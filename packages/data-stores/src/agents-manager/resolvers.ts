@@ -53,22 +53,8 @@ export function* getAgentsManagerState() {
 			yield setLastActivity( activityMap );
 		}
 
-		const perSiteHistory = state.agents_manager_router_history;
-		if ( isValidRouterHistory( perSiteHistory ) ) {
-			// Discard router history for sites that have been inactive for over 1 hour.
-			if ( activityMap ) {
-				const INACTIVITY_TIMEOUT_MS = 60 * 60 * 1000; // 1 hour
-				const now = Date.now();
-
-				for ( const siteKey of Object.keys( perSiteHistory ) ) {
-					const lastActive = activityMap[ siteKey ];
-					if ( lastActive && now - lastActive > INACTIVITY_TIMEOUT_MS ) {
-						delete perSiteHistory[ siteKey ];
-					}
-				}
-			}
-
-			yield setRouterHistory( perSiteHistory );
+		if ( isValidRouterHistory( state.agents_manager_router_history ) ) {
+			yield setRouterHistory( state.agents_manager_router_history );
 		}
 
 		if ( typeof state.agents_manager_docked === 'boolean' ) {
