@@ -491,6 +491,7 @@ export class FullPostView extends Component {
 	};
 
 	handleVisitSiteClick = () => {
+		recordAction( 'clicked_view_original' );
 		recordPermalinkClick( 'full_post_visit_link', this.props.post );
 	};
 
