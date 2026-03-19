@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { isAllowedRedirectUrl } from 'calypso/lib/url';
 import {
 	SUCCESS,
 	ERROR,
@@ -258,8 +259,23 @@ function interpolateReceiptId( url: string, receiptId: number ): string {
  * which is absolute and on an unknown host.
  */
 function isRedirectAllowed( url: string, siteSlug: string | undefined ): boolean {
-	if ( url.startsWith( '/' ) ) {
-		return true;
+	// Handle subdirectory sites (e.g., siteSlug = 'example.com::blog') separately
+	// since they need both hostname and path matching.
+	if ( siteSlug?.includes( '::' ) && ! url.startsWith( '/' ) ) {
+		try {
+			const parsedUrl = new URL( url );
+			if ( parsedUrl.protocol !== 'https:' && parsedUrl.protocol !== 'http:' ) {
+				return false;
+			}
+			const [ hostnameFromSlug, ...subdirectoryParts ] = siteSlug.split( '::' );
+			const subdirectoryPathFromSlug = subdirectoryParts.join( '/' );
+			return (
+				parsedUrl.hostname === hostnameFromSlug &&
+				!! parsedUrl.pathname?.startsWith( `/${ subdirectoryPathFromSlug }` )
+			);
+		} catch {
+			return false;
+		}
 	}
 
 	const allowedHostsForRedirect = [
@@ -278,50 +294,12 @@ function isRedirectAllowed( url: string, siteSlug: string | undefined ): boolean
 		'difmrequest.com',
 		'agencies.automattic.com',
 		'agencies.localhost',
-		siteSlug,
+		...( siteSlug ? [ siteSlug ] : [] ),
 	];
 
-	try {
-		const parsedUrl = new URL( url );
-		const { hostname, pathname, protocol } = parsedUrl;
-		if ( ! hostname ) {
-			return false;
-		}
-
-		// Only allow http and https protocols to prevent javascript: URL XSS.
-		if ( protocol !== 'https:' && protocol !== 'http:' ) {
-			return false;
-		}
-
-		// For subdirectory site, check that both hostname and subdirectory matches
-		// the siteSlug (host.name::subdirectory).
-		if ( siteSlug?.includes( '::' ) ) {
-			const [ hostnameFromSlug, ...subdirectoryParts ] = siteSlug.split( '::' );
-			const subdirectoryPathFromSlug = subdirectoryParts.join( '/' );
-			if (
-				hostname !== hostnameFromSlug &&
-				! pathname?.startsWith( `/${ subdirectoryPathFromSlug }` )
-			) {
-				return false;
-			}
-			return true;
-		}
-
-		// Return true for *.calypso.live urls.
-		if ( /^([a-zA-Z0-9-]+\.)?calypso\.live$/.test( hostname ) ) {
-			return true;
-		}
-
-		if ( ! allowedHostsForRedirect.includes( hostname ) ) {
-			return false;
-		}
-
-		return true;
-	} catch ( err ) {
-		// eslint-disable-next-line no-console
-		console.error( `Redirecting to absolute url '${ url }' failed:`, err );
-	}
-	return false;
+	return isAllowedRedirectUrl( url, allowedHostsForRedirect, [
+		/^([a-zA-Z0-9-]+\.)?calypso\.live$/,
+	] );
 }
 
 /**

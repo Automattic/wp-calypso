@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { getLanguageSlugs } from '@automattic/i18n-utils';
 import { useMemo } from 'react';
-import { resemblesUrl } from 'calypso/lib/url';
+import { isAllowedRedirectUrl } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import { getSiteId, isCommerceGardenSite, isJetpackSite } from 'calypso/state/sites/selectors';
@@ -56,19 +56,7 @@ const useValidCheckoutBackUrl = (
 
 		const allowedHosts = getAllowedHosts( siteSlug );
 
-		let parsedUrl;
-		try {
-			parsedUrl = new URL( checkoutBackUrl );
-		} catch {
-			return undefined;
-		}
-		const { hostname, protocol } = parsedUrl;
-		if (
-			resemblesUrl( checkoutBackUrl ) &&
-			hostname &&
-			( protocol === 'https:' || protocol === 'http:' ) &&
-			allowedHosts.includes( hostname )
-		) {
+		if ( isAllowedRedirectUrl( checkoutBackUrl, allowedHosts ) ) {
 			return checkoutBackUrl;
 		}
 
