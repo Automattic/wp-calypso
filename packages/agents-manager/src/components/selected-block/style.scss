@@ -1,3 +1,4 @@
+@import '@wordpress/base-styles/variables';
 @import '../../styles/mixins';
 
 .agents-manager-selected-block {
@@ -26,7 +27,7 @@
 	}
 
 	&__name {
-		font-size: 11px;
+		font-size: $font-size-x-small;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
