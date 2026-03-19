@@ -122,7 +122,6 @@ export default function McpWrite() {
 										checked={ allEnabled }
 										disabled={ mutation.isPending }
 										label={ __( 'Enable all' ) }
-										hideLabelFromVision
 										onChange={ ( checked ) => handleEnableAll( categoryTools, checked ) }
 									/>
 								</HStack>
