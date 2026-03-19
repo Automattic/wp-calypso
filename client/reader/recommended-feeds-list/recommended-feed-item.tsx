@@ -1,10 +1,12 @@
+import { filterURLForDisplay } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import AutoDirection from 'calypso/components/auto-direction';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import { FeedRecommendation } from 'calypso/data/reader/use-feed-recommendations-query';
 import ReaderFollowButton from 'calypso/reader/follow-button';
-import { useSelector } from 'calypso/state';
+import { useSelector, useDispatch } from 'calypso/state';
+import { successNotice } from 'calypso/state/notices/actions';
 import { getSite } from 'calypso/state/reader/sites/selectors';
 import type { SiteDetails } from '@automattic/data-stores';
 
@@ -20,11 +22,25 @@ export function RecommendedFeedItem( {
 	followSource,
 }: RecommendedFeedItemProps ): JSX.Element {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const { image, name, feedUrl = '', siteId, feedId } = feed;
 	const site = useSelector( ( state ) => getSite( state, Number( siteId ) ) ) as SiteDetails;
 	const siteIcon = site?.icon?.img || site?.icon?.ico || image;
 	const linkUrl = feedId ? `/reader/feeds/${ feedId }` : feedUrl;
 	const isCompactView = variant === 'compact';
+
+	function onFollowToggle( isFollowing: boolean ): void {
+		const displayName: string = name || filterURLForDisplay( feedUrl ?? '' );
+
+		dispatch(
+			successNotice(
+				isFollowing
+					? translate( 'Success! You are now subscribed to %s.', { args: displayName } )
+					: translate( 'Success! You are now unsubscribed from "%s".', { args: displayName } ),
+				{ duration: 2000 }
+			)
+		);
+	}
 
 	return (
 		<li className="recommended-feed-item">
@@ -60,6 +76,7 @@ export function RecommendedFeedItem( {
 					siteUrl={ feedUrl }
 					followSource={ followSource }
 					isButtonOnly={ isCompactView }
+					onFollowToggle={ onFollowToggle }
 				/>
 			) }
 		</li>
