@@ -1,4 +1,4 @@
-import { Gridicon, TimeSince } from '@automattic/components';
+import { Gridicon, ExternalLink, TimeSince } from '@automattic/components';
 import { formatNumberCompact } from '@automattic/number-formatters';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
@@ -20,6 +20,10 @@ const ReaderFullPostHeader = ( {
 	siteId,
 	tags,
 } ) => {
+	const handlePermalinkClick = () => {
+		recordPermalinkClick( 'full_post_title', post );
+	};
+
 	const recordDateClick = () => {
 		recordPermalinkClick( 'timestamp_full_post', post );
 	};
@@ -69,7 +73,16 @@ const ReaderFullPostHeader = ( {
 			) }
 			{ post.title ? (
 				<AutoDirection>
-					<h1 className="reader-full-post__header-title">{ post.title }</h1>
+					<h1 className="reader-full-post__header-title">
+						<ExternalLink
+							className="reader-full-post__header-title-link"
+							href={ post.URL }
+							target="_blank"
+							onClick={ handlePermalinkClick }
+						>
+							{ post.title }
+						</ExternalLink>
+					</h1>
 				</AutoDirection>
 			) : null }
 			{ isDefaultLayout && (
