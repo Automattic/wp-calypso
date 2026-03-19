@@ -23,7 +23,7 @@ describe( '#injectFingerprint', () => {
 
 	test( 'should not inject X-Fingerprint header when fingerprint is not available', async () => {
 		// Populate the cache, so that we get `undefined` as the fingerprint value.
-		fingerprintModule.cache.result = undefined;
+		fingerprintModule.cache.result = Promise.resolve( undefined );
 		fingerprintModule.injectFingerprint( wpcom );
 
 		await wpcom.request( { path: '/me/transactions' }, callback );
