@@ -1014,7 +1014,7 @@ function excludeDomainStep( stepName, tracksEventValue, submitSignupStep ) {
 	const domainItem = undefined;
 	const domainCart = undefined;
 
-	submitSignupStep( { stepName, domainItem }, { domainItem, domainCart } );
+	submitSignupStep( { stepName, domainItem, wasSkipped: true }, { domainItem, domainCart } );
 	recordExcludeStepEvent( stepName, tracksEventValue );
 
 	fulfilledDependencies = [ 'domainItem', 'domainCart', 'siteId', 'siteSlug', 'themeItem' ];
