@@ -6,6 +6,7 @@
 import { store as blockEditorStore } from '@wordpress/block-editor';
 import { select } from '@wordpress/data';
 import { store as imageStudioStore } from '../store';
+import type { ImageStudioEntryPoint } from '../store';
 import type { BlockEditorSelectors, CoreDataSelectors, WPBlock } from '../types/wordpress.d';
 
 export interface ImageStudioMetadata {
@@ -22,8 +23,8 @@ export interface ImageStudioData {
 	id: number | null;
 	style?: string;
 	metadata: ImageStudioMetadata;
-	entryPoint: string | null;
-	blockType?: string | null;
+	entryPoint: ImageStudioEntryPoint | null;
+	blockType: string | null;
 }
 
 export interface PageContentBlock {
