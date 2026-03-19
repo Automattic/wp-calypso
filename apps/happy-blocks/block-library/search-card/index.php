@@ -47,7 +47,6 @@ if ( ! function_exists( 'get_support_search_link_for_query' ) ) {
 	}
 }
 
-$form_id                 = isset( $args['form_id'] ) ? $args['form_id'] : '';
 $form_class              = isset( $args['form_class'] ) ? $args['form_class'] : '';
 $input_class             = isset( $args['input_class'] ) ? $args['input_class'] : '';
 $placeholder             = isset( $args['placeholder'] ) ? $args['placeholder'] : '';
@@ -155,7 +154,7 @@ $show_search_suggestions = isset( $args['show_search_suggestions'] ) ? $args['sh
 		<?php echo $is_404_page ? '<p class="subheading">' . esc_html( __( "Let's help you find what you're looking for.", 'happy-blocks' ) ) . '</p>' : ''; ?>
 
 		<fieldset class="support-search-form-container">
-			<form id="<?php echo esc_attr( $form_id ); ?>" class="<?php echo esc_attr( $form_class ); ?>" role="search" method="get" action="">
+			<form id="support-search-form" class="<?php echo esc_attr( $form_class ); ?>" role="search" method="get" action="">
 				<input type="hidden" name="group_id" value="blog_id:<?php echo esc_attr( get_current_blog_id() ); ?>"/>
 				<div class="input-wrapper" dir="auto">
 					<?php if ( $enable_odie_answers ) : ?>

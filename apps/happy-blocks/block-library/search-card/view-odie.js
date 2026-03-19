@@ -12,9 +12,9 @@ document.addEventListener( 'help-center-ready-to-load', resolveHelpCenterReadyTo
 
 document.addEventListener( 'DOMContentLoaded', function () {
 	const links = document.querySelectorAll( 'button[data-search-query]' );
+	const input = document.getElementById( 'support-search-input' );
 	const submitButton = document.querySelector( '.search-submit-button' );
 	const form = document.getElementById( 'support-search-form' );
-	const input = document.getElementById( 'support-search-input' );
 
 	links.forEach( ( link ) => {
 		link.addEventListener( 'click', function ( e ) {

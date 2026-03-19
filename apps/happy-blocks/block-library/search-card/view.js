@@ -5,9 +5,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
 	const links = document.querySelectorAll( 'button[data-search-query]' );
 	const input = document.getElementById( 'support-search-input' );
 	const submitButton = document.querySelector( '.search-submit-button' );
-	const form =
-		document.getElementById( 'support-search-form' ) || document.getElementById( 'searchform' );
-
+	const form = document.getElementById( 'support-search-form' );
 	links.forEach( ( link ) => {
 		link.addEventListener( 'click', function ( e ) {
 			const query = this.getAttribute( 'data-search-query' );
