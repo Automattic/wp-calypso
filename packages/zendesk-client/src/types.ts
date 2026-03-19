@@ -188,3 +188,7 @@ export type ConversationData = {
 		id: string;
 	};
 };
+
+export type QueuedMessage = {
+	text: string;
+};
