@@ -28,9 +28,6 @@ export function generateSteps( {
 	createSite = noop,
 	createSiteOrDomain = noop,
 	createSiteWithCart = noop,
-	setOptionsOnSite = noop,
-	setStoreFeatures = noop,
-	setIntentOnSite = noop,
 	addDomainToCart = noop,
 	launchSiteApi = noop,
 	isPlanFulfilled = noop,
@@ -191,37 +188,6 @@ export function generateSteps( {
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
 			},
-		},
-
-		'site-options': {
-			stepName: 'site-options',
-			dependencies: [ 'siteSlug', 'siteTitle', 'tagline' ],
-			providesDependencies: [ 'siteTitle', 'tagline', 'searchTerms', 'newOrExistingSiteChoice' ],
-			optionalDependencies: [ 'searchTerms', 'newOrExistingSiteChoice' ],
-			apiRequestFunction: setOptionsOnSite,
-			delayApiRequestUntilComplete: true,
-		},
-
-		'store-options': {
-			stepName: 'store-options',
-			dependencies: [ 'siteSlug', 'siteTitle', 'tagline' ],
-			providesDependencies: [ 'siteTitle', 'tagline', 'searchTerms', 'newOrExistingSiteChoice' ],
-			optionalDependencies: [ 'searchTerms', 'newOrExistingSiteChoice' ],
-			apiRequestFunction: setOptionsOnSite,
-		},
-
-		'store-features': {
-			stepName: 'store-features',
-			dependencies: [ 'siteSlug' ],
-			apiRequestFunction: setStoreFeatures,
-			providesDependencies: [ 'storeType' ],
-			optionalDependencies: [ 'storeType' ],
-		},
-
-		'starting-point': {
-			stepName: 'starting-point',
-			providesDependencies: [ 'startingPoint' ],
-			optionalDependencies: [ 'startingPoint' ],
 		},
 
 		plans: {
@@ -761,14 +727,6 @@ export function generateSteps( {
 				cartItem: PLAN_BUSINESS_3_YEARS,
 			},
 		},
-		intent: {
-			stepName: 'intent',
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'intent' ],
-			optionalDependencies: [ 'intent' ],
-			apiRequestFunction: setIntentOnSite,
-			delayApiRequestUntilComplete: true,
-		},
 
 		'new-or-existing-site': {
 			stepName: 'new-or-existing-site',
@@ -873,9 +831,6 @@ export function generateSteps( {
 			stepName: 'website-content',
 			dependencies: [ 'siteSlug' ],
 			apiRequestFunction: submitWebsiteContent,
-		},
-		courses: {
-			stepName: 'courses',
 		},
 
 		// Woocommerce Install steps.
