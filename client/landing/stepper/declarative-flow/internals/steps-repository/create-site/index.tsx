@@ -222,25 +222,6 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 				throw new Error( 'Invalid early_created_site parameter.' );
 			}
 
-			// Trigger the AI site builder job. This queues an async job that waits
-			// for provisioning to complete, then runs the Site Builder Workflow Agent.
-			try {
-				await wpcomRequest( {
-					path: `/sites/${ blogId }/big-sky/trigger-backend-build`,
-					apiNamespace: 'wpcom/v2',
-					method: 'POST',
-					body: {
-						spec_id: urlQueryParams.get( 'spec_id' ),
-					},
-				} );
-			} catch ( error ) {
-				// eslint-disable-next-line no-console
-				console.error( 'Failed to trigger backend build:', error );
-				throw new Error(
-					'We were unable to build your store. Please try again or contact support.'
-				);
-			}
-
 			// Poll until the provisioning is considered complete.
 			// Skip the initial delay since the site may have been provisioning for minutes already.
 			await pollForGardenProvisioning( blogId, 22, 5000, 0 );
