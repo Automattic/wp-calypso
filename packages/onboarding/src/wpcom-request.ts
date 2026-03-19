@@ -3,25 +3,23 @@ import wpcomProxyRequest, {
 	canAccessWpcomApis as originalCanAccessWpcomApis,
 } from 'wpcom-proxy-request';
 
-interface WpcomInstance {
-	request: typeof wpcomProxyRequest;
-}
+type WpcomRequester = < T >( params: WpcomRequestParams ) => Promise< T >;
 
-let wpcomInstance: WpcomInstance | null = null;
+let customRequester: WpcomRequester | null = null;
 
-export function setWpcomInstance( instance: WpcomInstance ): void {
-	wpcomInstance = instance;
+export function setRequester( requester: WpcomRequester ): void {
+	customRequester = requester;
 }
 
 export default function wpcomRequest< T >( params: WpcomRequestParams ): Promise< T > {
-	if ( wpcomInstance ) {
-		return wpcomInstance.request( params ) as Promise< T >;
+	if ( customRequester ) {
+		return customRequester( params );
 	}
 	return wpcomProxyRequest( params );
 }
 
 export function canAccessWpcomApis(): boolean {
-	if ( wpcomInstance ) {
+	if ( customRequester ) {
 		return true;
 	}
 	return originalCanAccessWpcomApis();

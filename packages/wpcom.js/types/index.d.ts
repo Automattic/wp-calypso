@@ -64,6 +64,9 @@ export class Request {
 }
 
 export interface WpcomInstance {
+	/** Low-level request handler set by the constructor (reqHandler or a no-op). */
+	request: ( params: object, callback: ( error: any, body: any, headers: any ) => any ) => any;
+
 	/** Convenience request wrapper with helpers and Promise support */
 	req: Request;
 

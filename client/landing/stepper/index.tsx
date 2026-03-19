@@ -3,7 +3,7 @@ import accessibleFocus from '@automattic/accessible-focus';
 import { initializeAnalytics } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import {
-	setWpcomInstance as setDataStoresWpcom,
+	setRequester as setDataStoresRequester,
 	UserActions,
 	User as UserStore,
 } from '@automattic/data-stores';
@@ -12,7 +12,7 @@ import {
 	AI_SITE_BUILDER_SPEC_FLOW,
 	DOMAIN_FLOW,
 	WOO_HOSTED_PLANS_FLOW,
-	setWpcomInstance as setOnboardingWpcom,
+	setRequester as setOnboardingRequester,
 } from '@automattic/onboarding';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { dispatch } from '@wordpress/data';
@@ -96,8 +96,30 @@ async function main() {
 	config.enable( 'no-force-sympathy' );
 
 	if ( config.isEnabled( 'oauth' ) ) {
-		setDataStoresWpcom( wpcom );
-		setOnboardingWpcom( wpcom );
+		// Build a requester that delegates to wpcom.req.get/post so requests go
+		// through the standard lib/wp path (which injects the OAuth token via
+		// sendRequest). We decompose the flat WpcomRequestParams into the
+		// (params, query, [body], callback) signature that req.get/post expect.
+		const requester = < T, >( params: Record< string, unknown > ) => {
+			const { query, body, method, ...rest } = params;
+			const queryObj =
+				typeof query === 'string'
+					? Object.fromEntries( new URLSearchParams( query ) )
+					: query || {};
+
+			return new Promise< T >( ( resolve, reject ) => {
+				const cb = ( error: Error, response: T ) => {
+					error ? reject( error ) : resolve( response );
+				};
+				if ( method && ( method as string ).toUpperCase() !== 'GET' ) {
+					wpcom.req.post( { ...rest, method }, queryObj, body, cb );
+				} else {
+					wpcom.req.get( rest, queryObj, cb );
+				}
+			} );
+		};
+		setDataStoresRequester( requester );
+		setOnboardingRequester( requester );
 	}
 
 	const flowName = getFlowFromURL();
