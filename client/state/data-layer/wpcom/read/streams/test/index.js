@@ -308,4 +308,91 @@ describe( 'streams', () => {
 			] );
 		} );
 	} );
+
+	describe( 'handlePage with sites data (custom_recs_sites_with_images)', () => {
+		const makeSiteAction = () =>
+			deepfreeze( requestPageAction( { streamKey: 'custom_recs_sites_with_images', page: 1 } ) );
+
+		it( 'should not throw when a site is missing the posts property', () => {
+			const siteAction = makeSiteAction();
+			const siteData = deepfreeze( { sites: [ { blog_ID: 1 } ] } );
+			expect( () => handlePage( siteAction, siteData ) ).not.toThrow();
+		} );
+
+		const findReceivePageAction = ( result ) =>
+			result.find( ( a ) => typeof a === 'object' && a.type === 'READER_STREAMS_PAGE_RECEIVE' );
+
+		it( 'should skip sites with missing posts and return empty stream items', () => {
+			const siteAction = makeSiteAction();
+			const siteData = deepfreeze( { sites: [ { blog_ID: 1 } ] } );
+			const result = handlePage( siteAction, siteData );
+			const receivePageAction = findReceivePageAction( result );
+			expect( receivePageAction.payload.streamItems ).toEqual( [] );
+		} );
+
+		it( 'should skip sites with an empty posts array', () => {
+			const siteAction = makeSiteAction();
+			const siteData = deepfreeze( { sites: [ { blog_ID: 1, posts: [] } ] } );
+			const result = handlePage( siteAction, siteData );
+			const receivePageAction = findReceivePageAction( result );
+			expect( receivePageAction.payload.streamItems ).toEqual( [] );
+		} );
+
+		it( 'should create stream items from sites with valid posts', () => {
+			const siteAction = makeSiteAction();
+			const siteData = deepfreeze( {
+				sites: [
+					{
+						blog_ID: 1,
+						name: 'Test Site',
+						description: 'A test',
+						icon: { ico: 'icon.png' },
+						posts: [
+							{
+								ID: 10,
+								site_ID: 1,
+								date: '2026-01-01',
+								URL: 'https://example.com/post',
+								feed_ID: 100,
+								feed_URL: 'https://example.com/feed',
+							},
+						],
+					},
+				],
+			} );
+			const result = handlePage( siteAction, siteData );
+			const receivePageAction = findReceivePageAction( result );
+			expect( receivePageAction.payload.streamItems ).toHaveLength( 1 );
+			expect( receivePageAction.payload.streamItems[ 0 ] ).toMatchObject( {
+				postId: 10,
+				date: '2026-01-01',
+				url: 'https://example.com/post',
+				site_name: 'Test Site',
+				site_icon: 'icon.png',
+			} );
+		} );
+
+		it( 'should handle a mix of sites with and without posts', () => {
+			const siteAction = makeSiteAction();
+			const siteData = deepfreeze( {
+				sites: [
+					{
+						blog_ID: 1,
+						name: 'Valid Site',
+						posts: [ { ID: 10, site_ID: 1, date: '2026-01-01', URL: 'https://example.com/a' } ],
+					},
+					{ blog_ID: 2, name: 'No Posts Property' },
+					{ blog_ID: 3, name: 'Empty Posts', posts: [] },
+					{
+						blog_ID: 4,
+						name: 'Another Valid Site',
+						posts: [ { ID: 20, site_ID: 4, date: '2026-01-02', URL: 'https://example.com/b' } ],
+					},
+				],
+			} );
+			const result = handlePage( siteAction, siteData );
+			const receivePageAction = findReceivePageAction( result );
+			expect( receivePageAction.payload.streamItems ).toHaveLength( 2 );
+		} );
+	} );
 } );

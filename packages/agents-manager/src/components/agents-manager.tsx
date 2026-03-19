@@ -9,10 +9,11 @@ import { useSelect } from '@wordpress/data';
 import { useEffect, useRef } from '@wordpress/element';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { AgentsManagerContextProvider, useAgentsManagerContext } from '../contexts';
+import { useAgentConfig } from '../hooks/use-agent-config';
 import { useEmptyViewSuggestions } from '../hooks/use-empty-view-suggestions';
 import { AGENTS_MANAGER_STORE } from '../stores';
-import { createAgentConfig, getAgentConfig } from '../utils/agent-config';
 import { clearSessionId } from '../utils/agent-session';
+import { createAgentConfig } from '../utils/create-agent-config';
 import { loadExternalProviders, type LoadedProviders } from '../utils/load-external-providers';
 import AgentDock from './agent-dock';
 import { PersistentRouter } from './persistent-router';
@@ -26,6 +27,8 @@ export interface AgentsManagerProps {
 	site?: AgentsManagerSite | null;
 	/** The current route path. */
 	currentRoute?: string;
+	/** The ID of the currently selected site, or undefined for non-site contexts. */
+	currentSiteId?: number;
 	/** Called when the agent is closed. */
 	handleClose?: () => void;
 }
@@ -37,6 +40,7 @@ export default function AgentsManager( {
 	currentUser,
 	site,
 	currentRoute,
+	currentSiteId,
 }: AgentsManagerProps ): JSX.Element | null {
 	// Wait for the store to load before rendering PersistentRouter
 	// This ensures router history is restored from persisted state
@@ -49,10 +53,14 @@ export default function AgentsManager( {
 		return null;
 	}
 
+	const siteKey = currentSiteId ? String( currentSiteId ) : 'no-site';
+
 	return (
-		<AgentsManagerContextProvider value={ { sectionName, currentUser, site, currentRoute } }>
+		<AgentsManagerContextProvider
+			value={ { sectionName, currentUser, site, siteKey, currentRoute } }
+		>
 			<QueryClientProvider client={ queryClient }>
-				<PersistentRouter>
+				<PersistentRouter siteKey={ siteKey }>
 					<AgentSetup />
 				</PersistentRouter>
 			</QueryClientProvider>
@@ -74,7 +82,7 @@ function AgentSetup(): JSX.Element | null {
 
 	// Read agent/version overrides from browser URL (?agent=, ?version=).
 	// PersistentRouter (memory router) does not track window.location.search.
-	const { agentId, version } = getAgentConfig();
+	const { agentId, version } = useAgentConfig();
 
 	useEffect( () => {
 		async function initializeAgent(): Promise< void > {

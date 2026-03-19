@@ -20,7 +20,6 @@ import {
 	isAkismetProduct,
 	isWooExpressPlan,
 	PLAN_100_YEARS,
-	type PlanSlug,
 } from '@automattic/calypso-products';
 import colorStudio from '@automattic/color-studio';
 import { Gridicon } from '@automattic/components';
@@ -42,7 +41,9 @@ import * as React from 'react';
 import { hasFreeCouponTransfersOnly } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import useEquivalentMonthlyTotals from 'calypso/my-sites/checkout/utils/use-equivalent-monthly-totals';
+import useEquivalentMonthlyTotals, {
+	getOriginalAmountIntegerForDisplay,
+} from 'calypso/my-sites/checkout/utils/use-equivalent-monthly-totals';
 import { useSelector } from 'calypso/state';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import getAkismetProductFeatures from '../lib/get-akismet-product-features';
@@ -167,8 +168,7 @@ function CheckoutSummaryPriceList() {
 	const monthlyPrices = useEquivalentMonthlyTotals( responseCart.products );
 
 	const subtotalBeforeDiscounts = responseCart.products.reduce( ( subtotal, product ) => {
-		const originalAmountInteger =
-			monthlyPrices[ product.product_slug as PlanSlug ] || product.item_original_subtotal_integer;
+		const originalAmountInteger = getOriginalAmountIntegerForDisplay( product, monthlyPrices );
 		// In specific cases (e.g. premium domains) the original price (renewal) is lower than the due price.
 		return subtotal + Math.max( product.item_subtotal_integer, originalAmountInteger );
 	}, 0 );

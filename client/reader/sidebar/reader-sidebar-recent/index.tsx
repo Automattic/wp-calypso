@@ -1,7 +1,5 @@
 import './style.scss';
 import page from '@automattic/calypso-router';
-import { Icon } from '@wordpress/components';
-import { plus } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import React, { useState } from 'react';
@@ -17,6 +15,7 @@ import { getSelectedRecentFeedId } from 'calypso/state/reader-ui/sidebar/selecto
 import { AppState } from 'calypso/types';
 import { AllIcon } from '../icons/all';
 import { MenuItem, MenuItemLink } from '../menu';
+
 // Not complete, just useful fields for now
 type Site = {
 	ID: number;
@@ -40,7 +39,7 @@ type Props = {
 	translate: ( key: string ) => string;
 };
 
-const SITE_DISPLAY_CUTOFF = 8;
+const SITE_DISPLAY_CUTOFF = 5;
 const RECENT_PATH_REGEX = /^\/reader(?:\/recent\/\d+)?\/?(?:\?|$)/;
 
 const ReaderSidebarRecent = ( {
@@ -57,7 +56,6 @@ const ReaderSidebarRecent = ( {
 	const isRecentStream = RECENT_PATH_REGEX.test( path );
 
 	let sitesToShow = showAllSites ? sites : sites.slice( 0, SITE_DISPLAY_CUTOFF );
-	// const totalUnseenCount = sites.reduce( ( total, site ) => total + site.unseen_count, 0 );
 
 	const selectedSite = sites.find( ( site ) => site.feed_ID === selectedSiteFeedId );
 	if ( selectedSite && ! sitesToShow.includes( selectedSite ) ) {
@@ -111,17 +109,6 @@ const ReaderSidebarRecent = ( {
 			materialIconStyle={ null }
 			expandableIconClick={ onClick }
 		>
-			<MenuItem key="add" selected={ path.startsWith( '/reader/new' ) }>
-				<MenuItemLink
-					href="/reader/new"
-					className="sidebar__menu-link"
-					onClick={ () => recordReaderTracksEvent( 'calypso_reader_sidebar_add_new_clicked' ) }
-				>
-					<Icon icon={ plus } viewBox="2 0 24 24" />
-					<span>{ translate( 'Add new' ) }</span>
-				</MenuItemLink>
-			</MenuItem>
-
 			<MenuItem key="all" selected={ isRecentStream && selectedSiteFeedId === null }>
 				<MenuItemLink
 					href="/reader"

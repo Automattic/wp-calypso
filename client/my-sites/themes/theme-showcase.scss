@@ -639,10 +639,10 @@
 	}
 
 	.themes-list {
+		gap: 48px;
 		margin: 0 auto;
 
 		@include break-small {
-			gap: 32px;
 			grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
 			max-width: 1220px;
 		}
@@ -656,6 +656,14 @@
 		border: none;
 		border-radius: 8px;
 		box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.25);
+	}
+
+	.theme-card__info {
+		height: auto;
+	}
+
+	.theme-card__info-title {
+		font-size: 18px;
 	}
 
 	// Hide style variation swatches for logged-out modern view

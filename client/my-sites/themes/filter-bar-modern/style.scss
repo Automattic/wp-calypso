@@ -19,6 +19,11 @@
 		.category-pill-navigation__button {
 			text-decoration: none;
 
+			&:not(.is-active):hover, &:not(.is-active):focus {
+				background-color: var( --studio-gray-10 );
+				color: var( --studio-gray-80 );
+			}
+
 			&:first-child {
 				margin-left: 0;
 			}
@@ -31,7 +36,7 @@
 	display: flex;
 	margin: 0 auto;
 	max-width: 1220px;
-	padding: 24px;
+	padding: 32px 24px;
 
 	@media ( min-width: $break-wide ) {
 		padding-left: 0;
