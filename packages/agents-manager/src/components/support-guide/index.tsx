@@ -78,7 +78,7 @@ export default function SupportGuide( {
 					options={ chatHeaderOptions }
 					title={ __( 'Support Guides', '__i18n_text_domain__' ) }
 				/>
-				<div className="agenttic agent-manager-support-guide-wrapper">
+				<div className="agent-manager-support-guide-wrapper">
 					<div className="agent-manager-support-guide-content help-center__container-content">
 						<HelpCenterArticle
 							sectionName={ sectionName }

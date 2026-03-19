@@ -1,6 +1,3 @@
-@import '@wordpress/base-styles/colors';
-@import '../../styles/mixins';
-
 .agent-manager-support-guide-wrapper {
 	height: calc( 100% - 50px );
 	display: flex;
@@ -9,7 +6,7 @@
 	.agent-manager-support-guide-content {
 		flex: 1;
 		overflow-y: auto;
-		scrollbar-color: $gray-400 transparent;
+		scrollbar-color: var( --color-muted ) transparent;
 		scroll-behavior: smooth;
 	}
 
@@ -23,54 +20,46 @@
 			justify-content: center;
 		}
 	}
-}
 
-// Docked chat dark-mode overrides
-@include docked-chat-without-modal {
-	.agent-manager-support-guide-wrapper {
-		.help-center-article {
-			color: $white;
+	.help-center-article {
+		color: var( --color-foreground );
 
-			.help-center-article-content__header {
-				&-title {
-					color: $white;
-				}
-				&-link {
-					color: $gray-400;
-				}
+		.help-center-article-content__header {
+			&-title {
+				color: var( --color-foreground );
 			}
 
-			.help-center-article-content__main {
-				h1,
-				h2,
-				h3,
-				h4,
-				h5,
-				h6,
-				p,
-				ol,
-				ul,
-				button,
-				ol.wp-block-list,
-				a {
-					color: $white;
-				}
-
-				.wp-block-a8c-support-table-of-contents {
-					background-color: $gray-800;
-				}
-			}
-
-			.help-center-feedback__form {
-				button {
-					color: $white;
-					fill: $white;
-				}
+			&-link {
+				color: var( --color-muted-foreground );
 			}
 		}
-	}
 
-	.agent-manager-support-guide-content {
-		scrollbar-color: #3f3f3f transparent;
+		.help-center-article-content__main,
+		.help-center-article__error {
+			h1,
+			h2,
+			h3,
+			h4,
+			h5,
+			h6,
+			p,
+			ol,
+			ul,
+			button,
+			ol.wp-block-list,
+			a {
+				color: var( --color-foreground );
+			}
+
+			.wp-block-a8c-support-table-of-contents {
+				background-color: var( --color-muted );
+			}
+		}
+
+		.help-center-feedback__form button {
+			color: var( --color-foreground );
+			fill: var( --color-foreground );
+		}
 	}
 }
+

@@ -108,7 +108,7 @@ export default function SupportGuides( {
 					title={ __( 'Support Guides', '__i18n_text_domain__' ) }
 				/>
 				<VStack
-					className="agenttic agent-manager-support-guides-wrapper"
+					className="agent-manager-support-guides-wrapper"
 					alignment="stretch"
 					justify="stretch"
 				>
