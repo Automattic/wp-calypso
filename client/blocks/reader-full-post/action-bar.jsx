@@ -7,6 +7,7 @@ import ReaderCommentIcon from 'calypso/reader/components/icons/comment-icon';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import LikeButton from 'calypso/reader/like-button';
 import { shouldShowLikes } from 'calypso/reader/like-helper';
+import { recordAction, recordPermalinkClick } from 'calypso/reader/stats';
 import { userCan } from 'calypso/state/posts/utils';
 
 const ReaderFullPostActionBar = ( {
@@ -15,7 +16,6 @@ const ReaderFullPostActionBar = ( {
 	commentCount,
 	onCommentClick,
 	onEditClick,
-	onViewOriginalClick,
 	commentsApiDisabled,
 	showComments,
 	renderMarkAsSeenButton,
@@ -30,6 +30,11 @@ const ReaderFullPostActionBar = ( {
 	const feedId = post.feed_ID ? Number( post.feed_ID ) : undefined;
 	const siteId = post.site_ID ? Number( post.site_ID ) : undefined;
 	const viewOriginalUrl = post.URL;
+
+	const handleViewOriginalClick = () => {
+		recordAction( 'clicked_view_original' );
+		recordPermalinkClick( 'full_post_visit_link', post );
+	};
 
 	return (
 		<div className="reader-full-post__action-bar">
@@ -62,7 +67,7 @@ const ReaderFullPostActionBar = ( {
 						href={ viewOriginalUrl }
 						target="_blank"
 						rel="external noopener noreferrer"
-						onClick={ onViewOriginalClick }
+						onClick={ handleViewOriginalClick }
 					>
 						<Icon icon={ globe } size={ 24 } />
 						<span className="reader-full-post__view-original-button-label">
@@ -98,7 +103,6 @@ ReaderFullPostActionBar.propTypes = {
 	commentCount: PropTypes.number,
 	onCommentClick: PropTypes.func,
 	onEditClick: PropTypes.func,
-	onViewOriginalClick: PropTypes.func,
 	commentsApiDisabled: PropTypes.bool,
 	showComments: PropTypes.bool,
 	renderMarkAsSeenButton: PropTypes.func,
