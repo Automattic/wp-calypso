@@ -194,64 +194,60 @@
 
 // Plan upgrade banner
 .plan-upgrade-banner {
-	--plan-banner-bg: var( --studio-gray-0 );
-	--plan-banner-text: var( --studio-gray-100 );
-	--plan-banner-text-secondary: var( --studio-gray-80 );
-	--plan-banner-text-tertiary: var( --studio-gray-60 );
 	--plan-banner-accent: var( --studio-blue-50 );
+
+	--plan-banner-bg: var( --studio-blue-5 );
+	--plan-banner-title: var( --studio-gray-100 );
+	--plan-banner-description: var( --studio-gray-80 );
+	--plan-banner-features: var( --studio-gray-80 );
+	--plan-banner-feature-check: var( --plan-banner-accent );
+	--plan-banner-price: var( --studio-gray-80 );
 	--plan-banner-radio-border: var( --studio-gray-20 );
 	--plan-banner-radio-bg: var( --studio-white );
 
 	background-color: var( --plan-banner-bg );
-	border-inline-start: 4px solid var( --plan-banner-accent );
+	border: 1px solid var( --plan-banner-accent );
 	display: grid;
 	gap: 24px;
 	grid-template-columns: 1fr;
-	padding: 32px 24px;
+	padding: 24px;
 
 	@include break-medium {
 		align-items: center;
-		grid-template-columns: 2fr 1.5fr 1.5fr;
-		padding: 32px;
+		grid-template-columns: 1fr 1fr 1fr;
+		padding: 40px;
 	}
 }
 
 .plan-upgrade-banner.is-dark {
-	--plan-banner-bg: var( --studio-gray-90 );
-	--plan-banner-text: var( --studio-white );
-	--plan-banner-text-secondary: var( --studio-gray-20 );
-	--plan-banner-text-tertiary: var( --studio-gray-30 );
+	--plan-banner-bg: var( --studio-gray-80 );
+	--plan-banner-title: var( --studio-gray-0 );
+	--plan-banner-description: var( --studio-gray-0 );
+	--plan-banner-features: var( --studio-white );
+	--plan-banner-feature-check: var( --studio-gray-5 );
+	--plan-banner-price: var( --studio-white );
 	--plan-banner-radio-border: var( --studio-gray-50 );
-	--plan-banner-radio-bg: var( --studio-gray-90 );
+	--plan-banner-radio-bg: var( --studio-white );
 
-	border-inline-start: none;
+	border: none;
 }
 
 .plan-upgrade-banner__title {
-	color: var( --plan-banner-text );
-	font-family: $brand-serif;
-	font-size: rem( 32px );
-	font-weight: 400;
-	line-height: 1.2;
-	margin: 0;
-
-	@include break-medium {
-		font-size: rem( 40px );
-	}
+	color: var( --plan-banner-title );
+	font-size: $font-title-large;
 }
-
 .plan-upgrade-banner__description {
-	color: var( --plan-banner-text-secondary );
+	color: var( --plan-banner-description );
 	font-size: $font-body;
-	line-height: 1.5;
-	margin: 8px 0 0;
+	margin-bottom: 0;
+	text-wrap: balance;
 }
 
 .plan-upgrade-banner__features-heading {
-	color: var( --plan-banner-text );
+	color: var( --plan-banner-features );
 	font-size: $font-body;
 	font-weight: 600;
-	margin: 0 0 12px;
+	margin-bottom: 8px;
 }
 
 .plan-upgrade-banner__features-list {
@@ -262,67 +258,73 @@
 
 .plan-upgrade-banner__features-item {
 	align-items: center;
-	color: var( --plan-banner-text-secondary );
+	color: var( --plan-banner-features );
 	display: flex;
-	font-size: $font-body;
+	font-size: $font-body-small;
 	gap: 8px;
 	line-height: 1.5;
-
-	& + & {
-		margin-block-start: 8px;
-	}
+	margin: 8px 0;
 }
 
 .plan-upgrade-banner__check-icon {
-	color: var( --plan-banner-accent );
+	background-color: var( --plan-banner-feature-check );
+	border-radius: 50%;
+	fill: var( --plan-banner-bg );
 	flex-shrink: 0;
-	height: 20px;
-	width: 20px;
+	height: 18px;
+	width: 18px;
 }
 
 .plan-upgrade-banner__price {
 	align-items: flex-start;
 	display: flex;
 	gap: 2px;
-	margin-block-end: 8px;
+	margin-block-end: 16px;
 }
 
 .plan-upgrade-banner__price-amount {
-	color: var( --plan-banner-text );
+	color: var( --plan-banner-price );
 	font-family: $brand-serif;
-	font-size: rem( 56px );
+	font-size: $font-headline-medium;
 	font-weight: 400;
 	line-height: 1;
 }
 
 .plan-upgrade-banner__price-period {
 	align-self: flex-end;
-	color: var( --plan-banner-text-tertiary );
-	font-size: $font-body;
-	margin-block-end: 8px;
+	color: var( --plan-banner-price );
+	font-size: $font-body-small;
+	margin-bottom: 8px;
 }
 
 .plan-upgrade-banner__billing-toggle {
+	align-items: flex-start;
 	border: none;
 	display: flex;
 	gap: 16px;
-	margin: 0 0 16px;
+	margin: 0 0 24px;
 	padding: 0;
 }
 
 .plan-upgrade-banner__billing-option {
 	align-items: center;
-	color: var( --plan-banner-text-secondary );
+	color: var( --plan-banner-price );
 	cursor: pointer;
 	display: flex;
-	font-size: $font-body;
+	font-size: $font-body-small;
 	gap: 6px;
+
+	&:last-child {
+		flex-wrap: wrap;
+	}
 
 	input[type='radio'] {
 		appearance: none;
-		border: 2px solid var( --plan-banner-radio-border );
+		background-color: var( --plan-banner-radio-bg );
+		border: 1px solid var( --plan-banner-radio-border );
 		border-radius: 50%;
 		cursor: pointer;
+		flex-shrink: 0;
 		height: 20px;
 		margin: 0;
 		width: 20px;
@@ -331,13 +333,12 @@
 	input[type='radio']:checked {
 		background-color: var( --plan-banner-accent );
 		border-color: var( --plan-banner-accent );
-		box-shadow: inset 0 0 0 3px var( --plan-banner-radio-bg );
+		box-shadow: inset 0 0 0 2px var( --plan-banner-radio-bg );
 	}
 }
 
 .plan-upgrade-banner__billing-savings {
-	color: var( --plan-banner-text-tertiary );
-	font-size: $font-body-small;
+	font-size: $font-body-extra-small;
 }
 
 .plan-upgrade-banner__cta.components-button.is-primary {
@@ -346,9 +347,8 @@
 	--wp-components-color-accent-darker-20: var( --studio-blue-70 );
 
 	border-radius: 4px;
-	font-size: $font-body;
+	font-size: $font-body-small;
 	height: auto;
-	justify-content: center;
 	padding: 12px 24px;
 	width: 100%;
 }

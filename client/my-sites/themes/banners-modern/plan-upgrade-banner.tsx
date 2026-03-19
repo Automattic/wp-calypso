@@ -9,6 +9,7 @@ import {
 	PLAN_BUSINESS_MONTHLY,
 } from '@automattic/calypso-products';
 import { Button } from '@wordpress/components';
+import { Icon, check } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
@@ -19,27 +20,6 @@ import { getProductCost, getProductDisplayCost } from 'calypso/state/products-li
 import type { IAppState } from 'calypso/state/types';
 
 import './style.scss';
-
-const CheckCircleIcon = () => (
-	<svg
-		className="plan-upgrade-banner__check-icon"
-		width="24"
-		height="24"
-		viewBox="0 0 24 24"
-		fill="none"
-		xmlns="http://www.w3.org/2000/svg"
-		aria-hidden="true"
-	>
-		<circle cx="12" cy="12" r="12" fill="currentColor" />
-		<path
-			d="M7.5 12.5l3 3 6-6"
-			stroke="white"
-			strokeWidth="2"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-		/>
-	</svg>
-);
 
 interface PlanUpgradeBannerProps {
 	planSlug: typeof PLAN_PERSONAL | typeof PLAN_PREMIUM | typeof PLAN_BUSINESS;
@@ -101,13 +81,13 @@ const PlanUpgradeBanner = ( { planSlug, variant = 'light' }: PlanUpgradeBannerPr
 			className={ clsx( 'banner-modern plan-upgrade-banner', { 'is-dark': variant === 'dark' } ) }
 		>
 			<div className="plan-upgrade-banner__plan">
-				<h2 className="plan-upgrade-banner__title">
+				<h2 className="banner-modern__title plan-upgrade-banner__title">
 					{
 						// translators: %(planName)s is the plan name - e.g. Business or Premium
 						translate( '%(planName)s plan', { args: { planName: plan.getTitle() } } )
 					}
 				</h2>
-				<p className="plan-upgrade-banner__description">
+				<p className="banner-modern__description plan-upgrade-banner__description">
 					{
 						// @ts-ignore - getPlanTagline is not typed as existing on all plan types, but it is in practice
 						preventWidows( plan.getPlanTagline() )
@@ -121,7 +101,9 @@ const PlanUpgradeBanner = ( { planSlug, variant = 'light' }: PlanUpgradeBannerPr
 				<ul className="plan-upgrade-banner__features-list">
 					{ features.map( ( feature, index ) => (
 						<li key={ index } className="plan-upgrade-banner__features-item">
-							<CheckCircleIcon />
+							<div className="plan-upgrade-banner__check-icon">
+								<Icon icon={ check } size={ 18 } />
+							</div>
 							<span>{ feature.getTitle() }</span>
 						</li>
 					) ) }
@@ -141,7 +123,9 @@ const PlanUpgradeBanner = ( { planSlug, variant = 'light' }: PlanUpgradeBannerPr
 						<input type="radio" checked={ ! isMonthly } onChange={ () => setIsMonthly( false ) } />
 						<span>{ translate( 'Annually' ) }</span>
 						<span className="plan-upgrade-banner__billing-savings">
-							{ translate( '(save %(percent)s%%)', { args: { percent: annualDiscount } } ) }
+							{ annualDiscount
+								? translate( '(save %(percent)s%%)', { args: { percent: annualDiscount } } )
+								: '' }
 						</span>
 					</label>
 				</fieldset>

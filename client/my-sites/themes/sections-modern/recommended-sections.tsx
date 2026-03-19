@@ -1,4 +1,4 @@
-import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
+import { getPlan, PLAN_BUSINESS, PLAN_PREMIUM } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { ThemesQuery } from 'calypso/my-sites/themes/collections/use-theme-collection';
 import AIBuilderBanner from '../banners-modern/ai-builder-banner';
@@ -91,7 +91,12 @@ export default function RecommendedSections( {
 				query={ PARTNER_QUERY }
 				sectionSlug="partner"
 				sectionIndex={ 2 }
-				banner={ <PlanUpgradeBanner planSlug={ PLAN_BUSINESS } variant="dark" /> }
+				banner={
+					<>
+						<PlanUpgradeBanner planSlug={ PLAN_PREMIUM } variant="light" />
+						<PlanUpgradeBanner planSlug={ PLAN_BUSINESS } variant="dark" />
+					</>
+				}
 				getActionLabel={ getActionLabel }
 				getOptions={ getOptions }
 				getScreenshotUrl={ getScreenshotUrl }
