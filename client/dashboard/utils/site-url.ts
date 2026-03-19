@@ -108,7 +108,11 @@ export function getSitePurchaseUpgradeUrl( purchase: Purchase ) {
 
 	const upgradeProductSlug = ProductUpgradeMap[ purchase.product_slug ];
 	if ( upgradeProductSlug ) {
-		return wpcomLink( `/checkout/${ purchase.site_slug }/${ upgradeProductSlug }` );
+		const backUrl = redirectToDashboardLink();
+		return addQueryArgs( wpcomLink( `/checkout/${ purchase.site_slug }/${ upgradeProductSlug }` ), {
+			redirect_to: backUrl,
+			cancel_to: backUrl,
+		} );
 	}
 
 	if ( purchase.is_jetpack_backup_t1 || isJetpackT1SecurityPlan( purchase ) ) {
