@@ -373,6 +373,12 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	text-decoration: none;
 }
 
+@media ( max-width: 900px ) {
+	.reader-full-post__view-original-button-label {
+		display: none;
+	}
+}
+
 .reader-full-post__story {
 	@include breakpoint-deprecated( '<480px' ) {
 		font-size: $font-body;
