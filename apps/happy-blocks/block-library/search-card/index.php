@@ -51,6 +51,7 @@ $form_class              = isset( $args['form_class'] ) ? $args['form_class'] : 
 $input_class             = isset( $args['input_class'] ) ? $args['input_class'] : '';
 $placeholder             = isset( $args['placeholder'] ) ? $args['placeholder'] : '';
 $show_search_suggestions = isset( $args['show_search_suggestions'] ) ? $args['show_search_suggestions'] : false;
+$website                 = isset( $args['website'] ) ? $args['website'] : '';
 
 ?>
 <div class="happy-blocks-search-card<?php echo $show_search_card ? '' : ' navigation-only'; ?>">
@@ -154,7 +155,7 @@ $show_search_suggestions = isset( $args['show_search_suggestions'] ) ? $args['sh
 		<?php echo $is_404_page ? '<p class="subheading">' . esc_html( __( "Let's help you find what you're looking for.", 'happy-blocks' ) ) . '</p>' : ''; ?>
 
 		<fieldset class="support-search-form-container">
-			<form id="support-search-form" class="<?php echo esc_attr( $form_class ); ?>" role="search" method="get" action="">
+			<form id="support-search-form" class="<?php echo esc_attr( $form_class ); ?>" role="search" method="get" action="" data-website="<?php echo esc_attr( $website ); ?>">
 				<input type="hidden" name="group_id" value="blog_id:<?php echo esc_attr( get_current_blog_id() ); ?>"/>
 				<div class="input-wrapper" dir="auto">
 					<?php if ( $enable_odie_answers ) : ?>
@@ -177,10 +178,10 @@ $show_search_suggestions = isset( $args['show_search_suggestions'] ) ? $args['sh
 
 			<?php if ( $show_search_suggestions ) : ?>
 				<ul class="search-terms">
-					<li><button data-search-query="<?php echo esc_attr( __( 'Connect a domain', 'happy-blocks' ) ); ?>" href="<?php echo esc_url( get_support_search_link_for_query( 'connect a domain', $is_forums ) ); ?>"><?php echo esc_html( __( 'Connect a domain', 'happy-blocks' ) ); ?></button></li>
-					<li><button data-search-query="<?php echo esc_attr( __( 'Upgrade my plan', 'happy-blocks' ) ); ?>" href="<?php echo esc_url( get_support_search_link_for_query( 'upgrade my plan', $is_forums ) ); ?>"><?php echo esc_html( __( 'Upgrade my plan', 'happy-blocks' ) ); ?></button></li>
-					<li><button data-search-query="<?php echo esc_attr( __( 'Add email', 'happy-blocks' ) ); ?>" href="<?php echo esc_url( get_support_search_link_for_query( 'add email', $is_forums ) ); ?>"><?php echo esc_html( __( 'Add email', 'happy-blocks' ) ); ?></button></li>
-					<li><button data-search-query="<?php echo esc_attr( __( 'Reset my password', 'happy-blocks' ) ); ?>" href="<?php echo esc_url( get_support_search_link_for_query( 'reset my password', $is_forums ) ); ?>"><?php echo esc_html( __( 'Reset my password', 'happy-blocks' ) ); ?></button></li>
+					<li><button data-search-query="<?php echo esc_attr( __( 'Connect a domain', 'happy-blocks' ) ); ?>" data-website="<?php echo esc_attr( $website ); ?>" href="<?php echo esc_url( get_support_search_link_for_query( 'connect a domain', $is_forums ) ); ?>"><?php echo esc_html( __( 'Connect a domain', 'happy-blocks' ) ); ?></button></li>
+					<li><button data-search-query="<?php echo esc_attr( __( 'Upgrade my plan', 'happy-blocks' ) ); ?>" data-website="<?php echo esc_attr( $website ); ?>" href="<?php echo esc_url( get_support_search_link_for_query( 'upgrade my plan', $is_forums ) ); ?>"><?php echo esc_html( __( 'Upgrade my plan', 'happy-blocks' ) ); ?></button></li>
+					<li><button data-search-query="<?php echo esc_attr( __( 'Add email', 'happy-blocks' ) ); ?>" data-website="<?php echo esc_attr( $website ); ?>" href="<?php echo esc_url( get_support_search_link_for_query( 'add email', $is_forums ) ); ?>"><?php echo esc_html( __( 'Add email', 'happy-blocks' ) ); ?></button></li>
+					<li><button data-search-query="<?php echo esc_attr( __( 'Reset my password', 'happy-blocks' ) ); ?>" data-website="<?php echo esc_attr( $website ); ?>" href="<?php echo esc_url( get_support_search_link_for_query( 'reset my password', $is_forums ) ); ?>"><?php echo esc_html( __( 'Reset my password', 'happy-blocks' ) ); ?></button></li>
 				</ul>
 			<?php endif; ?>
 		</fieldset>

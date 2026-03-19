@@ -13,10 +13,16 @@ document.addEventListener( 'DOMContentLoaded', function () {
 				return;
 			}
 
-			recordTracksEvent( 'calypso_happyblocks_support_suggested_search', {
-				query,
-				location: window.location.href,
-			} );
+			const website = this.getAttribute( 'data-website' ) || '';
+			recordTracksEvent(
+				website === 'forums'
+					? 'calypso_happyblocks_forums_suggested_search'
+					: 'calypso_happyblocks_support_suggested_search',
+				{
+					query,
+					location: window.location.href,
+				}
+			);
 
 			e.preventDefault();
 
@@ -42,10 +48,16 @@ document.addEventListener( 'DOMContentLoaded', function () {
 
 	if ( form ) {
 		form.addEventListener( 'submit', function () {
-			recordTracksEvent( 'calypso_happyblocks_support_custom_search', {
-				query: input.value,
-				location: window.location.href,
-			} );
+			const website = form.getAttribute( 'data-website' ) || '';
+			recordTracksEvent(
+				website === 'forums'
+					? 'calypso_happyblocks_forums_custom_search'
+					: 'calypso_happyblocks_support_custom_search',
+				{
+					query: input.value,
+					location: window.location.href,
+				}
+			);
 		} );
 	}
 
