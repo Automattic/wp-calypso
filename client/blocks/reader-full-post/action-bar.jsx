@@ -58,16 +58,15 @@ const ReaderFullPostActionBar = ( {
 
 				{ viewOriginalUrl && (
 					<a
-						className="reader-full-post__view-original-button tooltip"
+						className="reader-full-post__view-original-button"
 						href={ viewOriginalUrl }
 						target="_blank"
 						rel="external noopener noreferrer"
-						data-tooltip={ translate( 'View original' ) }
 						onClick={ onViewOriginalClick }
 					>
 						<Icon icon={ globe } size={ 24 } />
 						<span className="reader-full-post__view-original-button-label">
-							{ translate( 'View' ) }
+							{ translate( 'View original' ) }
 						</span>
 					</a>
 				) }
