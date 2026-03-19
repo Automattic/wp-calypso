@@ -228,10 +228,9 @@ const siteSetupFlow: Flow = {
 					}
 
 					pendingActions.push(
-						wpcom.request( {
+						wpcom.req.post( {
 							path: `/sites/${ siteId }/onboarding-customization`,
 							apiNamespace: 'wpcom/v2',
-							method: 'POST',
 							formData,
 						} )
 					);

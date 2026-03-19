@@ -35,7 +35,7 @@ const LaunchBigSky: StepType = function ( props ) {
 
 	const deletePage = async ( siteId: string, pageId: number ): Promise< boolean > => {
 		try {
-			await wpcom.request( {
+			await wpcom.req.post( {
 				path: '/sites/' + siteId + '/pages/' + pageId,
 				method: 'DELETE',
 				apiNamespace: 'wp/v2',
@@ -73,16 +73,18 @@ const LaunchBigSky: StepType = function ( props ) {
 			// Create a new home page if one is not set yet.
 			if ( ! hasStaticHomepage ) {
 				pendingActions.push(
-					wpcom.request( {
-						path: '/sites/' + selectedSiteId + '/pages',
-						method: 'POST',
-						apiNamespace: 'wp/v2',
-						body: {
+					wpcom.req.post(
+						{
+							path: '/sites/' + selectedSiteId + '/pages',
+							apiNamespace: 'wp/v2',
+						},
+						{},
+						{
 							title: 'Home',
 							status: 'publish',
 							content: '<!-- wp:paragraph -->\n<p>Hello world!</p>\n<!-- /wp:paragraph -->',
-						},
-					} )
+						}
+					)
 				);
 			}
 

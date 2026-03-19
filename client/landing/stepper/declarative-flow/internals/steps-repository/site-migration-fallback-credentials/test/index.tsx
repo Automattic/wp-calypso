@@ -13,7 +13,6 @@ import { StepProps } from '../../../types';
 import { RenderStepOptions, mockStepProps, renderStep } from '../../test/helpers';
 
 jest.mock( 'calypso/lib/wp', () => ( {
-	request: jest.fn(),
 	req: {
 		get: jest.fn(),
 		post: jest.fn(),
@@ -75,11 +74,13 @@ describe( 'SiteMigrationCredentials', () => {
 		await userEvent.type( specialInstructionsInput(), 'notes' );
 		await userEvent.click( continueButton() );
 
-		expect( wp.request ).toHaveBeenCalledWith( {
-			path: '/sites/site-url.wordpress.com/automated-migration?_locale=en',
-			apiNamespace: 'wpcom/v2',
-			method: 'POST',
-			body: {
+		expect( wp.req.post ).toHaveBeenCalledWith(
+			{
+				path: '/sites/site-url.wordpress.com/automated-migration?_locale=en',
+				apiNamespace: 'wpcom/v2',
+			},
+			{},
+			{
 				migration_type: 'credentials',
 				blog_url: 'site-url.wordpress.com',
 				bypass_verification: false,
@@ -87,8 +88,8 @@ describe( 'SiteMigrationCredentials', () => {
 				from_url: 'site-url.com',
 				username: 'username',
 				password: 'password',
-			},
-		} );
+			}
+		);
 
 		await waitFor( () => {
 			expect( submit ).toHaveBeenCalledWith( {
@@ -105,14 +106,14 @@ describe( 'SiteMigrationCredentials', () => {
 		await userEvent.click( skipButton() );
 
 		expect( submit ).toHaveBeenCalledWith( { action: 'skip' } );
-		expect( wp.request ).not.toHaveBeenCalled();
+		expect( wp.req.post ).not.toHaveBeenCalled();
 	} );
 
 	it( 'shows error messages by each field when the server returns "invalid param" by each field', async () => {
 		const submit = jest.fn();
 		render( { navigation: { submit } } );
 
-		( wp.request as jest.Mock ).mockRejectedValue( {
+		( wp.req.post as jest.Mock ).mockRejectedValue( {
 			code: 'rest_invalid_param',
 			data: {
 				params: {
@@ -136,7 +137,7 @@ describe( 'SiteMigrationCredentials', () => {
 		const submit = jest.fn();
 		render( { navigation: { submit } } );
 
-		( wp.request as jest.Mock ).mockRejectedValue( {
+		( wp.req.post as jest.Mock ).mockRejectedValue( {
 			code: 'rest_other_error',
 			message: 'Error message from backend',
 		} );
@@ -154,7 +155,7 @@ describe( 'SiteMigrationCredentials', () => {
 		const submit = jest.fn();
 		render( { navigation: { submit } } );
 
-		( wp.request as jest.Mock ).mockRejectedValue( {} );
+		( wp.req.post as jest.Mock ).mockRejectedValue( {} );
 
 		await fillAllFields();
 		await userEvent.click( continueButton() );
@@ -188,7 +189,7 @@ describe( 'SiteMigrationCredentials', () => {
 		render( { navigation: { submit } } );
 		const pendingPromise = new Promise( () => {} );
 
-		( wp.request as jest.Mock ).mockImplementation( () => pendingPromise );
+		( wp.req.post as jest.Mock ).mockImplementation( () => pendingPromise );
 
 		await fillAllFields();
 		userEvent.click( continueButton() );
@@ -213,7 +214,7 @@ describe( 'SiteMigrationCredentials', () => {
 			const submit = jest.fn();
 			render( { navigation: { submit } } );
 
-			( wp.request as jest.Mock ).mockRejectedValue( {
+			( wp.req.post as jest.Mock ).mockRejectedValue( {
 				code: 'automated_migration_tools_login_and_get_cookies_test_failed',
 				data: {
 					response_code,
@@ -242,7 +243,7 @@ describe( 'SiteMigrationCredentials', () => {
 
 		await fillAllFields();
 
-		( wp.request as jest.Mock ).mockImplementation( () => pendingPromise );
+		( wp.req.post as jest.Mock ).mockImplementation( () => pendingPromise );
 
 		await userEvent.click( continueButton() );
 

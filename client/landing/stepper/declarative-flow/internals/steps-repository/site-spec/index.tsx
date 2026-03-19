@@ -23,11 +23,13 @@ const SiteSpec: StepType = function SiteSpec() {
 		if ( messageCount === 1 ) {
 			siteCreationPromise = ( async () => {
 				try {
-					const response = ( await wpcom.request( {
-						path: '/sites/new',
-						apiVersion: '1.1',
-						method: 'POST',
-						body: {
+					const response = ( await wpcom.req.post(
+						{
+							path: '/sites/new',
+							apiVersion: '1.1',
+						},
+						{},
+						{
 							client_id: config( 'wpcom_signup_id' ),
 							client_secret: config( 'wpcom_signup_key' ),
 							garden_name: 'commerce',
@@ -38,8 +40,8 @@ const SiteSpec: StepType = function SiteSpec() {
 								site_creation_flow: 'ai-site-builder',
 								trigger_backend_build: false,
 							},
-						},
-					} ) ) as { blog_details: { blogid: number } };
+						}
+					) ) as { blog_details: { blogid: number } };
 
 					return response?.blog_details?.blogid ?? null;
 				} catch ( error ) {

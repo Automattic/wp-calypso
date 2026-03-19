@@ -55,6 +55,7 @@ import { getSessionId } from './utils/use-session-id';
 import { WindowLocaleEffectManager } from './utils/window-locale-effect-manager';
 import type { CurrentUser } from '@automattic/data-stores';
 import type { AnyAction } from 'redux';
+import type { WpcomRequestParams } from 'wpcom-proxy-request';
 
 declare const window: AppWindow;
 
@@ -100,7 +101,7 @@ async function main() {
 		// through the standard lib/wp path (which injects the OAuth token via
 		// sendRequest). We decompose the flat WpcomRequestParams into the
 		// (params, query, [body], callback) signature that req.get/post expect.
-		const requester = < T, >( params: Record< string, unknown > ) => {
+		const requester = < T, >( params: WpcomRequestParams ) => {
 			const { query, body, method, ...rest } = params;
 			const queryObj =
 				typeof query === 'string'

@@ -60,19 +60,21 @@ export const createSite = async ( {
 
 	const locale = getLocaleSlug();
 
-	const siteCreationResponse: NewSiteSuccessResponse = await wpcom.request( {
-		path: '/sites/new',
-		apiVersion: '1.1',
-		method: 'POST',
-		body: {
+	const siteCreationResponse: NewSiteSuccessResponse = await wpcom.req.post(
+		{
+			path: '/sites/new',
+			apiVersion: '1.1',
+		},
+		{},
+		{
 			...newSiteParams,
 			locale,
 			lang_id: getLanguage( locale as string )?.value,
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
 			options: newSiteParams.options,
-		},
-	} );
+		}
+	);
 
 	const parsedBlogURL = new URL( siteCreationResponse?.blog_details.url );
 	const siteSlug = parsedBlogURL.hostname;

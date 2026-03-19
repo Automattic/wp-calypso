@@ -67,10 +67,9 @@ async function pollForGardenProvisioning(
 
 	for ( let attempt = 1; attempt <= maxAttempts; attempt++ ) {
 		try {
-			const siteResponse = ( await wpcom.request( {
+			const siteResponse = ( await wpcom.req.get( {
 				path: `/sites/${ siteId }`,
 				apiVersion: '1.1',
-				method: 'GET',
 			} ) ) as { garden_is_provisioned?: boolean };
 
 			if ( siteResponse?.garden_is_provisioned ) {

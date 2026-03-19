@@ -19,7 +19,7 @@ import { FlowV2, SubmitHandler } from '../../internals/types';
 const SiteIntent = Onboard.SiteIntent;
 const deletePage = async ( siteId: string | number, pageId: number ): Promise< boolean > => {
 	try {
-		await wpcom.request( {
+		await wpcom.req.post( {
 			path: '/sites/' + siteId + '/pages/' + pageId,
 			method: 'DELETE',
 			apiNamespace: 'wp/v2',
@@ -200,16 +200,18 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 
 								// Create a new home page if one is not set yet (only for non-garden sites)
 								pendingActions.push(
-									wpcom.request( {
-										path: '/sites/' + siteId + '/pages',
-										method: 'POST',
-										apiNamespace: 'wp/v2',
-										body: {
+									wpcom.req.post(
+										{
+											path: '/sites/' + siteId + '/pages',
+											apiNamespace: 'wp/v2',
+										},
+										{},
+										{
 											title: 'Home',
 											status: 'publish',
 											content: '<!-- wp:paragraph -->\n<p>Hello world!</p>\n<!-- /wp:paragraph -->',
-										},
-									} )
+										}
+									)
 								);
 							}
 

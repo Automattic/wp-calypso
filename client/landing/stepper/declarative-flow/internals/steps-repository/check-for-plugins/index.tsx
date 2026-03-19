@@ -24,7 +24,7 @@ const CheckForPlugins: Step< { submits: { hasPlugins: boolean } } > = function C
 			let hasPlugins = false;
 
 			try {
-				const response: PluginsResponse = await wpcom.request( {
+				const response: PluginsResponse = await wpcom.req.get( {
 					path: `/sites/${ site?.ID }/plugins`,
 					apiVersion: '1.1',
 				} );

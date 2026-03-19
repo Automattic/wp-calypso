@@ -14,15 +14,17 @@ const setMigration = (
 	siteSlug: string,
 	{ intents, otherDetails }: TicketMigrationData
 ): Promise< ApiResponse > => {
-	return wpcom.request( {
-		path: `/sites/${ siteSlug }/automated-migration/wpcom-survey`,
-		apiNamespace: 'wpcom/v2',
-		method: 'POST',
-		body: {
+	return wpcom.req.post(
+		{
+			path: `/sites/${ siteSlug }/automated-migration/wpcom-survey`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{},
+		{
 			intents,
 			other_details: otherDetails,
-		},
-	} );
+		}
+	);
 };
 
 export const useMigrationTicketMutation = ( siteSlug: string ) => {

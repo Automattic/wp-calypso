@@ -75,7 +75,7 @@ const WaitForPluginInstall: StepType = function WaitForAtomic( { navigation, dat
 				await wait( backoffTime );
 
 				try {
-					const response: PluginsResponse = await wpcom.request( {
+					const response: PluginsResponse = await wpcom.req.get( {
 						path: `/sites/${ siteId }/plugins`,
 						apiVersion: '1.1',
 					} );

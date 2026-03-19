@@ -22,12 +22,14 @@ const requestAutomatedMigration = async (
 	payload: AutomatedMigration,
 	locale: string
 ): Promise< AutomatedMigrationAPIResponse > => {
-	return wpcom.request( {
-		path: `/sites/${ siteSlug }/automated-migration?_locale=${ locale }`,
-		apiNamespace: 'wpcom/v2',
-		method: 'POST',
-		body: payload,
-	} );
+	return wpcom.req.post(
+		{
+			path: `/sites/${ siteSlug }/automated-migration?_locale=${ locale }`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{},
+		payload
+	);
 };
 
 export const useRequestAutomatedMigration = (

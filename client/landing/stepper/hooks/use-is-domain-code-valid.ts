@@ -60,11 +60,13 @@ export function useIsDomainCodeValid( pair: DomainCodePair, queryOptions = {} ) 
 							},
 							{} as Record< string, string >
 					  );
-				const availability = await wpcom.request< DomainLockResponse >( {
-					apiVersion: '1.3',
-					path: `/domains/${ encodeURIComponent( pair.domain ) }/is-available`,
-					query: new URLSearchParams( options ).toString(),
-				} );
+				const availability = await wpcom.req.get< DomainLockResponse >(
+					{
+						apiVersion: '1.3',
+						path: `/domains/${ encodeURIComponent( pair.domain ) }/is-available`,
+					},
+					options
+				);
 
 				// A `transferrability` property was added in D115244-code to check whether a mapped domain can be transferred
 				const isUnlocked =
@@ -93,14 +95,16 @@ export function useIsDomainCodeValid( pair: DomainCodePair, queryOptions = {} ) 
 					};
 				}
 
-				const response = await wpcom
-					.request< DomainCodeResponse >( {
-						apiVersion: '1.1',
-						path: `/domains/${ encodeURIComponent(
-							pair.domain
-						) }/inbound-transfer-check-auth-code`,
-						query: `auth_code=${ encodeURIComponent( pair.auth ) }`,
-					} )
+				const response = await wpcom.req
+					.get< DomainCodeResponse >(
+						{
+							apiVersion: '1.1',
+							path: `/domains/${ encodeURIComponent(
+								pair.domain
+							) }/inbound-transfer-check-auth-code`,
+						},
+						{ auth_code: pair.auth }
+					)
 					.catch( () => ( { success: false } ) );
 
 				return {
