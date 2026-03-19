@@ -175,7 +175,7 @@ After completing all tests, if issues were found:
    - Both (fix and file).
 3. Default the **Linear project** to "Help Center Polish and Maintenance". Ask the user to confirm or pick a different one.
 4. Use `ToolSearch` to load Linear tools: `+linear save issue`.
-4. For each issue, create a Linear issue with `mcp__linear-server__save_issue` including:
+5. For each issue, create a Linear issue with `mcp__linear-server__save_issue` including:
    - **Title**: Clear, concise description of the bug.
    - **Description** (Markdown) — use this template:
 
@@ -198,6 +198,14 @@ After completing all tests, if issues were found:
 
    - **Team**: Ask user or default to "Dotcom Support Infrastructure" (DOTSUP).
    - **Project**: The project the user specified.
+
+### Fixing issues
+
+If the user wants to attempt fixes:
+
+1. Create a new branch named after the Linear issue ID (e.g., `git checkout -b DOTSUP-448`).
+2. Investigate the root cause and implement a fix.
+3. After fixing, ask the user if they want to commit and create a PR.
 
 ### Attaching evidence to Linear issues
 
