@@ -35,6 +35,10 @@ export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) 
 		enabled: canView,
 	} );
 
+	const { data: latestVersion } = useQuery( {
+		...wpOrgCoreVersionQuery(),
+		enabled: canView,
+	} );
 	const { data: betaVersion } = useQuery( {
 		...wpOrgCoreVersionQuery( 'beta' ),
 		enabled: canView,
@@ -54,18 +58,21 @@ export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) 
 		version: currentVersion ?? '',
 	} );
 
+	const currentWpVersion = site.options?.software_version ?? '';
+
 	const fields: Field< { version: string } >[] = [
 		{
 			id: 'version',
 			label: __( 'WordPress version' ),
 			Edit: 'select',
 			elements: [
-				{ value: 'latest', label: getFormattedWordPressVersion( site, 'latest' ) },
+				{
+					value: 'latest',
+					label: formatWordPressVersion( latestVersion ?? currentWpVersion, 'latest' ),
+				},
 				{
 					value: 'beta',
-					label: betaVersion
-						? formatWordPressVersion( betaVersion, 'beta' )
-						: getFormattedWordPressVersion( site, 'beta' ),
+					label: formatWordPressVersion( betaVersion ?? currentWpVersion, 'beta' ),
 				},
 			],
 		},
