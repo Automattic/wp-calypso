@@ -1,16 +1,16 @@
-import { DotcomFeatures } from '@automattic/api-core';
-import { userSettingsQuery, userSettingsMutation, pluginsQuery } from '@automattic/api-queries';
+import { userSettingsQuery, userSettingsMutation } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { useSuspenseQuery, useMutation, useQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, ToggleControl } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
-import { linkExternal } from '@wordpress/icons';
+import { __, _n, sprintf } from '@wordpress/i18n';
+import { external } from '@wordpress/icons';
 import {
 	getAccountMcpAbilities,
 	getDisabledSiteIds,
 	getEnabledSiteIds,
 } from '../../../me/mcp/utils';
+import { useAppContext } from '../../app/context';
 import { Card, CardBody, CardDivider } from '../../components/card';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -19,6 +19,7 @@ import PageLayout from '../../components/page-layout';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import { SectionHeader } from '../../components/section-header';
 import { isWriteTool } from './categories';
+import type { Site } from '@automattic/api-core';
 
 interface McpAbility {
 	title: string;
@@ -70,7 +71,7 @@ function getSiteCountBadgeText( count: number, noneLabel: string ): string {
 	}
 	return sprintf(
 		/* translators: %d is the number of sites */
-		__( '%d sites' ),
+		_n( '%d site', '%d sites', count ),
 		count
 	);
 }
@@ -94,6 +95,7 @@ function getReadStatus( tools: Array< [ string, McpAbility ] > ): string {
 }
 
 function McpComponent() {
+	const { queries } = useAppContext();
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
 
 	const mcpAbilities = getAccountMcpAbilities( userSettings || {} );
@@ -123,10 +125,11 @@ function McpComponent() {
 
 	const aiAssistantEnabled = userSettings?.ai_assistant ?? false;
 
-	const { data: pluginsData } = useQuery( pluginsQuery() );
-	const aiEnabledSiteCount = Object.values( pluginsData?.sites ?? {} )
-		.flat()
-		.filter( ( p ) => p.slug === DotcomFeatures.BIG_SKY && p.active ).length;
+	const sitesQueryResult = useQuery(
+		queries.sitesQuery( { site_visibility: 'visible', include_a8c_owned: false } )
+	);
+	const sites = ( sitesQueryResult.data as Site[] | undefined ) ?? [];
+	const aiEnabledSiteCount = sites.filter( ( site ) => site.big_sky_enabled ).length;
 
 	const mutation = useMutation( {
 		...userSettingsMutation(),
@@ -323,7 +326,7 @@ function McpComponent() {
 					to="/me/mcp/setup"
 					title={ __( 'Connect external AI assistant' ) }
 					description={ __( 'Get instructions for connecting your external AI assistant.' ) }
-					decoration={ linkExternal }
+					decoration={ external }
 				/>
 			</VStack>
 		</PageLayout>
