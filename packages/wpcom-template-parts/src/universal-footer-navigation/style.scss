@@ -60,7 +60,7 @@ $breakpoints: 320px, 360px, 480px, 660px, 782px, 960px, 1140px, 1366px, 1440px, 
 
 .lpc-footer-nav {
 	font-size: 1rem;
-	line-height: 36px;
+	line-height: 26px;
 	font-family: $lp-font-stack-default;
 	background: var(--studio-black);
 	padding: 25px 20px 80px;
@@ -69,6 +69,12 @@ $breakpoints: 320px, 360px, 480px, 660px, 782px, 960px, 1140px, 1366px, 1440px, 
 		margin: 0;
 		padding: 0;
 	}
+}
+
+.lpc-footer-logo {
+	display: block;
+	padding: 32px 0 72px;
+	text-decoration: none;
 }
 
 .lpc-footer-automattic-nav {
@@ -113,18 +119,35 @@ $breakpoints: 320px, 360px, 480px, 660px, 782px, 960px, 1140px, 1366px, 1440px, 
 .editor-styles-wrapper .lpc-footer-nav-container,
 .lpc-footer-nav-container {
 	display: grid;
-	grid-template-columns: repeat(4, 1fr);
+	grid-template-columns: repeat(5, 1fr);
 	justify-content: space-between;
 	margin-bottom: 52px;
 	position: relative;
 	column-gap: 18px;
 
-	& > div {
+	& > details {
 		margin: 20px 0;
 		flex-shrink: 1;
 	}
 
-	h3 {
+	& > details > ul {
+		display: block;
+	}
+
+	summary {
+		list-style: none;
+		pointer-events: none;
+
+		&::-webkit-details-marker {
+			display: none;
+		}
+	}
+
+	.lpc-footer-nav-chevron {
+		display: none;
+	}
+
+	.lpc-footer-nav-heading {
 		color: #fff;
 		font-weight: 600;
 		font-size: 1rem;
@@ -144,8 +167,8 @@ $breakpoints: 320px, 360px, 480px, 660px, 782px, 960px, 1140px, 1366px, 1440px, 
 		text-align: left;
 		text-decoration: none;
 		display: block;
-		padding: 0;
-		color: #c3c4c7;
+		padding: 4.5px 0;
+		color: #fff;
 		transition: opacity 0.15s ease-out;
 		font-size: 1rem;
 		line-height: inherit;
@@ -275,7 +298,7 @@ $breakpoints: 320px, 360px, 480px, 660px, 782px, 960px, 1140px, 1366px, 1440px, 
 
 .lp-icon {
 	display: block;
-	fill: rgb(195, 196, 199);
+	fill: #fff;
 }
 
 /*
@@ -322,7 +345,6 @@ $breakpoints: 320px, 360px, 480px, 660px, 782px, 960px, 1140px, 1366px, 1440px, 
 	position: relative;
 
 	&::before {
-		background: #1d2327;
 		border: 1px solid #3c434a;
 		border-radius: 4px;
 		bottom: 0;
@@ -535,12 +557,39 @@ $breakpoints: 320px, 360px, 480px, 660px, 782px, 960px, 1140px, 1366px, 1440px, 
 	}
 
 	.lpc-footer-nav-container {
+		margin-bottom: 20px;
+
 		ul {
 			margin-top: 6px;
 		}
 
-		& > div {
-			margin: 10px 0;
+		& > details {
+			margin: 0;
+		}
+
+		& > details:not([name]) > ul,
+		& > details:not([open]) > ul {
+			display: none;
+		}
+
+		summary {
+			pointer-events: auto;
+			cursor: pointer;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			padding: 8px 0;
+		}
+
+		.lpc-footer-nav-chevron {
+			display: block;
+			color: #fff;
+			flex-shrink: 0;
+			transition: transform 0.2s ease;
+		}
+
+		details[open] .lpc-footer-nav-chevron {
+			transform: rotate( 180deg );
 		}
 	}
 
@@ -561,6 +610,19 @@ $breakpoints: 320px, 360px, 480px, 660px, 782px, 960px, 1140px, 1366px, 1440px, 
 	.lpc-footer-nav .lp-footer-social-icons {
 		justify-content: center;
 		padding: 0;
+		gap: 8px;
+		margin: 0;
+
+		a {
+			border: 1px solid rgba(255, 255, 255, 0.3);
+			border-radius: 50%;
+			width: 36px;
+			height: 36px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			padding: 0;
+		}
 	}
 
 	.lp-link-work {
