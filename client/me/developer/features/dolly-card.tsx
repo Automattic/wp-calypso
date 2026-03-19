@@ -44,18 +44,13 @@ export const DollyCard = () => {
 			<div className="developer-features-list__item-tag">{ translate( 'New' ) }</div>
 			<div className="developer-features-list__item-title">{ translate( 'Dolly' ) }</div>
 			<div className="developer-features-list__item-description">
-				{ isStatusReady &&
-					( isConnected ? (
-						<>
-							{ translate( 'Your account is ' ) }
-							<span className="developer-features-list__item-connected-word">
-								{ translate( 'connected' ) }
-							</span>
-							{ translate( ' to Telegram.' ) }
-						</>
-					) : (
-						translate( 'Connect Dolly to Telegram to start using it with your account.' )
-					) ) }
+				{ isStatusReady && isConnected
+					? translate( 'Your account is {{strong}}connected{{/strong}} to Telegram.', {
+							components: {
+								strong: <span className="developer-features-list__item-connected-word" />,
+							},
+					  } )
+					: translate( 'Connect Dolly to Telegram to start using it with your account.' ) }
 			</div>
 			<div className="developer-features-list__item-learn-more">
 				{ renderConnectAction() }

@@ -34,18 +34,13 @@ export default function TelegramConnection() {
 			</div>
 
 			<div className="ai-assistant__telegram-connection-description">
-				{ isStatusReady &&
-					( isConnected ? (
-						<>
-							{ translate( 'Your account is ' ) }
-							<span className="ai-assistant__telegram-connected-word">
-								{ translate( 'connected' ) }
-							</span>
-							{ translate( ' to Telegram.' ) }
-						</>
-					) : (
-						translate( 'Connect Telegram to enable AI Assistant features on your account.' )
-					) ) }
+				{ isStatusReady && isConnected
+					? translate( 'Your account is {{strong}}connected{{/strong}} to Telegram.', {
+							components: {
+								strong: <span className="ai-assistant__telegram-connected-word" />,
+							},
+					  } )
+					: translate( 'Connect Telegram to enable AI Assistant features on your account.' ) }
 			</div>
 		</CompactCard>
 	);
