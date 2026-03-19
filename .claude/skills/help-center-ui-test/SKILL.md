@@ -80,7 +80,8 @@ For each surface, verify all of the following:
 - Verify the greeting message renders correctly.
 - Send a question (e.g., "How do I change my site title?").
 - Use `mcp__claude-in-chrome__find` to confirm the AI response has appeared. If not found, wait 5 seconds and retry (AI responses may take longer).
-- Verify the AI response renders correctly: text formatting, links, Sources dropdown, feedback icons (thumbs up/down).
+- Verify the AI response renders correctly: text formatting, links, feedback icons (thumbs up, thumbs down, copy).
+- Expand the **Sources** dropdown and verify it shows relevant documentation links.
 
 ### 5. Live Support Handoff
 
@@ -111,22 +112,18 @@ After completing the full test checklist at desktop size on each surface, test r
 | Name    | Width | Height |
 |---------|-------|--------|
 | Desktop | 1280  | 800    |
-| Tablet  | 768   | 1024   |
 | Mobile  | 375   | 812    |
 
 ### Procedure
 
 For each surface, after the desktop checklist is complete:
 
-1. Use `mcp__claude-in-chrome__resize_window` to switch to **Tablet** (768x1024).
+1. Use `mcp__claude-in-chrome__resize_window` to switch to **Mobile** (375x812).
 2. Open the Help Center and verify:
    - Home Screen layout (no overlapping, no broken spacing, no horizontal overflow).
    - Search results layout.
-   - Article rendering (content fits viewport, images scale).
    - Help Center panel sizing (doesn't overflow viewport).
-3. Use `mcp__claude-in-chrome__resize_window` to switch to **Mobile** (375x812).
-4. Repeat the same layout checks from step 2.
-5. Use `mcp__claude-in-chrome__resize_window` to restore **Desktop** (1280x800) before moving to the next surface.
+3. Use `mcp__claude-in-chrome__resize_window` to restore **Desktop** (1280x800) before moving to the next surface.
 
 ## Test Results Format
 
@@ -172,8 +169,12 @@ Name GIFs descriptively (e.g., "search-clear-button-bug.gif"). For static visual
 After completing all tests, if issues were found:
 
 1. Present a summary of all issues to the user.
-2. Ask the user which **Linear project** to file them under (e.g., "Help Center Polish and Maintenance").
-3. Use `ToolSearch` to load Linear tools: `+linear save issue`.
+2. Ask the user if they would like to:
+   - **File Linear issues** for the bugs found.
+   - **Attempt to fix** the issues directly in the codebase.
+   - Both (fix and file).
+3. Default the **Linear project** to "Help Center Polish and Maintenance". Ask the user to confirm or pick a different one.
+4. Use `ToolSearch` to load Linear tools: `+linear save issue`.
 4. For each issue, create a Linear issue with `mcp__linear-server__save_issue` including:
    - **Title**: Clear, concise description of the bug.
    - **Description** (Markdown) — use this template:
