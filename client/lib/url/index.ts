@@ -8,6 +8,7 @@ export { default as isExternal } from './is-external';
 export { default as resemblesUrl } from './resembles-url';
 export { default as isOutsideCalypso } from './is-outside-calypso';
 export { default as isHttps } from './is-https';
+export { default as isAllowedRedirectUrl } from './is-allowed-redirect-url';
 export { addSchemeIfMissing, setUrlScheme } from './scheme-utils';
 export { decodeURIIfValid, decodeURIComponentIfValid } from './decode-utils';
 export { default as resolveRelativePath } from './resolve-relative-path';
