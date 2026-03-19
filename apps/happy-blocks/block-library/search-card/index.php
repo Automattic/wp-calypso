@@ -16,9 +16,9 @@ $is_404_page   = isset( $args['is_404_page'] ) && ( true === $args['is_404_page'
 $active_page   = isset( $args['active_page'] ) ? $args['active_page'] : '';
 $is_forums     = 'forums' === $active_page;
 if ( $is_forums ) {
-	$should_show_search_card = $args['should_show_search_card'] ?? false;
+	$show_search_card = $args['show_search_card'] ?? false;
 } else {
-	$should_show_search_card = $is_front_page || $is_404_page;
+	$show_search_card = $is_front_page || $is_404_page;
 }
 $enable_odie_answers = ! is_user_logged_in() && ( 'treatment' === \ExPlat\assign_maybe_anon_user( 'wpcom_ai_on_logged_out_support_pages_v3' )
 // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- We are not processing any data here.
@@ -53,7 +53,7 @@ $placeholder             = isset( $args['placeholder'] ) ? $args['placeholder'] 
 $show_search_suggestions = isset( $args['show_search_suggestions'] ) ? $args['show_search_suggestions'] : false;
 
 ?>
-<div class="happy-blocks-search-card<?php echo $should_show_search_card ? '' : ' navigation-only'; ?>">
+<div class="happy-blocks-search-card<?php echo $show_search_card ? '' : ' navigation-only'; ?>">
 	<nav class="navigation-header">
 		<!-- Desktop navigation -->
 		<div class="desktop-nav-container">
@@ -132,7 +132,7 @@ $show_search_suggestions = isset( $args['show_search_suggestions'] ) ? $args['sh
 			<?php endif; ?>
 		</div>
 	</nav>
-	<?php if ( $should_show_search_card ) : ?>
+	<?php if ( $show_search_card ) : ?>
 		<?php
 		$content_classes = array_filter(
 			array(
