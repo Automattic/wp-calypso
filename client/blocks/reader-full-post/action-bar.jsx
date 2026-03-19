@@ -65,11 +65,7 @@ const ReaderFullPostActionBar = ( {
 						data-tooltip={ translate( 'View original' ) }
 						onClick={ onViewOriginalClick }
 					>
-						<Icon
-							icon={ globe }
-							size={ 24 }
-							className="reader-full-post__view-original-button-icon"
-						/>
+						<Icon icon={ globe } size={ 24 } />
 						<span className="reader-full-post__view-original-button-label">
 							{ translate( 'View' ) }
 						</span>
