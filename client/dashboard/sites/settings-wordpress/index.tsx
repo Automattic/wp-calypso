@@ -2,7 +2,7 @@ import {
 	siteBySlugQuery,
 	siteWordPressVersionQuery,
 	siteWordPressVersionMutation,
-	wpOrgCoreVersionCheckQuery,
+	wpOrgCoreVersionQuery,
 } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import {
@@ -35,8 +35,8 @@ export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) 
 		enabled: canView,
 	} );
 
-	const { data: betaVersionCheck } = useQuery( {
-		...wpOrgCoreVersionCheckQuery( 'beta' ),
+	const { data: betaVersion } = useQuery( {
+		...wpOrgCoreVersionQuery( 'beta' ),
 		enabled: canView,
 	} );
 
@@ -63,8 +63,8 @@ export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) 
 				{ value: 'latest', label: getFormattedWordPressVersion( site, 'latest' ) },
 				{
 					value: 'beta',
-					label: betaVersionCheck?.offers?.[ 0 ]?.version
-						? formatWordPressVersion( betaVersionCheck.offers[ 0 ].version, 'beta' )
+					label: betaVersion
+						? formatWordPressVersion( betaVersion, 'beta' )
 						: getFormattedWordPressVersion( site, 'beta' ),
 				},
 			],

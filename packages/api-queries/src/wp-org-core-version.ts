@@ -1,9 +1,9 @@
-import { fetchWpOrgCoreVersionCheck } from '@automattic/api-core';
+import { fetchWpOrgCoreVersion } from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
 
-export const wpOrgCoreVersionCheckQuery = ( channel: string = 'latest' ) =>
+export const wpOrgCoreVersionQuery = ( channel: string = 'latest' ) =>
 	queryOptions( {
-		queryKey: [ 'wp-org-core-version-check', channel ],
-		queryFn: () => fetchWpOrgCoreVersionCheck( channel ),
-		staleTime: 1000 * 60 * 60,
+		queryKey: [ 'wp-org-core-version', channel ],
+		queryFn: () => fetchWpOrgCoreVersion( channel ),
+		staleTime: 1000 * 60 * 60 * 24,
 	} );

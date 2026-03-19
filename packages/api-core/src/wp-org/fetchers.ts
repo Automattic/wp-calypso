@@ -1,8 +1,8 @@
 import type { WpOrgCoreVersionCheck } from './types';
 
-export async function fetchWpOrgCoreVersionCheck(
+export async function fetchWpOrgCoreVersion(
 	channel: string = 'latest'
-): Promise< WpOrgCoreVersionCheck > {
+): Promise< string | undefined > {
 	const response = await fetch(
 		`https://api.wordpress.org/core/version-check/1.7/?channel=${ channel }`,
 		{
@@ -15,5 +15,6 @@ export async function fetchWpOrgCoreVersionCheck(
 		throw new Error( `Failed to fetch WordPress core version check: ${ response.status }` );
 	}
 
-	return response.json();
+	const data: WpOrgCoreVersionCheck = await response.json();
+	return data.offers?.[ 0 ]?.version;
 }
