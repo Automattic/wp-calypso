@@ -19,7 +19,7 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
-import { isJetpackSite, getSite, isCommerceGardenSite } from 'calypso/state/sites/selectors';
+import { isJetpackSite, getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import AdministrationToolCard from './card';
 import { requestRestore } from './restore-plan-software';
@@ -111,17 +111,10 @@ class SiteTools extends Component {
 			"Remove all posts, pages, and media to start fresh while keeping your site's address."
 		);
 
-		const isCommerceStore = this.props.isCommerceGarden;
-		const deleteSite = isCommerceStore
-			? translate( 'Delete your store permanently' )
-			: translate( 'Delete your site permanently' );
-		const deleteSiteText = isCommerceStore
-			? translate(
-					"Delete all your products, orders, media, and data, and give up your store's address."
-			  )
-			: translate(
-					"Delete all your posts, pages, media, and data, and give up your site's address."
-			  );
+		const deleteSite = translate( 'Delete your site permanently' );
+		const deleteSiteText = translate(
+			"Delete all your posts, pages, media, and data, and give up your site's address."
+		);
 		const manageConnectionTitle = translate( 'Manage your connection' );
 		const manageConnectionText = translate(
 			'Sync your site content for a faster experience, change site owner, repair or terminate your connection.'
@@ -262,7 +255,6 @@ export default connect(
 		const isVip = isVipSite( state, siteId );
 		const isP2 = isSiteWPForTeams( state, siteId );
 		const isP2Hub = isSiteP2Hub( state, siteId );
-		const isCommerceGarden = isCommerceGardenSite( state, siteId );
 		const rewindState = getRewindState( state, siteId );
 		const sitePurchasesLoaded = hasLoadedSitePurchasesFromServer( state );
 
@@ -282,7 +274,6 @@ export default connect(
 		return {
 			site,
 			isAtomic,
-			isCommerceGarden,
 			copySiteUrl,
 			siteSlug,
 			purchasesError: getPurchasesError( state ),
@@ -291,11 +282,7 @@ export default connect(
 			showClone: 'active' === rewindState.state && ! isAtomic,
 			showRestorePlanSoftware: isAtomic,
 			showDeleteContent: isAtomic || ( ! isJetpack && ! isVip && ! isP2Hub ),
-			showDeleteSite:
-				( ! isJetpack || isAtomic ) &&
-				! isVip &&
-				sitePurchasesLoaded &&
-				( ! isCommerceGarden || ( site?.options?.can_delete_site ?? site?.can_delete_site ) ),
+			showDeleteSite: ( ! isJetpack || isAtomic ) && ! isVip && sitePurchasesLoaded,
 			showManageConnection: isJetpack && ! isAtomic,
 			showStartSiteTransfer,
 			showLeaveSite,

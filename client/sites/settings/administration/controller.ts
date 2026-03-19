@@ -4,7 +4,7 @@ import canCurrentUserStartSiteOwnerTransfer from 'calypso/state/selectors/can-cu
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
-import { getSite, isCommerceGardenSite, isJetpackSite } from 'calypso/state/sites/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import type { Context as PageJSContext } from '@automattic/calypso-router';
 import type { AppState } from 'calypso/types';
@@ -29,12 +29,6 @@ function canDeleteSite( state: AppState, siteId: number | null ) {
 	if ( isVipSite( state, siteId ) ) {
 		// Current user can't delete a VIP site
 		return false;
-	}
-
-	// For commerce stores, only the store owner can delete.
-	if ( isCommerceGardenSite( state, siteId ) ) {
-		const site = getSite( state, siteId );
-		return ( site?.options?.can_delete_site ?? site?.can_delete_site ?? false ) === true;
 	}
 
 	return true;

@@ -5,7 +5,6 @@ import { useAuth } from '../../app/auth';
 import { ActionList } from '../../components/action-list';
 import RouterLinkButton from '../../components/router-link-button';
 import { SectionHeader } from '../../components/section-header';
-import { isCommerceGarden } from '../../utils/site-types';
 import { canTransferSite, canLeaveSite, canResetSite } from '../features';
 import SiteDeleteModal from '../site-delete-modal';
 import SiteLeaveModal from '../site-leave-modal';
@@ -73,12 +72,6 @@ const SiteLeaveAction = ( { site }: { site: Site } ) => {
 const SiteDeleteAction = ( { site }: { site: Site } ) => {
 	const [ isOpen, setIsOpen ] = useState( false );
 
-	// For commerce stores, only the owner can delete — hide for non-owners.
-	const isCommerceStore = isCommerceGarden( site );
-	if ( isCommerceStore && ! ( site.options?.can_delete_site ?? site.can_delete_site ) ) {
-		return null;
-	}
-
 	const deleteButton = (
 		<Button variant="secondary" size="compact" isDestructive onClick={ () => setIsOpen( true ) }>
 			{ __( 'Delete' ) }
@@ -101,16 +94,10 @@ const SiteDeleteAction = ( { site }: { site: Site } ) => {
 	return (
 		<>
 			<ActionList.ActionItem
-				title={ isCommerceStore ? __( 'Delete store' ) : __( 'Delete site' ) }
-				description={
-					isCommerceStore
-						? __(
-								"Delete all your products, orders, media, and data, and give up your store's address."
-						  )
-						: __(
-								"Delete all your posts, pages, media, and data, and give up your site's address."
-						  )
-				}
+				title={ __( 'Delete site' ) }
+				description={ __(
+					'Delete all your posts, pages, media, and data, and give up your site’s address.'
+				) }
 				actions={ deleteButton }
 			/>
 			{ isOpen && <SiteDeleteModal site={ site } onClose={ () => setIsOpen( false ) } /> }
