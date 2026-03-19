@@ -11,12 +11,16 @@ if ( ! isset( $args ) ) {
 	$args = array();
 }
 
-$is_front_page           = isset( $args['is_front_page'] ) && ( true === $args['is_front_page'] );
-$is_404_page             = isset( $args['is_404_page'] ) && ( true === $args['is_404_page'] );
-$active_page             = isset( $args['active_page'] ) ? $args['active_page'] : '';
-$is_forums               = 'forums' === $active_page;
-$should_show_search_card = $is_front_page || $is_404_page || ( $is_forums && supportforums_should_have_search() );
-$enable_odie_answers     = ! is_user_logged_in() && ( 'treatment' === \ExPlat\assign_maybe_anon_user( 'wpcom_ai_on_logged_out_support_pages_v3' )
+$is_front_page = isset( $args['is_front_page'] ) && ( true === $args['is_front_page'] );
+$is_404_page   = isset( $args['is_404_page'] ) && ( true === $args['is_404_page'] );
+$active_page   = isset( $args['active_page'] ) ? $args['active_page'] : '';
+$is_forums     = 'forums' === $active_page;
+if ( $is_forums ) {
+	$should_show_search_card = $args['should_show_search_card'] ?? false;
+} else {
+	$should_show_search_card = $is_front_page || $is_404_page;
+}
+$enable_odie_answers = ! is_user_logged_in() && ( 'treatment' === \ExPlat\assign_maybe_anon_user( 'wpcom_ai_on_logged_out_support_pages_v3' )
 // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- We are not processing any data here.
 	|| ( isset( $_GET['dotcom_support_enable_odie_answers'] ) && 'true' === $_GET['dotcom_support_enable_odie_answers'] ) );
 $should_show_search_navigation = ( $is_front_page && $enable_odie_answers ) || ( ! $is_front_page && ! $is_404_page );
@@ -43,10 +47,11 @@ if ( ! function_exists( 'get_support_search_link_for_query' ) ) {
 	}
 }
 
-$form_id     = isset( $args['form_id'] ) ? $args['form_id'] : '';
-$form_class  = isset( $args['form_class'] ) ? $args['form_class'] : '';
-$input_class = isset( $args['input_class'] ) ? $args['input_class'] : '';
-$placeholder = isset( $args['placeholder'] ) ? $args['placeholder'] : '';
+$form_id                 = isset( $args['form_id'] ) ? $args['form_id'] : '';
+$form_class              = isset( $args['form_class'] ) ? $args['form_class'] : '';
+$input_class             = isset( $args['input_class'] ) ? $args['input_class'] : '';
+$placeholder             = isset( $args['placeholder'] ) ? $args['placeholder'] : '';
+$show_search_suggestions = isset( $args['show_search_suggestions'] ) ? $args['show_search_suggestions'] : false;
 
 ?>
 <div class="happy-blocks-search-card<?php echo $should_show_search_card ? '' : ' navigation-only'; ?>">
@@ -139,11 +144,13 @@ $placeholder = isset( $args['placeholder'] ) ? $args['placeholder'] : '';
 		);
 		?>
 	<div class="<?php echo esc_attr( implode( ' ', $content_classes ) ); ?>">
-		<?php if ( $is_forums ) : ?>
-			<h1 class="spf-header__title"><?php echo esc_html( __( 'WordPress.com support forums', 'happy-blocks' ) ); ?></h1>
-			<p class="spf-header__subtitle"><?php echo esc_html( __( 'Get help with WordPress.com and the WordPress.com apps.', 'happy-blocks' ) ); ?></p>
+		<?php if ( isset( $args['title'] ) ) : ?>
+			<h1 class="spf-header__title"><?php echo esc_html( $args['title'] ); ?></h1>
 		<?php else : ?>
 			<h2><?php echo esc_html( $is_404_page ? __( "This page doesn't exist", 'happy-blocks' ) : __( 'How can we help you?', 'happy-blocks' ) ); ?></h2>
+		<?php endif; ?>
+		<?php if ( isset( $args['subtitle'] ) ) : ?>
+			<p class="spf-header__subtitle"><?php echo esc_html( $args['subtitle'] ); ?></p>
 		<?php endif; ?>
 		<?php echo $is_404_page ? '<p class="subheading">' . esc_html( __( "Let's help you find what you're looking for.", 'happy-blocks' ) ) . '</p>' : ''; ?>
 
@@ -169,12 +176,14 @@ $placeholder = isset( $args['placeholder'] ) ? $args['placeholder'] : '';
 				</div>
 			</form>
 
-			<ul class="search-terms">
-				<li><button data-search-query="<?php echo esc_attr( __( 'Connect a domain', 'happy-blocks' ) ); ?>" href="<?php echo esc_url( get_support_search_link_for_query( 'connect a domain', $is_forums ) ); ?>"><?php echo esc_html( __( 'Connect a domain', 'happy-blocks' ) ); ?></button></li>
-				<li><button data-search-query="<?php echo esc_attr( __( 'Upgrade my plan', 'happy-blocks' ) ); ?>" href="<?php echo esc_url( get_support_search_link_for_query( 'upgrade my plan', $is_forums ) ); ?>"><?php echo esc_html( __( 'Upgrade my plan', 'happy-blocks' ) ); ?></button></li>
-				<li><button data-search-query="<?php echo esc_attr( __( 'Add email', 'happy-blocks' ) ); ?>" href="<?php echo esc_url( get_support_search_link_for_query( 'add email', $is_forums ) ); ?>"><?php echo esc_html( __( 'Add email', 'happy-blocks' ) ); ?></button></li>
-				<li><button data-search-query="<?php echo esc_attr( __( 'Reset my password', 'happy-blocks' ) ); ?>" href="<?php echo esc_url( get_support_search_link_for_query( 'reset my password', $is_forums ) ); ?>"><?php echo esc_html( __( 'Reset my password', 'happy-blocks' ) ); ?></button></li>
-			</ul>
+			<?php if ( $show_search_suggestions ) : ?>
+				<ul class="search-terms">
+					<li><button data-search-query="<?php echo esc_attr( __( 'Connect a domain', 'happy-blocks' ) ); ?>" href="<?php echo esc_url( get_support_search_link_for_query( 'connect a domain', $is_forums ) ); ?>"><?php echo esc_html( __( 'Connect a domain', 'happy-blocks' ) ); ?></button></li>
+					<li><button data-search-query="<?php echo esc_attr( __( 'Upgrade my plan', 'happy-blocks' ) ); ?>" href="<?php echo esc_url( get_support_search_link_for_query( 'upgrade my plan', $is_forums ) ); ?>"><?php echo esc_html( __( 'Upgrade my plan', 'happy-blocks' ) ); ?></button></li>
+					<li><button data-search-query="<?php echo esc_attr( __( 'Add email', 'happy-blocks' ) ); ?>" href="<?php echo esc_url( get_support_search_link_for_query( 'add email', $is_forums ) ); ?>"><?php echo esc_html( __( 'Add email', 'happy-blocks' ) ); ?></button></li>
+					<li><button data-search-query="<?php echo esc_attr( __( 'Reset my password', 'happy-blocks' ) ); ?>" href="<?php echo esc_url( get_support_search_link_for_query( 'reset my password', $is_forums ) ); ?>"><?php echo esc_html( __( 'Reset my password', 'happy-blocks' ) ); ?></button></li>
+				</ul>
+			<?php endif; ?>
 		</fieldset>
 	</div>
 	<?php endif; ?>
