@@ -167,6 +167,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	.comment-button,
 	.like-button,
 	.post-edit-button,
+	.reader-full-post__view-original-button,
 	.reader-full-post__seen-button,
 	.follow-button {
 		margin: 0;
@@ -279,6 +280,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	.comment-button__label,
 	.like-button__label,
 	.post-edit-button__label,
+	.reader-full-post__view-original-button-label,
 	.follow-button__label,
 	.reader-full-post__seen-button,
 	.freshly-pressed__button {
@@ -293,6 +295,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	.comment-button:hover .comment-button__label,
 	.like-button:hover .like-button__label,
 	.post-edit-button:hover .post-edit-button__label,
+	.reader-full-post__view-original-button:hover .reader-full-post__view-original-button-label,
 	.reader-full-post__seen-button:hover,
 	.freshly-pressed__button:hover {
 		color: var( --color-link );
@@ -366,42 +369,8 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 }
 
 .reader-full-post__view-original-button {
-	align-items: center;
-	background: var( --color-surface );
-	border: 1px solid var( --color-neutral-10 );
-	border-radius: 4px;
-	color: var( --color-neutral-20 );
-	cursor: pointer;
-	display: flex;
-	gap: 8px;
-	padding: 8px 16px;
+	min-height: auto;
 	text-decoration: none;
-	transition: all 0.2s ease;
-
-	svg {
-		display: block;
-		fill: var( --color-text-subtle );
-		flex-shrink: 0;
-		opacity: 0.6;
-	}
-
-	.reader-full-post__view-original-button-label {
-		color: var( --color-text-subtle );
-		font-size: $font-body-small;
-	}
-
-	&:hover {
-		border-color: var( --color-primary-10 );
-
-		svg {
-			fill: var( --color-link );
-			opacity: 1;
-		}
-
-		.reader-full-post__view-original-button-label {
-			color: var( --color-link );
-		}
-	}
 }
 
 .reader-full-post__story {
