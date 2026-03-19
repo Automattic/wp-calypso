@@ -142,9 +142,7 @@ export const useManagedZendeskChat = () => {
 
 	const hasCSAT = useMemo( () => {
 		const messages = conversation?.messages ?? [];
-		return messages.some(
-			( msg ) => msg.source?.type === 'zd:surveys' || msg.metadata?.type === 'csat'
-		);
+		return messages.some( ( msg ) => msg.metadata?.type === 'csat' );
 	}, [ conversation?.messages ] );
 
 	const disconnectedListener = useCallback( () => {
@@ -238,7 +236,11 @@ export const useManagedZendeskChat = () => {
 		let score: 'GOOD' | 'BAD' | null = null;
 
 		if ( hasRated && ratingMessage.payload ) {
-			score = JSON.parse( ratingMessage.payload ).csat_rating;
+			try {
+				score = JSON.parse( ratingMessage.payload ).csat_rating ?? null;
+			} catch {
+				score = null;
+			}
 		}
 
 		let ticketId: number | null = null;
@@ -283,7 +285,7 @@ export const useManagedZendeskChat = () => {
 				message.type === 'form' &&
 				message.fields?.some( ( field ) => field.name === 'csat_comment' );
 
-			if ( isCSATForm ) {
+			if ( isCSATForm && score ) {
 				return {
 					id: message.id || crypto.randomUUID(),
 					role: 'agent',

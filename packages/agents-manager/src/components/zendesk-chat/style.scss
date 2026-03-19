@@ -38,31 +38,6 @@
 		color: var( --color-foreground );
 	}
 	.zendesk-csat-form__feedback {
-		// Increase specificity.
-		.components-button.components-button {
-			&.is-tertiary {
-				background: transparent;
-				border: none;
-				color: #fff;
-
-				&:hover {
-					background: rgba( 128, 128, 128, 0.1 );
-					color: #fff;
-				}
-			}
-			&.is-primary {
-				background: transparent;
-				border: 1px solid #fff;
-				color: #fff;
-
-				&:hover {
-					background: transparent;
-					border: 1px solid var( --color-accent );
-					color: var( --color-accent );
-				}
-			}
-		}
-
 		.components-input-control__container {
 			select.components-select-control__input.components-select-control__input {
 				color: var( --color-foreground );
@@ -73,6 +48,35 @@
 		.zendesk-csat-form__reason {
 			label.components-input-control__label {
 				color: var( --color-foreground );
+			}
+		}
+	}
+}
+
+.agents-manager-chat--docked {
+	.zendesk-csat-form__feedback {
+		// Increase specificity.
+		.components-button.components-button {
+			&.is-tertiary {
+				background: transparent;
+				border: none;
+				color: var( --color-foreground );
+
+				&:hover {
+					background: rgba( 128, 128, 128, 0.1 );
+					color: var( --color-foreground );
+				}
+			}
+			&.is-primary {
+				background: transparent;
+				border: 1px solid var( --color-foreground );
+				color: var( --color-foreground );
+
+				&:hover {
+					background: transparent;
+					border: 1px solid var( --color-accent );
+					color: var( --color-accent );
+				}
 			}
 		}
 	}

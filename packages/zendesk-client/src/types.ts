@@ -1,3 +1,5 @@
+import type React from 'react';
+
 export type ZendeskConfigName =
 	| 'zendesk_support_chat_key'
 	| 'zendesk_presales_chat_key'
@@ -68,6 +70,9 @@ export type MessageAction = {
 	metadata: ChatFeedbackActions;
 	label: string;
 	onClick: () => void;
+	tooltip?: string;
+	icon?: React.ReactNode;
+	pressed?: boolean;
 };
 
 export type ZendeskContentType =

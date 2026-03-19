@@ -42,26 +42,38 @@ export function getSmoochContainer(): HTMLDivElement | null {
 }
 
 export const playNotificationSound = () => {
+	if ( typeof window === 'undefined' ) {
+		return;
+	}
+
 	// @ts-expect-error expected because of fallback webkitAudioContext
-	const audioContext = new ( window.AudioContext || window.webkitAudioContext )();
+	const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+	if ( ! AudioContextClass ) {
+		return;
+	}
 
-	const duration = 0.7;
-	const oscillator = audioContext.createOscillator();
-	const gainNode = audioContext.createGain();
+	try {
+		const audioContext = new AudioContextClass();
+		const duration = 0.7;
+		const oscillator = audioContext.createOscillator();
+		const gainNode = audioContext.createGain();
 
-	// Configure oscillator
-	oscillator.type = 'sine';
-	oscillator.frequency.setValueAtTime( 660, audioContext.currentTime );
+		// Configure oscillator
+		oscillator.type = 'sine';
+		oscillator.frequency.setValueAtTime( 660, audioContext.currentTime );
 
-	// Configure gain for a smoother fade-out
-	gainNode.gain.setValueAtTime( 0.3, audioContext.currentTime );
-	gainNode.gain.exponentialRampToValueAtTime( 0.001, audioContext.currentTime + duration );
+		// Configure gain for a smoother fade-out
+		gainNode.gain.setValueAtTime( 0.3, audioContext.currentTime );
+		gainNode.gain.exponentialRampToValueAtTime( 0.001, audioContext.currentTime + duration );
 
-	// Connect & start
-	oscillator.connect( gainNode );
-	gainNode.connect( audioContext.destination );
-	oscillator.start();
-	oscillator.stop( audioContext.currentTime + duration );
+		// Connect & start
+		oscillator.connect( gainNode );
+		gainNode.connect( audioContext.destination );
+		oscillator.start();
+		oscillator.stop( audioContext.currentTime + duration );
+	} catch {
+		// Audio playback is not available in this environment
+	}
 };
 
 export const isTestModeEnvironment = () => {

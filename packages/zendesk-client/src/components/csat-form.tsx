@@ -65,19 +65,24 @@ export const CSATForm = ( {
 
 	return (
 		<div className={ clsx( 'zendesk-csat-form', className ) }>
-			<div className={ clsx( 'zendesk-csat-form__thumbs-container', { has_score: score } ) }>
-				<div className="zendesk-csat-form__thumbs">
-					<Button
-						onClick={ () => postScore( 'good' ) }
-						className="zendesk-csat-form__thumbs-button"
-					>
-						<ThumbsUpIcon />
-					</Button>
-					<Button onClick={ () => postScore( 'bad' ) } className="zendesk-csat-form__thumbs-button">
-						<ThumbsDownIcon />
-					</Button>
+			{ ! preDeterminedScore && (
+				<div className={ clsx( 'zendesk-csat-form__thumbs-container', { has_score: score } ) }>
+					<div className="zendesk-csat-form__thumbs">
+						<Button
+							onClick={ () => postScore( 'good' ) }
+							className="zendesk-csat-form__thumbs-button"
+						>
+							<ThumbsUpIcon />
+						</Button>
+						<Button
+							onClick={ () => postScore( 'bad' ) }
+							className="zendesk-csat-form__thumbs-button"
+						>
+							<ThumbsDownIcon />
+						</Button>
+					</div>
 				</div>
-			</div>
+			) }
 			{ score && (
 				<>
 					{ ! preDeterminedScore && (
