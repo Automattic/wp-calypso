@@ -111,7 +111,11 @@ export default function AgentDock( {
 	useAdminBarIntegration( {
 		isOpen: isPersistedOpen,
 		sectionName,
-		openChat: () => ( isDocked ? openSidebar() : setIsOpen( true ) ),
+		maybeOpenChat: () => {
+			if ( ! isPersistedOpen ) {
+				isDocked ? openSidebar() : setIsOpen( true );
+			}
+		},
 		navigate,
 	} );
 

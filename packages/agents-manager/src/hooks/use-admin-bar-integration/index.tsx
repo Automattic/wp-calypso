@@ -20,7 +20,7 @@ const DESTINATION_GUIDES = 'agents-manager-support-guides';
 interface UseAdminBarIntegrationOptions {
 	isOpen: boolean;
 	sectionName: string;
-	openChat: () => void;
+	maybeOpenChat: () => void;
 	navigate: ( route: string, options?: { state?: object } ) => void;
 }
 
@@ -36,12 +36,12 @@ interface UseAdminBarIntegrationOptions {
 export default function useAdminBarIntegration( {
 	isOpen,
 	sectionName,
-	openChat,
+	maybeOpenChat,
 	navigate,
 }: UseAdminBarIntegrationOptions ) {
-	// Ref to avoid re-attaching DOM event listeners when the caller passes a new openChat reference.
-	const openChatRef = useRef( openChat );
-	openChatRef.current = openChat;
+	// Ref to avoid re-attaching DOM event listeners when the caller passes a new maybeOpenChat reference.
+	const maybeOpenChatRef = useRef( maybeOpenChat );
+	maybeOpenChatRef.current = maybeOpenChat;
 
 	// Update admin bar button active state based on isOpen
 	useEffect( () => {
@@ -117,7 +117,7 @@ export default function useAdminBarIntegration( {
 					destination,
 				} );
 				navigate( route );
-				openChatRef.current();
+				maybeOpenChatRef.current();
 			};
 		};
 
