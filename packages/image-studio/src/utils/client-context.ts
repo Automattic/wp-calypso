@@ -21,6 +21,7 @@ export interface ImageStudioData {
 	isOpen: boolean;
 	id: number | null;
 	style?: string;
+	aspect_ratio?: string;
 	metadata: ImageStudioMetadata;
 }
 
@@ -192,6 +193,7 @@ function detectImageEntity(): ImageStudioData | null {
 		const attachmentId = storeSelect.getImageStudioAttachmentId?.();
 		const isOpen = storeSelect.getIsImageStudioOpen?.() || false;
 		const selectedStyle = storeSelect.getSelectedStyle?.() || null;
+		const selectedAspectRatio = storeSelect.getSelectedAspectRatio?.() || null;
 		const originalAttachmentId = storeSelect.getOriginalAttachmentId?.() || null;
 
 		// Generate mode = opened without an existing image
@@ -203,9 +205,15 @@ function detectImageEntity(): ImageStudioData | null {
 			metadata: {},
 		};
 
-		// Only include style for generate mode
+		// Style only applies in generate mode (no existing image).
 		if ( selectedStyle && isGenerateMode ) {
 			imageStudio.style = selectedStyle;
+		}
+
+		// Always send aspect_ratio — the backend decides applicability via isEdit,
+		// so the client should not gate it on generate-only mode.
+		if ( selectedAspectRatio ) {
+			imageStudio.aspect_ratio = selectedAspectRatio;
 		}
 
 		// Try to get attachment metadata from core store
