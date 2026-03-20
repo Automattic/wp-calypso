@@ -714,7 +714,7 @@ const actions = {
 		attachmentId?: number,
 		onCloseCallback?: ImageStudioCloseCallback,
 		entryPoint?: ImageStudioEntryPoint,
-		blockType?: string
+		blockType?: string | null
 	): OpenImageStudioAction {
 		return {
 			type: 'OPEN_IMAGE_STUDIO',
