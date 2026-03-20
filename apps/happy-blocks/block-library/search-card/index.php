@@ -25,28 +25,6 @@ $enable_odie_answers = ! is_user_logged_in() && ( 'treatment' === \ExPlat\assign
 	|| ( isset( $_GET['dotcom_support_enable_odie_answers'] ) && 'true' === $_GET['dotcom_support_enable_odie_answers'] ) );
 $should_show_search_navigation = ( $is_front_page && $enable_odie_answers ) || ( ! $is_front_page && ! $is_404_page );
 
-if ( ! function_exists( 'get_support_search_link_for_query' ) ) {
-	/**
-	 * Generate a support search URL for a given query, scoped to the current site.
-	 *
-	 * @param string $query The search query.
-	 * @param bool   $is_forums Whether the search link is for forums or support articles.
-	 * @return string The generated support search URL.
-	 */
-	function get_support_search_link_for_query( $query, $is_forums ) {
-		$blog_id  = get_current_blog_id();
-		$base_url = localized_wpcom_url( $is_forums ? 'https://wordpress.com/forums/' : 'https://wordpress.com/support/' );
-
-		return add_query_arg(
-			array(
-				'group_id' => "blog_id:{$blog_id}",
-				's'        => $query,
-			),
-			$base_url
-		);
-	}
-}
-
 $form_class              = isset( $args['form_class'] ) ? $args['form_class'] : '';
 $input_class             = isset( $args['input_class'] ) ? $args['input_class'] : '';
 $placeholder             = isset( $args['placeholder'] ) ? $args['placeholder'] : '';
