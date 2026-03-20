@@ -33,6 +33,7 @@ const defaultWpcomSettings: WpcomNotificationSettings = {
 	akismet_marketing: false,
 	woopay_marketing: false,
 	gravatar_onboarding: false,
+	ai_tips: false,
 };
 
 const defaultUserSettings: UserNotificationSettings = {
@@ -132,6 +133,7 @@ describe( 'NotificationsExtras', () => {
 		expect( wpcomSectionQueries.getByLabelText( 'Digests' ) ).toBeVisible();
 		expect( wpcomSectionQueries.getByLabelText( 'Reports' ) ).toBeVisible();
 		expect( wpcomSectionQueries.getByLabelText( 'Developer Newsletter' ) ).toBeVisible();
+		expect( wpcomSectionQueries.getByLabelText( 'AI Tips' ) ).toBeVisible();
 		expect( wpcomSectionQueries.getByLabelText( 'Scheduled updates' ) ).toBeVisible();
 	} );
 
@@ -204,6 +206,7 @@ describe( 'NotificationsExtras', () => {
 		expect( screen.getByLabelText( 'Digests' ) ).not.toBeChecked();
 		expect( screen.getAllByLabelText( 'Reports' )[ 0 ] ).not.toBeChecked();
 		expect( screen.getByLabelText( 'Developer Newsletter' ) ).not.toBeChecked();
+		expect( screen.getByLabelText( 'AI Tips' ) ).not.toBeChecked();
 		expect( screen.getByLabelText( 'Scheduled updates' ) ).not.toBeChecked();
 
 		// Jetpack toggles - verify enabled ones are checked
@@ -256,6 +259,7 @@ describe( 'NotificationsExtras', () => {
 			digest: true,
 			reports: true,
 			news_developer: true,
+			ai_tips: true,
 			scheduled_updates: true,
 		} );
 
