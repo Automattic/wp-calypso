@@ -38,7 +38,7 @@ export type WPCOMTransactionEndpointResponseFailed = {
 };
 
 export type WPCOMTransactionEndpointResponseRedirect = {
-	message: { payment_intent_client_secret: string } | '';
+	message: { payment_intent_client_secret: string } | { setup_intent_client_secret: string } | '';
 	order_id: number | '';
 	redirect_url: string;
 	qr_code?: string;
