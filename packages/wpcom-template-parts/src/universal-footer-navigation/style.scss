@@ -74,7 +74,6 @@ $breakpoints: 320px, 360px, 480px, 660px, 782px, 960px, 1140px, 1366px, 1440px, 
 .lpc-footer-logo {
 	display: block;
 	padding: 32px 0 72px;
-	text-decoration: none;
 }
 
 .lpc-footer-automattic-nav {
@@ -516,7 +515,6 @@ $breakpoints: 320px, 360px, 480px, 660px, 782px, 960px, 1140px, 1366px, 1440px, 
 			margin: 0;
 		}
 
-		& > details:not([name]) > ul,
 		& > details:not([open]) > ul {
 			display: none;
 		}

@@ -175,7 +175,7 @@ export const PureUniversalNavbarFooter = ( {
 						</svg>
 					</div>
 					<div className="lpc-footer-nav-container">
-						<details open>
+						<details name="footer-nav">
 							<summary>
 								<div className="lpc-footer-nav-heading">
 									{ __( 'Products', __i18n_text_domain__ ) }
@@ -264,7 +264,7 @@ export const PureUniversalNavbarFooter = ( {
 								</li>
 							</ul>
 						</details>
-						<details open>
+						<details name="footer-nav">
 							<summary>
 								<div className="lpc-footer-nav-heading">
 									{ __( 'Features', __i18n_text_domain__ ) }
@@ -313,7 +313,7 @@ export const PureUniversalNavbarFooter = ( {
 								</li>
 							</ul>
 						</details>
-						<details open>
+						<details name="footer-nav">
 							<summary>
 								<div className="lpc-footer-nav-heading">
 									{ __( 'Resources', __i18n_text_domain__ ) }
@@ -351,7 +351,7 @@ export const PureUniversalNavbarFooter = ( {
 								</li>
 							</ul>
 						</details>
-						<details open>
+						<details name="footer-nav">
 							<summary>
 								<div className="lpc-footer-nav-heading">{ __( 'Help', __i18n_text_domain__ ) }</div>
 								<ChevronDown />
@@ -401,7 +401,7 @@ export const PureUniversalNavbarFooter = ( {
 								</li>
 							</ul>
 						</details>
-						<details open>
+						<details name="footer-nav">
 							<summary>
 								<div className="lpc-footer-nav-heading">
 									{ __( 'Company', __i18n_text_domain__ ) }
@@ -447,9 +447,11 @@ export const PureUniversalNavbarFooter = ( {
 									className="lp-language-picker__content"
 									title={ __( 'Change Language', __i18n_text_domain__ ) }
 									onChange={ onLanguageChange }
-									defaultValue={ `/${ locale }` }
+									defaultValue={ currentLocaleKey }
 								>
-									<option>{ currentLanguageName }</option>
+									<option value={ currentLocaleKey } disabled>
+										{ currentLanguageName }
+									</option>
 									{ languageEntries
 										.filter( ( [ key ] ) => key !== currentLocaleKey )
 										.map( ( option ) => {
