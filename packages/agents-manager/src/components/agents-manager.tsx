@@ -134,7 +134,6 @@ function AgentSetup(): JSX.Element | null {
 		initializeAgent();
 	}, [
 		agentId,
-		version,
 		currentRoute,
 		isAgentConfigLoading,
 		isNewChat,
@@ -142,6 +141,7 @@ function AgentSetup(): JSX.Element | null {
 		sessionId,
 		setAgentConfig,
 		site?.ID,
+		version,
 	] );
 
 	const loadedProviders = loadedProvidersRef.current;
