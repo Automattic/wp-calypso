@@ -1,4 +1,5 @@
 import store from 'store';
+import { isRelativeUrl } from '../../utils/url';
 
 export const OAUTH_CALLBACK_PATH = '/oauth/token';
 
@@ -26,7 +27,11 @@ export function handleOAuthCallback(): boolean {
 
 	const params = new URLSearchParams( window.location.search );
 	const next = params.get( 'next' ) || '/';
-	document.location.replace( next );
+
+	// Validate that next is a safe same-origin relative path to prevent DOM XSS
+	// and open redirect via javascript: URIs or absolute URLs to external domains.
+	const safeNext = isRelativeUrl( next ) ? next : '/';
+	document.location.replace( safeNext );
 
 	return true;
 }
