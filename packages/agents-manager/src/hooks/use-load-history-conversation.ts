@@ -10,7 +10,6 @@ import { API_BASE_URL } from '../constants';
 import { useAgentsManagerContext } from '../contexts';
 
 interface Config {
-	enabled?: boolean;
 	maxPages?: number;
 	onSuccess?: ( messages: Message[], sessionId: string ) => void;
 }
@@ -21,16 +20,23 @@ interface Result {
 	isError: boolean;
 }
 
-export default function useConversation( {
-	enabled = true,
+/**
+ * Loads a previous conversation from the server when the user selects
+ * one from the history list. Skips fetching on initial mount since
+ * `useAgentChat` already handles the current conversation.
+ */
+export default function useLoadHistoryConversation( {
 	maxPages = 10,
 	onSuccess = () => {},
 }: Config ): Result {
 	const { agentConfig } = useAgentsManagerContext();
 	const { agentId, sessionId, authProvider } = agentConfig!;
-	// Keep refs to the latest callbacks
 	const onSuccessRef = useRef( onSuccess );
 	onSuccessRef.current = onSuccess;
+
+	// Only fetch when sessionId changes from the initial value (user selected from history).
+	const initialSessionIdRef = useRef( sessionId );
+	const isSessionChanged = sessionId !== initialSessionIdRef.current;
 
 	const { data, isLoading, isError, error } = useQuery( {
 		// eslint-disable-next-line @tanstack/query/exhaustive-deps -- we only want to refetch when sessionId changes
@@ -40,30 +46,18 @@ export default function useConversation( {
 			const hasAgentParam = urlSearchParams.has( 'agent' );
 			const botId = hasAgentParam || isOdieBotId( agentId ) ? agentId : createOdieBotId( agentId );
 
-			try {
-				return await loadAllMessagesFromServer(
-					sessionId,
-					{
-						botId,
-						apiBaseUrl: API_BASE_URL,
-						authProvider,
-					},
-					maxPages,
-					true
-				);
-			} catch ( err ) {
-				// A 404 means the conversation was deleted or expired on the server.
-				// Warn and return empty so the chat can start fresh.
-				if ( ( err as { statusCode?: number } ).statusCode === 404 ) {
-					// eslint-disable-next-line no-console
-					console.warn( '[useConversation] Conversation not found (expired or deleted).' );
-					return { messages: [] as Message[], sessionId: undefined };
-				}
-
-				throw err;
-			}
+			return await loadAllMessagesFromServer(
+				sessionId,
+				{
+					botId,
+					apiBaseUrl: API_BASE_URL,
+					authProvider,
+				},
+				maxPages,
+				true
+			);
 		},
-		enabled: enabled && !! sessionId,
+		enabled: isSessionChanged && !! sessionId,
 		// Keep history stable while browsing; use explicit non-default refetch behavior for chat UX.
 		refetchOnWindowFocus: false,
 		refetchOnMount: false,
@@ -83,7 +77,7 @@ export default function useConversation( {
 	useEffect( () => {
 		if ( error ) {
 			// eslint-disable-next-line no-console
-			console.error( '[useConversation] Error loading conversation:', error );
+			console.error( '[useLoadHistoryConversation] Error loading conversation:', error );
 		}
 	}, [ error ] );
 

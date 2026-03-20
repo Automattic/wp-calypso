@@ -80,8 +80,6 @@ interface Props {
 	onSubmitFeedbackText?: ( feedbackText: string ) => Promise< void >;
 	/** Called when the user cancels the feedback input. */
 	onCancelFeedback?: () => void;
-	/** Called when the user views the conversation history. */
-	onViewHistory?: () => void;
 	/** Alternative footer to render instead of the default footer. */
 	alternativeFooter?: React.ReactNode;
 }
@@ -124,7 +122,6 @@ export default function AgentChat( {
 	showFeedbackInput = false,
 	onSubmitFeedbackText = () => Promise.resolve(),
 	onCancelFeedback = () => {},
-	onViewHistory,
 	alternativeFooter,
 }: Props ) {
 	const { setFloatingPosition } = useDispatch( AGENTS_MANAGER_STORE );
@@ -197,11 +194,7 @@ export default function AgentChat( {
 			}
 		>
 			<AgentUI.ConversationView ref={ conversationViewRef }>
-				<ChatHeader
-					onClose={ onClose }
-					options={ chatHeaderOptions }
-					onViewHistory={ onViewHistory }
-				/>
+				<ChatHeader onClose={ onClose } options={ chatHeaderOptions } />
 				{ isLoadingConversation ? <ChatMessageSkeleton count={ 3 } /> : <AgentUI.Messages /> }
 				{ showFeedbackInput && (
 					<FeedbackInput onSubmit={ onSubmitFeedbackText } onCancel={ onCancelFeedback } />
