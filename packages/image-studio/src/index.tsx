@@ -31,6 +31,7 @@ declare const imageStudioData: ImageStudioData | undefined;
 declare global {
 	interface Window {
 		__bigSkyImageStudioInitialized?: boolean;
+		imageStudioData?: ImageStudioData;
 	}
 }
 
