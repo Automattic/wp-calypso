@@ -51,13 +51,14 @@ export interface CiabPartnerConfig {
 	isOAuth2Client?: ( oauth2Client: { id: number } | null ) => boolean;
 	/** Build a full dashboard URL for this partner given a path */
 	buildDashboardLink?: ( path: string ) => string;
-	/** Named redirect paths per use case. Each returns the path to pass to buildDashboardLink. */
+	/** Named redirects per use case. Each returns the final destination URL. */
 	redirects?: Partial< Record< CiabRedirectType, ( site: CiabRedirectSite ) => string > >;
 }
 
 /** Site context passed to redirect path builders */
 export interface CiabRedirectSite {
 	domain: string;
+	admin_url: string;
 	garden?: { partner: string; name: string };
 }
 
@@ -96,7 +97,7 @@ export const CIAB_PARTNERS: Record< string, CiabPartnerConfig > = {
 		isOAuth2Client: isCiabOAuth2Client,
 		buildDashboardLink: buildCiabDashboardLink,
 		redirects: {
-			'invite-accept': ( site ) => `/sites/${ site.domain }`,
+			'invite-accept': ( site ) => site.admin_url,
 		},
 	},
 };
@@ -191,8 +192,8 @@ export function getCiabConfigFromGarden(
 
 /**
  * Get the partner redirect URL for a garden site and a specific use case.
- * Looks up the partner config from site.garden, resolves the path from the named redirect,
- * and builds the full dashboard URL. Returns null if the partner has no config for this redirect.
+ * Looks up the partner config from site.garden and resolves the destination URL
+ * from the named redirect. Returns null if the partner has no config for this redirect.
  */
 export function getPartnerRedirect(
 	redirectType: CiabRedirectType,
@@ -200,12 +201,11 @@ export function getPartnerRedirect(
 ): string | null {
 	const ciabConfig = getCiabConfigFromGarden( site?.garden?.partner, site?.garden?.name );
 
-	if ( ! ciabConfig?.buildDashboardLink || ! ciabConfig?.redirects?.[ redirectType ] || ! site ) {
+	if ( ! ciabConfig?.redirects?.[ redirectType ] || ! site ) {
 		return null;
 	}
 
-	const path = ciabConfig.redirects[ redirectType ]( site );
-	return ciabConfig.buildDashboardLink( path );
+	return ciabConfig.redirects[ redirectType ]( site );
 }
 
 /**
