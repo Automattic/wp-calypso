@@ -62,7 +62,7 @@ describe( '<PluginSites> – author link XSS regression', () => {
 		render( <PluginSites selectedPluginSlug="test-plugin" /> );
 
 		// The author name must be visible so we know the description rendered.
-		expect( screen.getByText( /Malicious Author/i ) ).toBeInTheDocument();
+		expect( screen.getByText( /Malicious Author/i ) ).toBeVisible();
 
 		// No anchor on the page may carry the javascript: URI as its href.
 		const links = document.querySelectorAll( 'a[href]' );
@@ -87,7 +87,7 @@ describe( '<PluginSites> – author link XSS regression', () => {
 		render( <PluginSites selectedPluginSlug="test-plugin" /> );
 
 		const authorLink = screen.getByRole( 'link', { name: /Malicious Author/i } );
-		expect( authorLink ).toBeInTheDocument();
+		expect( authorLink ).toBeVisible();
 		expect( ( authorLink as HTMLAnchorElement ).href ).toBe(
 			'https://trusted-author.example.com/'
 		);
@@ -109,7 +109,7 @@ describe( '<PluginSites> – author link XSS regression', () => {
 
 		render( <PluginSites selectedPluginSlug="test-plugin" /> );
 
-		expect( screen.getByText( /Malicious Author/i ) ).toBeInTheDocument();
+		expect( screen.getByText( /Malicious Author/i ) ).toBeVisible();
 		expect( screen.queryByRole( 'link', { name: /Malicious Author/i } ) ).not.toBeInTheDocument();
 	} );
 
