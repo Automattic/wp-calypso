@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { isAllowedRedirectUrl } from 'calypso/lib/url';
+import { isAllowedRedirectUrl } from '@automattic/calypso-url';
 import {
 	SUCCESS,
 	ERROR,

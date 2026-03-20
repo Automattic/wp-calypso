@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
+import { isAllowedRedirectUrl } from '@automattic/calypso-url';
 import { getLanguageSlugs } from '@automattic/i18n-utils';
 import { useMemo } from 'react';
-import { isAllowedRedirectUrl } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import { getSiteId, isCommerceGardenSite, isJetpackSite } from 'calypso/state/sites/selectors';
