@@ -86,6 +86,7 @@ class StatsTabs extends Component {
 					previousValue,
 					format: tab.format,
 					hasPreviousData: !! previousData,
+					aggregateNote: aggregate ? tab.aggregateNote : undefined,
 				};
 
 				return <StatTab key={ tabOptions.attr } { ...tabOptions } />;

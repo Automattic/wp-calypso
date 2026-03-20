@@ -123,6 +123,9 @@ Object.defineProperty( CHART_VIEWS, 'label', {
 Object.defineProperty( CHART_VISITORS, 'label', {
 	get: () => translate( 'Visitors', { context: 'noun' } ),
 } );
+Object.defineProperty( CHART_VISITORS, 'aggregateNote', {
+	get: () => translate( 'Totals are summed per-period, not unique overall.' ),
+} );
 Object.defineProperty( CHART_LIKES, 'label', {
 	get: () => translate( 'Likes', { context: 'noun' } ),
 } );
