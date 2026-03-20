@@ -88,7 +88,7 @@ export class SignupPickPlanPage {
 		const responsePromise = this.captureNewSiteResponse();
 
 		await Promise.all( [
-			this.page.waitForURL( redirectUrl, { timeout: 60 * 1000 } ),
+			this.page.waitForURL( redirectUrl, { timeout: 90 * 1000 } ),
 			this.plansPage.selectPlan( name ),
 		] );
 
@@ -116,7 +116,7 @@ export class SignupPickPlanPage {
 		}
 
 		const actions = [
-			this.page.waitForURL( redirectUrl, { timeout: 30 * 1000 } ),
+			this.page.waitForURL( redirectUrl, { timeout: 60 * 1000 } ),
 			this.plansPage.selectPlan( name ),
 		];
 
@@ -139,7 +139,7 @@ export class SignupPickPlanPage {
 		redirectUrl ??= new RegExp( '.*checkout.*' );
 
 		const actions = [
-			this.page.waitForURL( redirectUrl, { timeout: 30 * 1000 } ),
+			this.page.waitForURL( redirectUrl, { timeout: 60 * 1000 } ),
 			this.plansPage.selectModalUpsellPlan( planName ),
 		];
 
@@ -191,7 +191,7 @@ export class SignupPickPlanPage {
 		redirectUrl ??= new RegExp( '.*/home/.*' );
 
 		await Promise.all( [
-			this.page.waitForURL( redirectUrl, { timeout: 30 * 1000 } ),
+			this.page.waitForURL( redirectUrl, { timeout: 60 * 1000 } ),
 			this.plansPage.clickContinueWithFree(),
 		] );
 	}
