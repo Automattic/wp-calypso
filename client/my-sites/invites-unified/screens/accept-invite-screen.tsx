@@ -41,7 +41,6 @@ function toLegacyInvite( invite: Invite ) {
 			domain: blogDetails?.domain || '',
 			admin_url: blogDetails?.admin_url || '',
 			is_vip: blogDetails?.is_vip || false,
-			is_garden_site: blogDetails?.is_garden_site || false,
 			garden: blogDetails?.garden,
 		},
 		role: invite.invite?.meta?.role || '',

@@ -5,6 +5,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import wooLogo from 'calypso/assets/images/icons/Woo_logo_color.svg';
+import { buildCiabDashboardLink } from 'calypso/dashboard/app-ciab/routing';
 import { isCiabOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { useSelector } from 'calypso/state';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
@@ -48,7 +49,20 @@ export interface CiabPartnerConfig {
 	domains?: string[];
 	/** Callback to check if an OAuth2 client belongs to this partner */
 	isOAuth2Client?: ( oauth2Client: { id: number } | null ) => boolean;
+	/** Build a full dashboard URL for this partner given a path */
+	buildDashboardLink?: ( path: string ) => string;
+	/** Named redirect paths per use case. Each returns the path to pass to buildDashboardLink. */
+	redirects?: Partial< Record< CiabRedirectType, ( site: CiabRedirectSite ) => string > >;
 }
+
+/** Site context passed to redirect path builders */
+export interface CiabRedirectSite {
+	domain: string;
+	garden?: { partner: string; name: string };
+}
+
+/** Known redirect use cases */
+export type CiabRedirectType = 'invite-accept';
 
 /**
  * CIAB Partners Configuration
@@ -80,6 +94,10 @@ export const CIAB_PARTNERS: Record< string, CiabPartnerConfig > = {
 		fontStyle: 'system',
 		domains: [ 'my.woo.ai', 'my.woo.localhost' ],
 		isOAuth2Client: isCiabOAuth2Client,
+		buildDashboardLink: buildCiabDashboardLink,
+		redirects: {
+			'invite-accept': ( site ) => `/sites/${ site.domain }`,
+		},
 	},
 };
 
@@ -169,6 +187,25 @@ export function getCiabConfigFromGarden(
 
 	// Future: add mappings for other partners like "paypal"
 	return ciabConfig;
+}
+
+/**
+ * Get the partner redirect URL for a garden site and a specific use case.
+ * Looks up the partner config from site.garden, resolves the path from the named redirect,
+ * and builds the full dashboard URL. Returns null if the partner has no config for this redirect.
+ */
+export function getPartnerRedirect(
+	redirectType: CiabRedirectType,
+	site?: CiabRedirectSite
+): string | null {
+	const ciabConfig = getCiabConfigFromGarden( site?.garden?.partner, site?.garden?.name );
+
+	if ( ! ciabConfig?.buildDashboardLink || ! ciabConfig?.redirects?.[ redirectType ] || ! site ) {
+		return null;
+	}
+
+	const path = ciabConfig.redirects[ redirectType ]( site );
+	return ciabConfig.buildDashboardLink( path );
 }
 
 /**
