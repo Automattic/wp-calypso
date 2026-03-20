@@ -15,6 +15,7 @@ import { Card, CardBody } from '../../../components/card';
 import ComponentViewTracker from '../../../components/component-view-tracker';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
+import RouterLinkButton from '../../../components/router-link-button';
 import { SectionHeader } from '../../../components/section-header';
 import SiteIcon from '../../../components/site-icon';
 import { getSiteDisplayName } from '../../../utils/site-name';
@@ -154,14 +155,25 @@ export default function McpMcpSites() {
 									description={ site.displayUrl || undefined }
 									decoration={ site.site ? <SiteIcon site={ site.site } size={ 32 } /> : undefined }
 									actions={
-										<Button
-											variant="secondary"
-											size="compact"
-											disabled={ mutation.isPending }
-											onClick={ () => handleSiteToggle( site.id, mcpEnabled ) }
-										>
-											{ __( 'Remove' ) }
-										</Button>
+										<>
+											{ site.site?.slug && (
+												<RouterLinkButton
+													to={ `/sites/${ site.site.slug }/settings/ai-tools` }
+													variant="tertiary"
+													size="compact"
+												>
+													{ __( 'Manage' ) }
+												</RouterLinkButton>
+											) }
+											<Button
+												variant="secondary"
+												size="compact"
+												disabled={ mutation.isPending }
+												onClick={ () => handleSiteToggle( site.id, mcpEnabled ) }
+											>
+												{ __( 'Remove' ) }
+											</Button>
+										</>
 									}
 								/>
 							) ) }
