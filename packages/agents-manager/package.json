@@ -43,10 +43,12 @@
 	"dependencies": {
 		"@automattic/agenttic-client": "^0.1.53",
 		"@automattic/agenttic-ui": "^0.1.53",
+		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/oauth-token": "workspace:^",
 		"@automattic/support-articles": "workspace:^",
+		"@automattic/urls": "workspace:^",
 		"@tanstack/react-query": "^5.83.0",
 		"@wordpress/api-fetch": "^7.23.0",
 		"@wordpress/base-styles": "^5.23.0",

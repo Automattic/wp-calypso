@@ -1,4 +1,5 @@
 import store from 'store';
+import { isRelativeUrl } from '../../utils/url';
 
 export const OAUTH_CALLBACK_PATH = '/oauth/token';
 
@@ -13,6 +14,16 @@ export function handleOAuthCallback(): boolean {
 	}
 
 	const hash = new URLSearchParams( window.location.hash.substring( 1 ) );
+	const params = new URLSearchParams( window.location.search );
+
+	// Validate the OAuth state parameter to prevent login CSRF / session fixation.
+	const returnedState = hash.get( 'state' ) || params.get( 'state' );
+	const expectedState = sessionStorage.getItem( 'wpcom_oauth_state' );
+	sessionStorage.removeItem( 'wpcom_oauth_state' );
+	if ( ! returnedState || ! expectedState || returnedState !== expectedState ) {
+		document.location.replace( '/' );
+		return true;
+	}
 
 	const accessToken = hash.get( 'access_token' );
 	if ( accessToken ) {
@@ -24,9 +35,12 @@ export function handleOAuthCallback(): boolean {
 		store.set( 'wpcom_token_expires_in', expiresIn );
 	}
 
-	const params = new URLSearchParams( window.location.search );
 	const next = params.get( 'next' ) || '/';
-	document.location.replace( next );
+
+	// Validate that next is a safe same-origin relative path to prevent DOM XSS
+	// and open redirect via javascript: URIs or absolute URLs to external domains.
+	const safeNext = isRelativeUrl( next ) ? next : '/';
+	document.location.replace( safeNext );
 
 	return true;
 }

@@ -22,7 +22,7 @@ const DIFMBanner = () => {
 				<p className="banner-modern__description">
 					{ preventWidows(
 						translate(
-							'Built by WordPress.com experts and fully managed for you\u2014no coding or setup required.'
+							'Launch faster and sell smarter with features designed to save time and delight your customers.'
 						)
 					) }
 				</p>

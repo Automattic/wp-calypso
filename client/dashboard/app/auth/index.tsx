@@ -87,6 +87,9 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 				next: window.location.pathname + window.location.search,
 			} ).toString();
 
+			const state = crypto.randomUUID();
+			sessionStorage.setItem( 'wpcom_oauth_state', state );
+
 			const authUri = new URL( 'https://public-api.wordpress.com/oauth2/authorize' );
 			authUri.search = new URLSearchParams( {
 				response_type: 'token',
@@ -94,6 +97,7 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 				redirect_uri: redirectUri.toString(),
 				scope: 'global',
 				blog_id: '0',
+				state,
 			} ).toString();
 
 			window.location.replace( authUri.toString() );

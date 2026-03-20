@@ -111,13 +111,13 @@ RUN yarn run build-packages:web
 # change any time any of the Calypso source-code changes.
 ENV NODE_ENV production
 ARG generate_cache_image=false
-RUN GENERATE_CACHE_IMAGE=$generate_cache_image yarn run build 2>&1 | tee /tmp/build_log.txt
+# Delete sourcemaps in the same layer as the build so trunk's hidden-source-map
+# artifacts do not have to be committed and then whiteouted in a later snapshot.
+RUN GENERATE_CACHE_IMAGE=$generate_cache_image yarn run build 2>&1 | tee /tmp/build_log.txt \
+	&& find /calypso/build /calypso/public -name "*.*.map" -delete
 
 # This will output a service message to TeamCity if the build cache was invalidated as seen in the build_log file.
 RUN ./bin/check-log-for-cache-invalidation.sh /tmp/build_log.txt
-
-# Delete any sourcemaps which may have been generated to avoid creating a large artifact.
-RUN find /calypso/build /calypso/public -name "*.*.map" -delete
 
 ###################
 # A cache-only update can be generated with "docker build --target update-base-cache"

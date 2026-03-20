@@ -1,5 +1,5 @@
 import { apiFetch } from '@wordpress/data-controls';
-import { canAccessWpcomApis } from 'wpcom-proxy-request';
+import { canAccessWpcomApis } from '../wpcom-request';
 import { wpcomRequest } from '../wpcom-request-controls';
 import {
 	setRouterHistory,
