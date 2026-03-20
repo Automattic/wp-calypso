@@ -194,10 +194,6 @@ function detectImageEntity(): ImageStudioData | null {
 		const isOpen = storeSelect.getIsImageStudioOpen?.() || false;
 		const selectedStyle = storeSelect.getSelectedStyle?.() || null;
 		const selectedAspectRatio = storeSelect.getSelectedAspectRatio?.() || null;
-		const originalAttachmentId = storeSelect.getOriginalAttachmentId?.() || null;
-
-		// Generate mode = opened without an existing image
-		const isGenerateMode = originalAttachmentId === null;
 
 		const imageStudio: ImageStudioData = {
 			isOpen,
@@ -205,13 +201,10 @@ function detectImageEntity(): ImageStudioData | null {
 			metadata: {},
 		};
 
-		// Style only applies in generate mode (no existing image).
-		if ( selectedStyle && isGenerateMode ) {
+		if ( selectedStyle ) {
 			imageStudio.style = selectedStyle;
 		}
 
-		// Always send aspect_ratio — the backend decides applicability via isEdit,
-		// so the client should not gate it on generate-only mode.
 		if ( selectedAspectRatio ) {
 			imageStudio.aspect_ratio = selectedAspectRatio;
 		}
