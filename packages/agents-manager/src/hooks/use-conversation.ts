@@ -21,18 +21,16 @@ interface Result {
 	isError: boolean;
 }
 
-export default function useLoadHistoryConversation( {
+export default function useConversation( {
 	enabled = true,
 	maxPages = 10,
 	onSuccess = () => {},
 }: Config ): Result {
 	const { agentConfig } = useAgentsManagerContext();
 	const { agentId, sessionId, authProvider } = agentConfig!;
+	// Keep refs to the latest callbacks
 	const onSuccessRef = useRef( onSuccess );
 	onSuccessRef.current = onSuccess;
-	// Only fetch when sessionId changes from the initial value (i.e., user selects from history).
-	const initialSessionIdRef = useRef( sessionId );
-	const isSessionChanged = sessionId !== initialSessionIdRef.current;
 
 	const { data, isLoading, isError, error } = useQuery( {
 		// eslint-disable-next-line @tanstack/query/exhaustive-deps -- we only want to refetch when sessionId changes
@@ -42,18 +40,30 @@ export default function useLoadHistoryConversation( {
 			const hasAgentParam = urlSearchParams.has( 'agent' );
 			const botId = hasAgentParam || isOdieBotId( agentId ) ? agentId : createOdieBotId( agentId );
 
-			return await loadAllMessagesFromServer(
-				sessionId,
-				{
-					botId,
-					apiBaseUrl: API_BASE_URL,
-					authProvider,
-				},
-				maxPages,
-				true
-			);
+			try {
+				return await loadAllMessagesFromServer(
+					sessionId,
+					{
+						botId,
+						apiBaseUrl: API_BASE_URL,
+						authProvider,
+					},
+					maxPages,
+					true
+				);
+			} catch ( err ) {
+				// A 404 means the conversation was deleted or expired on the server.
+				// Warn and return empty so the chat can start fresh.
+				if ( ( err as { statusCode?: number } ).statusCode === 404 ) {
+					// eslint-disable-next-line no-console
+					console.warn( '[useConversation] Conversation not found (expired or deleted).' );
+					return { messages: [] as Message[], sessionId: undefined };
+				}
+
+				throw err;
+			}
 		},
-		enabled: enabled && isSessionChanged && !! sessionId,
+		enabled: enabled && !! sessionId,
 		// Keep history stable while browsing; use explicit non-default refetch behavior for chat UX.
 		refetchOnWindowFocus: false,
 		refetchOnMount: false,
@@ -73,7 +83,7 @@ export default function useLoadHistoryConversation( {
 	useEffect( () => {
 		if ( error ) {
 			// eslint-disable-next-line no-console
-			console.error( '[useLoadHistoryConversation] Error loading conversation:', error );
+			console.error( '[useConversation] Error loading conversation:', error );
 		}
 	}, [ error ] );
 
