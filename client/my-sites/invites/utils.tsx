@@ -3,7 +3,6 @@ import { addQueryArgs } from '@wordpress/url';
 import i18n from 'i18n-calypso';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { logmeinUrl } from 'calypso/lib/logmein';
-import { getPartnerRedirect } from 'calypso/lib/partner-branding';
 
 type InviteType = {
 	site: {
@@ -14,7 +13,7 @@ type InviteType = {
 		domain: string;
 		admin_url: string;
 		is_vip: boolean;
-		garden?: { partner: string; name: string };
+		is_garden_site?: boolean;
 	};
 	role: string;
 };
@@ -195,13 +194,7 @@ export function getRedirectAfterAccept( invite: InviteType, hasDashboardOptIn: b
 		return isMissingLogmein ? redirect : destination;
 	};
 
-	// CIAB stores: redirect to the partner dashboard
-	const partnerRedirect = getPartnerRedirect( 'invite-accept', invite.site );
-	if ( partnerRedirect ) {
-		return partnerRedirect;
-	}
-
-	if ( invite.site.is_vip ) {
+	if ( invite.site.is_vip || invite.site.is_garden_site ) {
 		switch ( invite.role ) {
 			case 'viewer':
 			case 'follower':
