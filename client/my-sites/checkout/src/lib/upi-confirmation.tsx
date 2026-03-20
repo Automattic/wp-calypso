@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 
 const ConfirmationDialog = styled.dialog`
-	width: 420px;
+	width: 475px;
 	max-width: 95vw;
 	padding: 0;
 	border: none;
@@ -30,7 +30,7 @@ const ConfirmationDialog = styled.dialog`
 const UpiIframe = styled.iframe`
 	display: block;
 	width: 100%;
-	height: 520px;
+	height: 700px;
 	border: none;
 `;
 
