@@ -1,6 +1,6 @@
 import { default as apiFetchPromise } from '@wordpress/api-fetch';
-import { default as wpcomRequestPromise, canAccessWpcomApis } from 'wpcom-proxy-request';
 import { GeneratorReturnType } from '../mapped-types';
+import { default as wpcomRequestPromise, canAccessWpcomApis } from '../wpcom-request';
 import { PerSiteRouterHistory } from './types';
 import type { APIFetchOptions } from '../shared-types';
 

@@ -1,5 +1,5 @@
 import * as oauthToken from '@automattic/oauth-token';
-import wpcomProxyRequest from 'wpcom-proxy-request';
+import wpcomProxyRequest from '../wpcom-request';
 import type {
 	AddSubscribersResponse,
 	GetSubscribersImportResponse,
