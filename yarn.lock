@@ -19513,6 +19513,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"eslint-plugin-playwright@npm:^2.10.1":
+  version: 2.10.1
+  resolution: "eslint-plugin-playwright@npm:2.10.1"
+  dependencies:
+    globals: "npm:^17.3.0"
+  peerDependencies:
+    eslint: ">=8.40.0"
+  checksum: a38c6663444b8d52fd83c8f1e99219698775c399e23855c0563bd9a21ce2b422ea2a969ca03e8679ee22901e01c5bfb81b76c171e69810d01bc619264f06c3c4
+  languageName: node
+  linkType: hard
+
 "eslint-plugin-prettier@npm:^5.0.0, eslint-plugin-prettier@npm:^5.2.3":
   version: 5.2.3
   resolution: "eslint-plugin-prettier@npm:5.2.3"
@@ -21406,6 +21417,13 @@ __metadata:
   dependencies:
     type-fest: "npm:^0.20.2"
   checksum: d3c11aeea898eb83d5ec7a99508600fbe8f83d2cf00cbb77f873dbf2bcb39428eff1b538e4915c993d8a3b3473fa71eeebfe22c9bb3a3003d1e26b1f2c8a42cd
+  languageName: node
+  linkType: hard
+
+"globals@npm:^17.3.0":
+  version: 17.4.0
+  resolution: "globals@npm:17.4.0"
+  checksum: 2be9e8c2b9035836f13d420b22f0247a328db82967d3bebfc01126d888ed609305f06c05895914e969653af5c6ba35fd7a0920f3e6c869afa60666c810630feb
   languageName: node
   linkType: hard
 
@@ -38256,6 +38274,7 @@ __metadata:
     archiver: "npm:^5.3.0"
     asana-phrase: "npm:^0.0.8"
     eslint: "npm:^8.34.0"
+    eslint-plugin-playwright: "npm:^2.10.1"
     form-data: "npm:^4.0.4"
     lodash: "npm:^4.17.20"
     mailosaur: "npm:^8.4.0"
