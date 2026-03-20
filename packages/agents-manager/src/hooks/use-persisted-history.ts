@@ -176,7 +176,7 @@ export const usePersistedHistory = ( siteKey: string ) => {
 		if ( isStale ) {
 			// eslint-disable-next-line no-console
 			console.log( `[AgentsManager] Active chat expired for site key "${ siteKey }"` );
-			return undefined;
+			return;
 		}
 		return persistedHistory;
 	}, [ isStale, persistedHistory, siteKey ] );
