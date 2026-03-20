@@ -13,6 +13,7 @@ import QueryReaderOrganizations from 'calypso/components/data/query-reader-organ
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import { withCurrentRoute } from 'calypso/components/route';
 import GlobalSidebar, { GLOBAL_SIDEBAR_EVENTS } from 'calypso/layout/global-sidebar';
+import CollapseSidebar from 'calypso/layout/sidebar/collapse-sidebar';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarMenu from 'calypso/layout/sidebar/menu';
 import SidebarSeparator from 'calypso/layout/sidebar/separator';
@@ -266,6 +267,11 @@ export class ReaderSidebar extends Component {
 						onNavigate={ this.handleSidebarMenuClick( TrackingKeys.manageSubscriptions ) }
 						customIcon={ <ReaderManageSubscriptionsIcon size={ 24 } viewBox="0 0 24 24" /> }
 						link="/reader/subscriptions"
+					/>
+					<CollapseSidebar
+						key="collapse"
+						title={ translate( 'Collapse menu' ) }
+						icon="dashicons-admin-collapse"
 					/>
 					{ /*
 					Keep a separator at the end to avoid having the last item covered by browser breadcrumbs,

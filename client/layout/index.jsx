@@ -499,7 +499,10 @@ export default withCurrentRoute(
 			userAllowedToHelpCenter: ! getIsOnboardingAffiliateFlow( state ),
 			currentRoute,
 			isGlobalSidebarVisible,
-			isGlobalSidebarCollapsed: shouldShowCollapsedGlobalSidebar && ! sidebarIsHidden,
+			isGlobalSidebarCollapsed:
+				( shouldShowCollapsedGlobalSidebar ||
+					( sectionName === 'reader' && getSidebarIsCollapsed( state ) ) ) &&
+				! sidebarIsHidden,
 			isUnifiedSiteSidebarVisible: shouldShowUnifiedSiteSidebar && ! sidebarIsHidden,
 			isNewUser: isUserNewerThan( WEEK_IN_MILLISECONDS )( state ),
 			isGravatarDomain,
