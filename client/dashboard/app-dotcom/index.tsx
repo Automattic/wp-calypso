@@ -16,6 +16,7 @@ import type {
 import './style.scss';
 
 boot( {
+	id: 'dotcom',
 	name: 'WordPress.com',
 	basePath: '/',
 	mainRoute: '/sites',

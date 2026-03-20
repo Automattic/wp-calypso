@@ -28,7 +28,10 @@ export type MeSupports = {
 	apps: boolean;
 };
 
+export type AppId = 'dotcom' | 'ciab';
+
 export type AppConfig = {
+	id: AppId;
 	name: string;
 	basePath: string;
 	mainRoute: string;
@@ -63,6 +66,7 @@ export type AppConfig = {
 };
 
 export const APP_CONTEXT_DEFAULT_CONFIG: AppConfig = {
+	id: 'dotcom',
 	name: '',
 	basePath: '',
 	mainRoute: '',

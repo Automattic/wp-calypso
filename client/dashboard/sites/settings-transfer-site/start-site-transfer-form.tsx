@@ -14,7 +14,8 @@ import React, { useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
 import { SectionHeader } from '../../components/section-header';
-import type { Site, SiteOwnerTransferContext } from '@automattic/api-core';
+import type { AppId } from '../../app/context';
+import type { Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 export type StartSiteTransferFormData = {
@@ -69,7 +70,7 @@ export function StartSiteTransferForm( {
 }: {
 	site: Site;
 	newOwnerEmail: string;
-	context?: SiteOwnerTransferContext;
+	context?: AppId;
 	onSubmit: () => void;
 	onBack: () => void;
 } ) {

@@ -14,7 +14,7 @@ import { ConfirmNewOwnerForm, ConfirmNewOwnerFormData } from './confirm-new-owne
 import { EmailConfirmation } from './email-confirmation';
 import { InvitationEmailSent } from './invitation-email-sent';
 import { StartSiteTransferForm } from './start-site-transfer-form';
-import type { SiteOwnerTransferContext } from '@automattic/api-core';
+import type { AppId } from '../../app/context';
 
 const MIN_STEP = 0;
 
@@ -50,7 +50,7 @@ export default function SettingsTransferSite( {
 	context,
 }: {
 	siteSlug: string;
-	context?: SiteOwnerTransferContext;
+	context?: AppId;
 } ) {
 	const { user } = useAuth();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );

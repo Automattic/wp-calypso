@@ -17,6 +17,7 @@ import type {
 import './style.scss';
 
 boot( {
+	id: 'ciab',
 	name: 'CIAB',
 	posthog: config.isEnabled( 'posthog-tracking' ) ? config( 'ciab_posthog_api_key' ) : undefined,
 	basePath: '/',

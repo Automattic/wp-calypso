@@ -6,11 +6,10 @@ import {
 import { mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
 import { siteQueryFilter } from './site';
-import type { SiteOwnerTransferContext } from '@automattic/api-core';
 
 export const siteOwnerTransferMutation = ( siteId: number ) =>
 	mutationOptions( {
-		mutationFn: ( data: { new_site_owner: string; context?: SiteOwnerTransferContext } ) =>
+		mutationFn: ( data: { new_site_owner: string; context?: string } ) =>
 			startSiteOwnerTransfer( siteId, data ),
 	} );
 

@@ -1,9 +1,9 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { SiteOwnerTransferContext, SiteOwnerTransferConfirmation } from './types';
+import type { SiteOwnerTransferConfirmation } from './types';
 
 export async function startSiteOwnerTransfer(
 	siteId: number,
-	data: { new_site_owner: string; context?: SiteOwnerTransferContext }
+	data: { new_site_owner: string; context?: string }
 ) {
 	return wpcom.req.post(
 		{

@@ -64,8 +64,8 @@ import { hasSiteTrialEnded } from '../../utils/site-trial';
 import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { AUTH_QUERY_KEY } from '../auth';
+import { useAppContext, type AppConfig } from '../context';
 import { rootRoute } from './root';
-import type { AppConfig } from '../context';
 import type { DifmWebsiteContentResponse, Site, User } from '@automattic/api-core';
 import type { AnyRoute } from '@tanstack/react-router';
 
@@ -1110,9 +1110,10 @@ export const siteSettingsTransferSiteRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../sites/settings-transfer-site' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-transfer-site' )( {
-			component: () => (
-				<d.default siteSlug={ siteRoute.useParams().siteSlug } context="dashboard_v2" />
-			),
+			component: function TransferSite() {
+				const { id } = useAppContext();
+				return <d.default siteSlug={ siteRoute.useParams().siteSlug } context={ id } />;
+			},
 		} )
 	)
 );
