@@ -39,7 +39,7 @@ export default function useAdminBarIntegration( {
 	maybeOpenChat,
 	navigate,
 }: UseAdminBarIntegrationOptions ) {
-	// Ref to avoid re-attaching DOM event listeners when the caller passes a new maybeOpenChat reference.
+	// Ref to avoid re-attaching DOM event listeners when the caller passes a new `maybeOpenChat` reference.
 	const maybeOpenChatRef = useRef( maybeOpenChat );
 	maybeOpenChatRef.current = maybeOpenChat;
 
