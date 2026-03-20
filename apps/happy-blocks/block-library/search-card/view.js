@@ -26,7 +26,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
 
 			e.preventDefault();
 
-			input.value = query.toLowerCase();
+			input.value = query;
 
 			const groupIdField = form ? form.querySelector( 'input[name="group_id"]' ) : null;
 			if ( groupIdField && window.JetpackInstantSearchOptions?.staticFilters ) {
