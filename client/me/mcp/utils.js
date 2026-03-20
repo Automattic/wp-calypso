@@ -89,3 +89,47 @@ export function getDisabledSiteIds( userSettings ) {
 		.filter( ( site ) => site.account_tools_enabled === false )
 		.map( ( site ) => site.blog_id );
 }
+
+/**
+ * Enable all account-level MCP tools and add site exceptions so MCP is only available on
+ * `selectedSiteId` for the visible sites list (every other visible site is blocked).
+ * @param {Object} userSettings
+ * @param {Array<{ ID: number }>} visibleSites Sites from the user’s visible sites list.
+ * @param {number} selectedSiteId Site that should keep MCP access.
+ * @returns {{ mcp_abilities: { account: Record<string, boolean>, sites: Array<{ blog_id: number, account_tools_enabled: boolean }> } } | null} Null if there are no account tools to enable.
+ */
+export function buildMcpAllowSingleSitePayload( userSettings, visibleSites, selectedSiteId ) {
+	const abilities = getAccountMcpAbilities( userSettings || {} );
+	const toolIds = Object.keys( abilities );
+	if ( toolIds.length === 0 ) {
+		return null;
+	}
+
+	const account = {};
+	toolIds.forEach( ( toolId ) => {
+		account[ toolId ] = true;
+	} );
+
+	const sites = visibleSites
+		.filter( ( site ) => site.ID !== selectedSiteId )
+		.map( ( site ) => ( {
+			blog_id: site.ID,
+			account_tools_enabled: false,
+		} ) );
+
+	// Clear a previous site exception for the selected site, if any.
+	const disabledIds = getDisabledSiteIds( userSettings || {} );
+	if ( disabledIds.includes( selectedSiteId ) ) {
+		sites.push( {
+			blog_id: selectedSiteId,
+			account_tools_enabled: true,
+		} );
+	}
+
+	return {
+		mcp_abilities: {
+			account,
+			sites,
+		},
+	};
+}

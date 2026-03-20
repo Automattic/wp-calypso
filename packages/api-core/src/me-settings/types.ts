@@ -20,6 +20,8 @@ export type McpAbility = {
 	category_label?: string;
 	type: string;
 	enabled: boolean;
+	/** When false, hide this tool from account settings UIs. */
+	visible?: boolean;
 	annotations?: McpAbilityAnnotations;
 };
 
@@ -75,6 +77,8 @@ export interface UserSettings {
 
 	primary_site_ID?: number;
 	mcp_abilities?: McpAbilities;
+	/** When true, account-level AI assistant features are enabled (requires API support). */
+	ai_assistant?: boolean;
 
 	// Username change related fields
 	email_verified?: boolean;
