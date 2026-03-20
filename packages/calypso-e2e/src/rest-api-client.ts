@@ -670,6 +670,35 @@ export class RestAPIClient {
 	}
 
 	/**
+	 * Gets a post by its URL.
+	 *
+	 * @param {number} siteID Target site ID.
+	 * @param {string} postURL URL of the post to retrieve.
+	 */
+	async getPostByURL( siteID: number, postURL: string ): Promise< PostResponse > {
+		const params: RequestParams = {
+			method: 'get',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		const url = this.getRequestURL( '1.1', `/sites/${ siteID }/post` );
+		url.searchParams.set( 'url', postURL );
+
+		const response = await this.sendRequest( url, params );
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
+	}
+
+	/**
 	 * Creates a post on the site.
 	 *
 	 * @param {number} siteID Target site ID.

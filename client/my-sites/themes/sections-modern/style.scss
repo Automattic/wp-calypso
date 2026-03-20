@@ -7,7 +7,7 @@
 	--theme-section-text: var(--studio-gray-100);
 	--theme-section-text-secondary: var(--studio-gray-80);
 
-	margin-bottom: 96px;
+	margin-bottom: 108px;
 	padding-inline: 24px;
 
 	&:last-child {
@@ -21,7 +21,7 @@
 	--theme-section-text-secondary: var(--studio-gray-10);
 
 	background-color: var(--theme-section-bg);
-	padding: 24px 24px 96px 24px;
+	padding: 48px 24px 96px 24px;
 }
 
 .theme-section-header {
@@ -64,11 +64,13 @@
 .theme-section-header__button.components-button.is-secondary {
 	--wp-components-color-accent: var(--studio-gray-80);
 	--wp-components-color-accent-darker-20: var(--studio-gray-100);
+	padding-left: 20px;
+	padding-right: 20px;
 }
 
 .theme-section-modern__grid {
 	display: grid;
-	gap: 24px;
+	gap: 48px;
 	grid-template-columns: 1fr;
 	margin: 0 auto;
 	max-width: 1220px;
@@ -96,7 +98,12 @@
 }
 
 .recommended-sections .banner-modern {
-	margin: 96px auto;
+	margin: 108px auto;
 	max-width: calc( 1220px - 48px);
 	width: calc( 100% - 48px - 48px);
+
+	@include break-mobile {
+		max-width: calc( 1220px - 80px);
+		width: calc( 100% - 48px - 80px);
+	}
 }

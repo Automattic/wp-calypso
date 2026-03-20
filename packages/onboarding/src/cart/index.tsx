@@ -7,7 +7,6 @@ import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import debugFactory from 'debug';
 import { getLocaleSlug } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
-import wpcomRequest from 'wpcom-proxy-request';
 import {
 	setupSiteAfterCreation,
 	isTailoredSignupFlow,
@@ -15,6 +14,7 @@ import {
 	isAnyHostingFlow,
 	AI_SITE_BUILDER_FLOW,
 } from '../';
+import wpcomRequest from '../wpcom-request';
 import cartManagerClient from './create-cart-manager-client';
 import type { DomainSuggestion } from '@automattic/api-core';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';

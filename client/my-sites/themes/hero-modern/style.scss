@@ -45,6 +45,7 @@ $hero-modern-navbar-height: 57px; // UniversalHeaderNavigation
 	font-weight: 400;
 	line-height: 1;
 	margin: 0 0 8px 0;
+	text-wrap: balance;
 
 	@media ( min-width: $break-small ) {
 		font-size: rem(70px);
@@ -56,6 +57,7 @@ $hero-modern-navbar-height: 57px; // UniversalHeaderNavigation
 	font-size: $font-body-large;
 	line-height: 1.5;
 	margin: 0;
+	text-wrap: balance;
 }
 
 .hero-modern__search {
@@ -70,11 +72,15 @@ $hero-modern-navbar-height: 57px; // UniversalHeaderNavigation
 		height: 55px;
 
 		.components-input-control__container {
+			.components-input-control__prefix {
+				color: var(--studio-gray-30);
+			}
 			input.components-input-control__input {
+				color: var(--studio-gray-90);
 				font-size: $font-body;
 			}
 			.components-input-control__backdrop {
-				border-color: var(--studio-gray-5);
+				border-color: transparent;
 				border-radius: 4px;
 			}
 		}

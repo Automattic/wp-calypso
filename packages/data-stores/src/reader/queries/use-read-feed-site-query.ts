@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { buildQueryString } from '@wordpress/url';
-import wpcomRequest from 'wpcom-proxy-request';
+import wpcomRequest from '../../wpcom-request';
 
 export type ReadFeedSiteResponse = {
 	ID: number;

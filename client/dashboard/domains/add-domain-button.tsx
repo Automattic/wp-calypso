@@ -9,7 +9,7 @@ import { useAppContext } from '../app/context';
 import { siteRoute } from '../app/router/sites';
 import { getCurrentDashboard } from '../app/routing';
 import { getDomainConnectionSetupTemplateUrl } from '../utils/domain-url';
-import { wpcomLink } from '../utils/link';
+import { redirectToDashboardLink, wpcomLink } from '../utils/link';
 
 function buildDomainQueryArgs( siteSlug?: string, adminUrl?: string ) {
 	const queryArgs: Record< string, string > = {};
@@ -25,6 +25,8 @@ function buildDomainQueryArgs( siteSlug?: string, adminUrl?: string ) {
 	if ( dashboard === 'ciab' && adminUrl ) {
 		queryArgs.redirect_to = `${ adminUrl }admin.php?page=next-admin&p=%2Fwoocommerce%2Fonboarding`;
 	}
+
+	queryArgs.back_to = redirectToDashboardLink();
 
 	return queryArgs;
 }

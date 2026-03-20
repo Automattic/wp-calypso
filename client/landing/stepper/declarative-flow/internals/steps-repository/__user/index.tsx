@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Step, StepContainer } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
@@ -59,8 +60,10 @@ const UserStepComponent: StepType = function UserStep( {
 	useEffect( () => {
 		if ( wpAccountCreateResponse && 'bearer_token' in wpAccountCreateResponse ) {
 			wpcom.loadToken( wpAccountCreateResponse.bearer_token );
-			reloadProxy();
-			requestAllBlogsAccess();
+			if ( ! config.isEnabled( 'oauth' ) ) {
+				reloadProxy();
+				requestAllBlogsAccess();
+			}
 			// Allow retries of fetching new users after creation. New user sign-ups go to one DC
 			// but follow-up API calls go to the closest DC, which may be different and might not
 			// have replicated the user data yet.

@@ -68,6 +68,11 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 		: undefined;
 
 	const handleToggle = ( enable: boolean ) => {
+		if ( ! enable && isFreeTrial && ! isConfirmModalOpen ) {
+			setIsConfirmModalOpen( true );
+			return;
+		}
+
 		if ( enable ) {
 			recordTracksEvent( 'calypso_dashboard_ai_tool_ai_assistant_enabled' );
 		} else {
