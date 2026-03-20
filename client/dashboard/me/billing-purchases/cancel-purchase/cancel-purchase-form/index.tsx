@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
@@ -5,11 +6,13 @@ import { intlFormat } from 'date-fns';
 import { ButtonStack } from '../../../../components/button-stack';
 import { SectionHeader } from '../../../../components/section-header';
 import { CANCEL_FLOW_TYPE, CancelFlowType } from '../../../../utils/purchase';
+import { getSolutionsForReason } from '../get-solutions-for-reason';
 import { AtomicRevertStep } from './step-components/atomic-revert-step';
 import EducationContentStep from './step-components/educational-content-step';
 import FeedbackStep from './step-components/feedback-step';
 import JetpackCancellationOfferStep from './step-components/jetpack-cancellation-offer-step';
 import NextAdventureStep from './step-components/next-adventure-step';
+import SolutionsCardsUpsellStep from './step-components/solutions-cards-upsell-step';
 import UpsellStep from './step-components/upsell-step';
 import {
 	ATOMIC_REVERT_STEP,
@@ -155,6 +158,25 @@ function SurveyContent( {
 					onDecline={ isLastStep ? onSubmit : clickNext }
 					siteSlug={ siteSlug }
 					type={ upsell }
+				/>
+			);
+		}
+
+		const solutions = getSolutionsForReason( questionOneText ?? '' );
+		const useSolutionsCards =
+			config.isEnabled( 'cancel-flow/solutions-cards-upsell' ) && solutions && solutions.length > 0;
+
+		if ( useSolutionsCards ) {
+			return (
+				<SolutionsCardsUpsellStep
+					cancellationInProgress={ cancellationInProgress }
+					cancellationReason={ questionOneText }
+					closeDialog={ closeDialog }
+					onClickDowngrade={ downgradeClick }
+					onClickFreeMonthOffer={ freeMonthOfferClick }
+					onDeclineUpsell={ isLastStep ? onSubmit : clickNext }
+					plans={ plans }
+					purchase={ purchase }
 				/>
 			);
 		}

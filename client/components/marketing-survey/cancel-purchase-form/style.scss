@@ -247,6 +247,13 @@
 	line-height: 1.8;
 }
 
+.cancel-purchase-form__upsell-solutions-cards {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	margin: 1rem 0;
+}
+
 .cancel-purchase-form__upsell-buttons {
 	display: flex;
 	flex-direction: row;
