@@ -47,6 +47,7 @@ jest.mock( 'calypso/my-sites/invites/invite-accept/utils/normalize-invite', () =
 
 const mockLoggedOutInviteAccept = jest.fn();
 const mockAlreadyMemberScreen = jest.fn();
+const mockInvalidInviteScreen = jest.fn();
 
 jest.mock( 'calypso/my-sites/invites/invite-accept-logged-out', () => ( {
 	__esModule: true,
@@ -67,6 +68,14 @@ jest.mock( '../screens/already-member-screen', () => ( {
 	default: ( props: unknown ) => {
 		mockAlreadyMemberScreen( props );
 		return <div data-testid="already-member-screen">AlreadyMemberScreen</div>;
+	},
+} ) );
+
+jest.mock( '../screens/invalid-invite-screen', () => ( {
+	__esModule: true,
+	default: ( props: unknown ) => {
+		mockInvalidInviteScreen( props );
+		return <div data-testid="invalid-invite-screen">InvalidInviteScreen</div>;
 	},
 } ) );
 
@@ -101,6 +110,7 @@ describe( 'UnifiedInviteAccept', () => {
 		mockTopBar.mockClear();
 		mockLoggedOutInviteAccept.mockClear();
 		mockAlreadyMemberScreen.mockClear();
+		mockInvalidInviteScreen.mockClear();
 		mockNormalizeInvite.mockReturnValue( {
 			inviteKey: 'abc123',
 			role: 'administrator',
@@ -277,5 +287,62 @@ describe( 'UnifiedInviteAccept', () => {
 
 		expect( screen.queryByTestId( 'already-member-screen' ) ).not.toBeInTheDocument();
 		expect( screen.getByTestId( 'accept-invite-screen' ) ).toBeVisible();
+	} );
+
+	describe( 'invalid invite errors', () => {
+		test.each( [
+			[ 'unauthorized_created_by_self', 'You cannot use an invite that you created' ],
+			[ 'invalid_input_invite_used', 'This invite has already been used' ],
+			[ 'invalid_input_incorrect_site', 'This invite is for a different site' ],
+			[ 'unknown_invite', 'This invite does not exist' ],
+		] )( 'renders InvalidInviteScreen for %s error when logged in', ( errorCode, errorMessage ) => {
+			const store = mockStore( { currentUser: { id: 1 } } );
+
+			render(
+				<Provider store={ store }>
+					<UnifiedInviteAccept
+						{ ...defaultProps }
+						inviteError={ { error: errorCode, message: errorMessage } }
+					/>
+				</Provider>
+			);
+
+			expect( screen.getByTestId( 'invalid-invite-screen' ) ).toBeVisible();
+			expect( screen.queryByTestId( 'accept-invite-screen' ) ).not.toBeInTheDocument();
+			expect( mockInvalidInviteScreen ).toHaveBeenCalledWith(
+				expect.objectContaining( {
+					inviteError: { error: errorCode, message: errorMessage },
+				} )
+			);
+		} );
+
+		test.each( [
+			[ 'unauthorized_created_by_self', 'You cannot use an invite that you created' ],
+			[ 'invalid_input_invite_used', 'This invite has already been used' ],
+			[ 'invalid_input_incorrect_site', 'This invite is for a different site' ],
+			[ 'unknown_invite', 'This invite does not exist' ],
+		] )(
+			'renders InvalidInviteScreen for %s error when logged out',
+			( errorCode, errorMessage ) => {
+				const store = mockStore( { currentUser: { id: null } } );
+
+				render(
+					<Provider store={ store }>
+						<UnifiedInviteAccept
+							{ ...defaultProps }
+							inviteError={ { error: errorCode, message: errorMessage } }
+						/>
+					</Provider>
+				);
+
+				expect( screen.getByTestId( 'invalid-invite-screen' ) ).toBeVisible();
+				expect( screen.queryByTestId( 'logged-out-invite-screen' ) ).not.toBeInTheDocument();
+				expect( mockInvalidInviteScreen ).toHaveBeenCalledWith(
+					expect.objectContaining( {
+						inviteError: { error: errorCode, message: errorMessage },
+					} )
+				);
+			}
+		);
 	} );
 } );

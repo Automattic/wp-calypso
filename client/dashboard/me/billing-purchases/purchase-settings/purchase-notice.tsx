@@ -144,6 +144,8 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 			</>
 		);
 	}
+
+	return cancellationOfferNotice;
 }
 
 function shouldShowExpiredRenewNotice(

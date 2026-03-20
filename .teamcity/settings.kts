@@ -148,6 +148,14 @@ object BuildBaseImages : BuildType({
 	params {
 		param("build.prefix", "1.0")
 		param("image_tag", "latest")
+		checkbox(
+			name = "PROFILE",
+			value = "false",
+			label = "Enable profiling",
+			description = "Enables webpack progress and filesystem cache profiling while building the base images.",
+			checked = "true",
+			unchecked = "false"
+		)
 	}
 
 	vcs {
@@ -163,7 +171,7 @@ object BuildBaseImages : BuildType({
 					path = "Dockerfile.base"
 				}
 				namesAndTags = "registry.a8c.com/calypso/base:%build.number%"
-				commandArgs = "--no-cache --target base --build-arg workers=32 --build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber}"
+				commandArgs = "--no-cache --target base --build-arg workers=32 --build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber} --build-arg profile=%PROFILE%"
 			}
 			param("dockerImage.platform", "linux")
 		}
@@ -174,7 +182,7 @@ object BuildBaseImages : BuildType({
 					path = "Dockerfile.base"
 				}
 				namesAndTags = "registry.a8c.com/calypso/ci-e2e:%build.number%"
-				commandArgs = "--target ci-e2e --build-arg workers=32 --build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber}"
+				commandArgs = "--target ci-e2e --build-arg workers=32 --build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber} --build-arg profile=%PROFILE%"
 			}
 			param("dockerImage.platform", "linux")
 		}
@@ -185,7 +193,7 @@ object BuildBaseImages : BuildType({
 					path = "Dockerfile.base"
 				}
 				namesAndTags = "registry.a8c.com/calypso/ci-wpcom:%build.number%"
-				commandArgs = "--target ci-wpcom --build-arg workers=32 --build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber}"
+				commandArgs = "--target ci-wpcom --build-arg workers=32 --build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber} --build-arg profile=%PROFILE%"
 			}
 			param("dockerImage.platform", "linux")
 		}

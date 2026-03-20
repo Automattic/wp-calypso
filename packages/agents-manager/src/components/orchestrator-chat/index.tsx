@@ -15,10 +15,9 @@ import useConversation from '../../hooks/use-conversation';
 import useCopyAction from '../../hooks/use-copy-action';
 import useFeedbackAction from '../../hooks/use-feedback-action';
 import useSaveNewChatRoute from '../../hooks/use-save-new-chat-route';
-import { setSessionId } from '../../utils/agent-session';
 import {
 	convertToolMessagesToComponents,
-	disablePickersAndRemoveNextButton,
+	deactivateStaleMessages,
 } from '../../utils/process-tool-messages';
 import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
@@ -151,7 +150,6 @@ export default function OrchestratorChat( {
 
 			// Sync local session ID with the server's
 			if ( configSessionId !== serverSessionId ) {
-				setSessionId( serverSessionId, agentId );
 				navigate( '/chat', { state: { sessionId: serverSessionId }, replace: true } );
 			}
 		},
@@ -159,8 +157,8 @@ export default function OrchestratorChat( {
 		enabled: ! hasCachedConversation,
 	} );
 
-	// Save new chat route for cross-domain conversation restore.
-	useSaveNewChatRoute( agentId, messages );
+	// Persist the chat route so the conversation can be resumed later.
+	useSaveNewChatRoute( messages );
 
 	// Register an "Undo" action on agent messages with checkpoints.
 	const checkpoint = useCheckpoint?.();
@@ -350,8 +348,8 @@ export default function OrchestratorChat( {
 		// Cache current conversation messages to restore when navigating back from history.
 		cachedConversation = {
 			sessionId: getActiveSessionId(),
-			// Disable stale picker components and strip `next-step-button` before caching.
-			messages: disablePickersAndRemoveNextButton( displayedMessages ),
+			// Deactivate interactive elements before caching.
+			messages: deactivateStaleMessages( displayedMessages ),
 		};
 	};
 

@@ -16,7 +16,6 @@ import useSetupCustomActions from '../../hooks/use-setup-custom-actions';
 import { useShouldUseUnifiedAgent } from '../../hooks/use-should-use-unified-agent';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { LocalConversationListItem } from '../../types';
-import { setSessionId } from '../../utils/agent-session';
 import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import OrchestratorChat from '../orchestrator-chat';
@@ -131,7 +130,13 @@ export default function AgentDock( {
 		setDesktopMediaQuery,
 	} );
 
-	const handleAbort = () => getAgentManager().abortCurrentRequest( agentId );
+	const handleAbort = useCallback( () => {
+		const agentManager = getAgentManager();
+
+		if ( agentManager.hasAgent( agentId ) ) {
+			agentManager.abortCurrentRequest( agentId );
+		}
+	}, [ agentId ] );
 
 	const handleChatHasMessagesChange = useCallback(
 		( hasMessages: boolean ) => setIsOrchestratorChatEmpty( ! hasMessages ),
@@ -141,8 +146,6 @@ export default function AgentDock( {
 		( hasMessages: boolean ) => setIsZendeskChatEmpty( ! hasMessages ),
 		[]
 	);
-
-	const handleNewChat = () => navigate( '/' );
 
 	const handleClose = isDocked ? closeSidebar : () => setIsOpen( false );
 
@@ -160,7 +163,6 @@ export default function AgentDock( {
 			const sessionId = conversation.session_id || '';
 
 			handleAbort();
-			setSessionId( sessionId, agentId );
 			navigate( '/chat', { state: { sessionId } } );
 		}
 	};
@@ -171,7 +173,7 @@ export default function AgentDock( {
 				icon: comment,
 				title: __( 'New chat', '__i18n_text_domain__' ),
 				isDisabled: pathname === '/chat' && isOrchestratorChatEmpty,
-				onClick: handleNewChat,
+				onClick: () => navigate( '/' ),
 			},
 			shouldUseUnifiedAgent && {
 				icon: lifesaver,
@@ -248,7 +250,6 @@ export default function AgentDock( {
 			onClose={ handleClose }
 			onExpand={ handleExpand }
 			onSelectConversation={ handleSelectConversation }
-			onNewChat={ handleNewChat }
 		/>
 	);
 

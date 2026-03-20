@@ -1,8 +1,7 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { Spinner } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { Button as CoreButton } from '@wordpress/components';
+import { Button as CoreButton, Spinner } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize, translate } from 'i18n-calypso';
 import { find, flowRight, isEqual } from 'lodash';
@@ -41,7 +40,7 @@ import { getEmailStat, isRequestingEmailStats } from 'calypso/state/stats/emails
 import { getPeriodWithFallback, getCharts } from 'calypso/state/stats/emails/utils';
 import { getPostStat, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import DatePicker from '../stats-date-picker';
+import DatePicker from '../stats-date-label';
 import StatsDetailsNavigation from '../stats-details-navigation';
 import ChartTabs from '../stats-email-chart-tabs';
 import StatsEmailTopRow from '../stats-email-top-row';
@@ -443,7 +442,7 @@ class StatsEmailDetail extends Component {
 							</WebPreview>
 						</>
 					) : (
-						<Spinner baseClassName="calypso-spinner" />
+						<Spinner />
 					) }
 				</Main>
 			</>

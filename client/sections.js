@@ -70,6 +70,12 @@ const sections = [
 		group: 'me',
 	},
 	{
+		name: 'telegram-connect',
+		paths: [ '/telegram-connect' ],
+		module: 'calypso/telegram-connect',
+		enableLoggedOut: true,
+	},
+	{
 		name: 'notification-settings',
 		paths: [ '/me/notifications' ],
 		module: 'calypso/me/notification-settings',

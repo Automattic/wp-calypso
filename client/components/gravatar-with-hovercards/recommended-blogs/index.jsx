@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
 import { shuffle } from 'lodash';
 import { useFeedRecommendationsQuery } from 'calypso/data/reader/use-feed-recommendations-query';
-import { RecommendedFeed } from 'calypso/reader/recommended-feed';
+import { RecommendedFeedsList } from 'calypso/reader/recommended-feeds-list';
 
 function RecommendedBlogs( { userLogin, closeCard } ) {
 	const translate = useTranslate();
@@ -36,21 +36,11 @@ function RecommendedBlogs( { userLogin, closeCard } ) {
 					{ translate( 'View all' ) }
 				</a>
 			</div>
-			<ul className="gravatar-hovercard__recommended-blogs-list">
-				{ shuffle( recommendedBlogs )
-					.slice( 0, 3 )
-					.map( ( blog ) => (
-						<li key={ blog.ID }>
-							<RecommendedFeed
-								key={ blog.ID }
-								blog={ blog }
-								classPrefix="gravatar-hovercard"
-								compact
-								onLinkClick={ closeCard }
-							/>
-						</li>
-					) ) }
-			</ul>
+			<RecommendedFeedsList
+				feeds={ shuffle( recommendedBlogs ).slice( 0, 3 ) }
+				followSource="gravatar-hovercard__recommended-feeds-list"
+				variant="compact"
+			/>
 		</div>
 	);
 }

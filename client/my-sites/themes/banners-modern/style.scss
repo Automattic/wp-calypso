@@ -16,6 +16,9 @@
 	@include break-mobile {
 		max-width: 60%;
 	}
+	@include break-large {
+		max-width: 40%;
+	}
 }
 
 .banner-modern__title {
@@ -75,6 +78,7 @@
 			var(--ai-builder-banner-linear-gradient-overlay),
 			url( ./ai-builder-background.png ) no-repeat bottom right -400px / cover,
 			var(--ai-builder-banner-linear-gradient-underlay);
+		padding: 40px;
 	}
 	@include break-medium {
 		background:
@@ -170,13 +174,20 @@
 	padding-bottom: 288px;
 
 	@include break-mobile {
-		background: url( ./difm-background.png ) no-repeat center right 24px / 35%;
+		background: url( ./difm-background.png ) no-repeat center right 40px / 35%;
 		background-color: var( --studio-gray-0 );
-		padding: 24px;
+		padding: 40px;
 	}
-
 	@include break-medium {
 		padding-bottom: 72px;
 		padding-top: 72px;
+	}
+	@include break-large {
+		background: url( ./difm-background.png ) no-repeat center right 40px / 50%;
+		background-color: var( --studio-gray-0 );
+	}
+	@include break-xlarge {
+		background: url( ./difm-background.png ) no-repeat center right 40px / 40%;
+		background-color: var( --studio-gray-0 );
 	}
 }

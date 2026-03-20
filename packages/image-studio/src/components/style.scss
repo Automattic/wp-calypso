@@ -58,6 +58,40 @@ body.js.is-image-studio-open {
 	max-height: 100vh;
 	border-radius: 0;
 	transition: background-color 1s ease;
+	// Override host theme styles that leak into the modal.
+	// WordPress core sets `color: rgb(30, 30, 30)` on `.components-modal__frame button`.
+	// P2 theme sets `button:not(.toggle) { background-color: transparent }`.
+	// These break agenttic-ui's dark theme styling. The !important is needed to
+	// beat host theme specificity.
+	color: #fff !important;
+
+	button,
+	input,
+	select,
+	textarea {
+		color: inherit !important;
+	}
+
+	// Restore agenttic-ui button backgrounds stripped by P2's
+	// `button:not(.toggle) { background-color: transparent }` reset.
+	// That selector (1 class + 1 element) beats agenttic-ui's single-class
+	// selectors like `.button-module_primary`. This re-scopes the fix to
+	// only agenttic-ui buttons inside the modal.
+	.agenttic button[class*="button-module_primary"]:not(:disabled) {
+		background-color: var(--color-primary, #2d5af2) !important;
+	}
+
+	// Override host theme SVG fill/stroke rules for icon rendering.
+	// P2 and other themes apply global CSS fill properties on SVG elements,
+	// which override the fill/stroke inheritance used by @wordpress/icons
+	// and agenttic-ui icons (lucide-react).
+	svg:not([fill]) {
+		fill: currentColor !important;
+	}
+
+	svg[fill="none"] {
+		fill: none !important;
+	}
 
 	// Reset modal component defaults
 	h1,

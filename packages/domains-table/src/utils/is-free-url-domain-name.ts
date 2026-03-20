@@ -3,6 +3,8 @@
  * mylinkinbio.w.link.
  *
  * We need to update this function every time a new free managed subdomain is added to WPCOM.
+ * The .blog subdomain list is also duplicated in
+ * packages/domain-search/src/helpers/is-blog-subdomain-query.ts — keep both in sync.
  */
 export function isFreeUrlDomainName( domainName: string ): boolean {
 	const freeDotBlogSubdomains = [

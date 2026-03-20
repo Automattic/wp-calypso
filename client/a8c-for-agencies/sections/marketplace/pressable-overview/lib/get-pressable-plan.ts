@@ -524,6 +524,41 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		storage: 1,
 		category: PRODUCT_CATEGORY_PRESSABLE_ADDON,
 	},
+	'pressable-addon-storage-2gb': {
+		slug: 'pressable-addon-storage-2gb',
+		install: 0,
+		visits: 0,
+		storage: 2,
+		category: PRODUCT_CATEGORY_PRESSABLE_ADDON,
+	},
+	'pressable-addon-storage-4gb': {
+		slug: 'pressable-addon-storage-4gb',
+		install: 0,
+		visits: 0,
+		storage: 4,
+		category: PRODUCT_CATEGORY_PRESSABLE_ADDON,
+	},
+	'pressable-addon-storage-8gb': {
+		slug: 'pressable-addon-storage-8gb',
+		install: 0,
+		visits: 0,
+		storage: 8,
+		category: PRODUCT_CATEGORY_PRESSABLE_ADDON,
+	},
+	'pressable-addon-storage-16gb': {
+		slug: 'pressable-addon-storage-16gb',
+		install: 0,
+		visits: 0,
+		storage: 16,
+		category: PRODUCT_CATEGORY_PRESSABLE_ADDON,
+	},
+	'pressable-addon-storage-32gb': {
+		slug: 'pressable-addon-storage-32gb',
+		install: 0,
+		visits: 0,
+		storage: 32,
+		category: PRODUCT_CATEGORY_PRESSABLE_ADDON,
+	},
 };
 
 export default function getPressablePlan( slug: string ) {

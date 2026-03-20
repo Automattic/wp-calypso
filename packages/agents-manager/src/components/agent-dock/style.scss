@@ -604,62 +604,64 @@ body.post-new-php.agents-manager-sidebar-container {
 }
 
 /* Agenttic UI: Styles for the docked chat */
-.agents-manager-chat--docked .agenttic {
-	.Message-module_message {
-		.big-sky__dock__menu__variation-picker {
-			min-height: unset;
+@include docked-chat-without-modal {
+	.agenttic {
+		.Message-module_message {
+			.big-sky__dock__menu__variation-picker {
+				min-height: unset;
 
-			.edit-site-global-styles-variations_item {
-				&.is-active,
-				&:focus-visible {
+				.edit-site-global-styles-variations_item {
+					&.is-active,
+					&:focus-visible {
+						.edit-site-global-styles-variations_item-preview {
+							outline: 1px solid $gray-400;
+							outline-offset: 1px;
+						}
+					}
+
+					&:not( .is-active ):hover {
+						.edit-site-global-styles-variations_item-preview {
+							outline-color: $gray-600;
+						}
+					}
+
 					.edit-site-global-styles-variations_item-preview {
-						outline: 1px solid $gray-400;
-						outline-offset: 1px;
+						outline: 1px solid #545454;
+						overflow: hidden;
 					}
 				}
+			}
 
-				&:not( .is-active ):hover {
-					.edit-site-global-styles-variations_item-preview {
-						outline-color: $gray-600;
+			.big-sky__item-picker__arrows {
+				bottom: -40px;
+
+				.components-button {
+					color: $gray-700;
+
+					&:not( :disabled ):hover {
+						color: $gray-100;
+					}
+
+					&:disabled {
+						opacity: 0.5;
+					}
+
+					&.is-pressed {
+						color: $gray-100;
+						background-color: #484848;
 					}
 				}
+			}
 
-				.edit-site-global-styles-variations_item-preview {
-					outline: 1px solid #545454;
-					overflow: hidden;
-				}
+			.big-sky__item-picker__pager {
+				color: $gray-400;
 			}
 		}
 
-		.big-sky__item-picker__arrows {
-			bottom: -40px;
-
-			.components-button {
-				color: $gray-700;
-
-				&:not( :disabled ):hover {
-					color: $gray-100;
-				}
-
-				&:disabled {
-					opacity: 0.5;
-				}
-
-				&.is-pressed {
-					color: $gray-100;
-					background-color: #484848;
-				}
-			}
+		// Prevent item picker content overflow (e.g., Patterns)
+		.Message-module_content {
+			width: 100%;
 		}
-
-		.big-sky__item-picker__pager {
-			color: $gray-400;
-		}
-	}
-
-	// Prevent item picker content overflow (e.g., Patterns)
-	.Message-module_content {
-		width: 100%;
 	}
 }
 

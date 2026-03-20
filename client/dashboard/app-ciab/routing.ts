@@ -3,11 +3,12 @@ import config from '@automattic/calypso-config';
 const CIAB_DASHBOARD_ALLOWED_HOSTNAMES = [ 'my.woo.localhost', 'my.woo.ai' ];
 
 export function isAllowedCiabDashboardHostname( hostname?: string ): boolean {
-	return CIAB_DASHBOARD_ALLOWED_HOSTNAMES.includes( hostname ?? '' );
-}
+	// Calypso Live links
+	if ( hostname?.endsWith( '-ciab.calypso.live' ) ) {
+		return true;
+	}
 
-export function getCiabDashboardBasePath( hostname: string ): string {
-	return isAllowedCiabDashboardHostname( hostname ) ? '/' : '/ciab';
+	return CIAB_DASHBOARD_ALLOWED_HOSTNAMES.includes( hostname ?? '' );
 }
 
 export function buildCiabDashboardLink( path: string = '' ) {

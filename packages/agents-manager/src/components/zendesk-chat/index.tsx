@@ -3,6 +3,7 @@ import { useManagedZendeskChat } from '@automattic/zendesk-client';
 import { useEffect } from '@wordpress/element';
 import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
+import ConcludedConversationFooter from '../concluded-conversation-footer';
 import type { Message } from '@automattic/agenttic-ui/dist/types';
 import './style.scss';
 
@@ -35,8 +36,17 @@ export default function ZendeskChat( {
 	markdownExtensions = {},
 	onHasMessagesChange,
 }: Props ) {
-	const { agentticMessages, onSubmit, isLoadingConversation, isProcessing, onTypingStatusChange } =
-		useManagedZendeskChat();
+	const {
+		agentticMessages,
+		onSubmit,
+		isLoadingConversation,
+		isProcessing,
+		onTypingStatusChange,
+		imageUpload,
+		supportedImageTypes,
+		notice,
+		hasInteractionEnded,
+	} = useManagedZendeskChat();
 
 	// Notify parent when has-messages state changes
 	const hasMessages = agentticMessages.length > 0;
@@ -56,11 +66,15 @@ export default function ZendeskChat( {
 			onAbort={ () => {} }
 			isOpen={ isOpen }
 			onClose={ onClose }
+			notice={ notice }
 			onExpand={ onExpand }
 			chatHeaderOptions={ chatHeaderOptions }
 			markdownComponents={ markdownComponents }
 			markdownExtensions={ markdownExtensions }
 			onTypingStatusChange={ onTypingStatusChange }
+			imageUpload={ imageUpload }
+			acceptedImageFileTypes={ supportedImageTypes }
+			alternativeFooter={ hasInteractionEnded ? <ConcludedConversationFooter /> : undefined }
 		/>
 	);
 }

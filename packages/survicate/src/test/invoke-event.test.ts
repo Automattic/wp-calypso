@@ -13,30 +13,76 @@ describe( 'invokeSurvicateEvent', () => {
 		window._sva = undefined;
 	} );
 
-	test( 'should return true and call invokeEvent when window._sva.invokeEvent exists', () => {
+	test( 'should call invokeEvent immediately when window._sva.invokeEvent exists', () => {
 		const invokeEvent = jest.fn();
 		window._sva = { invokeEvent };
 
-		const result = invokeSurvicateEvent( 'testEvent' );
+		invokeSurvicateEvent( 'testEvent' );
 
-		expect( result ).toBe( true );
 		expect( invokeEvent ).toHaveBeenCalledWith( 'testEvent' );
 	} );
 
-	test( 'should return false when window._sva is undefined', () => {
-		window._sva = undefined;
+	test( 'should return a cleanup function', () => {
+		const cleanup = invokeSurvicateEvent( 'testEvent' );
 
-		const result = invokeSurvicateEvent( 'testEvent' );
-
-		expect( result ).toBe( false );
+		expect( typeof cleanup ).toBe( 'function' );
 	} );
 
-	test( 'should return false when invokeEvent is not available on _sva', () => {
+	test( 'should invoke event when SurvicateReady fires and SDK was not ready initially', () => {
+		const invokeEvent = jest.fn();
+		window._sva = undefined;
+
+		invokeSurvicateEvent( 'testEvent' );
+
+		expect( invokeEvent ).not.toHaveBeenCalled();
+
+		window._sva = { invokeEvent };
+		window.dispatchEvent( new Event( 'SurvicateReady' ) );
+
+		expect( invokeEvent ).toHaveBeenCalledWith( 'testEvent' );
+	} );
+
+	test( 'should not invoke event when cleanup is called before SurvicateReady', () => {
+		const invokeEvent = jest.fn();
+
+		const cleanup = invokeSurvicateEvent( 'testEvent' );
+
+		cleanup();
+
+		window._sva = { invokeEvent };
+		window.dispatchEvent( new Event( 'SurvicateReady' ) );
+
+		expect( invokeEvent ).not.toHaveBeenCalled();
+	} );
+
+	test( 'should only invoke once even if SurvicateReady fires multiple times', () => {
+		const invokeEvent = jest.fn();
+		window._sva = undefined;
+
+		invokeSurvicateEvent( 'testEvent' );
+
+		window._sva = { invokeEvent };
+		window.dispatchEvent( new Event( 'SurvicateReady' ) );
+		window.dispatchEvent( new Event( 'SurvicateReady' ) );
+
+		expect( invokeEvent ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	test( 'should not throw when _sva is undefined at SurvicateReady time', () => {
+		window._sva = undefined;
+
+		invokeSurvicateEvent( 'testEvent' );
+
+		expect( () => window.dispatchEvent( new Event( 'SurvicateReady' ) ) ).not.toThrow();
+	} );
+
+	test( 'should not throw when invokeEvent is not available on _sva at SurvicateReady time', () => {
+		window._sva = undefined;
+
+		invokeSurvicateEvent( 'testEvent' );
+
 		window._sva = {};
-
-		const result = invokeSurvicateEvent( 'testEvent' );
-
-		expect( result ).toBe( false );
+		expect( () => window.dispatchEvent( new Event( 'SurvicateReady' ) ) ).not.toThrow();
 	} );
 
 	test( 'should not throw in any case', () => {
