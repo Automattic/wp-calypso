@@ -366,6 +366,7 @@ export function StripeUpiSubmitButton( {
 			fullWidth
 		>
 			{ submitButtonContent }
+			<div className="upi-modal-target" />
 		</Button>
 	);
 }
