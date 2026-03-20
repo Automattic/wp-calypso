@@ -259,20 +259,22 @@ function interpolateReceiptId( url: string, receiptId: number ): string {
  * which is absolute and on an unknown host.
  */
 function isRedirectAllowed( url: string, siteSlug: string | undefined ): boolean {
-	// Handle subdirectory sites (e.g., siteSlug = 'example.com::blog') separately
-	// since they need both hostname and path matching.
+	// Handle subdirectory sites (e.g., siteSlug = 'example.com::blog') which need
+	// both hostname and path matching. If the URL matches the subdirectory site,
+	// allow it; otherwise fall through to the general allowlist check below.
 	if ( siteSlug?.includes( '::' ) && ! url.startsWith( '/' ) ) {
 		try {
 			const parsedUrl = new URL( url );
-			if ( parsedUrl.protocol !== 'https:' && parsedUrl.protocol !== 'http:' ) {
-				return false;
+			if ( parsedUrl.protocol === 'https:' || parsedUrl.protocol === 'http:' ) {
+				const [ hostnameFromSlug, ...subdirectoryParts ] = siteSlug.split( '::' );
+				const subdirectoryPathFromSlug = subdirectoryParts.join( '/' );
+				if (
+					parsedUrl.hostname === hostnameFromSlug &&
+					parsedUrl.pathname?.startsWith( `/${ subdirectoryPathFromSlug }` )
+				) {
+					return true;
+				}
 			}
-			const [ hostnameFromSlug, ...subdirectoryParts ] = siteSlug.split( '::' );
-			const subdirectoryPathFromSlug = subdirectoryParts.join( '/' );
-			return (
-				parsedUrl.hostname === hostnameFromSlug &&
-				!! parsedUrl.pathname?.startsWith( `/${ subdirectoryPathFromSlug }` )
-			);
 		} catch {
 			return false;
 		}
