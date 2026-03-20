@@ -1,9 +1,13 @@
 import { wpcom } from '../wpcom-fetcher';
 import type { User, TwoStep } from './types';
 
-async function decode( text: string ) {
-	const { decode } = await import( 'he' );
-	return decode( text );
+let decode: Promise< typeof import('he').decode > | undefined;
+
+async function decodeText( text: string ) {
+	if ( ! decode ) {
+		decode = ( async () => ( await import( 'he' ) ).decode )();
+	}
+	return ( await decode )( text );
 }
 
 async function decodeEntities( text: string ) {
@@ -11,7 +15,7 @@ async function decodeEntities( text: string ) {
 	if ( 'string' !== typeof text || -1 === text.indexOf( '&' ) ) {
 		return text;
 	}
-	return decode( text );
+	return await decodeText( text );
 }
 
 async function decodeUserObject( user: User ): Promise< User > {
