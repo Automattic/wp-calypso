@@ -28,7 +28,8 @@
 			}
 		}
 
-		&.has-density-medium {
+		&.has-density-medium,
+		&.has-density-medium-low {
 			&:not(:focus-visible, :last-child) {
 				border-bottom: 1px solid color-mix(in srgb, var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9)) 12%, transparent);
 			}
@@ -71,7 +72,8 @@
 		background-color: #fff;
 	}
 
-	&.has-density-medium {
+	&.has-density-medium,
+	&.has-density-medium-low {
 		padding: $grid-unit-20 $grid-unit-30;
 		border-bottom: 1px solid $gray-100;
 		border-radius: 0;

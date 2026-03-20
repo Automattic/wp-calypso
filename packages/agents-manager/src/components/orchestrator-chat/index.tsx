@@ -15,6 +15,7 @@ import useConversation from '../../hooks/use-conversation';
 import useCopyAction from '../../hooks/use-copy-action';
 import useFeedbackAction from '../../hooks/use-feedback-action';
 import useSaveNewChatRoute from '../../hooks/use-save-new-chat-route';
+import { persistLastActivity } from '../../utils/persist-last-activity';
 import {
 	convertToolMessagesToComponents,
 	deactivateStaleMessages,
@@ -91,7 +92,7 @@ export default function OrchestratorChat( {
 	useCheckpoint,
 	onHasMessagesChange,
 }: Props ) {
-	const { agentConfig, getActiveSessionId } = useAgentsManagerContext();
+	const { agentConfig, getActiveSessionId, siteKey } = useAgentsManagerContext();
 
 	const navigate = useNavigate();
 	const [ inputValue, setInputValue ] = useState( '' );
@@ -179,6 +180,8 @@ export default function OrchestratorChat( {
 
 	const onSubmitWithImages = useCallback(
 		async ( message: string ) => {
+			persistLastActivity( siteKey );
+
 			if ( pendingImages.length > 0 && uploadImagesToWordPress ) {
 				try {
 					// Upload files to WordPress media library
@@ -213,7 +216,7 @@ export default function OrchestratorChat( {
 				onSubmit( message );
 			}
 		},
-		[ onSubmit, pendingImages.length, uploadImagesToWordPress ]
+		[ onSubmit, pendingImages.length, siteKey, uploadImagesToWordPress ]
 	);
 
 	// Handle navigation continuation if hook is provided
