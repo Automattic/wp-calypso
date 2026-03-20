@@ -12,8 +12,8 @@ interface AgentConfig {
  * `isLoading` is true until the default agent ID is determined.
  *
  * Query parameters:
- * - `agent`: Override the agent ID (e.g., ?agent=wpcom-workflow-support_chat)
- * - `version`: Override the agent version (e.g., ?version=1.0.25)
+ * - `agent`: Override the agent ID (e.g., `?agent=wpcom-workflow-support_chat`)
+ * - `version`: Override the agent version (e.g., `?version=1.0.25`)
  */
 export function useAgentConfig(): AgentConfig {
 	const { data: useUnifiedExperience, isLoading } = useUnifiedAiChat();
