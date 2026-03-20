@@ -24,6 +24,7 @@ import {
 	removePurchaseMutation,
 	userPreferenceQuery,
 } from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
 import { invokeSurvicateEvent } from '@automattic/survicate';
 import { useSuspenseQuery, useQuery, useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
@@ -75,6 +76,7 @@ import {
 import CancellationPreSurveyContent from './cancellation-pre-survey-content';
 import DomainRemovalFlow from './domain-removal-flow';
 import enrichedSurveyData from './enriched-survey-data';
+import { getSolutionsForReason } from './get-solutions-for-reason';
 import { getUpsellType } from './get-upsell-type';
 import initialSurveyState from './initial-survey-state';
 import MarketPlaceSubscriptionsDialog from './marketplace-subscriptions-dialog';
@@ -774,16 +776,19 @@ export default function CancelPurchase() {
 			recordClickRadioEvent( 'radio_1_2', value );
 		}
 
+		const upsellType = getUpsellType( value, purchase, {
+			canDowngrade: !! downgradeClick,
+			canOfferFreeMonth: !! freeMonthOfferClick && ! hasBeenExtended && ! purchase.is_refundable,
+		} );
+		const hasSolutionsCards =
+			config.isEnabled( 'cancel-flow/solutions-cards-upsell' ) &&
+			( getSolutionsForReason( value )?.length ?? 0 ) > 0;
+
 		setState( ( state ) => ( {
 			...state,
 			questionOneText: value,
 			questionOneDetails: detailsValue || questionOneDetails,
-			upsell:
-				getUpsellType( value, purchase, {
-					canDowngrade: !! downgradeClick,
-					canOfferFreeMonth:
-						!! freeMonthOfferClick && ! hasBeenExtended && ! purchase.is_refundable,
-				} ) || '',
+			upsell: upsellType || ( hasSolutionsCards ? 'solutions-cards' : '' ),
 		} ) );
 	};
 
@@ -1348,6 +1353,10 @@ export default function CancelPurchase() {
 	);
 	const description =
 		state.surveyStep === CANCELLATION_OFFER_STEP ? cancellationOfferDescription : null;
+	const isSolutionsStep =
+		state.surveyStep === UPSELL_STEP &&
+		config.isEnabled( 'cancel-flow/solutions-cards-upsell' ) &&
+		( getSolutionsForReason( state.questionOneText ?? '' )?.length ?? 0 ) > 0;
 	return (
 		<PageLayout
 			size="small"
@@ -1377,101 +1386,157 @@ export default function CancelPurchase() {
 				) )
 			}
 		>
-			<Card>
-				<CardBody>
-					<VStack spacing={ 6 }>
-						<CancelPurchaseForm
-							atomicRevertCheckOne={ state.atomicRevertCheckOne }
-							atomicRevertCheckTwo={ state.atomicRevertCheckTwo }
-							atomicRevertOnClickCheckOne={ atomicRevertOnClickCheckOne }
-							atomicRevertOnClickCheckTwo={ atomicRevertOnClickCheckTwo }
-							atomicTransfer={ atomicTransfer }
-							cancelBundledDomain={ state.cancelBundledDomain }
-							cancellationInProgress={ state.isLoading }
-							cancellationOffer={ cancellationOffer }
-							clickNext={ clickNext }
-							closeDialog={ closeDialog }
-							disableButtons={ state.isLoading }
-							downgradeClick={ downgradeClick }
-							downgradePlan={ downgradePlan }
-							flowType={ flowType }
-							freeMonthOfferClick={ freeMonthOfferClick }
-							hasBackupsFeature={ hasBackupsFeature }
-							importQuestionRadio={ state.importQuestionRadio }
-							includedDomainPurchase={ includedDomainPurchase }
-							isAkismet={ isAkismet }
-							isApplyingOffer={ isApplyingOffer }
-							isImport={ isImport }
-							isNextAdventureValid={ state.isNextAdventureValid }
-							isShowing={ state.isShowingMarketplaceSubscriptionsDialog }
-							isSubmitting={ state.isSubmitting }
-							isVisible={ state.surveyShown }
-							offerDiscountBasedFromPurchasePrice={ offerDiscountBasedFromPurchasePrice }
-							onClickAcceptForCancellationOffer={ onClickAcceptForCancellationOffer }
-							onGetCancellationOffer={ onGetCancellationOffer }
-							onImportRadioChange={ onImportRadioChange }
-							onNextAdventureValidationChange={ onNextAdventureValidationChange }
-							onRadioOneChange={ onRadioOneChange }
-							onRadioTwoChange={ onRadioTwoChange }
-							onSubmit={ onSubmit }
-							onSurveyComplete={ onSurveyComplete }
-							onTextOneChange={ onTextOneChange }
-							onTextThreeChange={ onTextThreeChange }
-							onTextTwoChange={ onTextTwoChange }
-							plans={ plans }
-							purchase={ purchase }
-							questionOneOrder={ state.questionOneOrder }
-							questionOneRadio={ state.questionOneRadio }
-							questionOneText={ state.questionOneText }
-							questionTwoOrder={ state.questionTwoOrder }
-							questionTwoRadio={ state.questionTwoRadio }
-							questionTwoText={ state.questionTwoText }
-							refundAmount={ purchase.total_refund_amount }
-							siteSlug={ siteSlug }
-							solution={ state.solution }
-							surveyStep={ state.surveyStep }
-							allSteps={ allSteps }
-							upsell={ state.upsell }
-						/>
-						{ ! state.surveyShown && (
-							<CancellationPreSurveyContent
-								purchase={ purchase }
-								includedDomainPurchase={ includedDomainPurchase }
+			{ isSolutionsStep ? (
+				<CancelPurchaseForm
+					atomicRevertCheckOne={ state.atomicRevertCheckOne }
+					atomicRevertCheckTwo={ state.atomicRevertCheckTwo }
+					atomicRevertOnClickCheckOne={ atomicRevertOnClickCheckOne }
+					atomicRevertOnClickCheckTwo={ atomicRevertOnClickCheckTwo }
+					atomicTransfer={ atomicTransfer }
+					cancelBundledDomain={ state.cancelBundledDomain }
+					cancellationInProgress={ state.isLoading }
+					cancellationOffer={ cancellationOffer }
+					clickNext={ clickNext }
+					closeDialog={ closeDialog }
+					disableButtons={ state.isLoading }
+					downgradeClick={ downgradeClick }
+					downgradePlan={ downgradePlan }
+					flowType={ flowType }
+					freeMonthOfferClick={ freeMonthOfferClick }
+					hasBackupsFeature={ hasBackupsFeature }
+					importQuestionRadio={ state.importQuestionRadio }
+					includedDomainPurchase={ includedDomainPurchase }
+					isAkismet={ isAkismet }
+					isApplyingOffer={ isApplyingOffer }
+					isImport={ isImport }
+					isNextAdventureValid={ state.isNextAdventureValid }
+					isShowing={ state.isShowingMarketplaceSubscriptionsDialog }
+					isSubmitting={ state.isSubmitting }
+					isVisible={ state.surveyShown }
+					offerDiscountBasedFromPurchasePrice={ offerDiscountBasedFromPurchasePrice }
+					onClickAcceptForCancellationOffer={ onClickAcceptForCancellationOffer }
+					onGetCancellationOffer={ onGetCancellationOffer }
+					onImportRadioChange={ onImportRadioChange }
+					onNextAdventureValidationChange={ onNextAdventureValidationChange }
+					onRadioOneChange={ onRadioOneChange }
+					onRadioTwoChange={ onRadioTwoChange }
+					onSubmit={ onSubmit }
+					onSurveyComplete={ onSurveyComplete }
+					onTextOneChange={ onTextOneChange }
+					onTextThreeChange={ onTextThreeChange }
+					onTextTwoChange={ onTextTwoChange }
+					plans={ plans }
+					purchase={ purchase }
+					questionOneOrder={ state.questionOneOrder }
+					questionOneRadio={ state.questionOneRadio }
+					questionOneText={ state.questionOneText }
+					questionTwoOrder={ state.questionTwoOrder }
+					questionTwoRadio={ state.questionTwoRadio }
+					questionTwoText={ state.questionTwoText }
+					refundAmount={ purchase.total_refund_amount }
+					siteSlug={ siteSlug }
+					solution={ state.solution }
+					surveyStep={ state.surveyStep }
+					allSteps={ allSteps }
+					upsell={ state.upsell }
+				/>
+			) : (
+				<Card>
+					<CardBody>
+						<VStack spacing={ 6 }>
+							<CancelPurchaseForm
+								atomicRevertCheckOne={ state.atomicRevertCheckOne }
+								atomicRevertCheckTwo={ state.atomicRevertCheckTwo }
+								atomicRevertOnClickCheckOne={ atomicRevertOnClickCheckOne }
+								atomicRevertOnClickCheckTwo={ atomicRevertOnClickCheckTwo }
 								atomicTransfer={ atomicTransfer }
-								selectedDomain={ selectedDomain }
-								state={ state }
-								purchaseCancelFeatures={ purchaseCancelFeatures }
-								onCancelConfirmationStateChange={ onCancelConfirmationStateChange }
-								onDomainConfirmationChange={ onDomainConfirmationChange }
-								onCustomerConfirmedUnderstandingChange={ onCustomerConfirmedUnderstandingChange }
-								onKeepSubscriptionClick={ onKeepSubscriptionClick }
-								onCancellationComplete={ onCancellationComplete }
-								onCancellationStart={ onCancellationStart }
-								shouldHandleMarketplaceSubscriptions={ shouldHandleMarketplaceSubscriptions }
-								showMarketplaceDialog={ showMarketplaceDialog }
+								cancelBundledDomain={ state.cancelBundledDomain }
+								cancellationInProgress={ state.isLoading }
+								cancellationOffer={ cancellationOffer }
+								clickNext={ clickNext }
+								closeDialog={ closeDialog }
+								disableButtons={ state.isLoading }
+								downgradeClick={ downgradeClick }
+								downgradePlan={ downgradePlan }
+								flowType={ flowType }
+								freeMonthOfferClick={ freeMonthOfferClick }
+								hasBackupsFeature={ hasBackupsFeature }
+								importQuestionRadio={ state.importQuestionRadio }
+								includedDomainPurchase={ includedDomainPurchase }
+								isAkismet={ isAkismet }
+								isApplyingOffer={ isApplyingOffer }
+								isImport={ isImport }
+								isNextAdventureValid={ state.isNextAdventureValid }
+								isShowing={ state.isShowingMarketplaceSubscriptionsDialog }
+								isSubmitting={ state.isSubmitting }
+								isVisible={ state.surveyShown }
+								offerDiscountBasedFromPurchasePrice={ offerDiscountBasedFromPurchasePrice }
+								onClickAcceptForCancellationOffer={ onClickAcceptForCancellationOffer }
+								onGetCancellationOffer={ onGetCancellationOffer }
+								onImportRadioChange={ onImportRadioChange }
+								onNextAdventureValidationChange={ onNextAdventureValidationChange }
+								onRadioOneChange={ onRadioOneChange }
+								onRadioTwoChange={ onRadioTwoChange }
+								onSubmit={ onSubmit }
+								onSurveyComplete={ onSurveyComplete }
+								onTextOneChange={ onTextOneChange }
+								onTextThreeChange={ onTextThreeChange }
+								onTextTwoChange={ onTextTwoChange }
+								plans={ plans }
+								purchase={ purchase }
+								questionOneOrder={ state.questionOneOrder }
+								questionOneRadio={ state.questionOneRadio }
+								questionOneText={ state.questionOneText }
+								questionTwoOrder={ state.questionTwoOrder }
+								questionTwoRadio={ state.questionTwoRadio }
+								questionTwoText={ state.questionTwoText }
+								refundAmount={ purchase.total_refund_amount }
+								siteSlug={ siteSlug }
+								solution={ state.solution }
+								surveyStep={ state.surveyStep }
+								allSteps={ allSteps }
+								upsell={ state.upsell }
 							/>
-						) }
-						{ shouldHandleMarketplaceSubscriptions() && (
-							<MarketPlaceSubscriptionsDialog
-								activeSubscriptions={ activeSubscriptions }
-								bodyParagraphText={ _n(
-									'This subscription will be cancelled. It will be removed when it expires.',
-									'These subscriptions will be cancelled. They will be removed when they expire.',
-									activeSubscriptions.length
-								) }
-								closeDialog={ closeMarketplaceSubscriptionsDialog }
-								isDialogVisible
-								planName={ planName ?? '' }
-								/* Translators: This button cancels the active plan and all active Marketplace subscriptions on the site */
-								primaryButtonText={ __( 'Continue' ) }
-								removePlan={ handleMarketplaceDialogContinue }
-								/* Translators: %(plan)s is the name of the plan being cancelled */
-								sectionHeadingText={ sprintf( __( 'Cancel %(plan)s' ), { plan: planName } ) }
-							/>
-						) }
-					</VStack>
-				</CardBody>
-			</Card>
+							{ ! state.surveyShown && (
+								<CancellationPreSurveyContent
+									purchase={ purchase }
+									includedDomainPurchase={ includedDomainPurchase }
+									atomicTransfer={ atomicTransfer }
+									selectedDomain={ selectedDomain }
+									state={ state }
+									purchaseCancelFeatures={ purchaseCancelFeatures }
+									onCancelConfirmationStateChange={ onCancelConfirmationStateChange }
+									onDomainConfirmationChange={ onDomainConfirmationChange }
+									onCustomerConfirmedUnderstandingChange={ onCustomerConfirmedUnderstandingChange }
+									onKeepSubscriptionClick={ onKeepSubscriptionClick }
+									onCancellationComplete={ onCancellationComplete }
+									onCancellationStart={ onCancellationStart }
+									shouldHandleMarketplaceSubscriptions={ shouldHandleMarketplaceSubscriptions }
+									showMarketplaceDialog={ showMarketplaceDialog }
+								/>
+							) }
+							{ shouldHandleMarketplaceSubscriptions() && (
+								<MarketPlaceSubscriptionsDialog
+									activeSubscriptions={ activeSubscriptions }
+									bodyParagraphText={ _n(
+										'This subscription will be cancelled. It will be removed when it expires.',
+										'These subscriptions will be cancelled. They will be removed when they expire.',
+										activeSubscriptions.length
+									) }
+									closeDialog={ closeMarketplaceSubscriptionsDialog }
+									isDialogVisible
+									planName={ planName ?? '' }
+									/* Translators: This button cancels the active plan and all active Marketplace subscriptions on the site */
+									primaryButtonText={ __( 'Continue' ) }
+									removePlan={ handleMarketplaceDialogContinue }
+									/* Translators: %(plan)s is the name of the plan being cancelled */
+									sectionHeadingText={ sprintf( __( 'Cancel %(plan)s' ), { plan: planName } ) }
+								/>
+							) }
+						</VStack>
+					</CardBody>
+				</Card>
+			) }
 		</PageLayout>
 	);
 }
