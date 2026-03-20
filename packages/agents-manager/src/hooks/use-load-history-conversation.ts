@@ -28,11 +28,9 @@ export default function useLoadHistoryConversation( {
 }: Config ): Result {
 	const { agentConfig } = useAgentsManagerContext();
 	const { agentId, sessionId, authProvider } = agentConfig!;
-	// Keep refs to the latest callbacks
 	const onSuccessRef = useRef( onSuccess );
 	onSuccessRef.current = onSuccess;
-	// Skip loading on initial mount — `useAgentChat` handles that.
-	// Only fetch when the sessionId changes (e.g., user selects from history).
+	// Only fetch when sessionId changes from the initial value (i.e., user selects from history).
 	const initialSessionIdRef = useRef( sessionId );
 	const isSessionChanged = sessionId !== initialSessionIdRef.current;
 

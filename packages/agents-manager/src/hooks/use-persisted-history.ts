@@ -183,9 +183,8 @@ export const usePersistedHistory = ( siteKey: string ) => {
 		return persistedHistory;
 	}, [ isStale, persistedHistory, siteKey ] );
 
-	// Initialize history from persisted data when available. The lazy initializer
-	// captures `activeHistory` from the closure so the very first render already
-	// has the correct location `state` when the store data is ready.
+	// Build history from persisted data on the first render when available,
+	// so `useLocation().state` (e.g., `sessionId`) is correct immediately.
 	const initializedHistoryRef = useRef( activeHistory );
 	const [ history, setHistory ] = useState< MemoryHistory >( () => {
 		if ( activeHistory ) {
@@ -218,8 +217,7 @@ export const usePersistedHistory = ( siteKey: string ) => {
 		return history.listen( setState );
 	}, [ history ] );
 
-	// Skip if `activeHistory` was already used by the lazy `useState` initializer,
-	// or if a later run sees the same reference (no actual change).
+	// Only rebuild history when `activeHistory` actually changes.
 	useEffect( () => {
 		if ( activeHistory === initializedHistoryRef.current ) {
 			return;
