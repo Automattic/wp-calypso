@@ -186,12 +186,9 @@ export const usePersistedHistory = ( siteKey: string ) => {
 	// Build history from persisted data on the first render when available,
 	// so `useLocation().state` (e.g., `sessionId`) is correct immediately.
 	const initializedHistoryRef = useRef( activeHistory );
-	const [ history, setHistory ] = useState< MemoryHistory >( () => {
-		if ( activeHistory ) {
-			return new MemoryHistory( activeHistory.entries, activeHistory.index );
-		}
-		return new MemoryHistory();
-	} );
+	const [ history, setHistory ] = useState< MemoryHistory >(
+		() => new MemoryHistory( activeHistory?.entries, activeHistory?.index )
+	);
 	const [ state, setState ] = useState< HistoryEvent >( () => ( {
 		action: history.action,
 		location: history.location,
