@@ -205,6 +205,7 @@ function McpComponent() {
 							to="/me/mcp/ai-sites"
 							title={ __( 'Add to specific sites' ) }
 							decoration={ sparklesIcon }
+							density="medium"
 							badges={ [ { text: getSiteCountBadgeText( aiEnabledSiteCount, __( 'No sites' ) ) } ] }
 						/>
 					</Card>
@@ -235,6 +236,7 @@ function McpComponent() {
 						<>
 							<RouterLinkSummaryButton
 								to="/me/mcp/read"
+								density="medium"
 								title={ __( 'Read' ) }
 								decoration={
 									<svg
@@ -259,9 +261,9 @@ function McpComponent() {
 									},
 								] }
 							/>
-							<CardDivider />
 							<RouterLinkSummaryButton
 								to="/me/mcp/write"
+								density="medium"
 								title={ __( 'Write' ) }
 								decoration={
 									<svg
@@ -286,9 +288,9 @@ function McpComponent() {
 									},
 								] }
 							/>
-							<CardDivider />
 							<RouterLinkSummaryButton
 								to="/me/mcp/mcp-sites"
+								density="medium"
 								title={ __( 'Site exceptions' ) }
 								decoration={
 									<svg
@@ -309,6 +311,7 @@ function McpComponent() {
 					) : (
 						<RouterLinkSummaryButton
 							to="/me/mcp/mcp-sites"
+							density="medium"
 							title={ __( 'Add to specific sites' ) }
 							decoration={ broadcastIcon }
 							badges={ [
