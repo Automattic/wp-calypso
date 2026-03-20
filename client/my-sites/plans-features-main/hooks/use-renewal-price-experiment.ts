@@ -24,6 +24,9 @@ export function useRenewalPricingExperiment(
 	const flowFromURL = getFlowFromURL();
 	const flow = flowName || flowFromStorage || flowFromURL;
 
+	// disable for now, until the UI issues are resolved
+	return [ false, null ];
+
 	if ( isAkismetCheckout() || isJetpackCheckout() ) {
 		return [ false, null ];
 	}
