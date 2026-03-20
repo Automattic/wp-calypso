@@ -1,12 +1,24 @@
 import { JetpackLogo } from '@automattic/components/src/logos/jetpack-logo';
 import { WordPressLogo } from '@automattic/components/src/logos/wordpress-logo';
 import { __experimentalHStack as HStack, Icon } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { commentAuthorAvatar, globe } from '@wordpress/icons';
 import { ActivityActorDetails } from './types';
 import './activity-actor.scss';
 
 const ICON_SIZE = 24;
+
+function getMcpIndicator( actor?: ActivityActorDetails ): string | null {
+	if ( ! actor?.isMcpAgent ) {
+		return null;
+	}
+	return actor.mcpClient
+		? sprintf(
+				/* translators: %s: MCP client name and version */ __( 'via %s (MCP)' ),
+				actor.mcpClient
+		  )
+		: __( 'via MCP' );
+}
 
 function getActorPresentation( actor?: ActivityActorDetails ) {
 	let actorName = __( 'Unknown' );
@@ -98,11 +110,15 @@ function getActorPresentation( actor?: ActivityActorDetails ) {
 
 export function ActivityActor( { actor }: { actor?: ActivityActorDetails } ) {
 	const { icon, label } = getActorPresentation( actor );
+	const mcpIndicator = getMcpIndicator( actor );
 
 	return (
 		<HStack spacing="2" alignment="left" className="site-activity-logs__actor">
 			{ icon }
-			<span>{ label }</span>
+			<span>
+				{ label }
+				{ mcpIndicator && <span className="site-activity-logs__actor-mcp">{ mcpIndicator }</span> }
+			</span>
 		</HStack>
 	);
 }

@@ -43,11 +43,6 @@ export default function HeadingInformation( props: Props ) {
 		page( `/setup/domain-transfer/intro?new=${ domain }&search=yes` );
 	};
 
-	const onTransferDomainFree = () => {
-		recordCtaEvent( 'transferDomainGoogle' );
-		page( `/setup/google-transfer/intro?new=${ domain }` );
-	};
-
 	const onMigrateSite = () => {
 		recordCtaEvent( 'migrateSite' );
 		page( `/setup/site-migration?ref=site-profiler&from=${ domain }` );
@@ -141,16 +136,9 @@ export default function HeadingInformation( props: Props ) {
 							{ translate( 'Transfer domain' ) }
 						</Button>
 					) }
-					{ ( finalStatus === 'transfer-google-domain' ||
-						finalStatus === 'transfer-google-domain-hosting' ) && (
-						<Button variant="primary" className="button-action" onClick={ onTransferDomainFree }>
-							{ translate( 'Transfer domain for free' ) }
-						</Button>
-					) }
 					{ ( finalStatus === 'transfer-hosting' ||
 						finalStatus === 'transfer-hosting-wp' ||
-						finalStatus === 'transfer-domain-hosting-wp' ||
-						finalStatus === 'transfer-google-domain-hosting-wp' ) && (
+						finalStatus === 'transfer-domain-hosting-wp' ) && (
 						<Button variant="primary" className="button-action" onClick={ onMigrateSite }>
 							{ translate( 'Migrate site' ) }
 						</Button>

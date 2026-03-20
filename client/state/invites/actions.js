@@ -204,6 +204,39 @@ export function createAccount( userData, invite ) {
 	};
 }
 
+export function createSocialAccount( socialInfo, userData, invite ) {
+	return ( dispatch ) => {
+		const result = wpcom.req.post( '/users/social/new', {
+			...socialInfo,
+			...userData,
+			signup_flow_name: userData?.signup_flow_name || 'invite',
+			locale: getLocaleSlug(),
+			client_id: config( 'wpcom_signup_id' ),
+			client_secret: config( 'wpcom_signup_key' ),
+		} );
+
+		result
+			.then( () => {
+				recordTracksEvent( 'calypso_invite_social_account_created', {
+					is_p2_site: invite.site?.is_wpforteams_site ?? false,
+					inviter_blog_id: invite.site?.ID ?? false,
+					social_account_type: socialInfo.service,
+				} );
+			} )
+			.catch( ( error ) => {
+				if ( error.message ) {
+					dispatch( errorNotice( error.message ) );
+				}
+				recordTracksEvent( 'calypso_invite_social_account_creation_failed', {
+					error: error.error,
+					social_account_type: socialInfo.service,
+				} );
+			} );
+
+		return result;
+	};
+}
+
 export function generateInviteLinks( siteId ) {
 	return async ( dispatch ) => {
 		await wpcom.req.post( {

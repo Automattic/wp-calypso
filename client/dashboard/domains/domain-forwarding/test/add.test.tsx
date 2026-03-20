@@ -37,7 +37,7 @@ test( 'renders domain forwarding form with correct fields', async () => {
 		expect( screen.getByText( /Target URL/ ) ).toBeInTheDocument();
 	} );
 
-	expect( screen.getByText( 'Type' ) ).toBeInTheDocument();
+	expect( screen.getByText( /Type/ ) ).toBeInTheDocument();
 	expect( screen.getByText( /Source URL/ ) ).toBeInTheDocument();
 	expect( screen.getByRole( 'button', { name: 'Add' } ) ).toBeInTheDocument();
 } );
@@ -50,7 +50,7 @@ test( 'hides source URL selector when forceSubdomain is true', async () => {
 	} );
 
 	// Should not show the source type selector when forceSubdomain is true
-	expect( screen.queryByText( 'Type' ) ).not.toBeInTheDocument();
+	expect( screen.queryByText( /Type/ ) ).not.toBeInTheDocument();
 	expect( screen.getByText( /Source URL/ ) ).toBeInTheDocument();
 } );
 
@@ -62,7 +62,7 @@ test( 'shows both root domain and subdomain options when forceSubdomain is false
 	} );
 
 	// Should show the source type selector when forceSubdomain is false
-	expect( screen.getByText( 'Type' ) ).toBeInTheDocument();
+	expect( screen.getByText( /Type/ ) ).toBeInTheDocument();
 } );
 
 test( 'calls onSubmit with correct data when form is submitted', async () => {

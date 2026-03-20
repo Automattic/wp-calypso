@@ -11,6 +11,8 @@ export interface ActivityActorDetails {
 	actorType?: string;
 	isCli?: boolean;
 	isSupport?: boolean;
+	isMcpAgent?: boolean;
+	mcpClient?: string;
 }
 
 export interface ActivityMediaDetails {

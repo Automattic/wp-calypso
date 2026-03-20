@@ -12,10 +12,16 @@ interface Props {
 	onClose: () => void;
 	options: Options;
 	onBack?: () => void;
+	onViewHistory?: () => void;
 }
 
-export default function ChatHeader( { onClose, options, title, onBack }: Props ) {
+export default function ChatHeader( { onClose, options, title, onBack, onViewHistory }: Props ) {
 	const navigate = useNavigate();
+
+	const handleViewHistory = () => {
+		navigate( '/history' );
+		onViewHistory?.();
+	};
 
 	return (
 		<div className="agents-manager-chat-header">
@@ -41,7 +47,7 @@ export default function ChatHeader( { onClose, options, title, onBack }: Props )
 				<Button
 					className="agents-manager-chat-header__history-btn"
 					icon={ backup }
-					onClick={ () => navigate( '/history' ) }
+					onClick={ handleViewHistory }
 					label={ __( 'View history', '__i18n_text_domain__' ) }
 					size="small"
 				/>

@@ -1,5 +1,5 @@
 import apiFetch, { APIFetchOptions } from '@wordpress/api-fetch';
-import wpcomRequest from 'wpcom-proxy-request';
+import wpcomRequest from '../../wpcom-request';
 import isValidId from './validators';
 
 type callApiParams = {

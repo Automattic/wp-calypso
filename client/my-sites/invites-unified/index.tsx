@@ -1,24 +1,27 @@
-import page from '@automattic/calypso-router';
+import { Step } from '@automattic/onboarding';
+import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
+import { getCiabConfigFromGarden } from 'calypso/lib/partner-branding';
+import normalizeInvite from 'calypso/my-sites/invites/invite-accept/utils/normalize-invite';
+import LoggedOutInviteAccept from 'calypso/my-sites/invites/invite-accept-logged-out';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import AcceptInviteScreen from './screens/accept-invite-screen';
 import AlreadyMemberScreen from './screens/already-member-screen';
-import { isAlreadyMemberError } from './utils';
+import InvalidInviteScreen from './screens/invalid-invite-screen';
+import { isAlreadyMemberError, isInvalidInviteError } from './utils';
 import type { Invite, InviteBlogDetails, InviteError } from './types';
 
-/**
- * Build the legacy invite path for fallback redirects
- */
-function buildLegacyPath(
-	siteId: string,
-	inviteKey: string,
-	...optionalKeys: ( string | undefined )[]
-): string {
-	const basePath = `/accept-invite/${ siteId }/${ inviteKey }`;
-	const fullPath = optionalKeys
-		.filter( Boolean )
-		.reduce( ( path, key ) => `${ path }/${ key }`, basePath );
-	return `${ fullPath }?legacy=1`;
+import './style.scss';
+
+interface LegacyLoggedOutInvite {
+	inviteKey: string;
+	activationKey?: string;
+	authKey?: string;
+	role: string;
+	sentTo: string;
+	knownUser?: boolean;
+	forceMatchingEmail?: boolean;
+	site: Record< string, unknown >;
 }
 
 interface UnifiedInviteAcceptProps {
@@ -31,7 +34,6 @@ interface UnifiedInviteAcceptProps {
 }
 
 export function UnifiedInviteAccept( {
-	siteId,
 	inviteKey,
 	activationKey,
 	authKey,
@@ -39,17 +41,61 @@ export function UnifiedInviteAccept( {
 	inviteError,
 }: UnifiedInviteAcceptProps ) {
 	const isLoggedIn = useSelector( isUserLoggedIn );
+	const blogDetails = ( inviteData as { blog_details?: InviteBlogDetails } )?.blog_details;
+	const branding =
+		blogDetails?.is_garden_site && blogDetails.garden
+			? getCiabConfigFromGarden( blogDetails.garden.partner, blogDetails.garden.name, {
+					persistToSession: true,
+			  } )
+			: null;
+	const topBarLogoConfig = branding?.compactLogo ?? branding?.logo;
+	const topBarLogo = topBarLogoConfig?.src ? (
+		<img { ...topBarLogoConfig } alt={ topBarLogoConfig.alt } />
+	) : undefined;
+	const legacyLoggedOutInvite = useMemo< LegacyLoggedOutInvite | null >( () => {
+		if ( isLoggedIn || ! inviteData || ! ( inviteData as { invite?: unknown } ).invite ) {
+			return null;
+		}
 
-	// Redirect to legacy flow if not logged in (signup flow will be added later)
+		const normalizedInvite = normalizeInvite( inviteData ) as LegacyLoggedOutInvite;
+
+		return {
+			...normalizedInvite,
+			inviteKey,
+			activationKey,
+			authKey,
+		};
+	}, [ isLoggedIn, inviteData, inviteKey, activationKey, authKey ] );
+
+	// Render logged-out invite signup in unified flow.
 	if ( ! isLoggedIn ) {
-		page.redirect( buildLegacyPath( siteId, inviteKey, activationKey, authKey ) );
-		return null;
+		// Invalid invite → show invalid-invite screen (no user card needed)
+		if ( inviteError?.error && isInvalidInviteError( inviteError.error ) ) {
+			return <InvalidInviteScreen blogDetails={ blogDetails } inviteError={ inviteError } />;
+		}
+
+		if ( ! legacyLoggedOutInvite ) {
+			return null;
+		}
+
+		return (
+			<div className="invites-unified__logged-out-layout">
+				<Step.TopBar logo={ topBarLogo } />
+				<div className="invites-unified__logged-out-shell">
+					<LoggedOutInviteAccept invite={ legacyLoggedOutInvite } forceMatchingEmail={ false } />
+				</div>
+			</div>
+		);
 	}
 
 	// Already a member → show already-member screen
 	if ( inviteError?.error && isAlreadyMemberError( inviteError.error ) ) {
-		const blogDetails = ( inviteData as { blog_details?: InviteBlogDetails } )?.blog_details;
 		return <AlreadyMemberScreen blogDetails={ blogDetails } />;
+	}
+
+	// Invalid invite → show invalid-invite screen
+	if ( inviteError?.error && isInvalidInviteError( inviteError.error ) ) {
+		return <InvalidInviteScreen blogDetails={ blogDetails } inviteError={ inviteError } />;
 	}
 
 	const invite = { ...inviteData, inviteKey, activationKey } as Invite;

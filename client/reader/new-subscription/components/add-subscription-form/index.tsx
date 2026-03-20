@@ -89,7 +89,7 @@ export default function AddSubscriptionForm( props: AddSubscriptionFormProps ): 
 					<AddSitesForm
 						placeholder={ config.placeholder }
 						buttonText={ isAddNewTab ? undefined : translate( 'Add Feed' ) }
-						pathname={ config.pathname }
+						pathname={ config.url }
 						source={ config.source }
 						onChangeFeedPreview={ handleChangeFeedPreview }
 						onChangeSubscribe={ handleSubscribeToggle }

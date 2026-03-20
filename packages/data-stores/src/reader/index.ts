@@ -63,6 +63,6 @@ export {
 	SiteSubscriptionsSortBy,
 } from './constants';
 export { callApi, isErrorResponse, isSiteSubscriptionDetails, isValidId } from './helpers';
-export { useReadFeedSearchQuery, useReadFeedSiteQuery, useReadFeedQuery } from './queries';
+export { useReadFeedSiteQuery } from './queries';
 
 export * from './types';

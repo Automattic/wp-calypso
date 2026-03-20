@@ -1,4 +1,5 @@
-import { ComponentSwapper, Spinner } from '@automattic/components';
+import { ComponentSwapper } from '@automattic/components';
+import { Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import QueryMembershipProducts from 'calypso/components/data/query-memberships';
 import CountCard from 'calypso/my-sites/stats/components/highlight-cards/count-card';
@@ -101,7 +102,7 @@ function SubscriberHighlightsStandard( {
 
 function SubscriberHighlightsMobile( { highlights, isLoading }: SubscriberHighlightsRenderProps ) {
 	if ( isLoading ) {
-		return <Spinner baseClassName="calypso-spinner" />;
+		return <Spinner />;
 	}
 
 	return <MobileHighlightCardListing highlights={ highlights } />;

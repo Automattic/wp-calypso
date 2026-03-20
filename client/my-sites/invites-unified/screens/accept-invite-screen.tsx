@@ -55,7 +55,9 @@ function getBrandingFromBlogDetails( blogDetails?: InviteBlogDetails ): CiabPart
 		return null;
 	}
 
-	return getCiabConfigFromGarden( blogDetails.garden.partner, blogDetails.garden.name );
+	return getCiabConfigFromGarden( blogDetails.garden.partner, blogDetails.garden.name, {
+		persistToSession: true,
+	} );
 }
 
 interface AcceptInviteScreenProps {

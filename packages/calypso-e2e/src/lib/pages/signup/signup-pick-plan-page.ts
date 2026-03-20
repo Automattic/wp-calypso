@@ -145,4 +145,54 @@ export class SignupPickPlanPage {
 
 		await Promise.all( actions );
 	}
+
+	/**
+	 * Opens the escape hatch modal by clicking the "start with a free plan" trigger.
+	 *
+	 * Use this when you need to inspect or assert modal content before committing to a plan.
+	 *
+	 * @returns {Promise<void>}
+	 */
+	async openEscapeHatch(): Promise< void > {
+		await this.page.waitForURL( plansPageUrl );
+		await this.plansPage.openEscapeHatch();
+	}
+
+	/**
+	 * Validates that the "No free custom domain" warning is visible in the escape hatch modal.
+	 *
+	 * @param {string} domainName The domain name that will be shown to visitors.
+	 * @returns {Promise<void>}
+	 */
+	async validateNoCustomDomainWarning( domainName: string ): Promise< void > {
+		await this.plansPage.validateNoCustomDomainWarning( domainName );
+	}
+
+	/**
+	 * Validates that the "Domain redirect" warning is visible in the escape hatch modal.
+	 *
+	 * @param {string} domainName The domain name that will be shown to visitors.
+	 * @param {string} siteSlug The site slug.
+	 * @returns {Promise<void>}
+	 */
+	async validateDomainRedirectWarning( domainName: string, siteSlug: string ): Promise< void > {
+		await this.plansPage.validateDomainRedirectWarning( domainName, siteSlug );
+	}
+
+	/**
+	 * Clicks the "Continue with Free" button in the escape hatch modal and waits for navigation.
+	 *
+	 * Intended for use after `openEscapeHatch()` when skipping to a free plan with no domain.
+	 *
+	 * @param {RegExp} redirectUrl Optional URL pattern to wait for after clicking.
+	 * @returns {Promise<void>}
+	 */
+	async continueWithFreeViaEscapeHatch( redirectUrl?: RegExp ): Promise< void > {
+		redirectUrl ??= new RegExp( '.*/home/.*' );
+
+		await Promise.all( [
+			this.page.waitForURL( redirectUrl, { timeout: 30 * 1000 } ),
+			this.plansPage.clickContinueWithFree(),
+		] );
+	}
 }

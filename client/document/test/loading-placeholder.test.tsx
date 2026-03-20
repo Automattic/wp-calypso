@@ -51,7 +51,6 @@ const baseProps: DocumentProps = {
 	renderedLayout: null,
 	sectionGroup: '',
 	sectionName: 'stepper',
-	hideWooHostedLogo: false,
 	storeSandboxHelper: false,
 	target: 'evergreen',
 	user: null,
@@ -60,34 +59,16 @@ const baseProps: DocumentProps = {
 };
 
 describe( 'Document LoadingPlaceholder', () => {
-	it( 'hides the WordPress logo for Woo Hosted plans setup SSR', () => {
+	it( 'hides the WordPress logo on CIAB dashboard', () => {
 		const html = renderToStaticMarkup(
-			<Document { ...baseProps } hideWooHostedLogo sectionName="stepper" />
+			<Document { ...baseProps } dashboard="ciab" sectionName="stepper" />
 		);
 
 		expect( html ).not.toContain( 'step-container-v2__top-bar-wordpress-logo-wrapper' );
 	} );
 
-	it( 'hides the WordPress logo for Woo Hosted checkout SSR', () => {
-		const html = renderToStaticMarkup(
-			<Document { ...baseProps } hideWooHostedLogo sectionName="checkout" />
-		);
-
-		expect( html ).not.toContain( 'step-container-v2__top-bar-wordpress-logo-wrapper' );
-	} );
-
-	it( 'shows the WordPress logo when hideWooHostedLogo is false', () => {
-		const html = renderToStaticMarkup(
-			<Document
-				{ ...baseProps }
-				query={ {
-					siteSlug: 'unabashedly-instant-starlight.commerce-garden.com',
-					dashboard: 'ciab',
-					sessionId: 'Z0',
-				} }
-				sectionName="stepper"
-			/>
-		);
+	it( 'shows the WordPress logo on non-CIAB dashboard', () => {
+		const html = renderToStaticMarkup( <Document { ...baseProps } sectionName="stepper" /> );
 
 		expect( html ).toContain( 'step-container-v2__top-bar-wordpress-logo-wrapper' );
 	} );

@@ -21,6 +21,7 @@ type SubscriberDetailsProps = {
 	newsletterCategories?: NewsletterCategory[];
 	onClose?: () => void;
 	onUnsubscribe?: ( subscriber: Subscriber ) => void;
+	onGiftSubscription?: ( subscriber: Subscriber ) => void;
 };
 
 const SubscriberDetails = ( {
@@ -32,6 +33,7 @@ const SubscriberDetails = ( {
 	newsletterCategories,
 	onClose,
 	onUnsubscribe,
+	onGiftSubscription,
 }: SubscriberDetailsProps ) => {
 	const translate = useTranslate();
 	const subscriptionPlans = useSubscriptionPlans( subscriber );
@@ -174,16 +176,27 @@ const SubscriberDetails = ( {
 					) }
 				</div>
 			</div>
-			{ onUnsubscribe && (
+			{ ( onGiftSubscription || onUnsubscribe ) && (
 				<div className="subscriber-details__footer">
-					<Button
-						className="subscriber-details__delete-button"
-						onClick={ () => onUnsubscribe( subscriber ) }
-						variant="secondary"
-						isDestructive
-					>
-						{ translate( 'Delete subscriber' ) }
-					</Button>
+					{ onGiftSubscription && (
+						<Button
+							className="subscriber-details__gift-button"
+							onClick={ () => onGiftSubscription( subscriber ) }
+							variant="primary"
+						>
+							{ translate( 'Comp a subscription' ) }
+						</Button>
+					) }
+					{ onUnsubscribe && (
+						<Button
+							className="subscriber-details__delete-button"
+							onClick={ () => onUnsubscribe( subscriber ) }
+							variant="secondary"
+							isDestructive
+						>
+							{ translate( 'Delete subscriber' ) }
+						</Button>
+					) }
 				</div>
 			) }
 		</div>

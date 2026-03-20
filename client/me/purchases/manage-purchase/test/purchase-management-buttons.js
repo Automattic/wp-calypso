@@ -295,4 +295,162 @@ describe( 'Purchase Management Buttons', () => {
 			expect( screen.queryByText( /Upgrade/ ) ).not.toBeInTheDocument();
 		}
 	);
+
+	it( 'renders payment method nav item for A4A billingdragon purchase on a real site', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/me/payment-methods?expired=include' )
+			.reply( 200 );
+
+		const store = createMockReduxStoreForPurchase( {
+			...purchase,
+			meta: 'is-a4a',
+		} );
+
+		render(
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<ManagePurchase
+						purchaseId={ Number( purchase.ID ) }
+						isSiteLevel
+						siteSlug="onecooltestsite.com"
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
+		);
+
+		expect( await screen.findByText( /(?:Add|Change) payment method/ ) ).toBeInTheDocument();
+	} );
+
+	it( 'renders payment method nav item for A4A billingdragon purchase on a siteless holding site', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/me/payment-methods?expired=include' )
+			.reply( 200 );
+
+		const a4aPurchase = {
+			...purchase,
+			meta: 'is-a4a',
+			domain: 'siteless.agencies.automattic.com',
+		};
+
+		// Don't include a site in the store to simulate siteless purchase
+		const store = createReduxStore(
+			{
+				currentUser: { id: Number( a4aPurchase.user_id ) },
+				plans: { items: [] },
+				purchases: {
+					data: [ a4aPurchase ],
+					hasLoadedUserPurchasesFromServer: true,
+					hasLoadedSitePurchasesFromServer: true,
+				},
+				productsList: { items: {} },
+				sites: {
+					items: {},
+					plans: {},
+					requesting: {},
+					domains: { requesting: {}, items: {} },
+				},
+				plugins: {
+					premium: { plugins: {} },
+				},
+				ui: { selectSiteId: a4aPurchase.blog_id },
+			},
+			( state ) => state
+		);
+
+		render(
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<ManagePurchase
+						purchaseId={ Number( a4aPurchase.ID ) }
+						isSiteLevel
+						siteSlug="siteless.agencies.automattic.com"
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
+		);
+
+		expect( await screen.findByText( /(?:Add|Change) payment method/ ) ).toBeInTheDocument();
+	} );
+
+	it( 'renders renew button for A4A billingdragon purchase', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/me/payment-methods?expired=include' )
+			.reply( 200 );
+
+		const store = createMockReduxStoreForPurchase( {
+			...purchase,
+			meta: 'is-a4a',
+			is_renewable: true,
+			can_explicit_renew: true,
+		} );
+
+		render(
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<ManagePurchase
+						purchaseId={ Number( purchase.ID ) }
+						isSiteLevel
+						siteSlug="onecooltestsite.com"
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
+		);
+
+		expect( await screen.findByText( /Renew now/ ) ).toBeInTheDocument();
+	} );
+
+	it( 'renders renewal nav item for A4A billingdragon purchase', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/me/payment-methods?expired=include' )
+			.reply( 200 );
+
+		const store = createMockReduxStoreForPurchase( {
+			...purchase,
+			meta: 'is-a4a',
+			is_renewable: true,
+			can_explicit_renew: true,
+		} );
+
+		render(
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<ManagePurchase
+						purchaseId={ Number( purchase.ID ) }
+						isSiteLevel
+						siteSlug="onecooltestsite.com"
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
+		);
+
+		// business-bundle is an annual WP.com plan, so the nav item shows "Renew annually" instead of "Renew now"
+		expect( await screen.findByText( /Renew annually/ ) ).toBeInTheDocument();
+	} );
+
+	it( 'does not render an upgrade button for A4A billingdragon purchase', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/me/payment-methods?expired=include' )
+			.reply( 200 );
+
+		const store = createMockReduxStoreForPurchase( {
+			...purchase,
+			meta: 'is-a4a',
+		} );
+
+		render(
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<ManagePurchase
+						purchaseId={ Number( purchase.ID ) }
+						isSiteLevel
+						siteSlug="onecooltestsite.com"
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
+		);
+
+		// Wait for component to fully render
+		await screen.findByText( /(?:Add|Change) payment method/ );
+		expect( screen.queryByText( /Upgrade/ ) ).not.toBeInTheDocument();
+	} );
 } );

@@ -4,6 +4,7 @@ import {
 	resendIcannVerificationEmail,
 	resendVerifyEmailForward,
 	deleteEmailForward,
+	updateEmailForward,
 } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { userMailboxesQuery } from './me-mailboxes';
@@ -40,7 +41,22 @@ export const deleteEmailForwardMutation = () => {
 		mutationFn: ( vars: { domainName: string; mailbox: string; destination: string } ) =>
 			deleteEmailForward( vars.domainName, vars.mailbox, vars.destination ),
 		onSuccess: () => {
-			queryClient.resetQueries( userMailboxesQuery() );
+			queryClient.invalidateQueries( userMailboxesQuery() );
+		},
+	} );
+};
+
+export const updateEmailForwardMutation = () => {
+	return mutationOptions( {
+		mutationFn: ( vars: {
+			domainName: string;
+			mailbox: string;
+			destination: string;
+			newDestination: string;
+		} ) =>
+			updateEmailForward( vars.domainName, vars.mailbox, vars.destination, vars.newDestination ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( userMailboxesQuery() );
 		},
 	} );
 };

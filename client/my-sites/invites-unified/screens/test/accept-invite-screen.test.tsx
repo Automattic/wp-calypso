@@ -8,6 +8,24 @@ import configureStore from 'redux-mock-store';
 import { AcceptInviteScreen } from '../accept-invite-screen';
 import type { Invite } from '../../types';
 
+const mockCenteredColumnLayout = jest.fn(
+	( {
+		children,
+		heading,
+		topBar,
+	}: {
+		children: React.ReactNode;
+		heading: React.ReactNode;
+		topBar: React.ReactNode;
+	} ) => (
+		<div data-testid="step-layout">
+			{ topBar }
+			{ heading }
+			{ children }
+		</div>
+	)
+);
+
 // Mock external dependencies
 jest.mock(
 	'@automattic/calypso-router',
@@ -39,21 +57,13 @@ jest.mock(
 			TopBar: ( { logo }: { logo?: React.ReactNode } ) => (
 				<div data-testid="step-topbar">{ logo }</div>
 			),
-			CenteredColumnLayout: ( {
-				children,
-				heading,
-				topBar,
-			}: {
+			CenteredColumnLayout: ( props: {
 				children: React.ReactNode;
 				heading: React.ReactNode;
 				topBar: React.ReactNode;
-			} ) => (
-				<div data-testid="step-layout">
-					{ topBar }
-					{ heading }
-					{ children }
-				</div>
-			),
+				columnWidth: number;
+				verticalAlign: string;
+			} ) => mockCenteredColumnLayout( props ),
 		},
 	} ),
 	{ virtual: true }
@@ -244,6 +254,7 @@ const setupUser = ( userOverrides = {} ) => {
 describe( 'AcceptInviteScreen', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		mockCenteredColumnLayout.mockClear();
 		mockAcceptInvite.mockReturnValue( { type: 'ACCEPT_INVITE' } );
 		mockDispatch.mockImplementation( ( action: unknown ) => {
 			if ( typeof action === 'function' ) {
@@ -255,6 +266,25 @@ describe( 'AcceptInviteScreen', () => {
 	} );
 
 	describe( 'rendering', () => {
+		test( 'passes centered layout props', () => {
+			const store = createStore();
+			const invite = createInvite();
+
+			render(
+				<Provider store={ store }>
+					<AcceptInviteScreen invite={ invite } />
+				</Provider>
+			);
+
+			expect( mockCenteredColumnLayout ).toHaveBeenCalled();
+			expect( mockCenteredColumnLayout.mock.calls[ 0 ][ 0 ] ).toEqual(
+				expect.objectContaining( {
+					columnWidth: 4,
+					verticalAlign: 'center',
+				} )
+			);
+		} );
+
 		test( 'renders the user card with current user info', () => {
 			const store = createStore();
 			const invite = createInvite();

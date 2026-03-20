@@ -33,7 +33,6 @@ import {
 	TASK_FIVERR,
 	TASK_GO_MOBILE_ANDROID,
 	TASK_GO_MOBILE_IOS,
-	TASK_GOOGLE_DOMAIN_OWNERS,
 	TASK_MARKETPLACE,
 	TASK_PROMOTE_POST,
 	TASK_REACTIVATE_ATOMIC_TRANSFER,
@@ -79,7 +78,6 @@ import DomainUpsell from 'calypso/my-sites/customer-home/cards/tasks/domain-upse
 import EarnFeatures from 'calypso/my-sites/customer-home/cards/tasks/earn-features';
 import Fiverr from 'calypso/my-sites/customer-home/cards/tasks/fiverr';
 import GoMobile from 'calypso/my-sites/customer-home/cards/tasks/go-mobile';
-import GoogleDomainOwners from 'calypso/my-sites/customer-home/cards/tasks/google-domain-owners';
 import JanuaryBump from 'calypso/my-sites/customer-home/cards/tasks/january-bump';
 import Marketplace from 'calypso/my-sites/customer-home/cards/tasks/marketplace';
 import NoticeHomeLimitedTimeOfferCoupon from 'calypso/my-sites/customer-home/cards/tasks/notice-home-limited-time-offer-coupon';
@@ -119,7 +117,6 @@ const PRIMARY_CARD_COMPONENTS: CardComponentMap = {
 	[ TASK_FIVERR ]: Fiverr,
 	[ TASK_GO_MOBILE_ANDROID ]: GoMobile,
 	[ TASK_GO_MOBILE_IOS ]: GoMobile,
-	[ TASK_GOOGLE_DOMAIN_OWNERS ]: GoogleDomainOwners,
 	[ TASK_MARKETPLACE ]: Marketplace,
 	[ TASK_PROMOTE_POST ]: PromotePost,
 	[ TASK_RENEW_EXPIRED_PLAN ]: Renew,

@@ -141,13 +141,11 @@ function ImageStudioAgentChat( {
 
 	const isProcessing = agentChatProps.isProcessing || isAnnotationSaving;
 
-	// Detect upload phase from progress message since useAgentChat doesn't expose currentPhase.
-	// The server sends a progress message containing "Uploading" during the upload phase.
-	const isUploadPhase =
-		agentChatProps.progressMessage?.toLowerCase().includes( 'uploading' ) ?? false;
+	const isFinalizingPhase =
+		( agentChatProps as unknown as { progressPhase?: string } ).progressPhase === 'uploading';
 
 	// Disable input during upload phase or annotation saving to prevent orphan images
-	const isStopDisabled = isUploadPhase || isAnnotationSaving;
+	const isStopDisabled = isFinalizingPhase || isAnnotationSaving;
 
 	const suggestionsComponent = isLoadingSuggestions ? (
 		<div className="image-studio-suggestions-loading">
@@ -163,7 +161,7 @@ function ImageStudioAgentChat( {
 			messages={ displayMessages as any }
 			variant="embedded"
 			placeholder={ placeholder }
-			className="image-studio-agent agenttic"
+			className="image-studio-agent agenttic dark"
 			onSubmit={ handleSubmit }
 			onStop={ agentChatProps.abortCurrentRequest }
 			isProcessing={ isProcessing }

@@ -1,40 +1,26 @@
 /**
  * @jest-environment jsdom
  */
-// @ts-nocheck - TODO: Fix TypeScript issues
 
 import { render, screen } from '@testing-library/react';
-import React from 'react';
-import { UserData } from 'calypso/lib/user/user';
+import userEvent from '@testing-library/user-event';
+import { UserProfileData } from 'calypso/lib/user/user';
 import UserProfileHeader from '../index';
 
-jest.mock( '@wordpress/icons', () => ( {
-	external: 'mock-external-icon',
-	Icon: ( { icon } ) => <span data-testid="icon">{ icon }</span>,
-} ) );
-
-jest.mock( 'calypso/blocks/reader-avatar', () => ( { author, iconSize } ) => (
-	<div data-testid="reader-avatar" data-author-id={ author.ID } data-icon-size={ iconSize }>
-		{ author.avatar_URL && <img src={ author.avatar_URL } alt="avatar" data-testid="avatar-img" /> }
-	</div>
+jest.mock( 'calypso/blocks/reader-avatar', () => ( { author }: { author: UserProfileData } ) => (
+	<div data-testid="reader-avatar" data-author-id={ author.ID }></div>
 ) );
 
-jest.mock( 'calypso/components/section-nav', () => ( { children } ) => (
-	<div data-testid="section-nav">{ children }</div>
-) );
-
-jest.mock( 'calypso/components/section-nav/tabs', () => ( { children } ) => (
-	<div data-testid="nav-tabs">{ children }</div>
-) );
-
-jest.mock( 'calypso/components/section-nav/item', () => ( { children, path, selected } ) => (
-	<a href={ path } data-testid="nav-item" data-selected={ selected ? 'true' : 'false' }>
-		{ children }
-	</a>
-) );
+jest.mock(
+	'calypso/components/section-nav/tabs',
+	() =>
+		( { children }: { children: React.ReactNode } ) => (
+			<div data-testid="nav-tabs">{ children }</div>
+		)
+);
 
 describe( 'UserProfileHeader', () => {
-	const defaultUser: UserData = {
+	const defaultUser: UserProfileData = {
 		ID: 123,
 		user_login: 'testuser',
 		display_name: 'Test User',
@@ -48,53 +34,35 @@ describe( 'UserProfileHeader', () => {
 	} );
 
 	test( 'should render the avatar with correct user information', () => {
-		render( <UserProfileHeader user={ defaultUser } /> );
+		render( <UserProfileHeader user={ defaultUser } view="posts" /> );
 
-		const avatars = screen.getAllByTestId( 'reader-avatar' );
-		expect( avatars[ 0 ] ).toBeInTheDocument();
-		expect( avatars[ 0 ] ).toHaveAttribute( 'data-author-id', defaultUser.ID.toString() );
-
-		// Test that desktop and mobile versions are properly rendered
-		const desktopAvatar = screen.getByTestId( 'desktop-avatar' );
-		expect( desktopAvatar ).toBeInTheDocument();
-
-		const mobileAvatar = screen.getByTestId( 'mobile-avatar' );
-		expect( mobileAvatar ).toBeInTheDocument();
+		const avatar = screen.getByTestId( 'reader-avatar' );
+		expect( avatar ).toBeVisible();
+		expect( avatar ).toHaveAttribute( 'data-author-id', defaultUser.ID.toString() );
 	} );
 
 	test( 'should render the user display name', () => {
-		render( <UserProfileHeader user={ defaultUser } /> );
+		render( <UserProfileHeader user={ defaultUser } view="posts" /> );
 
-		// Check if display name is rendered
 		const displayNameEl = screen.getByText( defaultUser.display_name ?? '' );
-		// @ts-expect-error -- jest-dom matchers are available globally
-		expect( displayNameEl ).toBeInTheDocument();
+		expect( displayNameEl ).toBeVisible();
 	} );
 
 	test( 'should render navigation tabs with Posts, Lists, and Recommended Blogs options', () => {
-		render( <UserProfileHeader user={ defaultUser } /> );
+		render( <UserProfileHeader user={ defaultUser } view="posts" /> );
 
-		// Check if navigation section is rendered
-		expect( screen.getByTestId( 'section-nav' ) ).toBeInTheDocument();
-		expect( screen.getByTestId( 'nav-tabs' ) ).toBeInTheDocument();
-
-		// Check for navigation items
-		const navItems = screen.getAllByTestId( 'nav-item' );
+		const navItems = screen.getAllByRole( 'menuitem' );
 		expect( navItems.length ).toBe( 3 ); // Posts, Lists, and Recommended Blogs
 
-		// Check nav item content - should have Posts, Lists, and Recommended Blogs
-		const navTexts = navItems.map( ( item ) => item.textContent );
-		expect( navTexts ).toContain( 'Posts' );
-		expect( navTexts ).toContain( 'Lists' );
-		expect( navTexts ).toContain( 'Recommended Blogs' );
+		expect( screen.getByRole( 'menuitem', { name: 'Posts' } ) ).toBeVisible();
+		expect( screen.getByRole( 'menuitem', { name: 'Lists' } ) ).toBeVisible();
+		expect( screen.getByRole( 'menuitem', { name: 'Recommended Blogs' } ) ).toBeVisible();
 	} );
 
 	test( 'should not render bio section when user has no bio', () => {
-		render( <UserProfileHeader user={ defaultUser } /> );
+		render( <UserProfileHeader user={ defaultUser } view="posts" /> );
 
-		// Bio section should not be present
-		const bioSection = document.querySelector( '.user-profile-header__bio' );
-		expect( bioSection ).not.toBeInTheDocument();
+		expect( screen.queryByText( /show more/i ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'should render bio section when user has a bio', () => {
@@ -103,10 +71,60 @@ describe( 'UserProfileHeader', () => {
 			bio: 'This is my test biography that describes me as a test user.',
 		};
 
-		render( <UserProfileHeader user={ userWithBio } /> );
+		render( <UserProfileHeader user={ userWithBio } view="posts" /> );
 
 		// Bio section should be present
 		const bioText = screen.getByText( userWithBio.bio );
-		expect( bioText ).toBeInTheDocument();
+		expect( bioText ).toBeVisible();
+	} );
+
+	test( 'should render Gravatar badge when user has profile_URL', () => {
+		render( <UserProfileHeader user={ defaultUser } view="posts" /> );
+
+		const gravatarBadge = screen.getByRole( 'link', { name: /gravatar/i } );
+		expect( gravatarBadge ).toBeVisible();
+		expect( gravatarBadge ).toHaveAttribute( 'href', defaultUser.profile_URL );
+
+		const gravatarIcon = screen.getByRole( 'img', { name: /gravatar badge./i } );
+		expect( gravatarIcon ).toBeVisible();
+	} );
+
+	test( 'should not render Gravatar badge when user does not have profile_URL', () => {
+		const userWithoutGravatarProfile = {
+			...defaultUser,
+			profile_URL: undefined,
+		};
+
+		render( <UserProfileHeader user={ userWithoutGravatarProfile } view="posts" /> );
+
+		expect( screen.queryByRole( 'link', { name: /gravatar/i } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'should show "Show more" button for long bio and expand on click', async () => {
+		const longBio = 'This is a very long biography that spans multiple lines. '.repeat( 10 ).trim();
+		const userWithLongBio = { ...defaultUser, bio: longBio };
+
+		const { rerender } = render( <UserProfileHeader user={ userWithLongBio } view="posts" /> );
+
+		const bioDesc = screen.getByText( longBio );
+		expect( bioDesc ).toBeVisible();
+		expect( screen.queryByText( /show more/i ) ).not.toBeInTheDocument();
+
+		// Mock scrollHeight to simulate overflow (needed for useLayoutEffect check)
+		Object.defineProperty( bioDesc, 'scrollHeight', { value: 200, configurable: true } );
+		Object.defineProperty( bioDesc, 'clientHeight', { value: 60, configurable: true } );
+		// Re-render with slightly different bio to trigger useLayoutEffect
+		rerender(
+			<UserProfileHeader user={ { ...userWithLongBio, bio: longBio + '.' } } view="posts" />
+		);
+
+		const showMoreButton = screen.getByText( /show more/i );
+		expect( showMoreButton ).toBeVisible();
+		expect( bioDesc ).toHaveClass( 'is-clamped' );
+
+		await userEvent.click( showMoreButton );
+
+		expect( bioDesc ).toHaveClass( 'is-expanded' );
+		expect( screen.getByText( /show less/i ) ).toBeVisible();
 	} );
 } );

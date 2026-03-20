@@ -51,6 +51,7 @@ import {
 	IncognitoPage,
 	InvitePeoplePage,
 	JetpackTrafficPage,
+	LaunchCelebrationComponent,
 	LoginPage,
 	LOHPThemeSignupFlow,
 	MarketingPage,
@@ -169,6 +170,10 @@ export const test = base.extend<
 		 * Component for selecting items in various flows.
 		 */
 		componentSelectItems: SelectItemsComponent;
+		/**
+		 * Component for asserting the site launch celebration modal.
+		 */
+		componentLaunchCelebration: LaunchCelebrationComponent;
 		/**
 		 * Environment variables for the tests.
 		 */
@@ -418,6 +423,10 @@ export const test = base.extend<
 	componentSelectItems: async ( { page }, use ) => {
 		const selectItemsComponent = new SelectItemsComponent( page );
 		await use( selectItemsComponent );
+	},
+	componentLaunchCelebration: async ( { page }, use ) => {
+		const launchCelebrationComponent = new LaunchCelebrationComponent( page );
+		await use( launchCelebrationComponent );
 	},
 	componentSidebar: async ( { page }, use ) => {
 		const sidebarComponent = new SidebarComponent( page );

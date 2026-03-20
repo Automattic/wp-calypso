@@ -5,10 +5,10 @@ import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, FormEvent } from 'react';
-import wpcomRequest from 'wpcom-proxy-request';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { SITE_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import wpcom from 'calypso/lib/wp';
 import { useIsBigSkyEligible } from '../../../../hooks/use-is-site-big-sky-eligible';
 import { useSiteData } from '../../../../hooks/use-site-data';
 import type { Step as StepType } from '../../types';
@@ -35,7 +35,7 @@ const LaunchBigSky: StepType = function ( props ) {
 
 	const deletePage = async ( siteId: string, pageId: number ): Promise< boolean > => {
 		try {
-			await wpcomRequest( {
+			await wpcom.req.post( {
 				path: '/sites/' + siteId + '/pages/' + pageId,
 				method: 'DELETE',
 				apiNamespace: 'wp/v2',
@@ -73,16 +73,18 @@ const LaunchBigSky: StepType = function ( props ) {
 			// Create a new home page if one is not set yet.
 			if ( ! hasStaticHomepage ) {
 				pendingActions.push(
-					wpcomRequest( {
-						path: '/sites/' + selectedSiteId + '/pages',
-						method: 'POST',
-						apiNamespace: 'wp/v2',
-						body: {
+					wpcom.req.post(
+						{
+							path: '/sites/' + selectedSiteId + '/pages',
+							apiNamespace: 'wp/v2',
+						},
+						{},
+						{
 							title: 'Home',
 							status: 'publish',
 							content: '<!-- wp:paragraph -->\n<p>Hello world!</p>\n<!-- /wp:paragraph -->',
-						},
-					} )
+						}
+					)
 				);
 			}
 

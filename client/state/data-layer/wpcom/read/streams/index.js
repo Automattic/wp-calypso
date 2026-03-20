@@ -96,7 +96,7 @@ function createStreamDataFromPosts( posts, dateProperty ) {
 }
 
 function createStreamItemFromSite( site, dateProperty ) {
-	const post = site.posts[ 0 ] ?? null;
+	const post = site.posts?.[ 0 ] ?? null;
 	if ( ! post ) {
 		return null;
 	}
@@ -133,7 +133,7 @@ function createStreamDataFromSites( sites, dateProperty ) {
 			streamItems.push( streamItem );
 		}
 
-		const post = site.posts[ 0 ];
+		const post = site.posts?.[ 0 ];
 		if ( post !== undefined ) {
 			streamPosts.push( post );
 		}

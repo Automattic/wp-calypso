@@ -981,10 +981,7 @@ export default connect(
 			oauth2Client,
 			isFromAutomatticForAgenciesPlugin:
 				'automattic-for-agencies-client' === get( getCurrentQueryArguments( state ), 'from' ),
-			allowedSocialServices: getPartnerAllowedSocialServices(
-				get( getCurrentQueryArguments( state ), 'from' ) ||
-					get( getInitialQueryArguments( state ), 'from' )
-			),
+			allowedSocialServices: getPartnerAllowedSocialServices( oauth2Client ),
 			isWooJPC: isWooJPCFlow( state ),
 			isWoo: getIsWoo( state ),
 			redirectTo: getRedirectToOriginal( state ),

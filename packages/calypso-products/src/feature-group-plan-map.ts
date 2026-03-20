@@ -184,7 +184,6 @@ import {
 	FEATURE_WOO_HOSTED_BASIC_ADMIN_USERS,
 	FEATURE_WOO_HOSTED_PRO_ADMIN_USERS,
 	FEATURE_WOO_HOSTED_POWERFUL_COMMERCE_TOOLS,
-	FEATURE_WOO_HOSTED_CSV_IMPORTER,
 	FEATURE_WOO_HOSTED_FREE_DOMAIN_1_YEAR,
 	FEATURE_WOO_HOSTED_SEAMLESS_CHECKOUT,
 	FEATURE_WOO_HOSTED_ACCEPT_CARD_PAYMENTS,
@@ -479,13 +478,16 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 		getFeatures: () => [
 			FEATURE_WOO_HOSTED_POWERFUL_COMMERCE_TOOLS,
 			FEATURE_WOO_HOSTED_AI_BUILDER,
-			FEATURE_WOO_HOSTED_CSV_IMPORTER,
 			FEATURE_WOO_HOSTED_FREE_DOMAIN_1_YEAR,
 		],
 	},
 	[ FEATURE_GROUP_WOO_HOSTED_PAYMENTS ]: {
 		slug: FEATURE_GROUP_WOO_HOSTED_PAYMENTS,
-		getTitle: () => i18n.translate( 'Accept payments with PayPal' ),
+		getTitle: () =>
+			i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+			i18n.hasTranslation( 'Accept payments with WooPayments' )
+				? i18n.translate( 'Accept payments with WooPayments' )
+				: i18n.translate( 'Accept payments with PayPal' ),
 		getFeatures: () => [
 			FEATURE_WOO_HOSTED_SEAMLESS_CHECKOUT,
 			FEATURE_WOO_HOSTED_ACCEPT_CARD_PAYMENTS,

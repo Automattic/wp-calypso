@@ -1,12 +1,10 @@
 import config from '@automattic/calypso-config';
-import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { Onboard } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { SiteExcerptData } from '@automattic/sites';
 import { useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
-import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
 import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
@@ -508,11 +506,6 @@ const siteMigration: FlowV2< typeof initialize > = {
 							from: fromQueryParam ?? undefined,
 							plan: providedDependencies.plan as string,
 							historyBack: true,
-							extraQueryParams:
-								providedDependencies?.sendIntentWhenCreatingTrial &&
-								providedDependencies?.plan === PLAN_MIGRATION_TRIAL_MONTHLY
-									? { hosting_intent: HOSTING_INTENT_MIGRATE }
-									: {},
 						} );
 						return;
 					}

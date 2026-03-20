@@ -36,6 +36,7 @@ function SearchResults( { searchInput }: { searchInput: string } ) {
 		getLocaleSlug() ?? 'en',
 		'sectionName'
 	);
+
 	if ( isSearching ) {
 		return <Spinner />;
 	}
@@ -99,6 +100,7 @@ export default function SupportGuides( {
 			floatingChatState={ isOpen ? 'expanded' : 'collapsed' }
 			onClose={ onClose }
 			onStop={ onAbort }
+			expandOnHover={ false }
 		>
 			<AgentUI.ConversationView>
 				<ChatHeader
@@ -107,7 +109,7 @@ export default function SupportGuides( {
 					title={ __( 'Support Guides', '__i18n_text_domain__' ) }
 				/>
 				<VStack
-					className="agenttic agent-manager-support-guides-wrapper"
+					className="agent-manager-support-guides-wrapper"
 					alignment="stretch"
 					justify="stretch"
 				>

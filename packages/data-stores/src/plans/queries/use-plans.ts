@@ -2,7 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { calculateMonthlyPriceForPlan } from '@automattic/calypso-products';
 import { useLocale } from '@automattic/i18n-utils';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
-import wpcomRequest from 'wpcom-proxy-request';
+import wpcomRequest from '../../wpcom-request';
 import unpackIntroOffer from './lib/unpack-intro-offer';
 import useQueryKeysFactory from './lib/use-query-keys-factory';
 import type { PricedAPIPlan, PlanNext } from '../types';
