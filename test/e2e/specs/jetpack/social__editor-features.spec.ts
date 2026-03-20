@@ -109,13 +109,13 @@ test.describe(
 					const section = await editorPage.expandSection( 'Share to social media' );
 
 					const toggle = section.getByLabel( 'Auto-share post' );
-					expect( await toggle.isChecked() ).toBe( true );
+					await expect( toggle ).toBeChecked();
 
 					const messageBox = section.getByRole( 'textbox', { name: 'Message' } );
-					expect( await messageBox.isEditable() ).toBe( true );
+					await expect( messageBox ).toBeEditable();
 
 					const mediaButton = section.getByRole( 'button', { name: 'Select' } );
-					expect( await mediaButton.isVisible() ).toBe( features.mediaSharing );
+					await expect( mediaButton ).toBeVisible( features.mediaSharing );
 				} );
 
 				test( `Should verify that resharing ${
@@ -145,7 +145,7 @@ test.describe(
 
 					await shareModal.waitFor();
 					let reshareButton = shareModal.getByRole( 'button', { name: 'Share', exact: true } );
-					expect( await reshareButton.isVisible() ).toBe( false );
+					await expect( reshareButton ).toBeHidden();
 
 					let closeButton = shareModal.getByRole( 'button', { name: 'Close' } ).first();
 					await closeButton.click();
@@ -166,14 +166,14 @@ test.describe(
 					section = await editorPage.expandSection( 'Share to social media' );
 
 					const toggle = section.getByLabel( 'Auto-share post' );
-					expect( await toggle.isVisible() ).toBe( false );
+					await expect( toggle ).toBeHidden();
 
 					sharePostModalButton = section.getByRole( 'button', {
 						name: 'Preview and share',
 						exact: true,
 					} );
 
-					expect( await sharePostModalButton.isVisible() ).toBe( features.resharing );
+					await expect( sharePostModalButton ).toBeVisible( features.resharing );
 
 					let isReshareButtonVisible = false;
 
@@ -214,7 +214,7 @@ test.describe(
 					let section = await editorPage.expandSection( 'Share to social media' );
 
 					let manualSharing = section.getByRole( 'paragraph', { name: 'Manual sharing' } );
-					expect( await manualSharing.isVisible() ).toBe( false );
+					await expect( manualSharing ).toBeHidden();
 
 					await editorPage.enterTitle( 'Manual sharing: ' + DataHelper.getRandomPhrase() );
 
@@ -239,7 +239,7 @@ test.describe(
 					section = await editorPage.expandSection( 'Share to social media' );
 
 					manualSharing = section.getByText( 'Manual sharing' );
-					expect( await manualSharing.isVisible() ).toBe( features.manualSharing );
+					await expect( manualSharing ).toBeVisible( features.manualSharing );
 				} );
 
 				if ( features.socialImageGenerator ) {
@@ -260,8 +260,8 @@ test.describe(
 						const popoverGroup = page.getByRole( 'group', { name: 'For link preview' } );
 						const templatebutton = popoverGroup.getByRole( 'menuitem', { name: 'Use template' } );
 
-						expect( await templatebutton.isVisible() ).toBe( true );
-						expect( await templatebutton.isDisabled() ).toBe( false );
+						await expect( templatebutton ).toBeVisible();
+						await expect( templatebutton ).toBeEnabled();
 					} );
 				}
 			} );

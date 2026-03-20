@@ -33,12 +33,12 @@ test.describe( 'Help Center in WP Admin', { tag: [ tags.JETPACK_WPCOM_INTEGRATIO
 		// General Interaction
 
 		await test.step( 'Is initially closed', async () => {
-			expect( await helpCenterComponent.isVisible() ).toBeFalsy();
+			await expect( helpCenterComponent ).toBeHidden();
 		} );
 
 		await test.step( 'Can be opened', async () => {
 			await helpCenterComponent.openPopover();
-			expect( await helpCenterComponent.isVisible() ).toBeTruthy();
+			await expect( helpCenterComponent ).toBeVisible();
 		} );
 
 		await test.step( 'Is showing on the screen', async () => {
@@ -55,7 +55,7 @@ test.describe( 'Help Center in WP Admin', { tag: [ tags.JETPACK_WPCOM_INTEGRATIO
 
 		await test.step( 'The popover can be closed', async () => {
 			await helpCenterComponent.closePopover();
-			expect( await helpCenterComponent.isVisible() ).toBeFalsy();
+			await expect( helpCenterComponent ).toBeHidden();
 		} );
 
 		// Articles
@@ -77,7 +77,7 @@ test.describe( 'Help Center in WP Admin', { tag: [ tags.JETPACK_WPCOM_INTEGRATIO
 		} );
 
 		await test.step( 'Post loads correctly', async () => {
-			const article = await helpCenterComponent.getArticles().first();
+			const article = helpCenterComponent.getArticles().first();
 			const articleTitle = await article.textContent();
 			await article.click();
 
@@ -86,10 +86,7 @@ test.describe( 'Help Center in WP Admin', { tag: [ tags.JETPACK_WPCOM_INTEGRATIO
 					response.url().includes( '/wpcom/v2/help/article' ) && response.status() === 200
 			);
 
-			const articleHeader = await helpCenterLocator
-				.getByRole( 'article' )
-				.getByRole( 'heading' )
-				.first();
+			const articleHeader = helpCenterLocator.getByRole( 'article' ).getByRole( 'heading' ).first();
 			await articleHeader.waitFor( { state: 'visible' } );
 
 			expect( normalizeString( await articleHeader.textContent() ) ).toBe(
@@ -127,7 +124,7 @@ test.describe( 'Help Center in WP Admin', { tag: [ tags.JETPACK_WPCOM_INTEGRATIO
 			const contactSupportButton = await helpCenterComponent.getContactSupportButton();
 			await contactSupportButton.dispatchEvent( 'click' );
 
-			const zendeskMessaging = await page
+			const zendeskMessaging = page
 				.frameLocator( 'iframe[title="Messaging window"]' )
 				.getByPlaceholder( 'Type a message' );
 

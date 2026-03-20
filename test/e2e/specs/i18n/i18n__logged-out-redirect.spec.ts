@@ -27,6 +27,7 @@ for ( const locale of localesToTest ) {
 		{ tag: [ tags.I18N, tags.DESKTOP_ONLY ] },
 		() => {
 			test.use( { locale: locale } );
+
 			test( `As an unauthenticated visitor using '${ locale }' as my locale, I can visit the homepage and see the correct URL`, async ( {
 				page,
 				environment,
@@ -52,6 +53,7 @@ for ( const locale of localesToTest ) {
 		{ tag: [ tags.I18N, tags.DESKTOP_ONLY ] },
 		() => {
 			test.use( { locale: locale } );
+
 			test( `As an unauthenticated visitor using '${ locale }' as my locale, I can visit the plans page and see the correct URL for the pricing page`, async ( {
 				page,
 				environment,

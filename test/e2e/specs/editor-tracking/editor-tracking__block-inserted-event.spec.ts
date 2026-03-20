@@ -100,14 +100,11 @@ test.describe.fixme(
 
 			await test.step( 'When I add a page template', async () => {
 				const editorParent = await pageEditor.getEditorParent();
-				const inserterSelector = await editorParent.getByRole( 'listbox', { name: 'All' } );
-				const modalSelector = await editorParent.getByRole( 'listbox', {
+				const inserterSelector = editorParent.getByRole( 'listbox', { name: 'All' } );
+				const modalSelector = editorParent.getByRole( 'listbox', {
 					name: 'Block patterns',
 				} );
-				const firstPattern = await inserterSelector
-					.or( modalSelector )
-					.getByRole( 'option' )
-					.first();
+				const firstPattern = inserterSelector.or( modalSelector ).getByRole( 'option' ).first();
 				const pageTemplateToSelect = ( await firstPattern.getAttribute( 'aria-label' ) ) ?? '';
 				await pageEditor.selectTemplate( pageTemplateToSelect, { timeout: 15 * 1000 } );
 			} );

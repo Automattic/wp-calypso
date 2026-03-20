@@ -162,7 +162,7 @@ test.describe(
 			} );
 
 			await test.step( 'Then Focused Launchpad is shown (if applicable)', async () => {
-				const title = await page.getByText( "Let's get started!" );
+				const title = page.getByText( "Let's get started!" );
 				if ( ! ( await title.isVisible() ) ) {
 					return;
 				}

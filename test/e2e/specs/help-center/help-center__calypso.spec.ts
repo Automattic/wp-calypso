@@ -32,12 +32,12 @@ test.describe( 'Help Center in Calypso', { tag: [ tags.CALYPSO_PR ] }, () => {
 		// General Interaction
 
 		await test.step( 'Help Center is initially closed', async () => {
-			expect( await helpCenterComponent.isVisible() ).toBeFalsy();
+			await expect( helpCenterComponent ).toBeHidden();
 		} );
 
 		await test.step( 'Help Center can be opened', async () => {
 			await helpCenterComponent.openPopover();
-			expect( await helpCenterComponent.isVisible() ).toBeTruthy();
+			await expect( helpCenterComponent ).toBeVisible();
 		} );
 
 		await test.step( 'Help Center is showing on the screen', async () => {
@@ -76,7 +76,7 @@ test.describe( 'Help Center in Calypso', { tag: [ tags.CALYPSO_PR ] }, () => {
 		} );
 
 		await test.step( 'Post loads correctly', async () => {
-			const article = await helpCenterComponent.getArticles().first();
+			const article = helpCenterComponent.getArticles().first();
 			const articleTitle = await article.textContent();
 			await article.click();
 
@@ -85,10 +85,7 @@ test.describe( 'Help Center in Calypso', { tag: [ tags.CALYPSO_PR ] }, () => {
 					response.url().includes( '/wpcom/v2/help/article' ) && response.status() === 200
 			);
 
-			const articleHeader = await helpCenterLocator
-				.getByRole( 'article' )
-				.getByRole( 'heading' )
-				.first();
+			const articleHeader = helpCenterLocator.getByRole( 'article' ).getByRole( 'heading' ).first();
 			await articleHeader.waitFor( { state: 'visible' } );
 
 			expect( normalizeString( await articleHeader.textContent() ) ).toBe(
@@ -100,7 +97,7 @@ test.describe( 'Help Center in Calypso', { tag: [ tags.CALYPSO_PR ] }, () => {
 
 		await test.step( 'The popover can be closed', async () => {
 			await helpCenterComponent.closePopover();
-			expect( await helpCenterComponent.isVisible() ).toBeFalsy();
+			await expect( helpCenterComponent ).toBeHidden();
 		} );
 
 		// Action Hooks

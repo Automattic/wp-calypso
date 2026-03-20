@@ -48,14 +48,14 @@ test.describe(
 
 			await test.step( 'When I select a page template', async () => {
 				const editorParent = await pageEditor.getEditorParent();
-				const modalSelector = await editorParent.getByRole( 'listbox', {
+				const modalSelector = editorParent.getByRole( 'listbox', {
 					name: /^(All|Block patterns)$/,
 				} );
 
 				let selectedPatternLocator;
 				try {
 					await modalSelector.waitFor( { timeout: 3 * 1000 } );
-					selectedPatternLocator = await modalSelector.getByRole( 'option' ).first();
+					selectedPatternLocator = modalSelector.getByRole( 'option' ).first();
 				} catch ( e ) {
 					selectedPatternLocator = await pageEditor.addPatternFromSidebar( 'About', false );
 				}

@@ -67,6 +67,7 @@ test.describe.fixme(
 					'connections'
 				);
 			} );
+
 			// Skipping the bulk of the spec, as it's flaky. We're working on better E2E tests.
 			await test.step( 'Click on the "Connect" button for Tumblr', async () => {
 				popup = await marketingPage.clickSocialConnectButton( 'Tumblr' );
