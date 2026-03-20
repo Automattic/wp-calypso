@@ -25,7 +25,7 @@ async function getFingerprint() {
  * Updates `wpcom` to pass a fingerprint if one is present.
  * @param {Object} wpcom Original WPCOM instance
  */
-export async function injectFingerprint( wpcom ) {
+export function injectFingerprint( wpcom ) {
 	const request = wpcom.request.bind( wpcom );
 
 	wpcom.request = async function ( params, callback ) {
