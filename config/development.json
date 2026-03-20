@@ -51,7 +51,7 @@
 		"calypso/big-sky": true,
 		"calypso/domains-dataviews": true,
 		"calypso/refund-eligibility-notice": false,
-		"cancel-flow/solutions-cards-upsell": true,
+		"cancel-flow/solutions-cards-upsell": false,
 		"checkout/checkout-version": true,
 		"ciab/allow-domain-features": true,
 		"ciab/custom-branding": true,
