@@ -183,10 +183,10 @@ export const usePersistedHistory = ( siteKey: string ) => {
 		return persistedHistory;
 	}, [ isStale, persistedHistory, siteKey ] );
 
-	// Initialize history from persisted data (available synchronously since the
-	// parent component gates on `isStoreReady`). The lazy initializer captures
-	// `activeHistory` from the closure so the very first render already has the
-	// correct location `state` — no null flash.
+	// Initialize history from persisted data when available. The lazy initializer
+	// captures `activeHistory` from the closure so the very first render already
+	// has the correct location `state` when the store data is ready.
+	const initializedHistoryRef = useRef( activeHistory );
 	const [ history, setHistory ] = useState< MemoryHistory >( () => {
 		if ( activeHistory ) {
 			return new MemoryHistory( activeHistory.entries, activeHistory.index );
@@ -218,13 +218,13 @@ export const usePersistedHistory = ( siteKey: string ) => {
 		return history.listen( setState );
 	}, [ history ] );
 
-	// Skip the first run — the lazy `useState` initializer already handled it.
-	const isInitialRender = useRef( true );
+	// Skip if `activeHistory` was already used by the lazy `useState` initializer,
+	// or if a later run sees the same reference (no actual change).
 	useEffect( () => {
-		if ( isInitialRender.current ) {
-			isInitialRender.current = false;
+		if ( activeHistory === initializedHistoryRef.current ) {
 			return;
 		}
+		initializedHistoryRef.current = activeHistory;
 
 		if ( ! activeHistory ) {
 			return;
