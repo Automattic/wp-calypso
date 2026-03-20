@@ -132,6 +132,8 @@ export default async function upiProcessor(
 				throw new Error( explicitClosureMessage ?? genericFailureMessage );
 			}
 
+			hideModal( root );
+
 			const responseData: Partial< WPCOMTransactionEndpointResponseSuccess > = {
 				success: true,
 				order_id: response.order_id,
