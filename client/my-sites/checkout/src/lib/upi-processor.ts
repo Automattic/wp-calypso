@@ -91,6 +91,8 @@ export default async function upiProcessor(
 		'Payment failed. Please check your account and try again.'
 	);
 
+	const root = getRenderRoot( genericErrorMessage );
+
 	return submitWpcomTransaction( formattedTransactionData, options )
 		.then( async ( response?: WPCOMTransactionEndpointResponse ) => {
 			if ( ! response?.redirect_url ) {
@@ -104,8 +106,6 @@ export default async function upiProcessor(
 				console.error( 'Transaction response was missing required order ID' );
 				throw new Error( genericErrorMessage );
 			}
-
-			const root = getRenderRoot( genericErrorMessage );
 
 			let isModalActive = true;
 			let explicitClosureMessage: string | undefined;
@@ -139,6 +139,7 @@ export default async function upiProcessor(
 			return makeSuccessResponse( responseData );
 		} )
 		.catch( ( error ) => {
+			hideModal( root );
 			return makeErrorResponse( error.message );
 		} );
 }
