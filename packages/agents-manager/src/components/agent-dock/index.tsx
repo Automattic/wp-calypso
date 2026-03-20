@@ -102,12 +102,7 @@ export default function AgentDock( {
 			defaultDocked: isPersistedDocked,
 			defaultOpen: isPersistedOpen,
 			desktopMediaQuery,
-			onOpenSidebar: () => {
-				setIsOpen( true );
-				if ( pathname === '/history' ) {
-					navigate( '/' );
-				}
-			},
+			onOpenSidebar: () => setIsOpen( true ),
 			onCloseSidebar: () => setIsOpen( false ),
 		} );
 
@@ -115,7 +110,7 @@ export default function AgentDock( {
 	useAdminBarIntegration( {
 		isOpen: isPersistedOpen,
 		sectionName,
-		setIsOpen,
+		openChat: () => ( isDocked ? openSidebar() : setIsOpen( true ) ),
 		navigate,
 	} );
 
