@@ -8,7 +8,11 @@ import DocumentHead from 'calypso/components/data/document-head';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { navigate } from 'calypso/lib/navigate';
-import { getCiabConfigFromGarden } from 'calypso/lib/partner-branding';
+import {
+	detectCiabConfig,
+	getCiabConfigFromGarden,
+	getPartnerFormattedWindowTitle,
+} from 'calypso/lib/partner-branding';
 import { login } from 'calypso/lib/paths';
 import { useDispatch } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -75,6 +79,7 @@ export function InviteScreenLayout( {
 				persistToSession: true,
 		  } )
 		: null;
+	const titleBranding = branding ?? detectCiabConfig();
 
 	const topBarLogoConfig = branding?.compactLogo ?? branding?.logo;
 	const topBarLogo = topBarLogoConfig?.src ? (
@@ -91,7 +96,13 @@ export function InviteScreenLayout( {
 
 	return (
 		<>
-			<DocumentHead title={ translate( 'Accept Invite', { textOnly: true } ) } />
+			<DocumentHead
+				title={ getPartnerFormattedWindowTitle(
+					translate( 'Accept Invite', { textOnly: true } ),
+					titleBranding
+				) }
+				skipTitleFormatting
+			/>
 			<BodySectionCssClass
 				bodyClass={ [
 					'is-section-accept-invite-unified',
