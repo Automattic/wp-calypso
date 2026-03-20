@@ -13,6 +13,16 @@ export function handleOAuthCallback(): boolean {
 	}
 
 	const hash = new URLSearchParams( window.location.hash.substring( 1 ) );
+	const params = new URLSearchParams( window.location.search );
+
+	// Validate the OAuth state parameter to prevent login CSRF / session fixation.
+	const returnedState = hash.get( 'state' ) || params.get( 'state' );
+	const expectedState = sessionStorage.getItem( 'wpcom_oauth_state' );
+	sessionStorage.removeItem( 'wpcom_oauth_state' );
+	if ( ! returnedState || ! expectedState || returnedState !== expectedState ) {
+		document.location.replace( '/' );
+		return true;
+	}
 
 	const accessToken = hash.get( 'access_token' );
 	if ( accessToken ) {
@@ -24,7 +34,6 @@ export function handleOAuthCallback(): boolean {
 		store.set( 'wpcom_token_expires_in', expiresIn );
 	}
 
-	const params = new URLSearchParams( window.location.search );
 	const next = params.get( 'next' ) || '/';
 	document.location.replace( next );
 
