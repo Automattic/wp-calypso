@@ -178,10 +178,10 @@ $website                 = isset( $args['website'] ) ? $args['website'] : '';
 
 			<?php if ( $show_search_suggestions ) : ?>
 				<ul class="search-terms">
-					<li><button data-search-query="<?php echo esc_attr( __( 'Connect a domain', 'happy-blocks' ) ); ?>" data-website="<?php echo esc_attr( $website ); ?>" href="<?php echo esc_url( get_support_search_link_for_query( 'connect a domain', $is_forums ) ); ?>"><?php echo esc_html( __( 'Connect a domain', 'happy-blocks' ) ); ?></button></li>
-					<li><button data-search-query="<?php echo esc_attr( __( 'Upgrade my plan', 'happy-blocks' ) ); ?>" data-website="<?php echo esc_attr( $website ); ?>" href="<?php echo esc_url( get_support_search_link_for_query( 'upgrade my plan', $is_forums ) ); ?>"><?php echo esc_html( __( 'Upgrade my plan', 'happy-blocks' ) ); ?></button></li>
-					<li><button data-search-query="<?php echo esc_attr( __( 'Add email', 'happy-blocks' ) ); ?>" data-website="<?php echo esc_attr( $website ); ?>" href="<?php echo esc_url( get_support_search_link_for_query( 'add email', $is_forums ) ); ?>"><?php echo esc_html( __( 'Add email', 'happy-blocks' ) ); ?></button></li>
-					<li><button data-search-query="<?php echo esc_attr( __( 'Reset my password', 'happy-blocks' ) ); ?>" data-website="<?php echo esc_attr( $website ); ?>" href="<?php echo esc_url( get_support_search_link_for_query( 'reset my password', $is_forums ) ); ?>"><?php echo esc_html( __( 'Reset my password', 'happy-blocks' ) ); ?></button></li>
+					<li><button data-search-query="<?php echo esc_attr( __( 'Connect a domain', 'happy-blocks' ) ); ?>" data-website="<?php echo esc_attr( $website ); ?>"><?php echo esc_html( __( 'Connect a domain', 'happy-blocks' ) ); ?></button></li>
+					<li><button data-search-query="<?php echo esc_attr( __( 'Upgrade my plan', 'happy-blocks' ) ); ?>" data-website="<?php echo esc_attr( $website ); ?>"><?php echo esc_html( __( 'Upgrade my plan', 'happy-blocks' ) ); ?></button></li>
+					<li><button data-search-query="<?php echo esc_attr( __( 'Add email', 'happy-blocks' ) ); ?>" data-website="<?php echo esc_attr( $website ); ?>"><?php echo esc_html( __( 'Add email', 'happy-blocks' ) ); ?></button></li>
+					<li><button data-search-query="<?php echo esc_attr( __( 'Reset my password', 'happy-blocks' ) ); ?>" data-website="<?php echo esc_attr( $website ); ?>"><?php echo esc_html( __( 'Reset my password', 'happy-blocks' ) ); ?></button></li>
 				</ul>
 			<?php endif; ?>
 		</fieldset>
