@@ -83,6 +83,16 @@ describe( 'isAllowedRedirectUrl', () => {
 		} );
 	} );
 
+	describe( 'edge cases', () => {
+		it( 'rejects javascript: without hostname', () => {
+			expect( isAllowedRedirectUrl( 'javascript:alert(1)', allowedHostnames ) ).toBe( false );
+		} );
+
+		it( 'normalizes hostname case — uppercase hostname matches allowlist', () => {
+			expect( isAllowedRedirectUrl( 'https://WORDPRESS.COM/page', allowedHostnames ) ).toBe( true );
+		} );
+	} );
+
 	describe( 'malformed URLs', () => {
 		it( 'rejects malformed URLs', () => {
 			expect( isAllowedRedirectUrl( 'not-a-url', allowedHostnames ) ).toBe( false );
