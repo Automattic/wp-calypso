@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { ThemesQuery } from 'calypso/my-sites/themes/collections/use-theme-collection';
 import AIBuilderBanner from '../banners-modern/ai-builder-banner';
 import DIFMBanner from '../banners-modern/difm-banner';
+import PlanUpgradeBanner from '../banners-modern/plan-upgrade-banner';
 import ThemeSection from './theme-section';
 
 const FAVORITES_QUERY: ThemesQuery = {
@@ -90,6 +91,7 @@ export default function RecommendedSections( {
 				query={ PARTNER_QUERY }
 				sectionSlug="partner"
 				sectionIndex={ 2 }
+				banner={ <PlanUpgradeBanner planSlug={ PLAN_BUSINESS } variant="dark" /> }
 				getActionLabel={ getActionLabel }
 				getOptions={ getOptions }
 				getScreenshotUrl={ getScreenshotUrl }
