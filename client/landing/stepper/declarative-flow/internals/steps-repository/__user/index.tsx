@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { Step, StepContainer } from '@automattic/onboarding';
+import { ONBOARDING_FLOW, Step, StepContainer } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { createInterpolateElement, useEffect, useState } from '@wordpress/element';
@@ -78,9 +78,13 @@ const UserStepComponent: StepType = function UserStep( {
 
 	const locale = useFlowLocale();
 
+	// When existing users click "Get started" on the logged-out homepage and then choose
+	// "Log in", redirect them to /sites instead of continuing through onboarding.
+	const loginRedirectTo = flow === ONBOARDING_FLOW ? '/sites' : redirectTo;
+
 	const loginLink = login( {
 		signupUrl,
-		redirectTo,
+		redirectTo: loginRedirectTo,
 		locale,
 		from: ciabConfig?.id ?? queryArgs.get( 'from' ) ?? undefined,
 	} );
