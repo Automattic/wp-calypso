@@ -81,10 +81,9 @@ export const PureUniversalNavbarFooter = ( {
 	languageOptions = allLanguageOptions,
 }: PureFooterProps ) => {
 	const languageEntries = Object.entries( languageOptions );
-	const currentLanguageName =
-		( locale &&
-			( allLanguageOptions[ locale ] || allLanguageOptions[ normalizedLocales[ locale ] ] ) ) ||
-		allLanguageOptions.en;
+	const currentLocaleKey: string =
+		( locale && ( allLanguageOptions[ locale ] ? locale : normalizedLocales[ locale ] ) ) || 'en';
+	const currentLanguageName = allLanguageOptions[ currentLocaleKey ] || allLanguageOptions.en;
 
 	return (
 		<>
@@ -451,15 +450,17 @@ export const PureUniversalNavbarFooter = ( {
 									defaultValue={ `/${ locale }` }
 								>
 									<option>{ currentLanguageName }</option>
-									{ languageEntries.map( ( option ) => {
-										const locale = option[ 0 ];
-										return (
-											<option key={ locale } lang={ locale } value={ locale }>
-												{ allLanguageOptions[ locale ] ||
-													allLanguageOptions[ normalizedLocales[ locale ] ] }
-											</option>
-										);
-									} ) }
+									{ languageEntries
+										.filter( ( [ key ] ) => key !== currentLocaleKey )
+										.map( ( option ) => {
+											const locale = option[ 0 ];
+											return (
+												<option key={ locale } lang={ locale } value={ locale }>
+													{ allLanguageOptions[ locale ] ||
+														allLanguageOptions[ normalizedLocales[ locale ] ] }
+												</option>
+											);
+										} ) }
 								</select>
 							</div>
 						</div>
@@ -679,17 +680,37 @@ const UniversalNavbarFooter = ( {
 	}, [ translate ] );
 
 	useIsomorphicEffect( () => {
-		if ( window.matchMedia( '(max-width: 480px)' ).matches ) {
+		const mql = window.matchMedia( '(max-width: 1140px)' );
+
+		const updateDetails = () => {
 			const footer = document.getElementById( 'lpc-footer-nav' );
-			if ( footer ) {
-				footer
-					.querySelectorAll< HTMLDetailsElement >( '.lpc-footer-nav-container > details' )
-					.forEach( ( d ) => {
-						d.removeAttribute( 'open' );
-						d.setAttribute( 'name', 'footer-nav' );
-					} );
+			if ( ! footer ) {
+				return;
 			}
-		}
+
+			const details = footer.querySelectorAll< HTMLDetailsElement >(
+				'.lpc-footer-nav-container > details'
+			);
+
+			if ( mql.matches ) {
+				details.forEach( ( d ) => {
+					d.removeAttribute( 'open' );
+					d.setAttribute( 'name', 'footer-nav' );
+				} );
+			} else {
+				details.forEach( ( d ) => {
+					d.setAttribute( 'open', '' );
+					d.removeAttribute( 'name' );
+				} );
+			}
+		};
+
+		updateDetails();
+		mql.addEventListener( 'change', updateDetails );
+
+		return () => {
+			mql.removeEventListener( 'change', updateDetails );
+		};
 	}, [] );
 
 	return (
