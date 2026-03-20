@@ -21,7 +21,7 @@ interface Result {
 	isError: boolean;
 }
 
-export default function useConversation( {
+export default function useLoadHistoryConversation( {
 	enabled = true,
 	maxPages = 10,
 	onSuccess = () => {},
@@ -31,6 +31,10 @@ export default function useConversation( {
 	// Keep refs to the latest callbacks
 	const onSuccessRef = useRef( onSuccess );
 	onSuccessRef.current = onSuccess;
+	// Skip loading on initial mount — `useAgentChat` handles that.
+	// Only fetch when the sessionId changes (e.g., user selects from history).
+	const initialSessionIdRef = useRef( sessionId );
+	const isSessionChanged = sessionId !== initialSessionIdRef.current;
 
 	const { data, isLoading, isError, error } = useQuery( {
 		// eslint-disable-next-line @tanstack/query/exhaustive-deps -- we only want to refetch when sessionId changes
@@ -51,7 +55,7 @@ export default function useConversation( {
 				true
 			);
 		},
-		enabled: enabled && !! sessionId,
+		enabled: enabled && isSessionChanged && !! sessionId,
 		// Keep history stable while browsing; use explicit non-default refetch behavior for chat UX.
 		refetchOnWindowFocus: false,
 		refetchOnMount: false,
@@ -71,7 +75,7 @@ export default function useConversation( {
 	useEffect( () => {
 		if ( error ) {
 			// eslint-disable-next-line no-console
-			console.error( '[useConversation] Error loading conversation:', error );
+			console.error( '[useLoadHistoryConversation] Error loading conversation:', error );
 		}
 	}, [ error ] );
 

@@ -4,7 +4,14 @@ import {
 	SingleRouterHistory,
 } from '@automattic/data-stores';
 import { select as storeSelect, useSelect } from '@wordpress/data';
-import { useState, useEffect, useLayoutEffect, useCallback, useMemo } from '@wordpress/element';
+import {
+	useState,
+	useEffect,
+	useLayoutEffect,
+	useCallback,
+	useMemo,
+	useRef,
+} from '@wordpress/element';
 import { Action, Location } from 'history';
 import { AGENTS_MANAGER_STORE } from '../stores';
 import { persistAgentsManagerState } from '../utils/persist-agents-manager-state';
@@ -154,11 +161,6 @@ function getFullRouterHistory(): PerSiteRouterHistory | undefined {
 }
 
 export const usePersistedHistory = ( siteKey: string ) => {
-	const [ history, setHistory ] = useState< MemoryHistory >( new MemoryHistory() );
-	const [ state, setState ] = useState< HistoryEvent >( {
-		action: history.action,
-		location: history.location,
-	} );
 	const { persistedHistory, lastActive } = useSelect(
 		( select ) => {
 			const store = select( AGENTS_MANAGER_STORE ) as AgentsManagerSelect;
@@ -181,6 +183,21 @@ export const usePersistedHistory = ( siteKey: string ) => {
 		return persistedHistory;
 	}, [ isStale, persistedHistory, siteKey ] );
 
+	// Initialize history from persisted data (available synchronously since the
+	// parent component gates on `isStoreReady`). The lazy initializer captures
+	// `activeHistory` from the closure so the very first render already has the
+	// correct location `state` — no null flash.
+	const [ history, setHistory ] = useState< MemoryHistory >( () => {
+		if ( activeHistory ) {
+			return new MemoryHistory( activeHistory.entries, activeHistory.index );
+		}
+		return new MemoryHistory();
+	} );
+	const [ state, setState ] = useState< HistoryEvent >( () => ( {
+		action: history.action,
+		location: history.location,
+	} ) );
+
 	// Create a persist callback that merges with existing per-site histories.
 	const persistHistory = useCallback(
 		( historyData: SingleRouterHistory ) => {
@@ -201,7 +218,14 @@ export const usePersistedHistory = ( siteKey: string ) => {
 		return history.listen( setState );
 	}, [ history ] );
 
+	// Skip the first run — the lazy `useState` initializer already handled it.
+	const isInitialRender = useRef( true );
 	useEffect( () => {
+		if ( isInitialRender.current ) {
+			isInitialRender.current = false;
+			return;
+		}
+
 		if ( ! activeHistory ) {
 			return;
 		}

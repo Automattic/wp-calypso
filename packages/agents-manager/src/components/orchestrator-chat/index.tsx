@@ -11,9 +11,9 @@ import { useNavigate } from 'react-router-dom';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
 import { useAgentsManagerContext } from '../../contexts';
 import useCheckpointAction from '../../hooks/use-checkpoint-action';
-import useConversation from '../../hooks/use-conversation';
 import useCopyAction from '../../hooks/use-copy-action';
 import useFeedbackAction from '../../hooks/use-feedback-action';
+import useLoadHistoryConversation from '../../hooks/use-load-history-conversation';
 import useSaveNewChatRoute from '../../hooks/use-save-new-chat-route';
 import { persistLastActivity } from '../../utils/persist-last-activity';
 import {
@@ -142,7 +142,7 @@ export default function OrchestratorChat( {
 		}
 	}, [ dynamicSuggestions?.suggestions, registerSuggestions, clearSuggestions ] );
 
-	const { isLoading: isLoadingConversation } = useConversation( {
+	const { isLoading: isLoadingConversation } = useLoadHistoryConversation( {
 		onSuccess: ( loadedMessages, serverSessionId ) => {
 			// Update the UI with the loaded messages
 			loadMessages( loadedMessages );
