@@ -1,4 +1,5 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
+import { SubscriptionBillPeriod } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
 import {
 	isPersonal,
@@ -38,9 +39,6 @@ import {
 	is100Year,
 	isJetpackGrowthPlan,
 	JETPACK_GROWTH_UPGRADE_MAP,
-	getPlan,
-	TERM_BIENNIALLY,
-	TERM_TRIENNIALLY,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import {
@@ -483,37 +481,31 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
-		const plan = getPlan( purchase.productSlug );
-		const term = plan?.term;
-		let monthsInTerm = 12;
-		let renewLabel = translate( 'Renew annually' );
+		const billPeriodDays = purchase.billPeriodDays;
+		const isAnnualRenewal = billPeriodDays === SubscriptionBillPeriod.PLAN_ANNUAL_PERIOD;
 
-		if ( term === TERM_BIENNIALLY ) {
-			monthsInTerm = 24;
-			renewLabel = translate( 'Renew every two years' );
-		} else if ( term === TERM_TRIENNIALLY ) {
-			monthsInTerm = 36;
-			renewLabel = translate( 'Renew every three years' );
+		if ( isAnnualRenewal ) {
+			const annualPrice = getRenewalPriceInSmallestUnit( purchase ) / 12;
+			const savings = Math.floor(
+				( 100 * ( relatedMonthlyPlanPrice - annualPrice ) ) / relatedMonthlyPlanPrice
+			);
+			return this.renderRenewalNavItem(
+				<div>
+					{ translate( 'Renew annually' ) }
+					<Badge className="manage-purchase__savings-badge" type="success">
+						{ translate( '%(savings)d%% cheaper than monthly', {
+							args: {
+								savings,
+							},
+						} ) }
+					</Badge>
+				</div>,
+				this.handleRenew
+			);
 		}
 
-		const pricePerMonth = getRenewalPriceInSmallestUnit( purchase ) / monthsInTerm;
-		const savings = Math.floor(
-			( 100 * ( relatedMonthlyPlanPrice - pricePerMonth ) ) / relatedMonthlyPlanPrice
-		);
-
-		return this.renderRenewalNavItem(
-			<div>
-				{ renewLabel }
-				<Badge className="manage-purchase__savings-badge" type="success">
-					{ translate( '%(savings)d%% cheaper than monthly', {
-						args: {
-							savings,
-						},
-					} ) }
-				</Badge>
-			</div>,
-			this.handleRenew
-		);
+		// All other use cases (monthly, biennially, triennially_)
+		return this.renderRenewButton();
 	}
 
 	renderRenewMonthlyNavItem() {
