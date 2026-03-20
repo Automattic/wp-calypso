@@ -147,8 +147,6 @@ export default function AgentDock( {
 		[]
 	);
 
-	const handleNewChat = () => navigate( '/' );
-
 	const handleClose = isDocked ? closeSidebar : () => setIsOpen( false );
 
 	const handleExpand = () => {
@@ -175,7 +173,7 @@ export default function AgentDock( {
 				icon: comment,
 				title: __( 'New chat', '__i18n_text_domain__' ),
 				isDisabled: pathname === '/chat' && isOrchestratorChatEmpty,
-				onClick: handleNewChat,
+				onClick: () => navigate( '/' ),
 			},
 			shouldUseUnifiedAgent && {
 				icon: lifesaver,
@@ -252,7 +250,6 @@ export default function AgentDock( {
 			onClose={ handleClose }
 			onExpand={ handleExpand }
 			onSelectConversation={ handleSelectConversation }
-			onNewChat={ handleNewChat }
 		/>
 	);
 

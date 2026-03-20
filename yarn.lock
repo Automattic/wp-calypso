@@ -143,11 +143,13 @@ __metadata:
   dependencies:
     "@automattic/agenttic-client": "npm:^0.1.53"
     "@automattic/agenttic-ui": "npm:^0.1.53"
+    "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/data-stores": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/oauth-token": "workspace:^"
     "@automattic/support-articles": "workspace:^"
+    "@automattic/urls": "workspace:^"
     "@tanstack/react-query": "npm:^5.83.0"
     "@types/react": "npm:^18.3.1"
     "@types/react-dom": "npm:^18.3.1"
