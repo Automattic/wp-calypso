@@ -279,17 +279,19 @@ function initTikTok() {
 	let advancedMatching = {};
 
 	const currentUser = getCurrentUser();
-	// TikTok specific email validation logic.
-	const notAllowedValues = [ '', 'null', 'undefined' ];
-	const processedEmail = currentUser.email.toLowerCase().replace( /\s/g, '' );
+	if ( currentUser ) {
+		// TikTok specific email validation logic.
+		const notAllowedValues = [ '', 'null', 'undefined' ];
+		const processedEmail = currentUser.email.toLowerCase().replace( /\s/g, '' );
 
-	if ( currentUser && notAllowedValues.indexOf( processedEmail ) === -1 ) {
-		advancedMatching = {
-			email: hashPii( processedEmail ),
-			external_id: hashPii( currentUser.ID ),
-		};
+		if ( notAllowedValues.indexOf( processedEmail ) === -1 ) {
+			advancedMatching = {
+				email: hashPii( processedEmail ),
+				external_id: hashPii( currentUser.ID ),
+			};
+		}
+		window.ttq.identify( advancedMatching );
 	}
-	window.ttq.identify( advancedMatching );
 
 	debug( 'initTikTok', advancedMatching );
 }
