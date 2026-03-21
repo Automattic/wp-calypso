@@ -22,7 +22,9 @@ import type {
 import type { Stripe } from '@stripe/stripe-js';
 import type { LocalizeProps } from 'i18n-calypso';
 
-// stripe.confirmUpiSetup is not yet included in the installed @stripe/stripe-js types.
+// stripe.confirmUpiSetup is not yet included in the installed @stripe/stripe-js types (v1.54.2).
+// TODO: Remove this local type once @stripe/stripe-js is upgraded to a version that includes it,
+// and verify the real signature matches before removing.
 type StripeWithUpiSetup = Stripe & {
 	confirmUpiSetup: (
 		clientSecret: string,
@@ -34,7 +36,7 @@ type StripeWithUpiSetup = Stripe & {
 			mandate_data: {
 				customer_acceptance: {
 					type: 'online';
-					online: { ip_address: string; user_agent: string };
+					online: { infer_from_client: boolean };
 				};
 			};
 		}
@@ -253,8 +255,10 @@ async function confirmUpiSetupIntent(
 			customer_acceptance: {
 				type: 'online',
 				online: {
-					ip_address: '',
-					user_agent: typeof navigator !== 'undefined' ? navigator.userAgent : '',
+					// infer_from_client tells Stripe to collect the customer's IP and
+					// user agent directly from the network request, which is the correct
+					// approach for browser-initiated mandate acceptance.
+					infer_from_client: true,
 				},
 			},
 		},
