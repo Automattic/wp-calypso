@@ -2,14 +2,16 @@ import { getUrlParts } from './url-parts';
 import { determineUrlType, URL_TYPE } from './url-type';
 
 /**
- * Validates a URL for safe redirection.
+ * Validates an absolute URL for safe redirection.
  *
  * Prevents open redirect and XSS attacks by ensuring:
- * - Absolute path URLs (starting with `/`, not `//`) are allowed
- * - Absolute URLs must use `http:` or `https:` protocol (blocks `javascript:`, `data:`, etc.)
- * - Absolute URL hostnames must match an allowlist or pattern
- * - Scheme-relative (`//evil.com`), path-relative, and invalid URLs are rejected
- * @param url - The URL to validate.
+ * - Only `http:` or `https:` protocol is allowed (blocks `javascript:`, `data:`, etc.)
+ * - Hostname must match an allowlist or pattern
+ * - Scheme-relative (`//evil.com`), relative, and invalid URLs are rejected
+ *
+ * Does not handle relative paths — callers should check for those separately
+ * before calling this function if they want to allow them.
+ * @param url - The absolute URL to validate.
  * @param allowedHostnames - Exact hostnames to allow (e.g., 'wordpress.com').
  * @param allowedHostnamePatterns - Optional regex patterns to match hostnames (e.g., /\.calypso\.live$/).
  * @returns True if the URL is safe to redirect to.
@@ -20,10 +22,6 @@ export function isAllowedRedirectUrl(
 	allowedHostnamePatterns?: RegExp[]
 ): boolean {
 	const urlType = determineUrlType( url );
-
-	if ( urlType === URL_TYPE.PATH_ABSOLUTE ) {
-		return true;
-	}
 
 	if ( urlType !== URL_TYPE.ABSOLUTE ) {
 		return false;

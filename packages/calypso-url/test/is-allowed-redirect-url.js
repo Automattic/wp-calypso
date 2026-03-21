@@ -3,13 +3,9 @@ import { isAllowedRedirectUrl } from '../src';
 const allowedHostnames = [ 'wordpress.com', 'cloud.jetpack.com', 'akismet.com' ];
 
 describe( 'isAllowedRedirectUrl', () => {
-	describe( 'relative URLs', () => {
-		it( 'allows absolute path URLs', () => {
-			expect( isAllowedRedirectUrl( '/checkout/thank-you', allowedHostnames ) ).toBe( true );
-		} );
-
-		it( 'allows absolute path URLs with query params', () => {
-			expect( isAllowedRedirectUrl( '/page?foo=bar', allowedHostnames ) ).toBe( true );
+	describe( 'non-absolute URLs', () => {
+		it( 'rejects absolute path URLs', () => {
+			expect( isAllowedRedirectUrl( '/checkout/thank-you', allowedHostnames ) ).toBe( false );
 		} );
 
 		it( 'rejects protocol-relative URLs', () => {

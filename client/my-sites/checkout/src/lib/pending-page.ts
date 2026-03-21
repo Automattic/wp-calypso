@@ -259,6 +259,11 @@ function interpolateReceiptId( url: string, receiptId: number ): string {
  * which is absolute and on an unknown host.
  */
 function isRedirectAllowed( url: string, siteSlug: string | undefined ): boolean {
+	// Allow relative paths (but not protocol-relative URLs like //evil.com).
+	if ( url.startsWith( '/' ) && ! url.startsWith( '//' ) ) {
+		return true;
+	}
+
 	// Handle subdirectory sites (e.g., siteSlug = 'example.com::blog') which need
 	// both hostname and path matching. If the URL matches the subdirectory site,
 	// allow it; otherwise fall through to the general allowlist check below.
