@@ -92,6 +92,13 @@ export default async function upiProcessor(
 	);
 
 	const root = getRenderRoot( genericErrorMessage );
+	let rootUnmounted = false;
+	const safeDismissModal = () => {
+		if ( ! rootUnmounted ) {
+			rootUnmounted = true;
+			hideModal( root );
+		}
+	};
 
 	return submitWpcomTransaction( formattedTransactionData, options )
 		.then( async ( response?: WPCOMTransactionEndpointResponse ) => {
@@ -113,12 +120,12 @@ export default async function upiProcessor(
 				root,
 				redirectUrl: response.redirect_url,
 				cancel: () => {
-					hideModal( root );
+					safeDismissModal();
 					isModalActive = false;
 					explicitClosureMessage = translate( 'Payment cancelled.' );
 				},
 				error: () => {
-					hideModal( root );
+					safeDismissModal();
 					isModalActive = false;
 					explicitClosureMessage = genericErrorMessage;
 				},
@@ -132,7 +139,7 @@ export default async function upiProcessor(
 				throw new Error( explicitClosureMessage ?? genericFailureMessage );
 			}
 
-			hideModal( root );
+			safeDismissModal();
 
 			const responseData: Partial< WPCOMTransactionEndpointResponseSuccess > = {
 				success: true,
@@ -141,7 +148,7 @@ export default async function upiProcessor(
 			return makeSuccessResponse( responseData );
 		} )
 		.catch( ( error ) => {
-			hideModal( root );
+			safeDismissModal();
 			return makeErrorResponse( error.message );
 		} );
 }
