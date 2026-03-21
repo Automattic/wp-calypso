@@ -1,7 +1,16 @@
 import { WordPressLogo } from '@automattic/components/src/logos/wordpress-logo';
 import { useQueryClient, useIsFetching } from '@tanstack/react-query';
 import { CatchNotFound, Outlet, useRouterState, useRouter } from '@tanstack/react-router';
-import { Suspense, lazy, useEffect, useState, useMemo, useSyncExternalStore } from 'react';
+import { useViewportMatch } from '@wordpress/compose';
+import {
+	Suspense,
+	lazy,
+	useEffect,
+	useState,
+	useMemo,
+	useCallback,
+	useSyncExternalStore,
+} from 'react';
 import { LoadingLine } from '../../components/loading-line';
 import { PageViewTracker } from '../../components/page-view-tracker';
 import NotFound from '../404';
@@ -10,6 +19,7 @@ import CommandPalette from '../command-palette';
 import { useAppContext } from '../context';
 import Header from '../header';
 import { NavigationBlockerRegistry } from '../navigation-blocker';
+import Sidebar, { ResponsiveSidebar } from '../sidebar';
 import Snackbars from '../snackbars';
 import './style.scss';
 
@@ -25,6 +35,10 @@ const VERY_SLOW_THRESHOLD_MS = 6000;
 
 function Root() {
 	const { name, supports, LoadingLogo = WordPressLogo } = useAppContext();
+	const isDesktop = useViewportMatch( 'medium' );
+	const [ isResponsiveSidebarOpen, setIsResponsiveSidebarOpen ] = useState( false );
+	const openResponsiveSidebar = useCallback( () => setIsResponsiveSidebarOpen( true ), [] );
+	const closeResponsiveSidebar = useCallback( () => setIsResponsiveSidebarOpen( false ), [] );
 	const isFetching = useIsFetching();
 	const router = useRouter();
 	const queryClient = useQueryClient();
@@ -109,13 +123,31 @@ function Root() {
 				/>
 			) }
 			{ ( isInitialLoad || isVerySlowNavigation ) && <LoadingLogo className="wpcom-site__logo" /> }
-			{ ! isInitialLoad && <Header /> }
 			{ ! isVerySlowNavigation && (
-				<main>
-					<CatchNotFound fallback={ NotFound }>
-						<Outlet />
-					</CatchNotFound>
-				</main>
+				<div className="dashboard-root__body">
+					{ isDesktop && <Sidebar /> }
+					{ ! isDesktop && (
+						<ResponsiveSidebar
+							isOpen={ isResponsiveSidebarOpen }
+							onClose={ closeResponsiveSidebar }
+						/>
+					) }
+					<div className="dashboard-root__content">
+						{ ! isDesktop && isResponsiveSidebarOpen && (
+							<div
+								className="dashboard-root__content-overlay"
+								onClick={ closeResponsiveSidebar }
+								role="presentation"
+							/>
+						) }
+						<Header onOpenMenu={ openResponsiveSidebar } isMenuOpen={ isResponsiveSidebarOpen } />
+						<main>
+							<CatchNotFound fallback={ NotFound }>
+								<Outlet />
+							</CatchNotFound>
+						</main>
+					</div>
+				</div>
 			) }
 			{ supports.commandPalette && <CommandPalette /> }
 			<Snackbars />

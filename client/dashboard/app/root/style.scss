@@ -1,8 +1,24 @@
-// For pages without sub menus, the first header is the sticky header
-// For pages with sub menus, the second header is the sticky header
-.dashboard-root__layout:not(:has(main > .dashboard-header-bar)) > .dashboard-header-bar,
-.dashboard-root__layout > main > .dashboard-header-bar {
+.dashboard-root__content > .dashboard-header-bar {
 	position: sticky;
 	top: 0;
 	z-index: 3; // DataViews header seems to have z-index: 1; CalloutOverlay has z-index: 2
+}
+
+.dashboard-root__body {
+	display: flex;
+	min-height: 100vh;
+}
+
+.dashboard-root__content {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	min-width: 0;
+}
+
+.dashboard-root__content-overlay {
+	position: absolute;
+	inset: 0;
+	z-index: 100;
 }

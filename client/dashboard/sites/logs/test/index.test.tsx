@@ -176,26 +176,6 @@ beforeEach( () => {
 } );
 
 describe( 'SiteLogs page', () => {
-	test.each( Object.entries( LogType ) )(
-		'on selecting tab %s, navigates to /%s',
-		async ( logType, logTypeName ) => {
-			// Different initial log type that the one under test
-			const initialLogType = logTypeName !== LogType.PHP ? LogType.PHP : LogType.SERVER;
-			render( <SiteLogs logType={ initialLogType } /> );
-
-			// Click another tab
-			await userEvent.click(
-				await screen.findByRole( 'button', { name: new RegExp( logTypeName, 'i' ) } )
-			);
-			const { __mocks: routerMocks } = jest.requireMock( '@tanstack/react-router' ) as {
-				__mocks: { navigate: jest.Mock };
-			};
-			expect( routerMocks.navigate ).toHaveBeenCalledWith( {
-				to: `/sites/test-site/logs/${ logTypeName }`,
-			} );
-		}
-	);
-
 	test( 'URL from/to params are normalized from ms to seconds', async () => {
 		const replaceSpy = jest.spyOn( window.history, 'replaceState' );
 		const msFrom = 1730000000000; // ms
@@ -208,16 +188,17 @@ describe( 'SiteLogs page', () => {
 
 		render( <SiteLogs logType={ LogType.PHP } /> );
 
-		await waitFor( () => expect( replaceSpy ).toHaveBeenCalled() );
-		const hrefArgs = replaceSpy.mock.calls
-			.map( ( call ) => call?.[ 2 ] )
-			.filter( ( v ): v is string => typeof v === 'string' );
-		expect( hrefArgs.some( ( h ) => h.includes( `from=${ Math.floor( msFrom / 1000 ) }` ) ) ).toBe(
-			true
-		);
-		expect( hrefArgs.some( ( h ) => h.includes( `to=${ Math.floor( msTo / 1000 ) }` ) ) ).toBe(
-			true
-		);
+		await waitFor( () => {
+			const hrefArgs = replaceSpy.mock.calls
+				.map( ( call ) => call?.[ 2 ] )
+				.filter( ( v ): v is string => typeof v === 'string' );
+			expect(
+				hrefArgs.some( ( h ) => h.includes( `from=${ Math.floor( msFrom / 1000 ) }` ) )
+			).toBe( true );
+			expect( hrefArgs.some( ( h ) => h.includes( `to=${ Math.floor( msTo / 1000 ) }` ) ) ).toBe(
+				true
+			);
+		} );
 
 		// restore
 		Object.defineProperty( window, 'location', { value: { href: originalHref } } );

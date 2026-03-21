@@ -1,5 +1,7 @@
+import { __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import ResponsiveMenu from '../../components/responsive-menu';
+import { brush, copy, envelope, globe, plugins } from '@wordpress/icons';
+import { SidebarExpandableMenuItem, SidebarMenu, SidebarMenuItem } from '../../components/sidebar';
 import { wpcomLink } from '../../utils/link';
 import { useAppContext } from '../context';
 
@@ -7,27 +9,59 @@ function PrimaryMenu() {
 	const { supports } = useAppContext();
 
 	return (
-		<ResponsiveMenu>
-			{ supports.sites && <ResponsiveMenu.Item to="/sites">{ __( 'Sites' ) }</ResponsiveMenu.Item> }
+		<SidebarMenu>
+			{ supports.sites && (
+				<SidebarMenuItem icon={ copy } to="/sites">
+					{ __( 'Sites' ) }
+				</SidebarMenuItem>
+			) }
 			{ supports.domains && (
-				<ResponsiveMenu.Item to="/domains">{ __( 'Domains' ) }</ResponsiveMenu.Item>
+				<SidebarMenuItem icon={ globe } to="/domains">
+					{ __( 'Domains' ) }
+				</SidebarMenuItem>
 			) }
 			{ supports.emails && (
-				<ResponsiveMenu.Item to="/emails">{ __( 'Emails' ) }</ResponsiveMenu.Item>
+				<SidebarMenuItem icon={ envelope } to="/emails">
+					{ __( 'Emails' ) }
+				</SidebarMenuItem>
 			) }
 			{ supports.plugins && (
-				<ResponsiveMenu.Item to="/plugins/manage">{ __( 'Plugins' ) }</ResponsiveMenu.Item>
+				<SidebarExpandableMenuItem
+					label={ __( 'Plugins' ) }
+					icon={ plugins }
+					to="/plugins"
+					defaultTo="/plugins/manage"
+				>
+					<SidebarMenuItem to="/plugins/manage">{ __( 'Manage plugins' ) }</SidebarMenuItem>
+					<SidebarMenuItem to="/plugins/scheduled-updates">
+						{ __( 'Scheduled updates' ) }
+					</SidebarMenuItem>
+					<SidebarMenuItem
+						href={ wpcomLink( '/plugins' ) }
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						<HStack justify="flex-start" spacing={ 1 }>
+							<span>{ __( 'Browse plugins' ) }</span>
+							<span aria-label={ __( '(opens in a new tab)' ) }>&#8599;</span>
+						</HStack>
+					</SidebarMenuItem>
+				</SidebarExpandableMenuItem>
 			) }
 			{ supports.themes && (
-				<ResponsiveMenu.Item
+				<SidebarMenuItem
+					icon={ brush }
 					href={ wpcomLink( '/themes' ) }
 					target="_blank"
 					rel="noopener noreferrer"
 				>
-					{ __( 'Themes' ) }
-				</ResponsiveMenu.Item>
+					<HStack justify="flex-start" spacing={ 1 }>
+						<span>{ __( 'Themes' ) }</span>
+						<span aria-label={ __( '(opens in a new tab)' ) }>&#8599;</span>
+					</HStack>
+				</SidebarMenuItem>
 			) }
-		</ResponsiveMenu>
+		</SidebarMenu>
 	);
 }
 
