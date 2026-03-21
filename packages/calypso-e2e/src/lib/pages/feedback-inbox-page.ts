@@ -22,7 +22,10 @@ export class FeedbackInboxPage {
 	 * @param {string} siteUrlWithProtocol Site URL with the protocol.
 	 */
 	async visit( siteUrlWithProtocol: string ): Promise< void > {
-		const url = new URL( '/wp-admin/admin.php?page=jetpack-forms-admin', siteUrlWithProtocol );
+		const url = new URL(
+			'/wp-admin/admin.php?page=jetpack-forms-responses-wp-admin',
+			siteUrlWithProtocol
+		);
 		await this.page.goto( url.href, { timeout: 20 * 1000 } );
 	}
 
@@ -44,14 +47,7 @@ export class FeedbackInboxPage {
 		const viewMenuItem = this.page.getByRole( 'menuitem', { name: 'View' } ).first();
 		await viewMenuItem.click();
 
-		if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
-			await this.page.locator( '.jp-forms__inbox-response' ).waitFor( { state: 'visible' } );
-		} else {
-			await this.page
-				.getByRole( 'dialog' )
-				.filter( { has: this.page.getByRole( 'heading', { name: 'Response' } ) } )
-				.waitFor();
-		}
+		await this.page.locator( '.jp-forms__inbox-response-data' ).waitFor( { state: 'visible' } );
 	}
 
 	/**
@@ -61,16 +57,7 @@ export class FeedbackInboxPage {
 	 * @throws If the text is not found in the response.
 	 */
 	async validateTextInSubmission( text: string ): Promise< void > {
-		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-			// On mobile, the response is in a full-screen modal
-			await this.page
-				.locator( '.jp-forms__inbox__response-mobile' )
-				.getByText( text )
-				.first()
-				.waitFor();
-		} else {
-			await this.page.locator( '.jp-forms__inbox-response' ).getByText( text ).first().waitFor();
-		}
+		await this.page.locator( '.boot-layout__inspector' ).getByText( text ).first().waitFor();
 	}
 
 	/**
@@ -81,30 +68,15 @@ export class FeedbackInboxPage {
 	 */
 	async searchResponses( search: string, skipWaiting: boolean = false ): Promise< void > {
 		if ( skipWaiting ) {
-			await this.page
-				.getByRole( 'searchbox', { name: 'Search' } )
-				.or( this.page.getByRole( 'textbox', { name: 'Search responses' } ) )
-				.fill( search );
-			await this.page
-				.getByRole( 'tab', { name: 'Inbox', exact: false, disabled: false } )
-				.or( this.page.getByRole( 'radio', { name: /^Inbox\s*\([\d,]+\)$/ } ) )
-				.waitFor();
+			await this.page.getByRole( 'searchbox', { name: 'Search' } ).fill( search );
+			await this.page.waitForTimeout( 500 ); // Wait for the UI to update
 			return;
 		}
-		const responseRequestPromise = this.page.waitForResponse(
-			( response ) =>
-				// Atomic
-				( response.url().includes( '/wp-json/wp/v2/feedback' ) ||
-					// Simple
-					!! response.url().match( /\/wp\/v2\/sites\/[0-9]+\/feedback/ ) ) &&
-				response.url().includes( encodeURIComponent( search ) )
-		);
 		await this.page.getByRole( 'searchbox', { name: 'Search' } ).fill( search );
-		await responseRequestPromise;
-		await this.page
-			.getByRole( 'tab', { name: 'Inbox', exact: false, disabled: false } )
-			.or( this.page.getByRole( 'radio', { name: /^Inbox\s*\([\d,]+\)$/ } ) )
-			.waitFor();
+		// Wait for the table to update with search results.
+		// Use a short delay since we can't rely on specific API URL patterns
+		// across different environments (wpcom, atomic, wp-admin).
+		await this.page.waitForTimeout( 2000 );
 	}
 
 	/**
@@ -118,17 +90,8 @@ export class FeedbackInboxPage {
 			await this.page.waitForTimeout( 500 ); // Wait for the UI to update
 			return;
 		}
-		const responseRequestPromise = this.page.waitForResponse(
-			( response ) =>
-				// Atomic
-				( response.url().includes( '/wp-json/wp/v2/feedback' ) ||
-					// Simple
-					!! response.url().match( /\/wp\/v2\/sites\/[0-9]+\/feedback/ ) ) &&
-				! response.url().includes( 'search=' )
-		);
 		await this.page.getByRole( 'searchbox', { name: 'Search' } ).clear();
-		await responseRequestPromise;
-		await this.page.waitForTimeout( 500 ); // Wait for the UI to update
+		await this.page.waitForTimeout( 2000 ); // Wait for the results to reload
 	}
 
 	/**
@@ -137,8 +100,11 @@ export class FeedbackInboxPage {
 	 * @param {string} folderName The name of the folder to click (e.g., 'Inbox', 'Spam', 'Trash').
 	 */
 	async clickFolderTab( folderName: string ): Promise< void > {
-		const tablist = this.page.getByRole( 'tablist' );
-		await tablist.getByRole( 'tab', { name: folderName } ).click();
+		// Open the folder dropdown by clicking the "Folder is:" button
+		const folderButton = this.page.getByRole( 'button' ).filter( { hasText: 'Folder is:' } );
+		await folderButton.click();
+		// Select the folder option from the listbox
+		await this.page.getByRole( 'option', { name: folderName, exact: false } ).click();
 		await this.page.waitForTimeout( 500 ); // Wait for the data to load
 	}
 
