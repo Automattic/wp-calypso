@@ -141,7 +141,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/agents-manager@workspace:packages/agents-manager"
   dependencies:
-    "@automattic/agenttic-client": "file:/Users/jcheringer/projects/a8c/agenttic/packages/agenttic-client/automattic-agenttic-client-0.1.55.tgz"
+    "@automattic/agenttic-client": "npm:^0.1.53"
     "@automattic/agenttic-ui": "npm:^0.1.53"
     "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
@@ -173,26 +173,6 @@ __metadata:
     react-dom: ^18.3.1
   languageName: unknown
   linkType: soft
-
-"@automattic/agenttic-client@file:/Users/jcheringer/projects/a8c/agenttic/packages/agenttic-client/automattic-agenttic-client-0.1.55.tgz::locator=%40automattic%2Fagents-manager%40workspace%3Apackages%2Fagents-manager":
-  version: 0.1.55
-  resolution: "@automattic/agenttic-client@file:/Users/jcheringer/projects/a8c/agenttic/packages/agenttic-client/automattic-agenttic-client-0.1.55.tgz#/Users/jcheringer/projects/a8c/agenttic/packages/agenttic-client/automattic-agenttic-client-0.1.55.tgz::hash=2cef1a&locator=%40automattic%2Fagents-manager%40workspace%3Apackages%2Fagents-manager"
-  dependencies:
-    "@types/react": "npm:^18.0.0"
-    marked: "npm:^16.2.1"
-    react: "npm:^18.0.0"
-  peerDependencies:
-    "@wordpress/api-fetch": ^6.0.0 || ^7.0.0
-    react: ^18.0.0
-  dependenciesMeta:
-    marked:
-      optional: true
-  peerDependenciesMeta:
-    "@wordpress/api-fetch":
-      optional: true
-  checksum: ea3e5ec7e743fc682a9b682ace6acbf80134c4cb53d10518f7beec657686145104a8a76ccf33f14a6f90b02d3817062e92ea896106ec2f441507d40ed7973aa3
-  languageName: node
-  linkType: hard
 
 "@automattic/agenttic-client@npm:^0.1.50, @automattic/agenttic-client@npm:^0.1.53":
   version: 0.1.53
