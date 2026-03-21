@@ -41,9 +41,10 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"@automattic/agenttic-client": "^0.1.53",
+		"@automattic/agenttic-client": "file:/Users/jcheringer/projects/a8c/agenttic/packages/agenttic-client/automattic-agenttic-client-0.1.55.tgz",
 		"@automattic/agenttic-ui": "^0.1.53",
 		"@automattic/calypso-analytics": "workspace:^",
+		"@automattic/components": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/oauth-token": "workspace:^",
