@@ -176,13 +176,13 @@ export const usePersistedHistory = ( siteKey: string ) => {
 		return persistedHistory;
 	}, [ isStale, persistedHistory, siteKey ] );
 
-	// Build history from persisted data. Recreated when activeHistory changes,
+	// Build history from persisted data. Recreated when `activeHistory` changes,
 	// so `useLocation().state` (e.g., `sessionId`) is correct immediately.
-	const historyKey = activeHistory ? JSON.stringify( activeHistory ) : 'default';
+	// Safe to use `activeHistory` as dep directly because the store is only
+	// populated once from the server — local navigations don't update it.
 	const history = useMemo(
 		() => new MemoryHistory( activeHistory?.entries, activeHistory?.index ),
-		// eslint-disable-next-line react-hooks/exhaustive-deps -- rebuild only when persisted data changes
-		[ historyKey ]
+		[ activeHistory ]
 	);
 
 	const [ historyState, setHistoryState ] = useState< HistoryEvent >( () => ( {
@@ -201,7 +201,7 @@ export const usePersistedHistory = ( siteKey: string ) => {
 		[ siteKey ]
 	);
 
-	// Sync historyState, persist callback, and listener when history instance changes.
+	// Sync `historyState`, persist callback, and listener when `history` instance changes.
 	useLayoutEffect( () => {
 		history.setOnPersist( persistHistory );
 		setHistoryState( { action: history.action, location: history.location } );
