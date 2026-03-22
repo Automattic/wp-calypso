@@ -133,6 +133,7 @@ export default function OrchestratorChat( {
 		}
 	}, [ dynamicSuggestions?.suggestions, registerSuggestions, clearSuggestions ] );
 
+	// Fetch the conversation when the user selects one from the history list.
 	const { isLoading: isLoadingConversation } = useFetchSelectedConversation( {
 		onSuccess: ( loadedMessages, serverSessionId ) => {
 			// Update the UI with the loaded messages
