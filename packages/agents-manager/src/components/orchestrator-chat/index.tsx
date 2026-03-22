@@ -118,21 +118,6 @@ export default function OrchestratorChat( {
 		progressMessage,
 	} = useAgentChat( agentConfig! );
 
-	// Use dynamic suggestions from the external provider (e.g., Big Sky block-based suggestions)
-	const dynamicSuggestions = useSuggestions?.();
-
-	// Register dynamic suggestions whenever they change
-	useEffect( () => {
-		const currentSuggestions = dynamicSuggestions?.suggestions;
-
-		if ( currentSuggestions && currentSuggestions.length > 0 ) {
-			registerSuggestions?.( currentSuggestions );
-		} else {
-			// Clear suggestions when there are none
-			clearSuggestions?.();
-		}
-	}, [ dynamicSuggestions?.suggestions, registerSuggestions, clearSuggestions ] );
-
 	// Fetch the conversation when the user selects one from the history list.
 	const { isLoading: isLoadingConversation } = useFetchSelectedConversation( {
 		onSuccess: ( loadedMessages, serverSessionId ) => {
@@ -147,6 +132,21 @@ export default function OrchestratorChat( {
 			}
 		},
 	} );
+
+	// Use dynamic suggestions from the external provider (e.g., Big Sky block-based suggestions)
+	const dynamicSuggestions = useSuggestions?.();
+
+	// Register dynamic suggestions whenever they change
+	useEffect( () => {
+		const currentSuggestions = dynamicSuggestions?.suggestions;
+
+		if ( currentSuggestions && currentSuggestions.length > 0 ) {
+			registerSuggestions?.( currentSuggestions );
+		} else {
+			// Clear suggestions when there are none
+			clearSuggestions?.();
+		}
+	}, [ dynamicSuggestions?.suggestions, registerSuggestions, clearSuggestions ] );
 
 	// Persist the chat route so the conversation can be resumed later.
 	useSaveNewChatRoute( messages );
