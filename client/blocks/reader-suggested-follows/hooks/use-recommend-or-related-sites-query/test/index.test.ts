@@ -181,6 +181,75 @@ describe( 'useRecommendOrRelatedSitesQuery', () => {
 		} );
 	} );
 
+	it( 'filters out the current site from recommended feeds', () => {
+		const mockRecommendedFeeds = [
+			{ ID: '1', name: 'Other Blog', feedId: '10', siteId: '999' },
+			{ ID: '2', name: 'Current Blog', feedId: '20', siteId: '123' },
+		];
+
+		( useFeedRecommendationsQuery as jest.Mock ).mockReturnValue( {
+			data: mockRecommendedFeeds,
+			isLoading: false,
+			isFetched: true,
+		} );
+
+		const { result } = renderHook( () =>
+			useRecommendOrRelatedSitesQuery( { author: fakeAuthor, siteId: 123, postId: 456 } )
+		);
+
+		expect( result.current.data ).toEqual( [
+			{ ID: '1', name: 'Other Blog', feedId: '10', siteId: '999' },
+		] );
+		expect( result.current.resourceType ).toBe( 'recommended' );
+	} );
+
+	it( 'filters out the current site from related sites', () => {
+		( useFeedRecommendationsQuery as jest.Mock ).mockReturnValue( {
+			data: [],
+			isLoading: false,
+			isFetched: true,
+		} );
+
+		( useRelatedSites as jest.Mock ).mockReturnValue( {
+			data: [
+				{ global_ID: 'a', site_ID: 999, name: 'Other Site' },
+				{ global_ID: 'b', site_ID: 123, name: 'Current Site' },
+			],
+			isLoading: false,
+			isFetched: true,
+		} );
+
+		const { result } = renderHook( () =>
+			useRecommendOrRelatedSitesQuery( { siteId: 123, postId: 456 } )
+		);
+
+		expect( result.current.data ).toEqual( [
+			{ global_ID: 'a', site_ID: 999, name: 'Other Site' },
+		] );
+		expect( result.current.resourceType ).toBe( 'related' );
+	} );
+
+	it( 'returns empty when all recommended feeds match the current site', () => {
+		( useFeedRecommendationsQuery as jest.Mock ).mockReturnValue( {
+			data: [ { ID: '1', name: 'Current Blog', feedId: '10', siteId: '123' } ],
+			isLoading: false,
+			isFetched: true,
+		} );
+
+		( useRelatedSites as jest.Mock ).mockReturnValue( {
+			data: [],
+			isLoading: false,
+			isFetched: true,
+		} );
+
+		const { result } = renderHook( () =>
+			useRecommendOrRelatedSitesQuery( { author: fakeAuthor, siteId: 123, postId: 456 } )
+		);
+
+		expect( result.current.data ).toEqual( [] );
+		expect( result.current.resourceType ).toBeNull();
+	} );
+
 	it( 'returns an empty array when there is no recommended or related sites', () => {
 		( useFeedRecommendationsQuery as jest.Mock ).mockReturnValue( {
 			data: [],
