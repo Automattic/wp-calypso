@@ -189,7 +189,7 @@ export const usePersistedHistory = ( siteKey: string ) => {
 	const [ history, setHistory ] = useState< MemoryHistory >(
 		() => new MemoryHistory( activeHistory?.entries, activeHistory?.index )
 	);
-	const [ state, setState ] = useState< HistoryEvent >( () => ( {
+	const [ historyState, setHistoryState ] = useState< HistoryEvent >( () => ( {
 		action: history.action,
 		location: history.location,
 	} ) );
@@ -211,7 +211,7 @@ export const usePersistedHistory = ( siteKey: string ) => {
 	}, [ history, persistHistory ] );
 
 	useLayoutEffect( () => {
-		return history.listen( setState );
+		return history.listen( setHistoryState );
 	}, [ history ] );
 
 	// Only rebuild history when `activeHistory` actually changes.
@@ -229,11 +229,11 @@ export const usePersistedHistory = ( siteKey: string ) => {
 		newHistory.setOnPersist( persistHistory );
 		setHistory( newHistory );
 
-		setState( {
+		setHistoryState( {
 			action: newHistory.action,
 			location: newHistory.location,
 		} );
 	}, [ activeHistory, persistHistory ] );
 
-	return { history, state };
+	return { history, historyState };
 };

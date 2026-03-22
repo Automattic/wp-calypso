@@ -10,10 +10,14 @@ interface Props {
  * A router like MemoryRouter, but it persists the history to the server using user preferences.
  */
 export const PersistentRouter = ( { children, siteKey }: Props ) => {
-	const { history, state } = usePersistedHistory( siteKey );
+	const { history, historyState } = usePersistedHistory( siteKey );
 
 	return (
-		<Router location={ state.location } navigator={ history } navigationType={ state.action }>
+		<Router
+			location={ historyState.location }
+			navigator={ history }
+			navigationType={ historyState.action }
+		>
 			{ children }
 		</Router>
 	);
