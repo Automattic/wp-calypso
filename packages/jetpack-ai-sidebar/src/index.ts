@@ -310,6 +310,28 @@ export function useAbilitiesSetup( actions: {
 		clearSuggestionsFn = actions.clearSuggestions;
 	}
 	registerSelectTitleAbility();
+	setupAutoScrollFix();
+}
+
+/**
+ * Override the AM's bottomMessages CSS so messages start from the top
+ * instead of being pinned to the bottom via margin-top: auto.
+ * This makes the chat push content upward when new messages arrive.
+ */
+function setupAutoScrollFix(): void {
+	if ( ( window as any ).__jetpackAiScrollFixActive ) {
+		return;
+	}
+	( window as any ).__jetpackAiScrollFixActive = true;
+
+	const style = document.createElement( 'style' );
+	style.id = 'jetpack-ai-scroll-fix';
+	style.textContent = `
+		[data-slot="messages"] > *:first-child {
+			margin-top: 0 !important;
+		}
+	`;
+	document.head.appendChild( style );
 }
 
 // ---------- toolProvider ----------
