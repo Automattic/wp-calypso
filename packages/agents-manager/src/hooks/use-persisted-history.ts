@@ -185,7 +185,7 @@ export const usePersistedHistory = ( siteKey: string ) => {
 		[ activeHistory ]
 	);
 
-	const [ historyState, setHistoryState ] = useState< HistoryEvent >( () => ( {
+	const [ state, setState ] = useState< HistoryEvent >( () => ( {
 		action: history.action,
 		location: history.location,
 	} ) );
@@ -201,12 +201,12 @@ export const usePersistedHistory = ( siteKey: string ) => {
 		[ siteKey ]
 	);
 
-	// Sync `historyState`, persist callback, and listener when `history` instance changes.
+	// Sync `state`, persist callback, and listener when `history` instance changes.
 	useLayoutEffect( () => {
 		history.setOnPersist( persistHistory );
-		setHistoryState( { action: history.action, location: history.location } );
-		return history.listen( setHistoryState );
+		setState( { action: history.action, location: history.location } );
+		return history.listen( setState );
 	}, [ history, persistHistory ] );
 
-	return { history, historyState };
+	return { history, state };
 };
