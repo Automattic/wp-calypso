@@ -1,0 +1,112 @@
+.jetpack-ai-title-picker {
+	padding: 8px 0;
+
+	&__intro {
+		margin: 0 0 12px;
+		font-size: 14px;
+	}
+
+	&__applied {
+		margin: 0;
+		font-size: 14px;
+		color: #00a32a;
+		font-weight: 600;
+	}
+
+	&__options {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+	}
+
+	&__card {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+		padding: 12px;
+		border: 1px solid rgba(255, 255, 255, 0.12);
+		border-radius: 8px;
+		background: transparent;
+		cursor: pointer;
+		text-align: left;
+		transition: border-color 0.15s ease, background 0.15s ease;
+		width: 100%;
+		color: inherit;
+		font-family: inherit;
+
+		&:hover {
+			border-color: rgba(255, 255, 255, 0.3);
+			background: rgba(255, 255, 255, 0.04);
+		}
+
+		&.is-selected {
+			border-color: var(--wp-admin-theme-color, #3858e9);
+			background: rgba(56, 88, 233, 0.08);
+		}
+
+		&-title {
+			font-size: 14px;
+			font-weight: 600;
+			line-height: 20px;
+		}
+
+		&-explanation {
+			font-size: 12px;
+			font-weight: 400;
+			line-height: 18px;
+			opacity: 0.7;
+		}
+	}
+
+	&__actions {
+		display: flex;
+		justify-content: flex-end;
+		margin-top: 12px;
+	}
+}
+
+// Block update transition effects
+@keyframes jetpack-ai-shimmer {
+
+	0% {
+		background-position: -200% 0;
+	}
+
+	100% {
+		background-position: 200% 0;
+	}
+}
+
+.jetpack-ai-block-updating {
+	position: relative;
+	opacity: 0.6;
+	transition: opacity 0.3s ease;
+
+	&::after {
+		content: "";
+		position: absolute;
+		inset: 0;
+		border-radius: 4px;
+		background: linear-gradient(90deg, transparent 0%, rgba(56, 88, 233, 0.12) 50%, transparent 100%);
+		background-size: 200% 100%;
+		animation: jetpack-ai-shimmer 1.2s ease-in-out infinite;
+		pointer-events: none;
+	}
+}
+
+.jetpack-ai-block-updated {
+	animation: jetpack-ai-highlight 1s ease-out;
+}
+
+@keyframes jetpack-ai-highlight {
+
+	0% {
+		outline: 2px solid rgba(56, 88, 233, 0.6);
+		outline-offset: 2px;
+	}
+
+	100% {
+		outline: 2px solid transparent;
+		outline-offset: 2px;
+	}
+}

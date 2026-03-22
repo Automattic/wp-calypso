@@ -79,7 +79,9 @@ function getIndividualConfig( options = {} ) {
 					// Bundle @wordpress/abilities into image-studio so it works on
 					// self-hosted sites where the package isn't registered as a script.
 					if (
-						( name === 'image-studio' || name === 'block-notes' ) &&
+						( name === 'image-studio' ||
+							name === 'block-notes' ||
+							name === 'jetpack-ai-sidebar' ) &&
 						request === '@wordpress/abilities'
 					) {
 						return null;
@@ -108,6 +110,7 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 		getIndividualConfig( { env, argv, name: 'agents-manager-gutenberg' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-wp-admin' } ),
 		getIndividualConfig( { env, argv, name: 'image-studio' } ),
+		getIndividualConfig( { env, argv, name: 'jetpack-ai-sidebar' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-gutenberg-disconnected' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-wp-admin-disconnected' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-ciab-disconnected' } ),
