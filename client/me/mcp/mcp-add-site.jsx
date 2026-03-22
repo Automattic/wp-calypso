@@ -61,7 +61,7 @@ export default function McpAddSitePage( { path } ) {
 		onSuccess: ( newData ) => {
 			queryClient.setQueryData( userSettingsQuery().queryKey, newData );
 			dispatch(
-				successNotice( translate( 'MCP is enabled for your account and the site you chose.' ), {
+				successNotice( translate( 'MCP is enabled for the selected site.' ), {
 					id: 'mcp-settings-saved',
 				} )
 			);
@@ -91,11 +91,7 @@ export default function McpAddSitePage( { path } ) {
 		if ( ! blogId || isNaN( blogId ) ) {
 			return;
 		}
-		const payload = buildMcpAllowSingleSitePayload( userSettings, sites, blogId );
-		if ( ! payload ) {
-			return;
-		}
-		mutation.mutate( payload );
+		mutation.mutate( buildMcpAllowSingleSitePayload( blogId ) );
 	};
 
 	const renderComboboxItem = ( { item } ) => {
@@ -173,7 +169,7 @@ export default function McpAddSitePage( { path } ) {
 										level={ 3 }
 										title={ translate( 'Choose a site' ) }
 										description={ translate(
-											'Turn on MCP for your account and allow it only on the site you select. Your other sites will be added as exceptions until you change this in Site exceptions.'
+											'Enable MCP access for a single site. Your other sites will not be affected.'
 										) }
 									/>
 									{ sites.length === 0 && (

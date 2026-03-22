@@ -28,6 +28,7 @@ export type McpAbility = {
 export type McpSiteOverride = {
 	blog_id: number;
 	account_tools_enabled?: boolean;
+	site_level_enabled?: boolean;
 	abilities?: Record< string, unknown >;
 };
 
