@@ -21,11 +21,11 @@ interface Result {
 }
 
 /**
- * Loads a previous conversation from the server when the user selects
- * one from the history list. Skips fetching on initial mount since
+ * Fetches a conversation from the server when the user selects one
+ * from the history list. Skips fetching on initial mount since
  * `useAgentChat` already handles the current conversation.
  */
-export default function useLoadHistoryConversation( {
+export default function useFetchSelectedConversation( {
 	maxPages = 10,
 	onSuccess = () => {},
 }: Config ): Result {
@@ -77,7 +77,7 @@ export default function useLoadHistoryConversation( {
 	useEffect( () => {
 		if ( error ) {
 			// eslint-disable-next-line no-console
-			console.error( '[useLoadHistoryConversation] Error loading conversation:', error );
+			console.error( '[useFetchSelectedConversation] Error loading conversation:', error );
 		}
 	}, [ error ] );
 

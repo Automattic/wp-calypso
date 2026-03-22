@@ -13,7 +13,7 @@ import { useAgentsManagerContext } from '../../contexts';
 import useCheckpointAction from '../../hooks/use-checkpoint-action';
 import useCopyAction from '../../hooks/use-copy-action';
 import useFeedbackAction from '../../hooks/use-feedback-action';
-import useLoadHistoryConversation from '../../hooks/use-load-history-conversation';
+import useFetchSelectedConversation from '../../hooks/use-fetch-selected-conversation';
 import useSaveNewChatRoute from '../../hooks/use-save-new-chat-route';
 import convertToolMessagesToComponents from '../../utils/convert-tool-messages-to-components';
 import { persistLastActivity } from '../../utils/persist-last-activity';
@@ -133,7 +133,7 @@ export default function OrchestratorChat( {
 		}
 	}, [ dynamicSuggestions?.suggestions, registerSuggestions, clearSuggestions ] );
 
-	const { isLoading: isLoadingConversation } = useLoadHistoryConversation( {
+	const { isLoading: isLoadingConversation } = useFetchSelectedConversation( {
 		onSuccess: ( loadedMessages, serverSessionId ) => {
 			// Update the UI with the loaded messages
 			loadMessages( loadedMessages );
