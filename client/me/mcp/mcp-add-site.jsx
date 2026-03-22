@@ -1,18 +1,20 @@
 import { sitesQuery, userSettingsQuery, userSettingsMutation } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
-import page from '@automattic/calypso-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
 	Button,
+	FlexItem,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 	Card,
 	CardBody,
 } from '@wordpress/components';
+import { sprintf } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import SiteIcon from 'calypso/blocks/site-icon';
 import DocumentHead from 'calypso/components/data/document-head';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
@@ -23,13 +25,10 @@ import ReauthRequired from 'calypso/me/reauth-required';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { SectionHeader } from '../../dashboard/components/section-header';
 import { getSiteDisplayName } from '../../dashboard/utils/site-name';
+import { getSiteDisplayUrl } from '../../dashboard/utils/site-url';
 import { useMcpPageChrome } from './mcp-page-header';
 import McpSiteCombobox from './mcp-site-combobox';
-import {
-	buildMcpAllowSingleSitePayload,
-	getAccountMcpAbilities,
-	hasEnabledAccountTools,
-} from './utils';
+import { getAccountMcpAbilities, getEnabledSiteIds, hasEnabledAccountTools } from './utils';
 
 import './style.scss';
 
@@ -44,7 +43,7 @@ export default function McpAddSitePage( { path } ) {
 	);
 	const { data: userSettings, error: userSettingsError } = useQuery( userSettingsQuery() );
 
-	const [ selectedSiteId, setSelectedSiteId ] = useState( '' );
+	const [ comboboxValue, setComboboxValue ] = useState( '' );
 	const [ reauthRequired, setReauthRequired ] = useState( false );
 
 	useEffect( () => {
@@ -58,12 +57,8 @@ export default function McpAddSitePage( { path } ) {
 		...userSettingsMutation(),
 		onSuccess: ( newData ) => {
 			queryClient.setQueryData( userSettingsQuery().queryKey, newData );
-			dispatch(
-				successNotice( translate( 'MCP is enabled for the selected site.' ), {
-					id: 'mcp-settings-saved',
-				} )
-			);
-			page( '/me/mcp' );
+			dispatch( successNotice( translate( 'MCP settings saved.' ), { id: 'mcp-settings-saved' } ) );
+			setComboboxValue( '' );
 		},
 		onError: () => {
 			dispatch(
@@ -75,21 +70,77 @@ export default function McpAddSitePage( { path } ) {
 	const mcpAbilities = getAccountMcpAbilities( userSettings || {} );
 	const hasTools = Object.keys( mcpAbilities ).length > 0;
 	const accountMcpOn = hasEnabledAccountTools( userSettings || {} );
+	const enabledSiteIds = getEnabledSiteIds( userSettings || {} );
+
+	const enabledSites = useMemo( () => {
+		return enabledSiteIds
+			.map( ( siteId ) => {
+				const site = sites.find( ( s ) => s.ID === siteId );
+				if ( site ) {
+					return {
+						id: siteId,
+						site,
+						name: getSiteDisplayName( site ),
+						domain: getSiteDisplayUrl( site ),
+					};
+				}
+				return {
+					id: siteId,
+					site: null,
+					name: sprintf(
+						/* translators: %s is the site ID. */
+						translate( 'Site ID: %s' ),
+						String( siteId )
+					),
+					domain: '',
+				};
+			} )
+			.sort( ( a, b ) => a.name.localeCompare( b.name ) );
+	}, [ enabledSiteIds, sites, translate ] );
 
 	const comboboxOptions = useMemo( () => {
-		return sites.map( ( site ) => ( {
-			value: String( site.ID ),
-			label: getSiteDisplayName( site ),
-			site,
-		} ) );
-	}, [ sites ] );
+		const enabledSet = new Set( enabledSiteIds );
+		return sites
+			.filter( ( site ) => ! enabledSet.has( site.ID ) )
+			.map( ( site ) => ( {
+				value: String( site.ID ),
+				label: getSiteDisplayName( site ),
+				site,
+			} ) );
+	}, [ sites, enabledSiteIds ] );
 
-	const handleApply = () => {
-		const blogId = Number( selectedSiteId );
-		if ( ! blogId || isNaN( blogId ) ) {
+	const handleComboboxChange = ( siteIdStr ) => {
+		setComboboxValue( siteIdStr || '' );
+		if ( ! siteIdStr ) {
 			return;
 		}
-		mutation.mutate( buildMcpAllowSingleSitePayload( blogId ) );
+		const blogId = Number( siteIdStr );
+		if ( isNaN( blogId ) ) {
+			return;
+		}
+		mutation.mutate( {
+			mcp_abilities: {
+				sites: [
+					{
+						blog_id: blogId,
+						site_level_enabled: true,
+					},
+				],
+			},
+		} );
+	};
+
+	const handleRemoveSite = ( siteId ) => {
+		mutation.mutate( {
+			mcp_abilities: {
+				sites: [
+					{
+						blog_id: siteId,
+						site_level_enabled: false,
+					},
+				],
+			},
+		} );
 	};
 
 	if ( userSettingsError || sitesError ) {
@@ -110,7 +161,7 @@ export default function McpAddSitePage( { path } ) {
 			</HeaderCake>
 			<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 			{ ! reauthRequired && (
-				<VStack spacing={ 6 } alignment="stretch">
+				<VStack spacing={ 10 } alignment="stretch">
 					{ ! hasTools && (
 						<Text variant="muted" as="p">
 							{ translate( 'No MCP tools are available for your account yet.' ) }
@@ -140,42 +191,88 @@ export default function McpAddSitePage( { path } ) {
 					) }
 
 					{ hasTools && ! accountMcpOn && (
-						<Card>
-							<CardBody>
-								<VStack spacing={ 4 }>
-									<SectionHeader
-										level={ 3 }
-										title={ translate( 'Choose a site' ) }
-										description={ translate(
-											'Enable MCP access for a single site. Your other sites will not be affected.'
+						<>
+							<Card>
+								<CardBody>
+									<VStack spacing={ 3 }>
+										<SectionHeader
+											level={ 3 }
+											title={ translate( 'Add a site' ) }
+											description={ translate( 'Search for a site to enable MCP access.' ) }
+										/>
+										<McpSiteCombobox
+											options={ comboboxOptions }
+											value={ comboboxValue }
+											onChange={ handleComboboxChange }
+											disabled={ mutation.isPending || comboboxOptions.length === 0 }
+											label={ translate( 'Search for a site to enable MCP' ) }
+										/>
+										{ sites.length === 0 && (
+											<Text variant="muted" as="p">
+												{ translate( 'You don’t have any visible sites yet.' ) }
+											</Text>
 										) }
-									/>
-									{ sites.length === 0 && (
-										<Text variant="muted" as="p">
-											{ translate( 'You don’t have any visible sites yet.' ) }
-										</Text>
-									) }
-									{ sites.length > 0 && (
-										<>
-											<McpSiteCombobox
-												options={ comboboxOptions }
-												value={ selectedSiteId }
-												onChange={ ( value ) => setSelectedSiteId( value || '' ) }
-												disabled={ mutation.isPending }
-												label={ translate( 'Site' ) }
-											/>
-											<Button
-												variant="primary"
-												disabled={ mutation.isPending || ! selectedSiteId || sites.length === 0 }
-												onClick={ handleApply }
-											>
-												{ translate( 'Enable MCP for this site' ) }
-											</Button>
-										</>
-									) }
-								</VStack>
-							</CardBody>
-						</Card>
+										{ sites.length > 0 && comboboxOptions.length === 0 && (
+											<Text variant="muted" as="p">
+												{ translate( 'Every site you manage is already listed below.' ) }
+											</Text>
+										) }
+									</VStack>
+								</CardBody>
+							</Card>
+
+							<VStack spacing={ 5 } alignment="stretch">
+								<SectionHeader
+									level={ 3 }
+									title={ translate( 'Sites with MCP access' ) }
+									description={ translate( 'These sites have MCP access enabled.' ) }
+								/>
+								{ enabledSites.length === 0 ? (
+									<Text variant="muted" as="p">
+										{ translate( 'No sites yet. Use the search field above to add a site.' ) }
+									</Text>
+								) : (
+									<Card>
+										<CardBody>
+											<VStack spacing={ 3 } alignment="stretch">
+												{ enabledSites.map( ( { id, site, name, domain } ) => (
+													<HStack
+														key={ id }
+														justify="space-between"
+														alignment="center"
+														spacing={ 4 }
+													>
+														<HStack spacing={ 3 } alignment="left">
+															{ site && <SiteIcon site={ site } size={ 40 } /> }
+															<FlexItem isBlock>
+																<VStack spacing={ 1 } alignment="stretch">
+																	<Text as="div" weight={ 600 } size={ 14 } lineHeight={ 1.4 }>
+																		{ name }
+																	</Text>
+																	{ domain && (
+																		<Text variant="muted" as="div" size={ 12 } lineHeight={ 1.4 }>
+																			{ domain }
+																		</Text>
+																	) }
+																</VStack>
+															</FlexItem>
+														</HStack>
+														<Button
+															variant="secondary"
+															size="compact"
+															disabled={ mutation.isPending }
+															onClick={ () => handleRemoveSite( id ) }
+														>
+															{ translate( 'Remove' ) }
+														</Button>
+													</HStack>
+												) ) }
+											</VStack>
+										</CardBody>
+									</Card>
+								) }
+							</VStack>
+						</>
 					) }
 				</VStack>
 			) }

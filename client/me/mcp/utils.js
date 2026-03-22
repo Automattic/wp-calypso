@@ -91,20 +91,19 @@ export function getDisabledSiteIds( userSettings ) {
 }
 
 /**
- * Build a payload that enables MCP access for a single site via the site-level allowlist.
- * Account-level MCP remains off; only the selected site gains access.
- * @param {number} selectedSiteId Site that should have MCP access enabled.
- * @returns {{ mcp_abilities: { sites: Array<{ blog_id: number, site_level_enabled: boolean }> } }}
+ * Get site IDs where MCP access is explicitly enabled at the site level (allowlist).
+ * @param {Object} userSettings - The user settings object
+ * @returns {number[]} Site IDs with site_level_enabled set to true
  */
-export function buildMcpAllowSingleSitePayload( selectedSiteId ) {
-	return {
-		mcp_abilities: {
-			sites: [
-				{
-					blog_id: selectedSiteId,
-					site_level_enabled: true,
-				},
-			],
-		},
-	};
+export function getEnabledSiteIds( userSettings ) {
+	if ( userSettings?.sites ) {
+		return userSettings.sites
+			.filter( ( site ) => site.site_level_enabled === true )
+			.map( ( site ) => site.blog_id );
+	}
+
+	const mcpSites = userSettings?.mcp_abilities?.sites || [];
+	return mcpSites
+		.filter( ( site ) => site.site_level_enabled === true )
+		.map( ( site ) => site.blog_id );
 }
