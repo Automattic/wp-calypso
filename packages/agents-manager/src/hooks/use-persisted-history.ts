@@ -4,14 +4,7 @@ import {
 	SingleRouterHistory,
 } from '@automattic/data-stores';
 import { select as storeSelect, useSelect } from '@wordpress/data';
-import {
-	useState,
-	useEffect,
-	useLayoutEffect,
-	useCallback,
-	useMemo,
-	useRef,
-} from '@wordpress/element';
+import { useState, useLayoutEffect, useCallback, useMemo } from '@wordpress/element';
 import { Action, Location } from 'history';
 import { AGENTS_MANAGER_STORE } from '../stores';
 import { persistAgentsManagerState } from '../utils/persist-agents-manager-state';
@@ -183,12 +176,15 @@ export const usePersistedHistory = ( siteKey: string ) => {
 		return persistedHistory;
 	}, [ isStale, persistedHistory, siteKey ] );
 
-	// Build history from persisted data on the first render when available,
+	// Build history from persisted data. Recreated when activeHistory changes,
 	// so `useLocation().state` (e.g., `sessionId`) is correct immediately.
-	const initializedHistoryRef = useRef( activeHistory );
-	const [ history, setHistory ] = useState< MemoryHistory >(
-		() => new MemoryHistory( activeHistory?.entries, activeHistory?.index )
+	const historyKey = activeHistory ? JSON.stringify( activeHistory ) : 'default';
+	const history = useMemo(
+		() => new MemoryHistory( activeHistory?.entries, activeHistory?.index ),
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- rebuild only when persisted data changes
+		[ historyKey ]
 	);
+
 	const [ historyState, setHistoryState ] = useState< HistoryEvent >( () => ( {
 		action: history.action,
 		location: history.location,
@@ -205,35 +201,12 @@ export const usePersistedHistory = ( siteKey: string ) => {
 		[ siteKey ]
 	);
 
-	// Keep persist callback in sync on the history instance.
-	useEffect( () => {
-		history.setOnPersist( persistHistory );
-	}, [ history, persistHistory ] );
-
+	// Sync historyState, persist callback, and listener when history instance changes.
 	useLayoutEffect( () => {
+		history.setOnPersist( persistHistory );
+		setHistoryState( { action: history.action, location: history.location } );
 		return history.listen( setHistoryState );
-	}, [ history ] );
-
-	// Only rebuild history when `activeHistory` actually changes.
-	useEffect( () => {
-		if ( activeHistory === initializedHistoryRef.current ) {
-			return;
-		}
-		initializedHistoryRef.current = activeHistory;
-
-		if ( ! activeHistory ) {
-			return;
-		}
-
-		const newHistory = new MemoryHistory( activeHistory.entries, activeHistory.index );
-		newHistory.setOnPersist( persistHistory );
-		setHistory( newHistory );
-
-		setHistoryState( {
-			action: newHistory.action,
-			location: newHistory.location,
-		} );
-	}, [ activeHistory, persistHistory ] );
+	}, [ history, persistHistory ] );
 
 	return { history, historyState };
 };
