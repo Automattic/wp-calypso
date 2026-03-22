@@ -3,7 +3,6 @@ import config from '@automattic/calypso-config';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
 	Button,
-	ComboboxControl,
 	FlexItem,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -28,6 +27,7 @@ import { SectionHeader } from '../../dashboard/components/section-header';
 import { getSiteDisplayName } from '../../dashboard/utils/site-name';
 import { getSiteDisplayUrl } from '../../dashboard/utils/site-url';
 import { useMcpPageChrome } from './mcp-page-header';
+import McpSiteCombobox from './mcp-site-combobox';
 import { getDisabledSiteIds } from './utils';
 
 import './style.scss';
@@ -139,26 +139,6 @@ export default function McpSitesPage( { path } ) {
 		} );
 	};
 
-	const renderComboboxItem = ( { item } ) => {
-		const option = comboboxOptions.find( ( o ) => o.value === item.value );
-		if ( ! option?.site ) {
-			return item.label;
-		}
-		return (
-			<HStack spacing={ 3 } alignment="left">
-				<SiteIcon site={ option.site } size={ 32 } />
-				<VStack spacing={ 0 }>
-					<Text as="div" weight={ 500 } size={ 14 } lineHeight={ 1.5 } color="inherit">
-						{ item.label }
-					</Text>
-					<Text as="div" size={ 12 } weight={ 400 } lineHeight={ 1.2 } color="inherit">
-						{ getSiteDisplayUrl( option.site ) }
-					</Text>
-				</VStack>
-			</HStack>
-		);
-	};
-
 	if ( userSettingsError || sitesError ) {
 		return null;
 	}
@@ -186,18 +166,12 @@ export default function McpSitesPage( { path } ) {
 									title={ translate( 'Add an exception' ) }
 									description={ translate( 'Search for sites to disable external AI access.' ) }
 								/>
-								<ComboboxControl
-									__next40pxDefaultSize
-									__nextHasNoMarginBottom
-									label={ translate( 'Search for a site to add an exception' ) }
-									hideLabelFromVision
+								<McpSiteCombobox
+									options={ comboboxOptions }
 									value={ comboboxValue }
 									onChange={ handleComboboxChange }
-									options={ comboboxOptions.map( ( { value, label } ) => ( { value, label } ) ) }
-									allowReset
 									disabled={ mutation.isPending || comboboxOptions.length === 0 }
-									placeholder={ translate( 'Search for a site…' ) }
-									__experimentalRenderItem={ renderComboboxItem }
+									label={ translate( 'Search for a site to add an exception' ) }
 								/>
 								{ sites.length === 0 && (
 									<Text variant="muted" as="p">

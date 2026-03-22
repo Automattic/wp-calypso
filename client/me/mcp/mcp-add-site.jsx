@@ -4,7 +4,6 @@ import page from '@automattic/calypso-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
 	Button,
-	ComboboxControl,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
@@ -14,7 +13,6 @@ import {
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import SiteIcon from 'calypso/blocks/site-icon';
 import DocumentHead from 'calypso/components/data/document-head';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
@@ -25,8 +23,8 @@ import ReauthRequired from 'calypso/me/reauth-required';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { SectionHeader } from '../../dashboard/components/section-header';
 import { getSiteDisplayName } from '../../dashboard/utils/site-name';
-import { getSiteDisplayUrl } from '../../dashboard/utils/site-url';
 import { useMcpPageChrome } from './mcp-page-header';
+import McpSiteCombobox from './mcp-site-combobox';
 import {
 	buildMcpAllowSingleSitePayload,
 	getAccountMcpAbilities,
@@ -94,26 +92,6 @@ export default function McpAddSitePage( { path } ) {
 		mutation.mutate( buildMcpAllowSingleSitePayload( blogId ) );
 	};
 
-	const renderComboboxItem = ( { item } ) => {
-		const option = comboboxOptions.find( ( o ) => o.value === item.value );
-		if ( ! option?.site ) {
-			return item.label;
-		}
-		return (
-			<HStack spacing={ 3 } alignment="left">
-				<SiteIcon site={ option.site } size={ 32 } />
-				<VStack spacing={ 0 }>
-					<Text as="div" weight={ 500 } size={ 14 } lineHeight={ 1.5 } color="inherit">
-						{ item.label }
-					</Text>
-					<Text as="div" size={ 12 } weight={ 400 } lineHeight={ 1.2 } color="inherit">
-						{ getSiteDisplayUrl( option.site ) }
-					</Text>
-				</VStack>
-			</HStack>
-		);
-	};
-
 	if ( userSettingsError || sitesError ) {
 		return null;
 	}
@@ -179,21 +157,12 @@ export default function McpAddSitePage( { path } ) {
 									) }
 									{ sites.length > 0 && (
 										<>
-											<ComboboxControl
-												__next40pxDefaultSize
-												__nextHasNoMarginBottom
-												label={ translate( 'Site' ) }
-												hideLabelFromVision
+											<McpSiteCombobox
+												options={ comboboxOptions }
 												value={ selectedSiteId }
 												onChange={ ( value ) => setSelectedSiteId( value || '' ) }
-												options={ comboboxOptions.map( ( { value, label } ) => ( {
-													value,
-													label,
-												} ) ) }
-												allowReset
 												disabled={ mutation.isPending }
-												placeholder={ translate( 'Search for a site…' ) }
-												__experimentalRenderItem={ renderComboboxItem }
+												label={ translate( 'Site' ) }
 											/>
 											<Button
 												variant="primary"
