@@ -22,8 +22,8 @@ import ReauthRequired from 'calypso/me/reauth-required';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { SectionHeader } from '../../dashboard/components/section-header';
 import { filterVisibleTools } from './categories';
-import { CATEGORY_ORDER, groupToolsByDisplayCategory } from './read-groups';
 import { useMcpPageChrome } from './mcp-page-header';
+import { CATEGORY_ORDER, groupToolsByDisplayCategory } from './read-groups';
 import { getAccountMcpAbilities } from './utils';
 
 import './style.scss';
