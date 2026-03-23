@@ -22,7 +22,6 @@ ENV NPM_CONFIG_CACHE=/calypso/.cache
 ENV NODE_OPTIONS=--max-old-space-size=$node_memory
 ENV HOME=/calypso
 ENV SKIP_TSC=true
-ENV PLAYWRIGHT_SKIP_DOWNLOAD=true
 ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
 
 RUN echo 'Acquire::Retries "5";' > /etc/apt/apt.conf.d/80-retries
@@ -54,8 +53,7 @@ ARG cache_seed_key
 
 LABEL org.opencontainers.image.revision=$commit_sha \
 	io.calypso.cache-seed-key=$cache_seed_key
-ENV PLAYWRIGHT_SKIP_DOWNLOAD=false
-ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=0
+ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=
 ENV DISPLAY=:99
 
 RUN apt-get update \
