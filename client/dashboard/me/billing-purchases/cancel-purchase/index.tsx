@@ -1313,6 +1313,10 @@ export default function CancelPurchase() {
 		setState( ( state ) => ( { ...state, customerConfirmedUnderstanding: checked } ) );
 	};
 
+	const onCustomerConfirmedUnderstandingAtomicPlanRevert = ( checked: boolean ) => {
+		setState( ( state ) => ( { ...state, atomicRevertConfirmed: checked } ) );
+	};
+
 	if ( isHundredYearDomain ) {
 		redirectBack();
 		return null;
@@ -1508,6 +1512,9 @@ export default function CancelPurchase() {
 									onCancelConfirmationStateChange={ onCancelConfirmationStateChange }
 									onDomainConfirmationChange={ onDomainConfirmationChange }
 									onCustomerConfirmedUnderstandingChange={ onCustomerConfirmedUnderstandingChange }
+									onCustomerConfirmedUnderstandingAtomicPlanRevert={
+										onCustomerConfirmedUnderstandingAtomicPlanRevert
+									}
 									onKeepSubscriptionClick={ onKeepSubscriptionClick }
 									onCancellationComplete={ onCancellationComplete }
 									onCancellationStart={ onCancellationStart }
