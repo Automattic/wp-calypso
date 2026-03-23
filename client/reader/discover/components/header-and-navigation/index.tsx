@@ -7,13 +7,7 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import { addQueryArgs } from 'calypso/lib/url';
 import DiscoverNavigation from 'calypso/reader/discover/components/navigation';
 import DiscoverTagsNavigation from 'calypso/reader/discover/components/tags-navigation';
-import {
-	FIRST_POSTS_TAB,
-	RECOMMENDED_TAB,
-	FRESHLY_PRESSED_TAB,
-	TAGS_TAB,
-	LATEST_TAB,
-} from '../../helper';
+import { RECOMMENDED_TAB, FRESHLY_PRESSED_TAB, TAGS_TAB, LATEST_TAB } from '../../helper';
 
 export interface DiscoverHeaderAndNavigationProps {
 	selectedTab: string;
@@ -35,11 +29,6 @@ export default function DiscoverHeaderAndNavigation(
 
 	let subHeaderText;
 	switch ( selectedTab ) {
-		case FIRST_POSTS_TAB:
-			subHeaderText = translate(
-				'Fresh voices, fresh views. Explore first-time posts from new bloggers.'
-			);
-			break;
 		case TAGS_TAB:
 			subHeaderText = fixMe( {
 				text: 'Browse posts by popular tags.',
