@@ -49,7 +49,7 @@ export interface UseGridPlansParams {
 	 */
 	useVar42NoAiFeatures?: boolean;
 	/**
-	 * When true, show focused_more_premium plan-scoped feature pills in the features grid.
+	 * When true, show plan-scoped feature pills (focused_more_premium, focused_new_copy, focused_no_ai only).
 	 */
 	isFocusedPremiumVariant?: boolean;
 	/**

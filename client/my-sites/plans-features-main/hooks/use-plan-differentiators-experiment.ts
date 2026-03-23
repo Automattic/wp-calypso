@@ -31,7 +31,7 @@ type PlanDifferentiatorsExperimentResult = {
 	useVar41MorePremiumFeatures: boolean;
 	/**
 	 * When true, show plan-scoped feature pills (badges) in the features grid.
-	 * Applies to: focused_more_premium (ExPlat variation name).
+	 * Applies to: focused_more_premium, focused_new_copy, focused_no_ai (not control or focused_comparison).
 	 */
 	isFocusedPremiumVariant: boolean;
 	/**
@@ -107,6 +107,12 @@ function usePlanDifferentiatorsExperiment( {
 
 	const isExperimentVariant = variant !== undefined && variant !== 'control';
 
+	const isVar4Variant =
+		variant === 'focused_comparison' ||
+		variant === 'focused_more_premium' ||
+		variant === 'focused_no_ai' ||
+		variant === 'focused_new_copy';
+
 	return {
 		isLoading,
 		variant,
@@ -115,12 +121,11 @@ function usePlanDifferentiatorsExperiment( {
 		useVar41MorePremiumFeatures:
 			variant === 'focused_more_premium' || variant === 'focused_new_copy',
 		useVar42NoAiFeatures: variant === 'focused_no_ai',
-		isFocusedPremiumVariant: variant === 'focused_more_premium',
-		isVar4Variant:
-			variant === 'focused_comparison' ||
+		isFocusedPremiumVariant:
 			variant === 'focused_more_premium' ||
-			variant === 'focused_no_ai' ||
-			variant === 'focused_new_copy',
+			variant === 'focused_new_copy' ||
+			variant === 'focused_no_ai',
+		isVar4Variant,
 		isExperimentVariant,
 	};
 }

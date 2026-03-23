@@ -1,12 +1,15 @@
 import {
+	FEATURE_AI_ASSISTANT,
 	FEATURE_AI_WEBSITE_BUILDER,
+	FEATURE_AI_WRITER_DESIGNER,
+	FEATURE_BUILT_IN_SITE_ASSISTANT,
 	FEATURE_CUSTOM_DOMAIN,
 	FEATURE_EMAIL_MARKETING,
 	FEATURE_ENHANCED_AI_ASSISTANT_AND_TOOLS,
+	FEATURE_GUIDED_WEBSITE_BUILDER,
 	FEATURE_UPLOAD_PLUGINS,
 	FEATURE_SIMPLE_PAYMENTS,
 	FEATURE_WORDADS,
-	FEATURE_AI_WRITER_DESIGNER,
 	FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
 	FEATURE_EARLY_ONBOARDING_CALLS,
 	applyTestFiltersToPlansList,
@@ -28,6 +31,23 @@ import type {
 import type { FeatureObject, FeatureList } from '@automattic/calypso-products';
 import type { TranslateResult } from 'i18n-calypso';
 
+function isPremiumWebsiteBuilderPillFeature( featureSlug: string ): boolean {
+	return (
+		featureSlug === FEATURE_AI_WEBSITE_BUILDER ||
+		featureSlug === FEATURE_GUIDED_WEBSITE_BUILDER ||
+		featureSlug === FEATURE_AI_WRITER_DESIGNER
+	);
+}
+
+function isBusinessAssistantPillFeature( featureSlug: string ): boolean {
+	return (
+		featureSlug === FEATURE_ENHANCED_AI_ASSISTANT_AND_TOOLS ||
+		featureSlug === FEATURE_AI_ASSISTANT ||
+		featureSlug === FEATURE_BUILT_IN_SITE_ASSISTANT ||
+		featureSlug === FEATURE_AI_WRITER_DESIGNER
+	);
+}
+
 function getFocusedPremiumFeatureBadgeText(
 	planSlug: string,
 	featureSlug: string,
@@ -36,13 +56,13 @@ function getFocusedPremiumFeatureBadgeText(
 	if ( isPersonalPlan( planSlug ) && featureSlug === FEATURE_CUSTOM_DOMAIN ) {
 		return translate( 'Free' );
 	}
-	if ( isPremiumPlan( planSlug ) && featureSlug === FEATURE_AI_WEBSITE_BUILDER ) {
+	if ( isPremiumPlan( planSlug ) && isPremiumWebsiteBuilderPillFeature( featureSlug ) ) {
 		return translate( 'AI' );
 	}
 	if ( isPremiumPlan( planSlug ) && featureSlug === FEATURE_SIMPLE_PAYMENTS ) {
 		return translate( 'New' );
 	}
-	if ( isBusinessPlan( planSlug ) && featureSlug === FEATURE_ENHANCED_AI_ASSISTANT_AND_TOOLS ) {
+	if ( isBusinessPlan( planSlug ) && isBusinessAssistantPillFeature( featureSlug ) ) {
 		return translate( 'AI' );
 	}
 	if ( isBusinessPlan( planSlug ) && featureSlug === FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR ) {
@@ -399,7 +419,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 							passedHeaderFeature = true;
 						}
 
-						// Badge pills: var1d experiment, or focused_more_premium (plan-scoped)
+						// Badge pills: var1d experiment, or focused_more_premium / focused_new_copy / focused_no_ai (plan-scoped)
 						const badgeText =
 							( isVar1dVariant ? var1dBadgeMap[ featureSlug ] : undefined ) ??
 							( isFocusedPremiumVariant
