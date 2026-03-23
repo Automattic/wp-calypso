@@ -123,49 +123,6 @@ async function main() {
 		setOnboardingRequester( requester );
 	}
 
-	// DELETE ME AFTER TESTING
-	await wpcom.req.post( {
-		path: '/ai/agent/test',
-		apiNamespace: 'wpcom/v2',
-		headers: {
-			'Content-Type': 'text/event-stream',
-		},
-		onStreamRecord: ( data: string ) => {
-			// TESTING request
-			// eslint-disable-next-line no-console
-			console.log( data );
-		},
-		body: {
-			jsonrpc: '2.0',
-			id: 'req-n1sog5lf',
-			method: 'message/stream',
-			params: {
-				message: {
-					role: 'user',
-					parts: [
-						{ type: 'text', text: 'hi' },
-						{
-							type: 'data',
-							data: {
-								clientContext: {
-									url: 'http://calypso.localhost:3000/home/blog.omaralshaker.com',
-									pathname: '/home/blog.omaralshaker.com',
-									search: '',
-									can_access_zendesk: true,
-									environment: 'calypso',
-								},
-							},
-							metadata: {},
-						},
-					],
-					kind: 'message',
-					messageId: 'emn2emt7',
-				},
-			},
-			tokenStreaming: true,
-		},
-	} );
-
 	const flowName = getFlowFromURL();
 	const flowLoader = availableFlows[ flowName ];
 
