@@ -3,7 +3,7 @@ $sidebar-width: 272px;
 .dashboard-responsive-sidebar {
 	flex-shrink: 0;
 	position: fixed;
-	top: 0;
+	top: var(--masterbar-height);
 	left: 0;
 	min-height: calc(100vh - var(--masterbar-height) );
 	width: $sidebar-width;
