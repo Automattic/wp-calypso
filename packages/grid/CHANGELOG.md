@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 
 - Add `fillWidth` layout property — items fill remaining columns in their row
+- Add AI agent context (`CLAUDE.md`, `AGENTS.md`)
 
 ## 0.1.3
 

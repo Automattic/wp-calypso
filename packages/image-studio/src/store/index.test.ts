@@ -84,6 +84,7 @@ describe( 'Image Studio Store', () => {
 				lastSavedAttachmentId: null,
 				isExitConfirmed: false,
 				entryPoint: null,
+				blockType: null,
 				onCloseCallback: null,
 				notices: [],
 				navigableAttachmentIds: [],
@@ -135,6 +136,7 @@ describe( 'Image Studio Store', () => {
 					payload: {
 						attachmentId: 123,
 						entryPoint: 'media_library',
+						blockType: null,
 						onCloseCallback: callback,
 					},
 				} );
@@ -148,9 +150,21 @@ describe( 'Image Studio Store', () => {
 					payload: {
 						attachmentId: null,
 						entryPoint: null,
+						blockType: null,
 						onCloseCallback: null,
 					},
 				} );
+			} );
+
+			it( 'stores blockType when provided', () => {
+				const action = actions.openImageStudio(
+					123,
+					null,
+					'editor_block' as ImageStudioEntryPoint,
+					'core/image'
+				);
+
+				expect( action.payload.blockType ).toBe( 'core/image' );
 			} );
 		} );
 
@@ -290,6 +304,7 @@ describe( 'Image Studio Store', () => {
 				expect( state.imageStudioAttachmentId ).toBe( 123 );
 				expect( state.originalAttachmentId ).toBe( 123 );
 				expect( state.entryPoint ).toBe( 'media_library' );
+				expect( state.blockType ).toBeNull();
 				expect( state.notices ).toEqual( [] );
 				expect( state.draftIds ).toEqual( [] );
 				expect( state.savedAttachmentIds ).toEqual( [] );
@@ -300,6 +315,20 @@ describe( 'Image Studio Store', () => {
 
 				expect( state.originalAttachmentId ).toBeNull();
 				expect( state.imageStudioAttachmentId ).toBeNull();
+			} );
+
+			it( 'stores blockType from payload', () => {
+				const state = reducer(
+					getInitialState(),
+					actions.openImageStudio(
+						123,
+						null,
+						'editor_block' as ImageStudioEntryPoint,
+						'core/image'
+					)
+				);
+
+				expect( state.blockType ).toBe( 'core/image' );
 			} );
 
 			it( 're-reads sidebar state from localStorage on open', () => {
@@ -592,6 +621,7 @@ describe( 'Image Studio Store', () => {
 					annotatedAttachmentIds: [ 77 ],
 					isAnnotationMode: true,
 					notices: [ { id: '1', content: 'Notice', type: 'error' } ],
+					blockType: 'core/image',
 				};
 
 				const state = reducer( previousState, actions.navigateToAttachment( 20 ) );
@@ -602,6 +632,7 @@ describe( 'Image Studio Store', () => {
 				expect( state.annotatedAttachmentIds ).toEqual( [] );
 				expect( state.isAnnotationMode ).toBe( false );
 				expect( state.notices ).toEqual( [] );
+				expect( state.blockType ).toBeNull();
 			} );
 
 			it( 'preserves navigation and user preferences when navigating', () => {
@@ -906,6 +937,11 @@ describe( 'Image Studio Store', () => {
 				entryPoint: 'media_library' as ImageStudioEntryPoint,
 			};
 			expect( selectors.getEntryPoint( state ) ).toBe( 'media_library' );
+		} );
+
+		it( 'getBlockType', () => {
+			const state: ImageStudioState = { ...getInitialState(), blockType: 'core/image' };
+			expect( selectors.getBlockType( state ) ).toBe( 'core/image' );
 		} );
 
 		it( 'getNotices', () => {

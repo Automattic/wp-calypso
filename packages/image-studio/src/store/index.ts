@@ -83,6 +83,8 @@ export interface ImageStudioState {
 	isExitConfirmed: boolean;
 	// Entry point for tracking where Image Studio was opened from
 	entryPoint: ImageStudioEntryPoint | null;
+	// Block type for tracking which block was the entry point for image studio
+	blockType: string | null;
 	// Callback from the opener. Despite being non-serializable, it is stored here to support cross-bundle access.
 	onCloseCallback: ImageStudioCloseCallback | null;
 	// Array of notices to display
@@ -114,6 +116,7 @@ type OpenImageStudioAction = {
 		attachmentId: number | null;
 		entryPoint: ImageStudioEntryPoint | null;
 		onCloseCallback: ImageStudioCloseCallback | null;
+		blockType?: string | null; // Optional block type for additional context (e.g. 'core/image')
 	};
 };
 
@@ -338,6 +341,7 @@ const initialState: ImageStudioState = {
 	lastSavedAttachmentId: null,
 	isExitConfirmed: false,
 	entryPoint: null,
+	blockType: null,
 	onCloseCallback: null,
 	notices: [],
 	navigableAttachmentIds: [],
@@ -378,6 +382,8 @@ const reducer = (
 				lastSavedAttachmentId: null,
 				// Store entry point for tracking
 				entryPoint: action.payload.entryPoint,
+				// Store blockType for entry point tracking
+				blockType: action.payload.blockType ?? null,
 				onCloseCallback: action.payload.onCloseCallback ?? null,
 				// Reset notices for new session
 				notices: [],
@@ -576,6 +582,7 @@ const reducer = (
 				isExitConfirmed: false,
 				onCloseCallback: null,
 				entryPoint: null,
+				blockType: null,
 				// Keep navigation state (navigableAttachmentIds, currentNavigationIndex, pagination)
 				// Keep user preferences (isSidebarOpen, selectedStyle, selectedAspectRatio)
 			};
@@ -646,7 +653,8 @@ export interface ImageStudioActions {
 	openImageStudio: (
 		attachmentId?: number,
 		onCloseCallback?: ImageStudioCloseCallback,
-		entryPoint?: ImageStudioEntryPoint
+		entryPoint?: ImageStudioEntryPoint,
+		blockType?: string | null
 	) => Promise< OpenImageStudioAction >;
 	closeImageStudio: () => Promise< CloseImageStudioAction >;
 	updateImageStudioCanvas: (
@@ -705,7 +713,8 @@ const actions = {
 	openImageStudio(
 		attachmentId?: number,
 		onCloseCallback?: ImageStudioCloseCallback,
-		entryPoint?: ImageStudioEntryPoint
+		entryPoint?: ImageStudioEntryPoint,
+		blockType?: string | null
 	): OpenImageStudioAction {
 		return {
 			type: 'OPEN_IMAGE_STUDIO',
@@ -713,6 +722,7 @@ const actions = {
 				attachmentId: attachmentId ?? null,
 				entryPoint: entryPoint ?? null,
 				onCloseCallback: onCloseCallback ?? null,
+				blockType: blockType ?? null,
 			},
 		};
 	},
@@ -940,6 +950,7 @@ export interface ImageStudioSelectors {
 	getHasUnsavedChanges: ( state: ImageStudioState ) => boolean;
 	getIsExitConfirmed: ( state: ImageStudioState ) => boolean;
 	getEntryPoint: ( state: ImageStudioState ) => ImageStudioEntryPoint | null;
+	getBlockType: ( state: ImageStudioState ) => string | null;
 	getNotices: ( state: ImageStudioState ) => Notice[];
 	getOnCloseCallback: ( state: ImageStudioState ) => ImageStudioCloseCallback | null;
 	getNavigableAttachmentIds: ( state: ImageStudioState ) => number[];
@@ -1057,6 +1068,10 @@ const selectors = {
 
 	getEntryPoint( state: ImageStudioState ): ImageStudioEntryPoint | null {
 		return state.entryPoint;
+	},
+
+	getBlockType( state: ImageStudioState ): string | null {
+		return state.blockType ?? null;
 	},
 
 	getOnCloseCallback( state: ImageStudioState ): ImageStudioCloseCallback | null {
