@@ -150,6 +150,7 @@ This component's props are:
 - `nextStepButtonAriaLabel?: string`. Used to fill in the `aria-label` attribute for the "Continue" button if one exists.
 - `canEditStep?: boolean`. If false, the step will never show an "Edit" button. Defaults to true.
 - `editButtonText?: string`. Used in place of "Edit" on the edit step button.
+- `editButtonElement?: React.ReactNode`. Used in place of the "Edit" button contents on the edit step button (overrides `editButtonText`).
 - `nextStepButtonText?: string`. Used in place of "Continue" on the next step button.
 - `validatingButtonText?: string`. Used in place of "Please wait…" on the next step button when `isCompleteCallback` returns an unresolved Promise.
 - `validatingButtonAriaLabel:? string`. Used for the `aria-label` attribute on the next step button when `isCompleteCallback` returns an unresolved Promise.
@@ -168,6 +169,7 @@ This component's props are:
 - `errorMessage?: string`. The error message to display in the React error boundary if there is an error thrown by any component in this step.
 - `onError?: (error: Error) => void`. A callback to be called from the React error boundary if there is an error thrown by any component in this step.
 - `editButtonText?: string`. The text to display instead of "Edit" for the edit step button.
+- `editButtonElement?: React.ReactNode`. Used in place of the "Edit" button contents on the edit step button (overrides `editButtonText`).
 - `editButtonAriaLabel?: string`. The text to display for `aria-label` instead of "Edit" for the edit step button.
 - `nextStepButtonText?: string`. Like `editButtonText` but for the "Continue" button.
 - `nextStepButtonAriaLabel?: string`. Like `editButtonAriaLabel` but for the "Continue" button.

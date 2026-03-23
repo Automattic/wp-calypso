@@ -26,21 +26,23 @@ export const useRecommendedTags = (): Tag[] => {
 	const locale = useLocale();
 	const translate = useTranslate();
 
+	const promptSlug = isBloganuary() ? 'bloganuary' : 'dailyprompt';
+	const promptTitle = isBloganuary() ? translate( 'Bloganuary' ) : translate( 'Daily prompts' );
+
 	const { data: interestTags = [] } = useQuery< InterestResponse, unknown, Tag[] >( {
 		queryKey: [ 'read/interests', locale ],
 		queryFn: () =>
 			wpcom.req.get( { path: '/read/interests', apiNamespace: 'wpcom/v2' }, { _locale: locale } ),
-		select: ( data ) => data.interests,
+		select: ( data ) => {
+			const tags = data.interests;
+			// Add dailyprompt to the front of tags if not present.
+			const hasPromptTab = tags.some( ( tag ) => tag.slug === promptSlug );
+			if ( ! hasPromptTab ) {
+				return [ { title: promptTitle, slug: promptSlug }, ...tags ];
+			}
+			return tags;
+		},
 	} );
-
-	const promptSlug = isBloganuary() ? 'bloganuary' : 'dailyprompt';
-	const promptTitle = isBloganuary() ? translate( 'Bloganuary' ) : translate( 'Daily prompts' );
-
-	// Add dailyprompt to the front of interestTags if not present.
-	const hasPromptTab = interestTags.filter( ( tag ) => tag.slug === promptSlug ).length;
-	if ( ! hasPromptTab ) {
-		interestTags.unshift( { title: promptTitle, slug: promptSlug } );
-	}
 
 	return interestTags;
 };
