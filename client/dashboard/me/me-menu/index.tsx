@@ -25,7 +25,7 @@ const MeMenu = () => {
 	return (
 		<SidebarMenu>
 			<SidebarMenuItem icon={ commentAuthorAvatar } to="/me/profile">
-				{ __( 'Account' ) }
+				{ __( 'Profile' ) }
 			</SidebarMenuItem>
 			<SidebarMenuItem icon={ settings } to="/me/preferences">
 				{ __( 'Preferences' ) }
