@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { WordPressLogo } from '@automattic/components/src/logos/wordpress-logo';
 import { useQueryClient, useIsFetching } from '@tanstack/react-query';
 import { CatchNotFound, Outlet, useRouterState, useRouter } from '@tanstack/react-router';
@@ -10,6 +11,8 @@ import CommandPalette from '../command-palette';
 import { useAppContext } from '../context';
 import Header from '../header';
 import { NavigationBlockerRegistry } from '../navigation-blocker';
+import OmnibarHeader from '../omnibar-header';
+import ResponsiveSidebar from '../responsive-sidebar';
 import Snackbars from '../snackbars';
 import './style.scss';
 
@@ -24,11 +27,13 @@ const SLOW_THRESHOLD_MS = 100;
 const VERY_SLOW_THRESHOLD_MS = 6000;
 
 function Root() {
+	const isOmnibarEnabled = isEnabled( 'dashboard/omnibar' );
 	const { name, supports, LoadingLogo = WordPressLogo } = useAppContext();
 	const isFetching = useIsFetching();
 	const router = useRouter();
 	const queryClient = useQueryClient();
 	const queryCache = queryClient.getQueryCache();
+	const [ isSidebarOpen, setIsSidebarOpen ] = useState( false );
 
 	const loadingQueryRequestedFullPageLoader = useSyncExternalStore(
 		( onStoreChange ) => queryCache.subscribe( onStoreChange ),
@@ -94,6 +99,47 @@ function Root() {
 			.join( ' ‹ ' );
 	}, [ routeMeta ] );
 
+	const renderHeader = () => {
+		if ( isInitialLoad ) {
+			return null;
+		}
+
+		if ( ! isOmnibarEnabled ) {
+			return <Header />;
+		}
+
+		return <OmnibarHeader onToggleMenu={ () => setIsSidebarOpen( ( value ) => ! value ) } />;
+	};
+
+	const renderBody = () => {
+		if ( isVerySlowNavigation ) {
+			return null;
+		}
+
+		if ( ! isOmnibarEnabled ) {
+			return (
+				<main>
+					<CatchNotFound fallback={ NotFound }>
+						<Outlet />
+					</CatchNotFound>
+				</main>
+			);
+		}
+
+		return (
+			<div className="dashboard-root__body">
+				<ResponsiveSidebar isOpen={ isSidebarOpen } onClose={ () => setIsSidebarOpen( false ) } />
+				<div className="dashboard-root__content">
+					<main>
+						<CatchNotFound fallback={ NotFound }>
+							<Outlet />
+						</CatchNotFound>
+					</main>
+				</div>
+			</div>
+		);
+	};
+
 	useEffect( () => {
 		document.title = title ? `${ title } – ${ name }` : name;
 	}, [ name, title ] );
@@ -109,14 +155,8 @@ function Root() {
 				/>
 			) }
 			{ ( isInitialLoad || isVerySlowNavigation ) && <LoadingLogo className="wpcom-site__logo" /> }
-			{ ! isInitialLoad && <Header /> }
-			{ ! isVerySlowNavigation && (
-				<main>
-					<CatchNotFound fallback={ NotFound }>
-						<Outlet />
-					</CatchNotFound>
-				</main>
-			) }
+			{ renderHeader() }
+			{ renderBody() }
 			{ supports.commandPalette && <CommandPalette /> }
 			<Snackbars />
 			<PageViewTracker />
