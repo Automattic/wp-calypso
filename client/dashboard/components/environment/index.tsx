@@ -12,9 +12,10 @@ interface EnvironmentProps {
 	environmentType: EnvironmentType;
 	spacing?: number;
 	iconSize?: number;
+	weight?: React.CSSProperties[ 'fontWeight' ];
 }
 
-const Environment = ( { environmentType, spacing = 1, iconSize }: EnvironmentProps ) => {
+const Environment = ( { environmentType, spacing = 1, iconSize, weight }: EnvironmentProps ) => {
 	if ( environmentType === 'staging' ) {
 		return (
 			<HStack
@@ -24,7 +25,7 @@ const Environment = ( { environmentType, spacing = 1, iconSize }: EnvironmentPro
 				style={ { flexShrink: 0 } }
 			>
 				<Icon icon={ staging } size={ iconSize } />
-				<Text>{ __( 'Staging' ) }</Text>
+				<Text weight={ weight }>{ __( 'Staging' ) }</Text>
 			</HStack>
 		);
 	}
@@ -32,7 +33,7 @@ const Environment = ( { environmentType, spacing = 1, iconSize }: EnvironmentPro
 	return (
 		<HStack justify="flex-start" spacing={ spacing } expanded={ false } style={ { flexShrink: 0 } }>
 			<Icon icon={ production } size={ iconSize } />
-			<Text>{ __( 'Production' ) }</Text>
+			<Text weight={ weight }>{ __( 'Production' ) }</Text>
 		</HStack>
 	);
 };

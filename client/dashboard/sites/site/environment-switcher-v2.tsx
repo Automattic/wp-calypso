@@ -40,7 +40,9 @@ import type { Site } from '@automattic/api-core';
 
 const CurrentEnvironment = ( { site }: { site: Site } ) => {
 	const environmentType = site.is_wpcom_staging_site ? 'staging' : 'production';
-	return <Environment environmentType={ environmentType } spacing={ 2 } iconSize={ 20 } />;
+	return (
+		<Environment environmentType={ environmentType } spacing={ 2 } iconSize={ 20 } weight={ 500 } />
+	);
 };
 
 const StagingSiteActionButton = ( {

@@ -6,11 +6,6 @@
 	// This makes it align with toggle caret's in the side.
 	padding-inline-end: calc( #{$grid-unit-15} - 3px );
 
-	span {
-		color: var( --dashboard__text-color );
-		font-weight: 500;
-	}
-
 	.environment-switcher-v2__toggle {
 		color: var( --dashboard-menu-item__color );
 		min-width: 0;
