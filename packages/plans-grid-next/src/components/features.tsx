@@ -22,7 +22,7 @@ const SubdomainSuggestion = styled.div`
 	}
 `;
 
-// var1d experiment: Badge displayed after feature title
+// Badge after feature title (var1d + pricing differentiation pills). Figma Green-0 / Green-50.
 const FeatureBadge = styled.span`
 	display: inline-flex;
 	height: 18px;
@@ -31,8 +31,8 @@ const FeatureBadge = styled.span`
 	align-items: center;
 	gap: 8px;
 	border-radius: 4px;
-	background: #d7ffba;
-	color: #008a20;
+	background-color: var( --studio-green-0, #e6f2e8 );
+	color: var( --studio-green-50, #008a20 );
 	text-align: center;
 	font-size: 11px;
 	font-weight: 600;
