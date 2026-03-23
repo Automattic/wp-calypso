@@ -48,6 +48,7 @@ boot( {
 	components: {
 		sites: () => import( '../sites-ciab' ),
 		siteSwitcher: () => import( '../sites-ciab/site-switcher' ),
+		siteSwitcherV2: () => import( '../sites-ciab/site-switcher-v2' ),
 	},
 	queries: {
 		sitesQuery: ( fetchSitesOptions?: FetchSitesOptions ) =>
