@@ -1,6 +1,8 @@
 # syntax=docker/dockerfile:1.20
 
 ARG node_version=22.9.0
+ARG commit_sha="(unknown)"
+ARG cache_seed_key="(unknown)"
 
 ###################
 # Dedicated dependency-install stage.
@@ -85,6 +87,11 @@ RUN BUILD_TRANSLATION_CHUNKS=false yarn run build-packages:web \
 # Publish only the cache data. The main app build should copy these directories
 # into a clean builder stage rather than inheriting the full filesystem state.
 FROM scratch AS cache-seed
+ARG commit_sha
+ARG cache_seed_key
+
+LABEL org.opencontainers.image.revision=$commit_sha \
+	io.calypso.cache-seed-key=$cache_seed_key
 
 COPY --from=cache-build /calypso/.cache /calypso/.cache
 COPY --from=cache-build /calypso/.yarn /calypso/.yarn
@@ -95,8 +102,14 @@ COPY --from=cache-build /calypso/.yarn /calypso/.yarn
 # shell assertions against exactly what the published cache-seed image contains.
 FROM node:${node_version}-bullseye-slim AS cache-seed-debug
 
+ARG commit_sha
+ARG cache_seed_key
+
 COPY --from=cache-seed / /
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
+LABEL org.opencontainers.image.revision=$commit_sha \
+	io.calypso.cache-seed-key=$cache_seed_key
 
 RUN test -d /calypso/.cache \
 	&& test -d /calypso/.yarn \

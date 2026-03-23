@@ -308,6 +308,8 @@ object BuildToolchainPreviewImages : BuildType({
 	}
 
 	steps {
+		val commonArgs = "--pull --build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber}"
+
 		dockerCommand {
 			name = "Build toolchain image"
 			commandType = build {
@@ -315,7 +317,7 @@ object BuildToolchainPreviewImages : BuildType({
 					path = "Dockerfile.toolchain"
 				}
 				namesAndTags = "registry.a8c.com/calypso/toolchain:%build.number%"
-				commandArgs = "--pull --target toolchain"
+				commandArgs = "--target toolchain $commonArgs"
 			}
 			param("dockerImage.platform", "linux")
 		}
@@ -326,7 +328,7 @@ object BuildToolchainPreviewImages : BuildType({
 					path = "Dockerfile.toolchain"
 				}
 				namesAndTags = "registry.a8c.com/calypso/ci-e2e-toolchain:%build.number%"
-				commandArgs = "--pull --target ci-e2e"
+				commandArgs = "--target ci-e2e $commonArgs"
 			}
 			param("dockerImage.platform", "linux")
 		}
@@ -337,7 +339,7 @@ object BuildToolchainPreviewImages : BuildType({
 					path = "Dockerfile.toolchain"
 				}
 				namesAndTags = "registry.a8c.com/calypso/ci-wpcom-toolchain:%build.number%"
-				commandArgs = "--pull --target ci-wpcom"
+				commandArgs = "--target ci-wpcom $commonArgs"
 			}
 			param("dockerImage.platform", "linux")
 		}
