@@ -1,0 +1,21 @@
+@import '@wordpress/base-styles/variables';
+
+.environment-switcher-v2 {
+	height: 40px;
+	padding-inline: $grid-unit-15;
+
+	span {
+		color: var( --dashboard__text-color );
+	}
+
+	.environment-switcher-v2__toggle {
+		color: var( --dashboard-menu-item__color );
+		min-width: 0;
+		padding: 0;
+
+		svg {
+			width: 18px;
+			height: 18px;
+		}
+	}
+}

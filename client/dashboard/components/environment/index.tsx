@@ -6,21 +6,28 @@ export type EnvironmentType = 'production' | 'staging';
 
 interface EnvironmentProps {
 	environmentType: EnvironmentType;
+	spacing?: number;
+	iconSize?: number;
 }
 
-const Environment = ( { environmentType }: EnvironmentProps ) => {
+const Environment = ( { environmentType, spacing = 1, iconSize }: EnvironmentProps ) => {
 	if ( environmentType === 'staging' ) {
 		return (
-			<HStack justify="flex-start" spacing={ 1 } expanded={ false } style={ { flexShrink: 0 } }>
-				<Icon icon={ staging } />
+			<HStack
+				justify="flex-start"
+				spacing={ spacing }
+				expanded={ false }
+				style={ { flexShrink: 0 } }
+			>
+				<Icon icon={ staging } size={ iconSize } />
 				<span>{ __( 'Staging' ) }</span>
 			</HStack>
 		);
 	}
 
 	return (
-		<HStack justify="flex-start" spacing={ 1 } expanded={ false } style={ { flexShrink: 0 } }>
-			<Icon icon={ production } />
+		<HStack justify="flex-start" spacing={ spacing } expanded={ false } style={ { flexShrink: 0 } }>
+			<Icon icon={ production } size={ iconSize } />
 			<span>{ __( 'Production' ) }</span>
 		</HStack>
 	);
