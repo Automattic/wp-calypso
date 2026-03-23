@@ -46,9 +46,11 @@
 	line-height: 1.2;
 	color: var( --studio-white );
 	margin: 0;
+	text-wrap: balance;
 
 	@include break-large {
 		font-size: rem( 50px );
+		max-width: 500px;
 	}
 }
 

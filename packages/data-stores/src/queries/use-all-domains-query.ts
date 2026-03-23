@@ -1,6 +1,6 @@
 import { UseQueryOptions, useQuery } from '@tanstack/react-query';
 import { addQueryArgs } from '@wordpress/url';
-import wpcomRequest from 'wpcom-proxy-request';
+import wpcomRequest from '../wpcom-request';
 import type { DomainData } from './use-site-domains-query';
 
 // The data returned by the /all-domains endpoint only includes the basic data

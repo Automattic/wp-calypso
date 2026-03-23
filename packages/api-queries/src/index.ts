@@ -120,3 +120,4 @@ export * from './site-collision-listener';
 export * from './site';
 export * from './sites';
 export * from './upgrades';
+export * from './wp-org-core-version';

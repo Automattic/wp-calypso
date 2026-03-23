@@ -17,6 +17,7 @@ import clsx from 'clsx';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import ChatMessageSkeleton from '../chat-message-skeleton';
+import CustomALink from '../custom-a-link';
 import FeedbackInput from '../feedback-input';
 import { AI } from '../icons';
 import SelectedBlock from '../selected-block';
@@ -81,6 +82,8 @@ interface Props {
 	onCancelFeedback?: () => void;
 	/** Called when the user views the conversation history. */
 	onViewHistory?: () => void;
+	/** Alternative footer to render instead of the default footer. */
+	alternativeFooter?: React.ReactNode;
 }
 
 const DEFAULT_ACCEPTED_IMAGE_TYPES = [
@@ -122,6 +125,7 @@ export default function AgentChat( {
 	onSubmitFeedbackText = () => Promise.resolve(),
 	onCancelFeedback = () => {},
 	onViewHistory,
+	alternativeFooter,
 }: Props ) {
 	const { setFloatingPosition } = useDispatch( AGENTS_MANAGER_STORE );
 	const conversationViewRef = useRef< HTMLDivElement >( null );
@@ -131,13 +135,18 @@ export default function AgentChat( {
 		return store.getAgentsManagerState();
 	}, [] );
 
+	const mergedComponents = useMemo(
+		() => ( { a: CustomALink, ...markdownComponents } ),
+		[ markdownComponents ]
+	);
+
 	const messageRenderer = useMemo(
 		() =>
 			createMessageRenderer( {
-				components: markdownComponents,
+				components: mergedComponents,
 				extensions: markdownExtensions,
 			} ),
-		[ markdownComponents, markdownExtensions ]
+		[ mergedComponents, markdownExtensions ]
 	);
 
 	let floatingChatState: ChatState = 'collapsed';
@@ -197,29 +206,32 @@ export default function AgentChat( {
 				{ showFeedbackInput && (
 					<FeedbackInput onSubmit={ onSubmitFeedbackText } onCancel={ onCancelFeedback } />
 				) }
-				<AgentUI.Footer>
-					<AgentUI.Suggestions />
-					<AgentUI.Notice />
-					{ imageUpload && (
-						<ImageUploader
-							ref={ imageUploaderRef }
-							images={ imageUpload.pendingImages }
-							uploadingImages={ imageUpload.uploadingImages }
-							onFilesSelected={ imageUpload.handleFilesSelected }
-							onRemoveImage={ imageUpload.handleRemoveImage }
-							acceptedFileTypes={ acceptedImageFileTypes }
-							showFileMetadata
-							allowDragToInsert={ false }
-							dropZoneRef={ conversationViewRef }
+				{ alternativeFooter ? (
+					alternativeFooter
+				) : (
+					<AgentUI.Footer>
+						<AgentUI.Suggestions />
+						<AgentUI.Notice />
+						{ imageUpload && (
+							<ImageUploader
+								ref={ imageUploaderRef }
+								images={ imageUpload.pendingImages }
+								uploadingImages={ imageUpload.uploadingImages }
+								onFilesSelected={ imageUpload.handleFilesSelected }
+								onRemoveImage={ imageUpload.handleRemoveImage }
+								acceptedFileTypes={ acceptedImageFileTypes }
+								showFileMetadata
+								allowDragToInsert={ false }
+								dropZoneRef={ conversationViewRef }
+							/>
+						) }
+						<SelectedBlock />
+						<AgentUI.Input
+							imageUploaderRef={ imageUpload ? imageUploaderRef : undefined }
+							disabled={ imageUpload?.pendingImages?.length ? false : undefined }
 						/>
-					) }
-
-					<SelectedBlock />
-					<AgentUI.Input
-						imageUploaderRef={ imageUpload ? imageUploaderRef : undefined }
-						disabled={ imageUpload?.pendingImages?.length ? false : undefined }
-					/>
-				</AgentUI.Footer>
+					</AgentUI.Footer>
+				) }
 			</AgentUI.ConversationView>
 		</AgentUI.Container>
 	);

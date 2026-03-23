@@ -4,6 +4,7 @@ export const getAgentsManagerState = ( state: State ) => ( {
 	isOpen: state.isOpen,
 	isDocked: state.isDocked,
 	routerHistory: state.routerHistory,
+	lastActivity: state.lastActivity,
 	isLoading: state.isLoading,
 	hasLoaded: state.hasLoaded,
 	floatingPosition: state.floatingPosition,
@@ -15,6 +16,12 @@ export const getRouterHistory = ( state: State, siteKey: string ) => {
 		return undefined;
 	}
 	return state.routerHistory[ siteKey ];
+};
+export const getLastActivity = ( state: State, siteKey: string ) => {
+	if ( ! state.lastActivity ) {
+		return undefined;
+	}
+	return state.lastActivity[ siteKey ];
 };
 export const getIsLoading = ( state: State ) => state.isLoading;
 export const getHasLoaded = ( state: State ) => state.hasLoaded;

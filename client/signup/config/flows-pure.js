@@ -307,6 +307,7 @@ export function generateFlows( {
 			providesDependenciesInQuery: [ 'siteSlug' ],
 			hideProgressIndicator: true,
 			lastModified: '2019-11-22',
+			excludeFromManageSiteFlows: true,
 			get pageTitle() {
 				return translate( 'Launch your site' );
 			},

@@ -44,4 +44,4 @@ function MyComponent() {
 }
 ```
 
-Persistence is disabled for queries that didn't succeed, regardless of the value defined in the `persist` property.  Mutation results are not persisted.
+Persistence is disabled for queries that didn't succeed, regardless of the value defined in the `persist` property. Mutation results are not persisted.

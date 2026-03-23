@@ -99,6 +99,7 @@ const domain: FlowV2< typeof initialize > = {
 		const isCiab = dashboard === 'ciab';
 
 		const redirectTo = useQuery().get( 'redirect_to' ) || undefined;
+		const backTo = useQuery().get( 'back_to' ) || undefined;
 		const defaultRedirect = dashboardLink( `/sites/${ siteSlug }/domains` );
 
 		const goToCheckout = ( siteSlug: string ) => {
@@ -139,6 +140,7 @@ const domain: FlowV2< typeof initialize > = {
 						addQueryArgs( '/setup/domain', {
 							siteSlug,
 							redirect_to: redirectTo,
+							...( backTo && { back_to: backTo } ),
 							...( dashboard && { dashboard } ),
 						} ),
 						window.location.href
@@ -191,6 +193,7 @@ const domain: FlowV2< typeof initialize > = {
 								addQueryArgs( '/setup/domain', {
 									siteSlug,
 									redirect_to: redirectTo,
+									...( backTo && { back_to: backTo } ),
 									...( dashboard && { dashboard } ),
 								} ),
 								window.location.href

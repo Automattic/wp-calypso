@@ -247,6 +247,31 @@
 	line-height: 1.8;
 }
 
+.cancel-purchase-form__upsell-solutions-cards {
+	display: flex;
+	flex-direction: column;
+	gap: 0;
+	margin: 0 0 1.25rem;
+	border: 1px solid var(--studio-gray-10);
+	border-radius: 4px;
+	overflow: hidden;
+
+	.cancel-purchase-form__solution-card.summary-button {
+		/* Vertically center the icon (decoration) with the card content */
+		> * {
+			align-items: center;
+		}
+
+		.summary-button-decoration {
+			align-items: center;
+		}
+
+		&:last-child {
+			border-bottom: none;
+		}
+	}
+}
+
 .cancel-purchase-form__upsell-buttons {
 	display: flex;
 	flex-direction: row;

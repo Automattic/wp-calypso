@@ -24,6 +24,7 @@ export type ThemeSectionProps = {
 	sectionSlug: string;
 	sectionIndex: number;
 	variant?: 'light' | 'dark';
+	banner?: React.ReactNode;
 	getActionLabel: ( themeId: string ) => string;
 	getOptions: ( themeId: string ) => void;
 	getScreenshotUrl: ( themeId: string ) => string;
@@ -38,6 +39,7 @@ export default function ThemeSection( {
 	sectionSlug,
 	sectionIndex,
 	variant = 'light',
+	banner,
 	getActionLabel,
 	getOptions,
 	getScreenshotUrl,
@@ -127,6 +129,7 @@ export default function ThemeSection( {
 						onStyleVariationClick={ onStyleVariationClick }
 					/>
 				) ) }
+				{ banner }
 			</div>
 		</div>
 	);

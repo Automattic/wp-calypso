@@ -1,4 +1,9 @@
-import { NoticeConfig, ThinkingMessage } from '@automattic/agenttic-ui';
+import {
+	NoticeConfig,
+	ThinkingMessage,
+	ThumbsDownIcon,
+	ThumbsUpIcon,
+} from '@automattic/agenttic-ui';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useQueryClient, useQuery } from '@tanstack/react-query';
 import {
@@ -15,75 +20,27 @@ import SmoochLibrary from 'smooch';
 import { AttachmentMessage } from './components/attachment-message';
 import { CSATForm } from './components/csat-form';
 import { SMOOCH_INTEGRATION_ID, SMOOCH_INTEGRATION_ID_STAGING } from './constants';
-import { ZendeskConversation } from './types';
+import {
+	ConversationData,
+	ZendeskConversation,
+	ZendeskImagePreview,
+	ZendeskUploadingImage,
+} from './types';
 import { useAttachFileToConversation } from './use-attach-file';
 import {
 	useAuthenticateZendeskMessaging,
 	fetchMessagingAuth,
 } from './use-authenticate-zendesk-messaging';
-import { isTestModeEnvironment, convertZendeskMessageToAgentticFormat } from './util';
+import {
+	convertZendeskMessageToAgentticFormat,
+	getSmoochContainer,
+	isSupportedImageType,
+	isTestModeEnvironment,
+	MAX_ATTACHMENTS,
+	playNotificationSound,
+	SUPPORTED_IMAGE_TYPES,
+} from './util';
 import type { AgentticMessage, ZendeskMessage } from './types';
-
-const SUPPORTED_IMAGE_TYPES = [ 'image/jpeg', 'image/jpg', 'image/png', 'image/gif' ];
-const MAX_ATTACHMENTS = 5;
-
-function isSupportedImageType( type: string ) {
-	return SUPPORTED_IMAGE_TYPES.includes( type );
-}
-
-/** Minimal image preview shape for attachment upload UI (compatible with UseImageUploadResult). */
-export type ZendeskImagePreview = {
-	id: string;
-	url: string;
-	name: string;
-	alt: string;
-	mime_type: string;
-	file: File;
-};
-
-/** Minimal uploading image shape (compatible with UseImageUploadResult.uploadingImages). */
-export type ZendeskUploadingImage = {
-	id: string;
-	url?: string;
-	name?: string;
-};
-
-type ConversationData = {
-	conversation: {
-		id: string;
-	};
-};
-
-let smoochContainer: HTMLDivElement | null = null;
-
-function getSmoochContainer(): HTMLDivElement | null {
-	if ( typeof document === 'undefined' ) {
-		return null;
-	}
-
-	const existing = document.querySelector< HTMLDivElement >( '.smooch-container' );
-	if ( existing ) {
-		smoochContainer = existing;
-	} else if ( ! smoochContainer ) {
-		smoochContainer = document.createElement( 'div' );
-		smoochContainer.className = 'smooch-container';
-	}
-
-	// Keep the container hidden since we're using embedded mode.
-	smoochContainer.style.display = 'none';
-	smoochContainer.style.position = 'absolute';
-	smoochContainer.style.top = '0';
-	smoochContainer.style.left = '0';
-	smoochContainer.style.width = '100%';
-	smoochContainer.style.height = '100%';
-	smoochContainer.style.zIndex = '1000';
-
-	if ( ! document.body.contains( smoochContainer ) ) {
-		document.body.appendChild( smoochContainer );
-	}
-
-	return smoochContainer;
-}
 
 function useSmooch( enabled = true ) {
 	const queryClient = useQueryClient();
@@ -136,29 +93,6 @@ function useSmooch( enabled = true ) {
 
 	return { ...smoochQuery, isLoading: isAuthenticatingZendeskMessaging || smoochQuery.isFetching };
 }
-
-const playNotificationSound = () => {
-	// @ts-expect-error expected because of fallback webkitAudioContext
-	const audioContext = new ( window.AudioContext || window.webkitAudioContext )();
-
-	const duration = 0.7;
-	const oscillator = audioContext.createOscillator();
-	const gainNode = audioContext.createGain();
-
-	// Configure oscillator
-	oscillator.type = 'sine';
-	oscillator.frequency.setValueAtTime( 660, audioContext.currentTime );
-
-	// Configure gain for a smoother fade-out
-	gainNode.gain.setValueAtTime( 0.3, audioContext.currentTime );
-	gainNode.gain.exponentialRampToValueAtTime( 0.001, audioContext.currentTime + duration );
-
-	// Connect & start
-	oscillator.connect( gainNode );
-	gainNode.connect( audioContext.destination );
-	oscillator.start();
-	oscillator.stop( audioContext.currentTime + duration );
-};
 /**
  * Returns a complete API for managing a Zendesk chat.
  * @returns An object with the following properties:
@@ -205,6 +139,11 @@ export const useManagedZendeskChat = () => {
 		},
 		[ Smooch, setConversation, conversation?.id ]
 	);
+
+	const hasCSAT = useMemo( () => {
+		const messages = conversation?.messages ?? [];
+		return messages.some( ( msg ) => msg.metadata?.type === 'csat' );
+	}, [ conversation?.messages ] );
 
 	const disconnectedListener = useCallback( () => {
 		setConnectionStatus( 'disconnected' );
@@ -273,8 +212,8 @@ export const useManagedZendeskChat = () => {
 
 			const text =
 				score === 'good'
-					? __( 'Good', '__i18n_text_domain__' )
-					: __( 'Needs improvement', '__i18n_text_domain__' );
+					? __( 'Good 👍', '__i18n_text_domain__' )
+					: __( 'Needs improvement 👎', '__i18n_text_domain__' );
 
 			const messageToSend = {
 				type: 'text',
@@ -292,30 +231,73 @@ export const useManagedZendeskChat = () => {
 
 	const agentticMessages = useMemo( () => {
 		const rawMessages = conversation?.messages ?? [];
-		const hasRated = rawMessages.some( ( msg ) => msg.metadata?.rated === true );
+		const ratingMessage = rawMessages.find( ( msg ) => msg.metadata?.rated === true );
+		const hasRated = ratingMessage !== undefined;
+		let score: 'GOOD' | 'BAD' | null = null;
 
+		if ( hasRated && ratingMessage.payload ) {
+			try {
+				score = JSON.parse( ratingMessage.payload ).csat_rating ?? null;
+			} catch {
+				score = null;
+			}
+		}
+
+		let ticketId: number | null = null;
 		const messages = rawMessages.map( ( message ): AgentticMessage => {
-			const isCSAT =
-				message.source?.type === 'zd:surveys' && message.actions && message.actions.length > 0;
+			const isCSAT = message.metadata?.type === 'csat';
 
-			if ( isCSAT && ! hasRated ) {
-				const ticketId = message.actions?.[ 0 ]?.metadata?.ticket_id ?? null;
+			if ( isCSAT ) {
+				ticketId = message.actions?.[ 0 ]?.metadata?.ticket_id ?? null;
+				return {
+					...convertZendeskMessageToAgentticFormat( message ),
+					content: [
+						{
+							type: 'text',
+							text: __(
+								'Please help us improve. How would you rate your experience?',
+								'__i18n_text_domain__'
+							),
+						},
+					],
+					actions: ! hasRated
+						? message.actions?.map( ( action ) => {
+								const label =
+									action.metadata.score === 'GOOD'
+										? __( 'Good 👍', '__i18n_text_domain__' )
+										: __( 'Needs improvement 👎', '__i18n_text_domain__' );
+								return {
+									...action,
+									label,
+									tooltip: label,
+									icon: action.metadata.score === 'GOOD' ? <ThumbsUpIcon /> : <ThumbsDownIcon />,
+									onClick: () => {
+										sendFeedbackMessage( action.metadata.score === 'GOOD' ? 'good' : 'bad' );
+									},
+									pressed: action.metadata.score === score,
+								};
+						  } ) ?? []
+						: [],
+				};
+			}
 
+			const isCSATForm =
+				message.type === 'form' &&
+				message.fields?.some( ( field ) => field.name === 'csat_comment' );
+
+			if ( isCSATForm && score ) {
 				return {
 					id: message.id || crypto.randomUUID(),
 					role: 'agent',
 					content: [
 						{
-							type: 'text',
-							text: __(
-								'Please help us improve. How would you rate your support experience?',
-								'__i18n_text_domain__'
-							),
-						},
-						{
 							type: 'component',
 							component: () => (
-								<CSATForm ticketId={ ticketId } onSendFeedback={ sendFeedbackMessage } />
+								<CSATForm
+									preDeterminedScore={ score === 'GOOD' ? 'good' : 'bad' }
+									ticketId={ ticketId }
+									onSendFeedback={ sendFeedbackMessage }
+								/>
 							),
 						},
 					],
@@ -586,6 +568,7 @@ export const useManagedZendeskChat = () => {
 		notice,
 		agentticMessages,
 		isLoadingConversation: isSettingUpSmooch || ! conversation,
+		hasInteractionEnded: hasCSAT,
 		onTypingStatusChange: ( typingStatus: boolean ) => {
 			if ( typingStatus ) {
 				Smooch?.startTyping( conversation?.id );

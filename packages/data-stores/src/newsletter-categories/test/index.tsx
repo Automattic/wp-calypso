@@ -4,10 +4,13 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import React from 'react';
-import request from 'wpcom-proxy-request';
+import request from '../../wpcom-request';
 import { useNewsletterCategories } from '../index';
 
-jest.mock( 'wpcom-proxy-request', () => jest.fn() );
+jest.mock( '../../wpcom-request', () => ( {
+	__esModule: true,
+	default: jest.fn(),
+} ) );
 
 describe( 'useNewsletterCategories', () => {
 	let queryClient: QueryClient;

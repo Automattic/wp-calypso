@@ -1,68 +1,65 @@
-@import '@wordpress/base-styles/colors';
-
 .agent-manager-support-guide-wrapper {
-	height: calc( 100% - 50px );
+	height: calc( 100% - 32px );
 	display: flex;
 	flex-direction: column;
 
 	.agent-manager-support-guide-content {
 		flex: 1;
 		overflow-y: auto;
-		scrollbar-color: $gray-400 transparent;
+		scrollbar-color: var( --color-muted ) transparent;
 		scroll-behavior: smooth;
 	}
+
 	.agent-manager-support-guide-footer {
 		padding: 16px;
 		display: flex;
 		justify-content: stretch;
 
 		button {
-			flex: 1
+			flex: 1;
+			justify-content: center;
+		}
+	}
+
+	.help-center-article {
+		color: var( --color-foreground );
+
+		.help-center-article-content__header {
+			&-title {
+				color: var( --color-foreground );
+			}
+
+			&-link {
+				color: var( --color-muted-foreground );
+			}
+		}
+
+		.help-center-article-content__main,
+		.help-center-article__error {
+			h1,
+			h2,
+			h3,
+			h4,
+			h5,
+			h6,
+			p,
+			ol,
+			ul,
+			button,
+			ol.wp-block-list,
+			a {
+				color: var( --color-foreground );
+			}
+
+			.wp-block-a8c-support-table-of-contents {
+				background-color: var( --color-muted );
+			}
+		}
+
+		.help-center-feedback__form button {
+			color: var( --color-foreground );
+			fill: var( --color-foreground );
 		}
 	}
 }
 
-.agents-manager-chat--docked {
-	.agent-manager-support-guide-wrapper {
-		.help-center-article {
-			color: $white;
-			.help-center-article-content__header {
-				&-title {
-					color: $white;
-				}
-				&-link {
-					color: $gray-400;
-				}
-			}
-			.help-center-article-content__main {
-				h1,
-				h2,
-				h3,
-				h4,
-				h5,
-				h6,
-				p,
-				ol,
-				ul,
-				button,
-				ol.wp-block-list,
-				a {
-					color: $white;
-				}
-				.wp-block-a8c-support-table-of-contents {
-					background-color: $gray-800;
-				}
-			}
-			.help-center-feedback__form {
-				button {
-					color: $white;
-					fill: $white;
-				}
-			}
-		}
-	}
-
-	.agent-manager-support-guide-content {
-		scrollbar-color: #3f3f3f transparent;
-	}
-}
