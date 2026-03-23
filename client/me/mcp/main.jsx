@@ -91,6 +91,7 @@ function McpComponent( { path } ) {
 		mutation.mutate( {
 			mcp_abilities: {
 				account: accountAbilities,
+				sites: [],
 			},
 		} );
 	};
