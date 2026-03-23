@@ -36,7 +36,6 @@ describe( 'preloadCurrentStep', () => {
 	} );
 
 	it( 'does nothing for an empty steps array', () => {
-		// Should not throw.
 		expect( () => preloadCurrentStep( [], '/setup/onboarding/domains' ) ).not.toThrow();
 	} );
 
@@ -53,7 +52,6 @@ describe( 'preloadCurrentStep', () => {
 	it( 'handles a URL with a trailing locale segment', () => {
 		const domainStep = makeStep( 'domains' );
 
-		// /setup/<flow>/<step>/<lang>
 		preloadCurrentStep( [ domainStep ], '/setup/onboarding/domains/es' );
 
 		expect( domainStep.asyncComponent ).toHaveBeenCalledTimes( 1 );

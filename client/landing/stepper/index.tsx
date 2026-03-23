@@ -180,7 +180,7 @@ async function main() {
 
 	// Warm the webpack module cache for the current step's chunk so React.lazy
 	// resolves instantly. See preload-current-step.ts for details.
-	if ( flowSteps && flowSteps.length > 0 ) {
+	if ( flowSteps ) {
 		preloadCurrentStep( flowSteps, window.location.pathname );
 	}
 
