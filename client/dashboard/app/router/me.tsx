@@ -875,6 +875,22 @@ export const mcpLegacyRedirectRoute = createRoute( {
 	},
 } );
 
+export const privacyLegacyRedirectRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'privacy',
+	beforeLoad: () => {
+		throw redirect( { to: '/me/preferences/privacy' } );
+	},
+} );
+
+export const blockedSitesLegacyRedirectRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'blocked-sites',
+	beforeLoad: () => {
+		throw redirect( { to: '/me/preferences/blocked-sites' } );
+	},
+} );
+
 export const mcpRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -1012,6 +1028,8 @@ export const createMeRoutes = ( config: AppConfig ) => {
 			? preferencesRoute.addChildren( preferencesChildren )
 			: preferencesRoute,
 		mcpLegacyRedirectRoute,
+		privacyLegacyRedirectRoute,
+		blockedSitesLegacyRedirectRoute,
 	];
 
 	meRoutes.push(

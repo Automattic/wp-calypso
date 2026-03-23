@@ -6,7 +6,7 @@ import RouterLinkSummaryButton from '../../components/router-link-summary-button
 export default function PreferencesBlockedSites() {
 	return (
 		<RouterLinkSummaryButton
-			to="/me/blocked-sites"
+			to="/me/preferences/blocked-sites"
 			title={ __( 'Blocked sites' ) }
 			description={ __( 'Manage your list of blocked sites in the Reader.' ) }
 			decoration={ <Icon icon={ notAllowed } size={ 24 } /> }
