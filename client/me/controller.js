@@ -7,7 +7,11 @@ import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import AppsComponent from 'calypso/me/get-apps';
 import McpComponent from 'calypso/me/mcp/main';
+import McpAddSiteComponent from 'calypso/me/mcp/mcp-add-site';
+import McpMcpSitesComponent from 'calypso/me/mcp/mcp-sites';
+import McpReadComponent from 'calypso/me/mcp/read';
 import McpSetupComponent from 'calypso/me/mcp/setup';
+import McpWriteComponent from 'calypso/me/mcp/write';
 import SidebarComponent from 'calypso/me/sidebar';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { fetchPreferences } from 'calypso/state/preferences/actions';
@@ -62,7 +66,7 @@ export function mcp( context, next ) {
 	const McpTitle = () => {
 		const translate = useTranslate();
 
-		return <DocumentHead title={ translate( 'MCP Account Settings', { textOnly: true } ) } />;
+		return <DocumentHead title={ translate( 'AI and MCP', { textOnly: true } ) } />;
 	};
 
 	context.primary = (
@@ -79,7 +83,7 @@ export function mcpSetup( context, next ) {
 	const McpSetupTitle = () => {
 		const translate = useTranslate();
 
-		return <DocumentHead title={ translate( 'MCP Setup', { textOnly: true } ) } />;
+		return <DocumentHead title={ translate( 'MCP Client Setup', { textOnly: true } ) } />;
 	};
 
 	context.primary = (
@@ -90,6 +94,74 @@ export function mcpSetup( context, next ) {
 		</>
 	);
 	next();
+}
+
+export function mcpRead( context, next ) {
+	const Title = () => {
+		const translate = useTranslate();
+		return <DocumentHead title={ translate( 'MCP — Read', { textOnly: true } ) } />;
+	};
+
+	context.primary = (
+		<>
+			<Title />
+			<QueryUserSettings />
+			<McpReadComponent path={ context.path } />
+		</>
+	);
+	next();
+}
+
+export function mcpWrite( context, next ) {
+	const Title = () => {
+		const translate = useTranslate();
+		return <DocumentHead title={ translate( 'MCP — Write', { textOnly: true } ) } />;
+	};
+
+	context.primary = (
+		<>
+			<Title />
+			<QueryUserSettings />
+			<McpWriteComponent path={ context.path } />
+		</>
+	);
+	next();
+}
+
+export function mcpMcpSites( context, next ) {
+	const Title = () => {
+		const translate = useTranslate();
+		return <DocumentHead title={ translate( 'MCP — Site exceptions', { textOnly: true } ) } />;
+	};
+
+	context.primary = (
+		<>
+			<Title />
+			<QueryUserSettings />
+			<McpMcpSitesComponent path={ context.path } />
+		</>
+	);
+	next();
+}
+
+export function mcpAddSite( context, next ) {
+	const Title = () => {
+		const translate = useTranslate();
+		return <DocumentHead title={ translate( 'MCP — Add to a site', { textOnly: true } ) } />;
+	};
+
+	context.primary = (
+		<>
+			<Title />
+			<QueryUserSettings />
+			<McpAddSiteComponent path={ context.path } />
+		</>
+	);
+	next();
+}
+
+export function mcpSetupLegacyRedirect() {
+	page.redirect( '/me/mcp/setup' );
 }
 
 // Helper thunk that ensures that the user preferences has been fetched into Redux state before we
