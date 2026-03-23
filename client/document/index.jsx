@@ -139,6 +139,7 @@ class Document extends Component {
 					branchName={ branchName }
 					inlineScriptNonce={ inlineScriptNonce }
 					faviconUrl={ headFaviconUrl }
+					lang={ lang }
 				>
 					{ head.metas.map( ( props, index ) => (
 						<meta { ...props } key={ index } />

@@ -2,12 +2,50 @@ import config from '@automattic/calypso-config';
 import PropTypes from 'prop-types';
 import Favicons from './favicons';
 
+// Languages that use Recoleta for .wp-brand-font headings.
+// Keep in sync with $langs in packages/typography/styles/fonts.scss.
+export const RECOLETA_LANGS = [
+	'af',
+	'ca',
+	'cs',
+	'da',
+	'de',
+	'en',
+	'es',
+	'eu',
+	'fi',
+	'fr',
+	'gl',
+	'hr',
+	'hu',
+	'id',
+	'is',
+	'it',
+	'lv',
+	'mt',
+	'nb',
+	'nl',
+	'pl',
+	'pt',
+	'ro',
+	'ru',
+	'sk',
+	'sl',
+	'sq',
+	'sr',
+	'sv',
+	'sw',
+	'tr',
+	'uz',
+];
+
 const Head = ( {
 	title = 'WordPress.com',
 	children,
 	branchName,
 	inlineScriptNonce,
 	faviconUrl,
+	lang,
 } ) => {
 	return (
 		<head>
@@ -45,6 +83,15 @@ const Head = ( {
 				href="https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese&display=swap"
 				as="style"
 			/>
+			{ lang && RECOLETA_LANGS.some( ( code ) => lang.startsWith( code ) ) && (
+				<link
+					rel="preload"
+					href="https://s1.wp.com/i/fonts/recoleta/extended/recoleta-400.woff2"
+					as="font"
+					type="font/woff2"
+					crossOrigin="anonymous"
+				/>
+			) }
 			<noscript>
 				<link
 					rel="stylesheet"
@@ -78,6 +125,7 @@ Head.propTypes = {
 	children: PropTypes.node,
 	branchName: PropTypes.string,
 	faviconUrl: PropTypes.string,
+	lang: PropTypes.string,
 };
 
 export default Head;
