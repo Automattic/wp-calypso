@@ -196,6 +196,57 @@ const request = ( originalParams, fn ) => {
 		return makeRequest( originalParams, fn );
 	}
 
+	if ( originalParams.emulateStreamBody ) {
+		const encoder = new TextEncoder();
+		let streamController;
+		const stream = new ReadableStream( {
+			start( controller ) {
+				streamController = controller;
+			},
+		} );
+
+		let resolveResponse;
+		const responsePromise = new Promise( ( res ) => {
+			resolveResponse = res;
+		} );
+
+		const params = Object.assign( {}, originalParams );
+		delete params.emulateStreamBody;
+
+		let resolved = false;
+
+		params.onStreamRecord = ( record ) => {
+			if ( ! resolved ) {
+				resolved = true;
+				resolveResponse( { ok: true, status: 200, body: stream } );
+			}
+			try {
+				streamController.enqueue( encoder.encode( record ) );
+			} catch ( e ) {
+				// Stream already closed/errored
+			}
+		};
+
+		makeRequest( params, ( err, body, headers ) => {
+			if ( ! resolved ) {
+				resolved = true;
+				const status = err ? err.status || 500 : headers?.status || 200;
+				resolveResponse( { ok: ! err, status, body: stream } );
+			}
+			try {
+				if ( err ) {
+					streamController.error( err );
+				} else {
+					streamController.close();
+				}
+			} catch ( e ) {
+				// Stream already closed/errored
+			}
+		} );
+
+		return responsePromise;
+	}
+
 	// but if not, return a Promise
 	return new Promise( ( res, rej ) => {
 		makeRequest( originalParams, ( err, response ) => {

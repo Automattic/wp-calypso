@@ -36,6 +36,39 @@ proxy( { path: '/me' }, function ( err, body, headers ) {
 } );
 ```
 
+## Streaming with `emulateStreamBody`
+
+For endpoints that return progressive responses (NDJSON or SSE via the proxy
+iframe's HTTP 207 mechanism), set `emulateStreamBody: true` to receive a
+`ReadableStream` instead of the final parsed body.
+
+The promise resolves immediately with an object containing `ok`, `status`, and
+`body` (a `ReadableStream<Uint8Array>`). Each chunk is an SSE-formatted line
+(`data: {json}\n\n`), making it compatible with standard SSE parsers.
+
+```js
+import proxy from 'wpcom-proxy-request';
+
+const response = await proxy( {
+	path: '/wpcom/v2/some/streaming-endpoint',
+	method: 'POST',
+	body: { prompt: 'Hello' },
+	emulateStreamBody: true,
+} );
+
+const reader = response.body.getReader();
+const decoder = new TextDecoder();
+
+while ( true ) {
+	const { done, value } = await reader.read();
+	if ( done ) break;
+	console.log( decoder.decode( value ) );
+}
+```
+
+> **Note:** `emulateStreamBody` only works in promise mode (without a
+> callback). When a callback is provided, the flag is ignored.
+
 ## Running tests
 
 Compile and `watch` client-test application
