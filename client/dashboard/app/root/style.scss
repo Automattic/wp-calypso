@@ -1,5 +1,6 @@
 @import '@wordpress/base-styles/variables';
 @import '@wordpress/base-styles/mixins';
+@import '../responsive-sidebar/variables';
 @import './omnibar-style';
 
 // Old layout (no sidebar): sticky header
@@ -39,9 +40,13 @@
 		transition: transform 0.2s ease-out;
 
 		&.is-sidebar-open {
-			transform: translateX( 272px );
+			transform: translateX( $sidebar-width );
 			overflow: hidden;
 			height: 100vh;
+
+			[dir='rtl'] & {
+				transform: translateX( -$sidebar-width );
+			}
 		}
 	}
 }

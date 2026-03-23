@@ -15,6 +15,14 @@ $sidebar-width: 272px;
 	&.is-open {
 		transform: translateX( 0 );
 	}
+
+	[dir='rtl'] & {
+		transform: translateX( 100% );
+
+		&.is-open {
+			transform: translateX( 0 );
+		}
+	}
 }
 
 .dashboard-responsive-sidebar__overlay {
