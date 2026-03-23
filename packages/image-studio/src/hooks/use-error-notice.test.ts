@@ -70,15 +70,18 @@ describe( 'useErrorNotice', () => {
 	} );
 
 	describe( 'errors with non-upgrade URLs', () => {
-		it( 'shows error snackbar with "Learn more" action', () => {
+		it( 'shows error snackbar with "Learn more" action for allowed domain', () => {
 			renderHook( () =>
-				useErrorNotice( 'Error occurred. See https://example.com/help for details.', mockAddNotice )
+				useErrorNotice(
+					'Error occurred. See https://wordpress.com/help for details.',
+					mockAddNotice
+				)
 			);
 
 			expect( mockAddNotice ).toHaveBeenCalledWith( 'Error occurred. See for details.', 'error', [
 				{
 					label: 'Learn more',
-					url: 'https://example.com/help',
+					url: 'https://wordpress.com/help',
 					openInNewTab: true,
 				},
 			] );
@@ -86,16 +89,24 @@ describe( 'useErrorNotice', () => {
 
 		it( 'extracts URL from middle of message', () => {
 			renderHook( () =>
-				useErrorNotice( 'Visit https://docs.example.com for help', mockAddNotice )
+				useErrorNotice( 'Visit https://jetpack.com/docs for help', mockAddNotice )
 			);
 
 			expect( mockAddNotice ).toHaveBeenCalledWith( 'Visit for help', 'error', [
 				{
 					label: 'Learn more',
-					url: 'https://docs.example.com',
+					url: 'https://jetpack.com/docs',
 					openInNewTab: true,
 				},
 			] );
+		} );
+
+		it( 'shows plain error when URL domain is not allowed', () => {
+			renderHook( () =>
+				useErrorNotice( 'Error occurred. See https://example.com/help for details.', mockAddNotice )
+			);
+
+			expect( mockAddNotice ).toHaveBeenCalledWith( 'Error occurred. See for details.', 'error' );
 		} );
 	} );
 
@@ -145,21 +156,34 @@ describe( 'useErrorNotice', () => {
 			] );
 		} );
 
-		it( 'shows warning notice with "Upgrade plan" for my-jetpack URL', () => {
-			renderHook( () =>
-				useErrorNotice(
-					'Please upgrade https://example.com/wp-admin/admin.php?page=my-jetpack#/add-jetpack-ai',
-					mockAddNotice
-				)
-			);
+		it( 'shows warning notice with "Upgrade plan" for my-jetpack URL on current origin', () => {
+			const savedOrigin = window.location.origin;
+			Object.defineProperty( window, 'location', {
+				value: { origin: 'https://example.com' },
+				writable: true,
+			} );
 
-			expect( mockAddNotice ).toHaveBeenCalledWith( 'Please upgrade', 'warning', [
-				{
-					label: 'Upgrade plan',
-					url: 'https://example.com/wp-admin/admin.php?page=my-jetpack#/add-jetpack-ai',
-					openInNewTab: true,
-				},
-			] );
+			try {
+				renderHook( () =>
+					useErrorNotice(
+						'Please upgrade https://example.com/wp-admin/admin.php?page=my-jetpack#/add-jetpack-ai',
+						mockAddNotice
+					)
+				);
+
+				expect( mockAddNotice ).toHaveBeenCalledWith( 'Please upgrade', 'warning', [
+					{
+						label: 'Upgrade plan',
+						url: 'https://example.com/wp-admin/admin.php?page=my-jetpack#/add-jetpack-ai',
+						openInNewTab: true,
+					},
+				] );
+			} finally {
+				Object.defineProperty( window, 'location', {
+					value: new URL( savedOrigin ),
+					writable: true,
+				} );
+			}
 		} );
 
 		it( 'handles real-world streaming error with upgrade URL', () => {

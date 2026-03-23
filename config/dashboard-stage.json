@@ -26,6 +26,7 @@
 		"ciab/custom-branding": true,
 		"cookie-banner": false,
 		"rum-tracking/logstash": true,
+		"dashboard/omnibar": false,
 		"dashboard/v2": false,
 		"dev/store-sandbox-helper": true,
 		"domain-transfer-redesign": true,

@@ -65,407 +65,429 @@ function WidgetActions( { onClose }: { onClose: () => void } ) {
 	);
 }
 
+function LayoutStatePanel( { layout }: { layout: GridLayoutItem[] } ) {
+	return (
+		<div
+			style={ {
+				marginBottom: 16,
+				padding: 12,
+				background: '#f5f5f5',
+				borderRadius: 4,
+				fontFamily: 'monospace',
+				fontSize: 12,
+			} }
+		>
+			<strong>Layout state:</strong>
+			<pre style={ { margin: '8px 0 0', whiteSpace: 'pre-wrap' } }>
+				{ JSON.stringify( layout, null, 2 ) }
+			</pre>
+		</div>
+	);
+}
+
 /**
- * Basic usage example of the Grid component
+ * Static grid with a fixed number of columns.
+ *
+ * **`columns=6`, no `minColumnWidth`**<br />
+ *
+ * The grid always renders exactly 6 columns regardless of container width.
+ * Each item specifies a fixed `width` (column span).
+ * Items that exceed the row are wrapped to the next one.
  */
 export const Default: StoryObj< typeof Grid > = {
 	args: {
 		layout: [
 			{ key: 'a', width: 1 },
 			{ key: 'b', width: 3 },
-			{ key: 'c', width: 1 },
+			{ key: 'c', width: 2 },
+			{ key: 'd', width: 4 },
+			{ key: 'e', width: 2 },
 		],
 		columns: 6,
 		children: [
 			<Card key="a" color="#f44336">
-				A
+				width: 1
 			</Card>,
 			<Card key="b" color="#2196f3">
-				B
+				width: 3
 			</Card>,
 			<Card key="c" color="#4caf50">
-				C
-			</Card>,
-		],
-	},
-};
-
-/**
- * Responsive grid that reflows based on container width.
- * Resize the storybook window to see it in action.
- */
-export const ResponsiveGrid: StoryObj< typeof Grid > = {
-	args: {
-		layout: [
-			{ key: 'a', width: 2, height: 1, order: 1 },
-			{ key: 'b', width: 2, height: 1, order: 2 },
-			{ key: 'c', width: 2, height: 1, order: 3 },
-			{ key: 'd', width: 4, height: 1, order: 4 },
-			{ key: 'e', width: 2, height: 1, order: 5 },
-			{ key: 'f', height: 2, order: 6, fullWidth: true },
-		],
-		rowHeight: 'auto',
-		minColumnWidth: 160,
-		children: [
-			<Card key="a" color="#f44336">
-				Card A
-			</Card>,
-			<Card key="b" color="#2196f3">
-				Card B
-			</Card>,
-			<Card key="c" color="#4caf50">
-				Card C
+				width: 2
 			</Card>,
 			<Card key="d" color="#ff9800">
-				Card D
+				width: 4
 			</Card>,
 			<Card key="e" color="#9c27b0">
-				Card E
-			</Card>,
-			<Card key="f" color="#607d8b">
-				Full Width Card F
+				width: 2
 			</Card>,
 		],
 	},
-	parameters: {
-		docs: {
-			description: {
-				story:
-					'This example demonstrates the responsive behavior of the Grid component. The grid will automatically adjust the number of columns based on the container width. Resize the browser window to see it in action.',
-			},
-		},
-		layout: '',
+};
+
+/**
+ * Responsive grid that adapts column count based on container width.
+ *
+ * **`minColumnWidth=192`, no fixed `columns`**<br />
+ *
+ * The grid computes effective columns as:
+ *   `Math.floor((containerWidth + gap) / (minColumnWidth + gap))`
+ *
+ * Combines all three width modes:
+ * - `width: N` — fixed column span
+ * - `fillWidth` — fills remaining columns in the current row
+ * - `fullWidth` — always spans all columns (grid-column: 1 / -1)
+ * span as the effective column count changes.
+ */
+export const Responsive: StoryObj< typeof Grid > = {
+	parameters: { layout: '' },
+	args: {
+		layout: [
+			{ key: 'fill', fillWidth: true, height: 1, order: 1 },
+			{ key: 'fixed-1', width: 1, height: 1, order: 2 },
+			{ key: 'fixed-2', width: 2, height: 1, order: 3 },
+			{ key: 'fixed-3', width: 2, height: 1, order: 4 },
+			{ key: 'fixed-4', width: 2, height: 1, order: 5 },
+			{ key: 'full', fullWidth: true, height: 1, order: 6 },
+			{ key: 'fixed-5', width: 1, height: 1, order: 7 },
+			{ key: 'fixed-6', width: 1, height: 1, order: 8 },
+			{ key: 'fill-2', fillWidth: true, height: 1, order: 9 },
+		],
+		rowHeight: 96,
+		minColumnWidth: 192,
+		children: [
+			<Card key="fill" color="#2196f3">
+				fillWidth
+			</Card>,
+			<Card key="fixed-1" color="#4caf50">
+				width: 1
+			</Card>,
+			<Card key="fixed-2" color="#f44336">
+				width: 2
+			</Card>,
+			<Card key="fixed-3" color="#ff9800">
+				width: 2
+			</Card>,
+			<Card key="fixed-4" color="#9c27b0">
+				width: 2
+			</Card>,
+			<Card key="full" color="#607d8b">
+				fullWidth
+			</Card>,
+			<Card key="fixed-5" color="#795548">
+				width: 1
+			</Card>,
+			<Card key="fixed-6" color="#e91e63">
+				width: 1
+			</Card>,
+			<Card key="fill-2" color="#00bcd4">
+				fillWidth
+			</Card>,
+		],
 	},
 };
 
 /**
- * Example showing the Grid component in edit mode with drag and drop functionality
+ * Numeric row height with multi-row items.
+ *
+ * **`columns=6`, `rowHeight=80`**<br />
+ *
+ * When `rowHeight` is a number, items can span multiple rows via `height: N`.
+ * The grid uses `gridAutoRows: 80px` and each item gets
+ * `gridRow: span N` based on its `height`.
  */
-export const EditableGrid: StoryObj< typeof Grid > = {
-	render: function EditableGrid() {
-		const [ layout, setLayout ] = useState< GridLayoutItem[] >( [
-			{ key: 'a', width: 1, height: 1 },
-			{ key: 'b', width: 2, height: 1 },
-			{ key: 'c', width: 1, height: 1 },
-			{ key: 'd', width: 2, height: 1 },
-			{ key: 'e', width: 1, height: 1 },
-			{ key: 'f', width: 1, height: 1 },
-			{ key: 'g', width: 2, height: 1 },
-			{ key: 'h', width: 1, height: 1 },
-			{ key: 'i', width: 1, height: 1 },
-			{ key: 'j', width: 1, height: 1 },
+export const RowHeight: StoryObj< typeof Grid > = {
+	parameters: { layout: '' },
+	args: {
+		layout: [
+			{ key: 'a', width: 2, height: 2, order: 1 },
+			{ key: 'b', width: 2, height: 1, order: 2 },
+			{ key: 'c', width: 2, height: 3, order: 3 },
+			{ key: 'd', width: 4, height: 1, order: 4 },
+			{ key: 'e', width: 2, height: 1, order: 5 },
+		],
+		columns: 6,
+		rowHeight: 80,
+		children: [
+			<Card key="a" color="#f44336">
+				2 cols x 2 rows
+			</Card>,
+			<Card key="b" color="#2196f3">
+				2 cols x 1 row
+			</Card>,
+			<Card key="c" color="#4caf50">
+				2 cols x 3 rows
+			</Card>,
+			<Card key="d" color="#ff9800">
+				4 cols x 1 row
+			</Card>,
+			<Card key="e" color="#9c27b0">
+				2 cols x 1 row
+			</Card>,
+		],
+	},
+};
+
+/**
+ * Auto row height — rows size to their content.
+ *
+ * **`minColumnWidth=128` (responsive mode), `rowHeight='auto'` (default)**<br />
+ *
+ * Rows grow to fit the tallest item. The `height` property has no
+ * visual effect since there is no fixed row size to multiply.
+ */
+export const AutoRowHeight: StoryObj< typeof Grid > = {
+	parameters: { layout: '' },
+	args: {
+		layout: [
+			{ key: 'a', width: 2, order: 1 },
+			{ key: 'b', width: 2, order: 2 },
+			{ key: 'c', width: 2, order: 3 },
+			{ key: 'd', width: 3, order: 4 },
+			{ key: 'e', width: 3, order: 5 },
+		],
+		minColumnWidth: 128,
+		rowHeight: 'auto',
+		children: [
+			<Card key="a" color="#f44336" style={ { minHeight: 60 } }>
+				Short
+			</Card>,
+			<Card key="b" color="#2196f3" style={ { minHeight: 150 } }>
+				Tall content pushes the row
+			</Card>,
+			<Card key="c" color="#4caf50" style={ { minHeight: 60 } }>
+				Short
+			</Card>,
+			<Card key="d" color="#ff9800" style={ { minHeight: 80 } }>
+				Medium
+			</Card>,
+			<Card key="e" color="#9c27b0" style={ { minHeight: 200 } }>
+				Very tall
+			</Card>,
+		],
+	},
+};
+
+/**
+ * Comparison: hardcoded `width: 3` vs `fillWidth: true`.
+ *
+ * Both grids share the same layout state and have edit mode enabled.
+ * The top grid simulates the CSS approach — the fill item has a
+ * hardcoded `width: 3` (the equivalent of `grid-column: 2 / -3`
+ * in 6 columns). The bottom grid uses `fillWidth: true`.
+ *
+ * Drag items to reorder or resize sidebars to see the difference:
+ * the hardcoded grid breaks, the fillWidth grid adapts.
+ */
+export const FillWidthVsCss: StoryObj< typeof Grid > = {
+	parameters: { layout: '' },
+	render: function FillWidthVsCssStory() {
+		const [ cssLayout, setCssLayout ] = useState< GridLayoutItem[] >( [
+			{ key: 'left', width: 1, height: 1, order: 0 },
+			{ key: 'fill', width: 3, height: 1, order: 1 },
+			{ key: 'right', width: 2, height: 1, order: 2 },
 		] );
 
-		return (
-			<Grid
-				layout={ layout }
-				minColumnWidth={ 160 }
-				rowHeight={ 100 }
-				spacing={ 2 }
-				editMode
-				onChangeLayout={ ( newLayout ) => setLayout( newLayout ) }
-			>
-				<Card key="a" color="#f44336">
-					Card A
-				</Card>
-				<Card key="b" color="#2196f3">
-					Card B
-				</Card>
-				<Card key="c" color="#4caf50">
-					Card C
-				</Card>
-				<Card key="d" color="#ff9800">
-					Card D
-				</Card>
-				<Card key="e" color="#9c27b0">
-					Card E
-				</Card>
-				<Card key="f" color="#607d8b">
-					Card F
-				</Card>
-				<Card key="g" color="#3f51b5">
-					Card G
-				</Card>
-				<Card key="h" color="#8bc34a">
-					Card H
-				</Card>
-				<Card key="i" color="#cddc39">
-					Card I
-				</Card>
-				<Card key="j" color="#ffeb3b">
-					Card J
-				</Card>
-			</Grid>
-		);
-	},
-	parameters: {
-		docs: {
-			description: {
-				story:
-					'This example demonstrates the Grid component in edit mode with drag, drop, and resize functionality. Use the edit mode to reorder and resize the cards. Grab and drag the handle in the bottom-right corner of each card to resize it. The layout and edit mode are managed with local state.',
-			},
-		},
-		layout: '',
-	},
-};
-
-/**
- * Example showing the Grid component with actionable area
- */
-export const WithActionableArea: StoryObj< typeof Grid > = {
-	render: function EditableGrid() {
-		const [ layout, setLayout ] = useState< GridLayoutItem[] >( [
-			{ key: 'a', width: 1, height: 1 },
-			{ key: 'b', width: 2, height: 1 },
-			{ key: 'c', width: 1, height: 1 },
-			{ key: 'd', width: 2, height: 1 },
-			{ key: 'e', width: 1, height: 1 },
-			{ key: 'f', width: 1, height: 1 },
-			{ key: 'g', width: 2, height: 1 },
-			{ key: 'h', width: 1, height: 1 },
-			{ key: 'i', width: 1, height: 1 },
-			{ key: 'j', width: 1, height: 1 },
+		const [ fillLayout, setFillLayout ] = useState< GridLayoutItem[] >( [
+			{ key: 'left', width: 1, height: 1, order: 0 },
+			{ key: 'fill', fillWidth: true, height: 1, order: 1 },
+			{ key: 'right', width: 2, height: 1, order: 2 },
 		] );
 
-		return (
-			<Grid
-				layout={ layout }
-				minColumnWidth={ 160 }
-				rowHeight={ 100 }
-				spacing={ 2 }
-				editMode
-				onChangeLayout={ ( newLayout ) => setLayout( newLayout ) }
-			>
-				<Card
-					key="a"
-					color="#f44336"
-					actionableArea={
-						<WidgetActions
-							onClose={ () => {
-								// eslint-disable-next-line no-console
-								console.log( 'close card A' );
-							} }
-						/>
-					}
-				>
-					Card A
-				</Card>
-				<Card key="b" color="#2196f3">
-					Card B
-				</Card>
-				<Card
-					key="c"
-					color="#4caf50"
-					actionableArea={
-						<WidgetActions
-							onClose={ () => {
-								// eslint-disable-next-line no-console
-								console.log( 'close card C' );
-							} }
-						/>
-					}
-				>
-					Card C
-				</Card>
-				<Card key="d" color="#ff9800">
-					Card D
-				</Card>
-				<Card key="e" color="#9c27b0">
-					Card E
-				</Card>
-				<Card key="f" color="#607d8b">
-					Card F
-				</Card>
-				<Card key="g" color="#3f51b5">
-					Card G
-				</Card>
-				<Card
-					key="h"
-					color="#8bc34a"
-					actionableArea={
-						<WidgetActions
-							onClose={ () => {
-								// eslint-disable-next-line no-console
-								console.log( 'close card H' );
-							} }
-						/>
-					}
-				>
-					Card H
-				</Card>
-				<Card key="i" color="#cddc39">
-					Card I
-				</Card>
-				<Card key="j" color="#ffeb3b">
-					Card J
-				</Card>
-			</Grid>
-		);
-	},
-	parameters: {
-		docs: {
-			description: {
-				story:
-					'This example demonstrates how to add actionable areas to grid items that remain interactive during edit mode.',
-			},
-		},
-		layout: '',
-	},
-};
-
-/**
- * Interactive grid example showing dynamic layout changes.
- * Add, remove, and switch layouts on the fly. Enable edit mode to drag and resize tiles.
- */
-export const InteractiveGrid: StoryObj< typeof Grid > = {
-	render: function InteractiveGrid() {
-		const colors = [
-			'#f44336',
-			'#2196f3',
-			'#4caf50',
-			'#ff9800',
-			'#9c27b0',
-			'#607d8b',
-			'#3f51b5',
-			'#8bc34a',
-			'#cddc39',
-			'#ffeb3b',
-		];
-
-		const layoutA: GridLayoutItem[] = [
-			{ key: 'tile-1', width: 2, height: 1 },
-			{ key: 'tile-2', width: 2, height: 1 },
-			{ key: 'tile-3', width: 2, height: 1 },
-		];
-
-		const layoutB: GridLayoutItem[] = [
-			{ key: 'tile-a', width: 3, height: 1 },
-			{ key: 'tile-b', width: 3, height: 1 },
-		];
-
-		const [ layout, setLayout ] = useState< GridLayoutItem[] >( layoutA );
-		const [ currentLayoutName, setCurrentLayoutName ] = useState( 'A' );
-		const [ nextTileId, setNextTileId ] = useState( 4 );
-		const [ editMode, setEditMode ] = useState( false );
-
-		const addTile = () => {
-			const newLayout = [ ...layout, { key: `tile-${ nextTileId }`, width: 2, height: 1 } ];
-			setLayout( newLayout );
-			setNextTileId( nextTileId + 1 );
+		const label = {
+			fontFamily: 'monospace',
+			fontSize: 12,
+			margin: '24px 0 8px',
+			color: '#666',
 		};
+
+		const cssItems = Object.fromEntries( cssLayout.map( ( i ) => [ i.key, i ] ) );
+		const fillItems = Object.fromEntries( fillLayout.map( ( i ) => [ i.key, i ] ) );
+
+		return (
+			<div style={ { width: '100%', maxWidth: 900 } }>
+				<h3 style={ { fontFamily: 'sans-serif', fontSize: 14 } }>
+					Hardcoded: width: 3 (equivalent to grid-column: 2 / -3)
+				</h3>
+				<p style={ label }>
+					Drag or resize — the fill item stays at width: { cssItems.fill?.width ?? 3 }. It overflows
+					or leaves gaps when siblings change.
+				</p>
+				<Grid
+					layout={ cssLayout }
+					columns={ 6 }
+					rowHeight={ 80 }
+					editMode
+					onChangeLayout={ setCssLayout }
+				>
+					<Card key="left" color="#607d8b">
+						left (w:{ cssItems.left?.width ?? 1 })
+					</Card>
+					<Card key="fill" color="#e53935">
+						hardcoded w:{ cssItems.fill?.width ?? 3 }
+					</Card>
+					<Card key="right" color="#607d8b">
+						right (w:{ cssItems.right?.width ?? 2 })
+					</Card>
+				</Grid>
+
+				<h3 style={ { fontFamily: 'sans-serif', fontSize: 14, marginTop: 32 } }>
+					fillWidth: computed dynamically
+				</h3>
+				<p style={ label }>
+					Drag or resize — the fill item recalculates its span based on siblings and column count.
+				</p>
+				<Grid
+					layout={ fillLayout }
+					columns={ 6 }
+					rowHeight={ 80 }
+					editMode
+					onChangeLayout={ setFillLayout }
+				>
+					<Card key="left" color="#607d8b">
+						left (w:{ fillItems.left?.width ?? 1 })
+					</Card>
+					<Card key="fill" color="#2196f3">
+						fillWidth — adapts
+					</Card>
+					<Card key="right" color="#607d8b">
+						right (w:{ fillItems.right?.width ?? 2 })
+					</Card>
+				</Grid>
+			</div>
+		);
+	},
+};
+
+/**
+ * Static fillWidth without responsive behavior.
+ *
+ * **`columns=6`, no `minColumnWidth`**<br />
+ *
+ * Shows `fillWidth` and `fullWidth` in a fixed column grid.
+ * Since there is no `minColumnWidth`, the column count never changes —
+ * the fill span is always computed against 6 columns.
+ */
+export const FillWidthStatic: StoryObj< typeof Grid > = {
+	parameters: { layout: '' },
+	args: {
+		layout: [
+			{ key: 'fixed-a', width: 1, height: 1, order: 1 },
+			{ key: 'fill', fillWidth: true, height: 1, order: 2 },
+			{ key: 'fixed-b', width: 2, height: 1, order: 3 },
+			{ key: 'full', fullWidth: true, height: 1, order: 4 },
+			{ key: 'fixed-c', width: 2, height: 1, order: 5 },
+			{ key: 'fill-2', fillWidth: true, height: 1, order: 6 },
+		],
+		columns: 6,
+		rowHeight: 80,
+		children: [
+			<Card key="fixed-a" color="#607d8b">
+				width: 1
+			</Card>,
+			<Card key="fill" color="#2196f3">
+				fillWidth (3 cols)
+			</Card>,
+			<Card key="fixed-b" color="#f44336">
+				width: 2
+			</Card>,
+			<Card key="full" color="#795548">
+				fullWidth (6 cols)
+			</Card>,
+			<Card key="fixed-c" color="#ff9800">
+				width: 2
+			</Card>,
+			<Card key="fill-2" color="#4caf50">
+				fillWidth (4 cols)
+			</Card>,
+		],
+	},
+};
+
+/**
+ * Edit mode with drag, resize, and all width modes.
+ *
+ * **`columns=6`, `rowHeight=80`, `editMode=true`**<br />
+ *
+ * Includes `fillWidth`, `fullWidth`, and fixed items.
+ * A state panel shows the raw layout JSON so you can observe
+ * how resize affects items — particularly `fillWidth`/`fullWidth` items
+ * where `width` gets a fixed value but the flag stays true.
+ *
+ * Drag items to reorder, resize from the bottom-right handle.
+ * Use the close button (actionable area) to remove items.
+ */
+export const EditMode: StoryObj< typeof Grid > = {
+	parameters: { layout: '' },
+	render: function EditModeStory() {
+		const [ layout, setLayout ] = useState< GridLayoutItem[] >( [
+			{ key: 'fill', fillWidth: true, height: 1, order: 1 },
+			{ key: 'fixed-1', width: 1, height: 1, order: 2 },
+			{ key: 'fixed-2', width: 5, height: 1, order: 3 },
+			{ key: 'full', fullWidth: true, height: 1, order: 4 },
+			{ key: 'fixed-3', width: 2, height: 1, order: 5 },
+			{ key: 'fixed-4', width: 2, height: 1, order: 6 },
+		] );
 
 		const removeTile = ( key: string ) => {
 			setLayout( layout.filter( ( item ) => item.key !== key ) );
 		};
 
-		const switchLayout = () => {
-			if ( currentLayoutName === 'A' ) {
-				setLayout( layoutB );
-				setCurrentLayoutName( 'B' );
-				setNextTileId( 4 );
-			} else {
-				setLayout( layoutA );
-				setCurrentLayoutName( 'A' );
-				setNextTileId( 4 );
-			}
-		};
-
-		const getTileNumber = ( key: string ) => {
-			const match = key.match( /\d+/ );
-			return match ? parseInt( match[ 0 ], 10 ) : key.charCodeAt( key.length - 1 ) - 96;
-		};
-
 		return (
 			<div style={ { width: '800px' } }>
-				<div
-					style={ {
-						marginBottom: '20px',
-						padding: '20px',
-						background: '#f5f5f5',
-						borderRadius: '4px',
-					} }
-				>
-					<h3 style={ { marginTop: 0 } }>Grid Controls</h3>
-					<div style={ { display: 'flex', gap: '10px', marginBottom: '15px' } }>
-						<button
-							onClick={ addTile }
-							style={ {
-								padding: '8px 16px',
-								background: '#2196f3',
-								color: 'white',
-								border: 'none',
-								borderRadius: '4px',
-								cursor: 'pointer',
-							} }
-						>
-							Add Tile
-						</button>
-						<button
-							onClick={ switchLayout }
-							style={ {
-								padding: '8px 16px',
-								background: '#4caf50',
-								color: 'white',
-								border: 'none',
-								borderRadius: '4px',
-								cursor: 'pointer',
-							} }
-						>
-							Switch to Layout { currentLayoutName === 'A' ? 'B' : 'A' }
-						</button>
-						<button
-							onClick={ () => setEditMode( ! editMode ) }
-							style={ {
-								padding: '8px 16px',
-								background: editMode ? '#ff9800' : '#666',
-								color: 'white',
-								border: 'none',
-								borderRadius: '4px',
-								cursor: 'pointer',
-							} }
-						>
-							{ editMode ? 'Disable' : 'Enable' } Edit Mode
-						</button>
-					</div>
-					<div style={ { fontSize: '14px', color: '#666' } }>
-						<strong>Layout:</strong> { currentLayoutName } | <strong>Tiles:</strong>{ ' ' }
-						{ layout.length } | <strong>Edit Mode:</strong> { editMode ? 'ON' : 'OFF' }
-					</div>
-				</div>
 				<Grid
 					layout={ layout }
-					minColumnWidth={ 160 }
-					rowHeight={ 100 }
+					columns={ 6 }
+					rowHeight={ 80 }
 					spacing={ 2 }
-					editMode={ editMode }
+					editMode
 					onChangeLayout={ setLayout }
 				>
-					{ layout.map( ( item ) => {
-						const tileNum = getTileNumber( item.key );
-						const colorIndex = tileNum % colors.length;
-						return (
-							<Card
-								key={ item.key }
-								color={ colors[ colorIndex ] }
-								actionableArea={
-									editMode ? <WidgetActions onClose={ () => removeTile( item.key ) } /> : undefined
-								}
-							>
-								{ item.key }
-							</Card>
-						);
-					} ) }
+					<Card
+						key="fill"
+						color="#2196f3"
+						actionableArea={ <WidgetActions onClose={ () => removeTile( 'fill' ) } /> }
+					>
+						fillWidth — resize me
+					</Card>
+					<Card
+						key="fixed-1"
+						color="#4caf50"
+						actionableArea={ <WidgetActions onClose={ () => removeTile( 'fixed-1' ) } /> }
+					>
+						width: 1
+					</Card>
+					<Card
+						key="fixed-2"
+						color="#f44336"
+						actionableArea={ <WidgetActions onClose={ () => removeTile( 'fixed-2' ) } /> }
+					>
+						width: 2
+					</Card>
+					<Card
+						key="full"
+						color="#607d8b"
+						actionableArea={ <WidgetActions onClose={ () => removeTile( 'full' ) } /> }
+					>
+						fullWidth — resize me
+					</Card>
+					<Card
+						key="fixed-3"
+						color="#ff9800"
+						actionableArea={ <WidgetActions onClose={ () => removeTile( 'fixed-3' ) } /> }
+					>
+						width: 2
+					</Card>
+					<Card
+						key="fixed-4"
+						color="#9c27b0"
+						actionableArea={ <WidgetActions onClose={ () => removeTile( 'fixed-4' ) } /> }
+					>
+						width: 2
+					</Card>
 				</Grid>
+
+				<LayoutStatePanel layout={ layout } />
 			</div>
 		);
-	},
-	parameters: {
-		docs: {
-			description: {
-				story:
-					'Interactive example showing dynamic layout management. Add tiles, switch between predefined layouts, and enable edit mode to drag and resize tiles. Each tile has a close button to remove it individually.',
-			},
-		},
-		layout: '',
 	},
 };

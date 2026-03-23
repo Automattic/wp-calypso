@@ -28,6 +28,7 @@
 		"cookie-banner": true,
 		"bilmur-script": true,
 		"rum-tracking/logstash": true,
+		"dashboard/omnibar": false,
 		"dashboard/v2": false,
 		"domain-transfer-redesign": true,
 		"marketplace-redesign": true,

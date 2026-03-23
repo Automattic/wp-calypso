@@ -26,6 +26,7 @@
 		"ciab/custom-branding": true,
 		"cookie-banner": false,
 		"rum-tracking/logstash": true,
+		"dashboard/omnibar": false,
 		"dashboard/v2": false,
 		"dev/auth-helper": true,
 		"dev/preferences-helper": true,
