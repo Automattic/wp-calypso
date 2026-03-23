@@ -12,7 +12,7 @@ yarn workspace @automattic/grid prepack
 yarn workspace @automattic/grid tsc --build --dry
 
 # Run tests
-yarn test-client packages/grid
+yarn jest packages/grid --config packages/grid/jest.config.js
 
 # Storybook
 yarn workspace @automattic/grid storybook:start
