@@ -349,7 +349,7 @@ export type Plan = BillingTerm & {
 	 */
 	getLongSetSignupWpcomFeatures?: () => Feature[];
 	/**
-	 * Comprehensive feature list for focused_more_premium and focused_new_copy
+	 * Feature list for focused_more_premium (with plan-scoped pills in the grid) and focused_new_copy
 	 * (ExPlat) variants of the plans differentiators experiment.
 	 */
 	getVar41MorePremiumSignupWpcomFeatures?: () => Feature[];

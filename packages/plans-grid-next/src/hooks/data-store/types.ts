@@ -49,6 +49,10 @@ export interface UseGridPlansParams {
 	 */
 	useVar42NoAiFeatures?: boolean;
 	/**
+	 * When true, show focused_more_premium plan-scoped feature pills in the features grid.
+	 */
+	isFocusedPremiumVariant?: boolean;
+	/**
 	 * When true, use the stacked (incremental) feature set for the long_set_stacked variant.
 	 */
 	useLongSetStackedFeatures?: boolean;

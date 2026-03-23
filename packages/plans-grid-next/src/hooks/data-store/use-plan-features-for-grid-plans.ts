@@ -1,5 +1,8 @@
 import {
+	FEATURE_AI_WEBSITE_BUILDER,
 	FEATURE_CUSTOM_DOMAIN,
+	FEATURE_EMAIL_MARKETING,
+	FEATURE_ENHANCED_AI_ASSISTANT_AND_TOOLS,
 	FEATURE_UPLOAD_PLUGINS,
 	FEATURE_SIMPLE_PAYMENTS,
 	FEATURE_WORDADS,
@@ -7,7 +10,10 @@ import {
 	FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
 	FEATURE_EARLY_ONBOARDING_CALLS,
 	applyTestFiltersToPlansList,
+	isBusinessPlan,
 	isMonthly,
+	isPersonalPlan,
+	isPremiumPlan,
 } from '@automattic/calypso-products';
 import { useMemo } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
@@ -22,6 +28,32 @@ import type {
 import type { FeatureObject, FeatureList } from '@automattic/calypso-products';
 import type { TranslateResult } from 'i18n-calypso';
 
+function getFocusedPremiumFeatureBadgeText(
+	planSlug: string,
+	featureSlug: string,
+	translate: ( text: string ) => TranslateResult
+): TranslateResult | undefined {
+	if ( isPersonalPlan( planSlug ) && featureSlug === FEATURE_CUSTOM_DOMAIN ) {
+		return translate( 'Free' );
+	}
+	if ( isPremiumPlan( planSlug ) && featureSlug === FEATURE_AI_WEBSITE_BUILDER ) {
+		return translate( 'AI' );
+	}
+	if ( isPremiumPlan( planSlug ) && featureSlug === FEATURE_SIMPLE_PAYMENTS ) {
+		return translate( 'New' );
+	}
+	if ( isBusinessPlan( planSlug ) && featureSlug === FEATURE_ENHANCED_AI_ASSISTANT_AND_TOOLS ) {
+		return translate( 'AI' );
+	}
+	if ( isBusinessPlan( planSlug ) && featureSlug === FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR ) {
+		return translate( 'Email' );
+	}
+	if ( isBusinessPlan( planSlug ) && featureSlug === FEATURE_EMAIL_MARKETING ) {
+		return translate( 'New' );
+	}
+	return undefined;
+}
+
 export type UsePlanFeaturesForGridPlans = ( {
 	gridPlans,
 	// allFeaturesList temporary until feature definitions are ported to calypso-products package
@@ -34,6 +66,7 @@ export type UsePlanFeaturesForGridPlans = ( {
 	useLongSetFeatures,
 	useVar41MorePremiumFeatures,
 	useVar42NoAiFeatures,
+	isFocusedPremiumVariant,
 	useLongSetStackedFeatures,
 	useShortSetStackedFeatures,
 	useVar5Features,
@@ -50,6 +83,7 @@ export type UsePlanFeaturesForGridPlans = ( {
 	useLongSetFeatures?: boolean;
 	useVar41MorePremiumFeatures?: boolean;
 	useVar42NoAiFeatures?: boolean;
+	isFocusedPremiumVariant?: boolean;
 	useLongSetStackedFeatures?: boolean;
 	useShortSetStackedFeatures?: boolean;
 	useVar5Features?: boolean;
@@ -77,6 +111,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 	useLongSetFeatures,
 	useVar41MorePremiumFeatures,
 	useVar42NoAiFeatures,
+	isFocusedPremiumVariant,
 	useLongSetStackedFeatures,
 	useShortSetStackedFeatures,
 	useVar5Features,
@@ -364,8 +399,12 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 							passedHeaderFeature = true;
 						}
 
-						// Get badge text for var1d variant
-						const badgeText = isVar1dVariant ? var1dBadgeMap[ featureSlug ] : undefined;
+						// Badge pills: var1d experiment, or focused_more_premium (plan-scoped)
+						const badgeText =
+							( isVar1dVariant ? var1dBadgeMap[ featureSlug ] : undefined ) ??
+							( isFocusedPremiumVariant
+								? getFocusedPremiumFeatureBadgeText( planSlug, featureSlug, translate )
+								: undefined );
 
 						wpcomFeaturesTransformed.push( {
 							...feature,
@@ -418,6 +457,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 		useLongSetFeatures,
 		useVar41MorePremiumFeatures,
 		useVar42NoAiFeatures,
+		isFocusedPremiumVariant,
 		useLongSetStackedFeatures,
 		useShortSetStackedFeatures,
 		useVar5Features,

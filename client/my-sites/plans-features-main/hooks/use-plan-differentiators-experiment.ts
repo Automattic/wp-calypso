@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useExperiment } from 'calypso/lib/explat';
 import { useSelector } from 'calypso/state';
 import getSite from 'calypso/state/sites/selectors/get-site';
@@ -28,6 +29,11 @@ type PlanDifferentiatorsExperimentResult = {
 	 * Applies to: focused_more_premium, focused_new_copy
 	 */
 	useVar41MorePremiumFeatures: boolean;
+	/**
+	 * When true, show plan-scoped feature pills (badges) in the features grid.
+	 * Applies to: focused_more_premium (ExPlat variation name).
+	 */
+	isFocusedPremiumVariant: boolean;
 	/**
 	 * When true, use no-AI wording feature set (getVar42NoAiSignupWpcomFeatures).
 	 * Applies to: focused_no_ai
@@ -73,6 +79,32 @@ function usePlanDifferentiatorsExperiment( {
 		| PlanDifferentiatorsExperimentVariant
 		| undefined;
 
+	// Remove before shipping: logs ExPlat assignment in local dev (yarn start).
+	/* eslint-disable no-console -- temporary ExPlat assignment debug */
+	useEffect( () => {
+		if ( process.env.NODE_ENV !== 'development' ) {
+			return;
+		}
+		if ( ! isEligible ) {
+			console.log( '[calypso_pricing_differentiation_202603] not eligible', {
+				isInSignup,
+				flowName,
+				siteId,
+				hasGatingFlag,
+			} );
+			return;
+		}
+		if ( isLoading ) {
+			console.log( '[calypso_pricing_differentiation_202603] loading…' );
+			return;
+		}
+		console.log( '[calypso_pricing_differentiation_202603] assignment', {
+			variant,
+			raw: assignment,
+		} );
+	}, [ isEligible, isLoading, variant, assignment, isInSignup, flowName, siteId, hasGatingFlag ] );
+	/* eslint-enable no-console */
+
 	const isExperimentVariant = variant !== undefined && variant !== 'control';
 
 	return {
@@ -83,6 +115,7 @@ function usePlanDifferentiatorsExperiment( {
 		useVar41MorePremiumFeatures:
 			variant === 'focused_more_premium' || variant === 'focused_new_copy',
 		useVar42NoAiFeatures: variant === 'focused_no_ai',
+		isFocusedPremiumVariant: variant === 'focused_more_premium',
 		isVar4Variant:
 			variant === 'focused_comparison' ||
 			variant === 'focused_more_premium' ||
