@@ -118,6 +118,11 @@ export const preferencesRoute = createRoute( {
 	} ),
 	getParentRoute: () => meRoute,
 	path: 'preferences',
+} );
+
+export const preferencesIndexRoute = createRoute( {
+	getParentRoute: () => preferencesRoute,
+	path: '/',
 	loader: async () => {
 		await Promise.all( [
 			queryClient.ensureQueryData( userSettingsQuery() ),
@@ -1003,7 +1008,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 		return [];
 	}
 
-	const preferencesChildren: AnyRoute[] = [];
+	const preferencesChildren: AnyRoute[] = [ preferencesIndexRoute ];
 	if ( config.supports.me.privacy ) {
 		preferencesChildren.push( privacyRoute );
 	}
