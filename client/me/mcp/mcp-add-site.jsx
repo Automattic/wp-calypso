@@ -82,6 +82,7 @@ export default function McpAddSitePage( { path } ) {
 						site,
 						name: getSiteDisplayName( site ),
 						domain: getSiteDisplayUrl( site ),
+						slug: site.slug,
 					};
 				}
 				return {
@@ -93,6 +94,7 @@ export default function McpAddSitePage( { path } ) {
 						String( siteId )
 					),
 					domain: '',
+					slug: null,
 				};
 			} )
 			.sort( ( a, b ) => a.name.localeCompare( b.name ) );
@@ -157,7 +159,7 @@ export default function McpAddSitePage( { path } ) {
 			<DocumentHead title={ documentTitle } />
 			<NavigationHeader { ...navigationHeaderProps } />
 			<HeaderCake backText={ translate( 'Back' ) } backHref="/me/mcp">
-				{ translate( 'Add to a specific site' ) }
+				{ translate( 'Add MCP to specific sites' ) }
 			</HeaderCake>
 			<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 			{ ! reauthRequired && (
@@ -209,7 +211,7 @@ export default function McpAddSitePage( { path } ) {
 										/>
 										{ sites.length === 0 && (
 											<Text variant="muted" as="p">
-												{ translate( 'You don’t have any visible sites yet.' ) }
+												{ translate( `You don't have any visible sites yet.` ) }
 											</Text>
 										) }
 										{ sites.length > 0 && comboboxOptions.length === 0 && (
@@ -221,21 +223,17 @@ export default function McpAddSitePage( { path } ) {
 								</CardBody>
 							</Card>
 
-							<VStack spacing={ 5 } alignment="stretch">
-								<SectionHeader
-									level={ 3 }
-									title={ translate( 'Sites with MCP access' ) }
-									description={ translate( 'These sites have MCP access enabled.' ) }
-								/>
-								{ enabledSites.length === 0 ? (
-									<Text variant="muted" as="p">
-										{ translate( 'No sites yet. Use the search field above to add a site.' ) }
-									</Text>
-								) : (
+							{ enabledSites.length > 0 && (
+								<VStack spacing={ 5 } alignment="stretch">
+									<SectionHeader
+										level={ 3 }
+										title={ translate( 'Enabled sites' ) }
+										description={ translate( 'These sites have MCP access enabled.' ) }
+									/>
 									<Card>
 										<CardBody>
-											<VStack spacing={ 3 } alignment="stretch">
-												{ enabledSites.map( ( { id, site, name, domain } ) => (
+											<VStack spacing={ 6 } alignment="stretch">
+												{ enabledSites.map( ( { id, site, name, domain, slug } ) => (
 													<HStack
 														key={ id }
 														justify="space-between"
@@ -257,21 +255,32 @@ export default function McpAddSitePage( { path } ) {
 																</VStack>
 															</FlexItem>
 														</HStack>
-														<Button
-															variant="secondary"
-															size="compact"
-															disabled={ mutation.isPending }
-															onClick={ () => handleRemoveSite( id ) }
-														>
-															{ translate( 'Remove' ) }
-														</Button>
+														<HStack spacing={ 4 } justify="flex-end" expanded={ false }>
+															{ slug && (
+																<Button
+																	variant="link"
+																	size="compact"
+																	href={ `/sites/${ slug }/settings/ai-tools` }
+																>
+																	{ translate( 'Manage' ) }
+																</Button>
+															) }
+															<Button
+																variant="secondary"
+																size="compact"
+																disabled={ mutation.isPending }
+																onClick={ () => handleRemoveSite( id ) }
+															>
+																{ translate( 'Remove' ) }
+															</Button>
+														</HStack>
 													</HStack>
 												) ) }
 											</VStack>
 										</CardBody>
 									</Card>
-								) }
-							</VStack>
+								</VStack>
+							) }
 						</>
 					) }
 				</VStack>

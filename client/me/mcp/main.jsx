@@ -4,7 +4,6 @@ import { Card } from '@automattic/components';
 import SummaryButton from '@automattic/components/src/summary-button';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
-	CardBody,
 	Icon,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
@@ -25,7 +24,7 @@ import { SectionHeader } from '../../dashboard/components/section-header';
 import { filterVisibleTools, isReadTool, isWriteTool } from './categories';
 import { getAccessSummaryBadge, getWriteAccessBadge } from './hub-helpers';
 import { useMcpPageChrome } from './mcp-page-header';
-import { getAccountMcpAbilities, getDisabledSiteIds } from './utils';
+import { getAccountMcpAbilities, getDisabledSiteIds, getEnabledSiteIds } from './utils';
 
 import './style.scss';
 
@@ -39,11 +38,9 @@ function McpComponent( { path } ) {
 		isLoading: isLoadingUserSettings,
 		error: userSettingsError,
 	} = useQuery( userSettingsQuery() );
-	const {
-		data: sites = [],
-		isLoading: isLoadingSites,
-		error: sitesError,
-	} = useQuery( sitesQuery( 'all', { site_visibility: 'visible', include_a8c_owned: false } ) );
+	const { isLoading: isLoadingSites, error: sitesError } = useQuery(
+		sitesQuery( 'all', { site_visibility: 'visible', include_a8c_owned: false } )
+	);
 
 	const [ reauthRequired, setReauthRequired ] = useState( false );
 
@@ -99,10 +96,14 @@ function McpComponent( { path } ) {
 	};
 
 	const disabledSiteCount = getDisabledSiteIds( userSettings || {} ).length;
-	const mcpSiteExceptionsBadgeText =
-		disabledSiteCount > 0
-			? translate( '%(count)d exceptions', { args: { count: disabledSiteCount } } )
-			: translate( 'No exceptions' );
+	const enabledSiteCount = getEnabledSiteIds( userSettings || {} ).length;
+	const mcpAddSiteBadgeText =
+		enabledSiteCount > 0
+			? translate( '%(count)d sites', { args: { count: enabledSiteCount } } )
+			: translate( 'No sites' );
+	const mcpSiteExceptionsBadgeText = translate( '%(count)d exceptions', {
+		args: { count: disabledSiteCount },
+	} );
 
 	const renderLayout = ( children ) => (
 		<Main wideLayout className="mcp">
@@ -151,29 +152,17 @@ function McpComponent( { path } ) {
 						) }
 					</VStack>
 
-					{ hasTools && ! anyToolsEnabled && (
+					{ /* TODO: Restore when site-level MCP PRs land */ }
+					{ false && hasTools && ! anyToolsEnabled && (
 						<VStack spacing={ 0 } className="mcp-hub__panel-rows">
-							{ isLoadingSites && (
-								<CardBody>
-									<Text variant="muted" as="p">
-										{ translate( 'Loading sites…' ) }
-									</Text>
-								</CardBody>
-							) }
-							{ ! isLoadingSites && sites.length === 0 && (
-								<CardBody>
-									<Text variant="muted" as="p">
-										{ translate( 'No sites' ) }
-									</Text>
-								</CardBody>
-							) }
-							{ ! isLoadingSites && sites.length > 0 && (
+							{ ! isLoadingSites && (
 								<SummaryButton
 									href="/me/mcp/add-site"
-									title={ translate( 'Add to a specific site' ) }
+									title={ translate( 'Add to specific sites' ) }
 									decoration={
 										<Icon className="mcp-hub__summary-icon" icon={ connection } size={ 24 } />
 									}
+									badges={ [ { text: mcpAddSiteBadgeText } ] }
 									density="medium"
 								/>
 							) }
@@ -197,20 +186,17 @@ function McpComponent( { path } ) {
 							badges={ [ { text: writeBadge.text, intent: writeBadge.intent } ] }
 							density="medium"
 						/>
-						<SummaryButton
-							href="/me/mcp/mcp-sites"
-							title={ translate( 'Site exceptions' ) }
-							decoration={
-								<Icon className="mcp-hub__summary-icon" icon={ notAllowed } size={ 24 } />
-							}
-							badges={ [
-								{
-									text: mcpSiteExceptionsBadgeText,
-									intent: disabledSiteCount > 0 ? 'warning' : 'default',
-								},
-							] }
-							density="medium"
-						/>
+						{ disabledSiteCount > 0 && (
+							<SummaryButton
+								href="/me/mcp/mcp-sites"
+								title={ translate( 'Site exceptions' ) }
+								decoration={
+									<Icon className="mcp-hub__summary-icon" icon={ notAllowed } size={ 24 } />
+								}
+								badges={ [ { text: mcpSiteExceptionsBadgeText, intent: 'warning' } ] }
+								density="medium"
+							/>
+						) }
 					</VStack>
 				) }
 			</Card>

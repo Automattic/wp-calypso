@@ -189,20 +189,16 @@ export default function McpSitesPage( { path } ) {
 						</CardBody>
 					</Card>
 
-					<VStack spacing={ 5 } alignment="stretch">
-						<SectionHeader
-							level={ 3 }
-							title={ translate( 'Restricted sites' ) }
-							description={ translate( 'These sites will not have MCP access.' ) }
-						/>
-						{ exceptionSites.length === 0 ? (
-							<Text variant="muted" as="p">
-								{ translate( 'No sites yet. Use the search field above to add an exception.' ) }
-							</Text>
-						) : (
+					{ exceptionSites.length > 0 && (
+						<VStack spacing={ 5 } alignment="stretch">
+							<SectionHeader
+								level={ 3 }
+								title={ translate( 'Restricted sites' ) }
+								description={ translate( 'These sites will not have MCP access.' ) }
+							/>
 							<Card>
 								<CardBody>
-									<VStack spacing={ 3 } alignment="stretch">
+									<VStack spacing={ 6 } alignment="stretch">
 										{ exceptionSites.map( ( { id, site, name, domain } ) => (
 											<HStack key={ id } justify="space-between" alignment="center" spacing={ 4 }>
 												<HStack spacing={ 3 } alignment="left">
@@ -233,8 +229,8 @@ export default function McpSitesPage( { path } ) {
 									</VStack>
 								</CardBody>
 							</Card>
-						) }
-					</VStack>
+						</VStack>
+					) }
 				</VStack>
 			) }
 		</Main>

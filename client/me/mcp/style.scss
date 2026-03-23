@@ -45,7 +45,7 @@ body.is-section-me div.layout.is-global-sidebar-visible .layout__primary .main.m
 
 	// Full-bleed row lists: cancel Card horizontal padding (16px default, 24px ≥ break-mobile)
 	.mcp-hub__panel-rows {
-		margin-top: 8px;
+		margin-top: 16px;
 		margin-left: -16px;
 		margin-right: -16px;
 		margin-bottom: -16px;
@@ -76,7 +76,7 @@ body.is-section-me div.layout.is-global-sidebar-visible .layout__primary .main.m
 		}
 
 		.summary-button.components-button.has-density-low {
-			border: none;
+			border: 1px solid transparent;
 			border-radius: 0;
 			margin: 0;
 		}
@@ -114,7 +114,7 @@ body.is-section-me div.layout.is-global-sidebar-visible .layout__primary .main.m
 		width: 100%;
 		gap: 16px;
 		// Space above the divider so the title row isn’t cramped against the rule
-		padding-bottom: 16px;
+		padding-bottom: 20px;
 
 		.mcp-tools-subpage__group-title {
 			flex: 1 1 auto;
