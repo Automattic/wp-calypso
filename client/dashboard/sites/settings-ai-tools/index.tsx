@@ -197,7 +197,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 									label={ __( 'Enable MCP access for this site' ) }
 									onChange={ handleMcpToggle }
 								/>
-								<RouterLinkButton to="/me/mcp" variant="link">
+								<RouterLinkButton to="/me/preferences/mcp" variant="link">
 									{ __( 'Manage at account level' ) }
 								</RouterLinkButton>
 							</VStack>

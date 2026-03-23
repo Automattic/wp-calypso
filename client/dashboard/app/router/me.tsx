@@ -867,6 +867,14 @@ export const appsRoute = createRoute( {
 	)
 );
 
+export const mcpLegacyRedirectRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'mcp',
+	beforeLoad: () => {
+		throw redirect( { to: '/me/preferences/mcp' } );
+	},
+} );
+
 export const mcpRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -1003,6 +1011,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 		preferencesChildren.length > 0
 			? preferencesRoute.addChildren( preferencesChildren )
 			: preferencesRoute,
+		mcpLegacyRedirectRoute,
 	];
 
 	meRoutes.push(

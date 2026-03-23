@@ -19,7 +19,7 @@ export default function PreferencesAiMcp() {
 
 	return (
 		<RouterLinkSummaryButton
-			to="/me/mcp"
+			to="/me/preferences/mcp"
 			title={ __( 'AI and MCP' ) }
 			description={ __( 'Configure how AI agents access your WordPress.com data.' ) }
 			decoration={ <Icon icon={ connection } size={ 24 } /> }

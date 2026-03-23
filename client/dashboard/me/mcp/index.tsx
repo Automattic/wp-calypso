@@ -160,21 +160,21 @@ function McpComponent() {
 						<>
 							<CardDivider />
 							<RouterLinkSummaryButton
-								to="/me/mcp/read"
+								to="/me/preferences/mcp/read"
 								density="medium"
 								title={ __( 'Read' ) }
 								decoration={ <Icon icon={ seen } size={ 24 } /> }
 								badges={ [ readBadge ] }
 							/>
 							<RouterLinkSummaryButton
-								to="/me/mcp/write"
+								to="/me/preferences/mcp/write"
 								density="medium"
 								title={ __( 'Write' ) }
 								decoration={ <Icon icon={ pencil } size={ 24 } /> }
 								badges={ [ writeBadge ] }
 							/>
 							<RouterLinkSummaryButton
-								to="/me/mcp/mcp-sites"
+								to="/me/preferences/mcp/mcp-sites"
 								density="medium"
 								title={ __( 'Site exceptions' ) }
 								decoration={ <Icon icon={ notAllowed } size={ 24 } /> }
@@ -186,7 +186,7 @@ function McpComponent() {
 
 				{ mcpEnabled && (
 					<RouterLinkSummaryButton
-						to="/me/mcp/setup"
+						to="/me/preferences/mcp/setup"
 						title={ __( 'Connect external AI assistant' ) }
 						description={ __( 'Get instructions for connecting your external AI assistant.' ) }
 						decoration={ <Icon icon={ connection } size={ 24 } /> }
