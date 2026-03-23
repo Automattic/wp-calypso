@@ -177,6 +177,19 @@ async function main() {
 
 	let flowSteps = 'initialize' in flow ? await flow.initialize( reduxStore ) : null;
 
+	// Eagerly preload the current step's chunk so it's ready before React mounts.
+	// usePreloadSteps only preloads *next* steps; the current step would otherwise
+	// wait for React.lazy + Suspense to trigger the download. We only fire the
+	// import here (no lazyCache write) because the webpack module cache ensures
+	// React.lazy's subsequent call resolves instantly from the already-loaded module.
+	if ( flowSteps && flowSteps.length > 0 ) {
+		const stepSlug = window.location.pathname.split( '/' )[ 3 ]; // /setup/<flow>/<step>
+		const currentStep = flowSteps.find( ( s ) => s.slug === stepSlug );
+		if ( currentStep && 'asyncComponent' in currentStep ) {
+			currentStep.asyncComponent();
+		}
+	}
+
 	if ( '__experimentalUseSessions' in flow ) {
 		const sessionId = getSessionId() || createSessionId();
 		history.replaceState( null, '', addQueryArgs( { sessionId }, window.location.href ) );
