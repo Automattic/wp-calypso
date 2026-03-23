@@ -6,10 +6,12 @@ import { useEffect, useRef } from 'react';
  */
 export function getScreenPath( pathname: string ): string {
 	if ( pathname.startsWith( '/sites/' ) ) {
-		return '/sites/' + pathname.split( '/' )[ 2 ];
+		const siteSlug = pathname.split( '/' )[ 2 ];
+		return siteSlug ? '/sites/' + siteSlug : '/';
 	}
 	if ( pathname.startsWith( '/domains/' ) ) {
-		return '/domains/' + pathname.split( '/' )[ 2 ];
+		const domainSlug = pathname.split( '/' )[ 2 ];
+		return domainSlug ? '/domains/' + domainSlug : '/';
 	}
 	if ( pathname.startsWith( '/me' ) ) {
 		return '/me';
