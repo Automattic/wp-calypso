@@ -106,17 +106,21 @@ describe( 'convertOdieChatToOdieConversation', () => {
 	const sessionId = 'test-session-id';
 	const botSlug = 'wpcom-support-chat';
 
-	it( 'throws a TypeError when messages array is empty (demonstrates the bug)', () => {
+	it( 'does not throw and falls back to createdAt 0 when messages array is empty', () => {
 		// An OdieChat with an empty messages array — e.g. a chat created but never messaged,
-		// or a truncated API response — triggers the bug: messages[0].ts is accessed on undefined.
+		// or a truncated API response — previously crashed with a TypeError because
+		// messages[0].ts was accessed on undefined.
 		const emptyChatLoggedOut: OdieChat = {
 			odieId: 42,
 			messages: [],
 		};
 
-		expect( () =>
-			convertOdieChatToOdieConversation( emptyChatLoggedOut, sessionId, botSlug )
-		).toThrow( TypeError );
+		const result = convertOdieChatToOdieConversation( emptyChatLoggedOut, sessionId, botSlug );
+
+		expect( result.id ).toBe( '42' );
+		expect( result.createdAt ).toBe( 0 );
+		expect( result.metadata.createdAt ).toBe( 0 );
+		expect( result.messages ).toHaveLength( 0 );
 	} );
 
 	it( 'converts an OdieChat with messages correctly', () => {
