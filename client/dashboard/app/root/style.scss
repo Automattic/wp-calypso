@@ -39,9 +39,5 @@
 			transform: translateX( $sidebar-width );
 			overflow: hidden;
 			height: 100vh;
-
-			[dir='rtl'] & {
-				transform: translateX( -$sidebar-width );
-			}
 	}
 }

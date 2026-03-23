@@ -4,7 +4,7 @@ $sidebar-width: 272px;
 	flex-shrink: 0;
 	position: fixed;
 	top: var(--masterbar-height);
-	left: 0;
+	inset-inline-start: 0;
 	min-height: calc(100vh - var(--masterbar-height) );
 	width: $sidebar-width;
 	transform: translateX( -100% );
@@ -14,14 +14,6 @@ $sidebar-width: 272px;
 
 	&.is-open {
 		transform: translateX( 0 );
-	}
-
-	[dir='rtl'] & {
-		transform: translateX( 100% );
-
-		&.is-open {
-			transform: translateX( 0 );
-		}
 	}
 }
 
