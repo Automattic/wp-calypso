@@ -401,8 +401,11 @@ function SingleProductAndCostOverridesList( { product }: { product: ResponseCart
 
 	// For WPCOM plans always show the renewal amount for legal reasons.
 	// Introductory offer discount would be shown in LineItemCostOverrides.
+	// For other products (e.g. domains), show the pre-coupon subtotal so
+	// that stacked cost overrides (price-increasing intro offer + sale
+	// coupon) display the correct amount instead of the renewal price.
 	let actualAmountDisplay;
-	if ( ! isDiscounted || isWpComPlan( product.product_slug ) ) {
+	if ( isWpComPlan( product.product_slug ) ) {
 		actualAmountDisplay = formatCurrency(
 			product.item_original_subtotal_integer,
 			product.currency,
