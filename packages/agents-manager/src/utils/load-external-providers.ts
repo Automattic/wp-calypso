@@ -203,46 +203,56 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	let mergedImageUpload: ImageUploadHook | undefined;
 	let mergedUseCheckpoint: UseCheckpointHook | undefined;
 
+	// Collect exports that need to be merged across all providers.
+	const allToolProviders: ToolProvider[] = [];
+	const allGetChatComponents: GetChatComponent[] = [];
+	const allAbilitiesSetups: AbilitiesSetupHook[] = [];
+	const allUseSuggestions: UseSuggestionsHook[] = [];
+	const allGetEmptyViewSuggestions: ( () => Suggestion[] )[] = [];
+
 	for ( const moduleId of agentProviders ) {
 		try {
 			// Dynamic import of registered script module
 			// The webpackIgnore comment tells webpack not to bundle this - it's loaded at runtime
 			const module = await import( /* webpackIgnore: true */ moduleId );
 
+			// These exports are merged across all providers.
 			if ( module.toolProvider ) {
-				mergedToolProvider = module.toolProvider;
-			}
-			if ( module.contextProvider ) {
-				mergedContextProvider = module.contextProvider;
-			}
-			if ( module.getEmptyViewSuggestions ) {
-				mergedGetEmptyViewSuggestions = module.getEmptyViewSuggestions;
-			}
-			if ( module.markdownComponents ) {
-				mergedMarkdownComponents = module.markdownComponents;
-			}
-			if ( module.markdownExtensions ) {
-				mergedMarkdownExtensions = module.markdownExtensions;
-			}
-			if ( module.useNavigationContinuation ) {
-				mergedNavigationContinuation = module.useNavigationContinuation;
-			}
-			if ( module.useAbilitiesSetup ) {
-				mergedAbilitiesSetup = module.useAbilitiesSetup;
-			}
-			if ( module.useSuggestions ) {
-				mergedUseSuggestions = module.useSuggestions;
+				allToolProviders.push( module.toolProvider );
 			}
 			if ( module.getChatComponent ) {
-				mergedGetChatComponent = module.getChatComponent;
+				allGetChatComponents.push( module.getChatComponent );
 			}
-			if ( module.siteBuildUtils ) {
+			if ( module.useAbilitiesSetup ) {
+				allAbilitiesSetups.push( module.useAbilitiesSetup );
+			}
+			if ( module.useSuggestions ) {
+				allUseSuggestions.push( module.useSuggestions );
+			}
+			if ( module.getEmptyViewSuggestions ) {
+				allGetEmptyViewSuggestions.push( module.getEmptyViewSuggestions );
+			}
+
+			// First-write-wins for singleton exports.
+			if ( module.contextProvider && ! mergedContextProvider ) {
+				mergedContextProvider = module.contextProvider;
+			}
+			if ( module.markdownComponents && ! mergedMarkdownComponents ) {
+				mergedMarkdownComponents = module.markdownComponents;
+			}
+			if ( module.markdownExtensions && ! mergedMarkdownExtensions ) {
+				mergedMarkdownExtensions = module.markdownExtensions;
+			}
+			if ( module.useNavigationContinuation && ! mergedNavigationContinuation ) {
+				mergedNavigationContinuation = module.useNavigationContinuation;
+			}
+			if ( module.siteBuildUtils && ! mergedSiteBuildUtils ) {
 				mergedSiteBuildUtils = module.siteBuildUtils;
 			}
-			if ( module.useImageUpload ) {
+			if ( module.useImageUpload && ! mergedImageUpload ) {
 				mergedImageUpload = module.useImageUpload;
 			}
-			if ( module.useCheckpoint ) {
+			if ( module.useCheckpoint && ! mergedUseCheckpoint ) {
 				mergedUseCheckpoint = module.useCheckpoint;
 			}
 
@@ -252,6 +262,99 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 			// eslint-disable-next-line no-console
 			console.warn( `[AgentsManager] Failed to load provider "${ moduleId }":`, error );
 		}
+	}
+
+	// Merge toolProviders: chain getAbilities (dedupe by name), chain executeAbility.
+	if ( allToolProviders.length === 1 ) {
+		mergedToolProvider = allToolProviders[ 0 ];
+	} else if ( allToolProviders.length > 1 ) {
+		mergedToolProvider = {
+			getAbilities: async () => {
+				const results = await Promise.all( allToolProviders.map( ( tp ) => tp.getAbilities() ) );
+				const seen = new Map< string, unknown >();
+				for ( const abilities of results ) {
+					for ( const ability of abilities ) {
+						seen.set( ability.name, ability );
+					}
+				}
+				return [ ...seen.values() ] as Awaited< ReturnType< ToolProvider[ 'getAbilities' ] > >;
+			},
+			executeAbility: async ( name: string, args: unknown ) => {
+				for ( let i = allToolProviders.length - 1; i >= 0; i-- ) {
+					try {
+						return await allToolProviders[ i ].executeAbility( name, args );
+					} catch {
+						// Try next provider
+					}
+				}
+				throw new Error( `No provider handled ability: ${ name }` );
+			},
+		};
+	}
+
+	// Merge getChatComponent: try each provider, return first non-null.
+	if ( allGetChatComponents.length === 1 ) {
+		mergedGetChatComponent = allGetChatComponents[ 0 ];
+	} else if ( allGetChatComponents.length > 1 ) {
+		mergedGetChatComponent = ( ( type: string ) => {
+			for ( const fn of allGetChatComponents ) {
+				const result = fn( type as ChatComponentType );
+				if ( result ) {
+					return result;
+				}
+			}
+			return null;
+		} ) as GetChatComponent;
+	}
+
+	// Merge useAbilitiesSetup: call ALL providers' hooks.
+	if ( allAbilitiesSetups.length === 1 ) {
+		mergedAbilitiesSetup = allAbilitiesSetups[ 0 ];
+	} else if ( allAbilitiesSetups.length > 1 ) {
+		mergedAbilitiesSetup = ( ( actions ) => {
+			for ( const fn of allAbilitiesSetups ) {
+				fn( actions );
+			}
+		} ) as AbilitiesSetupHook;
+	}
+
+	// Merge useSuggestions: combine from all providers, dedupe by id.
+	if ( allUseSuggestions.length === 1 ) {
+		mergedUseSuggestions = allUseSuggestions[ 0 ];
+	} else if ( allUseSuggestions.length > 1 ) {
+		mergedUseSuggestions = ( ( maxSuggestions?: number ) => {
+			const combined: Suggestion[] = [];
+			const seenIds = new Set< string >();
+			for ( const hook of allUseSuggestions ) {
+				const { suggestions } = hook( maxSuggestions );
+				for ( const s of suggestions ) {
+					if ( ! seenIds.has( s.id ) ) {
+						seenIds.add( s.id );
+						combined.push( s );
+					}
+				}
+			}
+			return { suggestions: combined };
+		} ) as UseSuggestionsHook;
+	}
+
+	// Merge getEmptyViewSuggestions: combine from all providers, dedupe by id.
+	if ( allGetEmptyViewSuggestions.length === 1 ) {
+		mergedGetEmptyViewSuggestions = allGetEmptyViewSuggestions[ 0 ];
+	} else if ( allGetEmptyViewSuggestions.length > 1 ) {
+		mergedGetEmptyViewSuggestions = () => {
+			const combined: Suggestion[] = [];
+			const seenIds = new Set< string >();
+			for ( const fn of allGetEmptyViewSuggestions ) {
+				for ( const s of fn() ) {
+					if ( ! seenIds.has( s.id ) ) {
+						seenIds.add( s.id );
+						combined.push( s );
+					}
+				}
+			}
+			return combined;
+		};
 	}
 
 	return {
