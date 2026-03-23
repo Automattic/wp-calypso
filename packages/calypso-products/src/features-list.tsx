@@ -343,6 +343,7 @@ import {
 	FEATURE_AI_WEBSITE_BUILDER_LIMITED,
 	FEATURE_AI_WRITER_DESIGNER,
 	FEATURE_AI_WRITER_DESIGNER_LIMITED,
+	FEATURE_ENHANCED_AI_ASSISTANT_AND_TOOLS,
 	FEATURE_INCLUDED_IN_PLAN,
 	FEATURE_EVERYTHING_IN_FREE_PLUS,
 	FEATURE_EVERYTHING_IN_PERSONAL_PLUS,
@@ -2747,6 +2748,14 @@ const FEATURES_LIST: FeatureList = {
 			params?.isExperimentVariant
 				? i18n.translate( 'AI assistant and tools' )
 				: i18n.translate( 'AI Assistant' ),
+		getDescription: () =>
+			i18n.translate(
+				'Use the WordPress AI Assistant to generate content, design, and manage your site — all without leaving WordPress.'
+			),
+	},
+	[ FEATURE_ENHANCED_AI_ASSISTANT_AND_TOOLS ]: {
+		getSlug: () => FEATURE_ENHANCED_AI_ASSISTANT_AND_TOOLS,
+		getTitle: () => i18n.translate( 'Enhanced AI assistant and tools' ),
 		getDescription: () =>
 			i18n.translate(
 				'Use the WordPress AI Assistant to generate content, design, and manage your site — all without leaving WordPress.'

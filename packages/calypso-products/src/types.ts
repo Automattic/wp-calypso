@@ -348,6 +348,10 @@ export type Plan = BillingTerm & {
 	 * Shows all features for each plan including base infrastructure features.
 	 */
 	getLongSetSignupWpcomFeatures?: () => Feature[];
+	/**
+	 * Comprehensive feature list for the var4_1_more_premium variant of the plans differentiators experiment.
+	 */
+	getVar41MorePremiumSignupWpcomFeatures?: () => Feature[];
 
 	/**
 	 * Incremental feature list for the long_set_stacked variant of the plans differentiators experiment.
