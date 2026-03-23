@@ -46,7 +46,7 @@ export type AppConfig = {
 		me: MeSupports | false;
 		commandPalette: boolean;
 		domainOnlySites: boolean;
-		startStoreRoute: boolean;
+		startStoreRoute?: boolean;
 	};
 	posthog?: string;
 	optIn: boolean;
