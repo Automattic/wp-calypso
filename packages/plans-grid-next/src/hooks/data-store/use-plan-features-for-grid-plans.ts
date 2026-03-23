@@ -159,7 +159,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 						isExperimentVariant ?? true // isExperimentVariant
 					);
 				} else if ( useVar41MorePremiumFeatures ) {
-					// Use the var4_1_more_premium feature list when available
+					// Use the var4_1_more_premium / var4_3_new_copy feature list when available
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
 						planConstantObj?.getVar41MorePremiumSignupWpcomFeatures?.() ??

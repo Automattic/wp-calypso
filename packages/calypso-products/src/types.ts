@@ -349,7 +349,8 @@ export type Plan = BillingTerm & {
 	 */
 	getLongSetSignupWpcomFeatures?: () => Feature[];
 	/**
-	 * Comprehensive feature list for the var4_1_more_premium variant of the plans differentiators experiment.
+	 * Comprehensive feature list for the var4_1_more_premium and var4_3_new_copy variants
+	 * of the plans differentiators experiment.
 	 */
 	getVar41MorePremiumSignupWpcomFeatures?: () => Feature[];
 	/**
