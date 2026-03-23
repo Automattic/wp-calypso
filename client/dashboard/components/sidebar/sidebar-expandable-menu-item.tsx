@@ -45,9 +45,10 @@ export function SidebarExpandableMenuItem( {
 	}, [ isActive ] );
 
 	return (
-		<div className="dashboard-sidebar__expandable">
+		<VStack className="dashboard-sidebar__expandable" spacing={ 1 }>
 			<RouterLinkButton
 				className="dashboard-sidebar__menu-item dashboard-sidebar__expandable-trigger"
+				variant="tertiary"
 				activeProps={ {
 					className: 'dashboard-sidebar__menu-item dashboard-sidebar__expandable-trigger',
 				} }
@@ -81,6 +82,6 @@ export function SidebarExpandableMenuItem( {
 					} ) }
 				</VStack>
 			) }
-		</div>
+		</VStack>
 	);
 }
