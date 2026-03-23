@@ -349,7 +349,7 @@ object BuildToolchainPreviewImages : BuildType({
 				#!/usr/bin/env bash
 				set -euo pipefail
 
-				docker run --rm registry.a8c.com/calypso/toolchain:%build.number% bash -lc \
+				docker run --rm --entrypoint /bin/bash registry.a8c.com/calypso/toolchain:%build.number% -lc \
 					'node --version && yarn --version && git --version && jq --version'
 			""".trimIndent()
 		}
@@ -359,7 +359,7 @@ object BuildToolchainPreviewImages : BuildType({
 				#!/usr/bin/env bash
 				set -euo pipefail
 
-				docker run --rm registry.a8c.com/calypso/ci-e2e-toolchain:%build.number% bash -lc '
+				docker run --rm --entrypoint /bin/bash registry.a8c.com/calypso/ci-e2e-toolchain:%build.number% -lc '
 					xvfb-run --help >/dev/null &&
 					aws --version &&
 					dpkg -s fonts-noto-cjk fonts-noto-core libgtk-3-0 libgbm1 libnss3 >/dev/null
@@ -372,7 +372,7 @@ object BuildToolchainPreviewImages : BuildType({
 				#!/usr/bin/env bash
 				set -euo pipefail
 
-				docker run --rm registry.a8c.com/calypso/ci-wpcom-toolchain:%build.number% bash -lc \
+				docker run --rm --entrypoint /bin/bash registry.a8c.com/calypso/ci-wpcom-toolchain:%build.number% -lc \
 					'php -v && composer --version && docker-compose version && sentry-cli --version'
 			""".trimIndent()
 		}
@@ -493,7 +493,8 @@ object BuildCacheSeedPreviewImage : BuildType({
 
 				trap 'docker image rm -f calypso/cache-seed-smoke:%build.number% >/dev/null 2>&1 || true' EXIT
 
-				docker run --rm calypso/cache-seed-smoke:%build.number% bash -lc 'du -sh /calypso/.cache /calypso/.yarn'
+				docker run --rm --entrypoint /bin/bash calypso/cache-seed-smoke:%build.number% -lc \
+					'du -sh /calypso/.cache /calypso/.yarn'
 			""".trimIndent()
 		}
 		script {
