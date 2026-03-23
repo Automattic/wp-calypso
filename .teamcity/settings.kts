@@ -473,30 +473,25 @@ object BuildCacheSeedPreviewImage : BuildType({
 			param("dockerImage.platform", "linux")
 		}
 		dockerCommand {
-			name = "Build cache-build smoke image"
+			name = "Build cache-seed debug smoke image"
 			commandType = build {
 				source = file {
 					path = "Dockerfile.cache-seed"
 				}
 				namesAndTags = "calypso/cache-seed-smoke:%build.number%"
-				commandArgs = "--target cache-build $commonArgs"
+				commandArgs = "--target cache-seed-debug $commonArgs"
 			}
 			param("dockerImage.platform", "linux")
 		}
 		script {
-			name = "Smoke test cache-build stage"
+			name = "Smoke test cache-seed debug image"
 			scriptContent = """
 				#!/usr/bin/env bash
 				set -euo pipefail
 
 				trap 'docker image rm -f calypso/cache-seed-smoke:%build.number% >/dev/null 2>&1 || true' EXIT
 
-				docker run --rm calypso/cache-seed-smoke:%build.number% bash -lc '
-					test -d /calypso/.cache &&
-					test -d /calypso/.yarn &&
-					test -n "${'$'}(find /calypso/.cache -mindepth 1 -maxdepth 1 -print -quit)" &&
-					test -n "${'$'}(find /calypso/.yarn -mindepth 1 -maxdepth 1 -print -quit)"
-				'
+				docker run --rm calypso/cache-seed-smoke:%build.number% bash -lc 'du -sh /calypso/.cache /calypso/.yarn'
 			""".trimIndent()
 		}
 		script {

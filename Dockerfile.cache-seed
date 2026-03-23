@@ -88,3 +88,19 @@ FROM scratch AS cache-seed
 
 COPY --from=cache-build /calypso/.cache /calypso/.cache
 COPY --from=cache-build /calypso/.yarn /calypso/.yarn
+
+###################
+# This stage exists only to make the exported cache image easy to smoke-test in
+# CI. It copies the scratch output into a debian-based node image so we can run
+# shell assertions against exactly what the published cache-seed image contains.
+FROM node:${node_version}-bullseye-slim AS cache-seed-debug
+
+COPY --from=cache-seed / /
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
+RUN test -d /calypso/.cache \
+	&& test -d /calypso/.yarn \
+	&& test ! -e /calypso/node_modules \
+	&& test ! -e /calypso/build \
+	&& test ! -e /calypso/public \
+	&& du -sh /calypso/.cache /calypso/.yarn
