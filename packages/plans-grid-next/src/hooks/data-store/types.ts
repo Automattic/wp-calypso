@@ -50,6 +50,7 @@ export interface UseGridPlansParams {
 	useVar42NoAiFeatures?: boolean;
 	/**
 	 * When true, show plan-scoped feature pills (focused_more_premium, focused_new_copy, focused_no_ai only).
+	 * focused_no_ai suppresses AI-labeled pills only.
 	 */
 	isFocusedPremiumVariant?: boolean;
 	/**

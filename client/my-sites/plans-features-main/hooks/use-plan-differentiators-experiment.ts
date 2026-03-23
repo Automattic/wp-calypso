@@ -32,6 +32,7 @@ type PlanDifferentiatorsExperimentResult = {
 	/**
 	 * When true, show plan-scoped feature pills (badges) in the features grid.
 	 * Applies to: focused_more_premium, focused_new_copy, focused_no_ai (not control or focused_comparison).
+	 * focused_no_ai omits AI-labeled pills only; Free / New / Email pills still apply.
 	 */
 	isFocusedPremiumVariant: boolean;
 	/**

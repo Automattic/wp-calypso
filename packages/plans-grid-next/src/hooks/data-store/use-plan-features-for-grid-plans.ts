@@ -51,18 +51,29 @@ function isBusinessAssistantPillFeature( featureSlug: string ): boolean {
 function getFocusedPremiumFeatureBadgeText(
 	planSlug: string,
 	featureSlug: string,
-	translate: ( text: string ) => TranslateResult
+	translate: ( text: string ) => TranslateResult,
+	options?: { suppressAiPills?: boolean }
 ): TranslateResult | undefined {
+	const suppressAiPills = options?.suppressAiPills ?? false;
+
 	if ( isPersonalPlan( planSlug ) && featureSlug === FEATURE_CUSTOM_DOMAIN ) {
 		return translate( 'Free' );
 	}
-	if ( isPremiumPlan( planSlug ) && isPremiumWebsiteBuilderPillFeature( featureSlug ) ) {
+	if (
+		! suppressAiPills &&
+		isPremiumPlan( planSlug ) &&
+		isPremiumWebsiteBuilderPillFeature( featureSlug )
+	) {
 		return translate( 'AI' );
 	}
 	if ( isPremiumPlan( planSlug ) && featureSlug === FEATURE_SIMPLE_PAYMENTS ) {
 		return translate( 'New' );
 	}
-	if ( isBusinessPlan( planSlug ) && isBusinessAssistantPillFeature( featureSlug ) ) {
+	if (
+		! suppressAiPills &&
+		isBusinessPlan( planSlug ) &&
+		isBusinessAssistantPillFeature( featureSlug )
+	) {
 		return translate( 'AI' );
 	}
 	if ( isBusinessPlan( planSlug ) && featureSlug === FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR ) {
@@ -423,7 +434,9 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 						const badgeText =
 							( isVar1dVariant ? var1dBadgeMap[ featureSlug ] : undefined ) ??
 							( isFocusedPremiumVariant
-								? getFocusedPremiumFeatureBadgeText( planSlug, featureSlug, translate )
+								? getFocusedPremiumFeatureBadgeText( planSlug, featureSlug, translate, {
+										suppressAiPills: useVar42NoAiFeatures,
+								  } )
 								: undefined );
 
 						wpcomFeaturesTransformed.push( {
