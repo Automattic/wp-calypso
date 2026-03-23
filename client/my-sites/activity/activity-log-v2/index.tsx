@@ -10,6 +10,7 @@ import QuerySiteCredentials from 'calypso/components/data/query-site-credentials
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import Upsell from 'calypso/components/jetpack/upsell';
+import JetpackTitle from 'calypso/components/jetpack-title';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
@@ -133,7 +134,7 @@ const ActivityLogV2: FunctionComponent = () => {
 				jetpackCloudHeader
 			) : (
 				<NavigationHeader
-					title={ translate( 'Activity' ) }
+					title={ <JetpackTitle title={ translate( 'Activity' ) } /> }
 					subtitle={ translate(
 						'This is the complete event history for your site. Filter by date range and/or activity type.'
 					) }
