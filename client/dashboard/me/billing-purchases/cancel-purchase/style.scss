@@ -27,3 +27,14 @@
 	font-weight: 500;
 	font-size: 0.875rem;
 }
+
+/* Vertically center the icon (decoration) in solutions cards */
+.cancel-purchase-form__solution-card.summary-button {
+	> * {
+		align-items: center;
+	}
+
+	.summary-button-decoration {
+		align-items: center;
+	}
+}

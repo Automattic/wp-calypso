@@ -16,6 +16,7 @@ import useSetupCustomActions from '../../hooks/use-setup-custom-actions';
 import { useShouldUseUnifiedAgent } from '../../hooks/use-should-use-unified-agent';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { LocalConversationListItem } from '../../types';
+import { persistLastActivity } from '../../utils/persist-last-activity';
 import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import OrchestratorChat from '../orchestrator-chat';
@@ -69,7 +70,7 @@ export default function AgentDock( {
 	useImageUpload,
 	useCheckpoint,
 }: Props ) {
-	const { site, sectionName, isEligibleForChat, agentConfig } = useAgentsManagerContext();
+	const { site, siteKey, sectionName, isEligibleForChat, agentConfig } = useAgentsManagerContext();
 
 	const [ isCompactMode, setIsCompactMode ] = useState(
 		window.__agentsManagerActions?.isCompactMode ?? false
@@ -102,12 +103,7 @@ export default function AgentDock( {
 			defaultDocked: isPersistedDocked,
 			defaultOpen: isPersistedOpen,
 			desktopMediaQuery,
-			onOpenSidebar: () => {
-				setIsOpen( true );
-				if ( pathname === '/history' ) {
-					navigate( '/' );
-				}
-			},
+			onOpenSidebar: () => setIsOpen( true ),
 			onCloseSidebar: () => setIsOpen( false ),
 		} );
 
@@ -115,7 +111,11 @@ export default function AgentDock( {
 	useAdminBarIntegration( {
 		isOpen: isPersistedOpen,
 		sectionName,
-		setIsOpen,
+		maybeOpenChat: () => {
+			if ( ! isPersistedOpen ) {
+				isDocked ? openSidebar() : setIsOpen( true );
+			}
+		},
 		navigate,
 	} );
 
@@ -162,6 +162,7 @@ export default function AgentDock( {
 		} else {
 			const sessionId = conversation.session_id || '';
 
+			persistLastActivity( siteKey );
 			handleAbort();
 			navigate( '/chat', { state: { sessionId } } );
 		}

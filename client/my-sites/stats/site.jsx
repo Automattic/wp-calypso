@@ -123,6 +123,13 @@ Object.defineProperty( CHART_VIEWS, 'label', {
 Object.defineProperty( CHART_VISITORS, 'label', {
 	get: () => translate( 'Visitors', { context: 'noun' } ),
 } );
+Object.defineProperty( CHART_VISITORS, 'aggregateNote', {
+	get: () =>
+		translate( 'Per-period sum, not unique overall.', {
+			comment:
+				'Explanation for the Visitors stats chart: the total visitors value is calculated by adding up the visitors count in each time bucket (day/week/month), so it may differ from the unique visitor count across the entire selected date range.',
+		} ),
+} );
 Object.defineProperty( CHART_LIKES, 'label', {
 	get: () => translate( 'Likes', { context: 'noun' } ),
 } );

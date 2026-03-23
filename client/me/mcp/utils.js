@@ -89,3 +89,21 @@ export function getDisabledSiteIds( userSettings ) {
 		.filter( ( site ) => site.account_tools_enabled === false )
 		.map( ( site ) => site.blog_id );
 }
+
+/**
+ * Get site IDs where MCP access is explicitly enabled at the site level (allowlist).
+ * @param {Object} userSettings - The user settings object
+ * @returns {number[]} Site IDs with site_level_enabled set to true
+ */
+export function getEnabledSiteIds( userSettings ) {
+	if ( userSettings?.sites ) {
+		return userSettings.sites
+			.filter( ( site ) => site.site_level_enabled === true )
+			.map( ( site ) => site.blog_id );
+	}
+
+	const mcpSites = userSettings?.mcp_abilities?.sites || [];
+	return mcpSites
+		.filter( ( site ) => site.site_level_enabled === true )
+		.map( ( site ) => site.blog_id );
+}

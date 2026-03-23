@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { useEffect } from '@wordpress/element';
+import { useEffect, useRef } from '@wordpress/element';
 import './style.scss';
 
 // Admin bar element selectors
@@ -20,7 +20,7 @@ const DESTINATION_GUIDES = 'agents-manager-support-guides';
 interface UseAdminBarIntegrationOptions {
 	isOpen: boolean;
 	sectionName: string;
-	setIsOpen: ( isOpen: boolean ) => void;
+	maybeOpenChat: () => void;
 	navigate: ( route: string, options?: { state?: object } ) => void;
 }
 
@@ -36,9 +36,13 @@ interface UseAdminBarIntegrationOptions {
 export default function useAdminBarIntegration( {
 	isOpen,
 	sectionName,
-	setIsOpen,
+	maybeOpenChat,
 	navigate,
 }: UseAdminBarIntegrationOptions ) {
+	// Ref to avoid re-attaching DOM event listeners when the caller passes a new `maybeOpenChat` reference.
+	const maybeOpenChatRef = useRef( maybeOpenChat );
+	maybeOpenChatRef.current = maybeOpenChat;
+
 	// Update admin bar button active state based on isOpen
 	useEffect( () => {
 		const button = document.getElementById( ADMIN_BAR_BUTTON_ID );
@@ -106,14 +110,14 @@ export default function useAdminBarIntegration( {
 		const historyItem = document.getElementById( ADMIN_BAR_HISTORY_ITEM_ID );
 		const guidesItem = document.getElementById( ADMIN_BAR_GUIDES_ITEM_ID );
 
-		const createMenuItemHandler = ( destination: string, route: string, routeState?: object ) => {
+		const createMenuItemHandler = ( destination: string, route: string ) => {
 			return () => {
 				recordTracksEvent( 'calypso_dashboard_help_center_menu_panel_click', {
 					section: sectionName || 'wp-admin',
 					destination,
 				} );
-				navigate( route, { state: routeState } );
-				setIsOpen( true );
+				navigate( route );
+				maybeOpenChatRef.current();
 			};
 		};
 
@@ -130,5 +134,5 @@ export default function useAdminBarIntegration( {
 			historyItem?.removeEventListener( 'click', handleHistoryClick );
 			guidesItem?.removeEventListener( 'click', handleGuidesClick );
 		};
-	}, [ navigate, setIsOpen, sectionName ] );
+	}, [ navigate, sectionName ] );
 }
