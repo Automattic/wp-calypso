@@ -1,4 +1,8 @@
-import { Icon, __experimentalHStack as HStack } from '@wordpress/components';
+import {
+	Icon,
+	__experimentalHStack as HStack,
+	__experimentalText as Text,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { staging, production } from '../icons';
 
@@ -20,7 +24,7 @@ const Environment = ( { environmentType, spacing = 1, iconSize }: EnvironmentPro
 				style={ { flexShrink: 0 } }
 			>
 				<Icon icon={ staging } size={ iconSize } />
-				<span>{ __( 'Staging' ) }</span>
+				<Text>{ __( 'Staging' ) }</Text>
 			</HStack>
 		);
 	}
@@ -28,7 +32,7 @@ const Environment = ( { environmentType, spacing = 1, iconSize }: EnvironmentPro
 	return (
 		<HStack justify="flex-start" spacing={ spacing } expanded={ false } style={ { flexShrink: 0 } }>
 			<Icon icon={ production } size={ iconSize } />
-			<span>{ __( 'Production' ) }</span>
+			<Text>{ __( 'Production' ) }</Text>
 		</HStack>
 	);
 };
