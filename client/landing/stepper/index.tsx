@@ -49,7 +49,7 @@ import { setupWpDataDebug } from './utils/devtools';
 import { enhanceFlowWithUtilityFunctions } from './utils/enhance-flow-with-utils';
 import { enhanceFlowWithAuth, injectUserStepInSteps } from './utils/enhanceFlowWithAuth';
 import redirectPathIfNecessary from './utils/flow-redirect-handler';
-import { DEFAULT_FLOW, getFlowFromURL } from './utils/get-flow-from-url';
+import { DEFAULT_FLOW, getFlowFromURL, getStepFromURL } from './utils/get-flow-from-url';
 import { startStepperPerformanceTracking } from './utils/performance-tracking';
 import { getSessionId } from './utils/use-session-id';
 import { WindowLocaleEffectManager } from './utils/window-locale-effect-manager';
@@ -201,6 +201,20 @@ async function main() {
 		flowSteps = injectUserStepInSteps( flowSteps ) as typeof flowSteps;
 		flow.__flowSteps = flowSteps;
 		enhanceFlowWithUtilityFunctions( flow );
+
+		// Warm the initial step's chunk so it's ready by the time React.lazy
+		// hits the Suspense boundary.
+		const warm = ( slug?: string ) =>
+			flowSteps
+				.find( ( s: { slug: string } ) => s.slug === slug )
+				?.asyncComponent()
+				?.catch( () => {} );
+		warm( getStepFromURL() || flowSteps[ 0 ]?.slug );
+
+		// Logged-out users get redirected to the auth step first; warm it too.
+		if ( ! user ) {
+			warm( 'user' );
+		}
 	} else if ( 'useSteps' in flow ) {
 		// V1 flows have to be enhanced by changing their `useSteps` hook.
 		flow = enhanceFlowWithAuth( flow );
