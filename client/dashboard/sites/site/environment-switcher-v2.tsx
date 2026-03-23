@@ -30,7 +30,6 @@ import { useHelpCenter } from '../../app/help-center';
 import useBuildCurrentRouteLink from '../../app/hooks/use-build-current-route-link';
 import Environment from '../../components/environment';
 import { staging, production } from '../../components/icons';
-import './environment-switcher-v2.scss';
 import RouterLinkMenuItem from '../../components/router-link-menu-item';
 import {
 	isAtomicTransferInProgress,
@@ -39,6 +38,8 @@ import {
 import { getProductionSiteId, getStagingSiteId } from '../../utils/site-staging-site';
 import { canManageSite, canCreateStagingSite } from '../features';
 import type { Site } from '@automattic/api-core';
+
+import './environment-switcher-v2.scss';
 
 const CurrentEnvironment = ( { site }: { site: Site } ) => {
 	const icon = site.is_wpcom_staging_site ? staging : production;
