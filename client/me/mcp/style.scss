@@ -76,13 +76,9 @@ body.is-section-me div.layout.is-global-sidebar-visible .layout__primary .main.m
 		}
 
 		.summary-button.components-button.has-density-low {
-			border: 1px solid transparent;
+			border: none;
 			border-radius: 0;
 			margin: 0;
-
-			&:hover:not(:disabled, [aria-disabled="true"]):not(:focus-visible) {
-				border-color: transparent;
-			}
 		}
 	}
 }
