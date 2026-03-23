@@ -85,7 +85,7 @@ export default function McpWrite() {
 			size="small"
 			header={
 				<PageHeader
-					prefix={ <Breadcrumbs length={ 2 } /> }
+					prefix={ <Breadcrumbs length={ 3 } /> }
 					title={ __( 'Write' ) }
 					description={ __( 'Create, update, and manage content on your sites.' ) }
 				/>

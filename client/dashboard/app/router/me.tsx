@@ -720,7 +720,7 @@ export const privacyRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => meRoute,
+	getParentRoute: () => preferencesRoute,
 	path: 'privacy',
 } ).lazy( () =>
 	import( '../../me/privacy' ).then( ( d ) =>
@@ -839,7 +839,7 @@ export const blockedSitesRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => meRoute,
+	getParentRoute: () => preferencesRoute,
 	path: 'blocked-sites',
 } ).lazy( () =>
 	import( '../../me/blocked-sites' ).then( ( d ) =>
@@ -871,11 +871,11 @@ export const mcpRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'MCP Account Settings' ),
+				title: __( 'AI and MCP' ),
 			},
 		],
 	} ),
-	getParentRoute: () => meRoute,
+	getParentRoute: () => preferencesRoute,
 	path: 'mcp',
 	loader: async () => {
 		await queryClient.ensureQueryData( userSettingsQuery() );
@@ -906,27 +906,6 @@ export const mcpSetupRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../me/mcp/setup' ).then( ( d ) =>
 		createLazyRoute( 'mcp-setup' )( {
-			component: d.default,
-		} )
-	)
-);
-
-export const mcpAiSitesRoute = createRoute( {
-	head: () => ( {
-		meta: [
-			{
-				title: __( 'Add AI assistant to sites' ),
-			},
-		],
-	} ),
-	getParentRoute: () => mcpRoute,
-	path: 'ai-sites',
-	loader: async () => {
-		await queryClient.ensureQueryData( userSettingsQuery() );
-	},
-} ).lazy( () =>
-	import( '../../me/mcp/ai-sites' ).then( ( d ) =>
-		createLazyRoute( 'mcp-ai-sites' )( {
 			component: d.default,
 		} )
 	)
@@ -1000,7 +979,31 @@ export const createMeRoutes = ( config: AppConfig ) => {
 		return [];
 	}
 
-	const meRoutes: AnyRoute[] = [ meIndexRoute, profileRoute, preferencesRoute ];
+	const preferencesChildren: AnyRoute[] = [];
+	if ( config.supports.me.privacy ) {
+		preferencesChildren.push( privacyRoute );
+	}
+	if ( config.supports.reader ) {
+		preferencesChildren.push( blockedSitesRoute );
+	}
+	if ( isEnabled( 'mcp-settings' ) ) {
+		preferencesChildren.push(
+			mcpRoute.addChildren( [
+				mcpIndexRoute,
+				mcpSetupRoute,
+				mcpMcpSitesRoute,
+				mcpReadRoute,
+				mcpWriteRoute,
+			] )
+		);
+	}
+	const meRoutes: AnyRoute[] = [
+		meIndexRoute,
+		profileRoute,
+		preferencesChildren.length > 0
+			? preferencesRoute.addChildren( preferencesChildren )
+			: preferencesRoute,
+	];
 
 	meRoutes.push(
 		billingRoute.addChildren( [
@@ -1055,27 +1058,6 @@ export const createMeRoutes = ( config: AppConfig ) => {
 			notificationsExtrasRoute,
 		] )
 	);
-
-	if ( config.supports.me.privacy ) {
-		meRoutes.push( privacyRoute );
-	}
-
-	if ( config.supports.reader ) {
-		meRoutes.push( blockedSitesRoute );
-	}
-
-	if ( isEnabled( 'mcp-settings' ) ) {
-		meRoutes.push(
-			mcpRoute.addChildren( [
-				mcpIndexRoute,
-				mcpSetupRoute,
-				mcpAiSitesRoute,
-				mcpMcpSitesRoute,
-				mcpReadRoute,
-				mcpWriteRoute,
-			] )
-		);
-	}
 
 	if ( config.supports.me.apps ) {
 		meRoutes.push( appsRoute );

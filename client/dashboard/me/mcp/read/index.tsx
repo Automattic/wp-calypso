@@ -85,7 +85,7 @@ export default function McpRead() {
 			size="small"
 			header={
 				<PageHeader
-					prefix={ <Breadcrumbs length={ 2 } /> }
+					prefix={ <Breadcrumbs length={ 3 } /> }
 					title={ __( 'Read' ) }
 					description={ __( 'View your sites, posts, and account info.' ) }
 				/>

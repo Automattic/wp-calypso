@@ -15,7 +15,6 @@ import { Card, CardBody } from '../../../components/card';
 import ComponentViewTracker from '../../../components/component-view-tracker';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
-import RouterLinkButton from '../../../components/router-link-button';
 import { SectionHeader } from '../../../components/section-header';
 import SiteIcon from '../../../components/site-icon';
 import { getSiteDisplayName } from '../../../utils/site-name';
@@ -113,14 +112,14 @@ export default function McpMcpSites() {
 			size="small"
 			header={
 				<PageHeader
-					prefix={ <Breadcrumbs length={ 2 } /> }
+					prefix={ <Breadcrumbs length={ 3 } /> }
 					title={ pageTitle }
 					description={ pageDescription }
 				/>
 			}
 		>
 			<ComponentViewTracker eventName="calypso_dashboard_mcp_mcp_sites_view" />
-			<VStack spacing={ 4 }>
+			<VStack spacing={ 8 }>
 				<Card>
 					<CardBody>
 						<VStack spacing={ 4 }>
@@ -131,7 +130,7 @@ export default function McpMcpSites() {
 							/>
 							<PreferencesLoginSiteDropdown
 								sites={ availableSitesForPicker }
-								isLoading={ isSiteListLoading }
+								isLoading={ isSiteListLoading || mutation.isPending }
 								value={ selectedSiteId ?? '' }
 								onChange={ handleSitePickerSelect }
 								hideLabelFromVision
@@ -156,15 +155,6 @@ export default function McpMcpSites() {
 									decoration={ site.site ? <SiteIcon site={ site.site } size={ 32 } /> : undefined }
 									actions={
 										<>
-											{ site.site?.slug && (
-												<RouterLinkButton
-													to={ `/sites/${ site.site.slug }/settings/ai-tools` }
-													variant="tertiary"
-													size="compact"
-												>
-													{ __( 'Manage' ) }
-												</RouterLinkButton>
-											) }
 											<Button
 												variant="secondary"
 												size="compact"
