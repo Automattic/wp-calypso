@@ -187,6 +187,13 @@ const transformClientMessageToUI = (
 					data,
 				};
 			}
+			// Preserve data parts with sources array for article references
+			if ( Array.isArray( data.sources ) && data.sources.length > 0 ) {
+				return {
+					type: 'data' as const,
+					data,
+				};
+			}
 			// For other data parts, convert to text
 			return {
 				type: 'text' as const,

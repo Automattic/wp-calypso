@@ -3,7 +3,13 @@
  * Maps to odie-assistant.php endpoints on WordPress.com
  */
 
-import type { FilePart, Message, Part, TextPart } from '../client/types/index';
+import type {
+	DataPart,
+	FilePart,
+	Message,
+	Part,
+	TextPart,
+} from '../client/types/index';
 import { generateMessageId } from '../client/utils/core';
 
 /**
@@ -143,6 +149,20 @@ export function serverMessageToMessage(
 				parts.push( part );
 			}
 		}
+	}
+
+	// Preserve sources from context as a data part for UI consumption.
+	if (
+		context &&
+		! Array.isArray( context ) &&
+		Array.isArray( context.sources ) &&
+		context.sources.length > 0
+	) {
+		const dataPart: DataPart = {
+			type: 'data',
+			data: { sources: context.sources },
+		};
+		parts.push( dataPart );
 	}
 
 	// Tool calls and tool results are intentionally not included in parts
