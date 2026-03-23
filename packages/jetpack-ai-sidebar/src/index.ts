@@ -170,27 +170,53 @@ function startBlockShimmer(): void {
  * @returns {Object} Result with returnToAgent: false.
  */
 function handleSelectTitle( input: any ): any {
-	if ( ! addMessageFn ) {
-		return { success: false, error: 'Provider not initialized', returnToAgent: false };
-	}
 	const titles = input?.titles;
 	if ( ! titles?.length ) {
 		return { success: false, error: 'No titles provided', returnToAgent: false };
 	}
-	addMessageFn( {
-		id: `title-picker-${ Date.now() }`,
-		role: 'assistant',
-		content: [
-			{
-				type: 'component',
-				component: TitlePicker,
-				componentProps: { titles },
-			},
-		],
-		created_at: Math.floor( Date.now() / 1000 ),
-		showIcon: true,
-	} );
-	return { success: true, returnToAgent: false };
+
+	// When running as an AM provider, addMessageFn is set by useAbilitiesSetup
+	// and we inject the TitlePicker component directly into the chat.
+	if ( addMessageFn ) {
+		addMessageFn( {
+			id: `title-picker-${ Date.now() }`,
+			role: 'assistant',
+			content: [
+				{
+					type: 'component',
+					component: TitlePicker,
+					componentProps: { titles },
+				},
+			],
+			created_at: Math.floor( Date.now() / 1000 ),
+			showIcon: true,
+		} );
+		return { success: true, returnToAgent: false };
+	}
+
+	// When running alongside Big Sky standalone (no AM provider setup),
+	// use Big Sky's AI store to inject the TitlePicker into the chat.
+	try {
+		const wpData = ( window as any ).wp?.data;
+		const aiStore = wpData?.dispatch?.( 'ai-assembler' );
+		if ( aiStore?.addMessage ) {
+			aiStore.addMessage( {
+				role: 'assistant',
+				content: [
+					{
+						type: 'component',
+						component: TitlePicker,
+						componentProps: { titles },
+					},
+				],
+			} );
+			return { success: true, returnToAgent: false, followUpTasks: false };
+		}
+	} catch {
+		// ignore
+	}
+
+	return { success: false, error: 'No chat interface available', returnToAgent: false };
 }
 
 /**
@@ -290,6 +316,10 @@ async function registerSelectTitleAbility(): Promise< void > {
 		}
 	}
 }
+
+// Register on module load so standalone integrations (without AM setup hooks)
+// still have the Jetpack AI abilities available.
+registerSelectTitleAbility();
 
 // ---------- useAbilitiesSetup ----------
 
