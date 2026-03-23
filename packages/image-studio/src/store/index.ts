@@ -512,11 +512,18 @@ const reducer = (
 				isExitConfirmed: action.payload,
 			};
 
-		case 'ADD_NOTICE':
+		case 'ADD_NOTICE': {
+			// Deduplicate notices by message content: if a notice with the
+			// same text already exists, skip adding it again.
+			if ( state.notices.some( ( n ) => n.content === action.payload.content ) ) {
+				return state;
+			}
+
 			return {
 				...state,
 				notices: [ ...state.notices, action.payload ],
 			};
+		}
 
 		case 'REMOVE_NOTICE':
 			return {

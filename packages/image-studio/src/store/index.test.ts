@@ -521,6 +521,34 @@ describe( 'Image Studio Store', () => {
 				expect( state.notices[ 0 ].content ).toBe( 'Message 2' );
 			} );
 
+			it( 'deduplicates notices with the same message content', () => {
+				let state = reducer( getInitialState(), actions.addNotice( 'Low credits', 'warning' ) );
+				expect( state.notices ).toHaveLength( 1 );
+
+				state = reducer( state, actions.addNotice( 'Low credits', 'warning' ) );
+				expect( state.notices ).toHaveLength( 1 );
+			} );
+
+			it( 'allows multiple warnings with different messages', () => {
+				let state = reducer( getInitialState(), actions.addNotice( 'Low credits', 'warning' ) );
+				state = reducer( state, actions.addNotice( 'Upgrade required', 'warning' ) );
+				expect( state.notices ).toHaveLength( 2 );
+			} );
+
+			it( 'deduplicates across notice types', () => {
+				let state = reducer( getInitialState(), actions.addNotice( 'Same message', 'error' ) );
+				state = reducer( state, actions.addNotice( 'Same message', 'warning' ) );
+				expect( state.notices ).toHaveLength( 1 );
+				expect( state.notices[ 0 ].type ).toBe( 'error' );
+			} );
+
+			it( 'allows multiple notices with different messages', () => {
+				let state = reducer( getInitialState(), actions.addNotice( 'Error 1', 'error' ) );
+				state = reducer( state, actions.addNotice( 'Error 2', 'error' ) );
+				state = reducer( state, actions.addNotice( 'Success 1', 'success' ) );
+				expect( state.notices ).toHaveLength( 3 );
+			} );
+
 			it( 'handles removing non-existent notice', () => {
 				const previousState: ImageStudioState = {
 					...getInitialState(),
