@@ -20,7 +20,7 @@ type PlanDifferentiatorsExperimentResult = {
 	showDifferentiatorHeader: boolean;
 	/**
 	 * When true, use var4 feature set (getLongSetSignupWpcomFeatures).
-	 * Applies to: var4, var4_2_no_ai, var4_3_new_copy
+	 * Applies to: var4, var4_3_new_copy
 	 */
 	useVar4Features: boolean;
 	/**
@@ -28,6 +28,11 @@ type PlanDifferentiatorsExperimentResult = {
 	 * Applies to: var4_1_more_premium
 	 */
 	useVar41MorePremiumFeatures: boolean;
+	/**
+	 * When true, use var4_2 feature set (getVar42NoAiSignupWpcomFeatures).
+	 * Applies to: var4_2_no_ai
+	 */
+	useVar42NoAiFeatures: boolean;
 	/**
 	 * When true, the user is in any var4-based variant.
 	 * Used to exclude var4-style variants from certain experiment-specific styling.
@@ -74,9 +79,9 @@ function usePlanDifferentiatorsExperiment( {
 		isLoading,
 		variant,
 		showDifferentiatorHeader: false,
-		useVar4Features:
-			variant === 'var4' || variant === 'var4_2_no_ai' || variant === 'var4_3_new_copy',
+		useVar4Features: variant === 'var4' || variant === 'var4_3_new_copy',
 		useVar41MorePremiumFeatures: variant === 'var4_1_more_premium',
+		useVar42NoAiFeatures: variant === 'var4_2_no_ai',
 		isVar4Variant:
 			variant === 'var4' ||
 			variant === 'var4_1_more_premium' ||

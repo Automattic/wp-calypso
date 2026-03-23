@@ -33,6 +33,7 @@ export type UsePlanFeaturesForGridPlans = ( {
 	isInSignup,
 	useLongSetFeatures,
 	useVar41MorePremiumFeatures,
+	useVar42NoAiFeatures,
 	useLongSetStackedFeatures,
 	useShortSetStackedFeatures,
 	useVar5Features,
@@ -48,6 +49,7 @@ export type UsePlanFeaturesForGridPlans = ( {
 	isInSignup?: boolean;
 	useLongSetFeatures?: boolean;
 	useVar41MorePremiumFeatures?: boolean;
+	useVar42NoAiFeatures?: boolean;
 	useLongSetStackedFeatures?: boolean;
 	useShortSetStackedFeatures?: boolean;
 	useVar5Features?: boolean;
@@ -74,6 +76,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 	isInSignup,
 	useLongSetFeatures,
 	useVar41MorePremiumFeatures,
+	useVar42NoAiFeatures,
 	useLongSetStackedFeatures,
 	useShortSetStackedFeatures,
 	useVar5Features,
@@ -128,6 +131,22 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
 						planConstantObj?.getLongSetStackedSignupWpcomFeatures?.() ??
+							planConstantObj?.getLongSetSignupWpcomFeatures?.() ??
+							planConstantObj?.get2023PricingGridSignupWpcomFeatures?.() ??
+							[],
+						isExperimentVariant ?? true // isExperimentVariant
+					);
+
+					jetpackFeatures = getPlanFeaturesObject(
+						allFeaturesList,
+						planConstantObj.get2023PricingGridSignupJetpackFeatures?.() ?? [],
+						isExperimentVariant ?? true // isExperimentVariant
+					);
+				} else if ( useVar42NoAiFeatures ) {
+					// Use the var4_2_no_ai feature list when available
+					wpcomFeatures = getPlanFeaturesObject(
+						allFeaturesList,
+						planConstantObj?.getVar42NoAiSignupWpcomFeatures?.() ??
 							planConstantObj?.getLongSetSignupWpcomFeatures?.() ??
 							planConstantObj?.get2023PricingGridSignupWpcomFeatures?.() ??
 							[],
@@ -398,6 +417,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 		hasRedeemedDomainCredit,
 		useLongSetFeatures,
 		useVar41MorePremiumFeatures,
+		useVar42NoAiFeatures,
 		useLongSetStackedFeatures,
 		useShortSetStackedFeatures,
 		useVar5Features,

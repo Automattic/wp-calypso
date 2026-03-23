@@ -24,6 +24,7 @@ export type UseRestructuredPlanFeaturesForComparisonGrid = ( {
 	selectedFeature,
 	useLongSetFeatures,
 	useVar41MorePremiumFeatures,
+	useVar42NoAiFeatures,
 	useLongSetStackedFeatures,
 	useShortSetStackedFeatures,
 	useVar5Features,
@@ -38,6 +39,7 @@ export type UseRestructuredPlanFeaturesForComparisonGrid = ( {
 	showLegacyStorageFeature?: boolean;
 	useLongSetFeatures?: boolean;
 	useVar41MorePremiumFeatures?: boolean;
+	useVar42NoAiFeatures?: boolean;
 	useLongSetStackedFeatures?: boolean;
 	useShortSetStackedFeatures?: boolean;
 	useVar5Features?: boolean;
@@ -55,6 +57,7 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 		showLegacyStorageFeature,
 		useLongSetFeatures,
 		useVar41MorePremiumFeatures,
+		useVar42NoAiFeatures,
 		useLongSetStackedFeatures,
 		useShortSetStackedFeatures,
 		useVar5Features,
@@ -69,6 +72,7 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 			showLegacyStorageFeature,
 			useLongSetFeatures,
 			useVar41MorePremiumFeatures,
+			useVar42NoAiFeatures,
 			useLongSetStackedFeatures,
 			useShortSetStackedFeatures,
 			useVar5Features,

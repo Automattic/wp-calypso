@@ -44,6 +44,10 @@ export interface UseGridPlansParams {
 	 */
 	useVar41MorePremiumFeatures?: boolean;
 	/**
+	 * When true, use the var4_2_no_ai feature set for the plans differentiators experiment.
+	 */
+	useVar42NoAiFeatures?: boolean;
+	/**
 	 * When true, use the stacked (incremental) feature set for the long_set_stacked variant.
 	 */
 	useLongSetStackedFeatures?: boolean;

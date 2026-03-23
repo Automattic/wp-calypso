@@ -341,9 +341,12 @@ import {
 	FEATURE_BIG_SKY_WEBSITE_BUILDER_CHECKOUT,
 	FEATURE_AI_WEBSITE_BUILDER,
 	FEATURE_AI_WEBSITE_BUILDER_LIMITED,
+	FEATURE_GUIDED_WEBSITE_BUILDER,
+	FEATURE_GUIDED_WEBSITE_BUILDER_LIMITED,
 	FEATURE_AI_WRITER_DESIGNER,
 	FEATURE_AI_WRITER_DESIGNER_LIMITED,
 	FEATURE_ENHANCED_AI_ASSISTANT_AND_TOOLS,
+	FEATURE_BUILT_IN_SITE_ASSISTANT,
 	FEATURE_INCLUDED_IN_PLAN,
 	FEATURE_EVERYTHING_IN_FREE_PLUS,
 	FEATURE_EVERYTHING_IN_PERSONAL_PLUS,
@@ -2761,6 +2764,14 @@ const FEATURES_LIST: FeatureList = {
 				'Use the WordPress AI Assistant to generate content, design, and manage your site — all without leaving WordPress.'
 			),
 	},
+	[ FEATURE_BUILT_IN_SITE_ASSISTANT ]: {
+		getSlug: () => FEATURE_BUILT_IN_SITE_ASSISTANT,
+		getTitle: () => i18n.translate( 'Built-in site assistant' ),
+		getDescription: () =>
+			i18n.translate(
+				'Use the WordPress AI Assistant to generate content, design, and manage your site — all without leaving WordPress.'
+			),
+	},
 	/* END: 2023 Pricing Grid Features */
 
 	/* START: Woo Express Features */
@@ -3186,6 +3197,22 @@ const FEATURES_LIST: FeatureList = {
 						'Skip the blank screen — create and launch a WordPress.com website in minutes by chatting with AI.'
 				  )
 				: i18n.translate( 'Build your site with our AI Website Builder.' ),
+	},
+	[ FEATURE_GUIDED_WEBSITE_BUILDER ]: {
+		getSlug: () => FEATURE_GUIDED_WEBSITE_BUILDER,
+		getTitle: () => i18n.translate( 'Guided website builder' ),
+		getDescription: () =>
+			i18n.translate(
+				'Skip the blank screen — create and launch a WordPress.com website in minutes by chatting with AI.'
+			),
+	},
+	[ FEATURE_GUIDED_WEBSITE_BUILDER_LIMITED ]: {
+		getSlug: () => FEATURE_GUIDED_WEBSITE_BUILDER_LIMITED,
+		getTitle: () => i18n.translate( 'Guided website builder (usage limits apply)' ),
+		getDescription: () =>
+			i18n.translate(
+				'Skip the blank screen — create and launch a WordPress.com website in minutes by chatting with AI.'
+			),
 	},
 	[ FEATURE_AI_WRITER_DESIGNER ]: {
 		getSlug: () => FEATURE_AI_WRITER_DESIGNER,
