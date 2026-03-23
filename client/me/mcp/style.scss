@@ -74,6 +74,7 @@ body.is-section-me div.layout.is-global-sidebar-visible .layout__primary .main.m
 		&:hover:not(:disabled, [aria-disabled="true"]):not(:focus-visible) {
 			border: none;
 			box-shadow: 0 0 0 1px var(--color-border-subtle);
+			background: color-mix(in srgb, #fff 98%, var(--wp-admin-theme-color, #3858e9));
 		}
 	}
 }
