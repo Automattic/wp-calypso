@@ -1,5 +1,5 @@
 import { userSettingsQuery } from '@automattic/api-queries';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
@@ -11,7 +11,11 @@ import MeMenu from '../me-menu';
 import './style.scss';
 
 export default function MeSidebar() {
-	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
+	const { data: userSettings } = useQuery( userSettingsQuery() );
+
+	if ( ! userSettings ) {
+		return null;
+	}
 
 	return (
 		<VStack spacing={ 4 }>
