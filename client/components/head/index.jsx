@@ -92,6 +92,14 @@ const Head = ( {
 					crossOrigin="anonymous"
 				/>
 			) }
+			{ /* eslint-disable react/no-danger */ }
+			<style
+				nonce={ inlineScriptNonce }
+				dangerouslySetInnerHTML={ {
+					__html: `@font-face{font-display:swap;font-family:Recoleta;font-weight:400;src:url(https://s1.wp.com/i/fonts/recoleta/extended/recoleta-400.woff2) format("woff2"),url(https://s1.wp.com/i/fonts/recoleta/extended/recoleta-400.woff) format("woff")}`,
+				} }
+			/>
+			{ /* eslint-enable react/no-danger */ }
 			<noscript>
 				<link
 					rel="stylesheet"
