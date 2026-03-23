@@ -18,10 +18,7 @@ import { get, includes } from 'lodash';
 import { stringify } from 'qs';
 // eslint-disable-next-line no-restricted-imports
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
-import {
-	getDashboardFromHostname,
-	isAllowedDashboardHostname,
-} from 'calypso/dashboard/app/routing';
+import { getDashboardFromHostname, isAllowedDashboardRoute } from 'calypso/dashboard/app/routing';
 import { isAllowedCiabDashboardHostname } from 'calypso/dashboard/app-ciab/routing';
 import { CIAB_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-ciab/section';
 import { isAllowedDotcomDashboardHostname } from 'calypso/dashboard/app-dotcom/routing';
@@ -1106,14 +1103,14 @@ export default function pages() {
 	if ( isDashboardEnv() || calypsoEnv === 'development' ) {
 		const signupSectionDefinition = sections.find( ( s ) => s.name === 'signup' );
 		handleSectionPath( signupSectionDefinition, '/start', undefined, ( req ) =>
-			isAllowedDashboardHostname( req.hostname )
+			isAllowedDashboardRoute( { hostname: req.hostname, path: req.path } )
 		);
 		const checkoutSectionDefinition = sections.find( ( s ) => s.name === 'checkout' );
 		handleSectionPath( checkoutSectionDefinition, '/checkout', undefined, ( req ) =>
-			isAllowedDashboardHostname( req.hostname )
+			isAllowedDashboardRoute( { hostname: req.hostname, path: req.path } )
 		);
 		handleSectionPath( STEPPER_SECTION_DEFINITION, '/setup', 'entry-stepper', ( req ) =>
-			isAllowedDashboardHostname( req.hostname )
+			isAllowedDashboardRoute( { hostname: req.hostname, path: req.path } )
 		);
 		DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
 			handleSectionPath(

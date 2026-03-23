@@ -22,6 +22,7 @@ export interface ImageStudioData {
 	isOpen: boolean;
 	id: number | null;
 	style?: string;
+	aspect_ratio?: string;
 	metadata: ImageStudioMetadata;
 	entryPoint: ImageStudioEntryPoint | null;
 	blockType: string | null;
@@ -195,10 +196,7 @@ function detectImageEntity(): ImageStudioData | null {
 		const attachmentId = storeSelect.getImageStudioAttachmentId?.();
 		const isOpen = storeSelect.getIsImageStudioOpen?.() || false;
 		const selectedStyle = storeSelect.getSelectedStyle?.() || null;
-		const originalAttachmentId = storeSelect.getOriginalAttachmentId?.() || null;
-
-		// Generate mode = opened without an existing image
-		const isGenerateMode = originalAttachmentId === null;
+		const selectedAspectRatio = storeSelect.getSelectedAspectRatio?.() || null;
 
 		// Entrypoint for image studio context
 		const entryPoint = storeSelect.getEntryPoint?.() || null;
@@ -213,9 +211,12 @@ function detectImageEntity(): ImageStudioData | null {
 			metadata: {},
 		};
 
-		// Only include style for generate mode
-		if ( selectedStyle && isGenerateMode ) {
+		if ( selectedStyle ) {
 			imageStudio.style = selectedStyle;
+		}
+
+		if ( selectedAspectRatio ) {
+			imageStudio.aspect_ratio = selectedAspectRatio;
 		}
 
 		// Try to get attachment metadata from core store
