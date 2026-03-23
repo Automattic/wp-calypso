@@ -6,3 +6,8 @@
 	top: 0;
 	z-index: 3; // DataViews header seems to have z-index: 1; CalloutOverlay has z-index: 2
 }
+
+.dashboard-root__body {
+	display: flex;
+	min-height: calc(100vh - var(--masterbar-height) );
+}
