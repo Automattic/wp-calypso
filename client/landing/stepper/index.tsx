@@ -51,6 +51,7 @@ import { enhanceFlowWithAuth, injectUserStepInSteps } from './utils/enhanceFlowW
 import redirectPathIfNecessary from './utils/flow-redirect-handler';
 import { DEFAULT_FLOW, getFlowFromURL } from './utils/get-flow-from-url';
 import { startStepperPerformanceTracking } from './utils/performance-tracking';
+import { preloadCurrentStep } from './utils/preload-current-step';
 import { getSessionId } from './utils/use-session-id';
 import { WindowLocaleEffectManager } from './utils/window-locale-effect-manager';
 import type { CurrentUser } from '@automattic/data-stores';
@@ -177,17 +178,10 @@ async function main() {
 
 	let flowSteps = 'initialize' in flow ? await flow.initialize( reduxStore ) : null;
 
-	// Eagerly preload the current step's chunk so it's ready before React mounts.
-	// usePreloadSteps only preloads *next* steps; the current step would otherwise
-	// wait for React.lazy + Suspense to trigger the download. We only fire the
-	// import here (no lazyCache write) because the webpack module cache ensures
-	// React.lazy's subsequent call resolves instantly from the already-loaded module.
+	// Warm the webpack module cache for the current step's chunk so React.lazy
+	// resolves instantly. See preload-current-step.ts for details.
 	if ( flowSteps && flowSteps.length > 0 ) {
-		const stepSlug = window.location.pathname.split( '/' )[ 3 ]; // /setup/<flow>/<step>
-		const currentStep = flowSteps.find( ( s ) => s.slug === stepSlug );
-		if ( currentStep && 'asyncComponent' in currentStep ) {
-			currentStep.asyncComponent();
-		}
+		preloadCurrentStep( flowSteps, window.location.pathname );
 	}
 
 	if ( '__experimentalUseSessions' in flow ) {
