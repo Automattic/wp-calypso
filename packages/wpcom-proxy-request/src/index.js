@@ -11,7 +11,10 @@ const debug = debugFactory( 'wpcom-proxy-request' );
  */
 const proxyOrigin = 'https://public-api.wordpress.com';
 
-let onStreamRecord = null;
+/**
+ * Per-request stream record callbacks, keyed by request id.
+ */
+const streamCallbacks = {};
 
 /**
  * Detecting support for the structured clone algorithm. IE8 and 9, and Firefox
@@ -150,14 +153,12 @@ const makeRequest = ( originalParams, fn ) => {
 	}
 
 	if ( 'function' === typeof params.onStreamRecord ) {
-		// remove onStreamRecord param, which can’t be cloned
-		onStreamRecord = params.onStreamRecord;
-		delete params.onStreamRecord;
+		// Store the stream callback keyed by request id so it can be
+		// looked up when progressive messages arrive from the proxy.
+		streamCallbacks[ id ] = params.onStreamRecord;
 
-		// FIXME @azabani implement stream mode processing
-		// Hint: port the algorithm from wpcom-xhr-request@1.2.0 to /public.api/rest-proxy/provider-
-		// v2.0.js in rWP, then plumb stream records from onmessage below to onStreamRecord (or add
-		// the XMLHttpRequest#response to ondownloadprogress there, then parse the chunks here).
+		// Remove onStreamRecord param, which can't be cloned via postMessage.
+		delete params.onStreamRecord;
 	}
 
 	if ( params.signal ) {
@@ -243,6 +244,7 @@ function submitRequest( params ) {
 		const id = params.callback;
 		const xhr = requests[ id ];
 		delete requests[ id ];
+		delete streamCallbacks[ id ];
 		reject(
 			xhr,
 			WPError( { status_code: 500, error_description: 'proxy iframe element is not loaded' } ),
@@ -456,7 +458,8 @@ function onmessage( e ) {
 	if ( statusCode === 207 ) {
 		// 207 is a signal from rest-proxy. It means, "this isn't the final
 		// response to the query." The proxy supports WebSocket connections
-		// by invoking the original success callback for each message received.
+		// and streaming responses (ndjson, SSE) by invoking the original
+		// success callback for each message received.
 	} else {
 		// this is the final response to this query
 		delete requests[ id ];
@@ -472,11 +475,35 @@ function onmessage( e ) {
 		// add statusCode into headers object
 		headers.status = statusCode;
 
+		// Handle ndjson stream records
 		if ( shouldProcessInStreamMode( headers[ 'Content-Type' ] ) ) {
 			if ( statusCode === 207 ) {
-				onStreamRecord( body );
+				const onStreamRecord = streamCallbacks[ id ];
+				if ( typeof onStreamRecord === 'function' ) {
+					onStreamRecord( body );
+				}
 				return;
 			}
+			// Final ndjson response — clean up the stream callback
+			delete streamCallbacks[ id ];
+		}
+
+		// Handle SSE (Server-Sent Events) stream records
+		if ( shouldProcessInSSEMode( headers[ 'Content-Type' ] ) ) {
+			if ( statusCode === 207 ) {
+				// Progressive SSE event — forward to the per-request onStreamRecord callback.
+				// body is { type, data, lastEventId } as sent by the provider.
+				const onStreamRecord = streamCallbacks[ id ];
+				if ( typeof onStreamRecord === 'function' ) {
+					onStreamRecord( body );
+				}
+				return;
+			}
+
+			// Final SSE message (body.type === 'done', status 200) — clean up and resolve.
+			delete streamCallbacks[ id ];
+			resolve( xhr, body, headers );
+			return;
 		}
 	}
 
@@ -491,11 +518,21 @@ function onmessage( e ) {
 }
 
 /**
- * Returns true iff stream mode processing is required (see wpcom-xhr-request@1.2.0).
+ * Returns true iff ndjson stream mode processing is required.
  * @param {string} contentType response Content-Type header value
+ * @returns {boolean}
  */
 function shouldProcessInStreamMode( contentType ) {
 	return /^application[/]x-ndjson($|;)/.test( contentType );
+}
+
+/**
+ * Returns true iff SSE (Server-Sent Events) stream mode processing is required.
+ * @param {string} contentType response Content-Type header value
+ * @returns {boolean}
+ */
+function shouldProcessInSSEMode( contentType ) {
+	return /^text[/]event-stream($|;)/.test( contentType );
 }
 
 /**
@@ -517,6 +554,7 @@ function onprogress( data ) {
  * Emits the "load" event on the `xhr`.
  * @param {window.XMLHttpRequest} xhr
  * @param {Object} body
+ * @param {Object} headers
  */
 
 function resolve( xhr, body, headers ) {
@@ -530,6 +568,7 @@ function resolve( xhr, body, headers ) {
  * Emits the "error" event on the `xhr`.
  * @param {window.XMLHttpRequest} xhr
  * @param {Error} err
+ * @param {Object} headers
  */
 
 function reject( xhr, err, headers ) {
