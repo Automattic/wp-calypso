@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { WordPressLogo } from '@automattic/components/src/logos/wordpress-logo';
 import { useQueryClient, useIsFetching } from '@tanstack/react-query';
 import { CatchNotFound, Outlet, useRouterState, useRouter } from '@tanstack/react-router';
@@ -34,6 +35,7 @@ const SLOW_THRESHOLD_MS = 100;
 const VERY_SLOW_THRESHOLD_MS = 6000;
 
 function Root() {
+	const isOmnibar = isEnabled( 'dashboard/omnibar' );
 	const { name, supports, LoadingLogo = WordPressLogo } = useAppContext();
 	const isDesktop = useViewportMatch( 'medium' );
 	const [ isResponsiveSidebarOpen, setIsResponsiveSidebarOpen ] = useState( false );
@@ -123,7 +125,7 @@ function Root() {
 				/>
 			) }
 			{ ( isInitialLoad || isVerySlowNavigation ) && <LoadingLogo className="wpcom-site__logo" /> }
-			{ ! isVerySlowNavigation && (
+			{ ! isVerySlowNavigation && isOmnibar && (
 				<div className="dashboard-root__body">
 					{ isDesktop && <Sidebar /> }
 					{ ! isDesktop && (
@@ -148,6 +150,16 @@ function Root() {
 						</main>
 					</div>
 				</div>
+			) }
+			{ ! isVerySlowNavigation && ! isOmnibar && (
+				<>
+					<Header />
+					<main>
+						<CatchNotFound fallback={ NotFound }>
+							<Outlet />
+						</CatchNotFound>
+					</main>
+				</>
 			) }
 			{ supports.commandPalette && <CommandPalette /> }
 			<Snackbars />

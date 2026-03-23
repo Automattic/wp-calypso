@@ -4,7 +4,7 @@ import { __experimentalVStack as VStack, useNavigator } from '@wordpress/compone
 import { __ } from '@wordpress/i18n';
 import { Suspense } from 'react';
 import { SidebarBackButton } from '../../components/sidebar';
-import DomainMenu from '../domain-menu';
+import { DomainMenuSidebar } from '../domain-menu';
 import DomainSwitcher from '../domain-switcher';
 
 export default function DomainSidebar() {
@@ -24,7 +24,7 @@ export default function DomainSidebar() {
 				<Suspense fallback={ null }>
 					<DomainSwitcher domain={ domain } />
 				</Suspense>
-				<DomainMenu domainName={ domainName } />
+				<DomainMenuSidebar domainName={ domainName } />
 			</VStack>
 		</VStack>
 	);

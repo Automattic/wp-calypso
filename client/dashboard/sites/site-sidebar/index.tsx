@@ -7,7 +7,7 @@ import { useAppContext } from '../../app/context';
 import { SidebarBackButton, SidebarMenu } from '../../components/sidebar';
 import { canSwitchEnvironment } from '../features';
 import EnvironmentSwitcher from '../site/environment-switcher-v2';
-import SiteMenu from '../site-menu';
+import { SiteMenuSidebar } from '../site-menu';
 
 export default function SiteSidebar() {
 	const { params } = useNavigator();
@@ -32,7 +32,7 @@ export default function SiteSidebar() {
 						{ canSwitchEnvironment( site ) && <EnvironmentSwitcher site={ site } /> }
 					</SidebarMenu>
 				</Suspense>
-				<SiteMenu site={ site } />
+				<SiteMenuSidebar site={ site } />
 			</VStack>
 		</VStack>
 	);

@@ -12,6 +12,8 @@ import {
 	starEmpty,
 } from '@wordpress/icons';
 import { useAppContext } from '../../app/context';
+import MenuDivider from '../../components/menu-divider';
+import ResponsiveMenu from '../../components/responsive-menu';
 import { SidebarMenu, SidebarMenuItem } from '../../components/sidebar';
 import type { AppConfig, MeSupports } from '../../app/context';
 
@@ -19,7 +21,7 @@ const hasAppSupport = ( supports: AppConfig[ 'supports' ], feature: keyof MeSupp
 	return supports.me && supports.me[ feature ];
 };
 
-const MeMenu = () => {
+export const MeMenuSidebar = () => {
 	const { supports } = useAppContext();
 
 	return (
@@ -62,6 +64,34 @@ const MeMenu = () => {
 				</SidebarMenuItem>
 			) }
 		</SidebarMenu>
+	);
+};
+
+const MeMenu = () => {
+	const { supports } = useAppContext();
+
+	return (
+		<ResponsiveMenu prefix={ <MenuDivider /> }>
+			<ResponsiveMenu.Item to="/me/profile">{ __( 'Profile' ) }</ResponsiveMenu.Item>
+			<ResponsiveMenu.Item to="/me/preferences">{ __( 'Preferences' ) }</ResponsiveMenu.Item>
+			<ResponsiveMenu.Item to="/me/billing">{ __( 'Billing' ) }</ResponsiveMenu.Item>
+			<ResponsiveMenu.Item to="/me/security">{ __( 'Security' ) }</ResponsiveMenu.Item>
+			{ hasAppSupport( supports, 'privacy' ) && (
+				<ResponsiveMenu.Item to="/me/privacy">{ __( 'Privacy' ) }</ResponsiveMenu.Item>
+			) }
+			{ supports.notifications && (
+				<ResponsiveMenu.Item to="/me/notifications">{ __( 'Notifications' ) }</ResponsiveMenu.Item>
+			) }
+			{ supports.reader && (
+				<ResponsiveMenu.Item to="/me/blocked-sites">{ __( 'Blocked sites' ) }</ResponsiveMenu.Item>
+			) }
+			{ isEnabled( 'mcp-settings' ) && (
+				<ResponsiveMenu.Item to="/me/mcp">{ __( 'MCP' ) }</ResponsiveMenu.Item>
+			) }
+			{ hasAppSupport( supports, 'apps' ) && (
+				<ResponsiveMenu.Item to="/me/apps">{ __( 'Apps' ) }</ResponsiveMenu.Item>
+			) }
+		</ResponsiveMenu>
 	);
 };
 

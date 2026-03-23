@@ -6,7 +6,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import MeMenu from '../me-menu';
+import { MeMenuSidebar } from '../me-menu';
 
 import './style.scss';
 
@@ -34,7 +34,7 @@ export default function MeSidebar() {
 					</Text>
 				</VStack>
 			</HStack>
-			<MeMenu />
+			<MeMenuSidebar />
 		</VStack>
 	);
 }

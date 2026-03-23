@@ -9,7 +9,7 @@ import MeSidebar from '../../me/me-sidebar';
 import SiteSidebar from '../../sites/site-sidebar';
 import { useAnalytics } from '../analytics';
 import { useAppContext } from '../context';
-import PrimaryMenu from '../primary-menu';
+import { PrimaryMenuSidebar } from '../primary-menu';
 import RouteErrorBoundary from './error';
 import { getScreenPath, NavigatorRouteSync } from './navigator-route-sync';
 
@@ -75,7 +75,7 @@ export default function Sidebar( { onNavigate }: { onNavigate?: () => void } ) {
 				<NavigatorRouteSync screenPath={ screenPath } />
 
 				<Navigator.Screen path="/">
-					<PrimaryMenu />
+					<PrimaryMenuSidebar />
 				</Navigator.Screen>
 
 				<Navigator.Screen path="/sites/:siteSlug">
