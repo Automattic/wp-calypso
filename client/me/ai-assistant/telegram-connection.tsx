@@ -1,5 +1,6 @@
 import { Button, CompactCard } from '@automattic/components';
 import React from 'react';
+import { getTelegramConnectionDescription } from '../telegram/get-telegram-connection-description';
 import { useTelegramDollyWidget } from '../telegram/use-telegram-dolly-widget';
 import './style.scss';
 
@@ -34,13 +35,21 @@ export default function TelegramConnection() {
 			</div>
 
 			<div className="ai-assistant__telegram-connection-description">
-				{ isStatusReady && isConnected
-					? translate( 'Your account is {{strong}}connected{{/strong}} to Telegram.', {
+				{ getTelegramConnectionDescription( {
+					isStatusReady,
+					isConnected,
+					connectedDescription: translate(
+						'Your account is {{strong}}connected{{/strong}} to Telegram.',
+						{
 							components: {
 								strong: <span className="ai-assistant__telegram-connected-word" />,
 							},
-					  } )
-					: translate( 'Connect Telegram to enable AI Assistant features on your account.' ) }
+						}
+					),
+					disconnectedDescription: translate(
+						'Connect Telegram to enable AI Assistant features on your account.'
+					),
+				} ) }
 			</div>
 		</CompactCard>
 	);

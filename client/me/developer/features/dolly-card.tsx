@@ -2,6 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button, Card } from '@automattic/components';
 import React from 'react';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import { getTelegramConnectionDescription } from '../../telegram/get-telegram-connection-description';
 import {
 	useTelegramDollyWidget,
 	TelegramAuthPayload,
@@ -44,13 +45,21 @@ export const DollyCard = () => {
 			<div className="developer-features-list__item-tag">{ translate( 'New' ) }</div>
 			<div className="developer-features-list__item-title">{ translate( 'Dolly' ) }</div>
 			<div className="developer-features-list__item-description">
-				{ isStatusReady && isConnected
-					? translate( 'Your account is {{strong}}connected{{/strong}} to Telegram.', {
+				{ getTelegramConnectionDescription( {
+					isStatusReady,
+					isConnected,
+					connectedDescription: translate(
+						'Your account is {{strong}}connected{{/strong}} to Telegram.',
+						{
 							components: {
 								strong: <span className="developer-features-list__item-connected-word" />,
 							},
-					  } )
-					: translate( 'Connect Dolly to Telegram to start using it with your account.' ) }
+						}
+					),
+					disconnectedDescription: translate(
+						'Connect Dolly to Telegram to start using it with your account.'
+					),
+				} ) }
 			</div>
 			<div className="developer-features-list__item-learn-more">
 				{ renderConnectAction() }
