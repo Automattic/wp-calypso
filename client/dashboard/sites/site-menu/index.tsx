@@ -1,17 +1,5 @@
-import { HostingFeatures } from '@automattic/api-core';
 import { isSupportSession } from '@automattic/calypso-support-session';
 import { __ } from '@wordpress/i18n';
-import {
-	backup,
-	category,
-	chartBar,
-	code,
-	formatListBullets,
-	globe,
-	pending,
-	settings,
-	shield,
-} from '@wordpress/icons';
 import {
 	siteOverviewRoute,
 	siteDeploymentsRoute,
@@ -23,8 +11,8 @@ import {
 	siteDomainsRoute,
 	siteSettingsRoute,
 } from '../../app/router/sites';
-import { SidebarExpandableMenuItem, SidebarMenu, SidebarMenuItem } from '../../components/sidebar';
-import { hasHostingFeature } from '../../utils/site-features';
+import MenuDivider from '../../components/menu-divider';
+import ResponsiveMenu from '../../components/responsive-menu';
 import { hasSiteTrialEnded } from '../../utils/site-trial';
 import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
@@ -35,32 +23,33 @@ const SiteMenu = ( { site }: { site: Site } ) => {
 	const siteSlug = site.slug;
 
 	const siteTypeSupports = getSiteTypeFeatureSupports( site );
-
 	if ( hasSiteTrialEnded( site ) ) {
 		return (
-			<SidebarMenu>
-				<SidebarMenuItem to={ `/sites/${ siteSlug }/trial-ended` }>
+			<ResponsiveMenu label={ __( 'Site Menu' ) } prefix={ <MenuDivider /> }>
+				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/trial-ended` }>
 					{ __( 'Trial ended' ) }
-				</SidebarMenuItem>
-			</SidebarMenu>
+				</ResponsiveMenu.Item>
+			</ResponsiveMenu>
 		);
 	}
 
 	if ( site.options?.is_difm_lite_in_progress && ! isSupportSession() ) {
 		return (
-			<SidebarMenu>
-				<SidebarMenuItem to={ `/sites/${ siteSlug }/site-building-in-progress` }>
+			<ResponsiveMenu label={ __( 'Site Menu' ) } prefix={ <MenuDivider /> }>
+				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/site-building-in-progress` }>
 					{ __( 'Site building' ) }
-				</SidebarMenuItem>
+				</ResponsiveMenu.Item>
 				{ siteTypeSupports.domains && (
-					<SidebarMenuItem to={ `/sites/${ siteSlug }/domains` }>
+					<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/domains` }>
 						{ __( 'Domains' ) }
-					</SidebarMenuItem>
+					</ResponsiveMenu.Item>
 				) }
 				{ siteTypeSupports.emails && (
-					<SidebarMenuItem to={ `/sites/${ siteSlug }/emails` }>{ __( 'Emails' ) }</SidebarMenuItem>
+					<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/emails` }>
+						{ __( 'Emails' ) }
+					</ResponsiveMenu.Item>
 				) }
-			</SidebarMenu>
+			</ResponsiveMenu>
 		);
 	}
 
@@ -69,87 +58,56 @@ const SiteMenu = ( { site }: { site: Site } ) => {
 		route.options.staticData?.availableToInaccessibleJetpackSites;
 
 	return (
-		<SidebarMenu>
+		<ResponsiveMenu label={ __( 'Site Menu' ) } prefix={ <MenuDivider /> }>
 			{ isAvailable( siteOverviewRoute ) && (
-				<SidebarMenuItem
-					icon={ category }
-					to={ `/sites/${ siteSlug }` }
-					activeOptions={ { exact: true } }
-				>
+				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }` } activeOptions={ { exact: true } }>
 					{ __( 'Overview' ) }
-				</SidebarMenuItem>
+				</ResponsiveMenu.Item>
 			) }
 			{ isAvailable( siteDeploymentsRoute ) && siteTypeSupports.deployments && (
-				<SidebarMenuItem icon={ code } to={ `/sites/${ siteSlug }/deployments` }>
+				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/deployments` }>
 					{ __( 'Deployments' ) }
-				</SidebarMenuItem>
+				</ResponsiveMenu.Item>
 			) }
 			{ isAvailable( sitePerformanceRoute ) && siteTypeSupports.performance && (
-				<SidebarMenuItem icon={ chartBar } to={ `/sites/${ siteSlug }/performance` }>
+				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/performance` }>
 					{ __( 'Performance' ) }
-				</SidebarMenuItem>
+				</ResponsiveMenu.Item>
 			) }
 			{ isAvailable( siteMonitoringRoute ) && siteTypeSupports.monitoring && (
-				<SidebarMenuItem icon={ pending } to={ `/sites/${ siteSlug }/monitoring` }>
+				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/monitoring` }>
 					{ __( 'Monitoring' ) }
-				</SidebarMenuItem>
+				</ResponsiveMenu.Item>
 			) }
 			{ isAvailable( siteLogsRoute ) && siteTypeSupports.logs && (
-				<SidebarExpandableMenuItem
-					label={ __( 'Logs' ) }
-					icon={ formatListBullets }
-					to={ `/sites/${ siteSlug }/logs` }
-				>
-					<SidebarMenuItem to={ `/sites/${ siteSlug }/logs/activity` }>
-						{ __( 'Activity' ) }
-					</SidebarMenuItem>
-					<SidebarMenuItem to={ `/sites/${ siteSlug }/logs/php` }>
-						{ __( 'PHP errors' ) }
-					</SidebarMenuItem>
-					<SidebarMenuItem to={ `/sites/${ siteSlug }/logs/server` }>
-						{ __( 'Web server' ) }
-					</SidebarMenuItem>
-				</SidebarExpandableMenuItem>
+				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/logs` }>
+					{ __( 'Logs' ) }
+				</ResponsiveMenu.Item>
 			) }
-			{ isAvailable( siteScanRoute ) &&
-				siteTypeSupports.scan &&
-				( hasHostingFeature( site, HostingFeatures.SCAN_SELF_SERVE ) ? (
-					<SidebarExpandableMenuItem
-						label={ __( 'Scan' ) }
-						icon={ shield }
-						to={ `/sites/${ siteSlug }/scan` }
-					>
-						<SidebarMenuItem to={ `/sites/${ siteSlug }/scan/active` }>
-							{ __( 'Active threats' ) }
-						</SidebarMenuItem>
-						<SidebarMenuItem to={ `/sites/${ siteSlug }/scan/history` }>
-							{ __( 'History' ) }
-						</SidebarMenuItem>
-					</SidebarExpandableMenuItem>
-				) : (
-					<SidebarMenuItem icon={ shield } to={ `/sites/${ siteSlug }/scan` }>
-						{ __( 'Scan' ) }
-					</SidebarMenuItem>
-				) ) }
+			{ isAvailable( siteScanRoute ) && siteTypeSupports.scan && (
+				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/scan` }>
+					{ __( 'Scan' ) }
+				</ResponsiveMenu.Item>
+			) }
 			{ isAvailable( siteBackupsRoute ) && siteTypeSupports.backups && (
-				<SidebarMenuItem icon={ backup } to={ `/sites/${ siteSlug }/backups` }>
+				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/backups` }>
 					{ __( 'Backups' ) }
-				</SidebarMenuItem>
+				</ResponsiveMenu.Item>
 			) }
 			{ isAvailable( siteDomainsRoute ) && siteTypeSupports.domains && (
-				<SidebarMenuItem icon={ globe } to={ `/sites/${ siteSlug }/domains` }>
+				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/domains` }>
 					{ __( 'Domains' ) }
-				</SidebarMenuItem>
+				</ResponsiveMenu.Item>
 			) }
 			{ isAvailable( siteSettingsRoute ) &&
 				siteTypeSupports.settings &&
 				site.capabilities?.manage_options &&
 				! isSelfHostedJetpackConnected( site ) && (
-					<SidebarMenuItem icon={ settings } to={ `/sites/${ siteSlug }/settings` }>
+					<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/settings` }>
 						{ __( 'Settings' ) }
-					</SidebarMenuItem>
+					</ResponsiveMenu.Item>
 				) }
-		</SidebarMenu>
+		</ResponsiveMenu>
 	);
 };
 

@@ -1,10 +1,13 @@
 import { domainQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
+import { useRouter } from '@tanstack/react-router';
 import { __experimentalVStack as VStack, useNavigator } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { category, envelope } from '@wordpress/icons';
 import { Suspense } from 'react';
-import { SidebarBackButton } from '../../components/sidebar';
-import DomainMenu from '../domain-menu';
+import { useAppContext } from '../../app/context';
+import { emailsRoute } from '../../app/router/emails';
+import { SidebarBackButton, SidebarMenu, SidebarMenuItem } from '../../components/sidebar';
 import DomainSwitcher from '../domain-switcher';
 
 export default function DomainSidebar() {
@@ -24,8 +27,34 @@ export default function DomainSidebar() {
 				<Suspense fallback={ null }>
 					<DomainSwitcher domain={ domain } />
 				</Suspense>
-				<DomainMenu domainName={ domainName } />
+				<DomainMenuSidebar domainName={ domainName } />
 			</VStack>
 		</VStack>
+	);
+}
+
+function DomainMenuSidebar( { domainName }: { domainName: string } ) {
+	const { supports } = useAppContext();
+	const router = useRouter();
+
+	return (
+		<SidebarMenu>
+			<SidebarMenuItem icon={ category } to={ `/domains/${ domainName }` }>
+				{ __( 'Overview' ) }
+			</SidebarMenuItem>
+			{ supports.emails && (
+				<SidebarMenuItem
+					icon={ envelope }
+					to={
+						router.buildLocation( {
+							to: emailsRoute.fullPath,
+							search: { domainName },
+						} ).href
+					}
+				>
+					{ __( 'Emails' ) }
+				</SidebarMenuItem>
+			) }
+		</SidebarMenu>
 	);
 }

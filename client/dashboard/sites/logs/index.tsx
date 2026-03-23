@@ -1,13 +1,15 @@
 import { HostingFeatures, LogType } from '@automattic/api-core';
 import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
+import { useRouter } from '@tanstack/react-router';
+import { TabPanel } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
 import { useDateRange } from '../../app/hooks/use-date-range';
 import { useLocale } from '../../app/locale';
 import { siteRoute } from '../../app/router/sites';
-import { Card, CardBody } from '../../components/card';
+import { Card, CardBody, CardHeader } from '../../components/card';
 import { DateRangePicker } from '../../components/date-range-picker';
 import { isLast7Days } from '../../components/date-range-picker/utils';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -20,11 +22,13 @@ import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callou
 import SiteActivityLogsDataViews from '../logs-activity/dataviews';
 import SiteLogsDataViews from './dataviews';
 import { getLogsCalloutProps } from './logs-callout';
+import { LOG_TABS } from './utils';
 import './style.scss';
 
 function SiteLogs( { logType }: { logType: LogType } ) {
 	const locale = useLocale();
 	const { siteSlug } = siteRoute.useParams();
+	const router = useRouter();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 
 	const settingsUrl = site.options?.admin_url
@@ -111,6 +115,19 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 		return true;
 	};
 
+	const handleTabChange = ( tab: LogType ) => {
+		if ( logType === tab ) {
+			return;
+		}
+
+		if ( tab === LogType.PHP ) {
+			router.navigate( { to: `/sites/${ siteSlug }/logs/php` } );
+		} else if ( tab === LogType.ACTIVITY ) {
+			router.navigate( { to: `/sites/${ siteSlug }/logs/activity` } );
+		} else {
+			router.navigate( { to: `/sites/${ siteSlug }/logs/server` } );
+		}
+	};
 	const hasActivityLogAccess =
 		hasHostingFeature( site, HostingFeatures.ACTIVITY_LOG ) ||
 		hasPlanFeature( site, HostingFeatures.ACTIVITY_LOG );
@@ -157,6 +174,25 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 			}
 		>
 			<Card className={ `site-logs-card site-logs-card--${ logType }` }>
+				<CardHeader style={ { paddingBottom: '0' } }>
+					<TabPanel
+						className="site-logs-tabs"
+						activeClass="is-active"
+						tabs={ LOG_TABS }
+						onSelect={ ( tabName ) => {
+							if (
+								tabName === LogType.PHP ||
+								tabName === LogType.SERVER ||
+								tabName === LogType.ACTIVITY
+							) {
+								handleTabChange( tabName );
+							}
+						} }
+						initialTabName={ logType }
+					>
+						{ () => null }
+					</TabPanel>
+				</CardHeader>
 				<CardBody>
 					{ logType === LogType.PHP || logType === LogType.SERVER ? (
 						<HostingFeatureGatedWithCallout site={ site } { ...getLogsCalloutProps() }>
