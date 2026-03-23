@@ -1,21 +1,13 @@
 import freeze from 'deep-freeze';
 import { NOTICE_CREATE } from 'calypso/state/action-types';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import {
-	READER_FEED_REQUEST_SUCCESS,
-	READER_FEED_REQUEST_FAILURE,
-} from 'calypso/state/reader/action-types';
 import { requestFeedSearch, receiveFeedSearch } from 'calypso/state/reader/feed-searches/actions';
 import queryKey from 'calypso/state/reader/feed-searches/query-key';
-import { requestFeed } from 'calypso/state/reader/feeds/actions';
 import {
 	requestReadFeedSearch,
 	receiveReadFeedSearchSuccess,
 	receiveReadFeedSearchError,
 	fromApi,
-	requestReadFeed,
-	receiveReadFeedSuccess,
-	receiveReadFeedError,
 } from '../';
 
 const feeds = freeze( [ { blog_ID: 123, subscribe_URL: 'http://example.com' } ] );
@@ -101,52 +93,6 @@ describe( 'wpcom-api', () => {
 
 				expect( receiveReadFeedSearchError( action ) ).toMatchObject( {
 					type: NOTICE_CREATE,
-				} );
-			} );
-		} );
-	} );
-
-	describe( 'request a single feed', () => {
-		const feedId = 123;
-
-		describe( '#requestReadFeed', () => {
-			test( 'should dispatch a http request', () => {
-				const action = requestFeed( feedId );
-
-				expect( requestReadFeed( action ) ).toMatchObject(
-					http(
-						{
-							apiVersion: '1.1',
-							method: 'GET',
-							path: `/read/feed/${ feedId }`,
-						},
-						action
-					)
-				);
-			} );
-		} );
-
-		describe( '#receiveReadFeedSuccess', () => {
-			test( 'should dispatch an action with the feed results', () => {
-				const action = requestFeed( feedId );
-				const apiResponse = { feed_ID: 123 };
-
-				expect( receiveReadFeedSuccess( action, apiResponse ) ).toMatchObject( {
-					type: READER_FEED_REQUEST_SUCCESS,
-					payload: { feed_ID: 123 },
-				} );
-			} );
-		} );
-
-		describe( '#receiveReadFeedError', () => {
-			test( 'should dispatch an error action', () => {
-				const action = requestFeed( feedId );
-				const apiResponse = { error: '417' };
-
-				expect( receiveReadFeedError( action, apiResponse ) ).toMatchObject( {
-					type: READER_FEED_REQUEST_FAILURE,
-					payload: { feed_ID: 123 },
-					error: apiResponse,
 				} );
 			} );
 		} );
