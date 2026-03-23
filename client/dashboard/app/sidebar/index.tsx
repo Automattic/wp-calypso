@@ -26,10 +26,15 @@ export function ResponsiveSidebar( { isOpen, onClose }: { isOpen: boolean; onClo
 export default function Sidebar( { onNavigate }: { onNavigate?: () => void } ) {
 	const { Logo, name } = useAppContext();
 	const { recordTracksEvent } = useAnalytics();
-	const resolvedPathname = useRouterState( {
-		select: ( state ) => state.resolvedLocation?.pathname ?? state.location.pathname,
+	const { resolvedPathname, hasError } = useRouterState( {
+		select: ( state ) => ( {
+			resolvedPathname: state.resolvedLocation?.pathname ?? state.location.pathname,
+			hasError: state.matches.some(
+				( match ) => match.status === 'error' || match.status === 'notFound'
+			),
+		} ),
 	} );
-	const screenPath = getScreenPath( resolvedPathname );
+	const screenPath = getScreenPath( resolvedPathname, hasError );
 	const initialPath = useMemo( () => screenPath, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	// Close responsive panel when a navigation link is clicked
