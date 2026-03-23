@@ -15,7 +15,11 @@ interface Source {
 	content?: string;
 }
 
-export default function SourcesDisplay( { sources }: { sources: Source[] } ) {
+interface Props {
+	sources: Source[];
+}
+
+export default function SourcesDisplay( { sources }: Props ) {
 	const navigate = useNavigate();
 	const { pathname, state } = useLocation();
 	const { getActiveSessionId } = useAgentsManagerContext();
@@ -50,9 +54,9 @@ export default function SourcesDisplay( { sources }: { sources: Source[] } ) {
 	return (
 		<FoldableCard
 			className="agents-manager-sources-display"
-			summary={ __( 'Sources' ) }
-			expandedSummary={ __( 'Sources' ) }
-			screenReaderText="More"
+			summary={ __( 'Sources', '__i18n_text_domain__' ) }
+			expandedSummary={ __( 'Sources', '__i18n_text_domain__' ) }
+			screenReaderText={ __( 'More', '__i18n_text_domain__' ) }
 			iconSize={ 16 }
 			clickableHeader
 			smooth

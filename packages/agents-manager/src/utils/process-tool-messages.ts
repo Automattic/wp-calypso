@@ -16,8 +16,7 @@ const SILENT_TOOL_IDS = [ 'big_sky__set_processing_state' ];
  */
 function extractSourcesFromContent( messages: UIMessage[] ): UIMessage[] {
 	return messages.map( ( message ) => {
-		// @ts-expect-error -- `assistant` comes from Big Sky messages
-		if ( message.role !== 'agent' && message.role !== 'assistant' ) {
+		if ( message.role !== 'agent' ) {
 			return message;
 		}
 
