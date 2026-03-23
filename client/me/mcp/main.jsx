@@ -1,19 +1,19 @@
 import { sitesQuery, userSettingsQuery, userSettingsMutation } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
+import { Card } from '@automattic/components';
+import SummaryButton from '@automattic/components/src/summary-button';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
-	Button,
+	Icon,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 	ToggleControl,
-	Card,
-	CardBody,
 } from '@wordpress/components';
+import { connection, notAllowed, pencil, seen } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
-import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -21,340 +21,206 @@ import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import ReauthRequired from 'calypso/me/reauth-required';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { SectionHeader } from '../../dashboard/components/section-header';
-import PreferencesLoginSiteDropdown from '../../dashboard/me/preferences-primary-site/site-dropdown';
-import { getAccountMcpAbilities, getDisabledSiteIds, getSiteAccountToolsEnabled } from './utils';
+import { filterVisibleTools, isReadTool, isWriteTool } from './categories';
+import { getAccessSummaryBadge, getWriteAccessBadge } from './hub-helpers';
+import { useMcpPageChrome } from './mcp-page-header';
+import { getAccountMcpAbilities, getDisabledSiteIds, getEnabledSiteIds } from './utils';
+
+import './style.scss';
 
 function McpComponent( { path } ) {
 	const translate = useTranslate();
+	const { documentTitle, navigationHeaderProps } = useMcpPageChrome();
 	const queryClient = useQueryClient();
 	const dispatch = useDispatch();
-	const { data: sites = [] } = useQuery( sitesQuery( 'all', { site_visibility: 'visible' } ) );
 	const {
 		data: userSettings,
 		isLoading: isLoadingUserSettings,
 		error: userSettingsError,
 	} = useQuery( userSettingsQuery() );
+	const { isLoading: isLoadingSites, error: sitesError } = useQuery(
+		sitesQuery( 'all', { site_visibility: 'visible', include_a8c_owned: false } )
+	);
 
-	// Site selector state for disabling MCP access on specific sites
-	const [ selectedSiteId, setSelectedSiteId ] = useState( '' );
-	const disabledSiteIds = getDisabledSiteIds( userSettings || {} );
-	const disabledSites = disabledSiteIds.map( ( siteId ) => {
-		const site = sites.find( ( siteEntry ) => siteEntry.ID === siteId );
-		const name = site?.name || translate( 'Site ID: %(siteId)s', { args: { siteId } } );
-		const domain = site?.URL ? site.URL.replace( /^https?:\/\//, '' ) : '';
-
-		return {
-			id: siteId,
-			name,
-			domain,
-		};
-	} );
-
-	// Reauth state
 	const [ reauthRequired, setReauthRequired ] = useState( false );
 
-	// Monitor reauth status
 	useEffect( () => {
-		const checkReauth = () => {
-			const reauth = twoStepAuthorization.isReauthRequired();
-			setReauthRequired( reauth );
-		};
-
+		const checkReauth = () => setReauthRequired( twoStepAuthorization.isReauthRequired() );
 		twoStepAuthorization.on( 'change', checkReauth );
-		checkReauth(); // Initial check
-
+		checkReauth();
 		return () => twoStepAuthorization.off( 'change', checkReauth );
-	}, [] ); // Empty dependency array - only run once on mount
+	}, [] );
 
-	// Use the standard userSettingsMutation with simple auto-save
 	const mutation = useMutation( {
 		...userSettingsMutation(),
 		onSuccess: ( newData ) => {
-			// Update the cache with the new data from the API response
 			queryClient.setQueryData( userSettingsQuery().queryKey, newData );
-			// Show success notification using Redux dispatch with unique ID to prevent stacking
-			dispatch( successNotice( translate( 'MCP settings saved.' ), { id: 'mcp-settings-saved' } ) );
+			dispatch( successNotice( translate( 'Settings saved.' ), { id: 'mcp-settings-saved' } ) );
 		},
-		// eslint-disable-next-line no-unused-vars
-		onError: ( error ) => {
-			// Show error notification using Redux dispatch with unique ID to prevent stacking
+		onError: () => {
 			dispatch(
-				errorNotice( translate( 'Failed to save MCP settings.' ), { id: 'mcp-settings-error' } )
+				errorNotice( translate( 'Failed to save settings.' ), { id: 'mcp-settings-error' } )
 			);
 		},
 	} );
 
-	// Handle error states only - allow loading to continue so reauth can show
-	if ( userSettingsError ) {
+	if ( userSettingsError || sitesError ) {
 		return null;
 	}
 
-	// Common layout wrapper
-	const renderLayout = ( children ) => (
-		<Main wideLayout className="mcp">
-			<PageViewTracker path={ path } title="MCP Account Settings" />
-			<DocumentHead title={ translate( 'Model Context Protocol (MCP) Account Settings' ) } />
-			<NavigationHeader
-				navigationItems={ [] }
-				title={ translate( 'MCP Account Settings' ) }
-				subtitle={ translate(
-					'MCP (Model Context Protocol) enables AI assistants to securely access and interact with your WordPress.com data. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-					{
-						components: {
-							learnMoreLink: <InlineSupportLink supportContext="mcp" showIcon={ false } />,
-						},
-					}
-				) }
-			/>
-			<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
-			{ ! isLoadingUserSettings && ! reauthRequired && children }
-		</Main>
-	);
-
-	// Get account-level tools from user settings using the new nested structure
 	const mcpAbilities = getAccountMcpAbilities( userSettings || {} );
-	const availableTools = Object.entries( mcpAbilities );
-	const hasTools = availableTools.length > 0;
+	const visibleTools = filterVisibleTools( Object.entries( mcpAbilities ) );
+	const readTools = visibleTools.filter( ( [ , t ] ) => isReadTool( t ) );
+	const writeTools = visibleTools.filter( ( [ , t ] ) => isWriteTool( t ) );
 
-	// Check if any tools are enabled (for master toggle state)
-	const anyToolsEnabled =
-		hasTools && Object.values( mcpAbilities ).some( ( tool ) => tool.enabled );
+	const readEnabled = readTools.filter( ( [ , t ] ) => t.enabled ).length;
+	const writeEnabled = writeTools.filter( ( [ , t ] ) => t.enabled ).length;
 
-	const handleToolChange = ( toolId, enabled ) => {
-		// Create minimal payload with only the changed tool (just boolean)
-		const payload = {
-			mcp_abilities: {
-				account: {
-					[ toolId ]: enabled,
-				},
-			},
-		};
-		mutation.mutate( payload );
-	};
+	const readBadge = getAccessSummaryBadge( readEnabled, readTools.length, translate );
+	const writeBadge = getWriteAccessBadge( writeEnabled, writeTools.length, translate );
 
-	const handleMasterToggle = ( enabled ) => {
-		// Create payload with all tools set to the same state (just booleans)
+	const hasTools = visibleTools.length > 0;
+	const anyToolsEnabled = hasTools && visibleTools.some( ( [ , tool ] ) => tool.enabled );
+
+	const handleToggleAll = ( enabled ) => {
 		const accountAbilities = {};
 		Object.keys( mcpAbilities ).forEach( ( toolId ) => {
 			accountAbilities[ toolId ] = enabled;
 		} );
 
-		const payload = {
+		mutation.mutate( {
 			mcp_abilities: {
 				account: accountAbilities,
 			},
-		};
-		mutation.mutate( payload );
+		} );
 	};
 
-	const handleSiteToggle = ( siteId, enabled ) => {
-		// Get current sites array from nested structure
-		const currentSites = userSettings?.mcp_abilities?.sites || [];
+	const disabledSiteCount = getDisabledSiteIds( userSettings || {} ).length;
+	const enabledSiteCount = getEnabledSiteIds( userSettings || {} ).length;
+	const mcpAddSiteBadgeText =
+		enabledSiteCount > 0
+			? translate( '%(count)d sites', { args: { count: enabledSiteCount } } )
+			: translate( 'No sites' );
+	const mcpSiteExceptionsBadgeText = translate( '%(count)d exceptions', {
+		args: { count: disabledSiteCount },
+	} );
 
-		// Find existing site entry
-		const siteIndex = currentSites.findIndex( ( site ) => site.blog_id === parseInt( siteId ) );
+	const renderLayout = ( children ) => (
+		<Main wideLayout className="mcp">
+			<PageViewTracker path={ path } title="AI and MCP" />
+			<DocumentHead title={ documentTitle } />
+			<NavigationHeader { ...navigationHeaderProps } />
+			<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+			{ ! isLoadingUserSettings && ! reauthRequired && children }
+		</Main>
+	);
 
-		let newSites;
-		if ( enabled ) {
-			// Enabling: remove from sites array (use defaults)
-			if ( siteIndex >= 0 ) {
-				// Remove the site entry entirely
-				newSites = currentSites.filter( ( site, index ) => index !== siteIndex );
-			} else {
-				// Site not in array, already using defaults
-				newSites = currentSites;
-			}
-		} else if ( siteIndex >= 0 ) {
-			// Disabling: update existing site entry
-			newSites = [ ...currentSites ];
-			newSites[ siteIndex ] = {
-				...newSites[ siteIndex ],
-				account_tools_enabled: false,
-			};
-		} else {
-			// Disabling: add new site entry with override
-			newSites = [
-				...currentSites,
-				{
-					blog_id: parseInt( siteId ),
-					account_tools_enabled: false,
-					abilities: {},
-				},
-			];
-		}
-
-		// For the API payload, we need to send the site being toggled as an array
-		// The API expects sites to be an array with blog_id fields
-		const sitesPayload = [];
-		if ( enabled ) {
-			// Enabling: send the site with account_tools_enabled: true
-			sitesPayload.push( {
-				blog_id: parseInt( siteId ),
-				account_tools_enabled: true,
-			} );
-		} else {
-			// Disabling: send the site with account_tools_enabled: false
-			sitesPayload.push( {
-				blog_id: parseInt( siteId ),
-				account_tools_enabled: false,
-			} );
-		}
-
-		// Only include sites in payload if there are any sites to send
-		// Don't include account object - only send the sites being changed
-		const payload = {
-			mcp_abilities: {
-				...( sitesPayload.length > 0 && { sites: sitesPayload } ),
-			},
-		};
-		mutation.mutate( payload );
-	};
-
-	// Helper function to render tools section using ExtrasToggleCard pattern
-	const renderToolsSection = ( tools ) => {
-		if ( ! tools || tools.length === 0 ) {
-			return null;
-		}
-
-		return (
-			<Card isRounded={ false }>
-				<CardBody>
-					<VStack spacing={ 8 }>
+	const renderContent = () => (
+		<VStack spacing={ 0 } className="mcp-hub">
+			<Card className="mcp-hub__panel">
+				<VStack spacing={ 0 }>
+					<VStack spacing={ 4 }>
 						<SectionHeader
 							level={ 3 }
-							title={ translate( 'Available MCP Tools' ) }
-							description={ translate( 'Choose which AI tools you want to use.' ) }
+							title={ translate( 'External AI assistant access' ) }
+							description={ translate(
+								'Allow external AI assistants to access your WordPress.com account and sites via MCP.'
+							) }
 						/>
 
-						{ /* Individual tool toggles */ }
-						<VStack>
-							{ tools.map( ( [ toolId, tool ] ) => (
-								<ToggleControl
-									key={ toolId }
-									__nextHasNoMarginBottom
-									checked={ tool.enabled }
-									disabled={ mutation.isPending }
-									label={ tool.title }
-									help={ tool.description }
-									onChange={ ( checked ) => handleToolChange( toolId, checked ) }
-								/>
-							) ) }
-						</VStack>
-					</VStack>
-				</CardBody>
-			</Card>
-		);
-	};
-
-	const renderContent = () => {
-		// Use mcpAbilities directly since we're using auto-save
-		const accountToolsToShow = availableTools;
-
-		return (
-			<VStack spacing={ 8 }>
-				{ /* MCP Tool Access Master Toggle */ }
-				<Card isRounded={ false }>
-					<CardBody>
-						<VStack spacing={ 8 }>
-							<SectionHeader
-								level={ 3 }
-								title={ translate( 'MCP Tool Access' ) }
-								description={ translate(
-									'Control which MCP tools can access your WordPress.com account and sites.'
-								) }
+						{ hasTools && ! anyToolsEnabled ? (
+							<ToggleControl
+								__nextHasNoMarginBottom
+								checked={ false }
+								disabled={ mutation.isPending }
+								onChange={ handleToggleAll }
+								label={ <Text weight="600">{ translate( 'Enable MCP access' ) }</Text> }
 							/>
+						) : (
+							<ToggleControl
+								__nextHasNoMarginBottom
+								checked={ anyToolsEnabled }
+								disabled={ mutation.isPending || ! hasTools }
+								onChange={ handleToggleAll }
+								label={ <Text weight="600">{ translate( 'Enable MCP access' ) }</Text> }
+								help={
+									! hasTools
+										? translate( 'No MCP tools are available for your account yet.' )
+										: undefined
+								}
+							/>
+						) }
+					</VStack>
 
-							<div
-								style={ {
-									display: 'flex',
-									justifyContent: 'space-between',
-									alignItems: 'center',
-								} }
-							>
-								<ToggleControl
-									__nextHasNoMarginBottom
-									checked={ anyToolsEnabled }
-									onChange={ handleMasterToggle }
-									label={ <Text weight="bold">{ translate( 'Enable MCP Tool Access' ) }</Text> }
+					{ /* TODO: Restore when site-level MCP PRs land */ }
+					{ false && hasTools && ! anyToolsEnabled && (
+						<VStack spacing={ 0 } className="mcp-hub__panel-rows">
+							{ ! isLoadingSites && (
+								<SummaryButton
+									href="/me/mcp/add-site"
+									title={ translate( 'Add to specific sites' ) }
+									decoration={
+										<Icon className="mcp-hub__summary-icon" icon={ connection } size={ 24 } />
+									}
+									badges={ [ { text: mcpAddSiteBadgeText } ] }
+									density="medium"
 								/>
-								{ anyToolsEnabled && (
-									<Button variant="secondary" href="/me/mcp-setup">
-										{ translate( 'Configure MCP Client' ) }
-									</Button>
-								) }
-							</div>
+							) }
 						</VStack>
-					</CardBody>
-				</Card>
+					) }
+				</VStack>
 
-				{ /* Account Tools Sections */ }
-				{ hasTools && renderToolsSection( accountToolsToShow ) }
-
-				{ /* Site-Specific Settings */ }
 				{ hasTools && anyToolsEnabled && (
-					<Card isRounded={ false }>
-						<CardBody>
-							<VStack spacing={ 8 }>
-								<SectionHeader
-									level={ 3 }
-									title={ translate( 'Site-specific MCP settings' ) }
-									description={ translate(
-										'Choose a site to block all MCP tools for all users on that site. This overrides your account settings.'
-									) }
-								/>
-
-								<PreferencesLoginSiteDropdown
-									sites={ sites }
-									value={ selectedSiteId }
-									onChange={ setSelectedSiteId }
-									label={ translate( 'Select a site to disable MCP access' ) }
-									isLoading={ false }
-								/>
-
-								{ selectedSiteId && anyToolsEnabled && (
-									<ToggleControl
-										__nextHasNoMarginBottom
-										checked={ getSiteAccountToolsEnabled( userSettings || {}, selectedSiteId ) }
-										disabled={ mutation.isPending }
-										onChange={ ( enabled ) => handleSiteToggle( selectedSiteId, enabled ) }
-										label={
-											<Text weight="bold">{ translate( 'Enable MCP access for this site' ) }</Text>
-										}
-									/>
-								) }
-								{ disabledSites.length > 0 && (
-									<VStack spacing={ 4 }>
-										<SectionHeader
-											level={ 3 }
-											title={ translate( 'Sites with disabled MCP access' ) }
-											description={ translate(
-												'Sites with disabled MCP access are not accessible to AI assistants.'
-											) }
-										/>
-										<VStack>
-											{ disabledSites.map( ( site ) => (
-												<ToggleControl
-													key={ site.id }
-													__nextHasNoMarginBottom
-													checked={ false }
-													disabled={ mutation.isPending }
-													onChange={ ( enabled ) => handleSiteToggle( site.id, enabled ) }
-													label={ site.name }
-													help={ site.domain }
-												/>
-											) ) }
-										</VStack>
-									</VStack>
-								) }
-							</VStack>
-						</CardBody>
-					</Card>
+					<VStack spacing={ 0 } className="mcp-hub__panel-rows">
+						<SummaryButton
+							href="/me/mcp/read"
+							title={ translate( 'Read' ) }
+							decoration={ <Icon className="mcp-hub__summary-icon" icon={ seen } size={ 24 } /> }
+							badges={ [ { text: readBadge.text, intent: readBadge.intent } ] }
+							density="medium"
+						/>
+						<SummaryButton
+							href="/me/mcp/write"
+							title={ translate( 'Write' ) }
+							decoration={ <Icon className="mcp-hub__summary-icon" icon={ pencil } size={ 24 } /> }
+							badges={ [ { text: writeBadge.text, intent: writeBadge.intent } ] }
+							density="medium"
+						/>
+						<SummaryButton
+							href="/me/mcp/mcp-sites"
+							title={ translate( 'Site exceptions' ) }
+							decoration={
+								<Icon className="mcp-hub__summary-icon" icon={ notAllowed } size={ 24 } />
+							}
+							badges={
+								disabledSiteCount > 0
+									? [ { text: mcpSiteExceptionsBadgeText, intent: 'warning' } ]
+									: []
+							}
+							density="medium"
+						/>
+					</VStack>
 				) }
-			</VStack>
-		);
-	};
+			</Card>
 
-	// Check if MCP settings feature is enabled
+			{ hasTools && anyToolsEnabled && (
+				<Card className="mcp-hub__panel mcp-hub__panel--connect">
+					<SummaryButton
+						href="/me/mcp/setup"
+						title={ translate( 'Connect external AI assistant' ) }
+						description={ translate(
+							'Get instructions for connecting your external AI assistant.'
+						) }
+						decoration={
+							<Icon className="mcp-hub__summary-icon" icon={ connection } size={ 24 } />
+						}
+						density="low"
+					/>
+				</Card>
+			) }
+		</VStack>
+	);
+
 	if ( ! config.isEnabled( 'mcp-settings' ) ) {
 		return null;
 	}
