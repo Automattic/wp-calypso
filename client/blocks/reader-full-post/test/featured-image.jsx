@@ -2,13 +2,13 @@
  * @jest-environment jsdom
  */
 import { fireEvent, render } from '@testing-library/react';
-import FeaturedImage from '../featured-image';
+import ReaderFullPostFeaturedImage from '../featured-image';
 
-describe( 'FeaturedImage', () => {
+describe( 'ReaderFullPostFeaturedImage', () => {
 	test( 'sets the source to an empty string if the image fails to load', () => {
 		const nonExistentImage = 'http://sketchy-feed.com/missing-image-2.jpg';
 		const { container } = render(
-			<FeaturedImage post={ { featured_image: nonExistentImage } } maxWidth={ 600 } />
+			<ReaderFullPostFeaturedImage post={ { featured_image: nonExistentImage } } maxWidth={ 600 } />
 		);
 		const div = container.getElementsByClassName( 'reader-full-post__featured-image' )[ 0 ];
 

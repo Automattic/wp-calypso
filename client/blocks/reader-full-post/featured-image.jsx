@@ -12,7 +12,7 @@ function featuredImageAltString( post ) {
 	return typeof alt === 'string' ? alt : '';
 }
 
-export default function FeaturedImage( { post, maxWidth } ) {
+export default function ReaderFullPostFeaturedImage( { post, maxWidth } ) {
 	if ( ! post?.featured_image ) {
 		return null;
 	}
@@ -30,7 +30,7 @@ export default function FeaturedImage( { post, maxWidth } ) {
 	);
 }
 
-FeaturedImage.propTypes = {
+ReaderFullPostFeaturedImage.propTypes = {
 	post: PropTypes.object.isRequired,
 	maxWidth: PropTypes.number.isRequired,
 };
