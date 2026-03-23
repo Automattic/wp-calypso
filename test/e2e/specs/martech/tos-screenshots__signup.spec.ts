@@ -33,7 +33,7 @@ test.describe.fixme( 'ToS acceptance tracking screenshots', { tag: [ tags.LEGAL 
 			for ( const locale of [ ...magnificientNonEnLocales, 'en' ] ) {
 				page.setViewportSize( { width: 1280, height: 720 } );
 				await userSignupPage.visit( { path: locale } );
-				page.waitForSelector( 'body.is-section-stepper' );
+				await page.locator( 'body.is-section-stepper' ).waitFor();
 				await page.screenshot( {
 					path: `tos_white_signup_desktop_${ locale }.png`,
 					fullPage: true,

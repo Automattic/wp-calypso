@@ -77,7 +77,7 @@ test.describe.fixme( 'CoBlocks: Extensions: Cover Styles', { tag: [ tags.GUTENBE
 		} );
 
 		await test.step( 'Then the class for "Bottom Wave" style is present', async () => {
-			await page.waitForSelector( '.wp-block-cover.is-style-bottom-wave' );
+			await page.locator( '.wp-block-cover.is-style-bottom-wave' ).waitFor();
 		} );
 	} );
 } );

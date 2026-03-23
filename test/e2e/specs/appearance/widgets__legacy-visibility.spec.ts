@@ -40,13 +40,13 @@ test.describe(
 
 			await test.step( 'And I insert a Legacy Widget', async function () {
 				await page.getByRole( 'button', { name: 'Add block' } ).click();
-				await page.fill( 'input[placeholder="Search"]', 'Authors' );
-				await page.click( 'button.editor-block-list-item-legacy-widget\\/authors' );
+				await page.locator( 'input[placeholder="Search"]' ).fill( 'Authors' );
+				await page.locator( 'button.editor-block-list-item-legacy-widget\\/authors' ).click();
 			} );
 
 			await test.step( 'Then visibility options are shown for the Legacy Widget', async function () {
-				await page.click( 'a.button:text("Visibility")' );
-				await page.waitForSelector( 'div.widget-conditional' );
+				await page.locator( 'a.button:text("Visibility")' ).click();
+				await page.locator( 'div.widget-conditional' ).waitFor();
 			} );
 		} );
 	}

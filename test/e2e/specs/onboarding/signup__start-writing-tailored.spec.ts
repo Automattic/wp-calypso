@@ -16,6 +16,24 @@ test.describe(
 		let newUserDetailsStartWriting: NewUserResponse;
 		let testUserStartWriting: NewTestUserDetails;
 
+		test.afterAll( 'Delete all user accounts generated', async function () {
+			if ( newUserDetailsStartWriting && testUserStartWriting ) {
+				const restAPIClient = new RestAPIClient(
+					{
+						username: testUserStartWriting.username,
+						password: testUserStartWriting.password,
+					},
+					newUserDetailsStartWriting.body.bearer_token
+				);
+
+				await apiCloseAccount( restAPIClient, {
+					userID: newUserDetailsStartWriting.body.user_id,
+					username: newUserDetailsStartWriting.body.username,
+					email: testUserStartWriting.email,
+				} );
+			}
+		} );
+
 		test( 'One: As a new WordPress.com blogger I can sign up for a new free site and start writing straight away', async ( {
 			flowStartWriting,
 			helperData,
@@ -135,24 +153,6 @@ test.describe(
 				await expect( flowStartWriting.jetpackSocialPageHeading ).toBeVisible();
 				await expect( flowStartWriting.connectAccountsButton ).toBeVisible();
 			} );
-		} );
-
-		test.afterAll( 'Delete all user accounts generated', async function () {
-			if ( newUserDetailsStartWriting && testUserStartWriting ) {
-				const restAPIClient = new RestAPIClient(
-					{
-						username: testUserStartWriting.username,
-						password: testUserStartWriting.password,
-					},
-					newUserDetailsStartWriting.body.bearer_token
-				);
-
-				await apiCloseAccount( restAPIClient, {
-					userID: newUserDetailsStartWriting.body.user_id,
-					username: newUserDetailsStartWriting.body.username,
-					email: testUserStartWriting.email,
-				} );
-			}
 		} );
 	}
 );

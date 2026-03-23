@@ -33,6 +33,14 @@ module.exports = {
 		// viewports (mobile/desktop), non-deterministic UI flows, and runtime
 		// feature flags.
 		'playwright/no-conditional-in-test': 'off',
+		// The no-conditional-expect rule is disabled for the same reason as
+		// no-conditional-in-test: E2E tests legitimately use conditional expects
+		// to handle environment variations (Atomic/Simple/Private), viewports,
+		// and locale-specific assertions.
+		'playwright/no-conditional-expect': 'off',
+		// Allow conditional test.skip() calls (e.g. test.skip(condition, reason))
+		// while still flagging unconditional skips.
+		'playwright/no-skipped-test': [ 'warn', { allowConditional: true } ],
 
 		'jsdoc/tag-lines': [ 'off' ],
 	},

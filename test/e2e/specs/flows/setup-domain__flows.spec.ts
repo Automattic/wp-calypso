@@ -21,6 +21,32 @@ test.describe(
 			newSiteDetails?: NewSiteResponse;
 		}[] = [];
 
+		test.afterAll( 'Delete all user accounts generated', async function () {
+			for ( const account of accountsToCleanup ) {
+				const restAPIClient = new RestAPIClient(
+					{
+						username: account.testUser.username,
+						password: account.testUser.password,
+					},
+					account.newUserDetails.body.bearer_token
+				);
+
+				if ( account.newSiteDetails ) {
+					await apiDeleteSite( restAPIClient, {
+						url: account.newSiteDetails.blog_details.url,
+						id: account.newSiteDetails.blog_details.blogid,
+						name: account.newSiteDetails.blog_details.blogname,
+					} );
+				}
+
+				await apiCloseAccount( restAPIClient, {
+					userID: account.newUserDetails.body.user_id,
+					username: account.newUserDetails.body.username,
+					email: account.testUser.email,
+				} );
+			}
+		} );
+
 		test( 'As a new user I can connect an external domain to a new site', async ( {
 			page,
 			componentDomainSearch,
@@ -661,32 +687,6 @@ test.describe(
 			await test.step( 'And I see the domain transfer product at checkout', async function () {
 				await pageCartCheckout.validateCartItem( targetDomain, 'Domain Transfer' );
 			} );
-		} );
-
-		test.afterAll( 'Delete all user accounts generated', async function () {
-			for ( const account of accountsToCleanup ) {
-				const restAPIClient = new RestAPIClient(
-					{
-						username: account.testUser.username,
-						password: account.testUser.password,
-					},
-					account.newUserDetails.body.bearer_token
-				);
-
-				if ( account.newSiteDetails ) {
-					await apiDeleteSite( restAPIClient, {
-						url: account.newSiteDetails.blog_details.url,
-						id: account.newSiteDetails.blog_details.blogid,
-						name: account.newSiteDetails.blog_details.blogname,
-					} );
-				}
-
-				await apiCloseAccount( restAPIClient, {
-					userID: account.newUserDetails.body.user_id,
-					username: account.newUserDetails.body.username,
-					email: account.testUser.email,
-				} );
-			}
 		} );
 	}
 );

@@ -20,6 +20,32 @@ test.describe(
 			newSiteDetails?: NewSiteResponse;
 		}[] = [];
 
+		test.afterAll( 'Delete all user accounts generated', async function () {
+			for ( const account of accountsToCleanup ) {
+				const restAPIClient = new RestAPIClient(
+					{
+						username: account.testUser.username,
+						password: account.testUser.password,
+					},
+					account.newUserDetails.body.bearer_token
+				);
+
+				if ( account.newSiteDetails ) {
+					await apiDeleteSite( restAPIClient, {
+						url: account.newSiteDetails.blog_details.url,
+						id: account.newSiteDetails.blog_details.blogid,
+						name: account.newSiteDetails.blog_details.blogname,
+					} );
+				}
+
+				await apiCloseAccount( restAPIClient, {
+					userID: account.newUserDetails.body.user_id,
+					username: account.newUserDetails.body.username,
+					email: account.testUser.email,
+				} );
+			}
+		} );
+
 		test( 'As a new user, I can create a free site then use launch-site flow to purchase domain and plan', async ( {
 			page,
 			componentDomainSearch,
@@ -353,32 +379,6 @@ test.describe(
 			await test.step( 'And I see the domain at checkout', async function () {
 				await pageCartCheckout.validateCartItem( selectedDomain );
 			} );
-		} );
-
-		test.afterAll( 'Delete all user accounts generated', async function () {
-			for ( const account of accountsToCleanup ) {
-				const restAPIClient = new RestAPIClient(
-					{
-						username: account.testUser.username,
-						password: account.testUser.password,
-					},
-					account.newUserDetails.body.bearer_token
-				);
-
-				if ( account.newSiteDetails ) {
-					await apiDeleteSite( restAPIClient, {
-						url: account.newSiteDetails.blog_details.url,
-						id: account.newSiteDetails.blog_details.blogid,
-						name: account.newSiteDetails.blog_details.blogname,
-					} );
-				}
-
-				await apiCloseAccount( restAPIClient, {
-					userID: account.newUserDetails.body.user_id,
-					username: account.newUserDetails.body.username,
-					email: account.testUser.email,
-				} );
-			}
 		} );
 	}
 );

@@ -113,6 +113,8 @@ test.describe(
 			await test.step( 'Click Back to return to form', async () => {
 				await page.getByRole( 'button', { name: /Back|Go back/ } ).click();
 				await publishedFormLocator.getByRole( 'button', { name: 'Send' } ).waitFor();
+				// Wait for form reset animation to complete after navigating back.
+				// eslint-disable-next-line playwright/no-wait-for-timeout
 				await page.waitForTimeout( 500 );
 			} );
 
@@ -281,6 +283,8 @@ test.describe(
 			await test.step( 'Clear search to show both responses', async () => {
 				feedbackInboxPage = new FeedbackInboxPage( page );
 				await feedbackInboxPage.clearSearch( true );
+				// Wait for search results to refresh after clearing the search filter.
+				// eslint-disable-next-line playwright/no-wait-for-timeout
 				await page.waitForTimeout( 1000 );
 			} );
 

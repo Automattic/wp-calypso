@@ -22,6 +22,24 @@ test.describe(
 		let testUserThemeSignup: NewTestUserDetails;
 		let newSiteDetails: NewSiteResponse;
 
+		test.afterAll( 'Delete all user accounts generated', async function () {
+			if ( newUserThemeSignup && testUserThemeSignup ) {
+				const restAPIClient = new RestAPIClient(
+					{
+						username: testUserThemeSignup.username,
+						password: testUserThemeSignup.password,
+					},
+					newUserThemeSignup.body.bearer_token
+				);
+
+				await apiCloseAccount( restAPIClient, {
+					userID: newUserThemeSignup.body.user_id,
+					username: newUserThemeSignup.body.username,
+					email: testUserThemeSignup.email,
+				} );
+			}
+		} );
+
 		test( 'One: As a new WordPress.com user I can sign up for a new Premium plan site using a theme from the Logged Out Home Page', async ( {
 			flowLOHPThemeSignup,
 			helperData,
@@ -156,24 +174,6 @@ test.describe(
 					}
 				);
 			} );
-		} );
-
-		test.afterAll( 'Delete all user accounts generated', async function () {
-			if ( newUserThemeSignup && testUserThemeSignup ) {
-				const restAPIClient = new RestAPIClient(
-					{
-						username: testUserThemeSignup.username,
-						password: testUserThemeSignup.password,
-					},
-					newUserThemeSignup.body.bearer_token
-				);
-
-				await apiCloseAccount( restAPIClient, {
-					userID: newUserThemeSignup.body.user_id,
-					username: newUserThemeSignup.body.username,
-					email: testUserThemeSignup.email,
-				} );
-			}
 		} );
 	}
 );

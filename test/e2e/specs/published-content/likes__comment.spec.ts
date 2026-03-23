@@ -27,6 +27,16 @@ test.describe( 'Likes: Comment', { tag: [ tags.GUTENBERG ] }, () => {
 	let commentToBeLiked: NewCommentResponse;
 	let commentToBeUnliked: NewCommentResponse;
 
+	test.afterAll( async () => {
+		if ( ! newPost ) {
+			return;
+		}
+		await restAPIClient.deletePost(
+			testAccount.credentials.testSites?.primary.id as number,
+			newPost.ID
+		);
+	} );
+
 	test( 'As a user, I can like and unlike a comment', async ( { page } ) => {
 		await test.step( 'Setup the test', async () => {
 			const postContent =
@@ -65,6 +75,8 @@ test.describe( 'Likes: Comment', { tag: [ tags.GUTENBERG ] }, () => {
 					if ( i === likeRetryCount ) {
 						throw error;
 					}
+					// Deliberate backoff: comment API needs time to settle before retrying.
+					// eslint-disable-next-line playwright/no-wait-for-timeout
 					await page.waitForTimeout( 1000 );
 				}
 			}
@@ -90,15 +102,5 @@ test.describe( 'Likes: Comment', { tag: [ tags.GUTENBERG ] }, () => {
 			}
 			await commentsComponent.unlike( commentToBeUnliked.raw_content );
 		} );
-	} );
-
-	test.afterAll( async () => {
-		if ( ! newPost ) {
-			return;
-		}
-		await restAPIClient.deletePost(
-			testAccount.credentials.testSites?.primary.id as number,
-			newPost.ID
-		);
 	} );
 } );

@@ -15,6 +15,21 @@ test.describe( 'P2: Post', { tag: [ tags.P2 ] }, () => {
 	let publishedPostURL: string | undefined;
 	let accountUsed: TestAccount | undefined;
 
+	test.afterAll( 'Delete the created post', async function () {
+		if ( ! publishedPostURL || ! accountUsed ) {
+			return;
+		}
+
+		const siteID = accountUsed.credentials.testSites?.primary.id;
+		if ( ! siteID ) {
+			return;
+		}
+
+		const restAPIClient = new RestAPIClient( accountUsed.credentials );
+		const post = await restAPIClient.getPostByURL( siteID, publishedPostURL );
+		await restAPIClient.deletePost( siteID, post.ID );
+	} );
+
 	test( 'As a P2 user, I can create and publish a post with a paragraph block', async ( {
 		page,
 		accountP2,
@@ -25,7 +40,7 @@ test.describe( 'P2: Post', { tag: [ tags.P2 ] }, () => {
 		} );
 
 		await test.step( 'And I navigate to the P2 site', async function () {
-			await page.goto( accountP2.getSiteURL(), { waitUntil: 'networkidle' } );
+			await page.goto( accountP2.getSiteURL(), { waitUntil: 'domcontentloaded' } );
 		} );
 
 		let blockHandle: ElementHandle;
@@ -60,20 +75,5 @@ test.describe( 'P2: Post', { tag: [ tags.P2 ] }, () => {
 			await p2Page.validatePostContent( postContent );
 			publishedPostURL = page.url();
 		} );
-	} );
-
-	test.afterAll( 'Delete the created post', async function () {
-		if ( ! publishedPostURL || ! accountUsed ) {
-			return;
-		}
-
-		const siteID = accountUsed.credentials.testSites?.primary.id;
-		if ( ! siteID ) {
-			return;
-		}
-
-		const restAPIClient = new RestAPIClient( accountUsed.credentials );
-		const post = await restAPIClient.getPostByURL( siteID, publishedPostURL );
-		await restAPIClient.deletePost( siteID, post.ID );
 	} );
 } );

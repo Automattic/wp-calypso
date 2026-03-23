@@ -216,6 +216,7 @@ test.describe.fixme(
 			// includes a core/page-list block, which triggers wpcom_block_inserted. This is
 			// arguably a reasonable outcome. We need to decide whether to adjust the test to
 			// match the tracking behavior or adjust the underlying tracking behavior.
+			// eslint-disable-next-line playwright/no-skipped-test
 			test.describe.skip( 'Adding blocks from existing template parts', () => {
 				test( '"wpcom_block_inserted" event does NOT fire when choosing an existing template part', async ( {
 					page,

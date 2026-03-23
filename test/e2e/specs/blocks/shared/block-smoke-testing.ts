@@ -24,6 +24,8 @@ export function createBlockTests(
 	muted: boolean = false
 ): void {
 	const describe = muted ? test.describe.fixme : test.describe;
+
+	// eslint-disable-next-line playwright/valid-test-tags
 	describe( DataHelper.createSuiteTitle( specName ), { tag: testTags }, () => {
 		const features = envToFeatureKey( envVariables );
 		const accountName = getTestAccountByFeature( features, [

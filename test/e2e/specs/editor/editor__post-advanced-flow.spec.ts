@@ -118,7 +118,7 @@ test.describe( 'Editor: Advanced Post Flow', { tag: [ tags.GUTENBERG, tags.CALYP
 			const incognito = await browser!.newContext();
 			const tmpPage = await incognito.newPage();
 			await tmpPage.goto( postURL!.href );
-			await tmpPage.waitForSelector( 'body.error404' );
+			await tmpPage.locator( 'body.error404' ).waitFor();
 			await incognito.close();
 		} );
 

@@ -10,6 +10,7 @@ import { expect, tags, test } from '../../lib/pw-base';
 test.describe( 'Help Center in WP Admin', { tag: [ tags.JETPACK_WPCOM_INTEGRATION ] }, () => {
 	const normalizeString = ( str: string | null ) => str?.replace( /\s+/g, ' ' ).trim();
 
+	// eslint-disable-next-line playwright/no-skipped-test
 	test.skip( true, 'Skipped: unable to test apps/help-center version' );
 
 	test( 'As a user, I can interact with the Help Center in WP Admin', async ( { page } ) => {
@@ -108,6 +109,7 @@ test.describe( 'Help Center in WP Admin', { tag: [ tags.JETPACK_WPCOM_INTEGRATIO
 			expect( await helpCenterComponent.getOdieChat().count() ).toBeTruthy();
 		} );
 
+		// eslint-disable-next-line playwright/no-skipped-test
 		test.skip( 'get forwarded to a human', async () => {
 			await helpCenterComponent.startAIChat( 'talk to human' );
 
@@ -120,6 +122,7 @@ test.describe( 'Help Center in WP Admin', { tag: [ tags.JETPACK_WPCOM_INTEGRATIO
 		/**
 		 * These tests need to be update
 		 */
+		// eslint-disable-next-line playwright/no-skipped-test
 		test.skip( 'start talking with a human', async () => {
 			const contactSupportButton = await helpCenterComponent.getContactSupportButton();
 			await contactSupportButton.dispatchEvent( 'click' );

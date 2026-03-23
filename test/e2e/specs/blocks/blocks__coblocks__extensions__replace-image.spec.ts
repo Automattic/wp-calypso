@@ -76,8 +76,9 @@ test.describe.fixme( 'CoBlocks: Extensions: Replace Image', { tag: [ tags.GUTENB
 
 		await test.step( 'Then the new image was published', async () => {
 			await ElementHelper.reloadAndRetry( page, async function () {
-				const publishedImage = await page.waitForSelector( '.wp-block-image img' );
-				const publishedImageURL = ( await publishedImage.getAttribute( 'src' ) ) as string;
+				const publishedImageLocator = page.locator( '.wp-block-image img' );
+				await publishedImageLocator.waitFor();
+				const publishedImageURL = ( await publishedImageLocator.getAttribute( 'src' ) ) as string;
 
 				expect( publishedImageURL.split( '?' )[ 0 ] ).toEqual( newImageURL );
 			} );

@@ -25,6 +25,7 @@ test.describe(
 		let siteCreatedFlag = false;
 		let testAccount: TestAccount;
 
+		// eslint-disable-next-line playwright/no-skipped-test
 		test.skip( true, 'Entire suite is skipped pending re-evaluation (was describe.skip in Jest)' );
 
 		test.afterAll( async () => {
@@ -124,14 +125,14 @@ test.describe(
 			} );
 
 			await test.step( 'Once at the /wp-admin settings page, update site name', async () => {
-				await page.fill( 'input[name="blogname"]', DataHelper.getRandomPhrase() );
+				await page.locator( 'input[name="blogname"]' ).fill( DataHelper.getRandomPhrase() );
 				const saveChangesButton = page.getByRole( 'button', { name: 'Save Changes' } );
 				await saveChangesButton.click();
 				// The first time we save, we need to wait for the page to reload because it redirects to Calypso's settings page
 				// before loading /wp-admin settings page again, so we'd lose the settings updated notice
 				await new Promise( ( r ) => setTimeout( r, 5000 ) );
 				await saveChangesButton.click();
-				await page.waitForSelector( '#setting-error-settings_updated' );
+				await page.locator( '#setting-error-settings_updated' ).waitFor();
 				await page.goto(
 					DataHelper.getCalypsoURL( `/home/${ newSiteDetails.blog_details.site_slug }` )
 				);

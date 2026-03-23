@@ -18,6 +18,24 @@ test.describe(
 			newUserDetails: NewUserResponse;
 		}[] = [];
 
+		test.afterAll( 'Close all user accounts generated', async function () {
+			for ( const account of accountsToCleanup ) {
+				const restAPIClient = new RestAPIClient(
+					{
+						username: account.testUser.username,
+						password: account.testUser.password,
+					},
+					account.newUserDetails.body.bearer_token
+				);
+
+				await apiCloseAccount( restAPIClient, {
+					userID: account.newUserDetails.body.user_id,
+					username: account.newUserDetails.body.username,
+					email: account.testUser.email,
+				} );
+			}
+		} );
+
 		test( 'As a new user I can purchase a 100-year domain and see the thank you page', async ( {
 			page,
 			componentDomainSearch,
@@ -82,24 +100,6 @@ test.describe(
 			await test.step( 'Then I am on the domain management page', async function () {
 				await expect( page ).toHaveURL( new RegExp( `/domains/manage/${ selectedDomain }` ) );
 			} );
-		} );
-
-		test.afterAll( 'Close all user accounts generated', async function () {
-			for ( const account of accountsToCleanup ) {
-				const restAPIClient = new RestAPIClient(
-					{
-						username: account.testUser.username,
-						password: account.testUser.password,
-					},
-					account.newUserDetails.body.bearer_token
-				);
-
-				await apiCloseAccount( restAPIClient, {
-					userID: account.newUserDetails.body.user_id,
-					username: account.newUserDetails.body.username,
-					email: account.testUser.email,
-				} );
-			}
 		} );
 	}
 );

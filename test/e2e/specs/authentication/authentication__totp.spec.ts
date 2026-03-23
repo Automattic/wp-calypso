@@ -70,8 +70,9 @@ test.describe(
 
 			const credentials = secrets.testAccounts.totpUser;
 
-			// Wait 30s to avoid OTP code reuse error.
 			await test.step( 'Given I wait 30 seconds to avoid OTP code reuse error', async function () {
+				// Deliberate delay: OTP providers reject codes reused within 30s.
+				// eslint-disable-next-line playwright/no-wait-for-timeout
 				await page.waitForTimeout( 30000 );
 			} );
 

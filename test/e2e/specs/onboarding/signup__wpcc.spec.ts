@@ -53,7 +53,7 @@ test.describe(
 
 			await test.step( 'User lands in CrowdSignal dashboard', async () => {
 				// This will be a production site instead of staging or wpcalypso.
-				await page.waitForSelector( 'div.welcome-main' );
+				await page.locator( 'div.welcome-main' ).waitFor();
 			} );
 
 			await test.step( 'Get activation link', async () => {

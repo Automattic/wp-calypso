@@ -15,6 +15,7 @@ test.describe( 'Authentication: GitHub', { tag: [ tags.AUTHENTICATION ] }, () =>
 		pageLogin,
 		secrets,
 	}, workerInfo ) => {
+		// eslint-disable-next-line playwright/no-skipped-test
 		test.skip( true, 'Skipping the tests because of captcha issues on GitHub login page' );
 		test.skip(
 			workerInfo.project.name !== 'authentication',
@@ -63,31 +64,21 @@ test.describe( 'Authentication: GitHub', { tag: [ tags.AUTHENTICATION ] }, () =>
 
 		await test.step( 'And I handle GitHub device verification if needed', async function () {
 			// GitHub may show a device verification screen in CI
-			const verificationUrl = 'https://github.com/sessions/verified-device';
-			const response = await page.waitForNavigation();
-
-			if ( ! response ) {
-				throw new Error( 'Navigation failed - no response received' );
-			}
-
-			if ( response.url() === verificationUrl ) {
-				// If we're on the verification screen, click the verify button
+			try {
+				await page.waitForURL( '**/sessions/verified-device', { timeout: 5000 } );
 				await pageGitHubLogin.clickButtonWithExactText( 'Verify' );
+			} catch {
+				// Not on verification page, continue
 			}
 		} );
 
 		await test.step( 'And I skip GitHub trust device if needed', async function () {
-			// GitHub may show a device verification screen in CI
-			const verificationUrl = 'https://github.com/sessions/trusted-device';
-			const response = await page.waitForNavigation();
-
-			if ( ! response ) {
-				throw new Error( 'Navigation failed - no response received' );
-			}
-
-			if ( response.url() === verificationUrl ) {
-				// If we're on the trusted device screen, skip it
+			// GitHub may show a trusted device screen in CI
+			try {
+				await page.waitForURL( '**/sessions/trusted-device', { timeout: 5000 } );
 				await pageGitHubLogin.clickButtonWithExactText( "Don't ask again for this browser" );
+			} catch {
+				// Not on trusted device page, continue
 			}
 		} );
 

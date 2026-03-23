@@ -17,6 +17,32 @@ test.describe(
 			newSiteDetails?: NewSiteResponse;
 		}[] = [];
 
+		test.afterAll( 'Delete all user accounts generated', async function () {
+			for ( const account of accountsToCleanup ) {
+				const restAPIClient = new RestAPIClient(
+					{
+						username: account.testUser.username,
+						password: account.testUser.password,
+					},
+					account.newUserDetails.body.bearer_token
+				);
+
+				if ( account.newSiteDetails ) {
+					await apiDeleteSite( restAPIClient, {
+						url: account.newSiteDetails.blog_details.url,
+						id: account.newSiteDetails.blog_details.blogid,
+						name: account.newSiteDetails.blog_details.blogname,
+					} );
+				}
+
+				await apiCloseAccount( restAPIClient, {
+					userID: account.newUserDetails.body.user_id,
+					username: account.newUserDetails.body.username,
+					email: account.testUser.email,
+				} );
+			}
+		} );
+
 		test( 'As a user with an unlaunched site, I can launch it via the WP Admin launch button and be redirected back at the end of the flow', async ( {
 			page,
 			componentDomainSearch,
@@ -104,32 +130,6 @@ test.describe(
 			await test.step( 'And the launch celebration modal is displayed', async function () {
 				await componentLaunchCelebration.validateVisible();
 			} );
-		} );
-
-		test.afterAll( 'Delete all user accounts generated', async function () {
-			for ( const account of accountsToCleanup ) {
-				const restAPIClient = new RestAPIClient(
-					{
-						username: account.testUser.username,
-						password: account.testUser.password,
-					},
-					account.newUserDetails.body.bearer_token
-				);
-
-				if ( account.newSiteDetails ) {
-					await apiDeleteSite( restAPIClient, {
-						url: account.newSiteDetails.blog_details.url,
-						id: account.newSiteDetails.blog_details.blogid,
-						name: account.newSiteDetails.blog_details.blogname,
-					} );
-				}
-
-				await apiCloseAccount( restAPIClient, {
-					userID: account.newUserDetails.body.user_id,
-					username: account.newUserDetails.body.username,
-					email: account.testUser.email,
-				} );
-			}
 		} );
 	}
 );

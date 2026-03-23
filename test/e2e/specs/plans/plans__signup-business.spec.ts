@@ -15,6 +15,23 @@ test.describe(
 		let newSiteDetails: NewSiteResponse | undefined;
 		let accountUsed: TestAccount;
 
+		test.afterAll( 'Delete the created site', async function () {
+			if ( ! siteCreatedFlag || ! newSiteDetails || ! accountUsed ) {
+				return;
+			}
+
+			const restAPIClient = new RestAPIClient( {
+				username: accountUsed.credentials.username,
+				password: accountUsed.credentials.password,
+			} );
+
+			await apiDeleteSite( restAPIClient, {
+				url: newSiteDetails.blog_details.url,
+				id: newSiteDetails.blog_details.blogid,
+				name: newSiteDetails.blog_details.blogname,
+			} );
+		} );
+
 		test( `As an existing WordPress.com user, I can purchase a ${ planName } plan during signup`, async ( {
 			accountPreRelease,
 			componentDomainSearch,
@@ -66,23 +83,6 @@ test.describe(
 			await test.step( `And the sidebar shows I am on the ${ planName } plan`, async function () {
 				const currentPlan = await componentSidebar.getCurrentPlanName();
 				expect( currentPlan ).toBe( planName );
-			} );
-		} );
-
-		test.afterAll( 'Delete the created site', async function () {
-			if ( ! siteCreatedFlag || ! newSiteDetails || ! accountUsed ) {
-				return;
-			}
-
-			const restAPIClient = new RestAPIClient( {
-				username: accountUsed.credentials.username,
-				password: accountUsed.credentials.password,
-			} );
-
-			await apiDeleteSite( restAPIClient, {
-				url: newSiteDetails.blog_details.url,
-				id: newSiteDetails.blog_details.blogid,
-				name: newSiteDetails.blog_details.blogname,
 			} );
 		} );
 	}

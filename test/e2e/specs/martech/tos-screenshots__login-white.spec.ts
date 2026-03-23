@@ -36,7 +36,7 @@ test.describe.fixme(
 				for ( const locale of [ 'en', ...magnificientNonEnLocales ] ) {
 					page.setViewportSize( { width: 1280, height: 720 } );
 					await loginPage.visit( { path: locale } );
-					page.waitForSelector( '.is-section-login' );
+					await page.locator( '.is-section-login' ).waitFor();
 					await page.screenshot( {
 						path: `tos_white_login_desktop_${ locale }.png`,
 						fullPage: true,

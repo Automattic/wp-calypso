@@ -72,6 +72,8 @@ test.describe(
 						await appleLoginPage.clickButtonWithExactText( 'Send code' );
 					}
 
+					// Deliberate delay: wait for Apple 2FA code to be delivered via email.
+					// eslint-disable-next-line playwright/no-wait-for-timeout
 					await page.waitForTimeout( 5000 );
 
 					const emailClient = new EmailClient();

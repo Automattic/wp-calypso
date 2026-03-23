@@ -46,6 +46,8 @@ test.describe( 'Help Center in Calypso', { tag: [ tags.CALYPSO_PR ] }, () => {
 
 		await test.step( 'Help Center can be minimized', async () => {
 			await helpCenterComponent.minimizePopover();
+			// Wait for the minimize animation to complete before measuring height.
+			// eslint-disable-next-line playwright/no-wait-for-timeout
 			await page.waitForTimeout( 200 );
 			const containerHeight = await helpCenterLocator.evaluate(
 				( el: HTMLElement ) => el.offsetHeight
@@ -131,6 +133,7 @@ test.describe( 'Help Center in Calypso', { tag: [ tags.CALYPSO_PR ] }, () => {
 	 *
 	 * These tests check the support flow. Starting with AI and then chat.
 	 */
+	// eslint-disable-next-line playwright/no-skipped-test
 	test.describe.skip( 'Support Flow', () => {
 		test( 'start support flow', async ( { page } ) => {
 			const helpCenterComponent = new HelpCenterComponent( page );
