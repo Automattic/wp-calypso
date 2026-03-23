@@ -12,6 +12,7 @@ import {
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
+	__experimentalText as Text,
 	Button,
 	Dropdown,
 	MenuGroup,
@@ -28,6 +29,7 @@ import { useAnalytics } from '../../app/analytics';
 import { useHelpCenter } from '../../app/help-center';
 import useBuildCurrentRouteLink from '../../app/hooks/use-build-current-route-link';
 import Environment from '../../components/environment';
+import { staging, production } from '../../components/icons';
 import './environment-switcher-v2.scss';
 import RouterLinkMenuItem from '../../components/router-link-menu-item';
 import {
@@ -39,9 +41,14 @@ import { canManageSite, canCreateStagingSite } from '../features';
 import type { Site } from '@automattic/api-core';
 
 const CurrentEnvironment = ( { site }: { site: Site } ) => {
-	const environmentType = site.is_wpcom_staging_site ? 'staging' : 'production';
+	const icon = site.is_wpcom_staging_site ? staging : production;
+	const label = site.is_wpcom_staging_site ? __( 'Staging' ) : __( 'Production' );
+
 	return (
-		<Environment environmentType={ environmentType } spacing={ 2 } iconSize={ 20 } weight={ 500 } />
+		<HStack justify="flex-start" spacing={ 2 } expanded={ false } style={ { flexShrink: 0 } }>
+			<Icon icon={ icon } size={ 20 } />
+			<Text weight={ 500 }>{ label }</Text>
+		</HStack>
 	);
 };
 
