@@ -4,7 +4,6 @@
 
 .dashboard-sidebar__expandable-trigger.dashboard-sidebar__expandable-trigger {
 	width: 100%;
-	padding: $grid-unit-10 $grid-unit-15;
 	border-radius: $radius-small;
 
 	.components-flex {
@@ -12,6 +11,3 @@
 	}
 }
 
-.dashboard-sidebar__expandable-children {
-	padding-inline-start: $grid-unit-20;
-}
