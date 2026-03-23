@@ -186,17 +186,19 @@ function McpComponent( { path } ) {
 							badges={ [ { text: writeBadge.text, intent: writeBadge.intent } ] }
 							density="medium"
 						/>
-						{ disabledSiteCount > 0 && (
-							<SummaryButton
-								href="/me/mcp/mcp-sites"
-								title={ translate( 'Site exceptions' ) }
-								decoration={
-									<Icon className="mcp-hub__summary-icon" icon={ notAllowed } size={ 24 } />
-								}
-								badges={ [ { text: mcpSiteExceptionsBadgeText, intent: 'warning' } ] }
-								density="medium"
-							/>
-						) }
+						<SummaryButton
+							href="/me/mcp/mcp-sites"
+							title={ translate( 'Site exceptions' ) }
+							decoration={
+								<Icon className="mcp-hub__summary-icon" icon={ notAllowed } size={ 24 } />
+							}
+							badges={
+								disabledSiteCount > 0
+									? [ { text: mcpSiteExceptionsBadgeText, intent: 'warning' } ]
+									: []
+							}
+							density="medium"
+						/>
 					</VStack>
 				) }
 			</Card>
