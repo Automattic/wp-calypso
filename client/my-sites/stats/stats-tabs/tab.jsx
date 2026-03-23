@@ -23,6 +23,7 @@ class StatsTabsTab extends Component {
 		previousValue: PropTypes.number,
 		value: PropTypes.oneOfType( [ PropTypes.number, PropTypes.string ] ),
 		format: PropTypes.func,
+		aggregateNote: PropTypes.string,
 	};
 
 	state = {
@@ -68,6 +69,7 @@ class StatsTabsTab extends Component {
 			previousValue,
 			value,
 			hasPreviousData,
+			aggregateNote,
 		} = this.props;
 
 		const tabClass = clsx( 'stats-tab', className, {
@@ -130,6 +132,7 @@ class StatsTabsTab extends Component {
 									value={ value }
 									label={ label.toLocaleLowerCase() }
 									previousValue={ previousValue }
+									note={ aggregateNote }
 								/>
 							</Popover>
 						</div>
