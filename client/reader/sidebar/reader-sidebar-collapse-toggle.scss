@@ -33,7 +33,7 @@
 // When sidebar is visible: button at the right edge of sidebar
 body.is-section-reader:not( .is-reader-sidebar-collapsed ) {
 	.reader-sidebar-collapse-toggle {
-		left: calc( var( --sidebar-width-max ) - 12px );
+		inset-inline-start: calc( var( --sidebar-width-max ) - 12px );
 	}
 }
 
@@ -41,7 +41,7 @@ body.is-section-reader:not( .is-reader-sidebar-collapsed ) {
 body.is-section-reader.is-reader-sidebar-collapsed {
 	// Move toggle to left edge
 	.reader-sidebar-collapse-toggle {
-		left: 8px;
+		inset-inline-start: 8px;
 	}
 
 	// Hide sidebar and reclaim space
