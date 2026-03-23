@@ -174,27 +174,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/agenttic-client@npm:^0.1.55":
-  version: 0.1.55
-  resolution: "@automattic/agenttic-client@npm:0.1.55"
-  dependencies:
-    "@types/react": "npm:^18.0.0"
-    marked: "npm:^16.2.1"
-    react: "npm:^18.0.0"
-  peerDependencies:
-    "@wordpress/api-fetch": ^6.0.0 || ^7.0.0
-    react: ^18.0.0
-  dependenciesMeta:
-    marked:
-      optional: true
-  peerDependenciesMeta:
-    "@wordpress/api-fetch":
-      optional: true
-  checksum: 3821a9e28680e38b6e820d268974074dd2cb01060c94b04aa0bb91ff1d9313855b60024536df3db007c78a96c5008cf27b6bfcb3bce0af35a2595e9bb0ee24be
-  languageName: node
-  linkType: hard
-
-"@automattic/agenttic-client@npm:^0.1.56":
+"@automattic/agenttic-client@npm:^0.1.55, @automattic/agenttic-client@npm:^0.1.56":
   version: 0.1.56
   resolution: "@automattic/agenttic-client@npm:0.1.56"
   dependencies:
@@ -214,41 +194,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@automattic/agenttic-ui@npm:^0.1.53":
-  version: 0.1.53
-  resolution: "@automattic/agenttic-ui@npm:0.1.53"
-  dependencies:
-    "@automattic/charts": "npm:>=0.14.0 <1.0.0"
-    "@floating-ui/react-dom": "npm:^2.1.6"
-    "@radix-ui/react-scroll-area": "npm:^1.2.9"
-    "@radix-ui/react-slot": "npm:^1.2.3"
-    "@visx/xychart": "npm:^3.12.0"
-    "@wordpress/i18n": "npm:^6.1.0"
-    class-variance-authority: "npm:^0.7.1"
-    clsx: "npm:^2.1.1"
-    framer-motion: "npm:^12.23.0"
-    lucide-react: "npm:^0.525.0"
-    marked: "npm:^16.2.1"
-    react: "npm:^18.0.0"
-    react-dom: "npm:^18.0.0"
-    react-markdown: "npm:^10.1.0"
-    react-textarea-autosize: "npm:^8.5.9"
-    remark-gfm: "npm:^4.0.1"
-    unified: "npm:^11.0.5"
-    use-debounce: "npm:^10.0.6"
-  peerDependencies:
-    react: ^18.0.0
-    react-dom: ^18.0.0
-  dependenciesMeta:
-    marked:
-      optional: true
-  checksum: ce9c723149cc688b83b96c49468bbf1fb507c35a53ca281a2a56d59242f0d8f587b690d5e7c4afe5ab4869655563711ed61075072819d96c237fbc93e3f15178
-  languageName: node
-  linkType: hard
-
-"@automattic/agenttic-ui@npm:^0.1.55":
-  version: 0.1.55
-  resolution: "@automattic/agenttic-ui@npm:0.1.55"
+"@automattic/agenttic-ui@npm:^0.1.53, @automattic/agenttic-ui@npm:^0.1.55, @automattic/agenttic-ui@npm:^0.1.56":
+  version: 0.1.56
+  resolution: "@automattic/agenttic-ui@npm:0.1.56"
   dependencies:
     "@automattic/charts": "npm:>=0.58.0 <1.0.0"
     "@floating-ui/react-dom": "npm:^2.1.6"
@@ -274,7 +222,7 @@ __metadata:
   dependenciesMeta:
     marked:
       optional: true
-  checksum: 65505a80e4f4784bb6e5d7c950e945c7338dcf4f364b4e72d6b92374b6ad23985715d6671d195e244c3b84b582fadb3de1905911056b464b7437e20182867a1c
+  checksum: 9b15b5e442f0f5ec7ae943306ac88c952065751b012f09eca5b419533b9f9e37c08e30b4224d99a8cb6c9052f7feffb2a6be9577f6afdaf1ce482b5e0c2a29f0
   languageName: node
   linkType: hard
 
@@ -820,42 +768,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/charts@npm:>=0.14.0 <1.0.0, @automattic/charts@npm:^0.50.0":
-  version: 0.50.2
-  resolution: "@automattic/charts@npm:0.50.2"
-  dependencies:
-    "@automattic/number-formatters": "npm:^1.0.15"
-    "@babel/runtime": "npm:7.28.4"
-    "@react-spring/web": "npm:9.7.5"
-    "@visx/annotation": "npm:^3.12.0"
-    "@visx/axis": "npm:^3.12.0"
-    "@visx/curve": "npm:^3.12.0"
-    "@visx/event": "npm:^3.12.0"
-    "@visx/gradient": "npm:^3.12.0"
-    "@visx/grid": "npm:^3.12.0"
-    "@visx/group": "npm:^3.12.0"
-    "@visx/legend": "npm:^3.12.0"
-    "@visx/pattern": "npm:^3.12.0"
-    "@visx/responsive": "npm:^3.12.0"
-    "@visx/scale": "npm:^3.12.0"
-    "@visx/shape": "npm:^3.12.0"
-    "@visx/text": "npm:^3.12.0"
-    "@visx/tooltip": "npm:^3.12.0"
-    "@visx/xychart": "npm:^3.12.0"
-    "@wordpress/i18n": "npm:^6.0.0"
-    clsx: "npm:2.1.1"
-    date-fns: "npm:^4.1.0"
-    deepmerge: "npm:4.3.1"
-    fast-deep-equal: "npm:3.1.3"
-    gridicons: "npm:3.4.2"
-    tslib: "npm:2.8.1"
-  peerDependencies:
-    react: ^17.0.0 || ^18.0.0
-    react-dom: ^17.0.0 || ^18.0.0
-  checksum: e0bdce896e10910973c422eb9626e86375731abd53223f06f77daa717da30fb04457d5ed71d54d51c323a037518c722d947d8b50b869cc65a3bcd4c0c690d76d
-  languageName: node
-  linkType: hard
-
 "@automattic/charts@npm:>=0.58.0 <1.0.0":
   version: 0.58.0
   resolution: "@automattic/charts@npm:0.58.0"
@@ -929,6 +841,42 @@ __metadata:
     react: ^17.0.0 || ^18.0.0
     react-dom: ^17.0.0 || ^18.0.0
   checksum: 0c986843d1ce366fe6bd0556f097ed278b39f6bdd1bd5e70ac665aac4ef4c3b5a5823f4ba9ecab6c277fe0e4ba5a6e6179664e05d933eb517fa91d24000f66bd
+  languageName: node
+  linkType: hard
+
+"@automattic/charts@npm:^0.50.0":
+  version: 0.50.2
+  resolution: "@automattic/charts@npm:0.50.2"
+  dependencies:
+    "@automattic/number-formatters": "npm:^1.0.15"
+    "@babel/runtime": "npm:7.28.4"
+    "@react-spring/web": "npm:9.7.5"
+    "@visx/annotation": "npm:^3.12.0"
+    "@visx/axis": "npm:^3.12.0"
+    "@visx/curve": "npm:^3.12.0"
+    "@visx/event": "npm:^3.12.0"
+    "@visx/gradient": "npm:^3.12.0"
+    "@visx/grid": "npm:^3.12.0"
+    "@visx/group": "npm:^3.12.0"
+    "@visx/legend": "npm:^3.12.0"
+    "@visx/pattern": "npm:^3.12.0"
+    "@visx/responsive": "npm:^3.12.0"
+    "@visx/scale": "npm:^3.12.0"
+    "@visx/shape": "npm:^3.12.0"
+    "@visx/text": "npm:^3.12.0"
+    "@visx/tooltip": "npm:^3.12.0"
+    "@visx/xychart": "npm:^3.12.0"
+    "@wordpress/i18n": "npm:^6.0.0"
+    clsx: "npm:2.1.1"
+    date-fns: "npm:^4.1.0"
+    deepmerge: "npm:4.3.1"
+    fast-deep-equal: "npm:3.1.3"
+    gridicons: "npm:3.4.2"
+    tslib: "npm:2.8.1"
+  peerDependencies:
+    react: ^17.0.0 || ^18.0.0
+    react-dom: ^17.0.0 || ^18.0.0
+  checksum: e0bdce896e10910973c422eb9626e86375731abd53223f06f77daa717da30fb04457d5ed71d54d51c323a037518c722d947d8b50b869cc65a3bcd4c0c690d76d
   languageName: node
   linkType: hard
 
@@ -33418,6 +33366,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "wp-calypso@workspace:."
   dependencies:
+    "@automattic/agenttic-ui": "npm:^0.1.56"
     "@automattic/calypso-babel-config": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-color-schemes": "workspace:^"
