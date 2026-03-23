@@ -237,12 +237,14 @@ export async function prepareRequest(
  * @param preparedRequest - Prepared request data
  * @param config          - Request configuration
  * @param options         - Request options (including external abort signal)
+ * @param fetchCallback   - Fetch callback to use
  * @return Promise resolving to the response task
  */
 export async function executeRequest(
 	preparedRequest: Awaited< ReturnType< typeof prepareRequest > >,
 	config: RequestConfig,
-	options: RequestOptions = {}
+	options: RequestOptions = {},
+	fetchCallback: typeof fetch
 ): Promise< Task > {
 	const { request, headers, fullAgentUrl } = preparedRequest;
 	const { timeout } = config;
@@ -271,7 +273,7 @@ export async function executeRequest(
 			headers: fetchOptions.headers,
 		} );
 
-		const response = await fetch( fullAgentUrl, fetchOptions );
+		const response = await fetchCallback( fullAgentUrl, fetchOptions );
 
 		clearTimeout( timeoutId );
 
@@ -306,7 +308,8 @@ export async function executeRequest(
 export async function* executeStreamingRequest(
 	preparedRequest: Awaited< ReturnType< typeof prepareRequest > >,
 	config: RequestConfig,
-	options: RequestOptions
+	options: RequestOptions,
+	fetchCallback: typeof fetch
 ): AsyncIterable< TaskUpdate > {
 	const { request, headers, fullAgentUrl } = preparedRequest;
 	const {} = config;
@@ -331,7 +334,7 @@ export async function* executeStreamingRequest(
 
 		const fetchOptions = createFetchOptions( headers, requestBody, signal );
 
-		const response = await fetch( fullAgentUrl, fetchOptions );
+		const response = await fetchCallback( fullAgentUrl, fetchOptions );
 
 		clearTimeout( timeoutId );
 
