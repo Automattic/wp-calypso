@@ -60,8 +60,7 @@ body.is-section-me div.layout.is-global-sidebar-visible .layout__primary .main.m
 	}
 
 	// Last summary row: drop duplicate bottom rule (card already has an edge)
-	.mcp-hub__panel-rows .summary-button.components-button.has-density-medium:last-child,
-	.mcp-hub__panel-rows .summary-button.components-button.has-density-medium-low:last-child {
+	.mcp-hub__panel-rows .summary-button.components-button.has-density-medium:last-child {
 		border-bottom: none;
 	}
 }
