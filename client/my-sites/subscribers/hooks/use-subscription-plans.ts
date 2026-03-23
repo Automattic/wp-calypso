@@ -88,7 +88,11 @@ const useSubscriptionPlans = ( subscriber: Subscriber ): SubscriptionPlanData[] 
 
 	const getPlanDisplay = ( plan: PlanData ): string => {
 		if ( plan.is_gift ) {
-			return translate( 'Gift' ) + `: ${ plan.title }`;
+			return (
+				translate( 'Comp', {
+					comment: 'Short for "complimentary" — a free subscription granted by the site creator',
+				} ) + `: ${ plan.title }`
+			);
 		} else if ( plan.renewalPrice === freePlan ) {
 			return plan.renewalPrice;
 		}

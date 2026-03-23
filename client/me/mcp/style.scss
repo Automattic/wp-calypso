@@ -64,21 +64,17 @@ body.is-section-me div.layout.is-global-sidebar-visible .layout__primary .main.m
 		border-bottom: none;
 	}
 
-	// Connect panel (MCP on): single SummaryButton, full width
-	.mcp-hub__panel--connect {
-		padding: 0;
-		overflow: hidden;
+	// Connect button: match Card appearance (box-shadow border, surface background, flat corners)
+	.summary-button.components-button.mcp-hub__panel {
+		border: none;
+		border-radius: 0;
+		background: var(--color-surface);
+		box-shadow: 0 0 0 1px var(--color-border-subtle);
 
-		.summary-button.components-button {
-			width: 100%;
-			max-width: 100%;
-			box-sizing: border-box;
-		}
-
-		.summary-button.components-button.has-density-low {
-			border: 1px solid transparent;
-			border-radius: 0;
-			margin: 0;
+		&:hover:not(:disabled, [aria-disabled="true"]):not(:focus-visible) {
+			border: none;
+			box-shadow: 0 0 0 1px var(--color-border-subtle);
+			background: color-mix(in srgb, #fff 98%, var(--wp-admin-theme-color, #3858e9));
 		}
 	}
 }
