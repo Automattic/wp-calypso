@@ -199,25 +199,20 @@ function McpComponent( { path } ) {
 							}
 							density="medium"
 						/>
+						<SummaryButton
+							href="/me/mcp/setup"
+							title={ translate( 'Connect external AI assistant' ) }
+							description={ translate(
+								'Get instructions for connecting your external AI assistant.'
+							) }
+							decoration={
+								<Icon className="mcp-hub__summary-icon" icon={ connection } size={ 24 } />
+							}
+							density="medium-low"
+						/>
 					</VStack>
 				) }
 			</Card>
-
-			{ hasTools && anyToolsEnabled && (
-				<Card className="mcp-hub__panel mcp-hub__panel--connect">
-					<SummaryButton
-						href="/me/mcp/setup"
-						title={ translate( 'Connect external AI assistant' ) }
-						description={ translate(
-							'Get instructions for connecting your external AI assistant.'
-						) }
-						decoration={
-							<Icon className="mcp-hub__summary-icon" icon={ connection } size={ 24 } />
-						}
-						density="low"
-					/>
-				</Card>
-			) }
 		</VStack>
 	);
 

@@ -60,26 +60,9 @@ body.is-section-me div.layout.is-global-sidebar-visible .layout__primary .main.m
 	}
 
 	// Last summary row: drop duplicate bottom rule (card already has an edge)
-	.mcp-hub__panel-rows .summary-button.components-button.has-density-medium:last-child {
+	.mcp-hub__panel-rows .summary-button.components-button.has-density-medium:last-child,
+	.mcp-hub__panel-rows .summary-button.components-button.has-density-medium-low:last-child {
 		border-bottom: none;
-	}
-
-	// Connect panel (MCP on): single SummaryButton, full width
-	.mcp-hub__panel--connect {
-		padding: 0;
-		overflow: hidden;
-
-		.summary-button.components-button {
-			width: 100%;
-			max-width: 100%;
-			box-sizing: border-box;
-		}
-
-		.summary-button.components-button.has-density-low {
-			border: none;
-			border-radius: 0;
-			margin: 0;
-		}
 	}
 }
 
