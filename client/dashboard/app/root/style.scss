@@ -1,3 +1,5 @@
+@import '@wordpress/base-styles/variables';
+@import '@wordpress/base-styles/mixins';
 @import './omnibar-style';
 
 // Old layout (no sidebar): sticky header
@@ -20,6 +22,10 @@
 .dashboard-root__body {
 	display: flex;
 	min-height: calc(100vh - var(--masterbar-height) );
+
+	@media ( max-width: #{ ( $break-medium - 1 ) } ) {
+		overflow-x: hidden;
+	}
 }
 
 .dashboard-root__content {
@@ -28,4 +34,14 @@
 	flex-direction: column;
 	flex: 1;
 	min-width: 0;
+
+	@media ( max-width: #{ ( $break-medium - 1 ) } ) {
+		transition: transform 0.2s ease-out;
+
+		&.is-sidebar-open {
+			transform: translateX( 272px );
+			overflow: hidden;
+			height: 100vh;
+		}
+	}
 }
