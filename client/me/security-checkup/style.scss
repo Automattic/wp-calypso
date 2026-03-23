@@ -18,6 +18,22 @@
 			margin-right: 16px;
 			min-width: 32px;
 
+			&.security-checkup__nav-item-icon--dolly {
+				box-sizing: border-box;
+				color: var(--color-neutral-90);
+				display: block;
+				fill: none;
+				flex-shrink: 0;
+				height: 32px;
+				min-width: 32px;
+				width: 32px;
+
+				path {
+					fill: none;
+					stroke: currentColor;
+				}
+			}
+
 			&.material-icon-check_circle {
 				fill: var(--color-success);
 			}

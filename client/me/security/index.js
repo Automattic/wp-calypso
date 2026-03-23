@@ -10,7 +10,7 @@ import { sidebar } from 'calypso/me/controller';
 import {
 	accountRecovery,
 	connectedApplications,
-	aiAssistant,
+	dolly,
 	password,
 	securityAccountEmail,
 	securityCheckup,
@@ -61,12 +61,18 @@ export default function () {
 		clientRender
 	);
 
+	page( '/me/security/ai-assistant', () => {
+		const search =
+			typeof window !== 'undefined' && window.location.search ? window.location.search : '';
+		page.redirect( `/me/security/dolly${ search }` );
+	} );
+
 	page(
-		'/me/security/ai-assistant',
+		'/me/security/dolly',
 		setupPreferences,
-		maybeRedirectToMultiSiteDashboard( '/me/security/ai-assistant' ),
+		maybeRedirectToMultiSiteDashboard( '/me/security/dolly' ),
 		sidebar,
-		aiAssistant,
+		dolly,
 		makeLayout,
 		clientRender
 	);

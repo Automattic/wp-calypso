@@ -5,7 +5,7 @@ type GetTelegramConnectionDescriptionArgs = {
 	isStatusReady: boolean;
 	isConnected: boolean;
 	connectedDescription: React.ReactNode;
-	disconnectedDescription: React.ReactNode;
+	disconnectedDescription?: React.ReactNode;
 };
 
 export function getTelegramConnectionDescription( {
@@ -22,5 +22,5 @@ export function getTelegramConnectionDescription( {
 		return connectedDescription;
 	}
 
-	return disconnectedDescription;
+	return disconnectedDescription ?? null;
 }

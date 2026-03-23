@@ -15,8 +15,8 @@ import TelegramConnection from './telegram-connection';
 
 import './style.scss';
 
-class AIAssistant extends Component {
-	static displayName = 'AIAssistant';
+class Dolly extends Component {
+	static displayName = 'DollySecurity';
 
 	static propTypes = {
 		path: PropTypes.string,
@@ -26,11 +26,11 @@ class AIAssistant extends Component {
 	render() {
 		const { path, translate } = this.props;
 		const useCheckupMenu = config.isEnabled( 'security/security-checkup' );
-		const title = translate( 'AI Assistant' );
+		const title = translate( 'Dolly' );
 
 		return (
-			<Main wideLayout className="security ai-assistant">
-				<PageViewTracker path="/me/security/ai-assistant" title="Me > AI Assistant" />
+			<Main wideLayout className="security dolly">
+				<PageViewTracker path="/me/security/dolly" title="Me > Dolly" />
 				<DocumentHead title={ title } />
 
 				<NavigationHeader navigationItems={ [] } title={ translate( 'Security' ) } />
@@ -44,9 +44,9 @@ class AIAssistant extends Component {
 
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 
-				<CompactCard className="ai-assistant__description">
+				<CompactCard className="dolly__description">
 					{ translate(
-						'Connect AI Assistant providers to enable assistant features on your account.'
+						'Chat with Dolly on Telegram to publish, update, and manage your WordPress site from wherever you are.'
 					) }
 				</CompactCard>
 
@@ -56,4 +56,4 @@ class AIAssistant extends Component {
 	}
 }
 
-export default localize( AIAssistant );
+export default localize( Dolly );

@@ -2,6 +2,8 @@ import { Button, CompactCard } from '@automattic/components';
 import React from 'react';
 import { getTelegramConnectionDescription } from '../telegram/get-telegram-connection-description';
 import { useTelegramDollyWidget } from '../telegram/use-telegram-dolly-widget';
+import telegramLogo from './telegram-logo.svg';
+import '../social-login/style.scss';
 import './style.scss';
 
 export default function TelegramConnection() {
@@ -28,27 +30,36 @@ export default function TelegramConnection() {
 	};
 
 	return (
-		<CompactCard className="ai-assistant__telegram-connection">
-			<div className="ai-assistant__telegram-connection-header">
-				<div className="ai-assistant__telegram-connection-title">{ translate( 'Telegram' ) }</div>
-				<div className="ai-assistant__telegram-connection-action">{ renderConnectAction() }</div>
+		<CompactCard className="dolly__telegram-connection">
+			<div className="social-login__header">
+				<div className="social-login__header-info">
+					<div className="social-login__header-icon">
+						<img
+							className="dolly__telegram-logo"
+							src={ telegramLogo }
+							alt=""
+							width={ 30 }
+							height={ 30 }
+							draggable={ false }
+						/>
+					</div>
+					<h3>{ translate( 'Telegram' ) }</h3>
+				</div>
+
+				<div className="social-login__header-action dolly__telegram-header-action">
+					{ renderConnectAction() }
+				</div>
 			</div>
 
-			<div className="ai-assistant__telegram-connection-description">
+			<div className="dolly__telegram-connection-description">
 				{ getTelegramConnectionDescription( {
 					isStatusReady,
 					isConnected,
-					connectedDescription: translate(
-						'Your account is {{strong}}connected{{/strong}} to Telegram.',
-						{
-							components: {
-								strong: <span className="ai-assistant__telegram-connected-word" />,
-							},
-						}
-					),
-					disconnectedDescription: translate(
-						'Connect Telegram to enable AI Assistant features on your account.'
-					),
+					connectedDescription: translate( 'Your account is {{strong}}connected{{/strong}}.', {
+						components: {
+							strong: <span className="dolly__telegram-connected-word" />,
+						},
+					} ),
 				} ) }
 			</div>
 		</CompactCard>

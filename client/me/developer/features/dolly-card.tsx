@@ -48,16 +48,13 @@ export const DollyCard = () => {
 				{ getTelegramConnectionDescription( {
 					isStatusReady,
 					isConnected,
-					connectedDescription: translate(
-						'Your account is {{strong}}connected{{/strong}} to Telegram.',
-						{
-							components: {
-								strong: <span className="developer-features-list__item-connected-word" />,
-							},
-						}
-					),
+					connectedDescription: translate( 'Your account is {{strong}}connected{{/strong}}.', {
+						components: {
+							strong: <span className="developer-features-list__item-connected-word" />,
+						},
+					} ),
 					disconnectedDescription: translate(
-						'Connect Dolly to Telegram to start using it with your account.'
+						'Chat with Dolly on Telegram to publish, update, and manage your WordPress site from wherever you are.'
 					),
 				} ) }
 			</div>
