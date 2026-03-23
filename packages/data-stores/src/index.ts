@@ -78,3 +78,4 @@ export type { SiteActions } from './site';
 export type { UserActions } from './user';
 export type { Member, UseQuery, UsersQuery } from './users/types';
 export { isE2ETest, isInSupportSession } from './utils';
+export { setRequester } from './wpcom-request';

@@ -20,3 +20,5 @@ export type SingleRouterHistory = {
 };
 
 export type PerSiteRouterHistory = Record< string, SingleRouterHistory >;
+
+export type PerSiteLastActivity = Record< string, number >;

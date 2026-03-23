@@ -13,12 +13,16 @@ export const connect: Callback = ( context, next ) => {
 	if ( config.isEnabled( 'oauth' ) && config( 'oauth_client_id' ) ) {
 		const redirectUri = new URL( '/connect/oauth/token', window.location.origin );
 
+		const state = crypto.randomUUID();
+		sessionStorage.setItem( 'wpcom_oauth_state', state );
+
 		const authUrl = new URL( WP_AUTHORIZE_ENDPOINT );
 		authUrl.search = new URLSearchParams( {
 			response_type: 'token',
 			client_id: config( 'oauth_client_id' ),
 			redirect_uri: redirectUri.toString(),
 			scope: 'global',
+			state,
 		} ).toString();
 
 		debug( `authUrl: ${ authUrl }` );
@@ -42,6 +46,15 @@ export const tokenRedirect: Callback = ( ctx, next ) => {
 	if ( context.hash?.error ) {
 		context.primary = <Connect authUrl="/connect/oauth/token" />;
 		return next();
+	}
+
+	// Validate the OAuth state parameter to prevent login CSRF / session fixation.
+	const returnedState = context.hash?.state;
+	const expectedState = sessionStorage.getItem( 'wpcom_oauth_state' );
+	sessionStorage.removeItem( 'wpcom_oauth_state' );
+	if ( ! returnedState || ! expectedState || returnedState !== expectedState ) {
+		document.location.replace( DEFAULT_NEXT_LOCATION );
+		return;
 	}
 
 	if ( context.hash?.access_token ) {

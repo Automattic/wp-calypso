@@ -1,4 +1,5 @@
 import { dispatch, useSelect } from '@wordpress/data';
+import { addQueryArgs } from '@wordpress/url';
 import { useCallback, useState, useRef } from 'react';
 // eslint-disable-next-line no-restricted-imports
 import type {
@@ -66,11 +67,62 @@ export function useHelpCenter() {
 		return ( dispatch( HELP_CENTER_STORE ) as HelpCenterDispatch ).setSubject( subject );
 	}, [] );
 
+	const setNewMessagingChat = useCallback(
+		async ( {
+			initialMessage,
+			section,
+			siteUrl,
+			siteId,
+		}: {
+			initialMessage: string;
+			section?: string;
+			siteUrl?: string;
+			siteId?: string;
+		} ) => {
+			const url = addQueryArgs( '/odie', {
+				provider: 'zendesk',
+				userFieldMessage: initialMessage,
+				section,
+				siteUrl,
+				siteId,
+			} );
+			await setNavigateToRoute( url );
+			await setShowHelpCenter( true );
+		},
+		[ setNavigateToRoute, setShowHelpCenter ]
+	);
+
+	const setOpenOdieWithContext = useCallback(
+		async ( {
+			initialMessage,
+			section,
+			siteUrl,
+			siteId,
+		}: {
+			initialMessage: string;
+			section?: string;
+			siteUrl?: string;
+			siteId?: string | number;
+		} ) => {
+			const url = addQueryArgs( '/odie', {
+				userFieldMessage: initialMessage,
+				section,
+				siteUrl,
+				siteId: siteId != null ? String( siteId ) : undefined,
+			} );
+			await setNavigateToRoute( url );
+			await setShowHelpCenter( true );
+		},
+		[ setNavigateToRoute, setShowHelpCenter ]
+	);
+
 	return {
 		isLoading,
 		isShown,
 		setShowHelpCenter,
 		setNavigateToRoute,
 		setSubject,
+		setNewMessagingChat,
+		setOpenOdieWithContext,
 	};
 }

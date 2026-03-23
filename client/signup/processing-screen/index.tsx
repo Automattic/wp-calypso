@@ -52,22 +52,6 @@ const useSteps = ( {
 		case ENTREPRENEUR_FLOW:
 			steps = [ { title: __( 'Creating your account' ) } ];
 			break;
-		case 'setup-site':
-			// Custom durations give a more believable loading effect while setting up
-			// the site with headstart. Which can take quite a long time.
-			steps = [
-				{ title: __( 'Laying the foundations' ), duration: 7000 },
-				{ title: __( 'Turning on the lights' ), duration: 3000 },
-				{ title: __( 'Making it beautiful' ), duration: 4000 },
-				{ title: __( 'Personalizing your site' ), duration: 7000 },
-				{ title: __( 'Sprinkling some magic' ), duration: 4000 },
-				{ title: __( 'Securing your data' ), duration: 9000 },
-				{ title: __( 'Enabling encryption' ), duration: 3000 },
-				{ title: __( 'Optimizing your content' ), duration: 6000 },
-				{ title: __( 'Applying a shiny top coat' ), duration: 4000 },
-				{ title: __( 'Closing the loop' ) },
-			];
-			break;
 		case 'do-it-for-me':
 		case 'do-it-for-me-store':
 			steps = [
