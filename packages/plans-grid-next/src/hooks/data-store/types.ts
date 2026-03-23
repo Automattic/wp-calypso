@@ -40,12 +40,12 @@ export interface UseGridPlansParams {
 	 */
 	useLongSetFeatures?: boolean;
 	/**
-	 * When true, use the var4_1_more_premium / var4_3_new_copy feature set
+	 * When true, use the focused_more_premium / focused_new_copy feature set
 	 * (getVar41MorePremiumSignupWpcomFeatures) for the plans differentiators experiment.
 	 */
 	useVar41MorePremiumFeatures?: boolean;
 	/**
-	 * When true, use the var4_2_no_ai feature set for the plans differentiators experiment.
+	 * When true, use the focused_no_ai feature set for the plans differentiators experiment.
 	 */
 	useVar42NoAiFeatures?: boolean;
 	/**

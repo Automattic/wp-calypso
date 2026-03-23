@@ -143,7 +143,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 						isExperimentVariant ?? true // isExperimentVariant
 					);
 				} else if ( useVar42NoAiFeatures ) {
-					// Use the var4_2_no_ai feature list when available
+					// Use the focused_no_ai feature list when available
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
 						planConstantObj?.getVar42NoAiSignupWpcomFeatures?.() ??
@@ -159,7 +159,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 						isExperimentVariant ?? true // isExperimentVariant
 					);
 				} else if ( useVar41MorePremiumFeatures ) {
-					// Use the var4_1_more_premium / var4_3_new_copy feature list when available
+					// Use the focused_more_premium / focused_new_copy feature list when available
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
 						planConstantObj?.getVar41MorePremiumSignupWpcomFeatures?.() ??
@@ -175,7 +175,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 						isExperimentVariant ?? true // isExperimentVariant
 					);
 				} else if ( useLongSetFeatures ) {
-					// Use the long set features for var4 variant
+					// Use the long set features for focused_comparison
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
 						planConstantObj?.getLongSetSignupWpcomFeatures?.() ??

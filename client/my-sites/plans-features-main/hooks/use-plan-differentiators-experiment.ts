@@ -5,10 +5,10 @@ import type { IAppState } from 'calypso/state/types';
 
 type PlanDifferentiatorsExperimentVariant =
 	| 'control'
-	| 'var4'
-	| 'var4_1_more_premium'
-	| 'var4_2_no_ai'
-	| 'var4_3_new_copy';
+	| 'focused_comparison'
+	| 'focused_more_premium'
+	| 'focused_no_ai'
+	| 'focused_new_copy';
 
 type PlanDifferentiatorsExperimentResult = {
 	isLoading: boolean;
@@ -19,23 +19,23 @@ type PlanDifferentiatorsExperimentResult = {
 	 */
 	showDifferentiatorHeader: boolean;
 	/**
-	 * When true, use var4 feature set (getLongSetSignupWpcomFeatures).
-	 * Applies to: var4
+	 * When true, use long-set feature list (getLongSetSignupWpcomFeatures).
+	 * Applies to ExPlat variation: focused_comparison
 	 */
 	useVar4Features: boolean;
 	/**
-	 * When true, use var4_1 / var4_3 feature set (getVar41MorePremiumSignupWpcomFeatures).
-	 * Applies to: var4_1_more_premium, var4_3_new_copy
+	 * When true, use more-premium / new-copy feature set (getVar41MorePremiumSignupWpcomFeatures).
+	 * Applies to: focused_more_premium, focused_new_copy
 	 */
 	useVar41MorePremiumFeatures: boolean;
 	/**
-	 * When true, use var4_2 feature set (getVar42NoAiSignupWpcomFeatures).
-	 * Applies to: var4_2_no_ai
+	 * When true, use no-AI wording feature set (getVar42NoAiSignupWpcomFeatures).
+	 * Applies to: focused_no_ai
 	 */
 	useVar42NoAiFeatures: boolean;
 	/**
-	 * When true, the user is in any var4-based variant.
-	 * Used to exclude var4-style variants from certain experiment-specific styling.
+	 * When true, the user is in any focused pricing experiment variant (not control).
+	 * Used to exclude these variants from certain experiment-specific styling.
 	 */
 	isVar4Variant: boolean;
 	/**
@@ -79,14 +79,15 @@ function usePlanDifferentiatorsExperiment( {
 		isLoading,
 		variant,
 		showDifferentiatorHeader: false,
-		useVar4Features: variant === 'var4',
-		useVar41MorePremiumFeatures: variant === 'var4_1_more_premium' || variant === 'var4_3_new_copy',
-		useVar42NoAiFeatures: variant === 'var4_2_no_ai',
+		useVar4Features: variant === 'focused_comparison',
+		useVar41MorePremiumFeatures:
+			variant === 'focused_more_premium' || variant === 'focused_new_copy',
+		useVar42NoAiFeatures: variant === 'focused_no_ai',
 		isVar4Variant:
-			variant === 'var4' ||
-			variant === 'var4_1_more_premium' ||
-			variant === 'var4_2_no_ai' ||
-			variant === 'var4_3_new_copy',
+			variant === 'focused_comparison' ||
+			variant === 'focused_more_premium' ||
+			variant === 'focused_no_ai' ||
+			variant === 'focused_new_copy',
 		isExperimentVariant,
 	};
 }

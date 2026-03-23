@@ -146,7 +146,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 					'upload-video',
 				];
 
-				// Apply green styling for domain feature in experiment variants (not var1d, var4, or control)
+				// Apply green styling for domain feature in experiment variants (not var1d, focused long-list, or control)
 				const isCustomDomainFeatureWithPaidDomain =
 					currentFeature.getSlug() === FEATURE_CUSTOM_DOMAIN &&
 					paidDomainName &&

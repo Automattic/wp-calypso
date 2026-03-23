@@ -46,7 +46,7 @@ const MobileFreeDomain = ( {
 		: translate( 'Free domain for one year' );
 
 	// Apply green styling for experiment variants (which use "Everything in X, plus:" features)
-	// but not for var1d, var4, or control experience
+	// but not for var1d, focused long-list variants, or control experience
 	const shouldHighlightDomain = isExperimentVariant && ! isVar4Variant && paidDomainName;
 
 	const titleClasses = clsx( 'plan-features-2023-grid__item-title', 'is-bold', {

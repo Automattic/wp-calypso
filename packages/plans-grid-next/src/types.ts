@@ -294,8 +294,8 @@ export type GridContextProps = {
 	isVar1dVariant?: boolean;
 
 	/**
-	 * When true, indicates the user is in the var4 experiment variant.
-	 * Used to exclude var4 from certain experiment-specific styling.
+	 * When true, indicates the user is in a focused pricing experiment variant (e.g. focused_comparison).
+	 * Used to exclude those variants from certain experiment-specific styling.
 	 */
 	isVar4Variant?: boolean;
 
