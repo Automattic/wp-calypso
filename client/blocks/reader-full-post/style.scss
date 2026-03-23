@@ -1,5 +1,6 @@
 // Styles targeted at story content
 @import './content';
+@import "@wordpress/base-styles/breakpoints";
 
 // Since we cannot use css variables in media queries, we need to define the valuess in scss.
 $reader-full-post-sidebar-width: 220px;
@@ -381,7 +382,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	}
 }
 
-@media ( max-width: 900px ) {
+@media ( max-width: $break-large ) {
 	.reader-full-post__view-original-button-label {
 		display: none;
 	}
