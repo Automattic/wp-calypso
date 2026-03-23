@@ -27,6 +27,7 @@ test.describe(
 			} );
 
 			await test.step( `And I choose the test site ${ testAccountSiteDomain } if the site selector is shown`, async function () {
+				// eslint-disable-next-line playwright/no-conditional-in-test -- The account may have one or multiple sites.
 				if ( await componentSiteSelect.isSiteSelectorVisible() ) {
 					await componentSiteSelect.selectSite( testAccountSiteDomain );
 				}
