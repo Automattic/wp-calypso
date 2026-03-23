@@ -41,7 +41,7 @@ export default function ResponsiveSidebar( {
 					/>,
 					document.body
 				) }
-			<Sidebar />
+			<Sidebar onNavigate={ onClose } />
 		</div>
 	);
 }
