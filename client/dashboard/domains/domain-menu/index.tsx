@@ -1,33 +1,27 @@
 import { useRouter } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
-import { category, envelope } from '@wordpress/icons';
 import { useAppContext } from '../../app/context';
 import { emailsRoute } from '../../app/router/emails';
-import { SidebarMenu, SidebarMenuItem } from '../../components/sidebar';
+import MenuDivider from '../../components/menu-divider';
+import ResponsiveMenu from '../../components/responsive-menu';
 
 const DomainMenu = ( { domainName }: { domainName: string } ) => {
 	const { supports } = useAppContext();
 	const router = useRouter();
 
 	return (
-		<SidebarMenu>
-			<SidebarMenuItem icon={ category } to={ `/domains/${ domainName }` }>
+		<ResponsiveMenu label={ __( 'Domain Menu' ) } prefix={ <MenuDivider /> }>
+			<ResponsiveMenu.Item to={ `/domains/${ domainName }` }>
 				{ __( 'Overview' ) }
-			</SidebarMenuItem>
+			</ResponsiveMenu.Item>
 			{ supports.emails && (
-				<SidebarMenuItem
-					icon={ envelope }
-					to={
-						router.buildLocation( {
-							to: emailsRoute.fullPath,
-							search: { domainName },
-						} ).href
-					}
+				<ResponsiveMenu.Item
+					to={ router.buildLocation( { to: emailsRoute.fullPath, search: { domainName } } ).href }
 				>
 					{ __( 'Emails' ) }
-				</SidebarMenuItem>
+				</ResponsiveMenu.Item>
 			) }
-		</SidebarMenu>
+		</ResponsiveMenu>
 	);
 };
 

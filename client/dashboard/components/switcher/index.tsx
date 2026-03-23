@@ -69,7 +69,7 @@ export default function Switcher< T >( {
 					} }
 					aria-haspopup="true"
 					aria-expanded={ isOpen }
-					style={ { justifyContent: 'flex-start' } }
+					style={ { width: '100%', justifyContent: 'flex-start' } }
 				>
 					<HStack
 						alignment="center"

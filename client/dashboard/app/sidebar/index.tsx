@@ -1,15 +1,17 @@
 import { useRouterState } from '@tanstack/react-router';
-import { Navigator } from '@wordpress/components';
+import { __experimentalHStack as HStack, Navigator } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
+import { brush, copy, envelope, globe, plugins } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useEffect, useMemo, useRef } from 'react';
 import RouterLinkButton from '../../components/router-link-button';
+import { SidebarExpandableMenuItem, SidebarMenu, SidebarMenuItem } from '../../components/sidebar';
 import DomainSidebar from '../../domains/domain-sidebar';
 import MeSidebar from '../../me/me-sidebar';
 import SiteSidebar from '../../sites/site-sidebar';
+import { wpcomLink } from '../../utils/link';
 import { useAnalytics } from '../analytics';
 import { useAppContext } from '../context';
-import PrimaryMenu from '../primary-menu';
 import RouteErrorBoundary from './error';
 import { getScreenPath, NavigatorRouteSync } from './navigator-route-sync';
 
@@ -75,7 +77,7 @@ export default function Sidebar( { onNavigate }: { onNavigate?: () => void } ) {
 				<NavigatorRouteSync screenPath={ screenPath } />
 
 				<Navigator.Screen path="/">
-					<PrimaryMenu />
+					<PrimaryMenuSidebar />
 				</Navigator.Screen>
 
 				<Navigator.Screen path="/sites/:siteSlug">
@@ -97,5 +99,60 @@ export default function Sidebar( { onNavigate }: { onNavigate?: () => void } ) {
 				</Navigator.Screen>
 			</Navigator>
 		</div>
+	);
+}
+
+function PrimaryMenuSidebar() {
+	const { supports } = useAppContext();
+
+	return (
+		<SidebarMenu>
+			{ supports.sites && (
+				<SidebarMenuItem icon={ copy } to="/sites">
+					{ __( 'Sites' ) }
+				</SidebarMenuItem>
+			) }
+			{ supports.domains && (
+				<SidebarMenuItem icon={ globe } to="/domains">
+					{ __( 'Domains' ) }
+				</SidebarMenuItem>
+			) }
+			{ supports.emails && (
+				<SidebarMenuItem icon={ envelope } to="/emails">
+					{ __( 'Emails' ) }
+				</SidebarMenuItem>
+			) }
+			{ supports.plugins && (
+				<SidebarExpandableMenuItem label={ __( 'Plugins' ) } icon={ plugins } to="/plugins">
+					<SidebarMenuItem to="/plugins/manage">{ __( 'Manage plugins' ) }</SidebarMenuItem>
+					<SidebarMenuItem to="/plugins/scheduled-updates">
+						{ __( 'Scheduled updates' ) }
+					</SidebarMenuItem>
+					<SidebarMenuItem
+						href={ wpcomLink( '/plugins' ) }
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						<HStack justify="flex-start" spacing={ 1 }>
+							<span>{ __( 'Browse plugins' ) }</span>
+							<span aria-label={ __( '(opens in a new tab)' ) }>&#8599;</span>
+						</HStack>
+					</SidebarMenuItem>
+				</SidebarExpandableMenuItem>
+			) }
+			{ supports.themes && (
+				<SidebarMenuItem
+					icon={ brush }
+					href={ wpcomLink( '/themes' ) }
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					<HStack justify="flex-start" spacing={ 1 }>
+						<span>{ __( 'Themes' ) }</span>
+						<span aria-label={ __( '(opens in a new tab)' ) }>&#8599;</span>
+					</HStack>
+				</SidebarMenuItem>
+			) }
+		</SidebarMenu>
 	);
 }
