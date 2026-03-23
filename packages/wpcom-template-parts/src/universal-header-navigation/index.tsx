@@ -78,7 +78,7 @@ const UniversalNavbarHeader = ( {
 			plugins: '//wordpress.com/start/business',
 			reader: '//wordpress.com/start/reader',
 		};
-		const startPath = startPaths[ sectionName ] ?? '//wordpress.com/start';
+		const startPath = ( sectionName && startPaths[ sectionName ] ) ?? '//wordpress.com/start';
 
 		startUrl = addQueryArgs(
 			localizeUrl( startPath, locale, isLoggedIn ),
