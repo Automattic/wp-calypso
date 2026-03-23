@@ -1,0 +1,64 @@
+.reader-sidebar-collapse-toggle {
+	position: fixed;
+	top: 50%;
+	transform: translateY( -50% );
+	z-index: 100;
+	width: 24px;
+	height: 24px;
+	min-width: 24px !important;
+	padding: 0 !important;
+	border-radius: 50%;
+	background: var( --color-surface );
+	border: 1px solid var( --color-border-subtle );
+	box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.1 );
+	cursor: pointer;
+	display: none;
+
+	&:hover {
+		background: var( --color-neutral-0 );
+		border-color: var( --color-border );
+	}
+
+	svg {
+		fill: var( --color-text-subtle );
+	}
+
+	@media ( min-width: 782px ) {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+}
+
+// When sidebar is visible: button at the right edge of sidebar
+body.is-section-reader:not( .is-reader-sidebar-collapsed ) {
+	.reader-sidebar-collapse-toggle {
+		left: calc( var( --sidebar-width-max ) - 12px );
+	}
+}
+
+// When sidebar is collapsed
+body.is-section-reader.is-reader-sidebar-collapsed {
+	// Move toggle to left edge
+	.reader-sidebar-collapse-toggle {
+		left: 8px;
+	}
+
+	// Hide sidebar and reclaim space
+	.layout__secondary {
+		/* stylelint-disable length-zero-no-unit */
+		width: 0px;
+		/* stylelint-enable length-zero-no-unit */
+		border: none;
+	}
+
+	.layout__secondary .global-sidebar {
+		visibility: hidden;
+		opacity: 0;
+	}
+
+	// Shift content to fill full width
+	.layout__content {
+		padding-inline-start: 32px !important;
+	}
+}

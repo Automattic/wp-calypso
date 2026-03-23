@@ -44,6 +44,7 @@ import {
 import { getReaderTeams } from 'calypso/state/teams/selectors';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import ReaderSidebarHelper from './helper';
+import ReaderSidebarCollapseToggle from './reader-sidebar-collapse-toggle';
 import ReaderSidebarLists from './reader-sidebar-lists';
 import ReaderSidebarNudges from './reader-sidebar-nudges';
 import ReaderSidebarOrganizations from './reader-sidebar-organizations';
@@ -286,6 +287,7 @@ export class ReaderSidebar extends Component {
 				onClick={ this.handleClick }
 				siteTitle={ i18n.translate( 'Reader' ) }
 			>
+				<ReaderSidebarCollapseToggle />
 				<ReaderSidebarNudges />
 				{ this.renderSidebarMenu() }
 			</GlobalSidebar>
