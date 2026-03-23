@@ -37,8 +37,8 @@ Published to npm as `@automattic/grid`. Steps:
 
 2. **Publish to npm**
    - Checkout `trunk` at the merged commit
-   - Log in with your personal npm account (must be a member of the `@automattic` org): `yarn npm login --scope @automattic`
-   - Verify: `yarn npm whoami --scope @automattic`
+   - Log in with your personal npm account (must be a member of the `@automattic` org): `yarn npm login --scope automattic`
+   - Verify: `yarn npm whoami --scope automattic`
    - Publish: `cd packages/grid && yarn npm publish`
    - Enter 2FA code when prompted
    - Verify on [npmjs.com](https://www.npmjs.com/package/@automattic/grid)
