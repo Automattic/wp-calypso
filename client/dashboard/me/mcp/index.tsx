@@ -9,6 +9,7 @@ import {
 	getDisabledSiteIds,
 	getEnabledSiteIds,
 } from '../../../me/mcp/utils';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { Card, CardBody, CardDivider } from '../../components/card';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import { PageHeader } from '../../components/page-header';
@@ -131,6 +132,7 @@ function McpComponent() {
 					description={ __(
 						'Allow external AI agents to access your WordPress.com account and sites via MCP.'
 					) }
+					prefix={ <Breadcrumbs length={ 2 } /> }
 				/>
 			}
 		>
