@@ -141,7 +141,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/agents-manager@workspace:packages/agents-manager"
   dependencies:
-    "@automattic/agenttic-client": "npm:^0.1.53"
+    "@automattic/agenttic-client": "npm:^0.1.56"
     "@automattic/agenttic-ui": "npm:^0.1.53"
     "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
@@ -173,9 +173,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/agenttic-client@npm:^0.1.50, @automattic/agenttic-client@npm:^0.1.53":
-  version: 0.1.53
-  resolution: "@automattic/agenttic-client@npm:0.1.53"
+"@automattic/agenttic-client@npm:^0.1.50, @automattic/agenttic-client@npm:^0.1.53, @automattic/agenttic-client@npm:^0.1.56":
+  version: 0.1.56
+  resolution: "@automattic/agenttic-client@npm:0.1.56"
   dependencies:
     "@types/react": "npm:^18.0.0"
     marked: "npm:^16.2.1"
@@ -189,7 +189,7 @@ __metadata:
   peerDependenciesMeta:
     "@wordpress/api-fetch":
       optional: true
-  checksum: 09dbbdb387f0b2b052f1b3cd7c08a6d62e5abeb808234cd20ada788f8d940038b6494ae3be095e1655acf1be547fc19f89f339a47be87ecc6f8d1b8fed9bcf07
+  checksum: 21381956f76a283d85e53b373bf8ee430002a07f4490ad14488a98ad9c87f80b9262d290974015fdae9a446fb692aab560bc4683e3430d31c21d8a5fbd42d23b
   languageName: node
   linkType: hard
 
