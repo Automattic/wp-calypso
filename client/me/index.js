@@ -42,6 +42,51 @@ export default function () {
 	);
 
 	page(
+		'/me/mcp/setup',
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard( '/me/mcp/setup' ),
+		controller.sidebar,
+		controller.mcpSetup,
+		makeLayout,
+		clientRender
+	);
+	page(
+		'/me/mcp/read',
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard( '/me/mcp' ),
+		controller.sidebar,
+		controller.mcpRead,
+		makeLayout,
+		clientRender
+	);
+	page(
+		'/me/mcp/write',
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard( '/me/mcp' ),
+		controller.sidebar,
+		controller.mcpWrite,
+		makeLayout,
+		clientRender
+	);
+	page(
+		'/me/mcp/mcp-sites',
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard( '/me/mcp' ),
+		controller.sidebar,
+		controller.mcpMcpSites,
+		makeLayout,
+		clientRender
+	);
+	page(
+		'/me/mcp/add-site',
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard( '/me/mcp' ),
+		controller.sidebar,
+		controller.mcpAddSite,
+		makeLayout,
+		clientRender
+	);
+	page(
 		'/me/mcp',
 		setupPreferences,
 		maybeRedirectToMultiSiteDashboard( '/me/mcp' ),
@@ -50,13 +95,5 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
-	page(
-		'/me/mcp-setup',
-		setupPreferences,
-		maybeRedirectToMultiSiteDashboard( '/me/mcp/setup' ),
-		controller.sidebar,
-		controller.mcpSetup,
-		makeLayout,
-		clientRender
-	);
+	page( '/me/mcp-setup', controller.mcpSetupLegacyRedirect, makeLayout, clientRender );
 }

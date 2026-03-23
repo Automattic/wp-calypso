@@ -1,0 +1,25 @@
+@import '@wordpress/base-styles/variables';
+@import '@wordpress/base-styles/mixins';
+
+$sidebar-width: 272px;
+
+.dashboard-responsive-sidebar__sidebar {
+	display: flex;
+	flex-direction: column;
+	flex-shrink: 0;
+	gap: $grid-unit-30;
+	position: sticky;
+	width: $sidebar-width;
+	min-height: calc(100vh - var(--masterbar-height) );
+	padding: 0 $grid-unit-20;
+	border-inline-end: $border-width solid var( --dashboard-header__border-color );
+	box-sizing: border-box;
+	color: var( --dashboard-menu-item__color );
+	background-color: var( --dashboard-header__background-color );
+	overflow-y: auto;
+}
+
+.dashboard-responsive-sidebar__logo {
+	padding: 14px 2px; // temporary to match Reader's layout
+	border-block-end: 1px solid var( --dashboard-header__border-color );
+}

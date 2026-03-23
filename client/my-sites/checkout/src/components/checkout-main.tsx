@@ -57,6 +57,7 @@ import { payPalJsProcessor } from '../lib/paypal-js-processor';
 import { pixProcessor } from '../lib/pix-processor';
 import razorpayProcessor from '../lib/razorpay-processor';
 import { translateResponseCartToWPCOMCart } from '../lib/translate-cart';
+import upiProcessor from '../lib/upi-processor';
 import weChatProcessor from '../lib/we-chat-processor';
 import webPayProcessor from '../lib/web-pay-processor';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
@@ -586,7 +587,7 @@ export default function CheckoutMain( {
 			eps: ( transactionData: unknown ) =>
 				genericRedirectProcessor( 'eps', transactionData, dataForProcessor ),
 			'stripe-upi': ( transactionData: unknown ) =>
-				genericRedirectProcessor( 'stripe-upi', transactionData, dataForProcessor ),
+				upiProcessor( transactionData, dataForProcessor, translate ),
 			'existing-card': ( transactionData: unknown ) =>
 				existingCardProcessor( transactionData, dataForProcessor ),
 			'existing-card-ebanx': ( transactionData: unknown ) =>

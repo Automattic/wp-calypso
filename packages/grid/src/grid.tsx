@@ -3,6 +3,7 @@ import { arrayMove, SortableContext, sortableKeyboardCoordinates } from '@dnd-ki
 import { useResizeObserver, useDebounce, useEvent } from '@wordpress/compose';
 import { useMemo, Children, isValidElement, useState } from 'react';
 import { GridItem } from './grid-item';
+import { resolveFillWidths } from './resolve-fill-widths';
 import type { GridLayoutItem, GridProps } from './types';
 import type { DragOverEvent } from '@dnd-kit/core';
 
@@ -53,6 +54,22 @@ export function Grid( {
 				.map( ( item ) => item.key ),
 		[ activeLayout ]
 	);
+
+	// Resolve fillWidth items to concrete column spans.
+	// Returns a map of key → resolved GridLayoutItem (with fillWidth replaced by a computed width).
+	// Items without fillWidth are returned as-is from layoutMap (same reference).
+	const resolvedItemMap = useMemo( () => {
+		const fillWidths = resolveFillWidths( items, layoutMap, effectiveColumns );
+		if ( fillWidths.size === 0 ) {
+			return layoutMap;
+		}
+		const map = new Map< string, GridLayoutItem >();
+		for ( const [ key, item ] of layoutMap ) {
+			const fillW = fillWidths.get( key );
+			map.set( key, fillW !== undefined ? { ...item, width: fillW } : item );
+		}
+		return map;
+	}, [ items, layoutMap, effectiveColumns ] );
 
 	const [ childrenMap, remaining ] = useMemo( () => {
 		const map = new Map< string, React.ReactElement >();
@@ -138,13 +155,15 @@ export function Grid( {
 			// Update the temporary layout with the new size
 			const updatedLayout = activeLayout.map( ( item ) => {
 				if ( item.key === id ) {
+					const resolvedItem = resolvedItemMap.get( id );
+					const baseWidth = item.fillWidth
+						? resolvedItem?.width ?? item.width ?? 1
+						: item.width ?? 1;
 					return {
 						...item,
-						width: Math.max(
-							1,
-							Math.min( ( item.width ?? 1 ) + relativeDelta.width, effectiveColumns )
-						),
+						width: Math.max( 1, Math.min( baseWidth + relativeDelta.width, effectiveColumns ) ),
 						height: Math.max( 1, ( item.height ?? 1 ) + relativeDelta.height ),
+						fillWidth: undefined,
 					};
 				}
 				return item;
@@ -176,7 +195,7 @@ export function Grid( {
 					{ items.map( ( id ) => (
 						<GridItem
 							key={ id }
-							item={ layoutMap.get( id ) as GridLayoutItem }
+							item={ resolvedItemMap.get( id ) as GridLayoutItem }
 							maxColumns={ effectiveColumns }
 							disabled={ ! editMode }
 							onResize={ ( delta ) => handleResize( id, delta ) }

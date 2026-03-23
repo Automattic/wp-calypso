@@ -36,12 +36,7 @@ import PostExcerptLink from 'calypso/reader/post-excerpt-link';
 import { keyForPost } from 'calypso/reader/post-key';
 import { ReaderPerformanceTrackerStop } from 'calypso/reader/reader-performance-tracker';
 import { getStreamUrlFromPost } from 'calypso/reader/route';
-import {
-	recordAction,
-	recordGaEvent,
-	recordTrackForPost,
-	recordPermalinkClick,
-} from 'calypso/reader/stats';
+import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
 import { getPostTitleFallback, showSelectedPost } from 'calypso/reader/utils';
 import { requestPostComments } from 'calypso/state/comments/actions';
 import { isCommentsApiDisabled } from 'calypso/state/comments/selectors/get-comments-api-disabled';
@@ -488,10 +483,6 @@ export class FullPostView extends Component {
 
 	handleRelatedPostFromSameSiteClicked = () => {
 		recordTrackForPost( 'calypso_reader_related_post_from_same_site_clicked', this.props.post );
-	};
-
-	handleVisitSiteClick = () => {
-		recordPermalinkClick( 'full_post_visit_link', this.props.post );
 	};
 
 	handleRelatedPostFromOtherSiteClicked = () => {

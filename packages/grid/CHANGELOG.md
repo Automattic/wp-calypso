@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## 0.2.0
+
+### Added
+
+- Add `fillWidth` layout property — items fill remaining columns in their row
+
 ## 0.1.3
 
 ### Bug Fixes
