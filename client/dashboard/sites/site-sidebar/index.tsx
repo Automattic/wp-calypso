@@ -6,7 +6,7 @@ import { Suspense, lazy, useMemo } from 'react';
 import { useAppContext } from '../../app/context';
 import { SidebarBackButton, SidebarMenu } from '../../components/sidebar';
 import { canSwitchEnvironment } from '../features';
-import EnvironmentSwitcher from '../site/environment-switcher';
+import EnvironmentSwitcher from '../site/environment-switcher-v2';
 import SiteMenu from '../site-menu';
 
 export default function SiteSidebar() {
