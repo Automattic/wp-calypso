@@ -12,6 +12,7 @@
 }
 
 .dashboard-root__body {
+	--masterbar-height: 61px;
 	display: flex;
 	min-height: calc(100vh - var(--masterbar-height) );
 
