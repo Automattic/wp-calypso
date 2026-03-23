@@ -18,6 +18,7 @@ interface CancellationPreSurveyContentProps {
 	onCancelConfirmationStateChange: ( newState: Partial< CancelPurchaseState > ) => void;
 	onDomainConfirmationChange: ( checked: boolean ) => void;
 	onCustomerConfirmedUnderstandingChange: ( checked: boolean ) => void;
+	onCustomerConfirmedUnderstandingAtomicPlanRevert: ( checked: boolean ) => void;
 	onKeepSubscriptionClick: () => void;
 	onCancellationComplete: () => void;
 	onCancellationStart: () => void;
@@ -35,6 +36,7 @@ export default function CancellationPreSurveyContent( {
 	onCancelConfirmationStateChange,
 	onDomainConfirmationChange,
 	onCustomerConfirmedUnderstandingChange,
+	onCustomerConfirmedUnderstandingAtomicPlanRevert,
 	onKeepSubscriptionClick,
 	onCancellationComplete,
 	onCancellationStart,
@@ -62,6 +64,9 @@ export default function CancellationPreSurveyContent( {
 			onCancelConfirmationStateChange={ onCancelConfirmationStateChange }
 			onDomainConfirmationChange={ onDomainConfirmationChange }
 			onCustomerConfirmedUnderstandingChange={ onCustomerConfirmedUnderstandingChange }
+			onCustomerConfirmedUnderstandingAtomicPlanRevert={
+				onCustomerConfirmedUnderstandingAtomicPlanRevert
+			}
 			onKeepSubscriptionClick={ onKeepSubscriptionClick }
 			onCancelClick={
 				shouldHandleMarketplaceSubscriptions() ? showMarketplaceDialog : onCancellationStart

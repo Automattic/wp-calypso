@@ -486,6 +486,7 @@ export const CheckoutStep = ( {
 	isCompleteCallback,
 	canEditStep = true,
 	editButtonText,
+	editButtonElement,
 	editButtonAriaLabel,
 	nextStepButtonText,
 	nextStepButtonAriaLabel,
@@ -543,6 +544,7 @@ export const CheckoutStep = ( {
 		<CheckoutStepBody
 			onError={ onError }
 			editButtonText={ editButtonText || __( 'Edit' ) }
+			editButtonElement={ editButtonElement }
 			editButtonAriaLabel={ editButtonAriaLabel || __( 'Edit this step' ) }
 			nextStepButtonText={ nextStepButtonText || __( 'Continue' ) }
 			nextStepButtonAriaLabel={ nextStepButtonAriaLabel || __( 'Continue to the next step' ) }
@@ -815,6 +817,7 @@ const StepSummaryWrapper = styled.div< StepContentWrapperProps & HTMLAttributes<
 export function CheckoutStepBody( {
 	errorMessage,
 	editButtonText,
+	editButtonElement,
 	editButtonAriaLabel,
 	nextStepButtonText,
 	validatingButtonText,
@@ -862,6 +865,7 @@ export function CheckoutStepBody( {
 							: undefined
 					}
 					editButtonText={ editButtonText || __( 'Edit' ) }
+					editButtonElement={ editButtonElement }
 					editButtonAriaLabel={ editButtonAriaLabel || __( 'Edit this step' ) }
 				/>
 				<StepContentWrapper
@@ -908,6 +912,7 @@ interface CheckoutStepBodyProps {
 	onError?: ( error: Error ) => void;
 	editButtonAriaLabel?: string;
 	editButtonText?: string;
+	editButtonElement?: ReactNode;
 	nextStepButtonText?: string;
 	nextStepButtonAriaLabel?: string;
 	isStepActive: boolean;
@@ -931,6 +936,7 @@ CheckoutStepBody.propTypes = {
 	onError: PropTypes.func,
 	editButtonAriaLabel: PropTypes.string,
 	editButtonText: PropTypes.string,
+	editButtonElement: PropTypes.node,
 	nextStepButtonText: PropTypes.string,
 	nextStepButtonAriaLabel: PropTypes.string,
 	isStepActive: PropTypes.bool.isRequired,
@@ -1027,6 +1033,7 @@ function CheckoutStepHeader( {
 	canEditStep,
 	onEdit,
 	editButtonText,
+	editButtonElement,
 	editButtonAriaLabel,
 }: {
 	id: string;
@@ -1038,6 +1045,7 @@ function CheckoutStepHeader( {
 	canEditStep?: boolean;
 	onEdit?: () => void;
 	editButtonText?: string;
+	editButtonElement?: ReactNode;
 	editButtonAriaLabel?: string;
 } ) {
 	const { __ } = useI18n();
@@ -1064,7 +1072,7 @@ function CheckoutStepHeader( {
 					onClick={ onEdit }
 					aria-label={ editButtonAriaLabel || __( 'Edit this step' ) }
 				>
-					{ editButtonText || __( 'Edit' ) }
+					{ editButtonElement ?? editButtonText ?? __( 'Edit' ) }
 				</HeaderEditButton>
 			) }
 		</StepHeaderWrapper>
@@ -1166,6 +1174,7 @@ CheckoutStepHeader.propTypes = {
 	isActive: PropTypes.bool,
 	isComplete: PropTypes.bool,
 	editButtonText: PropTypes.string,
+	editButtonElement: PropTypes.node,
 	editButtonAriaLabel: PropTypes.string,
 	onEdit: PropTypes.func,
 };

@@ -17,6 +17,7 @@ interface ConfirmCheckboxProps {
 	state: CancelPurchaseState;
 	onDomainConfirmationChange: ( checked: boolean ) => void;
 	onCustomerConfirmedUnderstandingChange: ( checked: boolean ) => void;
+	onCustomerConfirmedUnderstandingAtomicPlanRevert: ( checked: boolean ) => void;
 }
 
 export default function ConfirmCheckbox( {
@@ -25,6 +26,7 @@ export default function ConfirmCheckbox( {
 	state,
 	onDomainConfirmationChange,
 	onCustomerConfirmedUnderstandingChange,
+	onCustomerConfirmedUnderstandingAtomicPlanRevert,
 }: ConfirmCheckboxProps ) {
 	const isDomainRegistrationPurchase = purchase && purchase.is_domain_registration;
 
@@ -76,6 +78,7 @@ export default function ConfirmCheckbox( {
 					onChange={ ( checked ) => {
 						if ( atomicTransfer?.created_at ) {
 							onCustomerConfirmedUnderstandingChange( checked );
+							onCustomerConfirmedUnderstandingAtomicPlanRevert( checked );
 							return;
 						}
 

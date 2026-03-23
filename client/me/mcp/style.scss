@@ -1,0 +1,154 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
+// Use the same `.main > *` column as other Me screens (`client/me/style.scss`: max-width 1040px, centered).
+// Do not reset margins on `.main.mcp` children — that was forcing the nav header and cards edge-to-edge
+// and breaking padding alignment with Profile / Account settings.
+
+// Flat corners for MCP (hub + read/write tools) — default `.main` uses 8px radius in me/style.scss
+body.is-section-me div.layout.is-global-sidebar-visible .layout__primary .main.mcp {
+	border-radius: 0;
+}
+
+// AI & MCP hub — align with Dashboard / Figma: flat panels, full-bleed summary rows (see `mcp-hub__panel-rows`).
+.mcp-hub {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	max-width: 100%;
+	min-width: 0;
+	align-items: stretch;
+	box-sizing: border-box;
+
+	// Automattic `.card` uses `margin: 0 auto` — pair with explicit width so all panels match.
+	> .card {
+		width: 100%;
+		max-width: 100%;
+		margin-left: 0;
+		margin-right: 0;
+		box-sizing: border-box;
+	}
+
+	// Automattic Card spacing between stacked panels
+	.mcp-hub__panel {
+		margin-bottom: 16px;
+
+		@include break-mobile {
+			margin-bottom: 24px;
+		}
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+
+	// Full-bleed row lists: cancel Card horizontal padding (16px default, 24px ≥ break-mobile)
+	.mcp-hub__panel-rows {
+		margin-top: 16px;
+		margin-left: -16px;
+		margin-right: -16px;
+		margin-bottom: -16px;
+		border-top: 1px solid var(--color-border-subtle);
+		overflow: hidden;
+
+		@include break-mobile {
+			margin-left: -24px;
+			margin-right: -24px;
+			margin-bottom: -24px;
+		}
+	}
+
+	// Last summary row: drop duplicate bottom rule (card already has an edge)
+	.mcp-hub__panel-rows .summary-button.components-button.has-density-medium:last-child {
+		border-bottom: none;
+	}
+
+	// Connect panel (MCP on): single SummaryButton, full width
+	.mcp-hub__panel--connect {
+		padding: 0;
+		overflow: hidden;
+
+		.summary-button.components-button {
+			width: 100%;
+			max-width: 100%;
+			box-sizing: border-box;
+		}
+
+		.summary-button.components-button.has-density-low {
+			border: 1px solid transparent;
+			border-radius: 0;
+			margin: 0;
+		}
+	}
+}
+
+// Hub summary row icons (Read / Write / Site exceptions / Connect)
+.mcp-hub__summary-icon {
+	fill: var(--color-neutral-70);
+}
+
+// Read / Write subpages — grouped read view (Figma 5092:7643)
+.mcp-tools-subpage {
+	min-width: 0;
+
+	// @wordpress/components Card (often `components-surface` + `components-card`) — flat panels
+	.components-card,
+	.components-surface.components-card {
+		border-radius: 0;
+	}
+
+	.mcp-tools-subpage__group-card-body {
+		display: flex;
+		flex-direction: column;
+		gap: 0;
+		// WP CardBody defaults can leave titles flush to the card edge — set explicit inset
+		padding: 24px;
+
+		@include break-mobile {
+			padding: 24px 32px;
+		}
+	}
+
+	.mcp-tools-subpage__group-header {
+		width: 100%;
+		gap: 16px;
+		// Space above the divider so the title row isn’t cramped against the rule
+		padding-bottom: 20px;
+
+		.mcp-tools-subpage__group-title {
+			flex: 1 1 auto;
+			margin: 0 !important;
+			line-height: 1.35;
+			color: var(--color-neutral-100);
+		}
+
+		.mcp-tools-subpage__group-toggle {
+			flex: 0 0 auto;
+		}
+	}
+
+	// Divider + tool list — negative margins match CardBody horizontal padding (full-bleed rule)
+	.mcp-tools-subpage__group-body {
+		border-top: 1px solid var(--color-border-subtle);
+		margin-left: -24px;
+		margin-right: -24px;
+		padding: 20px 24px 4px;
+
+		@include break-mobile {
+			margin-left: -32px;
+			margin-right: -32px;
+			padding: 24px 32px 8px;
+		}
+	}
+}
+
+// Site exceptions — flat `@wordpress/components` Cards only (same as hub / tools subpages)
+.mcp-sites {
+	min-width: 0;
+
+	.components-card,
+	.components-surface.components-card {
+		border-radius: 0;
+	}
+}
