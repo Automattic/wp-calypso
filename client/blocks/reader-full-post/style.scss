@@ -677,11 +677,12 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 		&::after {
 			content: "↗";
 			display: inline-block;
-			color: var( --color-text-subtle );
+			color: var( --color-neutral-10 );
 			font-size: 0.65em;
 			margin-inline-start: 8px;
 			opacity: 0;
-			transform: translateY( -1px );
+			position: relative;
+			top: -3px;
 			transition: opacity 0.2s ease;
 		}
 	}
