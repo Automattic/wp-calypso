@@ -63,20 +63,24 @@ describe( 'reader utils', () => {
 	describe( 'getCurrentTabFromURL', () => {
 		it( 'returns the current tab', () => {
 			expect(
-				getCurrentTabFromURL( '/discover/firstposts', DISCOVER_PREFIX, FRESHLY_PRESSED_TAB )
-			).toEqual( 'firstposts' );
+				getCurrentTabFromURL( '/discover/recommended', DISCOVER_PREFIX, FRESHLY_PRESSED_TAB )
+			).toEqual( 'recommended' );
 		} );
 
 		it( 'ignores the locale', () => {
 			expect(
-				getCurrentTabFromURL( '/en/discover/firstposts', DISCOVER_PREFIX, FRESHLY_PRESSED_TAB )
-			).toEqual( 'firstposts' );
+				getCurrentTabFromURL( '/en/discover/recommended', DISCOVER_PREFIX, FRESHLY_PRESSED_TAB )
+			).toEqual( 'recommended' );
 		} );
 
 		it( 'ignores the query params', () => {
 			expect(
-				getCurrentTabFromURL( '/discover/firstposts?foo=bar', DISCOVER_PREFIX, FRESHLY_PRESSED_TAB )
-			).toEqual( 'firstposts' );
+				getCurrentTabFromURL(
+					'/discover/recommended?foo=bar',
+					DISCOVER_PREFIX,
+					FRESHLY_PRESSED_TAB
+				)
+			).toEqual( 'recommended' );
 		} );
 
 		it( 'returns the default tab when there is no tab', () => {
