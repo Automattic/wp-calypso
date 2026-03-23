@@ -1,0 +1,19 @@
+.dashboard-responsive-sidebar {
+	flex-shrink: 0;
+	position: sticky;
+	top: 0;
+	min-height: calc(100vh - var(--masterbar-height) );
+	width: 0;
+	overflow: hidden;
+	z-index: 101; // Above content overlay
+
+	&.is-open {
+		width: fit-content
+	}
+}
+
+.dashboard-responsive-sidebar__overlay {
+	position: absolute;
+	inset: 0;
+	z-index: 100;
+}

@@ -10,7 +10,6 @@ export const DEFAULT_DISCOVER_TAB = 'recommended';
 const ROUTES: Route[] = [
 	{ path: `/${ DISCOVER_PREFIX }` },
 	{ path: `/${ DISCOVER_PREFIX }/recommended` },
-	{ path: `/${ DISCOVER_PREFIX }/firstposts` },
 	{ path: `/${ DISCOVER_PREFIX }/tags` },
 	{ path: `/${ DISCOVER_PREFIX }/latest` },
 	{ path: `/${ DISCOVER_PREFIX }/reddit`, requiresAuth: true },
