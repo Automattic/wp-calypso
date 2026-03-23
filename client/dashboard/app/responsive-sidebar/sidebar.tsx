@@ -2,7 +2,7 @@ import { useRouterState } from '@tanstack/react-router';
 import { __experimentalHStack as HStack, Navigator } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { brush, copy, envelope, globe, plugins } from '@wordpress/icons';
-import { useEffect, useMemo, useRef } from 'react';
+import { useMemo } from 'react';
 import RouterLinkButton from '../../components/router-link-button';
 import { SidebarExpandableMenuItem, SidebarMenu, SidebarMenuItem } from '../../components/sidebar';
 import DomainSidebar from '../../domains/domain-sidebar';
@@ -16,7 +16,7 @@ import { getScreenPath, NavigatorRouteSync } from './navigator-route-sync';
 
 import './sidebar.scss';
 
-export default function Sidebar( { onNavigate }: { onNavigate?: () => void } ) {
+export default function Sidebar() {
 	const { Logo, name } = useAppContext();
 	const { recordTracksEvent } = useAnalytics();
 	const { resolvedPathname, hasError } = useRouterState( {
@@ -30,33 +30,8 @@ export default function Sidebar( { onNavigate }: { onNavigate?: () => void } ) {
 	const screenPath = getScreenPath( resolvedPathname, hasError );
 	const initialPath = useMemo( () => screenPath, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
-	// Close responsive panel when a navigation link is clicked
-	const sidebarRef = useRef< HTMLDivElement >( null );
-	useEffect( () => {
-		if ( ! onNavigate ) {
-			return;
-		}
-		const el = sidebarRef.current;
-		if ( ! el ) {
-			return;
-		}
-		let timeoutId: NodeJS.Timeout;
-		const handler = ( event: MouseEvent ) => {
-			if ( ( event.target as HTMLElement ).closest( 'a' ) ) {
-				// Brief delay so the user sees the selected state before
-				// the sidebar slides closed.
-				timeoutId = setTimeout( onNavigate, 150 );
-			}
-		};
-		el.addEventListener( 'click', handler );
-		return () => {
-			clearTimeout( timeoutId );
-			el.removeEventListener( 'click', handler );
-		};
-	}, [ onNavigate ] );
-
 	return (
-		<div className="dashboard-responsive-sidebar__sidebar" ref={ sidebarRef }>
+		<div className="dashboard-responsive-sidebar__sidebar">
 			{ Logo && (
 				<div className="dashboard-responsive-sidebar__logo">
 					<RouterLinkButton

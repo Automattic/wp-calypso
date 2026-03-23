@@ -8,7 +8,7 @@ $sidebar-width: 272px;
 	min-height: calc(100vh - var(--masterbar-height) );
 	width: $sidebar-width;
 	transform: translateX( -100% );
-	transition: transform 0.2s ease-out;
+	transition: transform 0.3s ease-in;
 	overflow: hidden;
 	z-index: 101; // Above content overlay
 

@@ -33,7 +33,7 @@
 	flex-direction: column;
 	flex: 1;
 	min-width: 0;
-	transition: transform 0.2s ease-out;
+	transition: transform 0.3s ease-in;
 
 	.dashboard-root__body:has(.dashboard-responsive-sidebar.is-open) & {
 			transform: translateX( $sidebar-width );
