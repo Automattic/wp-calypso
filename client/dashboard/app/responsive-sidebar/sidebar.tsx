@@ -40,13 +40,19 @@ export default function Sidebar( { onNavigate }: { onNavigate?: () => void } ) {
 		if ( ! el ) {
 			return;
 		}
+		let timeoutId: NodeJS.Timeout;
 		const handler = ( event: MouseEvent ) => {
 			if ( ( event.target as HTMLElement ).closest( 'a' ) ) {
-				onNavigate();
+				// Brief delay so the user sees the selected state before
+				// the sidebar slides closed.
+				timeoutId = setTimeout( onNavigate, 150 );
 			}
 		};
 		el.addEventListener( 'click', handler );
-		return () => el.removeEventListener( 'click', handler );
+		return () => {
+			clearTimeout( timeoutId );
+			el.removeEventListener( 'click', handler );
+		};
 	}, [ onNavigate ] );
 
 	return (
