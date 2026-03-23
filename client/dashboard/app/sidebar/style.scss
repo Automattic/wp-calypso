@@ -26,15 +26,17 @@ $sidebar-width: 272px;
 }
 
 .dashboard-sidebar-responsive__panel {
-	width: 0;
-	flex-shrink: 0;
-	overflow: hidden;
-	transition: width 0.2s ease-out;
-	position: sticky;
+	position: fixed;
 	top: 0;
+	left: 0;
+	width: $sidebar-width;
 	height: 100vh;
+	transform: translateX( -100% );
+	transition: transform 0.2s ease-out;
+	z-index: 101; // Above content overlay
+	overflow-y: auto;
 
 	&.is-open {
-		width: $sidebar-width;
+		transform: translateX( 0 );
 	}
 }

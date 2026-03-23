@@ -2,6 +2,7 @@ import { WordPressLogo } from '@automattic/components/src/logos/wordpress-logo';
 import { useQueryClient, useIsFetching } from '@tanstack/react-query';
 import { CatchNotFound, Outlet, useRouterState, useRouter } from '@tanstack/react-router';
 import { useViewportMatch } from '@wordpress/compose';
+import clsx from 'clsx';
 import {
 	Suspense,
 	lazy,
@@ -132,7 +133,11 @@ function Root() {
 							onClose={ closeResponsiveSidebar }
 						/>
 					) }
-					<div className="dashboard-root__content">
+					<div
+						className={ clsx( 'dashboard-root__content', {
+							'is-sidebar-open': ! isDesktop && isResponsiveSidebarOpen,
+						} ) }
+					>
 						{ ! isDesktop && isResponsiveSidebarOpen && (
 							<div
 								className="dashboard-root__content-overlay"
