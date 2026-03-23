@@ -24,6 +24,7 @@ declare module '@tanstack/react-router' {
 		 * The check is performed in siteRoute.beforeLoad against getSiteTypeFeatureSupports(site).
 		 */
 		requiresSiteTypeSupport?: SiteTypeFeature;
+		availableToInaccessibleJetpackSites?: boolean;
 	}
 }
 

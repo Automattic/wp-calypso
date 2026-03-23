@@ -1,4 +1,3 @@
-import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -15,7 +14,7 @@ import {
 	isIosOAuth2Client,
 	isStudioAppOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
-import { getEffectiveCiabConfig, getPartnerSignupTosElement } from 'calypso/lib/partner-branding';
+import { detectCiabConfig, getPartnerSignupTosElement } from 'calypso/lib/partner-branding';
 import { login } from 'calypso/lib/paths';
 import OneLoginFooter from 'calypso/login/wp-login/components/one-login-footer';
 import OneLoginLayout from 'calypso/login/wp-login/components/one-login-layout';
@@ -148,7 +147,10 @@ export class MagicLogin extends Component {
 
 		const loginParameters = buildEnterPasswordLoginParameters( this.props, options );
 
-		page( login( loginParameters ) );
+		// Use full page navigation instead of client-side routing because the magic
+		// login routes and the wp-login routes are registered as separate router groups.
+		// The page() client-side router updates the URL but doesn't re-dispatch across groups.
+		window.location.assign( login( loginParameters ) );
 	};
 
 	renderLinks() {
@@ -165,9 +167,10 @@ export class MagicLogin extends Component {
 
 		const isA4A = query?.redirect_to?.includes( 'agencies.automattic.com/client' ) ?? false;
 		const isMobileApp = isIosOAuth2Client( oauth2Client ) || isAndroidOAuth2Client( oauth2Client );
+		const hasPartnerBranding = Boolean( this.props.ciabConfig );
 
 		if ( showCheckYourEmail ) {
-			if ( isA4A || isMobileApp ) {
+			if ( isA4A || isMobileApp || hasPartnerBranding ) {
 				return null;
 			}
 			return (
@@ -214,7 +217,7 @@ export class MagicLogin extends Component {
 						</a>
 					}
 				/>
-				{ ! oauth2Client && ! isMobileApp && (
+				{ ! oauth2Client && ! isMobileApp && ! hasPartnerBranding && (
 					<AppPromo
 						title={ translate( 'Stay logged in with the Jetpack Mobile App' ) }
 						campaign="calypso-login-link"
@@ -396,7 +399,7 @@ const mapState = ( state ) => {
 			'jetpack-onboarding',
 		isWooJPC: isWooJPCFlow( state ),
 		publicToken: getMagicLoginPublicToken( state ),
-		ciabConfig: getEffectiveCiabConfig( currentQuery.from, initialQuery.from ),
+		ciabConfig: detectCiabConfig( getCurrentOAuth2Client( state ) ),
 	};
 };
 

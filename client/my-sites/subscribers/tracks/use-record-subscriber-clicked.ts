@@ -5,7 +5,7 @@ const useRecordSubscriberClicked = () => {
 
 	return (
 		where: 'title' | 'icon' | 'row' | 'list',
-		tracksProps: { site_id?: number | null; subscription_id?: number; user_id?: number }
+		tracksProps: { site_id?: number | null; subscription_id?: number; user_id?: number | string }
 	) => {
 		recordSubscribersTracksEvent(
 			`calypso_subscribers_subscriber_${ where }_clicked`,

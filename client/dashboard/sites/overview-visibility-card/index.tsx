@@ -6,11 +6,13 @@ import { launch } from '../../components/icons';
 import OverviewCard from '../../components/overview-card';
 import { wpcomLink } from '../../utils/link';
 import { getSiteVisibilityURL } from '../../utils/site-url';
+import JetpackConnectionWarningCard from '../overview-jetpack-connection-warning-card';
 import type { Site } from '@automattic/api-core';
 
 const CARD_PROPS = {
+	icon: launch,
 	title: __( 'Visibility' ),
-	trackId: 'site-overview-visibility',
+	tracksId: 'site-overview-visibility',
 };
 
 function getLaunchpadChecklistSlug( site: Site ) {
@@ -42,7 +44,6 @@ function VisibilityCardUnlaunched( { site }: { site: Site } ) {
 	return (
 		<OverviewCard
 			{ ...CARD_PROPS }
-			icon={ launch }
 			{ ...( isLaunchpadCompleted
 				? {
 						heading: __( 'Launch site' ),
@@ -68,7 +69,6 @@ function VisibilityCardComingSoon( { site }: { site: Site } ) {
 	return (
 		<OverviewCard
 			{ ...CARD_PROPS }
-			icon={ launch }
 			heading={ __( 'Coming soon' ) }
 			description={
 				site.is_wpcom_staging_site
@@ -110,6 +110,10 @@ function VisibilityCardPublic( { site }: { site: Site } ) {
 }
 
 export default function VisibilityCard( { site }: { site: Site } ) {
+	if ( site.__inaccessible_jetpack_error ) {
+		return <JetpackConnectionWarningCard { ...CARD_PROPS } />;
+	}
+
 	if ( site.launch_status === 'unlaunched' ) {
 		return <VisibilityCardUnlaunched site={ site } />;
 	}

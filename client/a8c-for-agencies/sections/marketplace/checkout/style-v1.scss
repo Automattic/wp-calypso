@@ -189,7 +189,7 @@
 	}
 
 	h3 {
-		margin-block: 24px;
+		margin-block: 24px 8px;
 		@include heading-large;
 		color: var( --color-neutral-70 );
 	}

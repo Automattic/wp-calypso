@@ -207,6 +207,25 @@ export const getExistingConversationMessage = (): Message => ( {
 	},
 } );
 
+export const getConversationLimitReachedMessage = (): Message => ( {
+	content: __(
+		'We noticed you have other open conversations. Would you like to see them?',
+		__i18n_text_domain__
+	),
+	role: 'bot',
+	internal_message_id: 'conversation-limit-reached-message',
+	type: 'message',
+	context: {
+		question_tags: {
+			inquiry_type: 'request-for-human-support',
+		},
+		flags: {
+			forward_to_human_support: true,
+		},
+		site_id: null,
+	},
+} );
+
 const getOdieInitialPromptContext = ( botNameSlug: OdieAllowedBots ): Context | undefined => {
 	switch ( botNameSlug ) {
 		case 'wpcom-plan-support':

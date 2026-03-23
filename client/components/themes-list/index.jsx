@@ -9,6 +9,7 @@ import { connect, useSelector } from 'react-redux';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
 import Theme from 'calypso/components/theme';
 import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
+import SearchMoreOptions from 'calypso/my-sites/themes/search-results-modern/search-more-options';
 import { getWooMyCustomThemeOptions } from 'calypso/my-sites/themes/theme-options';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -151,6 +152,16 @@ export const ThemesList = ( {
 	}, [ themes, translate, activeTheme, getButtonOptions, siteAdminUrl, siteSlug ] );
 
 	if ( ! loading && themes.length === 0 ) {
+		if ( props.isThemeShowcaseModern ) {
+			return (
+				<SearchMoreOptions
+					title={ translate( 'No themes found' ) }
+					subtitle={ translate( 'Try building your site another way.' ) }
+					searchTerm={ searchTerm }
+				/>
+			);
+		}
+
 		return (
 			<Empty
 				isFSEActive={ props.isFSEActive }

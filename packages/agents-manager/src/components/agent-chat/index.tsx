@@ -4,6 +4,7 @@ import {
 	createMessageRenderer,
 	EmptyView,
 	ImageUploader,
+	type ImageUploaderHandle,
 	type MarkdownComponents,
 	type MarkdownExtensions,
 	type Suggestion,
@@ -16,11 +17,12 @@ import clsx from 'clsx';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import ChatMessageSkeleton from '../chat-message-skeleton';
+import CustomALink from '../custom-a-link';
 import FeedbackInput from '../feedback-input';
 import { AI } from '../icons';
 import SelectedBlock from '../selected-block';
 import type { UseImageUploadResult } from '../../utils/load-external-providers';
-import type { Message } from '@automattic/agenttic-ui/dist/types';
+import type { Message, NoticeConfig } from '@automattic/agenttic-ui/dist/types';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 
 interface Props {
@@ -64,10 +66,14 @@ interface Props {
 	inputValue?: string;
 	/** Called when the input value changes. */
 	onInputChange?: ( value: string ) => void;
+	/** Notice to display in the chat. */
+	notice?: NoticeConfig;
 	/** Indicates if the floating chat is in compact mode. */
 	isCompactMode?: boolean;
 	/** Image upload state from the parent component. When provided, enables the image uploader UI. */
 	imageUpload?: UseImageUploadResult;
+	/** Optional list of MIME types accepted for image uploads. When not provided, defaults include HEIC/HEIF. */
+	acceptedImageFileTypes?: string[];
 	/** Whether to show the feedback text input (after thumbs down). */
 	showFeedbackInput?: boolean;
 	/** Called when the user submits feedback text. */
@@ -76,7 +82,18 @@ interface Props {
 	onCancelFeedback?: () => void;
 	/** Called when the user views the conversation history. */
 	onViewHistory?: () => void;
+	/** Alternative footer to render instead of the default footer. */
+	alternativeFooter?: React.ReactNode;
 }
+
+const DEFAULT_ACCEPTED_IMAGE_TYPES = [
+	'image/jpeg',
+	'image/png',
+	'image/heic',
+	'image/heif',
+	'image/heic-sequence',
+	'image/heif-sequence',
+];
 
 export default function AgentChat( {
 	messages,
@@ -94,6 +111,7 @@ export default function AgentChat( {
 	onClose,
 	onExpand,
 	clearSuggestions,
+	notice,
 	markdownComponents = {},
 	markdownExtensions = {},
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars -- Kept for API compatibility with `ZendeskChat`
@@ -102,25 +120,33 @@ export default function AgentChat( {
 	onInputChange,
 	isCompactMode = false,
 	imageUpload,
+	acceptedImageFileTypes = DEFAULT_ACCEPTED_IMAGE_TYPES,
 	showFeedbackInput = false,
 	onSubmitFeedbackText = () => Promise.resolve(),
 	onCancelFeedback = () => {},
 	onViewHistory,
+	alternativeFooter,
 }: Props ) {
 	const { setFloatingPosition } = useDispatch( AGENTS_MANAGER_STORE );
 	const conversationViewRef = useRef< HTMLDivElement >( null );
+	const imageUploaderRef = useRef< ImageUploaderHandle >( null );
 	const { floatingPosition } = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
 	}, [] );
 
+	const mergedComponents = useMemo(
+		() => ( { a: CustomALink, ...markdownComponents } ),
+		[ markdownComponents ]
+	);
+
 	const messageRenderer = useMemo(
 		() =>
 			createMessageRenderer( {
-				components: markdownComponents,
+				components: mergedComponents,
 				extensions: markdownExtensions,
 			} ),
-		[ markdownComponents, markdownExtensions ]
+		[ mergedComponents, markdownExtensions ]
 	);
 
 	let floatingChatState: ChatState = 'collapsed';
@@ -151,6 +177,8 @@ export default function AgentChat( {
 			inputValue={ inputValue }
 			onInputChange={ onInputChange }
 			messagesPosition="bottom"
+			expandOnHover={ false }
+			notice={ notice }
 			emptyView={
 				isLoadingConversation ? (
 					<ChatMessageSkeleton count={ 3 } />
@@ -178,32 +206,32 @@ export default function AgentChat( {
 				{ showFeedbackInput && (
 					<FeedbackInput onSubmit={ onSubmitFeedbackText } onCancel={ onCancelFeedback } />
 				) }
-				<AgentUI.Footer>
-					<AgentUI.Suggestions />
-					<AgentUI.Notice />
-					{ imageUpload && (
-						<ImageUploader
-							images={ imageUpload.pendingImages }
-							uploadingImages={ imageUpload.uploadingImages }
-							onFilesSelected={ imageUpload.handleFilesSelected }
-							onRemoveImage={ imageUpload.handleRemoveImage }
-							acceptedFileTypes={ [
-								'image/jpeg',
-								'image/png',
-								'image/heic',
-								'image/heif',
-								'image/heic-sequence',
-								'image/heif-sequence',
-							] }
-							showFileMetadata
-							allowDragToInsert={ false }
-							dropZoneRef={ conversationViewRef }
+				{ alternativeFooter ? (
+					alternativeFooter
+				) : (
+					<AgentUI.Footer>
+						<AgentUI.Suggestions />
+						<AgentUI.Notice />
+						{ imageUpload && (
+							<ImageUploader
+								ref={ imageUploaderRef }
+								images={ imageUpload.pendingImages }
+								uploadingImages={ imageUpload.uploadingImages }
+								onFilesSelected={ imageUpload.handleFilesSelected }
+								onRemoveImage={ imageUpload.handleRemoveImage }
+								acceptedFileTypes={ acceptedImageFileTypes }
+								showFileMetadata
+								allowDragToInsert={ false }
+								dropZoneRef={ conversationViewRef }
+							/>
+						) }
+						<SelectedBlock />
+						<AgentUI.Input
+							imageUploaderRef={ imageUpload ? imageUploaderRef : undefined }
+							disabled={ imageUpload?.pendingImages?.length ? false : undefined }
 						/>
-					) }
-
-					<SelectedBlock />
-					<AgentUI.Input />
-				</AgentUI.Footer>
+					</AgentUI.Footer>
+				) }
 			</AgentUI.ConversationView>
 		</AgentUI.Container>
 	);

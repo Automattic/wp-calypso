@@ -36,13 +36,8 @@ import PostExcerptLink from 'calypso/reader/post-excerpt-link';
 import { keyForPost } from 'calypso/reader/post-key';
 import { ReaderPerformanceTrackerStop } from 'calypso/reader/reader-performance-tracker';
 import { getStreamUrlFromPost } from 'calypso/reader/route';
-import {
-	recordAction,
-	recordGaEvent,
-	recordTrackForPost,
-	recordPermalinkClick,
-} from 'calypso/reader/stats';
-import { showSelectedPost } from 'calypso/reader/utils';
+import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
+import { getPostTitleFallback, showSelectedPost } from 'calypso/reader/utils';
 import { requestPostComments } from 'calypso/state/comments/actions';
 import { isCommentsApiDisabled } from 'calypso/state/comments/selectors/get-comments-api-disabled';
 import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/likes/actions';
@@ -264,24 +259,26 @@ export class FullPostView extends Component {
 			return;
 		}
 
-		switch ( event.keyCode ) {
-			// Close full post - Esc
-			case 27: {
+		switch ( event.key ) {
+			// Close full post.
+			case 'Escape': {
 				return this.handleBack( event );
 			}
 
-			// Like post - l
-			case 76: {
+			// Like post.
+			case 'l': {
 				return this.handleLike();
 			}
 
-			// Next post - j
-			case 74: {
+			// Next post.
+			case 'ArrowRight':
+			case 'j': {
 				return this.goToPost( this.props.nextPostKey );
 			}
 
-			// Previous post - k
-			case 75: {
+			// Previous post.
+			case 'ArrowLeft':
+			case 'k': {
 				return this.goToPost( this.props.previousPostKey );
 			}
 		}
@@ -486,10 +483,6 @@ export class FullPostView extends Component {
 
 	handleRelatedPostFromSameSiteClicked = () => {
 		recordTrackForPost( 'calypso_reader_related_post_from_same_site_clicked', this.props.post );
-	};
-
-	handleVisitSiteClick = () => {
-		recordPermalinkClick( 'full_post_visit_link', this.props.post );
 	};
 
 	handleRelatedPostFromOtherSiteClicked = () => {
@@ -759,7 +752,9 @@ export class FullPostView extends Component {
 					{ ! post || post._state === 'pending' ? (
 						<DocumentHead title={ translate( 'Loading' ) } />
 					) : (
-						<DocumentHead title={ `${ post.title } ‹ ${ siteName } ‹ Reader` } />
+						<DocumentHead
+							title={ `${ post.title || getPostTitleFallback( post ) } ‹ ${ siteName } ‹ Reader` }
+						/>
 					) }
 					{ post && post.feed_ID && <QueryReaderFeed feedId={ +post.feed_ID } /> }
 					{ post && ! post.is_external && post.site_ID && (

@@ -1,4 +1,5 @@
 import '@automattic/calypso-polyfills';
+import { setLocaleData } from '@wordpress/i18n';
 import { setLocale } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
@@ -24,8 +25,10 @@ const fetchLocale = async ( localeSlug ) => {
 			return;
 		}
 
-		// Set the locale for the i18n-calypso library
-		setLocale( await response.json() );
+		const localeData = await response.json();
+		// Sync @wordpress/i18n first — setLocale triggers re-renders that call __()
+		setLocaleData( localeData );
+		setLocale( localeData );
 	} catch {}
 };
 

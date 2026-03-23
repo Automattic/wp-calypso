@@ -1,3 +1,5 @@
+import type React from 'react';
+
 export type ZendeskConfigName =
 	| 'zendesk_support_chat_key'
 	| 'zendesk_presales_chat_key'
@@ -68,6 +70,9 @@ export type MessageAction = {
 	metadata: ChatFeedbackActions;
 	label: string;
 	onClick: () => void;
+	tooltip?: string;
+	icon?: React.ReactNode;
+	pressed?: boolean;
 };
 
 export type ZendeskContentType =
@@ -99,6 +104,11 @@ export type ZendeskMessage = {
 	mediaUrl?: string;
 	metadata?: Record< string, any >;
 	htmlText?: string;
+	payload?: string;
+	fields?: {
+		name: string;
+		value: string;
+	}[];
 };
 
 export type ZendeskConversation = {
@@ -155,3 +165,26 @@ export interface AgentticMessage {
 	actions?: MessageAction[];
 	disabled?: boolean;
 }
+
+/** Minimal image preview shape for attachment upload UI (compatible with UseImageUploadResult). */
+export type ZendeskImagePreview = {
+	id: string;
+	url: string;
+	name: string;
+	alt: string;
+	mime_type: string;
+	file: File;
+};
+
+/** Minimal uploading image shape (compatible with UseImageUploadResult.uploadingImages). */
+export type ZendeskUploadingImage = {
+	id: string;
+	url?: string;
+	name?: string;
+};
+
+export type ConversationData = {
+	conversation: {
+		id: string;
+	};
+};

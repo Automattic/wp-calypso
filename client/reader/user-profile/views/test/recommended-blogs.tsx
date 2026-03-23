@@ -13,14 +13,14 @@ jest.mock( '@automattic/components', () => ( {
 	LoadingPlaceholder: () => <div data-testid="loading-placeholder">Loading...</div>,
 } ) );
 
-jest.mock( 'calypso/reader/recommended-feed', () => ( {
-	RecommendedFeed: ( {
-		blog,
-		classPrefix,
-	}: {
-		blog: { ID: number; name: string };
-		classPrefix: string;
-	} ) => <li data-class-prefix={ classPrefix }>{ blog.name }</li>,
+jest.mock( 'calypso/reader/recommended-feeds-list', () => ( {
+	RecommendedFeedsList: ( { feeds }: { feeds: FeedRecommendation[] } ) => (
+		<div>
+			{ feeds.map( ( feed ) => (
+				<p key={ feed.ID }>{ feed.name }</p>
+			) ) }
+		</div>
+	),
 } ) );
 
 jest.mock( 'calypso/components/empty-content', () => ( {
