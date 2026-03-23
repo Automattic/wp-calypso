@@ -282,15 +282,17 @@ export class ReaderSidebar extends Component {
 
 	render() {
 		return (
-			<GlobalSidebar
-				path={ this.props.path }
-				onClick={ this.handleClick }
-				siteTitle={ i18n.translate( 'Reader' ) }
-			>
+			<>
 				<ReaderSidebarCollapseToggle />
-				<ReaderSidebarNudges />
-				{ this.renderSidebarMenu() }
-			</GlobalSidebar>
+				<GlobalSidebar
+					path={ this.props.path }
+					onClick={ this.handleClick }
+					siteTitle={ i18n.translate( 'Reader' ) }
+				>
+					<ReaderSidebarNudges />
+					{ this.renderSidebarMenu() }
+				</GlobalSidebar>
+			</>
 		);
 	}
 }

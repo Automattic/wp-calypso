@@ -49,12 +49,12 @@ body.is-section-reader.is-reader-sidebar-collapsed {
 		/* stylelint-disable length-zero-no-unit */
 		width: 0px;
 		/* stylelint-enable length-zero-no-unit */
+		overflow: visible;
 		border: none;
 	}
 
 	.layout__secondary .global-sidebar {
 		visibility: hidden;
-		opacity: 0;
 	}
 
 	// Shift content to fill full width
