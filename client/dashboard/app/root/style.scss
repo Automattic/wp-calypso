@@ -1,5 +1,3 @@
-@import '@wordpress/base-styles/variables';
-@import '@wordpress/base-styles/mixins';
 @import '../responsive-sidebar/variables';
 @import './omnibar-style';
 
@@ -24,7 +22,7 @@
 	display: flex;
 	min-height: calc(100vh - var(--masterbar-height) );
 
-	@media ( max-width: #{ ( $break-medium - 1 ) } ) {
+	&:has(.dashboard-responsive-sidebar) {
 		overflow-x: hidden;
 	}
 }
@@ -35,11 +33,9 @@
 	flex-direction: column;
 	flex: 1;
 	min-width: 0;
+	transition: transform 0.2s ease-out;
 
-	@media ( max-width: #{ ( $break-medium - 1 ) } ) {
-		transition: transform 0.2s ease-out;
-
-		&.is-sidebar-open {
+	.dashboard-root__body:has(.dashboard-responsive-sidebar.is-open) & {
 			transform: translateX( $sidebar-width );
 			overflow: hidden;
 			height: 100vh;
@@ -47,6 +43,5 @@
 			[dir='rtl'] & {
 				transform: translateX( -$sidebar-width );
 			}
-		}
 	}
 }
