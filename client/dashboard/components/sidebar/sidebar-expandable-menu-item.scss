@@ -11,3 +11,7 @@
 	}
 }
 
+.dashboard-sidebar__menu-item.active .dashboard-sidebar__dot {
+	fill: var( --wp-admin-theme-color );
+}
+
