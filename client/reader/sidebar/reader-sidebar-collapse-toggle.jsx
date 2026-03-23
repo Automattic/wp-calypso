@@ -1,7 +1,7 @@
-import { Button } from '@wordpress/components';
-import { chevronLeft, chevronRight } from '@wordpress/icons';
+import { chevronLeft, chevronRight, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
@@ -26,13 +26,14 @@ export default function ReaderSidebarCollapseToggle() {
 		dispatch( savePreference( 'readerSidebarCollapsed', ! isCollapsed ) );
 	};
 
-	return (
-		<Button
+	return createPortal(
+		<button
 			className="reader-sidebar-collapse-toggle"
 			onClick={ handleToggle }
-			icon={ isCollapsed ? chevronRight : chevronLeft }
-			label={ isCollapsed ? translate( 'Expand sidebar' ) : translate( 'Collapse sidebar' ) }
-			size="compact"
-		/>
+			aria-label={ isCollapsed ? translate( 'Expand sidebar' ) : translate( 'Collapse sidebar' ) }
+		>
+			<Icon icon={ isCollapsed ? chevronRight : chevronLeft } size={ 16 } />
+		</button>,
+		document.body
 	);
 }

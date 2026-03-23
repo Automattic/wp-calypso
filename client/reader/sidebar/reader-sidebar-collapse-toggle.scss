@@ -49,16 +49,13 @@ body.is-section-reader.is-reader-sidebar-collapsed {
 		/* stylelint-disable length-zero-no-unit */
 		width: 0px;
 		/* stylelint-enable length-zero-no-unit */
-		overflow: visible;
 		border: none;
 	}
 
-	.layout__secondary .global-sidebar {
-		visibility: hidden;
-	}
-
-	// Shift content to fill full width
+	// Shift content to fill full width — use padding shorthand to
+	// reliably override the Reader's existing padding shorthand.
 	.layout__content {
-		padding-inline-start: 32px !important;
+		padding: calc( var( --masterbar-height ) + var( --content-padding-top ) ) 16px
+			var( --content-padding-bottom ) 32px !important;
 	}
 }
