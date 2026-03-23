@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1.20
 #### toolchain image
 #### This file intentionally mirrors the non-cache stages in Dockerfile.base so
 #### we can validate a toolchain-only path while keeping the existing base flow
