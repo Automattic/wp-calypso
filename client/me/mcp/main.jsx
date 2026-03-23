@@ -88,10 +88,17 @@ function McpComponent( { path } ) {
 			accountAbilities[ toolId ] = enabled;
 		} );
 
+		const disabledSiteIds = getDisabledSiteIds( userSettings || {} );
+		const enabledSiteIds = getEnabledSiteIds( userSettings || {} );
+		const sitesToReset = [
+			...disabledSiteIds.map( ( id ) => ( { blog_id: id, account_tools_enabled: true } ) ),
+			...enabledSiteIds.map( ( id ) => ( { blog_id: id, site_level_enabled: false } ) ),
+		];
+
 		mutation.mutate( {
 			mcp_abilities: {
 				account: accountAbilities,
-				sites: [],
+				...( sitesToReset.length > 0 && { sites: sitesToReset } ),
 			},
 		} );
 	};
