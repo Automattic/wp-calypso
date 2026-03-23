@@ -23,12 +23,12 @@ import { getSiteAccountToolsEnabled } from '../../../me/mcp/utils';
 import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { useHelpCenter } from '../../app/help-center';
-import { Card, CardBody, CardFooter } from '../../components/card';
+import { Card, CardBody, CardDivider, CardFooter } from '../../components/card';
 import ConfirmModal from '../../components/confirm-modal';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import RouterLinkButton from '../../components/router-link-button';
+import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import { SectionHeader } from '../../components/section-header';
 import SummaryButton from '../../components/summary-button';
 import { SummaryButtonList } from '../../components/summary-button-list';
@@ -197,11 +197,14 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 									label={ __( 'Enable MCP access for this site' ) }
 									onChange={ handleMcpToggle }
 								/>
-								<RouterLinkButton to="/me/preferences/mcp" variant="link">
-									{ __( 'Manage at account level' ) }
-								</RouterLinkButton>
 							</VStack>
 						</CardBody>
+						<CardDivider />
+						<RouterLinkSummaryButton
+							to="/me/preferences/mcp"
+							density="medium"
+							title={ __( 'Manage at account level' ) }
+						/>
 					</Card>
 				) }
 				{ isFreeTrial && (
