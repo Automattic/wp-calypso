@@ -47,7 +47,13 @@ export type AppConfig = {
 		commandPalette: boolean;
 		domainOnlySites: boolean;
 	};
-	posthog?: string;
+	posthog?: {
+		apiKey: string;
+		masking?: {
+			maskTextFn?: ( text: string, element?: HTMLElement ) => string;
+			blockSelector?: string;
+		};
+	};
 	optIn: boolean;
 	components: Record< string, () => Promise< { default: React.FC } > >;
 	queries: {
