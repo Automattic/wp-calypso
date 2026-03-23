@@ -1,7 +1,7 @@
 @import '@wordpress/base-styles/variables';
 @import '@wordpress/base-styles/mixins';
 
-$sidebar-width: 272px;
+@import './variables';
 
 .dashboard-responsive-sidebar__sidebar {
 	display: flex;

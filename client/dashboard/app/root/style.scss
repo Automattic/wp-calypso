@@ -1,3 +1,4 @@
+@import '../responsive-sidebar/variables';
 @import './omnibar-style';
 
 // Old layout (no sidebar): sticky header
@@ -20,6 +21,10 @@
 .dashboard-root__body {
 	display: flex;
 	min-height: calc(100vh - var(--masterbar-height) );
+
+	&:has(.dashboard-responsive-sidebar) {
+		overflow-x: hidden;
+	}
 }
 
 .dashboard-root__content {
@@ -28,4 +33,11 @@
 	flex-direction: column;
 	flex: 1;
 	min-width: 0;
+	transition: transform 0.3s ease-in;
+
+	.dashboard-root__body:has(.dashboard-responsive-sidebar.is-open) & {
+			transform: translateX( $sidebar-width );
+			overflow: hidden;
+			height: 100vh;
+	}
 }

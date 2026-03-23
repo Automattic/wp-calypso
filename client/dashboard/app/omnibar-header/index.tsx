@@ -4,6 +4,7 @@ import { __ } from '@wordpress/i18n';
 import { menu } from '@wordpress/icons';
 import HeaderBar from '../../components/header-bar';
 import SecondaryMenu from '../secondary-menu';
+import './style.scss';
 
 function OmnibarHeader( { onToggleMenu }: { onToggleMenu?: () => void } ) {
 	const isDesktop = useViewportMatch( 'medium' );
