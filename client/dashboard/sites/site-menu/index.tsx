@@ -99,7 +99,6 @@ const SiteMenu = ( { site }: { site: Site } ) => {
 					label={ __( 'Logs' ) }
 					icon={ formatListBullets }
 					to={ `/sites/${ siteSlug }/logs` }
-					defaultTo={ `/sites/${ siteSlug }/logs/activity` }
 				>
 					<SidebarMenuItem to={ `/sites/${ siteSlug }/logs/activity` }>
 						{ __( 'Activity' ) }
@@ -119,7 +118,6 @@ const SiteMenu = ( { site }: { site: Site } ) => {
 						label={ __( 'Scan' ) }
 						icon={ shield }
 						to={ `/sites/${ siteSlug }/scan` }
-						defaultTo={ `/sites/${ siteSlug }/scan/active` }
 					>
 						<SidebarMenuItem to={ `/sites/${ siteSlug }/scan/active` }>
 							{ __( 'Active threats' ) }
