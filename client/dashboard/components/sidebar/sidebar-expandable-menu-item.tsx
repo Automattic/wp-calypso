@@ -65,7 +65,7 @@ export function SidebarExpandableMenuItem( {
 				</HStack>
 			</Button>
 			{ isOpen && (
-				<VStack id={ panelId } className="dashboard-sidebar__expandable-children" spacing={ 1 }>
+				<VStack id={ panelId } spacing={ 1 }>
 					{ Children.map( children, ( child ) => {
 						if ( isValidElement( child ) && child.type === SidebarMenuItem && ! child.props.icon ) {
 							return cloneElement( child, { icon: dotIcon } );
