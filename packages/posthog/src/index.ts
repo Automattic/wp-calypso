@@ -9,6 +9,13 @@ export interface PostHogUser {
 	username?: string;
 }
 
+export interface PostHogMasking {
+	maskTextFn?: ( text: string, element?: HTMLElement ) => string;
+	blockSelector?: string;
+}
+
+const defaultMaskTextFn = ( text: string ) => '*'.repeat( text.trim().length );
+
 export function getSessionId(): string | undefined {
 	return posthog.get_session_id?.();
 }
@@ -18,7 +25,7 @@ export function reset() {
 	initialized = false;
 }
 
-export function init( apiKey: string, user?: PostHogUser ) {
+export function init( apiKey: string, user?: PostHogUser, masking?: PostHogMasking ) {
 	if ( initialized || ! apiKey ) {
 		return;
 	}
@@ -30,12 +37,27 @@ export function init( apiKey: string, user?: PostHogUser ) {
 
 	initialized = true;
 
+	const maskTextFn = masking?.maskTextFn ?? defaultMaskTextFn;
+
+	// Expose masking config for debugging in the browser console.
+	// Usage: __posthogMasking.maskTextFn(text, element)
+	( window as Record< string, unknown > ).__posthogMasking = {
+		maskTextFn,
+		blockSelector: masking?.blockSelector,
+	};
+
 	posthog.init( apiKey, {
 		api_host: 'https://us.i.posthog.com',
 		autocapture: true,
 		defaults: '2026-01-30',
 		capture_pageleave: true,
 		debug: false,
+		session_recording: {
+			maskAllInputs: true,
+			maskTextSelector: '*',
+			maskTextFn,
+			...( masking?.blockSelector && { blockSelector: masking.blockSelector } ),
+		},
 		...( user?.ID && {
 			bootstrap: {
 				distinctID: String( user.ID ),
