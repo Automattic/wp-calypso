@@ -1,11 +1,21 @@
 import { useRouterState } from '@tanstack/react-router';
-import { __experimentalHStack as HStack } from '@wordpress/components';
+import {
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { Icon, chevronDown, chevronUp } from '@wordpress/icons';
-import { useState, useEffect } from 'react';
+import { Children, cloneElement, isValidElement, useState, useEffect } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import RouterLinkButton from '../../components/router-link-button';
+import { SidebarMenuItem } from './sidebar-menu-item';
 
 import './sidebar-expandable-menu-item.scss';
+
+const dotIcon = (
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+		<circle cx="12" cy="12" r="3" fill="currentColor" />
+	</svg>
+);
 
 interface SidebarExpandableMenuItemProps {
 	label: string;
@@ -61,7 +71,16 @@ export function SidebarExpandableMenuItem( {
 					<Icon icon={ isOpen ? chevronUp : chevronDown } size={ 18 } />
 				</HStack>
 			</RouterLinkButton>
-			{ isOpen && <div className="dashboard-sidebar__expandable-children">{ children }</div> }
+			{ isOpen && (
+				<VStack className="dashboard-sidebar__expandable-children" spacing={ 1 }>
+					{ Children.map( children, ( child ) => {
+						if ( isValidElement( child ) && child.type === SidebarMenuItem && ! child.props.icon ) {
+							return cloneElement( child, { icon: dotIcon } );
+						}
+						return child;
+					} ) }
+				</VStack>
+			) }
 		</div>
 	);
 }
