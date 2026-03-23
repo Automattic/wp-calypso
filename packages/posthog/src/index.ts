@@ -41,7 +41,7 @@ export function init( apiKey: string, user?: PostHogUser, masking?: PostHogMaski
 
 	// Expose masking config for debugging in the browser console.
 	// Usage: __posthogMasking.maskTextFn(text, element)
-	( window as Record< string, unknown > ).__posthogMasking = {
+	( window as unknown as Record< string, unknown > ).__posthogMasking = {
 		maskTextFn,
 		blockSelector: masking?.blockSelector,
 	};
