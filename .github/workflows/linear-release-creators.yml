@@ -1,0 +1,24 @@
+name: Linear Release Sync - Creators
+
+on:
+  push:
+    branches: [trunk]
+    paths:
+      # Reader
+      - 'client/reader/**'
+      - 'client/blocks/reader-*/**'
+      # Newsletter
+      - 'client/data/newsletter-categories/**'
+      - 'client/data/paid-newsletter/**'
+      - 'client/mailing-lists/**'
+      - 'client/my-sites/email/**'
+      - 'client/my-sites/subscribers/**'
+
+jobs:
+  linear-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: linear/linear-release-action@v1
+        with:
+          access_key: ${{ secrets.LINEAR_RELEASE_KEY_CREATORS }}
