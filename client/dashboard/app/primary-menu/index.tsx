@@ -26,12 +26,7 @@ function PrimaryMenu() {
 				</SidebarMenuItem>
 			) }
 			{ supports.plugins && (
-				<SidebarExpandableMenuItem
-					label={ __( 'Plugins' ) }
-					icon={ plugins }
-					to="/plugins"
-					defaultTo="/plugins/manage"
-				>
+				<SidebarExpandableMenuItem label={ __( 'Plugins' ) } icon={ plugins } to="/plugins">
 					<SidebarMenuItem to="/plugins/manage">{ __( 'Manage plugins' ) }</SidebarMenuItem>
 					<SidebarMenuItem to="/plugins/scheduled-updates">
 						{ __( 'Scheduled updates' ) }

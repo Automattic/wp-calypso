@@ -1,12 +1,12 @@
 import { useRouterState } from '@tanstack/react-router';
 import {
+	Button,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { Icon, chevronDown, chevronUp } from '@wordpress/icons';
-import { Children, cloneElement, isValidElement, useState, useEffect } from 'react';
+import { Children, cloneElement, isValidElement, useId, useState, useEffect } from 'react';
 import { useAnalytics } from '../../app/analytics';
-import RouterLinkButton from '../../components/router-link-button';
 import { SidebarMenuItem } from './sidebar-menu-item';
 
 import './sidebar-expandable-menu-item.scss';
@@ -21,7 +21,6 @@ interface SidebarExpandableMenuItemProps {
 	label: string;
 	icon?: React.JSX.Element;
 	to: string;
-	defaultTo: string;
 	children: React.ReactNode;
 }
 
@@ -29,7 +28,6 @@ export function SidebarExpandableMenuItem( {
 	label,
 	icon,
 	to,
-	defaultTo,
 	children,
 }: SidebarExpandableMenuItemProps ) {
 	const { recordTracksEvent } = useAnalytics();
@@ -38,6 +36,7 @@ export function SidebarExpandableMenuItem( {
 	} );
 	const isActive = pathname.startsWith( to );
 	const [ isOpen, setIsOpen ] = useState( isActive );
+	const panelId = useId();
 
 	// Sync open state with active state when navigating
 	useEffect( () => {
@@ -46,22 +45,15 @@ export function SidebarExpandableMenuItem( {
 
 	return (
 		<VStack className="dashboard-sidebar__expandable" spacing={ 1 }>
-			<RouterLinkButton
+			<Button
 				className="dashboard-sidebar__menu-item dashboard-sidebar__expandable-trigger"
 				variant="tertiary"
-				activeProps={ {
-					className: 'dashboard-sidebar__menu-item dashboard-sidebar__expandable-trigger',
+				onClick={ () => {
+					setIsOpen( ( prev ) => ! prev );
+					recordTracksEvent( 'calypso_dashboard_menu_item_click', { to } );
 				} }
-				to={ defaultTo }
-				onClick={ ( e: React.MouseEvent ) => {
-					if ( isActive ) {
-						e.preventDefault();
-						setIsOpen( ( prev ) => ! prev );
-					} else {
-						setIsOpen( true );
-						recordTracksEvent( 'calypso_dashboard_menu_item_click', { to: defaultTo } );
-					}
-				} }
+				aria-expanded={ isOpen }
+				aria-controls={ panelId }
 				__next40pxDefaultSize
 			>
 				<HStack justify="space-between">
@@ -71,9 +63,9 @@ export function SidebarExpandableMenuItem( {
 					</HStack>
 					<Icon icon={ isOpen ? chevronUp : chevronDown } size={ 18 } />
 				</HStack>
-			</RouterLinkButton>
+			</Button>
 			{ isOpen && (
-				<VStack className="dashboard-sidebar__expandable-children" spacing={ 1 }>
+				<VStack id={ panelId } className="dashboard-sidebar__expandable-children" spacing={ 1 }>
 					{ Children.map( children, ( child ) => {
 						if ( isValidElement( child ) && child.type === SidebarMenuItem && ! child.props.icon ) {
 							return cloneElement( child, { icon: dotIcon } );
