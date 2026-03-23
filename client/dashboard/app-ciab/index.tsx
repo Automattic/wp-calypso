@@ -43,6 +43,7 @@ boot( {
 		plugins: false,
 		commandPalette: false,
 		domainOnlySites: false,
+		startStoreRoute: true,
 	},
 	optIn: false,
 	components: {
