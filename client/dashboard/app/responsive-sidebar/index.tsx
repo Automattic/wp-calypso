@@ -32,8 +32,9 @@ export default function ResponsiveSidebar( {
 		<div className={ clsx( 'dashboard-responsive-sidebar', { 'is-open': isOpen } ) }>
 			{ isOpen &&
 				createPortal(
-					// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
+					// eslint-disable-next-line jsx-a11y/no-static-element-interactions
 					<div
+						role="presentation"
 						className="dashboard-responsive-sidebar__overlay"
 						onClick={ handleOverlayClick }
 						onKeyDown={ handleOverlayKeyDown }
