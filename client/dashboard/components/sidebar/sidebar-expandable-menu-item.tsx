@@ -46,7 +46,7 @@ export function SidebarExpandableMenuItem( {
 	return (
 		<VStack className="dashboard-sidebar__expandable" spacing={ 1 }>
 			<Button
-				className="dashboard-sidebar__menu-item dashboard-sidebar__expandable-trigger"
+				className="dashboard-sidebar__menu-item"
 				variant="tertiary"
 				onClick={ () => {
 					setIsOpen( ( prev ) => ! prev );

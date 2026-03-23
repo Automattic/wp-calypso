@@ -4,7 +4,6 @@ import { useRouter } from '@tanstack/react-router';
 import { __experimentalVStack as VStack, useNavigator } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { category, envelope } from '@wordpress/icons';
-import { Suspense } from 'react';
 import { useAppContext } from '../../app/context';
 import { emailsRoute } from '../../app/router/emails';
 import { SidebarBackButton, SidebarMenu, SidebarMenuItem } from '../../components/sidebar';
@@ -24,9 +23,7 @@ export default function DomainSidebar() {
 		<VStack spacing={ 2 }>
 			<SidebarBackButton to="/domains">{ __( 'Back to Domains' ) }</SidebarBackButton>
 			<VStack spacing={ 4 }>
-				<Suspense fallback={ null }>
-					<DomainSwitcher domain={ domain } />
-				</Suspense>
+				<DomainSwitcher domain={ domain } />
 				<DomainMenuSidebar domainName={ domainName } />
 			</VStack>
 		</VStack>
