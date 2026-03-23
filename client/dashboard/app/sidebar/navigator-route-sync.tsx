@@ -4,10 +4,7 @@ import { useEffect, useRef } from 'react';
 /**
  * Maps the route pathname to a Navigator screen.
  *
- * When `hasError` is true the screen falls back to the parent:
- *   /sites/slug  → /
- *   /domains/slug → /
- *   /me          → /
+ * When `hasError` is true the screen falls back to the parent.
  */
 export function getScreenPath( pathname: string, hasError = false ): string {
 	if ( pathname.startsWith( '/sites/' ) ) {
