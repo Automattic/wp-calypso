@@ -18,9 +18,10 @@ test.describe(
 	DataHelper.createSuiteTitle( 'Social: Editor Smoke test' ),
 	{ tag: [ tags.CALYPSO_PR, tags.JETPACK_WPCOM_INTEGRATION ] },
 	() => {
+		const isPrivateSite =
+			envVariables.TEST_ON_ATOMIC && envVariables.ATOMIC_VARIATION === 'private';
+
 		test( 'As a user, I can see the Social UI in the editor', async ( { page } ) => {
-			const isPrivateSite =
-				envVariables.TEST_ON_ATOMIC && envVariables.ATOMIC_VARIATION === 'private';
 			test.skip( isPrivateSite, 'Social connections not supported on private sites' );
 
 			let editorPage: EditorPage;
