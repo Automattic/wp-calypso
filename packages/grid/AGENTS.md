@@ -2,10 +2,6 @@
 
 `@automattic/grid` — data-driven CSS Grid layout component for React. See `README.md` for API and usage.
 
-## Linear Project
-
-Tracked in [Grid Package](https://linear.app/a8c/project/grid-package-aabf867f10a9) — Teams: Design System (DS), Architecture (ARC).
-
 ## Commands
 
 ```bash
