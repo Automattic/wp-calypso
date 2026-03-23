@@ -44,4 +44,26 @@ describe( 'getScreenPath', () => {
 	it( 'returns "/" for unknown paths', () => {
 		expect( getScreenPath( '/unknown/path' ) ).toBe( '/' );
 	} );
+
+	describe( 'with error context', () => {
+		it( 'returns "/" for a site path when hasError is true', () => {
+			expect( getScreenPath( '/sites/example.wordpress.com', true ) ).toBe( '/' );
+		} );
+
+		it( 'returns "/" for a site sub-path when hasError is true', () => {
+			expect( getScreenPath( '/sites/example.wordpress.com/settings', true ) ).toBe( '/' );
+		} );
+
+		it( 'returns "/" for a domain path when hasError is true', () => {
+			expect( getScreenPath( '/domains/example.com', true ) ).toBe( '/' );
+		} );
+
+		it( 'returns "/" for "/me" when hasError is true', () => {
+			expect( getScreenPath( '/me', true ) ).toBe( '/' );
+		} );
+
+		it( 'returns "/" for root path when hasError is true', () => {
+			expect( getScreenPath( '/', true ) ).toBe( '/' );
+		} );
+	} );
 } );

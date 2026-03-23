@@ -3,18 +3,29 @@ import { useEffect, useRef } from 'react';
 
 /**
  * Maps the route pathname to a Navigator screen.
+ *
+ * When `hasError` is true the screen falls back to the parent:
+ *   /sites/slug  → /
+ *   /domains/slug → /
+ *   /me          → /
  */
-export function getScreenPath( pathname: string ): string {
+export function getScreenPath( pathname: string, hasError = false ): string {
 	if ( pathname.startsWith( '/sites/' ) ) {
 		const siteSlug = pathname.split( '/' )[ 2 ];
-		return siteSlug ? '/sites/' + siteSlug : '/';
+		if ( ! siteSlug || hasError ) {
+			return '/';
+		}
+		return '/sites/' + siteSlug;
 	}
 	if ( pathname.startsWith( '/domains/' ) ) {
 		const domainSlug = pathname.split( '/' )[ 2 ];
-		return domainSlug ? '/domains/' + domainSlug : '/';
+		if ( ! domainSlug || hasError ) {
+			return '/';
+		}
+		return '/domains/' + domainSlug;
 	}
 	if ( pathname.startsWith( '/me' ) ) {
-		return '/me';
+		return hasError ? '/' : '/me';
 	}
 	return '/';
 }
