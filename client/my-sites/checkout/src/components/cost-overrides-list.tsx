@@ -20,6 +20,7 @@ import {
 	doesIntroductoryOfferHavePriceIncrease,
 	filterCostOverridesForLineItem,
 	getLabel,
+	getSubtotalWithoutDiscountsForProduct,
 	isOverrideCodeIntroductoryOffer,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
@@ -381,23 +382,6 @@ const WPCheckoutCheckIcon = styled( CheckIcon )`
 	}
 `;
 
-/**
- * Walk the cost overrides chain and return the `old_subtotal_integer` of the
- * first override that reduces the price. This gives us the "peak" price after
- * any price-increasing overrides (e.g. premium domain intro offer) but before
- * any discounts (e.g. sale coupon).
- *
- * Falls back to `item_subtotal_integer` when no price-reducing override exists.
- */
-function getPriceBeforeDiscountsFromOverrides( product: ResponseCartProduct ): number {
-	for ( const override of product.cost_overrides ?? [] ) {
-		if ( override.new_subtotal_integer < override.old_subtotal_integer ) {
-			return override.old_subtotal_integer;
-		}
-	}
-	return product.item_subtotal_integer;
-}
-
 function SingleProductAndCostOverridesList( { product }: { product: ResponseCartProduct } ) {
 	const translate = useTranslate();
 	const costOverridesList = filterCostOverridesForLineItem( product, translate );
@@ -420,7 +404,7 @@ function SingleProductAndCostOverridesList( { product }: { product: ResponseCart
 	// with a price-increasing intro offer followed by a sale coupon (e.g.
 	// premium domains: $80 → $1,100 → $275), this gives us the peak price
 	// ($1,100) to use as the crossed-out "full price".
-	const priceBeforeDiscountsInteger = getPriceBeforeDiscountsFromOverrides( product );
+	const priceBeforeDiscountsInteger = getSubtotalWithoutDiscountsForProduct( product );
 	const hasStackedPriceIncrease =
 		! isDiscounted &&
 		priceBeforeDiscountsInteger > originalAmountInteger &&
