@@ -31,6 +31,7 @@ export function createPurchaseObject( purchase: RawPurchase ): Purchase {
 		introductoryOffer: purchase.introductory_offer
 			? {
 					costPerInterval: Number( purchase.introductory_offer.cost_per_interval ),
+					costPerIntervalInteger: Number( purchase.introductory_offer.cost_per_interval_integer ),
 					endDate: String( purchase.introductory_offer.end_date ),
 					intervalCount: Number( purchase.introductory_offer.interval_count ),
 					intervalUnit: String( purchase.introductory_offer.interval_unit ),

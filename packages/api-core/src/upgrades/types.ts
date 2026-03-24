@@ -8,6 +8,7 @@ export interface RefundOptions {
 
 export interface RawPurchaseIntroductoryOffer {
 	cost_per_interval: number;
+	cost_per_interval_integer: number;
 	end_date: string;
 	interval_count: number;
 	interval_unit: string;
