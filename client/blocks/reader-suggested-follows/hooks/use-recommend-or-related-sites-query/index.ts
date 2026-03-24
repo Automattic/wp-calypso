@@ -77,6 +77,6 @@ export const useRecommendOrRelatedSitesQuery = ( query: QueryParams, options?: Q
 		data: isFetched ? data : [],
 		isLoading,
 		isFetched,
-		resourceType: getResourceType( recommendedFeeds, relatedSites ),
+		resourceType: getResourceType( filteredRecommendedFeeds, filteredRelatedSites ),
 	};
 };
