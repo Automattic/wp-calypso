@@ -13,10 +13,10 @@ import {
 import { copy, check, error } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
+import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
-import SectionHeader from 'calypso/components/section-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import ReauthRequired from 'calypso/me/reauth-required';
@@ -139,7 +139,9 @@ function McpSetupComponent( { path } ) {
 			<Card isRounded={ false }>
 				<CardBody>
 					<VStack spacing={ 4 }>
-						<SectionHeader label={ translate( 'Setup Required' ) } />
+						<CardHeading tagName="h2" size={ 16 } isBold>
+							{ translate( 'Setup Required' ) }
+						</CardHeading>
 						<VStack spacing={ 4 }>
 							<p>{ translate( 'No MCP access is currently enabled for your account.' ) }</p>
 							<Button variant="primary" href="/me/mcp" style={ { alignSelf: 'flex-start' } }>
@@ -157,7 +159,9 @@ function McpSetupComponent( { path } ) {
 			<Card isRounded={ false }>
 				<CardBody>
 					<VStack spacing={ 4 }>
-						<SectionHeader label={ translate( 'Choose your AI agent' ) } />
+						<CardHeading tagName="h2" size={ 16 } isBold>
+							{ translate( 'Choose your AI agent' ) }
+						</CardHeading>
 						<SelectControl
 							__next40pxDefaultSize
 							__nextHasNoMarginBottom
@@ -175,7 +179,9 @@ function McpSetupComponent( { path } ) {
 				<Card isRounded={ false }>
 					<CardBody>
 						<VStack spacing={ 4 }>
-							<SectionHeader label={ translate( 'Quick setup' ) } />
+							<CardHeading tagName="h2" size={ 16 } isBold>
+								{ translate( 'Quick setup' ) }
+							</CardHeading>
 
 							{ selectedMcpClient === 'claude' && (
 								<ol style={ { paddingInlineStart: '20px', margin: '0' } }>
@@ -236,7 +242,9 @@ function McpSetupComponent( { path } ) {
 				<CardBody>
 					<VStack spacing={ 3 }>
 						<HStack justify="space-between" alignment="center">
-							<SectionHeader label={ translate( 'Manual setup' ) } />
+							<CardHeading tagName="h2" size={ 16 } isBold>
+								{ translate( 'Manual setup' ) }
+							</CardHeading>
 							<Button
 								icon={ getCopyIcon() }
 								variant="tertiary"
