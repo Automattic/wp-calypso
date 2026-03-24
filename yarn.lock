@@ -7987,13 +7987,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tanstack/history@npm:^1.133.28":
-  version: 1.161.6
-  resolution: "@tanstack/history@npm:1.161.6"
-  checksum: 38be1af2ebb3511874f2ac922527b84fc01c568e24833a9fa85d483bcc88311e0daae38a97a80eee22581bf07350875a04f33a5c2d9d4edf421bed2f5f5da4a5
-  languageName: node
-  linkType: hard
-
 "@tanstack/query-core@npm:5.83.0":
   version: 5.83.0
   resolution: "@tanstack/query-core@npm:5.83.0"
@@ -8079,7 +8072,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tanstack/react-store@npm:^0.7.0":
+"@tanstack/react-store@npm:0.7.7":
   version: 0.7.7
   resolution: "@tanstack/react-store@npm:0.7.7"
   dependencies:
@@ -8103,7 +8096,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tanstack/store@npm:0.7.7, @tanstack/store@npm:^0.7.0":
+"@tanstack/store@npm:0.7.7":
   version: 0.7.7
   resolution: "@tanstack/store@npm:0.7.7"
   checksum: bf90fa957bd97336d7dbc0d7b87379b5fe4baea030efef8a93fe4e49ac1c8bc929247d1a9f84b16a1642e386b67fe53be14df8d5415efdf85f83733ccdf8877a
