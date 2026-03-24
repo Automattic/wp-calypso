@@ -1,58 +1,30 @@
 # Agents Manager App
 
-Build and deployment layer for the Agents Manager on Simple and Atomic sites. Most Agents Manager code lives in `packages/agents-manager/` — see `packages/agents-manager/AGENTS.md` for the primary spec.
+Build and deployment layer for the Agents Manager. Most code lives in `packages/agents-manager/` — see its `AGENTS.md` for architecture and conventions.
 
-## Overview
+This app bundles the package into 8 webpack entry points deployed to `widgets.wp.com/agents-manager/`. Jetpack enqueues these on Simple, Atomic, and CIAB sites.
 
-This app takes `@automattic/agents-manager` and bundles it into 8 separate webpack entry points deployed to `widgets.wp.com/agents-manager/`. Jetpack enqueues these bundles on various types of websites and pages (editor, wp-admin, CIAB).
-
-## Entry Points
-
-| Entry point                                 | Context                                           |
-| ------------------------------------------- | ------------------------------------------------- |
-| `agents-manager-gutenberg.js`               | Gutenberg editor (connected)                      |
-| `agents-manager-gutenberg-disconnected.js`  | Gutenberg editor (disconnected from Jetpack)      |
-| `agents-manager-wp-admin.js`                | wp-admin bar (connected, dual-mode: full/headless)|
-| `agents-manager-wp-admin-disconnected.js`   | wp-admin bar (disconnected from Jetpack)          |
-| `agents-manager-ciab.js`                    | CIAB admin (connected)                            |
-| `agents-manager-ciab-disconnected.js`       | CIAB admin (disconnected)                         |
-| `image-studio.js`                           | Standalone Image Studio integration               |
-| `block-notes.js`                            | Standalone Block Notes integration                |
-
-Each entry point is a standalone JS file in the app root that imports from `@automattic/agents-manager` (or `@automattic/image-studio` / `@automattic/block-notes`) and wires up environment-specific bootstrap logic.
-
-## Build & Sync Commands
+## Build & Sync
 
 ```bash
-# Dev build + sync to sandbox (use during development)
+# Dev build + sync to sandbox
 cd apps/agents-manager
 yarn dev --sync
 
-# Production build (for deployment)
-cd apps/agents-manager
+# Production build
 yarn build
 ```
 
-Both `dev` and `build` use `calypso-apps-builder` to compile webpack bundles. The `--sync` flag syncs them to `widgets.wp.com/agents-manager/` on your sandbox.
+The `--sync` flag syncs bundles to `widgets.wp.com/agents-manager/` on your sandbox.
 
 ## Sandbox Testing
 
 1. Sandbox `widgets.wp.com` (the sites themselves do not need sandboxing).
-2. Run `yarn dev --sync` from `apps/agents-manager/`.
+2. Run `yarn dev --sync` from this directory.
 3. Visit any Simple, Atomic, or CIAB site.
 4. Open the Agents Manager and verify your changes.
 
-## PR Guidelines
+## Pitfalls
 
-For PRs that **only** touch `apps/agents-manager/` (build config, entry point wiring):
-
-```markdown
-## Testing Instructions
-
-1. Sandbox `widgets.wp.com` (the sites themselves do not need sandboxing).
-2. Run `cd apps/agents-manager && yarn dev --sync`.
-3. Visit any Simple, Atomic, or CIAB site.
-4. Open the Agents Manager and verify it loads and functions correctly.
-```
-
-For PRs that also touch `packages/agents-manager/`, follow the PR guidelines in `packages/agents-manager/AGENTS.md` instead (which includes both Calypso and Simple/Atomic testing).
+- **`wp-admin` entry point is dual-mode**: It renders full UI when `#agents-manager-masterbar` exists, otherwise runs headless (for Image Studio shared use). This is not obvious from the filename.
+- **`image-studio` and `block-notes` are separate bundles**: They're built here but are independent features, not part of the main Agents Manager UI.
