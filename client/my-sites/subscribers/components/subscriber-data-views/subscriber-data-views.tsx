@@ -12,7 +12,7 @@ import { plus, trash } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 import { useSubscribedNewsletterCategories } from 'calypso/data/newsletter-categories';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { useSelector, useDispatch } from 'calypso/state';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { getCouponsAndGiftsEnabledForSiteId } from 'calypso/state/memberships/settings/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
