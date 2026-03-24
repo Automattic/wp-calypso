@@ -85,7 +85,8 @@ function McpComponent( { path } ) {
 	const handleToggleAll = ( enabled ) => {
 		const accountAbilities = {};
 		Object.keys( mcpAbilities ).forEach( ( toolId ) => {
-			accountAbilities[ toolId ] = enabled;
+			// When enabling, only turn on read tools by default — write tools must be opted in explicitly.
+			accountAbilities[ toolId ] = enabled ? isReadTool( mcpAbilities[ toolId ] ) : false;
 		} );
 
 		const disabledSiteIds = getDisabledSiteIds( userSettings || {} );
