@@ -6,15 +6,8 @@ import EnvironmentSwitcherDropdown from './environment-switcher-dropdown';
 import useStagingSite from './use-staging-site';
 import type { Site } from '@automattic/api-core';
 
-const CurrentEnvironment = ( { site }: { site: Site } ) => {
-	if ( site.is_wpcom_staging_site ) {
-		return <Environment environmentType="staging" />;
-	}
-
-	return <Environment environmentType="production" />;
-};
-
 const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
+	const environmentType = site.is_wpcom_staging_site ? 'staging' : 'production';
 	const {
 		productionSite,
 		stagingSite,
@@ -49,7 +42,7 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 							aria-haspopup="true"
 							aria-expanded={ isOpen }
 						>
-							<CurrentEnvironment site={ site } />
+							<Environment environmentType={ environmentType } />
 						</Button>
 					);
 				} }

@@ -1,30 +1,13 @@
-import {
-	__experimentalHStack as HStack,
-	__experimentalText as Text,
-	Button,
-	Dropdown,
-} from '@wordpress/components';
+import { __experimentalHStack as HStack, Button, Dropdown } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { Icon, chevronUpDown } from '@wordpress/icons';
-import { staging, production } from '../../components/icons';
+import { chevronUpDown } from '@wordpress/icons';
+import Environment from '../../components/environment';
 import { canManageSite } from '../features';
 import EnvironmentSwitcherDropdown from './environment-switcher-dropdown';
 import useStagingSite from './use-staging-site';
 import type { Site } from '@automattic/api-core';
 
 import './sidebar-environment-switcher.scss';
-
-const CurrentEnvironment = ( { site }: { site: Site } ) => {
-	const icon = site.is_wpcom_staging_site ? staging : production;
-	const label = site.is_wpcom_staging_site ? __( 'Staging' ) : __( 'Production' );
-
-	return (
-		<HStack justify="flex-start" spacing={ 2 } expanded={ false } style={ { flexShrink: 0 } }>
-			<Icon icon={ icon } size={ 20 } />
-			<Text weight={ 500 }>{ label }</Text>
-		</HStack>
-	);
-};
 
 const SidebarEnvironmentSwitcher = ( { site }: { site: Site } ) => {
 	const {
@@ -41,9 +24,11 @@ const SidebarEnvironmentSwitcher = ( { site }: { site: Site } ) => {
 		( productionSite && canManageSite( productionSite ) ) ||
 		( stagingSite && canManageSite( stagingSite ) );
 
+	const environmentType = site.is_wpcom_staging_site ? 'staging' : 'production';
+
 	return (
 		<HStack expanded={ false } style={ { flexShrink: 0 } } className="sidebar-environment-switcher">
-			<CurrentEnvironment site={ site } />
+			<Environment environmentType={ environmentType } />
 			{ canToggle && (
 				<Dropdown
 					renderToggle={ ( { isOpen, onToggle } ) => (
