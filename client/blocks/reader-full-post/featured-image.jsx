@@ -6,11 +6,6 @@ const hideImageOnError = ( event ) => {
 	event.target.parentNode.style.display = 'none';
 };
 
-function featuredImageAltString( post ) {
-	const alt = getFeaturedImageAlt( post );
-	return typeof alt === 'string' ? alt : '';
-}
-
 export default function ReaderFullPostFeaturedImage( { post, maxWidth } ) {
 	if ( ! post?.featured_image ) {
 		return null;
@@ -23,7 +18,7 @@ export default function ReaderFullPostFeaturedImage( { post, maxWidth } ) {
 
 	return (
 		<div className="reader-full-post__featured-image">
-			<img src={ resizedUrl } alt={ featuredImageAltString( post ) } onError={ hideImageOnError } />
+			<img src={ resizedUrl } alt={ getFeaturedImageAlt( post ) } onError={ hideImageOnError } />
 		</div>
 	);
 }
