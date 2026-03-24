@@ -2,7 +2,7 @@ import { ssoAuthorize } from '@automattic/api-core';
 import { createRoute, createLazyRoute } from '@tanstack/react-router';
 import { rootRoute } from './root';
 
-interface SsoBridgeSearchParams {
+export interface SsoBridgeSearchParams {
 	site_id?: string;
 	sso_nonce?: string;
 	action?: string;
