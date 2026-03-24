@@ -42,7 +42,7 @@ For endpoints that return progressive responses (NDJSON or SSE via the proxy
 iframe's HTTP 207 mechanism), set `emulateStreamBody: true` to receive a
 `ReadableStream` instead of the final parsed body.
 
-The promise resolves immediately with an object containing `ok`, `status`, and
+Upon the arrival of the first chunk, the promise resolves with an object containing `ok`, `status`, and
 `body` (a `ReadableStream<Uint8Array>`). Each chunk is an SSE-formatted line
 (`data: {json}\n\n`), making it compatible with standard SSE parsers.
 
