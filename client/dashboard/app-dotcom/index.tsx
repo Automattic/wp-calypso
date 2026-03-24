@@ -46,6 +46,7 @@ boot( {
 	components: {
 		sites: () => import( '../sites' ),
 		siteSwitcher: () => import( '../sites/site-switcher' ),
+		siteSwitcherV2: () => import( '../sites/site-switcher-v2' ),
 	},
 	queries: {
 		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => sitesQuery( 'all', fetchSiteOptions ),

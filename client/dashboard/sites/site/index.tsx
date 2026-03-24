@@ -1,4 +1,5 @@
 import { siteBySlugQuery } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { notFound, Outlet } from '@tanstack/react-router';
 import { __experimentalHStack as HStack } from '@wordpress/components';
@@ -33,20 +34,22 @@ function Site() {
 	return (
 		<Suspense fallback={ null }>
 			{ hasStagingSite( site ) && <StagingSiteSyncMonitor site={ site } /> }
-			<HeaderBar>
-				<HStack spacing={ 3 }>
-					<HeaderBar.Title>
-						<SiteSwitcher />
-						{ canSwitchEnvironment( site ) && (
-							<>
-								<MenuDivider />
-								<EnvironmentSwitcher site={ site } />
-							</>
-						) }
-					</HeaderBar.Title>
-					{ ! isSiteMigrationInProgress( site ) && <SiteMenu site={ site } /> }
-				</HStack>
-			</HeaderBar>
+			{ ! isEnabled( 'dashboard/omnibar' ) && (
+				<HeaderBar>
+					<HStack spacing={ 3 }>
+						<HeaderBar.Title>
+							<SiteSwitcher />
+							{ canSwitchEnvironment( site ) && (
+								<>
+									<MenuDivider />
+									<EnvironmentSwitcher site={ site } />
+								</>
+							) }
+						</HeaderBar.Title>
+						{ ! isSiteMigrationInProgress( site ) && <SiteMenu site={ site } /> }
+					</HStack>
+				</HeaderBar>
+			) }
 			<Suspense fallback={ null }>
 				<FlashMessage
 					id="route-not-allowed"

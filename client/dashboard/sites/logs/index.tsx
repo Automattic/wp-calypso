@@ -1,5 +1,6 @@
 import { HostingFeatures, LogType } from '@automattic/api-core';
 import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { TabPanel } from '@wordpress/components';
@@ -174,25 +175,27 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 			}
 		>
 			<Card className={ `site-logs-card site-logs-card--${ logType }` }>
-				<CardHeader style={ { paddingBottom: '0' } }>
-					<TabPanel
-						className="site-logs-tabs"
-						activeClass="is-active"
-						tabs={ LOG_TABS }
-						onSelect={ ( tabName ) => {
-							if (
-								tabName === LogType.PHP ||
-								tabName === LogType.SERVER ||
-								tabName === LogType.ACTIVITY
-							) {
-								handleTabChange( tabName );
-							}
-						} }
-						initialTabName={ logType }
-					>
-						{ () => null }
-					</TabPanel>
-				</CardHeader>
+				{ ! isEnabled( 'dashboard/omnibar' ) && (
+					<CardHeader style={ { paddingBottom: '0' } }>
+						<TabPanel
+							className="site-logs-tabs"
+							activeClass="is-active"
+							tabs={ LOG_TABS }
+							onSelect={ ( tabName ) => {
+								if (
+									tabName === LogType.PHP ||
+									tabName === LogType.SERVER ||
+									tabName === LogType.ACTIVITY
+								) {
+									handleTabChange( tabName );
+								}
+							} }
+							initialTabName={ logType }
+						>
+							{ () => null }
+						</TabPanel>
+					</CardHeader>
+				) }
 				<CardBody>
 					{ logType === LogType.PHP || logType === LogType.SERVER ? (
 						<HostingFeatureGatedWithCallout site={ site } { ...getLogsCalloutProps() }>
