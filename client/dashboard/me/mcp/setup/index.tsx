@@ -173,8 +173,8 @@ function McpSetupComponent() {
 					selectedMcpClient === 'claude-code' ||
 					selectedMcpClient === 'cursor' ) && (
 					<Card>
-						<CardBody style={ { padding: '8px 16px' } }>
-							<VStack spacing={ 2 }>
+						<CardBody style={ { padding: '16px' } }>
+							<VStack spacing={ 3 }>
 								<Text as="h3" weight="600" style={ { margin: 0 } }>
 									{ __( 'Quick setup' ) }
 								</Text>
@@ -235,23 +235,28 @@ function McpSetupComponent() {
 				) }
 
 				<Card>
-					<CardBody style={ { padding: '8px 16px' } }>
-						<VStack spacing={ 2 }>
-							<HStack justify="space-between" alignment="center">
+					<CardBody style={ { padding: '16px' } }>
+						<VStack spacing={ 3 }>
+							<VStack spacing={ 0 }>
 								<Text as="h3" weight="600" style={ { margin: 0 } }>
 									{ __( 'Manual setup' ) }
 								</Text>
-								<Button
-									icon={ getCopyIcon() }
-									variant="tertiary"
-									iconSize={ 20 }
-									style={ {
-										color: copyStatus === 'error' ? 'var(--color-error)' : undefined,
-									} }
-									onClick={ copyToClipboard }
-									aria-label={ __( 'Copy configuration to clipboard' ) }
-								/>
-							</HStack>
+								<HStack justify="space-between" alignment="center">
+									<p style={ { margin: 0, fontSize: '13px', color: '#757575' } }>
+										{ __( "Copy this configuration into your client's MCP settings." ) }
+									</p>
+									<Button
+										icon={ getCopyIcon() }
+										variant="tertiary"
+										iconSize={ 20 }
+										style={ {
+											color: copyStatus === 'error' ? 'var(--color-error)' : undefined,
+										} }
+										onClick={ copyToClipboard }
+										aria-label={ __( 'Copy configuration to clipboard' ) }
+									/>
+								</HStack>
+							</VStack>
 							<TextareaControl
 								__nextHasNoMarginBottom
 								value={ JSON.stringify( generateMcpConfig( selectedMcpClient ), null, 2 ) }
