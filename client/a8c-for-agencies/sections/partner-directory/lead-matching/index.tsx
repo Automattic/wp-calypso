@@ -1,4 +1,4 @@
-import { Text, VStack } from '@wordpress/components';
+import { __experimentalText as Text, __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 export default function LeadMatchingPlaceholder() {
