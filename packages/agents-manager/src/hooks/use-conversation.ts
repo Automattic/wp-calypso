@@ -21,22 +21,15 @@ interface Result {
 }
 
 /**
- * Fetches a conversation from the server when the user selects one
- * from the history list. Skips fetching on initial mount since
- * `useAgentChat` already handles the current conversation.
+ * Fetches a conversation from the server when a `sessionId` is available.
  */
-export default function useFetchSelectedConversation( {
-	maxPages = 10,
-	onSuccess = () => {},
-}: Config ): Result {
+export default function useConversation( { maxPages = 10, onSuccess = () => {} }: Config ): Result {
 	const { agentConfig } = useAgentsManagerContext();
 	const { agentId, sessionId, authProvider } = agentConfig!;
+
+	// Keep a ref to the latest callback to avoid re-triggering effects when it changes.
 	const onSuccessRef = useRef( onSuccess );
 	onSuccessRef.current = onSuccess;
-
-	// Only fetch when sessionId changes from the initial value (user selected from history).
-	const initialSessionIdRef = useRef( sessionId );
-	const isSessionChanged = sessionId !== initialSessionIdRef.current;
 
 	const { data, isLoading, isError, error } = useQuery( {
 		// eslint-disable-next-line @tanstack/query/exhaustive-deps -- we only want to refetch when sessionId changes
@@ -57,7 +50,7 @@ export default function useFetchSelectedConversation( {
 				true
 			);
 		},
-		enabled: isSessionChanged && !! sessionId,
+		enabled: !! sessionId,
 		// Keep history stable while browsing; use explicit non-default refetch behavior for chat UX.
 		refetchOnWindowFocus: false,
 		refetchOnMount: false,
@@ -77,7 +70,7 @@ export default function useFetchSelectedConversation( {
 	useEffect( () => {
 		if ( error ) {
 			// eslint-disable-next-line no-console
-			console.error( '[useFetchSelectedConversation] Error loading conversation:', error );
+			console.error( '[useConversation] Error loading conversation:', error );
 		}
 	}, [ error ] );
 
