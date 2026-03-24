@@ -22,7 +22,7 @@ const SubdomainSuggestion = styled.div`
 	}
 `;
 
-// Badge after feature title (pricing differentiation pills). Figma Green-0 / Green-50.
+// Pricing differentiation pills — colors match @automattic/components Badge type="info-green" (.badge--info-green).
 const FeatureBadge = styled.span`
 	display: inline-flex;
 	height: 18px;
@@ -31,8 +31,8 @@ const FeatureBadge = styled.span`
 	align-items: center;
 	gap: 8px;
 	border-radius: 4px;
-	background-color: var( --studio-green-0, #e6f2e8 );
-	color: var( --studio-green-50, #008a20 );
+	background-color: rgba( 184, 230, 191, 0.64 );
+	color: var( --studio-green-80 );
 	text-align: center;
 	font-size: 11px;
 	font-weight: 600;
