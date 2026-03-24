@@ -42,23 +42,6 @@ Both `dev` and `build` use `calypso-apps-builder` to compile webpack bundles. Th
 3. Visit any Simple, Atomic, or CIAB site.
 4. Open the Agents Manager and verify your changes.
 
-## Deployment
-
-1. Connect to your sandbox and run: `install-plugin.sh am --release`
-2. When prompted where to push the branch, select the WPCOM repository.
-3. This will create a PR on the WPCOM repository.
-4. Once checks pass, merge the PR.
-5. Deploy wpcom: `deploy wpcom`
-
-This deploys the Agents Manager bundles and language files for Jetpack consumption (served via `widgets.wp.com`).
-
-## Translations
-
-Translations are uploaded to `widgets.wp.com/agents-manager/languages`. They're downloaded in Jetpack during the build process.
-
-> [!IMPORTANT]
-> If you add new phrases to the Agents Manager, they will only be translated on Atomic sites after `jetpack-mu-plugin` is released, which happens twice a day.
-
 ## PR Guidelines
 
 For PRs that **only** touch `apps/agents-manager/` (build config, entry point wiring):
