@@ -139,7 +139,7 @@ function McpSetupComponent( { path } ) {
 			<Card isRounded={ false }>
 				<CardBody>
 					<VStack spacing={ 4 }>
-						<CardHeading tagName="h2" size={ 16 } isBold>
+						<CardHeading tagName="h2" size={ 16 } isBold style={ { marginBottom: 0 } }>
 							{ translate( 'Setup Required' ) }
 						</CardHeading>
 						<VStack spacing={ 4 }>
@@ -157,9 +157,9 @@ function McpSetupComponent( { path } ) {
 	return renderLayout(
 		<VStack spacing={ 2 }>
 			<Card isRounded={ false }>
-				<CardBody style={ { padding: '12px 16px' } }>
+				<CardBody style={ { padding: '8px 16px' } }>
 					<VStack spacing={ 2 }>
-						<CardHeading tagName="h2" size={ 16 } isBold>
+						<CardHeading tagName="h2" size={ 16 } isBold style={ { marginBottom: 0 } }>
 							{ translate( 'Choose your AI agent' ) }
 						</CardHeading>
 						<SelectControl
@@ -177,9 +177,9 @@ function McpSetupComponent( { path } ) {
 				selectedMcpClient === 'claude-code' ||
 				selectedMcpClient === 'cursor' ) && (
 				<Card isRounded={ false }>
-					<CardBody style={ { padding: '12px 16px' } }>
+					<CardBody style={ { padding: '8px 16px' } }>
 						<VStack spacing={ 3 }>
-							<CardHeading tagName="h2" size={ 16 } isBold>
+							<CardHeading tagName="h2" size={ 16 } isBold style={ { marginBottom: 0 } }>
 								{ translate( 'Quick setup' ) }
 							</CardHeading>
 
@@ -217,8 +217,8 @@ function McpSetupComponent( { path } ) {
 							) }
 
 							{ selectedMcpClient === 'cursor' && (
-								<VStack spacing={ 3 }>
-									<p>
+								<>
+									<p style={ { margin: 0 } }>
 										{ translate(
 											'Use the one-click install to add the WordPress.com MCP server to Cursor.'
 										) }
@@ -231,7 +231,7 @@ function McpSetupComponent( { path } ) {
 									>
 										{ translate( 'Install in Cursor' ) }
 									</Button>
-								</VStack>
+								</>
 							) }
 						</VStack>
 					</CardBody>
@@ -239,10 +239,10 @@ function McpSetupComponent( { path } ) {
 			) }
 
 			<Card isRounded={ false }>
-				<CardBody style={ { padding: '12px 16px' } }>
+				<CardBody style={ { padding: '8px 16px' } }>
 					<VStack spacing={ 2 }>
 						<HStack justify="space-between" alignment="center">
-							<CardHeading tagName="h2" size={ 16 } isBold>
+							<CardHeading tagName="h2" size={ 16 } isBold style={ { marginBottom: 0 } }>
 								{ translate( 'Manual setup' ) }
 							</CardHeading>
 							<Button

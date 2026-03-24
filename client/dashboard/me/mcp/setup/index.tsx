@@ -151,7 +151,7 @@ function McpSetupComponent() {
 			<ComponentViewTracker eventName="calypso_dashboard_mcp_setup_view" />
 			<VStack spacing={ 2 }>
 				<Card>
-					<CardBody style={ { padding: '12px 16px' } }>
+					<CardBody style={ { padding: '8px 16px' } }>
 						<VStack spacing={ 2 }>
 							<SectionHeader level={ 3 } title={ __( 'Choose your AI agent' ) } />
 							<SelectControl
@@ -169,8 +169,8 @@ function McpSetupComponent() {
 					selectedMcpClient === 'claude-code' ||
 					selectedMcpClient === 'cursor' ) && (
 					<Card>
-						<CardBody style={ { padding: '12px 16px' } }>
-							<VStack spacing={ 3 }>
+						<CardBody style={ { padding: '8px 16px' } }>
+							<VStack spacing={ 2 }>
 								<SectionHeader level={ 3 } title={ __( 'Quick setup' ) } />
 
 								{ selectedMcpClient === 'claude' && (
@@ -207,8 +207,8 @@ function McpSetupComponent() {
 								) }
 
 								{ selectedMcpClient === 'cursor' && (
-									<VStack spacing={ 3 }>
-										<p>
+									<>
+										<p style={ { margin: 0 } }>
 											{ __(
 												'Use the one-click install to add the WordPress.com MCP server to Cursor.'
 											) }
@@ -221,7 +221,7 @@ function McpSetupComponent() {
 										>
 											{ __( 'Install in Cursor' ) }
 										</Button>
-									</VStack>
+									</>
 								) }
 							</VStack>
 						</CardBody>
@@ -229,7 +229,7 @@ function McpSetupComponent() {
 				) }
 
 				<Card>
-					<CardBody style={ { padding: '12px 16px' } }>
+					<CardBody style={ { padding: '8px 16px' } }>
 						<VStack spacing={ 2 }>
 							<HStack justify="space-between" alignment="center">
 								<SectionHeader level={ 3 } title={ __( 'Manual setup' ) } />
