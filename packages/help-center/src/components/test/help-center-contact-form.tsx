@@ -2,38 +2,12 @@
  * @jest-environment jsdom
  */
 
-/**
- * Regression test for:
- * DOTSUP-452 – HelpCenterContactForm crashes with TypeError when currentUser is null
- *
- * HelpCenterLoader now renders for logged-out users on devdocs pages.
- * The loader passes currentUser straight through even when it is null.
- * HelpCenterContactForm then accesses currentUser.ID without a null-check,
- * throwing:
- *   TypeError: Cannot read properties of null (reading 'ID')
- *
- * Affected paths:
- *   client/layout/logged-out.jsx
- *   client/layout/help-center-loader.tsx
- *   client/state/current-user/selectors.js
- *   packages/help-center/src/components/help-center-contact-form.tsx
- *
- * Commit: 788e1211f727
- */
-
 import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { HelpCenterRequiredContextProvider } from '../../contexts/HelpCenterContext';
 import { HelpCenterContactForm } from '../help-center-contact-form';
-
-// ---------------------------------------------------------------------------
-// Module mocks – keep the component mountable in jsdom without real API calls
-// ---------------------------------------------------------------------------
-// Note: @automattic/onboarding and @automattic/data-stores are mapped to
-// lightweight stubs in jest.config.js#moduleNameMapper, which removes the
-// need to mock the entire transitive dependency tree here.
 
 jest.mock( 'react-router-dom', () => ( {
 	...jest.requireActual( 'react-router-dom' ),
@@ -129,10 +103,6 @@ jest.mock( 'calypso/lib/mobile-app', () => ( {
 	isWcMobileApp: () => false,
 } ) );
 
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
 /**
  * Renders HelpCenterContactForm wrapped in the mandatory context and router,
  * using the supplied currentUser value (may be null to simulate a logged-out
@@ -155,25 +125,7 @@ function renderContactForm( currentUser: unknown ) {
 	);
 }
 
-// ---------------------------------------------------------------------------
-// Tests
-// ---------------------------------------------------------------------------
-
-describe( 'HelpCenterContactForm – logged-out user (null currentUser)', () => {
-	/**
-	 * This test reproduces the TypeError reported in DOTSUP-452.
-	 *
-	 * Before the fix, passing null as currentUser caused the component to throw:
-	 *   TypeError: Cannot read properties of null (reading 'ID')
-	 * at the very first render because the component accessed `currentUser.ID`
-	 * unconditionally on lines:
-	 *   - useUserSites( currentUser.ID )
-	 *   - useSiteAnalysis( currentUser.ID, … )
-	 *   - queryClient.invalidateQueries( { queryKey: [ …, currentUser.ID ] } )
-	 *
-	 * After the fix (optional chaining: currentUser?.ID ?? 0/null), the component
-	 * must render without throwing.
-	 */
+describe( 'HelpCenterContactForm - logged-out user (null currentUser)', () => {
 	it( 'does not throw when currentUser is null (logged-out user on devdocs)', () => {
 		const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
 
