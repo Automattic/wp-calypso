@@ -73,7 +73,7 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 	const archiveQuery = useMemo( () => {
 		return {
 			...query,
-			max: 50,
+			max: 100,
 		};
 	}, [ query ] );
 
