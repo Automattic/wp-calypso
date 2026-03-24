@@ -1,9 +1,12 @@
 import { ProgressBar } from '@automattic/components';
 import { formatNumber, formatCurrency } from '@automattic/number-formatters';
+import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
+import { A4A_MARKETPLACE_PRODUCTS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useFetchLicenses from 'calypso/a8c-for-agencies/data/purchases/use-fetch-licenses';
+import { PRODUCT_CATEGORY_PRESSABLE_ADDON } from 'calypso/a8c-for-agencies/sections/marketplace/constants';
 import getPressablePlan from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/lib/get-pressable-plan';
 import {
 	LicenseFilter,
@@ -13,6 +16,7 @@ import {
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { TitanOrder } from 'calypso/state/a8c-for-agencies/types';
 import { calculateEffectiveCapacity } from './capacity';
+import { getPressableUsageWarning } from './usage-warnings';
 import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
 import './style.scss';
@@ -64,6 +68,37 @@ export default function PressableUsageDetails( { existingPlan }: Props ) {
 	}
 
 	const effectiveCapacity = calculateEffectiveCapacity( planInfo, pressableLicensesData?.items );
+	const storageUsage = planUsage?.storage_gb ?? 0;
+	const visitsUsage = planUsage?.visits_count ?? 0;
+	const storageWarning = getPressableUsageWarning(
+		'storage',
+		storageUsage,
+		effectiveCapacity.storage
+	);
+	const visitsWarning = getPressableUsageWarning( 'visits', visitsUsage, effectiveCapacity.visits );
+	const getAddOnLabel = ( addOnLabelKey: 'storage' | 'visits' ) =>
+		addOnLabelKey === 'storage' ? translate( 'Storage' ) : translate( 'Visits' );
+	const pressableAddOnsHref = addQueryArgs( A4A_MARKETPLACE_PRODUCTS_LINK, {
+		category: PRODUCT_CATEGORY_PRESSABLE_ADDON,
+	} );
+	const renderWarningMessage = ( addOnLabelKey: 'storage' | 'visits' ) => (
+		<div className="pressable-usage-details__warning-message">
+			<div>
+				{ translate(
+					'Over the limit. Purchase Pressable %(addon_type)s add-ons to avoid issues with your agency sites.',
+					{
+						args: {
+							addon_type: getAddOnLabel( addOnLabelKey ),
+						},
+						comment: '%(addon_type)s is the Pressable add-on type the user should purchase.',
+					}
+				) }
+			</div>
+			<a className="pressable-usage-details__warning-link" href={ pressableAddOnsHref }>
+				{ translate( 'View Pressable add-ons' ) }
+			</a>
+		</div>
+	);
 
 	// Only render the Titan card if there are active orders
 	const shouldRenderTitanCard = titanUsage?.orders && activeOrders.length > 0;
@@ -80,7 +115,11 @@ export default function PressableUsageDetails( { existingPlan }: Props ) {
 				</div>
 			) }
 			<div className="pressable-usage-details__info">
-				<div className="pressable-usage-details__info-item">
+				<div
+					className={ clsx( 'pressable-usage-details__info-item', {
+						'is-warning': Boolean( storageWarning ),
+					} ) }
+				>
 					<div className="pressable-usage-details__info-header">
 						<div className="pressable-usage-details__info-label">
 							{ translate( 'Storage used' ) }
@@ -100,10 +139,12 @@ export default function PressableUsageDetails( { existingPlan }: Props ) {
 						<ProgressBar
 							className="pressable-usage-details__storage-bar"
 							compact
-							value={ planUsage ? planUsage.storage_gb : 0 }
+							color={ storageWarning ? 'var(--color-error)' : undefined }
+							value={ storageUsage }
 							total={ effectiveCapacity.storage }
 						/>
 					</div>
+					{ storageWarning && renderWarningMessage( storageWarning.addOnLabelKey ) }
 				</div>
 			</div>
 			<div className="pressable-usage-details__info">
@@ -133,7 +174,11 @@ export default function PressableUsageDetails( { existingPlan }: Props ) {
 					</div>
 				</div>
 
-				<div className="pressable-usage-details__info-item visits">
+				<div
+					className={ clsx( 'pressable-usage-details__info-item visits', {
+						'is-warning': Boolean( visitsWarning ),
+					} ) }
+				>
 					<div className="pressable-usage-details__info-header">
 						<div className="pressable-usage-details__info-label">
 							{ translate( 'Monthly visits' ) }
@@ -153,10 +198,12 @@ export default function PressableUsageDetails( { existingPlan }: Props ) {
 						<ProgressBar
 							className="pressable-usage-details__storage-bar"
 							compact
-							value={ planUsage ? planUsage.visits_count : 0 }
+							color={ visitsWarning ? 'var(--color-error)' : undefined }
+							value={ visitsUsage }
 							total={ effectiveCapacity.visits }
 						/>
 					</div>
+					{ visitsWarning && renderWarningMessage( visitsWarning.addOnLabelKey ) }
 				</div>
 			</div>
 			{ shouldRenderTitanCard && (

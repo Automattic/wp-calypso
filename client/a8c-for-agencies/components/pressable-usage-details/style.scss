@@ -53,6 +53,17 @@
 		@include break-large {
 			width: 100%;
 		}
+
+		&.is-warning {
+			background: var(--color-error-0);
+			box-shadow: inset 0 0 0 1px var(--color-error-10);
+
+			.pressable-usage-details__info-label,
+			.pressable-usage-details__info-top-right,
+			.pressable-usage-details__warning-message {
+				color: var(--color-error-80);
+			}
+		}
 	}
 
 	.pressable-usage-details__info-header {
@@ -85,6 +96,27 @@
 	.pressable-usage-details__info-value {
 		@include heading-large;
 		margin-top: 5px;
+	}
+
+	.pressable-usage-details__warning-message {
+		@include body-small;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 8px;
+		margin-top: 12px;
+	}
+
+	.pressable-usage-details__warning-link {
+		@include body-small;
+		color: var(--color-error-80);
+		font-weight: 600;
+		text-decoration: underline;
+
+		&:hover,
+		&:focus {
+			color: var(--color-error-100);
+		}
 	}
 
 	/* Titan Email Addon styles */
