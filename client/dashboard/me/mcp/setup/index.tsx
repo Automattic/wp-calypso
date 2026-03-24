@@ -236,7 +236,7 @@ function McpSetupComponent() {
 
 				<Card>
 					<CardBody style={ { padding: '16px' } }>
-						<VStack spacing={ 3 }>
+						<VStack spacing={ 2 }>
 							<VStack spacing={ 0 }>
 								<Text as="h3" weight="600" style={ { margin: 0 } }>
 									{ __( 'Manual setup' ) }

@@ -243,8 +243,8 @@ function McpSetupComponent( { path } ) {
 
 				<Card isRounded={ false }>
 					<CardBody style={ { padding: '16px' } }>
-						<VStack spacing={ 3 }>
-							<VStack spacing={ 0 }>
+						<VStack spacing={ 2 }>
+							<VStack spacing={ 2 }>
 								<CardHeading tagName="h2" size={ 16 } isBold>
 									{ translate( 'Manual setup' ) }
 								</CardHeading>
