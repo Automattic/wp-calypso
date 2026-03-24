@@ -13,6 +13,7 @@ type InviteType = {
 		domain: string;
 		admin_url: string;
 		is_vip: boolean;
+		is_garden_site?: boolean;
 	};
 	role: string;
 };
@@ -193,7 +194,7 @@ export function getRedirectAfterAccept( invite: InviteType, hasDashboardOptIn: b
 		return isMissingLogmein ? redirect : destination;
 	};
 
-	if ( invite.site.is_vip ) {
+	if ( invite.site.is_vip || invite.site.is_garden_site ) {
 		switch ( invite.role ) {
 			case 'viewer':
 			case 'follower':
