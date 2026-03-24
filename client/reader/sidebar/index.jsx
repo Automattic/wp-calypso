@@ -44,6 +44,7 @@ import {
 import { getReaderTeams } from 'calypso/state/teams/selectors';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import ReaderSidebarHelper from './helper';
+import ReaderSidebarAppPromo from './reader-sidebar-app-promo';
 import ReaderSidebarLists from './reader-sidebar-lists';
 import ReaderSidebarNudges from './reader-sidebar-nudges';
 import ReaderSidebarOrganizations from './reader-sidebar-organizations';
@@ -288,6 +289,7 @@ export class ReaderSidebar extends Component {
 			>
 				<ReaderSidebarNudges />
 				{ this.renderSidebarMenu() }
+				<ReaderSidebarAppPromo />
 			</GlobalSidebar>
 		);
 	}

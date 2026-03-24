@@ -1,0 +1,35 @@
+.reader-sidebar-app-promo {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 24px 16px;
+	text-align: center;
+
+	.reader-sidebar-app-promo__icon {
+		margin-block-end: 8px;
+	}
+
+	.reader-sidebar-app-promo__heading {
+		font-size: 0.875rem;
+		font-weight: 600;
+		margin-block-end: 12px;
+		color: var(--color-text);
+	}
+
+	// Override the QR code block's large margins for sidebar context.
+	.app-promo__qr-code {
+		margin-block: 0;
+		flex-direction: column;
+		align-items: center;
+
+		.get-apps__card-text {
+			display: none;
+		}
+	}
+
+	.reader-sidebar-app-promo__helper {
+		font-size: 0.75rem;
+		color: var(--color-text-subtle);
+		margin-block-start: 8px;
+	}
+}
