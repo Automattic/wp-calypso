@@ -1,16 +1,15 @@
-import { useTranslate } from 'i18n-calypso';
+import { Text, VStack } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 
 export default function LeadMatchingPlaceholder() {
-	const translate = useTranslate();
-
 	return (
-		<div className="partner-directory-lead-matching-placeholder">
-			<h2>{ translate( 'Lead matching' ) }</h2>
-			<p>
-				{ translate(
+		<VStack className="partner-directory-lead-matching-placeholder">
+			<Text as="h2">{ __( 'Lead matching' ) }</Text>
+			<Text>
+				{ __(
 					'This section is now wired for rollout. The final lead matching form will land in a follow-up PR.'
 				) }
-			</p>
-		</div>
+			</Text>
+		</VStack>
 	);
 }
