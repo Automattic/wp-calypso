@@ -97,7 +97,7 @@ object BuildDockerImage : BuildType({
     }
 
 	params {
-		text("cache_mode", "base", label = "Docker build cache mode", description = "How the main Docker build sources warm caches. Allowed values: base, seed, none.", allowEmpty = false)
+		text("cache_mode", "seed", label = "Docker build cache mode", description = "How the main Docker build sources warm caches. Allowed values: base, seed, none.", allowEmpty = false)
 		text("base_image", "registry.a8c.com/calypso/base:latest", label = "Base docker image", description = "Base docker image", allowEmpty = false)
 		text("cache_seed_image", "registry.a8c.com/calypso/cache-seed:latest", label = "Cache seed image", description = "Cache-only image used when cache_mode=seed", allowEmpty = false)
 		text("base_image_publish_tag", "latest", label = "Tag to use for the published base image", description = "Base docker image tag", allowEmpty = false)
