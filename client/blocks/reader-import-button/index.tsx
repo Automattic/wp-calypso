@@ -4,8 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import FilePicker from 'calypso/components/file-picker';
 import wpcom from 'calypso/lib/wp';
-import { useDispatch, useSelector } from 'calypso/state';
-import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
+import { useDispatch } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 import './style.scss';
@@ -20,21 +19,6 @@ const ReaderImportButton: React.FC< ReaderImportButtonProps > = ( { onProgress =
 	const [ disabled, setDisabled ] = useState( false );
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
-
-	const checkUser = ( event: React.MouseEvent< HTMLButtonElement > ) => {
-		if ( ! isEmailVerified ) {
-			event?.preventDefault();
-
-			dispatch(
-				errorNotice( translate( 'Please verify your email before subscribing.' ), {
-					id: 'resend-verification-email',
-					button: translate( 'Account Settings' ),
-					href: '/me/account',
-				} )
-			);
-		}
-	};
 
 	const onClick = ( event: React.MouseEvent< HTMLButtonElement > ) => {
 		if ( disabled ) {
@@ -92,13 +76,10 @@ const ReaderImportButton: React.FC< ReaderImportButtonProps > = ( { onProgress =
 	const importLabel = translate( 'Import OPML' );
 
 	return (
-		<Button className="reader-import-button" icon={ upload } onClick={ checkUser }>
-			{ isEmailVerified && (
-				<FilePicker accept=".xml,.opml" onClick={ onClick } onPick={ onPick }>
-					<span className="reader-import-button__label">{ importLabel }</span>
-				</FilePicker>
-			) }
-			{ ! isEmailVerified && <span className="reader-import-button__label">{ importLabel }</span> }
+		<Button className="reader-import-button" icon={ upload }>
+			<FilePicker accept=".xml,.opml" onClick={ onClick } onPick={ onPick }>
+				<span className="reader-import-button__label">{ importLabel }</span>
+			</FilePicker>
 		</Button>
 	);
 };
