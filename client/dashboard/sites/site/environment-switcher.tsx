@@ -12,7 +12,6 @@ import {
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
-	__experimentalText as Text,
 	Button,
 	Dropdown,
 	MenuGroup,
@@ -22,14 +21,13 @@ import {
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { sprintf, __ } from '@wordpress/i18n';
-import { Icon, chevronDownSmall, chevronUpDown, plus } from '@wordpress/icons';
+import { chevronDownSmall, chevronUpDown, plus, Icon } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useHelpCenter } from '../../app/help-center';
 import useBuildCurrentRouteLink from '../../app/hooks/use-build-current-route-link';
 import Environment from '../../components/environment';
-import { staging, production } from '../../components/icons';
 import RouterLinkMenuItem from '../../components/router-link-menu-item';
 import {
 	isAtomicTransferInProgress,
@@ -41,24 +39,8 @@ import type { Site } from '@automattic/api-core';
 
 import './environment-switcher.scss';
 
-const CurrentEnvironment = ( { site, variant }: { site: Site; variant: 'header' | 'sidebar' } ) => {
-	if ( variant === 'sidebar' ) {
-		const icon = site.is_wpcom_staging_site ? staging : production;
-		const label = site.is_wpcom_staging_site ? __( 'Staging' ) : __( 'Production' );
-
-		return (
-			<HStack justify="flex-start" spacing={ 2 } expanded={ false } style={ { flexShrink: 0 } }>
-				<Icon icon={ icon } size={ 20 } />
-				<Text weight={ 500 }>{ label }</Text>
-			</HStack>
-		);
-	}
-
-	if ( site.is_wpcom_staging_site ) {
-		return <Environment environmentType="staging" />;
-	}
-
-	return <Environment environmentType="production" />;
+const CurrentEnvironment = ( { site }: { site: Site } ) => {
+	return <Environment environmentType={ site.is_wpcom_staging_site ? 'staging' : 'production' } />;
 };
 
 const StagingSiteActionButton = ( {
@@ -413,7 +395,7 @@ const EnvironmentSwitcher = ( {
 				style={ { flexShrink: 0 } }
 				className="environment-switcher--sidebar"
 			>
-				<CurrentEnvironment site={ site } variant="sidebar" />
+				<CurrentEnvironment site={ site } />
 				{ canToggle && (
 					<Dropdown
 						renderToggle={ ( { isOpen, onToggle } ) => (
@@ -461,7 +443,7 @@ const EnvironmentSwitcher = ( {
 							aria-haspopup="true"
 							aria-expanded={ isOpen }
 						>
-							<CurrentEnvironment site={ site } variant="header" />
+							<CurrentEnvironment site={ site } />
 						</Button>
 					);
 				} }
