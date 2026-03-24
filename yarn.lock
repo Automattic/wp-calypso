@@ -8927,16 +8927,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^22.10.10, @types/node@npm:^22.15.3, @types/node@npm:^22.7.5":
-  version: 22.15.3
-  resolution: "@types/node@npm:22.15.3"
-  dependencies:
-    undici-types: "npm:~6.21.0"
-  checksum: 2879f012d1aeba0bfdb5fed80d165f4f2cb3d1f2e1f98a24b18d4a211b4ace7d64bf2622784c78355982ffc1081ba79d0934efc2fb8353913e5871a63609661f
-  languageName: node
-  linkType: hard
-
-"@types/node@npm:>=13.7.0":
+"@types/node@npm:*, @types/node@npm:>=13.7.0":
   version: 25.2.3
   resolution: "@types/node@npm:25.2.3"
   dependencies:
@@ -8967,6 +8958,15 @@ __metadata:
   dependencies:
     undici-types: "npm:~5.26.4"
   checksum: dce80d63a3b91892b321af823d624995c61e39c6a223cc0ac481a44d337640cc46931d33efb3beeed75f5c85c3bda1d97cef4c5cd4ec333caf5dee59cff6eca0
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^22.10.10, @types/node@npm:^22.15.3, @types/node@npm:^22.7.5":
+  version: 22.15.3
+  resolution: "@types/node@npm:22.15.3"
+  dependencies:
+    undici-types: "npm:~6.21.0"
+  checksum: 2879f012d1aeba0bfdb5fed80d165f4f2cb3d1f2e1f98a24b18d4a211b4ace7d64bf2622784c78355982ffc1081ba79d0934efc2fb8353913e5871a63609661f
   languageName: node
   linkType: hard
 
@@ -10253,19 +10253,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/admin-ui@npm:^1.8.0":
-  version: 1.8.0
-  resolution: "@wordpress/admin-ui@npm:1.8.0"
+"@wordpress/admin-ui@npm:^1.10.0":
+  version: 1.10.0
+  resolution: "@wordpress/admin-ui@npm:1.10.0"
   dependencies:
-    "@wordpress/base-styles": "npm:^6.16.0"
-    "@wordpress/components": "npm:^32.2.0"
-    "@wordpress/element": "npm:^6.40.0"
-    "@wordpress/i18n": "npm:^6.13.0"
-    "@wordpress/route": "npm:^0.6.0"
+    "@wordpress/base-styles": "npm:^6.18.0"
+    "@wordpress/components": "npm:^32.4.0"
+    "@wordpress/element": "npm:^6.42.0"
+    "@wordpress/i18n": "npm:^6.15.0"
+    "@wordpress/private-apis": "npm:^1.42.0"
+    "@wordpress/route": "npm:^0.8.0"
+    "@wordpress/ui": "npm:^0.9.0"
     clsx: "npm:^2.1.1"
   peerDependencies:
     react: ^18.0.0
-  checksum: 50814cb590c6602ec50cb5f8bc2bbca1a2a1cdc8c22dc7eb0a63b131afa95ed6b6868456d4012c2a2b8dee276fef967332470a0e1dcb152067c0a89797399cb8
+  checksum: 7f7f28c57cd1d6a66a6717f18796e14dd1c200c2e04537ab0cd5ff4597a6471f2d61a809c5901c24eff70c7f004c578f550524b9efad598aa61cc258357d11f1
   languageName: node
   linkType: hard
 
@@ -11409,16 +11411,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/route@npm:^0.6.0":
-  version: 0.6.0
-  resolution: "@wordpress/route@npm:0.6.0"
+"@wordpress/route@npm:^0.8.0":
+  version: 0.8.0
+  resolution: "@wordpress/route@npm:0.8.0"
   dependencies:
     "@tanstack/history": "npm:^1.133.28"
     "@tanstack/react-router": "npm:^1.120.5"
-    "@wordpress/private-apis": "npm:^1.40.0"
+    "@wordpress/private-apis": "npm:^1.42.0"
   peerDependencies:
     react: ^18.0.0
-  checksum: 6e1464885be182510971d833fd0aa549f4646811f999aba2bee1ec803a01f64858c12c75c93b2546ca26bf0bab4d2500c27c3c7a2576c1be2b2d455de8beec4e
+  checksum: 8fa2a8968a86af0302dc89f4f9c15cb6c54b8bb9c74deba3be8ac02cb097644b4cac5378b7436dea630b5fc3ce65a0cd269084d6163ca74219a8f64054a09357
   languageName: node
   linkType: hard
 
@@ -33498,7 +33500,7 @@ __metadata:
     "@vgs/collect-js": "npm:^0.7.2"
     "@vgs/collect-js-react": "npm:^2.0.0"
     "@visx/glyph": "npm:^3.12.0"
-    "@wordpress/admin-ui": "npm:^1.8.0"
+    "@wordpress/admin-ui": "npm:^1.10.0"
     "@wordpress/base-styles": "npm:^5.23.0"
     "@wordpress/block-editor": "npm:^14.18.0"
     "@wordpress/block-library": "npm:^9.23.0"
