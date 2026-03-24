@@ -15,6 +15,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
+import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -156,20 +157,19 @@ function McpSetupComponent( { path } ) {
 
 	return renderLayout(
 		<VStack spacing={ 2 }>
+			<HeaderCake backText={ translate( 'Back' ) } backHref="/me/mcp">
+				{ translate( 'Connect AI agent' ) }
+			</HeaderCake>
 			<Card isRounded={ false }>
 				<CardBody style={ { padding: '8px 16px' } }>
-					<VStack spacing={ 2 }>
-						<CardHeading tagName="h2" size={ 16 } isBold style={ { marginBottom: 0 } }>
-							{ translate( 'Choose your AI agent' ) }
-						</CardHeading>
-						<SelectControl
-							__next40pxDefaultSize
-							__nextHasNoMarginBottom
-							value={ selectedMcpClient }
-							options={ mcpClientOptions }
-							onChange={ setSelectedMcpClient }
-						/>
-					</VStack>
+					<SelectControl
+						__next40pxDefaultSize
+						__nextHasNoMarginBottom
+						label={ translate( 'Choose your AI agent' ) }
+						value={ selectedMcpClient }
+						options={ mcpClientOptions }
+						onChange={ setSelectedMcpClient }
+					/>
 				</CardBody>
 			</Card>
 
@@ -242,9 +242,14 @@ function McpSetupComponent( { path } ) {
 				<CardBody style={ { padding: '8px 16px' } }>
 					<VStack spacing={ 2 }>
 						<HStack justify="space-between" alignment="center">
-							<CardHeading tagName="h2" size={ 16 } isBold style={ { marginBottom: 0 } }>
-								{ translate( 'Manual setup' ) }
-							</CardHeading>
+							<VStack spacing={ 0 }>
+								<CardHeading tagName="h2" size={ 16 } isBold style={ { marginBottom: 0 } }>
+									{ translate( 'Manual setup' ) }
+								</CardHeading>
+								<p style={ { margin: 0, fontSize: '13px', color: '#757575' } }>
+									{ translate( "Copy this configuration into your client's MCP settings." ) }
+								</p>
+							</VStack>
 							<Button
 								icon={ getCopyIcon() }
 								variant="tertiary"
