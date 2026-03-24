@@ -229,8 +229,6 @@ const streamApis = {
 				return '/read/streams/discover';
 			} else if ( streamKeySuffix( streamKey ).includes( 'latest' ) ) {
 				return '/read/tags/posts';
-			} else if ( streamKeySuffix( streamKey ).includes( 'firstposts' ) ) {
-				return '/read/streams/first-posts';
 			} else if ( streamKeySuffix( streamKey ).includes( 'freshly-pressed' ) ) {
 				return '/freshly-pressed';
 			}
