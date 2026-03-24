@@ -107,9 +107,6 @@ describe( 'convertOdieChatToOdieConversation', () => {
 	const botSlug = 'wpcom-support-chat';
 
 	it( 'does not throw and falls back to createdAt 0 when messages array is empty', () => {
-		// An OdieChat with an empty messages array — e.g. a chat created but never messaged,
-		// or a truncated API response — previously crashed with a TypeError because
-		// messages[0].ts was accessed on undefined.
 		const emptyChatLoggedOut: OdieChat = {
 			odieId: 42,
 			messages: [],
