@@ -18,7 +18,7 @@ const StatsEmptyActionAI: React.FC< StatsEmptyActionProps > = ( { from } ) => {
 	return (
 		<EmptyStateAction
 			icon={ sparkles }
-			text={ translate( 'Craft engaging content with Jetpack AI assistant' ) }
+			text={ translate( 'Craft engaging content with AI assistant' ) }
 			analyticsDetails={ {
 				from: from,
 				feature: 'ai_assistant',
