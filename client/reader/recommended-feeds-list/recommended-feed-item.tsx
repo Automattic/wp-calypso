@@ -26,8 +26,14 @@ export function RecommendedFeedItem( {
 	const { image, name, feedUrl = '', siteId, feedId } = feed;
 	const site = useSelector( ( state ) => getSite( state, Number( siteId ) ) ) as SiteDetails;
 	const siteIcon = site?.icon?.img || site?.icon?.ico || image;
-	const linkUrl = feedId ? `/reader/feeds/${ feedId }` : feedUrl;
 	const isCompactView = variant === 'compact';
+
+	let linkUrl = feedUrl;
+	if ( feedId ) {
+		linkUrl = `/reader/feeds/${ feedId }`;
+	} else if ( siteId ) {
+		linkUrl = `/reader/blogs/${ siteId }`;
+	}
 
 	function onFollowToggle( isFollowing: boolean ): void {
 		const displayName: string = name || filterURLForDisplay( feedUrl ?? '' );
