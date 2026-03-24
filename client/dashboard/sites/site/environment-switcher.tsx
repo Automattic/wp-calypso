@@ -12,6 +12,7 @@ import {
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
+	__experimentalText as Text,
 	Button,
 	Dropdown,
 	MenuGroup,
@@ -21,13 +22,14 @@ import {
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { sprintf, __ } from '@wordpress/i18n';
-import { Icon, chevronDownSmall, plus } from '@wordpress/icons';
+import { Icon, chevronDownSmall, chevronUpDown, plus } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useHelpCenter } from '../../app/help-center';
 import useBuildCurrentRouteLink from '../../app/hooks/use-build-current-route-link';
 import Environment from '../../components/environment';
+import { staging, production } from '../../components/icons';
 import RouterLinkMenuItem from '../../components/router-link-menu-item';
 import {
 	isAtomicTransferInProgress,
@@ -37,7 +39,21 @@ import { getProductionSiteId, getStagingSiteId } from '../../utils/site-staging-
 import { canManageSite, canCreateStagingSite } from '../features';
 import type { Site } from '@automattic/api-core';
 
-const CurrentEnvironment = ( { site }: { site: Site } ) => {
+import './environment-switcher.scss';
+
+const CurrentEnvironment = ( { site, variant }: { site: Site; variant: 'header' | 'sidebar' } ) => {
+	if ( variant === 'sidebar' ) {
+		const icon = site.is_wpcom_staging_site ? staging : production;
+		const label = site.is_wpcom_staging_site ? __( 'Staging' ) : __( 'Production' );
+
+		return (
+			<HStack justify="flex-start" spacing={ 2 } expanded={ false } style={ { flexShrink: 0 } }>
+				<Icon icon={ icon } size={ 20 } />
+				<Text weight={ 500 }>{ label }</Text>
+			</HStack>
+		);
+	}
+
 	if ( site.is_wpcom_staging_site ) {
 		return <Environment environmentType="staging" />;
 	}
@@ -152,7 +168,13 @@ const EnvironmentSwitcherDropdown = ( {
 	);
 };
 
-const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
+const EnvironmentSwitcher = ( {
+	site,
+	variant = 'header',
+}: {
+	site: Site;
+	variant?: 'header' | 'sidebar';
+} ) => {
 	const { recordTracksEvent } = useAnalytics();
 	const queryClient = useQueryClient();
 
@@ -366,16 +388,63 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 		} );
 	};
 
+	// TODO: Let's make sure to revise these conditions and simplify them once we have the design and the full understanding of how the
+	// deletion in progress should look like and if it should have a loading state during deletion.
+	const canToggle =
+		( productionSite && canManageSite( productionSite ) ) ||
+		( stagingSite && canManageSite( stagingSite ) );
+
+	const dropdownContent = ( { onClose }: { onClose: () => void } ) => (
+		<EnvironmentSwitcherDropdown
+			currentSite={ site }
+			productionSite={ productionSite }
+			stagingSite={ stagingSite }
+			onClose={ onClose }
+			onAddStagingSite={ handleAddStagingSite }
+			isStagingSiteDeleting={ !! isStagingSiteDeleting }
+			isStagingSiteCreating={ !! isStagingSiteCreating }
+		/>
+	);
+
+	if ( variant === 'sidebar' ) {
+		return (
+			<HStack
+				expanded={ false }
+				style={ { flexShrink: 0 } }
+				className="environment-switcher--sidebar"
+			>
+				<CurrentEnvironment site={ site } variant="sidebar" />
+				{ canToggle && (
+					<Dropdown
+						renderToggle={ ( { isOpen, onToggle } ) => (
+							<Button
+								className="environment-switcher__toggle"
+								variant="tertiary"
+								onClick={ onToggle }
+								onKeyDown={ ( event: React.KeyboardEvent ) => {
+									if ( ! isOpen && event.code === 'ArrowDown' ) {
+										event.preventDefault();
+										onToggle();
+									}
+								} }
+								aria-haspopup="true"
+								aria-expanded={ isOpen }
+								label={ __( 'Switch environment' ) }
+								icon={ chevronUpDown }
+								size="small"
+							/>
+						) }
+						renderContent={ dropdownContent }
+					/>
+				) }
+			</HStack>
+		);
+	}
+
 	return (
 		<HStack expanded={ false } style={ { flexShrink: 0 } }>
 			<Dropdown
 				renderToggle={ ( { isOpen, onToggle } ) => {
-					// TODO: Let's make sure to revise these conditions and simplify them once we have the design and the full understanding of how the
-					// deletion in progress should look like and if it should have a loading state during deletion.
-					const canToggle =
-						( productionSite && canManageSite( productionSite ) ) ||
-						( stagingSite && canManageSite( stagingSite ) );
-
 					return (
 						<Button
 							className="dashboard-menu__item active"
@@ -392,21 +461,11 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 							aria-haspopup="true"
 							aria-expanded={ isOpen }
 						>
-							<CurrentEnvironment site={ site } />
+							<CurrentEnvironment site={ site } variant="header" />
 						</Button>
 					);
 				} }
-				renderContent={ ( { onClose } ) => (
-					<EnvironmentSwitcherDropdown
-						currentSite={ site }
-						productionSite={ productionSite }
-						stagingSite={ stagingSite }
-						onClose={ onClose }
-						onAddStagingSite={ handleAddStagingSite }
-						isStagingSiteDeleting={ !! isStagingSiteDeleting }
-						isStagingSiteCreating={ !! isStagingSiteCreating }
-					/>
-				) }
+				renderContent={ dropdownContent }
 			/>
 		</HStack>
 	);
