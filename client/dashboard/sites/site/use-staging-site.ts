@@ -211,7 +211,7 @@ export default function useStagingSite( site: Site ) {
 
 		createSuccessNotice(
 			__(
-				'Setting up your staging site — this may take a few minutes. We\u2019ll email you when it\u2019s ready.'
+				'Setting up your staging site — this may take a few minutes. We’ll email you when it’s ready.'
 			),
 			{
 				type: 'snackbar',
