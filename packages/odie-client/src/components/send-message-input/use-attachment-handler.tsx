@@ -29,7 +29,7 @@ function isSupportedImageType( type: string ) {
 
 const getFileType = ( file: File ) => {
 	if ( file.type.startsWith( 'image/' ) ) {
-		return 'image';
+		return 'image-placeholder';
 	}
 	return 'text';
 };

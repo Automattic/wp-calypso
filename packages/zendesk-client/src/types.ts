@@ -93,6 +93,7 @@ export type ZendeskMessage = {
 	text: string;
 	altText?: string;
 	avatarUrl?: string;
+	sendStatus?: 'sending';
 	id: string;
 	actions?: MessageAction[];
 	source?: {

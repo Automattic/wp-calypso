@@ -32,6 +32,7 @@ import {
 	useAuthenticateZendeskMessaging,
 	fetchMessagingAuth,
 } from './use-authenticate-zendesk-messaging';
+import { useConnectionStatusNotice } from './use-connection-status-notice';
 import {
 	convertZendeskMessageToAgentticFormat,
 	getSmoochContainer,
@@ -169,7 +170,7 @@ function sendMessage(
  * - sendMessage: A function to send a message to the conversation.
  */
 export const useManagedZendeskChat = () => {
-	const [ notice, setNotice ] = useState< NoticeConfig | undefined >();
+	const [ attachmentsNotice, setAttachmentNotice ] = useState< NoticeConfig | undefined >();
 	const { state } = useLocation();
 	const conversationId = state?.conversationId;
 	const startedFromChatId = state?.startedFromChatId;
@@ -184,6 +185,8 @@ export const useManagedZendeskChat = () => {
 	const connectionStatusRef = useRef( connectionStatus );
 	connectionStatusRef.current = connectionStatus;
 	const hadDisconnectRef = useRef( false );
+
+	const connectionNotice = useConnectionStatusNotice( connectionStatus, true );
 
 	const { data: authData } = useAuthenticateZendeskMessaging( true, 'zendesk', false );
 	const { data: Smooch, isLoading: isSettingUpSmooch } = useSmooch();
@@ -201,7 +204,9 @@ export const useManagedZendeskChat = () => {
 	const getUnreadListener = useCallback(
 		( message: ZendeskMessage, data: { conversation: { id: string } } ) => {
 			if ( data.conversation.id === conversation?.id ) {
-				playNotificationSound();
+				if ( message.sendStatus !== 'sending' ) {
+					playNotificationSound();
+				}
 				//Smooch?.getConversationById( data.conversation.id ).then( setConversation );
 				//Smooch?.loadConversation( data.conversation.id );
 				setConversation( ( prev ) =>
@@ -499,7 +504,7 @@ export const useManagedZendeskChat = () => {
 	] );
 
 	const handleFilesSelected = useCallback( async ( files: File[] ) => {
-		setNotice( undefined );
+		setAttachmentNotice( undefined );
 
 		setPendingImages( ( prev ) => {
 			const uploadedImages = files.filter( ( f ) => isSupportedImageType( f.type ) );
@@ -507,7 +512,7 @@ export const useManagedZendeskChat = () => {
 			const shouldWarnAboutMaxAttachments = uploadedImages.length + prev.length > MAX_ATTACHMENTS;
 
 			if ( shouldWarnAboutMaxAttachments ) {
-				setNotice( {
+				setAttachmentNotice( {
 					status: 'warning',
 					message: __( 'Only five images can be added at a time.', '__i18n_text_domain__' ),
 				} );
@@ -533,7 +538,7 @@ export const useManagedZendeskChat = () => {
 	}, [] );
 
 	const handleRemoveImage = useCallback( ( image: { id: string } ) => {
-		setNotice( undefined );
+		setAttachmentNotice( undefined );
 		setPendingImages( ( prev ) => {
 			const item = prev.find( ( p ) => p.id === image.id );
 			if ( item?.url ) {
@@ -562,7 +567,7 @@ export const useManagedZendeskChat = () => {
 		( message: string ) => {
 			const toUpload = pendingImages;
 			setPendingImages( [] );
-			setNotice( undefined );
+			setAttachmentNotice( undefined );
 
 			const isDisconnected =
 				connectionStatusRef.current === 'disconnected' ||
@@ -684,7 +689,7 @@ export const useManagedZendeskChat = () => {
 		isProcessing: isSettingUpSmooch,
 		conversation,
 		connectionStatus,
-		notice,
+		notice: connectionNotice || attachmentsNotice,
 		agentticMessages,
 		isLoadingConversation: isSettingUpSmooch || ! conversation,
 		hasInteractionEnded: hasCSAT,
