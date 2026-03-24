@@ -7,6 +7,7 @@ import {
 } from '@automattic/api-queries';
 /* eslint-enable no-restricted-imports */
 import { createContext, useContext } from 'react';
+import type { SiteSwitcherProps } from '../sites/site-switcher/types';
 import type {
 	FetchSitesOptions,
 	FetchPaginatedSitesOptions,
@@ -50,7 +51,10 @@ export type AppConfig = {
 	};
 	posthog?: string;
 	optIn: boolean;
-	components: Record< string, () => Promise< { default: React.FC } > >;
+	components: {
+		sites: () => Promise< { default: React.FC } >;
+		siteSwitcher: () => Promise< { default: React.FC< SiteSwitcherProps > } >;
+	};
 	queries: {
 		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => ReturnType< typeof sitesQuery >;
 		paginatedSitesQuery: (
@@ -84,7 +88,10 @@ export const APP_CONTEXT_DEFAULT_CONFIG: AppConfig = {
 		startStoreRoute: false,
 	},
 	optIn: false,
-	components: {},
+	components: {
+		sites: () => Promise.resolve( { default: () => null } ),
+		siteSwitcher: () => Promise.resolve( { default: () => null } ),
+	},
 	queries: {
 		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => sitesQuery( 'all', fetchSiteOptions ),
 		paginatedSitesQuery: ( fetchSiteOptions?: FetchPaginatedSitesOptions ) =>
