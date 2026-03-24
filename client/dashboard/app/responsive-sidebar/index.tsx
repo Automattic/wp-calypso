@@ -1,5 +1,7 @@
+import { useRouter } from '@tanstack/react-router';
 import { useViewportMatch } from '@wordpress/compose';
 import clsx from 'clsx';
+import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import Sidebar from './sidebar';
 
@@ -12,6 +14,7 @@ export default function ResponsiveSidebar( {
 	isOpen: boolean;
 	onClose: () => void;
 } ) {
+	const router = useRouter();
 	const isDesktop = useViewportMatch( 'medium' );
 
 	const handleOverlayClick = () => {
@@ -23,6 +26,24 @@ export default function ResponsiveSidebar( {
 			onClose();
 		}
 	};
+
+	// Close sidebar after the navigation.
+	useEffect( () => {
+		if ( isDesktop ) {
+			return () => {};
+		}
+
+		const unsubscribe = router.subscribe( 'onLoad', () => {
+			onClose();
+			// Brief delay so the user sees the selected state before
+			// the sidebar slides closed.
+			// timeoutId = window.setTimeout( onClose, 0 );
+		} );
+
+		return () => {
+			unsubscribe();
+		};
+	}, [ isDesktop, router, onClose ] );
 
 	if ( isDesktop ) {
 		return <Sidebar />;

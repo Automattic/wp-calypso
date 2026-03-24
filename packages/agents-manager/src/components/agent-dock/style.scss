@@ -451,6 +451,11 @@ body.post-new-php.agents-manager-sidebar-container {
 		}
 	}
 
+	// Prevent content overflow
+	.Message-module_content {
+		width: 100%;
+	}
+
 	.big-sky__chat-actions {
 		width: 100%;
 		margin-top: auto;
@@ -656,11 +661,6 @@ body.post-new-php.agents-manager-sidebar-container {
 			.big-sky__item-picker__pager {
 				color: $gray-400;
 			}
-		}
-
-		// Prevent item picker content overflow (e.g., Patterns)
-		.Message-module_content {
-			width: 100%;
 		}
 	}
 }
