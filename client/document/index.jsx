@@ -23,6 +23,7 @@ import WooCommerceLogo from 'calypso/components/woocommerce-logo';
 import { getDashboardStepperLogo } from 'calypso/dashboard/app/stepper-logo';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { isGravPoweredOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import { getPartnerConfigFromDashboardType } from 'calypso/lib/partner-branding';
 import { jsonStringifyForHtml } from 'calypso/server/sanitize';
 import { initialClientsData, gravatarClientData } from 'calypso/state/oauth2-clients/reducer';
 import { isBilmurEnabled, getBilmurUrl } from './utils/bilmur';
@@ -353,13 +354,19 @@ function LoadingPlaceholder( {
 		isWpMobileApp: app?.isWpMobileApp,
 		isWcMobileApp: app?.isWcMobileApp,
 		isWCCOM,
+		dashboard,
 	} );
 	return <LoadingLogo size={ 72 } className="wpcom-site__logo" />;
 }
 
-function chooseLoadingLogo( { isWpMobileApp, isWcMobileApp, isWCCOM } ) {
+function chooseLoadingLogo( { isWpMobileApp, isWcMobileApp, isWCCOM, dashboard } ) {
 	if ( isWcMobileApp || isWCCOM ) {
 		return WooCommerceLogo;
+	}
+
+	const ciabConfig = getPartnerConfigFromDashboardType( dashboard );
+	if ( ciabConfig?.loadingLogo ) {
+		return ciabConfig.loadingLogo;
 	}
 
 	if ( config.isEnabled( 'jetpack-cloud' ) || isWpMobileApp ) {

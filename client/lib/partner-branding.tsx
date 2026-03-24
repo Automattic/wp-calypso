@@ -5,6 +5,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import wooLogo from 'calypso/assets/images/icons/Woo_logo_color.svg';
+import WooCommerceLogo from 'calypso/components/woocommerce-logo';
 import { isCiabOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { useSelector } from 'calypso/state';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
@@ -48,6 +49,8 @@ export interface CiabPartnerConfig {
 	domains?: string[];
 	/** Callback to check if an OAuth2 client belongs to this partner */
 	isOAuth2Client?: ( oauth2Client: { id: number } | null ) => boolean;
+	/** Loading logo component (inline SVG) shown during page load */
+	loadingLogo?: React.FC< { className?: string; size?: number } >;
 }
 
 /**
@@ -80,6 +83,7 @@ export const CIAB_PARTNERS: Record< string, CiabPartnerConfig > = {
 		fontStyle: 'system',
 		domains: [ 'my.woo.ai', 'my.woo.localhost' ],
 		isOAuth2Client: isCiabOAuth2Client,
+		loadingLogo: WooCommerceLogo,
 	},
 };
 
@@ -169,6 +173,20 @@ export function getCiabConfigFromGarden(
 
 	// Future: add mappings for other partners like "paypal"
 	return ciabConfig;
+}
+
+/**
+ * Get CIAB partner config from a dashboard type identifier.
+ * Server-safe: no window or DOM access needed.
+ */
+export function getPartnerConfigFromDashboardType( dashboard?: string ): CiabPartnerConfig | null {
+	if ( dashboard === 'ciab' ) {
+		const partnerConfig = CIAB_PARTNERS.woo;
+		if ( partnerConfig && isPartnerEnabled( partnerConfig ) ) {
+			return partnerConfig;
+		}
+	}
+	return null;
 }
 
 /**
