@@ -12,7 +12,7 @@ import { rss } from '@wordpress/icons';
 import { filterURLForDisplay } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import {
 	SOURCE_SUBSCRIPTIONS_SEARCH_RECOMMENDATION_LIST,
@@ -24,7 +24,6 @@ import {
 } from 'calypso/landing/subscriptions/tracks';
 import { getSiteName, getSiteUrl } from 'calypso/reader/get-helpers';
 import { getFeedUrl } from 'calypso/reader/route';
-import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { NoticeOptions } from 'calypso/state/notices/types';
 import './style.scss';
@@ -57,7 +56,6 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 	} = props;
 	const isWpcomFeed = !! blogId;
 	const translate = useTranslate();
-	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 	const dispatch = useDispatch();
 	const { isPending: isSubscribing, mutate: onSubscribe } =
 		SubscriptionManager.useSiteSubscribeMutation();
@@ -94,18 +92,6 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 			: feed?.name ?? filterURLForDisplay( subscribeUrl );
 
 	function onSubscribeToggle(): void {
-		if ( ! isEmailVerified ) {
-			dispatch(
-				errorNotice( translate( 'Please verify your email before subscribing.' ), {
-					id: 'resend-verification-email',
-					button: translate( 'Account Settings' ),
-					href: '/me/account',
-				} )
-			);
-
-			return;
-		}
-
 		const noticeOptions: NoticeOptions = { duration: 5000 };
 		if ( subscriptionId ) {
 			onUnsubscribe( {
