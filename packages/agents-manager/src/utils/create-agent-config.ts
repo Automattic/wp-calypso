@@ -6,7 +6,7 @@
  * Agents Manager UI and headless mode.
  */
 
-import wpcomRequest from 'wpcom-proxy-request';
+import wpcomRequest from 'calypso/lib/wp';
 import { createCalypsoAuthProvider } from '../auth/calypso-auth-provider';
 import { ORCHESTRATOR_AGENT_ID, ORCHESTRATOR_AGENT_URL } from '../constants';
 import { getSessionStorageKey } from './agent-session';
@@ -165,14 +165,14 @@ export async function createAgentConfig(
 			const body = init?.body ? JSON.parse( init.body as string ) : undefined;
 			const signal = init?.signal ?? undefined;
 
-			return ( await wpcomRequest( {
+			return wpcomRequest.req.post( {
 				path,
 				method,
 				body,
 				signal,
 				emulateStreamBody: true,
 				apiNamespace: 'wpcom/v2',
-			} ) ) as unknown as Response;
+			} );
 		},
 	};
 

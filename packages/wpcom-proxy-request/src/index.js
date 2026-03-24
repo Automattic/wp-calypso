@@ -190,15 +190,6 @@ const makeRequest = ( originalParams, fn ) => {
  * @returns {window.XMLHttpRequest|Promise} XMLHttpRequest instance or Promise
  */
 const request = ( originalParams, fn ) => {
-	// if callback is provided, behave traditionally
-	if ( 'function' === typeof fn ) {
-		if ( originalParams.emulateStreamBody ) {
-			return fn( new TypeError( 'Streaming mode is not supported in callback mode' ) );
-		}
-		// request method
-		return makeRequest( originalParams, fn );
-	}
-
 	if ( originalParams.emulateStreamBody ) {
 		const encoder = new TextEncoder();
 		let streamController;
@@ -244,7 +235,23 @@ const request = ( originalParams, fn ) => {
 			}
 		} );
 
+		// Support callback mode
+		if ( typeof fn === 'function' ) {
+			return promise
+				.then( ( response ) => {
+					fn( null, response );
+				} )
+				.catch( ( err ) => {
+					fn( err, null, {} );
+				} );
+		}
 		return promise;
+	}
+
+	// if callback is provided, behave traditionally
+	if ( 'function' === typeof fn ) {
+		// request method
+		return makeRequest( originalParams, fn );
 	}
 
 	// but if not, return a Promise
