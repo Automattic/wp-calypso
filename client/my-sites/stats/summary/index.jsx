@@ -150,7 +150,7 @@ class StatsSummary extends Component {
 		const query = {
 			period: period,
 			date: endOf.format( 'YYYY-MM-DD' ),
-			max: 50,
+			max: 0,
 		};
 
 		// Update query with date range if it provided.

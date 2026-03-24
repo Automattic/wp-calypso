@@ -70,6 +70,13 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 		};
 	}, [ queryFromProps, isArchiveBreakdownEnabled ] );
 
+	const archiveQuery = useMemo( () => {
+		return {
+			...query,
+			max: 50,
+		};
+	}, [ query ] );
+
 	const mainStatType = MAIN_STAT_TYPE;
 	const subStatType = SUB_STAT_TYPE;
 
@@ -94,11 +101,11 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 	) as Array< { id: number; label: string } >;
 
 	const isRequestingArchivesData = useSelector( ( state: StatsStateProps ) =>
-		isRequestingSiteStatsForQuery( state, siteId, subStatType, query )
+		isRequestingSiteStatsForQuery( state, siteId, subStatType, archiveQuery )
 	);
 	// Get the archives data to check if we should disable the archives option.
 	const archivesData = useSelector( ( state ) =>
-		getSiteStatsNormalizedData( state, siteId, subStatType, query )
+		getSiteStatsNormalizedData( state, siteId, subStatType, archiveQuery )
 	) as Array< { id: number; label: string } >;
 
 	const isRequestingData = isArchiveBreakdownEnabled
@@ -175,7 +182,7 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 				siteId &&
 				isArchiveBreakdownEnabled &&
 				shouldQuerySubStatType && (
-					<QuerySiteStats statType={ subStatType } siteId={ siteId } query={ query } />
+					<QuerySiteStats statType={ subStatType } siteId={ siteId } query={ archiveQuery } />
 				) }
 
 			{ presentLoadingUI && (
@@ -223,7 +230,7 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 					}
 					moduleStrings={ moduleStrings }
 					period={ period }
-					query={ query }
+					query={ statType === subStatType ? archiveQuery : query }
 					statType={ statType }
 					showSummaryLink={ !! summary }
 					summaryLinkModifier={ ( link: string ) => `${ link }&viewType=${ statType }` }
