@@ -3,7 +3,6 @@ import { SubscriptionManager } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import Notice from 'calypso/components/notice';
 import { AddSitesForm } from 'calypso/landing/subscriptions/components/add-sites-form';
 import { SiteSubscriptionsList } from 'calypso/landing/subscriptions/components/site-subscriptions-list';
 import {
@@ -11,8 +10,6 @@ import {
 	SubscriptionsPortal,
 } from 'calypso/landing/subscriptions/components/subscription-manager-context';
 import { UnsubscribedFeedsSearchList } from 'calypso/reader/site-subscriptions-manager/unsubscribed-feeds-search-list';
-import { useSelector } from 'calypso/state';
-import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { requestFollows } from 'calypso/state/reader/follows/actions';
 import { ADD_SUBSCRIPTION_CONFIGS, SubscriptionType } from './consts';
 const { useSiteSubscriptionsQueryProps } = SubscriptionManager;
@@ -24,7 +21,6 @@ interface AddSubscriptionFormProps {
 export default function AddSubscriptionForm( props: AddSubscriptionFormProps ): JSX.Element | null {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 	const [ hasFeedPreview, setHasFeedPreview ] = useState< boolean >( false );
 	const config = ADD_SUBSCRIPTION_CONFIGS[ props.type ];
 	const isAddNewTab = props.type === 'add-new';
@@ -65,21 +61,7 @@ export default function AddSubscriptionForm( props: AddSubscriptionFormProps ): 
 	return (
 		<div className="reader-add-subscription">
 			<SubscriptionManagerContextProvider portal={ SubscriptionsPortal.Reader }>
-				{ ! isEmailVerified && (
-					<Notice
-						status="is-warning"
-						showDismiss={ false }
-						text={ translate( 'Please verify your email before subscribing.' ) }
-					>
-						<a href="/me/account" className="calypso-notice__action">
-							{ translate( 'Account Settings' ) }
-						</a>
-					</Notice>
-				) }
-
-				<div
-					className={ `reader-add-subscription__form${ isEmailVerified ? '' : ' is-disabled' }` }
-				>
+				<div className="reader-add-subscription__form">
 					{ isAddNewTab && (
 						<h2 className="reader-add-subscription__form-title">
 							{ translate( 'Add new sites, newsletters, and RSS feeds to your reading list.' ) }

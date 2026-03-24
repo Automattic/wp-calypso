@@ -4,7 +4,6 @@
 
 import { SiteSubscriptionsQueryPropsProvider } from '@automattic/data-stores/src/reader/contexts';
 import { act, screen } from '@testing-library/react';
-import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import AddSubscriptionForm from '../index';
 
@@ -32,12 +31,6 @@ jest.mock( 'calypso/reader/site-subscriptions-manager/unsubscribed-feeds-search-
 	) ),
 } ) );
 
-jest.mock( 'calypso/state/current-user/selectors', () => ( {
-	isCurrentUserEmailVerified: jest.fn(),
-} ) );
-
-const mockIsCurrentUserEmailVerified = jest.mocked( isCurrentUserEmailVerified );
-
 const mockRequestFollows = jest.fn( () => ( { type: 'REQUEST_FOLLOWS' } ) );
 jest.mock( 'calypso/state/reader/follows/actions', () => ( {
 	requestFollows: () => mockRequestFollows(),
@@ -46,36 +39,6 @@ jest.mock( 'calypso/state/reader/follows/actions', () => ( {
 describe( 'AddSubscriptionForm', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		mockIsCurrentUserEmailVerified.mockReturnValue( true );
-	} );
-
-	describe( 'email verification notice', () => {
-		it( 'shows a warning when the user email is not verified', () => {
-			mockIsCurrentUserEmailVerified.mockReturnValue( false );
-			const { container } = renderWithProvider( <AddSubscriptionForm type="add-new" /> );
-
-			expect(
-				screen.getByText( 'Please verify your email before subscribing.' )
-			).toBeInTheDocument();
-			expect( screen.getByRole( 'link', { name: 'Account Settings' } ) ).toHaveAttribute(
-				'href',
-				'/me/account'
-			);
-			expect(
-				container.querySelector( '.reader-add-subscription__form.is-disabled' )
-			).toBeInTheDocument();
-		} );
-
-		it( 'does not show a warning when the user email is verified', () => {
-			const { container } = renderWithProvider( <AddSubscriptionForm type="add-new" /> );
-
-			expect(
-				screen.queryByText( 'Please verify your email before subscribing.' )
-			).not.toBeInTheDocument();
-			expect(
-				container.querySelector( '.reader-add-subscription__form.is-disabled' )
-			).not.toBeInTheDocument();
-		} );
 	} );
 
 	describe( 'add-new tab', () => {
