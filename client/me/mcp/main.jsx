@@ -88,9 +88,17 @@ function McpComponent( { path } ) {
 			accountAbilities[ toolId ] = enabled;
 		} );
 
+		const disabledSiteIds = getDisabledSiteIds( userSettings || {} );
+		const enabledSiteIds = getEnabledSiteIds( userSettings || {} );
+		const sitesToReset = [
+			...disabledSiteIds.map( ( id ) => ( { blog_id: id, account_tools_enabled: true } ) ),
+			...enabledSiteIds.map( ( id ) => ( { blog_id: id, site_level_enabled: false } ) ),
+		];
+
 		mutation.mutate( {
 			mcp_abilities: {
 				account: accountAbilities,
+				...( sitesToReset.length > 0 && { sites: sitesToReset } ),
 			},
 		} );
 	};
@@ -204,19 +212,14 @@ function McpComponent( { path } ) {
 			</Card>
 
 			{ hasTools && anyToolsEnabled && (
-				<Card className="mcp-hub__panel mcp-hub__panel--connect">
-					<SummaryButton
-						href="/me/mcp/setup"
-						title={ translate( 'Connect external AI assistant' ) }
-						description={ translate(
-							'Get instructions for connecting your external AI assistant.'
-						) }
-						decoration={
-							<Icon className="mcp-hub__summary-icon" icon={ connection } size={ 24 } />
-						}
-						density="low"
-					/>
-				</Card>
+				<SummaryButton
+					className="mcp-hub__panel"
+					href="/me/mcp/setup"
+					title={ translate( 'Connect external AI assistant' ) }
+					description={ translate( 'Get instructions for connecting your external AI assistant.' ) }
+					decoration={ <Icon className="mcp-hub__summary-icon" icon={ connection } size={ 24 } /> }
+					density="low"
+				/>
 			) }
 		</VStack>
 	);

@@ -82,9 +82,14 @@ function AgentSetup(): JSX.Element | null {
 
 	// Read agent/version overrides from browser URL (?agent=, ?version=).
 	// PersistentRouter (memory router) does not track window.location.search.
-	const { agentId, version } = useAgentConfig();
+	const { agentId, version, isLoading: isAgentConfigLoading } = useAgentConfig();
 
 	useEffect( () => {
+		// Wait for the agent config to stabilize before initializing.
+		if ( isAgentConfigLoading ) {
+			return;
+		}
+
 		async function initializeAgent(): Promise< void > {
 			// Handle new chat: clear existing session and navigate to clean state
 			if ( isNewChat ) {
@@ -127,7 +132,17 @@ function AgentSetup(): JSX.Element | null {
 		}
 
 		initializeAgent();
-	}, [ agentId, version, currentRoute, isNewChat, navigate, sessionId, setAgentConfig, site?.ID ] );
+	}, [
+		agentId,
+		currentRoute,
+		isAgentConfigLoading,
+		isNewChat,
+		navigate,
+		sessionId,
+		setAgentConfig,
+		site?.ID,
+		version,
+	] );
 
 	const loadedProviders = loadedProvidersRef.current;
 

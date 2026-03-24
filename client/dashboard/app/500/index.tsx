@@ -2,21 +2,12 @@ import { __ } from '@wordpress/i18n';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import RouterLinkButton from '../../components/router-link-button';
 
 function UnknownError( { error }: { error: Error } ) {
 	return (
 		<PageLayout
 			header={
-				<PageHeader
-					title={ __( '500 Error' ) }
-					description={ __( 'Something wrong happened.' ) }
-					actions={
-						<RouterLinkButton to="/sites" variant="primary" __next40pxDefaultSize>
-							{ __( 'Go to Sites' ) }
-						</RouterLinkButton>
-					}
-				/>
+				<PageHeader title={ __( '500 Error' ) } description={ __( 'Something wrong happened.' ) } />
 			}
 			notices={ <Notice variant="error">{ error.message }</Notice> }
 		></PageLayout>

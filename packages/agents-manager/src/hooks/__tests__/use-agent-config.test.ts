@@ -32,38 +32,57 @@ describe( 'useAgentConfig', () => {
 		window.history.pushState( {}, '', '/' );
 	} );
 
-	it( 'returns ORCHESTRATOR_AGENT_ID when useUnifiedAiChat returns undefined', () => {
+	it( 'returns `ORCHESTRATOR_AGENT_ID` when `useUnifiedAiChat` returns `undefined`', () => {
 		const { result } = renderHook( () => useAgentConfig() );
 		expect( result.current.agentId ).toBe( ORCHESTRATOR_AGENT_ID );
 	} );
 
-	it( 'returns ORCHESTRATOR_AGENT_ID when useUnifiedAiChat returns false', () => {
+	it( 'returns `ORCHESTRATOR_AGENT_ID` when `useUnifiedAiChat` returns `false`', () => {
 		mockUseUnifiedAiChat.mockReturnValue( { data: false } );
 		const { result } = renderHook( () => useAgentConfig() );
 		expect( result.current.agentId ).toBe( ORCHESTRATOR_AGENT_ID );
 	} );
 
-	it( 'returns UNIFIED_CHAT_AGENT_ID when useUnifiedAiChat returns true', () => {
+	it( 'returns `UNIFIED_CHAT_AGENT_ID` when `useUnifiedAiChat` returns `true`', () => {
 		mockUseUnifiedAiChat.mockReturnValue( { data: true } );
 		const { result } = renderHook( () => useAgentConfig() );
 		expect( result.current.agentId ).toBe( UNIFIED_CHAT_AGENT_ID );
 	} );
 
-	it( 'URL ?agent= param overrides useUnifiedAiChat result', () => {
+	it( 'URL `?agent=` param overrides `useUnifiedAiChat` result', () => {
 		mockUseUnifiedAiChat.mockReturnValue( { data: true } );
 		mockSearch( '?agent=custom-agent-id' );
 		const { result } = renderHook( () => useAgentConfig() );
 		expect( result.current.agentId ).toBe( 'custom-agent-id' );
 	} );
 
-	it( 'returns version from URL ?version= param', () => {
+	it( 'returns `version` from URL `?version=` param', () => {
 		mockSearch( '?version=1.0.25' );
 		const { result } = renderHook( () => useAgentConfig() );
 		expect( result.current.version ).toBe( '1.0.25' );
 	} );
 
-	it( 'returns undefined version when no ?version= param', () => {
+	it( 'returns `undefined` version when no `?version=` param', () => {
 		const { result } = renderHook( () => useAgentConfig() );
 		expect( result.current.version ).toBeUndefined();
+	} );
+
+	it( 'returns `isLoading` as `true` when `useUnifiedAiChat` is loading', () => {
+		mockUseUnifiedAiChat.mockReturnValue( { data: undefined, isLoading: true } );
+		const { result } = renderHook( () => useAgentConfig() );
+		expect( result.current.isLoading ).toBe( true );
+	} );
+
+	it( 'returns `isLoading` as `false` when `useUnifiedAiChat` has resolved', () => {
+		mockUseUnifiedAiChat.mockReturnValue( { data: false, isLoading: false } );
+		const { result } = renderHook( () => useAgentConfig() );
+		expect( result.current.isLoading ).toBe( false );
+	} );
+
+	it( 'defaults `agentId` to `ORCHESTRATOR_AGENT_ID` while still loading', () => {
+		mockUseUnifiedAiChat.mockReturnValue( { data: undefined, isLoading: true } );
+		const { result } = renderHook( () => useAgentConfig() );
+		expect( result.current.agentId ).toBe( ORCHESTRATOR_AGENT_ID );
+		expect( result.current.isLoading ).toBe( true );
 	} );
 } );

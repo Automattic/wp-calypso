@@ -1,3 +1,7 @@
+@import '../responsive-sidebar/variables';
+@import './omnibar-style';
+
+// Old layout (no sidebar): sticky header
 // For pages without sub menus, the first header is the sticky header
 // For pages with sub menus, the second header is the sticky header
 .dashboard-root__layout:not(:has(main > .dashboard-header-bar)) > .dashboard-header-bar,
@@ -8,6 +12,26 @@
 }
 
 .dashboard-root__body {
+	--masterbar-height: 61px;
 	display: flex;
 	min-height: calc(100vh - var(--masterbar-height) );
+
+	&:has(.dashboard-responsive-sidebar) {
+		overflow-x: hidden;
+	}
+}
+
+.dashboard-root__content {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	min-width: 0;
+	transition: transform 0.3s ease-in;
+
+	.dashboard-root__body:has(.dashboard-responsive-sidebar.is-open) & {
+			transform: translateX( $sidebar-width );
+			overflow: hidden;
+			height: 100vh;
+	}
 }

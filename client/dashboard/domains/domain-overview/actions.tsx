@@ -16,16 +16,19 @@ import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { addQueryArgs } from '@wordpress/url';
 import { useCallback, useState } from 'react';
 import { useAuth } from '../../app/auth';
 import { domainRoute, domainsIndexRoute, domainTransferRoute } from '../../app/router/domains';
 import { purchaseSettingsRoute, cancelPurchaseRoute } from '../../app/router/me';
+import { getCurrentDashboard } from '../../app/routing';
 import { ActionList } from '../../components/action-list';
 import InlineSupportLink from '../../components/inline-support-link';
 import RemoveDomainDialog from '../../components/purchase-dialogs/remove-domain-dialog';
 import RouterLinkButton from '../../components/router-link-button';
 import { SectionHeader } from '../../components/section-header';
 import { getDomainRenewalUrl } from '../../utils/domain';
+import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import {
 	shouldShowTransferAction,
 	shouldShowTransferInAction,
@@ -150,15 +153,20 @@ export default function Actions( { isDisabled }: { isDisabled?: boolean } ) {
 						title={ __( 'Bring your domain to WordPress.com' ) }
 						description={ __( 'Manage your site and domain all in one place.' ) }
 						actions={
-							<RouterLinkButton
+							<Button
 								size="compact"
 								variant="secondary"
-								// TODO: use the correct route once the domain transfer in route is created
-								to={ domainTransferRoute.fullPath }
-								params={ { domainName } }
+								href={ addQueryArgs( wpcomLink( '/setup/domain/use-my-domain' ), {
+									initialQuery: domainName,
+									initialMode: 'transfer-domain',
+									siteSlug: domain.site_slug,
+									dashboard: getCurrentDashboard(),
+									back_to: redirectToDashboardLink(),
+								} ) }
+								disabled={ isDisabled }
 							>
 								{ __( 'Transfer' ) }
-							</RouterLinkButton>
+							</Button>
 						}
 					/>
 				) }
