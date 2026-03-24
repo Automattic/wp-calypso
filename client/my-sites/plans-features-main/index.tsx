@@ -400,7 +400,7 @@ const PlansFeaturesMain = ( {
 		useVar4Features,
 		useVar41MorePremiumFeatures,
 		useVar42NoAiFeatures,
-		isFocusedPremiumVariant,
+		showPricingDifferentiationFeaturePills,
 		isVar4Variant,
 		isExperimentVariant,
 	} = usePlanDifferentiatorsExperiment( { flowName, isInSignup, siteId } );
@@ -484,7 +484,7 @@ const PlansFeaturesMain = ( {
 		useLongSetFeatures: useVar4Features,
 		useVar41MorePremiumFeatures,
 		useVar42NoAiFeatures,
-		isFocusedPremiumVariant,
+		showPricingDifferentiationFeaturePills,
 		isExperimentVariant,
 	} );
 
@@ -512,7 +512,7 @@ const PlansFeaturesMain = ( {
 		useLongSetFeatures: useVar4Features,
 		useVar41MorePremiumFeatures,
 		useVar42NoAiFeatures,
-		isFocusedPremiumVariant,
+		showPricingDifferentiationFeaturePills,
 		isExperimentVariant,
 	} );
 

@@ -48,7 +48,7 @@ function isBusinessAssistantPillFeature( featureSlug: string ): boolean {
 	);
 }
 
-function getFocusedPremiumFeatureBadgeText(
+function getPricingDifferentiationFeatureBadgeText(
 	planSlug: string,
 	featureSlug: string,
 	translate: ( text: string ) => TranslateResult,
@@ -97,7 +97,7 @@ export type UsePlanFeaturesForGridPlans = ( {
 	useLongSetFeatures,
 	useVar41MorePremiumFeatures,
 	useVar42NoAiFeatures,
-	isFocusedPremiumVariant,
+	showPricingDifferentiationFeaturePills,
 	useLongSetStackedFeatures,
 	useShortSetStackedFeatures,
 	useVar5Features,
@@ -114,7 +114,7 @@ export type UsePlanFeaturesForGridPlans = ( {
 	useLongSetFeatures?: boolean;
 	useVar41MorePremiumFeatures?: boolean;
 	useVar42NoAiFeatures?: boolean;
-	isFocusedPremiumVariant?: boolean;
+	showPricingDifferentiationFeaturePills?: boolean;
 	useLongSetStackedFeatures?: boolean;
 	useShortSetStackedFeatures?: boolean;
 	useVar5Features?: boolean;
@@ -142,7 +142,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 	useLongSetFeatures,
 	useVar41MorePremiumFeatures,
 	useVar42NoAiFeatures,
-	isFocusedPremiumVariant,
+	showPricingDifferentiationFeaturePills,
 	useLongSetStackedFeatures,
 	useShortSetStackedFeatures,
 	useVar5Features,
@@ -433,8 +433,8 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 						// Badge pills: var1d experiment, or focused_more_premium / focused_new_copy / focused_no_ai (plan-scoped)
 						const badgeText =
 							( isVar1dVariant ? var1dBadgeMap[ featureSlug ] : undefined ) ??
-							( isFocusedPremiumVariant
-								? getFocusedPremiumFeatureBadgeText( planSlug, featureSlug, translate, {
+							( showPricingDifferentiationFeaturePills
+								? getPricingDifferentiationFeatureBadgeText( planSlug, featureSlug, translate, {
 										suppressAiPills: useVar42NoAiFeatures,
 								  } )
 								: undefined );
@@ -490,7 +490,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 		useLongSetFeatures,
 		useVar41MorePremiumFeatures,
 		useVar42NoAiFeatures,
-		isFocusedPremiumVariant,
+		showPricingDifferentiationFeaturePills,
 		useLongSetStackedFeatures,
 		useShortSetStackedFeatures,
 		useVar5Features,

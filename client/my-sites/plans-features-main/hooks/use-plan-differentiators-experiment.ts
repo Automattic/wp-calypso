@@ -34,7 +34,7 @@ type PlanDifferentiatorsExperimentResult = {
 	 * Applies to: focused_more_premium, focused_new_copy, focused_no_ai (not control or focused_comparison).
 	 * focused_no_ai omits AI-labeled pills only; Free / New / Email pills still apply.
 	 */
-	isFocusedPremiumVariant: boolean;
+	showPricingDifferentiationFeaturePills: boolean;
 	/**
 	 * When true, use no-AI wording feature set (getVar42NoAiSignupWpcomFeatures).
 	 * Applies to: focused_no_ai
@@ -122,7 +122,7 @@ function usePlanDifferentiatorsExperiment( {
 		useVar41MorePremiumFeatures:
 			variant === 'focused_more_premium' || variant === 'focused_new_copy',
 		useVar42NoAiFeatures: variant === 'focused_no_ai',
-		isFocusedPremiumVariant:
+		showPricingDifferentiationFeaturePills:
 			variant === 'focused_more_premium' ||
 			variant === 'focused_new_copy' ||
 			variant === 'focused_no_ai',
