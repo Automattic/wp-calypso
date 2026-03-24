@@ -1,3 +1,4 @@
+import './style.scss';
 import page from '@automattic/calypso-router';
 import { useTranslate, fixMe } from 'i18n-calypso';
 import { useEffect } from 'react';
@@ -9,10 +10,10 @@ import UserProfileHeader from 'calypso/reader/user-profile/components/user-profi
 import UserLists from 'calypso/reader/user-profile/views/lists';
 import UserPosts from 'calypso/reader/user-profile/views/posts';
 import UserRecommendedBlogs from 'calypso/reader/user-profile/views/recommended-blogs';
+import UserSites from 'calypso/reader/user-profile/views/sites';
 import { requestUser } from 'calypso/state/reader/users/actions';
 import getReaderUser from 'calypso/state/selectors/get-reader-user';
 import ReaderMain from '../components/reader-main';
-import './style.scss';
 
 export interface UserProfileProps {
 	userLogin: string;
@@ -79,6 +80,8 @@ export function UserProfile( props: UserProfileProps ): JSX.Element | null {
 		switch ( view ) {
 			case 'posts':
 				return <UserPosts user={ user } />;
+			case 'sites':
+				return <UserSites user={ user } />;
 			case 'lists':
 				return <UserLists user={ user } />;
 			case 'recommended-blogs':
