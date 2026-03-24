@@ -334,6 +334,11 @@ export default function getThankYouPageUrl( {
 			debug( 'redirecting to the saved post-checkout destination' );
 			return addQueryArgs( { siteId }, urlFromCookie );
 		}
+
+		// Fallback for unified checkout - let the pending page construct the URL
+		// using the blogId from the receipt, and preserve the flow param
+		debug( 'unified checkout fallback, letting pending page construct URL' );
+		return '/?flow=unified';
 	}
 
 	// If there is no purchase, then send the user to a generic page (not

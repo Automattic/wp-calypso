@@ -12,6 +12,7 @@ import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
+import { hasDomainCredit } from 'calypso/state/sites/plans/selectors';
 import { getSiteOptions, getSiteUrl, getSiteWooCommerceUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import ThankYouPlanProduct from '../products/plan-product';
@@ -29,6 +30,7 @@ interface PlanOnlyThankYouProps {
 	removeNotice: ( noticeId: string ) => void;
 	successNotice: ( text: string, noticeOptions?: object ) => void;
 	transferComplete?: boolean;
+	flow?: string;
 }
 
 const isMonthsOld = ( months: number, rawDate?: string ) => {
@@ -47,6 +49,7 @@ const PlanOnlyThankYou = ( {
 	removeNotice,
 	successNotice,
 	transferComplete,
+	flow,
 }: PlanOnlyThankYouProps ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
@@ -95,7 +98,9 @@ const PlanOnlyThankYou = ( {
 	// we can be confident that `siteId` is a number and not `null`
 	const siteAdminUrl = useSelector( ( state ) => getSiteWooCommerceUrl( state, siteId as number ) );
 	const emailAddress = useSelector( getCurrentUserEmail );
+	const siteDomainCredit = useSelector( ( state ) => hasDomainCredit( state, siteId ) );
 
+	let title;
 	let subtitle;
 	let headerButtons;
 
@@ -133,6 +138,15 @@ const PlanOnlyThankYou = ( {
 				</Button>
 			);
 		}
+	} else if ( flow === 'unified' ) {
+		title = translate( 'Thank you for your purchase!' );
+		subtitle = siteDomainCredit
+			? translate(
+					"You're one step away from building your WordPress site. Click below to get started. You also have a free domain credit to redeem anytime in your dashboard."
+			  )
+			: translate(
+					"You're one step away from building your WordPress site. Click below to get started."
+			  );
 	} else {
 		subtitle = translate(
 			'All set! Start exploring the features included with your {{strong}}%(productName)s{{/strong}} plan',
@@ -192,7 +206,7 @@ const PlanOnlyThankYou = ( {
 					isEmailVerified && <WpAdminAutoLogin site={ { URL: siteUrl } } delay={ 0 } />
 			}
 			<ThankYouV2
-				title={ translate( 'Get the best out of your site' ) }
+				title={ title ?? translate( 'Get the best out of your site' ) }
 				subtitle={ preventWidows( subtitle ) }
 				headerButtons={ headerButtons }
 				products={
