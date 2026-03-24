@@ -1,5 +1,5 @@
 body:has(#wpcom-omnibar) #wpcom {
-	margin-top: var(--masterbar-height, 47px);
+	margin-block-start: var(--masterbar-height, 47px);
 }
 
 #wpcom-omnibar {
