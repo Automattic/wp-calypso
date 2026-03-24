@@ -7,6 +7,7 @@ import clsx from 'clsx';
 import { Suspense, lazy, useEffect, useState } from 'react';
 import wpcom from 'calypso/lib/wp';
 import { useAuth } from '../auth';
+import { useOmnibarEvent } from '../interim-omnibar/click-handlers';
 import { useLocale } from '../locale';
 import './style.scss';
 
@@ -52,6 +53,8 @@ export default function Notifications( { className }: { className: string } ) {
 		],
 		CLOSE_PANEL: [ handleClose ],
 	};
+
+	useOmnibarEvent( 'notifications', () => setIsOpen( ( v ) => ! v ) );
 
 	useEffect( () => {
 		const handleKeyDown = ( event: KeyboardEvent ) => {

@@ -18,6 +18,7 @@ import { bumpStat } from '../analytics';
 import CommandPalette from '../command-palette';
 import { useAppContext } from '../context';
 import Header from '../header';
+import { useOmnibarEvent } from '../interim-omnibar/click-handlers';
 import { NavigationBlockerRegistry } from '../navigation-blocker';
 import OmnibarHeader from '../omnibar-header';
 import ResponsiveSidebar from '../responsive-sidebar';
@@ -43,6 +44,7 @@ function Root() {
 	const queryCache = queryClient.getQueryCache();
 	const [ isSidebarOpen, setIsSidebarOpen ] = useState( false );
 	const closeSidebar = useCallback( () => setIsSidebarOpen( false ), [ setIsSidebarOpen ] );
+	useOmnibarEvent( 'mobileMenu', () => setIsSidebarOpen( ( v ) => ! v ) );
 
 	const loadingQueryRequestedFullPageLoader = useSyncExternalStore(
 		( onStoreChange ) => queryCache.subscribe( onStoreChange ),

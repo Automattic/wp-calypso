@@ -2,8 +2,9 @@ import { fetchUser } from '@automattic/api-core';
 import { queryClient, siteByIdQuery } from '@automattic/api-queries';
 import { hydrateRoot } from 'react-dom/client';
 import { AUTH_QUERY_KEY } from '../auth';
+import type { OmnibarEvents } from './click-handlers';
 
-export default async function loadOmnibar() {
+export default async function loadOmnibar( events: OmnibarEvents ) {
 	const container = document.getElementById( 'wpcom-omnibar' );
 	if ( ! container ) {
 		return;
@@ -22,5 +23,12 @@ export default async function loadOmnibar() {
 		? await queryClient.fetchQuery( siteByIdQuery( user.primary_blog ) )
 		: null;
 
-	root.render( <InterimOmnibar user={ user } site={ site } /> );
+	root.render(
+		<InterimOmnibar
+			user={ user }
+			site={ site }
+			onToggleMenu={ () => events.mobileMenu.emit() }
+			onToggleNotifications={ () => events.notifications.emit() }
+		/>
+	);
 }
