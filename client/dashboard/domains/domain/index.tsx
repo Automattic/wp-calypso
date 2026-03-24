@@ -1,5 +1,6 @@
 import { DomainSubtype } from '@automattic/api-core';
 import { domainQuery } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Outlet } from '@tanstack/react-router';
 import { __experimentalHStack as HStack, Icon } from '@wordpress/components';
@@ -36,37 +37,39 @@ function Domain() {
 
 	return (
 		<>
-			<HeaderBar>
-				<HStack spacing={ 3 }>
-					<HeaderBar.Title>
-						<Switcher
-							items={ domains }
-							value={ domain }
-							searchableFields={ searchableFields }
-							getItemUrl={ ( domain ) =>
-								buildCurrentRouteLink( { params: { domainName: domain.domain } } )
-							}
-							renderItemMedia={ ( { context } ) =>
-								context === 'list' ? null : (
-									<Icon className="domain-icon" icon={ globe } size={ 24 } />
-								)
-							}
-							renderItemTitle={ ( { item } ) => (
-								<span
-									style={ {
-										overflow: 'hidden',
-										textOverflow: 'ellipsis',
-										whiteSpace: 'nowrap',
-									} }
-								>
-									{ item.domain }
-								</span>
-							) }
-						/>
-					</HeaderBar.Title>
-					<DomainMenu domainName={ domain.domain } />
-				</HStack>
-			</HeaderBar>
+			{ ! isEnabled( 'dashboard/omnibar' ) && (
+				<HeaderBar>
+					<HStack spacing={ 3 }>
+						<HeaderBar.Title>
+							<Switcher
+								items={ domains }
+								value={ domain }
+								searchableFields={ searchableFields }
+								getItemUrl={ ( domain ) =>
+									buildCurrentRouteLink( { params: { domainName: domain.domain } } )
+								}
+								renderItemMedia={ ( { context } ) =>
+									context === 'list' ? null : (
+										<Icon className="domain-icon" icon={ globe } size={ 24 } />
+									)
+								}
+								renderItemTitle={ ( { item } ) => (
+									<span
+										style={ {
+											overflow: 'hidden',
+											textOverflow: 'ellipsis',
+											whiteSpace: 'nowrap',
+										} }
+									>
+										{ item.domain }
+									</span>
+								) }
+							/>
+						</HeaderBar.Title>
+						<DomainMenu domainName={ domain.domain } />
+					</HStack>
+				</HeaderBar>
+			) }
 			<Outlet />
 		</>
 	);
