@@ -163,25 +163,23 @@ describe( 'HelpCenterContactForm – logged-out user (null currentUser)', () => 
 	/**
 	 * This test reproduces the TypeError reported in DOTSUP-452.
 	 *
-	 * Before the fix, passing null as currentUser causes the component to throw:
+	 * Before the fix, passing null as currentUser caused the component to throw:
 	 *   TypeError: Cannot read properties of null (reading 'ID')
-	 * at the very first render because the component accesses `currentUser.ID`
+	 * at the very first render because the component accessed `currentUser.ID`
 	 * unconditionally on lines:
 	 *   - useUserSites( currentUser.ID )
 	 *   - useSiteAnalysis( currentUser.ID, … )
 	 *   - queryClient.invalidateQueries( { queryKey: [ …, currentUser.ID ] } )
 	 *
-	 * After the fix (null-guard / optional chaining), the component must render
-	 * without throwing.
+	 * After the fix (optional chaining: currentUser?.ID ?? 0/null), the component
+	 * must render without throwing.
 	 */
-	it( 'throws a TypeError when currentUser is null (regression – must be fixed)', () => {
-		// Suppress the expected React error boundary console output so the test
-		// output stays readable.
+	it( 'does not throw when currentUser is null (logged-out user on devdocs)', () => {
 		const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
 
 		expect( () => {
 			renderContactForm( null );
-		} ).toThrow( TypeError );
+		} ).not.toThrow();
 
 		consoleError.mockRestore();
 	} );
