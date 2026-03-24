@@ -162,11 +162,11 @@ function McpSetupComponent( { path } ) {
 			</HeaderCake>
 			<VStack spacing={ 2 }>
 				<Card isRounded={ false }>
-					<CardBody style={ { padding: '8px 16px' } }>
+					<CardBody style={ { padding: '16px' } }>
 						<SelectControl
 							__next40pxDefaultSize
 							__nextHasNoMarginBottom
-							label={ translate( 'Choose your AI agent' ) }
+							label={ <strong>{ translate( 'Choose your AI agent' ) }</strong> }
 							value={ selectedMcpClient }
 							options={ mcpClientOptions }
 							onChange={ setSelectedMcpClient }
