@@ -12,7 +12,7 @@ import EnvironmentSwitcherDropdown from './environment-switcher-dropdown';
 import useStagingSite from './use-staging-site';
 import type { Site } from '@automattic/api-core';
 
-import './environment-switcher-v2.scss';
+import './sidebar-environment-switcher.scss';
 
 const CurrentEnvironment = ( { site }: { site: Site } ) => {
 	const icon = site.is_wpcom_staging_site ? staging : production;
@@ -26,7 +26,7 @@ const CurrentEnvironment = ( { site }: { site: Site } ) => {
 	);
 };
 
-const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
+const SidebarEnvironmentSwitcher = ( { site }: { site: Site } ) => {
 	const {
 		productionSite,
 		stagingSite,
@@ -42,13 +42,13 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 		( stagingSite && canManageSite( stagingSite ) );
 
 	return (
-		<HStack expanded={ false } style={ { flexShrink: 0 } } className="environment-switcher-v2">
+		<HStack expanded={ false } style={ { flexShrink: 0 } } className="sidebar-environment-switcher">
 			<CurrentEnvironment site={ site } />
 			{ canToggle && (
 				<Dropdown
 					renderToggle={ ( { isOpen, onToggle } ) => (
 						<Button
-							className="environment-switcher-v2__toggle"
+							className="sidebar-environment-switcher__toggle"
 							variant="tertiary"
 							onClick={ onToggle }
 							onKeyDown={ ( event: React.KeyboardEvent ) => {
@@ -81,4 +81,4 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 	);
 };
 
-export default EnvironmentSwitcher;
+export default SidebarEnvironmentSwitcher;
