@@ -54,7 +54,9 @@ const SubscriberDetails = ( {
 		if ( subscriptionPlan.is_gift ) {
 			return (
 				<div className="subscriber-details__content-value" key={ index }>
-					{ translate( 'Gift' ) }
+					{ translate( 'Comp', {
+						comment: 'Short for "complimentary" — a free subscription granted by the site creator',
+					} ) }
 				</div>
 			);
 		}

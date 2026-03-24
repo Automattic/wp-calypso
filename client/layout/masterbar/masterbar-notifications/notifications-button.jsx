@@ -85,7 +85,8 @@ class MasterbarItemNotifications extends Component {
 	render() {
 		const classes = clsx( this.props.className, 'masterbar-notifications', {
 			'is-active':
-				this.props.isNotificationsOpen || window.location.pathname === '/reader/notifications',
+				this.props.isNotificationsOpen ||
+				( typeof window !== 'undefined' && window.location.pathname === '/reader/notifications' ),
 			'has-unread': this.state.newNote,
 			'is-initial-load': this.state.animationState === -1,
 		} );
