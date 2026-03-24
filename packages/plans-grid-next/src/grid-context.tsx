@@ -33,7 +33,6 @@ interface PlansGridContext {
 	reflectStorageSelectionInPlanPrices?: boolean;
 	showSimplifiedBillingDescription?: boolean;
 	showBillingDescriptionForIncreasedRenewalPrice?: string | null;
-	isVar1dVariant?: boolean;
 	isVar4Variant?: boolean;
 	isExperimentVariant?: boolean;
 }
@@ -63,7 +62,6 @@ const PlansGridContextProvider = ( {
 	reflectStorageSelectionInPlanPrices,
 	showSimplifiedBillingDescription,
 	showBillingDescriptionForIncreasedRenewalPrice,
-	isVar1dVariant,
 	isVar4Variant,
 	isExperimentVariant,
 }: GridContextProps ) => {
@@ -102,7 +100,6 @@ const PlansGridContextProvider = ( {
 				reflectStorageSelectionInPlanPrices,
 				showSimplifiedBillingDescription,
 				showBillingDescriptionForIncreasedRenewalPrice,
-				isVar1dVariant,
 				isVar4Variant,
 				isExperimentVariant,
 			} }

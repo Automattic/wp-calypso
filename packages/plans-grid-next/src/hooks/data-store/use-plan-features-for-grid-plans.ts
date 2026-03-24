@@ -7,11 +7,8 @@ import {
 	FEATURE_EMAIL_MARKETING,
 	FEATURE_ENHANCED_AI_ASSISTANT_AND_TOOLS,
 	FEATURE_GUIDED_WEBSITE_BUILDER,
-	FEATURE_UPLOAD_PLUGINS,
 	FEATURE_SIMPLE_PAYMENTS,
-	FEATURE_WORDADS,
 	FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
-	FEATURE_EARLY_ONBOARDING_CALLS,
 	applyTestFiltersToPlansList,
 	isBusinessPlan,
 	isMonthly,
@@ -98,11 +95,7 @@ export type UsePlanFeaturesForGridPlans = ( {
 	useVar41MorePremiumFeatures,
 	useVar42NoAiFeatures,
 	showPricingDifferentiationFeaturePills,
-	useLongSetStackedFeatures,
-	useShortSetStackedFeatures,
-	useVar5Features,
 	isExperimentVariant,
-	isVar1dVariant,
 }: {
 	gridPlans: Omit< GridPlan, 'features' >[];
 	allFeaturesList: FeatureList;
@@ -115,15 +108,7 @@ export type UsePlanFeaturesForGridPlans = ( {
 	useVar41MorePremiumFeatures?: boolean;
 	useVar42NoAiFeatures?: boolean;
 	showPricingDifferentiationFeaturePills?: boolean;
-	useLongSetStackedFeatures?: boolean;
-	useShortSetStackedFeatures?: boolean;
-	useVar5Features?: boolean;
 	isExperimentVariant?: boolean;
-	/**
-	 * When true, mark features after "Everything in X, plus:" header as differentiator features.
-	 * Used for var1d experiment variant styling.
-	 */
-	isVar1dVariant?: boolean;
 } ) => { [ planSlug: string ]: PlanFeaturesForGridPlan };
 
 /**
@@ -143,11 +128,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 	useVar41MorePremiumFeatures,
 	useVar42NoAiFeatures,
 	showPricingDifferentiationFeaturePills,
-	useLongSetStackedFeatures,
-	useShortSetStackedFeatures,
-	useVar5Features,
 	isExperimentVariant,
-	isVar1dVariant,
 } ) => {
 	const translate = useTranslate();
 	const highlightedFeatures = useHighlightedFeatures( { intent: intent ?? null, isInSignup } );
@@ -161,54 +142,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 				let wpcomFeatures: FeatureObject[] = [];
 				let jetpackFeatures: FeatureObject[] = [];
 
-				if ( useVar5Features ) {
-					// Use var5 features (getVar5StackedSignupWpcomFeatures) for var5 variant
-					wpcomFeatures = getPlanFeaturesObject(
-						allFeaturesList,
-						planConstantObj?.getVar5StackedSignupWpcomFeatures?.() ??
-							planConstantObj?.getShortSetStackedSignupWpcomFeatures?.() ??
-							planConstantObj?.get2023PricingGridSignupWpcomFeatures?.() ??
-							[],
-						isExperimentVariant ?? true // isExperimentVariant
-					);
-
-					jetpackFeatures = getPlanFeaturesObject(
-						allFeaturesList,
-						planConstantObj.get2023PricingGridSignupJetpackFeatures?.() ?? [],
-						isExperimentVariant ?? true // isExperimentVariant
-					);
-				} else if ( useShortSetStackedFeatures ) {
-					// Use the stacked features (incremental) for var1/var1d variant
-					wpcomFeatures = getPlanFeaturesObject(
-						allFeaturesList,
-						planConstantObj?.getShortSetStackedSignupWpcomFeatures?.() ??
-							planConstantObj?.get2023PricingGridSignupWpcomFeatures?.() ??
-							[],
-						isExperimentVariant ?? true // isExperimentVariant
-					);
-
-					jetpackFeatures = getPlanFeaturesObject(
-						allFeaturesList,
-						planConstantObj.get2023PricingGridSignupJetpackFeatures?.() ?? [],
-						isExperimentVariant ?? true // isExperimentVariant
-					);
-				} else if ( useLongSetStackedFeatures ) {
-					// Use the stacked features (incremental) for var3 variant
-					wpcomFeatures = getPlanFeaturesObject(
-						allFeaturesList,
-						planConstantObj?.getLongSetStackedSignupWpcomFeatures?.() ??
-							planConstantObj?.getLongSetSignupWpcomFeatures?.() ??
-							planConstantObj?.get2023PricingGridSignupWpcomFeatures?.() ??
-							[],
-						isExperimentVariant ?? true // isExperimentVariant
-					);
-
-					jetpackFeatures = getPlanFeaturesObject(
-						allFeaturesList,
-						planConstantObj.get2023PricingGridSignupJetpackFeatures?.() ?? [],
-						isExperimentVariant ?? true // isExperimentVariant
-					);
-				} else if ( useVar42NoAiFeatures ) {
+				if ( useVar42NoAiFeatures ) {
 					// Use the focused_no_ai feature list when available
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
@@ -385,20 +319,6 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 				}
 
 				if ( annualPlansOnlyFeatures.length > 0 ) {
-					// Track whether we've passed a header feature for var1d styling
-					let passedHeaderFeature = false;
-
-					// var1d badge mapping for specific features
-					const var1dBadgeMap: Record< string, TranslateResult > = {
-						[ FEATURE_CUSTOM_DOMAIN ]: translate( 'Free' ),
-						[ FEATURE_UPLOAD_PLUGINS ]: translate( 'New' ),
-						[ FEATURE_SIMPLE_PAYMENTS ]: translate( 'New' ),
-						[ FEATURE_WORDADS ]: translate( 'New' ),
-						[ FEATURE_AI_WRITER_DESIGNER ]: translate( 'AI' ),
-						[ FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR ]: translate( 'New' ),
-						[ FEATURE_EARLY_ONBOARDING_CALLS ]: translate( 'Free' ),
-					};
-
 					wpcomFeatures.forEach( ( feature ) => {
 						// topFeature and highlightedFeatures are already added to the list above
 						const isHighlightedFeature =
@@ -421,43 +341,24 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 						const isIncludedInPlanFeature = featureSlug === 'feature-included-in-plan';
 						const isHeaderFeature = isEverythingInPlusFeature || isIncludedInPlanFeature;
 
-						// For var1d: mark features after header as differentiators
-						const shouldMarkAsDifferentiator =
-							isVar1dVariant && ! isHeaderFeature && passedHeaderFeature;
-
-						// After we see a header feature, subsequent features are differentiators
-						if ( isHeaderFeature ) {
-							passedHeaderFeature = true;
-						}
-
-						// Badge pills: var1d experiment, or focused_more_premium / focused_new_copy / focused_no_ai (plan-scoped)
-						const badgeText =
-							( isVar1dVariant ? var1dBadgeMap[ featureSlug ] : undefined ) ??
-							( showPricingDifferentiationFeaturePills
-								? getPricingDifferentiationFeatureBadgeText( planSlug, featureSlug, translate, {
-										suppressAiPills: useVar42NoAiFeatures,
-								  } )
-								: undefined );
+						const badgeText = showPricingDifferentiationFeaturePills
+							? getPricingDifferentiationFeatureBadgeText( planSlug, featureSlug, translate, {
+									suppressAiPills: useVar42NoAiFeatures,
+							  } )
+							: undefined;
 
 						wpcomFeaturesTransformed.push( {
 							...feature,
 							availableOnlyForAnnualPlans,
 							availableForCurrentPlan: ! isMonthlyPlan || ! availableOnlyForAnnualPlans,
 							...( isHeaderFeature && { isHighlighted: true } ),
-							...( isHeaderFeature && isVar1dVariant && { isHeaderFeature: true } ),
-							...( shouldMarkAsDifferentiator && { isDifferentiatorFeature: true } ),
 							...( badgeText && { badgeText } ),
 						} );
 					} );
 
-					// Mark the last feature with variant-specific styling for bottom margin
-					if ( wpcomFeaturesTransformed.length > 0 ) {
+					if ( wpcomFeaturesTransformed.length > 0 && isExperimentVariant ) {
 						const lastIndex = wpcomFeaturesTransformed.length - 1;
-						if ( isVar1dVariant ) {
-							wpcomFeaturesTransformed[ lastIndex ].isVar1dLastFeature = true;
-						} else if ( isExperimentVariant ) {
-							wpcomFeaturesTransformed[ lastIndex ].isExperimentLastFeature = true;
-						}
+						wpcomFeaturesTransformed[ lastIndex ].isExperimentLastFeature = true;
 					}
 				}
 
@@ -491,11 +392,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 		useVar41MorePremiumFeatures,
 		useVar42NoAiFeatures,
 		showPricingDifferentiationFeaturePills,
-		useLongSetStackedFeatures,
-		useShortSetStackedFeatures,
-		useVar5Features,
 		isExperimentVariant,
-		isVar1dVariant,
 		translate,
 	] );
 };
