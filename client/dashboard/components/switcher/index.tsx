@@ -15,6 +15,8 @@ interface RenderCallbackProps {
 	onClose: () => void;
 }
 
+type RenderToggle = ComponentProps< typeof Dropdown >[ 'renderToggle' ];
+
 export type SwitcherProps< T > = {
 	items?: T[];
 	value: T;
@@ -25,6 +27,7 @@ export type SwitcherProps< T > = {
 	renderItemTitle: RenderItemTitle< T >;
 	renderItemDescription?: RenderItemDescription< T >;
 	onItemClick?: () => void;
+	renderToggle?: RenderToggle;
 } & Pick< ComponentProps< typeof Dropdown >, 'open' | 'onToggle' | 'defaultOpen' >; // For controlled usage of the switcher
 
 const DEFAULT_VIEW: View = {
@@ -47,39 +50,48 @@ export default function Switcher< T >( {
 	open,
 	onToggle,
 	defaultOpen,
+	renderToggle,
 }: SwitcherProps< T > ) {
 	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
 	const isDesktop = useViewportMatch( 'medium' );
+	const renderDropdownToggle: RenderToggle = ( { isOpen, onToggle, ...props } ) => {
+		if ( renderToggle ) {
+			return renderToggle( { isOpen, onToggle, ...props } );
+		}
+
+		return (
+			<Button
+				className="dashboard-menu__item active"
+				icon={ chevronDownSmall }
+				iconPosition="right"
+				onClick={ () => onToggle() }
+				onKeyDown={ ( event: React.KeyboardEvent ) => {
+					if ( ! isOpen && event.code === 'ArrowDown' ) {
+						event.preventDefault();
+						onToggle();
+					}
+				} }
+				aria-haspopup="true"
+				aria-expanded={ isOpen }
+				style={ { width: '100%', justifyContent: 'flex-start' } }
+			>
+				<HStack
+					alignment="center"
+					style={ { overflow: 'hidden', maxWidth: isDesktop ? 'calc(30vw)' : '100%' } }
+				>
+					{ renderItemMedia( { item: value, context: 'dropdown', size: 16 } ) }
+					{ renderItemTitle( { item: value, context: 'dropdown' } ) }
+				</HStack>
+			</Button>
+		);
+	};
+
 	return (
 		<Dropdown
 			open={ open }
 			onToggle={ onToggle }
 			defaultOpen={ defaultOpen }
-			renderToggle={ ( { onToggle, isOpen } ) => (
-				<Button
-					className="dashboard-menu__item active"
-					icon={ chevronDownSmall }
-					iconPosition="right"
-					onClick={ () => onToggle() }
-					onKeyDown={ ( event: React.KeyboardEvent ) => {
-						if ( ! isOpen && event.code === 'ArrowDown' ) {
-							event.preventDefault();
-							onToggle();
-						}
-					} }
-					aria-haspopup="true"
-					aria-expanded={ isOpen }
-					style={ { width: '100%', justifyContent: 'flex-start' } }
-				>
-					<HStack
-						alignment="center"
-						style={ { overflow: 'hidden', maxWidth: isDesktop ? 'calc(30vw)' : '100%' } }
-					>
-						{ renderItemMedia( { item: value, context: 'dropdown', size: 16 } ) }
-						{ renderItemTitle( { item: value, context: 'dropdown' } ) }
-					</HStack>
-				</Button>
-			) }
+			renderToggle={ renderDropdownToggle }
 			renderContent={ ( { onClose } ) => (
 				<>
 					<ScrollLock />
