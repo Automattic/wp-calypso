@@ -381,6 +381,23 @@ const WPCheckoutCheckIcon = styled( CheckIcon )`
 	}
 `;
 
+/**
+ * Walk the cost overrides chain and return the `old_subtotal_integer` of the
+ * first override that reduces the price. This gives us the "peak" price after
+ * any price-increasing overrides (e.g. premium domain intro offer) but before
+ * any discounts (e.g. sale coupon).
+ *
+ * Falls back to `item_subtotal_integer` when no price-reducing override exists.
+ */
+function getPriceBeforeDiscountsFromOverrides( product: ResponseCartProduct ): number {
+	for ( const override of product.cost_overrides ?? [] ) {
+		if ( override.new_subtotal_integer < override.old_subtotal_integer ) {
+			return override.old_subtotal_integer;
+		}
+	}
+	return product.item_subtotal_integer;
+}
+
 function SingleProductAndCostOverridesList( { product }: { product: ResponseCartProduct } ) {
 	const translate = useTranslate();
 	const costOverridesList = filterCostOverridesForLineItem( product, translate );
@@ -399,12 +416,21 @@ function SingleProductAndCostOverridesList( { product }: { product: ResponseCart
 		itemSubtotalInteger < originalAmountInteger && originalAmountDisplay
 	);
 
+	// Find the price before any price-reducing cost overrides. For products
+	// with a price-increasing intro offer followed by a sale coupon (e.g.
+	// premium domains: $80 → $1,100 → $275), this gives us the peak price
+	// ($1,100) to use as the crossed-out "full price".
+	const priceBeforeDiscountsInteger = getPriceBeforeDiscountsFromOverrides( product );
+	const hasStackedPriceIncrease =
+		! isDiscounted &&
+		priceBeforeDiscountsInteger > originalAmountInteger &&
+		product.item_subtotal_integer < priceBeforeDiscountsInteger;
+
 	// For WPCOM plans always show the renewal amount for legal reasons.
 	// Introductory offer discount would be shown in LineItemCostOverrides.
-	// For other products (e.g. domains), show the pre-coupon subtotal so
-	// that stacked cost overrides (price-increasing intro offer + sale
-	// coupon) display the correct amount instead of the renewal price.
 	let actualAmountDisplay;
+	let crossedOutAmountDisplay: string | undefined;
+
 	if ( isWpComPlan( product.product_slug ) ) {
 		actualAmountDisplay = formatCurrency(
 			product.item_original_subtotal_integer,
@@ -414,11 +440,25 @@ function SingleProductAndCostOverridesList( { product }: { product: ResponseCart
 				stripZeros: true,
 			}
 		);
+		crossedOutAmountDisplay = isDiscounted ? originalAmountDisplay : undefined;
+	} else if ( hasStackedPriceIncrease ) {
+		// Stacked cost overrides: a price-increasing intro offer raised the
+		// price above the original, then a sale coupon discounted it. Show
+		// the pre-discount price crossed out with the final price.
+		actualAmountDisplay = formatCurrency( product.item_subtotal_integer, product.currency, {
+			isSmallestUnit: true,
+			stripZeros: true,
+		} );
+		crossedOutAmountDisplay = formatCurrency( priceBeforeDiscountsInteger, product.currency, {
+			isSmallestUnit: true,
+			stripZeros: true,
+		} );
 	} else {
 		actualAmountDisplay = formatCurrency( itemSubtotalInteger, product.currency, {
 			isSmallestUnit: true,
 			stripZeros: true,
 		} );
+		crossedOutAmountDisplay = isDiscounted ? originalAmountDisplay : undefined;
 	}
 
 	return (
@@ -428,7 +468,7 @@ function SingleProductAndCostOverridesList( { product }: { product: ResponseCart
 				<span className="cost-overrides-list-product__title">{ label }</span>
 				<SimplifiedLineItemPrice
 					actualAmount={ actualAmountDisplay }
-					crossedOutAmount={ isDiscounted ? originalAmountDisplay : undefined }
+					crossedOutAmount={ crossedOutAmountDisplay }
 				/>
 			</ProductTitleAreaForCostOverridesList>
 			<LineItemCostOverrides product={ product } costOverridesList={ costOverridesList } />
