@@ -20,6 +20,10 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Get release date
+        id: date
+        run: echo "release_date=$(date +'%B %-d, %Y')" >> "$GITHUB_OUTPUT"
       - uses: linear/linear-release-action@v0.5.0
         with:
           access_key: ${{ secrets.LINEAR_RELEASE_KEY_CREATORS }}
+          release_version: ${{ steps.date.outputs.release_date }}
