@@ -1,5 +1,6 @@
 import { HostingFeatures } from '@automattic/api-core';
 import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { Button, Modal, TabPanel } from '@wordpress/components';
@@ -166,20 +167,22 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 				}
 			>
 				<Card>
-					<CardHeader style={ { paddingBottom: '0' } }>
-						<TabPanel
-							activeClass="is-active"
-							tabs={ SCAN_TABS }
-							onSelect={ ( tabName ) => {
-								if ( tabName === 'active' || tabName === 'history' ) {
-									handleTabChange( tabName );
-								}
-							} }
-							initialTabName={ scanTab }
-						>
-							{ () => null }
-						</TabPanel>
-					</CardHeader>
+					{ ! isEnabled( 'dashboard/omnibar' ) && (
+						<CardHeader style={ { paddingBottom: '0' } }>
+							<TabPanel
+								activeClass="is-active"
+								tabs={ SCAN_TABS }
+								onSelect={ ( tabName ) => {
+									if ( tabName === 'active' || tabName === 'history' ) {
+										handleTabChange( tabName );
+									}
+								} }
+								initialTabName={ scanTab }
+							>
+								{ () => null }
+							</TabPanel>
+						</CardHeader>
+					) }
 					<CardBody>
 						{ scanTab === 'active' && renderActiveTab() }
 						{ scanTab === 'history' && (
