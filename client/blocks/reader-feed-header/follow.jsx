@@ -122,7 +122,7 @@ export default function ReaderFeedHeaderFollow( props ) {
 										iconSize={ 24 }
 										showLabel={ false }
 										siteId={ siteId }
-										subscriptionId={ subscriptionId }
+										subscriptionId={ Number( subscriptionId ) }
 									/>
 								</div>
 							) }

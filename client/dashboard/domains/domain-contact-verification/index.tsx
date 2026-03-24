@@ -12,6 +12,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
+import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { domainContactInfoRoute, domainRoute } from '../../app/router/domains';
 import { Card, CardBody } from '../../components/card';
 import Notice from '../../components/notice';
@@ -234,6 +235,7 @@ export default function DomainContactVerification() {
 					</VStack>
 				</CardBody>
 			</Card>
+			<PerformanceTrackerStop />
 		</PageLayout>
 	);
 }

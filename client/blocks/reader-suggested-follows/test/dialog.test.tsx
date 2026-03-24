@@ -12,8 +12,10 @@ jest.mock( '../hooks/use-recommend-or-related-sites-query' );
 jest.mock( 'calypso/state', () => ( {
 	useDispatch: () => jest.fn(),
 } ) );
-jest.mock( '../recommended-feed', () => ( {
-	RecommendedFeed: ( { feed }: { feed: FeedRecommendation } ) => <div>{ feed.name }</div>,
+jest.mock( 'calypso/reader/recommended-feeds-list', () => ( {
+	RecommendedFeedsList: ( { feeds }: { feeds: FeedRecommendation[] } ) => (
+		<div>{ feeds.map( ( feed ) => feed.name ).join( ', ' ) }</div>
+	),
 } ) );
 
 jest.mock( 'calypso/blocks/reader-suggested-follows', () => ( {

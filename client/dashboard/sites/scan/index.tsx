@@ -1,5 +1,6 @@
 import { HostingFeatures } from '@automattic/api-core';
 import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { Button, Modal, TabPanel } from '@wordpress/components';
@@ -7,6 +8,7 @@ import { __, _n, sprintf } from '@wordpress/i18n';
 import { shield } from '@wordpress/icons';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { siteRoute } from '../../app/router/sites';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardHeader, CardBody } from '../../components/card';
@@ -87,7 +89,12 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 
 	const renderActiveTab = () => {
 		if ( isScanInProgress ) {
-			return <ScanStatus scanState={ scanState } />;
+			return (
+				<>
+					<PerformanceTrackerStop />
+					<ScanStatus scanState={ scanState } />
+				</>
+			);
 		}
 		return (
 			<ActiveThreatsDataViews
@@ -160,20 +167,22 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 				}
 			>
 				<Card>
-					<CardHeader style={ { paddingBottom: '0' } }>
-						<TabPanel
-							activeClass="is-active"
-							tabs={ SCAN_TABS }
-							onSelect={ ( tabName ) => {
-								if ( tabName === 'active' || tabName === 'history' ) {
-									handleTabChange( tabName );
-								}
-							} }
-							initialTabName={ scanTab }
-						>
-							{ () => null }
-						</TabPanel>
-					</CardHeader>
+					{ ! isEnabled( 'dashboard/omnibar' ) && (
+						<CardHeader style={ { paddingBottom: '0' } }>
+							<TabPanel
+								activeClass="is-active"
+								tabs={ SCAN_TABS }
+								onSelect={ ( tabName ) => {
+									if ( tabName === 'active' || tabName === 'history' ) {
+										handleTabChange( tabName );
+									}
+								} }
+								initialTabName={ scanTab }
+							>
+								{ () => null }
+							</TabPanel>
+						</CardHeader>
+					) }
 					<CardBody>
 						{ scanTab === 'active' && renderActiveTab() }
 						{ scanTab === 'history' && (

@@ -6,7 +6,7 @@ import {
 	__experimentalHeading as Heading,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
+import { __, _x, sprintf } from '@wordpress/i18n';
 import { ButtonStack } from '../../../components/button-stack';
 import RouterLinkButton from '../../../components/router-link-button';
 import { Text } from '../../../components/text';
@@ -32,6 +32,8 @@ export default function DomainRemovalWarningStep( {
 		...domainQuery( domainName ),
 		enabled: Boolean( domainName ),
 	} );
+
+	const canTransfer = domain?.can_transfer_to_any_user || domain?.can_transfer_to_other_site;
 
 	return (
 		<VStack spacing={ 8 }>
@@ -61,29 +63,46 @@ export default function DomainRemovalWarningStep( {
 				) }
 
 				<Text>
-					{ createInterpolateElement(
-						/* translators: <domainName /> is the domain name */
-						__(
-							'If you want to use <domainName /> with another provider you can <moveLink>move it to another service</moveLink> or <transferLink>transfer it to another provider</transferLink>.'
-						),
-						{
-							domainName: <strong>{ domainName }</strong>,
-							moveLink: (
-								<RouterLinkButton
-									variant="link"
-									to="/domains/$domainName"
-									params={ { domainName } }
-								/>
-							),
-							transferLink: (
-								<RouterLinkButton
-									variant="link"
-									to="/domains/$domainName/transfer"
-									params={ { domainName } }
-								/>
-							),
-						}
-					) }
+					{ canTransfer
+						? createInterpolateElement(
+								/* translators: <domainName /> is the domain name */
+								__(
+									'If you want to use <domainName /> with another provider you can <moveLink>move it to another service</moveLink> or <transferLink>transfer it to another provider</transferLink>.'
+								),
+								{
+									domainName: <strong>{ domainName }</strong>,
+									moveLink: (
+										<RouterLinkButton
+											variant="link"
+											to="/domains/$domainName"
+											params={ { domainName } }
+										/>
+									),
+									transferLink: (
+										<RouterLinkButton
+											variant="link"
+											to="/domains/$domainName/transfer"
+											params={ { domainName } }
+										/>
+									),
+								}
+						  )
+						: createInterpolateElement(
+								/* translators: <domainName /> is the domain name */
+								__(
+									'If you want to use <domainName /> with another provider you can <moveLink>move it to another service</moveLink>.'
+								),
+								{
+									domainName: <strong>{ domainName }</strong>,
+									moveLink: (
+										<RouterLinkButton
+											variant="link"
+											to="/domains/$domainName"
+											params={ { domainName } }
+										/>
+									),
+								}
+						  ) }
 				</Text>
 
 				<Text>{ __( 'Do you still want to continue with deleting your domain?' ) }</Text>
@@ -96,7 +115,7 @@ export default function DomainRemovalWarningStep( {
 					onClick={ onCancel }
 					disabled={ isLoading }
 				>
-					{ __( 'Cancel' ) }
+					{ _x( 'Cancel', 'Deny this change and return to the previous screen' ) }
 				</Button>
 				<Button
 					__next40pxDefaultSize
@@ -104,7 +123,7 @@ export default function DomainRemovalWarningStep( {
 					onClick={ onContinue }
 					disabled={ isLoading }
 				>
-					{ __( 'Continue' ) }
+					{ _x( 'Continue', 'Accept this change and continue with this action' ) }
 				</Button>
 			</ButtonStack>
 		</VStack>

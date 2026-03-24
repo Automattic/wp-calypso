@@ -253,6 +253,31 @@ export const setNavigateToOdie = function* () {
 	yield setShowHelpCenter( true );
 };
 
+/**
+ * Open the Help Center on the Odie (AI) assistant with optional context.
+ * Does not add provider=zendesk, so the user stays in the AI chat instead of human support.
+ */
+export const setOpenOdieWithContext = function* ( {
+	initialMessage,
+	section,
+	siteUrl,
+	siteId,
+}: {
+	initialMessage: string;
+	section?: string;
+	siteUrl?: string;
+	siteId?: string | number;
+} ) {
+	const url = addQueryArgs( '/odie', {
+		userFieldMessage: initialMessage,
+		section,
+		siteUrl,
+		siteId: siteId != null ? String( siteId ) : undefined,
+	} );
+	yield setNavigateToRoute( url );
+	yield setShowHelpCenter( true );
+};
+
 export const setShowSupportDoc = function* ( link: string, postId?: number, blogId?: number ) {
 	const params = new URLSearchParams( {
 		link,

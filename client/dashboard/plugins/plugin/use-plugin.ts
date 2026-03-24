@@ -34,7 +34,7 @@ const useMarketplaceSearchIcon = ( pluginSlug: string ) => {
 	return marketplaceSearchPluginData?.fields.plugin.icons;
 };
 
-export const usePlugin = ( pluginSlug: string ) => {
+export const usePlugin = ( pluginSlug: string, { enabled = true }: { enabled?: boolean } = {} ) => {
 	const queryClient = useQueryClient();
 	const availableIcon = useMarketplaceSearchIcon( pluginSlug );
 	const { queries } = useAppContext();
@@ -43,7 +43,7 @@ export const usePlugin = ( pluginSlug: string ) => {
 		data: sitesPlugins,
 		isLoading: isLoadingSitesPlugins,
 		isFetching: isFetchingSitePlugins,
-	} = useQuery( pluginsQuery() );
+	} = useQuery( { ...pluginsQuery(), enabled } );
 	const { data: sites, isLoading: isLoadingSites } = useQuery( queries.sitesQuery() );
 	const { data: marketplacePlugins, isLoading: isLoadingMarketplacePlugins } = useQuery(
 		marketplacePluginsQuery()

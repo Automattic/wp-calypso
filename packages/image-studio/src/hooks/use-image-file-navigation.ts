@@ -9,7 +9,6 @@ interface UseImageFileNavigationProps {
 	originalAttachmentId: number | null;
 	attachmentId: number | null;
 	hasUnsavedChanges: boolean;
-	isMediaLibraryContext: boolean;
 }
 
 interface UseImageFileNavigationReturn {
@@ -27,14 +26,12 @@ interface UseImageFileNavigationReturn {
  * @param root0.originalAttachmentId
  * @param root0.attachmentId
  * @param root0.hasUnsavedChanges
- * @param root0.isMediaLibraryContext
  */
 export function useImageFileNavigation( {
 	isOpen,
 	originalAttachmentId,
 	attachmentId,
 	hasUnsavedChanges,
-	isMediaLibraryContext,
 }: UseImageFileNavigationProps ): UseImageFileNavigationReturn {
 	const { setNavigableAttachmentIds, navigateToAttachment, setNavigationPagination } = useDispatch(
 		imageStudioStore
@@ -173,54 +170,6 @@ export function useImageFileNavigation( {
 		setNavigableAttachmentIds,
 		setNavigationPagination,
 		performFileNavigation,
-	] );
-
-	// Keyboard shortcuts for navigation - Cmd/Ctrl + Left/Right arrows
-	// Only available in media library context
-	// Placed at parent component level to ensure it's always active, even during transitions
-	useEffect( () => {
-		if ( ! isOpen || ! isMediaLibraryContext ) {
-			return;
-		}
-
-		const handleKeyDown = ( event: KeyboardEvent ) => {
-			// Check for Cmd (Mac) or Ctrl (Windows/Linux) + Arrow keys
-			const isModKey = event.metaKey || event.ctrlKey;
-			const isLeftArrow = event.key === 'ArrowLeft';
-			const isRightArrow = event.key === 'ArrowRight';
-
-			if ( ! isModKey || ( ! isLeftArrow && ! isRightArrow ) ) {
-				return;
-			}
-
-			// ALWAYS prevent default to block browser navigation
-			event.preventDefault();
-			event.stopPropagation();
-
-			// Handle left arrow
-			if ( isLeftArrow && hasPreviousImage ) {
-				handleNavigatePrevious();
-			}
-
-			// Handle right arrow
-			if ( isRightArrow && hasNextImage ) {
-				handleNavigateNext();
-			}
-		};
-
-		// Add listener with capture phase to intercept before any other handlers
-		window.addEventListener( 'keydown', handleKeyDown, true );
-
-		return () => {
-			window.removeEventListener( 'keydown', handleKeyDown, true );
-		};
-	}, [
-		isOpen,
-		isMediaLibraryContext,
-		hasPreviousImage,
-		hasNextImage,
-		handleNavigatePrevious,
-		handleNavigateNext,
 	] );
 
 	return {

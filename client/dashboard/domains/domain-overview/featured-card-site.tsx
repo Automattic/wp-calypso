@@ -22,7 +22,8 @@ export default function FeaturedCardSite( { domain }: Props ) {
 	const shouldShowAddAttachSite =
 		domain.is_domain_only_site &&
 		! domain.is_gravatar_restricted_domain &&
-		domain.subtype.id !== DomainSubtype.DOMAIN_TRANSFER;
+		domain.subtype.id !== DomainSubtype.DOMAIN_TRANSFER &&
+		domain.can_transfer_to_other_site;
 
 	return (
 		<OverviewCard

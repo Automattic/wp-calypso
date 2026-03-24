@@ -1,8 +1,10 @@
 import { siteBySlugQuery } from '@automattic/api-queries';
+import { invokeSurvicateEvent } from '@automattic/survicate';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Button, ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { useEffect } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
@@ -17,6 +19,9 @@ export default function SSHMigrationComplete( { siteSlug }: { siteSlug: string }
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 
 	const { recordTracksEvent } = useAnalytics();
+
+	useEffect( () => invokeSurvicateEvent( 'migrationCompleted' ), [] );
+
 	const sourceSiteDomain = site.options?.migration_source_site_domain;
 	const siteDomain = sourceSiteDomain?.replace( /^https?:\/\/|\/+$/g, '' );
 

@@ -1,8 +1,7 @@
-@import "@automattic/typography/styles/variables";
-@import "@wordpress/base-styles/breakpoints";
+@import '@automattic/typography/styles/variables';
+@import '@wordpress/base-styles/breakpoints';
 
-$recoleta-font-family: "Recoleta", sans-serif;
-$font-sf-pro-text: "SF Pro Text", $sans;
+$font-sf-pro-text: 'SF Pro Text', $sans;
 body.is-section-accept-invite {
 	.logged-out-wp-logo {
 		position: absolute;
@@ -12,7 +11,7 @@ body.is-section-accept-invite {
 	background: #fdfdfd;
 	.invite-accept {
 		padding-top: 50px;
-		height: calc(100vh - 100px);
+		height: calc( 100vh - 100px );
 	}
 	.invite-accept__form {
 		height: 100%;
@@ -40,22 +39,18 @@ body.is-section-accept-invite {
 		max-height: 340px;
 	}
 
-	.invite-form-header__title {
-		color: var(--studio-gray-100, #2c3338);
-		text-align: center;
-		font-family: $recoleta-font-family;
-		font-size: 2rem;
-		line-height: 1.26;
-		a {
-			text-decoration: none;
-		}
+	.invite-form-header--logged-out .connect-screen-brand-header__description a {
+		color: var( --studio-gray-70 );
+		text-decoration-line: underline;
+		text-decoration-style: solid;
+		text-decoration-skip-ink: none;
+		text-decoration-thickness: auto;
+		text-underline-offset: auto;
+		text-underline-position: from-font;
 	}
 
-	.invite-form-header__explanation {
-		color: var(--studio-gray-50, #2c3338);
-		text-align: center;
-		margin-top: 6px;
-		font-size: 14px;
+	.invite-form-header--logged-out .connect-screen-brand-header__title a {
+		text-decoration: none;
 	}
 
 	.card.logged-out-form {
@@ -66,27 +61,27 @@ body.is-section-accept-invite {
 
 		button.is-primary {
 			border-radius: 2px;
-			border: 1px solid var(--studio-wordpress-blue, #3858e9);
-			background: var(--studio-wordpress-blue, #3858e9);
+			border: 1px solid var( --studio-wordpress-blue, #3858e9 );
+			background: var( --studio-wordpress-blue, #3858e9 );
 			height: 48px;
 			font-weight: 500;
 			&:hover {
-				background: var(--studio-wordpress-blue-60);
+				background: var( --studio-wordpress-blue-60 );
 			}
 			&:focus {
-				background-color: var(--studio-wordpress-blue-60);
-				border-color: var(--studio-wordpress-blue-60);
-				color: var(--color-text-inverted);
+				background-color: var( --studio-wordpress-blue-60 );
+				border-color: var( --studio-wordpress-blue-60 );
+				color: var( --color-text-inverted );
 				box-shadow: none;
 			}
 			&:disabled {
-				background: var(--studio-gray-20);
-				border: 1px solid var(--studio-gray-20);
-				color: var(--color-surface);
+				background: var( --studio-gray-20 );
+				border: 1px solid var( --studio-gray-20 );
+				color: var( --color-surface );
 			}
 		}
 		label.form-label {
-			color: var(--studio-gray-60, #50575e);
+			color: var( --studio-gray-60, #50575e );
 			font-size: 0.875rem;
 			font-weight: 500;
 			line-height: 20px;
@@ -106,7 +101,7 @@ body.is-section-accept-invite {
 	.signup-form__passwordless-form-wrapper {
 		.signup-form__terms-of-service-link {
 			margin: 30px 0 16px;
-			color: var(--studio-gray-50, #2c3338);
+			color: var( --studio-gray-50, #2c3338 );
 			font-size: $font-body-small; // 14px
 			line-height: 20px;
 		}
@@ -117,7 +112,7 @@ body.is-section-accept-invite {
 		padding: 0;
 	}
 	.logged-out-form__link-item {
-		color: var(--color-link);
+		color: var( --color-link );
 		font-size: 12px;
 	}
 }

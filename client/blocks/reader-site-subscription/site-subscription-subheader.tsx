@@ -45,7 +45,7 @@ const SiteSubscriptionSubheader = ( {
 
 	if ( subscriberCount > 0 ) {
 		subheaderItems.push(
-			<div key={ `subscriber-count-${ subscriberCount }` }>
+			<div key={ `blog-${ blogId ?? 0 }-feed-${ feedId ?? 0 }-count-${ subscriberCount }` }>
 				{ translate( '%s subscriber', '%s subscribers', {
 					count: subscriberCount,
 					args: [ formatNumber( subscriberCount ) ],

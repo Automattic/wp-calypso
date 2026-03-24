@@ -25,8 +25,6 @@ import {
 	setPageTitle,
 	getStartDate,
 } from './controller-helper';
-import { NEW_SUBSCRIPTION_TABS } from './new-subscription';
-import { isDiscoverV3Enabled } from './utils';
 
 const analyticsPageTitle = 'Reader';
 
@@ -100,21 +98,12 @@ export function following( context, next ) {
 }
 
 export function loadNewSubscriptionPage( context, next ) {
-	if ( isDiscoverV3Enabled() ) {
-		const selectedTab = getCurrentTabFromURL(
-			context.path,
-			'reader/new',
-			NEW_SUBSCRIPTION_TABS.ADD_NEW
-		);
-		context.primary = (
-			<AsyncLoad require="calypso/reader/new-subscription" selectedTab={ selectedTab } />
-		);
+	const selectedTab = getCurrentTabFromURL( context.path, 'reader/new', 'add-new' );
+	context.primary = (
+		<AsyncLoad require="calypso/reader/new-subscription" selectedTab={ selectedTab } />
+	);
 
-		trackPageLoad( '/reader/new', 'Reader > New Subscription', 'reader-new-subscription' );
-	} else {
-		page.redirect( '/reader/subscriptions' );
-	}
-
+	trackPageLoad( '/reader/new', 'Reader > New Subscription', 'reader-new-subscription' );
 	next();
 }
 

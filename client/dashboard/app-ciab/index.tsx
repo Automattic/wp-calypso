@@ -3,10 +3,11 @@ import {
 	sitesQuery,
 	paginatedSitesQuery,
 	dashboardSiteFiltersQuery,
+	domainsQuery,
 } from '@automattic/api-queries';
 /* eslint-enable no-restricted-imports */
+import config from '@automattic/calypso-config';
 import boot from '../app/boot';
-import { getCiabDashboardBasePath } from './routing';
 import './translations';
 import type {
 	FetchSitesOptions,
@@ -17,7 +18,8 @@ import './style.scss';
 
 boot( {
 	name: 'CIAB',
-	basePath: getCiabDashboardBasePath( window.location.hostname ),
+	posthog: config.isEnabled( 'posthog-tracking' ) ? config( 'ciab_posthog_api_key' ) : undefined,
+	basePath: '/',
 	mainRoute: '/sites',
 	Logo: null,
 	supports: {
@@ -35,7 +37,7 @@ boot( {
 			security: {
 				sshKey: false,
 			},
-			privacy: false,
+			privacy: true,
 			apps: false,
 		},
 		plugins: false,
@@ -46,6 +48,7 @@ boot( {
 	components: {
 		sites: () => import( '../sites-ciab' ),
 		siteSwitcher: () => import( '../sites-ciab/site-switcher' ),
+		siteSwitcherV2: () => import( '../sites-ciab/site-switcher-v2' ),
 	},
 	queries: {
 		sitesQuery: ( fetchSitesOptions?: FetchSitesOptions ) =>
@@ -54,5 +57,6 @@ boot( {
 			paginatedSitesQuery( [ 'commerce-garden' ], fetchSitesOptions ),
 		dashboardSiteFiltersQuery: ( fields: FetchDashboardSiteFiltersParams[ 'fields' ] ) =>
 			dashboardSiteFiltersQuery( [ 'commerce-garden' ], fields ),
+		domainsQuery: () => domainsQuery( { garden: 'commerce' } ),
 	},
 } );

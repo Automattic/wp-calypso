@@ -22,6 +22,7 @@ import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings'; // For site time offset
 import EmptyContent from 'calypso/components/empty-content';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
+import JetpackTitle from 'calypso/components/jetpack-title';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
@@ -489,7 +490,7 @@ class ActivityLog extends Component {
 
 				<NavigationHeader
 					navigationItems={ [] }
-					title={ translate( 'Activity' ) }
+					title={ <JetpackTitle title={ translate( 'Activity Log' ) } /> }
 					subtitle={ translate(
 						"Keep tabs on all your site's activity — plugin and theme updates, user logins, setting modifications, and more."
 					) }

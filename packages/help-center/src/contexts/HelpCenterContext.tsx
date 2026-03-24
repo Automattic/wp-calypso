@@ -1,5 +1,7 @@
 import { ODIE_NEW_INTERACTIONS_BOT_SLUG } from '@automattic/odie-client/src/constants';
-import { useContext, createContext } from '@wordpress/element';
+import { useContext, createContext, useMemo } from '@wordpress/element';
+import { PRODUCT_PRESETS } from '../feature-config';
+import type { HelpCenterFeatureConfig, HelpCenterProduct } from '../feature-config';
 import type { CurrentUser, HelpCenterSite } from '@automattic/data-stores';
 
 export type HelpCenterRequiredInformation = {
@@ -14,16 +16,15 @@ export type HelpCenterRequiredInformation = {
 	primarySiteId: number;
 	googleMailServiceFamily: string;
 	onboardingUrl: string;
-	isCommerceGarden: boolean;
-	source: '' | 'wpcom' | 'a4a';
-	disableChatSupport: boolean;
-	hideMoreResources: boolean;
 	// This is specific to A4A
 	agency: {
 		id: number;
 		pressableId?: number;
 	} | null;
-	haveSurvicateEnabled: boolean;
+	/**
+	 * Product identifier. Defaults to 'wpcom' when omitted.
+	 */
+	product?: HelpCenterProduct;
 };
 
 const defaultContext: HelpCenterRequiredInformation = {
@@ -72,12 +73,7 @@ const defaultContext: HelpCenterRequiredInformation = {
 	primarySiteId: 0,
 	googleMailServiceFamily: '',
 	onboardingUrl: '',
-	isCommerceGarden: false,
-	source: 'wpcom',
-	disableChatSupport: false,
-	hideMoreResources: false,
 	agency: null,
-	haveSurvicateEnabled: false,
 };
 
 const HelpCenterRequiredContext = createContext< HelpCenterRequiredInformation >( defaultContext );
@@ -100,4 +96,16 @@ export const HelpCenterRequiredContextProvider: React.FC< {
 
 export function useHelpCenterContext() {
 	return useContext( HelpCenterRequiredContext );
+}
+
+/**
+ * Hook that returns the resolved feature configuration.
+ * Defaults to the 'wpcom' product when no product is specified.
+ */
+export function useFeatureConfig(): HelpCenterFeatureConfig {
+	const { product = 'wpcom' } = useHelpCenterContext();
+
+	return useMemo( () => {
+		return PRODUCT_PRESETS[ product ];
+	}, [ product ] );
 }

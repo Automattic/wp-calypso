@@ -91,7 +91,7 @@ export function useFields( {
 									</Text>
 								</ExternalLink>
 								<BranchDisplay branchName={ item.branch_name } />
-								<HStack spacing={ 1.5 } alignment="left" style={ { width: 'auto' } }>
+								<HStack spacing={ 1.5 } alignment="left" expanded={ false }>
 									<img
 										src={ author.avatar_url }
 										alt={ author.name }

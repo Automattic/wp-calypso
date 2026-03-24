@@ -83,19 +83,19 @@ export const ImageFeedbackButtons = ( {
 			actions: [
 				{
 					id: 'feedback-up',
-					label: __( 'Good response', 'default' ),
+					label: __( 'Good response', __i18n_text_domain__ ),
 					icon: <ThumbsUpIcon />,
 					onClick: () => handleFeedback( 'up' ),
-					tooltip: __( 'Good response', 'default' ),
+					tooltip: __( 'Good response', __i18n_text_domain__ ),
 					disabled: selectedFeedback === 'down',
 					pressed: selectedFeedback === 'up',
 				},
 				{
 					id: 'feedback-down',
-					label: __( 'Bad response', 'default' ),
+					label: __( 'Bad response', __i18n_text_domain__ ),
 					icon: <ThumbsDownIcon />,
 					onClick: () => handleFeedback( 'down' ),
-					tooltip: __( 'Bad response', 'default' ),
+					tooltip: __( 'Bad response', __i18n_text_domain__ ),
 					disabled: selectedFeedback === 'up',
 					pressed: selectedFeedback === 'down',
 				},

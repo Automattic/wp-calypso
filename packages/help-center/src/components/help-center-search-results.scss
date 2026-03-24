@@ -24,12 +24,15 @@
 	}
 
 	.help-center-search-results__empty-results {
-		padding: 8px 16px 0;
-		margin: 1em 0;
+		margin: 8px 0;
 		font-size: $font-body-small;
 		color: var(--color-text-subtle);
 		font-style: italic;
 		text-align: left;
+
+		p {
+			margin-bottom: 16px;
+		}
 
 		@media screen and (min-width: 661px) {
 			font-size: $font-body;

@@ -1,17 +1,28 @@
 import { isSupportSession } from '@automattic/calypso-support-session';
 import { __ } from '@wordpress/i18n';
+import {
+	siteOverviewRoute,
+	siteDeploymentsRoute,
+	sitePerformanceRoute,
+	siteMonitoringRoute,
+	siteLogsRoute,
+	siteScanRoute,
+	siteBackupsRoute,
+	siteDomainsRoute,
+	siteSettingsRoute,
+} from '../../app/router/sites';
 import MenuDivider from '../../components/menu-divider';
 import ResponsiveMenu from '../../components/responsive-menu';
 import { hasSiteTrialEnded } from '../../utils/site-trial';
 import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import type { Site } from '@automattic/api-core';
+import type { AnyRoute } from '@tanstack/react-router';
 
 const SiteMenu = ( { site }: { site: Site } ) => {
 	const siteSlug = site.slug;
 
 	const siteTypeSupports = getSiteTypeFeatureSupports( site );
-
 	if ( hasSiteTrialEnded( site ) ) {
 		return (
 			<ResponsiveMenu label={ __( 'Site Menu' ) } prefix={ <MenuDivider /> }>
@@ -42,47 +53,54 @@ const SiteMenu = ( { site }: { site: Site } ) => {
 		);
 	}
 
+	const isAvailable = ( route: AnyRoute ) =>
+		! site.__inaccessible_jetpack_error ||
+		route.options.staticData?.availableToInaccessibleJetpackSites;
+
 	return (
 		<ResponsiveMenu label={ __( 'Site Menu' ) } prefix={ <MenuDivider /> }>
-			<ResponsiveMenu.Item to={ `/sites/${ siteSlug }` } activeOptions={ { exact: true } }>
-				{ __( 'Overview' ) }
-			</ResponsiveMenu.Item>
-			{ siteTypeSupports.deployments && (
+			{ isAvailable( siteOverviewRoute ) && (
+				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }` } activeOptions={ { exact: true } }>
+					{ __( 'Overview' ) }
+				</ResponsiveMenu.Item>
+			) }
+			{ isAvailable( siteDeploymentsRoute ) && siteTypeSupports.deployments && (
 				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/deployments` }>
 					{ __( 'Deployments' ) }
 				</ResponsiveMenu.Item>
 			) }
-			{ siteTypeSupports.performance && (
+			{ isAvailable( sitePerformanceRoute ) && siteTypeSupports.performance && (
 				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/performance` }>
 					{ __( 'Performance' ) }
 				</ResponsiveMenu.Item>
 			) }
-			{ siteTypeSupports.monitoring && (
+			{ isAvailable( siteMonitoringRoute ) && siteTypeSupports.monitoring && (
 				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/monitoring` }>
 					{ __( 'Monitoring' ) }
 				</ResponsiveMenu.Item>
 			) }
-			{ siteTypeSupports.logs && (
+			{ isAvailable( siteLogsRoute ) && siteTypeSupports.logs && (
 				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/logs` }>
 					{ __( 'Logs' ) }
 				</ResponsiveMenu.Item>
 			) }
-			{ siteTypeSupports.scan && (
+			{ isAvailable( siteScanRoute ) && siteTypeSupports.scan && (
 				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/scan` }>
 					{ __( 'Scan' ) }
 				</ResponsiveMenu.Item>
 			) }
-			{ siteTypeSupports.backups && (
+			{ isAvailable( siteBackupsRoute ) && siteTypeSupports.backups && (
 				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/backups` }>
 					{ __( 'Backups' ) }
 				</ResponsiveMenu.Item>
 			) }
-			{ siteTypeSupports.domains && (
+			{ isAvailable( siteDomainsRoute ) && siteTypeSupports.domains && (
 				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/domains` }>
 					{ __( 'Domains' ) }
 				</ResponsiveMenu.Item>
 			) }
-			{ siteTypeSupports.settings &&
+			{ isAvailable( siteSettingsRoute ) &&
+				siteTypeSupports.settings &&
 				site.capabilities?.manage_options &&
 				! isSelfHostedJetpackConnected( site ) && (
 					<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/settings` }>

@@ -10,7 +10,7 @@ import {
 	getLastMessage,
 	getZendeskConversations,
 } from '../components/utils';
-import { useHelpCenterContext } from '../contexts/HelpCenterContext';
+import { useFeatureConfig, useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { HELP_CENTER_STORE } from '../stores';
 import { useGetSupportInteractions } from './use-get-support-interactions';
 import type {
@@ -131,7 +131,8 @@ const splitConversationsByRecency = (
 export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 	const [ recentConversations, setRecentConversations ] = useState< Conversations >( [] );
 	const [ archivedConversations, setArchivedConversations ] = useState< Conversations >( [] );
-	const { isCommerceGarden, newInteractionsBotSlug } = useHelpCenterContext();
+	const { newInteractionsBotSlug } = useHelpCenterContext();
+	const featureConfig = useFeatureConfig();
 
 	const { isChatLoaded, loggedOutSession } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
@@ -148,33 +149,35 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 		loggedOutSession ? loggedOutSession.botSlug : undefined
 	);
 
-	const { data: otherSupportInteractions, isLoading: isLoadingOtherSupportInteractions } =
-		useGetSupportInteractions( 'zendesk' );
-	const { data: odieSupportInteractions, isLoading: isLoadingOdieSupportInteractions } =
-		useGetSupportInteractions( 'odie' );
+	const chatEnabled = featureConfig.chat.enabled;
 
-	// When in CIAB context, filter interactions to only those matching the CIAB bot slug.
-	// This ensures the chat history only shows CIAB conversations.
+	const { data: otherSupportInteractions, isLoading: isLoadingOtherSupportInteractions } =
+		useGetSupportInteractions( 'zendesk', chatEnabled );
+	const { data: odieSupportInteractions, isLoading: isLoadingOdieSupportInteractions } =
+		useGetSupportInteractions( 'odie', chatEnabled );
+
+	// When filtering by bot slug is enabled (e.g. CIAB context), only show
+	// conversations matching the current bot slug.
 	const filteredOdieSupportInteractions = useMemo( () => {
-		if ( ! isCommerceGarden ) {
+		if ( ! featureConfig.chat.filterByBotSlug ) {
 			return odieSupportInteractions;
 		}
 		return odieSupportInteractions?.filter(
 			( interaction ) => interaction.bot_slug === newInteractionsBotSlug
 		);
-	}, [ isCommerceGarden, newInteractionsBotSlug, odieSupportInteractions ] );
+	}, [ featureConfig.chat.filterByBotSlug, newInteractionsBotSlug, odieSupportInteractions ] );
 
 	const filteredOtherSupportInteractions = useMemo( () => {
-		if ( ! isCommerceGarden ) {
+		if ( ! featureConfig.chat.filterByBotSlug ) {
 			return otherSupportInteractions;
 		}
 		return otherSupportInteractions?.filter(
 			( interaction ) => interaction.bot_slug === newInteractionsBotSlug
 		);
-	}, [ isCommerceGarden, newInteractionsBotSlug, otherSupportInteractions ] );
+	}, [ featureConfig.chat.filterByBotSlug, newInteractionsBotSlug, otherSupportInteractions ] );
 
 	const { data: odieConversations, isLoading: isLoadingOdieConversations } =
-		useGetOdieConversations( filteredOdieSupportInteractions );
+		useGetOdieConversations( filteredOdieSupportInteractions, chatEnabled );
 
 	const isLoadingInteractions =
 		isLoadingOtherSupportInteractions ||
@@ -190,7 +193,7 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 	);
 
 	useEffect( () => {
-		if ( isLoadingInteractions ) {
+		if ( ! chatEnabled || isLoadingInteractions ) {
 			return;
 		}
 
@@ -220,6 +223,7 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 		setRecentConversations( recent );
 		setArchivedConversations( archived );
 	}, [
+		chatEnabled,
 		isChatLoaded,
 		isLoadingInteractions,
 		loggedOutSession,

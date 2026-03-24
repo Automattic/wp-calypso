@@ -3,6 +3,7 @@ import {
 	sitesQuery,
 	paginatedSitesQuery,
 	dashboardSiteFiltersQuery,
+	domainsQuery,
 } from '@automattic/api-queries';
 /* eslint-enable no-restricted-imports */
 import boot from '../app/boot';
@@ -45,6 +46,7 @@ boot( {
 	components: {
 		sites: () => import( '../sites' ),
 		siteSwitcher: () => import( '../sites/site-switcher' ),
+		siteSwitcherV2: () => import( '../sites/site-switcher-v2' ),
 	},
 	queries: {
 		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => sitesQuery( 'all', fetchSiteOptions ),
@@ -52,5 +54,6 @@ boot( {
 			paginatedSitesQuery( 'all', fetchSiteOptions ),
 		dashboardSiteFiltersQuery: ( fields: FetchDashboardSiteFiltersParams[ 'fields' ] ) =>
 			dashboardSiteFiltersQuery( 'all', fields ),
+		domainsQuery: () => domainsQuery(),
 	},
 } );

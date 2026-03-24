@@ -12,6 +12,9 @@ COPY ./package-lock.json /
 COPY ./index.js /
 COPY ./cli.js /
 COPY ./presets/ /presets/
+COPY ./process-files.js /
+COPY ./worker.js /
+COPY ./utils/ /utils/
 RUN npm install
 
 # /src is user code lives, /build is pot file output

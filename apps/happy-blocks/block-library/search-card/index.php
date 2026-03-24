@@ -15,7 +15,7 @@ $is_front_page                 = isset( $args['is_front_page'] ) && ( true === $
 $is_404_page                   = isset( $args['is_404_page'] ) && ( true === $args['is_404_page'] );
 $active_page                   = isset( $args['active_page'] ) ? $args['active_page'] : '';
 $should_show_search_card       = ( $is_front_page || $is_404_page ) && 'forums' !== $active_page;
-$enable_odie_answers = ! is_user_logged_in() && ( 'treatment' === \ExPlat\assign_maybe_anon_user( 'wpcom_ai_on_logged_out_support_pages_v2' )
+$enable_odie_answers = ! is_user_logged_in() && ( 'treatment' === \ExPlat\assign_maybe_anon_user( 'wpcom_ai_on_logged_out_support_pages_v3' )
 	|| ( isset( $_GET['dotcom_support_enable_odie_answers'] ) && $_GET['dotcom_support_enable_odie_answers'] === 'true' ) );
 $should_show_search_navigation = ( $is_front_page && $enable_odie_answers ) || ( ! $is_front_page && ! $is_404_page );
 
@@ -47,7 +47,7 @@ if ( ! function_exists( 'get_support_search_link_for_query' ) ) {
 				<li class="<?php echo ( 'forums' === $active_page ) ? 'active' : ''; ?>"><a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/forums/' ) ); ?>"><?php echo esc_html( __( 'Forums', 'happy-blocks' ) ); ?></a></li>
 				<li class="<?php echo ( 'contact' === $active_page ) ? 'active' : ''; ?>"><a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/support/contact/' ) ); ?>"><?php echo esc_html( __( 'Contact', 'happy-blocks' ) ); ?></a></li>
 			</ul>
-			
+
 			<!-- Search button -->
 			<?php if ( $should_show_search_navigation ) : ?>
 			<div class="happy-blocks_navigation_search">
@@ -60,7 +60,7 @@ if ( ! function_exists( 'get_support_search_link_for_query' ) ) {
 			</div>
 			<?php endif; ?>
 		</div>
-		
+
 		<div class="mobile-nav-container">
 			<!-- Mobile dropdown navigation -->
 			<div class="mobile-nav-dropdown">

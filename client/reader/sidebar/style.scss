@@ -13,13 +13,6 @@
 	}
 }
 :root:has(.is-reader-msd-enabled) {
-	.sidebar-menu-container {
-		display: flex;
-		flex-direction: column;
-		gap: 24px;
-		padding: 0 16px;
-	}
-
 	.sidebar-header {
 		display: flex;
 		justify-content: space-between;
@@ -41,13 +34,6 @@
 
 //TODO: Remove this once the new reader MSD is enabled for all users (reader/enable-msd)
 :root:not(:has(.is-reader-msd-enabled)) {
-	.sidebar-menu-container {
-		display: flex;
-		flex-direction: column;
-		gap: 20px;
-		padding: 0 16px;
-	}
-
 	.sidebar-header {
 		display: flex;
 
@@ -73,6 +59,10 @@
 }
 
 body.is-section-reader {
+	.is-global-sidebar-visible {
+		--content-padding-top: 32px;
+	}
+
 	&.rtl .layout__content {
 		padding: calc( var( --masterbar-height ) + var( --content-padding-top ) )
 			calc( var( --sidebar-width-max ) ) var( --content-padding-bottom ) 16px;
@@ -84,10 +74,12 @@ body.is-section-reader {
 		min-height: 100vh;
 		padding-top: calc( var( --masterbar-height ) + var( --content-padding-top ) );
 		padding-bottom: var( --content-padding-bottom );
+
 		@media only screen and ( min-width: 782px ) {
 			padding: calc( var( --masterbar-height ) + var( --content-padding-top ) ) 16px
 				var( --content-padding-bottom ) calc( var( --sidebar-width-max ) ) !important;
 		}
+
 		.layout_primary > div {
 			padding-bottom: 0;
 		}
@@ -99,6 +91,21 @@ body.is-section-reader {
 
 	.has-no-masterbar .layout__content .main {
 		padding-top: var( --content-padding-top );
+	}
+
+	.sidebar__body {
+		padding-top: var(--content-padding-top);
+	}
+
+	.sidebar-menu-container {
+		display: flex;
+		flex-direction: column;
+		gap: 24px;
+		padding: 0 16px;
+
+		.app-title {
+			padding: 0;
+		}
 	}
 
 	@media only screen and ( max-width: 600px ) {
@@ -172,10 +179,10 @@ body.is-section-reader {
 			}
 		}
 	}
+
 	.sidebar__menu-icon {
 		margin-right: 12px;
 	}
-
 
 	.sidebar__menu-link-reader {
 		line-height: 1.8;

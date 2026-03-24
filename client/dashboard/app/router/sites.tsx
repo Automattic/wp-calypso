@@ -16,7 +16,6 @@ import {
 	siteDefensiveModeSettingsQuery,
 	siteDifmWebsiteContentQuery,
 	siteDomainsQuery,
-	domainsQuery,
 	siteJetpackModulesQuery,
 	siteJetpackSettingsQuery,
 	siteMediaStorageQuery,
@@ -52,10 +51,8 @@ import {
 	canManageSite,
 	canTransferSite,
 	canViewHundredYearPlanSettings,
-	canViewSiteVisibilitySettings,
 	canViewWordPressSettings,
 } from '../../sites/features';
-import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import {
 	getActivityLogHiddenGroups,
 	hasHostingFeature,
@@ -67,7 +64,6 @@ import { hasSiteTrialEnded } from '../../utils/site-trial';
 import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { AUTH_QUERY_KEY } from '../auth';
-import { startPerformanceTracking } from '../performance-tracking';
 import { rootRoute } from './root';
 import type { AppConfig } from '../context';
 import type { DifmWebsiteContentResponse, Site, User } from '@automattic/api-core';
@@ -83,30 +79,11 @@ export const sitesRoute = createRoute( {
 	} ),
 	getParentRoute: () => rootRoute,
 	path: 'sites',
-	beforeLoad: ( { cause, context: { fullPageLoad } } ) => {
-		if ( cause === 'enter' ) {
-			startPerformanceTracking( 'dashboard-site-list', { fullPageLoad } );
-		}
-	},
-	loader: async ( { context } ) => {
-		const tasks: Promise< unknown >[] = [];
-
-		tasks.push( queryClient.ensureQueryData( isAutomatticianQuery() ) );
-		tasks.push( queryClient.ensureQueryData( rawUserPreferencesQuery() ) );
-
-		if ( ! isEnabled( 'dashboard/v2/paginated-site-list' ) ) {
-			tasks.push(
-				queryClient.ensureQueryData(
-					context.config.queries.sitesQuery( {
-						source: isDashboardBackport() ? 'dashboard-site-list-default' : undefined,
-						site_visibility: 'visible',
-						include_a8c_owned: false,
-					} )
-				)
-			);
-		}
-
-		await Promise.all( tasks );
+	loader: async () => {
+		await Promise.all( [
+			queryClient.ensureQueryData( isAutomatticianQuery() ),
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+		] );
 	},
 } );
 
@@ -140,6 +117,13 @@ export const siteRoute = createRoute( {
 		const overviewUrl = `/sites/${ siteSlug }`;
 		if ( isSelfHostedJetpackConnected( site ) && ! location.pathname.endsWith( overviewUrl ) ) {
 			throw redirectAsNotAllowed( { to: overviewUrl } );
+		}
+
+		if (
+			site.__inaccessible_jetpack_error &&
+			! matches.some( ( match ) => match.staticData?.availableToInaccessibleJetpackSites )
+		) {
+			throw redirect( { to: overviewUrl } );
 		}
 
 		const trialExpiredUrl = `/sites/${ siteSlug }/trial-ended`;
@@ -192,13 +176,9 @@ export const siteRoute = createRoute( {
 );
 
 export const siteOverviewRoute = createRoute( {
+	staticData: { availableToInaccessibleJetpackSites: true },
 	getParentRoute: () => siteRoute,
 	path: '/',
-	beforeLoad: ( { cause, context: { fullPageLoad } } ) => {
-		if ( cause === 'enter' ) {
-			startPerformanceTracking( 'dashboard-site-overview', { fullPageLoad } );
-		}
-	},
 	loader: async ( { params: { siteSlug }, preload } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		if ( preload ) {
@@ -544,6 +524,7 @@ export const siteBackupDownloadRoute = createRoute( {
 );
 
 export const siteDomainsRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'domains', availableToInaccessibleJetpackSites: true },
 	head: () => ( {
 		meta: [
 			{
@@ -615,7 +596,7 @@ export const siteSettingsIndexRoute = createRoute( {
 );
 
 export const siteSettingsSiteVisibilityRoute = createRoute( {
-	staticData: { requiresSiteTypeSupport: 'settingsGeneral' },
+	staticData: { requiresSiteTypeSupport: 'settingsGeneralDotcomSiteVisibility' },
 	head: () => ( {
 		meta: [
 			{
@@ -631,16 +612,16 @@ export const siteSettingsSiteVisibilityRoute = createRoute( {
 		}
 
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( ! canViewSiteVisibilitySettings( site ) ) {
+		if ( site.is_wpcom_flex ) {
 			throw redirectAsNotAllowed( { to: siteSettingsRoute.fullPath, params: { siteSlug } } );
 		}
 	},
-	loader: async ( { params: { siteSlug } } ) => {
+	loader: async ( { context, params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 
 		await Promise.all( [
 			queryClient.ensureQueryData( siteSettingsQuery( site.ID ) ),
-			queryClient.ensureQueryData( domainsQuery() ),
+			queryClient.ensureQueryData( context.config.queries.domainsQuery() ),
 			site.is_coming_soon &&
 				hasPlanFeature( site, DotcomFeatures.SITE_PREVIEW_LINKS ) &&
 				queryClient.ensureQueryData( sitePreviewLinksQuery( site.ID ) ),
@@ -1192,27 +1173,6 @@ export const siteSettingsWpcomLoginRoute = createRoute( {
 	)
 );
 
-export const siteSettingsExperimentalRoute = createRoute( {
-	staticData: { requiresSiteTypeSupport: 'settingsExperimental' },
-	head: () => ( {
-		meta: [
-			{
-				title: __( 'AI Site Assistant' ),
-			},
-		],
-	} ),
-	getParentRoute: () => siteSettingsRoute,
-	path: 'ai-assistant',
-	loader: async ( { params: { siteSlug } } ) => {
-		await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-	},
-} ).lazy( () =>
-	import( '../../sites/settings-ai-assistant' ).then( ( d ) =>
-		createLazyRoute( 'site-settings-ai-assistant' )( {
-			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
-		} )
-	)
-);
 export const siteSettingsRepositoriesRoute = createRoute( {
 	staticData: { requiresSiteTypeSupport: 'settingsServer' },
 	head: () => ( {
@@ -1523,11 +1483,6 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteSettingsWpcomLoginRoute,
 		siteSettingsDefensiveModeRoute,
 	];
-
-	// Experimental
-	if ( isEnabled( 'wordpress-ai-assistant' ) ) {
-		settingsRoutes.push( siteSettingsExperimentalRoute );
-	}
 
 	siteRoutes.push( siteSettingsRoute.addChildren( settingsRoutes ) );
 

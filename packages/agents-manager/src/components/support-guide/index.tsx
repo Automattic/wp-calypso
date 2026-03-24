@@ -4,6 +4,7 @@ import { HelpCenterArticle } from '@automattic/support-articles';
 import { Button } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import clsx from 'clsx';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
@@ -39,20 +40,20 @@ export default function SupportGuide( {
 	isEligibleForChat,
 }: Props ) {
 	const navigate = useNavigate();
-	const location = useLocation().search;
-	const query = new URLSearchParams( location );
-	const isFromChat = query.has( 'from-chat' );
+	const { state } = useLocation();
 	const { setFloatingPosition } = useDispatch( AGENTS_MANAGER_STORE );
 	const { floatingPosition } = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
 	}, [] );
 
+	const isFromChat = !! ( state?.sessionId || state?.conversationId );
+
 	return (
 		<AgentUI.Container
 			initialChatPosition={ floatingPosition }
 			onChatPositionChange={ ( position ) => setFloatingPosition( position ) }
-			className="agenttic"
+			className={ clsx( 'agenttic', { dark: isDocked } ) }
 			messages={ [] }
 			isProcessing={ false }
 			error={ null }
@@ -61,16 +62,23 @@ export default function SupportGuide( {
 			floatingChatState={ isOpen ? 'expanded' : 'collapsed' }
 			onClose={ onClose }
 			onStop={ onAbort }
+			expandOnHover={ false }
 		>
 			<AgentUI.ConversationView>
 				<ChatHeader
-					isChatDocked={ isDocked }
 					onClose={ onClose }
-					onBack={ () => navigate( -1 ) }
+					onBack={ () => {
+						// Navigate back to the source route, preserving `state` (`sessionId`/`conversationId`).
+						if ( state?.sessionId ) {
+							navigate( '/chat', { state } );
+						} else {
+							navigate( '/zendesk', { state } );
+						}
+					} }
 					options={ chatHeaderOptions }
 					title={ __( 'Support Guides', '__i18n_text_domain__' ) }
 				/>
-				<div className="agenttic agent-manager-support-guide-wrapper">
+				<div className="agent-manager-support-guide-wrapper">
 					<div className="agent-manager-support-guide-content help-center__container-content">
 						<HelpCenterArticle
 							sectionName={ sectionName }
@@ -81,7 +89,7 @@ export default function SupportGuide( {
 					</div>
 					{ ! isFromChat && (
 						<div className="agent-manager-support-guide-footer">
-							<Button variant="primary" onClick={ () => navigate( '/chat' ) }>
+							<Button variant="primary" onClick={ () => navigate( '/' ) }>
 								{ __( 'Start a new chat', '__i18n_text_domain__' ) }
 							</Button>
 						</div>

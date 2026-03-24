@@ -1,5 +1,4 @@
 import { createSelector } from '@automattic/state-utils';
-import { flatMap } from 'lodash';
 import { isSiteOnWooExpress, isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
 import {
 	getActiveTheme,
@@ -15,7 +14,7 @@ import 'calypso/state/themes/init';
  * Returns an array of normalized themes for the themes query, including all
  * known queried pages, or null if the themes for the query are not known.
  * @param  {Object}  state  Global state tree
- * @param  {number}  siteId Site ID
+ * @param  {number|string}  siteId Site ID or theme source (e.g. 'wpcom', 'wporg')
  * @param  {Object}  query  Theme query object
  * @returns {?Array}         Themes for the theme query
  */
@@ -26,7 +25,7 @@ export const getThemesForQueryIgnoringPage = createSelector(
 			return null;
 		}
 
-		let themesForQueryIgnoringPage = themes.getItemsIgnoringPage( query );
+		const themesForQueryIgnoringPage = themes.getItemsIgnoringPage( query );
 		if ( ! themesForQueryIgnoringPage ) {
 			return null;
 		}
@@ -44,15 +43,6 @@ export const getThemesForQueryIgnoringPage = createSelector(
 			query.filter !== 'store' ||
 			( query.tier && premiumThemesEnabled )
 		);
-		// If query is default, filter out recommended themes.
-		if ( isDefaultQuery ) {
-			const recommendedThemes = state.themes.recommendedThemes.themes;
-			const themeIds = flatMap( recommendedThemes, ( theme ) => theme.id );
-
-			themesForQueryIgnoringPage = themesForQueryIgnoringPage.filter(
-				( theme ) => ! themeIds.includes( theme.id )
-			);
-		}
 
 		// Set active theme to be the first theme in the array.
 		if ( selectedSiteId ) {

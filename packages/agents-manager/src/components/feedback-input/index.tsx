@@ -1,28 +1,28 @@
 /**
  * Feedback Input Component
  * Allows users to submit text feedback after clicking thumbs down.
- * Adapted from big-sky-plugin's FeedbackInput component.
  */
 import { Button, Spinner, TextareaControl } from '@wordpress/components';
 import { useEffect, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import './style.scss';
 
-interface FeedbackInputProps {
+interface Props {
 	onSubmit: ( feedbackText: string ) => Promise< void >;
 	onCancel: () => void;
 }
 
-export default function FeedbackInput( { onSubmit, onCancel }: FeedbackInputProps ) {
+export default function FeedbackInput( { onSubmit, onCancel }: Props ) {
 	const [ feedbackText, setFeedbackText ] = useState( '' );
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const [ submitSuccess, setSubmitSuccess ] = useState( false );
 	const [ submitError, setSubmitError ] = useState< string | null >( null );
 	const timeoutRef = useRef< ReturnType< typeof setTimeout > | null >( null );
-	const containerRef = useRef< HTMLDivElement | null >( null );
+	const textareaContainerRef = useRef< HTMLDivElement | null >( null );
 
 	useEffect( () => {
-		containerRef.current?.querySelector( 'textarea' )?.focus();
+		textareaContainerRef.current?.querySelector( 'textarea' )?.focus();
+
 		return () => {
 			if ( timeoutRef.current ) {
 				clearTimeout( timeoutRef.current );
@@ -72,8 +72,8 @@ export default function FeedbackInput( { onSubmit, onCancel }: FeedbackInputProp
 
 	if ( submitSuccess ) {
 		return (
-			<div className="agents-manager-feedback-input-container">
-				<div className="agents-manager-feedback-input">
+			<div className="agents-manager-feedback-input">
+				<div className="agents-manager-feedback-input__inner">
 					<div className="agents-manager-feedback-input__success">
 						{ __( 'Feedback submitted, thank you!', '__i18n_text_domain__' ) }
 					</div>
@@ -84,8 +84,8 @@ export default function FeedbackInput( { onSubmit, onCancel }: FeedbackInputProp
 
 	if ( submitError ) {
 		return (
-			<div className="agents-manager-feedback-input-container">
-				<div className="agents-manager-feedback-input">
+			<div className="agents-manager-feedback-input">
+				<div className="agents-manager-feedback-input__inner">
 					<div className="agents-manager-feedback-input__error">{ submitError }</div>
 				</div>
 			</div>
@@ -93,8 +93,8 @@ export default function FeedbackInput( { onSubmit, onCancel }: FeedbackInputProp
 	}
 
 	return (
-		<div className="agents-manager-feedback-input-container">
-			<div className="agents-manager-feedback-input" ref={ containerRef }>
+		<div className="agents-manager-feedback-input">
+			<div className="agents-manager-feedback-input__inner" ref={ textareaContainerRef }>
 				<TextareaControl
 					label={ __( 'What could be improved?', '__i18n_text_domain__' ) }
 					value={ feedbackText }
@@ -116,14 +116,7 @@ export default function FeedbackInput( { onSubmit, onCancel }: FeedbackInputProp
 						onClick={ handleSubmit }
 						disabled={ ! feedbackText.trim() || isSubmitting }
 					>
-						{ isSubmitting && (
-							<Spinner
-								style={ {
-									height: '16px',
-									width: '16px',
-								} }
-							/>
-						) }
+						{ isSubmitting && <Spinner className="agents-manager-feedback-input__spinner" /> }
 						{ isSubmitting
 							? __( 'Submitting\u2026', '__i18n_text_domain__' )
 							: __( 'Submit', '__i18n_text_domain__' ) }

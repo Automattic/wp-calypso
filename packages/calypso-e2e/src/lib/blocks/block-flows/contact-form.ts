@@ -36,7 +36,7 @@ export class ContactFormFlow implements BlockFlow {
 		// Name and Email are common fields shared amongst all Form patterns.
 		// So let's make them unique here!
 		await labelFormFieldBlock( context.addedBlockLocator, {
-			blockName: 'Name field',
+			blockName: 'Name',
 			accessibleLabelName: 'Add label…',
 			labelText: this.addLabelPrefix( 'Name field' ),
 		} );

@@ -1,4 +1,5 @@
 import { siteMigrationZendeskTicketQuery, cancelSiteMigrationQuery } from '@automattic/api-queries';
+import { invokeSurvicateEvent } from '@automattic/survicate';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import {
@@ -12,7 +13,7 @@ import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { globe, group, scheduled } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
-import { Fragment, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody, CardDivider } from '../../components/card';
@@ -116,6 +117,9 @@ function CancellationModal( { site, onClose }: { site: Site; onClose: () => void
 
 export function StartedDIFMContentInfo( { site }: { site: Site } ) {
 	const { recordTracksEvent } = useAnalytics();
+
+	useEffect( () => invokeSurvicateEvent( 'migrationStarted' ), [] );
+
 	const [ isCancellationModalOpen, setIsCancellationModalOpen ] = useState( false );
 	const { data: ticketId } = useQuery( {
 		...siteMigrationZendeskTicketQuery( site.ID ),

@@ -68,7 +68,7 @@ The HOC has the following arguments. In order to set the cart key, you must prov
 
 A helper function that creates a `RequestCartProduct`, which can then be passed to shopping cart functions like `addProductsToCart()`.
 
-It takes one argument, an object which contains some or all of the properties in a `RequestCartProduct`, but must contain at least `product_slug` and `product_id`. The remaining properties, if not set, will be filled with the default values.
+It takes one argument, an object which contains some or all of the properties in a `RequestCartProduct`, but must contain at least `product_slug` unless this is a renewal, in which case you may instead specify just `extra.purchaseId` (the subscription ID) and set `extra.purchaseType` to `'renewal'`. The remaining properties, if not set, will be filled with the default values or filled in on the server.
 
 ## getEmptyResponseCart
 

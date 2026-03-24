@@ -33,7 +33,7 @@ export const withImageStudioGenerateButton = createHigherOrderComponent(
 			const { openImageStudio } = dispatch( imageStudioStore );
 
 			const handleClose = useCallback(
-				( image: ImageData ) => {
+				( image: ImageData | null ) => {
 					handleImageSelection( {
 						image,
 						onSelect,
@@ -44,7 +44,7 @@ export const withImageStudioGenerateButton = createHigherOrderComponent(
 			);
 
 			const handleOpen = () => {
-				openImageStudio( undefined, handleClose, ImageStudioEntryPoint.EditorBlock );
+				openImageStudio( undefined, handleClose, ImageStudioEntryPoint.EditorBlock, name );
 
 				trackImageStudioOpened( {
 					mode: ImageStudioMode.Edit,
@@ -71,7 +71,7 @@ export const withImageStudioGenerateButton = createHigherOrderComponent(
 									__next40pxDefaultSize
 									onClick={ handleOpen }
 								>
-									{ __( 'Generate Image', 'big-sky' ) }
+									{ __( 'Generate Image', __i18n_text_domain__ ) }
 								</Button>
 							</>
 						);

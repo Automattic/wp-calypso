@@ -2,11 +2,9 @@ import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import Notice from '../../../components/notice';
-import {
-	hasAmountAvailableToRefund,
-	shouldShowRefundEligibilityNotice,
-} from '../../../utils/purchase';
+import { hasAmountAvailableToRefund } from '../../../utils/purchase';
 import RefundAmountString from './refund-amount-string';
+import { useShowRefundEligibilityNotice } from './use-show-refund-eligibility-notice';
 import type { Purchase } from '@automattic/api-core';
 
 interface RefundEligibilityNoticeProps {
@@ -18,10 +16,9 @@ export default function RefundEligibilityNotice( {
 	purchase,
 	onClaimRefund,
 }: RefundEligibilityNoticeProps ) {
-	if (
-		! shouldShowRefundEligibilityNotice( purchase ) ||
-		! hasAmountAvailableToRefund( purchase )
-	) {
+	const showRefundEligibilityNotice = useShowRefundEligibilityNotice( purchase );
+
+	if ( ! showRefundEligibilityNotice || ! hasAmountAvailableToRefund( purchase ) ) {
 		return null;
 	}
 
@@ -36,7 +33,7 @@ export default function RefundEligibilityNotice( {
 					refundAmount: <RefundAmountString purchase={ purchase } cancelBundledDomain={ false } />,
 				}
 			) }{ ' ' }
-			<Button variant="link" isDestructive onClick={ onClaimRefund }>
+			<Button variant="link" onClick={ onClaimRefund }>
 				{ __( 'Remove plan and claim refund' ) }
 			</Button>
 		</Notice>

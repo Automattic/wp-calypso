@@ -1,4 +1,5 @@
 import { __ } from '@wordpress/i18n';
+import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -25,6 +26,7 @@ export default function Profile() {
 			<PersonalDetailsSection />
 			<GravatarProfileSection />
 			<AccountDeletionSection />
+			<PerformanceTrackerStop />
 		</PageLayout>
 	);
 }

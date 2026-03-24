@@ -631,3 +631,47 @@
 .section-nav-tab__text .theme-showcase__badge-beta {
 	margin-left: 6px;
 }
+
+// Modern theme card overrides (logged-out redesign)
+.theme-showcase.is-modern {
+	.themes__showcase {
+		padding: 0;
+	}
+
+	.themes-list {
+		gap: 48px;
+		margin: 0 auto 96px auto;
+
+		@include break-small {
+			grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+			max-width: 1220px;
+		}
+
+		.plan-upgrade-banner {
+			grid-row-start: 3;
+		}
+	}
+
+	.theme-card {
+		margin: 0;
+	}
+
+	.theme-card__image-container {
+		border: none;
+		border-radius: 8px;
+		box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.25);
+	}
+
+	.theme-card__info {
+		height: auto;
+	}
+
+	.theme-card__info-title {
+		font-size: 18px;
+	}
+
+	// Hide style variation swatches for logged-out modern view
+	.theme-card__info-style-variations {
+		display: none;
+	}
+}

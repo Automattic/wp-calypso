@@ -59,4 +59,10 @@
 			flex-direction: column;
 		}
 	}
+
+	.subscriber-details__footer {
+		display: flex;
+		gap: 8px;
+		margin-top: 32px;
+	}
 }

@@ -7,6 +7,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useState, useMemo } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { sitePerformanceRoute, siteRoute } from '../../app/router/sites';
 import InlineSupportLink from '../../components/inline-support-link';
 import { Notice } from '../../components/notice';
@@ -199,6 +200,7 @@ function SitePerformance() {
 			) : (
 				<SitePerformanceContent site={ site } />
 			) }
+			<PerformanceTrackerStop />
 		</HostingFeatureGatedWithCallout>
 	);
 }

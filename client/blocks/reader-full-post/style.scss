@@ -1,5 +1,6 @@
 // Styles targeted at story content
 @import './content';
+@import "@wordpress/base-styles/breakpoints";
 
 // Since we cannot use css variables in media queries, we need to define the valuess in scss.
 $reader-full-post-sidebar-width: 220px;
@@ -148,13 +149,9 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	color: var( --color-text-subtle );
 }
 
-.reader-full-post__header-meta-date-link {
+.reader-full-post__header-meta-date-text {
 	color: inherit;
 	text-decoration: none;
-
-	&:hover {
-		color: var( --color-link );
-	}
 }
 
 
@@ -171,6 +168,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	.comment-button,
 	.like-button,
 	.post-edit-button,
+	.reader-full-post__view-original-button,
 	.reader-full-post__seen-button,
 	.follow-button {
 		margin: 0;
@@ -283,6 +281,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	.comment-button__label,
 	.like-button__label,
 	.post-edit-button__label,
+	.reader-full-post__view-original-button-label,
 	.follow-button__label,
 	.reader-full-post__seen-button,
 	.freshly-pressed__button {
@@ -297,6 +296,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	.comment-button:hover .comment-button__label,
 	.like-button:hover .like-button__label,
 	.post-edit-button:hover .post-edit-button__label,
+	.reader-full-post__view-original-button:hover .reader-full-post__view-original-button-label,
 	.reader-full-post__seen-button:hover,
 	.freshly-pressed__button:hover {
 		color: var( --color-link );
@@ -369,11 +369,26 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	gap: 12px;
 }
 
-.reader-full-post__story {
-	max-width: var( --reader-full-post-story-max-width );
-	padding: 32px var( --reader-full-post-story-padding );
-	margin: 0 auto;
+.reader-full-post__action-bar .reader-full-post__view-original-button {
+	min-height: auto;
+	text-decoration: none;
 
+	.reader-full-post__view-original-button-icon {
+		fill: var( --color-text-subtle );
+	}
+
+	&:hover .reader-full-post__view-original-button-icon {
+		fill: var( --color-link );
+	}
+}
+
+@media ( max-width: $break-large ) {
+	.reader-full-post__view-original-button-label {
+		display: none;
+	}
+}
+
+.reader-full-post__story {
 	@include breakpoint-deprecated( '<480px' ) {
 		font-size: $font-body;
 		line-height: 24px;
@@ -657,6 +672,23 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 
 	.reader-full-post__header-title-link {
 		display: block;
+		text-decoration: none;
+
+		&::after {
+			content: "↗";
+			display: inline-block;
+			color: var( --color-neutral-10 );
+			font-size: 0.65em;
+			margin-inline-start: 8px;
+			opacity: 0;
+			position: relative;
+			top: -3px;
+			transition: opacity 0.2s ease;
+		}
+	}
+
+	.reader-full-post__header-title-link:hover::after {
+		opacity: 1;
 	}
 
 	.reader-full-post__header-title-link,

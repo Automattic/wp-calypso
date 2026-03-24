@@ -5,20 +5,32 @@ import {
 	A4A_MIGRATED_SITE_TAG,
 	A4A_MIGRATED_SITE_TAG_PRESSABLE_INCENTIVE_2026,
 	PRESSABLE_LAST_PURCHASE_CUTOFF_DATE,
+	PRESSABLE_PROMO_START_DATE,
 } from '../lib/constants';
 
 /**
- * Returns true if the user is eligible to see migration tagging based on Pressable usage start_date.
- * If start_date is not found, always allow (show). Otherwise allow only if start_date is on or before the cut-off.
- * E.g. start_date '2025-12-17' (Dec) > cutoff '2025-08-11' (Aug) → false (do not show).
- *      start_date '2025-08-10' (Aug 10) <= cutoff → true (show).
+ * Returns true if the agency is eligible to see migration tagging based on Pressable usage start_date.
+ * Show tagging if:
+ * - No start_date (never bought) → show.
+ * - start_date on or before PRESSABLE_LAST_PURCHASE_CUTOFF_DATE (bought before the gap) → show.
+ * - start_date on or after PRESSABLE_PROMO_START_DATE (bought when promo started, new customer) → show.
+ * Hide tagging if start_date is in the gap (after cutoff and before promo start).
  */
 function isWithinPressablePurchaseCutoff( startDate: string | undefined | null ): boolean {
 	if ( startDate == null || startDate === '' ) {
 		return true;
 	}
 	const datePart = startDate.slice( 0, 10 );
-	return datePart <= PRESSABLE_LAST_PURCHASE_CUTOFF_DATE;
+	// Bought on or before Aug 10, 2025 → eligible.
+	if ( datePart <= PRESSABLE_LAST_PURCHASE_CUTOFF_DATE ) {
+		return true;
+	}
+	// Bought on or after promo start (Feb 11, 2026) → eligible (new customer during promo).
+	if ( datePart >= PRESSABLE_PROMO_START_DATE ) {
+		return true;
+	}
+	// Bought in the gap (Aug 11, 2025 – Feb 10, 2026) → not eligible.
+	return false;
 }
 
 export default function useCanTagSitesForCommission(): {

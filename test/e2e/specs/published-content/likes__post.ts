@@ -35,6 +35,7 @@ describe( 'Likes: Post', function () {
 	const otherUser = new TestAccount( 'defaultUser' );
 	let page: Page;
 	let restAPIClient: RestAPIClient;
+	let otherUserRestAPIClient: RestAPIClient;
 
 	let newPost: PostResponse;
 
@@ -45,12 +46,19 @@ describe( 'Likes: Post', function () {
 
 	it( 'Setup the test', async function () {
 		restAPIClient = new RestAPIClient( postingUser.credentials );
-		newPost = await restAPIClient.createPost(
-			postingUser.credentials.testSites?.primary.id as number,
-			{
-				title: DataHelper.getRandomPhrase(),
-			}
-		);
+		otherUserRestAPIClient = new RestAPIClient( otherUser.credentials );
+		const siteID = postingUser.credentials.testSites?.primary.id as number;
+
+		newPost = await restAPIClient.createPost( siteID, {
+			title: DataHelper.getRandomPhrase(),
+		} );
+
+		// Ensure neither user has a stale "liked" state on the post
+		// from a previous test run.
+		await Promise.allSettled( [
+			restAPIClient.postLikeAction( 'unlike', siteID, newPost.ID ),
+			otherUserRestAPIClient.postLikeAction( 'unlike', siteID, newPost.ID ),
+		] );
 	} );
 
 	describe( 'While authenticated', function () {

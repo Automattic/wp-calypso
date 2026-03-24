@@ -1,25 +1,38 @@
 import { apiFetch } from '@wordpress/data-controls';
-import { Location } from 'history';
-import { canAccessWpcomApis } from 'wpcom-proxy-request';
+import { canAccessWpcomApis } from '../wpcom-request';
 import { wpcomRequest } from '../wpcom-request-controls';
 import {
 	setRouterHistory,
+	setLastActivity,
 	setIsDocked,
 	setIsOpen,
 	setIsLoading,
 	setHasLoaded,
 	setFloatingPosition,
 } from './actions';
+import type { PerSiteLastActivity, PerSiteRouterHistory } from './types';
 import type { APIFetchOptions } from '../shared-types';
+
+const VALID_SITE_KEY = /^\d+$|^no-site$/;
+
+/**
+ * Validate that the router history is in the expected per-site format,
+ * keyed by numeric site ID or 'no-site'.
+ */
+function isValidRouterHistory( value: unknown ): value is PerSiteRouterHistory {
+	return (
+		value !== null &&
+		typeof value === 'object' &&
+		Object.keys( value ).every( ( key ) => VALID_SITE_KEY.test( key ) )
+	);
+}
 
 type AgentsManagerStateResponse = {
 	agents_manager_open?: boolean;
 	agents_manager_docked?: boolean;
 	agents_manager_floating_position?: 'left' | 'right';
-	agents_manager_router_history?: {
-		entries: Location[];
-		index: number;
-	};
+	agents_manager_router_history?: PerSiteRouterHistory;
+	agents_manager_last_activity?: PerSiteLastActivity;
 };
 
 export function* getAgentsManagerState() {
@@ -35,7 +48,12 @@ export function* getAgentsManagerState() {
 					path: '/agents-manager/open-state',
 			  } as APIFetchOptions );
 
-		if ( state.agents_manager_router_history ) {
+		const activityMap = state.agents_manager_last_activity;
+		if ( activityMap ) {
+			yield setLastActivity( activityMap );
+		}
+
+		if ( isValidRouterHistory( state.agents_manager_router_history ) ) {
 			yield setRouterHistory( state.agents_manager_router_history );
 		}
 

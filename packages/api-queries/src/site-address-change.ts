@@ -5,7 +5,6 @@ import {
 	type ChangeSiteAddressData,
 } from '@automattic/api-core';
 import { mutationOptions } from '@tanstack/react-query';
-import { domainsQuery } from './domains';
 import { queryClient } from './query-client';
 import { siteQueryFilter } from './site';
 
@@ -19,6 +18,6 @@ export const changeSiteAddressChangeMutation = () =>
 		mutationFn: ( data: ChangeSiteAddressData ) => changeSiteAddress( data ),
 		onSuccess: ( data, { siteId } ) => {
 			queryClient.invalidateQueries( siteQueryFilter( siteId ) );
-			queryClient.invalidateQueries( domainsQuery() );
+			queryClient.invalidateQueries( { queryKey: [ 'domains' ] } );
 		},
 	} );

@@ -1,4 +1,4 @@
-@import "@wordpress/base-styles/variables";
+@import '@wordpress/base-styles/variables';
 
 // Remove layout padding for the unified invite accept screen
 body.is-section-accept-invite-unified {
@@ -18,7 +18,7 @@ body.is-section-accept-invite-unified.is-ciab-font-system {
 	margin-bottom: 1.5rem;
 }
 
-.already-member-screen-switch-account {
+.invite-screen-switch-account {
 	margin-top: 1.5rem;
 	text-align: center;
 }

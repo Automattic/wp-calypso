@@ -3,6 +3,7 @@ import {
 	sitesQuery,
 	paginatedSitesQuery,
 	dashboardSiteFiltersQuery,
+	domainsQuery,
 } from '@automattic/api-queries';
 /* eslint-enable no-restricted-imports */
 import { createContext, useContext } from 'react';
@@ -46,6 +47,7 @@ export type AppConfig = {
 		commandPalette: boolean;
 		domainOnlySites: boolean;
 	};
+	posthog?: string;
 	optIn: boolean;
 	components: Record< string, () => Promise< { default: React.FC } > >;
 	queries: {
@@ -56,6 +58,7 @@ export type AppConfig = {
 		dashboardSiteFiltersQuery: (
 			field: FetchDashboardSiteFiltersParams[ 'fields' ]
 		) => ReturnType< typeof dashboardSiteFiltersQuery >;
+		domainsQuery: () => ReturnType< typeof domainsQuery >;
 	};
 };
 
@@ -86,6 +89,7 @@ export const APP_CONTEXT_DEFAULT_CONFIG: AppConfig = {
 			paginatedSitesQuery( 'all', fetchSiteOptions ),
 		dashboardSiteFiltersQuery: ( fields: FetchDashboardSiteFiltersParams[ 'fields' ] ) =>
 			dashboardSiteFiltersQuery( 'all', fields ),
+		domainsQuery: () => domainsQuery(),
 	},
 };
 

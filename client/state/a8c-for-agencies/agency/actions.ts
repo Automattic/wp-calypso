@@ -23,6 +23,22 @@ export function setActiveAgency( agency: Agency ): AgencyThunkAction {
 	};
 }
 
+/**
+ * Update the active agency's referrals logo URL in local state (e.g. after sending a referral with a custom logo).
+ */
+export function updateAgencyReferralsLogo( logoUrl: string ): AgencyThunkAction {
+	return ( dispatch, getState ) => {
+		const agency = getActiveAgency( getState() );
+		if ( ! agency ) {
+			return;
+		}
+		dispatch( {
+			type: JETPACK_CURRENT_AGENCY_UPDATE,
+			activeAgency: { ...agency, referrals_logo: logoUrl },
+		} );
+	};
+}
+
 export function fetchAgencies(): AgencyThunkAction {
 	return ( dispatch, getState ) => {
 		if ( isFetchingAgency( getState() ) ) {

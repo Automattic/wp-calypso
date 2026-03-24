@@ -12,6 +12,19 @@ import PasswordlessSignupForm from '../passwordless';
 describe( 'createAccountError', () => {
 	const mockStore = configureStore( [ thunk ] );
 
+	it( 'renders connect-screen action buttons when enabled', () => {
+		const store = mockStore( {} );
+
+		render(
+			<Provider store={ store }>
+				<PasswordlessSignupForm useConnectScreenActions submitButtonLabel="Continue" />
+			</Provider>
+		);
+
+		expect( screen.getByRole( 'button', { name: 'Continue' } ) ).toBeInTheDocument();
+		expect( document.querySelector( '.connect-screen-action-buttons' ) ).toBeInTheDocument();
+	} );
+
 	const renderFormAndSubmit = async () => {
 		const onCreateAccountError = jest.fn();
 		const store = mockStore( {} );

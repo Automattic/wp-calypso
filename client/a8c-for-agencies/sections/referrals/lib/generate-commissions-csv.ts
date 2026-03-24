@@ -81,14 +81,23 @@ function findMatchingPurchase(
 	if ( ! referral?.purchases?.length ) {
 		return null;
 	}
-	const purchase = referral.purchases.find( ( p ) => p.product_id === productId );
-	if ( ! purchase || purchase.status === 'pending' || purchase.status === 'error' ) {
-		return null;
-	}
 	const product = products.find( ( p ) =>
-		[ p.product_id, p.monthly_product_id, p.yearly_product_id ].includes( productId )
+		[ p.product_id, p.monthly_product_id, p.yearly_product_id, p.alternative_product_id ].includes(
+			productId
+		)
 	);
 	if ( ! product ) {
+		return null;
+	}
+	const purchase = referral.purchases.find( ( p ) =>
+		[
+			product.product_id,
+			product.monthly_product_id,
+			product.yearly_product_id,
+			product.alternative_product_id,
+		].includes( p.product_id )
+	);
+	if ( ! purchase || purchase.status === 'pending' || purchase.status === 'error' ) {
 		return null;
 	}
 	return { referral, purchase, product };

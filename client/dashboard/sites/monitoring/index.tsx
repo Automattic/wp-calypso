@@ -10,6 +10,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { useLocale } from '../../app/locale';
+import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { siteRoute } from '../../app/router/sites';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -66,6 +67,9 @@ function SiteMonitoringBody( {
 
 	return (
 		<VStack alignment="stretch" spacing={ isSmallViewport ? 5 : 10 }>
+			{ /* Similar to the site overview page, we mark the page as loaded one the layout is looking correct */ }
+			<PerformanceTrackerStop />
+
 			<MonitoringPerformanceCard site={ site } timeRange={ hoursMap[ timeRange ] } />
 
 			<HStack wrap alignment="stretch" spacing={ isSmallViewport ? 4 : 8 }>

@@ -9,6 +9,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import EmptyContent from 'calypso/components/empty-content';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import JetpackTitle from 'calypso/components/jetpack-title';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -58,7 +59,7 @@ const SiteSettingsTraffic = ( {
 			{ siteId && <QueryJetpackModules siteId={ siteId } /> }
 			<NavigationHeader
 				navigationItems={ [] }
-				title={ translate( 'Traffic' ) }
+				title={ <JetpackTitle title={ translate( 'Traffic' ) } /> }
 				subtitle={ translate(
 					'Manage settings and tools related to the traffic your website receives. {{learnMoreLink/}}',
 					{

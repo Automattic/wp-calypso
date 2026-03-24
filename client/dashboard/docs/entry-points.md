@@ -18,19 +18,7 @@ This multi-entry point approach allows us to reuse the same codebase while tailo
 
 To create a new entry point for the dashboard, follow these steps:
 
-### 1. Create a Section Definition
-
-Add a new section definition in `client/dashboard/section.ts`:
-
-```typescript
-export const DASHBOARD_NEWPRODUCT_SECTION_DEFINITION = {
-  name: 'dashboard-newproduct',
-  paths: [ '/newproduct' ],
-  module: 'dashboard/app-newproduct',
-};
-```
-
-### 2. Create the Entry Point Module
+### 1. Create the Entry Point Module
 
 Create a new directory under `client/dashboard` called `app-newproduct` with the following files:
 
@@ -80,9 +68,25 @@ export default Logo;
 // These will be loaded when your entry point is active
 ```
 
-### 3. Register the Section in Calypso
+### 2. Create and Register the Routing
 
-To make your entry point available, you'll need to register the section in Calypso's main sections file. Typically this would be in `client/sections.js`.
+There is only a single dashboard instance for all entry points. The dashboard will route requests based on the request hostname and/or paths. See the following examples for CIAB, and follow similarly for the new entry point:
+
+- `client/dashboard/app-ciab/routing.ts`
+- `client/dashboard/app-ciab/section.ts`
+
+Then, we need to register the routing in `client/server/pages/index.js`. Look for the following code which registers `app-ciab`:
+
+```js
+DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
+	handleRoute( CIAB_DASHBOARD_SECTION_DEFINITION, route, 'entry-dashboard-ciab', ( req ) =>
+		isAllowedCiabDashboardHostname( req.hostname )
+	);
+} );
+handleRoute( CIAB_DASHBOARD_SECTION_DEFINITION, '/ciab', 'entry-dashboard-ciab', ( req ) => {
+	return isAllowedDotcomDashboardHostname( req.hostname );
+} );
+```
 
 ## Customizing Branding
 

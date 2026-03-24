@@ -18,7 +18,7 @@ import {
 	clearSignupCompleteSiteID,
 } from 'calypso/signup/storageUtils';
 import { useSelector, useDispatch as useReduxDispatch } from 'calypso/state';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { State } from '../../../../../../packages/data-stores/src/plans/reducer';
 import { isPlanProductFree } from '../../../../../../packages/data-stores/src/plans/selectors';
@@ -47,7 +47,7 @@ async function initialize() {
 
 	await loadExperimentAssignment( 'calypso_account_step_improvement_202601' );
 
-	return [ ...stepsWithRequiredLogin( steps ), STEPS.PLAYGROUND ];
+	return [ ...stepsWithRequiredLogin( steps ), STEPS.PLAYGROUND, STEPS.BLUEPRINT ];
 }
 
 const onboarding: FlowV2< typeof initialize > = {
@@ -69,10 +69,11 @@ const onboarding: FlowV2< typeof initialize > = {
 			setHideFreePlan,
 		} = useDispatch( ONBOARD_STORE ) as OnboardActions;
 		const locale = useFlowLocale();
-		const { signupDomainOrigin, planCartItem } = useSelect(
+		const { signupDomainOrigin, planCartItem, blueprint } = useSelect(
 			( select ) => ( {
 				signupDomainOrigin: ( select( ONBOARD_STORE ) as OnboardSelect ).getSignupDomainOrigin(),
 				planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
+				blueprint: ( select( ONBOARD_STORE ) as OnboardSelect ).getBlueprint(),
 			} ),
 			[]
 		);
@@ -93,22 +94,29 @@ const onboarding: FlowV2< typeof initialize > = {
 				return [ `/home/${ providedDependencies.siteSlug }`, null ];
 			}
 
-			if ( playgroundId ) {
+			if ( playgroundId || blueprint ) {
 				// Check if the user selected the free plan
 				const isFree =
 					! planCartItem || isPlanProductFree( {} as unknown as State, planCartItem?.product_id );
 
-				if ( isFree ) {
+				if ( isFree && ! blueprint ) {
 					// Redirect free plan users to a home page
 					return [ `/home/${ providedDependencies.siteSlug }`, null ];
 				}
 
+				const params: Record< string, string | number > = {
+					siteSlug: providedDependencies.siteSlug as string,
+					siteId: providedDependencies.siteId as number,
+				};
+
+				if ( blueprint ) {
+					params.blueprint = blueprint;
+				} else if ( playgroundId ) {
+					params.playground = playgroundId;
+				}
+
 				return [
-					addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), {
-						siteSlug: providedDependencies.siteSlug,
-						siteId: providedDependencies.siteId,
-						playground: playgroundId,
-					} ),
+					addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), params ),
 					null,
 				];
 			}
@@ -275,7 +283,8 @@ const onboarding: FlowV2< typeof initialize > = {
 					}
 					return;
 				}
-				case 'playground': {
+				case 'playground':
+				case 'blueprint': {
 					const backTo = window.location.pathname + window.location.search;
 					return navigate(
 						addQueryArgs( 'domains', { back_to: backTo } ) as typeof currentStepSlug
@@ -291,6 +300,7 @@ const onboarding: FlowV2< typeof initialize > = {
 		const reduxDispatch = useReduxDispatch();
 		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
 		const isLoggedIn = useSelector( isUserLoggedIn );
+		const user = useSelector( getCurrentUser );
 
 		/**
 		 * Clears every state we're persisting during the flow
@@ -318,10 +328,10 @@ const onboarding: FlowV2< typeof initialize > = {
 		 * - Analytics tracking works correctly throughout the onboarding flow
 		 */
 		useEffect( () => {
-			if ( isLoggedIn ) {
-				addSurvicate();
+			if ( isLoggedIn && user?.email && user?.date ) {
+				addSurvicate( { email: user.email, registrationDate: user.date } );
 			}
-		}, [ isLoggedIn, currentStepSlug ] );
+		}, [ isLoggedIn, currentStepSlug, user?.email, user?.date ] );
 
 		// Preload the visual split experiment
 		useEffect( () => {

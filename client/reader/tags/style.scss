@@ -47,20 +47,6 @@
 	}
 }
 
-// to match other reader pages.
-.is-section-reader .layout:not(.has-no-sidebar) .tags__main {
-	padding: 30px 20px;
-	max-width: 600px;
-	margin: 0 auto;
-	@media (min-width: 660px) {
-		padding: 30px 0;
-	}
-	@media (min-width: 782px) {
-		padding: 24px 0;
-		max-width: 1140px;
-	}
-}
-
 .is-section-reader .layout.is-global-sidebar-visible {
 	@media (max-width: $break-small) {
 		.sticky-panel {
@@ -76,15 +62,6 @@
 	}
 
 	.tags__main {
-		box-sizing: border-box;
-		max-width: 968px; // Max width of dual column reader stream.
-		padding: 24px 0;
-
-		.navigation-header {
-			// Align the header text with the text in tags page content below.
-			padding-inline: 35px;
-		}
-
 		.tags__header h4 {
 			margin: -4px 0 19px;
 		}
@@ -134,7 +111,7 @@
 
 .tags__header {
 	border-bottom: 1px solid var(--studio-gray-5);
-	padding: 0 35px;
+
 	h4 {
 		color: var(--studio-gray-50);
 		margin-bottom: 15px;
@@ -161,7 +138,7 @@
 		width: 100%;
 		// we need to set the border on the column for mobile and the row for desktop
 		border-top: 1px solid var(--studio-gray-5);
-		padding: 10px 35px;
+		padding: 10px 0;
 		box-sizing: border-box;
 		@include break-small {
 			width: 50%;
@@ -200,10 +177,12 @@
 }
 
 .alphabetic-tags__header {
+	position: sticky;
+	top: 0;
 	background-color: var(--studio-white);
 	border-bottom: 1px solid var(--studio-gray-5);
 	margin-bottom: 26px;
-	padding: 20px 35px 10px 35px;
+	padding: 20px 0;
 
 	@include break-large {
 		display: flex;
@@ -284,7 +263,6 @@
 		border-bottom: 1px solid var(--studio-gray-5);
 	}
 	margin-bottom: 26px;
-	padding-left: 35px;
 
 	.alphabetic-tags__letter-title {
 		font-size: 32px;

@@ -42,7 +42,7 @@ describe( 'SiteMigrationHowToMigrate', () => {
 		render( { navigation } );
 
 		expect(
-			screen.getByText( /Skip the migration hassle.*plus you get 50% off our annual/i )
+			screen.getByText( /Skip the migration hassle.*without disrupting your current site/i )
 		).toBeInTheDocument();
 	} );
 
@@ -52,6 +52,9 @@ describe( 'SiteMigrationHowToMigrate', () => {
 			plan: {
 				...defaultSiteDetails.plan,
 				product_slug: 'business-bundle',
+				features: {
+					active: [ 'install-plugins' ],
+				},
 			},
 		};
 
@@ -59,7 +62,7 @@ describe( 'SiteMigrationHowToMigrate', () => {
 
 		render( { navigation } );
 
-		expect( screen.queryByText( /Plus it's included in your/ ) ).toBeInTheDocument();
+		expect( screen.queryByText( /Plus it's included in your plan/ ) ).toBeInTheDocument();
 	} );
 
 	it( 'should render step content', () => {

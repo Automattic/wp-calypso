@@ -67,6 +67,12 @@ function mockStagingSiteDelete( status = 200, body: object = {} ) {
 		.reply( status, body );
 }
 
+function mockSyncState( status: string ) {
+	return nock( 'https://public-api.wordpress.com:443' )
+		.get( '/wpcom/v2/sites/1/staging-site/sync-state' )
+		.reply( 200, { status } );
+}
+
 const getButton = ( name: string ) => screen.getByRole( 'button', { name } );
 
 describe( 'StagingSiteDeleteModal', () => {
@@ -181,6 +187,33 @@ describe( 'StagingSiteDeleteModal', () => {
 					type: 'snackbar',
 				} );
 			} );
+		} );
+	} );
+
+	describe( 'Sync In Progress Warning', () => {
+		test( 'shows warning notice when a sync is in progress', async () => {
+			mockProductionSite();
+			mockSyncState( 'backing_up' );
+			render( <StagingSiteDeleteModal site={ mockStagingSite } onClose={ jest.fn() } /> );
+
+			expect(
+				await screen.findByText(
+					'A sync is currently in progress. Deleting this staging site will cancel the sync and any unfinished changes will be lost.'
+				)
+			).toBeVisible();
+		} );
+
+		test( 'does not show warning notice when no sync is in progress', async () => {
+			mockProductionSite();
+			mockSyncState( 'completed' );
+			render( <StagingSiteDeleteModal site={ mockStagingSite } onClose={ jest.fn() } /> );
+			await waitFor( () => expect( getButton( 'Delete staging site' ) ).toBeEnabled() );
+
+			expect(
+				screen.queryByText(
+					'A sync is currently in progress. Deleting this staging site will cancel the sync and any unfinished changes will be lost.'
+				)
+			).not.toBeInTheDocument();
 		} );
 	} );
 

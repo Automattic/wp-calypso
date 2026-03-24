@@ -2,6 +2,9 @@ import { AgentUI } from '@automattic/agenttic-ui';
 import { AgentsManagerSelect } from '@automattic/data-stores';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import clsx from 'clsx';
+import { useNavigate } from 'react-router-dom';
+import { useAgentsManagerContext } from '../../contexts';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { LocalConversationListItem } from '../../types';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
@@ -22,8 +25,6 @@ interface Props {
 	onExpand: () => void;
 	/** Called when a conversation is selected. */
 	onSelectConversation: ( conversation: LocalConversationListItem ) => void;
-	/** Called when the user starts a new chat. */
-	onNewChat: () => void;
 }
 
 export default function AgentHistory( {
@@ -34,19 +35,25 @@ export default function AgentHistory( {
 	onClose,
 	onExpand,
 	onSelectConversation,
-	onNewChat,
 }: Props ) {
+	const { getActiveSessionId } = useAgentsManagerContext();
+
 	const { setFloatingPosition } = useDispatch( AGENTS_MANAGER_STORE );
 	const { floatingPosition } = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
 	}, [] );
+	const navigate = useNavigate();
+
+	const handleBack = () => {
+		navigate( '/chat', { state: { sessionId: getActiveSessionId() } } );
+	};
 
 	return (
 		<AgentUI.Container
 			initialChatPosition={ floatingPosition }
 			onChatPositionChange={ ( position ) => setFloatingPosition( position ) }
-			className="agenttic"
+			className={ clsx( 'agenttic', { dark: isDocked } ) }
 			messages={ [] }
 			isProcessing={ false }
 			error={ null }
@@ -56,18 +63,16 @@ export default function AgentHistory( {
 			onClose={ onClose }
 			onExpand={ onExpand }
 			onStop={ onAbort }
+			expandOnHover={ false }
 		>
 			<AgentUI.ConversationView>
 				<ChatHeader
-					isChatDocked={ isDocked }
 					onClose={ onClose }
+					onBack={ handleBack }
 					options={ chatHeaderOptions }
 					title={ __( 'Past chats', '__i18n_text_domain__' ) }
 				/>
-				<ConversationHistoryView
-					onSelectConversation={ onSelectConversation }
-					onNewChat={ onNewChat }
-				/>
+				<ConversationHistoryView onSelectConversation={ onSelectConversation } />
 			</AgentUI.ConversationView>
 		</AgentUI.Container>
 	);

@@ -25,7 +25,7 @@ export type SubscriptionPlan = {
 };
 
 export type Subscriber = {
-	user_id: number;
+	user_id: number | string;
 	// Fields for new helper library
 	email_subscription_id?: number;
 	wpcom_subscription_id?: number;

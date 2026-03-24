@@ -224,20 +224,28 @@ function AdminHelpCenterContent() {
 			hasPurchases={ false }
 			onboardingUrl="https://wordpress.com/start"
 			handleClose={ closeCallback }
-			isCommerceGarden={ helpCenterData.isCommerceGarden }
+			product={ helpCenterData.isCommerceGarden ? 'commerce-garden' : undefined }
 			{ ...botProps }
 		/>
 	);
 }
 
-// Check for agents-manager-masterbar first, then fall back to help-center-masterbar
-const target =
-	document.getElementById( 'agents-manager-masterbar' ) ||
-	document.getElementById( 'help-center-masterbar' );
-if ( target ) {
-	createRoot( target ).render(
-		<QueryClientProvider client={ queryClient }>
-			<AdminHelpCenterContent />
-		</QueryClientProvider>
-	);
+function mountHelpCenter() {
+	const target =
+		document.getElementById( 'agents-manager-masterbar' ) ||
+		document.getElementById( 'help-center-masterbar' );
+
+	if ( target ) {
+		createRoot( target ).render(
+			<QueryClientProvider client={ queryClient }>
+				<AdminHelpCenterContent />
+			</QueryClientProvider>
+		);
+	}
+}
+
+if ( document.readyState === 'loading' ) {
+	document.addEventListener( 'DOMContentLoaded', mountHelpCenter );
+} else {
+	mountHelpCenter();
 }

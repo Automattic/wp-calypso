@@ -22,7 +22,8 @@ import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
-import { parseScheduleValue, ScheduleField } from './schedule-field';
+import { parseRequestedScheduleForBackwardCompatibility } from './parse-requested-schedule-for-backward-compatibility';
+import { ScheduleField } from './schedule-field';
 import type { Crontab, CrontabFormData } from '@automattic/api-core';
 
 interface CrontabFormProps {
@@ -41,7 +42,7 @@ export default function CrontabForm( { crontab }: CrontabFormProps ) {
 	const [ formData, setFormData ] = useState< CrontabFormData >( () => {
 		if ( crontab ) {
 			return {
-				schedule: parseScheduleValue( crontab.schedule ),
+				schedule: parseRequestedScheduleForBackwardCompatibility( crontab.requested_schedule ),
 				command: crontab.command,
 			};
 		}

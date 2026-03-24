@@ -1,6 +1,7 @@
 export default function ReaderSubstackIcon( { iconSize }: { iconSize: number } ): JSX.Element {
 	return (
 		<svg
+			aria-label="Substack Icon"
 			fill="#ff6719"
 			viewBox="0 0 24 24"
 			width={ iconSize }

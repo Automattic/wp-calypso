@@ -8,6 +8,7 @@ import fastDeepEqual from 'fast-deep-equal/es6';
 import { useMemo, useEffect } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { usePersistentView } from '../../../app/hooks/use-persistent-view';
+import { PerformanceTrackerStop } from '../../../app/performance-tracking';
 import { siteLogsActivityRoute } from '../../../app/router/sites';
 import { DataViews } from '../../../components/dataviews';
 import { getActivityLogHiddenGroups } from '../../../utils/site-features';
@@ -80,7 +81,11 @@ function SiteActivityLogsDataViews( {
 		activityLogQueryParams.group = activityLogTypeValues;
 	}
 
-	const { data: activityLogData, isFetching: isFetchingData } = useQuery( {
+	const {
+		data: activityLogData,
+		isFetching: isFetchingData,
+		isLoading: isLoadingActivityLogQuery,
+	} = useQuery( {
 		...siteActivityLogQuery( site.ID, activityLogQueryParams ),
 		select: ( data ) => {
 			// use the transformer to ensure the data is always in the expected format
@@ -183,6 +188,7 @@ function SiteActivityLogsDataViews( {
 	const logData = activityLogData?.activityLogs || [];
 	return (
 		<>
+			{ ! isLoadingActivityLogQuery && <PerformanceTrackerStop /> }
 			<DataViews< Activity >
 				data={ logData }
 				isLoading={ isFetching }

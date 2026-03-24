@@ -127,6 +127,7 @@ class MeSidebar extends Component {
 	renderMenu( options = {} ) {
 		const { context, translate } = this.props;
 		const path = context.path.replace( '/me', '' ); // Remove base path.
+		const meSectionPath = context.path || '';
 
 		const { isGlobal } = options;
 
@@ -202,9 +203,9 @@ class MeSidebar extends Component {
 
 					{ config.isEnabled( 'mcp-settings' ) && (
 						<SidebarItem
-							selected={ path.startsWith( '/mcp' ) }
+							selected={ meSectionPath.startsWith( '/me/mcp' ) }
 							link="/me/mcp"
-							label={ translate( 'MCP' ) }
+							label={ translate( 'AI and MCP' ) }
 							customIcon={ <McpIcon style={ { padding: '2px', boxSizing: 'border-box' } } /> }
 							onNavigate={ this.onNavigate }
 							preloadSectionName="mcp"

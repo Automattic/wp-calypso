@@ -25,6 +25,8 @@ export default function ProductInfo( {
 	const { title, product: productInfo } = useLicenseLightboxData( product );
 
 	const isWooCommerceProduct = product.slug.startsWith( 'woocommerce-' );
+	const isPressableAddonProduct =
+		product.family_slug === 'pressable-addon' || product.slug.startsWith( 'pressable-addon-' );
 
 	let productIcon =
 		productInfo?.productSlug && getProductIcon( { productSlug: productInfo?.productSlug } );
@@ -54,6 +56,68 @@ export default function ProductInfo( {
 					'The `install`, `visits` & `storage` are the count of WordPress installs, visits per month, and storage per month in the plan description.',
 			}
 		);
+	}
+
+	if ( isPressableAddonProduct ) {
+		const pressableAddonPlan = getPressablePlan( product.slug );
+
+		productIcon = pressableIcon;
+		productTitle = product.name;
+
+		if ( pressableAddonPlan?.unit === 'inbox' ) {
+			productDescription = translate(
+				'Add %(inboxes)d Titan inbox to your Pressable plan.',
+				'Add %(inboxes)d Titan inboxes to your Pressable plan.',
+				{
+					args: {
+						inboxes: product.quantity,
+					},
+					count: product.quantity,
+					comment: 'The `inboxes` is the number of Titan inboxes included in the add-on.',
+				}
+			);
+		} else if ( pressableAddonPlan?.install ) {
+			productDescription = translate(
+				'Add %(install)d WordPress install, %(visits)s visits per month, and %(storage)dGB of storage to your Pressable plan.',
+				'Add %(install)d WordPress installs, %(visits)s visits per month, and %(storage)dGB of storage to your Pressable plan.',
+				{
+					args: {
+						install: pressableAddonPlan.install,
+						visits: formatNumberCompact( pressableAddonPlan.visits ),
+						storage: pressableAddonPlan.storage,
+					},
+					count: pressableAddonPlan.install,
+					comment:
+						'The `install`, `visits` & `storage` are added capacities for the Pressable add-on.',
+				}
+			);
+		} else if ( pressableAddonPlan?.storage ) {
+			productDescription = translate(
+				'Add %(storage)dGB of storage capacity to your Pressable plan each month.',
+				{
+					args: {
+						storage: pressableAddonPlan.storage,
+					},
+					comment: 'The `storage` is additional monthly storage from the Pressable add-on.',
+				}
+			);
+		} else if ( pressableAddonPlan?.visits ) {
+			productDescription = translate(
+				'Add %(visits)s visits per month capacity to your Pressable plan.',
+				{
+					args: {
+						visits: formatNumberCompact( pressableAddonPlan.visits ),
+					},
+					comment: 'The `visits` is additional monthly visits from the Pressable add-on.',
+				}
+			);
+		}
+
+		if ( ! productDescription ) {
+			productDescription = translate(
+				'Add-on that increases your Pressable plan limits while your plan is active.'
+			);
+		}
 	}
 
 	if ( product.family_slug === 'wpcom-hosting' ) {
@@ -113,10 +177,10 @@ export default function ProductInfo( {
 	return (
 		<div className="product-info">
 			{ isWooCommerceProduct ? (
-				<img className="product-info__icon" src={ productIcon } alt={ title } />
+				<img className="product-info__icon" src={ productIcon } alt={ productTitle } />
 			) : (
 				<div className="product-info__icon">
-					<img src={ productIcon } alt={ title } />
+					<img src={ productIcon } alt={ productTitle } />
 				</div>
 			) }
 			<div className="product-info__text-content">

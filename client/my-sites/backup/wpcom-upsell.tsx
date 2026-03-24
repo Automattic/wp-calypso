@@ -8,6 +8,7 @@ import { useTranslate } from 'i18n-calypso';
 import JetpackBackupSVG from 'calypso/assets/images/illustrations/jetpack-backup.svg';
 import DocumentHead from 'calypso/components/data/document-head';
 import WhatIsJetpack from 'calypso/components/jetpack/what-is-jetpack';
+import JetpackTitle from 'calypso/components/jetpack-title';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
@@ -49,11 +50,15 @@ export default function WPCOMUpsellPage() {
 	};
 
 	return (
-		<Main className="backup__main backup__wpcom-upsell">
+		<Main wideLayout className="backup__main backup__wpcom-upsell">
 			<DocumentHead title="Jetpack VaultPress Backup" />
 			<PageViewTracker path="/backup/:site" title="VaultPress Backup" />
 
-			<NavigationHeader navigationItems={ [] } title={ translate( 'Jetpack VaultPress Backup' ) } />
+			<NavigationHeader
+				navigationItems={ [] }
+				title={ <JetpackTitle title={ translate( 'Backup' ) } /> }
+				subtitle={ translate( 'Save changes and restore quickly with one-click recovery.' ) }
+			/>
 
 			<PromoCard
 				title={ preventWidows(

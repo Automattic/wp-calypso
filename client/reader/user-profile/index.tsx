@@ -11,6 +11,7 @@ import UserPosts from 'calypso/reader/user-profile/views/posts';
 import UserRecommendedBlogs from 'calypso/reader/user-profile/views/recommended-blogs';
 import { requestUser } from 'calypso/state/reader/users/actions';
 import getReaderUser from 'calypso/state/selectors/get-reader-user';
+import ReaderMain from '../components/reader-main';
 import './style.scss';
 
 export interface UserProfileProps {
@@ -74,7 +75,7 @@ export function UserProfile( props: UserProfileProps ): JSX.Element | null {
 		);
 	}
 
-	const renderContent = (): React.ReactNode => {
+	const renderSelectedTabContent = (): React.ReactNode => {
 		switch ( view ) {
 			case 'posts':
 				return <UserPosts user={ user } />;
@@ -89,13 +90,11 @@ export function UserProfile( props: UserProfileProps ): JSX.Element | null {
 
 	return (
 		<div className="user-profile">
-			<div className="user-profile__wrapper">
+			<ReaderMain>
 				<ReaderBackButton />
-				<div className="user-profile__wrapper-content">
-					<UserProfileHeader user={ user } view={ view } />
-					{ renderContent() }
-				</div>
-			</div>
+				<UserProfileHeader user={ user } view={ view } />
+				{ renderSelectedTabContent() }
+			</ReaderMain>
 		</div>
 	);
 }

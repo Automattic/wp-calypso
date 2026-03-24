@@ -1,0 +1,118 @@
+# syntax=docker/dockerfile:1.20
+
+ARG node_version=22.9.0
+ARG commit_sha="(unknown)"
+ARG cache_seed_key="(unknown)"
+
+###################
+# Dedicated dependency-install stage.
+# By copying only manifests and the lockfile first, we can cache
+# the slow yarn install and skip it when only source files change.
+FROM node:${node_version}-bullseye-slim AS deps
+
+WORKDIR /calypso
+ENV HOME=/calypso
+ENV NPM_CONFIG_CACHE=/calypso/.cache
+ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
+ENV SKIP_TSC=true
+ENV SKIP_CALYPSO_POSTINSTALL=true
+ENV SKIP_CALYPSO_PACKAGE_BUILDS=true
+ENV IS_CI=true
+
+# Build a "base" layer
+#
+# This layer should never change unless env-config.sh
+# changes. For local development this should always
+# be an empty file and therefore this layer should
+# cache well.
+#
+# env-config.sh
+#   used by systems to overwrite some defaults
+#   such as the apt and npm mirrors
+COPY --link ./env-config.sh /tmp/env-config.sh
+RUN bash /tmp/env-config.sh
+
+# Copy dependency metadata only — manifests, lockfile, and Yarn config.
+# The workspace COPY block below should stay in sync with the root
+# workspaces in package.json. A CI check (`yarn check:docker-workspace-copy-globs`)
+# will let you know if they drift apart.
+COPY --link ./package.json ./yarn.lock ./.yarnrc.yml /calypso/
+COPY --link ./.yarn/releases /calypso/.yarn/releases
+COPY --link ./.yarn/patches /calypso/.yarn/patches
+# BEGIN: workspace package manifests (must stay in sync with package.json workspaces)
+COPY --link --parents \
+  ./apps/*/package.json \
+  ./packages/*/package.json \
+  ./client/package.json \
+  ./desktop/package.json \
+  ./test/e2e/package.json \
+  /calypso/
+# END: workspace package manifests
+
+# We don't need the full postinstall (build-packages, husky) at this
+# stage — just the bare install. SKIP_CALYPSO_POSTINSTALL lets us
+# bypass it safely.
+COPY --link ./bin/postinstall.sh /calypso/bin/postinstall.sh
+RUN yarn install --immutable --check-cache --inline-builds
+
+###################
+# This stage primes the Yarn/Babel/Webpack caches that the main app build will
+# later consume. It intentionally stays close to the current Dockerfile.base
+# cache stage, but the published image will export only the cache directories.
+FROM deps AS cache-build
+
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
+ARG node_memory=16384
+ARG workers=32
+ARG commit_sha="(unknown)"
+ARG profile=false
+ENV PERSISTENT_CACHE=true
+ENV GENERATE_CACHE_IMAGE=true
+ENV PROFILE=$profile
+ENV CALYPSO_ENV=production
+ENV BUILD_TRANSLATION_CHUNKS=true
+ENV WORKERS=$workers
+ENV NODE_OPTIONS=--max-old-space-size=$node_memory
+ENV COMMIT_SHA $commit_sha
+
+COPY --link . /calypso/
+
+RUN BUILD_TRANSLATION_CHUNKS=false yarn run build-packages:web \
+	&& NODE_ENV=production yarn build-client \
+	&& NODE_ENV=production SOURCEMAP=hidden-source-map yarn build-client
+
+###################
+# Publish only the cache data. The main app build should copy these directories
+# into a clean builder stage rather than inheriting the full filesystem state.
+FROM scratch AS cache-seed
+ARG commit_sha
+ARG cache_seed_key
+
+LABEL org.opencontainers.image.revision=$commit_sha \
+	io.calypso.cache-seed-key=$cache_seed_key
+
+COPY --from=cache-build /calypso/.cache /calypso/.cache
+COPY --from=cache-build /calypso/.yarn /calypso/.yarn
+
+###################
+# This stage exists only to make the exported cache image easy to smoke-test in
+# CI. It copies the scratch output into a debian-based node image so we can run
+# shell assertions against exactly what the published cache-seed image contains.
+FROM node:${node_version}-bullseye-slim AS cache-seed-debug
+
+ARG commit_sha
+ARG cache_seed_key
+
+COPY --from=cache-seed / /
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
+LABEL org.opencontainers.image.revision=$commit_sha \
+	io.calypso.cache-seed-key=$cache_seed_key
+
+RUN test -d /calypso/.cache \
+	&& test -d /calypso/.yarn \
+	&& test ! -e /calypso/node_modules \
+	&& test ! -e /calypso/build \
+	&& test ! -e /calypso/public \
+	&& du -sh /calypso/.cache /calypso/.yarn

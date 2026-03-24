@@ -484,10 +484,6 @@
 	margin-bottom: 8px;
 	gap: 8px;
 	flex-wrap: wrap;
-
-	&::after {
-		@include long-content-fade( $size: 35px );
-	}
 }
 
 .reader-post-card__tag {
@@ -925,7 +921,7 @@
 			width: 100%;
 		}
 		img {
-			object-fit: cover;
+			object-fit: contain;
 		}
 	}
 	.reader-featured-image {

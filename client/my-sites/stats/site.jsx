@@ -77,7 +77,7 @@ import StatsModuleListing from './pages/shared/stats-module-listing';
 import PromoCards from './promo-cards';
 import StatsCardUpdateJetpackVersion from './stats-card-upsell/stats-card-update-jetpack-version';
 import ChartTabs from './stats-chart-tabs';
-import DatePicker from './stats-date-picker';
+import StatsDateLabel from './stats-date-label';
 import StatsNotices from './stats-notices';
 import PageViewTracker from './stats-page-view-tracker';
 import StatsPeriodHeader from './stats-period-header';
@@ -122,6 +122,13 @@ Object.defineProperty( CHART_VIEWS, 'label', {
 } );
 Object.defineProperty( CHART_VISITORS, 'label', {
 	get: () => translate( 'Visitors', { context: 'noun' } ),
+} );
+Object.defineProperty( CHART_VISITORS, 'aggregateNote', {
+	get: () =>
+		translate( 'Per-period sum, not unique overall.', {
+			comment:
+				'Explanation for the Visitors stats chart: the total visitors value is calculated by adding up the visitors count in each time bucket (day/week/month), so it may differ from the unique visitor count across the entire selected date range.',
+		} ),
 } );
 Object.defineProperty( CHART_LIKES, 'label', {
 	get: () => translate( 'Likes', { context: 'noun' } ),
@@ -572,18 +579,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 				</div>
 			) }
 			<PageHeader
-				rightSection={
-					shouldRenderModuleToggler && (
-						<PageModuleToggler
-							selectedItem="traffic"
-							moduleToggles={ moduleToggles }
-							siteId={ siteId }
-							isTooltipShown={ showSettingsTooltip && ! isPageSettingsTooltipDismissed }
-							onTooltipDismiss={ onTooltipDismiss }
-							customToggleIcon={ <Icon className="gridicon" icon={ settings } /> }
-						/>
-					)
-				}
+				titleProps={ { subtitle: translate( 'Simple, powerful analytics to grow your site.' ) } }
 			/>
 			<StatsNavigation selectedItem="traffic" interval={ period } siteId={ siteId } slug={ slug } />
 			<StatsNotices
@@ -608,9 +604,21 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 						showArrows={ ! wpcomShowUpsell }
 						slug={ slug }
 						dateRange={ customChartRange }
+						endContent={
+							shouldRenderModuleToggler && (
+								<PageModuleToggler
+									selectedItem="traffic"
+									moduleToggles={ moduleToggles }
+									siteId={ siteId }
+									isTooltipShown={ showSettingsTooltip && ! isPageSettingsTooltipDismissed }
+									onTooltipDismiss={ onTooltipDismiss }
+									customToggleIcon={ <Icon className="gridicon" icon={ settings } /> }
+								/>
+							)
+						}
 					>
 						{ ' ' }
-						<DatePicker
+						<StatsDateLabel
 							period={ period }
 							date={ date }
 							query={ query }

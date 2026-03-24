@@ -3,6 +3,7 @@ import { Button } from '@wordpress/components';
 import { clsx } from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
+import useMinimizeHelpCenterOnMount from 'calypso/a8c-for-agencies/hooks/use-minimize-help-center-on-mount';
 
 import './style.scss';
 
@@ -32,6 +33,7 @@ export function A4AConfirmationDialog( {
 	isDestructive,
 }: Props ) {
 	const translate = useTranslate();
+	useMinimizeHelpCenterOnMount();
 
 	return (
 		<Dialog

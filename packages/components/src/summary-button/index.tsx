@@ -52,6 +52,7 @@ function UnforwardedSummaryButton(
 	ref: React.ForwardedRef< HTMLAnchorElement | HTMLButtonElement >
 ) {
 	const hasLowDensity = density === 'low';
+	const showsDescription = density === 'low' || density === 'medium-low';
 	return (
 		<Button
 			// Forward additional props to support standard attributes like mouse events.
@@ -74,7 +75,7 @@ function UnforwardedSummaryButton(
 								</Text>
 							) }
 							<Text className="summary-button-title">{ title }</Text>
-							{ description && hasLowDensity && (
+							{ description && showsDescription && (
 								<Text variant="muted" className="summary-button-description">
 									{ description }
 								</Text>

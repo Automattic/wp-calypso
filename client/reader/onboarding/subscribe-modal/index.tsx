@@ -50,6 +50,7 @@ interface StreamProps {
 	className?: string;
 	followSource?: string;
 	useCompactCards?: boolean;
+	wideLayout?: boolean;
 	trackScrollPage?: (
 		path: string,
 		title: string,

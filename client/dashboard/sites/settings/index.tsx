@@ -3,13 +3,13 @@ import { isEnabled } from '@automattic/calypso-config';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
 import { SummaryButtonList } from '../../components/summary-button-list';
 import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
 import AgencySettingsSummary from '../settings-agency/summary';
-import AISiteAssistantSettingsSummary from '../settings-ai-assistant/summary';
 import AISiteToolsSettingsSummary from '../settings-ai-tools/summary';
 import CachingSettingsSummary from '../settings-caching/summary';
 import CrontabSettingsSummary from '../settings-crontab/summary';
@@ -51,7 +51,9 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 				<VStack spacing={ 3 }>
 					<SectionHeader title={ __( 'General' ) } level={ 3 } />
 					<SummaryButtonList>
-						<SiteVisibilitySettingsSummary site={ site } />
+						{ siteTypeSupports.settingsGeneralDotcomSiteVisibility ? (
+							<SiteVisibilitySettingsSummary site={ site } />
+						) : null }
 						{ isEnabled( 'wordpress-ai-tools' ) && siteTypeSupports.settingsGeneralAITools ? (
 							<AISiteToolsSettingsSummary site={ site } />
 						) : null }
@@ -91,16 +93,9 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 					</SummaryButtonList>
 				</VStack>
 			) }
-			{ siteTypeSupports.settingsExperimental && isEnabled( 'wordpress-ai-assistant' ) && (
-				<VStack spacing={ 3 }>
-					<SectionHeader title={ __( 'Experimental (Staging)' ) } level={ 3 } />
-					<SummaryButtonList>
-						<AISiteAssistantSettingsSummary site={ site } />
-					</SummaryButtonList>
-				</VStack>
-			) }
 			<SiteActions site={ site } />
 			<DangerZone site={ site } />
+			<PerformanceTrackerStop />
 		</PageLayout>
 	);
 }
