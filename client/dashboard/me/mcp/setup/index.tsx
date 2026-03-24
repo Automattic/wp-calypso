@@ -7,6 +7,7 @@ import {
 	SelectControl,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
+	__experimentalText as Text,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { copy, check, error } from '@wordpress/icons';
@@ -18,7 +19,6 @@ import ComponentViewTracker from '../../../components/component-view-tracker';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import RouterLinkButton from '../../../components/router-link-button';
-import { SectionHeader } from '../../../components/section-header';
 
 function McpSetupComponent() {
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
@@ -119,7 +119,9 @@ function McpSetupComponent() {
 				<Card>
 					<CardBody>
 						<VStack spacing={ 4 }>
-							<SectionHeader level={ 3 } title={ __( 'Setup Required' ) } />
+							<Text as="h3" weight="600" style={ { margin: 0 } }>
+								{ __( 'Setup Required' ) }
+							</Text>
 							<VStack spacing={ 4 }>
 								<p>{ __( 'No MCP access is currently enabled for your account.' ) }</p>
 								<RouterLinkButton
@@ -153,7 +155,9 @@ function McpSetupComponent() {
 				<Card>
 					<CardBody style={ { padding: '8px 16px' } }>
 						<VStack spacing={ 2 }>
-							<SectionHeader level={ 3 } title={ __( 'Choose your AI agent' ) } />
+							<Text as="h3" weight="600" style={ { margin: 0 } }>
+								{ __( 'Choose your AI agent' ) }
+							</Text>
 							<SelectControl
 								__next40pxDefaultSize
 								__nextHasNoMarginBottom
@@ -171,7 +175,9 @@ function McpSetupComponent() {
 					<Card>
 						<CardBody style={ { padding: '8px 16px' } }>
 							<VStack spacing={ 2 }>
-								<SectionHeader level={ 3 } title={ __( 'Quick setup' ) } />
+								<Text as="h3" weight="600" style={ { margin: 0 } }>
+									{ __( 'Quick setup' ) }
+								</Text>
 
 								{ selectedMcpClient === 'claude' && (
 									<ol style={ { paddingInlineStart: '20px', margin: '0' } }>
@@ -232,7 +238,9 @@ function McpSetupComponent() {
 					<CardBody style={ { padding: '8px 16px' } }>
 						<VStack spacing={ 2 }>
 							<HStack justify="space-between" alignment="center">
-								<SectionHeader level={ 3 } title={ __( 'Manual setup' ) } />
+								<Text as="h3" weight="600" style={ { margin: 0 } }>
+									{ __( 'Manual setup' ) }
+								</Text>
 								<Button
 									icon={ getCopyIcon() }
 									variant="tertiary"
