@@ -157,10 +157,7 @@ function LineItemIntroOfferCostOverrideDetail( {
 			: undefined;
 	const dueAmount = tosData?.renewal_price_integer;
 	const renewAmount = tosData?.regular_renewal_price_integer;
-	const dueTodayAmount =
-		product.cost_overrides?.find(
-			( override ) => override.override_code === costOverride.overrideCode
-		)?.new_subtotal_integer ?? product.item_subtotal_integer;
+	const dueTodayAmount = product.item_subtotal_integer;
 	if ( ! dueDate || ! dueAmount || ! renewAmount ) {
 		return null;
 	}

@@ -2,7 +2,6 @@ const DEFAULT_DISCOVER_TAGS = [ 'dailyprompt', 'wordpress' ];
 export const RECOMMENDED_TAB = 'recommended';
 export const FRESHLY_PRESSED_TAB = 'freshly-pressed';
 export const LATEST_TAB = 'latest';
-export const FIRST_POSTS_TAB = 'firstposts';
 export const TAGS_TAB = 'tags';
 
 /**

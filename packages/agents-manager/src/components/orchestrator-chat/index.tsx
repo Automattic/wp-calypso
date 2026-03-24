@@ -1,4 +1,4 @@
-import { getAgentManager, useAgentChat, type UIMessage } from '@automattic/agenttic-client';
+import { getAgentManager, useAgentChat } from '@automattic/agenttic-client';
 import {
 	type Suggestion,
 	type MarkdownComponents,
@@ -15,10 +15,8 @@ import useConversation from '../../hooks/use-conversation';
 import useCopyAction from '../../hooks/use-copy-action';
 import useFeedbackAction from '../../hooks/use-feedback-action';
 import useSaveNewChatRoute from '../../hooks/use-save-new-chat-route';
-import {
-	convertToolMessagesToComponents,
-	deactivateStaleMessages,
-} from '../../utils/process-tool-messages';
+import convertToolMessagesToComponents from '../../utils/convert-tool-messages-to-components';
+import { persistLastActivity } from '../../utils/persist-last-activity';
 import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import type { BigSkyMessage } from '../../types';
@@ -69,9 +67,6 @@ interface Props {
 	onHasMessagesChange: ( hasMessages: boolean ) => void;
 }
 
-// Module-level cache to preserve conversation state during back-navigation from history.
-let cachedConversation: { sessionId?: string; messages: UIMessage[] } = { messages: [] };
-
 export default function OrchestratorChat( {
 	emptyViewSuggestions,
 	isDocked,
@@ -91,7 +86,7 @@ export default function OrchestratorChat( {
 	useCheckpoint,
 	onHasMessagesChange,
 }: Props ) {
-	const { agentConfig, getActiveSessionId } = useAgentsManagerContext();
+	const { agentConfig, getActiveSessionId, siteKey } = useAgentsManagerContext();
 
 	const navigate = useNavigate();
 	const [ inputValue, setInputValue ] = useState( '' );
@@ -108,9 +103,6 @@ export default function OrchestratorChat( {
 	const agentId = agentConfig!.agentId;
 	const configSessionId = agentConfig!.sessionId;
 
-	const { sessionId: cachedSessionId, messages: cachedMessages } = cachedConversation;
-	const hasCachedConversation = !! cachedSessionId && configSessionId === cachedSessionId;
-
 	const {
 		addMessage,
 		messages,
@@ -126,6 +118,20 @@ export default function OrchestratorChat( {
 		progressMessage,
 	} = useAgentChat( agentConfig! );
 
+	const { isLoading: isLoadingConversation } = useConversation( {
+		onSuccess: ( loadedMessages, serverSessionId ) => {
+			// Update the UI with the loaded messages
+			loadMessages( loadedMessages );
+			// Make sure future messages go to the right session
+			getAgentManager().updateSessionId( agentId, serverSessionId );
+
+			// Sync local session ID with the server's
+			if ( configSessionId !== serverSessionId ) {
+				navigate( '/chat', { state: { sessionId: serverSessionId }, replace: true } );
+			}
+		},
+	} );
+
 	// Use dynamic suggestions from the external provider (e.g., Big Sky block-based suggestions)
 	const dynamicSuggestions = useSuggestions?.();
 
@@ -140,22 +146,6 @@ export default function OrchestratorChat( {
 			clearSuggestions?.();
 		}
 	}, [ dynamicSuggestions?.suggestions, registerSuggestions, clearSuggestions ] );
-
-	const { isLoading: isLoadingConversation } = useConversation( {
-		onSuccess: ( loadedMessages, serverSessionId ) => {
-			// Update the UI with the loaded messages
-			loadMessages( loadedMessages );
-			// Make sure future messages go to the right session
-			getAgentManager().updateSessionId( agentId, serverSessionId );
-
-			// Sync local session ID with the server's
-			if ( configSessionId !== serverSessionId ) {
-				navigate( '/chat', { state: { sessionId: serverSessionId }, replace: true } );
-			}
-		},
-		// Skip fetching when cached messages are available for this session.
-		enabled: ! hasCachedConversation,
-	} );
 
 	// Persist the chat route so the conversation can be resumed later.
 	useSaveNewChatRoute( messages );
@@ -179,6 +169,8 @@ export default function OrchestratorChat( {
 
 	const onSubmitWithImages = useCallback(
 		async ( message: string ) => {
+			persistLastActivity( siteKey );
+
 			if ( pendingImages.length > 0 && uploadImagesToWordPress ) {
 				try {
 					// Upload files to WordPress media library
@@ -213,7 +205,7 @@ export default function OrchestratorChat( {
 				onSubmit( message );
 			}
 		},
-		[ onSubmit, pendingImages.length, uploadImagesToWordPress ]
+		[ onSubmit, pendingImages.length, siteKey, uploadImagesToWordPress ]
 	);
 
 	// Handle navigation continuation if hook is provided
@@ -286,11 +278,6 @@ export default function OrchestratorChat( {
 	} );
 
 	const displayedMessages = useMemo( () => {
-		// Return already-processed cached messages on back-navigation from history.
-		if ( hasCachedConversation && ! messages.length ) {
-			return cachedMessages;
-		}
-
 		let currentMessages = messages;
 
 		currentMessages = currentMessages.filter(
@@ -317,21 +304,11 @@ export default function OrchestratorChat( {
 			currentPostId,
 		} );
 
-		// Dedup and append new messages to cached messages during back-navigation.
-		if ( hasCachedConversation ) {
-			const cachedIds = new Set( cachedMessages.map( ( m ) => m.id ) );
-			const newMessages = currentMessages.filter( ( m ) => ! cachedIds.has( m.id ) );
-
-			return [ ...cachedMessages, ...newMessages ];
-		}
-
 		return currentMessages;
 	}, [
-		cachedMessages,
 		currentPostId,
 		deletedMessageIds,
 		getChatComponent,
-		hasCachedConversation,
 		isBuildingSite,
 		messages,
 		siteBuildUtils,
@@ -343,15 +320,6 @@ export default function OrchestratorChat( {
 	useEffect( () => {
 		onHasMessagesChange( hasMessages );
 	}, [ hasMessages, onHasMessagesChange ] );
-
-	const handleViewHistory = () => {
-		// Cache current conversation messages to restore when navigating back from history.
-		cachedConversation = {
-			sessionId: getActiveSessionId(),
-			// Deactivate interactive elements before caching.
-			messages: deactivateStaleMessages( displayedMessages ),
-		};
-	};
 
 	// Determine which suggestions to show following Big Sky's logic:
 	// - When there are dynamic suggestions (from block selection, etc.), show those
@@ -389,7 +357,6 @@ export default function OrchestratorChat( {
 			showFeedbackInput={ showFeedbackInput }
 			onSubmitFeedbackText={ submitFeedbackText }
 			onCancelFeedback={ resetFeedback }
-			onViewHistory={ handleViewHistory }
 		/>
 	);
 }
