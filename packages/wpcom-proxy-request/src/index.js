@@ -192,6 +192,9 @@ const makeRequest = ( originalParams, fn ) => {
 const request = ( originalParams, fn ) => {
 	// if callback is provided, behave traditionally
 	if ( 'function' === typeof fn ) {
+		if ( originalParams.emulateStreamBody ) {
+			return fn( new TypeError( 'Streaming mode is not supported in callback mode' ) );
+		}
 		// request method
 		return makeRequest( originalParams, fn );
 	}
@@ -205,10 +208,7 @@ const request = ( originalParams, fn ) => {
 			},
 		} );
 
-		let resolveResponse;
-		const responsePromise = new Promise( ( res ) => {
-			resolveResponse = res;
-		} );
+		const { promise, resolve: resolveResponse } = Promise.withResolvers();
 
 		const params = Object.assign( {}, originalParams );
 		delete params.emulateStreamBody;
@@ -244,7 +244,7 @@ const request = ( originalParams, fn ) => {
 			}
 		} );
 
-		return responsePromise;
+		return promise;
 	}
 
 	// but if not, return a Promise
