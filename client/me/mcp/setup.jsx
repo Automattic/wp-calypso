@@ -140,12 +140,7 @@ function McpSetupComponent( { path } ) {
 			<Card isRounded={ false }>
 				<CardBody>
 					<VStack spacing={ 4 }>
-						<CardHeading
-							tagName="h2"
-							size={ 16 }
-							isBold
-							style={ { marginTop: 0, marginBottom: 0 } }
-						>
+						<CardHeading tagName="h2" size={ 16 } isBold>
 							{ translate( 'Setup Required' ) }
 						</CardHeading>
 						<VStack spacing={ 4 }>
@@ -185,12 +180,7 @@ function McpSetupComponent( { path } ) {
 					<Card isRounded={ false }>
 						<CardBody style={ { padding: '16px' } }>
 							<VStack spacing={ 3 }>
-								<CardHeading
-									tagName="h2"
-									size={ 16 }
-									isBold
-									style={ { marginTop: 0, marginBottom: 0 } }
-								>
+								<CardHeading tagName="h2" size={ 16 } isBold>
 									{ translate( 'Quick setup' ) }
 								</CardHeading>
 
@@ -256,12 +246,7 @@ function McpSetupComponent( { path } ) {
 						<VStack spacing={ 3 }>
 							<HStack justify="space-between" alignment="center">
 								<VStack spacing={ 0 }>
-									<CardHeading
-										tagName="h2"
-										size={ 16 }
-										isBold
-										style={ { marginTop: 0, marginBottom: 0 } }
-									>
+									<CardHeading tagName="h2" size={ 16 } isBold>
 										{ translate( 'Manual setup' ) }
 									</CardHeading>
 									<p style={ { margin: 0, fontSize: '13px', color: '#757575' } }>

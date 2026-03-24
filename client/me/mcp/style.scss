@@ -139,6 +139,12 @@ body.is-section-me div.layout.is-global-sidebar-visible .layout__primary .main.m
 	}
 }
 
+// Setup page — zero out card-heading margins so CardBody padding is the only spacing
+.mcp-setup .card-heading {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
 // Site exceptions — flat `@wordpress/components` Cards only (same as hub / tools subpages)
 .mcp-sites {
 	min-width: 0;
