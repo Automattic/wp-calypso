@@ -1155,6 +1155,10 @@ a.masterbar__quick-language-switcher {
 	}
 }
 
+.masterbar--is-checkout.masterbar--is-checkout-redesign-v1 {
+	--color-checkout-masterbar-text: var(--studio-gray-100);
+}
+
 .masterbar--is-checkout-redesign-v1 {
 	padding-inline-start: 1.5em;
 
