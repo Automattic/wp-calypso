@@ -34,6 +34,7 @@ class ReaderFeaturedVideo extends Component {
 		isCompactPost: PropTypes.bool,
 		expandCard: PropTypes.func,
 		hasExcerpt: PropTypes.bool,
+		useStreamAspectFit: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -111,6 +112,7 @@ class ReaderFeaturedVideo extends Component {
 			isExpanded,
 			isCompactPost,
 			hasExcerpt,
+			useStreamAspectFit,
 		} = this.props;
 
 		const classNames = clsx( className, 'reader-featured-video', {
@@ -130,6 +132,7 @@ class ReaderFeaturedVideo extends Component {
 					hasExcerpt={ hasExcerpt }
 					imageWidth={ imageWidth }
 					imageHeight={ imageHeight }
+					useStreamAspectFit={ useStreamAspectFit }
 				>
 					{ allowPlaying && (
 						<img

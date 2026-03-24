@@ -26,9 +26,9 @@ function PostGallery( { post, children } ) {
 		if ( safeCssUrl ) {
 			imageStyle = {
 				backgroundImage: 'url(' + safeCssUrl + ')',
-				backgroundSize: 'cover',
 				backgroundPosition: '50% 50%',
 				backgroundRepeat: 'no-repeat',
+				backgroundSize: 'contain',
 			};
 		}
 		return (

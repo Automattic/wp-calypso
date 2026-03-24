@@ -16,6 +16,8 @@ const FeaturedAsset = ( {
 		return null;
 	}
 
+	const useStreamAspectFit = ! isCompactPost;
+
 	if ( canonicalMedia.mediaType === 'video' ) {
 		return (
 			<ReaderFeaturedVideo
@@ -26,6 +28,7 @@ const FeaturedAsset = ( {
 				isExpanded={ isVideoExpanded }
 				isCompactPost={ isCompactPost }
 				hasExcerpt={ hasExcerpt }
+				useStreamAspectFit={ useStreamAspectFit }
 			/>
 		);
 	}
@@ -37,6 +40,7 @@ const FeaturedAsset = ( {
 			canonicalMedia={ canonicalMedia }
 			isCompactPost={ isCompactPost }
 			hasExcerpt={ hasExcerpt }
+			useStreamAspectFit={ useStreamAspectFit }
 		/>
 	);
 };

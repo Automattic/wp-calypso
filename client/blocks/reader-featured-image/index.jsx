@@ -7,6 +7,7 @@ import {
 	READER_COMPACT_POST_FEATURED_MAX_IMAGE_HEIGHT,
 	READER_COMPACT_POST_FEATURED_MAX_IMAGE_WIDTH,
 	READER_COMPACT_POST_NO_EXCERPT_FEATURED_MAX_IMAGE_WIDTH,
+	READER_CONTENT_WIDTH,
 	READER_FEATURED_MAX_IMAGE_HEIGHT,
 } from 'calypso/state/reader/posts/sizes';
 import './style.scss';
@@ -69,6 +70,7 @@ const ReaderFeaturedImage = ( {
 	imageHeight,
 	isCompactPost,
 	hasExcerpt,
+	useStreamAspectFit = false,
 } ) => {
 	// No featured image, so don't render anything
 	if ( imageUrl === undefined ) {
@@ -136,40 +138,86 @@ const ReaderFeaturedImage = ( {
 			containerHeight = READER_COMPACT_POST_FEATURED_MAX_IMAGE_HEIGHT;
 	}
 
-	const resizedImageUrl = fetched
-		? imageUrl
-		: resizeImageUrl( imageUrl, { w: containerWidth }, containerHeight );
+	let resizedImageUrl = imageUrl;
+	if ( ! fetched ) {
+		if ( useStreamAspectFit ) {
+			resizedImageUrl = resizeImageUrl(
+				imageUrl,
+				READER_CONTENT_WIDTH,
+				READER_FEATURED_MAX_IMAGE_HEIGHT
+			);
+		} else {
+			resizedImageUrl = resizeImageUrl( imageUrl, { w: containerWidth }, containerHeight );
+		}
+	}
 	const safeCssUrl = cssSafeUrl( resizedImageUrl );
 	if ( ! safeCssUrl ) {
 		return null;
 	}
 
-	// Set default style to no background
-	let featuredImageStyle = {
-		background: 'none',
-		height: containerHeight,
-	};
+	const isPortrait =
+		typeof imageWidth === 'number' && typeof imageHeight === 'number' && imageHeight > imageWidth;
 
-	const isPortrait = imageHeight > imageWidth;
+	// `false` from `{ cond && <Node /> }` is a valid React child but means "no overlay" (e.g. video thumbnail).
+	const hasChildContent = children != null && children !== false;
 
-	if ( children ) {
+	let featuredImageStyle;
+	let renderedChildren = children;
+
+	if ( useStreamAspectFit && hasChildContent ) {
+		featuredImageStyle = {
+			backgroundColor: 'var(--studio-gray-0)',
+			backgroundImage: 'url(' + safeCssUrl + ')',
+			backgroundPosition: '50% 50%',
+			backgroundRepeat: 'no-repeat',
+			backgroundSize: 'contain',
+			height: containerHeight,
+			maxWidth: '100%',
+			width: '100%',
+		};
+	} else if ( useStreamAspectFit && ! hasChildContent ) {
+		featuredImageStyle = {
+			backgroundColor: 'var(--studio-gray-0)',
+			maxWidth: '100%',
+			width: '100%',
+		};
+		renderedChildren = (
+			<img
+				src={ safeCssUrl }
+				alt="Featured"
+				style={ {
+					display: 'block',
+					height: 'auto',
+					maxHeight: READER_FEATURED_MAX_IMAGE_HEIGHT,
+					maxWidth: '100%',
+					objectFit: 'contain',
+					width: 'auto',
+				} }
+			/>
+		);
+	} else if ( hasChildContent ) {
 		// If there are children, then we are rendering an image tag inside the anchor tag
 		// In this case we will need to anchor tag will need specific styling to show the image(s)
 		featuredImageStyle = {
 			backgroundImage: 'url(' + safeCssUrl + ')',
 			backgroundPosition: '50% 50%',
+			backgroundRepeat: 'no-repeat',
+			backgroundSize: 'cover',
 			height: containerHeight,
 			width: 'auto',
-			backgroundSize: 'cover',
-			backgroundRepeat: 'no-repeat',
 		};
 	} else {
+		featuredImageStyle = {
+			background: 'none',
+			height: containerHeight,
+		};
+
 		if ( isPortrait ) {
 			featuredImageStyle.background = 'var(--studio-gray-0)';
 		}
 
 		// Since there is no children in props, we need to create a new image tag to ensure the correct size is rendered
-		children = (
+		renderedChildren = (
 			<img
 				src={ safeCssUrl }
 				alt="Featured"
@@ -178,11 +226,13 @@ const ReaderFeaturedImage = ( {
 		);
 	}
 
-	const classNames = clsx( className, 'reader-featured-image' );
+	const classNames = clsx( className, 'reader-featured-image', {
+		'reader-featured-image--stream-aspect-fit': useStreamAspectFit,
+	} );
 
 	return (
 		<a className={ classNames } href={ href } style={ featuredImageStyle } onClick={ onClick }>
-			{ children }
+			{ renderedChildren }
 		</a>
 	);
 };
@@ -191,6 +241,7 @@ ReaderFeaturedImage.propTypes = {
 	canonicalMedia: PropTypes.object,
 	href: PropTypes.string,
 	onClick: PropTypes.func,
+	useStreamAspectFit: PropTypes.bool,
 };
 
 const mapStateToProps = ( state, ownProps ) => {
