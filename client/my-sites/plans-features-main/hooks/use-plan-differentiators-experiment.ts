@@ -19,10 +19,9 @@ type PlanDifferentiatorsExperimentResult = {
 	 */
 	showDifferentiatorHeader: boolean;
 	/**
-	 * When true, use long-set feature list (getLongSetSignupWpcomFeatures).
-	 * Applies to ExPlat variation: focused_comparison
+	 * When true, use the focused_comparison feature list (getLongSetSignupWpcomFeatures).
 	 */
-	useVar4Features: boolean;
+	useFocusedComparisonFeatures: boolean;
 	/**
 	 * When true, use more-premium / new-copy feature set (getVar41MorePremiumSignupWpcomFeatures).
 	 * Applies to: focused_more_premium, focused_new_copy
@@ -39,11 +38,6 @@ type PlanDifferentiatorsExperimentResult = {
 	 * Applies to: focused_no_ai
 	 */
 	useVar42NoAiFeatures: boolean;
-	/**
-	 * When true, the user is in any focused pricing experiment variant (not control).
-	 * Used to exclude these variants from certain experiment-specific styling.
-	 */
-	isVar4Variant: boolean;
 	/**
 	 * When true, the user is in an experiment variant (not control).
 	 */
@@ -81,17 +75,11 @@ function usePlanDifferentiatorsExperiment( {
 
 	const isExperimentVariant = variant !== undefined && variant !== 'control';
 
-	const isVar4Variant =
-		variant === 'focused_comparison' ||
-		variant === 'focused_more_premium' ||
-		variant === 'focused_no_ai' ||
-		variant === 'focused_new_copy';
-
 	return {
 		isLoading,
 		variant,
 		showDifferentiatorHeader: false,
-		useVar4Features: variant === 'focused_comparison',
+		useFocusedComparisonFeatures: variant === 'focused_comparison',
 		useVar41MorePremiumFeatures:
 			variant === 'focused_more_premium' || variant === 'focused_new_copy',
 		useVar42NoAiFeatures: variant === 'focused_no_ai',
@@ -99,7 +87,6 @@ function usePlanDifferentiatorsExperiment( {
 			variant === 'focused_more_premium' ||
 			variant === 'focused_new_copy' ||
 			variant === 'focused_no_ai',
-		isVar4Variant,
 		isExperimentVariant,
 	};
 }

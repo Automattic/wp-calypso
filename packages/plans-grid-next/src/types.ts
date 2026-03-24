@@ -273,16 +273,16 @@ export type GridContextProps = {
 	showBillingDescriptionForIncreasedRenewalPrice?: string | null;
 
 	/**
-	 * When true, indicates the user is in a focused pricing experiment variant (e.g. focused_comparison).
-	 * Used to exclude those variants from certain experiment-specific styling.
-	 */
-	isVar4Variant?: boolean;
-
-	/**
 	 * When true, indicates the user is in an experiment variant.
 	 * Used to display experiment-specific feature titles in the comparison grid.
 	 */
 	isExperimentVariant?: boolean;
+
+	/**
+	 * When true, the pricing differentiation experiment uses the focused_comparison feature set.
+	 * Used to exclude that arm from domain-line highlight styling.
+	 */
+	useFocusedComparisonFeatures?: boolean;
 };
 
 export type ComparisonGridExternalProps = Omit<

@@ -91,7 +91,7 @@ export type UsePlanFeaturesForGridPlans = ( {
 	showLegacyStorageFeature,
 	selectedFeature,
 	isInSignup,
-	useLongSetFeatures,
+	useFocusedComparisonFeatures,
 	useVar41MorePremiumFeatures,
 	useVar42NoAiFeatures,
 	showPricingDifferentiationFeaturePills,
@@ -104,7 +104,7 @@ export type UsePlanFeaturesForGridPlans = ( {
 	selectedFeature?: string | null;
 	showLegacyStorageFeature?: boolean;
 	isInSignup?: boolean;
-	useLongSetFeatures?: boolean;
+	useFocusedComparisonFeatures?: boolean;
 	useVar41MorePremiumFeatures?: boolean;
 	useVar42NoAiFeatures?: boolean;
 	showPricingDifferentiationFeaturePills?: boolean;
@@ -124,7 +124,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 	selectedFeature,
 	showLegacyStorageFeature,
 	isInSignup,
-	useLongSetFeatures,
+	useFocusedComparisonFeatures,
 	useVar41MorePremiumFeatures,
 	useVar42NoAiFeatures,
 	showPricingDifferentiationFeaturePills,
@@ -174,8 +174,8 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 						planConstantObj.get2023PricingGridSignupJetpackFeatures?.() ?? [],
 						isExperimentVariant ?? true // isExperimentVariant
 					);
-				} else if ( useLongSetFeatures ) {
-					// Use the long set features for focused_comparison
+				} else if ( useFocusedComparisonFeatures ) {
+					// Use getLongSetSignupWpcomFeatures for focused_comparison
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
 						planConstantObj?.getLongSetSignupWpcomFeatures?.() ??
@@ -388,7 +388,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 		showLegacyStorageFeature,
 		allFeaturesList,
 		hasRedeemedDomainCredit,
-		useLongSetFeatures,
+		useFocusedComparisonFeatures,
 		useVar41MorePremiumFeatures,
 		useVar42NoAiFeatures,
 		showPricingDifferentiationFeaturePills,

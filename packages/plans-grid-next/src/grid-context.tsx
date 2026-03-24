@@ -33,8 +33,8 @@ interface PlansGridContext {
 	reflectStorageSelectionInPlanPrices?: boolean;
 	showSimplifiedBillingDescription?: boolean;
 	showBillingDescriptionForIncreasedRenewalPrice?: string | null;
-	isVar4Variant?: boolean;
 	isExperimentVariant?: boolean;
+	useFocusedComparisonFeatures?: boolean;
 }
 
 const PlansGridContext = createContext< PlansGridContext >( {} as PlansGridContext );
@@ -62,8 +62,8 @@ const PlansGridContextProvider = ( {
 	reflectStorageSelectionInPlanPrices,
 	showSimplifiedBillingDescription,
 	showBillingDescriptionForIncreasedRenewalPrice,
-	isVar4Variant,
 	isExperimentVariant,
+	useFocusedComparisonFeatures,
 }: GridContextProps ) => {
 	const gridPlansIndex = gridPlans.reduce(
 		( acc, gridPlan ) => ( {
@@ -100,8 +100,8 @@ const PlansGridContextProvider = ( {
 				reflectStorageSelectionInPlanPrices,
 				showSimplifiedBillingDescription,
 				showBillingDescriptionForIncreasedRenewalPrice,
-				isVar4Variant,
 				isExperimentVariant,
+				useFocusedComparisonFeatures,
 			} }
 		>
 			{ children }

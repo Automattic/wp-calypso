@@ -36,9 +36,9 @@ export interface UseGridPlansParams {
 	 */
 	reflectStorageSelectionInPlanPrices?: boolean;
 	/**
-	 * When true, use the long/expanded feature set for the plans differentiators experiment.
+	 * When true, use the focused_comparison feature set (getLongSetSignupWpcomFeatures).
 	 */
-	useLongSetFeatures?: boolean;
+	useFocusedComparisonFeatures?: boolean;
 	/**
 	 * When true, use the focused_more_premium / focused_new_copy feature set
 	 * (getVar41MorePremiumSignupWpcomFeatures) for the plans differentiators experiment.

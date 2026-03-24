@@ -99,7 +99,8 @@ const PlanFeatures2023GridFeatures: React.FC< {
 	setActiveTooltipId,
 } ) => {
 	const translate = useTranslate();
-	const { enableFeatureTooltips, isExperimentVariant, isVar4Variant } = usePlansGridContext();
+	const { enableFeatureTooltips, isExperimentVariant, useFocusedComparisonFeatures } =
+		usePlansGridContext();
 
 	return (
 		<>
@@ -136,7 +137,9 @@ const PlanFeatures2023GridFeatures: React.FC< {
 					paidDomainName &&
 					! isFreePlan( planSlug );
 				const shouldHighlightDomainFeature =
-					isCustomDomainFeatureWithPaidDomain && isExperimentVariant && ! isVar4Variant;
+					isCustomDomainFeatureWithPaidDomain &&
+					isExperimentVariant &&
+					! useFocusedComparisonFeatures;
 
 				const divClasses = clsx( '', getPlanClass( planSlug ), {
 					'is-last-feature': featureIndex + 1 === features.length,
