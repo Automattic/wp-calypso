@@ -177,7 +177,7 @@ function McpSetupComponent( { path } ) {
 				selectedMcpClient === 'claude-code' ||
 				selectedMcpClient === 'cursor' ) && (
 				<Card isRounded={ false }>
-					<CardBody style={ { padding: '8px 16px' } }>
+					<CardBody style={ { padding: '16px' } }>
 						<VStack spacing={ 3 }>
 							<CardHeading tagName="h2" size={ 16 } isBold style={ { marginBottom: 0 } }>
 								{ translate( 'Quick setup' ) }
@@ -239,8 +239,8 @@ function McpSetupComponent( { path } ) {
 			) }
 
 			<Card isRounded={ false }>
-				<CardBody style={ { padding: '8px 16px' } }>
-					<VStack spacing={ 2 }>
+				<CardBody style={ { padding: '16px' } }>
+					<VStack spacing={ 3 }>
 						<HStack justify="space-between" alignment="center">
 							<VStack spacing={ 0 }>
 								<CardHeading tagName="h2" size={ 16 } isBold style={ { marginBottom: 0 } }>
