@@ -155,10 +155,10 @@ function McpSetupComponent( { path } ) {
 	}
 
 	return renderLayout(
-		<VStack spacing={ 4 }>
+		<VStack spacing={ 2 }>
 			<Card isRounded={ false }>
-				<CardBody>
-					<VStack spacing={ 4 }>
+				<CardBody style={ { padding: '12px 16px' } }>
+					<VStack spacing={ 2 }>
 						<CardHeading tagName="h2" size={ 16 } isBold>
 							{ translate( 'Choose your AI agent' ) }
 						</CardHeading>
@@ -177,8 +177,8 @@ function McpSetupComponent( { path } ) {
 				selectedMcpClient === 'claude-code' ||
 				selectedMcpClient === 'cursor' ) && (
 				<Card isRounded={ false }>
-					<CardBody>
-						<VStack spacing={ 4 }>
+					<CardBody style={ { padding: '12px 16px' } }>
+						<VStack spacing={ 3 }>
 							<CardHeading tagName="h2" size={ 16 } isBold>
 								{ translate( 'Quick setup' ) }
 							</CardHeading>
@@ -239,8 +239,8 @@ function McpSetupComponent( { path } ) {
 			) }
 
 			<Card isRounded={ false }>
-				<CardBody>
-					<VStack spacing={ 3 }>
+				<CardBody style={ { padding: '12px 16px' } }>
+					<VStack spacing={ 2 }>
 						<HStack justify="space-between" alignment="center">
 							<CardHeading tagName="h2" size={ 16 } isBold>
 								{ translate( 'Manual setup' ) }

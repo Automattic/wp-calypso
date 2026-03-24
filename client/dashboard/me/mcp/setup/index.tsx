@@ -149,10 +149,10 @@ function McpSetupComponent() {
 			}
 		>
 			<ComponentViewTracker eventName="calypso_dashboard_mcp_setup_view" />
-			<VStack spacing={ 4 }>
+			<VStack spacing={ 2 }>
 				<Card>
-					<CardBody>
-						<VStack spacing={ 4 }>
+					<CardBody style={ { padding: '12px 16px' } }>
+						<VStack spacing={ 2 }>
 							<SectionHeader level={ 3 } title={ __( 'Choose your AI agent' ) } />
 							<SelectControl
 								__next40pxDefaultSize
@@ -169,8 +169,8 @@ function McpSetupComponent() {
 					selectedMcpClient === 'claude-code' ||
 					selectedMcpClient === 'cursor' ) && (
 					<Card>
-						<CardBody>
-							<VStack spacing={ 4 }>
+						<CardBody style={ { padding: '12px 16px' } }>
+							<VStack spacing={ 3 }>
 								<SectionHeader level={ 3 } title={ __( 'Quick setup' ) } />
 
 								{ selectedMcpClient === 'claude' && (
@@ -229,8 +229,8 @@ function McpSetupComponent() {
 				) }
 
 				<Card>
-					<CardBody>
-						<VStack spacing={ 3 }>
+					<CardBody style={ { padding: '12px 16px' } }>
+						<VStack spacing={ 2 }>
 							<HStack justify="space-between" alignment="center">
 								<SectionHeader level={ 3 } title={ __( 'Manual setup' ) } />
 								<Button
