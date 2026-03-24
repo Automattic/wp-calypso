@@ -4,9 +4,7 @@ import { Provider as ReduxProvider } from 'react-redux';
 import { MasterbarLoggedIn } from 'calypso/layout/masterbar/logged-in';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getLogoutUrl } from 'calypso/lib/user/shared-utils';
-import { siteUsesWpAdminInterface } from 'calypso/sites-dashboard/utils';
-import type { User } from '@automattic/api-core';
-import type { Site } from '@automattic/api-core/src/site/types';
+import type { User, Site } from '@automattic/api-core';
 
 const noop = () => {};
 
@@ -16,14 +14,22 @@ const noopStore = {
 	getState: () => ( {} ),
 	dispatch: () => ( {} ),
 	subscribe: () => () => {},
-};
+} as unknown as Parameters< typeof ReduxProvider >[ 0 ][ 'store' ];
+
+// Minimal placeholder so MasterbarLoggedIn doesn't crash during SSR.
+const emptyUser = {
+	display_name: '',
+	username: '',
+	site_count: 0,
+} as unknown as User;
 
 interface Props {
-	user: User;
+	user: User | null;
 	site: Site | null;
 }
 
-export function InterimOmnibar( { user, site }: Props ) {
+export function InterimOmnibar( { user: userProp, site }: Props ) {
+	const user = userProp ?? emptyUser;
 	const siteId = user.primary_blog ?? null;
 	const siteSlug = site?.slug ?? null;
 	const siteAdminUrl = site?.options?.admin_url ?? null;
@@ -44,9 +50,11 @@ export function InterimOmnibar( { user, site }: Props ) {
 				siteHomeUrl={ site?.URL ?? '' }
 				sitePlanName={ site?.plan?.product_name_short ?? '' }
 				currentSelectedSiteSlug={ siteSlug }
+				// TODO: Audit site-specific flags to see which we need to handle in the interim omnibar, and which can be hardcoded to false.
 				// Site flags
-				isEcommerce={ isEcommercePlan( site?.plan?.product_slug ) }
-				isClassicView={ !! site && siteUsesWpAdminInterface( site ) }
+				isEcommerce={ isEcommercePlan( site?.plan?.product_slug ?? '' ) }
+				// isClassicView={ !! site && siteUsesWpAdminInterface( site ) }
+				isClassicView
 				isSimpleSite={ !! site && ! site.jetpack }
 				isJetpackNotAtomic={ !! site && site.jetpack && ! site.is_wpcom_atomic }
 				domainOnlySite={ !! site?.options?.is_domain_only }
@@ -61,7 +69,7 @@ export function InterimOmnibar( { user, site }: Props ) {
 				section=""
 				sectionGroup=""
 				currentLayoutFocus={ null }
-				currentRoute={ window.location.pathname }
+				currentRoute={ typeof window !== 'undefined' ? window.location.pathname : '/' }
 				previousPath=""
 				newPostUrl={ siteAdminUrl ? `${ siteAdminUrl }post-new.php` : '' }
 				newPageUrl={ siteAdminUrl ? `${ siteAdminUrl }post-new.php?post_type=page` : '' }
@@ -87,8 +95,10 @@ export function InterimOmnibar( { user, site }: Props ) {
 				savePreference={ noop }
 				requestAdminMenu={ noop }
 				redirectToLogout={ () => {
-					const logoutUrl = getLogoutUrl( user );
-					window.location.href = logoutUrl;
+					if ( userProp ) {
+						const logoutUrl = getLogoutUrl( userProp );
+						window.location.href = logoutUrl;
+					}
 				} }
 				launchSiteOrRedirectToLaunchSignupFlow={ noop }
 			/>

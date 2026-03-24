@@ -19,6 +19,11 @@ import type { AppConfig } from './context';
 
 import './style.scss';
 
+// Masterbar CSS loaded statically so it's available for SSR (the component is server-rendered).
+// eslint-disable-next-line no-restricted-imports
+import 'calypso/layout/masterbar/style.scss';
+import './interim-omnibar/style.scss';
+
 function boot( config: AppConfig ) {
 	if ( handleOAuthCallback() ) {
 		return;

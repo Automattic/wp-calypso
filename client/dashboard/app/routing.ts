@@ -44,6 +44,9 @@ export function getDashboardFromHostname( hostname?: string ): DashboardType | u
  * Used in dashboard environments.
  */
 export function getCurrentDashboard(): DashboardType {
+	if ( typeof window === 'undefined' ) {
+		return 'dotcom';
+	}
 	return getDashboardFromHostname( window.location.hostname ) ?? 'dotcom';
 }
 
@@ -52,6 +55,9 @@ export function getCurrentDashboard(): DashboardType {
  * Used in non-dashboard environments to know which dashboard the user came from.
  */
 export function getDashboardFromQuery(): DashboardType | undefined {
+	if ( typeof window === 'undefined' ) {
+		return undefined;
+	}
 	const params = new URLSearchParams( window.location.search );
 	const dashboard = params.get( 'dashboard' );
 

@@ -1,9 +1,7 @@
 import { fetchUser } from '@automattic/api-core';
 import { queryClient, siteByIdQuery } from '@automattic/api-queries';
-import { createRoot } from 'react-dom/client';
+import { hydrateRoot } from 'react-dom/client';
 import { AUTH_QUERY_KEY } from '../auth';
-
-import './style.scss';
 
 export default async function loadOmnibar() {
 	const container = document.getElementById( 'wpcom-omnibar' );
@@ -16,15 +14,18 @@ export default async function loadOmnibar() {
 		queryClient.fetchQuery( { queryKey: AUTH_QUERY_KEY, queryFn: fetchUser } ),
 	] );
 
-	const site = user.primary_blog
-		? await queryClient.fetchQuery( siteByIdQuery( user.primary_blog ) )
-		: null;
-
 	const wpcom = document.getElementById( 'wpcom' );
 	if ( wpcom ) {
 		wpcom.style.marginTop = 'var(--masterbar-height, 47px)';
 	}
 
-	const root = createRoot( container );
+	// Hydrate the server-rendered omnibar with null props first to match SSR output,
+	// then immediately re-render with real data.
+	const root = hydrateRoot( container, <InterimOmnibar user={ null } site={ null } /> );
+
+	const site = user.primary_blog
+		? await queryClient.fetchQuery( siteByIdQuery( user.primary_blog ) )
+		: null;
+
 	root.render( <InterimOmnibar user={ user } site={ site } /> );
 }
