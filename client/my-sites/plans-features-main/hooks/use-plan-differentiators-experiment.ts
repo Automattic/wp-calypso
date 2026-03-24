@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { useExperiment } from 'calypso/lib/explat';
 import { useSelector } from 'calypso/state';
 import getSite from 'calypso/state/sites/selectors/get-site';
@@ -79,32 +78,6 @@ function usePlanDifferentiatorsExperiment( {
 	const variant = ( assignment?.variationName ?? undefined ) as
 		| PlanDifferentiatorsExperimentVariant
 		| undefined;
-
-	// Remove before shipping: logs ExPlat assignment in local dev (yarn start).
-	/* eslint-disable no-console -- temporary ExPlat assignment debug */
-	useEffect( () => {
-		if ( process.env.NODE_ENV !== 'development' ) {
-			return;
-		}
-		if ( ! isEligible ) {
-			console.log( '[calypso_pricing_differentiation_202603] not eligible', {
-				isInSignup,
-				flowName,
-				siteId,
-				hasGatingFlag,
-			} );
-			return;
-		}
-		if ( isLoading ) {
-			console.log( '[calypso_pricing_differentiation_202603] loading…' );
-			return;
-		}
-		console.log( '[calypso_pricing_differentiation_202603] assignment', {
-			variant,
-			raw: assignment,
-		} );
-	}, [ isEligible, isLoading, variant, assignment, isInSignup, flowName, siteId, hasGatingFlag ] );
-	/* eslint-enable no-console */
 
 	const isExperimentVariant = variant !== undefined && variant !== 'control';
 
