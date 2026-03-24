@@ -142,7 +142,7 @@ __metadata:
   resolution: "@automattic/agents-manager@workspace:packages/agents-manager"
   dependencies:
     "@automattic/agenttic-client": "npm:^0.1.56"
-    "@automattic/agenttic-ui": "npm:^0.1.53"
+    "@automattic/agenttic-ui": "npm:^0.1.56"
     "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
@@ -174,7 +174,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/agenttic-client@npm:^0.1.55, @automattic/agenttic-client@npm:^0.1.56":
+"@automattic/agenttic-client@npm:^0.1.56":
   version: 0.1.56
   resolution: "@automattic/agenttic-client@npm:0.1.56"
   dependencies:
@@ -194,7 +194,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@automattic/agenttic-ui@npm:^0.1.53, @automattic/agenttic-ui@npm:^0.1.55, @automattic/agenttic-ui@npm:^0.1.56":
+"@automattic/agenttic-ui@npm:^0.1.56":
   version: 0.1.56
   resolution: "@automattic/agenttic-ui@npm:0.1.56"
   dependencies:
@@ -346,7 +346,7 @@ __metadata:
   resolution: "@automattic/block-notes@workspace:packages/block-notes"
   dependencies:
     "@automattic/agents-manager": "workspace:^"
-    "@automattic/agenttic-client": "npm:^0.1.55"
+    "@automattic/agenttic-client": "npm:^0.1.56"
     "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@testing-library/react": "npm:^15.0.0"
@@ -1443,8 +1443,8 @@ __metadata:
   resolution: "@automattic/image-studio@workspace:packages/image-studio"
   dependencies:
     "@automattic/agents-manager": "workspace:^"
-    "@automattic/agenttic-client": "npm:^0.1.55"
-    "@automattic/agenttic-ui": "npm:^0.1.55"
+    "@automattic/agenttic-client": "npm:^0.1.56"
+    "@automattic/agenttic-ui": "npm:^0.1.56"
     "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/oauth-token": "workspace:^"
@@ -1777,7 +1777,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/odie-client@workspace:packages/odie-client"
   dependencies:
-    "@automattic/agenttic-ui": "npm:^0.1.55"
+    "@automattic/agenttic-client": "npm:^0.1.56"
+    "@automattic/agenttic-ui": "npm:^0.1.56"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
@@ -13366,7 +13367,7 @@ __metadata:
   dependencies:
     "@automattic/accessible-focus": "workspace:^"
     "@automattic/agents-manager": "workspace:^"
-    "@automattic/agenttic-ui": "npm:^0.1.55"
+    "@automattic/agenttic-ui": "npm:^0.1.56"
     "@automattic/api-core": "workspace:^"
     "@automattic/api-queries": "workspace:^"
     "@automattic/block-renderer": "workspace:^"

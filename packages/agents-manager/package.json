@@ -42,7 +42,7 @@
 	},
 	"dependencies": {
 		"@automattic/agenttic-client": "^0.1.56",
-		"@automattic/agenttic-ui": "^0.1.53",
+		"@automattic/agenttic-ui": "^0.1.56",
 		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/components": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
