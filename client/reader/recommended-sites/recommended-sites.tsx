@@ -6,7 +6,6 @@ import { useTranslate } from 'i18n-calypso';
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Dispatch } from 'redux';
-import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import {
 	RecommendedSitesRequestAction,
 	requestRecommendedSites,
@@ -59,7 +58,6 @@ const RecommendedSitesPlaceholder = ( { count }: { count: number } ) => {
 const RecommendedSites = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch< Dispatch< RecommendedSitesRequestAction > >();
-	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 	const amountOfPlaceHolders = useBreakpoint( '<1040px' ) ? 1 : 2;
 
 	const recommendedSites = useSelector(
@@ -86,9 +84,6 @@ const RecommendedSites = () => {
 		}
 	}, [ dispatch, filteredRecommendedSites.length, offset ] );
 
-	if ( ! isEmailVerified ) {
-		return null;
-	}
 	return (
 		<div className="recommended-sites">
 			<h2 className="recommended-sites__heading">{ translate( 'Recommended sites' ) }</h2>
