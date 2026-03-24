@@ -47,13 +47,8 @@ type SubscriberDataViewsProps = {
 const SubscriptionTypeCell = ( { subscriber }: { subscriber: Subscriber } ) => {
 	const plans = useSubscriptionPlans( subscriber );
 
-	const freePlan = translate( 'Free' );
-	const compLabel = translate( 'Comp', {
-		comment: 'Short for "complimentary" — a free subscription granted by the site creator',
-	} );
-
 	// If there's a paid (non-gift, non-free) plan, show only that.
-	const paidPlans = plans.filter( ( p ) => ! p.is_gift && p.plan !== freePlan );
+	const paidPlans = plans.filter( ( p ) => ! p.is_gift && ! p.is_free );
 	if ( paidPlans.length > 0 ) {
 		return paidPlans.map( ( plan, index ) => <div key={ index }>{ plan.plan }</div> );
 	}
@@ -61,11 +56,17 @@ const SubscriptionTypeCell = ( { subscriber }: { subscriber: Subscriber } ) => {
 	// If there are any comps, show just "Comp" (no title details).
 	const hasComp = plans.some( ( p ) => p.is_gift );
 	if ( hasComp ) {
-		return <div>{ compLabel }</div>;
+		return (
+			<div>
+				{ translate( 'Comp', {
+					comment: 'Short for "complimentary" — a free subscription granted by the site creator',
+				} ) }
+			</div>
+		);
 	}
 
 	// Otherwise show "Free".
-	return <div>{ freePlan }</div>;
+	return <div>{ translate( 'Free' ) }</div>;
 };
 
 const SubscriberName = ( { displayName, email }: { displayName: string; email: string } ) => (
