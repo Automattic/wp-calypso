@@ -111,7 +111,7 @@ const useSubscriptionPlans = ( subscriber: Subscriber ): SubscriptionPlanData[] 
 				startDate: plan.start_date,
 				title: plan.title,
 				is_gift: plan.is_gift,
-				is_free: ! plan.renewal_price,
+				is_free: plan.renewal_price === 0,
 			} ) );
 		}
 		return [];
