@@ -10,6 +10,24 @@ export default async function loadOmnibar( events: OmnibarEvents ) {
 		return;
 	}
 
+	container.addEventListener( 'click', ( event ) => {
+		if ( event.metaKey || event.ctrlKey || event.shiftKey || event.altKey ) {
+			return;
+		}
+
+		const anchor = ( event.target as Element ).closest< HTMLAnchorElement >( 'a[href]' );
+		if ( ! anchor || anchor.target === '_blank' ) {
+			return;
+		}
+
+		const href = anchor.getAttribute( 'href' );
+		if ( ! href ) {
+			return;
+		}
+
+		events.linkClick.emit( { href, event } );
+	} );
+
 	const [ { InterimOmnibar }, user ] = await Promise.all( [
 		import( './interim-omnibar' ),
 		queryClient.fetchQuery( { queryKey: AUTH_QUERY_KEY, queryFn: fetchUser } ),
@@ -28,7 +46,13 @@ export default async function loadOmnibar( events: OmnibarEvents ) {
 			user={ user }
 			site={ site }
 			onToggleMenu={ () => events.mobileMenu.emit() }
-			onToggleNotifications={ () => events.notifications.emit() }
+			onToggleNotifications={ () => {
+				// Defer to a microtask so the callback runs after the current
+				// click handler but before any macrotasks (e.g. Popover's
+				// setTimeout(0) blur-close). This prevents focus-outside
+				// handlers from racing with the toggle.
+				Promise.resolve().then( () => events.notifications.emit() );
+			} }
 		/>
 	);
 }
