@@ -109,7 +109,7 @@ const useSubscriptionPlans = ( subscriber: Subscriber ): SubscriptionPlanData[] 
 				startDate: plan.start_date,
 				title: plan.title,
 				is_gift: plan.is_gift,
-				is_free: ! plan.is_gift && ! plan.renewalPrice,
+				is_free: ! plan.renewalPrice,
 			} ) );
 		}
 		return [];
