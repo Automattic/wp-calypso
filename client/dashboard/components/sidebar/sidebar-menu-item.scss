@@ -1,0 +1,10 @@
+.components-button.dashboard-sidebar__menu-item {
+	justify-content: flex-start;
+	width: 100%;
+	color: var( --dashboard-menu-item__color );
+
+	&.active {
+		background: color-mix( in srgb, var( --wp-admin-theme-color ) 8%, transparent );
+		color: var( --wp-admin-theme-color );
+	}
+}

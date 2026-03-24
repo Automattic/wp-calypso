@@ -1,7 +1,7 @@
 @import '@wordpress/base-styles/variables';
 @import '@wordpress/base-styles/mixins';
 
-$sidebar-width: 272px;
+@import './variables';
 
 .dashboard-responsive-sidebar__sidebar {
 	display: flex;
@@ -9,6 +9,7 @@ $sidebar-width: 272px;
 	flex-shrink: 0;
 	gap: $grid-unit-30;
 	position: sticky;
+	top: 0;
 	width: $sidebar-width;
 	min-height: calc(100vh - var(--masterbar-height) );
 	padding: 0 $grid-unit-20;

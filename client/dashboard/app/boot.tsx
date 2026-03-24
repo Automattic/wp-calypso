@@ -1,6 +1,6 @@
 import { persistQueryClientPromise } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
-import { initSentry } from '@automattic/calypso-sentry';
+import { captureException, initSentry } from '@automattic/calypso-sentry';
 import {
 	isSupportSession,
 	maybeInitializeSupportSession,
@@ -18,6 +18,11 @@ import limitTotalSnackbars from './snackbars/limit-total-snackbars';
 import type { AppConfig } from './context';
 
 import './style.scss';
+
+// Masterbar CSS loaded statically so it's available for SSR (the component is server-rendered).
+// eslint-disable-next-line no-restricted-imports
+import 'calypso/layout/masterbar/style.scss';
+import './interim-omnibar/style.scss';
 
 function boot( config: AppConfig ) {
 	if ( handleOAuthCallback() ) {
@@ -39,6 +44,10 @@ function boot( config: AppConfig ) {
 		throw new Error( 'No root element found' );
 	}
 	const root = createRoot( rootElement );
+
+	if ( isEnabled( 'dashboard/omnibar' ) ) {
+		import( './interim-omnibar' ).then( ( m ) => m.default() ).catch( captureException );
+	}
 
 	persistQueryClientPromise.then( () => {
 		root.render( <Layout config={ config } /> );
