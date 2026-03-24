@@ -7,23 +7,41 @@
 import { __ } from '@wordpress/i18n';
 
 export const DISPLAY_CATEGORIES = {
-	SITES_CONTENT: __( 'Sites & Content', 'calypso' ),
+	POSTS: __( 'Posts', 'calypso' ),
+	PAGES: __( 'Pages', 'calypso' ),
+	MEDIA: __( 'Media', 'calypso' ),
+	COMMENTS: __( 'Comments', 'calypso' ),
+	CATEGORIES_TAGS: __( 'Categories & Tags', 'calypso' ),
+	DESIGN: __( 'Design', 'calypso' ),
+	SITES: __( 'Sites', 'calypso' ),
+	USERS: __( 'Users', 'calypso' ),
+	PLUGINS: __( 'Plugins', 'calypso' ),
+	ANALYTICS: __( 'Analytics', 'calypso' ),
+	SITE_SETTINGS: __( 'Site Settings', 'calypso' ),
 	ACCOUNT: __( 'Account', 'calypso' ),
-	BILLING: __( 'Billing', 'calypso' ),
 	NOTIFICATIONS: __( 'Notifications', 'calypso' ),
-	DOMAINS_INTEGRATIONS: __( 'Domains & Integrations', 'calypso' ),
-	SITE_CONFIGURATION: __( 'Site Configuration', 'calypso' ),
+	BILLING: __( 'Billing', 'calypso' ),
+	DOMAINS: __( 'Domains', 'calypso' ),
 	DEVELOPER_TESTING: __( 'Developer & Testing', 'calypso' ),
 	UNCATEGORIZED: __( 'Uncategorized', 'calypso' ),
 } as const;
 
 export const CATEGORY_ORDER = [
-	DISPLAY_CATEGORIES.SITES_CONTENT,
+	DISPLAY_CATEGORIES.POSTS,
+	DISPLAY_CATEGORIES.PAGES,
+	DISPLAY_CATEGORIES.MEDIA,
+	DISPLAY_CATEGORIES.COMMENTS,
+	DISPLAY_CATEGORIES.CATEGORIES_TAGS,
+	DISPLAY_CATEGORIES.DESIGN,
+	DISPLAY_CATEGORIES.SITES,
+	DISPLAY_CATEGORIES.USERS,
+	DISPLAY_CATEGORIES.PLUGINS,
+	DISPLAY_CATEGORIES.ANALYTICS,
+	DISPLAY_CATEGORIES.SITE_SETTINGS,
 	DISPLAY_CATEGORIES.ACCOUNT,
-	DISPLAY_CATEGORIES.BILLING,
 	DISPLAY_CATEGORIES.NOTIFICATIONS,
-	DISPLAY_CATEGORIES.DOMAINS_INTEGRATIONS,
-	DISPLAY_CATEGORIES.SITE_CONFIGURATION,
+	DISPLAY_CATEGORIES.BILLING,
+	DISPLAY_CATEGORIES.DOMAINS,
 	DISPLAY_CATEGORIES.DEVELOPER_TESTING,
 	DISPLAY_CATEGORIES.UNCATEGORIZED,
 ] as const;
@@ -31,27 +49,64 @@ export const CATEGORY_ORDER = [
 /** Maps API category values to display category names (fallback when tool not in explicit map) */
 export const API_CATEGORY_TO_DISPLAY: Record< string, string > = {
 	user: DISPLAY_CATEGORIES.ACCOUNT,
-	content: DISPLAY_CATEGORIES.SITES_CONTENT,
-	site: DISPLAY_CATEGORIES.SITE_CONFIGURATION,
-	analytics: DISPLAY_CATEGORIES.SITE_CONFIGURATION,
+	content: DISPLAY_CATEGORIES.UNCATEGORIZED,
+	site: DISPLAY_CATEGORIES.SITE_SETTINGS,
+	analytics: DISPLAY_CATEGORIES.ANALYTICS,
 	internal: DISPLAY_CATEGORIES.DEVELOPER_TESTING,
 	utility: DISPLAY_CATEGORIES.DEVELOPER_TESTING,
 };
 
 /**
- * Tools that need a different display category than their API category (e.g. "user" tools
- * that belong in Sites & Content, Billing, Notifications, or Domains & Integrations).
+ * Tools that need an explicit display category (single-tool groups or cross-prefix exceptions).
  */
 const TOOL_DISPLAY_OVERRIDES: Record< string, string > = {
-	'user-sites-resource': DISPLAY_CATEGORIES.SITES_CONTENT,
-	'user-sites': DISPLAY_CATEGORIES.SITES_CONTENT,
-	'site-users': DISPLAY_CATEGORIES.SITES_CONTENT,
-	'user-domains': DISPLAY_CATEGORIES.DOMAINS_INTEGRATIONS,
-	'user-connections': DISPLAY_CATEGORIES.DOMAINS_INTEGRATIONS,
-	'user-subscriptions': DISPLAY_CATEGORIES.BILLING,
+	// Sites
+	'user-sites': DISPLAY_CATEGORIES.SITES,
+	'user-sites-resource': DISPLAY_CATEGORIES.SITES,
+	// Users
+	'site-users': DISPLAY_CATEGORIES.USERS,
+	// Plugins
+	'site-plugins': DISPLAY_CATEGORIES.PLUGINS,
+	// Analytics
+	'site-statistics': DISPLAY_CATEGORIES.ANALYTICS,
+	'site-activity-log': DISPLAY_CATEGORIES.ANALYTICS,
+	// Site Settings
+	'site-settings': DISPLAY_CATEGORIES.SITE_SETTINGS,
+	// Account
+	'user-profile': DISPLAY_CATEGORIES.ACCOUNT,
+	'user-achievements': DISPLAY_CATEGORIES.ACCOUNT,
+	'user-security': DISPLAY_CATEGORIES.ACCOUNT,
+	// Notifications
 	'user-notifications': DISPLAY_CATEGORIES.NOTIFICATIONS,
 	'user-notifications-inbox': DISPLAY_CATEGORIES.NOTIFICATIONS,
+	// Billing
+	'user-subscriptions': DISPLAY_CATEGORIES.BILLING,
+	// Domains
+	'user-domains': DISPLAY_CATEGORIES.DOMAINS,
+	'domain-purchase': DISPLAY_CATEGORIES.DOMAINS,
+	'user-connections': DISPLAY_CATEGORIES.DOMAINS,
 };
+
+/**
+ * Prefix-based overrides, checked after exact match. Order matters — more specific prefixes
+ * (e.g. 'site-posts-') must come before less specific ones (e.g. 'site-').
+ */
+const TOOL_PREFIX_OVERRIDES: Array< [ string, string ] > = [
+	[ 'posts-', DISPLAY_CATEGORIES.POSTS ],
+	[ 'post-', DISPLAY_CATEGORIES.POSTS ], // legacy: post-get
+	[ 'site-posts-', DISPLAY_CATEGORIES.POSTS ], // site-level server tools
+	[ 'site-post-', DISPLAY_CATEGORIES.POSTS ], // site-level server tools
+	[ 'pages-', DISPLAY_CATEGORIES.PAGES ],
+	[ 'media-', DISPLAY_CATEGORIES.MEDIA ],
+	[ 'comments-', DISPLAY_CATEGORIES.COMMENTS ],
+	[ 'site-comments-', DISPLAY_CATEGORIES.COMMENTS ],
+	[ 'categories-', DISPLAY_CATEGORIES.CATEGORIES_TAGS ],
+	[ 'tags-', DISPLAY_CATEGORIES.CATEGORIES_TAGS ],
+	[ 'synced-patterns-', DISPLAY_CATEGORIES.DESIGN ], // before 'patterns-'
+	[ 'patterns-', DISPLAY_CATEGORIES.DESIGN ],
+	[ 'theme-', DISPLAY_CATEGORIES.DESIGN ],
+	[ 'blocks-', DISPLAY_CATEGORIES.DESIGN ],
+];
 
 /**
  * Returns true if a tool should be treated as a write operation.
@@ -67,7 +122,6 @@ export function isWriteTool( toolId: string, ability?: { readonly?: boolean } ):
 
 /**
  * Get the display category for a tool based on its ID and optional API category.
- * API category is the primary source; overrides apply for tools needing different grouping.
  * @param toolId - The tool ID (e.g., 'wpcom-mcp/user-profile')
  * @param ability - Optional ability object with category from API
  * @param ability.category - API category (user, content, site, analytics, internal, utility)
@@ -76,13 +130,20 @@ export function isWriteTool( toolId: string, ability?: { readonly?: boolean } ):
 export function getDisplayCategory( toolId: string, ability?: { category?: string } ): string {
 	const toolName = toolId.replace( 'wpcom-mcp/', '' );
 
-	// 1. Check explicit overrides first (tools that need different grouping than API category)
-	const override = TOOL_DISPLAY_OVERRIDES[ toolName ];
-	if ( override ) {
-		return override;
+	// 1. Exact match overrides
+	const exactOverride = TOOL_DISPLAY_OVERRIDES[ toolName ];
+	if ( exactOverride ) {
+		return exactOverride;
 	}
 
-	// 2. Use API category as primary source of truth
+	// 2. Prefix-based overrides
+	for ( const [ prefix, category ] of TOOL_PREFIX_OVERRIDES ) {
+		if ( toolName.startsWith( prefix ) ) {
+			return category;
+		}
+	}
+
+	// 3. API category fallback
 	const apiCategory = ability?.category;
 	if ( apiCategory && API_CATEGORY_TO_DISPLAY[ apiCategory ] ) {
 		return API_CATEGORY_TO_DISPLAY[ apiCategory ];
