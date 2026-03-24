@@ -25,7 +25,7 @@ const StagingSiteActionButton = ( {
 		return (
 			<>
 				<Spinner style={ spinnerStyle } />
-				<span>{ __( 'Adding staging site\u2026' ) }</span>
+				<span>{ __( 'Adding staging site…' ) }</span>
 			</>
 		);
 	}
@@ -34,7 +34,7 @@ const StagingSiteActionButton = ( {
 		return (
 			<>
 				<Spinner style={ spinnerStyle } />
-				<span>{ __( 'Deleting staging site\u2026' ) }</span>
+				<span>{ __( 'Deleting staging site…' ) }</span>
 			</>
 		);
 	}
