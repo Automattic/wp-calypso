@@ -64,21 +64,27 @@ test.describe( 'Authentication: GitHub', { tag: [ tags.AUTHENTICATION ] }, () =>
 
 		await test.step( 'And I handle GitHub device verification if needed', async function () {
 			// GitHub may show a device verification screen in CI
-			try {
-				await page.waitForURL( '**/sessions/verified-device', { timeout: 5000 } );
+			const onVerificationPage = await page
+				.waitForURL( '**/sessions/verified-device', { timeout: 5000 } )
+				.then(
+					() => true,
+					() => false
+				);
+			if ( onVerificationPage ) {
 				await pageGitHubLogin.clickButtonWithExactText( 'Verify' );
-			} catch {
-				// Not on verification page, continue
 			}
 		} );
 
 		await test.step( 'And I skip GitHub trust device if needed', async function () {
 			// GitHub may show a trusted device screen in CI
-			try {
-				await page.waitForURL( '**/sessions/trusted-device', { timeout: 5000 } );
+			const onTrustedDevicePage = await page
+				.waitForURL( '**/sessions/trusted-device', { timeout: 5000 } )
+				.then(
+					() => true,
+					() => false
+				);
+			if ( onTrustedDevicePage ) {
 				await pageGitHubLogin.clickButtonWithExactText( "Don't ask again for this browser" );
-			} catch {
-				// Not on trusted device page, continue
 			}
 		} );
 

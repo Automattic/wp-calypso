@@ -46,13 +46,12 @@ test.describe( 'Help Center in Calypso', { tag: [ tags.CALYPSO_PR ] }, () => {
 
 		await test.step( 'Help Center can be minimized', async () => {
 			await helpCenterComponent.minimizePopover();
-			// Wait for the minimize animation to complete before measuring height.
-			// eslint-disable-next-line playwright/no-wait-for-timeout
-			await page.waitForTimeout( 200 );
-			const containerHeight = await helpCenterLocator.evaluate(
-				( el: HTMLElement ) => el.offsetHeight
-			);
-			expect( containerHeight ).toBe( 56 );
+			await expect
+				.poll( () => helpCenterLocator.evaluate( ( el: HTMLElement ) => el.offsetHeight ), {
+					timeout: 200,
+					intervals: [ 50 ],
+				} )
+				.toBe( 56 );
 		} );
 
 		await test.step( 'Help Center can be maximized', async () => {

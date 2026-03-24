@@ -25,6 +25,7 @@ export function createBlockTests(
 ): void {
 	const describe = muted ? test.describe.fixme : test.describe;
 
+	// Tags are composed dynamically from caller arguments; the linter cannot validate them statically.
 	// eslint-disable-next-line playwright/valid-test-tags
 	describe( DataHelper.createSuiteTitle( specName ), { tag: testTags }, () => {
 		const features = envToFeatureKey( envVariables );
