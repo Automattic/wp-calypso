@@ -47,6 +47,7 @@ boot( {
 		siteOverview: {
 			preview: true,
 		},
+		ssoBridge: true,
 	},
 	optIn: false,
 	components: {
