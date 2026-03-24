@@ -130,7 +130,7 @@ export const QuickLinks = ( {
 					href={ advertisingUrl }
 					hideLinkIndicator
 					onClick={ trackPromotePostAction }
-					label={ translate( 'Promote with Blaze' ) }
+					label={ translate( 'Promote with Blaze Ads' ) }
 					svgIcon={ blaze }
 				/>
 			) }
