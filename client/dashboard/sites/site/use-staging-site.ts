@@ -97,6 +97,7 @@ export default function useStagingSite( site: Site ) {
 		) {
 			createSuccessNotice( __( 'Staging site deleted.' ), {
 				type: 'snackbar',
+				id: 'staging-site-deleted',
 			} );
 			invalidateQueries( productionSiteId, productionSite?.slug, stagingSiteId );
 		}
@@ -123,6 +124,7 @@ export default function useStagingSite( site: Site ) {
 			createSuccessNotice( __( 'Staging site added.' ), {
 				type: 'snackbar',
 				explicitDismiss: true,
+				id: 'staging-site-added',
 			} );
 			productionSite && queryClient.invalidateQueries( siteBySlugQuery( productionSite.slug ) );
 			queryClient.setQueryData(
