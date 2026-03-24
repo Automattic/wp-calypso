@@ -11,8 +11,6 @@ import {
 	useMemo,
 	useSyncExternalStore,
 } from 'react';
-// eslint-disable-next-line no-restricted-imports
-import { detectCiabConfig } from 'calypso/lib/partner-branding';
 import { LoadingLine } from '../../components/loading-line';
 import { PageViewTracker } from '../../components/page-view-tracker';
 import NotFound from '../404';
@@ -26,11 +24,6 @@ import ResponsiveSidebar from '../responsive-sidebar';
 import Snackbars from '../snackbars';
 import './style.scss';
 
-function getDefaultLoadingLogo() {
-	const ciabConfig = detectCiabConfig();
-	return ciabConfig?.loadingLogo ?? WordPressLogo;
-}
-
 const WebpackBuildMonitor = lazy(
 	() =>
 		import(
@@ -43,7 +36,7 @@ const VERY_SLOW_THRESHOLD_MS = 6000;
 
 function Root() {
 	const isOmnibarEnabled = isEnabled( 'dashboard/omnibar' );
-	const { name, supports, LoadingLogo = getDefaultLoadingLogo() } = useAppContext();
+	const { name, supports, LoadingLogo = WordPressLogo } = useAppContext();
 	const isFetching = useIsFetching();
 	const router = useRouter();
 	const queryClient = useQueryClient();

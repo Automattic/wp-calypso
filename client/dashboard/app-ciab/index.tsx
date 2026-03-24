@@ -8,7 +8,7 @@ import {
 /* eslint-enable no-restricted-imports */
 import config from '@automattic/calypso-config';
 // eslint-disable-next-line no-restricted-imports
-import { detectCiabConfig } from 'calypso/lib/partner-branding';
+import WooCommerceLogo from 'calypso/components/woocommerce-logo';
 import boot from '../app/boot';
 import './translations';
 import type {
@@ -24,7 +24,7 @@ boot( {
 	basePath: '/',
 	mainRoute: '/sites',
 	Logo: null,
-	LoadingLogo: detectCiabConfig()?.loadingLogo,
+	LoadingLogo: WooCommerceLogo,
 	supports: {
 		sites: true,
 		domains: true,
