@@ -6,6 +6,7 @@
 import { store as blockEditorStore } from '@wordpress/block-editor';
 import { select } from '@wordpress/data';
 import { store as imageStudioStore } from '../store';
+import type { ImageStudioEntryPoint } from '../store';
 import type { BlockEditorSelectors, CoreDataSelectors, WPBlock } from '../types/wordpress.d';
 
 export interface ImageStudioMetadata {
@@ -23,6 +24,8 @@ export interface ImageStudioData {
 	style?: string;
 	aspect_ratio?: string;
 	metadata: ImageStudioMetadata;
+	entryPoint: ImageStudioEntryPoint | null;
+	blockType: string | null;
 }
 
 export interface PageContentBlock {
@@ -195,9 +198,16 @@ function detectImageEntity(): ImageStudioData | null {
 		const selectedStyle = storeSelect.getSelectedStyle?.() || null;
 		const selectedAspectRatio = storeSelect.getSelectedAspectRatio?.() || null;
 
+		// Entrypoint for image studio context
+		const entryPoint = storeSelect.getEntryPoint?.() || null;
+
+		const blockType = storeSelect.getBlockType?.() || null;
+
 		const imageStudio: ImageStudioData = {
 			isOpen,
 			id: attachmentId,
+			entryPoint, // 'editor_block' | 'media_library' | etc.
+			blockType, // 'core/image' | etc.
 			metadata: {},
 		};
 
