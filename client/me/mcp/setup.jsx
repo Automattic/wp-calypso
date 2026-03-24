@@ -156,127 +156,131 @@ function McpSetupComponent( { path } ) {
 	}
 
 	return renderLayout(
-		<VStack spacing={ 2 }>
+		<>
 			<HeaderCake backText={ translate( 'Back' ) } backHref="/me/mcp">
 				{ translate( 'Connect AI agent' ) }
 			</HeaderCake>
-			<Card isRounded={ false }>
-				<CardBody style={ { padding: '8px 16px' } }>
-					<SelectControl
-						__next40pxDefaultSize
-						__nextHasNoMarginBottom
-						label={ translate( 'Choose your AI agent' ) }
-						value={ selectedMcpClient }
-						options={ mcpClientOptions }
-						onChange={ setSelectedMcpClient }
-					/>
-				</CardBody>
-			</Card>
+			<VStack spacing={ 2 }>
+				<Card isRounded={ false }>
+					<CardBody style={ { padding: '8px 16px' } }>
+						<SelectControl
+							__next40pxDefaultSize
+							__nextHasNoMarginBottom
+							label={ translate( 'Choose your AI agent' ) }
+							value={ selectedMcpClient }
+							options={ mcpClientOptions }
+							onChange={ setSelectedMcpClient }
+						/>
+					</CardBody>
+				</Card>
 
-			{ ( selectedMcpClient === 'claude' ||
-				selectedMcpClient === 'claude-code' ||
-				selectedMcpClient === 'cursor' ) && (
+				{ ( selectedMcpClient === 'claude' ||
+					selectedMcpClient === 'claude-code' ||
+					selectedMcpClient === 'cursor' ) && (
+					<Card isRounded={ false }>
+						<CardBody style={ { padding: '16px' } }>
+							<VStack spacing={ 3 }>
+								<CardHeading tagName="h2" size={ 16 } isBold style={ { marginBottom: 0 } }>
+									{ translate( 'Quick setup' ) }
+								</CardHeading>
+
+								{ selectedMcpClient === 'claude' && (
+									<ol style={ { paddingInlineStart: '20px', margin: '0' } }>
+										<li>
+											<ExternalLink href="https://claude.ai/settings/connectors">
+												{ translate( 'Open Claude settings' ) }
+											</ExternalLink>
+										</li>
+										<li>
+											{ translate( 'Click "Browse connectors" and search for WordPress.com' ) }
+										</li>
+										<li>{ translate( 'Select WordPress.com and follow the prompts' ) }</li>
+									</ol>
+								) }
+
+								{ selectedMcpClient === 'claude-code' && (
+									<ol style={ { paddingInlineStart: '20px', margin: '0' } }>
+										<li>
+											{ translate( 'Run in your terminal:' ) }{ ' ' }
+											<code
+												style={ {
+													backgroundColor: '#f0f0f1',
+													padding: '2px 6px',
+													borderRadius: '3px',
+													fontFamily: 'monospace',
+													fontSize: '13px',
+												} }
+											>
+												claude mcp add --transport http wpcom-mcp
+												https://public-api.wordpress.com/wpcom/v2/mcp/v1
+											</code>
+										</li>
+										<li>{ translate( 'Run /mcp in Claude Code to authenticate' ) }</li>
+									</ol>
+								) }
+
+								{ selectedMcpClient === 'cursor' && (
+									<>
+										<p style={ { margin: 0 } }>
+											{ translate(
+												'Use the one-click install to add the WordPress.com MCP server to Cursor.'
+											) }
+										</p>
+										<Button
+											variant="primary"
+											href="cursor://anysphere.cursor-deeplink/mcp/install?name=WordPress.com&config=eyJjb21tYW5kIjoibnB4IC15IG1jcC1yZW1vdGUgaHR0cHM6Ly9wdWJsaWMtYXBpLndvcmRwcmVzcy5jb20vd3Bjb20vdjIvbWNwL3YxIn0%3D"
+											target="_blank"
+											style={ { alignSelf: 'flex-start' } }
+										>
+											{ translate( 'Install in Cursor' ) }
+										</Button>
+									</>
+								) }
+							</VStack>
+						</CardBody>
+					</Card>
+				) }
+
 				<Card isRounded={ false }>
 					<CardBody style={ { padding: '16px' } }>
 						<VStack spacing={ 3 }>
-							<CardHeading tagName="h2" size={ 16 } isBold style={ { marginBottom: 0 } }>
-								{ translate( 'Quick setup' ) }
-							</CardHeading>
-
-							{ selectedMcpClient === 'claude' && (
-								<ol style={ { paddingInlineStart: '20px', margin: '0' } }>
-									<li>
-										<ExternalLink href="https://claude.ai/settings/connectors">
-											{ translate( 'Open Claude settings' ) }
-										</ExternalLink>
-									</li>
-									<li>{ translate( 'Click "Browse connectors" and search for WordPress.com' ) }</li>
-									<li>{ translate( 'Select WordPress.com and follow the prompts' ) }</li>
-								</ol>
-							) }
-
-							{ selectedMcpClient === 'claude-code' && (
-								<ol style={ { paddingInlineStart: '20px', margin: '0' } }>
-									<li>
-										{ translate( 'Run in your terminal:' ) }{ ' ' }
-										<code
-											style={ {
-												backgroundColor: '#f0f0f1',
-												padding: '2px 6px',
-												borderRadius: '3px',
-												fontFamily: 'monospace',
-												fontSize: '13px',
-											} }
-										>
-											claude mcp add --transport http wpcom-mcp
-											https://public-api.wordpress.com/wpcom/v2/mcp/v1
-										</code>
-									</li>
-									<li>{ translate( 'Run /mcp in Claude Code to authenticate' ) }</li>
-								</ol>
-							) }
-
-							{ selectedMcpClient === 'cursor' && (
-								<>
-									<p style={ { margin: 0 } }>
-										{ translate(
-											'Use the one-click install to add the WordPress.com MCP server to Cursor.'
-										) }
+							<HStack justify="space-between" alignment="center">
+								<VStack spacing={ 0 }>
+									<CardHeading tagName="h2" size={ 16 } isBold style={ { marginBottom: 0 } }>
+										{ translate( 'Manual setup' ) }
+									</CardHeading>
+									<p style={ { margin: 0, fontSize: '13px', color: '#757575' } }>
+										{ translate( "Copy this configuration into your client's MCP settings." ) }
 									</p>
-									<Button
-										variant="primary"
-										href="cursor://anysphere.cursor-deeplink/mcp/install?name=WordPress.com&config=eyJjb21tYW5kIjoibnB4IC15IG1jcC1yZW1vdGUgaHR0cHM6Ly9wdWJsaWMtYXBpLndvcmRwcmVzcy5jb20vd3Bjb20vdjIvbWNwL3YxIn0%3D"
-										target="_blank"
-										style={ { alignSelf: 'flex-start' } }
-									>
-										{ translate( 'Install in Cursor' ) }
-									</Button>
-								</>
+								</VStack>
+								<Button
+									icon={ getCopyIcon() }
+									variant="tertiary"
+									size="small"
+									style={ {
+										color: copyStatus === 'error' ? 'var(--color-error)' : undefined,
+									} }
+									onClick={ copyToClipboard }
+									aria-label={ translate( 'Copy configuration to clipboard' ) }
+								/>
+							</HStack>
+							<TextareaControl
+								__nextHasNoMarginBottom
+								value={ JSON.stringify( generateMcpConfig( selectedMcpClient ), null, 2 ) }
+								onChange={ () => {} }
+								readOnly
+								style={ { minHeight: '160px' } }
+							/>
+							{ clientDocumentation[ selectedMcpClient ] && (
+								<ExternalLink href={ clientDocumentation[ selectedMcpClient ] }>
+									{ clientDocumentationLabels[ selectedMcpClient ] }
+								</ExternalLink>
 							) }
 						</VStack>
 					</CardBody>
 				</Card>
-			) }
-
-			<Card isRounded={ false }>
-				<CardBody style={ { padding: '16px' } }>
-					<VStack spacing={ 3 }>
-						<HStack justify="space-between" alignment="center">
-							<VStack spacing={ 0 }>
-								<CardHeading tagName="h2" size={ 16 } isBold style={ { marginBottom: 0 } }>
-									{ translate( 'Manual setup' ) }
-								</CardHeading>
-								<p style={ { margin: 0, fontSize: '13px', color: '#757575' } }>
-									{ translate( "Copy this configuration into your client's MCP settings." ) }
-								</p>
-							</VStack>
-							<Button
-								icon={ getCopyIcon() }
-								variant="tertiary"
-								size="small"
-								style={ {
-									color: copyStatus === 'error' ? 'var(--color-error)' : undefined,
-								} }
-								onClick={ copyToClipboard }
-								aria-label={ translate( 'Copy configuration to clipboard' ) }
-							/>
-						</HStack>
-						<TextareaControl
-							__nextHasNoMarginBottom
-							value={ JSON.stringify( generateMcpConfig( selectedMcpClient ), null, 2 ) }
-							onChange={ () => {} }
-							readOnly
-							style={ { minHeight: '160px' } }
-						/>
-						{ clientDocumentation[ selectedMcpClient ] && (
-							<ExternalLink href={ clientDocumentation[ selectedMcpClient ] }>
-								{ clientDocumentationLabels[ selectedMcpClient ] }
-							</ExternalLink>
-						) }
-					</VStack>
-				</CardBody>
-			</Card>
-		</VStack>
+			</VStack>
+		</>
 	);
 }
 
