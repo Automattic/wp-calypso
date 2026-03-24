@@ -1,0 +1,121 @@
+# syntax=docker/dockerfile:1.20
+#### toolchain image
+#### This file intentionally mirrors the non-cache stages in Dockerfile.base so
+#### we can validate a toolchain-only path while keeping the existing base flow
+#### intact as a fallback during rollout.
+ARG node_version=22.9.0
+ARG commit_sha="(unknown)"
+ARG cache_seed_key="(unknown)"
+FROM node:${node_version}-bullseye-slim AS toolchain
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
+ARG node_memory=16384
+ARG user=calypso
+ARG UID=1003
+ARG commit_sha
+ARG cache_seed_key
+
+WORKDIR /calypso
+LABEL org.opencontainers.image.revision=$commit_sha \
+	io.calypso.cache-seed-key=$cache_seed_key
+ENV NPM_CONFIG_CACHE=/calypso/.cache
+ENV NODE_OPTIONS=--max-old-space-size=$node_memory
+ENV HOME=/calypso
+ENV SKIP_TSC=true
+ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
+
+RUN echo 'Acquire::Retries "5";' > /etc/apt/apt.conf.d/80-retries
+
+# Add user calypso with uid 1003, give it sudo permissions
+RUN apt-get update \
+	&& apt-get install -y sudo zip jq curl git \
+	&& adduser --uid $UID --disabled-password $user \
+	&& echo "$user ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/$user \
+	&& chmod 0440 /etc/sudoers.d/$user \
+	&& mkdir -p /calypso/.cache /calypso/.yarn \
+	&& chown -R $UID:$UID /calypso \
+	# Remove unnecessary packages
+	&& apt-get autoremove --purge \
+	&& apt-get autoclean \
+	&& rm -rf /var/lib/apt/lists/* \
+	# Set bash as the default shell
+	&& rm /bin/sh \
+	&& ln -s /bin/bash /bin/sh
+
+ENTRYPOINT [ "/bin/bash" ]
+
+#### ci-e2e image
+#### This image is used to run E2E tests.
+FROM toolchain AS ci-e2e
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+ARG commit_sha
+ARG cache_seed_key
+
+LABEL org.opencontainers.image.revision=$commit_sha \
+	io.calypso.cache-seed-key=$cache_seed_key
+ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=
+ENV DISPLAY=:99
+
+RUN apt-get update \
+	&& apt-get install -y --no-install-recommends \
+		# For wp-calypso-test-results dashboard
+		awscli \
+		# Install non-Latin fonts
+		fonts-noto-cjk \
+		fonts-noto-core \
+		# Other required packages
+		git-restore-mtime \
+		libasound2 \
+		libatspi2.0-0 \
+		libdbus-glib-1-2 \
+		libgtk-3-0 \
+		libgbm1 \
+		libnspr4 \
+		libnss3 \
+		libsecret-1-0 \
+		libx11-xcb1 \
+		libxss1 \
+		libxtst6 \
+		openssl \
+		xauth \
+		xvfb \
+	&& apt-get autoremove --purge \
+	&& apt-get autoclean \
+	&& rm -rf /var/lib/apt/lists/*
+
+ENTRYPOINT [ "/bin/bash" ]
+
+#### ci-wpcom image
+#### This image is used to test and build WPCOM plugins in Calypso repo.
+FROM toolchain AS ci-wpcom
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+ARG UID=1003
+ARG commit_sha
+ARG cache_seed_key
+
+LABEL org.opencontainers.image.revision=$commit_sha \
+	io.calypso.cache-seed-key=$cache_seed_key
+COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
+COPY --chown=$UID ./composer.json ./composer.lock /calypso/
+
+RUN apt-get update && \
+	apt-get install -y apt-transport-https wget
+
+# libffi6 is no longer available from apt as of bullseye.
+RUN wget --tries=5 --retry-connrefused --waitretry=2 --timeout=20 --read-timeout=20 \
+		http://mirrors.kernel.org/ubuntu/pool/main/libf/libffi/libffi6_3.2.1-8_amd64.deb && \
+	dpkg -i libffi6_3.2.1-8_amd64.deb && \
+	wget --tries=5 --retry-connrefused --waitretry=2 --timeout=20 --read-timeout=20 \
+		https://packages.sury.org/php/apt.gpg -O /etc/apt/trusted.gpg.d/php-sury.gpg && \
+	echo "deb https://packages.sury.org/php/ bullseye main" > /etc/apt/sources.list.d/php-sury.list && \
+	apt-get update && \
+	apt-get upgrade -y && \
+	apt-get install -y php7.4-cli php7.4-xml php7.4-mbstring docker-compose && \
+	composer install && \
+	# Install sentry-cli. We pin it to a version to make it easier to know at a
+	# glance what is the version being used. It's important to keep the JS SDK and
+	# the CLI updated to their latest stable versions.
+	wget --tries=5 --retry-connrefused --waitretry=2 --timeout=20 --read-timeout=20 \
+		-O - https://sentry.io/get-cli/ | SENTRY_CLI_VERSION="2.18.1" bash
+
+ENTRYPOINT [ "/bin/bash" ]
