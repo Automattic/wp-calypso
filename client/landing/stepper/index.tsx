@@ -55,7 +55,7 @@ import { DEFAULT_FLOW, getFlowFromURL, getStepFromURL } from './utils/get-flow-f
 import { startStepperPerformanceTracking } from './utils/performance-tracking';
 import { getSessionId } from './utils/use-session-id';
 import { WindowLocaleEffectManager } from './utils/window-locale-effect-manager';
-import type { CurrentUser, HelpCenterSelect } from '@automattic/data-stores';
+import type { CurrentUser, HelpCenterSelect, HelpCenterDispatch } from '@automattic/data-stores';
 import type { AnyAction } from 'redux';
 import type { WpcomRequestParams } from 'wpcom-proxy-request';
 
@@ -76,10 +76,10 @@ const getSiteIdFromURL = () => {
 };
 
 /**
- * Flows that should not render the Help Center at all. The stepper has no masterbar or help
- * button, so the Help Center can only auto-open from persisted preferences, which is disruptive.
- * Flows that programmatically open the Help Center (e.g., hundred-year-plan, do-it-for-me)
- * should NOT be added to this set.
+ * Flows that should not render the Help Center. The stepper has no masterbar or help button, so
+ * the Help Center can only auto-open from persisted preferences in these flows, which is
+ * disruptive. Flows that programmatically open the Help Center (e.g., hundred-year-plan,
+ * do-it-for-me) should NOT be added to this set.
  */
 const FLOWS_WITHOUT_HELP_CENTER = new Set< string >( [
 	AI_SITE_BUILDER_FLOW,
@@ -236,6 +236,12 @@ async function main() {
 	} else if ( 'useSteps' in flow ) {
 		// V1 flows have to be enhanced by changing their `useSteps` hook.
 		flow = enhanceFlowWithAuth( flow );
+	}
+
+	// Clear any persisted help_center_open preference before React renders so the
+	// isHelpCenterShown resolver won't auto-open the Help Center in this flow.
+	if ( flowName === WOO_HOSTED_PLANS_FLOW ) {
+		( dispatch( HELP_CENTER_STORE ) as HelpCenterDispatch[ 'dispatch' ] ).showHelpCenter( false );
 	}
 
 	const root = createRoot( document.getElementById( 'wpcom' ) as HTMLElement );
