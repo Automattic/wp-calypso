@@ -11,6 +11,7 @@ module.exports = {
 		// @automattic/components → @wordpress/rich-text, which calls
 		// combineReducers() before @wordpress/data is ready.
 		'^@automattic/data-stores$': '<rootDir>/src/test/__mocks__/automattic-data-stores.js',
+		// @automattic/zendesk-client → @automattic/agenttic-ui (not installed).
 		'^@automattic/zendesk-client$': '<rootDir>/src/test/__mocks__/automattic-zendesk-client.js',
 		// @automattic/calypso-products and @automattic/components both chain into
 		// @wordpress/rich-text → combineReducers crash.
