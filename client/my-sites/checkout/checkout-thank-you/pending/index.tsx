@@ -255,13 +255,12 @@ function useRedirectOnTransactionSuccess( {
 		// (because the new site's ID was unknown before the transaction), use the
 		// receipt's blogId to redirect to the new site's thank-you page instead.
 		// Preserve any query params from the original redirectTo (e.g., ?flow=unified).
-		const redirectToPath = redirectTo?.split( '?' )[ 0 ];
-		const redirectToParams = redirectTo?.includes( '?' ) ? redirectTo.split( '?' )[ 1 ] : '';
+		const { pathname, search } = redirectTo
+			? getUrlParts( redirectTo )
+			: { pathname: undefined, search: '' };
 		const effectiveRedirectTo =
-			( ! redirectTo || redirectToPath === '/' ) && blogId && finalReceiptId
-				? `/checkout/thank-you/${ blogId }/${ finalReceiptId }${
-						redirectToParams ? '?' + redirectToParams : ''
-				  }`
+			( ! redirectTo || pathname === '/' ) && blogId && finalReceiptId
+				? `/checkout/thank-you/${ blogId }/${ finalReceiptId }${ search }`
 				: redirectTo;
 
 		const redirectInstructions = getRedirectFromPendingPage( {
