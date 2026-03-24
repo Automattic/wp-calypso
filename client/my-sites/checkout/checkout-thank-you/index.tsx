@@ -119,6 +119,7 @@ export interface CheckoutThankYouProps {
 	upgradeIntent: string;
 	redirectTo?: string;
 	displayMode?: string;
+	flow?: string;
 }
 
 export interface CheckoutThankYouConnectedProps {
