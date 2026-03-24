@@ -336,11 +336,6 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 
 						const featureSlug = feature.getSlug();
 
-						// Header features: "Everything in X, plus:" and "Included in plan:"
-						const isEverythingInPlusFeature = featureSlug.startsWith( 'feature-everything-in' );
-						const isIncludedInPlanFeature = featureSlug === 'feature-included-in-plan';
-						const isHeaderFeature = isEverythingInPlusFeature || isIncludedInPlanFeature;
-
 						const badgeText = showPricingDifferentiationFeaturePills
 							? getPricingDifferentiationFeatureBadgeText( planSlug, featureSlug, translate, {
 									suppressAiPills: useVar42NoAiFeatures,
@@ -351,7 +346,6 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 							...feature,
 							availableOnlyForAnnualPlans,
 							availableForCurrentPlan: ! isMonthlyPlan || ! availableOnlyForAnnualPlans,
-							...( isHeaderFeature && { isHighlighted: true } ),
 							...( badgeText && { badgeText } ),
 						} );
 					} );

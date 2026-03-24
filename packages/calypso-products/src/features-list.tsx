@@ -347,11 +347,6 @@ import {
 	FEATURE_AI_WRITER_DESIGNER_LIMITED,
 	FEATURE_ENHANCED_AI_ASSISTANT_AND_TOOLS,
 	FEATURE_BUILT_IN_SITE_ASSISTANT,
-	FEATURE_INCLUDED_IN_PLAN,
-	FEATURE_EVERYTHING_IN_FREE_PLUS,
-	FEATURE_EVERYTHING_IN_PERSONAL_PLUS,
-	FEATURE_EVERYTHING_IN_PREMIUM_PLUS,
-	FEATURE_EVERYTHING_IN_BUSINESS_PLUS,
 	FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
 	FEATURE_BLAZE_AD_CREDITS,
 	FEATURE_UPLOAD_VIDEO,
@@ -3237,30 +3232,6 @@ const FEATURES_LIST: FeatureList = {
 			params?.isExperimentVariant
 				? i18n.translate( 'Limited AI support for writing, images, and site management.' )
 				: i18n.translate( 'Enhance your content creation with AI-powered writing and design.' ),
-	},
-
-	// "Included in plan:" header for Free plan in stacked variants
-	[ FEATURE_INCLUDED_IN_PLAN ]: {
-		getSlug: () => FEATURE_INCLUDED_IN_PLAN,
-		getTitle: () => i18n.translate( 'Included in plan:' ),
-	},
-
-	// "Everything in X, plus:" features for stacked variants
-	[ FEATURE_EVERYTHING_IN_FREE_PLUS ]: {
-		getSlug: () => FEATURE_EVERYTHING_IN_FREE_PLUS,
-		getTitle: () => i18n.translate( 'Everything in Free, plus:' ),
-	},
-	[ FEATURE_EVERYTHING_IN_PERSONAL_PLUS ]: {
-		getSlug: () => FEATURE_EVERYTHING_IN_PERSONAL_PLUS,
-		getTitle: () => i18n.translate( 'Everything in Personal, plus:' ),
-	},
-	[ FEATURE_EVERYTHING_IN_PREMIUM_PLUS ]: {
-		getSlug: () => FEATURE_EVERYTHING_IN_PREMIUM_PLUS,
-		getTitle: () => i18n.translate( 'Everything in Premium, plus:' ),
-	},
-	[ FEATURE_EVERYTHING_IN_BUSINESS_PLUS ]: {
-		getSlug: () => FEATURE_EVERYTHING_IN_BUSINESS_PLUS,
-		getTitle: () => i18n.translate( 'Everything in Business, plus:' ),
 	},
 
 	// Additional features for plan differentiators experiment
