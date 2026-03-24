@@ -24,10 +24,14 @@ import SectionHeader from 'calypso/components/section-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import ReauthRequired from 'calypso/me/reauth-required';
+import { useMcpPageChrome } from './mcp-page-header';
 import { hasEnabledAccountTools } from './utils';
+
+import './style.scss';
 
 function McpSetupComponent( { path } ) {
 	const translate = useTranslate();
+	const { documentTitle, navigationHeaderProps } = useMcpPageChrome();
 	const {
 		data: userSettings,
 		isLoading: isLoadingUserSettings,
@@ -163,10 +167,10 @@ function McpSetupComponent( { path } ) {
 
 	// Common layout wrapper
 	const renderLayout = ( children ) => (
-		<Main wideLayout className="mcp-setup">
-			<PageViewTracker path={ path } title="MCP Setup" />
-			<DocumentHead title={ translate( 'MCP Setup' ) } />
-			<NavigationHeader navigationItems={ [] } title={ translate( 'MCP Setup' ) } />
+		<Main wideLayout className="mcp mcp-setup">
+			<PageViewTracker path={ path } title="MCP Client Setup" />
+			<DocumentHead title={ documentTitle } />
+			<NavigationHeader { ...navigationHeaderProps } />
 			<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 			{ ! isLoadingUserSettings && ! reauthRequired && children }
 		</Main>

@@ -35,7 +35,11 @@ export default function OutboundTransfer( { domain }: { domain: Domain } ) {
 	const domainName = domain.domain;
 	const { recordTracksEvent } = useAnalytics();
 	const locale = useLocale();
-	const { data: whoisData, isLoading: isLoadingWhois } = useQuery( domainWhoisQuery( domainName ) );
+	const isDomainConnection = domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION;
+	const { data: whoisData, isLoading: isLoadingWhois } = useQuery( {
+		...domainWhoisQuery( domainName ),
+		enabled: ! isDomainConnection,
+	} );
 	const registrantEmail = findRegistrantWhois( whoisData )?.email;
 	const { mutate: updateDomainLock, isPending: isUpdatingDomainLock } = useMutation( {
 		...domainLockMutation( domainName ),

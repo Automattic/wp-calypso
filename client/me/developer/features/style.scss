@@ -28,6 +28,7 @@
 		display: flex;
 		flex-direction: column;
 		margin-bottom: 0;
+		width: 100%;
 
 		a {
 			font-size: rem(13px);
@@ -77,6 +78,7 @@
 
 		.developer-features-list__item {
 			margin: 0 32px 24px 32px;
+			width: auto;
 
 			.developer-features-list__item-learn-more {
 				padding-top: 30px;
