@@ -22,7 +22,7 @@ jobs:
           fetch-depth: 0
       - name: Get release date
         id: date
-        run: echo "release_date=$(date +'%B %-d, %Y') #${{ github.run_number }}" >> "$GITHUB_OUTPUT"
+        run: echo "release_date=$(date +'%B %-d, %Y') (${{ github.run_number }})" >> "$GITHUB_OUTPUT"
       - uses: linear/linear-release-action@v0.5.0
         with:
           access_key: ${{ secrets.LINEAR_RELEASE_KEY_CREATORS }}
