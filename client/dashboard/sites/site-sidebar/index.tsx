@@ -50,7 +50,7 @@ export default function SiteSidebar() {
 	const { data: site } = useQuery( siteBySlugQuery( siteSlug ) );
 
 	const { components } = useAppContext();
-	const SiteSwitcher = useMemo( () => lazy( components.siteSwitcher ), [ components ] );
+	const SiteSwitcherV2 = useMemo( () => lazy( components.siteSwitcherV2 ), [ components ] );
 
 	if ( ! site ) {
 		return null;
@@ -62,7 +62,7 @@ export default function SiteSidebar() {
 			<VStack spacing={ 4 }>
 				<Suspense fallback={ null }>
 					<SidebarMenu>
-						<SiteSwitcher />
+						<SiteSwitcherV2 />
 						{ canSwitchEnvironment( site ) && <EnvironmentSwitcher site={ site } /> }
 					</SidebarMenu>
 				</Suspense>
