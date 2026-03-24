@@ -332,6 +332,7 @@
 		"yargs": "^17.0.1"
 	},
 	"resolutions": {
+		"@tanstack/react-router": "1.114.34",
 		"@types/react": "^18.3.23",
 		"@types/react-dom": "^18.3.7",
 		"@types/wordpress__block-editor": "npm:noop-package@1.0.0",
