@@ -135,18 +135,6 @@ class MeSidebar extends Component {
 			<>
 				<ProfileGravatar inSidebar user={ this.props.currentUser } />
 
-				<div className="sidebar__me-signout">
-					<Button
-						compact
-						className="sidebar__me-signout-button"
-						onClick={ this.onSignOut }
-						title={ translate( 'Log out of WordPress.com' ) }
-					>
-						<span className="sidebar__me-signout-text">{ translate( 'Log out' ) }</span>
-						<Gridicon icon="popout" size={ 16 } />
-					</Button>
-				</div>
-
 				<SidebarMenu>
 					<SidebarItem
 						selected={ itemLinkMatches( '', path ) }
@@ -248,6 +236,18 @@ class MeSidebar extends Component {
 						onNavigate={ this.onNavigate }
 					/>
 				</SidebarMenu>
+
+				<div className="sidebar__me-signout">
+					<Button
+						compact
+						className="sidebar__me-signout-button"
+						onClick={ this.onSignOut }
+						title={ translate( 'Log out of WordPress.com' ) }
+					>
+						<span className="sidebar__me-signout-text">{ translate( 'Log out' ) }</span>
+						<Gridicon icon="popout" size={ 16 } />
+					</Button>
+				</div>
 			</>
 		);
 
