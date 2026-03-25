@@ -45,7 +45,6 @@ export const StripeFieldWrapper = styled.span< { hasError?: boolean; isDisabled?
 			${ ( props ) =>
 				props.hasError ? props.theme.colors.error : props.theme.colors.borderColor };
 		border-radius: ${ ( props ) => props.theme.borderRadius.small };
-		background-color: field;
 		padding: 12px 14px;
 		line-height: 1.2;
 	}
@@ -82,7 +81,7 @@ export const StripeErrorMessage = ( {
 );
 
 export const CreditCardFieldsWrapper = styled.div< { isLoaded?: boolean } >`
-	padding: 0 16px 16px 16px;
+	padding: 0 24px 24px 24px;
 	position: relative;
 	display: ${ ( props ) => ( props.isLoaded ? 'block' : 'none' ) };
 	position: relative;

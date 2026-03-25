@@ -1260,6 +1260,12 @@ const StepContainerV2CheckoutFixer = styled.div< {
 				display: flex;
 				filter: none;
 			}
+			.checkout-payment-methods .StripeElement {
+				background-color: field;
+			}
+			div:has( > .credit-card-fields-inner-wrapper ) {
+				padding: 0 16px 16px 16px;
+			}
 			.checkout-steps__step-complete-content .checkout-payment-methods {
 				background: white;
 				padding: 12px 16px;
@@ -1937,6 +1943,12 @@ const WPCheckoutWrapper = styled.div< {
 			.checkout-payment-methods .payment-logos {
 				display: flex;
 				filter: none;
+			}
+			.checkout-payment-methods .StripeElement {
+				background-color: field;
+			}
+			div:has( > .credit-card-fields-inner-wrapper ) {
+				padding: 0 16px 16px 16px;
 			}
 			.checkout-steps__step-complete-content .checkout-payment-methods {
 				background: white;
