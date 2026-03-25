@@ -193,11 +193,7 @@ if ( isDevelopment ) {
 }
 
 const cssFilename = cssNameFromFilename( outputFilename );
-// Use [chunkhash] for CSS chunks instead of [contenthash] because mini-css-extract-plugin v1
-// cannot compute [contenthash] for CSS-only chunks, resulting in "undefined" in the filename.
-const cssChunkFilename = cssNameFromFilename(
-	outputChunkFilename.replace( '[contenthash]', '[chunkhash]' )
-);
+const cssChunkFilename = cssNameFromFilename( outputChunkFilename );
 
 const outputDir = path.resolve( '.' );
 
