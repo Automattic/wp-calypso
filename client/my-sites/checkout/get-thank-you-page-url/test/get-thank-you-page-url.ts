@@ -1991,7 +1991,7 @@ describe( 'getThankYouPageUrl', () => {
 			);
 		} );
 
-		it( 'should return /?flow=unified fallback when cookie URL does not contain post-checkout-onboarding path even if siteSlug is provided', () => {
+		it( 'should return /?checkout_type=unified fallback when cookie URL does not contain post-checkout-onboarding path even if siteSlug is provided', () => {
 			const getUrlFromCookie = jest.fn( () => '/some/other/path' );
 			const siteId = 12345;
 
@@ -2003,10 +2003,10 @@ describe( 'getThankYouPageUrl', () => {
 				getUrlFromCookie,
 			} );
 
-			expect( url ).toBe( '/?flow=unified' );
+			expect( url ).toBe( '/?checkout_type=unified' );
 		} );
 
-		it( 'should return /?flow=unified fallback when no cookie URL is available even if siteSlug is provided', () => {
+		it( 'should return /?checkout_type=unified fallback when no cookie URL is available even if siteSlug is provided', () => {
 			const getUrlFromCookie = jest.fn( () => undefined );
 			const siteId = 12345;
 
@@ -2018,10 +2018,10 @@ describe( 'getThankYouPageUrl', () => {
 				getUrlFromCookie,
 			} );
 
-			expect( url ).toBe( '/?flow=unified' );
+			expect( url ).toBe( '/?checkout_type=unified' );
 		} );
 
-		it( 'should return /?flow=unified fallback when cookie URL is empty string even if siteSlug is provided', () => {
+		it( 'should return /?checkout_type=unified fallback when cookie URL is empty string even if siteSlug is provided', () => {
 			const getUrlFromCookie = jest.fn( () => '' );
 			const siteId = 12345;
 
@@ -2033,7 +2033,7 @@ describe( 'getThankYouPageUrl', () => {
 				getUrlFromCookie,
 			} );
 
-			expect( url ).toBe( '/?flow=unified' );
+			expect( url ).toBe( '/?checkout_type=unified' );
 		} );
 
 		it( 'should redirect to checkout thank you page when cart has ecommerce plan', () => {

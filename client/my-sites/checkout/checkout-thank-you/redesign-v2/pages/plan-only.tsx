@@ -30,7 +30,7 @@ interface PlanOnlyThankYouProps {
 	removeNotice: ( noticeId: string ) => void;
 	successNotice: ( text: string, noticeOptions?: object ) => void;
 	transferComplete?: boolean;
-	flow?: string;
+	checkoutType?: string;
 }
 
 const isMonthsOld = ( months: number, rawDate?: string ) => {
@@ -49,7 +49,7 @@ const PlanOnlyThankYou = ( {
 	removeNotice,
 	successNotice,
 	transferComplete,
-	flow,
+	checkoutType,
 }: PlanOnlyThankYouProps ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
@@ -138,7 +138,7 @@ const PlanOnlyThankYou = ( {
 				</Button>
 			);
 		}
-	} else if ( flow === 'unified' ) {
+	} else if ( checkoutType === 'unified' ) {
 		title = translate( 'Thank you for your purchase!' );
 		subtitle = siteDomainCredit
 			? translate(

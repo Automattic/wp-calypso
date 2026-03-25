@@ -119,7 +119,7 @@ export interface CheckoutThankYouProps {
 	upgradeIntent: string;
 	redirectTo?: string;
 	displayMode?: string;
-	flow?: string;
+	checkoutType?: string;
 }
 
 export interface CheckoutThankYouConnectedProps {
@@ -656,7 +656,7 @@ export class CheckoutThankYou extends Component<
 						primaryPurchase={ purchases[ 0 ] }
 						isEmailVerified={ this.props.isEmailVerified }
 						transferComplete={ this.props.transferComplete }
-						flow={ this.props.flow }
+						checkoutType={ this.props.checkoutType }
 					/>
 				);
 			} else if ( purchases.length === 1 && isSearch( purchases[ 0 ] ) ) {

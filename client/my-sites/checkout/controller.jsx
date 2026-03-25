@@ -448,7 +448,7 @@ export function checkoutThankYou( context, next ) {
 				displayMode={ displayMode }
 				domainOnlySiteFlow={ ! context.params.site }
 				email={ context.query.email }
-				flow={ context.query.flow }
+				checkoutType={ context.query.checkout_type }
 				gsuiteReceiptId={ gsuiteReceiptId }
 				receiptId={ receiptId }
 				redirectTo={ context.query.redirect_to }
