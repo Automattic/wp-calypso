@@ -46,14 +46,30 @@ export const SiteSwitcherBase = (
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const buildCurrentRouteLink = useBuildCurrentRouteLink();
 
+	const renderItemMedia: SwitcherProps< Site >[ 'renderItemMedia' ] = ( { item, size } ) => (
+		<SiteIcon site={ item } size={ size } />
+	);
+
+	const renderItemTitle: SwitcherProps< Site >[ 'renderItemTitle' ] = ( { item } ) => (
+		<span
+			style={ {
+				color: 'var(--dashboard__text-color)',
+				fontWeight: 500,
+				overflow: 'hidden',
+				textOverflow: 'ellipsis',
+				whiteSpace: 'nowrap',
+			} }
+		>
+			{ getSiteDisplayName( item ) }
+		</span>
+	);
+
 	return (
 		<HStack className="site-switcher" spacing={ 0 } expanded={ false } style={ { flexShrink: 0 } }>
 			<HStack justify="flex-start" alignment="center" style={ { maxWidth: '85%' } }>
-				<SiteIcon site={ site } size={ 32 } />
+				{ renderItemMedia( { item: site, context: 'dropdown', size: 32 } ) }
 				<VStack spacing={ 0 }>
-					<Text weight={ 500 } truncate numberOfLines={ 1 }>
-						{ getSiteDisplayName( site ) }
-					</Text>
+					{ renderItemTitle( { item: site, context: 'dropdown' } ) }
 					<ExternalLink
 						href={ site.URL }
 						style={ { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }
@@ -73,22 +89,12 @@ export const SiteSwitcherBase = (
 					}
 					return site.options?.admin_url ?? '';
 				} }
-				renderItem={ ( { item, context } ) => (
-					<Switcher.Item
-						media={ <SiteIcon site={ item } size={ context === 'list' ? 32 : 16 } /> }
-						title={
-							<Text weight={ 500 } truncate numberOfLines={ 1 } style={ { color: 'inherit' } }>
-								{ getSiteDisplayName( item ) }
-							</Text>
-						}
-						description={
-							context === 'list' ? (
-								<Text variant="muted" truncate numberOfLines={ 1 }>
-									{ getSiteDisplayUrl( item ) }
-								</Text>
-							) : undefined
-						}
-					/>
+				renderItemMedia={ renderItemMedia }
+				renderItemTitle={ renderItemTitle }
+				renderItemDescription={ ( { item } ) => (
+					<Text variant="muted" truncate numberOfLines={ 1 }>
+						{ getSiteDisplayUrl( item ) }
+					</Text>
 				) }
 				open={ isSwitcherOpen }
 				onToggle={ ( willOpen: boolean ) => {

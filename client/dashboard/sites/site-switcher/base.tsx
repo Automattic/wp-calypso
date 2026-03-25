@@ -46,22 +46,23 @@ export const SiteSwitcherBase = ( props: Pick< SwitcherProps< Site >, 'children'
 				}
 				return site.options?.admin_url ?? '';
 			} }
-			renderItem={ ( { item, context } ) => (
-				<Switcher.Item
-					media={ <SiteIcon site={ item } size={ context === 'list' ? 32 : 16 } /> }
-					title={
-						<Text weight={ 500 } truncate numberOfLines={ 1 } style={ { color: 'inherit' } }>
-							{ getSiteDisplayName( item ) }
-						</Text>
-					}
-					description={
-						context === 'list' ? (
-							<Text variant="muted" truncate numberOfLines={ 1 }>
-								{ getSiteDisplayUrl( item ) }
-							</Text>
-						) : undefined
-					}
-				/>
+			renderItemMedia={ ( { item, size } ) => <SiteIcon site={ item } size={ size } /> }
+			renderItemTitle={ ( { item } ) => (
+				<span
+					style={ {
+						fontWeight: 500,
+						overflow: 'hidden',
+						textOverflow: 'ellipsis',
+						whiteSpace: 'nowrap',
+					} }
+				>
+					{ getSiteDisplayName( item ) }
+				</span>
+			) }
+			renderItemDescription={ ( { item } ) => (
+				<Text variant="muted" truncate numberOfLines={ 1 }>
+					{ getSiteDisplayUrl( item ) }
+				</Text>
 			) }
 			open={ isSwitcherOpen }
 			onToggle={ ( willOpen: boolean ) => {
