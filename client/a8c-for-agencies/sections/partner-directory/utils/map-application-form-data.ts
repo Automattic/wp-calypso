@@ -144,8 +144,12 @@ export function mapAgencyDetailsFormData( agency: Agency | null ): AgencyDetails
 }
 
 export function mapLeadMatchingFormData( agency: Agency | null ): LeadMatchingDetails | null {
-	const profile = agency?.lead_matching?.profile;
+	return mapLeadMatchingProfileToFormData( agency?.lead_matching?.profile ?? null );
+}
 
+export function mapLeadMatchingProfileToFormData(
+	profile: AgencyLeadMatchingProfile | null | undefined
+): LeadMatchingDetails | null {
 	if ( ! profile ) {
 		return null;
 	}

@@ -19,7 +19,11 @@ import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { useFormSelectors } from '../components/hooks/use-form-selectors';
 import LanguagesSelector from '../components/languages-selector';
 import { PARTNER_DIRECTORY_DASHBOARD_SLUG } from '../constants';
-import { AgencyLeadMatchingResponse, LeadMatchingDetails } from '../types';
+import {
+	AgencyLeadMatchingProfile,
+	AgencyLeadMatchingResponse,
+	LeadMatchingDetails,
+} from '../types';
 import useLeadMatchingForm from './hooks/use-lead-matching-form';
 import useLeadMatchingFormValidation from './hooks/use-lead-matching-form-validation';
 import useSubmitForm from './hooks/use-submit-form';
@@ -28,9 +32,10 @@ import './style.scss';
 
 type Props = {
 	initialFormData: LeadMatchingDetails | null;
+	profile?: AgencyLeadMatchingProfile | null;
 };
 
-const LeadMatchingForm = ( { initialFormData }: Props ) => {
+const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 	const dispatch = useDispatch();
 	const agency = useSelector( getActiveAgency );
 	const {
@@ -181,6 +186,7 @@ const LeadMatchingForm = ( { initialFormData }: Props ) => {
 
 	const { onSubmit, isSubmitting } = useSubmitForm( {
 		formData,
+		profile,
 		onSubmitSuccess,
 		onSubmitError,
 	} );

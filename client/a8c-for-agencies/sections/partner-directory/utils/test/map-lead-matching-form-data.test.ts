@@ -2,6 +2,7 @@ import {
 	createDefaultLeadMatchingDetails,
 	mapLeadMatchingDetailsToProfile,
 	mapLeadMatchingFormData,
+	mapLeadMatchingProfileToFormData,
 } from '../map-application-form-data';
 import type { Agency } from 'calypso/state/a8c-for-agencies/types';
 
@@ -65,6 +66,88 @@ describe( 'mapLeadMatchingFormData', () => {
 		} as Agency;
 
 		expect( mapLeadMatchingFormData( agency ) ).toEqual( {
+			regions: [ 'emea' ],
+			supportsGlobal: true,
+			languages: [ 'en', 'es' ],
+			businessTypes: [ 'local_service' ],
+			otherBusinessType: '',
+			idealBusinessTypes: [ 'content_media' ],
+			otherIdealBusinessType: '',
+			companySizes: [ 'size_6_50' ],
+			hostingEnvironments: [ 'wordpress_com' ],
+			supportsHostingRecommendation: true,
+			migrationPlatforms: [ 'shopify' ],
+			storeComplexities: [ 'traffic_spikes' ],
+			projectTypes: [ 'new_woocommerce_store' ],
+			supportsQuickHelp: true,
+			serviceLevels: [ 'premium' ],
+			budgetLevels: [ 'premium' ],
+			minimumBudget: '10k_30k',
+			timingPreferences: [ 'within_month' ],
+			supportsHardDeadlines: true,
+			decisionProcesses: [ 'multi_stakeholder' ],
+			ongoingRelationships: [ 'care_plans', 'technical_teams' ],
+			requiresMaintenance: false,
+		} );
+	} );
+} );
+
+describe( 'mapLeadMatchingProfileToFormData', () => {
+	it( 'maps a lead matching profile directly into the reference UI shape', () => {
+		const agency = {
+			lead_matching: {
+				profile: {
+					availability: {
+						accepting_work: true,
+						lead_eligibility: 'ready',
+						profile_v2_complete: false,
+					},
+					geography_and_language: {
+						supported_regions: [ 'emea' ],
+						global_remote: true,
+						supported_languages: [ 'en', 'es' ],
+					},
+					business_fit: {
+						supported_business_types: [ 'local_service' ],
+						ideal_business_types: [ 'content_media' ],
+						supported_company_sizes: [ 'size_6_50' ],
+					},
+					platform_and_hosting: {
+						supported_hosting_environments: [ 'wordpress_com' ],
+						migration_platforms: [ 'shopify' ],
+						can_recommend_better_hosting: true,
+					},
+					ecommerce: {
+						supports_ecommerce_projects: true,
+						ecommerce_focus: true,
+						supported_complexity_flags: [ 'traffic_spikes' ],
+					},
+					project_types: {
+						supported_project_types: [ 'new_woocommerce_store' ],
+						core_project_types: [ 'new_woocommerce_store' ],
+						accepts_small_fixes: true,
+					},
+					service_and_budget: {
+						max_service_level: 'premium',
+						supported_budget_bands: [ 'premium' ],
+						minimum_budget_band: '10k_30k',
+					},
+					timing: {
+						supported_start_timings: [ 'within_month' ],
+						supports_hard_deadlines: true,
+					},
+					delivery_model: {
+						supported_decision_processes: [ 'multi_stakeholder' ],
+						offers_care_plans: true,
+						trains_clients: false,
+						works_with_internal_technical_teams: true,
+						requires_maintenance_plan: false,
+					},
+				},
+			},
+		} as Agency;
+
+		expect( mapLeadMatchingProfileToFormData( agency.lead_matching?.profile ) ).toEqual( {
 			regions: [ 'emea' ],
 			supportsGlobal: true,
 			languages: [ 'en', 'es' ],
