@@ -1,0 +1,24 @@
+.is-reader-page {
+	.user-sites-pills {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 12px;
+		border-radius: 2px;
+		margin-top: 16px;
+	}
+
+	.user-site-pill {
+		display: flex;
+		background-color: #f0f0f0;
+		align-items: center;
+		gap: 8px;
+		padding: 6px 8px;
+		font-size: rem( 13px );
+		color: var( --studio-gray-90 );
+		text-decoration: none;
+
+		p {
+			margin: 0;
+		}
+	}
+}

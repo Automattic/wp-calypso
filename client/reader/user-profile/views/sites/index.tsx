@@ -7,7 +7,6 @@ import { ReaderSitesList } from 'calypso/reader/sites-list';
 import { ReaderSite } from 'calypso/reader/sites-list/site-item';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import useUserSitesQuery from './use-user-sites-query';
 
 interface UserSitesProps {
 	user: UserProfileData;
