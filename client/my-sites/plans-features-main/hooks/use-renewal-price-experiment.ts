@@ -24,9 +24,6 @@ export function useRenewalPricingExperiment(
 	const flowFromURL = getFlowFromURL();
 	const flow = flowName || flowFromStorage || flowFromURL;
 
-	//fixme: disable for now, until the UI issues are resolved
-	return [ false, null ];
-
 	if ( isAkismetCheckout() || isJetpackCheckout() ) {
 		return [ false, null ];
 	}
@@ -50,7 +47,7 @@ export function useRenewalPricingExperiment(
 	return [ false, 'crossed_price' ];
 }
 
-const REGISTRATION_DATE_CUTOFF = new Date( '2026-03-04T00:00:00Z' );
+const REGISTRATION_DATE_CUTOFF = new Date( '2026-03-26T00:00:00Z' );
 
 function isNewUserOrLoggedOut( registrationDate: string | null | undefined ): boolean {
 	if ( ! registrationDate ) {

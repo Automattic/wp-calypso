@@ -1,21 +1,16 @@
-import { HelpCenterSelect } from '@automattic/data-stores';
-import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
-import { useSelect } from '@wordpress/data';
 import { Icon, check, info } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useState } from 'react';
 
 const WARNING_THRESHOLD = 15; // seconds
 
-export default function useConnectionStatusNotice( isLiveChat: boolean = false ) {
+export function useConnectionStatusNotice(
+	connectionStatus: 'connected' | 'disconnected' | 'reconnecting' | undefined,
+	isLiveChat: boolean = false
+) {
 	const [ shouldWarn, setShouldWarn ] = useState( false );
 	const [ secondsSinceDisconnected, setSecondsSinceDisconnected ] = useState( 0 );
 	const { __ } = useI18n();
-
-	const connectionStatus = useSelect(
-		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getZendeskConnectionStatus(),
-		[]
-	);
 
 	useEffect( () => {
 		if ( connectionStatus === 'disconnected' ) {

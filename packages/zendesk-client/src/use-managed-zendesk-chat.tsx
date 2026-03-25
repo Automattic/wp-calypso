@@ -25,12 +25,14 @@ import {
 	ZendeskConversation,
 	ZendeskImagePreview,
 	ZendeskUploadingImage,
+	QueuedMessage,
 } from './types';
 import { useAttachFileToConversation } from './use-attach-file';
 import {
 	useAuthenticateZendeskMessaging,
 	fetchMessagingAuth,
 } from './use-authenticate-zendesk-messaging';
+import { useConnectionStatusNotice } from './use-connection-status-notice';
 import {
 	convertZendeskMessageToAgentticFormat,
 	getSmoochContainer,
@@ -40,7 +42,18 @@ import {
 	playNotificationSound,
 	SUPPORTED_IMAGE_TYPES,
 } from './util';
-import type { AgentticMessage, ZendeskMessage } from './types';
+import type { AgentticMessage, ZendeskMessage, ZendeskContentType } from './types';
+
+function sortMessagesByTimestamp( messages: ZendeskMessage[] ) {
+	return messages.slice( 0 ).sort( ( a, b ) => {
+		// Give precedence to the local timestamp, if it exists.
+		// It's more accurate than the server timestamp because it's independent of connection status.
+		const aTimestamp = a.metadata?.local_timestamp || a.received;
+		const bTimestamp = b.metadata?.local_timestamp || b.received;
+
+		return aTimestamp - bTimestamp;
+	} );
+}
 
 function useSmooch( enabled = true ) {
 	const queryClient = useQueryClient();
@@ -93,6 +106,59 @@ function useSmooch( enabled = true ) {
 
 	return { ...smoochQuery, isLoading: isAuthenticatingZendeskMessaging || smoochQuery.isFetching };
 }
+
+type UserMessageContent = {
+	type: ZendeskContentType;
+	text: string;
+	payload?: string;
+	metadata?: Record< string, unknown >;
+};
+
+function createUserMessage( content: UserMessageContent ): ZendeskMessage {
+	return {
+		...content,
+		id: crypto.randomUUID(),
+		role: 'user',
+		received: Date.now() / 1000,
+		metadata: {
+			...content.metadata,
+			local_timestamp: Date.now() / 1000,
+			temporary_id: crypto.randomUUID(),
+		},
+	} as ZendeskMessage;
+}
+
+/**
+ * Creates an enhanced ZendeskMessage from the given content and sends it via Smooch.
+ * Automatically adds id, role, received timestamp, and temporary_id metadata.
+ * @returns The enhanced message (for optimistic updates) and a `sent` promise that
+ *          resolves when the server acknowledges the message, or rejects after 5 s.
+ */
+function sendMessage(
+	content: UserMessageContent,
+	conversationId: string,
+	Smooch: typeof SmoochLibrary
+) {
+	const messageToSend = createUserMessage( content );
+
+	const sent = new Promise< ZendeskMessage >( ( resolve, reject ) => {
+		Smooch?.sendMessage( messageToSend, conversationId );
+		const timeout = setTimeout( () => {
+			reject( new Error( 'Message not sent' ) );
+		}, 5000 );
+		function onMessageSent( message: ZendeskMessage ) {
+			if ( message.metadata?.temporary_id === messageToSend.metadata?.temporary_id ) {
+				Smooch.off( 'message:sent', onMessageSent );
+				resolve( message );
+				clearTimeout( timeout );
+			}
+		}
+		Smooch?.on( 'message:sent', onMessageSent as any );
+	} );
+
+	return { message: messageToSend, sent };
+}
+
 /**
  * Returns a complete API for managing a Zendesk chat.
  * @returns An object with the following properties:
@@ -104,7 +170,7 @@ function useSmooch( enabled = true ) {
  * - sendMessage: A function to send a message to the conversation.
  */
 export const useManagedZendeskChat = () => {
-	const [ notice, setNotice ] = useState< NoticeConfig | undefined >();
+	const [ attachmentsNotice, setAttachmentNotice ] = useState< NoticeConfig | undefined >();
 	const { state } = useLocation();
 	const conversationId = state?.conversationId;
 	const startedFromChatId = state?.startedFromChatId;
@@ -115,6 +181,12 @@ export const useManagedZendeskChat = () => {
 	>( undefined );
 	const [ pendingImages, setPendingImages ] = useState< ZendeskImagePreview[] >( [] );
 	const refetchTimeoutRef = useRef< ReturnType< typeof setTimeout > | null >( null );
+	const messageQueueRef = useRef< QueuedMessage[] >( [] );
+	const connectionStatusRef = useRef( connectionStatus );
+	connectionStatusRef.current = connectionStatus;
+	const hadDisconnectRef = useRef( false );
+
+	const connectionNotice = useConnectionStatusNotice( connectionStatus, true );
 
 	const { data: authData } = useAuthenticateZendeskMessaging( true, 'zendesk', false );
 	const { data: Smooch, isLoading: isSettingUpSmooch } = useSmooch();
@@ -132,12 +204,17 @@ export const useManagedZendeskChat = () => {
 	const getUnreadListener = useCallback(
 		( message: ZendeskMessage, data: { conversation: { id: string } } ) => {
 			if ( data.conversation.id === conversation?.id ) {
-				playNotificationSound();
-				Smooch?.getConversationById( data.conversation.id ).then( setConversation );
+				if ( message.sendStatus !== 'sending' ) {
+					playNotificationSound();
+				}
+				//Smooch?.getConversationById( data.conversation.id ).then( setConversation );
 				//Smooch?.loadConversation( data.conversation.id );
+				setConversation( ( prev ) =>
+					prev ? { ...prev, messages: [ ...prev.messages, message ] } : prev
+				);
 			}
 		},
-		[ Smooch, setConversation, conversation?.id ]
+		[ setConversation, conversation?.id ]
 	);
 
 	const hasCSAT = useMemo( () => {
@@ -146,6 +223,7 @@ export const useManagedZendeskChat = () => {
 	}, [ conversation?.messages ] );
 
 	const disconnectedListener = useCallback( () => {
+		hadDisconnectRef.current = true;
 		setConnectionStatus( 'disconnected' );
 		recordTracksEvent( 'calypso_smooch_messenger_disconnected' );
 	}, [ setConnectionStatus ] );
@@ -215,22 +293,22 @@ export const useManagedZendeskChat = () => {
 					? __( 'Good 👍', '__i18n_text_domain__' )
 					: __( 'Needs improvement 👎', '__i18n_text_domain__' );
 
-			const messageToSend = {
-				type: 'text',
-				text,
-				payload: JSON.stringify( { csat_rating: score.toUpperCase() } ),
-				metadata: {
-					rated: true,
+			sendMessage(
+				{
+					type: 'text',
+					text,
+					payload: JSON.stringify( { csat_rating: score.toUpperCase() } ),
+					metadata: { rated: true },
 				},
-			};
-
-			Smooch.sendMessage( messageToSend, conversation.id );
+				conversation.id,
+				Smooch
+			);
 		},
-		[ Smooch, conversation?.id ]
+		[ conversation?.id, Smooch ]
 	);
 
 	const agentticMessages = useMemo( () => {
-		const rawMessages = conversation?.messages ?? [];
+		const rawMessages = sortMessagesByTimestamp( conversation?.messages ?? [] );
 		const ratingMessage = rawMessages.find( ( msg ) => msg.metadata?.rated === true );
 		const hasRated = ratingMessage !== undefined;
 		let score: 'GOOD' | 'BAD' | null = null;
@@ -310,10 +388,7 @@ export const useManagedZendeskChat = () => {
 			}
 
 			const isAttachment =
-				( message.type === 'file' ||
-					message.type === 'image' ||
-					message.type === 'image-placeholder' ) &&
-				message.mediaUrl;
+				( message.type === 'file' || message.type === 'image' ) && message.mediaUrl;
 
 			if ( isAttachment && message.mediaUrl ) {
 				const mediaUrl = message.mediaUrl;
@@ -429,7 +504,7 @@ export const useManagedZendeskChat = () => {
 	] );
 
 	const handleFilesSelected = useCallback( async ( files: File[] ) => {
-		setNotice( undefined );
+		setAttachmentNotice( undefined );
 
 		setPendingImages( ( prev ) => {
 			const uploadedImages = files.filter( ( f ) => isSupportedImageType( f.type ) );
@@ -437,7 +512,7 @@ export const useManagedZendeskChat = () => {
 			const shouldWarnAboutMaxAttachments = uploadedImages.length + prev.length > MAX_ATTACHMENTS;
 
 			if ( shouldWarnAboutMaxAttachments ) {
-				setNotice( {
+				setAttachmentNotice( {
 					status: 'warning',
 					message: __( 'Only five images can be added at a time.', '__i18n_text_domain__' ),
 				} );
@@ -463,7 +538,7 @@ export const useManagedZendeskChat = () => {
 	}, [] );
 
 	const handleRemoveImage = useCallback( ( image: { id: string } ) => {
-		setNotice( undefined );
+		setAttachmentNotice( undefined );
 		setPendingImages( ( prev ) => {
 			const item = prev.find( ( p ) => p.id === image.id );
 			if ( item?.url ) {
@@ -473,8 +548,11 @@ export const useManagedZendeskChat = () => {
 		} );
 	}, [] );
 
+	const isDisconnectedStatus =
+		connectionStatus === 'disconnected' || connectionStatus === 'reconnecting';
+
 	const imageUpload =
-		conversation?.id && clientId && authData?.jwt
+		conversation?.id && clientId && authData?.jwt && ! isDisconnectedStatus
 			? {
 					pendingImages,
 					uploadingImages: [] as ZendeskUploadingImage[],
@@ -489,7 +567,21 @@ export const useManagedZendeskChat = () => {
 		( message: string ) => {
 			const toUpload = pendingImages;
 			setPendingImages( [] );
-			setNotice( undefined );
+			setAttachmentNotice( undefined );
+
+			const isDisconnected =
+				connectionStatusRef.current === 'disconnected' ||
+				connectionStatusRef.current === 'reconnecting';
+
+			if ( isDisconnected && conversation?.id && message.trim().length > 0 ) {
+				messageQueueRef.current.push( { text: message.trim() } );
+				const messageToSend = createUserMessage( { type: 'text', text: message.trim() } );
+				setConversation( ( prev ) =>
+					prev ? { ...prev, messages: [ ...prev.messages, messageToSend ] } : prev
+				);
+				return;
+			}
+
 			if ( toUpload.length > 0 && conversation?.id && authData?.jwt && clientId && Smooch ) {
 				const conversationId = conversation.id;
 				Promise.all(
@@ -530,14 +622,7 @@ export const useManagedZendeskChat = () => {
 			}
 			const hasText = message.trim().length > 0;
 			if ( conversation?.id && Smooch && hasText ) {
-				const messageToSend = {
-					type: 'text',
-					text: message.trim(),
-				};
-				setConversation( ( prev ) =>
-					prev ? { ...prev, messages: [ ...prev.messages, messageToSend as ZendeskMessage ] } : prev
-				);
-				Smooch.sendMessage( messageToSend, conversation.id );
+				sendMessage( { type: 'text', text: message.trim() }, conversation.id, Smooch );
 			}
 		},
 		[
@@ -550,6 +635,45 @@ export const useManagedZendeskChat = () => {
 			attachFileToConversation,
 		]
 	);
+
+	useEffect( () => {
+		if (
+			connectionStatus !== 'connected' ||
+			! hadDisconnectRef.current ||
+			! Smooch ||
+			! conversation?.id
+		) {
+			return;
+		}
+
+		hadDisconnectRef.current = false;
+		const conversationId = conversation.id;
+		const queue = [ ...messageQueueRef.current ];
+		messageQueueRef.current = [];
+
+		const flushAndResync = async () => {
+			for ( const entry of queue ) {
+				if ( entry.text.length > 0 ) {
+					try {
+						await sendMessage( { type: 'text', text: entry.text }, conversationId, Smooch ).sent;
+					} catch {
+						// Message failed to send — it was already shown optimistically, and the
+						// resync below will reconcile the conversation state with the server.
+					}
+				}
+			}
+
+			if ( queue.length > 0 ) {
+				recordTracksEvent( 'calypso_smooch_messenger_queue_flushed', {
+					queued_messages: queue.length,
+				} );
+			}
+
+			return Smooch.getConversationById( conversationId ).then( setConversation );
+		};
+
+		flushAndResync();
+	}, [ connectionStatus, Smooch, conversation?.id ] );
 
 	useEffect( () => {
 		return () => {
@@ -565,7 +689,7 @@ export const useManagedZendeskChat = () => {
 		isProcessing: isSettingUpSmooch,
 		conversation,
 		connectionStatus,
-		notice,
+		notice: connectionNotice || attachmentsNotice,
 		agentticMessages,
 		isLoadingConversation: isSettingUpSmooch || ! conversation,
 		hasInteractionEnded: hasCSAT,
