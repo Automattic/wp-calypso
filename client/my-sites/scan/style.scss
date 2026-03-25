@@ -1,28 +1,7 @@
-@import "@wordpress/base-styles/breakpoints";
-@import '@wordpress/admin-ui/build-style/style.css';
+@import "calypso/components/jetpack-page-layout/admin-ui-page";
 
 body.is-section-scan {
-	.layout:not(.has-no-sidebar) .layout__content {
-		padding: calc(var(--masterbar-height)) 0 0 calc(var(--sidebar-width-max));
-
-		@media (max-width: $break-medium) {
-			padding-left: 0;
-		}
-	}
-
-	.layout__primary .main {
-		padding-bottom: 0;
-	}
-
-	// Temporarily here until constrained content width is implemented in Admin-UI
-	.admin-ui-page__content {
-		> * {
-			max-width: 660px;
-			width: 100%;
-			margin: 0 auto;
-			box-sizing: border-box;
-		}
-	}
+	@include admin-ui-page-layout;
 }
 
 .scan .formatted-header.is-left-align {
