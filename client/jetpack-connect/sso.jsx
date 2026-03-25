@@ -19,7 +19,7 @@ import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { decodeEntities } from 'calypso/lib/formatting';
-import { detectPartnerConfig } from 'calypso/lib/partner-branding';
+import { detectPartnerConfig, getPartnerConfigFromRedirectUrl } from 'calypso/lib/partner-branding';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -524,6 +524,9 @@ const connectComponent = connect(
 	( state ) => {
 		const jetpackSSO = getSSO( state );
 		const oauth2Client = getCurrentOAuth2Client( state );
+		const sitePartnerConfig =
+			getPartnerConfigFromRedirectUrl( get( jetpackSSO, 'blogDetails.URL' ) ) ??
+			getPartnerConfigFromRedirectUrl( get( jetpackSSO, 'blogDetails.admin_url' ) );
 		return {
 			ssoUrl: get( jetpackSSO, 'ssoUrl' ),
 			isAuthorizing: get( jetpackSSO, 'isAuthorizing' ),
@@ -534,7 +537,7 @@ const connectComponent = connect(
 			blogDetails: get( jetpackSSO, 'blogDetails' ),
 			sharedDetails: get( jetpackSSO, 'sharedDetails' ),
 			currentUser: getCurrentUser( state ),
-			partnerConfig: detectPartnerConfig( oauth2Client ),
+			partnerConfig: sitePartnerConfig ?? detectPartnerConfig( oauth2Client ),
 		};
 	},
 	{
