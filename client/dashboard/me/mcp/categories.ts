@@ -1,9 +1,16 @@
 /**
  * MCP Tools Category Mapping
  *
- * Maps API category values to display categories for the MCP settings page.
- * Category values come from abilities-config.php on the backend and are passed
- * through the API response as `ability.category`.
+ * Maps API category values to display categories and sub-categories for the
+ * MCP settings page. Category values come from abilities-config.php on the
+ * backend and are passed through the API response as `ability.category`.
+ *
+ * Display categories are coarser than API categories: several API categories
+ * are merged into a single card with visual sub-category dividers.
+ *
+ *   Posts card:  posts | comments | categories-tags
+ *   Sites card:  sites | media | users/plugins/site-settings | analytics
+ *   Account card: account | notifications | billing
  */
 
 import { __ } from '@wordpress/i18n';
@@ -11,83 +18,138 @@ import { __ } from '@wordpress/i18n';
 export const DISPLAY_CATEGORIES = {
 	POSTS: __( 'Posts', 'calypso' ),
 	PAGES: __( 'Pages', 'calypso' ),
-	MEDIA: __( 'Media', 'calypso' ),
-	COMMENTS: __( 'Comments', 'calypso' ),
-	CATEGORIES_TAGS: __( 'Categories & tags', 'calypso' ),
 	DESIGN: __( 'Design', 'calypso' ),
 	SITES: __( 'Sites', 'calypso' ),
-	USERS: __( 'Users', 'calypso' ),
-	PLUGINS: __( 'Plugins', 'calypso' ),
-	ANALYTICS: __( 'Analytics', 'calypso' ),
-	SITE_SETTINGS: __( 'Site settings', 'calypso' ),
 	ACCOUNT: __( 'Account', 'calypso' ),
-	NOTIFICATIONS: __( 'Notifications', 'calypso' ),
-	BILLING: __( 'Billing', 'calypso' ),
 	DOMAINS: __( 'Domains', 'calypso' ),
 	DEVELOPER_TESTING: __( 'Developer & testing', 'calypso' ),
 	UNCATEGORIZED: __( 'Uncategorized', 'calypso' ),
 } as const;
 
 export const CATEGORY_ORDER = [
+	DISPLAY_CATEGORIES.SITES,
 	DISPLAY_CATEGORIES.POSTS,
 	DISPLAY_CATEGORIES.PAGES,
-	DISPLAY_CATEGORIES.MEDIA,
-	DISPLAY_CATEGORIES.COMMENTS,
-	DISPLAY_CATEGORIES.CATEGORIES_TAGS,
 	DISPLAY_CATEGORIES.DESIGN,
-	DISPLAY_CATEGORIES.SITES,
-	DISPLAY_CATEGORIES.USERS,
-	DISPLAY_CATEGORIES.PLUGINS,
-	DISPLAY_CATEGORIES.ANALYTICS,
-	DISPLAY_CATEGORIES.SITE_SETTINGS,
-	DISPLAY_CATEGORIES.ACCOUNT,
-	DISPLAY_CATEGORIES.NOTIFICATIONS,
-	DISPLAY_CATEGORIES.BILLING,
 	DISPLAY_CATEGORIES.DOMAINS,
+	DISPLAY_CATEGORIES.ACCOUNT,
 	DISPLAY_CATEGORIES.DEVELOPER_TESTING,
 	DISPLAY_CATEGORIES.UNCATEGORIZED,
 ] as const;
 
-/** Maps API category values (from abilities-config.php) to display category labels. */
+/**
+ * Sub-categories within merged display cards.
+ * Used to visually separate tools with dividers inside a single card.
+ */
+const SUB_CATEGORIES = {
+	// Posts sub-categories
+	POSTS: __( 'Posts', 'calypso' ),
+	COMMENTS: __( 'Comments', 'calypso' ),
+	CATEGORIES_TAGS: __( 'Categories & tags', 'calypso' ),
+	// Sites sub-categories
+	SITES: __( 'Sites', 'calypso' ),
+	MEDIA: __( 'Media', 'calypso' ),
+	SITE_SETTINGS: __( 'Site settings', 'calypso' ),
+	ANALYTICS: __( 'Analytics', 'calypso' ),
+	// Account sub-categories
+	ACCOUNT: __( 'Account', 'calypso' ),
+	NOTIFICATIONS: __( 'Notifications', 'calypso' ),
+} as const;
+
+/**
+ * Display order for sub-categories within merged cards.
+ */
+export const SUB_CATEGORY_ORDER: Record< string, readonly string[] > = {
+	[ DISPLAY_CATEGORIES.POSTS ]: [
+		SUB_CATEGORIES.POSTS,
+		SUB_CATEGORIES.COMMENTS,
+		SUB_CATEGORIES.CATEGORIES_TAGS,
+	],
+	[ DISPLAY_CATEGORIES.SITES ]: [
+		SUB_CATEGORIES.SITES,
+		SUB_CATEGORIES.SITE_SETTINGS,
+		SUB_CATEGORIES.MEDIA,
+		SUB_CATEGORIES.ANALYTICS,
+	],
+	[ DISPLAY_CATEGORIES.ACCOUNT ]: [ SUB_CATEGORIES.ACCOUNT, SUB_CATEGORIES.NOTIFICATIONS ],
+};
+
+/**
+ * Maps API category values to the merged display card they belong to.
+ * Multiple API categories can map to the same display category.
+ */
 const API_CATEGORY_TO_DISPLAY: Record< string, string > = {
+	// Posts card
 	posts: DISPLAY_CATEGORIES.POSTS,
+	comments: DISPLAY_CATEGORIES.POSTS,
+	'categories-tags': DISPLAY_CATEGORIES.POSTS,
+	// Pages card
 	pages: DISPLAY_CATEGORIES.PAGES,
-	media: DISPLAY_CATEGORIES.MEDIA,
-	comments: DISPLAY_CATEGORIES.COMMENTS,
-	'categories-tags': DISPLAY_CATEGORIES.CATEGORIES_TAGS,
+	// Design card
 	design: DISPLAY_CATEGORIES.DESIGN,
+	// Sites card
 	sites: DISPLAY_CATEGORIES.SITES,
-	users: DISPLAY_CATEGORIES.USERS,
-	plugins: DISPLAY_CATEGORIES.PLUGINS,
-	analytics: DISPLAY_CATEGORIES.ANALYTICS,
-	'site-settings': DISPLAY_CATEGORIES.SITE_SETTINGS,
+	media: DISPLAY_CATEGORIES.SITES,
+	users: DISPLAY_CATEGORIES.SITES,
+	plugins: DISPLAY_CATEGORIES.SITES,
+	'site-settings': DISPLAY_CATEGORIES.SITES,
+	analytics: DISPLAY_CATEGORIES.SITES,
+	// Account card
 	account: DISPLAY_CATEGORIES.ACCOUNT,
-	notifications: DISPLAY_CATEGORIES.NOTIFICATIONS,
-	billing: DISPLAY_CATEGORIES.BILLING,
+	notifications: DISPLAY_CATEGORIES.ACCOUNT,
+	billing: DISPLAY_CATEGORIES.ACCOUNT,
+	// Domains card
 	domains: DISPLAY_CATEGORIES.DOMAINS,
+	// Developer & testing card
 	'developer-testing': DISPLAY_CATEGORIES.DEVELOPER_TESTING,
 };
 
 /**
- * No sub-categories — each API category maps to its own top-level card.
- * Kept for interface compatibility with read/write page components.
+ * Maps API category values to the sub-category divider within their display card.
+ * Only needed for API categories that are merged into a card with multiple sub-groups.
  */
-export const SUB_CATEGORY_ORDER: Record< string, readonly string[] > = {};
+const API_CATEGORY_TO_SUB_CATEGORY: Record< string, string > = {
+	// Posts card sub-categories
+	posts: SUB_CATEGORIES.POSTS,
+	comments: SUB_CATEGORIES.COMMENTS,
+	'categories-tags': SUB_CATEGORIES.CATEGORIES_TAGS,
+	// Sites card sub-categories
+	sites: SUB_CATEGORIES.SITES,
+	media: SUB_CATEGORIES.MEDIA,
+	users: SUB_CATEGORIES.SITE_SETTINGS,
+	plugins: SUB_CATEGORIES.SITE_SETTINGS,
+	'site-settings': SUB_CATEGORIES.SITE_SETTINGS,
+	analytics: SUB_CATEGORIES.ANALYTICS,
+	// Account card sub-categories
+	account: SUB_CATEGORIES.ACCOUNT,
+	notifications: SUB_CATEGORIES.NOTIFICATIONS,
+	billing: SUB_CATEGORIES.ACCOUNT,
+};
 
 /**
- * Pass-through sort — no explicit ordering needed with granular categories.
- * Kept for interface compatibility with read/write page components.
+ * Pass-through sort — preserved for interface compatibility.
  */
 export function sortTools< T >( tools: Array< [ string, T ] > ): Array< [ string, T ] > {
 	return tools;
 }
 
 /**
- * No sub-categories with granular per-category cards.
- * Kept for interface compatibility with read/write page components.
+ * Get the sub-category for a tool within its merged display card.
+ * Returns undefined for tools in cards that have no sub-category dividers.
+ * @param toolId - Unused; kept for interface compatibility.
+ * @param ability - Ability object with category from API
+ * @param ability.category - API category value from abilities-config.php
+ * @returns The sub-category label, or undefined
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function getSubCategory( toolId: string ): string | undefined {
+export function getSubCategory(
+	toolId: string,
+	ability?: { category?: string }
+): string | undefined {
+	const apiCategory = ability?.category;
+	if ( apiCategory ) {
+		return API_CATEGORY_TO_SUB_CATEGORY[ apiCategory ];
+	}
 	return undefined;
 }
 
@@ -105,7 +167,7 @@ export function isWriteTool( toolId: string, ability?: { readonly?: boolean } ):
 }
 
 /**
- * Get the display category for a tool based on its API category.
+ * Get the display category (card) for a tool based on its API category.
  * @param toolId - Unused; kept for interface compatibility.
  * @param ability - Ability object with category from API
  * @param ability.category - API category value from abilities-config.php

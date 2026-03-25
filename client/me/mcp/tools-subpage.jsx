@@ -137,7 +137,7 @@ export default function McpToolsSubpage( {
 	const renderSubGroupedTools = ( categoryTools, categoryName ) => {
 		const subGrouped = {};
 		categoryTools.forEach( ( [ toolId, tool ] ) => {
-			const sub = getSubCategory( toolId ) ?? '';
+			const sub = getSubCategory( toolId, tool ) ?? '';
 			if ( ! subGrouped[ sub ] ) {
 				subGrouped[ sub ] = [];
 			}

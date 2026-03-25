@@ -107,7 +107,7 @@ export default function McpWrite() {
 	) => {
 		const subGrouped: Record< string, Array< [ string, McpAbility ] > > = {};
 		categoryTools.forEach( ( [ toolId, tool ] ) => {
-			const sub = getSubCategory( toolId ) ?? '';
+			const sub = getSubCategory( toolId, tool ) ?? '';
 			if ( ! subGrouped[ sub ] ) {
 				subGrouped[ sub ] = [];
 			}
