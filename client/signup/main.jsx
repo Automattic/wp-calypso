@@ -128,7 +128,7 @@ class Signup extends Component {
 		flowName: PropTypes.string,
 		stepName: PropTypes.string,
 		pageTitle: PropTypes.string,
-		ciabConfig: PropTypes.object,
+		partnerConfig: PropTypes.object,
 		stepSectionName: PropTypes.string,
 		hostingFlow: PropTypes.bool.isRequired,
 	};
@@ -873,7 +873,10 @@ class Signup extends Component {
 			<>
 				<div className={ `signup is-${ kebabCase( this.props.flowName ) }` }>
 					<DocumentHead
-						title={ getPartnerFormattedWindowTitle( this.props.pageTitle, this.props.ciabConfig ) }
+						title={ getPartnerFormattedWindowTitle(
+							this.props.pageTitle,
+							this.props.partnerConfig
+						) }
 						skipTitleFormatting
 					/>
 					{ showPageHeader && (
@@ -940,7 +943,7 @@ export default connect(
 			siteId,
 			localeSlug: getCurrentLocaleSlug( state ),
 			oauth2Client,
-			ciabConfig: detectPartnerConfig( oauth2Client ),
+			partnerConfig: detectPartnerConfig( oauth2Client ),
 			isGravatar: isGravatarOAuth2Client( oauth2Client ),
 			wccomFrom: getWccomFrom( state ),
 			hostingFlow,

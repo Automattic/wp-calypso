@@ -13,9 +13,9 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { navigate } from 'calypso/lib/navigate';
 import {
 	detectPartnerConfig,
-	getCiabConfigFromGarden,
+	getPartnerConfigFromGarden,
 	getPartnerFormattedWindowTitle,
-	type CiabPartnerConfig,
+	type PartnerConfig,
 } from 'calypso/lib/partner-branding';
 import { login } from 'calypso/lib/paths';
 import { getRedirectAfterAccept } from 'calypso/my-sites/invites/utils';
@@ -56,12 +56,12 @@ function toLegacyInvite( invite: Invite ) {
 /**
  * Get CIAB branding config from blog details
  */
-function getBrandingFromBlogDetails( blogDetails?: InviteBlogDetails ): CiabPartnerConfig | null {
+function getBrandingFromBlogDetails( blogDetails?: InviteBlogDetails ): PartnerConfig | null {
 	if ( ! blogDetails?.is_garden_site || ! blogDetails?.garden ) {
 		return null;
 	}
 
-	return getCiabConfigFromGarden( blogDetails.garden.partner, blogDetails.garden.name, {
+	return getPartnerConfigFromGarden( blogDetails.garden.partner, blogDetails.garden.name, {
 		persistToSession: true,
 	} );
 }
@@ -257,7 +257,7 @@ export function AcceptInviteScreen( { invite }: AcceptInviteScreenProps ) {
 				inviteSentTo={ inviteSentTo }
 				isKnownUser={ isKnownUser }
 				topBarLogo={ topBarLogo }
-				ciabConfig={ titleBranding }
+				partnerConfig={ titleBranding }
 				trackingProps={ trackingProps }
 			/>
 		);

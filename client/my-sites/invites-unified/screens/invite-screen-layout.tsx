@@ -10,7 +10,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { navigate } from 'calypso/lib/navigate';
 import {
 	detectPartnerConfig,
-	getCiabConfigFromGarden,
+	getPartnerConfigFromGarden,
 	getPartnerFormattedWindowTitle,
 } from 'calypso/lib/partner-branding';
 import { login } from 'calypso/lib/paths';
@@ -75,7 +75,7 @@ export function InviteScreenLayout( {
 	};
 
 	const branding = blogDetails?.garden
-		? getCiabConfigFromGarden( blogDetails.garden.partner, blogDetails.garden.name, {
+		? getPartnerConfigFromGarden( blogDetails.garden.partner, blogDetails.garden.name, {
 				persistToSession: true,
 		  } )
 		: null;

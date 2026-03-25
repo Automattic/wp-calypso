@@ -1,7 +1,7 @@
 import { Step } from '@automattic/onboarding';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { getCiabConfigFromGarden } from 'calypso/lib/partner-branding';
+import { getPartnerConfigFromGarden } from 'calypso/lib/partner-branding';
 import normalizeInvite from 'calypso/my-sites/invites/invite-accept/utils/normalize-invite';
 import LoggedOutInviteAccept from 'calypso/my-sites/invites/invite-accept-logged-out';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -44,7 +44,7 @@ export function UnifiedInviteAccept( {
 	const blogDetails = ( inviteData as { blog_details?: InviteBlogDetails } )?.blog_details;
 	const branding =
 		blogDetails?.is_garden_site && blogDetails.garden
-			? getCiabConfigFromGarden( blogDetails.garden.partner, blogDetails.garden.name, {
+			? getPartnerConfigFromGarden( blogDetails.garden.partner, blogDetails.garden.name, {
 					persistToSession: true,
 			  } )
 			: null;

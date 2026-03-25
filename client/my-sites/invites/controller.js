@@ -7,7 +7,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { navigate } from 'calypso/lib/navigate';
 import {
 	detectPartnerConfig,
-	getCiabConfigFromGarden,
+	getPartnerConfigFromGarden,
 	getPartnerFormattedWindowTitle,
 } from 'calypso/lib/partner-branding';
 import InviteAccept from 'calypso/my-sites/invites/invite-accept';
@@ -66,9 +66,9 @@ export function acceptInvite( context, next ) {
 	const AcceptInviteTitle = () => {
 		const translate = useTranslate();
 		const blogDetails = context.inviteData?.blog_details;
-		const ciabConfig =
+		const partnerConfig =
 			blogDetails?.is_garden_site && blogDetails.garden
-				? getCiabConfigFromGarden( blogDetails.garden.partner, blogDetails.garden.name, {
+				? getPartnerConfigFromGarden( blogDetails.garden.partner, blogDetails.garden.name, {
 						persistToSession: true,
 				  } )
 				: detectPartnerConfig();
@@ -77,7 +77,7 @@ export function acceptInvite( context, next ) {
 			<DocumentHead
 				title={ getPartnerFormattedWindowTitle(
 					translate( 'Accept Invite', { textOnly: true } ),
-					ciabConfig
+					partnerConfig
 				) }
 				skipTitleFormatting
 			/>

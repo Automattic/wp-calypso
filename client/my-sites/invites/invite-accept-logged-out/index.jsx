@@ -11,7 +11,7 @@ import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item'
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { getCiabConfigFromGarden } from 'calypso/lib/partner-branding';
+import { getPartnerConfigFromGarden } from 'calypso/lib/partner-branding';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
 import InviteFormHeaderLoggedOut from 'calypso/my-sites/invites/invite-form-header-logged-out';
@@ -129,7 +129,7 @@ class InviteAcceptLoggedOut extends Component {
 		return (
 			<InviteFormHeaderLoggedOut
 				site={ this.props.invite?.site }
-				ciabConfig={ this.getCiabConfig() }
+				partnerConfig={ this.getCiabConfig() }
 			/>
 		);
 	};
@@ -139,7 +139,7 @@ class InviteAcceptLoggedOut extends Component {
 		const gardenName = site?.garden?.name;
 		const gardenPartner = site?.garden?.partner;
 
-		return getCiabConfigFromGarden( gardenPartner, gardenName, { persistToSession: true } );
+		return getPartnerConfigFromGarden( gardenPartner, gardenName, { persistToSession: true } );
 	};
 
 	loginUser = () => {
@@ -215,15 +215,15 @@ class InviteAcceptLoggedOut extends Component {
 	};
 
 	render() {
-		const ciabConfig = this.getCiabConfig();
+		const partnerConfig = this.getCiabConfig();
 
 		if ( this.props.forceMatchingEmail && this.props.invite.knownUser ) {
 			return (
 				<>
 					<BodySectionCssClass
-						bodyClass={ ciabConfig?.fontStyle === 'system' ? [ 'is-ciab-font-system' ] : [] }
+						bodyClass={ partnerConfig?.fontStyle === 'system' ? [ 'is-ciab-font-system' ] : [] }
 					/>
-					<WpLoggedOutInviteLogo ciabConfig={ ciabConfig } />
+					<WpLoggedOutInviteLogo partnerConfig={ partnerConfig } />
 					{ this.renderSignInLinkOnly() }
 				</>
 			);
@@ -244,9 +244,9 @@ class InviteAcceptLoggedOut extends Component {
 		return (
 			<>
 				<BodySectionCssClass
-					bodyClass={ ciabConfig?.fontStyle === 'system' ? [ 'is-ciab-font-system' ] : [] }
+					bodyClass={ partnerConfig?.fontStyle === 'system' ? [ 'is-ciab-font-system' ] : [] }
 				/>
-				<WpLoggedOutInviteLogo ciabConfig={ ciabConfig } />
+				<WpLoggedOutInviteLogo partnerConfig={ partnerConfig } />
 				<div className="invite-accept-logged-out-wrapper">
 					{ this.renderFormHeader() }
 					<SignupForm
