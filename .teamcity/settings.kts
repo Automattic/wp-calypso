@@ -295,7 +295,7 @@ object BuildToolchainPreviewImages : BuildType({
 	buildNumberPattern = "%build.prefix%.%build.counter%"
 
 	params {
-		param("build.prefix", "1.0")
+		param("build.prefix", "2.0")
 		param("image_tag", "latest")
 	}
 
