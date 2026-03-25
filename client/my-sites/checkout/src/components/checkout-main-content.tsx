@@ -1856,9 +1856,12 @@ const WPCheckoutWrapper = styled.div< {
 		css`
 			.checkout__main-title,
 			.step-container-v2__heading h1 {
-				font-size: 28px;
 				font-weight: 400;
 				color: ${ colorStudio.colors[ 'Gray 100' ] };
+
+				@media ( max-width: 699px ) {
+					font-size: 28px;
+				}
 			}
 			.checkout__summary-card {
 				background: transparent;
