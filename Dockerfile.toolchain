@@ -53,6 +53,7 @@ ARG cache_seed_key
 
 LABEL org.opencontainers.image.revision=$commit_sha \
 	io.calypso.cache-seed-key=$cache_seed_key
+ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=0
 ENV DISPLAY=:99
 
 RUN apt-get update \
