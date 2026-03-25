@@ -1,17 +1,10 @@
 /**
  * @jest-environment jsdom
- *
- * Regression tests for the security report:
- *   "Smooch.destroy() errors are not caught, causing unhandled promise rejections
- *    that abort the initialization flow and prevent retry logic from running."
- *
- * Commit: 28923103f4e4
- * Path:   packages/help-center/src/components/help-center-smooch.tsx
  */
 
 // babel-jest.  Assigning into a `var` (which is also hoisted) avoids the
 // TDZ error while still letting the factory populate the object at
-// require-time.  `mockSmooch` prefix satisfies Jest's "mock" naming rule.
+// require-time. `mockSmooch` prefix satisfies Jest's "mock" naming rule.
 // eslint-disable-next-line no-var
 var mockSmooch: {
 	init: jest.Mock;
@@ -34,7 +27,6 @@ jest.mock( 'smooch', () => {
 	return mockSmooch;
 } );
 
-// ── External package mocks ────────────────────────────────────────────────────
 jest.mock( '@automattic/calypso-analytics', () => ( {
 	recordTracksEvent: jest.fn(),
 } ) );
@@ -118,11 +110,9 @@ jest.mock( '@wordpress/element', () => ( {
 	...jest.requireActual( '@wordpress/element' ),
 } ) );
 
-// ── Import component under test (after all mocks) ─────────────────────────────
 import '@testing-library/jest-dom';
 import { act, render } from '@testing-library/react';
 import HelpCenterSmooch from '../help-center-smooch';
-// ── Tests ─────────────────────────────────────────────────────────────────────
 
 describe( 'HelpCenterSmooch – Smooch.destroy() error handling (regression)', () => {
 	const destroyError = new Error( 'SDK not fully initialized' );
@@ -132,17 +122,6 @@ describe( 'HelpCenterSmooch – Smooch.destroy() error handling (regression)', (
 		mockSmooch.render.mockImplementation( () => {} );
 	} );
 
-	/**
-	 * REGRESSION: When destroy() rejects, the initialization must still proceed
-	 * to call Smooch.init().
-	 *
-	 * Before the fix: `await Smooch?.destroy?.()` is bare (no try/catch), so the
-	 * rejection propagates out of `initialize()` and `Smooch.init` is never
-	 * reached → call count stays 0.
-	 *
-	 * After the fix: destroy() errors are caught and swallowed, so init() is
-	 * always called → call count is 1.
-	 */
 	it( 'still calls Smooch.init() after Smooch.destroy() throws', async () => {
 		mockSmooch.destroy.mockRejectedValueOnce( destroyError );
 		mockSmooch.init.mockResolvedValue( undefined );
@@ -155,20 +134,6 @@ describe( 'HelpCenterSmooch – Smooch.destroy() error handling (regression)', (
 		expect( mockSmooch.init ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	/**
-	 * REGRESSION: When destroy() throws AND init() subsequently fails, the
-	 * catch/retry branch inside initialize() must still be reached.
-	 *
-	 * Before the fix: the unhandled destroy() rejection aborts initialize()
-	 * entirely — the inner try/catch is never entered, so setIsChatLoaded is
-	 * called exactly once (with false, from the line before destroy()) and
-	 * never again.  The catch block that would schedule the retry never runs,
-	 * so setIsChatLoaded is NOT called a second time with false.
-	 *
-	 * After the fix: destroy() is caught, init() is called and also rejects,
-	 * the catch block runs, and setIsChatLoaded(false) is called a second time
-	 * from inside the catch — resulting in at least two calls total.
-	 */
 	it( 'enters the catch/retry branch when Smooch.init() fails after destroy() throws', async () => {
 		const initError = new Error( 'Smooch.init failed' );
 		mockSmooch.destroy.mockRejectedValueOnce( destroyError );
@@ -187,19 +152,6 @@ describe( 'HelpCenterSmooch – Smooch.destroy() error handling (regression)', (
 		expect( mockSetIsChatLoaded ).toHaveBeenNthCalledWith( 2, false ); // catch branch
 	} );
 
-	/**
-	 * REGRESSION: Smooch.destroy() in the cleanup (useEffect return) must not
-	 * surface an unhandled rejection on unmount.
-	 *
-	 * Before the fix: `Smooch?.destroy?.()` is called fire-and-forget with no
-	 * error handler, so when it rejects the Promise is unhandled.  In jsdom this
-	 * fires `window.unhandledrejection`.  We intercept that event (and call
-	 * preventDefault() to stop Jest from also catching it) and assert it was
-	 * emitted — proving the bug exists without the fix.
-	 *
-	 * After the fix: destroy() rejection is swallowed via `.catch()`, so no
-	 * `unhandledrejection` event fires and the errors array stays empty.
-	 */
 	it( 'does not produce an unhandled rejection when Smooch.destroy() throws on unmount', async () => {
 		mockSmooch.destroy.mockResolvedValueOnce( undefined ); // init-time destroy: succeeds
 		mockSmooch.init.mockResolvedValue( undefined );
@@ -227,8 +179,6 @@ describe( 'HelpCenterSmooch – Smooch.destroy() error handling (regression)', (
 			window.removeEventListener( 'unhandledrejection', onUnhandled );
 		}
 
-		// With the fix destroy()'s rejection is caught — no unhandled rejection.
-		// Without the fix the rejection escapes and this assertion fails.
 		expect( unhandledErrors ).toHaveLength( 0 );
 	} );
 } );
