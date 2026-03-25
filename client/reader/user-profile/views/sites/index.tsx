@@ -8,7 +8,6 @@ import { UserProfileData } from 'calypso/lib/user/user';
 import { RecommendedFeedsList } from 'calypso/reader/recommended-feeds-list';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import useUserSitesQuery from './use-user-sites-query';
 
 interface UserSitesProps {
 	user: UserProfileData;
