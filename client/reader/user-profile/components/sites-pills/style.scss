@@ -3,8 +3,14 @@
 		display: flex;
 		flex-wrap: wrap;
 		gap: 12px;
-		border-radius: 2px;
 		margin-top: 16px;
+
+		.skeleton {
+			@include placeholder( --color-neutral-5 );
+			width: 140px;
+			height: 32px;
+			border-radius: 2px;
+		}
 	}
 
 	.user-site-pill {
@@ -12,6 +18,7 @@
 		background-color: #f0f0f0;
 		align-items: center;
 		gap: 8px;
+		border-radius: 2px;
 		padding: 6px 8px;
 		font-size: rem( 13px );
 		color: var( --studio-gray-90 );
