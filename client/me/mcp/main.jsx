@@ -204,7 +204,7 @@ function McpComponent( { path } ) {
 							badges={
 								disabledSiteCount > 0
 									? [ { text: mcpSiteExceptionsBadgeText, intent: 'warning' } ]
-									: []
+									: [ { text: translate( 'No exceptions' ) } ]
 							}
 							density="medium"
 						/>
