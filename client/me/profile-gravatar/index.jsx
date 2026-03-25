@@ -22,7 +22,7 @@ export default function ProfileGravatar( { user, inSidebar } ) {
 		<div className={ clsx( 'profile-gravatar', { 'is-in-sidebar': inSidebar } ) }>
 			<div role="presentation" onClick={ recordGravatarMisclick }>
 				<Animate type="appear">
-					<Gravatar user={ user } size={ 150 } imgSize={ GRAVATAR_IMG_SIZE } />
+					<Gravatar user={ user } size={ 80 } imgSize={ GRAVATAR_IMG_SIZE } />
 				</Animate>
 			</div>
 			<h2 className="profile-gravatar__user-display-name">{ user.display_name }</h2>
