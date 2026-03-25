@@ -46,13 +46,7 @@ export default async function loadOmnibar( events: OmnibarEvents ) {
 			user={ user }
 			site={ site }
 			onToggleMenu={ () => events.mobileMenu.emit() }
-			onToggleNotifications={ () => {
-				// Defer to a microtask so the callback runs after the current
-				// click handler but before any macrotasks (e.g. Popover's
-				// setTimeout(0) blur-close). This prevents focus-outside
-				// handlers from racing with the toggle.
-				Promise.resolve().then( () => events.notifications.emit() );
-			} }
+			onToggleNotifications={ () => events.notifications.emit() }
 		/>
 	);
 }
