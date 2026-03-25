@@ -10,7 +10,6 @@ import useBuildCurrentRouteLink from '../../app/hooks/use-build-current-route-li
 import { domainRoute } from '../../app/router/domains';
 import HeaderBar from '../../components/header-bar';
 import Switcher from '../../components/switcher';
-import { Text } from '../../components/text';
 import DomainMenu from '../domain-menu';
 import type { DomainSummary } from '@automattic/api-core';
 import './style.scss';
@@ -49,19 +48,21 @@ function Domain() {
 								getItemUrl={ ( domain ) =>
 									buildCurrentRouteLink( { params: { domainName: domain.domain } } )
 								}
-								renderItem={ ( { item, context } ) => (
-									<Switcher.Item
-										media={
-											context !== 'list' ? (
-												<Icon className="domain-icon" icon={ globe } size={ 24 } />
-											) : undefined
-										}
-										title={
-											<Text truncate numberOfLines={ 1 }>
-												{ item.domain }
-											</Text>
-										}
-									/>
+								renderItemMedia={ ( { context } ) =>
+									context === 'list' ? null : (
+										<Icon className="domain-icon" icon={ globe } size={ 24 } />
+									)
+								}
+								renderItemTitle={ ( { item } ) => (
+									<span
+										style={ {
+											overflow: 'hidden',
+											textOverflow: 'ellipsis',
+											whiteSpace: 'nowrap',
+										} }
+									>
+										{ item.domain }
+									</span>
 								) }
 							/>
 						</HeaderBar.Title>
