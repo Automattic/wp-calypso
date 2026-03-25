@@ -20,10 +20,12 @@ function getOAuthAuthorizeUrl( {
 	state,
 	next = '',
 	isLogout = false,
+	isNewUser = false,
 }: {
 	state: string;
 	next?: string;
 	isLogout?: boolean;
+	isNewUser?: boolean;
 } ): string {
 	const redirectUri = new URL( OAUTH_CALLBACK_PATH, window.location.origin );
 
@@ -40,6 +42,7 @@ function getOAuthAuthorizeUrl( {
 		blog_id: '0',
 		state,
 		...( isLogout === true ? { implicit: 'false' } : {} ),
+		...( isNewUser === true ? { 'new-user': '1' } : {} ),
 	} ).toString();
 
 	return authUri.toString();
@@ -114,9 +117,14 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 			const state = crypto.randomUUID();
 			sessionStorage.setItem( 'wpcom_oauth_state', state );
 
+			// Default to the signup screen rather than the login screen for certain paths.
+			const newUserPaths = [ '/start-store' ];
+			const isNewUser = newUserPaths.includes( window.location.pathname );
+
 			window.location.replace(
 				getOAuthAuthorizeUrl( {
 					state,
+					isNewUser,
 					next: window.location.pathname + window.location.search,
 				} )
 			);
