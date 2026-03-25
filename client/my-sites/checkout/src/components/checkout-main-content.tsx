@@ -1174,6 +1174,9 @@ const StepContainerV2CheckoutFixer = styled.div< {
 			.checkout-main-content .step-container-v2__heading {
 				display: none;
 			}
+			.checkout-step {
+				padding: 16px 16px 48px 16px;
+			}
 		` }
 	${ ( props ) =>
 		props.isCheckoutUiRedesignV1 &&
@@ -1855,6 +1858,9 @@ const WPCheckoutWrapper = styled.div< {
 			}
 			.wp-checkout__review-order-step {
 				padding-block-start: 0;
+			}
+			.checkout-step {
+				padding: 16px 16px 48px 16px;
 			}
 		` }
 	${ ( props ) =>

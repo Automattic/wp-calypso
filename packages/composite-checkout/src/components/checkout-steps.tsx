@@ -766,7 +766,7 @@ export function CheckoutFormSubmit( {
 
 const StepWrapper = styled.div< HTMLAttributes< HTMLDivElement > >`
 	position: relative;
-	padding: 16px 16px 48px 16px;
+	padding: 24px;
 	width: 100%;
 	box-sizing: border-box;
 
