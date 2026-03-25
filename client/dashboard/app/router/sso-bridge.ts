@@ -46,7 +46,7 @@ export const ssoBridgeRoute = createRoute( {
 	},
 } ).lazy( () =>
 	import( '../sso-bridge' ).then( ( d ) =>
-		createLazyRoute( '/sso-bridge' )( {
+		createLazyRoute( 'sso-bridge' )( {
 			component: d.default,
 		} )
 	)

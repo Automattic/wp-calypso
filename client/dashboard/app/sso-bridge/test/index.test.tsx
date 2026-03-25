@@ -39,6 +39,6 @@ describe( '<SsoBridge>', () => {
 
 		render( <SsoBridge /> );
 
-		expect( document.querySelector( '.sso-bridge__loading' ) ).toBeInTheDocument();
+		expect( document.querySelector( '.sso-bridge__loading' ) ).toBeVisible();
 	} );
 } );

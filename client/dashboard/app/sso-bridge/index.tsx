@@ -1,9 +1,9 @@
 import { useSearch } from '@tanstack/react-router';
-import { Spinner } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { TextSkeleton } from '../../components/text-skeleton';
 
 import './style.scss';
 
@@ -38,7 +38,7 @@ export default function SsoBridge() {
 
 	return (
 		<div className="sso-bridge__loading">
-			<Spinner />
+			<TextSkeleton length={ 30 } />
 		</div>
 	);
 }
