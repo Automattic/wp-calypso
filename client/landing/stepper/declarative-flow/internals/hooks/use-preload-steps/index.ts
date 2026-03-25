@@ -1,6 +1,6 @@
 import { SiteDetails } from '@automattic/data-stores';
 import debugFactory from 'debug';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import type { Flow, FlowV2, StepperStep } from '../../types';
@@ -24,6 +24,17 @@ async function tryPreload( step?: StepperStep, followingStep?: StepperStep ) {
 	}
 }
 
+function useHasItBeenASecond() {
+	const [ hasItBeenASecond, setHasItBeenASecond ] = useState( false );
+
+	useEffect( () => {
+		const intervalId = setTimeout( () => setHasItBeenASecond( true ), 1000 );
+		return () => clearTimeout( intervalId );
+	}, [] );
+
+	return hasItBeenASecond;
+}
+
 /**
  * Preload the next step in the flow, if it's an async component.
  * @param siteSlugOrId The site slug or ID.
@@ -40,8 +51,14 @@ export function usePreloadSteps(
 	flow: Flow | FlowV2< any >
 ) {
 	const isLoggedIn = useSelector( isUserLoggedIn );
+	// Wait a second before preloading. Gives priority to what's on the screen.
+	const activate = useHasItBeenASecond();
 
 	useEffect( () => {
+		if ( ! activate ) {
+			debug( 'Not preloading steps yet. Too early.' );
+			return;
+		}
 		if ( siteSlugOrId && ! selectedSite ) {
 			// If this step depends on a selected site, only preload after we have the data.
 			// Otherwise, we're still waiting to render something meaningful, and we don't want to
@@ -80,5 +97,5 @@ export function usePreloadSteps(
 		// different points. But even if they do, worst case scenario we only fail to preload
 		// some steps, and they'll simply be loaded later.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ siteSlugOrId, selectedSite, currentStepRoute, flow ] );
+	}, [ siteSlugOrId, selectedSite, currentStepRoute, flow, activate ] );
 }

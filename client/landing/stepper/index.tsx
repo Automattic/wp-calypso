@@ -226,6 +226,8 @@ async function main() {
 					</BrowserRouter>
 					{ ! FLOWS_WITHOUT_HELP_CENTER.has( flowName ) && (
 						<AsyncHelpCenterApp
+							// Only load the Help Center for logged in users.
+							requireLogin
 							currentUser={ user as UserStore.CurrentUser }
 							sectionName="stepper"
 						/>
