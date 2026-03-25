@@ -393,15 +393,6 @@ function getLineItemPriceDisplay(
 		product.item_subtotal_integer + ( product.coupon_savings_integer ?? 0 );
 	const isDiscounted = itemSubtotalInteger < originalAmountInteger;
 
-	// For WPCOM plans always show the renewal amount for legal reasons.
-	// Introductory offer discount would be shown in LineItemCostOverrides.
-	if ( isWpComPlan( product.product_slug ) ) {
-		return {
-			actualAmountDisplay: fmt( product.item_original_subtotal_integer ),
-			crossedOutAmountDisplay: isDiscounted ? fmt( originalAmountInteger ) : undefined,
-		};
-	}
-
 	// For products with a price-increasing intro offer followed by a sale
 	// coupon (e.g. premium domains: $80 → $1,100 → $275), show the peak
 	// price crossed out with the final price.
