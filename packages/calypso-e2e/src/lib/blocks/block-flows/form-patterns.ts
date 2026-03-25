@@ -1,5 +1,6 @@
 import {
 	ExpectedFormField,
+	disableFormEmailNotifications,
 	labelFormFieldBlock,
 	makeSelectorFromBlockName,
 	validatePublishedFormFields,
@@ -54,6 +55,8 @@ export class FormPatternsFlow implements BlockFlow {
 			)
 			.getAttribute( 'id' );
 		const newParentBlockLocator = editorCanvas.locator( `#${ newParentBlockId }` );
+
+		await disableFormEmailNotifications( context.page, newParentBlockLocator );
 
 		// We now have to double-click to edit the pattern-added form.
 		// (or click an "Edit section" sidebar button, but this is easier)

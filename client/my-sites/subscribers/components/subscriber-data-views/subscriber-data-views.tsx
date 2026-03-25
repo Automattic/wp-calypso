@@ -1,21 +1,33 @@
 import page from '@automattic/calypso-router';
 import { Gravatar } from '@automattic/components';
-import { Locale } from '@automattic/i18n-utils';
+import { HelpCenter } from '@automattic/data-stores';
+import { Locale, useLocalizeUrl } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
+import { Page } from '@wordpress/admin-ui';
+import { Button, Icon } from '@wordpress/components';
+import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { DataViews, type View, type ViewTable, type Action, Operator } from '@wordpress/dataviews';
 import { useMemo, useState, useCallback, useEffect } from '@wordpress/element';
-import { trash } from '@wordpress/icons';
-import { translate, fixMe } from 'i18n-calypso';
+import { plus, trash } from '@wordpress/icons';
+import { translate } from 'i18n-calypso';
+import JetpackTitle from 'calypso/components/jetpack-title';
 import { useSubscribedNewsletterCategories } from 'calypso/data/newsletter-categories';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { getCouponsAndGiftsEnabledForSiteId } from 'calypso/state/memberships/settings/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { isSimpleSite, getSiteSlug } from 'calypso/state/sites/selectors';
 import { SubscribersFilterBy, SubscribersSortBy, SubscribersStatus } from '../../constants';
 import { getSubscriptionIdFromSubscriber } from '../../helpers';
-import { useSubscriptionPlans, useUnsubscribeModal } from '../../hooks';
+import {
+	useAddSubscribersCallback,
+	useMigrateSubscribersCallback,
+	useSubscriptionPlans,
+	useUnsubscribeModal,
+} from '../../hooks';
 import {
 	useSubscribersQuery,
 	useSubscriberCountQuery,
@@ -28,14 +40,24 @@ import {
 	useRecordSubscriberSort,
 } from '../../tracks';
 import { Subscriber } from '../../types';
+import { AddSubscribersModal } from '../add-subscribers-modal';
 import { JetpackEmptyListView } from '../jetpack-empty-list-view';
+import { MigrateSubscribersModal } from '../migrate-subscribers-modal';
 import { SubscriberDetails } from '../subscriber-details';
 import { SubscriberDetailsSkeleton } from '../subscriber-details/skeleton';
 import { SubscriberLaunchpad } from '../subscriber-launchpad';
 import SubscriberTotals from '../subscriber-totals';
-import { SubscribersHeader } from '../subscribers-header';
+import { SubscribersHeaderPopover } from '../subscribers-header-popover';
 import { UnsubscribeModal } from '../unsubscribe-modal';
 import './style.scss';
+
+enum SubscriberModalType {
+	NONE = 'none',
+	ADD = 'add',
+	MIGRATE = 'migrate',
+}
+
+const HELP_CENTER_STORE = HelpCenter.register();
 
 type SubscriberDataViewsProps = {
 	siteId: number | null;
@@ -151,6 +173,55 @@ export default function SubscriberDataViews( {
 			direction: 'desc',
 		},
 	} );
+
+	// Header: support link and add/migrate modals
+	const localizeUrl = useLocalizeUrl();
+	const { setShowSupportDoc } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const isWPCOMSite = useSelector( ( state ) => isSiteWPCOM( state, siteId ) );
+	const supportUrl = ! isWPCOMSite
+		? 'https://jetpack.com/support/newsletter/customize-the-newsletter-experience/#manage-subscribers'
+		: 'https://wordpress.com/support/subscribers/ ';
+
+	const openHelpCenter = () => {
+		setShowSupportDoc( localizeUrl( supportUrl ) );
+	};
+
+	const addSubscribersCallback = useAddSubscribersCallback( siteId );
+	const migrateSubscribersCallback = useMigrateSubscribersCallback( siteId );
+	const [ showSubscriberModal, setShowSubscriberModal ] = useState< SubscriberModalType >(
+		SubscriberModalType.NONE
+	);
+	const [ initialMethod, setInitialMethod ] = useState( '' );
+	const closeSubscriberModal = () => {
+		setShowSubscriberModal( SubscriberModalType.NONE );
+		setInitialMethod( '' );
+
+		if ( window.location.hash.startsWith( '#add-subscribers' ) ) {
+			history.pushState( '', document.title, window.location.pathname + window.location.search );
+		}
+	};
+
+	useEffect( () => {
+		const handleHashChange = () => {
+			const hash = window.location.hash;
+			if ( hash.startsWith( '#add-subscribers' ) ) {
+				const method = new URLSearchParams( hash.replace( '#add-subscribers', '' ) ).get(
+					'method'
+				);
+				setShowSubscriberModal( SubscriberModalType.ADD );
+				if ( method ) {
+					setInitialMethod( method );
+				}
+			}
+		};
+
+		window.addEventListener( 'hashchange', handleHashChange );
+		handleHashChange();
+
+		return () => {
+			window.removeEventListener( 'hashchange', handleHashChange );
+		};
+	}, [] );
 
 	const { data: subscribersQueryResult, isLoading } = useSubscribersQuery( {
 		siteId: siteId ?? null,
@@ -393,11 +464,7 @@ export default function SubscriberDataViews( {
 			},
 			{
 				id: 'date_subscribed',
-				label: fixMe( {
-					text: 'Date subscribed',
-					newCopy: translate( 'Date subscribed' ),
-					oldCopy: translate( 'Since' ),
-				} ) as string,
+				label: translate( 'Date subscribed' ),
 				getValue: ( { item }: { item: Subscriber } ) =>
 					getFormattedSubscriptionDate( item, locale ),
 				render: ( { item }: { item: Subscriber } ) => getFormattedSubscriptionDate( item, locale ),
@@ -580,46 +647,111 @@ export default function SubscriberDataViews( {
 			className={ `subscriber-data-views ${ selectedSubscriber ? 'has-selected-subscriber' : '' }` }
 		>
 			<section className="subscriber-data-views__list">
-				<SubscribersHeader
-					siteId={ siteId }
-					disableCta={ isUnverified || isStaging }
-					hideSubtitle={ !! selectedSubscriber }
-					hideAddButtonLabel={ isMobile || !! selectedSubscriber }
-				/>
-				{ shouldShowLaunchpad ? (
-					<EmptyComponent />
-				) : (
-					<>
-						<SubscriberTotals
-							totalSubscribers={ grandTotal }
-							filteredCount={ total }
-							filters={ filters }
-							searchTerm={ searchTerm }
-							isLoading={ isLoading }
-						/>
-						<DataViews< Subscriber >
-							data={ data }
-							fields={ fields }
-							view={ currentView }
-							onClickItem={ handleSubscriberSelection }
-							isItemClickable={ () => true }
-							onChangeView={ handleViewChange }
-							selection={
-								selectedSubscriber ? [ getSubscriptionIdString( selectedSubscriber ) ] : undefined
+				<Page
+					title={ <JetpackTitle title={ translate( 'Subscribers' ) } /> }
+					subTitle={
+						! selectedSubscriber &&
+						translate(
+							'Add subscribers to your site and filter your audience list. {{link}}Learn more{{/link}}.',
+							{
+								components: {
+									link: (
+										<a
+											href={ localizeUrl( supportUrl ) }
+											target="blank"
+											onClick={ ( event ) => {
+												if ( ! isJetpackCloud() ) {
+													event.preventDefault();
+													openHelpCenter();
+												}
+											} }
+											rel="noreferrer"
+										/>
+									),
+								},
 							}
-							onChangeSelection={
-								currentView.type === 'list' ? handleSubscriberSelection : undefined
-							}
-							isLoading={ isLoading }
-							paginationInfo={ paginationInfo }
-							getItemId={ ( item: Subscriber ) => getSubscriptionIdString( item ) }
-							defaultLayouts={ selectedSubscriber ? { list: {} } : { table: {} } }
-							actions={ actions }
-							search
-							searchLabel={ translate( 'Search subscribers…' ) }
+						)
+					}
+					actions={
+						<>
+							<Button
+								variant="primary"
+								disabled={ isUnverified || isStaging }
+								onClick={ () => setShowSubscriberModal( SubscriberModalType.ADD ) }
+								size="compact"
+								icon={ <Icon icon={ plus } size={ 18 } /> }
+								{ ...{
+									[ isMobile || !! selectedSubscriber ? 'label' : 'text' ]:
+										translate( 'Add subscribers' ),
+								} }
+							/>
+							<SubscribersHeaderPopover
+								siteId={ siteId }
+								openMigrateSubscribersModal={ () =>
+									setShowSubscriberModal( SubscriberModalType.MIGRATE )
+								}
+							/>
+						</>
+					}
+					showSidebarToggle={ false }
+					hasPadding={ false }
+				>
+					{ siteId && (
+						<AddSubscribersModal
+							isVisible={ showSubscriberModal === SubscriberModalType.ADD }
+							onClose={ closeSubscriberModal }
+							addSubscribersCallback={ () => {
+								closeSubscriberModal();
+								addSubscribersCallback();
+							} }
+							initialMethod={ initialMethod }
 						/>
-					</>
-				) }
+					) }
+					{ siteId && (
+						<MigrateSubscribersModal
+							isVisible={ showSubscriberModal === SubscriberModalType.MIGRATE }
+							onClose={ closeSubscriberModal }
+							migrateSubscribersCallback={ ( selectedSourceSiteId ) => {
+								closeSubscriberModal();
+								migrateSubscribersCallback( selectedSourceSiteId );
+							} }
+						/>
+					) }
+					{ shouldShowLaunchpad ? (
+						<EmptyComponent />
+					) : (
+						<>
+							<SubscriberTotals
+								totalSubscribers={ grandTotal }
+								filteredCount={ total }
+								filters={ filters }
+								searchTerm={ searchTerm }
+								isLoading={ isLoading }
+							/>
+							<DataViews< Subscriber >
+								data={ data }
+								fields={ fields }
+								view={ currentView }
+								onClickItem={ handleSubscriberSelection }
+								isItemClickable={ () => true }
+								onChangeView={ handleViewChange }
+								selection={
+									selectedSubscriber ? [ getSubscriptionIdString( selectedSubscriber ) ] : undefined
+								}
+								onChangeSelection={
+									currentView.type === 'list' ? handleSubscriberSelection : undefined
+								}
+								isLoading={ isLoading }
+								paginationInfo={ paginationInfo }
+								getItemId={ ( item: Subscriber ) => getSubscriptionIdString( item ) }
+								defaultLayouts={ selectedSubscriber ? { list: {} } : { table: {} } }
+								actions={ actions }
+								search
+								searchLabel={ translate( 'Search subscribers…' ) }
+							/>
+						</>
+					) }
+				</Page>
 			</section>
 			{ subscriberId && siteId && (
 				<section className="subscriber-data-views__details">

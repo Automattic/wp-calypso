@@ -163,7 +163,10 @@ export const setUpActionsForTasks = ( {
 		}
 
 		const actionDispatch = () => {
-			onTaskClick?.( task );
+			const result = onTaskClick?.( task );
+			if ( result === false ) {
+				return;
+			}
 			action?.();
 		};
 

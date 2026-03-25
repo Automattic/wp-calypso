@@ -7,13 +7,21 @@ import {
 	ToggleControl,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { Fragment } from 'react';
 import { getAccountMcpAbilities } from '../../../../me/mcp/utils';
 import Breadcrumbs from '../../../app/breadcrumbs';
 import { Card, CardBody, CardDivider } from '../../../components/card';
 import ComponentViewTracker from '../../../components/component-view-tracker';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
-import { CATEGORY_ORDER, getDisplayCategory, isWriteTool } from '../categories';
+import {
+	CATEGORY_ORDER,
+	SUB_CATEGORY_ORDER,
+	getDisplayCategory,
+	getSubCategory,
+	isWriteTool,
+	sortTools,
+} from '../categories';
 
 interface McpAbility {
 	title: string;
@@ -80,6 +88,55 @@ export default function McpRead() {
 		grouped[ category ].push( [ toolId, tool ] );
 	} );
 
+	const renderToolToggles = ( tools: Array< [ string, McpAbility ] > ) =>
+		tools.map( ( [ toolId, tool ] ) => (
+			<ToggleControl
+				key={ toolId }
+				__nextHasNoMarginBottom
+				checked={ tool.enabled }
+				disabled={ mutation.isPending }
+				label={ tool.title }
+				help={ tool.description }
+				onChange={ ( checked ) => handleToolChange( toolId, checked ) }
+			/>
+		) );
+
+	const renderSubGroupedTools = (
+		categoryTools: Array< [ string, McpAbility ] >,
+		categoryName: string
+	) => {
+		const subGrouped: Record< string, Array< [ string, McpAbility ] > > = {};
+		categoryTools.forEach( ( [ toolId, tool ] ) => {
+			const sub = getSubCategory( toolId, tool ) ?? '';
+			if ( ! subGrouped[ sub ] ) {
+				subGrouped[ sub ] = [];
+			}
+			subGrouped[ sub ].push( [ toolId, tool ] );
+		} );
+
+		const order = SUB_CATEGORY_ORDER[ categoryName ] ?? [];
+		const subGroups = order.filter( ( sub ) => subGrouped[ sub ] && subGrouped[ sub ].length > 0 );
+
+		return subGroups.map( ( subName, index ) => (
+			<Fragment key={ subName }>
+				{ index > 0 && (
+					<CardBody style={ { padding: 'calc(4px * 2) calc(4px * 6)' } }>
+						<hr
+							style={ {
+								border: 'none',
+								borderTop: '1px solid var(--color-border-subtle, #dcdcde)',
+								margin: 0,
+							} }
+						/>
+					</CardBody>
+				) }
+				<CardBody>
+					<VStack spacing={ 4 }>{ renderToolToggles( sortTools( subGrouped[ subName ] ) ) }</VStack>
+				</CardBody>
+			</Fragment>
+		) );
+	};
+
 	return (
 		<PageLayout
 			size="small"
@@ -100,6 +157,7 @@ export default function McpRead() {
 					}
 
 					const allEnabled = categoryTools.every( ( [ , tool ] ) => tool.enabled );
+					const subOrder = SUB_CATEGORY_ORDER[ categoryName ];
 
 					return (
 						<Card key={ categoryName }>
@@ -118,21 +176,13 @@ export default function McpRead() {
 								</HStack>
 							</CardBody>
 							<CardDivider />
-							<CardBody>
-								<VStack spacing={ 4 }>
-									{ categoryTools.map( ( [ toolId, tool ] ) => (
-										<ToggleControl
-											key={ toolId }
-											__nextHasNoMarginBottom
-											checked={ tool.enabled }
-											disabled={ mutation.isPending }
-											label={ tool.title }
-											help={ tool.description }
-											onChange={ ( checked ) => handleToolChange( toolId, checked ) }
-										/>
-									) ) }
-								</VStack>
-							</CardBody>
+							{ subOrder ? (
+								renderSubGroupedTools( categoryTools, categoryName )
+							) : (
+								<CardBody>
+									<VStack spacing={ 4 }>{ renderToolToggles( categoryTools ) }</VStack>
+								</CardBody>
+							) }
 						</Card>
 					);
 				} ) }

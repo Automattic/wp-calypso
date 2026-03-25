@@ -20,6 +20,7 @@ import {
 	doesIntroductoryOfferHavePriceIncrease,
 	filterCostOverridesForLineItem,
 	getLabel,
+	getSubtotalWithoutDiscountsForProduct,
 	isOverrideCodeIntroductoryOffer,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
@@ -381,6 +382,39 @@ const WPCheckoutCheckIcon = styled( CheckIcon )`
 	}
 `;
 
+function getLineItemPriceDisplay(
+	product: ResponseCartProduct,
+	monthlyPrices: Record< string, number >
+): { actualAmountDisplay: string; crossedOutAmountDisplay: string | undefined } {
+	const fmt = ( amount: number ) =>
+		formatCurrency( amount, product.currency, { isSmallestUnit: true, stripZeros: true } );
+	const originalAmountInteger = getOriginalAmountIntegerForDisplay( product, monthlyPrices );
+	const itemSubtotalInteger =
+		product.item_subtotal_integer + ( product.coupon_savings_integer ?? 0 );
+	const isDiscounted = itemSubtotalInteger < originalAmountInteger;
+
+	// For products with a price-increasing intro offer followed by a sale
+	// coupon (e.g. premium domains: $80 → $1,100 → $275), show the peak
+	// price crossed out with the final price.
+	const priceBeforeDiscountsInteger = getSubtotalWithoutDiscountsForProduct( product );
+	if (
+		priceBeforeDiscountsInteger > originalAmountInteger &&
+		product.item_subtotal_integer < priceBeforeDiscountsInteger
+	) {
+		return {
+			actualAmountDisplay: fmt( product.item_subtotal_integer ),
+			crossedOutAmountDisplay: fmt( priceBeforeDiscountsInteger ),
+		};
+	}
+
+	// Default: show the pre-coupon subtotal, with the original crossed out
+	// when the product is discounted.
+	return {
+		actualAmountDisplay: fmt( itemSubtotalInteger ),
+		crossedOutAmountDisplay: isDiscounted ? fmt( originalAmountInteger ) : undefined,
+	};
+}
+
 function SingleProductAndCostOverridesList( { product }: { product: ResponseCartProduct } ) {
 	const translate = useTranslate();
 	const costOverridesList = filterCostOverridesForLineItem( product, translate );
@@ -388,35 +422,10 @@ function SingleProductAndCostOverridesList( { product }: { product: ResponseCart
 
 	const monthlyPrices = useEquivalentMonthlyTotals( [ product ] );
 
-	const originalAmountInteger = getOriginalAmountIntegerForDisplay( product, monthlyPrices );
-	const originalAmountDisplay = formatCurrency( originalAmountInteger, product.currency, {
-		isSmallestUnit: true,
-		stripZeros: true,
-	} );
-	const itemSubtotalInteger =
-		product.item_subtotal_integer + ( product.coupon_savings_integer ?? 0 );
-	const isDiscounted = Boolean(
-		itemSubtotalInteger < originalAmountInteger && originalAmountDisplay
+	const { actualAmountDisplay, crossedOutAmountDisplay } = getLineItemPriceDisplay(
+		product,
+		monthlyPrices
 	);
-
-	// For WPCOM plans always show the renewal amount for legal reasons.
-	// Introductory offer discount would be shown in LineItemCostOverrides.
-	let actualAmountDisplay;
-	if ( ! isDiscounted || isWpComPlan( product.product_slug ) ) {
-		actualAmountDisplay = formatCurrency(
-			product.item_original_subtotal_integer,
-			product.currency,
-			{
-				isSmallestUnit: true,
-				stripZeros: true,
-			}
-		);
-	} else {
-		actualAmountDisplay = formatCurrency( itemSubtotalInteger, product.currency, {
-			isSmallestUnit: true,
-			stripZeros: true,
-		} );
-	}
 
 	return (
 		<SimplifiedSingleProductAndCostOverridesListWrapper>
@@ -425,7 +434,7 @@ function SingleProductAndCostOverridesList( { product }: { product: ResponseCart
 				<span className="cost-overrides-list-product__title">{ label }</span>
 				<SimplifiedLineItemPrice
 					actualAmount={ actualAmountDisplay }
-					crossedOutAmount={ isDiscounted ? originalAmountDisplay : undefined }
+					crossedOutAmount={ crossedOutAmountDisplay }
 				/>
 			</ProductTitleAreaForCostOverridesList>
 			<LineItemCostOverrides product={ product } costOverridesList={ costOverridesList } />
