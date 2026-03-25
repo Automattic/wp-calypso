@@ -66,6 +66,7 @@ export interface Purchase {
 	isLocked: boolean;
 	isRechargeable: boolean;
 	isRefundable: boolean;
+	isWithinInitialRefundWindow: boolean;
 	isRenewable: boolean;
 	isRenewal: boolean;
 	isWooExpressTrial: boolean;
