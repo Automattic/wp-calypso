@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
 import { shuffle } from 'lodash';
 import { useFeedRecommendationsQuery } from 'calypso/data/reader/use-feed-recommendations-query';
-import { SitesList } from 'calypso/reader/sites-list';
+import { ReaderSitesList } from 'calypso/reader/sites-list';
 
 function RecommendedBlogs( { userLogin, closeCard } ) {
 	const translate = useTranslate();
@@ -36,7 +36,7 @@ function RecommendedBlogs( { userLogin, closeCard } ) {
 					{ translate( 'View all' ) }
 				</a>
 			</div>
-			<SitesList
+			<ReaderSitesList
 				sites={ shuffle( recommendedBlogs ).slice( 0, 3 ) }
 				followSource="gravatar-hovercard__recommended-feeds-list"
 				variant="compact"
