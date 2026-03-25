@@ -1,9 +1,9 @@
 import { Step } from '@automattic/onboarding';
-import { Notice } from '@wordpress/components';
 import PropTypes from 'prop-types';
 import { ActionButtons } from 'calypso/components/connect-screen/action-buttons';
 import { BrandHeader } from 'calypso/components/connect-screen/brand-header';
 import { UserCard } from 'calypso/components/connect-screen/user-card';
+import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
 
 export default function SsoPartnerBranded( {
 	partnerConfig,
@@ -11,8 +11,6 @@ export default function SsoPartnerBranded( {
 	subtitle,
 	currentUser,
 	errorNotice,
-	isEmailVerificationBlocked,
-	emailVerificationNoticeText,
 	isPrimaryDisabled,
 	isPrimaryLoading,
 	onApproveClick,
@@ -21,24 +19,13 @@ export default function SsoPartnerBranded( {
 	approveLabel,
 	returnToSiteLabel,
 	signInDifferentUserLabel,
+	emailVerificationNoticeText,
 } ) {
-	const topBarLogoConfig = partnerConfig?.compactLogo || partnerConfig?.logo;
-	const topBarLogo = topBarLogoConfig?.src ? (
-		<img
-			src={ topBarLogoConfig.src }
-			alt={ topBarLogoConfig.alt }
-			width={ topBarLogoConfig.width }
-			height={ topBarLogoConfig.height }
-		/>
-	) : undefined;
-
 	return (
-		<Step.CenteredColumnLayout
-			columnWidth={ 4 }
-			verticalAlign="center"
-			topBar={ <Step.TopBar logo={ topBarLogo } /> }
-		>
-			<div className="jetpack-connect__sso-partner-branded">
+		<Step.CenteredColumnLayout columnWidth={ 4 } verticalAlign="center">
+			<div
+				className={ `jetpack-connect__sso-partner-branded jetpack-connect__sso-partner-branded--${ partnerConfig.id }` }
+			>
 				<BrandHeader
 					logo={ partnerConfig?.logo?.src }
 					logoAlt={ partnerConfig?.logo?.alt }
@@ -50,36 +37,34 @@ export default function SsoPartnerBranded( {
 
 				{ currentUser ? (
 					<div className="jetpack-connect__sso-partner-branded-logged-in">
-						{ isEmailVerificationBlocked && (
-							<Notice
-								status="info"
-								isDismissible={ false }
-								className="jetpack-connect__sso-partner-branded-email-notice"
-							>
-								{ emailVerificationNoticeText }
-							</Notice>
-						) }
 						{ errorNotice }
-						<UserCard
-							className="jetpack-connect__sso-partner-branded-user-card"
-							size="large"
-							user={ {
-								displayName: currentUser.display_name,
-								email: currentUser.email,
-								avatarUrl: currentUser.avatar_URL,
-							} }
-						/>
-						<ActionButtons
-							className="jetpack-connect__sso-partner-branded-actions"
-							primaryLabel={ approveLabel }
-							primaryOnClick={ onApproveClick }
-							primaryLoading={ isPrimaryLoading }
-							primaryDisabled={ isPrimaryDisabled }
-							secondaryLabel={ returnToSiteLabel }
-							secondaryOnClick={ onReturnToSiteClick }
-							tertiaryLabel={ signInDifferentUserLabel }
-							tertiaryOnClick={ onSignInDifferentUserClick }
-						/>
+						<EmailVerificationGate
+							noticeText={ emailVerificationNoticeText }
+							noticeStatus="is-info"
+						>
+							<UserCard
+								className="jetpack-connect__sso-partner-branded-user-card"
+								size="large"
+								user={ {
+									displayName: currentUser.display_name,
+									email: currentUser.email,
+									avatarUrl: currentUser.avatar_URL,
+								} }
+							/>
+							<ActionButtons
+								className="jetpack-connect__sso-partner-branded-actions"
+								primaryClassName="jetpack-connect__sso-partner-branded-primary-button"
+								primaryLabel={ approveLabel }
+								primaryOnClick={ onApproveClick }
+								primaryLoading={ isPrimaryLoading }
+								primaryDisabled={ isPrimaryDisabled }
+								secondaryClassName="jetpack-connect__sso-partner-branded-secondary-button"
+								secondaryLabel={ returnToSiteLabel }
+								secondaryOnClick={ onReturnToSiteClick }
+								tertiaryLabel={ signInDifferentUserLabel }
+								tertiaryOnClick={ onSignInDifferentUserClick }
+							/>
+						</EmailVerificationGate>
 					</div>
 				) : (
 					<div className="jetpack-connect__sso-partner-branded-logged-out-placeholder" />
@@ -91,6 +76,7 @@ export default function SsoPartnerBranded( {
 
 SsoPartnerBranded.propTypes = {
 	partnerConfig: PropTypes.shape( {
+		id: PropTypes.string.isRequired,
 		logo: PropTypes.shape( {
 			src: PropTypes.string,
 			alt: PropTypes.string,
@@ -112,7 +98,6 @@ SsoPartnerBranded.propTypes = {
 		avatar_URL: PropTypes.string,
 	} ),
 	errorNotice: PropTypes.node,
-	isEmailVerificationBlocked: PropTypes.bool,
 	emailVerificationNoticeText: PropTypes.node,
 	isPrimaryDisabled: PropTypes.bool,
 	isPrimaryLoading: PropTypes.bool,

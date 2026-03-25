@@ -418,7 +418,6 @@ class JetpackSsoForm extends Component {
 	render() {
 		const { currentUser, partnerConfig } = this.props;
 		const { ssoNonce, siteId, validationError, translate } = this.props;
-		const isEmailVerificationBlocked = ! currentUser?.email_verified;
 
 		if ( ! ssoNonce || ! siteId || validationError ) {
 			return this.renderBadPathArgsError();
@@ -426,31 +425,28 @@ class JetpackSsoForm extends Component {
 
 		if ( partnerConfig ) {
 			return (
-				<MainWrapper>
-					<div className="jetpack-connect__sso">
-						<SsoPartnerBranded
-							partnerConfig={ partnerConfig }
-							title={ translate( 'Connect with WordPress.com' ) }
-							subtitle={ this.getSubHeaderText() }
-							currentUser={ currentUser }
-							errorNotice={ currentUser?.email_verified ? this.maybeRenderErrorNotice() : null }
-							isEmailVerificationBlocked={ isEmailVerificationBlocked }
-							emailVerificationNoticeText={ translate(
-								'You must verify your email to sign in with WordPress.com.'
-							) }
-							isPrimaryDisabled={ this.isButtonDisabled() }
-							isPrimaryLoading={ this.props.isAuthorizing }
-							onApproveClick={ this.onApproveSsoBranded }
-							onReturnToSiteClick={ this.onClickReturnToSiteBranded }
-							onSignInDifferentUserClick={ this.onClickSignInDifferentUserBranded }
-							approveLabel={ translate( 'Log in' ) }
-							signInDifferentUserLabel={ translate( 'Sign in as a different user' ) }
-							returnToSiteLabel={ this.getReturnToSiteText() }
-						/>
-					</div>
+				<>
+					<SsoPartnerBranded
+						partnerConfig={ partnerConfig }
+						title={ translate( 'Connect with WordPress.com' ) }
+						subtitle={ this.getSubHeaderText() }
+						currentUser={ currentUser }
+						errorNotice={ currentUser?.email_verified ? this.maybeRenderErrorNotice() : null }
+						emailVerificationNoticeText={ translate(
+							'You must verify your email to sign in with WordPress.com.'
+						) }
+						isPrimaryDisabled={ this.isButtonDisabled() }
+						isPrimaryLoading={ this.props.isAuthorizing }
+						onApproveClick={ this.onApproveSsoBranded }
+						onReturnToSiteClick={ this.onClickReturnToSiteBranded }
+						onSignInDifferentUserClick={ this.onClickSignInDifferentUserBranded }
+						approveLabel={ translate( 'Log in' ) }
+						signInDifferentUserLabel={ translate( 'Sign in as a different user' ) }
+						returnToSiteLabel={ this.getReturnToSiteText() }
+					/>
 
 					{ this.renderSharedDetailsDialog() }
-				</MainWrapper>
+				</>
 			);
 		}
 
