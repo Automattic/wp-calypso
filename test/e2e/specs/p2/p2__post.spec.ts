@@ -25,7 +25,7 @@ test.describe( 'P2: Post', { tag: [ tags.P2 ] }, () => {
 		} );
 
 		await test.step( 'And I navigate to the P2 site', async function () {
-			await page.goto( accountP2.getSiteURL(), { waitUntil: 'networkidle' } );
+			await page.goto( accountP2.getSiteURL(), { waitUntil: 'load' } );
 		} );
 
 		let blockHandle: ElementHandle;

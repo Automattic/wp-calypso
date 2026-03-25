@@ -32,12 +32,12 @@ test.describe( 'Help Center in Calypso', { tag: [ tags.CALYPSO_PR ] }, () => {
 		// General Interaction
 
 		await test.step( 'Help Center is initially closed', async () => {
-			await expect( helpCenterComponent ).toBeHidden();
+			await expect( helpCenterLocator ).toBeHidden();
 		} );
 
 		await test.step( 'Help Center can be opened', async () => {
 			await helpCenterComponent.openPopover();
-			await expect( helpCenterComponent ).toBeVisible();
+			await expect( helpCenterLocator ).toBeVisible();
 		} );
 
 		await test.step( 'Help Center is showing on the screen', async () => {
@@ -97,7 +97,7 @@ test.describe( 'Help Center in Calypso', { tag: [ tags.CALYPSO_PR ] }, () => {
 
 		await test.step( 'The popover can be closed', async () => {
 			await helpCenterComponent.closePopover();
-			await expect( helpCenterComponent ).toBeHidden();
+			await expect( helpCenterLocator ).toBeHidden();
 		} );
 
 		// Action Hooks

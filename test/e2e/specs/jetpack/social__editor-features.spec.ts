@@ -115,7 +115,7 @@ test.describe(
 					await expect( messageBox ).toBeEditable();
 
 					const mediaButton = section.getByRole( 'button', { name: 'Select' } );
-					await expect( mediaButton ).toBeVisible( features.mediaSharing );
+					await expect( mediaButton ).toBeVisible( { visible: features.mediaSharing } );
 				} );
 
 				test( `Should verify that resharing ${
@@ -173,7 +173,7 @@ test.describe(
 						exact: true,
 					} );
 
-					await expect( sharePostModalButton ).toBeVisible( features.resharing );
+					await expect( sharePostModalButton ).toBeVisible( { visible: features.resharing } );
 
 					let isReshareButtonVisible = false;
 
@@ -239,7 +239,7 @@ test.describe(
 					section = await editorPage.expandSection( 'Share to social media' );
 
 					manualSharing = section.getByText( 'Manual sharing' );
-					await expect( manualSharing ).toBeVisible( features.manualSharing );
+					await expect( manualSharing ).toBeVisible( { visible: features.manualSharing } );
 				} );
 
 				if ( features.socialImageGenerator ) {

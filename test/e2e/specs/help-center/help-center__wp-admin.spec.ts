@@ -33,12 +33,12 @@ test.describe( 'Help Center in WP Admin', { tag: [ tags.JETPACK_WPCOM_INTEGRATIO
 		// General Interaction
 
 		await test.step( 'Is initially closed', async () => {
-			await expect( helpCenterComponent ).toBeHidden();
+			await expect( helpCenterLocator ).toBeHidden();
 		} );
 
 		await test.step( 'Can be opened', async () => {
 			await helpCenterComponent.openPopover();
-			await expect( helpCenterComponent ).toBeVisible();
+			await expect( helpCenterLocator ).toBeVisible();
 		} );
 
 		await test.step( 'Is showing on the screen', async () => {
@@ -55,7 +55,7 @@ test.describe( 'Help Center in WP Admin', { tag: [ tags.JETPACK_WPCOM_INTEGRATIO
 
 		await test.step( 'The popover can be closed', async () => {
 			await helpCenterComponent.closePopover();
-			await expect( helpCenterComponent ).toBeHidden();
+			await expect( helpCenterLocator ).toBeHidden();
 		} );
 
 		// Articles

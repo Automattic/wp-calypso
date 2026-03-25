@@ -61,7 +61,7 @@ test.describe(
 
 			await test.step( 'Activate account', async () => {
 				const activationPage = await page.context().newPage();
-				await activationPage.goto( activationLink!, { waitUntil: 'networkidle', timeout: 25000 } );
+				await activationPage.goto( activationLink!, { waitUntil: 'load', timeout: 25000 } );
 			} );
 		} );
 	}
