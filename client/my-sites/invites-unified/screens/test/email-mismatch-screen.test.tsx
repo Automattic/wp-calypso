@@ -102,6 +102,7 @@ describe( 'EmailMismatchScreen', () => {
 			<EmailMismatchScreen
 				inviteSentTo="invited@example.com"
 				isKnownUser
+				ciabConfig={ null }
 				trackingProps={ { unified: true } }
 			/>
 		);
@@ -120,6 +121,7 @@ describe( 'EmailMismatchScreen', () => {
 			<EmailMismatchScreen
 				inviteSentTo="invited@example.com"
 				isKnownUser
+				ciabConfig={ null }
 				trackingProps={ { unified: true } }
 			/>
 		);
@@ -132,6 +134,7 @@ describe( 'EmailMismatchScreen', () => {
 			<EmailMismatchScreen
 				inviteSentTo="invited@example.com"
 				isKnownUser={ false }
+				ciabConfig={ null }
 				trackingProps={ { unified: true } }
 			/>
 		);
@@ -145,6 +148,7 @@ describe( 'EmailMismatchScreen', () => {
 			<EmailMismatchScreen
 				inviteSentTo="invited@example.com"
 				isKnownUser
+				ciabConfig={ null }
 				trackingProps={ { role: 'administrator', unified: true } }
 			/>
 		);

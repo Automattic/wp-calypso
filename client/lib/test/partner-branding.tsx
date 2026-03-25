@@ -12,6 +12,8 @@ import {
 	detectCiabConfig,
 	getPartnerAllowedSocialServices,
 	getPartnerSignupTosElement,
+	getPartnerWindowTitleSuffix,
+	getPartnerFormattedWindowTitle,
 	persistCiabPartnerId,
 	readPersistedCiabPartnerId,
 	clearPersistedCiabPartnerId,
@@ -22,7 +24,13 @@ import type { useTranslate } from 'i18n-calypso';
 
 // Mock the config module
 jest.mock( '@automattic/calypso-config', () => {
-	const config = () => null;
+	const config = ( key: string ) => {
+		if ( key === 'site_name' ) {
+			return 'WordPress.com';
+		}
+
+		return null;
+	};
 	config.isEnabled = jest.fn( ( feature: string ) => {
 		if ( feature === 'ciab/custom-branding' ) {
 			return true;
@@ -446,7 +454,30 @@ describe( 'partner-branding', () => {
 			expect( wooConfig.logo.src ).toBeDefined();
 			expect( wooConfig.ssoProviders ).toBeInstanceOf( Array );
 			expect( wooConfig.ssoProviders.length ).toBeGreaterThan( 0 );
+			expect( wooConfig.windowTitleSuffix ).toBe( 'Woo' );
 			expect( wooConfig.domains ).toContain( 'my.woo.ai' );
+		} );
+	} );
+
+	describe( 'window title helpers', () => {
+		test( 'returns partner-specific suffix when available', () => {
+			expect( getPartnerWindowTitleSuffix( CIAB_PARTNERS.woo ) ).toBe( 'Woo' );
+		} );
+
+		test( 'falls back to site_name when partner suffix is unavailable', () => {
+			expect( getPartnerWindowTitleSuffix( null ) ).toBe( 'WordPress.com' );
+		} );
+
+		test( 'formats title with partner-aware suffix', () => {
+			expect( getPartnerFormattedWindowTitle( 'Accept Invite', CIAB_PARTNERS.woo ) ).toBe(
+				'Accept Invite — Woo'
+			);
+		} );
+
+		test( 'formats title with default suffix when no partner is detected', () => {
+			expect( getPartnerFormattedWindowTitle( 'Accept Invite', null ) ).toBe(
+				'Accept Invite — WordPress.com'
+			);
 		} );
 	} );
 } );

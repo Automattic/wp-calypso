@@ -8055,7 +8055,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tanstack/react-router@npm:^1.114.34":
+"@tanstack/react-router@npm:1.114.34":
   version: 1.114.34
   resolution: "@tanstack/react-router@npm:1.114.34"
   dependencies:
@@ -8072,16 +8072,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tanstack/react-store@npm:^0.7.0":
-  version: 0.7.0
-  resolution: "@tanstack/react-store@npm:0.7.0"
+"@tanstack/react-store@npm:0.7.7":
+  version: 0.7.7
+  resolution: "@tanstack/react-store@npm:0.7.7"
   dependencies:
-    "@tanstack/store": "npm:0.7.0"
-    use-sync-external-store: "npm:^1.4.0"
+    "@tanstack/store": "npm:0.7.7"
+    use-sync-external-store: "npm:^1.5.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
     react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-  checksum: 7e971ae3c547d0d803133f07737e7cc7cf381e959b4fab3f55755b28c194688392f5b921d3d43b8c9c81bdc721ea8878c680d4ca28a1ccd59e8a64ab7bcfd0f8
+  checksum: 12f5119492503aeac0bb45fc41bda140630ccbb6b5b92ebc5dbc1bf0e32728820dbb9455821850aa87bdc15793d4efbf98fa0ff04bb85363fe4d77c03547f13e
   languageName: node
   linkType: hard
 
@@ -8096,10 +8096,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tanstack/store@npm:0.7.0, @tanstack/store@npm:^0.7.0":
-  version: 0.7.0
-  resolution: "@tanstack/store@npm:0.7.0"
-  checksum: 17003f1eba25bb6e9e2557ffb5d9c63cac09aa46f57d670a917727665ccc0b72d8d421ea1c07451257554aa5d14dbfff46875e7ed6a81f133b0738065f3162df
+"@tanstack/store@npm:0.7.7":
+  version: 0.7.7
+  resolution: "@tanstack/store@npm:0.7.7"
+  checksum: bf90fa957bd97336d7dbc0d7b87379b5fe4baea030efef8a93fe4e49ac1c8bc929247d1a9f84b16a1642e386b67fe53be14df8d5415efdf85f83733ccdf8877a
   languageName: node
   linkType: hard
 
@@ -10249,6 +10249,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wordpress/admin-ui@npm:^1.10.0":
+  version: 1.10.0
+  resolution: "@wordpress/admin-ui@npm:1.10.0"
+  dependencies:
+    "@wordpress/base-styles": "npm:^6.18.0"
+    "@wordpress/components": "npm:^32.4.0"
+    "@wordpress/element": "npm:^6.42.0"
+    "@wordpress/i18n": "npm:^6.15.0"
+    "@wordpress/private-apis": "npm:^1.42.0"
+    "@wordpress/route": "npm:^0.8.0"
+    "@wordpress/ui": "npm:^0.9.0"
+    clsx: "npm:^2.1.1"
+  peerDependencies:
+    react: ^18.0.0
+  checksum: 7f7f28c57cd1d6a66a6717f18796e14dd1c200c2e04537ab0cd5ff4597a6471f2d61a809c5901c24eff70c7f004c578f550524b9efad598aa61cc258357d11f1
+  languageName: node
+  linkType: hard
+
 "@wordpress/api-fetch@npm:7.23.0":
   version: 7.23.0
   resolution: "@wordpress/api-fetch@npm:7.23.0"
@@ -11386,6 +11404,19 @@ __metadata:
   peerDependencies:
     react: ^18.0.0
   checksum: ab59ec4a774ea103d78c434a0f65964edcb7dd974798e10032c1228094d8099bce2d145826522357976482017434d735869308d6dd65d385b5cc3e08f5dab103
+  languageName: node
+  linkType: hard
+
+"@wordpress/route@npm:^0.8.0":
+  version: 0.8.0
+  resolution: "@wordpress/route@npm:0.8.0"
+  dependencies:
+    "@tanstack/history": "npm:^1.133.28"
+    "@tanstack/react-router": "npm:^1.120.5"
+    "@wordpress/private-apis": "npm:^1.42.0"
+  peerDependencies:
+    react: ^18.0.0
+  checksum: 8fa2a8968a86af0302dc89f4f9c15cb6c54b8bb9c74deba3be8ac02cb097644b4cac5378b7436dea630b5fc3ce65a0cd269084d6163ca74219a8f64054a09357
   languageName: node
   linkType: hard
 
@@ -33435,6 +33466,7 @@ __metadata:
     "@vgs/collect-js": "npm:^0.7.2"
     "@vgs/collect-js-react": "npm:^2.0.0"
     "@visx/glyph": "npm:^3.12.0"
+    "@wordpress/admin-ui": "npm:^1.10.0"
     "@wordpress/base-styles": "npm:^5.23.0"
     "@wordpress/block-editor": "npm:^14.18.0"
     "@wordpress/block-library": "npm:^9.23.0"
