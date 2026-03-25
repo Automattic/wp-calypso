@@ -289,7 +289,7 @@ function getSearchParam( name: string ): string | null {
 }
 
 /**
- * Detect CIAB partner config from globally available values.
+ * Detect partner config from globally available values.
  *
  * The oauth2Client parameter comes from Redux (getCurrentOAuth2Client).
  * Other detection sources read from window.location internally.
@@ -301,7 +301,9 @@ function getSearchParam( name: string ): string | null {
  *   4. redirect_to        — hostname inside ?redirect_to= URL
  *   5. session storage    — persisted partner from a previous detection in this session
  */
-export function detectCiabConfig( oauth2Client?: { id: number } | null ): CiabPartnerConfig | null {
+export function detectPartnerConfig(
+	oauth2Client?: { id: number } | null
+): CiabPartnerConfig | null {
 	const detected =
 		getCiabConfigFromCurrentDomain() ??
 		getCiabConfigFromBrandingCode() ??
@@ -330,16 +332,18 @@ export function detectCiabConfig( oauth2Client?: { id: number } | null ): CiabPa
 	return null;
 }
 
+export const detectCiabConfig = detectPartnerConfig;
+
 /**
  * Get allowed social services for a partner.
- * Detects partner from globally available values (see detectCiabConfig).
+ * Detects partner from globally available values (see detectPartnerConfig).
  * Returns the array of allowed SSO providers or null if no restrictions apply.
  * @returns Array of allowed service names (e.g., ['paypal', 'google', 'apple']) or null
  */
 export function getPartnerAllowedSocialServices(
 	oauth2Client?: { id: number } | null
 ): AllowedSocialService[] | null {
-	const ciabConfig = detectCiabConfig( oauth2Client );
+	const ciabConfig = detectPartnerConfig( oauth2Client );
 	return ciabConfig?.ssoProviders ?? null;
 }
 
@@ -359,7 +363,7 @@ export interface UsePartnerBrandingResult {
 
 /**
  * Hook to get current partner branding based on URL params and feature flags.
- * Internally calls detectCiabConfig() — callers do not need to pass any values.
+ * Internally calls detectPartnerConfig() — callers do not need to pass any values.
  *
  * @example
  * const { topBarLogo, ciabConfig, signupTosElement } = usePartnerBranding();
@@ -381,7 +385,7 @@ export function usePartnerBranding(): UsePartnerBrandingResult {
 	const translate = useTranslate();
 
 	// Redux selectors are used only as memo-invalidation triggers.
-	// The actual detection reads from window.location via detectCiabConfig().
+	// The actual detection reads from window.location via detectPartnerConfig().
 	const currentQuery = useSelector( getCurrentQueryArguments );
 	const initialQuery = useSelector( getInitialQueryArguments );
 	const from = currentQuery?.from || initialQuery?.from;
@@ -389,7 +393,7 @@ export function usePartnerBranding(): UsePartnerBrandingResult {
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
 
 	return useMemo( () => {
-		const ciabConfig = detectCiabConfig( oauth2Client );
+		const ciabConfig = detectPartnerConfig( oauth2Client );
 		const hasCustomBranding = ciabConfig !== null;
 
 		// Build logo element for TopBar

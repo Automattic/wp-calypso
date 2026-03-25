@@ -9,7 +9,7 @@ import {
 	getCiabConfigFromOAuth2Client,
 	getCiabConfigFromRedirectUrl,
 	getCiabConfigFromGarden,
-	detectCiabConfig,
+	detectPartnerConfig,
 	getPartnerAllowedSocialServices,
 	getPartnerSignupTosElement,
 	getPartnerWindowTitleSuffix,
@@ -206,11 +206,11 @@ describe( 'partner-branding', () => {
 		} );
 	} );
 
-	describe( 'detectCiabConfig — precedence', () => {
+	describe( 'detectPartnerConfig — precedence', () => {
 		test( 'hostname wins over conflicting from query param', () => {
 			setLocation( 'my.woo.ai', '?from=other' );
 
-			const result = detectCiabConfig();
+			const result = detectPartnerConfig();
 
 			expect( result ).not.toBeNull();
 			expect( result?.id ).toBe( 'woo' );
@@ -219,7 +219,7 @@ describe( 'partner-branding', () => {
 		test( 'hostname wins over conflicting redirect_to', () => {
 			setLocation( 'my.woo.ai', '?redirect_to=https://example.com' );
 
-			const result = detectCiabConfig();
+			const result = detectPartnerConfig();
 
 			expect( result ).not.toBeNull();
 			expect( result?.id ).toBe( 'woo' );
@@ -228,7 +228,7 @@ describe( 'partner-branding', () => {
 		test( 'from=woo still works when hostname does not match', () => {
 			setLocation( 'wordpress.com', '?from=woo' );
 
-			const result = detectCiabConfig();
+			const result = detectPartnerConfig();
 
 			expect( result ).not.toBeNull();
 			expect( result?.id ).toBe( 'woo' );
@@ -237,7 +237,7 @@ describe( 'partner-branding', () => {
 		test( 'from wins over redirect_to when conflicting', () => {
 			setLocation( 'wordpress.com', '?from=woo&redirect_to=https://example.com' );
 
-			const result = detectCiabConfig();
+			const result = detectPartnerConfig();
 
 			expect( result ).not.toBeNull();
 			expect( result?.id ).toBe( 'woo' );
@@ -246,7 +246,7 @@ describe( 'partner-branding', () => {
 		test( 'from wins over oauth2Client when conflicting', () => {
 			setLocation( 'wordpress.com', '?from=woo' );
 
-			const result = detectCiabConfig( { id: 99999 } );
+			const result = detectPartnerConfig( { id: 99999 } );
 
 			expect( result ).not.toBeNull();
 			expect( result?.id ).toBe( 'woo' );
@@ -255,7 +255,7 @@ describe( 'partner-branding', () => {
 		test( 'oauth2Client matching still works when no hostname or from match', () => {
 			setLocation( 'wordpress.com' );
 
-			const result = detectCiabConfig( { id: 134404 } );
+			const result = detectPartnerConfig( { id: 134404 } );
 
 			expect( result ).not.toBeNull();
 			expect( result?.id ).toBe( 'woo' );
@@ -264,7 +264,7 @@ describe( 'partner-branding', () => {
 		test( 'oauth2Client wins over redirect_to when conflicting', () => {
 			setLocation( 'wordpress.com', '?redirect_to=https://example.com' );
 
-			const result = detectCiabConfig( { id: 134405 } );
+			const result = detectPartnerConfig( { id: 134405 } );
 
 			expect( result ).not.toBeNull();
 			expect( result?.id ).toBe( 'woo' );
@@ -273,7 +273,7 @@ describe( 'partner-branding', () => {
 		test( 'redirect_to matching still works when no hostname or from match', () => {
 			setLocation( 'wordpress.com', '?redirect_to=https://my.woo.ai/dashboard' );
 
-			const result = detectCiabConfig();
+			const result = detectPartnerConfig();
 
 			expect( result ).not.toBeNull();
 			expect( result?.id ).toBe( 'woo' );
@@ -282,7 +282,7 @@ describe( 'partner-branding', () => {
 		test( 'returns null when nothing matches', () => {
 			setLocation( 'wordpress.com', '?redirect_to=https://example.com' );
 
-			const result = detectCiabConfig();
+			const result = detectPartnerConfig();
 
 			expect( result ).toBeNull();
 		} );
@@ -290,7 +290,7 @@ describe( 'partner-branding', () => {
 		test( 'returns null when no query params are present', () => {
 			setLocation( 'wordpress.com' );
 
-			const result = detectCiabConfig();
+			const result = detectPartnerConfig();
 
 			expect( result ).toBeNull();
 		} );
@@ -303,29 +303,29 @@ describe( 'partner-branding', () => {
 			expect( readPersistedCiabPartnerId() ).toBe( 'woo' );
 		} );
 
-		test( 'detectCiabConfig persists partner when detected', () => {
+		test( 'detectPartnerConfig persists partner when detected', () => {
 			setLocation( 'wordpress.com', '?from=woo' );
 
-			detectCiabConfig();
+			detectPartnerConfig();
 
 			expect( readPersistedCiabPartnerId() ).toBe( 'woo' );
 		} );
 
-		test( 'detectCiabConfig uses persisted partner when nothing else matches', () => {
+		test( 'detectPartnerConfig uses persisted partner when nothing else matches', () => {
 			persistCiabPartnerId( 'woo' );
 			setLocation( 'wordpress.com' );
 
-			const result = detectCiabConfig();
+			const result = detectPartnerConfig();
 
 			expect( result?.id ).toBe( 'woo' );
 		} );
 
-		test( 'detectCiabConfig clears persisted partner when feature flag is disabled', () => {
+		test( 'detectPartnerConfig clears persisted partner when feature flag is disabled', () => {
 			persistCiabPartnerId( 'woo' );
 			( config.isEnabled as jest.Mock ).mockReturnValue( false );
 			setLocation( 'wordpress.com' );
 
-			const result = detectCiabConfig();
+			const result = detectPartnerConfig();
 
 			expect( result ).toBeNull();
 			expect( readPersistedCiabPartnerId() ).toBeNull();
