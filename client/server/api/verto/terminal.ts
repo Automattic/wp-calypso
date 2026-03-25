@@ -51,6 +51,9 @@ export default function attachTerminalWebSocket( server: Server | HttpsServer ) 
 	wss.on( 'connection', ( ws: WebSocket ) => {
 		const cwd = process.cwd();
 		const home = process.env.HOME || cwd;
+		const localBin = `${ home }/.local/bin`;
+		const path = process.env.PATH || '';
+		const augmentedPath = path.includes( localBin ) ? path : `${ localBin }:${ path }`;
 
 		let term;
 		try {
@@ -63,6 +66,7 @@ export default function attachTerminalWebSocket( server: Server | HttpsServer ) 
 					...process.env,
 					TERM: 'xterm-256color',
 					HOME: home,
+					PATH: augmentedPath,
 				},
 			} );
 		} catch ( err: unknown ) {
