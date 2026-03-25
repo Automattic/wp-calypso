@@ -1,3 +1,18 @@
 .dashboard-sidebar__expandable {
 	width: 100%;
 }
+
+.dashboard-sidebar__expandable-panel {
+	interpolate-size: allow-keywords;
+	height: 0;
+	overflow: hidden;
+	opacity: 0;
+	transition:
+	height 0.2s ease-out,
+	opacity 0.2s ease-out;
+
+	&.is-open {
+		height: auto;
+		opacity: 1;
+	}
+}
