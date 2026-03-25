@@ -1240,6 +1240,10 @@ const StepContainerV2CheckoutFixer = styled.div< {
 				overflow: hidden;
 				padding-top: 0;
 			}
+			.checkout-payment-methods .has-highlight,
+			.item-variation-picker > li > div {
+				border-radius: 0;
+			}
 			.checkout-payment-methods .has-highlight {
 				margin: 0;
 				border-bottom: 1px solid #f0f0f0;
@@ -1930,6 +1934,10 @@ const WPCheckoutWrapper = styled.div< {
 				border-radius: 8px;
 				overflow: hidden;
 				padding-top: 0;
+			}
+			.checkout-payment-methods .has-highlight,
+			.item-variation-picker > li > div {
+				border-radius: 0;
 			}
 			.checkout-payment-methods .has-highlight {
 				margin: 0;
