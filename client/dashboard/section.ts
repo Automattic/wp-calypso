@@ -6,4 +6,5 @@ export const DASHBOARD_SECTION_PATHS = [
 	'/plugins',
 	'/me',
 	'/oauth/token',
+	'/sso-bridge',
 ];

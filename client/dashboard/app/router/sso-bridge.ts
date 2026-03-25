@@ -14,13 +14,13 @@ export const ssoBridgeRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sso-bridge',
 	validateSearch: ( search: Record< string, unknown > ): SsoBridgeSearchParams => ( {
-		site_id: typeof search.site_id === 'string' ? search.site_id : undefined,
-		sso_nonce: typeof search.sso_nonce === 'string' ? search.sso_nonce : undefined,
-		action: typeof search.action === 'string' ? search.action : undefined,
-		calypso_auth: typeof search.calypso_auth === 'string' ? search.calypso_auth : undefined,
+		site_id: search.site_id != null ? String( search.site_id ) : undefined,
+		sso_nonce: search.sso_nonce != null ? String( search.sso_nonce ) : undefined,
+		action: search.action != null ? String( search.action ) : undefined,
+		calypso_auth: search.calypso_auth != null ? String( search.calypso_auth ) : undefined,
 		'broker-sso-auth-redirect':
-			typeof search[ 'broker-sso-auth-redirect' ] === 'string'
-				? search[ 'broker-sso-auth-redirect' ]
+			search[ 'broker-sso-auth-redirect' ] != null
+				? String( search[ 'broker-sso-auth-redirect' ] )
 				: undefined,
 	} ),
 	beforeLoad: async ( { search } ) => {
