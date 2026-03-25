@@ -8,8 +8,8 @@
 	overflow: hidden;
 	opacity: 0;
 	transition:
-		block-size 0.2s ease-out,
-		opacity 0.2s ease-out;
+	block-size 0.2s ease-out,
+	opacity 0.2s ease-out;
 
 	&.is-open {
 		overflow: visible;
