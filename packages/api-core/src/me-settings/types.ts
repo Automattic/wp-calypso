@@ -79,7 +79,7 @@ export interface UserSettings {
 	primary_site_ID?: number;
 	mcp_abilities?: McpAbilities;
 	/** When true, account-level AI assistant features are enabled (requires API support). */
-	ai_assistant?: boolean;
+	ai_assistant?: boolean | null;
 
 	// Username change related fields
 	email_verified?: boolean;

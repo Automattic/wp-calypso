@@ -152,4 +152,21 @@ describe( 'getNewSiteParams', () => {
 			} )
 		);
 	} );
+
+	test( 'find_available_url is false when siteUrl is a free .blog subdomain', () => {
+		expect(
+			getNewSiteParams(
+				testParams( {
+					siteUrl: 'mysite.tech.blog',
+					siteTitle: 'Testing Inc.',
+					username: 'janedoe',
+				} )
+			)
+		).toEqual(
+			expect.objectContaining( {
+				blog_name: 'mysite.tech.blog',
+				find_available_url: false,
+			} )
+		);
+	} );
 } );
