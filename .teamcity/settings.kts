@@ -290,7 +290,7 @@ object BuildBaseImages : BuildType({
 
 object BuildToolchainPreviewImages : BuildType({
 	name = "Build toolchain images"
-	description = "Builds manual-only toolchain, ci-e2e, and ci-wpcom images from Dockerfile.toolchain and publishes the canonical ci image tags."
+	description = "Builds toolchain, ci-e2e, and ci-wpcom images from Dockerfile.toolchain and publishes the canonical ci image tags."
 
 	buildNumberPattern = "%build.prefix%.%build.counter%"
 
@@ -417,6 +417,32 @@ object BuildToolchainPreviewImages : BuildType({
 					registry.a8c.com/calypso/ci-wpcom:%build.number%
 				""".trimIndent()
 			}
+		}
+	}
+
+	triggers {
+		vcs {
+			branchFilter = """
+				+:trunk
+			""".trimIndent()
+			triggerRules = """
+				+:.nvmrc
+				+:.dockerignore
+				+:Dockerfile.toolchain
+				+:composer.json
+				+:composer.lock
+			""".trimIndent()
+		}
+		schedule {
+			schedulingPolicy = cron {
+				hours = "1"
+				dayOfWeek = "Sun"
+			}
+			branchFilter = """
+				+:trunk
+			""".trimIndent()
+			triggerBuild = always()
+			withPendingChangesOnly = false
 		}
 	}
 
