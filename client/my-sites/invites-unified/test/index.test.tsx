@@ -24,7 +24,7 @@ jest.mock( '@automattic/onboarding', () => ( {
 } ) );
 
 jest.mock( 'calypso/lib/partner-branding', () => ( {
-	detectCiabConfig: () => null,
+	detectPartnerConfig: () => null,
 	getCiabConfigFromGarden: () => ( {
 		windowTitleSuffix: 'Woo',
 		compactLogo: {

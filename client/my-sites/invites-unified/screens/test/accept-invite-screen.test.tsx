@@ -153,7 +153,7 @@ const mockWooBranding = {
 };
 
 jest.mock( 'calypso/lib/partner-branding', () => ( {
-	detectCiabConfig: () => null,
+	detectPartnerConfig: () => null,
 	getCiabConfigFromGarden: ( partner: string, name: string ) => {
 		if ( partner === 'woo' && name === 'commerce' ) {
 			return mockWooBranding;
