@@ -8,6 +8,7 @@ const blockParentSelector = '[aria-label="Block: Content Carousel"]';
 export class PostCarouselBlockFlow implements BlockFlow {
 	blockSidebarName = 'Content Carousel';
 	blockEditorSelector = blockParentSelector;
+	noSearch = false;
 
 	// We are very limited in what we can safely smoke test with the Post Carousel block because it is dependent on other posts.
 	// There's no guarantee (due to data clean up operations) that there will even be other posts!

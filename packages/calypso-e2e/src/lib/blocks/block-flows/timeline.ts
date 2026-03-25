@@ -31,6 +31,7 @@ export class TimelineBlockFlow implements BlockFlow {
 
 	blockSidebarName = 'Timeline';
 	blockEditorSelector = blockParentSelector;
+	noSearch = false;
 
 	/**
 	 * Configure the block in the editor with the configuration data from the constructor

@@ -8,6 +8,7 @@ const blockParentSelector = '[aria-label="Block: Blog Posts"]';
 export class BlogPostsBlockFlow implements BlockFlow {
 	blockSidebarName = 'Blog Posts';
 	blockEditorSelector = blockParentSelector;
+	noSearch = false;
 
 	// We are very limited in what we can safely smoke test with the Blog Posts block because it is dependent on other posts.
 	// There's no guarantee (due to data clean up operations) that there will even be other posts!
