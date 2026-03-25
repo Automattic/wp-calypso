@@ -1,3 +1,7 @@
+body:has(#wpcom-omnibar) #wpcom {
+	margin-block-start: var(--masterbar-height, 47px);
+}
+
 #wpcom-omnibar {
 	--color-masterbar-background: #1d2327;
 	--color-masterbar-text: #f0f0f1;

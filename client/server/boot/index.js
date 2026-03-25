@@ -22,6 +22,12 @@ export default function setup() {
 	// for nginx
 	app.enable( 'trust proxy' );
 
+	// Lightweight health check endpoint for container readiness probes.
+	// Registered before any middleware to avoid unnecessary overhead.
+	app.get( '/health', ( req, res ) => {
+		res.status( 200 ).send( 'ok' );
+	} );
+
 	app.use( cookieParser() );
 	app.use( userAgent.express() );
 	app.use( loggerMiddleware() );

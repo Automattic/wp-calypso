@@ -1,7 +1,6 @@
 import { EscalationButton } from '../components/escalation-button';
 import SourcesDisplay from '../components/sources-display';
 import UnavailableToolMessage from '../components/unavailable-tool-message';
-import { CHECKPOINT_ACTION_ID } from '../hooks/use-checkpoint-action';
 import { isEditorPage } from './is-editor-page';
 import type { GetChatComponent } from './load-external-providers';
 import type { UIMessage } from '@automattic/agenttic-client';
@@ -55,7 +54,7 @@ interface Options {
 /**
  * Converts tool-related messages to component messages.
  */
-export function convertToolMessagesToComponents( {
+export default function convertToolMessagesToComponents( {
 	messages,
 	getChatComponent,
 	currentPostId,
@@ -145,8 +144,6 @@ export function convertToolMessagesToComponents( {
 					},
 				],
 				disabled: isStale,
-				// Tag for `deactivateStaleMessages` to disable on back-navigation.
-				isShowComponentMessage: true,
 			};
 
 			// Only show `next-step-button` when the component is active and has follow-up tasks.
@@ -166,8 +163,6 @@ export function convertToolMessagesToComponents( {
 							component: NextStepButton,
 						},
 					],
-					// Tag for `deactivateStaleMessages` to remove on back-navigation.
-					isNextStepButton: true,
 				},
 			];
 		}
@@ -230,37 +225,8 @@ export function convertToolMessagesToComponents( {
 		// Remove unhandled tool messages to avoid displaying raw JSON to the user.
 		if ( ! SILENT_TOOL_IDS.includes( textData.tool_id ) ) {
 			// eslint-disable-next-line no-console
-			console.warn( `[Agents Manager] Unhandled tool message with tool_id: ${ textData.tool_id }` );
+			console.warn( `[AgentsManager] Unhandled tool message with tool_id: ${ textData.tool_id }` );
 		}
 		return [];
 	} );
-}
-
-// Deactivates messages that should no longer be interactive when caching.
-export function deactivateStaleMessages( messages: UIMessage[] ): UIMessage[] {
-	return messages
-		.filter( ( message ) => {
-			// @ts-ignore -- custom flag not on the `UIMessage` type.
-			// Remove next-step buttons.
-			return ! message.isNextStepButton;
-		} )
-		.map( ( message ) => {
-			let updated = message;
-
-			// Strip the undo (checkpoint) action so it won't reappear on cached messages.
-			if ( updated.actions?.length ) {
-				updated = {
-					...updated,
-					actions: updated.actions.filter( ( action ) => action.id !== CHECKPOINT_ACTION_ID ),
-				};
-			}
-
-			// @ts-ignore -- custom flag not on the `UIMessage` type.
-			// Disable picker components so they become non-interactive.
-			if ( updated.isShowComponentMessage ) {
-				return { ...updated, disabled: true };
-			}
-
-			return updated;
-		} );
 }
