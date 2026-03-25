@@ -1,7 +1,7 @@
 import { callApi } from '@automattic/data-stores/src/reader';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
 
-interface UserSitesResponse {
+export interface UserSitesResponse {
 	total: number;
 	primary_site_id: number;
 	sites: UserSiteResponse[];
