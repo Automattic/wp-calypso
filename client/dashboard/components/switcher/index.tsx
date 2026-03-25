@@ -1,4 +1,4 @@
-import { Dropdown, Button, ScrollLock } from '@wordpress/components';
+import { Dropdown, Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { chevronDownSmall } from '@wordpress/icons';
 import { useState, type ComponentProps } from 'react';
@@ -86,21 +86,18 @@ function Switcher< T >( {
 			defaultOpen={ defaultOpen }
 			renderToggle={ renderDropdownToggle }
 			renderContent={ ( { onClose } ) => (
-				<>
-					<ScrollLock />
-					<SwitcherContent
-						items={ items }
-						searchableFields={ searchableFields }
-						getItemUrl={ getItemUrl }
-						renderItem={ renderItem }
-						view={ view }
-						onChangeView={ setView }
-						onClose={ onClose }
-						onItemClick={ onItemClick }
-					>
-						{ children?.( { onClose } ) }
-					</SwitcherContent>
-				</>
+				<SwitcherContent
+					items={ items }
+					searchableFields={ searchableFields }
+					getItemUrl={ getItemUrl }
+					renderItem={ renderItem }
+					view={ view }
+					onChangeView={ setView }
+					onClose={ onClose }
+					onItemClick={ onItemClick }
+				>
+					{ children?.( { onClose } ) }
+				</SwitcherContent>
 			) }
 		/>
 	);
