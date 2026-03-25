@@ -175,7 +175,7 @@ export class ReaderSidebar extends Component {
 							selected: path.startsWith( '/reader/search' ),
 						} ) }
 						label={ translate( 'Search' ) }
-						onNavigate={ this.handleSidebarMenuClick( TrackingKeys.search ) }
+						onNavigate={ this.handleSidebarMenuClick( 'search' ) }
 						customIcon={ <ReaderSearchIcon /> }
 						link="/reader/search"
 					/>
@@ -184,14 +184,14 @@ export class ReaderSidebar extends Component {
 							selected: path.startsWith( '/discover' ),
 						} ) }
 						label={ translate( 'Discover' ) }
-						onNavigate={ this.handleSidebarMenuClick( TrackingKeys.discover ) }
+						onNavigate={ this.handleSidebarMenuClick( 'discover' ) }
 						customIcon={ <ReaderDiscoverIcon viewBox="0 0 24 24" /> }
 						link="/discover"
 					/>
 
 					<SidebarItem
 						label={ translate( 'Likes' ) }
-						onNavigate={ this.handleSidebarMenuClick( TrackingKeys.likeActivity ) }
+						onNavigate={ this.handleSidebarMenuClick( 'likeActivity' ) }
 						customIcon={ <ReaderLikesIcon viewBox="0 0 24 24" /> }
 						link="/activities/likes"
 						className={ ReaderSidebarHelper.itemLinkClass( '/activities/likes', path, {
@@ -204,7 +204,7 @@ export class ReaderSidebar extends Component {
 							'sidebar-streams__conversations': true,
 						} ) }
 						label={ translate( 'Conversations' ) }
-						onNavigate={ this.handleSidebarMenuClick( TrackingKeys.conversations ) }
+						onNavigate={ this.handleSidebarMenuClick( 'conversations' ) }
 						customIcon={ <ReaderConversationsIcon iconSize={ 24 } viewBox="0 0 24 24" /> }
 						link="/reader/conversations"
 					/>
@@ -243,7 +243,7 @@ export class ReaderSidebar extends Component {
 								'sidebar-streams__conversations': true,
 							} ) }
 							label="A8C Conversations"
-							onNavigate={ this.handleSidebarMenuClick( TrackingKeys.a8cConversations ) }
+							onNavigate={ this.handleSidebarMenuClick( 'a8cConversations' ) }
 							link="/reader/conversations/a8c"
 							customIcon={ <ReaderA8cConversationsIcon size={ 24 } viewBox="-2 -2 24 24" /> }
 						/>
@@ -263,7 +263,7 @@ export class ReaderSidebar extends Component {
 							'sidebar-streams__manage-subscriptions': true,
 						} ) }
 						label={ translate( 'Manage Subscriptions' ) }
-						onNavigate={ this.handleSidebarMenuClick( TrackingKeys.manageSubscriptions ) }
+						onNavigate={ this.handleSidebarMenuClick( 'manageSubscriptions' ) }
 						customIcon={ <ReaderManageSubscriptionsIcon size={ 24 } viewBox="0 0 24 24" /> }
 						link="/reader/subscriptions"
 					/>
