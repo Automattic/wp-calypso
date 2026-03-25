@@ -1867,7 +1867,6 @@ const WPCheckoutWrapper = styled.div< {
 				background: transparent;
 				box-shadow: none;
 				padding: 0;
-				padding-inline-end: 22px;
 				margin-bottom: 0;
 			}
 			.promo-card.checkout-sidebar-plan-upsell {
