@@ -1128,6 +1128,12 @@ export default function pages() {
 				( req ) => isAllowedCiabDashboardHostname( req.hostname )
 			);
 		} );
+		handleSectionPath(
+			CIAB_DASHBOARD_SECTION_DEFINITION,
+			'/start-store',
+			'entry-dashboard-ciab',
+			( req ) => isAllowedCiabDashboardHostname( req.hostname )
+		);
 	}
 
 	sections

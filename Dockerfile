@@ -1,26 +1,48 @@
 # syntax=docker/dockerfile:1.20
 
-ARG use_cache=false
+ARG cache_mode=base
 ARG node_version=22.9.0
 ARG base_image=registry.a8c.com/calypso/base:latest
+ARG cache_seed_image=registry.a8c.com/calypso/cache-seed:latest
 
 ###################
-FROM node:${node_version}-bullseye-slim AS builder-cache-false
+FROM node:${node_version}-bullseye-slim AS builder-cache-none
+
+WORKDIR /calypso
+ENV HOME=/calypso
+ENV NPM_CONFIG_CACHE=/calypso/.cache
+ENV PERSISTENT_CACHE=true
+
+RUN mkdir -p /calypso/.cache /calypso/.yarn
 
 
 ###################
 # This image contains a directory /calypso/.cache which includes caches
 # for yarn, terser, css-loader and babel.
-FROM ${base_image} AS builder-cache-true
+FROM ${base_image} AS builder-cache-base
 
 ENV NPM_CONFIG_CACHE=/calypso/.cache
 ENV PERSISTENT_CACHE=true
 
 ###################
+FROM ${cache_seed_image} AS cache-seed-source
+
+###################
+FROM node:${node_version}-bullseye-slim AS builder-cache-seed
+
+WORKDIR /calypso
+ENV HOME=/calypso
+ENV NPM_CONFIG_CACHE=/calypso/.cache
+ENV PERSISTENT_CACHE=true
+
+COPY --from=cache-seed-source /calypso/.cache /calypso/.cache
+COPY --from=cache-seed-source /calypso/.yarn /calypso/.yarn
+
+###################
 # Dedicated dependency-install stage.
 # By copying only manifests and the lockfile first, we can cache
 # the slow yarn install and skip it when only source files change.
-FROM builder-cache-${use_cache} AS deps
+FROM builder-cache-${cache_mode} AS deps
 
 WORKDIR /calypso
 ENV PLAYWRIGHT_SKIP_DOWNLOAD=true

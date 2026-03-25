@@ -56,6 +56,7 @@ project {
 	subProject(_self.projects.MarTech)
 	buildType(YarnInstall)
 	buildType(BuildToolchainPreviewImages)
+	buildType(BuildCacheSeedImages)
 	buildType(BuildCacheSeedPreviewImage)
 	buildType(BuildBaseImages)
 	buildType(CheckCodeStyle)
@@ -436,6 +437,124 @@ object BuildToolchainPreviewImages : BuildType({
 	}
 })
 
+object BuildCacheSeedImages : BuildType({
+	name = "Build cache-seed images"
+	description = "Builds and publishes scheduled cache-seed images from Dockerfile.cache-seed."
+
+	buildNumberPattern = "%build.prefix%.%build.counter%"
+
+	params {
+		param("build.prefix", "1.0")
+		param("image_tag", "latest")
+		checkbox(
+			name = "PROFILE",
+			value = "false",
+			label = "Enable profiling",
+			description = "Enables webpack progress and filesystem cache profiling while building the scheduled cache-seed image.",
+			checked = "true",
+			unchecked = "false"
+		)
+	}
+
+	vcs {
+		root(WpCalypso)
+		cleanCheckout = true
+	}
+
+	steps {
+		val commonArgs = "--pull --build-arg workers=32 --build-arg node_memory=16384 --build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber} --build-arg profile=%PROFILE%"
+
+		dockerCommand {
+			name = "Build cache-seed image"
+			commandType = build {
+				source = file {
+					path = "Dockerfile.cache-seed"
+				}
+				namesAndTags = "registry.a8c.com/calypso/cache-seed:%build.number%"
+				commandArgs = "--target cache-seed $commonArgs"
+			}
+			param("dockerImage.platform", "linux")
+		}
+		dockerCommand {
+			name = "Build cache-seed debug smoke image"
+			commandType = build {
+				source = file {
+					path = "Dockerfile.cache-seed"
+				}
+				namesAndTags = "calypso/cache-seed-smoke:%build.number%"
+				commandArgs = "--target cache-seed-debug $commonArgs"
+			}
+			param("dockerImage.platform", "linux")
+		}
+		script {
+			name = "Smoke test cache-seed debug image"
+			scriptContent = """
+				#!/usr/bin/env bash
+				set -euo pipefail
+
+				trap 'docker image rm -f calypso/cache-seed-smoke:%build.number% >/dev/null 2>&1 || true' EXIT
+
+				docker run --rm --entrypoint /bin/bash calypso/cache-seed-smoke:%build.number% -lc \
+					'du -sh /calypso/.cache /calypso/.yarn'
+			""".trimIndent()
+		}
+		script {
+			name = "Retag image for publish"
+			scriptContent = """
+				#!/usr/bin/env bash
+				set -euo pipefail
+
+				docker tag "registry.a8c.com/calypso/cache-seed:%build.number%" "registry.a8c.com/calypso/cache-seed:%image_tag%"
+
+				numbered_id=$(docker image inspect "registry.a8c.com/calypso/cache-seed:%build.number%" --format '{{.Id}}')
+				publish_id=$(docker image inspect "registry.a8c.com/calypso/cache-seed:%image_tag%" --format '{{.Id}}')
+
+				echo "registry.a8c.com/calypso/cache-seed:%build.number% id=${'$'}numbered_id"
+				echo "registry.a8c.com/calypso/cache-seed:%image_tag% id=${'$'}publish_id"
+
+				if [[ "${'$'}numbered_id" != "${'$'}publish_id" ]]; then
+					echo "Tag mismatch for registry.a8c.com/calypso/cache-seed"
+					exit 1
+				fi
+			""".trimIndent()
+		}
+		dockerCommand {
+			name = "Push images"
+			commandType = push {
+				namesAndTags = """
+					registry.a8c.com/calypso/cache-seed:%image_tag%
+					registry.a8c.com/calypso/cache-seed:%build.number%
+				""".trimIndent()
+			}
+		}
+	}
+
+	triggers {
+		schedule {
+			schedulingPolicy = cron {
+				hours = "3,9,15,21"
+			}
+			branchFilter = """
+				+:trunk
+			""".trimIndent()
+			triggerBuild = always()
+			withPendingChangesOnly = false
+		}
+	}
+
+	failureConditions {
+		executionTimeoutMin = 65
+	}
+
+	features {
+		perfmon {
+		}
+		dockerSupport {
+			cleanupPushedImages = true
+		}
+	}
+})
+
 object BuildCacheSeedPreviewImage : BuildType({
 	name = "Build cache-seed preview image"
 	description = "Builds a manual-only preview cache-seed image from Dockerfile.cache-seed."
@@ -444,7 +563,6 @@ object BuildCacheSeedPreviewImage : BuildType({
 
 	params {
 		param("build.prefix", "preview")
-		param("image_tag", "latest")
 		checkbox(
 			name = "PROFILE",
 			value = "false",
@@ -497,33 +615,10 @@ object BuildCacheSeedPreviewImage : BuildType({
 					'du -sh /calypso/.cache /calypso/.yarn'
 			""".trimIndent()
 		}
-		script {
-			name = "Retag preview image for publish"
-			scriptContent = """
-				#!/usr/bin/env bash
-				set -euo pipefail
-
-				docker tag "registry.a8c.com/calypso/cache-seed:%build.number%" "registry.a8c.com/calypso/cache-seed:%image_tag%"
-
-				numbered_id=$(docker image inspect "registry.a8c.com/calypso/cache-seed:%build.number%" --format '{{.Id}}')
-				publish_id=$(docker image inspect "registry.a8c.com/calypso/cache-seed:%image_tag%" --format '{{.Id}}')
-
-				echo "registry.a8c.com/calypso/cache-seed:%build.number% id=${'$'}numbered_id"
-				echo "registry.a8c.com/calypso/cache-seed:%image_tag% id=${'$'}publish_id"
-
-				if [[ "${'$'}numbered_id" != "${'$'}publish_id" ]]; then
-					echo "Tag mismatch for registry.a8c.com/calypso/cache-seed"
-					exit 1
-				fi
-			""".trimIndent()
-		}
 		dockerCommand {
 			name = "Push preview image"
 			commandType = push {
-				namesAndTags = """
-					registry.a8c.com/calypso/cache-seed:%image_tag%
-					registry.a8c.com/calypso/cache-seed:%build.number%
-				""".trimIndent()
+				namesAndTags = "registry.a8c.com/calypso/cache-seed:%build.number%"
 			}
 		}
 	}

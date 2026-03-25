@@ -196,6 +196,7 @@
 		"@vgs/collect-js": "^0.7.2",
 		"@vgs/collect-js-react": "^2.0.0",
 		"@visx/glyph": "^3.12.0",
+		"@wordpress/admin-ui": "^1.10.0",
 		"@wordpress/base-styles": "^5.23.0",
 		"@wordpress/block-editor": "^14.18.0",
 		"@wordpress/block-library": "^9.23.0",
@@ -331,6 +332,11 @@
 		"yargs": "^17.0.1"
 	},
 	"resolutions": {
+		"@tanstack/history": "1.114.29",
+		"@tanstack/react-router": "1.114.34",
+		"@tanstack/react-store": "0.7.7",
+		"@tanstack/router-core": "1.114.33",
+		"@tanstack/store": "0.7.7",
 		"@types/react": "^18.3.23",
 		"@types/react-dom": "^18.3.7",
 		"@types/wordpress__block-editor": "npm:noop-package@1.0.0",

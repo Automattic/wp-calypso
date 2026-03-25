@@ -97,9 +97,11 @@ jest.mock( 'calypso/lib/navigate', () => ( {
 } ) );
 
 jest.mock( 'calypso/lib/partner-branding', () => ( {
+	detectCiabConfig: () => null,
 	getCiabConfigFromGarden: ( partner: string, name: string ) => {
 		if ( partner === 'woo' && name === 'commerce' ) {
 			return {
+				windowTitleSuffix: 'Woo',
 				logo: {
 					src: 'https://example.com/woo-logo.png',
 					alt: 'Woo',
@@ -116,6 +118,10 @@ jest.mock( 'calypso/lib/partner-branding', () => ( {
 		}
 		return null;
 	},
+	getPartnerFormattedWindowTitle: (
+		title: string,
+		ciabConfig: { windowTitleSuffix?: string } | null
+	) => `${ title } — ${ ciabConfig?.windowTitleSuffix || 'WordPress.com' }`,
 } ) );
 
 jest.mock( 'calypso/lib/paths', () => ( {

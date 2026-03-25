@@ -48,6 +48,8 @@ export interface CiabPartnerConfig {
 	domains?: string[];
 	/** Callback to check if an OAuth2 client belongs to this partner */
 	isOAuth2Client?: ( oauth2Client: { id: number } | null ) => boolean;
+	/** Window title suffix used on branded auth flows */
+	windowTitleSuffix?: string;
 }
 
 /**
@@ -78,10 +80,24 @@ export const CIAB_PARTNERS: Record< string, CiabPartnerConfig > = {
 		},
 		ssoProviders: [ 'paypal', 'google', 'apple', 'magic-login' ],
 		fontStyle: 'system',
+		windowTitleSuffix: 'Woo',
 		domains: [ 'my.woo.ai', 'my.woo.localhost' ],
 		isOAuth2Client: isCiabOAuth2Client,
 	},
 };
+
+export function getPartnerWindowTitleSuffix( ciabConfig: CiabPartnerConfig | null ): string {
+	return ciabConfig?.windowTitleSuffix || config( 'site_name' );
+}
+
+export function getPartnerFormattedWindowTitle(
+	title: string | null | undefined,
+	ciabConfig: CiabPartnerConfig | null
+): string {
+	const titlePrefix = title ? `${ title } — ` : '';
+
+	return titlePrefix + getPartnerWindowTitleSuffix( ciabConfig );
+}
 
 function isPartnerEnabled( partnerConfig: CiabPartnerConfig ): boolean {
 	return ! partnerConfig.featureFlag || config.isEnabled( partnerConfig.featureFlag );
