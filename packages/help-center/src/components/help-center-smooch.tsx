@@ -188,10 +188,11 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 			setIsChatLoaded( false );
 			try {
 				await Smooch?.destroy?.();
-			} catch {
-				// Ignore errors from destroy() — the SDK may not be fully
-				// initialized yet (e.g. rapid open/close).  We still want to
-				// proceed with init() and let the retry logic handle failures.
+			} catch ( error ) {
+				recordTracksEvent( 'calypso_smooch_messenger_destroy_error', {
+					error: ( error as Error ).message,
+					context: 'initialize',
+				} );
 			}
 
 			if ( isCancelled ) {
@@ -233,9 +234,11 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 		return () => {
 			isCancelled = true;
 			clearTimeout( retryTimeout );
-			Smooch?.destroy?.()?.catch?.( () => {
-				// Suppress errors during cleanup — the SDK may already be torn
-				// down or in a bad state when the component unmounts.
+			Smooch?.destroy?.()?.catch?.( ( error: Error ) => {
+				recordTracksEvent( 'calypso_smooch_messenger_destroy_error', {
+					error: error.message,
+					context: 'cleanup',
+				} );
 			} );
 		};
 	}, [
