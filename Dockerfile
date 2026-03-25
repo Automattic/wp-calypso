@@ -4,6 +4,7 @@ ARG cache_mode=base
 ARG node_version=22.9.0
 ARG base_image=registry.a8c.com/calypso/base:latest
 ARG cache_seed_image=registry.a8c.com/calypso/cache-seed:latest
+ARG cache_seed_key="(unknown)"
 
 ###################
 FROM node:${node_version}-bullseye-slim AS builder-cache-none
@@ -149,6 +150,18 @@ FROM ${base_image} AS update-base-cache
 # We only copy this part of the cache to make --push faster, and because webpack
 # is the main thing which will impact build performance when the cache invalidates.
 COPY --from=builder /calypso/.cache/evergreen/webpack /calypso/.cache/evergreen/webpack
+
+###################
+# A cache-only update can be generated with "docker build --target update-cache-seed"
+FROM scratch AS update-cache-seed
+ARG commit_sha
+ARG cache_seed_key
+
+LABEL org.opencontainers.image.revision=$commit_sha \
+	io.calypso.cache-seed-key=$cache_seed_key
+
+COPY --from=builder /calypso/.cache /calypso/.cache
+COPY --from=builder /calypso/.yarn /calypso/.yarn
 
 ###################
 FROM node:${node_version}-alpine AS app
