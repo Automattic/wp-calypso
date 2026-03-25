@@ -85,4 +85,33 @@ describe( 'useAgentConfig', () => {
 		expect( result.current.agentId ).toBe( ORCHESTRATOR_AGENT_ID );
 		expect( result.current.isLoading ).toBe( true );
 	} );
+
+	it( 'uses `agentsManagerData.agentId` as default when set', () => {
+		( globalThis as Record< string, unknown > ).agentsManagerData = {
+			agentId: 'woo-workflow-unified_chat',
+		};
+		const { result } = renderHook( () => useAgentConfig() );
+		expect( result.current.agentId ).toBe( 'woo-workflow-unified_chat' );
+		delete ( globalThis as Record< string, unknown > ).agentsManagerData;
+	} );
+
+	it( 'URL `?agent=` param overrides `agentsManagerData.agentId`', () => {
+		( globalThis as Record< string, unknown > ).agentsManagerData = {
+			agentId: 'woo-workflow-unified_chat',
+		};
+		mockSearch( '?agent=custom-agent-id' );
+		const { result } = renderHook( () => useAgentConfig() );
+		expect( result.current.agentId ).toBe( 'custom-agent-id' );
+		delete ( globalThis as Record< string, unknown > ).agentsManagerData;
+	} );
+
+	it( '`agentsManagerData.agentId` takes priority over unified experience', () => {
+		mockUseUnifiedAiChat.mockReturnValue( { data: true } );
+		( globalThis as Record< string, unknown > ).agentsManagerData = {
+			agentId: 'woo-workflow-unified_chat',
+		};
+		const { result } = renderHook( () => useAgentConfig() );
+		expect( result.current.agentId ).toBe( 'woo-workflow-unified_chat' );
+		delete ( globalThis as Record< string, unknown > ).agentsManagerData;
+	} );
 } );

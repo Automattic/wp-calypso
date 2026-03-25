@@ -1,5 +1,6 @@
 import { OpenInlineInserter } from '../../pages';
 import {
+	disableFormEmailNotifications,
 	labelFormFieldBlock,
 	makeSelectorFromBlockName,
 	validatePublishedFormFields,
@@ -36,6 +37,8 @@ export class AllFormFieldsFlow implements BlockFlow {
 	 * @param {EditorContext} context The current context for the editor at the point of test execution
 	 */
 	async configure( context: EditorContext ): Promise< void > {
+		await disableFormEmailNotifications( context.page, context.addedBlockLocator );
+
 		// Determine if we are working with the refactored form fields (released June 2025)
 		const editorCanvas = await context.editorPage.getEditorCanvas();
 		const initailBlock = editorCanvas.locator( makeSelectorFromBlockName( 'Text input field' ) );

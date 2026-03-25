@@ -238,10 +238,6 @@ object BuildBaseImages : BuildType({
 				namesAndTags = """
 					registry.a8c.com/calypso/base:%image_tag%
 					registry.a8c.com/calypso/base:%build.number%
-					registry.a8c.com/calypso/ci-e2e:%image_tag%
-					registry.a8c.com/calypso/ci-e2e:%build.number%
-					registry.a8c.com/calypso/ci-wpcom:%image_tag%
-					registry.a8c.com/calypso/ci-wpcom:%build.number%
 				""".trimIndent()
 			}
 		}
@@ -293,13 +289,13 @@ object BuildBaseImages : BuildType({
 })
 
 object BuildToolchainPreviewImages : BuildType({
-	name = "Build toolchain preview images"
-	description = "Builds manual-only preview images for toolchain, ci-e2e, and ci-wpcom from Dockerfile.toolchain."
+	name = "Build toolchain images"
+	description = "Builds manual-only toolchain, ci-e2e, and ci-wpcom images from Dockerfile.toolchain and publishes the canonical ci image tags."
 
 	buildNumberPattern = "%build.prefix%.%build.counter%"
 
 	params {
-		param("build.prefix", "preview")
+		param("build.prefix", "2.0")
 		param("image_tag", "latest")
 	}
 
@@ -323,23 +319,23 @@ object BuildToolchainPreviewImages : BuildType({
 			param("dockerImage.platform", "linux")
 		}
 		dockerCommand {
-			name = "Build CI e2e preview image"
+			name = "Build CI e2e image"
 			commandType = build {
 				source = file {
 					path = "Dockerfile.toolchain"
 				}
-				namesAndTags = "registry.a8c.com/calypso/ci-e2e-toolchain:%build.number%"
+				namesAndTags = "registry.a8c.com/calypso/ci-e2e:%build.number%"
 				commandArgs = "--target ci-e2e $commonArgs"
 			}
 			param("dockerImage.platform", "linux")
 		}
 		dockerCommand {
-			name = "Build CI wpcom preview image"
+			name = "Build CI wpcom image"
 			commandType = build {
 				source = file {
 					path = "Dockerfile.toolchain"
 				}
-				namesAndTags = "registry.a8c.com/calypso/ci-wpcom-toolchain:%build.number%"
+				namesAndTags = "registry.a8c.com/calypso/ci-wpcom:%build.number%"
 				commandArgs = "--target ci-wpcom $commonArgs"
 			}
 			param("dockerImage.platform", "linux")
@@ -355,12 +351,12 @@ object BuildToolchainPreviewImages : BuildType({
 			""".trimIndent()
 		}
 		script {
-			name = "Smoke test CI e2e preview image"
+			name = "Smoke test CI e2e image"
 			scriptContent = """
 				#!/usr/bin/env bash
 				set -euo pipefail
 
-				docker run --rm --entrypoint /bin/bash registry.a8c.com/calypso/ci-e2e-toolchain:%build.number% -lc '
+				docker run --rm --entrypoint /bin/bash registry.a8c.com/calypso/ci-e2e:%build.number% -lc '
 					xvfb-run --help >/dev/null &&
 					aws --version &&
 					dpkg -s fonts-noto-cjk fonts-noto-core libgtk-3-0 libgbm1 libnss3 >/dev/null
@@ -368,17 +364,17 @@ object BuildToolchainPreviewImages : BuildType({
 			""".trimIndent()
 		}
 		script {
-			name = "Smoke test CI wpcom preview image"
+			name = "Smoke test CI wpcom image"
 			scriptContent = """
 				#!/usr/bin/env bash
 				set -euo pipefail
 
-				docker run --rm --entrypoint /bin/bash registry.a8c.com/calypso/ci-wpcom-toolchain:%build.number% -lc \
+				docker run --rm --entrypoint /bin/bash registry.a8c.com/calypso/ci-wpcom:%build.number% -lc \
 					'php -v && composer --version && docker-compose version && sentry-cli --version'
 			""".trimIndent()
 		}
 		script {
-			name = "Retag preview images for publish"
+			name = "Retag images for publish"
 			scriptContent = """
 				#!/usr/bin/env bash
 				set -euo pipefail
@@ -405,20 +401,20 @@ object BuildToolchainPreviewImages : BuildType({
 				}
 
 				retag_image registry.a8c.com/calypso/toolchain
-				retag_image registry.a8c.com/calypso/ci-e2e-toolchain
-				retag_image registry.a8c.com/calypso/ci-wpcom-toolchain
+				retag_image registry.a8c.com/calypso/ci-e2e
+				retag_image registry.a8c.com/calypso/ci-wpcom
 			""".trimIndent()
 		}
 		dockerCommand {
-			name = "Push preview images"
+			name = "Push images"
 			commandType = push {
 				namesAndTags = """
 					registry.a8c.com/calypso/toolchain:%image_tag%
 					registry.a8c.com/calypso/toolchain:%build.number%
-					registry.a8c.com/calypso/ci-e2e-toolchain:%image_tag%
-					registry.a8c.com/calypso/ci-e2e-toolchain:%build.number%
-					registry.a8c.com/calypso/ci-wpcom-toolchain:%image_tag%
-					registry.a8c.com/calypso/ci-wpcom-toolchain:%build.number%
+					registry.a8c.com/calypso/ci-e2e:%image_tag%
+					registry.a8c.com/calypso/ci-e2e:%build.number%
+					registry.a8c.com/calypso/ci-wpcom:%image_tag%
+					registry.a8c.com/calypso/ci-wpcom:%build.number%
 				""".trimIndent()
 			}
 		}

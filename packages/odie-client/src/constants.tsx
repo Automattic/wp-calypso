@@ -63,9 +63,9 @@ export const getOdieTransferMessages = ( botSlug?: OdieAllBotSlugs ): Message[] 
 		return [
 			{
 				content:
-					( isTestMode ? '(STAGING VERSION OF ZENDESK) ' : '' ) +
+					( isTestMode ? '**STAGING VERSION OF ZENDESK** ⚠️\n\n' : '' ) +
 					__(
-						"Yes, of course! A Happiness Engineer is jumping in to help you now. They can see your chat with our assistant, so feel free to share any extra details; we'll take it from there.",
+						'You have started a chat in a staging version of Zendesk. This means you will not be redirected to a support agent, nor the ticket will appear in Zendesk production. To target Zendesk production, **you need to be unproxied and use a production environment.**',
 						__i18n_text_domain__
 					),
 				role: 'bot' as const,

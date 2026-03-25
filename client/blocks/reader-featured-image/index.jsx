@@ -1,3 +1,8 @@
+/**
+ * Fixed-size featured thumbnails for Reader compact UIs: post cards, related cards,
+ * Recent stream rows, and video overlays (reader-featured-video). For the full post
+ * article column, use ReaderFullPostFeaturedImage from reader-full-post/featured-image instead.
+ */
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';

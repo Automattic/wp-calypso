@@ -93,6 +93,7 @@ export type ZendeskMessage = {
 	text: string;
 	altText?: string;
 	avatarUrl?: string;
+	sendStatus?: 'sending';
 	id: string;
 	actions?: MessageAction[];
 	source?: {
@@ -187,4 +188,8 @@ export type ConversationData = {
 	conversation: {
 		id: string;
 	};
+};
+
+export type QueuedMessage = {
+	text: string;
 };
