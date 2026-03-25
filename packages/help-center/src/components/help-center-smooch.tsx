@@ -186,7 +186,13 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 
 		const initialize = async () => {
 			setIsChatLoaded( false );
-			await Smooch?.destroy?.();
+			try {
+				await Smooch?.destroy?.();
+			} catch {
+				// Ignore errors from destroy() — the SDK may not be fully
+				// initialized yet (e.g. rapid open/close).  We still want to
+				// proceed with init() and let the retry logic handle failures.
+			}
 
 			if ( isCancelled ) {
 				return;
@@ -227,7 +233,10 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 		return () => {
 			isCancelled = true;
 			clearTimeout( retryTimeout );
-			Smooch?.destroy?.();
+			Smooch?.destroy?.()?.catch?.( () => {
+				// Suppress errors during cleanup — the SDK may already be torn
+				// down or in a bad state when the component unmounts.
+			} );
 		};
 	}, [
 		isMessagingScriptLoaded,
