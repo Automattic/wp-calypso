@@ -6,8 +6,6 @@ import type { UseAgentChatReturn, UIMessage } from '@automattic/agenttic-client'
 
 type RegisterMessageActions = UseAgentChatReturn[ 'registerMessageActions' ];
 
-export const CHECKPOINT_ACTION_ID = 'checkpoint';
-
 /**
  * Gets the checkpoint ID embedded in a tool message, or an empty string
  * if the message doesn't contain one.
@@ -60,7 +58,7 @@ export default function useCheckpointAction(
 
 				return [
 					{
-						id: CHECKPOINT_ACTION_ID,
+						id: 'checkpoint',
 						label: __( 'Undo', '__i18n_text_domain__' ),
 						icon: createElement( Icon, {
 							icon: undo,

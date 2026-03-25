@@ -21,7 +21,7 @@ import {
 	isCrowdsignalOAuth2Client,
 	isVIPOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
-import { detectCiabConfig } from 'calypso/lib/partner-branding';
+import { detectCiabConfig, getPartnerFormattedWindowTitle } from 'calypso/lib/partner-branding';
 import isPassportRedirect from 'calypso/lib/passport/is-passport-redirect';
 import { login } from 'calypso/lib/paths';
 import { getHeaderText } from 'calypso/login/wp-login/hooks/get-header-text';
@@ -315,8 +315,15 @@ export class Login extends Component {
 	}
 
 	render() {
-		const { locale, translate, isGenericOauth, isGravPoweredClient, isJetpack, action } =
-			this.props;
+		const {
+			locale,
+			translate,
+			isGenericOauth,
+			isGravPoweredClient,
+			isJetpack,
+			action,
+			ciabConfig,
+		} = this.props;
 
 		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );
 
@@ -334,7 +341,11 @@ export class Login extends Component {
 				{ isGravPoweredClient && this.renderI18nSuggestions() }
 
 				<DocumentHead
-					title={ translate( 'Log In' ) }
+					title={ getPartnerFormattedWindowTitle(
+						translate( 'Log In', { textOnly: true } ),
+						ciabConfig
+					) }
+					skipTitleFormatting
 					link={ [ { rel: 'canonical', href: canonicalUrl } ] }
 					meta={ [
 						{
