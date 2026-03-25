@@ -77,7 +77,7 @@ export const SiteSwitcherBase = (
 					<Switcher.Item
 						media={ <SiteIcon site={ item } size={ context === 'list' ? 32 : 16 } /> }
 						title={
-							<Text weight={ 500 } truncate numberOfLines={ 1 }>
+							<Text weight={ 500 } truncate numberOfLines={ 1 } style={ { color: 'inherit' } }>
 								{ getSiteDisplayName( item ) }
 							</Text>
 						}
