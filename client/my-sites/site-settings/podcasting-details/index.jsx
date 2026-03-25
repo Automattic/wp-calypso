@@ -431,10 +431,11 @@ const PodcastingDetails = () => {
 	const translate = useTranslate();
 
 	return (
-		<Main wideLayout className="site-settings podcasting-details">
+		<Main fullWidthLayout className="site-settings podcasting-details">
 			<DocumentHead title={ translate( 'Podcasting' ) } />
 			<Page
-				title={ <JetpackTitle title={ translate( 'Podcasting' ) } /> }
+				hasPadding
+				showSidebarToggle={ false }
 				subTitle={ translate(
 					'Publish a podcast feed to Apple Podcasts and other podcasting services. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 					{
@@ -443,8 +444,7 @@ const PodcastingDetails = () => {
 						},
 					}
 				) }
-				showSidebarToggle={ false }
-				hasPadding={ false }
+				title={ <JetpackTitle title={ translate( 'Podcasting' ) } /> }
 			>
 				<PodcastingSettingsForm />
 			</Page>
