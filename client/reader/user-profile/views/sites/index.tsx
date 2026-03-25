@@ -60,18 +60,18 @@ const UserSites = ( { user }: UserSitesProps ): JSX.Element | null => {
 	const feedsList = data.sites.map( ( site ): FeedRecommendation => {
 		return {
 			ID: String( site.ID ),
-			image: site.icon?.img || site.icon?.ico,
-			name: site.name,
-			feedUrl: site.URL,
 			siteId: site.ID ? String( site.ID ) : '',
 			feedId: site.feed_ID ? String( site.feed_ID ) : '',
+			name: site.name,
+			feedUrl: site.URL,
+			image: site.icon?.img || site.icon?.ico,
 		};
 	} );
 
 	return (
 		<RecommendedFeedsList
 			feeds={ feedsList }
-			followSource="user-profile-page__sites-list"
+			followSource="user-profile-page__sites-tab__list"
 			variant="card"
 		/>
 	);
