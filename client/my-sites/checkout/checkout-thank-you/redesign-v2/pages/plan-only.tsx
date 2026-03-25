@@ -12,7 +12,6 @@ import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
-import { hasDomainCredit } from 'calypso/state/sites/plans/selectors';
 import { getSiteOptions, getSiteUrl, getSiteWooCommerceUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import ThankYouPlanProduct from '../products/plan-product';
@@ -98,7 +97,7 @@ const PlanOnlyThankYou = ( {
 	// we can be confident that `siteId` is a number and not `null`
 	const siteAdminUrl = useSelector( ( state ) => getSiteWooCommerceUrl( state, siteId as number ) );
 	const emailAddress = useSelector( getCurrentUserEmail );
-	const siteDomainCredit = useSelector( ( state ) => hasDomainCredit( state, siteId ) );
+	const siteUrl = useSelector( ( state ) => getSiteUrl( state, siteId as number ) );
 
 	let title;
 	let subtitle;
@@ -139,14 +138,10 @@ const PlanOnlyThankYou = ( {
 			);
 		}
 	} else if ( checkoutType === 'unified' ) {
-		title = translate( 'Thank you for your purchase!' );
-		subtitle = siteDomainCredit
-			? translate(
-					"You're one step away from building your WordPress site. Click below to get started. You also have a free domain credit to redeem anytime in your dashboard."
-			  )
-			: translate(
-					"You're one step away from building your WordPress site. Click below to get started."
-			  );
+		title = translate( 'Purchase successful' );
+		subtitle = translate(
+			"You're all set to start building your WordPress site. Jump into your dashboard to create and customize your site."
+		);
 	} else {
 		subtitle = translate(
 			'All set! Start exploring the features included with your {{strong}}%(productName)s{{/strong}} plan',
@@ -194,8 +189,6 @@ const PlanOnlyThankYou = ( {
 		} );
 	}
 
-	const siteUrl = useSelector( ( state ) => getSiteUrl( state, siteId as number ) );
-
 	return (
 		<>
 			{
@@ -214,6 +207,7 @@ const PlanOnlyThankYou = ( {
 						purchase={ primaryPurchase }
 						siteSlug={ siteSlug }
 						siteId={ siteId }
+						checkoutType={ checkoutType }
 					/>
 				}
 				footerDetails={ footerDetails }
