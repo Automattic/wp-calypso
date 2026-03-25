@@ -16,9 +16,17 @@ import { getSiteDisplayUrl } from '../../dashboard/utils/site-url';
  * @param {string}   props.value
  * @param {Function} props.onChange
  * @param {boolean}  props.disabled
+ * @param {boolean}  [props.isLoading]
  * @param {string}   [props.label]
  */
-export default function McpSiteCombobox( { options, value, onChange, disabled, label } ) {
+export default function McpSiteCombobox( {
+	options,
+	value,
+	onChange,
+	disabled,
+	isLoading,
+	label,
+} ) {
 	const translate = useTranslate();
 
 	const renderItem = ( { item } ) => {
@@ -52,6 +60,7 @@ export default function McpSiteCombobox( { options, value, onChange, disabled, l
 			options={ options.map( ( { value: v, label: l } ) => ( { value: v, label: l } ) ) }
 			allowReset
 			disabled={ disabled }
+			isLoading={ isLoading }
 			placeholder={ translate( 'Search for a site…' ) }
 			__experimentalRenderItem={ renderItem }
 		/>
