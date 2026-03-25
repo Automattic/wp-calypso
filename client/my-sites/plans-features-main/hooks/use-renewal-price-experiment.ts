@@ -47,7 +47,7 @@ export function useRenewalPricingExperiment(
 	return [ false, 'crossed_price' ];
 }
 
-const REGISTRATION_DATE_CUTOFF = new Date( '2026-03-26T00:00:00Z' );
+const REGISTRATION_DATE_CUTOFF = new Date( '2026-03-27T00:00:00Z' );
 
 function isNewUserOrLoggedOut( registrationDate: string | null | undefined ): boolean {
 	if ( ! registrationDate ) {
