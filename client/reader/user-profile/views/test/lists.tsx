@@ -58,6 +58,33 @@ describe( 'UserLists', () => {
 		expect( container ).toBeEmptyDOMElement();
 	} );
 
+	test( 'should not render the recommended-blogs list in the lists view', () => {
+		const mockLists: List[] = [
+			{
+				ID: 1,
+				title: 'Recommended Blogs',
+				description: '',
+				slug: 'recommended-blogs',
+				owner: 'testuser',
+				is_public: true,
+				is_owner: true,
+			},
+		];
+
+		render(
+			<UserLists
+				user={ defaultUser }
+				requestUserLists={ mockRequestUserLists }
+				lists={ mockLists }
+				isLoading={ false }
+			/>
+		);
+
+		// Should show empty state when the only list is recommended-blogs
+		expect( screen.getByTestId( 'empty-content' ) ).toBeInTheDocument();
+		expect( screen.getByTestId( 'empty-content-line' ) ).toHaveTextContent( 'No lists yet.' );
+	} );
+
 	test( 'should render lists when user has lists', () => {
 		const mockLists: List[] = [
 			{

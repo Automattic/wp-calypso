@@ -44,7 +44,10 @@ export const UserLists = ( {
 		return <></>;
 	}
 
-	if ( ! lists || lists.length === 0 ) {
+	// Exclude the recommended-blogs list since it has its own dedicated tab.
+	const filteredLists = lists?.filter( ( list ) => list.slug !== 'recommended-blogs' ) ?? [];
+
+	if ( filteredLists.length === 0 ) {
 		return (
 			<div className="user-profile__lists">
 				<EmptyContent
@@ -60,7 +63,7 @@ export const UserLists = ( {
 	return (
 		<div className="user-profile__lists">
 			<div className="user-profile__lists-body">
-				{ lists.map( ( list: List ) => (
+				{ filteredLists.map( ( list: List ) => (
 					<a
 						className="user-profile__lists-body-link"
 						href={ `/reader/list/${ list.owner }/${ list.slug }` }
