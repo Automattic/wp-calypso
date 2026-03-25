@@ -1,12 +1,12 @@
+@import "@wordpress/base-styles/breakpoints";
 @import '@wordpress/admin-ui/build-style/style.css';
 
 body.is-section-backup {
 	.layout:not(.has-no-sidebar) .layout__content {
 		padding: calc(var(--masterbar-height)) 0 0 calc(var(--sidebar-width-max));
 
-		@media (max-width: 782px) {
+		@media (max-width: $break-medium) {
 			padding-left: 0;
-			padding-right: 0;
 		}
 	}
 
