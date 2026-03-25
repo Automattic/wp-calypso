@@ -39,9 +39,9 @@ function getReadBadge( tools: Array< [ string, McpAbility ] > ) {
 		return { text: __( 'All enabled' ), intent: 'success' as const };
 	}
 	if ( enabledCount === 0 ) {
-		return { text: __( 'None enabled' ), intent: 'warning' as const };
+		return { text: __( 'None enabled' ) };
 	}
-	return { text: `${ enabledCount } of ${ tools.length }` };
+	return { text: `${ enabledCount } of ${ tools.length } enabled`, intent: 'info' as const };
 }
 
 function getWriteBadge( tools: Array< [ string, McpAbility ] > ) {
@@ -55,7 +55,7 @@ function getWriteBadge( tools: Array< [ string, McpAbility ] > ) {
 	if ( enabledCount === 0 ) {
 		return { text: __( 'Disabled' ) };
 	}
-	return { text: `${ enabledCount } of ${ tools.length }` };
+	return { text: `${ enabledCount } of ${ tools.length } enabled`, intent: 'info' as const };
 }
 
 function McpComponent() {
@@ -130,7 +130,7 @@ function McpComponent() {
 				<PageHeader
 					title={ __( 'AI and MCP' ) }
 					description={ __(
-						'Allow external AI agents to access your WordPress.com account and sites via MCP.'
+						'Control how AI assistants interact with your WordPress.com account and sites.'
 					) }
 					prefix={ <Breadcrumbs length={ 2 } /> }
 				/>
