@@ -18,6 +18,10 @@ export default function SwitcherItem( {
 	spacing,
 	alignment = 'center',
 }: SwitcherItemProps ) {
+	if ( ! media && ! description ) {
+		return <>{ title }</>;
+	}
+
 	return (
 		<HStack justify="flex-start" alignment={ alignment } expanded spacing={ spacing }>
 			{ media }
