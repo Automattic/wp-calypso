@@ -36,6 +36,7 @@ const emptyUser = {
 interface Props {
 	user: User | null;
 	site: Site | null;
+	currentRoute: string;
 	onToggleMenu?: () => void;
 	onToggleNotifications?: () => void;
 }
@@ -43,6 +44,7 @@ interface Props {
 export function InterimOmnibar( {
 	user: userProp,
 	site,
+	currentRoute,
 	onToggleMenu,
 	onToggleNotifications,
 }: Props ) {
@@ -90,7 +92,7 @@ export function InterimOmnibar( {
 				section=""
 				sectionGroup=""
 				currentLayoutFocus={ null }
-				currentRoute={ typeof window !== 'undefined' ? window.location.pathname : '/' }
+				currentRoute={ currentRoute }
 				previousPath=""
 				newPostUrl={ siteAdminUrl ? `${ siteAdminUrl }post-new.php` : '' }
 				newPageUrl={ siteAdminUrl ? `${ siteAdminUrl }post-new.php?post_type=page` : '' }

@@ -33,9 +33,15 @@ export default async function loadOmnibar( events: OmnibarEvents ) {
 		queryClient.fetchQuery( { queryKey: AUTH_QUERY_KEY, queryFn: fetchUser } ),
 	] );
 
-	// Hydrate the server-rendered omnibar with null props first to match SSR output,
-	// then immediately re-render with real data.
-	const root = hydrateRoot( container, <InterimOmnibar user={ null } site={ null } /> );
+	// Hydrate the server-rendered omnibar with null props to match SSR output,
+	// then immediately re-render with real data.  Suppress recoverable hydration
+	// errors caused by Suspense boundaries inside MasterbarLoggedIn that
+	// renderToString cannot serialize (see logged-in.jsx for the proper fix).
+	const root = hydrateRoot(
+		container,
+		<InterimOmnibar user={ null } site={ null } currentRoute={ window.location.pathname } />,
+		{ onRecoverableError() {} }
+	);
 
 	const site = user.primary_blog
 		? await queryClient.fetchQuery( siteByIdQuery( user.primary_blog ) )
@@ -45,6 +51,7 @@ export default async function loadOmnibar( events: OmnibarEvents ) {
 		<InterimOmnibar
 			user={ user }
 			site={ site }
+			currentRoute={ window.location.pathname }
 			onToggleMenu={ () => events.mobileMenu.emit() }
 			onToggleNotifications={ () => events.notifications.emit() }
 		/>
