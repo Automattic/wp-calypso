@@ -332,8 +332,6 @@ export function detectPartnerConfig(
 	return null;
 }
 
-export const detectCiabConfig = detectPartnerConfig;
-
 /**
  * Get allowed social services for a partner.
  * Detects partner from globally available values (see detectPartnerConfig).
