@@ -371,6 +371,8 @@ import {
 	FEATURE_WOO_HOSTED_FREE_DOMAIN_1_YEAR,
 	FEATURE_WOO_HOSTED_SEAMLESS_CHECKOUT,
 	FEATURE_WOO_HOSTED_ACCEPT_CARD_PAYMENTS,
+	FEATURE_WOO_HOSTED_POS_PAYMENTS,
+	FEATURE_WOO_HOSTED_POS_NO_MONTHLY_FEES,
 	FEATURE_WOO_HOSTED_LIST_PRODUCTS,
 	FEATURE_WOO_HOSTED_BOOKINGS,
 	FEATURE_WOO_HOSTED_TEAM_BOOKINGS,
@@ -2969,6 +2971,16 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_WOO_HOSTED_ACCEPT_CARD_PAYMENTS,
 		getTitle: () => i18n.translate( 'Accept all major card brands automatically' ),
 		getDescription: () => i18n.translate( 'Online card rates start at 2.99%% + $0.45/transaction' ),
+	},
+	[ FEATURE_WOO_HOSTED_POS_PAYMENTS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_POS_PAYMENTS,
+		getTitle: () => i18n.translate( 'Take payments in person' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_POS_NO_MONTHLY_FEES ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_POS_NO_MONTHLY_FEES,
+		getTitle: () => i18n.translate( 'No monthly fees for the Point of Sale reader' ),
+		getDescription: () => '',
 	},
 	[ FEATURE_WOO_HOSTED_LIST_PRODUCTS ]: {
 		getSlug: () => FEATURE_WOO_HOSTED_LIST_PRODUCTS,
