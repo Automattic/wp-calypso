@@ -10,7 +10,7 @@ Please note, we're currently working on expanding this document to contain all o
 
 Query results are persisted by default because React Query is typically used to fetch and render server-side data. In `redux`, on the other hand, we require folks to opt-in to persistence because `redux` is often used for client-side UI state, which is typically not intended to be persisted.
 
-Persistence opt-out when using React Query is necessary in some cases. You can achieve that in two ways:
+Persistence opt-out when using React Query is necessary in some cases.  You can achieve that in two ways:
 
 - Simple opt-out, where you pass a boolean to the `persist` property:
 
