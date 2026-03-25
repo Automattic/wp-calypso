@@ -137,6 +137,17 @@ body.is-section-me div.layout.is-global-sidebar-visible .layout__primary .main.m
 			padding: 24px 32px 8px;
 		}
 	}
+
+	// Sub-group tool list — same padding as group-body but no top border
+	.mcp-tools-subpage__sub-group-body {
+		padding: 0 0 4px;
+	}
+
+	// Sub-group divider within merged cards (e.g. Posts) — content-width, equal spacing
+	.mcp-tools-subpage__sub-divider {
+		border-top: 1px solid var(--color-border-subtle);
+		margin: 16px 0 24px;
+	}
 }
 
 // Site exceptions — flat `@wordpress/components` Cards only (same as hub / tools subpages)
