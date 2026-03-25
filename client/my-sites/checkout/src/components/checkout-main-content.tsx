@@ -1303,6 +1303,10 @@ const StepContainerV2CheckoutFixer = styled.div< {
 				font-weight: 590;
 				color: ${ colorStudio.colors[ 'Gray 100' ] };
 			}
+			.checkout-step--active .checkout-step__header,
+			.checkout-step--complete .checkout-step__header {
+				margin-block-end: 24px;
+			}
 			.wp-checkout__review-order-step .checkout-step__header h2 > span {
 				font-weight: 500;
 			}
@@ -1989,6 +1993,10 @@ const WPCheckoutWrapper = styled.div< {
 			.checkout-step__header h2 > span {
 				font-weight: 590;
 				color: ${ colorStudio.colors[ 'Gray 100' ] };
+			}
+			.checkout-step--active .checkout-step__header,
+			.checkout-step--complete .checkout-step__header {
+				margin-block-end: 24px;
 			}
 			.wp-checkout__review-order-step .checkout-step__header h2 > span {
 				font-weight: 500;

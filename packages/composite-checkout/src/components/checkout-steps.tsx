@@ -1001,7 +1001,7 @@ const StepHeaderWrapper = styled.div< StepHeaderProps & HTMLAttributes< HTMLDivE
 	display: flex;
 	width: 100%;
 	align-items: center;
-	margin: 0 0 ${ ( props ) => ( props.isComplete || props.isActive ? '24px' : '0' ) };
+	margin: 0 0 ${ ( props ) => ( props.isComplete || props.isActive ? '8px' : '0' ) };
 `;
 
 const StepHeader = styled.h2< StepHeaderProps & HTMLAttributes< HTMLHeadingElement > >`
