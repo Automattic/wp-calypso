@@ -6,6 +6,7 @@ import { FeedRecommendation } from 'calypso/data/reader/use-feed-recommendations
 import { decodeEntities } from 'calypso/lib/formatting';
 import { UserProfileData } from 'calypso/lib/user/user';
 import { RecommendedFeedsList } from 'calypso/reader/recommended-feeds-list';
+import useUserSitesQuery from 'calypso/reader/user-profile/queries/use-user-sites-query';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
