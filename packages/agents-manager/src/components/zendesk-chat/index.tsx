@@ -3,6 +3,7 @@ import { useManagedZendeskChat } from '@automattic/zendesk-client';
 import { useEffect } from '@wordpress/element';
 import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
+import ConcludedConversationFooter from '../concluded-conversation-footer';
 import type { Message } from '@automattic/agenttic-ui/dist/types';
 import './style.scss';
 
@@ -44,6 +45,7 @@ export default function ZendeskChat( {
 		imageUpload,
 		supportedImageTypes,
 		notice,
+		hasInteractionEnded,
 	} = useManagedZendeskChat();
 
 	// Notify parent when has-messages state changes
@@ -72,6 +74,7 @@ export default function ZendeskChat( {
 			onTypingStatusChange={ onTypingStatusChange }
 			imageUpload={ imageUpload }
 			acceptedImageFileTypes={ supportedImageTypes }
+			alternativeFooter={ hasInteractionEnded ? <ConcludedConversationFooter /> : undefined }
 		/>
 	);
 }

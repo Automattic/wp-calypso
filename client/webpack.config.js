@@ -460,6 +460,7 @@ const webpackConfig = {
 					profile: shouldProfile,
 					version: webpackCacheVersion,
 					readonly: shouldUseReadonlyCache,
+					compression: 'brotli',
 				},
 				...( shouldProfile
 					? {

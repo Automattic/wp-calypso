@@ -1,4 +1,3 @@
-import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -148,7 +147,10 @@ export class MagicLogin extends Component {
 
 		const loginParameters = buildEnterPasswordLoginParameters( this.props, options );
 
-		page( login( loginParameters ) );
+		// Use full page navigation instead of client-side routing because the magic
+		// login routes and the wp-login routes are registered as separate router groups.
+		// The page() client-side router updates the URL but doesn't re-dispatch across groups.
+		window.location.assign( login( loginParameters ) );
 	};
 
 	renderLinks() {

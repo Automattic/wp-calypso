@@ -31,6 +31,7 @@ interface FilterBarModernProps {
 	showTierFilter?: boolean;
 	searchQuery?: string;
 	onSearch?: ( query: string ) => void;
+	sentinelRef?: React.RefObject< HTMLDivElement >;
 }
 
 const FilterBarModern = ( {
@@ -43,6 +44,7 @@ const FilterBarModern = ( {
 	showTierFilter = true,
 	searchQuery = '',
 	onSearch,
+	sentinelRef,
 }: FilterBarModernProps ) => {
 	const translate = useTranslate();
 	const [ isSticky, setIsSticky ] = useState( false );
@@ -99,13 +101,9 @@ const FilterBarModern = ( {
 		const selectedTierObj = tiers.find( ( t ) => t.key === selectedTier );
 		return {
 			key: selectedTier,
-			name: String(
-				translate( 'View: %s', {
-					args: selectedTierObj?.name ?? '',
-				} )
-			),
+			name: selectedTierObj?.name ?? '',
 		};
-	}, [ tiers, selectedTier, translate ] );
+	}, [ tiers, selectedTier ] );
 
 	return (
 		<>
@@ -115,7 +113,7 @@ const FilterBarModern = ( {
 				fallbackInView
 				onChange={ ( inView ) => setIsSticky( ! inView ) }
 			>
-				<div className="filter-bar-modern__sentinel" />
+				<div className="filter-bar-modern__sentinel" ref={ sentinelRef } />
 			</InView>
 			<div className={ clsx( 'filter-bar-modern', { 'is-sticky': isSticky } ) }>
 				<div className="filter-bar-modern__content">
@@ -127,6 +125,7 @@ const FilterBarModern = ( {
 								onSearchOpen={ handleSearchOpen }
 								onSearchClose={ handleSearchClose }
 								initialValue={ searchQuery }
+								value={ searchQuery }
 								onSearch={ onSearch }
 								placeholder={ translate( 'Search themes…' ) }
 								searchMode={ SEARCH_MODE_ON_ENTER }

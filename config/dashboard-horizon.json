@@ -10,8 +10,8 @@
 		"my.woo.ai": {
 			"oauth_client_id": 134405,
 			"wpcom_login_url": false,
-			"logout_url": "https://woo.com",
-			"features": { "oauth": true, "wpcom-user-bootstrap": false, "always_use_logout_url": true }
+			"logout_url": false,
+			"features": { "oauth": true, "wpcom-user-bootstrap": false }
 		}
 	},
 	"i18n_default_locale_slug": "en",
@@ -26,6 +26,7 @@
 		"ciab/custom-branding": true,
 		"cookie-banner": false,
 		"rum-tracking/logstash": true,
+		"dashboard/omnibar": false,
 		"dashboard/v2": false,
 		"dev/auth-helper": true,
 		"dev/preferences-helper": true,

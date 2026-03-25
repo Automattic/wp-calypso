@@ -1,3 +1,6 @@
+const paramToPluginNameMap = {
+	'woocommerce-payments': 'WooPayments',
+};
 /**
  * This function abstracts the logic for the "Woo DNA" Jetpack flow. The Woo DNA flow is an exclusively Woo-branded
  * Jetpack connection flow. It's meant to be used by Woo extensions or services with the Jetpack Connection package.
@@ -27,4 +30,9 @@ export default ( query ) =>
 		 * @returns {string} URL with help about connecting Jetpack.
 		 */
 		getServiceHelpUrl: () => query.woodna_help_url,
+
+		/**
+		 * @returns {string} Mapped Woo extension name
+		 */
+		getPluginName: () => paramToPluginNameMap[ query.plugin_name ] || '',
 	} );

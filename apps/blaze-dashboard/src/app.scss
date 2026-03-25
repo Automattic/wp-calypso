@@ -111,6 +111,7 @@
 			font-weight: 600;
 			font-size: 0.75rem;
 			background-color: var(--color-surface);
+			word-break: normal;
 
 			&:hover {
 				text-decoration: underline;

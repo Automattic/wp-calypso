@@ -76,7 +76,7 @@ class EmailedLoginLinkSuccessfully extends Component {
 				<OneLoginFooter>
 					<p className="one-login__footer-text">
 						{ translate(
-							"Didn't get the email? You might want to double check if the email address is associated with your account,{{a}}or reset your password.{{/a}}",
+							"Didn't get the email? You might want to double check if the email address is associated with your account, {{a}}or reset your password.{{/a}}",
 							{
 								components: {
 									a: (

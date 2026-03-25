@@ -155,7 +155,7 @@ export default function ThemesFAQ() {
 		<div className="themes-faq">
 			<div className="themes-faq__wrapper">
 				<div className="themes-faq__header">
-					<h2 className="themes-faq__title">{ translate( 'Themes FAQs' ) }</h2>
+					<h2 className="themes-faq__title">{ translate( 'WordPress theme FAQs' ) }</h2>
 				</div>
 				<div className="themes-faq__list">
 					{ faqItems.map( ( item ) => (

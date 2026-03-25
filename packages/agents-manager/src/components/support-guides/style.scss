@@ -1,52 +1,70 @@
 @import '@wordpress/base-styles/variables';
+@import '../../styles/mixins';
 
 .agent-manager-support-guides-wrapper {
+	height: calc( 100% - 32px );
+	padding: 16px;
+
 	.agent-manager-support-guides-no-results {
 		text-align: center;
 		font-size: $font-size-small;
-		color: #f2f2f2;
+		color: var( --color-muted-foreground );
 		padding: 16px;
 	}
 
-	height: calc( 100% - 50px );
-	padding: 16px;
-
 	.components-search-control {
 		.components-input-control__container {
-			background-color: #f2f2f2;
+			background-color: var( --color-muted );
+
+			.components-input-control__prefix {
+				color: var( --color-muted-foreground );
+			}
+
+			.components-input-control__input {
+				color: var( --color-foreground );
+
+				&::placeholder {
+					color: var( --color-muted-foreground );
+				}
+			}
 		}
+
 		.components-input-base {
 			border-radius: 16px;
-			color: var( --color-text );
+			color: var( --color-foreground );
 		}
-		.components-input-control__input {
-			color: var( --color-text );
-		}
+
 		.components-input-control__backdrop {
 			opacity: 0;
 		}
-		&:focus-within {
-			.components-input-control__backdrop {
-				opacity: 1;
-			}
+
+		&:focus-within .components-input-control__backdrop {
+			opacity: 1;
 		}
 	}
 
 	.components-item-group {
 		border-radius: 16px;
+		border-color: var( --color-muted );
+
+		div[role='listitem'] + div[role='listitem'] {
+			border-top: 1px solid var( --color-muted );
+		}
 
 		div[role='listitem'] {
 			box-sizing: border-box;
 			font-size: $font-size-small;
+
 			.components-item {
 				transition: var( --transition-colors );
 				padding: 0;
+
 				&:hover {
-					background: #f2f2f2;
+					background: var( --color-muted );
 				}
 
 				a {
-					color: var( --color-text );
+					color: var( --color-foreground );
 					text-decoration: none;
 					padding: 14px;
 					display: block;
@@ -66,48 +84,10 @@
 	}
 }
 
-.agents-manager-chat--docked {
-	.agent-manager-support-guides-no-results {
-		color: $gray-800;
-	}
-
+// Docked chat overrides
+@include docked-chat-without-modal {
 	.agent-manager-support-guides-wrapper {
-		padding: 0;
-
-		.components-search-control {
-			.components-input-control__container {
-				background-color: $gray-800;
-
-				.components-input-control__prefix {
-					color: #f2f2f2;
-				}
-				.components-input-control__input {
-					color: $white;
-
-					&::placeholder {
-						color: #f2f2f2;
-					}
-				}
-			}
-		}
-
-		.components-item-group {
-			border-color: #545454;
-			div[role='listitem'] {
-				.components-item {
-					&:hover {
-						background: $gray-800;
-					}
-
-					a {
-						color: $white;
-					}
-				}
-			}
-
-			div[role='listitem'] + div[role='listitem'] {
-				border-top: 1px solid #545454;
-			}
-		}
+		padding-left: 0;
+		padding-right: 0;
 	}
 }

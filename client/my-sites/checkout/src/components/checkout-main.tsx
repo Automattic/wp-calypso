@@ -2,6 +2,7 @@ import { useRazorpay } from '@automattic/calypso-razorpay';
 import { useStripe } from '@automattic/calypso-stripe';
 import colorStudio from '@automattic/color-studio';
 import { CheckoutProvider, checkoutTheme } from '@automattic/composite-checkout';
+import { Step } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import {
 	isValueTruthy,
@@ -15,7 +16,9 @@ import { useSelect } from '@wordpress/data';
 import debugFactory from 'debug';
 import DOMPurify from 'dompurify';
 import { useTranslate } from 'i18n-calypso';
-import { Fragment, useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
+import { getDashboardFromHostname } from 'calypso/dashboard/app/routing';
+import { getDashboardStepperLogo } from 'calypso/dashboard/app/stepper-logo';
 import { useCheckoutMigrationIntroductoryOfferSticker } from 'calypso/data/site-migration/use-checkout-migration-introductory-offer-sticker';
 import { recordAddEvent } from 'calypso/lib/analytics/cart';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -54,6 +57,7 @@ import { payPalJsProcessor } from '../lib/paypal-js-processor';
 import { pixProcessor } from '../lib/pix-processor';
 import razorpayProcessor from '../lib/razorpay-processor';
 import { translateResponseCartToWPCOMCart } from '../lib/translate-cart';
+import upiProcessor from '../lib/upi-processor';
 import weChatProcessor from '../lib/we-chat-processor';
 import webPayProcessor from '../lib/web-pay-processor';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
@@ -583,7 +587,7 @@ export default function CheckoutMain( {
 			eps: ( transactionData: unknown ) =>
 				genericRedirectProcessor( 'eps', transactionData, dataForProcessor ),
 			'stripe-upi': ( transactionData: unknown ) =>
-				genericRedirectProcessor( 'stripe-upi', transactionData, dataForProcessor ),
+				upiProcessor( transactionData, dataForProcessor, translate ),
 			'existing-card': ( transactionData: unknown ) =>
 				existingCardProcessor( transactionData, dataForProcessor ),
 			'existing-card-ebanx': ( transactionData: unknown ) =>
@@ -856,8 +860,19 @@ export default function CheckoutMain( {
 		paymentMethods
 	);
 
+	const dashboard = getDashboardFromHostname( window?.location?.hostname );
+	const stepContainerV2Context = useMemo(
+		() => ( {
+			flowName: '',
+			stepName: '',
+			recordTracksEvent: () => {},
+			logo: getDashboardStepperLogo( dashboard ),
+		} ),
+		[ dashboard ]
+	);
+
 	return (
-		<Fragment>
+		<Step.StepContainerV2Provider value={ stepContainerV2Context }>
 			<PageViewTracker
 				path={ analyticsPath }
 				title="Checkout"
@@ -920,7 +935,7 @@ export default function CheckoutMain( {
 					}
 				</CheckoutProvider>
 			</VGSCollectProvider>
-		</Fragment>
+		</Step.StepContainerV2Provider>
 	);
 }
 

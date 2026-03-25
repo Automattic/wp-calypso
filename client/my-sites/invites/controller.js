@@ -5,6 +5,11 @@ import { useTranslate } from 'i18n-calypso';
 import store from 'store';
 import DocumentHead from 'calypso/components/data/document-head';
 import { navigate } from 'calypso/lib/navigate';
+import {
+	detectCiabConfig,
+	getCiabConfigFromGarden,
+	getPartnerFormattedWindowTitle,
+} from 'calypso/lib/partner-branding';
 import InviteAccept from 'calypso/my-sites/invites/invite-accept';
 import { getRedirectAfterAccept } from 'calypso/my-sites/invites/utils';
 import { setUserEmailVerified } from 'calypso/state/current-user/actions';
@@ -60,8 +65,23 @@ export function acceptInvite( context, next ) {
 
 	const AcceptInviteTitle = () => {
 		const translate = useTranslate();
+		const blogDetails = context.inviteData?.blog_details;
+		const ciabConfig =
+			blogDetails?.is_garden_site && blogDetails.garden
+				? getCiabConfigFromGarden( blogDetails.garden.partner, blogDetails.garden.name, {
+						persistToSession: true,
+				  } )
+				: detectCiabConfig();
 
-		return <DocumentHead title={ translate( 'Accept Invite', { textOnly: true } ) } />;
+		return (
+			<DocumentHead
+				title={ getPartnerFormattedWindowTitle(
+					translate( 'Accept Invite', { textOnly: true } ),
+					ciabConfig
+				) }
+				skipTitleFormatting
+			/>
+		);
 	};
 
 	context.primary = (

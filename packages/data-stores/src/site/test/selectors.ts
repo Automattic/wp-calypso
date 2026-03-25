@@ -7,8 +7,8 @@
  */
 
 import { dispatch, select, subscribe } from '@wordpress/data';
-import wpcomRequest from 'wpcom-proxy-request';
 import { AtomicSoftwareStatus, AtomicSoftwareStatusError, register } from '..';
+import wpcomRequest from '../../wpcom-request';
 import {
 	getAtomicSoftwareStatus,
 	getAtomicSoftwareError,
@@ -20,10 +20,10 @@ import {
 import { SiteDetails } from '../types';
 import type { State } from '../reducer';
 
-jest.mock( 'wpcom-proxy-request', () => ( {
+jest.mock( '../../wpcom-request', () => ( {
 	__esModule: true,
 	default: jest.fn(),
-	requestAllBlogsAccess: jest.fn( () => Promise.resolve() ),
+	canAccessWpcomApis: jest.fn( () => true ),
 } ) );
 
 let store: ReturnType< typeof register >;

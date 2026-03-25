@@ -10,7 +10,7 @@
  * without touching the admin bar or Site Hub. Help Center continues to manage
  * its own button in the Site Hub independently.
  */
-
+import './config';
 import { createRoot } from 'react-dom/client';
 import AgentsManagerWithProvider from './agents-manager-with-provider';
 

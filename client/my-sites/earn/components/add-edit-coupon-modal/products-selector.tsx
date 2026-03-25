@@ -17,12 +17,14 @@ type ProductsSelectorProps = {
 	onSelectedPlanIdsChange: ( ids_list: number[] ) => void;
 	initialSelectedList: number[];
 	allowMultiple: boolean;
+	showLabel?: boolean;
 };
 
 const ProductsSelector = ( {
 	onSelectedPlanIdsChange,
 	initialSelectedList,
 	allowMultiple,
+	showLabel = true,
 }: ProductsSelectorProps ) => {
 	const [ selectedPlanIds, setSelectedPlanIds ] = useState( initialSelectedList ?? [] );
 
@@ -125,7 +127,7 @@ const ProductsSelector = ( {
 	return (
 		<FormFieldset className="memberships__dialog-sections-products">
 			<QueryMemberships siteId={ selectedSiteId ?? 0 } />
-			<FormLabel htmlFor="coupon_code">{ translate( 'Products' ) }</FormLabel>
+			{ showLabel && <FormLabel htmlFor="coupon_code">{ translate( 'Products' ) }</FormLabel> }
 			<ToolbarDropdownMenu
 				icon={ chevronDown }
 				label={ selectedProductSummary }

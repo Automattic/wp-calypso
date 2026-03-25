@@ -1,6 +1,5 @@
 import config, { isEnabled } from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
-import { WooDashboardLogo } from '@automattic/components';
 import { Step } from '@automattic/onboarding';
 import { UniversalNavbarHeader, UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
 import clsx from 'clsx';
@@ -13,6 +12,8 @@ import ReaderJoinConversationDialog from 'calypso/blocks/reader-join-conversatio
 import AsyncLoad from 'calypso/components/async-load';
 import { withCurrentRoute } from 'calypso/components/route';
 import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
+import { getDashboardFromHostname } from 'calypso/dashboard/app/routing';
+import { getDashboardStepperLogo } from 'calypso/dashboard/app/stepper-logo';
 import MasterbarLoggedOut from 'calypso/layout/masterbar/logged-out';
 import OauthClientMasterbar from 'calypso/layout/masterbar/oauth-client';
 import { isInStepContainerV2FlowContext } from 'calypso/layout/utils';
@@ -50,8 +51,7 @@ import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
-import { getSite } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId, masterbarIsVisible } from 'calypso/state/ui/selectors';
+import { masterbarIsVisible } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
 import { refreshColorScheme, getColorSchemeFromCurrentQuery } from './color-scheme';
 import HelpCenterLoader from './help-center-loader';
@@ -88,28 +88,22 @@ const LayoutLoggedOut = ( {
 	userAllowedToHelpCenter,
 	colorScheme,
 	isJetpackCloud,
-	isCIABSite,
 } ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const currentRoute = useSelector( getCurrentRoute );
 	const loggedInAction = useSelector( getLastActionRequiresLogin );
 	const { ciabConfig } = usePartnerBranding();
 
+	const dashboard =
+		typeof window !== 'undefined' && getDashboardFromHostname( window.location.hostname );
 	const stepContainerV2Context = useMemo( () => {
-		// Detect CIAB dashboard for Woo branding.
-		const isWooDashboard =
-			typeof window !== 'undefined' &&
-			new URLSearchParams( window.location.search ).get( 'dashboard' ) === 'ciab';
-
 		return {
 			flowName: '',
 			stepName: '',
 			recordTracksEvent,
-			// Show Woo logo for CIAB dashboard; null lets TopBar use default WordPress logo.
-			// Login screens use compactLogo='always' which applies to the default logo.
-			logo: isWooDashboard ? <WooDashboardLogo /> : null,
+			logo: getDashboardStepperLogo( dashboard ),
 		};
-	}, [] );
+	}, [ dashboard ] );
 
 	const isCheckout = sectionName === 'checkout';
 	const isCheckoutPending = sectionName === 'checkout-pending';
@@ -269,7 +263,6 @@ const LayoutLoggedOut = ( {
 				isCheckoutPending={ isCheckoutPending }
 				isCheckoutFailed={ isCheckoutFailed }
 				redirectUri={ redirectUri }
-				isCIABSite={ isCIABSite }
 			/>
 		);
 	}
@@ -412,10 +405,6 @@ export default withCurrentRoute(
 			 */
 			const colorScheme = isWooJPC ? getColorSchemeFromCurrentQuery( currentQuery ) : null;
 
-			const siteId = getSelectedSiteId( state );
-			const site = getSite( state, siteId );
-			const isCIABSite = site?.is_garden && site.garden_name === 'commerce';
-
 			return {
 				isAkismet,
 				isPassport,
@@ -439,7 +428,6 @@ export default withCurrentRoute(
 				twoFactorEnabled,
 				colorScheme,
 				isJetpackCloud: isJetpackCloudOAuth2Client( oauth2Client ),
-				isCIABSite,
 			};
 		},
 		{ clearLastActionRequiresLogin }

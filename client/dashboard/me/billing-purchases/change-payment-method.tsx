@@ -67,7 +67,11 @@ function ChangePaymentMethod() {
 		if ( redirect_to ) {
 			try {
 				const parsed = new URL( redirect_to );
-				if ( purchase.domain && parsed.hostname === purchase.domain ) {
+				if (
+					purchase.domain &&
+					( parsed.protocol === 'https:' || parsed.protocol === 'http:' ) &&
+					parsed.hostname === purchase.domain
+				) {
 					window.location.href = redirect_to;
 					return;
 				}

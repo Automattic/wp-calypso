@@ -6,7 +6,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import FeedPreview from 'calypso/landing/subscriptions/components/feed-preview';
-import { useAddSitesModalNotices } from 'calypso/landing/subscriptions/hooks';
+import { useAddSitesNotices } from 'calypso/landing/subscriptions/hooks';
 import { useRecordSiteSubscribed } from 'calypso/landing/subscriptions/tracks';
 import { isValidUrl, parseUrl } from 'calypso/lib/importer/url-validation';
 import { getUrlQuerySearchTerm, setUrlQuery, SEARCH_QUERY_PARAM } from 'calypso/reader/utils';
@@ -49,7 +49,7 @@ const AddSitesForm = ( {
 	const [ isSubmitting, setIsSubmitting ] = useState< boolean >( false );
 	const [ inputFieldError, setInputFieldError ] = useState< string | null >( null );
 	const [ isValidInput, setIsValidInput ] = useState( false );
-	const { showErrorNotice, showWarningNotice, showSuccessNotice } = useAddSitesModalNotices();
+	const { showErrorNotice, showWarningNotice, showSuccessNotice } = useAddSitesNotices();
 	const recordSiteSubscribed = useRecordSiteSubscribed();
 
 	const { mutate: subscribe, isPending: subscribing } =

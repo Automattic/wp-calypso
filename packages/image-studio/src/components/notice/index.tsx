@@ -6,16 +6,20 @@ import './style.scss';
 
 /**
  * Renders a single warning notice using the core Notice component.
+ * Dismissibility is controlled by the notice's `dismissible` flag (set by the store).
  * Opens links in new tab to preserve Image Studio modal context.
- * @param root0        - Component props.
- * @param root0.notice - The notice object to render.
+ * @param root0           - Component props.
+ * @param root0.notice    - The notice object to render.
+ * @param root0.onDismiss - Callback when notice is dismissed.
  */
-function WarningNotice( { notice }: { notice: NoticeType } ) {
+function WarningNotice( { notice, onDismiss }: { notice: NoticeType; onDismiss?: () => void } ) {
+	const isDismissible = notice.dismissible ?? false;
+
 	return (
 		<Notice
 			status="warning"
-			// Intentionally non-dismissible: upgrade prompts should persist until user takes action
-			isDismissible={ false }
+			isDismissible={ isDismissible }
+			onDismiss={ isDismissible ? onDismiss : undefined }
 			actions={
 				notice.actions?.map( ( action ) => ( {
 					label: action.label,
@@ -47,7 +51,11 @@ export function ImageStudioNotice() {
 	return (
 		<>
 			{ warningNotices.map( ( notice ) => (
-				<WarningNotice key={ notice.id } notice={ notice } />
+				<WarningNotice
+					key={ notice.id }
+					notice={ notice }
+					onDismiss={ () => removeNotice( notice.id ) }
+				/>
 			) ) }
 			{ snackbarNotices.length > 0 && (
 				<SnackbarList

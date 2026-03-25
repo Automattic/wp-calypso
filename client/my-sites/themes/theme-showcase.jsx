@@ -42,6 +42,7 @@ import {
 } from 'calypso/state/themes/selectors';
 import { getThemesBookmark } from 'calypso/state/themes/themes-ui/selectors';
 import EligibilityWarningModal from './atomic-transfer-dialog';
+import PlanUpgradeBanner from './banners-modern/plan-upgrade-banner';
 import { CustomSelectWrapper } from './custom-select-wrapper';
 import {
 	addTracking,
@@ -80,6 +81,7 @@ class ThemeShowcase extends Component {
 		this.scrollRef = createRef();
 		this.bookmarkRef = createRef();
 		this.showcaseRef = createRef();
+		this.sentinelRef = createRef();
 
 		this.subjectFilters = this.getSubjectFilters( props );
 		this.subjectTermTable = getSubjectsFromTermTable( props.filterToTermTable );
@@ -270,6 +272,15 @@ class ThemeShowcase extends Component {
 	};
 
 	scrollToSearchInput = () => {
+		// In the modern showcase, scroll to the filter bar sentinel when sticky.
+		if ( this.isThemeShowcaseModern() ) {
+			const sentinel = this.sentinelRef.current;
+			if ( sentinel && sentinel.getBoundingClientRect().top < 0 ) {
+				sentinel.scrollIntoView( { behavior: 'smooth', block: 'start' } );
+			}
+			return;
+		}
+
 		// Scroll to the top of the showcase
 		if ( this.showcaseRef.current && this.state.shouldThemeControlsSticky ) {
 			this.showcaseRef.current.scrollIntoView( {
@@ -452,6 +463,9 @@ class ThemeShowcase extends Component {
 								}
 							/>
 						</>
+					) }
+					{ this.isThemeShowcaseModern() && tier && (
+						<PlanUpgradeBanner planSlug={ THEME_TIERS[ tier ].minimumUpsellPlan } />
 					) }
 				</ThemesSelection>
 			</div>
@@ -746,6 +760,7 @@ class ThemeShowcase extends Component {
 							) }
 							{ this.isThemeShowcaseModern() ? (
 								<FilterBarModern
+									sentinelRef={ this.sentinelRef }
 									categories={ Object.values( tabFilters ) }
 									selectedCategory={ this.getSelectedTabFilter().key }
 									onCategorySelect={ ( category ) =>

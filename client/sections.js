@@ -74,6 +74,12 @@ const sections = [
 		paths: [ '/verto' ],
 		module: 'calypso/verto',
 		title: 'Calypso Agentic Framework',
+  },
+  {
+		name: 'telegram-connect',
+		paths: [ '/telegram-connect' ],
+		module: 'calypso/telegram-connect',
+		enableLoggedOut: true,
 	},
 	{
 		name: 'notification-settings',

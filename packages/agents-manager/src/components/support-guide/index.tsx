@@ -40,14 +40,14 @@ export default function SupportGuide( {
 	isEligibleForChat,
 }: Props ) {
 	const navigate = useNavigate();
-	const location = useLocation().search;
-	const query = new URLSearchParams( location );
-	const isFromChat = query.has( 'from-chat' );
+	const { state } = useLocation();
 	const { setFloatingPosition } = useDispatch( AGENTS_MANAGER_STORE );
 	const { floatingPosition } = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
 	}, [] );
+
+	const isFromChat = !! ( state?.sessionId || state?.conversationId );
 
 	return (
 		<AgentUI.Container
@@ -67,11 +67,18 @@ export default function SupportGuide( {
 			<AgentUI.ConversationView>
 				<ChatHeader
 					onClose={ onClose }
-					onBack={ () => navigate( -1 ) }
+					onBack={ () => {
+						// Navigate back to the source route, preserving `state` (`sessionId`/`conversationId`).
+						if ( state?.sessionId ) {
+							navigate( '/chat', { state } );
+						} else {
+							navigate( '/zendesk', { state } );
+						}
+					} }
 					options={ chatHeaderOptions }
 					title={ __( 'Support Guides', '__i18n_text_domain__' ) }
 				/>
-				<div className="agenttic agent-manager-support-guide-wrapper">
+				<div className="agent-manager-support-guide-wrapper">
 					<div className="agent-manager-support-guide-content help-center__container-content">
 						<HelpCenterArticle
 							sectionName={ sectionName }
@@ -82,7 +89,7 @@ export default function SupportGuide( {
 					</div>
 					{ ! isFromChat && (
 						<div className="agent-manager-support-guide-footer">
-							<Button variant="primary" onClick={ () => navigate( '/chat' ) }>
+							<Button variant="primary" onClick={ () => navigate( '/' ) }>
 								{ __( 'Start a new chat', '__i18n_text_domain__' ) }
 							</Button>
 						</div>

@@ -8,7 +8,9 @@ import {
 	PARTNER_DIRECTORY_DASHBOARD_SLUG,
 	PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG,
 	PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG,
+	PARTNER_DIRECTORY_LEAD_MATCHING_SLUG,
 } from './constants';
+import { isLeadMatchingSectionVisible } from './lib/lead-matching-visibility';
 import PartnerDirectory from './partner-directory';
 
 export const partnerDirectoryDashboardContext: Callback = ( context, next ) => {
@@ -17,12 +19,14 @@ export const partnerDirectoryDashboardContext: Callback = ( context, next ) => {
 	const hasDirectoryApproval = agency?.profile?.partner_directory_application?.directories.some(
 		( { status } ) => status === 'approved'
 	);
+	const canAccessLeadMatching = isLeadMatchingSectionVisible();
 
 	const validSections = [
 		PARTNER_DIRECTORY_DASHBOARD_SLUG,
 		// Agency details is hidden if the agency has no directories approved
 		...( hasDirectoryApproval ? [ PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG ] : [] ),
 		PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG,
+		...( canAccessLeadMatching ? [ PARTNER_DIRECTORY_LEAD_MATCHING_SLUG ] : [] ),
 	];
 
 	const selectedSection = context.params.section ?? PARTNER_DIRECTORY_DASHBOARD_SLUG;
@@ -34,7 +38,14 @@ export const partnerDirectoryDashboardContext: Callback = ( context, next ) => {
 
 	context.primary = (
 		<>
-			<PageViewTracker title="Partner Directory > Dashboard" path={ context.path } />
+			<PageViewTracker
+				title={
+					selectedSection === PARTNER_DIRECTORY_LEAD_MATCHING_SLUG
+						? 'Partner Directory > Lead Matching'
+						: 'Partner Directory > Dashboard'
+				}
+				path={ context.path }
+			/>
 			<PartnerDirectory selectedSection={ selectedSection } />
 		</>
 	);
