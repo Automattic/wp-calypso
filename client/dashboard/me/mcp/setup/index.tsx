@@ -9,8 +9,9 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { copy, check, error } from '@wordpress/icons';
+import { copy, check } from '@wordpress/icons';
 import { useState } from 'react';
 import { hasEnabledAccountTools } from '../../../../me/mcp/utils';
 import Breadcrumbs from '../../../app/breadcrumbs';
@@ -19,6 +20,9 @@ import ComponentViewTracker from '../../../components/component-view-tracker';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import RouterLinkButton from '../../../components/router-link-button';
+import { SectionHeader } from '../../../components/section-header';
+
+import './style.scss';
 
 function McpSetupComponent() {
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
@@ -84,20 +88,8 @@ function McpSetupComponent() {
 			await navigator.clipboard.writeText( configText );
 			setCopyStatus( 'success' );
 			setTimeout( () => setCopyStatus( 'idle' ), 2000 );
-		} catch ( err ) {
-			setCopyStatus( 'error' );
-			setTimeout( () => setCopyStatus( 'idle' ), 2000 );
-		}
-	};
-
-	const getCopyIcon = () => {
-		switch ( copyStatus ) {
-			case 'success':
-				return check;
-			case 'error':
-				return error;
-			default:
-				return copy;
+		} catch {
+			// Silently fail — clipboard access may be blocked
 		}
 	};
 
@@ -119,15 +111,20 @@ function McpSetupComponent() {
 				<Card>
 					<CardBody>
 						<VStack spacing={ 4 }>
-							<Text as="h3" weight="600" style={ { margin: 0 } }>
-								{ __( 'Setup Required' ) }
-							</Text>
+							<SectionHeader level={ 3 } title={ __( 'Setup Required' ) } />
 							<VStack spacing={ 4 }>
-								<p>{ __( 'No MCP access is currently enabled for your account.' ) }</p>
+								<Text as="p" variant="muted">
+									{ __( 'No MCP access is currently enabled for your account.' ) }
+								</Text>
+								<Text as="p" variant="muted">
+									{ __(
+										'MCP access defines what actions and data your MCP client can access on your account. You need to enable MCP access in the main MCP settings before configuring your client.'
+									) }
+								</Text>
 								<RouterLinkButton
 									to="/me/preferences/mcp"
 									variant="primary"
-									style={ { alignSelf: 'flex-start' } }
+									className="mcp-setup__action-button"
 								>
 									{ __( 'Go to MCP Settings' ) }
 								</RouterLinkButton>
@@ -151,21 +148,17 @@ function McpSetupComponent() {
 			}
 		>
 			<ComponentViewTracker eventName="calypso_dashboard_mcp_setup_view" />
-			<VStack spacing={ 2 }>
+			<>
 				<Card>
-					<CardBody style={ { padding: '8px 16px' } }>
-						<VStack spacing={ 2 }>
-							<Text as="h3" weight="600" style={ { margin: 0 } }>
-								{ __( 'Choose your AI agent' ) }
-							</Text>
-							<SelectControl
-								__next40pxDefaultSize
-								__nextHasNoMarginBottom
-								value={ selectedMcpClient }
-								options={ mcpClientOptions }
-								onChange={ setSelectedMcpClient }
-							/>
-						</VStack>
+					<CardBody>
+						<SelectControl
+							__next40pxDefaultSize
+							__nextHasNoMarginBottom
+							label={ __( 'Choose your AI agent' ) }
+							value={ selectedMcpClient }
+							options={ mcpClientOptions }
+							onChange={ setSelectedMcpClient }
+						/>
 					</CardBody>
 				</Card>
 
@@ -173,61 +166,126 @@ function McpSetupComponent() {
 					selectedMcpClient === 'claude-code' ||
 					selectedMcpClient === 'cursor' ) && (
 					<Card>
-						<CardBody style={ { padding: '16px' } }>
-							<VStack spacing={ 3 }>
-								<Text as="h3" weight="600" style={ { margin: 0 } }>
-									{ __( 'Quick setup' ) }
-								</Text>
-
+						<CardBody>
+							<VStack spacing={ 4 }>
+								<SectionHeader level={ 3 } title={ __( 'Quick setup' ) } />
+								{ /* Quick Setup for Claude */ }
 								{ selectedMcpClient === 'claude' && (
-									<ol style={ { paddingInlineStart: '20px', margin: '0' } }>
+									<ol className="mcp-setup__steps">
 										<li>
-											<ExternalLink href="https://claude.ai/settings/connectors">
-												{ __( 'Open Claude settings' ) }
-											</ExternalLink>
+											<Text as="p" variant="muted">
+												{ createInterpolateElement(
+													/* translators: <ClaudeSettings/> is a link to the Claude settings page */
+													__( 'Open <ClaudeSettings/>.' ),
+													{
+														ClaudeSettings: (
+															<ExternalLink href="https://claude.ai/settings/connectors">
+																{ __( 'Claude settings' ) }
+															</ExternalLink>
+														),
+													}
+												) }
+											</Text>
 										</li>
-										<li>{ __( 'Click "Browse connectors" and search for WordPress.com' ) }</li>
-										<li>{ __( 'Select WordPress.com and follow the prompts' ) }</li>
+										<li>
+											<Text as="p" variant="muted">
+												{ __( 'Click "Browse connectors" and search for WordPress.com.' ) }
+											</Text>
+										</li>
+										<li>
+											<Text as="p" variant="muted">
+												{ __( 'Select WordPress.com and follow the prompts.' ) }
+											</Text>
+										</li>
 									</ol>
 								) }
 
+								{ /* Quick Setup for Claude Code */ }
 								{ selectedMcpClient === 'claude-code' && (
-									<ol style={ { paddingInlineStart: '20px', margin: '0' } }>
-										<li>
-											{ __( 'Run in your terminal:' ) }{ ' ' }
-											<code
-												style={ {
-													backgroundColor: '#f0f0f1',
-													padding: '2px 6px',
-													borderRadius: '3px',
-													fontFamily: 'monospace',
-													fontSize: '13px',
-												} }
-											>
-												claude mcp add --transport http wpcom-mcp
-												https://public-api.wordpress.com/wpcom/v2/mcp/v1
-											</code>
-										</li>
-										<li>{ __( 'Run /mcp in Claude Code to authenticate' ) }</li>
-									</ol>
+									<VStack spacing={ 4 }>
+										<Text as="p" variant="muted">
+											{ __(
+												'Claude Code uses a different config format with type: "http". Use the CLI or copy the configuration below.'
+											) }
+										</Text>
+										<ol className="mcp-setup__steps">
+											<li>
+												<Text as="p" variant="muted">
+													{ createInterpolateElement(
+														/* translators: %s is the CLI command to add the MCP server */
+														__( 'Run this command in your terminal: <code>%s</code>' ).replace(
+															'%s',
+															'claude mcp add --transport http wpcom-mcp https://public-api.wordpress.com/wpcom/v2/mcp/v1'
+														),
+														{
+															code: (
+																<code className="mcp-setup__code" key="claude-code-cmd">
+																	claude mcp add --transport http wpcom-mcp
+																	https://public-api.wordpress.com/wpcom/v2/mcp/v1
+																</code>
+															),
+														}
+													) }
+												</Text>
+											</li>
+											<li>
+												<Text as="p" variant="muted">
+													{ createInterpolateElement(
+														__(
+															'Or copy the configuration below and add it to your <mcpJson/> or <claudeJson/> file.'
+														),
+														{
+															mcpJson: (
+																<code className="mcp-setup__code" key="mcp-json">
+																	.mcp.json
+																</code>
+															),
+															claudeJson: (
+																<code className="mcp-setup__code" key="claude-json">
+																	~/.claude.json
+																</code>
+															),
+														}
+													) }
+												</Text>
+											</li>
+											<li>
+												<Text as="p" variant="muted">
+													{ createInterpolateElement(
+														__(
+															'In Claude Code, run <code/> to authenticate with your WordPress.com account.'
+														),
+														{
+															code: (
+																<code className="mcp-setup__code" key="mcp-cmd">
+																	/mcp
+																</code>
+															),
+														}
+													) }
+												</Text>
+											</li>
+										</ol>
+									</VStack>
 								) }
 
+								{ /* Quick Setup for Cursor */ }
 								{ selectedMcpClient === 'cursor' && (
-									<>
-										<p style={ { margin: 0 } }>
+									<VStack spacing={ 4 }>
+										<Text as="p" variant="muted">
 											{ __(
-												'Use the one-click install to add the WordPress.com MCP server to Cursor.'
+												'For Cursor users, use the one-click install to add the WordPress.com MCP app.'
 											) }
-										</p>
+										</Text>
 										<Button
 											variant="primary"
 											href="cursor://anysphere.cursor-deeplink/mcp/install?name=WordPress.com&config=eyJjb21tYW5kIjoibnB4IC15IG1jcC1yZW1vdGUgaHR0cHM6Ly9wdWJsaWMtYXBpLndvcmRwcmVzcy5jb20vd3Bjb20vdjIvbWNwL3YxIn0%3D"
 											target="_blank"
-											style={ { alignSelf: 'flex-start' } }
+											className="mcp-setup__action-button"
 										>
 											{ __( 'Install in Cursor' ) }
 										</Button>
-									</>
+									</VStack>
 								) }
 							</VStack>
 						</CardBody>
@@ -235,34 +293,27 @@ function McpSetupComponent() {
 				) }
 
 				<Card>
-					<CardBody style={ { padding: '16px' } }>
+					<CardBody>
 						<VStack spacing={ 2 }>
-							<VStack spacing={ 0 }>
-								<Text as="h3" weight="600" style={ { margin: 0 } }>
-									{ __( 'Manual setup' ) }
-								</Text>
-								<HStack justify="space-between" alignment="center">
-									<p style={ { margin: 0, fontSize: '13px', color: '#757575' } }>
-										{ __( "Copy this configuration into your client's MCP settings." ) }
-									</p>
-									<Button
-										icon={ getCopyIcon() }
-										variant="tertiary"
-										iconSize={ 20 }
-										style={ {
-											color: copyStatus === 'error' ? 'var(--color-error)' : undefined,
-										} }
-										onClick={ copyToClipboard }
-										aria-label={ __( 'Copy configuration to clipboard' ) }
-									/>
-								</HStack>
-							</VStack>
+							<HStack justify="space-between" alignment="center">
+								<SectionHeader level={ 3 } title={ __( 'Manual setup' ) } />
+								<Button
+									icon={ copyStatus === 'success' ? check : copy }
+									variant="tertiary"
+									iconSize={ 20 }
+									onClick={ copyToClipboard }
+									aria-label={ __( 'Copy configuration to clipboard' ) }
+								/>
+							</HStack>
+							<Text as="p" variant="muted">
+								{ __( 'Copy this configuration into your client\u2019s MCP settings.' ) }
+							</Text>
 							<TextareaControl
+								className="mcp-setup__config-textarea"
 								__nextHasNoMarginBottom
 								value={ JSON.stringify( generateMcpConfig( selectedMcpClient ), null, 2 ) }
 								onChange={ () => {} }
 								readOnly
-								style={ { minHeight: '160px' } }
 							/>
 							{ clientDocumentation[ selectedMcpClient ] && (
 								<ExternalLink href={ clientDocumentation[ selectedMcpClient ] }>
@@ -272,7 +323,7 @@ function McpSetupComponent() {
 						</VStack>
 					</CardBody>
 				</Card>
-			</VStack>
+			</>
 		</PageLayout>
 	);
 }
