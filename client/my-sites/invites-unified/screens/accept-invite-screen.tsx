@@ -12,7 +12,7 @@ import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { navigate } from 'calypso/lib/navigate';
 import {
-	detectCiabConfig,
+	detectPartnerConfig,
 	getCiabConfigFromGarden,
 	getPartnerFormattedWindowTitle,
 	type CiabPartnerConfig,
@@ -169,7 +169,7 @@ export function AcceptInviteScreen( { invite }: AcceptInviteScreenProps ) {
 
 	// Get branding from blog_details garden info
 	const branding = getBrandingFromBlogDetails( invite?.blog_details );
-	const titleBranding = branding ?? detectCiabConfig();
+	const titleBranding = branding ?? detectPartnerConfig();
 	const gardenName = invite?.blog_details?.garden?.name || null;
 	const gardenPartner = invite?.blog_details?.garden?.partner || null;
 

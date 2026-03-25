@@ -9,7 +9,7 @@ import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { navigate } from 'calypso/lib/navigate';
 import {
-	detectCiabConfig,
+	detectPartnerConfig,
 	getCiabConfigFromGarden,
 	getPartnerFormattedWindowTitle,
 } from 'calypso/lib/partner-branding';
@@ -79,7 +79,7 @@ export function InviteScreenLayout( {
 				persistToSession: true,
 		  } )
 		: null;
-	const titleBranding = branding ?? detectCiabConfig();
+	const titleBranding = branding ?? detectPartnerConfig();
 
 	const topBarLogoConfig = branding?.compactLogo ?? branding?.logo;
 	const topBarLogo = topBarLogoConfig?.src ? (

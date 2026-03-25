@@ -6,7 +6,7 @@ import store from 'store';
 import DocumentHead from 'calypso/components/data/document-head';
 import { navigate } from 'calypso/lib/navigate';
 import {
-	detectCiabConfig,
+	detectPartnerConfig,
 	getCiabConfigFromGarden,
 	getPartnerFormattedWindowTitle,
 } from 'calypso/lib/partner-branding';
@@ -71,7 +71,7 @@ export function acceptInvite( context, next ) {
 				? getCiabConfigFromGarden( blogDetails.garden.partner, blogDetails.garden.name, {
 						persistToSession: true,
 				  } )
-				: detectCiabConfig();
+				: detectPartnerConfig();
 
 		return (
 			<DocumentHead
