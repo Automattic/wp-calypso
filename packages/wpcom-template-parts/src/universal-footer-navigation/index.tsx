@@ -253,7 +253,7 @@ export const PureUniversalNavbarFooter = ( {
 								</li>
 								<li>
 									<a
-										href="https://wpvip.com/wordpress-vip-agile-content-platform/?utm_source=WordPresscom&utm_medium=automattic_referral"
+										href="https://wpvip.com/wordpress-vip-agile-content-platform/?utm_source=WordPresscom&utm_medium=automattic_referral&utm_campaign=footer"
 										target="_self"
 										data-is_external="1"
 									>

@@ -292,7 +292,7 @@ const UniversalNavbarHeader = ( {
 														<ClickableItem
 															titleValue=""
 															content={ __( 'Enterprise WordPress', __i18n_text_domain__ ) }
-															urlValue="https://wpvip.com/wordpress-vip-agile-content-platform/?utm_source=WordPresscom&utm_medium=automattic_referral"
+															urlValue="https://wpvip.com/wordpress-vip-agile-content-platform/?utm_source=WordPresscom&utm_medium=automattic_referral&utm_campaign=top_nav"
 															type="dropdown"
 														/>
 													</ul>
@@ -656,7 +656,7 @@ const UniversalNavbarHeader = ( {
 											<ClickableItem
 												titleValue=""
 												content={ __( 'Enterprise', __i18n_text_domain__ ) }
-												urlValue="https://wpvip.com/wordpress-vip-agile-content-platform/?utm_source=WordPresscom&utm_medium=automattic_referral"
+												urlValue="https://wpvip.com/wordpress-vip-agile-content-platform/?utm_source=WordPresscom&utm_medium=automattic_referral&utm_campaign=top_nav"
 												type="menu"
 												tabIndex={ mobileMenuTabIndex }
 											/>
