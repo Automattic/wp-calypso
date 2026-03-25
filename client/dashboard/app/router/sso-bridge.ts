@@ -23,7 +23,11 @@ export const ssoBridgeRoute = createRoute( {
 				? String( search[ 'broker-sso-auth-redirect' ] )
 				: undefined,
 	} ),
-	beforeLoad: async ( { search } ) => {
+	beforeLoad: async ( { search, cause } ) => {
+		if ( cause !== 'enter' ) {
+			return;
+		}
+
 		if ( search[ 'broker-sso-auth-redirect' ] === '1' ) {
 			return;
 		}
@@ -35,13 +39,28 @@ export const ssoBridgeRoute = createRoute( {
 			throw new Error( 'Missing required parameters: site_id and sso_nonce' );
 		}
 
-		const data = await ssoAuthorize( siteId, ssoNonce );
+		if ( ! /^\d+$/.test( siteId ) ) {
+			throw new Error( 'Invalid site_id format' );
+		}
 
-		if ( ! data.sso_url || ! data.sso_url.startsWith( 'https://' ) ) {
+		const data = await ssoAuthorize( Number( siteId ), ssoNonce );
+
+		if ( ! data.sso_url ) {
 			throw new Error( 'Received invalid SSO redirect URL' );
 		}
 
-		window.location.replace( data.sso_url );
+		let ssoUrl: URL;
+		try {
+			ssoUrl = new URL( data.sso_url );
+		} catch {
+			throw new Error( 'Received invalid SSO redirect URL' );
+		}
+
+		if ( ssoUrl.protocol !== 'https:' ) {
+			throw new Error( 'Received invalid SSO redirect URL' );
+		}
+
+		window.location.replace( ssoUrl.toString() );
 		return new Promise( () => {} );
 	},
 } ).lazy( () =>
