@@ -16,7 +16,7 @@ describe( 'getHeadingSubText', () => {
 			action: 'login',
 			translate,
 			isWooJPC: false,
-			ciabConfig: {
+			partnerConfig: {
 				id: 'woo',
 				displayName: 'Woo',
 				featureFlag: 'ciab/custom-branding',
@@ -37,7 +37,7 @@ describe( 'getHeadingSubText', () => {
 			action: 'login',
 			translate,
 			isWooJPC: true,
-			ciabConfig: {
+			partnerConfig: {
 				id: 'woo',
 				displayName: 'Woo',
 				featureFlag: 'ciab/custom-branding',
