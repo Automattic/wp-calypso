@@ -71,7 +71,7 @@ const usePartnerDirectoryMenuItems = ( path: string ) => {
 								icon: people,
 								path: A4A_PARTNER_DIRECTORY_LINK,
 								link: `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_LEAD_MATCHING_SLUG }`,
-								title: translate( 'Lead matching' ),
+								title: translate( 'Lead Matching' ),
 								trackEventProps: {
 									menu_item: 'Automattic for Agencies / Partner Directory / Lead matching',
 								},

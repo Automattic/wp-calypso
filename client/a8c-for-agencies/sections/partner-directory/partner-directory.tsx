@@ -26,10 +26,11 @@ import {
 	PARTNER_DIRECTORY_LEAD_MATCHING_SLUG,
 } from './constants';
 import Dashboard from './dashboard';
-import LeadMatchingPlaceholder from './lead-matching';
+import LeadMatchingForm from './lead-matching';
 import {
 	mapAgencyDetailsFormData,
 	mapApplicationFormData,
+	mapLeadMatchingFormData,
 } from './utils/map-application-form-data';
 
 import './style.scss';
@@ -54,6 +55,7 @@ export default function PartnerDirectory( { selectedSection }: Props ) {
 
 	const applicationData = useMemo( () => mapApplicationFormData( agency ), [ agency ] );
 	const agencyDetailsData = useMemo( () => mapAgencyDetailsFormData( agency ), [ agency ] );
+	const leadMatchingData = useMemo( () => mapLeadMatchingFormData( agency ), [ agency ] );
 
 	// Define the sub-menu sections
 	const sections: { [ slug: string ]: Section } = useMemo( () => {
@@ -93,18 +95,18 @@ export default function PartnerDirectory( { selectedSection }: Props ) {
 		};
 
 		sections[ PARTNER_DIRECTORY_LEAD_MATCHING_SLUG ] = {
-			content: <LeadMatchingPlaceholder />,
+			content: <LeadMatchingForm initialFormData={ leadMatchingData } />,
 			breadcrumbItems: [
 				...sections[ PARTNER_DIRECTORY_DASHBOARD_SLUG ].breadcrumbItems,
 				{
-					label: translate( 'Lead matching' ),
+					label: translate( 'Lead Matching' ),
 					href: `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_LEAD_MATCHING_SLUG }`,
 				},
 			],
 		};
 
 		return sections;
-	}, [ translate, agencyDetailsData, applicationData ] );
+	}, [ translate, agencyDetailsData, applicationData, leadMatchingData ] );
 
 	// Wait until the agency is fetched
 	if ( ! hasAgency || isFetching ) {
