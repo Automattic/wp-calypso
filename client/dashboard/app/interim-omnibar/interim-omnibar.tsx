@@ -15,7 +15,7 @@ type StoreType = Parameters< typeof ReduxProvider >[ 0 ][ 'store' ];
 // Intercepts specific actions so the dashboard can handle them.
 function createOmnibarStore( onToggleNotifications?: () => void ): StoreType {
 	return {
-		getState: () => ( {} ),
+		getState: () => ( { ui: { section: false, isNotificationsOpen: false } } ),
 		dispatch: ( action: { type: string } ) => {
 			if ( action.type === 'NOTIFICATIONS_PANEL_TOGGLE' ) {
 				onToggleNotifications?.();
@@ -98,7 +98,7 @@ export function InterimOmnibar( {
 				isCheckout={ false }
 				isCheckoutPending={ false }
 				isCheckoutFailed={ false }
-				loadHelpCenterIcon={ false }
+				loadHelpCenterIcon
 				isGlobalSidebarVisible={ false }
 				isGravatarDomain={ false }
 				dashboardOptIn
