@@ -239,11 +239,14 @@ export default function useStagingSite( site: Site ) {
 		} );
 	};
 
+	const environmentType = site.is_wpcom_staging_site ? 'staging' : 'production';
+
 	return {
 		productionSite,
 		stagingSite,
 		isStagingSiteCreating: !! isStagingSiteCreating,
 		isStagingSiteDeleting: !! isStagingSiteDeleting,
 		handleAddStagingSite,
+		environmentType,
 	};
 }

@@ -16,6 +16,7 @@ const SidebarEnvironmentSwitcher = ( { site }: { site: Site } ) => {
 		isStagingSiteCreating,
 		isStagingSiteDeleting,
 		handleAddStagingSite,
+		environmentType,
 	} = useStagingSite( site );
 
 	// TODO: Let's make sure to revise these conditions and simplify them once we have the design and the full understanding of how the
@@ -23,8 +24,6 @@ const SidebarEnvironmentSwitcher = ( { site }: { site: Site } ) => {
 	const canToggle =
 		( productionSite && canManageSite( productionSite ) ) ||
 		( stagingSite && canManageSite( stagingSite ) );
-
-	const environmentType = site.is_wpcom_staging_site ? 'staging' : 'production';
 
 	return (
 		<HStack expanded={ false } style={ { flexShrink: 0 } } className="sidebar-environment-switcher">
