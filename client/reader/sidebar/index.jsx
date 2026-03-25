@@ -141,12 +141,11 @@ export class ReaderSidebar extends Component {
 		} );
 	};
 
-	handleSidebarMenuClick = ( key ) => ( event, path ) => {
-		const handler = TrackingKeys[ key ];
-		if ( handler ) {
-			recordAction( handler.action );
-			recordGaEvent( handler.gaEvent );
-			this.props.recordReaderTracksEvent( handler.tracksEvent );
+	handleSidebarMenuClick = ( metadata ) => ( event, path ) => {
+		if ( metadata ) {
+			recordAction( metadata.action );
+			recordGaEvent( metadata.gaEvent );
+			this.props.recordReaderTracksEvent( metadata.tracksEvent );
 			this.handleGlobalSidebarMenuItemClick( path );
 		}
 	};
