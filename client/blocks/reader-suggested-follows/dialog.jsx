@@ -5,7 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { SuggestedFollowItem } from 'calypso/blocks/reader-suggested-follows';
 import { READER_SUGGESTED_FOLLOWS_DIALOG } from 'calypso/reader/follow-sources';
-import { RecommendedFeedsList } from 'calypso/reader/recommended-feeds-list';
+import { ReaderSitesList } from 'calypso/reader/sites-list';
 import { useDispatch } from 'calypso/state';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { useRecommendOrRelatedSitesQuery } from './hooks/use-recommend-or-related-sites-query';
@@ -162,8 +162,8 @@ const ReaderSuggestedFollowsDialog = ( {
 										className="reader-recommended-follows-dialog__follow-item"
 										style={ { padding: 0 } }
 									>
-										<RecommendedFeedsList
-											feeds={ data }
+										<ReaderSitesList
+											sites={ data }
 											followSource="reader-recommended-follows-dialog__recommended-feeds-list"
 										/>
 									</li>

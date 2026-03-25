@@ -5,7 +5,7 @@ import { render, screen } from '@testing-library/react';
 import { ComponentProps } from 'react';
 import { FeedRecommendation } from 'calypso/data/reader/use-feed-recommendations-query';
 import { RecommendedFeedsList } from '../index';
-import { RecommendedFeedItem } from '../recommended-feed-item';
+import { RecommendedFeedItem } from '../site-item';
 
 jest.mock( '../recommended-feed-item', () => ( {
 	__esModule: true,

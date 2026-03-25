@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
-import { FeedRecommendation } from 'calypso/data/reader/use-feed-recommendations-query';
+import { ReaderSite } from 'calypso/reader/sites-list/site-item';
 import UserSites from '..';
 import useUserSitesQuery, { UserSitesResponse } from '../use-user-sites-query';
 import type { UserProfileData } from 'calypso/lib/user/user';
@@ -16,12 +16,12 @@ jest.mock( '../use-user-sites-query', () => ( {
 	default: jest.fn(),
 } ) );
 
-// Mocking RecommendedFeedsList because it uses useDispatch internally which would require a full Redux store setup.
-jest.mock( 'calypso/reader/recommended-feeds-list', () => ( {
-	RecommendedFeedsList: ( { feeds }: { feeds: FeedRecommendation[] } ) => (
-		<div data-testid="recommended-feeds-list">
-			{ feeds.map( ( feed ) => (
-				<p key={ feed.ID }>{ feed.name }</p>
+// Mocking ReaderSitesList because it uses useDispatch internally which would require a full Redux store setup.
+jest.mock( 'calypso/reader/sites-list', () => ( {
+	ReaderSitesList: ( { sites }: { sites: ReaderSite[] } ) => (
+		<div data-testid="reader-sites-list">
+			{ sites.map( ( site ) => (
+				<p key={ site.siteId }>{ site.name }</p>
 			) ) }
 		</div>
 	),
@@ -125,8 +125,8 @@ describe( 'UserSites', () => {
 
 		render( <UserSites user={ defaultUser } /> );
 
-		const feedsList = screen.getByTestId( 'recommended-feeds-list' );
-		expect( feedsList ).toBeVisible();
+		const sitesList = screen.getByTestId( 'reader-sites-list' );
+		expect( sitesList ).toBeVisible();
 		expect( screen.getByText( 'Test Site 1' ) ).toBeVisible();
 		expect( screen.getByText( 'Test Site 2' ) ).toBeVisible();
 	} );
