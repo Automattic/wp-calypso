@@ -34,7 +34,7 @@ export const ADD_SUBSCRIPTION_CONFIGS: Record< SubscriptionType, AddSubscription
 			title: translate( 'Reddit' ),
 			url: `/${ BASE_URL }/reddit`,
 			source: 'reader-add-reddit',
-			placeholder: translate( 'Search by Reddit URL' ),
+			placeholder: translate( 'Search Reddit or enter a URL' ),
 			instructions: {
 				icon: <ReaderRedditIcon iconSize={ 75 } />,
 				title: translate( 'Common Reddit URLs' ),

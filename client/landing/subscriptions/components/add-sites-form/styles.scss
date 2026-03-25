@@ -9,6 +9,58 @@
 
 	.subscriptions-add-sites__form-field {
 		flex: 1;
+		position: relative;
+	}
+
+	.subscriptions-add-sites__suggestions {
+		position: absolute;
+		top: 100%;
+		left: 0;
+		right: 0;
+		z-index: 100;
+		background: #fff;
+		border: 1px solid var(--studio-gray-10);
+		border-radius: 4px;
+		margin: 4px 0 0;
+		padding: 4px 0;
+		list-style: none;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+		li {
+			margin: 0;
+		}
+
+		button {
+			display: flex;
+			flex-direction: column;
+			width: 100%;
+			padding: 8px 12px;
+			background: none;
+			border: none;
+			cursor: pointer;
+			text-align: left;
+
+			&:hover,
+			&:focus {
+				background: var(--studio-gray-5);
+				outline: none;
+			}
+		}
+	}
+
+	.subscriptions-add-sites__suggestion-label {
+		font-size: 13px;
+		font-weight: 500;
+		color: var(--studio-gray-80);
+	}
+
+	.subscriptions-add-sites__suggestion-url {
+		font-size: 12px;
+		color: var(--studio-gray-40);
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		max-width: 100%;
 	}
 
 	.components-input-base {

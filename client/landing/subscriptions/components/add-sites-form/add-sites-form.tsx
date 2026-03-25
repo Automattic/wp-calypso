@@ -11,6 +11,11 @@ import { useRecordSiteSubscribed } from 'calypso/landing/subscriptions/tracks';
 import { isValidUrl, parseUrl } from 'calypso/lib/importer/url-validation';
 import { getUrlQuerySearchTerm, setUrlQuery, SEARCH_QUERY_PARAM } from 'calypso/reader/utils';
 
+export interface AddSitesSuggestion {
+	label: string;
+	url: string;
+}
+
 interface AddSitesFormProps {
 	placeholder?: string;
 	buttonText?: string;
@@ -31,6 +36,11 @@ interface AddSitesFormProps {
 	 * Whether to hide the input error.
 	 */
 	hideInputError?: boolean;
+	/**
+	 * Optional function to generate autocomplete suggestions based on the current input.
+	 * Return an empty array when no suggestions should be shown.
+	 */
+	getSuggestions?: ( value: string ) => AddSitesSuggestion[];
 }
 
 const AddSitesForm = ( {
@@ -43,12 +53,14 @@ const AddSitesForm = ( {
 	onChangeSubscribe,
 	hideFeedPreview = false,
 	hideInputError = false,
+	getSuggestions,
 }: AddSitesFormProps ) => {
 	const translate = useTranslate();
 	const [ inputValue, setInputValue ] = useState( '' );
 	const [ isSubmitting, setIsSubmitting ] = useState< boolean >( false );
 	const [ inputFieldError, setInputFieldError ] = useState< string | null >( null );
 	const [ isValidInput, setIsValidInput ] = useState( false );
+	const [ suggestions, setSuggestions ] = useState< AddSitesSuggestion[] >( [] );
 	const { showErrorNotice, showWarningNotice, showSuccessNotice } = useAddSitesNotices();
 	const recordSiteSubscribed = useRecordSiteSubscribed();
 
@@ -84,6 +96,12 @@ const AddSitesForm = ( {
 		setInputValue( value );
 		validateInputValue( value, showErrorOnInvalidUrl );
 		onChange?.( value );
+		setSuggestions( getSuggestions ? getSuggestions( value ) : [] );
+	}
+
+	function handleSuggestionSelect( url: string ): void {
+		setSuggestions( [] );
+		onTextFieldChange( url );
 	}
 
 	const onSubmit = ( e: React.FormEvent ) => {
@@ -144,9 +162,35 @@ const AddSitesForm = ( {
 						placeholder={ placeholder || 'https://www.site.com' }
 						value={ inputValue }
 						onChange={ onTextFieldChange }
-						onBlur={ () => validateInputValue( inputValue, true ) }
+						onBlur={ () => {
+							validateInputValue( inputValue, true );
+							setSuggestions( [] );
+						} }
 						__next40pxDefaultSize
 					/>
+
+					{ suggestions.length > 0 && (
+						<ul className="subscriptions-add-sites__suggestions" role="listbox">
+							{ suggestions.map( ( suggestion ) => (
+								<li key={ suggestion.url }>
+									<button
+										type="button"
+										role="option"
+										aria-selected={ false }
+										onMouseDown={ ( e ) => e.preventDefault() } // Prevent input blur before click fires.
+										onClick={ () => handleSuggestionSelect( suggestion.url ) }
+									>
+										<span className="subscriptions-add-sites__suggestion-label">
+											{ suggestion.label }
+										</span>
+										<span className="subscriptions-add-sites__suggestion-url">
+											{ suggestion.url }
+										</span>
+									</button>
+								</li>
+							) ) }
+						</ul>
+					) }
 
 					{ showInputError ? <FormInputValidation isError text={ inputFieldError } /> : null }
 				</div>

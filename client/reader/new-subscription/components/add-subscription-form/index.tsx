@@ -4,7 +4,10 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import Notice from 'calypso/components/notice';
-import { AddSitesForm } from 'calypso/landing/subscriptions/components/add-sites-form';
+import {
+	AddSitesForm,
+	type AddSitesSuggestion,
+} from 'calypso/landing/subscriptions/components/add-sites-form';
 import { SiteSubscriptionsList } from 'calypso/landing/subscriptions/components/site-subscriptions-list';
 import {
 	SubscriptionManagerContextProvider,
@@ -28,6 +31,7 @@ export default function AddSubscriptionForm( props: AddSubscriptionFormProps ): 
 	const [ hasFeedPreview, setHasFeedPreview ] = useState< boolean >( false );
 	const config = ADD_SUBSCRIPTION_CONFIGS[ props.type ];
 	const isAddNewTab = props.type === 'add-new';
+	const isRedditTab = props.type === 'reddit';
 	const { setSearchTerm, searchTerm } = useSiteSubscriptionsQueryProps();
 	const hasSearchTerm = searchTerm && searchTerm.length > 0;
 	const shouldShowSubscriptionsList = ! hasSearchTerm && ! hasFeedPreview;
@@ -55,6 +59,36 @@ export default function AddSubscriptionForm( props: AddSubscriptionFormProps ): 
 			setSearchTerm( value );
 		},
 		[ setSearchTerm ]
+	);
+
+	/**
+	 * Returns Reddit URL autocomplete suggestions when the user types plain text
+	 * (i.e. input that doesn't look like a URL yet). Suggestions cover the most
+	 * common Reddit RSS URL patterns so users don't have to construct them manually.
+	 */
+	const getRedditSuggestions = useCallback(
+		( value: string ): AddSitesSuggestion[] => {
+			// Only suggest when the value looks like plain text, not a URL.
+			if ( ! value || value.includes( '.' ) || value.includes( '://' ) ) {
+				return [];
+			}
+			const encoded = encodeURIComponent( value );
+			return [
+				{
+					label: translate( 'Subreddit: r/%(text)s', { args: { text: value } } ) as string,
+					url: `https://www.reddit.com/r/${ encoded }/.rss`,
+				},
+				{
+					label: translate( 'User: u/%(text)s', { args: { text: value } } ) as string,
+					url: `https://www.reddit.com/user/${ encoded }/.rss`,
+				},
+				{
+					label: translate( 'Search: %(text)s', { args: { text: value } } ) as string,
+					url: `https://www.reddit.com/search.rss?q=${ encoded }`,
+				},
+			];
+		},
+		[ translate ]
 	);
 
 	if ( ! config ) {
@@ -96,6 +130,7 @@ export default function AddSubscriptionForm( props: AddSubscriptionFormProps ): 
 						onChange={ handleChangeSearchTerm }
 						hideFeedPreview={ isAddNewTab }
 						hideInputError={ isAddNewTab }
+						getSuggestions={ isRedditTab ? getRedditSuggestions : undefined }
 					/>
 				</div>
 
