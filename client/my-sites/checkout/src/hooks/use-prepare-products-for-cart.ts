@@ -485,7 +485,21 @@ function useAddRenewalBySubscriptionId( {
 			} );
 			return;
 		}
-		const subscriptionIds = String( originalPurchaseId ).split( ',' );
+		const subscriptionIds = String( originalPurchaseId )
+			.split( ',' )
+			.map( ( id ) => id.trim() )
+			.filter( Boolean );
+		if ( subscriptionIds.length === 0 ) {
+			dispatch( {
+				type: 'RENEWALS_ADD_ERROR',
+				message: String(
+					translate( 'A valid subscription ID is required to add a renewal to the cart.', {
+						textOnly: true,
+					} )
+				),
+			} );
+			return;
+		}
 		const cartItems = subscriptionIds.map( ( subscriptionId ) =>
 			createRequestCartProduct( {
 				product_slug: '',

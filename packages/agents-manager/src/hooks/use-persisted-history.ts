@@ -4,7 +4,7 @@ import {
 	SingleRouterHistory,
 } from '@automattic/data-stores';
 import { select as storeSelect, useSelect } from '@wordpress/data';
-import { useState, useEffect, useLayoutEffect, useCallback, useMemo } from '@wordpress/element';
+import { useState, useLayoutEffect, useCallback, useMemo } from '@wordpress/element';
 import { Action, Location } from 'history';
 import { AGENTS_MANAGER_STORE } from '../stores';
 import { persistAgentsManagerState } from '../utils/persist-agents-manager-state';
@@ -154,11 +154,6 @@ function getFullRouterHistory(): PerSiteRouterHistory | undefined {
 }
 
 export const usePersistedHistory = ( siteKey: string ) => {
-	const [ history, setHistory ] = useState< MemoryHistory >( new MemoryHistory() );
-	const [ state, setState ] = useState< HistoryEvent >( {
-		action: history.action,
-		location: history.location,
-	} );
 	const { persistedHistory, lastActive } = useSelect(
 		( select ) => {
 			const store = select( AGENTS_MANAGER_STORE ) as AgentsManagerSelect;
@@ -181,6 +176,20 @@ export const usePersistedHistory = ( siteKey: string ) => {
 		return persistedHistory;
 	}, [ isStale, persistedHistory, siteKey ] );
 
+	// Build history from persisted data. Recreated when `activeHistory` changes,
+	// so `useLocation().state` (e.g., `sessionId`) is correct immediately.
+	// Safe to use `activeHistory` as dep directly because the store is only
+	// populated once from the server — local navigations don't update it.
+	const history = useMemo(
+		() => new MemoryHistory( activeHistory?.entries, activeHistory?.index ),
+		[ activeHistory ]
+	);
+
+	const [ state, setState ] = useState< HistoryEvent >( () => ( {
+		action: history.action,
+		location: history.location,
+	} ) );
+
 	// Create a persist callback that merges with existing per-site histories.
 	const persistHistory = useCallback(
 		( historyData: SingleRouterHistory ) => {
@@ -192,29 +201,12 @@ export const usePersistedHistory = ( siteKey: string ) => {
 		[ siteKey ]
 	);
 
-	// Keep persist callback in sync on the history instance.
-	useEffect( () => {
-		history.setOnPersist( persistHistory );
-	}, [ history, persistHistory ] );
-
+	// Sync `state`, persist callback, and listener when `history` instance changes.
 	useLayoutEffect( () => {
+		history.setOnPersist( persistHistory );
+		setState( { action: history.action, location: history.location } );
 		return history.listen( setState );
-	}, [ history ] );
-
-	useEffect( () => {
-		if ( ! activeHistory ) {
-			return;
-		}
-
-		const newHistory = new MemoryHistory( activeHistory.entries, activeHistory.index );
-		newHistory.setOnPersist( persistHistory );
-		setHistory( newHistory );
-
-		setState( {
-			action: newHistory.action,
-			location: newHistory.location,
-		} );
-	}, [ activeHistory, persistHistory ] );
+	}, [ history, persistHistory ] );
 
 	return { history, state };
 };

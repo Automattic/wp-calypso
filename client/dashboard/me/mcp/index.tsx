@@ -32,30 +32,30 @@ interface McpAbility {
 
 function getReadBadge( tools: Array< [ string, McpAbility ] > ) {
 	if ( tools.length === 0 ) {
-		return { text: __( 'All enabled' ), intent: 'info' as const };
+		return { text: __( 'All enabled' ), intent: 'success' as const };
 	}
 	const enabledCount = tools.filter( ( [ , tool ] ) => tool.enabled ).length;
 	if ( enabledCount === tools.length ) {
-		return { text: __( 'All enabled' ), intent: 'info' as const };
+		return { text: __( 'All enabled' ), intent: 'success' as const };
 	}
 	if ( enabledCount === 0 ) {
-		return { text: __( 'None enabled' ) };
+		return { text: __( 'None enabled' ), intent: 'warning' as const };
 	}
-	return { text: `${ enabledCount } of ${ tools.length }`, intent: 'info' as const };
+	return { text: `${ enabledCount } of ${ tools.length }` };
 }
 
 function getWriteBadge( tools: Array< [ string, McpAbility ] > ) {
 	if ( tools.length === 0 ) {
-		return { text: __( 'All enabled' ), intent: 'info' as const };
+		return { text: __( 'All enabled' ), intent: 'success' as const };
 	}
 	const enabledCount = tools.filter( ( [ , tool ] ) => tool.enabled ).length;
 	if ( enabledCount === tools.length ) {
-		return { text: __( 'All enabled' ), intent: 'info' as const };
+		return { text: __( 'All enabled' ), intent: 'success' as const };
 	}
 	if ( enabledCount === 0 ) {
 		return { text: __( 'Disabled' ) };
 	}
-	return { text: `${ enabledCount } of ${ tools.length }`, intent: 'info' as const };
+	return { text: `${ enabledCount } of ${ tools.length }` };
 }
 
 function McpComponent() {

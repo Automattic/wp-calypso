@@ -4,6 +4,7 @@
 
 - When creating forms, prefer `@wordpress/components` form controls and patterns directly, following the existing design system.
 - When adding new UI text (especially in new files or files that do not already use translations), use the `@wordpress/i18n` package for translation.
+- When wiring a new page into an existing A4A navigation structure, keep breadcrumbs aligned with the real page hierarchy: sibling pages should inherit from the shared parent breadcrumb trail, not from another sibling page.
 - When implementing non-trivial or complicated logic, add a minimal set of non-redundant tests that cover the key branches and edge cases.
 - When building tabular/list views or form workflows, prefer existing `DataViews` and `DataForm` abstractions where they fit, instead of creating bespoke implementations:
   - **DataViews** – display lists in a tabular, grid, or list format with sorting, filtering, and pagination.
