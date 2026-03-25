@@ -5,7 +5,6 @@ import { globe } from '@wordpress/icons';
 import { useAppContext } from '../../app/context';
 import useBuildCurrentRouteLink from '../../app/hooks/use-build-current-route-link';
 import Switcher from '../../components/switcher';
-import { Text } from '../../components/text';
 import type { Domain, DomainSummary } from '@automattic/api-core';
 
 import './style.scss';
@@ -35,19 +34,19 @@ export default function DomainSwitcher( { domain }: { domain: Domain } ) {
 			value={ domain }
 			searchableFields={ searchableFields }
 			getItemUrl={ ( d ) => buildCurrentRouteLink( { params: { domainName: d.domain } } ) }
-			renderItem={ ( { item, context } ) => (
-				<Switcher.Item
-					media={
-						context !== 'list' ? (
-							<Icon className="domain-icon" icon={ globe } size={ 24 } />
-						) : undefined
-					}
-					title={
-						<Text truncate numberOfLines={ 1 } style={ { color: 'inherit' } }>
-							{ item.domain }
-						</Text>
-					}
-				/>
+			renderItemMedia={ ( { context } ) =>
+				context === 'list' ? null : <Icon className="domain-icon" icon={ globe } size={ 24 } />
+			}
+			renderItemTitle={ ( { item } ) => (
+				<span
+					style={ {
+						overflow: 'hidden',
+						textOverflow: 'ellipsis',
+						whiteSpace: 'nowrap',
+					} }
+				>
+					{ item.domain }
+				</span>
 			) }
 		/>
 	);
