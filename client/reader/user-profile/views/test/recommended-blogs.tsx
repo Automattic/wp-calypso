@@ -6,6 +6,7 @@ import {
 	FeedRecommendation,
 	useFeedRecommendationsQuery,
 } from 'calypso/data/reader/use-feed-recommendations-query';
+import { ReaderSite } from 'calypso/reader/sites-list/site-item';
 import UserRecommendedBlogs from '../recommended-blogs';
 import type { UserProfileData } from 'calypso/lib/user/user';
 
@@ -13,11 +14,11 @@ jest.mock( '@automattic/components', () => ( {
 	LoadingPlaceholder: () => <div data-testid="loading-placeholder">Loading...</div>,
 } ) );
 
-jest.mock( 'calypso/reader/recommended-feeds-list', () => ( {
-	RecommendedFeedsList: ( { feeds }: { feeds: FeedRecommendation[] } ) => (
+jest.mock( 'calypso/reader/sites-list', () => ( {
+	ReaderSitesList: ( { sites }: { sites: ReaderSite[] } ) => (
 		<div>
-			{ feeds.map( ( feed ) => (
-				<p key={ feed.ID }>{ feed.name }</p>
+			{ sites.map( ( site ) => (
+				<p key={ site.siteId }>{ site.name }</p>
 			) ) }
 		</div>
 	),

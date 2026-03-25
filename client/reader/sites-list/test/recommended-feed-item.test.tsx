@@ -8,7 +8,7 @@ import ReaderFollowButton from 'calypso/reader/follow-button';
 import { successNotice } from 'calypso/state/notices/actions';
 import readerReducer from 'calypso/state/reader/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
-import { RecommendedFeedItem } from '../recommended-feed-item';
+import { RecommendedFeedItem } from '../site-item';
 
 jest.mock( 'calypso/components/data/query-reader-site', () => ( {
 	__esModule: true,
