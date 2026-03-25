@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
-import aiStar from '@automattic/components/src/icons/ai-star';
+import { BigSkyLogo } from '@automattic/components/src/logos/big-sky-logo';
 import { localizeUrl } from '@automattic/i18n-utils';
 import {
 	bell,
@@ -189,7 +189,11 @@ class MeSidebar extends Component {
 							selected={ meSectionPath.startsWith( '/me/mcp' ) }
 							link="/me/mcp"
 							label={ translate( 'AI and MCP' ) }
-							icon={ aiStar }
+							customIcon={
+								<span className="sidebar__menu-icon">
+									<BigSkyLogo.CentralLogo heartless size={ 24 } fill="currentColor" />
+								</span>
+							}
 							onNavigate={ this.onNavigate }
 							preloadSectionName="mcp"
 						/>

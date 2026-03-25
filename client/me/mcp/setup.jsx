@@ -12,7 +12,7 @@ import {
 	CardBody,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
-import { copy, check, error } from '@wordpress/icons';
+import { copy, check } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -105,19 +105,7 @@ function McpSetupComponent( { path } ) {
 			setCopyStatus( 'success' );
 			setTimeout( () => setCopyStatus( 'idle' ), 2000 );
 		} catch {
-			setCopyStatus( 'error' );
-			setTimeout( () => setCopyStatus( 'idle' ), 2000 );
-		}
-	};
-
-	const getCopyIcon = () => {
-		switch ( copyStatus ) {
-			case 'success':
-				return check;
-			case 'error':
-				return error;
-			default:
-				return copy;
+			// Silently fail — clipboard access may be blocked
 		}
 	};
 
@@ -155,7 +143,7 @@ function McpSetupComponent( { path } ) {
 									'You need to enable MCP access in the main MCP settings before configuring your client.'
 								) }
 							</Text>
-							<Button variant="primary" href="/me/mcp" style={ { alignSelf: 'flex-start' } }>
+							<Button variant="primary" href="/me/mcp" className="mcp-setup__action-button">
 								{ translate( 'Go to MCP Settings' ) }
 							</Button>
 						</VStack>
@@ -193,7 +181,7 @@ function McpSetupComponent( { path } ) {
 							<SectionHeader level={ 3 } title={ translate( 'Quick setup' ) } />
 
 							{ selectedMcpClient === 'claude' && (
-								<ol>
+								<ol className="mcp-setup__steps">
 									<li>
 										<Text as="p" size="medium">
 											{ createInterpolateElement(
@@ -229,7 +217,7 @@ function McpSetupComponent( { path } ) {
 											'Claude Code uses a different config format with type: "http". Use the CLI or copy the configuration below.'
 										) }
 									</Text>
-									<ol>
+									<ol className="mcp-setup__steps">
 										<li>
 											<Text as="p" size="medium">
 												{ createInterpolateElement(
@@ -239,7 +227,7 @@ function McpSetupComponent( { path } ) {
 													),
 													{
 														code: (
-															<code key="claude-code-cmd">
+															<code className="mcp-setup__code" key="claude-code-cmd">
 																claude mcp add --transport http wpcom-mcp
 																https://public-api.wordpress.com/wpcom/v2/mcp/v1
 															</code>
@@ -255,8 +243,16 @@ function McpSetupComponent( { path } ) {
 														'Or copy the configuration below and add it to your <mcpJson/> or <claudeJson/> file.'
 													),
 													{
-														mcpJson: <code key="mcp-json">.mcp.json</code>,
-														claudeJson: <code key="claude-json">~/.claude.json</code>,
+														mcpJson: (
+															<code className="mcp-setup__code" key="mcp-json">
+																.mcp.json
+															</code>
+														),
+														claudeJson: (
+															<code className="mcp-setup__code" key="claude-json">
+																~/.claude.json
+															</code>
+														),
 													}
 												) }
 											</Text>
@@ -268,7 +264,11 @@ function McpSetupComponent( { path } ) {
 														'In Claude Code, run <code/> to authenticate with your WordPress.com account.'
 													),
 													{
-														code: <code key="mcp-cmd">/mcp</code>,
+														code: (
+															<code className="mcp-setup__code" key="mcp-cmd">
+																/mcp
+															</code>
+														),
 													}
 												) }
 											</Text>
@@ -288,7 +288,7 @@ function McpSetupComponent( { path } ) {
 										variant="primary"
 										href="cursor://anysphere.cursor-deeplink/mcp/install?name=WordPress.com&config=eyJjb21tYW5kIjoibnB4IC15IG1jcC1yZW1vdGUgaHR0cHM6Ly9wdWJsaWMtYXBpLndvcmRwcmVzcy5jb20vd3Bjb20vdjIvbWNwL3YxIn0%3D"
 										target="_blank"
-										style={ { alignSelf: 'flex-start' } }
+										className="mcp-setup__action-button"
 									>
 										{ translate( 'Install in Cursor' ) }
 									</Button>
@@ -305,12 +305,9 @@ function McpSetupComponent( { path } ) {
 						<HStack justify="space-between" alignment="center">
 							<SectionHeader level={ 3 } title={ translate( 'Manual setup' ) } />
 							<Button
-								icon={ getCopyIcon() }
+								icon={ copyStatus === 'success' ? check : copy }
 								variant="tertiary"
 								iconSize={ 20 }
-								style={ {
-									color: copyStatus === 'error' ? 'var(--color-error)' : undefined,
-								} }
 								onClick={ copyToClipboard }
 								aria-label={ translate( 'Copy configuration to clipboard' ) }
 							/>

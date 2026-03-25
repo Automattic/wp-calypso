@@ -157,17 +157,21 @@ body.is-section-me div.layout.is-global-sidebar-visible .layout__primary .main.m
 		}
 	}
 
-	ol {
+	.mcp-setup__steps {
 		padding-inline-start: 20px;
 		margin: 0;
 	}
 
-	code {
+	.mcp-setup__code {
 		background-color: #f0f0f1;
 		padding: 2px 6px;
 		border-radius: 3px;
 		font-family: monospace;
 		font-size: 13px;
+	}
+
+	.mcp-setup__action-button {
+		align-self: flex-start;
 	}
 
 	.components-textarea-control__input[readonly] {

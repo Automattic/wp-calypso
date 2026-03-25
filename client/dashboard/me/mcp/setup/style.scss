@@ -1,19 +1,21 @@
-.mcp-setup {
-	ol {
-		color: #757575;
-		padding-inline-start: 20px;
-		margin: 0;
-	}
+.mcp-setup__steps {
+	color: #757575;
+	padding-inline-start: 20px;
+	margin: 0;
+}
 
-	code {
-		background-color: #f0f0f1;
-		padding: 2px 6px;
-		border-radius: 3px;
-		font-family: monospace;
-		font-size: 13px;
-	}
+.mcp-setup__code {
+	background-color: #f0f0f1;
+	padding: 2px 6px;
+	border-radius: 3px;
+	font-family: monospace;
+	font-size: 13px;
+}
 
-	.components-textarea-control__input[readonly] {
-		min-height: 160px;
-	}
+.mcp-setup__action-button {
+	align-self: flex-start;
+}
+
+.mcp-setup__config-textarea .components-textarea-control__input {
+	min-height: 160px;
 }
