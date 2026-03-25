@@ -150,6 +150,7 @@ function McpSetupComponent() {
 
 	return (
 		<PageLayout
+			className="mcp-setup"
 			size="small"
 			header={
 				<PageHeader
@@ -183,13 +184,7 @@ function McpSetupComponent() {
 								<SectionHeader level={ 3 } title={ __( 'Quick setup' ) } />
 								{ /* Quick Setup for Claude */ }
 								{ selectedMcpClient === 'claude' && (
-									<ol
-										style={ {
-											color: '#757575',
-											paddingInlineStart: '20px',
-											margin: '0',
-										} }
-									>
+									<ol>
 										<li>
 											<Text as="p" variant="muted">
 												{ createInterpolateElement(
@@ -226,13 +221,7 @@ function McpSetupComponent() {
 												'Claude Code uses a different config format with type: "http". Use the CLI or copy the configuration below.'
 											) }
 										</Text>
-										<ol
-											style={ {
-												color: '#757575',
-												paddingInlineStart: '20px',
-												margin: '0',
-											} }
-										>
+										<ol>
 											<li>
 												<Text as="p" variant="muted">
 													{ createInterpolateElement(
@@ -243,16 +232,7 @@ function McpSetupComponent() {
 														),
 														{
 															code: (
-																<code
-																	key="claude-code-cmd"
-																	style={ {
-																		backgroundColor: '#f0f0f1',
-																		padding: '2px 6px',
-																		borderRadius: '3px',
-																		fontFamily: 'monospace',
-																		fontSize: '13px',
-																	} }
-																>
+																<code key="claude-code-cmd">
 																	claude mcp add --transport http wpcom-mcp
 																	https://public-api.wordpress.com/wpcom/v2/mcp/v1
 																</code>
@@ -268,34 +248,8 @@ function McpSetupComponent() {
 															'Or copy the configuration below and add it to your <mcpJson/> or <claudeJson/> file.'
 														),
 														{
-															mcpJson: (
-																<code
-																	key="mcp-json"
-																	style={ {
-																		backgroundColor: '#f0f0f1',
-																		padding: '2px 6px',
-																		borderRadius: '3px',
-																		fontFamily: 'monospace',
-																		fontSize: '13px',
-																	} }
-																>
-																	.mcp.json
-																</code>
-															),
-															claudeJson: (
-																<code
-																	key="claude-json"
-																	style={ {
-																		backgroundColor: '#f0f0f1',
-																		padding: '2px 6px',
-																		borderRadius: '3px',
-																		fontFamily: 'monospace',
-																		fontSize: '13px',
-																	} }
-																>
-																	~/.claude.json
-																</code>
-															),
+															mcpJson: <code key="mcp-json">.mcp.json</code>,
+															claudeJson: <code key="claude-json">~/.claude.json</code>,
 														}
 													) }
 												</Text>
@@ -307,20 +261,7 @@ function McpSetupComponent() {
 															'In Claude Code, run <code/> to authenticate with your WordPress.com account.'
 														),
 														{
-															code: (
-																<code
-																	key="mcp-cmd"
-																	style={ {
-																		backgroundColor: '#f0f0f1',
-																		padding: '2px 6px',
-																		borderRadius: '3px',
-																		fontFamily: 'monospace',
-																		fontSize: '13px',
-																	} }
-																>
-																	/mcp
-																</code>
-															),
+															code: <code key="mcp-cmd">/mcp</code>,
 														}
 													) }
 												</Text>
@@ -376,7 +317,6 @@ function McpSetupComponent() {
 								value={ JSON.stringify( generateMcpConfig( selectedMcpClient ), null, 2 ) }
 								onChange={ () => {} }
 								readOnly
-								style={ { minHeight: '160px' } }
 							/>
 							{ clientDocumentation[ selectedMcpClient ] && (
 								<ExternalLink href={ clientDocumentation[ selectedMcpClient ] }>

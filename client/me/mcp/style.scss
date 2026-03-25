@@ -145,6 +145,36 @@ body.is-section-me div.layout.is-global-sidebar-visible .layout__primary .main.m
 	margin-bottom: 0;
 }
 
+// Setup page — flat cards, ordered lists, code blocks
+.mcp-setup {
+	.components-card,
+	.components-surface.components-card {
+		border-radius: 0;
+		margin-top: 24px;
+
+		&:first-of-type {
+			margin-top: 0;
+		}
+	}
+
+	ol {
+		padding-inline-start: 20px;
+		margin: 0;
+	}
+
+	code {
+		background-color: #f0f0f1;
+		padding: 2px 6px;
+		border-radius: 3px;
+		font-family: monospace;
+		font-size: 13px;
+	}
+
+	.components-textarea-control__input[readonly] {
+		min-height: 160px;
+	}
+}
+
 // Site exceptions — flat `@wordpress/components` Cards only (same as hub / tools subpages)
 .mcp-sites {
 	min-width: 0;
