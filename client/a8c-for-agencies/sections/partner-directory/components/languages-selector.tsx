@@ -1,6 +1,7 @@
 import { TokenItem } from '@wordpress/components/build-types/form-token-field/types';
+import { useMemo } from 'react';
 import FormTokenFieldWrapper from './form-token-field-wrapper';
-import { useFormSelectors } from './hooks/use-form-selectors';
+import { reverseMap, useFormSelectors } from './hooks/use-form-selectors';
 
 type Props = {
 	setLanguages: ( tokens: ( string | TokenItem )[] ) => void;
@@ -9,23 +10,27 @@ type Props = {
 
 const LanguagesSelector = ( { setLanguages, selectedLanguages = [] }: Props ) => {
 	const { availableLanguages } = useFormSelectors();
+	const languagesByLabel = useMemo(
+		() => reverseMap( availableLanguages ),
+		[ availableLanguages ]
+	);
 
-	// It converts the values selected into their keys
-	const setLanguagesByCode = ( codes: ( string | TokenItem )[] ) => {
-		const selectedLanguagesByCode = codes.filter( ( code ) => {
-			return Object.keys( availableLanguages ).find(
-				( key: string ) => availableLanguages?.[ key ] === code
-			);
-		} );
+	const selectedLanguageLabels = selectedLanguages.flatMap( ( code ) => {
+		const label = availableLanguages[ code ];
+		return label ? [ label ] : [];
+	} );
 
-		setLanguages( selectedLanguagesByCode );
+	const setLanguagesByCode = ( labels: ( string | TokenItem )[] ) => {
+		setLanguages(
+			labels.map( ( label ) => languagesByLabel[ label as string ] ).filter( Boolean )
+		);
 	};
 
 	return (
 		<FormTokenFieldWrapper
 			onChange={ setLanguagesByCode }
 			suggestions={ Object.values( availableLanguages ) }
-			value={ selectedLanguages }
+			value={ selectedLanguageLabels }
 		/>
 	);
 };
