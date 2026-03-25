@@ -1,4 +1,3 @@
-import { Spinner } from '@wordpress/components';
 import './style.scss';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import useUserSitesQuery from 'calypso/reader/user-profile/queries/use-user-sites-query';
@@ -16,14 +15,14 @@ export default function UserSitesPills( {
 
 	if ( isFetching ) {
 		return (
-			<div className="wp-spinner-wrapper">
-				<Spinner />
+			<div className="user-sites-pills">
+				<span className="skeleton" /> <span className="skeleton" /> <span className="skeleton" />
 			</div>
 		);
 	}
 
 	if ( error?.message || ! data?.sites?.length ) {
-		return null; // Toast notification is handled by query function.
+		return null; // Toast notification appears in case of error.
 	}
 
 	const sitesCount = data.sites.length;
