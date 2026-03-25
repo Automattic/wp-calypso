@@ -11,6 +11,12 @@ interface AgentConfig {
  * Resolves agent ID and version from URL parameters or defaults.
  * `isLoading` is true until the default agent ID is determined.
  *
+ * Priority chain:
+ * 1. `?agent=` URL param (testing override)
+ * 2. `agentsManagerData.agentId` (host-level override, e.g., WooCommerce AI)
+ * 3. Unified experience toggle (`useUnifiedAiChat`)
+ * 4. `ORCHESTRATOR_AGENT_ID` (default)
+ *
  * Query parameters:
  * - `agent`: Override the agent ID (e.g., `?agent=wpcom-workflow-support_chat`)
  * - `version`: Override the agent version (e.g., `?version=1.0.25`)
@@ -21,7 +27,10 @@ export function useAgentConfig(): AgentConfig {
 	const agentIdParam = urlSearchParams.get( 'agent' );
 	const versionParam = urlSearchParams.get( 'version' );
 
-	const defaultAgentId = useUnifiedExperience ? UNIFIED_CHAT_AGENT_ID : ORCHESTRATOR_AGENT_ID;
+	const inlineAgentId =
+		typeof agentsManagerData !== 'undefined' ? agentsManagerData?.agentId : undefined;
+	const defaultAgentId =
+		inlineAgentId || ( useUnifiedExperience ? UNIFIED_CHAT_AGENT_ID : ORCHESTRATOR_AGENT_ID );
 
 	return {
 		agentId: agentIdParam || defaultAgentId,
