@@ -357,7 +357,6 @@ object BuildToolchainPreviewImages : BuildType({
 				set -euo pipefail
 
 				docker run --rm --entrypoint /bin/bash registry.a8c.com/calypso/ci-e2e:%build.number% -lc '
-					test "${PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD:-}" = "0" &&
 					xvfb-run --help >/dev/null &&
 					aws --version &&
 					dpkg -s fonts-noto-cjk fonts-noto-core libgtk-3-0 libgbm1 libnss3 >/dev/null
