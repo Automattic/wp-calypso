@@ -32,7 +32,11 @@ const CancelPurchaseFeatureList = ( {
 	const expirationDate = intlFormat( expiryDate, { dateStyle: 'medium' }, { locale: 'en-US' } );
 
 	const introCopy = ( () => {
-		if ( getPurchaseCancellationFlowType( purchase ) === CANCEL_FLOW_TYPE.REMOVE ) {
+		const flowType = getPurchaseCancellationFlowType( purchase );
+		if (
+			flowType === CANCEL_FLOW_TYPE.REMOVE ||
+			flowType === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND
+		) {
 			return __( 'When you remove your plan, you will lose access to:' );
 		}
 		return sprintf(

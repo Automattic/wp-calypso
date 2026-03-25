@@ -2,7 +2,7 @@ import { useRouterState } from '@tanstack/react-router';
 import { __experimentalHStack as HStack, Navigator } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { brush, copy, envelope, globe, plugins } from '@wordpress/icons';
-import { useMemo } from 'react';
+import { useRef } from 'react';
 import RouterLinkButton from '../../components/router-link-button';
 import { SidebarExpandableMenuItem, SidebarMenu, SidebarMenuItem } from '../../components/sidebar';
 import DomainSidebar from '../../domains/domain-sidebar';
@@ -28,7 +28,7 @@ export default function Sidebar() {
 		} ),
 	} );
 	const screenPath = getScreenPath( resolvedPathname, hasError );
-	const initialPath = useMemo( () => screenPath, [] ); // eslint-disable-line react-hooks/exhaustive-deps
+	const initialPath = useRef( screenPath ).current;
 
 	return (
 		<div className="dashboard-responsive-sidebar__sidebar">

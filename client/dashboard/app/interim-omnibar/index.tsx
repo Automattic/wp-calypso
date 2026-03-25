@@ -14,11 +14,6 @@ export default async function loadOmnibar() {
 		queryClient.fetchQuery( { queryKey: AUTH_QUERY_KEY, queryFn: fetchUser } ),
 	] );
 
-	const wpcom = document.getElementById( 'wpcom' );
-	if ( wpcom ) {
-		wpcom.style.marginTop = 'var(--masterbar-height, 47px)';
-	}
-
 	// Hydrate the server-rendered omnibar with null props first to match SSR output,
 	// then immediately re-render with real data.
 	const root = hydrateRoot( container, <InterimOmnibar user={ null } site={ null } /> );
