@@ -11,7 +11,12 @@ import DocumentHead from 'calypso/components/data/document-head';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { navigate } from 'calypso/lib/navigate';
-import { getCiabConfigFromGarden, type CiabPartnerConfig } from 'calypso/lib/partner-branding';
+import {
+	detectCiabConfig,
+	getCiabConfigFromGarden,
+	getPartnerFormattedWindowTitle,
+	type CiabPartnerConfig,
+} from 'calypso/lib/partner-branding';
 import { login } from 'calypso/lib/paths';
 import { getRedirectAfterAccept } from 'calypso/my-sites/invites/utils';
 import { useDispatch } from 'calypso/state';
@@ -164,6 +169,7 @@ export function AcceptInviteScreen( { invite }: AcceptInviteScreenProps ) {
 
 	// Get branding from blog_details garden info
 	const branding = getBrandingFromBlogDetails( invite?.blog_details );
+	const titleBranding = branding ?? detectCiabConfig();
 	const gardenName = invite?.blog_details?.garden?.name || null;
 	const gardenPartner = invite?.blog_details?.garden?.partner || null;
 
@@ -251,6 +257,7 @@ export function AcceptInviteScreen( { invite }: AcceptInviteScreenProps ) {
 				inviteSentTo={ inviteSentTo }
 				isKnownUser={ isKnownUser }
 				topBarLogo={ topBarLogo }
+				ciabConfig={ titleBranding }
 				trackingProps={ trackingProps }
 			/>
 		);
@@ -258,7 +265,13 @@ export function AcceptInviteScreen( { invite }: AcceptInviteScreenProps ) {
 
 	return (
 		<>
-			<DocumentHead title={ translate( 'Accept Invite', { textOnly: true } ) } />
+			<DocumentHead
+				title={ getPartnerFormattedWindowTitle(
+					translate( 'Accept Invite', { textOnly: true } ),
+					titleBranding
+				) }
+				skipTitleFormatting
+			/>
 			<BodySectionCssClass
 				bodyClass={ [
 					'is-section-accept-invite-unified',

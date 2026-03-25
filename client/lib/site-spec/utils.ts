@@ -200,7 +200,7 @@ export function getCiabSiteSpecConfig(): SiteSpecConfig {
 	return {
 		buildSiteUrl: '/setup/ai-site-builder/?create_garden_site=1&trigger_backend_build=0&spec_id=',
 		backButton: {
-			enabled: ref === 'new-site-popover',
+			enabled: ref === 'new-site-popover' || ref === 'start-store',
 			url: '/sites',
 		},
 		exitButton: {
