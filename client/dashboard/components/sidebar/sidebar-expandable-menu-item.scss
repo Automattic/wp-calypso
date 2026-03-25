@@ -4,15 +4,15 @@
 
 .dashboard-sidebar__expandable-panel {
 	interpolate-size: allow-keywords;
-	height: 0;
+	block-size: 0;
 	overflow: hidden;
 	opacity: 0;
 	transition:
-	height 0.2s ease-out,
-	opacity 0.2s ease-out;
+		block-size 0.2s ease-out,
+		opacity 0.2s ease-out;
 
 	&.is-open {
-		height: auto;
+		block-size: auto;
 		opacity: 1;
 	}
 }

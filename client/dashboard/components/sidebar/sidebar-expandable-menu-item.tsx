@@ -70,6 +70,7 @@ export function SidebarExpandableMenuItem( {
 				className={ clsx( 'dashboard-sidebar__expandable-panel', {
 					'is-open': isOpen,
 				} ) }
+				inert={ ! isOpen ? true : undefined }
 			>
 				<VStack id={ panelId } spacing={ 1 }>
 					{ Children.map( children, ( child ) => {
