@@ -17,6 +17,7 @@ const RadioButtonWrapper = styled.div<
 >`
 	position: relative;
 	display: ${ ( props ) => ( props.hidden ? 'none' : 'block' ) };
+	border-radius: 3px;
 	box-sizing: border-box;
 	width: 100%;
 	outline: ${ getOutline };
