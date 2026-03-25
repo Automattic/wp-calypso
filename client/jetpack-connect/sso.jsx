@@ -19,14 +19,17 @@ import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { decodeEntities } from 'calypso/lib/formatting';
+import { detectPartnerConfig } from 'calypso/lib/partner-branding';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { validateSSONonce, authorizeSSO } from 'calypso/state/jetpack-connect/actions';
 import { getSSO } from 'calypso/state/jetpack-connect/selectors';
+import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import HelpButton from './help-button';
 import MainWrapper from './main-wrapper';
 import { persistSsoApproved } from './persistence-utils';
+import SsoPartnerBranded from './sso-partner-branded';
 
 /*
  * Module variables
@@ -60,6 +63,10 @@ class JetpackSsoForm extends Component {
 
 	onApproveSSO = ( event ) => {
 		event.preventDefault();
+		this.onApproveSsoBranded();
+	};
+
+	onApproveSsoBranded = () => {
 		recordTracksEvent( 'calypso_jetpack_sso_log_in_button_click' );
 
 		const { siteId, ssoNonce } = this.props;
@@ -69,6 +76,25 @@ class JetpackSsoForm extends Component {
 
 		debug( 'Approving sso' );
 		this.props.authorizeSSO( siteId, ssoNonce, siteUrl );
+	};
+
+	onClickReturnToSiteBranded = () => {
+		debug( 'Clicked return to site link' );
+		recordTracksEvent( 'calypso_jetpack_sso_return_to_site_link_click' );
+
+		const adminUrl = get( this.props, 'blogDetails.admin_url' );
+		if ( adminUrl ) {
+			window.location.href = adminUrl;
+			return;
+		}
+
+		recordTracksEvent( 'calypso_jetpack_sso_admin_url_fallback_redirect' );
+		window.history.back();
+	};
+
+	onClickSignInDifferentUserBranded = () => {
+		recordTracksEvent( 'calypso_jetpack_sso_sign_in_different_user_link_click' );
+		window.location.href = this.getSignInLink();
 	};
 
 	onCancelClick = ( event ) => {
@@ -120,7 +146,7 @@ class JetpackSsoForm extends Component {
 			isValidating ||
 			ssoUrl ||
 			authorizationError ||
-			! currentUser.email_verified
+			! currentUser?.email_verified
 		);
 	}
 
@@ -390,11 +416,42 @@ class JetpackSsoForm extends Component {
 	}
 
 	render() {
-		const { currentUser } = this.props;
+		const { currentUser, partnerConfig } = this.props;
 		const { ssoNonce, siteId, validationError, translate } = this.props;
+		const isEmailVerificationBlocked = ! currentUser?.email_verified;
 
 		if ( ! ssoNonce || ! siteId || validationError ) {
 			return this.renderBadPathArgsError();
+		}
+
+		if ( partnerConfig ) {
+			return (
+				<MainWrapper>
+					<div className="jetpack-connect__sso">
+						<SsoPartnerBranded
+							partnerConfig={ partnerConfig }
+							title={ translate( 'Connect with WordPress.com' ) }
+							subtitle={ this.getSubHeaderText() }
+							currentUser={ currentUser }
+							errorNotice={ currentUser?.email_verified ? this.maybeRenderErrorNotice() : null }
+							isEmailVerificationBlocked={ isEmailVerificationBlocked }
+							emailVerificationNoticeText={ translate(
+								'You must verify your email to sign in with WordPress.com.'
+							) }
+							isPrimaryDisabled={ this.isButtonDisabled() }
+							isPrimaryLoading={ this.props.isAuthorizing }
+							onApproveClick={ this.onApproveSsoBranded }
+							onReturnToSiteClick={ this.onClickReturnToSiteBranded }
+							onSignInDifferentUserClick={ this.onClickSignInDifferentUserBranded }
+							approveLabel={ translate( 'Log in' ) }
+							signInDifferentUserLabel={ translate( 'Sign in as a different user' ) }
+							returnToSiteLabel={ this.getReturnToSiteText() }
+						/>
+					</div>
+
+					{ this.renderSharedDetailsDialog() }
+				</MainWrapper>
+			);
 		}
 
 		return (
@@ -466,6 +523,7 @@ class JetpackSsoForm extends Component {
 const connectComponent = connect(
 	( state ) => {
 		const jetpackSSO = getSSO( state );
+		const oauth2Client = getCurrentOAuth2Client( state );
 		return {
 			ssoUrl: get( jetpackSSO, 'ssoUrl' ),
 			isAuthorizing: get( jetpackSSO, 'isAuthorizing' ),
@@ -476,6 +534,7 @@ const connectComponent = connect(
 			blogDetails: get( jetpackSSO, 'blogDetails' ),
 			sharedDetails: get( jetpackSSO, 'sharedDetails' ),
 			currentUser: getCurrentUser( state ),
+			partnerConfig: detectPartnerConfig( oauth2Client ),
 		};
 	},
 	{

@@ -773,6 +773,34 @@ $colophon-height: 50px;
 	word-break: break-word;
 }
 
+.jetpack-connect__sso-partner-branded {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+}
+
+.jetpack-connect__sso-partner-branded-logged-in {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.jetpack-connect__sso-partner-branded-email-notice {
+	margin: 0;
+}
+
+.jetpack-connect__sso-partner-branded-user-card {
+	margin: 0;
+}
+
+.jetpack-connect__sso-partner-branded-actions {
+	margin-top: 8px;
+}
+
+.jetpack-connect__sso-partner-branded-logged-out-placeholder {
+	min-height: 120px;
+}
+
 .jetpack-connect__error-details {
 	margin-bottom: 16px;
 }
