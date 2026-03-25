@@ -96,20 +96,26 @@ function PrimaryMenuSidebar() {
 			) }
 			{ supports.plugins && (
 				<SidebarExpandableMenuItem label={ __( 'Plugins' ) } icon={ plugins } to="/plugins">
-					<SidebarMenuItem to="/plugins/manage">{ __( 'Manage plugins' ) }</SidebarMenuItem>
-					<SidebarMenuItem to="/plugins/scheduled-updates">
-						{ __( 'Scheduled updates' ) }
-					</SidebarMenuItem>
-					<SidebarMenuItem
-						href={ wpcomLink( '/plugins' ) }
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						<HStack justify="flex-start" spacing={ 1 }>
-							<span>{ __( 'Browse plugins' ) }</span>
-							<span aria-label={ __( '(opens in a new tab)' ) }>&#8599;</span>
-						</HStack>
-					</SidebarMenuItem>
+					{ ( dotIcon ) => (
+						<>
+							<SidebarMenuItem icon={ dotIcon } to="/plugins/manage">
+								{ __( 'Manage plugins' ) }
+							</SidebarMenuItem>
+							<SidebarMenuItem icon={ dotIcon } to="/plugins/scheduled-updates">
+								{ __( 'Scheduled updates' ) }
+							</SidebarMenuItem>
+							<SidebarMenuItem
+								href={ wpcomLink( '/plugins' ) }
+								target="_blank"
+								rel="noopener noreferrer"
+							>
+								<HStack justify="flex-start" spacing={ 1 }>
+									<span>{ __( 'Browse plugins' ) }</span>
+									<span aria-label={ __( '(opens in a new tab)' ) }>&#8599;</span>
+								</HStack>
+							</SidebarMenuItem>
+						</>
+					) }
 				</SidebarExpandableMenuItem>
 			) }
 			{ supports.themes && (

@@ -140,15 +140,19 @@ function SiteMenuSidebar( { site }: { site: Site } ) {
 					icon={ formatListBullets }
 					to={ `/sites/${ siteSlug }/logs` }
 				>
-					<SidebarMenuItem to={ `/sites/${ siteSlug }/logs/activity` }>
-						{ __( 'Activity' ) }
-					</SidebarMenuItem>
-					<SidebarMenuItem to={ `/sites/${ siteSlug }/logs/php` }>
-						{ __( 'PHP errors' ) }
-					</SidebarMenuItem>
-					<SidebarMenuItem to={ `/sites/${ siteSlug }/logs/server` }>
-						{ __( 'Web server' ) }
-					</SidebarMenuItem>
+					{ ( dotIcon ) => (
+						<>
+							<SidebarMenuItem icon={ dotIcon } to={ `/sites/${ siteSlug }/logs/activity` }>
+								{ __( 'Activity' ) }
+							</SidebarMenuItem>
+							<SidebarMenuItem icon={ dotIcon } to={ `/sites/${ siteSlug }/logs/php` }>
+								{ __( 'PHP errors' ) }
+							</SidebarMenuItem>
+							<SidebarMenuItem icon={ dotIcon } to={ `/sites/${ siteSlug }/logs/server` }>
+								{ __( 'Web server' ) }
+							</SidebarMenuItem>
+						</>
+					) }
 				</SidebarExpandableMenuItem>
 			) }
 			{ isAvailable( siteScanRoute ) &&
@@ -159,12 +163,16 @@ function SiteMenuSidebar( { site }: { site: Site } ) {
 						icon={ shield }
 						to={ `/sites/${ siteSlug }/scan` }
 					>
-						<SidebarMenuItem to={ `/sites/${ siteSlug }/scan/active` }>
-							{ __( 'Active threats' ) }
-						</SidebarMenuItem>
-						<SidebarMenuItem to={ `/sites/${ siteSlug }/scan/history` }>
-							{ __( 'History' ) }
-						</SidebarMenuItem>
+						{ ( dotIcon ) => (
+							<>
+								<SidebarMenuItem icon={ dotIcon } to={ `/sites/${ siteSlug }/scan/active` }>
+									{ __( 'Active threats' ) }
+								</SidebarMenuItem>
+								<SidebarMenuItem icon={ dotIcon } to={ `/sites/${ siteSlug }/scan/history` }>
+									{ __( 'History' ) }
+								</SidebarMenuItem>
+							</>
+						) }
 					</SidebarExpandableMenuItem>
 				) : (
 					<SidebarMenuItem icon={ shield } to={ `/sites/${ siteSlug }/scan` }>
