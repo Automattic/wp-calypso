@@ -1,6 +1,18 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/components/src/styles/typography";
 @import "@wordpress/base-styles/mixins";
+@import "calypso/components/jetpack-page-layout/admin-ui-page";
+
+body.is-section-earn {
+	@include admin-ui-page-layout;
+
+	// Override the default 660px max-width — Monetize content needs more room
+	.admin-ui-page__content {
+		> * {
+			max-width: none;
+		}
+	}
+}
 
 #earn-navigation {
 	margin-bottom: 30px;
