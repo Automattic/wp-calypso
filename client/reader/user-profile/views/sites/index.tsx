@@ -5,6 +5,7 @@ import EmptyContent from 'calypso/components/empty-content';
 import { UserProfileData } from 'calypso/lib/user/user';
 import { ReaderSitesList } from 'calypso/reader/sites-list';
 import { ReaderSite } from 'calypso/reader/sites-list/site-item';
+import useUserSitesQuery from 'calypso/reader/user-profile/queries/use-user-sites-query';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
