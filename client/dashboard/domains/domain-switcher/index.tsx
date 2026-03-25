@@ -43,7 +43,7 @@ export default function DomainSwitcher( { domain }: { domain: Domain } ) {
 						) : undefined
 					}
 					title={
-						<Text truncate numberOfLines={ 1 }>
+						<Text truncate numberOfLines={ 1 } style={ { color: 'inherit' } }>
 							{ item.domain }
 						</Text>
 					}
