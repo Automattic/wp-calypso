@@ -12,31 +12,11 @@ import SiteSidebar from '../../sites/site-sidebar';
 import { wpcomLink } from '../../utils/link';
 import { useAnalytics } from '../analytics';
 import { useAppContext } from '../context';
-import { getScreenPath } from './navigator-route-sync';
 import SidebarScreen from './sidebar-screen';
+import { getSidebarState } from './sidebar-state';
 
 import './sidebar.scss';
 import './sidebar-screen.scss';
-
-type ScreenId = 'root' | 'site' | 'domain' | 'me';
-
-function getScreenId( screenPath: string ): ScreenId {
-	if ( screenPath.startsWith( '/sites/' ) ) {
-		return 'site';
-	}
-	if ( screenPath.startsWith( '/domains/' ) ) {
-		return 'domain';
-	}
-	if ( screenPath.startsWith( '/me' ) ) {
-		return 'me';
-	}
-	return 'root';
-}
-
-function extractParam( screenPath: string ): string | undefined {
-	const parts = screenPath.split( '/' );
-	return parts[ 2 ] || undefined;
-}
 
 export default function Sidebar() {
 	const { Logo, name } = useAppContext();
@@ -49,8 +29,7 @@ export default function Sidebar() {
 			),
 		} ),
 	} );
-	const screenPath = getScreenPath( resolvedPathname, hasError );
-	const currentScreen = getScreenId( screenPath );
+	const { screen: currentScreen, param } = getSidebarState( resolvedPathname, hasError );
 	const previousScreenRef = useRef( currentScreen );
 	const isInitialRender = useRef( true );
 
@@ -94,7 +73,7 @@ export default function Sidebar() {
 					isBack={ isBack }
 					skipAnimation={ skipAnimation }
 				>
-					<SiteSidebar siteSlug={ extractParam( screenPath ) } />
+					<SiteSidebar siteSlug={ param } />
 				</SidebarScreen>
 
 				<SidebarScreen
@@ -102,7 +81,7 @@ export default function Sidebar() {
 					isBack={ isBack }
 					skipAnimation={ skipAnimation }
 				>
-					<DomainSidebar domainName={ extractParam( screenPath ) } />
+					<DomainSidebar domainName={ param } />
 				</SidebarScreen>
 
 				<SidebarScreen
