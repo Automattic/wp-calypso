@@ -395,10 +395,16 @@ export function requestPage( action ) {
 		number = gap ? PER_GAP : fetchCount;
 	}
 
-	// Set lang to the localeSlug if it is provided, otherwise use the default locale
+	// Set lang to the localeSlug if it is provided, otherwise use the browser's full ranked
+	// language list (equivalent to the Accept-Language header) so multilingual users see
+	// content in all their preferred languages without changing any setting.
 	// There is a race condition in switchLocale when retrieving the language file
 	// The stream request can occur before the language file is loaded, so we need a way to explicitly set the lang in the request
-	const lang = localeSlug || i18n.getLocaleSlug();
+	const acceptLanguages =
+		typeof navigator !== 'undefined' && navigator.languages?.length
+			? navigator.languages.join( ',' )
+			: null;
+	const lang = localeSlug || acceptLanguages || i18n.getLocaleSlug();
 	const commonQueryParams = { ...algorithm, feed_id: feedId };
 
 	return http( {
