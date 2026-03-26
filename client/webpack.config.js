@@ -62,7 +62,7 @@ const shouldUsePersistentCache = process.env.PERSISTENT_CACHE === 'true';
 // a minute in the current build, an updated cache saves 2 minutes in many future builds.
 // Note that in local builds, IS_DEFAULT_BRANCH is not set, in which case we should also write to the cache.
 const shouldUseReadonlyCache = ! (
-	process.env.GENERATE_CACHE_IMAGE === 'true' || process.env.IS_DEFAULT_BRANCH === undefined
+	process.env.UPDATE_CACHE_SEED === 'true' || process.env.IS_DEFAULT_BRANCH === undefined
 );
 
 const shouldProfile = process.env.PROFILE === 'true';
