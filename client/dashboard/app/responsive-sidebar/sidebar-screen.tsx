@@ -1,89 +1,96 @@
+import {
+	// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
+	__unstableMotion as motion,
+} from '@wordpress/components';
 import { useReducedMotion } from '@wordpress/compose';
-import clsx from 'clsx';
-import { useEffect, useLayoutEffect, useCallback, useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 
-type AnimationStatus = 'INITIAL' | 'ANIMATING_IN' | 'IN' | 'ANIMATING_OUT' | 'OUT';
+const SLIDE_DISTANCE = 100;
 
-const ANIMATION_DURATION = 450;
-const ANIMATION_TIMEOUT_MARGIN = 1.2;
+const transition = {
+	x: { duration: 0.3, ease: [ 0.33, 0, 0, 1 ] as number[] },
+	opacity: { duration: 0.15 },
+};
+
+interface ExitingScreen {
+	key: string;
+	content: React.ReactNode;
+	exitX: number;
+}
 
 /**
- * A sidebar screen that animates in and out based on whether it's active.
- * Replaces `Navigator.Screen` without depending on `@wordpress/components` Navigator.
+ * Animates sidebar screen transitions with slide + fade.
+ *
+ * Keeps a snapshot of the previous screen so it can animate out while
+ * the new screen slides in. Uses `animate` (not `initial`) to drive
+ * the enter animation so it works regardless of React render timing.
  */
-export default function SidebarScreen( {
-	isActive,
+export default function SidebarScreenTransition( {
+	screenKey,
 	isBack,
-	skipAnimation,
 	children,
 }: {
-	isActive: boolean;
+	screenKey: string;
 	isBack: boolean;
-	skipAnimation: boolean;
 	children: React.ReactNode;
 } ) {
 	const prefersReducedMotion = useReducedMotion();
-	const [ animationStatus, setAnimationStatus ] = useState< AnimationStatus >( 'INITIAL' );
+	const prevKeyRef = useRef( screenKey );
+	const prevChildrenRef = useRef< React.ReactNode >( children );
+	const [ exiting, setExiting ] = useState< ExitingScreen | null >( null );
 
-	const becameSelected = animationStatus !== 'ANIMATING_IN' && animationStatus !== 'IN' && isActive;
-	const becameUnselected =
-		animationStatus !== 'ANIMATING_OUT' && animationStatus !== 'OUT' && ! isActive;
+	// The enter position: start offset, then animate to center.
+	// `null` means no transition needed (initial render or same screen).
+	const [ enterX, setEnterX ] = useState< number | null >( null );
 
 	useLayoutEffect( () => {
-		if ( becameSelected ) {
-			setAnimationStatus( skipAnimation || prefersReducedMotion ? 'IN' : 'ANIMATING_IN' );
-		} else if ( becameUnselected ) {
-			setAnimationStatus( skipAnimation || prefersReducedMotion ? 'OUT' : 'ANIMATING_OUT' );
+		if ( screenKey !== prevKeyRef.current && ! prefersReducedMotion ) {
+			// Snapshot previous screen for exit.
+			setExiting( {
+				key: prevKeyRef.current + '-exit-' + Date.now(),
+				content: prevChildrenRef.current,
+				exitX: isBack ? SLIDE_DISTANCE : -SLIDE_DISTANCE,
+			} );
+
+			// Start the new screen at an offset — it will animate to 0.
+			setEnterX( isBack ? -SLIDE_DISTANCE : SLIDE_DISTANCE );
+
+			// After a frame, animate to the final position.
+			requestAnimationFrame( () => {
+				setEnterX( 0 );
+			} );
 		}
-	}, [ becameSelected, becameUnselected, skipAnimation, prefersReducedMotion ] );
-
-	// Fallback timeout in case animationend doesn't fire.
-	useEffect( () => {
-		let timeout: number | undefined;
-		if ( animationStatus === 'ANIMATING_OUT' ) {
-			timeout = window.setTimeout(
-				() => setAnimationStatus( 'OUT' ),
-				ANIMATION_DURATION * ANIMATION_TIMEOUT_MARGIN
-			);
-		} else if ( animationStatus === 'ANIMATING_IN' ) {
-			timeout = window.setTimeout(
-				() => setAnimationStatus( 'IN' ),
-				ANIMATION_DURATION * ANIMATION_TIMEOUT_MARGIN
-			);
-		}
-		return () => {
-			if ( timeout ) {
-				window.clearTimeout( timeout );
-			}
-		};
-	}, [ animationStatus ] );
-
-	const onAnimationEnd = useCallback( () => {
-		if ( animationStatus === 'ANIMATING_OUT' ) {
-			setAnimationStatus( 'OUT' );
-		} else if ( animationStatus === 'ANIMATING_IN' ) {
-			setAnimationStatus( 'IN' );
-		}
-	}, [ animationStatus ] );
-
-	const shouldRender = isActive || animationStatus === 'IN' || animationStatus === 'ANIMATING_OUT';
-
-	if ( ! shouldRender ) {
-		return null;
-	}
-
-	const isAnimating = animationStatus === 'ANIMATING_IN' || animationStatus === 'ANIMATING_OUT';
+		prevKeyRef.current = screenKey;
+		prevChildrenRef.current = children;
+	}, [ screenKey, isBack, children, prefersReducedMotion ] );
 
 	return (
-		<div
-			className={ clsx( 'dashboard-sidebar-screen', {
-				'is-animating-in': animationStatus === 'ANIMATING_IN',
-				'is-animating-out': animationStatus === 'ANIMATING_OUT',
-				'is-back': isBack,
-			} ) }
-			onAnimationEnd={ isAnimating ? onAnimationEnd : undefined }
-		>
-			{ children }
-		</div>
+		<>
+			{ exiting && (
+				<motion.div
+					key={ exiting.key }
+					className="dashboard-sidebar-screen"
+					initial={ { x: 0, opacity: 1 } }
+					animate={ { x: exiting.exitX, opacity: 0 } }
+					transition={ transition }
+					onAnimationComplete={ () => setExiting( null ) }
+					style={ { position: 'absolute', inset: 0, zIndex: 0 } }
+				>
+					{ exiting.content }
+				</motion.div>
+			) }
+			<motion.div
+				key={ screenKey }
+				className="dashboard-sidebar-screen"
+				animate={ {
+					x: enterX ?? 0,
+					opacity: enterX === null || enterX === 0 ? 1 : 0,
+				} }
+				transition={ enterX !== null && enterX !== 0 ? { duration: 0 } : transition }
+				style={ { position: 'relative', zIndex: 1 } }
+			>
+				{ children }
+			</motion.div>
+		</>
 	);
 }

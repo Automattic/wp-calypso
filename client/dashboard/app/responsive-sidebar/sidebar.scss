@@ -22,12 +22,7 @@
 
 .dashboard-sidebar-screens {
 	position: relative;
-	overflow-x: clip;
-	contain: layout;
-	display: grid;
-	grid-template-columns: 1fr;
-	grid-template-rows: 1fr;
-	align-items: start;
+	overflow: hidden;
 }
 
 .dashboard-responsive-sidebar__logo {
