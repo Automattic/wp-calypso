@@ -161,7 +161,7 @@ export async function validateContactDetails(
 			reduxDispatch(
 				recordTracksEvent( 'calypso_checkout_contact_info_validation_failed', {
 					country: contactInfo.countryCode?.value,
-					messages: validationResult.messages_simple.join( ', ' ),
+					messages: validationResult.messages_simple?.join( ', ' ),
 				} )
 			);
 		}
