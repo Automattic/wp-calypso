@@ -44,13 +44,14 @@ export const convertOdieChatToOdieConversation = (
 	sessionId: string,
 	botSlug: string
 ): LoggedOutOdieConversation => {
+	const createdAt = odieChat.messages[ 0 ]?.ts ?? 0;
 	return {
 		id: odieChat.odieId?.toString() || '',
 		messages: odieChat.messages.map( ( message ) => convertMessageToOdieMessage( message ) ),
-		createdAt: odieChat.messages[ 0 ].ts || 0,
+		createdAt,
 		metadata: {
 			odieChatId: odieChat.odieId || 0,
-			createdAt: odieChat.messages[ 0 ].ts || 0,
+			createdAt,
 			supportInteractionId: '',
 			status: 'open',
 			botSlug,
