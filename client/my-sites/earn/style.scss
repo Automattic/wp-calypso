@@ -5,17 +5,19 @@
 
 body.is-section-earn {
 	@include admin-ui-page-layout;
+}
 
-	// Override the default 660px max-width — Monetize content needs more room
-	.admin-ui-page__content {
-		> * {
-			max-width: none;
-		}
+.earn-navigation {
+	.section-nav {
+		padding: 0 var(--wpds-dimension-padding-2xl, 24px);
 	}
 }
 
-#earn-navigation {
-	margin-bottom: 30px;
+.earn-content {
+	margin: 0 auto;
+	max-width: 1040px;
+	padding: 24px;
+	width: 100%;
 }
 
 // Small override for card component headers

@@ -2,6 +2,7 @@
 
 body.is-section-settings-podcasting {
 	@include admin-ui-page-layout;
+	@include admin-ui-page-layout-constrained-content;
 }
 
 .podcasting-details__publish-wrapper {

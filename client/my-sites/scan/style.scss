@@ -2,6 +2,7 @@
 
 body.is-section-scan {
 	@include admin-ui-page-layout;
+	@include admin-ui-page-layout-constrained-content;
 }
 
 .scan .formatted-header.is-left-align {

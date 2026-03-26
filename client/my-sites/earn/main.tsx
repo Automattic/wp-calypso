@@ -190,7 +190,7 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 
 	const getEarnSectionNav = () => {
 		return (
-			<div id="earn-navigation">
+			<div className="earn-navigation">
 				<SectionNav
 					selectedText={ getEarnSelectedText() }
 					variation={ ! isJetpackCloud() ? 'minimal' : '' }
@@ -246,8 +246,10 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 	const content = (
 		<>
 			{ showPageHeader && getEarnSectionNav() }
-			{ isAdSection( section ) && getAdsHeader() }
-			{ getComponent( section ) }
+			<div className="earn-content">
+				{ isAdSection( section ) && getAdsHeader() }
+				{ getComponent( section ) }
+			</div>
 		</>
 	);
 
@@ -262,7 +264,6 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 			/>
 			{ showPageHeader ? (
 				<Page
-					hasPadding
 					showSidebarToggle={ false }
 					title={ <JetpackTitle title={ translate( 'Monetize' ) } /> }
 					subTitle={ translate(

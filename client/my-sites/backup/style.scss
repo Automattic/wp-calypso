@@ -2,6 +2,7 @@
 
 body.is-section-backup {
 	@include admin-ui-page-layout;
+	@include admin-ui-page-layout-constrained-content;
 }
 
 .backup__page {
