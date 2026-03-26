@@ -192,8 +192,11 @@ if ( isDevelopment ) {
 	outputChunkFilename = '[name].js';
 }
 
-const cssFilename = cssNameFromFilename( outputFilename );
-const cssChunkFilename = cssNameFromFilename( outputChunkFilename );
+const cssFilename = cssNameFromFilename( outputFilename ).replace( '[contenthash]', '[chunkhash]' );
+const cssChunkFilename = cssNameFromFilename( outputChunkFilename ).replace(
+	'[contenthash]',
+	'[chunkhash]'
+);
 
 const outputDir = path.resolve( '.' );
 
