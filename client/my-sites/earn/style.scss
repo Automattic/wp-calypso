@@ -14,6 +14,7 @@ body.is-section-earn {
 }
 
 .earn-content {
+	box-sizing: border-box;
 	margin: 0 auto;
 	max-width: 1040px;
 	padding: 24px;
@@ -244,12 +245,5 @@ body:not(.theme-jetpack-cloud) {
 	max-width: 98%;
 	h1 {
 		margin-bottom: 1em;
-	}
-}
-
-/* Media Queries */
-@media (max-width: $break-large) {
-	.earn.main {
-		padding: 20px;
 	}
 }
