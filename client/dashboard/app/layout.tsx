@@ -14,11 +14,9 @@ import { getNormalizedPath, getSuperProps } from './analytics/super-props';
 import { AuthProvider, useAuth } from './auth';
 import { AppProvider, useAppContext } from './context';
 import { I18nProvider } from './i18n';
-import { OmnibarEventsProvider } from './interim-omnibar/click-handlers';
 import { getRouter } from './router';
 import { useSurvicate } from './survicate';
 import type { AppConfig } from './context';
-import type { OmnibarEvents } from './interim-omnibar/click-handlers';
 
 function AnalyticsProviderWithClient( {
 	children,
@@ -71,29 +69,21 @@ function AnalyticsProviderWithClient( {
 	return <AnalyticsProvider client={ analyticsClient }>{ children }</AnalyticsProvider>;
 }
 
-function Layout( {
-	config,
-	omnibarEvents,
-}: {
-	config: AppConfig;
-	omnibarEvents: OmnibarEvents | null;
-} ) {
+function Layout( { config }: { config: AppConfig } ) {
 	const router = useMemo( () => getRouter( config ), [ config ] );
 
 	return (
-		<OmnibarEventsProvider value={ omnibarEvents }>
-			<AppProvider config={ config }>
-				<QueryClientProvider client={ queryClient }>
-					<AuthProvider>
-						<I18nProvider>
-							<AnalyticsProviderWithClient router={ router }>
-								<RouterProvider router={ router } context={ { config } } />
-							</AnalyticsProviderWithClient>
-						</I18nProvider>
-					</AuthProvider>
-				</QueryClientProvider>
-			</AppProvider>
-		</OmnibarEventsProvider>
+		<AppProvider config={ config }>
+			<QueryClientProvider client={ queryClient }>
+				<AuthProvider>
+					<I18nProvider>
+						<AnalyticsProviderWithClient router={ router }>
+							<RouterProvider router={ router } context={ { config } } />
+						</AnalyticsProviderWithClient>
+					</I18nProvider>
+				</AuthProvider>
+			</QueryClientProvider>
+		</AppProvider>
 	);
 }
 export default Layout;
