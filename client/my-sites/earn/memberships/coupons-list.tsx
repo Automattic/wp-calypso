@@ -5,6 +5,7 @@ import {
 } from '@automattic/calypso-products';
 import { CompactCard, Button, Badge, Gridicon } from '@automattic/components';
 import { formatCurrency } from '@automattic/number-formatters';
+import { Stack } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import QueryMembershipsCoupons from 'calypso/components/data/query-memberships-coupons';
@@ -163,65 +164,67 @@ function CouponsList() {
 					coupons.map( function ( currentCoupon: Coupon ) {
 						return (
 							<CompactCard className="memberships__products-product-card" key={ currentCoupon?.ID }>
-								<div className="memberships__products-product-details">
-									<div className="memberships__products-product-title">
-										{ currentCoupon?.coupon_code }
+								<Stack direction="row">
+									<div className="memberships__products-product-details">
+										<div className="memberships__products-product-title">
+											{ currentCoupon?.coupon_code }
+										</div>
+										<sub className="memberships__products-product-amount"></sub>
+										{ currentCoupon?.end_date && (
+											<div className="memberships__coupons-coupon-badge">
+												<Badge type="info">
+													{ translate( 'Expires on %s', { args: [ currentCoupon.end_date ] } ) }
+												</Badge>
+											</div>
+										) }
+										{ currentCoupon?.discount_type === COUPON_DISCOUNT_TYPE_PERCENTAGE && (
+											<div className="memberships__coupons-coupon-badge">
+												<Badge type="info">
+													{ getDiscountBadge(
+														currentCoupon?.duration || '',
+														currentCoupon?.discount_type,
+														currentCoupon?.discount_percentage || 0
+													) }
+												</Badge>
+											</div>
+										) }
+										{ currentCoupon?.discount_type === COUPON_DISCOUNT_TYPE_AMOUNT && (
+											<div className="memberships__coupons-coupon-badge">
+												<Badge type="info">
+													{ getDiscountBadge(
+														currentCoupon?.duration || '',
+														currentCoupon?.discount_type,
+														currentCoupon?.discount_value || 0,
+														currentCoupon?.discount_currency || 'USD'
+													) }
+												</Badge>
+											</div>
+										) }
+										{ currentCoupon?.cannot_be_combined && (
+											<div className="memberships__coupons-coupon-badge">
+												<Badge type="info">
+													{ translate( 'Cannot be combined with other coupons' ) }
+												</Badge>
+											</div>
+										) }
+										{ currentCoupon?.first_time_purchase_only && (
+											<div className="memberships__coupons-coupon-badge">
+												<Badge type="info">{ translate( 'First-time order only' ) }</Badge>
+											</div>
+										) }
+										{ ( currentCoupon?.email_allow_list?.length ?? 0 ) > 0 && (
+											<div className="memberships__coupons-coupon-badge">
+												<Badge type="info">{ translate( 'Limited to specific emails' ) }</Badge>
+											</div>
+										) }
+										{ ( currentCoupon?.plan_ids_allow_list?.length ?? 0 ) > 0 && (
+											<div className="memberships__coupons-coupon-badge">
+												<Badge type="info">{ translate( 'Limited to specific products' ) }</Badge>
+											</div>
+										) }
 									</div>
-									<sub className="memberships__products-product-amount"></sub>
-									{ currentCoupon?.end_date && (
-										<div className="memberships__coupons-coupon-badge">
-											<Badge type="info">
-												{ translate( 'Expires on %s', { args: [ currentCoupon.end_date ] } ) }
-											</Badge>
-										</div>
-									) }
-									{ currentCoupon?.discount_type === COUPON_DISCOUNT_TYPE_PERCENTAGE && (
-										<div className="memberships__coupons-coupon-badge">
-											<Badge type="info">
-												{ getDiscountBadge(
-													currentCoupon?.duration || '',
-													currentCoupon?.discount_type,
-													currentCoupon?.discount_percentage || 0
-												) }
-											</Badge>
-										</div>
-									) }
-									{ currentCoupon?.discount_type === COUPON_DISCOUNT_TYPE_AMOUNT && (
-										<div className="memberships__coupons-coupon-badge">
-											<Badge type="info">
-												{ getDiscountBadge(
-													currentCoupon?.duration || '',
-													currentCoupon?.discount_type,
-													currentCoupon?.discount_value || 0,
-													currentCoupon?.discount_currency || 'USD'
-												) }
-											</Badge>
-										</div>
-									) }
-									{ currentCoupon?.cannot_be_combined && (
-										<div className="memberships__coupons-coupon-badge">
-											<Badge type="info">
-												{ translate( 'Cannot be combined with other coupons' ) }
-											</Badge>
-										</div>
-									) }
-									{ currentCoupon?.first_time_purchase_only && (
-										<div className="memberships__coupons-coupon-badge">
-											<Badge type="info">{ translate( 'First-time order only' ) }</Badge>
-										</div>
-									) }
-									{ ( currentCoupon?.email_allow_list?.length ?? 0 ) > 0 && (
-										<div className="memberships__coupons-coupon-badge">
-											<Badge type="info">{ translate( 'Limited to specific emails' ) }</Badge>
-										</div>
-									) }
-									{ ( currentCoupon?.plan_ids_allow_list?.length ?? 0 ) > 0 && (
-										<div className="memberships__coupons-coupon-badge">
-											<Badge type="info">{ translate( 'Limited to specific products' ) }</Badge>
-										</div>
-									) }
-								</div>
-								{ currentCoupon && currentCoupon.ID && renderEllipsisMenu( currentCoupon.ID ) }
+									{ currentCoupon && currentCoupon.ID && renderEllipsisMenu( currentCoupon.ID ) }
+								</Stack>
 							</CompactCard>
 						);
 					} ) }
