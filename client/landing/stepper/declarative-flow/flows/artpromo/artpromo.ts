@@ -41,7 +41,7 @@ const artPromoFlow: FlowV2< typeof initialize > = {
 					product_slug: availability.product_slug,
 					meta: domain,
 					extra: {
-						art_promo: 'wpcom2026',
+						is_art_promo: true,
 						privacy_available: availability.supports_privacy,
 						privacy: availability.supports_privacy,
 					},
