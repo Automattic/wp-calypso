@@ -647,9 +647,15 @@ export default function CheckoutMain( {
 			  }
 			: {};
 
+	// WP.com Theme
+	const wpcomColors = {
+		primary: 'red',
+		primaryOver: '#cc0000',
+	};
+
 	const theme = {
 		...checkoutTheme,
-		colors: { ...checkoutTheme.colors, ...gravatarColors, ...jetpackColors, ...a4aColors },
+		colors: { ...checkoutTheme.colors, ...wpcomColors, ...gravatarColors, ...jetpackColors, ...a4aColors },
 		weights: { ...checkoutTheme.weights, ...gravatarFontWeights },
 	};
 
