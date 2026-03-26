@@ -1,36 +1,8 @@
-@use '@wordpress/base-styles/breakpoints' as breakpoints;
-@import '@wordpress/admin-ui/build-style/style.css';
+@import "calypso/components/jetpack-page-layout/admin-ui-page";
 
 body.is-section-settings-podcasting {
-
-	@media screen and (max-width: breakpoints.$break-small) {
-		.focus-content:not(.has-no-sidebar):not(.has-no-masterbar) .layout__content {
-			padding-top: var(--masterbar-height);
-		}
-	}
-
-	.layout:not(.has-no-sidebar) .layout__content {
-		padding: var(--masterbar-height) 0 0 var(--sidebar-width-max);
-
-		// Full width when sidebar is collapsed
-		@media ( max-width: breakpoints.$break-medium ) {
-			padding-left: 0;
-		}
-	}
-
-	.layout__primary .main {
-		padding-bottom: 0;
-	}
-
-	// Tempoarily here until constrained content width is implemented in Admin-UI
-	.admin-ui-page__content {
-		> * {
-			max-width: 660px;
-			width: 100%;
-			margin: 0 auto;
-			box-sizing: border-box;
-		}
-	}
+	@include admin-ui-page-layout;
+	@include admin-ui-page-layout-constrained-content;
 }
 
 .podcasting-details__publish-wrapper {
