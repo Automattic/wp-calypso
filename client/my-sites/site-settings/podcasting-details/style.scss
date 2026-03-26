@@ -2,8 +2,15 @@
 @import '@wordpress/admin-ui/build-style/style.css';
 
 body.is-section-settings-podcasting {
+
+	@media screen and (max-width: breakpoints.$break-small) {
+		.focus-content:not(.has-no-sidebar):not(.has-no-masterbar) .layout__content {
+			padding-top: var(--masterbar-height);
+		}
+	}
+
 	.layout:not(.has-no-sidebar) .layout__content {
-		padding: calc(var(--masterbar-height)) 0 0 calc(var(--sidebar-width-max));
+		padding: var(--masterbar-height) 0 0 var(--sidebar-width-max);
 
 		// Full width when sidebar is collapsed
 		@media ( max-width: breakpoints.$break-medium ) {
