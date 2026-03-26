@@ -125,7 +125,9 @@ export class CartCheckoutPage {
 				.waitFor( { state: 'visible' } );
 		}
 
-		await this.page.waitForSelector( selectors.cartItem( expectedCartItemName ) );
+		await this.page.waitForSelector( selectors.cartItem( expectedCartItemName ), {
+			timeout: 15000,
+		} );
 	}
 
 	/**
@@ -315,18 +317,24 @@ export class CartCheckoutPage {
 
 		const cardNumberFrameHandle = await this.page.waitForSelector( selectors.cardNumberFrame );
 		const cardNumberFrame = ( await cardNumberFrameHandle.contentFrame() ) as Frame;
-		const cardNumberInput = await cardNumberFrame.waitForSelector( selectors.cardNumberInput );
+		const cardNumberInput = await cardNumberFrame.waitForSelector( selectors.cardNumberInput, {
+			state: 'visible',
+		} );
 		await cardNumberInput.fill( paymentDetails.cardNumber );
 
 		const expiryFrameHandle = await this.page.waitForSelector( selectors.cardExpiryFrame );
 		const expiryFrame = ( await expiryFrameHandle.contentFrame() ) as Frame;
-		const expiryInput = await expiryFrame.waitForSelector( selectors.cardExpiryInput );
+		const expiryInput = await expiryFrame.waitForSelector( selectors.cardExpiryInput, {
+			state: 'visible',
+		} );
 		await expiryInput.fill( `${ paymentDetails.expiryMonth }${ paymentDetails.expiryYear }` );
 
 		const cvvFrame = ( await (
 			await this.page.waitForSelector( selectors.cardCVVFrame )
 		).contentFrame() ) as Frame;
-		const cvvInput = await cvvFrame.waitForSelector( selectors.cardCVVInput );
+		const cvvInput = await cvvFrame.waitForSelector( selectors.cardCVVInput, {
+			state: 'visible',
+		} );
 		await cvvInput.fill( paymentDetails.cvv );
 	}
 
