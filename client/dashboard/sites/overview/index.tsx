@@ -12,6 +12,7 @@ import { __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useRef } from 'react';
+import { useAppContext } from '../../app/context';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { GuidedTourContextProvider, GuidedTourStep } from '../../components/guided-tour';
 import OptInSurvey from '../../components/opt-in-survey';
@@ -173,19 +174,18 @@ function SiteOverviewSecondaryCards( {
 
 function SiteOverview( {
 	siteSlug,
-	hideSitePreview = false,
 	breakpoints,
 }: {
 	siteSlug: string;
-	hideSitePreview?: boolean;
 	breakpoints?: { large: WPBreakpoint; small: WPBreakpoint };
 } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const { supports } = useAppContext();
 	const isLargeViewport = useViewportMatch( breakpoints?.large ?? 'xlarge' );
 	const isSmallViewport = useViewportMatch( breakpoints?.small ?? 'medium', '<' );
-	const showSitePreview = ! ( hideSitePreview || isSmallViewport );
-	const spacing = isSmallViewport ? SPACING.SMALL : SPACING.DEFAULT;
+	const showSitePreview = ! isSmallViewport && supports.sitePreview;
 	const isCommerceGardenSite = isCommerceGarden( site );
+	const spacing = isSmallViewport ? SPACING.SMALL : SPACING.DEFAULT;
 	const gridLayout = getGridLayout( {
 		count: ( isCommerceGardenSite ? 1 : 3 ) + Number( showSitePreview ),
 		isLargeViewport,
