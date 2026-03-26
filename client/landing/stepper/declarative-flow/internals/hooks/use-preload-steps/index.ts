@@ -12,7 +12,7 @@ export const lazyCache = new WeakMap<
 	Awaited< ReturnType< StepperStep[ 'asyncComponent' ] > >[ 'default' ]
 >();
 
-async function tryPreload( step?: StepperStep, followingStep?: StepperStep ) {
+export async function tryPreload( step?: StepperStep, followingStep?: StepperStep ) {
 	if ( step && 'asyncComponent' in step ) {
 		debug( 'Preloading step:', step.slug );
 		const { default: component } = await step.asyncComponent();
