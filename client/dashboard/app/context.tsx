@@ -7,7 +7,6 @@ import {
 } from '@automattic/api-queries';
 /* eslint-enable no-restricted-imports */
 import { createContext, useContext } from 'react';
-import type { SiteSwitcherProps } from '../sites/site-switcher/types';
 import type {
 	FetchSitesOptions,
 	FetchPaginatedSitesOptions,
@@ -53,7 +52,7 @@ export type AppConfig = {
 	optIn: boolean;
 	components: {
 		sites: () => Promise< { default: React.FC } >;
-		siteSwitcher: () => Promise< { default: React.FC< SiteSwitcherProps > } >;
+		siteSwitcher: () => Promise< { default: React.FC } >;
 	};
 	queries: {
 		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => ReturnType< typeof sitesQuery >;

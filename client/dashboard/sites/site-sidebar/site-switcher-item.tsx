@@ -13,11 +13,16 @@ import SiteIcon from '../../components/site-icon';
 import { Text } from '../../components/text';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { getSiteDisplayUrl } from '../../utils/site-url';
+import type { SiteSwitcherProps } from '../../sites/site-switcher/types';
 import type { Site } from '@automattic/api-core';
 
 export default function SiteSwitcherItem( { site }: { site: Site } ) {
 	const { components } = useAppContext();
-	const SiteSwitcher = useMemo( () => lazy( components.siteSwitcher ), [ components ] );
+	const SiteSwitcher = useMemo(
+		() =>
+			lazy( components.siteSwitcher ) as React.LazyExoticComponent< React.FC< SiteSwitcherProps > >,
+		[ components ]
+	);
 
 	return (
 		<SidebarMenuSwitcherItem
