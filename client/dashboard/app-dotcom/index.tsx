@@ -42,7 +42,9 @@ boot( {
 		plugins: true,
 		commandPalette: false,
 		domainOnlySites: true,
-		siteOverviewPreview: ! isEnabled( 'dashboard/omnibar' ),
+		siteOverview: {
+			preview: ! isEnabled( 'dashboard/omnibar' ),
+		},
 	},
 	optIn: true,
 	components: {

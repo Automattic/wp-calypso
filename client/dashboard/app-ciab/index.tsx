@@ -44,7 +44,9 @@ boot( {
 		commandPalette: false,
 		domainOnlySites: false,
 		startStoreRoute: true,
-		siteOverviewPreview: true,
+		siteOverview: {
+			preview: true,
+		},
 	},
 	optIn: false,
 	components: {

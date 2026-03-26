@@ -183,7 +183,7 @@ function SiteOverview( {
 	const { supports } = useAppContext();
 	const isLargeViewport = useViewportMatch( breakpoints?.large ?? 'xlarge' );
 	const isSmallViewport = useViewportMatch( breakpoints?.small ?? 'medium', '<' );
-	const showSitePreview = ! isSmallViewport && supports.siteOverviewPreview;
+	const showSitePreview = ! isSmallViewport && supports.siteOverview.preview;
 	const spacing = isSmallViewport ? SPACING.SMALL : SPACING.DEFAULT;
 	const isCommerceGardenSite = isCommerceGarden( site );
 	const gridLayout = getGridLayout( {
