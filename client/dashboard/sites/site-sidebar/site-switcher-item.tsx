@@ -24,6 +24,7 @@ export default function SiteSwitcherItem( { site }: { site: Site } ) {
 			switcher={
 				<Suspense fallback={ null }>
 					<SiteSwitcher
+						site={ site }
 						icon={ chevronUpDown }
 						renderToggle={ ( { isOpen, onToggle } ) => (
 							<Button

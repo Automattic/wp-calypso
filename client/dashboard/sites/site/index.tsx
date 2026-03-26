@@ -38,7 +38,7 @@ function Site() {
 				<HeaderBar>
 					<HStack spacing={ 3 }>
 						<HeaderBar.Title>
-							<SiteSwitcher />
+							<SiteSwitcher site={ site } />
 							{ canSwitchEnvironment( site ) && (
 								<>
 									<MenuDivider />
