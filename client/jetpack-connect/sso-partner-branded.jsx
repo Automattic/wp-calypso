@@ -3,9 +3,14 @@ import PropTypes from 'prop-types';
 import { useState } from 'react';
 import { ActionButtons } from 'calypso/components/connect-screen/action-buttons';
 import { BrandHeader } from 'calypso/components/connect-screen/brand-header';
+import {
+	NoticeActionButton,
+	NoticeActions,
+	NoticeDescription,
+	NoticeRoot,
+	NoticeTitle,
+} from 'calypso/components/connect-screen/notice';
 import { UserCard } from 'calypso/components/connect-screen/user-card';
-import Notice from 'calypso/components/notice';
-import NoticeAction from 'calypso/components/notice/notice-action';
 import wpcom from 'calypso/lib/wp';
 
 export default function SsoPartnerBranded( {
@@ -50,31 +55,41 @@ export default function SsoPartnerBranded( {
 
 	const renderEmailVerificationNotice = () => {
 		if ( isSendingVerificationEmail ) {
-			return <Notice icon="mail" showDismiss={ false } text="Sending…" />;
+			return (
+				<NoticeRoot intent="info">
+					<NoticeTitle>Sending…</NoticeTitle>
+				</NoticeRoot>
+			);
 		}
 
 		if ( verificationEmailError ) {
 			return (
-				<Notice status="is-warning" showDismiss={ false } text="The email could not be sent.">
-					<NoticeAction onClick={ sendVerificationEmail }>Try again</NoticeAction>
-				</Notice>
+				<NoticeRoot intent="warning">
+					<NoticeTitle>The email could not be sent.</NoticeTitle>
+					<NoticeActions>
+						<NoticeActionButton onClick={ sendVerificationEmail }>Try again</NoticeActionButton>
+					</NoticeActions>
+				</NoticeRoot>
 			);
 		}
 
 		if ( verificationEmailSent ) {
 			return (
-				<Notice
-					status="is-success"
-					showDismiss={ false }
-					text={ `We sent another confirmation email to ${ currentUser?.email }.` }
-				/>
+				<NoticeRoot intent="success">
+					<NoticeDescription>
+						{ `We sent another confirmation email to ${ currentUser?.email }.` }
+					</NoticeDescription>
+				</NoticeRoot>
 			);
 		}
 
 		return (
-			<Notice status="is-info" showDismiss={ false } text={ emailVerificationNoticeText }>
-				<NoticeAction onClick={ sendVerificationEmail }>Resend Email</NoticeAction>
-			</Notice>
+			<NoticeRoot intent="info">
+				<NoticeDescription>{ emailVerificationNoticeText }</NoticeDescription>
+				<NoticeActions>
+					<NoticeActionButton onClick={ sendVerificationEmail }>Resend Email</NoticeActionButton>
+				</NoticeActions>
+			</NoticeRoot>
 		);
 	};
 
