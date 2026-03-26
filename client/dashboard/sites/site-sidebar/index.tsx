@@ -28,6 +28,7 @@ import {
 	siteDomainsRoute,
 	siteSettingsRoute,
 } from '../../app/router/sites';
+import { menuDot } from '../../components/icons';
 import {
 	SidebarBackButton,
 	SidebarExpandableMenuItem,
@@ -140,19 +141,15 @@ function SiteMenuSidebar( { site }: { site: Site } ) {
 					icon={ formatListBullets }
 					to={ `/sites/${ siteSlug }/logs` }
 				>
-					{ ( dotIcon ) => (
-						<>
-							<SidebarMenuItem icon={ dotIcon } to={ `/sites/${ siteSlug }/logs/activity` }>
-								{ __( 'Activity' ) }
-							</SidebarMenuItem>
-							<SidebarMenuItem icon={ dotIcon } to={ `/sites/${ siteSlug }/logs/php` }>
-								{ __( 'PHP errors' ) }
-							</SidebarMenuItem>
-							<SidebarMenuItem icon={ dotIcon } to={ `/sites/${ siteSlug }/logs/server` }>
-								{ __( 'Web server' ) }
-							</SidebarMenuItem>
-						</>
-					) }
+					<SidebarMenuItem icon={ menuDot } to={ `/sites/${ siteSlug }/logs/activity` }>
+						{ __( 'Activity' ) }
+					</SidebarMenuItem>
+					<SidebarMenuItem icon={ menuDot } to={ `/sites/${ siteSlug }/logs/php` }>
+						{ __( 'PHP errors' ) }
+					</SidebarMenuItem>
+					<SidebarMenuItem icon={ menuDot } to={ `/sites/${ siteSlug }/logs/server` }>
+						{ __( 'Web server' ) }
+					</SidebarMenuItem>
 				</SidebarExpandableMenuItem>
 			) }
 			{ isAvailable( siteScanRoute ) &&
@@ -163,16 +160,12 @@ function SiteMenuSidebar( { site }: { site: Site } ) {
 						icon={ shield }
 						to={ `/sites/${ siteSlug }/scan` }
 					>
-						{ ( dotIcon ) => (
-							<>
-								<SidebarMenuItem icon={ dotIcon } to={ `/sites/${ siteSlug }/scan/active` }>
-									{ __( 'Active threats' ) }
-								</SidebarMenuItem>
-								<SidebarMenuItem icon={ dotIcon } to={ `/sites/${ siteSlug }/scan/history` }>
-									{ __( 'History' ) }
-								</SidebarMenuItem>
-							</>
-						) }
+						<SidebarMenuItem icon={ menuDot } to={ `/sites/${ siteSlug }/scan/active` }>
+							{ __( 'Active threats' ) }
+						</SidebarMenuItem>
+						<SidebarMenuItem icon={ menuDot } to={ `/sites/${ siteSlug }/scan/history` }>
+							{ __( 'History' ) }
+						</SidebarMenuItem>
 					</SidebarExpandableMenuItem>
 				) : (
 					<SidebarMenuItem icon={ shield } to={ `/sites/${ siteSlug }/scan` }>

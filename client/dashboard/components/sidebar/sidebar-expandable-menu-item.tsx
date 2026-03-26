@@ -11,17 +11,11 @@ import { useAnalytics } from '../../app/analytics';
 
 import './sidebar-expandable-menu-item.scss';
 
-const dotIcon = (
-	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
-		<circle cx="12" cy="12" r="2" fill="currentColor" />
-	</svg>
-);
-
 interface SidebarExpandableMenuItemProps {
 	label: string;
 	icon?: React.JSX.Element;
 	to: string;
-	children: ( icon: React.JSX.Element ) => React.ReactNode;
+	children: React.ReactNode;
 }
 
 export function SidebarExpandableMenuItem( {
@@ -73,7 +67,7 @@ export function SidebarExpandableMenuItem( {
 				inert={ ! isOpen ? 'true' : undefined }
 			>
 				<VStack id={ panelId } spacing={ 1 }>
-					{ children( dotIcon ) }
+					{ children }
 				</VStack>
 			</div>
 		</VStack>
