@@ -205,6 +205,7 @@ body.is-section-reader {
 		outline-color: currentColor;
 		color: currentColor;
 		margin: 0 auto;
+		align-self: self-start;
 	}
 
 	.sidebar__menu-link:hover .count {
@@ -228,7 +229,6 @@ body.is-section-reader {
 		font-size: 0.67rem; /* stylelint-disable-line scales/font-sizes */
 		font-style: italic;
 		color: var( --color-sidebar-text-alternative );
-		line-height: 14px;
 	}
 
 	.sidebar__separator {
@@ -237,11 +237,9 @@ body.is-section-reader {
 
 	.sidebar__menu-item-sitename {
 		line-height: 14px;
-		max-width: 80%;
 		text-overflow: ellipsis;
 		white-space: nowrap;
 		overflow: hidden;
-		margin-right: 8px;
 
 		// If the site name is marked with ltr or rtl, ensure we use that directionality.
 		&:has( span[direction='ltr'] ) {
