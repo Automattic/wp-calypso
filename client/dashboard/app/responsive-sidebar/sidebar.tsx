@@ -1,5 +1,5 @@
 import { useRouterState } from '@tanstack/react-router';
-import { __experimentalHStack as HStack, Navigator } from '@wordpress/components';
+import { __experimentalHStack as HStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { brush, envelope, globe, layout, plugins } from '@wordpress/icons';
 import { useRef } from 'react';
@@ -12,10 +12,31 @@ import SiteSidebar from '../../sites/site-sidebar';
 import { wpcomLink } from '../../utils/link';
 import { useAnalytics } from '../analytics';
 import { useAppContext } from '../context';
-import RouteErrorBoundary from './error';
-import { getScreenPath, NavigatorRouteSync } from './navigator-route-sync';
+import { getScreenPath } from './navigator-route-sync';
+import SidebarScreen from './sidebar-screen';
 
 import './sidebar.scss';
+import './sidebar-screen.scss';
+
+type ScreenId = 'root' | 'site' | 'domain' | 'me';
+
+function getScreenId( screenPath: string ): ScreenId {
+	if ( screenPath.startsWith( '/sites/' ) ) {
+		return 'site';
+	}
+	if ( screenPath.startsWith( '/domains/' ) ) {
+		return 'domain';
+	}
+	if ( screenPath.startsWith( '/me' ) ) {
+		return 'me';
+	}
+	return 'root';
+}
+
+function extractParam( screenPath: string ): string | undefined {
+	const parts = screenPath.split( '/' );
+	return parts[ 2 ] || undefined;
+}
 
 export default function Sidebar() {
 	const { Logo, name } = useAppContext();
@@ -29,7 +50,20 @@ export default function Sidebar() {
 		} ),
 	} );
 	const screenPath = getScreenPath( resolvedPathname, hasError );
-	const initialPath = useRef( screenPath ).current;
+	const currentScreen = getScreenId( screenPath );
+	const previousScreenRef = useRef( currentScreen );
+	const isInitialRender = useRef( true );
+
+	const isBack = currentScreen === 'root' && previousScreenRef.current !== 'root';
+
+	if ( previousScreenRef.current !== currentScreen ) {
+		previousScreenRef.current = currentScreen;
+	}
+
+	const skipAnimation = isInitialRender.current;
+	if ( isInitialRender.current ) {
+		isInitialRender.current = false;
+	}
 
 	return (
 		<div className="dashboard-responsive-sidebar__sidebar">
@@ -46,31 +80,39 @@ export default function Sidebar() {
 					/>
 				</div>
 			) }
-			<Navigator initialPath={ initialPath }>
-				<NavigatorRouteSync screenPath={ screenPath } />
-
-				<Navigator.Screen path="/">
+			<div className="dashboard-sidebar-screens">
+				<SidebarScreen
+					isActive={ currentScreen === 'root' }
+					isBack={ isBack }
+					skipAnimation={ skipAnimation }
+				>
 					<PrimaryMenuSidebar />
-				</Navigator.Screen>
+				</SidebarScreen>
 
-				<Navigator.Screen path="/sites/:siteSlug">
-					<RouteErrorBoundary>
-						<SiteSidebar />
-					</RouteErrorBoundary>
-				</Navigator.Screen>
+				<SidebarScreen
+					isActive={ currentScreen === 'site' }
+					isBack={ isBack }
+					skipAnimation={ skipAnimation }
+				>
+					<SiteSidebar siteSlug={ extractParam( screenPath ) } />
+				</SidebarScreen>
 
-				<Navigator.Screen path="/domains/:domainName">
-					<RouteErrorBoundary>
-						<DomainSidebar />
-					</RouteErrorBoundary>
-				</Navigator.Screen>
+				<SidebarScreen
+					isActive={ currentScreen === 'domain' }
+					isBack={ isBack }
+					skipAnimation={ skipAnimation }
+				>
+					<DomainSidebar domainName={ extractParam( screenPath ) } />
+				</SidebarScreen>
 
-				<Navigator.Screen path="/me">
-					<RouteErrorBoundary>
-						<MeSidebar />
-					</RouteErrorBoundary>
-				</Navigator.Screen>
-			</Navigator>
+				<SidebarScreen
+					isActive={ currentScreen === 'me' }
+					isBack={ isBack }
+					skipAnimation={ skipAnimation }
+				>
+					<MeSidebar />
+				</SidebarScreen>
+			</div>
 		</div>
 	);
 }

@@ -1,0 +1,89 @@
+// Animations matching @wordpress/components Navigator.Screen behavior.
+// Forward (drill in): new screen slides from right, old slides to left.
+// Back (drill out): new screen slides from left, old slides to right.
+
+$slide-duration: 450ms;
+$slide-easing: cubic-bezier( 0.33, 0, 0, 1 );
+$fade-duration: 70ms;
+$fade-delay-in: 70ms;
+$fade-delay-out: 40ms;
+
+@keyframes sidebar-slide-from-right {
+	from {
+		transform: translateX( 100px );
+	}
+}
+
+@keyframes sidebar-slide-to-left {
+	to {
+		transform: translateX( -80px );
+	}
+}
+
+@keyframes sidebar-slide-from-left {
+	from {
+		transform: translateX( -100px );
+	}
+}
+
+@keyframes sidebar-slide-to-right {
+	to {
+		transform: translateX( 80px );
+	}
+}
+
+@keyframes sidebar-fade-in {
+	from {
+		opacity: 0;
+	}
+}
+
+@keyframes sidebar-fade-out {
+	to {
+		opacity: 0;
+	}
+}
+
+.dashboard-sidebar-screen {
+	overflow-x: auto;
+	max-height: 100%;
+	box-sizing: border-box;
+	position: relative;
+	grid-column: 1 / -1;
+	grid-row: 1 / -1;
+	z-index: 1;
+
+	&.is-animating-out {
+		z-index: 0;
+	}
+
+	@media not ( prefers-reduced-motion ) {
+		// Forward enter: slide from right + fade in
+		&.is-animating-in:not( .is-back ) {
+			animation:
+				$fade-duration linear $fade-delay-in both sidebar-fade-in,
+				$slide-duration $slide-easing both sidebar-slide-from-right;
+		}
+
+		// Forward exit: slide to left + fade out
+		&.is-animating-out:not( .is-back ) {
+			animation:
+				$fade-duration linear $fade-delay-out both sidebar-fade-out,
+				$slide-duration $slide-easing both sidebar-slide-to-left;
+		}
+
+		// Back enter: slide from left + fade in
+		&.is-animating-in.is-back {
+			animation:
+				$fade-duration linear $fade-delay-in both sidebar-fade-in,
+				$slide-duration $slide-easing both sidebar-slide-from-left;
+		}
+
+		// Back exit: slide to right + fade out
+		&.is-animating-out.is-back {
+			animation:
+				$fade-duration linear $fade-delay-out both sidebar-fade-out,
+				$slide-duration $slide-easing both sidebar-slide-to-right;
+		}
+	}
+}
