@@ -649,7 +649,14 @@ export default function CheckoutMain( {
 
 	const theme = {
 		...checkoutTheme,
-		colors: { ...checkoutTheme.colors, ...gravatarColors, ...jetpackColors, ...a4aColors },
+		colors: {
+			...checkoutTheme.colors,
+			primary: '#D63638',
+			primaryOver: '#B32D2E',
+			...gravatarColors,
+			...jetpackColors,
+			...a4aColors,
+		},
 		weights: { ...checkoutTheme.weights, ...gravatarFontWeights },
 	};
 
