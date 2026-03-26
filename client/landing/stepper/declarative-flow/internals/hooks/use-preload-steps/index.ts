@@ -24,15 +24,15 @@ async function tryPreload( step?: StepperStep, followingStep?: StepperStep ) {
 	}
 }
 
-function useHasItBeenASecond() {
-	const [ hasItBeenASecond, setHasItBeenASecond ] = useState( false );
+function useHasItBeenFiveSeconds() {
+	const [ hasItBeenFiveSeconds, setHasItBeenFiveSeconds ] = useState( false );
 
 	useEffect( () => {
-		const intervalId = setTimeout( () => setHasItBeenASecond( true ), 1000 );
+		const intervalId = setTimeout( () => setHasItBeenFiveSeconds( true ), 5000 );
 		return () => clearTimeout( intervalId );
 	}, [] );
 
-	return hasItBeenASecond;
+	return hasItBeenFiveSeconds;
 }
 
 /**
@@ -52,7 +52,7 @@ export function usePreloadSteps(
 ) {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	// Wait a second before preloading. Gives priority to what's on the screen.
-	const activate = useHasItBeenASecond();
+	const activate = useHasItBeenFiveSeconds();
 
 	useEffect( () => {
 		if ( ! activate ) {
