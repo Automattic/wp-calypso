@@ -34,11 +34,11 @@ describe( '<SsoBridge>', () => {
 		expect( screen.getByText( /contact support/i ) ).toBeVisible();
 	} );
 
-	test( 'renders loading spinner for normal SSO flow', () => {
+	test( 'renders loading skeleton for normal SSO flow', () => {
 		mockSearchParams = {};
 
 		render( <SsoBridge /> );
 
-		expect( document.querySelector( '.sso-bridge__loading' ) ).toBeVisible();
+		expect( document.querySelector( '.components-v-stack' ) ).toBeVisible();
 	} );
 } );

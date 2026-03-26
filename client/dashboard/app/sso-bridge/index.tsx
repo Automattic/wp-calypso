@@ -1,11 +1,10 @@
 import { useSearch } from '@tanstack/react-router';
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { TextSkeleton } from '../../components/text-skeleton';
-
-import './style.scss';
 
 function SsoBridgeAuthError() {
 	return (
@@ -37,8 +36,8 @@ export default function SsoBridge() {
 	}
 
 	return (
-		<div className="sso-bridge__loading">
+		<VStack alignment="center" justify="center" style={ { minHeight: '60vh' } }>
 			<TextSkeleton length={ 30 } />
-		</div>
+		</VStack>
 	);
 }
