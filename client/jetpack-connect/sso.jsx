@@ -427,6 +427,11 @@ class JetpackSsoForm extends Component {
 			return null;
 		}
 
+		if ( ! currentUser ) {
+			window.location.href = this.getSignInLink();
+			return null;
+		}
+
 		if ( partnerConfig ) {
 			return (
 				<>
@@ -529,7 +534,9 @@ class JetpackSsoForm extends Component {
 const connectComponent = connect(
 	( state ) => {
 		const jetpackSSO = getSSO( state );
-		const sitePartnerConfig = getPartnerConfigFromSiteDetails( get( jetpackSSO, 'blogDetails' ) );
+		const sitePartnerConfig = getPartnerConfigFromSiteDetails( get( jetpackSSO, 'blogDetails' ), {
+			persistToSession: true,
+		} );
 		return {
 			ssoUrl: get( jetpackSSO, 'ssoUrl' ),
 			isAuthorizing: get( jetpackSSO, 'isAuthorizing' ),
