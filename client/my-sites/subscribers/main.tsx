@@ -9,6 +9,7 @@ import Main from 'calypso/components/main';
 import SubscriberValidationGate from 'calypso/components/subscribers-validation-gate';
 import { useCompleteLaunchpadTaskWithNoticeOnLoad } from 'calypso/launchpad/hooks/use-complete-launchpad-task-with-notice-on-load';
 import GiftSubscriptionModal from 'calypso/my-sites/subscribers/components/gift-modal/gift-modal';
+import RemoveCompModal from 'calypso/my-sites/subscribers/components/remove-comp-modal/remove-comp-modal';
 import { SubscriberDataViews } from 'calypso/my-sites/subscribers/components/subscriber-data-views';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { Subscriber } from './types';
@@ -66,6 +67,12 @@ const SubscribersPage = ( { subscriberId }: Props ) => {
 		setGiftUsername( display_name );
 	};
 
+	const [ removeComp, setRemoveComp ] = useState< {
+		giftId: number;
+		planName: string;
+		username: string;
+	} | null >( null );
+
 	return (
 		<>
 			<QueryMembershipsSettings siteId={ siteId ?? 0 } source="calypso" />
@@ -76,6 +83,9 @@ const SubscribersPage = ( { subscriberId }: Props ) => {
 						siteId={ siteId }
 						isUnverified={ isUnverified }
 						onGiftSubscription={ onGiftSubscription }
+						onRemoveComp={ ( giftId, planName, username ) =>
+							setRemoveComp( { giftId, planName, username } )
+						}
 						subscriberId={ isSubscriberIdValid ? subscriberId : undefined }
 					/>
 
@@ -86,6 +96,17 @@ const SubscribersPage = ( { subscriberId }: Props ) => {
 							username={ giftUsername }
 							onClose={ () => setGiftUserId( null ) }
 							onConfirm={ () => setGiftUserId( null ) }
+						/>
+					) }
+
+					{ removeComp !== null && (
+						<RemoveCompModal
+							siteId={ siteId ?? 0 }
+							giftId={ removeComp.giftId }
+							planName={ removeComp.planName }
+							username={ removeComp.username }
+							onClose={ () => setRemoveComp( null ) }
+							onRemoved={ () => setRemoveComp( null ) }
 						/>
 					) }
 				</SubscriberValidationGate>

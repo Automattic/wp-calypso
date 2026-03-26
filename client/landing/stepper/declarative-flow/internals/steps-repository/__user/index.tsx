@@ -47,7 +47,7 @@ const UserStepComponent: StepType = function UserStep( {
 	const { handleSocialResponse, notice, accountCreateResponse } = useHandleSocialResponse( flow );
 	const [ wpAccountCreateResponse, setWpAccountCreateResponse ] = useState< AccountCreateReturn >();
 	const { socialServiceResponse } = useSocialService();
-	const { topBarLogo, ciabConfig, signupTosElement } = usePartnerBranding();
+	const { topBarLogo, partnerConfig, signupTosElement } = usePartnerBranding();
 
 	const {
 		isExperimentVariant,
@@ -82,7 +82,7 @@ const UserStepComponent: StepType = function UserStep( {
 		signupUrl,
 		redirectTo,
 		locale,
-		from: ciabConfig?.id ?? queryArgs.get( 'from' ) ?? undefined,
+		from: partnerConfig?.id ?? queryArgs.get( 'from' ) ?? undefined,
 	} );
 
 	const shouldRenderLocaleSuggestions = ! isLoggedIn; // For logged-in users, we respect the user language settings
@@ -126,7 +126,7 @@ const UserStepComponent: StepType = function UserStep( {
 				isEmailVariation={ isEmailVariation }
 				isMessagingVariation={ isMessagingVariation }
 				isSliderVariation={ isSliderVariation }
-				allowedSocialServices={ ciabConfig?.ssoProviders }
+				allowedSocialServices={ partnerConfig?.ssoProviders }
 				customTosElement={ signupTosElement }
 			/>
 			{ accountCreateResponse && 'bearer_token' in accountCreateResponse && (
@@ -143,9 +143,9 @@ const UserStepComponent: StepType = function UserStep( {
 		let headingText = translate( 'Create your account' );
 		if ( isMessagingVariation ) {
 			headingText = translate( 'Welcome to WordPress.com' );
-		} else if ( ciabConfig ) {
+		} else if ( partnerConfig ) {
 			headingText = translate( 'Create an account for %(partner)s', {
-				args: { partner: ciabConfig.displayName },
+				args: { partner: partnerConfig.displayName },
 				textOnly: true,
 			} );
 		}
