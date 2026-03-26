@@ -48,7 +48,9 @@ export function useOmnibarEvent< K extends keyof OmnibarEvents >(
 ) {
 	const events = useContext( OmnibarEventsContext );
 	const callbackRef = useRef( callback );
-	callbackRef.current = callback;
+	useEffect( () => {
+		callbackRef.current = callback;
+	} );
 
 	useEffect( () => {
 		if ( ! events ) {
