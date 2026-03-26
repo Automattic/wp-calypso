@@ -115,3 +115,19 @@ One such tool is [AnyBar](https://github.com/tonsky/AnyBar) (_macOS only_), a ve
 ### Other platforms
 
 `anybar-calypso` communicates with AnyBar by sending simple strings via UDP to a local port. This means that it can trivially be adapted to work with any other notification system, either by listening to UDP traffic or by altering `anybar-calypso` directly.
+
+## Docker Sandbox (Claude Code)
+
+You can run Claude Code in a Docker sandbox with the correct Node and Yarn versions pre-installed. The sandbox is fully isolated, so all tools run without permission gating — no approval prompts for file edits, shell commands, etc.
+
+Build the image:
+
+```bash
+docker build -f Dockerfile.claude-sandbox -t my-calypso-sandbox .
+```
+
+Launch a sandbox:
+
+```bash
+docker sandbox run -t my-calypso-sandbox claude
+```

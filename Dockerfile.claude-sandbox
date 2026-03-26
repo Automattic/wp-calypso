@@ -1,0 +1,24 @@
+FROM docker/sandbox-templates:claude-code
+
+USER root
+
+# Install Node.js 22.9.0 (replace base image's Node)
+RUN ARCH=$(dpkg --print-architecture) && \
+    if [ "$ARCH" = "amd64" ]; then NARCH="x64"; else NARCH="arm64"; fi && \
+    curl -fsSL "https://nodejs.org/dist/v22.9.0/node-v22.9.0-linux-${NARCH}.tar.gz" -o /tmp/node.tar.gz && \
+    tar -xzf /tmp/node.tar.gz -C /usr/local --strip-components=1 && \
+    rm /tmp/node.tar.gz
+
+# Enable corepack
+RUN corepack enable
+
+# Install system deps useful for Calypso development
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    python3 \
+    && rm -rf /var/lib/apt/lists/*
+
+USER agent
+
+# Pre-download Yarn 4.0.2 as the agent user
+RUN corepack prepare yarn@4.0.2 --activate
