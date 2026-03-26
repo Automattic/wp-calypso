@@ -379,7 +379,6 @@ export interface UsePartnerBrandingResult {
 /**
  * Hook to get current partner branding based on URL params and feature flags.
  * Internally calls detectPartnerConfig() — callers do not need to pass any values.
- *
  * @example
  * const { topBarLogo, partnerConfig, signupTosElement } = usePartnerBranding();
  *
