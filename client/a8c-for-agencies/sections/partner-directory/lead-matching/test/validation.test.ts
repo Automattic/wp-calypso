@@ -25,13 +25,13 @@ describe( 'validateLeadMatchingDetails', () => {
 		details.regions = [ 'americas' ];
 		details.languages = [ 'en' ];
 		details.businessTypes = [ 'local_service' ];
-		details.idealBusinessTypes = [ 'content_blog_media' ];
-		details.companySizes = [ '1_5' ];
-		details.projectTypes = [ 'new_wordpress' ];
+		details.idealBusinessTypes = [ 'content_media' ];
+		details.companySizes = [ 'size_1_5' ];
+		details.projectTypes = [ 'new_wordpress_site' ];
 		details.serviceLevels = [ 'essential' ];
 		details.budgetLevels = [ 'affordable' ];
 		details.timingPreferences = [ 'right_away' ];
-		details.decisionProcesses = [ 'individual' ];
+		details.decisionProcesses = [ 'solo_decider' ];
 		details.ongoingRelationships = [ 'care_plans' ];
 
 		expect( validateLeadMatchingDetails( details ) ).toBeNull();

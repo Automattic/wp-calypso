@@ -120,14 +120,18 @@ export function useFormSelectors() {
 			'Common shared / managed hosting (SiteGround, Bluehost, GoDaddy, etc.)'
 		),
 		managed_wp_host: translate( 'Managed WordPress hosts (WP Engine, Kinsta, etc.)' ),
+		unknown: translate( 'Not sure / unknown' ),
 	};
 
 	const availableMigrationPlatforms: Record< string, string > = {
+		wordpress: 'WordPress',
+		woocommerce: 'WooCommerce',
 		shopify: 'Shopify',
 		wix: 'Wix',
 		squarespace: 'Squarespace',
 		webflow: 'Webflow',
 		custom: translate( 'Other website builders / e-commerce platforms / custom platforms' ),
+		other: translate( 'Other platform' ),
 	};
 
 	const availableStoreComplexities: Record< string, string > = {
