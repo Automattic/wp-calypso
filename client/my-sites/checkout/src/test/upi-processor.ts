@@ -352,41 +352,47 @@ describe( 'upiProcessor', () => {
 			configurable: true,
 		} );
 
-		const orderId = 54321;
-		const mockOrderStatus = {
-			order_id: orderId,
-			user_id: 1234,
-			receipt_id: undefined,
-			processing_status: 'payment-confirmed',
-		};
-		mockOrderEndpoint( orderId, () => [ 200, mockOrderStatus ] );
-		mockTransactionsEndpoint( () => mockTransactionsRedirectResponse( orderId ) );
+		try {
+			const orderId = 54321;
+			const mockOrderStatus = {
+				order_id: orderId,
+				user_id: 1234,
+				receipt_id: undefined,
+				processing_status: 'payment-confirmed',
+			};
+			mockOrderEndpoint( orderId, () => [ 200, mockOrderStatus ] );
+			mockTransactionsEndpoint( () => mockTransactionsRedirectResponse( orderId ) );
 
-		const expectedPendingUrl =
-			'https://example.com/checkout/thank-you/no-site/pending/54321?redirect_to=%2Fthank-you&receiptId=%3AreceiptId';
-		const expected = {
-			payload: expectedPendingUrl,
-			type: 'REDIRECT',
-		};
+			const expectedPendingUrl =
+				'https://example.com/checkout/thank-you/no-site/pending/54321?redirect_to=%2Fthank-you&receiptId=%3AreceiptId';
+			const expected = {
+				payload: expectedPendingUrl,
+				type: 'REDIRECT',
+			};
 
-		await act( async () => {
-			await expect(
-				upiProcessor(
-					submitData,
-					{
-						...options,
-						contactDetails: {
-							countryCode,
-							postalCode,
+			await act( async () => {
+				await expect(
+					upiProcessor(
+						submitData,
+						{
+							...options,
+							contactDetails: {
+								countryCode,
+								postalCode,
+							},
 						},
-					},
-					translate
-				)
-			).resolves.toStrictEqual( expected );
-		} );
+						translate
+					)
+				).resolves.toStrictEqual( expected );
+			} );
 
-		expect( window.location.href ).toBe( expectedPendingUrl );
-		Object.defineProperty( window, 'location', { value: originalLocation, configurable: true } );
+			expect( window.location.href ).toBe( expectedPendingUrl );
+		} finally {
+			Object.defineProperty( window, 'location', {
+				value: originalLocation,
+				configurable: true,
+			} );
+		}
 	} );
 
 	it( 'returns a success response when the order succeeds', async () => {
