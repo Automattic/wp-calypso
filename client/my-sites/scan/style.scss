@@ -2,17 +2,7 @@
 
 body.is-section-scan {
 	@include admin-ui-page-layout;
-
-	// Constrain content width on upsell pages only
-	.scan__wpcom-upsell .admin-ui-page__content {
-		> * {
-			max-width: 660px;
-			width: 100%;
-			margin-left: auto;
-			margin-right: auto;
-			box-sizing: border-box;
-		}
-	}
+	@include admin-ui-page-layout-constrained-content(".scan__wpcom-upsell");
 }
 
 .scan .formatted-header.is-left-align {

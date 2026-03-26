@@ -2,17 +2,7 @@
 
 body.is-section-backup {
 	@include admin-ui-page-layout;
-
-	// Constrain content width on upsell pages only
-	.backup__wpcom-upsell .admin-ui-page__content {
-		> * {
-			max-width: 660px;
-			width: 100%;
-			margin-left: auto;
-			margin-right: auto;
-			box-sizing: border-box;
-		}
-	}
+	@include admin-ui-page-layout-constrained-content(".backup__wpcom-upsell");
 }
 
 .backup__page {

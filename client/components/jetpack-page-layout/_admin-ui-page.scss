@@ -18,17 +18,22 @@
 	}
 }
 
-@mixin admin-ui-page-layout-constrained-content {
-	.layout:not(.has-no-sidebar) .layout__content {
-		// Temporarily here until constrained content width is implemented in Admin-UI
-		.admin-ui-page__content {
-			> * {
-				max-width: 660px;
-				width: 100%;
-				margin-left: auto;
-				margin-right: auto;
-				box-sizing: border-box;
-			}
+// Constrain admin-ui Page content to 660px centered.
+// Pass a $scope selector to limit to specific page variants (e.g. upsell pages).
+// Usage:
+//   @include admin-ui-page-layout-constrained-content;           // always constrained
+//   @include admin-ui-page-layout-constrained-content('.my-upsell'); // only within .my-upsell
+@mixin admin-ui-page-layout-constrained-content($scope: null) {
+	$parent: if($scope, "#{$scope} .admin-ui-page__content", ".admin-ui-page__content");
+
+	// Temporarily here until constrained content width is implemented in Admin-UI
+	#{$parent} {
+		> * {
+			max-width: 660px;
+			width: 100%;
+			margin-left: auto;
+			margin-right: auto;
+			box-sizing: border-box;
 		}
 	}
 }
