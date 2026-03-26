@@ -2,6 +2,7 @@
 
 body.is-section-marketing {
 	@include admin-ui-page-layout;
+	@include admin-ui-page-layout-constrained-content;
 }
 
 .site-settings {
