@@ -153,8 +153,8 @@ const mockWooBranding = {
 };
 
 jest.mock( 'calypso/lib/partner-branding', () => ( {
-	detectCiabConfig: () => null,
-	getCiabConfigFromGarden: ( partner: string, name: string ) => {
+	detectPartnerConfig: () => null,
+	getPartnerConfigFromGarden: ( partner: string, name: string ) => {
 		if ( partner === 'woo' && name === 'commerce' ) {
 			return mockWooBranding;
 		}
@@ -162,8 +162,8 @@ jest.mock( 'calypso/lib/partner-branding', () => ( {
 	},
 	getPartnerFormattedWindowTitle: (
 		title: string,
-		ciabConfig: { windowTitleSuffix?: string } | null
-	) => `${ title } — ${ ciabConfig?.windowTitleSuffix || 'WordPress.com' }`,
+		partnerConfig: { windowTitleSuffix?: string } | null
+	) => `${ title } — ${ partnerConfig?.windowTitleSuffix || 'WordPress.com' }`,
 } ) );
 
 jest.mock( 'calypso/lib/paths', () => ( {

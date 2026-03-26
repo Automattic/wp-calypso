@@ -166,7 +166,7 @@ class Document extends Component {
 					{ /* eslint-disable wpcalypso/jsx-classname-namespace, react/no-danger */ }
 					{ dashboard && config.isEnabled( 'dashboard/omnibar' ) && (
 						<div id="wpcom-omnibar">
-							<InterimOmnibar user={ null } site={ null } />
+							<InterimOmnibar user={ null } site={ null } currentRoute={ this.props.path ?? '/' } />
 						</div>
 					) }
 					{ renderedLayout ? (

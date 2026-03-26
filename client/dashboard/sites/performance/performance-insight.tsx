@@ -20,6 +20,7 @@ import { useLocale } from '../../app/locale';
 import { ButtonStack } from '../../components/button-stack';
 import { Notice } from '../../components/notice';
 import { Text } from '../../components/text';
+import { VIEWPORT_BREAKPOINTS } from './constants';
 import LLMNotice from './llm-notice';
 import PerformanceInsightTable from './performance-insight-table';
 import useLoadingSteps from './use-loading-steps';
@@ -40,8 +41,8 @@ export const PerformanceInsightTitle = ( {
 	index: number;
 	isHightImpact: boolean;
 } ) => {
-	const isMediumScreen = useViewportMatch( 'medium', '<' );
-	const isSmallScreen = useViewportMatch( 'small', '<' );
+	const isMediumScreen = useViewportMatch( VIEWPORT_BREAKPOINTS.medium, '<' );
+	const isSmallScreen = useViewportMatch( VIEWPORT_BREAKPOINTS.small, '<' );
 	const intent = insight.type === 'fail' ? 'error' : 'warning';
 
 	return (
@@ -254,7 +255,7 @@ export const PerformanceInsight = ( {
 	showTip: boolean;
 } ) => {
 	const locale = useLocale();
-	const isDesktop = useViewportMatch( 'medium' );
+	const isDesktop = useViewportMatch( VIEWPORT_BREAKPOINTS.desktop );
 	const { data: llmAnswer, isError } = useQuery( {
 		...odieAssistantPerformanceProfilerQuery( {
 			hash,

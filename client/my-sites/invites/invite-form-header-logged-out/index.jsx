@@ -5,7 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { BrandHeader } from 'calypso/components/connect-screen/brand-header';
 import { getPartnerSignupTosElement } from 'calypso/lib/partner-branding';
 
-function InviteFormHeaderLoggedOut( { site, ciabConfig } ) {
+function InviteFormHeaderLoggedOut( { site, partnerConfig } ) {
 	const translate = useTranslate();
 	const siteName = site?.title || site?.domain || translate( 'this site' );
 	const siteUrl = site?.URL;
@@ -27,7 +27,7 @@ function InviteFormHeaderLoggedOut( { site, ciabConfig } ) {
 	);
 
 	const description =
-		getPartnerSignupTosElement( ciabConfig, translate ) ||
+		getPartnerSignupTosElement( partnerConfig, translate ) ||
 		createInterpolateElement(
 			translate(
 				'Just a little reminder that by continuing with any of the options below, you agree to our <tosLink>Terms of Service</tosLink> and <privacyLink>Privacy Policy</privacyLink>.'

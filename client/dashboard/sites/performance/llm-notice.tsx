@@ -7,6 +7,7 @@ import AILoadingIcon from 'calypso/assets/images/performance-profiler/ai-loading
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import { Text } from '../../components/text';
+import { VIEWPORT_BREAKPOINTS } from './constants';
 import type { ReactNode } from 'react';
 
 const LLMNotice = ( {
@@ -18,7 +19,7 @@ const LLMNotice = ( {
 	isLoading?: boolean;
 	actions?: ReactNode;
 } ) => {
-	const isMediumScreen = useViewportMatch( 'medium', '<' );
+	const isMediumScreen = useViewportMatch( VIEWPORT_BREAKPOINTS.medium, '<' );
 
 	return (
 		<Card

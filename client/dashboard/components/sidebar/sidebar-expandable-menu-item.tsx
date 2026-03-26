@@ -5,6 +5,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { Icon, chevronDown, chevronUp } from '@wordpress/icons';
+import clsx from 'clsx';
 import { Children, cloneElement, isValidElement, useId, useState, useEffect } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { SidebarMenuItem } from './sidebar-menu-item';
@@ -64,7 +65,14 @@ export function SidebarExpandableMenuItem( {
 					<Icon icon={ isOpen ? chevronUp : chevronDown } size={ 18 } />
 				</HStack>
 			</Button>
-			{ isOpen && (
+			{ /* Wrapper div is needed because VStack's flex layout interferes with the CSS height animation. */ }
+			<div
+				className={ clsx( 'dashboard-sidebar__expandable-panel', {
+					'is-open': isOpen,
+				} ) }
+				// @ts-expect-error For some reason there's no inert type.
+				inert={ ! isOpen ? 'true' : undefined }
+			>
 				<VStack id={ panelId } spacing={ 1 }>
 					{ Children.map( children, ( child ) => {
 						if ( isValidElement( child ) && child.type === SidebarMenuItem && ! child.props.icon ) {
@@ -73,7 +81,7 @@ export function SidebarExpandableMenuItem( {
 						return child;
 					} ) }
 				</VStack>
-			) }
+			</div>
 		</VStack>
 	);
 }
