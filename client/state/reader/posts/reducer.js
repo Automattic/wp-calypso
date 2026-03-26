@@ -10,6 +10,43 @@ import {
 } from 'calypso/state/reader/action-types';
 import { combineReducers } from 'calypso/state/utils';
 
+const MEDIA_FIELDS_TO_PRESERVE = [
+	'featured_image',
+	'canonical_media',
+	'canonical_image',
+	'post_thumbnail',
+];
+
+function isIncomingMediaFieldEmpty( value ) {
+	if ( value == null || value === '' ) {
+		return true;
+	}
+	if (
+		typeof value === 'object' &&
+		value !== null &&
+		! Array.isArray( value ) &&
+		Object.keys( value ).length === 0
+	) {
+		return true;
+	}
+	return false;
+}
+
+function existingMediaFieldHasValue( value ) {
+	if ( value == null || value === '' ) {
+		return false;
+	}
+	if (
+		typeof value === 'object' &&
+		value !== null &&
+		! Array.isArray( value ) &&
+		Object.keys( value ).length === 0
+	) {
+		return false;
+	}
+	return true;
+}
+
 /**
  * Tracks all known post objects, indexed by post ID.
  * @param  {Object} state  Current state
@@ -25,11 +62,25 @@ export function items( state = {}, action ) {
 			// Keep track of all the feed_item_ID that have the same global_ID.
 			// See: https://github.com/Automattic/wp-calypso/pull/88408
 			posts.forEach( ( post ) => {
-				const { feed_item_IDs = [] } = state[ post.global_ID ] ?? {};
+				const existing = state[ post.global_ID ];
+				const { feed_item_IDs = [] } = existing ?? {};
 				const { feed_item_ID, global_ID } = post;
 
+				let merged = { ...post };
+				if ( existing ) {
+					merged = { ...existing, ...post };
+					for ( const field of MEDIA_FIELDS_TO_PRESERVE ) {
+						if (
+							isIncomingMediaFieldEmpty( post[ field ] ) &&
+							existingMediaFieldHasValue( existing[ field ] )
+						) {
+							merged[ field ] = existing[ field ];
+						}
+					}
+				}
+
 				postsByKey[ global_ID ] = {
-					...post,
+					...merged,
 					...( feed_item_ID && {
 						feed_item_IDs: feed_item_IDs.length
 							? [ ...new Set( [ ...feed_item_IDs, feed_item_ID ] ) ]

@@ -22,12 +22,31 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		test( 'should overwrite already existing post with a new one', () => {
-			const posts = [ { global_ID: 1 } ];
-			const prevState = { [ 1 ]: {} };
+		test( 'should merge incoming post with existing when global_ID matches', () => {
+			const posts = [ { global_ID: 1, title: 'Updated' } ];
+			const prevState = { 1: { global_ID: 1, title: 'Old' } };
 			const nextState = items( prevState, receivePosts( posts ) );
 
-			expect( nextState ).toEqual( { 1: posts[ 0 ] } );
+			expect( nextState ).toEqual( { 1: { global_ID: 1, title: 'Updated' } } );
+		} );
+
+		test( 'should preserve featured_image when incoming post has empty string', () => {
+			const posts = [ { global_ID: 'a', featured_image: '' } ];
+			const prevState = {
+				a: { global_ID: 'a', featured_image: 'https://example.com/hero.jpg' },
+			};
+			const nextState = items( prevState, receivePosts( posts ) );
+
+			expect( nextState.a.featured_image ).toBe( 'https://example.com/hero.jpg' );
+		} );
+
+		test( 'should preserve canonical_media when incoming omits it', () => {
+			const canonical = { mediaType: 'image', src: 'https://example.com/hero.jpg' };
+			const posts = [ { global_ID: 'b' } ];
+			const prevState = { b: { global_ID: 'b', canonical_media: canonical } };
+			const nextState = items( prevState, receivePosts( posts ) );
+
+			expect( nextState.b.canonical_media ).toEqual( canonical );
 		} );
 	} );
 
