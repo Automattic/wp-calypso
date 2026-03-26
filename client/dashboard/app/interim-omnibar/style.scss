@@ -22,4 +22,14 @@ body:has(#wpcom-omnibar) #wpcom {
 			background: var(--color-masterbar-item-hover-background);
 		}
 	}
+
+	.masterbar__item:focus-visible {
+		box-shadow: inset 0 0 0 2px var(--color-masterbar-highlight);
+		outline: none;
+	}
+
+	.masterbar__item-subitems a:focus-visible,
+	.masterbar__item-subitems button:focus-visible {
+		outline: thin dotted;
+	}
 }
