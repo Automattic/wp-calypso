@@ -1,51 +1,22 @@
-import { useRouterState } from '@tanstack/react-router';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { brush, envelope, globe, layout, plugins } from '@wordpress/icons';
-import { useRef } from 'react';
 import { menuDot } from '../../components/icons';
 import RouterLinkButton from '../../components/router-link-button';
 import { SidebarExpandableMenuItem, SidebarMenu, SidebarMenuItem } from '../../components/sidebar';
+import SidebarNavigator from '../../components/sidebar-navigator';
 import DomainSidebar from '../../domains/domain-sidebar';
 import MeSidebar from '../../me/me-sidebar';
 import SiteSidebar from '../../sites/site-sidebar';
 import { wpcomLink } from '../../utils/link';
 import { useAnalytics } from '../analytics';
 import { useAppContext } from '../context';
-import SidebarScreen from './sidebar-screen';
-import { getSidebarState } from './sidebar-state';
-import type { ScreenId } from './sidebar-state';
 
 import './sidebar.scss';
-import './sidebar-screen.scss';
 
 export default function Sidebar() {
 	const { Logo, name } = useAppContext();
 	const { recordTracksEvent } = useAnalytics();
-	const { screen: currentScreen, param } = useRouterState( {
-		select: ( state ) => {
-			const hasError = state.matches.some(
-				( match ) => match.status === 'error' || match.status === 'notFound'
-			);
-			return getSidebarState( state.matches, hasError );
-		},
-	} );
-	const previousScreenRef = useRef( currentScreen );
-
-	// Remember the last param for each screen so it persists during exit animations.
-	const lastParamsRef = useRef< Record< string, string | undefined > >( {} );
-	if ( param ) {
-		lastParamsRef.current[ currentScreen ] = param;
-	}
-
-	const isBack = currentScreen === 'root' && previousScreenRef.current !== 'root';
-
-	if ( previousScreenRef.current !== currentScreen ) {
-		previousScreenRef.current = currentScreen;
-	}
-
-	const siteSlug = currentScreen === 'site' ? param : lastParamsRef.current.site;
-	const domainName = currentScreen === 'domain' ? param : lastParamsRef.current.domain;
 
 	return (
 		<div className="dashboard-responsive-sidebar__sidebar">
@@ -62,26 +33,22 @@ export default function Sidebar() {
 					/>
 				</div>
 			) }
-			<div className="dashboard-sidebar-screens">
-				<SidebarScreen screenKey={ currentScreen } isBack={ isBack }>
-					{ renderActiveScreen( currentScreen, siteSlug, domainName ) }
-				</SidebarScreen>
-			</div>
+			<SidebarNavigator>
+				<SidebarNavigator.Screen path="/">
+					<PrimaryMenuSidebar />
+				</SidebarNavigator.Screen>
+				<SidebarNavigator.Screen path="/sites/$siteSlug">
+					<SiteSidebar />
+				</SidebarNavigator.Screen>
+				<SidebarNavigator.Screen path="/domains/$domainName">
+					<DomainSidebar />
+				</SidebarNavigator.Screen>
+				<SidebarNavigator.Screen path="/me">
+					<MeSidebar />
+				</SidebarNavigator.Screen>
+			</SidebarNavigator>
 		</div>
 	);
-}
-
-function renderActiveScreen( screen: ScreenId, siteSlug?: string, domainName?: string ) {
-	switch ( screen ) {
-		case 'site':
-			return <SiteSidebar key="site" siteSlug={ siteSlug } />;
-		case 'domain':
-			return <DomainSidebar key="domain" domainName={ domainName } />;
-		case 'me':
-			return <MeSidebar key="me" />;
-		default:
-			return <PrimaryMenuSidebar key="root" />;
-	}
 }
 
 function PrimaryMenuSidebar() {

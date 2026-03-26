@@ -16,6 +16,7 @@ import {
 	shield,
 } from '@wordpress/icons';
 import {
+	siteRoute,
 	siteOverviewRoute,
 	siteDeploymentsRoute,
 	sitePerformanceRoute,
@@ -43,11 +44,9 @@ import SiteSwitcherItem from './site-switcher-item';
 import type { Site } from '@automattic/api-core';
 import type { AnyRoute } from '@tanstack/react-router';
 
-export default function SiteSidebar( { siteSlug }: { siteSlug?: string } ) {
-	const { data: site } = useQuery( {
-		...siteBySlugQuery( siteSlug! ),
-		enabled: !! siteSlug,
-	} );
+export default function SiteSidebar() {
+	const { siteSlug } = siteRoute.useParams();
+	const { data: site } = useQuery( siteBySlugQuery( siteSlug ) );
 
 	if ( ! site ) {
 		return null;
