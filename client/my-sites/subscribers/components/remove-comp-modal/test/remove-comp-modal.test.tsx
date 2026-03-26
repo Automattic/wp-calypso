@@ -25,6 +25,10 @@ jest.mock( 'calypso/state/memberships/gifts/actions', () => ( {
 	requestDeleteGift: jest.fn( () => () => Promise.resolve() ),
 } ) );
 
+jest.mock( 'calypso/state/memberships/comps/actions', () => ( {
+	requestDeleteComp: jest.fn( () => () => Promise.resolve() ),
+} ) );
+
 jest.mock( '@automattic/calypso-analytics', () => ( {
 	recordTracksEvent: jest.fn(),
 } ) );
@@ -39,6 +43,7 @@ function renderModal( props = {} ) {
 		giftId: 456,
 		planName: 'Premium Newsletter',
 		username: 'testuser',
+		useComps: false,
 		onClose: jest.fn(),
 		onRemoved: jest.fn(),
 	};
@@ -83,6 +88,18 @@ describe( 'RemoveCompModal', () => {
 
 		expect( requestDeleteGift ).toHaveBeenCalledWith( 123, 456, expect.any( String ) );
 		// Wait for the promise to resolve
+		await screen.findByRole( 'button', { name: 'Remove' } );
+		expect( props.onRemoved ).toHaveBeenCalled();
+	} );
+
+	it( 'calls requestDeleteComp when useComps is true', async () => {
+		const { requestDeleteComp } = jest.requireMock( 'calypso/state/memberships/comps/actions' );
+		const user = userEvent.setup();
+		const { props } = renderModal( { useComps: true, compId: 789 } );
+
+		await user.click( screen.getByRole( 'button', { name: 'Remove' } ) );
+
+		expect( requestDeleteComp ).toHaveBeenCalledWith( 123, 789, expect.any( String ) );
 		await screen.findByRole( 'button', { name: 'Remove' } );
 		expect( props.onRemoved ).toHaveBeenCalled();
 	} );

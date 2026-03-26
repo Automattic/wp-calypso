@@ -23,7 +23,7 @@ type SubscriberDetailsProps = {
 	onClose?: () => void;
 	onUnsubscribe?: ( subscriber: Subscriber ) => void;
 	onGiftSubscription?: ( subscriber: Subscriber ) => void;
-	onRemoveComp?: ( giftId: number, planName: string ) => void;
+	onRemoveComp?: ( planName: string, giftId?: number, compId?: number ) => void;
 };
 
 const SubscriberDetails = ( {
@@ -60,7 +60,7 @@ const SubscriberDetails = ( {
 					{ translate( 'Comp', {
 						comment: 'Short for "complimentary" — a free subscription granted by the site creator',
 					} ) }
-					{ onRemoveComp && subscriptionPlan.gift_id && (
+					{ onRemoveComp && ( subscriptionPlan.gift_id || subscriptionPlan.comp_id ) && (
 						<Button
 							className="subscriber-details__remove-comp-button"
 							variant="tertiary"
@@ -70,7 +70,11 @@ const SubscriberDetails = ( {
 								} )
 							) }
 							onClick={ () =>
-								onRemoveComp( subscriptionPlan.gift_id!, subscriptionPlan.title ?? '' )
+								onRemoveComp(
+									subscriptionPlan.title ?? '',
+									subscriptionPlan.gift_id,
+									subscriptionPlan.comp_id
+								)
 							}
 						>
 							<Icon icon={ trash } size={ 18 } />
