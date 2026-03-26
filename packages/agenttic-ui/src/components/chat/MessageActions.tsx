@@ -11,6 +11,15 @@ export function MessageActions( { message }: MessageActionsProps ) {
 		return null;
 	}
 
+	const buttonActions = message.actions.filter(
+		( action ): action is Extract< MessageAction, { type?: 'button' } > =>
+			action.type !== 'component'
+	);
+	const componentActions = message.actions.filter(
+		( action ): action is Extract< MessageAction, { type: 'component' } > =>
+			action.type === 'component'
+	);
+
 	return (
 		<div
 			className={ styles.container }
@@ -18,24 +27,33 @@ export function MessageActions( { message }: MessageActionsProps ) {
 			role="toolbar"
 			aria-label="Message actions"
 		>
-			{ message.actions.map( ( action: MessageAction ) => {
+			{ buttonActions.map( ( action ) => (
+				<Button
+					key={ action.id }
+					className={ styles.button }
+					icon={ action.icon }
+					onClick={ () => action.onClick( message ) }
+					variant="ghost"
+					size="sm"
+					type="button"
+					disabled={ action.disabled }
+					pressed={ action.pressed }
+					title={ action.tooltip || action.label }
+					aria-label={ action.label }
+					{ ...( action.tooltip && {
+						title: action.tooltip,
+					} ) }
+				>
+					{ action.showLabel ? action.label : undefined }
+				</Button>
+			) ) }
+			{ componentActions.map( ( action ) => {
+				const ActionComponent = action.component;
 				return (
-					<Button
+					<ActionComponent
 						key={ action.id }
-						className={ styles.button }
-						icon={ action.icon }
-						onClick={ () => action.onClick( message ) }
-						variant="ghost"
-						size="sm"
-						type="button"
-						disabled={ action.disabled }
-						pressed={ action.pressed }
-						title={ action.tooltip || action.label }
-						aria-label={ action.label }
-						{ ...( action.tooltip && { title: action.tooltip } ) }
-					>
-						{ action.showLabel ? action.label : undefined }
-					</Button>
+						{ ...( action.componentProps || {} ) }
+					/>
 				);
 			} ) }
 		</div>

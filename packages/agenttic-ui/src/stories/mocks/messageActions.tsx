@@ -1,5 +1,5 @@
 import React from 'react';
-import type { Message, MessageAction } from '../../types';
+import type { Message, MessageAction, MessageActionButton } from '../../types';
 import { CopyIcon, ThumbsDownIcon, ThumbsUpIcon } from '../../components';
 
 // Mock message data
@@ -100,7 +100,7 @@ export const mockHandlers = {
 };
 
 // Static action definitions
-export const copyAction: MessageAction = {
+export const copyAction: MessageActionButton = {
 	id: 'copy',
 	label: 'Copy message',
 	icon: <CopyIcon />,

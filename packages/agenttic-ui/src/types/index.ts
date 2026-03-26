@@ -30,7 +30,8 @@ export interface Message {
 	reactKey?: string; // Stable key for React rendering (prevents unmount/remount during updates)
 }
 
-export interface MessageAction {
+export interface MessageActionButton {
+	type?: 'button';
 	id: string;
 	icon?: React.ReactNode;
 	label: string;
@@ -40,6 +41,16 @@ export interface MessageAction {
 	pressed?: boolean;
 	showLabel?: boolean;
 }
+
+export interface MessageActionComponent {
+	type: 'component';
+	id: string;
+	label: string;
+	component: React.ComponentType< any >;
+	componentProps?: Record< string, unknown >;
+}
+
+export type MessageAction = MessageActionButton | MessageActionComponent;
 
 // UI package only exports UI-specific types
 
