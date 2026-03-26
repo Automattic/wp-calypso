@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Page } from '@wordpress/admin-ui';
 import { Tabs } from '@wordpress/ui';
@@ -179,7 +180,7 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 					onValueChange={ ( tabId: string ) => {
 						const tab = tabs.find( ( item ) => item.id === tabId );
 						if ( tab ) {
-							window.location.assign( tab.path );
+							page.show( tab.path );
 						}
 					} }
 				>
@@ -209,7 +210,7 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 					onValueChange={ ( tabId: string ) => {
 						const tab = tabs.find( ( item ) => item.id === tabId );
 						if ( tab ) {
-							window.location.assign( tab.path );
+							page.show( tab.path );
 						}
 					} }
 				>
