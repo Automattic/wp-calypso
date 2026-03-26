@@ -1,5 +1,4 @@
 import { EscalationButton } from '../../components/escalation-button';
-import SourcesDisplay from '../../components/sources-display';
 import UnavailableToolMessage from '../../components/unavailable-tool-message';
 import convertToolMessagesToComponents from '../convert-tool-messages-to-components';
 import { isEditorPage } from '../is-editor-page';
@@ -14,10 +13,6 @@ jest.mock(
 	{ virtual: true }
 );
 jest.mock( '../is-editor-page' );
-jest.mock( '../../components/sources-display', () => ( {
-	__esModule: true,
-	default: jest.fn(),
-} ) );
 
 const MockComponent = jest.fn();
 const MockNextStepButton = jest.fn();
@@ -188,7 +183,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 	} );
 
-	it( 'replaces data blocks with sources into SourcesDisplay components', () => {
+	it( 'passes through messages with sources data blocks unchanged', () => {
 		const sources = [
 			{ title: 'Article 1', url: 'https://example.com/1' },
 			{ title: 'Article 2', url: 'https://example.com/2' },
@@ -209,9 +204,8 @@ describe( 'convertToolMessagesToComponents', () => {
 			text: 'Here is your answer.',
 		} );
 		expect( result[ 0 ].content[ 1 ] ).toMatchObject( {
-			type: 'component',
-			component: SourcesDisplay,
-			componentProps: { sources },
+			type: 'data',
+			data: { sources },
 		} );
 	} );
 
