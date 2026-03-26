@@ -15,8 +15,6 @@ import {
 	settings,
 	shield,
 } from '@wordpress/icons';
-import { Suspense, lazy, useMemo } from 'react';
-import { useAppContext } from '../../app/context';
 import {
 	siteOverviewRoute,
 	siteDeploymentsRoute,
@@ -40,6 +38,7 @@ import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-suppor
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { canSwitchEnvironment } from '../features';
 import EnvironmentSwitcher from '../site/environment-switcher-v2';
+import SiteSwitcherItem from './site-switcher-item';
 import type { Site } from '@automattic/api-core';
 import type { AnyRoute } from '@tanstack/react-router';
 
@@ -49,9 +48,6 @@ export default function SiteSidebar() {
 
 	const { data: site } = useQuery( siteBySlugQuery( siteSlug ) );
 
-	const { components } = useAppContext();
-	const SiteSwitcherV2 = useMemo( () => lazy( components.siteSwitcherV2 ), [ components ] );
-
 	if ( ! site ) {
 		return null;
 	}
@@ -60,12 +56,10 @@ export default function SiteSidebar() {
 		<VStack spacing={ 2 }>
 			<SidebarBackButton to="/sites">{ __( 'Back to Sites' ) }</SidebarBackButton>
 			<VStack spacing={ 4 }>
-				<Suspense fallback={ null }>
-					<SidebarMenu>
-						<SiteSwitcherV2 />
-						{ canSwitchEnvironment( site ) && <EnvironmentSwitcher site={ site } /> }
-					</SidebarMenu>
-				</Suspense>
+				<SidebarMenu>
+					<SiteSwitcherItem site={ site } />
+					{ canSwitchEnvironment( site ) && <EnvironmentSwitcher site={ site } /> }
+				</SidebarMenu>
 				<SiteMenuSidebar site={ site } />
 			</VStack>
 		</VStack>

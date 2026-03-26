@@ -260,6 +260,7 @@ object BuildDockerImage : BuildType({
 			--build-arg cache_mode=%cache_mode%
 			--build-arg base_image=%base_image%
 			--build-arg cache_seed_image=%cache_seed_image%
+			--build-arg cache_seed_key=%CACHE_SEED_KEY%
 			--build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber}
 			--build-arg profile=%PROFILE%
 			--build-arg manual_sentry_release=%MANUAL_SENTRY_RELEASE%
@@ -337,10 +338,9 @@ object BuildDockerImage : BuildType({
 			""".trimIndent()
 		}
 
-		// TODO: Cache rebuilding is currently disabled. It takes a long time and
-		// causes timeouts on trunk. It needs to run more quickly to be worth it.
-		// For now, the cache will be rebuilt a couple times a day by the dedicated
-		// cache build.
+		// Base-image cache rebuilding remains disabled by default because it is slow
+		// enough to risk trunk timeouts. Seed-mode inline refresh is handled below,
+		// while the base flow stays available as a manual fallback.
 
 		// Conditions don't seem to support and/or, so we do this in a separate step.
 		// Essentially, UPDATE_BASE_IMAGE_CACHE will remain false by default, but
@@ -395,10 +395,49 @@ object BuildDockerImage : BuildType({
 				namesAndTags = "registry.a8c.com/calypso/base:%base_image_publish_tag%"
 			}
 		}
+
+		dockerCommand {
+			name = "Rebuild cache-seed image"
+			conditions {
+				equals("cache_mode", "seed")
+				equals("UPDATE_CACHE_SEED", "true")
+				equals("teamcity.build.branch.is_default", "true")
+			}
+			commandType = build {
+				source = file {
+					path = "Dockerfile"
+				}
+				namesAndTags = """
+					registry.a8c.com/calypso/cache-seed:latest
+					registry.a8c.com/calypso/cache-seed:build-%build.number%
+				""".trimIndent()
+				commandArgs = """
+					--target update-cache-seed
+					--cache-from=registry.a8c.com/calypso/app:commit-${Settings.WpCalypso.paramRefs.buildVcsNumber},%cache_seed_image%
+					$commonArgs
+				""".trimIndent().replace("\n"," ")
+			}
+			param("dockerImage.platform", "linux")
+		}
+
+		dockerCommand {
+			name = "Push cache-seed image"
+			conditions {
+				equals("cache_mode", "seed")
+				equals("UPDATE_CACHE_SEED", "true")
+				equals("teamcity.build.branch.is_default", "true")
+			}
+			commandType = push {
+				namesAndTags = """
+					registry.a8c.com/calypso/cache-seed:latest
+					registry.a8c.com/calypso/cache-seed:build-%build.number%
+				""".trimIndent()
+			}
+		}
 	}
 
 	failureConditions {
-		executionTimeoutMin = 20
+		executionTimeoutMin = 26
 	}
 
 	features {
