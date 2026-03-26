@@ -12,8 +12,9 @@
 	opacity 0.2s ease-out;
 
 	&.is-open {
-		overflow: visible;
 		block-size: auto;
 		opacity: 1;
+		overflow: clip;
+		overflow-clip-margin: 2px;
 	}
 }
