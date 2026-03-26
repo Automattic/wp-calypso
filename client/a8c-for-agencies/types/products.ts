@@ -31,6 +31,14 @@ export interface APIProductFamilyProduct {
 	yearly_introductory_price?: number;
 	tier_monthly_prices?: APIProductTierPrice[];
 	tier_yearly_prices?: APIProductTierPrice[];
+
+	metadata?: {
+		sites?: number;
+		visits?: number;
+		storage?: number;
+		php_worker_count?: number;
+		category?: string | null;
+	};
 }
 
 export interface APIProductFamily {

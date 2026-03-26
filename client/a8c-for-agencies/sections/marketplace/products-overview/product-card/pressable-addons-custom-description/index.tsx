@@ -2,7 +2,7 @@ import { Icon, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import pressableIcon from 'calypso/assets/images/a8c-for-agencies/product-logos/pressable.svg';
 import { useProductDescription } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
-import { getPressableAddonCapacityCopyContext } from './lib/capacity-copy';
+import usePressableAddonCapacityContext from './hooks/use-pressable-addon-capacity-context';
 
 import './style.scss';
 
@@ -14,7 +14,7 @@ type Props = {
 export default function PressableAddonsCustomDescription( { productName, productSlug }: Props ) {
 	const translate = useTranslate();
 	const { description } = useProductDescription( productSlug );
-	const context = getPressableAddonCapacityCopyContext( productSlug );
+	const context = usePressableAddonCapacityContext( productSlug );
 	const addOnType = context?.type ?? 'unknown';
 
 	const getCalloutCopy = () => {

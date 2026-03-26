@@ -10,7 +10,7 @@ import { isAgencyOwner } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { useGetProductPricingInfo } from '../../hooks/use-marketplace';
-import getPressablePlan from '../lib/get-pressable-plan';
+import useGetPressablePlan from '../hooks/use-get-pressable-plan';
 import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
 type Props = {
@@ -31,6 +31,7 @@ export default function PlanSelectionDetails( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
+	const getPressablePlan = useGetPressablePlan();
 	const info = selectedPlan?.slug ? getPressablePlan( selectedPlan?.slug ) : null;
 
 	const customString = translate( 'Custom' );

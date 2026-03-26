@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import useFetchLicenses from 'calypso/a8c-for-agencies/data/purchases/use-fetch-licenses';
-import getPressablePlan from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/lib/get-pressable-plan';
+import useGetPressablePlan from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/hooks/use-get-pressable-plan';
 import {
 	LicenseFilter,
 	LicenseSortDirection,
@@ -12,7 +12,7 @@ import {
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { TitanOrder } from 'calypso/state/a8c-for-agencies/types';
-import { calculateEffectiveCapacity } from './capacity';
+import useCalculateEffectiveCapacity from './hooks/use-calculate-effective-capacity';
 import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
 import './style.scss';
@@ -35,7 +35,11 @@ export default function PressableUsageDetails( { existingPlan }: Props ) {
 		100
 	);
 
-	const planInfo = existingPlan?.slug ? getPressablePlan( existingPlan?.slug ) : null;
+	const getPressablePlan = useGetPressablePlan();
+
+	const calculateEffectiveCapacity = useCalculateEffectiveCapacity();
+
+	const planInfo = existingPlan?.slug ? getPressablePlan( existingPlan.slug ) : null;
 
 	// Filter active Titan orders and calculate total active inboxes
 	const activeOrders =
