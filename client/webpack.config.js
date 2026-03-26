@@ -102,7 +102,15 @@ const webpackCacheBuildDependencies = [
 	path.resolve( __dirname, '../.yarnrc.yml' ),
 ];
 
-const cacheFlavorParts = [ `mode=${ bundleEnv }`, `devtool=${ sourceMapType || 'none' }` ];
+// Sentry release mode mutates the client compilation by injecting release code
+// into the entrypoints. It must not share a filesystem cache flavor with
+// hidden-source-map builds that run without the Sentry plugin, such as
+// cache-seed priming.
+const cacheFlavorParts = [
+	`mode=${ bundleEnv }`,
+	`devtool=${ sourceMapType || 'none' }`,
+	`release=${ shouldCreateSentryRelease ? 'on' : 'off' }`,
+];
 const webpackCacheName = `client-${ cacheFlavorParts.join( '__' ) }`;
 
 // Inputs that should invalidate a cache flavor.
@@ -110,6 +118,8 @@ const webpackCacheVersion = JSON.stringify( {
 	bundleEnv,
 	nodeEnv: process.env.NODE_ENV || null,
 	calypsoEnv: process.env.CALYPSO_ENV || null,
+	sourceMapType: sourceMapType || null,
+	sentryRelease: shouldCreateSentryRelease,
 	buildChunksMap: shouldBuildChunksMap,
 	minify: shouldMinify,
 	entryLimit: process.env.ENTRY_LIMIT || null,

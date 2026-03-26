@@ -437,7 +437,7 @@ object BuildDockerImage : BuildType({
 	}
 
 	failureConditions {
-		executionTimeoutMin = 26
+		executionTimeoutMin = 31
 	}
 
 	features {
