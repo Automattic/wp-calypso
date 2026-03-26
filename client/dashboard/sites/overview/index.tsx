@@ -39,6 +39,7 @@ import VisibilityCard from '../overview-visibility-card';
 import VisibilityCardCiab from '../overview-visibility-card-ciab';
 import { InaccessibleJetpackNotice } from '../site/notices';
 import StagingSiteSyncDropdown from '../staging-site-sync-dropdown';
+import { CiabPlanExpiredBanner } from './ciab-plan-expired-banner';
 import { StorageWarningBanner } from './storage-warning-banner';
 import type { Site } from '@automattic/api-core';
 import type { WPBreakpoint } from '@wordpress/compose/build-types/hooks/use-viewport-match';
@@ -201,7 +202,12 @@ function SiteOverview( {
 
 		if ( isCommerceGardenSite ) {
 			return (
-				<Button __next40pxDefaultSize variant="primary" href={ site.options.admin_url }>
+				<Button
+					__next40pxDefaultSize
+					variant="primary"
+					href={ site.options.admin_url }
+					disabled={ !! site.plan?.expired }
+				>
 					{ __( 'Manage store' ) }
 				</Button>
 			);
@@ -247,6 +253,7 @@ function SiteOverview( {
 		>
 			<VStack alignment="stretch" spacing={ isSmallViewport ? 5 : 10 }>
 				<StorageWarningBanner site={ site } />
+				<CiabPlanExpiredBanner site={ site } />
 				<Grid { ...gridLayout } gap={ spacing }>
 					{ showSitePreview && <SitePreviewCard site={ site } /> }
 					<SiteOverviewPrimaryCards site={ site } spacing={ spacing } />
