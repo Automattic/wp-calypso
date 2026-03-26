@@ -3,6 +3,16 @@
 body.is-section-settings-podcasting {
 	@include admin-ui-page-layout;
 	@include admin-ui-page-layout-constrained-content;
+
+	.layout,
+	.layout__content,
+	.layout__primary {
+		height: 100%;
+	}
+
+	.layout__primary .main {
+		height: 100%;
+	}
 }
 
 .podcasting-details__publish-wrapper {
