@@ -1,0 +1,196 @@
+.connect-screen-notice {
+	--connect-screen-notice-icon-size: 24px;
+	--connect-screen-notice-text-line-height: 20px;
+	--connect-screen-notice-text-vertical-padding: calc(
+		( var( --connect-screen-notice-icon-size ) - var( --connect-screen-notice-text-line-height ) ) /
+			2
+	);
+	--connect-screen-notice-background-color: var( --studio-white, #fff );
+	--connect-screen-notice-border-color: var( --studio-gray-5, #dcdcde );
+	--connect-screen-notice-text-color: var( --color-text, #1e1e1e );
+	--connect-screen-notice-icon-color: var( --color-text-subtle, #50575e );
+
+	display: grid;
+	align-items: start;
+	grid-template-columns: auto minmax( 0, 1fr ) auto;
+	width: 100%;
+	margin-bottom: 1rem;
+	padding: 0.75rem;
+	border: 1px solid var( --connect-screen-notice-border-color );
+	border-radius: 8px;
+	background: var( --connect-screen-notice-background-color );
+	color: var( --connect-screen-notice-text-color );
+}
+
+.connect-screen-notice.is-intent-neutral {
+	--connect-screen-notice-background-color: var( --studio-white, #fff );
+	--connect-screen-notice-border-color: var( --studio-gray-5, #dcdcde );
+	--connect-screen-notice-text-color: var( --color-text, #1e1e1e );
+	--connect-screen-notice-icon-color: var( --color-text-subtle, #50575e );
+}
+
+.connect-screen-notice.is-intent-info {
+	--connect-screen-notice-background-color: color-mix(
+		in srgb,
+		var( --color-accent, #0675c4 ) 8%,
+		var( --studio-white, #fff )
+	);
+	--connect-screen-notice-border-color: color-mix(
+		in srgb,
+		var( --color-accent, #0675c4 ) 30%,
+		var( --studio-gray-5, #dcdcde )
+	);
+	--connect-screen-notice-text-color: var( --color-accent-70, #005f96 );
+	--connect-screen-notice-icon-color: color-mix(
+		in srgb,
+		var( --color-accent, #0675c4 ) 78%,
+		var( --studio-white, #fff )
+	);
+}
+
+.connect-screen-notice.is-intent-warning {
+	--connect-screen-notice-background-color: color-mix(
+		in srgb,
+		var( --color-warning, #b26200 ) 12%,
+		var( --studio-white, #fff )
+	);
+	--connect-screen-notice-border-color: color-mix(
+		in srgb,
+		var( --color-warning, #b26200 ) 36%,
+		var( --studio-gray-5, #dcdcde )
+	);
+	--connect-screen-notice-text-color: var( --color-warning-70, #7a3d00 );
+	--connect-screen-notice-icon-color: color-mix(
+		in srgb,
+		var( --color-warning, #b26200 ) 78%,
+		var( --studio-white, #fff )
+	);
+}
+
+.connect-screen-notice.is-intent-success {
+	--connect-screen-notice-background-color: color-mix(
+		in srgb,
+		var( --color-success, #008a20 ) 11%,
+		var( --studio-white, #fff )
+	);
+	--connect-screen-notice-border-color: color-mix(
+		in srgb,
+		var( --color-success, #008a20 ) 34%,
+		var( --studio-gray-5, #dcdcde )
+	);
+	--connect-screen-notice-text-color: var( --color-success-70, #005f1c );
+	--connect-screen-notice-icon-color: color-mix(
+		in srgb,
+		var( --color-success, #008a20 ) 80%,
+		var( --studio-white, #fff )
+	);
+}
+
+.connect-screen-notice.is-intent-error {
+	--connect-screen-notice-background-color: color-mix(
+		in srgb,
+		var( --color-error, #c9352d ) 11%,
+		var( --studio-white, #fff )
+	);
+	--connect-screen-notice-border-color: color-mix(
+		in srgb,
+		var( --color-error, #c9352d ) 34%,
+		var( --studio-gray-5, #dcdcde )
+	);
+	--connect-screen-notice-text-color: var( --color-error-70, #8c201c );
+	--connect-screen-notice-icon-color: color-mix(
+		in srgb,
+		var( --color-error, #c9352d ) 80%,
+		var( --studio-white, #fff )
+	);
+}
+
+.connect-screen-notice-icon {
+	grid-row: 1;
+	grid-column: 1;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	margin-inline-end: 0.5rem;
+	color: var( --connect-screen-notice-icon-color );
+}
+
+.connect-screen-notice-content {
+	grid-column: 2;
+	min-width: 0;
+}
+
+.connect-screen-notice-title {
+	margin: 0;
+	padding-block: var( --connect-screen-notice-text-vertical-padding );
+	font-size: 0.875rem;
+	font-weight: 500;
+	line-height: var( --connect-screen-notice-text-line-height );
+	color: var( --connect-screen-notice-text-color );
+}
+
+.connect-screen-notice-description {
+	margin: 0;
+	padding-block: var( --connect-screen-notice-text-vertical-padding );
+	font-size: 0.875rem;
+	line-height: var( --connect-screen-notice-text-line-height );
+	color: var( --connect-screen-notice-text-color );
+}
+
+.connect-screen-notice-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.75rem;
+}
+
+.connect-screen-notice-content:has( .connect-screen-notice-title ) .connect-screen-notice-actions,
+.connect-screen-notice-content:has( .connect-screen-notice-description )
+	.connect-screen-notice-actions {
+	margin-block-start: 0.5rem;
+}
+
+.connect-screen-notice-action-button.components-button {
+	flex-shrink: 0;
+	min-height: 30px;
+	padding: 0 0.75rem;
+	font-size: 0.75rem;
+	font-weight: 500;
+}
+
+.connect-screen-notice-action-link {
+	display: inline-flex;
+	align-items: center;
+	flex-shrink: 0;
+	font-size: 0.875rem;
+	line-height: var( --connect-screen-notice-text-line-height );
+	color: var( --connect-screen-notice-text-color );
+	text-decoration: underline;
+	margin-block: auto;
+}
+
+.connect-screen-notice-action-link:not( :first-child ) {
+	margin-inline-start: 0.25rem;
+}
+
+.connect-screen-notice-action-link:not( :last-child ) {
+	margin-inline-end: 0.25rem;
+}
+
+.connect-screen-notice-action-link:hover,
+.connect-screen-notice-action-link:focus {
+	color: var( --connect-screen-notice-text-color );
+}
+
+.connect-screen-notice-close-icon.components-button {
+	grid-row: 1;
+	grid-column: 3;
+	margin-inline-start: 0.5rem;
+	color: var( --connect-screen-notice-text-color );
+	opacity: 0.8;
+}
+
+.connect-screen-notice-close-icon.components-button:hover,
+.connect-screen-notice-close-icon.components-button:focus {
+	opacity: 1;
+	background: color-mix( in srgb, transparent 50%, var( --studio-gray-5, #dcdcde ) );
+}
