@@ -541,7 +541,7 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 						<ToggleControl
 							checked={ formData.supportsQuickHelp }
 							onChange={ ( value ) => updateField( 'supportsQuickHelp', value ) }
-							label={ __( 'We accept one-off small fixes / "quick help" tickets' ) }
+							label={ __( 'We accept one-off small fixes / `quick help` tickets' ) }
 						/>
 					</div>
 

@@ -121,7 +121,7 @@ export default function PartnerDirectory( { selectedSection }: Props ) {
 			breadcrumbItems: [
 				...sections[ PARTNER_DIRECTORY_DASHBOARD_SLUG ].breadcrumbItems,
 				{
-					label: translate( 'Lead Matching' ),
+					label: translate( 'Lead matching' ),
 					href: `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_LEAD_MATCHING_SLUG }`,
 				},
 			],
