@@ -22,6 +22,7 @@ import {
 	requestPaginatedStream,
 } from 'calypso/state/reader/streams/actions';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
+
 import './style.scss';
 
 interface SubscribeModalProps {

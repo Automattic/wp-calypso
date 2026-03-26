@@ -127,20 +127,6 @@ const ReaderOnboarding = ( {
 		}
 	}, [ shouldRenderOnboarding, hasSeenOnboarding, dispatch ] );
 
-	// Reopen subscription onboarding page if prompted by query param.
-	useEffect( () => {
-		const urlParams = new URLSearchParams( window.location.search );
-		const shouldReloadOnboarding = urlParams.has( 'reloadSubscriptionOnboarding' );
-
-		if ( shouldReloadOnboarding ) {
-			openDiscoverModal();
-			urlParams.delete( 'reloadSubscriptionOnboarding' );
-			page.redirect(
-				`${ window.location.pathname }${ urlParams.toString() ? '?' + urlParams.toString() : '' }`
-			);
-		}
-	}, [] );
-
 	// Fetch gravatar info when component mounts
 	useEffect( () => {
 		dispatch( requestGravatarDetails() );
