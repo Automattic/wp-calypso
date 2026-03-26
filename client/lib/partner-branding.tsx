@@ -206,6 +206,29 @@ export function getPartnerConfigFromGarden(
 	return partnerConfig;
 }
 
+export function getPartnerConfigFromSiteDetails(
+	siteDetails?: {
+		isCommerceGarden?: boolean | null;
+		garden_name?: string | null;
+		garden_partner?: string | null;
+		garden?: { name?: string | null; partner?: string | null } | null;
+	} | null,
+	options: { persistToSession?: boolean } = {}
+): PartnerConfig | null {
+	if ( siteDetails?.isCommerceGarden ) {
+		return getPartnerConfigFromGarden( 'woo', 'commerce', options );
+	}
+
+	const gardenName = siteDetails?.garden_name ?? siteDetails?.garden?.name;
+	const gardenPartner = siteDetails?.garden_partner ?? siteDetails?.garden?.partner;
+
+	if ( ! gardenName || ! gardenPartner ) {
+		return null;
+	}
+
+	return getPartnerConfigFromGarden( gardenPartner, gardenName, options );
+}
+
 /**
  * Get partner config by matching a hostname against partner domains.
  */
