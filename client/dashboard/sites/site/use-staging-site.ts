@@ -21,6 +21,7 @@ import {
 	isAtomicTransferredSite,
 } from '../../utils/site-atomic-transfers';
 import { getProductionSiteId, getStagingSiteId } from '../../utils/site-staging-site';
+import type { EnvironmentType } from '../../components/environment';
 import type { Site } from '@automattic/api-core';
 
 export default function useStagingSite( site: Site ) {
@@ -239,7 +240,7 @@ export default function useStagingSite( site: Site ) {
 		} );
 	};
 
-	const environmentType = site.is_wpcom_staging_site ? 'staging' : 'production';
+	const environmentType: EnvironmentType = site.is_wpcom_staging_site ? 'staging' : 'production';
 
 	return {
 		productionSite,
