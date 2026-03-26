@@ -2,13 +2,7 @@
 
 body.is-section-activity {
 	@include admin-ui-page-layout;
-
-	// Override max-width — Activity Log content needs full width
-	.admin-ui-page__content {
-		> * {
-			max-width: none;
-		}
-	}
+	@include admin-ui-page-layout-constrained-content;
 }
 
 main.activity-log-v2 {
