@@ -315,6 +315,26 @@ class JetpackSsoForm extends Component {
 		return this.maybeWrapWithPlaceholder( text );
 	}
 
+	getPartnerBrandedCopy( partnerId ) {
+		const { translate } = this.props;
+
+		if ( partnerId === 'woo' ) {
+			return {
+				title: translate( 'Connect to Woo Shop' ),
+				subtitle: translate( 'Give Woo Shop access to your WordPress.com account.' ),
+				primaryLabel: translate( 'Connect' ),
+				secondaryLabel: translate( 'Cancel' ),
+			};
+		}
+
+		return {
+			title: translate( 'Connect with WordPress.com' ),
+			subtitle: this.getSubHeaderText(),
+			primaryLabel: translate( 'Log in' ),
+			secondaryLabel: translate( 'Cancel' ),
+		};
+	}
+
 	maybeWrapWithPlaceholder( input ) {
 		const title = get( this.props, 'blogDetails.title' );
 		if ( title ) {
@@ -433,6 +453,8 @@ class JetpackSsoForm extends Component {
 		}
 
 		if ( partnerConfig ) {
+			const brandedCopy = this.getPartnerBrandedCopy( partnerConfig.id );
+
 			return (
 				<>
 					<BodySectionCssClass
@@ -443,8 +465,8 @@ class JetpackSsoForm extends Component {
 					/>
 					<SsoPartnerBranded
 						partnerConfig={ partnerConfig }
-						title={ translate( 'Connect with WordPress.com' ) }
-						subtitle={ this.getSubHeaderText() }
+						title={ brandedCopy.title }
+						subtitle={ brandedCopy.subtitle }
 						currentUser={ currentUser }
 						errorNotice={ currentUser?.email_verified ? this.maybeRenderErrorNotice() : null }
 						emailVerificationNoticeText={ translate(
@@ -455,9 +477,9 @@ class JetpackSsoForm extends Component {
 						onApproveClick={ this.onApproveSsoBranded }
 						onReturnToSiteClick={ this.onClickReturnToSiteBranded }
 						onSignInDifferentUserClick={ this.onClickSignInDifferentUserBranded }
-						approveLabel={ translate( 'Log in' ) }
+						approveLabel={ brandedCopy.primaryLabel }
 						signInDifferentUserLabel={ translate( 'Sign in as a different user' ) }
-						returnToSiteLabel={ translate( 'Cancel' ) }
+						returnToSiteLabel={ brandedCopy.secondaryLabel }
 					/>
 
 					{ this.renderSharedDetailsDialog() }

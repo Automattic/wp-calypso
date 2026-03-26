@@ -42,40 +42,33 @@ export default function SsoPartnerBranded( {
 			>
 				<BrandHeader title={ title } description={ subtitle } />
 
-				{ currentUser ? (
-					<div className="jetpack-connect__sso-partner-branded-logged-in">
-						{ errorNotice }
-						<EmailVerificationGate
-							noticeText={ emailVerificationNoticeText }
-							noticeStatus="is-info"
-						>
-							<UserCard
-								className="jetpack-connect__sso-partner-branded-user-card"
-								size="large"
-								user={ {
-									displayName: currentUser.display_name,
-									email: currentUser.email,
-									avatarUrl: currentUser.avatar_URL,
-								} }
-							/>
-							<ActionButtons
-								className="jetpack-connect__sso-partner-branded-actions"
-								primaryClassName="jetpack-connect__sso-partner-branded-primary-button"
-								primaryLabel={ approveLabel }
-								primaryOnClick={ onApproveClick }
-								primaryLoading={ isPrimaryLoading }
-								primaryDisabled={ isPrimaryDisabled }
-								secondaryClassName="jetpack-connect__sso-partner-branded-secondary-button"
-								secondaryLabel={ returnToSiteLabel }
-								secondaryOnClick={ onReturnToSiteClick }
-								tertiaryLabel={ signInDifferentUserLabel }
-								tertiaryOnClick={ onSignInDifferentUserClick }
-							/>
-						</EmailVerificationGate>
-					</div>
-				) : (
-					<div className="jetpack-connect__sso-partner-branded-logged-out-placeholder" />
-				) }
+				<div className="jetpack-connect__sso-partner-branded-logged-in">
+					{ errorNotice }
+					<EmailVerificationGate noticeText={ emailVerificationNoticeText } noticeStatus="is-info">
+						<UserCard
+							className="jetpack-connect__sso-partner-branded-user-card"
+							size="large"
+							user={ {
+								displayName: currentUser.display_name,
+								email: currentUser.email,
+								avatarUrl: currentUser.avatar_URL,
+							} }
+						/>
+						<ActionButtons
+							className="jetpack-connect__sso-partner-branded-actions"
+							primaryClassName="jetpack-connect__sso-partner-branded-primary-button"
+							primaryLabel={ approveLabel }
+							primaryOnClick={ onApproveClick }
+							primaryLoading={ isPrimaryLoading }
+							primaryDisabled={ isPrimaryDisabled }
+							secondaryClassName="jetpack-connect__sso-partner-branded-secondary-button"
+							secondaryLabel={ returnToSiteLabel }
+							secondaryOnClick={ onReturnToSiteClick }
+							tertiaryLabel={ signInDifferentUserLabel }
+							tertiaryOnClick={ onSignInDifferentUserClick }
+						/>
+					</EmailVerificationGate>
+				</div>
 			</div>
 		</Step.CenteredColumnLayout>
 	);
@@ -103,7 +96,7 @@ SsoPartnerBranded.propTypes = {
 		display_name: PropTypes.string,
 		email: PropTypes.string,
 		avatar_URL: PropTypes.string,
-	} ),
+	} ).isRequired,
 	errorNotice: PropTypes.node,
 	emailVerificationNoticeText: PropTypes.node,
 	isPrimaryDisabled: PropTypes.bool,
