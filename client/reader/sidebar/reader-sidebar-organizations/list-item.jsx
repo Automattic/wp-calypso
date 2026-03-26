@@ -40,7 +40,7 @@ export class ReaderSidebarOrganizationsListItem extends Component {
 					href={ `/reader/feeds/${ site.feed_ID }` }
 					onClick={ this.handleSidebarClick }
 				>
-					<Favicon site={ site } className="sidebar__menu-item-siteicon" size={ 16 } />
+					<Favicon site={ site } className="sidebar__menu-item-site-icon" size={ 22 } />
 
 					<span className="sidebar__menu-item-sitename">
 						<AutoDirection>
