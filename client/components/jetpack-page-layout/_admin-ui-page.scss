@@ -5,8 +5,14 @@
 // Usage: @include admin-ui-page-layout;
 // Must be called inside a `body.is-section-<name>` selector.
 @mixin admin-ui-page-layout {
+	@media screen and (max-width: $break-small) {
+		.focus-content:not(.has-no-sidebar):not(.has-no-masterbar) .layout__content {
+			padding-top: var(--masterbar-height);
+		}
+	}
+
 	.layout:not(.has-no-sidebar) .layout__content {
-		padding: calc(var(--masterbar-height)) 0 0 calc(var(--sidebar-width-max));
+		padding: var(--masterbar-height) 0 0 var(--sidebar-width-max);
 
 		@media (max-width: $break-medium) {
 			padding-left: 0;
