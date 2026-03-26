@@ -6,7 +6,7 @@ import { Card, CardBody } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
 import { Text } from '../../../components/text';
 import { TextBlur } from '../../../components/text-blur';
-import safeProtocolUrl from '../../../utils/safe-protocol-url';
+import { isWebUrl } from '../../../utils/is-web-url';
 import { PluginTabs } from '../../plugin';
 import { usePlugin } from '../../plugin/use-plugin';
 import { PluginIcon } from './plugin-icon';
@@ -51,7 +51,8 @@ export const PluginSites = ( { selectedPluginSlug }: { selectedPluginSlug: strin
 			return null;
 		}
 
-		const authorUrl = 'author_url' in plugin ? safeProtocolUrl( plugin.author_url ) : null;
+		const authorUrl =
+			'author_url' in plugin && isWebUrl( plugin.author_url ) ? plugin.author_url : null;
 
 		return authorUrl
 			? createInterpolateElement(
