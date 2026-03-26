@@ -21,22 +21,36 @@ import type {
  * @param param0 Object parameter.
  * @param {keyof Secrets['mailosaur']} [param0.mailosaurInbox] Optional key to specify the mailosaur server to use. Defaults to `signupInboxId`.
  * @param {string} [param0.usernamePrefix] Optional key to specify the username prefix inserted between the `e2eflowtesting` and timestamp. Defaults to an empty string.
+ * @param {boolean} [param0.useMailosaur] Whether to use a Mailosaur inbox for the email address. Defaults to `false`, which uses Gmail + aliasing to avoid consuming Mailosaur quota.
  * @returns Data for new test user.
  */
 export function getNewTestUser( {
 	mailosaurInbox = 'signupInboxId',
 	usernamePrefix = '',
+	useMailosaur = false,
 }: {
 	mailosaurInbox?: keyof Secrets[ 'mailosaur' ];
 	usernamePrefix?: string;
+	useMailosaur?: boolean;
 } = {} ): NewTestUserDetails {
 	const username = getUsername( { prefix: usernamePrefix } );
 	const password = generateRandomPassword();
 
-	const email = getTestEmailAddress( {
-		inboxId: SecretsManager.secrets.mailosaur[ mailosaurInbox ],
-		prefix: username,
-	} );
+	let email: string;
+	let inboxId: string;
+
+	if ( useMailosaur ) {
+		inboxId = SecretsManager.secrets.mailosaur[ mailosaurInbox ];
+		email = getTestEmailAddress( { inboxId, prefix: username } );
+	} else {
+		// Use Gmail + aliasing to avoid consuming Mailosaur quota.
+		// WP.com sends transactional emails to Gmail instead of Mailosaur.
+		// The emails are never read by tests — they just need a valid,
+		// unique address for signup.
+		inboxId = '';
+		email = `wpcome2etesting+${ username }@gmail.com`;
+	}
+
 	const siteName = getBlogName();
 
 	return {
@@ -44,7 +58,7 @@ export function getNewTestUser( {
 		password: password,
 		email: email,
 		siteName: siteName,
-		inboxId: SecretsManager.secrets.mailosaur[ mailosaurInbox ],
+		inboxId: inboxId,
 	};
 }
 
