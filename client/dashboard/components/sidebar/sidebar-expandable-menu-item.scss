@@ -1,0 +1,19 @@
+.dashboard-sidebar__expandable {
+	width: 100%;
+}
+
+.dashboard-sidebar__expandable-panel {
+	interpolate-size: allow-keywords;
+	block-size: 0;
+	overflow: hidden;
+	opacity: 0;
+	transition:
+	block-size 0.2s ease-out,
+	opacity 0.2s ease-out;
+
+	&.is-open {
+		overflow: visible;
+		block-size: auto;
+		opacity: 1;
+	}
+}

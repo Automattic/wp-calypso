@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useNavigate } from '@tanstack/react-router';
 import { Button, Dropdown } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
@@ -7,6 +8,7 @@ import clsx from 'clsx';
 import { Suspense, lazy, useEffect, useState } from 'react';
 import wpcom from 'calypso/lib/wp';
 import { useAuth } from '../auth';
+import { useOmnibarEvent } from '../interim-omnibar/click-handlers';
 import { useLocale } from '../locale';
 import './style.scss';
 
@@ -53,6 +55,8 @@ export default function Notifications( { className }: { className: string } ) {
 		CLOSE_PANEL: [ handleClose ],
 	};
 
+	useOmnibarEvent( 'notifications', () => setIsOpen( ( v ) => ! v ) );
+
 	useEffect( () => {
 		const handleKeyDown = ( event: KeyboardEvent ) => {
 			if ( event.target !== document.body ) {
@@ -81,6 +85,21 @@ export default function Notifications( { className }: { className: string } ) {
 				placement: 'bottom-end',
 				offset: 8,
 				focusOnMount: true,
+				...( isEnabled( 'dashboard/omnibar' ) && {
+					onFocusOutside: () => {
+						// When focus moves to the omnibar (e.g. clicking the
+						// omnibar notification bell), suppress the Popover's
+						// auto-close and let the omnibar event handle the toggle
+						// instead. Without this, the Popover's focus-outside close
+						// races with the omnibar's toggle event, causing the panel
+						// to close then immediately reopen.
+						const omnibar = document.getElementById( 'wpcom-omnibar' );
+						if ( omnibar?.contains( document.activeElement ) ) {
+							return;
+						}
+						setIsOpen( false );
+					},
+				} ),
 			} }
 			open={ isOpen }
 			expandOnMobile={ isMobileViewport }

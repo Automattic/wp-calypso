@@ -106,10 +106,11 @@ export default function McpSitesPage( { path } ) {
 	}, [ sites, exceptionSiteIds ] );
 
 	const handleComboboxChange = ( siteIdStr ) => {
-		setComboboxValue( siteIdStr || '' );
 		if ( ! siteIdStr ) {
+			setComboboxValue( '' );
 			return;
 		}
+		setComboboxValue( '' );
 		const blogId = Number( siteIdStr );
 		if ( isNaN( blogId ) ) {
 			return;
@@ -171,6 +172,7 @@ export default function McpSitesPage( { path } ) {
 									value={ comboboxValue }
 									onChange={ handleComboboxChange }
 									disabled={ mutation.isPending || comboboxOptions.length === 0 }
+									isLoading={ mutation.isPending }
 									label={ translate( 'Search for a site to add an exception' ) }
 								/>
 								{ sites.length === 0 && (

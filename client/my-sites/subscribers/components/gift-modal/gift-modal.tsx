@@ -62,7 +62,7 @@ const GiftSubscriptionModal = ( {
 			requestAddGift(
 				siteId,
 				giftDetails,
-				translate( 'Gifted subscription to user "%(username)s".', {
+				translate( 'Gave complimentary subscription to user "%(username)s".', {
 					args: {
 						username: username,
 					},
@@ -81,10 +81,10 @@ const GiftSubscriptionModal = ( {
 	return (
 		<Modal
 			overlayClassName="complimentary-subscription-modal"
-			title={ translate( 'Gift a subscription' ) }
+			title={ translate( 'Complimentary subscription' ) }
 			onRequestClose={ onClose }
 		>
-			<p>{ translate( 'Select a plan to gift to this user: ' ) }</p>
+			<p>{ translate( 'Select a plan to give complimentary access to this user:' ) }</p>
 			<ProductsSelector
 				onSelectedPlanIdsChange={ ( list ) => setPlanId( list[ 0 ] ?? 0 ) }
 				initialSelectedList={ [] }

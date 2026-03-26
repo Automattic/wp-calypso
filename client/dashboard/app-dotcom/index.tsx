@@ -6,6 +6,7 @@ import {
 	domainsQuery,
 } from '@automattic/api-queries';
 /* eslint-enable no-restricted-imports */
+import { isEnabled } from '@automattic/calypso-config';
 import boot from '../app/boot';
 import Logo from './logo';
 import type {
@@ -41,11 +42,15 @@ boot( {
 		plugins: true,
 		commandPalette: false,
 		domainOnlySites: true,
+		siteOverview: {
+			preview: ! isEnabled( 'dashboard/omnibar' ),
+		},
 	},
 	optIn: true,
 	components: {
 		sites: () => import( '../sites' ),
 		siteSwitcher: () => import( '../sites/site-switcher' ),
+		siteSwitcherV2: () => import( '../sites/site-switcher-v2' ),
 	},
 	queries: {
 		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => sitesQuery( 'all', fetchSiteOptions ),

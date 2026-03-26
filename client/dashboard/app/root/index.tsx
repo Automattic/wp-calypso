@@ -2,7 +2,15 @@ import { isEnabled } from '@automattic/calypso-config';
 import { WordPressLogo } from '@automattic/components/src/logos/wordpress-logo';
 import { useQueryClient, useIsFetching } from '@tanstack/react-query';
 import { CatchNotFound, Outlet, useRouterState, useRouter } from '@tanstack/react-router';
-import { Suspense, lazy, useEffect, useState, useMemo, useSyncExternalStore } from 'react';
+import {
+	Suspense,
+	lazy,
+	useCallback,
+	useEffect,
+	useState,
+	useMemo,
+	useSyncExternalStore,
+} from 'react';
 import { LoadingLine } from '../../components/loading-line';
 import { PageViewTracker } from '../../components/page-view-tracker';
 import NotFound from '../404';
@@ -10,6 +18,7 @@ import { bumpStat } from '../analytics';
 import CommandPalette from '../command-palette';
 import { useAppContext } from '../context';
 import Header from '../header';
+import { useOmnibarEvent } from '../interim-omnibar/click-handlers';
 import { NavigationBlockerRegistry } from '../navigation-blocker';
 import OmnibarHeader from '../omnibar-header';
 import ResponsiveSidebar from '../responsive-sidebar';
@@ -34,6 +43,30 @@ function Root() {
 	const queryClient = useQueryClient();
 	const queryCache = queryClient.getQueryCache();
 	const [ isSidebarOpen, setIsSidebarOpen ] = useState( false );
+	const closeSidebar = useCallback( () => setIsSidebarOpen( false ), [ setIsSidebarOpen ] );
+	useOmnibarEvent( 'mobileMenu', () => setIsSidebarOpen( ( v ) => ! v ) );
+	useOmnibarEvent( 'linkClick', ( { href, event } ) => {
+		const url = new URL( href, window.location.origin );
+
+		if ( url.origin !== window.location.origin ) {
+			return;
+		}
+
+		const path = url.pathname + url.search + url.hash;
+		const parsedLocation = router.parseLocation( undefined, {
+			pathname: url.pathname,
+			search: url.search,
+			hash: url.hash,
+			href: path,
+			state: { __TSR_index: 0 },
+		} );
+		const { foundRoute } = router.getMatchedRoutes( parsedLocation );
+
+		if ( foundRoute ) {
+			event.preventDefault();
+			router.navigate( { to: path } );
+		}
+	} );
 
 	const loadingQueryRequestedFullPageLoader = useSyncExternalStore(
 		( onStoreChange ) => queryCache.subscribe( onStoreChange ),
@@ -128,7 +161,7 @@ function Root() {
 
 		return (
 			<div className="dashboard-root__body">
-				<ResponsiveSidebar isOpen={ isSidebarOpen } onClose={ () => setIsSidebarOpen( false ) } />
+				<ResponsiveSidebar isOpen={ isSidebarOpen } onClose={ closeSidebar } />
 				<div className="dashboard-root__content">
 					<main>
 						<CatchNotFound fallback={ NotFound }>

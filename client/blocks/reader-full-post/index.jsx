@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import Comments from 'calypso/blocks/comments';
 import { COMMENTS_FILTER_ALL } from 'calypso/blocks/comments/comments-filters';
 import { shouldShowComments } from 'calypso/blocks/comments/helper';
-import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
+import ReaderFullPostFeaturedImage from 'calypso/blocks/reader-full-post/featured-image';
 import { scrollToComments } from 'calypso/blocks/reader-full-post/scroll-to-comments';
 import WPiFrameResize from 'calypso/blocks/reader-full-post/wp-iframe-resize';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
@@ -816,13 +816,7 @@ export class FullPostView extends Component {
 							) }
 
 							{ post.featured_image && ! isFeaturedImageInContent( post ) && (
-								<ReaderFeaturedImage
-									canonicalMedia={ null }
-									imageUrl={ post.featured_image }
-									href={ getStreamUrlFromPost( post ) }
-									imageWidth={ contentWidth }
-									children={ <div style={ { width: contentWidth } } /> }
-								/>
+								<ReaderFullPostFeaturedImage post={ post } maxWidth={ contentWidth } />
 							) }
 							{ isLoading && <ReaderFullPostContentPlaceholder /> }
 							{ post.use_excerpt ? (

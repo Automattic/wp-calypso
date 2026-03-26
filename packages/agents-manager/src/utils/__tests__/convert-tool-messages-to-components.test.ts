@@ -1,17 +1,23 @@
 import { EscalationButton } from '../../components/escalation-button';
+import SourcesDisplay from '../../components/sources-display';
 import UnavailableToolMessage from '../../components/unavailable-tool-message';
+import convertToolMessagesToComponents from '../convert-tool-messages-to-components';
 import { isEditorPage } from '../is-editor-page';
-import { convertToolMessagesToComponents, deactivateStaleMessages } from '../process-tool-messages';
 import type { UIMessage } from '@automattic/agenttic-client';
 
 jest.mock(
 	'@automattic/components',
 	() => ( {
 		SummaryButton: () => null,
+		FoldableCard: () => null,
 	} ),
 	{ virtual: true }
 );
 jest.mock( '../is-editor-page' );
+jest.mock( '../../components/sources-display', () => ( {
+	__esModule: true,
+	default: jest.fn(),
+} ) );
 
 const MockComponent = jest.fn();
 const MockNextStepButton = jest.fn();
@@ -182,6 +188,62 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 	} );
 
+	it( 'replaces data blocks with sources into SourcesDisplay components', () => {
+		const sources = [
+			{ title: 'Article 1', url: 'https://example.com/1' },
+			{ title: 'Article 2', url: 'https://example.com/2' },
+		];
+		const message = createMessage( {
+			content: [
+				{ type: 'text', text: 'Here is your answer.' },
+				{ type: 'data', data: { sources } },
+			],
+		} );
+
+		const result = convertToolMessagesToComponents( { messages: [ message ] } );
+
+		expect( result ).toHaveLength( 1 );
+		expect( result[ 0 ].content ).toHaveLength( 2 );
+		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
+			type: 'text',
+			text: 'Here is your answer.',
+		} );
+		expect( result[ 0 ].content[ 1 ] ).toMatchObject( {
+			type: 'component',
+			component: SourcesDisplay,
+			componentProps: { sources },
+		} );
+	} );
+
+	it( 'does not modify messages without sources data blocks', () => {
+		const message = createMessage( {
+			content: [
+				{ type: 'text', text: 'Just a normal message.' },
+				{ type: 'data', data: { flags: null } },
+			],
+		} );
+
+		const result = convertToolMessagesToComponents( { messages: [ message ] } );
+
+		expect( result ).toHaveLength( 1 );
+		expect( result[ 0 ].content ).toHaveLength( 2 );
+		expect( result[ 0 ].content[ 1 ] ).toMatchObject( { type: 'data', data: { flags: null } } );
+	} );
+
+	it( 'ignores sources data blocks with an empty array', () => {
+		const message = createMessage( {
+			content: [
+				{ type: 'text', text: 'Answer text.' },
+				{ type: 'data', data: { sources: [] } },
+			],
+		} );
+
+		const result = convertToolMessagesToComponents( { messages: [ message ] } );
+
+		expect( result ).toHaveLength( 1 );
+		expect( result[ 0 ].content[ 1 ] ).toMatchObject( { type: 'data', data: { sources: [] } } );
+	} );
+
 	it( 'filters out unhandled tool messages', () => {
 		const result = convertToolMessagesToComponents( {
 			messages: [ createToolMessage( 'other_tool' ) ],
@@ -318,82 +380,5 @@ describe( 'convertToolMessagesToComponents', () => {
 
 		expect( result ).toHaveLength( 1 );
 		expect( result[ 0 ] ).toMatchObject( { disabled: false } );
-	} );
-} );
-
-describe( 'deactivateStaleMessages', () => {
-	it( 'disables messages with `isShowComponentMessage`', () => {
-		const message = { ...createMessage(), isShowComponentMessage: true } as UIMessage;
-
-		const result = deactivateStaleMessages( [ message ] );
-
-		expect( result ).toHaveLength( 1 );
-		expect( result[ 0 ] ).toMatchObject( { disabled: true } );
-	} );
-
-	it( 'removes messages with `isNextStepButton`', () => {
-		const message = { ...createMessage(), isNextStepButton: true } as UIMessage;
-
-		const result = deactivateStaleMessages( [ message ] );
-
-		expect( result ).toHaveLength( 0 );
-	} );
-
-	it( 'passes through regular messages unchanged', () => {
-		const message = createMessage();
-
-		const result = deactivateStaleMessages( [ message ] );
-
-		expect( result ).toEqual( [ message ] );
-	} );
-
-	it( 'removes the checkpoint action from messages', () => {
-		const message = {
-			...createMessage( { id: 'agent-msg' } ),
-			actions: [
-				{ id: 'checkpoint', label: 'Undo', onClick: jest.fn() },
-				{ id: 'copy', label: 'Copy', onClick: jest.fn() },
-			],
-		} as UIMessage;
-
-		const result = deactivateStaleMessages( [ message ] );
-
-		expect( result[ 0 ].actions ).toEqual( [ expect.objectContaining( { id: 'copy' } ) ] );
-	} );
-
-	it( 'strips the checkpoint action from `isShowComponentMessage` messages', () => {
-		const message = {
-			...createMessage( { id: 'component-msg' } ),
-			isShowComponentMessage: true,
-			actions: [
-				{ id: 'checkpoint', label: 'Undo', onClick: jest.fn() },
-				{ id: 'copy', label: 'Copy', onClick: jest.fn() },
-			],
-		} as UIMessage;
-
-		const result = deactivateStaleMessages( [ message ] );
-
-		expect( result ).toHaveLength( 1 );
-		expect( result[ 0 ] ).toMatchObject( { disabled: true } );
-		expect( result[ 0 ].actions ).toEqual( [ expect.objectContaining( { id: 'copy' } ) ] );
-	} );
-
-	it( 'handles a mix of message types', () => {
-		const regular = createMessage( { id: 'regular' } );
-		const component = {
-			...createMessage( { id: 'component' } ),
-			isShowComponentMessage: true,
-		} as UIMessage;
-		const nextStep = {
-			...createMessage( { id: 'next-step' } ),
-			isNextStepButton: true,
-		} as UIMessage;
-
-		const result = deactivateStaleMessages( [ regular, component, nextStep ] );
-
-		expect( result ).toHaveLength( 2 );
-		expect( result[ 0 ].id ).toBe( 'regular' );
-		expect( result[ 1 ].id ).toBe( 'component' );
-		expect( result[ 1 ] ).toMatchObject( { disabled: true } );
 	} );
 } );

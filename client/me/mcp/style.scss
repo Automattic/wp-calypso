@@ -64,21 +64,17 @@ body.is-section-me div.layout.is-global-sidebar-visible .layout__primary .main.m
 		border-bottom: none;
 	}
 
-	// Connect panel (MCP on): single SummaryButton, full width
-	.mcp-hub__panel--connect {
-		padding: 0;
-		overflow: hidden;
+	// Connect button: match Card appearance (box-shadow border, surface background, flat corners)
+	.summary-button.components-button.mcp-hub__panel {
+		border: none;
+		border-radius: 0;
+		background: var(--color-surface);
+		box-shadow: 0 0 0 1px var(--color-border-subtle);
 
-		.summary-button.components-button {
-			width: 100%;
-			max-width: 100%;
-			box-sizing: border-box;
-		}
-
-		.summary-button.components-button.has-density-low {
-			border: 1px solid transparent;
-			border-radius: 0;
-			margin: 0;
+		&:hover:not(:disabled, [aria-disabled="true"]):not(:focus-visible) {
+			border: none;
+			box-shadow: 0 0 0 1px var(--color-border-subtle);
+			background: color-mix(in srgb, #fff 98%, var(--wp-admin-theme-color, #3858e9));
 		}
 	}
 }
@@ -140,6 +136,57 @@ body.is-section-me div.layout.is-global-sidebar-visible .layout__primary .main.m
 			margin-right: -32px;
 			padding: 24px 32px 8px;
 		}
+	}
+
+	// Sub-group tool list — same padding as group-body but no top border
+	.mcp-tools-subpage__sub-group-body {
+		padding: 0 0 4px;
+	}
+
+	// Sub-group divider within merged cards (e.g. Posts) — content-width, equal spacing
+	.mcp-tools-subpage__sub-divider {
+		border-top: 1px solid var(--color-border-subtle);
+		margin: 16px 0 24px;
+	}
+}
+
+// Setup page — zero out card-heading margins so CardBody padding is the only spacing
+.mcp-setup .card-heading {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+// Setup page — flat cards, ordered lists, code blocks
+.mcp-setup {
+	.components-card,
+	.components-surface.components-card {
+		border-radius: 0;
+		margin-top: 24px;
+
+		&:first-of-type {
+			margin-top: 0;
+		}
+	}
+
+	.mcp-setup__steps {
+		padding-inline-start: 20px;
+		margin: 0;
+	}
+
+	.mcp-setup__code {
+		background-color: #f0f0f1;
+		padding: 2px 6px;
+		border-radius: 3px;
+		font-family: monospace;
+		font-size: 13px;
+	}
+
+	.mcp-setup__action-button {
+		align-self: flex-start;
+	}
+
+	.components-textarea-control__input[readonly] {
+		min-height: 160px;
 	}
 }
 

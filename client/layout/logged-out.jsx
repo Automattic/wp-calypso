@@ -92,7 +92,7 @@ const LayoutLoggedOut = ( {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const currentRoute = useSelector( getCurrentRoute );
 	const loggedInAction = useSelector( getLastActionRequiresLogin );
-	const { ciabConfig } = usePartnerBranding();
+	const { partnerConfig } = usePartnerBranding();
 
 	const dashboard =
 		typeof window !== 'undefined' && getDashboardFromHostname( window.location.hostname );
@@ -169,7 +169,7 @@ const LayoutLoggedOut = ( {
 		'is-wpcom-magic-login': isWpcomMagicLogin,
 		'is-woo-passwordless': isWoo,
 		'is-blaze-pro': isBlazePro,
-		'is-ciab-font-system': ciabConfig?.fontStyle === 'system',
+		'is-ciab-font-system': partnerConfig?.fontStyle === 'system',
 		'two-factor-auth-enabled': twoFactorEnabled,
 		'is-woo-com-oauth': isWooOAuth2Client( oauth2Client ),
 		woo: isWoo,

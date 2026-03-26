@@ -1,10 +1,20 @@
 import { Gridicon, Button } from '@automattic/components';
-import { localize } from 'i18n-calypso';
-import PropTypes from 'prop-types';
+import { useTranslate } from 'i18n-calypso';
 import FollowButton from 'calypso/blocks/follow-button/button';
 import AutoDirection from 'calypso/components/auto-direction';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { isExternal } from 'calypso/lib/url';
+
+interface ListStreamHeaderProps {
+	isPublic?: boolean;
+	title: React.ReactNode;
+	description?: string;
+	showEdit?: boolean;
+	editUrl?: string;
+	showFollow?: boolean;
+	following?: boolean;
+	onFollowToggle?: () => void;
+}
 
 const ListStreamHeader = ( {
 	isPublic,
@@ -15,8 +25,9 @@ const ListStreamHeader = ( {
 	showFollow,
 	following,
 	onFollowToggle,
-	translate,
-} ) => {
+}: ListStreamHeaderProps ) => {
+	const translate = useTranslate();
+
 	const formattedTitle = (
 		<AutoDirection>
 			<div>{ title }</div>
@@ -60,15 +71,4 @@ const ListStreamHeader = ( {
 	);
 };
 
-ListStreamHeader.propTypes = {
-	isPublic: PropTypes.bool,
-	title: PropTypes.string,
-	description: PropTypes.string,
-	showEdit: PropTypes.bool,
-	editUrl: PropTypes.string,
-	showFollow: PropTypes.bool,
-	following: PropTypes.bool,
-	onFollowToggle: PropTypes.func,
-};
-
-export default localize( ListStreamHeader );
+export default ListStreamHeader;

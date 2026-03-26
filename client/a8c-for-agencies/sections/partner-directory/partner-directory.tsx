@@ -23,8 +23,10 @@ import {
 	PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG,
 	PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG,
 	PARTNER_DIRECTORY_DASHBOARD_SLUG,
+	PARTNER_DIRECTORY_LEAD_MATCHING_SLUG,
 } from './constants';
 import Dashboard from './dashboard';
+import LeadMatchingPlaceholder from './lead-matching';
 import {
 	mapAgencyDetailsFormData,
 	mapApplicationFormData,
@@ -86,6 +88,17 @@ export default function PartnerDirectory( { selectedSection }: Props ) {
 				{
 					label: translate( 'Agency Expertise' ),
 					href: `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG }`,
+				},
+			],
+		};
+
+		sections[ PARTNER_DIRECTORY_LEAD_MATCHING_SLUG ] = {
+			content: <LeadMatchingPlaceholder />,
+			breadcrumbItems: [
+				...sections[ PARTNER_DIRECTORY_DASHBOARD_SLUG ].breadcrumbItems,
+				{
+					label: translate( 'Lead matching' ),
+					href: `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_LEAD_MATCHING_SLUG }`,
 				},
 			],
 		};

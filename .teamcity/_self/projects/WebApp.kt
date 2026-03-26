@@ -97,7 +97,9 @@ object BuildDockerImage : BuildType({
     }
 
 	params {
+		text("cache_mode", "seed", label = "Docker build cache mode", description = "How the main Docker build sources warm caches. Allowed values: base, seed, none.", allowEmpty = false)
 		text("base_image", "registry.a8c.com/calypso/base:latest", label = "Base docker image", description = "Base docker image", allowEmpty = false)
+		text("cache_seed_image", "registry.a8c.com/calypso/cache-seed:latest", label = "Cache seed image", description = "Cache-only image used when cache_mode=seed", allowEmpty = false)
 		text("base_image_publish_tag", "latest", label = "Tag to use for the published base image", description = "Base docker image tag", allowEmpty = false)
 		checkbox(
 			name = "MANUAL_SENTRY_RELEASE",
@@ -111,7 +113,7 @@ object BuildDockerImage : BuildType({
 			name = "UPDATE_BASE_IMAGE_CACHE",
 			value = "false",
 			label = "Update the base image from the cache.",
-			description = "Updates the base image by copying .cache files from the current build. Runs on trunk by default if the cache invalidates during the build.",
+			description = "Updates the base image by copying .cache files from the current build. This applies only when cache_mode=base.",
 			checked = "true",
 			unchecked = "false"
 		)
@@ -123,6 +125,9 @@ object BuildDockerImage : BuildType({
 			checked = "true",
 			unchecked = "false"
 		)
+		param("CACHE_SEED_KEY", "")
+		param("UPDATE_CACHE_SEED", "false")
+		param("GENERATE_CACHE_IMAGE", "false")
 		param("env.WEBPACK_CACHE_INVALIDATED", "false")
 	}
 
@@ -201,19 +206,66 @@ object BuildDockerImage : BuildType({
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
 		}
 
+		script {
+			name = "Resolve cache-seed state"
+			scriptContent = """
+				#!/usr/bin/env bash
+				set -euo pipefail
+
+				cache_seed_key=$(bash ./bin/print-cache-seed-key.sh)
+				echo "Computed cache-seed key: ${'$'}cache_seed_key"
+				echo "##teamcity[setParameter name='CACHE_SEED_KEY' value='${'$'}cache_seed_key']"
+
+				update_cache_seed=false
+				generate_cache_image=false
+
+				if [[ "%cache_mode%" == "seed" && "%teamcity.build.branch.is_default%" == "true" ]]; then
+					docker pull "%cache_seed_image%" >/dev/null 2>&1 || true
+
+					existing_cache_seed_key=$(
+						docker image inspect "%cache_seed_image%" \
+							--format '{{with index .Config.Labels "io.calypso.cache-seed-key"}}{{.}}{{end}}' \
+							2>/dev/null || true
+					)
+
+					echo "Existing cache-seed key: ${'$'}{existing_cache_seed_key:-<missing>}"
+
+					if [[ -z "${'$'}existing_cache_seed_key" || "${'$'}existing_cache_seed_key" != "${'$'}cache_seed_key" ]]; then
+						echo "Cache-seed image is stale or unlabeled; enabling inline cache regeneration."
+						update_cache_seed=true
+						generate_cache_image=true
+					else
+						echo "Cache-seed image is current."
+					fi
+				elif [[ "%cache_mode%" == "base" && "%UPDATE_BASE_IMAGE_CACHE%" == "true" ]]; then
+					echo "Base mode selected with UPDATE_BASE_IMAGE_CACHE=true; enabling writable cache."
+					generate_cache_image=true
+				else
+					echo "No inline cache refresh required for this build."
+				fi
+
+				echo "UPDATE_CACHE_SEED=${'$'}update_cache_seed"
+				echo "GENERATE_CACHE_IMAGE=${'$'}generate_cache_image"
+
+				echo "##teamcity[setParameter name='UPDATE_CACHE_SEED' value='${'$'}update_cache_seed']"
+				echo "##teamcity[setParameter name='GENERATE_CACHE_IMAGE' value='${'$'}generate_cache_image']"
+			""".trimIndent()
+		}
+
 		val commonArgs = """
 			--label com.a8c.image-builder=teamcity
 			--label com.a8c.build-id=%teamcity.build.id%
 			--build-arg workers=32
 			--build-arg node_memory=16384
-			--build-arg use_cache=true
+			--build-arg cache_mode=%cache_mode%
 			--build-arg base_image=%base_image%
+			--build-arg cache_seed_image=%cache_seed_image%
 			--build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber}
 			--build-arg profile=%PROFILE%
 			--build-arg manual_sentry_release=%MANUAL_SENTRY_RELEASE%
 			--build-arg is_default_branch=%teamcity.build.branch.is_default%
 			--build-arg sentry_auth_token=%SENTRY_AUTH_TOKEN%
-			--build-arg generate_cache_image=%UPDATE_BASE_IMAGE_CACHE%
+			--build-arg generate_cache_image=%GENERATE_CACHE_IMAGE%
 		""".trimIndent().replace("\n"," ")
 
 		dockerCommand {
@@ -314,6 +366,7 @@ object BuildDockerImage : BuildType({
 		dockerCommand {
 			name = "Rebuild cache image"
 			conditions {
+				equals("cache_mode", "base")
 				equals("UPDATE_BASE_IMAGE_CACHE", "true")
 				equals("teamcity.build.branch.is_default", "true")
 			}
@@ -334,6 +387,7 @@ object BuildDockerImage : BuildType({
 		dockerCommand {
 			name = "Push cache image"
 			conditions {
+				equals("cache_mode", "base")
 				equals("UPDATE_BASE_IMAGE_CACHE", "true")
 				equals("teamcity.build.branch.is_default", "true")
 			}

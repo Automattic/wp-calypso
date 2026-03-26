@@ -1,4 +1,4 @@
-import { Locator, Page } from 'playwright';
+import { Frame, Locator, Page } from 'playwright';
 
 export interface ExpectedFormField {
 	type: 'textbox' | 'checkbox' | 'radio' | 'combobox' | 'button';
@@ -36,6 +36,26 @@ export async function validatePublishedFormFields(
 		const { type, accessibleName } = expectedField;
 		await publishedPage.getByRole( type, { name: accessibleName } ).first().waitFor();
 	}
+}
+
+/**
+ * Disables email notifications on a form block by updating its attributes
+ * via the WordPress block editor data store.
+ *
+ * @param {Frame | Page} editorFrame The editor frame or page to evaluate in.
+ * @param {Locator} blockLocator Locator for the form block.
+ */
+export async function disableFormEmailNotifications(
+	editorFrame: Frame | Page,
+	blockLocator: Locator
+) {
+	const domId = await blockLocator.getAttribute( 'id' );
+	const clientId = domId?.replace( /^block-/, '' );
+	await editorFrame.evaluate( ( cid ) => {
+		( window as any ).wp.data
+			.dispatch( 'core/block-editor' )
+			.updateBlockAttributes( cid, { emailNotifications: false } );
+	}, clientId );
 }
 
 /**

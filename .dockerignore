@@ -18,6 +18,11 @@ bin/build-docker.sh
 /client/server/devdocs/proptypes-index.json
 /client/server/devdocs/search-index.js
 
+# Docker / CI files that should not affect app or cache-seed builds
+Dockerfile.toolchain
+Dockerfile.cache-seed
+.teamcity
+
 # Tests do not need to be included in build
 /client/**/test/**
 
