@@ -1,14 +1,12 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Page } from '@wordpress/admin-ui';
+import { Tabs } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
-import { capitalize, find } from 'lodash';
+import { capitalize } from 'lodash';
 import DocumentHead from 'calypso/components/data/document-head';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import JetpackTitle from 'calypso/components/jetpack-title';
 import Main from 'calypso/components/main';
-import SectionNav from 'calypso/components/section-nav';
-import NavItem from 'calypso/components/section-nav/item';
-import NavTabs from 'calypso/components/section-nav/tabs';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import AdsSettings from 'calypso/my-sites/earn/ads/form-settings';
@@ -109,24 +107,6 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 		return tabs;
 	};
 
-	const getEarnSelectedText = () => {
-		const selected = find( getEarnTabs(), { path: path } );
-		if ( selected ) {
-			return selected.title;
-		}
-
-		return '';
-	};
-
-	const getAdSelectedText = () => {
-		const selected = find( getAdTabs(), { path: path } );
-		if ( selected ) {
-			return selected.title;
-		}
-
-		return '';
-	};
-
 	const isAdSection = ( currentSection: string | undefined ) =>
 		currentSection && currentSection.startsWith( 'ads' );
 
@@ -189,52 +169,58 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 	};
 
 	const getEarnSectionNav = () => {
+		const tabs = getEarnTabs();
+		const selectedTab = tabs.find( isEarnTabSelected );
+
 		return (
 			<div className="earn-navigation">
-				<SectionNav
-					selectedText={ getEarnSelectedText() }
-					variation={ ! isJetpackCloud() ? 'minimal' : '' }
+				<Tabs.Root
+					value={ selectedTab?.id ?? tabs[ 0 ]?.id }
+					onValueChange={ ( tabId: string ) => {
+						const tab = tabs.find( ( item ) => item.id === tabId );
+						if ( tab ) {
+							window.location.assign( tab.path );
+						}
+					} }
 				>
-					<NavTabs>
-						{ getEarnTabs().map( ( tabItem ) => {
-							return (
-								<NavItem
-									key={ tabItem.id }
-									path={ tabItem.path }
-									selected={ isEarnTabSelected( tabItem ) }
-								>
-									{ tabItem.title }
-								</NavItem>
-							);
-						} ) }
-					</NavTabs>
-				</SectionNav>
+					<Tabs.List variant={ ! isJetpackCloud() ? 'minimal' : 'default' }>
+						{ tabs.map( ( tabItem ) => (
+							<Tabs.Tab key={ tabItem.id } value={ tabItem.id }>
+								{ tabItem.title }
+							</Tabs.Tab>
+						) ) }
+					</Tabs.List>
+				</Tabs.Root>
 			</div>
 		);
 	};
 
 	const getAdsHeader = () => {
+		const tabs = getAdTabs();
 		const currentPath = getCurrentPath();
+		const selectedTab = tabs.find( ( tabItem ) => tabItem.path === currentPath );
 
 		return (
 			<div className="earn__ads-header">
 				<h2 className="formatted-header__title wp-brand-font">{ translate( 'Ads Dashboard' ) }</h2>
 
-				<SectionNav selectedText={ getAdSelectedText() }>
-					<NavTabs>
-						{ getAdTabs().map( ( filterItem ) => {
-							return (
-								<NavItem
-									key={ filterItem.id }
-									path={ filterItem.path }
-									selected={ filterItem.path === currentPath }
-								>
-									{ filterItem.title }
-								</NavItem>
-							);
-						} ) }
-					</NavTabs>
-				</SectionNav>
+				<Tabs.Root
+					value={ selectedTab?.id ?? tabs[ 0 ]?.id }
+					onValueChange={ ( tabId: string ) => {
+						const tab = tabs.find( ( item ) => item.id === tabId );
+						if ( tab ) {
+							window.location.assign( tab.path );
+						}
+					} }
+				>
+					<Tabs.List variant="minimal">
+						{ tabs.map( ( tabItem ) => (
+							<Tabs.Tab key={ tabItem.id } value={ tabItem.id }>
+								{ tabItem.title }
+							</Tabs.Tab>
+						) ) }
+					</Tabs.List>
+				</Tabs.Root>
 			</div>
 		);
 	};

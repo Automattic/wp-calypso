@@ -1,6 +1,7 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/components/src/styles/typography";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/theme/design-tokens.css";
 @import "calypso/components/jetpack-page-layout/admin-ui-page";
 
 body.is-section-earn {
@@ -153,31 +154,6 @@ body.is-section-earn {
 		margin: 0 0 12px;
 		font-size: $font-size-header-small;
 	}
-
-	.section-nav {
-		box-shadow: none;
-		background: none;
-	}
-
-	.section-nav-tab {
-		&:hover:not(.is-selected) {
-			border-bottom-color: transparent;
-		}
-		&.is-selected {
-			border-bottom: none;
-			.section-nav-tab__link {
-				color: var(--color-text);
-			}
-		}
-	}
-	.section-nav-tab__link {
-		padding: 0 20px 10px 0;
-		color: var(--color-link);
-		&:hover {
-			background-color: transparent;
-			color: var(--color-link);
-		}
-	}
 }
 
 @include break-wide {
@@ -220,25 +196,6 @@ body:not(.theme-jetpack-cloud) {
 		h2.formatted-header__title {
 			margin: 0 0 12px;
 			font-size: $font-size-header-small;
-		}
-
-		.section-nav {
-			box-shadow: none;
-		}
-
-		.section-nav-tab {
-			&:hover:not(.is-selected) {
-				border-bottom-color: transparent;
-			}
-			&.is-selected {
-				border-bottom: none;
-			}
-			.section-nav-tab__link {
-				padding: 0 20px 10px 0;
-				&:hover {
-					background-color: transparent;
-				}
-			}
 		}
 	}
 }
