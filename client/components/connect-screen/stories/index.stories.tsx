@@ -20,6 +20,15 @@ import { BrandHeader } from '../brand-header';
 import { ConsentText } from '../consent-text';
 import { LoadingScreen } from '../loading-screen';
 import { LoginPageWrapper } from '../login-page-wrapper';
+import {
+	NoticeActionButton,
+	NoticeActionLink,
+	NoticeActions,
+	NoticeCloseIcon,
+	NoticeDescription,
+	NoticeRoot,
+	NoticeTitle,
+} from '../notice';
 import { PermissionsList } from '../permissions-list';
 import { ScreenLayout } from '../screen-layout';
 import { UserCard } from '../user-card';
@@ -254,6 +263,55 @@ export const ConsentTextVariants: StoryObj< typeof ConsentText > = {
 					</a>
 					.
 				</ConsentText>
+			</VariantSection>
+		</div>
+	),
+};
+
+// Notice - All intent variants
+export const NoticeVariants: StoryObj = {
+	render: () => (
+		<div>
+			<VariantSection title="Info with title, description, and actions">
+				<NoticeRoot intent="info">
+					<NoticeTitle>Complete your setup</NoticeTitle>
+					<NoticeDescription>
+						You are one step away from connecting your account to this site.
+					</NoticeDescription>
+					<NoticeActions>
+						<NoticeActionLink href="https://wordpress.com/help" target="_blank" rel="noreferrer">
+							Read guide
+						</NoticeActionLink>
+						<NoticeActionButton>Try again</NoticeActionButton>
+					</NoticeActions>
+				</NoticeRoot>
+			</VariantSection>
+			<VariantSection title="Warning">
+				<NoticeRoot intent="warning">
+					<NoticeTitle>Review requested permissions</NoticeTitle>
+					<NoticeDescription>
+						This app requests access to additional site settings.
+					</NoticeDescription>
+				</NoticeRoot>
+			</VariantSection>
+			<VariantSection title="Success">
+				<NoticeRoot intent="success">
+					<NoticeTitle>Connection successful</NoticeTitle>
+					<NoticeDescription>Your account is now connected.</NoticeDescription>
+				</NoticeRoot>
+			</VariantSection>
+			<VariantSection title="Error">
+				<NoticeRoot intent="error">
+					<NoticeTitle>We could not connect your account</NoticeTitle>
+					<NoticeDescription>Please check your permissions and try again.</NoticeDescription>
+				</NoticeRoot>
+			</VariantSection>
+			<VariantSection title="Neutral with close icon slot">
+				<NoticeRoot intent="neutral">
+					<NoticeTitle>Heads up</NoticeTitle>
+					<NoticeDescription>You can dismiss this notice and continue later.</NoticeDescription>
+					<NoticeCloseIcon />
+				</NoticeRoot>
 			</VariantSection>
 		</div>
 	),
