@@ -1,7 +1,11 @@
 import page from '@automattic/calypso-router';
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { recordDSPEntryPoint, useDspOriginProps } from 'calypso/lib/promote-post';
+import {
+	recordDSPEntryPoint,
+	useDspOriginProps,
+	useJetpackBlazeVersionCheck,
+} from 'calypso/lib/promote-post';
 import { useRouteModal } from 'calypso/lib/route-modal';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -21,6 +25,8 @@ const useOpenPromoteWidget = ( { keyValue, entrypoint, external }: Props ) => {
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const dspOriginProps = useDspOriginProps();
 	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
+	const hasNewAdminPage = useJetpackBlazeVersionCheck( siteId, '15.8-alpha', '0.9.0' );
+	const adminPagePath = hasNewAdminPage ? 'admin.php' : 'tools.php';
 	const dispatch = useDispatch();
 
 	const onOpenPromoteWidget = useCallback( () => {
@@ -33,7 +39,7 @@ const useOpenPromoteWidget = ( { keyValue, entrypoint, external }: Props ) => {
 				const query = encodeURIComponent( `blazepress-widget=${ keyValue }` );
 				window.location.href = isAtomic
 					? `https://jetpack.com/redirect/?source=jetpack-blaze&site=${ siteSlug }&query=${ query }`
-					: `${ siteAdminUrl }admin.php?page=advertising#!${ blazeURL }`;
+					: `${ siteAdminUrl }${ adminPagePath }?page=advertising#!${ blazeURL }`;
 			} else {
 				page( blazeURL );
 			}
@@ -47,6 +53,7 @@ const useOpenPromoteWidget = ( { keyValue, entrypoint, external }: Props ) => {
 		dspOriginProps,
 		external,
 		siteAdminUrl,
+		adminPagePath,
 		isRunningInWpAdmin,
 		openModal,
 		dispatch,
