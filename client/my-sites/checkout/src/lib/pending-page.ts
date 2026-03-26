@@ -301,7 +301,7 @@ function isRedirectAllowed( url: string, siteSlug: string | undefined ): boolean
 		'difmrequest.com',
 		'agencies.automattic.com',
 		'agencies.localhost',
-		...( siteSlug ? [ siteSlug ] : [] ),
+		...( siteSlug ? [ siteSlug.includes( '::' ) ? siteSlug.split( '::' )[ 0 ] : siteSlug ] : [] ),
 	];
 
 	return isAllowedRedirectUrl( url, allowedHostsForRedirect, [

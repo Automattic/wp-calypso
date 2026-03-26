@@ -13,7 +13,7 @@ const getAllowedHosts = ( siteSlug?: string ) => {
 		'jetpack.cloud.localhost',
 		'cloud.jetpack.com',
 		config( 'hostname' ),
-		...( ( siteSlug && [ siteSlug ] ) || [] ),
+		...( siteSlug ? [ siteSlug.includes( '::' ) ? siteSlug.split( '::' )[ 0 ] : siteSlug ] : [] ),
 	];
 
 	const languageSpecificJetpackHosts = getLanguageSlugs().map(
