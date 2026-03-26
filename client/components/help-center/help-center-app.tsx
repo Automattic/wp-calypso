@@ -12,9 +12,7 @@ import './help-center-app.scss';
 export type HelpCenterAppProps = Omit<
 	React.ComponentProps< typeof HelpCenter >,
 	'onboardingUrl' | 'handleClose'
-> & {
-	requireLogin?: boolean;
-};
+>;
 
 const HELP_CENTER_STORE = HelpCenterStore.register();
 
