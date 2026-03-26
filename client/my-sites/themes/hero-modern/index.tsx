@@ -25,7 +25,7 @@ const HeroModern = ( {
 	return (
 		<FullWidthSection enabled className="hero-modern">
 			<div className="hero-modern__content">
-				<h1 className="hero-modern__title">{ preventWidows( header ) }</h1>
+				<h1 className="hero-modern__title">{ header }</h1>
 				<p className="hero-modern__description">{ preventWidows( description ) }</p>
 				<div className="hero-modern__search">
 					<SearchThemes
