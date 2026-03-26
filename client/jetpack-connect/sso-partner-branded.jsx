@@ -21,19 +21,26 @@ export default function SsoPartnerBranded( {
 	signInDifferentUserLabel,
 	emailVerificationNoticeText,
 } ) {
+	const topBarLogoConfig = partnerConfig?.compactLogo ?? partnerConfig?.logo;
+	const topBarLogo = topBarLogoConfig?.src ? (
+		<img
+			src={ topBarLogoConfig.src }
+			alt={ topBarLogoConfig.alt }
+			width={ topBarLogoConfig.width }
+			height={ topBarLogoConfig.height }
+		/>
+	) : undefined;
+
 	return (
-		<Step.CenteredColumnLayout columnWidth={ 4 } verticalAlign="center">
+		<Step.CenteredColumnLayout
+			columnWidth={ 4 }
+			verticalAlign="center"
+			topBar={ <Step.TopBar logo={ topBarLogo } /> }
+		>
 			<div
 				className={ `jetpack-connect__sso-partner-branded jetpack-connect__sso-partner-branded--${ partnerConfig.id }` }
 			>
-				<BrandHeader
-					logo={ partnerConfig?.logo?.src }
-					logoAlt={ partnerConfig?.logo?.alt }
-					logoWidth={ partnerConfig?.logo?.width }
-					logoHeight={ partnerConfig?.logo?.height }
-					title={ title }
-					description={ subtitle }
-				/>
+				<BrandHeader title={ title } description={ subtitle } />
 
 				{ currentUser ? (
 					<div className="jetpack-connect__sso-partner-branded-logged-in">
