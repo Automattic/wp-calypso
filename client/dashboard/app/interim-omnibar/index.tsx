@@ -28,18 +28,21 @@ export default async function loadOmnibar( events: OmnibarEvents ) {
 		events.linkClick.emit( { href, event } );
 	} );
 
+	// When wpcom-user-bootstrap is enabled, the user is already in window.currentUser —
+	// use it directly to avoid a redundant API fetch. Otherwise, fetch from the API.
+	const ssrUser = window.currentUser ?? null;
+
 	const [ { InterimOmnibar }, user ] = await Promise.all( [
 		import( './interim-omnibar' ),
-		queryClient.fetchQuery( { queryKey: AUTH_QUERY_KEY, queryFn: fetchUser } ),
+		ssrUser ?? queryClient.fetchQuery( { queryKey: AUTH_QUERY_KEY, queryFn: fetchUser } ),
 	] );
 
-	// Hydrate the server-rendered omnibar with null props to match SSR output,
-	// then immediately re-render with real data.  Suppress recoverable hydration
-	// errors caused by Suspense boundaries inside MasterbarLoggedIn that
-	// renderToString cannot serialize (see logged-in.jsx for the proper fix).
+	// Hydrate matching the SSR output: user when bootstrapped, null when not.
+	// Suppress recoverable hydration errors caused by Suspense boundaries inside
+	// MasterbarLoggedIn that renderToString cannot serialize.
 	const root = hydrateRoot(
 		container,
-		<InterimOmnibar user={ null } site={ null } currentRoute={ window.location.pathname } />,
+		<InterimOmnibar user={ ssrUser } site={ null } currentRoute={ window.location.pathname } />,
 		{ onRecoverableError() {} }
 	);
 
