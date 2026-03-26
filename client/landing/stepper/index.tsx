@@ -41,6 +41,7 @@ import { setStore } from 'calypso/state/redux-store';
 import { setCurrentFlowName } from 'calypso/state/signup/flow/actions';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { FlowRenderer } from './declarative-flow/internals';
+import { tryPreload } from './declarative-flow/internals/hooks/use-preload-steps';
 import 'calypso/assets/stylesheets/style.scss';
 import { createSessionId } from './declarative-flow/internals/state-manager/create-session-id';
 import availableFlows from './declarative-flow/registered-flows';
@@ -204,16 +205,14 @@ async function main() {
 
 		// Warm the initial step's chunk so it's ready by the time React.lazy
 		// hits the Suspense boundary.
-		const warm = ( slug?: string ) =>
-			flowSteps
-				.find( ( s: { slug: string } ) => s.slug === slug )
-				?.asyncComponent()
-				?.catch( () => {} );
-		warm( getStepFromURL() || flowSteps[ 0 ]?.slug );
+		const findStep = ( slug?: string ) =>
+			flowSteps.find( ( s: { slug: string } ) => s.slug === slug );
+
+		tryPreload( findStep( getStepFromURL() || flowSteps[ 0 ]?.slug ) );
 
 		// Logged-out users get redirected to the auth step first; warm it too.
 		if ( ! user ) {
-			warm( 'user' );
+			tryPreload( findStep( 'user' ) );
 		}
 	} else if ( 'useSteps' in flow ) {
 		// V1 flows have to be enhanced by changing their `useSteps` hook.
