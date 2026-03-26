@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button, ProgressBar, Gridicon, Card } from '@automattic/components';
+import { Page } from '@wordpress/admin-ui';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { Component } from 'react';
@@ -14,7 +15,6 @@ import SecurityIcon from 'calypso/components/jetpack/security-icon';
 import JetpackTitle from 'calypso/components/jetpack-title';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
-import NavigationHeader from 'calypso/components/navigation-header';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import { withApplySiteOffset, applySiteOffsetType } from 'calypso/components/site-offset';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
@@ -326,6 +326,7 @@ class ScanPage extends Component< Props > {
 	render() {
 		const { siteId, siteSettingsUrl } = this.props;
 		const isJetpackPlatform = isJetpackCloud();
+		const isWpcom = ! ( isJetpackPlatform || isA8CForAgencies() );
 		let mainClass = 'scan';
 
 		if ( ! siteId ) {
@@ -336,9 +337,19 @@ class ScanPage extends Component< Props > {
 			mainClass = 'scan-new';
 		}
 
+		const content = (
+			<>
+				<QueryJetpackScan siteId={ siteId } />
+				<ScanNavigation section="scanner" />
+				<div className="scan__content">{ this.renderScanState() }</div>
+				{ this.renderJetpackReviewPrompt() }
+			</>
+		);
+
 		return (
 			<Main
-				wideLayout
+				fullWidthLayout={ isWpcom }
+				wideLayout={ ! isWpcom }
 				className={ clsx( mainClass, {
 					is_jetpackcom: isJetpackPlatform,
 				} ) }
@@ -347,18 +358,18 @@ class ScanPage extends Component< Props > {
 				{ isJetpackPlatform && <SidebarNavigation /> }
 				<PageViewTracker path="/scan/:site" title="Scanner" />
 				<TimeMismatchWarning siteId={ siteId } settingsUrl={ siteSettingsUrl } />
-				{ ! ( isJetpackPlatform || isA8CForAgencies() ) && (
-					<NavigationHeader
-						navigationItems={ [] }
+				{ isWpcom ? (
+					<Page
+						hasPadding
+						showSidebarToggle={ false }
 						title={ <JetpackTitle title={ translate( 'Scan' ) } /> }
-						subtitle={ translate( 'Automated malware scanning and firewall protection.' ) }
-					/>
+						subTitle={ translate( 'Automated malware scanning and firewall protection.' ) }
+					>
+						{ content }
+					</Page>
+				) : (
+					content
 				) }
-
-				<QueryJetpackScan siteId={ siteId } />
-				<ScanNavigation section="scanner" />
-				<div className="scan__content">{ this.renderScanState() }</div>
-				{ this.renderJetpackReviewPrompt() }
 			</Main>
 		);
 	}

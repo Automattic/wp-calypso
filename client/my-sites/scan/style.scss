@@ -1,3 +1,10 @@
+@import "calypso/components/jetpack-page-layout/admin-ui-page";
+
+body.is-section-scan {
+	@include admin-ui-page-layout;
+	@include admin-ui-page-layout-constrained-content(".scan__wpcom-upsell");
+}
+
 .scan .formatted-header.is-left-align {
 	margin-top: 20px;
 
