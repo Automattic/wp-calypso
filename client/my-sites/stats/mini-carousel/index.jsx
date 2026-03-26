@@ -143,7 +143,7 @@ const MiniCarousel = ( { slug, isSitePrivate } ) => {
 				clickEvent={ EVENT_TRAFFIC_BLAZE_PROMO_CLICK }
 				dismissEvent={ EVENT_TRAFFIC_BLAZE_PROMO_DISMISS }
 				image={ <BlazeLogo className="mini-carousel-blaze" size={ 45 } /> }
-				headerText={ translate( 'Promote your content with Blaze' ) }
+				headerText={ translate( 'Promote your content with Blaze Ads' ) }
 				contentText={ translate(
 					'Grow your audience by promoting your content. Reach millions of users across Tumblr and WordPress.com'
 				) }
