@@ -16,15 +16,19 @@
 	.layout__primary .main {
 		padding-bottom: 0;
 	}
+}
 
-	// Temporarily here until constrained content width is implemented in Admin-UI
-	.admin-ui-page__content {
-		> * {
-			max-width: 660px;
-			width: 100%;
-			margin-left: auto;
-			margin-right: auto;
-			box-sizing: border-box;
+@mixin admin-ui-page-layout-constrained-content {
+	.layout:not(.has-no-sidebar) .layout__content {
+		// Temporarily here until constrained content width is implemented in Admin-UI
+		.admin-ui-page__content {
+			> * {
+				max-width: 660px;
+				width: 100%;
+				margin-left: auto;
+				margin-right: auto;
+				box-sizing: border-box;
+			}
 		}
 	}
 }
