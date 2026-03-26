@@ -17,7 +17,57 @@ const MEDIA_FIELDS_TO_PRESERVE = [
 	'post_thumbnail',
 ];
 
-function isIncomingMediaFieldEmpty( value ) {
+/**
+ * Stream-normalized posts may carry canonical_media objects with keys but no usable src;
+ * treat those as empty so we do not clobber a good full-post canonical_media.
+ */
+function isEmptyCanonicalMedia( value ) {
+	if ( value == null || value === '' ) {
+		return true;
+	}
+	if (
+		typeof value !== 'object' ||
+		value === null ||
+		Array.isArray( value ) ||
+		Object.keys( value ).length === 0
+	) {
+		return true;
+	}
+	const { mediaType, src, autoplayIframe } = value;
+	if ( mediaType === 'video' ) {
+		if ( autoplayIframe ) {
+			return false;
+		}
+		const srcStr = typeof src === 'string' ? src.trim() : '';
+		return srcStr === '';
+	}
+	const srcStr = typeof src === 'string' ? src.trim() : '';
+	return srcStr === '';
+}
+
+function isEmptyCanonicalImage( value ) {
+	if ( value == null || value === '' ) {
+		return true;
+	}
+	if (
+		typeof value !== 'object' ||
+		value === null ||
+		Array.isArray( value ) ||
+		Object.keys( value ).length === 0
+	) {
+		return true;
+	}
+	const uri = typeof value.uri === 'string' ? value.uri.trim() : '';
+	return uri === '';
+}
+
+function isIncomingMediaFieldEmpty( fieldName, value ) {
+	if ( fieldName === 'canonical_media' ) {
+		return isEmptyCanonicalMedia( value );
+	}
+	if ( fieldName === 'canonical_image' ) {
+		return isEmptyCanonicalImage( value );
+	}
 	if ( value == null || value === '' ) {
 		return true;
 	}
@@ -32,7 +82,13 @@ function isIncomingMediaFieldEmpty( value ) {
 	return false;
 }
 
-function existingMediaFieldHasValue( value ) {
+function existingMediaFieldHasValue( fieldName, value ) {
+	if ( fieldName === 'canonical_media' ) {
+		return ! isEmptyCanonicalMedia( value );
+	}
+	if ( fieldName === 'canonical_image' ) {
+		return ! isEmptyCanonicalImage( value );
+	}
 	if ( value == null || value === '' ) {
 		return false;
 	}
@@ -45,6 +101,77 @@ function existingMediaFieldHasValue( value ) {
 		return false;
 	}
 	return true;
+}
+
+/**
+ * True when two posts are the same Reader item but may have different global_ID
+ * (e.g. single-post vs feed list responses). getPostByKey maps by feed/site keys, so
+ * duplicates must share merged media or the wrong copy wins in the selector.
+ */
+function postsMatchSameReaderItem( a, b ) {
+	if ( ! a || ! b || a.global_ID === b.global_ID ) {
+		return false;
+	}
+	const sameBlog =
+		a.site_ID && b.site_ID && a.ID && b.ID && a.site_ID === b.site_ID && a.ID === b.ID;
+	if ( sameBlog ) {
+		return true;
+	}
+	if ( ! a.feed_ID || ! b.feed_ID || a.feed_ID !== b.feed_ID ) {
+		return false;
+	}
+	const aItem = a.feed_item_ID;
+	const bItem = b.feed_item_ID;
+	if ( aItem && bItem && aItem === bItem ) {
+		return true;
+	}
+	const bIds = b.feed_item_IDs || [];
+	const aIds = a.feed_item_IDs || [];
+	if ( aItem && bIds.length && bIds.includes( aItem ) ) {
+		return true;
+	}
+	if ( bItem && aIds.length && aIds.includes( bItem ) ) {
+		return true;
+	}
+	return false;
+}
+
+function findSiblingPost( state, post ) {
+	if ( ! post?.global_ID ) {
+		return undefined;
+	}
+	for ( const candidate of Object.values( state ) ) {
+		if ( postsMatchSameReaderItem( post, candidate ) ) {
+			return candidate;
+		}
+	}
+	return undefined;
+}
+
+/**
+ * Combine two store entries for the same logical post so spread(incoming) does not drop
+ * media that only exists on the sibling (different global_ID).
+ */
+function mergeDirectAndSiblingForMedia( direct, sibling ) {
+	const merged = { ...sibling, ...direct };
+	for ( const field of MEDIA_FIELDS_TO_PRESERVE ) {
+		if (
+			isIncomingMediaFieldEmpty( field, direct[ field ] ) &&
+			existingMediaFieldHasValue( field, sibling[ field ] )
+		) {
+			merged[ field ] = sibling[ field ];
+		}
+	}
+	return merged;
+}
+
+function resolveExistingPostForMerge( state, post ) {
+	const direct = state[ post.global_ID ];
+	const sibling = findSiblingPost( state, post );
+	if ( direct && sibling ) {
+		return mergeDirectAndSiblingForMedia( direct, sibling );
+	}
+	return direct || sibling;
 }
 
 /**
@@ -62,7 +189,7 @@ export function items( state = {}, action ) {
 			// Keep track of all the feed_item_ID that have the same global_ID.
 			// See: https://github.com/Automattic/wp-calypso/pull/88408
 			posts.forEach( ( post ) => {
-				const existing = state[ post.global_ID ];
+				const existing = resolveExistingPostForMerge( state, post );
 				const { feed_item_IDs = [] } = existing ?? {};
 				const { feed_item_ID, global_ID } = post;
 
@@ -71,8 +198,8 @@ export function items( state = {}, action ) {
 					merged = { ...existing, ...post };
 					for ( const field of MEDIA_FIELDS_TO_PRESERVE ) {
 						if (
-							isIncomingMediaFieldEmpty( post[ field ] ) &&
-							existingMediaFieldHasValue( existing[ field ] )
+							isIncomingMediaFieldEmpty( field, post[ field ] ) &&
+							existingMediaFieldHasValue( field, existing[ field ] )
 						) {
 							merged[ field ] = existing[ field ];
 						}

@@ -48,6 +48,74 @@ describe( 'reducer', () => {
 
 			expect( nextState.b.canonical_media ).toEqual( canonical );
 		} );
+
+		test( 'should preserve canonical_media when incoming has empty src', () => {
+			const good = {
+				mediaType: 'image',
+				src: 'https://good.example/img.jpg',
+				width: 100,
+				height: 100,
+			};
+			const posts = [ { global_ID: 'c', canonical_media: { mediaType: 'image', src: '' } } ];
+			const prevState = { c: { global_ID: 'c', canonical_media: good } };
+			const nextState = items( prevState, receivePosts( posts ) );
+
+			expect( nextState.c.canonical_media ).toEqual( good );
+		} );
+
+		test( 'should preserve canonical_media when incoming image omits src', () => {
+			const good = {
+				mediaType: 'image',
+				src: 'https://good.example/img.jpg',
+				width: 200,
+				height: 150,
+			};
+			const posts = [ { global_ID: 'd', canonical_media: { mediaType: 'image' } } ];
+			const prevState = { d: { global_ID: 'd', canonical_media: good } };
+			const nextState = items( prevState, receivePosts( posts ) );
+
+			expect( nextState.d.canonical_media ).toEqual( good );
+		} );
+
+		test( 'should preserve canonical_image when incoming has empty uri', () => {
+			const good = { uri: 'https://good.example/thumb.jpg', width: 50, height: 50 };
+			const posts = [ { global_ID: 'e', canonical_image: { uri: '', width: 0, height: 0 } } ];
+			const prevState = { e: { global_ID: 'e', canonical_image: good } };
+			const nextState = items( prevState, receivePosts( posts ) );
+
+			expect( nextState.e.canonical_image ).toEqual( good );
+		} );
+
+		test( 'should pull media from sibling post with different global_ID for same feed item', () => {
+			const fullFromSingle = {
+				global_ID: 'aaa',
+				feed_ID: 1,
+				feed_item_ID: 99,
+				site_ID: 2,
+				ID: 3,
+				featured_image: 'https://example.com/hero.jpg',
+				canonical_media: {
+					mediaType: 'image',
+					src: 'https://example.com/hero.jpg',
+					width: 100,
+					height: 100,
+				},
+			};
+			const thinFromStream = {
+				global_ID: 'bbb',
+				feed_ID: 1,
+				feed_item_ID: 99,
+				site_ID: 2,
+				ID: 3,
+				featured_image: '',
+				canonical_media: { mediaType: 'image', src: '' },
+			};
+			const prevState = { aaa: fullFromSingle };
+			const nextState = items( prevState, receivePosts( [ thinFromStream ] ) );
+
+			expect( nextState.bbb.featured_image ).toBe( 'https://example.com/hero.jpg' );
+			expect( nextState.bbb.canonical_media ).toEqual( fullFromSingle.canonical_media );
+		} );
 	} );
 
 	describe( '#seen()', () => {
