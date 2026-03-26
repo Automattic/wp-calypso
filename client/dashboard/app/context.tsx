@@ -47,7 +47,7 @@ export type AppConfig = {
 		commandPalette: boolean;
 		domainOnlySites: boolean;
 		startStoreRoute?: boolean;
-		sitePreview: boolean;
+		siteOverviewPreview: boolean;
 	};
 	posthog?: string;
 	optIn: boolean;
@@ -83,7 +83,7 @@ export const APP_CONTEXT_DEFAULT_CONFIG: AppConfig = {
 		commandPalette: false,
 		domainOnlySites: false,
 		startStoreRoute: false,
-		sitePreview: false,
+		siteOverviewPreview: false,
 	},
 	optIn: false,
 	components: {},
