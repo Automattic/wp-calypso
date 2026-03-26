@@ -1,9 +1,12 @@
 import { Step } from '@automattic/onboarding';
 import PropTypes from 'prop-types';
+import { useState } from 'react';
 import { ActionButtons } from 'calypso/components/connect-screen/action-buttons';
 import { BrandHeader } from 'calypso/components/connect-screen/brand-header';
 import { UserCard } from 'calypso/components/connect-screen/user-card';
-import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import wpcom from 'calypso/lib/wp';
 
 export default function SsoPartnerBranded( {
 	partnerConfig,
@@ -21,6 +24,60 @@ export default function SsoPartnerBranded( {
 	signInDifferentUserLabel,
 	emailVerificationNoticeText,
 } ) {
+	const [ isSendingVerificationEmail, setIsSendingVerificationEmail ] = useState( false );
+	const [ verificationEmailSent, setVerificationEmailSent ] = useState( false );
+	const [ verificationEmailError, setVerificationEmailError ] = useState( null );
+
+	const isEmailVerified = Boolean( currentUser?.email_verified );
+
+	const sendVerificationEmail = ( event ) => {
+		event.preventDefault();
+
+		if ( isSendingVerificationEmail ) {
+			return;
+		}
+
+		setIsSendingVerificationEmail( true );
+		setVerificationEmailSent( false );
+		setVerificationEmailError( null );
+
+		wpcom.req.post( '/me/send-verification-email', ( error, response ) => {
+			setVerificationEmailSent( Boolean( response?.success ) );
+			setVerificationEmailError( error );
+			setIsSendingVerificationEmail( false );
+		} );
+	};
+
+	const renderEmailVerificationNotice = () => {
+		if ( isSendingVerificationEmail ) {
+			return <Notice icon="mail" showDismiss={ false } text="Sending…" />;
+		}
+
+		if ( verificationEmailError ) {
+			return (
+				<Notice status="is-warning" showDismiss={ false } text="The email could not be sent.">
+					<NoticeAction onClick={ sendVerificationEmail }>Try again</NoticeAction>
+				</Notice>
+			);
+		}
+
+		if ( verificationEmailSent ) {
+			return (
+				<Notice
+					status="is-success"
+					showDismiss={ false }
+					text={ `We sent another confirmation email to ${ currentUser?.email }.` }
+				/>
+			);
+		}
+
+		return (
+			<Notice status="is-info" showDismiss={ false } text={ emailVerificationNoticeText }>
+				<NoticeAction onClick={ sendVerificationEmail }>Resend Email</NoticeAction>
+			</Notice>
+		);
+	};
+
 	const topBarLogoConfig = partnerConfig?.compactLogo ?? partnerConfig?.logo;
 	const topBarLogo = topBarLogoConfig?.src ? (
 		<img
@@ -44,30 +101,29 @@ export default function SsoPartnerBranded( {
 
 				<div className="jetpack-connect__sso-partner-branded-logged-in">
 					{ errorNotice }
-					<EmailVerificationGate noticeText={ emailVerificationNoticeText } noticeStatus="is-info">
-						<UserCard
-							className="jetpack-connect__sso-partner-branded-user-card"
-							size="large"
-							user={ {
-								displayName: currentUser.display_name,
-								email: currentUser.email,
-								avatarUrl: currentUser.avatar_URL,
-							} }
-						/>
-						<ActionButtons
-							className="jetpack-connect__sso-partner-branded-actions"
-							primaryClassName="jetpack-connect__sso-partner-branded-primary-button"
-							primaryLabel={ approveLabel }
-							primaryOnClick={ onApproveClick }
-							primaryLoading={ isPrimaryLoading }
-							primaryDisabled={ isPrimaryDisabled }
-							secondaryClassName="jetpack-connect__sso-partner-branded-secondary-button"
-							secondaryLabel={ returnToSiteLabel }
-							secondaryOnClick={ onReturnToSiteClick }
-							tertiaryLabel={ signInDifferentUserLabel }
-							tertiaryOnClick={ onSignInDifferentUserClick }
-						/>
-					</EmailVerificationGate>
+					{ ! isEmailVerified && renderEmailVerificationNotice() }
+					<UserCard
+						className="jetpack-connect__sso-partner-branded-user-card"
+						size="large"
+						user={ {
+							displayName: currentUser.display_name,
+							email: currentUser.email,
+							avatarUrl: currentUser.avatar_URL,
+						} }
+					/>
+					<ActionButtons
+						className="jetpack-connect__sso-partner-branded-actions"
+						primaryClassName="jetpack-connect__sso-partner-branded-primary-button"
+						primaryLabel={ approveLabel }
+						primaryOnClick={ onApproveClick }
+						primaryLoading={ isPrimaryLoading }
+						primaryDisabled={ isPrimaryDisabled || ! isEmailVerified }
+						secondaryClassName="jetpack-connect__sso-partner-branded-secondary-button"
+						secondaryLabel={ returnToSiteLabel }
+						secondaryOnClick={ onReturnToSiteClick }
+						tertiaryLabel={ signInDifferentUserLabel }
+						tertiaryOnClick={ onSignInDifferentUserClick }
+					/>
 				</div>
 			</div>
 		</Step.CenteredColumnLayout>
@@ -96,6 +152,7 @@ SsoPartnerBranded.propTypes = {
 		display_name: PropTypes.string,
 		email: PropTypes.string,
 		avatar_URL: PropTypes.string,
+		email_verified: PropTypes.bool,
 	} ).isRequired,
 	errorNotice: PropTypes.node,
 	emailVerificationNoticeText: PropTypes.node,
