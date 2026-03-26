@@ -17,15 +17,15 @@ import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
+import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { decodeEntities } from 'calypso/lib/formatting';
-import { detectPartnerConfig, getPartnerConfigFromRedirectUrl } from 'calypso/lib/partner-branding';
+import { getPartnerConfigFromSiteDetails } from 'calypso/lib/partner-branding';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { validateSSONonce, authorizeSSO } from 'calypso/state/jetpack-connect/actions';
 import { getSSO } from 'calypso/state/jetpack-connect/selectors';
-import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import HelpButton from './help-button';
 import MainWrapper from './main-wrapper';
 import { persistSsoApproved } from './persistence-utils';
@@ -417,15 +417,25 @@ class JetpackSsoForm extends Component {
 
 	render() {
 		const { currentUser, partnerConfig } = this.props;
-		const { ssoNonce, siteId, validationError, translate } = this.props;
+		const { ssoNonce, siteId, nonceValid, isValidating, validationError, translate } = this.props;
 
 		if ( ! ssoNonce || ! siteId || validationError ) {
 			return this.renderBadPathArgsError();
 		}
 
+		if ( typeof nonceValid === 'undefined' || isValidating ) {
+			return null;
+		}
+
 		if ( partnerConfig ) {
 			return (
 				<>
+					<BodySectionCssClass
+						bodyClass={ [
+							'is-jetpack-sso-partner-branded',
+							`is-jetpack-sso-partner-branded--${ partnerConfig.id }`,
+						] }
+					/>
 					<SsoPartnerBranded
 						partnerConfig={ partnerConfig }
 						title={ translate( 'Connect with WordPress.com' ) }
@@ -442,7 +452,7 @@ class JetpackSsoForm extends Component {
 						onSignInDifferentUserClick={ this.onClickSignInDifferentUserBranded }
 						approveLabel={ translate( 'Log in' ) }
 						signInDifferentUserLabel={ translate( 'Sign in as a different user' ) }
-						returnToSiteLabel={ this.getReturnToSiteText() }
+						returnToSiteLabel={ translate( 'Cancel' ) }
 					/>
 
 					{ this.renderSharedDetailsDialog() }
@@ -519,10 +529,7 @@ class JetpackSsoForm extends Component {
 const connectComponent = connect(
 	( state ) => {
 		const jetpackSSO = getSSO( state );
-		const oauth2Client = getCurrentOAuth2Client( state );
-		const sitePartnerConfig =
-			getPartnerConfigFromRedirectUrl( get( jetpackSSO, 'blogDetails.URL' ) ) ??
-			getPartnerConfigFromRedirectUrl( get( jetpackSSO, 'blogDetails.admin_url' ) );
+		const sitePartnerConfig = getPartnerConfigFromSiteDetails( get( jetpackSSO, 'blogDetails' ) );
 		return {
 			ssoUrl: get( jetpackSSO, 'ssoUrl' ),
 			isAuthorizing: get( jetpackSSO, 'isAuthorizing' ),
@@ -533,7 +540,7 @@ const connectComponent = connect(
 			blogDetails: get( jetpackSSO, 'blogDetails' ),
 			sharedDetails: get( jetpackSSO, 'sharedDetails' ),
 			currentUser: getCurrentUser( state ),
-			partnerConfig: sitePartnerConfig ?? detectPartnerConfig( oauth2Client ),
+			partnerConfig: sitePartnerConfig,
 		};
 	},
 	{
