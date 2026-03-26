@@ -63,6 +63,8 @@ const RemoveCompModal = ( {
 			} );
 
 			dispatch( requestDeleteGift( siteId, giftId, noticeText ) ).then( onSuccess );
+		} else {
+			setIsSubmitting( false );
 		}
 	};
 
