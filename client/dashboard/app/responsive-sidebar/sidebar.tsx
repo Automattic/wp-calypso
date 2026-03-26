@@ -104,6 +104,7 @@ function PrimaryMenuSidebar() {
 						{ __( 'Scheduled updates' ) }
 					</SidebarMenuItem>
 					<SidebarMenuItem
+						icon={ menuDot }
 						href={ wpcomLink( '/plugins' ) }
 						target="_blank"
 						rel="noopener noreferrer"
