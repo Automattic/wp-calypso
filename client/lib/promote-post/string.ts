@@ -38,7 +38,7 @@ const BlazePressStrings = () => {
 	translate( 'No posts found.' );
 	translate( 'Select post to promote' );
 	translate(
-		'Blaze is syncing your content as part of first-time setup – this can take up to 15 minutes or a few hours.'
+		'Blaze Ads is syncing your content as part of first-time setup. This may take anywhere from 15 minutes to a few hours'
 	);
 	translate( 'Post' );
 	translate( 'Type' );

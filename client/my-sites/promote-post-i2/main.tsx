@@ -224,7 +224,7 @@ export default function PromotedPosts( { tab, receiptId }: Props ) {
 						: translate( 'Site is private' )
 				}
 				line={ translate(
-					'To start using Blaze, you must make your site public. You can do that from {{sitePrivacySettingsLink}}here{{/sitePrivacySettingsLink}}.',
+					'To start using Blaze Ads, you must make your site public. You can do that from {{sitePrivacySettingsLink}}here{{/sitePrivacySettingsLink}}.',
 					{
 						components: {
 							sitePrivacySettingsLink: (

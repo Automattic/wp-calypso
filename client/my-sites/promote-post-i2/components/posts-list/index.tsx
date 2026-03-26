@@ -38,7 +38,7 @@ const fetchErrorListMessage = translate(
 );
 
 export const postsNotReadyErrorMessage = translate(
-	'Blaze is syncing your content as part of first-time setup – this can take up to 15 minutes or a few hours.',
+	'Blaze Ads is syncing your content as part of first-time setup – this can take up to 15 minutes or a few hours.',
 	{
 		comment: 'Validation error when fetching the posts and they are not ready/sync',
 	}
