@@ -54,6 +54,18 @@ const TOOL_DISPLAY_OVERRIDES: Record< string, string > = {
 };
 
 /**
+ * Returns true if a tool should be treated as a write operation.
+ * Uses the `readonly` field from the API: a tool is a write tool when readonly is explicitly false.
+ * @param toolId - The tool ID (e.g., 'wpcom-mcp/create-post')
+ * @param ability - Optional ability object with readonly flag from API
+ * @param ability.readonly - Whether the tool is read-only
+ * @returns Whether the tool is a write operation
+ */
+export function isWriteTool( toolId: string, ability?: { readonly?: boolean } ): boolean {
+	return ability?.readonly === false;
+}
+
+/**
  * Get the display category for a tool based on its ID and optional API category.
  * API category is the primary source; overrides apply for tools needing different grouping.
  * @param toolId - The tool ID (e.g., 'wpcom-mcp/user-profile')

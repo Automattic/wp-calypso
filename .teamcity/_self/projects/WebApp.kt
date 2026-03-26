@@ -97,7 +97,9 @@ object BuildDockerImage : BuildType({
     }
 
 	params {
+		text("cache_mode", "base", label = "Docker build cache mode", description = "How the main Docker build sources warm caches. Allowed values: base, seed, none.", allowEmpty = false)
 		text("base_image", "registry.a8c.com/calypso/base:latest", label = "Base docker image", description = "Base docker image", allowEmpty = false)
+		text("cache_seed_image", "registry.a8c.com/calypso/cache-seed:latest", label = "Cache seed image", description = "Cache-only image used when cache_mode=seed", allowEmpty = false)
 		text("base_image_publish_tag", "latest", label = "Tag to use for the published base image", description = "Base docker image tag", allowEmpty = false)
 		checkbox(
 			name = "MANUAL_SENTRY_RELEASE",
@@ -111,7 +113,7 @@ object BuildDockerImage : BuildType({
 			name = "UPDATE_BASE_IMAGE_CACHE",
 			value = "false",
 			label = "Update the base image from the cache.",
-			description = "Updates the base image by copying .cache files from the current build. Runs on trunk by default if the cache invalidates during the build.",
+			description = "Updates the base image by copying .cache files from the current build. This applies only when cache_mode=base.",
 			checked = "true",
 			unchecked = "false"
 		)
@@ -206,8 +208,9 @@ object BuildDockerImage : BuildType({
 			--label com.a8c.build-id=%teamcity.build.id%
 			--build-arg workers=32
 			--build-arg node_memory=16384
-			--build-arg use_cache=true
+			--build-arg cache_mode=%cache_mode%
 			--build-arg base_image=%base_image%
+			--build-arg cache_seed_image=%cache_seed_image%
 			--build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber}
 			--build-arg profile=%PROFILE%
 			--build-arg manual_sentry_release=%MANUAL_SENTRY_RELEASE%
@@ -314,6 +317,7 @@ object BuildDockerImage : BuildType({
 		dockerCommand {
 			name = "Rebuild cache image"
 			conditions {
+				equals("cache_mode", "base")
 				equals("UPDATE_BASE_IMAGE_CACHE", "true")
 				equals("teamcity.build.branch.is_default", "true")
 			}
@@ -334,6 +338,7 @@ object BuildDockerImage : BuildType({
 		dockerCommand {
 			name = "Push cache image"
 			conditions {
+				equals("cache_mode", "base")
 				equals("UPDATE_BASE_IMAGE_CACHE", "true")
 				equals("teamcity.build.branch.is_default", "true")
 			}

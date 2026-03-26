@@ -42,6 +42,7 @@ import {
 } from 'calypso/state/themes/selectors';
 import { getThemesBookmark } from 'calypso/state/themes/themes-ui/selectors';
 import EligibilityWarningModal from './atomic-transfer-dialog';
+import PlanUpgradeBanner from './banners-modern/plan-upgrade-banner';
 import { CustomSelectWrapper } from './custom-select-wrapper';
 import {
 	addTracking,
@@ -462,6 +463,9 @@ class ThemeShowcase extends Component {
 								}
 							/>
 						</>
+					) }
+					{ this.isThemeShowcaseModern() && tier && (
+						<PlanUpgradeBanner planSlug={ THEME_TIERS[ tier ].minimumUpsellPlan } />
 					) }
 				</ThemesSelection>
 			</div>

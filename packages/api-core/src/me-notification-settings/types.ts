@@ -22,6 +22,7 @@ export interface WpcomNotificationSettings {
 	akismet_marketing: boolean;
 	woopay_marketing: boolean;
 	gravatar_onboarding: boolean;
+	ai_tips: boolean;
 }
 
 export interface NotificationSettings {

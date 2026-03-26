@@ -30,6 +30,7 @@ interface CancellationMainContentProps {
 	onCancelConfirmationStateChange: ( newState: Partial< CancelPurchaseState > ) => void;
 	onDomainConfirmationChange: ( checked: boolean ) => void;
 	onCustomerConfirmedUnderstandingChange: ( checked: boolean ) => void;
+	onCustomerConfirmedUnderstandingAtomicPlanRevert: ( checked: boolean ) => void;
 	onKeepSubscriptionClick: () => void;
 	onCancelClick?: () => void;
 }
@@ -56,6 +57,7 @@ export default function CancellationMainContent( {
 	onCancelConfirmationStateChange,
 	onDomainConfirmationChange,
 	onCustomerConfirmedUnderstandingChange,
+	onCustomerConfirmedUnderstandingAtomicPlanRevert,
 	onKeepSubscriptionClick,
 	onCancelClick,
 }: CancellationMainContentProps ) {
@@ -158,6 +160,9 @@ export default function CancellationMainContent( {
 				state={ state }
 				onDomainConfirmationChange={ onDomainConfirmationChange }
 				onCustomerConfirmedUnderstandingChange={ onCustomerConfirmedUnderstandingChange }
+				onCustomerConfirmedUnderstandingAtomicPlanRevert={
+					onCustomerConfirmedUnderstandingAtomicPlanRevert
+				}
 				onKeepSubscriptionClick={ onKeepSubscriptionClick }
 				onCancelClick={ onCancelClick }
 			/>

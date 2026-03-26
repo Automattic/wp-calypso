@@ -32,6 +32,7 @@ export async function updateUserSettings(
 		'two_step_enhanced_security',
 		'primary_site_ID',
 		'mcp_abilities',
+		'ai_assistant',
 		'user_email_change_pending',
 	];
 	const payload = Object.fromEntries(

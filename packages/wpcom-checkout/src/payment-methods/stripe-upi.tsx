@@ -344,29 +344,32 @@ export function StripeUpiSubmitButton( {
 	}
 
 	return (
-		<Button
-			disabled={ disabled }
-			onClick={ ( ev ) => {
-				ev.preventDefault();
-				if ( state.isValid() ) {
-					debug( 'Initiate Stripe UPI payment' );
-					onClick( {
-						name: state.data.customerName,
-						address: state.data.address,
-						streetNumber: state.data.streetNumber,
-						city: state.data.city,
-						state: state.data.state,
-						postalCode: state.data.postalCode,
-						country: state.data.country,
-					} );
-				}
-			} }
-			buttonType="primary"
-			isBusy={ FormStatus.SUBMITTING === formStatus }
-			fullWidth
-		>
-			{ submitButtonContent }
-		</Button>
+		<>
+			<Button
+				disabled={ disabled }
+				onClick={ ( ev ) => {
+					ev.preventDefault();
+					if ( state.isValid() ) {
+						debug( 'Initiate Stripe UPI payment' );
+						onClick( {
+							name: state.data.customerName,
+							address: state.data.address,
+							streetNumber: state.data.streetNumber,
+							city: state.data.city,
+							state: state.data.state,
+							postalCode: state.data.postalCode,
+							country: state.data.country,
+						} );
+					}
+				} }
+				buttonType="primary"
+				isBusy={ FormStatus.SUBMITTING === formStatus }
+				fullWidth
+			>
+				{ submitButtonContent }
+			</Button>
+			<div className="upi-modal-target" />
+		</>
 	);
 }
 

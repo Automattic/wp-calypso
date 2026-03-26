@@ -1,6 +1,6 @@
 import type { Badge } from '@automattic/ui';
 
-export type Density = 'low' | 'medium';
+export type Density = 'low' | 'medium-low' | 'medium';
 
 /**
  * `badges` property of `SummaryButton` component is used to display `Badge`
@@ -40,15 +40,13 @@ export interface SummaryButtonProps {
 	density?: Density;
 	/**
 	 * Optional supporting text that provides additional context or detail about the linked page.
-	 * For now, this property is only rendered in `low` density variant.
-	 * We might revisit adding this in more variants in the future.
+	 * Rendered in `low` and `medium-low` density variants.
 	 */
 	description?: React.ReactNode;
 	/**
 	 * A brief, optional line of text used to highlight important information,
 	 * such as a warning or status.
-	 * For now, this property is only rendered in `low` density variant.
-	 * We might revisit adding this in more variants in the future.
+	 * Only rendered in `low` density variant.
 	 */
 	strapline?: string;
 	/**

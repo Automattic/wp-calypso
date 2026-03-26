@@ -217,6 +217,23 @@ const ActionButton = ( {
 				</>
 			);
 		}
+	} else if (
+		showPostButtonText &&
+		postButtonText &&
+		showBillingDescriptionForIncreasedRenewalPrice
+	) {
+		actionButton = (
+			<>
+				{ actionButton }
+				<span
+					className={ clsx( 'plans-grid-next-action-button__label', {
+						'is-left-aligned': showBillingDescriptionForIncreasedRenewalPrice,
+					} ) }
+				>
+					{ postButtonText }
+				</span>
+			</>
+		);
 	}
 
 	return (

@@ -1,7 +1,7 @@
 import { default as apiFetchPromise } from '@wordpress/api-fetch';
 import { GeneratorReturnType } from '../mapped-types';
 import { default as wpcomRequestPromise, canAccessWpcomApis } from '../wpcom-request';
-import { PerSiteRouterHistory } from './types';
+import { PerSiteLastActivity, PerSiteRouterHistory } from './types';
 import type { APIFetchOptions } from '../shared-types';
 
 /**
@@ -108,6 +108,13 @@ export function* setFloatingPosition(
 	} as const;
 }
 
+export function setLastActivity( lastActivity: PerSiteLastActivity | undefined ) {
+	return {
+		type: 'AGENTS_MANAGER_SET_LAST_ACTIVITY',
+		lastActivity,
+	} as const;
+}
+
 export function setIsLoading( isLoading: boolean ) {
 	return {
 		type: 'AGENTS_MANAGER_SET_LOADING',
@@ -124,6 +131,7 @@ export function setHasLoaded( hasLoaded: boolean ) {
 
 export type AgentsManagerAction =
 	| ReturnType< typeof setRouterHistory >
+	| ReturnType< typeof setLastActivity >
 	| ReturnType< typeof setIsLoading >
 	| ReturnType< typeof setHasLoaded >
 	| GeneratorReturnType< typeof setIsOpen >

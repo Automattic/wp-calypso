@@ -144,7 +144,7 @@ function McpSetupComponent() {
 					<PageHeader
 						title={ __( 'MCP Client Setup' ) }
 						description={ __( 'Configure your MCP client to connect to WordPress.com.' ) }
-						prefix={ <Breadcrumbs length={ 2 } /> }
+						prefix={ <Breadcrumbs length={ 3 } /> }
 					/>
 				}
 			>
@@ -163,7 +163,7 @@ function McpSetupComponent() {
 									) }
 								</Text>
 								<RouterLinkButton
-									to="/me/mcp"
+									to="/me/preferences/mcp"
 									variant="primary"
 									style={ { alignSelf: 'flex-start' } }
 								>
@@ -181,7 +181,7 @@ function McpSetupComponent() {
 		<PageLayout
 			size="small"
 			header={
-				<PageHeader title={ __( 'MCP Client Setup' ) } prefix={ <Breadcrumbs length={ 2 } /> } />
+				<PageHeader title={ __( 'MCP Client Setup' ) } prefix={ <Breadcrumbs length={ 3 } /> } />
 			}
 		>
 			<ComponentViewTracker eventName="calypso_dashboard_mcp_setup_view" />

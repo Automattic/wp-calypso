@@ -97,7 +97,7 @@
 	color: var(--theme-section-text-secondary);
 }
 
-.recommended-sections .banner-modern {
+.recommended-sections .banner-modern:not(.plan-upgrade-banner) {
 	margin: 108px auto;
 	max-width: calc( 1220px - 48px);
 	width: calc( 100% - 48px - 48px);
@@ -106,4 +106,7 @@
 		max-width: calc( 1220px - 80px);
 		width: calc( 100% - 48px - 80px);
 	}
+}
+.recommended-sections .banner-modern.plan-upgrade-banner {
+	margin-bottom: 0;
 }

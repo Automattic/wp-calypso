@@ -308,7 +308,7 @@ const SiteSubscriptionDetails = ( {
 								if ( is_gift ) {
 									return (
 										<dl className="site-subscription-info__list" key={ id }>
-											<dt>{ translate( 'Gift' ) }</dt>
+											<dt>{ translate( 'Complimentary subscription' ) }</dt>
 											<dd></dd>
 										</dl>
 									);

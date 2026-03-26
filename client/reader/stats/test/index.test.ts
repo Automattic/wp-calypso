@@ -697,12 +697,6 @@ describe( 'reader stats', () => {
 					searchParams: {},
 				},
 				{
-					url: '/discover/firstposts',
-					expected: 'discover_firstposts',
-					description: 'discover first posts page',
-					searchParams: {},
-				},
-				{
 					url: '/discover/reddit',
 					expected: 'discover_reddit',
 					description: 'discover reddit page',
