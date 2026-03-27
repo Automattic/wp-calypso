@@ -28,7 +28,6 @@ export default function SsoPartnerBranded( {
 	approveLabel,
 	returnToSiteLabel,
 	signInDifferentUserLabel,
-	emailVerificationNoticeText,
 } ) {
 	const translate = useTranslate();
 	const [ isSendingVerificationEmail, setIsSendingVerificationEmail ] = useState( false );
@@ -93,7 +92,9 @@ export default function SsoPartnerBranded( {
 
 		return (
 			<NoticeRoot intent="info" className="jetpack-connect__sso-partner-branded-email-notice">
-				<NoticeDescription>{ emailVerificationNoticeText }</NoticeDescription>
+				<NoticeDescription>
+					{ translate( 'You must verify your email to sign in with WordPress.com.' ) }
+				</NoticeDescription>
 				<NoticeActions>
 					<NoticeActionButton onClick={ sendVerificationEmail }>
 						{ translate( 'Resend Email' ) }
@@ -180,7 +181,6 @@ SsoPartnerBranded.propTypes = {
 		email_verified: PropTypes.bool,
 	} ).isRequired,
 	errorNotice: PropTypes.node,
-	emailVerificationNoticeText: PropTypes.node,
 	isPrimaryDisabled: PropTypes.bool,
 	isPrimaryLoading: PropTypes.bool,
 	onApproveClick: PropTypes.func.isRequired,

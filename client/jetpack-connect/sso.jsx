@@ -449,9 +449,6 @@ class JetpackSsoForm extends Component {
 						subtitle={ brandedCopy.subtitle }
 						currentUser={ currentUser }
 						errorNotice={ currentUser?.email_verified ? this.maybeRenderErrorNotice() : null }
-						emailVerificationNoticeText={ translate(
-							'You must verify your email to sign in with WordPress.com.'
-						) }
 						isPrimaryDisabled={ this.isButtonDisabled() }
 						isPrimaryLoading={ this.props.isAuthorizing }
 						onApproveClick={ this.approveSSO }

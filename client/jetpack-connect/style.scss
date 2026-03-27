@@ -795,6 +795,12 @@ body:not( .is-jetpack-sso-partner-branded--woo ) {
 	margin: 0;
 }
 
+.jetpack-connect__sso-partner-branded-email-notice {
+	width: 100%;
+	box-sizing: border-box;
+	margin-bottom: 0;
+}
+
 .jetpack-connect__sso-partner-branded-actions {
 	margin-top: 8px;
 }
