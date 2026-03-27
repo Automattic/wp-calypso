@@ -21,7 +21,7 @@
 }
 
 .dashboard-responsive-sidebar__logo {
-	padding: 14px 2px;
+	padding: 14px 2px; // temporary to match Reader's layout
 	border-block-end: 1px solid var( --dashboard-header__border-color );
 
 	&.has-wordmark-logo {
