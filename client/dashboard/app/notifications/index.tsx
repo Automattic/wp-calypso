@@ -5,7 +5,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { bellUnread, bell } from '@wordpress/icons';
 import clsx from 'clsx';
-import { Suspense, lazy, useEffect, useState } from 'react';
+import { Suspense, lazy, useEffect, useRef, useState } from 'react';
 import wpcom from 'calypso/lib/wp';
 import { useAuth } from '../auth';
 import { useOmnibarEvent } from '../interim-omnibar/click-handlers';
@@ -14,13 +14,27 @@ import './style.scss';
 
 const AsyncNotificationApp = lazy( () => import( '@automattic/notifications/src/app' ) );
 
-export default function Notifications( { className }: { className: string } ) {
+export default function Notifications( {
+	className,
+	anchor,
+}: {
+	className?: string;
+	/** CSS selector for an external element to anchor the popover to. */
+	anchor?: string;
+} ) {
 	const navigate = useNavigate();
 	const { user } = useAuth();
 	const locale = useLocale();
 	const isMobileViewport = useViewportMatch( 'small', '<' );
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ hasUnseenNotifications, setHasUnseenNotifications ] = useState( user.has_unseen_notes );
+	const anchorRef = useRef< HTMLElement | null >( null );
+
+	useEffect( () => {
+		if ( anchor ) {
+			anchorRef.current = document.querySelector< HTMLElement >( anchor );
+		}
+	}, [ anchor ] );
 
 	const handleToggle = ( willOpen: boolean ) => {
 		setIsOpen( willOpen );
@@ -85,6 +99,7 @@ export default function Notifications( { className }: { className: string } ) {
 				placement: 'bottom-end',
 				offset: 8,
 				focusOnMount: true,
+				...( anchor && { anchor: anchorRef.current } ),
 				...( isEnabled( 'dashboard/omnibar' ) && {
 					onFocusOutside: () => {
 						// When focus moves to the omnibar (e.g. clicking the
@@ -104,16 +119,18 @@ export default function Notifications( { className }: { className: string } ) {
 			open={ isOpen }
 			expandOnMobile={ isMobileViewport }
 			onToggle={ handleToggle }
-			renderToggle={ ( { isOpen, onToggle } ) => (
-				<Button
-					className={ clsx( className, 'dashboard-notifications__icon' ) }
-					onClick={ onToggle }
-					aria-expanded={ isOpen }
-					variant="tertiary"
-					label={ __( 'Notifications' ) }
-					icon={ hasUnseenNotifications ? bellUnread : bell }
-				/>
-			) }
+			renderToggle={ ( { isOpen, onToggle } ) =>
+				anchor ? null : (
+					<Button
+						className={ clsx( className, 'dashboard-notifications__icon' ) }
+						onClick={ onToggle }
+						aria-expanded={ isOpen }
+						variant="tertiary"
+						label={ __( 'Notifications' ) }
+						icon={ hasUnseenNotifications ? bellUnread : bell }
+					/>
+				)
+			}
 			renderContent={ () => (
 				<div
 					style={ {

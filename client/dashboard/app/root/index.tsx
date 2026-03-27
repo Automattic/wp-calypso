@@ -20,8 +20,10 @@ import { useAppContext } from '../context';
 import Header from '../header';
 import { useOmnibarEvent } from '../interim-omnibar/click-handlers';
 import { NavigationBlockerRegistry } from '../navigation-blocker';
+import Notifications from '../notifications';
 import ResponsiveSidebar from '../responsive-sidebar';
 import Snackbars from '../snackbars';
+import OmnibarHelpCenter from './omnibar-help-center';
 import './style.scss';
 
 const WebpackBuildMonitor = lazy(
@@ -190,6 +192,10 @@ function Root() {
 			{ renderHeader() }
 			{ renderBody() }
 			{ supports.commandPalette && <CommandPalette /> }
+			{ isOmnibarEnabled && supports.notifications && (
+				<Notifications anchor=".masterbar__item-notifications" />
+			) }
+			{ isOmnibarEnabled && supports.help && <OmnibarHelpCenter /> }
 			<Snackbars />
 			<PageViewTracker />
 			<NavigationBlockerRegistry />
