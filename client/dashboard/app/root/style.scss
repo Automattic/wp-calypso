@@ -10,7 +10,6 @@
 }
 
 .dashboard-root__body {
-	--masterbar-height: 61px;
 	display: flex;
 	min-height: calc(100vh - var(--masterbar-height) );
 
@@ -30,6 +29,5 @@
 	.dashboard-root__body:has(.dashboard-responsive-sidebar.is-open) & {
 			transform: translateX( $sidebar-width );
 			overflow: hidden;
-			height: 100vh;
 	}
 }

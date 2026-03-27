@@ -1,5 +1,7 @@
 body:has(#wpcom-omnibar) #wpcom {
-	margin-block-start: var(--masterbar-height, 47px);
+	padding-block-start: var(--masterbar-height, 47px);
+	height: auto;
+	min-height: calc(100vh - var(--masterbar-height, 47px) );
 }
 
 #wpcom-omnibar {
