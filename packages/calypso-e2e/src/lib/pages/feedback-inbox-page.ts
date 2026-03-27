@@ -1,4 +1,4 @@
-import { Page } from 'playwright';
+import { Locator, Page } from 'playwright';
 import { envVariables } from '../..';
 
 /**
@@ -15,6 +15,16 @@ export class FeedbackInboxPage {
 	 */
 	constructor( page: Page ) {
 		this.page = page;
+	}
+
+	/**
+	 * Returns a locator for a response row matching the given text.
+	 *
+	 * @param {string} text The text to match in the row.
+	 * @returns {Locator} The row locator.
+	 */
+	private getResponseRow( text: string ): Locator {
+		return this.page.locator( '.dataviews-view-table__row' ).filter( { hasText: text } ).first();
 	}
 
 	/**
@@ -36,7 +46,6 @@ export class FeedbackInboxPage {
 		if ( await responsesTab.isVisible( { timeout: 2000 } ).catch( () => false ) ) {
 			this.isCFM = true;
 			await responsesTab.click();
-			// Wait for the responses data to load
 			await this.page.waitForTimeout( 1000 );
 		}
 	}
@@ -49,10 +58,7 @@ export class FeedbackInboxPage {
 	 * @param {string} text The text to match in the row. Using the name field is a good choice.
 	 */
 	async viewResponseRowByText( text: string ): Promise< void > {
-		const responseRowLocator = this.page
-			.locator( '.dataviews-view-table__row' )
-			.filter( { hasText: text } )
-			.first();
+		const responseRowLocator = this.getResponseRow( text );
 		await responseRowLocator.waitFor( { state: 'visible' } );
 		await responseRowLocator.getByRole( 'button', { name: 'Actions' } ).click();
 		// The menu item is on a popover portal, so outside of the response row locator
@@ -125,7 +131,6 @@ export class FeedbackInboxPage {
 		await searchBox.fill( search );
 		await responseRequestPromise;
 
-		// Wait for the UI to settle after the API response
 		await this.page.waitForTimeout( 500 );
 	}
 
@@ -162,22 +167,19 @@ export class FeedbackInboxPage {
 	 * @param {string} folderName The name of the folder to click (e.g., 'Inbox', 'Spam', 'Trash').
 	 */
 	async clickFolderTab( folderName: string ): Promise< void > {
-		// Try the old dashboard tabs first
-		const tab = this.page.getByRole( 'tab', { name: folderName } );
-		if ( await tab.isVisible( { timeout: 1000 } ).catch( () => false ) ) {
-			await tab.click();
+		if ( await this.isCentralFormManagement() ) {
+			// CFM: folder is a DataViews filter chip ("Folder is: Inbox (0)").
+			const folderChip = this.page.locator( '.dataviews-filters__summary-chip' ).filter( {
+				hasText: /Folder is:/i,
+			} );
+			await folderChip.click();
+			await this.page.getByRole( 'option', { name: new RegExp( folderName, 'i' ) } ).click();
 			await this.page.waitForTimeout( 500 );
 			return;
 		}
 
-		// CFM dashboard: folder is a DataViews filter chip ("Folder is: Inbox (0)").
-		// Click the chip to open the dropdown, then select the matching option.
-		const folderChip = this.page.locator( '.dataviews-filters__summary-chip' ).filter( {
-			hasText: /Folder is:/i,
-		} );
-		await folderChip.click();
-		const option = this.page.getByRole( 'option', { name: new RegExp( folderName, 'i' ) } );
-		await option.click();
+		const tablist = this.page.getByRole( 'tablist' );
+		await tablist.getByRole( 'tab', { name: folderName } ).click();
 		await this.page.waitForTimeout( 500 );
 	}
 
@@ -360,11 +362,9 @@ export class FeedbackInboxPage {
 	 * @returns {boolean} True if the row is visible.
 	 */
 	async hasResponseRow( text: string, timeout = 3000 ): Promise< boolean > {
-		const row = this.page
-			.locator( '.dataviews-view-table__row' )
-			.filter( { hasText: text } )
-			.first();
-		return row.isVisible( { timeout } ).catch( () => false );
+		return this.getResponseRow( text )
+			.isVisible( { timeout } )
+			.catch( () => false );
 	}
 
 	/**
@@ -374,10 +374,7 @@ export class FeedbackInboxPage {
 	 * @param {string} actionName The name of the action to verify in the dropdown menu.
 	 */
 	async verifyActionExistsInMenu( text: string, actionName: string ): Promise< void > {
-		const responseRowLocator = this.page
-			.locator( '.dataviews-view-table__row' )
-			.filter( { hasText: text } )
-			.first();
+		const responseRowLocator = this.getResponseRow( text );
 
 		// Click the Actions button (three dot menu)
 		await responseRowLocator.getByRole( 'button', { name: 'Actions' } ).click();

@@ -83,6 +83,9 @@ export class ContactFormFlow implements BlockFlow {
 	 * @param {PublishedPostContext} context The current context for the published post at the point of test execution
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
+		if ( this.skippedDueToCFM ) {
+			return;
+		}
 		// With CFM, edits to synced form labels may not persist through the
 		// multi-entity save. Skip validation if our custom labels aren't present.
 		const testLabel = context.page

@@ -789,19 +789,18 @@ export class EditorPage {
 		// Trigger a secondary/confirmation click if needed.
 		// When multiple entities need saving (e.g., a post + a synced jetpack_form),
 		// Gutenberg shows a multi-entity save panel instead of the normal publish panel.
+		// Race both so whichever panel appears first gets handled immediately.
 		actionsArray.push(
-			( async () => {
-				// Try the normal publish panel first (has a 5s timeout and returns gracefully).
-				await this.editorPublishPanelComponent.publish();
-				// If the normal panel wasn't found, try the multi-entity save panel.
-				const editorParent = await this.editor.parent();
-				const saveButton = editorParent.locator(
-					'.entities-saved-states__panel button:has-text("Save")'
-				);
-				if ( await saveButton.isVisible( { timeout: 2000 } ).catch( () => false ) ) {
-					await saveButton.click();
-				}
-			} )()
+			Promise.race( [
+				this.editorPublishPanelComponent.publish(),
+				( async () => {
+					const editorParent = await this.editor.parent();
+					const saveButton = editorParent.locator(
+						'.entities-saved-states__panel button:has-text("Save")'
+					);
+					await saveButton.click( { timeout: 10 * 1000 } );
+				} )(),
+			] )
 		);
 
 		// Resolve the promises.
