@@ -72,13 +72,12 @@ describe( 'PostCommentForm', () => {
 	} );
 
 	describe( 'when login is required to comment', () => {
-		it( 'shows the registration required message', () => {
+		it( 'shows the registration required message when comments are open', () => {
 			renderForm( {
 				post: {
 					...defaultPost,
 					discussion: {
-						comments_open: false,
-						comment_count: 5,
+						comments_open: true,
 						comments_require_registration: true,
 					},
 				},
@@ -91,7 +90,7 @@ describe( 'PostCommentForm', () => {
 				post: {
 					...defaultPost,
 					discussion: {
-						comments_open: false,
+						comments_open: true,
 						comments_require_registration: true,
 					},
 				},
@@ -112,6 +111,20 @@ describe( 'PostCommentForm', () => {
 				},
 			} );
 			expect( screen.queryByPlaceholderText( 'Add a comment…' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'shows comments closed when comments_open is false even with registration required', () => {
+			renderForm( {
+				post: {
+					...defaultPost,
+					discussion: {
+						comments_open: false,
+						comment_count: 5,
+						comments_require_registration: true,
+					},
+				},
+			} );
+			expect( screen.getByText( 'Comments closed.' ) ).toBeVisible();
 		} );
 	} );
 } );

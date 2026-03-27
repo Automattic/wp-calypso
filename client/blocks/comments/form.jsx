@@ -152,6 +152,16 @@ class PostCommentForm extends Component {
 	render() {
 		const { post, error, errorType, translate } = this.props;
 
+		// Don't display the form if comments are closed
+		if ( post && ! isCommentsOpen( post ) ) {
+			// If we already have some comments, show a 'comments closed message'
+			if ( post.discussion?.comment_count > 0 ) {
+				return <p className="comments__form-closed">{ translate( 'Comments closed.' ) }</p>;
+			}
+
+			return null;
+		}
+
 		// If comments require registration, show a prompt to visit the post instead of the form
 		if ( post && isLoginRequiredToComment( post ) ) {
 			return (
@@ -166,16 +176,6 @@ class PostCommentForm extends Component {
 					) }
 				</p>
 			);
-		}
-
-		// Don't display the form if comments are closed
-		if ( post && ! isCommentsOpen( post ) ) {
-			// If we already have some comments, show a 'comments closed message'
-			if ( post.discussion?.comment_count > 0 ) {
-				return <p className="comments__form-closed">{ translate( 'Comments closed.' ) }</p>;
-			}
-
-			return null;
 		}
 
 		const buttonClasses = clsx( {
