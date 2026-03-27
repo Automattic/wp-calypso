@@ -29,6 +29,12 @@ import { getSSO } from 'calypso/state/jetpack-connect/selectors';
 import HelpButton from './help-button';
 import MainWrapper from './main-wrapper';
 import { persistSsoApproved } from './persistence-utils';
+import {
+	fallbackToHistoryBackWhenAdminUrlMissing,
+	getAdminUrlFromBlogDetails,
+	navigateToAdminUrlWhenAvailable,
+	navigateToUrl,
+} from './sso-flow-primitives';
 import SsoPartnerBranded from './sso-partner-branded';
 
 /*
@@ -78,39 +84,33 @@ class JetpackSsoForm extends Component {
 		this.props.authorizeSSO( siteId, ssoNonce, siteUrl );
 	};
 
-	onClickReturnToSiteBranded = () => {
+	onClickReturnToSite = ( event, { navigateToAdminUrl = false } = {} ) => {
 		debug( 'Clicked return to site link' );
 		recordTracksEvent( 'calypso_jetpack_sso_return_to_site_link_click' );
 
-		const adminUrl = get( this.props, 'blogDetails.admin_url' );
-		if ( adminUrl ) {
-			window.location.href = adminUrl;
+		if ( navigateToAdminUrl && navigateToAdminUrlWhenAvailable( this.props.blogDetails ) ) {
 			return;
 		}
 
-		recordTracksEvent( 'calypso_jetpack_sso_admin_url_fallback_redirect' );
-		window.history.back();
+		this.returnToSiteFallback( event );
 	};
 
-	onClickSignInDifferentUserBranded = () => {
+	onClickSignInDifferentUser = ( event, { navigate = false } = {} ) => {
 		recordTracksEvent( 'calypso_jetpack_sso_sign_in_different_user_link_click' );
-		window.location.href = this.getSignInLink();
+
+		if ( navigate ) {
+			navigateToUrl( this.getSignInLink() );
+		}
 	};
 
 	onCancelClick = ( event ) => {
-		debug( 'Clicked return to site link' );
-		recordTracksEvent( 'calypso_jetpack_sso_return_to_site_link_click' );
-		this.returnToSiteFallback( event );
+		this.onClickReturnToSite( event );
 	};
 
 	onTryAgainClick = ( event ) => {
 		debug( 'Clicked try again link' );
 		recordTracksEvent( 'calypso_jetpack_sso_try_again_link_click' );
 		this.returnToSiteFallback( event );
-	};
-
-	onClickSignInDifferentUser = () => {
-		recordTracksEvent( 'calypso_jetpack_sso_sign_in_different_user_link_click' );
 	};
 
 	onClickSharedDetailsModal = ( event ) => {
@@ -128,13 +128,11 @@ class JetpackSsoForm extends Component {
 	};
 
 	returnToSiteFallback = ( event ) => {
-		// If, for some reason, the API request failed and we do not have the admin URL,
-		// then fallback to the user's last location.
-		if ( ! get( this.props, 'blogDetails.admin_url' ) ) {
+		if ( ! getAdminUrlFromBlogDetails( this.props.blogDetails ) ) {
 			recordTracksEvent( 'calypso_jetpack_sso_admin_url_fallback_redirect' );
-			event.preventDefault();
-			window.history.back();
 		}
+
+		return fallbackToHistoryBackWhenAdminUrlMissing( this.props.blogDetails, event );
 	};
 
 	isButtonDisabled() {
@@ -182,7 +180,7 @@ class JetpackSsoForm extends Component {
 				showDismiss={ false }
 			>
 				<NoticeAction
-					href={ get( this.props, 'blogDetails.admin_url', '#' ) }
+					href={ getAdminUrlFromBlogDetails( this.props.blogDetails ) || '#' }
 					onClick={ this.onTryAgainClick }
 				>
 					{ translate( 'Try again' ) }
@@ -457,8 +455,12 @@ class JetpackSsoForm extends Component {
 						isPrimaryDisabled={ this.isButtonDisabled() }
 						isPrimaryLoading={ this.props.isAuthorizing }
 						onApproveClick={ this.approveSSO }
-						onReturnToSiteClick={ this.onClickReturnToSiteBranded }
-						onSignInDifferentUserClick={ this.onClickSignInDifferentUserBranded }
+						onReturnToSiteClick={ ( event ) =>
+							this.onClickReturnToSite( event, { navigateToAdminUrl: true } )
+						}
+						onSignInDifferentUserClick={ ( event ) =>
+							this.onClickSignInDifferentUser( event, { navigate: true } )
+						}
 						approveLabel={ brandedCopy.primaryLabel }
 						signInDifferentUserLabel={ translate( 'Sign in as a different user' ) }
 						returnToSiteLabel={ brandedCopy.secondaryLabel }
@@ -520,7 +522,7 @@ class JetpackSsoForm extends Component {
 						</LoggedOutFormLinkItem>
 						<LoggedOutFormLinkItem
 							rel="external"
-							href={ get( this.props, 'blogDetails.admin_url', '#' ) }
+							href={ getAdminUrlFromBlogDetails( this.props.blogDetails ) || '#' }
 							onClick={ this.onCancelClick }
 						>
 							{ this.getReturnToSiteText() }
