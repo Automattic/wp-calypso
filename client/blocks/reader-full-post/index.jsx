@@ -31,7 +31,7 @@ import ReaderBackButton from 'calypso/reader/components/back-button';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { canBeMarkedAsSeen, getSiteName, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import readerContentWidth from 'calypso/reader/lib/content-width';
-import { isCommentable, isLoginRequiredToComment } from 'calypso/reader/post/capabilities';
+import { isCommentsOpen, isLoginRequiredToComment } from 'calypso/reader/post/capabilities';
 import PostExcerptLink from 'calypso/reader/post-excerpt-link';
 import { keyForPost } from 'calypso/reader/post-key';
 import { ReaderPerformanceTrackerStop } from 'calypso/reader/reader-performance-tracker';
@@ -805,7 +805,11 @@ export class FullPostView extends Component {
 									onCommentClick={ this.handleCommentClick }
 									onEditClick={ this.onEditClick }
 									commentsApiDisabled={ commentsApiDisabled }
-									showComments={ isCommentable( post ) || isLoginRequiredToComment( post ) }
+									showComments={
+										isCommentsOpen( post ) ||
+										isLoginRequiredToComment( post ) ||
+										post.discussion?.comment_count > 0
+									}
 									renderMarkAsSeenButton={
 										shouldShowMarkAsSeen ? this.renderMarkAsSenButton : null
 									}
@@ -848,7 +852,9 @@ export class FullPostView extends Component {
 
 							<div className="reader-full-post__comments-wrapper" ref={ this.commentsWrapper }>
 								{ ! commentsApiDisabled &&
-									( isCommentable( post ) || isLoginRequiredToComment( post ) ) && (
+									( isCommentsOpen( post ) ||
+										isLoginRequiredToComment( post ) ||
+										post.discussion?.comment_count > 0 ) && (
 										<Comments
 											showNestingReplyArrow
 											post={ post }

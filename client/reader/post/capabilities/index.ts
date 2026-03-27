@@ -12,15 +12,8 @@ interface ReaderPost {
 	};
 }
 
-export function isCommentable( post: ReaderPost ): boolean {
-	if (
-		post.discussion &&
-		( post.discussion.comments_open || ( post.discussion.comment_count ?? 0 ) > 0 )
-	) {
-		return true;
-	}
-
-	return false;
+export function isCommentsOpen( post: ReaderPost ): boolean {
+	return !! post.discussion?.comments_open;
 }
 
 export function isLoginRequiredToComment( post: ReaderPost ): boolean {
@@ -62,5 +55,5 @@ export function isLikeable( post: ReaderPost ): boolean {
 }
 
 export function isConversationFollowable( post: ReaderPost ): boolean {
-	return !! post?.site_ID && ! post?.is_external && isCommentable( post );
+	return !! post?.site_ID && ! post?.is_external && isCommentsOpen( post );
 }
