@@ -76,7 +76,7 @@ export default function HostingDashboard() {
 			header={
 				<PageHeader
 					prefix={ <Breadcrumbs length={ 2 } /> }
-					title={ __( 'New hosting dashboard' ) }
+				 __( 'New Hosting Dashboard' ) }
 					description={ __(
 						'Opt in for a modern design and smarter tools for managing your hosting.'
 					) }
