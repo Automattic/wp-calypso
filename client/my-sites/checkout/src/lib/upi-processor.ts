@@ -148,7 +148,6 @@ export default async function upiProcessor(
 			}
 			if ( orderStatus === 'payment-confirmed' ) {
 				safeDismissModal();
-				window.location.href = pendingPageUrl;
 				return makeRedirectResponse( pendingPageUrl );
 			}
 			if ( orderStatus !== 'success' ) {
