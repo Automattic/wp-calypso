@@ -2,7 +2,11 @@
 
 body.is-section-activity {
 	@include admin-ui-page-layout;
-	@include admin-ui-page-layout-constrained-content;
+	@include admin-ui-page-layout-constrained-content($max-width: 1040px);
+
+	.admin-ui-page {
+		background: var(--color-surface-backdrop);
+	}
 }
 
 main.activity-log-v2 {
