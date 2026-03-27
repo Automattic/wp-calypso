@@ -46,6 +46,7 @@ import useRecordCartLoaded from '../hooks/use-record-cart-loaded';
 import useRecordCheckoutLoaded from '../hooks/use-record-checkout-loaded';
 import useRemoveFromCartAndRedirect from '../hooks/use-remove-from-cart-and-redirect';
 import { useStoredPaymentMethods } from '../hooks/use-stored-payment-methods';
+import useSubmitButtonColor from '../hooks/use-submit-button-color';
 import { logStashLoadErrorEvent, logStashEvent, convertErrorToString } from '../lib/analytics';
 import existingCardProcessor from '../lib/existing-card-processor';
 import existingPayPalPPCPProcessor from '../lib/existing-paypal-ppcp-processor';
@@ -245,6 +246,7 @@ export default function CheckoutMain( {
 	} );
 
 	const countriesList = useCountryList();
+	const submitButtonColor = useSubmitButtonColor();
 
 	const {
 		productsForCart,
@@ -647,9 +649,17 @@ export default function CheckoutMain( {
 			  }
 			: {};
 
+	const submitButtonColorOverride = submitButtonColor ? { primary: submitButtonColor } : {};
+
 	const theme = {
 		...checkoutTheme,
-		colors: { ...checkoutTheme.colors, ...gravatarColors, ...jetpackColors, ...a4aColors },
+		colors: {
+			...checkoutTheme.colors,
+			...gravatarColors,
+			...jetpackColors,
+			...a4aColors,
+			...submitButtonColorOverride,
+		},
 		weights: { ...checkoutTheme.weights, ...gravatarFontWeights },
 	};
 
