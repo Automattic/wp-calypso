@@ -2,9 +2,9 @@ import { Count } from '@automattic/components';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { SiteIcon } from 'calypso/blocks/site-icon';
 import AutoDirection from 'calypso/components/auto-direction';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import Favicon from 'calypso/reader/components/favicon';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import ReaderSidebarHelper from '../helper';
@@ -40,7 +40,7 @@ export class ReaderSidebarOrganizationsListItem extends Component {
 					href={ `/reader/feeds/${ site.feed_ID }` }
 					onClick={ this.handleSidebarClick }
 				>
-					<Favicon site={ site } className="sidebar__menu-item-site-icon" size={ 22 } />
+					<SiteIcon iconUrl={ site.site_icon } size={ 22 } />
 
 					<span className="sidebar__menu-item-sitename">
 						<AutoDirection>

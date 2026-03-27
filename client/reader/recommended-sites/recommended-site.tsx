@@ -19,7 +19,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AnyAction } from 'redux';
-import ReaderAvatar from 'calypso/blocks/reader-avatar';
+import { SiteIcon } from 'calypso/blocks/site-icon';
 import { useSubscriptionManagerContext } from 'calypso/landing/subscriptions/components/subscription-manager-context';
 import {
 	useRecordSiteIconClicked,
@@ -88,7 +88,6 @@ const RecommendedSite = ( {
 	siteDomain,
 	siteUrl,
 	siteIcon,
-	feedIcon,
 	railcar,
 	uiPosition,
 }: RecommendedSiteProps ) => {
@@ -216,11 +215,10 @@ const RecommendedSite = ( {
 				/>
 			</Flex>
 			<HStack justify="flex-start" spacing="4">
-				<ReaderAvatar
-					siteIcon={ siteIcon }
-					feedIcon={ feedIcon }
+				<SiteIcon
+					iconUrl={ siteIcon }
+					size={ 40 }
 					onClick={ () => recordSiteIconClicked( siteTracksEventProps ) }
-					isCompact
 				/>
 				<VStack spacing={ 0 }>
 					<a

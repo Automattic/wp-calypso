@@ -1,7 +1,8 @@
+import '../style.scss';
 import { Count } from '@automattic/components';
 import { get } from 'lodash';
 import { connect, useDispatch, useSelector } from 'react-redux';
-import ReaderAvatar from 'calypso/blocks/reader-avatar';
+import { SiteIcon } from 'calypso/blocks/site-icon';
 import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -13,7 +14,6 @@ import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import { getSite } from 'calypso/state/reader/sites/selectors';
 import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 import ReaderSidebarHelper from '../../sidebar/helper';
-import '../style.scss';
 
 const ReaderListFollowingItem = ( props ) => {
 	const { site, path, isUnseen, feed, follow, siteId } = props;
@@ -81,13 +81,7 @@ const ReaderListFollowingItem = ( props ) => {
 					{ ! siteIcon && ! feedIcon && ! feed && follow.feed_ID && (
 						<QueryReaderFeed feedId={ follow.feed_ID } />
 					) }
-					<ReaderAvatar
-						siteIcon={ siteIcon }
-						feedIcon={ feedIcon }
-						preferGravatar
-						isCompact
-						iconSize={ 32 }
-					/>
+					<SiteIcon iconUrl={ feedIcon || siteIcon } size={ 32 } />
 				</span>
 				<span className="reader-sidebar-site_sitename">
 					<span className="reader-sidebar-site_nameurl">{ follow.name || urlForDisplay }</span>
