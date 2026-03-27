@@ -234,6 +234,7 @@ async function main() {
 								require="calypso/layout/agents-manager-loader"
 								placeholder={ null }
 								sectionName={ flowName }
+								loadAgentsManager
 							/>
 						</>
 					) }
