@@ -11,6 +11,7 @@ import { useCallback, useEffect, useMemo, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { comment, backup, page, video, rss } from '@wordpress/icons';
 import { registerPlugin } from '@wordpress/plugins';
+import { useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { useCanvasMode } from './hooks/use-canvas-mode';
 import { useMenuPanelExperiment } from './hooks/use-menu-panel-experiment';
@@ -103,6 +104,7 @@ function HelpCenterContent() {
 
 	const sidebarActionsContainer = document.querySelector( '.edit-site-site-hub__actions' );
 
+	const hasInitialized = useRef( false );
 	// On mobile the SlotFill button is hidden by Gutenberg's own CSS, so wire up the
 	// admin bar icon that our PHP adds for the gutenberg variant instead.
 	const adminBarButton = document.getElementById( 'wp-admin-bar-help-center' );
@@ -111,6 +113,12 @@ function HelpCenterContent() {
 			return;
 		}
 		adminBarButton.onclick = handleToggleHelpCenter;
+
+		// make sure it's closed from the beginning
+		if ( ! hasInitialized.current ) {
+			hasInitialized.current = true;
+			setShowHelpCenter( false );
+		}
 
 		// The help center panel uses --masterbar-height to position itself below the
 		// top bars. In Gutenberg this variable is unset, so the panel defaults to
@@ -126,7 +134,7 @@ function HelpCenterContent() {
 			adminBarButton.onclick = null;
 			document.documentElement.style.removeProperty( '--masterbar-height' );
 		};
-	}, [ isDesktop, adminBarButton, handleToggleHelpCenter ] );
+	}, [ isDesktop, adminBarButton, handleToggleHelpCenter, setShowHelpCenter ] );
 
 	// Menu items for the dropdown
 	const menuControls = useMemo(
