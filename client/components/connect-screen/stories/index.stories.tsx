@@ -2,7 +2,6 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { StoryObj, Meta } from '@storybook/react';
 import { IconType } from '@wordpress/components';
 import { seen, edit, cog, check, chartBar, postList, commentAuthorAvatar } from '@wordpress/icons';
-import { Notice } from '@wordpress/ui';
 import { useState } from 'react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
@@ -255,53 +254,6 @@ export const ConsentTextVariants: StoryObj< typeof ConsentText > = {
 					</a>
 					.
 				</ConsentText>
-			</VariantSection>
-		</div>
-	),
-};
-
-// Notice - All intent variants
-export const NoticeVariants: StoryObj = {
-	render: () => (
-		<div>
-			<VariantSection title="Info with title, description, and actions">
-				<Notice.Root intent="info">
-					<Notice.Title>Complete your setup</Notice.Title>
-					<Notice.Description>
-						You are one step away from connecting your account to this site.
-					</Notice.Description>
-					<Notice.Actions>
-						<Notice.ActionLink href="https://wordpress.com/help">Read guide</Notice.ActionLink>
-						<Notice.ActionButton>Try again</Notice.ActionButton>
-					</Notice.Actions>
-				</Notice.Root>
-			</VariantSection>
-			<VariantSection title="Warning">
-				<Notice.Root intent="warning">
-					<Notice.Title>Review requested permissions</Notice.Title>
-					<Notice.Description>
-						This app requests access to additional site settings.
-					</Notice.Description>
-				</Notice.Root>
-			</VariantSection>
-			<VariantSection title="Success">
-				<Notice.Root intent="success">
-					<Notice.Title>Connection successful</Notice.Title>
-					<Notice.Description>Your account is now connected.</Notice.Description>
-				</Notice.Root>
-			</VariantSection>
-			<VariantSection title="Error">
-				<Notice.Root intent="error">
-					<Notice.Title>We could not connect your account</Notice.Title>
-					<Notice.Description>Please check your permissions and try again.</Notice.Description>
-				</Notice.Root>
-			</VariantSection>
-			<VariantSection title="Neutral with close icon slot">
-				<Notice.Root intent="neutral">
-					<Notice.Title>Heads up</Notice.Title>
-					<Notice.Description>You can dismiss this notice and continue later.</Notice.Description>
-					<Notice.CloseIcon />
-				</Notice.Root>
 			</VariantSection>
 		</div>
 	),
