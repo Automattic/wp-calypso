@@ -80,3 +80,34 @@ yarn reformat-files # Fix formatting with Prettier
   - Avoid mentioning people's names.
   - Do not link to wordpress.com URLs.
   - Include all checklist items from .github/PULL_REQUEST_TEMPLATE.md. Only mark items as completed (`[x]`) if they actually apply; leave inapplicable items unchecked (`[ ]`).
+
+## Cursor Cloud specific instructions
+
+### Hosts file entries
+
+The dev server requires these `/etc/hosts` entries (already configured in the VM snapshot):
+
+```
+127.0.0.1 calypso.localhost
+127.0.0.1 my.localhost
+127.0.0.1 my.woo.localhost
+```
+
+If missing, add them before starting any dev server.
+
+### Starting the dev server
+
+- `yarn start` — full Calypso (all clients). Builds packages, compiles webpack, and starts Express on port 3000. First build takes ~2-3 minutes.
+- `yarn start-dashboard` — Dashboard client only (faster, limits webpack entries). Served at `http://my.localhost:3000/`.
+- The Dashboard environment config uses hostname `my.localhost` (not `calypso.localhost`). The root URL `/` redirects to the WordPress.com login page when unauthenticated — this is expected.
+- Webpack hot-reloading is enabled; after the initial build completes ("Ready! All assets are re-compiled"), incremental rebuilds take ~5-10 seconds.
+
+### Running tests
+
+- Use scoped test commands for faster feedback: `yarn test-client <path>` or `yarn test-packages <path>`.
+- Full `yarn lint` runs all linters sequentially (`lint:config-defaults`, `lint:css`, `lint:js`, `lint:mixedindent`, `lint:unused-state-action-types`). For quick checks, run `yarn lint:js` or `yarn lint:css` directly.
+- The `.env` file does not exist and the "Failed to load ./.env" warning on startup is benign.
+
+### Node.js version
+
+This project requires Node.js 22.9.0 (pinned in `.nvmrc`). The update script handles version switching via nvm.
