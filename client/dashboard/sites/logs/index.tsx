@@ -140,7 +140,6 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 		<PageLayout
 			header={
 				<PageHeader
-					title={ __( 'Logs' ) }
 					description={ createInterpolateElement(
 						__( 'View and download various server logs. <learnMoreLink />' ),
 						{
