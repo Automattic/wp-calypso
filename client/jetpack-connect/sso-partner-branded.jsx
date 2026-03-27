@@ -1,4 +1,5 @@
 import { Step } from '@automattic/onboarding';
+import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import { ActionButtons } from 'calypso/components/connect-screen/action-buttons';
@@ -29,6 +30,7 @@ export default function SsoPartnerBranded( {
 	signInDifferentUserLabel,
 	emailVerificationNoticeText,
 } ) {
+	const translate = useTranslate();
 	const [ isSendingVerificationEmail, setIsSendingVerificationEmail ] = useState( false );
 	const [ verificationEmailSent, setVerificationEmailSent ] = useState( false );
 	const [ verificationEmailError, setVerificationEmailError ] = useState( null );
@@ -56,18 +58,20 @@ export default function SsoPartnerBranded( {
 	const renderEmailVerificationNotice = () => {
 		if ( isSendingVerificationEmail ) {
 			return (
-				<NoticeRoot intent="info">
-					<NoticeTitle>Sending…</NoticeTitle>
+				<NoticeRoot intent="info" className="jetpack-connect__sso-partner-branded-email-notice">
+					<NoticeTitle>{ translate( 'Sending…' ) }</NoticeTitle>
 				</NoticeRoot>
 			);
 		}
 
 		if ( verificationEmailError ) {
 			return (
-				<NoticeRoot intent="warning">
-					<NoticeTitle>The email could not be sent.</NoticeTitle>
+				<NoticeRoot intent="warning" className="jetpack-connect__sso-partner-branded-email-notice">
+					<NoticeTitle>{ translate( 'The email could not be sent.' ) }</NoticeTitle>
 					<NoticeActions>
-						<NoticeActionButton onClick={ sendVerificationEmail }>Try again</NoticeActionButton>
+						<NoticeActionButton onClick={ sendVerificationEmail }>
+							{ translate( 'Try again' ) }
+						</NoticeActionButton>
 					</NoticeActions>
 				</NoticeRoot>
 			);
@@ -75,19 +79,25 @@ export default function SsoPartnerBranded( {
 
 		if ( verificationEmailSent ) {
 			return (
-				<NoticeRoot intent="success">
+				<NoticeRoot intent="success" className="jetpack-connect__sso-partner-branded-email-notice">
 					<NoticeDescription>
-						{ `We sent another confirmation email to ${ currentUser?.email }.` }
+						{ translate( 'We sent another confirmation email to %(email)s.', {
+							args: {
+								email: currentUser?.email,
+							},
+						} ) }
 					</NoticeDescription>
 				</NoticeRoot>
 			);
 		}
 
 		return (
-			<NoticeRoot intent="info">
+			<NoticeRoot intent="info" className="jetpack-connect__sso-partner-branded-email-notice">
 				<NoticeDescription>{ emailVerificationNoticeText }</NoticeDescription>
 				<NoticeActions>
-					<NoticeActionButton onClick={ sendVerificationEmail }>Resend Email</NoticeActionButton>
+					<NoticeActionButton onClick={ sendVerificationEmail }>
+						{ translate( 'Resend Email' ) }
+					</NoticeActionButton>
 				</NoticeActions>
 			</NoticeRoot>
 		);
