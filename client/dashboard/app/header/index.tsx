@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useViewportMatch } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
 import HeaderBar from '../../components/header-bar';
@@ -12,8 +13,12 @@ function Header() {
 	const { Logo, name } = useAppContext();
 	const isDesktop = useViewportMatch( 'medium' );
 
+	const styles = isEnabled( 'dashboard/omnibar' )
+		? { style: { height: 0, position: 'absolute' as const } }
+		: {};
+
 	return (
-		<HeaderBar as="header">
+		<HeaderBar as="header" { ...styles }>
 			{ ! isDesktop && <PrimaryMenu /> }
 
 			{ Logo && (

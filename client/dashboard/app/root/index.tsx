@@ -136,11 +136,7 @@ function Root() {
 			return null;
 		}
 
-		if ( ! isOmnibarEnabled ) {
-			return <Header />;
-		}
-
-		return null;
+		return <Header />;
 	};
 
 	const renderBody = () => {

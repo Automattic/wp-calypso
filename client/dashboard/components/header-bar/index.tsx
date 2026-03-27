@@ -3,7 +3,15 @@ import { __experimentalHStack as HStack } from '@wordpress/components';
 import clsx from 'clsx';
 import './style.scss';
 
-function Header( { as = 'div', children }: { as?: 'div' | 'header'; children?: React.ReactNode } ) {
+function Header( {
+	as = 'div',
+	children,
+	style,
+}: {
+	as?: 'div' | 'header';
+	children?: React.ReactNode;
+	style?: React.CSSProperties;
+} ) {
 	return (
 		<HStack
 			as={ as }
@@ -16,6 +24,7 @@ function Header( { as = 'div', children }: { as?: 'div' | 'header'; children?: R
 			alignment="left"
 			spacing={ 0 }
 			justify="flex-start"
+			style={ style }
 		>
 			{ children }
 		</HStack>
