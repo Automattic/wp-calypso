@@ -175,8 +175,8 @@ __metadata:
   linkType: soft
 
 "@automattic/agenttic-client@npm:^0.1.55":
-  version: 0.1.56
-  resolution: "@automattic/agenttic-client@npm:0.1.56"
+  version: 0.1.55
+  resolution: "@automattic/agenttic-client@npm:0.1.55"
   dependencies:
     "@types/react": "npm:^18.0.0"
     marked: "npm:^16.2.1"
@@ -190,13 +190,13 @@ __metadata:
   peerDependenciesMeta:
     "@wordpress/api-fetch":
       optional: true
-  checksum: 21381956f76a283d85e53b373bf8ee430002a07f4490ad14488a98ad9c87f80b9262d290974015fdae9a446fb692aab560bc4683e3430d31c21d8a5fbd42d23b
+  checksum: 3821a9e28680e38b6e820d268974074dd2cb01060c94b04aa0bb91ff1d9313855b60024536df3db007c78a96c5008cf27b6bfcb3bce0af35a2595e9bb0ee24be
   languageName: node
   linkType: hard
 
 "@automattic/agenttic-ui@npm:^0.1.55":
-  version: 0.1.56
-  resolution: "@automattic/agenttic-ui@npm:0.1.56"
+  version: 0.1.55
+  resolution: "@automattic/agenttic-ui@npm:0.1.55"
   dependencies:
     "@automattic/charts": "npm:>=0.58.0 <1.0.0"
     "@floating-ui/react-dom": "npm:^2.1.6"
@@ -222,7 +222,7 @@ __metadata:
   dependenciesMeta:
     marked:
       optional: true
-  checksum: 9b15b5e442f0f5ec7ae943306ac88c952065751b012f09eca5b419533b9f9e37c08e30b4224d99a8cb6c9052f7feffb2a6be9577f6afdaf1ce482b5e0c2a29f0
+  checksum: 65505a80e4f4784bb6e5d7c950e945c7338dcf4f364b4e72d6b92374b6ad23985715d6671d195e244c3b84b582fadb3de1905911056b464b7437e20182867a1c
   languageName: node
   linkType: hard
 
