@@ -88,7 +88,6 @@ const RecommendedSite = ( {
 	siteDomain,
 	siteUrl,
 	siteIcon,
-	feedIcon,
 	railcar,
 	uiPosition,
 }: RecommendedSiteProps ) => {
@@ -217,7 +216,7 @@ const RecommendedSite = ( {
 			</Flex>
 			<HStack justify="flex-start" spacing="4">
 				<SiteIcon
-					iconUrl={ siteIcon || feedIcon }
+					iconUrl={ feedIcon || siteIcon }
 					size={ 40 }
 					onClick={ () => recordSiteIconClicked( siteTracksEventProps ) }
 				/>

@@ -12,15 +12,15 @@
 		}
 	}
 }
-:root:has(.is-reader-msd-enabled) {
+:root:has( .is-reader-msd-enabled ) {
 	.sidebar-header {
 		display: flex;
 		justify-content: space-between;
-		@media only screen and (max-width: 781px) {
+		@media only screen and ( max-width: 781px ) {
 			display: none;
 		}
 		h3 {
-			font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
+			font-family: Recoleta, 'Noto Serif', Georgia, 'Times New Roman', Times, serif;
 			font-size: 32px;
 			font-style: normal;
 			font-weight: 400;
@@ -33,7 +33,7 @@
 }
 
 //TODO: Remove this once the new reader MSD is enabled for all users (reader/enable-msd)
-:root:not(:has(.is-reader-msd-enabled)) {
+:root:not( :has( .is-reader-msd-enabled ) ) {
 	.sidebar-header {
 		display: flex;
 
@@ -47,7 +47,7 @@
 		}
 
 		p {
-			color: var(--studio-gray-50);
+			color: var( --studio-gray-50 );
 			font-size: $font-body-small;
 			margin: 0;
 		}
@@ -94,7 +94,7 @@ body.is-section-reader {
 	}
 
 	.sidebar__body {
-		padding-top: var(--content-padding-top);
+		padding-top: var( --content-padding-top );
 	}
 
 	.sidebar-menu-container {
