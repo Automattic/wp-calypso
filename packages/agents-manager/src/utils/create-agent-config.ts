@@ -107,6 +107,7 @@ async function createWrappedContextProvider(
 				constructorArguments: {
 					...( resolvedContext.constructorArguments || {} ),
 					...( version && { version } ),
+					client: 'agents-manager',
 				},
 			};
 		},
@@ -134,7 +135,10 @@ async function createDefaultContextProvider(
 			currentScreen: { url: window.location.href },
 			...( siteId && { selectedSiteId: siteId } ),
 			// TODO: Remove once agenttic-client supports top-level constructorArguments
-			...( version && { constructorArguments: { version } } ),
+			constructorArguments: {
+				...( version && { version } ),
+				client: 'agents-manager',
+			},
 		} ),
 	};
 }
@@ -166,6 +170,7 @@ export async function createAgentConfig(
 		sessionIdStorageKey: getSessionStorageKey( agentId ),
 		authProvider: createCalypsoAuthProvider( siteId ),
 		enableStreaming: true,
+		fetchCallback: fetch,
 	};
 
 	if ( toolProvider ) {
