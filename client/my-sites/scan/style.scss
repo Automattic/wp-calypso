@@ -2,7 +2,12 @@
 
 body.is-section-scan {
 	@include admin-ui-page-layout;
-	@include admin-ui-page-layout-constrained-content(".scan__wpcom-upsell");
+	@include admin-ui-page-layout-constrained-content($max-width: 1040px);
+
+	.scan__wpcom-upsell .promo-card {
+		display: flex;
+		gap: 24px;
+	}
 }
 
 .scan .formatted-header.is-left-align {
