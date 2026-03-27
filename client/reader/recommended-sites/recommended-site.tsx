@@ -88,7 +88,6 @@ const RecommendedSite = ( {
 	siteDomain,
 	siteUrl,
 	siteIcon,
-	feedIcon,
 	railcar,
 	uiPosition,
 }: RecommendedSiteProps ) => {
