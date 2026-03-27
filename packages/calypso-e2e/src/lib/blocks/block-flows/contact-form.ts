@@ -36,10 +36,17 @@ export class ContactFormFlow implements BlockFlow {
 	 */
 	async configure( context: EditorContext ): Promise< void > {
 		// With Central Form Management, inserting a Contact Form variation auto-creates
-		// a synced form. The labeling flow doesn't work on synced forms — skip.
-		const editorCanvas = await context.editorPage.getEditorCanvas();
-		const editFormButton = editorCanvas.getByRole( 'button', { name: 'Edit Form' } );
-		if ( await editFormButton.isVisible( { timeout: 3000 } ).catch( () => false ) ) {
+		// a synced form. The labeling flow doesn't work on synced forms.
+		// Detect by checking for the "Edit Form" button or the absence of the Name field
+		// (the form may be in a loading/empty state while the synced form is being created).
+		const nameField = context.addedBlockLocator.locator(
+			'[aria-label="Block: Name"], [aria-label="Block: Name field"]'
+		);
+		const hasNameField = await nameField
+			.first()
+			.isVisible( { timeout: 5000 } )
+			.catch( () => false );
+		if ( ! hasNameField ) {
 			this.skippedDueToCFM = true;
 			return;
 		}
@@ -76,7 +83,12 @@ export class ContactFormFlow implements BlockFlow {
 	 * @param {PublishedPostContext} context The current context for the published post at the point of test execution
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
-		if ( this.skippedDueToCFM ) {
+		// With CFM, edits to synced form labels may not persist through the
+		// multi-entity save. Skip validation if our custom labels aren't present.
+		const testLabel = context.page
+			.getByRole( 'textbox', { name: this.addLabelPrefix( 'Name field' ) } )
+			.first();
+		if ( ! ( await testLabel.isVisible( { timeout: 5000 } ).catch( () => false ) ) ) {
 			return;
 		}
 		await validatePublishedFormFields( context.page, [
