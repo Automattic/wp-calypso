@@ -76,6 +76,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { useUpdateCachedContactDetails } from '../hooks/use-cached-contact-details';
 import { useCheckoutHelpCenter } from '../hooks/use-checkout-help-center';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
+import useSubmitButtonColor from '../hooks/use-submit-button-color';
 import { validateContactDetails } from '../lib/contact-validation';
 import { updateCartContactDetailsForCheckout } from '../lib/update-cart-contact-details-for-checkout';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
@@ -439,6 +440,7 @@ export default function CheckoutMainContent( {
 	const [ isSummaryVisible, setIsSummaryVisible ] = useState( false );
 	const { formStatus } = useFormStatus();
 	const isLoading = formStatus === FormStatus.LOADING;
+	const submitButtonColor = useSubmitButtonColor();
 
 	const onReviewError = useCallback(
 		( error: Error ) =>
@@ -833,17 +835,19 @@ export default function CheckoutMainContent( {
 						setIs100YearPlanTermsAccepted={ setIs100YearPlanTermsAccepted }
 						isSubmitted={ isSubmitted }
 					/>
-					<CheckoutFormSubmit
-						validateForm={ validateForm }
-						submitButtonHeader={ <SubmitButtonHeader /> }
-						submitButtonFooter={
-							hasCartJetpackProductsOnly ? (
-								<JetpackCheckoutSeals />
-							) : (
-								<CheckoutMoneyBackGuarantee cart={ responseCart } />
-							)
-						}
-					/>
+					<SubmitButtonColorWrapper submitButtonColor={ submitButtonColor }>
+						<CheckoutFormSubmit
+							validateForm={ validateForm }
+							submitButtonHeader={ <SubmitButtonHeader /> }
+							submitButtonFooter={
+								hasCartJetpackProductsOnly ? (
+									<JetpackCheckoutSeals />
+								) : (
+									<CheckoutMoneyBackGuarantee cart={ responseCart } />
+								)
+							}
+						/>
+					</SubmitButtonColorWrapper>
 				</CheckoutStepGroup>
 			</WPCheckoutMainContent>
 		</RestorableProductsProvider>
@@ -1413,6 +1417,16 @@ const SubmitButtonHeaderWrapper = styled.div`
 			color: ${ ( props ) => props.theme.colors.highlightOver };
 		}
 	}
+`;
+
+const SubmitButtonColorWrapper = styled.div< { submitButtonColor?: string | null } >`
+	${ ( props ) =>
+		props.submitButtonColor &&
+		css`
+			.checkout-submit-button button {
+				background: ${ props.submitButtonColor };
+			}
+		` }
 `;
 
 const WPCheckoutWrapper = styled.div< {
