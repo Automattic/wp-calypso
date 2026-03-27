@@ -5,7 +5,7 @@ body.is-section-marketing-traffic {
 	@include admin-ui-page-layout-constrained-content;
 }
 
-.site-settings {
+.settings-traffic.site-settings {
 	font-size: $font-body-small;
 
 	fieldset {
@@ -140,6 +140,9 @@ body.is-section-marketing-traffic {
 		}
 	}
 
+	.card.promo-card-block {
+		display: flex;
+	}
 
 	.promo-card .button {
 		float: none;
