@@ -65,13 +65,11 @@ export class FeedbackInboxPage {
 		const viewMenuItem = this.page.getByRole( 'menuitem', { name: 'View' } ).first();
 		await viewMenuItem.click();
 
-		if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
-			if ( await this.isCentralFormManagement() ) {
-				// CFM: wait for response header in the DataViews inspector
-				await this.page.locator( '.jp-forms-response-header' ).waitFor( { state: 'visible' } );
-			} else {
-				await this.page.locator( '.jp-forms__inbox-response' ).waitFor( { state: 'visible' } );
-			}
+		if ( await this.isCentralFormManagement() ) {
+			// CFM uses the DataViews inspector on both desktop and mobile.
+			await this.page.locator( '.jp-forms-response-header' ).waitFor( { state: 'visible' } );
+		} else if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
+			await this.page.locator( '.jp-forms__inbox-response' ).waitFor( { state: 'visible' } );
 		} else {
 			await this.page
 				.getByRole( 'dialog' )
