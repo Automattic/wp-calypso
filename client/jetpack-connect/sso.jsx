@@ -20,7 +20,7 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { decodeEntities } from 'calypso/lib/formatting';
-import { getPartnerConfigFromSiteDetails } from 'calypso/lib/partner-branding';
+import { getPartnerConfigFromSiteDetails, getPartnerSsoCopy } from 'calypso/lib/partner-branding';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -63,10 +63,10 @@ class JetpackSsoForm extends Component {
 
 	onApproveSSO = ( event ) => {
 		event.preventDefault();
-		this.onApproveSsoBranded();
+		this.approveSSO();
 	};
 
-	onApproveSsoBranded = () => {
+	approveSSO = () => {
 		recordTracksEvent( 'calypso_jetpack_sso_log_in_button_click' );
 
 		const { siteId, ssoNonce } = this.props;
@@ -315,26 +315,6 @@ class JetpackSsoForm extends Component {
 		return this.maybeWrapWithPlaceholder( text );
 	}
 
-	getPartnerBrandedCopy( partnerId ) {
-		const { translate } = this.props;
-
-		if ( partnerId === 'woo' ) {
-			return {
-				title: translate( 'Connect to Woo Shop' ),
-				subtitle: translate( 'Give Woo Shop access to your WordPress.com account.' ),
-				primaryLabel: translate( 'Connect' ),
-				secondaryLabel: translate( 'Cancel' ),
-			};
-		}
-
-		return {
-			title: translate( 'Connect with WordPress.com' ),
-			subtitle: this.getSubHeaderText(),
-			primaryLabel: translate( 'Log in' ),
-			secondaryLabel: translate( 'Cancel' ),
-		};
-	}
-
 	maybeWrapWithPlaceholder( input ) {
 		const title = get( this.props, 'blogDetails.title' );
 		if ( title ) {
@@ -453,7 +433,9 @@ class JetpackSsoForm extends Component {
 		}
 
 		if ( partnerConfig ) {
-			const brandedCopy = this.getPartnerBrandedCopy( partnerConfig.id );
+			const brandedCopy = getPartnerSsoCopy( partnerConfig, translate, {
+				defaultSubtitle: this.getSubHeaderText(),
+			} );
 
 			return (
 				<>
@@ -474,7 +456,7 @@ class JetpackSsoForm extends Component {
 						) }
 						isPrimaryDisabled={ this.isButtonDisabled() }
 						isPrimaryLoading={ this.props.isAuthorizing }
-						onApproveClick={ this.onApproveSsoBranded }
+						onApproveClick={ this.approveSSO }
 						onReturnToSiteClick={ this.onClickReturnToSiteBranded }
 						onSignInDifferentUserClick={ this.onClickSignInDifferentUserBranded }
 						approveLabel={ brandedCopy.primaryLabel }

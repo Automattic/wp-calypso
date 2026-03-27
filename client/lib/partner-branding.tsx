@@ -14,6 +14,7 @@ import type {
 	AllowedSocialService,
 	SignupAllowedService,
 } from 'calypso/components/social-buttons/utils';
+import type React from 'react';
 
 /**
  * Logo configuration
@@ -97,6 +98,35 @@ export function getPartnerFormattedWindowTitle(
 	const titlePrefix = title ? `${ title } — ` : '';
 
 	return titlePrefix + getPartnerWindowTitleSuffix( partnerConfig );
+}
+
+export interface PartnerSsoCopy {
+	title: React.ReactNode;
+	subtitle: React.ReactNode;
+	primaryLabel: React.ReactNode;
+	secondaryLabel: React.ReactNode;
+}
+
+export function getPartnerSsoCopy(
+	partnerConfig: PartnerConfig | null,
+	translate: ReturnType< typeof useTranslate >,
+	options: { defaultSubtitle: React.ReactNode }
+): PartnerSsoCopy {
+	if ( partnerConfig?.id === 'woo' ) {
+		return {
+			title: translate( 'Connect to Woo Shop' ),
+			subtitle: translate( 'Give Woo Shop access to your WordPress.com account.' ),
+			primaryLabel: translate( 'Connect' ),
+			secondaryLabel: translate( 'Cancel' ),
+		};
+	}
+
+	return {
+		title: translate( 'Connect with WordPress.com' ),
+		subtitle: options.defaultSubtitle,
+		primaryLabel: translate( 'Log in' ),
+		secondaryLabel: translate( 'Cancel' ),
+	};
 }
 
 function isPartnerEnabled( partnerConfig: PartnerConfig ): boolean {
