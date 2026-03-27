@@ -15,6 +15,7 @@ interface ConfigurationData {
  */
 export class ContactFormFlow implements BlockFlow {
 	private configurationData: ConfigurationData;
+	private skippedDueToCFM = false;
 
 	/**
 	 * Constructs an instance of this block flow with data to be used when configuring and validating the block.
@@ -34,6 +35,15 @@ export class ContactFormFlow implements BlockFlow {
 	 * @param {EditorContext} context The current context for the editor at the point of test execution
 	 */
 	async configure( context: EditorContext ): Promise< void > {
+		// With Central Form Management, inserting a Contact Form variation auto-creates
+		// a synced form. The labeling flow doesn't work on synced forms — skip.
+		const editorCanvas = await context.editorPage.getEditorCanvas();
+		const editFormButton = editorCanvas.getByRole( 'button', { name: 'Edit Form' } );
+		if ( await editFormButton.isVisible( { timeout: 3000 } ).catch( () => false ) ) {
+			this.skippedDueToCFM = true;
+			return;
+		}
+
 		await disableFormEmailNotifications( context.page, context.addedBlockLocator );
 
 		// Name and Email are common fields shared amongst all Form patterns.
@@ -66,6 +76,9 @@ export class ContactFormFlow implements BlockFlow {
 	 * @param {PublishedPostContext} context The current context for the published post at the point of test execution
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
+		if ( this.skippedDueToCFM ) {
+			return;
+		}
 		await validatePublishedFormFields( context.page, [
 			{ type: 'textbox', accessibleName: this.addLabelPrefix( 'Name field' ) },
 			{ type: 'textbox', accessibleName: this.addLabelPrefix( 'Email field' ) },
