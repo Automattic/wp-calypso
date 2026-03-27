@@ -150,7 +150,7 @@ const TaxNotCalculatedLineItemWrapper = styled.div`
 function TaxNotCalculatedLineItem() {
 	const translate = useTranslate();
 	return (
-		<TaxNotCalculatedLineItemWrapper>
+		<TaxNotCalculatedLineItemWrapper className="wp-checkout-order-summary__tax-not-calculated">
 			{ translate( 'Tax: to be calculated', {
 				textOnly: true,
 			} ) }
@@ -205,7 +205,7 @@ function CheckoutSummaryPriceList() {
 						</span>
 					</CheckoutSummarySubtotal>
 					{ totalDiscount > 0 && (
-						<CheckoutSummaryTotalDiscount>
+						<CheckoutSummaryTotalDiscount className="wp-checkout-order-summary__line-item">
 							<span>{ translate( 'Discount' ) }</span>
 							<span className="wp-checkout-order-summary__subtotal-discount">
 								{ formatCurrency( totalDiscount, responseCart.currency, {
@@ -217,14 +217,20 @@ function CheckoutSummaryPriceList() {
 					) }
 
 					{ taxLineItems.map( ( taxLineItem ) => (
-						<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + taxLineItem.id }>
+						<CheckoutSummaryLineItem
+							key={ 'checkout-summary-line-item-' + taxLineItem.id }
+							className="wp-checkout-order-summary__line-item"
+						>
 							<span>{ taxLineItem.label }</span>
 							<span>{ taxLineItem.formattedAmount }</span>
 						</CheckoutSummaryLineItem>
 					) ) }
 					{ isBillingInfoEmpty( responseCart ) && <TaxNotCalculatedLineItem /> }
 					{ creditsLineItem && responseCart.sub_total_integer > 0 && (
-						<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + creditsLineItem.id }>
+						<CheckoutSummaryLineItem
+							key={ 'checkout-summary-line-item-' + creditsLineItem.id }
+							className="wp-checkout-order-summary__line-item"
+						>
 							<span>{ creditsLineItem.label }</span>
 							<span>{ creditsLineItem.formattedAmount }</span>
 						</CheckoutSummaryLineItem>

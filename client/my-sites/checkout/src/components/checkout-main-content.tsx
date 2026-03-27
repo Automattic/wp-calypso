@@ -1370,6 +1370,15 @@ const StepContainerV2CheckoutFixer = styled.div< {
 			.wp-checkout-order-summary__subtotal,
 			.wp-checkout-order-summary__total {
 				color: ${ colorStudio.colors[ 'Gray 90' ] };
+				font-size: 13px;
+				line-height: 20px;
+			}
+			.wp-checkout-order-summary__subtotal .wp-checkout-order-summary__subtotal-price {
+				font-size: 13px;
+			}
+			.wp-checkout-order-summary__line-item,
+			.wp-checkout-order-summary__tax-not-calculated {
+				font-size: 13px;
 			}
 			.wp-checkout-order-summary__section-title {
 				margin-bottom: 0;
@@ -2065,6 +2074,15 @@ const WPCheckoutWrapper = styled.div< {
 			.wp-checkout-order-summary__subtotal,
 			.wp-checkout-order-summary__total {
 				color: ${ colorStudio.colors[ 'Gray 90' ] };
+				font-size: 13px;
+				line-height: 20px;
+			}
+			.wp-checkout-order-summary__subtotal .wp-checkout-order-summary__subtotal-price {
+				font-size: 13px;
+			}
+			.wp-checkout-order-summary__line-item,
+			.wp-checkout-order-summary__tax-not-calculated {
+				font-size: 13px;
 			}
 			.wp-checkout-order-summary__section-title {
 				margin-bottom: 0;
@@ -2253,8 +2271,8 @@ const CheckoutSummaryTitleLinkRedesign = styled.button`
 const CheckoutSummaryTitleContentRedesign = styled.span`
 	color: ${ ( props ) => props.theme.colors.textColor };
 	display: flex;
-	font-size: 16px;
-	font-weight: ${ ( props ) => props.theme.weights.bold };
+	font-size: 13px;
+	font-weight: 400;
 	justify-content: space-between;
 	align-items: center;
 	margin: 0 auto;
