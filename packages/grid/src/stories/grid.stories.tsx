@@ -136,7 +136,6 @@ export const Default: StoryObj< typeof Grid > = {
  * - `width: N` — fixed column span
  * - `fillWidth` — fills remaining columns in the current row
  * - `fullWidth` — always spans all columns (grid-column: 1 / -1)
- * span as the effective column count changes.
  */
 export const Responsive: StoryObj< typeof Grid > = {
 	parameters: { layout: '' },
@@ -410,8 +409,8 @@ export const FillWidthStatic: StoryObj< typeof Grid > = {
  *
  * Includes `fillWidth`, `fullWidth`, and fixed items.
  * A state panel shows the raw layout JSON so you can observe
- * how resize affects items — particularly `fillWidth`/`fullWidth` items
- * where `width` gets a fixed value but the flag stays true.
+ * how resize affects items — particularly `fillWidth` items,
+ * where resizing clears the flag and converts them to fixed-width.
  *
  * Drag items to reorder, resize from the bottom-right handle.
  * Use the close button (actionable area) to remove items.
