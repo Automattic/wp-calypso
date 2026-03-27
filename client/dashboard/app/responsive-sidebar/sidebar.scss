@@ -24,7 +24,7 @@
 	padding: 14px 2px; // temporary to match Reader's layout
 	border-block-end: 1px solid var( --dashboard-header__border-color );
 
-	&.has-wordmark-logo {
-		padding: 14px $grid-unit-10;
+	.wordmark-logo {
+		margin: 0 6px;
 	}
 }

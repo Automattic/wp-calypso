@@ -3,6 +3,7 @@ import { isEnabled } from '@automattic/calypso-config';
 function WordmarkLogo() {
 	return (
 		<svg
+			className="wordmark-logo"
 			style={ { display: 'block' } }
 			width="132"
 			height="22"
