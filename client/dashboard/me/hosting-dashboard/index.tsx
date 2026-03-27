@@ -89,7 +89,7 @@ export default function HostingDashboard() {
 							<SectionHeader
 								title={ __( 'New hosting dashboard' ) }
 								description={ __(
-									'We\u2019ve recently updated the dashboard with a modern design and smarter tools for managing your hosting.'
+									"We've recently updated the dashboard with a modern design and smarter tools for managing your hosting."
 								) }
 								level={ 3 }
 							/>
@@ -115,7 +115,7 @@ export default function HostingDashboard() {
 					>
 						{ createInterpolateElement(
 							__(
-								'<surveyLink>Please complete this short survey</surveyLink> to help us understand what didn\u2019t work and how we can improve.'
+								"<surveyLink>Please complete this short survey</surveyLink> to help us understand what didn't work and how we can improve."
 							),
 							{
 								surveyLink: (
