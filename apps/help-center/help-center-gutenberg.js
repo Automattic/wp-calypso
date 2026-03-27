@@ -103,6 +103,31 @@ function HelpCenterContent() {
 
 	const sidebarActionsContainer = document.querySelector( '.edit-site-site-hub__actions' );
 
+	// On mobile the SlotFill button is hidden by Gutenberg's own CSS, so wire up the
+	// admin bar icon that our PHP adds for the gutenberg variant instead.
+	const adminBarButton = document.getElementById( 'wp-admin-bar-help-center' );
+	useEffect( () => {
+		if ( isDesktop || ! adminBarButton ) {
+			return;
+		}
+		adminBarButton.onclick = handleToggleHelpCenter;
+
+		// The help center panel uses --masterbar-height to position itself below the
+		// top bars. In Gutenberg this variable is unset, so the panel defaults to
+		// top:0 and the header is hidden behind the admin bar + editor toolbar.
+		const adminBar = document.getElementById( 'wpadminbar' );
+		const editorBar = document.querySelector( '.editor-header' );
+		const combinedHeight = ( adminBar?.offsetHeight ?? 0 ) + ( editorBar?.offsetHeight ?? 0 );
+		if ( combinedHeight > 0 ) {
+			document.documentElement.style.setProperty( '--masterbar-height', combinedHeight + 'px' );
+		}
+
+		return () => {
+			adminBarButton.onclick = null;
+			document.documentElement.style.removeProperty( '--masterbar-height' );
+		};
+	}, [ isDesktop, adminBarButton, handleToggleHelpCenter ] );
+
 	// Menu items for the dropdown
 	const menuControls = useMemo(
 		() => [
