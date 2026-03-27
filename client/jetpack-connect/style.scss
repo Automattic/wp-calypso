@@ -796,8 +796,21 @@ body:not( .is-jetpack-sso-partner-branded--woo ) {
 }
 
 .jetpack-connect__sso-partner-branded-email-notice {
+	&,
+	* {
+		all: revert-layer;
+	}
+
+	:where( a, button, .components-button ) {
+		all: revert-layer;
+	}
+
+	:where( a, button, .components-button ):focus,
+	:where( a, button, .components-button ):focus-visible {
+		all: revert-layer;
+	}
+
 	width: 100%;
-	box-sizing: border-box;
 	margin-bottom: 0;
 }
 
