@@ -1,5 +1,6 @@
 import {
 	isCommentable,
+	isLoginRequiredToComment,
 	isSharable,
 	isRebloggable,
 	isLikeable,
@@ -30,6 +31,28 @@ describe( 'reader/post/capabilities', () => {
 
 		it( 'returns false when discussion exists but has no properties', () => {
 			expect( isCommentable( { discussion: {} } ) ).toBe( false );
+		} );
+	} );
+
+	describe( 'isLoginRequiredToComment', () => {
+		it( 'returns true when comments_require_registration is true', () => {
+			expect(
+				isLoginRequiredToComment( {
+					discussion: { comments_require_registration: true },
+				} )
+			).toBe( true );
+		} );
+
+		it( 'returns false when comments_require_registration is false', () => {
+			expect(
+				isLoginRequiredToComment( {
+					discussion: { comments_require_registration: false },
+				} )
+			).toBe( false );
+		} );
+
+		it( 'returns false when discussion is undefined', () => {
+			expect( isLoginRequiredToComment( {} ) ).toBe( false );
 		} );
 	} );
 

@@ -8,6 +8,7 @@ interface ReaderPost {
 	discussion?: {
 		comments_open?: boolean;
 		comment_count?: number;
+		comments_require_registration?: boolean;
 	};
 }
 
@@ -20,6 +21,10 @@ export function isCommentable( post: ReaderPost ): boolean {
 	}
 
 	return false;
+}
+
+export function isLoginRequiredToComment( post: ReaderPost ): boolean {
+	return !! post.discussion?.comments_require_registration;
 }
 
 export function isSharable( post: ReaderPost ): boolean {

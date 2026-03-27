@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import GravatarWithHovercards from 'calypso/components/gravatar-with-hovercards';
 import { ProtectFormGuard } from 'calypso/lib/protect-form';
+import { isLoginRequiredToComment } from 'calypso/reader/post/capabilities';
 import { recordAction, recordGaEvent, recordTrackForPost, getLocation } from 'calypso/reader/stats';
 import { writeComment, deleteComment, replyComment } from 'calypso/state/comments/actions';
 import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -150,6 +151,22 @@ class PostCommentForm extends Component {
 
 	render() {
 		const { post, error, errorType, translate } = this.props;
+
+		// If comments require registration, show a prompt to visit the post instead of the form
+		if ( post && isLoginRequiredToComment( post ) ) {
+			return (
+				<p className="comments__form-closed">
+					{ translate(
+						'This site requires registration to comment. {{a}}Visit the original post{{/a}} to log in or create an account and join the conversation.',
+						{
+							components: {
+								a: <a href={ post.URL } target="_blank" rel="noopener noreferrer" />,
+							},
+						}
+					) }
+				</p>
+			);
+		}
 
 		// Don't display the form if comments are closed
 		if ( post && post.discussion && post.discussion.comments_open === false ) {

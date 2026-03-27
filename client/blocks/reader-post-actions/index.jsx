@@ -7,6 +7,7 @@ import ReaderCommentIcon from 'calypso/reader/components/icons/comment-icon';
 import LikeButton from 'calypso/reader/like-button';
 import {
 	isCommentable,
+	isLoginRequiredToComment,
 	isSharable,
 	isRebloggable,
 	isLikeable,
@@ -30,7 +31,7 @@ const ReaderPostActions = ( {
 	const hasSites = !! useSelector( getPrimarySiteId );
 	const showShare = isSharable( post );
 	const showReblog = isRebloggable( post, hasSites );
-	const showComments = isCommentable( post );
+	const showComments = isCommentable( post ) || isLoginRequiredToComment( post );
 	const showLikes = isLikeable( post );
 	const listClassnames = clsx( 'reader-post-actions', className );
 	const isAutomattician = useSelector( isA8cTeamMember );
