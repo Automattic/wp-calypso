@@ -72,7 +72,7 @@ const ReaderListFollowingItem = ( props ) => {
 					{ ! siteIcon && ! feedIcon && ! feed && follow.feed_ID && (
 						<QueryReaderFeed feedId={ follow.feed_ID } />
 					) }
-					<SiteIcon iconUrl={ feedIcon || siteIcon } size={ 32 } />
+					<SiteIcon iconUrl={ siteIcon || feedIcon } size={ 32 } />
 				</span>
 				<span className="reader-sidebar-site_sitename">
 					<span className="reader-sidebar-site_nameurl">{ follow.name || urlForDisplay }</span>
