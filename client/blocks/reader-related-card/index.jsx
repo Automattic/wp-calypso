@@ -1,3 +1,4 @@
+import './style.scss';
 import { CompactCard as Card } from '@automattic/components';
 import clsx from 'clsx';
 import { get } from 'lodash';
@@ -8,15 +9,12 @@ import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
 import ReaderFeaturedVideo from 'calypso/blocks/reader-featured-video';
 import ReaderPostOptionsMenu from 'calypso/blocks/reader-post-options-menu';
 import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
+import { SiteIcon } from 'calypso/blocks/site-icon';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
-import Gravatar from 'calypso/components/gravatar';
-import GravatarWithHovercards from 'calypso/components/gravatar-with-hovercards';
 import { areEqualIgnoringWhitespaceAndCase } from 'calypso/lib/string';
 import { getPostUrl, getStreamUrl } from 'calypso/reader/route';
 import { getPostById } from 'calypso/state/reader/posts/selectors';
 import { getSite } from 'calypso/state/reader/sites/selectors';
-
-import './style.scss';
 
 const noop = () => {};
 
@@ -28,9 +26,12 @@ function AuthorAndSiteFollow( { post, site, onSiteClick, followSource, onFollowT
 
 	return (
 		<div className="reader-related-card__meta">
-			<a href={ siteUrl } onClick={ onSiteClick } aria-hidden="true">
-				<GravatarWithHovercards user={ post.author } />
-			</a>
+			<SiteIcon
+				iconUrl={ post?.site_icon?.img || post?.site_icon?.ico }
+				href={ siteUrl }
+				size={ 40 }
+				onClick={ onSiteClick }
+			/>
 			<div className="reader-related-card__byline">
 				<span className="reader-related-card__byline-site">
 					<a href={ siteUrl } onClick={ onSiteClick } className="reader-related-card__link">
@@ -69,7 +70,7 @@ function AuthorAndSiteFollow( { post, site, onSiteClick, followSource, onFollowT
 function AuthorAndSiteFollowPlaceholder() {
 	return (
 		<div className="reader-related-card__meta is-placeholder">
-			<Gravatar user={ null } />
+			<span className="reader-related-card__site-icon">Site icon</span>
 			<div className="reader-related-card__byline">
 				<span className="reader-related-card__byline-author">Author name</span>
 				<span className="reader-related-card__byline-site">Site title</span>

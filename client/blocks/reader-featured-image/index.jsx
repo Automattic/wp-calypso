@@ -174,13 +174,7 @@ const ReaderFeaturedImage = ( {
 		}
 
 		// Since there is no children in props, we need to create a new image tag to ensure the correct size is rendered
-		children = (
-			<img
-				src={ safeCssUrl }
-				alt="Featured"
-				style={ { height: containerHeight, ...( ! isPortrait && { width: '100%' } ) } }
-			/>
-		);
+		children = <img src={ safeCssUrl } alt="Featured" style={ { height: containerHeight } } />;
 	}
 
 	const classNames = clsx( className, 'reader-featured-image' );
