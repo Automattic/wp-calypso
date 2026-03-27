@@ -40,7 +40,7 @@ export function isRebloggable( post: ReaderPost, hasSites: boolean ): boolean {
 		return false;
 	}
 
-	return post?.sharing_enabled ?? false;
+	return post?.sharing_enabled !== false;
 }
 
 export function isLikeable( post: ReaderPost ): boolean {
