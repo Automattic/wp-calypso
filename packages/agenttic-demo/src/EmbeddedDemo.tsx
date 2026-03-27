@@ -24,9 +24,12 @@ import {
 
 // Import chart styles from UI package source
 import '../../packages/agenttic-ui/src/markdown-extensions/charts/charts.css';
+import DemoMoreMenu from './DemoMoreMenu';
 import MessageTester from './MessageTester';
 
-const EmbeddedDemo: React.FC<{ currentTheme: 'light' | 'dark' }> = ( { currentTheme } ) => {
+const EmbeddedDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( {
+	currentTheme,
+} ) => {
 	const [ contextProvider ] = useState< ContextProvider >( () => ( {
 		getClientContext,
 	} ) );
@@ -36,7 +39,9 @@ const EmbeddedDemo: React.FC<{ currentTheme: 'light' | 'dark' }> = ( { currentTh
 	>();
 
 	const [ isTyping, setIsTyping ] = useState( false );
-	const [ uploadedImages, setUploadedImages ] = useState< UploadedImage[] >( [] );
+	const [ uploadedImages, setUploadedImages ] = useState< UploadedImage[] >(
+		[]
+	);
 
 	const addMessageRef = useRef< ( ( message: any ) => void ) | null >( null );
 
@@ -111,7 +116,8 @@ const EmbeddedDemo: React.FC<{ currentTheme: 'light' | 'dark' }> = ( { currentTh
 					{ ...props }
 					style={ {
 						borderLeft: '4px solid #007cba',
-						backgroundColor: currentTheme === 'dark' ? '#0d375c' : '#f0f8ff',
+						backgroundColor:
+							currentTheme === 'dark' ? '#0d375c' : '#f0f8ff',
 						margin: '16px 0',
 						padding: '12px 16px',
 						fontStyle: 'italic',
@@ -122,7 +128,7 @@ const EmbeddedDemo: React.FC<{ currentTheme: 'light' | 'dark' }> = ( { currentTh
 				</blockquote>
 			),
 		} ),
-		[ currentTheme ],
+		[ currentTheme ]
 	);
 
 	// Create custom message renderer with markdown components and extensions
@@ -184,6 +190,24 @@ const EmbeddedDemo: React.FC<{ currentTheme: 'light' | 'dark' }> = ( { currentTh
 			registerMessageActions( { ...feedbackRegistration } );
 		};
 		feedbackManager.onChange( handleFeedbackChange );
+
+		// Register a demo "more menu" component action on agent messages
+		registerMessageActions( {
+			id: 'demo-more-menu',
+			actions: ( message: UIMessage ) => {
+				if ( message.role !== 'agent' ) {
+					return [];
+				}
+				return [
+					{
+						type: 'component' as const,
+						id: 'more-menu',
+						label: 'More actions',
+						component: DemoMoreMenu,
+					},
+				];
+			},
+		} );
 
 		hasRegistered.current = true;
 
@@ -275,7 +299,9 @@ const EmbeddedDemo: React.FC<{ currentTheme: 'light' | 'dark' }> = ( { currentTh
 	}, [] );
 
 	const handleRemoveImage = useCallback( ( image: UploadedImage ) => {
-		setUploadedImages( ( prev ) => prev.filter( ( img ) => img.id !== image.id ) );
+		setUploadedImages( ( prev ) =>
+			prev.filter( ( img ) => img.id !== image.id )
+		);
 		// Revoke the object URL to free memory
 		URL.revokeObjectURL( image.url );
 	}, [] );
@@ -285,7 +311,9 @@ const EmbeddedDemo: React.FC<{ currentTheme: 'light' | 'dark' }> = ( { currentTh
 			<style>
 				{ `
                 body {
-                    background-color: ${ currentTheme === 'dark' ? '#1F1F1F' : '#FCFCFC' };
+                    background-color: ${
+						currentTheme === 'dark' ? '#1F1F1F' : '#FCFCFC'
+					};
                 }
 
                 /* Override suggestions positioning to appear below footer */
@@ -359,7 +387,10 @@ const EmbeddedDemo: React.FC<{ currentTheme: 'light' | 'dark' }> = ( { currentTh
 					>
 						Pattern
 					</button>
-					<MessageTester addMessage={ addMessage } onClear={ () => loadMessages( [] ) } />
+					<MessageTester
+						addMessage={ addMessage }
+						onClear={ () => loadMessages( [] ) }
+					/>
 					<button
 						onClick={ () => {
 							setManualThinkingMessage(
@@ -382,8 +413,14 @@ const EmbeddedDemo: React.FC<{ currentTheme: 'light' | 'dark' }> = ( { currentTh
 					>
 						Test Progress
 					</button>
-					<div style={ { marginLeft: '10px', display: 'inline-block' } }>
-						<strong>Typing Status:</strong> { isTyping ? '✍️ Typing...' : '💤 Not typing' }
+					<div
+						style={ {
+							marginLeft: '10px',
+							display: 'inline-block',
+						} }
+					>
+						<strong>Typing Status:</strong>{ ' ' }
+						{ isTyping ? '✍️ Typing...' : '💤 Not typing' }
 					</div>
 				</div>
 				<AgentUI.Container
@@ -412,13 +449,18 @@ const EmbeddedDemo: React.FC<{ currentTheme: 'light' | 'dark' }> = ( { currentTh
 						<AgentUI.Messages />
 						<AgentUI.Footer>
 							<AgentUI.Notice />
-								<ImageUploader
-									images={ uploadedImages }
-									onFilesSelected={ handleFilesSelected }
-									onRemoveImage={ handleRemoveImage }
-									acceptedFileTypes={ [ 'image/jpeg', 'image/png', 'image/gif', 'image/webp' ] }
-									showFileMetadata={ true }
-								/>
+							<ImageUploader
+								images={ uploadedImages }
+								onFilesSelected={ handleFilesSelected }
+								onRemoveImage={ handleRemoveImage }
+								acceptedFileTypes={ [
+									'image/jpeg',
+									'image/png',
+									'image/gif',
+									'image/webp',
+								] }
+								showFileMetadata={ true }
+							/>
 							<AgentUI.Input />
 							<AgentUI.InputToolbar label="Custom Toolbar">
 								<div>
