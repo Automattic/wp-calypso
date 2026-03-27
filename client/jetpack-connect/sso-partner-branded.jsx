@@ -50,17 +50,29 @@ export default function SsoPartnerBranded( {
 
 	const renderEmailVerificationNotice = () => {
 		if ( isSendingVerificationEmail ) {
+			const sendingTitle = translate( 'Sending…' );
+
 			return (
-				<Notice.Root intent="info" className="jetpack-connect__sso-partner-branded-email-notice">
-					<Notice.Title>{ translate( 'Sending…' ) }</Notice.Title>
+				<Notice.Root
+					intent="info"
+					spokenMessage={ sendingTitle }
+					className="jetpack-connect__sso-partner-branded-email-notice"
+				>
+					<Notice.Title>{ sendingTitle }</Notice.Title>
 				</Notice.Root>
 			);
 		}
 
 		if ( verificationEmailError ) {
+			const errorTitle = translate( 'The email could not be sent.' );
+
 			return (
-				<Notice.Root intent="warning" className="jetpack-connect__sso-partner-branded-email-notice">
-					<Notice.Title>{ translate( 'The email could not be sent.' ) }</Notice.Title>
+				<Notice.Root
+					intent="warning"
+					spokenMessage={ errorTitle }
+					className="jetpack-connect__sso-partner-branded-email-notice"
+				>
+					<Notice.Title>{ errorTitle }</Notice.Title>
 					<Notice.Actions>
 						<Notice.ActionButton onClick={ sendVerificationEmail }>
 							{ translate( 'Try again' ) }
@@ -71,24 +83,34 @@ export default function SsoPartnerBranded( {
 		}
 
 		if ( verificationEmailSent ) {
+			const successDescription = translate( 'We sent another confirmation email to %(email)s.', {
+				args: {
+					email: currentUser?.email,
+				},
+			} );
+
 			return (
-				<Notice.Root intent="success" className="jetpack-connect__sso-partner-branded-email-notice">
-					<Notice.Description>
-						{ translate( 'We sent another confirmation email to %(email)s.', {
-							args: {
-								email: currentUser?.email,
-							},
-						} ) }
-					</Notice.Description>
+				<Notice.Root
+					intent="success"
+					spokenMessage={ successDescription }
+					className="jetpack-connect__sso-partner-branded-email-notice"
+				>
+					<Notice.Description>{ successDescription }</Notice.Description>
 				</Notice.Root>
 			);
 		}
 
+		const defaultDescription = translate(
+			'You must verify your email to sign in with WordPress.com.'
+		);
+
 		return (
-			<Notice.Root intent="info" className="jetpack-connect__sso-partner-branded-email-notice">
-				<Notice.Description>
-					{ translate( 'You must verify your email to sign in with WordPress.com.' ) }
-				</Notice.Description>
+			<Notice.Root
+				intent="info"
+				spokenMessage={ defaultDescription }
+				className="jetpack-connect__sso-partner-branded-email-notice"
+			>
+				<Notice.Description>{ defaultDescription }</Notice.Description>
 				<Notice.Actions>
 					<Notice.ActionButton onClick={ sendVerificationEmail }>
 						{ translate( 'Resend Email' ) }
