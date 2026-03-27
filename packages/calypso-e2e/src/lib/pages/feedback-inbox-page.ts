@@ -178,8 +178,11 @@ export class FeedbackInboxPage {
 			return;
 		}
 
-		const tablist = this.page.getByRole( 'tablist' );
-		await tablist.getByRole( 'tab', { name: folderName } ).click();
+		// Handle both tab and radio-button layouts (some Atomic sites use radios).
+		const tab = this.page
+			.getByRole( 'tab', { name: folderName } )
+			.or( this.page.getByRole( 'radio', { name: new RegExp( folderName, 'i' ) } ) );
+		await tab.click();
 		await this.page.waitForTimeout( 500 );
 	}
 
