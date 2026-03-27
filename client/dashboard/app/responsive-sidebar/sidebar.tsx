@@ -1,7 +1,9 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useRouterState } from '@tanstack/react-router';
 import { __experimentalHStack as HStack, Navigator } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { brush, copy, envelope, globe, plugins } from '@wordpress/icons';
+import clsx from 'clsx';
 import { useRef } from 'react';
 import { menuDot } from '../../components/icons';
 import RouterLinkButton from '../../components/router-link-button';
@@ -34,7 +36,11 @@ export default function Sidebar() {
 	return (
 		<div className="dashboard-responsive-sidebar__sidebar">
 			{ Logo && (
-				<div className="dashboard-responsive-sidebar__logo">
+				<div
+					className={ clsx( 'dashboard-responsive-sidebar__logo', {
+						'has-wordmark-logo': isEnabled( 'dashboard/omnibar' ),
+					} ) }
+				>
 					<RouterLinkButton
 						/* translators: Screen reader text for link to root of the hosting dashboard. "name" is the product name, e.g. WordPress.com */
 						aria-label={ sprintf( __( '%(name)s home' ), { name } ) }

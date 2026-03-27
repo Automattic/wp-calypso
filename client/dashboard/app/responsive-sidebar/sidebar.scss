@@ -21,6 +21,10 @@
 }
 
 .dashboard-responsive-sidebar__logo {
-	padding: 14px $grid-unit-10;
+	padding: 14px 2px;
 	border-block-end: 1px solid var( --dashboard-header__border-color );
+
+	&.has-wordmark-logo {
+		padding: 14px $grid-unit-10;
+	}
 }
