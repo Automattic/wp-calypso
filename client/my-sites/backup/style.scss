@@ -2,7 +2,12 @@
 
 body.is-section-backup {
 	@include admin-ui-page-layout;
-	@include admin-ui-page-layout-constrained-content(".backup__wpcom-upsell");
+	@include admin-ui-page-layout-constrained-content($max-width: 1040px);
+
+	.backup__wpcom-upsell .promo-card {
+		display: flex;
+		gap: 24px;
+	}
 }
 
 .backup__page {
