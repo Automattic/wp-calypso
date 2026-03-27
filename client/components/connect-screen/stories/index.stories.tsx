@@ -2,6 +2,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { StoryObj, Meta } from '@storybook/react';
 import { IconType } from '@wordpress/components';
 import { seen, edit, cog, check, chartBar, postList, commentAuthorAvatar } from '@wordpress/icons';
+import { Notice } from '@wordpress/ui';
 import { useState } from 'react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
@@ -20,15 +21,6 @@ import { BrandHeader } from '../brand-header';
 import { ConsentText } from '../consent-text';
 import { LoadingScreen } from '../loading-screen';
 import { LoginPageWrapper } from '../login-page-wrapper';
-import {
-	NoticeActionButton,
-	NoticeActionLink,
-	NoticeActions,
-	NoticeCloseIcon,
-	NoticeDescription,
-	NoticeRoot,
-	NoticeTitle,
-} from '../notice';
 import { PermissionsList } from '../permissions-list';
 import { ScreenLayout } from '../screen-layout';
 import { UserCard } from '../user-card';
@@ -273,45 +265,43 @@ export const NoticeVariants: StoryObj = {
 	render: () => (
 		<div>
 			<VariantSection title="Info with title, description, and actions">
-				<NoticeRoot intent="info">
-					<NoticeTitle>Complete your setup</NoticeTitle>
-					<NoticeDescription>
+				<Notice.Root intent="info">
+					<Notice.Title>Complete your setup</Notice.Title>
+					<Notice.Description>
 						You are one step away from connecting your account to this site.
-					</NoticeDescription>
-					<NoticeActions>
-						<NoticeActionLink href="https://wordpress.com/help" target="_blank" rel="noreferrer">
-							Read guide
-						</NoticeActionLink>
-						<NoticeActionButton>Try again</NoticeActionButton>
-					</NoticeActions>
-				</NoticeRoot>
+					</Notice.Description>
+					<Notice.Actions>
+						<Notice.ActionLink href="https://wordpress.com/help">Read guide</Notice.ActionLink>
+						<Notice.ActionButton>Try again</Notice.ActionButton>
+					</Notice.Actions>
+				</Notice.Root>
 			</VariantSection>
 			<VariantSection title="Warning">
-				<NoticeRoot intent="warning">
-					<NoticeTitle>Review requested permissions</NoticeTitle>
-					<NoticeDescription>
+				<Notice.Root intent="warning">
+					<Notice.Title>Review requested permissions</Notice.Title>
+					<Notice.Description>
 						This app requests access to additional site settings.
-					</NoticeDescription>
-				</NoticeRoot>
+					</Notice.Description>
+				</Notice.Root>
 			</VariantSection>
 			<VariantSection title="Success">
-				<NoticeRoot intent="success">
-					<NoticeTitle>Connection successful</NoticeTitle>
-					<NoticeDescription>Your account is now connected.</NoticeDescription>
-				</NoticeRoot>
+				<Notice.Root intent="success">
+					<Notice.Title>Connection successful</Notice.Title>
+					<Notice.Description>Your account is now connected.</Notice.Description>
+				</Notice.Root>
 			</VariantSection>
 			<VariantSection title="Error">
-				<NoticeRoot intent="error">
-					<NoticeTitle>We could not connect your account</NoticeTitle>
-					<NoticeDescription>Please check your permissions and try again.</NoticeDescription>
-				</NoticeRoot>
+				<Notice.Root intent="error">
+					<Notice.Title>We could not connect your account</Notice.Title>
+					<Notice.Description>Please check your permissions and try again.</Notice.Description>
+				</Notice.Root>
 			</VariantSection>
 			<VariantSection title="Neutral with close icon slot">
-				<NoticeRoot intent="neutral">
-					<NoticeTitle>Heads up</NoticeTitle>
-					<NoticeDescription>You can dismiss this notice and continue later.</NoticeDescription>
-					<NoticeCloseIcon />
-				</NoticeRoot>
+				<Notice.Root intent="neutral">
+					<Notice.Title>Heads up</Notice.Title>
+					<Notice.Description>You can dismiss this notice and continue later.</Notice.Description>
+					<Notice.CloseIcon />
+				</Notice.Root>
 			</VariantSection>
 		</div>
 	),
