@@ -23,15 +23,12 @@ export function isCommentable( post: ReaderPost ): boolean {
 }
 
 export function isSharable( post: ReaderPost ): boolean {
-	if ( ! post?.site_ID ) {
-		return false;
-	}
-
 	if ( post?.site_is_private ) {
 		return false;
 	}
 
-	return post?.sharing_enabled ?? false;
+	// Treat sharing as enabled by default; only disable when explicitly set to false.
+	return post?.sharing_enabled !== false;
 }
 
 export function isRebloggable( post: ReaderPost, hasSites: boolean ): boolean {
