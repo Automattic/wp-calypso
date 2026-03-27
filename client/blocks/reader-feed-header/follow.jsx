@@ -1,4 +1,5 @@
 import { Gridicon } from '@automattic/components';
+import { filterURLForDisplay } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
 import { useDispatch, shallowEqual } from 'react-redux';
@@ -10,6 +11,7 @@ import { getSiteUrl, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import { RecommendButton } from 'calypso/reader/recommend-button';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
+import { successNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import { hasReaderFollowOrganization, isFollowing } from 'calypso/state/reader/follows/selectors';
@@ -81,6 +83,17 @@ export default function ReaderFeedHeaderFollow( props ) {
 	}, shallowEqual );
 
 	const openSuggestedFollowsModal = ( followClicked ) => {
+		const displayName = site.name || filterURLForDisplay( feed.feed_URL ?? '' );
+
+		dispatch(
+			successNotice(
+				following
+					? translate( 'Success! You are now unsubscribed from "%s".', { args: displayName } )
+					: translate( 'Success! You are now subscribed to "%s".', { args: displayName } ),
+				{ duration: 3000 }
+			)
+		);
+
 		setIsSuggestedFollowsModalOpen( followClicked );
 	};
 
