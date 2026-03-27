@@ -1,0 +1,61 @@
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
+
+.partner-directory-lead-matching {
+	max-width: 700px;
+	margin: 0 auto;
+
+	.a4a-form {
+		max-width: none;
+	}
+}
+
+.partner-directory-lead-matching__status-placeholder {
+	margin-block-end: 24px;
+}
+
+.partner-directory-lead-matching__status-card {
+	z-index: 100;
+	will-change: transform, box-shadow;
+	transition: box-shadow 0.15s ease-out;
+	background: var( --color-surface );
+
+	&.is-stuck {
+		box-shadow: 0 2px 8px rgba( 0, 0, 0, 0.09 );
+	}
+
+	.components-card__body {
+		width: 100%;
+	}
+}
+
+.partner-directory-lead-matching__status-content {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	width: 100%;
+
+	> [class*='dashboard-stat--density'] {
+		width: 100%;
+	}
+}
+
+.partner-directory-lead-matching__status-text {
+	font-size: 14px;
+	color: var( --color-text );
+}
+
+.partner-directory-lead-matching__toggle-field {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin-block-start: 16px;
+
+	.components-toggle-control {
+		margin-block-end: 0;
+	}
+
+	.components-toggle-control__label {
+		order: 2;
+	}
+}
