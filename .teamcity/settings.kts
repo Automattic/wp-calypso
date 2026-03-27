@@ -540,14 +540,17 @@ object BuildCacheSeedImages : BuildType({
 				set -euo pipefail
 
 				docker tag "registry.a8c.com/calypso/cache-seed:%build.number%" "registry.a8c.com/calypso/cache-seed:%image_tag%"
+				docker tag "registry.a8c.com/calypso/cache-seed:%build.number%" "registry.a8c.com/calypso/cache-seed:key-%CACHE_SEED_KEY%"
 
 				numbered_id=$(docker image inspect "registry.a8c.com/calypso/cache-seed:%build.number%" --format '{{.Id}}')
 				publish_id=$(docker image inspect "registry.a8c.com/calypso/cache-seed:%image_tag%" --format '{{.Id}}')
+				key_id=$(docker image inspect "registry.a8c.com/calypso/cache-seed:key-%CACHE_SEED_KEY%" --format '{{.Id}}')
 
 				echo "registry.a8c.com/calypso/cache-seed:%build.number% id=${'$'}numbered_id"
 				echo "registry.a8c.com/calypso/cache-seed:%image_tag% id=${'$'}publish_id"
+				echo "registry.a8c.com/calypso/cache-seed:key-%CACHE_SEED_KEY% id=${'$'}key_id"
 
-				if [[ "${'$'}numbered_id" != "${'$'}publish_id" ]]; then
+				if [[ "${'$'}numbered_id" != "${'$'}publish_id" || "${'$'}numbered_id" != "${'$'}key_id" ]]; then
 					echo "Tag mismatch for registry.a8c.com/calypso/cache-seed"
 					exit 1
 				fi
@@ -558,6 +561,7 @@ object BuildCacheSeedImages : BuildType({
 			commandType = push {
 				namesAndTags = """
 					registry.a8c.com/calypso/cache-seed:%image_tag%
+					registry.a8c.com/calypso/cache-seed:key-%CACHE_SEED_KEY%
 					registry.a8c.com/calypso/cache-seed:%build.number%
 				""".trimIndent()
 			}
