@@ -1,16 +1,10 @@
 import { Step } from '@automattic/onboarding';
+import { Notice } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import { ActionButtons } from 'calypso/components/connect-screen/action-buttons';
 import { BrandHeader } from 'calypso/components/connect-screen/brand-header';
-import {
-	NoticeActionButton,
-	NoticeActions,
-	NoticeDescription,
-	NoticeRoot,
-	NoticeTitle,
-} from 'calypso/components/connect-screen/notice';
 import { UserCard } from 'calypso/components/connect-screen/user-card';
 import wpcom from 'calypso/lib/wp';
 
@@ -57,50 +51,50 @@ export default function SsoPartnerBranded( {
 	const renderEmailVerificationNotice = () => {
 		if ( isSendingVerificationEmail ) {
 			return (
-				<NoticeRoot intent="info" className="jetpack-connect__sso-partner-branded-email-notice">
-					<NoticeTitle>{ translate( 'Sending…' ) }</NoticeTitle>
-				</NoticeRoot>
+				<Notice.Root intent="info" className="jetpack-connect__sso-partner-branded-email-notice">
+					<Notice.Title>{ translate( 'Sending…' ) }</Notice.Title>
+				</Notice.Root>
 			);
 		}
 
 		if ( verificationEmailError ) {
 			return (
-				<NoticeRoot intent="warning" className="jetpack-connect__sso-partner-branded-email-notice">
-					<NoticeTitle>{ translate( 'The email could not be sent.' ) }</NoticeTitle>
-					<NoticeActions>
-						<NoticeActionButton onClick={ sendVerificationEmail }>
+				<Notice.Root intent="warning" className="jetpack-connect__sso-partner-branded-email-notice">
+					<Notice.Title>{ translate( 'The email could not be sent.' ) }</Notice.Title>
+					<Notice.Actions>
+						<Notice.ActionButton onClick={ sendVerificationEmail }>
 							{ translate( 'Try again' ) }
-						</NoticeActionButton>
-					</NoticeActions>
-				</NoticeRoot>
+						</Notice.ActionButton>
+					</Notice.Actions>
+				</Notice.Root>
 			);
 		}
 
 		if ( verificationEmailSent ) {
 			return (
-				<NoticeRoot intent="success" className="jetpack-connect__sso-partner-branded-email-notice">
-					<NoticeDescription>
+				<Notice.Root intent="success" className="jetpack-connect__sso-partner-branded-email-notice">
+					<Notice.Description>
 						{ translate( 'We sent another confirmation email to %(email)s.', {
 							args: {
 								email: currentUser?.email,
 							},
 						} ) }
-					</NoticeDescription>
-				</NoticeRoot>
+					</Notice.Description>
+				</Notice.Root>
 			);
 		}
 
 		return (
-			<NoticeRoot intent="info" className="jetpack-connect__sso-partner-branded-email-notice">
-				<NoticeDescription>
+			<Notice.Root intent="info" className="jetpack-connect__sso-partner-branded-email-notice">
+				<Notice.Description>
 					{ translate( 'You must verify your email to sign in with WordPress.com.' ) }
-				</NoticeDescription>
-				<NoticeActions>
-					<NoticeActionButton onClick={ sendVerificationEmail }>
+				</Notice.Description>
+				<Notice.Actions>
+					<Notice.ActionButton onClick={ sendVerificationEmail }>
 						{ translate( 'Resend Email' ) }
-					</NoticeActionButton>
-				</NoticeActions>
-			</NoticeRoot>
+					</Notice.ActionButton>
+				</Notice.Actions>
+			</Notice.Root>
 		);
 	};
 
