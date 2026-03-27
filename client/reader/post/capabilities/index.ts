@@ -52,7 +52,8 @@ export function isLikeable( post: ReaderPost ): boolean {
 		return false;
 	}
 
-	return post?.likes_enabled ?? false;
+	// Default to likes enabled unless explicitly disabled
+	return post?.likes_enabled !== false;
 }
 
 export function isConversationFollowable( post: ReaderPost ): boolean {
