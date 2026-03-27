@@ -39,6 +39,7 @@ export interface ReaderPost {
 }
 
 export interface ReaderFeed {
+	feed_ID?: number;
 	description: string;
 	feed_URL: string;
 	is_error: boolean;
@@ -188,8 +189,8 @@ export const getSiteAuthorName = ( site: ReaderSite ): string => {
 
 interface isEligibleForUnseenArgs {
 	isWPForTeamsItem: boolean;
-	currentRoute: string | null;
-	hasOrganization: boolean | null;
+	currentRoute?: string | null;
+	hasOrganization?: boolean | null;
 }
 
 /**
