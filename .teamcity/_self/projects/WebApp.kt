@@ -223,36 +223,67 @@ object BuildDockerImage : BuildType({
 					docker pull "${'$'}ref" >/dev/null 2>&1 || return 1
 
 					docker image inspect "${'$'}ref" \
-						--format '{{range .RepoDigests}}{{println .}}{{end}}' \
-						| grep '^registry\.a8c\.com/calypso/cache-seed@sha256:' \
-						| head -n1
+						--format '{{if .RepoDigests}}{{index .RepoDigests 0}}{{end}}'
 				}
 
+				read_cache_seed_key() {
+					local ref="${'$'}1"
+
+					docker image inspect "${'$'}ref" \
+						--format '{{with index .Config.Labels "io.calypso.cache-seed-key"}}{{.}}{{end}}' \
+						2>/dev/null || true
+				}
+
+				default_cache_seed_image="registry.a8c.com/calypso/cache-seed:latest"
 				update_cache_seed=false
 				generate_cache_image=false
 				resolved_cache_seed_image="%cache_seed_image%"
 
 				if [[ "%cache_mode%" == "seed" ]]; then
-					key_ref="registry.a8c.com/calypso/cache-seed:key-${'$'}cache_seed_key"
+					if [[ "%cache_seed_image%" == "${'$'}default_cache_seed_image" ]]; then
+						key_ref="registry.a8c.com/calypso/cache-seed:key-${'$'}cache_seed_key"
 
-					if resolved_cache_seed_image=$(resolve_cache_seed_digest "${'$'}key_ref"); then
-						echo "Using cache-seed image for current key: ${'$'}resolved_cache_seed_image"
+						if resolved_cache_seed_image=$(resolve_cache_seed_digest "${'$'}key_ref"); then
+							echo "Using cache-seed image for current key: ${'$'}resolved_cache_seed_image"
+						else
+							echo "No exact cache-seed image found for key ${'$'}cache_seed_key; falling back to %cache_seed_image%."
+
+							if resolved_cache_seed_image=$(resolve_cache_seed_digest "%cache_seed_image%"); then
+								echo "Resolved cache-seed input: ${'$'}resolved_cache_seed_image"
+							else
+								echo "Could not resolve %cache_seed_image% to a digest; falling back to tag."
+								resolved_cache_seed_image="%cache_seed_image%"
+							fi
+
+							if [[ "%teamcity.build.branch.is_default%" == "true" ]]; then
+								echo "Cache-seed key is missing; enabling inline cache regeneration."
+								update_cache_seed=true
+								generate_cache_image=true
+							else
+								echo "Cache-seed key is missing, but this is not the default branch."
+							fi
+						fi
 					else
-						echo "No exact cache-seed image found for key ${'$'}cache_seed_key; falling back to %cache_seed_image%."
+						echo "Explicit cache-seed image override detected (%cache_seed_image%); bypassing canonical key lookup."
 
 						if resolved_cache_seed_image=$(resolve_cache_seed_digest "%cache_seed_image%"); then
-							echo "Resolved cache-seed input: ${'$'}resolved_cache_seed_image"
+							echo "Resolved explicit cache-seed input: ${'$'}resolved_cache_seed_image"
 						else
 							echo "Could not resolve %cache_seed_image% to a digest; falling back to tag."
 							resolved_cache_seed_image="%cache_seed_image%"
 						fi
 
 						if [[ "%teamcity.build.branch.is_default%" == "true" ]]; then
-							echo "Cache-seed key is missing; enabling inline cache regeneration."
-							update_cache_seed=true
-							generate_cache_image=true
-						else
-							echo "Cache-seed key is missing, but this is not the default branch."
+							existing_cache_seed_key=$(read_cache_seed_key "${'$'}resolved_cache_seed_image")
+							echo "Explicit cache-seed key: ${'$'}{existing_cache_seed_key:-<missing>}"
+
+							if [[ -z "${'$'}existing_cache_seed_key" || "${'$'}existing_cache_seed_key" != "${'$'}cache_seed_key" ]]; then
+								echo "Explicit cache-seed image does not match the current key; enabling inline cache regeneration."
+								update_cache_seed=true
+								generate_cache_image=true
+							else
+								echo "Explicit cache-seed image already matches the current key."
+							fi
 						fi
 					fi
 				elif [[ "%cache_mode%" == "base" && "%UPDATE_BASE_IMAGE_CACHE%" == "true" ]]; then
@@ -450,6 +481,7 @@ object BuildDockerImage : BuildType({
 					path = "Dockerfile"
 				}
 				namesAndTags = """
+					registry.a8c.com/calypso/cache-seed:latest
 					registry.a8c.com/calypso/cache-seed:key-%CACHE_SEED_KEY%
 					registry.a8c.com/calypso/cache-seed:build-%build.number%
 				""".trimIndent()
