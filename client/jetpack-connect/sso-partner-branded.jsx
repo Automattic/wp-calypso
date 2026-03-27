@@ -31,7 +31,7 @@ export default function SsoPartnerBranded( {
 	const isEmailVerified = Boolean( currentUser?.email_verified );
 
 	const sendVerificationEmail = ( event ) => {
-		event.preventDefault();
+		event?.preventDefault?.();
 
 		if ( isSendingVerificationEmail ) {
 			return;
