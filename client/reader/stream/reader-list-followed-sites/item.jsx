@@ -7,6 +7,7 @@ import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';
+import { getStreamUrl } from 'calypso/reader/route';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
@@ -49,18 +50,8 @@ const ReaderListFollowingItem = ( props ) => {
 		}
 	};
 
-	let streamLink;
-
-	if ( follow.feed_ID ) {
-		streamLink = `/reader/feeds/${ follow.feed_ID }`;
-	} else if ( follow.blog_ID ) {
-		// If subscription is missing a feed ID, fallback to blog stream
-		streamLink = `/reader/blogs/${ follow.blog_ID }`;
-	} else {
-		// Skip it
-		return null;
-	}
-
+	const streamLink =
+		follow.feed || follow.blog_ID ? getStreamUrl( follow.feed_ID, follow.blog_ID ) : null;
 	const urlForDisplay = formatUrlForDisplay( follow.URL );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -81,7 +72,7 @@ const ReaderListFollowingItem = ( props ) => {
 					{ ! siteIcon && ! feedIcon && ! feed && follow.feed_ID && (
 						<QueryReaderFeed feedId={ follow.feed_ID } />
 					) }
-					<SiteIcon iconUrl={ feedIcon || siteIcon } size={ 32 } />
+					<SiteIcon iconUrl={ siteIcon || feedIcon } size={ 32 } />
 				</span>
 				<span className="reader-sidebar-site_sitename">
 					<span className="reader-sidebar-site_nameurl">{ follow.name || urlForDisplay }</span>
