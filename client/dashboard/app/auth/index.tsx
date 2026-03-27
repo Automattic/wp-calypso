@@ -11,6 +11,7 @@ import {
 	type MutationCacheNotifyEvent,
 } from '@tanstack/react-query';
 import { createContext, useContext, useMemo, useEffect, useRef, useCallback } from 'react';
+import { useAppContext } from '../context';
 import { OAUTH_CALLBACK_PATH } from './oauth-callback';
 import type { WPError } from '@automattic/api-core';
 
@@ -79,6 +80,7 @@ async function initializeCurrentUser(): Promise< User > {
  */
 export function AuthProvider( { children }: { children: React.ReactNode } ) {
 	const authErrorHandled = useRef( false );
+	const { supports } = useAppContext();
 	const queryClient = useQueryClient();
 	const {
 		data: user,
@@ -117,9 +119,9 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 			const state = crypto.randomUUID();
 			sessionStorage.setItem( 'wpcom_oauth_state', state );
 
-			// Default to the signup screen rather than the login screen for certain paths.
-			const newUserPaths = [ '/start-store' ];
-			const isNewUser = newUserPaths.includes( window.location.pathname );
+			// Default to the signup screen rather than the login screen for certain routes.
+			const isNewUser =
+				supports.startStoreRoute === true && window.location.pathname === '/start-store';
 
 			window.location.replace(
 				getOAuthAuthorizeUrl( {
