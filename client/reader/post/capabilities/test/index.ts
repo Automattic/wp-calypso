@@ -42,8 +42,8 @@ describe( 'reader/post/capabilities', () => {
 			expect( isSharable( { site_ID: 1, sharing_enabled: false } ) ).toBe( false );
 		} );
 
-		it( 'returns false when site_ID is missing', () => {
-			expect( isSharable( { sharing_enabled: true } ) ).toBe( false );
+		it( 'returns true when site_ID is missing but sharing_enabled is true', () => {
+			expect( isSharable( { sharing_enabled: true } ) ).toBe( true );
 		} );
 
 		it( 'returns false when site_is_private is true', () => {
@@ -52,8 +52,8 @@ describe( 'reader/post/capabilities', () => {
 			);
 		} );
 
-		it( 'returns false when sharing_enabled is undefined', () => {
-			expect( isSharable( { site_ID: 1 } ) ).toBe( false );
+		it( 'defaults to true when sharing_enabled is undefined', () => {
+			expect( isSharable( { site_ID: 1 } ) ).toBe( true );
 		} );
 	} );
 
@@ -98,8 +98,8 @@ describe( 'reader/post/capabilities', () => {
 			expect( isLikeable( { site_ID: 1, is_external: true, likes_enabled: true } ) ).toBe( false );
 		} );
 
-		it( 'returns false when likes_enabled is undefined', () => {
-			expect( isLikeable( { site_ID: 1 } ) ).toBe( false );
+		it( 'defaults to true when likes_enabled is undefined', () => {
+			expect( isLikeable( { site_ID: 1 } ) ).toBe( true );
 		} );
 	} );
 
