@@ -25,7 +25,6 @@
 		}
 	],
 	"features": {
-		"a4a-help-center": true,
 		"ad-tracking": false,
 		"a8c-for-agencies": true,
 		"cookie-banner": false,
@@ -33,7 +32,7 @@
 		"a4a/site-details-pane": true,
 		"a4a/site-migration": true,
 		"a4a-partner-directory": false,
-		"a4a-dev-sites": true,
+		"a4a-partner-directory-lead-matching": false,
 		"a4a-pressable-referrals": true,
 		"a4a-pressable-premium-plans": true,
 		"a4a-updated-add-new-site": true,
@@ -41,8 +40,6 @@
 		"a4a-signup-v2-via-email": false,
 		"a4a-unified-onboarding-tour": true,
 		"a4a-bd-checkout": false,
-		"a4a-pressable-addons": true,
-		"a4a-vip-partner-opportunity-referrals": true,
 		"jetpack/crm-downloads": true,
 		"upgrades/redirect-payments": true,
 		"a4a-bd-term-pricing": true
@@ -70,6 +67,7 @@
 		"a8c-for-agencies-woopayments": true,
 		"a8c-for-agencies-express-checkout": true,
 		"a8c-for-agencies-learn": true,
+		"a8c-for-agencies-dev-tools": true,
 		"a8c-for-agencies-exclusive-offers": true
 	},
 	"site_filter": [],

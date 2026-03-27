@@ -26,6 +26,7 @@ const ciabGetTranslations = ( translation: string, text: string ) => {
 			'Migrate site': __( 'Migrate store', ciabDomain ),
 			Site: __( 'Store', ciabDomain ),
 			Sites: __( 'Stores', ciabDomain ),
+			Public: __( 'Live', ciabDomain ),
 			'Visit site ↗': __( 'Visit store ↗', ciabDomain ),
 			'We guard your site. You run your business.': __(
 				'We guard your store. You run your business.',

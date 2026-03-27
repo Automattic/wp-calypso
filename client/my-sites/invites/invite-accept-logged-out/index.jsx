@@ -11,13 +11,13 @@ import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item'
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { getCiabConfigFromGarden } from 'calypso/lib/partner-branding';
+import { getPartnerConfigFromGarden } from 'calypso/lib/partner-branding';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
 import InviteFormHeaderLoggedOut from 'calypso/my-sites/invites/invite-form-header-logged-out';
 import P2InviteAcceptLoggedOut from 'calypso/my-sites/invites/p2/invite-accept-logged-out';
 import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
-import { createAccount, acceptInvite } from 'calypso/state/invites/actions';
+import { createAccount, createSocialAccount, acceptInvite } from 'calypso/state/invites/actions';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { WpLoggedOutInviteLogo } from '../invite-accept-logged-out/wp-logo';
 
@@ -86,11 +86,50 @@ class InviteAcceptLoggedOut extends Component {
 			.finally( afterSubmitCallback );
 	};
 
+	handleSocialResponse = ( service, access_token, id_token = null, socialUserData = {} ) => {
+		const { invite } = this.props;
+		recordTracksEvent( 'calypso_invite_accept_logged_out_social_submit', {
+			social_account_type: service,
+			role: invite?.role,
+			site_id: invite?.site?.ID,
+		} );
+
+		this.setState( { submitting: true } );
+		debug( 'Storing invite_accepted for social signup: ' + JSON.stringify( invite ) );
+		store.set( 'invite_accepted', invite );
+
+		const enhancedUserData = { ...socialUserData };
+
+		if ( get( invite, 'site.is_wpforteams_site', false ) ) {
+			enhancedUserData.signup_flow_name = 'p2';
+		}
+
+		this.props
+			.createSocialAccount( { service, access_token, id_token }, enhancedUserData, invite )
+			.then( ( response ) => {
+				const bearerToken = response.bearer_token;
+				debug( 'Create social account bearerToken: ' + bearerToken );
+				this.setState( {
+					bearerToken,
+					userData: {
+						...socialUserData,
+						email: response.email || socialUserData.email,
+						username: response.username || socialUserData.username,
+					},
+				} );
+			} )
+			.catch( ( error ) => {
+				debug( 'Create social account error: ' + JSON.stringify( error ) );
+				store.remove( 'invite_accepted' );
+				this.setState( { submitting: false } );
+			} );
+	};
+
 	renderFormHeader = () => {
 		return (
 			<InviteFormHeaderLoggedOut
 				site={ this.props.invite?.site }
-				ciabConfig={ this.getCiabConfig() }
+				partnerConfig={ this.getCiabConfig() }
 			/>
 		);
 	};
@@ -100,7 +139,7 @@ class InviteAcceptLoggedOut extends Component {
 		const gardenName = site?.garden?.name;
 		const gardenPartner = site?.garden?.partner;
 
-		return getCiabConfigFromGarden( gardenPartner, gardenName );
+		return getPartnerConfigFromGarden( gardenPartner, gardenName, { persistToSession: true } );
 	};
 
 	loginUser = () => {
@@ -176,15 +215,15 @@ class InviteAcceptLoggedOut extends Component {
 	};
 
 	render() {
-		const ciabConfig = this.getCiabConfig();
+		const partnerConfig = this.getCiabConfig();
 
 		if ( this.props.forceMatchingEmail && this.props.invite.knownUser ) {
 			return (
 				<>
 					<BodySectionCssClass
-						bodyClass={ ciabConfig?.fontStyle === 'system' ? [ 'is-ciab-font-system' ] : [] }
+						bodyClass={ partnerConfig?.fontStyle === 'system' ? [ 'is-ciab-font-system' ] : [] }
 					/>
-					<WpLoggedOutInviteLogo ciabConfig={ ciabConfig } />
+					<WpLoggedOutInviteLogo partnerConfig={ partnerConfig } />
 					{ this.renderSignInLinkOnly() }
 				</>
 			);
@@ -205,9 +244,9 @@ class InviteAcceptLoggedOut extends Component {
 		return (
 			<>
 				<BodySectionCssClass
-					bodyClass={ ciabConfig?.fontStyle === 'system' ? [ 'is-ciab-font-system' ] : [] }
+					bodyClass={ partnerConfig?.fontStyle === 'system' ? [ 'is-ciab-font-system' ] : [] }
 				/>
-				<WpLoggedOutInviteLogo ciabConfig={ ciabConfig } />
+				<WpLoggedOutInviteLogo partnerConfig={ partnerConfig } />
 				<div className="invite-accept-logged-out-wrapper">
 					{ this.renderFormHeader() }
 					<SignupForm
@@ -234,6 +273,7 @@ class InviteAcceptLoggedOut extends Component {
 						submitButtonLabel={ this.props.translate( 'Create an account' ) }
 						labelText={ this.props.translate( 'Your email address' ) }
 						useConnectScreenActions
+						handleSocialResponse={ this.handleSocialResponse }
 					/>
 					{ this.state.userData && this.loginUser() }
 				</div>
@@ -246,5 +286,5 @@ export default connect(
 	( state ) => ( {
 		emailVerificationSecret: getCurrentQueryArguments( state )?.email_verification_secret,
 	} ),
-	{ createAccount, acceptInvite }
+	{ createAccount, createSocialAccount, acceptInvite }
 )( localize( InviteAcceptLoggedOut ) );

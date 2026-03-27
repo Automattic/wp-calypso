@@ -1,4 +1,3 @@
-import { __experimentalVStack as VStack } from '@wordpress/components';
 import { throttle } from '@wordpress/compose';
 import { Field, View } from '@wordpress/dataviews';
 import { __, _n, sprintf } from '@wordpress/i18n';
@@ -7,6 +6,7 @@ import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useRef, useS
 import { pluginRoute } from '../../../app/router/plugins';
 import { Card, CardBody } from '../../../components/card';
 import SwitcherContent from '../../../components/switcher/switcher-content';
+import SwitcherItem from '../../../components/switcher/switcher-item';
 import { Text } from '../../../components/text';
 import { PluginListRow } from '../types';
 import { PluginIcon } from './plugin-icon';
@@ -80,11 +80,7 @@ export const PluginSwitcher = ( {
 		[ selectedPluginSlug ]
 	);
 
-	const renderItemMedia = useCallback( ( { item }: { item: PluginListRow } ) => {
-		return <PluginIcon item={ item } />;
-	}, [] );
-
-	const renderItemTitle = useCallback( ( { item }: { item: PluginListRow } ) => {
+	const renderItem = useCallback( ( { item }: { item: PluginListRow } ) => {
 		const sitesText = sprintf(
 			// translators: %(siteCount)d is the number of sites the plugin is installed on.
 			_n( '%(siteCount)d site', '%(siteCount)d sites', item.sitesCount ),
@@ -104,17 +100,24 @@ export const PluginSwitcher = ( {
 			: '';
 
 		return (
-			<VStack spacing={ 1 }>
-				{ /* @ts-expect-error: Can only set one of `children` or `props.dangerouslySetInnerHTML`. */ }
-				<Text
-					className="plugin-switcher-item-name"
-					dangerouslySetInnerHTML={ { __html: item.name } }
-					title={ item.name }
-				/>
-				<Text className="plugin-switcher-item-site-count" variant="muted">
-					{ updatesText ? `${ sitesText }, ${ updatesText }` : sitesText }
-				</Text>
-			</VStack>
+			<SwitcherItem
+				alignment="start"
+				spacing={ 3 }
+				media={ <PluginIcon item={ item } /> }
+				title={
+					// @ts-expect-error: Can only set one of `children` or `props.dangerouslySetInnerHTML`.
+					<Text
+						className="plugin-switcher-item-name"
+						dangerouslySetInnerHTML={ { __html: item.name } }
+						title={ item.name }
+					/>
+				}
+				description={
+					<Text className="plugin-switcher-item-site-count" variant="muted">
+						{ updatesText ? `${ sitesText }, ${ updatesText }` : sitesText }
+					</Text>
+				}
+			/>
 		);
 	}, [] );
 
@@ -135,17 +138,14 @@ export const PluginSwitcher = ( {
 		<Card>
 			<CardBody className="plugin-switcher-card-body" ref={ scrollRef }>
 				<SwitcherContent
-					itemAlignment="start"
 					itemClassName={ itemClassName }
-					itemSpacing={ 3 }
 					searchClassName="plugin-switcher-search"
 					view={ view }
 					onChangeView={ onChangeView }
 					items={ pluginsWithIcon }
 					resetScroll={ false }
 					getItemUrl={ ( item ) => pluginRoute.to.replace( '$pluginId', item.slug ) }
-					renderItemMedia={ renderItemMedia }
-					renderItemTitle={ renderItemTitle }
+					renderItem={ renderItem }
 					searchableFields={ searchableFields }
 					onClose={ () => {} }
 					width="auto"

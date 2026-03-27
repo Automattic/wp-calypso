@@ -26,7 +26,6 @@ const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const cacheIdentifier = require( '../build-tools/babel/babel-loader-cache-identifier' );
 const AssetsWriter = require( '../build-tools/webpack/assets-writer-plugin.js' );
 const GenerateChunksMapPlugin = require( '../build-tools/webpack/generate-chunks-map-plugin' );
-const ReadOnlyCachePlugin = require( '../build-tools/webpack/readonly-cache-plugin' );
 const RequireChunkCallbackPlugin = require( '../build-tools/webpack/require-chunk-callback-plugin' );
 const config = require( './server/config' );
 const { workerCount } = require( './webpack.common' );
@@ -77,6 +76,49 @@ if ( ! sourceMapType && shouldCreateSentryRelease ) {
 } else if ( ! sourceMapType && isDevelopment ) {
 	sourceMapType = 'eval';
 }
+
+const webpackCacheBuildDependencies = [
+	__filename,
+	// Top-level config inputs that change compilation behavior
+	path.resolve( __dirname, '../package.json' ),
+	path.resolve( __dirname, '../babel.config.js' ),
+	// Config modules used by this webpack config
+	require.resolve( './webpack.common' ),
+	require.resolve( './server/config' ),
+	// Local build tools that influence compilation
+	require.resolve( '../build-tools/babel/babel-loader-cache-identifier' ),
+	require.resolve( '../build-tools/webpack/assets-writer-plugin.js' ),
+	require.resolve( '../build-tools/webpack/generate-chunks-map-plugin' ),
+	require.resolve( '../build-tools/webpack/require-chunk-callback-plugin' ),
+	require.resolve( '../build-tools/webpack/sections-loader' ),
+	// Workspace config helper modules used to build rules/plugins
+	require.resolve( '@automattic/calypso-build/webpack/file-loader' ),
+	require.resolve( '@automattic/calypso-build/webpack/minify' ),
+	require.resolve( '@automattic/calypso-build/webpack/sass' ),
+	require.resolve( '@automattic/calypso-build/webpack/transpile' ),
+	require.resolve( '@automattic/calypso-build/webpack/util' ),
+	// Dependency graph changes
+	path.resolve( __dirname, '../yarn.lock' ),
+	path.resolve( __dirname, '../.yarnrc.yml' ),
+];
+
+const cacheFlavorParts = [ `mode=${ bundleEnv }`, `devtool=${ sourceMapType || 'none' }` ];
+const webpackCacheName = `client-${ cacheFlavorParts.join( '__' ) }`;
+
+// Inputs that should invalidate a cache flavor.
+const webpackCacheVersion = JSON.stringify( {
+	bundleEnv,
+	nodeEnv: process.env.NODE_ENV || null,
+	calypsoEnv: process.env.CALYPSO_ENV || null,
+	buildChunksMap: shouldBuildChunksMap,
+	minify: shouldMinify,
+	entryLimit: process.env.ENTRY_LIMIT || null,
+	sectionLimit: process.env.SECTION_LIMIT || null,
+	emitStats: shouldEmitStats,
+	concatenateModules: shouldConcatenateModules,
+	hotReload: shouldHotReload,
+	profile: shouldProfile,
+} );
 
 if ( shouldCreateSentryRelease ) {
 	console.log(
@@ -150,8 +192,11 @@ if ( isDevelopment ) {
 	outputChunkFilename = '[name].js';
 }
 
-const cssFilename = cssNameFromFilename( outputFilename );
-const cssChunkFilename = cssNameFromFilename( outputChunkFilename );
+const cssFilename = cssNameFromFilename( outputFilename ).replace( '[contenthash]', '[chunkhash]' );
+const cssChunkFilename = cssNameFromFilename( outputChunkFilename ).replace(
+	'[contenthash]',
+	'[chunkhash]'
+);
 
 const outputDir = path.resolve( '.' );
 
@@ -383,8 +428,6 @@ const webpackConfig = {
 		// Equivalent to the CLI flag --progress=profile
 		shouldProfile && new webpack.ProgressPlugin( { profile: true } ),
 
-		shouldUsePersistentCache && shouldUseReadonlyCache && new ReadOnlyCachePlugin(),
-
 		// NOTE: Sentry should be the last webpack plugin in the array.
 		shouldCreateSentryRelease &&
 			new SentryCliPlugin( {
@@ -397,6 +440,8 @@ const webpackConfig = {
 				errorHandler: ( err, invokeErr, compilation ) => {
 					// Sentry should _never_ fail the webpack build, so only emit warnings here:
 					compilation.warnings.push( 'Sentry CLI Plugin: ' + err.message );
+					console.error( 'Sentry CLI Plugin Error:', err.message );
+					console.error( 'Sentry Full error:', err );
 				},
 			} ),
 		shouldHotReload && new webpack.HotModuleReplacementPlugin(),
@@ -412,24 +457,23 @@ const webpackConfig = {
 		? {
 				cache: {
 					type: 'filesystem',
+					name: webpackCacheName,
 					buildDependencies: {
-						config: [ __filename ],
+						config: webpackCacheBuildDependencies,
 					},
 					cacheDirectory: path.resolve( cachePath, 'webpack' ),
-					profile: true,
-					version: [
-						// No need to add BROWSERSLIST, as it is already part of the cacheDirectory
-						shouldBuildChunksMap,
-						shouldMinify,
-						process.env.ENTRY_LIMIT,
-						process.env.SECTION_LIMIT,
-						process.env.NODE_ENV,
-						process.env.CALYPSO_ENV,
-					].join( '-' ),
+					profile: shouldProfile,
+					version: webpackCacheVersion,
+					readonly: shouldUseReadonlyCache,
+					compression: 'brotli',
 				},
-				infrastructureLogging: {
-					debug: /webpack\.cache/,
-				},
+				...( shouldProfile
+					? {
+							infrastructureLogging: {
+								debug: /webpack\.cache/,
+							},
+					  }
+					: {} ),
 				snapshot: {
 					managedPaths: [
 						path.resolve( __dirname, '../node_modules' ),

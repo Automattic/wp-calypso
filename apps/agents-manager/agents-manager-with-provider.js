@@ -1,4 +1,5 @@
 /* global agentsManagerData */
+import './config';
 import AgentsManager from '@automattic/agents-manager';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
@@ -11,6 +12,7 @@ export default function AgentsManagerWithProvider() {
 				sectionName={ agentsManagerData.sectionName || 'wp-admin' }
 				currentUser={ agentsManagerData.currentUser }
 				site={ agentsManagerData.site }
+				currentSiteId={ agentsManagerData.site?.ID }
 			/>
 		</QueryClientProvider>
 	);

@@ -11,6 +11,7 @@ import VaultPressLogo from 'calypso/assets/images/jetpack/vaultpress-logo.svg';
 import DocumentHead from 'calypso/components/data/document-head';
 import JetpackDisconnectedWPCOM from 'calypso/components/jetpack/jetpack-disconnected-wpcom';
 import SecurityIcon from 'calypso/components/jetpack/security-icon';
+import JetpackTitle from 'calypso/components/jetpack-title';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
@@ -196,7 +197,11 @@ export default function WPCOMScanUpsellPage( { reason }: { reason?: string } ) {
 			<DocumentHead title="Scanner" />
 			<PageViewTracker path="/scan/:site" title="Scanner" />
 
-			<NavigationHeader navigationItems={ [] } title={ translate( 'Jetpack Scan' ) } />
+			<NavigationHeader
+				navigationItems={ [] }
+				title={ <JetpackTitle title={ translate( 'Scan' ) } /> }
+				subtitle={ translate( 'Automated malware scanning and firewall protection.' ) }
+			/>
 
 			{ body }
 		</Main>

@@ -12,6 +12,7 @@ import useCreateWPCOMDevSiteMutation, {
 } from 'calypso/a8c-for-agencies/data/sites/use-create-wpcom-dev-site';
 import useCreateWPCOMSiteMutation from 'calypso/a8c-for-agencies/data/sites/use-create-wpcom-site';
 import useHelpCenter from 'calypso/a8c-for-agencies/hooks/use-help-center';
+import useMinimizeHelpCenterOnMount from 'calypso/a8c-for-agencies/hooks/use-minimize-help-center-on-mount';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import { getPHPVersions } from 'calypso/data/php-versions';
@@ -49,6 +50,7 @@ export default function SiteConfigurationsModal( {
 	const { mutate: createWPCOMSite } = useCreateWPCOMSiteMutation();
 	const { mutate: createWPCOMDevSite } = useCreateWPCOMDevSiteMutation();
 	const dispatch = useDispatch();
+	useMinimizeHelpCenterOnMount();
 
 	const toggleAllowClientsToUseSiteHelpCenter = () =>
 		setAllowClientsToUseSiteHelpCenter( ! allowClientsToUseSiteHelpCenter );

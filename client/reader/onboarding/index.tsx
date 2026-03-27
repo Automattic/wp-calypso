@@ -147,7 +147,10 @@ const ReaderOnboarding = ( {
 	}, [ dispatch ] );
 
 	// Notify the parent component if onboarding will render.
-	onRender?.( shouldShowOnboarding );
+	// Use useEffect to avoid calling setState during render (React anti-pattern).
+	useEffect( () => {
+		onRender?.( shouldShowOnboarding );
+	}, [ onRender, shouldShowOnboarding ] );
 
 	if ( ! shouldRenderOnboarding ) {
 		return null;

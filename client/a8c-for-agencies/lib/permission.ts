@@ -2,6 +2,7 @@ import {
 	PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG,
 	PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG,
 	PARTNER_DIRECTORY_DASHBOARD_SLUG,
+	PARTNER_DIRECTORY_LEAD_MATCHING_SLUG,
 } from 'calypso/a8c-for-agencies/sections/partner-directory/constants';
 import {
 	A4A_REPORTS_LINK,
@@ -54,7 +55,8 @@ import {
 	A4A_WOOPAYMENTS_SITE_SETUP_LINK,
 	A4A_WOOPAYMENTS_OVERVIEW_LINK,
 	A4A_LEARN_LINK,
-	A4A_LEARN_RESOURCE_CENTER_LINK,
+	A4A_RESOURCES_LINK,
+	A4A_DEV_TOOLS_LINK,
 	A4A_EXCLUSIVE_OFFERS_LINK,
 } from '../components/sidebar-menu/lib/constants';
 import type { Agency } from 'calypso/state/a8c-for-agencies/types';
@@ -62,6 +64,7 @@ import type { Agency } from 'calypso/state/a8c-for-agencies/types';
 const A4A_PARTNER_DIRECTORY_DASHBOARD_LINK = `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_DASHBOARD_SLUG }`;
 const A4A_PARTNER_DIRECTORY_AGENCY_DETAILS_LINK = `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG }`;
 const A4A_PARTNER_DIRECTORY_AGENCY_EXPERTISE_LINK = `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG }`;
+const A4A_PARTNER_DIRECTORY_LEAD_MATCHING_LINK = `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_LEAD_MATCHING_SLUG }`;
 
 const MEMBER_ACCESSIBLE_PATHS: Record< string, string[] > = {
 	[ A4A_SITES_LINK ]: [ 'a4a_read_managed_sites' ],
@@ -92,6 +95,7 @@ const MEMBER_ACCESSIBLE_PATHS: Record< string, string[] > = {
 	[ A4A_PARTNER_DIRECTORY_DASHBOARD_LINK ]: [ 'a4a_read_partner_directory' ],
 	[ A4A_PARTNER_DIRECTORY_AGENCY_DETAILS_LINK ]: [ 'a4a_read_partner_directory' ],
 	[ A4A_PARTNER_DIRECTORY_AGENCY_EXPERTISE_LINK ]: [ 'a4a_read_partner_directory' ],
+	[ A4A_PARTNER_DIRECTORY_LEAD_MATCHING_LINK ]: [ 'a4a_read_partner_directory' ],
 	[ A4A_PURCHASES_LINK ]: [ 'a4a_jetpack_licensing' ],
 	[ A4A_BILLING_LINK ]: [ 'a4a_jetpack_licensing' ],
 	[ A4A_INVOICES_LINK ]: [ 'a4a_jetpack_licensing' ],
@@ -113,8 +117,9 @@ const MEMBER_ACCESSIBLE_PATHS: Record< string, string[] > = {
 	[ A4A_WOOPAYMENTS_SITE_SETUP_LINK ]: [ 'a4a_read_referrals' ],
 	[ A4A_WOOPAYMENTS_OVERVIEW_LINK ]: [ 'a4a_read_referrals' ],
 	[ A4A_EXCLUSIVE_OFFERS_LINK ]: [ 'a4a_read_exclusive_offers' ],
+	[ A4A_RESOURCES_LINK ]: [ 'a4a_read_learn' ],
 	[ A4A_LEARN_LINK ]: [ 'a4a_read_learn' ],
-	[ A4A_LEARN_RESOURCE_CENTER_LINK ]: [ 'a4a_read_learn' ],
+	[ A4A_DEV_TOOLS_LINK ]: [ 'a4a_read_learn' ],
 };
 
 const MEMBER_ACCESSIBLE_DYNAMIC_PATHS: Record< string, string[] > = {
@@ -171,6 +176,7 @@ const MEMBER_TIER_ACCESSIBLE_PATHS: Record< string, string[] > = {
 	[ A4A_PARTNER_DIRECTORY_DASHBOARD_LINK ]: [ 'a4a_feature_partner_directory' ],
 	[ A4A_PARTNER_DIRECTORY_AGENCY_DETAILS_LINK ]: [ 'a4a_feature_partner_directory' ],
 	[ A4A_PARTNER_DIRECTORY_AGENCY_EXPERTISE_LINK ]: [ 'a4a_feature_partner_directory' ],
+	[ A4A_PARTNER_DIRECTORY_LEAD_MATCHING_LINK ]: [ 'a4a_feature_partner_directory' ],
 };
 
 export const isPathAllowedForTier = ( pathname: string, agency: Agency | null ) => {

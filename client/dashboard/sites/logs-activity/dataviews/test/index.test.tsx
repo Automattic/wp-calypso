@@ -48,6 +48,7 @@ jest.mock( '@tanstack/react-router', () => ( {
 				hash: '',
 				href: '/',
 			},
+			matches: [],
 		},
 	} ),
 } ) );

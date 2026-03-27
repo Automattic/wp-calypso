@@ -116,6 +116,8 @@ export interface PlansFeaturesMainProps {
 	selectedPlan?: PlanSlug;
 	selectedFeature?: string;
 	onUpgradeClick?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
+	redirectTo?: string;
+	pluginSlug?: string;
 	redirectToAddDomainFlow?: boolean;
 	hidePlanTypeSelector?: boolean;
 	paidDomainName?: string;
@@ -199,6 +201,8 @@ const PlansFeaturesMain = ( {
 	isDomainTransfer,
 	onUpgradeClick,
 	hidePlanTypeSelector,
+	redirectTo,
+	pluginSlug,
 	redirectToAddDomainFlow,
 	siteId,
 	selectedPlan,
@@ -238,6 +242,9 @@ const PlansFeaturesMain = ( {
 	// eslint-disable-next-line
 	const [ lastClickedPlan, setLastClickedPlan ] = useState< string | null >( null );
 	const [ showPlansComparisonGrid, setShowPlansComparisonGrid ] = useState( false );
+	const [ comparisonGridVisiblePlansCount, setComparisonGridVisiblePlansCount ] = useState<
+		number | null
+	>( null );
 	const translate = useTranslate();
 	const currentPlan = Plans.useCurrentPlan( { siteId } );
 
@@ -432,6 +439,8 @@ const PlansFeaturesMain = ( {
 		enableCategorisedFeatures: showSimplifiedFeatures,
 		reflectStorageSelectionInPlanPrices: true,
 		isGatingBusinessQ1: !! differentiatorsVariant,
+		redirectTo,
+		pluginSlug,
 	} );
 
 	const isDomainOnlySite = useSelector( ( state: IAppState ) =>
@@ -707,6 +716,18 @@ const PlansFeaturesMain = ( {
 		'is-hidden': ! showPlansComparisonGrid,
 	} );
 
+	// Match comparison grid width constants: feature column 450px + 290px per plan column
+	const comparisonGridContainerStyle = useMemo( () => {
+		if (
+			comparisonGridVisiblePlansCount !== null &&
+			comparisonGridVisiblePlansCount >= 1 &&
+			comparisonGridVisiblePlansCount <= 3
+		) {
+			return { maxWidth: 450 + 290 * comparisonGridVisiblePlansCount };
+		}
+		return undefined;
+	}, [ comparisonGridVisiblePlansCount ] );
+
 	const isLoadingGridPlans = Boolean(
 		! intent ||
 			! defaultWpcomPlansIntent || // this may be unnecessary, but just in case
@@ -976,6 +997,7 @@ const PlansFeaturesMain = ( {
 										<div
 											ref={ plansComparisonGridRef }
 											className={ comparisonGridContainerClasses }
+											style={ comparisonGridContainerStyle }
 										>
 											<PlanComparisonHeader className="wp-brand-font">
 												{ translate( 'Compare our plans and find yours' ) }
@@ -1004,6 +1026,7 @@ const PlansFeaturesMain = ( {
 													isInAdmin={ ! isInSignup }
 													isInSiteDashboard={ isInSiteDashboard }
 													isInSignup={ isInSignup }
+													onVisiblePlansCountChange={ setComparisonGridVisiblePlansCount }
 													onStorageAddOnClick={ handleStorageAddOnClick }
 													planTypeSelectorProps={
 														! hidePlanSelector

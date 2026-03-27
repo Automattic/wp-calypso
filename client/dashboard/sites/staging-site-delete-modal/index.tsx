@@ -1,4 +1,8 @@
-import { siteByIdQuery, stagingSiteDeleteMutation } from '@automattic/api-queries';
+import {
+	siteByIdQuery,
+	stagingSiteDeleteMutation,
+	stagingSiteSyncStateQuery,
+} from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import {
@@ -12,7 +16,9 @@ import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useAnalytics } from '../../app/analytics';
 import { ButtonStack } from '../../components/button-stack';
+import Notice from '../../components/notice';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
+import { getProductionSiteId, isStagingSiteSyncing } from '../../utils/site-staging-site';
 import type { Site } from '@automattic/api-core';
 
 export default function StagingSiteDeleteModal( {
@@ -26,12 +32,18 @@ export default function StagingSiteDeleteModal( {
 	const navigate = useNavigate();
 	const { recordTracksEvent } = useAnalytics();
 
-	const productionSiteId = site.options?.wpcom_production_blog_id;
+	const productionSiteId = getProductionSiteId( site );
 	const { data: productionSite, isLoading: isLoadingProductionSite } = useQuery( {
 		...siteByIdQuery( productionSiteId ?? 0 ),
 		enabled: !! productionSiteId,
 	} );
 	const productionSiteSlug = productionSite?.slug;
+
+	const { data: stagingSiteSyncState } = useQuery( {
+		...stagingSiteSyncStateQuery( productionSiteId ?? 0 ),
+		enabled: !! productionSiteId,
+	} );
+	const isSyncing = isStagingSiteSyncing( stagingSiteSyncState );
 
 	const mutation = useMutation( stagingSiteDeleteMutation( site.ID, productionSiteId ?? 0 ) );
 	const isDisabled = mutation.isPending || isLoadingProductionSite;
@@ -71,6 +83,15 @@ export default function StagingSiteDeleteModal( {
 	return (
 		<Modal title={ __( 'Delete staging site' ) } size="medium" onRequestClose={ onClose }>
 			<VStack spacing={ 4 }>
+				{ isSyncing && (
+					<Notice variant="warning" density="medium">
+						<Text>
+							{ __(
+								'A sync is currently in progress. Deleting this staging site will cancel the sync and any unfinished changes will be lost.'
+							) }
+						</Text>
+					</Notice>
+				) }
 				<Text as="p">
 					{ __(
 						'Are you sure you want to delete this staging site? This action cannot be undone and will permanently remove all staging site content.'

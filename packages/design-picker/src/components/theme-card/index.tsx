@@ -11,6 +11,7 @@ interface ThemeCardProps {
 	image: React.ReactNode;
 	imageClickUrl?: string;
 	imageActionLabel?: string;
+	imageOverlay?: React.ReactNode;
 	banner?: React.ReactNode;
 	badge?: React.ReactNode;
 	optionsMenu?: React.ReactNode;
@@ -51,6 +52,7 @@ const ThemeCard = forwardRef(
 			image,
 			imageClickUrl,
 			imageActionLabel,
+			imageOverlay,
 			banner,
 			badge,
 			optionsMenu,
@@ -68,6 +70,7 @@ const ThemeCard = forwardRef(
 		const themeClasses = clsx( 'theme-card', {
 			'theme-card--is-active': isActive,
 			'theme-card--is-actionable': isActionable,
+			'theme-card--has-overlay': imageOverlay,
 		} );
 
 		return (
@@ -91,11 +94,12 @@ const ThemeCard = forwardRef(
 								onImageClick?.();
 							} }
 						>
-							{ isActionable && imageActionLabel && (
+							{ isActionable && imageActionLabel && ! imageOverlay && (
 								<div className="theme-card__image-label">{ imageActionLabel }</div>
 							) }
 							{ image }
 						</a>
+						{ imageOverlay && <div className="theme-card__image-overlay">{ imageOverlay }</div> }
 					</div>
 					{ isLoading && (
 						<div className="theme-card__loading">
@@ -124,5 +128,7 @@ const ThemeCard = forwardRef(
 		);
 	}
 );
+
+ThemeCard.displayName = 'ThemeCard';
 
 export default ThemeCard;

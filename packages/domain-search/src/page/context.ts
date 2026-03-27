@@ -5,6 +5,7 @@ import {
 	freeSuggestionQuery,
 } from '@automattic/api-queries';
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
+import { isBlogSubdomainQuery } from '../helpers';
 import { DEFAULT_FILTER } from './constants';
 import { type DomainSearchProps, type DomainSearchContextType } from './types';
 
@@ -155,7 +156,8 @@ export const useDomainSearchContextValue = ( {
 				} ),
 				freeSuggestion: ( query ) => ( {
 					...freeSuggestionQuery( query, {
-						include_dotblogsubdomain: normalizedConfig.includeDotBlogSubdomain,
+						include_dotblogsubdomain:
+							normalizedConfig.includeDotBlogSubdomain && isBlogSubdomainQuery( query ),
 					} ),
 					enabled: false,
 					staleTime: Infinity,

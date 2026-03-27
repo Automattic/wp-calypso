@@ -50,7 +50,7 @@ export default function ResourceCenterOverviewContent( {
 			<Spacer marginBottom={ 8 } style={ { maxWidth: '650px' } }>
 				<Text size={ 15 }>
 					{ __(
-						'Explore our resource center for agencies, with exclusive materials designed to help you grow and run your agency more effectively. You will find practical guidance, playbooks, and training, including resources to understand, position, and integrate Automattic products when they are the right fit.'
+						'Browse our guides and articles for agencies, with exclusive materials designed to help you grow and run your agency more effectively. You will find practical guidance, playbooks, and training, including practical ways to recommend the right solutions for your clients.'
 					) }
 				</Text>
 			</Spacer>

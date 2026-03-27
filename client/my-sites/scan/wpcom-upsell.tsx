@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import JetpackScanSVG from 'calypso/assets/images/illustrations/jetpack-scan.svg';
 import DocumentHead from 'calypso/components/data/document-head';
 import WhatIsJetpack from 'calypso/components/jetpack/what-is-jetpack';
+import JetpackTitle from 'calypso/components/jetpack-title';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import PromoCard from 'calypso/components/promo-section/promo-card';
@@ -26,7 +27,11 @@ export default function WPCOMScanUpsellPage() {
 			<DocumentHead title="Scanner" />
 			<PageViewTracker path="/scan/:site" title="Scanner" />
 
-			<NavigationHeader navigationItems={ [] } title={ translate( 'Jetpack Scan' ) } />
+			<NavigationHeader
+				navigationItems={ [] }
+				title={ <JetpackTitle title={ translate( 'Scan' ) } /> }
+				subtitle={ translate( 'Automated malware scanning and firewall protection.' ) }
+			/>
 
 			<PromoCard
 				title={ translate( 'We guard your site. You run your business.' ) }

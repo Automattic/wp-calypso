@@ -213,13 +213,6 @@ const SiteSubscriptionRow = ( {
 
 	const siteTitleUrl = useMemo( () => {
 		if ( isReaderPortal ) {
-			const feedUrl = `/reader/feeds/${ feed_id }`;
-
-			if ( ! blog_id ) {
-				// The site subscription page does not support non-wpcom feeds yet
-				return feedUrl;
-			}
-
 			if ( resubscribed ) {
 				// If the site was resubscribed, the id of the optmistic update is not the same as the id of the new subscription
 				return `/reader/site/subscription/${ blog_id }`;
@@ -326,7 +319,11 @@ const SiteSubscriptionRow = ( {
 
 						{ !! is_gift && (
 							<span className="gift-label">
-								{ translate( 'Gift', { context: 'Label for a gifted subscription' } ) }
+								{ translate( 'Comp', {
+									context: 'Label for a complimentary subscription',
+									comment:
+										'Short for "complimentary" — a free subscription granted by the site creator',
+								} ) }
 							</span>
 						) }
 

@@ -207,7 +207,11 @@ class GoogleMyBusinessStats extends Component {
 				<QueryKeyringServices />
 
 				<div className="stats">
-					<PageHeader />
+					<PageHeader
+						titleProps={ {
+							subtitle: translate( 'Simple, powerful analytics to grow your site.' ),
+						} }
+					/>
 					<StatsNavigation selectedItem="googleMyBusiness" siteId={ siteId } slug={ siteSlug } />
 
 					{ ! locationData && (

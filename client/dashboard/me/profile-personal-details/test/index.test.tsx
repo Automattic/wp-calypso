@@ -5,391 +5,238 @@
 import '@testing-library/jest-dom';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import nock from 'nock';
 import { render } from '../../../test-utils';
-import {
-	mockUserSettings,
-	mockAutomatticianUserSettings,
-} from '../../profile/__mocks__/user-settings';
 import PersonalDetailsSection from '../index';
+import type { UserSettings } from '@automattic/api-core';
 
-// Mock the username validation utils
-jest.mock( '../update-username/username-validation-utils', () => ( {
-	validateUsernameDebounced: jest.fn(),
-	isUsernameValid: jest.fn(),
-	getUsernameValidationMessage: jest.fn(),
-	getAllowedActions: jest.fn( () => ( {} ) ),
-	updateUsername: jest.fn(),
-} ) );
+const settings = {
+	first_name: 'John',
+	last_name: 'Doe',
+	user_login: 'johndoe',
+	user_email: 'john@example.com',
+	email_verified: true,
+	user_login_can_be_changed: true,
+	is_dev_account: false,
+} as unknown as UserSettings;
 
-// Mock email validator
-// Mock the API queries (return query configurations, not data)
-jest.mock( '@automattic/api-queries', () => ( {
-	startSiteCollisionListener: jest.fn( () => jest.fn() ),
-	isAutomatticianQuery: jest.fn( () => ( {
-		queryKey: [ 'me', 'is-automattician' ],
-		queryFn: jest.fn(),
-	} ) ),
-	userSettingsQuery: jest.fn( () => ( {
-		queryKey: [ 'me', 'settings' ],
-		queryFn: jest.fn(),
-	} ) ),
-	userSettingsMutation: jest.fn( () => ( {
-		mutationFn: jest.fn(),
-		onSuccess: jest.fn(),
-	} ) ),
-	updateUsernameMutation: jest.fn( () => ( {
-		mutationFn: jest.fn(),
-		onSuccess: jest.fn(),
-	} ) ),
-	cancelPendingEmailChangeMutation: jest.fn( () => ( {
-		mutationFn: jest.fn(),
-	} ) ),
-	resendEmailVerificationMutation: jest.fn( () => ( {
-		mutationFn: jest.fn(),
-	} ) ),
-} ) );
+function mockUserSettings( data: UserSettings ) {
+	return nock( 'https://public-api.wordpress.com' )
+		.get( '/rest/v1.1/me/settings' )
+		.reply( 200, data );
+}
 
-// Mock WordPress notices
-const mockCreateSuccessNotice = jest.fn();
-const mockCreateErrorNotice = jest.fn();
-jest.mock( '@wordpress/data', () => ( {
-	useDispatch: () => ( {
-		createSuccessNotice: mockCreateSuccessNotice,
-		createErrorNotice: mockCreateErrorNotice,
-	} ),
-	combineReducers: jest.fn( ( reducers ) => reducers ),
-	createReduxStore: jest.fn(),
-	register: jest.fn(),
-	createSelector: jest.fn(),
-	useSelect: jest.fn(),
-	dispatch: jest.fn(),
-} ) );
+function mockValidateUsername( username: string ) {
+	return nock( 'https://public-api.wordpress.com' )
+		.get( `/rest/v1.1/me/username/validate/${ username }` )
+		.reply( 200, { success: true, allowed_actions: { none: 'Keep your current URL' } } );
+}
 
-const renderWithUserData = ( userData = mockUserSettings ) => {
-	// Update the mocked query functions to return test data
-	const { userSettingsQuery, isAutomatticianQuery } = require( '@automattic/api-queries' );
+function mockIsAutomattician( isAutomattician: boolean ) {
+	return nock( 'https://public-api.wordpress.com' )
+		.get( '/rest/v1.2/read/teams' )
+		.reply( 200, {
+			number: isAutomattician ? 1 : 0,
+			teams: isAutomattician ? [ { slug: 'a8c', title: 'Automatticians' } ] : [],
+		} );
+}
 
-	userSettingsQuery.mockReturnValue( {
-		queryKey: [ 'me', 'settings', userData ],
-		queryFn: () => Promise.resolve( userData ),
-	} );
+describe( '<PersonalDetailsSection>', () => {
+	test( 'renders the form and saves the form', async () => {
+		const user = userEvent.setup();
+		mockUserSettings( settings );
+		mockIsAutomattician( false );
 
-	isAutomatticianQuery.mockReturnValue( {
-		queryKey: [ 'me', 'is-automattician' ],
-		queryFn: () => Promise.resolve( userData.user_email?.includes( 'automattic.com' ) || false ),
-	} );
+		render( <PersonalDetailsSection /> );
+		await screen.findByRole( 'heading', { name: 'Personal details' } );
 
-	const result = render( <PersonalDetailsSection /> );
+		expect( screen.getByRole( 'textbox', { name: 'First name' } ) ).toHaveValue( 'John' );
+		expect( screen.getByRole( 'textbox', { name: 'Last name' } ) ).toHaveValue( 'Doe' );
+		expect( screen.getByRole( 'textbox', { name: 'Username' } ) ).toHaveValue( 'johndoe' );
+		expect( screen.getByRole( 'textbox', { name: 'Email address' } ) ).toHaveValue(
+			'john@example.com'
+		);
+		expect( screen.getByRole( 'checkbox', { name: 'I am a developer' } ) ).not.toBeChecked();
 
-	return result;
-};
+		const firstNameInput = screen.getByRole( 'textbox', { name: 'First name' } );
+		await user.clear( firstNameInput );
+		await user.type( firstNameInput, 'Jane' );
 
-describe( 'PersonalDetailsSection', () => {
-	beforeEach( () => {
-		mockCreateSuccessNotice.mockClear();
-		mockCreateErrorNotice.mockClear();
-	} );
+		const lastNameInput = screen.getByRole( 'textbox', { name: 'Last name' } );
+		await user.clear( lastNameInput );
+		await user.type( lastNameInput, 'Smith' );
 
-	describe( 'Basic rendering', () => {
-		it( 'renders the form with all sections', async () => {
-			renderWithUserData();
+		const emailInput = screen.getByRole( 'textbox', { name: 'Email address' } );
+		await user.clear( emailInput );
+		await user.type( emailInput, 'jane@example.com' );
 
-			await waitFor( () => {
-				expect( screen.getByText( 'Personal details' ) ).toBeInTheDocument();
+		const devCheckbox = screen.getByRole( 'checkbox', { name: 'I am a developer' } );
+		await user.click( devCheckbox );
+
+		const scope = nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/me/settings', ( body ) => {
+				expect( body ).toEqual(
+					expect.objectContaining( {
+						first_name: 'Jane',
+						last_name: 'Smith',
+						user_email: 'jane@example.com',
+						is_dev_account: true,
+					} )
+				);
+				return true;
+			} )
+			.reply( 200, {
+				...settings,
+				first_name: 'Jane',
+				last_name: 'Smith',
+				user_email: 'jane@example.com',
+				is_dev_account: true,
 			} );
 
-			expect( screen.getByLabelText( 'First name' ) ).toBeInTheDocument();
-			expect( screen.getByLabelText( 'Last name' ) ).toBeInTheDocument();
-			expect( screen.getByLabelText( 'Username' ) ).toBeInTheDocument();
-			expect( screen.getByLabelText( 'Email address' ) ).toBeInTheDocument();
-			expect( screen.getByLabelText( 'I am a developer' ) ).toBeInTheDocument();
+		await user.click( screen.getByRole( 'button', { name: 'Save' } ) );
 
-			renderWithUserData();
-
-			await waitFor( () => {
-				const saveButton = screen.getByRole( 'button', { name: 'Save' } );
-				expect( saveButton ).toBeInTheDocument();
-				expect( saveButton ).toBeDisabled();
-			} );
+		await waitFor( () => {
+			expect( scope.isDone() ).toBe( true );
 		} );
 	} );
 
-	describe( 'Form interactions', () => {
-		it( 'submits form with updated data', async () => {
+	describe( 'username field', () => {
+		test( 'disables username field for Automatticians', async () => {
+			mockUserSettings( settings );
+			mockIsAutomattician( true );
+
+			render( <PersonalDetailsSection /> );
+
+			await waitFor( () => {
+				expect( screen.getByRole( 'textbox', { name: 'Username' } ) ).toBeDisabled();
+			} );
+			expect( screen.getByText( 'Automatticians cannot change their username.' ) ).toBeVisible();
+		} );
+
+		test( 'disables username field for unverified email users', async () => {
+			mockUserSettings( { ...settings, email_verified: false } as unknown as UserSettings );
+			mockIsAutomattician( false );
+
+			render( <PersonalDetailsSection /> );
+
+			await waitFor( () => {
+				expect( screen.getByRole( 'textbox', { name: 'Username' } ) ).toBeDisabled();
+			} );
+			expect(
+				screen.getByText( 'Username can be changed once your email address is verified.' )
+			).toBeVisible();
+		} );
+
+		test( 'shows username update form and submits username change', async () => {
 			const user = userEvent.setup();
-			renderWithUserData();
+			mockUserSettings( settings );
+			mockIsAutomattician( false );
+			mockValidateUsername( 'newusername' );
+
+			render( <PersonalDetailsSection /> );
 
 			await waitFor( () => {
-				expect( screen.getByDisplayValue( 'Test First Name' ) ).toBeInTheDocument();
+				expect( screen.getByRole( 'textbox', { name: 'Username' } ) ).toHaveValue( 'johndoe' );
 			} );
 
-			const firstNameInput = screen.getByDisplayValue( 'Test First Name' );
-			await user.clear( firstNameInput );
-			await user.type( firstNameInput, 'Updated' );
-
-			const saveButton = screen.getByRole( 'button', { name: 'Save' } );
-			expect( saveButton ).toBeEnabled();
-			await user.click( saveButton );
-
-			expect( saveButton ).toBeInTheDocument();
-		} );
-	} );
-
-	describe( 'Username field restrictions', () => {
-		it( 'disables username field for Automatticians', async () => {
-			renderWithUserData( mockAutomatticianUserSettings );
-
-			await waitFor( () => {
-				const usernameInput = screen.getByLabelText( 'Username' );
-				expect( usernameInput ).toBeDisabled();
-				expect(
-					screen.getByText( 'Automatticians cannot change their username.' )
-				).toBeInTheDocument();
-			} );
-		} );
-
-		it( 'disables username field for unverified email users', async () => {
-			const unverifiedUserData = { ...mockUserSettings, email_verified: false };
-			renderWithUserData( unverifiedUserData );
-
-			await waitFor( () => {
-				const usernameInput = screen.getByLabelText( 'Username' );
-				expect( usernameInput ).toBeDisabled();
-				expect(
-					screen.getByText( 'Username can be changed once your email address is verified.' )
-				).toBeInTheDocument();
-			} );
-		} );
-
-		it( 'enables username field for eligible users', async () => {
-			renderWithUserData();
-
-			await waitFor( () => {
-				const usernameInput = screen.getByLabelText( 'Username' );
-				expect( usernameInput ).toBeEnabled();
-			} );
-		} );
-	} );
-
-	describe( 'Username update flow', () => {
-		it( 'shows username update form when username is changed', async () => {
-			const user = userEvent.setup();
-			const eligibleUserData = {
-				...mockUserSettings,
-				email_verified: true,
-				user_login_can_be_changed: true,
-			};
-			renderWithUserData( eligibleUserData );
-
-			await waitFor( () => {
-				const usernameInput = screen.getByLabelText( 'Username' );
-				expect( usernameInput ).toBeEnabled();
-				expect( usernameInput ).toHaveValue( 'testuser' );
-			} );
-
-			const usernameInput = screen.getByLabelText( 'Username' );
+			const usernameInput = screen.getByRole( 'textbox', { name: 'Username' } );
 			await user.clear( usernameInput );
 			await user.type( usernameInput, 'newusername' );
 
+			const confirmInput = await screen.findByRole( 'textbox', { name: 'Confirm new username' } );
+			await user.type( confirmInput, 'newusername' );
+
+			// Wait for debounced validation to complete
+			await waitFor(
+				() => {
+					expect( screen.getByRole( 'button', { name: 'Change username' } ) ).toBeEnabled();
+				},
+				{ timeout: 2000 }
+			);
+
+			const scope = nock( 'https://public-api.wordpress.com' )
+				.post( '/rest/v1.1/me/username', ( body ) => {
+					expect( body ).toEqual( { username: 'newusername', action: 'none' } );
+					return true;
+				} )
+				.reply( 200, { success: true } );
+
+			await user.click( screen.getByRole( 'button', { name: 'Change username' } ) );
+
+			// Confirm in the modal
+			await user.click( await screen.findByRole( 'button', { name: 'OK' } ) );
+
 			await waitFor( () => {
-				expect( screen.getByText( 'Confirm new username' ) ).toBeInTheDocument();
+				expect( scope.isDone() ).toBe( true );
 			} );
 		} );
 	} );
 
-	describe( 'Success and error states', () => {
-		it( 'shows success notice on successful username change', async () => {
-			Object.defineProperty( window, 'location', {
-				value: {
-					search: '?flash=username',
-					href: 'http://localhost/?flash=username',
-				},
-				writable: true,
-			} );
+	describe( 'email field', () => {
+		test( 'disables email input when email change is pending', async () => {
+			mockUserSettings( {
+				...settings,
+				user_email_change_pending: true,
+				new_user_email: 'pending@example.com',
+			} as unknown as UserSettings );
+			mockIsAutomattician( false );
 
-			Object.defineProperty( window, 'history', {
-				value: {
-					replaceState: jest.fn(),
-				},
-			} );
-
-			renderWithUserData();
+			render( <PersonalDetailsSection /> );
 
 			await waitFor( () => {
-				expect( mockCreateSuccessNotice ).toHaveBeenCalledWith(
-					'Username saved.',
-					expect.objectContaining( {
-						type: 'snackbar',
-					} )
-				);
+				expect( screen.getByRole( 'textbox', { name: 'Email address' } ) ).toBeDisabled();
 			} );
+			expect( screen.getByText( 'Your email has not been verified yet.' ) ).toBeVisible();
 		} );
 
-		it( 'shows error notice on username mutation error', async () => {
-			// Access the mocked function to override the behavior for this test
-			const { updateUsernameMutation } = require( '@automattic/api-queries' );
-			updateUsernameMutation.mockReturnValue( {
-				mutationFn: jest.fn().mockRejectedValue( new Error( 'Username update failed' ) ),
-				meta: {
-					snackbar: {
-						error: 'Failed to update username.',
-					},
-				},
-			} );
-
-			const eligibleUserData = {
-				...mockUserSettings,
-				email_verified: true,
-				user_login_can_be_changed: true,
-			};
-
-			renderWithUserData( eligibleUserData );
-
-			await waitFor( () => {
-				expect( screen.getByLabelText( 'Username' ) ).toBeInTheDocument();
-			} );
-
-			expect( updateUsernameMutation ).toHaveBeenCalledWith();
-			expect( updateUsernameMutation().meta.snackbar.error ).toBe( 'Failed to update username.' );
-		} );
-	} );
-
-	describe( 'Accessibility', () => {
-		it( 'has proper ARIA labels and structure', async () => {
-			renderWithUserData();
-
-			await waitFor( () => {
-				expect( screen.getByRole( 'form' ) ).toHaveAttribute(
-					'aria-labelledby',
-					'personal-details-heading'
-				);
-				expect( screen.getByRole( 'heading', { name: 'Personal details' } ) ).toHaveAttribute(
-					'id',
-					'personal-details-heading'
-				);
-			} );
-		} );
-
-		it( 'has proper ARIA attributes for success notice', async () => {
-			Object.defineProperty( window, 'location', {
-				value: {
-					search: '?flash=username',
-					href: 'http://localhost/?flash=username',
-				},
-				writable: true,
-			} );
-
-			Object.defineProperty( window, 'history', {
-				value: {
-					replaceState: jest.fn(),
-				},
-			} );
-
-			renderWithUserData();
-
-			await waitFor( () => {
-				expect( mockCreateSuccessNotice ).toHaveBeenCalledWith(
-					'Username saved.',
-					expect.objectContaining( {
-						type: 'snackbar',
-					} )
-				);
-			} );
-		} );
-	} );
-
-	describe( 'Email validation and Save button', () => {
-		it( 'disables save when email is invalid', async () => {
+		test( 'cancels pending email change', async () => {
 			const user = userEvent.setup();
-			renderWithUserData();
+			mockUserSettings( {
+				...settings,
+				user_email_change_pending: true,
+				new_user_email: 'pending@example.com',
+			} as unknown as UserSettings );
+			mockIsAutomattician( false );
+
+			render( <PersonalDetailsSection /> );
+
+			const scope = nock( 'https://public-api.wordpress.com' )
+				.post( '/rest/v1.1/me/settings', ( body ) => {
+					expect( body ).toEqual( expect.objectContaining( { user_email_change_pending: false } ) );
+					return true;
+				} )
+				.reply( 200, {
+					...settings,
+					user_email_change_pending: false,
+				} );
+
+			const cancelButton = await screen.findByRole( 'button', {
+				name: 'Cancel the pending email change.',
+			} );
+			await user.click( cancelButton );
 
 			await waitFor( () => {
-				expect( screen.getByLabelText( 'Email address' ) ).toBeInTheDocument();
+				expect( scope.isDone() ).toBe( true );
+			} );
+		} );
+
+		test( 'disables save when email is invalid', async () => {
+			const user = userEvent.setup();
+			mockUserSettings( settings );
+			mockIsAutomattician( false );
+
+			render( <PersonalDetailsSection /> );
+
+			await waitFor( () => {
+				expect( screen.getByRole( 'textbox', { name: 'Email address' } ) ).toBeVisible();
 			} );
 
-			const emailInput = screen.getByLabelText( 'Email address' );
+			const emailInput = screen.getByRole( 'textbox', { name: 'Email address' } );
 			await user.clear( emailInput );
 			await user.type( emailInput, 'invalid-email' );
 
 			await waitFor( () => {
-				const saveButton = screen.getByRole( 'button', { name: 'Save' } );
-				expect( saveButton ).toBeDisabled();
-			} );
-		} );
-
-		it( 'disables save when email is invalid even if other fields are edited', async () => {
-			const user = userEvent.setup();
-			renderWithUserData();
-
-			await waitFor( () => {
-				expect( screen.getByDisplayValue( 'Test First Name' ) ).toBeInTheDocument();
-			} );
-
-			// Edit first name
-			const firstNameInput = screen.getByDisplayValue( 'Test First Name' );
-			await user.clear( firstNameInput );
-			await user.type( firstNameInput, 'UpdatedName' );
-
-			// Enter invalid email
-			const emailInput = screen.getByLabelText( 'Email address' );
-			await user.clear( emailInput );
-			await user.type( emailInput, 'invalid-email' );
-
-			await waitFor( () => {
-				const saveButton = screen.getByRole( 'button', { name: 'Save' } );
-				expect( saveButton ).toBeDisabled();
-			} );
-		} );
-
-		it( 'enables save when email becomes valid after being invalid', async () => {
-			const user = userEvent.setup();
-			renderWithUserData();
-
-			await waitFor( () => {
-				expect( screen.getByLabelText( 'Email address' ) ).toBeInTheDocument();
-			} );
-
-			// Edit first name to make form dirty
-			const firstNameInput = screen.getByDisplayValue( 'Test First Name' );
-			await user.clear( firstNameInput );
-			await user.type( firstNameInput, 'UpdatedName' );
-
-			// Enter invalid email
-			const emailInput = screen.getByLabelText( 'Email address' );
-			await user.clear( emailInput );
-			await user.type( emailInput, 'invalid' );
-
-			await waitFor( () => {
-				const saveButton = screen.getByRole( 'button', { name: 'Save' } );
-				expect( saveButton ).toBeDisabled();
-			} );
-
-			// Fix email to be valid
-			await user.clear( emailInput );
-			await user.type( emailInput, 'valid@example.com' );
-
-			await waitFor( () => {
-				const saveButton = screen.getByRole( 'button', { name: 'Save' } );
-				expect( saveButton ).toBeEnabled();
-			} );
-		} );
-
-		it( 'keeps save enabled when email is unchanged and other fields are edited', async () => {
-			const user = userEvent.setup();
-			renderWithUserData();
-
-			await waitFor( () => {
-				expect( screen.getByDisplayValue( 'Test First Name' ) ).toBeInTheDocument();
-			} );
-
-			// Only edit first name, leave email unchanged
-			const firstNameInput = screen.getByDisplayValue( 'Test First Name' );
-			await user.clear( firstNameInput );
-			await user.type( firstNameInput, 'UpdatedName' );
-
-			await waitFor( () => {
-				const saveButton = screen.getByRole( 'button', { name: 'Save' } );
-				expect( saveButton ).toBeEnabled();
+				expect( screen.getByRole( 'button', { name: 'Save' } ) ).toBeDisabled();
 			} );
 		} );
 	} );

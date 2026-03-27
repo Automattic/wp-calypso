@@ -2,7 +2,11 @@
 @import '../../styles/mixins.scss';
 
 @mixin sidebar-base( $main-container-selector ) {
-	background-color: $gray-900 !important;
+	// Also set the background color for the sidebar chat to prevent transparency issues during transitions (e.g., site editor)
+	&,
+	.agents-manager-chat {
+		background-color: $gray-900 !important;
+	}
 
 	#{$main-container-selector} {
 		will-change: width, margin, border-radius;
@@ -191,6 +195,10 @@ body:is( [class*='is-group-'], [class*='is-section-'] ).agents-manager-sidebar-c
 			box-sizing: border-box;
 			height: calc( var( --masterbar-height ) + 1px );
 
+			.masterbar__item-wrapper .masterbar__item-my-sites {
+				border-top-left-radius: $main-border-radius;
+			}
+
 			.masterbar__section.masterbar__section--left {
 				overflow: hidden;
 			}
@@ -207,6 +215,11 @@ body:is( [class*='is-group-'], [class*='is-section-'] ).agents-manager-sidebar-c
 			.masterbar__item.is-active {
 				cursor: pointer;
 			}
+		}
+
+		// Hide the outward border that protrudes into the agents manager sidebar
+		.is-global-sidebar-visible .masterbar__item.has-global-border::after {
+			display: none;
 		}
 
 		#content {
@@ -299,13 +312,11 @@ body.is-section-stepper.agents-manager-sidebar-container {
 }
 
 /* Calypso: Fix sticky headers on marketplace pages when the sidebar is open */
-.agents-manager-sidebar-container--sidebar-open
-	.layout__secondary
-	~ .layout__primary {
+.agents-manager-sidebar-container--sidebar-open .layout__secondary ~ .layout__primary {
 	.plugins-browser--site-view .search-categories.fixed-top {
 		top: calc( $admin-bar-height + $layout-spacing + 1px );
 		right: calc( $sidebar-width + 1px );
-		left: calc( var(--sidebar-width-max) + 17px );
+		left: calc( var( --sidebar-width-max ) + 17px );
 
 		&::after {
 			width: calc( 100vw - var( --sidebar-width-max ) - $sidebar-width - 18px );
@@ -314,7 +325,7 @@ body.is-section-stepper.agents-manager-sidebar-container {
 
 	.themes__content .themes__controls.is-sticky:not( .is-global-sidebar-visible ) {
 		top: calc( $admin-bar-height + $layout-spacing + 1px );
-		left: calc( var(--sidebar-width-max) + 17px );
+		left: calc( var( --sidebar-width-max ) + 17px );
 		width: calc( 100vw - var( --sidebar-width-max ) - $sidebar-width - 18px );
 	}
 }
@@ -438,6 +449,11 @@ body.post-new-php.agents-manager-sidebar-container {
 			width: fit-content;
 			margin-top: 20px;
 		}
+	}
+
+	// Prevent content overflow
+	.Message-module_content {
+		width: 100%;
 	}
 
 	.big-sky__chat-actions {
@@ -593,62 +609,59 @@ body.post-new-php.agents-manager-sidebar-container {
 }
 
 /* Agenttic UI: Styles for the docked chat */
-.agents-manager-chat--docked .agenttic {
-	.Message-module_message {
-		.big-sky__dock__menu__variation-picker {
-			min-height: unset;
+@include docked-chat-without-modal {
+	.agenttic {
+		.Message-module_message {
+			.big-sky__dock__menu__variation-picker {
+				min-height: unset;
 
-			.edit-site-global-styles-variations_item {
-				&.is-active,
-				&:focus-visible {
+				.edit-site-global-styles-variations_item {
+					&.is-active,
+					&:focus-visible {
+						.edit-site-global-styles-variations_item-preview {
+							outline: 1px solid $gray-400;
+							outline-offset: 1px;
+						}
+					}
+
+					&:not( .is-active ):hover {
+						.edit-site-global-styles-variations_item-preview {
+							outline-color: $gray-600;
+						}
+					}
+
 					.edit-site-global-styles-variations_item-preview {
-						outline: 1px solid $gray-400;
-						outline-offset: 1px;
+						outline: 1px solid #545454;
+						overflow: hidden;
 					}
 				}
+			}
 
-				&:not( .is-active ):hover {
-					.edit-site-global-styles-variations_item-preview {
-						outline-color: $gray-600;
+			.big-sky__item-picker__arrows {
+				bottom: -40px;
+
+				.components-button {
+					color: $gray-700;
+
+					&:not( :disabled ):hover {
+						color: $gray-100;
+					}
+
+					&:disabled {
+						opacity: 0.5;
+					}
+
+					&.is-pressed {
+						color: $gray-100;
+						background-color: #484848;
 					}
 				}
+			}
 
-				.edit-site-global-styles-variations_item-preview {
-					outline: 1px solid #545454;
-					overflow: hidden;
-				}
+			.big-sky__item-picker__pager {
+				color: $gray-400;
 			}
 		}
-
-		.big-sky__item-picker__arrows {
-			bottom: -40px;
-
-			.components-button {
-				color: $gray-700;
-
-				&:not( :disabled ):hover {
-					color: $gray-100;
-				}
-
-				&:disabled {
-					opacity: 0.5;
-				}
-
-				&.is-pressed {
-					color: $gray-100;
-					background-color: #484848;
-				}
-			}
-		}
-
-		.big-sky__item-picker__pager {
-			color: $gray-400;
-		}
-	}
-
-	// Prevent item picker content overflow (e.g., Patterns)
-	.Message-module_content {
-		width: 100%;
 	}
 }
 

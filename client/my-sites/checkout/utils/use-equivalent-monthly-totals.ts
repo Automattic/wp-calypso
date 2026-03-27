@@ -58,3 +58,23 @@ export default function useEquivalentMonthlyTotals(
 		[ eligibleProducts, pricing ]
 	);
 }
+
+/**
+ * Returns the original amount integer for a product, used for displaying a crossed-out price.
+ * For renewals, this is always the product's own original subtotal (not the monthly equivalent),
+ * since the monthly comparison is only meaningful for new purchases.
+ *
+ * @param product - The cart product.
+ * @param monthlyPrices - Map of plan slug to equivalent monthly total, from `useEquivalentMonthlyTotals`.
+ */
+export function getOriginalAmountIntegerForDisplay(
+	product: ResponseCartProduct,
+	monthlyPrices: Record< PlanSlug, number >
+): number {
+	if ( product.is_renewal ) {
+		return product.item_original_subtotal_integer;
+	}
+	return (
+		monthlyPrices[ product.product_slug as PlanSlug ] || product.item_original_subtotal_integer
+	);
+}

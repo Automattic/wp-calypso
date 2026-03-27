@@ -24,12 +24,8 @@
 		}
 
 		&.header {
-			padding-bottom: $font-code;
+			padding-bottom: 12px;
 			padding-top: 0;
-
-			@media (max-width: $break-small) {
-				display: none;
-			}
 		}
 
 		.title-cell {
@@ -113,6 +109,11 @@
 			@media (max-width: $break-xlarge) {
 				display: none;
 			}
+		}
+
+		.unsubscribe-action-cell {
+			flex: initial;
+			flex-basis: 45px;
 		}
 
 		.actions-cell {

@@ -306,4 +306,24 @@ describe( 'LoginPageWrapper', () => {
 		fireEvent.click( screen.getByRole( 'link', { name: 'Create an account' } ) );
 		expect( onPrimaryClick ).toHaveBeenCalledTimes( 1 );
 	} );
+
+	it( 'adds noopener noreferrer for _blank top bar links', () => {
+		render(
+			<LoginPageWrapper
+				title="Log in"
+				primaryNavLink={ {
+					label: 'Create an account',
+					href: '/start/account',
+					target: '_blank',
+				} }
+			>
+				<div>Form content</div>
+			</LoginPageWrapper>
+		);
+
+		expect( screen.getByRole( 'link', { name: 'Create an account' } ) ).toHaveAttribute(
+			'rel',
+			'noopener noreferrer'
+		);
+	} );
 } );

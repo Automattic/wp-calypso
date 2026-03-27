@@ -38,11 +38,6 @@ export function canViewHundredYearPlanSettings( site: Site ) {
 	);
 }
 
-export function canViewSiteVisibilitySettings( site: Site ) {
-	// Site Visibility is a Jetpack feature; Flex sites don't have Jetpack by default.
-	return ! site.is_wpcom_flex;
-}
-
 // Settings -> Server
 
 export function canViewWordPressSettings( site: Site ) {
@@ -67,6 +62,10 @@ export function canLeaveSite( site: Site ) {
 		! isP2( site ) &&
 		! isSelfHostedJetpackConnected( site )
 	);
+}
+
+export function canDisconnectSite( site: Site ) {
+	return !! site.capabilities?.manage_options && isSelfHostedJetpackConnected( site );
 }
 
 export function canResetSite( site: Site ) {

@@ -2,6 +2,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import ThreatHistoryList from 'calypso/components/jetpack/threat-history-list';
+import JetpackTitle from 'calypso/components/jetpack-title';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
@@ -32,7 +33,11 @@ export default function ScanHistoryPage( { filter }: Props ) {
 			{ isJetpackPlatform && <SidebarNavigation /> }
 			<PageViewTracker path="/scan/history/:site" title="Scan History" />
 			{ ! ( isJetpackPlatform || isA8CForAgencies() ) && (
-				<NavigationHeader navigationItems={ [] } title={ translate( 'Jetpack Scan' ) } />
+				<NavigationHeader
+					navigationItems={ [] }
+					title={ <JetpackTitle title={ translate( 'Scan' ) } /> }
+					subtitle={ translate( 'Automated malware scanning and firewall protection.' ) }
+				/>
 			) }
 
 			<ScanNavigation section="history" />

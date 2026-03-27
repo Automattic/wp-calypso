@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import { SiteSubscriptionsQueryPropsProvider } from '@automattic/data-stores/src/reader/contexts';
 import { act, screen } from '@testing-library/react';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -25,9 +26,16 @@ jest.mock( 'calypso/landing/subscriptions/components/site-subscriptions-list', (
 	SiteSubscriptionsList: jest.fn( () => <div data-testid="site-subscriptions-list" /> ),
 } ) );
 
+jest.mock( 'calypso/reader/site-subscriptions-manager/unsubscribed-feeds-search-list', () => ( {
+	UnsubscribedFeedsSearchList: jest.fn( () => (
+		<div data-testid="unsubscribed-feeds-search-list" />
+	) ),
+} ) );
+
 jest.mock( 'calypso/state/current-user/selectors', () => ( {
 	isCurrentUserEmailVerified: jest.fn(),
 } ) );
+
 const mockIsCurrentUserEmailVerified = jest.mocked( isCurrentUserEmailVerified );
 
 const mockRequestFollows = jest.fn( () => ( { type: 'REQUEST_FOLLOWS' } ) );
@@ -78,12 +86,30 @@ describe( 'AddSubscriptionForm', () => {
 
 			renderWithProvider( <AddSubscriptionForm type="add-new" /> );
 
-			expect( screen.getByText( 'Your subscriptions' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Your subscriptions' ) ).toBeVisible();
 			expect( screen.getByTestId( 'site-subscriptions-list' ) ).toBeInTheDocument();
 			expect( SiteSubscriptionsList ).toHaveBeenCalledWith(
 				expect.objectContaining( { layout: 'compact' } ),
 				expect.anything()
 			);
+		} );
+
+		it( 'shows the related sites list when there is a search term', () => {
+			renderWithProvider(
+				<SiteSubscriptionsQueryPropsProvider initialSearchTermState="example">
+					<AddSubscriptionForm type="add-new" />
+				</SiteSubscriptionsQueryPropsProvider>
+			);
+			expect( screen.getByTestId( 'unsubscribed-feeds-search-list' ) ).toBeInTheDocument();
+		} );
+
+		it( 'does not show the related sites list when there is no search term', () => {
+			renderWithProvider(
+				<SiteSubscriptionsQueryPropsProvider initialSearchTermState="">
+					<AddSubscriptionForm type="add-new" />
+				</SiteSubscriptionsQueryPropsProvider>
+			);
+			expect( screen.queryByTestId( 'unsubscribed-feeds-search-list' ) ).not.toBeInTheDocument();
 		} );
 
 		it( 'does not dispatch requestFollows on subscribe toggle', () => {
@@ -100,6 +126,7 @@ describe( 'AddSubscriptionForm', () => {
 			expect( screen.getByTestId( 'site-subscriptions-list' ) ).toBeInTheDocument();
 
 			act( () => capturedOnChangeFeedPreview( true ) );
+			expect( screen.queryByText( 'Your subscriptions' ) ).not.toBeInTheDocument();
 
 			expect( screen.queryByTestId( 'site-subscriptions-list' ) ).not.toBeInTheDocument();
 		} );

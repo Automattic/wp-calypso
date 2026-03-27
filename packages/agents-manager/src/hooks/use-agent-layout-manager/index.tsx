@@ -173,7 +173,7 @@ export default function useAgentLayoutManager( {
 	);
 
 	const handleOpenSidebar = useCallback( () => {
-		if ( ! isReady || ! container ) {
+		if ( ! isReady || ! container || ! canDock ) {
 			return;
 		}
 
@@ -181,10 +181,10 @@ export default function useAgentLayoutManager( {
 		container.classList.add( 'agents-manager-sidebar-container--sidebar-open' );
 
 		onOpenSidebarRef.current();
-	}, [ container, isReady ] );
+	}, [ canDock, container, isReady ] );
 
 	const handleCloseSidebar = useCallback( () => {
-		if ( ! isReady || ! container ) {
+		if ( ! isReady || ! container || ! canDock ) {
 			return;
 		}
 
@@ -192,7 +192,7 @@ export default function useAgentLayoutManager( {
 		container.classList.remove( 'agents-manager-sidebar-container--sidebar-open' );
 
 		onCloseSidebarRef.current();
-	}, [ container, isReady ] );
+	}, [ canDock, container, isReady ] );
 
 	const dock = useCallback( () => {
 		if ( ! isReady || ! container ) {

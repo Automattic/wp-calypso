@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { capitalize, find } from 'lodash';
 import DocumentHead from 'calypso/components/data/document-head';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import JetpackTitle from 'calypso/components/jetpack-title';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import SectionNav from 'calypso/components/section-nav';
@@ -53,7 +54,7 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 		'ads-settings': translate( '%(wordads)s Settings', { args: { wordads: adsProgramName } } ),
 		'ads-payments': translate( '%(wordads)s Payments', { args: { wordads: adsProgramName } } ),
 		payments: translate( 'Payment Settings' ),
-		'paid-subscriptions': translate( 'Active Paid Subscriptions' ),
+		'paid-subscriptions': translate( 'Paid Subscribers' ),
 		'refer-a-friend': translate( 'Refer-a-Friend Program' ),
 	};
 
@@ -66,7 +67,7 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 				id: 'earn',
 			},
 			{
-				title: translate( 'Active Paid Subscriptions' ),
+				title: translate( 'Paid Subscribers' ),
 				path: earnPath + '/paid-subscriptions' + pathSuffix,
 				id: 'paid-subscriptions',
 			},
@@ -253,7 +254,7 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 				<>
 					<NavigationHeader
 						navigationItems={ [] }
-						title={ translate( 'Monetize' ) }
+						title={ <JetpackTitle title={ translate( 'Monetize' ) } /> }
 						subtitle={ translate(
 							'Explore tools to earn money with your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 							{

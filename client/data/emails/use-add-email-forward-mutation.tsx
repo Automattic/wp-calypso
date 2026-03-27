@@ -8,7 +8,12 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getCacheKey as getEmailAccountsQueryKey } from './use-get-email-accounts-query';
-import type { ResponseError } from './types';
+import type {
+	AddEmailForwardResponse,
+	DomainsQueryData,
+	EmailAccountsQueryData,
+	ResponseError,
+} from './types';
 import type { UseMutationOptions } from '@tanstack/react-query';
 
 const ArrayOfFive = new Array( 5 );
@@ -19,7 +24,8 @@ type AddMailboxFormData = {
 };
 
 type Context = {
-	[ key: string ]: any;
+	emailAccountsQueryData: EmailAccountsQueryData | undefined;
+	domainsQueryData: DomainsQueryData | undefined;
 };
 
 const MUTATION_KEY = 'addEmailForward';
@@ -41,7 +47,7 @@ export function useIsLoading() {
 export default function useAddEmailForwardMutation(
 	domainName: string,
 	mutationOptions: Omit<
-		UseMutationOptions< any, ResponseError, AddMailboxFormData, Context >,
+		UseMutationOptions< AddEmailForwardResponse, ResponseError, AddMailboxFormData, Context >,
 		'mutationFn'
 	> = {}
 ) {
@@ -74,11 +80,12 @@ export default function useAddEmailForwardMutation(
 		await queryClient.cancelQueries( { queryKey: emailAccountsQueryKey } );
 		await queryClient.cancelQueries( { queryKey: domainsQueryKey } );
 
-		const previousEmailAccountsQueryData = queryClient.getQueryData< any >( emailAccountsQueryKey );
+		const previousEmailAccountsQueryData =
+			queryClient.getQueryData< EmailAccountsQueryData >( emailAccountsQueryKey );
 		const emailForwards = previousEmailAccountsQueryData?.accounts?.[ 0 ]?.emails;
 
 		// Optimistically add email forward to `useGetEmailAccountsQuery` data
-		if ( emailForwards ) {
+		if ( previousEmailAccountsQueryData && emailForwards ) {
 			const newEmailForwards = orderBy(
 				[
 					...emailForwards,
@@ -108,7 +115,8 @@ export default function useAddEmailForwardMutation(
 			} );
 		}
 
-		const previousDomainsQueryData = queryClient.getQueryData< any >( domainsQueryKey );
+		const previousDomainsQueryData =
+			queryClient.getQueryData< DomainsQueryData >( domainsQueryKey );
 
 		// Optimistically increment `email_forwards_count` in `useGetDomainsQuery` data
 		if ( previousDomainsQueryData ) {
@@ -133,8 +141,8 @@ export default function useAddEmailForwardMutation(
 		}
 
 		return {
-			[ JSON.stringify( emailAccountsQueryKey ) ]: previousEmailAccountsQueryData,
-			[ JSON.stringify( domainsQueryKey ) ]: previousDomainsQueryData,
+			emailAccountsQueryData: previousEmailAccountsQueryData,
+			domainsQueryData: previousDomainsQueryData,
 		};
 	};
 
@@ -142,12 +150,8 @@ export default function useAddEmailForwardMutation(
 		suppliedOnError?.( error, variables, context );
 
 		if ( context ) {
-			queryClient.setQueryData(
-				emailAccountsQueryKey,
-				context[ JSON.stringify( emailAccountsQueryKey ) ]
-			);
-
-			queryClient.setQueryData( domainsQueryKey, context[ JSON.stringify( domainsQueryKey ) ] );
+			queryClient.setQueryData( emailAccountsQueryKey, context.emailAccountsQueryData );
+			queryClient.setQueryData( domainsQueryKey, context.domainsQueryData );
 		}
 
 		const noticeComponents = {
@@ -183,7 +187,7 @@ export default function useAddEmailForwardMutation(
 		dispatch( errorNotice( errorMessage ) );
 	};
 
-	return useMutation< any, ResponseError, AddMailboxFormData, Context >( {
+	return useMutation< AddEmailForwardResponse, ResponseError, AddMailboxFormData, Context >( {
 		mutationFn: ( { mailbox, destinations } ) =>
 			wp.req.post( `/domains/${ encodeURIComponent( domainName ) }/email/new`, {
 				mailbox,

@@ -6,6 +6,8 @@
 import { store as blockEditorStore } from '@wordpress/block-editor';
 import { select } from '@wordpress/data';
 import { store as imageStudioStore } from '../store';
+import type { ImageStudioEntryPoint } from '../store';
+import type { BlockEditorSelectors, CoreDataSelectors, WPBlock } from '../types/wordpress.d';
 
 export interface ImageStudioMetadata {
 	id?: number;
@@ -20,7 +22,10 @@ export interface ImageStudioData {
 	isOpen: boolean;
 	id: number | null;
 	style?: string;
+	aspect_ratio?: string;
 	metadata: ImageStudioMetadata;
+	entryPoint: ImageStudioEntryPoint | null;
+	blockType: string | null;
 }
 
 export interface PageContentBlock {
@@ -35,12 +40,29 @@ export interface ImageStudioClientContext extends Record< string, unknown > {
 	url: string;
 	pathname: string;
 	search: string;
-	environment: 'wp-admin';
+	environment: 'wp-admin' | 'image-studio';
 	imageStudio?: ImageStudioData;
 	currentPageContent?: PageContentBlock[];
+	constructorArguments?: {
+		skip_storage?: boolean;
+	};
 }
 
 const TEMPLATE_PART_SLUGS = [ 'header', 'header-hero', 'footer' ];
+
+/**
+ * Extract rendered text from a WordPress entity field that may be
+ * either a plain string or a `{ rendered: string }` object.
+ */
+function getRenderedText( field: string | { rendered: string } | undefined ): string | undefined {
+	if ( ! field ) {
+		return undefined;
+	}
+	if ( typeof field === 'string' ) {
+		return field;
+	}
+	return field.rendered;
+}
 
 /**
  * Recursively process blocks to resolve template part inner blocks.
@@ -48,10 +70,10 @@ const TEMPLATE_PART_SLUGS = [ 'header', 'header-hero', 'footer' ];
  * they must be fetched separately from the block editor store.
  */
 function processTemplatePartBlocks(
-	blocks: any[],
-	getBlocks: ( clientId?: string ) => any[]
-): any[] {
-	return blocks.map( ( block: any ) => {
+	blocks: WPBlock[],
+	getBlocks: ( clientId?: string ) => WPBlock[]
+): WPBlock[] {
+	return blocks.map( ( block: WPBlock ) => {
 		const processed = { ...block };
 
 		if ( block.name === 'core/template-part' || block.name === 'core/post-content' ) {
@@ -75,7 +97,8 @@ function processTemplatePartBlocks(
  */
 function getCurrentPageContent(): PageContentBlock[] | null {
 	try {
-		const blockEditorSelect = select( blockEditorStore ) as any;
+		// TODO: remove cast when @wordpress/block-editor exports store types
+		const blockEditorSelect = select( blockEditorStore ) as unknown as BlockEditorSelectors;
 		if ( ! blockEditorSelect ) {
 			return null;
 		}
@@ -106,8 +129,9 @@ function getCurrentPageContent(): PageContentBlock[] | null {
 
 		// Filter content blocks (exclude known template parts)
 		const contentBlocks = rootBlocks.filter(
-			( b: any ) =>
-				b.name !== 'core/template-part' || ! TEMPLATE_PART_SLUGS.includes( b.attributes?.slug )
+			( b: WPBlock ) =>
+				b.name !== 'core/template-part' ||
+				! TEMPLATE_PART_SLUGS.includes( b.attributes?.slug as string )
 		);
 
 		// Get inner blocks of header and footer
@@ -164,7 +188,7 @@ function getCurrentPageContent(): PageContentBlock[] | null {
  */
 function detectImageEntity(): ImageStudioData | null {
 	try {
-		const storeSelect = select( imageStudioStore ) as any;
+		const storeSelect = select( imageStudioStore );
 		if ( ! storeSelect ) {
 			return null;
 		}
@@ -172,24 +196,32 @@ function detectImageEntity(): ImageStudioData | null {
 		const attachmentId = storeSelect.getImageStudioAttachmentId?.();
 		const isOpen = storeSelect.getIsImageStudioOpen?.() || false;
 		const selectedStyle = storeSelect.getSelectedStyle?.() || null;
-		const originalAttachmentId = storeSelect.getOriginalAttachmentId?.() || null;
+		const selectedAspectRatio = storeSelect.getSelectedAspectRatio?.() || null;
 
-		// Generate mode = opened without an existing image
-		const isGenerateMode = originalAttachmentId === null;
+		// Entrypoint for image studio context
+		const entryPoint = storeSelect.getEntryPoint?.() || null;
+
+		const blockType = storeSelect.getBlockType?.() || null;
 
 		const imageStudio: ImageStudioData = {
 			isOpen,
 			id: attachmentId,
+			entryPoint, // 'editor_block' | 'media_library' | etc.
+			blockType, // 'core/image' | etc.
 			metadata: {},
 		};
 
-		// Only include style for generate mode
-		if ( selectedStyle && isGenerateMode ) {
+		if ( selectedStyle ) {
 			imageStudio.style = selectedStyle;
 		}
 
+		if ( selectedAspectRatio ) {
+			imageStudio.aspect_ratio = selectedAspectRatio;
+		}
+
 		// Try to get attachment metadata from core store
-		const coreSelect = select( 'core' ) as any;
+		// TODO: remove cast when @wordpress/core-data exports store types
+		const coreSelect = select( 'core' ) as unknown as CoreDataSelectors;
 		const attachment = attachmentId
 			? coreSelect.getEntityRecord?.( 'postType', 'attachment', attachmentId )
 			: null;
@@ -197,11 +229,11 @@ function detectImageEntity(): ImageStudioData | null {
 		if ( attachment ) {
 			imageStudio.metadata = {
 				id: attachment.id,
-				title: attachment.title?.rendered || attachment.title,
+				title: getRenderedText( attachment.title ),
 				alt: attachment.alt_text,
 				width: attachment.media_details?.width,
 				height: attachment.media_details?.height,
-				description: attachment.description?.rendered || attachment.description,
+				description: getRenderedText( attachment.description ),
 			};
 		}
 
@@ -219,7 +251,7 @@ export function getClientContext(): ImageStudioClientContext {
 		url: window.location.href,
 		pathname: window.location.pathname,
 		search: window.location.search,
-		environment: 'wp-admin',
+		environment: imageStudio?.isOpen ? 'image-studio' : 'wp-admin',
 	};
 
 	if ( imageStudio ) {
@@ -230,8 +262,6 @@ export function getClientContext(): ImageStudioClientContext {
 	if ( currentPageContent ) {
 		context.currentPageContent = currentPageContent;
 	}
-
-	window.console?.log?.( '[Image Studio] Client context:', context );
 
 	return context;
 }

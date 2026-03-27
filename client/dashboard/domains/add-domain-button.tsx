@@ -1,3 +1,5 @@
+import { siteBySlugQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { Button, Dropdown, MenuItem } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -7,9 +9,9 @@ import { useAppContext } from '../app/context';
 import { siteRoute } from '../app/router/sites';
 import { getCurrentDashboard } from '../app/routing';
 import { getDomainConnectionSetupTemplateUrl } from '../utils/domain-url';
-import { wpcomLink } from '../utils/link';
+import { redirectToDashboardLink, wpcomLink } from '../utils/link';
 
-function buildDomainQueryArgs( siteSlug?: string ) {
+function buildDomainQueryArgs( siteSlug?: string, adminUrl?: string ) {
 	const queryArgs: Record< string, string > = {};
 
 	if ( siteSlug ) {
@@ -17,7 +19,14 @@ function buildDomainQueryArgs( siteSlug?: string ) {
 		queryArgs.domainConnectionSetupUrl = getDomainConnectionSetupTemplateUrl();
 	}
 
-	queryArgs.dashboard = getCurrentDashboard();
+	const dashboard = getCurrentDashboard();
+	queryArgs.dashboard = dashboard;
+
+	if ( dashboard === 'ciab' && adminUrl ) {
+		queryArgs.redirect_to = `${ adminUrl }admin.php?page=next-admin&p=%2Fwoocommerce%2Fonboarding`;
+	}
+
+	queryArgs.back_to = redirectToDashboardLink();
 
 	return queryArgs;
 }
@@ -25,7 +34,8 @@ function buildDomainQueryArgs( siteSlug?: string ) {
 function DomainOnlyAddDomainButton() {
 	const router = useRouter();
 	const { siteSlug } = router.matchRoute( siteRoute.fullPath );
-	const queryArgs = buildDomainQueryArgs( siteSlug );
+	const { data: site } = useQuery( siteBySlugQuery( siteSlug ) );
+	const queryArgs = buildDomainQueryArgs( siteSlug, site?.options?.admin_url );
 
 	const onSearchClick = () => {
 		window.location.href = addQueryArgs(
@@ -53,7 +63,8 @@ function DomainOnlyAddDomainButton() {
 function DefaultAddDomainButton() {
 	const router = useRouter();
 	const { siteSlug } = router.matchRoute( siteRoute.fullPath );
-	const queryArgs = buildDomainQueryArgs( siteSlug );
+	const { data: site } = useQuery( siteBySlugQuery( siteSlug ) );
+	const queryArgs = buildDomainQueryArgs( siteSlug, site?.options?.admin_url );
 
 	const onSearchClick = () => {
 		window.location.href = addQueryArgs( wpcomLink( '/setup/domain' ), queryArgs );

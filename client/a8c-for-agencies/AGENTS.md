@@ -4,6 +4,7 @@
 
 - When creating forms, prefer `@wordpress/components` form controls and patterns directly, following the existing design system.
 - When adding new UI text (especially in new files or files that do not already use translations), use the `@wordpress/i18n` package for translation.
+- When wiring a new page into an existing A4A navigation structure, keep breadcrumbs aligned with the real page hierarchy: sibling pages should inherit from the shared parent breadcrumb trail, not from another sibling page.
 - When implementing non-trivial or complicated logic, add a minimal set of non-redundant tests that cover the key branches and edge cases.
 - When building tabular/list views or form workflows, prefer existing `DataViews` and `DataForm` abstractions where they fit, instead of creating bespoke implementations:
   - **DataViews** – display lists in a tabular, grid, or list format with sorting, filtering, and pagination.
@@ -11,6 +12,11 @@
 - When the same JSX structure repeats in a page component, extract a local sub-component within that page’s directory — not inside a shared/generic component. Generic layout primitives (e.g. `PageSectionColumns`) should stay data-agnostic; the repeated pattern belongs in a component local to the feature.
 - When creating new components or building a new feature that uses `LayoutBody`, put the body content in a separate component in the same directory rather than inlining it.
 - For logic (data fetching, derived state, side effects), use an existing library when it fits; if none exists, extract it into a new custom hook. Keep components readable by avoiding inlined non-trivial logic.
+
+### Analytics and tracking
+
+- When adding new user-facing actions or key flows (e.g. form submissions, modal open/close, option toggles, file uploads), add Tracks events via `recordTracksEvent` from `calypso/state/analytics/actions`.
+- Use the `calypso_a4a_*` event name prefix for A4A-specific events. Include relevant properties where they help analysis.
 
 ### Style Conventions
 

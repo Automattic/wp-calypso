@@ -41,6 +41,7 @@ import { joinClasses } from './join-classes';
 import { LoadingCard, LoadingCopy, LoadingRow } from './loading-card';
 import { getPartnerCoupon } from './partner-coupon';
 import IonosLogo from './partner-logo-ionos';
+import { getSubtotalWithoutDiscountsForProduct } from './transformations';
 import type { LineItemType } from './types';
 import type {
 	GSuiteProductUser,
@@ -1481,6 +1482,21 @@ function CheckoutLineItem( {
 		itemSubtotalInteger < originalAmountInteger && originalAmountDisplay
 	);
 
+	// For products with stacked cost overrides (e.g. premium domains with a
+	// price-increasing intro offer + sale coupon: $80 → $1,100 → $275), show
+	// the pre-discount price ($1,100) crossed out next to the final price.
+	const priceBeforeDiscountsInteger = getSubtotalWithoutDiscountsForProduct( product );
+	const hasStackedPriceIncrease =
+		! isDiscounted &&
+		priceBeforeDiscountsInteger > originalAmountInteger &&
+		itemSubtotalInteger < priceBeforeDiscountsInteger;
+	const stackedCrossedOutDisplay = hasStackedPriceIncrease
+		? formatCurrency( priceBeforeDiscountsInteger, product.currency, {
+				isSmallestUnit: true,
+				stripZeros: true,
+		  } )
+		: undefined;
+
 	const isEmail =
 		isGoogleWorkspaceProductSlug( productSlug ) ||
 		isGSuiteOrExtraLicenseProductSlug( productSlug ) ||
@@ -1570,7 +1586,9 @@ function CheckoutLineItem( {
 					<>
 						<LineItemPrice
 							actualAmount={ actualAmountDisplay }
-							crossedOutAmount={ isDiscounted ? originalAmountDisplay : undefined }
+							crossedOutAmount={
+								stackedCrossedOutDisplay ?? ( isDiscounted ? originalAmountDisplay : undefined )
+							}
 						/>
 					</>
 				) }

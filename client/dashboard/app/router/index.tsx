@@ -3,12 +3,14 @@ import { createRouter, createRoute, redirect } from '@tanstack/react-router';
 import NotFound from '../404';
 import UnknownError from '../500';
 import { handleOnCatch } from '../logger';
+import { startPerformanceTracking } from '../performance-tracking';
 import { createDomainsRoutes } from './domains';
 import { createEmailsRoutes } from './emails';
 import { createMeRoutes } from './me';
 import { createPluginsRoutes } from './plugins';
 import { rootRoute } from './root';
 import { createSitesRoutes } from './sites';
+import { startStoreRoute } from './start-store';
 import type { SiteTypeFeature } from '../../utils/site-type-feature-support';
 import type { AppConfig } from '../context';
 import type { ErrorInfo } from 'react';
@@ -23,6 +25,7 @@ declare module '@tanstack/react-router' {
 		 * The check is performed in siteRoute.beforeLoad against getSiteTypeFeatureSupports(site).
 		 */
 		requiresSiteTypeSupport?: SiteTypeFeature;
+		availableToInaccessibleJetpackSites?: boolean;
 	}
 }
 
@@ -65,6 +68,10 @@ const createRouteTree = ( config: AppConfig ) => {
 		children.push( ...createMeRoutes( config ) );
 	}
 
+	if ( config.supports.startStoreRoute ) {
+		children.push( startStoreRoute );
+	}
+
 	return rootRoute.addChildren( children );
 };
 
@@ -92,6 +99,13 @@ export const getRouter = ( config: AppConfig ) => {
 		// areas.
 		defaultViewTransition: true,
 		scrollRestoration: true,
+	} );
+
+	router.subscribe( 'onBeforeLoad', () => {
+		const routeId = router.state.pendingMatches?.at( -1 )?.routeId;
+		if ( routeId ) {
+			startPerformanceTracking( routeId );
+		}
 	} );
 
 	return router;

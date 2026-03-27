@@ -95,11 +95,7 @@ const saveStep = ( state, { step } ) => {
 	return state.hasOwnProperty( step.stepName )
 		? updateStep( state, {
 				...step,
-				// The pending status means this step needs to delay api requests until the setup-site flow completes
-				// In case the user goes back to an earlier step and changes their intent
-				// So we can mark status as in-progress
-				status:
-					status === 'pending' && step.lastKnownFlow === 'setup-site' ? 'in-progress' : status,
+				status,
 		  } )
 		: addStep( state, { ...step, status: 'in-progress' } );
 };

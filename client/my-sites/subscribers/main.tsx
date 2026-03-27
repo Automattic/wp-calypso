@@ -9,6 +9,7 @@ import Main from 'calypso/components/main';
 import SubscriberValidationGate from 'calypso/components/subscribers-validation-gate';
 import { useCompleteLaunchpadTaskWithNoticeOnLoad } from 'calypso/launchpad/hooks/use-complete-launchpad-task-with-notice-on-load';
 import GiftSubscriptionModal from 'calypso/my-sites/subscribers/components/gift-modal/gift-modal';
+import RemoveCompModal from 'calypso/my-sites/subscribers/components/remove-comp-modal/remove-comp-modal';
 import { SubscriberDataViews } from 'calypso/my-sites/subscribers/components/subscriber-data-views';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { Subscriber } from './types';
@@ -59,12 +60,18 @@ const SubscribersPage = ( { subscriberId }: Props ) => {
 		}
 	}, [ siteId, getSubscribersImports ] );
 
-	const [ giftUserId, setGiftUserId ] = useState( 0 );
+	const [ giftUserId, setGiftUserId ] = useState< number | string | null >( null );
 	const [ giftUsername, setGiftUsername ] = useState( '' );
-	const onGiftSubscription = ( { user_id, display_name }: Subscriber ) => {
-		setGiftUserId( user_id );
+	const onGiftSubscription = ( { user_id, email_address, display_name }: Subscriber ) => {
+		setGiftUserId( user_id || email_address || null );
 		setGiftUsername( display_name );
 	};
+
+	const [ removeComp, setRemoveComp ] = useState< {
+		giftId: number;
+		planName: string;
+		username: string;
+	} | null >( null );
 
 	return (
 		<>
@@ -76,16 +83,30 @@ const SubscribersPage = ( { subscriberId }: Props ) => {
 						siteId={ siteId }
 						isUnverified={ isUnverified }
 						onGiftSubscription={ onGiftSubscription }
+						onRemoveComp={ ( giftId, planName, username ) =>
+							setRemoveComp( { giftId, planName, username } )
+						}
 						subscriberId={ isSubscriberIdValid ? subscriberId : undefined }
 					/>
 
-					{ giftUserId !== 0 && (
+					{ giftUserId !== null && (
 						<GiftSubscriptionModal
 							siteId={ siteId ?? 0 }
 							userId={ giftUserId }
 							username={ giftUsername }
-							onCancel={ () => setGiftUserId( 0 ) }
-							onConfirm={ () => setGiftUserId( 0 ) }
+							onClose={ () => setGiftUserId( null ) }
+							onConfirm={ () => setGiftUserId( null ) }
+						/>
+					) }
+
+					{ removeComp !== null && (
+						<RemoveCompModal
+							siteId={ siteId ?? 0 }
+							giftId={ removeComp.giftId }
+							planName={ removeComp.planName }
+							username={ removeComp.username }
+							onClose={ () => setRemoveComp( null ) }
+							onRemoved={ () => setRemoveComp( null ) }
 						/>
 					) }
 				</SubscriberValidationGate>

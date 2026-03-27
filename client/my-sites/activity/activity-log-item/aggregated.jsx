@@ -62,13 +62,32 @@ class ActivityLogAggregatedItem extends Component {
 
 	renderHeader() {
 		const { activity, isBreakpointActive: isDesktop } = this.props;
-		const { actorAvatarUrl, actorName, actorRole, actorType, multipleActors, activityMedia } =
-			activity;
+		const {
+			actorAvatarUrl,
+			actorName,
+			actorRole,
+			actorType,
+			actorIsMcpAgent,
+			actorMcpClient,
+			multipleActors,
+			activityMedia,
+		} = activity;
 		let actor;
 		if ( multipleActors ) {
 			actor = <ActivityActor actorType="Multiple" />;
 		} else {
-			actor = <ActivityActor { ...{ actorAvatarUrl, actorName, actorRole, actorType } } />;
+			actor = (
+				<ActivityActor
+					{ ...{
+						actorAvatarUrl,
+						actorName,
+						actorRole,
+						actorType,
+						actorIsMcpAgent,
+						actorMcpClient,
+					} }
+				/>
+			);
 		}
 
 		return (

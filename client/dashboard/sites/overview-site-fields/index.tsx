@@ -1,5 +1,6 @@
 import { HostingFeatures } from '@automattic/api-core';
 import { siteAgencyBlogQuery } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { __experimentalText as Text, ExternalLink } from '@wordpress/components';
@@ -70,7 +71,7 @@ const SiteOverviewFields = ( { site }: { site: Site } ) => {
 				</Text>
 			</MetadataItem>
 		);
-	} else {
+	} else if ( ! isEnabled( 'dashboard/omnibar' ) ) {
 		fields.push(
 			<MetadataItem key="url">
 				<ExternalLink href={ url } style={ { overflowWrap: 'anywhere' } }>
@@ -80,7 +81,7 @@ const SiteOverviewFields = ( { site }: { site: Site } ) => {
 		);
 	}
 
-	if ( wpVersion ) {
+	if ( wpVersion && ! site.__inaccessible_jetpack_error ) {
 		fields.push(
 			<MetadataItem key="wp-version" title={ __( 'WordPress' ) }>
 				{ isSelfHostedJetpackConnected( site ) ? (
@@ -92,7 +93,7 @@ const SiteOverviewFields = ( { site }: { site: Site } ) => {
 		);
 	}
 
-	if ( hasPHPFeature ) {
+	if ( hasPHPFeature && ! site.__inaccessible_jetpack_error ) {
 		fields.push(
 			<MetadataItem key="php" title={ __( 'PHP' ) }>
 				<Link to={ `/sites/${ site.slug }/settings/php` }>

@@ -82,7 +82,7 @@ export default function ThemeSupportTab( { themeId } ) {
 						</Button>
 					</Card>
 
-					{ themeTier?.slug === 'community' || themeTier?.slug === 'partner' ? (
+					{ themeTier?.slug === 'community' ? (
 						<Card className="theme__sheet-card-support">
 							<Gridicon icon="notice-outline" size={ 48 } />
 							<div className="theme__sheet-card-support-details">

@@ -27,6 +27,7 @@ object WebApp : Project({
 	buildType(PlaywrightTestPRMatrix)
 	buildType(PlaywrightTestPreReleaseMatrix)
 	buildType(PlaywrightTestDashboardPRMatrix)
+	buildType(PlaywrightTestA4APRMatrix)
 	buildType(JestPreReleaseE2ETests)
 	buildType(PreReleaseE2ETests)
 	buildType(AuthenticationE2ETests)
@@ -40,12 +41,12 @@ object BuildDockerImage : BuildType({
 
     data class EnvConfig(
         val label: String,
-        val baseUrl: String = "https://calypso.live",
         val envQuery: String, // e.g. "" or "&env=jetpack"
         val qrEnv: String,    // e.g. "flags=oauth" or "env=jetpack&flags=oauth"
     )
 
     val imageBase = "registry.a8c.com/calypso/app"
+	val baseUrl = "https://calypso.live"
 
     val environments = listOf(
         EnvConfig(
@@ -70,9 +71,8 @@ object BuildDockerImage : BuildType({
 		),
 		EnvConfig(
 			label = "Dashboard Live (CIAB)",
-			baseUrl = "https://calypso.live/ciab",
-			envQuery = "&env=dashboard",
-			qrEnv = "env=dashboard&flags=oauth",
+			envQuery = "&env=dashboard-ciab",
+			qrEnv = "env=dashboard-ciab&flags=oauth",
 		)
     )
 
@@ -81,11 +81,11 @@ object BuildDockerImage : BuildType({
             appendLine(
                 """
                 <details>
-                  <summary>${env.label} <a href="${env.baseUrl}?image=$imageBase:build-%build.number%${env.envQuery}">(direct link)</a></summary>
+                  <summary>${env.label} <a href="${baseUrl}?image=$imageBase:build-%build.number%${env.envQuery}">(direct link)</a></summary>
                   <table>
                     <tr>
                       <td>
-                        <a href="${env.baseUrl}?image=$imageBase:build-%build.number%${env.envQuery}">${env.baseUrl}?image=$imageBase:build-%build.number%${env.envQuery}</a>
+                        <a href="${baseUrl}?image=$imageBase:build-%build.number%${env.envQuery}">${baseUrl}?image=$imageBase:build-%build.number%${env.envQuery}</a>
                       </td>
                     </tr>
                   </table>
@@ -97,7 +97,9 @@ object BuildDockerImage : BuildType({
     }
 
 	params {
+		text("cache_mode", "seed", label = "Docker build cache mode", description = "How the main Docker build sources warm caches. Allowed values: base, seed, none.", allowEmpty = false)
 		text("base_image", "registry.a8c.com/calypso/base:latest", label = "Base docker image", description = "Base docker image", allowEmpty = false)
+		text("cache_seed_image", "registry.a8c.com/calypso/cache-seed:latest", label = "Cache seed image", description = "Cache-only image used when cache_mode=seed", allowEmpty = false)
 		text("base_image_publish_tag", "latest", label = "Tag to use for the published base image", description = "Base docker image tag", allowEmpty = false)
 		checkbox(
 			name = "MANUAL_SENTRY_RELEASE",
@@ -111,10 +113,21 @@ object BuildDockerImage : BuildType({
 			name = "UPDATE_BASE_IMAGE_CACHE",
 			value = "false",
 			label = "Update the base image from the cache.",
-			description = "Updates the base image by copying .cache files from the current build. Runs on trunk by default if the cache invalidates during the build.",
+			description = "Updates the base image by copying .cache files from the current build. This applies only when cache_mode=base.",
 			checked = "true",
 			unchecked = "false"
 		)
+		checkbox(
+			name = "PROFILE",
+			value = "false",
+			label = "Enable profiling",
+			description = "Enables webpack progress and filesystem cache profiling inside the Docker build.",
+			checked = "true",
+			unchecked = "false"
+		)
+		param("CACHE_SEED_KEY", "")
+		param("UPDATE_CACHE_SEED", "false")
+		param("GENERATE_CACHE_IMAGE", "false")
 		param("env.WEBPACK_CACHE_INVALIDATED", "false")
 	}
 
@@ -183,16 +196,60 @@ object BuildDockerImage : BuildType({
 		mergeTrunk( skipIfConflict = true )
 
 		script {
-			name = "Restore git mtime"
+			name = "Check Docker workspace COPY globs"
 			scriptContent = """
 				#!/usr/bin/env bash
-				sudo apt-get install -y git-restore-mtime
-				/usr/lib/git-core/git-restore-mtime --force --commit-time --skip-missing
+				node ./bin/check-docker-workspace-copy-globs.mjs
 			"""
 			dockerImage = "%docker_image_e2e%"
 			dockerRunParameters = "-u %env.UID%"
-			dockerPull = true
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+		}
+
+		script {
+			name = "Resolve cache-seed state"
+			scriptContent = """
+				#!/usr/bin/env bash
+				set -euo pipefail
+
+				cache_seed_key=$(bash ./bin/print-cache-seed-key.sh)
+				echo "Computed cache-seed key: ${'$'}cache_seed_key"
+				echo "##teamcity[setParameter name='CACHE_SEED_KEY' value='${'$'}cache_seed_key']"
+
+				update_cache_seed=false
+				generate_cache_image=false
+
+				if [[ "%cache_mode%" == "seed" && "%teamcity.build.branch.is_default%" == "true" ]]; then
+					docker pull "%cache_seed_image%" >/dev/null 2>&1 || true
+
+					existing_cache_seed_key=$(
+						docker image inspect "%cache_seed_image%" \
+							--format '{{with index .Config.Labels "io.calypso.cache-seed-key"}}{{.}}{{end}}' \
+							2>/dev/null || true
+					)
+
+					echo "Existing cache-seed key: ${'$'}{existing_cache_seed_key:-<missing>}"
+
+					if [[ -z "${'$'}existing_cache_seed_key" || "${'$'}existing_cache_seed_key" != "${'$'}cache_seed_key" ]]; then
+						echo "Cache-seed image is stale or unlabeled; enabling inline cache regeneration."
+						update_cache_seed=true
+						generate_cache_image=true
+					else
+						echo "Cache-seed image is current."
+					fi
+				elif [[ "%cache_mode%" == "base" && "%UPDATE_BASE_IMAGE_CACHE%" == "true" ]]; then
+					echo "Base mode selected with UPDATE_BASE_IMAGE_CACHE=true; enabling writable cache."
+					generate_cache_image=true
+				else
+					echo "No inline cache refresh required for this build."
+				fi
+
+				echo "UPDATE_CACHE_SEED=${'$'}update_cache_seed"
+				echo "GENERATE_CACHE_IMAGE=${'$'}generate_cache_image"
+
+				echo "##teamcity[setParameter name='UPDATE_CACHE_SEED' value='${'$'}update_cache_seed']"
+				echo "##teamcity[setParameter name='GENERATE_CACHE_IMAGE' value='${'$'}generate_cache_image']"
+			""".trimIndent()
 		}
 
 		val commonArgs = """
@@ -200,13 +257,16 @@ object BuildDockerImage : BuildType({
 			--label com.a8c.build-id=%teamcity.build.id%
 			--build-arg workers=32
 			--build-arg node_memory=16384
-			--build-arg use_cache=true
+			--build-arg cache_mode=%cache_mode%
 			--build-arg base_image=%base_image%
+			--build-arg cache_seed_image=%cache_seed_image%
+			--build-arg cache_seed_key=%CACHE_SEED_KEY%
 			--build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber}
+			--build-arg profile=%PROFILE%
 			--build-arg manual_sentry_release=%MANUAL_SENTRY_RELEASE%
 			--build-arg is_default_branch=%teamcity.build.branch.is_default%
 			--build-arg sentry_auth_token=%SENTRY_AUTH_TOKEN%
-			--build-arg generate_cache_image=%UPDATE_BASE_IMAGE_CACHE%
+			--build-arg generate_cache_image=%GENERATE_CACHE_IMAGE%
 		""".trimIndent().replace("\n"," ")
 
 		dockerCommand {
@@ -278,10 +338,9 @@ object BuildDockerImage : BuildType({
 			""".trimIndent()
 		}
 
-		// TODO: Cache rebuilding is currently disabled. It takes a long time and
-		// causes timeouts on trunk. It needs to run more quickly to be worth it.
-		// For now, the cache will be rebuilt a couple times a day by the dedicated
-		// cache build.
+		// Base-image cache rebuilding remains disabled by default because it is slow
+		// enough to risk trunk timeouts. Seed-mode inline refresh is handled below,
+		// while the base flow stays available as a manual fallback.
 
 		// Conditions don't seem to support and/or, so we do this in a separate step.
 		// Essentially, UPDATE_BASE_IMAGE_CACHE will remain false by default, but
@@ -307,7 +366,9 @@ object BuildDockerImage : BuildType({
 		dockerCommand {
 			name = "Rebuild cache image"
 			conditions {
+				equals("cache_mode", "base")
 				equals("UPDATE_BASE_IMAGE_CACHE", "true")
+				equals("teamcity.build.branch.is_default", "true")
 			}
 			commandType = build {
 				source = file {
@@ -326,16 +387,57 @@ object BuildDockerImage : BuildType({
 		dockerCommand {
 			name = "Push cache image"
 			conditions {
+				equals("cache_mode", "base")
 				equals("UPDATE_BASE_IMAGE_CACHE", "true")
+				equals("teamcity.build.branch.is_default", "true")
 			}
 			commandType = push {
 				namesAndTags = "registry.a8c.com/calypso/base:%base_image_publish_tag%"
 			}
 		}
+
+		dockerCommand {
+			name = "Rebuild cache-seed image"
+			conditions {
+				equals("cache_mode", "seed")
+				equals("UPDATE_CACHE_SEED", "true")
+				equals("teamcity.build.branch.is_default", "true")
+			}
+			commandType = build {
+				source = file {
+					path = "Dockerfile"
+				}
+				namesAndTags = """
+					registry.a8c.com/calypso/cache-seed:latest
+					registry.a8c.com/calypso/cache-seed:build-%build.number%
+				""".trimIndent()
+				commandArgs = """
+					--target update-cache-seed
+					--cache-from=registry.a8c.com/calypso/app:commit-${Settings.WpCalypso.paramRefs.buildVcsNumber},%cache_seed_image%
+					$commonArgs
+				""".trimIndent().replace("\n"," ")
+			}
+			param("dockerImage.platform", "linux")
+		}
+
+		dockerCommand {
+			name = "Push cache-seed image"
+			conditions {
+				equals("cache_mode", "seed")
+				equals("UPDATE_CACHE_SEED", "true")
+				equals("teamcity.build.branch.is_default", "true")
+			}
+			commandType = push {
+				namesAndTags = """
+					registry.a8c.com/calypso/cache-seed:latest
+					registry.a8c.com/calypso/cache-seed:build-%build.number%
+				""".trimIndent()
+			}
+		}
 	}
 
 	failureConditions {
-		executionTimeoutMin = 20
+		executionTimeoutMin = 26
 	}
 
 	features {
@@ -392,6 +494,11 @@ object RunAllUnitTests : BuildType({
 		test_results => test_results
 		artifacts => artifacts
 	""".trimIndent()
+
+	params {
+		// Unit tests don't exercise Playwright browsers, so avoid downloading them during yarn install.
+		param("env.PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD", "1")
+	}
 
 	vcs {
 		root(Settings.WpCalypso)
@@ -507,12 +614,13 @@ object RunAllUnitTests : BuildType({
 		bashNodeScript {
 			name = "Tag build"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
+			conditions {
+				equals("teamcity.build.branch.is_default", "true")
+			}
 			scriptContent = """
 				set -x
 
-				if [[ "%teamcity.build.branch.is_default%" == "true" ]] ; then
-					curl -s -X POST -H "Content-Type: text/plain" --data "release-candidate" -u "%system.teamcity.auth.userId%:%system.teamcity.auth.password%" "%teamcity.serverUrl%/httpAuth/app/rest/builds/id:%teamcity.build.id%/tags/"
-				fi
+				curl -s -X POST -H "Content-Type: text/plain" --data "release-candidate" -u "%system.teamcity.auth.userId%:%system.teamcity.auth.password%" "%teamcity.serverUrl%/httpAuth/app/rest/builds/id:%teamcity.build.id%/tags/"
 			""".trimIndent()
 		}
 	}
@@ -527,7 +635,7 @@ object RunAllUnitTests : BuildType({
 	}
 
 	failureConditions {
-		executionTimeoutMin = 10
+		executionTimeoutMin = 15
 	}
 	features {
 		feature {
@@ -977,32 +1085,6 @@ object PlaywrightTestPRMatrix : BuildType({
 		}
 	}
 
-	steps {
-		bashNodeScript {
-			name = "Upload report and send Slack notification"
-			executionMode = BuildStep.ExecutionMode.RUN_ONLY_ON_FAILURE
-			conditions {
-				matches("teamcity.build.branch", ".*e2e.*")
-			}
-			scriptContent = """
-				ARCHIVE_NAME="%build.counter%-%build.vcs.number%-%PROJECT%"
-				export E2E_SECRETS_KEY="%E2E_SECRETS_ENCRYPTION_KEY_CURRENT%"
-
-				# Need to use -C to avoid creation of an unnecessary top level directory.
-				tar cvfz - -C test/e2e/output/html . | openssl enc -aes-256-cbc -salt -out ${'$'}{ARCHIVE_NAME}.tgz.enc -pass env:E2E_SECRETS_KEY
-
-				aws configure set aws_access_key_id %CALYPSO_E2E_DASHBOARD_AWS_S3_ACCESS_KEY_ID%
-				aws configure set aws_secret_access_key %CALYPSO_E2E_DASHBOARD_AWS_S3_SECRET_ACCESS_KEY%
-
-				aws s3 cp ${'$'}{ARCHIVE_NAME}.tgz.enc %CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT%/archive/
-
-				# Send custom Slack notification
-				REPORT_URL="https://automattic.github.io/wp-calypso-test-results/r"
-				echo "##teamcity[notification notifier='slack' message='Report available: ${'$'}{REPORT_URL}/${'$'}{ARCHIVE_NAME}.tgz.enc|nBranch: %teamcity.build.branch%' sendTo='calypso-e2e-reports-ext' connectionId='PROJECT_EXT_11']"
-			""".trimIndent()
-			dockerImage = "%docker_image_e2e%"
-		}
-	}
 })
 
 object PlaywrightTestPreReleaseMatrix : BuildType({
@@ -1084,6 +1166,59 @@ object PlaywrightTestDashboardPRMatrix : BuildType({
 				+:client/dashboard/**
 				+:packages/**
 				+:test/e2e/specs/dashboard/**
+			""".trimIndent()
+		}
+	}
+
+	dependencies {
+		snapshot(BuildDockerImage) {
+			onDependencyFailure = FailureAction.FAIL_TO_START
+		}
+	}
+})
+
+
+object PlaywrightTestA4APRMatrix : BuildType({
+	templates(CalypsoE2ETestsBuildTemplate)
+	id("calypso_WebApp_A4A_E2E_Playwright_Test_Matrix")
+	uuid = "1ac8958e-d3e6-4fd1-a0f5-d1b2614900e3"
+	name = "A4A E2E Tests (PR)"
+	description = "Runs Automattic for Agencies e2e tests on pull requests using Playwright Test runner with build matrix"
+
+	params {
+		param("TEST_GROUP", "@a8c-for-agencies")
+		param("DOCKER_IMAGE_BUILD_NUMBER", "${BuildDockerImage.depParamRefs.buildNumber}")
+	}
+
+	features {
+		matrix {
+			param("PROJECT", listOf(
+				value("desktop", label = "Desktop"),
+				value("mobile", label = "Mobile"),
+			))
+		}
+		pullRequests {
+			vcsRootExtId = "${Settings.WpCalypso.id}"
+			provider = github {
+				authType = token {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+				filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
+			}
+		}
+	}
+
+	triggers {
+		vcs {
+			branchFilter = """
+				+:*
+				-:pull*
+				-:trunk
+			""".trimIndent()
+			triggerRules = """
+				-:**.md
+				+:client/a8c-for-agencies/**
+				+:test/e2e/specs/a8c-for-agencies/**
 			""".trimIndent()
 		}
 	}

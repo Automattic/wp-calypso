@@ -8,7 +8,7 @@ import { __ } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useHelpCenterContext } from '../contexts/HelpCenterContext';
+import { useFeatureConfig, useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useSupportStatus } from '../data/use-support-status';
 import useChatStatus from '../hooks/use-chat-status';
 import './notices.scss';
@@ -18,9 +18,11 @@ export const BlockedZendeskNotice: React.FC = () => {
 	const { currentUser, sectionName } = useHelpCenterContext();
 	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging( !! currentUser?.ID );
 	const { isEligibleForChat } = useChatStatus();
+	const featureConfig = useFeatureConfig();
 	const { setShowSupportDoc } = useDispatch( HELP_CENTER_STORE );
 
-	const willShowNotice = ! canConnectToZendesk && isEligibleForChat;
+	const willShowNotice =
+		! canConnectToZendesk && ( isEligibleForChat || featureConfig.chat.hasPremiumSupport );
 
 	useEffect( () => {
 		if ( willShowNotice ) {

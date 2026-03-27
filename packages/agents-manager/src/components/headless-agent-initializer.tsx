@@ -8,8 +8,8 @@
 
 import { useAgentChat } from '@automattic/agenttic-client';
 import { useEffect, useState, useRef } from '@wordpress/element';
-import { createAgentConfig } from '../utils/agent-config';
 import { getSessionId } from '../utils/agent-session';
+import { createAgentConfig } from '../utils/create-agent-config';
 import { loadExternalProviders, type LoadedProviders } from '../utils/load-external-providers';
 import type { UseAgentChatConfig } from '@automattic/agenttic-client';
 import type { HelpCenterSite } from '@automattic/data-stores';
@@ -48,7 +48,7 @@ export default function HeadlessAgentInitializer( {
 
 			const siteId = typeof site?.ID === 'number' ? site.ID : undefined;
 
-			const config = createAgentConfig( {
+			const config = await createAgentConfig( {
 				sessionId,
 				siteId,
 				currentRoute,

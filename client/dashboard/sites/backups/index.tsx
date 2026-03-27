@@ -1,5 +1,6 @@
 import { HostingFeatures } from '@automattic/api-core';
 import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Outlet, useParams, useRouter } from '@tanstack/react-router';
 import { __experimentalGrid as Grid } from '@wordpress/components';
@@ -13,6 +14,7 @@ import { FileBrowserProvider } from '../../../my-sites/backup/backup-contents-pa
 import Breadcrumbs from '../../app/breadcrumbs';
 import { useDateRange } from '../../app/hooks/use-date-range';
 import { useLocale } from '../../app/locale';
+import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { siteRoute, siteBackupsIndexRoute, siteBackupDetailRoute } from '../../app/router/sites';
 import { Card, CardBody } from '../../components/card';
 import { DateRangePicker } from '../../components/date-range-picker';
@@ -99,7 +101,8 @@ export function BackupsListPage() {
 		[ router, siteSlug ]
 	);
 
-	const isSmallViewport = useViewportMatch( 'medium', '<' );
+	const isOmnibarEnabled = isEnabled( 'dashboard/omnibar' );
+	const isSmallViewport = useViewportMatch( isOmnibarEnabled ? 'xlarge' : 'medium', '<' );
 
 	// Auto-select backup based on rewindId parameter
 	useEffect( () => {
@@ -141,25 +144,31 @@ export function BackupsListPage() {
 	const renderMobileView = () => {
 		if ( selectedBackup ) {
 			return (
-				<BackupDetails
-					backup={ selectedBackup }
-					site={ site }
-					timezoneString={ timezoneString }
-					gmtOffset={ gmtOffset }
-				/>
+				<>
+					<PerformanceTrackerStop />
+					<BackupDetails
+						backup={ selectedBackup }
+						site={ site }
+						timezoneString={ timezoneString }
+						gmtOffset={ gmtOffset }
+					/>
+				</>
 			);
 		}
 
 		return (
-			<BackupsList
-				activityLog={ activityLog }
-				isLoadingActivityLog={ isLoadingActivityLog }
-				selectedBackup={ selectedBackup }
-				setSelectedBackup={ handleBackupSelection }
-				dateRange={ dateRange }
-				timezoneString={ timezoneString }
-				gmtOffset={ gmtOffset }
-			/>
+			<>
+				{ ! isLoadingActivityLog && <PerformanceTrackerStop /> }
+				<BackupsList
+					activityLog={ activityLog }
+					isLoadingActivityLog={ isLoadingActivityLog }
+					selectedBackup={ selectedBackup }
+					setSelectedBackup={ handleBackupSelection }
+					dateRange={ dateRange }
+					timezoneString={ timezoneString }
+					gmtOffset={ gmtOffset }
+				/>
+			</>
 		);
 	};
 
@@ -237,6 +246,7 @@ export function BackupsListPage() {
 						renderMobileView()
 					) : (
 						<Grid columns={ columns } templateColumns="40% 1fr">
+							{ ! isLoadingActivityLog && <PerformanceTrackerStop /> }
 							<BackupsList
 								activityLog={ activityLog }
 								isLoadingActivityLog={ isLoadingActivityLog }
@@ -251,6 +261,7 @@ export function BackupsListPage() {
 					) }
 				</>
 			) }
+			{ ! hasBackups && <PerformanceTrackerStop /> }
 		</PageLayout>
 	);
 }

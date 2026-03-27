@@ -39,6 +39,7 @@
 	"dependencies": {
 		"@automattic/calypso-config": "workspace:^",
 		"@automattic/components": "workspace:^",
+		"@automattic/design-types": "workspace:^",
 		"@automattic/global-styles": "workspace:^",
 		"@automattic/js-utils": "workspace:^",
 		"@automattic/onboarding": "workspace:^",

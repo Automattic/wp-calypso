@@ -2,9 +2,7 @@ export { Title, SubTitle } from './titles';
 export { useFlowProgress } from './flow-progress/use-flow-progress';
 export { default as ActionButtons, BackButton, NextButton } from './action-buttons';
 export {
-	createSiteWithCart,
-	addPlanToCart,
-	processItemCart,
+	createSite,
 	getNewSiteParams,
 	addProductsToCart,
 	replaceProductsInCart,
@@ -30,3 +28,4 @@ export * from './utils';
 export type { SelectItem } from './select-items';
 export type { SelectItemAlt } from './select-items-alt';
 export type { MShotsOptions } from './mshots-image';
+export { setRequester } from './wpcom-request';

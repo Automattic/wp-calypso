@@ -39,7 +39,7 @@ import {
 import { useViewportMatch } from '@wordpress/compose';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
-import { __, _n, sprintf } from '@wordpress/i18n';
+import { __, _n, _x, sprintf } from '@wordpress/i18n';
 import {
 	moreVertical,
 	calendar,
@@ -92,6 +92,7 @@ import {
 	isWpcomFlexSubscription,
 	isAkismetFreeProduct,
 	isInExpirationGracePeriod,
+	isA4ABillingDragonPurchase,
 } from '../../../utils/purchase';
 import BillingFlexUsageCard from '../../billing-flex-usage';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
@@ -181,7 +182,8 @@ function canPurchaseBeUpgraded( purchase: Purchase ): boolean {
 	return Boolean(
 		purchase.is_upgradable &&
 			getUpgradeUrl( purchase ) &&
-			! isJetpackTemporarySitePurchase( purchase )
+			! isJetpackTemporarySitePurchase( purchase ) &&
+			! isA4ABillingDragonPurchase( purchase )
 	);
 }
 
@@ -271,7 +273,7 @@ function PurchaseActionMenu( { purchase }: { purchase: Purchase } ) {
 					upgradePurchase( upgradeUrl );
 				} }
 			>
-				{ __( 'Upgrade' ) }
+				{ _x( 'Upgrade', 'Change to a plan with more features.' ) }
 			</MenuItem>
 		),
 		canBeRenewed && (
@@ -283,7 +285,10 @@ function PurchaseActionMenu( { purchase }: { purchase: Purchase } ) {
 					renewPurchase( purchase );
 				} }
 			>
-				{ __( 'Renew' ) }
+				{ _x(
+					'Renew',
+					'Immediately pay for and receive another term of the subscription, extending the expiration date by another term.'
+				) }
 			</MenuItem>
 		),
 	].filter( Boolean );
@@ -321,7 +326,7 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 							} )
 						}
 					>
-						{ __( 'Cancel' ) }
+						{ _x( 'Cancel', 'Stop the subscription from automatically charging and renewing' ) }
 					</Button>
 				}
 			/>
@@ -344,7 +349,10 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 							} )
 						}
 					>
-						{ __( 'Remove' ) }
+						{ _x(
+							'Remove',
+							'Remove the cancelled or expired subscription from the list of active purchases.'
+						) }
 					</Button>
 				}
 			/>
@@ -378,7 +386,7 @@ function UpgradeActionButton( { purchase }: { purchase: Purchase } ) {
 						upgradePurchase( upgradeUrl );
 					} }
 				>
-					{ __( 'Upgrade' ) }
+					{ _x( 'Upgrade', 'Change to a plan with more features.' ) }
 				</Button>
 			}
 		/>
@@ -437,7 +445,10 @@ function RenewActionButton( { purchase }: { purchase: Purchase } ) {
 						renewPurchase( purchase );
 					} }
 				>
-					{ __( 'Renew' ) }
+					{ _x(
+						'Renew',
+						'Immediately pay for and receive another term of the subscription, extending the expiration date by another term.'
+					) }
 				</Button>
 			}
 		/>
@@ -589,6 +600,42 @@ function getFields( {
 					}
 					return undefined;
 				} )();
+				if ( purchase.is_jetpack_plan_or_product ) {
+					if ( purchase.is_auto_renew_enabled ) {
+						return (
+							<ActionList.ActionItem
+								title={ __( 'Subscription renewal' ) }
+								description={ ( (): string => {
+									return typeof helpText === 'string' ? helpText : '';
+								} )() }
+								actions={ <></> }
+							/>
+						);
+					}
+					return (
+						<ActionList.ActionItem
+							title={ __( 'Your subscription is inactive' ) }
+							description={ sprintf(
+								// translators: date is a formatted expiry date
+								__( 'Expires on %(date)s.' ),
+								{
+									date: formatDate( new Date( purchase.expiry_date ), locale, {
+										dateStyle: 'long',
+									} ),
+								}
+							) }
+							actions={
+								<Button
+									variant="secondary"
+									size="compact"
+									onClick={ () => onChange( { is_auto_renew_enabled: true } ) }
+								>
+									{ __( 'Re-activate subscription' ) }
+								</Button>
+							}
+						/>
+					);
+				}
 				return (
 					<ToggleControl
 						__nextHasNoMarginBottom
@@ -608,6 +655,7 @@ function getFields( {
 		},
 		{
 			id: 'purchase_payment_method',
+			isVisible: ( item ) => item.is_auto_renew_enabled,
 			Edit: ( { data: purchase } ) => {
 				return <PurchasePaymentMethod purchase={ purchase } showUpdateButton />;
 			},
@@ -660,7 +708,7 @@ function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 }
 
 function PurchasePriceCard( { purchase }: { purchase: Purchase } ) {
-	if ( purchase.partner_name ) {
+	if ( purchase.partner_name && ! isA4ABillingDragonPurchase( purchase ) ) {
 		return (
 			<OverviewCard
 				icon={ currencyDollar }
@@ -694,6 +742,16 @@ function PurchasePriceCard( { purchase }: { purchase: Purchase } ) {
 			/>
 		);
 	}
+	const isOffer = purchase.regular_price_integer !== purchase.price_integer;
+	const offerText = isOffer
+		? /* translators: %(regularPrice) is a monetary amount that the customer will be charged after this offer ends */
+		  sprintf( __( 'After the offer ends, the subscription price will be %(regularPrice)s.' ), {
+				regularPrice: formatCurrency( purchase.regular_price_integer, purchase.currency_code, {
+					isSmallestUnit: true,
+					stripZeros: true,
+				} ),
+		  } )
+		: '';
 	return (
 		<OverviewCard
 			icon={ currencyDollar }
@@ -701,7 +759,9 @@ function PurchasePriceCard( { purchase }: { purchase: Purchase } ) {
 			heading={ formatCurrency( purchase.price_integer, purchase.currency_code, {
 				isSmallestUnit: true,
 			} ) }
-			description={ getBillPeriodLabel( purchase ) + ' ' + __( 'Excludes taxes.' ) }
+			description={
+				getBillPeriodLabel( purchase ) + ' ' + __( 'Excludes taxes.' ) + ' ' + offerText
+			}
 		/>
 	);
 }
@@ -1107,6 +1167,10 @@ export default function PurchaseSettings() {
 		...siteBySlugQuery( purchase.site_slug ?? '' ),
 		enabled: Boolean( purchase.site_slug ) && ! isTemporarySitePurchase( purchase ),
 	} );
+	const { data: domain } = useQuery( {
+		...domainQuery( purchase.meta ?? '' ),
+		enabled: Boolean( purchase.meta ) && purchase.is_domain,
+	} );
 	const formattedExpiry = useFormattedTime( purchase.expiry_date ?? '' );
 	const formattedRenewal = useFormattedTime( purchase.renew_date ?? '' );
 	const upgradeUrl = getUpgradeUrl( purchase );
@@ -1146,7 +1210,7 @@ export default function PurchaseSettings() {
 								<HStack justify="space-between">
 									{ canPurchaseBeUpgraded( purchase ) && upgradeUrl && (
 										<Button __next40pxDefaultSize variant="primary" href={ upgradeUrl }>
-											{ __( 'Upgrade' ) }
+											{ _x( 'Upgrade', 'Change to a plan with more features.' ) }
 										</Button>
 									) }
 									<PageHeader.ActionMenu>
@@ -1224,7 +1288,8 @@ export default function PurchaseSettings() {
 					{ site &&
 						( site.options?.is_domain_only &&
 						purchase.is_domain &&
-						purchase.product_slug !== DomainProductSlugs.TRANSFER_IN ? (
+						purchase.product_slug !== DomainProductSlugs.TRANSFER_IN &&
+						domain?.can_transfer_to_other_site ? (
 							<OverviewCard
 								icon={ <Icon icon={ layout } /> }
 								title={ __( 'Attach to a site' ) }

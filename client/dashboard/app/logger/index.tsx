@@ -12,6 +12,7 @@ function isBenignError( error: Error ) {
 	switch ( error.name ) {
 		case 'AuthorizationRequiredError':
 		case 'ReauthorizationRequiredError':
+		case 'DomainPermissionError':
 			return true;
 	}
 

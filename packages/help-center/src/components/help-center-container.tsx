@@ -13,7 +13,6 @@ import Draggable, { DraggableProps } from 'react-draggable';
 /**
  * Internal Dependencies
  */
-import { FeatureFlagProvider } from '../contexts/FeatureFlagContext';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useActionHooks } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
@@ -100,26 +99,24 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, curr
 
 	return (
 		<PersistentRouter>
-			<FeatureFlagProvider>
-				<OptionalDraggable
-					draggable={ ! isMobile && ! isMinimized }
-					nodeRef={ nodeRef }
-					handle=".help-center-header__text"
-					bounds="body"
-				>
-					<Card className={ classNames } ref={ cardMergeRefs }>
-						<HelpCenterHeader onDismiss={ onDismiss } />
-						<HelpCenterContent currentRoute={ currentRoute } />
-						{ ! isMinimized && <HelpCenterFooter /> }
-						{ ! isMobile && (
-							<Elevation
-								borderRadius={ isMinimized ? '16px 16px 0 0' : '16px' }
-								value={ 4 }
-							></Elevation>
-						) }
-					</Card>
-				</OptionalDraggable>
-			</FeatureFlagProvider>
+			<OptionalDraggable
+				draggable={ ! isMobile && ! isMinimized }
+				nodeRef={ nodeRef }
+				handle=".help-center-header__text"
+				bounds="body"
+			>
+				<Card className={ classNames } ref={ cardMergeRefs }>
+					<HelpCenterHeader onDismiss={ onDismiss } />
+					<HelpCenterContent currentRoute={ currentRoute } />
+					{ ! isMinimized && <HelpCenterFooter /> }
+					{ ! isMobile && (
+						<Elevation
+							borderRadius={ isMinimized ? '16px 16px 0 0' : '16px' }
+							value={ 4 }
+						></Elevation>
+					) }
+				</Card>
+			</OptionalDraggable>
 		</PersistentRouter>
 	);
 };

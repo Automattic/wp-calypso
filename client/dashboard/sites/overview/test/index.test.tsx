@@ -278,4 +278,24 @@ describe( '<SiteOverview>', () => {
 		expect( getCard( 'Month-to-date site usage' ) ).toBeVisible();
 		expect( getCard( 'The perfect domain awaits' ) ).toBeVisible();
 	} );
+
+	test( 'renders the overview of an inaccessible Jetpack site', async () => {
+		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
+
+		mockSite( {
+			...site,
+			is_wpcom_atomic: true,
+			__inaccessible_jetpack_error: new Error( 'Connection failed' ),
+		} as Site );
+
+		render( <SiteOverview siteSlug={ site.slug } /> );
+		await screen.findByRole( 'heading', { name: 'Test Site' } );
+
+		expect( getCard( 'Last backup' ) ).toHaveTextContent( 'Connection issue' );
+		expect( getCard( 'Last scan' ) ).toHaveTextContent( 'Connection issue' );
+		expect( getCard( 'Performance' ) ).toHaveTextContent( 'Connection issue' );
+		expect( getCard( 'Visibility' ) ).toHaveTextContent( 'Connection issue' );
+		expect( getCard( 'Plan' ) ).toBeVisible();
+		expect( screen.queryByText( 'Latest activity' ) ).not.toBeInTheDocument();
+	} );
 } );

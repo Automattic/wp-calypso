@@ -70,6 +70,7 @@ type TranslationStringType = {
 };
 
 const StatsSubscribersPage = ( { period, context }: StatsSubscribersPageProps ) => {
+	const translate = useTranslate();
 	// Use hooks for Redux pulls.
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
@@ -139,7 +140,9 @@ const StatsSubscribersPage = ( { period, context }: StatsSubscribersPageProps ) 
 			<DocumentHead title={ STATS_PRODUCT_NAME } />
 			<PageViewTracker path="/stats/subscribers/:site" title="Stats > Subscribers" />
 			<div className={ subscribersPageClasses }>
-				<PageHeader />
+				<PageHeader
+					titleProps={ { subtitle: translate( 'Simple, powerful analytics to grow your site.' ) } }
+				/>
 				<StatsNavigation selectedItem="subscribers" siteId={ siteId } slug={ siteSlug } />
 				{ isLoading && <StatsModulePlaceholder className="is-subscriber-page" isLoading /> }
 				{ isError && <StatsSubscribersPageError /> }

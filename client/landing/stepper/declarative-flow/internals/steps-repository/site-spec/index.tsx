@@ -1,10 +1,11 @@
 import config from '@automattic/calypso-config';
+import { getSessionId as getPostHogSessionId } from '@automattic/posthog';
 import { useTranslate } from 'i18n-calypso';
-import wpcomRequest from 'wpcom-proxy-request';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSpec } from 'calypso/lib/site-spec';
 import { getCiabSiteSpecConfig } from 'calypso/lib/site-spec/utils';
+import wpcom from 'calypso/lib/wp';
 import type { Step as StepType } from '../../types';
 
 const SiteSpec: StepType = function SiteSpec() {
@@ -22,11 +23,13 @@ const SiteSpec: StepType = function SiteSpec() {
 		if ( messageCount === 1 ) {
 			siteCreationPromise = ( async () => {
 				try {
-					const response = ( await wpcomRequest( {
-						path: '/sites/new',
-						apiVersion: '1.1',
-						method: 'POST',
-						body: {
+					const response = ( await wpcom.req.post(
+						{
+							path: '/sites/new',
+							apiVersion: '1.1',
+						},
+						{},
+						{
 							client_id: config( 'wpcom_signup_id' ),
 							client_secret: config( 'wpcom_signup_key' ),
 							garden_name: 'commerce',
@@ -37,8 +40,8 @@ const SiteSpec: StepType = function SiteSpec() {
 								site_creation_flow: 'ai-site-builder',
 								trigger_backend_build: false,
 							},
-						},
-					} ) ) as { blog_details: { blogid: number } };
+						}
+					) ) as { blog_details: { blogid: number } };
 
 					return response?.blog_details?.blogid ?? null;
 				} catch ( error ) {
@@ -60,11 +63,17 @@ const SiteSpec: StepType = function SiteSpec() {
 		const specId = specData.session_id || '';
 		const blogId = siteCreationPromise ? await siteCreationPromise : null;
 
-		let url = `/setup/ai-site-builder/?create_garden_site=1&spec_id=${ encodeURIComponent(
+		let url = `/setup/ai-site-builder/?create_garden_site=1&trigger_backend_build=0&spec_id=${ encodeURIComponent(
 			specId
 		) }`;
 		if ( blogId ) {
 			url += `&early_created_site=${ encodeURIComponent( blogId ) }`;
+		}
+
+		// Add the PostHog session ID to the URL to track the user session.
+		const phSessionId = getPostHogSessionId();
+		if ( phSessionId ) {
+			url += `&_ph=${ encodeURIComponent( phSessionId ) }`;
 		}
 
 		window.location.href = url;
