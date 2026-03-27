@@ -67,7 +67,7 @@ export function InterimOmnibar( {
 				siteId={ siteId }
 				site={ site }
 				siteSlug={ siteSlug }
-				siteTitle={ site?.name ?? '' }
+				siteTitle={ site?.name?.trim() || site?.slug || '' }
 				siteUrl={ site?.URL ?? '' }
 				siteAdminUrl={ siteAdminUrl }
 				siteHomeUrl={ site?.URL ?? '' }
