@@ -9,12 +9,14 @@ export interface PostHogUser {
 	username?: string;
 }
 
-export interface PostHogMasking {
-	maskTextFn?: ( text: string, element?: HTMLElement ) => string;
-	blockSelector?: string;
+export interface PostHogOverrides {
+	session_recording?: {
+		maskAllInputs?: boolean;
+		maskTextSelector?: string;
+		maskTextFn?: ( text: string, element?: HTMLElement ) => string;
+		blockSelector?: string;
+	};
 }
-
-const defaultMaskTextFn = ( text: string ) => '*'.repeat( text.trim().length );
 
 export function getSessionId(): string | undefined {
 	return posthog.get_session_id?.();
@@ -25,7 +27,7 @@ export function reset() {
 	initialized = false;
 }
 
-export function init( apiKey: string, user?: PostHogUser, masking?: PostHogMasking ) {
+export function init( apiKey: string, user?: PostHogUser, overrides?: PostHogOverrides ) {
 	if ( initialized || ! apiKey ) {
 		return;
 	}
@@ -37,13 +39,12 @@ export function init( apiKey: string, user?: PostHogUser, masking?: PostHogMaski
 
 	initialized = true;
 
-	const maskTextFn = masking?.maskTextFn ?? defaultMaskTextFn;
+	const sessionRecording = overrides?.session_recording;
 
 	// Expose masking config for debugging in the browser console.
-	// Usage: __posthogMasking.maskTextFn(text, element)
 	( window as unknown as Record< string, unknown > ).__posthogMasking = {
-		maskTextFn,
-		blockSelector: masking?.blockSelector,
+		maskTextFn: sessionRecording?.maskTextFn,
+		blockSelector: sessionRecording?.blockSelector,
 	};
 
 	posthog.init( apiKey, {
@@ -53,10 +54,12 @@ export function init( apiKey: string, user?: PostHogUser, masking?: PostHogMaski
 		capture_pageleave: true,
 		debug: false,
 		session_recording: {
-			maskAllInputs: true,
-			maskTextSelector: '*',
-			maskTextFn,
-			...( masking?.blockSelector && { blockSelector: masking.blockSelector } ),
+			maskAllInputs: sessionRecording?.maskAllInputs ?? true,
+			maskTextSelector: sessionRecording?.maskTextSelector ?? '*',
+			...( sessionRecording?.maskTextFn && { maskTextFn: sessionRecording.maskTextFn } ),
+			...( sessionRecording?.blockSelector && {
+				blockSelector: sessionRecording.blockSelector,
+			} ),
 		},
 		...( user?.ID && {
 			bootstrap: {
