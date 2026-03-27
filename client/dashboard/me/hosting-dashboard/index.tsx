@@ -58,7 +58,6 @@ export default function HostingDashboard() {
 				onError( _, data ) {
 					createErrorNotice(
 						data?.value === 'opt-in'
-						data?.value === 'opt-in'
 							? __( 'Failed to enable New Hosting Dashboard.' )
 							: __( 'Failed to disable New Hosting Dashboard.' ),
 						{
@@ -76,7 +75,7 @@ export default function HostingDashboard() {
 			header={
 				<PageHeader
 					prefix={ <Breadcrumbs length={ 2 } /> }
-				 __( 'New Hosting Dashboard' ) }
+					title={ __( 'New Hosting Dashboard' ) }
 					description={ __(
 						'Opt in for a modern design and smarter tools for managing your hosting.'
 					) }
