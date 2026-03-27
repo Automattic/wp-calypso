@@ -85,17 +85,15 @@ export class FeedbackInboxPage {
 	 * @throws If the text is not found in the response.
 	 */
 	async validateTextInSubmission( text: string ): Promise< void > {
-		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-			// On mobile, the response is in a full-screen modal
+		if ( await this.isCentralFormManagement() ) {
+			// CFM uses the DataViews inspector on both desktop and mobile.
+			await this.page.getByText( text ).first().waitFor();
+		} else if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
 			await this.page
 				.locator( '.jp-forms__inbox__response-mobile' )
 				.getByText( text )
 				.first()
 				.waitFor();
-		} else if ( await this.isCentralFormManagement() ) {
-			// CFM: response fields are rendered in the DataViews inspector panel
-			// without a single wrapping container — just look for the text on the page.
-			await this.page.getByText( text ).first().waitFor();
 		} else {
 			await this.page.locator( '.jp-forms__inbox-response' ).getByText( text ).first().waitFor();
 		}
@@ -166,6 +164,16 @@ export class FeedbackInboxPage {
 	 */
 	async clickFolderTab( folderName: string ): Promise< void > {
 		if ( await this.isCentralFormManagement() ) {
+			// On mobile, the DataViews inspector may overlap the filter chips.
+			// Close it first if it's open.
+			const closeButton = this.page.locator( '.jp-forms-response-header' ).getByRole( 'button', {
+				name: 'Close',
+			} );
+			if ( await closeButton.isVisible( { timeout: 500 } ).catch( () => false ) ) {
+				await closeButton.click();
+				await this.page.waitForTimeout( 300 );
+			}
+
 			// CFM: folder is a DataViews filter chip ("Folder is: Inbox (0)").
 			const folderChip = this.page.locator( '.dataviews-filters__summary-chip' ).filter( {
 				hasText: /Folder is:/i,
@@ -241,7 +249,11 @@ export class FeedbackInboxPage {
 	async clickMarkAsUnreadAction(): Promise< void > {
 		// Use .last() to get the button in the side panel, not in the table row
 		await this.page.getByRole( 'button', { name: 'Mark as unread' } ).last().click();
-		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+		if ( await this.isCentralFormManagement() ) {
+			// CFM auto-marks responses as read when viewed, so the button toggle
+			// won't stick. Just wait briefly for the action to process.
+			await this.page.waitForTimeout( 1000 );
+		} else if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
 			// On mobile, read/unread actions keep the modal open, so wait for button state change
 			await this.page
 				.getByRole( 'button', { name: 'Mark as read' } )
