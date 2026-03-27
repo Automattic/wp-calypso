@@ -141,8 +141,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/agents-manager@workspace:packages/agents-manager"
   dependencies:
-    "@automattic/agenttic-client": "file:/tmp/agenttic-packs/automattic-agenttic-client-0.1.56.tgz"
-    "@automattic/agenttic-ui": "file:/tmp/agenttic-packs/automattic-agenttic-ui-0.1.56.tgz"
+    "@automattic/agenttic-client": "npm:^0.1.55"
+    "@automattic/agenttic-ui": "npm:^0.1.55"
     "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
@@ -174,9 +174,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/agenttic-client@file:/tmp/agenttic-packs/automattic-agenttic-client-0.1.56.tgz::locator=%40automattic%2Fagents-manager%40workspace%3Apackages%2Fagents-manager":
+"@automattic/agenttic-client@npm:^0.1.55":
   version: 0.1.56
-  resolution: "@automattic/agenttic-client@file:/tmp/agenttic-packs/automattic-agenttic-client-0.1.56.tgz#/tmp/agenttic-packs/automattic-agenttic-client-0.1.56.tgz::hash=5646f1&locator=%40automattic%2Fagents-manager%40workspace%3Apackages%2Fagents-manager"
+  resolution: "@automattic/agenttic-client@npm:0.1.56"
   dependencies:
     "@types/react": "npm:^18.0.0"
     marked: "npm:^16.2.1"
@@ -190,53 +190,13 @@ __metadata:
   peerDependenciesMeta:
     "@wordpress/api-fetch":
       optional: true
-  checksum: 527f0cfce2a6e625edfe5d4763168bab09b9f4d3c34d10f908d47290ebcad7e7ee74baf0c38da5d5d7d5b5cc4a248db35fe26e64922512b3ab2759fc99c4fb1a
+  checksum: 21381956f76a283d85e53b373bf8ee430002a07f4490ad14488a98ad9c87f80b9262d290974015fdae9a446fb692aab560bc4683e3430d31c21d8a5fbd42d23b
   languageName: node
   linkType: hard
 
-"@automattic/agenttic-client@file:/tmp/agenttic-packs/automattic-agenttic-client-0.1.56.tgz::locator=%40automattic%2Fblock-notes%40workspace%3Apackages%2Fblock-notes":
+"@automattic/agenttic-ui@npm:^0.1.55":
   version: 0.1.56
-  resolution: "@automattic/agenttic-client@file:/tmp/agenttic-packs/automattic-agenttic-client-0.1.56.tgz#/tmp/agenttic-packs/automattic-agenttic-client-0.1.56.tgz::hash=5646f1&locator=%40automattic%2Fblock-notes%40workspace%3Apackages%2Fblock-notes"
-  dependencies:
-    "@types/react": "npm:^18.0.0"
-    marked: "npm:^16.2.1"
-    react: "npm:^18.0.0"
-  peerDependencies:
-    "@wordpress/api-fetch": ^6.0.0 || ^7.0.0
-    react: ^18.0.0
-  dependenciesMeta:
-    marked:
-      optional: true
-  peerDependenciesMeta:
-    "@wordpress/api-fetch":
-      optional: true
-  checksum: 527f0cfce2a6e625edfe5d4763168bab09b9f4d3c34d10f908d47290ebcad7e7ee74baf0c38da5d5d7d5b5cc4a248db35fe26e64922512b3ab2759fc99c4fb1a
-  languageName: node
-  linkType: hard
-
-"@automattic/agenttic-client@file:/tmp/agenttic-packs/automattic-agenttic-client-0.1.56.tgz::locator=%40automattic%2Fimage-studio%40workspace%3Apackages%2Fimage-studio":
-  version: 0.1.56
-  resolution: "@automattic/agenttic-client@file:/tmp/agenttic-packs/automattic-agenttic-client-0.1.56.tgz#/tmp/agenttic-packs/automattic-agenttic-client-0.1.56.tgz::hash=5646f1&locator=%40automattic%2Fimage-studio%40workspace%3Apackages%2Fimage-studio"
-  dependencies:
-    "@types/react": "npm:^18.0.0"
-    marked: "npm:^16.2.1"
-    react: "npm:^18.0.0"
-  peerDependencies:
-    "@wordpress/api-fetch": ^6.0.0 || ^7.0.0
-    react: ^18.0.0
-  dependenciesMeta:
-    marked:
-      optional: true
-  peerDependenciesMeta:
-    "@wordpress/api-fetch":
-      optional: true
-  checksum: 527f0cfce2a6e625edfe5d4763168bab09b9f4d3c34d10f908d47290ebcad7e7ee74baf0c38da5d5d7d5b5cc4a248db35fe26e64922512b3ab2759fc99c4fb1a
-  languageName: node
-  linkType: hard
-
-"@automattic/agenttic-ui@file:/tmp/agenttic-packs/automattic-agenttic-ui-0.1.56.tgz::locator=%40automattic%2Fagents-manager%40workspace%3Apackages%2Fagents-manager":
-  version: 0.1.56
-  resolution: "@automattic/agenttic-ui@file:/tmp/agenttic-packs/automattic-agenttic-ui-0.1.56.tgz#/tmp/agenttic-packs/automattic-agenttic-ui-0.1.56.tgz::hash=112577&locator=%40automattic%2Fagents-manager%40workspace%3Apackages%2Fagents-manager"
+  resolution: "@automattic/agenttic-ui@npm:0.1.56"
   dependencies:
     "@automattic/charts": "npm:>=0.58.0 <1.0.0"
     "@floating-ui/react-dom": "npm:^2.1.6"
@@ -262,103 +222,7 @@ __metadata:
   dependenciesMeta:
     marked:
       optional: true
-  checksum: 5471b6c0322f4ae118d2987362b321728d071ad97db78cb01d7f0544a72ce82e3d318fbcd0a92cf4f30f142fc80d9066e5ea959458dc7b4596e1eed7eb70160f
-  languageName: node
-  linkType: hard
-
-"@automattic/agenttic-ui@file:/tmp/agenttic-packs/automattic-agenttic-ui-0.1.56.tgz::locator=%40automattic%2Fimage-studio%40workspace%3Apackages%2Fimage-studio":
-  version: 0.1.56
-  resolution: "@automattic/agenttic-ui@file:/tmp/agenttic-packs/automattic-agenttic-ui-0.1.56.tgz#/tmp/agenttic-packs/automattic-agenttic-ui-0.1.56.tgz::hash=112577&locator=%40automattic%2Fimage-studio%40workspace%3Apackages%2Fimage-studio"
-  dependencies:
-    "@automattic/charts": "npm:>=0.58.0 <1.0.0"
-    "@floating-ui/react-dom": "npm:^2.1.6"
-    "@radix-ui/react-scroll-area": "npm:^1.2.9"
-    "@radix-ui/react-slot": "npm:^1.2.3"
-    "@visx/xychart": "npm:^3.12.0"
-    "@wordpress/i18n": "npm:^6.1.0"
-    class-variance-authority: "npm:^0.7.1"
-    clsx: "npm:^2.1.1"
-    framer-motion: "npm:^12.23.0"
-    lucide-react: "npm:^0.525.0"
-    marked: "npm:^16.2.1"
-    react: "npm:^18.0.0"
-    react-dom: "npm:^18.0.0"
-    react-markdown: "npm:^10.1.0"
-    react-textarea-autosize: "npm:^8.5.9"
-    remark-gfm: "npm:^4.0.1"
-    unified: "npm:^11.0.5"
-    use-debounce: "npm:^10.0.6"
-  peerDependencies:
-    react: ^18.0.0
-    react-dom: ^18.0.0
-  dependenciesMeta:
-    marked:
-      optional: true
-  checksum: 5471b6c0322f4ae118d2987362b321728d071ad97db78cb01d7f0544a72ce82e3d318fbcd0a92cf4f30f142fc80d9066e5ea959458dc7b4596e1eed7eb70160f
-  languageName: node
-  linkType: hard
-
-"@automattic/agenttic-ui@file:/tmp/agenttic-packs/automattic-agenttic-ui-0.1.56.tgz::locator=%40automattic%2Fodie-client%40workspace%3Apackages%2Fodie-client":
-  version: 0.1.56
-  resolution: "@automattic/agenttic-ui@file:/tmp/agenttic-packs/automattic-agenttic-ui-0.1.56.tgz#/tmp/agenttic-packs/automattic-agenttic-ui-0.1.56.tgz::hash=112577&locator=%40automattic%2Fodie-client%40workspace%3Apackages%2Fodie-client"
-  dependencies:
-    "@automattic/charts": "npm:>=0.58.0 <1.0.0"
-    "@floating-ui/react-dom": "npm:^2.1.6"
-    "@radix-ui/react-scroll-area": "npm:^1.2.9"
-    "@radix-ui/react-slot": "npm:^1.2.3"
-    "@visx/xychart": "npm:^3.12.0"
-    "@wordpress/i18n": "npm:^6.1.0"
-    class-variance-authority: "npm:^0.7.1"
-    clsx: "npm:^2.1.1"
-    framer-motion: "npm:^12.23.0"
-    lucide-react: "npm:^0.525.0"
-    marked: "npm:^16.2.1"
-    react: "npm:^18.0.0"
-    react-dom: "npm:^18.0.0"
-    react-markdown: "npm:^10.1.0"
-    react-textarea-autosize: "npm:^8.5.9"
-    remark-gfm: "npm:^4.0.1"
-    unified: "npm:^11.0.5"
-    use-debounce: "npm:^10.0.6"
-  peerDependencies:
-    react: ^18.0.0
-    react-dom: ^18.0.0
-  dependenciesMeta:
-    marked:
-      optional: true
-  checksum: 5471b6c0322f4ae118d2987362b321728d071ad97db78cb01d7f0544a72ce82e3d318fbcd0a92cf4f30f142fc80d9066e5ea959458dc7b4596e1eed7eb70160f
-  languageName: node
-  linkType: hard
-
-"@automattic/agenttic-ui@file:/tmp/agenttic-packs/automattic-agenttic-ui-0.1.56.tgz::locator=calypso%40workspace%3Aclient":
-  version: 0.1.56
-  resolution: "@automattic/agenttic-ui@file:/tmp/agenttic-packs/automattic-agenttic-ui-0.1.56.tgz#/tmp/agenttic-packs/automattic-agenttic-ui-0.1.56.tgz::hash=112577&locator=calypso%40workspace%3Aclient"
-  dependencies:
-    "@automattic/charts": "npm:>=0.58.0 <1.0.0"
-    "@floating-ui/react-dom": "npm:^2.1.6"
-    "@radix-ui/react-scroll-area": "npm:^1.2.9"
-    "@radix-ui/react-slot": "npm:^1.2.3"
-    "@visx/xychart": "npm:^3.12.0"
-    "@wordpress/i18n": "npm:^6.1.0"
-    class-variance-authority: "npm:^0.7.1"
-    clsx: "npm:^2.1.1"
-    framer-motion: "npm:^12.23.0"
-    lucide-react: "npm:^0.525.0"
-    marked: "npm:^16.2.1"
-    react: "npm:^18.0.0"
-    react-dom: "npm:^18.0.0"
-    react-markdown: "npm:^10.1.0"
-    react-textarea-autosize: "npm:^8.5.9"
-    remark-gfm: "npm:^4.0.1"
-    unified: "npm:^11.0.5"
-    use-debounce: "npm:^10.0.6"
-  peerDependencies:
-    react: ^18.0.0
-    react-dom: ^18.0.0
-  dependenciesMeta:
-    marked:
-      optional: true
-  checksum: 5471b6c0322f4ae118d2987362b321728d071ad97db78cb01d7f0544a72ce82e3d318fbcd0a92cf4f30f142fc80d9066e5ea959458dc7b4596e1eed7eb70160f
+  checksum: 9b15b5e442f0f5ec7ae943306ac88c952065751b012f09eca5b419533b9f9e37c08e30b4224d99a8cb6c9052f7feffb2a6be9577f6afdaf1ce482b5e0c2a29f0
   languageName: node
   linkType: hard
 
@@ -482,7 +346,7 @@ __metadata:
   resolution: "@automattic/block-notes@workspace:packages/block-notes"
   dependencies:
     "@automattic/agents-manager": "workspace:^"
-    "@automattic/agenttic-client": "file:/tmp/agenttic-packs/automattic-agenttic-client-0.1.56.tgz"
+    "@automattic/agenttic-client": "npm:^0.1.55"
     "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@testing-library/react": "npm:^15.0.0"
@@ -1579,8 +1443,8 @@ __metadata:
   resolution: "@automattic/image-studio@workspace:packages/image-studio"
   dependencies:
     "@automattic/agents-manager": "workspace:^"
-    "@automattic/agenttic-client": "file:/tmp/agenttic-packs/automattic-agenttic-client-0.1.56.tgz"
-    "@automattic/agenttic-ui": "file:/tmp/agenttic-packs/automattic-agenttic-ui-0.1.56.tgz"
+    "@automattic/agenttic-client": "npm:^0.1.55"
+    "@automattic/agenttic-ui": "npm:^0.1.55"
     "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/oauth-token": "workspace:^"
@@ -1913,7 +1777,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/odie-client@workspace:packages/odie-client"
   dependencies:
-    "@automattic/agenttic-ui": "file:/tmp/agenttic-packs/automattic-agenttic-ui-0.1.56.tgz"
+    "@automattic/agenttic-ui": "npm:^0.1.55"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
@@ -13533,7 +13397,7 @@ __metadata:
   dependencies:
     "@automattic/accessible-focus": "workspace:^"
     "@automattic/agents-manager": "workspace:^"
-    "@automattic/agenttic-ui": "file:/tmp/agenttic-packs/automattic-agenttic-ui-0.1.56.tgz"
+    "@automattic/agenttic-ui": "npm:^0.1.55"
     "@automattic/api-core": "workspace:^"
     "@automattic/api-queries": "workspace:^"
     "@automattic/block-renderer": "workspace:^"

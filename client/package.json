@@ -14,7 +14,7 @@
 	"dependencies": {
 		"@automattic/accessible-focus": "workspace:^",
 		"@automattic/agents-manager": "workspace:^",
-		"@automattic/agenttic-ui": "file:/tmp/agenttic-packs/automattic-agenttic-ui-0.1.56.tgz",
+		"@automattic/agenttic-ui": "^0.1.55",
 		"@automattic/api-core": "workspace:^",
 		"@automattic/api-queries": "workspace:^",
 		"@automattic/block-renderer": "workspace:^",
