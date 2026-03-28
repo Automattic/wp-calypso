@@ -29,7 +29,7 @@ import getSuperProps from 'calypso/lib/analytics/super-props';
 import { setupErrorLogger } from 'calypso/lib/error-logger/setup-error-logger';
 import loadDevHelpers from 'calypso/lib/load-dev-helpers';
 import { addQueryArgs } from 'calypso/lib/url';
-import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
+// import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
 import { onDisablePersistence } from 'calypso/lib/user/store';
 import wpcom from 'calypso/lib/wp';
 import { createReduxStore } from 'calypso/state';
@@ -147,7 +147,7 @@ async function main() {
 	// Add accessible-focus listener.
 	accessibleFocus();
 
-	const user = await initializeCurrentUser();
+	const user = false as unknown as UserStore.CurrentUser;
 	const userId = user ? user.ID : 0;
 	let queryClient;
 

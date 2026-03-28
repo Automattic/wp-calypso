@@ -45,7 +45,7 @@ async function initialize() {
 		STEPS.SETUP_YOUR_SITE_AI,
 	];
 
-	await loadExperimentAssignment( 'calypso_account_step_improvement_202601' );
+	// await loadExperimentAssignment( 'calypso_account_step_improvement_202601' );
 
 	return [ ...stepsWithRequiredLogin( steps ), STEPS.PLAYGROUND, STEPS.BLUEPRINT ];
 }
