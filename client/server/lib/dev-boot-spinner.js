@@ -37,8 +37,13 @@ export function stopDevBootSpinner() {
 		clearInterval( timer );
 		timer = null;
 	}
-	if ( wasRunning && process.stderr.isTTY ) {
-		process.stderr.write( '\r\x1b[2K\n' );
+	if ( wasRunning ) {
+		const done = chalk.green( '✓' ) + ' ' + chalk.gray( 'Server ready.' ) + '\n';
+		if ( process.stderr.isTTY ) {
+			process.stderr.write( '\r\x1b[2K' + done );
+		} else {
+			process.stderr.write( done );
+		}
 	}
 }
 

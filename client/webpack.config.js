@@ -14,6 +14,7 @@ const {
 const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive-lodash-replacement-plugin' );
 const InlineConstantExportsPlugin = require( '@automattic/webpack-inline-constant-exports-plugin' );
 const ReactRefreshWebpackPlugin = require( '@pmmmwh/react-refresh-webpack-plugin' );
+const SentryCliPlugin = require( '@sentry/webpack-plugin' );
 const autoprefixerPlugin = require( 'autoprefixer' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 const Dotenv = require( 'dotenv-webpack' );
@@ -431,26 +432,21 @@ const webpackConfig = {
 		shouldProfile && new webpack.ProgressPlugin( { profile: true } ),
 
 		// NOTE: Sentry should be the last webpack plugin in the array.
-		// Lazy-require: plugin still runs identically when `shouldCreateSentryRelease` is true;
-		// only skips loading @sentry/webpack-plugin in local dev where it was never used.
 		shouldCreateSentryRelease &&
-			( () => {
-				const SentryCliPlugin = require( '@sentry/webpack-plugin' );
-				return new SentryCliPlugin( {
-					org: 'a8c',
-					project: 'calypso',
-					authToken: process.env.SENTRY_AUTH_TOKEN,
-					release: `calypso_${ process.env.COMMIT_SHA }`,
-					include: filePaths.path,
-					urlPrefix: `~${ filePaths.publicPath }`,
-					errorHandler: ( err, invokeErr, compilation ) => {
-						// Sentry should _never_ fail the webpack build, so only emit warnings here:
-						compilation.warnings.push( 'Sentry CLI Plugin: ' + err.message );
-						console.error( 'Sentry CLI Plugin Error:', err.message );
-						console.error( 'Sentry Full error:', err );
-					},
-				} );
-			} )(),
+			new SentryCliPlugin( {
+				org: 'a8c',
+				project: 'calypso',
+				authToken: process.env.SENTRY_AUTH_TOKEN,
+				release: `calypso_${ process.env.COMMIT_SHA }`,
+				include: filePaths.path,
+				urlPrefix: `~${ filePaths.publicPath }`,
+				errorHandler: ( err, invokeErr, compilation ) => {
+					// Sentry should _never_ fail the webpack build, so only emit warnings here:
+					compilation.warnings.push( 'Sentry CLI Plugin: ' + err.message );
+					console.error( 'Sentry CLI Plugin Error:', err.message );
+					console.error( 'Sentry Full error:', err );
+				},
+			} ),
 		shouldHotReload && new webpack.HotModuleReplacementPlugin(),
 		shouldHotReload &&
 			new ReactRefreshWebpackPlugin( {
@@ -459,6 +455,15 @@ const webpackConfig = {
 			} ),
 	].filter( Boolean ),
 	externals: [ 'keytar' ],
+	infrastructureLogging: {
+		// In dev, suppress webpack-dev-middleware's "wait until bundle finished" / "bundle
+		// is now VALID" info messages — our compile spinner and "Ready!" cover these.
+		// CALYPSO_WEBPACK_LOG=verbose restores full output.
+		...( ! isDevelopment || process.env.CALYPSO_WEBPACK_LOG === 'verbose'
+			? {}
+			: { level: 'warn' } ),
+		...( shouldProfile ? { debug: /webpack\.cache/ } : {} ),
+	},
 
 	...( shouldUsePersistentCache
 		? {
@@ -474,13 +479,6 @@ const webpackConfig = {
 					readonly: shouldUseReadonlyCache,
 					compression: 'brotli',
 				},
-				...( shouldProfile
-					? {
-							infrastructureLogging: {
-								debug: /webpack\.cache/,
-							},
-					  }
-					: {} ),
 				snapshot: {
 					managedPaths: [
 						path.resolve( __dirname, '../node_modules' ),

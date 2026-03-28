@@ -19,7 +19,7 @@ const verbose = process.env.CALYPSO_VERBOSE_LOG === 'true';
 
 // Webpack noise patterns to suppress — our spinner and "Ready!" message cover these.
 const NOISE_PATTERNS = [
-	/^(<i> )?\[webpack-dev-middleware\]/,
+	/(<i>|ℹ)?\s*\[webpack-dev-middleware\]/,
 	/^webpack built /,
 	/^webpack compiled /,
 	/^\d+ WARNINGS? in child compilations/,

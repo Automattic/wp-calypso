@@ -57,14 +57,22 @@ function middleware( app ) {
 	let compileProgressHighWater = 0;
 	let compileProgressMessage = '';
 
+	let compileStartTime = 0;
+
 	function stopCompileSpinner() {
+		const wasRunning = compileSpinnerTimer != null;
 		if ( compileSpinnerTimer ) {
 			clearInterval( compileSpinnerTimer );
 			compileSpinnerTimer = null;
+		}
+		if ( wasRunning ) {
+			const elapsed = Math.round( ( Date.now() - compileStartTime ) / 1000 );
+			const timeStr = elapsed > 0 ? ` · ${ elapsed }s` : '';
+			const done = chalk.green( '✓' ) + ' ' + chalk.gray( '100% · Done' + timeStr ) + '\n';
 			if ( process.stderr.isTTY ) {
-				process.stderr.write(
-					'\r\x1b[2K' + chalk.hex( '#21759b' )( '✓' ) + ' ' + chalk.gray( '100% · Done.' ) + '\n'
-				);
+				process.stderr.write( '\r\x1b[2K' + done );
+			} else {
+				process.stderr.write( done );
 			}
 		}
 	}
@@ -80,9 +88,13 @@ function middleware( app ) {
 		}
 		const stream = process.stderr;
 		const showAsides = process.env.CALYPSO_COMPILE_SNARK !== '0';
+		compileStartTime = Date.now();
 		const tick = function () {
 			const glyph = COMPILE_SPINNER_FRAMES[ compileSpinnerFrame % COMPILE_SPINNER_FRAMES.length ];
 			compileSpinnerFrame++;
+			const elapsed = Math.round( ( Date.now() - compileStartTime ) / 1000 );
+			const elapsedStr = elapsed > 0 ? `${ elapsed }s` : '';
+
 			const pctPart =
 				compileProgressHighWater > 0 || compileProgressMessage
 					? `${ Math.round( compileProgressHighWater * 100 ) }%` +
@@ -95,9 +107,12 @@ function middleware( app ) {
 				? COMPILE_ASIDES[ Math.floor( compileSpinnerFrame / 89 ) % COMPILE_ASIDES.length ]
 				: '';
 
-			const rest = aside ? chalk.gray( `${ pctPart } · ${ aside }` ) : chalk.gray( pctPart );
+			const grayParts = [ pctPart, elapsedStr ].filter( Boolean );
+			const rest =
+				chalk.gray( grayParts.join( ' · ' ) ) +
+				( aside ? chalk.gray( ' · ' ) + chalk.white( aside ) : '' );
 
-			stream.write( '\r\x1b[2K' + chalk.hex( '#21759b' )( glyph ) + ' ' + rest );
+			stream.write( '\r\x1b[2K' + glyph + ' ' + rest );
 		};
 		tick();
 		compileSpinnerTimer = setInterval( tick, 90 );
@@ -150,11 +165,15 @@ function middleware( app ) {
 				if ( beforeFirstCompile ) {
 					beforeFirstCompile = false;
 					process.stderr.write(
-						chalk.hex( '#21759b' )( `\nReady! ${ protocol }://${ host }:${ port }/\n` )
+						chalk.white( 'Ready! ' ) +
+							chalk.hex( '#21759b' )( `${ protocol }://${ host }:${ port }/` ) +
+							'\n'
 					);
 				} else {
 					process.stderr.write(
-						chalk.hex( '#21759b' )( '\nReady! Fresh assets — keep hacking.\n' )
+						chalk.white( 'Ready! ' ) +
+							chalk.hex( '#21759b' )( 'Fresh assets — keep hacking.' ) +
+							'\n'
 					);
 				}
 			} );

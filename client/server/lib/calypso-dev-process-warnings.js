@@ -19,6 +19,10 @@ if ( process.env.NODE_ENV === 'development' && process.env.CI !== 'true' ) {
 		if ( process.env.CALYPSO_TRACE_WARNINGS === 'true' && warning.stack ) {
 			block += chalk.dim( warning.stack.replace( /\n/g, '\n  ' ) ) + '\n';
 		}
+		// Clear any active spinner on the current line before printing.
+		if ( process.stderr.isTTY ) {
+			process.stderr.write( '\r\x1b[2K' );
+		}
 		process.stderr.write( block );
 	} );
 }
