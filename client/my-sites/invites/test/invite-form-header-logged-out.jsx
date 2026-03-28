@@ -62,7 +62,7 @@ describe( 'InviteFormHeaderLoggedOut', () => {
 					title: 'Woo Store',
 					URL: 'https://woo.store',
 				} }
-				ciabConfig={ { id: 'woo' } }
+				partnerConfig={ { id: 'woo' } }
 			/>
 		);
 

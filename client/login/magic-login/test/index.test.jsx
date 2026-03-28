@@ -4,7 +4,7 @@ import { getPartnerSignupTosElement } from 'calypso/lib/partner-branding';
 import { getMagicLoginInitialHeaders, MagicLogin } from '../index';
 
 jest.mock( 'calypso/lib/partner-branding', () => ( {
-	detectCiabConfig: jest.fn(),
+	detectPartnerConfig: jest.fn(),
 	getPartnerSignupTosElement: jest.fn(),
 } ) );
 
@@ -22,7 +22,7 @@ describe( 'magic-login branding behavior', () => {
 		translate: ( text ) => text,
 		oauth2Client: null,
 		isWooJPC: false,
-		ciabConfig: null,
+		partnerConfig: null,
 	};
 
 	beforeEach( () => {
@@ -41,7 +41,7 @@ describe( 'magic-login branding behavior', () => {
 		const { heading } = getMagicLoginInitialHeaders(
 			{
 				...baseProps,
-				ciabConfig: {
+				partnerConfig: {
 					displayName: 'Woo',
 				},
 			},
@@ -70,7 +70,7 @@ describe( 'magic-login branding behavior', () => {
 
 		const instance = new MagicLogin( {
 			...baseProps,
-			ciabConfig: { id: 'woo', displayName: 'Woo' },
+			partnerConfig: { id: 'woo', displayName: 'Woo' },
 		} );
 
 		expect( instance.renderTos() ).toBe( partnerTosElement );
@@ -103,7 +103,7 @@ describe( 'magic-login branding behavior', () => {
 		const instance = new MagicLogin( {
 			...baseProps,
 			showCheckYourEmail: true,
-			ciabConfig: { id: 'woo', displayName: 'Woo' },
+			partnerConfig: { id: 'woo', displayName: 'Woo' },
 		} );
 
 		expect( instance.renderLinks() ).toBeNull();
@@ -113,7 +113,7 @@ describe( 'magic-login branding behavior', () => {
 		const instance = new MagicLogin( {
 			...baseProps,
 			showCheckYourEmail: true,
-			ciabConfig: null,
+			partnerConfig: null,
 		} );
 
 		expect( instance.renderLinks() ).toEqual(

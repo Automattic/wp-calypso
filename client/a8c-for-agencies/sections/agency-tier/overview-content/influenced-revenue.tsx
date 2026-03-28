@@ -1,6 +1,6 @@
 import { formatCurrency } from '@automattic/number-formatters';
 import { __ } from '@wordpress/i18n';
-import { Stat } from 'calypso/dashboard/components/stat';
+import { Stat } from 'calypso/a8c-for-agencies/components/stat';
 import getCurrentAgencyTier from '../lib/get-current-agency-tier';
 import type { AgencyTierType } from './types';
 

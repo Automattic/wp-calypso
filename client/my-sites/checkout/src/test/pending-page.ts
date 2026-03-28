@@ -469,4 +469,39 @@ describe( 'getRedirectFromPendingPage', () => {
 		} );
 		expect( actual ).toBeUndefined();
 	} );
+
+	it( 'returns a url with preserved query params if there is a receipt', () => {
+		const actual = getRedirectFromPendingPage( {
+			isLoadingOrder: false,
+			redirectTo: '/checkout/thank-you/12345/67890?checkout_type=unified',
+			receiptId: 67890,
+		} );
+		expect( actual ).toEqual( { url: '/checkout/thank-you/12345/67890?checkout_type=unified' } );
+	} );
+
+	it( 'returns a url with preserved query params if the transaction is successful', () => {
+		const actual = getRedirectFromPendingPage( {
+			isLoadingOrder: false,
+			redirectTo: '/checkout/thank-you/12345/:receiptId?checkout_type=unified',
+			siteSlug: 'example.com',
+			transaction: {
+				orderId: 1,
+				userId: 1,
+				receiptId: 67890,
+				processingStatus: SUCCESS,
+			},
+		} );
+		expect( actual ).toEqual( { url: '/checkout/thank-you/12345/67890?checkout_type=unified' } );
+	} );
+
+	it( 'returns a url with multiple preserved query params if there is a receipt', () => {
+		const actual = getRedirectFromPendingPage( {
+			isLoadingOrder: false,
+			redirectTo: '/checkout/thank-you/12345/67890?checkout_type=unified&source=paid-media',
+			receiptId: 67890,
+		} );
+		expect( actual ).toEqual( {
+			url: '/checkout/thank-you/12345/67890?checkout_type=unified&source=paid-media',
+		} );
+	} );
 } );

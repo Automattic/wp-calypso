@@ -34,6 +34,7 @@ import { isJetpackSite, isCommerceGardenSite } from 'calypso/state/sites/selecto
 import useActOnceOnStrings from '../hooks/use-act-once-on-strings';
 import useAddProductsFromUrl from '../hooks/use-add-products-from-url';
 import useCheckoutFlowTrackKey from '../hooks/use-checkout-flow-track-key';
+import { useCheckoutUiRedesignExperiment } from '../hooks/use-checkout-ui-redesign-experiment';
 import useCountryList from '../hooks/use-country-list';
 import useCreatePaymentMethods from '../hooks/use-create-payment-methods';
 import { existingCardPrefix } from '../hooks/use-create-payment-methods/use-create-existing-cards';
@@ -654,6 +655,7 @@ export default function CheckoutMain( {
 	};
 
 	const isCheckoutV2ExperimentLoading = false;
+	const [ isCheckoutUiRedesignLoading ] = useCheckoutUiRedesignExperiment();
 
 	// This variable determines if we see the loading page or if checkout can
 	// render its steps.
@@ -679,6 +681,7 @@ export default function CheckoutMain( {
 		},
 		{ name: translate( 'Loading countries list' ), isLoading: countriesList.length < 1 },
 		{ name: translate( 'Loading Site' ), isLoading: isCheckoutV2ExperimentLoading },
+		{ name: translate( 'Loading checkout' ), isLoading: isCheckoutUiRedesignLoading },
 	];
 
 	if ( shouldSetMigrationSticker ) {

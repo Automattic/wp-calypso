@@ -19,7 +19,7 @@ import scrollTo from 'calypso/lib/scroll-to';
 import withDimensions from 'calypso/lib/with-dimensions';
 import { isEditorIframeFocused } from 'calypso/reader/components/quick-post/utils';
 import ReaderMain from 'calypso/reader/components/reader-main';
-import { shouldShowLikes } from 'calypso/reader/like-helper';
+import { isLikeable } from 'calypso/reader/post/capabilities';
 import { keysAreEqual, keyToString } from 'calypso/reader/post-key';
 import { MAX_POSTS_FOR_LOGGED_OUT_USERS } from 'calypso/reader/reader.const';
 import ReaderStreamLoginPrompt from 'calypso/reader/stream/login-prompt';
@@ -368,7 +368,7 @@ class ReaderStream extends Component {
 			return;
 		}
 
-		if ( shouldShowLikes( selectedPost ) ) {
+		if ( isLikeable( selectedPost ) ) {
 			this.toggleLikeAction();
 		}
 	};

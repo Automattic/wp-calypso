@@ -12,6 +12,7 @@ import { useCallback, useMemo } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { Text } from '../../components/text';
 import { metricsNames } from '../../utils/site-performance';
+import { VIEWPORT_BREAKPOINTS } from './constants';
 import { PerformanceInsightTitle, PerformanceInsight } from './performance-insight';
 import type { DeviceToggleType } from './types';
 import type { SitePerformanceReport, PerformanceMetricAudit } from '@automattic/api-core';
@@ -111,7 +112,7 @@ export default function PerformanceInsights( {
 	onFilterChange: ( filter: Metrics ) => void;
 } ) {
 	const { recordTracksEvent } = useAnalytics();
-	const isDesktop = useViewportMatch( 'medium' );
+	const isDesktop = useViewportMatch( VIEWPORT_BREAKPOINTS.desktop );
 	const { audits, fullPageScreenshot, is_wpcom } = report;
 
 	const options: CustomSelectControlOption[] = Object.keys( metricsNames ).map( ( key: string ) => {

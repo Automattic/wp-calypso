@@ -1,3 +1,4 @@
+import { Page } from '@wordpress/admin-ui';
 import { localize } from 'i18n-calypso';
 import { pick } from 'lodash';
 import { useEffect } from 'react';
@@ -11,7 +12,6 @@ import EmptyContent from 'calypso/components/empty-content';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import JetpackTitle from 'calypso/components/jetpack-title';
 import Main from 'calypso/components/main';
-import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import useAdvertisingUrl from 'calypso/my-sites/advertising/useAdvertisingUrl';
 import AnalyticsSettings from 'calypso/my-sites/site-settings/analytics/form-google-analytics';
@@ -54,13 +54,14 @@ const SiteSettingsTraffic = ( {
 
 	return (
 		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-		<Main wideLayout className="sharing">
+		<Main fullWidthLayout className="sharing">
 			<DocumentHead title={ translate( 'Traffic' ) } />
 			{ siteId && <QueryJetpackModules siteId={ siteId } /> }
-			<NavigationHeader
-				navigationItems={ [] }
+			<Page
+				hasPadding
+				showSidebarToggle={ false }
 				title={ <JetpackTitle title={ translate( 'Traffic' ) } /> }
-				subtitle={ translate(
+				subTitle={ translate(
 					'Manage settings and tools related to the traffic your website receives. {{learnMoreLink/}}',
 					{
 						components: {
@@ -70,64 +71,67 @@ const SiteSettingsTraffic = ( {
 						},
 					}
 				) }
-			/>
-			<div className="settings-traffic site-settings">
-				<PageViewTracker path="/marketing/traffic/:site" title="Jetpack > Traffic" />
-				{ ! isAdmin && (
-					<EmptyContent title={ translate( 'You are not authorized to view this page' ) } />
-				) }
-				<JetpackDevModeNotice />
-				{ isAdmin && shouldShowAdvertisingOption && (
-					<PromoCardBlock
-						productSlug="blaze"
-						impressionEvent="calypso_marketing_traffic_blaze_banner_view"
-						clickEvent="calypso_marketing_traffic_blaze_banner_click"
-						headerText={ translate( 'Reach new readers and customers' ) }
-						contentText={ translate(
-							'Use WordPress Blaze to increase your reach by promoting your work to the larger WordPress.com community of blogs and sites. '
-						) }
-						ctaText={ translate( 'Get started' ) }
-						image={ blazeIllustration }
-						href={ advertisingUrl }
-					/>
-				) }
-				{ isAdmin && <SeoSettingsHelpCard disabled={ isRequestingSettings || isSavingSettings } /> }
-				{ isAdmin && (
-					<AsyncLoad
-						key={ siteId }
-						require="calypso/my-sites/site-settings/seo-settings/form"
-						placeholder={ null }
-					/>
-				) }
-				{ isJetpackAdmin && (
-					<JetpackSiteStats
-						handleAutosavingToggle={ handleAutosavingToggle }
-						setFieldValue={ setFieldValue }
-						isSavingSettings={ isSavingSettings }
-						isRequestingSettings={ isRequestingSettings }
-						fields={ fields }
-					/>
-				) }
-				{ isAdmin && <AnalyticsSettings /> }
-				{ isJetpackAdmin && (
-					<Shortlinks
-						handleAutosavingRadio={ handleAutosavingRadio }
-						handleAutosavingToggle={ handleAutosavingToggle }
-						isSavingSettings={ isSavingSettings }
-						isRequestingSettings={ isRequestingSettings }
-						fields={ fields }
-						onSubmitForm={ handleSubmitForm }
-					/>
-				) }
-				{ isAdmin && (
-					<Sitemaps
-						isSavingSettings={ isSavingSettings }
-						isRequestingSettings={ isRequestingSettings }
-						fields={ fields }
-					/>
-				) }
-				{ isAdmin && <SiteVerification /> }
-			</div>
+			>
+				<div className="settings-traffic site-settings">
+					<PageViewTracker path="/marketing/traffic/:site" title="Jetpack > Traffic" />
+					{ ! isAdmin && (
+						<EmptyContent title={ translate( 'You are not authorized to view this page' ) } />
+					) }
+					<JetpackDevModeNotice />
+					{ isAdmin && shouldShowAdvertisingOption && (
+						<PromoCardBlock
+							productSlug="blaze"
+							impressionEvent="calypso_marketing_traffic_blaze_banner_view"
+							clickEvent="calypso_marketing_traffic_blaze_banner_click"
+							headerText={ translate( 'Reach new readers and customers' ) }
+							contentText={ translate(
+								'Use WordPress Blaze to increase your reach by promoting your work to the larger WordPress.com community of blogs and sites. '
+							) }
+							ctaText={ translate( 'Get started' ) }
+							image={ blazeIllustration }
+							href={ advertisingUrl }
+						/>
+					) }
+					{ isAdmin && (
+						<SeoSettingsHelpCard disabled={ isRequestingSettings || isSavingSettings } />
+					) }
+					{ isAdmin && (
+						<AsyncLoad
+							key={ siteId }
+							require="calypso/my-sites/site-settings/seo-settings/form"
+							placeholder={ null }
+						/>
+					) }
+					{ isJetpackAdmin && (
+						<JetpackSiteStats
+							handleAutosavingToggle={ handleAutosavingToggle }
+							setFieldValue={ setFieldValue }
+							isSavingSettings={ isSavingSettings }
+							isRequestingSettings={ isRequestingSettings }
+							fields={ fields }
+						/>
+					) }
+					{ isAdmin && <AnalyticsSettings /> }
+					{ isJetpackAdmin && (
+						<Shortlinks
+							handleAutosavingRadio={ handleAutosavingRadio }
+							handleAutosavingToggle={ handleAutosavingToggle }
+							isSavingSettings={ isSavingSettings }
+							isRequestingSettings={ isRequestingSettings }
+							fields={ fields }
+							onSubmitForm={ handleSubmitForm }
+						/>
+					) }
+					{ isAdmin && (
+						<Sitemaps
+							isSavingSettings={ isSavingSettings }
+							isRequestingSettings={ isRequestingSettings }
+							fields={ fields }
+						/>
+					) }
+					{ isAdmin && <SiteVerification /> }
+				</div>
+			</Page>
 		</Main>
 	);
 };

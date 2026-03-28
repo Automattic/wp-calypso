@@ -1,3 +1,4 @@
+import { Spinner } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode, useMemo } from 'react';
@@ -5,6 +6,7 @@ import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/compone
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_PARTNER_DIRECTORY_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import useLeadMatchingProfile from 'calypso/a8c-for-agencies/data/partner-directory/use-lead-matching-profile';
 import { Item as BreadcrumbItem } from 'calypso/components/breadcrumb';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {
@@ -26,10 +28,12 @@ import {
 	PARTNER_DIRECTORY_LEAD_MATCHING_SLUG,
 } from './constants';
 import Dashboard from './dashboard';
-import LeadMatchingPlaceholder from './lead-matching';
+import LeadMatchingForm from './lead-matching';
 import {
 	mapAgencyDetailsFormData,
 	mapApplicationFormData,
+	mapLeadMatchingFormData,
+	mapLeadMatchingProfileToFormData,
 } from './utils/map-application-form-data';
 
 import './style.scss';
@@ -51,9 +55,25 @@ export default function PartnerDirectory( { selectedSection }: Props ) {
 	const agency = useSelector( getActiveAgency );
 	const hasAgency = useSelector( hasFetchedAgency );
 	const isFetching = useSelector( isFetchingAgency );
+	const shouldFetchLeadMatching =
+		selectedSection === PARTNER_DIRECTORY_LEAD_MATCHING_SLUG && hasAgency && ! isFetching;
+	const leadMatchingProfileQuery = useLeadMatchingProfile( shouldFetchLeadMatching );
 
 	const applicationData = useMemo( () => mapApplicationFormData( agency ), [ agency ] );
 	const agencyDetailsData = useMemo( () => mapAgencyDetailsFormData( agency ), [ agency ] );
+	const leadMatchingProfile =
+		leadMatchingProfileQuery.data?.lead_matching_profile ?? agency?.lead_matching?.profile ?? null;
+	const leadMatchingData = useMemo(
+		() =>
+			leadMatchingProfileQuery.data?.lead_matching_profile
+				? mapLeadMatchingProfileToFormData( leadMatchingProfileQuery.data.lead_matching_profile )
+				: mapLeadMatchingFormData( agency ),
+		[ agency, leadMatchingProfileQuery.data?.lead_matching_profile ]
+	);
+	const isLeadMatchingLoading =
+		selectedSection === PARTNER_DIRECTORY_LEAD_MATCHING_SLUG &&
+		leadMatchingProfileQuery.isLoading &&
+		! leadMatchingProfileQuery.data;
 
 	// Define the sub-menu sections
 	const sections: { [ slug: string ]: Section } = useMemo( () => {
@@ -93,7 +113,11 @@ export default function PartnerDirectory( { selectedSection }: Props ) {
 		};
 
 		sections[ PARTNER_DIRECTORY_LEAD_MATCHING_SLUG ] = {
-			content: <LeadMatchingPlaceholder />,
+			content: isLeadMatchingLoading ? (
+				<Spinner />
+			) : (
+				<LeadMatchingForm initialFormData={ leadMatchingData } profile={ leadMatchingProfile } />
+			),
 			breadcrumbItems: [
 				...sections[ PARTNER_DIRECTORY_DASHBOARD_SLUG ].breadcrumbItems,
 				{
@@ -104,7 +128,14 @@ export default function PartnerDirectory( { selectedSection }: Props ) {
 		};
 
 		return sections;
-	}, [ translate, agencyDetailsData, applicationData ] );
+	}, [
+		translate,
+		agencyDetailsData,
+		applicationData,
+		isLeadMatchingLoading,
+		leadMatchingData,
+		leadMatchingProfile,
+	] );
 
 	// Wait until the agency is fetched
 	if ( ! hasAgency || isFetching ) {

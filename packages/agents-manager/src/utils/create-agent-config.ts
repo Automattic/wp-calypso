@@ -82,6 +82,7 @@ function wrapToolProvider( toolProvider: ToolProvider ): UseAgentChatConfig[ 'to
  */
 async function createWrappedContextProvider(
 	contextProvider: ContextProvider,
+	siteId?: number,
 	version?: string
 ): Promise< UseAgentChatConfig[ 'contextProvider' ] > {
 	const canAccessZendesk = await canConnectToZendesk();
@@ -99,6 +100,10 @@ async function createWrappedContextProvider(
 			return {
 				...resolvedContext,
 				can_access_zendesk: canAccessZendesk,
+				currentScreen: resolvedContext.currentScreen || {
+					url: window.location.href,
+				},
+				...( siteId && ! resolvedContext.selectedSiteId && { selectedSiteId: siteId } ),
 				constructorArguments: {
 					...( resolvedContext.constructorArguments || {} ),
 					...( version && { version } ),
@@ -114,6 +119,7 @@ async function createWrappedContextProvider(
 async function createDefaultContextProvider(
 	currentRoute: string | undefined,
 	environment: string,
+	siteId?: number,
 	version?: string
 ): Promise< UseAgentChatConfig[ 'contextProvider' ] > {
 	const canAccessZendesk = await canConnectToZendesk();
@@ -124,6 +130,9 @@ async function createDefaultContextProvider(
 			search: window.location.search,
 			can_access_zendesk: canAccessZendesk,
 			environment,
+			// Match Odie's context shape so the server can read current_screen.url
+			currentScreen: { url: window.location.href },
+			...( siteId && { selectedSiteId: siteId } ),
 			// TODO: Remove once agenttic-client supports top-level constructorArguments
 			...( version && { constructorArguments: { version } } ),
 		} ),
@@ -164,11 +173,12 @@ export async function createAgentConfig(
 	}
 
 	if ( contextProvider ) {
-		config.contextProvider = await createWrappedContextProvider( contextProvider, version );
+		config.contextProvider = await createWrappedContextProvider( contextProvider, siteId, version );
 	} else {
 		config.contextProvider = await createDefaultContextProvider(
 			currentRoute,
 			environment,
+			siteId,
 			version
 		);
 	}

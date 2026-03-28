@@ -6,7 +6,7 @@ import PostEditButton from 'calypso/blocks/post-edit-button';
 import ReaderCommentIcon from 'calypso/reader/components/icons/comment-icon';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import LikeButton from 'calypso/reader/like-button';
-import { shouldShowLikes } from 'calypso/reader/like-helper';
+import { isLikeable } from 'calypso/reader/post/capabilities';
 import { recordAction, recordPermalinkClick } from 'calypso/reader/stats';
 import { userCan } from 'calypso/state/posts/utils';
 
@@ -25,7 +25,7 @@ const ReaderFullPostActionBar = ( {
 } ) => {
 	const translate = useTranslate();
 	const canEdit = site && userCan( 'edit_post', post );
-	const showLikes = shouldShowLikes( post );
+	const showLikes = isLikeable( post );
 	const followUrl = feedUrl || siteUrl;
 	const feedId = post.feed_ID ? Number( post.feed_ID ) : undefined;
 	const siteId = post.site_ID ? Number( post.site_ID ) : undefined;
