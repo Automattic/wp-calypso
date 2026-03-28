@@ -1,0 +1,60 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
+.a4a-stat__strapline {
+	@include body-small;
+
+	color: var(--color-neutral-70);
+	font-weight: $font-weight-medium;
+	text-transform: uppercase;
+}
+
+.a4a-stat__header {
+	align-items: baseline;
+	display: flex;
+	gap: 8px;
+}
+
+.a4a-stat__header--with-progress {
+	justify-content: space-between;
+}
+
+.a4a-stat__metric {
+	color: var(--color-neutral-100);
+	font-weight: $font-weight-medium;
+}
+
+.a4a-stat__metric-placeholder {
+	inline-size: 80px;
+}
+
+.a4a-stat__description {
+	@include body-small;
+
+	color: var(--color-neutral-70);
+}
+
+.a4a-stat__progress-bar {
+	margin-block-start: 4px;
+}
+
+.a4a-stat__progress-bar.progress-bar {
+	background-color: var(--color-neutral-5);
+	border-radius: 4px;
+	height: 4px;
+}
+
+.a4a-stat__progress-bar .progress-bar__progress {
+	border-radius: 4px;
+	height: 100%;
+}
+
+.a4a-stat--density-low .a4a-stat__metric {
+	font-size: $font-size-2x-large;
+	line-height: $font-line-height-2x-large;
+}
+
+.a4a-stat--density-high .a4a-stat__metric {
+	font-size: $font-size-large;
+	line-height: $font-line-height-small;
+}

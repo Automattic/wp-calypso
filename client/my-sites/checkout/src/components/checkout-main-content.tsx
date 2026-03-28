@@ -34,8 +34,10 @@ import {
 	RestorableProductsProvider,
 } from '@automattic/wpcom-checkout';
 import { css, keyframes } from '@emotion/react';
+import { Icon } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { pencil } from '@wordpress/icons';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
@@ -59,6 +61,7 @@ import { usePresalesChat } from 'calypso/lib/presales-chat';
 import { areVatDetailsSame } from 'calypso/me/purchases/vat-info/are-vat-details-same';
 import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
 import { CheckoutOrderBanner } from 'calypso/my-sites/checkout/src/components/checkout-order-banner';
+import { useCheckoutUiRedesignExperiment } from 'calypso/my-sites/checkout/src/hooks/use-checkout-ui-redesign-experiment';
 import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/src/hooks/use-valid-checkout-back-url';
 import { leaveCheckout } from 'calypso/my-sites/checkout/src/lib/leave-checkout';
 import { prepareDomainContactValidationRequest } from 'calypso/my-sites/checkout/src/types/wpcom-store-state';
@@ -510,6 +513,13 @@ export default function CheckoutMainContent( {
 	const isStepContainerV2 = useInitialIsInStepContainerV2FlowContext();
 	const isLargeViewport = useViewportMatch( 'large', '>=' );
 
+	const [ , isCheckoutUiRedesignV1 ] = useCheckoutUiRedesignExperiment();
+	const originalPriceForHeader = responseCart.products.reduce(
+		( sum, product ) => sum + product.item_original_subtotal_integer,
+		0
+	);
+	const hasDiscountForHeader = originalPriceForHeader > responseCart.total_cost_integer;
+
 	const { helpCenterButtonCopy, helpCenterButtonLink, toggleHelpCenter } = useCheckoutHelpCenter();
 
 	if ( ! checkoutActions ) {
@@ -559,7 +569,9 @@ export default function CheckoutMainContent( {
 				<WPCheckoutSidebarContent></WPCheckoutSidebarContent>
 				<WPCheckoutMainContent>
 					<PerformanceTrackerStop />
-					<WPCheckoutTitle>{ translate( 'Checkout' ) }</WPCheckoutTitle>
+					<WPCheckoutTitle className="checkout__main-title">
+						{ translate( 'Checkout' ) }
+					</WPCheckoutTitle>
 					<EmptyCart />
 					<CheckoutFormSubmit
 						submitButton={
@@ -591,49 +603,99 @@ export default function CheckoutMainContent( {
 		<WPCheckoutSidebarContent className="checkout-sidebar-content">
 			{ isLoading && <LoadingSidebarContent /> }
 			{ ! isLoading && (
-				<CheckoutSummaryArea className={ isSummaryVisible ? 'is-visible' : '' }>
-					<CheckoutErrorBoundary
-						errorMessage={ translate( 'Sorry, there was an error loading this information.' ) }
-						onError={ onSummaryError }
-					>
-						<CheckoutSummaryTitleLink
-							className="checkout__summary-button"
-							onClick={ () => setIsSummaryVisible( ! isSummaryVisible ) }
+				<>
+					<CheckoutSummaryArea className={ isSummaryVisible ? 'is-visible' : '' }>
+						<CheckoutErrorBoundary
+							errorMessage={ translate( 'Sorry, there was an error loading this information.' ) }
+							onError={ onSummaryError }
 						>
-							<CheckoutSummaryTitleContent className="checkout__summary-title">
-								<CheckoutSummaryTitle>
-									{ ! isStepContainerV2 && (
-										<CheckoutSummaryTitleIcon icon="info-outline" size={ 20 } />
-									) }
-									{ translate( 'Purchase Details' ) }
-									<CheckoutSummaryTitleToggle icon="keyboard_arrow_down" />
-								</CheckoutSummaryTitle>
-								<CheckoutSummaryTitlePrice className="wp-checkout__total-price">
-									{ formatCurrency( responseCart.total_cost_integer, responseCart.currency, {
-										isSmallestUnit: true,
-										stripZeros: true,
-									} ) }
-								</CheckoutSummaryTitlePrice>
-							</CheckoutSummaryTitleContent>
-						</CheckoutSummaryTitleLink>
-
-						<CheckoutSummaryBody className="checkout__summary-body">
-							{ shouldShowSitePreview && (
-								<div className="checkout-site-preview">
-									<SitePreviewWrapper>
-										<SitePreview showEditSite={ false } showSiteDetails={ false } />
-									</SitePreviewWrapper>
-								</div>
+							{ isCheckoutUiRedesignV1 ? (
+								<CheckoutSummaryTitleLinkRedesign
+									className="checkout__summary-button"
+									onClick={ () => setIsSummaryVisible( ! isSummaryVisible ) }
+								>
+									<CheckoutSummaryTitleContentRedesign className="checkout__summary-title">
+										<CheckoutSummaryTitle>
+											<CheckoutSummaryBagIconWrapper>
+												<MaterialIcon icon="shopping_cart" size={ 24 } />
+											</CheckoutSummaryBagIconWrapper>
+											{ translate( 'Purchase details' ) }
+										</CheckoutSummaryTitle>
+										<CheckoutSummaryPricesWrapper>
+											{ hasDiscountForHeader && (
+												<CheckoutSummaryOriginalPrice>
+													{ formatCurrency( originalPriceForHeader, responseCart.currency, {
+														isSmallestUnit: true,
+														stripZeros: true,
+													} ) }
+												</CheckoutSummaryOriginalPrice>
+											) }
+											<CheckoutSummaryCurrentPrice>
+												{ formatCurrency( responseCart.total_cost_integer, responseCart.currency, {
+													isSmallestUnit: true,
+													stripZeros: true,
+												} ) }
+											</CheckoutSummaryCurrentPrice>
+											<CheckoutSummaryTitleToggle icon="keyboard_arrow_down" />
+										</CheckoutSummaryPricesWrapper>
+									</CheckoutSummaryTitleContentRedesign>
+								</CheckoutSummaryTitleLinkRedesign>
+							) : (
+								<CheckoutSummaryTitleLink
+									className="checkout__summary-button"
+									onClick={ () => setIsSummaryVisible( ! isSummaryVisible ) }
+								>
+									<CheckoutSummaryTitleContent className="checkout__summary-title">
+										<CheckoutSummaryTitle>
+											{ ! isStepContainerV2 && (
+												<CheckoutSummaryTitleIcon icon="info-outline" size={ 20 } />
+											) }
+											{ translate( 'Purchase Details' ) }
+											<CheckoutSummaryTitleToggle icon="keyboard_arrow_down" />
+										</CheckoutSummaryTitle>
+										<CheckoutSummaryTitlePrice className="wp-checkout__total-price">
+											{ formatCurrency( responseCart.total_cost_integer, responseCart.currency, {
+												isSmallestUnit: true,
+												stripZeros: true,
+											} ) }
+										</CheckoutSummaryTitlePrice>
+									</CheckoutSummaryTitleContent>
+								</CheckoutSummaryTitleLink>
 							) }
 
-							<WPCheckoutOrderSummary />
-							<CheckoutSidebarNudge
-								addItemToCart={ addItemToCart }
-								areThereDomainProductsInCart={ areThereDomainProductsInCart }
-							/>
-						</CheckoutSummaryBody>
-					</CheckoutErrorBoundary>
-				</CheckoutSummaryArea>
+							<CheckoutSummaryBody className="checkout__summary-body">
+								{ shouldShowSitePreview && (
+									<div className="checkout-site-preview">
+										<SitePreviewWrapper>
+											<SitePreview showEditSite={ false } showSiteDetails={ false } />
+										</SitePreviewWrapper>
+									</div>
+								) }
+
+								<WPCheckoutOrderSummary />
+								{ ! isCheckoutUiRedesignV1 && (
+									<CheckoutSidebarNudge
+										addItemToCart={ addItemToCart }
+										areThereDomainProductsInCart={ areThereDomainProductsInCart }
+									/>
+								) }
+							</CheckoutSummaryBody>
+						</CheckoutErrorBoundary>
+					</CheckoutSummaryArea>
+					{
+						// This upsell should always be displayed in the
+						// sidebar at desktop width but only shown at mobile
+						// width if the checkout summary is toggled open.
+						isCheckoutUiRedesignV1 && ( isSummaryVisible || isLargeViewport ) && (
+							<CheckoutSummaryNudgeArea>
+								<CheckoutSidebarNudge
+									addItemToCart={ addItemToCart }
+									areThereDomainProductsInCart={ areThereDomainProductsInCart }
+								/>
+							</CheckoutSummaryNudgeArea>
+						)
+					}
+				</>
 			) }
 		</WPCheckoutSidebarContent>
 	);
@@ -649,7 +711,9 @@ export default function CheckoutMainContent( {
 						size={ ! isLargeViewport ? 'small' : undefined }
 					/>
 				) : (
-					<WPCheckoutTitle>{ translate( 'Checkout' ) }</WPCheckoutTitle>
+					<WPCheckoutTitle className="checkout__main-title">
+						{ translate( 'Checkout' ) }
+					</WPCheckoutTitle>
 				) }
 				<CheckoutStepGroup loadingHeader={ loadingHeader } onStepChanged={ onStepChanged }>
 					<PerformanceTrackerStop />
@@ -779,7 +843,10 @@ export default function CheckoutMainContent( {
 								</>
 							}
 							titleContent={ <ContactFormTitle /> }
-							editButtonText={ String( translate( 'Edit' ) ) }
+							editButtonText={ isCheckoutUiRedesignV1 ? undefined : String( translate( 'Edit' ) ) }
+							editButtonElement={
+								isCheckoutUiRedesignV1 ? <Icon icon={ pencil } size={ 18 } /> : undefined
+							}
 							editButtonAriaLabel={ String( translate( 'Edit the contact details' ) ) }
 							nextStepButtonText={ nextStepButtonText }
 							nextStepButtonAriaLabel={ String(
@@ -797,7 +864,10 @@ export default function CheckoutMainContent( {
 							/>
 						}
 						canEditStep={ canEditPaymentStep() }
-						editButtonText={ String( translate( 'Edit' ) ) }
+						editButtonText={ isCheckoutUiRedesignV1 ? undefined : String( translate( 'Edit' ) ) }
+						editButtonElement={
+							isCheckoutUiRedesignV1 ? <Icon icon={ pencil } size={ 18 } /> : undefined
+						}
 						editButtonAriaLabel={ String( translate( 'Edit the payment method' ) ) }
 						nextStepButtonText={ String( translate( 'Continue' ) ) }
 						nextStepButtonAriaLabel={ String(
@@ -851,7 +921,16 @@ export default function CheckoutMainContent( {
 
 	if ( ! isStepContainerV2 ) {
 		return (
-			<WPCheckoutWrapper className="checkout-wrapper" isLargeViewport={ isLargeViewport }>
+			<WPCheckoutWrapper
+				className="checkout-wrapper"
+				isLargeViewport={ isLargeViewport }
+				isCheckoutUiRedesignV1={ isCheckoutUiRedesignV1 }
+			>
+				{ isCheckoutUiRedesignV1 && ! isLargeViewport && (
+					<WPCheckoutTitle className="checkout__main-title checkout__redesign-header">
+						{ translate( 'Checkout' ) }
+					</WPCheckoutTitle>
+				) }
 				{ checkoutSummary }
 				{ checkoutMainContent }
 			</WPCheckoutWrapper>
@@ -859,7 +938,10 @@ export default function CheckoutMainContent( {
 	}
 
 	return (
-		<StepContainerV2CheckoutFixer isLargeViewport={ isLargeViewport }>
+		<StepContainerV2CheckoutFixer
+			isLargeViewport={ isLargeViewport }
+			isCheckoutUiRedesignV1={ isCheckoutUiRedesignV1 }
+		>
 			<Step.TwoColumnLayout
 				firstColumnWidth={ 8 }
 				secondColumnWidth={ 4 }
@@ -885,6 +967,9 @@ export default function CheckoutMainContent( {
 					return (
 						<>
 							{ topBar }
+							{ isCheckoutUiRedesignV1 && (
+								<Step.Heading text={ translate( 'Checkout' ) } align="left" size="small" />
+							) }
 							{ checkoutSummary }
 						</>
 					);
@@ -910,6 +995,7 @@ export default function CheckoutMainContent( {
 
 const StepContainerV2CheckoutFixer = styled.div< {
 	isLargeViewport: boolean;
+	isCheckoutUiRedesignV1?: boolean;
 } >`
 	background: ${ colorStudio.colors[ 'White' ] };
 
@@ -1053,6 +1139,291 @@ const StepContainerV2CheckoutFixer = styled.div< {
 			.checkout__summary-area,
 			.checkout-loading-sidebar {
 				min-width: 384px;
+			}
+		` }
+	${ ( props ) =>
+		props.isCheckoutUiRedesignV1 &&
+		! props.isLargeViewport &&
+		css`
+			.checkout-sidebar-content {
+				background: ${ colorStudio.colors[ 'White' ] };
+			}
+			.checkout__summary-area {
+				background: #f5f5f5;
+				border: 1px solid ${ colorStudio.colors[ 'Gray 10' ] };
+				border-radius: 8px;
+				margin: 12px 16px;
+				overflow: hidden;
+				width: calc( 100% - 32px );
+			}
+			.checkout__summary-button {
+				background: transparent;
+				border-bottom: none;
+			}
+			.checkout__summary-body {
+				padding-block-start: 0;
+			}
+			.wp-checkout-order-summary__section-title {
+				border-top: 1px dashed ${ colorStudio.colors[ 'Gray 10' ] };
+				padding-top: 20px;
+			}
+			.step-container-v2__top-bar-wrapper .step-container-v2__heading {
+				padding-inline: 16px;
+				margin-bottom: 4px;
+			}
+			.checkout-main-content .step-container-v2__heading {
+				display: none;
+			}
+			.checkout-step {
+				padding: 16px 16px 48px 16px;
+			}
+		` }
+	${ ( props ) =>
+		props.isCheckoutUiRedesignV1 &&
+		css`
+			.checkout__main-title,
+			.step-container-v2__heading h1 {
+				font-size: 28px;
+				font-weight: 400;
+				color: ${ colorStudio.colors[ 'Gray 100' ] };
+			}
+			.checkout__summary-card {
+				background: transparent;
+				box-shadow: none;
+				padding: 0;
+				padding-inline-end: 22px;
+				margin-bottom: 0;
+			}
+			.promo-card.checkout-sidebar-plan-upsell {
+				background: linear-gradient( 135deg, rgba( 255, 255, 255, 0 ) 0%, #fff 50%, #e6f1ff 100% );
+				border-radius: 8px;
+				margin: 0;
+				max-width: none;
+				width: 100%;
+			}
+			.checkout-sidebar-plan-upsell__plan-grid > div {
+				border-top: none;
+			}
+			.item-variation-picker {
+				background: #ffffff;
+				border: 1px solid #e0e0e0;
+				border-radius: 8px;
+				overflow: hidden;
+				padding: 0;
+			}
+			.item-variation-picker > li {
+				margin: 0;
+				border-bottom: 1px solid #f0f0f0;
+			}
+			.item-variation-picker > li:last-child {
+				border-bottom: none;
+			}
+			.item-variation-picker > li > div.is-checked {
+				background: linear-gradient( 135deg, rgba( 255, 255, 255, 0 ) 0%, #fff 50%, #e6f1ff 100% );
+			}
+			.item-variation-picker > li > div::before,
+			.item-variation-picker > li > div:hover::before {
+				border: none;
+			}
+			.item-variation-picker > li > div > label {
+				min-height: 52px;
+			}
+			.checkout-step__stepper > div > div:first-child {
+				border: 1px solid ${ colorStudio.colors[ 'Gray 90' ] };
+				color: ${ colorStudio.colors[ 'Gray 90' ] };
+				font-weight: 600;
+			}
+			.checkout-payment-methods {
+				background: #ffffff;
+				border: 1px solid #e0e0e0;
+				border-radius: 8px;
+				overflow: hidden;
+				padding-top: 0;
+			}
+			.checkout-payment-methods .has-highlight,
+			.item-variation-picker > li > div {
+				border-radius: 0;
+			}
+			.checkout-payment-methods .has-highlight {
+				margin: 0;
+				border-bottom: 1px solid #f0f0f0;
+			}
+			.checkout-payment-methods .has-highlight:last-child {
+				border-bottom: none;
+			}
+			.checkout-payment-methods .has-highlight.is-checked {
+				background: linear-gradient( 135deg, rgba( 255, 255, 255, 0 ) 0%, #fff 50%, #e6f1ff 100% );
+			}
+			.checkout-payment-methods .has-highlight::before,
+			.checkout-payment-methods .has-highlight:hover::before {
+				border: none;
+			}
+			.checkout-payment-methods .has-highlight > label {
+				min-height: 52px;
+				font-size: 13px;
+				font-weight: 400;
+			}
+			.checkout-payment-methods .payment-logos {
+				display: flex;
+				filter: none;
+			}
+			.checkout-payment-methods .StripeElement {
+				background-color: field;
+			}
+			div:has( > .credit-card-fields-inner-wrapper ) {
+				padding: 0 16px 16px 16px;
+			}
+			.checkout-steps__step-complete-content .checkout-payment-methods {
+				background: white;
+				padding: 12px 16px;
+				min-height: 52px;
+				display: flex;
+				align-items: center;
+				box-sizing: border-box;
+				font-size: 15px;
+				font-weight: 500;
+				color: ${ colorStudio.colors[ 'Gray 90' ] };
+			}
+			.checkout-contact-form-step .checkout-steps__step-complete-content {
+				font-weight: 500;
+				color: ${ colorStudio.colors[ 'Gray 90' ] };
+			}
+			.checkout-contact-form-step .checkout-steps__step-complete-content ul:empty {
+				display: none;
+			}
+			.checkout-contact-form-step .checkout-steps__step-complete-content ul {
+				margin-top: 0;
+			}
+			.checkout-step__edit-button {
+				padding: 4px;
+				display: flex;
+				align-items: center;
+				line-height: 1;
+			}
+			.checkout-step__header h2 {
+				font-size: 15px;
+			}
+			.checkout-step__header h2 > span {
+				font-weight: 590;
+				color: ${ colorStudio.colors[ 'Gray 100' ] };
+			}
+			.checkout-step--active .checkout-step__header,
+			.checkout-step--complete .checkout-step__header {
+				margin-block-end: 24px;
+			}
+			.wp-checkout__review-order-step .checkout-step__header h2 > span {
+				font-weight: 500;
+			}
+			.wp-checkout-order-review__show-coupon-field-button {
+				color: ${ colorStudio.colors[ 'Gray 90' ] };
+				font-weight: 500;
+				text-decoration: none;
+			}
+			div:has( > div > .wp-checkout-order-review__show-coupon-field-button ) {
+				margin-block-start: -4px;
+				padding-block-start: 0;
+			}
+			.wp-checkout__review-order-step .checkout-step__stepper {
+				display: none;
+			}
+			.wp-checkout__review-order-step .checkout-step__header h2 {
+				font-size: 20px;
+			}
+			.wp-checkout__review-order-step .checkout-line-item {
+				font-size: 15px;
+			}
+			.wp-checkout__review-order-step .order-review-line-items {
+				margin-top: 0;
+			}
+			.wp-checkout__review-order-step .checkout-review-order__site {
+				font-size: 13px;
+				font-weight: 400;
+				color: ${ colorStudio.colors[ 'Gray 40' ] };
+				@media ( ${ props.theme.breakpoints.tabletUp } ) {
+					margin-inline-start: -40px;
+					margin-top: 0;
+				}
+			}
+			.checkout-contact-form-step .checkout-steps__step-content > p {
+				font-size: 12px;
+				font-weight: 400;
+				color: ${ colorStudio.colors[ 'Gray 40' ] };
+			}
+			.checkout__terms strong {
+				font-size: 16px;
+				font-weight: 500;
+				color: ${ colorStudio.colors[ 'Gray 100' ] };
+			}
+			.checkout__terms-item {
+				font-size: 12px;
+				font-weight: 400;
+				color: ${ colorStudio.colors[ 'Gray 40' ] };
+			}
+			.checkout__summary-title {
+				font-size: 13px;
+				font-weight: 400;
+				color: ${ colorStudio.colors[ 'Gray 100' ] };
+			}
+			.checkout__summary-body {
+				color: ${ colorStudio.colors[ 'Gray 70' ] };
+			}
+			.wp-checkout-order-summary__subtotal,
+			.wp-checkout-order-summary__total {
+				color: ${ colorStudio.colors[ 'Gray 90' ] };
+				font-size: 13px;
+				line-height: 20px;
+			}
+			.wp-checkout-order-summary__subtotal .wp-checkout-order-summary__subtotal-price {
+				font-size: 13px;
+			}
+			.wp-checkout-order-summary__line-item,
+			.wp-checkout-order-summary__tax-not-calculated {
+				font-size: 13px;
+			}
+			.wp-checkout-order-summary__section-title {
+				margin-bottom: 0;
+			}
+			.wp-checkout-order-summary__section-title > span {
+				display: none;
+			}
+			.cost-overrides-list-product-wrapper,
+			:has( > .cost-overrides-list-item--coupon ) {
+				padding-inline-start: 0;
+			}
+			.cost-overrides-list-product-wrapper > svg[aria-hidden='true'],
+			:has( > .cost-overrides-list-item--coupon ) > svg[aria-hidden='true'] {
+				display: none;
+			}
+			.wp-checkout-order-summary__amount-wrapper {
+				border-top: 1px dashed ${ colorStudio.colors[ 'Gray 10' ] };
+			}
+			.wp-checkout-order-summary__subtotal-section {
+				border-bottom: 1px dashed ${ colorStudio.colors[ 'Gray 10' ] };
+			}
+			.checkout-terms-and-checkboxes {
+				padding-block-start: 24px;
+			}
+			.checkout-terms-and-checkboxes > *:first-child {
+				border-top: 1px dashed ${ colorStudio.colors[ 'Gray 10' ] };
+			}
+			.checkout-steps__submit-footer-wrapper > div {
+				margin-top: 8px;
+			}
+			.checkout-steps__submit-footer-wrapper > div > svg {
+				display: none;
+			}
+			.checkout-steps__submit-footer-wrapper > div > p {
+				font-size: 13px;
+				font-weight: 400;
+				color: ${ colorStudio.colors[ 'Gray 70' ] };
+			}
+		` }
+	${ ( props ) =>
+		props.isCheckoutUiRedesignV1 &&
+		props.isLargeViewport &&
+		css`
+			div:has( > div > .wp-checkout-order-review__show-coupon-field-button ) {
+				padding-block-start: 24px;
 			}
 		` }
 `;
@@ -1417,6 +1788,7 @@ const SubmitButtonHeaderWrapper = styled.div`
 
 const WPCheckoutWrapper = styled.div< {
 	isLargeViewport?: boolean;
+	isCheckoutUiRedesignV1?: boolean;
 } >`
 	background: ${ colorStudio.colors[ 'White' ] };
 	display: grid;
@@ -1457,6 +1829,305 @@ const WPCheckoutWrapper = styled.div< {
 			.checkout-loading-sidebar,
 			.checkout-sidebar-plan-upsell {
 				min-width: 384px;
+			}
+		` }
+	${ ( props ) =>
+		props.isCheckoutUiRedesignV1 &&
+		! props.isLargeViewport &&
+		css`
+			grid-template-areas: 'checkout-title-area' 'sidebar-content' 'main-content';
+			.checkout-sidebar-content {
+				background: ${ colorStudio.colors[ 'White' ] };
+			}
+			.checkout__summary-area {
+				background: #f5f5f5;
+				border: 1px solid ${ colorStudio.colors[ 'Gray 10' ] };
+				border-radius: 8px;
+				margin: 12px 16px;
+				overflow: hidden;
+				width: calc( 100% - 32px );
+			}
+			.checkout__summary-button {
+				background: transparent;
+				border-bottom: none;
+			}
+			.checkout__summary-body {
+				padding-block-start: 0;
+			}
+			.wp-checkout-order-summary__section-title {
+				border-top: 1px dashed ${ colorStudio.colors[ 'Gray 10' ] };
+				padding-top: 20px;
+			}
+			.checkout__redesign-header {
+				grid-area: checkout-title-area;
+				margin-top: var( --masterbar-checkout-height );
+				margin-bottom: 12px;
+				padding-inline: 16px;
+			}
+			.checkout-sidebar-content {
+				margin-top: 0;
+			}
+			.checkout-main-content .checkout__main-title {
+				display: none;
+			}
+			.checkout-main-content {
+				margin-top: 12px;
+			}
+			.wp-checkout__review-order-step {
+				padding-block-start: 0;
+			}
+			.checkout-step {
+				padding: 16px 16px 48px 16px;
+			}
+		` }
+	${ ( props ) =>
+		props.isCheckoutUiRedesignV1 &&
+		css`
+			.checkout__main-title,
+			.step-container-v2__heading h1 {
+				font-weight: 400;
+				color: ${ colorStudio.colors[ 'Gray 100' ] };
+
+				@media ( max-width: 699px ) {
+					font-size: 28px;
+				}
+			}
+			.checkout__summary-card {
+				background: transparent;
+				box-shadow: none;
+				padding: 0;
+				margin-bottom: 0;
+			}
+			.promo-card.checkout-sidebar-plan-upsell {
+				background: linear-gradient( 135deg, rgba( 255, 255, 255, 0 ) 0%, #fff 50%, #e6f1ff 100% );
+				border-radius: 8px;
+				margin: 0;
+				max-width: none;
+				width: 100%;
+			}
+			.checkout-sidebar-plan-upsell__plan-grid > div {
+				border-top: none;
+			}
+			.item-variation-picker {
+				background: #ffffff;
+				border: 1px solid #e0e0e0;
+				border-radius: 8px;
+				overflow: hidden;
+				padding: 0;
+			}
+			.item-variation-picker > li {
+				margin: 0;
+				border-bottom: 1px solid #f0f0f0;
+			}
+			.item-variation-picker > li:last-child {
+				border-bottom: none;
+			}
+			.item-variation-picker > li > div.is-checked {
+				background: linear-gradient( 135deg, rgba( 255, 255, 255, 0 ) 0%, #fff 50%, #e6f1ff 100% );
+			}
+			.item-variation-picker > li > div::before,
+			.item-variation-picker > li > div:hover::before {
+				border: none;
+			}
+			.item-variation-picker > li > div > label {
+				min-height: 52px;
+			}
+			.checkout-step__stepper > div > div:first-child {
+				border: 1px solid ${ colorStudio.colors[ 'Gray 90' ] };
+				color: ${ colorStudio.colors[ 'Gray 90' ] };
+				font-weight: 600;
+			}
+			.checkout-payment-methods {
+				background: #ffffff;
+				border: 1px solid #e0e0e0;
+				border-radius: 8px;
+				overflow: hidden;
+				padding-top: 0;
+			}
+			.checkout-payment-methods .has-highlight,
+			.item-variation-picker > li > div {
+				border-radius: 0;
+			}
+			.checkout-payment-methods .has-highlight {
+				margin: 0;
+				border-bottom: 1px solid #f0f0f0;
+			}
+			.checkout-payment-methods .has-highlight:last-child {
+				border-bottom: none;
+			}
+			.checkout-payment-methods .has-highlight.is-checked {
+				background: linear-gradient( 135deg, rgba( 255, 255, 255, 0 ) 0%, #fff 50%, #e6f1ff 100% );
+			}
+			.checkout-payment-methods .has-highlight::before,
+			.checkout-payment-methods .has-highlight:hover::before {
+				border: none;
+			}
+			.checkout-payment-methods .has-highlight > label {
+				min-height: 52px;
+				font-size: 13px;
+				font-weight: 400;
+			}
+			.checkout-payment-methods .payment-logos {
+				display: flex;
+				filter: none;
+			}
+			.checkout-payment-methods .StripeElement {
+				background-color: field;
+			}
+			div:has( > .credit-card-fields-inner-wrapper ) {
+				padding: 0 16px 16px 16px;
+			}
+			.checkout-steps__step-complete-content .checkout-payment-methods {
+				background: white;
+				padding: 12px 16px;
+				min-height: 52px;
+				display: flex;
+				align-items: center;
+				box-sizing: border-box;
+				font-size: 15px;
+				font-weight: 500;
+				color: ${ colorStudio.colors[ 'Gray 90' ] };
+			}
+			.checkout-contact-form-step .checkout-steps__step-complete-content {
+				font-weight: 500;
+				color: ${ colorStudio.colors[ 'Gray 90' ] };
+			}
+			.checkout-contact-form-step .checkout-steps__step-complete-content ul:empty {
+				display: none;
+			}
+			.checkout-contact-form-step .checkout-steps__step-complete-content ul {
+				margin-top: 0;
+			}
+			.checkout-step__edit-button {
+				padding: 4px;
+				display: flex;
+				align-items: center;
+				line-height: 1;
+			}
+			.checkout-step__header h2 {
+				font-size: 15px;
+			}
+			.checkout-step__header h2 > span {
+				font-weight: 590;
+				color: ${ colorStudio.colors[ 'Gray 100' ] };
+			}
+			.checkout-step--active .checkout-step__header,
+			.checkout-step--complete .checkout-step__header {
+				margin-block-end: 24px;
+			}
+			.wp-checkout__review-order-step .checkout-step__header h2 > span {
+				font-weight: 500;
+			}
+			.wp-checkout-order-review__show-coupon-field-button {
+				color: ${ colorStudio.colors[ 'Gray 90' ] };
+				font-weight: 500;
+				text-decoration: none;
+			}
+			div:has( > div > .wp-checkout-order-review__show-coupon-field-button ) {
+				margin-block-start: -4px;
+				padding-block-start: 0;
+			}
+			.wp-checkout__review-order-step .checkout-step__stepper {
+				display: none;
+			}
+			.wp-checkout__review-order-step .checkout-step__header h2 {
+				font-size: 20px;
+			}
+			.wp-checkout__review-order-step .checkout-line-item {
+				font-size: 15px;
+			}
+			.wp-checkout__review-order-step .order-review-line-items {
+				margin-top: 0;
+			}
+			.wp-checkout__review-order-step .checkout-review-order__site {
+				font-size: 13px;
+				font-weight: 400;
+				color: ${ colorStudio.colors[ 'Gray 40' ] };
+				@media ( ${ props.theme.breakpoints.tabletUp } ) {
+					margin-inline-start: -40px;
+					margin-top: 0;
+				}
+			}
+			.checkout-contact-form-step .checkout-steps__step-content > p {
+				font-size: 12px;
+				font-weight: 400;
+				color: ${ colorStudio.colors[ 'Gray 40' ] };
+			}
+			.checkout__terms strong {
+				font-size: 16px;
+				font-weight: 500;
+				color: ${ colorStudio.colors[ 'Gray 100' ] };
+			}
+			.checkout__terms-item {
+				font-size: 12px;
+				font-weight: 400;
+				color: ${ colorStudio.colors[ 'Gray 40' ] };
+			}
+			.checkout__summary-title {
+				font-size: 13px;
+				font-weight: 400;
+				color: ${ colorStudio.colors[ 'Gray 100' ] };
+			}
+			.checkout__summary-body {
+				color: ${ colorStudio.colors[ 'Gray 70' ] };
+			}
+			.wp-checkout-order-summary__subtotal,
+			.wp-checkout-order-summary__total {
+				color: ${ colorStudio.colors[ 'Gray 90' ] };
+				font-size: 13px;
+				line-height: 20px;
+			}
+			.wp-checkout-order-summary__subtotal .wp-checkout-order-summary__subtotal-price {
+				font-size: 13px;
+			}
+			.wp-checkout-order-summary__line-item,
+			.wp-checkout-order-summary__tax-not-calculated {
+				font-size: 13px;
+			}
+			.wp-checkout-order-summary__section-title {
+				margin-bottom: 0;
+			}
+			.wp-checkout-order-summary__section-title > span {
+				display: none;
+			}
+			.cost-overrides-list-product-wrapper,
+			:has( > .cost-overrides-list-item--coupon ) {
+				padding-inline-start: 0;
+			}
+			.cost-overrides-list-product-wrapper > svg[aria-hidden='true'],
+			:has( > .cost-overrides-list-item--coupon ) > svg[aria-hidden='true'] {
+				display: none;
+			}
+			.wp-checkout-order-summary__amount-wrapper {
+				border-top: 1px dashed ${ colorStudio.colors[ 'Gray 10' ] };
+			}
+			.wp-checkout-order-summary__subtotal-section {
+				border-bottom: 1px dashed ${ colorStudio.colors[ 'Gray 10' ] };
+			}
+			.checkout-terms-and-checkboxes {
+				padding-block-start: 24px;
+			}
+			.checkout-terms-and-checkboxes > *:first-child {
+				border-top: 1px dashed ${ colorStudio.colors[ 'Gray 10' ] };
+			}
+			.checkout-steps__submit-footer-wrapper > div {
+				margin-top: 8px;
+			}
+			.checkout-steps__submit-footer-wrapper > div > svg {
+				display: none;
+			}
+			.checkout-steps__submit-footer-wrapper > div > p {
+				font-size: 13px;
+				font-weight: 400;
+				color: ${ colorStudio.colors[ 'Gray 70' ] };
+			}
+		` }
+	${ ( props ) =>
+		props.isCheckoutUiRedesignV1 &&
+		props.isLargeViewport &&
+		css`
+			div:has( > div > .wp-checkout-order-review__show-coupon-field-button ) {
+				padding-block-start: 24px;
 			}
 		` }
 `;
@@ -1583,5 +2254,70 @@ const WPCheckoutTitle = styled.div`
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		padding: 0;
+	}
+`;
+
+// Redesign V1 styled components for summary header
+const CheckoutSummaryTitleLinkRedesign = styled.button`
+	background: transparent;
+	border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+	width: 100%;
+
+	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
+		display: none;
+	}
+`;
+
+const CheckoutSummaryTitleContentRedesign = styled.span`
+	color: ${ ( props ) => props.theme.colors.textColor };
+	display: flex;
+	font-size: 13px;
+	font-weight: 400;
+	justify-content: space-between;
+	align-items: center;
+	margin: 0 auto;
+	padding: 16px;
+	max-width: 600px;
+
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		padding: 16px 0;
+	}
+`;
+
+const CheckoutSummaryPricesWrapper = styled.span`
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 4px;
+`;
+
+const CheckoutSummaryOriginalPrice = styled.s`
+	color: ${ ( props ) => props.theme.colors.textColorLight };
+	font-weight: ${ ( props ) => props.theme.weights.normal };
+	font-size: 13px;
+`;
+
+const CheckoutSummaryCurrentPrice = styled.span`
+	font-weight: ${ ( props ) => props.theme.weights.bold };
+`;
+
+const CheckoutSummaryBagIconWrapper = styled.span`
+	opacity: 0.5;
+	display: flex;
+	align-items: center;
+	margin-inline-end: 6px;
+	& svg {
+		width: 16px;
+		height: 16px;
+	}
+`;
+
+const CheckoutSummaryNudgeArea = styled.div`
+	margin: 8px 16px 12px;
+
+	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
+		margin-inline: 0;
+		margin-block-start: 24px;
+		max-width: 288px;
 	}
 `;

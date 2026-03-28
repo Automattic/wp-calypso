@@ -25,6 +25,7 @@ export {
 export type * from './types';
 export { zendeskMessageConverter } from './zendesk-message-converter';
 export { useManagedZendeskChat } from './use-managed-zendesk-chat';
+export { useConnectionStatusNotice } from './use-connection-status-notice';
 export { useGetZendeskConversations } from './use-managed-zendesk-chat';
 export { CSATForm } from './components/csat-form';
 export type { CSATFormProps } from './components/csat-form';

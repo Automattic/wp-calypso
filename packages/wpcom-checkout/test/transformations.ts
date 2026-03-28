@@ -1,6 +1,7 @@
 import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
 import {
 	getCreditsLineItemFromCart,
+	getSubtotalWithoutDiscountsForProduct,
 	getTaxLineItemFromCart,
 	getTaxBreakdownLineItemsFromCart,
 	getCouponLineItemFromCart,
@@ -244,5 +245,109 @@ describe( 'getCreditsLineItemFromCart', function () {
 		};
 
 		expect( getCreditsLineItemFromCart( cartWithCredits ) ).toStrictEqual( expected );
+	} );
+} );
+
+describe( 'getSubtotalWithoutDiscountsForProduct', function () {
+	it( 'returns item_subtotal_integer when there are no cost overrides', () => {
+		const product = {
+			...getEmptyResponseCartProduct(),
+			item_subtotal_integer: 8000,
+			item_original_subtotal_integer: 8000,
+		};
+
+		expect( getSubtotalWithoutDiscountsForProduct( product ) ).toBe( 8000 );
+	} );
+
+	it( 'returns the intro offer new_subtotal for a premium domain with a price-increasing intro offer', () => {
+		const product = {
+			...getEmptyResponseCartProduct(),
+			product_slug: 'dotart_domain',
+			item_subtotal_integer: 110000,
+			item_original_subtotal_integer: 8000,
+			introductory_offer_terms: {
+				enabled: true,
+				interval_unit: 'year' as const,
+				interval_count: 1,
+				transition_after_renewal_count: 0,
+				should_prorate_when_offer_ends: false,
+				do_not_use_offer: false,
+				reason: null,
+			},
+			cost_overrides: [
+				{
+					human_readable_reason: 'Introductory offer',
+					old_subtotal_integer: 8000,
+					new_subtotal_integer: 110000,
+					override_code: 'introductory-offer',
+					does_override_original_cost: false,
+					percentage: 0,
+					first_unit_only: false,
+				},
+			],
+		};
+
+		expect( getSubtotalWithoutDiscountsForProduct( product ) ).toBe( 110000 );
+	} );
+
+	it( 'returns the peak price for a premium domain with stacked overrides (intro offer + sale coupon)', () => {
+		const product = {
+			...getEmptyResponseCartProduct(),
+			product_slug: 'dotart_domain',
+			item_subtotal_integer: 27500,
+			item_original_subtotal_integer: 8000,
+			introductory_offer_terms: {
+				enabled: true,
+				interval_unit: 'year' as const,
+				interval_count: 1,
+				transition_after_renewal_count: 0,
+				should_prorate_when_offer_ends: false,
+				do_not_use_offer: false,
+				reason: null,
+			},
+			cost_overrides: [
+				{
+					human_readable_reason: 'Introductory offer',
+					old_subtotal_integer: 8000,
+					new_subtotal_integer: 110000,
+					override_code: 'introductory-offer',
+					does_override_original_cost: false,
+					percentage: 0,
+					first_unit_only: false,
+				},
+				{
+					human_readable_reason: 'Item on sale',
+					old_subtotal_integer: 110000,
+					new_subtotal_integer: 27500,
+					override_code: 'sale-coupon-discount-1',
+					does_override_original_cost: false,
+					percentage: 75,
+					first_unit_only: true,
+				},
+			],
+		};
+
+		expect( getSubtotalWithoutDiscountsForProduct( product ) ).toBe( 110000 );
+	} );
+
+	it( 'returns the first override old_subtotal for a product with only a discount override', () => {
+		const product = {
+			...getEmptyResponseCartProduct(),
+			item_subtotal_integer: 6000,
+			item_original_subtotal_integer: 8000,
+			cost_overrides: [
+				{
+					human_readable_reason: 'Introductory offer',
+					old_subtotal_integer: 8000,
+					new_subtotal_integer: 6000,
+					override_code: 'introductory-offer',
+					does_override_original_cost: false,
+					percentage: 0,
+					first_unit_only: false,
+				},
+			],
+		};
+
+		expect( getSubtotalWithoutDiscountsForProduct( product ) ).toBe( 8000 );
 	} );
 } );

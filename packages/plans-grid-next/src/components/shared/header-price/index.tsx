@@ -246,7 +246,16 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 	if ( isAnyPlanPriceDiscounted ) {
 		return (
 			<div className="plans-grid-next-header-price">
-				<div className="plans-grid-next-header-price__badge is-hidden">' '</div>
+				{ showBillingDescriptionForIncreasedRenewalPrice === 'crossed_price' && savings ? (
+					<div className="plans-grid-next-header-price__badge">
+						{ translate( 'Save %(savings)d%%', {
+							args: { savings },
+							comment: 'Example: Save 35%',
+						} ) }
+					</div>
+				) : (
+					<div className="plans-grid-next-header-price__badge is-hidden">' '</div>
+				) }
 				{ isLargeCurrency ? (
 					<div className="plans-grid-next-header-price__pricing-group is-large-currency">
 						<PlanPrice

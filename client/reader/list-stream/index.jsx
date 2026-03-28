@@ -65,11 +65,19 @@ class ListStream extends Component {
 			return <QueryReaderList owner={ this.props.owner } slug={ this.props.slug } />;
 		}
 
+		let formattedTitle = this.title;
 		if ( list ) {
 			// Show author name in parentheses if the list is owned by someone other than the current user
 			const isOwnedByCurrentUser =
 				this.props.currentUser && list.owner === this.props.currentUser.username;
 			this.title = isOwnedByCurrentUser ? list.title : `${ list.title } (${ list.owner })`;
+			formattedTitle = isOwnedByCurrentUser ? (
+				list.title
+			) : (
+				<>
+					{ list.title } (<a href={ `/reader/users/${ list.owner }` }>{ list.owner }</a>)
+				</>
+			);
 		}
 
 		if ( this.props.isMissing ) {
@@ -111,7 +119,7 @@ class ListStream extends Component {
 							</g>
 						</svg>
 					}
-					title={ this.title }
+					title={ formattedTitle }
 					description={ list?.description }
 					showFollow={ shouldShowFollow }
 					following={ this.props.isSubscribed }

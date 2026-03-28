@@ -10,16 +10,16 @@ export function getAccessSummaryBadge( enabledCount, total, translate ) {
 		return { text: translate( 'None' ), intent: 'default' };
 	}
 	if ( enabledCount === 0 ) {
-		return { text: translate( 'None enabled' ), intent: 'warning' };
+		return { text: translate( 'None enabled' ), intent: 'default' };
 	}
 	if ( enabledCount === total ) {
 		return { text: translate( 'All enabled' ), intent: 'success' };
 	}
 	return {
-		text: translate( '%(enabled)d of %(total)d', {
+		text: translate( '%(enabled)d of %(total)d enabled', {
 			args: { enabled: enabledCount, total },
 		} ),
-		intent: 'default',
+		intent: 'info',
 	};
 }
 
@@ -41,9 +41,9 @@ export function getWriteAccessBadge( enabledCount, total, translate ) {
 		return { text: translate( 'All enabled' ), intent: 'success' };
 	}
 	return {
-		text: translate( '%(enabled)d of %(total)d', {
+		text: translate( '%(enabled)d of %(total)d enabled', {
 			args: { enabled: enabledCount, total },
 		} ),
-		intent: 'default',
+		intent: 'info',
 	};
 }

@@ -7,7 +7,7 @@ import { category, envelope } from '@wordpress/icons';
 import { useAppContext } from '../../app/context';
 import { emailsRoute } from '../../app/router/emails';
 import { SidebarBackButton, SidebarMenu, SidebarMenuItem } from '../../components/sidebar';
-import DomainSwitcher from '../domain-switcher';
+import DomainSwitcherItem from './domain-switcher-item';
 
 export default function DomainSidebar() {
 	const { params } = useNavigator();
@@ -23,7 +23,7 @@ export default function DomainSidebar() {
 		<VStack spacing={ 2 }>
 			<SidebarBackButton to="/domains">{ __( 'Back to Domains' ) }</SidebarBackButton>
 			<VStack spacing={ 4 }>
-				<DomainSwitcher domain={ domain } />
+				<DomainSwitcherItem domain={ domain } />
 				<DomainMenuSidebar domainName={ domainName } />
 			</VStack>
 		</VStack>

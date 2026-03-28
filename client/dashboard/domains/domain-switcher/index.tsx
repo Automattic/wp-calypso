@@ -5,6 +5,8 @@ import { globe } from '@wordpress/icons';
 import { useAppContext } from '../../app/context';
 import useBuildCurrentRouteLink from '../../app/hooks/use-build-current-route-link';
 import Switcher from '../../components/switcher';
+import { Text } from '../../components/text';
+import type { SwitcherProps } from '../../components/switcher';
 import type { Domain, DomainSummary } from '@automattic/api-core';
 
 import './style.scss';
@@ -17,7 +19,13 @@ const searchableFields = [
 	},
 ];
 
-export default function DomainSwitcher( { domain }: { domain: Domain } ) {
+export default function DomainSwitcher( {
+	domain,
+	renderToggle,
+}: {
+	domain: Domain;
+	renderToggle?: SwitcherProps< DomainSummary >[ 'renderToggle' ];
+} ) {
 	const { queries } = useAppContext();
 	const domains = useQuery( {
 		...queries.domainsQuery(),
@@ -34,19 +42,20 @@ export default function DomainSwitcher( { domain }: { domain: Domain } ) {
 			value={ domain }
 			searchableFields={ searchableFields }
 			getItemUrl={ ( d ) => buildCurrentRouteLink( { params: { domainName: d.domain } } ) }
-			renderItemMedia={ ( { context } ) =>
-				context === 'list' ? null : <Icon className="domain-icon" icon={ globe } size={ 24 } />
-			}
-			renderItemTitle={ ( { item } ) => (
-				<span
-					style={ {
-						overflow: 'hidden',
-						textOverflow: 'ellipsis',
-						whiteSpace: 'nowrap',
-					} }
-				>
-					{ item.domain }
-				</span>
+			renderToggle={ renderToggle }
+			renderItem={ ( { item, context } ) => (
+				<Switcher.Item
+					media={
+						context !== 'list' ? (
+							<Icon className="domain-icon" icon={ globe } size={ 24 } />
+						) : undefined
+					}
+					title={
+						<Text truncate numberOfLines={ 1 } style={ { color: 'inherit' } }>
+							{ item.domain }
+						</Text>
+					}
+				/>
 			) }
 		/>
 	);

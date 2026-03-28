@@ -254,9 +254,13 @@ function useRedirectOnTransactionSuccess( {
 		// For siteless purchases where the pre-transaction redirect URL defaults to '/'
 		// (because the new site's ID was unknown before the transaction), use the
 		// receipt's blogId to redirect to the new site's thank-you page instead.
+		// Preserve any query params from the original redirectTo (e.g., ?flow=unified).
+		const { pathname, search } = redirectTo
+			? getUrlParts( redirectTo )
+			: { pathname: undefined, search: '' };
 		const effectiveRedirectTo =
-			( ! redirectTo || redirectTo === '/' ) && blogId && finalReceiptId
-				? `/checkout/thank-you/${ blogId }/${ finalReceiptId }`
+			( ! redirectTo || pathname === '/' ) && blogId && finalReceiptId
+				? `/checkout/thank-you/${ blogId }/${ finalReceiptId }${ search }`
 				: redirectTo;
 
 		const redirectInstructions = getRedirectFromPendingPage( {
