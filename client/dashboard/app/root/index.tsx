@@ -20,7 +20,6 @@ import { useAppContext } from '../context';
 import Header from '../header';
 import { useOmnibarEvent } from '../interim-omnibar/click-handlers';
 import { NavigationBlockerRegistry } from '../navigation-blocker';
-import OmnibarHeader from '../omnibar-header';
 import ResponsiveSidebar from '../responsive-sidebar';
 import Snackbars from '../snackbars';
 import './style.scss';
@@ -141,7 +140,7 @@ function Root() {
 			return <Header />;
 		}
 
-		return <OmnibarHeader onToggleMenu={ () => setIsSidebarOpen( ( value ) => ! value ) } />;
+		return null;
 	};
 
 	const renderBody = () => {

@@ -428,7 +428,7 @@ function SingleProductAndCostOverridesList( { product }: { product: ResponseCart
 	);
 
 	return (
-		<SimplifiedSingleProductAndCostOverridesListWrapper>
+		<SimplifiedSingleProductAndCostOverridesListWrapper className="cost-overrides-list-product-wrapper">
 			<WPCheckoutCheckIcon />
 			<ProductTitleAreaForCostOverridesList>
 				<span className="cost-overrides-list-product__title">{ label }</span>

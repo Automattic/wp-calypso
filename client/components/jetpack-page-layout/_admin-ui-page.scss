@@ -1,0 +1,45 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/admin-ui/build-style/style.css";
+
+// Shared layout overrides for pages using @wordpress/admin-ui Page component.
+// Usage: @include admin-ui-page-layout;
+// Must be called inside a `body.is-section-<name>` selector.
+@mixin admin-ui-page-layout {
+	@media screen and (max-width: $break-small) {
+		.focus-content:not(.has-no-sidebar):not(.has-no-masterbar) .layout__content {
+			padding-top: var(--masterbar-height);
+		}
+	}
+
+	.layout:not(.has-no-sidebar) .layout__content {
+		padding: var(--masterbar-height) 0 0 var(--sidebar-width-max);
+
+		@media (max-width: $break-medium) {
+			padding-left: 0;
+		}
+	}
+
+	.layout__primary .main {
+		padding-bottom: 0;
+	}
+}
+
+// Constrain admin-ui Page content to 660px centered.
+// Pass a $scope selector to limit to specific page variants (e.g. upsell pages).
+// Usage:
+//   @include admin-ui-page-layout-constrained-content;           // always constrained
+//   @include admin-ui-page-layout-constrained-content('.my-upsell'); // only within .my-upsell
+@mixin admin-ui-page-layout-constrained-content($scope: null) {
+	$parent: if($scope, "#{$scope} .admin-ui-page__content", ".admin-ui-page__content");
+
+	// Temporarily here until constrained content width is implemented in Admin-UI
+	#{$parent} {
+		> * {
+			max-width: 660px;
+			width: 100%;
+			margin-left: auto;
+			margin-right: auto;
+			box-sizing: border-box;
+		}
+	}
+}

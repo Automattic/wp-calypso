@@ -854,6 +854,30 @@ export const blockedSitesRoute = createRoute( {
 	)
 );
 
+export const hostingDashboardRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'New hosting dashboard' ),
+			},
+		],
+	} ),
+	getParentRoute: () => preferencesRoute,
+	path: 'hosting-dashboard',
+	loader: async () => {
+		await Promise.all( [
+			queryClient.ensureQueryData( userSettingsQuery() ),
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+		] );
+	},
+} ).lazy( () =>
+	import( '../../me/hosting-dashboard' ).then( ( d ) =>
+		createLazyRoute( 'hosting-dashboard' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const appsRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -1014,6 +1038,9 @@ export const createMeRoutes = ( config: AppConfig ) => {
 	}
 	if ( config.supports.reader ) {
 		preferencesChildren.push( blockedSitesRoute );
+	}
+	if ( config.optIn ) {
+		preferencesChildren.push( hostingDashboardRoute );
 	}
 	if ( isEnabled( 'mcp-settings' ) ) {
 		preferencesChildren.push(

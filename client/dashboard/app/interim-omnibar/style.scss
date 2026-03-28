@@ -1,5 +1,7 @@
 body:has(#wpcom-omnibar) #wpcom {
-	margin-block-start: var(--masterbar-height, 47px);
+	padding-block-start: var(--masterbar-height, 47px);
+	height: auto;
+	min-height: calc(100vh - var(--masterbar-height, 47px) );
 }
 
 #wpcom-omnibar {
@@ -21,5 +23,15 @@ body:has(#wpcom-omnibar) #wpcom {
 		&:hover {
 			background: var(--color-masterbar-item-hover-background);
 		}
+	}
+
+	.masterbar__item:focus-visible {
+		box-shadow: inset 0 0 0 2px var(--color-masterbar-highlight);
+		outline: none;
+	}
+
+	.masterbar__item-subitems a:focus-visible,
+	.masterbar__item-subitems button:focus-visible {
+		outline: thin dotted;
 	}
 }

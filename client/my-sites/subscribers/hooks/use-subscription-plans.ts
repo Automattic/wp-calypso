@@ -13,11 +13,13 @@ export type SubscriptionPlanData = {
 	title?: string;
 	is_gift: boolean;
 	is_free: boolean;
+	gift_id?: number;
 };
 
 type PlanData = {
 	is_gift: boolean;
 	renewal_price: number;
+	gift_id?: number;
 	renewalPrice: string;
 	when: string;
 	start_date: string;
@@ -70,6 +72,7 @@ const useSubscriptionPlans = ( subscriber: Subscriber ): SubscriptionPlanData[] 
 			const result = subscriptions.map( ( subscription: SubscriptionPlan ) => {
 				const {
 					is_gift,
+					gift_id,
 					currency,
 					renewal_price,
 					renew_interval,
@@ -80,7 +83,7 @@ const useSubscriptionPlans = ( subscriber: Subscriber ): SubscriptionPlanData[] 
 				const renewalPrice = formatRenewalPrice( renewal_price, currency );
 				const when = getPaymentInterval( renew_interval, inactive_renew_interval );
 
-				return { is_gift, renewal_price, renewalPrice, when, start_date, title };
+				return { is_gift, gift_id, renewal_price, renewalPrice, when, start_date, title };
 			} );
 
 			return result || defaultSubscription;
@@ -112,6 +115,7 @@ const useSubscriptionPlans = ( subscriber: Subscriber ): SubscriptionPlanData[] 
 				title: plan.title,
 				is_gift: plan.is_gift,
 				is_free: plan.renewal_price === 0,
+				gift_id: plan.gift_id,
 			} ) );
 		}
 		return [];

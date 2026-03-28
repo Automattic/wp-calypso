@@ -55,6 +55,19 @@
 			line-height: rem(20px);
 			letter-spacing: -0.15px;
 		}
+
+		.subscriber-details__remove-comp-button {
+			margin-inline-start: 4px;
+			padding: 0;
+			height: auto;
+			min-height: auto;
+			vertical-align: text-bottom;
+			color: $studio-gray-60;
+
+			&:hover {
+				color: $studio-gray-80;
+			}
+		}
 		@media (max-width: $break-large) {
 			flex-direction: column;
 		}

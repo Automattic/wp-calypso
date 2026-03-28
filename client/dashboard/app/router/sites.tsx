@@ -291,7 +291,7 @@ export const siteLogsPhpRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'PHP errors' ),
+				title: isEnabled( 'dashboard/omnibar' ) ? __( 'PHP errors' ) : undefined,
 			},
 		],
 	} ),
@@ -313,7 +313,7 @@ export const siteLogsServerRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Web server' ),
+				title: isEnabled( 'dashboard/omnibar' ) ? __( 'Web server' ) : undefined,
 			},
 		],
 	} ),
@@ -335,7 +335,7 @@ export const siteLogsActivityRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Activity' ),
+				title: isEnabled( 'dashboard/omnibar' ) ? __( 'Activity' ) : undefined,
 			},
 		],
 	} ),
@@ -386,7 +386,7 @@ export const siteScanActiveThreatsRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Active threats' ),
+				title: isEnabled( 'dashboard/omnibar' ) ? __( 'Active threats' ) : undefined,
 			},
 		],
 	} ),
@@ -404,7 +404,7 @@ export const siteScanHistoryRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'History' ),
+				title: isEnabled( 'dashboard/omnibar' ) ? __( 'History' ) : undefined,
 			},
 		],
 	} ),

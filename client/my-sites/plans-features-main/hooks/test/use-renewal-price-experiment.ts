@@ -134,7 +134,7 @@ describe( 'useRenewalPricingExperiment', () => {
 
 	describe( 'registration date cutoff', () => {
 		it( 'qualifies users registered on the cutoff date', () => {
-			mockUserDate( '2026-03-27T00:00:00Z' );
+			mockUserDate( '2026-03-31T05:00:00Z' );
 			const { result } = renderHook( () => useRenewalPricingExperiment() );
 			expect( result.current[ 1 ] ).toBe( 'crossed_price' );
 		} );
