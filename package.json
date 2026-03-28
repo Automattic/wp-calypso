@@ -113,7 +113,7 @@
 		"start": "npx check-node-version --package && node bin/welcome.js && node bin/print-dev-start-hint.js && yarn run build && yarn run start-build",
 		"start:debug": "NODE_OPTIONS='--max-old-space-size=8192' SOURCEMAP='eval-source-map' yarn start",
 		"start-mock-wordpress-com": "MOCK_WORDPRESSDOTCOM=1 yarn run start",
-		"start-build": "BROWSERSLIST_ENV=evergreen node --no-warnings build/server.js | bunyan -o short",
+		"start-build": "FORCE_COLOR=1 BROWSERSLIST_ENV=evergreen node --no-warnings build/server.js | node bin/format-server-log.js",
 		"start-jetpack-cloud": "CALYPSO_ENV=jetpack-cloud-development yarn run start",
 		"start-jetpack-cloud-p": "PORT=3001 CALYPSO_ENV=jetpack-cloud-development yarn run build-server && PORT=3001 CALYPSO_ENV=jetpack-cloud-development yarn run start-build",
 		"start-a8c-for-agencies": "CALYPSO_ENV=a8c-for-agencies-development yarn run start",

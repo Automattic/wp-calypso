@@ -1,6 +1,5 @@
 import chalk from 'chalk';
 
-const WP_BLUE = '#21759b';
 const FRAMES = [ '⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏' ];
 
 let timer = null;
@@ -10,11 +9,7 @@ function render( message ) {
 	const glyph = FRAMES[ frame % FRAMES.length ];
 	frame++;
 	const stream = process.stderr;
-	const wpBit = chalk.hex( WP_BLUE )( glyph + ' WP ' );
-	const rest = chalk.gray( message );
-	// Erase the whole line so stderr writes without a leading newline (e.g. “Failed to compile”)
-	// cannot glue onto “Booting dev server…”.
-	stream.write( '\r\x1b[2K' + wpBit + rest );
+	stream.write( '\r\x1b[2K' + chalk.hex( '#21759b' )( glyph ) + ' ' + chalk.gray( message ) );
 }
 
 export function startDevBootSpinner( message ) {
@@ -23,7 +18,7 @@ export function startDevBootSpinner( message ) {
 	}
 
 	if ( ! process.stderr.isTTY ) {
-		console.error( chalk.gray( 'WP  ' + ( message || 'Booting dev server…' ) ) );
+		console.error( chalk.gray( message || 'Booting dev server…' ) );
 		return;
 	}
 

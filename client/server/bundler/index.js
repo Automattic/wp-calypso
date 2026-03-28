@@ -22,8 +22,6 @@ const shouldBuildChunksMap =
 	process.env.BUILD_TRANSLATION_CHUNKS === 'true' ||
 	process.env.ENABLE_FEATURES === 'use-translation-chunks';
 
-// WordPress “W” blue — subtle nod in the terminal spinner (single line, works everywhere).
-const WP_BLUE = '#21759b';
 const COMPILE_SPINNER_FRAMES = [ '⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏' ];
 
 /** Rotate ~every 8s at 90ms/tick (90 * 89 ≈ 8s). */
@@ -64,7 +62,9 @@ function middleware( app ) {
 			clearInterval( compileSpinnerTimer );
 			compileSpinnerTimer = null;
 			if ( process.stderr.isTTY ) {
-				process.stderr.write( '\r\x1b[2K\n' );
+				process.stderr.write(
+					'\r\x1b[2K' + chalk.hex( '#21759b' )( '✓' ) + ' ' + chalk.gray( '100% · Done.' ) + '\n'
+				);
 			}
 		}
 	}
@@ -83,8 +83,6 @@ function middleware( app ) {
 		const tick = function () {
 			const glyph = COMPILE_SPINNER_FRAMES[ compileSpinnerFrame % COMPILE_SPINNER_FRAMES.length ];
 			compileSpinnerFrame++;
-			const wpBit = chalk.hex( WP_BLUE )( glyph + ' WP ' );
-
 			const pctPart =
 				compileProgressHighWater > 0 || compileProgressMessage
 					? `${ Math.round( compileProgressHighWater * 100 ) }%` +
@@ -99,7 +97,7 @@ function middleware( app ) {
 
 			const rest = aside ? chalk.gray( `${ pctPart } · ${ aside }` ) : chalk.gray( pctPart );
 
-			stream.write( '\r\x1b[2K' + wpBit + rest );
+			stream.write( '\r\x1b[2K' + chalk.hex( '#21759b' )( glyph ) + ' ' + rest );
 		};
 		tick();
 		compileSpinnerTimer = setInterval( tick, 90 );
@@ -151,11 +149,13 @@ function middleware( app ) {
 			process.nextTick( function () {
 				if ( beforeFirstCompile ) {
 					beforeFirstCompile = false;
-					console.info(
-						chalk.hex( WP_BLUE )( `\nReady! ${ protocol }://${ host }:${ port }/ — Ship it!` )
+					process.stderr.write(
+						chalk.hex( '#21759b' )( `\nReady! ${ protocol }://${ host }:${ port }/\n` )
 					);
 				} else {
-					console.info( chalk.hex( WP_BLUE )( '\nReady! Fresh assets — keep hacking.' ) );
+					process.stderr.write(
+						chalk.hex( '#21759b' )( '\nReady! Fresh assets — keep hacking.\n' )
+					);
 				}
 			} );
 		} );
@@ -168,10 +168,11 @@ function middleware( app ) {
 
 		if ( ! compileWaitMessageLogged ) {
 			compileWaitMessageLogged = true;
-			console.info(
-				chalk.gray(
-					`Waiting for the first compile… When you see Ready!, try ${ protocol }://${ host }:${ port }/ again.`
-				)
+			process.stderr.write(
+				'\r\x1b[2K' +
+					chalk.gray(
+						`Waiting for the first compile… When you see Ready!, try ${ protocol }://${ host }:${ port }/ again.\n`
+					)
 			);
 		}
 

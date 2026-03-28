@@ -431,8 +431,8 @@ const webpackConfig = {
 		shouldProfile && new webpack.ProgressPlugin( { profile: true } ),
 
 		// NOTE: Sentry should be the last webpack plugin in the array.
-		// Lazy-require: plugin still runs whenever `shouldCreateSentryRelease` (unchanged); only
-		// skips loading @sentry/cli when that flag is false (typical local dev — avoids punycode DEP0040).
+		// Lazy-require: plugin still runs identically when `shouldCreateSentryRelease` is true;
+		// only skips loading @sentry/webpack-plugin in local dev where it was never used.
 		shouldCreateSentryRelease &&
 			( () => {
 				const SentryCliPlugin = require( '@sentry/webpack-plugin' );

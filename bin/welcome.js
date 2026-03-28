@@ -10,12 +10,13 @@ console.log( banner( "   / __/ _` | | | | | '_ \\/ __|/ _ \\ " ) );
 console.log( banner( '  | (_| (_| | | |_| | |_) \\__ \\ (_) |  ' ) );
 console.log( banner( '   \\___\\__,_|_|\\__, | .__/|___/\\___/ ' ) );
 console.log( banner( '               |___/|_|                ' ) );
-console.log( chalk.gray( '         WordPress.com in the browser\n' ) );
+console.log( banner( '                                         ' ) );
+console.log( chalk.gray( '       More than just a dashboard.  \n' ) );
 
 if ( process.env.MOCK_WORDPRESSDOTCOM === '1' ) {
 	console.log(
 		`${ chalk.yellowBright.bold( 'Mocking WordPress.com' ) }
-		
+
 - Add ${ chalk.yellowBright( '127.0.0.1 wordpress.com' ) } to your hosts file.
 - If you want to sandbox the authentication backend, sandbox ${ chalk.yellowBright(
 			'de.wordpress.com'

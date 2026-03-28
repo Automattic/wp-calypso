@@ -6,14 +6,12 @@
  */
 import chalk from 'chalk';
 
-const WP_BLUE = '#21759b';
-
 if ( process.env.NODE_ENV === 'development' && process.env.CI !== 'true' ) {
 	process.on( 'warning', ( warning ) => {
 		const meta = [ warning.name, warning.code ].filter( Boolean ).join( ' · ' );
 		let block =
 			'\n' +
-			chalk.hex( WP_BLUE ).bold( '▸ runtime notice' ) +
+			chalk.hex( '#21759b' ).bold( '▸ runtime notice' ) +
 			chalk.gray( ` · ${ meta }\n` ) +
 			'  ' +
 			chalk.gray( String( warning.message ).replace( /\n/g, '\n  ' ) ) +
