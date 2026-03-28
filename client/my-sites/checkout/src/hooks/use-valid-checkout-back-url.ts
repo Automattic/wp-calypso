@@ -6,13 +6,14 @@ import { useSelector } from 'calypso/state';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import { getSiteId, isCommerceGardenSite, isJetpackSite } from 'calypso/state/sites/selectors';
 
-const getAllowedHosts = ( siteSlug?: string ) => {
-	const basicHosts = [
+const getAllowedHosts = ( siteSlug?: string ): string[] => {
+	const hostname = config< string >( 'hostname' );
+	const basicHosts: string[] = [
 		'akismet.com',
 		'jetpack.com',
 		'jetpack.cloud.localhost',
 		'cloud.jetpack.com',
-		config( 'hostname' ),
+		...( hostname ? [ hostname ] : [] ),
 		...( siteSlug ? [ siteSlug.includes( '::' ) ? siteSlug.split( '::' )[ 0 ] : siteSlug ] : [] ),
 	];
 
