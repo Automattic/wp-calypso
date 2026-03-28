@@ -20,6 +20,7 @@ import {
 	getSimplifiedPlanFeaturesGroupedForFeaturesGrid,
 	getWordPressHostingFeaturesGroupedForFeaturesGrid,
 	isWooHostedPlan,
+	isWooHostedFreePlan,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
@@ -310,7 +311,12 @@ const PlansFeaturesMain = ( {
 	// Users can only select interval types that are equal to or longer than their current plan's interval
 	// Only apply this fix in the plan-upgrade flow to avoid breaking other flows
 	const currentPlanTerm =
-		isStepperUpgradeFlow && sitePlanSlug ? getPlan( sitePlanSlug )?.term : null;
+		isStepperUpgradeFlow &&
+		sitePlanSlug &&
+		! isFreePlan( sitePlanSlug ) &&
+		! isWooHostedFreePlan( sitePlanSlug )
+			? getPlan( sitePlanSlug )?.term
+			: null;
 	const compatibleIntervalType = useMemo(
 		() => ensureCompatibleIntervalType( currentPlanTerm, intervalType ),
 		[ currentPlanTerm, intervalType ]

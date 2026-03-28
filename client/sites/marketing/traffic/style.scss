@@ -1,4 +1,11 @@
-.site-settings {
+@import "calypso/components/jetpack-page-layout/admin-ui-page";
+
+body.is-section-marketing-traffic {
+	@include admin-ui-page-layout;
+	@include admin-ui-page-layout-constrained-content;
+}
+
+.settings-traffic.site-settings {
 	font-size: $font-body-small;
 
 	fieldset {
@@ -133,6 +140,9 @@
 		}
 	}
 
+	.card.promo-card-block {
+		display: flex;
+	}
 
 	.promo-card .button {
 		float: none;

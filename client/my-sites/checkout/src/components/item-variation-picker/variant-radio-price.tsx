@@ -3,6 +3,7 @@ import { formatCurrency } from '@automattic/number-formatters';
 import { styled } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
+import { useCheckoutUiRedesignExperiment } from 'calypso/my-sites/checkout/src/hooks/use-checkout-ui-redesign-experiment';
 import { getItemVariantDiscount } from './util';
 import type { WPCOMProductVariant } from './types';
 
@@ -37,18 +38,27 @@ const Variant = styled.div`
 	width: 100%;
 `;
 
-const VariantTermLabel = styled.span`
+const VariantTermLabel = styled.span< { isCheckoutUiRedesignV1?: boolean } >`
 	display: flex;
 	flex-direction: column;
+	${ ( props ) => props.isCheckoutUiRedesignV1 && 'align-items: flex-start;' }
 	gap: 2px;
 `;
 
-const PriceArea = styled.span`
+const PriceArea = styled.span< { inlineDiscount?: boolean } >`
 	text-align: right;
 	display: flex;
-	flex-direction: column;
-	gap: 2px;
-	align-items: flex-end;
+	flex-direction: ${ ( props ) => ( props.inlineDiscount ? 'row' : 'column' ) };
+	gap: ${ ( props ) => ( props.inlineDiscount ? '8px' : '2px' ) };
+	align-items: ${ ( props ) => ( props.inlineDiscount ? 'center' : 'flex-end' ) };
+	${ ( props ) =>
+		props.inlineDiscount &&
+		`
+		> span:last-child {
+			min-width: 80px;
+			text-align: right;
+		}
+	` }
 `;
 
 const DiscountPercentage: FunctionComponent< { percent: number } > = ( { percent } ) => {
@@ -69,6 +79,7 @@ export const ItemVariantRadioPrice: FunctionComponent< {
 	compareTo?: WPCOMProductVariant;
 } > = ( { variant, compareTo } ) => {
 	const translate = useTranslate();
+	const [ , isCheckoutUiRedesignV1 ] = useCheckoutUiRedesignExperiment();
 	const discountPercentage = getItemVariantDiscount( variant, compareTo );
 
 	// Calculate months per bill period with introductory offers.
@@ -95,10 +106,17 @@ export const ItemVariantRadioPrice: FunctionComponent< {
 		variant.termIntervalInMonths === 1 ? translate( 'Month' ) : variant.variantLabel.noun;
 	return (
 		<Variant>
-			<VariantTermLabel>{ label }</VariantTermLabel>
-			<PriceArea>
+			<VariantTermLabel isCheckoutUiRedesignV1={ isCheckoutUiRedesignV1 }>
+				{ label }
+			</VariantTermLabel>
+			<PriceArea inlineDiscount={ isCheckoutUiRedesignV1 && discountPercentage > 0 }>
+				{ isCheckoutUiRedesignV1 && discountPercentage > 0 && (
+					<DiscountPercentage percent={ discountPercentage } />
+				) }
 				<Price>{ priceDisplay }</Price>
-				{ discountPercentage > 0 && <DiscountPercentage percent={ discountPercentage } /> }
+				{ ! isCheckoutUiRedesignV1 && discountPercentage > 0 && (
+					<DiscountPercentage percent={ discountPercentage } />
+				) }
 			</PriceArea>
 		</Variant>
 	);

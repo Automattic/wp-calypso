@@ -21,7 +21,7 @@ import {
 	isCrowdsignalOAuth2Client,
 	isVIPOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
-import { detectCiabConfig, getPartnerFormattedWindowTitle } from 'calypso/lib/partner-branding';
+import { detectPartnerConfig, getPartnerFormattedWindowTitle } from 'calypso/lib/partner-branding';
 import isPassportRedirect from 'calypso/lib/passport/is-passport-redirect';
 import { login } from 'calypso/lib/paths';
 import { getHeaderText } from 'calypso/login/wp-login/hooks/get-header-text';
@@ -114,7 +114,7 @@ export class Login extends Component {
 			'isFromAkismet',
 			'isFromPassport',
 			'isFromAutomatticForAgenciesPlugin',
-			'ciabConfig',
+			'partnerConfig',
 			'isGravPoweredClient',
 			'currentQuery',
 			'translate',
@@ -322,7 +322,7 @@ export class Login extends Component {
 			isGravPoweredClient,
 			isJetpack,
 			action,
-			ciabConfig,
+			partnerConfig,
 		} = this.props;
 
 		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );
@@ -343,7 +343,7 @@ export class Login extends Component {
 				<DocumentHead
 					title={ getPartnerFormattedWindowTitle(
 						translate( 'Log In', { textOnly: true } ),
-						ciabConfig
+						partnerConfig
 					) }
 					skipTitleFormatting
 					link={ [ { rel: 'canonical', href: canonicalUrl } ] }
@@ -398,7 +398,7 @@ function getInitialHeadingState( props, translate ) {
 		isFromAkismet,
 		isFromPassport,
 		isFromAutomatticForAgenciesPlugin,
-		ciabConfig,
+		partnerConfig,
 		isGravPoweredClient,
 		currentQuery,
 		isUserLoggedIn: isLoggedIn,
@@ -421,7 +421,7 @@ function getInitialHeadingState( props, translate ) {
 		isFromAkismet,
 		isFromPassport,
 		isFromAutomatticForAgenciesPlugin,
-		ciabConfig,
+		partnerConfig,
 		isGravPoweredClient,
 		currentQuery,
 		translate,
@@ -434,7 +434,7 @@ function getInitialHeadingState( props, translate ) {
 		action,
 		translate,
 		isWooJPC,
-		ciabConfig,
+		partnerConfig,
 	} );
 
 	return {
@@ -506,7 +506,7 @@ export default connect(
 				'automattic-for-agencies-client' === get( getCurrentQueryArguments( state ), 'from' ) ||
 				'automattic-for-agencies-client' ===
 					new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'from' ),
-			ciabConfig: detectCiabConfig( oauth2Client ),
+			partnerConfig: detectPartnerConfig( oauth2Client ),
 			isManualRenewalImmediateLoginAttempt: wasManualRenewalImmediateLoginAttempted( state ),
 			isUserLoggedIn: isUserLoggedIn( state ),
 			isWooPaymentsFlow: isWooCommercePaymentsOnboardingFlow( state ),

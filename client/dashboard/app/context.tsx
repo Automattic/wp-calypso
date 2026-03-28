@@ -28,6 +28,10 @@ export type MeSupports = {
 	apps: boolean;
 };
 
+export type SiteOverviewSupports = {
+	preview: boolean;
+};
+
 export type AppConfig = {
 	name: string;
 	basePath: string;
@@ -47,10 +51,15 @@ export type AppConfig = {
 		commandPalette: boolean;
 		domainOnlySites: boolean;
 		startStoreRoute?: boolean;
+		siteOverview: SiteOverviewSupports;
 	};
 	posthog?: string;
 	optIn: boolean;
-	components: Record< string, () => Promise< { default: React.FC } > >;
+	components: {
+		sites: () => Promise< { default: React.FC } >;
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		siteSwitcher: () => Promise< { default: React.FC< any > } >;
+	};
 	queries: {
 		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => ReturnType< typeof sitesQuery >;
 		paginatedSitesQuery: (
@@ -82,9 +91,15 @@ export const APP_CONTEXT_DEFAULT_CONFIG: AppConfig = {
 		commandPalette: false,
 		domainOnlySites: false,
 		startStoreRoute: false,
+		siteOverview: {
+			preview: false,
+		},
 	},
 	optIn: false,
-	components: {},
+	components: {
+		sites: () => Promise.resolve( { default: () => null } ),
+		siteSwitcher: () => Promise.resolve( { default: () => null } ),
+	},
 	queries: {
 		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => sitesQuery( 'all', fetchSiteOptions ),
 		paginatedSitesQuery: ( fetchSiteOptions?: FetchPaginatedSitesOptions ) =>

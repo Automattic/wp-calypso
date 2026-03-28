@@ -875,6 +875,7 @@ export interface ResponseCartProductExtra {
 	legal_agreements?: never[] | DomainLegalAgreements;
 	is_gravatar_domain?: boolean;
 	is_hundred_year_domain?: boolean;
+	is_art_promo?: boolean;
 
 	/**
 	 * Set to 'renewal' if requesting a renewal.

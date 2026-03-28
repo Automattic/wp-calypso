@@ -192,8 +192,11 @@ if ( isDevelopment ) {
 	outputChunkFilename = '[name].js';
 }
 
-const cssFilename = cssNameFromFilename( outputFilename );
-const cssChunkFilename = cssNameFromFilename( outputChunkFilename );
+const cssFilename = cssNameFromFilename( outputFilename ).replace( '[contenthash]', '[chunkhash]' );
+const cssChunkFilename = cssNameFromFilename( outputChunkFilename ).replace(
+	'[contenthash]',
+	'[chunkhash]'
+);
 
 const outputDir = path.resolve( '.' );
 
@@ -437,6 +440,8 @@ const webpackConfig = {
 				errorHandler: ( err, invokeErr, compilation ) => {
 					// Sentry should _never_ fail the webpack build, so only emit warnings here:
 					compilation.warnings.push( 'Sentry CLI Plugin: ' + err.message );
+					console.error( 'Sentry CLI Plugin Error:', err.message );
+					console.error( 'Sentry Full error:', err );
 				},
 			} ),
 		shouldHotReload && new webpack.HotModuleReplacementPlugin(),

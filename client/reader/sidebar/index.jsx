@@ -286,8 +286,8 @@ export class ReaderSidebar extends Component {
 				onClick={ this.handleClick }
 				siteTitle={ i18n.translate( 'Reader' ) }
 			>
-				<ReaderSidebarNudges />
 				{ this.renderSidebarMenu() }
+				<ReaderSidebarNudges />
 			</GlobalSidebar>
 		);
 	}

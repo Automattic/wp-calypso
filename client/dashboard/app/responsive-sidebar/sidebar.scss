@@ -9,9 +9,9 @@
 	flex-shrink: 0;
 	gap: $grid-unit-30;
 	position: sticky;
-	top: 0;
+	top: var(--masterbar-height, 0);
 	width: $sidebar-width;
-	min-height: calc(100vh - var(--masterbar-height) );
+	min-height: calc(100vh - var(--masterbar-height, 0) );
 	padding: 0 $grid-unit-20;
 	border-inline-end: $border-width solid var( --dashboard-header__border-color );
 	box-sizing: border-box;
@@ -23,4 +23,8 @@
 .dashboard-responsive-sidebar__logo {
 	padding: 14px 2px; // temporary to match Reader's layout
 	border-block-end: 1px solid var( --dashboard-header__border-color );
+
+	.wordmark-logo {
+		margin: 0 6px;
+	}
 }

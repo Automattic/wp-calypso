@@ -133,6 +133,7 @@ export class ThemesDetailPage {
 	async calypsoGetStartedLink(): Promise< string > {
 		const route = await this.page
 			.getByRole( 'link', { name: 'Get started' } )
+			.first()
 			.getAttribute( 'href' );
 		return getCalypsoURL( route ?? '' );
 	}

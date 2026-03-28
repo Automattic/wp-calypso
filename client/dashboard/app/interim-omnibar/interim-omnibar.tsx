@@ -1,5 +1,6 @@
 /* eslint-disable no-restricted-imports */
 import { isEcommercePlan } from '@automattic/calypso-products';
+import { useMemo } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { MasterbarLoggedIn } from 'calypso/layout/masterbar/logged-in';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -8,13 +9,22 @@ import type { User, Site } from '@automattic/api-core';
 
 const noop = () => {};
 
+type StoreType = Parameters< typeof ReduxProvider >[ 0 ][ 'store' ];
+
 // Fake Redux store so child components using connect() (e.g. Notifications) don't crash.
-// Just the three methods react-redux's Provider needs.
-const noopStore = {
-	getState: () => ( {} ),
-	dispatch: () => ( {} ),
-	subscribe: () => () => {},
-} as unknown as Parameters< typeof ReduxProvider >[ 0 ][ 'store' ];
+// Intercepts specific actions so the dashboard can handle them.
+function createOmnibarStore( onToggleNotifications?: () => void ): StoreType {
+	return {
+		getState: () => ( { ui: { section: false, isNotificationsOpen: false } } ),
+		dispatch: ( action: { type: string } ) => {
+			if ( action.type === 'NOTIFICATIONS_PANEL_TOGGLE' ) {
+				onToggleNotifications?.();
+			}
+			return action;
+		},
+		subscribe: () => () => {},
+	} as unknown as StoreType;
+}
 
 // Minimal placeholder so MasterbarLoggedIn doesn't crash during SSR.
 const emptyUser = {
@@ -26,16 +36,29 @@ const emptyUser = {
 interface Props {
 	user: User | null;
 	site: Site | null;
+	currentRoute: string;
+	onToggleMenu?: () => void;
+	onToggleNotifications?: () => void;
 }
 
-export function InterimOmnibar( { user: userProp, site }: Props ) {
+export function InterimOmnibar( {
+	user: userProp,
+	site,
+	currentRoute,
+	onToggleMenu,
+	onToggleNotifications,
+}: Props ) {
 	const user = userProp ?? emptyUser;
 	const siteId = user.primary_blog ?? null;
 	const siteSlug = site?.slug ?? null;
 	const siteAdminUrl = site?.options?.admin_url ?? null;
+	const store = useMemo(
+		() => createOmnibarStore( onToggleNotifications ),
+		[ onToggleNotifications ]
+	);
 
 	return (
-		<ReduxProvider store={ noopStore }>
+		<ReduxProvider store={ store }>
 			<MasterbarLoggedIn
 				// User
 				user={ user }
@@ -69,7 +92,7 @@ export function InterimOmnibar( { user: userProp, site }: Props ) {
 				section=""
 				sectionGroup=""
 				currentLayoutFocus={ null }
-				currentRoute={ typeof window !== 'undefined' ? window.location.pathname : '/' }
+				currentRoute={ currentRoute }
 				previousPath=""
 				newPostUrl={ siteAdminUrl ? `${ siteAdminUrl }post-new.php` : '' }
 				newPageUrl={ siteAdminUrl ? `${ siteAdminUrl }post-new.php?post_type=page` : '' }
@@ -77,7 +100,7 @@ export function InterimOmnibar( { user: userProp, site }: Props ) {
 				isCheckout={ false }
 				isCheckoutPending={ false }
 				isCheckoutFailed={ false }
-				loadHelpCenterIcon={ false }
+				loadHelpCenterIcon
 				isGlobalSidebarVisible={ false }
 				isGravatarDomain={ false }
 				dashboardOptIn
@@ -89,7 +112,7 @@ export function InterimOmnibar( { user: userProp, site }: Props ) {
 				adminMenu={ null }
 				// Actions
 				setNextLayoutFocus={ noop }
-				activateNextLayoutFocus={ noop }
+				activateNextLayoutFocus={ () => onToggleMenu?.() }
 				recordTracksEvent={ recordTracksEvent }
 				updateSiteMigrationMeta={ noop }
 				savePreference={ noop }

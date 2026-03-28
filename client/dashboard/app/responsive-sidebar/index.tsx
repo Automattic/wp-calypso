@@ -35,9 +35,6 @@ export default function ResponsiveSidebar( {
 
 		const unsubscribe = router.subscribe( 'onLoad', () => {
 			onClose();
-			// Brief delay so the user sees the selected state before
-			// the sidebar slides closed.
-			// timeoutId = window.setTimeout( onClose, 0 );
 		} );
 
 		return () => {

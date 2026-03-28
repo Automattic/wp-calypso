@@ -20,12 +20,14 @@ export type ThankYouPlanProductProps = {
 	purchase: ReceiptPurchase;
 	siteSlug: string | null;
 	siteId: number | null;
+	checkoutType?: string;
 };
 
 export default function ThankYouPlanProduct( {
 	purchase,
 	siteSlug,
 	siteId,
+	checkoutType,
 }: ThankYouPlanProductProps ) {
 	const isLoadingPurchases = useSelector(
 		( state ) => isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state )
@@ -117,7 +119,9 @@ export default function ThankYouPlanProduct( {
 							href={ letsWorkHref }
 							onClick={ letsWorkButtonOnClick }
 						>
-							{ translate( 'Let’s work on the site' ) }
+							{ checkoutType === 'unified'
+								? translate( 'Go to dashboard' )
+								: translate( 'Let’s work on the site' ) }
 						</Button>
 					) }
 					<Button variant="secondary" href={ `/plans/my-plan/${ siteSlug }` }>
