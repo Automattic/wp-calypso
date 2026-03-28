@@ -32,7 +32,7 @@ By default `yarn start` shows concise output: spinners, progress, and compact re
 | `CALYPSO_VERBOSE_LOG=true` | Full bunyan JSON records for every HTTP request (instead of `▸ GET / 304 0.3ms`) |
 | `CALYPSO_TIME_START=true` | Print wall-clock timestamps at each boot phase (server entry, webpack start/done) |
 | `CALYPSO_TRACE_WARNINGS=true` | Include stack traces in Node.js process warnings |
-| `CALYPSO_COMPILE_SNARK=0` | Hide the rotating aside messages on the compile spinner |
+| `CALYPSO_COMPILE_ASIDES=0` | Hide the rotating aside messages on the compile spinner |
 
 Example: `CALYPSO_VERBOSE_LOG=true CALYPSO_WEBPACK_LOG=verbose yarn start`
 

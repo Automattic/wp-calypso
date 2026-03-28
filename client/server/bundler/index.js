@@ -87,7 +87,7 @@ function middleware( app ) {
 			return;
 		}
 		const stream = process.stderr;
-		const showAsides = process.env.CALYPSO_COMPILE_SNARK !== '0';
+		const showAsides = process.env.CALYPSO_COMPILE_ASIDES !== '0';
 		compileStartTime = Date.now();
 		const tick = function () {
 			const glyph = COMPILE_SPINNER_FRAMES[ compileSpinnerFrame % COMPILE_SPINNER_FRAMES.length ];
