@@ -2,13 +2,15 @@
 
 const process = require( 'process' );
 const chalk = require( 'chalk' );
+const banner = chalk.hex( '#21759b' );
 
-console.log( chalk.cyan( '             _                           ' ) );
-console.log( chalk.cyan( '    ___ __ _| |_   _ _ __  ___  ___      ' ) );
-console.log( chalk.cyan( "   / __/ _` | | | | | '_ \\/ __|/ _ \\ " ) );
-console.log( chalk.cyan( '  | (_| (_| | | |_| | |_) \\__ \\ (_) |  ' ) );
-console.log( chalk.cyan( '   \\___\\__,_|_|\\__, | .__/|___/\\___/ ' ) );
-console.log( chalk.cyan( '               |___/|_|                \n' ) );
+console.log( banner( '             _                           ' ) );
+console.log( banner( '    ___ __ _| |_   _ _ __  ___  ___      ' ) );
+console.log( banner( "   / __/ _` | | | | | '_ \\/ __|/ _ \\ " ) );
+console.log( banner( '  | (_| (_| | | |_| | |_) \\__ \\ (_) |  ' ) );
+console.log( banner( '   \\___\\__,_|_|\\__, | .__/|___/\\___/ ' ) );
+console.log( banner( '               |___/|_|                ' ) );
+console.log( chalk.gray( '         WordPress.com in the browser\n' ) );
 
 if ( process.env.MOCK_WORDPRESSDOTCOM === '1' ) {
 	console.log(

@@ -1,3 +1,4 @@
+import '../lib/dev-boot-spinner.js';
 import path from 'path';
 import chalk from 'chalk';
 import cookieParser from 'cookie-parser';

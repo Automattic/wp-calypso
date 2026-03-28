@@ -1,11 +1,28 @@
+import './lib/calypso-dev-process-warnings.js';
+
+if ( globalThis.__calypsoStartClockMs == null ) {
+	globalThis.__calypsoStartClockMs = Date.now();
+}
+
 import 'source-map-support/register';
 import '@automattic/calypso-polyfills';
 
 import fs from 'fs';
 import config from '@automattic/calypso-config';
 import boot from './boot';
+import { stopDevBootSpinner } from './lib/dev-boot-spinner.js';
 import { getLogger } from './lib/logger';
+
 const logger = getLogger();
+
+function msSinceStart() {
+	return Date.now() - globalThis.__calypsoStartClockMs;
+}
+
+if ( process.env.CALYPSO_TIME_START === 'true' ) {
+	console.error( '[calypso-time] server/index before boot(): %dms since entry\n', msSinceStart() );
+}
+
 const start = Date.now();
 
 let protocol = config( 'protocol' );
@@ -21,6 +38,18 @@ if ( process.env.MOCK_WORDPRESSDOTCOM === '1' ) {
 }
 
 const app = boot();
+
+if ( process.env.NODE_ENV === 'development' ) {
+	stopDevBootSpinner();
+}
+
+if ( process.env.CALYPSO_TIME_START === 'true' ) {
+	console.error(
+		'[calypso-time] after boot(): %dms (boot() took %dms)\n',
+		msSinceStart(),
+		Date.now() - start
+	);
+}
 
 function sendBootStatus( status ) {
 	// don't send anything if we're not running in a fork
@@ -81,6 +110,9 @@ process.on( 'uncaughtExceptionMonitor', ( err ) => {
 
 // The desktop app runs Calypso in a fork. Let non-forks listen on any host.
 server.listen( { port, host: process.env.CALYPSO_IS_FORK ? host : null }, function () {
+	if ( process.env.CALYPSO_TIME_START === 'true' ) {
+		console.error( '[calypso-time] HTTP(s) listening: %dms since server entry\n', msSinceStart() );
+	}
 	// Tell the parent process that Calypso has booted.
 	sendBootStatus( 'ready' );
 } );

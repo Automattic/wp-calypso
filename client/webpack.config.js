@@ -14,7 +14,6 @@ const {
 const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive-lodash-replacement-plugin' );
 const InlineConstantExportsPlugin = require( '@automattic/webpack-inline-constant-exports-plugin' );
 const ReactRefreshWebpackPlugin = require( '@pmmmwh/react-refresh-webpack-plugin' );
-const SentryCliPlugin = require( '@sentry/webpack-plugin' );
 const autoprefixerPlugin = require( 'autoprefixer' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 const Dotenv = require( 'dotenv-webpack' );
@@ -345,7 +344,10 @@ const webpackConfig = {
 	},
 	node: false,
 	plugins: [
-		new Dotenv(),
+		new Dotenv( {
+			// Optional file in dev; skip noisy “Failed to load ./.env” for most contributors.
+			silent: isDevelopment,
+		} ),
 		new webpack.DefinePlugin( {
 			'typeof window': JSON.stringify( 'object' ),
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
@@ -429,21 +431,26 @@ const webpackConfig = {
 		shouldProfile && new webpack.ProgressPlugin( { profile: true } ),
 
 		// NOTE: Sentry should be the last webpack plugin in the array.
+		// Lazy-require: plugin still runs whenever `shouldCreateSentryRelease` (unchanged); only
+		// skips loading @sentry/cli when that flag is false (typical local dev — avoids punycode DEP0040).
 		shouldCreateSentryRelease &&
-			new SentryCliPlugin( {
-				org: 'a8c',
-				project: 'calypso',
-				authToken: process.env.SENTRY_AUTH_TOKEN,
-				release: `calypso_${ process.env.COMMIT_SHA }`,
-				include: filePaths.path,
-				urlPrefix: `~${ filePaths.publicPath }`,
-				errorHandler: ( err, invokeErr, compilation ) => {
-					// Sentry should _never_ fail the webpack build, so only emit warnings here:
-					compilation.warnings.push( 'Sentry CLI Plugin: ' + err.message );
-					console.error( 'Sentry CLI Plugin Error:', err.message );
-					console.error( 'Sentry Full error:', err );
-				},
-			} ),
+			( () => {
+				const SentryCliPlugin = require( '@sentry/webpack-plugin' );
+				return new SentryCliPlugin( {
+					org: 'a8c',
+					project: 'calypso',
+					authToken: process.env.SENTRY_AUTH_TOKEN,
+					release: `calypso_${ process.env.COMMIT_SHA }`,
+					include: filePaths.path,
+					urlPrefix: `~${ filePaths.publicPath }`,
+					errorHandler: ( err, invokeErr, compilation ) => {
+						// Sentry should _never_ fail the webpack build, so only emit warnings here:
+						compilation.warnings.push( 'Sentry CLI Plugin: ' + err.message );
+						console.error( 'Sentry CLI Plugin Error:', err.message );
+						console.error( 'Sentry Full error:', err );
+					},
+				} );
+			} )(),
 		shouldHotReload && new webpack.HotModuleReplacementPlugin(),
 		shouldHotReload &&
 			new ReactRefreshWebpackPlugin( {

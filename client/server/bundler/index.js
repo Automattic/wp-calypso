@@ -5,6 +5,14 @@ const webpack = require( 'webpack' );
 const webpackMiddleware = require( 'webpack-dev-middleware' );
 const hotMiddleware = require( 'webpack-hot-middleware' );
 const webpackConfig = require( 'calypso/webpack.config' );
+const { stopDevBootSpinner } = require( '../lib/dev-boot-spinner.js' );
+
+if ( process.env.CALYPSO_TIME_START === 'true' && globalThis.__calypsoStartClockMs != null ) {
+	console.error(
+		'[calypso-time] bundler module loaded (incl. webpack.config): %dms\n',
+		Date.now() - globalThis.__calypsoStartClockMs
+	);
+}
 
 const protocol = config( 'protocol' );
 const host = config( 'hostname' );
@@ -14,16 +22,107 @@ const shouldBuildChunksMap =
 	process.env.BUILD_TRANSLATION_CHUNKS === 'true' ||
 	process.env.ENABLE_FEATURES === 'use-translation-chunks';
 
+// WordPress “W” blue — subtle nod in the terminal spinner (single line, works everywhere).
+const WP_BLUE = '#21759b';
+const COMPILE_SPINNER_FRAMES = [ '⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏' ];
+
+/** Rotate ~every 8s at 90ms/tick (90 * 89 ≈ 8s). */
+const COMPILE_ASIDES = [
+	'Webpack is thinking.',
+	'This is the slow part.',
+	'Making chunks.',
+	'Source maps take a sec.',
+	'The caches help next time.',
+	'Almost there maybe.',
+];
+
+function shortWebpackProgressMsg( message ) {
+	if ( ! message ) {
+		return '';
+	}
+	return message.length > 40 ? message.slice( 0, 37 ) + '…' : message;
+}
+
 function middleware( app ) {
+	const tWebpack = Date.now();
 	const compiler = webpack( webpackConfig );
+	if ( process.env.CALYPSO_TIME_START === 'true' ) {
+		console.error( '[calypso-time] webpack( config ) (sync): %dms\n', Date.now() - tWebpack );
+	}
 	const callbacks = [];
 	let built = false;
 	let beforeFirstCompile = true;
+	let compileSpinnerTimer = null;
+	let compileSpinnerFrame = 0;
+	let compileWaitMessageLogged = false;
+	/** Webpack’s reported % can go backward between phases; display only ever rises. */
+	let compileProgressHighWater = 0;
+	let compileProgressMessage = '';
+
+	function stopCompileSpinner() {
+		if ( compileSpinnerTimer ) {
+			clearInterval( compileSpinnerTimer );
+			compileSpinnerTimer = null;
+			if ( process.stderr.isTTY ) {
+				process.stderr.write( '\r\x1b[2K\n' );
+			}
+		}
+	}
+
+	function startCompileSpinner() {
+		stopDevBootSpinner();
+		stopCompileSpinner();
+		compileSpinnerFrame = 0;
+		compileProgressHighWater = 0;
+		compileProgressMessage = '';
+		if ( process.env.CI === 'true' || ! process.stderr.isTTY ) {
+			return;
+		}
+		const stream = process.stderr;
+		const showAsides = process.env.CALYPSO_COMPILE_SNARK !== '0';
+		const tick = function () {
+			const glyph = COMPILE_SPINNER_FRAMES[ compileSpinnerFrame % COMPILE_SPINNER_FRAMES.length ];
+			compileSpinnerFrame++;
+			const wpBit = chalk.hex( WP_BLUE )( glyph + ' WP ' );
+
+			const pctPart =
+				compileProgressHighWater > 0 || compileProgressMessage
+					? `${ Math.round( compileProgressHighWater * 100 ) }%` +
+					  ( compileProgressMessage
+							? ` · ${ shortWebpackProgressMsg( compileProgressMessage ) }`
+							: '' )
+					: 'Compiling…';
+
+			const aside = showAsides
+				? COMPILE_ASIDES[ Math.floor( compileSpinnerFrame / 89 ) % COMPILE_ASIDES.length ]
+				: '';
+
+			const rest = aside ? chalk.gray( `${ pctPart } · ${ aside }` ) : chalk.gray( pctPart );
+
+			stream.write( '\r\x1b[2K' + wpBit + rest );
+		};
+		tick();
+		compileSpinnerTimer = setInterval( tick, 90 );
+	}
 
 	app.set( 'compiler', compiler );
 
+	compiler.hooks.compile.tap( 'CalypsoCompileSpinner', function () {
+		if ( process.env.CALYPSO_TIME_START === 'true' ) {
+			const t0 = globalThis.__calypsoStartClockMs;
+			const ms = t0 != null ? Date.now() - t0 : -1;
+			console.error( '[calypso-time] webpack compile started: %dms since server entry\n', ms );
+		}
+		startCompileSpinner();
+	} );
+
 	if ( shouldProfile ) {
 		new compiler.webpack.ProgressPlugin( { profile: true } ).apply( compiler );
+	} else if ( process.env.NODE_ENV === 'development' && process.env.CI !== 'true' ) {
+		new compiler.webpack.ProgressPlugin( ( percentage, message ) => {
+			compileProgressHighWater = Math.max( compileProgressHighWater, percentage );
+			compileProgressMessage = message || '';
+		} ).apply( compiler );
 	}
 
 	// In development environment we need to wait for initial webpack compile
@@ -36,6 +135,7 @@ function middleware( app ) {
 	}
 
 	compiler.hooks.done.tap( 'Calypso', function () {
+		stopCompileSpinner();
 		built = true;
 
 		// Dequeue and call request handlers
@@ -52,12 +152,10 @@ function middleware( app ) {
 				if ( beforeFirstCompile ) {
 					beforeFirstCompile = false;
 					console.info(
-						chalk.cyan(
-							`\nReady! You can load ${ protocol }://${ host }:${ port }/ now. Have fun!`
-						)
+						chalk.hex( WP_BLUE )( `\nReady! ${ protocol }://${ host }:${ port }/ — Ship it!` )
 					);
 				} else {
-					console.info( chalk.cyan( '\nReady! All assets are re-compiled. Have fun!' ) );
+					console.info( chalk.hex( WP_BLUE )( '\nReady! Fresh assets — keep hacking.' ) );
 				}
 			} );
 		} );
@@ -68,9 +166,14 @@ function middleware( app ) {
 			return next();
 		}
 
-		console.info(
-			`Compiling assets... Wait until you see Ready! and then try ${ protocol }://${ host }:${ port }/ again.`
-		);
+		if ( ! compileWaitMessageLogged ) {
+			compileWaitMessageLogged = true;
+			console.info(
+				chalk.gray(
+					`Waiting for the first compile… When you see Ready!, try ${ protocol }://${ host }:${ port }/ again.`
+				)
+			);
+		}
 
 		// a special message for newcomers, because seeing a blank page is confusing
 		if ( request.url === '/' ) {
@@ -97,8 +200,13 @@ function middleware( app ) {
 		}
 	}
 
+	const devMiddlewareOptions = {
+		publicPath: compiler.options.output.publicPath,
+		...( process.env.CALYPSO_WEBPACK_LOG === 'verbose' ? {} : { stats: 'errors-warnings' } ),
+	};
+
 	app.use( waitForCompiler );
-	app.use( webpackMiddleware( compiler ) );
+	app.use( webpackMiddleware( compiler, devMiddlewareOptions ) );
 	app.use( hotMiddleware( compiler ) );
 }
 
