@@ -22,6 +22,20 @@ For example: `ENTRY_LIMIT=entry-login,entry-main yarn start` would start Calypso
 
 To find all available entry points, you can refer to the `entry` option in Calypso's primary `webpack.config.js` file.
 
+### Dev server verbosity
+
+By default `yarn start` shows concise output: spinners, progress, and compact request logs. These environment variables restore full detail when you need it:
+
+| Variable | Effect |
+| --- | --- |
+| `CALYPSO_WEBPACK_LOG=verbose` | Full webpack compile stats and webpack-dev-middleware info messages |
+| `CALYPSO_VERBOSE_LOG=true` | Full bunyan JSON records for every HTTP request (instead of `▸ GET / 304 0.3ms`) |
+| `CALYPSO_TIME_START=true` | Print wall-clock timestamps at each boot phase (server entry, webpack start/done) |
+| `CALYPSO_TRACE_WARNINGS=true` | Include stack traces in Node.js process warnings |
+| `CALYPSO_COMPILE_SNARK=0` | Hide the rotating aside messages on the compile spinner |
+
+Example: `CALYPSO_VERBOSE_LOG=true CALYPSO_WEBPACK_LOG=verbose yarn start`
+
 ## Tests
 
 If you want to run the tests for a specific library in `client/` use:
