@@ -7,7 +7,7 @@ import {
 import { mapLeadMatchingDetailsToProfile } from '../../utils/map-application-form-data';
 import { SubmitSource } from './use-submit-form';
 
-export type AutosaveStatus = 'idle' | 'unsaved' | 'saving' | 'saved' | 'error';
+export type SaveStatus = 'idle' | 'unsaved' | 'saving' | 'saved' | 'error';
 
 type SubmitParams = {
 	formData: LeadMatchingDetails;
@@ -32,12 +32,12 @@ const getPayloadSnapshot = (
 	profile?: AgencyLeadMatchingProfile | null
 ) => JSON.stringify( mapLeadMatchingDetailsToProfile( formData, profile ) );
 
-export default function useLeadMatchingAutosave( { formData, profile, onSubmit }: Props ) {
+export default function useLeadMatchingSaveState( { formData, profile, onSubmit }: Props ) {
 	const currentSnapshot = useMemo(
 		() => getPayloadSnapshot( formData, profile ),
 		[ formData, profile ]
 	);
-	const [ autosaveStatus, setAutosaveStatus ] = useState< AutosaveStatus >( 'idle' );
+	const [ saveStatus, setSaveStatus ] = useState< SaveStatus >( 'idle' );
 	const [ lastSavedSnapshot, setLastSavedSnapshot ] = useState( currentSnapshot );
 	const latestDraftRef = useRef< DraftState >( { formData, profile, snapshot: currentSnapshot } );
 	const lastSavedSnapshotRef = useRef( currentSnapshot );
@@ -55,7 +55,7 @@ export default function useLeadMatchingAutosave( { formData, profile, onSubmit }
 
 			if ( snapshot === lastSavedSnapshotRef.current ) {
 				if ( isMountedRef.current ) {
-					setAutosaveStatus( 'saved' );
+					setSaveStatus( 'saved' );
 				}
 				return undefined;
 			}
@@ -66,7 +66,7 @@ export default function useLeadMatchingAutosave( { formData, profile, onSubmit }
 
 			isSavingRef.current = true;
 			if ( isMountedRef.current ) {
-				setAutosaveStatus( 'saving' );
+				setSaveStatus( 'saving' );
 			}
 
 			const response = await onSubmit( {
@@ -80,10 +80,10 @@ export default function useLeadMatchingAutosave( { formData, profile, onSubmit }
 				lastSavedSnapshotRef.current = savedSnapshot;
 				if ( isMountedRef.current ) {
 					setLastSavedSnapshot( savedSnapshot );
-					setAutosaveStatus( 'saved' );
+					setSaveStatus( 'saved' );
 				}
 			} else if ( isMountedRef.current ) {
-				setAutosaveStatus( 'error' );
+				setSaveStatus( 'error' );
 			}
 
 			isSavingRef.current = false;
@@ -95,13 +95,11 @@ export default function useLeadMatchingAutosave( { formData, profile, onSubmit }
 
 	useEffect( () => {
 		if ( ! hasUnsavedChanges ) {
-			setAutosaveStatus( ( currentStatus ) =>
-				currentStatus === 'idle' ? currentStatus : 'saved'
-			);
+			setSaveStatus( ( currentStatus ) => ( currentStatus === 'idle' ? currentStatus : 'saved' ) );
 			return;
 		}
 
-		setAutosaveStatus( 'unsaved' );
+		setSaveStatus( 'unsaved' );
 	}, [ hasUnsavedChanges ] );
 
 	useEffect(
@@ -115,7 +113,7 @@ export default function useLeadMatchingAutosave( { formData, profile, onSubmit }
 	const saveOnExit = useCallback( () => runSave( 'exit' ), [ runSave ] );
 
 	return {
-		autosaveStatus,
+		saveStatus,
 		hasUnsavedChanges,
 		saveNow,
 		saveOnExit,

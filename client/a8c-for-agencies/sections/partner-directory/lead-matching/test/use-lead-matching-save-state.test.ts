@@ -7,7 +7,7 @@ import {
 	createDefaultLeadMatchingDetails,
 	mapLeadMatchingDetailsToProfile,
 } from '../../utils/map-application-form-data';
-import useLeadMatchingAutosave from '../hooks/use-lead-matching-autosave';
+import useLeadMatchingSaveState from '../hooks/use-lead-matching-save-state';
 import type { LeadMatchingDetails } from '../../types';
 
 const createResponse = ( formData: LeadMatchingDetails ) => ( {
@@ -15,7 +15,7 @@ const createResponse = ( formData: LeadMatchingDetails ) => ( {
 	lead_matching_profile: mapLeadMatchingDetailsToProfile( formData, null ),
 } );
 
-describe( 'useLeadMatchingAutosave', () => {
+describe( 'useLeadMatchingSaveState', () => {
 	it( 'marks rerendered draft changes as unsaved without autosaving', () => {
 		const formData = createDefaultLeadMatchingDetails();
 		const updatedFormData = {
@@ -26,7 +26,7 @@ describe( 'useLeadMatchingAutosave', () => {
 
 		const { result, rerender } = renderHook(
 			( currentFormData ) =>
-				useLeadMatchingAutosave( {
+				useLeadMatchingSaveState( {
 					formData: currentFormData,
 					profile: null,
 					onSubmit,
@@ -36,7 +36,7 @@ describe( 'useLeadMatchingAutosave', () => {
 
 		rerender( updatedFormData );
 
-		expect( result.current.autosaveStatus ).toBe( 'unsaved' );
+		expect( result.current.saveStatus ).toBe( 'unsaved' );
 		expect( result.current.hasUnsavedChanges ).toBe( true );
 		expect( onSubmit ).not.toHaveBeenCalled();
 	} );
@@ -51,7 +51,7 @@ describe( 'useLeadMatchingAutosave', () => {
 
 		const { result, rerender } = renderHook(
 			( currentFormData ) =>
-				useLeadMatchingAutosave( {
+				useLeadMatchingSaveState( {
 					formData: currentFormData,
 					profile: null,
 					onSubmit,
@@ -83,7 +83,7 @@ describe( 'useLeadMatchingAutosave', () => {
 
 		const { result, rerender } = renderHook(
 			( currentFormData ) =>
-				useLeadMatchingAutosave( {
+				useLeadMatchingSaveState( {
 					formData: currentFormData,
 					profile: null,
 					onSubmit,

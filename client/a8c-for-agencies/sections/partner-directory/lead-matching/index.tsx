@@ -33,9 +33,9 @@ import {
 	LeadMatchingDetails,
 } from '../types';
 import { mapAgencyDetailsFormData } from '../utils/map-application-form-data';
-import useLeadMatchingAutosave from './hooks/use-lead-matching-autosave';
 import useLeadMatchingForm from './hooks/use-lead-matching-form';
 import useLeadMatchingFormValidation from './hooks/use-lead-matching-form-validation';
+import useLeadMatchingSaveState from './hooks/use-lead-matching-save-state';
 import useSubmitForm from './hooks/use-submit-form';
 
 import './style.scss';
@@ -269,7 +269,7 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 	}, [ formData ] );
 
 	const { onSubmit, isSubmitting } = useSubmitForm( { onSubmitSuccess, onSubmitError } );
-	const { autosaveStatus, hasUnsavedChanges, saveNow, saveOnExit } = useLeadMatchingAutosave( {
+	const { saveStatus, hasUnsavedChanges, saveNow, saveOnExit } = useLeadMatchingSaveState( {
 		formData,
 		profile,
 		onSubmit,
@@ -387,12 +387,12 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 		wasInitiallyComplete,
 	] );
 
-	const autosaveMessage = useMemo( () => {
+	const saveMessage = useMemo( () => {
 		if ( hasUnsavedAvailability && ! hasUnsavedChanges ) {
 			return __( 'Unsaved changes' );
 		}
 
-		switch ( autosaveStatus ) {
+		switch ( saveStatus ) {
 			case 'unsaved':
 				return __( 'Unsaved changes' );
 			case 'saving':
@@ -404,15 +404,15 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 			default:
 				return '';
 		}
-	}, [ autosaveStatus, hasUnsavedAvailability, hasUnsavedChanges ] );
+	}, [ hasUnsavedAvailability, hasUnsavedChanges, saveStatus ] );
 
 	const saveStatusTone = useMemo( () => {
 		if ( hasUnsavedAvailability && ! hasUnsavedChanges ) {
 			return 'unsaved';
 		}
 
-		return autosaveStatus;
-	}, [ autosaveStatus, hasUnsavedAvailability, hasUnsavedChanges ] );
+		return saveStatus;
+	}, [ hasUnsavedAvailability, hasUnsavedChanges, saveStatus ] );
 
 	const getProgressStrapline = () => {
 		const { completed, total } = completionStatus;
@@ -877,11 +877,11 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 				</FormSection>
 
 				<div className="partner-directory-agency-cta__footer">
-					{ autosaveMessage && (
+					{ saveMessage && (
 						<span
 							className={ `partner-directory-lead-matching__save-status is-${ saveStatusTone }` }
 						>
-							{ autosaveMessage }
+							{ saveMessage }
 						</span>
 					) }
 
