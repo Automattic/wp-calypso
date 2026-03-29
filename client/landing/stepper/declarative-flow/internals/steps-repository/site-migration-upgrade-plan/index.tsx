@@ -1,7 +1,6 @@
-import { PLAN_MIGRATION_TRIAL_MONTHLY, getPlan, type PlanSlug } from '@automattic/calypso-products';
+import { getPlan, type PlanSlug } from '@automattic/calypso-products';
 import { Step } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -23,7 +22,6 @@ const SiteMigrationUpgradePlan: StepType< {
 	submits: {
 		goToCheckout?: boolean;
 		plan?: string;
-		sendIntentWhenCreatingTrial?: boolean;
 		verifyEmail?: boolean;
 	};
 } > = ( { navigation } ) => {
@@ -46,14 +44,6 @@ const SiteMigrationUpgradePlan: StepType< {
 		},
 		[ navigation ]
 	);
-
-	const handleFreeTrialClick = useCallback( () => {
-		navigation.submit?.( {
-			goToCheckout: true,
-			plan: PLAN_MIGRATION_TRIAL_MONTHLY,
-			sendIntentWhenCreatingTrial: true,
-		} );
-	}, [ navigation ] );
 
 	if ( ! siteItem || ! siteSlug ) {
 		return <Step.Loading />;
@@ -83,20 +73,6 @@ const SiteMigrationUpgradePlan: StepType< {
 					onUpgradeClick={ handleUpgradeClick }
 					coupon={ queryParams.get( 'coupon' ) ?? undefined }
 				/>
-				<div className="site-migration-upgrade-plan__trial-section">
-					<p className="site-migration-upgrade-plan__trial-description">
-						{ translate(
-							'Not sure which plan is right for you? Try our 7-day trial to see how your site turns out.'
-						) }
-					</p>
-					<Button
-						className="site-migration-upgrade-plan__trial-button"
-						variant="secondary"
-						onClick={ handleFreeTrialClick }
-					>
-						{ translate( 'Try a free 7-day trial' ) }
-					</Button>
-				</div>
 			</Step.WideLayout>
 		</>
 	);

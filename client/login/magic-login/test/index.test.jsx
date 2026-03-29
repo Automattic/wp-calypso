@@ -4,7 +4,7 @@ import { getPartnerSignupTosElement } from 'calypso/lib/partner-branding';
 import { getMagicLoginInitialHeaders, MagicLogin } from '../index';
 
 jest.mock( 'calypso/lib/partner-branding', () => ( {
-	getCiabConfig: jest.fn(),
+	detectPartnerConfig: jest.fn(),
 	getPartnerSignupTosElement: jest.fn(),
 } ) );
 
@@ -22,7 +22,7 @@ describe( 'magic-login branding behavior', () => {
 		translate: ( text ) => text,
 		oauth2Client: null,
 		isWooJPC: false,
-		ciabConfig: null,
+		partnerConfig: null,
 	};
 
 	beforeEach( () => {
@@ -41,7 +41,7 @@ describe( 'magic-login branding behavior', () => {
 		const { heading } = getMagicLoginInitialHeaders(
 			{
 				...baseProps,
-				ciabConfig: {
+				partnerConfig: {
 					displayName: 'Woo',
 				},
 			},
@@ -70,7 +70,7 @@ describe( 'magic-login branding behavior', () => {
 
 		const instance = new MagicLogin( {
 			...baseProps,
-			ciabConfig: { id: 'woo', displayName: 'Woo' },
+			partnerConfig: { id: 'woo', displayName: 'Woo' },
 		} );
 
 		expect( instance.renderTos() ).toBe( partnerTosElement );
@@ -94,6 +94,33 @@ describe( 'magic-login branding behavior', () => {
 				components: expect.objectContaining( {
 					privacyLink: expect.anything(),
 					tosLink: expect.anything(),
+				} ),
+			} )
+		);
+	} );
+
+	it( 'hides the app promo in check-your-email when partner branding is enabled', () => {
+		const instance = new MagicLogin( {
+			...baseProps,
+			showCheckYourEmail: true,
+			partnerConfig: { id: 'woo', displayName: 'Woo' },
+		} );
+
+		expect( instance.renderLinks() ).toBeNull();
+	} );
+
+	it( 'shows the app promo in check-your-email when partner branding is not enabled', () => {
+		const instance = new MagicLogin( {
+			...baseProps,
+			showCheckYourEmail: true,
+			partnerConfig: null,
+		} );
+
+		expect( instance.renderLinks() ).toEqual(
+			expect.objectContaining( {
+				props: expect.objectContaining( {
+					campaign: 'calypso-login-link-check-email',
+					className: 'magic-link-app-promo',
 				} ),
 			} )
 		);

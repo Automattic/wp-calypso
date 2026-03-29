@@ -60,8 +60,6 @@ export const useResendVerificationAction = (): Action< Email > => {
 				} );
 		},
 		isEligible: ( item: Email ) =>
-			item.type === 'forwarding' &&
-			item.status === 'unverified_forwards' &&
-			!! ( item?.forwardingTo ?? false ),
+			item.type === 'forwarding' && item.status === 'unverified_forwards' && !! item.forwardingTo,
 	};
 };

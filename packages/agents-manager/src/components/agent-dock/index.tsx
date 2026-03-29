@@ -5,7 +5,7 @@ import {
 	type Suggestion,
 } from '@automattic/agenttic-ui';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useState } from '@wordpress/element';
+import { useCallback, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { comment, drawerRight, login, lifesaver } from '@wordpress/icons';
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
@@ -16,7 +16,7 @@ import useSetupCustomActions from '../../hooks/use-setup-custom-actions';
 import { useShouldUseUnifiedAgent } from '../../hooks/use-should-use-unified-agent';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { LocalConversationListItem } from '../../types';
-import { setSessionId } from '../../utils/agent-session';
+import { persistLastActivity } from '../../utils/persist-last-activity';
 import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import OrchestratorChat from '../orchestrator-chat';
@@ -30,6 +30,7 @@ import type {
 	UseSuggestionsHook,
 	SiteBuildUtils,
 	ImageUploadHook,
+	UseCheckpointHook,
 } from '../../utils/load-external-providers';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 import './style.scss';
@@ -53,6 +54,8 @@ interface Props {
 	siteBuildUtils?: SiteBuildUtils;
 	/** Hook for handling image uploads within the agent chat. */
 	useImageUpload?: ImageUploadHook;
+	/** Hook for saving and restoring editor state so that AI actions can be undone. */
+	useCheckpoint?: UseCheckpointHook;
 }
 
 export default function AgentDock( {
@@ -65,8 +68,9 @@ export default function AgentDock( {
 	useSuggestions,
 	siteBuildUtils,
 	useImageUpload,
+	useCheckpoint,
 }: Props ) {
-	const { site, sectionName, isEligibleForChat, agentConfig } = useAgentsManagerContext();
+	const { site, siteKey, sectionName, isEligibleForChat, agentConfig } = useAgentsManagerContext();
 
 	const [ isCompactMode, setIsCompactMode ] = useState(
 		window.__agentsManagerActions?.isCompactMode ?? false
@@ -77,8 +81,8 @@ export default function AgentDock( {
 	const [ desktopMediaQuery, setDesktopMediaQuery ] = useState< string | undefined >(
 		window.__agentsManagerActions?.desktopMediaQuery
 	);
-	const [ orchestratorMsgCount, setOrchestratorMsgCount ] = useState( 0 );
-	const [ zendeskMsgCount, setZendeskMsgCount ] = useState( 0 );
+	const [ isOrchestratorChatEmpty, setIsOrchestratorChatEmpty ] = useState( true );
+	const [ isZendeskChatEmpty, setIsZendeskChatEmpty ] = useState( true );
 	const { setIsOpen, setIsDocked } = useDispatch( AGENTS_MANAGER_STORE );
 	const { isOpen: isPersistedOpen = false, isDocked: isPersistedDocked = false } = useSelect(
 		( select ) => {
@@ -99,12 +103,7 @@ export default function AgentDock( {
 			defaultDocked: isPersistedDocked,
 			defaultOpen: isPersistedOpen,
 			desktopMediaQuery,
-			onOpenSidebar: () => {
-				setIsOpen( true );
-				if ( pathname === '/history' ) {
-					navigate( '/' );
-				}
-			},
+			onOpenSidebar: () => setIsOpen( true ),
 			onCloseSidebar: () => setIsOpen( false ),
 		} );
 
@@ -112,7 +111,11 @@ export default function AgentDock( {
 	useAdminBarIntegration( {
 		isOpen: isPersistedOpen,
 		sectionName,
-		setIsOpen,
+		maybeOpenChat: () => {
+			if ( ! isPersistedOpen ) {
+				isDocked ? openSidebar() : setIsOpen( true );
+			}
+		},
 		navigate,
 	} );
 
@@ -127,9 +130,22 @@ export default function AgentDock( {
 		setDesktopMediaQuery,
 	} );
 
-	const handleAbort = () => getAgentManager().abortCurrentRequest( agentId );
+	const handleAbort = useCallback( () => {
+		const agentManager = getAgentManager();
 
-	const handleNewChat = () => navigate( '/' );
+		if ( agentManager.hasAgent( agentId ) ) {
+			agentManager.abortCurrentRequest( agentId );
+		}
+	}, [ agentId ] );
+
+	const handleChatHasMessagesChange = useCallback(
+		( hasMessages: boolean ) => setIsOrchestratorChatEmpty( ! hasMessages ),
+		[]
+	);
+	const handleZendeskHasMessagesChange = useCallback(
+		( hasMessages: boolean ) => setIsZendeskChatEmpty( ! hasMessages ),
+		[]
+	);
 
 	const handleClose = isDocked ? closeSidebar : () => setIsOpen( false );
 
@@ -146,8 +162,8 @@ export default function AgentDock( {
 		} else {
 			const sessionId = conversation.session_id || '';
 
+			persistLastActivity( siteKey );
 			handleAbort();
-			setSessionId( sessionId, agentId );
 			navigate( '/chat', { state: { sessionId } } );
 		}
 	};
@@ -157,13 +173,13 @@ export default function AgentDock( {
 			{
 				icon: comment,
 				title: __( 'New chat', '__i18n_text_domain__' ),
-				isDisabled: pathname === '/chat' && ! orchestratorMsgCount,
-				onClick: handleNewChat,
+				isDisabled: pathname === '/chat' && isOrchestratorChatEmpty,
+				onClick: () => navigate( '/' ),
 			},
 			shouldUseUnifiedAgent && {
 				icon: lifesaver,
 				title: __( 'New Zendesk chat', '__i18n_text_domain__' ),
-				isDisabled: pathname === '/zendesk' && ! zendeskMsgCount,
+				isDisabled: pathname === '/zendesk' && isZendeskChatEmpty,
 				onClick: () => {
 					handleAbort();
 					navigate( '/zendesk' );
@@ -207,9 +223,9 @@ export default function AgentDock( {
 			useSuggestions={ useSuggestions }
 			getChatComponent={ getChatComponent }
 			siteBuildUtils={ siteBuildUtils }
-			navigate={ navigate }
 			useImageUpload={ useImageUpload }
-			onMessagesCountChange={ setOrchestratorMsgCount }
+			useCheckpoint={ useCheckpoint }
+			onHasMessagesChange={ handleChatHasMessagesChange }
 		/>
 	);
 
@@ -222,7 +238,7 @@ export default function AgentDock( {
 			chatHeaderOptions={ chatHeaderOptions }
 			markdownComponents={ markdownComponents }
 			markdownExtensions={ markdownExtensions }
-			onMessagesCountChange={ setZendeskMsgCount }
+			onHasMessagesChange={ handleZendeskHasMessagesChange }
 		/>
 	);
 
@@ -235,7 +251,6 @@ export default function AgentDock( {
 			onClose={ handleClose }
 			onExpand={ handleExpand }
 			onSelectConversation={ handleSelectConversation }
-			onNewChat={ handleNewChat }
 		/>
 	);
 

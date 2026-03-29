@@ -40,6 +40,7 @@ export const SITE_FIELDS = [
 	'garden_name',
 	'garden_partner',
 	'garden_is_provisioned',
+	'big_sky_enabled',
 ];
 
 export const JOINED_SITE_FIELDS = SITE_FIELDS.join( ',' );

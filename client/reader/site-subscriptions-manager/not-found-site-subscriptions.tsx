@@ -1,13 +1,17 @@
-import { Reader, SubscriptionManager } from '@automattic/data-stores';
+import { readFeedSearchQuery } from '@automattic/api-queries';
+import { SubscriptionManager } from '@automattic/data-stores';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 
 const NotFoundSiteSubscriptions = (): JSX.Element => {
 	const translate = useTranslate();
 	const { searchTerm } = SubscriptionManager.useSiteSubscriptionsQueryProps();
-	const { data } = Reader.useReadFeedSearchQuery( {
-		query: searchTerm,
-		excludeFollowed: true,
-	} );
+	const { data } = useQuery(
+		readFeedSearchQuery( {
+			query: searchTerm,
+			excludeFollowed: true,
+		} )
+	);
 
 	function getFeedSearchMessage( feedItemsCount: number ): string {
 		if ( feedItemsCount === 1 ) {

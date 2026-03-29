@@ -1,7 +1,6 @@
 import { EmailBox, isWpError } from '@automattic/api-core';
 import {
 	domainQuery,
-	domainsQuery,
 	mailboxAccountsQuery,
 	productsQuery,
 	queryClient,
@@ -36,10 +35,10 @@ export const emailsRoute = createRoute( {
 export const emailsIndexRoute = createRoute( {
 	getParentRoute: () => emailsRoute,
 	path: '/',
-	loader: async () => {
+	loader: async ( { context } ) => {
 		await Promise.all( [
 			queryClient.ensureQueryData( userMailboxesQuery() ),
-			queryClient.ensureQueryData( domainsQuery() ),
+			queryClient.ensureQueryData( context.config.queries.domainsQuery() ),
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
 		] );
 	},
@@ -85,8 +84,8 @@ export const chooseDomainRoute = createRoute( {
 	} ),
 	getParentRoute: () => emailsRoute,
 	path: 'choose-domain',
-	loader: async () => {
-		queryClient.prefetchQuery( domainsQuery() );
+	loader: async ( { context } ) => {
+		queryClient.prefetchQuery( context.config.queries.domainsQuery() );
 	},
 } ).lazy( () =>
 	import( '../../emails/choose-domain' ).then( ( d ) =>

@@ -24,7 +24,7 @@ export function SummaryButtonList( {
 	children,
 }: SummaryButtonListProps ) {
 	const titleId = useInstanceId( SummaryButtonList, 'dashboard-summary-button-list__title' );
-	const isMediumDensity = density === 'medium';
+	const useCardWrapper = density === 'medium' || density === 'medium-low';
 	// Clone children and override their density prop.
 	const clonedChildren = Children.map( children, ( child ) => {
 		if ( isValidElement( child ) ) {
@@ -48,7 +48,7 @@ export function SummaryButtonList( {
 			{ clonedChildren }
 		</ul>
 	);
-	if ( isMediumDensity ) {
+	if ( useCardWrapper ) {
 		return (
 			<Card className={ className }>
 				{ header && <CardHeader>{ header }</CardHeader> }

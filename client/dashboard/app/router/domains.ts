@@ -7,7 +7,6 @@ import {
 	domainGlueRecordsQuery,
 	domainNameServersQuery,
 	sslDetailsQuery,
-	domainsQuery,
 	mailboxesQuery,
 	siteByIdQuery,
 	queryClient,
@@ -29,7 +28,9 @@ import {
 	lazyRouteComponent,
 	Outlet,
 } from '@tanstack/react-router';
+import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import {
 	checkDomainNameServersPermissions,
 	checkDomainTransferPermissions,
@@ -58,7 +59,7 @@ export const domainsIndexRoute = createRoute( {
 	path: '/',
 	loader: async ( { context } ) => {
 		await Promise.all( [
-			queryClient.ensureQueryData( domainsQuery() ),
+			queryClient.ensureQueryData( context.config.queries.domainsQuery() ),
 			queryClient.ensureQueryData( context.config.queries.sitesQuery() ),
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
 		] );
@@ -124,6 +125,7 @@ export const domainRoute = createRoute( {
 	} ),
 	getParentRoute: () => rootRoute,
 	path: 'domains/$domainName',
+	errorComponent: lazyRouteComponent( () => import( '../../domains/domain/error' ) ),
 	loader: async ( { params: { domainName }, location } ) => {
 		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
 		const isNameServersSubRoute = location.pathname.includes( '/name-servers' );
@@ -139,7 +141,18 @@ export const domainRoute = createRoute( {
 		}
 
 		if ( isTransferSubRoute ) {
-			checkDomainTransferPermissions( domain );
+			try {
+				checkDomainTransferPermissions( domain );
+			} catch ( error ) {
+				dispatch( noticesStore ).createWarningNotice(
+					__( 'You do not have permission to transfer this domain.' ),
+					{ type: 'snackbar' }
+				);
+				throw redirect( {
+					to: '/domains/$domainName',
+					params: { domainName },
+				} );
+			}
 		}
 
 		if ( isContactInfoSubRoute ) {

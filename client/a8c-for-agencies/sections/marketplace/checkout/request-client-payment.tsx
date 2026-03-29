@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { FormLabel, Tooltip } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
@@ -90,8 +89,6 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 		logoUrl: string;
 	} | null >( null );
 
-	const isCobrandedCheckoutEnabled = isEnabled( 'a4a-referral-cobranded-checkout' );
-
 	const ctaButtonRef = useRef< HTMLButtonElement >( null );
 
 	const [ showVerifyAccountToolip, setShowVerifyAccountToolip ] = useState( false );
@@ -125,10 +122,7 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 	const hasCompletedForm = !! email && !! message;
 	// Disable Send/Copy when "Use a different logo" is selected but no logo is uploaded
 	const isDifferentLogoWithoutUpload =
-		isCobrandedCheckoutEnabled &&
-		referralLogo.option === 'different' &&
-		! referralLogo.file &&
-		! referralLogo.logoUrl;
+		referralLogo.option === 'different' && ! referralLogo.file && ! referralLogo.logoUrl;
 	const hasPressableAddonsInCheckout = useMemo(
 		() => checkoutItems.some( ( item ) => isPressableAddonProduct( item.slug ) ),
 		[ checkoutItems ]
@@ -152,10 +146,6 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 	const buildLogoPayload = useCallback( async (): Promise<
 		{ type: 'profile' | 'custom' | 'none'; url?: string } | undefined | 'error'
 	> => {
-		if ( ! isCobrandedCheckoutEnabled ) {
-			return undefined;
-		}
-
 		let logo: { type: 'profile' | 'custom' | 'none'; url?: string } | undefined;
 
 		if ( referralLogo.option === 'profile' ) {
@@ -214,7 +204,6 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 	}, [
 		agencyId,
 		dispatch,
-		isCobrandedCheckoutEnabled,
 		lastUploadedFile,
 		referralLogo.file,
 		referralLogo.logoUrl,
@@ -279,9 +268,7 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 						: 'calypso_a4a_marketplace_referral_checkout_request_payment_copy_click',
 					{
 						term_pricing: termPricing,
-						...( isCobrandedCheckoutEnabled && referralLogo.option
-							? { logo_type: referralLogo.option }
-							: {} ),
+						...( referralLogo.option ? { logo_type: referralLogo.option } : {} ),
 					}
 				)
 			);
@@ -361,7 +348,6 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 			hasPressableAddonsInCheckout,
 			dispatch,
 			termPricing,
-			isCobrandedCheckoutEnabled,
 			referralLogo.option,
 			buildLogoPayload,
 			requestPayment,
@@ -412,7 +398,7 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 						}
 					/>
 				</FormFieldset>
-				{ isCobrandedCheckoutEnabled && <ReferralLogo onChange={ onReferralLogoChange } /> }
+				<ReferralLogo onChange={ onReferralLogoChange } />
 			</div>
 
 			<NoticeSummary type="request-client-payment" />
@@ -468,19 +454,17 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 						) }
 					</Tooltip>
 				</div>
-				{ isCobrandedCheckoutEnabled && (
-					<Button
-						variant="link"
-						onClick={ async () => {
-							dispatch( recordTracksEvent( 'calypso_a4a_client_referral_email_preview_click' ) );
-							const logoUrlForPreview = await getLogoUrlForPreview( referralLogo, profileLogoUrl );
-							setPreviewLogoUrl( logoUrlForPreview );
-							setIsPreviewOpen( true );
-						} }
-					>
-						{ translate( 'Preview referral email' ) }
-					</Button>
-				) }
+				<Button
+					variant="link"
+					onClick={ async () => {
+						dispatch( recordTracksEvent( 'calypso_a4a_client_referral_email_preview_click' ) );
+						const logoUrlForPreview = await getLogoUrlForPreview( referralLogo, profileLogoUrl );
+						setPreviewLogoUrl( logoUrlForPreview );
+						setIsPreviewOpen( true );
+					} }
+				>
+					{ translate( 'Preview referral email' ) }
+				</Button>
 			</VStack>
 
 			<ReferralEmailPreviewModal

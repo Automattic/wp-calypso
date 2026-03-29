@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { HelpCenter } from '@automattic/data-stores';
 import {
 	useDispatch as useDataStoreDispatch,
@@ -50,7 +49,7 @@ export default function useHelpCenter() {
 				window.location.hash === CONTACT_URL_HASH_FRAGMENT_WITH_PRODUCT ||
 				window.location.hash === CONTACT_URL_FOR_MIGRATION_OFFER_HASH_FRAGMENT;
 
-			if ( hasSupportFormHash && isEnabled( 'a4a-help-center' ) ) {
+			if ( hasSupportFormHash ) {
 				const isMigrationRequest =
 					window.location.hash === CONTACT_URL_FOR_MIGRATION_OFFER_HASH_FRAGMENT;
 

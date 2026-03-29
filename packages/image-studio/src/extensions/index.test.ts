@@ -12,6 +12,7 @@ jest.mock( '@wordpress/hooks', () => ( {
 const mockAddImageStudioMediaSource = jest.fn();
 const mockWithImageStudioGenerateButton = jest.fn();
 const mockWithImageStudioToolbarButton = jest.fn();
+const mockAddImageStudioHandler = jest.fn();
 
 jest.mock( './external-media-source-extension', () => ( {
 	addImageStudioMediaSource: mockAddImageStudioMediaSource,
@@ -23,6 +24,10 @@ jest.mock( './generate-button-extension', () => ( {
 
 jest.mock( './image-toolbar-extension', () => ( {
 	withImageStudioToolbarButton: mockWithImageStudioToolbarButton,
+} ) );
+
+jest.mock( './image-generation-handler-extension', () => ( {
+	addImageStudioHandler: mockAddImageStudioHandler,
 } ) );
 
 describe( 'Extension Registration', () => {
@@ -41,7 +46,7 @@ describe( 'Extension Registration', () => {
 
 			registerBlockEditorFilters();
 
-			expect( mockAddFilter ).toHaveBeenCalledTimes( 3 );
+			expect( mockAddFilter ).toHaveBeenCalledTimes( 4 );
 
 			// Verify toolbar button filter
 			expect( mockAddFilter ).toHaveBeenCalledWith(
@@ -63,6 +68,13 @@ describe( 'Extension Registration', () => {
 				'big-sky/generate-button',
 				mockWithImageStudioGenerateButton
 			);
+
+			// Verify image generation handler filter
+			expect( mockAddFilter ).toHaveBeenCalledWith(
+				'jetpack.ai.imageGenerationHandler',
+				'big-sky/image-studio',
+				mockAddImageStudioHandler
+			);
 		} );
 
 		it( 'should only register filters once (idempotency)', () => {
@@ -72,8 +84,8 @@ describe( 'Extension Registration', () => {
 			registerBlockEditorFilters();
 			registerBlockEditorFilters();
 
-			// Should only call addFilter 3 times total (not 9)
-			expect( mockAddFilter ).toHaveBeenCalledTimes( 3 );
+			// Should only call addFilter 4 times total (not 12)
+			expect( mockAddFilter ).toHaveBeenCalledTimes( 4 );
 		} );
 
 		it( 'should use correct namespace for filters', () => {

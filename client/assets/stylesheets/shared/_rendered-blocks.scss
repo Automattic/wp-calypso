@@ -111,6 +111,14 @@
 			margin-bottom: 12px;
 			margin-left: 32px;
 		}
+
+		/**
+		 * Sometimes we have figure inside the div.wp-block-image, in other cases we have figure.wp-block-image
+		 */
+		figure.wp-block-image:is(.alignleft, .alignright):has( + p),
+		.wp-block-image:has(figure.alignleft, figure.alignright):has( + p) {
+			max-width: 40%;
+		}
 	}
 
 	@include breakpoint-deprecated( "<660px" ) {

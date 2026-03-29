@@ -7,8 +7,8 @@ import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
 import ConversationFollowButton from 'calypso/blocks/conversation-follow-button';
-import { shouldShowConversationFollowButton } from 'calypso/blocks/conversation-follow-button/helper';
 import ReaderFollowConversationIcon from 'calypso/reader/components/icons/follow-conversation-icon';
+import { isConversationFollowable } from 'calypso/reader/post/capabilities';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
 import {
 	requestPostComments,
@@ -649,8 +649,7 @@ class PostCommentList extends Component {
 				  this.getCommentsCount( this.props.commentsTree.children );
 
 		const showConversationFollowButton =
-			this.props.showConversationFollowButton &&
-			shouldShowConversationFollowButton( this.props.post );
+			this.props.showConversationFollowButton && isConversationFollowable( this.props.post );
 
 		const showManageCommentsButton =
 			! expandableView && this.props.canUserModerateComments && commentCount > 0;

@@ -17,7 +17,7 @@ import { isDesktop as isDesktopViewport, subscribeIsDesktop } from '@automattic/
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useMemo, useState } from '@wordpress/element';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
+import i18n, { useTranslate } from 'i18n-calypso';
 import { parse as parseQs } from 'qs';
 import AsyncLoad from 'calypso/components/async-load';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -119,7 +119,6 @@ export interface UnifiedPlansStepProps {
 		isExtraWideLayout: boolean;
 	};
 
-	hideLogo?: boolean;
 	shouldHideNavButtons?: boolean;
 	intent?: PlansIntent;
 	onIntentChange?: ( intent: PlansIntent ) => void;
@@ -220,7 +219,6 @@ function UnifiedPlansStep( {
 	step,
 	signupDependencies,
 	displayedIntervals,
-	hideLogo,
 	headerText,
 	useEmailOnboardingSubheader,
 	onPlanIntervalUpdate,
@@ -466,7 +464,15 @@ function UnifiedPlansStep( {
 		}
 
 		if ( intent === 'plans-woo-hosted' ) {
-			return translate( 'Your free trial ends soon - select a plan to keep your online store.' );
+			return i18n.fixMe( {
+				text: 'Your free trial ends soon. Select a plan to keep access to your store admin.',
+				newCopy: translate(
+					'Your free trial ends soon. Select a plan to keep access to your store admin.'
+				),
+				oldCopy: translate(
+					'Your free trial ends soon - select a plan to keep your online store.'
+				),
+			} );
 		}
 
 		if ( useEmailOnboardingSubheader ) {
@@ -600,7 +606,6 @@ function UnifiedPlansStep( {
 					className="step-container-v2--plans"
 					topBar={
 						<Step.TopBar
-							hideLogo={ hideLogo }
 							leftElement={
 								goBack ? (
 									<Step.BackButton onClick={ goBack }>{ backLabelText }</Step.BackButton>

@@ -25,8 +25,6 @@ interface Props {
 	onExpand: () => void;
 	/** Called when a conversation is selected. */
 	onSelectConversation: ( conversation: LocalConversationListItem ) => void;
-	/** Called when the user starts a new chat. */
-	onNewChat: () => void;
 }
 
 export default function AgentHistory( {
@@ -37,7 +35,6 @@ export default function AgentHistory( {
 	onClose,
 	onExpand,
 	onSelectConversation,
-	onNewChat,
 }: Props ) {
 	const { getActiveSessionId } = useAgentsManagerContext();
 
@@ -66,6 +63,7 @@ export default function AgentHistory( {
 			onClose={ onClose }
 			onExpand={ onExpand }
 			onStop={ onAbort }
+			expandOnHover={ false }
 		>
 			<AgentUI.ConversationView>
 				<ChatHeader
@@ -74,10 +72,7 @@ export default function AgentHistory( {
 					options={ chatHeaderOptions }
 					title={ __( 'Past chats', '__i18n_text_domain__' ) }
 				/>
-				<ConversationHistoryView
-					onSelectConversation={ onSelectConversation }
-					onNewChat={ onNewChat }
-				/>
+				<ConversationHistoryView onSelectConversation={ onSelectConversation } />
 			</AgentUI.ConversationView>
 		</AgentUI.Container>
 	);

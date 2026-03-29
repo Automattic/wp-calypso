@@ -73,7 +73,9 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 		};
 	}, [] );
 	const isUserEligibleForPaidSupport =
-		Boolean( data?.eligibility?.is_user_eligible ) || hasPremiumSupport;
+		Boolean( data?.eligibility?.is_user_eligible ) ||
+		hasPremiumSupport ||
+		featureConfig.chat.hasPremiumSupport;
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_helpcenter_page_open', {

@@ -28,6 +28,7 @@
 		display: flex;
 		flex-direction: column;
 		margin-bottom: 0;
+		width: 100%;
 
 		a {
 			font-size: rem(13px);
@@ -52,6 +53,12 @@
 			padding-top: 8px;
 			margin-top: auto;
 		}
+
+		// Telegram login widget: hide user photo and its background
+		.tgme_widget_login_user_photo,
+		.tgme_widget_login_user_photo.bgcolor4 {
+			display: none;
+		}
 	}
 
 	.developer-features-list__item-tag {
@@ -61,11 +68,17 @@
 		text-transform: uppercase;
 	}
 
+	.developer-features-list__item-connected-word {
+		font-weight: 700;
+		color: var(--color-success);
+	}
+
 	@media (max-width: $break-large) {
 		display: block;
 
 		.developer-features-list__item {
 			margin: 0 32px 24px 32px;
+			width: auto;
 
 			.developer-features-list__item-learn-more {
 				padding-top: 30px;

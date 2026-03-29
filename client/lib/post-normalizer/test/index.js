@@ -232,12 +232,14 @@ describe( 'index', () => {
 	} );
 
 	describe( 'content.disableAutoPlayOnMediaShortcodes', () => {
-		test( 'should strip autoplay attributes from video', () => {
+		test( 'should strip autoplay attributes from video and add controls and preload', () => {
 			const post = {
 				content: '<video autoplay="1"></video>',
 			};
 			const normalized = withContentDOM( [ disableAutoPlayOnMedia ] )( post );
-			expect( normalized ).toEqual( { content: '<video></video>' } );
+			expect( normalized ).toEqual( {
+				content: '<video controls="" preload="metadata"></video>',
+			} );
 		} );
 
 		test( 'should strip autoplay attributes from audio', () => {

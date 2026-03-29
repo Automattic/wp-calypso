@@ -37,7 +37,6 @@ import {
 	fetchSiteDomains,
 } from '../domains-table-fetch-functions';
 import EmptyDomainsListCard from './empty-domains-list-card';
-import GoogleDomainOwnerBanner from './google-domain-owner-banner';
 import ManageAllDomainsButton from './manage-all-domains-button';
 import OptionsDomainButton from './options-domain-button';
 import { usePurchaseActions } from './use-purchase-actions';
@@ -162,7 +161,6 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 					bodyClass={ [ 'edit__body-white', 'is-bulk-domains-page', 'is-bulk-site-domains-page' ] }
 				/>
 				<DomainHeader items={ [ item ] } buttons={ buttons } mobileButtons={ buttons } />
-				{ ! isLoading && <GoogleDomainOwnerBanner /> }
 				<PrimaryDomainSelector
 					domains={ data?.domains }
 					site={ site }

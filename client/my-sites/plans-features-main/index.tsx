@@ -20,6 +20,7 @@ import {
 	getSimplifiedPlanFeaturesGroupedForFeaturesGrid,
 	getWordPressHostingFeaturesGroupedForFeaturesGrid,
 	isWooHostedPlan,
+	isWooHostedFreePlan,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
@@ -117,6 +118,7 @@ export interface PlansFeaturesMainProps {
 	selectedFeature?: string;
 	onUpgradeClick?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
 	redirectTo?: string;
+	pluginSlug?: string;
 	redirectToAddDomainFlow?: boolean;
 	hidePlanTypeSelector?: boolean;
 	paidDomainName?: string;
@@ -201,6 +203,7 @@ const PlansFeaturesMain = ( {
 	onUpgradeClick,
 	hidePlanTypeSelector,
 	redirectTo,
+	pluginSlug,
 	redirectToAddDomainFlow,
 	siteId,
 	selectedPlan,
@@ -308,7 +311,12 @@ const PlansFeaturesMain = ( {
 	// Users can only select interval types that are equal to or longer than their current plan's interval
 	// Only apply this fix in the plan-upgrade flow to avoid breaking other flows
 	const currentPlanTerm =
-		isStepperUpgradeFlow && sitePlanSlug ? getPlan( sitePlanSlug )?.term : null;
+		isStepperUpgradeFlow &&
+		sitePlanSlug &&
+		! isFreePlan( sitePlanSlug ) &&
+		! isWooHostedFreePlan( sitePlanSlug )
+			? getPlan( sitePlanSlug )?.term
+			: null;
 	const compatibleIntervalType = useMemo(
 		() => ensureCompatibleIntervalType( currentPlanTerm, intervalType ),
 		[ currentPlanTerm, intervalType ]
@@ -438,6 +446,7 @@ const PlansFeaturesMain = ( {
 		reflectStorageSelectionInPlanPrices: true,
 		isGatingBusinessQ1: !! differentiatorsVariant,
 		redirectTo,
+		pluginSlug,
 	} );
 
 	const isDomainOnlySite = useSelector( ( state: IAppState ) =>

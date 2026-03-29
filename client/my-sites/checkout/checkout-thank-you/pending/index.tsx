@@ -4,6 +4,7 @@ import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
+import { invokeSurvicateEvent } from '@automattic/survicate';
 import { AUTO_RENEWAL } from '@automattic/urls';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState, useEffect, useRef } from 'react';
@@ -253,9 +254,13 @@ function useRedirectOnTransactionSuccess( {
 		// For siteless purchases where the pre-transaction redirect URL defaults to '/'
 		// (because the new site's ID was unknown before the transaction), use the
 		// receipt's blogId to redirect to the new site's thank-you page instead.
+		// Preserve any query params from the original redirectTo (e.g., ?flow=unified).
+		const { pathname, search } = redirectTo
+			? getUrlParts( redirectTo )
+			: { pathname: undefined, search: '' };
 		const effectiveRedirectTo =
-			( ! redirectTo || redirectTo === '/' ) && blogId && finalReceiptId
-				? `/checkout/thank-you/${ blogId }/${ finalReceiptId }`
+			( ! redirectTo || pathname === '/' ) && blogId && finalReceiptId
+				? `/checkout/thank-you/${ blogId }/${ finalReceiptId }${ search }`
 				: redirectTo;
 
 		const redirectInstructions = getRedirectFromPendingPage( {
@@ -275,6 +280,9 @@ function useRedirectOnTransactionSuccess( {
 		}
 
 		didRedirect.current = true;
+		if ( ! redirectInstructions.isError && ! redirectInstructions.isUnknown ) {
+			invokeSurvicateEvent( 'purchaseCompleted' );
+		}
 		if ( isConnectAfterCheckoutFlow ) {
 			setHeadingText( connectingJetpackText );
 		}

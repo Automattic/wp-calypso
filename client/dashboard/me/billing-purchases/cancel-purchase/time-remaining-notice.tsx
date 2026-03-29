@@ -2,7 +2,11 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { intlFormat, isToday, isBefore } from 'date-fns';
 import Notice from '../../../components/notice';
-import { isPartnerPurchase } from '../../../utils/purchase';
+import {
+	isPartnerPurchase,
+	getPurchaseCancellationFlowType,
+	CANCEL_FLOW_TYPE,
+} from '../../../utils/purchase';
 import type { Purchase } from '@automattic/api-core';
 
 interface TimeRemainingNoticeProps {
@@ -15,6 +19,13 @@ export default function TimeRemainingNotice( { purchase }: TimeRemainingNoticePr
 	const purchaseExpiryDate = new Date( purchase.expiry_date );
 	const now = new Date();
 	if ( isToday( purchaseExpiryDate ) || isBefore( purchaseExpiryDate, now ) ) {
+		return null;
+	}
+
+	// If the plan is being immediately removed (refund or explicit removal), don't show
+	// "available until [date]" — the plan won't be available, it's being removed now.
+	const flowType = getPurchaseCancellationFlowType( purchase );
+	if ( flowType === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND || flowType === CANCEL_FLOW_TYPE.REMOVE ) {
 		return null;
 	}
 

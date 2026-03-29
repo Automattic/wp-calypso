@@ -2,6 +2,7 @@ import { useRazorpay } from '@automattic/calypso-razorpay';
 import { useStripe } from '@automattic/calypso-stripe';
 import colorStudio from '@automattic/color-studio';
 import { CheckoutProvider, checkoutTheme } from '@automattic/composite-checkout';
+import { Step } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import {
 	isValueTruthy,
@@ -15,7 +16,9 @@ import { useSelect } from '@wordpress/data';
 import debugFactory from 'debug';
 import DOMPurify from 'dompurify';
 import { useTranslate } from 'i18n-calypso';
-import { Fragment, useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
+import { getDashboardFromHostname } from 'calypso/dashboard/app/routing';
+import { getDashboardStepperLogo } from 'calypso/dashboard/app/stepper-logo';
 import { useCheckoutMigrationIntroductoryOfferSticker } from 'calypso/data/site-migration/use-checkout-migration-introductory-offer-sticker';
 import { recordAddEvent } from 'calypso/lib/analytics/cart';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -31,6 +34,7 @@ import { isJetpackSite, isCommerceGardenSite } from 'calypso/state/sites/selecto
 import useActOnceOnStrings from '../hooks/use-act-once-on-strings';
 import useAddProductsFromUrl from '../hooks/use-add-products-from-url';
 import useCheckoutFlowTrackKey from '../hooks/use-checkout-flow-track-key';
+import { useCheckoutUiRedesignExperiment } from '../hooks/use-checkout-ui-redesign-experiment';
 import useCountryList from '../hooks/use-country-list';
 import useCreatePaymentMethods from '../hooks/use-create-payment-methods';
 import { existingCardPrefix } from '../hooks/use-create-payment-methods/use-create-existing-cards';
@@ -54,6 +58,7 @@ import { payPalJsProcessor } from '../lib/paypal-js-processor';
 import { pixProcessor } from '../lib/pix-processor';
 import razorpayProcessor from '../lib/razorpay-processor';
 import { translateResponseCartToWPCOMCart } from '../lib/translate-cart';
+import upiProcessor from '../lib/upi-processor';
 import weChatProcessor from '../lib/we-chat-processor';
 import webPayProcessor from '../lib/web-pay-processor';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
@@ -582,6 +587,8 @@ export default function CheckoutMain( {
 				genericRedirectProcessor( 'sofort', transactionData, dataForProcessor ),
 			eps: ( transactionData: unknown ) =>
 				genericRedirectProcessor( 'eps', transactionData, dataForProcessor ),
+			'stripe-upi': ( transactionData: unknown ) =>
+				upiProcessor( transactionData, dataForProcessor, translate ),
 			'existing-card': ( transactionData: unknown ) =>
 				existingCardProcessor( transactionData, dataForProcessor ),
 			'existing-card-ebanx': ( transactionData: unknown ) =>
@@ -648,6 +655,7 @@ export default function CheckoutMain( {
 	};
 
 	const isCheckoutV2ExperimentLoading = false;
+	const [ isCheckoutUiRedesignLoading ] = useCheckoutUiRedesignExperiment();
 
 	// This variable determines if we see the loading page or if checkout can
 	// render its steps.
@@ -673,6 +681,7 @@ export default function CheckoutMain( {
 		},
 		{ name: translate( 'Loading countries list' ), isLoading: countriesList.length < 1 },
 		{ name: translate( 'Loading Site' ), isLoading: isCheckoutV2ExperimentLoading },
+		{ name: translate( 'Loading checkout' ), isLoading: isCheckoutUiRedesignLoading },
 	];
 
 	if ( shouldSetMigrationSticker ) {
@@ -854,8 +863,19 @@ export default function CheckoutMain( {
 		paymentMethods
 	);
 
+	const dashboard = getDashboardFromHostname( window?.location?.hostname );
+	const stepContainerV2Context = useMemo(
+		() => ( {
+			flowName: '',
+			stepName: '',
+			recordTracksEvent: () => {},
+			logo: getDashboardStepperLogo( dashboard ),
+		} ),
+		[ dashboard ]
+	);
+
 	return (
-		<Fragment>
+		<Step.StepContainerV2Provider value={ stepContainerV2Context }>
 			<PageViewTracker
 				path={ analyticsPath }
 				title="Checkout"
@@ -918,7 +938,7 @@ export default function CheckoutMain( {
 					}
 				</CheckoutProvider>
 			</VGSCollectProvider>
-		</Fragment>
+		</Step.StepContainerV2Provider>
 	);
 }
 

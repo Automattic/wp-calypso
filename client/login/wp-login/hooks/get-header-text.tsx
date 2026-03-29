@@ -9,7 +9,7 @@ import {
 } from 'calypso/lib/oauth2-clients';
 import { getOAuth2Client } from 'calypso/state/oauth2-clients/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
-import type { CiabPartnerConfig } from 'calypso/lib/partner-branding';
+import type { PartnerConfig } from 'calypso/lib/partner-branding';
 
 interface Props {
 	twoFactorAuthType: string | null;
@@ -29,7 +29,7 @@ interface Props {
 	isFromAkismet?: boolean;
 	isFromPassport?: boolean;
 	isFromAutomatticForAgenciesPlugin?: boolean;
-	ciabConfig?: CiabPartnerConfig | null;
+	partnerConfig?: PartnerConfig | null;
 	isGravPoweredClient?: boolean;
 	isUserLoggedIn?: boolean;
 }
@@ -72,7 +72,7 @@ export function getHeaderText( {
 	isFromAkismet,
 	isFromPassport,
 	isFromAutomatticForAgenciesPlugin,
-	ciabConfig,
+	partnerConfig,
 	isGravPoweredClient,
 	currentQuery,
 	translate,
@@ -96,9 +96,9 @@ export function getHeaderText( {
 
 	if ( isSocialFirst ) {
 		// CIAB partners have custom headers without "with WordPress.com"
-		if ( ciabConfig ) {
+		if ( partnerConfig ) {
 			headerText = translate( 'Log in to %(partner)s', {
-				args: { partner: ciabConfig.displayName },
+				args: { partner: partnerConfig.displayName },
 			} );
 		} else {
 			let clientName = oauth2Client?.name;

@@ -334,6 +334,11 @@ export default function getThankYouPageUrl( {
 			debug( 'redirecting to the saved post-checkout destination' );
 			return addQueryArgs( { siteId }, urlFromCookie );
 		}
+
+		// Fallback for unified checkout - let the pending page construct the URL
+		// using the blogId from the receipt, and preserve the checkout_type param
+		debug( 'unified checkout fallback, letting pending page construct URL' );
+		return addQueryArgs( { checkout_type: 'unified' }, '/' );
 	}
 
 	// If there is no purchase, then send the user to a generic page (not
@@ -396,8 +401,7 @@ export default function getThankYouPageUrl( {
 		( [ 'no-user', 'no-site' ].includes( String( cart?.cart_key ?? '' ) ) ||
 			signupFlowName === 'domain' ) &&
 		urlFromCookie &&
-		receiptIdOrPlaceholder &&
-		! urlFromCookie.includes( '/start/setup-site' )
+		receiptIdOrPlaceholder
 	) {
 		clearSignupCompleteFlowName();
 		let newBlogReceiptUrl = `${ urlFromCookie }/${ receiptIdOrPlaceholder }`;

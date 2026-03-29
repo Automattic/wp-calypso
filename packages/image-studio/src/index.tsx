@@ -23,16 +23,29 @@ import {
  */
 
 interface ImageStudioData {
-	enabled?: boolean;
+	enabled?: boolean | string;
 }
 
 declare const imageStudioData: ImageStudioData | undefined;
+
+declare global {
+	interface Window {
+		__bigSkyImageStudioInitialized?: boolean;
+	}
+}
 
 /**
  * Initialize the Image Studio integration for WordPress Media Library.
  * Uses WordPress data store patterns instead of DOM manipulation.
  */
 function initImageStudioIntegration(): void {
+	// Sentinel guard: prevent double-initialization (e.g. if both Jetpack and Big Sky load this).
+	// TODO: Remove this guard after Jetpack Image Studio is released to WoA.
+	if ( window.__bigSkyImageStudioInitialized ) {
+		return;
+	}
+	window.__bigSkyImageStudioInitialized = true;
+
 	// Validate required globals
 	if ( typeof imageStudioData === 'undefined' || ! imageStudioData?.enabled ) {
 		return;

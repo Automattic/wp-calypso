@@ -3,6 +3,79 @@ import { isInSupportSession } from '@automattic/data-stores';
 import { __ } from '@wordpress/i18n';
 import { AgentticMessage, ZendeskMessage } from './types';
 
+export const SUPPORTED_IMAGE_TYPES = [ 'image/jpeg', 'image/jpg', 'image/png', 'image/gif' ];
+export const MAX_ATTACHMENTS = 5;
+
+export function isSupportedImageType( type: string ) {
+	return SUPPORTED_IMAGE_TYPES.includes( type );
+}
+
+let smoochContainer: HTMLDivElement | null = null;
+
+export function getSmoochContainer(): HTMLDivElement | null {
+	if ( typeof document === 'undefined' ) {
+		return null;
+	}
+
+	const existing = document.querySelector< HTMLDivElement >( '.smooch-container' );
+	if ( existing ) {
+		smoochContainer = existing;
+	} else if ( ! smoochContainer ) {
+		smoochContainer = document.createElement( 'div' );
+		smoochContainer.className = 'smooch-container';
+	}
+
+	// Keep the container hidden since we're using embedded mode.
+	smoochContainer.style.display = 'none';
+	smoochContainer.style.position = 'absolute';
+	smoochContainer.style.top = '0';
+	smoochContainer.style.left = '0';
+	smoochContainer.style.width = '100%';
+	smoochContainer.style.height = '100%';
+	smoochContainer.style.zIndex = '1000';
+
+	if ( ! document.body.contains( smoochContainer ) ) {
+		document.body.appendChild( smoochContainer );
+	}
+
+	return smoochContainer;
+}
+
+export const playNotificationSound = () => {
+	if ( typeof window === 'undefined' ) {
+		return;
+	}
+
+	// @ts-expect-error expected because of fallback webkitAudioContext
+	const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+	if ( ! AudioContextClass ) {
+		return;
+	}
+
+	try {
+		const audioContext = new AudioContextClass();
+		const duration = 0.7;
+		const oscillator = audioContext.createOscillator();
+		const gainNode = audioContext.createGain();
+
+		// Configure oscillator
+		oscillator.type = 'sine';
+		oscillator.frequency.setValueAtTime( 660, audioContext.currentTime );
+
+		// Configure gain for a smoother fade-out
+		gainNode.gain.setValueAtTime( 0.3, audioContext.currentTime );
+		gainNode.gain.exponentialRampToValueAtTime( 0.001, audioContext.currentTime + duration );
+
+		// Connect & start
+		oscillator.connect( gainNode );
+		gainNode.connect( audioContext.destination );
+		oscillator.start();
+		oscillator.stop( audioContext.currentTime + duration );
+	} catch {
+		// Audio playback is not available in this environment
+	}
+};
+
 export const isTestModeEnvironment = () => {
 	// `env_id` may not be set in all environments (e.g., Gutenberg plugin context).
 	// `config()` throws in development and returns `undefined` in production when the key is missing.

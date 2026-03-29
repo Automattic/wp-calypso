@@ -8,6 +8,7 @@ export interface RefundOptions {
 
 export interface RawPurchaseIntroductoryOffer {
 	cost_per_interval: number;
+	cost_per_interval_integer: number;
 	end_date: string;
 	interval_count: number;
 	interval_unit: string;
@@ -391,6 +392,20 @@ export interface Purchase {
 	 * deletion flow should require the user to cancel these purchases first.
 	 */
 	blocks_site_deletion: boolean;
+
+	/**
+	 * True if the multisite dashboard should show a notice at the top of the
+	 * purchase management page thanking the user for their purchase and letting
+	 * them know that they will be billed at the regular price next renewal.
+	 */
+	should_show_cancellation_offer_notice: boolean;
+
+	/**
+	 * The percentage (0 - 100%) that this purchase was discounted by when the
+	 * customer accepted the cancellation offer, rounded the nearest whole
+	 * number.
+	 */
+	cancellation_offer_notice_discount_percentage: number | null;
 }
 
 export type RawPurchase = Purchase & {

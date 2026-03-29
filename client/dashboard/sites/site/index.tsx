@@ -1,4 +1,5 @@
 import { siteBySlugQuery } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { notFound, Outlet } from '@tanstack/react-router';
 import { __experimentalHStack as HStack } from '@wordpress/components';
@@ -15,12 +16,17 @@ import { isSiteMigrationInProgress } from '../../utils/site-status';
 import { canManageSite, canSwitchEnvironment } from '../features';
 import SiteMenu from '../site-menu';
 import EnvironmentSwitcher from './environment-switcher';
+import type { SiteSwitcherProps } from '../site-switcher/types';
 
 function Site() {
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site, isError, error } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { components } = useAppContext();
-	const SiteSwitcher = useMemo( () => lazy( components.siteSwitcher ), [ components ] );
+	const SiteSwitcher = useMemo(
+		() =>
+			lazy( components.siteSwitcher ) as React.LazyExoticComponent< React.FC< SiteSwitcherProps > >,
+		[ components ]
+	);
 
 	if ( isError ) {
 		throw error;
@@ -33,20 +39,22 @@ function Site() {
 	return (
 		<Suspense fallback={ null }>
 			{ hasStagingSite( site ) && <StagingSiteSyncMonitor site={ site } /> }
-			<HeaderBar>
-				<HStack spacing={ 3 }>
-					<HeaderBar.Title>
-						<SiteSwitcher />
-						{ canSwitchEnvironment( site ) && (
-							<>
-								<MenuDivider />
-								<EnvironmentSwitcher site={ site } />
-							</>
-						) }
-					</HeaderBar.Title>
-					{ ! isSiteMigrationInProgress( site ) && <SiteMenu site={ site } /> }
-				</HStack>
-			</HeaderBar>
+			{ ! isEnabled( 'dashboard/omnibar' ) && (
+				<HeaderBar>
+					<HStack spacing={ 3 }>
+						<HeaderBar.Title>
+							<SiteSwitcher site={ site } />
+							{ canSwitchEnvironment( site ) && (
+								<>
+									<MenuDivider />
+									<EnvironmentSwitcher site={ site } />
+								</>
+							) }
+						</HeaderBar.Title>
+						{ ! isSiteMigrationInProgress( site ) && <SiteMenu site={ site } /> }
+					</HStack>
+				</HeaderBar>
+			) }
 			<Suspense fallback={ null }>
 				<FlashMessage
 					id="route-not-allowed"

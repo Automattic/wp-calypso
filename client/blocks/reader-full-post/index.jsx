@@ -9,8 +9,7 @@ import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import Comments from 'calypso/blocks/comments';
 import { COMMENTS_FILTER_ALL } from 'calypso/blocks/comments/comments-filters';
-import { shouldShowComments } from 'calypso/blocks/comments/helper';
-import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
+import ReaderFullPostFeaturedImage from 'calypso/blocks/reader-full-post/featured-image';
 import { scrollToComments } from 'calypso/blocks/reader-full-post/scroll-to-comments';
 import WPiFrameResize from 'calypso/blocks/reader-full-post/wp-iframe-resize';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
@@ -32,17 +31,13 @@ import ReaderBackButton from 'calypso/reader/components/back-button';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { canBeMarkedAsSeen, getSiteName, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import readerContentWidth from 'calypso/reader/lib/content-width';
+import { isCommentable } from 'calypso/reader/post/capabilities';
 import PostExcerptLink from 'calypso/reader/post-excerpt-link';
 import { keyForPost } from 'calypso/reader/post-key';
 import { ReaderPerformanceTrackerStop } from 'calypso/reader/reader-performance-tracker';
 import { getStreamUrlFromPost } from 'calypso/reader/route';
-import {
-	recordAction,
-	recordGaEvent,
-	recordTrackForPost,
-	recordPermalinkClick,
-} from 'calypso/reader/stats';
-import { showSelectedPost } from 'calypso/reader/utils';
+import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
+import { getPostTitleFallback, showSelectedPost } from 'calypso/reader/utils';
 import { requestPostComments } from 'calypso/state/comments/actions';
 import { isCommentsApiDisabled } from 'calypso/state/comments/selectors/get-comments-api-disabled';
 import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/likes/actions';
@@ -264,24 +259,26 @@ export class FullPostView extends Component {
 			return;
 		}
 
-		switch ( event.keyCode ) {
-			// Close full post - Esc
-			case 27: {
+		switch ( event.key ) {
+			// Close full post.
+			case 'Escape': {
 				return this.handleBack( event );
 			}
 
-			// Like post - l
-			case 76: {
+			// Like post.
+			case 'l': {
 				return this.handleLike();
 			}
 
-			// Next post - j
-			case 74: {
+			// Next post.
+			case 'ArrowRight':
+			case 'j': {
 				return this.goToPost( this.props.nextPostKey );
 			}
 
-			// Previous post - k
-			case 75: {
+			// Previous post.
+			case 'ArrowLeft':
+			case 'k': {
 				return this.goToPost( this.props.previousPostKey );
 			}
 		}
@@ -486,10 +483,6 @@ export class FullPostView extends Component {
 
 	handleRelatedPostFromSameSiteClicked = () => {
 		recordTrackForPost( 'calypso_reader_related_post_from_same_site_clicked', this.props.post );
-	};
-
-	handleVisitSiteClick = () => {
-		recordPermalinkClick( 'full_post_visit_link', this.props.post );
 	};
 
 	handleRelatedPostFromOtherSiteClicked = () => {
@@ -759,7 +752,9 @@ export class FullPostView extends Component {
 					{ ! post || post._state === 'pending' ? (
 						<DocumentHead title={ translate( 'Loading' ) } />
 					) : (
-						<DocumentHead title={ `${ post.title } ‹ ${ siteName } ‹ Reader` } />
+						<DocumentHead
+							title={ `${ post.title || getPostTitleFallback( post ) } ‹ ${ siteName } ‹ Reader` }
+						/>
 					) }
 					{ post && post.feed_ID && <QueryReaderFeed feedId={ +post.feed_ID } /> }
 					{ post && ! post.is_external && post.site_ID && (
@@ -810,7 +805,7 @@ export class FullPostView extends Component {
 									onCommentClick={ this.handleCommentClick }
 									onEditClick={ this.onEditClick }
 									commentsApiDisabled={ commentsApiDisabled }
-									showComments={ shouldShowComments( post ) }
+									showComments={ isCommentable( post ) }
 									renderMarkAsSeenButton={
 										shouldShowMarkAsSeen ? this.renderMarkAsSenButton : null
 									}
@@ -821,13 +816,7 @@ export class FullPostView extends Component {
 							) }
 
 							{ post.featured_image && ! isFeaturedImageInContent( post ) && (
-								<ReaderFeaturedImage
-									canonicalMedia={ null }
-									imageUrl={ post.featured_image }
-									href={ getStreamUrlFromPost( post ) }
-									imageWidth={ contentWidth }
-									children={ <div style={ { width: contentWidth } } /> }
-								/>
+								<ReaderFullPostFeaturedImage post={ post } maxWidth={ contentWidth } />
 							) }
 							{ isLoading && <ReaderFullPostContentPlaceholder /> }
 							{ post.use_excerpt ? (
@@ -858,7 +847,7 @@ export class FullPostView extends Component {
 							{ ! isLoading && <ReaderPerformanceTrackerStop /> }
 
 							<div className="reader-full-post__comments-wrapper" ref={ this.commentsWrapper }>
-								{ ! commentsApiDisabled && shouldShowComments( post ) && (
+								{ ! commentsApiDisabled && isCommentable( post ) && (
 									<Comments
 										showNestingReplyArrow
 										post={ post }

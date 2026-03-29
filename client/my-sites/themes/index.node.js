@@ -25,8 +25,8 @@ export default function ( router ) {
 	const showcaseRoutes = [
 		`/${ langParam }/themes/${ tierParam }/:view(collection)?`,
 		`/${ langParam }/themes/${ tierParam }/filter/:filter?/:view(collection)?`,
-		`/${ langParam }/themes/:category(all)?/${ tierParam }/:view(collection)?`,
-		`/${ langParam }/themes/:category(all)?/${ tierParam }/filter/:filter/:view(collection)?`,
+		`/${ langParam }/themes/:category(all|recommended)?/${ tierParam }/:view(collection)?`,
+		`/${ langParam }/themes/:category(all|recommended)?/${ tierParam }/filter/:filter/:view(collection)?`,
 		`/${ langParam }/themes/:vertical?/${ tierParam }/:view(collection)?`,
 		`/${ langParam }/themes/:vertical?/${ tierParam }/filter/:filter/:view(collection)?`,
 	];

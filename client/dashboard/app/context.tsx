@@ -3,6 +3,7 @@ import {
 	sitesQuery,
 	paginatedSitesQuery,
 	dashboardSiteFiltersQuery,
+	domainsQuery,
 } from '@automattic/api-queries';
 /* eslint-enable no-restricted-imports */
 import { createContext, useContext } from 'react';
@@ -27,6 +28,10 @@ export type MeSupports = {
 	apps: boolean;
 };
 
+export type SiteOverviewSupports = {
+	preview: boolean;
+};
+
 export type AppConfig = {
 	name: string;
 	basePath: string;
@@ -45,10 +50,16 @@ export type AppConfig = {
 		me: MeSupports | false;
 		commandPalette: boolean;
 		domainOnlySites: boolean;
+		startStoreRoute?: boolean;
+		siteOverview: SiteOverviewSupports;
 	};
 	posthog?: string;
 	optIn: boolean;
-	components: Record< string, () => Promise< { default: React.FC } > >;
+	components: {
+		sites: () => Promise< { default: React.FC } >;
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		siteSwitcher: () => Promise< { default: React.FC< any > } >;
+	};
 	queries: {
 		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => ReturnType< typeof sitesQuery >;
 		paginatedSitesQuery: (
@@ -57,6 +68,7 @@ export type AppConfig = {
 		dashboardSiteFiltersQuery: (
 			field: FetchDashboardSiteFiltersParams[ 'fields' ]
 		) => ReturnType< typeof dashboardSiteFiltersQuery >;
+		domainsQuery: () => ReturnType< typeof domainsQuery >;
 	};
 };
 
@@ -78,15 +90,23 @@ export const APP_CONTEXT_DEFAULT_CONFIG: AppConfig = {
 		me: false,
 		commandPalette: false,
 		domainOnlySites: false,
+		startStoreRoute: false,
+		siteOverview: {
+			preview: false,
+		},
 	},
 	optIn: false,
-	components: {},
+	components: {
+		sites: () => Promise.resolve( { default: () => null } ),
+		siteSwitcher: () => Promise.resolve( { default: () => null } ),
+	},
 	queries: {
 		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => sitesQuery( 'all', fetchSiteOptions ),
 		paginatedSitesQuery: ( fetchSiteOptions?: FetchPaginatedSitesOptions ) =>
 			paginatedSitesQuery( 'all', fetchSiteOptions ),
 		dashboardSiteFiltersQuery: ( fields: FetchDashboardSiteFiltersParams[ 'fields' ] ) =>
 			dashboardSiteFiltersQuery( 'all', fields ),
+		domainsQuery: () => domainsQuery(),
 	},
 };
 

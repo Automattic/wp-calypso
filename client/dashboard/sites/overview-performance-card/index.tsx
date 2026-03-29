@@ -10,6 +10,7 @@ import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { getPerformanceStatus, getStatusIntent, getStatusText } from '../../utils/site-performance';
 import { getSiteVisibilityURL } from '../../utils/site-url';
 import HostingFeatureGatedWithOverviewCard from '../hosting-feature-gated-with-overview-card';
+import JetpackConnectionWarningCard from '../overview-jetpack-connection-warning-card';
 import { useSitePerformanceData } from '../performance/use-site-performance-data';
 import type { SitePerformanceReport, Site } from '@automattic/api-core';
 
@@ -165,6 +166,10 @@ function PerformanceCardContent( { site }: { site: Site } ) {
 }
 
 export default function PerformanceCard( { site }: { site: Site } ) {
+	if ( site.__inaccessible_jetpack_error ) {
+		return <JetpackConnectionWarningCard { ...CARD_PROPS } />;
+	}
+
 	return (
 		<HostingFeatureGatedWithOverviewCard
 			site={ site }

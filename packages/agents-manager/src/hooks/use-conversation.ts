@@ -1,6 +1,7 @@
 import {
 	loadAllMessagesFromServer,
 	createOdieBotId,
+	isOdieBotId,
 	type Message,
 } from '@automattic/agenttic-client';
 import { useQuery } from '@tanstack/react-query';
@@ -9,7 +10,6 @@ import { API_BASE_URL } from '../constants';
 import { useAgentsManagerContext } from '../contexts';
 
 interface Config {
-	enabled?: boolean;
 	maxPages?: number;
 	onSuccess?: ( messages: Message[], sessionId: string ) => void;
 }
@@ -20,14 +20,14 @@ interface Result {
 	isError: boolean;
 }
 
-export default function useConversation( {
-	enabled = true,
-	maxPages = 10,
-	onSuccess = () => {},
-}: Config ): Result {
+/**
+ * Fetches a conversation from the server when a `sessionId` is available.
+ */
+export default function useConversation( { maxPages = 10, onSuccess = () => {} }: Config ): Result {
 	const { agentConfig } = useAgentsManagerContext();
 	const { agentId, sessionId, authProvider } = agentConfig!;
-	// Keep refs to the latest callbacks
+
+	// Keep a ref to the latest callback to avoid re-triggering effects when it changes.
 	const onSuccessRef = useRef( onSuccess );
 	onSuccessRef.current = onSuccess;
 
@@ -37,7 +37,7 @@ export default function useConversation( {
 		queryFn: async () => {
 			const urlSearchParams = new URLSearchParams( window.location.search );
 			const hasAgentParam = urlSearchParams.has( 'agent' );
-			const botId = hasAgentParam ? agentId : createOdieBotId( agentId );
+			const botId = hasAgentParam || isOdieBotId( agentId ) ? agentId : createOdieBotId( agentId );
 
 			return await loadAllMessagesFromServer(
 				sessionId,
@@ -50,7 +50,11 @@ export default function useConversation( {
 				true
 			);
 		},
-		enabled: enabled && !! sessionId,
+		enabled: !! sessionId,
+		// Keep history stable while browsing; use explicit non-default refetch behavior for chat UX.
+		refetchOnWindowFocus: false,
+		refetchOnMount: false,
+		staleTime: 300000, // 5 minutes
 	} );
 
 	useEffect(
