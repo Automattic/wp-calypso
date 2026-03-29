@@ -12,46 +12,69 @@ export type SaveStatus = 'idle' | 'unsaved' | 'saving' | 'saved' | 'error';
 type SubmitParams = {
 	formData: LeadMatchingDetails;
 	profile?: AgencyLeadMatchingProfile | null;
+	acceptingWork?: boolean;
 	source?: SubmitSource;
 };
 
 type Props = {
 	formData: LeadMatchingDetails;
 	profile?: AgencyLeadMatchingProfile | null;
+	acceptingWork?: boolean;
 	onSubmit: ( params: SubmitParams ) => Promise< AgencyLeadMatchingResponse | undefined >;
 };
 
 type DraftState = {
 	formData: LeadMatchingDetails;
 	profile?: AgencyLeadMatchingProfile | null;
+	acceptingWork?: boolean;
 	snapshot: string;
+};
+
+const getProfileSnapshot = ( profile: AgencyLeadMatchingProfile ) => {
+	const { availability, ...snapshotProfile } = profile;
+	return JSON.stringify( snapshotProfile );
 };
 
 const getPayloadSnapshot = (
 	formData: LeadMatchingDetails,
 	profile?: AgencyLeadMatchingProfile | null
-) => JSON.stringify( mapLeadMatchingDetailsToProfile( formData, profile ) );
+) => getProfileSnapshot( mapLeadMatchingDetailsToProfile( formData, profile ) );
 
-export default function useLeadMatchingSaveState( { formData, profile, onSubmit }: Props ) {
+export default function useLeadMatchingSaveState( {
+	formData,
+	profile,
+	acceptingWork,
+	onSubmit,
+}: Props ) {
 	const currentSnapshot = useMemo(
 		() => getPayloadSnapshot( formData, profile ),
 		[ formData, profile ]
 	);
 	const [ saveStatus, setSaveStatus ] = useState< SaveStatus >( 'idle' );
 	const [ lastSavedSnapshot, setLastSavedSnapshot ] = useState( currentSnapshot );
-	const latestDraftRef = useRef< DraftState >( { formData, profile, snapshot: currentSnapshot } );
+	const latestDraftRef = useRef< DraftState >( {
+		formData,
+		profile,
+		acceptingWork,
+		snapshot: currentSnapshot,
+	} );
 	const lastSavedSnapshotRef = useRef( currentSnapshot );
 	const isSavingRef = useRef( false );
 	const isMountedRef = useRef( true );
 
-	latestDraftRef.current = { formData, profile, snapshot: currentSnapshot };
+	latestDraftRef.current = { formData, profile, acceptingWork, snapshot: currentSnapshot };
 	lastSavedSnapshotRef.current = lastSavedSnapshot;
 
 	const hasUnsavedChanges = currentSnapshot !== lastSavedSnapshot;
 
 	const runSave = useCallback(
 		async ( source: SubmitSource ) => {
-			const { formData: nextFormData, profile: nextProfile, snapshot } = latestDraftRef.current;
+			const {
+				formData: nextFormData,
+				profile: nextProfile,
+				acceptingWork: nextAcceptingWork,
+				snapshot,
+			} = latestDraftRef.current;
 
 			if ( snapshot === lastSavedSnapshotRef.current ) {
 				if ( isMountedRef.current ) {
@@ -72,11 +95,12 @@ export default function useLeadMatchingSaveState( { formData, profile, onSubmit 
 			const response = await onSubmit( {
 				formData: nextFormData,
 				profile: nextProfile,
+				...( nextAcceptingWork !== undefined ? { acceptingWork: nextAcceptingWork } : {} ),
 				source,
 			} );
 
 			if ( response?.lead_matching_profile ) {
-				const savedSnapshot = JSON.stringify( response.lead_matching_profile );
+				const savedSnapshot = getProfileSnapshot( response.lead_matching_profile );
 				lastSavedSnapshotRef.current = savedSnapshot;
 				if ( isMountedRef.current ) {
 					setLastSavedSnapshot( savedSnapshot );

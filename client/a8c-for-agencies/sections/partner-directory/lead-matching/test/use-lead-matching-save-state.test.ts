@@ -16,7 +16,7 @@ const createResponse = ( formData: LeadMatchingDetails ) => ( {
 } );
 
 describe( 'useLeadMatchingSaveState', () => {
-	it( 'marks rerendered draft changes as unsaved without autosaving', () => {
+	it( 'marks rerendered draft changes as unsaved', () => {
 		const formData = createDefaultLeadMatchingDetails();
 		const updatedFormData = {
 			...formData,
@@ -54,6 +54,7 @@ describe( 'useLeadMatchingSaveState', () => {
 				useLeadMatchingSaveState( {
 					formData: currentFormData,
 					profile: null,
+					acceptingWork: false,
 					onSubmit,
 				} ),
 			{ initialProps: formData }
@@ -69,6 +70,7 @@ describe( 'useLeadMatchingSaveState', () => {
 		expect( onSubmit ).toHaveBeenCalledWith( {
 			formData: updatedFormData,
 			profile: null,
+			acceptingWork: false,
 			source: 'manual',
 		} );
 	} );
@@ -103,5 +105,34 @@ describe( 'useLeadMatchingSaveState', () => {
 			profile: null,
 			source: 'exit',
 		} );
+	} );
+
+	it( 'does not mark availability-only profile changes as unsaved lead matching edits', () => {
+		const formData = createDefaultLeadMatchingDetails();
+		const profile = mapLeadMatchingDetailsToProfile( formData, null );
+		const updatedProfile = {
+			...profile,
+			availability: {
+				...profile.availability,
+				accepting_work: ! profile.availability.accepting_work,
+			},
+		};
+		const onSubmit = jest.fn();
+
+		const { result, rerender } = renderHook(
+			( currentProfile ) =>
+				useLeadMatchingSaveState( {
+					formData,
+					profile: currentProfile,
+					onSubmit,
+				} ),
+			{ initialProps: profile }
+		);
+
+		rerender( updatedProfile );
+
+		expect( result.current.saveStatus ).toBe( 'idle' );
+		expect( result.current.hasUnsavedChanges ).toBe( false );
+		expect( onSubmit ).not.toHaveBeenCalled();
 	} );
 } );

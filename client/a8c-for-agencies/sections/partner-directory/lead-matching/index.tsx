@@ -1,6 +1,6 @@
 import page from '@automattic/calypso-router';
-import { Badge, Button } from '@automattic/components';
-import { Card, CardBody, TextControl, ToggleControl } from '@wordpress/components';
+import { Badge } from '@automattic/components';
+import { Card, CardBody, TextControl, ToggleControl, Button } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -14,7 +14,6 @@ import MinimumBudgetSelector from 'calypso/a8c-for-agencies/sections/partner-dir
 import TokenFieldSelector from 'calypso/a8c-for-agencies/sections/partner-directory/components/token-field-selector';
 import { useDispatch, useSelector } from 'calypso/state';
 import {
-	setActiveAgency,
 	updateActiveAgencyAvailability,
 	updateActiveAgencyLeadMatching,
 } from 'calypso/state/a8c-for-agencies/agency/actions';
@@ -83,7 +82,7 @@ const getCompletedRequiredFieldCount = ( formData: LeadMatchingDetails ) =>
 	].filter( Boolean ).length;
 
 let hasRegisteredLeadMatchingExitHook = false;
-let runLeadMatchingExitSave: null | ( () => void ) = null;
+const leadMatchingExitSaveRef: { current: null | ( () => void ) } = { current: null };
 
 const ensureLeadMatchingExitHook = () => {
 	if ( hasRegisteredLeadMatchingExitHook ) {
@@ -91,7 +90,7 @@ const ensureLeadMatchingExitHook = () => {
 	}
 
 	page.exit( LEAD_MATCHING_ROUTE, ( _context, next ) => {
-		runLeadMatchingExitSave?.();
+		leadMatchingExitSaveRef.current?.();
 		next();
 	} );
 	hasRegisteredLeadMatchingExitHook = true;
@@ -100,7 +99,7 @@ const ensureLeadMatchingExitHook = () => {
 const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 	const dispatch = useDispatch();
 	const agency = useSelector( getActiveAgency );
-	const isAcceptingNewClients = agency?.profile.listing_details.is_available ?? true;
+	const persistedAvailability = agency?.profile.listing_details.is_available ?? true;
 	const {
 		availableRegions,
 		availableBusinessTypes,
@@ -121,7 +120,6 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 		initialFormData,
 	} );
 	const { mutateAsync: submitAgencyDetails } = useSubmitAgencyDetailsMutation();
-
 	const cardRef = useRef< HTMLDivElement >( null );
 	const placeholderRef = useRef< HTMLDivElement >( null );
 	const rafRef = useRef< number >( 0 );
@@ -191,7 +189,15 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 	}, [ dispatch ] );
 
 	const [ hasSavedSuccessfully, setHasSavedSuccessfully ] = useState( false );
-	const [ savedAvailability, setSavedAvailability ] = useState( isAcceptingNewClients );
+	const [ availabilityDraft, setAvailabilityDraft ] = useState< boolean | null >( null );
+	const currentAvailability = availabilityDraft ?? persistedAvailability;
+
+	useEffect( () => {
+		setAvailabilityDraft( ( currentDraft ) =>
+			currentDraft !== null && currentDraft === persistedAvailability ? null : currentDraft
+		);
+	}, [ persistedAvailability ] );
+
 	const getSectionClassName = useCallback(
 		( fields: ReadonlyArray< keyof typeof validationError > ) =>
 			clsx( 'partner-directory-lead-matching__form-section', {
@@ -203,7 +209,6 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 	const onSubmitSuccess = useCallback(
 		( response: AgencyLeadMatchingResponse, { source }: { source: 'manual' | 'exit' } ) => {
 			setHasSavedSuccessfully( true );
-			setSavedAvailability( isAcceptingNewClients );
 			dispatch(
 				updateActiveAgencyLeadMatching( {
 					draft: null,
@@ -232,7 +237,7 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 				}
 			}
 		},
-		[ agency, dispatch, isAcceptingNewClients ]
+		[ agency, dispatch ]
 	);
 
 	const onSubmitError = useCallback(
@@ -272,9 +277,10 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 	const { saveStatus, hasUnsavedChanges, saveNow, saveOnExit } = useLeadMatchingSaveState( {
 		formData,
 		profile,
+		acceptingWork: currentAvailability,
 		onSubmit,
 	} );
-	const hasUnsavedAvailability = isAcceptingNewClients !== savedAvailability;
+	const hasUnsavedAvailability = availabilityDraft !== null;
 	const hasUnsavedState = hasUnsavedChanges || hasUnsavedAvailability;
 
 	const updateField = useCallback(
@@ -286,7 +292,7 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 
 	const saveAvailability = useCallback(
 		async ( source: 'manual' | 'exit' ) => {
-			if ( ! agency || ! hasUnsavedAvailability ) {
+			if ( ! agency || availabilityDraft === null ) {
 				return true;
 			}
 
@@ -296,14 +302,13 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 			}
 
 			try {
-				const response = await submitAgencyDetails( {
+				await submitAgencyDetails( {
 					...agencyDetails,
-					isAvailable: isAcceptingNewClients,
+					isAvailable: currentAvailability,
 				} );
 
-				dispatch( setActiveAgency( { ...agency, ...response } ) );
-				dispatch( updateActiveAgencyAvailability( isAcceptingNewClients ) );
-				setSavedAvailability( isAcceptingNewClients );
+				dispatch( updateActiveAgencyAvailability( currentAvailability ) );
+				setAvailabilityDraft( null );
 
 				return true;
 			} catch {
@@ -317,7 +322,7 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 				return false;
 			}
 		},
-		[ agency, dispatch, hasUnsavedAvailability, isAcceptingNewClients, submitAgencyDetails ]
+		[ agency, availabilityDraft, currentAvailability, dispatch, submitAgencyDetails ]
 	);
 
 	const saveLeadMatchingPreferences = useCallback(
@@ -348,7 +353,7 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 		ensureLeadMatchingExitHook();
 
 		if ( ! hasUnsavedState ) {
-			runLeadMatchingExitSave = null;
+			leadMatchingExitSaveRef.current = null;
 			return;
 		}
 
@@ -356,17 +361,17 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 			void saveLeadMatchingPreferences( 'exit' );
 		};
 
-		runLeadMatchingExitSave = handleRouteExit;
+		leadMatchingExitSaveRef.current = handleRouteExit;
 
 		return () => {
-			if ( runLeadMatchingExitSave === handleRouteExit ) {
-				runLeadMatchingExitSave = null;
+			if ( leadMatchingExitSaveRef.current === handleRouteExit ) {
+				leadMatchingExitSaveRef.current = null;
 			}
 		};
 	}, [ hasUnsavedState, saveLeadMatchingPreferences ] );
 
 	const eligibilityState = useMemo( () => {
-		if ( ! isAcceptingNewClients ) {
+		if ( ! currentAvailability ) {
 			return 'not-accepting';
 		}
 
@@ -381,9 +386,9 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 		return 'in-progress';
 	}, [
 		completionStatus.isComplete,
+		currentAvailability,
 		hasSavedSuccessfully,
 		hasUnsavedState,
-		isAcceptingNewClients,
 		wasInitiallyComplete,
 	] );
 
@@ -543,10 +548,10 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 						description={ __( 'Agencies not accepting new clients are not eligible for leads.' ) }
 					>
 						<ToggleControl
-							checked={ isAcceptingNewClients }
-							onChange={ ( value ) => {
-								dispatch( updateActiveAgencyAvailability( value ) );
-							} }
+							checked={ currentAvailability }
+							onChange={ ( value ) =>
+								setAvailabilityDraft( value === persistedAvailability ? null : value )
+							}
 							label={ __( 'Accepting new clients' ) }
 						/>
 					</FormField>

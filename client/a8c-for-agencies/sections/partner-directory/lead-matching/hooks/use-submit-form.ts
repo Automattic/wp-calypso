@@ -17,6 +17,7 @@ type SubmitContext = {
 type SubmitParams = {
 	formData: LeadMatchingDetails;
 	profile?: AgencyLeadMatchingProfile | null;
+	acceptingWork?: boolean;
 };
 
 type Props = {
@@ -31,9 +32,13 @@ export default function useSubmitForm( { onSubmitSuccess, onSubmitError }: Props
 		async ( {
 			formData,
 			profile,
+			acceptingWork,
 			source = 'manual',
 		}: SubmitParams & { source?: SubmitSource } ) => {
 			const payload = mapLeadMatchingDetailsToProfile( formData, profile );
+			if ( typeof acceptingWork === 'boolean' ) {
+				payload.availability.accepting_work = acceptingWork;
+			}
 			const context: SubmitContext = { payload, source };
 
 			try {
