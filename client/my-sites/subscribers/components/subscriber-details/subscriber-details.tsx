@@ -23,7 +23,7 @@ type SubscriberDetailsProps = {
 	onClose?: () => void;
 	onUnsubscribe?: ( subscriber: Subscriber ) => void;
 	onGiftSubscription?: ( subscriber: Subscriber ) => void;
-	onRemoveComp?: ( planName: string, giftId?: number, compId?: number ) => void;
+	onRemoveComp?: ( params: { planName: string; giftId?: number; compId?: number } ) => void;
 };
 
 const SubscriberDetails = ( {
@@ -70,11 +70,11 @@ const SubscriberDetails = ( {
 								} )
 							) }
 							onClick={ () =>
-								onRemoveComp(
-									subscriptionPlan.title ?? '',
-									subscriptionPlan.gift_id,
-									subscriptionPlan.comp_id
-								)
+								onRemoveComp( {
+									planName: subscriptionPlan.title ?? '',
+									giftId: subscriptionPlan.gift_id,
+									compId: subscriptionPlan.comp_id,
+								} )
 							}
 						>
 							<Icon icon={ trash } size={ 18 } />

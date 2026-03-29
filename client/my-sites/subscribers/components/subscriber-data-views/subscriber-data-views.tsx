@@ -63,7 +63,12 @@ type SubscriberDataViewsProps = {
 	siteId: number | null;
 	isUnverified: boolean;
 	onGiftSubscription: ( subscriber: Subscriber ) => void;
-	onRemoveComp: ( planName: string, username: string, giftId?: number, compId?: number ) => void;
+	onRemoveComp: ( params: {
+		planName: string;
+		username: string;
+		giftId?: number;
+		compId?: number;
+	} ) => void;
 	subscriberId?: string;
 };
 
@@ -772,8 +777,13 @@ export default function SubscriberDataViews( {
 							onGiftSubscription={ couponsAndGiftsEnabled ? onGiftSubscription : undefined }
 							onRemoveComp={
 								couponsAndGiftsEnabled
-									? ( planName, giftId, compId ) =>
-											onRemoveComp( planName, subscriberDetails.display_name, giftId, compId )
+									? ( { planName, giftId, compId } ) =>
+											onRemoveComp( {
+												planName,
+												username: subscriberDetails.display_name,
+												giftId,
+												compId,
+											} )
 									: undefined
 							}
 							newsletterCategoriesEnabled={ subscribedNewsletterCategoriesData?.enabled }

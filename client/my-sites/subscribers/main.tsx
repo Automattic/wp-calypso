@@ -88,9 +88,7 @@ const SubscribersPage = ( { subscriberId }: Props ) => {
 						siteId={ siteId }
 						isUnverified={ isUnverified }
 						onGiftSubscription={ onGiftSubscription }
-						onRemoveComp={ ( planName, username, giftId, compId ) =>
-							setRemoveComp( { giftId, compId, planName, username } )
-						}
+						onRemoveComp={ ( params ) => setRemoveComp( params ) }
 						subscriberId={ isSubscriberIdValid ? subscriberId : undefined }
 					/>
 
