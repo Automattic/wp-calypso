@@ -14,7 +14,6 @@ import {
 	lock,
 	notAllowed,
 	payment,
-	seen,
 	settings,
 	starEmpty,
 } from '@wordpress/icons';
@@ -74,11 +73,6 @@ function MeMenuSidebar() {
 			<SidebarMenuItem icon={ lock } to="/me/security">
 				{ __( 'Security' ) }
 			</SidebarMenuItem>
-			{ hasAppSupport( supports, 'privacy' ) && (
-				<SidebarMenuItem icon={ seen } to="/me/privacy">
-					{ __( 'Privacy' ) }
-				</SidebarMenuItem>
-			) }
 			{ supports.notifications && (
 				<SidebarMenuItem icon={ bell } to="/me/notifications">
 					{ __( 'Notifications' ) }
