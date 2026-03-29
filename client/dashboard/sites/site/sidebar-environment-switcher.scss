@@ -1,12 +1,12 @@
 @import '@wordpress/base-styles/variables';
 
-.environment-switcher-v2 {
+.sidebar-environment-switcher {
 	height: 40px;
 	padding-inline-start: $grid-unit-15;
 	// This makes it align with toggle caret's in the sidebar.
 	padding-inline-end: calc( #{$grid-unit-15} - 3px );
 
-	.environment-switcher-v2__toggle {
+	.sidebar-environment-switcher__toggle {
 		color: var( --dashboard-menu-item__color );
 		min-width: 0;
 		padding: 0;

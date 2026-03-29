@@ -468,7 +468,6 @@ object BuildCacheSeedImages : BuildType({
 	params {
 		param("build.prefix", "1.0")
 		param("image_tag", "latest")
-		param("CACHE_SEED_KEY", "")
 		checkbox(
 			name = "PROFILE",
 			value = "false",
@@ -485,19 +484,7 @@ object BuildCacheSeedImages : BuildType({
 	}
 
 	steps {
-		script {
-			name = "Compute cache-seed key"
-			scriptContent = """
-				#!/usr/bin/env bash
-				set -euo pipefail
-
-				cache_seed_key=$(bash ./bin/print-cache-seed-key.sh)
-				echo "Computed cache-seed key: ${'$'}cache_seed_key"
-				echo "##teamcity[setParameter name='CACHE_SEED_KEY' value='${'$'}cache_seed_key']"
-			""".trimIndent()
-		}
-
-		val commonArgs = "--pull --build-arg workers=32 --build-arg node_memory=16384 --build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber} --build-arg profile=%PROFILE% --build-arg cache_seed_key=%CACHE_SEED_KEY%"
+		val commonArgs = "--pull --build-arg workers=32 --build-arg node_memory=16384 --build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber} --build-arg profile=%PROFILE%"
 
 		dockerCommand {
 			name = "Build cache-seed image"
@@ -598,7 +585,6 @@ object BuildCacheSeedPreviewImage : BuildType({
 
 	params {
 		param("build.prefix", "preview")
-		param("CACHE_SEED_KEY", "")
 		checkbox(
 			name = "PROFILE",
 			value = "false",
@@ -615,19 +601,7 @@ object BuildCacheSeedPreviewImage : BuildType({
 	}
 
 	steps {
-		script {
-			name = "Compute cache-seed key"
-			scriptContent = """
-				#!/usr/bin/env bash
-				set -euo pipefail
-
-				cache_seed_key=$(bash ./bin/print-cache-seed-key.sh)
-				echo "Computed cache-seed key: ${'$'}cache_seed_key"
-				echo "##teamcity[setParameter name='CACHE_SEED_KEY' value='${'$'}cache_seed_key']"
-			""".trimIndent()
-		}
-
-		val commonArgs = "--pull --build-arg workers=32 --build-arg node_memory=16384 --build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber} --build-arg profile=%PROFILE% --build-arg cache_seed_key=%CACHE_SEED_KEY%"
+		val commonArgs = "--pull --build-arg workers=32 --build-arg node_memory=16384 --build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber} --build-arg profile=%PROFILE%"
 
 		dockerCommand {
 			name = "Build cache-seed preview image"
