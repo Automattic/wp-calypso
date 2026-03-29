@@ -46,6 +46,7 @@ type Props = {
 
 const REQUIRED_LEAD_MATCHING_FIELD_COUNT = 11;
 const LEAD_MATCHING_ROUTE = `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_LEAD_MATCHING_SLUG }`;
+const LEAD_MATCHING_STICKY_CARD_MIN_WIDTH = 660;
 const REGIONS_AND_LANGUAGES_FIELDS = [ 'regions', 'languages' ] as const;
 const BUSINESS_DETAILS_FIELDS = [ 'businessTypes', 'idealBusinessTypes', 'companySizes' ] as const;
 const WEBSITE_NEEDS_AND_VISION_FIELDS = [ 'projectTypes', 'serviceLevels' ] as const;
@@ -131,12 +132,31 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 			return;
 		}
 
-		placeholderRef.current.style.height = `${ cardRef.current.offsetHeight }px`;
+		const resetCardPosition = () => {
+			if ( ! cardRef.current || ! placeholderRef.current ) {
+				return;
+			}
+
+			placeholderRef.current.style.height = '';
+			cardRef.current.style.position = '';
+			cardRef.current.style.top = '';
+			cardRef.current.style.left = '';
+			cardRef.current.style.width = '';
+			cardRef.current.classList.remove( 'is-stuck' );
+			lastStuckRef.current = false;
+		};
 
 		const updatePosition = () => {
 			if ( ! cardRef.current || ! placeholderRef.current ) {
 				return;
 			}
+
+			if ( window.innerWidth < LEAD_MATCHING_STICKY_CARD_MIN_WIDTH ) {
+				resetCardPosition();
+				return;
+			}
+
+			placeholderRef.current.style.height = `${ cardRef.current.offsetHeight }px`;
 
 			const placeholderRect = placeholderRef.current.getBoundingClientRect();
 			const containerRect = scrollContainer.getBoundingClientRect();
@@ -172,10 +192,12 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 			rafRef.current = requestAnimationFrame( updatePosition );
 		};
 
+		updatePosition();
 		scrollContainer.addEventListener( 'scroll', handleScroll, { passive: true } );
 		window.addEventListener( 'resize', handleScroll, { passive: true } );
 
 		return () => {
+			resetCardPosition();
 			scrollContainer.removeEventListener( 'scroll', handleScroll );
 			window.removeEventListener( 'resize', handleScroll );
 			if ( rafRef.current ) {
@@ -900,13 +922,20 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 					) }
 
 					<Button
+						__next40pxDefaultSize
+						variant="secondary"
 						href={ `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_DASHBOARD_SLUG }` }
 						disabled={ isSubmitting }
 					>
 						{ __( 'Cancel' ) }
 					</Button>
 
-					<Button primary onClick={ submitForm } disabled={ isSubmitting }>
+					<Button
+						__next40pxDefaultSize
+						variant="primary"
+						onClick={ submitForm }
+						disabled={ isSubmitting }
+					>
 						{ initialFormData ? __( 'Update preferences' ) : __( 'Save preferences' ) }
 					</Button>
 				</div>
