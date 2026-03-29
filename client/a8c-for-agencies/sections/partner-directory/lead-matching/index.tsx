@@ -549,9 +549,18 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 					>
 						<ToggleControl
 							checked={ currentAvailability }
-							onChange={ ( value ) =>
-								setAvailabilityDraft( value === persistedAvailability ? null : value )
-							}
+							onChange={ ( value ) => {
+								dispatch(
+									recordTracksEvent(
+										'calypso_a4a_partner_directory_lead_matching_availability_toggle',
+										{
+											agency_id: agency?.id,
+											is_available: value,
+										}
+									)
+								);
+								setAvailabilityDraft( value === persistedAvailability ? null : value );
+							} }
 							label={ __( 'Accepting new clients' ) }
 						/>
 					</FormField>

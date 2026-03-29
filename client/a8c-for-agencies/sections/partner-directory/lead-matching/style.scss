@@ -15,10 +15,10 @@
 
 		&.is-error {
 			padding: 12px;
-			border: 1px solid rgba( 214, 54, 56, 0.2 );
+			border: 1px solid color-mix( in srgb, var( --color-error ) 20%, transparent );
 			border-radius: 4px;
-			background: rgba( 214, 54, 56, 0.04 );
-			box-shadow: inset 0 0 0 1px rgba( 214, 54, 56, 0.05 );
+			background: color-mix( in srgb, var( --color-error ) 4%, transparent );
+			box-shadow: inset 0 0 0 1px color-mix( in srgb, var( --color-error ) 5%, transparent );
 
 			input,
 			textarea,
@@ -120,7 +120,7 @@
 	transition: border-color 0.15s ease-out, background-color 0.15s ease-out;
 
 	&.is-error {
-		border: 1px solid rgba( 214, 54, 56, 0.14 );
-		background: rgba( 214, 54, 56, 0.02 );
+		border: 1px solid color-mix( in srgb, var( --color-error ) 14%, transparent );
+		background: color-mix( in srgb, var( --color-error ) 2%, transparent );
 	}
 }
