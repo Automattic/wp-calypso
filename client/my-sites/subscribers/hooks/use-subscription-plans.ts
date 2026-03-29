@@ -86,7 +86,7 @@ const useSubscriptionPlans = ( subscriber: Subscriber ): SubscriptionPlanData[] 
 				} = subscription;
 				const renewalPrice = formatRenewalPrice( renewal_price, currency );
 				const when = getPaymentInterval( renew_interval, inactive_renew_interval );
-				const isComplimentary = is_gift || is_comp;
+				const isComplimentary = !! ( is_gift || is_comp );
 
 				return {
 					is_gift: isComplimentary,

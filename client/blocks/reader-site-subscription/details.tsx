@@ -79,7 +79,7 @@ const SiteSubscriptionDetails = ( {
 				const when = getPaymentInterval( renew_interval );
 				const renewalDate = formatRenewalDate( paymentDetail.end_date, localeSlug );
 				newPaymentPlans.push( {
-					is_gift: is_gift || is_comp,
+					is_gift: !! ( is_gift || is_comp ),
 					id: ID,
 					renewalPrice: `${ renewalPrice }${ when }`,
 					renewalDate,
