@@ -38,7 +38,7 @@ const indexRoute = createRoute( {
 	path: '/',
 	beforeLoad: ( { context }: { context: RouteContext } ) => {
 		if ( context.config ) {
-			throw redirect( { to: context.config.mainRoute } );
+			throw redirect( { to: context.config.mainRoute, viewTransition: false } );
 		}
 	},
 } );
