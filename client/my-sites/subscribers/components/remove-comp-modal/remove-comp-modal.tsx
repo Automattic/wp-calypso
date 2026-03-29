@@ -34,6 +34,7 @@ const RemoveCompModal = ( {
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
+	const isMissingId = useComps ? ! compId : ! giftId;
 
 	const handleRemove = () => {
 		setIsSubmitting( true );
@@ -63,8 +64,6 @@ const RemoveCompModal = ( {
 			} );
 
 			dispatch( requestDeleteGift( siteId, giftId, noticeText ) ).then( onSuccess );
-		} else {
-			setIsSubmitting( false );
 		}
 	};
 
@@ -91,7 +90,7 @@ const RemoveCompModal = ( {
 					variant="primary"
 					isBusy={ isSubmitting }
 					onClick={ handleRemove }
-					disabled={ isSubmitting }
+					disabled={ isSubmitting || isMissingId }
 				>
 					{ translate( 'Remove' ) }
 				</Button>

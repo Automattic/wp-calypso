@@ -116,4 +116,16 @@ describe( 'RemoveCompModal', () => {
 
 		expect( screen.getByRole( 'button', { name: 'Remove' } ) ).toBeDisabled();
 	} );
+
+	it( 'disables Remove button when giftId is missing and useComps is false', () => {
+		renderModal( { giftId: undefined, useComps: false } );
+
+		expect( screen.getByRole( 'button', { name: 'Remove' } ) ).toBeDisabled();
+	} );
+
+	it( 'disables Remove button when compId is missing and useComps is true', () => {
+		renderModal( { compId: undefined, useComps: true } );
+
+		expect( screen.getByRole( 'button', { name: 'Remove' } ) ).toBeDisabled();
+	} );
 } );
