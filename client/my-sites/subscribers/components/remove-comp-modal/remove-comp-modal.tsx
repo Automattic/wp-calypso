@@ -50,20 +50,24 @@ const RemoveCompModal = ( {
 			onRemoved();
 		};
 
+		const onError = () => {
+			setIsSubmitting( false );
+		};
+
 		if ( useComps && compId ) {
 			recordTracksEvent( 'calypso_subscribers_remove_comp_confirm', {
 				site_id: siteId,
 				comp_id: compId,
 			} );
 
-			dispatch( requestDeleteComp( siteId, compId, noticeText ) ).then( onSuccess );
+			dispatch( requestDeleteComp( siteId, compId, noticeText ) ).then( onSuccess, onError );
 		} else if ( giftId ) {
 			recordTracksEvent( 'calypso_subscribers_remove_comp_confirm', {
 				site_id: siteId,
 				gift_id: giftId,
 			} );
 
-			dispatch( requestDeleteGift( siteId, giftId, noticeText ) ).then( onSuccess );
+			dispatch( requestDeleteGift( siteId, giftId, noticeText ) ).then( onSuccess, onError );
 		}
 	};
 

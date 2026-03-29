@@ -76,13 +76,13 @@ const SubscriptionTypeCell = ( { subscriber }: { subscriber: Subscriber } ) => {
 	const plans = useSubscriptionPlans( subscriber );
 
 	// If there's a paid (non-gift, non-free) plan, show only that.
-	const paidPlans = plans.filter( ( p ) => ! p.is_gift && ! p.is_free );
+	const paidPlans = plans.filter( ( p ) => ! p.is_complimentary && ! p.is_free );
 	if ( paidPlans.length > 0 ) {
 		return paidPlans.map( ( plan, index ) => <div key={ index }>{ plan.plan }</div> );
 	}
 
 	// If there are any comps, show just "Comp" (no title details).
-	const hasComp = plans.some( ( p ) => p.is_gift );
+	const hasComp = plans.some( ( p ) => p.is_complimentary );
 	if ( hasComp ) {
 		return (
 			<div>

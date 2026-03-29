@@ -11,14 +11,14 @@ export type SubscriptionPlanData = {
 	plan: ReactNode;
 	startDate?: string;
 	title?: string;
-	is_gift: boolean;
+	is_complimentary: boolean;
 	is_free: boolean;
 	gift_id?: number;
 	comp_id?: number;
 };
 
 type PlanData = {
-	is_gift: boolean;
+	is_complimentary: boolean;
 	renewal_price: number;
 	gift_id?: number;
 	comp_id?: number;
@@ -61,7 +61,7 @@ const useSubscriptionPlans = ( subscriber: Subscriber ): SubscriptionPlanData[] 
 	const transformSubscriptionPlans = ( subscriptions?: SubscriptionPlan[] ): PlanData[] => {
 		const defaultSubscription = [
 			{
-				is_gift: false,
+				is_complimentary: false,
 				renewal_price: 0,
 				renewalPrice: freePlan,
 				when: '',
@@ -89,7 +89,7 @@ const useSubscriptionPlans = ( subscriber: Subscriber ): SubscriptionPlanData[] 
 				const isComplimentary = !! ( is_gift || is_comp );
 
 				return {
-					is_gift: isComplimentary,
+					is_complimentary: isComplimentary,
 					gift_id,
 					comp_id,
 					renewal_price,
@@ -107,7 +107,7 @@ const useSubscriptionPlans = ( subscriber: Subscriber ): SubscriptionPlanData[] 
 	};
 
 	const getPlanDisplay = ( plan: PlanData ): string => {
-		if ( plan.is_gift ) {
+		if ( plan.is_complimentary ) {
 			return (
 				translate( 'Comp', {
 					comment: 'Short for "complimentary" — a free subscription granted by the site creator',
@@ -127,7 +127,7 @@ const useSubscriptionPlans = ( subscriber: Subscriber ): SubscriptionPlanData[] 
 				plan: getPlanDisplay( plan ),
 				startDate: plan.start_date,
 				title: plan.title,
-				is_gift: plan.is_gift,
+				is_complimentary: plan.is_complimentary,
 				is_free: plan.renewal_price === 0,
 				gift_id: plan.gift_id,
 				comp_id: plan.comp_id,

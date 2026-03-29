@@ -54,7 +54,7 @@ const SubscriberDetails = ( {
 	} );
 
 	const displayPaidUpgrade = ( subscriptionPlan: SubscriptionPlanData, index: number ) => {
-		if ( subscriptionPlan.is_gift ) {
+		if ( subscriptionPlan.is_complimentary ) {
 			return (
 				<div className="subscriber-details__content-value" key={ index }>
 					{ translate( 'Comp', {
@@ -163,7 +163,7 @@ const SubscriberDetails = ( {
 						{ subscriptionPlans &&
 							subscriptionPlans.map( ( subscriptionPlan, index ) => (
 								<div className="subscriber-details__content-value" key={ index }>
-									{ ! subscriptionPlan.is_gift && subscriptionPlan.title
+									{ ! subscriptionPlan.is_complimentary && subscriptionPlan.title
 										? `${ subscriptionPlan.title } - `
 										: '' }
 									{ subscriptionPlan.plan }

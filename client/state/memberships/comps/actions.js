@@ -95,6 +95,7 @@ export const requestDeleteComp = ( siteId, compId, noticeText ) => {
 						duration: 10000,
 					} )
 				);
+				throw error;
 			} );
 	};
 };
