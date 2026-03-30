@@ -10,18 +10,23 @@ import { Badge } from '@automattic/ui';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useSearch } from '@tanstack/react-router';
 import { Button, __experimentalHStack as HStack } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
-import { useMemo } from 'react';
+import { store as noticesStore } from '@wordpress/notices';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { useAppContext } from '../../app/context';
 import { useLocale } from '../../app/locale';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { domainRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import PendingPrimaryDomainNotice from '../../components/pending-primary-domain-notice';
 import SnackbarBackButton, {
 	getSnackbarBackButtonText,
 } from '../../components/snackbar-back-button';
 import { formatDate } from '../../utils/datetime';
 import { getDomainRenewalUrl, isTldInMaintenance } from '../../utils/domain';
+import { isPendingPrimaryDomain } from '../../utils/is-pending-primary-domain';
 import { TLDMaintenanceNotice } from '../maintenance-notice';
 import Actions from './actions';
 import FeaturedCards from './featured-cards';
@@ -33,6 +38,36 @@ export default function DomainOverview() {
 	const locale = useLocale();
 	const { domainName } = domainRoute.useParams();
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
+
+	const { name: dashboardName } = useAppContext();
+	const isCiab = dashboardName === 'CIAB';
+	const isPending = isCiab && isPendingPrimaryDomain( domain );
+	const [ isDismissed, setIsDismissed ] = useState( false );
+
+	// Poll the domain query while the primary domain setup is in progress.
+	useQuery( {
+		...domainQuery( domainName ),
+		refetchInterval: isPending ? 5000 : false,
+		meta: { persist: false },
+	} );
+
+	// Show completion snackbar when primary domain setup finishes.
+	const { createSuccessNotice } = useDispatch( noticesStore );
+	const wasPendingRef = useRef( false );
+	useEffect( () => {
+		if ( wasPendingRef.current && ! isPending ) {
+			createSuccessNotice(
+				sprintf(
+					/* translators: %s is the domain name */
+					__( '%s is now your store\u2019s primary address.' ),
+					domain.domain
+				),
+				{ type: 'snackbar' }
+			);
+		}
+		wasPendingRef.current = isPending;
+	}, [ isPending, createSuccessNotice, domain.domain ] );
+
 	const { data: purchase } = useSuspenseQuery(
 		purchaseQuery( parseInt( domain.subscription_id ?? '0', 10 ) )
 	);
@@ -129,6 +164,12 @@ export default function DomainOverview() {
 				) }
 				{ domain.is_pending_icann_verification && (
 					<IcannSuspensionNotice domainName={ domain.domain } />
+				) }
+				{ isPending && ! isDismissed && (
+					<PendingPrimaryDomainNotice
+						domainName={ domain.domain }
+						onClose={ () => setIsDismissed( true ) }
+					/>
 				) }
 				{ domain.subtype.id !== DomainSubtype.DOMAIN_TRANSFER && (
 					<>
