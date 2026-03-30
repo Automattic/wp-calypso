@@ -62,7 +62,7 @@ export default function SiteSidebar() {
 					<SiteSwitcherItem site={ site } />
 					{ canSwitchEnvironment( site ) && <SidebarEnvironmentSwitcher site={ site } /> }
 				</SidebarMenu>
-				{ ! isSiteMigrationInProgress( site ) && <SiteMenuSidebar site={ site } /> }
+				<SiteMenuSidebar site={ site } />
 			</VStack>
 		</VStack>
 	);
@@ -71,6 +71,10 @@ export default function SiteSidebar() {
 function SiteMenuSidebar( { site }: { site: Site } ) {
 	const siteSlug = site.slug;
 	const siteTypeSupports = getSiteTypeFeatureSupports( site );
+
+	if ( isSiteMigrationInProgress( site ) ) {
+		return null;
+	}
 
 	if ( hasSiteTrialEnded( site ) ) {
 		return (
