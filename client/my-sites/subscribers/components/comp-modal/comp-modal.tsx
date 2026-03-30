@@ -44,8 +44,7 @@ const CompSubscriptionModal = ( {
 		if ( ! compedPlanTitles?.length || ! products?.length ) {
 			return false;
 		}
-		const compedSet = new Set( compedPlanTitles );
-		return products.every( ( product ) => compedSet.has( product.title ?? '' ) );
+		return products.every( ( product ) => compedPlanTitles.includes( product.title ?? '' ) );
 	}, [ compedPlanTitles, products ] );
 
 	useEffect( () => {
