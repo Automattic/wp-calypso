@@ -385,14 +385,17 @@ import {
 	FEATURE_WOO_HOSTED_BASIC_STORAGE,
 	FEATURE_WOO_HOSTED_PRO_STORAGE,
 	FEATURE_WOO_HOSTED_SECURITY,
-	FEATURE_WOO_HOSTED_BASIC_EMAIL_SUBSCRIBERS,
-	FEATURE_WOO_HOSTED_PRO_EMAIL_SUBSCRIBERS,
 	FEATURE_WOO_HOSTED_AUTOMATED_EMAIL_FLOWS,
 	FEATURE_WOO_HOSTED_ABANDONED_CART_EMAILS,
 	FEATURE_WOO_HOSTED_POST_PURCHASE_EMAILS,
 	FEATURE_WOO_HOSTED_EMAIL_TEMPLATES,
 	FEATURE_WOO_HOSTED_SEO_TOOLS,
 	FEATURE_WOO_HOSTED_COUPONS,
+	FEATURE_WOO_HOSTED_POS_SYSTEM,
+	FEATURE_WOO_HOSTED_STAFF_ACCOUNTS,
+	FEATURE_WOO_HOSTED_STORAGE_SPACE,
+	FEATURE_WOO_HOSTED_EMAIL_CAMPAIGNS,
+	FEATURE_WOO_HOSTED_EMAIL_SUBSCRIBER_MGMT,
 } from './constants';
 import type { FeatureList } from './types';
 
@@ -2970,16 +2973,16 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_WOO_HOSTED_ACCEPT_CARD_PAYMENTS ]: {
 		getSlug: () => FEATURE_WOO_HOSTED_ACCEPT_CARD_PAYMENTS,
 		getTitle: () => i18n.translate( 'Accept all major card brands automatically' ),
-		getDescription: () => i18n.translate( 'Online card rates start at 2.99%% + $0.45/transaction' ),
+		getDescription: () => i18n.translate( 'Online card rates start at 2.9%% + $0.30/transaction' ),
 	},
 	[ FEATURE_WOO_HOSTED_POS_PAYMENTS ]: {
 		getSlug: () => FEATURE_WOO_HOSTED_POS_PAYMENTS,
-		getTitle: () => i18n.translate( 'Take payments in person' ),
+		getTitle: () => i18n.translate( 'Take in-person payments anywhere using your phone' ),
 		getDescription: () => '',
 	},
 	[ FEATURE_WOO_HOSTED_POS_NO_MONTHLY_FEES ]: {
 		getSlug: () => FEATURE_WOO_HOSTED_POS_NO_MONTHLY_FEES,
-		getTitle: () => i18n.translate( 'No monthly fees for the Point of Sale reader' ),
+		getTitle: () => i18n.translate( 'No monthly fees for POS card readers' ),
 		getDescription: () => '',
 	},
 	[ FEATURE_WOO_HOSTED_LIST_PRODUCTS ]: {
@@ -3010,7 +3013,7 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_WOO_HOSTED_MOBILE_APP ]: {
 		getSlug: () => FEATURE_WOO_HOSTED_MOBILE_APP,
-		getTitle: () => i18n.translate( 'Mobile app to run your store on the go' ),
+		getTitle: () => i18n.translate( 'Manage your store from your phone' ),
 		getDescription: () => '',
 	},
 	[ FEATURE_WOO_HOSTED_SHIPMENT_TRACKING ]: {
@@ -3043,16 +3046,6 @@ const FEATURES_LIST: FeatureList = {
 		getTitle: () => i18n.translate( 'Security tools to ensure your store and data are protected' ),
 		getDescription: () => '',
 	},
-	[ FEATURE_WOO_HOSTED_BASIC_EMAIL_SUBSCRIBERS ]: {
-		getSlug: () => FEATURE_WOO_HOSTED_BASIC_EMAIL_SUBSCRIBERS,
-		getTitle: () => i18n.translate( 'Up to 500 email subscribers' ),
-		getDescription: () => '',
-	},
-	[ FEATURE_WOO_HOSTED_PRO_EMAIL_SUBSCRIBERS ]: {
-		getSlug: () => FEATURE_WOO_HOSTED_PRO_EMAIL_SUBSCRIBERS,
-		getTitle: () => i18n.translate( 'Unlimited email subscribers' ),
-		getDescription: () => '',
-	},
 	[ FEATURE_WOO_HOSTED_AUTOMATED_EMAIL_FLOWS ]: {
 		getSlug: () => FEATURE_WOO_HOSTED_AUTOMATED_EMAIL_FLOWS,
 		getTitle: () => i18n.translate( 'Automated email marketing flows to build customer relations' ),
@@ -3082,6 +3075,34 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_WOO_HOSTED_COUPONS ]: {
 		getSlug: () => FEATURE_WOO_HOSTED_COUPONS,
 		getTitle: () => i18n.translate( 'Create coupons to drive more sales' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_POS_SYSTEM ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_POS_SYSTEM,
+		getTitle: () =>
+			i18n.translate(
+				'Access our Point of Sale system with real-time inventory and order syncing across online and in-person sales'
+			),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_STAFF_ACCOUNTS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_STAFF_ACCOUNTS,
+		getTitle: () => i18n.translate( 'Staff accounts to share store management' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_STORAGE_SPACE ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_STORAGE_SPACE,
+		getTitle: () => i18n.translate( 'Storage space for product images and store data' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_EMAIL_CAMPAIGNS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_EMAIL_CAMPAIGNS,
+		getTitle: () => i18n.translate( 'Create and send email marketing campaigns' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_EMAIL_SUBSCRIBER_MGMT ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_EMAIL_SUBSCRIBER_MGMT,
+		getTitle: () => i18n.translate( 'Email subscriber management' ),
 		getDescription: () => '',
 	},
 	/* END: Woo Hosted (CIAB) Features */
