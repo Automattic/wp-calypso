@@ -1671,8 +1671,7 @@ const getPlanWooHostedBasicDetails = (): IncompleteWPcomPlan => ( {
 	],
 	getStorageFeature: () => FEATURE_50GB_STORAGE,
 	getTitle: () => i18n.translate( 'Basic' ),
-	getPlanTagline: () =>
-		i18n.translate( 'Everything you need to set up your store and start selling your products.' ),
+	getPlanTagline: () => i18n.translate( 'Everything you need to build and run your online store.' ),
 	getTagline: () =>
 		i18n.translate(
 			'Learn more about everything included with Woo Basic and take advantage of its powerful marketplace features.'
@@ -1709,7 +1708,8 @@ const getPlanWooHostedProDetails = (): IncompleteWPcomPlan => ( {
 	],
 	getStorageFeature: () => FEATURE_100GB_STORAGE,
 	getTitle: () => i18n.translate( 'Pro' ),
-	getPlanTagline: () => i18n.translate( 'Accelerate your growth with advanced features.' ),
+	getPlanTagline: () =>
+		i18n.translate( 'For businesses selling anywhere, reaching more customers, and growing fast.' ),
 	getTagline: () =>
 		i18n.translate(
 			'Learn more about everything included with Woo Pro and take advantage of its powerful marketplace features.'
