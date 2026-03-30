@@ -562,7 +562,7 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 				) }
 			>
 				<FormSection
-					title={ __( 'Lead availability' ) }
+					title={ __( "Your agency's availability" ) }
 					className="partner-directory-lead-matching__form-section"
 				>
 					<FormField
