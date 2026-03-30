@@ -4,6 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
+import QueryMemberships from 'calypso/components/data/query-memberships';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
 import Main from 'calypso/components/main';
 import SubscriberValidationGate from 'calypso/components/subscribers-validation-gate';
@@ -79,6 +80,7 @@ const SubscribersPage = ( { subscriberId }: Props ) => {
 
 	return (
 		<>
+			<QueryMemberships siteId={ siteId ?? 0 } />
 			<QueryMembershipsSettings siteId={ siteId ?? 0 } source="calypso" />
 			<Main wideLayout className="subscribers">
 				<DocumentHead title={ translate( 'Subscribers' ) } />
