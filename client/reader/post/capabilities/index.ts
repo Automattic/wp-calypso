@@ -36,7 +36,7 @@ export function isRebloggable( post: ReaderPost, hasSites: boolean ): boolean {
 		return false;
 	}
 
-	if ( post?.site_is_private || ! hasSites ) {
+	if ( post?.site_is_private || ! hasSites || post.is_external ) {
 		return false;
 	}
 
