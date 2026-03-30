@@ -45,7 +45,10 @@ const aiSiteBuilderSpec: FlowV2< typeof initialize > = {
 				initPostHog(
 					config( 'ciab_posthog_api_key' ),
 					currentUser ? { ID: currentUser.ID } : undefined,
-					{ session_recording: { maskAllInputs: false, maskTextSelector: '' } }
+					{
+						debug: config( 'env' ) === 'development',
+						session_recording: { maskAllInputs: false, maskTextSelector: '' },
+					}
 				);
 			}
 		}, [ source, currentUser ] );
