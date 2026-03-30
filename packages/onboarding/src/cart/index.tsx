@@ -2,12 +2,11 @@ import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { NewSiteSuccessResponse, Site } from '@automattic/data-stores';
 import { SiteGoal } from '@automattic/data-stores/src/onboard';
-import { getTld } from '@automattic/domain-search';
+import { getTld, isFreeSubdomainQuery } from '@automattic/domain-search';
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import debugFactory from 'debug';
 import { getLocaleSlug } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
-import wpcomRequest from 'wpcom-proxy-request';
 import {
 	setupSiteAfterCreation,
 	isTailoredSignupFlow,
@@ -15,6 +14,7 @@ import {
 	isAnyHostingFlow,
 	AI_SITE_BUILDER_FLOW,
 } from '../';
+import wpcomRequest from '../wpcom-request';
 import cartManagerClient from './create-cart-manager-client';
 import type { DomainSuggestion } from '@automattic/api-core';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -69,8 +69,9 @@ const getBlogNameGenerationParams = ( {
 
 		return {
 			blog_name: blogName,
-			// If there is a TLD we need to find an underlying free subdomain in case the user wants to skip checkout.
-			find_available_url: !! getTld( blogName ),
+			// Free subdomains (.wordpress.com and .blog) should use the exact URL.
+			// Only paid domains need find_available_url to generate a fallback free subdomain.
+			find_available_url: ! isFreeSubdomainQuery( siteUrl ) && !! getTld( blogName ),
 		};
 	}
 

@@ -4,11 +4,11 @@ import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { resolveSelect, useDispatch as useWpDataDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
-import wpcomRequest from 'wpcom-proxy-request';
 import { useAddBlogStickerMutation } from 'calypso/blocks/blog-stickers/use-add-blog-sticker-mutation';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
+import wpcom from 'calypso/lib/wp';
 import { useDispatch } from 'calypso/state';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
@@ -19,7 +19,7 @@ import { FlowV2, SubmitHandler } from '../../internals/types';
 const SiteIntent = Onboard.SiteIntent;
 const deletePage = async ( siteId: string | number, pageId: number ): Promise< boolean > => {
 	try {
-		await wpcomRequest( {
+		await wpcom.req.post( {
 			path: '/sites/' + siteId + '/pages/' + pageId,
 			method: 'DELETE',
 			apiNamespace: 'wp/v2',
@@ -200,16 +200,18 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 
 								// Create a new home page if one is not set yet (only for non-garden sites)
 								pendingActions.push(
-									wpcomRequest( {
-										path: '/sites/' + siteId + '/pages',
-										method: 'POST',
-										apiNamespace: 'wp/v2',
-										body: {
+									wpcom.req.post(
+										{
+											path: '/sites/' + siteId + '/pages',
+											apiNamespace: 'wp/v2',
+										},
+										{},
+										{
 											title: 'Home',
 											status: 'publish',
 											content: '<!-- wp:paragraph -->\n<p>Hello world!</p>\n<!-- /wp:paragraph -->',
-										},
-									} )
+										}
+									)
 								);
 							}
 

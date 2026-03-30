@@ -1,7 +1,7 @@
 import { default as apiFetchPromise } from '@wordpress/api-fetch';
 import { select } from '@wordpress/data';
-import { default as wpcomRequestPromise, canAccessWpcomApis } from 'wpcom-proxy-request';
 import { isE2ETest } from '../utils';
+import { default as wpcomRequestPromise, canAccessWpcomApis } from '../wpcom-request';
 import { PREFERENCES_KEY, STORE_KEY } from './constants';
 import type { HelpCenterSelect, Preferences } from './types';
 import type { APIFetchOptions } from '../shared-types';

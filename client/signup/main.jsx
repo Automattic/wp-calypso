@@ -46,6 +46,7 @@ import {
 	isGravatarOAuth2Client,
 	isPartnerPortalOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
+import { detectPartnerConfig, getPartnerFormattedWindowTitle } from 'calypso/lib/partner-branding';
 import SignupFlowController from 'calypso/lib/signup/flow-controller';
 import FlowProgressIndicator from 'calypso/signup/flow-progress-indicator';
 import SignupHeader from 'calypso/signup/signup-header';
@@ -127,6 +128,7 @@ class Signup extends Component {
 		flowName: PropTypes.string,
 		stepName: PropTypes.string,
 		pageTitle: PropTypes.string,
+		partnerConfig: PropTypes.object,
 		stepSectionName: PropTypes.string,
 		hostingFlow: PropTypes.bool.isRequired,
 	};
@@ -870,7 +872,13 @@ class Signup extends Component {
 		return (
 			<>
 				<div className={ `signup is-${ kebabCase( this.props.flowName ) }` }>
-					<DocumentHead title={ this.props.pageTitle } />
+					<DocumentHead
+						title={ getPartnerFormattedWindowTitle(
+							this.props.pageTitle,
+							this.props.partnerConfig
+						) }
+						skipTitleFormatting
+					/>
 					{ showPageHeader && (
 						<SignupHeader
 							progressBar={ {
@@ -935,6 +943,7 @@ export default connect(
 			siteId,
 			localeSlug: getCurrentLocaleSlug( state ),
 			oauth2Client,
+			partnerConfig: detectPartnerConfig( oauth2Client ),
 			isGravatar: isGravatarOAuth2Client( oauth2Client ),
 			wccomFrom: getWccomFrom( state ),
 			hostingFlow,

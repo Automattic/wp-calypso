@@ -24,7 +24,9 @@ jest.mock( '@automattic/onboarding', () => ( {
 } ) );
 
 jest.mock( 'calypso/lib/partner-branding', () => ( {
-	getCiabConfigFromGarden: () => ( {
+	detectPartnerConfig: () => null,
+	getPartnerConfigFromGarden: () => ( {
+		windowTitleSuffix: 'Woo',
 		compactLogo: {
 			src: 'https://example.com/compact-logo.svg',
 			alt: 'Compact Logo',
@@ -38,6 +40,10 @@ jest.mock( 'calypso/lib/partner-branding', () => ( {
 			height: 32,
 		},
 	} ),
+	getPartnerFormattedWindowTitle: (
+		title: string,
+		partnerConfig: { windowTitleSuffix?: string } | null
+	) => `${ title } — ${ partnerConfig?.windowTitleSuffix || 'WordPress.com' }`,
 } ) );
 
 jest.mock( 'calypso/my-sites/invites/invite-accept/utils/normalize-invite', () => ( {

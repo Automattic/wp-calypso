@@ -1,13 +1,13 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { type LocalizeProps } from 'i18n-calypso';
-import type { CiabPartnerConfig } from 'calypso/lib/partner-branding';
+import type { PartnerConfig } from 'calypso/lib/partner-branding';
 
 interface Props {
 	isSocialFirst: boolean;
 	twoFactorAuthType: string;
 	action?: string;
 	isWooJPC?: boolean;
-	ciabConfig?: CiabPartnerConfig | null;
+	partnerConfig?: PartnerConfig | null;
 	translate: LocalizeProps[ 'translate' ];
 }
 
@@ -20,7 +20,7 @@ const getHeadingSubText = ( {
 	action,
 	translate,
 	isWooJPC,
-	ciabConfig,
+	partnerConfig,
 }: Props ) => {
 	if ( ! isSocialFirst || twoFactorAuthType ) {
 		return null;
@@ -28,7 +28,7 @@ const getHeadingSubText = ( {
 
 	const tos = (
 		<span className="wp-login__one-login-layout-tos">
-			{ ciabConfig
+			{ partnerConfig
 				? translate(
 						'By continuing with any of the options below, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}. WordPress.com is used to manage your account.',
 						{

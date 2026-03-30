@@ -16,6 +16,7 @@ interface PlanProductRevertContentProps {
 	state: CancelPurchaseState;
 	onDomainConfirmationChange: ( checked: boolean ) => void;
 	onCustomerConfirmedUnderstandingChange: ( checked: boolean ) => void;
+	onCustomerConfirmedUnderstandingAtomicPlanRevert: ( checked: boolean ) => void;
 	onKeepSubscriptionClick: () => void;
 	onCancelClick?: () => void;
 }
@@ -27,6 +28,7 @@ export default function PlanProductRevertContent( {
 	state,
 	onDomainConfirmationChange,
 	onCustomerConfirmedUnderstandingChange,
+	onCustomerConfirmedUnderstandingAtomicPlanRevert,
 	onKeepSubscriptionClick,
 	onCancelClick,
 }: PlanProductRevertContentProps ) {
@@ -50,6 +52,9 @@ export default function PlanProductRevertContent( {
 					state={ state }
 					onDomainConfirmationChange={ onDomainConfirmationChange }
 					onCustomerConfirmedUnderstandingChange={ onCustomerConfirmedUnderstandingChange }
+					onCustomerConfirmedUnderstandingAtomicPlanRevert={
+						onCustomerConfirmedUnderstandingAtomicPlanRevert
+					}
 				/>
 			) }
 

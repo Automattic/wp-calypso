@@ -1,24 +1,34 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useNavigate } from '@tanstack/react-router';
 import { Button, Dropdown } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { bellUnread, bell } from '@wordpress/icons';
 import clsx from 'clsx';
-import { Suspense, lazy, useEffect, useState } from 'react';
+import { Suspense, lazy, useCallback, useEffect, useState } from 'react';
 import wpcom from 'calypso/lib/wp';
 import { useAuth } from '../auth';
+import { useOmnibarEvent } from '../interim-omnibar/click-handlers';
 import { useLocale } from '../locale';
 import './style.scss';
 
 const AsyncNotificationApp = lazy( () => import( '@automattic/notifications/src/app' ) );
 
-export default function Notifications( { className }: { className: string } ) {
+export default function Notifications( {
+	className,
+	anchor,
+}: {
+	className?: string;
+	/** When true, hides the built-in toggle button (the omnibar provides its own). */
+	anchor?: boolean;
+} ) {
 	const navigate = useNavigate();
 	const { user } = useAuth();
 	const locale = useLocale();
 	const isMobileViewport = useViewportMatch( 'small', '<' );
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ hasUnseenNotifications, setHasUnseenNotifications ] = useState( user.has_unseen_notes );
+	const [ anchorEl, setAnchorEl ] = useState< HTMLElement | null >( null );
 
 	const handleToggle = ( willOpen: boolean ) => {
 		setIsOpen( willOpen );
@@ -53,6 +63,13 @@ export default function Notifications( { className }: { className: string } ) {
 		CLOSE_PANEL: [ handleClose ],
 	};
 
+	const handleOmnibarToggle = useCallback( ( element: HTMLElement | null ) => {
+		setAnchorEl( element );
+		setIsOpen( ( v ) => ! v );
+	}, [] );
+
+	useOmnibarEvent( 'notifications', handleOmnibarToggle );
+
 	useEffect( () => {
 		const handleKeyDown = ( event: KeyboardEvent ) => {
 			if ( event.target !== document.body ) {
@@ -81,20 +98,38 @@ export default function Notifications( { className }: { className: string } ) {
 				placement: 'bottom-end',
 				offset: 8,
 				focusOnMount: true,
+				...( anchorEl && { anchor: anchorEl } ),
+				...( isEnabled( 'dashboard/omnibar' ) && {
+					onFocusOutside: () => {
+						// When focus moves to the omnibar (e.g. clicking the
+						// omnibar notification bell), suppress the Popover's
+						// auto-close and let the omnibar event handle the toggle
+						// instead. Without this, the Popover's focus-outside close
+						// races with the omnibar's toggle event, causing the panel
+						// to close then immediately reopen.
+						const omnibar = document.getElementById( 'wpcom-omnibar' );
+						if ( omnibar?.contains( document.activeElement ) ) {
+							return;
+						}
+						setIsOpen( false );
+					},
+				} ),
 			} }
 			open={ isOpen }
 			expandOnMobile={ isMobileViewport }
 			onToggle={ handleToggle }
-			renderToggle={ ( { isOpen, onToggle } ) => (
-				<Button
-					className={ clsx( className, 'dashboard-notifications__icon' ) }
-					onClick={ onToggle }
-					aria-expanded={ isOpen }
-					variant="tertiary"
-					label={ __( 'Notifications' ) }
-					icon={ hasUnseenNotifications ? bellUnread : bell }
-				/>
-			) }
+			renderToggle={ ( { isOpen, onToggle } ) =>
+				anchor ? null : (
+					<Button
+						className={ clsx( className, 'dashboard-notifications__icon' ) }
+						onClick={ onToggle }
+						aria-expanded={ isOpen }
+						variant="tertiary"
+						label={ __( 'Notifications' ) }
+						icon={ hasUnseenNotifications ? bellUnread : bell }
+					/>
+				)
+			}
 			renderContent={ () => (
 				<div
 					style={ {

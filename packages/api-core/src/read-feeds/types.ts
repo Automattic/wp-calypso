@@ -38,4 +38,8 @@ export interface ReadFeedItem {
 	subscribers_count: number;
 	unseen_count: number;
 	subscription_id?: number; // Only present if the user is subscribed to the feed.
+	is_error?: boolean;
+	error?: {
+		message: string;
+	};
 }

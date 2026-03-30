@@ -11,7 +11,12 @@ import DocumentHead from 'calypso/components/data/document-head';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { navigate } from 'calypso/lib/navigate';
-import { getCiabConfigFromGarden, type CiabPartnerConfig } from 'calypso/lib/partner-branding';
+import {
+	detectPartnerConfig,
+	getPartnerConfigFromGarden,
+	getPartnerFormattedWindowTitle,
+	type PartnerConfig,
+} from 'calypso/lib/partner-branding';
 import { login } from 'calypso/lib/paths';
 import { getRedirectAfterAccept } from 'calypso/my-sites/invites/utils';
 import { useDispatch } from 'calypso/state';
@@ -41,6 +46,7 @@ function toLegacyInvite( invite: Invite ) {
 			domain: blogDetails?.domain || '',
 			admin_url: blogDetails?.admin_url || '',
 			is_vip: blogDetails?.is_vip || false,
+			is_garden_site: blogDetails?.is_garden_site || false,
 		},
 		role: invite.invite?.meta?.role || '',
 		sentTo: invite.invite?.meta?.sent_to || '',
@@ -50,12 +56,12 @@ function toLegacyInvite( invite: Invite ) {
 /**
  * Get CIAB branding config from blog details
  */
-function getBrandingFromBlogDetails( blogDetails?: InviteBlogDetails ): CiabPartnerConfig | null {
+function getBrandingFromBlogDetails( blogDetails?: InviteBlogDetails ): PartnerConfig | null {
 	if ( ! blogDetails?.is_garden_site || ! blogDetails?.garden ) {
 		return null;
 	}
 
-	return getCiabConfigFromGarden( blogDetails.garden.partner, blogDetails.garden.name, {
+	return getPartnerConfigFromGarden( blogDetails.garden.partner, blogDetails.garden.name, {
 		persistToSession: true,
 	} );
 }
@@ -163,6 +169,7 @@ export function AcceptInviteScreen( { invite }: AcceptInviteScreenProps ) {
 
 	// Get branding from blog_details garden info
 	const branding = getBrandingFromBlogDetails( invite?.blog_details );
+	const titleBranding = branding ?? detectPartnerConfig();
 	const gardenName = invite?.blog_details?.garden?.name || null;
 	const gardenPartner = invite?.blog_details?.garden?.partner || null;
 
@@ -250,6 +257,7 @@ export function AcceptInviteScreen( { invite }: AcceptInviteScreenProps ) {
 				inviteSentTo={ inviteSentTo }
 				isKnownUser={ isKnownUser }
 				topBarLogo={ topBarLogo }
+				partnerConfig={ titleBranding }
 				trackingProps={ trackingProps }
 			/>
 		);
@@ -257,7 +265,13 @@ export function AcceptInviteScreen( { invite }: AcceptInviteScreenProps ) {
 
 	return (
 		<>
-			<DocumentHead title={ translate( 'Accept Invite', { textOnly: true } ) } />
+			<DocumentHead
+				title={ getPartnerFormattedWindowTitle(
+					translate( 'Accept Invite', { textOnly: true } ),
+					titleBranding
+				) }
+				skipTitleFormatting
+			/>
 			<BodySectionCssClass
 				bodyClass={ [
 					'is-section-accept-invite-unified',

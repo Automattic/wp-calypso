@@ -1,5 +1,5 @@
 import { combineReducers } from '@wordpress/data';
-import { PerSiteRouterHistory } from './types';
+import { PerSiteLastActivity, PerSiteRouterHistory } from './types';
 import type { AgentsManagerAction } from './actions';
 import type { Reducer } from 'redux';
 
@@ -26,6 +26,17 @@ const routerHistory: Reducer< PerSiteRouterHistory | undefined, AgentsManagerAct
 	switch ( action.type ) {
 		case 'AGENTS_MANAGER_SET_ROUTER_HISTORY':
 			return action.history;
+	}
+	return state;
+};
+
+const lastActivity: Reducer< PerSiteLastActivity | undefined, AgentsManagerAction > = (
+	state,
+	action
+) => {
+	switch ( action.type ) {
+		case 'AGENTS_MANAGER_SET_LAST_ACTIVITY':
+			return action.lastActivity;
 	}
 	return state;
 };
@@ -61,6 +72,7 @@ const reducer = combineReducers( {
 	isOpen,
 	isDocked,
 	routerHistory,
+	lastActivity,
 	isLoading,
 	hasLoaded,
 	floatingPosition,

@@ -19,7 +19,6 @@ import {
 	NOTICE_CELEBRATE_SITE_COPY,
 	NOTICE_CELEBRATE_SITE_SETUP_COMPLETE,
 	NOTICE_HOME_LIMITED_TIME_OFFER_COUPON,
-	NOTICE_READER_FIRST_POSTS,
 	NOTICE_SITE_LAUNCH_SELLER_UPSELL,
 	NOTICE_STAGING_SITE,
 	SECTION_BLOGGING_PROMPT,
@@ -69,7 +68,6 @@ import CelebrateSiteCreation from 'calypso/my-sites/customer-home/cards/notices/
 import CelebrateSiteLaunch from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-launch';
 import CelebrateSiteMigration from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-migration';
 import CelebrateSiteSetupComplete from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-setup-complete';
-import ReaderFirstPosts from 'calypso/my-sites/customer-home/cards/notices/reader-first-posts';
 import SiteLaunchSellerUpsell from 'calypso/my-sites/customer-home/cards/notices/site-launch-seller-upsell';
 import StagingSiteNotice from 'calypso/my-sites/customer-home/cards/notices/staging-site';
 import Affiliates from 'calypso/my-sites/customer-home/cards/tasks/affiliates';
@@ -148,7 +146,6 @@ const CARD_COMPONENTS: CardComponentMap = {
 	[ LAUNCHPAD_LEGACY_SITE_SETUP ]: LaunchpadSiteSetup,
 	[ LAUNCHPAD_INTENT_NEWSLETTER_GOAL ]: LaunchpadIntentNewsletterGoal,
 	[ LAUNCHPAD_POST_MIGRATION ]: LaunchpadPostMigration,
-	[ NOTICE_READER_FIRST_POSTS ]: ReaderFirstPosts,
 	[ SECTION_BLOGGING_PROMPT ]: BloggingPrompt,
 	[ SECTION_BLOGANUARY_BLOGGING_PROMPT ]: BloggingPrompt,
 	[ SECTION_LEARN_GROW ]: LearnGrow,
