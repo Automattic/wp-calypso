@@ -44,7 +44,8 @@ export type NavigationContinuationHook = ( props: {
 	isProcessing: boolean;
 	onSubmit: ( message: string, options?: SubmitOptions ) => Promise< void >;
 	sessionId: string;
-	agentId: string;
+	pathname: string;
+	onComplete?: () => void;
 } ) => void;
 
 /**

@@ -9,6 +9,8 @@ import { useEffect, useRef } from '@wordpress/element';
 import { API_BASE_URL } from '../constants';
 import { useAgentsManagerContext } from '../contexts';
 
+export const CONVERSATION_QUERY_KEY = 'agents-manager-conversation';
+
 interface Config {
 	maxPages?: number;
 	onSuccess?: ( messages: Message[], sessionId: string ) => void;
@@ -33,7 +35,7 @@ export default function useConversation( { maxPages = 10, onSuccess = () => {} }
 
 	const { data, isLoading, isError, error } = useQuery( {
 		// eslint-disable-next-line @tanstack/query/exhaustive-deps -- we only want to refetch when sessionId changes
-		queryKey: [ 'agents-manager-conversation', sessionId ],
+		queryKey: [ CONVERSATION_QUERY_KEY, sessionId ],
 		queryFn: async () => {
 			const urlSearchParams = new URLSearchParams( window.location.search );
 			const hasAgentParam = urlSearchParams.has( 'agent' );
