@@ -18,6 +18,10 @@ export function isCommerceGarden( site: Site ) {
 	return site.is_garden && site.garden_name === 'commerce';
 }
 
+export function isCommerceGardenPlanExpired( site: Site ) {
+	return !! site.plan?.expired || !! site.plan?.is_free;
+}
+
 export function isStagingSite( site: Site ) {
 	return site.is_wpcom_staging_site;
 }

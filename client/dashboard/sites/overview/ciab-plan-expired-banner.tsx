@@ -8,12 +8,12 @@ import { getCurrentDashboard } from '../../app/routing';
 import Notice from '../../components/notice';
 import { formatDate } from '../../utils/datetime';
 import { wpcomLink } from '../../utils/link';
-import { isCommerceGarden } from '../../utils/site-types';
+import { isCommerceGarden, isCommerceGardenPlanExpired } from '../../utils/site-types';
 import type { Site } from '@automattic/api-core';
 
 export function CiabPlanExpiredBanner( { site }: { site: Site } ) {
 	const locale = useLocale();
-	const isExpired = isCommerceGarden( site ) && site.plan?.expired;
+	const isExpired = isCommerceGarden( site ) && isCommerceGardenPlanExpired( site );
 
 	const { data: plan } = useQuery( {
 		...siteCurrentPlanQuery( site.ID ),

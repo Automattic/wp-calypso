@@ -20,7 +20,11 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { getSiteDisplayName } from '../../utils/site-name';
-import { isSelfHostedJetpackConnected, isCommerceGarden } from '../../utils/site-types';
+import {
+	isSelfHostedJetpackConnected,
+	isCommerceGarden,
+	isCommerceGardenPlanExpired,
+} from '../../utils/site-types';
 import AgencySiteShareCard from '../overview-agency-site-share-card';
 import BackupCard from '../overview-backup-card';
 import DIFMUpsellCard from '../overview-difm-upsell-card';
@@ -206,7 +210,7 @@ function SiteOverview( {
 					__next40pxDefaultSize
 					variant="primary"
 					href={ site.options.admin_url }
-					disabled={ !! site.plan?.expired }
+					disabled={ isCommerceGardenPlanExpired( site ) }
 				>
 					{ __( 'Manage store' ) }
 				</Button>
