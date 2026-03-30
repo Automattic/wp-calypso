@@ -1,5 +1,6 @@
 import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import { __, _n, sprintf } from '@wordpress/i18n';
+import { isAkismetPro500Plan } from '../../utils/akismet';
 import {
 	isDIFMProduct,
 	isGoogleWorkspace,
@@ -186,6 +187,30 @@ function renderSpaceAddOnquantitySummary( licensedQuantity: number, isRenewal: b
 	);
 }
 
+function renderAkismetTransactionQuantitySummary( licensedQuantity: number, isRenewal: boolean ) {
+	if ( isRenewal ) {
+		return sprintf(
+			/* translators: %d: number of 500 API call licenses */
+			_n(
+				'Renewal for %d 500 API call license',
+				'Renewal for %d 500 API call licenses',
+				licensedQuantity
+			),
+			licensedQuantity
+		);
+	}
+
+	return sprintf(
+		/* translators: %d: number of 500 API call licenses */
+		_n(
+			'Purchase of %d 500 API call license',
+			'Purchase of %d 500 API call licenses',
+			licensedQuantity
+		),
+		licensedQuantity
+	);
+}
+
 export function DomainTransactionVolumeSummary( { item }: { item: ReceiptItem } ) {
 	if ( ! item.volume ) {
 		return null;
@@ -260,6 +285,10 @@ export function renderTransactionQuantitySummary( {
 
 	if ( isTieredVolumeSpaceAddon( product ) ) {
 		return renderSpaceAddOnquantitySummary( licensedQuantity, isRenewal );
+	}
+
+	if ( isAkismetPro500Plan( wpcom_product_slug ) ) {
+		return renderAkismetTransactionQuantitySummary( licensedQuantity, isRenewal );
 	}
 
 	if ( isRenewal ) {
