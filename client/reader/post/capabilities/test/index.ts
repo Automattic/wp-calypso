@@ -74,6 +74,10 @@ describe( 'reader/post/capabilities', () => {
 			expect( isRebloggable( { sharing_enabled: true }, true ) ).toBe( false );
 		} );
 
+		it( 'returns false when post is an external post', () => {
+			expect( isRebloggable( { is_external: true }, true ) ).toBe( false );
+		} );
+
 		it( 'returns false when site_is_private is true', () => {
 			expect(
 				isRebloggable( { site_ID: 1, site_is_private: true, sharing_enabled: true }, true )

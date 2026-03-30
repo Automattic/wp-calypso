@@ -672,13 +672,15 @@ class MasterbarLoggedIn extends Component {
 				subItems={ [ profileActions, wpcomActions ] }
 				hasGlobalBorderStyle
 			>
-				<span className="masterbar__item-howdy-howdy">
-					{ sprintf(
-						/* translators: %s is the user's display name */
-						__( 'Howdy, %s' ),
-						user.display_name
-					) }
-				</span>
+				{ user.display_name && (
+					<span className="masterbar__item-howdy-howdy">
+						{ sprintf(
+							/* translators: %s is the user's display name */
+							__( 'Howdy, %s' ),
+							user.display_name
+						) }
+					</span>
+				) }
 				<Gravatar
 					className="masterbar__item-howdy-gravatar"
 					role="presentation"
