@@ -2,7 +2,6 @@ import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import { DollySecurityCheckupIcon } from './dolly-checkup-icon';
 import SecurityCheckupNavigationItem from './navigation-item';
 
 class SecurityCheckupDolly extends Component {
@@ -19,11 +18,11 @@ class SecurityCheckupDolly extends Component {
 
 		return (
 			<SecurityCheckupNavigationItem
-				path="/me/security/dolly"
-				icon={ <DollySecurityCheckupIcon /> }
-				text={ translate( 'Dolly' ) }
+				path="/me/security/ai-assistant"
+				materialIcon="smartphone"
+				text={ translate( 'Telegram Agent' ) }
 				description={ translate(
-					'Chat with Dolly on Telegram to publish, update, and manage your WordPress site from wherever you are.'
+					'Chat with our Telegram Agent to publish, update, and manage your WordPress site from wherever you are.'
 				) }
 			/>
 		);

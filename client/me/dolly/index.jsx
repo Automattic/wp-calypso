@@ -26,11 +26,11 @@ class Dolly extends Component {
 	render() {
 		const { path, translate } = this.props;
 		const useCheckupMenu = config.isEnabled( 'security/security-checkup' );
-		const title = translate( 'Dolly' );
+		const title = translate( 'Telegram Agent' );
 
 		return (
 			<Main wideLayout className="security dolly">
-				<PageViewTracker path="/me/security/dolly" title="Me > Dolly" />
+				<PageViewTracker path="/me/security/ai-assistant" title="Me > AI Assistant" />
 				<DocumentHead title={ title } />
 
 				<NavigationHeader navigationItems={ [] } title={ translate( 'Security' ) } />
@@ -46,7 +46,7 @@ class Dolly extends Component {
 
 				<CompactCard className="dolly__description">
 					{ translate(
-						'Chat with Dolly on Telegram to publish, update, and manage your WordPress site from wherever you are.'
+						'Chat with our Telegram Agent to publish, update, and manage your WordPress site from wherever you are.'
 					) }
 				</CompactCard>
 

@@ -8,7 +8,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import Loading from 'calypso/components/loading';
 import { useInterval } from 'calypso/lib/interval';
 import wpcom from 'calypso/lib/wp';
-import { TELEGRAM_TRANSIENT_NOTICE } from 'calypso/me/telegram/use-telegram-dolly-widget';
+import { TELEGRAM_TRANSIENT_NOTICE } from 'calypso/me/telegram/use-telegram-bot-widget';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 import './style.scss';

@@ -1,14 +1,14 @@
 import { Button, CompactCard } from '@automattic/components';
 import React from 'react';
 import { getTelegramConnectionDescription } from '../telegram/get-telegram-connection-description';
-import { useTelegramDollyWidget } from '../telegram/use-telegram-dolly-widget';
+import { useTelegramBotWidget } from '../telegram/use-telegram-bot-widget';
 import telegramLogo from './telegram-logo.svg';
 import '../social-login/style.scss';
 import './style.scss';
 
 export default function TelegramConnection() {
 	const { translate, isConfigured, isConnected, isStatusReady, containerRef, handleDisconnect } =
-		useTelegramDollyWidget();
+		useTelegramBotWidget();
 
 	if ( ! isConfigured ) {
 		return null;

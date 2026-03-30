@@ -61,16 +61,10 @@ export default function () {
 		clientRender
 	);
 
-	page( '/me/security/ai-assistant', () => {
-		const search =
-			typeof window !== 'undefined' && window.location.search ? window.location.search : '';
-		page.redirect( `/me/security/dolly${ search }` );
-	} );
-
 	page(
-		'/me/security/dolly',
+		'/me/security/ai-assistant',
 		setupPreferences,
-		maybeRedirectToMultiSiteDashboard( '/me/security/dolly' ),
+		maybeRedirectToMultiSiteDashboard( '/me/security/ai-assistant' ),
 		sidebar,
 		dolly,
 		makeLayout,

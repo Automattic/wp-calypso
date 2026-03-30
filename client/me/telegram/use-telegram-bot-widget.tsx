@@ -19,7 +19,7 @@ export type TelegramAuthPayload = {
 	hash: string;
 };
 
-type UseTelegramDollyWidgetArgs = {
+type UseTelegramBotWidgetArgs = {
 	trackAuthCallback?: ( user: TelegramAuthPayload ) => void;
 };
 
@@ -45,7 +45,7 @@ function getWidgetSettings() {
 	return { botUsername, authUrl, requestAccess, size, showUserpic };
 }
 
-export function useTelegramDollyWidget( args: UseTelegramDollyWidgetArgs = {} ) {
+export function useTelegramBotWidget( args: UseTelegramBotWidgetArgs = {} ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
