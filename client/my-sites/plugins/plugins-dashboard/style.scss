@@ -348,6 +348,13 @@
 		margin-top: 16px;
 	}
 
+	.dataviews-column-primary__media {
+		background-color: transparent;
+		&::after {
+			display: none;
+		}
+	}
+
 	.dataviews-view-list {
 		.dataviews-view-list__media-wrapper {
 			background-color: transparent;
@@ -375,7 +382,8 @@
 }
 
 body.is-section-plugins .hosting-dashboard-layout,
-.is-section-jetpack-cloud-plugin-management .hosting-dashboard-layout {
+.is-section-jetpack-cloud-plugin-management .hosting-dashboard-layout,
+.is-section-a8c-for-agencies-plugins .hosting-dashboard-layout {
 	.hosting-dashboard-layout-with-columns__container {
 		background-color: var( --color-main-background );
 	}
