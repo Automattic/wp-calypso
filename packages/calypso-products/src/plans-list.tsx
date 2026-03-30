@@ -1693,14 +1693,14 @@ const getWooHostedPlanCompareFeatures = (): string[] => [
 const getPlanWooHostedBasicDetails = (): IncompleteWPcomPlan => ( {
 	...getPlanEcommerceDetails(),
 	get2023PricingGridSignupWpcomFeatures: () => [
+		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_WOO_HOSTED_PACKAGE,
 		FEATURE_WOO_HOSTED_AI_BUILDER,
 		FEATURE_WOO_HOSTED_PAYPAL_INTEGRATON,
 		FEATURE_WOO_HOSTED_MARKETING_TOOLS,
-		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_WOO_HOSTED_BASIC_MAILPOET,
 		FEATURE_WOO_HOSTED_BASIC_ADMIN_USERS,
-		FEATURE_50GB_STORAGE,
+		FEATURE_WOO_HOSTED_BASIC_STORAGE,
 	],
 	getPlanCompareFeatures: () => [
 		...getWooHostedPlanCompareFeatures(),
@@ -1729,14 +1729,14 @@ const getPlanWooHostedBasicDetails = (): IncompleteWPcomPlan => ( {
 const getPlanWooHostedProDetails = (): IncompleteWPcomPlan => ( {
 	...getPlanEcommerceDetails(),
 	get2023PricingGridSignupWpcomFeatures: () => [
+		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_WOO_HOSTED_PACKAGE,
 		FEATURE_WOO_HOSTED_AI_BUILDER,
 		FEATURE_WOO_HOSTED_PAYPAL_INTEGRATON,
 		FEATURE_WOO_HOSTED_MARKETING_TOOLS,
-		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_WOO_HOSTED_PRO_MAILPOET,
 		FEATURE_WOO_HOSTED_PRO_ADMIN_USERS,
-		FEATURE_100GB_STORAGE,
+		FEATURE_WOO_HOSTED_PRO_STORAGE,
 	],
 	getPlanCompareFeatures: () => [
 		...getWooHostedPlanCompareFeatures(),

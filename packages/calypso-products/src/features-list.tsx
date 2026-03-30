@@ -3030,12 +3030,12 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_WOO_HOSTED_BASIC_STORAGE ]: {
 		getSlug: () => FEATURE_WOO_HOSTED_BASIC_STORAGE,
-		getTitle: () => i18n.translate( '50 GB storage for product images and store data' ),
+		getTitle: () => i18n.translate( 'Includes 50 GB storage' ),
 		getDescription: () => '',
 	},
 	[ FEATURE_WOO_HOSTED_PRO_STORAGE ]: {
 		getSlug: () => FEATURE_WOO_HOSTED_PRO_STORAGE,
-		getTitle: () => i18n.translate( '100GB storage for product images and store data' ),
+		getTitle: () => i18n.translate( 'Includes 100 GB storage' ),
 		getDescription: () => '',
 	},
 	[ FEATURE_WOO_HOSTED_SECURITY ]: {
