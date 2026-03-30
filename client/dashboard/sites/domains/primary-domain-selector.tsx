@@ -16,15 +16,13 @@ import {
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { addQueryArgs } from '@wordpress/url';
 import { useState, useMemo } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import InlineSupportLink from '../../components/inline-support-link';
 import { Notice } from '../../components/notice';
 import UpsellCTAButton from '../../components/upsell-cta-button';
-import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
+import { getSitePlanUpgradeUrl } from '../../utils/site-url';
 import { userHasFlag } from '../../utils/user';
-import { isSitePlanWooHosted } from '../plans';
 import type { Field } from '@wordpress/dataviews';
 
 interface PrimaryDomainSelectorProps {
@@ -112,20 +110,13 @@ const PrimaryDomainSelector = ( { domains, site, user }: PrimaryDomainSelectorPr
 
 	const renderMessage = () => {
 		if ( ! canUserSetPrimaryDomainOnThisSite ) {
-			const upgradeLink = isSitePlanWooHosted( site )
-				? wpcomLink( '/setup/woo-hosted-plans' )
-				: wpcomLink( '/setup/plan-upgrade' );
-			const backUrl = redirectToDashboardLink();
 			const message = createInterpolateElement(
 				'Your site plan doesn’t allow you to set a custom domain as a primary site address.<br/><upgradeLink>Upgrade to an annual paid plan</upgradeLink> and get a free one-year domain name registration or transfer. <learnMoreLink />',
 				{
 					upgradeLink: (
 						<UpsellCTAButton
 							variant="link"
-							href={ addQueryArgs( upgradeLink, {
-								siteSlug: site.slug,
-								cancel_to: backUrl,
-							} ) }
+							href={ getSitePlanUpgradeUrl( site ) }
 							upsellId="site-domains-primary-domain-selector"
 							upsellFeatureId="domain"
 						/>

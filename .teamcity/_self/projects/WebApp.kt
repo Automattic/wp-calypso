@@ -125,10 +125,6 @@ object BuildDockerImage : BuildType({
 			checked = "true",
 			unchecked = "false"
 		)
-		param("CACHE_SEED_KEY", "")
-		param("RESOLVED_CACHE_SEED_IMAGE", "%cache_seed_image%")
-		param("UPDATE_CACHE_SEED", "false")
-		param("GENERATE_CACHE_IMAGE", "false")
 		param("env.WEBPACK_CACHE_INVALIDATED", "false")
 	}
 
@@ -207,102 +203,6 @@ object BuildDockerImage : BuildType({
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
 		}
 
-		script {
-			name = "Resolve cache-seed state"
-			scriptContent = """
-				#!/usr/bin/env bash
-				set -euo pipefail
-
-				cache_seed_key=$(bash ./bin/print-cache-seed-key.sh)
-				echo "Computed cache-seed key: ${'$'}cache_seed_key"
-				echo "##teamcity[setParameter name='CACHE_SEED_KEY' value='${'$'}cache_seed_key']"
-
-				resolve_cache_seed_digest() {
-					local ref="${'$'}1"
-
-					docker pull "${'$'}ref" >/dev/null 2>&1 || return 1
-
-					docker image inspect "${'$'}ref" \
-						--format '{{if .RepoDigests}}{{index .RepoDigests 0}}{{end}}'
-				}
-
-				read_cache_seed_key() {
-					local ref="${'$'}1"
-
-					docker image inspect "${'$'}ref" \
-						--format '{{with index .Config.Labels "io.calypso.cache-seed-key"}}{{.}}{{end}}' \
-						2>/dev/null || true
-				}
-
-				default_cache_seed_image="registry.a8c.com/calypso/cache-seed:latest"
-				update_cache_seed=false
-				generate_cache_image=false
-				resolved_cache_seed_image="%cache_seed_image%"
-
-				if [[ "%cache_mode%" == "seed" ]]; then
-					if [[ "%cache_seed_image%" == "${'$'}default_cache_seed_image" ]]; then
-						key_ref="registry.a8c.com/calypso/cache-seed:key-${'$'}cache_seed_key"
-
-						if resolved_cache_seed_image=$(resolve_cache_seed_digest "${'$'}key_ref"); then
-							echo "Using cache-seed image for current key: ${'$'}resolved_cache_seed_image"
-						else
-							echo "No exact cache-seed image found for key ${'$'}cache_seed_key; falling back to %cache_seed_image%."
-
-							if resolved_cache_seed_image=$(resolve_cache_seed_digest "%cache_seed_image%"); then
-								echo "Resolved cache-seed input: ${'$'}resolved_cache_seed_image"
-							else
-								echo "Could not resolve %cache_seed_image% to a digest; falling back to tag."
-								resolved_cache_seed_image="%cache_seed_image%"
-							fi
-
-							if [[ "%teamcity.build.branch.is_default%" == "true" ]]; then
-								echo "Cache-seed key is missing; enabling inline cache regeneration."
-								update_cache_seed=true
-								generate_cache_image=true
-							else
-								echo "Cache-seed key is missing, but this is not the default branch."
-							fi
-						fi
-					else
-						echo "Explicit cache-seed image override detected (%cache_seed_image%); bypassing canonical key lookup."
-
-						if resolved_cache_seed_image=$(resolve_cache_seed_digest "%cache_seed_image%"); then
-							echo "Resolved explicit cache-seed input: ${'$'}resolved_cache_seed_image"
-						else
-							echo "Could not resolve %cache_seed_image% to a digest; falling back to tag."
-							resolved_cache_seed_image="%cache_seed_image%"
-						fi
-
-						if [[ "%teamcity.build.branch.is_default%" == "true" ]]; then
-							existing_cache_seed_key=$(read_cache_seed_key "${'$'}resolved_cache_seed_image")
-							echo "Explicit cache-seed key: ${'$'}{existing_cache_seed_key:-<missing>}"
-
-							if [[ -z "${'$'}existing_cache_seed_key" || "${'$'}existing_cache_seed_key" != "${'$'}cache_seed_key" ]]; then
-								echo "Explicit cache-seed image does not match the current key; enabling inline cache regeneration."
-								update_cache_seed=true
-								generate_cache_image=true
-							else
-								echo "Explicit cache-seed image already matches the current key."
-							fi
-						fi
-					fi
-				elif [[ "%cache_mode%" == "base" && "%UPDATE_BASE_IMAGE_CACHE%" == "true" ]]; then
-					echo "Base mode selected with UPDATE_BASE_IMAGE_CACHE=true; enabling writable cache."
-					generate_cache_image=true
-				else
-					echo "No inline cache refresh required for this build."
-				fi
-
-				echo "RESOLVED_CACHE_SEED_IMAGE=${'$'}resolved_cache_seed_image"
-				echo "UPDATE_CACHE_SEED=${'$'}update_cache_seed"
-				echo "GENERATE_CACHE_IMAGE=${'$'}generate_cache_image"
-
-				echo "##teamcity[setParameter name='RESOLVED_CACHE_SEED_IMAGE' value='${'$'}resolved_cache_seed_image']"
-				echo "##teamcity[setParameter name='UPDATE_CACHE_SEED' value='${'$'}update_cache_seed']"
-				echo "##teamcity[setParameter name='GENERATE_CACHE_IMAGE' value='${'$'}generate_cache_image']"
-			""".trimIndent()
-		}
-
 		val commonArgs = """
 			--label com.a8c.image-builder=teamcity
 			--label com.a8c.build-id=%teamcity.build.id%
@@ -310,14 +210,13 @@ object BuildDockerImage : BuildType({
 			--build-arg node_memory=16384
 			--build-arg cache_mode=%cache_mode%
 			--build-arg base_image=%base_image%
-			--build-arg cache_seed_image=%RESOLVED_CACHE_SEED_IMAGE%
-			--build-arg cache_seed_key=%CACHE_SEED_KEY%
+			--build-arg cache_seed_image=%cache_seed_image%
 			--build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber}
 			--build-arg profile=%PROFILE%
 			--build-arg manual_sentry_release=%MANUAL_SENTRY_RELEASE%
 			--build-arg is_default_branch=%teamcity.build.branch.is_default%
 			--build-arg sentry_auth_token=%SENTRY_AUTH_TOKEN%
-			--build-arg generate_cache_image=%GENERATE_CACHE_IMAGE%
+			--build-arg generate_cache_image=%UPDATE_BASE_IMAGE_CACHE%
 		""".trimIndent().replace("\n"," ")
 
 		dockerCommand {
@@ -389,9 +288,10 @@ object BuildDockerImage : BuildType({
 			""".trimIndent()
 		}
 
-		// Base-image cache rebuilding remains disabled by default because it is slow
-		// enough to risk trunk timeouts. Seed-mode inline refresh is handled below,
-		// while the base flow stays available as a manual fallback.
+		// TODO: Cache rebuilding is currently disabled. It takes a long time and
+		// causes timeouts on trunk. It needs to run more quickly to be worth it.
+		// For now, the cache will be rebuilt a couple times a day by the dedicated
+		// cache build.
 
 		// Conditions don't seem to support and/or, so we do this in a separate step.
 		// Essentially, UPDATE_BASE_IMAGE_CACHE will remain false by default, but
@@ -446,73 +346,10 @@ object BuildDockerImage : BuildType({
 				namesAndTags = "registry.a8c.com/calypso/base:%base_image_publish_tag%"
 			}
 		}
-
-		script {
-			name = "Skip cache refresh if key already exists"
-			conditions {
-				equals("cache_mode", "seed")
-				equals("UPDATE_CACHE_SEED", "true")
-				equals("teamcity.build.branch.is_default", "true")
-			}
-			scriptContent = """
-				#!/usr/bin/env bash
-				set -euo pipefail
-
-				key_ref="registry.a8c.com/calypso/cache-seed:key-%CACHE_SEED_KEY%"
-
-				if docker pull "${'$'}key_ref" >/dev/null 2>&1; then
-					echo "Exact cache-seed key already published by another build; skipping refresh."
-					echo "##teamcity[setParameter name='UPDATE_CACHE_SEED' value='false']"
-				else
-					echo "Exact cache-seed key still missing; proceeding with inline refresh."
-				fi
-			""".trimIndent()
-		}
-
-		dockerCommand {
-			name = "Rebuild cache-seed image"
-			conditions {
-				equals("cache_mode", "seed")
-				equals("UPDATE_CACHE_SEED", "true")
-				equals("teamcity.build.branch.is_default", "true")
-			}
-			commandType = build {
-				source = file {
-					path = "Dockerfile"
-				}
-				namesAndTags = """
-					registry.a8c.com/calypso/cache-seed:latest
-					registry.a8c.com/calypso/cache-seed:key-%CACHE_SEED_KEY%
-					registry.a8c.com/calypso/cache-seed:build-%build.number%
-				""".trimIndent()
-				commandArgs = """
-					--target update-cache-seed
-					--cache-from=registry.a8c.com/calypso/app:commit-${Settings.WpCalypso.paramRefs.buildVcsNumber},%RESOLVED_CACHE_SEED_IMAGE%
-					$commonArgs
-				""".trimIndent().replace("\n"," ")
-			}
-			param("dockerImage.platform", "linux")
-		}
-
-		dockerCommand {
-			name = "Push cache-seed image"
-			conditions {
-				equals("cache_mode", "seed")
-				equals("UPDATE_CACHE_SEED", "true")
-				equals("teamcity.build.branch.is_default", "true")
-			}
-			commandType = push {
-				namesAndTags = """
-					registry.a8c.com/calypso/cache-seed:latest
-					registry.a8c.com/calypso/cache-seed:key-%CACHE_SEED_KEY%
-					registry.a8c.com/calypso/cache-seed:build-%build.number%
-				""".trimIndent()
-			}
-		}
 	}
 
 	failureConditions {
-		executionTimeoutMin = 26
+		executionTimeoutMin = 20
 	}
 
 	features {

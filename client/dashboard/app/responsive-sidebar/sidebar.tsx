@@ -1,7 +1,7 @@
 import { useRouterState } from '@tanstack/react-router';
 import { __experimentalHStack as HStack, Navigator } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { brush, copy, envelope, globe, plugins } from '@wordpress/icons';
+import { brush, envelope, globe, layout, plugins } from '@wordpress/icons';
 import { useRef } from 'react';
 import { menuDot } from '../../components/icons';
 import RouterLinkButton from '../../components/router-link-button';
@@ -81,7 +81,7 @@ function PrimaryMenuSidebar() {
 	return (
 		<SidebarMenu>
 			{ supports.sites && (
-				<SidebarMenuItem icon={ copy } to="/sites">
+				<SidebarMenuItem icon={ layout } to="/sites">
 					{ __( 'Sites' ) }
 				</SidebarMenuItem>
 			) }
