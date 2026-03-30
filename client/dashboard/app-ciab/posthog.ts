@@ -17,7 +17,7 @@ function maskText( text: string, element?: HTMLElement ): string {
 	if ( element?.closest( UNMASK_SELECTOR ) ) {
 		return text;
 	}
-	return '*'.repeat( text.trim().length );
+	return '*'.repeat( text.length );
 }
 
 export function getPostHogConfig(): AppConfig[ 'posthog' ] {
