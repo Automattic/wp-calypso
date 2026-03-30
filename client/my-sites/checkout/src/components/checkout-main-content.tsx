@@ -79,6 +79,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { useUpdateCachedContactDetails } from '../hooks/use-cached-contact-details';
 import { useCheckoutHelpCenter } from '../hooks/use-checkout-help-center';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
+import useSubmitButtonColor from '../hooks/use-submit-button-color';
 import { validateContactDetails } from '../lib/contact-validation';
 import { updateCartContactDetailsForCheckout } from '../lib/update-cart-contact-details-for-checkout';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
@@ -118,6 +119,20 @@ import type { CountryListItem } from '@automattic/wpcom-checkout';
 import type { PropsWithChildren, ReactNode } from 'react';
 
 const debug = debugFactory( 'calypso:wp-checkout' );
+
+const SubmitButtonColorWrapper = styled.div< { $submitButtonColor?: string } >`
+	${ ( { $submitButtonColor } ) =>
+		$submitButtonColor &&
+		css`
+			.checkout-button.is-status-primary:not( :disabled ) {
+				background: ${ $submitButtonColor };
+			}
+			.checkout-button.is-status-primary:not( :disabled ):hover,
+			.checkout-button.is-status-primary:not( :disabled ):active {
+				background: ${ $submitButtonColor };
+			}
+		` }
+`;
 
 // This will make converting to TS less noisy. The order of components can be reorganized later
 /* eslint-disable @typescript-eslint/no-use-before-define */
@@ -509,6 +524,8 @@ export default function CheckoutMainContent( {
 	};
 
 	useOneDollarOfferTrack( siteId, 'checkout' );
+
+	const submitButtonColor = useSubmitButtonColor();
 
 	const isStepContainerV2 = useInitialIsInStepContainerV2FlowContext();
 	const isLargeViewport = useViewportMatch( 'large', '>=' );
@@ -903,17 +920,19 @@ export default function CheckoutMainContent( {
 						setIs100YearPlanTermsAccepted={ setIs100YearPlanTermsAccepted }
 						isSubmitted={ isSubmitted }
 					/>
-					<CheckoutFormSubmit
-						validateForm={ validateForm }
-						submitButtonHeader={ <SubmitButtonHeader /> }
-						submitButtonFooter={
-							hasCartJetpackProductsOnly ? (
-								<JetpackCheckoutSeals />
-							) : (
-								<CheckoutMoneyBackGuarantee cart={ responseCart } />
-							)
-						}
-					/>
+					<SubmitButtonColorWrapper $submitButtonColor={ submitButtonColor }>
+						<CheckoutFormSubmit
+							validateForm={ validateForm }
+							submitButtonHeader={ <SubmitButtonHeader /> }
+							submitButtonFooter={
+								hasCartJetpackProductsOnly ? (
+									<JetpackCheckoutSeals />
+								) : (
+									<CheckoutMoneyBackGuarantee cart={ responseCart } />
+								)
+							}
+						/>
+					</SubmitButtonColorWrapper>
 				</CheckoutStepGroup>
 			</WPCheckoutMainContent>
 		</RestorableProductsProvider>
