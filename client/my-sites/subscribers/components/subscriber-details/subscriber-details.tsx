@@ -23,7 +23,7 @@ type SubscriberDetailsProps = {
 	onClose?: () => void;
 	onUnsubscribe?: ( subscriber: Subscriber ) => void;
 	onGiftSubscription?: ( subscriber: Subscriber ) => void;
-	onRemoveComp?: ( giftId: number, planName: string ) => void;
+	onRemoveComp?: ( params: { planName: string; giftId?: number; compId?: number } ) => void;
 };
 
 const SubscriberDetails = ( {
@@ -54,13 +54,13 @@ const SubscriberDetails = ( {
 	} );
 
 	const displayPaidUpgrade = ( subscriptionPlan: SubscriptionPlanData, index: number ) => {
-		if ( subscriptionPlan.is_gift ) {
+		if ( subscriptionPlan.is_complimentary ) {
 			return (
 				<div className="subscriber-details__content-value" key={ index }>
 					{ translate( 'Comp', {
 						comment: 'Short for "complimentary" — a free subscription granted by the site creator',
 					} ) }
-					{ onRemoveComp && subscriptionPlan.gift_id && (
+					{ onRemoveComp && ( subscriptionPlan.gift_id || subscriptionPlan.comp_id ) && (
 						<Button
 							className="subscriber-details__remove-comp-button"
 							variant="tertiary"
@@ -70,7 +70,11 @@ const SubscriberDetails = ( {
 								} )
 							) }
 							onClick={ () =>
-								onRemoveComp( subscriptionPlan.gift_id!, subscriptionPlan.title ?? '' )
+								onRemoveComp( {
+									planName: subscriptionPlan.title ?? '',
+									giftId: subscriptionPlan.gift_id,
+									compId: subscriptionPlan.comp_id,
+								} )
 							}
 						>
 							<Icon icon={ trash } size={ 18 } />
@@ -159,7 +163,7 @@ const SubscriberDetails = ( {
 						{ subscriptionPlans &&
 							subscriptionPlans.map( ( subscriptionPlan, index ) => (
 								<div className="subscriber-details__content-value" key={ index }>
-									{ ! subscriptionPlan.is_gift && subscriptionPlan.title
+									{ ! subscriptionPlan.is_complimentary && subscriptionPlan.title
 										? `${ subscriptionPlan.title } - `
 										: '' }
 									{ subscriptionPlan.plan }

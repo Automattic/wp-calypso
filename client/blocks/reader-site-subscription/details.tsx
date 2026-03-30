@@ -74,12 +74,12 @@ const SiteSubscriptionDetails = ( {
 			const newPaymentPlans: PaymentPlan[] = [];
 
 			paymentDetails.forEach( ( paymentDetail: Reader.SiteSubscriptionPaymentDetails ) => {
-				const { is_gift, ID, currency, renewal_price, renew_interval } = paymentDetail;
+				const { is_gift, is_comp, ID, currency, renewal_price, renew_interval } = paymentDetail;
 				const renewalPrice = formatRenewalPrice( renewal_price, currency );
 				const when = getPaymentInterval( renew_interval );
 				const renewalDate = formatRenewalDate( paymentDetail.end_date, localeSlug );
 				newPaymentPlans.push( {
-					is_gift: is_gift,
+					is_gift: !! ( is_gift || is_comp ),
 					id: ID,
 					renewalPrice: `${ renewalPrice }${ when }`,
 					renewalDate,

@@ -2,12 +2,15 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import CommentButton from 'calypso/blocks/comment-button';
-import { shouldShowComments } from 'calypso/blocks/comments/helper';
 import ShareButton from 'calypso/blocks/reader-share';
-import { shouldShowShare, shouldShowReblog } from 'calypso/blocks/reader-share/helper';
 import ReaderCommentIcon from 'calypso/reader/components/icons/comment-icon';
 import LikeButton from 'calypso/reader/like-button';
-import { shouldShowLikes } from 'calypso/reader/like-helper';
+import {
+	isCommentable,
+	isSharable,
+	isRebloggable,
+	isLikeable,
+} from 'calypso/reader/post/capabilities';
 import { useSelector } from 'calypso/state';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import { isA8cTeamMember } from 'calypso/state/teams/selectors';
@@ -25,13 +28,13 @@ const ReaderPostActions = ( {
 } ) => {
 	const translate = useTranslate();
 	const hasSites = !! useSelector( getPrimarySiteId );
-	const showShare = shouldShowShare( post );
-	const showReblog = shouldShowReblog( post, hasSites );
-	const showComments = shouldShowComments( post );
-	const showLikes = shouldShowLikes( post );
+	const showShare = isSharable( post );
+	const showReblog = isRebloggable( post, hasSites );
+	const showComments = isCommentable( post );
+	const showLikes = isLikeable( post );
 	const listClassnames = clsx( 'reader-post-actions', className );
 	const isAutomattician = useSelector( isA8cTeamMember );
-	const shouldShowFreshlyPressed = fullPost && isAutomattician;
+	const shouldShowFreshlyPressed = fullPost && isAutomattician && showShare;
 
 	return (
 		<ul className={ listClassnames }>

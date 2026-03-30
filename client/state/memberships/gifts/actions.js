@@ -103,6 +103,7 @@ export const requestDeleteGift = ( siteId, giftId, noticeText ) => {
 						duration: 10000,
 					} )
 				);
+				throw error;
 			} );
 	};
 };

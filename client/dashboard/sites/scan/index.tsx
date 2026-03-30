@@ -122,7 +122,6 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 			<PageLayout
 				header={
 					<PageHeader
-						title={ __( 'Scan' ) }
 						description={ getPageDescription() }
 						actions={
 							<ButtonStack>

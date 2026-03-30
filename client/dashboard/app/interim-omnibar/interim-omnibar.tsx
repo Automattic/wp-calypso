@@ -5,6 +5,7 @@ import { Provider as ReduxProvider } from 'react-redux';
 import { MasterbarLoggedIn } from 'calypso/layout/masterbar/logged-in';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getLogoutUrl } from 'calypso/lib/user/shared-utils';
+import { getSiteDisplayName } from '../../utils/site-name';
 import type { User, Site } from '@automattic/api-core';
 
 const noop = () => {};
@@ -67,7 +68,7 @@ export function InterimOmnibar( {
 				siteId={ siteId }
 				site={ site }
 				siteSlug={ siteSlug }
-				siteTitle={ site?.name ?? '' }
+				siteTitle={ site ? getSiteDisplayName( site ) : '' }
 				siteUrl={ site?.URL ?? '' }
 				siteAdminUrl={ siteAdminUrl }
 				siteHomeUrl={ site?.URL ?? '' }

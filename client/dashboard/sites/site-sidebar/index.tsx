@@ -26,6 +26,7 @@ import {
 	siteDomainsRoute,
 	siteSettingsRoute,
 } from '../../app/router/sites';
+import { menuDot } from '../../components/icons';
 import {
 	SidebarBackButton,
 	SidebarExpandableMenuItem,
@@ -37,7 +38,7 @@ import { hasSiteTrialEnded } from '../../utils/site-trial';
 import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { canSwitchEnvironment } from '../features';
-import EnvironmentSwitcher from '../site/environment-switcher-v2';
+import SidebarEnvironmentSwitcher from '../site/sidebar-environment-switcher';
 import SiteSwitcherItem from './site-switcher-item';
 import type { Site } from '@automattic/api-core';
 import type { AnyRoute } from '@tanstack/react-router';
@@ -58,7 +59,7 @@ export default function SiteSidebar() {
 			<VStack spacing={ 4 }>
 				<SidebarMenu>
 					<SiteSwitcherItem site={ site } />
-					{ canSwitchEnvironment( site ) && <EnvironmentSwitcher site={ site } /> }
+					{ canSwitchEnvironment( site ) && <SidebarEnvironmentSwitcher site={ site } /> }
 				</SidebarMenu>
 				<SiteMenuSidebar site={ site } />
 			</VStack>
@@ -134,13 +135,13 @@ function SiteMenuSidebar( { site }: { site: Site } ) {
 					icon={ formatListBullets }
 					to={ `/sites/${ siteSlug }/logs` }
 				>
-					<SidebarMenuItem to={ `/sites/${ siteSlug }/logs/activity` }>
+					<SidebarMenuItem icon={ menuDot } to={ `/sites/${ siteSlug }/logs/activity` }>
 						{ __( 'Activity' ) }
 					</SidebarMenuItem>
-					<SidebarMenuItem to={ `/sites/${ siteSlug }/logs/php` }>
+					<SidebarMenuItem icon={ menuDot } to={ `/sites/${ siteSlug }/logs/php` }>
 						{ __( 'PHP errors' ) }
 					</SidebarMenuItem>
-					<SidebarMenuItem to={ `/sites/${ siteSlug }/logs/server` }>
+					<SidebarMenuItem icon={ menuDot } to={ `/sites/${ siteSlug }/logs/server` }>
 						{ __( 'Web server' ) }
 					</SidebarMenuItem>
 				</SidebarExpandableMenuItem>
@@ -153,10 +154,10 @@ function SiteMenuSidebar( { site }: { site: Site } ) {
 						icon={ shield }
 						to={ `/sites/${ siteSlug }/scan` }
 					>
-						<SidebarMenuItem to={ `/sites/${ siteSlug }/scan/active` }>
+						<SidebarMenuItem icon={ menuDot } to={ `/sites/${ siteSlug }/scan/active` }>
 							{ __( 'Active threats' ) }
 						</SidebarMenuItem>
-						<SidebarMenuItem to={ `/sites/${ siteSlug }/scan/history` }>
+						<SidebarMenuItem icon={ menuDot } to={ `/sites/${ siteSlug }/scan/history` }>
 							{ __( 'History' ) }
 						</SidebarMenuItem>
 					</SidebarExpandableMenuItem>

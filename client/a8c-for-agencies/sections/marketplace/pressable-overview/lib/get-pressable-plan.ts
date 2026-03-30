@@ -559,6 +559,13 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		storage: 32,
 		category: PRODUCT_CATEGORY_PRESSABLE_ADDON,
 	},
+	'pressable-addon-storage-64gb': {
+		slug: 'pressable-addon-storage-64gb',
+		install: 0,
+		visits: 0,
+		storage: 64,
+		category: PRODUCT_CATEGORY_PRESSABLE_ADDON,
+	},
 };
 
 export default function getPressablePlan( slug: string ) {

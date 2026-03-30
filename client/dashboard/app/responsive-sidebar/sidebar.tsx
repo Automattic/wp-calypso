@@ -1,8 +1,9 @@
 import { useRouterState } from '@tanstack/react-router';
 import { __experimentalHStack as HStack, Navigator } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { brush, copy, envelope, globe, plugins } from '@wordpress/icons';
+import { brush, envelope, globe, layout, plugins } from '@wordpress/icons';
 import { useRef } from 'react';
+import { menuDot } from '../../components/icons';
 import RouterLinkButton from '../../components/router-link-button';
 import { SidebarExpandableMenuItem, SidebarMenu, SidebarMenuItem } from '../../components/sidebar';
 import DomainSidebar from '../../domains/domain-sidebar';
@@ -80,7 +81,7 @@ function PrimaryMenuSidebar() {
 	return (
 		<SidebarMenu>
 			{ supports.sites && (
-				<SidebarMenuItem icon={ copy } to="/sites">
+				<SidebarMenuItem icon={ layout } to="/sites">
 					{ __( 'Sites' ) }
 				</SidebarMenuItem>
 			) }
@@ -96,11 +97,14 @@ function PrimaryMenuSidebar() {
 			) }
 			{ supports.plugins && (
 				<SidebarExpandableMenuItem label={ __( 'Plugins' ) } icon={ plugins } to="/plugins">
-					<SidebarMenuItem to="/plugins/manage">{ __( 'Manage plugins' ) }</SidebarMenuItem>
-					<SidebarMenuItem to="/plugins/scheduled-updates">
+					<SidebarMenuItem icon={ menuDot } to="/plugins/manage">
+						{ __( 'Manage plugins' ) }
+					</SidebarMenuItem>
+					<SidebarMenuItem icon={ menuDot } to="/plugins/scheduled-updates">
 						{ __( 'Scheduled updates' ) }
 					</SidebarMenuItem>
 					<SidebarMenuItem
+						icon={ menuDot }
 						href={ wpcomLink( '/plugins' ) }
 						target="_blank"
 						rel="noopener noreferrer"

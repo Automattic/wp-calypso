@@ -3,6 +3,7 @@ import { useDispatch as useDataStoreDispatch, useSelect } from '@wordpress/data'
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useBlogStickersQuery } from 'calypso/blocks/blog-stickers/use-blog-stickers-query';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
 import Main from 'calypso/components/main';
@@ -38,6 +39,9 @@ const SubscribersPage = ( { subscriberId }: Props ) => {
 	const siteId = useSelector( getSelectedSiteId ) ?? null;
 	const isSubscriberIdValid = subscriberId && /^\d+$/.test( subscriberId );
 
+	const { data: blogStickers = [] } = useBlogStickersQuery( siteId );
+	const useComps = blogStickers.includes( 'complimentary-memberships' );
+
 	const initiallyLoadedWithTaskCompletionHash = useRef(
 		window.location.hash === '#building-your-audience-task'
 	);
@@ -68,7 +72,8 @@ const SubscribersPage = ( { subscriberId }: Props ) => {
 	};
 
 	const [ removeComp, setRemoveComp ] = useState< {
-		giftId: number;
+		giftId?: number;
+		compId?: number;
 		planName: string;
 		username: string;
 	} | null >( null );
@@ -83,9 +88,7 @@ const SubscribersPage = ( { subscriberId }: Props ) => {
 						siteId={ siteId }
 						isUnverified={ isUnverified }
 						onGiftSubscription={ onGiftSubscription }
-						onRemoveComp={ ( giftId, planName, username ) =>
-							setRemoveComp( { giftId, planName, username } )
-						}
+						onRemoveComp={ ( params ) => setRemoveComp( params ) }
 						subscriberId={ isSubscriberIdValid ? subscriberId : undefined }
 					/>
 
@@ -94,6 +97,7 @@ const SubscribersPage = ( { subscriberId }: Props ) => {
 							siteId={ siteId ?? 0 }
 							userId={ giftUserId }
 							username={ giftUsername }
+							useComps={ useComps }
 							onClose={ () => setGiftUserId( null ) }
 							onConfirm={ () => setGiftUserId( null ) }
 						/>
@@ -103,8 +107,10 @@ const SubscribersPage = ( { subscriberId }: Props ) => {
 						<RemoveCompModal
 							siteId={ siteId ?? 0 }
 							giftId={ removeComp.giftId }
+							compId={ removeComp.compId }
 							planName={ removeComp.planName }
 							username={ removeComp.username }
+							useComps={ useComps }
 							onClose={ () => setRemoveComp( null ) }
 							onRemoved={ () => setRemoveComp( null ) }
 						/>
