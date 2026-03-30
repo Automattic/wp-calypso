@@ -656,7 +656,7 @@ export class CheckoutThankYou extends Component<
 						primaryPurchase={ purchases[ 0 ] }
 						isEmailVerified={ this.props.isEmailVerified }
 						transferComplete={ this.props.transferComplete }
-						checkoutType={ this.props.checkoutType }
+						checkoutType={ this.props.receipt.data?.checkoutType ?? this.props.checkoutType }
 					/>
 				);
 			} else if ( purchases.length === 1 && isSearch( purchases[ 0 ] ) ) {
