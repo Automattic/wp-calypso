@@ -2023,10 +2023,20 @@ const WPCheckoutWrapper = styled.div< {
 				font-weight: 590;
 				color: ${ colorStudio.colors[ 'Gray 100' ] };
 			}
-			.checkout-step--active .checkout-step__header,
-			.checkout-step--complete .checkout-step__header {
-				margin-block-end: 24px;
+				
+			.checkout-step__header {
+				margin-bottom: 16px;
 			}
+
+			.wp-checkout__review-order-step .checkout-step__header {
+				margin-bottom: 0;
+			}
+
+			.checkout-line-item {
+				padding-top: 24px;
+				padding-bottom: 0;
+			}
+				
 			.wp-checkout__review-order-step .checkout-step__header h2 > span {
 				font-weight: 500;
 			}
@@ -2052,9 +2062,9 @@ const WPCheckoutWrapper = styled.div< {
 				margin-top: 0;
 			}
 			.wp-checkout__review-order-step .checkout-review-order__site {
-				font-size: 13px;
+				font-size: 14px;
 				font-weight: 400;
-				color: ${ colorStudio.colors[ 'Gray 40' ] };
+				color: ${ colorStudio.colors[ 'Gray 50' ] };
 				@media ( ${ props.theme.breakpoints.tabletUp } ) {
 					margin-inline-start: -40px;
 					margin-top: 0;
