@@ -8,6 +8,28 @@ body.is-section-scan {
 		display: flex;
 		gap: 24px;
 	}
+
+	.scan__content > .card {
+		.security-icon {
+			margin: 0 auto;
+			padding: 0;
+		}
+
+		@include break-mobile {
+			display: flex;
+			gap: 24px;
+			align-items: flex-start;
+
+			.scan__header {
+				flex-shrink: 0;
+			}
+
+			.security-icon {
+				width: 48px;
+				margin: 0;
+			}
+		}
+	}
 }
 
 .scan .formatted-header.is-left-align {
