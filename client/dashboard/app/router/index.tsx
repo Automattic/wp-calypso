@@ -73,9 +73,7 @@ const createRouteTree = ( config: AppConfig ) => {
 		children.push( startStoreRoute );
 	}
 
-	if ( config.supports.ssoBridge ) {
-		children.push( ssoBridgeRoute );
-	}
+	children.push( ssoBridgeRoute );
 
 	return rootRoute.addChildren( children );
 };

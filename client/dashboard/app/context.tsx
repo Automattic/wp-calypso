@@ -52,7 +52,6 @@ export type AppConfig = {
 		domainOnlySites: boolean;
 		startStoreRoute?: boolean;
 		siteOverview: SiteOverviewSupports;
-		ssoBridge: boolean;
 	};
 	posthog?: string;
 	optIn: boolean;
@@ -91,7 +90,6 @@ export const APP_CONTEXT_DEFAULT_CONFIG: AppConfig = {
 		siteOverview: {
 			preview: false,
 		},
-		ssoBridge: false,
 	},
 	optIn: false,
 	components: {},

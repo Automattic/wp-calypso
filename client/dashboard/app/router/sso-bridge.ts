@@ -1,5 +1,4 @@
-import { ssoAuthorize } from '@automattic/api-core';
-import { createRoute, createLazyRoute } from '@tanstack/react-router';
+import { createRoute, lazyRouteComponent } from '@tanstack/react-router';
 import { rootRoute } from './root';
 
 export interface SsoBridgeSearchParams {
@@ -23,13 +22,13 @@ export const ssoBridgeRoute = createRoute( {
 				? String( search[ 'broker-sso-auth-redirect' ] )
 				: undefined,
 	} ),
-	beforeLoad: async ( { search, cause } ) => {
+	beforeLoad: ( { search, cause } ) => {
 		if ( cause !== 'enter' ) {
 			return;
 		}
 
 		if ( search[ 'broker-sso-auth-redirect' ] === '1' ) {
-			return;
+			throw new Error( 'SSO authentication redirect is not supported.' );
 		}
 
 		const siteId = search.site_id;
@@ -42,31 +41,7 @@ export const ssoBridgeRoute = createRoute( {
 		if ( ! /^\d+$/.test( siteId ) ) {
 			throw new Error( 'Invalid site_id format' );
 		}
-
-		const data = await ssoAuthorize( Number( siteId ), ssoNonce );
-
-		if ( ! data.sso_url ) {
-			throw new Error( 'Received invalid SSO redirect URL' );
-		}
-
-		let ssoUrl: URL;
-		try {
-			ssoUrl = new URL( data.sso_url );
-		} catch {
-			throw new Error( 'Received invalid SSO redirect URL' );
-		}
-
-		if ( ssoUrl.protocol !== 'https:' ) {
-			throw new Error( 'Received invalid SSO redirect URL' );
-		}
-
-		window.location.replace( ssoUrl.toString() );
-		return new Promise( () => {} );
 	},
-} ).lazy( () =>
-	import( '../sso-bridge' ).then( ( d ) =>
-		createLazyRoute( 'sso-bridge' )( {
-			component: d.default,
-		} )
-	)
-);
+	component: lazyRouteComponent( () => import( '../sso-bridge' ) ),
+	errorComponent: lazyRouteComponent( () => import( '../sso-bridge/error' ) ),
+} );

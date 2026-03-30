@@ -45,7 +45,6 @@ boot( {
 		siteOverview: {
 			preview: ! isEnabled( 'dashboard/omnibar' ),
 		},
-		ssoBridge: false,
 	},
 	optIn: true,
 	components: {
