@@ -17,9 +17,9 @@ const UserSites = ( { user }: UserSitesProps ): JSX.Element | null => {
 	const { ID: userId, user_login: userLogin } = user;
 	const translate = useTranslate();
 	const currentUser = useSelector( getCurrentUser );
-	const { isFetching, data, error } = useUserSitesQuery( userId );
+	const { isLoading, data, error } = useUserSitesQuery( userId );
 
-	if ( isFetching ) {
+	if ( isLoading ) {
 		return (
 			<div className="wp-spinner-wrapper">
 				<Spinner />
@@ -28,7 +28,7 @@ const UserSites = ( { user }: UserSitesProps ): JSX.Element | null => {
 		);
 	}
 
-	if ( error?.message ) {
+	if ( error ) {
 		return (
 			<EmptyContent
 				title={ translate( 'Sorry, something went wrong.' ) }
@@ -64,7 +64,7 @@ const UserSites = ( { user }: UserSitesProps ): JSX.Element | null => {
 			feedId: site.feed_ID ? String( site.feed_ID ) : '',
 			name: site.name,
 			feedUrl: site.URL,
-			image: site.icon?.img || site.icon?.ico,
+			image: site.icon?.img || site.icon?.ico || '',
 		};
 	} );
 

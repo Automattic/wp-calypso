@@ -27,7 +27,7 @@ export default function useUserSitesQuery(
 	userId: number
 ): UseQueryResult< UserSitesResponse, Error > {
 	return useQuery( {
-		queryKey: [ 'user', userId, 'sites' ],
+		queryKey: [ 'reader', 'user', userId, 'sites' ],
 		queryFn: () =>
 			callApi< UserSitesResponse >( {
 				apiNamespace: 'wpcom/v2',

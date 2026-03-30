@@ -27,9 +27,6 @@ jest.mock( 'calypso/reader/recommended-feeds-list', () => ( {
 	),
 } ) );
 
-const mockUseSelector = jest.fn();
-jest.mocked( jest.requireMock< { useSelector: typeof mockUseSelector } >( 'calypso/state' ) );
-
 describe( 'UserSites', () => {
 	const { useSelector } = jest.requireMock( 'calypso/state' );
 	const defaultUser: UserProfileData = {
@@ -47,7 +44,7 @@ describe( 'UserSites', () => {
 	test( 'should render Spinner when fetching sites', () => {
 		jest
 			.mocked( useUserSitesQuery )
-			.mockReturnValue( { isFetching: true } as ReturnType< typeof useUserSitesQuery > );
+			.mockReturnValue( { isLoading: true } as ReturnType< typeof useUserSitesQuery > );
 
 		render( <UserSites user={ defaultUser } /> );
 
@@ -56,8 +53,6 @@ describe( 'UserSites', () => {
 
 	test( 'should render error message when fetch fails', () => {
 		jest.mocked( useUserSitesQuery ).mockReturnValue( {
-			isFetching: false,
-			data: undefined,
 			error: { message: 'Network error' },
 		} as ReturnType< typeof useUserSitesQuery > );
 
@@ -68,9 +63,7 @@ describe( 'UserSites', () => {
 
 	test( 'should render EmptyContent when no sites available', () => {
 		jest.mocked( useUserSitesQuery ).mockReturnValue( {
-			isFetching: false,
 			data: { sites: [], total: 0, primary_site_id: 0 } as UserSitesResponse,
-			error: null,
 		} as ReturnType< typeof useUserSitesQuery > );
 
 		render( <UserSites user={ defaultUser } /> );
@@ -85,9 +78,7 @@ describe( 'UserSites', () => {
 		useSelector.mockReturnValue( { username: 'test_user' } );
 
 		jest.mocked( useUserSitesQuery ).mockReturnValue( {
-			isFetching: false,
 			data: { sites: [], total: 0, primary_site_id: 0 } as UserSitesResponse,
-			error: null,
 		} as ReturnType< typeof useUserSitesQuery > );
 
 		render( <UserSites user={ defaultUser } /> );
@@ -129,9 +120,7 @@ describe( 'UserSites', () => {
 		];
 
 		jest.mocked( useUserSitesQuery ).mockReturnValue( {
-			isFetching: false,
 			data: { sites: mockSites, total: 2, primary_site_id: 1 } as UserSitesResponse,
-			error: null,
 		} as ReturnType< typeof useUserSitesQuery > );
 
 		render( <UserSites user={ defaultUser } /> );
