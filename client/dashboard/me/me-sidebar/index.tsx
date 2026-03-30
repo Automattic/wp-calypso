@@ -58,11 +58,15 @@ export default function MeSidebar() {
 
 function MeMenuSidebar() {
 	const { supports } = useAppContext();
+	const isOmnibarEnabled = isEnabled( 'dashboard/omnibar' );
 
 	return (
 		<SidebarMenu>
-			<SidebarMenuItem icon={ commentAuthorAvatar } to="/me/account">
-				{ __( 'Account' ) }
+			<SidebarMenuItem
+				icon={ commentAuthorAvatar }
+				to={ isOmnibarEnabled ? '/me/account' : '/me/profile' }
+			>
+				{ isOmnibarEnabled ? __( 'Account' ) : __( 'Profile' ) }
 			</SidebarMenuItem>
 			<SidebarMenuItem icon={ settings } to="/me/preferences">
 				{ __( 'Preferences' ) }

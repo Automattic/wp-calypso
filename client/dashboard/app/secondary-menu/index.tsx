@@ -1,5 +1,5 @@
 import { useShouldUseUnifiedAgent } from '@automattic/agents-manager';
-import config from '@automattic/calypso-config';
+import config, { isEnabled } from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useNavigate } from '@tanstack/react-router';
 import {
@@ -249,6 +249,8 @@ function UserProfile() {
 	const navigate = useNavigate();
 	const { recordTracksEvent } = useAnalytics();
 	const [ isLoggingOut, setIsLoggingOut ] = useState( false );
+	const isOmnibarEnabled = isEnabled( 'dashboard/omnibar' );
+	const accountLabel = isOmnibarEnabled ? __( 'Account' ) : __( 'Profile' );
 
 	const handleAccountItemClick = ( itemId: string ) => {
 		let route: AnyRoute | undefined;
@@ -281,7 +283,7 @@ function UserProfile() {
 				render={
 					<Button
 						className="dashboard-secondary-menu__item"
-						label={ __( 'My account' ) }
+						label={ isOmnibarEnabled ? __( 'My account' ) : __( 'My profile' ) }
 						variant="tertiary"
 						icon={
 							user.avatar_URL ? (
@@ -310,7 +312,7 @@ function UserProfile() {
 				<Menu.Group>
 					<Menu.GroupLabel>{ __( 'Account' ) }</Menu.GroupLabel>
 					<Menu.Item onClick={ () => handleAccountItemClick( 'account' ) }>
-						<Menu.ItemLabel>{ __( 'Account' ) }</Menu.ItemLabel>
+						<Menu.ItemLabel>{ accountLabel }</Menu.ItemLabel>
 					</Menu.Item>
 					<Menu.Item onClick={ () => handleAccountItemClick( 'preferences' ) }>
 						<Menu.ItemLabel>{ __( 'Preferences' ) }</Menu.ItemLabel>
