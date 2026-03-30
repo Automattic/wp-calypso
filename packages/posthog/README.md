@@ -24,6 +24,7 @@ Pass an optional third argument to customize session recording masking. By defau
 import { init } from '@automattic/posthog';
 
 init( 'your-api-key', { ID: 12345 }, {
+	debug: true, // enables PostHog console logging and exposes config on window.__posthogConfig
 	session_recording: {
 		maskAllInputs: true,
 		maskTextSelector: '*',

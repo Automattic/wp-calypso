@@ -10,6 +10,7 @@ export interface PostHogUser {
 }
 
 export interface PostHogOverrides {
+	debug?: boolean;
 	session_recording?: {
 		maskAllInputs?: boolean;
 		maskTextSelector?: string;
@@ -41,18 +42,12 @@ export function init( apiKey: string, user?: PostHogUser, overrides?: PostHogOve
 
 	const sessionRecording = overrides?.session_recording;
 
-	// Expose masking config for debugging in the browser console.
-	( window as unknown as Record< string, unknown > ).__posthogMasking = {
-		maskTextFn: sessionRecording?.maskTextFn,
-		blockSelector: sessionRecording?.blockSelector,
-	};
-
-	posthog.init( apiKey, {
+	const posthogConfig = {
 		api_host: 'https://us.i.posthog.com',
 		autocapture: true,
 		defaults: '2026-01-30',
 		capture_pageleave: true,
-		debug: false,
+		debug: overrides?.debug ?? false,
 		session_recording: {
 			maskAllInputs: sessionRecording?.maskAllInputs ?? true,
 			maskTextSelector: sessionRecording?.maskTextSelector ?? '*',
@@ -67,7 +62,13 @@ export function init( apiKey: string, user?: PostHogUser, overrides?: PostHogOve
 				isIdentifiedID: true,
 			},
 		} ),
-	} );
+	};
+
+	if ( overrides?.debug ) {
+		( window as unknown as Record< string, unknown > ).__posthogConfig = posthogConfig;
+	}
+
+	posthog.init( apiKey, posthogConfig );
 
 	if ( user?.ID ) {
 		posthog.identify( String( user.ID ), {
