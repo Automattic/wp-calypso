@@ -22,8 +22,8 @@ type SubscriberDetailsProps = {
 	newsletterCategories?: NewsletterCategory[];
 	onClose?: () => void;
 	onUnsubscribe?: ( subscriber: Subscriber ) => void;
-	onGiftSubscription?: ( subscriber: Subscriber ) => void;
-	onRemoveComp?: ( giftId: number, planName: string ) => void;
+	onCompSubscription?: ( subscriber: Subscriber ) => void;
+	onRemoveComp?: ( params: { planName: string; compId?: number } ) => void;
 };
 
 const SubscriberDetails = ( {
@@ -35,7 +35,7 @@ const SubscriberDetails = ( {
 	newsletterCategories,
 	onClose,
 	onUnsubscribe,
-	onGiftSubscription,
+	onCompSubscription,
 	onRemoveComp,
 }: SubscriberDetailsProps ) => {
 	const translate = useTranslate();
@@ -54,13 +54,13 @@ const SubscriberDetails = ( {
 	} );
 
 	const displayPaidUpgrade = ( subscriptionPlan: SubscriptionPlanData, index: number ) => {
-		if ( subscriptionPlan.is_gift ) {
+		if ( subscriptionPlan.is_complimentary ) {
 			return (
 				<div className="subscriber-details__content-value" key={ index }>
 					{ translate( 'Comp', {
 						comment: 'Short for "complimentary" — a free subscription granted by the site creator',
 					} ) }
-					{ onRemoveComp && subscriptionPlan.gift_id && (
+					{ onRemoveComp && subscriptionPlan.comp_id && (
 						<Button
 							className="subscriber-details__remove-comp-button"
 							variant="tertiary"
@@ -70,7 +70,10 @@ const SubscriberDetails = ( {
 								} )
 							) }
 							onClick={ () =>
-								onRemoveComp( subscriptionPlan.gift_id!, subscriptionPlan.title ?? '' )
+								onRemoveComp( {
+									planName: subscriptionPlan.title ?? '',
+									compId: subscriptionPlan.comp_id,
+								} )
 							}
 						>
 							<Icon icon={ trash } size={ 18 } />
@@ -159,7 +162,7 @@ const SubscriberDetails = ( {
 						{ subscriptionPlans &&
 							subscriptionPlans.map( ( subscriptionPlan, index ) => (
 								<div className="subscriber-details__content-value" key={ index }>
-									{ ! subscriptionPlan.is_gift && subscriptionPlan.title
+									{ ! subscriptionPlan.is_complimentary && subscriptionPlan.title
 										? `${ subscriptionPlan.title } - `
 										: '' }
 									{ subscriptionPlan.plan }
@@ -197,12 +200,12 @@ const SubscriberDetails = ( {
 					) }
 				</div>
 			</div>
-			{ ( onGiftSubscription || onUnsubscribe ) && (
+			{ ( onCompSubscription || onUnsubscribe ) && (
 				<div className="subscriber-details__footer">
-					{ onGiftSubscription && (
+					{ onCompSubscription && (
 						<Button
-							className="subscriber-details__gift-button"
-							onClick={ () => onGiftSubscription( subscriber ) }
+							className="subscriber-details__comp-button"
+							onClick={ () => onCompSubscription( subscriber ) }
 							variant="primary"
 						>
 							{ translate( 'Comp a subscription' ) }

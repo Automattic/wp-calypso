@@ -62,22 +62,22 @@ const HELP_CENTER_STORE = HelpCenter.register();
 type SubscriberDataViewsProps = {
 	siteId: number | null;
 	isUnverified: boolean;
-	onGiftSubscription: ( subscriber: Subscriber ) => void;
-	onRemoveComp: ( giftId: number, planName: string, username: string ) => void;
+	onCompSubscription: ( subscriber: Subscriber ) => void;
+	onRemoveComp: ( params: { planName: string; username: string; compId?: number } ) => void;
 	subscriberId?: string;
 };
 
 const SubscriptionTypeCell = ( { subscriber }: { subscriber: Subscriber } ) => {
 	const plans = useSubscriptionPlans( subscriber );
 
-	// If there's a paid (non-gift, non-free) plan, show only that.
-	const paidPlans = plans.filter( ( p ) => ! p.is_gift && ! p.is_free );
+	// If there's a paid (non-comp, non-free) plan, show only that.
+	const paidPlans = plans.filter( ( p ) => ! p.is_complimentary && ! p.is_free );
 	if ( paidPlans.length > 0 ) {
 		return paidPlans.map( ( plan, index ) => <div key={ index }>{ plan.plan }</div> );
 	}
 
 	// If there are any comps, show just "Comp" (no title details).
-	const hasComp = plans.some( ( p ) => p.is_gift );
+	const hasComp = plans.some( ( p ) => p.is_complimentary );
 	if ( hasComp ) {
 		return (
 			<div>
@@ -142,7 +142,7 @@ const defaultView: ViewTable = {
 
 export default function SubscriberDataViews( {
 	siteId,
-	onGiftSubscription,
+	onCompSubscription,
 	onRemoveComp,
 	isUnverified,
 	subscriberId,
@@ -506,7 +506,7 @@ export default function SubscriberDataViews( {
 
 		if ( couponsAndGiftsEnabled ) {
 			baseActions.push( {
-				id: 'gift',
+				id: 'comp',
 				label: translate( 'Comp a subscription', {
 					textOnly: true,
 					comment:
@@ -520,7 +520,7 @@ export default function SubscriberDataViews( {
 						return;
 					}
 
-					onGiftSubscription( subscriber );
+					onCompSubscription( subscriber );
 				},
 				isPrimary: false,
 			} );
@@ -531,7 +531,7 @@ export default function SubscriberDataViews( {
 		selectedSubscriber,
 		handleSubscriberSelection,
 		handleUnsubscribe,
-		onGiftSubscription,
+		onCompSubscription,
 		couponsAndGiftsEnabled,
 	] );
 
@@ -769,11 +769,15 @@ export default function SubscriberDataViews( {
 							subscriptionId={ getSubscriptionId( subscriberDetails ) }
 							onClose={ handleClose }
 							onUnsubscribe={ ( subscriber ) => handleUnsubscribe( [ subscriber ] ) }
-							onGiftSubscription={ couponsAndGiftsEnabled ? onGiftSubscription : undefined }
+							onCompSubscription={ couponsAndGiftsEnabled ? onCompSubscription : undefined }
 							onRemoveComp={
 								couponsAndGiftsEnabled
-									? ( giftId, planName ) =>
-											onRemoveComp( giftId, planName, subscriberDetails.display_name )
+									? ( { planName, compId } ) =>
+											onRemoveComp( {
+												planName,
+												username: subscriberDetails.display_name,
+												compId,
+											} )
 									: undefined
 							}
 							newsletterCategoriesEnabled={ subscribedNewsletterCategoriesData?.enabled }

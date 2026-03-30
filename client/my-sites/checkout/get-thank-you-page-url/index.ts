@@ -318,10 +318,13 @@ export default function getThankYouPageUrl( {
 
 	// Unified affiliate + paid media siteless checkout - handles post-checkout site creation flow
 	if ( sitelessCheckoutType === 'unified' ) {
-		// If there is an ecommerce plan in cart, redirect to checkout thank you page
+		// If there is an ecommerce plan in cart, redirect to checkout thank you page.
+		// Use ':siteId' as a placeholder when siteId is not yet known (redirect payment methods
+		// like PayPal generate this URL before the new site is created). The pending page will
+		// replace ':siteId' with the actual blogId from the receipt.
 		if ( cart && hasEcommercePlan( cart ) ) {
 			debug( 'redirecting to Commerce thank you' );
-			return `/checkout/thank-you/${ siteId }/${ receiptIdOrPlaceholder }`;
+			return `/checkout/thank-you/${ siteId ?? ':siteId' }/${ receiptIdOrPlaceholder }`;
 		}
 
 		// Get the post-checkout destination URL from cookie (set during onboarding-unified plans step)
@@ -332,7 +335,15 @@ export default function getThankYouPageUrl( {
 			urlFromCookie.includes( '/setup/onboarding-unified/post-checkout-onboarding' )
 		) {
 			debug( 'redirecting to the saved post-checkout destination' );
-			return addQueryArgs( { siteId }, urlFromCookie );
+			if ( siteId ) {
+				return addQueryArgs( { siteId }, urlFromCookie );
+			}
+			// siteId is not yet known (redirect payment methods like PayPal generate this URL
+			// before the new site is created). Append ':siteId' as a literal placeholder
+			// rather than using addQueryArgs, which would percent-encode the colon and prevent
+			// the pending page from detecting and replacing it.
+			const separator = urlFromCookie.includes( '?' ) ? '&' : '?';
+			return `${ urlFromCookie }${ separator }siteId=:siteId`;
 		}
 
 		// Fallback for unified checkout - let the pending page construct the URL

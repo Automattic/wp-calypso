@@ -4,11 +4,11 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import ProductsSelector from 'calypso/my-sites/earn/components/add-edit-coupon-modal/products-selector';
 import { useDispatch } from 'calypso/state';
-import { requestAddGift } from 'calypso/state/memberships/gifts/actions';
+import { requestAddComp } from 'calypso/state/memberships/comps/actions';
 
 import './style.scss';
 
-type GiftSubscriptionModalProps = {
+type CompSubscriptionModalProps = {
 	userId: number | string;
 	siteId: number;
 	username: string;
@@ -16,19 +16,18 @@ type GiftSubscriptionModalProps = {
 	onConfirm: () => void;
 };
 
-type Gift = {
-	gift_id: number | null;
+type Comp = {
 	user_id: number | string;
 	plan_id: number;
 };
 
-const GiftSubscriptionModal = ( {
+const CompSubscriptionModal = ( {
 	siteId,
 	userId,
 	username,
 	onClose,
 	onConfirm,
-}: GiftSubscriptionModalProps ) => {
+}: CompSubscriptionModalProps ) => {
 	const translate = useTranslate();
 
 	const dispatch = useDispatch();
@@ -42,14 +41,8 @@ const GiftSubscriptionModal = ( {
 		} );
 	}, [ siteId ] );
 
-	const giftSubscription = ( plan_id: number, user_id: number | string, username: string ) => {
+	const addCompSubscription = ( plan_id: number, user_id: number | string, username: string ) => {
 		setIsSubmitting( true );
-
-		const giftDetails: Gift = {
-			gift_id: null,
-			plan_id: plan_id,
-			user_id: user_id,
-		};
 
 		recordTracksEvent( 'calypso_subscribers_comp_modal_confirm', {
 			site_id: siteId,
@@ -58,24 +51,26 @@ const GiftSubscriptionModal = ( {
 			is_email_subscriber: typeof user_id !== 'number',
 		} );
 
-		dispatch(
-			requestAddGift(
-				siteId,
-				giftDetails,
-				translate( 'Gave complimentary subscription to user "%(username)s".', {
-					args: {
-						username: username,
-					},
-				} ),
-				( { success }: { success: boolean } ) => {
-					setIsSubmitting( false );
-					if ( success ) {
-						onConfirm();
-					}
-					onClose();
-				}
-			)
-		);
+		const onComplete = ( { success }: { success: boolean } ) => {
+			setIsSubmitting( false );
+			if ( success ) {
+				onConfirm();
+			}
+			onClose();
+		};
+
+		const noticeText = translate( 'Gave complimentary subscription to user "%(username)s".', {
+			args: {
+				username: username,
+			},
+		} );
+
+		const compDetails: Comp = {
+			plan_id: plan_id,
+			user_id: user_id,
+		};
+
+		dispatch( requestAddComp( siteId, compDetails, noticeText, onComplete ) );
 	};
 
 	return (
@@ -98,7 +93,7 @@ const GiftSubscriptionModal = ( {
 				<Button
 					variant="primary"
 					isBusy={ isSubmitting }
-					onClick={ () => giftSubscription( planId, userId, username ) }
+					onClick={ () => addCompSubscription( planId, userId, username ) }
 					disabled={ planId === 0 || isSubmitting }
 				>
 					{ translate( 'Confirm' ) }
@@ -108,4 +103,4 @@ const GiftSubscriptionModal = ( {
 	);
 };
 
-export default GiftSubscriptionModal;
+export default CompSubscriptionModal;

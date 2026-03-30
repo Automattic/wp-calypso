@@ -59,6 +59,7 @@ export function createPurchaseObject( purchase: RawPurchase ): Purchase {
 		isInAppPurchase: Boolean( purchase.is_iap_purchase ),
 		isRechargeable: Boolean( purchase.is_rechargeable ),
 		isRefundable: Boolean( purchase.is_refundable ),
+		isWithinInitialRefundWindow: Boolean( purchase.is_within_initial_refund_window ),
 		isRenewable: Boolean( purchase.is_renewable ),
 		isRenewal: Boolean( purchase.is_renewal ),
 		isWooExpressTrial: Boolean( purchase.is_woo_express_trial ),
