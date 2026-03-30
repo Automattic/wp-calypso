@@ -355,6 +355,7 @@ class ScanPage extends Component< Props > {
 
 		const content = (
 			<>
+				<TimeMismatchWarning siteId={ siteId } settingsUrl={ siteSettingsUrl } />
 				<QueryJetpackScan siteId={ siteId } />
 				<ScanNavigation section="scanner" />
 				<div className="scan__content">{ this.renderScanState() }</div>
@@ -373,7 +374,6 @@ class ScanPage extends Component< Props > {
 				<DocumentHead title="Scan" />
 				{ isJetpackPlatform && <SidebarNavigation /> }
 				<PageViewTracker path="/scan/:site" title="Scanner" />
-				<TimeMismatchWarning siteId={ siteId } settingsUrl={ siteSettingsUrl } />
 				{ isWpcom ? (
 					<Page
 						hasPadding
