@@ -41,6 +41,7 @@ export function createReceiptObject(
 		priceInteger: data.price_integer,
 		priceFloat: data.price_float,
 		isGravatarDomain: Boolean( data.is_gravatar_domain ),
+		checkoutType: 'checkout_type' in data ? data.checkout_type : undefined,
 		purchases: purchases.map( ( purchase ) => {
 			return {
 				delayedProvisioning: Boolean( purchase.delayed_provisioning ),

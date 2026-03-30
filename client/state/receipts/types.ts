@@ -38,6 +38,7 @@ export interface RawReceiptData {
 	currency: string;
 	purchases: TransactionResponsePurchase[] | undefined | false;
 	is_gravatar_domain: boolean;
+	checkout_type?: string;
 }
 
 export interface ReceiptData {
@@ -49,6 +50,7 @@ export interface ReceiptData {
 	purchases: ReceiptPurchase[];
 	failedPurchases: FailedReceiptPurchase[];
 	isGravatarDomain: boolean;
+	checkoutType?: string;
 }
 
 export interface ReceiptState {
