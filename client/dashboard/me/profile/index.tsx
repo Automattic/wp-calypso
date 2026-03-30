@@ -13,7 +13,6 @@ export default function Profile() {
 			size="small"
 			header={
 				<PageHeader
-					title={ __( 'Profile' ) }
 					description={
 						<>
 							{ __( 'Set your name, bio, and other public-facing information.' ) }{ ' ' }
