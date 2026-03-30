@@ -141,8 +141,7 @@ export class ReaderSidebar extends Component {
 		} );
 	};
 
-	handleSidebarMenuClick = ( key ) => ( event, path ) => {
-		const handler = TrackingKeys[ key ];
+	handleSidebarMenuClick = ( handler ) => ( event, path ) => {
 		if ( handler ) {
 			recordAction( handler.action );
 			recordGaEvent( handler.gaEvent );
@@ -175,7 +174,7 @@ export class ReaderSidebar extends Component {
 							selected: path.startsWith( '/reader/search' ),
 						} ) }
 						label={ translate( 'Search' ) }
-						onNavigate={ this.handleSidebarMenuClick( 'search' ) }
+						onNavigate={ this.handleSidebarMenuClick( TrackingKeys.search ) }
 						customIcon={ <ReaderSearchIcon /> }
 						link="/reader/search"
 					/>
@@ -184,14 +183,14 @@ export class ReaderSidebar extends Component {
 							selected: path.startsWith( '/discover' ),
 						} ) }
 						label={ translate( 'Discover' ) }
-						onNavigate={ this.handleSidebarMenuClick( 'discover' ) }
+						onNavigate={ this.handleSidebarMenuClick( TrackingKeys.discover ) }
 						customIcon={ <ReaderDiscoverIcon viewBox="0 0 24 24" /> }
 						link="/discover"
 					/>
 
 					<SidebarItem
 						label={ translate( 'Likes' ) }
-						onNavigate={ this.handleSidebarMenuClick( 'likeActivity' ) }
+						onNavigate={ this.handleSidebarMenuClick( TrackingKeys.likeActivity ) }
 						customIcon={ <ReaderLikesIcon viewBox="0 0 24 24" /> }
 						link="/activities/likes"
 						className={ ReaderSidebarHelper.itemLinkClass( '/activities/likes', path, {
@@ -204,7 +203,7 @@ export class ReaderSidebar extends Component {
 							'sidebar-streams__conversations': true,
 						} ) }
 						label={ translate( 'Conversations' ) }
-						onNavigate={ this.handleSidebarMenuClick( 'conversations' ) }
+						onNavigate={ this.handleSidebarMenuClick( TrackingKeys.conversations ) }
 						customIcon={ <ReaderConversationsIcon iconSize={ 24 } viewBox="0 0 24 24" /> }
 						link="/reader/conversations"
 					/>
@@ -243,7 +242,7 @@ export class ReaderSidebar extends Component {
 								'sidebar-streams__conversations': true,
 							} ) }
 							label="A8C Conversations"
-							onNavigate={ this.handleSidebarMenuClick( 'a8cConversations' ) }
+							onNavigate={ this.handleSidebarMenuClick( TrackingKeys.a8cConversations ) }
 							link="/reader/conversations/a8c"
 							customIcon={ <ReaderA8cConversationsIcon size={ 24 } viewBox="-2 -2 24 24" /> }
 						/>
@@ -263,7 +262,7 @@ export class ReaderSidebar extends Component {
 							'sidebar-streams__manage-subscriptions': true,
 						} ) }
 						label={ translate( 'Manage Subscriptions' ) }
-						onNavigate={ this.handleSidebarMenuClick( 'manageSubscriptions' ) }
+						onNavigate={ this.handleSidebarMenuClick( TrackingKeys.manageSubscriptions ) }
 						customIcon={ <ReaderManageSubscriptionsIcon size={ 24 } viewBox="0 0 24 24" /> }
 						link="/reader/subscriptions"
 					/>
