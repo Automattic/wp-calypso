@@ -80,20 +80,20 @@ export const meIndexRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: '/',
 	beforeLoad: () => {
-		throw redirect( { to: '/me/profile' } );
+		throw redirect( { to: '/me/account' } );
 	},
 } );
 
-export const profileRoute = createRoute( {
+export const accountRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Profile' ),
+				title: __( 'Account' ),
 			},
 		],
 	} ),
 	getParentRoute: () => meRoute,
-	path: 'profile',
+	path: 'account',
 	loader: async () => {
 		await Promise.all( [
 			queryClient.ensureQueryData( userSettingsQuery() ),
@@ -102,7 +102,7 @@ export const profileRoute = createRoute( {
 	},
 } ).lazy( () =>
 	import( '../../me/profile' ).then( ( d ) =>
-		createLazyRoute( 'profile' )( {
+		createLazyRoute( 'account' )( {
 			component: d.default,
 		} )
 	)
@@ -920,6 +920,14 @@ export const blockedSitesLegacyRedirectRoute = createRoute( {
 	},
 } );
 
+export const profileLegacyRedirectRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'profile',
+	beforeLoad: () => {
+		throw redirect( { to: '/me/account' } );
+	},
+} );
+
 export const mcpRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -1052,7 +1060,8 @@ export const createMeRoutes = ( config: AppConfig ) => {
 	}
 	const meRoutes: AnyRoute[] = [
 		meIndexRoute,
-		profileRoute,
+		accountRoute,
+		profileLegacyRedirectRoute,
 		preferencesChildren.length > 0
 			? preferencesRoute.addChildren( preferencesChildren )
 			: preferencesRoute,

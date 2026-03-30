@@ -35,7 +35,7 @@ import { useAuth } from '../auth';
 import { useAppContext } from '../context';
 import { useHelpCenter } from '../help-center';
 import Notifications from '../notifications';
-import { billingRoute, profileRoute, preferencesRoute, securityRoute } from '../router/me';
+import { billingRoute, accountRoute, preferencesRoute, securityRoute } from '../router/me';
 import type { AnyRoute } from '@tanstack/react-router';
 
 import './style.scss';
@@ -243,7 +243,7 @@ function Help() {
 	);
 }
 
-// User profile dropdown component
+// User account dropdown component
 function UserProfile() {
 	const { user, logout } = useAuth();
 	const navigate = useNavigate();
@@ -256,8 +256,8 @@ function UserProfile() {
 			case 'billing':
 				route = billingRoute;
 				break;
-			case 'profile':
-				route = profileRoute;
+			case 'account':
+				route = accountRoute;
 				break;
 			case 'preferences':
 				route = preferencesRoute;
@@ -281,7 +281,7 @@ function UserProfile() {
 				render={
 					<Button
 						className="dashboard-secondary-menu__item"
-						label={ __( 'My profile' ) }
+						label={ __( 'My account' ) }
 						variant="tertiary"
 						icon={
 							user.avatar_URL ? (
@@ -309,8 +309,8 @@ function UserProfile() {
 				<Menu.Separator />
 				<Menu.Group>
 					<Menu.GroupLabel>{ __( 'Account' ) }</Menu.GroupLabel>
-					<Menu.Item onClick={ () => handleAccountItemClick( 'profile' ) }>
-						<Menu.ItemLabel>{ __( 'Profile' ) }</Menu.ItemLabel>
+					<Menu.Item onClick={ () => handleAccountItemClick( 'account' ) }>
+						<Menu.ItemLabel>{ __( 'Account' ) }</Menu.ItemLabel>
 					</Menu.Item>
 					<Menu.Item onClick={ () => handleAccountItemClick( 'preferences' ) }>
 						<Menu.ItemLabel>{ __( 'Preferences' ) }</Menu.ItemLabel>

@@ -56,7 +56,7 @@ export default function AlternativesModal( {
 		},
 		{
 			text: __( 'Change your username' ),
-			to: '/me/profile',
+			to: '/me/account',
 			supportLink: localizeUrl( 'https://wordpress.com/support/change-your-username/' ),
 			useRouterButton: true,
 		},
