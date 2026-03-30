@@ -18,6 +18,7 @@ type ProductsSelectorProps = {
 	initialSelectedList: number[];
 	allowMultiple: boolean;
 	showLabel?: boolean;
+	excludeTitles?: string[];
 };
 
 const ProductsSelector = ( {
@@ -25,14 +26,19 @@ const ProductsSelector = ( {
 	initialSelectedList,
 	allowMultiple,
 	showLabel = true,
+	excludeTitles,
 }: ProductsSelectorProps ) => {
 	const [ selectedPlanIds, setSelectedPlanIds ] = useState( initialSelectedList ?? [] );
 
 	const selectedSiteId = useSelector( getSelectedSiteId );
 
-	const products: Product[] = useSelector( ( state ) =>
+	const allProducts: Product[] = useSelector( ( state ) =>
 		getProductsForSiteId( state, selectedSiteId )
 	);
+
+	const products = excludeTitles?.length
+		? allProducts.filter( ( product ) => ! excludeTitles.includes( product.title ?? '' ) )
+		: allProducts;
 
 	const onSelectProduct = ( event: ChangeEvent< HTMLInputElement > ) => {
 		const productId =

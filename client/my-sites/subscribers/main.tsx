@@ -62,9 +62,13 @@ const SubscribersPage = ( { subscriberId }: Props ) => {
 
 	const [ compUserId, setCompUserId ] = useState< number | string | null >( null );
 	const [ compUsername, setCompUsername ] = useState( '' );
-	const onCompSubscription = ( { user_id, email_address, display_name }: Subscriber ) => {
+	const [ compedPlanTitles, setCompedPlanTitles ] = useState< string[] >( [] );
+	const onCompSubscription = ( { user_id, email_address, display_name, plans }: Subscriber ) => {
 		setCompUserId( user_id || email_address || null );
 		setCompUsername( display_name );
+		setCompedPlanTitles(
+			( plans ?? [] ).filter( ( plan ) => plan.is_comp ).map( ( plan ) => plan.title )
+		);
 	};
 
 	const [ removeComp, setRemoveComp ] = useState< {
@@ -92,6 +96,7 @@ const SubscribersPage = ( { subscriberId }: Props ) => {
 							siteId={ siteId ?? 0 }
 							userId={ compUserId }
 							username={ compUsername }
+							compedPlanTitles={ compedPlanTitles }
 							onClose={ () => setCompUserId( null ) }
 							onConfirm={ () => setCompUserId( null ) }
 						/>
