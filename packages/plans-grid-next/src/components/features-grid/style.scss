@@ -419,6 +419,10 @@
 	padding: 0 20px 12px;
 	text-align: left;
 
+	.is-plan-differentiators-experiment & {
+		padding-inline-end: 12px;
+	}
+
 	&.plan-features-2023-grid__item-available {
 		display: flex;
 		flex-direction: column;
