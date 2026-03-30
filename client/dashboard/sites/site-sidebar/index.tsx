@@ -34,6 +34,7 @@ import {
 	SidebarMenuItem,
 } from '../../components/sidebar';
 import { hasHostingFeature } from '../../utils/site-features';
+import { isSiteMigrationInProgress } from '../../utils/site-status';
 import { hasSiteTrialEnded } from '../../utils/site-trial';
 import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
@@ -61,7 +62,7 @@ export default function SiteSidebar() {
 					<SiteSwitcherItem site={ site } />
 					{ canSwitchEnvironment( site ) && <SidebarEnvironmentSwitcher site={ site } /> }
 				</SidebarMenu>
-				<SiteMenuSidebar site={ site } />
+				{ ! isSiteMigrationInProgress( site ) && <SiteMenuSidebar site={ site } /> }
 			</VStack>
 		</VStack>
 	);
