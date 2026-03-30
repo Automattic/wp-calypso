@@ -2,7 +2,7 @@ import { userSettingsQuery, userSettingsMutation } from '@automattic/api-queries
 import config from '@automattic/calypso-config';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { Icon, __experimentalVStack as VStack, ToggleControl } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { seen, pencil, notAllowed, connection } from '@wordpress/icons';
 import {
 	getAccountMcpAbilities,
@@ -32,30 +32,38 @@ interface McpAbility {
 
 function getReadBadge( tools: Array< [ string, McpAbility ] > ) {
 	if ( tools.length === 0 ) {
-		return { text: __( 'All enabled' ), intent: 'info' as const };
+		return { text: __( 'All enabled' ), intent: 'success' as const };
 	}
 	const enabledCount = tools.filter( ( [ , tool ] ) => tool.enabled ).length;
 	if ( enabledCount === tools.length ) {
-		return { text: __( 'All enabled' ), intent: 'info' as const };
+		return { text: __( 'All enabled' ), intent: 'success' as const };
 	}
 	if ( enabledCount === 0 ) {
 		return { text: __( 'None enabled' ) };
 	}
-	return { text: `${ enabledCount } of ${ tools.length }`, intent: 'info' as const };
+	return {
+		/* translators: %1$d is the number of enabled tools, %2$d is the total number of tools */
+		text: sprintf( __( '%1$d of %2$d enabled' ), enabledCount, tools.length ),
+		intent: 'info' as const,
+	};
 }
 
 function getWriteBadge( tools: Array< [ string, McpAbility ] > ) {
 	if ( tools.length === 0 ) {
-		return { text: __( 'All enabled' ), intent: 'info' as const };
+		return { text: __( 'All enabled' ), intent: 'success' as const };
 	}
 	const enabledCount = tools.filter( ( [ , tool ] ) => tool.enabled ).length;
 	if ( enabledCount === tools.length ) {
-		return { text: __( 'All enabled' ), intent: 'info' as const };
+		return { text: __( 'All enabled' ), intent: 'success' as const };
 	}
 	if ( enabledCount === 0 ) {
 		return { text: __( 'Disabled' ) };
 	}
-	return { text: `${ enabledCount } of ${ tools.length }`, intent: 'info' as const };
+	return {
+		/* translators: %1$d is the number of enabled tools, %2$d is the total number of tools */
+		text: sprintf( __( '%1$d of %2$d enabled' ), enabledCount, tools.length ),
+		intent: 'info' as const,
+	};
 }
 
 function McpComponent() {
@@ -130,7 +138,7 @@ function McpComponent() {
 				<PageHeader
 					title={ __( 'AI and MCP' ) }
 					description={ __(
-						'Allow external AI agents to access your WordPress.com account and sites via MCP.'
+						'Control how AI assistants interact with your WordPress.com account and sites.'
 					) }
 					prefix={ <Breadcrumbs length={ 2 } /> }
 				/>

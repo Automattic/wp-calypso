@@ -1,4 +1,5 @@
 import {
+	disableFormEmailNotifications,
 	labelFormFieldBlock,
 	makeSelectorFromBlockName,
 	validatePublishedFormFields,
@@ -33,6 +34,8 @@ export class ContactFormFlow implements BlockFlow {
 	 * @param {EditorContext} context The current context for the editor at the point of test execution
 	 */
 	async configure( context: EditorContext ): Promise< void > {
+		await disableFormEmailNotifications( context.page, context.addedBlockLocator );
+
 		// Name and Email are common fields shared amongst all Form patterns.
 		// So let's make them unique here!
 		await labelFormFieldBlock( context.addedBlockLocator, {

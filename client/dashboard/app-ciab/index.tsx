@@ -43,12 +43,15 @@ boot( {
 		plugins: false,
 		commandPalette: false,
 		domainOnlySites: false,
+		startStoreRoute: true,
+		siteOverview: {
+			preview: true,
+		},
 	},
 	optIn: false,
 	components: {
 		sites: () => import( '../sites-ciab' ),
 		siteSwitcher: () => import( '../sites-ciab/site-switcher' ),
-		siteSwitcherV2: () => import( '../sites-ciab/site-switcher-v2' ),
 	},
 	queries: {
 		sitesQuery: ( fetchSitesOptions?: FetchSitesOptions ) =>

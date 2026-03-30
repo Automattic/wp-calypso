@@ -1,8 +1,7 @@
 import { userSettingsQuery } from '@automattic/api-queries';
+import { BigSkyLogo } from '@automattic/components/src/logos/big-sky-logo';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { connection } from '@wordpress/icons';
 import { hasEnabledAccountTools } from '../../../me/mcp/utils';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 
@@ -22,7 +21,7 @@ export default function PreferencesAiMcp() {
 			to="/me/preferences/mcp"
 			title={ __( 'AI and MCP' ) }
 			description={ __( 'Configure how AI agents access your WordPress.com data.' ) }
-			decoration={ <Icon icon={ connection } size={ 24 } /> }
+			decoration={ <BigSkyLogo.CentralLogo heartless size={ 24 } /> }
 			badges={ badges }
 		/>
 	);

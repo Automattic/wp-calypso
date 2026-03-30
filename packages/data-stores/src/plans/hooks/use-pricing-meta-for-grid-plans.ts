@@ -117,6 +117,7 @@ const usePricingMetaForGridPlans = ( {
 					discountedPrice: Plans.PlanPricing[ 'discountedPrice' ];
 					currencyCode: Plans.PlanPricing[ 'currencyCode' ];
 					introOffer: Plans.PlanPricing[ 'introOffer' ];
+					renewalPrice?: Plans.PlanPricing[ 'originalPrice' ];
 				};
 		  }
 		| null = null;
@@ -186,17 +187,35 @@ const usePricingMetaForGridPlans = ( {
 
 					/**
 					 * Ensure the spotlight (current) plan shows the price with which the plan was purchased.
+					 * When the purchase has an active intro offer, use the intro offer price (what the
+					 * user is actually paying this billing term) instead of the renewal price.
 					 */
+					let renewalPrice: Plans.PlanPricing[ 'originalPrice' ] | undefined;
+
 					if ( purchasedPlan ) {
+						const hasActiveIntroOffer = purchasedPlan.introductoryOffer?.isWithinPeriod;
+						const currentTermPrice = hasActiveIntroOffer
+							? purchasedPlan.introductoryOffer!.costPerIntervalInteger
+							: purchasedPlan.priceInteger;
 						const isMonthly = purchasedPlan.billPeriodDays === PLAN_MONTHLY_PERIOD;
 
-						if ( isMonthly && monthlyPrice !== purchasedPlan.priceInteger ) {
-							monthlyPrice = purchasedPlan.priceInteger;
-							fullPrice = parseFloat( ( purchasedPlan.priceInteger * 12 ).toFixed( 2 ) );
-						} else if ( fullPrice !== purchasedPlan.priceInteger ) {
+						if ( isMonthly && monthlyPrice !== currentTermPrice ) {
+							monthlyPrice = currentTermPrice;
+							fullPrice = parseFloat( ( currentTermPrice * 12 ).toFixed( 2 ) );
+						} else if ( fullPrice !== currentTermPrice ) {
 							const term = getTermFromDuration( purchasedPlan.billPeriodDays ) || '';
-							monthlyPrice = calculateMonthlyPrice( term, purchasedPlan.priceInteger );
-							fullPrice = purchasedPlan.priceInteger;
+							monthlyPrice = calculateMonthlyPrice( term, currentTermPrice );
+							fullPrice = currentTermPrice;
+						}
+
+						if ( hasActiveIntroOffer ) {
+							const renewalTerm = getTermFromDuration( purchasedPlan.billPeriodDays ) || '';
+							renewalPrice = {
+								monthly: isMonthly
+									? purchasedPlan.priceInteger
+									: calculateMonthlyPrice( renewalTerm, purchasedPlan.priceInteger ),
+								full: purchasedPlan.priceInteger,
+							};
 						}
 					}
 
@@ -214,6 +233,7 @@ const usePricingMetaForGridPlans = ( {
 							currencyCode: purchasedPlan
 								? purchasedPlan?.currencyCode
 								: plan?.pricing?.currencyCode,
+							...( renewalPrice && { renewalPrice } ),
 						},
 					];
 				}
@@ -366,6 +386,7 @@ const usePricingMetaForGridPlans = ( {
 					currencyCode: planPrices?.[ planSlug ]?.currencyCode,
 					expiry: sitePlans.data?.[ planSlug ]?.expiry,
 					introOffer: planPrices?.[ planSlug ]?.introOffer,
+					renewalPrice: planPrices?.[ planSlug ]?.renewalPrice,
 				},
 			} ),
 			{} as { [ planSlug in PlanSlug ]?: Plans.PricingMetaForGridPlan }

@@ -18,8 +18,10 @@ import { bumpStat } from '../analytics';
 import CommandPalette from '../command-palette';
 import { useAppContext } from '../context';
 import Header from '../header';
+import { useOmnibarEvent } from '../interim-omnibar/click-handlers';
+import OmnibarHelpCenter from '../interim-omnibar/omnibar-help-center';
 import { NavigationBlockerRegistry } from '../navigation-blocker';
-import OmnibarHeader from '../omnibar-header';
+import Notifications from '../notifications';
 import ResponsiveSidebar from '../responsive-sidebar';
 import Snackbars from '../snackbars';
 import './style.scss';
@@ -43,6 +45,29 @@ function Root() {
 	const queryCache = queryClient.getQueryCache();
 	const [ isSidebarOpen, setIsSidebarOpen ] = useState( false );
 	const closeSidebar = useCallback( () => setIsSidebarOpen( false ), [ setIsSidebarOpen ] );
+	useOmnibarEvent( 'mobileMenu', () => setIsSidebarOpen( ( v ) => ! v ) );
+	useOmnibarEvent( 'linkClick', ( { href, event } ) => {
+		const url = new URL( href, window.location.origin );
+
+		if ( url.origin !== window.location.origin ) {
+			return;
+		}
+
+		const path = url.pathname + url.search + url.hash;
+		const parsedLocation = router.parseLocation( undefined, {
+			pathname: url.pathname,
+			search: url.search,
+			hash: url.hash,
+			href: path,
+			state: { __TSR_index: 0 },
+		} );
+		const { foundRoute } = router.getMatchedRoutes( parsedLocation );
+
+		if ( foundRoute ) {
+			event.preventDefault();
+			router.navigate( { to: path } );
+		}
+	} );
 
 	const loadingQueryRequestedFullPageLoader = useSyncExternalStore(
 		( onStoreChange ) => queryCache.subscribe( onStoreChange ),
@@ -117,7 +142,7 @@ function Root() {
 			return <Header />;
 		}
 
-		return <OmnibarHeader onToggleMenu={ () => setIsSidebarOpen( ( value ) => ! value ) } />;
+		return null;
 	};
 
 	const renderBody = () => {
@@ -167,6 +192,8 @@ function Root() {
 			{ renderHeader() }
 			{ renderBody() }
 			{ supports.commandPalette && <CommandPalette /> }
+			{ isOmnibarEnabled && supports.notifications && <Notifications anchor /> }
+			{ isOmnibarEnabled && supports.help && <OmnibarHelpCenter /> }
 			<Snackbars />
 			<PageViewTracker />
 			<NavigationBlockerRegistry />

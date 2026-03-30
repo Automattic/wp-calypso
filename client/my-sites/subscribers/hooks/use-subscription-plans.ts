@@ -11,11 +11,15 @@ export type SubscriptionPlanData = {
 	plan: ReactNode;
 	startDate?: string;
 	title?: string;
-	is_gift: boolean;
+	is_complimentary: boolean;
+	is_free: boolean;
+	comp_id?: number;
 };
 
 type PlanData = {
-	is_gift: boolean;
+	is_complimentary: boolean;
+	renewal_price: number;
+	comp_id?: number;
 	renewalPrice: string;
 	when: string;
 	start_date: string;
@@ -53,9 +57,10 @@ const useSubscriptionPlans = ( subscriber: Subscriber ): SubscriptionPlanData[] 
 	}
 
 	const transformSubscriptionPlans = ( subscriptions?: SubscriptionPlan[] ): PlanData[] => {
-		const defaultSubscription = [
+		const defaultSubscription: PlanData[] = [
 			{
-				is_gift: false,
+				is_complimentary: false,
+				renewal_price: 0,
 				renewalPrice: freePlan,
 				when: '',
 				title: '',
@@ -63,31 +68,37 @@ const useSubscriptionPlans = ( subscriber: Subscriber ): SubscriptionPlanData[] 
 			},
 		];
 
-		if ( subscriptions ) {
-			const result = subscriptions.map( ( subscription: SubscriptionPlan ) => {
-				const {
-					is_gift,
-					currency,
-					renewal_price,
-					renew_interval,
-					inactive_renew_interval,
-					start_date,
-					title,
-				} = subscription;
-				const renewalPrice = formatRenewalPrice( renewal_price, currency );
-				const when = getPaymentInterval( renew_interval, inactive_renew_interval );
-
-				return { is_gift, renewalPrice, when, start_date, title };
-			} );
-
-			return result || defaultSubscription;
+		if ( ! subscriptions?.length ) {
+			return defaultSubscription;
 		}
 
-		return defaultSubscription;
+		// Filter out legacy gift subscriptions and transform in a single pass.
+		const plans = subscriptions.reduce< PlanData[] >( ( acc, subscription ) => {
+			if ( subscription.is_gift && ! subscription.is_comp ) {
+				return acc;
+			}
+
+			acc.push( {
+				is_complimentary: !! subscription.is_comp,
+				comp_id: subscription.comp_id,
+				renewal_price: subscription.renewal_price,
+				renewalPrice: formatRenewalPrice( subscription.renewal_price, subscription.currency ),
+				when: getPaymentInterval(
+					subscription.renew_interval,
+					subscription.inactive_renew_interval
+				),
+				start_date: subscription.start_date,
+				title: subscription.title,
+			} );
+
+			return acc;
+		}, [] );
+
+		return plans.length ? plans : defaultSubscription;
 	};
 
 	const getPlanDisplay = ( plan: PlanData ): string => {
-		if ( plan.is_gift ) {
+		if ( plan.is_complimentary ) {
 			return (
 				translate( 'Comp', {
 					comment: 'Short for "complimentary" — a free subscription granted by the site creator',
@@ -107,7 +118,9 @@ const useSubscriptionPlans = ( subscriber: Subscriber ): SubscriptionPlanData[] 
 				plan: getPlanDisplay( plan ),
 				startDate: plan.start_date,
 				title: plan.title,
-				is_gift: plan.is_gift,
+				is_complimentary: plan.is_complimentary,
+				is_free: plan.renewal_price === 0,
+				comp_id: plan.comp_id,
 			} ) );
 		}
 		return [];

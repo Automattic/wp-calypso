@@ -36,13 +36,13 @@ const getFileType = ( file: File ) => {
 
 const getPlaceholderAttachmentMessage = ( file: File ) => {
 	return zendeskMessageConverter( {
+		id: String( new Date().getTime() ),
 		role: 'user',
 		type: getFileType( file ),
 		text: '',
-		id: String( new Date().getTime() ),
 		received: new Date().getTime(),
 		metadata: {
-			temporary_id: crypto.randomUUID(),
+			temporary_id: crypto.randomUUID() as string,
 			local_timestamp: Date.now() / 1000,
 		},
 		source: { type: 'web', id: '', integrationId: '' },

@@ -49,13 +49,13 @@ describe( 'UserLists', () => {
 		expect( mockRequestUserLists ).toHaveBeenCalledWith( defaultUser.user_login );
 	} );
 
-	test( 'should render nothing when in loading state', () => {
+	test( 'should render spinner when in loading state', () => {
 		const { container } = render(
 			<UserLists user={ defaultUser } requestUserLists={ mockRequestUserLists } isLoading />
 		);
 
-		// Container should be empty
-		expect( container ).toBeEmptyDOMElement();
+		expect( container.querySelector( '.user-profile__lists-loader' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Loading lists...' ) ).toBeInTheDocument();
 	} );
 
 	test( 'should render lists when user has lists', () => {
@@ -89,7 +89,7 @@ describe( 'UserLists', () => {
 			/>
 		);
 
-		const listsContainer = document.querySelector( '.user-profile__lists-body' );
+		const listsContainer = document.querySelector( '.user-profile__lists' );
 		expect( listsContainer ).toBeInTheDocument();
 
 		// List titles should be displayed
@@ -101,7 +101,7 @@ describe( 'UserLists', () => {
 		expect( screen.getByText( 'This is test list 2' ) ).toBeInTheDocument();
 
 		// Links should be correct
-		const links = Array.from( document.querySelectorAll( 'a.user-profile__lists-body-link' ) );
+		const links = Array.from( document.querySelectorAll( 'a.summary-button' ) );
 		expect( links ).toHaveLength( 2 );
 		expect( links[ 0 ].getAttribute( 'href' ) ).toBe(
 			`/reader/list/${ defaultUser.user_login }/test-list-1`
@@ -109,5 +109,63 @@ describe( 'UserLists', () => {
 		expect( links[ 1 ].getAttribute( 'href' ) ).toBe(
 			`/reader/list/${ defaultUser.user_login }/test-list-2`
 		);
+	} );
+
+	test( 'should show recommended-blogs list from another user with custom description', () => {
+		const mockLists: List[] = [
+			{
+				ID: 1,
+				title: 'Recommended Blogs',
+				description: '',
+				slug: 'recommended-blogs',
+				owner: 'anotheruser',
+				is_public: true,
+				is_owner: false,
+			},
+		];
+
+		render(
+			<UserLists
+				user={ defaultUser }
+				requestUserLists={ mockRequestUserLists }
+				lists={ mockLists }
+				isLoading={ false }
+			/>
+		);
+
+		expect( screen.getByText( 'Recommended Blogs' ) ).toBeInTheDocument();
+		expect(
+			screen.getByText( 'A list of blogs recommended by @anotheruser.' )
+		).toBeInTheDocument();
+
+		// Link should point to the other user's list
+		const link = document.querySelector( 'a.summary-button' );
+		expect( link?.getAttribute( 'href' ) ).toBe( '/reader/list/anotheruser/recommended-blogs' );
+	} );
+
+	test( 'should display fallback description when list has no description', () => {
+		const mockLists: List[] = [
+			{
+				ID: 1,
+				title: 'Test List',
+				description: '',
+				slug: 'no-desc-list',
+				owner: 'testuser',
+				is_public: true,
+				is_owner: true,
+			},
+		];
+
+		render(
+			<UserLists
+				user={ defaultUser }
+				requestUserLists={ mockRequestUserLists }
+				lists={ mockLists }
+				isLoading={ false }
+			/>
+		);
+
+		expect( screen.getByText( 'Test List' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'No description.' ) ).toBeInTheDocument();
 	} );
 } );

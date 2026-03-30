@@ -125,6 +125,7 @@ export const domainRoute = createRoute( {
 	} ),
 	getParentRoute: () => rootRoute,
 	path: 'domains/$domainName',
+	errorComponent: lazyRouteComponent( () => import( '../../domains/domain/error' ) ),
 	loader: async ( { params: { domainName }, location } ) => {
 		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
 		const isNameServersSubRoute = location.pathname.includes( '/name-servers' );

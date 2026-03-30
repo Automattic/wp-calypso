@@ -48,7 +48,12 @@ export class TiledGalleryBlockFlow implements BlockFlow {
 			const editorCanvas = await context.editorPage.getEditorCanvas();
 
 			const fileInputLocator = editorCanvas.locator( selectors.fileInput );
-			await fileInputLocator.setInputFiles( testFile.fullpath );
+			await Promise.all( [
+				fileInputLocator.setInputFiles( testFile.fullpath ),
+				context.page.waitForResponse(
+					( response ) => response.url().includes( 'media?' ) && response.ok()
+				),
+			] );
 
 			const uploadingIndicatorLocator = editorCanvas.locator( selectors.uploadingIndicator );
 			await uploadingIndicatorLocator.waitFor( { state: 'detached' } );

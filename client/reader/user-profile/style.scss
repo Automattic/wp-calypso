@@ -10,20 +10,5 @@
 			margin: initial;
 			padding-top: 150px;
 		}
-
-		&__lists-body-link {
-			color: var( --color-neutral-100 );
-			cursor: pointer;
-			display: block;
-			line-height: 29px;
-			text-wrap: pretty;
-			text-decoration: none;
-
-			.reader-post-card__title {
-				margin-top: 0;
-				font-size: 1.25rem;
-				font-weight: 600;
-			}
-		}
 	}
 }
