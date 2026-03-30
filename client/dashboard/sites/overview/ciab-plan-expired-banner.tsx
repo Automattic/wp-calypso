@@ -2,13 +2,11 @@ import { siteCurrentPlanQuery, purchaseQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { sprintf, __ } from '@wordpress/i18n';
-import { addQueryArgs } from '@wordpress/url';
 import { useLocale } from '../../app/locale';
-import { getCurrentDashboard } from '../../app/routing';
 import Notice from '../../components/notice';
 import { formatDate } from '../../utils/datetime';
-import { wpcomLink } from '../../utils/link';
 import { isCommerceGarden, isCommerceGardenPlanExpired } from '../../utils/site-types';
+import { getSitePlanUpgradeUrl } from '../../utils/site-url';
 import type { Site } from '@automattic/api-core';
 
 export function CiabPlanExpiredBanner( { site }: { site: Site } ) {
@@ -28,10 +26,7 @@ export function CiabPlanExpiredBanner( { site }: { site: Site } ) {
 		return null;
 	}
 
-	const plansUrl = addQueryArgs( wpcomLink( '/setup/woo-hosted-plans' ), {
-		siteSlug: site.slug,
-		dashboard: getCurrentDashboard(),
-	} );
+	const plansUrl = getSitePlanUpgradeUrl( site );
 
 	const gracePeriodDate = purchase?.expiry_date
 		? new Date( new Date( purchase.expiry_date ).getTime() + 30 * 24 * 60 * 60 * 1000 )
