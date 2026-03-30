@@ -80,7 +80,6 @@ const BackupPage = ( { queryDate } ) => {
 				} ) }
 			>
 				{ isJetpackCloud() && <SidebarNavigation /> }
-				<TimeMismatchWarning siteId={ siteId } settingsUrl={ siteSettingsUrl } />
 				{ isWpcom ? (
 					<Page
 						hasPadding
@@ -89,10 +88,14 @@ const BackupPage = ( { queryDate } ) => {
 						subTitle={ translate( 'Save changes and restore quickly with one-click recovery.' ) }
 						actions={ <BackupActionsToolbar siteId={ siteId } /> }
 					>
+						<TimeMismatchWarning siteId={ siteId } settingsUrl={ siteSettingsUrl } />
 						<AdminContent selectedDate={ selectedDate } />
 					</Page>
 				) : (
-					<AdminContent selectedDate={ selectedDate } />
+					<>
+						<TimeMismatchWarning siteId={ siteId } settingsUrl={ siteSettingsUrl } />
+						<AdminContent selectedDate={ selectedDate } />
+					</>
 				) }
 			</Main>
 		</div>
