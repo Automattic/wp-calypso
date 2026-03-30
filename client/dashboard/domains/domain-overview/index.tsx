@@ -59,7 +59,7 @@ export default function DomainOverview() {
 			createSuccessNotice(
 				sprintf(
 					/* translators: %s is the domain name */
-					__( '%s is now your store\u2019s primary address.' ),
+					__( '%s is now your store’s primary address.' ),
 					domain.domain
 				),
 				{ type: 'snackbar' }
