@@ -664,6 +664,8 @@ export const siteSettingsAIToolsRoute = createRoute( {
 				window.location.href = reauthRequiredLink();
 				return;
 			}
+
+			throw error;
 		}
 	},
 	loader: async ( { params: { siteSlug } } ) => {
