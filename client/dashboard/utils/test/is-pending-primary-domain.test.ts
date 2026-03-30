@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { DomainSubtype } from '@automattic/api-core';
 import { isPendingPrimaryDomain } from '../is-pending-primary-domain';
 import type { DomainSummary } from '@automattic/api-core';
