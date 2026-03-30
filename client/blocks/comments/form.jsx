@@ -1,3 +1,4 @@
+import './form.scss';
 import { Button, FormInputValidation } from '@automattic/components';
 import clsx from 'clsx';
 import { localize, useTranslate } from 'i18n-calypso';
@@ -5,7 +6,6 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import GravatarWithHovercards from 'calypso/components/gravatar-with-hovercards';
 import { ProtectFormGuard } from 'calypso/lib/protect-form';
 import { recordAction, recordGaEvent, recordTrackForPost, getLocation } from 'calypso/reader/stats';
 import { writeComment, deleteComment, replyComment } from 'calypso/state/comments/actions';
@@ -13,9 +13,8 @@ import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selec
 import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import { getPreviousPath } from 'calypso/state/selectors/get-previous-path';
+import UserAvatar from '../user-avatar';
 import AutoresizingFormTextarea from './autoresizing-form-textarea';
-
-import './form.scss';
 
 const noop = () => {};
 
@@ -174,7 +173,7 @@ class PostCommentForm extends Component {
 			<form className="comments__form">
 				<ProtectFormGuard isChanged={ this.hasCommentText() } />
 				<FormFieldset>
-					<GravatarWithHovercards user={ this.props.currentUser } />
+					<UserAvatar user={ this.props.currentUser } />
 					<AutoresizingFormTextarea
 						value={ this.getCommentText() }
 						placeholder={ translate( 'Add a comment…' ) }
