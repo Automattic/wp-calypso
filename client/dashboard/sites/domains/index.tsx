@@ -50,6 +50,9 @@ function SiteDomains() {
 	const hasPendingDomain = Boolean( pendingDomain );
 	const [ isDismissed, setIsDismissed ] = useState( false );
 
+	// Reset dismissed state when the pending domain changes.
+	useEffect( () => setIsDismissed( false ), [ pendingDomain?.domain ] );
+
 	// Poll while the primary domain setup is in progress.
 	useQuery( {
 		...queries.domainsQuery(),
@@ -65,7 +68,7 @@ function SiteDomains() {
 			createSuccessNotice(
 				sprintf(
 					/* translators: %s is the domain name */
-					__( '%s is now your store\u2019s primary address.' ),
+					__( '%s is now your store’s primary address.' ),
 					pendingDomainNameRef.current
 				),
 				{ type: 'snackbar' }
@@ -111,7 +114,7 @@ function SiteDomains() {
 				! isRedirectLoading &&
 				siteDomains &&
 				! hasRedirect &&
-				( hasPendingDomain && ! isDismissed ? (
+				( pendingDomain && ! isDismissed ? (
 					<PendingPrimaryDomainNotice
 						domainName={ pendingDomain.domain }
 						onClose={ () => setIsDismissed( true ) }
