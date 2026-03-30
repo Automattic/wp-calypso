@@ -95,6 +95,12 @@
 	white-space: nowrap;
 	width: fit-content;
 
+	// Figma Green-0 / Green-50 — same as feature pills; only when plans grid has pricing differentiators experiment (non-control).
+	&.is-plan-differentiators-experiment-badge {
+		background-color: var(--studio-green-0, #e6f2e8);
+		color: var(--studio-green-50, #008a20);
+	}
+
 	&.is-hidden {
 		visibility: hidden;
 	}
