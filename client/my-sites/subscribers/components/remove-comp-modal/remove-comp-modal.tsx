@@ -5,28 +5,23 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useDispatch } from 'calypso/state';
 import { requestDeleteComp } from 'calypso/state/memberships/comps/actions';
-import { requestDeleteGift } from 'calypso/state/memberships/gifts/actions';
 
 import './style.scss';
 
 type RemoveCompModalProps = {
 	siteId: number;
-	giftId?: number;
 	compId?: number;
 	planName: string;
 	username: string;
-	useComps: boolean;
 	onClose: () => void;
 	onRemoved: () => void;
 };
 
 const RemoveCompModal = ( {
 	siteId,
-	giftId,
 	compId,
 	planName,
 	username,
-	useComps,
 	onClose,
 	onRemoved,
 }: RemoveCompModalProps ) => {
@@ -34,9 +29,12 @@ const RemoveCompModal = ( {
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
-	const isMissingId = useComps ? ! compId : ! giftId;
 
 	const handleRemove = () => {
+		if ( ! compId ) {
+			return;
+		}
+
 		setIsSubmitting( true );
 
 		const noticeText = translate( 'Removed complimentary subscription from "%(username)s".', {
@@ -54,21 +52,12 @@ const RemoveCompModal = ( {
 			setIsSubmitting( false );
 		};
 
-		if ( useComps && compId ) {
-			recordTracksEvent( 'calypso_subscribers_remove_comp_confirm', {
-				site_id: siteId,
-				comp_id: compId,
-			} );
+		recordTracksEvent( 'calypso_subscribers_remove_comp_confirm', {
+			site_id: siteId,
+			comp_id: compId,
+		} );
 
-			dispatch( requestDeleteComp( siteId, compId, noticeText ) ).then( onSuccess, onError );
-		} else if ( giftId ) {
-			recordTracksEvent( 'calypso_subscribers_remove_comp_confirm', {
-				site_id: siteId,
-				gift_id: giftId,
-			} );
-
-			dispatch( requestDeleteGift( siteId, giftId, noticeText ) ).then( onSuccess, onError );
-		}
+		dispatch( requestDeleteComp( siteId, compId, noticeText ) ).then( onSuccess, onError );
 	};
 
 	return (
@@ -94,7 +83,7 @@ const RemoveCompModal = ( {
 					variant="primary"
 					isBusy={ isSubmitting }
 					onClick={ handleRemove }
-					disabled={ isSubmitting || isMissingId }
+					disabled={ isSubmitting || ! compId }
 				>
 					{ translate( 'Remove' ) }
 				</Button>

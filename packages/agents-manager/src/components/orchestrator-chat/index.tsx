@@ -4,7 +4,6 @@ import {
 	type MarkdownComponents,
 	type MarkdownExtensions,
 } from '@automattic/agenttic-ui';
-import { useQueryClient } from '@tanstack/react-query';
 import { useSelect } from '@wordpress/data';
 import { useState, useCallback, useMemo, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -12,7 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
 import { useAgentsManagerContext } from '../../contexts';
 import useCheckpointAction from '../../hooks/use-checkpoint-action';
-import useConversation, { CONVERSATION_QUERY_KEY } from '../../hooks/use-conversation';
+import useConversation from '../../hooks/use-conversation';
 import useCopyAction from '../../hooks/use-copy-action';
 import useFeedbackAction from '../../hooks/use-feedback-action';
 import useSaveNewChatRoute from '../../hooks/use-save-new-chat-route';
@@ -90,7 +89,6 @@ export default function OrchestratorChat( {
 	const { agentConfig, getActiveSessionId, siteKey } = useAgentsManagerContext();
 
 	const navigate = useNavigate();
-	const queryClient = useQueryClient();
 	const [ inputValue, setInputValue ] = useState( '' );
 	const [ isThinking, setIsThinking ] = useState( false );
 	const [ thinkingMessage, setThinkingMessage ] = useState< string | null >( null );
@@ -217,11 +215,6 @@ export default function OrchestratorChat( {
 		onSubmit,
 		sessionId: getActiveSessionId(),
 		pathname: window.location.pathname,
-		onComplete: () => {
-			queryClient.invalidateQueries( {
-				queryKey: [ CONVERSATION_QUERY_KEY, getActiveSessionId() ],
-			} );
-		},
 	} );
 
 	// Listen for inline suggestion clicks dispatched by Big Sky's InlineSuggestions component.

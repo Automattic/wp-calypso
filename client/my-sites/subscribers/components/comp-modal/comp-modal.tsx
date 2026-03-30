@@ -5,23 +5,15 @@ import { useEffect, useState } from 'react';
 import ProductsSelector from 'calypso/my-sites/earn/components/add-edit-coupon-modal/products-selector';
 import { useDispatch } from 'calypso/state';
 import { requestAddComp } from 'calypso/state/memberships/comps/actions';
-import { requestAddGift } from 'calypso/state/memberships/gifts/actions';
 
 import './style.scss';
 
-type GiftSubscriptionModalProps = {
+type CompSubscriptionModalProps = {
 	userId: number | string;
 	siteId: number;
 	username: string;
-	useComps: boolean;
 	onClose: () => void;
 	onConfirm: () => void;
-};
-
-type Gift = {
-	gift_id: number | null;
-	user_id: number | string;
-	plan_id: number;
 };
 
 type Comp = {
@@ -29,14 +21,13 @@ type Comp = {
 	plan_id: number;
 };
 
-const GiftSubscriptionModal = ( {
+const CompSubscriptionModal = ( {
 	siteId,
 	userId,
 	username,
-	useComps,
 	onClose,
 	onConfirm,
-}: GiftSubscriptionModalProps ) => {
+}: CompSubscriptionModalProps ) => {
 	const translate = useTranslate();
 
 	const dispatch = useDispatch();
@@ -50,7 +41,7 @@ const GiftSubscriptionModal = ( {
 		} );
 	}, [ siteId ] );
 
-	const giftSubscription = ( plan_id: number, user_id: number | string, username: string ) => {
+	const addCompSubscription = ( plan_id: number, user_id: number | string, username: string ) => {
 		setIsSubmitting( true );
 
 		recordTracksEvent( 'calypso_subscribers_comp_modal_confirm', {
@@ -74,22 +65,12 @@ const GiftSubscriptionModal = ( {
 			},
 		} );
 
-		if ( useComps ) {
-			const compDetails: Comp = {
-				plan_id: plan_id,
-				user_id: user_id,
-			};
+		const compDetails: Comp = {
+			plan_id: plan_id,
+			user_id: user_id,
+		};
 
-			dispatch( requestAddComp( siteId, compDetails, noticeText, onComplete ) );
-		} else {
-			const giftDetails: Gift = {
-				gift_id: null,
-				plan_id: plan_id,
-				user_id: user_id,
-			};
-
-			dispatch( requestAddGift( siteId, giftDetails, noticeText, onComplete ) );
-		}
+		dispatch( requestAddComp( siteId, compDetails, noticeText, onComplete ) );
 	};
 
 	return (
@@ -112,7 +93,7 @@ const GiftSubscriptionModal = ( {
 				<Button
 					variant="primary"
 					isBusy={ isSubmitting }
-					onClick={ () => giftSubscription( planId, userId, username ) }
+					onClick={ () => addCompSubscription( planId, userId, username ) }
 					disabled={ planId === 0 || isSubmitting }
 				>
 					{ translate( 'Confirm' ) }
@@ -122,4 +103,4 @@ const GiftSubscriptionModal = ( {
 	);
 };
 
-export default GiftSubscriptionModal;
+export default CompSubscriptionModal;

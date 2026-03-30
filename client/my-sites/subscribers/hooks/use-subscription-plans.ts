@@ -13,14 +13,12 @@ export type SubscriptionPlanData = {
 	title?: string;
 	is_complimentary: boolean;
 	is_free: boolean;
-	gift_id?: number;
 	comp_id?: number;
 };
 
 type PlanData = {
 	is_complimentary: boolean;
 	renewal_price: number;
-	gift_id?: number;
 	comp_id?: number;
 	renewalPrice: string;
 	when: string;
@@ -59,7 +57,7 @@ const useSubscriptionPlans = ( subscriber: Subscriber ): SubscriptionPlanData[] 
 	}
 
 	const transformSubscriptionPlans = ( subscriptions?: SubscriptionPlan[] ): PlanData[] => {
-		const defaultSubscription = [
+		const defaultSubscription: PlanData[] = [
 			{
 				is_complimentary: false,
 				renewal_price: 0,
@@ -70,40 +68,33 @@ const useSubscriptionPlans = ( subscriber: Subscriber ): SubscriptionPlanData[] 
 			},
 		];
 
-		if ( subscriptions ) {
-			const result = subscriptions.map( ( subscription: SubscriptionPlan ) => {
-				const {
-					is_gift,
-					gift_id,
-					is_comp,
-					comp_id,
-					currency,
-					renewal_price,
-					renew_interval,
-					inactive_renew_interval,
-					start_date,
-					title,
-				} = subscription;
-				const renewalPrice = formatRenewalPrice( renewal_price, currency );
-				const when = getPaymentInterval( renew_interval, inactive_renew_interval );
-				const isComplimentary = !! ( is_gift || is_comp );
-
-				return {
-					is_complimentary: isComplimentary,
-					gift_id,
-					comp_id,
-					renewal_price,
-					renewalPrice,
-					when,
-					start_date,
-					title,
-				};
-			} );
-
-			return result || defaultSubscription;
+		if ( ! subscriptions?.length ) {
+			return defaultSubscription;
 		}
 
-		return defaultSubscription;
+		// Filter out legacy gift subscriptions and transform in a single pass.
+		const plans = subscriptions.reduce< PlanData[] >( ( acc, subscription ) => {
+			if ( subscription.is_gift && ! subscription.is_comp ) {
+				return acc;
+			}
+
+			acc.push( {
+				is_complimentary: !! subscription.is_comp,
+				comp_id: subscription.comp_id,
+				renewal_price: subscription.renewal_price,
+				renewalPrice: formatRenewalPrice( subscription.renewal_price, subscription.currency ),
+				when: getPaymentInterval(
+					subscription.renew_interval,
+					subscription.inactive_renew_interval
+				),
+				start_date: subscription.start_date,
+				title: subscription.title,
+			} );
+
+			return acc;
+		}, [] );
+
+		return plans.length ? plans : defaultSubscription;
 	};
 
 	const getPlanDisplay = ( plan: PlanData ): string => {
@@ -129,7 +120,6 @@ const useSubscriptionPlans = ( subscriber: Subscriber ): SubscriptionPlanData[] 
 				title: plan.title,
 				is_complimentary: plan.is_complimentary,
 				is_free: plan.renewal_price === 0,
-				gift_id: plan.gift_id,
 				comp_id: plan.comp_id,
 			} ) );
 		}
