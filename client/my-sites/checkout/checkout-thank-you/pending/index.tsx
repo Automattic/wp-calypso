@@ -17,6 +17,7 @@ import { getRedirectFromPendingPage } from 'calypso/my-sites/checkout/src/lib/pe
 import { sendMessageToOpener } from 'calypso/my-sites/checkout/src/lib/popup';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useSelector, useDispatch } from 'calypso/state';
+import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { SUCCESS } from 'calypso/state/order-transactions/constants';
 import { fetchReceipt } from 'calypso/state/receipts/actions';
@@ -211,6 +212,26 @@ function useRedirectOnTransactionSuccess( {
 		searchParams.size &&
 		searchParams.get( 'from' ) === 'connect-after-checkout' &&
 		searchParams.get( 'connect_url_redirect' ) === 'true';
+	const isUnifiedCheckout = searchParams.get( 'checkout_type' ) === 'unified';
+
+	// For unified checkout (logged-out flow where a new account + site are
+	// created before the transaction), we re-fetch the current user once the
+	// receipt is available. By the time the pending page has finished polling
+	// for the transaction, enough time has passed for the server to propagate
+	// the new site, so a fresh fetch reliably returns site_count >= 1. Without
+	// this, siteSelection receives a stale site_count = 0 and renders "You
+	// don't have any sites yet" instead of the thank-you page.
+	const didRefreshUserForUnified = useRef( false );
+	const [ isUserRefreshedForUnified, setIsUserRefreshedForUnified ] = useState( false );
+	useEffect( () => {
+		if ( ! isUnifiedCheckout || ! blogId || didRefreshUserForUnified.current ) {
+			return;
+		}
+		didRefreshUserForUnified.current = true;
+		( reduxDispatch( fetchCurrentUser() ) as Promise< unknown > )
+			.catch( () => {} )
+			.finally( () => setIsUserRefreshedForUnified( true ) );
+	}, [ isUnifiedCheckout, blogId, reduxDispatch ] );
 
 	const defaultPendingText = translate( 'Almost there—we’re currently finalizing your order.' );
 	const connectingJetpackText = translate(
@@ -290,6 +311,14 @@ function useRedirectOnTransactionSuccess( {
 			return;
 		}
 
+		// For unified checkout, wait for the current user to be re-fetched
+		// (triggered by the useEffect above) before proceeding. This ensures
+		// site_count is up-to-date in Redux so siteSelection doesn't incorrectly
+		// bail with "You don't have any sites yet" on the thank-you page.
+		if ( isUnifiedCheckout && blogId && ! isUserRefreshedForUnified ) {
+			return;
+		}
+
 		didRedirect.current = true;
 		if ( ! redirectInstructions.isError && ! redirectInstructions.isUnknown ) {
 			invokeSurvicateEvent( 'purchaseCompleted' );
@@ -307,8 +336,7 @@ function useRedirectOnTransactionSuccess( {
 		} );
 
 		// Pre-populate the Redux sites store with the newly-purchased site so
-		// that the thank-you page does not briefly show "You don't have any
-		// sites yet" while siteSelection fetches it asynchronously.
+		// that the thank-you page can use it immediately on arrival.
 		if ( blogId ) {
 			reduxDispatch( requestSite( blogId ) );
 		}
@@ -318,6 +346,8 @@ function useRedirectOnTransactionSuccess( {
 		isLoadingOrder,
 		saasRedirectUrl,
 		isConnectAfterCheckoutFlow,
+		isUnifiedCheckout,
+		isUserRefreshedForUnified,
 		connectingJetpackText,
 		error,
 		finalReceiptId,
