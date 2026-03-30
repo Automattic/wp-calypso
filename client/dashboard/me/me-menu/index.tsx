@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { __ } from '@wordpress/i18n';
 import { useAppContext } from '../../app/context';
 import MenuDivider from '../../components/menu-divider';
@@ -12,13 +11,9 @@ const hasAppSupport = ( supports: AppConfig[ 'supports' ], feature: keyof MeSupp
 const MeMenu = () => {
 	const { supports } = useAppContext();
 
-	const isOmnibarEnabled = isEnabled( 'dashboard/omnibar' );
-
 	return (
 		<ResponsiveMenu prefix={ <MenuDivider /> }>
-			<ResponsiveMenu.Item to={ isOmnibarEnabled ? '/me/account' : '/me/profile' }>
-				{ isOmnibarEnabled ? __( 'Account' ) : __( 'Profile' ) }
-			</ResponsiveMenu.Item>
+			<ResponsiveMenu.Item to="/me/account">{ __( 'Account' ) }</ResponsiveMenu.Item>
 			<ResponsiveMenu.Item to="/me/preferences">{ __( 'Preferences' ) }</ResponsiveMenu.Item>
 			<ResponsiveMenu.Item to="/me/billing">{ __( 'Billing' ) }</ResponsiveMenu.Item>
 			<ResponsiveMenu.Item to="/me/security">{ __( 'Security' ) }</ResponsiveMenu.Item>

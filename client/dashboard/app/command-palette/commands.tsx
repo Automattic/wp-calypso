@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useRouter } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { globe, commentAuthorAvatar, envelope, bell, wordpress } from '@wordpress/icons';
@@ -41,10 +40,10 @@ export const navigationCommands: Command[] = [
 		feature: 'domains',
 	},
 	{
-		name: isEnabled( 'dashboard/omnibar' ) ? 'dashboard-go-to-account' : 'dashboard-go-to-profile',
-		label: isEnabled( 'dashboard/omnibar' ) ? __( 'Go to Account' ) : __( 'Go to Profile' ),
+		name: 'dashboard-go-to-account',
+		label: __( 'Go to Account' ),
 		searchLabel: __( 'Navigate to User account profile settings' ),
-		path: isEnabled( 'dashboard/omnibar' ) ? '/me/account' : '/me/profile',
+		path: '/me/account',
 		icon: commentAuthorAvatar,
 		feature: 'me',
 	},

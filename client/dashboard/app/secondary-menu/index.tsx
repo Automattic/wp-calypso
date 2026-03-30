@@ -1,5 +1,5 @@
 import { useShouldUseUnifiedAgent } from '@automattic/agents-manager';
-import config, { isEnabled } from '@automattic/calypso-config';
+import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useNavigate } from '@tanstack/react-router';
 import {
@@ -35,7 +35,12 @@ import { useAuth } from '../auth';
 import { useAppContext } from '../context';
 import { useHelpCenter } from '../help-center';
 import Notifications from '../notifications';
-import { billingRoute, accountRoute, preferencesRoute, securityRoute } from '../router/me';
+import {
+	accountRoute as profileRoute,
+	billingRoute,
+	preferencesRoute,
+	securityRoute,
+} from '../router/me';
 import type { AnyRoute } from '@tanstack/react-router';
 
 import './style.scss';
@@ -243,14 +248,12 @@ function Help() {
 	);
 }
 
-// User account dropdown component
+// User profile dropdown component
 function UserProfile() {
 	const { user, logout } = useAuth();
 	const navigate = useNavigate();
 	const { recordTracksEvent } = useAnalytics();
 	const [ isLoggingOut, setIsLoggingOut ] = useState( false );
-	const isOmnibarEnabled = isEnabled( 'dashboard/omnibar' );
-	const accountLabel = isOmnibarEnabled ? __( 'Account' ) : __( 'Profile' );
 
 	const handleAccountItemClick = ( itemId: string ) => {
 		let route: AnyRoute | undefined;
@@ -258,8 +261,8 @@ function UserProfile() {
 			case 'billing':
 				route = billingRoute;
 				break;
-			case 'account':
-				route = accountRoute;
+			case 'profile':
+				route = profileRoute;
 				break;
 			case 'preferences':
 				route = preferencesRoute;
@@ -283,7 +286,7 @@ function UserProfile() {
 				render={
 					<Button
 						className="dashboard-secondary-menu__item"
-						label={ isOmnibarEnabled ? __( 'My account' ) : __( 'My profile' ) }
+						label={ __( 'My profile' ) }
 						variant="tertiary"
 						icon={
 							user.avatar_URL ? (
@@ -311,8 +314,8 @@ function UserProfile() {
 				<Menu.Separator />
 				<Menu.Group>
 					<Menu.GroupLabel>{ __( 'Account' ) }</Menu.GroupLabel>
-					<Menu.Item onClick={ () => handleAccountItemClick( 'account' ) }>
-						<Menu.ItemLabel>{ accountLabel }</Menu.ItemLabel>
+					<Menu.Item onClick={ () => handleAccountItemClick( 'profile' ) }>
+						<Menu.ItemLabel>{ __( 'Profile' ) }</Menu.ItemLabel>
 					</Menu.Item>
 					<Menu.Item onClick={ () => handleAccountItemClick( 'preferences' ) }>
 						<Menu.ItemLabel>{ __( 'Preferences' ) }</Menu.ItemLabel>

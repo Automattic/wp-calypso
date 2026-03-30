@@ -76,15 +76,11 @@ export const meRoute = createRoute( {
 	)
 );
 
-const isOmnibarEnabled = isEnabled( 'dashboard/omnibar' );
-const accountPath = isOmnibarEnabled ? 'account' : 'profile';
-const accountLabel = isOmnibarEnabled ? __( 'Account' ) : __( 'Profile' );
-
 export const meIndexRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: '/',
 	beforeLoad: () => {
-		throw redirect( { to: `/me/${ accountPath }` } );
+		throw redirect( { to: '/me/account' } );
 	},
 } );
 
@@ -92,12 +88,12 @@ export const accountRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: accountLabel,
+				title: isEnabled( 'dashboard/omnibar' ) ? __( 'Account' ) : __( 'Profile' ),
 			},
 		],
 	} ),
 	getParentRoute: () => meRoute,
-	path: accountPath,
+	path: 'account',
 	loader: async () => {
 		await Promise.all( [
 			queryClient.ensureQueryData( userSettingsQuery() ),
@@ -106,7 +102,7 @@ export const accountRoute = createRoute( {
 	},
 } ).lazy( () =>
 	import( '../../me/profile' ).then( ( d ) =>
-		createLazyRoute( accountPath )( {
+		createLazyRoute( 'account' )( {
 			component: d.default,
 		} )
 	)

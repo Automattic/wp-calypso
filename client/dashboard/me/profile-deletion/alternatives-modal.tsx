@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import {
 	Button,
@@ -57,7 +56,7 @@ export default function AlternativesModal( {
 		},
 		{
 			text: __( 'Change your username' ),
-			to: isEnabled( 'dashboard/omnibar' ) ? '/me/account' : '/me/profile',
+			to: '/me/account',
 			supportLink: localizeUrl( 'https://wordpress.com/support/change-your-username/' ),
 			useRouterButton: true,
 		},
