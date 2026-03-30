@@ -32,6 +32,7 @@ import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite, isCommerceGardenSite } from 'calypso/state/sites/selectors';
 import useActOnceOnStrings from '../hooks/use-act-once-on-strings';
+import useSubmitButtonColor from '../hooks/use-submit-button-color';
 import useAddProductsFromUrl from '../hooks/use-add-products-from-url';
 import useCheckoutFlowTrackKey from '../hooks/use-checkout-flow-track-key';
 import { useCheckoutUiRedesignExperiment } from '../hooks/use-checkout-ui-redesign-experiment';
@@ -604,6 +605,8 @@ export default function CheckoutMain( {
 		[ dataForProcessor, translate ]
 	);
 
+	const submitButtonColor = useSubmitButtonColor();
+
 	// Gravatar Theme
 	let gravatarColors = {};
 	let gravatarFontWeights = {};
@@ -648,9 +651,17 @@ export default function CheckoutMain( {
 			  }
 			: {};
 
+	const submitButtonColors = submitButtonColor ? { primary: submitButtonColor } : {};
+
 	const theme = {
 		...checkoutTheme,
-		colors: { ...checkoutTheme.colors, ...gravatarColors, ...jetpackColors, ...a4aColors },
+		colors: {
+			...checkoutTheme.colors,
+			...gravatarColors,
+			...jetpackColors,
+			...a4aColors,
+			...submitButtonColors,
+		},
 		weights: { ...checkoutTheme.weights, ...gravatarFontWeights },
 	};
 
