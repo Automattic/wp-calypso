@@ -19,11 +19,11 @@ import CommandPalette from '../command-palette';
 import { useAppContext } from '../context';
 import Header from '../header';
 import { useOmnibarEvent } from '../interim-omnibar/click-handlers';
+import OmnibarHelpCenter from '../interim-omnibar/omnibar-help-center';
 import { NavigationBlockerRegistry } from '../navigation-blocker';
 import Notifications from '../notifications';
 import ResponsiveSidebar from '../responsive-sidebar';
 import Snackbars from '../snackbars';
-import OmnibarHelpCenter from './omnibar-help-center';
 import './style.scss';
 
 const WebpackBuildMonitor = lazy(
