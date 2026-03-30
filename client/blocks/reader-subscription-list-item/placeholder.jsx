@@ -4,7 +4,7 @@ const ReaderSubscriptionListItemPlaceholder = () => {
 	return (
 		<div className="reader-subscription-list-item reader-subscription-list-item__placeholder">
 			<div>
-				<UserAvatar isCompact iconSize={ 32 } />
+				<UserAvatar />
 			</div>
 			<div className="reader-subscription-list-item__byline">
 				<span className="reader-subscription-list-item__site-title is-placeholder">Site title</span>

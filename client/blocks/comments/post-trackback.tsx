@@ -15,6 +15,7 @@ interface PostComment {
 			ID: number;
 			name: string;
 			URL: string;
+			login: string;
 			wpcom_login: string;
 		};
 		date: string;
@@ -33,10 +34,8 @@ export default function PostTrackback( props: PostTrackbackProps ): JSX.Element 
 		return null;
 	}
 	const unescapedAuthorName = unescape( get( comment, 'author.name', '' ) );
-
-	const authorUrlLink = comment.author?.wpcom_login
-		? getUserProfileUrl( comment.author.wpcom_login )
-		: comment.author?.URL;
+	const username = comment.author?.wpcom_login || comment.author?.login;
+	const authorUrlLink = username ? getUserProfileUrl( username ) : comment.author?.URL;
 
 	return (
 		<li className="comments__comment depth-0">
