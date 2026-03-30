@@ -7,7 +7,7 @@ import AccountDeletionSection from '../profile-deletion';
 import GravatarProfileSection from '../profile-gravatar';
 import PersonalDetailsSection from '../profile-personal-details';
 
-export default function Profile() {
+export default function Account() {
 	return (
 		<PageLayout
 			size="small"
