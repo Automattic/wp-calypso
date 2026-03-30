@@ -6,12 +6,17 @@ import {
 } from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import { Icon, Button, __experimentalText as Text } from '@wordpress/components';
+import {
+	Icon,
+	Button,
+	__experimentalText as Text,
+	__experimentalHStack as HStack,
+} from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { scheduled, trash, copy } from '@wordpress/icons';
+import { scheduled, trash, copy, people, calendar } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
@@ -22,6 +27,7 @@ import { DataViewsCard } from '../../components/dataviews';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import TimeSince from '../../components/time-since';
 import { hasHostingFeature } from '../../utils/site-features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import { parseRequestedScheduleForBackwardCompatibility } from './parse-requested-schedule-for-backward-compatibility';
@@ -35,6 +41,8 @@ const DEFAULT_VIEW: View = {
 	page: 1,
 	fields: [ 'command' ],
 	titleField: 'schedule',
+	descriptionField: 'created_info',
+	showDescription: true,
 };
 
 export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
@@ -137,6 +145,44 @@ export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
 				</code>
 			),
 			enableGlobalSearch: true,
+		},
+		{
+			id: 'created_info',
+			label: __( 'Added by' ),
+			getValue: ( { item }: { item: Crontab } ) => item.created_by ?? '',
+			render: ( { item }: { item: Crontab } ) => {
+				if ( ! item.created_by && ! item.created_at ) {
+					return null;
+				}
+				return (
+					<HStack spacing={ 3 } alignment="left" expanded={ false }>
+						{ item.created_by && (
+							<HStack spacing={ 1 } alignment="left" expanded={ false }>
+								<Icon
+									icon={ people }
+									size={ 18 }
+									style={ { color: 'var(--color-text-subtle, #646970)', flexShrink: 0 } }
+								/>
+								<Text size={ 12 } style={ { color: 'var(--color-text-subtle, #646970)' } }>
+									{ item.created_by }
+								</Text>
+							</HStack>
+						) }
+						{ item.created_at && (
+							<HStack spacing={ 1 } alignment="left" expanded={ false }>
+								<Icon
+									icon={ calendar }
+									size={ 18 }
+									style={ { color: 'var(--color-text-subtle, #646970)', flexShrink: 0 } }
+								/>
+								<Text size={ 12 } style={ { color: 'var(--color-text-subtle, #646970)' } }>
+									<TimeSince timestamp={ item.created_at } />
+								</Text>
+							</HStack>
+						) }
+					</HStack>
+				);
+			},
 		},
 	];
 
