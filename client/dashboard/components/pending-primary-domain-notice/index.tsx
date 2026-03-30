@@ -15,7 +15,7 @@ export default function PendingPrimaryDomainNotice( {
 		<Notice variant="info" title={ __( 'Setting up your custom domain' ) } onClose={ onClose }>
 			{ createInterpolateElement(
 				__(
-					'We\u2019re preparing <domain /> to be your store\u2019s <strong>primary address</strong>. This usually takes a few moments, but can sometimes take up to 15 minutes.'
+					'We’re preparing <domain /> to be your store’s <strong>primary address</strong>. This usually takes a few moments, but can sometimes take up to 15 minutes.'
 				),
 				{
 					domain: <strong>{ domainName }</strong>,
