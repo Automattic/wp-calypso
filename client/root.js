@@ -138,8 +138,12 @@ async function getLoggedInLandingPage( { dispatch, getState } ) {
 
 	if ( isCustomerHomeEnabled ) {
 		if ( isAdminInterfaceWPAdmin( getState(), primaryOrSelectedSiteId ) ) {
-			// This URL starts with 'https://' because it's the access to wp-admin.
-			return getSiteAdminUrl( getState(), primaryOrSelectedSiteId );
+			// In development and Calypso Live environments, don't redirect to wp-admin as it
+			// navigates the user completely away from the testing environment.
+			if ( ! [ 'development', 'wpcalypso' ].includes( config( 'env_id' ) ) ) {
+				// This URL starts with 'https://' because it's the access to wp-admin.
+				return getSiteAdminUrl( getState(), primaryOrSelectedSiteId );
+			}
 		}
 		return `/home/${ primarySiteSlug }`;
 	}
