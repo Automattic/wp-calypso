@@ -233,7 +233,10 @@ describe( 'a8c-for-agencies agency actions', () => {
 			} )( dispatch, getState, undefined );
 
 			expect( dispatch ).toHaveBeenCalled();
-			expect( state.a8cForAgencies.agencies.activeAgency.lead_matching ).toEqual( {
+			const activeAgency = state.a8cForAgencies.agencies.activeAgency;
+
+			expect( activeAgency ).not.toBeNull();
+			expect( activeAgency?.lead_matching ).toEqual( {
 				draft: {
 					...createLeadMatchingDraft(),
 					regions: [ 'americas' ],
