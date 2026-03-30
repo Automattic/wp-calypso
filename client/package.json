@@ -121,6 +121,7 @@
 		"@wordpress/notices": "5.23.0",
 		"@wordpress/private-apis": "^ 1.39.0",
 		"@wordpress/react-i18n": "^4.23.0",
+		"@wordpress/ui": "^0.9.0",
 		"@wordpress/viewport": "^6.23.0",
 		"@wordpress/warning": "^3.23.0",
 		"autosize": "^4.0.4",

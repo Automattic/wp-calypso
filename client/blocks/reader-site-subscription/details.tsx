@@ -74,13 +74,18 @@ const SiteSubscriptionDetails = ( {
 			const newPaymentPlans: PaymentPlan[] = [];
 
 			paymentDetails.forEach( ( paymentDetail: Reader.SiteSubscriptionPaymentDetails ) => {
-				const { is_gift, is_comp, ID, currency, renewal_price, renew_interval } = paymentDetail;
+				// Skip legacy gift subscriptions that haven't been migrated to comps.
+				if ( paymentDetail.is_gift && ! paymentDetail.is_comp ) {
+					return;
+				}
+				const { is_comp, ID, title, currency, renewal_price, renew_interval } = paymentDetail;
 				const renewalPrice = formatRenewalPrice( renewal_price, currency );
 				const when = getPaymentInterval( renew_interval );
 				const renewalDate = formatRenewalDate( paymentDetail.end_date, localeSlug );
 				newPaymentPlans.push( {
-					is_gift: !! ( is_gift || is_comp ),
+					is_comp: !! is_comp,
 					id: ID,
+					title: title || '',
 					renewalPrice: `${ renewalPrice }${ when }`,
 					renewalDate,
 				} );
@@ -90,10 +95,10 @@ const SiteSubscriptionDetails = ( {
 		}
 	}, [ localeSlug, paymentDetails ] );
 
-	const areAllPaymentsGifts = useMemo( () => {
+	const areAllPaymentsComps = useMemo( () => {
 		if ( paymentDetails && paymentDetails.length ) {
 			for ( const plan in paymentPlans ) {
-				if ( ! paymentPlans[ plan ].is_gift ) {
+				if ( ! paymentPlans[ plan ].is_comp ) {
 					return false;
 				}
 			}
@@ -304,29 +309,29 @@ const SiteSubscriptionDetails = ( {
 							</dl>
 						) }
 						{ paymentPlans &&
-							paymentPlans.map( ( { is_gift, id, renewalPrice, renewalDate } ) => {
-								if ( is_gift ) {
-									return (
-										<dl className="site-subscription-info__list" key={ id }>
-											<dt>{ translate( 'Complimentary subscription' ) }</dt>
-											<dd></dd>
-										</dl>
-									);
-								}
-
-								return (
-									<dl className="site-subscription-info__list" key={ id }>
-										<dt>{ translate( 'Plan' ) }</dt>
-										<dd>{ renewalPrice }</dd>
-										{ renewalDate && (
-											<>
-												<dt>{ translate( 'Billing period' ) }</dt>
-												<dd>{ translate( 'Renews on %s', { args: [ renewalDate ] } ) }</dd>
-											</>
-										) }
-									</dl>
-								);
-							} ) }
+							paymentPlans.map( ( { is_comp, id, title, renewalPrice, renewalDate } ) => (
+								<dl className="site-subscription-info__list" key={ id }>
+									<dt>{ translate( 'Plan' ) }</dt>
+									<dd>
+										{ is_comp
+											? translate( 'Complimentary: %(title)s', {
+													args: { title },
+													comment: 'Label showing a complimentary subscription plan name',
+											  } )
+											: renewalPrice }
+									</dd>
+									{ ( renewalDate || is_comp ) && (
+										<>
+											<dt>{ translate( 'Billing period' ) }</dt>
+											<dd>
+												{ renewalDate
+													? translate( 'Renews on %s', { args: [ renewalDate ] } )
+													: translate( 'Does not expire' ) }
+											</dd>
+										</>
+									) }
+								</dl>
+							) ) }
 					</div>
 
 					<div className="site-subscription-page__button-container">
@@ -342,7 +347,7 @@ const SiteSubscriptionDetails = ( {
 						<Button
 							className="site-subscription-page__unsubscribe-button"
 							onClick={ onClickCancelSubscriptionButton }
-							disabled={ unsubscribing || areAllPaymentsGifts }
+							disabled={ unsubscribing || areAllPaymentsComps }
 						>
 							{ translate( 'Unsubscribe' ) }
 						</Button>

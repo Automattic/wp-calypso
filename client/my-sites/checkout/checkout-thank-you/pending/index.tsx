@@ -22,6 +22,7 @@ import { SUCCESS } from 'calypso/state/order-transactions/constants';
 import { fetchReceipt } from 'calypso/state/receipts/actions';
 import { getReceiptById } from 'calypso/state/receipts/selectors';
 import getOrderTransactionError from 'calypso/state/selectors/get-order-transaction-error';
+import { requestSite } from 'calypso/state/sites/actions';
 import usePurchaseOrder from '../../src/hooks/use-purchase-order';
 import { logStashLoadErrorEvent } from '../../src/lib/analytics';
 import type { RedirectInstructions } from 'calypso/my-sites/checkout/src/lib/pending-page';
@@ -251,17 +252,27 @@ function useRedirectOnTransactionSuccess( {
 			return;
 		}
 
-		// For siteless purchases where the pre-transaction redirect URL defaults to '/'
-		// (because the new site's ID was unknown before the transaction), use the
-		// receipt's blogId to redirect to the new site's thank-you page instead.
-		// Preserve any query params from the original redirectTo (e.g., ?flow=unified).
+		// For siteless purchases where the new site's ID was unknown at the time the
+		// redirect URL was generated (e.g. redirect payment methods like PayPal that
+		// build the thank-you URL before the transaction begins), resolve the site using
+		// the blogId from the receipt. Two cases are handled:
+		//
+		// 1. redirectTo is '/' or empty: construct the full thank-you URL from blogId
+		//    and receiptId, preserving any query params (e.g. ?checkout_type=unified).
+		// 2. redirectTo contains a ':siteId' placeholder: replace it with the real blogId.
+		//    This covers the onboarding cookie URL and ecommerce plan thank-you URL paths.
 		const { pathname, search } = redirectTo
 			? getUrlParts( redirectTo )
 			: { pathname: undefined, search: '' };
-		const effectiveRedirectTo =
-			( ! redirectTo || pathname === '/' ) && blogId && finalReceiptId
-				? `/checkout/thank-you/${ blogId }/${ finalReceiptId }${ search }`
-				: redirectTo;
+		const effectiveRedirectTo = ( () => {
+			if ( ( ! redirectTo || pathname === '/' ) && blogId && finalReceiptId ) {
+				return `/checkout/thank-you/${ blogId }/${ finalReceiptId }${ search }`;
+			}
+			if ( blogId && redirectTo?.includes( ':siteId' ) ) {
+				return redirectTo.replaceAll( ':siteId', String( blogId ) );
+			}
+			return redirectTo;
+		} )();
 
 		const redirectInstructions = getRedirectFromPendingPage( {
 			isLoadingOrder,
@@ -294,6 +305,13 @@ function useRedirectOnTransactionSuccess( {
 			translate,
 			reduxDispatch,
 		} );
+
+		// Pre-populate the Redux sites store with the newly-purchased site so
+		// that the thank-you page does not briefly show "You don't have any
+		// sites yet" while siteSelection fetches it asynchronously.
+		if ( blogId ) {
+			reduxDispatch( requestSite( blogId ) );
+		}
 
 		notifyAndPerformRedirect( siteSlug, redirectInstructions );
 	}, [
