@@ -101,7 +101,7 @@ export const accountRoute = createRoute( {
 		] );
 	},
 } ).lazy( () =>
-	import( '../../me/profile' ).then( ( d ) =>
+	import( '../../me/account' ).then( ( d ) =>
 		createLazyRoute( 'account' )( {
 			component: d.default,
 		} )
