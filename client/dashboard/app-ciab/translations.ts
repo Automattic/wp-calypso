@@ -52,7 +52,7 @@ const ciabGetTranslations = ( translation: string, text: string ) => {
 					ciabDomain
 				),
 			'Type {{strong}}%(siteDomain)s{{/strong}} below to confirm you want to delete the site:':
-				// eslint-disable-next-line @wordpress/i18n-translator-comments -- Key is the site string, value is store translation
+				/* translators: %(siteDomain)s: site domain the user must type to confirm deletion */
 				__(
 					'Type {{strong}}%(siteDomain)s{{/strong}} below to confirm you want to delete the store:',
 					ciabDomain
@@ -68,8 +68,9 @@ const ciabGetTranslations = ( translation: string, text: string ) => {
 				),
 			'Failed to delete site': __( 'Failed to delete store', ciabDomain ),
 			'Type the site domain to confirm': __( 'Type the store domain to confirm', ciabDomain ),
-			// eslint-disable-next-line @wordpress/i18n-translator-comments -- Key is the site string, value is store translation
-			'The site domain is: %s': __( 'The store domain is: %s', ciabDomain ),
+			'The site domain is: %s':
+				/* translators: %s: domain to confirm store deletion */
+				__( 'The store domain is: %s', ciabDomain ),
 			'You have an active or expired free trial on your site. Please cancel this plan prior to deleting your site.':
 				__(
 					'You have an active or expired free trial on your store. Please cancel this plan prior to deleting your store.',
