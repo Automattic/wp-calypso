@@ -4,6 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import ProductsSelector from 'calypso/my-sites/earn/components/add-edit-coupon-modal/products-selector';
 import { useDispatch } from 'calypso/state';
+import { requestAddComp } from 'calypso/state/memberships/comps/actions';
 import { requestAddGift } from 'calypso/state/memberships/gifts/actions';
 
 import './style.scss';
@@ -12,6 +13,7 @@ type GiftSubscriptionModalProps = {
 	userId: number | string;
 	siteId: number;
 	username: string;
+	useComps: boolean;
 	onClose: () => void;
 	onConfirm: () => void;
 };
@@ -22,10 +24,16 @@ type Gift = {
 	plan_id: number;
 };
 
+type Comp = {
+	user_id: number | string;
+	plan_id: number;
+};
+
 const GiftSubscriptionModal = ( {
 	siteId,
 	userId,
 	username,
+	useComps,
 	onClose,
 	onConfirm,
 }: GiftSubscriptionModalProps ) => {
@@ -45,12 +53,6 @@ const GiftSubscriptionModal = ( {
 	const giftSubscription = ( plan_id: number, user_id: number | string, username: string ) => {
 		setIsSubmitting( true );
 
-		const giftDetails: Gift = {
-			gift_id: null,
-			plan_id: plan_id,
-			user_id: user_id,
-		};
-
 		recordTracksEvent( 'calypso_subscribers_comp_modal_confirm', {
 			site_id: siteId,
 			plan_id: plan_id,
@@ -58,24 +60,36 @@ const GiftSubscriptionModal = ( {
 			is_email_subscriber: typeof user_id !== 'number',
 		} );
 
-		dispatch(
-			requestAddGift(
-				siteId,
-				giftDetails,
-				translate( 'Gave complimentary subscription to user "%(username)s".', {
-					args: {
-						username: username,
-					},
-				} ),
-				( { success }: { success: boolean } ) => {
-					setIsSubmitting( false );
-					if ( success ) {
-						onConfirm();
-					}
-					onClose();
-				}
-			)
-		);
+		const onComplete = ( { success }: { success: boolean } ) => {
+			setIsSubmitting( false );
+			if ( success ) {
+				onConfirm();
+			}
+			onClose();
+		};
+
+		const noticeText = translate( 'Gave complimentary subscription to user "%(username)s".', {
+			args: {
+				username: username,
+			},
+		} );
+
+		if ( useComps ) {
+			const compDetails: Comp = {
+				plan_id: plan_id,
+				user_id: user_id,
+			};
+
+			dispatch( requestAddComp( siteId, compDetails, noticeText, onComplete ) );
+		} else {
+			const giftDetails: Gift = {
+				gift_id: null,
+				plan_id: plan_id,
+				user_id: user_id,
+			};
+
+			dispatch( requestAddGift( siteId, giftDetails, noticeText, onComplete ) );
+		}
 	};
 
 	return (

@@ -51,7 +51,7 @@ interface AuthContextType {
 }
 export const AuthContext = createContext< AuthContextType | undefined >( undefined );
 
-async function initializeCurrentUser(): Promise< User > {
+export async function initializeCurrentUser(): Promise< User > {
 	// In support user session the `currentUser` refers to the wrong person so we should request
 	// the user object. Note we do not check `isSupportNextSession()` because in "next" support
 	// sessions the server does bootstrap the correct `currentUser`.

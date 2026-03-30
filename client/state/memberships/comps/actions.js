@@ -1,46 +1,38 @@
 import wpcom from 'calypso/lib/wp';
 import {
-	MEMBERSHIPS_GIFT_ADD,
-	MEMBERSHIPS_GIFT_ADD_FAILURE,
-	MEMBERSHIPS_GIFT_DELETE,
-	MEMBERSHIPS_GIFT_DELETE_FAILURE,
+	MEMBERSHIPS_COMP_ADD,
+	MEMBERSHIPS_COMP_ADD_FAILURE,
+	MEMBERSHIPS_COMP_DELETE,
+	MEMBERSHIPS_COMP_DELETE_FAILURE,
 } from 'calypso/state/action-types';
-import { membershipGiftFromApi } from 'calypso/state/data-layer/wpcom/sites/memberships';
+import { membershipCompFromApi } from 'calypso/state/data-layer/wpcom/sites/memberships';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import 'calypso/state/memberships/init';
 
-export function receiveDeleteCoupon( siteId, giftId ) {
-	return {
-		giftId,
-		siteId,
-		type: MEMBERSHIPS_GIFT_DELETE,
-	};
-}
-
-export const requestAddGift = ( siteId, gift, noticeText, onComplete ) => {
+export const requestAddComp = ( siteId, comp, noticeText, onComplete ) => {
 	return ( dispatch ) => {
 		dispatch( {
-			gift,
+			comp,
 			siteId,
-			type: MEMBERSHIPS_GIFT_ADD,
+			type: MEMBERSHIPS_COMP_ADD,
 		} );
 
 		return wpcom.req
 			.post(
 				{
 					method: 'POST',
-					path: `/sites/${ siteId }/memberships/gifts/${ encodeURIComponent( gift.user_id ) }/${
-						gift.plan_id
+					path: `/sites/${ siteId }/memberships/comps/${ encodeURIComponent( comp.user_id ) }/${
+						comp.plan_id
 					}`,
 					apiNamespace: 'wpcom/v2',
 				},
 				null
 			)
-			.then( ( newGift ) => {
-				if ( newGift.error ) {
-					throw new Error( newGift.error );
+			.then( ( newComp ) => {
+				if ( newComp.error ) {
+					throw new Error( newComp.error );
 				}
-				const membershipGift = membershipGiftFromApi( newGift );
+				const membershipComp = membershipCompFromApi( newComp );
 				if ( noticeText ) {
 					dispatch(
 						successNotice( noticeText, {
@@ -51,13 +43,13 @@ export const requestAddGift = ( siteId, gift, noticeText, onComplete ) => {
 
 				onComplete?.( { success: true } );
 
-				return membershipGift;
+				return membershipComp;
 			} )
 			.catch( ( error ) => {
 				dispatch( {
 					error,
 					siteId,
-					type: MEMBERSHIPS_GIFT_ADD_FAILURE,
+					type: MEMBERSHIPS_COMP_ADD_FAILURE,
 				} );
 				dispatch(
 					errorNotice( error.error?.message ?? error.message, {
@@ -70,18 +62,18 @@ export const requestAddGift = ( siteId, gift, noticeText, onComplete ) => {
 	};
 };
 
-export const requestDeleteGift = ( siteId, giftId, noticeText ) => {
+export const requestDeleteComp = ( siteId, compId, noticeText ) => {
 	return ( dispatch ) => {
 		dispatch( {
-			type: MEMBERSHIPS_GIFT_DELETE,
+			type: MEMBERSHIPS_COMP_DELETE,
 			siteId,
-			giftId,
+			compId,
 		} );
 
 		return wpcom.req
 			.post( {
 				method: 'DELETE',
-				path: `/sites/${ siteId }/memberships/gift/${ giftId }`,
+				path: `/sites/${ siteId }/memberships/comp/${ compId }`,
 				apiNamespace: 'wpcom/v2',
 			} )
 			.then( () => {
@@ -93,10 +85,10 @@ export const requestDeleteGift = ( siteId, giftId, noticeText ) => {
 			} )
 			.catch( ( error ) => {
 				dispatch( {
-					type: MEMBERSHIPS_GIFT_DELETE_FAILURE,
+					type: MEMBERSHIPS_COMP_DELETE_FAILURE,
 					siteId,
 					error,
-					giftId,
+					compId,
 				} );
 				dispatch(
 					errorNotice( error.message, {

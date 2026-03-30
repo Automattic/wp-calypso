@@ -96,6 +96,7 @@ const SiteSubscriptionRow = ( {
 	is_wpforteams_site,
 	is_paid_subscription,
 	is_gift,
+	is_comp,
 	is_rss,
 	resubscribed,
 	layout = 'full',
@@ -317,7 +318,7 @@ const SiteSubscriptionRow = ( {
 							</span>
 						) }
 
-						{ !! is_gift && (
+						{ !! ( is_gift || is_comp ) && (
 							<span className="gift-label">
 								{ translate( 'Comp', {
 									context: 'Label for a complimentary subscription',
