@@ -4,13 +4,13 @@ import { Modal, Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useDispatch } from 'calypso/state';
-import { requestDeleteGift } from 'calypso/state/memberships/gifts/actions';
+import { requestDeleteComp } from 'calypso/state/memberships/comps/actions';
 
 import './style.scss';
 
 type RemoveCompModalProps = {
 	siteId: number;
-	giftId: number;
+	compId?: number;
 	planName: string;
 	username: string;
 	onClose: () => void;
@@ -19,7 +19,7 @@ type RemoveCompModalProps = {
 
 const RemoveCompModal = ( {
 	siteId,
-	giftId,
+	compId,
 	planName,
 	username,
 	onClose,
@@ -31,27 +31,33 @@ const RemoveCompModal = ( {
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 
 	const handleRemove = () => {
+		if ( ! compId ) {
+			return;
+		}
+
 		setIsSubmitting( true );
 
-		recordTracksEvent( 'calypso_subscribers_remove_comp_confirm', {
-			site_id: siteId,
-			gift_id: giftId,
+		const noticeText = translate( 'Removed complimentary subscription from "%(username)s".', {
+			args: { username },
 		} );
 
-		dispatch(
-			requestDeleteGift(
-				siteId,
-				giftId,
-				translate( 'Removed complimentary subscription from "%(username)s".', {
-					args: { username },
-				} )
-			)
-		).then( () => {
+		const onSuccess = () => {
 			queryClient.invalidateQueries( { queryKey: [ 'subscribers', siteId ] } );
 			queryClient.invalidateQueries( { queryKey: [ 'subscriber-details', siteId ] } );
 			setIsSubmitting( false );
 			onRemoved();
+		};
+
+		const onError = () => {
+			setIsSubmitting( false );
+		};
+
+		recordTracksEvent( 'calypso_subscribers_remove_comp_confirm', {
+			site_id: siteId,
+			comp_id: compId,
 		} );
+
+		dispatch( requestDeleteComp( siteId, compId, noticeText ) ).then( onSuccess, onError );
 	};
 
 	return (
@@ -77,7 +83,7 @@ const RemoveCompModal = ( {
 					variant="primary"
 					isBusy={ isSubmitting }
 					onClick={ handleRemove }
-					disabled={ isSubmitting }
+					disabled={ isSubmitting || ! compId }
 				>
 					{ translate( 'Remove' ) }
 				</Button>
