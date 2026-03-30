@@ -5,7 +5,6 @@ import type { IAppState } from 'calypso/state/types';
 
 type PlanDifferentiatorsExperimentVariant =
 	| 'control'
-	| 'focused_comparison'
 	| 'focused_more_premium'
 	| 'focused_no_ai'
 	| 'focused_new_copy';
@@ -19,7 +18,8 @@ type PlanDifferentiatorsExperimentResult = {
 	 */
 	showDifferentiatorHeader: boolean;
 	/**
-	 * When true, use the focused_comparison feature list (getLongSetSignupWpcomFeatures).
+	 * When true, use the long-set signup feature list (getLongSetSignupWpcomFeatures).
+	 * Set for eligible users on the control arm (Explat may return variationName null or "control").
 	 */
 	useFocusedComparisonFeatures: boolean;
 	/**
@@ -29,7 +29,7 @@ type PlanDifferentiatorsExperimentResult = {
 	useVar41MorePremiumFeatures: boolean;
 	/**
 	 * When true, show plan-scoped feature pills (badges) in the features grid.
-	 * Applies to: focused_more_premium, focused_new_copy, focused_no_ai (not control or focused_comparison).
+	 * Applies to: focused_more_premium, focused_new_copy, focused_no_ai (not control / long-list).
 	 * focused_no_ai omits AI-labeled pills only; Free / New / Email pills still apply.
 	 */
 	showPricingDifferentiationFeaturePills: boolean;
@@ -39,7 +39,7 @@ type PlanDifferentiatorsExperimentResult = {
 	 */
 	useVar42NoAiFeatures: boolean;
 	/**
-	 * When true, the user is in an experiment variant (not control).
+	 * When true, the user is eligible for the experiment (any arm, including control).
 	 */
 	isExperimentVariant: boolean;
 };
@@ -69,17 +69,24 @@ function usePlanDifferentiatorsExperiment( {
 		isEligible,
 	} );
 
-	const variant = ( assignment?.variationName ?? undefined ) as
-		| PlanDifferentiatorsExperimentVariant
-		| undefined;
+	const rawVariationName = assignment?.variationName;
 
-	const isExperimentVariant = variant !== undefined && variant !== 'control';
+	let variant: PlanDifferentiatorsExperimentVariant | undefined;
+	if ( ! isEligible ) {
+		variant = undefined;
+	} else if ( rawVariationName === null || rawVariationName === 'control' ) {
+		variant = 'control';
+	} else {
+		variant = rawVariationName as Exclude< PlanDifferentiatorsExperimentVariant, 'control' >;
+	}
+
+	const isExperimentVariant = isEligible;
 
 	return {
 		isLoading,
 		variant,
 		showDifferentiatorHeader: false,
-		useFocusedComparisonFeatures: variant === 'focused_comparison',
+		useFocusedComparisonFeatures: isEligible && variant === 'control',
 		useVar41MorePremiumFeatures:
 			variant === 'focused_more_premium' || variant === 'focused_new_copy',
 		useVar42NoAiFeatures: variant === 'focused_no_ai',

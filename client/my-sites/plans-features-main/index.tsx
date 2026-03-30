@@ -396,7 +396,6 @@ const PlansFeaturesMain = ( {
 	const {
 		isLoading: isLoadingDifferentiatorsExperiment,
 		showDifferentiatorHeader,
-		variant: differentiatorsVariant,
 		useFocusedComparisonFeatures,
 		useVar41MorePremiumFeatures,
 		useVar42NoAiFeatures,
@@ -442,7 +441,7 @@ const PlansFeaturesMain = ( {
 		showBillingDescriptionForIncreasedRenewalPrice: renewalPricingVariation,
 		enableCategorisedFeatures: showSimplifiedFeatures,
 		reflectStorageSelectionInPlanPrices: true,
-		isGatingBusinessQ1: !! differentiatorsVariant,
+		isGatingBusinessQ1: isExperimentVariant,
 		redirectTo,
 		pluginSlug,
 	} );
