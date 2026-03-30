@@ -22,6 +22,7 @@ import { SUCCESS } from 'calypso/state/order-transactions/constants';
 import { fetchReceipt } from 'calypso/state/receipts/actions';
 import { getReceiptById } from 'calypso/state/receipts/selectors';
 import getOrderTransactionError from 'calypso/state/selectors/get-order-transaction-error';
+import { requestSite } from 'calypso/state/sites/actions';
 import usePurchaseOrder from '../../src/hooks/use-purchase-order';
 import { logStashLoadErrorEvent } from '../../src/lib/analytics';
 import type { RedirectInstructions } from 'calypso/my-sites/checkout/src/lib/pending-page';
@@ -304,6 +305,13 @@ function useRedirectOnTransactionSuccess( {
 			translate,
 			reduxDispatch,
 		} );
+
+		// Pre-populate the Redux sites store with the newly-purchased site so
+		// that the thank-you page does not briefly show "You don't have any
+		// sites yet" while siteSelection fetches it asynchronously.
+		if ( blogId ) {
+			reduxDispatch( requestSite( blogId ) );
+		}
 
 		notifyAndPerformRedirect( siteSlug, redirectInstructions );
 	}, [
