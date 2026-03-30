@@ -36,22 +36,12 @@ export function getNewTestUser( {
 	const username = getUsername( { prefix: usernamePrefix } );
 	const password = generateRandomPassword();
 
-	let email: string;
-	let inboxId: string;
-
-	if ( useMailosaur ) {
-		inboxId = SecretsManager.secrets.mailosaur[ mailosaurInbox ];
-		email = getTestEmailAddress( { inboxId, prefix: username } );
-	} else {
-		// Use Gmail + aliasing to avoid consuming Mailosaur quota.
-		// WP.com sends transactional emails to Gmail instead of Mailosaur.
-		// The emails are never read by tests — they just need a valid,
-		// unique address for signup.
-		inboxId = '';
-		email = `wpcome2etesting+${ username }@gmail.com`;
-	}
+	const inboxId = useMailosaur ? SecretsManager.secrets.mailosaur[ mailosaurInbox ] : '';
+	const email = getTestEmailAddress( { inboxId, prefix: username } );
 
 	const siteName = getBlogName();
+
+	process.stderr.write( `[getNewTestUser] email=${ email }, useMailosaur=${ useMailosaur }\n` );
 
 	return {
 		username: username,
@@ -297,8 +287,41 @@ export function getTestEmailAddress( {
 	inboxId: string;
 	prefix: string;
 } ): string {
+	if ( inboxId ) {
+		return getMailosaurTestAddress( { inboxId, prefix } );
+	}
+	return getGmailTestAddress( { prefix } );
+}
+
+/**
+ * Builds a Mailosaur test email address.
+ *
+ * @param {Object} param0 Object parameter.
+ * @param {string} param0.inboxId Mailosaur server/inbox ID.
+ * @param {string} param0.prefix Email prefix (typically the username).
+ * @returns {string} Mailosaur email address.
+ */
+function getMailosaurTestAddress( {
+	inboxId,
+	prefix,
+}: {
+	inboxId: string;
+	prefix: string;
+} ): string {
 	const domain = 'mailosaur.net';
 	return `${ prefix }@${ inboxId }.${ domain }`;
+}
+
+/**
+ * Builds a Gmail test email address using plus-aliasing.
+ *
+ * @param {Object} param0 Object parameter.
+ * @param {string} param0.prefix Alias inserted between the base address and the @ sign.
+ * @returns {string} Gmail-aliased email address.
+ */
+function getGmailTestAddress( { prefix }: { prefix: string } ): string {
+	const baseEmail = SecretsManager.secrets.gmailTestEmail;
+	return baseEmail.replace( '@', `+${ prefix }@` );
 }
 
 /**
