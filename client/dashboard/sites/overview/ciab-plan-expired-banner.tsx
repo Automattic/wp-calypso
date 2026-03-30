@@ -1,9 +1,9 @@
 import { siteCurrentPlanQuery, purchaseQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { Button } from '@wordpress/components';
 import { sprintf, __ } from '@wordpress/i18n';
 import { useLocale } from '../../app/locale';
 import Notice from '../../components/notice';
+import UpsellCTAButton from '../../components/upsell-cta-button';
 import { formatDate } from '../../utils/datetime';
 import { isCommerceGarden, isCommerceGardenPlanExpired } from '../../utils/site-types';
 import { getSitePlanUpgradeUrl } from '../../utils/site-url';
@@ -40,9 +40,9 @@ export function CiabPlanExpiredBanner( { site }: { site: Site } ) {
 			variant="warning"
 			title={ __( 'Plan expired' ) }
 			actions={
-				<Button variant="primary" href={ plansUrl }>
+				<UpsellCTAButton upsellId="site-overview-plan-expired" variant="primary" href={ plansUrl }>
 					{ __( 'Get a plan' ) }
-				</Button>
+				</UpsellCTAButton>
 			}
 		>
 			{ formattedDate
