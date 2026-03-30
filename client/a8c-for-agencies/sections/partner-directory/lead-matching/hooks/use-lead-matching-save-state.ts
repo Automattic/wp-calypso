@@ -100,7 +100,7 @@ export default function useLeadMatchingSaveState( {
 			} );
 
 			if ( response?.lead_matching_profile ) {
-				const savedSnapshot = getProfileSnapshot( response.lead_matching_profile );
+				const savedSnapshot = snapshot;
 				lastSavedSnapshotRef.current = savedSnapshot;
 				if ( isMountedRef.current ) {
 					setLastSavedSnapshot( savedSnapshot );
