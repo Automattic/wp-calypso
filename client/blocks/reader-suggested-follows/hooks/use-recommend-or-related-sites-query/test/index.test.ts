@@ -235,9 +235,7 @@ describe( 'useRecommendOrRelatedSitesQuery', () => {
 			useRecommendOrRelatedSitesQuery( { siteId: 123, postId: 456 } )
 		);
 
-		expect( result.current.data ).toEqual( [
-			{ site_ID: 789, name: 'Other Site' },
-		] );
+		expect( result.current.data ).toEqual( [ { site_ID: 789, name: 'Other Site' } ] );
 		expect( result.current.resourceType ).toBe( 'related' );
 	} );
 
