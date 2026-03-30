@@ -715,7 +715,11 @@ export default function CheckoutMainContent( {
 						{ translate( 'Checkout' ) }
 					</WPCheckoutTitle>
 				) }
-				<CheckoutStepGroup loadingHeader={ loadingHeader } onStepChanged={ onStepChanged }>
+				<CheckoutStepGroup
+					loadingHeader={ loadingHeader }
+					onStepChanged={ onStepChanged }
+					scrollToStepOnForwardNavigation
+				>
 					<PerformanceTrackerStop />
 					{ infoMessage }
 
