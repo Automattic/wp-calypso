@@ -45,7 +45,7 @@ export function init( apiKey: string, user?: PostHogUser, overrides?: PostHogOve
 	const posthogConfig = {
 		api_host: 'https://us.i.posthog.com',
 		autocapture: true,
-		defaults: '2026-01-30',
+		defaults: '2026-01-30' as const,
 		capture_pageleave: true,
 		debug: overrides?.debug ?? false,
 		session_recording: {
