@@ -30,8 +30,8 @@ export function updateActiveAgencyLeadMatching( {
 	sync,
 }: {
 	draft?: LeadMatchingDetails | null;
-	profile?: Agency[ 'lead_matching' ][ 'profile' ];
-	sync?: Agency[ 'lead_matching' ][ 'sync' ];
+	profile?: NonNullable< Agency[ 'lead_matching' ] >[ 'profile' ];
+	sync?: NonNullable< Agency[ 'lead_matching' ] >[ 'sync' ];
 } ): AgencyThunkAction {
 	return ( dispatch, getState ) => {
 		const agency = getActiveAgency( getState() );
