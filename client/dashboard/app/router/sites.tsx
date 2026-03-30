@@ -1,4 +1,4 @@
-import { HostingFeatures, DotcomFeatures, LogType } from '@automattic/api-core';
+import { HostingFeatures, DotcomFeatures, LogType, isWpError } from '@automattic/api-core';
 import {
 	bigSkyPluginQuery,
 	codeDeploymentQuery,
@@ -35,6 +35,7 @@ import {
 	siteSshAccessStatusQuery,
 	siteStaticFile404SettingQuery,
 	siteWordPressVersionQuery,
+	userSettingsQuery,
 	queryClient,
 } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
@@ -53,6 +54,7 @@ import {
 	canViewHundredYearPlanSettings,
 	canViewWordPressSettings,
 } from '../../sites/features';
+import { reauthRequiredLink } from '../../utils/link';
 import {
 	getActivityLogHiddenGroups,
 	hasHostingFeature,
@@ -653,6 +655,15 @@ export const siteSettingsAIToolsRoute = createRoute( {
 
 		if ( ! isEnabled( 'wordpress-ai-tools' ) ) {
 			throw redirectAsNotAllowed( { to: siteSettingsRoute.fullPath, params: { siteSlug } } );
+		}
+
+		try {
+			await queryClient.ensureQueryData( userSettingsQuery() );
+		} catch ( error: unknown ) {
+			if ( isWpError( error ) && error.error === 'reauthorization_required' ) {
+				window.location.href = reauthRequiredLink();
+				return;
+			}
 		}
 	},
 	loader: async ( { params: { siteSlug } } ) => {
