@@ -53,7 +53,11 @@ export default async function loadOmnibar( events: OmnibarEvents ) {
 			site={ site }
 			currentRoute={ window.location.pathname }
 			onToggleMenu={ () => events.mobileMenu.emit() }
-			onToggleNotifications={ () => events.notifications.emit() }
+			onToggleNotifications={ () =>
+				events.notifications.emit(
+					container.querySelector< HTMLElement >( '.masterbar-notifications' )
+				)
+			}
 		/>
 	);
 }

@@ -192,9 +192,7 @@ function Root() {
 			{ renderHeader() }
 			{ renderBody() }
 			{ supports.commandPalette && <CommandPalette /> }
-			{ isOmnibarEnabled && supports.notifications && (
-				<Notifications anchor=".masterbar__item-notifications" />
-			) }
+			{ isOmnibarEnabled && supports.notifications && <Notifications anchor /> }
 			{ isOmnibarEnabled && supports.help && <OmnibarHelpCenter /> }
 			<Snackbars />
 			<PageViewTracker />
