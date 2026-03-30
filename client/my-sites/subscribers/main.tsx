@@ -8,7 +8,7 @@ import QueryMembershipsSettings from 'calypso/components/data/query-memberships-
 import Main from 'calypso/components/main';
 import SubscriberValidationGate from 'calypso/components/subscribers-validation-gate';
 import { useCompleteLaunchpadTaskWithNoticeOnLoad } from 'calypso/launchpad/hooks/use-complete-launchpad-task-with-notice-on-load';
-import GiftSubscriptionModal from 'calypso/my-sites/subscribers/components/gift-modal/gift-modal';
+import CompSubscriptionModal from 'calypso/my-sites/subscribers/components/comp-modal/comp-modal';
 import RemoveCompModal from 'calypso/my-sites/subscribers/components/remove-comp-modal/remove-comp-modal';
 import { SubscriberDataViews } from 'calypso/my-sites/subscribers/components/subscriber-data-views';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -60,15 +60,15 @@ const SubscribersPage = ( { subscriberId }: Props ) => {
 		}
 	}, [ siteId, getSubscribersImports ] );
 
-	const [ giftUserId, setGiftUserId ] = useState< number | string | null >( null );
-	const [ giftUsername, setGiftUsername ] = useState( '' );
-	const onGiftSubscription = ( { user_id, email_address, display_name }: Subscriber ) => {
-		setGiftUserId( user_id || email_address || null );
-		setGiftUsername( display_name );
+	const [ compUserId, setCompUserId ] = useState< number | string | null >( null );
+	const [ compUsername, setCompUsername ] = useState( '' );
+	const onCompSubscription = ( { user_id, email_address, display_name }: Subscriber ) => {
+		setCompUserId( user_id || email_address || null );
+		setCompUsername( display_name );
 	};
 
 	const [ removeComp, setRemoveComp ] = useState< {
-		giftId: number;
+		compId?: number;
 		planName: string;
 		username: string;
 	} | null >( null );
@@ -82,27 +82,25 @@ const SubscribersPage = ( { subscriberId }: Props ) => {
 					<SubscriberDataViews
 						siteId={ siteId }
 						isUnverified={ isUnverified }
-						onGiftSubscription={ onGiftSubscription }
-						onRemoveComp={ ( giftId, planName, username ) =>
-							setRemoveComp( { giftId, planName, username } )
-						}
+						onCompSubscription={ onCompSubscription }
+						onRemoveComp={ ( params ) => setRemoveComp( params ) }
 						subscriberId={ isSubscriberIdValid ? subscriberId : undefined }
 					/>
 
-					{ giftUserId !== null && (
-						<GiftSubscriptionModal
+					{ compUserId !== null && (
+						<CompSubscriptionModal
 							siteId={ siteId ?? 0 }
-							userId={ giftUserId }
-							username={ giftUsername }
-							onClose={ () => setGiftUserId( null ) }
-							onConfirm={ () => setGiftUserId( null ) }
+							userId={ compUserId }
+							username={ compUsername }
+							onClose={ () => setCompUserId( null ) }
+							onConfirm={ () => setCompUserId( null ) }
 						/>
 					) }
 
 					{ removeComp !== null && (
 						<RemoveCompModal
 							siteId={ siteId ?? 0 }
-							giftId={ removeComp.giftId }
+							compId={ removeComp.compId }
 							planName={ removeComp.planName }
 							username={ removeComp.username }
 							onClose={ () => setRemoveComp( null ) }

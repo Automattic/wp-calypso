@@ -118,7 +118,7 @@ export default function QuickPost(): JSX.Element | null {
 							{
 								button: translate( 'View Post.' ),
 								onClick: () => {
-									window.open( data.URL, '_blank' );
+									window.open( data.URL, '_blank', 'noopener,noreferrer' );
 								},
 							}
 						)

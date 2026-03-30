@@ -2089,5 +2089,64 @@ describe( 'getThankYouPageUrl', () => {
 
 			expect( url ).toBe( '/setup/onboarding-unified/post-checkout-onboarding?siteId=12345' );
 		} );
+
+		it( 'should append :siteId placeholder when cookie URL contains post-checkout-onboarding path but siteId is undefined', () => {
+			const getUrlFromCookie = jest.fn(
+				() => '/setup/onboarding-unified/post-checkout-onboarding'
+			);
+
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				sitelessCheckoutType: 'unified',
+				siteId: undefined,
+				getUrlFromCookie,
+			} );
+
+			expect( url ).toBe( '/setup/onboarding-unified/post-checkout-onboarding?siteId=:siteId' );
+		} );
+
+		it( 'should append :siteId placeholder after existing query params when siteId is undefined', () => {
+			const getUrlFromCookie = jest.fn(
+				() => '/setup/onboarding-unified/post-checkout-onboarding?existing=param'
+			);
+
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				sitelessCheckoutType: 'unified',
+				siteId: undefined,
+				getUrlFromCookie,
+			} );
+
+			expect( url ).toBe(
+				'/setup/onboarding-unified/post-checkout-onboarding?existing=param&siteId=:siteId'
+			);
+		} );
+
+		it( 'should use :siteId placeholder in ecommerce thank-you URL when siteId is undefined', () => {
+			const getUrlFromCookie = jest.fn(
+				() => '/setup/onboarding-unified/post-checkout-onboarding'
+			);
+			const receiptId = 67890;
+			const cart = {
+				...getMockCart(),
+				products: [
+					{
+						...getEmptyResponseCartProduct(),
+						product_slug: PLAN_ECOMMERCE,
+					},
+				],
+			};
+
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				sitelessCheckoutType: 'unified',
+				siteId: undefined,
+				receiptId,
+				cart,
+				getUrlFromCookie,
+			} );
+
+			expect( url ).toBe( '/checkout/thank-you/:siteId/67890' );
+		} );
 	} );
 } );

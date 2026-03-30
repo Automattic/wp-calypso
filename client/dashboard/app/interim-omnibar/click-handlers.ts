@@ -20,7 +20,7 @@ function createOmnibarEvent< T = void >() {
 
 export const omnibarEvents = {
 	mobileMenu: createOmnibarEvent(),
-	notifications: createOmnibarEvent(),
+	notifications: createOmnibarEvent< HTMLElement | null >(),
 	linkClick: createOmnibarEvent< { href: string; event: MouseEvent } >(),
 };
 
