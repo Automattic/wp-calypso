@@ -22,6 +22,7 @@ export type SiteSubscriptionDetailsProps = {
 export type PaymentPlan = {
 	is_comp: boolean;
 	id: string;
+	title: string;
 	renewalPrice: string;
 	renewalDate: string;
 };

@@ -168,6 +168,8 @@ export type SiteSubscriptionDetails< DateT = Date > = {
 
 export type SiteSubscriptionPaymentDetails = {
 	is_comp: boolean;
+	/** @deprecated Legacy field from the API — plans with is_gift are filtered out. */
+	is_gift?: boolean;
 	ID: string;
 	site_id: string;
 	status: string;

@@ -57,7 +57,7 @@ const useSubscriptionPlans = ( subscriber: Subscriber ): SubscriptionPlanData[] 
 	}
 
 	const transformSubscriptionPlans = ( subscriptions?: SubscriptionPlan[] ): PlanData[] => {
-		const defaultSubscription = [
+		const defaultSubscription: PlanData[] = [
 			{
 				is_complimentary: false,
 				renewal_price: 0,
@@ -68,38 +68,33 @@ const useSubscriptionPlans = ( subscriber: Subscriber ): SubscriptionPlanData[] 
 			},
 		];
 
-		if ( subscriptions ) {
-			const result = subscriptions
-				.filter( ( subscription: SubscriptionPlan ) => ! subscription.is_gift )
-				.map( ( subscription: SubscriptionPlan ) => {
-					const {
-						is_comp,
-						comp_id,
-						currency,
-						renewal_price,
-						renew_interval,
-						inactive_renew_interval,
-						start_date,
-						title,
-					} = subscription;
-					const renewalPrice = formatRenewalPrice( renewal_price, currency );
-					const when = getPaymentInterval( renew_interval, inactive_renew_interval );
-
-					return {
-						is_complimentary: !! is_comp,
-						comp_id,
-						renewal_price,
-						renewalPrice,
-						when,
-						start_date,
-						title,
-					};
-				} );
-
-			return result || defaultSubscription;
+		if ( ! subscriptions?.length ) {
+			return defaultSubscription;
 		}
 
-		return defaultSubscription;
+		// Filter out legacy gift subscriptions and transform in a single pass.
+		const plans = subscriptions.reduce< PlanData[] >( ( acc, subscription ) => {
+			if ( subscription.is_gift && ! subscription.is_comp ) {
+				return acc;
+			}
+
+			acc.push( {
+				is_complimentary: !! subscription.is_comp,
+				comp_id: subscription.comp_id,
+				renewal_price: subscription.renewal_price,
+				renewalPrice: formatRenewalPrice( subscription.renewal_price, subscription.currency ),
+				when: getPaymentInterval(
+					subscription.renew_interval,
+					subscription.inactive_renew_interval
+				),
+				start_date: subscription.start_date,
+				title: subscription.title,
+			} );
+
+			return acc;
+		}, [] );
+
+		return plans.length ? plans : defaultSubscription;
 	};
 
 	const getPlanDisplay = ( plan: PlanData ): string => {
