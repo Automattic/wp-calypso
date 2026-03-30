@@ -79,6 +79,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { useUpdateCachedContactDetails } from '../hooks/use-cached-contact-details';
 import { useCheckoutHelpCenter } from '../hooks/use-checkout-help-center';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
+import useSubmitButtonColor from '../hooks/use-submit-button-color';
 import { validateContactDetails } from '../lib/contact-validation';
 import { updateCartContactDetailsForCheckout } from '../lib/update-cart-contact-details-for-checkout';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
@@ -408,6 +409,7 @@ export default function CheckoutMainContent( {
 
 	const couponFieldStateProps = useCouponFieldState( applyCoupon );
 	const reduxDispatch = useReduxDispatch();
+	const submitButtonColor = useSubmitButtonColor();
 
 	const presalesChatKey = getPresalesChatKey( responseCart );
 	const isPresalesChatEnabled =
@@ -903,17 +905,19 @@ export default function CheckoutMainContent( {
 						setIs100YearPlanTermsAccepted={ setIs100YearPlanTermsAccepted }
 						isSubmitted={ isSubmitted }
 					/>
-					<CheckoutFormSubmit
-						validateForm={ validateForm }
-						submitButtonHeader={ <SubmitButtonHeader /> }
-						submitButtonFooter={
-							hasCartJetpackProductsOnly ? (
-								<JetpackCheckoutSeals />
-							) : (
-								<CheckoutMoneyBackGuarantee cart={ responseCart } />
-							)
-						}
-					/>
+					<SubmitButtonColorWrapper buttonColor={ submitButtonColor }>
+						<CheckoutFormSubmit
+							validateForm={ validateForm }
+							submitButtonHeader={ <SubmitButtonHeader /> }
+							submitButtonFooter={
+								hasCartJetpackProductsOnly ? (
+									<JetpackCheckoutSeals />
+								) : (
+									<CheckoutMoneyBackGuarantee cart={ responseCart } />
+								)
+							}
+						/>
+					</SubmitButtonColorWrapper>
 				</CheckoutStepGroup>
 			</WPCheckoutMainContent>
 		</RestorableProductsProvider>
@@ -2320,4 +2324,14 @@ const CheckoutSummaryNudgeArea = styled.div`
 		margin-block-start: 24px;
 		max-width: 288px;
 	}
+`;
+
+const SubmitButtonColorWrapper = styled.div< { buttonColor?: string } >`
+	${ ( { buttonColor } ) =>
+		buttonColor &&
+		`
+		button.checkout-button.is-status-primary {
+			background: ${ buttonColor };
+		}
+	` }
 `;
