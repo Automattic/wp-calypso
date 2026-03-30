@@ -3,6 +3,7 @@ import getAgencyTierInfo from 'calypso/a8c-for-agencies/sections/agency-tier/lib
 import AgencyTierProgressCard from 'calypso/a8c-for-agencies/sections/agency-tier/progress-card';
 import { useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import AgencyTierCelebrationModal from './celebration-modal';
 
 import './style.scss';
 
@@ -21,10 +22,16 @@ export default function OverviewSidebarAgencyTier() {
 	}
 
 	return (
-		<AgencyTierProgressCard
-			currentAgencyTierId={ currentAgencyTierId }
-			influencedRevenue={ influencedRevenue ?? 0 }
-			tierStatus={ tierStatus }
-		/>
+		<>
+			<AgencyTierCelebrationModal
+				agencyTierInfo={ currentAgencyTierInfo }
+				currentAgencyTier={ currentAgencyTierId }
+			/>
+			<AgencyTierProgressCard
+				currentAgencyTierId={ currentAgencyTierId }
+				influencedRevenue={ influencedRevenue ?? 0 }
+				tierStatus={ tierStatus }
+			/>
+		</>
 	);
 }
