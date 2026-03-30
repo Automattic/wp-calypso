@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import Loading from 'calypso/components/loading';
+import { bumpStat } from 'calypso/lib/analytics/mc';
 import { useInterval } from 'calypso/lib/interval';
 import wpcom from 'calypso/lib/wp';
 import { TELEGRAM_TRANSIENT_NOTICE } from 'calypso/me/telegram/use-telegram-bot-widget';
@@ -59,6 +60,10 @@ export default function TelegramConnectPage( { telegramId, token, ts } ) {
 			setStatus( 'missing_params' );
 			return;
 		}
+
+		// The user reached this page by clicking the Telegram assistant connect URL.
+		bumpStat( 'telegram_assistant', 'connect-url-clicked' );
+		recordTracksEvent( 'wpcom_telegram_assistant_connect_url_clicked' );
 
 		wpcom.req
 			.post(
