@@ -13,14 +13,12 @@ export type SubscriptionPlanData = {
 	title?: string;
 	is_complimentary: boolean;
 	is_free: boolean;
-	gift_id?: number;
 	comp_id?: number;
 };
 
 type PlanData = {
 	is_complimentary: boolean;
 	renewal_price: number;
-	gift_id?: number;
 	comp_id?: number;
 	renewalPrice: string;
 	when: string;
@@ -71,34 +69,32 @@ const useSubscriptionPlans = ( subscriber: Subscriber ): SubscriptionPlanData[] 
 		];
 
 		if ( subscriptions ) {
-			const result = subscriptions.map( ( subscription: SubscriptionPlan ) => {
-				const {
-					is_gift,
-					gift_id,
-					is_comp,
-					comp_id,
-					currency,
-					renewal_price,
-					renew_interval,
-					inactive_renew_interval,
-					start_date,
-					title,
-				} = subscription;
-				const renewalPrice = formatRenewalPrice( renewal_price, currency );
-				const when = getPaymentInterval( renew_interval, inactive_renew_interval );
-				const isComplimentary = !! ( is_gift || is_comp );
+			const result = subscriptions
+				.filter( ( subscription: SubscriptionPlan ) => ! subscription.is_gift )
+				.map( ( subscription: SubscriptionPlan ) => {
+					const {
+						is_comp,
+						comp_id,
+						currency,
+						renewal_price,
+						renew_interval,
+						inactive_renew_interval,
+						start_date,
+						title,
+					} = subscription;
+					const renewalPrice = formatRenewalPrice( renewal_price, currency );
+					const when = getPaymentInterval( renew_interval, inactive_renew_interval );
 
-				return {
-					is_complimentary: isComplimentary,
-					gift_id,
-					comp_id,
-					renewal_price,
-					renewalPrice,
-					when,
-					start_date,
-					title,
-				};
-			} );
+					return {
+						is_complimentary: !! is_comp,
+						comp_id,
+						renewal_price,
+						renewalPrice,
+						when,
+						start_date,
+						title,
+					};
+				} );
 
 			return result || defaultSubscription;
 		}
@@ -129,7 +125,6 @@ const useSubscriptionPlans = ( subscriber: Subscriber ): SubscriptionPlanData[] 
 				title: plan.title,
 				is_complimentary: plan.is_complimentary,
 				is_free: plan.renewal_price === 0,
-				gift_id: plan.gift_id,
 				comp_id: plan.comp_id,
 			} ) );
 		}

@@ -74,12 +74,12 @@ const SiteSubscriptionDetails = ( {
 			const newPaymentPlans: PaymentPlan[] = [];
 
 			paymentDetails.forEach( ( paymentDetail: Reader.SiteSubscriptionPaymentDetails ) => {
-				const { is_gift, is_comp, ID, currency, renewal_price, renew_interval } = paymentDetail;
+				const { is_comp, ID, currency, renewal_price, renew_interval } = paymentDetail;
 				const renewalPrice = formatRenewalPrice( renewal_price, currency );
 				const when = getPaymentInterval( renew_interval );
 				const renewalDate = formatRenewalDate( paymentDetail.end_date, localeSlug );
 				newPaymentPlans.push( {
-					is_gift: !! ( is_gift || is_comp ),
+					is_comp: !! is_comp,
 					id: ID,
 					renewalPrice: `${ renewalPrice }${ when }`,
 					renewalDate,
@@ -90,10 +90,10 @@ const SiteSubscriptionDetails = ( {
 		}
 	}, [ localeSlug, paymentDetails ] );
 
-	const areAllPaymentsGifts = useMemo( () => {
+	const areAllPaymentsComps = useMemo( () => {
 		if ( paymentDetails && paymentDetails.length ) {
 			for ( const plan in paymentPlans ) {
-				if ( ! paymentPlans[ plan ].is_gift ) {
+				if ( ! paymentPlans[ plan ].is_comp ) {
 					return false;
 				}
 			}
@@ -304,8 +304,8 @@ const SiteSubscriptionDetails = ( {
 							</dl>
 						) }
 						{ paymentPlans &&
-							paymentPlans.map( ( { is_gift, id, renewalPrice, renewalDate } ) => {
-								if ( is_gift ) {
+							paymentPlans.map( ( { is_comp, id, renewalPrice, renewalDate } ) => {
+								if ( is_comp ) {
 									return (
 										<dl className="site-subscription-info__list" key={ id }>
 											<dt>{ translate( 'Complimentary subscription' ) }</dt>
@@ -342,7 +342,7 @@ const SiteSubscriptionDetails = ( {
 						<Button
 							className="site-subscription-page__unsubscribe-button"
 							onClick={ onClickCancelSubscriptionButton }
-							disabled={ unsubscribing || areAllPaymentsGifts }
+							disabled={ unsubscribing || areAllPaymentsComps }
 						>
 							{ translate( 'Unsubscribe' ) }
 						</Button>

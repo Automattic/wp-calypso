@@ -48,12 +48,6 @@ export const membershipCouponFromApi = ( coupon ) => ( {
 	email_allow_list: coupon.email_allow_list ?? [],
 } );
 
-export const membershipGiftFromApi = ( gift ) => ( {
-	gift_id: parseInt( gift.gift_id ),
-	user_id: parseInt( gift.user_id ),
-	plan_id: parseInt( gift.plan_id ),
-} );
-
 export const membershipCompFromApi = ( comp ) => ( {
 	id: parseInt( comp.id ),
 	recipient_user_id: parseInt( comp.recipient_user_id ),
