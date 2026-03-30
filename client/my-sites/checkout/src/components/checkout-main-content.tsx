@@ -1902,6 +1902,14 @@ const WPCheckoutWrapper = styled.div< {
 				padding: 0;
 				margin-bottom: 0;
 			}
+			@media ( ${ props.theme.breakpoints.desktopUp } ) {
+				.checkout__summary-card {
+					background: ${ colorStudio.colors[ 'White' ] };
+					border: 1px solid ${ colorStudio.colors[ 'Gray 5' ] };
+					border-radius: 8px;
+					padding: 24px;
+				}
+			}
 			.promo-card.checkout-sidebar-plan-upsell {
 				background: linear-gradient( 135deg, rgba( 255, 255, 255, 0 ) 0%, #fff 50%, #e6f1ff 100% );
 				border-radius: 8px;
@@ -2103,16 +2111,17 @@ const WPCheckoutWrapper = styled.div< {
 				display: none;
 			}
 			.wp-checkout-order-summary__amount-wrapper {
-				border-top: 1px dashed ${ colorStudio.colors[ 'Gray 10' ] };
+				border-top: 1px dashed ${ colorStudio.colors[ 'Gray 5' ] };
 			}
 			.wp-checkout-order-summary__subtotal-section {
-				border-bottom: 1px dashed ${ colorStudio.colors[ 'Gray 10' ] };
+				border-top: 0;
+				border-bottom: 1px dashed ${ colorStudio.colors[ 'Gray 5' ] };S
 			}
 			.checkout-terms-and-checkboxes {
 				padding-block-start: 24px;
 			}
 			.checkout-terms-and-checkboxes > *:first-child {
-				border-top: 1px dashed ${ colorStudio.colors[ 'Gray 10' ] };
+				border-top: 1px dashed ${ colorStudio.colors[ 'Gray 5' ] };
 			}
 			.checkout-steps__submit-footer-wrapper > div {
 				margin-top: 8px;
