@@ -63,7 +63,10 @@ const SubscriberDetails = ( {
 		}
 
 		if ( subscriptionPlan.endDate ) {
-			const isExpired = new Date( subscriptionPlan.endDate ) < new Date();
+			const endDateUTC = subscriptionPlan.endDate.endsWith( 'Z' )
+				? subscriptionPlan.endDate
+				: subscriptionPlan.endDate + 'Z';
+			const isExpired = new Date( endDateUTC ) < new Date();
 
 			if ( isExpired ) {
 				return (
@@ -85,7 +88,9 @@ const SubscriberDetails = ( {
 
 		return (
 			<div className="subscriber-details__content-value" key={ index }>
-				{ translate( "Doesn't expire" ) }
+				{ subscriptionPlan.is_complimentary
+					? translate( "Doesn't expire" )
+					: translate( 'Auto-renews' ) }
 			</div>
 		);
 	};
