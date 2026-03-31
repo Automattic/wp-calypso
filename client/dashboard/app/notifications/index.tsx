@@ -41,10 +41,10 @@ export default function Notifications( {
 
 	// Close notifications when help center opens.
 	useEffect( () => {
-		if ( isHelpCenterShown && isOpen ) {
+		if ( isHelpCenterShown ) {
 			setIsOpen( false );
 		}
-	}, [ isHelpCenterShown ] ); // eslint-disable-line react-hooks/exhaustive-deps
+	}, [ isHelpCenterShown ] );
 
 	const handleClose = () => {
 		handleToggle( false );
