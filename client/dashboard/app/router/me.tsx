@@ -920,6 +920,14 @@ export const blockedSitesLegacyRedirectRoute = createRoute( {
 	},
 } );
 
+export const profileLegacyRedirectRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'profile',
+	beforeLoad: () => {
+		throw redirect( { to: '/me/account' } );
+	},
+} );
+
 export const mcpRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -1059,6 +1067,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 		mcpLegacyRedirectRoute,
 		privacyLegacyRedirectRoute,
 		blockedSitesLegacyRedirectRoute,
+		profileLegacyRedirectRoute,
 	];
 
 	meRoutes.push(
