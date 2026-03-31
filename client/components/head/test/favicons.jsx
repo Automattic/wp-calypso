@@ -44,12 +44,12 @@ describe( 'Favicons', () => {
 			[ 'icon', 96, 'favicon-96x96.png' ],
 
 			// Android favicon
-			[ 'icon', 192, 'android-chrome-192x192.webp' ],
+			[ 'icon', 192, 'android-chrome-192x192.png' ],
 
 			// Apple touch icons
 			[ 'apple-touch-icon', 180, 'apple-touch-icon-180x180.png' ],
 			[ 'apple-touch-icon', 152, 'apple-touch-icon-152x152.png' ],
-			[ 'apple-touch-icon', 144, 'apple-touch-icon-144x144.webp' ],
+			[ 'apple-touch-icon', 144, 'apple-touch-icon-144x144.png' ],
 			[ 'apple-touch-icon', 120, 'apple-touch-icon-120x120.png' ],
 			[ 'apple-touch-icon', 114, 'apple-touch-icon-114x114.png' ],
 			[ 'apple-touch-icon', 76, 'apple-touch-icon-76x76.png' ],
@@ -104,16 +104,16 @@ describe( 'Favicons', () => {
 		// Android favicons
 		expect( findFaviconBySizes( links, { rel: 'icon', sizes: '512x512' } ) ).toHaveAttribute(
 			'href',
-			expect.stringMatching( `${ basePath }/android-chrome-512x512.webp` )
+			expect.stringMatching( `${ basePath }/android-chrome-512x512.png` )
 		);
 		expect( findFaviconBySizes( links, { rel: 'icon', sizes: '192x192' } ) ).toHaveAttribute(
 			'href',
-			expect.stringMatching( `${ basePath }/android-chrome-192x192.webp` )
+			expect.stringMatching( `${ basePath }/android-chrome-192x192.png` )
 		);
 
 		// Apple touch icon
 		expect(
 			findFaviconBySizes( links, { rel: 'apple-touch-icon', sizes: '180x180' } )
-		).toHaveAttribute( 'href', expect.stringContaining( `${ basePath }/apple-touch-icon.webp` ) );
+		).toHaveAttribute( 'href', expect.stringContaining( `${ basePath }/apple-touch-icon.png` ) );
 	} );
 } );
