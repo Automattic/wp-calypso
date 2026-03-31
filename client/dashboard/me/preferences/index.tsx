@@ -27,7 +27,7 @@ export default function Preferences() {
 			{ optIn && <PreferencesNewHostingDashboard /> }
 			{ isEnabled( 'mcp-settings' ) && <PreferencesAiMcp /> }
 			{ supports.reader && <PreferencesBlockedSites /> }
-			{ !! supports.me && supports.me.privacy && <PreferencesPrivacy /> }
+			<PreferencesPrivacy />
 			<PreferencesLanguageForm />
 			<PreferencesPrimarySite />
 			<PreferencesDefaultLanding />
