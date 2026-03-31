@@ -2096,7 +2096,7 @@ const WPCheckoutWrapper = styled.div< {
 			.wp-checkout-order-summary__subtotal,
 			.wp-checkout-order-summary__total {
 				color: ${ colorStudio.colors[ 'Gray 90' ] };
-				font-size: 14px;
+				font-size: 16px;
 				line-height: 20px;
 				margin-bottom: 0;
 			}
