@@ -1,0 +1,8 @@
+@import "@wordpress/base-styles/colors";
+@import "@wordpress/base-styles/variables";
+
+.celebration-modal--container {
+	padding: $grid-unit-10 $grid-unit-20;
+	background-color: $gray-100;
+	border-radius: $radius-large;
+}

@@ -12,6 +12,7 @@ import { __ } from '@wordpress/i18n';
 import { copy, globe } from '@wordpress/icons';
 import { useState, useRef } from 'react';
 import type { DomainSummary, Site } from '@automattic/api-core';
+import './styles.scss';
 
 interface SiteLaunchCelebrationModalProps {
 	site: Site;
@@ -40,17 +41,13 @@ export default function SiteLaunchCelebrationModal( {
 	};
 
 	const renderUpsellContent = () => {
-		if ( hasCustomDomain ) {
-			return null;
-		}
-
 		let contentElement;
 		let buttonText;
 		let buttonHref;
 
 		if ( ! isPaidPlan ) {
 			contentElement = (
-				<Text as="p">
+				<Text as="p" style={ { flex: 1, minWidth: 0 } }>
 					{ createInterpolateElement(
 						__(
 							'Supercharge your website with a <strong>custom address</strong> that matches your blog, brand, or business.'
@@ -65,7 +62,7 @@ export default function SiteLaunchCelebrationModal( {
 			buttonHref = `/domains/add/${ site.slug }`;
 		} else if ( isBilledMonthly ) {
 			contentElement = (
-				<Text as="p">
+				<Text as="p" style={ { flex: 1, minWidth: 0 } }>
 					{ __(
 						"Interested in a custom domain? It's free for the first year when you switch to annual billing."
 					) }
@@ -77,7 +74,7 @@ export default function SiteLaunchCelebrationModal( {
 			buttonHref = `/domains/add/${ site.slug }`;
 		} else {
 			contentElement = (
-				<Text as="p">
+				<Text as="p" style={ { flex: 1, minWidth: 0 } }>
 					{ createInterpolateElement(
 						__(
 							'Your paid plan includes a domain name <strong>free for one year</strong>. Choose one that`s easy to remember and even easier to share.'
@@ -93,7 +90,7 @@ export default function SiteLaunchCelebrationModal( {
 		}
 
 		return (
-			<HStack spacing={ 3 }>
+			<HStack spacing={ 3 } alignment="bottomRight">
 				{ contentElement }
 				<Button variant="primary" href={ buttonHref }>
 					{ buttonText }
@@ -105,29 +102,31 @@ export default function SiteLaunchCelebrationModal( {
 	return (
 		<Modal title={ __( 'Congrats, your site is live!' ) } size="medium" onRequestClose={ onClose }>
 			<ConfettiAnimation />
-			<VStack spacing={ 3 }>
+			<VStack spacing={ 6 }>
 				<Text as="p">
 					{ __( 'Now you can head over to your site and share it with the world.' ) }
 				</Text>
-				<HStack>
+				<div className="celebration-modal--container">
 					<HStack>
-						<Text as="p" weight={ 600 }>
-							{ site.URL }
-						</Text>
-						<Button
-							ref={ copyButtonRef }
-							variant="tertiary"
-							size="compact"
-							icon={ copy }
-							label={ __( 'Copy URL' ) }
-							onClick={ handleCopy }
-							title={ clipboardCopied ? __( 'Copied!' ) : __( 'Copy URL' ) }
-						/>
+						<HStack style={ { flex: 1, minWidth: 0 } }>
+							<Text as="p" weight={ 600 } truncate>
+								{ site.URL }
+							</Text>
+							<Button
+								ref={ copyButtonRef }
+								variant="tertiary"
+								size="compact"
+								icon={ copy }
+								label={ __( 'Copy URL' ) }
+								onClick={ handleCopy }
+								title={ clipboardCopied ? __( 'Copied!' ) : __( 'Copy URL' ) }
+							/>
+						</HStack>
+						<Button icon={ globe } href={ site.URL } target="_blank">
+							{ __( 'View site' ) }
+						</Button>
 					</HStack>
-					<Button variant="tertiary" icon={ globe } href={ site.URL } target="_blank">
-						{ __( 'View site' ) }
-					</Button>
-				</HStack>
+				</div>
 				{ renderUpsellContent() }
 			</VStack>
 		</Modal>
