@@ -50,6 +50,7 @@
 
 .signup-slider__slide-content {
 	border-radius: 16px;
+	overflow: hidden;
 	height: 100%;
 	display: flex;
 	flex-direction: column;
@@ -88,13 +89,13 @@
 
 .signup-slider__slide-image {
 	width: calc( 100% + 100px );
+	max-width: none;
 	height: 100%;
 	margin-bottom: 60px;
 	margin-inline: -50px;
 	display: block;
-	background-repeat: no-repeat;
-	background-size: cover;
-	background-position: center bottom;
+	object-fit: cover;
+	object-position: center bottom;
 	pointer-events: none;
 	user-select: none;
 }
@@ -121,10 +122,6 @@
 }
 
 .signup-slider__slide--1 {
-	.signup-slider__slide-image {
-		background-image: url( ./images/webp/img-01@2x.webp );
-	}
-
 	/* This covers the case where there's no description in the slide */
 	.signup-slider__headline:last-child {
 		margin-top: 36px;
@@ -134,9 +131,8 @@
 
 .signup-slider__slide--2 {
 	.signup-slider__slide-image {
-		background-image: url( ./images/webp/img-02@2x.webp );
-		background-position: center;
-		background-size: contain;
+		object-fit: contain;
+		object-position: center;
 		width: calc( 100% - 100px );
 		margin-bottom: 0;
 	}
@@ -148,9 +144,8 @@
 
 .signup-slider__slide--3 {
 	.signup-slider__slide-image {
-		background-image: url( ./images/webp/img-03@2x.webp );
-		background-position: center;
-		background-size: contain;
+		object-fit: contain;
+		object-position: center;
 		width: calc( 100% - 80px );
 		margin-bottom: 0;
 	}
@@ -168,7 +163,6 @@
 
 .signup-slider__slide--4 {
 	.signup-slider__slide-image {
-		background-image: url( ./images/webp/img-04@2x.webp );
 		margin-bottom: 12px;
 	}
 
