@@ -39,7 +39,6 @@ export interface ReaderPost {
 }
 
 export interface ReaderFeed {
-	feed_ID?: number;
 	description: string;
 	feed_URL: string;
 	is_error: boolean;
