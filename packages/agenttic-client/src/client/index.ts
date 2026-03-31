@@ -75,10 +75,12 @@ async function executeToolOrAbility(
 					// client side callback, execute it
 					if ( ability.callback ) {
 						try {
-							// Pass messageId and toolCallId to callback for context
+							// Pass `messageId`, `toolCallId`, and `toolId` to callback for context
 							const enhancedArgs = {
 								...args,
 								...( messageId && { messageId } ),
+								...( toolCallId && { toolCallId } ),
+								...( toolId && { toolId } ),
 							};
 							const result =
 								await ability.callback( enhancedArgs );
