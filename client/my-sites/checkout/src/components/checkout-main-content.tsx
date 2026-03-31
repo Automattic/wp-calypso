@@ -1981,7 +1981,6 @@ const WPCheckoutWrapper = styled.div< {
 				border: none;
 			}
 			.checkout-payment-methods .has-highlight > label {
-				min-height: 52px;
 				font-size: 13px;
 				font-weight: 400;
 			}
