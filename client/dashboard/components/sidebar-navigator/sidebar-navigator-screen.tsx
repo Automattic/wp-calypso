@@ -44,26 +44,6 @@ export default function SidebarNavigatorScreen( { path, children }: ScreenProps 
 		isMounted.current = true;
 	}, [] );
 
-	// Restore focus when the screen becomes active.
-	// Skip on the initially active screen (wasActive is undefined on first render).
-	useEffect( () => {
-		if ( ! justBecameActive || wasActive === undefined ) {
-			return;
-		}
-		const wrapper = wrapperRef.current;
-		if ( ! wrapper || wrapper.contains( wrapper.ownerDocument.activeElement ) ) {
-			return;
-		}
-		const firstTabbable = wrapper.querySelector< HTMLElement >(
-			'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
-		);
-		if ( firstTabbable ) {
-			firstTabbable.focus();
-		} else {
-			wrapper.focus();
-		}
-	}, [ justBecameActive, wasActive ] );
-
 	if ( ! isActive ) {
 		return null;
 	}
