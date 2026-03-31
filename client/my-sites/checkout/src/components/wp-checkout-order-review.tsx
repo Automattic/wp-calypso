@@ -157,7 +157,7 @@ export default function WPCheckoutOrderReview( {
 			getCurrentUser( state ) && currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
 	);
 	const currentUserEmail = useSelector( getCurrentUserEmail ) as string | undefined;
-	const isGiftPurchase = responseCart.gift_details?.receiver_blog_slug;
+	const isGiftPurchase = Boolean( responseCart.gift_details?.receiver_blog_slug );
 
 	return (
 		<>
@@ -174,7 +174,11 @@ export default function WPCheckoutOrderReview( {
 					</SiteSummary>
 				) }
 				{ currentUserEmail && ! isGiftPurchase && (
-					<EmailSummary className="checkout-review-order__email">{ currentUserEmail }</EmailSummary>
+					<EmailSummary className="checkout-review-order__email">
+						{ isCheckoutUiRedesignV1
+							? currentUserEmail
+							: translate( 'Account: %s', { args: currentUserEmail } ) }
+					</EmailSummary>
 				) }
 				{ planIsP2Plus && selectedSiteData?.name && (
 					<SiteSummary className="checkout-review-order__site">
