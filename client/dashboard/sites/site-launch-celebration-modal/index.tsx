@@ -11,11 +11,11 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { copy, globe } from '@wordpress/icons';
 import { useState, useRef } from 'react';
-import type { Domain, Site } from '@automattic/api-core';
+import type { DomainSummary, Site } from '@automattic/api-core';
 
 interface SiteLaunchCelebrationModalProps {
 	site: Site;
-	domains?: Domain[];
+	domains?: DomainSummary[];
 	onClose: () => void;
 }
 
@@ -30,7 +30,7 @@ export default function SiteLaunchCelebrationModal( {
 
 	const isPaidPlan = ! site.plan?.is_free;
 	const isBilledMonthly = site.plan?.product_slug?.includes( 'monthly' );
-	const customDomains = domains.filter( ( domain ) => ! domain.wpcom_domain );
+	const customDomains = domains.filter( ( domain ) => domain.subscription_id !== null );
 	const hasCustomDomain = customDomains.length > 0;
 
 	const handleCopy = () => {
