@@ -1941,9 +1941,14 @@ const WPCheckoutWrapper = styled.div< {
 			.item-variation-picker > li > div:hover::before {
 				border: none;
 			}
-			.item-variation-picker > li > div > label {
-				min-height: 52px;
-			}
+			.item-variation-picker > li > div > label {                                                                                                                    
+					min-height: 64px;
+					padding-top: 2px;
+					padding-bottom: 0;                                                                                                                                       
+				@media ( ${ props.theme.breakpoints.desktopUp } ) {                                                                                                        
+					min-height: 72px;                                                                                                                                     
+				}                                                                                                                                                          
+			}   
 			.checkout-step__stepper > div > div:first-child {
 				border: 1px solid ${ colorStudio.colors[ 'Gray 90' ] };
 				color: ${ colorStudio.colors[ 'Gray 90' ] };
