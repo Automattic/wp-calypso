@@ -11,6 +11,7 @@ Once the hook is mounted, `window.__agentsManagerActions` provides:
 | Method                       | Signature                                                  | Description                                                                                      |
 | ---------------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
 | `getChatState`               | `() => Promise<{ isOpen, isDocked, floatingPosition }>`    | Returns the current chat state. Waits for the store to load before resolving.                    |
+| `getSessionId`               | `() => string`                                             | Returns the active session ID for the current conversation.                                      |
 | `setChatOpen`                | `(isOpen: boolean) => void`                                | Opens or closes the chat.                                                                        |
 | `setChatDocked`              | `(isDocked: boolean) => void`                              | Docks or undocks the chat.                                                                       |
 | `setChatEnabled`             | `(isEnabled: boolean) => void`                             | Enables or disables chat rendering.                                                              |
@@ -34,6 +35,9 @@ Properties can be pre-set on `window.__agentsManagerActions` **before** the hook
 // Get current state (resolves once the store has loaded)
 const state = await window.__agentsManagerActions.getChatState();
 console.log( state );
+
+// Get active session ID
+const sessionId = window.__agentsManagerActions.getSessionId();
 
 // Open the chat
 window.__agentsManagerActions.setChatOpen( true );

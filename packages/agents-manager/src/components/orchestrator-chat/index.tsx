@@ -94,14 +94,9 @@ export default function OrchestratorChat( {
 	const [ thinkingMessage, setThinkingMessage ] = useState< string | null >( null );
 	const [ isBuildingSite, setIsBuildingSite ] = useState( false );
 	const [ deletedMessageIds, setDeletedMessageIds ] = useState< Set< string > >( new Set() );
-
 	const currentPostId = useSelect( ( select ) => {
 		return ( select( 'core/editor' ) as { getCurrentPostId?: () => number } )?.getCurrentPostId?.();
 	}, [] );
-
-	// `agentConfig` is guaranteed non-null here because AgentSetup guards rendering
-	const agentId = agentConfig!.agentId;
-	const configSessionId = agentConfig!.sessionId;
 
 	const {
 		addMessage,
@@ -123,10 +118,10 @@ export default function OrchestratorChat( {
 			// Update the UI with the loaded messages
 			loadMessages( loadedMessages );
 			// Make sure future messages go to the right session
-			getAgentManager().updateSessionId( agentId, serverSessionId );
+			getAgentManager().updateSessionId( agentConfig!.agentId, serverSessionId );
 
 			// Sync local session ID with the server's
-			if ( configSessionId !== serverSessionId ) {
+			if ( agentConfig!.sessionId !== serverSessionId ) {
 				navigate( '/chat', { state: { sessionId: serverSessionId }, replace: true } );
 			}
 		},
@@ -212,7 +207,14 @@ export default function OrchestratorChat( {
 	// This allows to resume conversations after full page navigation
 	useNavigationContinuation?.( {
 		isProcessing,
-		onSubmit,
+		sendToolResult: async ( params ) => {
+			await onSubmit( params.message, {
+				type: 'tool_result',
+				toolCallId: params.toolCallId,
+				toolId: params.toolId,
+				sessionId: params.sessionId,
+			} );
+		},
 		sessionId: getActiveSessionId(),
 		pathname: window.location.pathname,
 	} );
