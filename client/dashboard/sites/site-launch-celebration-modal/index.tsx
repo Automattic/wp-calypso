@@ -25,6 +25,7 @@ export default function SiteLaunchCelebrationModal( {
 	domains = [],
 }: SiteLaunchCelebrationModalProps ) {
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
+	const hasEnTranslation = useHasEnTranslation();
 	const copyButtonRef = useRef< HTMLButtonElement >( null );
 
 	const isPaidPlan = ! site.plan?.is_free;
@@ -39,8 +40,6 @@ export default function SiteLaunchCelebrationModal( {
 	};
 
 	const renderUpsellContent = () => {
-		const hasEnTranslation = useHasEnTranslation();
-
 		if ( hasCustomDomain ) {
 			return null;
 		}
