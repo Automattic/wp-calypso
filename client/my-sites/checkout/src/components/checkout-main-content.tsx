@@ -1942,14 +1942,14 @@ const WPCheckoutWrapper = styled.div< {
 			.item-variation-picker > li > div:hover::before {
 				border: none;
 			}
-			.item-variation-picker > li > div > label {                                                                                                                    
+			.item-variation-picker > li > div > label {
 					min-height: 64px;
 					padding-top: 2px;
-					padding-bottom: 0;                                                                                                                                       
-				@media ( ${ props.theme.breakpoints.desktopUp } ) {                                                                                                        
-					min-height: 72px;                                                                                                                                     
-				}                                                                                                                                                          
-			}   
+					padding-bottom: 0;
+				@media ( ${ props.theme.breakpoints.desktopUp } ) {
+					min-height: 72px;
+				}
+			}
 			.checkout-step__stepper > div > div:first-child {
 				border: 1px solid ${ colorStudio.colors[ 'Gray 90' ] };
 				color: ${ colorStudio.colors[ 'Gray 90' ] };
@@ -2025,11 +2025,11 @@ const WPCheckoutWrapper = styled.div< {
 			.checkout-step__header h2 > span {
 				color: ${ colorStudio.colors[ 'Gray 100' ] };
 				font-size: 18px;
-					@media ( ${ props.theme.breakpoints.desktopUp } ) {                                                                                                                                                                  
-						font-size: 20px;                                                                                                                                                                                                 
-					}                                                                                                                                                                                                                    
-				}  
-				
+					@media ( ${ props.theme.breakpoints.desktopUp } ) {
+						font-size: 20px;
+					}
+				}
+
 			.checkout-step__header {
 				margin-bottom: 16px;
 			}
@@ -2042,7 +2042,7 @@ const WPCheckoutWrapper = styled.div< {
 				padding-top: 24px;
 				padding-bottom: 0;
 			}
-				
+
 			.wp-checkout__review-order-step .checkout-step__header h2 > span {
 				font-weight: 500;
 			}
