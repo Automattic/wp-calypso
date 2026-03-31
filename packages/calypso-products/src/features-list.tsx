@@ -2703,10 +2703,15 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_PRIORITY_24_7_SUPPORT ]: {
 		getSlug: () => FEATURE_PRIORITY_24_7_SUPPORT,
-		getTitle: ( params ) =>
-			params?.isExperimentVariant
-				? i18n.translate( 'Free 24/7 expert support with priority response times' )
-				: i18n.translate( 'Priority 24/7 support from our expert\u00A0team' ),
+		getTitle: ( params ) => {
+			if ( ! params?.isExperimentVariant ) {
+				return i18n.translate( 'Priority 24/7 support from our expert\u00A0team' );
+			}
+			return i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+				i18n.hasTranslation( 'Free 24/7 priority expert support' )
+				? i18n.translate( 'Free 24/7 priority expert support' )
+				: i18n.translate( 'Free 24/7 expert support with priority response times' );
+		},
 		getDescription: ( params ) =>
 			params?.isExperimentVariant
 				? i18n.translate(
