@@ -21,8 +21,8 @@ const wordPressFavicons = () => {
 			/>
 			<link
 				rel="icon"
-				type="image/png"
-				href={ `${ cdn }/i/favicons/android-chrome-192x192.png` }
+				type="image/webp"
+				href={ `${ cdn }/i/favicons/android-chrome-192x192.webp` }
 				sizes="192x192"
 			/>
 			{ [ 180, 152, 144, 120, 114, 76, 72, 60, 57 ].map( ( size ) => (
@@ -53,21 +53,21 @@ const jetpackFavicons = () => (
 		/>
 		<link
 			rel="icon"
-			type="image/png"
+			type="image/webp"
 			sizes="512x512"
-			href="/calypso/images/jetpack/favicons/android-chrome-512x512.png"
+			href="/calypso/images/jetpack/favicons/android-chrome-512x512.webp"
 		/>
 		<link
 			rel="icon"
-			type="image/png"
+			type="image/webp"
 			sizes="192x192"
-			href="/calypso/images/jetpack/favicons/android-chrome-192x192.png"
+			href="/calypso/images/jetpack/favicons/android-chrome-192x192.webp"
 		/>
 		<link
 			rel="apple-touch-icon"
-			type="image/png"
+			type="image/webp"
 			sizes="180x180"
-			href="/calypso/images/jetpack/favicons/apple-touch-icon.png"
+			href="/calypso/images/jetpack/favicons/apple-touch-icon.webp"
 		/>
 	</>
 );
@@ -77,39 +77,39 @@ const a4aFavicons = () => (
 		<meta name="application-name" content="Automattic for Agencies" />
 		<link
 			rel="icon"
-			type="image/png"
+			type="image/webp"
 			sizes="16x16"
-			href="/calypso/images/a8c-for-agencies/favicons/favicon-16x16.png"
+			href="/calypso/images/a8c-for-agencies/favicons/favicon-16x16.webp"
 		/>
 		<link
 			rel="icon"
-			type="image/png"
+			type="image/webp"
 			sizes="32x32"
-			href="/calypso/images/a8c-for-agencies/favicons/favicon-32x32.png"
+			href="/calypso/images/a8c-for-agencies/favicons/favicon-32x32.webp"
 		/>
 		<link
 			rel="icon"
-			type="image/png"
+			type="image/webp"
 			sizes="48x48"
-			href="/calypso/images/a8c-for-agencies/favicons/favicon-48x48.png"
+			href="/calypso/images/a8c-for-agencies/favicons/favicon-48x48.webp"
 		/>
 		<link
 			rel="icon"
-			type="image/png"
+			type="image/webp"
 			sizes="192x192"
-			href="/calypso/images/a8c-for-agencies/favicons/android-chrome-192x192.png"
+			href="/calypso/images/a8c-for-agencies/favicons/android-chrome-192x192.webp"
 		/>
 		<link
 			rel="icon"
-			type="image/png"
+			type="image/webp"
 			sizes="512x512"
-			href="/calypso/images/a8c-for-agencies/favicons/android-chrome-512x512.png"
+			href="/calypso/images/a8c-for-agencies/favicons/android-chrome-512x512.webp"
 		/>
 		<link
 			rel="apple-touch-icon"
-			type="image/png"
+			type="image/webp"
 			sizes="180x180"
-			href="/calypso/images/a8c-for-agencies/favicons/apple-touch-icon.png"
+			href="/calypso/images/a8c-for-agencies/favicons/apple-touch-icon.webp"
 		/>
 	</>
 );

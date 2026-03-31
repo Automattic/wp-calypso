@@ -28,7 +28,7 @@ exports[`Marketplace SignupSuccess should render the page as expected 1`] = `
     >
       <img
         alt=""
-        src="submission-success.png"
+        src="submission-success.webp"
       />
       <h1
         class="signup-success__header-title wp-brand-font"
