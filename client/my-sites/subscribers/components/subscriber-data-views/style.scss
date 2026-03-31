@@ -9,6 +9,8 @@ $padding-standard: 16px;
 
 body.is-section-subscribers,
 .theme-jetpack-cloud.is-group-jetpack-cloud.is-section-jetpack-subscribers {
+	overflow: hidden;
+
 	.layout:not( .has-no-sidebar ),
 	.has-no-masterbar {
 		.layout__content {
@@ -50,6 +52,7 @@ body.is-section-subscribers,
 			position: relative;
 			gap: 24px;
 			height: calc( 100vh - var( --masterbar-height ) - #{$padding-standard * 2} );
+			overflow: hidden;
 
 			@media ( max-width: $break-small ) {
 				padding: 0;
