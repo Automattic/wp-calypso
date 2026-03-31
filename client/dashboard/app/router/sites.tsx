@@ -663,7 +663,13 @@ export const siteSettingsAIToolsRoute = createRoute( {
 			queryClient.ensureQueryData( userSettingsQuery() ),
 		] );
 	},
-} );
+} ).lazy( () =>
+	import( '../../sites/settings-ai-tools/layout' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-ai-tools-layout' )( {
+			component: d.default,
+		} )
+	)
+);
 
 export const siteSettingsAIToolsIndexRoute = createRoute( {
 	getParentRoute: () => siteSettingsAIToolsRoute,
