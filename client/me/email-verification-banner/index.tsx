@@ -9,6 +9,8 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import isPendingEmailChange from 'calypso/state/selectors/is-pending-email-change';
+import { setUnsavedUserSetting } from 'calypso/state/user-settings/actions';
+import { saveUnsavedUserSettings } from 'calypso/state/user-settings/thunks';
 import './style.scss';
 
 const EmailVerificationBanner: React.FC< {
@@ -65,6 +67,7 @@ const EmailVerificationBannerV2: React.FC< Props > = ( { setIsBusy } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const emailToVerify = useGetEmailToVerify();
+	const isEmailChangePending = useSelector( isPendingEmailChange );
 	const sendVerificationEmail = useSendEmailVerification();
 	const [ isSendingEmail, setIsSendingEmail ] = useState( false );
 
@@ -76,7 +79,16 @@ const EmailVerificationBannerV2: React.FC< Props > = ( { setIsBusy } ) => {
 		setIsBusy( true );
 		setIsSendingEmail( true );
 		try {
-			await sendVerificationEmail();
+			if ( isEmailChangePending ) {
+				// For pending email changes, re-submit the new email via PUT /me/settings
+				// since POST /me/send-verification-email only works for the original email.
+				dispatch( setUnsavedUserSetting( 'user_email', emailToVerify ) );
+				await dispatch( saveUnsavedUserSettings( [ 'user_email' ] ) );
+			} else {
+				// For unverified original emails, use the dedicated endpoint since
+				// PUT /me/settings won't resend when the email hasn't changed.
+				await sendVerificationEmail();
+			}
 			dispatch(
 				successNotice(
 					translate(
@@ -99,7 +111,14 @@ const EmailVerificationBannerV2: React.FC< Props > = ( { setIsBusy } ) => {
 			setIsBusy( false );
 			setIsSendingEmail( false );
 		}
-	}, [ dispatch, emailToVerify, sendVerificationEmail, setIsBusy, translate ] );
+	}, [
+		dispatch,
+		emailToVerify,
+		isEmailChangePending,
+		sendVerificationEmail,
+		setIsBusy,
+		translate,
+	] );
 
 	if ( ! emailToVerify ) {
 		return null;
