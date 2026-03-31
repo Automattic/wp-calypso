@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import isPendingEmailChange from 'calypso/state/selectors/is-pending-email-change';
-import { setUserSetting } from 'calypso/state/user-settings/actions';
+import { setUnsavedUserSetting } from 'calypso/state/user-settings/actions';
 import { saveUnsavedUserSettings } from 'calypso/state/user-settings/thunks';
 import './style.scss';
 
@@ -82,7 +82,7 @@ const EmailVerificationBannerV2: React.FC< Props > = ( { setIsBusy } ) => {
 			if ( isEmailChangePending ) {
 				// For pending email changes, re-submit the new email via PUT /me/settings
 				// since POST /me/send-verification-email only works for the original email.
-				dispatch( setUserSetting( 'user_email', emailToVerify ) );
+				dispatch( setUnsavedUserSetting( 'user_email', emailToVerify ) );
 				await dispatch( saveUnsavedUserSettings( [ 'user_email' ] ) );
 			} else {
 				// For unverified original emails, use the dedicated endpoint since
