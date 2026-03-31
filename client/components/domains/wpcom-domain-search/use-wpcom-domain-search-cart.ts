@@ -113,7 +113,7 @@ export const useWPCOMDomainSearchCart = ( {
 				const isCoveredByCredits =
 					! forceFirstNonPremiumDomainToBeFree &&
 					creditsInteger >= domainItem.item_subtotal_integer &&
-					domainItem === firstNonPremiumDomain;
+					domainItem.meta === firstNonPremiumDomain?.meta;
 				return wpcomCartToDomainSearchCart(
 					domainItem,
 					freeDomainName === domainItem.meta || isCoveredByCredits
