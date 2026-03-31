@@ -6,7 +6,7 @@ import PageLayout from '../../components/page-layout';
 import PreferencesAiMcp from '../preferences-ai-mcp';
 import PreferencesBlockedSites from '../preferences-blocked-sites';
 import PreferencesDefaultLanding from '../preferences-default-landing';
-import PreferencesLanguageForm from '../preferences-language';
+import PreferencesLanguage from '../preferences-language';
 import PreferencesNewHostingDashboard from '../preferences-new-hosting-dashboard';
 import PreferencesPrimarySite from '../preferences-primary-site';
 import PreferencesPrivacy from '../preferences-privacy';
@@ -26,9 +26,9 @@ export default function Preferences() {
 		>
 			{ optIn && <PreferencesNewHostingDashboard /> }
 			{ isEnabled( 'mcp-settings' ) && <PreferencesAiMcp /> }
+			<PreferencesLanguage />
 			{ supports.reader && <PreferencesBlockedSites /> }
 			<PreferencesPrivacy />
-			<PreferencesLanguageForm />
 			<PreferencesPrimarySite />
 			<PreferencesDefaultLanding />
 		</PageLayout>

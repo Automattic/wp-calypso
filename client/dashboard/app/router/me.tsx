@@ -878,6 +878,27 @@ export const hostingDashboardRoute = createRoute( {
 	)
 );
 
+export const languageRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Language' ),
+			},
+		],
+	} ),
+	getParentRoute: () => preferencesRoute,
+	path: 'language',
+	loader: async () => {
+		await queryClient.ensureQueryData( userSettingsQuery() );
+	},
+} ).lazy( () =>
+	import( '../../me/language' ).then( ( d ) =>
+		createLazyRoute( 'language' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const appsRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -1032,7 +1053,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 		return [];
 	}
 
-	const preferencesChildren: AnyRoute[] = [ preferencesIndexRoute, privacyRoute ];
+	const preferencesChildren: AnyRoute[] = [ preferencesIndexRoute, privacyRoute, languageRoute ];
 	if ( config.supports.reader ) {
 		preferencesChildren.push( blockedSitesRoute );
 	}
