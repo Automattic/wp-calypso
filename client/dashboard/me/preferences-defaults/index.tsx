@@ -1,5 +1,5 @@
 import { rawUserPreferencesQuery, userSettingsQuery } from '@automattic/api-queries';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
@@ -8,7 +8,7 @@ import { useAppContext } from '../../app/context';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 
 function useLandingPageLabel() {
-	const { data: landingPage } = useSuspenseQuery( {
+	const { data: landingPage } = useQuery( {
 		...rawUserPreferencesQuery(),
 		select: ( preferences ) => {
 			if ( preferences[ 'sites-landing-page' ]?.useSitesAsLandingPage ) {
@@ -35,12 +35,12 @@ function usePrimarySiteName() {
 	const { queries } = useAppContext();
 	const { user } = useAuth();
 
-	const { data: primarySiteId } = useSuspenseQuery( {
+	const { data: primarySiteId } = useQuery( {
 		...userSettingsQuery(),
 		select: ( data ) => data.primary_site_ID,
 	} );
 
-	const { data: sites } = useSuspenseQuery(
+	const { data: sites } = useQuery(
 		queries.sitesQuery( { site_visibility: 'visible', include_a8c_owned: false } )
 	);
 
