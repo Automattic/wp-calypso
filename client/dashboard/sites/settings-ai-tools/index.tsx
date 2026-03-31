@@ -1,3 +1,5 @@
+import './style.scss';
+
 import { HostingFeatures } from '@automattic/api-core';
 import {
 	bigSkyPluginMutation,
@@ -29,7 +31,13 @@ import {
 	termDescription,
 } from '@wordpress/icons';
 import { useState } from 'react';
-import { getAccountMcpAbilities, getSiteAccountToolsEnabled } from '../../../me/mcp/utils';
+import {
+	getAccountMcpAbilities,
+	getSiteContextToolIds,
+	getSiteLevelEnabled,
+	getSiteMcpAbilities,
+	mergeSiteMcpAbilities,
+} from '../../../me/mcp/utils';
 import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { useHelpCenter } from '../../app/help-center';
@@ -112,9 +120,17 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 
 	// MCP settings for this site
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
-	const isMcpEnabled = getSiteAccountToolsEnabled( userSettings || {}, site.ID );
+	const isMcpEnabled = getSiteLevelEnabled( userSettings || {}, site.ID );
 
-	const mcpAbilities = getAccountMcpAbilities( userSettings || {} );
+	const accountAbilities = getAccountMcpAbilities( userSettings || {} );
+	const siteContextToolIds = getSiteContextToolIds( userSettings || {} );
+	const siteAbilities = getSiteMcpAbilities( userSettings || {}, site.ID );
+	const siteAccountAbilities = siteContextToolIds.size
+		? Object.fromEntries(
+				Object.entries( accountAbilities ).filter( ( [ id ] ) => siteContextToolIds.has( id ) )
+		  )
+		: accountAbilities;
+	const mcpAbilities = mergeSiteMcpAbilities( siteAccountAbilities, siteAbilities );
 	const availableTools = (
 		Object.entries( mcpAbilities ) as Array< [ string, McpAbility ] >
 	 ).filter( ( [ , tool ] ) => tool.visible !== false );
@@ -140,11 +156,11 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 				sites: [
 					{
 						blog_id: site.ID,
-						account_tools_enabled: enabled,
+						site_level_enabled: enabled,
 					},
 				],
 			},
-		} as any );
+		} );
 	};
 
 	const mutation = useMutation( {
@@ -264,16 +280,16 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 							</CardBody>
 							{ isMcpEnabled && (
 								<>
-									<CardDivider />
+									<CardDivider className="mcp-settings__sub-divider" />
 									<RouterLinkSummaryButton
-										to="./read"
+										to={ `/sites/${ siteSlug }/settings/ai-tools/read` }
 										density="medium"
 										title={ __( 'Read' ) }
 										decoration={ <Icon icon={ seen } size={ 24 } /> }
 										badges={ [ readBadge ] }
 									/>
 									<RouterLinkSummaryButton
-										to="./write"
+										to={ `/sites/${ siteSlug }/settings/ai-tools/write` }
 										density="medium"
 										title={ __( 'Write' ) }
 										decoration={ <Icon icon={ pencil } size={ 24 } /> }
@@ -284,7 +300,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 						</Card>
 						{ isMcpEnabled && (
 							<RouterLinkSummaryButton
-								to="./setup"
+								to={ `/sites/${ siteSlug }/settings/ai-tools/setup` }
 								title={ __( 'Connect external AI agent' ) }
 								description={ __( 'Get instructions for connecting your external AI assistant.' ) }
 								decoration={ <Icon icon={ connection } size={ 24 } /> }

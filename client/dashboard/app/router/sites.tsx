@@ -636,17 +636,22 @@ export const siteSettingsSiteVisibilityRoute = createRoute( {
 	)
 );
 
+// Pathless layout: a route with path `ai-tools` in flatRoutes fuzzy-matches `ai-tools/read` and
+// breaks matching (leftover `**` segment). Children use full paths under `settings` instead.
 export const siteSettingsAIToolsRoute = createRoute( {
+	id: 'siteSettingsAiTools',
 	staticData: { requiresSiteTypeSupport: 'settingsGeneralAITools' },
-	head: () => ( {
+	head: ( { params: { siteSlug } } ) => ( {
 		meta: [
 			{
 				title: __( 'AI tools' ),
 			},
+			{
+				breadcrumbHref: `/sites/${ siteSlug }/settings/ai-tools`,
+			},
 		],
 	} ),
 	getParentRoute: () => siteSettingsRoute,
-	path: 'ai-tools',
 	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
 		if ( cause === 'preload' ) {
 			return;
@@ -663,17 +668,11 @@ export const siteSettingsAIToolsRoute = createRoute( {
 			queryClient.ensureQueryData( userSettingsQuery() ),
 		] );
 	},
-} ).lazy( () =>
-	import( '../../sites/settings-ai-tools/layout' ).then( ( d ) =>
-		createLazyRoute( 'site-settings-ai-tools-layout' )( {
-			component: d.default,
-		} )
-	)
-);
+} );
 
 export const siteSettingsAIToolsIndexRoute = createRoute( {
 	getParentRoute: () => siteSettingsAIToolsRoute,
-	path: '/',
+	path: 'ai-tools',
 } ).lazy( () =>
 	import( '../../sites/settings-ai-tools' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-ai-tools' )( {
@@ -681,6 +680,24 @@ export const siteSettingsAIToolsIndexRoute = createRoute( {
 		} )
 	)
 );
+
+function redirectSiteAiToolsSubpageToHub( {
+	cause,
+	params: { siteSlug },
+}: {
+	cause: string;
+	params: { siteSlug: string };
+} ) {
+	if ( cause === 'preload' ) {
+		return;
+	}
+	if ( ! isEnabled( 'mcp-settings' ) ) {
+		throw redirect( {
+			to: siteSettingsAIToolsIndexRoute.fullPath,
+			params: { siteSlug },
+		} );
+	}
+}
 
 export const siteSettingsAIToolsReadRoute = createRoute( {
 	head: () => ( {
@@ -691,9 +708,13 @@ export const siteSettingsAIToolsReadRoute = createRoute( {
 		],
 	} ),
 	getParentRoute: () => siteSettingsAIToolsRoute,
-	path: 'read',
-	loader: async () => {
-		await queryClient.ensureQueryData( userSettingsQuery() );
+	path: 'ai-tools/read',
+	beforeLoad: redirectSiteAiToolsSubpageToHub,
+	loader: async ( { params: { siteSlug } } ) => {
+		await Promise.all( [
+			queryClient.ensureQueryData( userSettingsQuery() ),
+			queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) ),
+		] );
 	},
 } ).lazy( () =>
 	import( '../../sites/settings-ai-tools/read' ).then( ( d ) =>
@@ -712,9 +733,13 @@ export const siteSettingsAIToolsWriteRoute = createRoute( {
 		],
 	} ),
 	getParentRoute: () => siteSettingsAIToolsRoute,
-	path: 'write',
-	loader: async () => {
-		await queryClient.ensureQueryData( userSettingsQuery() );
+	path: 'ai-tools/write',
+	beforeLoad: redirectSiteAiToolsSubpageToHub,
+	loader: async ( { params: { siteSlug } } ) => {
+		await Promise.all( [
+			queryClient.ensureQueryData( userSettingsQuery() ),
+			queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) ),
+		] );
 	},
 } ).lazy( () =>
 	import( '../../sites/settings-ai-tools/write' ).then( ( d ) =>
@@ -733,7 +758,8 @@ export const siteSettingsAIToolsSetupRoute = createRoute( {
 		],
 	} ),
 	getParentRoute: () => siteSettingsAIToolsRoute,
-	path: 'setup',
+	path: 'ai-tools/setup',
+	beforeLoad: redirectSiteAiToolsSubpageToHub,
 	loader: async () => {
 		await queryClient.ensureQueryData( userSettingsQuery() );
 	},
@@ -1531,14 +1557,12 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 
 		// General
 		siteSettingsSiteVisibilityRoute,
-		isEnabled( 'mcp-settings' )
-			? siteSettingsAIToolsRoute.addChildren( [
-					siteSettingsAIToolsIndexRoute,
-					siteSettingsAIToolsReadRoute,
-					siteSettingsAIToolsWriteRoute,
-					siteSettingsAIToolsSetupRoute,
-			  ] )
-			: siteSettingsAIToolsRoute.addChildren( [ siteSettingsAIToolsIndexRoute ] ),
+		siteSettingsAIToolsRoute.addChildren( [
+			siteSettingsAIToolsIndexRoute,
+			siteSettingsAIToolsReadRoute,
+			siteSettingsAIToolsWriteRoute,
+			siteSettingsAIToolsSetupRoute,
+		] ),
 		siteSettingsSubscriptionGiftingRoute,
 		siteSettingsAgencyRoute,
 		siteSettingsHundredYearPlanRoute,

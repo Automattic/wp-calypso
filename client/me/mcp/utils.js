@@ -73,6 +73,47 @@ export function getSiteAccountToolsEnabled( userSettings, siteId ) {
 }
 
 /**
+ * Get the set of tool IDs that are relevant in a site context.
+ * Uses mcp_abilities.site as the authoritative list of site-applicable tools.
+ * @param {Object} userSettings - The user settings object
+ * @returns {Set<string>} Tool IDs relevant at the site level
+ */
+export function getSiteContextToolIds( userSettings ) {
+	const siteTools = userSettings?.mcp_abilities?.site || {};
+	return new Set( Object.keys( siteTools ) );
+}
+
+/**
+ * Get site-level MCP ability overrides for a specific site
+ * @param {Object} userSettings - The user settings object
+ * @param {string|number} siteId - The site ID
+ * @returns {Record<string, boolean>} Site-level ability overrides (toolId -> enabled)
+ */
+export function getSiteMcpAbilities( userSettings, siteId ) {
+	const mcpSites = userSettings?.mcp_abilities?.sites || [];
+	const siteEntry = mcpSites.find( ( site ) => site.blog_id === parseInt( siteId ) );
+	return siteEntry?.abilities || {};
+}
+
+/**
+ * Merge account-level MCP abilities with site-level overrides
+ * @param {Record<string, Object>} accountAbilities - Account-level abilities from getAccountMcpAbilities
+ * @param {Record<string, boolean>} siteAbilities - Site-level overrides from getSiteMcpAbilities
+ * @returns {Record<string, Object>} Merged abilities with site overrides taking precedence
+ */
+export function mergeSiteMcpAbilities( accountAbilities, siteAbilities ) {
+	return Object.fromEntries(
+		Object.entries( accountAbilities ).map( ( [ toolId, tool ] ) => [
+			toolId,
+			{
+				...tool,
+				enabled: toolId in siteAbilities ? siteAbilities[ toolId ] : tool.enabled,
+			},
+		] )
+	);
+}
+
+/**
  * Get site IDs where MCP access is disabled at the site level
  * @param {Object} userSettings - The user settings object
  * @returns {number[]} Site IDs with account tools disabled
@@ -88,6 +129,26 @@ export function getDisabledSiteIds( userSettings ) {
 	return mcpSites
 		.filter( ( site ) => site.account_tools_enabled === false )
 		.map( ( site ) => site.blog_id );
+}
+
+/**
+ * Check if the site-level MCP server is enabled for a specific site.
+ * Absent means off (default); only true when site_level_enabled is explicitly true.
+ * @param {Object} userSettings - The user settings object
+ * @param {string|number} siteId - The site ID
+ * @returns {boolean}
+ */
+export function getSiteLevelEnabled( userSettings, siteId ) {
+	if ( userSettings?.sites ) {
+		const siteEntry = userSettings.sites.find( ( site ) => site.blog_id === parseInt( siteId ) );
+		if ( siteEntry ) {
+			return siteEntry.site_level_enabled === true;
+		}
+	}
+
+	const mcpSites = userSettings?.mcp_abilities?.sites || [];
+	const siteEntry = mcpSites.find( ( site ) => site.blog_id === parseInt( siteId ) );
+	return siteEntry?.site_level_enabled === true;
 }
 
 /**

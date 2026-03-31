@@ -35,13 +35,67 @@ const siteVisibilityRoute = createRoute( {
 	)
 );
 
-const aiToolsRoute = createRoute( {
+const aiToolsLayoutRoute = createRoute( {
 	...appRouterSites.siteSettingsAIToolsRoute.options,
 	getParentRoute: () => settingsRoute,
+} );
+
+const { getParentRoute: _aiToolsIndexParent, ...aiToolsIndexRouteOptions } =
+	appRouterSites.siteSettingsAIToolsIndexRoute.options;
+
+const aiToolsIndexRoute = createRoute( {
+	...aiToolsIndexRouteOptions,
+	getParentRoute: () => aiToolsLayoutRoute,
+	path: 'ai-tools',
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-ai-tools' ).then( ( d ) =>
 		createLazyRoute( 'ai-tools' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+const { getParentRoute: _aiToolsReadParent, ...aiToolsReadRouteOptions } =
+	appRouterSites.siteSettingsAIToolsReadRoute.options;
+
+const aiToolsReadRoute = createRoute( {
+	...aiToolsReadRouteOptions,
+	getParentRoute: () => aiToolsLayoutRoute,
+	path: 'ai-tools/read',
+} ).lazy( () =>
+	import( 'calypso/dashboard/sites/settings-ai-tools/read' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-ai-tools-read-v2' )( {
+			component: d.default,
+		} )
+	)
+);
+
+const { getParentRoute: _aiToolsWriteParent, ...aiToolsWriteRouteOptions } =
+	appRouterSites.siteSettingsAIToolsWriteRoute.options;
+
+const aiToolsWriteRoute = createRoute( {
+	...aiToolsWriteRouteOptions,
+	getParentRoute: () => aiToolsLayoutRoute,
+	path: 'ai-tools/write',
+} ).lazy( () =>
+	import( 'calypso/dashboard/sites/settings-ai-tools/write' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-ai-tools-write-v2' )( {
+			component: d.default,
+		} )
+	)
+);
+
+const { getParentRoute: _aiToolsSetupParent, ...aiToolsSetupRouteOptions } =
+	appRouterSites.siteSettingsAIToolsSetupRoute.options;
+
+const aiToolsSetupRoute = createRoute( {
+	...aiToolsSetupRouteOptions,
+	getParentRoute: () => aiToolsLayoutRoute,
+	path: 'ai-tools/setup',
+} ).lazy( () =>
+	import( 'calypso/dashboard/sites/settings-ai-tools/setup' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-ai-tools-setup-v2' )( {
+			component: d.default,
 		} )
 	)
 );
@@ -208,7 +262,12 @@ const createRouteTree = () =>
 			settingsRoute.addChildren( [
 				settingsIndexRoute,
 				siteVisibilityRoute,
-				aiToolsRoute,
+				aiToolsLayoutRoute.addChildren( [
+					aiToolsIndexRoute,
+					aiToolsReadRoute,
+					aiToolsWriteRoute,
+					aiToolsSetupRoute,
+				] ),
 				subscriptionGiftingRoute,
 				wordpressRoute,
 				phpRoute,

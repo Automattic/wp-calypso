@@ -1,4 +1,6 @@
-import { userSettingsQuery, userSettingsMutation } from '@automattic/api-queries';
+import '../style.scss';
+
+import { userSettingsQuery, userSettingsMutation, siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
@@ -8,9 +10,15 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Fragment } from 'react';
-import { getAccountMcpAbilities } from '../../../../me/mcp/utils';
+import {
+	getAccountMcpAbilities,
+	getSiteContextToolIds,
+	getSiteMcpAbilities,
+	mergeSiteMcpAbilities,
+} from '../../../../me/mcp/utils';
 import Breadcrumbs from '../../../app/breadcrumbs';
-import { Card, CardBody, CardDivider } from '../../../components/card';
+import { siteRoute } from '../../../app/router/sites';
+import { Card, CardBody, CardDivider, CardHeader } from '../../../components/card';
 import ComponentViewTracker from '../../../components/component-view-tracker';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
@@ -36,8 +44,19 @@ interface McpAbility {
 }
 
 export default function SiteAIToolsRead() {
+	const { siteSlug } = siteRoute.useParams();
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
-	const mcpAbilities = getAccountMcpAbilities( userSettings || {} );
+
+	const accountAbilities = getAccountMcpAbilities( userSettings || {} );
+	const siteContextToolIds = getSiteContextToolIds( userSettings || {} );
+	const siteAbilities = getSiteMcpAbilities( userSettings || {}, site.ID );
+	const siteAccountAbilities = siteContextToolIds.size
+		? Object.fromEntries(
+				Object.entries( accountAbilities ).filter( ( [ id ] ) => siteContextToolIds.has( id ) )
+		  )
+		: accountAbilities;
+	const mcpAbilities = mergeSiteMcpAbilities( siteAccountAbilities, siteAbilities );
 
 	const allTools = ( Object.entries( mcpAbilities ) as Array< [ string, McpAbility ] > ).filter(
 		( [ , tool ] ) => tool.visible !== false
@@ -57,23 +76,33 @@ export default function SiteAIToolsRead() {
 	const handleToolChange = ( toolId: string, enabled: boolean ) => {
 		mutation.mutate( {
 			mcp_abilities: {
-				account: {
-					[ toolId ]: enabled,
-				},
+				sites: [
+					{
+						blog_id: site.ID,
+						abilities: {
+							[ toolId ]: enabled,
+						},
+					},
+				],
 			},
-		} as any );
+		} );
 	};
 
 	const handleEnableAll = ( categoryTools: Array< [ string, McpAbility ] >, enabled: boolean ) => {
-		const accountAbilities: Record< string, boolean > = {};
+		const abilities: Record< string, boolean > = {};
 		categoryTools.forEach( ( [ toolId ] ) => {
-			accountAbilities[ toolId ] = enabled;
+			abilities[ toolId ] = enabled;
 		} );
 		mutation.mutate( {
 			mcp_abilities: {
-				account: accountAbilities,
+				sites: [
+					{
+						blog_id: site.ID,
+						abilities,
+					},
+				],
 			},
-		} as any );
+		} );
 	};
 
 	// Group tools by display category
@@ -117,17 +146,7 @@ export default function SiteAIToolsRead() {
 
 		return subGroups.map( ( subName, index ) => (
 			<Fragment key={ subName }>
-				{ index > 0 && (
-					<CardBody style={ { padding: 'calc(4px * 2) calc(4px * 6)' } }>
-						<hr
-							style={ {
-								border: 'none',
-								borderTop: '1px solid var(--color-border-subtle, #dcdcde)',
-								margin: 0,
-							} }
-						/>
-					</CardBody>
-				) }
+				{ index > 0 && <CardDivider className="mcp-settings__sub-divider" /> }
 				<CardBody>
 					<VStack spacing={ 4 }>{ renderToolToggles( sortTools( subGrouped[ subName ] ) ) }</VStack>
 				</CardBody>
@@ -159,7 +178,7 @@ export default function SiteAIToolsRead() {
 
 					return (
 						<Card key={ categoryName }>
-							<CardBody>
+							<CardHeader>
 								<HStack justify="space-between" alignment="center">
 									<Text as="h3" weight={ 600 } size={ 14 }>
 										{ categoryName }
@@ -172,8 +191,7 @@ export default function SiteAIToolsRead() {
 										onChange={ ( checked ) => handleEnableAll( categoryTools, checked ) }
 									/>
 								</HStack>
-							</CardBody>
-							<CardDivider />
+							</CardHeader>
 							{ subOrder ? (
 								renderSubGroupedTools( categoryTools, categoryName )
 							) : (

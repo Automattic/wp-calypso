@@ -24,9 +24,11 @@ export default function Breadcrumbs( { length, onItemClick }: BreadcrumbsProps )
 	const items: BreadcrumbItemProps[] = matches
 		.map( ( match ) => {
 			const title = match.meta?.find( ( meta ) => meta?.title )?.title;
+			const breadcrumbHref = match.meta?.find( ( meta ) => meta?.breadcrumbHref )?.breadcrumbHref;
+			const href = breadcrumbHref ?? match.pathname;
 			return {
 				label: title || '',
-				href: match.pathname,
+				href,
 			};
 		} )
 		.filter( ( { label } ) => Boolean( label ) )
