@@ -1,5 +1,4 @@
 import { userSettingsQuery } from '@automattic/api-queries';
-import { isEnabled } from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
@@ -15,7 +14,6 @@ import {
 	notAllowed,
 	payment,
 	settings,
-	starEmpty,
 } from '@wordpress/icons';
 import { useAppContext } from '../../app/context';
 import { SidebarMenu, SidebarMenuItem } from '../../components/sidebar';
@@ -81,11 +79,6 @@ function MeMenuSidebar() {
 			{ supports.reader && (
 				<SidebarMenuItem icon={ notAllowed } to="/me/blocked-sites">
 					{ __( 'Blocked sites' ) }
-				</SidebarMenuItem>
-			) }
-			{ isEnabled( 'mcp-settings' ) && (
-				<SidebarMenuItem icon={ starEmpty } to="/me/mcp">
-					{ __( 'MCP' ) }
 				</SidebarMenuItem>
 			) }
 			{ hasAppSupport( supports, 'apps' ) && (
