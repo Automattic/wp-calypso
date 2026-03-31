@@ -9,6 +9,11 @@
 	background-color: var(--color-surface);
 	justify-content: flex-start;
 	font-weight: 400;
+
+	&.is-woo-hosted-basic-plan {
+		align-items: center;
+		gap: 12px;
+	}
 }
 
 .plan-features-2023-grid__header-logo {
@@ -203,6 +208,18 @@
 	font-weight: 400;
 	@include onboarding-font-recoleta;
 	letter-spacing: 0;
+}
+
+.plan-features-2023-grid__header-badge {
+	background-color: var(--studio-blue-5);
+	color: var(--studio-blue-50);
+	border-radius: 3px;
+	display: inline-block;
+	font-size: $font-body-extra-small;
+	font-weight: 500;
+	line-height: 20px;
+	padding: 0 8px;
+	white-space: nowrap;
 }
 
 .plan-features-2023-grid__header-tagline {
