@@ -7,6 +7,8 @@ import { URL as URLString } from 'calypso/types';
 const BASE_HOSTNAME = 'base.invalid';
 const BASE_URL = `http://${ BASE_HOSTNAME }`;
 
+const DEV_ENV_IDS = new Set( [ 'development', 'wpcalypso' ] );
+
 export default function isExternal( url: URLString ): boolean {
 	// While TypeScript should ensure that `url` really is a string, this method
 	// is still used in a lot of JavaScript contexts, without type checks.
@@ -40,16 +42,20 @@ export default function isExternal( url: URLString ): boolean {
 		return false;
 	}
 
+	// Legacy routes (e.g. /support) are served outside Calypso even when the
+	// hostname matches — treat them as external.
+	const hasLegacyPath = pathname && isLegacyRoute( pathname.replace( '//', '/' ) );
+
 	if ( typeof window !== 'undefined' ) {
 		if ( hostname === window.location.hostname ) {
-			// even if hostname matches, the url might be outside calypso
-			// outside calypso should be considered external
-			// double separators are valid paths - but not handled correctly
-			if ( pathname && isLegacyRoute( pathname.replace( '//', '/' ) ) ) {
-				return true;
-			}
-			return false;
+			return Boolean( hasLegacyPath );
 		}
+	}
+
+	// On Calypso Live and dev environments, treat production wordpress.com
+	// routes as internal so sidebar links stay within the testing environment.
+	if ( DEV_ENV_IDS.has( config( 'env_id' ) ) && hostname === 'wordpress.com' ) {
+		return Boolean( hasLegacyPath );
 	}
 
 	return hostname !== config( 'hostname' );
