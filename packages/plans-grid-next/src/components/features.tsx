@@ -42,7 +42,7 @@ const FeatureBadge = styled.span`
 	font-weight: 600;
 	line-height: inherit;
 	margin-inline-start: 8px;
-	vertical-align: middle;
+	vertical-align: baseline;
 	text-decoration: none;
 	white-space: nowrap;
 
