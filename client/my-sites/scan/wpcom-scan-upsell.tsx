@@ -4,6 +4,7 @@ import {
 	getPlan,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
+import { Page } from '@wordpress/admin-ui';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import JetpackScanSVG from 'calypso/assets/images/illustrations/jetpack-scan.svg';
@@ -13,7 +14,6 @@ import JetpackDisconnectedWPCOM from 'calypso/components/jetpack/jetpack-disconn
 import SecurityIcon from 'calypso/components/jetpack/security-icon';
 import JetpackTitle from 'calypso/components/jetpack-title';
 import Main from 'calypso/components/main';
-import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
@@ -193,17 +193,18 @@ export default function WPCOMScanUpsellPage( { reason }: { reason?: string } ) {
 			body = <ScanUpsellBody />;
 	}
 	return (
-		<Main className="scan scan__wpcom-upsell">
+		<Main fullWidthLayout className="scan scan__wpcom-upsell">
 			<DocumentHead title="Scanner" />
 			<PageViewTracker path="/scan/:site" title="Scanner" />
 
-			<NavigationHeader
-				navigationItems={ [] }
+			<Page
+				hasPadding
+				showSidebarToggle={ false }
 				title={ <JetpackTitle title={ translate( 'Scan' ) } /> }
-				subtitle={ translate( 'Automated malware scanning and firewall protection.' ) }
-			/>
-
-			{ body }
+				subTitle={ translate( 'Automated malware scanning and firewall protection.' ) }
+			>
+				{ body }
+			</Page>
 		</Main>
 	);
 }

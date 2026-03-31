@@ -4,6 +4,7 @@ import { siteByIdQuery, stagingSiteSyncStateQuery } from '@automattic/api-querie
 import { WPCOM_FEATURES_FULL_ACTIVITY_LOG } from '@automattic/calypso-products';
 import { isMobile } from '@automattic/viewport';
 import { useQuery } from '@tanstack/react-query';
+import { Page } from '@wordpress/admin-ui';
 import { localize } from 'i18n-calypso';
 import { get, isEmpty, isEqual } from 'lodash';
 import PropTypes from 'prop-types';
@@ -25,7 +26,6 @@ import JetpackColophon from 'calypso/components/jetpack-colophon';
 import JetpackTitle from 'calypso/components/jetpack-title';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
-import NavigationHeader from 'calypso/components/navigation-header';
 import Pagination from 'calypso/components/pagination';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import { getProductionSiteId } from 'calypso/dashboard/utils/site-staging-site';
@@ -488,83 +488,84 @@ class ActivityLog extends Component {
 
 				{ isJetpackCloud() && <SidebarNavigation /> }
 
-				<NavigationHeader
-					navigationItems={ [] }
+				<Page
+					hasPadding
+					showSidebarToggle={ false }
 					title={ <JetpackTitle title={ translate( 'Activity Log' ) } /> }
-					subtitle={ translate(
+					subTitle={ translate(
 						"Keep tabs on all your site's activity — plugin and theme updates, user logins, setting modifications, and more."
 					) }
-				/>
-
-				{ siteId && isJetpack && ! isAtomic && <RewindAlerts siteId={ siteId } /> }
-				{ siteId && 'unavailable' === rewindState.state && (
-					<RewindUnavailabilityNotice siteId={ siteId } />
-				) }
-				{ ! hasFullActivityLog && ! isMultisite && <UpgradeBanner siteId={ siteId } /> }
-				{ siteId && isJetpack && <ActivityLogTasklist siteId={ siteId } /> }
-				{ this.renderErrorMessage() }
-				{ this.renderActionProgress() }
-				{ this.renderFilterbar() }
-				{ isEmpty( logs ) ? (
-					this.renderNoLogsContent()
-				) : (
-					<div>
-						<Pagination
-							compact={ isMobile() }
-							className="activity-log__pagination is-top-pagination"
-							key="activity-list-pagination-top"
-							nextLabel={ translate( 'Older' ) }
-							page={ actualPage }
-							pageClick={ this.changePage }
-							perPage={ PAGE_SIZE }
-							prevLabel={ translate( 'Newer' ) }
-							total={ logs.length }
-						/>
-						<section className="activity-log__wrapper">
-							{ ! hasFullActivityLog && <div className="activity-log__fader" /> }
-							{ theseLogs.map( ( log ) =>
-								log.isAggregate ? (
-									<Fragment key={ log.activityId }>
-										{ timePeriod( log ) }
-										<ActivityLogAggregatedItem
-											key={ log.activityId }
-											activity={ log }
-											disableRestore={ disableRestore }
-											disableBackup={ disableBackup }
-											siteId={ siteId }
-											rewindState={ rewindState.state }
-										/>
-									</Fragment>
-								) : (
-									<Fragment key={ log.activityId }>
-										{ timePeriod( log ) }
-										<ActivityLogItem
-											key={ log.activityId }
-											activity={ log }
-											disableRestore={ disableRestore }
-											disableBackup={ disableBackup }
-											siteId={ siteId }
-										/>
-									</Fragment>
-								)
+				>
+					{ siteId && isJetpack && ! isAtomic && <RewindAlerts siteId={ siteId } /> }
+					{ siteId && 'unavailable' === rewindState.state && (
+						<RewindUnavailabilityNotice siteId={ siteId } />
+					) }
+					{ ! hasFullActivityLog && ! isMultisite && <UpgradeBanner siteId={ siteId } /> }
+					{ siteId && isJetpack && <ActivityLogTasklist siteId={ siteId } /> }
+					{ this.renderErrorMessage() }
+					{ this.renderActionProgress() }
+					{ this.renderFilterbar() }
+					{ isEmpty( logs ) ? (
+						this.renderNoLogsContent()
+					) : (
+						<div>
+							<Pagination
+								compact={ isMobile() }
+								className="activity-log__pagination is-top-pagination"
+								key="activity-list-pagination-top"
+								nextLabel={ translate( 'Older' ) }
+								page={ actualPage }
+								pageClick={ this.changePage }
+								perPage={ PAGE_SIZE }
+								prevLabel={ translate( 'Newer' ) }
+								total={ logs.length }
+							/>
+							<section className="activity-log__wrapper">
+								{ ! hasFullActivityLog && <div className="activity-log__fader" /> }
+								{ theseLogs.map( ( log ) =>
+									log.isAggregate ? (
+										<Fragment key={ log.activityId }>
+											{ timePeriod( log ) }
+											<ActivityLogAggregatedItem
+												key={ log.activityId }
+												activity={ log }
+												disableRestore={ disableRestore }
+												disableBackup={ disableBackup }
+												siteId={ siteId }
+												rewindState={ rewindState.state }
+											/>
+										</Fragment>
+									) : (
+										<Fragment key={ log.activityId }>
+											{ timePeriod( log ) }
+											<ActivityLogItem
+												key={ log.activityId }
+												activity={ log }
+												disableRestore={ disableRestore }
+												disableBackup={ disableBackup }
+												siteId={ siteId }
+											/>
+										</Fragment>
+									)
+								) }
+							</section>
+							{ showVisibleDaysLimitUpsell && (
+								<VisibleDaysLimitUpsell cardClassName="activity-log-item__card" />
 							) }
-						</section>
-						{ showVisibleDaysLimitUpsell && (
-							<VisibleDaysLimitUpsell cardClassName="activity-log-item__card" />
-						) }
-						<Pagination
-							compact={ isMobile() }
-							className="activity-log__pagination is-bottom-pagination"
-							key="activity-list-pagination-bottom"
-							nextLabel={ translate( 'Older' ) }
-							page={ actualPage }
-							pageClick={ this.changePage }
-							perPage={ PAGE_SIZE }
-							prevLabel={ translate( 'Newer' ) }
-							total={ logs.length }
-						/>
-					</div>
-				) }
+							<Pagination
+								compact={ isMobile() }
+								className="activity-log__pagination is-bottom-pagination"
+								key="activity-list-pagination-bottom"
+								nextLabel={ translate( 'Older' ) }
+								page={ actualPage }
+								pageClick={ this.changePage }
+								perPage={ PAGE_SIZE }
+								prevLabel={ translate( 'Newer' ) }
+								total={ logs.length }
+							/>
+						</div>
+					) }
+				</Page>
 			</>
 		);
 	}
@@ -601,7 +602,7 @@ class ActivityLog extends Component {
 			'vp_can_transfer' === rewindState.reason;
 
 		return (
-			<Main wideLayout>
+			<Main fullWidthLayout>
 				<QuerySiteFeatures siteIds={ [ siteId ] } />
 				<PageViewTracker path="/activity-log/:site" title="Activity" />
 				<DocumentHead title={ translate( 'Activity' ) } />

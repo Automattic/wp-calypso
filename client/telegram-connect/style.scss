@@ -1,0 +1,24 @@
+@import "../components/loading/style.scss";
+
+/*
+ * Message states reuse wpcom__loading visuals. The base `.wpcom__loading-title` uses a fixed
+ * 40px height (single-line loading copy). Duplicate `loading/style.scss` from the `Loading`
+ * component can load after this file, so we need higher specificity than `.wpcom__loading .wpcom__loading-title`
+ * or multi-line titles clip and the action overlaps the text.
+ */
+.wpcom__loading.telegram-connect__wpcom-loading {
+	.wpcom__loading-title {
+		height: auto;
+		line-height: 1.35;
+		min-height: 0;
+		overflow: visible;
+		vertical-align: unset;
+	}
+
+	.telegram-connect__action {
+		margin: 32px auto 0;
+		text-align: center;
+		display: flex;
+		justify-content: center;
+	}
+}
