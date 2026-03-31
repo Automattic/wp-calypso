@@ -116,7 +116,7 @@ describe( 'HeaderPrice', () => {
 		expect( discountedPrice ).toBeNull();
 	} );
 
-	test( 'should render empty for the enterprise plan', () => {
+	test( 'should render client logos but no price for the enterprise plan', () => {
 		const pricing = {
 			currencyCode: 'USD',
 			originalPrice: { full: 120, monthly: 10 },
@@ -138,7 +138,10 @@ describe( 'HeaderPrice', () => {
 			{ wrapper: Wrapper }
 		);
 
-		expect( container ).toBeEmptyDOMElement();
+		expect( container.querySelector( '.plan-price' ) ).toBeNull();
+		expect(
+			container.querySelector( '.plans-grid-next-header-price__enterprise-logos' )
+		).toBeInTheDocument();
 	} );
 
 	test( 'should display "Special Offer" badge when intro offer exists and offer is not complete', () => {
