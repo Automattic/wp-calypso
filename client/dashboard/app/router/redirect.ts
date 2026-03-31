@@ -7,8 +7,7 @@ import { redirect } from '@tanstack/react-router';
  * should not trigger a view transition animation.
  */
 export function dashboardRedirect(
-	...args: Parameters< typeof redirect >
+	options: Parameters< typeof redirect >[ 0 ]
 ): ReturnType< typeof redirect > {
-	const [ options ] = args;
 	return redirect( { ...options, viewTransition: false } );
 }
