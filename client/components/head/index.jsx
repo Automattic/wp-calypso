@@ -2,7 +2,13 @@ import config from '@automattic/calypso-config';
 import PropTypes from 'prop-types';
 import Favicons from './favicons';
 
-const Head = ( { title = 'WordPress.com', children, branchName, faviconUrl } ) => {
+const Head = ( {
+	title = 'WordPress.com',
+	children,
+	branchName,
+	inlineScriptNonce,
+	faviconUrl,
+} ) => {
 	return (
 		<head>
 			<title>{ title }</title>
@@ -34,6 +40,34 @@ const Head = ( { title = 'WordPress.com', children, branchName, faviconUrl } ) =
 					href={ '/calypso/manifest.json?branch=' + encodeURIComponent( branchName ) }
 				/>
 			) }
+			<link
+				rel="preload"
+				href="https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese&display=swap"
+				as="style"
+			/>
+			<noscript>
+				<link
+					rel="stylesheet"
+					href="https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese&display=swap"
+				/>
+			</noscript>
+			{ /* eslint-disable react/no-danger */ }
+			<script
+				type="text/javascript"
+				nonce={ inlineScriptNonce }
+				dangerouslySetInnerHTML={ {
+					// eslint-disable
+					__html: `
+			(function() {
+				var m = document.createElement( "link" );
+				m.rel = "stylesheet";
+				m.href = "https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese&display=swap";
+				document.head.insertBefore( m, document.head.childNodes[ document.head.childNodes.length - 1 ].nextSibling );
+			})()
+			`,
+				} }
+			/>
+			{ /* eslint-enable react/no-danger */ }
 			{ children }
 		</head>
 	);

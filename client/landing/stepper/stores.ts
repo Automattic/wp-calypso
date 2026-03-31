@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { Onboard, Site, StepperInternal, User } from '@automattic/data-stores';
+import { Onboard, Plans, Site, StepperInternal, User } from '@automattic/data-stores';
 
 export const ONBOARD_STORE = Onboard.register();
 export const STEPPER_INTERNAL_STORE = StepperInternal.register();
@@ -10,3 +10,5 @@ export const SITE_STORE = Site.register( {
 } );
 
 export const USER_STORE = User.register();
+
+export const PLANS_STORE = Plans.register();

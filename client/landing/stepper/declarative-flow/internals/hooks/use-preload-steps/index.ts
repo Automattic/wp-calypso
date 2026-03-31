@@ -1,6 +1,6 @@
 import { SiteDetails } from '@automattic/data-stores';
 import debugFactory from 'debug';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import type { Flow, FlowV2, StepperStep } from '../../types';
@@ -12,7 +12,7 @@ export const lazyCache = new WeakMap<
 	Awaited< ReturnType< StepperStep[ 'asyncComponent' ] > >[ 'default' ]
 >();
 
-export async function tryPreload( step?: StepperStep, followingStep?: StepperStep ) {
+async function tryPreload( step?: StepperStep, followingStep?: StepperStep ) {
 	if ( step && 'asyncComponent' in step ) {
 		debug( 'Preloading step:', step.slug );
 		const { default: component } = await step.asyncComponent();
@@ -22,17 +22,6 @@ export async function tryPreload( step?: StepperStep, followingStep?: StepperSte
 	if ( followingStep ) {
 		tryPreload( followingStep );
 	}
-}
-
-function useHasItBeenFiveSeconds() {
-	const [ hasItBeenFiveSeconds, setHasItBeenFiveSeconds ] = useState( false );
-
-	useEffect( () => {
-		const intervalId = setTimeout( () => setHasItBeenFiveSeconds( true ), 5000 );
-		return () => clearTimeout( intervalId );
-	}, [] );
-
-	return hasItBeenFiveSeconds;
 }
 
 /**
@@ -51,14 +40,8 @@ export function usePreloadSteps(
 	flow: Flow | FlowV2< any >
 ) {
 	const isLoggedIn = useSelector( isUserLoggedIn );
-	// Wait a second before preloading. Gives priority to what's on the screen.
-	const activate = useHasItBeenFiveSeconds();
 
 	useEffect( () => {
-		if ( ! activate ) {
-			debug( 'Not preloading steps yet. Too early.' );
-			return;
-		}
 		if ( siteSlugOrId && ! selectedSite ) {
 			// If this step depends on a selected site, only preload after we have the data.
 			// Otherwise, we're still waiting to render something meaningful, and we don't want to
@@ -97,5 +80,5 @@ export function usePreloadSteps(
 		// different points. But even if they do, worst case scenario we only fail to preload
 		// some steps, and they'll simply be loaded later.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ siteSlugOrId, selectedSite, currentStepRoute, flow, activate ] );
+	}, [ siteSlugOrId, selectedSite, currentStepRoute, flow ] );
 }
