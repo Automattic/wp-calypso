@@ -1,0 +1,1 @@
+PNG files can be deleted with the WebP ones. I kept them out of care.
