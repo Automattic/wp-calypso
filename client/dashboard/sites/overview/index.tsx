@@ -40,6 +40,7 @@ import VisibilityCardCiab from '../overview-visibility-card-ciab';
 import { InaccessibleJetpackNotice } from '../site/notices';
 import StagingSiteSyncDropdown from '../staging-site-sync-dropdown';
 import { StorageWarningBanner } from './storage-warning-banner';
+import { WpVersionNotice } from './wp-version-notice';
 import type { Site } from '@automattic/api-core';
 import type { WPBreakpoint } from '@wordpress/compose/build-types/hooks/use-viewport-match';
 import './style.scss';
@@ -242,6 +243,7 @@ function SiteOverview( {
 						<InaccessibleJetpackNotice error={ site.__inaccessible_jetpack_error } />
 					) }
 					{ ! isDashboardBackport() && <OptInSurvey /> }
+					<WpVersionNotice site={ site } />
 				</>
 			}
 		>

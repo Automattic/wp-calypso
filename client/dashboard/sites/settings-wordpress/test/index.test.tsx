@@ -64,29 +64,26 @@ describe( '<WordPressSettings>', () => {
 		} );
 	} );
 
-	test( 'renders notice for a non-staging site', async () => {
+	test( 'renders and saves the form for a non-staging site', async () => {
+		const user = userEvent.setup();
+
 		mockSite( { ...site, is_wpcom_staging_site: false } as Site );
+		mockWordPressVersion( 'latest' );
 
 		render( <WordPressSettings siteSlug={ site.slug } /> );
 		await screen.findByRole( 'heading', { name: 'WordPress' } );
 
-		expect(
-			screen.getByText( /Every WordPress.com site runs the latest WordPress version/ )
-		).toBeVisible();
-		expect( screen.queryByRole( 'button', { name: 'Save' } ) ).not.toBeInTheDocument();
-	} );
+		const versionSelect = await screen.findByRole( 'combobox', { name: 'WordPress version' } );
+		expect( versionSelect ).toHaveDisplayValue( '6.8.1 (Latest)' );
 
-	test( 'renders staging site suggestion for Atomic non-staging sites', async () => {
-		mockSite( {
-			...site,
-			is_wpcom_staging_site: false,
-			is_wpcom_atomic: true,
-		} as Site );
+		await user.selectOptions( versionSelect, '6.8.1 (Beta)' );
+		const scope = mockWordPressVersionSaved( 'beta' );
 
-		render( <WordPressSettings siteSlug={ site.slug } /> );
-		await screen.findByRole( 'heading', { name: 'WordPress' } );
+		const saveButton = screen.getByRole( 'button', { name: 'Save' } );
+		await user.click( saveButton );
 
-		expect( screen.getByText( /Switch to a staging site to test a beta version/ ) ).toBeVisible();
-		expect( screen.queryByRole( 'button', { name: 'Save' } ) ).not.toBeInTheDocument();
+		await waitFor( () => {
+			expect( scope.isDone() ).toBe( true );
+		} );
 	} );
 } );

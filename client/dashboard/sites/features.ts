@@ -40,8 +40,9 @@ export function canViewHundredYearPlanSettings( site: Site ) {
 
 // Settings -> Server
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function canViewWordPressSettings( site: Site ) {
-	return site.is_wpcom_staging_site;
+	return true;
 }
 
 // Settings -> Actions & danger zone
