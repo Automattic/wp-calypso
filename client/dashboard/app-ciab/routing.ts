@@ -35,8 +35,9 @@ export function isAllowedCiabLegacyRoute( path: string = '' ): boolean {
 }
 
 export function buildCiabDashboardLink( path: string = '' ) {
+	const safePath = path.replace( /^\/\/+/, '/' );
 	if ( config( 'env' ) === 'development' ) {
-		return new URL( path, 'http://my.woo.localhost:3000' ).href;
+		return new URL( safePath, 'http://my.woo.localhost:3000' ).href;
 	}
-	return new URL( path, 'https://my.woo.ai' ).href;
+	return new URL( safePath, 'https://my.woo.ai' ).href;
 }

@@ -12,8 +12,9 @@ export function isAllowedDotcomDashboardHostname( hostname?: string ): boolean {
 }
 
 export function buildDotcomDashboardLink( path: string = '' ) {
+	const safePath = path.replace( /^\/\/+/, '/' );
 	if ( config( 'env' ) === 'development' ) {
-		return new URL( path, 'http://my.localhost:3000' ).href;
+		return new URL( safePath, 'http://my.localhost:3000' ).href;
 	}
-	return new URL( path, 'https://my.wordpress.com' ).href;
+	return new URL( safePath, 'https://my.wordpress.com' ).href;
 }

@@ -37,18 +37,19 @@ export function wpcomLink( path: string ) {
 			return path;
 		}
 	}
-	return new URL( path, config( 'wpcom_url' ) ).href;
+	return new URL( path.replace( /^\/\/+/, '/' ), config( 'wpcom_url' ) ).href;
 }
 
 /**
  * This function returns a link to the A4A (Automattic for Agencies) domain.
  */
 export function a4aLink( path: string ) {
+	const safePath = path.replace( /^\/\/+/, '/' );
 	if ( config( 'env' ) === 'development' ) {
-		return new URL( path, 'http://agencies.localhost:3000' ).href;
+		return new URL( safePath, 'http://agencies.localhost:3000' ).href;
 	}
 
-	return new URL( path, 'https://agencies.automattic.com' ).href;
+	return new URL( safePath, 'https://agencies.automattic.com' ).href;
 }
 
 /**
