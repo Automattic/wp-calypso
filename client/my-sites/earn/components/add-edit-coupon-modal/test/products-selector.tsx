@@ -154,7 +154,7 @@ describe( 'ProductsSelector', () => {
 		expect( getDropdownButton( '2 products selected.' ) ).not.toBeNull();
 	} );
 
-	test( 'should not render products matching excludeTitles', async () => {
+	test( 'should not render products matching excludeProductIds', async () => {
 		const render = ( el, options ) =>
 			renderWithProvider( el, {
 				...options,
@@ -171,7 +171,7 @@ describe( 'ProductsSelector', () => {
 				onSelectedPlanIdsChange={ () => {} }
 				initialSelectedList={ [] }
 				allowMultiple={ false }
-				excludeTitles={ [ 'Monthly Subscription' ] }
+				excludeProductIds={ [ testProduct1.ID ] }
 			/>
 		);
 

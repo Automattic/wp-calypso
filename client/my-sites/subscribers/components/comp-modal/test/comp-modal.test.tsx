@@ -81,7 +81,7 @@ describe( 'CompSubscriptionModal', () => {
 
 	it( 'hides already-comped plans from the dropdown', async () => {
 		const user = userEvent.setup();
-		renderModal( { compedPlanTitles: [ 'Monthly Subscription' ] } );
+		renderModal( { compedPlanIds: [ 100 ] } );
 
 		await user.click( screen.getByRole( 'button', { name: 'No product selected' } ) );
 
@@ -97,7 +97,7 @@ describe( 'CompSubscriptionModal', () => {
 
 	it( 'shows all-comped message when all plans are comped', () => {
 		renderModal( {
-			compedPlanTitles: [ 'Monthly Subscription', 'Yearly Subscription' ],
+			compedPlanIds: [ 100, 200 ],
 		} );
 
 		expect(
@@ -110,7 +110,7 @@ describe( 'CompSubscriptionModal', () => {
 	it( 'calls onClose when Close is clicked in all-comped state', async () => {
 		const user = userEvent.setup();
 		const { props } = renderModal( {
-			compedPlanTitles: [ 'Monthly Subscription', 'Yearly Subscription' ],
+			compedPlanIds: [ 100, 200 ],
 		} );
 
 		const closeButtons = screen.getAllByRole( 'button', { name: 'Close' } );

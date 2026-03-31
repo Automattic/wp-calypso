@@ -14,7 +14,7 @@ type CompSubscriptionModalProps = {
 	userId: number | string;
 	siteId: number;
 	username: string;
-	compedPlanTitles?: string[];
+	compedPlanIds?: number[];
 	onClose: () => void;
 	onConfirm: () => void;
 };
@@ -28,7 +28,7 @@ const CompSubscriptionModal = ( {
 	siteId,
 	userId,
 	username,
-	compedPlanTitles,
+	compedPlanIds,
 	onClose,
 	onConfirm,
 }: CompSubscriptionModalProps ) => {
@@ -41,11 +41,11 @@ const CompSubscriptionModal = ( {
 
 	const products: Product[] = useSelector( ( state ) => getProductsForSiteId( state, siteId ) );
 	const allPlansComped = useMemo( () => {
-		if ( ! compedPlanTitles?.length || ! products?.length ) {
+		if ( ! compedPlanIds?.length || ! products?.length ) {
 			return false;
 		}
-		return products.every( ( product ) => compedPlanTitles.includes( product.title ?? '' ) );
-	}, [ compedPlanTitles, products ] );
+		return products.every( ( product ) => compedPlanIds.includes( product.ID ?? 0 ) );
+	}, [ compedPlanIds, products ] );
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_subscribers_comp_modal_open', {
@@ -108,7 +108,7 @@ const CompSubscriptionModal = ( {
 						initialSelectedList={ [] }
 						allowMultiple={ false }
 						showLabel={ false }
-						excludeTitles={ compedPlanTitles }
+						excludeProductIds={ compedPlanIds }
 					/>
 					<div className="complimentary-subscription-modal__buttons">
 						<Button onClick={ onClose } variant="tertiary">

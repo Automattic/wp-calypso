@@ -175,10 +175,10 @@ export default function SubscriberDataViews( {
 			if ( ! products?.length ) {
 				return true;
 			}
-			const compedTitles = ( subscriber.plans ?? [] )
-				.filter( ( p ) => p.is_comp )
-				.map( ( p ) => p.title );
-			return products.some( ( product ) => ! compedTitles.includes( product.title ?? '' ) );
+			const compedIds = ( subscriber.plans ?? [] )
+				.filter( ( p ) => p.is_comp && p.subscription_id )
+				.map( ( p ) => p.subscription_id );
+			return products.some( ( product ) => ! compedIds.includes( product.ID ?? 0 ) );
 		},
 		[ products ]
 	);
