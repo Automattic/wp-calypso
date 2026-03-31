@@ -1,3 +1,9 @@
+@import '@wordpress/base-styles/variables';
+
+.dashboard-sidebar__menu-item {
+	border-radius: $radius-small;
+}
+
 .components-button.dashboard-sidebar__menu-item {
 	justify-content: flex-start;
 	width: 100%;

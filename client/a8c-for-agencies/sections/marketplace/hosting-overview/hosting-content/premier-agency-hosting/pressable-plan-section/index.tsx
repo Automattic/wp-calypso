@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { formatCurrency, formatNumberCompact } from '@automattic/number-formatters';
 import { external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -119,8 +118,7 @@ export default function PressablePlanSection( {
 			return pressablePlans.filter(
 				( plan ) =>
 					plan.slug.startsWith( 'pressable-signature-' ) ||
-					( isEnabled( 'a4a-pressable-premium-plans' ) &&
-						plan.slug.startsWith( 'pressable-premium-' ) )
+					plan.slug.startsWith( 'pressable-premium-' )
 			);
 		}
 

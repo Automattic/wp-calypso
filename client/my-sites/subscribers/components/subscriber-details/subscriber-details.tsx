@@ -22,8 +22,8 @@ type SubscriberDetailsProps = {
 	newsletterCategories?: NewsletterCategory[];
 	onClose?: () => void;
 	onUnsubscribe?: ( subscriber: Subscriber ) => void;
-	onGiftSubscription?: ( subscriber: Subscriber ) => void;
-	onRemoveComp?: ( params: { planName: string; giftId?: number; compId?: number } ) => void;
+	onCompSubscription?: ( subscriber: Subscriber ) => void;
+	onRemoveComp?: ( params: { planName: string; compId?: number } ) => void;
 };
 
 const SubscriberDetails = ( {
@@ -35,7 +35,7 @@ const SubscriberDetails = ( {
 	newsletterCategories,
 	onClose,
 	onUnsubscribe,
-	onGiftSubscription,
+	onCompSubscription,
 	onRemoveComp,
 }: SubscriberDetailsProps ) => {
 	const translate = useTranslate();
@@ -60,7 +60,7 @@ const SubscriberDetails = ( {
 					{ translate( 'Comp', {
 						comment: 'Short for "complimentary" — a free subscription granted by the site creator',
 					} ) }
-					{ onRemoveComp && ( subscriptionPlan.gift_id || subscriptionPlan.comp_id ) && (
+					{ onRemoveComp && subscriptionPlan.comp_id && (
 						<Button
 							className="subscriber-details__remove-comp-button"
 							variant="tertiary"
@@ -72,7 +72,6 @@ const SubscriberDetails = ( {
 							onClick={ () =>
 								onRemoveComp( {
 									planName: subscriptionPlan.title ?? '',
-									giftId: subscriptionPlan.gift_id,
 									compId: subscriptionPlan.comp_id,
 								} )
 							}
@@ -201,12 +200,12 @@ const SubscriberDetails = ( {
 					) }
 				</div>
 			</div>
-			{ ( onGiftSubscription || onUnsubscribe ) && (
+			{ ( onCompSubscription || onUnsubscribe ) && (
 				<div className="subscriber-details__footer">
-					{ onGiftSubscription && (
+					{ onCompSubscription && (
 						<Button
-							className="subscriber-details__gift-button"
-							onClick={ () => onGiftSubscription( subscriber ) }
+							className="subscriber-details__comp-button"
+							onClick={ () => onCompSubscription( subscriber ) }
 							variant="primary"
 						>
 							{ translate( 'Comp a subscription' ) }

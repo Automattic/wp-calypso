@@ -1,3 +1,15 @@
+@import "calypso/components/jetpack-page-layout/admin-ui-page";
+
+body.is-section-backup {
+	@include admin-ui-page-layout;
+	@include admin-ui-page-layout-constrained-content($max-width: 1040px);
+
+	.backup__wpcom-upsell .promo-card {
+		display: flex;
+		gap: 24px;
+	}
+}
+
 .backup__page {
 	.filterbar .filterbar__wrap.card {
 		display: flex;
@@ -115,8 +127,8 @@
 /* WordPress.com-only styles */
 .wordpressdotcom.backup__page {
 	.backup__main-wrap {
-		margin-left: initial;
-		margin-right: initial;
+		margin-left: auto;
+		margin-right: auto;
 	}
 
 	.backup__last-backup-status {

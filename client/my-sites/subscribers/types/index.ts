@@ -10,10 +10,10 @@ export type SubscriberEndpointResponse = {
 };
 
 export type SubscriptionPlan = {
-	is_gift: boolean;
-	gift_id: number;
-	is_comp?: boolean;
+	is_comp: boolean;
 	comp_id?: number;
+	/** @deprecated Legacy field from the API — plans with is_gift are filtered out. */
+	is_gift?: boolean;
 	paid_subscription_id: string;
 	status: string;
 	title: string;

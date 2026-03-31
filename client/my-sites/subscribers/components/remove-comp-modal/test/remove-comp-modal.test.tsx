@@ -21,10 +21,6 @@ jest.mock( 'calypso/state', () => ( {
 	useDispatch: () => mockDispatch,
 } ) );
 
-jest.mock( 'calypso/state/memberships/gifts/actions', () => ( {
-	requestDeleteGift: jest.fn( () => () => Promise.resolve() ),
-} ) );
-
 jest.mock( 'calypso/state/memberships/comps/actions', () => ( {
 	requestDeleteComp: jest.fn( () => () => Promise.resolve() ),
 } ) );
@@ -40,10 +36,9 @@ function renderModal( props = {} ) {
 	const queryClient = new QueryClient();
 	const defaultProps = {
 		siteId: 123,
-		giftId: 456,
+		compId: 789,
 		planName: 'Premium Newsletter',
 		username: 'testuser',
-		useComps: false,
 		onClose: jest.fn(),
 		onRemoved: jest.fn(),
 	};
@@ -79,23 +74,10 @@ describe( 'RemoveCompModal', () => {
 		expect( props.onClose ).toHaveBeenCalled();
 	} );
 
-	it( 'calls requestDeleteGift and onRemoved when Remove is clicked', async () => {
-		const { requestDeleteGift } = jest.requireMock( 'calypso/state/memberships/gifts/actions' );
-		const user = userEvent.setup();
-		const { props } = renderModal();
-
-		await user.click( screen.getByRole( 'button', { name: 'Remove' } ) );
-
-		expect( requestDeleteGift ).toHaveBeenCalledWith( 123, 456, expect.any( String ) );
-		// Wait for the promise to resolve
-		await screen.findByRole( 'button', { name: 'Remove' } );
-		expect( props.onRemoved ).toHaveBeenCalled();
-	} );
-
-	it( 'calls requestDeleteComp when useComps is true', async () => {
+	it( 'calls requestDeleteComp and onRemoved when Remove is clicked', async () => {
 		const { requestDeleteComp } = jest.requireMock( 'calypso/state/memberships/comps/actions' );
 		const user = userEvent.setup();
-		const { props } = renderModal( { useComps: true, compId: 789 } );
+		const { props } = renderModal();
 
 		await user.click( screen.getByRole( 'button', { name: 'Remove' } ) );
 
@@ -105,9 +87,9 @@ describe( 'RemoveCompModal', () => {
 	} );
 
 	it( 'disables Remove button while submitting', async () => {
-		const { requestDeleteGift } = jest.requireMock( 'calypso/state/memberships/gifts/actions' );
+		const { requestDeleteComp } = jest.requireMock( 'calypso/state/memberships/comps/actions' );
 		// Make the request hang indefinitely
-		requestDeleteGift.mockImplementation( () => () => new Promise( () => {} ) );
+		requestDeleteComp.mockImplementation( () => () => new Promise( () => {} ) );
 
 		const user = userEvent.setup();
 		renderModal();
@@ -117,14 +99,8 @@ describe( 'RemoveCompModal', () => {
 		expect( screen.getByRole( 'button', { name: 'Remove' } ) ).toBeDisabled();
 	} );
 
-	it( 'disables Remove button when giftId is missing and useComps is false', () => {
-		renderModal( { giftId: undefined, useComps: false } );
-
-		expect( screen.getByRole( 'button', { name: 'Remove' } ) ).toBeDisabled();
-	} );
-
-	it( 'disables Remove button when compId is missing and useComps is true', () => {
-		renderModal( { compId: undefined, useComps: true } );
+	it( 'disables Remove button when compId is missing', () => {
+		renderModal( { compId: undefined } );
 
 		expect( screen.getByRole( 'button', { name: 'Remove' } ) ).toBeDisabled();
 	} );
