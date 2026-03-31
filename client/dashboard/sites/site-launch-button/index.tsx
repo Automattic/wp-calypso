@@ -5,6 +5,7 @@ import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
+import { useExperiment } from 'calypso/lib/explat';
 import { useAnalytics } from '../../app/analytics';
 import { useAppContext } from '../../app/context';
 import { getCurrentDashboard } from '../../app/routing';
@@ -14,6 +15,7 @@ import {
 	isSitePlanBigSkyTrial,
 	isSitePlanPaid,
 } from '../plans';
+import SiteLaunchCelebrationModal from '../site-launch-celebration-modal';
 import type { Site } from '@automattic/api-core';
 
 export function SiteLaunchButton( {
@@ -47,6 +49,9 @@ export function SiteLaunchButton( {
 		},
 	} );
 	const [ isLaunchModalOpen, setIsLaunchModalOpen ] = useState( false );
+	const [ isCelebrationModalOpen, setIsCelebrationModalOpen ] = useState( false );
+	const [ , experimentData ] = useExperiment( 'calypso_launch_button_experiment_test_20260319_4' );
+	const experimentAssignment = experimentData?.variationName;
 
 	const handleTracksEvent = () => {
 		recordTracksEvent( 'calypso_dashboard_site_launch_button_click', { context: tracksContext } );
@@ -55,10 +60,19 @@ export function SiteLaunchButton( {
 	const handleLaunch = () => {
 		handleTracksEvent();
 		launchMutation.mutate( undefined, {
+			onSuccess: () => {
+				setIsLaunchModalOpen( false );
+				setIsCelebrationModalOpen( true );
+			},
 			onSettled: () => {
 				setIsLaunchModalOpen( false );
 			},
 		} );
+	};
+
+	const handleGatedLaunchClick = () => {
+		handleTracksEvent();
+		window.location.assign( `/start/launch-site?siteSlug=${ site.slug }` );
 	};
 
 	const isSitePlanHostingTrial = site.plan?.product_slug === DotcomPlans.HOSTING_TRIAL_MONTHLY;
@@ -99,6 +113,28 @@ export function SiteLaunchButton( {
 		return null;
 	}
 
+	// Handle gated_site_launch variant: redirect to the standardized launch flow
+	if ( experimentAssignment === 'gated_site_launch' ) {
+		return <Button { ...commonProps } onClick={ handleGatedLaunchClick } />;
+	}
+
+	// Handle ungated_site_launch variant: launch directly and show celebration modal
+	if ( experimentAssignment === 'ungated_site_launch' ) {
+		return (
+			<>
+				<Button { ...commonProps } onClick={ handleLaunch } />
+				{ isCelebrationModalOpen && (
+					<SiteLaunchCelebrationModal
+						site={ site }
+						domains={ domains }
+						onClose={ () => setIsCelebrationModalOpen( false ) }
+					/>
+				) }
+			</>
+		);
+	}
+
+	// Control variant and non-dashboard sites: preserve existing behavior
 	if ( site.is_a4a_dev_site ) {
 		if ( launchUrl ) {
 			return <Button { ...commonProps } onClick={ handleTracksEvent } href={ launchUrl } />;
