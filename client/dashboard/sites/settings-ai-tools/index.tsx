@@ -16,10 +16,20 @@ import {
 	ToggleControl,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
-import { brush, check, comment, help, image, termDescription } from '@wordpress/icons';
+import { __, sprintf } from '@wordpress/i18n';
+import {
+	brush,
+	check,
+	comment,
+	connection,
+	help,
+	image,
+	pencil,
+	seen,
+	termDescription,
+} from '@wordpress/icons';
 import { useState } from 'react';
-import { getSiteAccountToolsEnabled } from '../../../me/mcp/utils';
+import { getAccountMcpAbilities, getSiteAccountToolsEnabled } from '../../../me/mcp/utils';
 import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { useHelpCenter } from '../../app/help-center';
@@ -32,8 +42,53 @@ import RouterLinkSummaryButton from '../../components/router-link-summary-button
 import { SectionHeader } from '../../components/section-header';
 import SummaryButton from '../../components/summary-button';
 import { SummaryButtonList } from '../../components/summary-button-list';
+import { isWriteTool } from '../../me/mcp/categories';
 import UpsellCallout from '../hosting-feature-gated-with-callout/upsell';
 import upsellIllustrationUrl from './upsell-illustration.svg';
+
+interface McpAbility {
+	title: string;
+	description: string;
+	enabled: boolean;
+	readonly?: boolean;
+	visible?: boolean;
+}
+
+function getReadBadge( tools: Array< [ string, McpAbility ] > ) {
+	if ( tools.length === 0 ) {
+		return { text: __( 'All enabled' ), intent: 'success' as const };
+	}
+	const enabledCount = tools.filter( ( [ , tool ] ) => tool.enabled ).length;
+	if ( enabledCount === tools.length ) {
+		return { text: __( 'All enabled' ), intent: 'success' as const };
+	}
+	if ( enabledCount === 0 ) {
+		return { text: __( 'None enabled' ) };
+	}
+	return {
+		/* translators: %1$d is the number of enabled tools, %2$d is the total number of tools */
+		text: sprintf( __( '%1$d of %2$d enabled' ), enabledCount, tools.length ),
+		intent: 'info' as const,
+	};
+}
+
+function getWriteBadge( tools: Array< [ string, McpAbility ] > ) {
+	if ( tools.length === 0 ) {
+		return { text: __( 'All enabled' ), intent: 'success' as const };
+	}
+	const enabledCount = tools.filter( ( [ , tool ] ) => tool.enabled ).length;
+	if ( enabledCount === tools.length ) {
+		return { text: __( 'All enabled' ), intent: 'success' as const };
+	}
+	if ( enabledCount === 0 ) {
+		return { text: __( 'Disabled' ) };
+	}
+	return {
+		/* translators: %1$d is the number of enabled tools, %2$d is the total number of tools */
+		text: sprintf( __( '%1$d of %2$d enabled' ), enabledCount, tools.length ),
+		intent: 'info' as const,
+	};
+}
 
 const features = [
 	__( 'Get answers where you work so you‘re unstuck faster' ),
@@ -58,6 +113,15 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 	// MCP settings for this site
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
 	const isMcpEnabled = getSiteAccountToolsEnabled( userSettings || {}, site.ID );
+
+	const mcpAbilities = getAccountMcpAbilities( userSettings || {} );
+	const availableTools = (
+		Object.entries( mcpAbilities ) as Array< [ string, McpAbility ] >
+	 ).filter( ( [ , tool ] ) => tool.visible !== false );
+	const readTools = availableTools.filter( ( [ toolId, tool ] ) => ! isWriteTool( toolId, tool ) );
+	const writeTools = availableTools.filter( ( [ toolId, tool ] ) => isWriteTool( toolId, tool ) );
+	const readBadge = getReadBadge( readTools );
+	const writeBadge = getWriteBadge( writeTools );
 	const mcpMutation = useMutation( {
 		...userSettingsMutation(),
 		meta: {
@@ -180,32 +244,53 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 					) }
 				</Card>
 				{ config.isEnabled( 'mcp-settings' ) && (
-					<Card>
-						<CardBody>
-							<VStack spacing={ 4 }>
-								<SectionHeader
-									title={ __( 'MCP access' ) }
-									description={ __(
-										'Control whether AI assistants can access this site via MCP (Model Context Protocol).'
-									) }
-									level={ 3 }
-								/>
-								<ToggleControl
-									__nextHasNoMarginBottom
-									checked={ isMcpEnabled }
-									disabled={ mcpMutation.isPending }
-									label={ __( 'Enable MCP access for this site' ) }
-									onChange={ handleMcpToggle }
-								/>
-							</VStack>
-						</CardBody>
-						<CardDivider />
-						<RouterLinkSummaryButton
-							to="/me/preferences/mcp"
-							density="medium"
-							title={ __( 'Manage at account level' ) }
-						/>
-					</Card>
+					<>
+						<Card>
+							<CardBody>
+								<VStack spacing={ 4 }>
+									<SectionHeader
+										title={ __( 'External AI agent access' ) }
+										description={ __( 'Allow external AI agents to access this site via MCP.' ) }
+										level={ 3 }
+									/>
+									<ToggleControl
+										__nextHasNoMarginBottom
+										checked={ isMcpEnabled }
+										disabled={ mcpMutation.isPending }
+										label={ __( 'Enable MCP access for this site' ) }
+										onChange={ handleMcpToggle }
+									/>
+								</VStack>
+							</CardBody>
+							{ isMcpEnabled && (
+								<>
+									<CardDivider />
+									<RouterLinkSummaryButton
+										to="./read"
+										density="medium"
+										title={ __( 'Read' ) }
+										decoration={ <Icon icon={ seen } size={ 24 } /> }
+										badges={ [ readBadge ] }
+									/>
+									<RouterLinkSummaryButton
+										to="./write"
+										density="medium"
+										title={ __( 'Write' ) }
+										decoration={ <Icon icon={ pencil } size={ 24 } /> }
+										badges={ [ writeBadge ] }
+									/>
+								</>
+							) }
+						</Card>
+						{ isMcpEnabled && (
+							<RouterLinkSummaryButton
+								to="./setup"
+								title={ __( 'Connect external AI agent' ) }
+								description={ __( 'Get instructions for connecting your external AI assistant.' ) }
+								decoration={ <Icon icon={ connection } size={ 24 } /> }
+							/>
+						) }
+					</>
 				) }
 				{ isFreeTrial && (
 					<ConfirmModal
