@@ -161,16 +161,18 @@ export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
 					<HStack spacing={ 3 } alignment="left" expanded={ false }>
 						{ item.created_by && (
 							<HStack spacing={ 1 } alignment="left" expanded={ false }>
-								<Icon icon={ people } size={ 18 } style={ metaIconStyle } />
+								<Icon icon={ people } size={ 18 } style={ metaIconStyle } aria-hidden />
 								<Text size={ 12 } style={ metaTextStyle }>
+									<span className="screen-reader-text">{ __( 'Created by' ) } </span>
 									{ item.created_by }
 								</Text>
 							</HStack>
 						) }
 						{ item.created_at && (
 							<HStack spacing={ 1 } alignment="left" expanded={ false }>
-								<Icon icon={ calendar } size={ 18 } style={ metaIconStyle } />
+								<Icon icon={ calendar } size={ 18 } style={ metaIconStyle } aria-hidden />
 								<Text size={ 12 } style={ metaTextStyle }>
+									<span className="screen-reader-text">{ __( 'Created' ) } </span>
 									<TimeSince timestamp={ item.created_at } />
 								</Text>
 							</HStack>
