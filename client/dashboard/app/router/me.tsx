@@ -899,6 +899,30 @@ export const languageRoute = createRoute( {
 	)
 );
 
+export const wordpressDefaultsRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'WordPress.com defaults' ),
+			},
+		],
+	} ),
+	getParentRoute: () => preferencesRoute,
+	path: 'defaults',
+	loader: async () => {
+		await Promise.all( [
+			queryClient.ensureQueryData( userSettingsQuery() ),
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+		] );
+	},
+} ).lazy( () =>
+	import( '../../me/wordpress-defaults' ).then( ( d ) =>
+		createLazyRoute( 'wordpress-defaults' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const appsRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -1053,7 +1077,12 @@ export const createMeRoutes = ( config: AppConfig ) => {
 		return [];
 	}
 
-	const preferencesChildren: AnyRoute[] = [ preferencesIndexRoute, privacyRoute, languageRoute ];
+	const preferencesChildren: AnyRoute[] = [
+		preferencesIndexRoute,
+		privacyRoute,
+		languageRoute,
+		wordpressDefaultsRoute,
+	];
 	if ( config.supports.reader ) {
 		preferencesChildren.push( blockedSitesRoute );
 	}

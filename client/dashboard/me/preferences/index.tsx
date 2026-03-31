@@ -5,10 +5,9 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import PreferencesAiMcp from '../preferences-ai-mcp';
 import PreferencesBlockedSites from '../preferences-blocked-sites';
-import PreferencesDefaultLanding from '../preferences-default-landing';
+import PreferencesDefaults from '../preferences-defaults';
 import PreferencesLanguage from '../preferences-language';
 import PreferencesNewHostingDashboard from '../preferences-new-hosting-dashboard';
-import PreferencesPrimarySite from '../preferences-primary-site';
 import PreferencesPrivacy from '../preferences-privacy';
 
 export default function Preferences() {
@@ -27,10 +26,9 @@ export default function Preferences() {
 			{ optIn && <PreferencesNewHostingDashboard /> }
 			{ isEnabled( 'mcp-settings' ) && <PreferencesAiMcp /> }
 			<PreferencesLanguage />
+			<PreferencesDefaults />
 			{ supports.reader && <PreferencesBlockedSites /> }
 			<PreferencesPrivacy />
-			<PreferencesPrimarySite />
-			<PreferencesDefaultLanding />
 		</PageLayout>
 	);
 }
