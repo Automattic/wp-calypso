@@ -2161,6 +2161,9 @@ const WPCheckoutWrapper = styled.div< {
 		props.isCheckoutUiRedesignV1 &&
 		props.isLargeViewport &&
 		css`
+			.checkout__summary-area {
+				padding-top: 50px;
+			}
 			div:has( > div > .wp-checkout-order-review__show-coupon-field-button ) {
 				padding-block-start: 24px;
 			}
