@@ -35,6 +35,9 @@ import { formatScheduleLabel, formatScheduleDescription } from './schedules';
 import type { Crontab } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
 
+const metaIconStyle = { color: 'var(--color-text-subtle, #646970)', flexShrink: 0 } as const;
+const metaTextStyle = { color: 'var(--color-text-subtle, #646970)' } as const;
+
 const DEFAULT_VIEW: View = {
 	type: 'table',
 	perPage: 20,
@@ -158,24 +161,16 @@ export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
 					<HStack spacing={ 3 } alignment="left" expanded={ false }>
 						{ item.created_by && (
 							<HStack spacing={ 1 } alignment="left" expanded={ false }>
-								<Icon
-									icon={ people }
-									size={ 18 }
-									style={ { color: 'var(--color-text-subtle, #646970)', flexShrink: 0 } }
-								/>
-								<Text size={ 12 } style={ { color: 'var(--color-text-subtle, #646970)' } }>
+								<Icon icon={ people } size={ 18 } style={ metaIconStyle } />
+								<Text size={ 12 } style={ metaTextStyle }>
 									{ item.created_by }
 								</Text>
 							</HStack>
 						) }
 						{ item.created_at && (
 							<HStack spacing={ 1 } alignment="left" expanded={ false }>
-								<Icon
-									icon={ calendar }
-									size={ 18 }
-									style={ { color: 'var(--color-text-subtle, #646970)', flexShrink: 0 } }
-								/>
-								<Text size={ 12 } style={ { color: 'var(--color-text-subtle, #646970)' } }>
+								<Icon icon={ calendar } size={ 18 } style={ metaIconStyle } />
+								<Text size={ 12 } style={ metaTextStyle }>
 									<TimeSince timestamp={ item.created_at } />
 								</Text>
 							</HStack>
