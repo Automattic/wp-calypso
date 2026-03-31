@@ -40,7 +40,9 @@ export const DollyCard = () => {
 	return (
 		<Card className="developer-features-list__item">
 			<div className="developer-features-list__item-tag">{ translate( 'New' ) }</div>
-			<div className="developer-features-list__item-title">{ translate( 'Telegram Agent' ) }</div>
+			<div className="developer-features-list__item-title">
+				{ translate( 'Telegram Bot (alpha)' ) }
+			</div>
 			<div className="developer-features-list__item-description">
 				{ getTelegramConnectionDescription( {
 					isStatusReady,
@@ -51,7 +53,7 @@ export const DollyCard = () => {
 						},
 					} ),
 					disconnectedDescription: translate(
-						'Chat with our Telegram Agent to publish, update, and manage your WordPress site from wherever you are.'
+						"Connect your WordPress.com account to @wordpressagentbot to publish posts, check stats, find a domain, brainstorm ideas, or fix that typo you've been meaning to get to — all without leaving Telegram."
 					),
 				} ) }
 			</div>

@@ -62,9 +62,9 @@ export default function () {
 	);
 
 	page(
-		'/me/security/ai-assistant',
+		'/me/security/telegram-bot',
 		setupPreferences,
-		maybeRedirectToMultiSiteDashboard( '/me/security/ai-assistant' ),
+		maybeRedirectToMultiSiteDashboard( '/me/security/telegram-bot' ),
 		sidebar,
 		dolly,
 		makeLayout,
