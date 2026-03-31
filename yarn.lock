@@ -13590,7 +13590,7 @@ __metadata:
     nock: "npm:^13.5.6"
     path-browserify: "npm:^1.0.1"
     percentage-regex: "npm:^3.0.0"
-    phone: "npm:^3.1.59"
+    phone: "npm:^3.1.71"
     photon: "workspace:^"
     phpunserialize: "npm:^1.1.0"
     pkg-dir: "npm:^5.0.0"
@@ -25636,10 +25636,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"phone@npm:^3.1.59":
-  version: 3.1.59
-  resolution: "phone@npm:3.1.59"
-  checksum: 8abc5c2ed5ff292f39484340906ab1f49414a54812dba72bba47da06790957eaf8c844965d04b8f9d540bb03ca5b4f304de00157c665caa31b6d3d80c775e322
+"phone@npm:^3.1.71":
+  version: 3.1.71
+  resolution: "phone@npm:3.1.71"
+  checksum: 8f4ac65b82e64d7d73fb4c6e50ab36ebeea7697327c224b3586fc8b23b1e8220c0d08bdb131c4d6abe2955404bb9df8140fe8d8e3c8cb6702b5a9b58b46a2269
   languageName: node
   linkType: hard
 
