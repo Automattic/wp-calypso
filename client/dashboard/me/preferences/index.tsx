@@ -29,8 +29,8 @@ export default function Preferences() {
 				{ isEnabled( 'mcp-settings' ) && <PreferencesAiMcp /> }
 				<PreferencesLanguage />
 				<PreferencesDefaults />
-				{ supports.reader && <PreferencesBlockedSites /> }
 				<PreferencesPrivacy />
+				{ supports.reader && <PreferencesBlockedSites /> }
 			</VStack>
 		</PageLayout>
 	);
