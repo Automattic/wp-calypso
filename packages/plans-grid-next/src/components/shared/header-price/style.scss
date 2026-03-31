@@ -119,8 +119,12 @@
 	}
 }
 
+.plan-features-2023-grid__table-item.plan-price:has(.plans-grid-next-header-price__enterprise-logos) {
+	vertical-align: bottom;
+}
+
 .plans-grid-next-header-price__enterprise-logos {
-	padding: 0 20px;
+	padding: 0 20px 10px;
 	column-gap: 24px;
 	row-gap: 8px;
 	align-items: center;
