@@ -29,14 +29,14 @@ describe( 'UserAvatar', () => {
 		expect( container.querySelector( '.user-avatar' ) ).toHaveClass( 'custom-class' );
 	} );
 
-	test( 'should use iconSize 32 by default', () => {
+	test( 'should use size 32 by default', () => {
 		render( <UserAvatar user={ mockUser } /> );
 
 		expect( screen.getByTestId( 'gravatar' ) ).toHaveAttribute( 'data-size', '32' );
 	} );
 
-	test( 'should use custom iconSize when provided', () => {
-		render( <UserAvatar user={ mockUser } iconSize={ 64 } /> );
+	test( 'should use custom size when provided', () => {
+		render( <UserAvatar user={ mockUser } size={ 64 } /> );
 
 		expect( screen.getByTestId( 'gravatar' ) ).toHaveAttribute( 'data-size', '64' );
 	} );

@@ -63,7 +63,7 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 		<>
 			<header className="user-profile-header">
 				<div className="user-profile-header__user-info">
-					<UserAvatar user={ user } iconSize={ 56 } />
+					<UserAvatar user={ user } size={ 56 } />
 					<div className="user-profile-header__names">
 						<h1>
 							{ user.display_name }

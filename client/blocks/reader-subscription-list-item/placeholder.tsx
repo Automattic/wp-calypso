@@ -1,10 +1,8 @@
-import UserAvatar from 'calypso/blocks/user-avatar';
-
-const ReaderSubscriptionListItemPlaceholder = () => {
+const ReaderSubscriptionListItemPlaceholder = (): JSX.Element => {
 	return (
 		<div className="reader-subscription-list-item reader-subscription-list-item__placeholder">
 			<div>
-				<UserAvatar />
+				<span className="reader-subscription-list-item__site-avatar is-placeholder"></span>
 			</div>
 			<div className="reader-subscription-list-item__byline">
 				<span className="reader-subscription-list-item__site-title is-placeholder">Site title</span>

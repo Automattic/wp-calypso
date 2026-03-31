@@ -24,7 +24,7 @@ const ReaderFullPostHeaderMeta = ( { post, author, siteName, feedId, siteId } ) 
 			<UserAvatar
 				className="reader-full-post__header-meta-avatars"
 				user={ { ...author, avatar_URL: avatarUrl } }
-				iconSize={ 40 }
+				size={ 40 }
 			/>
 			<div className="reader-full-post__header-meta-info">
 				<div className="reader-full-post__header-meta-line-1">
