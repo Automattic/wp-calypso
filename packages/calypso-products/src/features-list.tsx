@@ -836,10 +836,15 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_SIMPLE_PAYMENTS ]: {
 		getSlug: () => FEATURE_SIMPLE_PAYMENTS,
-		getTitle: ( params ) =>
-			params?.isExperimentVariant
-				? i18n.translate( 'Add payment buttons to your site' )
-				: i18n.translate( 'PayPal Payment Buttons' ),
+		getTitle: ( params ) => {
+			if ( ! params?.isExperimentVariant ) {
+				return i18n.translate( 'PayPal Payment Buttons' );
+			}
+			return i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+				i18n.hasTranslation( 'Add payment buttons' )
+				? i18n.translate( 'Add payment buttons' )
+				: i18n.translate( 'Add payment buttons to your site' );
+		},
 		getDescription: ( params ) =>
 			params?.isExperimentVariant
 				? i18n.translate( 'Collect payments and donations with PayPal and Stripe.' )
@@ -2177,10 +2182,14 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_EMAIL_MARKETING ]: {
 		getSlug: () => FEATURE_EMAIL_MARKETING,
-		getTitle: ( params ) =>
-			params?.isExperimentVariant
-				? i18n.translate( 'Email marketing automation' )
-				: i18n.translate( 'Email marketing built-in' ),
+		getTitle: ( params ) => {
+			if ( ! params?.isExperimentVariant ) {
+				return i18n.translate( 'Email marketing built-in' );
+			}
+			return i18n.getLocaleSlug()?.startsWith( 'en' ) || i18n.hasTranslation( 'Email marketing' )
+				? i18n.translate( 'Email marketing' )
+				: i18n.translate( 'Email marketing automation' );
+		},
 		getDescription: ( params ) =>
 			params?.isExperimentVariant
 				? i18n.translate(
@@ -2753,7 +2762,15 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_ENHANCED_AI_ASSISTANT_AND_TOOLS ]: {
 		getSlug: () => FEATURE_ENHANCED_AI_ASSISTANT_AND_TOOLS,
-		getTitle: () => i18n.translate( 'Enhanced AI assistant and tools' ),
+		getTitle: () => {
+			if (
+				i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+				i18n.hasTranslation( 'AI assistant and tools' )
+			) {
+				return i18n.translate( 'AI assistant and tools' );
+			}
+			return i18n.translate( 'Enhanced AI assistant and tools' );
+		},
 		getDescription: () =>
 			i18n.translate(
 				'Use the WordPress AI Assistant to generate content, design, and manage your site — all without leaving WordPress.'
@@ -3171,10 +3188,7 @@ const FEATURES_LIST: FeatureList = {
 	// AI features for plan differentiators experiment
 	[ FEATURE_AI_WEBSITE_BUILDER ]: {
 		getSlug: () => FEATURE_AI_WEBSITE_BUILDER,
-		getTitle: ( params ) =>
-			params?.isExperimentVariant
-				? i18n.translate( 'Enhanced AI Website Builder' )
-				: i18n.translate( 'AI Website Builder' ),
+		getTitle: () => i18n.translate( 'AI Website Builder' ),
 		getDescription: ( params ) =>
 			params?.isExperimentVariant
 				? i18n.translate( 'Use the latest AI models in the AI website builder.' )
@@ -3195,7 +3209,15 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_GUIDED_WEBSITE_BUILDER ]: {
 		getSlug: () => FEATURE_GUIDED_WEBSITE_BUILDER,
-		getTitle: () => i18n.translate( 'Guided website builder' ),
+		getTitle: () => {
+			if (
+				i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+				i18n.hasTranslation( 'Create your site with a guided website builder' )
+			) {
+				return i18n.translate( 'Create your site with a guided website builder' );
+			}
+			return i18n.translate( 'Guided website builder' );
+		},
 		getDescription: () =>
 			i18n.translate(
 				'Skip the blank screen — create and launch a WordPress.com website in minutes by chatting with AI.'
