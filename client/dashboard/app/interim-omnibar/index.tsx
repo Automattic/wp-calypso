@@ -8,6 +8,7 @@ import { QueryObserver } from '@tanstack/react-query';
 import { hydrateRoot } from 'react-dom/client';
 import { AUTH_QUERY_KEY, initializeCurrentUser } from '../auth';
 import type { OmnibarEvents } from './click-handlers';
+import type { UserPreferences } from '@automattic/api-core';
 
 export default async function loadOmnibar( events: OmnibarEvents ) {
 	const container = document.getElementById( 'wpcom-omnibar' );
@@ -68,7 +69,9 @@ export default async function loadOmnibar( events: OmnibarEvents ) {
 	}
 
 	// Render with the initial recent site (or primary blog as fallback).
-	const recentSites = queryClient.getQueryData( rawUserPreferencesQuery().queryKey )?.recentSites;
+	const recentSites = queryClient.getQueryData< UserPreferences >(
+		rawUserPreferencesQuery().queryKey
+	)?.recentSites;
 	const initialSiteId = recentSites?.[ 0 ] || user.primary_blog;
 	renderWithSiteId( initialSiteId );
 
