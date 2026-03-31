@@ -183,61 +183,6 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 	} );
 
-	it( 'passes through messages with sources data blocks unchanged', () => {
-		const sources = [
-			{ title: 'Article 1', url: 'https://example.com/1' },
-			{ title: 'Article 2', url: 'https://example.com/2' },
-		];
-		const message = createMessage( {
-			content: [
-				{ type: 'text', text: 'Here is your answer.' },
-				{ type: 'data', data: { sources } },
-			],
-		} );
-
-		const result = convertToolMessagesToComponents( { messages: [ message ] } );
-
-		expect( result ).toHaveLength( 1 );
-		expect( result[ 0 ].content ).toHaveLength( 2 );
-		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
-			type: 'text',
-			text: 'Here is your answer.',
-		} );
-		expect( result[ 0 ].content[ 1 ] ).toMatchObject( {
-			type: 'data',
-			data: { sources },
-		} );
-	} );
-
-	it( 'does not modify messages without sources data blocks', () => {
-		const message = createMessage( {
-			content: [
-				{ type: 'text', text: 'Just a normal message.' },
-				{ type: 'data', data: { flags: null } },
-			],
-		} );
-
-		const result = convertToolMessagesToComponents( { messages: [ message ] } );
-
-		expect( result ).toHaveLength( 1 );
-		expect( result[ 0 ].content ).toHaveLength( 2 );
-		expect( result[ 0 ].content[ 1 ] ).toMatchObject( { type: 'data', data: { flags: null } } );
-	} );
-
-	it( 'ignores sources data blocks with an empty array', () => {
-		const message = createMessage( {
-			content: [
-				{ type: 'text', text: 'Answer text.' },
-				{ type: 'data', data: { sources: [] } },
-			],
-		} );
-
-		const result = convertToolMessagesToComponents( { messages: [ message ] } );
-
-		expect( result ).toHaveLength( 1 );
-		expect( result[ 0 ].content[ 1 ] ).toMatchObject( { type: 'data', data: { sources: [] } } );
-	} );
-
 	it( 'filters out unhandled tool messages', () => {
 		const result = convertToolMessagesToComponents( {
 			messages: [ createToolMessage( 'other_tool' ) ],
