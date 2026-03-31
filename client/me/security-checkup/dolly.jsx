@@ -18,7 +18,7 @@ class SecurityCheckupDolly extends Component {
 
 		return (
 			<SecurityCheckupNavigationItem
-				path="/me/security/telegram-bot"
+				path="/me/security/ai-assistant"
 				materialIcon="smartphone"
 				text={ translate( 'Telegram Bot (alpha)' ) }
 				description={ translate(

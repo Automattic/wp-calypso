@@ -30,7 +30,7 @@ class Dolly extends Component {
 
 		return (
 			<Main wideLayout className="security dolly">
-				<PageViewTracker path="/me/security/telegram-bot" title="Me > Telegram Bot (alpha)" />
+				<PageViewTracker path="/me/security/ai-assistant" title="Me > Telegram Bot (alpha)" />
 				<DocumentHead title={ title } />
 
 				<NavigationHeader navigationItems={ [] } title={ translate( 'Security' ) } />
