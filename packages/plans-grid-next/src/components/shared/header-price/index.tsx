@@ -1,5 +1,6 @@
 import {
 	getPlanSlugForTermVariant,
+	isFreePlan,
 	isWpcomEnterpriseGridPlan,
 	PERIOD_LIST,
 	TERM_MONTHLY,
@@ -23,15 +24,16 @@ import { useHeaderPriceContext } from './header-price-context';
 import type { GridPlan } from '../../../types';
 import './style.scss';
 
-const ENTERPRISE_LOGO_SLUGS = [
-	'time',
+const ALL_ENTERPRISE_LOGO_SLUGS = [
 	'slack',
-	'disney',
-	'cnn',
+	'samsung',
+	'techcrunch',
+	'usa-today',
 	'salesforce',
-	'facebook',
-	'conde-nast',
-	'bloomberg',
+	'vox-media',
+	'meta',
+	'intuit',
+	'siriusxm',
 ];
 
 interface HeaderPriceProps {
@@ -140,9 +142,11 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 	] );
 
 	if ( isWpcomEnterpriseGridPlan( planSlug ) ) {
+		const hasFreePlan = visibleGridPlans.some( ( { planSlug: slug } ) => isFreePlan( slug ) );
+		const logoCount = hasFreePlan ? 7 : 9;
 		return (
 			<ClientLogoList
-				slugs={ ENTERPRISE_LOGO_SLUGS }
+				slugs={ ALL_ENTERPRISE_LOGO_SLUGS.slice( 0, logoCount ) }
 				className="plans-grid-next-header-price__enterprise-logos"
 			/>
 		);
