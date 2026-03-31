@@ -7,8 +7,8 @@ const noop = () => undefined;
 type UserAvatarProps = {
 	className?: string;
 	user?: UserAvatarInfo | null;
+	size?: number;
 	onClick?: () => void; // Click handler to be executed when avatar is clicked.
-	iconSize?: number;
 };
 
 type UserAvatarInfo = {
@@ -23,8 +23,8 @@ type UserAvatarInfo = {
 export default function UserAvatar( {
 	className,
 	user,
+	size = 32,
 	onClick = noop,
-	iconSize = 32,
 }: UserAvatarProps ) {
 	// GravatarWithHovercards component display default avatar if user an empty object. Nothing when user is null or undefined.
 	if ( ! user ) {
@@ -34,7 +34,7 @@ export default function UserAvatar( {
 	const classes = clsx( 'user-avatar', 'has-gravatar', className );
 	const username = user?.wpcom_login || user?.login;
 	const userProfileUrl = username ? getUserProfileUrl( username ) : null;
-	const userGravatar = <GravatarWithHovercards user={ user } size={ iconSize } />;
+	const userGravatar = <GravatarWithHovercards user={ user } size={ size } />;
 	const avatarElement = userProfileUrl ? (
 		<a href={ userProfileUrl }> { userGravatar }</a>
 	) : (
