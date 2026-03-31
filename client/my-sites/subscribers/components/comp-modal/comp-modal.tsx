@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Modal, Button } from '@wordpress/components';
+import { CheckboxControl, Modal, Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import ProductsSelector from 'calypso/my-sites/earn/components/add-edit-coupon-modal/products-selector';
@@ -22,7 +22,22 @@ type CompSubscriptionModalProps = {
 type Comp = {
 	user_id: number | string;
 	plan_id: number;
+	end_date?: string;
 };
+
+function getEndDateFromRenewalSchedule( renewalSchedule?: string ): string | undefined {
+	const now = new Date();
+	switch ( renewalSchedule ) {
+		case '1 month':
+			now.setMonth( now.getMonth() + 1 );
+			return now.toISOString();
+		case '1 year':
+			now.setFullYear( now.getFullYear() + 1 );
+			return now.toISOString();
+		default:
+			return undefined;
+	}
+}
 
 const CompSubscriptionModal = ( {
 	siteId,
@@ -37,6 +52,7 @@ const CompSubscriptionModal = ( {
 	const dispatch = useDispatch();
 
 	const [ planId, setPlanId ] = useState( 0 );
+	const [ doesNotExpire, setDoesNotExpire ] = useState( false );
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 
 	const products: Product[] = useSelector( ( state ) => getProductsForSiteId( state, siteId ) );
@@ -77,9 +93,15 @@ const CompSubscriptionModal = ( {
 			},
 		} );
 
+		const selectedProduct = products.find( ( product ) => product.ID === plan_id );
+		const endDate = doesNotExpire
+			? undefined
+			: getEndDateFromRenewalSchedule( selectedProduct?.renewal_schedule );
+
 		const compDetails: Comp = {
 			plan_id: plan_id,
 			user_id: user_id,
+			...( endDate && { end_date: endDate } ),
 		};
 
 		dispatch( requestAddComp( siteId, compDetails, noticeText, onComplete ) );
@@ -109,6 +131,11 @@ const CompSubscriptionModal = ( {
 						allowMultiple={ false }
 						showLabel={ false }
 						excludeProductIds={ compedPlanIds }
+					/>
+					<CheckboxControl
+						label={ translate( "Doesn't expire" ) }
+						checked={ doesNotExpire }
+						onChange={ setDoesNotExpire }
 					/>
 					<div className="complimentary-subscription-modal__buttons">
 						<Button onClick={ onClose } variant="tertiary">

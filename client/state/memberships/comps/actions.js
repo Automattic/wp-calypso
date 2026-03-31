@@ -17,6 +17,8 @@ export const requestAddComp = ( siteId, comp, noticeText, onComplete ) => {
 			type: MEMBERSHIPS_COMP_ADD,
 		} );
 
+		const body = comp.end_date ? { end_date: comp.end_date } : null;
+
 		return wpcom.req
 			.post(
 				{
@@ -26,7 +28,7 @@ export const requestAddComp = ( siteId, comp, noticeText, onComplete ) => {
 					}`,
 					apiNamespace: 'wpcom/v2',
 				},
-				null
+				body
 			)
 			.then( ( newComp ) => {
 				if ( newComp.error ) {

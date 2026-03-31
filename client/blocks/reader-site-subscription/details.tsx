@@ -324,9 +324,11 @@ const SiteSubscriptionDetails = ( {
 										<>
 											<dt>{ translate( 'Billing period' ) }</dt>
 											<dd>
-												{ renewalDate
-													? translate( 'Renews on %s', { args: [ renewalDate ] } )
-													: translate( 'Does not expire' ) }
+												{ ! is_comp && translate( 'Renews on %s', { args: [ renewalDate ] } ) }
+												{ is_comp &&
+													renewalDate &&
+													translate( 'Expires on %s', { args: [ renewalDate ] } ) }
+												{ is_comp && ! renewalDate && translate( 'Does not expire' ) }
 											</dd>
 										</>
 									) }
