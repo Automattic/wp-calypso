@@ -431,3 +431,7 @@ const YourStep: Step< {
 ## Help and feedback
 
 Please feel free to reach out to Team T-Rex, or post in `#dotcom-stepper` for any feedback or if you need help.
+
+## Preloading
+
+Stepper uses the order of the steps in the steps array of your flow as a signal to preload steps before the user lands at them. Sort your steps as closely as possible to expected user behavior.
