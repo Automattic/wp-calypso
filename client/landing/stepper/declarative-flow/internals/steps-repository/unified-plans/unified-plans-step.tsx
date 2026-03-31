@@ -1,6 +1,10 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import { UrlFriendlyTermType, isDomainTransfer } from '@automattic/calypso-products';
+import {
+	UrlFriendlyTermType,
+	isDomainTransfer,
+	PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY,
+} from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { FREE_THEME } from '@automattic/design-picker';
 import {
@@ -18,8 +22,10 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useMemo, useState } from '@wordpress/element';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import moment from 'moment';
 import { parse as parseQs } from 'qs';
 import AsyncLoad from 'calypso/components/async-load';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import FormattedHeader from 'calypso/components/formatted-header';
 import MarketingMessage from 'calypso/components/marketing-message';
 import Notice from 'calypso/components/notice';
@@ -41,6 +47,7 @@ import {
 	submitSignupStep as submitSignupStepAction,
 } from 'calypso/state/signup/progress/actions';
 import { useSiteGlobalStylesOnPersonal } from 'calypso/state/sites/hooks/use-site-global-styles-on-personal';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
 import { getIntervalType } from './util';
@@ -353,6 +360,12 @@ function UnifiedPlansStep( {
 		]
 	);
 
+	const siteId = selectedSite?.ID ?? signupDependencies.siteId;
+
+	const currentPlan = useSelector( ( state ) =>
+		siteId ? getCurrentPlan( state, siteId ) : null
+	);
+
 	const handleRemovePaidDomain = useCallback( () => {
 		const domainItem = undefined;
 
@@ -464,7 +477,28 @@ function UnifiedPlansStep( {
 		}
 
 		if ( intent === 'plans-woo-hosted' ) {
-			return translate( 'Your free trial ends soon — select a plan to keep your online store.' );
+			if ( ! currentPlan && ! selectedSite?.plan ) {
+				return null;
+			}
+			const isOnTrial =
+				currentPlan?.productSlug === PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY ||
+				selectedSite?.plan?.product_slug === PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY;
+
+			if ( isOnTrial ) {
+				const daysLeft = currentPlan?.expiryDate
+					? Math.ceil( moment.utc( currentPlan.expiryDate ).diff( moment().utc(), 'days', true ) )
+					: null;
+
+				if ( daysLeft !== null && daysLeft >= 1 ) {
+					return translate(
+						'Your free trial ends in %(daysLeft)d day — select a plan to keep your online store.',
+						'Your free trial ends in %(daysLeft)d days — select a plan to keep your online store.',
+						{ count: daysLeft, args: { daysLeft } }
+					);
+				}
+				return translate( 'Your free trial ends soon — select a plan to keep your online store.' );
+			}
+			return translate( 'Choose the plan that fits your business.' );
 		}
 
 		if ( useEmailOnboardingSubheader ) {
@@ -532,6 +566,7 @@ function UnifiedPlansStep( {
 					intent === 'plans-wordpress-hosting' || intent === 'plans-website-builder',
 			} ) }
 		>
+			{ intent === 'plans-woo-hosted' && siteId && <QuerySitePlans siteId={ siteId } /> }
 			{ 'invalid' === step?.status && (
 				<div>
 					<Notice status="is-error" showDismiss={ false }>
