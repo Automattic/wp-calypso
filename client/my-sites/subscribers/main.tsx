@@ -4,6 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
+import QueryMemberships from 'calypso/components/data/query-memberships';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
 import Main from 'calypso/components/main';
 import SubscriberValidationGate from 'calypso/components/subscribers-validation-gate';
@@ -62,9 +63,15 @@ const SubscribersPage = ( { subscriberId }: Props ) => {
 
 	const [ compUserId, setCompUserId ] = useState< number | string | null >( null );
 	const [ compUsername, setCompUsername ] = useState( '' );
-	const onCompSubscription = ( { user_id, email_address, display_name }: Subscriber ) => {
+	const [ compedPlanIds, setCompedPlanIds ] = useState< number[] >( [] );
+	const onCompSubscription = ( { user_id, email_address, display_name, plans }: Subscriber ) => {
 		setCompUserId( user_id || email_address || null );
 		setCompUsername( display_name );
+		setCompedPlanIds(
+			( plans ?? [] )
+				.filter( ( plan ) => plan.is_comp && plan.subscription_id )
+				.map( ( plan ) => plan.subscription_id as number )
+		);
 	};
 
 	const [ removeComp, setRemoveComp ] = useState< {
@@ -75,6 +82,7 @@ const SubscribersPage = ( { subscriberId }: Props ) => {
 
 	return (
 		<>
+			<QueryMemberships siteId={ siteId ?? 0 } />
 			<QueryMembershipsSettings siteId={ siteId ?? 0 } source="calypso" />
 			<Main wideLayout className="subscribers">
 				<DocumentHead title={ translate( 'Subscribers' ) } />
@@ -92,6 +100,7 @@ const SubscribersPage = ( { subscriberId }: Props ) => {
 							siteId={ siteId ?? 0 }
 							userId={ compUserId }
 							username={ compUsername }
+							compedPlanIds={ compedPlanIds }
 							onClose={ () => setCompUserId( null ) }
 							onConfirm={ () => setCompUserId( null ) }
 						/>
