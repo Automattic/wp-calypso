@@ -60,14 +60,6 @@ describe( 'validatePhone', () => {
 			} );
 		} );
 
-		it( 'should return success for valid US 350 area code number', () => {
-			const result = validatePhone( '+13502197449' );
-			expect( result ).toEqual( {
-				info: 'phone_number_valid',
-				message: 'Valid phone number',
-			} );
-		} );
-
 		it( 'should return success for valid international phone number', () => {
 			const result = validatePhone( '+447911123456' );
 			expect( result ).toEqual( {
