@@ -92,6 +92,15 @@ body.is-section-subscribers,
 				display: flex;
 				flex-direction: column;
 
+				// DataViews' height: 100% doesn't resolve inside the
+				// Page content flex layout. Use flex to fill remaining
+				// space so the internal scroll container works.
+				.dataviews-wrapper {
+					height: auto;
+					flex-grow: 1;
+					min-height: 0;
+				}
+
 				.navigation-header {
 					padding: $padding-standard 24px;
 
