@@ -17,7 +17,7 @@ export const requestAddComp = ( siteId, comp, noticeText, onComplete ) => {
 			type: MEMBERSHIPS_COMP_ADD,
 		} );
 
-		const body = comp.end_date ? { end_date: comp.end_date } : null;
+		const body = comp.no_expiration ? { no_expiration: true } : null;
 
 		return wpcom.req
 			.post(

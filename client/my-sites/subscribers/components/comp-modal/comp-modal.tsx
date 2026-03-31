@@ -22,22 +22,8 @@ type CompSubscriptionModalProps = {
 type Comp = {
 	user_id: number | string;
 	plan_id: number;
-	end_date?: string;
+	no_expiration?: boolean;
 };
-
-function getEndDateFromRenewalSchedule( renewalSchedule?: string ): string | undefined {
-	const now = new Date();
-	switch ( renewalSchedule ) {
-		case '1 month':
-			now.setMonth( now.getMonth() + 1 );
-			return now.toISOString();
-		case '1 year':
-			now.setFullYear( now.getFullYear() + 1 );
-			return now.toISOString();
-		default:
-			return undefined;
-	}
-}
 
 const CompSubscriptionModal = ( {
 	siteId,
@@ -93,15 +79,10 @@ const CompSubscriptionModal = ( {
 			},
 		} );
 
-		const selectedProduct = products.find( ( product ) => product.ID === plan_id );
-		const endDate = doesNotExpire
-			? undefined
-			: getEndDateFromRenewalSchedule( selectedProduct?.renewal_schedule );
-
 		const compDetails: Comp = {
 			plan_id: plan_id,
 			user_id: user_id,
-			...( endDate && { end_date: endDate } ),
+			...( doesNotExpire && { no_expiration: true } ),
 		};
 
 		dispatch( requestAddComp( siteId, compDetails, noticeText, onComplete ) );
