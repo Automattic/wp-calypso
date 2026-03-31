@@ -78,7 +78,7 @@ export default function Language() {
 			onError: ( error ) => {
 				// Prepend previous attempted data back into local edits
 				setFormData( ( current ) => ( { ...mutationData, ...current } ) );
-				createErrorNotice( error.message ?? __( 'Language setting could not be saved.' ), {
+				createErrorNotice( error.message ?? __( 'Failed to save language.' ), {
 					type: 'snackbar',
 				} );
 			},
