@@ -2022,13 +2022,14 @@ const WPCheckoutWrapper = styled.div< {
 				align-items: center;
 				line-height: 1;
 			}
-			.checkout-step__header h2 {
-				font-size: 15px;
-			}
+
 			.checkout-step__header h2 > span {
-				font-weight: 590;
 				color: ${ colorStudio.colors[ 'Gray 100' ] };
-			}
+				font-size: 18px;
+					@media ( ${ props.theme.breakpoints.desktopUp } ) {                                                                                                                                                                  
+						font-size: 20px;                                                                                                                                                                                                 
+					}                                                                                                                                                                                                                    
+				}  
 				
 			.checkout-step__header {
 				margin-bottom: 16px;
