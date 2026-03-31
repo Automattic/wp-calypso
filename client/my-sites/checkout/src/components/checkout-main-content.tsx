@@ -2096,11 +2096,16 @@ const WPCheckoutWrapper = styled.div< {
 			.wp-checkout-order-summary__subtotal,
 			.wp-checkout-order-summary__total {
 				color: ${ colorStudio.colors[ 'Gray 90' ] };
-				font-size: 13px;
+				font-size: 14px;
 				line-height: 20px;
+				margin-bottom: 0;
+			}
+			.wp-checkout-order-summary__subtotal:first-child,
+			.wp-checkout-order-summary__total:first-child {
+				margin-bottom: 4px;
 			}
 			.wp-checkout-order-summary__subtotal .wp-checkout-order-summary__subtotal-price {
-				font-size: 13px;
+				font-size: 14px;
 			}
 			.wp-checkout-order-summary__line-item,
 			.wp-checkout-order-summary__tax-not-calculated {
