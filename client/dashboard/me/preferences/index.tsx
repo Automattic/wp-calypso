@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useAppContext } from '../../app/context';
 import { PageHeader } from '../../components/page-header';
@@ -23,12 +24,14 @@ export default function Preferences() {
 				/>
 			}
 		>
-			{ optIn && <PreferencesNewHostingDashboard /> }
-			{ isEnabled( 'mcp-settings' ) && <PreferencesAiMcp /> }
-			<PreferencesLanguage />
-			<PreferencesDefaults />
-			{ supports.reader && <PreferencesBlockedSites /> }
-			<PreferencesPrivacy />
+			<VStack spacing={ 4 }>
+				{ optIn && <PreferencesNewHostingDashboard /> }
+				{ isEnabled( 'mcp-settings' ) && <PreferencesAiMcp /> }
+				<PreferencesLanguage />
+				<PreferencesDefaults />
+				{ supports.reader && <PreferencesBlockedSites /> }
+				<PreferencesPrivacy />
+			</VStack>
 		</PageLayout>
 	);
 }
