@@ -60,8 +60,16 @@ export function SiteLaunchButton( {
 	const handleLaunch = () => {
 		handleTracksEvent();
 		launchMutation.mutate( undefined, {
-			onSuccess: () => {
+			onSettled: () => {
 				setIsLaunchModalOpen( false );
+			},
+		} );
+	};
+
+	const handleUngatedLaunch = () => {
+		handleTracksEvent();
+		launchMutation.mutate( undefined, {
+			onSuccess: () => {
 				setIsCelebrationModalOpen( true );
 			},
 			onSettled: () => {
@@ -122,7 +130,7 @@ export function SiteLaunchButton( {
 	if ( experimentAssignment === 'ungated_site_launch' ) {
 		return (
 			<>
-				<Button { ...commonProps } onClick={ handleLaunch } />
+				<Button { ...commonProps } onClick={ handleUngatedLaunch } />
 				{ isCelebrationModalOpen && (
 					<SiteLaunchCelebrationModal
 						site={ site }
