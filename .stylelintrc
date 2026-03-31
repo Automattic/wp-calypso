@@ -43,14 +43,6 @@
 				"units": [ "px" ]
 			}
 		],
-		"declaration-property-value-disallowed-list": [
-			{
-				"/./": [ "/\\.(?:png|jpe?g)/i" ]
-			},
-			{
-				"message": "Please use 'webp' files instead."
-			}
-		],
 		"unit-allowed-list": [
 			"%",
 			"deg",
