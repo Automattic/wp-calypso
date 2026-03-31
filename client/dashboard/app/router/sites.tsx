@@ -677,7 +677,6 @@ export const siteSettingsAIToolsIndexRoute = createRoute( {
 );
 
 export const siteSettingsAIToolsReadRoute = createRoute( {
-	staticData: { requiresSiteTypeSupport: 'settingsGeneralAITools' },
 	head: () => ( {
 		meta: [
 			{
@@ -687,14 +686,6 @@ export const siteSettingsAIToolsReadRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteSettingsAIToolsRoute,
 	path: 'read',
-	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
-		if ( cause === 'preload' ) {
-			return;
-		}
-		if ( ! isEnabled( 'mcp-settings' ) ) {
-			throw redirectAsNotAllowed( { to: siteSettingsAIToolsRoute.fullPath, params: { siteSlug } } );
-		}
-	},
 	loader: async () => {
 		await queryClient.ensureQueryData( userSettingsQuery() );
 	},
@@ -707,7 +698,6 @@ export const siteSettingsAIToolsReadRoute = createRoute( {
 );
 
 export const siteSettingsAIToolsWriteRoute = createRoute( {
-	staticData: { requiresSiteTypeSupport: 'settingsGeneralAITools' },
 	head: () => ( {
 		meta: [
 			{
@@ -717,14 +707,6 @@ export const siteSettingsAIToolsWriteRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteSettingsAIToolsRoute,
 	path: 'write',
-	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
-		if ( cause === 'preload' ) {
-			return;
-		}
-		if ( ! isEnabled( 'mcp-settings' ) ) {
-			throw redirectAsNotAllowed( { to: siteSettingsAIToolsRoute.fullPath, params: { siteSlug } } );
-		}
-	},
 	loader: async () => {
 		await queryClient.ensureQueryData( userSettingsQuery() );
 	},
@@ -737,7 +719,6 @@ export const siteSettingsAIToolsWriteRoute = createRoute( {
 );
 
 export const siteSettingsAIToolsSetupRoute = createRoute( {
-	staticData: { requiresSiteTypeSupport: 'settingsGeneralAITools' },
 	head: () => ( {
 		meta: [
 			{
@@ -747,14 +728,6 @@ export const siteSettingsAIToolsSetupRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteSettingsAIToolsRoute,
 	path: 'setup',
-	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
-		if ( cause === 'preload' ) {
-			return;
-		}
-		if ( ! isEnabled( 'mcp-settings' ) ) {
-			throw redirectAsNotAllowed( { to: siteSettingsAIToolsRoute.fullPath, params: { siteSlug } } );
-		}
-	},
 	loader: async () => {
 		await queryClient.ensureQueryData( userSettingsQuery() );
 	},
@@ -1552,12 +1525,14 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 
 		// General
 		siteSettingsSiteVisibilityRoute,
-		siteSettingsAIToolsRoute.addChildren( [
-			siteSettingsAIToolsIndexRoute,
-			siteSettingsAIToolsReadRoute,
-			siteSettingsAIToolsWriteRoute,
-			siteSettingsAIToolsSetupRoute,
-		] ),
+		isEnabled( 'mcp-settings' )
+			? siteSettingsAIToolsRoute.addChildren( [
+					siteSettingsAIToolsIndexRoute,
+					siteSettingsAIToolsReadRoute,
+					siteSettingsAIToolsWriteRoute,
+					siteSettingsAIToolsSetupRoute,
+			  ] )
+			: siteSettingsAIToolsRoute.addChildren( [ siteSettingsAIToolsIndexRoute ] ),
 		siteSettingsSubscriptionGiftingRoute,
 		siteSettingsAgencyRoute,
 		siteSettingsHundredYearPlanRoute,
