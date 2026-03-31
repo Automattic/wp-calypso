@@ -1,7 +1,7 @@
 import colorStudio from '@automattic/color-studio';
 import { formatCurrency } from '@automattic/number-formatters';
 import { styled } from '@automattic/wpcom-checkout';
-import { useTranslate } from 'i18n-calypso';
+import i18n, { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { useCheckoutUiRedesignExperiment } from 'calypso/my-sites/checkout/src/hooks/use-checkout-ui-redesign-experiment';
 import { getItemVariantDiscount } from './util';
@@ -97,6 +97,21 @@ export const ItemVariantRadioPrice: FunctionComponent< {
 	} );
 
 	const priceDisplay = ( () => {
+		if ( isCheckoutUiRedesignV1 ) {
+			return i18n.fixMe( {
+				text: '%(pricePerMonth)s/mo',
+				newCopy: translate( '%(pricePerMonth)s/mo', {
+					args: {
+						pricePerMonth: pricePerMonthFormatted,
+					},
+				} ),
+				oldCopy: translate( '%(pricePerMonth)s /mo', {
+					args: {
+						pricePerMonth: pricePerMonthFormatted,
+					},
+				} ),
+			} );
+		}
 		return translate( '%(pricePerMonth)s /mo', {
 			args: {
 				pricePerMonth: pricePerMonthFormatted,
