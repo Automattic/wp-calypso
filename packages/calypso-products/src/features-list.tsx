@@ -396,6 +396,8 @@ import {
 	FEATURE_WOO_HOSTED_STORAGE_SPACE,
 	FEATURE_WOO_HOSTED_EMAIL_CAMPAIGNS,
 	FEATURE_WOO_HOSTED_EMAIL_SUBSCRIBER_MGMT,
+	FEATURE_WOO_HOSTED_SALES_TAX,
+	FEATURE_WOO_HOSTED_SHIPPING_LABELS,
 } from './constants';
 import type { FeatureList } from './types';
 
@@ -3103,6 +3105,16 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_WOO_HOSTED_EMAIL_SUBSCRIBER_MGMT ]: {
 		getSlug: () => FEATURE_WOO_HOSTED_EMAIL_SUBSCRIBER_MGMT,
 		getTitle: () => i18n.translate( 'Email subscriber management' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_SALES_TAX ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_SALES_TAX,
+		getTitle: () => i18n.translate( 'Automated sales tax' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOO_HOSTED_SHIPPING_LABELS ]: {
+		getSlug: () => FEATURE_WOO_HOSTED_SHIPPING_LABELS,
+		getTitle: () => i18n.translate( 'Printable shipping labels' ),
 		getDescription: () => '',
 	},
 	/* END: Woo Hosted (CIAB) Features */
