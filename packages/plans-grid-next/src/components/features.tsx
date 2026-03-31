@@ -1,4 +1,9 @@
-import { getPlanClass, FEATURE_CUSTOM_DOMAIN, isFreePlan } from '@automattic/calypso-products';
+import {
+	getPlanClass,
+	FEATURE_AI_WEBSITE_BUILDER,
+	FEATURE_CUSTOM_DOMAIN,
+	isFreePlan,
+} from '@automattic/calypso-products';
 import { LoadingPlaceholder } from '@automattic/components';
 import styled from '@emotion/styled';
 import clsx from 'clsx';
@@ -25,7 +30,6 @@ const SubdomainSuggestion = styled.div`
 // Pricing differentiation pills — colors match @automattic/components Badge type="info-green" (.badge--info-green).
 const FeatureBadge = styled.span`
 	display: inline-flex;
-	height: 18px;
 	padding: 0 6px;
 	justify-content: center;
 	align-items: center;
@@ -36,14 +40,13 @@ const FeatureBadge = styled.span`
 	text-align: center;
 	font-size: 11px;
 	font-weight: 600;
-	line-height: 16px;
+	line-height: inherit;
 	margin-inline-start: 8px;
-	vertical-align: baseline;
+	vertical-align: middle;
 	text-decoration: none;
 	white-space: nowrap;
 
 	@media ( max-width: 480px ) {
-		height: 16px;
 		padding: 0 4px;
 		margin-inline-start: 6px;
 	}
@@ -99,7 +102,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 	setActiveTooltipId,
 } ) => {
 	const translate = useTranslate();
-	const { enableFeatureTooltips, isExperimentVariant, useFocusedComparisonFeatures } =
+	const { enableFeatureTooltips, gridPlans, isExperimentVariant, useFocusedComparisonFeatures } =
 		usePlansGridContext();
 
 	return (
@@ -125,6 +128,8 @@ const PlanFeatures2023GridFeatures: React.FC< {
 					  ! currentFeature.availableForCurrentPlan;
 
 				const featureSlug = currentFeature.getSlug();
+				const shouldBreakAfterAiWebsiteBuilderTitle =
+					gridPlans.length === 6 && featureSlug === FEATURE_AI_WEBSITE_BUILDER;
 				const featuresWithMinHeight = [
 					'support-from-experts',
 					'priority-24-7-support',
@@ -198,6 +203,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 														<FeatureBadge>{ currentFeature.badgeText }</FeatureBadge>
 													) }
 												</span>
+												{ shouldBreakAfterAiWebsiteBuilderTitle && <div>{ '\u00A0' }</div> }
 												{ currentFeature?.getSubFeatureObjects?.()?.length ? (
 													<ul className="plan-features-2023-grid__item-sub-feature-list">
 														{ currentFeature.getSubFeatureObjects().map( ( subFeature ) => (
