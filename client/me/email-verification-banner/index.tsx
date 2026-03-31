@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import isPendingEmailChange from 'calypso/state/selectors/is-pending-email-change';
-import { setUserSetting } from 'calypso/state/user-settings/actions';
+import { setUnsavedUserSetting } from 'calypso/state/user-settings/actions';
 import { saveUnsavedUserSettings } from 'calypso/state/user-settings/thunks';
 import './style.scss';
 
@@ -76,7 +76,9 @@ const EmailVerificationBannerV2: React.FC< Props > = ( { setIsBusy } ) => {
 		setIsBusy( true );
 		setIsSendingEmail( true );
 		try {
-			dispatch( setUserSetting( 'user_email', emailToVerify ) );
+			// Use setUnsavedUserSetting so the email is included even when it hasn't changed,
+			// e.g. when the original email was never confirmed.
+			dispatch( setUnsavedUserSetting( 'user_email', emailToVerify ) );
 			await dispatch( saveUnsavedUserSettings( [ 'user_email' ] ) );
 			dispatch(
 				successNotice(
