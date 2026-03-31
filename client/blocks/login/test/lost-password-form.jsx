@@ -22,6 +22,7 @@ Object.defineProperty( window, 'location', {
 describe( 'LostPasswordForm', () => {
 	afterEach( () => {
 		mockFetch.mockClear();
+		delete window.Blackbox;
 	} );
 
 	test( 'displays a lost password form without errors', () => {
@@ -185,5 +186,34 @@ describe( 'LostPasswordForm', () => {
 				/You have exceeded the password reset limit/i
 			);
 		} );
+	} );
+
+	test( 'includes blackbox_session_id in the password reset POST when Blackbox is available', async () => {
+		window.Blackbox = {
+			getSessionId: jest.fn().mockResolvedValue( 'test-session-id' ),
+		};
+
+		mockFetch.mockResolvedValueOnce( {
+			ok: true,
+			status: 200,
+			text: jest.fn().mockResolvedValue( '' ),
+		} );
+
+		render( <LostPasswordForm redirectToAfterLoginUrl="" oauth2ClientId="" locale="" /> );
+
+		await userEvent.type(
+			screen.getByRole( 'textbox', { name: 'Email address or username' } ),
+			'user@example.com'
+		);
+
+		const btn = screen.getByRole( 'button', { name: /Reset my password/i } );
+		await userEvent.click( btn );
+
+		await waitFor( () => {
+			expect( mockFetch ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		const formData = mockFetch.mock.calls[ 0 ][ 1 ].body;
+		expect( formData.get( 'blackbox_session_id' ) ).toBe( 'test-session-id' );
 	} );
 } );
