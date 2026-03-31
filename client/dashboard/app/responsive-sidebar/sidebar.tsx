@@ -1,35 +1,22 @@
-import { useRouterState } from '@tanstack/react-router';
-import { __experimentalHStack as HStack, Navigator } from '@wordpress/components';
+import { __experimentalHStack as HStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { brush, envelope, globe, layout, plugins } from '@wordpress/icons';
-import { useRef } from 'react';
 import { menuDot } from '../../components/icons';
 import RouterLinkButton from '../../components/router-link-button';
 import { SidebarExpandableMenuItem, SidebarMenu, SidebarMenuItem } from '../../components/sidebar';
+import SidebarNavigator from '../../components/sidebar-navigator';
 import DomainSidebar from '../../domains/domain-sidebar';
 import MeSidebar from '../../me/me-sidebar';
 import SiteSidebar from '../../sites/site-sidebar';
 import { wpcomLink } from '../../utils/link';
 import { useAnalytics } from '../analytics';
 import { useAppContext } from '../context';
-import RouteErrorBoundary from './error';
-import { getScreenPath, NavigatorRouteSync } from './navigator-route-sync';
 
 import './sidebar.scss';
 
 export default function Sidebar() {
 	const { Logo, name } = useAppContext();
 	const { recordTracksEvent } = useAnalytics();
-	const { resolvedPathname, hasError } = useRouterState( {
-		select: ( state ) => ( {
-			resolvedPathname: state.resolvedLocation?.pathname ?? state.location.pathname,
-			hasError: state.matches.some(
-				( match ) => match.status === 'error' || match.status === 'notFound'
-			),
-		} ),
-	} );
-	const screenPath = getScreenPath( resolvedPathname, hasError );
-	const initialPath = useRef( screenPath ).current;
 
 	return (
 		<div className="dashboard-responsive-sidebar__sidebar">
@@ -46,31 +33,20 @@ export default function Sidebar() {
 					/>
 				</div>
 			) }
-			<Navigator initialPath={ initialPath }>
-				<NavigatorRouteSync screenPath={ screenPath } />
-
-				<Navigator.Screen path="/">
+			<SidebarNavigator>
+				<SidebarNavigator.Screen path="/">
 					<PrimaryMenuSidebar />
-				</Navigator.Screen>
-
-				<Navigator.Screen path="/sites/:siteSlug">
-					<RouteErrorBoundary>
-						<SiteSidebar />
-					</RouteErrorBoundary>
-				</Navigator.Screen>
-
-				<Navigator.Screen path="/domains/:domainName">
-					<RouteErrorBoundary>
-						<DomainSidebar />
-					</RouteErrorBoundary>
-				</Navigator.Screen>
-
-				<Navigator.Screen path="/me">
-					<RouteErrorBoundary>
-						<MeSidebar />
-					</RouteErrorBoundary>
-				</Navigator.Screen>
-			</Navigator>
+				</SidebarNavigator.Screen>
+				<SidebarNavigator.Screen path="/sites/$siteSlug">
+					<SiteSidebar />
+				</SidebarNavigator.Screen>
+				<SidebarNavigator.Screen path="/domains/$domainName">
+					<DomainSidebar />
+				</SidebarNavigator.Screen>
+				<SidebarNavigator.Screen path="/me">
+					<MeSidebar />
+				</SidebarNavigator.Screen>
+			</SidebarNavigator>
 		</div>
 	);
 }

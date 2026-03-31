@@ -1,4 +1,4 @@
-import { Page } from 'playwright';
+import { Locator, Page } from 'playwright';
 import { envVariables } from '../..';
 
 /**
@@ -6,6 +6,7 @@ import { envVariables } from '../..';
  */
 export class FeedbackInboxPage {
 	private page: Page;
+	private isCFM = false;
 
 	/**
 	 * Constructs an instance of the component.
@@ -17,13 +18,36 @@ export class FeedbackInboxPage {
 	}
 
 	/**
+	 * Returns a locator for a response row matching the given text.
+	 *
+	 * @param {string} text The text to match in the row.
+	 * @returns {Locator} The row locator.
+	 */
+	private getResponseRow( text: string ): Locator {
+		return this.page.locator( '.dataviews-view-table__row' ).filter( { hasText: text } ).first();
+	}
+
+	/**
 	 * Visit the Jetpack Forms Inbox page.
+	 *
+	 * Handles both the old dashboard (lands directly on responses) and the
+	 * new Central Form Management dashboard (lands on Forms tab — needs to
+	 * click "Responses" to get to the inbox).
 	 *
 	 * @param {string} siteUrlWithProtocol Site URL with the protocol.
 	 */
 	async visit( siteUrlWithProtocol: string ): Promise< void > {
 		const url = new URL( '/wp-admin/admin.php?page=jetpack-forms-admin', siteUrlWithProtocol );
 		await this.page.goto( url.href, { timeout: 20 * 1000 } );
+
+		// With Central Form Management enabled, the dashboard lands on the Forms tab.
+		// Click "Responses" to navigate to the inbox.
+		const responsesTab = this.page.getByRole( 'tab', { name: 'Responses' } );
+		if ( await responsesTab.isVisible( { timeout: 2000 } ).catch( () => false ) ) {
+			this.isCFM = true;
+			await responsesTab.click();
+			await this.page.waitForTimeout( 1000 );
+		}
 	}
 
 	/**
@@ -34,17 +58,17 @@ export class FeedbackInboxPage {
 	 * @param {string} text The text to match in the row. Using the name field is a good choice.
 	 */
 	async viewResponseRowByText( text: string ): Promise< void > {
-		const responseRowLocator = this.page
-			.locator( '.dataviews-view-table__row' )
-			.filter( { hasText: text } )
-			.first();
+		const responseRowLocator = this.getResponseRow( text );
 		await responseRowLocator.waitFor( { state: 'visible' } );
 		await responseRowLocator.getByRole( 'button', { name: 'Actions' } ).click();
 		// The menu item is on a popover portal, so outside of the response row locator
 		const viewMenuItem = this.page.getByRole( 'menuitem', { name: 'View' } ).first();
 		await viewMenuItem.click();
 
-		if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
+		if ( await this.isCentralFormManagement() ) {
+			// CFM uses the DataViews inspector on both desktop and mobile.
+			await this.page.locator( '.jp-forms-response-header' ).waitFor( { state: 'visible' } );
+		} else if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
 			await this.page.locator( '.jp-forms__inbox-response' ).waitFor( { state: 'visible' } );
 		} else {
 			await this.page
@@ -61,8 +85,10 @@ export class FeedbackInboxPage {
 	 * @throws If the text is not found in the response.
 	 */
 	async validateTextInSubmission( text: string ): Promise< void > {
-		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-			// On mobile, the response is in a full-screen modal
+		if ( await this.isCentralFormManagement() ) {
+			// CFM uses the DataViews inspector on both desktop and mobile.
+			await this.page.getByText( text ).first().waitFor();
+		} else if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
 			await this.page
 				.locator( '.jp-forms__inbox__response-mobile' )
 				.getByText( text )
@@ -80,17 +106,16 @@ export class FeedbackInboxPage {
 	 * @param {boolean} skipWaiting Whether to skip waiting for the response request to complete.
 	 */
 	async searchResponses( search: string, skipWaiting: boolean = false ): Promise< void > {
+		const searchBox = this.page
+			.getByRole( 'searchbox', { name: 'Search' } )
+			.or( this.page.getByRole( 'textbox', { name: 'Search responses' } ) );
+
 		if ( skipWaiting ) {
-			await this.page
-				.getByRole( 'searchbox', { name: 'Search' } )
-				.or( this.page.getByRole( 'textbox', { name: 'Search responses' } ) )
-				.fill( search );
-			await this.page
-				.getByRole( 'tab', { name: 'Inbox', exact: false, disabled: false } )
-				.or( this.page.getByRole( 'radio', { name: /^Inbox\s*\([\d,]+\)$/ } ) )
-				.waitFor();
+			await searchBox.fill( search );
+			await this.page.waitForTimeout( 1000 );
 			return;
 		}
+
 		const responseRequestPromise = this.page.waitForResponse(
 			( response ) =>
 				// Atomic
@@ -99,12 +124,10 @@ export class FeedbackInboxPage {
 					!! response.url().match( /\/wp\/v2\/sites\/[0-9]+\/feedback/ ) ) &&
 				response.url().includes( encodeURIComponent( search ) )
 		);
-		await this.page.getByRole( 'searchbox', { name: 'Search' } ).fill( search );
+		await searchBox.fill( search );
 		await responseRequestPromise;
-		await this.page
-			.getByRole( 'tab', { name: 'Inbox', exact: false, disabled: false } )
-			.or( this.page.getByRole( 'radio', { name: /^Inbox\s*\([\d,]+\)$/ } ) )
-			.waitFor();
+
+		await this.page.waitForTimeout( 500 );
 	}
 
 	/**
@@ -134,12 +157,39 @@ export class FeedbackInboxPage {
 	/**
 	 * Clicks on a folder tab (Inbox, Spam, or Trash).
 	 *
+	 * Handles both the old dashboard (role="tab" within a tablist) and the
+	 * new CFM dashboard (DataViews "Folder" filter pill with dropdown options).
+	 *
 	 * @param {string} folderName The name of the folder to click (e.g., 'Inbox', 'Spam', 'Trash').
 	 */
 	async clickFolderTab( folderName: string ): Promise< void > {
-		const tablist = this.page.getByRole( 'tablist' );
-		await tablist.getByRole( 'tab', { name: folderName } ).click();
-		await this.page.waitForTimeout( 500 ); // Wait for the data to load
+		if ( await this.isCentralFormManagement() ) {
+			// On mobile, the DataViews inspector may overlap the filter chips.
+			// Close it first if it's open.
+			const closeButton = this.page.locator( '.jp-forms-response-header' ).getByRole( 'button', {
+				name: 'Close',
+			} );
+			if ( await closeButton.isVisible( { timeout: 500 } ).catch( () => false ) ) {
+				await closeButton.click();
+				await this.page.waitForTimeout( 300 );
+			}
+
+			// CFM: folder is a DataViews filter chip ("Folder is: Inbox (0)").
+			const folderChip = this.page.locator( '.dataviews-filters__summary-chip' ).filter( {
+				hasText: /Folder is:/i,
+			} );
+			await folderChip.click();
+			await this.page.getByRole( 'option', { name: new RegExp( folderName, 'i' ) } ).click();
+			await this.page.waitForTimeout( 500 );
+			return;
+		}
+
+		// Handle both tab and radio-button layouts (some Atomic sites use radios).
+		const tab = this.page
+			.getByRole( 'tab', { name: folderName } )
+			.or( this.page.getByRole( 'radio', { name: new RegExp( folderName, 'i' ) } ) );
+		await tab.click();
+		await this.page.waitForTimeout( 500 );
 	}
 
 	/**
@@ -199,7 +249,11 @@ export class FeedbackInboxPage {
 	async clickMarkAsUnreadAction(): Promise< void > {
 		// Use .last() to get the button in the side panel, not in the table row
 		await this.page.getByRole( 'button', { name: 'Mark as unread' } ).last().click();
-		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+		if ( await this.isCentralFormManagement() ) {
+			// CFM auto-marks responses as read when viewed, so the button toggle
+			// won't stick. Just wait briefly for the action to process.
+			await this.page.waitForTimeout( 1000 );
+		} else if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
 			// On mobile, read/unread actions keep the modal open, so wait for button state change
 			await this.page
 				.getByRole( 'button', { name: 'Mark as read' } )
@@ -293,16 +347,47 @@ export class FeedbackInboxPage {
 	}
 
 	/**
+	 * Whether Central Form Management is enabled on the current site.
+	 * Checks for the Forms/Responses tab bar that only exists with CFM.
+	 *
+	 * @returns {Promise<boolean>} True if CFM is detected.
+	 */
+	async isCentralFormManagement(): Promise< boolean > {
+		if ( this.isCFM ) {
+			return true;
+		}
+		// Detect by checking for the CFM-specific URL pattern or Forms tab
+		const url = this.page.url();
+		if ( url.includes( 'jetpack-forms-responses-wp-admin' ) || url.includes( '/responses/' ) ) {
+			this.isCFM = true;
+			return true;
+		}
+		const formsTab = this.page.getByRole( 'tab', { name: 'Forms' } );
+		this.isCFM = await formsTab.isVisible( { timeout: 2000 } ).catch( () => false );
+		return this.isCFM;
+	}
+
+	/**
+	 * Check if a response row with the given text is visible.
+	 *
+	 * @param {string}  text    The text to look for in a row.
+	 * @param {number} timeout  How long to wait (ms).
+	 * @returns {boolean} True if the row is visible.
+	 */
+	async hasResponseRow( text: string, timeout = 3000 ): Promise< boolean > {
+		return this.getResponseRow( text )
+			.isVisible( { timeout } )
+			.catch( () => false );
+	}
+
+	/**
 	 * Opens the actions menu (three dot menu) and verifies the specified action exists.
 	 *
 	 * @param {string} text The text to match in the row. Using the name field is a good choice.
 	 * @param {string} actionName The name of the action to verify in the dropdown menu.
 	 */
 	async verifyActionExistsInMenu( text: string, actionName: string ): Promise< void > {
-		const responseRowLocator = this.page
-			.locator( '.dataviews-view-table__row' )
-			.filter( { hasText: text } )
-			.first();
+		const responseRowLocator = this.getResponseRow( text );
 
 		// Click the Actions button (three dot menu)
 		await responseRowLocator.getByRole( 'button', { name: 'Actions' } ).click();

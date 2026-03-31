@@ -1,5 +1,6 @@
 import { WPCOM_FEATURES_FULL_ACTIVITY_LOG } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
+import { Page } from '@wordpress/admin-ui';
 import { Tooltip } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -10,8 +11,8 @@ import QuerySiteCredentials from 'calypso/components/data/query-site-credentials
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import Upsell from 'calypso/components/jetpack/upsell';
+import JetpackTitle from 'calypso/components/jetpack-title';
 import Main from 'calypso/components/main';
-import NavigationHeader from 'calypso/components/navigation-header';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import useActivityLogQuery from 'calypso/data/activity-log/use-activity-log-query';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
@@ -115,12 +116,26 @@ const ActivityLogV2: FunctionComponent = () => {
 		/>
 	);
 
+	const isWpcom = ! ( ( isJetpackCloud() || isA8CForAgencies() ) && ! isWPCOMSite );
+
+	const content = (
+		<div className="activity-log-v2__content">
+			<ActivityCardList
+				logs={ logs }
+				pageSize={ 10 }
+				showFilter={ siteHasFullActivityLog }
+				siteId={ siteId }
+			/>
+		</div>
+	);
+
 	return (
 		<Main
 			className={ clsx( 'activity-log-v2', {
-				wordpressdotcom: ! ( isJetpackCloud() || isA8CForAgencies() ),
+				wordpressdotcom: isWpcom,
 			} ) }
-			wideLayout={ ! isA8CForAgencies() }
+			fullWidthLayout={ isWpcom }
+			wideLayout={ ! isWpcom && ! isA8CForAgencies() }
 		>
 			{ siteId && <QuerySitePlans siteId={ siteId } /> }
 			{ siteId && <QuerySitePurchases siteId={ siteId } /> }
@@ -129,24 +144,23 @@ const ActivityLogV2: FunctionComponent = () => {
 			{ isJetpackCloud() && <SidebarNavigation /> }
 			<PageViewTracker path="/activity-log/:site" title="Activity Log" />
 			{ settingsUrl && <TimeMismatchWarning siteId={ siteId } settingsUrl={ settingsUrl } /> }
-			{ ( isJetpackCloud() || isA8CForAgencies() ) && ! isWPCOMSite ? (
-				jetpackCloudHeader
-			) : (
-				<NavigationHeader
-					title={ translate( 'Activity' ) }
-					subtitle={ translate(
+			{ isWpcom ? (
+				<Page
+					hasPadding
+					showSidebarToggle={ false }
+					title={ <JetpackTitle title={ translate( 'Activity' ) } /> }
+					subTitle={ translate(
 						'This is the complete event history for your site. Filter by date range and/or activity type.'
 					) }
-				/>
+				>
+					{ content }
+				</Page>
+			) : (
+				<>
+					{ jetpackCloudHeader }
+					{ content }
+				</>
 			) }
-			<div className="activity-log-v2__content">
-				<ActivityCardList
-					logs={ logs }
-					pageSize={ 10 }
-					showFilter={ siteHasFullActivityLog }
-					siteId={ siteId }
-				/>
-			</div>
 		</Main>
 	);
 };
