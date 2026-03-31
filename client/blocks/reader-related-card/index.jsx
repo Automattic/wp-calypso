@@ -1,6 +1,7 @@
 import './style.scss';
 import { CompactCard as Card } from '@automattic/components';
 import clsx from 'clsx';
+import { useTranslate } from 'i18n-calypso';
 import { get } from 'lodash';
 import { useState } from 'react';
 import { connect } from 'react-redux';
@@ -68,18 +69,20 @@ function AuthorAndSiteFollow( { post, site, onSiteClick, followSource, onFollowT
 }
 
 function AuthorAndSiteFollowPlaceholder() {
+	const translate = useTranslate();
 	return (
 		<div className="reader-related-card__meta is-placeholder">
-			<span className="reader-related-card__site-icon">Site icon</span>
+			<span className="reader-related-card__site-icon">{ translate( 'Site icon' ) }</span>
 			<div className="reader-related-card__byline">
-				<span className="reader-related-card__byline-author">Author name</span>
-				<span className="reader-related-card__byline-site">Site title</span>
+				<span className="reader-related-card__byline-author">{ translate( 'Author name' ) }</span>
+				<span className="reader-related-card__byline-site">{ translate( 'Site title' ) }</span>
 			</div>
 		</div>
 	);
 }
 
 function RelatedPostCardPlaceholder() {
+	const translate = useTranslate();
 	return (
 		/* eslint-disable */
 		<Card className="reader-related-card is-placeholder">
@@ -87,8 +90,10 @@ function RelatedPostCardPlaceholder() {
 			<a className="reader-related-card__post reader-related-card__link-block">
 				<div className="reader-related-card__featured-image" />
 				<div className="reader-related-card__site-info">
-					<h1 className="reader-related-card__title">Title</h1>
-					<div className="reader-related-card__excerpt post-excerpt">Excerpt</div>
+					<h1 className="reader-related-card__title">{ translate( 'Title' ) }</h1>
+					<div className="reader-related-card__excerpt post-excerpt">
+						{ translate( 'Excerpt' ) }
+					</div>
 				</div>
 			</a>
 		</Card>
