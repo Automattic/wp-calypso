@@ -135,6 +135,14 @@ const LostPasswordForm = ( {
 			);
 		} catch ( response ) {
 			setBusy( false );
+
+			// Reset Blackbox so the next attempt gets a fresh session.
+			try {
+				window.Blackbox?.reset();
+			} catch {
+				// Intentionally ignored — Blackbox must never interfere with password reset.
+			}
+
 			const defaultError = translate(
 				'There was an error sending the password reset email. Please try again.'
 			);

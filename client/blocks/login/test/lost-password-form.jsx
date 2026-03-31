@@ -216,4 +216,31 @@ describe( 'LostPasswordForm', () => {
 		const formData = mockFetch.mock.calls[ 0 ][ 1 ].body;
 		expect( formData.get( 'blackbox_session_id' ) ).toBe( 'test-session-id' );
 	} );
+
+	test( 'resets Blackbox on password reset POST failure', async () => {
+		window.Blackbox = {
+			getSessionId: jest.fn().mockResolvedValue( 'test-session-id' ),
+			reset: jest.fn(),
+		};
+
+		mockFetch.mockResolvedValueOnce( {
+			ok: false,
+			status: 400,
+			text: jest.fn().mockResolvedValue( '' ),
+		} );
+
+		render( <LostPasswordForm redirectToAfterLoginUrl="" oauth2ClientId="" locale="" /> );
+
+		await userEvent.type(
+			screen.getByRole( 'textbox', { name: 'Email address or username' } ),
+			'user@example.com'
+		);
+
+		const btn = screen.getByRole( 'button', { name: /Reset my password/i } );
+		await userEvent.click( btn );
+
+		await waitFor( () => {
+			expect( window.Blackbox.reset ).toHaveBeenCalledTimes( 1 );
+		} );
+	} );
 } );
