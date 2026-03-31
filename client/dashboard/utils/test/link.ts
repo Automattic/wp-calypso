@@ -84,10 +84,13 @@ describe( 'redirectToDashboardLink', () => {
 	} );
 
 	test( 'should prevent protocol-relative redirect when URL contains double slashes', () => {
-		window.location = {
-			href: 'https://wordpress.com//evil.com/path',
-			origin: 'https://wordpress.com',
-		} as Location;
+		Object.defineProperty( window, 'location', {
+			value: {
+				href: 'https://wordpress.com//evil.com/path',
+				origin: 'https://wordpress.com',
+			},
+			writable: true,
+		} );
 
 		const result = redirectToDashboardLink();
 		const parsed = new URL( result );
