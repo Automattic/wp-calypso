@@ -23,7 +23,6 @@ export type MeSecuritySupports = {
 
 export type MeSupports = {
 	billing: MeBillingSupports | false;
-	privacy: boolean;
 	security: MeSecuritySupports | false;
 	apps: boolean;
 };

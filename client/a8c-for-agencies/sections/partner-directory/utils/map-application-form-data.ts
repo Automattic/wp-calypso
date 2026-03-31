@@ -1,5 +1,4 @@
 import { Agency } from 'calypso/state/a8c-for-agencies/types';
-import { availableLanguages } from '../lib/available-languages';
 import {
 	AgencyDetails,
 	AgencyDirectoryApplication,
@@ -113,18 +112,6 @@ export function mapAgencyDetailsFormData( agency: Agency | null ): AgencyDetails
 		return null;
 	}
 
-	const languages = agency.profile.listing_details.languages_spoken?.reduce(
-		( acc: string[], val ) => {
-			if ( availableLanguages[ val ] ) {
-				acc.push( availableLanguages[ val ] );
-			} else {
-				acc.push( val );
-			}
-			return acc;
-		},
-		[]
-	);
-
 	return {
 		name: agency.profile.company_details.name,
 		email: agency.profile.company_details.email,
@@ -138,7 +125,7 @@ export function mapAgencyDetailsFormData( agency: Agency | null ): AgencyDetails
 		industries: agency.profile.listing_details.industries,
 		services: agency.profile.listing_details.services,
 		products: agency.profile.listing_details.products,
-		languagesSpoken: languages,
+		languagesSpoken: agency.profile.listing_details.languages_spoken ?? [],
 		budgetLowerRange: agency.profile.budget_details.budget_lower_range,
 	};
 }

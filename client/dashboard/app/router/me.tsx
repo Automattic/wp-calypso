@@ -1032,10 +1032,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 		return [];
 	}
 
-	const preferencesChildren: AnyRoute[] = [ preferencesIndexRoute ];
-	if ( config.supports.me.privacy ) {
-		preferencesChildren.push( privacyRoute );
-	}
+	const preferencesChildren: AnyRoute[] = [ preferencesIndexRoute, privacyRoute ];
 	if ( config.supports.reader ) {
 		preferencesChildren.push( blockedSitesRoute );
 	}

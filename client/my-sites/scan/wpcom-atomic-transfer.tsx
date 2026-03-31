@@ -1,12 +1,13 @@
 import { WPCOM_FEATURES_SCAN_SELF_SERVE } from '@automattic/calypso-products';
+import { Page } from '@wordpress/admin-ui';
 import { translate } from 'i18n-calypso';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import JetpackScanSVG from 'calypso/assets/images/illustrations/jetpack-scan.svg';
 import QueryJetpackScan from 'calypso/components/data/query-jetpack-scan';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
-import FormattedHeader from 'calypso/components/formatted-header';
 import WPCOMBusinessAT from 'calypso/components/jetpack/wpcom-business-at';
+import JetpackTitle from 'calypso/components/jetpack-title';
 import Main from 'calypso/components/main';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -27,16 +28,16 @@ const ScanLoadingPlaceholder = () => {
 	const siteId = useSelector( getSelectedSiteId ) as number;
 
 	return (
-		<Main className="business-at-switch__loading">
+		<Main fullWidthLayout className="business-at-switch__loading">
 			<QuerySiteFeatures siteIds={ [ siteId ] } />
 			<QueryJetpackScan siteId={ siteId } />
-			<FormattedHeader
-				id="wpcom-scan-loading"
-				className="business-at-switch placeholder__header"
-				headerText={ translate( 'Loading…' ) }
-				align="left"
-			/>
-			<div className="business-at-switch placeholder__primary-promo"></div>
+			<Page
+				hasPadding
+				showSidebarToggle={ false }
+				title={ <JetpackTitle title={ translate( 'Scan' ) } /> }
+			>
+				<div className="business-at-switch placeholder__primary-promo"></div>
+			</Page>
 		</Main>
 	);
 };
@@ -86,7 +87,8 @@ const ScanAtomicTransferWrapper = () => {
 	// If scan state is 'unavailable' and site has scan feature, show atomic transfer activation
 	const content = {
 		documentHeadTitle: translate( 'Activate Jetpack Scan now' ) as string,
-		header: translate( 'Jetpack Scan' ) as string,
+		header: translate( 'Scan' ) as string,
+		subTitle: translate( 'Automated malware scanning and firewall protection.' ) as string,
 		primaryPromo: {
 			title: translate( 'We guard your site. You run your business.' ),
 			image: { path: JetpackScanSVG },

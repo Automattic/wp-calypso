@@ -24,18 +24,21 @@
 	}
 }
 
-// Constrain admin-ui Page content to 660px centered.
+// Constrain admin-ui Page content width, centered.
 // Pass a $scope selector to limit to specific page variants (e.g. upsell pages).
+// Pass $max-width to override the default 660px (e.g. 1040px for wider content).
 // Usage:
-//   @include admin-ui-page-layout-constrained-content;           // always constrained
-//   @include admin-ui-page-layout-constrained-content('.my-upsell'); // only within .my-upsell
-@mixin admin-ui-page-layout-constrained-content($scope: null) {
+//   @include admin-ui-page-layout-constrained-content;                        // 660px, always
+//   @include admin-ui-page-layout-constrained-content('.my-upsell');          // 660px, scoped
+//   @include admin-ui-page-layout-constrained-content($max-width: 1040px);   // 1040px, always
+//   @include admin-ui-page-layout-constrained-content('.my-upsell', 1040px); // 1040px, scoped
+@mixin admin-ui-page-layout-constrained-content($scope: null, $max-width: 660px) {
 	$parent: if($scope, "#{$scope} .admin-ui-page__content", ".admin-ui-page__content");
 
 	// Temporarily here until constrained content width is implemented in Admin-UI
 	#{$parent} {
 		> * {
-			max-width: 660px;
+			max-width: $max-width;
 			width: 100%;
 			margin-left: auto;
 			margin-right: auto;
