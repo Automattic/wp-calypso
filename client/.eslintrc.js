@@ -18,6 +18,10 @@ module.exports = {
 			{
 				patterns: [
 					{
+						group: [ '**/*.png', '**/*.jpg', '**/*.jpeg' ],
+						message: "Please use 'webp' files instead.",
+					},
+					{
 						group: [ '@testing-library/jest-dom*' ],
 						message:
 							'@testing-library/jest-dom is already globally provided by our test setup framework.',

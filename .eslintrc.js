@@ -376,6 +376,12 @@ module.exports = {
 		'no-restricted-imports': [
 			2,
 			{
+				patterns: [
+					{
+						group: [ '**/*.png', '**/*.jpg', '**/*.jpeg' ],
+						message: "Please use 'webp' files instead.",
+					},
+				],
 				paths: [
 					// Prevent naked import of gridicons module. Use 'components/gridicon' instead.
 					{
