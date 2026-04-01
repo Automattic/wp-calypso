@@ -50,33 +50,10 @@ function mockWordPressVersionSaved( expectedVersion: string ) {
 }
 
 describe( '<WordPressSettings>', () => {
-	test( 'renders and saves the form for a staging site', async () => {
+	test( 'renders and saves the form for a Business+ site', async () => {
 		const user = userEvent.setup();
 
-		mockSite( { ...site, is_wpcom_staging_site: true } as Site );
-		mockWordPressVersion( 'latest' );
-
-		render( <WordPressSettings siteSlug={ site.slug } /> );
-		await screen.findByRole( 'heading', { name: 'WordPress' } );
-
-		const versionSelect = await screen.findByRole( 'combobox', { name: 'WordPress version' } );
-		expect( versionSelect ).toHaveDisplayValue( '6.8.1 (Latest)' );
-
-		await user.selectOptions( versionSelect, '6.8.1 (Beta)' );
-		const scope = mockWordPressVersionSaved( 'beta' );
-
-		const saveButton = screen.getByRole( 'button', { name: 'Save' } );
-		await user.click( saveButton );
-
-		await waitFor( () => {
-			expect( scope.isDone() ).toBe( true );
-		} );
-	} );
-
-	test( 'renders and saves the form for a non-staging site', async () => {
-		const user = userEvent.setup();
-
-		mockSite( { ...site, is_wpcom_staging_site: false } as Site );
+		mockSite( site );
 		mockWordPressVersion( 'latest' );
 
 		render( <WordPressSettings siteSlug={ site.slug } /> );
