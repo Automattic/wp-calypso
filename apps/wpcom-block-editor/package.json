@@ -23,6 +23,7 @@
 	},
 	"dependencies": {
 		"@automattic/calypso-url": "workspace:^",
+		"canvas-confetti": "^1.6.0",
 		"@automattic/typography": "workspace:^",
 		"@babel/runtime": "^7.27.1",
 		"@wordpress/api-fetch": "^7.23.0",

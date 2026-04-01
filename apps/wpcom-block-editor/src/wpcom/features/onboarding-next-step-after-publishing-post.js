@@ -1,72 +1,105 @@
+import apiFetch from '@wordpress/api-fetch';
 import { dispatch, select, subscribe, useSelect } from '@wordpress/data';
-import { __ } from '@wordpress/i18n';
-import { Icon, pending } from '@wordpress/icons';
-import { getQueryArg } from '@wordpress/url';
+import { useState, useEffect, useRef } from 'react';
+import { CelebrateFirstPostModal } from './celebrate-first-post-modal';
+import useSiteIntent from './use-site-intent';
 
 export function OnboardingNextStepAfterPublishingPost() {
+	const [ showCelebration, setShowCelebration ] = useState( false );
+	const firstPostAlreadyPublishedRef = useRef( null );
+	const launchpadFetchPromiseRef = useRef( null );
+	const unmountedRef = useRef( false );
+
+	const { siteIntent } = useSiteIntent();
 	const currentPostType = useSelect(
 		( localSelect ) => localSelect( 'core/editor' ).getCurrentPostType(),
 		[]
 	);
 
-	const hasPublishFirstPostTaskQueryArg = window.location.hash === '#publish-first-post';
+	const isNewsletterPost = siteIntent === 'newsletter' && currentPostType === 'post';
 
-	if ( ! hasPublishFirstPostTaskQueryArg || currentPostType !== 'post' ) {
-		return false;
-	}
+	// Fetch launchpad status on mount for newsletter posts.
+	useEffect( () => {
+		if ( ! isNewsletterPost ) {
+			return;
+		}
 
-	// Save site origin in session storage to be used in editor refresh.
-	const siteOriginParam = getQueryArg( window.location.search, 'origin' );
-	if ( siteOriginParam ) {
-		window.sessionStorage.setItem( 'site-origin', siteOriginParam );
-	}
+		const promise = apiFetch( { path: '/wpcom/v2/launchpad' } )
+			.then( ( response ) => {
+				firstPostAlreadyPublishedRef.current =
+					response?.checklist_statuses?.first_post_published ?? false;
+			} )
+			.catch( () => {
+				// On failure, default to false so a first-publish can still celebrate.
+				firstPostAlreadyPublishedRef.current = false;
+			} );
 
-	const siteOrigin = window.sessionStorage.getItem( 'site-origin' ) || 'https://wordpress.com';
-	const siteSlug = window.location.hostname;
+		launchpadFetchPromiseRef.current = promise;
+	}, [ isNewsletterPost ] );
 
-	const unsubscribe = subscribe( () => {
-		const isSavingPost = select( 'core/editor' ).isSavingPost();
-		const getCurrentPostRevisionsCount = select( 'core/editor' ).getCurrentPostRevisionsCount();
+	// Watch for publish transitions using a persistent subscriber.
+	useEffect( () => {
+		if ( ! isNewsletterPost ) {
+			return;
+		}
 
-		if ( isSavingPost ) {
-			const unsubscribeFromSavingPost = subscribe( () => {
-				const postStatus = select( 'core/editor' ).getEditedPostAttribute( 'status' );
-				if (
-					( postStatus === 'publish' || postStatus === 'future' ) &&
-					getCurrentPostRevisionsCount >= 1
-				) {
-					unsubscribeFromSavingPost();
-					unsubscribe();
-					dispatch( 'core/edit-post' ).closePublishSidebar();
+		unmountedRef.current = false;
+		let prevIsSaving = select( 'core/editor' ).isSavingPost();
+		let wasPublishedBeforeSave = select( 'core/editor' ).isCurrentPostPublished();
+		let didCelebrate = false;
 
-					const unsubscribeFromNotices = subscribe( () => {
-						const notices = select( 'core/notices' ).getNotices();
-						if ( notices.some( ( notice ) => notice.id === 'editor-save' ) ) {
-							dispatch( 'core/notices' ).removeNotice( 'editor-save' );
+		const unsubscribe = subscribe( () => {
+			if ( didCelebrate ) {
+				return;
+			}
 
-							// Show success notice with Next steps link
-							dispatch( 'core/notices' ).createSuccessNotice(
-								__( 'Well done publishing your first post!' ),
-								{
-									actions: [
-										{
-											label: __( 'Next steps' ),
-											url: `${ siteOrigin }/home/${ siteSlug }`,
-										},
-									],
-									type: 'snackbar',
-									isDismissible: true,
-									explicitDismiss: true,
-									icon: <Icon icon={ pending } fill="white" size={ 24 } />,
-									id: 'NEXT_STEPS_NOTICE_ID',
-								}
-							);
+			const isSaving = select( 'core/editor' ).isSavingPost();
 
-							unsubscribeFromNotices();
+			if ( ! prevIsSaving && isSaving ) {
+				// Snapshot the pre-save published state when a save cycle starts.
+				wasPublishedBeforeSave = select( 'core/editor' ).isCurrentPostPublished();
+			}
+
+			if ( prevIsSaving && ! isSaving ) {
+				const isNowPublished = select( 'core/editor' ).isCurrentPostPublished();
+
+				if ( isNowPublished && ! wasPublishedBeforeSave ) {
+					const fetchPromise = launchpadFetchPromiseRef.current || Promise.resolve();
+
+					fetchPromise.then( () => {
+						if ( unmountedRef.current || didCelebrate ) {
+							return;
+						}
+
+						if ( firstPostAlreadyPublishedRef.current === false ) {
+							didCelebrate = true;
+
+							dispatch( 'core/edit-post' ).closePublishSidebar();
+
+							// Best-effort removal of the save notice so it doesn't overlap the modal.
+							const notices = select( 'core/notices' ).getNotices();
+							if ( notices.some( ( notice ) => notice.id === 'editor-save' ) ) {
+								dispatch( 'core/notices' ).removeNotice( 'editor-save' );
+							}
+
+							setShowCelebration( true );
 						}
 					} );
 				}
-			} );
-		}
-	} );
+			}
+
+			prevIsSaving = isSaving;
+		} );
+
+		return () => {
+			unmountedRef.current = true;
+			unsubscribe();
+		};
+	}, [ isNewsletterPost ] );
+
+	if ( ! showCelebration ) {
+		return null;
+	}
+
+	return <CelebrateFirstPostModal onClose={ () => setShowCelebration( false ) } />;
 }
