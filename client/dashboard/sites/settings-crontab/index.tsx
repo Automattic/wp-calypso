@@ -15,7 +15,7 @@ import {
 import { useDispatch } from '@wordpress/data';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { scheduled, trash, copy, people, calendar } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
@@ -27,7 +27,7 @@ import { DataViewsCard } from '../../components/dataviews';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import TimeSince from '../../components/time-since';
+import TimeSince, { useTimeSince } from '../../components/time-since';
 import { hasHostingFeature } from '../../utils/site-features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import { parseRequestedScheduleForBackwardCompatibility } from './parse-requested-schedule-for-backward-compatibility';
@@ -36,7 +36,55 @@ import type { Crontab } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
 
 const metaIconStyle = { color: 'var(--color-text-subtle, #646970)', flexShrink: 0 } as const;
-const metaTextStyle = { color: 'var(--color-text-subtle, #646970)' } as const;
+
+function CrontabCreatedInfo( { item }: { item: Crontab } ) {
+	const timeSince = useTimeSince( item.created_at ?? '' );
+
+	if ( ! item.created_by && ! item.created_at ) {
+		return null;
+	}
+
+	return (
+		<HStack spacing={ 3 } alignment="left" expanded={ false }>
+			{ item.created_by && (
+				<HStack
+					role="img"
+					aria-label={ sprintf(
+						/* translators: %s: username */
+						__( 'Created by %s' ),
+						item.created_by
+					) }
+					spacing={ 1 }
+					alignment="left"
+					expanded={ false }
+				>
+					<Icon icon={ people } size={ 18 } style={ metaIconStyle } aria-hidden />
+					<Text variant="muted" size={ 12 } aria-hidden>
+						{ item.created_by }
+					</Text>
+				</HStack>
+			) }
+			{ item.created_at && (
+				<HStack
+					role="img"
+					aria-label={ sprintf(
+						/* translators: %s: relative time, e.g. "3d ago" */
+						__( 'Created %s' ),
+						timeSince
+					) }
+					spacing={ 1 }
+					alignment="left"
+					expanded={ false }
+				>
+					<Icon icon={ calendar } size={ 18 } style={ metaIconStyle } aria-hidden />
+					<Text variant="muted" size={ 12 } aria-hidden>
+						<TimeSince timestamp={ item.created_at } />
+					</Text>
+				</HStack>
+			) }
+		</HStack>
+	);
+}
 
 const DEFAULT_VIEW: View = {
 	type: 'table',
@@ -153,33 +201,7 @@ export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
 			id: 'created_info',
 			label: __( 'Added by' ),
 			getValue: ( { item }: { item: Crontab } ) => item.created_by ?? '',
-			render: ( { item }: { item: Crontab } ) => {
-				if ( ! item.created_by && ! item.created_at ) {
-					return null;
-				}
-				return (
-					<HStack spacing={ 3 } alignment="left" expanded={ false }>
-						{ item.created_by && (
-							<HStack spacing={ 1 } alignment="left" expanded={ false }>
-								<Icon icon={ people } size={ 18 } style={ metaIconStyle } aria-hidden />
-								<Text size={ 12 } style={ metaTextStyle }>
-									<span className="screen-reader-text">{ __( 'Created by' ) } </span>
-									{ item.created_by }
-								</Text>
-							</HStack>
-						) }
-						{ item.created_at && (
-							<HStack spacing={ 1 } alignment="left" expanded={ false }>
-								<Icon icon={ calendar } size={ 18 } style={ metaIconStyle } aria-hidden />
-								<Text size={ 12 } style={ metaTextStyle }>
-									<span className="screen-reader-text">{ __( 'Created' ) } </span>
-									<TimeSince timestamp={ item.created_at } />
-								</Text>
-							</HStack>
-						) }
-					</HStack>
-				);
-			},
+			render: ( { item }: { item: Crontab } ) => <CrontabCreatedInfo item={ item } />,
 		},
 	];
 
