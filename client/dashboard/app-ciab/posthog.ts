@@ -28,7 +28,6 @@ export function getPostHogConfig(): AppConfig[ 'posthog' ] {
 	return {
 		apiKey: config( 'ciab_posthog_api_key' ) as string,
 		overrides: {
-			debug: config( 'env' ) === 'development',
 			session_recording: {
 				maskTextFn: maskText,
 				blockSelector: BLOCK_SELECTOR,

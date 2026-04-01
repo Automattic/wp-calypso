@@ -40,8 +40,6 @@ export function init( apiKey: string, user?: PostHogUser, overrides?: PostHogOve
 
 	initialized = true;
 
-	const sessionRecording = overrides?.session_recording;
-
 	const posthogConfig = {
 		api_host: 'https://us.i.posthog.com',
 		autocapture: true,
@@ -49,12 +47,9 @@ export function init( apiKey: string, user?: PostHogUser, overrides?: PostHogOve
 		capture_pageleave: true,
 		debug: overrides?.debug ?? false,
 		session_recording: {
-			maskAllInputs: sessionRecording?.maskAllInputs ?? true,
-			maskTextSelector: sessionRecording?.maskTextSelector ?? '*',
-			...( sessionRecording?.maskTextFn && { maskTextFn: sessionRecording.maskTextFn } ),
-			...( sessionRecording?.blockSelector && {
-				blockSelector: sessionRecording.blockSelector,
-			} ),
+			maskAllInputs: true,
+			maskTextSelector: '*',
+			...overrides?.session_recording,
 		},
 		...( user?.ID && {
 			bootstrap: {
@@ -64,7 +59,9 @@ export function init( apiKey: string, user?: PostHogUser, overrides?: PostHogOve
 		} ),
 	};
 
-	if ( overrides?.debug ) {
+	const urlDebug =
+		new URLSearchParams( window.location.search ).get( '__posthog_debug' ) === 'true';
+	if ( overrides?.debug || urlDebug ) {
 		( window as unknown as Record< string, unknown > ).__posthogConfig = posthogConfig;
 	}
 
