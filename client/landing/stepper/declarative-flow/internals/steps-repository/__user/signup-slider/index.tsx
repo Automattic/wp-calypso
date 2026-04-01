@@ -1,14 +1,14 @@
 import { DotPager } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import './style.scss';
-import img01 from './images/webp/img-01.webp';
-import img01x2 from './images/webp/img-01@2x.webp';
-import img02 from './images/webp/img-02.webp';
-import img02x2 from './images/webp/img-02@2x.webp';
-import img03 from './images/webp/img-03.webp';
-import img03x2 from './images/webp/img-03@2x.webp';
-import img04 from './images/webp/img-04.webp';
-import img04x2 from './images/webp/img-04@2x.webp';
+import img01 from './images/img-01.webp';
+import img01x2 from './images/img-01@2x.webp';
+import img02 from './images/img-02.webp';
+import img02x2 from './images/img-02@2x.webp';
+import img03 from './images/img-03.webp';
+import img03x2 from './images/img-03@2x.webp';
+import img04 from './images/img-04.webp';
+import img04x2 from './images/img-04@2x.webp';
 
 export const SignupSlider = ( { hideDescription }: { hideDescription: boolean } ) => {
 	const translate = useTranslate();
