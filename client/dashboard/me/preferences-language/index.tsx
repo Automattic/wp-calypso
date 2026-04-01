@@ -5,8 +5,9 @@ import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { language } from '@wordpress/icons';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
+import type { Density } from '@automattic/components/src/summary-button/types';
 
-export default function PreferencesLanguage() {
+export default function PreferencesLanguage( { density }: { density?: Density } ) {
 	const { data: userSettings } = useQuery( {
 		...userSettingsQuery(),
 		meta: { persist: false },
@@ -24,6 +25,7 @@ export default function PreferencesLanguage() {
 
 	return (
 		<RouterLinkSummaryButton
+			density={ density }
 			to="/me/preferences/language"
 			title={ __( 'Language' ) }
 			description={ __( 'Set the display language for WordPress.com.' ) }
