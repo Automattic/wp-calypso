@@ -1,13 +1,12 @@
+import './styles.scss';
 import { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { useSelector, useDispatch } from 'calypso/state';
 import { requestUser } from 'calypso/state/reader/users/actions';
 import getReaderUser from 'calypso/state/selectors/get-reader-user';
 import GravatarHeader from './gravatar-header';
-import PrimaryBlog from './primary-blog-card';
+import PrimaryBlogCard from './primary-blog-card';
 import RecommendedBlogs from './recommended-blogs';
-
-import './styles.scss';
 
 function HovercardContent( props ) {
 	const dispatch = useDispatch();
@@ -53,7 +52,7 @@ function HovercardContent( props ) {
 				{ !! userID && (
 					<>
 						<div className="gravatar-hovercard__body">
-							<PrimaryBlog
+							<PrimaryBlogCard
 								primaryBlogId={ primaryBlogId }
 								displayName={ displayName }
 								closeCard={ closeCard }

@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { SiteDetails } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import AutoDirection from 'calypso/components/auto-direction';
@@ -8,10 +9,20 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { successNotice } from 'calypso/state/notices/actions';
 import { getSite } from 'calypso/state/reader/sites/selectors';
 
-function PrimaryBlog( { primaryBlogId, displayName, closeCard } ) {
+interface PrimaryBlogCardProps {
+	primaryBlogId: number;
+	displayName?: string;
+	closeCard: () => void;
+}
+
+function PrimaryBlogCard( {
+	primaryBlogId,
+	displayName,
+	closeCard,
+}: PrimaryBlogCardProps ): JSX.Element {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const site = useSelector( ( state ) => getSite( state, primaryBlogId ) );
+	const site = useSelector( ( state ) => getSite( state, primaryBlogId ) ) as SiteDetails;
 	const primaryBlogUrl = site?.URL;
 
 	if ( ! primaryBlogUrl ) {
@@ -20,7 +31,7 @@ function PrimaryBlog( { primaryBlogId, displayName, closeCard } ) {
 
 	const linkUrl = site?.feed_ID ? `/reader/feeds/${ site?.feed_ID }` : primaryBlogUrl;
 
-	const onFollowToggle = ( following ) => {
+	const onFollowToggle = ( following: boolean ): void => {
 		const siteName = site?.title || site?.URL;
 
 		dispatch(
@@ -84,4 +95,4 @@ function PrimaryBlog( { primaryBlogId, displayName, closeCard } ) {
 	);
 }
 
-export default PrimaryBlog;
+export default PrimaryBlogCard;
