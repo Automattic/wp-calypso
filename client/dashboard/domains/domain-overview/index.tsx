@@ -25,8 +25,11 @@ import SnackbarBackButton, {
 	getSnackbarBackButtonText,
 } from '../../components/snackbar-back-button';
 import { formatDate } from '../../utils/datetime';
-import { getDomainRenewalUrl, isTldInMaintenance } from '../../utils/domain';
-import { isPendingPrimaryDomain } from '../../utils/is-pending-primary-domain';
+import {
+	getDomainRenewalUrl,
+	isPendingPrimaryDomain,
+	isTldInMaintenance,
+} from '../../utils/domain';
 import { TLDMaintenanceNotice } from '../maintenance-notice';
 import Actions from './actions';
 import FeaturedCards from './featured-cards';

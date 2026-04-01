@@ -25,7 +25,7 @@ import {
 	SITE_CONTEXT_VIEW,
 	BulkActionsProgressNotice,
 } from '../../domains/dataviews';
-import { isPendingPrimaryDomain } from '../../utils/is-pending-primary-domain';
+import { isPendingPrimaryDomain } from '../../utils/domain';
 import PrimaryDomainSelector from './primary-domain-selector';
 import type { DomainSummary } from '@automattic/api-core';
 
