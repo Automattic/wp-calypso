@@ -4,7 +4,12 @@ import { shuffle } from 'lodash';
 import { useFeedRecommendationsQuery } from 'calypso/data/reader/use-feed-recommendations-query';
 import { RecommendedFeedsList } from 'calypso/reader/recommended-feeds-list';
 
-function RecommendedBlogs( { userLogin, closeCard } ) {
+interface RecommendedBlogsProps {
+	userLogin?: string;
+	closeCard: () => void;
+}
+
+function RecommendedBlogs( { userLogin, closeCard }: RecommendedBlogsProps ): JSX.Element | null {
 	const translate = useTranslate();
 	const { data: recommendedBlogs } = useFeedRecommendationsQuery( userLogin, {
 		enabled: !! userLogin,
@@ -12,7 +17,7 @@ function RecommendedBlogs( { userLogin, closeCard } ) {
 	const recommendedBlogsPath = `/reader/users/${ userLogin }/recommended-blogs`;
 	const shouldShowRecommendedBlogs = recommendedBlogs?.length && userLogin;
 
-	const handleViewAllClick = ( e ) => {
+	const handleViewAllClick = ( e: React.MouseEvent< HTMLAnchorElement > ): void => {
 		e.preventDefault();
 		closeCard();
 		page( recommendedBlogsPath );
