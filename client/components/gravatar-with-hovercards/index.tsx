@@ -1,6 +1,6 @@
 import '@gravatar-com/hovercards/dist/style.css';
 import { ProfileData } from '@gravatar-com/hovercards';
-import { useHovercards } from '@gravatar-com/hovercards/dist/index.react';
+import { useHovercards } from '@gravatar-com/hovercards/react';
 import { useEffect, useRef, useState } from 'react';
 import Gravatar from '../gravatar';
 import HovercardContentPortal from './hovercard-content';

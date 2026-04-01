@@ -10,7 +10,10 @@
 			"@testing-library/jest-dom"
 		],
 		"paths": {
-			"calypso/*": [ "./*" ]
+			"calypso/*": [ "./*" ],
+			"@gravatar-com/hovercards/react": [
+				"../node_modules/@gravatar-com/hovercards/dist/index.react.d.ts"
+			]
 		}
 	},
 	"references": [ { "path": "../packages" }, { "path": "../build-tools" } ],
