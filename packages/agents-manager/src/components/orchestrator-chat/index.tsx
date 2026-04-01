@@ -94,6 +94,7 @@ export default function OrchestratorChat( {
 	const [ thinkingMessage, setThinkingMessage ] = useState< string | null >( null );
 	const [ isBuildingSite, setIsBuildingSite ] = useState( false );
 	const [ deletedMessageIds, setDeletedMessageIds ] = useState< Set< string > >( new Set() );
+	const [ hasUserSentMessage, setHasUserSentMessage ] = useState( false );
 	const currentPostId = useSelect( ( select ) => {
 		return ( select( 'core/editor' ) as { getCurrentPostId?: () => number } )?.getCurrentPostId?.();
 	}, [] );
@@ -143,7 +144,7 @@ export default function OrchestratorChat( {
 	}, [ dynamicSuggestions?.suggestions, registerSuggestions, clearSuggestions ] );
 
 	// Persist the chat route so the conversation can be resumed later.
-	useSaveNewChatRoute();
+	useSaveNewChatRoute( hasUserSentMessage );
 
 	// Register an "Undo" action on agent messages with checkpoints.
 	const checkpoint = useCheckpoint?.();
@@ -164,6 +165,7 @@ export default function OrchestratorChat( {
 
 	const onSubmitWithImages = useCallback(
 		async ( message: string ) => {
+			setHasUserSentMessage( true );
 			persistLastActivity( siteKey );
 
 			if ( pendingImages.length > 0 && uploadImagesToWordPress ) {

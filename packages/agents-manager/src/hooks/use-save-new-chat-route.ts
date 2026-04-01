@@ -34,19 +34,29 @@ function saveNewChatRoute( sessionId: string, siteKey: string ): void {
 }
 
 /**
- * Polls `localStorage` for the session ID (written by `agenttic-client` after the first AI reply),
- * then saves the chat route so the conversation can be resumed later.
+ * When the user sends a message in a new chat, polls for the session ID and saves
+ * the chat route so the conversation can be restored later.
  */
-export default function useSaveNewChatRoute() {
+export default function useSaveNewChatRoute( hasUserSentMessage: boolean ) {
 	const { agentConfig, siteKey } = useAgentsManagerContext();
 	const { pathname, state } = useLocation();
 
 	useEffect( () => {
-		if ( pathname !== '/chat' || state?.sessionId ) {
+		if ( pathname !== '/chat' || state?.sessionId || ! hasUserSentMessage ) {
 			return;
 		}
 
+		let attempts = 0;
+		const MAX_ATTEMPTS = 120; // Stop after 60 seconds (120 × 500ms)
+
 		const intervalId = setInterval( () => {
+			attempts++;
+
+			if ( attempts >= MAX_ATTEMPTS ) {
+				clearInterval( intervalId );
+				return;
+			}
+
 			const sessionId = getSessionId( agentConfig?.agentId );
 
 			if ( sessionId ) {
@@ -56,5 +66,5 @@ export default function useSaveNewChatRoute() {
 		}, 500 );
 
 		return () => clearInterval( intervalId );
-	}, [ agentConfig?.agentId, pathname, siteKey, state?.sessionId ] );
+	}, [ agentConfig?.agentId, hasUserSentMessage, pathname, siteKey, state?.sessionId ] );
 }
