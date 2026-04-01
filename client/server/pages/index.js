@@ -36,6 +36,7 @@ import { login } from 'calypso/lib/paths';
 import loginRouter, { LOGIN_SECTION_DEFINITION } from 'calypso/login';
 import sections from 'calypso/sections';
 import isSectionEnabled from 'calypso/sections-filter';
+import ssoBridge from 'calypso/server/api/sso-bridge';
 import { serverRouter, getCacheKey } from 'calypso/server/isomorphic-routing';
 import { isWpMobileApp, isWcMobileApp } from 'calypso/server/lib/is-mobile-app';
 import performanceMark from 'calypso/server/lib/performance-mark/index';
@@ -1112,6 +1113,9 @@ export default function pages() {
 		handleSectionPath( STEPPER_SECTION_DEFINITION, '/setup', 'entry-stepper', ( req ) =>
 			isAllowedDashboardRoute( { hostname: req.hostname, path: req.path } )
 		);
+
+		ssoBridge( app );
+
 		DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
 			handleSectionPath(
 				DOTCOM_DASHBOARD_SECTION_DEFINITION,
