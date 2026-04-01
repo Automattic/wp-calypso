@@ -778,6 +778,7 @@ class ReaderStream extends Component {
 				<StreamError
 					onTryAgain={ this.tryAgain }
 					streamKey={ streamKey }
+					error={ this.props.error }
 					context={ this.state.selectedTab }
 				/>
 			);
