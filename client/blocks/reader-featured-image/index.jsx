@@ -5,7 +5,7 @@
  */
 import './style.scss';
 import clsx from 'clsx';
-import { translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import cssSafeUrl from 'calypso/lib/css-safe-url';
@@ -76,6 +76,8 @@ const ReaderFeaturedImage = ( {
 	isCompactPost,
 	hasExcerpt,
 } ) => {
+	const translate = useTranslate();
+
 	// No featured image, so don't render anything
 	if ( imageUrl === undefined ) {
 		return null;
