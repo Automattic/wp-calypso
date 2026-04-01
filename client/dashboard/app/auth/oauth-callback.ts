@@ -1,4 +1,4 @@
-import store from 'store';
+import { setToken } from '@automattic/oauth-token';
 import { isRelativeUrl } from '../../utils/url';
 
 export const OAUTH_CALLBACK_PATH = '/oauth/token';
@@ -27,12 +27,13 @@ export function handleOAuthCallback(): boolean {
 
 	const accessToken = hash.get( 'access_token' );
 	if ( accessToken ) {
-		store.set( 'wpcom_token', accessToken );
-	}
-
-	const expiresIn = hash.get( 'expires_in' );
-	if ( expiresIn ) {
-		store.set( 'wpcom_token_expires_in', expiresIn );
+		const expiresIn = hash.get( 'expires_in' );
+		setToken( accessToken, {
+			path: '/',
+			sameSite: 'lax',
+			secure: process.env.NODE_ENV !== 'development',
+			...( expiresIn ? { maxAge: Number( expiresIn ) } : {} ),
+		} );
 	}
 
 	const next = params.get( 'next' ) || '/';
