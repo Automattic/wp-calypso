@@ -272,7 +272,6 @@ export class SecretsManager {
 			otherTestSites: {
 				notifications: 'FAKE_VALUE',
 			},
-			gmailTestEmail: 'FAKE_VALUE',
 		};
 	}
 }
