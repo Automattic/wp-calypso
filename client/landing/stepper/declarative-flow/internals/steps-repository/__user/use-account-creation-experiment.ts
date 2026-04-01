@@ -1,6 +1,3 @@
-import { isOnboardingFlow } from '@automattic/onboarding';
-import { useExperiment } from 'calypso/lib/explat';
-
 type AccountCreationExperimentVariant =
 	| 'control'
 	| 'treatment_email'
@@ -18,10 +15,6 @@ type AccountCreationExperimentResult = {
 	isSliderVariation: boolean;
 	isSimpleSliderVariation: boolean;
 };
-
-interface UseAccountCreationExperimentParams {
-	flow: string;
-}
 
 const EMAIL_VARIATIONS: AccountCreationExperimentVariant[] = [
 	'treatment_email',
@@ -47,19 +40,15 @@ const SIMPLE_SLIDER_VARIATIONS: AccountCreationExperimentVariant[] = [
 	'treatment_email_messaging_slider_simplified',
 ];
 
-function useAccountCreationExperiment( {
-	flow,
-}: UseAccountCreationExperimentParams ): AccountCreationExperimentResult {
-	const [ isLoading, assignment ] = useExperiment( 'calypso_account_step_improvement_202601', {
-		isEligible: isOnboardingFlow( flow ),
-	} );
+function useAccountCreationExperiment(): AccountCreationExperimentResult {
+	// const [ isLoading, assignment ] = useExperiment( 'calypso_account_step_improvement_202601', {
+	// 	isEligible: isOnboardingFlow( flow ),
+	// } );
 
-	const variationName = (
-		isLoading ? 'control' : assignment?.variationName ?? 'control'
-	) as AccountCreationExperimentVariant;
+	const variationName = 'control';
 
 	return {
-		isLoading,
+		isLoading: false,
 		variationName,
 		isExperimentVariant: variationName !== 'control',
 		isEmailVariation: EMAIL_VARIATIONS.includes( variationName ),
