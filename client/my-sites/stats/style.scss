@@ -102,22 +102,16 @@ $font-sf-pro-display: "SF Pro Display", $sans;
 	.admin-ui-page__header {
 		border-bottom: none;
 
-		// Breadcrumb-style title for detail pages.
-		.stats-main__breadcrumb-title {
+		// Breadcrumb styling for detail pages.
+		.stats-breadcrumbs {
 			display: inline-flex;
 			align-items: center;
 			gap: 8px;
 		}
 
-		.stats-main__breadcrumb-link {
+		.stats-breadcrumbs__link {
 			color: inherit;
 			text-decoration: underline;
-			font: inherit;
-		}
-
-		.stats-main__breadcrumb-separator,
-		.stats-main__breadcrumb-current {
-			font: inherit;
 		}
 	}
 

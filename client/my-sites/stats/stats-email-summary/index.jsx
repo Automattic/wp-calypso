@@ -90,8 +90,10 @@ const StatsEmailSummary = ( { period, query, context } ) => {
 	return (
 		<Main
 			fullWidthLayout
-			pageSubTitle={ navigationItems[ 1 ].label }
-			pageBackUrl={ navigationItems[ 0 ].href }
+			breadcrumbs={ [
+				{ label: 'Stats', to: navigationItems[ 0 ].href },
+				{ label: navigationItems[ 1 ].label },
+			] }
 			pageActions={ <div className="stats-module__header-nav-button">{ downloadCsvElement }</div> }
 		>
 			<PageViewTracker path="/stats/emails/:site" title="Stats > Emails" />

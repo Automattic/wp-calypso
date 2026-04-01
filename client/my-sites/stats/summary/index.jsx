@@ -444,8 +444,7 @@ class StatsSummary extends Component {
 		return (
 			<Main
 				fullWidthLayout
-				pageSubTitle={ title }
-				pageBackUrl={ lastScreen.url }
+				breadcrumbs={ [ { label: 'Stats', to: lastScreen.url }, { label: title } ] }
 				pageTabs={ tabs }
 				pageActions={
 					<div className="stats-module__header-nav-button">

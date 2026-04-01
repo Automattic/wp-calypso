@@ -253,8 +253,10 @@ class StatsPostDetail extends Component {
 		return (
 			<Main
 				fullWidthLayout
-				pageSubTitle={ navigationItems[ 1 ].label }
-				pageBackUrl={ lastScreen.url }
+				breadcrumbs={ [
+					{ label: 'Stats', to: lastScreen.url },
+					{ label: navigationItems[ 1 ].label },
+				] }
 				pageActions={
 					showViewLink && (
 						<CoreButton onClick={ this.openPreview } variant="primary" size="compact">

@@ -265,8 +265,10 @@ class StatsEmailDetail extends Component {
 				<Main
 					fullWidthLayout
 					className={ clsx( 'stats__email-detail' ) }
-					pageSubTitle={ navigationItems[ 1 ].label }
-					pageBackUrl={ lastScreen?.url }
+					breadcrumbs={ [
+						{ label: 'Stats', to: lastScreen?.url },
+						{ label: navigationItems[ 1 ].label },
+					] }
 					pageActions={
 						showViewLink && (
 							<CoreButton onClick={ this.openPreview } variant="primary" size="compact">
