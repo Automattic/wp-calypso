@@ -47,6 +47,7 @@ import {
 	attachI18n,
 } from 'calypso/server/render';
 import sanitize from 'calypso/server/sanitize';
+import getBootstrappedSite from 'calypso/server/site-bootstrap';
 import stateCache from 'calypso/server/state-cache';
 import getBootstrappedUser from 'calypso/server/user-bootstrap';
 import { createReduxStore } from 'calypso/state';
@@ -456,6 +457,7 @@ function setUpLoggedInRoute( req, res, next ) {
 					}
 				}
 				performanceMark( req.context, 'finish_user_bootstrap', true );
+				return data;
 			} )
 			.catch( ( error ) => {
 				if ( error.error === 'authorization_required' ) {
@@ -483,6 +485,15 @@ function setUpLoggedInRoute( req, res, next ) {
 			} );
 
 		setupRequests.push( userPromise );
+
+		if ( config.isEnabled( 'wpcom-bootstrap-most-recent-site' ) ) {
+			performanceMark( req.context, 'site_bootstrap', true );
+			const sitePromise = getBootstrappedSite( req, userPromise ).then( ( site ) => {
+				req.context.mostRecentSite = site;
+				performanceMark( req.context, 'finish_site_bootstrap', true );
+			} );
+			setupRequests.push( sitePromise );
+		}
 	}
 
 	Promise.all( setupRequests )

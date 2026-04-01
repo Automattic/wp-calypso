@@ -1,4 +1,4 @@
-import { persistQueryClientPromise } from '@automattic/api-queries';
+import { persistQueryClientPromise, queryClient, siteBySlugQuery } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import { captureException, initSentry } from '@automattic/calypso-sentry';
 import {
@@ -32,6 +32,14 @@ function boot( config: AppConfig ) {
 
 	if ( ! isDashboardEnv() && ! isEnabled( 'dashboard/v2' ) && ! isSupportSession() ) {
 		throw new Error( 'Multi-site Dashboard is not enabled' );
+	}
+
+	// If the server has bootstrapped a most recent site, then we can seed the query cache with it.
+	if ( window.mostRecentSite ) {
+		queryClient.setQueryData(
+			siteBySlugQuery( window.mostRecentSite.slug ).queryKey,
+			window.mostRecentSite
+		);
 	}
 
 	maybeInitializeSupportSession( wpcom );
