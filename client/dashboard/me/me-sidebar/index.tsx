@@ -59,8 +59,8 @@ function MeMenuSidebar() {
 
 	return (
 		<SidebarMenu>
-			<SidebarMenuItem icon={ commentAuthorAvatar } to="/me/profile">
-				{ __( 'Profile' ) }
+			<SidebarMenuItem icon={ commentAuthorAvatar } to="/me/account">
+				{ __( 'Account' ) }
 			</SidebarMenuItem>
 			<SidebarMenuItem icon={ settings } to="/me/preferences">
 				{ __( 'Preferences' ) }

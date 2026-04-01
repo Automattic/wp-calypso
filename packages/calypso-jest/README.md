@@ -31,7 +31,7 @@ the asset file's basename as a string:
 ```js
 const config = {
 	transform: {
-		'\\.(gif|jpg|jpeg|png|svg|scss|sass|css)$': require.resolve(
+		'\\.(gif|jpg|jpeg|png|svg|webp|scss|sass|css)$': require.resolve(
 			'@automattic/calypso-jest/asset-transform.js'
 		),
 	},

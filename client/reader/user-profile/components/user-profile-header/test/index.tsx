@@ -48,13 +48,14 @@ describe( 'UserProfileHeader', () => {
 		expect( displayNameEl ).toBeVisible();
 	} );
 
-	test( 'should render navigation tabs with Posts, Lists, and Recommended Blogs options', () => {
+	test( 'should render navigation tabs with Posts, Sites, Lists, and Recommended Blogs options', () => {
 		render( <UserProfileHeader user={ defaultUser } view="posts" /> );
 
 		const navItems = screen.getAllByRole( 'menuitem' );
-		expect( navItems.length ).toBe( 3 ); // Posts, Lists, and Recommended Blogs
+		expect( navItems.length ).toBe( 4 );
 
 		expect( screen.getByRole( 'menuitem', { name: 'Posts' } ) ).toBeVisible();
+		expect( screen.getByRole( 'menuitem', { name: 'Sites' } ) ).toBeVisible();
 		expect( screen.getByRole( 'menuitem', { name: 'Lists' } ) ).toBeVisible();
 		expect( screen.getByRole( 'menuitem', { name: 'Recommended Blogs' } ) ).toBeVisible();
 	} );
