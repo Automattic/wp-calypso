@@ -41,6 +41,7 @@ import { setStore } from 'calypso/state/redux-store';
 import { setCurrentFlowName } from 'calypso/state/signup/flow/actions';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { FlowRenderer } from './declarative-flow/internals';
+import { tryPreload } from './declarative-flow/internals/hooks/use-preload-steps';
 import 'calypso/assets/stylesheets/style.scss';
 import { createSessionId } from './declarative-flow/internals/state-manager/create-session-id';
 import availableFlows from './declarative-flow/registered-flows';
@@ -49,7 +50,7 @@ import { setupWpDataDebug } from './utils/devtools';
 import { enhanceFlowWithUtilityFunctions } from './utils/enhance-flow-with-utils';
 import { enhanceFlowWithAuth, injectUserStepInSteps } from './utils/enhanceFlowWithAuth';
 import redirectPathIfNecessary from './utils/flow-redirect-handler';
-import { DEFAULT_FLOW, getFlowFromURL } from './utils/get-flow-from-url';
+import { DEFAULT_FLOW, getFlowFromURL, getStepFromURL } from './utils/get-flow-from-url';
 import { startStepperPerformanceTracking } from './utils/performance-tracking';
 import { getSessionId } from './utils/use-session-id';
 import { WindowLocaleEffectManager } from './utils/window-locale-effect-manager';
@@ -201,6 +202,18 @@ async function main() {
 		flowSteps = injectUserStepInSteps( flowSteps ) as typeof flowSteps;
 		flow.__flowSteps = flowSteps;
 		enhanceFlowWithUtilityFunctions( flow );
+
+		// Warm the initial step's chunk so it's ready by the time React.lazy
+		// hits the Suspense boundary.
+		const findStep = ( slug?: string ) =>
+			flowSteps.find( ( s: { slug: string } ) => s.slug === slug );
+
+		tryPreload( findStep( getStepFromURL() || flowSteps[ 0 ]?.slug ) );
+
+		// Logged-out users get redirected to the auth step first; warm it too.
+		if ( ! user ) {
+			tryPreload( findStep( 'user' ) );
+		}
 	} else if ( 'useSteps' in flow ) {
 		// V1 flows have to be enhanced by changing their `useSteps` hook.
 		flow = enhanceFlowWithAuth( flow );
@@ -226,6 +239,7 @@ async function main() {
 					</BrowserRouter>
 					{ ! FLOWS_WITHOUT_HELP_CENTER.has( flowName ) && (
 						<AsyncHelpCenterApp
+							requireLogin
 							currentUser={ user as UserStore.CurrentUser }
 							sectionName="stepper"
 						/>

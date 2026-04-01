@@ -29,6 +29,7 @@ import {
 	getPlanClass,
 } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
+import i18n, { useTranslate } from 'i18n-calypso';
 import { isSamePlan } from '../../lib/is-same-plan';
 import { UseGridPlansParams, UseGridPlansType } from './types';
 import useHighlightLabels from './use-highlight-labels';
@@ -309,8 +310,10 @@ const useGridPlans: UseGridPlansType = ( {
 	highlightLabelOverrides,
 	isDomainOnlySite,
 	reflectStorageSelectionInPlanPrices,
+	useFocusedNewCopyTaglines,
 	isExperimentVariant,
 } ) => {
+	const translate = useTranslate();
 	const freeTrialPlanSlugs = useFreeTrialPlanSlugs?.( {
 		intent: intent ?? 'default',
 		eligibleForFreeHostingTrial,
@@ -393,6 +396,47 @@ const useGridPlans: UseGridPlansType = ( {
 			tagline = planConstantObj.getBlogOnboardingTagLine?.() ?? '';
 		} else {
 			tagline = planConstantObj.getPlanTagline?.() ?? '';
+		}
+
+		if ( useFocusedNewCopyTaglines ) {
+			const existingTagline = tagline;
+			if ( isFreePlan( planSlug ) ) {
+				tagline =
+					i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+					i18n.hasTranslation( 'Start your WordPress journey.' )
+						? translate( 'Start your WordPress journey.' )
+						: existingTagline;
+			} else if ( isPersonalPlan( planSlug ) ) {
+				tagline =
+					i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+					i18n.hasTranslation( 'Build your presence with a site you can customize.' )
+						? translate( 'Build your presence with a site you can customize.' )
+						: existingTagline;
+			} else if ( isPremiumPlan( planSlug ) ) {
+				tagline =
+					i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+					i18n.hasTranslation( 'Accept payments on your site and reach more people.' )
+						? translate( 'Accept payments on your site and reach more people.' )
+						: existingTagline;
+			} else if ( isBusinessPlan( planSlug ) ) {
+				tagline =
+					i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+					i18n.hasTranslation( 'Grow your business with powerful tools and priority support.' )
+						? translate( 'Grow your business with powerful tools and priority support.' )
+						: existingTagline;
+			} else if ( isEcommercePlan( planSlug ) ) {
+				tagline =
+					i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+					i18n.hasTranslation( 'Run an online store and keep more of what you earn.' )
+						? translate( 'Run an online store and keep more of what you earn.' )
+						: existingTagline;
+			} else if ( isWpcomEnterpriseGridPlan( planSlug ) ) {
+				tagline =
+					i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+					i18n.hasTranslation( 'Publish securely at enterprise scale.' )
+						? translate( 'Publish securely at enterprise scale.' )
+						: existingTagline;
+			}
 		}
 
 		const productNameShort =

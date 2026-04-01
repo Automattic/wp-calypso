@@ -13,8 +13,10 @@ import { translate } from 'i18n-calypso';
 import JetpackTitle from 'calypso/components/jetpack-title';
 import { useSubscribedNewsletterCategories } from 'calypso/data/newsletter-categories';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { Product } from 'calypso/my-sites/earn/types';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
 import { getCouponsAndGiftsEnabledForSiteId } from 'calypso/state/memberships/settings/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
@@ -164,6 +166,21 @@ export default function SubscriberDataViews( {
 
 	const couponsAndGiftsEnabled = useSelector( ( state ) =>
 		getCouponsAndGiftsEnabledForSiteId( state, siteId )
+	);
+
+	const products: Product[] = useSelector( ( state ) => getProductsForSiteId( state, siteId ) );
+
+	const hasUncompedPlans = useCallback(
+		( subscriber: Subscriber ) => {
+			if ( ! products?.length ) {
+				return true;
+			}
+			const compedIds = ( subscriber.plans ?? [] )
+				.filter( ( p ) => p.is_comp && p.subscription_id )
+				.map( ( p ) => p.subscription_id );
+			return products.some( ( product ) => ! compedIds.includes( product.ID ?? 0 ) );
+		},
+		[ products ]
 	);
 
 	const [ currentView, setCurrentView ] = useState< View >( {
@@ -513,7 +530,7 @@ export default function SubscriberDataViews( {
 						'"Comp" is short for "complimentary" — granting a free subscription to a subscriber',
 				} ),
 				isEligible: ( subscriber: Subscriber ) =>
-					!! ( subscriber.user_id || subscriber.email_address ),
+					!! ( subscriber.user_id || subscriber.email_address ) && hasUncompedPlans( subscriber ),
 				callback: ( items: Subscriber[] ) => {
 					const subscriber = items[ 0 ];
 					if ( ! subscriber ) {
@@ -533,6 +550,7 @@ export default function SubscriberDataViews( {
 		handleUnsubscribe,
 		onCompSubscription,
 		couponsAndGiftsEnabled,
+		hasUncompedPlans,
 	] );
 
 	const handleViewChange = useCallback(

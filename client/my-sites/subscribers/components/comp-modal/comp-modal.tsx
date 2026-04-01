@@ -1,10 +1,12 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Modal, Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import ProductsSelector from 'calypso/my-sites/earn/components/add-edit-coupon-modal/products-selector';
-import { useDispatch } from 'calypso/state';
+import { Product } from 'calypso/my-sites/earn/types';
+import { useDispatch, useSelector } from 'calypso/state';
 import { requestAddComp } from 'calypso/state/memberships/comps/actions';
+import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
 
 import './style.scss';
 
@@ -12,6 +14,7 @@ type CompSubscriptionModalProps = {
 	userId: number | string;
 	siteId: number;
 	username: string;
+	compedPlanIds?: number[];
 	onClose: () => void;
 	onConfirm: () => void;
 };
@@ -25,6 +28,7 @@ const CompSubscriptionModal = ( {
 	siteId,
 	userId,
 	username,
+	compedPlanIds,
 	onClose,
 	onConfirm,
 }: CompSubscriptionModalProps ) => {
@@ -34,6 +38,14 @@ const CompSubscriptionModal = ( {
 
 	const [ planId, setPlanId ] = useState( 0 );
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
+
+	const products: Product[] = useSelector( ( state ) => getProductsForSiteId( state, siteId ) );
+	const allPlansComped = useMemo( () => {
+		if ( ! compedPlanIds?.length || ! products?.length ) {
+			return false;
+		}
+		return products.every( ( product ) => compedPlanIds.includes( product.ID ?? 0 ) );
+	}, [ compedPlanIds, products ] );
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_subscribers_comp_modal_open', {
@@ -79,26 +91,40 @@ const CompSubscriptionModal = ( {
 			title={ translate( 'Complimentary subscription' ) }
 			onRequestClose={ onClose }
 		>
-			<p>{ translate( 'Select a plan to give complimentary access to this user:' ) }</p>
-			<ProductsSelector
-				onSelectedPlanIdsChange={ ( list ) => setPlanId( list[ 0 ] ?? 0 ) }
-				initialSelectedList={ [] }
-				allowMultiple={ false }
-				showLabel={ false }
-			/>
-			<div className="complimentary-subscription-modal__buttons">
-				<Button onClick={ onClose } variant="tertiary">
-					{ translate( 'Cancel' ) }
-				</Button>
-				<Button
-					variant="primary"
-					isBusy={ isSubmitting }
-					onClick={ () => addCompSubscription( planId, userId, username ) }
-					disabled={ planId === 0 || isSubmitting }
-				>
-					{ translate( 'Confirm' ) }
-				</Button>
-			</div>
+			{ allPlansComped ? (
+				<>
+					<p>{ translate( 'This subscriber already has complimentary access to all plans.' ) }</p>
+					<div className="complimentary-subscription-modal__buttons">
+						<Button onClick={ onClose } variant="primary">
+							{ translate( 'Close' ) }
+						</Button>
+					</div>
+				</>
+			) : (
+				<>
+					<p>{ translate( 'Select a plan to give complimentary access to this user:' ) }</p>
+					<ProductsSelector
+						onSelectedPlanIdsChange={ ( list ) => setPlanId( list[ 0 ] ?? 0 ) }
+						initialSelectedList={ [] }
+						allowMultiple={ false }
+						showLabel={ false }
+						excludeProductIds={ compedPlanIds }
+					/>
+					<div className="complimentary-subscription-modal__buttons">
+						<Button onClick={ onClose } variant="tertiary">
+							{ translate( 'Cancel' ) }
+						</Button>
+						<Button
+							variant="primary"
+							isBusy={ isSubmitting }
+							onClick={ () => addCompSubscription( planId, userId, username ) }
+							disabled={ planId === 0 || isSubmitting }
+						>
+							{ translate( 'Confirm' ) }
+						</Button>
+					</div>
+				</>
+			) }
 		</Modal>
 	);
 };

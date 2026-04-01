@@ -3,38 +3,10 @@ import {
 	FEATURE_UPLOAD_THEMES_PLUGINS,
 	isEcommerce,
 	planHasFeature,
-	UrlFriendlyTermType,
 } from '@automattic/calypso-products';
-import { getUrlParts } from '@automattic/calypso-url';
-import { PlansIntent } from '@automattic/plans-grid-next';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
-import { UnifiedPlansStepProps } from './unified-plans-step';
-
-export type SupportedIntervalTypes = Extract<
-	UrlFriendlyTermType,
-	'monthly' | 'yearly' | '2yearly' | '3yearly'
->;
-export const supportedIntervalTypes: SupportedIntervalTypes[] = [
-	'monthly',
-	'yearly',
-	'2yearly',
-	'3yearly',
-];
-
-export const getIntervalType = (
-	path?: string,
-	defaultType = 'yearly'
-): SupportedIntervalTypes => {
-	const url = path ?? window?.location?.href ?? '';
-	const intervalType = getUrlParts( url ).searchParams.get( 'intervalType' ) || defaultType;
-
-	return (
-		supportedIntervalTypes.includes( intervalType as SupportedIntervalTypes )
-			? intervalType
-			: defaultType
-	) as SupportedIntervalTypes;
-};
+import { UnifiedPlansStepProps } from '../unified-plans-step';
 
 export const buildUpgradeFunction = (
 	planProps: {
@@ -112,13 +84,3 @@ export const buildUpgradeFunction = (
 	submitSignupStep( step, signupVals );
 	goToNextStep();
 };
-
-export function getVisualSplitPlansIntent( intent?: string | null ): PlansIntent | null {
-	if ( intent === 'default_websitebuilder' ) {
-		return 'plans-website-builder';
-	}
-	if ( intent === 'default_hosting' ) {
-		return 'plans-wordpress-hosting';
-	}
-	return null;
-}
