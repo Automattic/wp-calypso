@@ -29,6 +29,11 @@ export default function UserAvatar( {
 	onClick = noop,
 	iconSize = null,
 }: UserAvatarProps ) {
+	// GravatarWithHovercards component display default avatar if user an empty object. Nothing when user is null or undefined.
+	if ( ! user ) {
+		user = {};
+	}
+
 	if ( ! iconSize ) {
 		iconSize = isCompact ? 40 : 96;
 	}
