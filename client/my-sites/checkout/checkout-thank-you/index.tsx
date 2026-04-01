@@ -1,3 +1,4 @@
+import { receiptQuery } from '@automattic/api-queries';
 import {
 	domainProductSlugs,
 	isCredits,
@@ -19,6 +20,7 @@ import {
 import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
 import { css, Global } from '@emotion/react';
+import { useQuery } from '@tanstack/react-query';
 import { dispatch } from '@wordpress/data';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
@@ -774,7 +776,7 @@ function isWooCommercePluginInstalled( sitePlugins: { slug: string }[] ) {
 	return sitePlugins.length > 0 && sitePlugins.some( ( item ) => item.slug === 'woocommerce' );
 }
 
-export default connect(
+const ConnectedCheckoutThankYou = connect(
 	( state: IAppState, props: CheckoutThankYouProps ) => {
 		let siteId = getSelectedSiteId( state );
 		const activeTheme = getActiveTheme( state, siteId ?? 0 );
@@ -831,3 +833,18 @@ export default connect(
 		requestSite,
 	}
 )( localize( CheckoutThankYou ) );
+
+function CheckoutThankYouWithReceipt( props: CheckoutThankYouProps ) {
+	const { data: receipt } = useQuery( {
+		...receiptQuery( props.receiptId ),
+		enabled: !! props.receiptId,
+	} );
+	return (
+		<ConnectedCheckoutThankYou
+			{ ...props }
+			checkoutType={ receipt?.checkout_type ?? props.checkoutType }
+		/>
+	);
+}
+
+export default CheckoutThankYouWithReceipt;
