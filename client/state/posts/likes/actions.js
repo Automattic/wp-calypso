@@ -2,7 +2,6 @@ import {
 	POST_LIKERS_RECEIVE,
 	POST_LIKERS_REQUEST,
 	POST_LIKES_RECEIVE,
-	POST_LIKES_REQUEST,
 	POST_LIKE,
 	POST_LIKES_ADD_LIKER,
 	POST_LIKES_REMOVE_LIKER,
@@ -12,21 +11,6 @@ import {
 import 'calypso/state/data-layer/wpcom/sites/posts/likes';
 
 import 'calypso/state/posts/init';
-
-/**
- * Returns an action thunk which, when invoked, triggers a network request to
- * retrieve post likes for a post.
- * @param  {number}   siteId Site ID
- * @param  {number}   postId Post ID
- * @returns {Object}        Action
- */
-export function requestPostLikes( siteId, postId ) {
-	return {
-		type: POST_LIKES_REQUEST,
-		siteId,
-		postId,
-	};
-}
 
 /**
  * Returns an action thunk which, when invoked, triggers a network request to

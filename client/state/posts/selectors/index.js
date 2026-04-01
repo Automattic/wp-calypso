@@ -4,7 +4,6 @@ export { getNormalizedPost } from 'calypso/state/posts/selectors/get-normalized-
 export { getPost } from 'calypso/state/posts/selectors/get-post';
 export { getPostEdits } from 'calypso/state/posts/selectors/get-post-edits';
 export { getPostLikeCount } from 'calypso/state/posts/selectors/get-post-like-count';
-export { getPostLikeLastUpdated } from 'calypso/state/posts/selectors/get-post-like-last-updated';
 export { getPostLikes } from 'calypso/state/posts/selectors/get-post-likes';
 export { getPostPreviewUrl } from 'calypso/state/posts/selectors/get-post-preview-url';
 export { getPostsForQuery } from 'calypso/state/posts/selectors/get-posts-for-query';

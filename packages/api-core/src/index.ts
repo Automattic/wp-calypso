@@ -109,6 +109,7 @@ export * from './site-migration-status';
 export * from './site-owner-transfer';
 export * from './site-plans';
 export * from './site-plugins';
+export * from './site-post-likes';
 export * from './site-preview-links';
 export * from './site-performance';
 export * from './site-performance-pages';
