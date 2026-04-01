@@ -133,6 +133,13 @@ class Document extends Component {
 			}
 		}
 
+		const isBlackboxLoginEnabled =
+			sectionName === 'login' &&
+			config.isEnabled( 'blackbox-login' ) &&
+			config( 'blackbox_api_key' );
+		const blackboxChallengeRootId = 'blackbox-challenge-root';
+		const blackboxChallengeRootSelector = `#${ blackboxChallengeRootId }`;
+
 		return (
 			<html lang={ lang } dir={ isRTL ? 'rtl' : 'ltr' }>
 				<Head
@@ -173,6 +180,7 @@ class Document extends Component {
 							/>
 						</div>
 					) }
+					{ isBlackboxLoginEnabled && <div id={ blackboxChallengeRootId } /> }
 					{ renderedLayout ? (
 						<div
 							id="wpcom"
@@ -259,16 +267,15 @@ class Document extends Component {
 						/>
 					) }
 
-					{ sectionName === 'login' &&
-						config.isEnabled( 'blackbox-login' ) &&
-						config( 'blackbox_api_key' ) && (
-							<script
-								nonce={ inlineScriptNonce }
-								defer
-								src={ config( 'blackbox_url' ) }
-								data-apikey={ config( 'blackbox_api_key' ) }
-							/>
-						) }
+					{ isBlackboxLoginEnabled && (
+						<script
+							nonce={ inlineScriptNonce }
+							defer
+							src={ config( 'blackbox_url' ) }
+							data-apikey={ config( 'blackbox_api_key' ) }
+							data-challenge-container={ blackboxChallengeRootSelector }
+						/>
+					) }
 
 					{ entrypoint?.language?.manifest && (
 						<script nonce={ inlineScriptNonce } src={ entrypoint.language.manifest } />

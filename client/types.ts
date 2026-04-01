@@ -138,5 +138,11 @@ declare global {
 		};
 		currentUser?: User;
 		__REDUX_DEVTOOLS_EXTENSION__?: () => void;
+		/** Blackbox-js bot detection (login); loaded from blackbox-api.wp.com. */
+		Blackbox?: {
+			collect?: () => unknown;
+			getSessionId?: () => Promise< unknown >;
+			reset?: () => void;
+		};
 	}
 }
