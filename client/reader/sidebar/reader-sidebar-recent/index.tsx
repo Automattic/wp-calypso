@@ -134,7 +134,7 @@ const ReaderSidebarRecent = ( {
 							onClick={ () => trackMenuClick( site.feed_ID ) }
 						>
 							<SiteIcon iconUrl={ site.site_icon } size={ 22 } />
-							<span title={ site.name } className="sidebar__menu-item-site-name">
+							<span title={ site.name } className="sidebar__menu-item-sitename">
 								<span>{ site.name }</span>
 								{ site.last_updated > 0 && (
 									<span className="sidebar__menu-item-last-updated">
