@@ -15,6 +15,7 @@ import useConversation from '../../hooks/use-conversation';
 import useCopyAction from '../../hooks/use-copy-action';
 import useFeedbackAction from '../../hooks/use-feedback-action';
 import useSaveNewChatRoute from '../../hooks/use-save-new-chat-route';
+import useZoomAction from '../../hooks/use-zoom-action';
 import convertToolMessagesToComponents from '../../utils/convert-tool-messages-to-components';
 import { persistLastActivity } from '../../utils/persist-last-activity';
 import AgentChat from '../agent-chat';
@@ -162,6 +163,9 @@ export default function OrchestratorChat( {
 
 	// Register a "Copy" action on plain-text agent messages.
 	useCopyAction( registerMessageActions );
+
+	// Register zoom-in/zoom-out actions on agent messages.
+	useZoomAction( registerMessageActions );
 
 	const imageUpload = useImageUpload?.();
 	const pendingImages = imageUpload?.pendingImages || [];

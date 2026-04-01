@@ -70,8 +70,10 @@
 		"typescript": "^5.8.3"
 	},
 	"peerDependencies": {
+		"@wordpress/block-editor": "^14.18.0",
 		"@wordpress/data": "^10.23.0",
 		"@wordpress/element": "^6.23.0",
+		"@wordpress/private-apis": "^1.39.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1"
 	},
