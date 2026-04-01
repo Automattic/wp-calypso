@@ -10,7 +10,7 @@ import Notice from '../../components/notice';
 import RouterLinkButton from '../../components/router-link-button';
 import type { Site } from '@automattic/api-core';
 
-const PREFERENCE_KEY = 'hosting-dashboard-wp-beta-notice-dismissed';
+const PREFERENCE_KEY = 'hosting-dashboard-wp-beta-notice-dismissed' as const;
 
 export function WpVersionNotice( { site }: { site: Site } ) {
 	const { data: isDismissed } = useSuspenseQuery(
