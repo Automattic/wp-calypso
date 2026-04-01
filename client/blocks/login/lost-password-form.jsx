@@ -4,11 +4,11 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { Button, Spinner, ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useEffect } from 'react';
+import { getBlackboxSessionId } from 'calypso/blocks/login/utils/get-blackbox-session-id';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { login } from 'calypso/lib/paths';
 import { useDispatch } from 'calypso/state';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
-import { getBlackboxSessionId } from 'calypso/blocks/login/utils/get-blackbox-session-id';
 
 const LostPasswordForm = ( {
 	redirectToAfterLoginUrl,
