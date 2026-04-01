@@ -21,30 +21,34 @@ import type {
  * @param param0 Object parameter.
  * @param {keyof Secrets['mailosaur']} [param0.mailosaurInbox] Optional key to specify the mailosaur server to use. Defaults to `signupInboxId`.
  * @param {string} [param0.usernamePrefix] Optional key to specify the username prefix inserted between the `e2eflowtesting` and timestamp. Defaults to an empty string.
+ * @param {boolean} [param0.useMailosaur] Whether to use a Mailosaur inbox for the email address. Defaults to `false`, which uses Gmail + aliasing to avoid consuming Mailosaur quota.
  * @returns Data for new test user.
  */
 export function getNewTestUser( {
 	mailosaurInbox = 'signupInboxId',
 	usernamePrefix = '',
+	useMailosaur = false,
 }: {
 	mailosaurInbox?: keyof Secrets[ 'mailosaur' ];
 	usernamePrefix?: string;
+	useMailosaur?: boolean;
 } = {} ): NewTestUserDetails {
 	const username = getUsername( { prefix: usernamePrefix } );
 	const password = generateRandomPassword();
 
-	const email = getTestEmailAddress( {
-		inboxId: SecretsManager.secrets.mailosaur[ mailosaurInbox ],
-		prefix: username,
-	} );
+	const inboxId = useMailosaur ? SecretsManager.secrets.mailosaur[ mailosaurInbox ] : '';
+	const email = getTestEmailAddress( { inboxId, prefix: username } );
+
 	const siteName = getBlogName();
+
+	process.stderr.write( `[getNewTestUser] email=${ email }, useMailosaur=${ useMailosaur }\n` );
 
 	return {
 		username: username,
 		password: password,
 		email: email,
 		siteName: siteName,
-		inboxId: SecretsManager.secrets.mailosaur[ mailosaurInbox ],
+		inboxId: inboxId,
 	};
 }
 
@@ -283,8 +287,41 @@ export function getTestEmailAddress( {
 	inboxId: string;
 	prefix: string;
 } ): string {
+	if ( inboxId ) {
+		return getMailosaurTestAddress( { inboxId, prefix } );
+	}
+	return getGmailTestAddress( { prefix } );
+}
+
+/**
+ * Builds a Mailosaur test email address.
+ *
+ * @param {Object} param0 Object parameter.
+ * @param {string} param0.inboxId Mailosaur server/inbox ID.
+ * @param {string} param0.prefix Email prefix (typically the username).
+ * @returns {string} Mailosaur email address.
+ */
+function getMailosaurTestAddress( {
+	inboxId,
+	prefix,
+}: {
+	inboxId: string;
+	prefix: string;
+} ): string {
 	const domain = 'mailosaur.net';
 	return `${ prefix }@${ inboxId }.${ domain }`;
+}
+
+/**
+ * Builds a Gmail test email address using plus-aliasing.
+ *
+ * @param {Object} param0 Object parameter.
+ * @param {string} param0.prefix Alias inserted between the base address and the @ sign.
+ * @returns {string} Gmail-aliased email address.
+ */
+function getGmailTestAddress( { prefix }: { prefix: string } ): string {
+	const baseEmail = SecretsManager.secrets.gmailTestEmail;
+	return baseEmail.replace( '@', `+${ prefix }@` );
 }
 
 /**
