@@ -5,6 +5,7 @@ import { localize, useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import UserAvatar from 'calypso/blocks/user-avatar';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import { ProtectFormGuard } from 'calypso/lib/protect-form';
 import { recordAction, recordGaEvent, recordTrackForPost, getLocation } from 'calypso/reader/stats';
@@ -13,7 +14,6 @@ import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selec
 import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import { getPreviousPath } from 'calypso/state/selectors/get-previous-path';
-import UserAvatar from '../user-avatar';
 import AutoresizingFormTextarea from './autoresizing-form-textarea';
 
 const noop = () => {};

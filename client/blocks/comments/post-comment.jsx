@@ -3,7 +3,7 @@ import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Gridicon, TimeSince } from '@automattic/components';
 import { Icon, external } from '@wordpress/icons';
-import { getAuthority, getProtocol, isURL } from '@wordpress/url';
+import { isURL, getProtocol, getAuthority } from '@wordpress/url';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { get, some, flatMap } from 'lodash';
