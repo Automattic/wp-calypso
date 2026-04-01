@@ -1,4 +1,5 @@
 import './styles.scss';
+import { ProfileData } from '@gravatar-com/hovercards';
 import { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { useSelector, useDispatch } from 'calypso/state';
@@ -8,7 +9,21 @@ import GravatarHeader from './gravatar-header';
 import PrimaryBlogCard from './primary-blog-card';
 import RecommendedBlogs from './recommended-blogs';
 
-function HovercardContent( props ) {
+interface HovercardContentProps {
+	user: HovercardUser;
+	gravatarData: Partial< ProfileData >;
+	processedAvatarUrl?: string | null;
+	closeCard: () => void;
+}
+
+interface HovercardUser {
+	ID?: number;
+	wpcom_id?: number;
+	primary_blog?: number;
+	site_ID?: number;
+}
+
+function HovercardContent( props: HovercardContentProps ): JSX.Element {
 	const dispatch = useDispatch();
 	const { user, gravatarData, processedAvatarUrl, closeCard } = props;
 	// For some reason there are places where the user object passes in primary blog of -1. Lets
@@ -47,7 +62,7 @@ function HovercardContent( props ) {
 					<>
 						<div className="gravatar-hovercard__body">
 							<PrimaryBlogCard
-								primaryBlogId={ primaryBlogId }
+								primaryBlogId={ primaryBlogId! }
 								displayName={ displayName }
 								closeCard={ closeCard }
 							/>
@@ -63,7 +78,14 @@ function HovercardContent( props ) {
 	);
 }
 
-export default function HovercardContentPortal( { mountNode, ...props } ) {
+interface HovercardContentPortalProps extends HovercardContentProps {
+	mountNode: Element | null;
+}
+
+export default function HovercardContentPortal( {
+	mountNode,
+	...props
+}: HovercardContentPortalProps ): JSX.Element | null {
 	if ( ! mountNode ) {
 		return null;
 	}
