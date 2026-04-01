@@ -4,6 +4,10 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import wpcom from 'calypso/lib/wp';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { DEFAULT_NOTICE_DURATION } from 'calypso/state/notices/constants';
+
+/** Auto-dismiss options for Telegram connect/disconnect global notices (shared with `/telegram-connect`). */
+export const TELEGRAM_TRANSIENT_NOTICE = { duration: DEFAULT_NOTICE_DURATION };
 
 export type TelegramAuthPayload = {
 	id: number;
@@ -15,7 +19,7 @@ export type TelegramAuthPayload = {
 	hash: string;
 };
 
-type UseTelegramDollyWidgetArgs = {
+type UseTelegramBotWidgetArgs = {
 	trackAuthCallback?: ( user: TelegramAuthPayload ) => void;
 };
 
@@ -41,7 +45,7 @@ function getWidgetSettings() {
 	return { botUsername, authUrl, requestAccess, size, showUserpic };
 }
 
-export function useTelegramDollyWidget( args: UseTelegramDollyWidgetArgs = {} ) {
+export function useTelegramBotWidget( args: UseTelegramBotWidgetArgs = {} ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -75,13 +79,19 @@ export function useTelegramDollyWidget( args: UseTelegramDollyWidgetArgs = {} ) 
 			wpcom.req
 				.post( { path: '/telegram-bot/connect', apiNamespace: 'wpcom/v2' }, user )
 				.then( () => {
-					dispatch( successNotice( translate( 'Telegram connected successfully.' ) ) );
+					dispatch(
+						successNotice(
+							translate( 'Telegram connected successfully.' ),
+							TELEGRAM_TRANSIENT_NOTICE
+						)
+					);
 					setConnectedTrue();
 				} )
 				.catch( ( err: Error ) => {
 					dispatch(
 						errorNotice(
-							err?.message || translate( 'Failed to connect Telegram. Please try again.' )
+							err?.message || translate( 'Failed to connect Telegram. Please try again.' ),
+							TELEGRAM_TRANSIENT_NOTICE
 						)
 					);
 				} );
@@ -183,13 +193,16 @@ export function useTelegramDollyWidget( args: UseTelegramDollyWidgetArgs = {} ) 
 		wpcom.req
 			.post( { path: '/telegram-bot/disconnect', apiNamespace: 'wpcom/v2' } )
 			.then( () => {
-				dispatch( successNotice( translate( 'Telegram disconnected.' ) ) );
+				dispatch(
+					successNotice( translate( 'Telegram disconnected.' ), TELEGRAM_TRANSIENT_NOTICE )
+				);
 				setIsConnected( false );
 			} )
 			.catch( ( err: Error ) => {
 				dispatch(
 					errorNotice(
-						err?.message || translate( 'Failed to disconnect Telegram. Please try again.' )
+						err?.message || translate( 'Failed to disconnect Telegram. Please try again.' ),
+						TELEGRAM_TRANSIENT_NOTICE
 					)
 				);
 			} );
