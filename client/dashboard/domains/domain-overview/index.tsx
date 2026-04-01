@@ -12,7 +12,6 @@ import { useSearch } from '@tanstack/react-router';
 import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { useMemo } from 'react';
-import { useAppContext } from '../../app/context';
 import { usePendingPrimaryDomain } from '../../app/hooks/use-pending-primary-domain';
 import { useLocale } from '../../app/locale';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
@@ -41,9 +40,7 @@ export default function DomainOverview() {
 	const { domainName } = domainRoute.useParams();
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
 
-	const { name: dashboardName } = useAppContext();
-	const isCiab = dashboardName === 'CIAB';
-	const pendingDomainName = isCiab && isPendingPrimaryDomain( domain ) ? domain.domain : undefined;
+	const pendingDomainName = isPendingPrimaryDomain( domain ) ? domain.domain : undefined;
 	const { isPending, isDismissed, dismiss } = usePendingPrimaryDomain( pendingDomainName );
 
 	const { data: purchase } = useSuspenseQuery(

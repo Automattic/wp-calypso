@@ -33,7 +33,7 @@ function getDomainId( domain: DomainSummary ) {
 
 function SiteDomains() {
 	const queryClient = useQueryClient();
-	const { name: dashboardName, queries } = useAppContext();
+	const { queries } = useAppContext();
 	const { siteSlug } = siteRoute.useParams();
 	const { user } = useAuth();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
@@ -44,8 +44,7 @@ function SiteDomains() {
 		},
 	} );
 
-	const isCiab = dashboardName === 'CIAB';
-	const pendingDomainFromList = isCiab ? siteDomains?.find( isPendingPrimaryDomain ) : undefined;
+	const pendingDomainFromList = siteDomains?.find( isPendingPrimaryDomain );
 	const { isPending, isDismissed, dismiss } = usePendingPrimaryDomain(
 		pendingDomainFromList?.domain,
 		{
