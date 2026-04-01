@@ -36,7 +36,11 @@ const siteVisibilityRoute = createRoute( {
 );
 
 const aiToolsLayoutRoute = createRoute( {
-	...appRouterSites.siteSettingsAIToolsRoute.options,
+	// Bypass type issue by omitting the loader and head (both are typed against the dashboard router context).
+	...Object.assign( appRouterSites.siteSettingsAIToolsRoute.options, {
+		loader: undefined,
+		head: undefined,
+	} ),
 	getParentRoute: () => settingsRoute,
 } );
 
@@ -55,8 +59,12 @@ const aiToolsIndexRoute = createRoute( {
 	)
 );
 
-const { getParentRoute: _aiToolsReadParent, ...aiToolsReadRouteOptions } =
-	appRouterSites.siteSettingsAIToolsReadRoute.options;
+const {
+	getParentRoute: _aiToolsReadParent,
+	loader: _aiToolsReadLoader,
+	head: _aiToolsReadHead,
+	...aiToolsReadRouteOptions
+} = appRouterSites.siteSettingsAIToolsReadRoute.options;
 
 const aiToolsReadRoute = createRoute( {
 	...aiToolsReadRouteOptions,
@@ -70,8 +78,12 @@ const aiToolsReadRoute = createRoute( {
 	)
 );
 
-const { getParentRoute: _aiToolsWriteParent, ...aiToolsWriteRouteOptions } =
-	appRouterSites.siteSettingsAIToolsWriteRoute.options;
+const {
+	getParentRoute: _aiToolsWriteParent,
+	loader: _aiToolsWriteLoader,
+	head: _aiToolsWriteHead,
+	...aiToolsWriteRouteOptions
+} = appRouterSites.siteSettingsAIToolsWriteRoute.options;
 
 const aiToolsWriteRoute = createRoute( {
 	...aiToolsWriteRouteOptions,
@@ -85,8 +97,12 @@ const aiToolsWriteRoute = createRoute( {
 	)
 );
 
-const { getParentRoute: _aiToolsSetupParent, ...aiToolsSetupRouteOptions } =
-	appRouterSites.siteSettingsAIToolsSetupRoute.options;
+const {
+	getParentRoute: _aiToolsSetupParent,
+	loader: _aiToolsSetupLoader,
+	head: _aiToolsSetupHead,
+	...aiToolsSetupRouteOptions
+} = appRouterSites.siteSettingsAIToolsSetupRoute.options;
 
 const aiToolsSetupRoute = createRoute( {
 	...aiToolsSetupRouteOptions,
