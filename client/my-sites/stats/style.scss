@@ -1,4 +1,5 @@
 @use "sass:math";
+@import "calypso/components/jetpack-page-layout/admin-ui-page";
 @import "calypso/my-sites/stats/modernized-tooltip-styles";
 @import "calypso/my-sites/stats/modernized-chart-tabs-styles";
 @import "calypso/my-sites/stats/modernized-layout-styles";
@@ -88,12 +89,24 @@ $font-sf-pro-display: "SF Pro Display", $sans;
 
 // Stats section scoped styles
 .is-section-stats {
+	@include admin-ui-page-layout;
 	&.color-scheme.is-classic-dark {
 		@include apply-improved-classic-dark-colors();
 	}
 
 	.sticky-panel.is-sticky {
 		padding: 0;
+	}
+
+	// Pull stats-navigation tabs into the Page header area visually.
+	.admin-ui-page__header {
+		border-bottom: none;
+		padding-bottom: 0;
+	}
+
+	.admin-ui-page > .stats-navigation {
+		background: var(--wpds-color-bg-surface-neutral-strong);
+		padding-inline: var(--wpds-dimension-padding-2xl, 24px);
 	}
 
 	// TODO: Remove other independent segmented control styles by this mixin.
