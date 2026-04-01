@@ -1,8 +1,5 @@
 .gravatar-hovercard {
 	// Ensure our styles take precedence over the default styles
-	background: var( --studio-white );
-	border-radius: 4px;
-
 	.gravatar-hovercard__inner {
 		box-shadow:
 			0 6px 10px 0 rgba( 42, 57, 75, 0.07 ),
@@ -30,6 +27,13 @@
 				display: flex;
 				gap: 8px;
 				margin-bottom: 12px;
+
+				a {
+					align-items: center;
+					display: flex;
+					flex-grow: 1;
+					gap: 8px;
+				}
 			}
 
 			.gravatar-hovercard__primary-blog-card-site-icon.reader-avatar {
@@ -81,12 +85,13 @@
 				overflow: hidden;
 				text-overflow: ellipsis;
 				white-space: nowrap;
+				width: 100%;
 			}
 
 			.gravatar-hovercard__primary-blog-card-description {
 				font-size: 13px;
 				line-height: 1.4;
-				margin: 0 0 16px;
+				margin: 0 0 7px;
 				color: var( --color-text );
 				overflow: hidden;
 				text-overflow: ellipsis;
@@ -97,21 +102,7 @@
 			}
 
 			.gravatar-hovercard__primary-blog-card-follow-button {
-				width: 100%;
-				justify-content: center;
-
-				&.is-following {
-					border-color: var( --color-accent );
-					.follow-button__label {
-						color: var( --color-accent );
-					}
-					svg path {
-						fill: var( --color-accent );
-					}
-					&:hover svg path {
-						fill: var( --color-text );
-					}
-				}
+				flex-shrink: 0;
 			}
 		}
 

@@ -4,11 +4,13 @@ import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import AutoDirection from 'calypso/components/auto-direction';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import ReaderFollowButton from 'calypso/reader/follow-button';
-import { useSelector } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { successNotice } from 'calypso/state/notices/actions';
 import { getSite } from 'calypso/state/reader/sites/selectors';
 
 function PrimaryBlog( { primaryBlogId, displayName, closeCard } ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const site = useSelector( ( state ) => getSite( state, primaryBlogId ) );
 	const primaryBlogUrl = site?.URL;
 
@@ -18,20 +20,33 @@ function PrimaryBlog( { primaryBlogId, displayName, closeCard } ) {
 
 	const linkUrl = site?.feed_ID ? `/reader/feeds/${ site?.feed_ID }` : primaryBlogUrl;
 
+	const onFollowToggle = ( following ) => {
+		const siteName = site?.title || site?.URL;
+
+		dispatch(
+			successNotice(
+				following
+					? translate( 'Success! You are now subscribed to "%s".', { args: siteName } )
+					: translate( 'Success! You are now unsubscribed from "%s".', { args: siteName } ),
+				{ duration: 3000 }
+			)
+		);
+	};
+
 	return (
 		<>
 			<QueryReaderSite siteId={ primaryBlogId } />
 			<AutoDirection>
 				<div className="gravatar-hovercard__primary-blog-card">
-					<a
-						href={ linkUrl }
-						onClick={ ( e ) => {
-							e.preventDefault();
-							closeCard();
-							page( linkUrl );
-						} }
-					>
-						<div className="gravatar-hovercard__primary-blog-card-header">
+					<div className="gravatar-hovercard__primary-blog-card-header">
+						<a
+							href={ linkUrl }
+							onClick={ ( e ) => {
+								e.preventDefault();
+								closeCard();
+								page( linkUrl );
+							} }
+						>
 							<ReaderAvatar
 								isCompact
 								siteIcon={ site?.icon?.img || site?.icon?.ico }
@@ -50,17 +65,19 @@ function PrimaryBlog( { primaryBlogId, displayName, closeCard } ) {
 									</p>
 								) }
 							</div>
-						</div>
-					</a>
+						</a>
+
+						<ReaderFollowButton
+							className="gravatar-hovercard__primary-blog-card-follow-button"
+							siteUrl={ primaryBlogUrl }
+							followSource="gravatar-hovercard__primary-blog-card"
+							isButtonOnly
+							iconSize={ 26 }
+							onFollowToggle={ onFollowToggle }
+						/>
+					</div>
 
 					<p className="gravatar-hovercard__primary-blog-card-description">{ site?.description }</p>
-
-					<ReaderFollowButton
-						className="gravatar-hovercard__primary-blog-card-follow-button"
-						siteUrl={ primaryBlogUrl }
-						hasButtonStyle
-						followSource="gravatar-hovercard__primary-blog-card"
-					/>
 				</div>
 			</AutoDirection>
 		</>
