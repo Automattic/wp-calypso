@@ -48,7 +48,7 @@ export function SiteLaunchButton( {
 		},
 	} );
 	const [ isLaunchModalOpen, setIsLaunchModalOpen ] = useState( false );
-	const [ , experimentData ] = useExperiment( 'calypso_launch_button_experiment_test_20260319_4' );
+	const [ , experimentData ] = useExperiment( 'calypso_standardized_site_launch_gating' );
 	const experimentAssignment = experimentData?.variationName;
 
 	const handleTracksEvent = () => {
