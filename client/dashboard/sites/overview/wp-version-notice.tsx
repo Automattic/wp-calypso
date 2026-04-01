@@ -1,6 +1,6 @@
 import {
 	userPreferenceQuery,
-	userPreferenceMutation,
+	userPreferenceOptimisticMutation,
 	siteWordPressVersionQuery,
 	wpOrgCoreVersionQuery,
 } from '@automattic/api-queries';
@@ -13,18 +13,15 @@ import type { Site } from '@automattic/api-core';
 const PREFERENCE_KEY = 'hosting-dashboard-wp-beta-notice-dismissed';
 
 export function WpVersionNotice( { site }: { site: Site } ) {
-	const { data: isDismissedPersisted } = useSuspenseQuery(
+	const { data: isDismissed } = useSuspenseQuery(
 		userPreferenceQuery( `${ PREFERENCE_KEY }-${ site.ID }` )
 	);
-	const { mutate: dismiss, isPending: isDismissing } = useMutation(
-		userPreferenceMutation( `${ PREFERENCE_KEY }-${ site.ID }` )
+	const { mutate: dismiss } = useMutation(
+		userPreferenceOptimisticMutation( `${ PREFERENCE_KEY }-${ site.ID }` )
 	);
 
 	const { data: currentVersionTag } = useQuery( siteWordPressVersionQuery( site.ID ) );
 	const { data: betaVersion } = useQuery( wpOrgCoreVersionQuery( 'beta' ) );
-
-	// Optimistically hide after dismiss click.
-	const isDismissed = isDismissedPersisted || isDismissing;
 
 	// Don't show if already dismissed, already on beta, or no beta version available.
 	if ( isDismissed || currentVersionTag === 'beta' || ! betaVersion ) {
