@@ -55,7 +55,7 @@ const UserStepComponent: StepType = function UserStep( {
 		isMessagingVariation,
 		isSliderVariation,
 		isSimpleSliderVariation,
-	} = useAccountCreationExperiment( { flow } );
+	} = useAccountCreationExperiment();
 
 	useEffect( () => {
 		if ( wpAccountCreateResponse && 'bearer_token' in wpAccountCreateResponse ) {
