@@ -34,7 +34,7 @@ import { ProcessingResult } from '../../internals/steps-repository/processing-st
 import { type FlowV2, type ProvidedDependencies, type SubmitHandler } from '../../internals/types';
 import type { DomainSuggestion } from '@automattic/api-core';
 
-async function initialize() {
+function initialize() {
 	const steps = [
 		STEPS.DOMAIN_SEARCH,
 		STEPS.USE_MY_DOMAIN,
