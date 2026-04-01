@@ -835,10 +835,15 @@ const ConnectedCheckoutThankYou = connect(
 )( localize( CheckoutThankYou ) );
 
 function CheckoutThankYouWithReceipt( props: ComponentProps< typeof ConnectedCheckoutThankYou > ) {
-	const { data: receipt } = useQuery( {
+	const { data: receipt, isLoading } = useQuery( {
 		...receiptQuery( props.receiptId ),
 		enabled: !! props.receiptId,
 	} );
+
+	if ( isLoading ) {
+		return <Loading />;
+	}
+
 	return (
 		<ConnectedCheckoutThankYou
 			{ ...props }
