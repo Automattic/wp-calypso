@@ -440,8 +440,6 @@
 .reader-post-card__byline-details {
 	color: var(--color-primary);
 	width: 100%;
-	position: relative;
-	top: 3px;
 }
 
 // Fix for IE11 unable to handle nested flexbox min-height.
@@ -494,36 +492,9 @@
 	align-self: center;
 }
 
-.reader-post-card__byline .reader-avatar {
+.reader-post-card__byline .site-icon {
 	flex-shrink: 0;
-
-	.gravatar,
-	.gridicon {
-		float: left;
-		height: 40px;
-		margin: 4px 12px 0 0;
-		vertical-align: text-top;
-		width: 40px;
-	}
-
-	&.has-site-icon {
-		margin: 0 12px 0 0;
-	}
-
-	.site-icon {
-		width: 40px !important;
-		height: 40px !important;
-		font-size: 40px !important;
-		line-height: 40px !important;
-	}
-
-	img {
-		border-radius: 100%;
-	}
-}
-
-.reader-post-card .has-site-and-author-icon .gravatar {
-	display: none;
+	margin: 0 12px 0 0;
 }
 
 .reader-post-card__link {

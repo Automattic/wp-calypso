@@ -356,6 +356,12 @@
 	flex: 1 0 0;
 	width: 100%;
 
+	.plan-features-2023-grid__ai-website-builder-break {
+		@media ( max-width: 480px ) {
+			display: none;
+		}
+	}
+
 	.plan-features-2023-grid__item-title {
 		color: var(--studio-gray-80);
 		font-size: $font-body-small;
