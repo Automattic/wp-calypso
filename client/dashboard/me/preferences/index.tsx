@@ -30,7 +30,7 @@ export default function Preferences() {
 				<PreferencesLanguage />
 				<PreferencesDefaults />
 				<PreferencesPrivacy />
-				{ supports.reader && <PreferencesBlockedSites /> }
+				{ supports.reader ? <PreferencesBlockedSites /> : null }
 			</SummaryButtonList>
 		</PageLayout>
 	);
