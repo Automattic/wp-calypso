@@ -23,7 +23,7 @@ import { css, Global } from '@emotion/react';
 import { useQuery } from '@tanstack/react-query';
 import { dispatch } from '@wordpress/data';
 import { localize } from 'i18n-calypso';
-import { Component } from 'react';
+import { Component, ComponentProps } from 'react';
 import { connect } from 'react-redux';
 import PlanThankYouCard from 'calypso/blocks/plan-thank-you-card';
 import QueryPreferences from 'calypso/components/data/query-preferences';
@@ -834,7 +834,7 @@ const ConnectedCheckoutThankYou = connect(
 	}
 )( localize( CheckoutThankYou ) );
 
-function CheckoutThankYouWithReceipt( props: CheckoutThankYouProps ) {
+function CheckoutThankYouWithReceipt( props: ComponentProps< typeof ConnectedCheckoutThankYou > ) {
 	const { data: receipt } = useQuery( {
 		...receiptQuery( props.receiptId ),
 		enabled: !! props.receiptId,
