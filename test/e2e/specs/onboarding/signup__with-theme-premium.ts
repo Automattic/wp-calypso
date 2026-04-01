@@ -36,6 +36,7 @@ describe( 'Lifecyle: Premium theme signup, onboard, launch and cancel subscripti
 	let themeSlug: string | null = null;
 
 	const testUser = DataHelper.getNewTestUser( {
+		useMailosaur: true,
 		usernamePrefix: 'ftmepremium',
 	} );
 

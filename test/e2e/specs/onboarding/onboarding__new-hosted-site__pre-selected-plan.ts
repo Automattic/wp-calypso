@@ -19,7 +19,7 @@ describe(
 	function () {
 		const planSlug = 'business-bundle';
 		const planName = 'Business';
-		const testUser = DataHelper.getNewTestUser();
+		const testUser = DataHelper.getNewTestUser( { useMailosaur: true } );
 
 		let newUserDetails: NewUserResponse;
 		let cartCheckoutPage: CartCheckoutPage;

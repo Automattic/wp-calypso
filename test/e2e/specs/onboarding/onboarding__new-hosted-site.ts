@@ -29,7 +29,7 @@ describe(
 		jest.setTimeout( 240 * 1000 );
 
 		const planName = 'Business';
-		const testUser = DataHelper.getNewTestUser();
+		const testUser = DataHelper.getNewTestUser( { useMailosaur: true } );
 
 		let newUserDetails: NewUserResponse;
 		let siteSlug: string;

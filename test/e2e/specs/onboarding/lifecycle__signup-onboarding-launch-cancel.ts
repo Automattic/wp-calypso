@@ -36,6 +36,7 @@ declare const browser: Browser;
 describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function () {
 	const planName = 'Personal';
 	const testUser = DataHelper.getNewTestUser( {
+		useMailosaur: true,
 		usernamePrefix: 'ftmepersonal',
 	} );
 

@@ -21,7 +21,7 @@ describe(
 	function () {
 		const planName = 'Business';
 		const blogName = DataHelper.getBlogName();
-		const testUser = DataHelper.getNewTestUser();
+		const testUser = DataHelper.getNewTestUser( { useMailosaur: true } );
 
 		let newUserDetails: NewUserResponse;
 		let plansPage: PlansPage;
