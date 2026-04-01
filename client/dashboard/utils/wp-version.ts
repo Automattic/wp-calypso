@@ -26,8 +26,9 @@ export function formatWordPressVersion(
 		return '';
 	}
 
-	// The version string could have suffix like 6.8.1-alpha-60199, e.g. on Simple sites
-	wpVersion = wpVersion.split( '-' )[ 0 ];
+	// Strip dev suffixes like "6.8.1-alpha-60199" (Simple sites) but keep
+	// meaningful pre-release identifiers like "7.0-RC2" or "7.0-beta1".
+	wpVersion = wpVersion.replace( /-alpha-\d+$/, '' );
 
 	if ( versionTag ) {
 		wpVersion = `${ wpVersion } (${ getWordPressVersionTagName( versionTag ) })`;
