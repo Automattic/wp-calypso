@@ -62,5 +62,4 @@ export interface Secrets {
 	otherTestSites: {
 		[ key in OtherTestSiteName ]: string;
 	};
-	gmailTestEmail: string;
 }
