@@ -1,4 +1,3 @@
-import ConfettiAnimation from '@automattic/components/src/confetti';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import {
 	__experimentalText as Text,
@@ -13,6 +12,7 @@ import { copy, globe } from '@wordpress/icons';
 import { removeQueryArgs } from '@wordpress/url';
 import { useEffect, useState, useRef } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import ConfettiAnimation from './confetti';
 import type { DomainSummary, Site } from '@automattic/api-core';
 import './styles.scss';
 
