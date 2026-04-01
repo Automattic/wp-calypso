@@ -1,5 +1,5 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
 
 .signup__step .is-site-options,
 .signup__step .is-difm-store-options,
@@ -13,20 +13,6 @@
 	.step-wrapper.is-horizontal-layout {
 		@include break-small {
 			margin-top: 15vh;
-		}
-	}
-}
-
-.signup__step .is-store-options {
-	.step-wrapper__header {
-		@include break-small {
-			flex-basis: 40%;
-		}
-	}
-
-	.step-wrapper__content {
-		@include break-small {
-			flex-basis: 50%;
 		}
 	}
 }

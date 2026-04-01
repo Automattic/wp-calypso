@@ -10,6 +10,7 @@ import { createMeRoutes } from './me';
 import { createPluginsRoutes } from './plugins';
 import { rootRoute } from './root';
 import { createSitesRoutes } from './sites';
+import { startStoreRoute } from './start-store';
 import type { SiteTypeFeature } from '../../utils/site-type-feature-support';
 import type { AppConfig } from '../context';
 import type { ErrorInfo } from 'react';
@@ -24,6 +25,7 @@ declare module '@tanstack/react-router' {
 		 * The check is performed in siteRoute.beforeLoad against getSiteTypeFeatureSupports(site).
 		 */
 		requiresSiteTypeSupport?: SiteTypeFeature;
+		availableToInaccessibleJetpackSites?: boolean;
 	}
 }
 
@@ -64,6 +66,10 @@ const createRouteTree = ( config: AppConfig ) => {
 
 	if ( config.supports.me ) {
 		children.push( ...createMeRoutes( config ) );
+	}
+
+	if ( config.supports.startStoreRoute ) {
+		children.push( startStoreRoute );
 	}
 
 	return rootRoute.addChildren( children );

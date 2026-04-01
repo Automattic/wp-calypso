@@ -21,6 +21,9 @@ interface Props {
 	};
 	highlightLabelOverrides?: { [ K in PlanSlug ]?: TranslateResult };
 	isDomainOnlySite: boolean;
+	/**
+	 * When true (pricing differentiators experiment eligible), use treatment copy for grid badges.
+	 */
 	isExperimentVariant?: boolean;
 }
 
@@ -77,9 +80,9 @@ const useHighlightLabels = ( {
 			} else if ( 'plans-affiliate' === intent && isBusinessPlan( planSlug ) ) {
 				label = translate( 'Popular' );
 			} else if ( isBusinessPlan( planSlug ) && ! selectedPlan && ! isVisualSplitIntent ) {
-				label = isExperimentVariant ? translate( 'Best for growth' ) : translate( 'Best for devs' );
+				label = isExperimentVariant ? translate( 'Best value' ) : translate( 'Best for devs' );
 			} else if ( isPopularPlan( planSlug ) && ! selectedPlan && ! isVisualSplitIntent ) {
-				label = translate( 'Popular' );
+				label = isExperimentVariant ? translate( 'Most popular' ) : translate( 'Popular' );
 			}
 
 			return {

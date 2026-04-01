@@ -398,9 +398,8 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 		enableTermSavingsPriceDisplay,
 		showSimplifiedBillingDescription,
 		showBillingDescriptionForIncreasedRenewalPrice,
-		isVar1dVariant,
-		isVar4Variant,
 		isExperimentVariant,
+		useFocusedComparisonFeatures,
 	} = props;
 
 	const gridContainerRef = useRef< HTMLDivElement >( null );
@@ -462,9 +461,8 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 				showBillingDescriptionForIncreasedRenewalPrice={
 					showBillingDescriptionForIncreasedRenewalPrice
 				}
-				isVar1dVariant={ isVar1dVariant }
-				isVar4Variant={ isVar4Variant }
 				isExperimentVariant={ isExperimentVariant }
+				useFocusedComparisonFeatures={ useFocusedComparisonFeatures }
 			>
 				<FeaturesGrid { ...props } gridSize={ gridSize ?? undefined } />
 			</PlansGridContextProvider>

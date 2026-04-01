@@ -21,9 +21,14 @@ export default function ThemesFAQ() {
 		( faqArgs: { id: string; isExpanded: boolean } ) => {
 			const { id, isExpanded } = faqArgs;
 			dispatch(
-				recordTracksEvent( isExpanded ? 'calypso_themes_faq_open' : 'calypso_themes_faq_closed', {
-					faq_id: id,
-				} )
+				recordTracksEvent(
+					isExpanded
+						? 'calypso_themeshowcase_faq_open_click'
+						: 'calypso_themeshowcase_faq_close_click',
+					{
+						faq_id: id,
+					}
+				)
 			);
 		},
 		[ dispatch ]
@@ -150,7 +155,7 @@ export default function ThemesFAQ() {
 		<div className="themes-faq">
 			<div className="themes-faq__wrapper">
 				<div className="themes-faq__header">
-					<h2 className="themes-faq__title">{ translate( 'Themes FAQs' ) }</h2>
+					<h2 className="themes-faq__title">{ translate( 'WordPress theme FAQs' ) }</h2>
 				</div>
 				<div className="themes-faq__list">
 					{ faqItems.map( ( item ) => (

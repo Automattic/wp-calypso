@@ -6,7 +6,6 @@ document.addEventListener( 'DOMContentLoaded', function () {
 	const input = document.getElementById( 'support-search-input' );
 	const submitButton = document.querySelector( '.search-submit-button' );
 	const form = document.getElementById( 'support-search-form' );
-
 	links.forEach( ( link ) => {
 		link.addEventListener( 'click', function ( e ) {
 			const query = this.getAttribute( 'data-search-query' );
@@ -14,14 +13,31 @@ document.addEventListener( 'DOMContentLoaded', function () {
 				return;
 			}
 
-			recordTracksEvent( 'calypso_happyblocks_support_suggested_search', {
-				query,
-				location: window.location.href,
-			} );
+			const website = this.getAttribute( 'data-website' ) || '';
+			recordTracksEvent(
+				website === 'forums'
+					? 'calypso_happyblocks_forums_suggested_search'
+					: 'calypso_happyblocks_support_suggested_search',
+				{
+					query,
+					location: window.location.href,
+				}
+			);
 
 			e.preventDefault();
 
 			input.value = query;
+
+			const groupIdField = form ? form.querySelector( 'input[name="group_id"]' ) : null;
+			if ( groupIdField && window.JetpackInstantSearchOptions?.staticFilters ) {
+				const groupFilter = window.JetpackInstantSearchOptions.staticFilters.find(
+					( f ) => f.filter_id === 'group_id'
+				);
+				if ( groupFilter ) {
+					groupFilter.selected = groupIdField.value;
+				}
+			}
+
 			submitButton.click();
 
 			setTimeout( () => {
@@ -32,10 +48,16 @@ document.addEventListener( 'DOMContentLoaded', function () {
 
 	if ( form ) {
 		form.addEventListener( 'submit', function () {
-			recordTracksEvent( 'calypso_happyblocks_support_custom_search', {
-				query: input.value,
-				location: window.location.href,
-			} );
+			const website = form.getAttribute( 'data-website' ) || '';
+			recordTracksEvent(
+				website === 'forums'
+					? 'calypso_happyblocks_forums_custom_search'
+					: 'calypso_happyblocks_support_custom_search',
+				{
+					query: input.value,
+					location: window.location.href,
+				}
+			);
 		} );
 	}
 

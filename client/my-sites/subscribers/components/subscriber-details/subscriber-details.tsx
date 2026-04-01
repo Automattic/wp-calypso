@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { TimeSince } from '@automattic/components';
-import { Button, ExternalLink } from '@wordpress/components';
+import { Button, ExternalLink, Icon } from '@wordpress/components';
+import { trash } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { NewsletterCategory } from 'calypso/data/newsletter-categories/types';
@@ -21,6 +22,8 @@ type SubscriberDetailsProps = {
 	newsletterCategories?: NewsletterCategory[];
 	onClose?: () => void;
 	onUnsubscribe?: ( subscriber: Subscriber ) => void;
+	onCompSubscription?: ( subscriber: Subscriber ) => void;
+	onRemoveComp?: ( params: { planName: string; compId?: number } ) => void;
 };
 
 const SubscriberDetails = ( {
@@ -32,6 +35,8 @@ const SubscriberDetails = ( {
 	newsletterCategories,
 	onClose,
 	onUnsubscribe,
+	onCompSubscription,
+	onRemoveComp,
 }: SubscriberDetailsProps ) => {
 	const translate = useTranslate();
 	const subscriptionPlans = useSubscriptionPlans( subscriber );
@@ -49,10 +54,31 @@ const SubscriberDetails = ( {
 	} );
 
 	const displayPaidUpgrade = ( subscriptionPlan: SubscriptionPlanData, index: number ) => {
-		if ( subscriptionPlan.is_gift ) {
+		if ( subscriptionPlan.is_complimentary ) {
 			return (
 				<div className="subscriber-details__content-value" key={ index }>
-					{ translate( 'Gift' ) }
+					{ translate( 'Comp', {
+						comment: 'Short for "complimentary" — a free subscription granted by the site creator',
+					} ) }
+					{ onRemoveComp && subscriptionPlan.comp_id && (
+						<Button
+							className="subscriber-details__remove-comp-button"
+							variant="tertiary"
+							aria-label={ String(
+								translate( 'Remove complimentary subscription: %(planName)s', {
+									args: { planName: subscriptionPlan.title ?? '' },
+								} )
+							) }
+							onClick={ () =>
+								onRemoveComp( {
+									planName: subscriptionPlan.title ?? '',
+									compId: subscriptionPlan.comp_id,
+								} )
+							}
+						>
+							<Icon icon={ trash } size={ 18 } />
+						</Button>
+					) }
 				</div>
 			);
 		}
@@ -136,7 +162,7 @@ const SubscriberDetails = ( {
 						{ subscriptionPlans &&
 							subscriptionPlans.map( ( subscriptionPlan, index ) => (
 								<div className="subscriber-details__content-value" key={ index }>
-									{ ! subscriptionPlan.is_gift && subscriptionPlan.title
+									{ ! subscriptionPlan.is_complimentary && subscriptionPlan.title
 										? `${ subscriptionPlan.title } - `
 										: '' }
 									{ subscriptionPlan.plan }
@@ -174,16 +200,27 @@ const SubscriberDetails = ( {
 					) }
 				</div>
 			</div>
-			{ onUnsubscribe && (
+			{ ( onCompSubscription || onUnsubscribe ) && (
 				<div className="subscriber-details__footer">
-					<Button
-						className="subscriber-details__delete-button"
-						onClick={ () => onUnsubscribe( subscriber ) }
-						variant="secondary"
-						isDestructive
-					>
-						{ translate( 'Delete subscriber' ) }
-					</Button>
+					{ onCompSubscription && (
+						<Button
+							className="subscriber-details__comp-button"
+							onClick={ () => onCompSubscription( subscriber ) }
+							variant="primary"
+						>
+							{ translate( 'Comp a subscription' ) }
+						</Button>
+					) }
+					{ onUnsubscribe && (
+						<Button
+							className="subscriber-details__delete-button"
+							onClick={ () => onUnsubscribe( subscriber ) }
+							variant="secondary"
+							isDestructive
+						>
+							{ translate( 'Delete subscriber' ) }
+						</Button>
+					) }
 				</div>
 			) }
 		</div>

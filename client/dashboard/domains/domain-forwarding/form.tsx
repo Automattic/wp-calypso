@@ -132,7 +132,7 @@ export default function DomainForwardingForm( {
 				label: __( 'Source URL' ),
 				help: __( 'Enter the subdomain (e.g., "blog")' ),
 				type: 'text' as const,
-				Edit: ( { field, data, onChange } ) => {
+				Edit: ( { field, data, onChange, markWhenOptional } ) => {
 					const { id, getValue } = field;
 					const isDisabled = data.sourceType !== '';
 					const suffix = isDisabled ? '' : `.${ domainName }`;
@@ -142,6 +142,7 @@ export default function DomainForwardingForm( {
 					return (
 						<SuffixInputControl
 							required={ !! field.isValid?.required }
+							markWhenOptional={ markWhenOptional }
 							label={ field.label }
 							placeholder={ field.placeholder }
 							disabled={ isDisabled }

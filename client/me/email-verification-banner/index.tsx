@@ -3,12 +3,13 @@ import React, { useCallback, useState } from 'react';
 import Banner from 'calypso/components/banner';
 import EmailVerificationDialog from 'calypso/components/email-verification/email-verification-dialog';
 import useGetEmailToVerify from 'calypso/components/email-verification/hooks/use-get-email-to-verify';
+import { useSendEmailVerification } from 'calypso/landing/stepper/hooks/use-send-email-verification';
 import { emailFormEventEmitter } from 'calypso/me/account/account-email-field';
 import { useDispatch, useSelector } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import isPendingEmailChange from 'calypso/state/selectors/is-pending-email-change';
-import { setUserSetting } from 'calypso/state/user-settings/actions';
+import { setUnsavedUserSetting } from 'calypso/state/user-settings/actions';
 import { saveUnsavedUserSettings } from 'calypso/state/user-settings/thunks';
 import './style.scss';
 
@@ -66,6 +67,8 @@ const EmailVerificationBannerV2: React.FC< Props > = ( { setIsBusy } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const emailToVerify = useGetEmailToVerify();
+	const isEmailChangePending = useSelector( isPendingEmailChange );
+	const sendVerificationEmail = useSendEmailVerification();
 	const [ isSendingEmail, setIsSendingEmail ] = useState( false );
 
 	const highlightEmailInput = useCallback( () => {
@@ -76,8 +79,16 @@ const EmailVerificationBannerV2: React.FC< Props > = ( { setIsBusy } ) => {
 		setIsBusy( true );
 		setIsSendingEmail( true );
 		try {
-			dispatch( setUserSetting( 'user_email', emailToVerify ) );
-			await dispatch( saveUnsavedUserSettings( [ 'user_email' ] ) );
+			if ( isEmailChangePending ) {
+				// For pending email changes, re-submit the new email via PUT /me/settings
+				// since POST /me/send-verification-email only works for the original email.
+				dispatch( setUnsavedUserSetting( 'user_email', emailToVerify ) );
+				await dispatch( saveUnsavedUserSettings( [ 'user_email' ] ) );
+			} else {
+				// For unverified original emails, use the dedicated endpoint since
+				// PUT /me/settings won't resend when the email hasn't changed.
+				await sendVerificationEmail();
+			}
 			dispatch(
 				successNotice(
 					translate(
@@ -100,7 +111,14 @@ const EmailVerificationBannerV2: React.FC< Props > = ( { setIsBusy } ) => {
 			setIsBusy( false );
 			setIsSendingEmail( false );
 		}
-	}, [ dispatch, emailToVerify, setIsBusy, translate ] );
+	}, [
+		dispatch,
+		emailToVerify,
+		isEmailChangePending,
+		sendVerificationEmail,
+		setIsBusy,
+		translate,
+	] );
 
 	if ( ! emailToVerify ) {
 		return null;

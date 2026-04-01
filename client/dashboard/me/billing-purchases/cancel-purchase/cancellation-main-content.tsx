@@ -30,6 +30,7 @@ interface CancellationMainContentProps {
 	onCancelConfirmationStateChange: ( newState: Partial< CancelPurchaseState > ) => void;
 	onDomainConfirmationChange: ( checked: boolean ) => void;
 	onCustomerConfirmedUnderstandingChange: ( checked: boolean ) => void;
+	onCustomerConfirmedUnderstandingAtomicPlanRevert: ( checked: boolean ) => void;
 	onKeepSubscriptionClick: () => void;
 	onCancelClick?: () => void;
 }
@@ -42,7 +43,8 @@ const willShowDomainOptionsRadioButtons = (
 	return (
 		includedDomainPurchase.is_domain_registration &&
 		purchase.is_refundable &&
-		!! includedDomainPurchase.cost_to_unbundle_display
+		!! includedDomainPurchase.cost_to_unbundle_display &&
+		includedDomainPurchase.is_within_initial_refund_window
 	);
 };
 
@@ -56,6 +58,7 @@ export default function CancellationMainContent( {
 	onCancelConfirmationStateChange,
 	onDomainConfirmationChange,
 	onCustomerConfirmedUnderstandingChange,
+	onCustomerConfirmedUnderstandingAtomicPlanRevert,
 	onKeepSubscriptionClick,
 	onCancelClick,
 }: CancellationMainContentProps ) {
@@ -158,6 +161,9 @@ export default function CancellationMainContent( {
 				state={ state }
 				onDomainConfirmationChange={ onDomainConfirmationChange }
 				onCustomerConfirmedUnderstandingChange={ onCustomerConfirmedUnderstandingChange }
+				onCustomerConfirmedUnderstandingAtomicPlanRevert={
+					onCustomerConfirmedUnderstandingAtomicPlanRevert
+				}
 				onKeepSubscriptionClick={ onKeepSubscriptionClick }
 				onCancelClick={ onCancelClick }
 			/>

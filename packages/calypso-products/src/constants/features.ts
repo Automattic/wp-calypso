@@ -506,6 +506,8 @@ export const FEATURE_WOO_HOSTED_POWERFUL_COMMERCE_TOOLS = 'woo-hosted-powerful-c
 export const FEATURE_WOO_HOSTED_FREE_DOMAIN_1_YEAR = 'woo-hosted-free-domain-1-year';
 export const FEATURE_WOO_HOSTED_SEAMLESS_CHECKOUT = 'woo-hosted-seamless-checkout';
 export const FEATURE_WOO_HOSTED_ACCEPT_CARD_PAYMENTS = 'woo-hosted-accept-card-payments';
+export const FEATURE_WOO_HOSTED_POS_PAYMENTS = 'woo-hosted-pos-payments';
+export const FEATURE_WOO_HOSTED_POS_NO_MONTHLY_FEES = 'woo-hosted-pos-no-monthly-fees';
 export const FEATURE_WOO_HOSTED_LIST_PRODUCTS = 'woo-hosted-list-products';
 export const FEATURE_WOO_HOSTED_BOOKINGS = 'woo-hosted-bookings';
 export const FEATURE_WOO_HOSTED_TEAM_BOOKINGS = 'woo-hosted-team-bookings';
@@ -566,17 +568,12 @@ export const FEATURE_BIG_SKY_WEBSITE_BUILDER_CHECKOUT = 'feature-big-sky-website
 // AI features for plan differentiators experiment
 export const FEATURE_AI_WEBSITE_BUILDER = 'feature-ai-website-builder';
 export const FEATURE_AI_WEBSITE_BUILDER_LIMITED = 'feature-ai-website-builder-limited';
+export const FEATURE_GUIDED_WEBSITE_BUILDER = 'feature-guided-website-builder';
+export const FEATURE_GUIDED_WEBSITE_BUILDER_LIMITED = 'feature-guided-website-builder-limited';
 export const FEATURE_AI_WRITER_DESIGNER = 'feature-ai-writer-designer';
 export const FEATURE_AI_WRITER_DESIGNER_LIMITED = 'feature-ai-writer-designer-limited';
-
-// "Everything in X, plus:" features for stacked variants
-export const FEATURE_EVERYTHING_IN_FREE_PLUS = 'feature-everything-in-free-plus';
-export const FEATURE_EVERYTHING_IN_PERSONAL_PLUS = 'feature-everything-in-personal-plus';
-export const FEATURE_EVERYTHING_IN_PREMIUM_PLUS = 'feature-everything-in-premium-plus';
-export const FEATURE_EVERYTHING_IN_BUSINESS_PLUS = 'feature-everything-in-business-plus';
-
-// "Included in plan:" header for Free plan in stacked variants
-export const FEATURE_INCLUDED_IN_PLAN = 'feature-included-in-plan';
+export const FEATURE_ENHANCED_AI_ASSISTANT_AND_TOOLS = 'feature-enhanced-ai-assistant-and-tools';
+export const FEATURE_BUILT_IN_SITE_ASSISTANT = 'feature-built-in-site-assistant';
 
 // Additional features for plan differentiators experiment
 export const FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR = 'feature-professional-email-free-year';

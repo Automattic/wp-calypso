@@ -6,7 +6,7 @@ module.exports = {
 	cacheDirectory: path.join( __dirname, '../../.cache/jest' ),
 	rootDir: '../../client/server',
 	transformIgnorePatterns: [
-		'node_modules[\\/\\\\](?!@fnando[\\/\\\\]|.*\\.(?:gif|jpg|jpeg|png|svg|scss|sass|css)$)',
+		'node_modules[\\/\\\\](?!@fnando[\\/\\\\]|.*\\.(?:gif|jpg|jpeg|png|svg|webp|scss|sass|css)$)',
 	],
 	moduleNameMapper: {
 		'^@automattic/calypso-config$': 'calypso/server/config',

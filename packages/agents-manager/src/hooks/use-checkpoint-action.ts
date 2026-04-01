@@ -1,12 +1,10 @@
-import { createElement, useEffect } from '@wordpress/element';
+import { createElement, useEffect, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { undo, Icon } from '@wordpress/icons';
 import type { UseCheckpointReturn } from '../utils/load-external-providers';
 import type { UseAgentChatReturn, UIMessage } from '@automattic/agenttic-client';
 
 type RegisterMessageActions = UseAgentChatReturn[ 'registerMessageActions' ];
-
-export const CHECKPOINT_ACTION_ID = 'checkpoint';
 
 /**
  * Gets the checkpoint ID embedded in a tool message, or an empty string
@@ -38,27 +36,29 @@ export default function useCheckpointAction(
 	registerMessageActions: RegisterMessageActions,
 	checkpoint?: UseCheckpointReturn
 ): void {
-	useEffect( () => {
-		if ( ! checkpoint ) {
-			return;
-		}
+	// Ref avoids infinite re-renders caused by unstable `checkpoint` reference.
+	const checkpointRef = useRef( checkpoint );
+	checkpointRef.current = checkpoint;
 
+	useEffect( () => {
 		registerMessageActions( {
 			id: 'agents-manager-checkpoint',
 			actions: ( message: UIMessage ) => {
-				if ( message.role !== 'agent' ) {
+				const currentCheckpoint = checkpointRef.current;
+
+				if ( ! currentCheckpoint || message.role !== 'agent' ) {
 					return [];
 				}
 
 				const checkpointId = getCheckpointId( message );
 
-				if ( ! checkpointId || ! checkpoint.hasCheckpoint( checkpointId ) ) {
+				if ( ! checkpointId || ! currentCheckpoint.hasCheckpoint( checkpointId ) ) {
 					return [];
 				}
 
 				return [
 					{
-						id: CHECKPOINT_ACTION_ID,
+						id: 'checkpoint',
 						label: __( 'Undo', '__i18n_text_domain__' ),
 						icon: createElement( Icon, {
 							icon: undo,
@@ -66,7 +66,7 @@ export default function useCheckpointAction(
 						} ),
 						onClick: async () => {
 							try {
-								await checkpoint.restoreCheckpoint( checkpointId );
+								await checkpointRef.current?.restoreCheckpoint( checkpointId );
 							} catch ( error ) {
 								// eslint-disable-next-line no-console
 								console.error( '[useCheckpointAction] Failed to restore checkpoint:', error );
@@ -76,5 +76,5 @@ export default function useCheckpointAction(
 				];
 			},
 		} );
-	}, [ registerMessageActions, checkpoint ] );
+	}, [ registerMessageActions ] );
 }

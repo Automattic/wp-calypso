@@ -6,10 +6,10 @@ import { waitFor } from '@testing-library/dom';
 import { renderHook } from '@testing-library/react';
 import React from 'react';
 import { act } from 'react-dom/test-utils';
-import wpcomRequest from 'wpcom-proxy-request';
+import wpcomRequest from '../../wpcom-request';
 import { useSiteResetMutation } from '../use-site-reset-mutation';
 
-jest.mock( 'wpcom-proxy-request', () => ( {
+jest.mock( '../../wpcom-request', () => ( {
 	__esModule: true,
 	default: jest.fn(),
 } ) );

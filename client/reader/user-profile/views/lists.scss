@@ -1,0 +1,19 @@
+.is-reader-page {
+	.user-profile__lists-loader {
+		display: flex;
+		justify-content: center;
+		margin-top: 50px;
+	}
+
+	.user-profile__lists {
+		margin: 26px 0 0;
+
+		@include breakpoint-deprecated( '<660px' ) {
+			margin: 16px 0 0 0;
+		}
+
+		.summary-button {
+			margin-bottom: 16px;
+		}
+	}
+}

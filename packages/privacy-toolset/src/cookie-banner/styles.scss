@@ -1,4 +1,4 @@
-@use "sass:math";
+@use 'sass:math';
 
 // Granular consent banner (v2).
 $granular-banner-max-width: 900px;
@@ -10,20 +10,25 @@ $horizontal-padding: 20px;
 $cookie-banner-bg-color: #fff;
 $cookie-banner-text-color: #000;
 $cookie-banner-text-muted-color: #000;
-$cookie-banner-link-color: var(--studio-blue-50);
+$cookie-banner-link-color: var( --studio-blue-50 );
 
 // Buttons
+$cookie-banner-button-bg-color: $cookie-banner-bg-color;
+$cookie-banner-button-text-color: $cookie-banner-link-color;
+$cookie-banner-button-border-color: $cookie-banner-link-color;
+
 $cookie-banner-main-button-color: $cookie-banner-link-color;
 $cookie-banner-main-button-font-color: #fff;
 
 // Checkboxes
 $cookie-banner-checkbox-color: $cookie-banner-link-color;
-$cookie-banner-checkbox-bg-color: rgba(196, 195, 195, 0.55);
+$cookie-banner-checkbox-bg-color: rgba( 196, 195, 195, 0.55 );
 
 // Fonts
-$cookie-banner-font-size: 0.875rem;
-$cookie-banner-line-height: 1.125rem;
-$cookie-banner-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen-Sans", "Ubuntu", "Cantarell", "Helvetica Neue", sans-serif;
+$cookie-banner-font-size: 16px;
+$cookie-banner-line-height: 1.5;
+$cookie-banner-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen-Sans',
+	'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
 
 /**
  Cookie Banner styling.
@@ -43,16 +48,19 @@ $cookie-banner-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Robo
 	position: fixed;
 	top: auto;
 	left: 50%;
-	transform: translate(-50%);
+	transform: translate( -50% );
 	max-width: $granular-banner-max-width;
 	width: 100%;
 	bottom: 25px;
 	margin: 0;
 	max-height: 90vh;
 	z-index: 50001;
-	padding: 20px 0;
+	padding: 32px;
 	background-color: $cookie-banner-bg-color;
-	box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.15), 0 1px 0 rgba(0, 0, 0, 0.05);
+	box-shadow:
+		0 8px 16px rgba( 0, 0, 0, 0.2 ),
+		0 1px 3px rgba( 0, 0, 0, 0.15 ),
+		0 1px 0 rgba( 0, 0, 0, 0.05 );
 	border-radius: 3 * 2px;
 	animation: fadeIn 0.6s;
 	color: $cookie-banner-text-color;
@@ -72,7 +80,7 @@ $cookie-banner-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Robo
 			white-space: nowrap;
 		}
 	}
-	p:not(:first-child) {
+	p:not( :first-child ) {
 		margin: 18px 0 0 0;
 	}
 	a {
@@ -95,15 +103,28 @@ $cookie-banner-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Robo
 	.cookie-banner__simple-options {
 		display: flex;
 		justify-content: space-between;
-		padding: 0 $horizontal-padding;
 		gap: 25px;
 
 		.cookie-banner__button-container {
-			width: 22%;
 			display: flex;
 			flex-direction: row;
 			align-items: center;
 			justify-content: flex-end;
+		}
+	}
+	/**
+	 * Specific styling for the variant including the Decline Non-Essential button.
+	 */
+	.cookie-banner__simple-options.cookie-banner__simple-options-non-essential {
+		.a8c-cookie-banner__button {
+			text-wrap: nowrap;
+			width: 100%;
+			margin: 5px;
+			max-width: initial;
+		}
+		.cookie-banner__button-container {
+			width: 100%;
+			flex-direction: column;
 		}
 	}
 	.cookie-banner__options-selection {
@@ -140,12 +161,13 @@ $cookie-banner-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Robo
 			}
 		}
 	}
-	.cookie-banner__options-selection input[type="checkbox"]:not(:disabled) {
+	.cookie-banner__options-selection input[type='checkbox']:not( :disabled ) {
 		cursor: pointer;
 	}
 	.cookie-banner__ok-button,
 	.cookie-banner__accept-all-button,
 	.cookie-banner__customize-button,
+	.cookie-banner__decline-button,
 	.cookie-banner__accept-selection-button {
 		min-width: 110px;
 		max-width: 500px;
@@ -155,15 +177,19 @@ $cookie-banner-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Robo
 		font-family: $cookie-banner-font-family;
 		font-style: normal;
 		font-weight: 600;
-		font-size: $cookie-banner-font-size;
 		line-height: $cookie-banner-line-height;
 		border-radius: 4px;
 		border: none;
 		cursor: pointer;
+		font-size: $cookie-banner-font-size;
 	}
 	.cookie-banner__customize-button {
-		color: $cookie-banner-text-color;
-		background-color: $cookie-banner-bg-color;
+		margin-right: 10px;
+	}
+	.a8c-cookie-banner__button {
+		color: $cookie-banner-button-text-color;
+		border: 1px solid $cookie-banner-button-border-color;
+		background-color: $cookie-banner-button-bg-color;
 	}
 	.cookie-banner__ok-button,
 	.cookie-banner__accept-all-button,
@@ -179,7 +205,7 @@ $cookie-banner-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Robo
 		margin: 2px + 4 * 4px auto 0 auto;
 	}
 
-	@media only screen and (max-width: 900px) {
+	@media only screen and ( max-width: 900px ) {
 		.cookie-banner__simple-options {
 			flex-direction: column;
 			gap: 0;
@@ -213,6 +239,9 @@ $cookie-banner-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Robo
 		}
 		.cookie-banner__accept-selection-button {
 			min-width: 150px;
+		}
+		.cookie-banner__customize-button {
+			margin-right: 10px;
 		}
 	}
 }

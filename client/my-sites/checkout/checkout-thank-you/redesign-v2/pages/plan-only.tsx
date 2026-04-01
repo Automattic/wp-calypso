@@ -29,6 +29,7 @@ interface PlanOnlyThankYouProps {
 	removeNotice: ( noticeId: string ) => void;
 	successNotice: ( text: string, noticeOptions?: object ) => void;
 	transferComplete?: boolean;
+	checkoutType?: string;
 }
 
 const isMonthsOld = ( months: number, rawDate?: string ) => {
@@ -47,6 +48,7 @@ const PlanOnlyThankYou = ( {
 	removeNotice,
 	successNotice,
 	transferComplete,
+	checkoutType,
 }: PlanOnlyThankYouProps ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
@@ -95,7 +97,9 @@ const PlanOnlyThankYou = ( {
 	// we can be confident that `siteId` is a number and not `null`
 	const siteAdminUrl = useSelector( ( state ) => getSiteWooCommerceUrl( state, siteId as number ) );
 	const emailAddress = useSelector( getCurrentUserEmail );
+	const siteUrl = useSelector( ( state ) => getSiteUrl( state, siteId as number ) );
 
+	let title;
 	let subtitle;
 	let headerButtons;
 
@@ -133,6 +137,11 @@ const PlanOnlyThankYou = ( {
 				</Button>
 			);
 		}
+	} else if ( checkoutType === 'unified' ) {
+		title = translate( 'Purchase successful' );
+		subtitle = translate(
+			"You're all set to start building your WordPress site. Jump into your dashboard to create and customize your site."
+		);
 	} else {
 		subtitle = translate(
 			'All set! Start exploring the features included with your {{strong}}%(productName)s{{/strong}} plan',
@@ -180,8 +189,6 @@ const PlanOnlyThankYou = ( {
 		} );
 	}
 
-	const siteUrl = useSelector( ( state ) => getSiteUrl( state, siteId as number ) );
-
 	return (
 		<>
 			{
@@ -192,7 +199,7 @@ const PlanOnlyThankYou = ( {
 					isEmailVerified && <WpAdminAutoLogin site={ { URL: siteUrl } } delay={ 0 } />
 			}
 			<ThankYouV2
-				title={ translate( 'Get the best out of your site' ) }
+				title={ title ?? translate( 'Get the best out of your site' ) }
 				subtitle={ preventWidows( subtitle ) }
 				headerButtons={ headerButtons }
 				products={
@@ -200,6 +207,7 @@ const PlanOnlyThankYou = ( {
 						purchase={ primaryPurchase }
 						siteSlug={ siteSlug }
 						siteId={ siteId }
+						checkoutType={ checkoutType }
 					/>
 				}
 				footerDetails={ footerDetails }

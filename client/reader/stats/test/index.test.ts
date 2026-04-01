@@ -673,6 +673,11 @@ describe( 'reader stats', () => {
 					expected: 'user_profile_posts',
 					description: 'user profile posts',
 				},
+				{
+					url: '/reader/users/matt/sites',
+					expected: 'user_profile_sites',
+					description: 'user profile sites tab',
+				},
 			] as const;
 
 			scenarios.map( ( scenario ) => {
@@ -694,12 +699,6 @@ describe( 'reader stats', () => {
 					url: '/discover/add-new',
 					expected: 'discover_addnew',
 					description: 'discover add new page',
-					searchParams: {},
-				},
-				{
-					url: '/discover/firstposts',
-					expected: 'discover_firstposts',
-					description: 'discover first posts page',
 					searchParams: {},
 				},
 				{

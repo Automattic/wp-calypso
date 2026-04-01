@@ -18,13 +18,13 @@ import { get, includes } from 'lodash';
 import { stringify } from 'qs';
 // eslint-disable-next-line no-restricted-imports
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
+import { getDashboardFromHostname, isAllowedDashboardRoute } from 'calypso/dashboard/app/routing';
 import { isAllowedCiabDashboardHostname } from 'calypso/dashboard/app-ciab/routing';
 import { CIAB_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-ciab/section';
 import { isAllowedDotcomDashboardHostname } from 'calypso/dashboard/app-dotcom/routing';
 import { DOTCOM_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-dotcom/section';
 import { DASHBOARD_SECTION_PATHS } from 'calypso/dashboard/section';
 import isDashboardEnv from 'calypso/dashboard/utils/is-dashboard-env';
-import { shouldHideWooHostedLogo } from 'calypso/document/utils/should-hide-woo-hosted-logo';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { STEPPER_SECTION_DEFINITION } from 'calypso/landing/stepper/section';
 import { SUBSCRIPTIONS_SECTION_DEFINITION } from 'calypso/landing/subscriptions/section';
@@ -209,7 +209,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 			request.query.hasOwnProperty( 'useTranslationChunks' ),
 		showGdprBanner,
 		showStepContainerV2Loader: isInStepContainerV2FlowContext( request.path, request.query ),
-		hideWooHostedLogo: shouldHideWooHostedLogo( request.url ?? '' ),
+		dashboard: getDashboardFromHostname( request.hostname ),
 	} );
 
 	context.app = {
@@ -1075,11 +1075,12 @@ export default function pages() {
 	 * This approach allows requests to an SSR section to skip any section-specific
 	 * SSR middleware if the request wasn't going to be resolved with SSR anyways.
 	 */
-	function handleSectionPath( section, sectionPath, entrypoint ) {
+	function handleSectionPath( section, sectionPath, entrypoint, reqFilter ) {
 		const pathRegex = pathToRegExp( sectionPath );
 
 		app.get(
 			pathRegex,
+			( req, res, next ) => ( ! reqFilter || reqFilter( req ) ? next() : next( 'route' ) ),
 			setupDefaultContext( entrypoint, section.name ),
 			setUpSectionContext( section, entrypoint ),
 			// Skip the rest of the middleware chain if SSR compatible. Further
@@ -1100,29 +1101,39 @@ export default function pages() {
 
 	// Multi-site Dashboard routing.
 	if ( isDashboardEnv() || calypsoEnv === 'development' ) {
-		const handleRoute = ( section, sectionPath, entrypoint, reqFilter ) => {
-			app.get(
-				pathToRegExp( sectionPath ),
-				( req, res, next ) => ( ! reqFilter || reqFilter( req ) ? next() : next( 'route' ) ),
-				setupDefaultContext( entrypoint, section.name ),
-				setUpSectionContext( section, entrypoint ),
-				setUpRoute,
-				serverRender
-			);
-		};
+		const signupSectionDefinition = sections.find( ( s ) => s.name === 'signup' );
+		handleSectionPath( signupSectionDefinition, '/start', undefined, ( req ) =>
+			isAllowedDashboardRoute( { hostname: req.hostname, path: req.path } )
+		);
+		const checkoutSectionDefinition = sections.find( ( s ) => s.name === 'checkout' );
+		handleSectionPath( checkoutSectionDefinition, '/checkout', undefined, ( req ) =>
+			isAllowedDashboardRoute( { hostname: req.hostname, path: req.path } )
+		);
+		handleSectionPath( STEPPER_SECTION_DEFINITION, '/setup', 'entry-stepper', ( req ) =>
+			isAllowedDashboardRoute( { hostname: req.hostname, path: req.path } )
+		);
 		DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
-			handleRoute( DOTCOM_DASHBOARD_SECTION_DEFINITION, route, 'entry-dashboard-dotcom', ( req ) =>
-				isAllowedDotcomDashboardHostname( req.hostname )
+			handleSectionPath(
+				DOTCOM_DASHBOARD_SECTION_DEFINITION,
+				route,
+				'entry-dashboard-dotcom',
+				( req ) => isAllowedDotcomDashboardHostname( req.hostname )
 			);
 		} );
 		DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
-			handleRoute( CIAB_DASHBOARD_SECTION_DEFINITION, route, 'entry-dashboard-ciab', ( req ) =>
-				isAllowedCiabDashboardHostname( req.hostname )
+			handleSectionPath(
+				CIAB_DASHBOARD_SECTION_DEFINITION,
+				route,
+				'entry-dashboard-ciab',
+				( req ) => isAllowedCiabDashboardHostname( req.hostname )
 			);
 		} );
-		handleRoute( CIAB_DASHBOARD_SECTION_DEFINITION, '/ciab', 'entry-dashboard-ciab', ( req ) => {
-			return isAllowedDotcomDashboardHostname( req.hostname );
-		} );
+		handleSectionPath(
+			CIAB_DASHBOARD_SECTION_DEFINITION,
+			'/start-store',
+			'entry-dashboard-ciab',
+			( req ) => isAllowedCiabDashboardHostname( req.hostname )
+		);
 	}
 
 	sections

@@ -1,6 +1,7 @@
 import { useUpdateZendeskUserFields, type ZendeskConversation } from '@automattic/zendesk-client';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Smooch from 'smooch';
+import { hasReachedConversationLimit } from '../components/notices/get-most-recent-open-live-interaction';
 import {
 	getErrorTryAgainLaterMessage,
 	getOdieTransferMessages,
@@ -43,6 +44,26 @@ export const useCreateZendeskConversation = () => {
 		errorReason?: string;
 		escalationOnSecondAttempt?: boolean;
 	} ) => {
+		if (
+			isSubmittingZendeskUserFields ||
+			chat.conversationId ||
+			chat.status === 'transfer' ||
+			chat.provider === 'zendesk'
+		) {
+			return chat.conversationId || '';
+		}
+
+		if ( hasReachedConversationLimit() ) {
+			trackEvent( 'conversation_limit_reached', {
+				created_from: createdFrom,
+			} );
+			setChat( ( prevChat ) => ( {
+				...prevChat,
+				status: 'loaded',
+			} ) );
+			return;
+		}
+
 		let activeInteractionId = currentSupportInteraction?.uuid;
 
 		trackEvent( 'creating_zendesk_conversation', {
@@ -57,15 +78,6 @@ export const useCreateZendeskConversation = () => {
 			escalation_on_second_attempt: escalationOnSecondAttempt,
 			error_reason: isFromError ? errorReason ?? 'Unknown error' : '',
 		} );
-
-		if (
-			isSubmittingZendeskUserFields ||
-			chat.conversationId ||
-			chat.status === 'transfer' ||
-			chat.provider === 'zendesk'
-		) {
-			return chat.conversationId || '';
-		}
 
 		// Store previous state to restore on error
 		const previousMessages = [ ...chat.messages ];

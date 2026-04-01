@@ -1,3 +1,4 @@
+import './config';
 import { createRoot } from 'react-dom/client';
 import AgentsManagerWithProvider from './agents-manager-with-provider';
 import HeadlessAgentWithProvider from './headless-agent-with-provider';

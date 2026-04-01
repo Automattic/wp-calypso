@@ -1,6 +1,6 @@
 import { UseMutationOptions, useMutation } from '@tanstack/react-query';
 import { useCallback } from 'react';
-import wpcomRequest from 'wpcom-proxy-request';
+import wpcomRequest from '../wpcom-request';
 
 export interface SiteResetAPIResponse {
 	success: boolean;

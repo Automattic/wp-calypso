@@ -1,7 +1,16 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { WordPressLogo } from '@automattic/components/src/logos/wordpress-logo';
 import { useQueryClient, useIsFetching } from '@tanstack/react-query';
 import { CatchNotFound, Outlet, useRouterState, useRouter } from '@tanstack/react-router';
-import { Suspense, lazy, useEffect, useState, useMemo, useSyncExternalStore } from 'react';
+import {
+	Suspense,
+	lazy,
+	useCallback,
+	useEffect,
+	useState,
+	useMemo,
+	useSyncExternalStore,
+} from 'react';
 import { LoadingLine } from '../../components/loading-line';
 import { PageViewTracker } from '../../components/page-view-tracker';
 import NotFound from '../404';
@@ -9,7 +18,11 @@ import { bumpStat } from '../analytics';
 import CommandPalette from '../command-palette';
 import { useAppContext } from '../context';
 import Header from '../header';
+import { useOmnibarEvent } from '../interim-omnibar/click-handlers';
+import OmnibarHelpCenter from '../interim-omnibar/omnibar-help-center';
 import { NavigationBlockerRegistry } from '../navigation-blocker';
+import Notifications from '../notifications';
+import ResponsiveSidebar from '../responsive-sidebar';
 import Snackbars from '../snackbars';
 import './style.scss';
 
@@ -24,11 +37,37 @@ const SLOW_THRESHOLD_MS = 100;
 const VERY_SLOW_THRESHOLD_MS = 6000;
 
 function Root() {
+	const isOmnibarEnabled = isEnabled( 'dashboard/omnibar' );
 	const { name, supports, LoadingLogo = WordPressLogo } = useAppContext();
 	const isFetching = useIsFetching();
 	const router = useRouter();
 	const queryClient = useQueryClient();
 	const queryCache = queryClient.getQueryCache();
+	const [ isSidebarOpen, setIsSidebarOpen ] = useState( false );
+	const closeSidebar = useCallback( () => setIsSidebarOpen( false ), [ setIsSidebarOpen ] );
+	useOmnibarEvent( 'mobileMenu', () => setIsSidebarOpen( ( v ) => ! v ) );
+	useOmnibarEvent( 'linkClick', ( { href, event } ) => {
+		const url = new URL( href, window.location.origin );
+
+		if ( url.origin !== window.location.origin ) {
+			return;
+		}
+
+		const path = url.pathname + url.search + url.hash;
+		const parsedLocation = router.parseLocation( undefined, {
+			pathname: url.pathname,
+			search: url.search,
+			hash: url.hash,
+			href: path,
+			state: { __TSR_index: 0 },
+		} );
+		const { foundRoute } = router.getMatchedRoutes( parsedLocation );
+
+		if ( foundRoute ) {
+			event.preventDefault();
+			router.navigate( { to: path } );
+		}
+	} );
 
 	const loadingQueryRequestedFullPageLoader = useSyncExternalStore(
 		( onStoreChange ) => queryCache.subscribe( onStoreChange ),
@@ -94,6 +133,47 @@ function Root() {
 			.join( ' ‹ ' );
 	}, [ routeMeta ] );
 
+	const renderHeader = () => {
+		if ( isInitialLoad ) {
+			return null;
+		}
+
+		if ( ! isOmnibarEnabled ) {
+			return <Header />;
+		}
+
+		return null;
+	};
+
+	const renderBody = () => {
+		if ( isVerySlowNavigation ) {
+			return null;
+		}
+
+		if ( ! isOmnibarEnabled ) {
+			return (
+				<main>
+					<CatchNotFound fallback={ NotFound }>
+						<Outlet />
+					</CatchNotFound>
+				</main>
+			);
+		}
+
+		return (
+			<div className="dashboard-root__body">
+				<ResponsiveSidebar isOpen={ isSidebarOpen } onClose={ closeSidebar } />
+				<div className="dashboard-root__content">
+					<main>
+						<CatchNotFound fallback={ NotFound }>
+							<Outlet />
+						</CatchNotFound>
+					</main>
+				</div>
+			</div>
+		);
+	};
+
 	useEffect( () => {
 		document.title = title ? `${ title } – ${ name }` : name;
 	}, [ name, title ] );
@@ -109,15 +189,11 @@ function Root() {
 				/>
 			) }
 			{ ( isInitialLoad || isVerySlowNavigation ) && <LoadingLogo className="wpcom-site__logo" /> }
-			{ ! isInitialLoad && <Header /> }
-			{ ! isVerySlowNavigation && (
-				<main>
-					<CatchNotFound fallback={ NotFound }>
-						<Outlet />
-					</CatchNotFound>
-				</main>
-			) }
+			{ renderHeader() }
+			{ renderBody() }
 			{ supports.commandPalette && <CommandPalette /> }
+			{ isOmnibarEnabled && supports.notifications && <Notifications anchor /> }
+			{ isOmnibarEnabled && supports.help && <OmnibarHelpCenter /> }
 			<Snackbars />
 			<PageViewTracker />
 			<NavigationBlockerRegistry />

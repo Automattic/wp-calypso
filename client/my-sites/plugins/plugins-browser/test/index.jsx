@@ -66,13 +66,10 @@ import {
 	FEATURE_INSTALL_PLUGINS,
 	PLAN_FREE,
 	PLAN_BUSINESS,
-	PLAN_BUSINESS_2_YEARS,
 	PLAN_PREMIUM,
-	PLAN_PREMIUM_2_YEARS,
 	PLAN_PERSONAL,
-	PLAN_PERSONAL_2_YEARS,
 	PLAN_BLOGGER,
-	PLAN_BLOGGER_2_YEARS,
+	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 } from '@automattic/calypso-products';
 import { screen } from '@testing-library/react';
 import { merge } from 'lodash';
@@ -131,33 +128,53 @@ describe( 'Search view', () => {
 
 describe( 'Upsell Nudge should get appropriate plan constant', () => {
 	test.each( [ PLAN_FREE, PLAN_BLOGGER, PLAN_PERSONAL, PLAN_PREMIUM ] )(
-		`Business 1 year for (%s)`,
+		`Cheapest plan for (%s)`,
 		( product_slug ) => {
 			const initialState = {
 				sites: {
 					items: { 1: { jetpack: false, plan: { product_slug } } },
-					features: { 1: { data: [ FEATURE_INSTALL_PLUGINS ] } },
+					features: {
+						1: {
+							data: {
+								active: [],
+								available: {
+									[ FEATURE_INSTALL_PLUGINS ]: [ PLAN_PERSONAL ],
+									[ WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS ]: [ PLAN_PERSONAL ],
+								},
+							},
+						},
+					},
 				},
 			};
 			render( <PluginsBrowser />, { initialState } );
 			const nudge = screen.getByTestId( 'upsell-nudge' );
 			expect( nudge ).toBeVisible();
-			expect( nudge ).toHaveTextContent( PLAN_BUSINESS );
+			expect( nudge ).toHaveTextContent( PLAN_PERSONAL );
 		}
 	);
 
-	test.each( [ PLAN_BLOGGER_2_YEARS, PLAN_PERSONAL_2_YEARS, PLAN_PREMIUM_2_YEARS ] )(
-		`Business 2 year for (%s)`,
-		( product_slug ) => {
-			const initialState = {
-				sites: { items: { 1: { jetpack: false, plan: { product_slug } } } },
-			};
-			render( <PluginsBrowser />, { initialState } );
-			const nudge = screen.getByTestId( 'upsell-nudge' );
-			expect( nudge ).toBeVisible();
-			expect( nudge ).toHaveTextContent( PLAN_BUSINESS_2_YEARS );
-		}
-	);
+	test( 'should use business plan when it is the cheapest for the feature', () => {
+		const initialState = {
+			sites: {
+				items: { 1: { jetpack: false, plan: { product_slug: PLAN_FREE } } },
+				features: {
+					1: {
+						data: {
+							active: [],
+							available: {
+								[ FEATURE_INSTALL_PLUGINS ]: [ PLAN_BUSINESS ],
+								[ WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS ]: [ PLAN_BUSINESS ],
+							},
+						},
+					},
+				},
+			},
+		};
+		render( <PluginsBrowser />, { initialState } );
+		const nudge = screen.getByTestId( 'upsell-nudge' );
+		expect( nudge ).toBeVisible();
+		expect( nudge ).toHaveTextContent( PLAN_BUSINESS );
+	} );
 } );
 
 describe( 'PluginsBrowser basic tests', () => {

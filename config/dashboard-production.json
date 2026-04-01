@@ -10,8 +10,8 @@
 		"my.woo.ai": {
 			"oauth_client_id": 134405,
 			"wpcom_login_url": false,
-			"logout_url": "https://woo.com",
-			"features": { "oauth": true }
+			"logout_url": false,
+			"features": { "oauth": true, "wpcom-user-bootstrap": false }
 		}
 	},
 	"i18n_default_locale_slug": "en",
@@ -20,21 +20,36 @@
 	"wpcom_url": "https://wordpress.com",
 	"wpcom_login_url": "https://wordpress.com/log-in",
 	"features": {
+		"calypso/ai-site-builder-flow": true,
 		"catch-js-errors": true,
 		"posthog-tracking": true,
 		"ciab/allow-domain-features": true,
-		"ciab/custom-branding": false,
+		"ciab/custom-branding": true,
 		"cookie-banner": true,
 		"bilmur-script": true,
 		"rum-tracking/logstash": true,
+		"dashboard/omnibar": false,
 		"dashboard/v2": false,
 		"domain-transfer-redesign": true,
 		"marketplace-redesign": true,
 		"mcp-settings": true,
+		"onboarding/interval-dropdown": true,
+		"plans/hosting-trial": true,
+		"plans/migration-trial": true,
+		"plans/personal-plan": true,
+		"plans/self-service-downgrade": false,
+		"plans/updated-storage-labels": true,
+		"plans/upgradeable-storage": true,
+		"site-spec": true,
 		"wordpress-ai-tools": true,
-		"two-factor/enhanced-security": true
+		"two-factor/enhanced-security": true,
+		"wpcom-user-bootstrap": true
 	},
 	"enable_all_sections": false,
+	"sections": {
+		"signup": true,
+		"checkout": true
+	},
 	"site_filter": [],
 	"theme": "dashboard",
 	"restricted_me_access": false

@@ -118,8 +118,12 @@ const DomainSearchStep: StepType< {
 				hidePrice: isHundredYearPlanFlow( flow ),
 				oneTimePrice: isHundredYearDomainFlow( flow ),
 			},
-			includeDotBlogSubdomain: isNewsletterFlow( flow ),
 			skippable:
+				! isHundredYearPlanFlow( flow ) &&
+				! isHundredYearDomainFlow( flow ) &&
+				! isDomainFlow( flow ) &&
+				! isDomainAndPlanFlow( flow ),
+			includeDotBlogSubdomain:
 				! isHundredYearPlanFlow( flow ) &&
 				! isHundredYearDomainFlow( flow ) &&
 				! isDomainFlow( flow ) &&
@@ -379,13 +383,7 @@ const DomainSearchStep: StepType< {
 			} else if ( 'general-settings' === source && siteSlug ) {
 				backDestination = `/settings/general/${ siteSlug }`;
 				backLabelText = __( 'Back to General Settings' );
-			} else if ( ! isOnboardingFlow( flow ) && navigation.goBack ) {
-				backDestination = navigation.goBack;
-				backLabelText = __( 'Back' );
 			} else {
-				backDestination = defaultBackUrl;
-				backLabelText = sitesBackLabelText;
-
 				const isSafeBackTo =
 					isRelativeUrl( backTo ) ||
 					dashboardOrigins().some( ( origin ) => backTo?.startsWith( origin ) );
@@ -393,6 +391,12 @@ const DomainSearchStep: StepType< {
 				if ( isSafeBackTo ) {
 					backDestination = backTo;
 					backLabelText = __( 'Back' );
+				} else if ( ! isOnboardingFlow( flow ) && navigation.goBack ) {
+					backDestination = navigation.goBack;
+					backLabelText = __( 'Back' );
+				} else {
+					backDestination = defaultBackUrl;
+					backLabelText = sitesBackLabelText;
 				}
 			}
 

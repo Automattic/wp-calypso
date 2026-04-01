@@ -4,7 +4,6 @@ import { includes } from 'lodash';
 import {
 	APP_BANNER_DISMISS_TIMES_PREFERENCE,
 	ALLOWED_SECTIONS,
-	GUTENBERG,
 	HOME,
 	isDismissed,
 	getCurrentSection,
@@ -14,7 +13,6 @@ import { isWpMobileApp, isWcMobileApp } from 'calypso/lib/mobile-app';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import { shouldDisplayTosUpdateBanner } from 'calypso/state/selectors/should-display-tos-update-banner';
-import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import { getSectionName, appBannerIsEnabled, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { AppState } from 'calypso/types';
@@ -48,11 +46,6 @@ export const shouldDisplayAppBanner = ( state: AppState ): boolean | undefined =
 	const sectionName = getSectionName( state );
 	const isNotesOpen = isNotificationsOpen( state );
 	const currentSection = getCurrentSection( sectionName, isNotesOpen );
-
-	// Never show the AppBanner in the site setup flow in the gutenberg section
-	if ( getCurrentFlowName( state ) === 'setup-site' && GUTENBERG === currentSection ) {
-		return false;
-	}
 
 	// Do not show the banner if the user will be redirected to launchpad
 	const currentSiteId = getSelectedSiteId( state );

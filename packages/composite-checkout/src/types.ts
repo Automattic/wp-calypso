@@ -19,6 +19,7 @@ export interface CheckoutStepProps {
 	className?: string;
 	canEditStep?: boolean;
 	editButtonText?: string;
+	editButtonElement?: React.ReactNode;
 	editButtonAriaLabel?: string;
 	nextStepButtonText?: string;
 	nextStepButtonAriaLabel?: string;

@@ -28,3 +28,4 @@ export * from './utils';
 export type { SelectItem } from './select-items';
 export type { SelectItemAlt } from './select-items-alt';
 export type { MShotsOptions } from './mshots-image';
+export { setRequester } from './wpcom-request';

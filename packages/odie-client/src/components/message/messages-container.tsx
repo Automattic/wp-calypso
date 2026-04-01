@@ -14,7 +14,9 @@ import {
 	useUpdateDocumentTitle,
 } from '../../hooks';
 import { useHelpCenterChatScroll } from '../../hooks/use-help-center-chat-scroll';
-import getMostRecentOpenLiveInteraction from '../notices/get-most-recent-open-live-interaction';
+import getMostRecentOpenLiveInteraction, {
+	hasReachedConversationLimit,
+} from '../notices/get-most-recent-open-live-interaction';
 import { JumpToRecent } from './jump-to-recent';
 import { MessagesClusterizer } from './messages-cluster/messages-cluster';
 import { ThinkingPlaceholder } from './thinking-placeholder';
@@ -84,6 +86,11 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 				// Redirect to the existing Zendesk chat.
 				searchParams.set( 'id', alreadyHasActiveZendeskChatId );
 				return navigate( '/odie?' + searchParams.toString() );
+			}
+
+			// Don't create a new conversation if the user has reached the limit.
+			if ( hasReachedConversationLimit() ) {
+				return;
 			}
 
 			searchParams.delete( 'id' );

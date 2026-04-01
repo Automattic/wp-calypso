@@ -10,7 +10,7 @@
 		"my.woo.localhost": {
 			"oauth_client_id": 134404,
 			"wpcom_login_url": false,
-			"logout_url": "http://my.woo.localhost:3000",
+			"logout_url": false,
 			"features": { "oauth": true }
 		}
 	},
@@ -23,9 +23,12 @@
 	"logout_url": "https://|subdomain|wordpress.com",
 	"features": {
 		"always_use_logout_url": true,
+		"calypso/ai-site-builder-flow": true,
+		"cancel-flow/solutions-cards-upsell": false,
 		"ciab/allow-domain-features": true,
 		"cookie-banner": false,
 		"rum-tracking/logstash": true,
+		"dashboard/omnibar": false,
 		"dashboard/v2": false,
 		"dev/auth-helper": true,
 		"dev/preferences-helper": true,
@@ -33,10 +36,23 @@
 		"domain-transfer-redesign": true,
 		"marketplace-redesign": true,
 		"mcp-settings": true,
+		"onboarding/interval-dropdown": true,
+		"plans/hosting-trial": true,
+		"plans/migration-trial": true,
+		"plans/personal-plan": true,
+		"plans/self-service-downgrade": false,
+		"plans/updated-storage-labels": true,
+		"plans/upgradeable-storage": true,
+		"site-spec": true,
 		"wordpress-ai-tools": true,
-		"two-factor/enhanced-security": true
+		"two-factor/enhanced-security": true,
+		"wpcom-user-bootstrap": false
 	},
 	"enable_all_sections": false,
+	"sections": {
+		"signup": true,
+		"checkout": true
+	},
 	"site_filter": [],
 	"theme": "dashboard",
 	"theme_color": "#3858E9",

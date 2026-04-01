@@ -1,4 +1,5 @@
-@import "@wordpress/base-styles/colors";
+@import '@wordpress/base-styles/variables';
+@import '../../styles/mixins';
 
 .agents-manager-selected-block {
 	max-width: 150px;
@@ -6,12 +7,12 @@
 	align-items: center;
 	align-self: start;
 	gap: 4px;
-	border: 1px solid rgba($black, 0.1);
+	border: 1px solid var( --color-muted );
 	border-radius: 8px;
 	padding: 4px;
 	margin-top: 4px;
 	margin-left: 4px;
-	color: $gray-900;
+	color: var( --color-foreground );
 
 	.block-editor-block-icon {
 		flex-shrink: 0;
@@ -26,7 +27,7 @@
 	}
 
 	&__name {
-		font-size: 11px;
+		font-size: $font-size-x-small;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
@@ -35,7 +36,7 @@
 	&__divider {
 		height: 16px;
 		border: none;
-		border-left: 1px solid rgba($black, 0.1);
+		border-left: 1px solid var( --color-muted );
 		margin: 0;
 	}
 
@@ -43,7 +44,7 @@
 		&.components-button {
 			min-width: unset;
 			height: auto;
-			color: $gray-900;
+			color: var( --color-foreground );
 			padding: 0;
 
 			&:hover {
@@ -54,21 +55,8 @@
 }
 
 // Docked chat overrides
-.agents-manager-chat--docked .agenttic {
+@include docked-chat-without-modal {
 	.agents-manager-selected-block {
-		color: $white;
-		border: 1px solid rgba( $white, 0.1 );
 		margin-top: 8px;
-
-		&__divider {
-			border-left: 1px solid rgba( $white, 0.1 );
-		}
-
-		&__remove {
-			&.components-button {
-				color: $white;
-			}
-		}
 	}
 }
-
