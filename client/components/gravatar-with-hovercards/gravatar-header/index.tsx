@@ -1,14 +1,15 @@
 import page from '@automattic/calypso-router';
+import { ProfileData } from '@gravatar-com/hovercards';
 import AutoDirection from 'calypso/components/auto-direction';
 
-function getFallbackAvatarUrl( gravatarData ) {
+function getFallbackAvatarUrl( { avatarUrl }: { avatarUrl?: string } ): string {
 	const defaultUrl = 'https://www.gravatar.com/avatar/0?d=mm&s=256&r=G';
-	if ( ! gravatarData?.avatarUrl ) {
+	if ( ! avatarUrl ) {
 		return defaultUrl;
 	}
 
 	try {
-		const url = new URL( gravatarData?.avatarUrl );
+		const url = new URL( avatarUrl );
 		url.searchParams.set( 'd', 'mm' );
 		url.searchParams.set( 'r', 'G' );
 		url.searchParams.set( 's', '256' );
@@ -18,8 +19,20 @@ function getFallbackAvatarUrl( gravatarData ) {
 	}
 }
 
-function GravatarHeader( { gravatarData, processedAvatarUrl, userLogin, closeCard } ) {
-	const profileUrl = userLogin ? `/reader/users/${ userLogin }` : gravatarData.profileUrl;
+interface GravatarHeaderProps {
+	gravatarData: Partial< ProfileData >;
+	processedAvatarUrl?: string | null;
+	userLogin?: string;
+	closeCard: () => void;
+}
+
+function GravatarHeader( {
+	gravatarData,
+	processedAvatarUrl,
+	userLogin,
+	closeCard,
+}: GravatarHeaderProps ): JSX.Element {
+	const profileUrl = userLogin ? `/reader/users/${ userLogin }` : gravatarData.profileUrl!;
 
 	// We prefer the processedAvatarUrl from the gravatar hovercard itself, as they have logic to
 	// evaluate data and set params on the url. However, lets also provide a basic fallback being
@@ -27,7 +40,7 @@ function GravatarHeader( { gravatarData, processedAvatarUrl, userLogin, closeCar
 	// (default avatar, rating, and size).
 	const fallbackAvatarUrl = getFallbackAvatarUrl( gravatarData );
 
-	const clickProfileLink = ( e ) => {
+	const clickProfileLink = ( e: React.MouseEvent< HTMLAnchorElement > ) => {
 		e.preventDefault();
 		closeCard();
 		page( profileUrl );
