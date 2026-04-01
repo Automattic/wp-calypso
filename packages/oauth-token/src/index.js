@@ -5,6 +5,8 @@ import store from 'store';
  * Module variables
  */
 const TOKEN_NAME = 'wpcom_token';
+
+// Note: Cookies expect seconds for maxAge, not milliseconds. Leaving this as the existing default behavior for now though.
 const MAX_AGE = 365 * 24 * 60 * 60 * 1000; // How long to store the OAuth cookie
 
 export function getToken() {
@@ -23,15 +25,17 @@ export function getToken() {
 	return false;
 }
 
-export function setToken( token ) {
-	// TODO: Support secure cookies if this is ever used outside of the desktop app
-	document.cookie = cookie.serialize( TOKEN_NAME, token, { maxAge: MAX_AGE } );
+export function setToken( token, options = {} ) {
+	document.cookie = cookie.serialize( TOKEN_NAME, token, { maxAge: MAX_AGE, ...options } );
 }
 
-export function clearToken() {
+export function clearToken( path ) {
 	const cookies = cookie.parse( document.cookie );
 
 	if ( typeof cookies[ TOKEN_NAME ] !== 'undefined' ) {
-		document.cookie = cookie.serialize( TOKEN_NAME, false, { maxAge: -1 } );
+		document.cookie = cookie.serialize( TOKEN_NAME, '', {
+			maxAge: -1,
+			...( path ? { path } : {} ),
+		} );
 	}
 }

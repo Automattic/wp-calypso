@@ -4,6 +4,7 @@ import config from '@automattic/calypso-config';
 import { setUser } from '@automattic/calypso-sentry';
 import { isSupportUserSession } from '@automattic/calypso-support-session';
 import { magnificentNonEnLocales } from '@automattic/i18n-utils';
+import { clearToken } from '@automattic/oauth-token';
 import {
 	useQuery,
 	useQueryClient,
@@ -217,6 +218,7 @@ export async function logout( user: User ): Promise< void > {
 
 	disablePersistQueryClient();
 	clearQueryClient();
+	clearToken( '/' );
 
 	// Dynamically import Calypso v1 cleanup code because it includes a number
 	// of dependencies we don't want included in the Hosting Dashboard bundle.

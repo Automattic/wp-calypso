@@ -65,6 +65,7 @@ module.exports = {
 							'!@automattic/languages',
 							'!@automattic/load-script',
 							'!@automattic/number-formatters',
+							'!@automattic/oauth-token',
 							'!@automattic/search',
 							'!@automattic/calypso-razorpay',
 							'!@automattic/calypso-stripe',
