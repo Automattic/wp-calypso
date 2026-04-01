@@ -10,11 +10,10 @@ import { Badge } from '@automattic/ui';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useSearch } from '@tanstack/react-router';
 import { Button, __experimentalHStack as HStack } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo } from 'react';
 import { useAppContext } from '../../app/context';
+import { usePendingPrimaryDomain } from '../../app/hooks/use-pending-primary-domain';
 import { useLocale } from '../../app/locale';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { domainRoute } from '../../app/router/domains';
@@ -44,32 +43,8 @@ export default function DomainOverview() {
 
 	const { name: dashboardName } = useAppContext();
 	const isCiab = dashboardName === 'CIAB';
-	const isPending = isCiab && isPendingPrimaryDomain( domain );
-	const [ isDismissed, setIsDismissed ] = useState( false );
-
-	// Poll the domain query while the primary domain setup is in progress.
-	useQuery( {
-		...domainQuery( domainName ),
-		refetchInterval: isPending ? 5000 : false,
-		meta: { persist: false },
-	} );
-
-	// Show completion snackbar when primary domain setup finishes.
-	const { createSuccessNotice } = useDispatch( noticesStore );
-	const wasPendingRef = useRef( false );
-	useEffect( () => {
-		if ( wasPendingRef.current && ! isPending ) {
-			createSuccessNotice(
-				sprintf(
-					/* translators: %s is the domain name */
-					__( '%s is now your store’s primary address.' ),
-					domain.domain
-				),
-				{ type: 'snackbar' }
-			);
-		}
-		wasPendingRef.current = isPending;
-	}, [ isPending, createSuccessNotice, domain.domain ] );
+	const pendingDomainName = isCiab && isPendingPrimaryDomain( domain ) ? domain.domain : undefined;
+	const { isPending, isDismissed, dismiss } = usePendingPrimaryDomain( pendingDomainName );
 
 	const { data: purchase } = useSuspenseQuery(
 		purchaseQuery( parseInt( domain.subscription_id ?? '0', 10 ) )
@@ -169,10 +144,7 @@ export default function DomainOverview() {
 					<IcannSuspensionNotice domainName={ domain.domain } />
 				) }
 				{ isPending && ! isDismissed && (
-					<PendingPrimaryDomainNotice
-						domainName={ domain.domain }
-						onClose={ () => setIsDismissed( true ) }
-					/>
+					<PendingPrimaryDomainNotice domainName={ domain.domain } onClose={ dismiss } />
 				) }
 				{ domain.subtype.id !== DomainSubtype.DOMAIN_TRANSFER && (
 					<>

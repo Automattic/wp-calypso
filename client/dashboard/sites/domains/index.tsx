@@ -1,14 +1,12 @@
 import { siteBySlugQuery, siteRedirectQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
-import { useDispatch } from '@wordpress/data';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
-import { useEffect, useRef, useState } from 'react';
+import { __ } from '@wordpress/i18n';
 import { useAuth } from '../../app/auth';
 import { useAppContext } from '../../app/context';
+import { usePendingPrimaryDomain } from '../../app/hooks/use-pending-primary-domain';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { siteRoute, siteDomainsRoute, siteSettingsRedirectRoute } from '../../app/router/sites';
@@ -46,36 +44,10 @@ function SiteDomains() {
 	} );
 
 	const isCiab = dashboardName === 'CIAB';
-	const pendingDomain = isCiab ? siteDomains?.find( isPendingPrimaryDomain ) : undefined;
-	const hasPendingDomain = Boolean( pendingDomain );
-	const [ isDismissed, setIsDismissed ] = useState( false );
-
-	// Reset dismissed state when the pending domain changes.
-	useEffect( () => setIsDismissed( false ), [ pendingDomain?.domain ] );
-
-	// Poll while the primary domain setup is in progress.
-	useQuery( {
-		...queries.domainsQuery(),
-		refetchInterval: hasPendingDomain ? 5000 : false,
-		meta: { persist: false },
-	} );
-
-	// Show completion snackbar when primary domain setup finishes.
-	const { createSuccessNotice } = useDispatch( noticesStore );
-	const pendingDomainNameRef = useRef< string | null >( null );
-	useEffect( () => {
-		if ( pendingDomainNameRef.current && ! hasPendingDomain ) {
-			createSuccessNotice(
-				sprintf(
-					/* translators: %s is the domain name */
-					__( '%s is now your store’s primary address.' ),
-					pendingDomainNameRef.current
-				),
-				{ type: 'snackbar' }
-			);
-		}
-		pendingDomainNameRef.current = pendingDomain?.domain ?? null;
-	}, [ hasPendingDomain, pendingDomain?.domain, createSuccessNotice ] );
+	const pendingDomainFromList = isCiab ? siteDomains?.find( isPendingPrimaryDomain ) : undefined;
+	const { isPending, isDismissed, dismiss } = usePendingPrimaryDomain(
+		pendingDomainFromList?.domain
+	);
 
 	const { data: redirect, isLoading: isRedirectLoading } = useQuery( siteRedirectQuery( site.ID ) );
 	const hasRedirect = redirect && Object.keys( redirect ).length > 0;
@@ -114,10 +86,10 @@ function SiteDomains() {
 				! isRedirectLoading &&
 				siteDomains &&
 				! hasRedirect &&
-				( pendingDomain && ! isDismissed ? (
+				( isPending && ! isDismissed ? (
 					<PendingPrimaryDomainNotice
-						domainName={ pendingDomain.domain }
-						onClose={ () => setIsDismissed( true ) }
+						domainName={ pendingDomainFromList?.domain ?? '' }
+						onClose={ dismiss }
 					/>
 				) : (
 					<PrimaryDomainSelector domains={ siteDomains } site={ site } user={ user } />
