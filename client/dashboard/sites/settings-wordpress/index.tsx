@@ -1,3 +1,4 @@
+import { HostingFeatures } from '@automattic/api-core';
 import {
 	siteBySlugQuery,
 	siteWordPressVersionQuery,
@@ -15,15 +16,28 @@ import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { hasHostingFeature } from '../../utils/site-features';
 import { formatWordPressVersion } from '../../utils/wp-version';
+import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import type { Field } from '@wordpress/dataviews';
 
 export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const { data: currentVersion } = useQuery( siteWordPressVersionQuery( site.ID ) );
+	const canView = hasHostingFeature( site, HostingFeatures.SFTP );
 
-	const { data: latestVersion } = useQuery( wpOrgCoreVersionQuery() );
-	const { data: betaVersion } = useQuery( wpOrgCoreVersionQuery( 'beta' ) );
+	const { data: currentVersion } = useQuery( {
+		...siteWordPressVersionQuery( site.ID ),
+		enabled: canView,
+	} );
+
+	const { data: latestVersion } = useQuery( {
+		...wpOrgCoreVersionQuery(),
+		enabled: canView,
+	} );
+	const { data: betaVersion } = useQuery( {
+		...wpOrgCoreVersionQuery( 'beta' ),
+		enabled: canView,
+	} );
 
 	const mutation = useMutation( {
 		...siteWordPressVersionMutation( site.ID ),
@@ -83,33 +97,39 @@ export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) 
 				/>
 			}
 		>
-			<Card>
-				<CardBody>
-					<form onSubmit={ handleSubmit }>
-						<VStack spacing={ 4 }>
-							<NavigationBlocker shouldBlock={ isDirty } />
-							<DataForm< { version: string } >
-								data={ formData }
-								fields={ fields }
-								form={ form }
-								onChange={ ( edits: { version?: string } ) => {
-									setFormData( ( data ) => ( { ...data, ...edits } ) );
-								} }
-							/>
-							<ButtonStack justify="flex-start">
-								<Button
-									variant="primary"
-									type="submit"
-									isBusy={ isPending }
-									disabled={ isPending || ! isDirty }
-								>
-									{ __( 'Save' ) }
-								</Button>
-							</ButtonStack>
-						</VStack>
-					</form>
-				</CardBody>
-			</Card>
+			<HostingFeatureGatedWithCallout
+				site={ site }
+				feature={ HostingFeatures.SFTP }
+				upsellId="site-settings-wordpress"
+			>
+				<Card>
+					<CardBody>
+						<form onSubmit={ handleSubmit }>
+							<VStack spacing={ 4 }>
+								<NavigationBlocker shouldBlock={ isDirty } />
+								<DataForm< { version: string } >
+									data={ formData }
+									fields={ fields }
+									form={ form }
+									onChange={ ( edits: { version?: string } ) => {
+										setFormData( ( data ) => ( { ...data, ...edits } ) );
+									} }
+								/>
+								<ButtonStack justify="flex-start">
+									<Button
+										variant="primary"
+										type="submit"
+										isBusy={ isPending }
+										disabled={ isPending || ! isDirty }
+									>
+										{ __( 'Save' ) }
+									</Button>
+								</ButtonStack>
+							</VStack>
+						</form>
+					</CardBody>
+				</Card>
+			</HostingFeatureGatedWithCallout>
 		</PageLayout>
 	);
 }
