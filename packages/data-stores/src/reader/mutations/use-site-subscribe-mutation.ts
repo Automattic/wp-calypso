@@ -20,6 +20,7 @@ type SubscribeResponse = {
 	success?: boolean;
 	subscribed?: boolean;
 	subscription?: {
+		ID: string;
 		blog_ID: string;
 		delivery_frequency: string;
 		status: string;
@@ -68,7 +69,8 @@ const useSiteSubscribeMutation = () => {
 			if ( ! response.subscribed ) {
 				throw new Error(
 					// reminder: translate this string when we add it to the UI
-					'Something went wrong while subscribing.'
+					'Something went wrong while subscribing.',
+					{ cause: response.info }
 				);
 			}
 

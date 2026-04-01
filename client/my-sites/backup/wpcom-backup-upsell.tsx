@@ -4,6 +4,7 @@ import {
 	getPlan,
 } from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
+import { Page } from '@wordpress/admin-ui';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useCallback } from 'react';
@@ -12,8 +13,8 @@ import VaultPressLogo from 'calypso/assets/images/jetpack/vaultpress-logo.svg';
 import DocumentHead from 'calypso/components/data/document-head';
 import JetpackDisconnectedWPCOM from 'calypso/components/jetpack/jetpack-disconnected-wpcom';
 import WhatIsJetpack from 'calypso/components/jetpack/what-is-jetpack';
+import JetpackTitle from 'calypso/components/jetpack-title';
 import Main from 'calypso/components/main';
-import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
 import PromoCard from 'calypso/components/promo-section/promo-card';
@@ -278,12 +279,18 @@ export default function WPCOMUpsellPage( { reason }: { reason: string } ) {
 			body = <BackupUpsellBody />;
 	}
 	return (
-		<Main wideLayout className="backup__main backup__wpcom-upsell">
+		<Main fullWidthLayout className="backup__main backup__wpcom-upsell">
 			<DocumentHead title="Jetpack VaultPress Backup" />
 			<PageViewTracker path="/backup/:site" title="VaultPress Backup" />
-			<NavigationHeader navigationItems={ [] } title={ translate( 'Jetpack VaultPress Backup' ) } />
 
-			{ body }
+			<Page
+				hasPadding
+				showSidebarToggle={ false }
+				title={ <JetpackTitle title={ translate( 'Backup' ) } /> }
+				subTitle={ translate( 'Save changes and restore quickly with one-click recovery.' ) }
+			>
+				{ body }
+			</Page>
 		</Main>
 	);
 }

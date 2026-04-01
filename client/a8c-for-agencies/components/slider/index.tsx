@@ -1,6 +1,6 @@
 import { useResizeObserver } from '@wordpress/compose';
 import clsx from 'clsx';
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 
 import './style.scss';
 
@@ -66,10 +66,6 @@ export default function A4ASlider( {
 	const fillAreaLeft = `${ disabledEndPosition }px`;
 	const fillEndPosition = sliderSectionWidth * displayValue - valueOffset;
 	const fillAreaWidth = `${ Math.max( 0, fillEndPosition - disabledEndPosition + 1 ) }px`;
-
-	useEffect( () => {
-		onChange?.( options[ Math.max( value, normalizeMinimum ) ] );
-	}, [ normalizeMinimum, onChange, options, value ] );
 
 	return (
 		<div className={ clsx( 'a4a-slider', className ) }>

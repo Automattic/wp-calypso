@@ -1,11 +1,9 @@
-/* eslint-disable no-restricted-imports */
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { backup, chevronRight, external, Icon, rss, thumbsUp, video } from '@wordpress/icons';
+import { backup, chevronRight, external, Icon, page, rss, video } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useNavigate } from 'react-router-dom';
-import { showHelpCenterFeedbackSurvey } from 'calypso/lib/analytics/survicate';
 import { useFeatureConfig, useHelpCenterContext } from '../contexts/HelpCenterContext';
 
 import './help-center-more-resources.scss';
@@ -58,26 +56,23 @@ export const HelpCenterMoreResources = () => {
 						</div>
 					</li>
 				) }
-				{ featureConfig.moreResources.feedback &&
-					typeof window._sva !== 'undefined' &&
-					window._sva?.invokeEvent && (
-						<li className="help-center-more-resources__resource-item help-center-link__item">
-							<div className="help-center-more-resources__resource-cell help-center-link__cell">
-								<button
-									type="button"
-									onClick={ () => {
-										trackMoreResourcesButtonClick( 'feedback-survey' );
-										showHelpCenterFeedbackSurvey();
-									} }
-									className="help-center-more-resources__survicate"
-								>
-									<Icon icon={ thumbsUp } size={ 24 } />
-									<span>{ __( 'Share feedback', __i18n_text_domain__ ) }</span>
-									<Icon icon={ chevronRight } size={ 20 } />
-								</button>
-							</div>
-						</li>
-					) }
+				{ featureConfig.moreResources.supportGuidesUrl && (
+					<li className="help-center-more-resources__resource-item help-center-link__item">
+						<div className="help-center-more-resources__resource-cell help-center-link__cell">
+							<a
+								href={ featureConfig.moreResources.supportGuidesUrl }
+								rel="noreferrer"
+								target="_blank"
+								onClick={ () => trackMoreResourcesButtonClick( 'support-guides' ) }
+								className="help-center-more-resources__support-guides"
+							>
+								<Icon icon={ page } size={ 24 } />
+								<span>{ __( 'Support guides', __i18n_text_domain__ ) }</span>
+								<Icon icon={ external } size={ 20 } />
+							</a>
+						</div>
+					</li>
+				) }
 				{ featureConfig.moreResources.courses && (
 					<li className="help-center-more-resources__resource-item help-center-link__item">
 						<div className="help-center-more-resources__resource-cell help-center-link__cell">

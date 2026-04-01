@@ -4,16 +4,19 @@ import {
 	type MarkdownComponents,
 	type MarkdownExtensions,
 } from '@automattic/agenttic-ui';
+import { useSelect } from '@wordpress/data';
 import { useState, useCallback, useMemo, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { useNavigate } from 'react-router-dom';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
 import { useAgentsManagerContext } from '../../contexts';
+import useCheckpointAction from '../../hooks/use-checkpoint-action';
 import useConversation from '../../hooks/use-conversation';
-import useCopyMessage from '../../hooks/use-copy-message';
-import useFeedback from '../../hooks/use-feedback';
+import useCopyAction from '../../hooks/use-copy-action';
+import useFeedbackAction from '../../hooks/use-feedback-action';
 import useSaveNewChatRoute from '../../hooks/use-save-new-chat-route';
-import { setSessionId, getSessionId as getStoredSessionId } from '../../utils/agent-session';
-import { convertToolMessagesToComponents } from '../../utils/convert-tool-message-to-component';
+import convertToolMessagesToComponents from '../../utils/convert-tool-messages-to-components';
+import { persistLastActivity } from '../../utils/persist-last-activity';
 import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import type { BigSkyMessage } from '../../types';
@@ -24,8 +27,8 @@ import type {
 	UseSuggestionsHook,
 	SiteBuildUtils,
 	ImageUploadHook,
+	UseCheckpointHook,
 } from '../../utils/load-external-providers';
-import type { NavigateFunction } from 'react-router-dom';
 
 interface Props {
 	/** Suggestions displayed when the chat is empty. */
@@ -56,12 +59,12 @@ interface Props {
 	getChatComponent?: GetChatComponent;
 	/** Utilities for site building flow (e.g., progress tracking, site preview). */
 	siteBuildUtils?: SiteBuildUtils;
-	/** Navigate function from the router. */
-	navigate: NavigateFunction;
 	/** Hook for handling image uploads within the agent chat. */
 	useImageUpload?: ImageUploadHook;
-	/** Called when the message count changes. */
-	onMessagesCountChange: ( count: number ) => void;
+	/** Hook for saving and restoring editor state so that AI actions can be undone. */
+	useCheckpoint?: UseCheckpointHook;
+	/** Called when the has-messages state changes. */
+	onHasMessagesChange: ( hasMessages: boolean ) => void;
 }
 
 export default function OrchestratorChat( {
@@ -80,20 +83,25 @@ export default function OrchestratorChat( {
 	getChatComponent,
 	siteBuildUtils,
 	useImageUpload,
-	onMessagesCountChange,
-	navigate,
+	useCheckpoint,
+	onHasMessagesChange,
 }: Props ) {
-	const { agentConfig } = useAgentsManagerContext();
+	const { agentConfig, getActiveSessionId, siteKey } = useAgentsManagerContext();
 
+	const navigate = useNavigate();
 	const [ inputValue, setInputValue ] = useState( '' );
 	const [ isThinking, setIsThinking ] = useState( false );
 	const [ thinkingMessage, setThinkingMessage ] = useState< string | null >( null );
 	const [ isBuildingSite, setIsBuildingSite ] = useState( false );
 	const [ deletedMessageIds, setDeletedMessageIds ] = useState< Set< string > >( new Set() );
 
+	const currentPostId = useSelect( ( select ) => {
+		return ( select( 'core/editor' ) as { getCurrentPostId?: () => number } )?.getCurrentPostId?.();
+	}, [] );
+
 	// `agentConfig` is guaranteed non-null here because AgentSetup guards rendering
-	const sessionId = agentConfig!.sessionId;
 	const agentId = agentConfig!.agentId;
+	const configSessionId = agentConfig!.sessionId;
 
 	const {
 		addMessage,
@@ -107,12 +115,22 @@ export default function OrchestratorChat( {
 		clearSuggestions,
 		registerSuggestions,
 		registerMessageActions,
+		progressMessage,
 	} = useAgentChat( agentConfig! );
 
-	// Notify parent when message count changes
-	useEffect( () => {
-		onMessagesCountChange( messages.length );
-	}, [ messages.length, onMessagesCountChange ] );
+	const { isLoading: isLoadingConversation } = useConversation( {
+		onSuccess: ( loadedMessages, serverSessionId ) => {
+			// Update the UI with the loaded messages
+			loadMessages( loadedMessages );
+			// Make sure future messages go to the right session
+			getAgentManager().updateSessionId( agentId, serverSessionId );
+
+			// Sync local session ID with the server's
+			if ( configSessionId !== serverSessionId ) {
+				navigate( '/chat', { state: { sessionId: serverSessionId }, replace: true } );
+			}
+		},
+	} );
 
 	// Use dynamic suggestions from the external provider (e.g., Big Sky block-based suggestions)
 	const dynamicSuggestions = useSuggestions?.();
@@ -129,32 +147,21 @@ export default function OrchestratorChat( {
 		}
 	}, [ dynamicSuggestions?.suggestions, registerSuggestions, clearSuggestions ] );
 
-	const { isLoading: isLoadingConversation } = useConversation( {
-		onSuccess: ( loadedMessages, serverSessionId ) => {
-			// Update the UI with the loaded messages
-			loadMessages( loadedMessages );
-			// Make sure future messages go to the right session
-			getAgentManager().updateSessionId( agentId, serverSessionId );
+	// Persist the chat route so the conversation can be resumed later.
+	useSaveNewChatRoute( messages );
 
-			// Sync local session ID with the server's
-			if ( sessionId !== serverSessionId ) {
-				setSessionId( serverSessionId, agentId );
-				navigate( '/chat', { state: { sessionId: serverSessionId }, replace: true } );
-			}
-		},
-	} );
-
-	// Save new chat route for cross-domain conversation restore.
-	useSaveNewChatRoute( agentId, messages );
+	// Register an "Undo" action on agent messages with checkpoints.
+	const checkpoint = useCheckpoint?.();
+	useCheckpointAction( registerMessageActions, checkpoint );
 
 	// Register thumbs-up/down feedback actions on agent messages.
-	const { showFeedbackInput, submitFeedbackText, resetFeedback } = useFeedback( {
+	const { showFeedbackInput, submitFeedbackText, resetFeedback } = useFeedbackAction( {
 		registerMessageActions,
 		messages,
 	} );
 
 	// Register a "Copy" action on plain-text agent messages.
-	useCopyMessage( registerMessageActions );
+	useCopyAction( registerMessageActions );
 
 	const imageUpload = useImageUpload?.();
 	const pendingImages = imageUpload?.pendingImages || [];
@@ -162,6 +169,8 @@ export default function OrchestratorChat( {
 
 	const onSubmitWithImages = useCallback(
 		async ( message: string ) => {
+			persistLastActivity( siteKey );
+
 			if ( pendingImages.length > 0 && uploadImagesToWordPress ) {
 				try {
 					// Upload files to WordPress media library
@@ -196,7 +205,7 @@ export default function OrchestratorChat( {
 				onSubmit( message );
 			}
 		},
-		[ onSubmit, pendingImages.length, uploadImagesToWordPress ]
+		[ onSubmit, pendingImages.length, siteKey, uploadImagesToWordPress ]
 	);
 
 	// Handle navigation continuation if hook is provided
@@ -204,9 +213,34 @@ export default function OrchestratorChat( {
 	useNavigationContinuation?.( {
 		isProcessing,
 		onSubmit,
-		sessionId,
+		sessionId: getActiveSessionId(),
 		agentId,
 	} );
+
+	// Listen for inline suggestion clicks dispatched by Big Sky's InlineSuggestions component.
+	useEffect( () => {
+		const handleInlineSuggestionClick = ( event: Event ) => {
+			const { value } = ( event as CustomEvent ).detail;
+			if ( value ) {
+				const inputValue = value.endsWith( ' ' ) ? value : `${ value } `;
+				setInputValue( inputValue );
+
+				// Focus the textarea and set cursor position to end
+				const textarea = document.querySelector< HTMLTextAreaElement >(
+					'.agenttic .Textarea-module_textarea'
+				);
+				if ( textarea ) {
+					textarea.focus();
+					textarea.setSelectionRange( inputValue.length, inputValue.length );
+				}
+			}
+		};
+
+		window.addEventListener( 'big-sky-inline-suggestion-click', handleInlineSuggestionClick );
+		return () => {
+			window.removeEventListener( 'big-sky-inline-suggestion-click', handleInlineSuggestionClick );
+		};
+	}, [] );
 
 	// Invoke abilities setup hook to register hook-based abilities that utilize React context.
 	// Provides custom action handlers for agent and chat interaction within Big Sky's AI store.
@@ -238,12 +272,12 @@ export default function OrchestratorChat( {
 		},
 		// This ensures the same session ID is used between Big Sky and Calypso agents,
 		// so that messages will be stored in the same conversation.
-		getSessionId: () => sessionId || getStoredSessionId( agentId ),
+		getSessionId: getActiveSessionId,
 		setIsBuildingSite,
 		setThinkingMessage,
 	} );
 
-	const visibleMessages = useMemo( () => {
+	const displayedMessages = useMemo( () => {
 		let currentMessages = messages;
 
 		currentMessages = currentMessages.filter(
@@ -267,10 +301,12 @@ export default function OrchestratorChat( {
 		currentMessages = convertToolMessagesToComponents( {
 			messages: currentMessages,
 			getChatComponent,
+			currentPostId,
 		} );
 
 		return currentMessages;
 	}, [
+		currentPostId,
 		deletedMessageIds,
 		getChatComponent,
 		isBuildingSite,
@@ -279,22 +315,29 @@ export default function OrchestratorChat( {
 		thinkingMessage,
 	] );
 
+	// Notify parent when has-messages state changes.
+	const hasMessages = displayedMessages.length > 0;
+	useEffect( () => {
+		onHasMessagesChange( hasMessages );
+	}, [ hasMessages, onHasMessagesChange ] );
+
 	// Determine which suggestions to show following Big Sky's logic:
 	// - When there are dynamic suggestions (from block selection, etc.), show those
 	// - Otherwise, show empty view suggestions only when there are no messages AND no input text
 	let displayedEmptyViewSuggestions: Suggestion[] = [];
 	if ( suggestions.length > 0 ) {
 		displayedEmptyViewSuggestions = suggestions;
-	} else if ( visibleMessages.length === 0 && inputValue.length === 0 ) {
+	} else if ( displayedMessages.length === 0 && inputValue.length === 0 ) {
 		displayedEmptyViewSuggestions = emptyViewSuggestions;
 	}
 
 	return (
 		<AgentChat
-			messages={ visibleMessages }
+			messages={ displayedMessages }
 			suggestions={ suggestions }
 			emptyViewSuggestions={ displayedEmptyViewSuggestions }
 			isProcessing={ isProcessing || ( isThinking && ! isBuildingSite ) }
+			thinkingMessage={ progressMessage }
 			error={ error }
 			onSubmit={ onSubmitWithImages }
 			onAbort={ abortCurrentRequest }

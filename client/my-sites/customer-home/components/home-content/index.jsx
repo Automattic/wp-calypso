@@ -85,7 +85,11 @@ const HomeContent = ( {
 	const { data: layout, isLoading, error: homeLayoutError } = useHomeLayoutQuery( siteId );
 	const { skipCurrentView } = useSkipCurrentViewMutation( siteId );
 
-	const { data: allDomains = [], isSuccess } = useGetDomainsQuery( site?.ID ?? null, {
+	const {
+		data: allDomains = [],
+		isSuccess,
+		isFetchedAfterMount,
+	} = useGetDomainsQuery( site?.ID ?? null, {
 		retry: false,
 	} );
 
@@ -111,10 +115,10 @@ const HomeContent = ( {
 	usePurchasePlanNotification( siteId, site?.plan?.product_slug );
 
 	useEffect( () => {
-		if ( getQueryArgs().celebrateLaunch === 'true' && isSuccess ) {
+		if ( getQueryArgs().celebrateLaunch === 'true' && isSuccess && isFetchedAfterMount ) {
 			setCelebrateLaunchModalIsOpen( true );
 		}
-	}, [ isSuccess ] );
+	}, [ isSuccess, isFetchedAfterMount ] );
 
 	useEffect( () => {
 		if ( ! isSiteLaunching && launchedSiteId === siteId ) {

@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { isAllowedRedirectUrl } from '@automattic/calypso-url';
 import {
 	SUCCESS,
 	ERROR,
@@ -258,8 +259,30 @@ function interpolateReceiptId( url: string, receiptId: number ): string {
  * which is absolute and on an unknown host.
  */
 function isRedirectAllowed( url: string, siteSlug: string | undefined ): boolean {
-	if ( url.startsWith( '/' ) ) {
+	// Allow relative paths (but not protocol-relative URLs like //evil.com).
+	if ( url.startsWith( '/' ) && ! url.startsWith( '//' ) ) {
 		return true;
+	}
+
+	// Handle subdirectory sites (e.g., siteSlug = 'example.com::blog') which need
+	// both hostname and path matching. If the URL matches the subdirectory site,
+	// allow it; otherwise fall through to the general allowlist check below.
+	if ( siteSlug?.includes( '::' ) && ! url.startsWith( '/' ) ) {
+		try {
+			const parsedUrl = new URL( url );
+			if ( parsedUrl.protocol === 'https:' || parsedUrl.protocol === 'http:' ) {
+				const [ hostnameFromSlug, ...subdirectoryParts ] = siteSlug.split( '::' );
+				const subdirectoryPathFromSlug = subdirectoryParts.join( '/' );
+				if (
+					parsedUrl.hostname === hostnameFromSlug &&
+					parsedUrl.pathname?.startsWith( `/${ subdirectoryPathFromSlug }` )
+				) {
+					return true;
+				}
+			}
+		} catch {
+			return false;
+		}
 	}
 
 	const allowedHostsForRedirect = [
@@ -278,45 +301,12 @@ function isRedirectAllowed( url: string, siteSlug: string | undefined ): boolean
 		'difmrequest.com',
 		'agencies.automattic.com',
 		'agencies.localhost',
-		siteSlug,
+		...( siteSlug ? [ siteSlug.includes( '::' ) ? siteSlug.split( '::' )[ 0 ] : siteSlug ] : [] ),
 	];
 
-	try {
-		const parsedUrl = new URL( url );
-		const { hostname, pathname } = parsedUrl;
-		if ( ! hostname ) {
-			return false;
-		}
-
-		// For subdirectory site, check that both hostname and subdirectory matches
-		// the siteSlug (host.name::subdirectory).
-		if ( siteSlug?.includes( '::' ) ) {
-			const [ hostnameFromSlug, ...subdirectoryParts ] = siteSlug.split( '::' );
-			const subdirectoryPathFromSlug = subdirectoryParts.join( '/' );
-			if (
-				hostname !== hostnameFromSlug &&
-				! pathname?.startsWith( `/${ subdirectoryPathFromSlug }` )
-			) {
-				return false;
-			}
-			return true;
-		}
-
-		// Return true for *.calypso.live urls.
-		if ( /^([a-zA-Z0-9-]+\.)?calypso\.live$/.test( hostname ) ) {
-			return true;
-		}
-
-		if ( ! allowedHostsForRedirect.includes( hostname ) ) {
-			return false;
-		}
-
-		return true;
-	} catch ( err ) {
-		// eslint-disable-next-line no-console
-		console.error( `Redirecting to absolute url '${ url }' failed:`, err );
-	}
-	return false;
+	return isAllowedRedirectUrl( url, allowedHostsForRedirect, [
+		/^([a-zA-Z0-9-]+\.)?calypso\.live$/,
+	] );
 }
 
 /**

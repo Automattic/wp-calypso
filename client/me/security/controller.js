@@ -3,6 +3,7 @@ import i18n from 'i18n-calypso';
 import { createElement } from 'react';
 import { getSocialServiceFromClientId } from 'calypso/lib/login';
 import ConnectedAppsComponent from 'calypso/me/connected-applications';
+import DollyComponent from 'calypso/me/dolly';
 import PasswordComponent from 'calypso/me/security/main';
 import SecurityAccountEmail from 'calypso/me/security-account-email';
 import AccountRecoveryComponent from 'calypso/me/security-account-recovery';
@@ -82,6 +83,13 @@ export function socialLogin( context, next ) {
 		path: context.path,
 		socialService,
 		socialServiceResponse,
+	} );
+	next();
+}
+
+export function dolly( context, next ) {
+	context.primary = createElement( DollyComponent, {
+		path: context.path,
 	} );
 	next();
 }

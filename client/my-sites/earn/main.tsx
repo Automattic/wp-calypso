@@ -1,10 +1,11 @@
 import { localizeUrl } from '@automattic/i18n-utils';
+import { Page } from '@wordpress/admin-ui';
 import { useTranslate } from 'i18n-calypso';
 import { capitalize, find } from 'lodash';
 import DocumentHead from 'calypso/components/data/document-head';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import JetpackTitle from 'calypso/components/jetpack-title';
 import Main from 'calypso/components/main';
-import NavigationHeader from 'calypso/components/navigation-header';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
@@ -53,7 +54,7 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 		'ads-settings': translate( '%(wordads)s Settings', { args: { wordads: adsProgramName } } ),
 		'ads-payments': translate( '%(wordads)s Payments', { args: { wordads: adsProgramName } } ),
 		payments: translate( 'Payment Settings' ),
-		'paid-subscriptions': translate( 'Active Paid Subscriptions' ),
+		'paid-subscriptions': translate( 'Paid Subscribers' ),
 		'refer-a-friend': translate( 'Refer-a-Friend Program' ),
 	};
 
@@ -66,7 +67,7 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 				id: 'earn',
 			},
 			{
-				title: translate( 'Active Paid Subscriptions' ),
+				title: translate( 'Paid Subscribers' ),
 				path: earnPath + '/paid-subscriptions' + pathSuffix,
 				id: 'paid-subscriptions',
 			},
@@ -189,7 +190,7 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 
 	const getEarnSectionNav = () => {
 		return (
-			<div id="earn-navigation">
+			<div className="earn-navigation">
 				<SectionNav
 					selectedText={ getEarnSelectedText() }
 					variation={ ! isJetpackCloud() ? 'minimal' : '' }
@@ -240,8 +241,20 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 
 	const atomicLearnMoreLink = localizeUrl( 'https://wordpress.com/support/monetize-your-site/' );
 	const jetpackLearnMoreLink = localizeUrl( 'https://jetpack.com/support/monetize-your-site/' );
+	const showPageHeader = ! isSinglePaidSubscriptionSection( section );
+
+	const content = (
+		<>
+			{ showPageHeader && getEarnSectionNav() }
+			<div className="earn-content">
+				{ isAdSection( section ) && getAdsHeader() }
+				{ getComponent( section ) }
+			</div>
+		</>
+	);
+
 	return (
-		<Main wideLayout className="earn">
+		<Main fullWidthLayout={ showPageHeader } wideLayout={ ! showPageHeader } className="earn">
 			<PageViewTracker
 				path={ section ? `${ earnPath }/${ section }/:site` : `${ earnPath }/:site` }
 				title={ `${ adsProgramName } ${ capitalize( section ) }` }
@@ -249,33 +262,32 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 			<DocumentHead
 				title={ layoutTitles[ section as keyof typeof layoutTitles ] ?? translate( 'Monetize' ) }
 			/>
-			{ ! isSinglePaidSubscriptionSection( section ) && (
-				<>
-					<NavigationHeader
-						navigationItems={ [] }
-						title={ translate( 'Monetize' ) }
-						subtitle={ translate(
-							'Explore tools to earn money with your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-							{
-								components: {
-									learnMoreLink: isJetpackCloud() ? (
-										<a
-											href={ isJetpackNotAtomic ? jetpackLearnMoreLink : atomicLearnMoreLink }
-											target="_blank"
-											rel="noopener noreferrer"
-										/>
-									) : (
-										<InlineSupportLink supportContext="earn" showIcon={ false } />
-									),
-								},
-							}
-						) }
-					/>
-					{ getEarnSectionNav() }
-				</>
+			{ showPageHeader ? (
+				<Page
+					showSidebarToggle={ false }
+					title={ <JetpackTitle title={ translate( 'Monetize' ) } /> }
+					subTitle={ translate(
+						'Explore tools to earn money with your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+						{
+							components: {
+								learnMoreLink: isJetpackCloud() ? (
+									<a
+										href={ isJetpackNotAtomic ? jetpackLearnMoreLink : atomicLearnMoreLink }
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								) : (
+									<InlineSupportLink supportContext="earn" showIcon={ false } />
+								),
+							},
+						}
+					) }
+				>
+					{ content }
+				</Page>
+			) : (
+				content
 			) }
-			{ isAdSection( section ) && getAdsHeader() }
-			{ getComponent( section ) }
 		</Main>
 	);
 };

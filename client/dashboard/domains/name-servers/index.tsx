@@ -11,6 +11,7 @@ import { useMemo, useCallback } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useAuth } from '../../app/auth';
 import Breadcrumbs from '../../app/breadcrumbs';
+import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { domainRoute } from '../../app/router/domains';
 import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -103,6 +104,7 @@ export default function NameServers() {
 					/>
 				</CardBody>
 			</Card>
+			<PerformanceTrackerStop />
 		</PageLayout>
 	);
 }

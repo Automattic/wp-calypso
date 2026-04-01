@@ -104,10 +104,17 @@ function getSignupDestination( { siteSlug, redirect_to, localeSlug, flowName } )
 }
 
 function getLaunchDestination( dependencies ) {
+	if ( dependencies.refParameter === 'wp-admin' ) {
+		return addQueryArgs(
+			{ 'celebrate-launch': 'true' },
+			`https://${ dependencies.siteSlug }/wp-admin`
+		);
+	}
+
 	return addQueryArgs( { celebrateLaunch: 'true' }, `/home/${ dependencies.siteSlug }` );
 }
 
-function getDomainSignupFlowDestination( { siteId, designType, siteSlug } ) {
+function getDomainSignupFlowDestination( { designType, siteSlug } ) {
 	const dashboardType = new URLSearchParams( window.location.search ).get( 'dashboard' );
 
 	// This designType represents a new site.
@@ -116,7 +123,7 @@ function getDomainSignupFlowDestination( { siteId, designType, siteSlug } ) {
 			return dashboardLink( `/sites/${ siteSlug }/domains` );
 		}
 
-		return addQueryArgs( { siteId }, '/start/setup-site' );
+		return `/home/${ siteSlug }`;
 	} else if ( designType === 'existing-site' ) {
 		if ( dashboardType ) {
 			return dashboardLink( `/sites/${ siteSlug }/domains` );
@@ -135,10 +142,6 @@ function getEmailSignupFlowDestination( { siteId, siteSlug } ) {
 		{ siteId },
 		`/checkout/thank-you/features/email-license/${ siteSlug }/:receiptId`
 	);
-}
-
-function getChecklistThemeDestination( { siteSlug } ) {
-	return `/home/${ siteSlug }`;
 }
 
 function getWithThemeDestination( {
@@ -182,30 +185,6 @@ function getEditorDestination( dependencies ) {
 	return `/page/${ dependencies.siteSlug }/home`;
 }
 
-function getDestinationFromIntent( dependencies ) {
-	const { intent, storeType, startingPoint, siteSlug } = dependencies;
-	// If the user skips starting point, redirect them to My Home
-	if ( intent === 'write' && startingPoint !== 'skip-to-my-home' ) {
-		if ( startingPoint !== 'write' ) {
-			window.sessionStorage.setItem( 'wpcom_signup_complete_show_draft_post_modal', '1' );
-		}
-
-		return `/post/${ siteSlug }`;
-	}
-
-	if ( intent === 'sell' && storeType === 'power' ) {
-		return addQueryArgs(
-			{
-				back_to: `/start/setup-site/store-features?siteSlug=${ siteSlug }`,
-				siteSlug: siteSlug,
-			},
-			`/start/woocommerce-install`
-		);
-	}
-
-	return getChecklistThemeDestination( dependencies );
-}
-
 function getDIFMSignupDestination( { siteId } ) {
 	return addQueryArgs( { siteId }, '/start/site-content-collection' );
 }
@@ -227,7 +206,6 @@ const flows = generateFlows( {
 	getWithThemeDestination,
 	getWithPluginDestination,
 	getEditorDestination,
-	getDestinationFromIntent,
 	getDIFMSignupDestination,
 	getDIFMSiteContentCollectionDestination,
 	getHostingFlowDestination,

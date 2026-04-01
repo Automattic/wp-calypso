@@ -12,6 +12,16 @@ export const gravatarClientData = {
 };
 
 export const initialClientsData = {
+	11: {
+		id: 11,
+		name: 'wordpress-app-ios',
+		title: 'WordPress for iOS',
+	},
+	2697: {
+		id: 2697,
+		name: 'wordpress-app-android',
+		title: 'WordPress for Android',
+	},
 	930: {
 		id: 930,
 		name: 'vaultpress',
@@ -133,6 +143,18 @@ export const initialClientsData = {
 		name: 'blaze-pro',
 		title: 'Blaze Pro',
 		url: 'https://blazepro.tumblr.com',
+	},
+	134404: {
+		id: 134404,
+		name: 'ciab',
+		title: 'CIAB by Woo',
+		url: 'https://my.woo.ai',
+	},
+	134405: {
+		id: 134405,
+		name: 'ciab',
+		title: 'CIAB by Woo',
+		url: 'https://my.woo.ai',
 	},
 };
 

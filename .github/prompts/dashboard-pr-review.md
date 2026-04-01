@@ -23,7 +23,8 @@ Review the PR based on the following documentation files as the guidelines:
 - Do NOT try to list recent PRs when reviewing - you do not have permission to do so.
 - Use `mcp__github_inline_comment__create_inline_comment` to post feedback directly on specific lines.
 - Provide fix suggestions in each comment.
-- Don't nitpick minor style issues unless they violate project guidelines.
+- Do NOT nitpick minor style issues unless they violate project guidelines.
+- Do NOT suggest to add new tests other than for top-level React components in a TanStack Router route.
 - Before suggesting alternative implementations, check if the PR description already addresses why that approach wasn't used.
 
 ## Output Format

@@ -552,15 +552,7 @@ function FreePrice( { shouldUpgrade } ) {
 		<>
 			{ translate( 'Free' ) }
 			{ ( ! isLoggedIn || ! selectedSite || shouldUpgrade ) && (
-				<span className="plugin-details-cta__notice">
-					{ translate(
-						// Translators: %(planName)s is the name of a plan (e.g. Creator or Business)
-						'on %(planName)s plan',
-						{
-							args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
-						}
-					) }
-				</span>
+				<span className="plugin-details-cta__notice">{ translate( 'on paid plans' ) }</span>
 			) }
 		</>
 	);

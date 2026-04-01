@@ -170,6 +170,7 @@ import {
 	isAkismetTemporarySitePurchase,
 	isMarketplaceTemporarySitePurchase,
 	isA4ATemporarySitePurchase,
+	isA4ABillingDragonPurchase,
 	getCancelPurchaseSurveyCompletedPreferenceKey,
 } from '../utils';
 import PurchaseNotice from './notices';
@@ -370,11 +371,12 @@ class ManagePurchase extends Component<
 			return null;
 		}
 		if (
-			isPartnerPurchase( purchase ) ||
+			( isPartnerPurchase( purchase ) && ! isA4ABillingDragonPurchase( purchase ) ) ||
 			! isRenewable( purchase ) ||
 			( ! this.props.site &&
 				! isAkismetTemporarySitePurchase( purchase ) &&
-				! isMarketplaceTemporarySitePurchase( purchase ) ) ||
+				! isMarketplaceTemporarySitePurchase( purchase ) &&
+				! isA4ABillingDragonPurchase( purchase ) ) ||
 			isAkismetFreeProduct( purchase ) ||
 			( is100Year( purchase ) && ! isCloseToExpiration( purchase ) )
 		) {
@@ -404,6 +406,10 @@ class ManagePurchase extends Component<
 	renderUpgradeButton( preventRenewal: boolean ) {
 		const { purchase, translate } = this.props;
 		if ( ! purchase ) {
+			return null;
+		}
+
+		if ( isPartnerPurchase( purchase ) || isA4ABillingDragonPurchase( purchase ) ) {
 			return null;
 		}
 
@@ -448,11 +454,12 @@ class ManagePurchase extends Component<
 		}
 
 		if (
-			isPartnerPurchase( purchase ) ||
+			( isPartnerPurchase( purchase ) && ! isA4ABillingDragonPurchase( purchase ) ) ||
 			! isRenewable( purchase ) ||
 			( ! this.props.site &&
 				! isAkismetTemporarySitePurchase( purchase ) &&
-				! isMarketplaceTemporarySitePurchase( purchase ) ) ||
+				! isMarketplaceTemporarySitePurchase( purchase ) &&
+				! isA4ABillingDragonPurchase( purchase ) ) ||
 			isAkismetFreeProduct( purchase )
 		) {
 			return null;
@@ -580,6 +587,10 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
+		if ( isPartnerPurchase( purchase ) || isA4ABillingDragonPurchase( purchase ) ) {
+			return null;
+		}
+
 		const isUpgradeablePlan =
 			purchase &&
 			isPlan( purchase ) &&
@@ -647,14 +658,15 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
-		if ( isPartnerPurchase( purchase ) ) {
+		if ( isPartnerPurchase( purchase ) && ! isA4ABillingDragonPurchase( purchase ) ) {
 			return null;
 		}
 
 		if (
 			! this.props.site &&
 			! isAkismetTemporarySitePurchase( purchase ) &&
-			! isMarketplaceTemporarySitePurchase( purchase )
+			! isMarketplaceTemporarySitePurchase( purchase ) &&
+			! isA4ABillingDragonPurchase( purchase )
 		) {
 			return null;
 		}
@@ -1394,7 +1406,7 @@ class ManagePurchase extends Component<
 									: purchaseType( purchase ) }
 							</div>
 							<div className="manage-purchase__price">
-								{ isPartnerPurchase( purchase ) ? (
+								{ isPartnerPurchase( purchase ) && ! isA4ABillingDragonPurchase( purchase ) ? (
 									<div className="manage-purchase__contact-partner">
 										{ translate( 'Please contact %(partnerName)s for details', {
 											args: {
@@ -1424,7 +1436,7 @@ class ManagePurchase extends Component<
 						) }
 					</header>
 					{ this.renderPurchaseDescription() }
-					{ ! isPartnerPurchase( purchase ) && (
+					{ ( ! isPartnerPurchase( purchase ) || isA4ABillingDragonPurchase( purchase ) ) && (
 						<PurchaseMeta
 							purchaseId={ purchase.id }
 							siteSlug={ siteSlug }
@@ -1433,6 +1445,7 @@ class ManagePurchase extends Component<
 							getChangePaymentMethodUrlFor={
 								getChangePaymentMethodUrlFor ?? getChangePaymentMethodPath
 							}
+							isA4ABillingDragonPurchase={ isA4ABillingDragonPurchase( purchase ) }
 						/>
 					) }
 				</Card>

@@ -5,13 +5,8 @@ import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link';
 import { areEqualIgnoringWhitespaceAndCase } from 'calypso/lib/string';
 import { getStreamUrl } from 'calypso/reader/route';
-import { recordPermalinkClick } from 'calypso/reader/stats';
 
 const ReaderFullPostHeaderMeta = ( { post, author, siteName, feedId, siteId } ) => {
-	const recordDateClick = () => {
-		recordPermalinkClick( 'timestamp_full_post', post );
-	};
-
 	const streamUrl = getStreamUrl( feedId, siteId );
 
 	const hasAuthorName = author?.name;
@@ -32,18 +27,27 @@ const ReaderFullPostHeaderMeta = ( { post, author, siteName, feedId, siteId } ) 
 			<div className="reader-full-post__header-meta-info">
 				<div className="reader-full-post__header-meta-line-1">
 					{ showAuthorLink && (
-						<>
-							<ReaderAuthorLink
-								className="reader-full-post__header-meta-author"
-								author={ author }
-								siteUrl={ streamUrl }
-								post={ post }
-							>
-								{ author.name }
-							</ReaderAuthorLink>
-							<span className="reader-full-post__header-meta-separator"> • </span>
-						</>
+						<ReaderAuthorLink
+							className="reader-full-post__header-meta-author"
+							author={ author }
+							siteUrl={ streamUrl }
+							post={ post }
+						>
+							{ author.name }
+						</ReaderAuthorLink>
 					) }
+					{ showAuthorLink && post.date && (
+						<span className="reader-full-post__header-meta-separator"> • </span>
+					) }
+					{ post.date && (
+						<span className="reader-full-post__header-meta-date">
+							<span className="reader-full-post__header-meta-date-text">
+								<TimeSince date={ post.date } />
+							</span>
+						</span>
+					) }
+				</div>
+				<div className="reader-full-post__header-meta-line-2">
 					{ siteName && (
 						<ReaderSiteStreamLink
 							className="reader-full-post__header-meta-site-link"
@@ -53,23 +57,6 @@ const ReaderFullPostHeaderMeta = ( { post, author, siteName, feedId, siteId } ) 
 						>
 							{ siteName }
 						</ReaderSiteStreamLink>
-					) }
-				</div>
-				<div className="reader-full-post__header-meta-line-2">
-					{ post.date && (
-						<>
-							<span className="reader-full-post__header-meta-date">
-								<a
-									className="reader-full-post__header-meta-date-link"
-									onClick={ recordDateClick }
-									href={ post.URL }
-									target="_blank"
-									rel="noopener noreferrer"
-								>
-									<TimeSince date={ post.date } />
-								</a>
-							</span>
-						</>
 					) }
 				</div>
 			</div>

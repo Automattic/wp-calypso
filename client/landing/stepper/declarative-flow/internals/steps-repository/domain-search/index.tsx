@@ -78,7 +78,7 @@ const DomainSearchStep: StepType< {
 	const siteSlug = useSiteSlugParam();
 	const siteId = useSiteIdParam();
 	const queryParams = useQuery();
-	const initialQuery = queryParams.get( 'new' ) ?? '';
+	const queryParamNew = queryParams.get( 'new' ) ?? '';
 	const tldQuery = queryParams.get( 'tld' );
 	const source = queryParams.get( 'source' );
 	const backTo = queryParams.get( 'back_to' ) ?? '';
@@ -87,6 +87,11 @@ const DomainSearchStep: StepType< {
 	const { __ } = useI18n();
 
 	const isCiab = dashboard === 'ciab';
+
+	// For CIAB sites, prefer the site title over the slug for domain suggestions
+	// since the slug is often randomly generated.
+	const siteTitle = isCiab && site?.name?.trim() ? site.name.trim() : '';
+	const initialQuery = queryParamNew || siteTitle;
 
 	// eslint-disable-next-line no-nested-ternary
 	const currentSiteUrl = site?.URL ? site.URL : siteSlug ? `https://${ siteSlug }` : undefined;
@@ -113,8 +118,12 @@ const DomainSearchStep: StepType< {
 				hidePrice: isHundredYearPlanFlow( flow ),
 				oneTimePrice: isHundredYearDomainFlow( flow ),
 			},
-			includeDotBlogSubdomain: isNewsletterFlow( flow ),
 			skippable:
+				! isHundredYearPlanFlow( flow ) &&
+				! isHundredYearDomainFlow( flow ) &&
+				! isDomainFlow( flow ) &&
+				! isDomainAndPlanFlow( flow ),
+			includeDotBlogSubdomain:
 				! isHundredYearPlanFlow( flow ) &&
 				! isHundredYearDomainFlow( flow ) &&
 				! isDomainFlow( flow ) &&
@@ -374,13 +383,7 @@ const DomainSearchStep: StepType< {
 			} else if ( 'general-settings' === source && siteSlug ) {
 				backDestination = `/settings/general/${ siteSlug }`;
 				backLabelText = __( 'Back to General Settings' );
-			} else if ( ! isOnboardingFlow( flow ) && navigation.goBack ) {
-				backDestination = navigation.goBack;
-				backLabelText = __( 'Back' );
 			} else {
-				backDestination = defaultBackUrl;
-				backLabelText = sitesBackLabelText;
-
 				const isSafeBackTo =
 					isRelativeUrl( backTo ) ||
 					dashboardOrigins().some( ( origin ) => backTo?.startsWith( origin ) );
@@ -388,6 +391,12 @@ const DomainSearchStep: StepType< {
 				if ( isSafeBackTo ) {
 					backDestination = backTo;
 					backLabelText = __( 'Back' );
+				} else if ( ! isOnboardingFlow( flow ) && navigation.goBack ) {
+					backDestination = navigation.goBack;
+					backLabelText = __( 'Back' );
+				} else {
+					backDestination = defaultBackUrl;
+					backLabelText = sitesBackLabelText;
 				}
 			}
 

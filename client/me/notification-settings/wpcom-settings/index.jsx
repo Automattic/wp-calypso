@@ -38,6 +38,7 @@ const options = {
 	digest: 'digest',
 	reports: 'reports',
 	news_developer: 'news_developer',
+	ai_tips: 'ai_tips',
 	scheduled_updates: 'scheduled_updates',
 };
 
@@ -171,6 +172,15 @@ class WPCOMNotifications extends Component {
 					title={ translate( 'Developer Newsletter' ) }
 					description={ translate(
 						'A once-monthly roundup of notable news for WordPress developers.'
+					) }
+				/>
+
+				<EmailCategory
+					name={ options.ai_tips }
+					isEnabled={ get( settings, options.ai_tips ) }
+					title={ translate( 'AI Tips' ) }
+					description={ translate(
+						'AI insights, breakthroughs, tips, and new feature highlights.'
 					) }
 				/>
 

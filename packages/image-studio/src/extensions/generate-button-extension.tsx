@@ -33,7 +33,7 @@ export const withImageStudioGenerateButton = createHigherOrderComponent(
 			const { openImageStudio } = dispatch( imageStudioStore );
 
 			const handleClose = useCallback(
-				( image: ImageData ) => {
+				( image: ImageData | null ) => {
 					handleImageSelection( {
 						image,
 						onSelect,
@@ -44,7 +44,7 @@ export const withImageStudioGenerateButton = createHigherOrderComponent(
 			);
 
 			const handleOpen = () => {
-				openImageStudio( undefined, handleClose, ImageStudioEntryPoint.EditorBlock );
+				openImageStudio( undefined, handleClose, ImageStudioEntryPoint.EditorBlock, name );
 
 				trackImageStudioOpened( {
 					mode: ImageStudioMode.Edit,

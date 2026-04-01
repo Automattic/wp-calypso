@@ -1,6 +1,7 @@
 import {
 	listConversationsFromServer,
 	createOdieBotId,
+	isOdieBotId,
 	type ServerConversationListItem,
 } from '@automattic/agenttic-client';
 import { useGetZendeskConversations } from '@automattic/zendesk-client';
@@ -18,7 +19,7 @@ export default function useConversationList() {
 	const { agentId, authProvider } = agentConfig!;
 	const urlSearchParams = new URLSearchParams( window.location.search );
 	const hasAgentParam = urlSearchParams.has( 'agent' );
-	const botId = hasAgentParam ? agentId : createOdieBotId( agentId );
+	const botId = hasAgentParam || isOdieBotId( agentId ) ? agentId : createOdieBotId( agentId );
 	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
 
 	// Only fetch Zendesk conversations if the unified agent flag is enabled

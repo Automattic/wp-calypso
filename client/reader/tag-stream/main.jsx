@@ -168,6 +168,7 @@ class TagStream extends Component {
 				streamHeader={ tagHeader }
 				showSiteNameOnCards={ false }
 				useCompactCards
+				wideLayout
 				{ ...sidebarProps }
 			>
 				<QueryReaderFollowedTags />

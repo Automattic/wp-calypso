@@ -1,10 +1,11 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { formatCurrency, formatNumberCompact } from '@automattic/number-formatters';
 import { external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useCallback, useEffect, useMemo } from 'react';
+import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
+import useKeyedPersistence from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-keyed-persistence';
 import useProductAndPlans from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-product-and-plans';
+import useSliderPersistence from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-slider-persistence';
 import {
 	PLAN_CATEGORY_SIGNATURE,
 	PLAN_CATEGORY_SIGNATURE_HIGH,
@@ -16,8 +17,7 @@ import getPressablePlan, {
 	PressablePlan,
 } from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/lib/get-pressable-plan';
 import PlanSelectionFilter from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/plan-selection/filter';
-import { useDispatch, useSelector } from 'calypso/state';
-import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import HostingPlanSection from '../../common/hosting-plan-section';
 import CustomPlanCardContent from './custom-plan-card-content';
@@ -86,9 +86,18 @@ export default function PressablePlanSection( {
 
 	const existingPressablePlan = isReferralMode ? null : existingPlanInfo;
 
-	const [ selectedTab, setSelectedTab ] = useState(
-		getSelectedTab( existingPressablePlan, areSignaturePlans )
-	);
+	const [ selectedTab, setSelectedTab ] = useSliderPersistence( {
+		key: 'pressable-tab',
+		defaultValue: getSelectedTab( existingPressablePlan, areSignaturePlans ),
+	} );
+
+	// Persist the selected plan slug per-tab
+	const [ , setPersistedPlanSlug, getPersistedPlanSlug ] = useKeyedPersistence< string | null >( {
+		storageKey: 'pressable-plan',
+		currentKey: selectedTab,
+		defaultValue: null,
+	} );
+
 	const [ selectedPlan, setSelectedPlan ] = useState< APIProductFamilyProduct | null >( null );
 
 	const dispatch = useDispatch();
@@ -100,8 +109,6 @@ export default function PressablePlanSection( {
 
 	const selectedPlanInfo = selectedPlan ? getPressablePlan( selectedPlan.slug ) : null;
 
-	const isBDBillingSystem = useSelector( getActiveAgency )?.billing_system === 'billingdragon';
-
 	const filteredPressablePlans = useMemo( () => {
 		if ( ! pressablePlans ) {
 			return [];
@@ -111,8 +118,7 @@ export default function PressablePlanSection( {
 			return pressablePlans.filter(
 				( plan ) =>
 					plan.slug.startsWith( 'pressable-signature-' ) ||
-					( isEnabled( 'a4a-pressable-premium-plans' ) &&
-						plan.slug.startsWith( 'pressable-premium-' ) )
+					plan.slug.startsWith( 'pressable-premium-' )
 			);
 		}
 
@@ -123,31 +129,82 @@ export default function PressablePlanSection( {
 		);
 	}, [ pressablePlans, areSignaturePlans ] );
 
-	useEffect( () => {
-		if ( pressablePlans?.length ) {
-			let defaultSlug = areSignaturePlans ? 'pressable-signature-1' : 'pressable-build';
+	// Track initialization to prevent effects from fighting each other
+	const isInitialized = useRef( false );
 
-			if ( selectedTab === PLAN_CATEGORY_PREMIUM ) {
-				defaultSlug = 'pressable-premium-1';
+	// Restore plan for current tab when tab changes or on init
+	useEffect( () => {
+		if ( ! pressablePlans?.length ) {
+			return;
+		}
+
+		// Read persisted plan synchronously to avoid race condition on tab switch
+		const persistedSlug = getPersistedPlanSlug( selectedTab );
+		if ( persistedSlug ) {
+			const persistedPlan = pressablePlans.find( ( p ) => p.slug === persistedSlug );
+			if ( persistedPlan ) {
+				setSelectedPlan( persistedPlan );
+				return;
 			}
-
-			setSelectedPlan(
-				isReferralMode
-					? pressablePlans.find( ( plan ) => plan.slug === defaultSlug ) ?? null
-					: pressablePlans.find( ( plan ) => plan.slug === defaultSlug ) ?? pressablePlans[ 0 ]
-			);
 		}
-	}, [ isReferralMode, pressablePlans, setSelectedPlan, areSignaturePlans, selectedTab ] );
 
-	useEffect( () => {
-		if ( ! isReferralMode && existingPlan ) {
-			setSelectedPlan( existingPlan );
+		// Fall back to existing plan (for users with subscriptions)
+		if ( ! isReferralMode && existingPlan && ! isInitialized.current ) {
+			isInitialized.current = true;
+			const planInfo = getPressablePlan( existingPlan.slug );
+			// Only use existing plan if it matches current tab
+			if ( planInfo?.category === selectedTab ) {
+				setSelectedPlan( existingPlan );
+				setPersistedPlanSlug( existingPlan.slug );
+				return;
+			}
 		}
-	}, [ existingPlan, isReferralMode ] );
 
-	useEffect( () => {
-		setSelectedTab( getSelectedTab( existingPressablePlan, areSignaturePlans ) );
-	}, [ areSignaturePlans, existingPressablePlan, setSelectedTab ] );
+		// Fall back to default plan for this tab
+		let defaultSlug = 'pressable-signature-1';
+		if (
+			selectedTab === PLAN_CATEGORY_SIGNATURE_HIGH ||
+			selectedTab === PLAN_CATEGORY_ENTERPRISE
+		) {
+			defaultSlug = areSignaturePlans ? 'pressable-signature-11' : 'pressable-enterprise-1';
+		} else if ( selectedTab === PLAN_CATEGORY_PREMIUM ) {
+			defaultSlug = 'pressable-premium-1';
+		} else if ( ! areSignaturePlans ) {
+			defaultSlug = 'pressable-build';
+		}
+
+		const defaultPlan = isReferralMode
+			? pressablePlans.find( ( plan ) => plan.slug === defaultSlug ) ?? null
+			: pressablePlans.find( ( plan ) => plan.slug === defaultSlug ) ?? pressablePlans[ 0 ];
+		setSelectedPlan( defaultPlan );
+	}, [
+		pressablePlans,
+		selectedTab,
+		getPersistedPlanSlug,
+		setPersistedPlanSlug,
+		isReferralMode,
+		existingPlan,
+		areSignaturePlans,
+	] );
+
+	// Handle tab changes - just persist the tab, don't reset the plan
+	const handleTabChange = useCallback(
+		( tab: string ) => {
+			setSelectedTab( tab );
+		},
+		[ setSelectedTab ]
+	);
+
+	// Handle plan selection - update state and persist
+	const handlePlanSelect = useCallback(
+		( plan: APIProductFamilyProduct | null ) => {
+			setSelectedPlan( plan );
+			if ( plan ) {
+				setPersistedPlanSlug( plan.slug );
+			}
+		},
+		[ setPersistedPlanSlug ]
+	);
 
 	const onPlanAddToCart = useCallback( () => {
 		if ( selectedPlan ) {
@@ -170,13 +227,13 @@ export default function PressablePlanSection( {
 				<PlanSelectionFilter
 					selectedPlan={ selectedPlan }
 					plans={ filteredPressablePlans }
-					onSelectPlan={ setSelectedPlan }
+					onSelectPlan={ handlePlanSelect }
 					pressablePlan={ existingPressablePlan }
 					isLoading={ ! isFetching }
 					isReferralMode={ !! isReferralMode }
 					areSignaturePlans={ areSignaturePlans }
 					selectedTab={ selectedTab }
-					setSelectedTab={ setSelectedTab }
+					setSelectedTab={ handleTabChange }
 				/>
 			</HostingPlanSection.Banner>
 		);
@@ -189,6 +246,8 @@ export default function PressablePlanSection( {
 		isReferralMode,
 		areSignaturePlans,
 		selectedTab,
+		handleTabChange,
+		handlePlanSelect,
 	] );
 
 	const heading = useMemo( () => {
@@ -217,7 +276,6 @@ export default function PressablePlanSection( {
 	const isCustomPlan = ! selectedPlan;
 
 	const hasNewPremiumPlans =
-		isBDBillingSystem &&
 		isReferralMode &&
 		filteredPressablePlans.some( ( plan ) => plan.slug.startsWith( 'pressable-premium-' ) );
 

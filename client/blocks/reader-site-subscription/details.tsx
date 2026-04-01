@@ -1,8 +1,10 @@
+import './styles.scss';
+import page from '@automattic/calypso-router';
 import { Badge, TimeSince } from '@automattic/components';
 import { SubscriptionManager, Reader } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
-import { useTranslate } from 'i18n-calypso';
+import { fixMe, useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -21,7 +23,6 @@ import {
 import SiteSubscriptionSettings from './settings';
 import SiteSubscriptionSubheader from './site-subscription-subheader';
 import SubscribeToNewsletterCategories from './subscribe-to-newsletter-categories';
-import './styles.scss';
 
 const SiteSubscriptionDetails = ( {
 	subscriptionId,
@@ -73,13 +74,18 @@ const SiteSubscriptionDetails = ( {
 			const newPaymentPlans: PaymentPlan[] = [];
 
 			paymentDetails.forEach( ( paymentDetail: Reader.SiteSubscriptionPaymentDetails ) => {
-				const { is_gift, ID, currency, renewal_price, renew_interval } = paymentDetail;
+				// Skip legacy gift subscriptions that haven't been migrated to comps.
+				if ( paymentDetail.is_gift && ! paymentDetail.is_comp ) {
+					return;
+				}
+				const { is_comp, ID, title, currency, renewal_price, renew_interval } = paymentDetail;
 				const renewalPrice = formatRenewalPrice( renewal_price, currency );
 				const when = getPaymentInterval( renew_interval );
 				const renewalDate = formatRenewalDate( paymentDetail.end_date, localeSlug );
 				newPaymentPlans.push( {
-					is_gift: is_gift,
+					is_comp: !! is_comp,
 					id: ID,
+					title: title || '',
 					renewalPrice: `${ renewalPrice }${ when }`,
 					renewalDate,
 				} );
@@ -89,10 +95,10 @@ const SiteSubscriptionDetails = ( {
 		}
 	}, [ localeSlug, paymentDetails ] );
 
-	const areAllPaymentsGifts = useMemo( () => {
+	const areAllPaymentsComps = useMemo( () => {
 		if ( paymentDetails && paymentDetails.length ) {
 			for ( const plan in paymentPlans ) {
-				if ( ! paymentPlans[ plan ].is_gift ) {
+				if ( ! paymentPlans[ plan ].is_comp ) {
 					return false;
 				}
 			}
@@ -119,7 +125,19 @@ const SiteSubscriptionDetails = ( {
 		// todo: style the button (underline, color?, etc.)
 		const Resubscribe = () => (
 			<Button
-				onClick={ () => subscribe( { blog_id: blogId, url } ) }
+				onClick={ () =>
+					subscribe(
+						{ blog_id: blogId, url },
+						{
+							onSuccess: ( response ): void => {
+								const subscriptionId = response.subscription?.ID;
+								if ( subscriptionId ) {
+									page( `/reader/subscriptions/${ subscriptionId }` );
+								}
+							},
+						}
+					)
+				}
 				disabled={ subscribing || unsubscribing }
 				variant="secondary"
 			>
@@ -134,13 +152,20 @@ const SiteSubscriptionDetails = ( {
 			setNotice( {
 				type: NoticeType.Success,
 				action: <Resubscribe />,
-				message: translate(
-					'You have successfully unsubscribed and will no longer receive emails from %s.',
-					{
+				message: fixMe( {
+					text: 'You have successfully unsubscribed from %s.',
+					newCopy: translate( 'You have successfully unsubscribed from %s.', {
 						args: [ name ],
 						comment: 'Name of the site that the user has unsubscribed from.',
-					}
-				),
+					} ),
+					oldCopy: translate(
+						'You have successfully unsubscribed and will no longer receive emails from %s.',
+						{
+							args: [ name ],
+							comment: 'Name of the site that the user has unsubscribed from.',
+						}
+					),
+				} ),
 			} );
 		}
 		if ( unsubscribeError ) {
@@ -239,23 +264,29 @@ const SiteSubscriptionDetails = ( {
 
 			{ siteSubscribed && (
 				<>
-					<SiteSubscriptionSettings
-						subscriptionId={ subscriptionId }
-						blogId={ blogId }
-						notifyMeOfNewPosts={ !! deliveryMethods.notification?.send_posts }
-						emailMeNewPosts={ !! deliveryMethods.email?.send_posts }
-						deliveryFrequency={
-							deliveryMethods.email?.post_delivery_frequency ??
-							Reader.EmailDeliveryFrequency.Instantly
-						}
-						emailMeNewComments={ !! deliveryMethods.email?.send_comments }
-					/>
-
-					{ !! deliveryMethods.email?.send_posts && (
-						<SubscribeToNewsletterCategories siteId={ blogId } />
+					{ !! blogId && (
+						<>
+							<SiteSubscriptionSettings
+								subscriptionId={ subscriptionId }
+								blogId={ blogId }
+								notifyMeOfNewPosts={ !! deliveryMethods.notification?.send_posts }
+								emailMeNewPosts={ !! deliveryMethods.email?.send_posts }
+								deliveryFrequency={
+									deliveryMethods.email?.post_delivery_frequency ??
+									Reader.EmailDeliveryFrequency.Instantly
+								}
+								emailMeNewComments={ !! deliveryMethods.email?.send_comments }
+							/>
+							<hr className="subscriptions__separator" />
+						</>
 					) }
 
-					<hr className="subscriptions__separator" />
+					{ !! deliveryMethods.email?.send_posts && (
+						<>
+							<SubscribeToNewsletterCategories siteId={ blogId } />
+							<hr className="subscriptions__separator" />
+						</>
+					) }
 
 					{ /* TODO: Move to SiteSubscriptionInfo component when payment details are in. */ }
 					<div className="site-subscription-info">
@@ -278,29 +309,29 @@ const SiteSubscriptionDetails = ( {
 							</dl>
 						) }
 						{ paymentPlans &&
-							paymentPlans.map( ( { is_gift, id, renewalPrice, renewalDate } ) => {
-								if ( is_gift ) {
-									return (
-										<dl className="site-subscription-info__list" key={ id }>
-											<dt>{ translate( 'Gift' ) }</dt>
-											<dd></dd>
-										</dl>
-									);
-								}
-
-								return (
-									<dl className="site-subscription-info__list" key={ id }>
-										<dt>{ translate( 'Plan' ) }</dt>
-										<dd>{ renewalPrice }</dd>
-										{ renewalDate && (
-											<>
-												<dt>{ translate( 'Billing period' ) }</dt>
-												<dd>{ translate( 'Renews on %s', { args: [ renewalDate ] } ) }</dd>
-											</>
-										) }
-									</dl>
-								);
-							} ) }
+							paymentPlans.map( ( { is_comp, id, title, renewalPrice, renewalDate } ) => (
+								<dl className="site-subscription-info__list" key={ id }>
+									<dt>{ translate( 'Plan' ) }</dt>
+									<dd>
+										{ is_comp
+											? translate( 'Complimentary: %(title)s', {
+													args: { title },
+													comment: 'Label showing a complimentary subscription plan name',
+											  } )
+											: renewalPrice }
+									</dd>
+									{ ( renewalDate || is_comp ) && (
+										<>
+											<dt>{ translate( 'Billing period' ) }</dt>
+											<dd>
+												{ renewalDate
+													? translate( 'Renews on %s', { args: [ renewalDate ] } )
+													: translate( 'Does not expire' ) }
+											</dd>
+										</>
+									) }
+								</dl>
+							) ) }
 					</div>
 
 					<div className="site-subscription-page__button-container">
@@ -316,7 +347,7 @@ const SiteSubscriptionDetails = ( {
 						<Button
 							className="site-subscription-page__unsubscribe-button"
 							onClick={ onClickCancelSubscriptionButton }
-							disabled={ unsubscribing || areAllPaymentsGifts }
+							disabled={ unsubscribing || areAllPaymentsComps }
 						>
 							{ translate( 'Unsubscribe' ) }
 						</Button>

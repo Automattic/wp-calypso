@@ -1,5 +1,7 @@
 import { Modal } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import useMinimizeHelpCenterOnMount from 'calypso/a8c-for-agencies/hooks/use-minimize-help-center-on-mount';
+
 import './style.scss';
 
 type Props = {
@@ -8,6 +10,7 @@ type Props = {
 
 export default function DiscountsComingSoonModal( { onClose }: Props ) {
 	const translate = useTranslate();
+	useMinimizeHelpCenterOnMount();
 
 	return (
 		<Modal

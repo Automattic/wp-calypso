@@ -317,7 +317,10 @@ export class EditorToolbarComponent {
 		if ( target !== 'Settings' ) {
 			await this.openMoreOptionsMenu();
 
-			button = editorParent.getByRole( 'menuitemcheckbox', { name: translatedTargetName } );
+			button = editorParent.getByRole( 'menuitemcheckbox', {
+				name: translatedTargetName,
+				exact: true,
+			} );
 		}
 
 		if ( await this.targetIsOpen( button ) ) {

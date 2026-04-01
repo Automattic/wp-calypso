@@ -31,6 +31,7 @@ export function createPurchaseObject( purchase: RawPurchase ): Purchase {
 		introductoryOffer: purchase.introductory_offer
 			? {
 					costPerInterval: Number( purchase.introductory_offer.cost_per_interval ),
+					costPerIntervalInteger: Number( purchase.introductory_offer.cost_per_interval_integer ),
 					endDate: String( purchase.introductory_offer.end_date ),
 					intervalCount: Number( purchase.introductory_offer.interval_count ),
 					intervalUnit: String( purchase.introductory_offer.interval_unit ),
@@ -58,6 +59,7 @@ export function createPurchaseObject( purchase: RawPurchase ): Purchase {
 		isInAppPurchase: Boolean( purchase.is_iap_purchase ),
 		isRechargeable: Boolean( purchase.is_rechargeable ),
 		isRefundable: Boolean( purchase.is_refundable ),
+		isWithinInitialRefundWindow: Boolean( purchase.is_within_initial_refund_window ),
 		isRenewable: Boolean( purchase.is_renewable ),
 		isRenewal: Boolean( purchase.is_renewal ),
 		isWooExpressTrial: Boolean( purchase.is_woo_express_trial ),

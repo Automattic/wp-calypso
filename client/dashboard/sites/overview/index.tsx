@@ -12,6 +12,7 @@ import { __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useRef } from 'react';
+import { useAppContext } from '../../app/context';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { GuidedTourContextProvider, GuidedTourStep } from '../../components/guided-tour';
 import OptInSurvey from '../../components/opt-in-survey';
@@ -20,7 +21,6 @@ import PageLayout from '../../components/page-layout';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { isSelfHostedJetpackConnected, isCommerceGarden } from '../../utils/site-types';
-import { canViewSiteVisibilitySettings } from '../features';
 import AgencySiteShareCard from '../overview-agency-site-share-card';
 import BackupCard from '../overview-backup-card';
 import DIFMUpsellCard from '../overview-difm-upsell-card';
@@ -36,6 +36,7 @@ import SiteOverviewFields from '../overview-site-fields';
 import SitePreviewCard from '../overview-site-preview-card';
 import SubscribersCard from '../overview-subscribers-card';
 import VisibilityCard from '../overview-visibility-card';
+import VisibilityCardCiab from '../overview-visibility-card-ciab';
 import { InaccessibleJetpackNotice } from '../site/notices';
 import StagingSiteSyncDropdown from '../staging-site-sync-dropdown';
 import { StorageWarningBanner } from './storage-warning-banner';
@@ -82,7 +83,7 @@ function SiteOverviewPrimaryCards( { site, spacing }: { site: Site; spacing: num
 		return (
 			<Grid columns={ 1 } rows={ 2 } gap={ spacing }>
 				<PlanCard site={ site } />
-				<VisibilityCard site={ site } />
+				<VisibilityCardCiab site={ site } />
 			</Grid>
 		);
 	}
@@ -90,7 +91,7 @@ function SiteOverviewPrimaryCards( { site, spacing }: { site: Site; spacing: num
 	return (
 		<>
 			{ ( () => {
-				const showVisibilityCard = canViewSiteVisibilitySettings( site );
+				const showVisibilityCard = ! site.is_wpcom_flex;
 				return (
 					<Grid columns={ 1 } rows={ showVisibilityCard ? 2 : 1 } gap={ spacing }>
 						{ showVisibilityCard && <VisibilityCard site={ site } /> }
@@ -146,7 +147,9 @@ function SiteOverviewSecondaryCards( {
 					<DomainsCard site={ site } />
 				) : (
 					<>
-						<LatestActivityCard site={ site } isCompact={ isSmallViewport } />
+						{ ! site.__inaccessible_jetpack_error && (
+							<LatestActivityCard site={ site } isCompact={ isSmallViewport } />
+						) }
 						<VStack spacing={ spacing } justify="start">
 							{ showFlexUsageCard && <OverviewFlexUsageCard site={ site } /> }
 							{ ! isSelfHostedJetpackConnectedSite && ! site.is_wpcom_staging_site && (
@@ -171,17 +174,16 @@ function SiteOverviewSecondaryCards( {
 
 function SiteOverview( {
 	siteSlug,
-	hideSitePreview = false,
 	breakpoints,
 }: {
 	siteSlug: string;
-	hideSitePreview?: boolean;
 	breakpoints?: { large: WPBreakpoint; small: WPBreakpoint };
 } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const { supports } = useAppContext();
 	const isLargeViewport = useViewportMatch( breakpoints?.large ?? 'xlarge' );
 	const isSmallViewport = useViewportMatch( breakpoints?.small ?? 'medium', '<' );
-	const showSitePreview = ! ( hideSitePreview || isSmallViewport );
+	const showSitePreview = ! isSmallViewport && supports.siteOverview.preview;
 	const spacing = isSmallViewport ? SPACING.SMALL : SPACING.DEFAULT;
 	const isCommerceGardenSite = isCommerceGarden( site );
 	const gridLayout = getGridLayout( {
@@ -277,7 +279,7 @@ function SiteOverview( {
 					/>
 				) }
 			</GuidedTourContextProvider>
-			<PerformanceTrackerStop id="dashboard-site-overview" siteSlug={ siteSlug } />
+			<PerformanceTrackerStop />
 		</PageLayout>
 	);
 }

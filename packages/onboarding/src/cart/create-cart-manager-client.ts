@@ -1,5 +1,5 @@
 import { createShoppingCartManagerClient } from '@automattic/shopping-cart';
-import wpcomRequest from 'wpcom-proxy-request';
+import wpcomRequest from '../wpcom-request';
 import type {
 	RequestCart,
 	CartKey,

@@ -1,4 +1,10 @@
-import { SVG, Path } from '@wordpress/primitives';
+import { SVG, Path, Circle } from '@wordpress/primitives';
+
+export const menuDot = (
+	<SVG xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+		<Circle cx="12" cy="12" r="2" fill="currentColor" />
+	</SVG>
+);
 
 export const production = (
 	<SVG width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

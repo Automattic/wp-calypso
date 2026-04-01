@@ -16,7 +16,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useState, type ReactElement, PropsWithChildren } from 'react';
 import { VideoPreload } from 'calypso/components/hundred-year-loader-view';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { usePresalesChat } from 'calypso/lib/presales-chat';
 import { SMALL_BREAKPOINT } from './constants';
 import HundredYearPlanLogo from './hundred-year-plan-logo';
 import InfoModal from './info-modal';
@@ -299,8 +298,6 @@ function HundredYearPlanStepWrapper( props: Props ) {
 	const [ isOpen, setOpen ] = useState( false );
 	const openModal = () => setOpen( true );
 	const closeModal = () => setOpen( false );
-
-	usePresalesChat( 'wpcom' );
 
 	return (
 		<>

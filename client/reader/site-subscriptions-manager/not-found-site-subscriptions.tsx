@@ -1,10 +1,17 @@
-import { Reader, SubscriptionManager } from '@automattic/data-stores';
+import { readFeedSearchQuery } from '@automattic/api-queries';
+import { SubscriptionManager } from '@automattic/data-stores';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 
 const NotFoundSiteSubscriptions = (): JSX.Element => {
 	const translate = useTranslate();
 	const { searchTerm } = SubscriptionManager.useSiteSubscriptionsQueryProps();
-	const readFeedSearch = Reader.useUnsubscribedFeedsSearch();
+	const { data } = useQuery(
+		readFeedSearchQuery( {
+			query: searchTerm,
+			excludeFollowed: true,
+		} )
+	);
 
 	function getFeedSearchMessage( feedItemsCount: number ): string {
 		if ( feedItemsCount === 1 ) {
@@ -29,7 +36,7 @@ const NotFoundSiteSubscriptions = (): JSX.Element => {
 						comment:
 							"When users type something into the search field of their site subscriptions manager in Reader, they'll see this message if their search doesn't find any of the websites they're currently subscribed to.",
 				  } ) }{ ' ' }
-			{ getFeedSearchMessage( readFeedSearch?.feedItems.length ?? 0 ) }
+			{ getFeedSearchMessage( data?.feeds?.length ?? 0 ) }
 		</div>
 	);
 };

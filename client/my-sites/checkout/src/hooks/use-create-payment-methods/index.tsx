@@ -14,6 +14,7 @@ import {
 	createAlipayMethod,
 	createAlipayPaymentMethodStore,
 	createRazorpayMethod,
+	createStripeUpiMethod,
 	isValueTruthy,
 	translateCheckoutPaymentMethodToWpcomPaymentMethod,
 	type StoredPaymentMethod,
@@ -357,6 +358,26 @@ function useCreateGooglePay( {
 	}, [ stripe, stripeConfiguration, isStripeReady, cartKey ] );
 }
 
+function useCreateStripeUpi( {
+	isStripeLoading,
+	stripeLoadingError,
+}: {
+	isStripeLoading: boolean;
+	stripeLoadingError: StripeLoadingError;
+} ): PaymentMethod | null {
+	const shouldLoad =
+		! isStripeLoading && ! stripeLoadingError && isEnabled( 'checkout/stripe-upi' );
+	return useMemo(
+		() =>
+			shouldLoad
+				? createStripeUpiMethod( {
+						submitButtonContent: <CheckoutSubmitButtonContent />,
+				  } )
+				: null,
+		[ shouldLoad ]
+	);
+}
+
 function useCreateRazorpay( {
 	isRazorpayLoading,
 	razorpayLoadingError,
@@ -524,6 +545,11 @@ export default function useCreatePaymentMethods( {
 		cartKey,
 	} );
 
+	const stripeUpiMethod = useCreateStripeUpi( {
+		isStripeLoading,
+		stripeLoadingError,
+	} );
+
 	const razorpayMethod = useCreateRazorpay( {
 		isRazorpayLoading,
 		razorpayLoadingError,
@@ -555,6 +581,7 @@ export default function useCreatePaymentMethods( {
 		wechatMethod,
 		bancontactMethod,
 		razorpayMethod,
+		stripeUpiMethod,
 	].filter( isValueTruthy );
 
 	// In Germany, PayPal is the preferred option, so we display it before
@@ -579,6 +606,7 @@ export default function useCreatePaymentMethods( {
 			wechatMethod,
 			bancontactMethod,
 			razorpayMethod,
+			stripeUpiMethod,
 		].filter( isValueTruthy );
 	}
 

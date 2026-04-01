@@ -94,7 +94,6 @@ const PlansStepAdaptor: StepType< {
 		isStepperUpgradeFlow?: boolean;
 		selectedFeature?: string;
 		displayedIntervals?: SupportedIntervalTypes[];
-		hideLogo?: boolean;
 		wrapperProps?: {
 			hideBack?: boolean;
 			goBack?: () => void;
@@ -103,14 +102,8 @@ const PlansStepAdaptor: StepType< {
 		};
 	};
 } > = ( props ) => {
-	const {
-		displayedIntervals,
-		hideLogo,
-		isInSignup,
-		isStepperUpgradeFlow,
-		selectedFeature,
-		wrapperProps,
-	} = props;
+	const { displayedIntervals, isInSignup, isStepperUpgradeFlow, selectedFeature, wrapperProps } =
+		props;
 	const [ stepState, setStepState ] = useStepPersistedState< ProvidedDependencies >( 'plans-step' );
 	const siteSlug = useSiteSlug();
 
@@ -244,7 +237,6 @@ const PlansStepAdaptor: StepType< {
 			onPlanIntervalUpdate={ onPlanIntervalUpdate }
 			intervalType={ planInterval }
 			displayedIntervals={ displayedIntervals }
-			hideLogo={ hideLogo }
 			wrapperProps={ {
 				hideBack: wrapperProps?.hideBack ?? false,
 				goBack: wrapperProps?.goBack ?? props.navigation.goBack,

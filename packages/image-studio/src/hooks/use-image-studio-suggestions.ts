@@ -13,6 +13,7 @@ import { getSuggestions, type SuggestionState } from './suggestions-data';
 import { useAsyncSuggestionsLoader } from './use-async-suggestions-loader';
 import useCurrentScreen from './use-current-screen';
 import type { AgentMessage } from '../types/agenttic';
+import type { CurriedImageStudioSelectors } from '../types/wordpress';
 
 /**
  * Async suggestions configuration for different contexts.
@@ -48,7 +49,7 @@ function getAsyncSuggestionsConfig(
  * @param selectors - The store selectors.
  * @returns The current suggestion state.
  */
-function getSuggestionState( selectors: Record< string, any > ): SuggestionState {
+function getSuggestionState( selectors: CurriedImageStudioSelectors ): SuggestionState {
 	const annotationCanvasRef = selectors.getAnnotationCanvasRef();
 	const currentAttachmentId = selectors.getImageStudioAttachmentId();
 	const annotatedAttachmentIds = selectors.getAnnotatedAttachmentIds() || [];
@@ -129,9 +130,16 @@ export function useImageStudioSuggestions( {
 
 	// Get current state from the image studio store and editor store
 	const { suggestionState, postId } = useSelect( ( storeSelect ) => {
+		let currentPostId: string | number | null = null;
+		try {
+			currentPostId = storeSelect( editorStore )?.getCurrentPostId?.() ?? null;
+		} catch {
+			// eslint-disable-next-line no-console
+			console.debug( '[Image Studio] Failed to get current post ID from editor store.' );
+		}
 		return {
 			suggestionState: getSuggestionState( storeSelect( imageStudioStore ) ),
-			postId: storeSelect( editorStore )?.getCurrentPostId?.() ?? null,
+			postId: currentPostId,
 		};
 	}, [] );
 

@@ -27,7 +27,6 @@ import {
 	fetchSiteDomains,
 } from '../domains-table-fetch-functions';
 import EmptyState from './empty-state';
-import GoogleDomainOwnerBanner from './google-domain-owner-banner';
 import OptionsDomainButton from './options-domain-button';
 import { usePurchaseActions } from './use-purchase-actions';
 import './style.scss';
@@ -556,7 +555,6 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 					bodyClass={ [ 'edit__body-white', 'is-bulk-domains-page', 'is-bulk-all-domains-page' ] }
 				/>
 				<DomainHeader items={ [ item ] } buttons={ buttons } mobileButtons={ buttons } />
-				{ ! isLoading && ! isDomainsEmpty && <GoogleDomainOwnerBanner /> }
 				{ ! isDomainsEmpty ? (
 					<Element
 						isInSupportSession={ isInSupportSession }

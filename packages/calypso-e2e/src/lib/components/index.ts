@@ -39,6 +39,7 @@ export * from './jetpack-instant-search-modal-component';
 export * from './select-items-component';
 export * from './wp-admin-notice-component';
 export * from './wp-admin-sidebar-component';
+export * from './launch-celebration-component';
 
 export * from './me';
 

@@ -6,7 +6,6 @@ import {
 	NEW_HOSTED_SITE_FLOW,
 	TRANSFERRING_HOSTED_SITE_FLOW,
 	DOMAIN_TRANSFER,
-	GOOGLE_TRANSFER,
 	HUNDRED_YEAR_DOMAIN_TRANSFER,
 	REBLOGGING_FLOW,
 	SITE_MIGRATION_FLOW,
@@ -21,6 +20,7 @@ import {
 	PLAN_UPGRADE_FLOW,
 	FLEX_SITE_FLOW,
 	WOO_HOSTED_PLANS_FLOW,
+	ART_PROMO_FLOW,
 } from '@automattic/onboarding';
 import type { Flow, FlowV2 } from '../declarative-flow/internals/types';
 
@@ -63,6 +63,9 @@ const availableFlows: Record< string, () => Promise< { default: FlowV2< any > } 
 		import(
 			/* webpackChunkName: "woo-hosted-plans" */ './flows/woo-hosted-plans/woo-hosted-plans'
 		),
+
+	[ ART_PROMO_FLOW ]: () =>
+		import( /* webpackChunkName: "artpromo-flow" */ './flows/artpromo/artpromo' ),
 };
 
 /**
@@ -116,9 +119,6 @@ export const deprecatedV1Flows: Record< string, () => Promise< { default: Flow }
 
 	[ DOMAIN_TRANSFER ]: () =>
 		import( /* webpackChunkName: "domain-transfer" */ './flows/domain-transfer/domain-transfer' ),
-
-	[ GOOGLE_TRANSFER ]: () =>
-		import( /* webpackChunkName: "google-transfer" */ './flows/google-transfer/google-transfer' ),
 
 	[ 'plugin-bundle' ]: () =>
 		import(

@@ -4,6 +4,7 @@ import { Icon, close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import useImportWPCOMSitesMutation from 'calypso/a8c-for-agencies/data/sites/use-import-wpcom-sites';
+import useMinimizeHelpCenterOnMount from 'calypso/a8c-for-agencies/hooks/use-minimize-help-center-on-mount';
 import { useDispatch } from 'calypso/state';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import WPCOMSitesTable from './wpcom-sites-table';
@@ -18,6 +19,7 @@ type Props = {
 export default function ImportFromWPCOMModal( { onImport, onClose }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	useMinimizeHelpCenterOnMount();
 
 	const [ selectedSites, setSelectedSites ] = useState< number[] | [] >( [] );
 

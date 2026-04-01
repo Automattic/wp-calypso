@@ -1,3 +1,40 @@
+@import "calypso/components/jetpack-page-layout/admin-ui-page";
+
+body.is-section-scan {
+	@include admin-ui-page-layout;
+	@include admin-ui-page-layout-constrained-content($max-width: 1040px);
+
+	.scan__wpcom-upsell .promo-card {
+		display: flex;
+		gap: 24px;
+	}
+
+	.scan__content > .card {
+
+		justify-content: center;
+
+		.security-icon {
+			margin: 0 auto;
+			padding: 0;
+		}
+
+		@include break-mobile {
+			display: flex;
+			gap: 24px;
+			align-items: flex-start;
+
+			.scan__header {
+				flex-shrink: 0;
+			}
+
+			.security-icon {
+				width: 48px;
+				margin: 0;
+			}
+		}
+	}
+}
+
 .scan .formatted-header.is-left-align {
 	margin-top: 20px;
 

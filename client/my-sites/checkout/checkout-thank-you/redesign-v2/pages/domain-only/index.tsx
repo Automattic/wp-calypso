@@ -1,3 +1,5 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { getTld } from '@automattic/domain-search';
 import { formatCurrency } from '@automattic/number-formatters';
 import { Step } from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
@@ -23,6 +25,13 @@ import type { ReceiptPurchase } from 'calypso/state/receipts/types';
 
 import './style.scss';
 
+type NextStep =
+	| 'start_new_site'
+	| 'add_mailbox'
+	| 'attach_existing_site'
+	| 'use_domain_only'
+	| 'migrate_existing_site';
+
 export default function DomainOnly( {
 	domainPurchase,
 	currency,
@@ -42,6 +51,15 @@ export default function DomainOnly( {
 			domain: domainPurchase.meta,
 		},
 	} );
+
+	const getOnClickEventHandler = ( nextStep: NextStep ) => {
+		return () => {
+			recordTracksEvent( 'calypso_checkout_thank_you_domain_next_step_click', {
+				next_step: nextStep,
+				domain_tld: getTld( domainPurchase.meta ),
+			} );
+		};
+	};
 
 	return (
 		<div className="checkout-thank-you__domain-only-container">
@@ -78,6 +96,7 @@ export default function DomainOnly( {
 							: undefined
 					}
 					href={ createSiteFromDomainOnly( domainPurchase.meta, domainPurchase.blogId ) }
+					onSelect={ getOnClickEventHandler( 'start_new_site' ) }
 				/>
 				<OptionContent
 					illustration={ <img src={ addMailbox } alt="" aria-hidden /> }
@@ -88,6 +107,7 @@ export default function DomainOnly( {
 							? dashboardLink( `/emails/choose-email-solution/${ domainPurchase.meta }` )
 							: domainAddEmailUpsell( domainPurchase.meta, domainPurchase.meta )
 					}
+					onSelect={ getOnClickEventHandler( 'add_mailbox' ) }
 				/>
 				{ hasConnectableSites && (
 					<OptionContent
@@ -99,6 +119,7 @@ export default function DomainOnly( {
 								? dashboardLink( `/domains/${ domainPurchase.meta }/transfer/other-site` )
 								: domainManagementTransferToOtherSite( domainPurchase.meta, domainPurchase.meta )
 						}
+						onSelect={ getOnClickEventHandler( 'attach_existing_site' ) }
 					/>
 				) }
 				<OptionContent
@@ -112,6 +133,7 @@ export default function DomainOnly( {
 							? dashboardLink( `/domains/${ domainPurchase.meta }` )
 							: domainManagementList( domainPurchase.meta, domainPurchase.meta )
 					}
+					onSelect={ getOnClickEventHandler( 'use_domain_only' ) }
 				/>
 				<Step.LinkButton
 					className="domain-only__migrate-link"
@@ -119,6 +141,7 @@ export default function DomainOnly( {
 						dashboard: getDashboardFromQuery(),
 						siteSlug: domainPurchase.meta,
 					} ) }
+					onClick={ getOnClickEventHandler( 'migrate_existing_site' ) }
 				>
 					{ translate( 'Migrate an existing site' ) }
 				</Step.LinkButton>

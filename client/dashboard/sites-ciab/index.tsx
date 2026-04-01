@@ -2,7 +2,6 @@ import { isAutomatticianQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
-import { type View, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useAnalytics } from '../app/analytics';
@@ -13,7 +12,7 @@ import { sitesRoute } from '../app/router/sites';
 import { DataViewsEmptyState } from '../components/dataviews';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
-import { useSiteListQuery } from '../sites';
+import { useSiteListQuery, filterSortAndPaginateSites } from '../sites';
 import {
 	SitesDataViews,
 	useActions,
@@ -25,6 +24,7 @@ import {
 import noSitesIllustration from '../sites/no-sites-illustration.svg';
 import { SitesNotices } from '../sites/notices';
 import { wpcomLink } from '../utils/link';
+import type { View } from '@wordpress/dataviews';
 
 export default function CIABSites() {
 	const { recordTracksEvent } = useAnalytics();
@@ -49,7 +49,7 @@ export default function CIABSites() {
 		sanitizeFields,
 	} );
 
-	const { sites, isLoadingSites, isPlaceholderData } = useSiteListQuery( view, {
+	const { sites, isLoadingSites, isPlaceholderData, totalItems } = useSiteListQuery( view, {
 		isRestoringAccount,
 		isAutomattician,
 	} );
@@ -91,7 +91,11 @@ export default function CIABSites() {
 		ref: 'new-site-popover',
 	} );
 
-	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites ?? [], view, fields );
+	const { data: filteredData, paginationInfo } = filterSortAndPaginateSites(
+		sites ?? [],
+		view,
+		totalItems ?? 0
+	);
 
 	const emptyState = (
 		<DataViewsEmptyState

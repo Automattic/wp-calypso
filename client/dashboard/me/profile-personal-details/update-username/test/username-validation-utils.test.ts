@@ -1,81 +1,51 @@
-/**
- * @jest-environment jsdom
- */
-import { validateUsername } from '@automattic/api-core';
-import {
-	validateUsernameDebounced,
-	isUsernameValid,
-	getUsernameValidationMessage,
-	getAllowedActions,
-	type ValidationResult,
-} from '../username-validation-utils';
-
-type ValidateUsernameFn = (
-	username: string,
-	currentUsername: string,
-	setValidationResult: ( result: ValidationResult | null ) => void
-) => Promise< void >;
-type MockedValidateUsernameFn = jest.MockedFunction< ValidateUsernameFn > & {
-	_originalFn: ValidateUsernameFn;
-	cancel: jest.MockedFunction< () => void >;
-	flush: jest.MockedFunction< () => void >;
-	pending: jest.MockedFunction< () => boolean >;
-};
-
-// Mock dependencies
-jest.mock( '@wordpress/compose', () => {
-	const mockFn = jest.fn() as unknown as MockedValidateUsernameFn;
-	mockFn.cancel = jest.fn();
-	mockFn.flush = jest.fn();
-	mockFn.pending = jest.fn();
-	mockFn._originalFn = jest.fn();
-
-	return {
-		debounce: jest.fn( ( fn ) => {
-			mockFn._originalFn = fn;
-			return mockFn;
-		} ),
-	};
-} );
-
-jest.mock( '@automattic/api-core', () => ( {
-	validateUsername: jest.fn(),
-	updateUsername: jest.fn(),
-} ) );
-
-const mockValidateUsername = validateUsername as jest.MockedFunction< typeof validateUsername >;
+import nock from 'nock';
+import { validateUsernameInternal } from '../username-validation-utils';
 
 describe( 'Username Validation Utils', () => {
-	describe( 'validateUsernameDebounced', () => {
-		it( 'is a debounced function that delegates parameters correctly', () => {
+	describe( 'validateUsernameInternal', () => {
+		test( 'skips validation when username matches current username', async () => {
 			const setValidationResult = jest.fn();
 
-			expect( typeof validateUsernameDebounced ).toBe( 'function' );
-			expect( validateUsernameDebounced ).toHaveProperty( 'cancel' );
-			expect( validateUsernameDebounced ).toHaveProperty( 'flush' );
+			await validateUsernameInternal( 'sameusername', 'sameusername', setValidationResult );
 
-			validateUsernameDebounced( 'testuser', 'olduser', setValidationResult );
-
-			expect( validateUsernameDebounced ).toHaveBeenCalledWith(
-				'testuser',
-				'olduser',
-				setValidationResult
-			);
+			expect( setValidationResult ).toHaveBeenCalledWith( null );
 		} );
 
-		it( 'validates username with API call', async () => {
-			mockValidateUsername.mockResolvedValue( {
-				success: true,
-				allowed_actions: { none: 'Just change username' },
+		test( 'validates minimum length requirement', async () => {
+			const setValidationResult = jest.fn();
+
+			await validateUsernameInternal( 'ab', 'oldusername', setValidationResult );
+
+			expect( setValidationResult ).toHaveBeenCalledWith( {
+				error: 'invalid_input',
+				message: 'Usernames must be at least 4 characters.',
 			} );
+		} );
+
+		test( 'validates allowed characters', async () => {
+			const setValidationResult = jest.fn();
+
+			await validateUsernameInternal( 'user@name', 'oldusername', setValidationResult );
+
+			expect( setValidationResult ).toHaveBeenCalledWith( {
+				error: 'invalid_input',
+				message: 'Usernames can only contain lowercase letters (a-z) and numbers.',
+			} );
+		} );
+
+		test( 'calls the API and sets validation result on success', async () => {
+			const scope = nock( 'https://public-api.wordpress.com' )
+				.get( '/rest/v1.1/me/username/validate/newusername' )
+				.reply( 200, {
+					success: true,
+					allowed_actions: { none: 'Just change username' },
+				} );
 
 			const setValidationResult = jest.fn();
-			const actualValidationFn = ( validateUsernameDebounced as MockedValidateUsernameFn )
-				._originalFn;
 
-			await actualValidationFn( 'newusername', 'oldusername', setValidationResult );
+			await validateUsernameInternal( 'newusername', 'oldusername', setValidationResult );
 
-			expect( mockValidateUsername ).toHaveBeenCalledWith( 'newusername' );
+			expect( scope.isDone() ).toBe( true );
 			expect( setValidationResult ).toHaveBeenCalledWith( {
 				success: true,
 				allowed_actions: { none: 'Just change username' },
@@ -83,104 +53,24 @@ describe( 'Username Validation Utils', () => {
 			} );
 		} );
 
-		it( 'handles API errors', async () => {
-			const apiError = { error: 'username_taken', message: 'Username is already taken' };
-			mockValidateUsername.mockRejectedValue( apiError );
+		test( 'sets error result on API failure', async () => {
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/rest/v1.1/me/username/validate/takenusername' )
+				.reply( 400, {
+					error: 'username_taken',
+					message: 'Username is already taken',
+				} );
 
 			const setValidationResult = jest.fn();
-			const actualValidationFn = ( validateUsernameDebounced as MockedValidateUsernameFn )
-				._originalFn;
 
-			await actualValidationFn( 'takenusername', 'oldusername', setValidationResult );
+			await validateUsernameInternal( 'takenusername', 'oldusername', setValidationResult );
 
-			expect( setValidationResult ).toHaveBeenCalledWith( apiError );
-		} );
-
-		it( 'skips validation when username matches current username', async () => {
-			const setValidationResult = jest.fn();
-			const actualValidationFn = ( validateUsernameDebounced as MockedValidateUsernameFn )
-				._originalFn;
-
-			await actualValidationFn( 'sameusername', 'sameusername', setValidationResult );
-
-			expect( mockValidateUsername ).not.toHaveBeenCalled();
-			expect( setValidationResult ).toHaveBeenCalledWith( null );
-		} );
-
-		it( 'validates minimum length requirement', async () => {
-			const setValidationResult = jest.fn();
-			const actualValidationFn = ( validateUsernameDebounced as MockedValidateUsernameFn )
-				._originalFn;
-
-			await actualValidationFn( 'ab', 'oldusername', setValidationResult );
-
-			expect( mockValidateUsername ).not.toHaveBeenCalled();
-			expect( setValidationResult ).toHaveBeenCalledWith( {
-				error: 'invalid_input',
-				message: 'Usernames must be at least 4 characters.',
-			} );
-		} );
-
-		it( 'validates allowed characters', async () => {
-			const setValidationResult = jest.fn();
-			const actualValidationFn = ( validateUsernameDebounced as MockedValidateUsernameFn )
-				._originalFn;
-
-			await actualValidationFn( 'user@name', 'oldusername', setValidationResult );
-
-			expect( mockValidateUsername ).not.toHaveBeenCalled();
-			expect( setValidationResult ).toHaveBeenCalledWith( {
-				error: 'invalid_input',
-				message: 'Usernames can only contain lowercase letters (a-z) and numbers.',
-			} );
-		} );
-	} );
-
-	describe( 'isUsernameValid', () => {
-		it( 'returns true for valid validation result', () => {
-			const validResult: ValidationResult = { success: true };
-			expect( isUsernameValid( validResult ) ).toBe( true );
-		} );
-
-		it( 'returns false for null validation result', () => {
-			expect( isUsernameValid( null ) ).toBe( false );
-		} );
-
-		it( 'returns false for validation result with error', () => {
-			const errorResult: ValidationResult = {
-				error: 'username_taken',
-				message: 'Username is already taken',
-			};
-			expect( isUsernameValid( errorResult ) ).toBe( false );
-		} );
-	} );
-
-	describe( 'getUsernameValidationMessage', () => {
-		it( 'returns message or null correctly', () => {
-			expect( getUsernameValidationMessage( { message: 'error' } ) ).toBe( 'error' );
-			expect( getUsernameValidationMessage( { error: 'no message' } ) ).toBe( null );
-			expect( getUsernameValidationMessage( null ) ).toBe( null );
-		} );
-	} );
-
-	describe( 'getAllowedActions', () => {
-		it( 'returns allowed actions from validation result', () => {
-			const result: ValidationResult = {
-				success: true,
-				allowed_actions: {
-					none: 'Just change username',
-					redirect: 'Create matching blog address',
-				},
-			};
-			expect( getAllowedActions( result ) ).toEqual( {
-				none: 'Just change username',
-				redirect: 'Create matching blog address',
-			} );
-		} );
-
-		it( 'returns empty object for validation result without allowed_actions', () => {
-			const result: ValidationResult = { success: true };
-			expect( getAllowedActions( result ) ).toEqual( {} );
+			expect( setValidationResult ).toHaveBeenCalledWith(
+				expect.objectContaining( {
+					error: 'username_taken',
+					message: 'Username is already taken',
+				} )
+			);
 		} );
 	} );
 } );

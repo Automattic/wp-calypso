@@ -40,8 +40,8 @@ $jp-gray: #dcdcde;
 	}
 }
 
-// Use base component styling of `@automattic/components/Button`
-.button.jetpack-emerald-button {
+// Use base component styling of `@wordpress/components/Button`
+.components-button.jetpack-emerald-button {
 	font-weight: 600;
 
 	&:focus {
@@ -51,10 +51,14 @@ $jp-gray: #dcdcde;
 	&.is-primary {
 		color: var(--studio-white);
 		background: var(--studio-black);
+
+		&:hover:not(.is-busy) {
+			background: $emerald-hover-color;
+		}
 	}
 
-	// Use `transparent` styling as secondary styles
-	&.is-transparent {
+	// Use secondary styles (previously transparent)
+	&.is-secondary {
 		color: var(--studio-black);
 		background: inset 0 0 0 1.5px var(--studio-white);
 

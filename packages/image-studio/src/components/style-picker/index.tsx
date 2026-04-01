@@ -20,10 +20,13 @@ import pixelArtPreview from '../../assets/pixel-art.webp';
 import texturePreview from '../../assets/texture.webp';
 import vividPreview from '../../assets/vivid.webp';
 import { store as imageStudioStore } from '../../store';
+import { ImageStudioMode } from '../../types';
+import { trackImageStudioStyleSelected } from '../../utils/tracking';
 import { BrushIcon } from '../icons/BrushIcon';
 
 interface StylePickerProps {
 	disabled?: boolean;
+	mode: ImageStudioMode;
 }
 
 export const STYLE_OPTIONS = [
@@ -112,7 +115,7 @@ export const STYLE_OPTIONS = [
 	},
 ];
 
-export function StylePicker( { disabled = false }: StylePickerProps ) {
+export function StylePicker( { disabled = false, mode }: StylePickerProps ) {
 	const { setSelectedStyle } = useDispatch( imageStudioStore );
 
 	const selectedStyle = useSelect( ( select ) => {
@@ -121,6 +124,8 @@ export function StylePicker( { disabled = false }: StylePickerProps ) {
 
 	const handleStyleSelect = ( value: string ) => {
 		setSelectedStyle( value );
+		// Track style selection
+		trackImageStudioStyleSelected( { style: value, mode } );
 		// Close dropdown by triggering a mousedown event outside the InputToolbar container
 		// We use requestAnimationFrame to ensure the state update completes first
 		requestAnimationFrame( () => {

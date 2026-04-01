@@ -1,45 +1,55 @@
 import './styles.scss';
 import { FormInputValidation } from '@automattic/components';
 import { SubscriptionManager } from '@automattic/data-stores';
-import { Button, TextControl } from '@wordpress/components';
-import { check, Icon } from '@wordpress/icons';
+import { Button, SearchControl } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import FeedPreview from 'calypso/landing/subscriptions/components/feed-preview';
-import { useAddSitesModalNotices } from 'calypso/landing/subscriptions/hooks';
+import { useAddSitesNotices } from 'calypso/landing/subscriptions/hooks';
 import { useRecordSiteSubscribed } from 'calypso/landing/subscriptions/tracks';
 import { isValidUrl, parseUrl } from 'calypso/lib/importer/url-validation';
 import { getUrlQuerySearchTerm, setUrlQuery, SEARCH_QUERY_PARAM } from 'calypso/reader/utils';
 
-export type AddSitesFormProps = {
+interface AddSitesFormProps {
 	placeholder?: string;
 	buttonText?: string;
 	pathname?: string; // Used to prevent search query changes on other pages.
 	source: string;
 	onChangeFeedPreview?: ( hasPreview: boolean ) => void;
 	onChangeSubscribe?: ( subscribed: boolean ) => void;
-};
-
-type SubscriptionError = {
-	error?: string;
-	message?: string;
-};
+	/**
+	 * Callback function to be called when the input value changes.
+	 * @param value - The new value of the input field.
+	 */
+	onChange?: ( value: string ) => void;
+	/**
+	 * Whether to hide the feed preview.
+	 */
+	hideFeedPreview?: boolean;
+	/**
+	 * Whether to hide the input error.
+	 */
+	hideInputError?: boolean;
+}
 
 const AddSitesForm = ( {
+	onChange,
 	placeholder,
 	buttonText,
 	pathname,
 	source,
 	onChangeFeedPreview,
 	onChangeSubscribe,
+	hideFeedPreview = false,
+	hideInputError = false,
 }: AddSitesFormProps ) => {
 	const translate = useTranslate();
 	const [ inputValue, setInputValue ] = useState( '' );
 	const [ isSubmitting, setIsSubmitting ] = useState< boolean >( false );
 	const [ inputFieldError, setInputFieldError ] = useState< string | null >( null );
 	const [ isValidInput, setIsValidInput ] = useState( false );
-	const { showErrorNotice, showWarningNotice, showSuccessNotice } = useAddSitesModalNotices();
+	const { showErrorNotice, showWarningNotice, showSuccessNotice } = useAddSitesNotices();
 	const recordSiteSubscribed = useRecordSiteSubscribed();
 
 	const { mutate: subscribe, isPending: subscribing } =
@@ -73,6 +83,7 @@ const AddSitesForm = ( {
 		setUrlQuery( SEARCH_QUERY_PARAM, value, pathname ); // Update url query when search term changes.
 		setInputValue( value );
 		validateInputValue( value, showErrorOnInvalidUrl );
+		onChange?.( value );
 	}
 
 	const onSubmit = ( e: React.FormEvent ) => {
@@ -99,7 +110,7 @@ const AddSitesForm = ( {
 							onSubscribeToggle( true );
 						}
 					},
-					onError: ( error: SubscriptionError ) => {
+					onError: ( error ) => {
 						showErrorNotice( inputValue, error );
 						onChangeSubscribe?.( false );
 					},
@@ -119,32 +130,31 @@ const AddSitesForm = ( {
 		onChangeSubscribe?.( subscribed );
 	}
 
+	const showInputError = inputFieldError && ! hideInputError;
+
 	return (
 		<>
 			<form onSubmit={ onSubmit } className="subscriptions-add-sites__form--container">
 				<div className="subscriptions-add-sites__form-field">
-					<TextControl
-						className={ clsx(
-							'subscriptions-add-sites__form-input',
-							inputFieldError ? 'is-error' : ''
-						) }
+					<SearchControl
+						className={ clsx( 'subscriptions-add-sites__form-input', {
+							'is-error': !! showInputError,
+						} ) }
 						disabled={ subscribing }
-						placeholder={ placeholder || translate( 'https://www.site.com' ) }
+						placeholder={ placeholder || 'https://www.site.com' }
 						value={ inputValue }
 						onChange={ onTextFieldChange }
-						help={ isValidInput ? <Icon icon={ check } data-testid="check-icon" /> : undefined }
 						onBlur={ () => validateInputValue( inputValue, true ) }
 						__next40pxDefaultSize
-						__nextHasNoMarginBottom
 					/>
 
-					{ inputFieldError ? <FormInputValidation isError text={ inputFieldError } /> : null }
+					{ showInputError ? <FormInputValidation isError text={ inputFieldError } /> : null }
 				</div>
 
 				<Button
 					variant="primary"
 					className="button subscriptions-add-sites__save-button"
-					disabled={ ! inputValue || !! inputFieldError || subscribing }
+					disabled={ ! inputValue || ! isValidInput || subscribing }
 					isBusy={ isSubmitting }
 					type="submit"
 					__next40pxDefaultSize
@@ -153,12 +163,14 @@ const AddSitesForm = ( {
 				</Button>
 			</form>
 
-			<FeedPreview
-				url={ isValidInput ? inputValue : '' } // Passing empty state to make sure that debounce works correctly else it was firing events 2 times.
-				source={ source }
-				onChangeFeedPreview={ onChangeFeedPreview }
-				onChangeSubscribe={ onSubscribeToggle }
-			/>
+			{ ! hideFeedPreview && (
+				<FeedPreview
+					url={ isValidInput ? inputValue : '' } // Passing empty state to make sure that debounce works correctly else it was firing events 2 times.
+					source={ source }
+					onChangeFeedPreview={ onChangeFeedPreview }
+					onChangeSubscribe={ onSubscribeToggle }
+				/>
+			) }
 		</>
 	);
 };

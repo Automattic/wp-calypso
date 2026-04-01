@@ -60,6 +60,8 @@ export function getUpsellType(
 
 			break;
 
+		case 'complicatedDashboard':
+		case 'difficultEditor':
 		case 'freeIsGoodEnough':
 		case 'foundBetterValue':
 		case 'tooMuchTimeToLearn':

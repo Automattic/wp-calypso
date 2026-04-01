@@ -347,6 +347,14 @@ export type RequestCartTaxData = null | {
  * exist at all (although there will likely be a message if the item failed to
  * be added).
  *
+ * Most cart items require either a `product_slug` or `product_id` to identify
+ * the product. The one exception is a renewal requested by subscription ID
+ * only: in that case `product_slug` may be omitted and the server will look up
+ * the product from the subscription record. To request such a renewal, use
+ * `RequestCartProductRenewalBySubscriptionId` (a member of this union) and set
+ * `extra.purchaseId` to the subscription ID with `extra.purchaseType` set to
+ * `'renewal'`.
+ *
  * See `createRequestCartProduct()` and `createRequestCartProducts()` in this
  * package for a convenient way to create a `RequestCartProduct`.
  *
@@ -867,6 +875,7 @@ export interface ResponseCartProductExtra {
 	legal_agreements?: never[] | DomainLegalAgreements;
 	is_gravatar_domain?: boolean;
 	is_hundred_year_domain?: boolean;
+	is_art_promo?: boolean;
 
 	/**
 	 * Set to 'renewal' if requesting a renewal.
@@ -916,6 +925,15 @@ export interface ResponseCartGiftDetails {
 	receiver_blog_url?: string;
 }
 
+export type SitelessCheckoutType =
+	| 'domainonly'
+	| 'jetpack'
+	| 'akismet'
+	| 'marketplace'
+	| 'a4a'
+	| 'unified'
+	| undefined;
+
 /**
  * Miscellaneous data requested to be added to the shopping cart item in a
  * `RequestCart` (in `RequestCartProduct`).
@@ -931,6 +949,18 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	 * and we might find the wrong one.
 	 */
 	purchaseId?: string;
+
+	sitelessCheckoutType?: SitelessCheckoutType;
+
+	/**
+	 * Marks a product as having been added by the siteless domain-only flow.
+	 */
+	isDomainOnlySitelessCheckout?: boolean;
+
+	/**
+	 * Marks a product as having been added by the siteless `/checkout/unified` route.
+	 */
+	isUnifiedSitelessCheckout?: boolean;
 
 	isAkismetSitelessCheckout?: boolean;
 	isJetpackCheckout?: boolean;
@@ -980,7 +1010,7 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 
 	/**
 	 * Indicates the user was in a treatment variation of the pricing
-	 * differentiation experiment (calypso_pricing_differentiation_202601_v1).
+	 * differentiation experiment (calypso_pricing_differentiation_202603).
 	 * Used to add the `gating-business-q1` blog sticker on purchase.
 	 */
 	is_gating_business_q1?: boolean;

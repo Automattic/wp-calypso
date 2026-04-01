@@ -5,7 +5,7 @@ import {
 	type FeatureList,
 	FEATURE_CUSTOM_DOMAIN,
 } from '@automattic/calypso-products';
-import { useMemo } from 'react';
+import { useMemo } from '@wordpress/element';
 import getPlanFeaturesObject from '../../lib/get-plan-features-object';
 import usePlanFeaturesForGridPlans from './use-plan-features-for-grid-plans';
 import type {
@@ -22,12 +22,11 @@ export type UseRestructuredPlanFeaturesForComparisonGrid = ( {
 	intent,
 	showLegacyStorageFeature,
 	selectedFeature,
-	useLongSetFeatures,
-	useLongSetStackedFeatures,
-	useShortSetStackedFeatures,
-	useVar5Features,
+	useFocusedComparisonFeatures,
+	useVar41MorePremiumFeatures,
+	useVar42NoAiFeatures,
+	showPricingDifferentiationFeaturePills,
 	isExperimentVariant,
-	isVar1dVariant,
 }: {
 	gridPlans: Omit< GridPlan, 'features' >[];
 	allFeaturesList: FeatureList;
@@ -35,12 +34,11 @@ export type UseRestructuredPlanFeaturesForComparisonGrid = ( {
 	intent?: PlansIntent;
 	selectedFeature?: string | null;
 	showLegacyStorageFeature?: boolean;
-	useLongSetFeatures?: boolean;
-	useLongSetStackedFeatures?: boolean;
-	useShortSetStackedFeatures?: boolean;
-	useVar5Features?: boolean;
+	useFocusedComparisonFeatures?: boolean;
+	useVar41MorePremiumFeatures?: boolean;
+	useVar42NoAiFeatures?: boolean;
+	showPricingDifferentiationFeaturePills?: boolean;
 	isExperimentVariant?: boolean;
-	isVar1dVariant?: boolean;
 } ) => { [ planSlug: string ]: PlanFeaturesForGridPlan };
 
 const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesForComparisonGrid =
@@ -51,12 +49,11 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 		intent,
 		selectedFeature,
 		showLegacyStorageFeature,
-		useLongSetFeatures,
-		useLongSetStackedFeatures,
-		useShortSetStackedFeatures,
-		useVar5Features,
+		useFocusedComparisonFeatures,
+		useVar41MorePremiumFeatures,
+		useVar42NoAiFeatures,
+		showPricingDifferentiationFeaturePills,
 		isExperimentVariant,
-		isVar1dVariant,
 	} ) => {
 		const planFeaturesForGridPlans = usePlanFeaturesForGridPlans( {
 			gridPlans,
@@ -64,12 +61,11 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 			intent,
 			selectedFeature,
 			showLegacyStorageFeature,
-			useLongSetFeatures,
-			useLongSetStackedFeatures,
-			useShortSetStackedFeatures,
-			useVar5Features,
+			useFocusedComparisonFeatures,
+			useVar41MorePremiumFeatures,
+			useVar42NoAiFeatures,
+			showPricingDifferentiationFeaturePills,
 			isExperimentVariant,
-			isVar1dVariant,
 		} );
 
 		return useMemo( () => {
@@ -84,9 +80,7 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 
 				let wpcomFeatures;
 
-				// Plans Differentiators Experiment: For comparison grid, use dedicated experiment override function
-				// when in an experiment variant. This ensures all features are displayed in the comparison grid
-				// regardless of which experiment variant (var1, var1d, var3, var4, var5) is active.
+				// Plans differentiators (non-control): use experiment comparison override when present.
 				if (
 					isExperimentVariant &&
 					planConstantObj.get2023PlanComparisonFeatureOverrideForExperiment?.()?.length

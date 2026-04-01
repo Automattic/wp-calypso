@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { Button } from '@wordpress/components';
@@ -25,7 +24,6 @@ export default function PremiumPlanSection( {
 	banner: React.ReactNode;
 } ) {
 	const translate = useTranslate();
-	const isPremiumPlansEnabled = isEnabled( 'a4a-pressable-premium-plans' );
 
 	const { marketplaceType, toggleMarketplaceType } = useContext( MarketplaceTypeContext );
 
@@ -39,7 +37,7 @@ export default function PremiumPlanSection( {
 		dispatch(
 			recordTracksEvent( 'calypso_a4a_marketplace_hosting_pressable_premium_refer_now_click' )
 		);
-		if ( isPremiumPlansEnabled && marketplaceType !== 'referral' ) {
+		if ( marketplaceType !== 'referral' ) {
 			toggleMarketplaceType();
 		}
 	};
@@ -50,9 +48,6 @@ export default function PremiumPlanSection( {
 		);
 		scheduleCall();
 	};
-
-	// Show refer button if premium plans are not enabled or if they are enabled and we are not in referral mode
-	const shouldShowReferButton = ! isPremiumPlansEnabled || marketplaceType !== 'referral';
 
 	return (
 		<HostingPlanSection className="pressable-plan-section" heading={ heading }>
@@ -73,20 +68,18 @@ export default function PremiumPlanSection( {
 					</div>
 
 					<div className="premium-plan-section__cta-buttons">
-						{ shouldShowReferButton && (
-							<Button
-								href={
-									isPremiumPlansEnabled
-										? A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK
-										: A4A_MARKETPLACE_HOSTING_REFER_PRESSABLE_PREMIUM_PLAN_LINK
-								}
-								onClick={ onReferNowClick }
-								variant="primary"
-								__next40pxDefaultSize
-							>
-								{ translate( 'Refer now and get rewarded' ) }
-							</Button>
-						) }
+						<Button
+							href={
+								marketplaceType !== 'referral'
+									? A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK
+									: A4A_MARKETPLACE_HOSTING_REFER_PRESSABLE_PREMIUM_PLAN_LINK
+							}
+							onClick={ onReferNowClick }
+							variant="primary"
+							__next40pxDefaultSize
+						>
+							{ translate( 'Refer now and get rewarded' ) }
+						</Button>
 
 						<Button
 							className="premium-plan-section__cta-button"

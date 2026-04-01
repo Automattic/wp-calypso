@@ -2,6 +2,7 @@ import {
 	siteBySlugQuery,
 	siteWordPressVersionQuery,
 	siteWordPressVersionMutation,
+	wpOrgCoreVersionQuery,
 } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import {
@@ -21,7 +22,7 @@ import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { getFormattedWordPressVersion } from '../../utils/wp-version';
+import { formatWordPressVersion, getFormattedWordPressVersion } from '../../utils/wp-version';
 import { canViewWordPressSettings } from '../features';
 import type { Field } from '@wordpress/dataviews';
 
@@ -33,6 +34,16 @@ export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) 
 		...siteWordPressVersionQuery( site.ID ),
 		enabled: canView,
 	} );
+
+	const { data: latestVersion } = useQuery( {
+		...wpOrgCoreVersionQuery(),
+		enabled: canView,
+	} );
+	const { data: betaVersion } = useQuery( {
+		...wpOrgCoreVersionQuery( 'beta' ),
+		enabled: canView,
+	} );
+
 	const mutation = useMutation( {
 		...siteWordPressVersionMutation( site.ID ),
 		meta: {
@@ -47,14 +58,22 @@ export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) 
 		version: currentVersion ?? '',
 	} );
 
+	const currentWpVersion = site.options?.software_version ?? '';
+
 	const fields: Field< { version: string } >[] = [
 		{
 			id: 'version',
 			label: __( 'WordPress version' ),
 			Edit: 'select',
 			elements: [
-				{ value: 'latest', label: getFormattedWordPressVersion( site, 'latest' ) },
-				{ value: 'beta', label: getFormattedWordPressVersion( site, 'beta' ) },
+				{
+					value: 'latest',
+					label: formatWordPressVersion( latestVersion ?? currentWpVersion, 'latest' ),
+				},
+				{
+					value: 'beta',
+					label: formatWordPressVersion( betaVersion ?? currentWpVersion, 'beta' ),
+				},
 			],
 		},
 	];

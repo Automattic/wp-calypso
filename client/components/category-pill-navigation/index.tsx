@@ -22,9 +22,11 @@ type CategoryPillNavigationProps = {
 		id: string;
 		label?: string;
 		link: string;
+		icon?: React.ReactElement< typeof Icon >;
 	}[];
 	selectedCategoryId: string;
 	onSelect?: ( selectedId: string ) => void;
+	disableMobileCollapse?: boolean;
 };
 
 export const CategoryPillNavigation = ( {
@@ -32,6 +34,7 @@ export const CategoryPillNavigation = ( {
 	categories,
 	selectedCategoryId,
 	onSelect = () => {},
+	disableMobileCollapse = false,
 }: CategoryPillNavigationProps ) => {
 	const locale = useLocale();
 	const isMobile = useMobileBreakpoint();
@@ -91,7 +94,7 @@ export const CategoryPillNavigation = ( {
 		} );
 	}, [ selectedCategoryId ] );
 
-	if ( isMobile ) {
+	if ( isMobile && ! disableMobileCollapse ) {
 		const selectedItem =
 			buttons?.find( ( { isActive } ) => isActive ) ||
 			categories.find( ( { id } ) => id === selectedCategoryId );
@@ -180,6 +183,7 @@ export const CategoryPillNavigation = ( {
 								'is-active': category.id === selectedCategoryId,
 							} ) }
 						>
+							{ category.icon }
 							{ category.label }
 						</LocalizedLink>
 					) ) }

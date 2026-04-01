@@ -1,23 +1,22 @@
 import './style.scss';
 import page from '@automattic/calypso-router';
-import { Icon } from '@wordpress/components';
-import { plus } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
 import AutoDirection from 'calypso/components/auto-direction';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import Favicon from 'calypso/reader/components/favicon';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
-import { isDiscoverV3Enabled } from 'calypso/reader/utils';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 import getReaderFollowedSites from 'calypso/state/reader/follows/selectors/get-reader-followed-sites';
 import { getSelectedRecentFeedId } from 'calypso/state/reader-ui/sidebar/selectors';
 import { AppState } from 'calypso/types';
 import { AllIcon } from '../icons/all';
 import { MenuItem, MenuItemLink } from '../menu';
+
 // Not complete, just useful fields for now
 type Site = {
 	ID: number;
@@ -41,7 +40,7 @@ type Props = {
 	translate: ( key: string ) => string;
 };
 
-const SITE_DISPLAY_CUTOFF = 8;
+const SITE_DISPLAY_CUTOFF = 5;
 const RECENT_PATH_REGEX = /^\/reader(?:\/recent\/\d+)?\/?(?:\?|$)/;
 
 const ReaderSidebarRecent = ( {
@@ -54,11 +53,11 @@ const ReaderSidebarRecent = ( {
 	const [ showAllSites, setShowAllSites ] = useState( false );
 	const sites = useSelector< AppState, Site[] >( getReaderFollowedSites );
 	const selectedSiteFeedId = useSelector< AppState, number | null >( getSelectedRecentFeedId );
+	const moment = useLocalizedMoment();
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
 	const isRecentStream = RECENT_PATH_REGEX.test( path );
 
 	let sitesToShow = showAllSites ? sites : sites.slice( 0, SITE_DISPLAY_CUTOFF );
-	// const totalUnseenCount = sites.reduce( ( total, site ) => total + site.unseen_count, 0 );
 
 	const selectedSite = sites.find( ( site ) => site.feed_ID === selectedSiteFeedId );
 	if ( selectedSite && ! sitesToShow.includes( selectedSite ) ) {
@@ -112,19 +111,6 @@ const ReaderSidebarRecent = ( {
 			materialIconStyle={ null }
 			expandableIconClick={ onClick }
 		>
-			{ isDiscoverV3Enabled() && (
-				<MenuItem key="add" selected={ path.startsWith( '/reader/new' ) }>
-					<MenuItemLink
-						href="/reader/new"
-						className="sidebar__menu-link"
-						onClick={ () => recordReaderTracksEvent( 'calypso_reader_sidebar_add_new_clicked' ) }
-					>
-						<Icon icon={ plus } viewBox="2 0 24 24" />
-						<span>{ translate( 'Add new' ) }</span>
-					</MenuItemLink>
-				</MenuItem>
-			) }
-
 			<MenuItem key="all" selected={ isRecentStream && selectedSiteFeedId === null }>
 				<MenuItemLink
 					href="/reader"
@@ -147,9 +133,14 @@ const ReaderSidebarRecent = ( {
 							className={ clsx( 'reader-sidebar-recent__item sidebar__menu-link' ) }
 							onClick={ () => trackMenuClick( site.feed_ID ) }
 						>
-							<Favicon site={ site } className="reader-sidebar-recent__site-icon" size={ 24 } />
-							<span title={ site.name } className="reader-sidebar-recent__site-name">
-								{ site.name }
+							<Favicon site={ site } className="sidebar__menu-item-site-icon" size={ 22 } />
+							<span title={ site.name } className="sidebar__menu-item-sitename">
+								<span>{ site.name }</span>
+								{ site.last_updated > 0 && (
+									<span className="sidebar__menu-item-last-updated">
+										{ moment( new Date( site.last_updated ) ).fromNow() }
+									</span>
+								) }
 							</span>
 						</MenuItemLink>
 					</AutoDirection>

@@ -670,6 +670,35 @@ export class RestAPIClient {
 	}
 
 	/**
+	 * Gets a post by its URL.
+	 *
+	 * @param {number} siteID Target site ID.
+	 * @param {string} postURL URL of the post to retrieve.
+	 */
+	async getPostByURL( siteID: number, postURL: string ): Promise< PostResponse > {
+		const params: RequestParams = {
+			method: 'get',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		const url = this.getRequestURL( '1.1', `/sites/${ siteID }/post` );
+		url.searchParams.set( 'url', postURL );
+
+		const response = await this.sendRequest( url, params );
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
+	}
+
+	/**
 	 * Creates a post on the site.
 	 *
 	 * @param {number} siteID Target site ID.
@@ -846,6 +875,34 @@ export class RestAPIClient {
 
 		// Otherwise, consider it a success.
 		return response;
+	}
+
+	/**
+	 * Likes or unlikes a post.
+	 *
+	 * @param {'like'|'unlike'} action Action to perform on the post.
+	 * @param {number} siteID Target site ID.
+	 * @param {number} postID Target post ID.
+	 */
+	async postLikeAction(
+		action: 'like' | 'unlike',
+		siteID: number,
+		postID: number
+	): Promise< any > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		const endpoint =
+			action === 'like'
+				? this.getRequestURL( '1.1', `/sites/${ siteID }/posts/${ postID }/likes/new` )
+				: this.getRequestURL( '1.1', `/sites/${ siteID }/posts/${ postID }/likes/mine/delete` );
+
+		return await this.sendRequest( endpoint, params );
 	}
 
 	/* Media */

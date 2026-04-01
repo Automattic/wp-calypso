@@ -145,7 +145,7 @@ class StatsPeriodNavigation extends PureComponent {
 		this.handleArrowNavigation( false );
 	};
 
-	// TODO: refactor to extract logic with `dateForCustomRange` from `client/my-sites/stats/stats-date-picker/index.jsx`.
+	// TODO: refactor to extract logic with `dateForCustomRange` from `client/my-sites/stats/stats-date-label/index.jsx`.
 	getFullPeriod = () => {
 		const { dateRange, momentSiteZone } = this.props;
 		const localizedStartDate = momentSiteZone( dateRange.chartStart );
