@@ -26,7 +26,7 @@ export default function Preferences() {
 		>
 			<SummaryButtonList>
 				{ optIn ? <PreferencesNewHostingDashboard /> : null }
-				{ isEnabled( 'mcp-settings' ) && <PreferencesAiMcp /> }
+				{ isEnabled( 'mcp-settings' ) ? <PreferencesAiMcp /> : null }
 				<PreferencesLanguage />
 				<PreferencesDefaults />
 				<PreferencesPrivacy />
