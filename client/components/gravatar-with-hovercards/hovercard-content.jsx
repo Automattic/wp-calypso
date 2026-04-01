@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'calypso/state';
 import { requestUser } from 'calypso/state/reader/users/actions';
 import getReaderUser from 'calypso/state/selectors/get-reader-user';
 import GravatarHeader from './gravatar-header';
-import PrimaryBlog from './primary-blog-card';
+import PrimaryBlogCard from './primary-blog-card';
 import RecommendedBlogs from './recommended-blogs';
 
 function HovercardContent( props ) {
@@ -46,7 +46,7 @@ function HovercardContent( props ) {
 				{ !! user?.wpcom_id && (
 					<>
 						<div className="gravatar-hovercard__body">
-							<PrimaryBlog
+							<PrimaryBlogCard
 								primaryBlogId={ primaryBlogId }
 								displayName={ displayName }
 								closeCard={ closeCard }

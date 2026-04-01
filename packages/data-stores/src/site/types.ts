@@ -125,6 +125,7 @@ export interface SiteDetails {
 	capabilities?: SiteDetailsCapabilities;
 	description: string;
 	domain: string;
+	feed_ID?: number;
 	icon?: { ico: string; img: string; media_id: number };
 	is_a8c?: boolean;
 	is_coming_soon?: boolean;
