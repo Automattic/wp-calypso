@@ -1,5 +1,5 @@
 import { siteBySlugQuery, siteRedirectQuery } from '@automattic/api-queries';
-import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
@@ -32,6 +32,7 @@ function getDomainId( domain: DomainSummary ) {
 }
 
 function SiteDomains() {
+	const queryClient = useQueryClient();
 	const { name: dashboardName, queries } = useAppContext();
 	const { siteSlug } = siteRoute.useParams();
 	const { user } = useAuth();
@@ -46,7 +47,10 @@ function SiteDomains() {
 	const isCiab = dashboardName === 'CIAB';
 	const pendingDomainFromList = isCiab ? siteDomains?.find( isPendingPrimaryDomain ) : undefined;
 	const { isPending, isDismissed, dismiss } = usePendingPrimaryDomain(
-		pendingDomainFromList?.domain
+		pendingDomainFromList?.domain,
+		{
+			onComplete: () => queryClient.invalidateQueries( queries.domainsQuery() ),
+		}
 	);
 
 	const { data: redirect, isLoading: isRedirectLoading } = useQuery( siteRedirectQuery( site.ID ) );

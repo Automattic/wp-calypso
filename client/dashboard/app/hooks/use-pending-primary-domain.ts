@@ -6,12 +6,21 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useEffect, useRef, useState } from 'react';
 import { isPendingPrimaryDomain } from '../../utils/domain';
 
+interface UsePendingPrimaryDomainOptions {
+	onComplete?: () => void;
+}
+
 /**
  * Polls a single domain while it is pending primary status, and shows a
  * snackbar when setup completes.
  * @param domainName The domain to watch, or undefined to disable.
+ * @param options Options object.
+ * @param options.onComplete Called when the domain transitions from pending to primary.
  */
-export function usePendingPrimaryDomain( domainName: string | undefined ) {
+export function usePendingPrimaryDomain(
+	domainName: string | undefined,
+	{ onComplete }: UsePendingPrimaryDomainOptions = {}
+) {
 	const [ isDismissed, setIsDismissed ] = useState( false );
 
 	// Reset dismissed state when the watched domain changes.
@@ -30,20 +39,25 @@ export function usePendingPrimaryDomain( domainName: string | undefined ) {
 	const isPending = !! polledDomain && isPendingPrimaryDomain( polledDomain );
 
 	// Show completion snackbar when primary domain setup finishes.
+	// Store the domain name in a ref so it survives if the caller clears
+	// `domainName` before this effect fires (e.g. list query refetch).
 	const { createSuccessNotice } = useDispatch( noticesStore );
-	const wasPendingRef = useRef( false );
+	const pendingNameRef = useRef< string | null >( null );
+	const onCompleteRef = useRef( onComplete );
+	onCompleteRef.current = onComplete;
 	useEffect( () => {
-		if ( wasPendingRef.current && ! isPending ) {
+		if ( pendingNameRef.current && ! isPending ) {
 			createSuccessNotice(
 				sprintf(
 					/* translators: %s is the domain name */
-					__( '%s is now your store\u2019s primary address.' ),
-					domainName
+					__( '%s is now your store’s primary address.' ),
+					pendingNameRef.current
 				),
 				{ type: 'snackbar' }
 			);
+			onCompleteRef.current?.();
 		}
-		wasPendingRef.current = isPending;
+		pendingNameRef.current = isPending && domainName ? domainName : null;
 	}, [ isPending, createSuccessNotice, domainName ] );
 
 	return {
