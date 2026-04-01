@@ -18,7 +18,6 @@ import JetpackColophon from 'calypso/components/jetpack-colophon';
 import WebPreview from 'calypso/components/web-preview';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { isHttps } from 'calypso/lib/url';
-import PageHeader from 'calypso/my-sites/stats/components/headers/page-header';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import {
 	useStatsNavigationHistory,
@@ -240,17 +239,6 @@ class StatsPostDetail extends Component {
 		// TODO: Refactor navigationItems to a single object with backLink and title attributes.
 		const navigationItems = this.getNavigationItemsWithTitle( this.getTitle() );
 
-		const backLinkProps = {
-			text: lastScreen.text,
-			url: lastScreen.url,
-		};
-
-		const titleProps = {
-			title: navigationItems[ 1 ].label,
-			// Remove the default logo for Odyssey stats.
-			titleLogo: null,
-		};
-
 		const subscriptionsEnabled = isSimple || isSubscriptionsModuleActive;
 		// postId > 0: Show the tabs for posts except for the Home Page (postId = 0).
 		const isEmailTabsAvailable =
@@ -263,7 +251,18 @@ class StatsPostDetail extends Component {
 			supportsEmailStats;
 
 		return (
-			<Main fullWidthLayout>
+			<Main
+				fullWidthLayout
+				pageSubTitle={ navigationItems[ 1 ].label }
+				pageBackUrl={ lastScreen.url }
+				pageActions={
+					showViewLink && (
+						<CoreButton onClick={ this.openPreview } variant="primary" size="compact">
+							<span>{ actionLabel }</span>
+						</CoreButton>
+					)
+				}
+			>
 				<PageViewTracker
 					path={ `/stats/${ postType }/:post_id/:site` }
 					title={ `Stats > Single ${ titlecase( postType ) }` }
@@ -273,18 +272,6 @@ class StatsPostDetail extends Component {
 				{ siteId && <QueryJetpackModules siteId={ siteId } /> }
 
 				<div className={ postDetailPageClasses }>
-					<PageHeader
-						backLinkProps={ backLinkProps }
-						titleProps={ titleProps }
-						rightSection={
-							showViewLink && (
-								<CoreButton onClick={ this.openPreview } variant="primary">
-									<span>{ actionLabel }</span>
-								</CoreButton>
-							)
-						}
-					/>
-
 					{ isEmailTabsAvailable && (
 						<div
 							className={ clsx(

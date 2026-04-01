@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { Page } from '@wordpress/admin-ui';
 import clsx from 'clsx';
 import { ReactNode } from 'react';
@@ -16,11 +17,13 @@ import { STATS_HEADER_TITLE } from '../../constants';
 
 interface StatsMainProps extends MainProps {
 	/** Subtitle shown below the page title in the unified header. */
-	pageSubTitle?: string;
+	pageSubTitle?: ReactNode;
 	/** Optional actions to display on the right side of the unified header. */
 	pageActions?: ReactNode;
-	/** Navigation tabs rendered as the first child inside the Page header area. */
+	/** Navigation tabs rendered as the first child inside the Page content area. */
 	pageTabs?: ReactNode;
+	/** Back URL for detail pages. When set, renders a breadcrumb-style title: Stats / pageSubTitle. */
+	pageBackUrl?: string;
 }
 
 export default function StatsMain( {
@@ -29,6 +32,7 @@ export default function StatsMain( {
 	pageSubTitle,
 	pageActions,
 	pageTabs,
+	pageBackUrl,
 	...props
 }: StatsMainProps ) {
 	const isWPAdminAndNotSimpleSite = config.isEnabled( 'is_running_in_jetpack_site' );
@@ -41,14 +45,43 @@ export default function StatsMain( {
 	// Make the upsell modal view available on all Stats pages.
 	const upsellModalView = useSelector( ( state ) => getUpsellModalView( state, siteId ) );
 
+	// Detail pages: breadcrumb-style title with back link.
+	// Top-level pages: plain Jetpack + Stats title.
+	let title: ReactNode = <JetpackTitle title={ STATS_HEADER_TITLE } />;
+	let subTitle = pageSubTitle;
+
+	if ( pageBackUrl ) {
+		title = (
+			<span className="stats-main__breadcrumb-title">
+				<a
+					className="stats-main__breadcrumb-link"
+					href={ pageBackUrl }
+					onClick={ ( e ) => {
+						e.preventDefault();
+						page( pageBackUrl );
+					} }
+				>
+					<JetpackTitle title={ STATS_HEADER_TITLE } />
+				</a>
+				{ pageSubTitle && (
+					<>
+						<span className="stats-main__breadcrumb-separator"> / </span>
+						<span className="stats-main__breadcrumb-current">{ pageSubTitle }</span>
+					</>
+				) }
+			</span>
+		);
+		subTitle = undefined;
+	}
+
 	return (
 		<Main { ...props } className={ clsx( 'stats-main', 'color-scheme', customTheme, className ) }>
 			{ ! isWPAdminAndNotSimpleSite && <QuerySiteFeatures siteIds={ [ siteId ] } /> }
 			<QuerySiteSettings siteId={ siteId } />
 			<Page
 				showSidebarToggle={ false }
-				title={ <JetpackTitle title={ STATS_HEADER_TITLE } /> }
-				subTitle={ pageSubTitle }
+				title={ title }
+				subTitle={ subTitle }
 				actions={ pageActions }
 			>
 				{ pageTabs }

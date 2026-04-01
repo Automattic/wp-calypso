@@ -9,7 +9,6 @@ import DownloadCsv from 'calypso/my-sites/stats/stats-download-csv';
 import DownloadCsvUpsell from 'calypso/my-sites/stats/stats-download-csv-upsell';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import PageHeader from '../components/headers/page-header';
 import { STATS_FEATURE_DOWNLOAD_CSV } from '../constants';
 import {
 	TooltipWrapper,
@@ -68,16 +67,6 @@ const StatsEmailSummary = ( { period, query, context } ) => {
 		} );
 	}, [ context.query, period.period ] );
 
-	const backLinkProps = {
-		text: navigationItems[ 0 ].label,
-		url: navigationItems[ 0 ].href,
-	};
-	const titleProps = {
-		title: navigationItems[ 1 ].label,
-		// Remove the default logo for Odyssey stats.
-		titleLogo: null,
-	};
-
 	const downloadCsvElement = shouldGateCsvDownloads ? (
 		<DownloadCsvUpsell siteId={ siteId } borderless />
 	) : (
@@ -99,18 +88,14 @@ const StatsEmailSummary = ( { period, query, context } ) => {
 	);
 
 	return (
-		<Main fullWidthLayout>
+		<Main
+			fullWidthLayout
+			pageSubTitle={ navigationItems[ 1 ].label }
+			pageBackUrl={ navigationItems[ 0 ].href }
+			pageActions={ <div className="stats-module__header-nav-button">{ downloadCsvElement }</div> }
+		>
 			<PageViewTracker path="/stats/emails/:site" title="Stats > Emails" />
 			<div className="stats stats-summary-view">
-				<PageHeader
-					className="stats__section-header modernized-header"
-					titleProps={ titleProps }
-					backLinkProps={ backLinkProps }
-					rightSection={
-						<div className="stats-module__header-nav-button">{ downloadCsvElement }</div>
-					}
-				/>
-
 				<div id="my-stats-content" className="stats-summary-view stats-summary__positioned">
 					<div className="stats-summary-nav">
 						<div className="stats-summary-nav__header">

@@ -22,7 +22,6 @@ import {
 import getMediaItem from 'calypso/state/selectors/get-media-item';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import PageHeader from '../components/headers/page-header';
 import { STATS_FEATURE_DOWNLOAD_CSV } from '../constants';
 import StatsModuleLocations from '../features/modules/stats-locations';
 import LocationsNavTabs from '../features/modules/stats-locations/locations-nav-tabs';
@@ -423,55 +422,53 @@ class StatsSummary extends Component {
 
 		const { module } = this.props.context.params;
 
+		let tabs = null;
+		if ( module === 'locations' ) {
+			tabs = (
+				<div className="stats-navigation stats-navigation--improved">
+					<LocationsNavTabs
+						period={ this.props.period }
+						query={ moduleQuery }
+						givenSiteId={ siteId }
+					/>
+				</div>
+			);
+		} else if ( isArchiveBreakdownEnabled && module === 'posts' ) {
+			tabs = (
+				<div className="stats-navigation stats-navigation--improved">
+					<PostsNavTabs query={ moduleQuery } />
+				</div>
+			);
+		}
+
 		return (
-			<Main fullWidthLayout>
+			<Main
+				fullWidthLayout
+				pageSubTitle={ title }
+				pageBackUrl={ lastScreen.url }
+				pageTabs={ tabs }
+				pageActions={
+					<div className="stats-module__header-nav-button">
+						{ shouldGateStatsCsvDownload ? (
+							<DownloadCsvUpsell siteId={ siteId } borderless />
+						) : (
+							<DownloadCsv
+								statType={ statType }
+								query={ moduleQuery }
+								path={ this.getPath( statType, path ) }
+								period={ this.props.period }
+								skipQuery
+								hideIfNoData
+							/>
+						) }
+					</div>
+				}
+			>
 				<PageViewTracker
 					path={ `/stats/${ period }/${ module }/:site` }
 					title={ `Stats > ${ titlecase( period ) } > ${ titlecase( module ) }` }
 				/>
 				<div className="stats stats-summary-view">
-					<PageHeader
-						className="stats__section-header modernized-header"
-						titleProps={ { title, titleLogo: null } }
-						backLinkProps={ {
-							url: lastScreen.url,
-							text: lastScreen.text,
-						} }
-						rightSection={
-							<div className="stats-module__header-nav-button">
-								{ shouldGateStatsCsvDownload ? (
-									<DownloadCsvUpsell siteId={ siteId } borderless />
-								) : (
-									<DownloadCsv
-										statType={ statType }
-										query={ moduleQuery }
-										path={ this.getPath( statType, path ) }
-										period={ this.props.period }
-										skipQuery
-										hideIfNoData
-									/>
-								) }
-							</div>
-						}
-					/>
-
-					{ this.props.context.params.module === 'locations' && (
-						<div className="stats-navigation stats-navigation--improved">
-							<LocationsNavTabs
-								period={ this.props.period }
-								query={ moduleQuery }
-								givenSiteId={ siteId }
-							/>
-						</div>
-					) }
-
-					{ /* TODO: Refactor to use the same component for both locations and posts */ }
-					{ isArchiveBreakdownEnabled && this.props.context.params.module === 'posts' && (
-						<div className="stats-navigation stats-navigation--improved">
-							<PostsNavTabs query={ moduleQuery } />
-						</div>
-					) }
-
 					<div id="my-stats-content" className="stats-summary-view stats-summary__positioned">
 						{ this.props.context.params.module === 'utm' ? (
 							<StatsGlobalValuesContext.Consumer>

@@ -101,6 +101,24 @@ $font-sf-pro-display: "SF Pro Display", $sans;
 	// Pull stats-navigation tabs into the Page header area visually.
 	.admin-ui-page__header {
 		border-bottom: none;
+
+		// Breadcrumb-style title for detail pages.
+		.stats-main__breadcrumb-title {
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+		}
+
+		.stats-main__breadcrumb-link {
+			color: inherit;
+			text-decoration: underline;
+			font: inherit;
+		}
+
+		.stats-main__breadcrumb-separator,
+		.stats-main__breadcrumb-current {
+			font: inherit;
+		}
 	}
 
 	.admin-ui-page > .stats-navigation {
