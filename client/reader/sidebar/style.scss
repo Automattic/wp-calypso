@@ -24,7 +24,7 @@
 			font-size: 32px;
 			font-style: normal;
 			font-weight: 400;
-			line-height: normal;;
+			line-height: normal;
 		}
 		p {
 			display: none;
@@ -205,6 +205,7 @@ body.is-section-reader {
 		outline-color: currentColor;
 		color: currentColor;
 		margin: 0 auto;
+		align-self: self-start;
 	}
 
 	.sidebar__menu-link:hover .count {
@@ -219,10 +220,7 @@ body.is-section-reader {
 		color: var( --color-sidebar-menu-selected-text );
 	}
 
-	.sidebar__menu-item-siteicon {
-		margin-right: 15px;
-		position: relative;
-		flex-shrink: 0;
+	.sidebar__menu-item-site-icon {
 		border-radius: 4px;
 	}
 
@@ -239,11 +237,9 @@ body.is-section-reader {
 
 	.sidebar__menu-item-sitename {
 		line-height: 14px;
-		max-width: 80%;
 		text-overflow: ellipsis;
 		white-space: nowrap;
 		overflow: hidden;
-		margin-right: 8px;
 
 		// If the site name is marked with ltr or rtl, ensure we use that directionality.
 		&:has( span[direction='ltr'] ) {
@@ -291,11 +287,16 @@ body.is-section-reader {
 			}
 			margin-bottom: 16px;
 		}
+
+		&.has-counts .sidebar__menu-link {
+			grid-template-columns: 24px 1fr 36px;
+		}
+
 		.sidebar__menu-link {
 			display: grid;
-			grid-template-columns: 24px 1fr 36px;
+			grid-template-columns: 24px 1fr;
 			align-items: center;
-			gap: 4px;
+			gap: 6px;
 			line-height: 1.5;
 			padding: 12px 10px 12px 18px;
 			box-sizing: content-box;

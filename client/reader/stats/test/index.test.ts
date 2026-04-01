@@ -673,6 +673,11 @@ describe( 'reader stats', () => {
 					expected: 'user_profile_posts',
 					description: 'user profile posts',
 				},
+				{
+					url: '/reader/users/matt/sites',
+					expected: 'user_profile_sites',
+					description: 'user profile sites tab',
+				},
 			] as const;
 
 			scenarios.map( ( scenario ) => {

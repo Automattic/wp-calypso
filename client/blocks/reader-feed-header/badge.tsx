@@ -1,7 +1,13 @@
+import { Site } from '@automattic/api-core';
 import { Gridicon } from '@automattic/components';
-import PropTypes from 'prop-types';
 
-const ReaderFeedHeaderSiteBadge = ( { site } ) => {
+interface ReaderFeedHeaderSiteBadgeProps {
+	site?: Site;
+}
+
+const ReaderFeedHeaderSiteBadge = ( {
+	site,
+}: ReaderFeedHeaderSiteBadgeProps ): JSX.Element | null => {
 	/* eslint-disable wpcalypso/jsx-gridicon-size */
 	if ( site && site.is_private ) {
 		return <Gridicon icon="lock" size={ 14 } />;
@@ -12,11 +18,6 @@ const ReaderFeedHeaderSiteBadge = ( { site } ) => {
 	}
 
 	return null;
-	/* eslint-enable wpcalypso/jsx-gridicon-size */
-};
-
-ReaderFeedHeaderSiteBadge.propTypes = {
-	site: PropTypes.object,
 };
 
 export default ReaderFeedHeaderSiteBadge;

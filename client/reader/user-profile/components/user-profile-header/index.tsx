@@ -42,6 +42,11 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 			selected: view === 'posts',
 		},
 		{
+			label: translate( 'Sites' ),
+			path: `${ userProfileUrl }/sites`,
+			selected: view === 'sites',
+		},
+		{
 			label: translate( 'Lists' ),
 			path: `${ userProfileUrl }/lists`,
 			selected: view === 'lists',
