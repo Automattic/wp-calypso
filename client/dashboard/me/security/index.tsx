@@ -33,7 +33,7 @@ function Security() {
 				<SecurityPasswordSummary />
 				<SecurityAccountRecoverySummary />
 				<SecurityTwoStepAuthSummary />
-				{ supportsSecurity.sshKey && <SecuritySshKeySummary /> }
+				{ supportsSecurity.sshKey ? <SecuritySshKeySummary /> : null }
 				<SecurityConnectedAppsSummary />
 				<SecuritySocialLoginsSummary />
 			</SummaryButtonList>
