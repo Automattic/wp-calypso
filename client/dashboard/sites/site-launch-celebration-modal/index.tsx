@@ -8,9 +8,12 @@ import {
 	Modal,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
+import { removeQueryArgs } from '@wordpress/url';
 import { __ } from '@wordpress/i18n';
 import { copy, globe } from '@wordpress/icons';
-import { useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
+import { useAnalytics } from '../../app/analytics';
+
 import type { DomainSummary, Site } from '@automattic/api-core';
 import './styles.scss';
 
@@ -25,6 +28,7 @@ export default function SiteLaunchCelebrationModal( {
 	onClose,
 	domains = [],
 }: SiteLaunchCelebrationModalProps ) {
+	const { recordTracksEvent } = useAnalytics();
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
 	const hasEnTranslation = useHasEnTranslation();
 	const copyButtonRef = useRef< HTMLButtonElement >( null );
@@ -33,9 +37,24 @@ export default function SiteLaunchCelebrationModal( {
 	const isBilledMonthly = site.plan?.product_slug?.includes( 'monthly' );
 	const customDomains = domains.filter( ( domain ) => domain.subscription_id !== null );
 	const hasCustomDomain = customDomains.length > 0;
+	const siteDomain = hasCustomDomain ? customDomains[ 0 ].domain : site.slug;
+
+	useEffect( () => {
+		// Remove the celebrateLaunch URL param without reloading the page
+		window.history.replaceState(
+			null,
+			'',
+			removeQueryArgs( window.location.href, 'celebrateLaunch' )
+		);
+
+		// Track the modal view
+		recordTracksEvent( 'calypso_launchpad_celebration_modal_view', {
+			product_slug: site?.plan?.product_slug,
+		} );
+	}, [ site?.plan?.product_slug, recordTracksEvent ] );
 
 	const handleCopy = () => {
-		navigator.clipboard.writeText( site.URL );
+		navigator.clipboard.writeText( siteDomain );
 		setClipboardCopied( true );
 		setTimeout( () => setClipboardCopied( false ), 2000 );
 	};
@@ -115,7 +134,7 @@ export default function SiteLaunchCelebrationModal( {
 					<HStack>
 						<HStack className="celebration-modal--url-container flex-shrink-safe">
 							<Text as="p" weight={ 600 } truncate>
-								{ site.URL }
+								{ siteDomain }
 							</Text>
 							<Button
 								ref={ copyButtonRef }
