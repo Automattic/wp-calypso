@@ -6,6 +6,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { isSitePlanWooHosted } from 'calypso/dashboard/sites/plans';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
@@ -21,6 +22,7 @@ export default function PlanPricing( { inline }: PlanPricingProps ) {
 	const dispatch = useDispatch();
 	const moment = useLocalizedMoment();
 	const site = useSelector( getSelectedSite );
+	const isWooHostedPlan = site ? isSitePlanWooHosted( site ) : false;
 	const planDetails = site?.plan;
 	const planSlug = ( planDetails?.product_slug || '' ) as PlanSlug;
 	const planData = useSelector( ( state ) => getCurrentPlan( state, site?.ID ) );
@@ -127,33 +129,35 @@ export default function PlanPricing( { inline }: PlanPricingProps ) {
 					} ) }
 				>
 					{ getExpireDetails() }
-					<div className="plan-price-cta">
-						{ isFreePlan && (
-							<Button
-								href={ `/plans/${ site?.slug }` }
-								onClick={ () =>
-									dispatch( recordTracksEvent( 'calypso_hosting_overview_upgrade_plan_click' ) )
-								}
-							>
-								{ translate( 'Upgrade your plan' ) }
-							</Button>
-						) }
-						{ site?.plan?.expired && (
-							<>
-								<Button compact href={ `/plans/${ site?.slug }` }>
-									{ translate( 'See all plans' ) }
-								</Button>
+					{ ! isWooHostedPlan && (
+						<div className="plan-price-cta">
+							{ isFreePlan && (
 								<Button
-									style={ { marginLeft: '8px' } }
-									primary
-									compact
-									href={ `/checkout/${ site?.slug }/${ planData.productSlug }` }
+									href={ `/plans/${ site?.slug }` }
+									onClick={ () =>
+										dispatch( recordTracksEvent( 'calypso_hosting_overview_upgrade_plan_click' ) )
+									}
 								>
-									{ translate( 'Renew plan' ) }
+									{ translate( 'Upgrade your plan' ) }
 								</Button>
-							</>
-						) }
-					</div>
+							) }
+							{ site?.plan?.expired && (
+								<>
+									<Button compact href={ `/plans/${ site?.slug }` }>
+										{ translate( 'See all plans' ) }
+									</Button>
+									<Button
+										style={ { marginLeft: '8px' } }
+										primary
+										compact
+										href={ `/checkout/${ site?.slug }/${ planData.productSlug }` }
+									>
+										{ translate( 'Renew plan' ) }
+									</Button>
+								</>
+							) }
+						</div>
+					) }
 				</div>
 			) }
 		</>

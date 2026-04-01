@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import { HostingCard, HostingCardLinkButton } from 'calypso/components/hosting-card';
+import { isSitePlanWooHosted } from 'calypso/dashboard/sites/plans';
 import { isPlansPageUntangled } from 'calypso/lib/plans/untangling-plans-experiment';
 import { isPartnerPurchase, purchaseType } from 'calypso/lib/purchases';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
@@ -86,7 +87,14 @@ const PlanCard = () => {
 	const plansPageIsUntangled = useSelector( isPlansPageUntangled );
 
 	const renderManageButton = () => {
-		if ( isJetpack || ! site || isStaging || isAgencyPurchase || isDevelopmentSite ) {
+		if (
+			isJetpack ||
+			! site ||
+			isStaging ||
+			isAgencyPurchase ||
+			isDevelopmentSite ||
+			isSitePlanWooHosted( site )
+		) {
 			return false;
 		}
 		if ( isFreePlan ) {

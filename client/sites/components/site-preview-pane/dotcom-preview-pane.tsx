@@ -2,6 +2,7 @@ import { FEATURE_SITE_STAGING_SITES } from '@automattic/calypso-products';
 import { SiteExcerptData } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useMemo } from 'react';
+import { isSitePlanWooHosted } from 'calypso/dashboard/sites/plans';
 import { isAtomicTransferredSite } from 'calypso/dashboard/utils/site-atomic-transfers';
 import { isMigrationInProgress } from 'calypso/data/site-migration';
 import ItemView from 'calypso/layout/hosting-dashboard/item-view';
@@ -62,6 +63,7 @@ const DotcomPreviewPane = ( {
 	const { __ } = useI18n();
 	const isInProgress = isMigrationInProgress( site );
 	const isA4ADevSite = !! site?.is_a4a_dev_site;
+	const isWooHostedSite = isSitePlanWooHosted( site );
 
 	const hasStagingSitesFeature = useSelector( ( state ) =>
 		siteHasFeature( state, site.ID, FEATURE_SITE_STAGING_SITES )
@@ -76,33 +78,33 @@ const DotcomPreviewPane = ( {
 			},
 			{
 				label: __( 'Deployments' ),
-				enabled: true,
+				enabled: ! isWooHostedSite,
 				featureIds: [ DEPLOYMENTS ],
 			},
 			{
 				label: __( 'Monitoring' ),
-				enabled: true,
+				enabled: ! isWooHostedSite,
 				featureIds: [ MONITORING ],
 			},
 			{
 				label: __( 'Performance' ),
-				enabled: true,
+				enabled: ! isWooHostedSite,
 				featureIds: [ PERFORMANCE ],
 			},
 			{
 				label: __( 'Logs' ),
-				enabled: true,
+				enabled: ! isWooHostedSite,
 				featureIds: [ LOGS_PHP, LOGS_WEB ],
 			},
 			{
 				label: __( 'Staging Site' ),
 				// We don't have the callout for the staging site tab since we'll retire the tab.
-				enabled: hasStagingSitesFeature && ! isA4ADevSite,
+				enabled: hasStagingSitesFeature && ! isA4ADevSite && ! isWooHostedSite,
 				featureIds: [ STAGING_SITE ],
 			},
 			{
 				label: __( 'Settings' ),
-				enabled: true,
+				enabled: ! isWooHostedSite,
 				featureIds: [
 					SETTINGS_SITE,
 					SETTINGS_ADMINISTRATION_RESET_SITE,
@@ -160,6 +162,7 @@ const DotcomPreviewPane = ( {
 		selectedSiteFeaturePreview,
 		hasStagingSitesFeature,
 		isA4ADevSite,
+		isWooHostedSite,
 	] );
 
 	const itemData: ItemData = {

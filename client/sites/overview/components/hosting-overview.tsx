@@ -1,6 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
 import NavigationHeader from 'calypso/components/navigation-header';
+import { isSitePlanWooHosted } from 'calypso/dashboard/sites/plans';
 import { isMigrationInProgress } from 'calypso/data/site-migration';
 import PlanNoticeUpgradeCredit from 'calypso/my-sites/plans-features-main/components/plan-notice-upgrade-credit';
 import { isNotAtomicJetpack } from 'calypso/sites-dashboard/utils';
@@ -20,6 +21,7 @@ import './style.scss';
 const HostingOverview: FC = () => {
 	const site = useSelector( getSelectedSite );
 	const translate = useTranslate();
+	const isWooHostedSite = site ? isSitePlanWooHosted( site ) : false;
 
 	if ( site ) {
 		const queryParams = new URLSearchParams( window.location.search );
@@ -48,7 +50,7 @@ const HostingOverview: FC = () => {
 				title={ translate( 'Overview' ) }
 				subtitle={ subtitle }
 			/>
-			{ site?.ID && (
+			{ site?.ID && ! isWooHostedSite && (
 				<PlanNoticeUpgradeCredit
 					className="hosting-overview__upgrade-credit-notice"
 					siteId={ site.ID }

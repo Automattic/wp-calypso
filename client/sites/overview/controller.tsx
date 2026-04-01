@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
+import { isSitePlanWooHosted } from 'calypso/dashboard/sites/plans';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { isMigrationInProgress } from 'calypso/data/site-migration';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -65,6 +66,10 @@ export async function dashboardBackportSiteOverview( context: PageJSContext, nex
 	if ( isMigrationInProgress( site ) || sshMigration ) {
 		// Temporarily show the v1 site migration overview page.
 		// @todo implement the page in v2.
+		return overview( context, next );
+	}
+
+	if ( site && isSitePlanWooHosted( site ) ) {
 		return overview( context, next );
 	}
 

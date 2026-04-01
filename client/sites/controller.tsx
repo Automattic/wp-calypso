@@ -5,6 +5,7 @@ import { removeQueryArgs } from '@wordpress/url';
 import i18n from 'i18n-calypso';
 import AsyncLoad from 'calypso/components/async-load';
 import ResurrectedWelcomeModalGate from 'calypso/components/resurrected-welcome-modal';
+import { isSitePlanWooHosted } from 'calypso/dashboard/sites/plans';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
@@ -13,6 +14,7 @@ import { fetchPreferences } from 'calypso/state/preferences/actions';
 import { hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import { setAllSitesSelected } from 'calypso/state/ui/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { OVERVIEW } from './components/site-preview-pane/constants';
 import SitesDashboard from './components/sites-dashboard';
 import { areHostingFeaturesSupported } from './hosting/features';
 import type { Context, Context as PageJSContext } from '@automattic/calypso-router';
@@ -131,8 +133,18 @@ export function sitesDashboard( context: Context, next: () => void ) {
 	next();
 }
 
+function isWooHostedDashboardFeatureAllowed( feature: string | undefined ) {
+	return feature === undefined || feature === OVERVIEW;
+}
+
 export function siteDashboard( feature: string | undefined ) {
 	return ( context: Context, next: () => void ) => {
+		const site = getSelectedSite( context.store.getState() );
+		if ( site && isSitePlanWooHosted( site ) && ! isWooHostedDashboardFeatureAllowed( feature ) ) {
+			page.redirect( `/sites/${ site.slug }` );
+			return;
+		}
+
 		context.primary = (
 			<SitesDashboard
 				initialSiteFeature={ feature }

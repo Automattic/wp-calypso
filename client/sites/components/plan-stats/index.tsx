@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PlanStorage, { useDisplayUpgradeLink } from 'calypso/blocks/plan-storage';
+import { isSitePlanWooHosted } from 'calypso/dashboard/sites/plans';
 import { isPlansPageUntangled } from 'calypso/lib/plans/untangling-plans-experiment';
 import { useStorageAddOnAvailable } from 'calypso/lib/plans/use-storage-add-on-available';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -55,6 +56,7 @@ type PlanStatsProps = {
 
 export default function PlanStats( { needMoreStorageTracksEventName }: PlanStatsProps ) {
 	const site = useSelector( getSelectedSite );
+	const isWooHostedPlan = site ? isSitePlanWooHosted( site ) : false;
 	const planDetails = site?.plan;
 	const planData = useSelector( ( state ) => getCurrentPlan( state, site?.ID ) );
 	const isFreePlan = planDetails?.is_free;
@@ -81,7 +83,7 @@ export default function PlanStats( { needMoreStorageTracksEventName }: PlanStats
 					siteId={ site?.ID }
 					storageBarComponent={ PlanStorageBar }
 				>
-					{ isStorageAddOnAvailable ? (
+					{ isStorageAddOnAvailable && ! isWooHostedPlan ? (
 						<div className="plan-storage-footer">
 							<NeedMoreStorage
 								noLink={ footerWrapperIsLink }
