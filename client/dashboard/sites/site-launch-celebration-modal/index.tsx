@@ -8,12 +8,11 @@ import {
 	Modal,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
-import { removeQueryArgs } from '@wordpress/url';
 import { __ } from '@wordpress/i18n';
 import { copy, globe } from '@wordpress/icons';
+import { removeQueryArgs } from '@wordpress/url';
 import { useEffect, useState, useRef } from 'react';
 import { useAnalytics } from '../../app/analytics';
-
 import type { DomainSummary, Site } from '@automattic/api-core';
 import './styles.scss';
 
@@ -64,7 +63,7 @@ export default function SiteLaunchCelebrationModal( {
 		let buttonText;
 		let buttonHref;
 
-		if ( ! isPaidPlan ) {
+		if ( ! isPaidPlan && ! hasCustomDomain ) {
 			contentElement = (
 				<Text as="p" className="flex-shrink-safe">
 					{ createInterpolateElement(
@@ -79,11 +78,11 @@ export default function SiteLaunchCelebrationModal( {
 				? __( 'Get your domain' )
 				: __( 'Claim your domain' );
 			buttonHref = `/domains/add/${ site.slug }`;
-		} else if ( isBilledMonthly ) {
+		} else if ( isPaidPlan && isBilledMonthly && ! hasCustomDomain ) {
 			contentElement = (
 				<Text as="p" className="flex-shrink-safe">
 					{ __(
-						"Interested in a custom domain? It's free for the first year when you switch to annual billing."
+						'Interested in a custom domain? It’s free for the first year when you switch to annual billing.'
 					) }
 				</Text>
 			);
@@ -91,12 +90,12 @@ export default function SiteLaunchCelebrationModal( {
 				? __( 'Get your domain' )
 				: __( 'Claim your domain' );
 			buttonHref = `/domains/add/${ site.slug }`;
-		} else {
+		} else if ( isPaidPlan && ! hasCustomDomain ) {
 			contentElement = (
 				<Text as="p" className="flex-shrink-safe">
 					{ createInterpolateElement(
 						__(
-							'Your paid plan includes a domain name <strong>free for one year</strong>. Choose one that`s easy to remember and even easier to share.'
+							'Your paid plan includes a domain name <strong>free for one year</strong>. Choose one that’s easy to remember and even easier to share.'
 						),
 						{ strong: <strong /> }
 					) }
@@ -106,12 +105,22 @@ export default function SiteLaunchCelebrationModal( {
 				? __( 'Get your free domain' )
 				: __( 'Claim your free domain' );
 			buttonHref = `/domains/add/${ site.slug }`;
+		} else {
+			return null;
 		}
 
 		return (
 			<HStack spacing={ 3 } alignment="bottomRight">
 				{ contentElement }
-				<Button variant="primary" href={ buttonHref }>
+				<Button
+					variant="primary"
+					href={ buttonHref }
+					onClick={ () =>
+						recordTracksEvent( 'calypso_launchpad_celebration_modal_upsell_clicked', {
+							product_slug: site?.plan?.product_slug,
+						} )
+					}
+				>
 					{ buttonText }
 				</Button>
 			</HStack>
