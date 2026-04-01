@@ -17,7 +17,7 @@ import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { hasHostingFeature } from '../../utils/site-features';
-import { formatWordPressVersion } from '../../utils/wp-version';
+import { formatWordPressVersion, getWordPressVersionTagName } from '../../utils/wp-version';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import type { Field } from '@wordpress/dataviews';
 
@@ -63,11 +63,15 @@ export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) 
 			elements: [
 				{
 					value: 'latest',
-					label: formatWordPressVersion( latestVersion ?? currentWpVersion, 'latest' ),
+					label: `${
+						latestVersion ?? formatWordPressVersion( currentWpVersion )
+					} (${ getWordPressVersionTagName( 'latest' ) })`,
 				},
 				{
 					value: 'beta',
-					label: formatWordPressVersion( betaVersion ?? currentWpVersion, 'beta' ),
+					label: `${
+						betaVersion ?? formatWordPressVersion( currentWpVersion )
+					} (${ getWordPressVersionTagName( 'beta' ) })`,
 				},
 			],
 		},

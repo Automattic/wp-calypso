@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import type { Site } from '@automattic/api-core';
 
-function getWordPressVersionTagName( versionTag: string ) {
+export function getWordPressVersionTagName( versionTag: string ) {
 	if ( versionTag === 'latest' ) {
 		return __( 'Latest' );
 	}
@@ -26,9 +26,8 @@ export function formatWordPressVersion(
 		return '';
 	}
 
-	// Strip dev suffixes like "6.8.1-alpha-60199" (Simple sites) but keep
-	// meaningful pre-release identifiers like "7.0-RC2" or "7.0-beta1".
-	wpVersion = wpVersion.replace( /-alpha-\d+$/, '' );
+	// The version string could have suffix like 6.8.1-alpha-60199, e.g. on Simple sites
+	wpVersion = wpVersion.split( '-' )[ 0 ];
 
 	if ( versionTag ) {
 		wpVersion = `${ wpVersion } (${ getWordPressVersionTagName( versionTag ) })`;
