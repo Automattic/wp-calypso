@@ -73,7 +73,9 @@ const createRouteTree = ( config: AppConfig ) => {
 		children.push( startStoreRoute );
 	}
 
-	children.push( ssoBridgeRoute );
+	if ( calypsoConfig.isEnabled( 'oauth' ) ) {
+		children.push( ssoBridgeRoute );
+	}
 
 	return rootRoute.addChildren( children );
 };

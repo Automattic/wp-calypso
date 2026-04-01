@@ -1,55 +1,26 @@
-import { ssoAuthorize } from '@automattic/api-core';
-import { useSearch } from '@tanstack/react-router';
-import { __experimentalVStack as VStack } from '@wordpress/components';
-import { useEffect, useState } from 'react';
-import { TextSkeleton } from '../../components/text-skeleton';
-
-function validateSsoUrl( raw: string ): URL {
-	const url = new URL( raw );
-	if ( url.protocol !== 'https:' ) {
-		throw new Error( 'Received invalid SSO redirect URL' );
-	}
-	return url;
-}
+import { __ } from '@wordpress/i18n';
+import Notice from '../../components/notice';
+import { PageHeader } from '../../components/page-header';
+import PageLayout from '../../components/page-layout';
 
 export default function SsoBridge() {
-	const { site_id: siteId, sso_nonce: ssoNonce } = useSearch( { from: '/sso-bridge' } );
-	const [ error, setError ] = useState< Error >();
-
-	useEffect( () => {
-		if ( ! siteId || ! ssoNonce ) {
-			return;
-		}
-
-		let cancelled = false;
-
-		ssoAuthorize( Number( siteId ), ssoNonce )
-			.then( ( data ) => {
-				if ( cancelled ) {
-					return;
-				}
-				const ssoUrl = validateSsoUrl( data.sso_url );
-				window.location.replace( ssoUrl.toString() );
-			} )
-			.catch( ( err: unknown ) => {
-				if ( cancelled ) {
-					return;
-				}
-				setError( err instanceof Error ? err : new Error( 'SSO authorization failed' ) );
-			} );
-
-		return () => {
-			cancelled = true;
-		};
-	}, [ siteId, ssoNonce ] );
-
-	if ( error ) {
-		throw error;
-	}
-
 	return (
-		<VStack alignment="center" justify="center" style={ { minHeight: '60vh' } }>
-			<TextSkeleton length={ 30 } />
-		</VStack>
+		<PageLayout
+			header={
+				<PageHeader
+					title={ __( 'Unable to sign in' ) }
+					description={ __(
+						'Something went wrong while signing you in. Please try again by navigating back to your site.'
+					) }
+				/>
+			}
+			notices={
+				<Notice variant="error">
+					{ __(
+						'If the problem persists, please contact support and let them know you saw this message while trying to sign in via SSO.'
+					) }
+				</Notice>
+			}
+		/>
 	);
 }

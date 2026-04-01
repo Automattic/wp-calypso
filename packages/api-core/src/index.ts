@@ -32,7 +32,6 @@ export * from './emails';
 export * from './geo';
 export * from './hosting-github';
 export * from './hosting-update-schedules';
-export * from './jetpack-sso';
 export * from './jetpack-user-license';
 export * from './marketplace-products';
 export * from './marketplace-search';
