@@ -1,4 +1,5 @@
 import './styles.scss';
+import { ProfileData } from '@gravatar-com/hovercards';
 import { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { useSelector, useDispatch } from 'calypso/state';
@@ -8,7 +9,21 @@ import GravatarHeader from './gravatar-header';
 import PrimaryBlogCard from './primary-blog-card';
 import RecommendedBlogs from './recommended-blogs';
 
-function HovercardContent( props ) {
+interface HovercardContentProps {
+	user: HovercardUser;
+	gravatarData: Partial< ProfileData >;
+	processedAvatarUrl?: string | null;
+	closeCard: () => void;
+}
+
+interface HovercardUser {
+	ID?: number;
+	wpcom_id?: number;
+	primary_blog?: number;
+	site_ID?: number;
+}
+
+function HovercardContent( props: HovercardContentProps ): JSX.Element {
 	const dispatch = useDispatch();
 	const { user, gravatarData, processedAvatarUrl, closeCard } = props;
 
@@ -18,7 +33,7 @@ function HovercardContent( props ) {
 
 	// For some reason there are places where the user object passes in primary blog of -1. Lets
 	// find the read one with this selector.
-	const readerUserData = useSelector( ( state ) => getReaderUser( state, userID, true ) );
+	const readerUserData = useSelector( ( state ) => getReaderUser( state, userID!, true ) );
 	const { display_name: displayName, user_login: userLogin } = readerUserData || {};
 
 	const primaryBlogId = readerUserData?.primary_blog || user?.primary_blog || user?.site_ID;
@@ -53,7 +68,7 @@ function HovercardContent( props ) {
 					<>
 						<div className="gravatar-hovercard__body">
 							<PrimaryBlogCard
-								primaryBlogId={ primaryBlogId }
+								primaryBlogId={ primaryBlogId! }
 								displayName={ displayName }
 								closeCard={ closeCard }
 							/>
@@ -69,7 +84,14 @@ function HovercardContent( props ) {
 	);
 }
 
-export default function HovercardContentPortal( { mountNode, ...props } ) {
+interface HovercardContentPortalProps extends HovercardContentProps {
+	mountNode: Element | null;
+}
+
+export default function HovercardContentPortal( {
+	mountNode,
+	...props
+}: HovercardContentPortalProps ): JSX.Element | null {
 	if ( ! mountNode ) {
 		return null;
 	}
