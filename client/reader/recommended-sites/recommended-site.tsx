@@ -82,6 +82,7 @@ type RecommendedSiteProps = {
 const RecommendedSite = ( {
 	siteId,
 	feedId,
+	feedIcon,
 	siteTitle,
 	streamUrl,
 	siteDescription,
@@ -216,7 +217,7 @@ const RecommendedSite = ( {
 			</Flex>
 			<HStack justify="flex-start" spacing="4">
 				<SiteIcon
-					iconUrl={ feedIcon || siteIcon }
+					iconUrl={ siteIcon || feedIcon }
 					size={ 40 }
 					onClick={ () => recordSiteIconClicked( siteTracksEventProps ) }
 				/>
