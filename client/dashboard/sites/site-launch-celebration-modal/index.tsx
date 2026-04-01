@@ -47,7 +47,7 @@ export default function SiteLaunchCelebrationModal( {
 
 		if ( ! isPaidPlan ) {
 			contentElement = (
-				<Text as="p" style={ { flex: 1, minWidth: 0 } }>
+				<Text as="p" className="flex-shrink-safe">
 					{ createInterpolateElement(
 						__(
 							'Supercharge your website with a <strong>custom address</strong> that matches your blog, brand, or business.'
@@ -62,7 +62,7 @@ export default function SiteLaunchCelebrationModal( {
 			buttonHref = `/domains/add/${ site.slug }`;
 		} else if ( isBilledMonthly ) {
 			contentElement = (
-				<Text as="p" style={ { flex: 1, minWidth: 0 } }>
+				<Text as="p" className="flex-shrink-safe">
 					{ __(
 						"Interested in a custom domain? It's free for the first year when you switch to annual billing."
 					) }
@@ -74,7 +74,7 @@ export default function SiteLaunchCelebrationModal( {
 			buttonHref = `/domains/add/${ site.slug }`;
 		} else {
 			contentElement = (
-				<Text as="p" style={ { flex: 1, minWidth: 0 } }>
+				<Text as="p" className="flex-shrink-safe">
 					{ createInterpolateElement(
 						__(
 							'Your paid plan includes a domain name <strong>free for one year</strong>. Choose one that`s easy to remember and even easier to share.'
@@ -100,15 +100,20 @@ export default function SiteLaunchCelebrationModal( {
 	};
 
 	return (
-		<Modal title={ __( 'Congrats, your site is live!' ) } size="medium" onRequestClose={ onClose }>
+		<Modal
+			className="celebration-modal"
+			title={ __( 'Congrats, your site is live!' ) }
+			size="medium"
+			onRequestClose={ onClose }
+		>
 			<ConfettiAnimation />
 			<VStack spacing={ 6 }>
 				<Text as="p">
 					{ __( 'Now you can head over to your site and share it with the world.' ) }
 				</Text>
-				<div className="celebration-modal--container">
+				<div className="celebration-modal--content">
 					<HStack>
-						<HStack style={ { flex: 1, minWidth: 0 } }>
+						<HStack className="celebration-modal--url-container flex-shrink-safe">
 							<Text as="p" weight={ 600 } truncate>
 								{ site.URL }
 							</Text>
