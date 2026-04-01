@@ -400,6 +400,7 @@ const PlansFeaturesMain = ( {
 		useVar41MorePremiumFeatures,
 		useVar42NoAiFeatures,
 		showPricingDifferentiationFeaturePills,
+		useFocusedNewCopyTaglines,
 		isExperimentVariant,
 	} = usePlanDifferentiatorsExperiment( { flowName, isInSignup, siteId } );
 
@@ -483,6 +484,7 @@ const PlansFeaturesMain = ( {
 		useVar41MorePremiumFeatures,
 		useVar42NoAiFeatures,
 		showPricingDifferentiationFeaturePills,
+		useFocusedNewCopyTaglines,
 		isExperimentVariant,
 	} );
 
@@ -511,6 +513,7 @@ const PlansFeaturesMain = ( {
 		useVar41MorePremiumFeatures,
 		useVar42NoAiFeatures,
 		showPricingDifferentiationFeaturePills,
+		useFocusedNewCopyTaglines,
 		isExperimentVariant,
 	} );
 

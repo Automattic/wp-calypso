@@ -3193,7 +3193,15 @@ const FEATURES_LIST: FeatureList = {
 	// AI features for plan differentiators experiment
 	[ FEATURE_AI_WEBSITE_BUILDER ]: {
 		getSlug: () => FEATURE_AI_WEBSITE_BUILDER,
-		getTitle: () => i18n.translate( 'AI Website Builder' ),
+		getTitle: () => {
+			if (
+				i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+				i18n.hasTranslation( 'AI website builder' )
+			) {
+				return i18n.translate( 'AI website builder' );
+			}
+			return i18n.translate( 'AI Website Builder' );
+		},
 		getDescription: ( params ) =>
 			params?.isExperimentVariant
 				? i18n.translate( 'Use the latest AI models in the AI website builder.' )
