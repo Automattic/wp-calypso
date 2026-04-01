@@ -15,7 +15,6 @@ import {
 	isSitePlanBigSkyTrial,
 	isSitePlanPaid,
 } from '../plans';
-import SiteLaunchCelebrationModal from '../site-launch-celebration-modal';
 import type { Site } from '@automattic/api-core';
 
 export function SiteLaunchButton( {
@@ -49,7 +48,6 @@ export function SiteLaunchButton( {
 		},
 	} );
 	const [ isLaunchModalOpen, setIsLaunchModalOpen ] = useState( false );
-	const [ isCelebrationModalOpen, setIsCelebrationModalOpen ] = useState( false );
 	const [ , experimentData ] = useExperiment( 'calypso_launch_button_experiment_test_20260319_4' );
 	const experimentAssignment = experimentData?.variationName;
 
@@ -70,7 +68,12 @@ export function SiteLaunchButton( {
 		handleTracksEvent();
 		launchMutation.mutate( undefined, {
 			onSuccess: () => {
-				setIsCelebrationModalOpen( true );
+				// Add query param to trigger celebration modal in parent component
+				window.history.replaceState(
+					null,
+					'',
+					addQueryArgs( window.location.href, { celebrateLaunch: 'true' } )
+				);
 			},
 			onSettled: () => {
 				setIsLaunchModalOpen( false );
@@ -128,18 +131,7 @@ export function SiteLaunchButton( {
 
 	// Handle ungated_site_launch variant: launch directly and show celebration modal
 	if ( experimentAssignment === 'ungated_site_launch' ) {
-		return (
-			<>
-				<Button { ...commonProps } onClick={ handleUngatedLaunch } />
-				{ isCelebrationModalOpen && (
-					<SiteLaunchCelebrationModal
-						site={ site }
-						domains={ domains }
-						onClose={ () => setIsCelebrationModalOpen( false ) }
-					/>
-				) }
-			</>
-		);
+		return <Button { ...commonProps } onClick={ handleUngatedLaunch } />;
 	}
 
 	// Control variant and non-dashboard sites: preserve existing behavior
