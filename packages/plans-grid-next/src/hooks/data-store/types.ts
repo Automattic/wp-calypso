@@ -54,6 +54,11 @@ export interface UseGridPlansParams {
 	 */
 	showPricingDifferentiationFeaturePills?: boolean;
 	/**
+	 * When true, use the focused_new_copy taglines for plan headers.
+	 * Applies to: focused_new_copy only.
+	 */
+	useFocusedNewCopyTaglines?: boolean;
+	/**
 	 * When true, the user is in an experiment variant (not control).
 	 */
 	isExperimentVariant?: boolean;

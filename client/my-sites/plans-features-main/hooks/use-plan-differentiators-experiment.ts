@@ -39,6 +39,11 @@ type PlanDifferentiatorsExperimentResult = {
 	 */
 	useVar42NoAiFeatures: boolean;
 	/**
+	 * When true, use focused_new_copy taglines for plan headers.
+	 * Applies to: focused_new_copy only.
+	 */
+	useFocusedNewCopyTaglines: boolean;
+	/**
 	 * When true, the user is eligible for the experiment (any arm, including control).
 	 */
 	isExperimentVariant: boolean;
@@ -94,6 +99,7 @@ function usePlanDifferentiatorsExperiment( {
 			variant === 'focused_more_premium' ||
 			variant === 'focused_new_copy' ||
 			variant === 'focused_no_ai',
+		useFocusedNewCopyTaglines: variant === 'focused_new_copy',
 		isExperimentVariant,
 	};
 }
