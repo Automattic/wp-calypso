@@ -1,23 +1,35 @@
-import { useHovercards } from '@gravatar-com/hovercards/react';
+import '@gravatar-com/hovercards/dist/style.css';
+import { ProfileData } from '@gravatar-com/hovercards';
+import { useHovercards } from '@gravatar-com/hovercards/dist/index.react';
 import { useEffect, useRef, useState } from 'react';
 import Gravatar from '../gravatar';
 import HovercardContentPortal from './hovercard-content';
 
-import '@gravatar-com/hovercards/dist/style.css';
+interface GravatarWithHovercardsProps {
+	user: {
+		ID?: number;
+		wpcom_id?: number;
+		primary_blog?: number;
+		site_ID?: number;
+		display_name?: string;
+		name?: string;
+		avatar_URL?: string;
+	};
+}
 
-export default function GravatarWithHovercards( props ) {
-	const containerRef = useRef( null );
-	const [ mountNode, setMountNode ] = useState( null );
-	const [ processedAvatarUrl, setProcessedAvatarUrl ] = useState( null );
-	const [ gravatarData, setGravatarData ] = useState( {} );
+export default function GravatarWithHovercards( props: GravatarWithHovercardsProps ): JSX.Element {
+	const containerRef = useRef< HTMLDivElement >( null );
+	const [ mountNode, setMountNode ] = useState< Element | null >( null );
+	const [ processedAvatarUrl, setProcessedAvatarUrl ] = useState< string | null >( null );
+	const [ gravatarData, setGravatarData ] = useState< Partial< ProfileData > >( {} );
 
 	const { attach, detach } = useHovercards( {
-		onHovercardShown: ( hash, hovercardElement ) => {
+		onHovercardShown: ( hash: string, hovercardElement: HTMLDivElement ) => {
 			if ( hovercardElement ) {
 				const inner = hovercardElement.querySelector( '.gravatar-hovercard__inner' );
 				if ( inner ) {
 					// Get the processed avatar URL before clearing innerHTML
-					const avatarImg = inner.querySelector( '.gravatar-hovercard__avatar' );
+					const avatarImg: HTMLImageElement = inner.querySelector( '.gravatar-hovercard__avatar' )!;
 					const extractedAvatarUrl = avatarImg ? avatarImg.src : null;
 
 					inner.innerHTML = '';
@@ -28,7 +40,7 @@ export default function GravatarWithHovercards( props ) {
 				}
 			}
 		},
-		onFetchProfileSuccess: ( hash, data ) => {
+		onFetchProfileSuccess: ( hash: string, data: Partial< ProfileData > ) => {
 			setGravatarData( data );
 		},
 	} );
