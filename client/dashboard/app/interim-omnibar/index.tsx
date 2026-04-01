@@ -1,7 +1,31 @@
 import { queryClient, siteByIdQuery } from '@automattic/api-queries';
+import { defaultI18n } from '@wordpress/i18n';
 import { hydrateRoot } from 'react-dom/client';
 import { AUTH_QUERY_KEY, initializeCurrentUser } from '../auth';
 import type { OmnibarEvents } from './click-handlers';
+import type { User } from '@automattic/api-core';
+
+async function loadLocaleData( user: User ) {
+	const language =
+		( user as User & { localeVariant?: string; localeSlug?: string } ).localeVariant ||
+		( user as User & { localeVariant?: string; localeSlug?: string } ).localeSlug ||
+		user.locale_variant ||
+		user.language ||
+		'en';
+
+	if ( language === 'en' ) {
+		return;
+	}
+
+	try {
+		const response = await fetch(
+			`https://widgets.wp.com/languages/calypso/${ language }-v1.1.json`
+		);
+		defaultI18n.resetLocaleData( await response.json() );
+	} catch {
+		// Fall back to English if loading fails.
+	}
+}
 
 export default async function loadOmnibar( events: OmnibarEvents ) {
 	const container = document.getElementById( 'wpcom-omnibar' );
@@ -46,9 +70,10 @@ export default async function loadOmnibar( events: OmnibarEvents ) {
 		{ onRecoverableError() {} }
 	);
 
-	const site = user.primary_blog
-		? await queryClient.fetchQuery( siteByIdQuery( user.primary_blog ) )
-		: null;
+	const [ site ] = await Promise.all( [
+		user.primary_blog ? queryClient.fetchQuery( siteByIdQuery( user.primary_blog ) ) : null,
+		loadLocaleData( user ),
+	] );
 
 	root.render(
 		<InterimOmnibar
