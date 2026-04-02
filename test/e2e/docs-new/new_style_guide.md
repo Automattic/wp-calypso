@@ -17,7 +17,7 @@
 
 Having a consistent structure means that tests are not only easier to read and update, but test reports generated are easy to read as system specifications:
 
-![Playwright Test Report Example](./files/example_test_report.png 'Playwright Test Report Example')
+![Playwright Test Report Example](./files/example_test_report.webp 'Playwright Test Report Example')
 
 ### Test Describe Block
 

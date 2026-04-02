@@ -28,6 +28,7 @@ const FormTokenFieldWrapper = ( { onChange, suggestions, value, label = '' }: Pr
 				__experimentalAutoSelectFirstMatch
 				__experimentalExpandOnFocus
 				__experimentalShowHowTo={ false }
+				__next40pxDefaultSize
 				__nextHasNoMarginBottom
 				label={ label }
 				onChange={ onChange }

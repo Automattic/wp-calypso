@@ -20,6 +20,7 @@ const MinimumBudgetSelector = ( { setMinimumBudget, selectedMinimumBudget }: Pro
 
 	return (
 		<SelectControl
+			__next40pxDefaultSize
 			value={ selectedMinimumBudget }
 			options={ options }
 			onChange={ setMinimumBudget }

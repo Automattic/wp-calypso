@@ -5,10 +5,10 @@ import { localize } from 'i18n-calypso';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
+import { SiteIcon } from 'calypso/blocks/site-icon';
 import AutoDirection from 'calypso/components/auto-direction';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
-import Favicon from 'calypso/reader/components/favicon';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 import getReaderFollowedSites from 'calypso/state/reader/follows/selectors/get-reader-followed-sites';
@@ -133,7 +133,7 @@ const ReaderSidebarRecent = ( {
 							className={ clsx( 'reader-sidebar-recent__item sidebar__menu-link' ) }
 							onClick={ () => trackMenuClick( site.feed_ID ) }
 						>
-							<Favicon site={ site } className="sidebar__menu-item-site-icon" size={ 22 } />
+							<SiteIcon iconUrl={ site.site_icon } size={ 22 } />
 							<span title={ site.name } className="sidebar__menu-item-sitename">
 								<span>{ site.name }</span>
 								{ site.last_updated > 0 && (

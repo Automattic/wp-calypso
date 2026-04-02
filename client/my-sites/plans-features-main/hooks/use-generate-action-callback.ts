@@ -10,6 +10,7 @@ import {
 import page from '@automattic/calypso-router';
 import { AddOns, Plans } from '@automattic/data-stores';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
+import { WOO_HOSTED_PLANS_FLOW } from '@automattic/onboarding';
 import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
 import { useDispatch } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
@@ -265,7 +266,7 @@ function useGenerateActionCallback( {
 			/* 3. In the logged-in plans dashboard, handle plan downgrades and plan downgrade tracks events */
 			if (
 				sitePlanSlug &&
-				! flowName &&
+				( ! flowName || flowName === WOO_HOSTED_PLANS_FLOW ) &&
 				intent !== 'plans-p2' &&
 				intent !== 'plans-blog-onboarding' &&
 				! availableForPurchase

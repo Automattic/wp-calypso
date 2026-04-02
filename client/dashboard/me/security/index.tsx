@@ -29,7 +29,7 @@ function Security() {
 				/>
 			}
 		>
-			<VStack spacing={ 6 }>
+			<VStack spacing={ 4 }>
 				<SecurityPasswordSummary />
 				<SecurityAccountRecoverySummary />
 				<SecurityTwoStepAuthSummary />
