@@ -51,7 +51,6 @@ const { getParentRoute: _aiToolsIndexParent, ...aiToolsIndexRouteOptions } =
 const aiToolsIndexRoute = createRoute( {
 	...aiToolsIndexRouteOptions,
 	getParentRoute: () => aiToolsLayoutRoute,
-	path: 'ai-tools',
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-ai-tools' ).then( ( d ) =>
 		createLazyRoute( 'ai-tools' )( {
@@ -70,7 +69,6 @@ const {
 const aiToolsReadRoute = createRoute( {
 	...aiToolsReadRouteOptions,
 	getParentRoute: () => aiToolsLayoutRoute,
-	path: 'ai-tools/read',
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-ai-tools/read' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-ai-tools-read-v2' )( {
@@ -89,7 +87,6 @@ const {
 const aiToolsWriteRoute = createRoute( {
 	...aiToolsWriteRouteOptions,
 	getParentRoute: () => aiToolsLayoutRoute,
-	path: 'ai-tools/write',
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-ai-tools/write' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-ai-tools-write-v2' )( {
@@ -108,7 +105,6 @@ const {
 const aiToolsSetupRoute = createRoute( {
 	...aiToolsSetupRouteOptions,
 	getParentRoute: () => aiToolsLayoutRoute,
-	path: 'ai-tools/setup',
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-ai-tools/setup' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-ai-tools-setup-v2' )( {

@@ -639,19 +639,16 @@ export const siteSettingsSiteVisibilityRoute = createRoute( {
 // Pathless layout: a route with path `ai-tools` in flatRoutes fuzzy-matches `ai-tools/read` and
 // breaks matching (leftover `**` segment). Children use full paths under `settings` instead.
 export const siteSettingsAIToolsRoute = createRoute( {
-	id: 'siteSettingsAiTools',
 	staticData: { requiresSiteTypeSupport: 'settingsGeneralAITools' },
-	head: ( { params: { siteSlug } } ) => ( {
+	head: () => ( {
 		meta: [
 			{
 				title: __( 'AI tools' ),
 			},
-			{
-				breadcrumbHref: `/sites/${ siteSlug }/settings/ai-tools`,
-			},
 		],
 	} ),
 	getParentRoute: () => siteSettingsRoute,
+	path: 'ai-tools',
 	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
 		if ( cause === 'preload' ) {
 			return;
@@ -672,7 +669,7 @@ export const siteSettingsAIToolsRoute = createRoute( {
 
 export const siteSettingsAIToolsIndexRoute = createRoute( {
 	getParentRoute: () => siteSettingsAIToolsRoute,
-	path: 'ai-tools',
+	path: '/',
 } ).lazy( () =>
 	import( '../../sites/settings-ai-tools' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-ai-tools' )( {
@@ -708,7 +705,7 @@ export const siteSettingsAIToolsReadRoute = createRoute( {
 		],
 	} ),
 	getParentRoute: () => siteSettingsAIToolsRoute,
-	path: 'ai-tools/read',
+	path: 'read',
 	beforeLoad: redirectSiteAiToolsSubpageToHub,
 	loader: async ( { params: { siteSlug } } ) => {
 		await Promise.all( [
@@ -733,7 +730,7 @@ export const siteSettingsAIToolsWriteRoute = createRoute( {
 		],
 	} ),
 	getParentRoute: () => siteSettingsAIToolsRoute,
-	path: 'ai-tools/write',
+	path: 'write',
 	beforeLoad: redirectSiteAiToolsSubpageToHub,
 	loader: async ( { params: { siteSlug } } ) => {
 		await Promise.all( [
@@ -758,7 +755,7 @@ export const siteSettingsAIToolsSetupRoute = createRoute( {
 		],
 	} ),
 	getParentRoute: () => siteSettingsAIToolsRoute,
-	path: 'ai-tools/setup',
+	path: 'setup',
 	beforeLoad: redirectSiteAiToolsSubpageToHub,
 	loader: async ( { params: { siteSlug } } ) => {
 		await Promise.all( [
