@@ -7,7 +7,7 @@ import 'calypso/state/posts/init';
  * @param  {Object}  state  Global state tree
  * @param  {number}  siteId Site ID
  * @param  {number}  postId Post ID
- * @returns {Array}          Post Likes
+ * @returns {number}         Post like count
  */
 export function getPostLikeCount( state, siteId, postId ) {
 	return get( state.posts.likes.items, [ siteId, postId, 'found' ], 0 );
