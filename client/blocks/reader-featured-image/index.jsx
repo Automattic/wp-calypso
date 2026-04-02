@@ -3,7 +3,9 @@
  * Recent stream rows, and video overlays (reader-featured-video). For the full post
  * article column, use ReaderFullPostFeaturedImage from reader-full-post/featured-image instead.
  */
+import './style.scss';
 import clsx from 'clsx';
+import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import cssSafeUrl from 'calypso/lib/css-safe-url';
@@ -14,7 +16,6 @@ import {
 	READER_COMPACT_POST_NO_EXCERPT_FEATURED_MAX_IMAGE_WIDTH,
 	READER_FEATURED_MAX_IMAGE_HEIGHT,
 } from 'calypso/state/reader/posts/sizes';
-import './style.scss';
 
 const getFeaturedImageType = (
 	canonicalMedia,
@@ -75,6 +76,8 @@ const ReaderFeaturedImage = ( {
 	isCompactPost,
 	hasExcerpt,
 } ) => {
+	const translate = useTranslate();
+
 	// No featured image, so don't render anything
 	if ( imageUrl === undefined ) {
 		return null;
@@ -177,8 +180,8 @@ const ReaderFeaturedImage = ( {
 		children = (
 			<img
 				src={ safeCssUrl }
-				alt="Featured"
-				style={ { height: containerHeight, ...( ! isPortrait && { width: '100%' } ) } }
+				alt={ translate( 'Featured image' ) }
+				style={ { height: containerHeight } }
 			/>
 		);
 	}

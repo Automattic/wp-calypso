@@ -8,6 +8,7 @@ import clsx from 'clsx';
 import { Suspense, lazy, useCallback, useEffect, useState } from 'react';
 import wpcom from 'calypso/lib/wp';
 import { useAuth } from '../auth';
+import { useHelpCenter } from '../help-center';
 import { useOmnibarEvent } from '../interim-omnibar/click-handlers';
 import { useLocale } from '../locale';
 import './style.scss';
@@ -26,13 +27,24 @@ export default function Notifications( {
 	const { user } = useAuth();
 	const locale = useLocale();
 	const isMobileViewport = useViewportMatch( 'small', '<' );
+	const { isShown: isHelpCenterShown, setShowHelpCenter } = useHelpCenter();
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ hasUnseenNotifications, setHasUnseenNotifications ] = useState( user.has_unseen_notes );
 	const [ anchorEl, setAnchorEl ] = useState< HTMLElement | null >( null );
 
 	const handleToggle = ( willOpen: boolean ) => {
+		if ( willOpen ) {
+			setShowHelpCenter( false, undefined, true );
+		}
 		setIsOpen( willOpen );
 	};
+
+	// Close notifications when help center opens.
+	useEffect( () => {
+		if ( isHelpCenterShown ) {
+			setIsOpen( false );
+		}
+	}, [ isHelpCenterShown ] );
 
 	const handleClose = () => {
 		handleToggle( false );
@@ -63,10 +75,18 @@ export default function Notifications( {
 		CLOSE_PANEL: [ handleClose ],
 	};
 
-	const handleOmnibarToggle = useCallback( ( element: HTMLElement | null ) => {
-		setAnchorEl( element );
-		setIsOpen( ( v ) => ! v );
-	}, [] );
+	const handleOmnibarToggle = useCallback(
+		( element: HTMLElement | null ) => {
+			setAnchorEl( element );
+			setIsOpen( ( prev ) => {
+				if ( ! prev ) {
+					setShowHelpCenter( false, undefined, true );
+				}
+				return ! prev;
+			} );
+		},
+		[ setShowHelpCenter ]
+	);
 
 	useOmnibarEvent( 'notifications', handleOmnibarToggle );
 

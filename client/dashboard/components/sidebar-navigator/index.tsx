@@ -1,0 +1,82 @@
+import { useRouterState } from '@tanstack/react-router';
+import { usePrevious } from '@wordpress/compose';
+import { Children, isValidElement, useMemo } from 'react';
+import { SidebarNavigatorContext } from './context';
+import SidebarNavigatorScreen from './sidebar-navigator-screen';
+import type { ScreenProps } from './sidebar-navigator-screen';
+import type { ReactElement } from 'react';
+
+import './style.scss';
+
+/**
+ * Walks up the segments of a route ID to find the nearest parent screen path.
+ *
+ * Example: given routeId `/sites/$siteSlug` and screen paths `['/', '/sites/$siteSlug', '/me']`,
+ * it tries `/sites` (no match), then `/` (match) → returns `/`.
+ */
+function findParentPath( routeId: string, screenPaths: string[] ): string | undefined {
+	const parts = routeId.split( '/' );
+	while ( parts.length > 1 ) {
+		parts.pop();
+		const candidate = parts.join( '/' ) || '/';
+		if ( screenPaths.includes( candidate ) ) {
+			return candidate;
+		}
+	}
+	return undefined;
+}
+
+/**
+ * Determines the active screen by matching `Screen` children's `path` props
+ * against the current TanStack Router route, and provides `activePath` and
+ * `isBack` to screens via context.
+ *
+ * When no screen path matches a route ID directly, it walks up the deepest
+ * route ID's segments to find the nearest parent screen.
+ *
+ * Usage:
+ * ```
+ * <SidebarNavigator>
+ *   <SidebarNavigator.Screen path="/">
+ *     <PrimaryMenu />
+ *   </SidebarNavigator.Screen>
+ *   <SidebarNavigator.Screen path="/sites/$siteSlug">
+ *     <SiteSidebar />
+ *   </SidebarNavigator.Screen>
+ * </SidebarNavigator>
+ * ```
+ */
+function SidebarNavigator( { children }: { children: React.ReactNode } ) {
+	const matches = useRouterState( { select: ( s ) => s.matches } );
+
+	const screens = Children.toArray( children ).filter(
+		( child ): child is ReactElement< ScreenProps > =>
+			isValidElement( child ) && child.type === SidebarNavigatorScreen
+	);
+
+	const screenPaths = screens.map( ( s ) => s.props.path );
+
+	// Find the active path: first try exact match, then walk up to find parent.
+	const routeId = matches[ matches.length - 1 ]?.routeId;
+	const activePath =
+		screenPaths.find( ( sp ) => matches.some( ( m ) => m.routeId === sp ) ) ??
+		findParentPath( routeId, screenPaths );
+
+	const previousPath = usePrevious( activePath );
+	const isBack =
+		previousPath !== undefined &&
+		activePath !== previousPath &&
+		activePath === findParentPath( previousPath, screenPaths );
+
+	const contextValue = useMemo( () => ( { activePath, isBack } ), [ activePath, isBack ] );
+
+	return (
+		<SidebarNavigatorContext.Provider value={ contextValue }>
+			<div className="dashboard-sidebar-navigator">{ children }</div>
+		</SidebarNavigatorContext.Provider>
+	);
+}
+
+SidebarNavigator.Screen = SidebarNavigatorScreen;
+
+export default SidebarNavigator;

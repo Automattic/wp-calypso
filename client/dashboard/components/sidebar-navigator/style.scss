@@ -1,0 +1,11 @@
+@import '@wordpress/base-styles/variables';
+
+.dashboard-sidebar-navigator {
+	position: relative;
+	overflow: hidden;
+}
+
+.dashboard-sidebar-navigator__screen {
+	box-sizing: border-box;
+	padding: 0 $grid-unit-20;
+}

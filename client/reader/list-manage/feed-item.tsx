@@ -5,6 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import FollowButton from 'calypso/blocks/follow-button/button';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
+import { SiteIcon } from 'calypso/blocks/site-icon';
 import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
 import { removeTrailingSlash } from 'calypso/lib/string';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -27,8 +28,7 @@ function renderFeed( feed: Feed ) {
 		<div className="feed-item list-item">
 			<a className="list-item__content" href={ `/reader/feeds/${ feed.feed_ID }` }>
 				<div className="list-item__icon">
-					{ feed.image && <img src={ feed.image } className="list-item__img image" alt="" /> }
-					{ ! feed.image && <Gridicon icon="site" size={ 36 } /> }
+					<SiteIcon iconUrl={ feed.image } />
 				</div>
 
 				<div className="list-item__info">

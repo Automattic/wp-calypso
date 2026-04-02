@@ -1,8 +1,8 @@
 import { TimeSince } from '@automattic/components';
 import PropTypes from 'prop-types';
 import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
-import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link';
+import UserAvatar from 'calypso/blocks/user-avatar';
 import { areEqualIgnoringWhitespaceAndCase } from 'calypso/lib/string';
 import { getStreamUrl } from 'calypso/reader/route';
 
@@ -17,12 +17,10 @@ const ReaderFullPostHeaderMeta = ( { post, author, siteName, feedId, siteId } ) 
 
 	return (
 		<div className="reader-full-post__header-meta-wrapper">
-			<ReaderAvatar
-				author={ author }
-				siteUrl={ streamUrl }
-				iconSize={ 40 }
-				preferGravatar
+			<UserAvatar
 				className="reader-full-post__header-meta-avatars"
+				user={ author }
+				iconSize={ 40 }
 			/>
 			<div className="reader-full-post__header-meta-info">
 				<div className="reader-full-post__header-meta-line-1">

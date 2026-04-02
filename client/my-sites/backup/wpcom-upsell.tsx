@@ -4,13 +4,13 @@ import {
 	getPlan,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
+import { Page } from '@wordpress/admin-ui';
 import { useTranslate } from 'i18n-calypso';
 import JetpackBackupSVG from 'calypso/assets/images/illustrations/jetpack-backup.svg';
 import DocumentHead from 'calypso/components/data/document-head';
 import WhatIsJetpack from 'calypso/components/jetpack/what-is-jetpack';
 import JetpackTitle from 'calypso/components/jetpack-title';
 import Main from 'calypso/components/main';
-import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
 import PromoCard from 'calypso/components/promo-section/promo-card';
@@ -50,69 +50,70 @@ export default function WPCOMUpsellPage() {
 	};
 
 	return (
-		<Main wideLayout className="backup__main backup__wpcom-upsell">
+		<Main fullWidthLayout className="backup__main backup__wpcom-upsell">
 			<DocumentHead title="Jetpack VaultPress Backup" />
 			<PageViewTracker path="/backup/:site" title="VaultPress Backup" />
 
-			<NavigationHeader
-				navigationItems={ [] }
+			<Page
+				hasPadding
+				showSidebarToggle={ false }
 				title={ <JetpackTitle title={ translate( 'Backup' ) } /> }
-				subtitle={ translate( 'Save changes and restore quickly with one-click recovery.' ) }
-			/>
-
-			<PromoCard
-				title={ preventWidows(
-					translate( 'Get time travel for your site with Jetpack VaultPress Backup' )
-				) }
-				image={ { path: JetpackBackupSVG } }
-				isPrimary
+				subTitle={ translate( 'Save changes and restore quickly with one-click recovery.' ) }
 			>
-				<p>
-					{ preventWidows(
-						translate(
-							'VaultPress Backup gives you granular control over your site, with the ability to restore it to any previous state, and export it at any time.'
-						)
+				<PromoCard
+					title={ preventWidows(
+						translate( 'Get time travel for your site with Jetpack VaultPress Backup' )
 					) }
-				</p>
-				{ ! isAdmin && (
-					<Notice
-						status="is-warning"
-						text={ translate(
-							'Only site administrators can upgrade to the %(businessPlanName)s plan.',
-							{ args: { businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' } }
+					image={ { path: JetpackBackupSVG } }
+					isPrimary
+				>
+					<p>
+						{ preventWidows(
+							translate(
+								'VaultPress Backup gives you granular control over your site, with the ability to restore it to any previous state, and export it at any time.'
+							)
 						) }
-						showDismiss={ false }
-					/>
-				) }
-				{ isAdmin && (
-					<PromoCardCTA
-						cta={ {
-							text: translate( 'Upgrade to %(planName)s Plan', {
+					</p>
+					{ ! isAdmin && (
+						<Notice
+							status="is-warning"
+							text={ translate(
+								'Only site administrators can upgrade to the %(businessPlanName)s plan.',
+								{ args: { businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' } }
+							) }
+							showDismiss={ false }
+						/>
+					) }
+					{ isAdmin && (
+						<PromoCardCTA
+							cta={ {
+								text: translate( 'Upgrade to %(planName)s Plan', {
+									args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+								} ),
+								action: {
+									url: `/checkout/${ siteSlug }/business`,
+									onClick: onUpgradeClick,
+									selfTarget: true,
+								},
+							} }
+						/>
+					) }
+				</PromoCard>
+
+				{ ! hasFullActivityLogFeature && (
+					<>
+						<h2 className="backup__subheader">
+							{ translate( 'Also included in the %(planName)s Plan', {
 								args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
-							} ),
-							action: {
-								url: `/checkout/${ siteSlug }/business`,
-								onClick: onUpgradeClick,
-								selfTarget: true,
-							},
-						} }
-					/>
+							} ) }
+						</h2>
+
+						<PromoSection { ...promos } />
+					</>
 				) }
-			</PromoCard>
 
-			{ ! hasFullActivityLogFeature && (
-				<>
-					<h2 className="backup__subheader">
-						{ translate( 'Also included in the %(planName)s Plan', {
-							args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
-						} ) }
-					</h2>
-
-					<PromoSection { ...promos } />
-				</>
-			) }
-
-			<WhatIsJetpack />
+				<WhatIsJetpack />
+			</Page>
 		</Main>
 	);
 }

@@ -10,6 +10,7 @@ export type SubscriberEndpointResponse = {
 };
 
 export type SubscriptionPlan = {
+	subscription_id?: number;
 	is_comp: boolean;
 	comp_id?: number;
 	/** @deprecated Legacy field from the API — plans with is_gift are filtered out. */
