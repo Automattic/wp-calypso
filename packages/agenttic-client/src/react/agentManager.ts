@@ -14,6 +14,7 @@ import {
 } from '../client/index';
 import {
 	createTextMessage,
+	createToolResultDataPart,
 	extractToolCallsFromMessage,
 	generateMessageId,
 } from '../client/utils/index';
@@ -25,6 +26,7 @@ import {
 	storeConversation,
 } from './conversationStorage';
 import {
+	conversationMessagesToDataParts,
 	createTextMessageWithHistory,
 	extractNewContentFromMessage,
 	extractToolResultsFromMessage,
@@ -167,6 +169,14 @@ export interface AgentManager {
 	sendMessageStream: (
 		key: string,
 		message: string,
+		options?: Partial< SendMessageParams >
+	) => AsyncIterable< TaskUpdate >;
+	// Used internally by `useAgentChat` — not intended for direct external use.
+	sendToolResult: (
+		key: string,
+		toolCallId: string,
+		toolId: string,
+		result: unknown,
 		options?: Partial< SendMessageParams >
 	) => AsyncIterable< TaskUpdate >;
 	resetConversation: ( key: string ) => Promise< void >;
@@ -406,11 +416,14 @@ function createAgentManager(): AgentManager {
 				throw new Error( `Agent with key "${ key }" not found` );
 			}
 
+			// Destructure `message` from options to prevent `...otherOptions` from
+			// overwriting the history-prepended `messageObj` built below.
 			const {
 				withHistory = true,
 				abortSignal,
 				metadata,
 				sessionId,
+				message: optionsMessage,
 				...otherOptions
 			} = options;
 			const { client } = managedAgent;
@@ -456,16 +469,27 @@ function createAgentManager(): AgentManager {
 				);
 			}
 
-			const messageObj: Message =
-				options.message ||
-				createTextMessageWithHistory(
+			let messageObj: Message;
+			if ( optionsMessage ) {
+				// When a pre-built message is provided (e.g., tool results),
+				// prepend conversation history so the server has full context.
+				const historyParts = conversationMessagesToDataParts(
+					resolvedConversationHistory
+				);
+				messageObj = {
+					...optionsMessage,
+					parts: [ ...historyParts, ...optionsMessage.parts ],
+				};
+			} else {
+				messageObj = createTextMessageWithHistory(
 					message,
 					resolvedConversationHistory,
 					options.imageUrls
 				);
+			}
 
 			// Add metadata to the message object that will be sent to the agent
-			if ( options.metadata && ! options.message ) {
+			if ( options.metadata && ! optionsMessage ) {
 				const { contentType: msgContentType, ...msgMetadata } =
 					options.metadata as any;
 
@@ -490,8 +514,10 @@ function createAgentManager(): AgentManager {
 			}
 
 			// Add user message to local conversation history before streaming (always)
-			// createTextMessage automatically splits contentType into TextPart metadata
-			const userMessage = createTextMessage( message, options.metadata );
+			// When a pre-built message is provided (e.g., tool results), use it directly.
+			const userMessage =
+				optionsMessage ||
+				createTextMessage( message, options.metadata );
 
 			// Add image parts if present
 			if ( options.imageUrls && options.imageUrls.length > 0 ) {
@@ -696,6 +722,59 @@ function createAgentManager(): AgentManager {
 
 			// Clear abort controller when stream completes
 			managedAgent.currentAbortController = null;
+		},
+
+		/**
+		 * Send a tool result for a previously executed tool call.
+		 * Removes any existing tool result for the same `toolCallId` from
+		 * conversation history before sending, so the server sees exactly
+		 * one result per call.
+		 *
+		 * @param key        - The agent key
+		 * @param toolCallId - The tool call ID to respond to
+		 * @param toolId     - The tool ID
+		 * @param result     - The tool result payload
+		 * @param options    - Optional send message params
+		 */
+		async *sendToolResult(
+			key: string,
+			toolCallId: string,
+			toolId: string,
+			result: unknown,
+			options: Partial< SendMessageParams > = {}
+		): AsyncIterable< TaskUpdate > {
+			const managedAgent = agents.get( key );
+			if ( ! managedAgent ) {
+				throw new Error( `Agent with key "${ key }" not found` );
+			}
+
+			const isMatchingToolResult = ( part: any ) =>
+				part.type === 'data' &&
+				part.data?.toolCallId === toolCallId &&
+				'result' in part.data;
+
+			// Remove existing tool result for this `toolCallId` from conversation
+			// history to prevent duplicate results (server rejects mismatched pairs).
+			managedAgent.conversationHistory = managedAgent.conversationHistory
+				.map( ( msg ) => ( {
+					...msg,
+					parts: msg.parts.filter(
+						( p ) => ! isMatchingToolResult( p )
+					),
+				} ) )
+				.filter( ( msg ) => msg.parts.length > 0 );
+
+			yield* this.sendMessageStream( key, '', {
+				...options,
+				message: {
+					role: 'user',
+					kind: 'message',
+					parts: [
+						createToolResultDataPart( toolCallId, toolId, result ),
+					],
+					messageId: generateMessageId(),
+				},
+			} );
 		},
 
 		async resetConversation( key: string ): Promise< void > {

@@ -1281,7 +1281,13 @@ describe( 'Client', () => {
 			}
 
 			// Assert - ability should have been executed with the right input
-			expect( capturedInput ).toEqual( { includePreferences: true } );
+			// `enhancedArgs` includes the original arguments plus `messageId`, `toolCallId`, and `toolId`
+			expect( capturedInput ).toEqual( {
+				includePreferences: true,
+				messageId: 'message-123',
+				toolCallId: 'call-123',
+				toolId: 'demo__get_user_info',
+			} );
 		} );
 
 		it( 'should fall through to executeTool when no ability matches', async () => {

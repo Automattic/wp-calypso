@@ -55,10 +55,12 @@ export interface ImageData {
 
 // Extra options for submitting a message
 export interface SubmitOptions {
-	type?: ContentType; // Content type: 'text' for normal visible text (default), 'context' for hidden context content
+	type?: ContentType | 'tool_result'; // `text` for normal visible text (default), `context` for hidden context, `tool_result` for tool result (hidden from UI)
 	archived?: boolean;
 	imageUrls?: ( string | ImageData )[]; // Array of image URLs or image objects with metadata
-	sessionId?: string; // Optional sessionId to use for this message (overrides agent's sessionId)
+	sessionId?: string; // Optional `sessionId` to use for this message (overrides agent's `sessionId`)
+	toolCallId?: string; // Required when type is `tool_result`: the tool call ID to respond to
+	toolId?: string; // Required when type is `tool_result`: the tool ID
 }
 
 // UI Message format (simplified for UI components)
@@ -379,6 +381,9 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		registrations,
 	} = useMessageActions();
 
+	// Guard against concurrent sends racing on `conversationHistory`
+	const isSendingRef = useRef( false );
+
 	// Use a ref to always have access to the latest registrations
 	const registrationsRef = useRef( registrations );
 	useEffect( () => {
@@ -491,40 +496,64 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				throw new Error( 'Invalid agent configuration' );
 			}
 
+			if ( isSendingRef.current ) {
+				return;
+			}
+			isSendingRef.current = true;
+
+			const isToolResult = options?.type === 'tool_result';
+
+			// Validate tool result options early, before any state changes
+			if (
+				isToolResult &&
+				( ! options?.toolCallId || ! options?.toolId )
+			) {
+				throw new Error(
+					'`toolCallId` and `toolId` are required when type is `tool_result`'
+				);
+			}
+
 			const agentManager = getAgentManager();
 			const agentKey = agentConfig.agentId;
 
 			// Capture timestamp once for consistency
 			const messageTimestamp = Date.now();
 
-			// Create user message immediately for UI
-			const contentType = options?.type || 'text';
-			const userMessage: UIMessage = {
-				id: `user-${ messageTimestamp }`,
-				role: 'user',
-				content: [
-					{ type: contentType, text: message },
-					// Map image URLs to component content parts
-					...( options?.imageUrls?.map( ( imageData ) => {
-						const url =
-							typeof imageData === 'string'
-								? imageData
-								: imageData.url;
-						return createImageComponent( url );
-					} ) ?? [] ),
-				],
-				timestamp: messageTimestamp,
-				archived: options?.archived ?? false,
-				showIcon: false,
-			};
+			// Create user message immediately for UI (skipped for tool results)
+			if ( ! isToolResult ) {
+				const contentType = ( options?.type || 'text' ) as ContentType;
+				const userMessage: UIMessage = {
+					id: `user-${ messageTimestamp }`,
+					role: 'user',
+					content: [
+						{ type: contentType, text: message },
+						// Map image URLs to component content parts
+						...( options?.imageUrls?.map( ( imageData ) => {
+							const url =
+								typeof imageData === 'string'
+									? imageData
+									: imageData.url;
+							return createImageComponent( url );
+						} ) ?? [] ),
+					],
+					timestamp: messageTimestamp,
+					archived: options?.archived ?? false,
+					showIcon: false,
+				};
 
-			// Add user message to UI and set communication state
-			setState( ( prev ) => ( {
-				...prev,
-				uiMessages: [ ...prev.uiMessages, userMessage ],
-				isProcessing: true,
-				error: null,
-			} ) );
+				setState( ( prev ) => ( {
+					...prev,
+					uiMessages: [ ...prev.uiMessages, userMessage ],
+					isProcessing: true,
+					error: null,
+				} ) );
+			} else {
+				setState( ( prev ) => ( {
+					...prev,
+					isProcessing: true,
+					error: null,
+				} ) );
+			}
 
 			try {
 				// Track streaming message for incremental updates
@@ -533,10 +562,11 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 
 				// Pass metadata including archived flag and content type if provided
 				const messageOptions: any = {};
-				if ( options?.archived || options?.type ) {
+				const hasContentType = !! options?.type && ! isToolResult;
+				if ( options?.archived || hasContentType ) {
 					messageOptions.metadata = {
 						...( options?.archived && { archived: true } ),
-						...( options?.type && { contentType: options.type } ),
+						...( hasContentType && { contentType: options!.type } ),
 					};
 				}
 				// Pass sessionId if provided (overrides agent's default sessionId)
@@ -548,11 +578,24 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 					messageOptions.imageUrls = options.imageUrls;
 				}
 
-				for await ( const update of agentManager.sendMessageStream(
-					agentKey,
-					message,
-					messageOptions
-				) ) {
+				// Use `sendToolResult` for tool results (cleans up duplicate results
+				// from conversation history and sends a `ToolResultDataPart` message),
+				// otherwise use regular `sendMessageStream`.
+				const stream = isToolResult
+					? agentManager.sendToolResult(
+							agentKey,
+							options!.toolCallId!,
+							options!.toolId!,
+							{ success: true, message },
+							messageOptions
+					  )
+					: agentManager.sendMessageStream(
+							agentKey,
+							message,
+							messageOptions
+					  );
+
+				for await ( const update of stream ) {
 					// Update progress message and phase if present
 					if ( update.progressMessage || update.progressPhase ) {
 						setState( ( prev ) => ( {
@@ -758,6 +801,8 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 					error: errorMessage,
 				} ) );
 				throw error;
+			} finally {
+				isSendingRef.current = false;
 			}
 		},
 		[ agentConfig.agentId, isValidConfig ]
