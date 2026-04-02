@@ -32,6 +32,7 @@ export default function useZoomAction( registerMessageActions: RegisterMessageAc
 						type: 'component',
 						id: 'zoom-toggle',
 						component: ZoomActionButton,
+						order: 4,
 					},
 				];
 			},
