@@ -257,6 +257,19 @@ class StatsPostDetail extends Component {
 					{ label: 'Stats', to: lastScreen.url },
 					{ label: navigationItems[ 1 ].label },
 				] }
+				pageTabs={
+					isEmailTabsAvailable ? (
+						<div
+							className={ clsx(
+								'stats-navigation',
+								'stats-navigation--modernized',
+								'stats-navigation--improved'
+							) }
+						>
+							<StatsDetailsNavigation postId={ postId } givenSiteId={ siteId } />
+						</div>
+					) : undefined
+				}
 				pageActions={
 					showViewLink && (
 						<CoreButton onClick={ this.openPreview } variant="primary" size="compact">
@@ -274,18 +287,6 @@ class StatsPostDetail extends Component {
 				{ siteId && <QueryJetpackModules siteId={ siteId } /> }
 
 				<div className={ postDetailPageClasses }>
-					{ isEmailTabsAvailable && (
-						<div
-							className={ clsx(
-								'stats-navigation',
-								'stats-navigation--modernized',
-								'stats-navigation--improved'
-							) }
-						>
-							<StatsDetailsNavigation postId={ postId } givenSiteId={ siteId } />
-						</div>
-					) }
-
 					<PostDetailHighlightsSection siteId={ siteId } postId={ postId } post={ passedPost } />
 
 					<StatsPlaceholder isLoading={ isLoading } />
