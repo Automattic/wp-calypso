@@ -133,22 +133,22 @@ export function getDisabledSiteIds( userSettings ) {
 
 /**
  * Check if the site-level MCP server is enabled for a specific site.
- * Absent means off (default); only true when site_level_enabled is explicitly true.
+ * Uses site_level_enabled from the site's entry if present, otherwise
+ * falls back to mcp_abilities.site_level_enabled_default.
  * @param {Object} userSettings - The user settings object
  * @param {string|number} siteId - The site ID
  * @returns {boolean}
  */
 export function getSiteLevelEnabled( userSettings, siteId ) {
-	if ( userSettings?.sites ) {
-		const siteEntry = userSettings.sites.find( ( site ) => site.blog_id === parseInt( siteId ) );
-		if ( siteEntry ) {
-			return siteEntry.site_level_enabled === true;
-		}
+	const mcpAbilities = userSettings?.mcp_abilities;
+	const mcpSites = mcpAbilities?.sites || [];
+	const siteEntry = mcpSites.find( ( site ) => site.blog_id === parseInt( siteId ) );
+
+	if ( siteEntry ) {
+		return siteEntry.site_level_enabled === true;
 	}
 
-	const mcpSites = userSettings?.mcp_abilities?.sites || [];
-	const siteEntry = mcpSites.find( ( site ) => site.blog_id === parseInt( siteId ) );
-	return siteEntry?.site_level_enabled === true;
+	return mcpAbilities?.site_level_enabled_default === true;
 }
 
 /**

@@ -136,9 +136,8 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 	 ).filter( ( [ , tool ] ) => tool.visible !== false );
 	const readTools = availableTools.filter( ( [ toolId, tool ] ) => ! isWriteTool( toolId, tool ) );
 	const writeTools = availableTools.filter( ( [ toolId, tool ] ) => isWriteTool( toolId, tool ) );
-	const disabledBadge = { text: __( 'Disabled' ) };
-	const readBadge = isMcpEnabled ? getReadBadge( readTools ) : disabledBadge;
-	const writeBadge = isMcpEnabled ? getWriteBadge( writeTools ) : disabledBadge;
+	const readBadge = getReadBadge( readTools );
+	const writeBadge = getWriteBadge( writeTools );
 	const mcpMutation = useMutation( {
 		...userSettingsMutation(),
 		meta: {
