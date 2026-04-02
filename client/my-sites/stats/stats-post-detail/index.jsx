@@ -19,9 +19,8 @@ import WebPreview from 'calypso/components/web-preview';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { isHttps } from 'calypso/lib/url';
 import Main from 'calypso/my-sites/stats/components/stats-main';
-import { STATS_HEADER_TITLE } from 'calypso/my-sites/stats/constants';
 import {
-	useStatsNavigationHistory,
+	useStatsBreadcrumbTrail,
 	recordCurrentScreen,
 } from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
 import StatsDetailsNavigation from 'calypso/my-sites/stats/stats-details-navigation';
@@ -211,7 +210,7 @@ class StatsPostDetail extends Component {
 			isSubscriptionsModuleActive,
 			supportsEmailStats,
 			isSimple,
-			lastScreen,
+			breadcrumbTrail,
 		} = this.props;
 
 		const isLoading = isRequestingStats && ! countViews;
@@ -255,7 +254,7 @@ class StatsPostDetail extends Component {
 			<Main
 				fullWidthLayout
 				breadcrumbs={ [
-					{ label: STATS_HEADER_TITLE, to: lastScreen.url },
+					...breadcrumbTrail.map( ( item ) => ( { label: item.label, to: item.url } ) ),
 					{ label: navigationItems[ 1 ].label },
 				] }
 				pageTabs={
@@ -333,7 +332,7 @@ class StatsPostDetail extends Component {
 }
 
 const StatsPostDetailWrapper = ( props ) => {
-	const lastScreen = useStatsNavigationHistory();
+	const breadcrumbTrail = useStatsBreadcrumbTrail();
 
 	const supportLink = localizeUrl(
 		'https://wordpress.com/support/getting-more-views-and-traffic/'
@@ -357,7 +356,9 @@ const StatsPostDetailWrapper = ( props ) => {
 		}
 	};
 
-	return <StatsPostDetail { ...props } lastScreen={ lastScreen } openSupportDoc={ openDoc } />;
+	return (
+		<StatsPostDetail { ...props } breadcrumbTrail={ breadcrumbTrail } openSupportDoc={ openDoc } />
+	);
 };
 
 const connectComponent = connect( ( state, { postId } ) => {

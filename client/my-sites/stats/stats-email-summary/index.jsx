@@ -4,12 +4,15 @@ import { useMemo, useEffect } from 'react';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
-import { recordCurrentScreen } from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
+import {
+	useStatsBreadcrumbTrail,
+	recordCurrentScreen,
+} from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
 import DownloadCsv from 'calypso/my-sites/stats/stats-download-csv';
 import DownloadCsvUpsell from 'calypso/my-sites/stats/stats-download-csv-upsell';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { STATS_FEATURE_DOWNLOAD_CSV, STATS_HEADER_TITLE } from '../constants';
+import { STATS_FEATURE_DOWNLOAD_CSV } from '../constants';
 import {
 	TooltipWrapper,
 	OpensTooltipContent,
@@ -23,6 +26,7 @@ import '../stats-module/summary-nav.scss';
 
 // TODO: `query` was never passed from outside or defined in scope. Adding it to avoid a lint error.
 const StatsEmailSummary = ( { period, query, context } ) => {
+	const breadcrumbTrail = useStatsBreadcrumbTrail();
 	const StatsStrings = useStatsStrings();
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
@@ -91,7 +95,7 @@ const StatsEmailSummary = ( { period, query, context } ) => {
 		<Main
 			fullWidthLayout
 			breadcrumbs={ [
-				{ label: STATS_HEADER_TITLE, to: navigationItems[ 0 ].href },
+				...breadcrumbTrail.map( ( item ) => ( { label: item.label, to: item.url } ) ),
 				{ label: navigationItems[ 1 ].label },
 			] }
 			pageActions={ <div className="stats-module__header-nav-button">{ downloadCsvElement }</div> }

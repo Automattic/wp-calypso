@@ -16,13 +16,13 @@ import StatsModuleReferrers from 'calypso/my-sites/stats/features/modules/stats-
 import StatsModuleSearch from 'calypso/my-sites/stats/features/modules/stats-search';
 import StatsModuleTopPosts from 'calypso/my-sites/stats/features/modules/stats-top-posts';
 import {
-	useStatsNavigationHistory,
+	useStatsBreadcrumbTrail,
 	recordCurrentScreen,
 } from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
 import getMediaItem from 'calypso/state/selectors/get-media-item';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { STATS_FEATURE_DOWNLOAD_CSV, STATS_HEADER_TITLE } from '../constants';
+import { STATS_FEATURE_DOWNLOAD_CSV } from '../constants';
 import StatsModuleLocations from '../features/modules/stats-locations';
 import LocationsNavTabs from '../features/modules/stats-locations/locations-nav-tabs';
 import { GEO_MODES } from '../features/modules/stats-locations/types';
@@ -130,7 +130,7 @@ class StatsSummary extends Component {
 			supportsUTMStats,
 			supportsArchiveStats,
 			shouldGateStatsCsvDownload,
-			lastScreen,
+			breadcrumbTrail,
 			statsStrings,
 		} = this.props;
 
@@ -444,7 +444,10 @@ class StatsSummary extends Component {
 		return (
 			<Main
 				fullWidthLayout
-				breadcrumbs={ [ { label: STATS_HEADER_TITLE, to: lastScreen.url }, { label: title } ] }
+				breadcrumbs={ [
+					...breadcrumbTrail.map( ( item ) => ( { label: item.label, to: item.url } ) ),
+					{ label: title },
+				] }
 				pageTabs={ tabs }
 				pageActions={
 					<div className="stats-module__header-nav-button">
@@ -502,10 +505,12 @@ class StatsSummary extends Component {
 }
 
 const StatsSummaryWrapper = ( props ) => {
-	const lastScreen = useStatsNavigationHistory();
+	const breadcrumbTrail = useStatsBreadcrumbTrail();
 	const statsStrings = useStatsStrings( { supportsArchiveStats: props.supportsArchiveStats } );
 
-	return <StatsSummary { ...props } lastScreen={ lastScreen } statsStrings={ statsStrings } />;
+	return (
+		<StatsSummary { ...props } breadcrumbTrail={ breadcrumbTrail } statsStrings={ statsStrings } />
+	);
 };
 
 export default connect( ( state, { context, postId } ) => {
