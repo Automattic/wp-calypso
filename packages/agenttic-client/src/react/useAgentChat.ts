@@ -364,7 +364,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		registrations,
 	} = useMessageActions();
 
-	// Guard against concurrent sends racing on conversationHistory
+	// Guard against concurrent sends racing on `conversationHistory`
 	const isSendingRef = useRef( false );
 
 	// Use a ref to always have access to the latest registrations
