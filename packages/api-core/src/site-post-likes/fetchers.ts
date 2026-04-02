@@ -7,15 +7,17 @@ interface RawPostLikesResponse {
 	likes: PostLikesResponse[ 'likes' ];
 }
 
+export const fromApi = ( data: RawPostLikesResponse ): PostLikesResponse => ( {
+	found: +data.found,
+	iLike: !! data.i_like,
+	likes: data.likes,
+} );
+
 export const fetchPostLikes = ( siteId: number, postId: number ): Promise< PostLikesResponse > => {
 	return wpcom.req
 		.get( {
 			path: `/sites/${ siteId }/posts/${ postId }/likes`,
 			apiVersion: '1.1',
 		} )
-		.then( ( data: RawPostLikesResponse ) => ( {
-			found: +data.found,
-			iLike: !! data.i_like,
-			likes: data.likes,
-		} ) );
+		.then( fromApi );
 };

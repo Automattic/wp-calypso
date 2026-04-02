@@ -1,28 +1,32 @@
-import { fromApi } from '../';
+// eslint-disable-next-line import/named
+import { fromApi } from '@automattic/api-core';
 
 describe( 'fromApi', () => {
 	test( 'transforms to standard output', () => {
 		expect(
 			fromApi( {
 				found: 45,
+				i_like: false,
 				likes: [],
 			} )
 		).toEqual( {
 			found: 45,
-			likes: [],
 			iLike: false,
+			likes: [],
 		} );
+	} );
 
+	test( 'coerces found to number and i_like to boolean', () => {
 		expect(
 			fromApi( {
 				found: '45',
-				likes: [],
 				i_like: true,
+				likes: [],
 			} )
 		).toEqual( {
 			found: 45,
-			likes: [],
 			iLike: true,
+			likes: [],
 		} );
 	} );
 } );
