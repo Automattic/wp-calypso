@@ -36,7 +36,6 @@ export default function SiteVisibilitySettings( { siteSlug }: { siteSlug: string
 	);
 
 	const renderContent = () => {
-		// return <LaunchForm site={ site } />;
 		if ( site.launch_status === 'unlaunched' ) {
 			return (
 				<>
