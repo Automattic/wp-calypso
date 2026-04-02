@@ -49,14 +49,14 @@ function Billing() {
 					decoration={ <Icon icon={ backup } /> }
 					to={ billingHistoryRoute.to }
 				/>
-				{ supportsBilling.monetizeSubscriptions && (
+				{ supportsBilling.monetizeSubscriptions ? (
 					<RouterLinkSummaryButton
 						title={ getMonetizeSubscriptionsPageTitle() }
 						description={ __( 'Manage Monetize subscriptions.' ) }
 						decoration={ <Icon icon={ currencyDollar } /> }
 						to={ monetizeSubscriptionsRoute.to }
 					/>
-				) }
+				) : null }
 				<RouterLinkSummaryButton
 					title={ __( 'Payment methods' ) }
 					description={ __( 'Manage credit cards saved to your account.' ) }
