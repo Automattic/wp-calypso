@@ -1,4 +1,5 @@
 @use "sass:math";
+@import "@wordpress/base-styles/variables";
 @import "calypso/components/jetpack-page-layout/admin-ui-page";
 @import "calypso/my-sites/stats/modernized-tooltip-styles";
 @import "calypso/my-sites/stats/modernized-chart-tabs-styles";
@@ -105,6 +106,7 @@ $font-sf-pro-display: "SF Pro Display", $sans;
 		// Allow the title to truncate when breadcrumb text is long.
 		> :first-child {
 			align-items: center;
+			height: $grid-unit-40;
 
 			> :first-child {
 				min-width: 0;
