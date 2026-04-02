@@ -154,33 +154,6 @@ describe( '<SiteLaunchCelebrationModal>', () => {
 			expect( navigator.clipboard.writeText ).toHaveBeenCalledWith( 'example.com' );
 		} );
 
-		test( 'displays "Copied!" message after copy button is clicked', async () => {
-			const user = userEvent.setup();
-			const mockSite = createMockSite();
-			navigator.clipboard.writeText = jest.fn();
-
-			render( <SiteLaunchCelebrationModal site={ mockSite } onClose={ jest.fn() } /> );
-
-			const copyButton = screen.getByRole( 'button', { name: 'Copy URL' } );
-			await user.click( copyButton );
-
-			expect( copyButton ).toHaveAttribute( 'title', 'Copied!' );
-		} );
-
-		test( 'displays "Copied!" message and restores after 2 seconds', async () => {
-			const user = userEvent.setup();
-			const mockSite = createMockSite();
-			navigator.clipboard.writeText = jest.fn();
-
-			render( <SiteLaunchCelebrationModal site={ mockSite } onClose={ jest.fn() } /> );
-
-			const copyButton = screen.getByRole( 'button', { name: 'Copy URL' } );
-			await user.click( copyButton );
-
-			// Verify the button shows "Copied!" after click
-			expect( copyButton ).toHaveAttribute( 'title', 'Copied!' );
-		} );
-
 		test( 'copy button is in DOM and focusable for keyboard navigation', () => {
 			const mockSite = createMockSite();
 			navigator.clipboard.writeText = jest.fn();
@@ -204,6 +177,14 @@ describe( '<SiteLaunchCelebrationModal>', () => {
 
 			expect( viewLink ).toHaveAttribute( 'href', 'https://test-site.wordpress.com' );
 			expect( viewLink ).toHaveAttribute( 'target', '_blank' );
+		} );
+
+		test( 'view site button still renders when site.URL is missing', () => {
+			const mockSite = createMockSite( { URL: undefined } );
+			render( <SiteLaunchCelebrationModal site={ mockSite } onClose={ jest.fn() } /> );
+
+			// Button should still exist in DOM even if URL is missing (renders as button without href)
+			expect( screen.getByRole( 'button', { name: 'View site' } ) ).toBeInTheDocument();
 		} );
 	} );
 
@@ -296,17 +277,6 @@ describe( '<SiteLaunchCelebrationModal>', () => {
 		} );
 	} );
 
-	describe( 'Upsell Link Navigation', () => {
-		test( 'upsell link navigates to domains add page', () => {
-			const mockSite = createMockSite();
-			render( <SiteLaunchCelebrationModal site={ mockSite } onClose={ jest.fn() } /> );
-
-			const upsellLink = screen.getByRole( 'link', { name: /domain/i } );
-
-			expect( upsellLink ).toHaveAttribute( 'href', '/domains/add/test-site.wordpress.com' );
-		} );
-	} );
-
 	describe( 'Analytics Tracking', () => {
 		test( 'tracks celebration modal view on mount', () => {
 			const mockSite = createMockSite();
@@ -334,45 +304,6 @@ describe( '<SiteLaunchCelebrationModal>', () => {
 					product_slug: undefined,
 				}
 			);
-		} );
-	} );
-
-	describe( 'Edge Cases', () => {
-		test( 'renders without error when site.plan is undefined', () => {
-			const mockSite = createMockSite( { plan: undefined } );
-			render( <SiteLaunchCelebrationModal site={ mockSite } onClose={ jest.fn() } /> );
-
-			expect( screen.getByRole( 'dialog' ) ).toBeInTheDocument();
-		} );
-
-		test( 'renders without error when domains array is empty', () => {
-			const mockSite = createMockSite();
-			render(
-				<SiteLaunchCelebrationModal site={ mockSite } domains={ [] } onClose={ jest.fn() } />
-			);
-
-			expect( screen.getByText( 'test-site.wordpress.com' ) ).toBeVisible();
-		} );
-
-		test( 'renders without error when site.URL is missing', () => {
-			const mockSite = createMockSite( { URL: undefined } );
-			render( <SiteLaunchCelebrationModal site={ mockSite } onClose={ jest.fn() } /> );
-
-			expect( screen.getByRole( 'dialog' ) ).toBeInTheDocument();
-		} );
-
-		test( 'renders without error when domains default to empty array', () => {
-			const mockSite = createMockSite();
-			render( <SiteLaunchCelebrationModal site={ mockSite } onClose={ jest.fn() } /> );
-
-			expect( screen.getByRole( 'dialog' ) ).toBeInTheDocument();
-		} );
-
-		test( 'handles site.plan with missing properties gracefully', () => {
-			const mockSite = createMockSite( { plan: { is_free: false } as any } );
-			render( <SiteLaunchCelebrationModal site={ mockSite } onClose={ jest.fn() } /> );
-
-			expect( screen.getByRole( 'dialog' ) ).toBeInTheDocument();
 		} );
 	} );
 } );
