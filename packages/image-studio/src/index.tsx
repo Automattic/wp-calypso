@@ -1,10 +1,9 @@
 /**
  * WordPress dependencies
  */
-import apiFetch from '@wordpress/api-fetch';
 import { store as coreStore } from '@wordpress/core-data';
 import { select, useDispatch, useSelect } from '@wordpress/data';
-import { createRoot, useCallback, useEffect, useRef, useState } from '@wordpress/element';
+import { createRoot, useCallback, useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import ImageStudio from './components';
 import { registerBlockEditorFilters } from './extensions';
@@ -92,26 +91,9 @@ function ImageStudioIntegration(): JSX.Element | null {
 
 	const [ image, setImage ] = useState< ImageData | null >( null );
 
-	// Track whether the user has exhausted free Jetpack AI credits (free tier only).
-	// Uses a ref so the click handler always reads the latest value without needing
-	// to re-register the document click listener on every credit check.
-	const requireUpgradeRef = useRef( false );
-
-	useEffect( () => {
-		apiFetch< {
-			'site-require-upgrade': boolean;
-			'current-tier': { value: number };
-		} >( { path: '/wpcom/v2/jetpack-ai/ai-assistant-feature' } )
-			.then( ( response ) => {
-				const siteRequiresUpgrade = response?.[ 'site-require-upgrade' ] === true;
-				const isFreeTier = response?.[ 'current-tier' ]?.value === 0;
-				requireUpgradeRef.current = siteRequiresUpgrade && isFreeTier;
-			} )
-			.catch( () => {
-				// If the API call fails, default to allowing Image Studio.
-				requireUpgradeRef.current = false;
-			} );
-	}, [] );
+	// Big Sky (WordPress.com AI Assistant) sets window.bigSkyInitialState when its
+	// plugin is active. The grid-view override should only apply for Big Sky subscribers.
+	const isBigSkyEnabled = typeof ( window as any ).bigSkyInitialState !== 'undefined';
 
 	// Check for unsaved changes
 	const hasUnsavedChanges = useSelect(
@@ -196,9 +178,9 @@ function ImageStudioIntegration(): JSX.Element | null {
 					}
 				}
 
-				// Don't override grid clicks when free AI credits are exhausted.
-				// Let the legacy media editor handle it instead.
-				if ( requireUpgradeRef.current ) {
+				// Only override grid clicks for Big Sky subscribers.
+				// Non-subscribers fall through to the legacy media editor.
+				if ( ! isBigSkyEnabled ) {
 					return;
 				}
 
