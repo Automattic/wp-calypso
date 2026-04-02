@@ -1,7 +1,7 @@
 import { fetchPostLikes } from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
 
-export const postLikesQuery = ( siteId?: number, postId?: number ) => {
+export const postLikesQuery = ( siteId?: number | null, postId?: number | null ) => {
 	return queryOptions( {
 		queryKey: [ 'site', siteId, 'post', postId, 'likes' ],
 		staleTime: 1000 * 120,
