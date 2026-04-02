@@ -28,12 +28,19 @@ export default function PendingPrimaryDomainNotice( {
 
 	const isPending = ! polledDomain || isPendingPrimaryDomain( polledDomain );
 
+	// Track whether the domain was ever actually pending, so we don't fire
+	// a spurious snackbar when rendered for a non-pending domain.
+	const wasPendingRef = useRef( false );
+	if ( isPending && polledDomain ) {
+		wasPendingRef.current = true;
+	}
+
 	// Show completion snackbar when primary domain setup finishes.
 	const { createSuccessNotice } = useDispatch( noticesStore );
 	const onCompleteRef = useRef( onComplete );
 	onCompleteRef.current = onComplete;
 	useEffect( () => {
-		if ( ! isPending ) {
+		if ( ! isPending && wasPendingRef.current ) {
 			createSuccessNotice(
 				sprintf(
 					/* translators: %s is the domain name */
@@ -46,7 +53,7 @@ export default function PendingPrimaryDomainNotice( {
 		}
 	}, [ isPending, createSuccessNotice, domainName ] );
 
-	if ( ! isPending ) {
+	if ( ! isPending || ! polledDomain ) {
 		return null;
 	}
 
