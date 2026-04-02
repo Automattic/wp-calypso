@@ -1,5 +1,5 @@
 import { useEffect } from '@wordpress/element';
-import ZoomToggleButton from '../components/zoom-toggle-button';
+import ZoomActionButton from '../components/zoom-action-button';
 import type { UseAgentChatReturn, UIMessage } from '@automattic/agenttic-client';
 
 type RegisterMessageActions = UseAgentChatReturn[ 'registerMessageActions' ];
@@ -32,7 +32,7 @@ export default function useZoomAction( registerMessageActions: RegisterMessageAc
 						type: 'component',
 						id: 'zoom-toggle',
 						label: 'Toggle zoom',
-						component: ZoomToggleButton,
+						component: ZoomActionButton,
 					},
 				];
 			},

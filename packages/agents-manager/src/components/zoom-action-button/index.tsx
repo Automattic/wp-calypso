@@ -7,12 +7,12 @@ import { toggleZoom } from '../../utils/canvas-zoom';
 import { unlock } from '../../utils/unlock-private-apis';
 import './style.scss';
 
-export default function ZoomToggleButton() {
+export default function ZoomActionButton() {
 	const isZoomed = useSelect( ( select ) => unlock( select( blockEditorStore ) ).isZoomOut(), [] );
 
 	return (
 		<Button
-			className="agents-manager-zoom-toggle-button"
+			className="agents-manager-zoom-action-button"
 			icon={ zoomIcon }
 			label={
 				isZoomed
