@@ -94,14 +94,10 @@ export default function OrchestratorChat( {
 	const [ thinkingMessage, setThinkingMessage ] = useState< string | null >( null );
 	const [ isBuildingSite, setIsBuildingSite ] = useState( false );
 	const [ deletedMessageIds, setDeletedMessageIds ] = useState< Set< string > >( new Set() );
-
+	const [ hasUserSentMessage, setHasUserSentMessage ] = useState( false );
 	const currentPostId = useSelect( ( select ) => {
 		return ( select( 'core/editor' ) as { getCurrentPostId?: () => number } )?.getCurrentPostId?.();
 	}, [] );
-
-	// `agentConfig` is guaranteed non-null here because AgentSetup guards rendering
-	const agentId = agentConfig!.agentId;
-	const configSessionId = agentConfig!.sessionId;
 
 	const {
 		addMessage,
@@ -123,10 +119,10 @@ export default function OrchestratorChat( {
 			// Update the UI with the loaded messages
 			loadMessages( loadedMessages );
 			// Make sure future messages go to the right session
-			getAgentManager().updateSessionId( agentId, serverSessionId );
+			getAgentManager().updateSessionId( agentConfig!.agentId, serverSessionId );
 
 			// Sync local session ID with the server's
-			if ( configSessionId !== serverSessionId ) {
+			if ( agentConfig!.sessionId !== serverSessionId ) {
 				navigate( '/chat', { state: { sessionId: serverSessionId }, replace: true } );
 			}
 		},
@@ -148,7 +144,7 @@ export default function OrchestratorChat( {
 	}, [ dynamicSuggestions?.suggestions, registerSuggestions, clearSuggestions ] );
 
 	// Persist the chat route so the conversation can be resumed later.
-	useSaveNewChatRoute( messages );
+	useSaveNewChatRoute( hasUserSentMessage );
 
 	// Register an "Undo" action on agent messages with checkpoints.
 	const checkpoint = useCheckpoint?.();
@@ -169,6 +165,7 @@ export default function OrchestratorChat( {
 
 	const onSubmitWithImages = useCallback(
 		async ( message: string ) => {
+			setHasUserSentMessage( true );
 			persistLastActivity( siteKey );
 
 			if ( pendingImages.length > 0 && uploadImagesToWordPress ) {
@@ -212,9 +209,16 @@ export default function OrchestratorChat( {
 	// This allows to resume conversations after full page navigation
 	useNavigationContinuation?.( {
 		isProcessing,
-		onSubmit,
+		sendToolResult: async ( params ) => {
+			await onSubmit( params.message, {
+				type: 'tool_result',
+				toolCallId: params.toolCallId,
+				toolId: params.toolId,
+				sessionId: params.sessionId,
+			} );
+		},
 		sessionId: getActiveSessionId(),
-		agentId,
+		pathname: window.location.pathname,
 	} );
 
 	// Listen for inline suggestion clicks dispatched by Big Sky's InlineSuggestions component.

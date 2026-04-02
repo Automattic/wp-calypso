@@ -209,7 +209,10 @@ function useRedirectOnTransactionSuccess( {
 		searchParams.size &&
 		searchParams.get( 'from' ) === 'connect-after-checkout' &&
 		searchParams.get( 'connect_url_redirect' ) === 'true';
-	const isUnifiedCheckout = searchParams.get( 'checkout_type' ) === 'unified';
+	// Prefer checkout_type from the receipt (more reliable) and fall back to
+	// the query string for receipts fetched before the field was available.
+	const isUnifiedCheckout =
+		( receipt?.checkout_type ?? searchParams.get( 'checkout_type' ) ) === 'unified';
 
 	// For unified checkout (logged-out flow where a new account + site are
 	// created before the transaction), we re-fetch the current user once the

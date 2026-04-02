@@ -1,17 +1,50 @@
+@import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/variables';
 
 .partner-directory-lead-matching {
 	max-width: 700px;
-	margin: 0 auto;
+	margin-inline: auto;
 
 	.a4a-form {
 		max-width: none;
 	}
+
+	.a4a-form__content-wrapper {
+		transition: border-color 0.15s ease-out, background-color 0.15s ease-out,
+			box-shadow 0.15s ease-out;
+
+		&.is-error {
+			padding-block: 12px;
+			padding-inline: 12px;
+			border: 1px solid color-mix( in srgb, var( --color-error ) 20%, transparent );
+			border-radius: 4px;
+			background: color-mix( in srgb, var( --color-error ) 4%, transparent );
+			box-shadow: inset 0 0 0 1px color-mix( in srgb, var( --color-error ) 5%, transparent );
+
+			input,
+			textarea,
+			.components-input-control__container,
+			.components-combobox-control__suggestions-container,
+			.components-form-token-field__input-container {
+				border-color: var( --color-error ) !important;
+			}
+		}
+	}
+
+	.a4a-form__error {
+		color: var( --color-scary-40 );
+		font-style: normal;
+		font-weight: 500;
+	}
 }
 
 .partner-directory-lead-matching__status-placeholder {
-	margin-block-end: 24px;
+	margin-block-end: 16px;
+
+	@include break-medium {
+		margin-block-end: 24px;
+	}
 }
 
 .partner-directory-lead-matching__status-card {
@@ -31,9 +64,16 @@
 
 .partner-directory-lead-matching__status-content {
 	display: flex;
-	align-items: center;
-	gap: 12px;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 8px;
 	width: 100%;
+
+	@include break-medium {
+		flex-direction: row;
+		align-items: center;
+		gap: 12px;
+	}
 
 	> [class*='dashboard-stat--density'] {
 		width: 100%;
@@ -41,21 +81,64 @@
 }
 
 .partner-directory-lead-matching__status-text {
-	font-size: 14px;
+	@include body-medium;
 	color: var( --color-text );
 }
 
 .partner-directory-lead-matching__toggle-field {
 	display: flex;
-	align-items: center;
+	align-items: flex-start;
 	gap: 12px;
 	margin-block-start: 16px;
 
 	.components-toggle-control {
+		inline-size: 100%;
 		margin-block-end: 0;
 	}
 
 	.components-toggle-control__label {
 		order: 2;
+	}
+}
+
+.partner-directory-lead-matching__save-status {
+	display: inline-flex;
+	align-items: center;
+	justify-content: flex-end;
+	inline-size: 100%;
+	min-block-size: 36px;
+	margin-inline-start: auto;
+	margin-inline-end: 0;
+	margin-block-end: 0;
+	@include body-medium;
+	color: var( --color-neutral-60 );
+
+	@include break-medium {
+		inline-size: auto;
+	}
+
+	&.is-unsaved {
+		color: var( --color-warning );
+	}
+
+	&.is-saving {
+		color: var( --color-primary );
+	}
+
+	&.is-saved {
+		color: var( --color-success );
+	}
+
+	&.is-error {
+		color: var( --color-error );
+	}
+}
+
+.partner-directory-lead-matching__form-section {
+	transition: border-color 0.15s ease-out, background-color 0.15s ease-out;
+
+	&.is-error {
+		border: 1px solid color-mix( in srgb, var( --color-error ) 14%, transparent );
+		background: color-mix( in srgb, var( --color-error ) 2%, transparent );
 	}
 }
