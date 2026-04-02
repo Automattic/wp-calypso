@@ -250,7 +250,7 @@ export default function WordPressDefaults() {
 			header={
 				<PageHeader
 					prefix={ <Breadcrumbs length={ 2 } /> }
-					title={ __( 'WordPress.com defaults' ) }
+					title={ __( 'Account defaults' ) }
 					description={ __( 'Set your starting point after you log in and primary site.' ) }
 				/>
 			}
