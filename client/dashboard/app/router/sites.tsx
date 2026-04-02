@@ -636,8 +636,6 @@ export const siteSettingsSiteVisibilityRoute = createRoute( {
 	)
 );
 
-// Pathless layout: a route with path `ai-tools` in flatRoutes fuzzy-matches `ai-tools/read` and
-// breaks matching (leftover `**` segment). Children use full paths under `settings` instead.
 export const siteSettingsAIToolsRoute = createRoute( {
 	staticData: { requiresSiteTypeSupport: 'settingsGeneralAITools' },
 	head: () => ( {

@@ -1,5 +1,6 @@
 import calypsoConfig from '@automattic/calypso-config';
 import { Router, createLazyRoute, createRoute } from '@tanstack/react-router';
+import { __ } from '@wordpress/i18n';
 import { APP_CONTEXT_DEFAULT_CONFIG } from 'calypso/dashboard/app/context';
 import { handleOnCatch } from 'calypso/dashboard/app/logger';
 import * as appRouterSites from 'calypso/dashboard/app/router/sites';
@@ -43,6 +44,7 @@ const aiToolsLayoutRoute = createRoute( {
 		head: undefined,
 	} ),
 	getParentRoute: () => settingsRoute,
+	head: () => ( { meta: [ { title: __( 'AI tools' ) } ] } ),
 } );
 
 const { getParentRoute: _aiToolsIndexParent, ...aiToolsIndexRouteOptions } =
@@ -69,6 +71,7 @@ const {
 const aiToolsReadRoute = createRoute( {
 	...aiToolsReadRouteOptions,
 	getParentRoute: () => aiToolsLayoutRoute,
+	head: () => ( { meta: [ { title: __( 'Read' ) } ] } ),
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-ai-tools/read' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-ai-tools-read-v2' )( {
@@ -87,6 +90,7 @@ const {
 const aiToolsWriteRoute = createRoute( {
 	...aiToolsWriteRouteOptions,
 	getParentRoute: () => aiToolsLayoutRoute,
+	head: () => ( { meta: [ { title: __( 'Write' ) } ] } ),
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-ai-tools/write' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-ai-tools-write-v2' )( {
@@ -105,6 +109,7 @@ const {
 const aiToolsSetupRoute = createRoute( {
 	...aiToolsSetupRouteOptions,
 	getParentRoute: () => aiToolsLayoutRoute,
+	head: () => ( { meta: [ { title: __( 'Connect AI agent' ) } ] } ),
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-ai-tools/setup' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-ai-tools-setup-v2' )( {
