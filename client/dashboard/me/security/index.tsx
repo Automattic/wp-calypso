@@ -1,9 +1,9 @@
-import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useAppContext } from '../../app/context';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { SummaryButtonList } from '../../components/summary-button-list';
 import SecurityAccountRecoverySummary from '../security-account-recovery/summary';
 import SecurityConnectedAppsSummary from '../security-connected-apps/summary';
 import SecurityPasswordSummary from '../security-password/summary';
@@ -29,14 +29,14 @@ function Security() {
 				/>
 			}
 		>
-			<VStack spacing={ 4 }>
+			<SummaryButtonList>
 				<SecurityPasswordSummary />
 				<SecurityAccountRecoverySummary />
 				<SecurityTwoStepAuthSummary />
-				{ supportsSecurity.sshKey && <SecuritySshKeySummary /> }
+				{ supportsSecurity.sshKey ? <SecuritySshKeySummary /> : null }
 				<SecurityConnectedAppsSummary />
 				<SecuritySocialLoginsSummary />
-			</VStack>
+			</SummaryButtonList>
 			<PerformanceTrackerStop />
 		</PageLayout>
 	);

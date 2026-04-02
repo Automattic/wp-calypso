@@ -36,6 +36,7 @@ import {
 	siteStaticFile404SettingQuery,
 	siteWordPressVersionQuery,
 	queryClient,
+	wpOrgCoreVersionQuery,
 } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import { isSupportSession } from '@automattic/calypso-support-session';
@@ -53,6 +54,7 @@ import {
 	canViewHundredYearPlanSettings,
 	canViewWordPressSettings,
 } from '../../sites/features';
+import { shouldLoadWpVersionNotice } from '../../sites/overview/wp-version-notice';
 import {
 	getActivityLogHiddenGroups,
 	hasHostingFeature,
@@ -199,11 +201,20 @@ export const siteOverviewRoute = createRoute( {
 				queryClient.ensureQueryData( purchaseQuery( currentPlan.id ) );
 			}
 		}
-		// Ensure storage specifically is loaded because the warning notice can cause a layout shift
-		await Promise.all( [
-			queryClient.ensureQueryData( siteMediaStorageQuery( site.ID ) ),
+
+		const [ preferences ] = await Promise.all( [
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+
+			// Ensure storage specifically is loaded because the warning notice can cause a layout shift
+			queryClient.ensureQueryData( siteMediaStorageQuery( site.ID ) ),
 		] );
+
+		if ( shouldLoadWpVersionNotice( site, preferences ) ) {
+			await Promise.all( [
+				queryClient.ensureQueryData( siteWordPressVersionQuery( site.ID ) ),
+				queryClient.ensureQueryData( wpOrgCoreVersionQuery( 'beta' ) ),
+			] );
+		}
 	},
 } ).lazy( () =>
 	import( '../../sites/overview' ).then( ( d ) =>

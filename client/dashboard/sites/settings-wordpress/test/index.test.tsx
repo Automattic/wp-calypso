@@ -12,6 +12,16 @@ import type { Site } from '@automattic/api-core';
 const site = {
 	ID: 123,
 	slug: 'test-site.wordpress.com',
+	is_wpcom_atomic: true,
+	is_wpcom_staging_site: true,
+	plan: {
+		product_slug: 'business-bundle',
+		product_name_short: 'Business',
+		is_free: false,
+		features: {
+			active: [ 'atomic', 'sftp', 'backups' ],
+		},
+	},
 	options: {
 		software_version: '6.8.1',
 	},
@@ -41,10 +51,10 @@ function mockWordPressVersionSaved( expectedVersion: string ) {
 }
 
 describe( '<WordPressSettings>', () => {
-	test( 'renders and saves the form for a staging site', async () => {
+	test( 'renders and saves the form for a Business+ site', async () => {
 		const user = userEvent.setup();
 
-		mockSite( { ...site, is_wpcom_staging_site: true } as Site );
+		mockSite( site );
 		mockWordPressVersion( 'latest' );
 
 		render( <WordPressSettings siteSlug={ site.slug } /> );
@@ -62,31 +72,5 @@ describe( '<WordPressSettings>', () => {
 		await waitFor( () => {
 			expect( scope.isDone() ).toBe( true );
 		} );
-	} );
-
-	test( 'renders notice for a non-staging site', async () => {
-		mockSite( { ...site, is_wpcom_staging_site: false } as Site );
-
-		render( <WordPressSettings siteSlug={ site.slug } /> );
-		await screen.findByRole( 'heading', { name: 'WordPress' } );
-
-		expect(
-			screen.getByText( /Every WordPress.com site runs the latest WordPress version/ )
-		).toBeVisible();
-		expect( screen.queryByRole( 'button', { name: 'Save' } ) ).not.toBeInTheDocument();
-	} );
-
-	test( 'renders staging site suggestion for Atomic non-staging sites', async () => {
-		mockSite( {
-			...site,
-			is_wpcom_staging_site: false,
-			is_wpcom_atomic: true,
-		} as Site );
-
-		render( <WordPressSettings siteSlug={ site.slug } /> );
-		await screen.findByRole( 'heading', { name: 'WordPress' } );
-
-		expect( screen.getByText( /Switch to a staging site to test a beta version/ ) ).toBeVisible();
-		expect( screen.queryByRole( 'button', { name: 'Save' } ) ).not.toBeInTheDocument();
 	} );
 } );

@@ -4,8 +4,9 @@ import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { seen } from '@wordpress/icons';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
+import type { Density } from '@automattic/components/src/summary-button/types';
 
-export default function PreferencesPrivacy() {
+export default function PreferencesPrivacy( { density }: { density?: Density } ) {
 	const { data: userSettings } = useQuery( userSettingsQuery() );
 	const isSharingUsageInfo = userSettings ? ! userSettings.tracks_opt_out : undefined;
 
@@ -23,6 +24,7 @@ export default function PreferencesPrivacy() {
 
 	return (
 		<RouterLinkSummaryButton
+			density={ density }
 			to="/me/preferences/privacy"
 			title={ __( 'Privacy' ) }
 			description={ __( 'Manage your privacy settings and data sharing preferences.' ) }
