@@ -1,7 +1,5 @@
-import { createElement, useEffect } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
-import { Icon, square } from '@wordpress/icons';
-import { toggleZoom, isZoomedOut } from '../utils/canvas-zoom';
+import { useEffect } from '@wordpress/element';
+import ZoomToggleButton from '../components/zoom-toggle-button';
 import type { UseAgentChatReturn, UIMessage } from '@automattic/agenttic-client';
 
 type RegisterMessageActions = UseAgentChatReturn[ 'registerMessageActions' ];
@@ -32,14 +30,10 @@ export default function useZoomAction( registerMessageActions: RegisterMessageAc
 
 				return [
 					{
+						type: 'component',
 						id: 'zoom-toggle',
-						label: __( 'Toggle zoom', '__i18n_text_domain__' ),
-						icon: createElement( Icon, {
-							icon: square,
-							className: 'agents-manager-message-action-icon',
-						} ),
-						onClick: toggleZoom,
-						pressed: isZoomedOut(),
+						label: 'Toggle zoom',
+						component: ZoomToggleButton,
 					},
 				];
 			},

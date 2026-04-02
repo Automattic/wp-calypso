@@ -1,0 +1,14 @@
+.agents-manager-zoom-toggle-button {
+	width: 32px;
+	height: 32px;
+	min-width: 32px;
+	padding: 0;
+
+	svg {
+		fill: var( --color-muted-foreground );
+	}
+
+	&:hover:not( :disabled ) svg {
+		fill: var( --color-foreground );
+	}
+}
