@@ -11,7 +11,7 @@ import { copy, globe } from '@wordpress/icons';
 import { removeQueryArgs } from '@wordpress/url';
 import { useEffect, useState, useRef } from 'react';
 import { useAnalytics } from '../../app/analytics';
-import ConfettiAnimation from './confetti';
+import ConfettiAnimation from '../../components/confetti';
 import type { DomainSummary, Site } from '@automattic/api-core';
 import './styles.scss';
 
