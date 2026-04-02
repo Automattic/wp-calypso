@@ -6,7 +6,6 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useAuth } from '../../app/auth';
 import { useAppContext } from '../../app/context';
-import { usePendingPrimaryDomain } from '../../app/hooks/use-pending-primary-domain';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { siteRoute, siteDomainsRoute, siteSettingsRedirectRoute } from '../../app/router/sites';
@@ -44,13 +43,7 @@ function SiteDomains() {
 		},
 	} );
 
-	const pendingDomainFromList = siteDomains?.find( isPendingPrimaryDomain );
-	const { isPending, isDismissed, dismiss } = usePendingPrimaryDomain(
-		pendingDomainFromList?.domain,
-		{
-			onComplete: () => queryClient.invalidateQueries( queries.domainsQuery() ),
-		}
-	);
+	const pendingDomain = siteDomains?.find( isPendingPrimaryDomain );
 
 	const { data: redirect, isLoading: isRedirectLoading } = useQuery( siteRedirectQuery( site.ID ) );
 	const hasRedirect = redirect && Object.keys( redirect ).length > 0;
@@ -89,10 +82,10 @@ function SiteDomains() {
 				! isRedirectLoading &&
 				siteDomains &&
 				! hasRedirect &&
-				( isPending && ! isDismissed ? (
+				( pendingDomain ? (
 					<PendingPrimaryDomainNotice
-						domainName={ pendingDomainFromList?.domain ?? '' }
-						onClose={ dismiss }
+						domainName={ pendingDomain.domain }
+						onComplete={ () => queryClient.invalidateQueries( queries.domainsQuery() ) }
 					/>
 				) : (
 					<PrimaryDomainSelector domains={ siteDomains } site={ site } user={ user } />

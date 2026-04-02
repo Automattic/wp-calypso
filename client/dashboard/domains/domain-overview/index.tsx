@@ -12,7 +12,6 @@ import { useSearch } from '@tanstack/react-router';
 import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { useMemo } from 'react';
-import { usePendingPrimaryDomain } from '../../app/hooks/use-pending-primary-domain';
 import { useLocale } from '../../app/locale';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { domainRoute } from '../../app/router/domains';
@@ -39,9 +38,6 @@ export default function DomainOverview() {
 	const locale = useLocale();
 	const { domainName } = domainRoute.useParams();
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
-
-	const pendingDomainName = isPendingPrimaryDomain( domain ) ? domain.domain : undefined;
-	const { isPending, isDismissed, dismiss } = usePendingPrimaryDomain( pendingDomainName );
 
 	const { data: purchase } = useSuspenseQuery(
 		purchaseQuery( parseInt( domain.subscription_id ?? '0', 10 ) )
@@ -140,8 +136,8 @@ export default function DomainOverview() {
 				{ domain.is_pending_icann_verification && (
 					<IcannSuspensionNotice domainName={ domain.domain } />
 				) }
-				{ isPending && ! isDismissed && (
-					<PendingPrimaryDomainNotice domainName={ domain.domain } onClose={ dismiss } />
+				{ isPendingPrimaryDomain( domain ) && (
+					<PendingPrimaryDomainNotice domainName={ domain.domain } />
 				) }
 				{ domain.subtype.id !== DomainSubtype.DOMAIN_TRANSFER && (
 					<>
