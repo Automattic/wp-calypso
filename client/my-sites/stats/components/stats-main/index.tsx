@@ -55,6 +55,17 @@ function StatsBreadcrumbs( { items }: { items: BreadcrumbItem[] } ) {
 							className="stats-breadcrumbs__link"
 							href={ item.to }
 							onClick={ ( e ) => {
+								// Only handle unmodified primary-button clicks via the SPA router.
+								if (
+									e.defaultPrevented ||
+									e.button !== 0 ||
+									e.metaKey ||
+									e.altKey ||
+									e.ctrlKey ||
+									e.shiftKey
+								) {
+									return;
+								}
 								e.preventDefault();
 								page( item.to! );
 							} }
@@ -64,7 +75,7 @@ function StatsBreadcrumbs( { items }: { items: BreadcrumbItem[] } ) {
 					);
 				} else {
 					elements.push(
-						<span key={ `item-${ index }` } className="stats-breadcrumbs__current">
+						<span key={ `item-${ index }` } className="stats-breadcrumbs__current" aria-current="page">
 							{ item.label }
 						</span>
 					);
