@@ -15,12 +15,13 @@ import { useRef } from 'react';
 import { useAppContext } from '../../app/context';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { GuidedTourContextProvider, GuidedTourStep } from '../../components/guided-tour';
-import OptInSurvey from '../../components/opt-in-survey';
+import OptInSurvey, { useShouldShowOptInSurvey } from '../../components/opt-in-survey';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { isSelfHostedJetpackConnected, isCommerceGarden } from '../../utils/site-types';
+import { canViewWordPressSettings } from '../features';
 import AgencySiteShareCard from '../overview-agency-site-share-card';
 import BackupCard from '../overview-backup-card';
 import DIFMUpsellCard from '../overview-difm-upsell-card';
@@ -40,7 +41,7 @@ import VisibilityCardCiab from '../overview-visibility-card-ciab';
 import { InaccessibleJetpackNotice } from '../site/notices';
 import StagingSiteSyncDropdown from '../staging-site-sync-dropdown';
 import { StorageWarningBanner } from './storage-warning-banner';
-import { WpVersionNotice } from './wp-version-notice';
+import { WpVersionNotice, useShouldShowWpVersionNotice } from './wp-version-notice';
 import type { Site } from '@automattic/api-core';
 import type { WPBreakpoint } from '@wordpress/compose/build-types/hooks/use-viewport-match';
 import './style.scss';
@@ -194,6 +195,24 @@ function SiteOverview( {
 	} );
 
 	const wpAdminButtonRef = useRef( null );
+	const shouldShowOptInSurvey = useShouldShowOptInSurvey();
+	const shouldShowWpVersionNotice = useShouldShowWpVersionNotice( site );
+
+	const renderNotices = () => {
+		if ( site.__inaccessible_jetpack_error ) {
+			return <InaccessibleJetpackNotice error={ site.__inaccessible_jetpack_error } />;
+		}
+
+		if ( canViewWordPressSettings( site ) && shouldShowWpVersionNotice ) {
+			return <WpVersionNotice site={ site } />;
+		}
+
+		if ( ! isDashboardBackport() && shouldShowOptInSurvey ) {
+			return <OptInSurvey />;
+		}
+
+		return null;
+	};
 
 	const renderActions = () => {
 		if ( ! site.options?.admin_url ) {
@@ -237,15 +256,7 @@ function SiteOverview( {
 					actions={ renderActions() }
 				/>
 			}
-			notices={
-				<>
-					{ !! site.__inaccessible_jetpack_error && (
-						<InaccessibleJetpackNotice error={ site.__inaccessible_jetpack_error } />
-					) }
-					{ ! isDashboardBackport() && <OptInSurvey /> }
-					<WpVersionNotice site={ site } />
-				</>
-			}
+			notices={ renderNotices() }
 		>
 			<VStack alignment="stretch" spacing={ isSmallViewport ? 5 : 10 }>
 				<StorageWarningBanner site={ site } />

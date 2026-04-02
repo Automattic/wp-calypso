@@ -12,19 +12,29 @@ import type { Site } from '@automattic/api-core';
 
 const PREFERENCE_KEY = 'hosting-dashboard-wp-beta-notice-dismissed' as const;
 
-export function WpVersionNotice( { site }: { site: Site } ) {
+export function useShouldShowWpVersionNotice( site: Site ) {
 	const { data: isDismissed } = useSuspenseQuery(
 		userPreferenceQuery( `${ PREFERENCE_KEY }-${ site.ID }` )
 	);
+
+	const { data: currentVersionTag } = useSuspenseQuery( siteWordPressVersionQuery( site.ID ) );
+
+	const { data: betaVersion } = useSuspenseQuery( wpOrgCoreVersionQuery( 'beta' ) );
+
+	// Don't show if already dismissed, already on beta, or no beta version available.
+	return ! isDismissed && currentVersionTag !== 'beta' && betaVersion;
+}
+
+export function WpVersionNotice( { site }: { site: Site } ) {
+	const shouldShow = useShouldShowWpVersionNotice( site );
+
 	const { mutate: dismiss } = useMutation(
 		userPreferenceOptimisticMutation( `${ PREFERENCE_KEY }-${ site.ID }` )
 	);
 
-	const { data: currentVersionTag } = useSuspenseQuery( siteWordPressVersionQuery( site.ID ) );
 	const { data: betaVersion } = useSuspenseQuery( wpOrgCoreVersionQuery( 'beta' ) );
 
-	// Don't show if already dismissed, already on beta, or no beta version available.
-	if ( isDismissed || currentVersionTag === 'beta' || ! betaVersion ) {
+	if ( ! shouldShow ) {
 		return null;
 	}
 
