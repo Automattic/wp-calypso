@@ -1,4 +1,3 @@
-import { HostingFeatures } from '@automattic/api-core';
 import {
 	siteBySlugQuery,
 	siteWordPressVersionQuery,
@@ -25,7 +24,6 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { formatWordPressVersion, getFormattedWordPressVersion } from '../../utils/wp-version';
 import { canViewWordPressSettings } from '../features';
-import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import type { Field } from '@wordpress/dataviews';
 
 export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) {
@@ -143,39 +141,33 @@ export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) 
 				/>
 			}
 		>
-			<HostingFeatureGatedWithCallout
-				site={ site }
-				feature={ HostingFeatures.BACKUPS }
-				upsellId="site-settings-wordpress"
-			>
-				<Card>
-					<CardBody>
-						<form onSubmit={ handleSubmit }>
-							<VStack spacing={ 4 }>
-								<NavigationBlocker shouldBlock={ isDirty } />
-								<DataForm< { version: string } >
-									data={ formData }
-									fields={ fields }
-									form={ form }
-									onChange={ ( edits: { version?: string } ) => {
-										setFormData( ( data ) => ( { ...data, ...edits } ) );
-									} }
-								/>
-								<ButtonStack justify="flex-start">
-									<Button
-										variant="primary"
-										type="submit"
-										isBusy={ isPending }
-										disabled={ isPending || ! isDirty }
-									>
-										{ __( 'Save' ) }
-									</Button>
-								</ButtonStack>
-							</VStack>
-						</form>
-					</CardBody>
-				</Card>
-			</HostingFeatureGatedWithCallout>
+			<Card>
+				<CardBody>
+					<form onSubmit={ handleSubmit }>
+						<VStack spacing={ 4 }>
+							<NavigationBlocker shouldBlock={ isDirty } />
+							<DataForm< { version: string } >
+								data={ formData }
+								fields={ fields }
+								form={ form }
+								onChange={ ( edits: { version?: string } ) => {
+									setFormData( ( data ) => ( { ...data, ...edits } ) );
+								} }
+							/>
+							<ButtonStack justify="flex-start">
+								<Button
+									variant="primary"
+									type="submit"
+									isBusy={ isPending }
+									disabled={ isPending || ! isDirty }
+								>
+									{ __( 'Save' ) }
+								</Button>
+							</ButtonStack>
+						</VStack>
+					</form>
+				</CardBody>
+			</Card>
 		</PageLayout>
 	);
 }

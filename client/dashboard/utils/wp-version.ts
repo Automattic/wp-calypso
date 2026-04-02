@@ -3,7 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { hasHostingFeature } from './site-features';
 import type { Site } from '@automattic/api-core';
 
-export function getWordPressVersionTagName( versionTag: string ) {
+function getWordPressVersionTagName( versionTag: string ) {
 	if ( versionTag === 'latest' ) {
 		return __( 'Latest' );
 	}
