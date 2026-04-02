@@ -23,7 +23,7 @@ export type PaymentPlan = {
 	id: string;
 	title: string;
 	renewalPrice: string;
-	rawEndDate: string;
+	rawEndDate: string | null;
 };
 
 export const getPaymentInterval = ( renew_interval: string ) => {

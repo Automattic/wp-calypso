@@ -10,7 +10,7 @@ import { Subscriber, SubscriptionPlan } from '../types';
 export type SubscriptionPlanData = {
 	plan: ReactNode;
 	startDate?: string;
-	endDate?: string;
+	endDate?: string | null;
 	title?: string;
 	is_complimentary: boolean;
 	is_free: boolean;
@@ -24,7 +24,7 @@ type PlanData = {
 	renewalPrice: string;
 	when: string;
 	start_date: string;
-	end_date: string;
+	end_date: string | null;
 	title: string;
 };
 

@@ -2,13 +2,12 @@ import './styles.scss';
 import page from '@automattic/calypso-router';
 import { Badge, TimeSince } from '@automattic/components';
 import { SubscriptionManager, Reader } from '@automattic/data-stores';
-import { useLocale } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { fixMe, useTranslate } from 'i18n-calypso';
-import moment from 'moment';
 import { useEffect, useMemo, useState } from 'react';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import FormattedHeader from 'calypso/components/formatted-header';
+import SubscriptionPeriodLabel from 'calypso/components/subscription-period-label';
 import { Notice, NoticeState, NoticeType } from 'calypso/landing/subscriptions/components/notice';
 import { useRecordViewFeedButtonClicked } from 'calypso/landing/subscriptions/tracks';
 import { getQueryArgs } from 'calypso/lib/query-args';
@@ -37,7 +36,6 @@ const SiteSubscriptionDetails = ( {
 	paymentDetails,
 }: SiteSubscriptionDetailsProps ) => {
 	const translate = useTranslate();
-	const localeSlug = useLocale();
 	const [ notice, setNotice ] = useState< NoticeState | null >( null );
 	const [ showUnsubscribeModal, setShowUnsubscribeModal ] = useState( false );
 
@@ -92,7 +90,7 @@ const SiteSubscriptionDetails = ( {
 
 			setPaymentPlans( newPaymentPlans );
 		}
-	}, [ localeSlug, paymentDetails ] );
+	}, [ paymentDetails ] );
 
 	const areAllPaymentsComps = useMemo( () => {
 		if ( paymentDetails && paymentDetails.length ) {
@@ -321,22 +319,7 @@ const SiteSubscriptionDetails = ( {
 									</dd>
 									<dt>{ translate( 'Period' ) }</dt>
 									<dd>
-										{ ( () => {
-											if ( rawEndDate ) {
-												const date = moment( rawEndDate ).locale( localeSlug );
-												const formatted = date.format( 'LL' );
-												if ( is_comp ) {
-													return date.isBefore( moment() )
-														? translate( 'Expired' )
-														: translate( 'Expires on %s', { args: [ formatted ] } );
-												}
-												return translate( 'Renews on %s', { args: [ formatted ] } );
-											}
-											if ( is_comp ) {
-												return translate( "Doesn't expire" );
-											}
-											return translate( 'Auto-renews' );
-										} )() }
+										<SubscriptionPeriodLabel endDate={ rawEndDate } isComp={ is_comp } />
 									</dd>
 								</dl>
 							) ) }

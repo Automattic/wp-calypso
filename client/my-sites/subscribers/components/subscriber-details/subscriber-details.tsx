@@ -3,8 +3,8 @@ import { TimeSince } from '@automattic/components';
 import { Button, ExternalLink, Icon } from '@wordpress/components';
 import { trash } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import moment from 'moment';
 import { useMemo } from 'react';
+import SubscriptionPeriodLabel from 'calypso/components/subscription-period-label';
 import { NewsletterCategory } from 'calypso/data/newsletter-categories/types';
 import { useSubscriptionPlans } from '../../hooks';
 import { Subscriber, SubscriberDetails as SubscriberDetailsType } from '../../types';
@@ -145,28 +145,11 @@ const SubscriberDetails = ( {
 						{ subscriptionPlans &&
 							subscriptionPlans.map( ( subscriptionPlan, index ) => (
 								<div className="subscriber-details__content-value" key={ index }>
-									{ ( () => {
-										if ( subscriptionPlan.is_free && ! subscriptionPlan.is_complimentary ) {
-											return translate( 'N/A', {
-												context:
-													'For free subscriptions the period description is displayed as N/A (not applicable)',
-											} );
-										}
-										if ( subscriptionPlan.endDate ) {
-											const date = moment( subscriptionPlan.endDate );
-											const formatted = date.format( 'LL' );
-											if ( subscriptionPlan.is_complimentary ) {
-												return date.isBefore( moment() )
-													? translate( 'Expired' )
-													: translate( 'Expires on %s', { args: [ formatted ] } );
-											}
-											return translate( 'Renews on %s', { args: [ formatted ] } );
-										}
-										if ( subscriptionPlan.is_complimentary ) {
-											return translate( "Doesn't expire" );
-										}
-										return translate( 'Auto-renews' );
-									} )() }
+									<SubscriptionPeriodLabel
+										endDate={ subscriptionPlan.endDate }
+										isComp={ subscriptionPlan.is_complimentary }
+										isFree={ subscriptionPlan.is_free }
+									/>
 								</div>
 							) ) }
 					</div>
