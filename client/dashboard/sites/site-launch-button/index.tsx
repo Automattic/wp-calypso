@@ -51,6 +51,32 @@ export function SiteLaunchButton( {
 	const [ , experimentData ] = useExperiment( 'calypso_standardized_site_launch_gating' );
 	const experimentAssignment = experimentData?.variationName;
 
+	const isSitePlanHostingTrial = site.plan?.product_slug === DotcomPlans.HOSTING_TRIAL_MONTHLY;
+	const isSitePlanPaidWithDomains = isSitePlanPaid( site ) && domains.length > 1;
+	const isSitePlanLaunchable = getIsSitePlanLaunchable( site );
+	const shouldImmediatelyLaunch =
+		isSitePlanPaidWithDomains || isSitePlanHostingTrial || site.is_wpcom_staging_site;
+
+	const getLaunchUrl = () => {
+		if ( isSitePlanBigSkyTrial( site ) ) {
+			return addQueryArgs( wpcomLink( '/setup/ai-site-builder/domains' ), {
+				siteId: site.ID,
+				source: 'general-settings',
+				redirect: 'site-launch',
+				new: site.name,
+				search: 'yes',
+			} );
+		}
+
+		return addQueryArgs( wpcomLink( '/start/launch-site' ), {
+			siteSlug: site.slug,
+			new: site.name,
+			hide_initial_query: 'yes',
+			back_to: redirectToDashboardLink( { supportBackport: true } ),
+			dashboard: getCurrentDashboard(),
+		} );
+	};
+
 	const handleTracksEvent = () => {
 		recordTracksEvent( 'calypso_dashboard_site_launch_button_click', { context: tracksContext } );
 	};
@@ -83,33 +109,7 @@ export function SiteLaunchButton( {
 
 	const handleGatedLaunchClick = () => {
 		handleTracksEvent();
-		window.location.assign( `/start/launch-site?siteSlug=${ site.slug }` );
-	};
-
-	const isSitePlanHostingTrial = site.plan?.product_slug === DotcomPlans.HOSTING_TRIAL_MONTHLY;
-	const isSitePlanPaidWithDomains = isSitePlanPaid( site ) && domains.length > 1;
-	const isSitePlanLaunchable = getIsSitePlanLaunchable( site );
-	const shouldImmediatelyLaunch =
-		isSitePlanPaidWithDomains || isSitePlanHostingTrial || site.is_wpcom_staging_site;
-
-	const getLaunchUrl = () => {
-		if ( isSitePlanBigSkyTrial( site ) ) {
-			return addQueryArgs( wpcomLink( '/setup/ai-site-builder/domains' ), {
-				siteId: site.ID,
-				source: 'general-settings',
-				redirect: 'site-launch',
-				new: site.name,
-				search: 'yes',
-			} );
-		}
-
-		return addQueryArgs( wpcomLink( '/start/launch-site' ), {
-			siteSlug: site.slug,
-			new: site.name,
-			hide_initial_query: 'yes',
-			back_to: redirectToDashboardLink( { supportBackport: true } ),
-			dashboard: getCurrentDashboard(),
-		} );
+		window.location.assign( getLaunchUrl() );
 	};
 
 	const commonProps = {
