@@ -14,6 +14,8 @@ import {
 	PRICING_PAGE,
 	TEAM_PAGE,
 	SHOP_PAGE,
+	SUPPORT_BLOG_PAGE,
+	SUPPORT_SHOP_PAGE,
 	CUSTOM_PAGE,
 	CAREERS_PAGE,
 	CASE_STUDIES_PAGE,
@@ -45,6 +47,8 @@ export function useTranslatedPageTitles() {
 			[ PRICING_PAGE ]: translate( 'Pricing' ),
 			[ TEAM_PAGE ]: translate( 'Team' ),
 			[ SHOP_PAGE ]: translate( 'Shop' ),
+			[ SUPPORT_SHOP_PAGE ]: translate( 'Custom Shop Page' ),
+			[ SUPPORT_BLOG_PAGE ]: translate( 'Custom Blog Page' ),
 			[ CUSTOM_PAGE ]: translate( 'Custom Page' ),
 			[ CAREERS_PAGE ]: translate( 'Careers' ),
 			[ EVENTS_PAGE ]: translate( 'Events' ),
@@ -113,6 +117,8 @@ export function useTranslatedPageDescriptions(
 		[ SHOP_PAGE ]: translate(
 			'Your shop page will display all the products you have for sale. We will set up the shop page and explain how you can add products to your new site.'
 		),
+		[ SUPPORT_SHOP_PAGE ]: translate( "We'll create this page for you as per our service scope." ),
+		[ SUPPORT_BLOG_PAGE ]: translate( "We'll create this page for you as per our service scope." ),
 		[ CUSTOM_PAGE ]: translate(
 			"Craft a page that's perfect for anything you have in mind. You decide the title and content, and we'll create a custom layout."
 		),
@@ -222,6 +228,12 @@ export function useTranslatedPageDescriptionsMap(
 			),
 			[ SHOP_PAGE ]: translate(
 				'Your shop page will display all the products you have for sale. We will set up the shop page and explain how you can add products to your new site.'
+			),
+			[ SUPPORT_SHOP_PAGE ]: translate(
+				"We'll create this page for you as per our service scope."
+			),
+			[ SUPPORT_BLOG_PAGE ]: translate(
+				"We'll create this page for you as per our service scope."
 			),
 			[ CUSTOM_PAGE ]: translate(
 				"Craft a page that's perfect for anything you have in mind. You decide the title and content, and we'll create a custom layout."

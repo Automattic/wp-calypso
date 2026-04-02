@@ -17,12 +17,16 @@ export interface PageDetailsParams< T > {
 	formErrors: ValidationErrors;
 	context: BBETranslationContext;
 	onChangeField?: ( { target: { name, value } }: ChangeEvent< HTMLInputElement > ) => void;
+	isReadOnly?: boolean;
+	readOnlyTagline?: string;
 }
 export function DefaultPageDetails( {
 	page,
 	formErrors,
 	context,
 	onChangeField,
+	isReadOnly = false,
+	readOnlyTagline,
 }: PageDetailsParams< PageData > ) {
 	const translate = useTranslate();
 
@@ -32,6 +36,14 @@ export function DefaultPageDetails( {
 		pageId: page.id,
 		onChangeField,
 	} );
+
+	if ( isReadOnly ) {
+		return (
+			<>
+				<p>{ readOnlyTagline ?? description }</p>
+			</>
+		);
+	}
 
 	return (
 		<>

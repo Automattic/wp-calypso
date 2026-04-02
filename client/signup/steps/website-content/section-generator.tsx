@@ -6,6 +6,8 @@ import {
 	PHOTO_GALLERY_PAGE,
 	PORTFOLIO_PAGE,
 	SHOP_PAGE,
+	SUPPORT_BLOG_PAGE,
+	SUPPORT_SHOP_PAGE,
 	VIDEO_GALLERY_PAGE,
 } from 'calypso/signup/difm/constants';
 import {
@@ -79,6 +81,8 @@ const generateSiteInformationSection = (
 
 const isCustomPageId = ( pageId: string ) =>
 	pageId === CUSTOM_PAGE || String( pageId ).startsWith( CUSTOM_PAGE + '_' );
+const isSupportOnlyPageId = ( pageId: string ) =>
+	pageId === SUPPORT_SHOP_PAGE || pageId === SUPPORT_BLOG_PAGE;
 
 const resolveDisplayedComponent = ( pageId: string ) => {
 	if ( isCustomPageId( pageId ) ) {
@@ -102,6 +106,8 @@ const generateWebsiteContentSections = (
 		[ CONTACT_PAGE ]: true,
 		[ BLOG_PAGE ]: true,
 		[ SHOP_PAGE ]: true,
+		[ SUPPORT_SHOP_PAGE ]: true,
+		[ SUPPORT_BLOG_PAGE ]: true,
 		[ VIDEO_GALLERY_PAGE ]: true,
 		[ PHOTO_GALLERY_PAGE ]: true,
 		[ PORTFOLIO_PAGE ]: true,
@@ -118,6 +124,7 @@ const generateWebsiteContentSections = (
 
 		const DisplayedPageComponent = resolveDisplayedComponent( page.id );
 		const isOptionalPage = !! OPTIONAL_PAGES[ page.id as PageId ] || isCustomPageId( page.id );
+		const isSupportOnlyPage = isSupportOnlyPageId( page.id );
 
 		return {
 			title: translate( '%(fieldNumber)d. %(pageTitle)s', {
@@ -134,10 +141,20 @@ const generateWebsiteContentSections = (
 					formErrors={ formErrors }
 					onChangeField={ onChangeField }
 					context={ context }
+					isReadOnly={ isSupportOnlyPage }
+					readOnlyTagline={
+						isSupportOnlyPage
+							? translate( "We'll create this page for you as per our service scope." )
+							: undefined
+					}
 				/>
 			),
 			showSkip: isOptionalPage,
 			validate: () => {
+				if ( isSupportOnlyPage ) {
+					return { result: true, errors: { content: null, title: null } };
+				}
+
 				const isContentValid =
 					isOptionalPage || Boolean( page.content?.length ) || page.useFillerContent;
 				const isTitleValid = Boolean( page.title?.length );

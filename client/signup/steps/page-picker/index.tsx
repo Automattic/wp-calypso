@@ -10,6 +10,7 @@ import { isMobile } from '@automattic/viewport';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useQueryReaderTeams } from 'calypso/components/data/query-reader-teams';
 import InfoPopover from 'calypso/components/info-popover';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { logToLogstash } from 'calypso/lib/logstash';
@@ -32,6 +33,8 @@ import {
 	PRICING_PAGE,
 	TEAM_PAGE,
 	SHOP_PAGE,
+	SUPPORT_BLOG_PAGE,
+	SUPPORT_SHOP_PAGE,
 	CUSTOM_PAGE,
 	EVENTS_PAGE,
 	DONATE_PAGE,
@@ -54,6 +57,8 @@ import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSiteId, getSitePlan } from 'calypso/state/sites/selectors';
+import { isSupportSession } from 'calypso/state/support/selectors';
+import { isA8cTeamMember } from 'calypso/state/teams/selectors';
 import ShoppingCartForDIFM from './shopping-cart-for-difm';
 import useCartForDIFM from './use-cart-for-difm';
 import type { PageId } from 'calypso/signup/difm/constants';
@@ -251,6 +256,7 @@ interface InstancePageGridProps {
 	instances: PageInstance[];
 	setInstances: ( updater: ( prev: PageInstance[] ) => PageInstance[] ) => void;
 	isStoreFlow: boolean;
+	canAddSupportOnlyPages: boolean;
 }
 
 /** 0-based index of the first instance with the given type in the instances list, or -1. */
@@ -259,7 +265,12 @@ function getGlobalIndexForType( instances: PageInstance[], pageId: PageId ): num
 	return idx;
 }
 
-function InstancePageGrid( { instances, setInstances, isStoreFlow }: InstancePageGridProps ) {
+function InstancePageGrid( {
+	instances,
+	setInstances,
+	isStoreFlow,
+	canAddSupportOnlyPages,
+}: InstancePageGridProps ) {
 	const selectedPages = instances.map( ( instance ) => instance.type );
 	const customInstances = instances.filter( ( instance ) => instance.type === CUSTOM_PAGE );
 
@@ -340,6 +351,15 @@ function InstancePageGrid( { instances, setInstances, isStoreFlow }: InstancePag
 				globalIndex={ getGlobalIndexForType( instances, BLOG_PAGE ) }
 				onClick={ onPageClick }
 			/>
+			{ canAddSupportOnlyPages && (
+				<PageCell
+					context={ context }
+					pageId={ SUPPORT_BLOG_PAGE }
+					selectedPages={ selectedPages }
+					globalIndex={ getGlobalIndexForType( instances, SUPPORT_BLOG_PAGE ) }
+					onClick={ onPageClick }
+				/>
+			) }
 
 			<PageCell
 				context={ context }
@@ -381,6 +401,15 @@ function InstancePageGrid( { instances, setInstances, isStoreFlow }: InstancePag
 					pageId={ PRICING_PAGE }
 					selectedPages={ selectedPages }
 					globalIndex={ getGlobalIndexForType( instances, PRICING_PAGE ) }
+					onClick={ onPageClick }
+				/>
+			) }
+			{ canAddSupportOnlyPages && ! isStoreFlow && (
+				<PageCell
+					context={ context }
+					pageId={ SUPPORT_SHOP_PAGE }
+					selectedPages={ selectedPages }
+					globalIndex={ getGlobalIndexForType( instances, SUPPORT_SHOP_PAGE ) }
 					onClick={ onPageClick }
 				/>
 			) }
@@ -748,7 +777,13 @@ function DIFMPagePicker( props: StepProps ) {
 	} = props;
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	// Reader teams are not fetched elsewhere in signup; without this, `isA8cTeamMember` stays false
+	// and support-only page tiles (Custom Blog / Custom Shop) never appear for HEs in support session.
+	useQueryReaderTeams();
 	const isStoreFlow = 'do-it-for-me-store' === flowName;
+	const canAddSupportOnlyPages = useSelector(
+		( state ) => isA8cTeamMember( state ) && isSupportSession( state )
+	);
 	const [ isCheckoutPressed, setIsCheckoutPressed ] = useState( false );
 	const [ showPurchaseModal, setShowPurchaseModal ] = useState( false );
 	const [ pageInstances, setPageInstances ] = useState< PageInstance[] >( () =>
@@ -922,6 +957,7 @@ function DIFMPagePicker( props: StepProps ) {
 						isStoreFlow={ isStoreFlow }
 						instances={ pageInstances }
 						setInstances={ setPageInstances }
+						canAddSupportOnlyPages={ canAddSupportOnlyPages }
 					/>
 				</>
 			}

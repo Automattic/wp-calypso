@@ -15,8 +15,10 @@ The frontend now sends and consumes an optional **`selected_page_instances`** ar
 
 Array of `{ id: string, type: string }`:
 
-- **`id`** – Unique per selected page (e.g. `HOME_PAGE`, `SERVICES_PAGE`, `SERVICES_PAGE_2`, `CUSTOM_PAGE`, `CUSTOM_PAGE_2`). Same rules as in the [plan](./difm-add-pages-plan.md#31-selected-pages-frontend-state--submit).
+- **`id`** – Unique per selected page (e.g. `HOME_PAGE`, `SERVICES_PAGE`, `SERVICES_PAGE_2`, `CUSTOM_PAGE`, `CUSTOM_PAGE_2`). Same rules as in the [plan](./difm-add-pages-plan.md#31-selected-pages-frontend-state).
 - **`type`** – Page type (template). Matches existing `PageId` values used in `selected_page_titles`.
+
+**Calypso today:** cart/checkout extras and signup dependencies use this **`{ id, type }`** shape only (no `title` on each instance). Custom titles travel via **website-content `pages[].title`**. A future API could add optional `title` on each instance for fulfillment.
 
 Order of the array is the **global selection order** (used for badges and for ordering pages in the website-content step).
 
