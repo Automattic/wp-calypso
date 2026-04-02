@@ -1,4 +1,3 @@
-import { useHasEnTranslation } from '@automattic/i18n-utils';
 import {
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
@@ -29,7 +28,6 @@ export default function SiteLaunchCelebrationModal( {
 }: SiteLaunchCelebrationModalProps ) {
 	const { recordTracksEvent } = useAnalytics();
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
-	const hasEnTranslation = useHasEnTranslation();
 	const copyButtonRef = useRef< HTMLButtonElement >( null );
 
 	const isPaidPlan = ! site.plan?.is_free;
@@ -74,9 +72,7 @@ export default function SiteLaunchCelebrationModal( {
 					) }
 				</Text>
 			);
-			buttonText = hasEnTranslation( 'Get your domain' )
-				? __( 'Get your domain' )
-				: __( 'Claim your domain' );
+			buttonText = __( 'Get your domain' );
 			buttonHref = `/domains/add/${ site.slug }`;
 		} else if ( isPaidPlan && isBilledMonthly && ! hasCustomDomain ) {
 			contentElement = (
@@ -86,9 +82,7 @@ export default function SiteLaunchCelebrationModal( {
 					) }
 				</Text>
 			);
-			buttonText = hasEnTranslation( 'Get your domain' )
-				? __( 'Get your domain' )
-				: __( 'Claim your domain' );
+			buttonText = __( 'Get your domain' );
 			buttonHref = `/domains/add/${ site.slug }`;
 		} else if ( isPaidPlan && ! hasCustomDomain ) {
 			contentElement = (
@@ -101,9 +95,7 @@ export default function SiteLaunchCelebrationModal( {
 					) }
 				</Text>
 			);
-			buttonText = hasEnTranslation( 'Get your free domain' )
-				? __( 'Get your free domain' )
-				: __( 'Claim your free domain' );
+			buttonText = __( 'Get your free domain' );
 			buttonHref = `/domains/add/${ site.slug }`;
 		} else {
 			return null;
