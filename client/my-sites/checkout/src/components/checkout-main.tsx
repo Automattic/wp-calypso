@@ -588,7 +588,12 @@ export default function CheckoutMain( {
 			eps: ( transactionData: unknown ) =>
 				genericRedirectProcessor( 'eps', transactionData, dataForProcessor ),
 			'stripe-upi': ( transactionData: unknown ) =>
-				upiProcessor( transactionData, dataForProcessor, translate ),
+				upiProcessor(
+					transactionData,
+					dataForProcessor,
+					translate,
+					sitelessCheckoutType === 'a4a'
+				),
 			'existing-card': ( transactionData: unknown ) =>
 				existingCardProcessor( transactionData, dataForProcessor ),
 			'existing-card-ebanx': ( transactionData: unknown ) =>
@@ -601,7 +606,7 @@ export default function CheckoutMain( {
 			razorpay: ( transactionData: unknown ) =>
 				razorpayProcessor( transactionData, dataForProcessor, translate ),
 		} ),
-		[ dataForProcessor, translate ]
+		[ dataForProcessor, sitelessCheckoutType, translate ]
 	);
 
 	// Gravatar Theme

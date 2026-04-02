@@ -11,7 +11,7 @@
 
 Once you have installed the [Playwright VSCode Extension](./setup.md) it is easy to run and debug tests via the extension pane, or directly from the test specifications themselves.
 
-![Run and Debug Tests](./files/run-debug-tests.png)
+![Run and Debug Tests](./files/run-debug-tests.webp)
 
 ### Setting custom environment variables for the Playwright VSCode Extension
 
@@ -28,7 +28,7 @@ You can easily set custom environment variables for the Playwright VSCode Extens
 },
 ```
 
-![Playwright VSCode Extension Settings](./files/pw-extensionsettings.png)
+![Playwright VSCode Extension Settings](./files/pw-extensionsettings.webp)
 
 ## Running via the Terminal
 
