@@ -11,3 +11,8 @@
 .components-card > .summary-button:last-child {
 	border-bottom: 0;
 }
+
+// Inset sub-group dividers on the Read/Write tool pages to align with CardBody content.
+.mcp-settings__tool-group-divider {
+	margin-inline: 16px;
+}
