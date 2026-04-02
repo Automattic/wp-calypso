@@ -5,12 +5,14 @@ import type { BackupState } from '../backups/use-backup-state';
 interface VersionSwitchNoticeProps {
 	backupState: BackupState;
 	targetVersion: string;
+	currentWpVersion: string;
 	isVersionSwitched: boolean;
 }
 
 export function VersionSwitchNotice( {
 	backupState,
 	targetVersion,
+	currentWpVersion,
 	isVersionSwitched,
 }: VersionSwitchNoticeProps ) {
 	const { status, backup } = backupState;
@@ -21,7 +23,7 @@ export function VersionSwitchNotice( {
 				{ sprintf(
 					// translators: %s: WordPress version, e.g. "7.0-RC2"
 					__( 'Your site is now running WordPress %s.' ),
-					targetVersion
+					currentWpVersion
 				) }
 			</Notice>
 		);
@@ -86,5 +88,17 @@ export function VersionSwitchNotice( {
 		);
 	}
 
-	return null;
+	// Fallback for 'idle' state — pending version exists but backup hasn't started yet.
+	return (
+		<Notice
+			variant="info"
+			title={ sprintf(
+				// translators: %s: WordPress version, e.g. "7.0-RC2"
+				__( 'Switching to WordPress %s…' ),
+				targetVersion
+			) }
+		>
+			{ __( 'Preparing to switch WordPress version…' ) }
+		</Notice>
+	);
 }

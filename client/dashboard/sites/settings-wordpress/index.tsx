@@ -1,4 +1,8 @@
-import { siteBySlugQuery, siteWordPressVersionQuery } from '@automattic/api-queries';
+import {
+	siteBySlugQuery,
+	siteWordPressVersionQuery,
+	wpOrgCoreVersionQuery,
+} from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, __experimentalText as Text } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
@@ -10,54 +14,55 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
 import { canViewWordPressSettings } from '../features';
+import { useVersionSwitch } from './use-version-switch';
 import { VersionForm } from './version-form';
+import { VersionSwitchNotice } from './version-switch-notice';
+
+function WordPressSettingsForm( { siteSlug }: { siteSlug: string } ) {
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const { data: currentVersion } = useQuery( siteWordPressVersionQuery( site.ID ) );
+	const versionSwitch = useVersionSwitch( site );
+	const { isSwitching, isSwitched, backupState, targetVersion } = versionSwitch;
+
+	// Resolve the target version tag (e.g. "beta") to a display string (e.g. "7.0-RC2").
+	const { data: latestVersion = '' } = useQuery( wpOrgCoreVersionQuery() );
+	const { data: betaVersion = '' } = useQuery( wpOrgCoreVersionQuery( 'beta' ) );
+
+	return (
+		<PageLayout
+			size="small"
+			header={
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
+					title="WordPress"
+					description={ __( 'Manage your WordPress version.' ) }
+				/>
+			}
+			notices={
+				isSwitching || isSwitched ? (
+					<VersionSwitchNotice
+						backupState={ backupState }
+						targetVersion={ targetVersion === 'beta' ? betaVersion : latestVersion }
+						currentWpVersion={ site.options?.software_version ?? '' }
+						isVersionSwitched={ isSwitched }
+					/>
+				) : undefined
+			}
+		>
+			<VersionForm
+				site={ site }
+				currentVersion={ currentVersion }
+				versionSwitch={ versionSwitch }
+			/>
+		</PageLayout>
+	);
+}
 
 export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const canView = canViewWordPressSettings( site );
 
-	const { data: currentVersion } = useQuery( {
-		...siteWordPressVersionQuery( site.ID ),
-		enabled: canView,
-	} );
-
-	if ( ! canView ) {
-		return (
-			<PageLayout
-				size="small"
-				header={
-					<PageHeader
-						prefix={ <Breadcrumbs length={ 2 } /> }
-						title="WordPress"
-						description={ __( 'Manage your WordPress version.' ) }
-					/>
-				}
-			>
-				<Notice>
-					<VStack>
-						<Text as="p">
-							{ sprintf(
-								// translators: %s: WordPress version, e.g. 6.8
-								__( 'Every WordPress.com site runs the latest WordPress version (%s).' ),
-								getFormattedWordPressVersion( site )
-							) }
-						</Text>
-						{ site.is_wpcom_atomic && (
-							<Text as="p">
-								{ createInterpolateElement(
-									__(
-										'Switch to a staging site to test a beta version of the next WordPress release. <learnMoreLink />'
-									),
-									{
-										learnMoreLink: <InlineSupportLink supportContext="switch-to-staging-site" />,
-									}
-								) }
-							</Text>
-						) }
-					</VStack>
-				</Notice>
-			</PageLayout>
-		);
+	if ( canViewWordPressSettings( site ) ) {
+		return <WordPressSettingsForm siteSlug={ siteSlug } />;
 	}
 
 	return (
@@ -71,7 +76,29 @@ export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) 
 				/>
 			}
 		>
-			<VersionForm site={ site } currentVersion={ currentVersion } />
+			<Notice>
+				<VStack>
+					<Text as="p">
+						{ sprintf(
+							// translators: %s: WordPress version, e.g. 6.8
+							__( 'Every WordPress.com site runs the latest WordPress version (%s).' ),
+							getFormattedWordPressVersion( site )
+						) }
+					</Text>
+					{ site.is_wpcom_atomic && (
+						<Text as="p">
+							{ createInterpolateElement(
+								__(
+									'Switch to a staging site to test a beta version of the next WordPress release. <learnMoreLink />'
+								),
+								{
+									learnMoreLink: <InlineSupportLink supportContext="switch-to-staging-site" />,
+								}
+							) }
+						</Text>
+					) }
+				</VStack>
+			</Notice>
 		</PageLayout>
 	);
 }
