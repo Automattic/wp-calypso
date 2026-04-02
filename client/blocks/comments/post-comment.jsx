@@ -3,7 +3,7 @@ import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Gridicon, TimeSince } from '@automattic/components';
 import { Icon, external } from '@wordpress/icons';
-import { isURL, getProtocol, getAuthority } from '@wordpress/url';
+import { isURL, getAuthority, prependHTTPS } from '@wordpress/url';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { get, some, flatMap } from 'lodash';
@@ -319,12 +319,10 @@ class PostComment extends PureComponent {
 		} else if ( commentAuthor.site_ID ) {
 			commentAuthorUrl = getStreamUrl( null, commentAuthor.site_ID );
 		} else {
-			const urlToCheck = commentAuthor?.URL;
+			const urlToCheck = prependHTTPS( commentAuthor?.URL );
 			if ( urlToCheck && isURL( urlToCheck ) ) {
-				const protocol = getProtocol( urlToCheck );
 				const domain = getAuthority( urlToCheck );
-				// isURL uses URL() which allows '%20' in Chromium but not Firefox, so we check ourselves.
-				if ( protocol === 'https:' && ! domain.includes( '%' ) ) {
+				if ( ! domain.includes( '%' ) ) {
 					commentAuthorUrl = urlToCheck;
 				}
 			}
