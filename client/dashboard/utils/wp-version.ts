@@ -17,7 +17,7 @@ export function getFormattedWordPressVersion(
 	site: Site,
 	versionTag: string | undefined = undefined
 ) {
-	const canManageVersion = hasHostingFeature( site, HostingFeatures.SFTP );
+	const canManageVersion = hasHostingFeature( site, HostingFeatures.BACKUPS );
 	return formatWordPressVersion(
 		site.options?.software_version ?? '',
 		versionTag,

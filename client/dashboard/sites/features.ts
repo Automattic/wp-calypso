@@ -41,7 +41,7 @@ export function canViewHundredYearPlanSettings( site: Site ) {
 // Settings -> Server
 
 export function canViewWordPressSettings( site: Site ) {
-	return hasPlanFeature( site, HostingFeatures.BACKUPS );
+	return hasHostingFeature( site, HostingFeatures.BACKUPS );
 }
 
 // Settings -> Actions & danger zone

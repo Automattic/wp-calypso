@@ -21,7 +21,6 @@ import PageLayout from '../../components/page-layout';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { isSelfHostedJetpackConnected, isCommerceGarden } from '../../utils/site-types';
-import { canViewWordPressSettings } from '../features';
 import AgencySiteShareCard from '../overview-agency-site-share-card';
 import BackupCard from '../overview-backup-card';
 import DIFMUpsellCard from '../overview-difm-upsell-card';
@@ -203,7 +202,7 @@ function SiteOverview( {
 			return <InaccessibleJetpackNotice error={ site.__inaccessible_jetpack_error } />;
 		}
 
-		if ( canViewWordPressSettings( site ) && shouldShowWpVersionNotice ) {
+		if ( shouldShowWpVersionNotice ) {
 			return <WpVersionNotice site={ site } />;
 		}
 
