@@ -37,7 +37,7 @@ function StatsBreadcrumbs( { items }: { items: BreadcrumbItem[] } ) {
 	const translate = useTranslate();
 
 	return (
-		<span className="stats-breadcrumbs" role="navigation" aria-label={ translate( 'Breadcrumbs' ) }>
+		<nav className="stats-breadcrumbs" aria-label={ translate( 'Breadcrumbs' ) }>
 			<JetpackLogo size={ 20 } monochrome={ false } />
 			{ items.flatMap( ( item, index ) => {
 				const elements: ReactNode[] = [];
@@ -75,14 +75,18 @@ function StatsBreadcrumbs( { items }: { items: BreadcrumbItem[] } ) {
 					);
 				} else {
 					elements.push(
-						<span key={ `item-${ index }` } className="stats-breadcrumbs__current" aria-current="page">
+						<span
+							key={ `item-${ index }` }
+							className="stats-breadcrumbs__current"
+							aria-current="page"
+						>
 							{ item.label }
 						</span>
 					);
 				}
 				return elements;
 			} ) }
-		</span>
+		</nav>
 	);
 }
 
