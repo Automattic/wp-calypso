@@ -13,6 +13,9 @@
 }
 
 // Inset sub-group dividers on the Read/Write tool pages to align with CardBody content.
-.mcp-settings__tool-group-divider {
-	margin-inline: 16px;
+// width: auto overrides the emotion-injected width: 100% so margin-inline takes effect.
+// 24px matches the horizontal padding of a medium-sized CardBody (space(6)).
+hr.mcp-settings__tool-group-divider {
+	width: auto;
+	margin-inline: 24px;
 }
