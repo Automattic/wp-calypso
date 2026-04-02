@@ -124,16 +124,6 @@ export function SiteLaunchButton( {
 		return null;
 	}
 
-	// Handle gated_site_launch variant: redirect to the standardized launch flow
-	if ( experimentAssignment === 'gated_site_launch' ) {
-		return <Button { ...commonProps } onClick={ handleGatedLaunchClick } />;
-	}
-
-	// Handle ungated_site_launch variant: launch directly and show celebration modal
-	if ( experimentAssignment === 'ungated_site_launch' ) {
-		return <Button { ...commonProps } onClick={ handleUngatedLaunch } />;
-	}
-
 	// Control variant and non-dashboard sites: preserve existing behavior
 	if ( site.is_a4a_dev_site ) {
 		if ( launchUrl ) {
@@ -156,6 +146,16 @@ export function SiteLaunchButton( {
 				) }
 			</>
 		);
+	}
+
+	// Handle gated_site_launch variant: redirect to the standardized launch flow
+	if ( experimentAssignment === 'gated_site_launch' ) {
+		return <Button { ...commonProps } onClick={ handleGatedLaunchClick } />;
+	}
+
+	// Handle ungated_site_launch variant: launch directly and show celebration modal
+	if ( experimentAssignment === 'ungated_site_launch' ) {
+		return <Button { ...commonProps } onClick={ handleUngatedLaunch } />;
 	}
 
 	if ( shouldImmediatelyLaunch ) {
