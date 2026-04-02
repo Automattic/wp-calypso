@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query';
 import {
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
@@ -11,22 +12,26 @@ import { copy, globe } from '@wordpress/icons';
 import { removeQueryArgs } from '@wordpress/url';
 import { useEffect, useState, useRef } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import { useAppContext } from '../../app/context';
 import ConfettiAnimation from '../../components/confetti';
-import type { DomainSummary, Site } from '@automattic/api-core';
+import type { Site } from '@automattic/api-core';
 import './styles.scss';
 
 interface SiteLaunchCelebrationModalProps {
 	site: Site;
-	domains?: DomainSummary[];
 	onClose: () => void;
 }
 
 export default function SiteLaunchCelebrationModal( {
 	site,
 	onClose,
-	domains = [],
 }: SiteLaunchCelebrationModalProps ) {
 	const { recordTracksEvent } = useAnalytics();
+	const { queries } = useAppContext();
+	const { data: domains = [] } = useQuery( {
+		...queries.domainsQuery(),
+		select: ( data ) => data.filter( ( domain ) => domain.blog_id === site.ID ),
+	} );
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
 	const copyButtonRef = useRef< HTMLButtonElement >( null );
 

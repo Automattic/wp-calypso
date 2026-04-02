@@ -1,11 +1,10 @@
 import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
-import { useSuspenseQuery, useQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { useSearch } from '@tanstack/react-router';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
-import { useAppContext } from '../../app/context';
 import { siteSettingsSiteVisibilityRoute } from '../../app/router/sites';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
@@ -19,21 +18,23 @@ import { PrivacyForm } from './privacy-form';
 import { ShareSiteForm } from './share-site-form';
 
 export default function SiteVisibilitySettings( { siteSlug }: { siteSlug: string } ) {
-	const { queries } = useAppContext();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: settings } = useSuspenseQuery( siteSettingsQuery( site.ID ) );
-	const { data: domains = [] } = useQuery( {
-		...queries.domainsQuery(),
-		select: ( data ) => data.filter( ( domain ) => domain.blog_id === site.ID ),
-	} );
 	const { back_to } = useSearch( {
 		from: siteSettingsSiteVisibilityRoute.fullPath,
 	} );
 
 	// Check if celebration modal should be shown based on URL param
-	const [ isCelebrationModalOpen, setIsCelebrationModalOpen ] = useState(
-		new URLSearchParams( window.location.search ).has( 'celebrateLaunch' )
-	);
+	const searchQueryParams = window.location.search;
+	const [ isCelebrationModalOpen, setIsCelebrationModalOpen ] = useState( false );
+
+	useEffect( () => {
+		const hasCelebrateLaunch = new URLSearchParams( searchQueryParams ).has( 'celebrateLaunch' );
+		// Only open the modal if the param is present; closing is handled by onClose
+		if ( hasCelebrateLaunch ) {
+			setIsCelebrationModalOpen( true );
+		}
+	}, [ searchQueryParams ] );
 
 	const renderContent = () => {
 		if ( site.launch_status === 'unlaunched' ) {
@@ -84,7 +85,6 @@ export default function SiteVisibilitySettings( { siteSlug }: { siteSlug: string
 			{ isCelebrationModalOpen && (
 				<SiteLaunchCelebrationModal
 					site={ site }
-					domains={ domains }
 					onClose={ () => setIsCelebrationModalOpen( false ) }
 				/>
 			) }
