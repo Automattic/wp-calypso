@@ -37,7 +37,8 @@ const siteVisibilityRoute = createRoute( {
 
 const aiToolsLayoutRoute = createRoute( {
 	// Bypass type issue by omitting the loader and head (both are typed against the dashboard router context).
-	...Object.assign( appRouterSites.siteSettingsAIToolsRoute.options, {
+	// Use an empty object as the first arg to avoid mutating the shared options object.
+	...Object.assign( {}, appRouterSites.siteSettingsAIToolsRoute.options, {
 		loader: undefined,
 		head: undefined,
 	} ),
@@ -151,7 +152,7 @@ const phpRoute = createRoute( {
 
 const databaseRoute = createRoute( {
 	// Bypass type issue by omitting the loader.
-	...Object.assign( appRouterSites.siteSettingsDatabaseRoute.options, { loader: undefined } ),
+	...Object.assign( {}, appRouterSites.siteSettingsDatabaseRoute.options, { loader: undefined } ),
 	getParentRoute: () => settingsRoute,
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-database' ).then( ( d ) =>
@@ -240,7 +241,9 @@ const sftpSshRoute = createRoute( {
 
 const transferSiteRoute = createRoute( {
 	// Bypass type issue by omitting the loader.
-	...Object.assign( appRouterSites.siteSettingsTransferSiteRoute.options, { loader: undefined } ),
+	...Object.assign( {}, appRouterSites.siteSettingsTransferSiteRoute.options, {
+		loader: undefined,
+	} ),
 	getParentRoute: () => settingsRoute,
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-transfer-site' ).then( ( d ) =>
