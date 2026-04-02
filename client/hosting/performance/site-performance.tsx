@@ -299,7 +299,7 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 				{ isMobile ? (
 					<MobileHeader
 						pageTitle={ currentPage?.label ?? '' }
-						pageSelector={ isSitePublic ? pageSelector : null }
+						{ ...( isSitePublic && { pageSelector } ) }
 						subtitle={ subtitle }
 					/>
 				) : (

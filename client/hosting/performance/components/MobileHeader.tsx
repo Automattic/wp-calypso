@@ -6,7 +6,7 @@ import NavigationHeader from 'calypso/components/navigation-header';
 
 type MobileHeaderProps = {
 	pageTitle: string;
-	pageSelector: JSX.Element;
+	pageSelector?: JSX.Element;
 	subtitle?: ReactNode;
 };
 
@@ -34,7 +34,7 @@ export const MobileHeader = ( { pageTitle, pageSelector, subtitle }: MobileHeade
 				</Button>
 			</NavigationHeader>
 
-			{ isPageSelectorVisible && (
+			{ isPageSelectorVisible && pageSelector && (
 				<div
 					css={ {
 						width: '100%',
