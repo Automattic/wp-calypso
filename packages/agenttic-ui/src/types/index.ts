@@ -40,14 +40,16 @@ export interface MessageActionButton {
 	disabled?: boolean;
 	pressed?: boolean;
 	showLabel?: boolean;
+	order?: number;
 }
 
 export interface MessageActionComponent {
 	type: 'component';
 	id: string;
-	label: string;
+	label?: string;
 	component: React.ComponentType< any >;
 	componentProps?: Record< string, unknown >;
+	order?: number;
 }
 
 export type MessageAction = MessageActionButton | MessageActionComponent;

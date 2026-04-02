@@ -92,13 +92,15 @@ export type UIMessageAction =
 			tooltip?: string;
 			pressed?: boolean;
 			showLabel?: boolean;
+			order?: number;
 	  }
 	| {
 			type: 'component';
 			id: string;
-			label: string;
+			label?: string;
 			component: React.ComponentType< any >;
 			componentProps?: Record< string, unknown >;
+			order?: number;
 	  };
 
 // Internal types for message actions with conditional logic
@@ -114,14 +116,16 @@ export type MessageActionDefinition =
 			tooltip?: string;
 			pressed?: boolean;
 			showLabel?: boolean;
+			order?: number;
 	  }
 	| {
 			type: 'component';
 			id: string;
-			label: string;
+			label?: string;
 			component: React.ComponentType< any >;
 			componentProps?: Record< string, unknown >;
 			condition?: ( message: UIMessage ) => boolean;
+			order?: number;
 	  };
 
 export interface MessageActionsRegistration {
