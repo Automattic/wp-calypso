@@ -19,6 +19,8 @@ import RouterLinkSummaryButton from '../../components/router-link-summary-button
 import { SectionHeader } from '../../components/section-header';
 import { isWriteTool } from './categories';
 
+import './style.scss';
+
 interface McpAbility {
 	title: string;
 	description: string;
@@ -160,7 +162,7 @@ function McpComponent() {
 		>
 			<ComponentViewTracker eventName="calypso_dashboard_mcp_view" />
 			<VStack spacing={ 4 }>
-				<Card>
+				<Card className="dashboard-mcp-settings">
 					<CardBody>
 						<VStack spacing={ 4 }>
 							<SectionHeader

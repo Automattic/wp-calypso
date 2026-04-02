@@ -75,11 +75,8 @@
 	&.has-density-medium,
 	&.has-density-medium-low {
 		padding: $grid-unit-20 $grid-unit-30;
+		border-bottom: 1px solid $gray-100;
 		border-radius: 0;
-
-		&:not(:last-child) {
-			border-bottom: 1px solid $gray-100;
-		}
 
 		.summary-button-title {
 			@include body-medium;
