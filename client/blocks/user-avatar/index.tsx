@@ -12,11 +12,12 @@ type UserAvatarProps = {
 };
 
 type UserAvatarInfo = {
-	ID?: number;
+	ID?: number; // Represents user ID on source website i.e. WPCOM, Jetpack site, etc.
 	avatar_URL?: string;
 	display_name?: string;
 	name?: string;
-	login?: string; // Some API's send the username as "login" instead of "wpcom_login". This is to support both cases.
+	login?: string; // Represents username on source website i.e. WPCOM, Jetpack site, etc.
+	wpcom_id?: number;
 	wpcom_login?: string;
 };
 
@@ -32,8 +33,7 @@ export default function UserAvatar( {
 	}
 
 	const classes = clsx( 'user-avatar', 'has-gravatar', className );
-	const username = user?.wpcom_login || user?.login;
-	const userProfileUrl = username ? getUserProfileUrl( username ) : null;
+	const userProfileUrl = user?.wpcom_login ? getUserProfileUrl( user?.wpcom_login ) : null;
 	const userGravatar = <GravatarWithHovercards user={ user } size={ size } />;
 	const avatarElement = userProfileUrl ? (
 		<a href={ userProfileUrl }> { userGravatar }</a>

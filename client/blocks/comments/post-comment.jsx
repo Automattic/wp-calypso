@@ -312,11 +312,10 @@ class PostComment extends PureComponent {
 		const comment = get( this.props.commentsTree, [ commentId, 'data' ], {} );
 		const commentAuthor = get( comment, 'author', {} );
 		const commentAuthorName = decodeEntities( commentAuthor.name );
-		const username = commentAuthor?.wpcom_login || commentAuthor?.login;
 
 		let commentAuthorUrl;
-		if ( username ) {
-			commentAuthorUrl = getUserProfileUrl( username );
+		if ( commentAuthor.wpcom_login ) {
+			commentAuthorUrl = getUserProfileUrl( commentAuthor.wpcom_login );
 		} else if ( commentAuthor.site_ID ) {
 			commentAuthorUrl = getStreamUrl( null, commentAuthor.site_ID );
 		} else {
