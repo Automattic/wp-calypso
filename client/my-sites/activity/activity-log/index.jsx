@@ -22,7 +22,7 @@ import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings'; // For site time offset
 import EmptyContent from 'calypso/components/empty-content';
-import JetpackFooter from 'calypso/components/jetpack-colophon';
+import JetpackFooter from 'calypso/components/jetpack/jetpack-footer';
 import JetpackTitle from 'calypso/components/jetpack-title';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';

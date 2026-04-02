@@ -4,7 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { capitalize, find } from 'lodash';
 import DocumentHead from 'calypso/components/data/document-head';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import JetpackFooter from 'calypso/components/jetpack-footer';
+import JetpackFooter from 'calypso/components/jetpack/jetpack-footer';
 import JetpackTitle from 'calypso/components/jetpack-title';
 import Main from 'calypso/components/main';
 import SectionNav from 'calypso/components/section-nav';
