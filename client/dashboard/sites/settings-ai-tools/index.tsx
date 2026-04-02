@@ -71,7 +71,7 @@ function getReadBadge( tools: Array< [ string, McpAbility ] > ) {
 		return { text: __( 'All enabled' ), intent: 'success' as const };
 	}
 	if ( enabledCount === 0 ) {
-		return { text: __( 'None enabled' ) };
+		return { text: __( 'Disabled' ) };
 	}
 	return {
 		/* translators: %1$d is the number of enabled tools, %2$d is the total number of tools */
@@ -151,12 +151,21 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 	} );
 
 	const handleMcpToggle = ( enabled: boolean ) => {
+		const abilities: Record< string, boolean > = {};
+		if ( enabled ) {
+			// Auto-enable all read tools and disable all write tools.
+			availableTools.forEach( ( [ toolId, tool ] ) => {
+				abilities[ toolId ] = ! isWriteTool( toolId, tool );
+			} );
+		}
+		// When disabling, send abilities: {} to clear all site-level overrides.
 		mcpMutation.mutate( {
 			mcp_abilities: {
 				sites: [
 					{
 						blog_id: site.ID,
 						site_level_enabled: enabled,
+						abilities,
 					},
 				],
 			},
