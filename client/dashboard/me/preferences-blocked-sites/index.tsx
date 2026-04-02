@@ -7,7 +7,7 @@ import RouterLinkSummaryButton from '../../components/router-link-summary-button
 import type { Density } from '@automattic/components/src/summary-button/types';
 
 export default function PreferencesBlockedSites( { density }: { density?: Density } ) {
-	const { data } = useInfiniteQuery( blockedSitesInfiniteQuery( 1 ) );
+	const { data } = useInfiniteQuery( blockedSitesInfiniteQuery( 20 ) );
 	const sites = ( data?.pages || [] ).flat();
 	const count = sites.length;
 
