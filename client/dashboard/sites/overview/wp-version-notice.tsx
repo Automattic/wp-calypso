@@ -24,7 +24,10 @@ export function useShouldShowWpVersionNotice( site: Site ) {
 		...( canView ? {} : { queryFn: () => Promise.resolve( '' ) } ),
 	} );
 
-	const { data: betaVersion } = useSuspenseQuery( wpOrgCoreVersionQuery( 'beta' ) );
+	const { data: betaVersion } = useSuspenseQuery( {
+		...wpOrgCoreVersionQuery( 'beta' ),
+		...( canView ? {} : { queryFn: () => Promise.resolve( '' ) } ),
+	} );
 
 	// Don't show if already dismissed, already on beta, or no beta version available.
 	return canView && ! isDismissed && currentVersionTag !== 'beta' && betaVersion;

@@ -13,12 +13,13 @@ const site = {
 	ID: 123,
 	slug: 'test-site.wordpress.com',
 	is_wpcom_atomic: true,
+	is_wpcom_staging_site: true,
 	plan: {
 		product_slug: 'business-bundle',
 		product_name_short: 'Business',
 		is_free: false,
 		features: {
-			active: [ 'atomic', 'sftp' ],
+			active: [ 'atomic', 'sftp', 'backups' ],
 		},
 	},
 	options: {
