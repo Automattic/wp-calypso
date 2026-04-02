@@ -73,6 +73,7 @@ export * from './plugins';
 export * from './products';
 export * from './products';
 export * from './plans';
+export * from './read-comment-email-subscriptions';
 export * from './read-feeds';
 export * from './read-teams';
 export * from './site';

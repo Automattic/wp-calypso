@@ -1,5 +1,5 @@
+import { deletePostCommentEmailSubscription } from '@automattic/api-core';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { callApi } from '../helpers';
 import { useCacheKey, useIsLoggedIn } from '../hooks';
 import { PostSubscription, SubscriptionManagerSubscriptionsCount } from '../types';
 
@@ -7,12 +7,6 @@ type UnsubscribeParams = {
 	id: number | string;
 	blog_id: number | string;
 	post_id: number | string;
-};
-
-type UnsubscribeResponse = {
-	success: boolean;
-	subscribed: boolean;
-	subscription: null;
 };
 
 type PostSubscriptions = {
@@ -33,28 +27,10 @@ const usePostUnsubscribeMutation = () => {
 
 	return useMutation( {
 		mutationFn: async ( params: UnsubscribeParams ) => {
-			if ( ! params.blog_id ) {
-				throw new Error(
-					// reminder: translate this string when we add it to the UI
-					'Something went wrong while unsubscribing.'
-				);
-			}
-
-			const response = await callApi< UnsubscribeResponse >( {
-				path: `/read/site/${ params.blog_id }/comment_email_subscriptions/delete?post_id=${ params.post_id }`,
-				method: 'POST',
-				isLoggedIn,
-				apiVersion: '1.2',
+			return deletePostCommentEmailSubscription( {
+				blog_id: params.blog_id,
+				post_id: params.post_id,
 			} );
-
-			if ( ! response.success ) {
-				throw new Error(
-					// reminder: translate this string when we add it to the UI
-					'Something went wrong while unsubscribing.'
-				);
-			}
-
-			return response;
 		},
 		onMutate: async ( params ) => {
 			await queryClient.cancelQueries( { queryKey: postSubscriptionsCacheKey } );

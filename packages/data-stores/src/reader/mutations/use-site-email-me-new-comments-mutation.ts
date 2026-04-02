@@ -1,5 +1,6 @@
+import { updateSiteCommentEmailSubscription } from '@automattic/api-core';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { buildQueryKey, callApi } from '../helpers';
+import { buildQueryKey } from '../helpers';
 import {
 	alterSiteSubscriptionDetails,
 	invalidateSiteSubscriptionDetails,
@@ -13,41 +14,16 @@ type SiteSubscriptionEmailMeNewCommentsParams = {
 	subscriptionId: number;
 };
 
-type SiteSubscriptionEmailMeNewCommentsResponse = {
-	success: boolean;
-	subscribed: boolean;
-};
-
 const useSiteEmailMeNewCommentsMutation = () => {
 	const { id, isLoggedIn } = useIsLoggedIn();
 	const queryClient = useQueryClient();
 
 	return useMutation( {
 		mutationFn: async ( params: SiteSubscriptionEmailMeNewCommentsParams ) => {
-			if ( ! params.blog_id || typeof params.send_comments !== 'boolean' ) {
-				throw new Error(
-					// reminder: translate this string when we add it to the UI
-					'Something went wrong while changing the "Email me new comments" setting.'
-				);
-			}
-
-			const action = params.send_comments ? 'new' : 'delete';
-
-			const response = await callApi< SiteSubscriptionEmailMeNewCommentsResponse >( {
-				path: `/read/site/${ params.blog_id }/comment_email_subscriptions/${ action }`,
-				method: 'POST',
-				body: {},
-				isLoggedIn,
-				apiVersion: '1.2',
+			return updateSiteCommentEmailSubscription( {
+				send_comments: params.send_comments,
+				blog_id: params.blog_id,
 			} );
-			if ( ! response.success ) {
-				throw new Error(
-					// reminder: translate this string when we add it to the UI
-					'Something went wrong while changing the "Email me comments posts" setting.'
-				);
-			}
-
-			return response;
 		},
 		onMutate: async ( { blog_id, send_comments, subscriptionId } ) => {
 			const siteSubscriptionsQueryKey = buildQueryKey(
