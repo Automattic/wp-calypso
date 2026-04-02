@@ -760,8 +760,11 @@ export const siteSettingsAIToolsSetupRoute = createRoute( {
 	getParentRoute: () => siteSettingsAIToolsRoute,
 	path: 'ai-tools/setup',
 	beforeLoad: redirectSiteAiToolsSubpageToHub,
-	loader: async () => {
-		await queryClient.ensureQueryData( userSettingsQuery() );
+	loader: async ( { params: { siteSlug } } ) => {
+		await Promise.all( [
+			queryClient.ensureQueryData( userSettingsQuery() ),
+			queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) ),
+		] );
 	},
 } ).lazy( () =>
 	import( '../../sites/settings-ai-tools/setup' ).then( ( d ) =>

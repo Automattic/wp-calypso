@@ -1,4 +1,4 @@
-import { userSettingsQuery } from '@automattic/api-queries';
+import { userSettingsQuery, siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Button,
@@ -13,7 +13,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { copy, check } from '@wordpress/icons';
 import { useState } from 'react';
-import { hasEnabledAccountTools } from '../../../../me/mcp/utils';
+import { getSiteLevelEnabled } from '../../../../me/mcp/utils';
 import Breadcrumbs from '../../../app/breadcrumbs';
 import { siteRoute } from '../../../app/router/sites';
 import { Card, CardBody } from '../../../components/card';
@@ -27,6 +27,7 @@ import '../../../me/mcp/setup/style.scss';
 
 function SiteAIToolsSetup() {
 	const { siteSlug } = siteRoute.useParams();
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
 
 	type McpClient = 'claude' | 'claude-code' | 'cursor' | 'vscode' | 'continue' | 'default';
@@ -95,9 +96,9 @@ function SiteAIToolsSetup() {
 		}
 	};
 
-	const hasEnabledTools = hasEnabledAccountTools( userSettings || {} );
+	const isSiteMcpEnabled = getSiteLevelEnabled( userSettings || {}, site.ID );
 
-	if ( ! hasEnabledTools ) {
+	if ( ! isSiteMcpEnabled ) {
 		return (
 			<PageLayout
 				size="small"
@@ -116,19 +117,17 @@ function SiteAIToolsSetup() {
 							<SectionHeader level={ 3 } title={ __( 'Setup Required' ) } />
 							<VStack spacing={ 4 }>
 								<Text as="p" variant="muted">
-									{ __( 'No MCP access is currently enabled for your account.' ) }
+									{ __( 'MCP access is not enabled for this site.' ) }
 								</Text>
 								<Text as="p" variant="muted">
-									{ __(
-										'MCP access defines what actions and data your MCP client can access on your account. You need to enable MCP access in the main MCP settings before configuring your client.'
-									) }
+									{ __( 'Enable MCP access for this site before connecting your AI agent.' ) }
 								</Text>
 								<RouterLinkButton
 									to={ `/sites/${ siteSlug }/settings/ai-tools` }
 									variant="primary"
 									className="mcp-setup__action-button"
 								>
-									{ __( 'Go to AI tools settings' ) }
+									{ __( 'Go to Site MCP settings' ) }
 								</RouterLinkButton>
 							</VStack>
 						</VStack>
