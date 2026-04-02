@@ -4,7 +4,7 @@ import {
 	siteWordPressVersionQuery,
 	wpOrgCoreVersionQuery,
 } from '@automattic/api-queries';
-import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { __, sprintf } from '@wordpress/i18n';
 import Notice from '../../components/notice';
 import RouterLinkButton from '../../components/router-link-button';
@@ -19,9 +19,9 @@ export function useShouldShowWpVersionNotice( site: Site ) {
 		userPreferenceQuery( `${ PREFERENCE_KEY }-${ site.ID }` )
 	);
 
-	const { data: currentVersionTag } = useSuspenseQuery( {
+	const { data: currentVersionTag } = useQuery( {
 		...siteWordPressVersionQuery( site.ID ),
-		...( canView ? {} : { queryFn: () => Promise.resolve( '' ) } ),
+		enabled: canView,
 	} );
 
 	const { data: betaVersion } = useSuspenseQuery( {

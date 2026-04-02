@@ -199,10 +199,14 @@ export const siteOverviewRoute = createRoute( {
 				queryClient.ensureQueryData( purchaseQuery( currentPlan.id ) );
 			}
 		}
-		// Ensure storage specifically is loaded because the warning notice can cause a layout shift
+
 		await Promise.all( [
+			// Ensure storage specifically is loaded because the warning notice can cause a layout shift
 			queryClient.ensureQueryData( siteMediaStorageQuery( site.ID ) ),
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+			// Ensure wp version specifically is loaded because the wp version notice can cause a layout shift
+			canViewWordPressSettings( site ) &&
+				queryClient.ensureQueryData( siteWordPressVersionQuery( site.ID ) ),
 		] );
 	},
 } ).lazy( () =>
