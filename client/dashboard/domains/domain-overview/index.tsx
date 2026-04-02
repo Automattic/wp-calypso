@@ -22,11 +22,7 @@ import SnackbarBackButton, {
 	getSnackbarBackButtonText,
 } from '../../components/snackbar-back-button';
 import { formatDate } from '../../utils/datetime';
-import {
-	getDomainRenewalUrl,
-	isPendingPrimaryDomain,
-	isTldInMaintenance,
-} from '../../utils/domain';
+import { getDomainRenewalUrl, isTldInMaintenance } from '../../utils/domain';
 import { TLDMaintenanceNotice } from '../maintenance-notice';
 import Actions from './actions';
 import FeaturedCards from './featured-cards';
@@ -136,9 +132,7 @@ export default function DomainOverview() {
 				{ domain.is_pending_icann_verification && (
 					<IcannSuspensionNotice domainName={ domain.domain } />
 				) }
-				{ isPendingPrimaryDomain( domain ) && (
-					<PendingPrimaryDomainNotice domainName={ domain.domain } />
-				) }
+				<PendingPrimaryDomainNotice domainName={ domain.domain } />
 				{ domain.subtype.id !== DomainSubtype.DOMAIN_TRANSFER && (
 					<>
 						<FeaturedCards isDisabled={ isTldInMaintenance( domain ) } />
