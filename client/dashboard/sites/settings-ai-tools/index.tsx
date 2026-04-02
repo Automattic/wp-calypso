@@ -287,25 +287,21 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 									/>
 								</VStack>
 							</CardBody>
-							{ isMcpEnabled && (
-								<>
-									<CardDivider className="mcp-settings__sub-divider" />
-									<RouterLinkSummaryButton
-										to={ `/sites/${ siteSlug }/settings/ai-tools/read` }
-										density="medium"
-										title={ __( 'Read' ) }
-										decoration={ <Icon icon={ seen } size={ 24 } /> }
-										badges={ [ readBadge ] }
-									/>
-									<RouterLinkSummaryButton
-										to={ `/sites/${ siteSlug }/settings/ai-tools/write` }
-										density="medium"
-										title={ __( 'Write' ) }
-										decoration={ <Icon icon={ pencil } size={ 24 } /> }
-										badges={ [ writeBadge ] }
-									/>
-								</>
-							) }
+							<CardDivider className="mcp-settings__sub-divider" />
+							<RouterLinkSummaryButton
+								to={ `/sites/${ siteSlug }/settings/ai-tools/read` }
+								density="medium"
+								title={ __( 'Read' ) }
+								decoration={ <Icon icon={ seen } size={ 24 } /> }
+								badges={ [ readBadge ] }
+							/>
+							<RouterLinkSummaryButton
+								to={ `/sites/${ siteSlug }/settings/ai-tools/write` }
+								density="medium"
+								title={ __( 'Write' ) }
+								decoration={ <Icon icon={ pencil } size={ 24 } /> }
+								badges={ [ writeBadge ] }
+							/>
 						</Card>
 						{ isMcpEnabled && (
 							<RouterLinkSummaryButton
