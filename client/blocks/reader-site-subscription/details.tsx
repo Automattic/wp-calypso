@@ -5,6 +5,7 @@ import { SubscriptionManager, Reader } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { fixMe, useTranslate } from 'i18n-calypso';
+import moment from 'moment';
 import { useEffect, useMemo, useState } from 'react';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -16,7 +17,6 @@ import CancelPaidSubscriptionModal from './cancel-paid-subscription-modal';
 import {
 	PaymentPlan,
 	SiteSubscriptionDetailsProps,
-	formatRenewalDate,
 	formatRenewalPrice,
 	getPaymentInterval,
 } from './helpers';
@@ -81,13 +81,12 @@ const SiteSubscriptionDetails = ( {
 				const { is_comp, ID, title, currency, renewal_price, renew_interval } = paymentDetail;
 				const renewalPrice = formatRenewalPrice( renewal_price, currency );
 				const when = getPaymentInterval( renew_interval );
-				const renewalDate = formatRenewalDate( paymentDetail.end_date, localeSlug );
 				newPaymentPlans.push( {
 					is_comp: !! is_comp,
 					id: ID,
 					title: title || '',
 					renewalPrice: `${ renewalPrice }${ when }`,
-					renewalDate,
+					rawEndDate: paymentDetail.end_date,
 				} );
 			} );
 
@@ -309,7 +308,7 @@ const SiteSubscriptionDetails = ( {
 							</dl>
 						) }
 						{ paymentPlans &&
-							paymentPlans.map( ( { is_comp, id, title, renewalPrice, renewalDate } ) => (
+							paymentPlans.map( ( { is_comp, id, title, renewalPrice, rawEndDate } ) => (
 								<dl className="site-subscription-info__list" key={ id }>
 									<dt>{ translate( 'Plan' ) }</dt>
 									<dd>
@@ -320,20 +319,25 @@ const SiteSubscriptionDetails = ( {
 											  } )
 											: renewalPrice }
 									</dd>
-									{ ( renewalDate || is_comp ) && (
-										<>
-											<dt>{ translate( 'Billing period' ) }</dt>
-											<dd>
-												{ ! is_comp &&
-													renewalDate &&
-													translate( 'Renews on %s', { args: [ renewalDate ] } ) }
-												{ is_comp &&
-													renewalDate &&
-													translate( 'Expires on %s', { args: [ renewalDate ] } ) }
-												{ is_comp && ! renewalDate && translate( 'Does not expire' ) }
-											</dd>
-										</>
-									) }
+									<dt>{ translate( 'Period' ) }</dt>
+									<dd>
+										{ ( () => {
+											if ( rawEndDate ) {
+												const date = moment( rawEndDate ).locale( localeSlug );
+												const formatted = date.format( 'LL' );
+												if ( is_comp ) {
+													return date.isBefore( moment() )
+														? translate( 'Expired' )
+														: translate( 'Expires on %s', { args: [ formatted ] } );
+												}
+												return translate( 'Renews on %s', { args: [ formatted ] } );
+											}
+											if ( is_comp ) {
+												return translate( "Doesn't expire" );
+											}
+											return translate( 'Auto-renews' );
+										} )() }
+									</dd>
 								</dl>
 							) ) }
 					</div>

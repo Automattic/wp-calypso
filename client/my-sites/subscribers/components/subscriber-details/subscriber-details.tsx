@@ -3,10 +3,10 @@ import { TimeSince } from '@automattic/components';
 import { Button, ExternalLink, Icon } from '@wordpress/components';
 import { trash } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import moment from 'moment';
 import { useMemo } from 'react';
 import { NewsletterCategory } from 'calypso/data/newsletter-categories/types';
 import { useSubscriptionPlans } from '../../hooks';
-import { SubscriptionPlanData } from '../../hooks/use-subscription-plans';
 import { Subscriber, SubscriberDetails as SubscriberDetailsType } from '../../types';
 import { SubscriberProfile } from '../subscriber-profile';
 import { SubscriberStats } from '../subscriber-stats';
@@ -48,52 +48,6 @@ const SubscriberDetails = ( {
 		[ newsletterCategories ]
 	);
 	const { avatar, date_subscribed, display_name, email_address, country, url } = subscriber;
-
-	const notApplicableLabel = translate( 'N/A', {
-		context: 'For free subscriptions the plan description is displayed as N/A (not applicable)',
-	} );
-
-	const displayExpiration = ( subscriptionPlan: SubscriptionPlanData, index: number ) => {
-		if ( subscriptionPlan.is_free && ! subscriptionPlan.is_complimentary ) {
-			return (
-				<div className="subscriber-details__content-value" key={ index }>
-					{ notApplicableLabel }
-				</div>
-			);
-		}
-
-		if ( subscriptionPlan.endDate ) {
-			const endDateUTC = subscriptionPlan.endDate.endsWith( 'Z' )
-				? subscriptionPlan.endDate
-				: subscriptionPlan.endDate + 'Z';
-			const isExpired = new Date( endDateUTC ) < new Date();
-
-			if ( isExpired ) {
-				return (
-					<div className="subscriber-details__content-value" key={ index }>
-						{ translate( 'Expired' ) }
-					</div>
-				);
-			}
-
-			return (
-				<TimeSince
-					className="subscriber-details__content-value"
-					date={ subscriptionPlan.endDate }
-					dateFormat="LL"
-					key={ index }
-				/>
-			);
-		}
-
-		return (
-			<div className="subscriber-details__content-value" key={ index }>
-				{ subscriptionPlan.is_complimentary
-					? translate( "Doesn't expire" )
-					: translate( 'Auto-renews' ) }
-			</div>
-		);
-	};
 
 	return (
 		<div className="subscriber-details">
@@ -187,8 +141,34 @@ const SubscriberDetails = ( {
 							) ) }
 					</div>
 					<div className="subscriber-details__content-column">
-						<div className="subscriber-details__content-label">{ translate( 'Expires' ) }</div>
-						{ subscriptionPlans && subscriptionPlans.map( displayExpiration ) }
+						<div className="subscriber-details__content-label">{ translate( 'Period' ) }</div>
+						{ subscriptionPlans &&
+							subscriptionPlans.map( ( subscriptionPlan, index ) => (
+								<div className="subscriber-details__content-value" key={ index }>
+									{ ( () => {
+										if ( subscriptionPlan.is_free && ! subscriptionPlan.is_complimentary ) {
+											return translate( 'N/A', {
+												context:
+													'For free subscriptions the period description is displayed as N/A (not applicable)',
+											} );
+										}
+										if ( subscriptionPlan.endDate ) {
+											const date = moment( subscriptionPlan.endDate );
+											const formatted = date.format( 'LL' );
+											if ( subscriptionPlan.is_complimentary ) {
+												return date.isBefore( moment() )
+													? translate( 'Expired' )
+													: translate( 'Expires on %s', { args: [ formatted ] } );
+											}
+											return translate( 'Renews on %s', { args: [ formatted ] } );
+										}
+										if ( subscriptionPlan.is_complimentary ) {
+											return translate( "Doesn't expire" );
+										}
+										return translate( 'Auto-renews' );
+									} )() }
+								</div>
+							) ) }
 					</div>
 				</div>
 			</div>
