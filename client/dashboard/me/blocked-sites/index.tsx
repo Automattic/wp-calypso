@@ -154,12 +154,7 @@ export default function BlockedSites() {
 				<EmptyState.Wrapper isCompact>
 					<EmptyState>
 						<EmptyState.Header>
-							<EmptyState.Title>{ __( ‘You haven\u2019t blocked any sites yet.’ ) }</EmptyState.Title>
-							<EmptyState.Description>
-								{ __(
-									‘When you block a site, it will no longer appear in your Reader or recommendations.’
-								) }
-							</EmptyState.Description>
+							<EmptyState.Title>{ __( ‘You haven\u2019t blocked any sites yet’ ) }</EmptyState.Title>
 						</EmptyState.Header>
 					</EmptyState>
 				</EmptyState.Wrapper>
