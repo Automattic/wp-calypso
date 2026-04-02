@@ -5,17 +5,17 @@ import type { BackupState } from '../backups/use-backup-state';
 interface VersionSwitchNoticeProps {
 	backupState: BackupState;
 	targetVersion: string;
-	isVersionChanged: boolean;
+	isVersionSwitched: boolean;
 }
 
 export function VersionSwitchNotice( {
 	backupState,
 	targetVersion,
-	isVersionChanged,
+	isVersionSwitched,
 }: VersionSwitchNoticeProps ) {
 	const { status, backup } = backupState;
 
-	if ( isVersionChanged ) {
+	if ( isVersionSwitched ) {
 		return (
 			<Notice variant="success" title={ __( 'WordPress version updated' ) }>
 				{ sprintf(
