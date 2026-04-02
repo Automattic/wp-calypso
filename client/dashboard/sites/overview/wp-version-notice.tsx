@@ -14,7 +14,7 @@ import type { Site, UserPreferences } from '@automattic/api-core';
 const PREFERENCE_KEY = 'hosting-dashboard-wp-beta-notice-dismissed' as const;
 
 export function shouldLoadWpVersionNotice( site: Site, preferences: UserPreferences ) {
-	const canView = canViewWordPressSettings( site );
+	const canView = canViewWordPressSettings( site ) && ! site.is_wpcom_staging_site;
 	const isDismissed = preferences[ `${ PREFERENCE_KEY }-${ site.ID }` ];
 
 	return canView && ! isDismissed;
