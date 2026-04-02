@@ -364,6 +364,9 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		registrations,
 	} = useMessageActions();
 
+	// Guard against concurrent sends racing on conversationHistory
+	const isSendingRef = useRef( false );
+
 	// Use a ref to always have access to the latest registrations
 	const registrationsRef = useRef( registrations );
 	useEffect( () => {
@@ -475,6 +478,11 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 			if ( ! isValidConfig ) {
 				throw new Error( 'Invalid agent configuration' );
 			}
+
+			if ( isSendingRef.current ) {
+				return;
+			}
+			isSendingRef.current = true;
 
 			const isToolResult = options?.type === 'tool_result';
 
@@ -778,6 +786,8 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 					error: errorMessage,
 				} ) );
 				throw error;
+			} finally {
+				isSendingRef.current = false;
 			}
 		},
 		[ agentConfig.agentId, isValidConfig ]
