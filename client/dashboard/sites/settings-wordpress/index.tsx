@@ -1,4 +1,6 @@
 import {
+	queryClient,
+	siteBackupsQuery,
 	siteBySlugQuery,
 	siteWordPressVersionQuery,
 	siteWordPressVersionMutation,
@@ -13,7 +15,7 @@ import {
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { NavigationBlocker } from '../../app/navigation-blocker';
 import { ButtonStack } from '../../components/button-stack';
@@ -23,7 +25,9 @@ import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { formatWordPressVersion, getFormattedWordPressVersion } from '../../utils/wp-version';
+import { useBackupState } from '../backups/use-backup-state';
 import { canViewWordPressSettings } from '../features';
+import { VersionSwitchNotice } from './version-switch-notice';
 import type { Field } from '@wordpress/dataviews';
 
 export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) {
@@ -44,11 +48,42 @@ export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) 
 		enabled: canView,
 	} );
 
+	const backupState = useBackupState( site.ID );
+	const isBackupInProgress = backupState.status === 'enqueued' || backupState.status === 'running';
+	const [ switchTarget, setSwitchTarget ] = useState< string | null >( null );
+
+	// The version has changed when the current version matches what we requested.
+	const isVersionChanged = !! switchTarget && currentVersion === switchTarget;
+	const isSwitching = !! switchTarget && ! isVersionChanged;
+
+	// Poll backups while a version switch is in progress.
+	useQuery( {
+		...siteBackupsQuery( site.ID ),
+		refetchInterval: isBackupInProgress ? 3000 : false,
+		enabled: canView && isBackupInProgress,
+	} );
+
+	// After backup completes, poll WP version until it changes.
+	useQuery( {
+		...siteWordPressVersionQuery( site.ID ),
+		refetchInterval: isSwitching && backupState.hasRecentlyCompleted ? 5000 : false,
+		enabled: canView,
+	} );
+
+	// After backup completes, also invalidate immediately to get a quick first check.
+	useEffect( () => {
+		if ( backupState.hasRecentlyCompleted ) {
+			queryClient.invalidateQueries( siteWordPressVersionQuery( site.ID ) );
+		}
+	}, [ backupState.hasRecentlyCompleted, site.ID ] );
+
 	const mutation = useMutation( {
 		...siteWordPressVersionMutation( site.ID ),
+		onSuccess: () => {
+			backupState.setEnqueued( true );
+		},
 		meta: {
 			snackbar: {
-				success: __( 'WordPress version saved.' ),
 				error: __( 'Failed to save WordPress version.' ),
 			},
 		},
@@ -88,6 +123,7 @@ export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) 
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
+		setSwitchTarget( formData.version );
 		mutation.mutate( formData.version );
 	};
 
@@ -140,6 +176,19 @@ export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) 
 					description={ __( 'Manage your WordPress version.' ) }
 				/>
 			}
+			notices={
+				isSwitching || isVersionChanged ? (
+					<VersionSwitchNotice
+						backupState={ backupState }
+						targetVersion={
+							switchTarget === 'beta'
+								? betaVersion ?? currentWpVersion
+								: latestVersion ?? currentWpVersion
+						}
+						isVersionChanged={ isVersionChanged }
+					/>
+				) : undefined
+			}
 		>
 			<Card>
 				<CardBody>
@@ -158,8 +207,8 @@ export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) 
 								<Button
 									variant="primary"
 									type="submit"
-									isBusy={ isPending }
-									disabled={ isPending || ! isDirty }
+									isBusy={ isPending || isSwitching }
+									disabled={ isPending || ! isDirty || isSwitching }
 								>
 									{ __( 'Save' ) }
 								</Button>
