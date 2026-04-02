@@ -27,7 +27,8 @@ import { getAtomicHostingWpVersion } from 'calypso/state/selectors/get-atomic-ho
 import getRequest from 'calypso/state/selectors/get-request';
 import { isFetchingAtomicHostingGeoAffinity } from 'calypso/state/selectors/is-fetching-atomic-hosting-geo-affinity';
 import { isFetchingAtomicHostingWpVersion } from 'calypso/state/selectors/is-fetching-atomic-hosting-wp-version';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import type { DataCenterOption } from '@automattic/api-core';
 
 import './server-configuration-form.scss';
@@ -59,6 +60,9 @@ export default function ServerConfigurationForm( { disabled }: ServerConfigurati
 	const translate = useTranslate();
 
 	const siteId = useSelector( getSelectedSiteId );
+	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
+
+	const isWpcomStagingSite = useSelector( ( state ) => isSiteWpcomStaging( state, siteId ) );
 	const geoAffinity = useSelector( ( state ) => getAtomicHostingGeoAffinity( state, siteId ) );
 	const phpVersion = useSelector( ( state ) => getAtomicHostingPhpVersion( state, siteId ) );
 	const wpVersion = useSelector( ( state ) => getAtomicHostingWpVersion( state, siteId ) );
@@ -95,6 +99,7 @@ export default function ServerConfigurationForm( { disabled }: ServerConfigurati
 
 	const wpVersionRef = useRef< HTMLLabelElement >( null );
 	const wpVersionDropdownRef = useRef< HTMLSelectElement >( null );
+	const wpVersionExplainerRef = useRef< HTMLParagraphElement >( null );
 
 	const phpVersionRef = useRef< HTMLLabelElement >( null );
 	const phpVersionDropdownRef = useRef< HTMLSelectElement >( null );
@@ -111,7 +116,7 @@ export default function ServerConfigurationForm( { disabled }: ServerConfigurati
 
 			if ( wpVersionRef.current && hash === '#wp' ) {
 				targetLabel = wpVersionRef.current;
-				targetControl = wpVersionDropdownRef.current;
+				targetControl = wpVersionDropdownRef.current || wpVersionExplainerRef.current;
 			} else if ( phpVersionRef.current && hash === '#php' ) {
 				targetLabel = phpVersionRef.current;
 				targetControl = phpVersionDropdownRef.current;
@@ -172,25 +177,42 @@ export default function ServerConfigurationForm( { disabled }: ServerConfigurati
 		return (
 			<FormFieldset>
 				<FormLabel ref={ wpVersionRef }>{ translate( 'WordPress version' ) }</FormLabel>
-				<FormSelect
-					disabled={ disabled || isUpdating }
-					className="web-server-settings-card__wp-version-select"
-					onChange={ ( event ) => setSelectedWpVersion( event.currentTarget.value ) }
-					inputRef={ wpVersionDropdownRef }
-					value={ selectedWpVersionValue }
-				>
-					{ getWpVersions().map( ( option ) => {
-						return (
-							<option
-								disabled={ option.value === wpVersion }
-								value={ option.value }
-								key={ option.label }
-							>
-								{ option.label }
-							</option>
-						);
-					} ) }
-				</FormSelect>
+				{ isWpcomStagingSite && (
+					<>
+						<FormSelect
+							disabled={ disabled || isUpdating }
+							className="web-server-settings-card__wp-version-select"
+							onChange={ ( event ) => setSelectedWpVersion( event.currentTarget.value ) }
+							inputRef={ wpVersionDropdownRef }
+							value={ selectedWpVersionValue }
+						>
+							{ getWpVersions().map( ( option ) => {
+								return (
+									<option
+										disabled={ option.value === wpVersion }
+										value={ option.value }
+										key={ option.label }
+									>
+										{ option.label }
+									</option>
+								);
+							} ) }
+						</FormSelect>
+					</>
+				) }
+				{ ! isWpcomStagingSite && (
+					<FormSettingExplanation ref={ wpVersionExplainerRef }>
+						{ translate(
+							'Every WordPress.com site runs the latest WordPress version. ' +
+								'For testing purposes, you can switch to the beta version of the next WordPress release on {{a}}your staging site{{/a}}.',
+							{
+								components: {
+									a: <a href={ `/staging-site/${ selectedSiteSlug }` } />,
+								},
+							}
+						) }
+					</FormSettingExplanation>
+				) }
 			</FormFieldset>
 		);
 	};
