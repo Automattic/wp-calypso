@@ -23,7 +23,7 @@ import { css, Global } from '@emotion/react';
 import { useQuery } from '@tanstack/react-query';
 import { dispatch } from '@wordpress/data';
 import { localize } from 'i18n-calypso';
-import { Component, ComponentProps } from 'react';
+import { Component, ComponentProps, useEffect } from 'react';
 import { connect } from 'react-redux';
 import PlanThankYouCard from 'calypso/blocks/plan-thank-you-card';
 import QueryPreferences from 'calypso/components/data/query-preferences';
@@ -78,6 +78,7 @@ import { requestThenActivate } from 'calypso/state/themes/actions';
 import { getActiveTheme } from 'calypso/state/themes/selectors';
 import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { logStashEvent } from '../src/lib/analytics';
 import CheckoutThankYouHeader from './header';
 import HundredYearThankYou from './hundred-year-thank-you';
 import MasterbarStyled from './redesign-v2/masterbar-styled';
@@ -835,10 +836,29 @@ const ConnectedCheckoutThankYou = connect(
 )( localize( CheckoutThankYou ) );
 
 function CheckoutThankYouWithReceipt( props: ComponentProps< typeof ConnectedCheckoutThankYou > ) {
-	const { data: receipt, isLoading } = useQuery( {
+	const {
+		data: receipt,
+		isLoading,
+		isError,
+		error,
+	} = useQuery( {
 		...receiptQuery( props.receiptId ),
 		enabled: !! props.receiptId,
 	} );
+
+	useEffect( () => {
+		if ( isError && error ) {
+			logStashEvent(
+				'checkout thank you receipt fetch error',
+				{
+					type: 'checkout_thank_you_receipt',
+					message: ( error as Error )?.message ?? String( error ),
+					tags: [ 'checkout-thank-you' ],
+				},
+				'warning'
+			);
+		}
+	}, [ isError, error ] );
 
 	if ( isLoading ) {
 		return <Loading />;
