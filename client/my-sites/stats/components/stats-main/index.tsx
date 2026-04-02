@@ -40,7 +40,7 @@ function StatsBreadcrumbs( { items }: { items: BreadcrumbItem[] } ) {
 		<span className="stats-breadcrumbs" role="navigation" aria-label={ translate( 'Breadcrumbs' ) }>
 			<JetpackLogo size={ 20 } monochrome={ false } />
 			{ items.flatMap( ( item, index ) => {
-				const elements = [];
+				const elements: ReactNode[] = [];
 				if ( index > 0 ) {
 					elements.push(
 						<span key={ `sep-${ index }` } className="stats-breadcrumbs__separator">
