@@ -114,20 +114,15 @@ export function mergeSiteMcpAbilities( accountAbilities, siteAbilities ) {
 }
 
 /**
- * Get site IDs where MCP access is disabled at the site level
+ * Get site IDs where site-level MCP access is explicitly disabled.
+ * These appear as exceptions when the account default is enabled.
  * @param {Object} userSettings - The user settings object
- * @returns {number[]} Site IDs with account tools disabled
+ * @returns {number[]} Site IDs with site_level_enabled set to false
  */
 export function getDisabledSiteIds( userSettings ) {
-	if ( userSettings?.sites ) {
-		return userSettings.sites
-			.filter( ( site ) => site.account_tools_enabled === false )
-			.map( ( site ) => site.blog_id );
-	}
-
 	const mcpSites = userSettings?.mcp_abilities?.sites || [];
 	return mcpSites
-		.filter( ( site ) => site.account_tools_enabled === false )
+		.filter( ( site ) => site.site_level_enabled === false )
 		.map( ( site ) => site.blog_id );
 }
 

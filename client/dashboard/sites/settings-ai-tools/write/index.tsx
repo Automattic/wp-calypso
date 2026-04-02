@@ -148,7 +148,7 @@ export default function SiteAIToolsWrite() {
 
 		return subGroups.map( ( subName, index ) => (
 			<Fragment key={ subName }>
-				{ index > 0 && <CardDivider className="mcp-settings__sub-divider" /> }
+				{ index > 0 && <CardDivider /> }
 				<CardBody>
 					<VStack spacing={ 4 }>{ renderToolToggles( sortTools( subGrouped[ subName ] ) ) }</VStack>
 				</CardBody>

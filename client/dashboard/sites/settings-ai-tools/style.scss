@@ -6,3 +6,8 @@
 	height: 0;
 	margin: 0;
 }
+
+// Remove the bottom border from the last summary button inside a card to avoid a double border.
+.components-card > .summary-button:last-child {
+	border-bottom: 0;
+}

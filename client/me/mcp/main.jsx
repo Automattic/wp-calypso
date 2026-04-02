@@ -92,7 +92,7 @@ function McpComponent( { path } ) {
 		const disabledSiteIds = getDisabledSiteIds( userSettings || {} );
 		const enabledSiteIds = getEnabledSiteIds( userSettings || {} );
 		const sitesToReset = [
-			...disabledSiteIds.map( ( id ) => ( { blog_id: id, account_tools_enabled: true } ) ),
+			...disabledSiteIds.map( ( id ) => ( { blog_id: id, site_level_enabled: true } ) ),
 			...enabledSiteIds.map( ( id ) => ( { blog_id: id, site_level_enabled: false } ) ),
 		];
 

@@ -258,7 +258,7 @@ export default function McpAddSitePage( { path } ) {
 														<HStack spacing={ 4 } justify="flex-end" expanded={ false }>
 															{ slug && (
 																<Button
-																	variant="link"
+																	variant="tertiary"
 																	size="compact"
 																	href={ `/sites/${ slug }/settings/ai-tools` }
 																>
