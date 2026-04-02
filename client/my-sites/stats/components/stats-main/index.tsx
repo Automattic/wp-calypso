@@ -39,11 +39,19 @@ function StatsBreadcrumbs( { items }: { items: BreadcrumbItem[] } ) {
 	return (
 		<span className="stats-breadcrumbs" role="navigation" aria-label={ translate( 'Breadcrumbs' ) }>
 			<JetpackLogo size={ 20 } monochrome={ false } />
-			{ items.map( ( item, index ) => (
-				<span key={ index }>
-					{ index > 0 && <span className="stats-breadcrumbs__separator"> / </span> }
-					{ item.to ? (
+			{ items.flatMap( ( item, index ) => {
+				const elements = [];
+				if ( index > 0 ) {
+					elements.push(
+						<span key={ `sep-${ index }` } className="stats-breadcrumbs__separator">
+							{ ' / ' }
+						</span>
+					);
+				}
+				if ( item.to ) {
+					elements.push(
 						<a
+							key={ `item-${ index }` }
 							className="stats-breadcrumbs__link"
 							href={ item.to }
 							onClick={ ( e ) => {
@@ -53,11 +61,16 @@ function StatsBreadcrumbs( { items }: { items: BreadcrumbItem[] } ) {
 						>
 							{ item.label }
 						</a>
-					) : (
-						<span className="stats-breadcrumbs__current">{ item.label }</span>
-					) }
-				</span>
-			) ) }
+					);
+				} else {
+					elements.push(
+						<span key={ `item-${ index }` } className="stats-breadcrumbs__current">
+							{ item.label }
+						</span>
+					);
+				}
+				return elements;
+			} ) }
 		</span>
 	);
 }
