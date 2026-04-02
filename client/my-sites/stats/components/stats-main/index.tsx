@@ -6,7 +6,6 @@ import { useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
-import JetpackLogo from 'calypso/components/jetpack-logo';
 import JetpackTitle from 'calypso/components/jetpack-title';
 import Main, { MainProps } from 'calypso/components/main';
 import useWPAdminTheme from 'calypso/my-sites/stats/hooks/use-wp-admin-theme';
@@ -42,7 +41,6 @@ function StatsBreadcrumbs( { items }: { items: BreadcrumbItem[] } ) {
 
 	return (
 		<nav className="stats-breadcrumbs" aria-label={ translate( 'Breadcrumbs' ) }>
-			<JetpackLogo size={ 20 } monochrome={ false } />
 			{ rootUrl ? (
 				<a
 					className="stats-breadcrumbs__link"
@@ -111,7 +109,11 @@ export default function StatsMain( {
 	// Make the upsell modal view available on all Stats pages.
 	const upsellModalView = useSelector( ( state ) => getUpsellModalView( state, siteId ) );
 
-	const defaultTitle = <JetpackTitle title={ STATS_HEADER_TITLE } />;
+	const titleContent = breadcrumbs ? (
+		<StatsBreadcrumbs items={ breadcrumbs } />
+	) : (
+		STATS_HEADER_TITLE
+	);
 
 	return (
 		<Main { ...props } className={ clsx( 'stats-main', 'color-scheme', customTheme, className ) }>
@@ -119,7 +121,7 @@ export default function StatsMain( {
 			<QuerySiteSettings siteId={ siteId } />
 			<Page
 				showSidebarToggle={ false }
-				title={ breadcrumbs ? <StatsBreadcrumbs items={ breadcrumbs } /> : defaultTitle }
+				title={ <JetpackTitle title={ titleContent } /> }
 				subTitle={ breadcrumbs ? undefined : pageSubTitle }
 				actions={ pageActions }
 			>
