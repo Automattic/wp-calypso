@@ -49,7 +49,6 @@ export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) 
 	} );
 
 	const backupState = useBackupState( site.ID );
-	const isBackupInProgress = backupState.status === 'enqueued' || backupState.status === 'running';
 	const [ switchTarget, setSwitchTarget ] = useState< string | null >( null );
 
 	// The version has changed when the current version matches what we requested.
@@ -59,8 +58,8 @@ export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) 
 	// Poll backups while a version switch is in progress.
 	useQuery( {
 		...siteBackupsQuery( site.ID ),
-		refetchInterval: isBackupInProgress ? 3000 : false,
-		enabled: canView && isBackupInProgress,
+		refetchInterval: isSwitching ? 3000 : false,
+		enabled: canView && isSwitching,
 	} );
 
 	// After backup completes, poll WP version until it changes.
@@ -193,27 +192,29 @@ export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) 
 			<Card>
 				<CardBody>
 					<form onSubmit={ handleSubmit }>
-						<VStack spacing={ 4 }>
-							<NavigationBlocker shouldBlock={ isDirty } />
-							<DataForm< { version: string } >
-								data={ formData }
-								fields={ fields }
-								form={ form }
-								onChange={ ( edits: { version?: string } ) => {
-									setFormData( ( data ) => ( { ...data, ...edits } ) );
-								} }
-							/>
-							<ButtonStack justify="flex-start">
-								<Button
-									variant="primary"
-									type="submit"
-									isBusy={ isPending || isSwitching }
-									disabled={ isPending || ! isDirty || isSwitching }
-								>
-									{ __( 'Save' ) }
-								</Button>
-							</ButtonStack>
-						</VStack>
+						<fieldset disabled={ isSwitching } style={ { border: 0, margin: 0, padding: 0 } }>
+							<VStack spacing={ 4 }>
+								<NavigationBlocker shouldBlock={ isDirty } />
+								<DataForm< { version: string } >
+									data={ formData }
+									fields={ fields }
+									form={ form }
+									onChange={ ( edits: { version?: string } ) => {
+										setFormData( ( data ) => ( { ...data, ...edits } ) );
+									} }
+								/>
+								<ButtonStack justify="flex-start">
+									<Button
+										variant="primary"
+										type="submit"
+										isBusy={ isPending }
+										disabled={ isPending || ! isDirty || isSwitching }
+									>
+										{ __( 'Save' ) }
+									</Button>
+								</ButtonStack>
+							</VStack>
+						</fieldset>
 					</form>
 				</CardBody>
 			</Card>

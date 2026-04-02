@@ -47,13 +47,18 @@ export function VersionSwitchNotice( {
 			<Notice
 				variant="info"
 				title={ sprintf(
-					// translators: %1$s: WordPress version, %2$s: backup progress percentage
-					__( 'Switching to WordPress %1$s… (%2$s%% backup progress)' ),
-					targetVersion,
-					backup?.percent ?? '0'
+					// translators: %s: WordPress version, e.g. "7.0-RC2"
+					__( 'Switching to WordPress %s…' ),
+					targetVersion
 				) }
 			>
-				{ __( 'A backup is being created before switching. This may take a few minutes.' ) }
+				{ sprintf(
+					// translators: %s: backup progress percentage
+					__(
+						'Generating backup… (%s%% progress). A backup is being created before switching. This may take a few minutes.'
+					),
+					backup?.percent ?? '0'
+				) }
 			</Notice>
 		);
 	}
