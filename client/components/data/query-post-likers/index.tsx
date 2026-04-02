@@ -9,17 +9,12 @@ type QueryPostLikersProps = {
 	postId: number | null;
 };
 
-const REFETCH_INTERVAL = 1000 * 120; // 2 minutes
-
 /**
  * Fetches post likes using React Query and bridges the liker list into Redux
  * for retro-compatibility.
  */
 const QueryPostLikers = ( { siteId, postId }: QueryPostLikersProps ) => {
-	const { data, isSuccess } = useQuery( {
-		...postLikesQuery( siteId, postId ),
-		refetchInterval: REFETCH_INTERVAL,
-	} );
+	const { data, isSuccess } = useQuery( postLikesQuery( siteId, postId ) );
 
 	const dispatch = useDispatch();
 

@@ -4,8 +4,6 @@ import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { receiveLikes } from 'calypso/state/posts/likes/actions';
 
-const REFETCH_INTERVAL = 1000 * 120; // 2 minutes
-
 interface Props {
 	siteId: number;
 	postId: number;
@@ -16,10 +14,7 @@ interface Props {
  * @deprecated Use postLikesQuery + useQuery directly in new components.
  */
 export default function QueryPostLikes( { siteId, postId }: Props ) {
-	const { data, isSuccess } = useQuery( {
-		...postLikesQuery( siteId, postId ),
-		refetchInterval: REFETCH_INTERVAL,
-	} );
+	const { data, isSuccess } = useQuery( postLikesQuery( siteId, postId ) );
 	const dispatch = useDispatch();
 
 	useEffect( () => {
