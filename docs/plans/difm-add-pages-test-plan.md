@@ -11,6 +11,7 @@ Test plan for the DIFM page-instances / custom-pages change: PR verification (au
 - **Multiple Custom pages:** Use **Add a Custom Page** to add extra Custom instances; each can be removed individually.
 - **Only one tile per non-Custom type** in the grid — you **cannot** pick two separate “Services” rows from the picker (no duplicate non-Custom instances). Scenarios below use **at most one** of each standard type plus **3× Custom** where needed.
 - **Support session (A8C + HE):** Extra tiles **Custom Blog Page** and **Custom Shop Page** appear only when a support session is active **and** reader teams have loaded (Calypso fetches teams on this step so Automattician detection works). **Custom Shop Page** appears only in **non-store** flows (store flow uses the regular **Shop** row instead).
+- **Not in the picker (by design):** **Careers** and **Case Studies** were removed from the grid per product guidance; they are **not** selectable in these manual tests.
 
 ## Progress (manual QA)
 
@@ -77,15 +78,13 @@ You run **four** manual tests: three **paid** (Premium, Business, E-commerce) an
 | Video Gallery | 1         |
 | Services      | 1, 3      |
 | Pricing       | 2         |
-| Portfolio     | 2         |
+| Portfolio     | 2, 4      |
 | FAQ           | 2         |
 | Testimonials  | 2         |
 | Team          | 2         |
-| Careers       | 2         |
 | Events        | 2         |
 | Donate        | 4         |
 | Newsletter    | 4         |
-| Case Studies  | 4         |
 | **Shop**      | 3 only    |
 | **Custom × 3**| 1, 2, 3, 4 |
 
@@ -134,12 +133,10 @@ You run **four** manual tests: three **paid** (Premium, Business, E-commerce) an
 | 4 | FAQ           | -                         |
 | 5 | Testimonials  | -                         |
 | 6 | Team          | -                         |
-| 7 | Careers       | -                         |
+| 7 | Events        | -                         |
 | 8 | Custom        | Business Custom 1       |
 | 9 | Custom        | Business Custom 2       |
 |10 | Custom        | Business Custom 3       |
-
-**Note:** An earlier version of this plan listed **Events** in Test 2 instead of **Home** in the table; **Home must always be selected**, so the seven named slots are **Home** plus six of the other standard types. If you already completed Test 2 using the old list, keep your notes — for new runs use the table above (swap **Careers** for **Events** if you need to cover Events in this test instead).
 
 **Checklist:** [ ] **Home** remains selected. [ ] Select exactly these 10 pages (deselect default pages you do not need). [ ] Cart quantity = 10, total **$844**. [ ] Checkout; content form shows all 10 and the three custom titles above.
 
@@ -183,7 +180,7 @@ You run **four** manual tests: three **paid** (Premium, Business, E-commerce) an
 | 1 | Home         | -                         |
 | 2 | Donate       | -                         |
 | 3 | Newsletter   | -                         |
-| 4 | Case Studies | -                         |
+| 4 | Portfolio    | -                         |
 | 5 | About        | -                         |
 | 6 | Contact      | -                         |
 | 7 | Blog         | -                         |
@@ -207,6 +204,13 @@ This test validates support-only rows that are not expected in regular customer 
 
 **Checklist:** [ ] Rows appear only when support session + Automattician detection are active. [ ] Click tiles to select/deselect (same grid rules as other optional types). [ ] Selected values persist and round-trip through dependencies/payloads. [ ] Non-support session hides both rows.
 
+**If the tiles do not show or clicks do nothing:**
+
+- Confirm **Redux** support session is active (support user boot should run after refresh; `sessionStorage` / support flow must restore the session).
+- **Automattician:** reader **teams** must load — wait a moment after opening the page picker, or refresh once; tiles depend on `isA8cTeamMember`.
+- **Custom Shop:** only appears in **non-store** DIFM flows; in **store** flow use the normal **Shop** row and only **Custom Blog Page** as the extra support row.
+- If you are logged in as the customer (not SU), or teams never load, the support-only tiles stay hidden.
+
 ---
 
 ## Part 3: Total credits needed
@@ -227,6 +231,6 @@ This test validates support-only rows that are not expected in regular customer 
 
 - **Pricing:** Base **USD 499.00** (5 pages); **USD 69.00** per additional page.
 - **UI:** Thumbnail grid with toggles; **no stepper**; **Home** always on; **Shop** required and locked in store flow; multiple pages only via **Custom** repeats.
-- **Page coverage:** Tests 1–4 cover the standard types per the tables above plus **3× Custom** per test. Test 5 covers support-only Custom Blog/Shop rows.
+- **Page coverage:** Tests 1–4 cover the picker’s standard types (Careers and Case Studies are **not** in the grid) plus **3× Custom** per test. Test 5 covers support-only Custom Blog/Shop rows.
 - **Manual QA progress:** Tests **1–3** done; **Test 4** in progress.
 - **Credits:** Add **$2,600** for the three paid tests; Test 4 uses no credits.
