@@ -50,8 +50,6 @@ export default function useSaveNewChatRoute( hasUserSentMessage: boolean ) {
 		const MAX_ATTEMPTS = 120; // Stop after 60 seconds (120 × 500ms)
 
 		const intervalId = setInterval( () => {
-			attempts++;
-
 			if ( attempts >= MAX_ATTEMPTS ) {
 				clearInterval( intervalId );
 				return;
@@ -63,6 +61,8 @@ export default function useSaveNewChatRoute( hasUserSentMessage: boolean ) {
 				saveNewChatRoute( sessionId, siteKey );
 				clearInterval( intervalId );
 			}
+
+			attempts++;
 		}, 500 );
 
 		return () => clearInterval( intervalId );
