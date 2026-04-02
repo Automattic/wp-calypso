@@ -19,6 +19,7 @@ import WebPreview from 'calypso/components/web-preview';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { isHttps } from 'calypso/lib/url';
 import Main from 'calypso/my-sites/stats/components/stats-main';
+import { STATS_HEADER_TITLE } from 'calypso/my-sites/stats/constants';
 import {
 	useStatsNavigationHistory,
 	recordCurrentScreen,
@@ -254,7 +255,7 @@ class StatsPostDetail extends Component {
 			<Main
 				fullWidthLayout
 				breadcrumbs={ [
-					{ label: 'Stats', to: lastScreen.url },
+					{ label: STATS_HEADER_TITLE, to: lastScreen.url },
 					{ label: navigationItems[ 1 ].label },
 				] }
 				pageTabs={

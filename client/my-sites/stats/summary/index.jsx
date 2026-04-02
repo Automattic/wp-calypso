@@ -22,7 +22,7 @@ import {
 import getMediaItem from 'calypso/state/selectors/get-media-item';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { STATS_FEATURE_DOWNLOAD_CSV } from '../constants';
+import { STATS_FEATURE_DOWNLOAD_CSV, STATS_HEADER_TITLE } from '../constants';
 import StatsModuleLocations from '../features/modules/stats-locations';
 import LocationsNavTabs from '../features/modules/stats-locations/locations-nav-tabs';
 import { GEO_MODES } from '../features/modules/stats-locations/types';
@@ -444,7 +444,7 @@ class StatsSummary extends Component {
 		return (
 			<Main
 				fullWidthLayout
-				breadcrumbs={ [ { label: 'Stats', to: lastScreen.url }, { label: title } ] }
+				breadcrumbs={ [ { label: STATS_HEADER_TITLE, to: lastScreen.url }, { label: title } ] }
 				pageTabs={ tabs }
 				pageActions={
 					<div className="stats-module__header-nav-button">

@@ -22,7 +22,7 @@ import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import memoizeLast from 'calypso/lib/memoize-last';
 import { isHttps } from 'calypso/lib/url';
 import Main from 'calypso/my-sites/stats/components/stats-main';
-import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
+import { STATS_HEADER_TITLE, STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import {
 	useStatsNavigationHistory,
 	recordCurrentScreen,
@@ -266,7 +266,7 @@ class StatsEmailDetail extends Component {
 					fullWidthLayout
 					className={ clsx( 'stats__email-detail' ) }
 					breadcrumbs={ [
-						{ label: 'Stats', to: lastScreen?.url },
+						{ label: STATS_HEADER_TITLE, to: lastScreen?.url },
 						{ label: navigationItems[ 1 ].label },
 					] }
 					pageActions={

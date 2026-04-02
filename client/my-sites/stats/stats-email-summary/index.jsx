@@ -9,7 +9,7 @@ import DownloadCsv from 'calypso/my-sites/stats/stats-download-csv';
 import DownloadCsvUpsell from 'calypso/my-sites/stats/stats-download-csv-upsell';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { STATS_FEATURE_DOWNLOAD_CSV } from '../constants';
+import { STATS_FEATURE_DOWNLOAD_CSV, STATS_HEADER_TITLE } from '../constants';
 import {
 	TooltipWrapper,
 	OpensTooltipContent,
@@ -91,7 +91,7 @@ const StatsEmailSummary = ( { period, query, context } ) => {
 		<Main
 			fullWidthLayout
 			breadcrumbs={ [
-				{ label: 'Stats', to: navigationItems[ 0 ].href },
+				{ label: STATS_HEADER_TITLE, to: navigationItems[ 0 ].href },
 				{ label: navigationItems[ 1 ].label },
 			] }
 			pageActions={ <div className="stats-module__header-nav-button">{ downloadCsvElement }</div> }
