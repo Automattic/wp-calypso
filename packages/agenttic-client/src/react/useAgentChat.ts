@@ -81,31 +81,48 @@ export interface UIMessage {
 }
 
 // Message action type for UI, resolved from condition and passed to the dumb component
-export interface UIMessageAction {
-	id: string;
-	label: string;
-	icon?: React.ReactNode;
-	onClick: ( message: UIMessage ) => void | Promise< void >;
-	disabled?: boolean;
-	tooltip?: string;
-	pressed?: boolean;
-	showLabel?: boolean;
-}
+export type UIMessageAction =
+	| {
+			type?: 'button';
+			id: string;
+			label: string;
+			icon?: React.ReactNode;
+			onClick: ( message: UIMessage ) => void | Promise< void >;
+			disabled?: boolean;
+			tooltip?: string;
+			pressed?: boolean;
+			showLabel?: boolean;
+	  }
+	| {
+			type: 'component';
+			id: string;
+			label: string;
+			component: React.ComponentType< any >;
+			componentProps?: Record< string, unknown >;
+	  };
 
 // Internal types for message actions with conditional logic
-export interface MessageActionDefinition {
-	id: string;
-	label: string;
-	icon?: ReactNode;
-	onClick: ( message: UIMessage ) => void | Promise< void >;
-	// Complex condition function - evaluated in client
-	condition?: ( message: UIMessage ) => boolean;
-	// Static disabled state
-	disabled?: boolean;
-	tooltip?: string;
-	pressed?: boolean;
-	showLabel?: boolean;
-}
+export type MessageActionDefinition =
+	| {
+			type?: 'button';
+			id: string;
+			label: string;
+			icon?: ReactNode;
+			onClick: ( message: UIMessage ) => void | Promise< void >;
+			condition?: ( message: UIMessage ) => boolean;
+			disabled?: boolean;
+			tooltip?: string;
+			pressed?: boolean;
+			showLabel?: boolean;
+	  }
+	| {
+			type: 'component';
+			id: string;
+			label: string;
+			component: React.ComponentType< any >;
+			componentProps?: Record< string, unknown >;
+			condition?: ( message: UIMessage ) => boolean;
+	  };
 
 export interface MessageActionsRegistration {
 	id: string;

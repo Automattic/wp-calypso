@@ -29,15 +29,26 @@ export function resolveActionsForMessage(
 			}
 			return true;
 		} )
-		.map( ( action ) => ( {
-			id: action.id,
-			label: action.label,
-			icon: action.icon,
-			onClick: action.onClick,
-			tooltip: action.tooltip,
-			disabled: action.disabled || false,
-			pressed: action.pressed,
-			showLabel: action.showLabel,
-		} ) );
+		.map( ( action ): UIMessageAction => {
+			if ( action.type === 'component' ) {
+				return {
+					type: 'component',
+					id: action.id,
+					label: action.label,
+					component: action.component,
+					componentProps: action.componentProps,
+				};
+			}
+			return {
+				id: action.id,
+				label: action.label,
+				icon: action.icon,
+				onClick: action.onClick,
+				tooltip: action.tooltip,
+				disabled: action.disabled || false,
+				pressed: action.pressed,
+				showLabel: action.showLabel,
+			};
+		} );
 	return filteredActions;
 }

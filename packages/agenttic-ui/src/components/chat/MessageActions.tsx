@@ -19,6 +19,15 @@ export function MessageActions( { message }: MessageActionsProps ) {
 			aria-label="Message actions"
 		>
 			{ message.actions.map( ( action: MessageAction ) => {
+				if ( action.type === 'component' ) {
+					const ActionComponent = action.component;
+					return (
+						<ActionComponent
+							key={ action.id }
+							{ ...( action.componentProps || {} ) }
+						/>
+					);
+				}
 				return (
 					<Button
 						key={ action.id }
@@ -32,7 +41,9 @@ export function MessageActions( { message }: MessageActionsProps ) {
 						pressed={ action.pressed }
 						title={ action.tooltip || action.label }
 						aria-label={ action.label }
-						{ ...( action.tooltip && { title: action.tooltip } ) }
+						{ ...( action.tooltip && {
+							title: action.tooltip,
+						} ) }
 					>
 						{ action.showLabel ? action.label : undefined }
 					</Button>
