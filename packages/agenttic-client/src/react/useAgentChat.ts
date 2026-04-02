@@ -551,7 +551,8 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				) {
 					messageOptions.metadata = {
 						...( options?.archived && { archived: true } ),
-						...( options?.type && { contentType: options.type } ),
+						...( options?.type &&
+							! isToolResult && { contentType: options.type } ),
 					};
 				}
 				// Pass sessionId if provided (overrides agent's default sessionId)
