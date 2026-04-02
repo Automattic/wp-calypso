@@ -153,12 +153,12 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 	const handleMcpToggle = ( enabled: boolean ) => {
 		const abilities: Record< string, boolean > = {};
 		if ( enabled ) {
-			// Auto-enable all read tools and disable all write tools.
-			availableTools.forEach( ( [ toolId, tool ] ) => {
-				abilities[ toolId ] = ! isWriteTool( toolId, tool );
+			// Auto-enable all read tools; leave write tools unset (not explicitly disabled).
+			readTools.forEach( ( [ toolId ] ) => {
+				abilities[ toolId ] = true;
 			} );
 		}
-		// When disabling, send abilities: {} to clear all site-level overrides.
+		// When disabling, send abilities: {} to clear all site-level tool access.
 		mcpMutation.mutate( {
 			mcp_abilities: {
 				sites: [
