@@ -12,10 +12,6 @@ export default function CopyActionButton( { text }: Props ) {
 	const [ copied, setCopied ] = useState( false );
 	const timerRef = useRef< ReturnType< typeof setTimeout > >();
 
-	useEffect( () => {
-		return () => clearTimeout( timerRef.current );
-	}, [] );
-
 	const handleClick = async () => {
 		try {
 			await navigator.clipboard.writeText( text );
@@ -27,6 +23,8 @@ export default function CopyActionButton( { text }: Props ) {
 			console.error( '[AgentsManager] Failed to copy text to clipboard:', error );
 		}
 	};
+
+	useEffect( () => () => clearTimeout( timerRef.current ), [] );
 
 	return (
 		<Button
