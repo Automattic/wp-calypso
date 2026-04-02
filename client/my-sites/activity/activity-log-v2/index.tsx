@@ -143,7 +143,6 @@ const ActivityLogV2: FunctionComponent = () => {
 			<DocumentHead title={ translate( 'Activity Log' ) } />
 			{ isJetpackCloud() && <SidebarNavigation /> }
 			<PageViewTracker path="/activity-log/:site" title="Activity Log" />
-			{ settingsUrl && <TimeMismatchWarning siteId={ siteId } settingsUrl={ settingsUrl } /> }
 			{ isWpcom ? (
 				<Page
 					hasPadding
@@ -153,11 +152,13 @@ const ActivityLogV2: FunctionComponent = () => {
 						'This is the complete event history for your site. Filter by date range and/or activity type.'
 					) }
 				>
+					{ settingsUrl && <TimeMismatchWarning siteId={ siteId } settingsUrl={ settingsUrl } /> }
 					{ content }
 				</Page>
 			) : (
 				<>
 					{ jetpackCloudHeader }
+					{ settingsUrl && <TimeMismatchWarning siteId={ siteId } settingsUrl={ settingsUrl } /> }
 					{ content }
 				</>
 			) }
