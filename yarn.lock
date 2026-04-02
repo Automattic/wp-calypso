@@ -178,7 +178,7 @@ __metadata:
 
 "@automattic/agenttic-client@file:/tmp/automattic-agenttic-client-0.1.56.tgz::locator=%40automattic%2Fagents-manager%40workspace%3Apackages%2Fagents-manager":
   version: 0.1.56
-  resolution: "@automattic/agenttic-client@file:/tmp/automattic-agenttic-client-0.1.56.tgz#/tmp/automattic-agenttic-client-0.1.56.tgz::hash=5f3f0e&locator=%40automattic%2Fagents-manager%40workspace%3Apackages%2Fagents-manager"
+  resolution: "@automattic/agenttic-client@file:/tmp/automattic-agenttic-client-0.1.56.tgz#/tmp/automattic-agenttic-client-0.1.56.tgz::hash=be9e5a&locator=%40automattic%2Fagents-manager%40workspace%3Apackages%2Fagents-manager"
   dependencies:
     "@types/react": "npm:^18.0.0"
     marked: "npm:^16.2.1"
@@ -192,7 +192,7 @@ __metadata:
   peerDependenciesMeta:
     "@wordpress/api-fetch":
       optional: true
-  checksum: 527f0cfce2a6e625edfe5d4763168bab09b9f4d3c34d10f908d47290ebcad7e7ee74baf0c38da5d5d7d5b5cc4a248db35fe26e64922512b3ab2759fc99c4fb1a
+  checksum: b915f60e5d28f2c3cac5b3b64b4ce8c6c54d829cd05563488668c3e58ba9fb850da341a398b2e73a8e342ed40480039fcd92728a8b5710a6b271e72b381aa2ec
   languageName: node
   linkType: hard
 
@@ -218,7 +218,7 @@ __metadata:
 
 "@automattic/agenttic-ui@file:/tmp/automattic-agenttic-ui-0.1.56.tgz::locator=%40automattic%2Fagents-manager%40workspace%3Apackages%2Fagents-manager":
   version: 0.1.56
-  resolution: "@automattic/agenttic-ui@file:/tmp/automattic-agenttic-ui-0.1.56.tgz#/tmp/automattic-agenttic-ui-0.1.56.tgz::hash=ee0d65&locator=%40automattic%2Fagents-manager%40workspace%3Apackages%2Fagents-manager"
+  resolution: "@automattic/agenttic-ui@file:/tmp/automattic-agenttic-ui-0.1.56.tgz#/tmp/automattic-agenttic-ui-0.1.56.tgz::hash=5cecee&locator=%40automattic%2Fagents-manager%40workspace%3Apackages%2Fagents-manager"
   dependencies:
     "@automattic/charts": "npm:>=0.58.0 <1.0.0"
     "@floating-ui/react-dom": "npm:^2.1.6"
@@ -244,7 +244,7 @@ __metadata:
   dependenciesMeta:
     marked:
       optional: true
-  checksum: 5471b6c0322f4ae118d2987362b321728d071ad97db78cb01d7f0544a72ce82e3d318fbcd0a92cf4f30f142fc80d9066e5ea959458dc7b4596e1eed7eb70160f
+  checksum: 7686a369098d4256d1a106f8652d07432ea414db40ddc87eb08752dac640464deffd2d82d58a2b303c3c885cbaf098a081743f27daa8656622a8d7d1caf25f2d
   languageName: node
   linkType: hard
 

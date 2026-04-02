@@ -1,6 +1,5 @@
-import { createElement, useEffect } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
-import { copy, Icon } from '@wordpress/icons';
+import { useEffect } from '@wordpress/element';
+import CopyActionButton from '../components/copy-action-button';
 import type { UseAgentChatReturn, UIMessage } from '@automattic/agenttic-client';
 
 type RegisterMessageActions = UseAgentChatReturn[ 'registerMessageActions' ];
@@ -68,21 +67,10 @@ export default function useCopyAction( registerMessageActions: RegisterMessageAc
 
 				return [
 					{
+						type: 'component' as const,
 						id: 'copy',
-						label: __( 'Copy', '__i18n_text_domain__' ),
-						icon: createElement( Icon, {
-							icon: copy,
-							className:
-								'agents-manager-message-action-icon agents-manager-message-action-icon--copy',
-						} ),
-						onClick: async () => {
-							try {
-								await navigator.clipboard.writeText( text );
-							} catch ( error ) {
-								// eslint-disable-next-line no-console
-								console.error( '[useCopyAction] Failed to copy text to clipboard:', error );
-							}
-						},
+						component: CopyActionButton,
+						componentProps: { text },
 					},
 				];
 			},

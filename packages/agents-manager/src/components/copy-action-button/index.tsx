@@ -1,0 +1,42 @@
+import { Button } from '@wordpress/components';
+import { useEffect, useRef, useState } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
+import { copy, check } from '@wordpress/icons';
+import './style.scss';
+
+interface Props {
+	text: string;
+}
+
+export default function CopyActionButton( { text }: Props ) {
+	const [ copied, setCopied ] = useState( false );
+	const timerRef = useRef< ReturnType< typeof setTimeout > >();
+
+	useEffect( () => {
+		return () => clearTimeout( timerRef.current );
+	}, [] );
+
+	const handleClick = async () => {
+		try {
+			await navigator.clipboard.writeText( text );
+			setCopied( true );
+			clearTimeout( timerRef.current );
+			timerRef.current = setTimeout( () => setCopied( false ), 2000 );
+		} catch ( error ) {
+			// eslint-disable-next-line no-console
+			console.error( '[AgentsManager] Failed to copy text to clipboard:', error );
+		}
+	};
+
+	return (
+		<Button
+			className="agents-manager-copy-action-button"
+			icon={ copied ? check : copy }
+			label={
+				copied ? __( 'Copied', '__i18n_text_domain__' ) : __( 'Copy', '__i18n_text_domain__' )
+			}
+			onClick={ handleClick }
+			size="compact"
+		/>
+	);
+}
