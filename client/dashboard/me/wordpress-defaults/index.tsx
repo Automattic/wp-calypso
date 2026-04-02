@@ -62,7 +62,7 @@ function LandingPageCard() {
 			label: __( 'Page' ),
 			Edit: 'radio',
 			elements: [
-				{ label: __( "Open your primary site's dashboard." ), value: 'primary-site-dashboard' },
+				{ label: __( 'Open your primary site’s dashboard.' ), value: 'primary-site-dashboard' },
 				{ label: __( 'See a list of all your sites.' ), value: 'sites' },
 				{ label: __( 'View posts from sites you follow.' ), value: 'reader' },
 			] satisfies { label: string; value: LandingPage }[],

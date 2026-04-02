@@ -153,9 +153,14 @@ export default function BlockedSites() {
 			{ ! isLoading && sites.length === 0 ? (
 				<EmptyState.Wrapper isCompact>
 					<EmptyState>
-						<EmptyState.Description>
-							{ __( "You haven't blocked any sites yet." ) }
-						</EmptyState.Description>
+						<EmptyState.Header>
+							<EmptyState.Title>{ __( ‘You haven\u2019t blocked any sites yet.’ ) }</EmptyState.Title>
+							<EmptyState.Description>
+								{ __(
+									‘When you block a site, it will no longer appear in your Reader or recommendations.’
+								) }
+							</EmptyState.Description>
+						</EmptyState.Header>
 					</EmptyState>
 				</EmptyState.Wrapper>
 			) : (

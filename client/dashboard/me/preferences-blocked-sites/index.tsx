@@ -30,7 +30,7 @@ export default function PreferencesBlockedSites( { density }: { density?: Densit
 			density={ density }
 			to="/me/preferences/blocked-sites"
 			title={ __( 'Blocked sites' ) }
-			description={ __( "Sites that won't appear in your Reader or recommendations." ) }
+			description={ __( 'Sites that won’t appear in your Reader or recommendations.' ) }
 			decoration={ <Icon icon={ notAllowed } size={ 24 } /> }
 			badges={ badges }
 		/>
