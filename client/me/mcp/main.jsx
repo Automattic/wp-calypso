@@ -162,7 +162,7 @@ function McpComponent( { path } ) {
 					</VStack>
 
 					{ /* TODO: Restore when site-level MCP PRs land */ }
-					{ false && hasTools && ! anyToolsEnabled && (
+					{ hasTools && ! anyToolsEnabled && (
 						<VStack spacing={ 0 } className="mcp-hub__panel-rows">
 							{ ! isLoadingSites && (
 								<SummaryButton
