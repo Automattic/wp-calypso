@@ -545,14 +545,11 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 
 				// Pass metadata including archived flag and content type if provided
 				const messageOptions: any = {};
-				if (
-					options?.archived ||
-					( options?.type && ! isToolResult )
-				) {
+				const hasContentType = !! options?.type && ! isToolResult;
+				if ( options?.archived || hasContentType ) {
 					messageOptions.metadata = {
 						...( options?.archived && { archived: true } ),
-						...( options?.type &&
-							! isToolResult && { contentType: options.type } ),
+						...( hasContentType && { contentType: options!.type } ),
 					};
 				}
 				// Pass sessionId if provided (overrides agent's default sessionId)
