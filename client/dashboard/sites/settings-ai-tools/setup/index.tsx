@@ -15,6 +15,7 @@ import { copy, check } from '@wordpress/icons';
 import { useState } from 'react';
 import { hasEnabledAccountTools } from '../../../../me/mcp/utils';
 import Breadcrumbs from '../../../app/breadcrumbs';
+import { siteRoute } from '../../../app/router/sites';
 import { Card, CardBody } from '../../../components/card';
 import ComponentViewTracker from '../../../components/component-view-tracker';
 import { PageHeader } from '../../../components/page-header';
@@ -25,6 +26,7 @@ import { SectionHeader } from '../../../components/section-header';
 import '../../../me/mcp/setup/style.scss';
 
 function SiteAIToolsSetup() {
+	const { siteSlug } = siteRoute.useParams();
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
 
 	type McpClient = 'claude' | 'claude-code' | 'cursor' | 'vscode' | 'continue' | 'default';
@@ -122,11 +124,11 @@ function SiteAIToolsSetup() {
 									) }
 								</Text>
 								<RouterLinkButton
-									to="/me/preferences/mcp"
+									to={ `/sites/${ siteSlug }/settings/ai-tools` }
 									variant="primary"
 									className="mcp-setup__action-button"
 								>
-									{ __( 'Go to MCP Settings' ) }
+									{ __( 'Go to AI tools settings' ) }
 								</RouterLinkButton>
 							</VStack>
 						</VStack>
