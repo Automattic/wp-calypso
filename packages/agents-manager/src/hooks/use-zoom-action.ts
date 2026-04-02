@@ -1,35 +1,10 @@
-import { store as blockEditorStore } from '@wordpress/block-editor';
-import { dispatch, select } from '@wordpress/data';
 import { createElement, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Icon, square } from '@wordpress/icons';
-import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
+import { toggleZoom, isZoomedOut } from '../utils/canvas-zoom';
 import type { UseAgentChatReturn, UIMessage } from '@automattic/agenttic-client';
 
 type RegisterMessageActions = UseAgentChatReturn[ 'registerMessageActions' ];
-
-// Opt-in to private APIs to access zoom-level dispatchers.
-const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
-	'I acknowledge private features are not for use in themes or plugins and doing so will break in the next version of WordPress.',
-	'@wordpress/edit-site'
-);
-
-function isZoomedOut(): boolean {
-	return unlock( select( blockEditorStore ) ).isZoomOut();
-}
-
-function toggleZoom(): void {
-	const { setZoomLevel, resetZoomLevel } = unlock( dispatch( blockEditorStore ) );
-	const { __unstableSetEditorMode } = dispatch( blockEditorStore );
-
-	if ( isZoomedOut() ) {
-		resetZoomLevel();
-		__unstableSetEditorMode( 'edit' );
-	} else {
-		setZoomLevel( 0.5 );
-		__unstableSetEditorMode( 'zoom-out' );
-	}
-}
 
 /**
  * Registers a zoom toggle action on `show_component` agent messages.
@@ -64,6 +39,7 @@ export default function useZoomAction( registerMessageActions: RegisterMessageAc
 							className: 'agents-manager-message-action-icon',
 						} ),
 						onClick: toggleZoom,
+						pressed: isZoomedOut(),
 					},
 				];
 			},
