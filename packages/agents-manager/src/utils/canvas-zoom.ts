@@ -4,10 +4,6 @@ import { unlock } from './unlock-private-apis';
 
 const ZOOM_OUT_LEVEL = 0.5;
 
-export function isZoomedOut(): boolean {
-	return unlock( select( blockEditorStore ) ).isZoomOut();
-}
-
 export function zoomIn(): void {
 	const { resetZoomLevel } = unlock( dispatch( blockEditorStore ) );
 	const { __unstableSetEditorMode } = dispatch( blockEditorStore );
@@ -25,7 +21,7 @@ export function zoomOut(): void {
 }
 
 export function toggleZoom(): void {
-	if ( isZoomedOut() ) {
+	if ( unlock( select( blockEditorStore ) ).isZoomOut() ) {
 		zoomIn();
 	} else {
 		zoomOut();

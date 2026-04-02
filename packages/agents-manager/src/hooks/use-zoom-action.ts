@@ -6,7 +6,6 @@ type RegisterMessageActions = UseAgentChatReturn[ 'registerMessageActions' ];
 
 /**
  * Registers a zoom toggle action on `show_component` agent messages.
- * Toggles the Gutenberg editor canvas between default and zoom-out mode.
  */
 export default function useZoomAction( registerMessageActions: RegisterMessageActions ): void {
 	useEffect( () => {
