@@ -1,6 +1,6 @@
 import { formatNumber } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useEffect } from 'react';
+import { useMemo, useLayoutEffect } from 'react';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
@@ -24,9 +24,10 @@ import PageViewTracker from '../stats-page-view-tracker';
 import '../summary/style.scss';
 import '../stats-module/summary-nav.scss';
 
-// TODO: `query` was never passed from outside or defined in scope. Adding it to avoid a lint error.
-const StatsEmailSummary = ( { period, query, context } ) => {
-	const breadcrumbTrail = useStatsBreadcrumbTrail();
+// Inner component that records the current screen before the wrapper reads breadcrumb trail.
+// useLayoutEffect fires before the parent wrapper's useEffect in useStatsBreadcrumbTrail,
+// ensuring the navigation history is updated before the breadcrumb trail is read.
+const StatsEmailSummaryInner = ( { period, query, context, breadcrumbTrail } ) => {
 	const StatsStrings = useStatsStrings();
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
@@ -64,7 +65,7 @@ const StatsEmailSummary = ( { period, query, context } ) => {
 		return [ { label: backLabel, href: backLink }, { label: title } ];
 	}, [ translate, siteSlug ] );
 
-	useEffect( () => {
+	useLayoutEffect( () => {
 		recordCurrentScreen( 'emailsummary', {
 			queryParams: context.query,
 			period: period.period,
@@ -180,6 +181,13 @@ const StatsEmailSummary = ( { period, query, context } ) => {
 			</div>
 		</Main>
 	);
+};
+
+// TODO: `query` was never passed from outside or defined in scope. Adding it to avoid a lint error.
+const StatsEmailSummary = ( props ) => {
+	const breadcrumbTrail = useStatsBreadcrumbTrail();
+
+	return <StatsEmailSummaryInner { ...props } breadcrumbTrail={ breadcrumbTrail } />;
 };
 
 export default StatsEmailSummary;
