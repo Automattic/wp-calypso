@@ -15,6 +15,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import { SiteLaunchButton } from '../site-launch-button';
+import SiteLaunchCelebrationModal from '../site-launch-celebration-modal';
 import DeviceToggle from './device-toggle';
 import PageSelector from './page-selector';
 import { getPerformanceCalloutProps } from './performance-callout';
@@ -191,7 +192,13 @@ function SitePerformance() {
 					notices={
 						<Notice
 							title={ __( 'Launch your site to start measuring performance' ) }
-							actions={ <SiteLaunchButton site={ site } tracksContext="site_performance" /> }
+							actions={
+								<SiteLaunchButton
+									site={ site }
+									tracksContext="site_performance"
+									backTo={ `/sites/${ site.slug }/performance` }
+								/>
+							}
 						>
 							{ __( 'Performance statistics are only available for public sites.' ) }
 						</Notice>

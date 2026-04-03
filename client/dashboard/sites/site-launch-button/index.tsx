@@ -22,10 +22,12 @@ export function SiteLaunchButton( {
 	tracksContext,
 	launchUrl,
 	LaunchModal,
+	backTo,
 }: {
 	site: Site;
 	tracksContext: string;
 	launchUrl?: string;
+	backTo?: string;
 	LaunchModal?: React.ComponentType< {
 		isLaunching: boolean;
 		onClose: () => void;
