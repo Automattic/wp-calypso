@@ -44,11 +44,13 @@ export function reducer( state: Phase, action: Action ): Phase {
 	}
 }
 
-// --- Public interface ---
-
 export interface VersionSwitchState {
 	backupState: BackupState;
-	phase: Phase;
+	targetVersion: string;
+	isSwitching: boolean;
+	isSwitched: boolean;
+	switchedToBeta: boolean;
+	switchedToLatest: boolean;
 	mutation: ReturnType< typeof useMutation< void, Error, string > >;
 }
 
@@ -106,5 +108,16 @@ export function useVersionSwitch( site: Site ): VersionSwitchState {
 		},
 	} );
 
-	return { backupState, phase, mutation };
+	const targetVersion = phase.status !== 'idle' ? phase.targetVersion : '';
+	const isSwitched = phase.status === 'switched';
+
+	return {
+		backupState,
+		targetVersion,
+		isSwitching: phase.status === 'submitting' || phase.status === 'switching',
+		isSwitched,
+		switchedToBeta: isSwitched && phase.targetVersion === 'beta',
+		switchedToLatest: isSwitched && phase.targetVersion === 'latest',
+		mutation,
+	};
 }

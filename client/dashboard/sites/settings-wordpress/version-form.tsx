@@ -22,8 +22,7 @@ export function VersionForm( { site, currentVersion, versionSwitch }: VersionFor
 	const { data: latestVersion } = useQuery( wpOrgCoreVersionQuery() );
 	const { data: betaVersion } = useQuery( wpOrgCoreVersionQuery( 'beta' ) );
 
-	const { phase, mutation } = versionSwitch;
-	const isSwitching = phase.status === 'switching' || phase.status === 'submitting';
+	const { isSwitching, mutation } = versionSwitch;
 
 	const [ formData, setFormData ] = useState< { version: string } >( {
 		version: currentVersion ?? '',
