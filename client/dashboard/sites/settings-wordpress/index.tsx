@@ -14,6 +14,8 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
 import { canViewWordPressSettings } from '../features';
+import { BetaProgramNotice } from './beta-program-notice';
+import { LatestVersionNotice } from './latest-version-notice';
 import { useVersionSwitch } from './use-version-switch';
 import { VersionForm } from './version-form';
 import { VersionSwitchNotice } from './version-switch-notice';
@@ -23,13 +25,39 @@ function WordPressSettingsForm( { siteSlug }: { siteSlug: string } ) {
 	const { data: currentVersion } = useQuery( siteWordPressVersionQuery( site.ID ) );
 	const versionSwitch = useVersionSwitch( site );
 	const { phase, backupState } = versionSwitch;
-	const showNotice = phase.status !== 'idle';
+	const isInProgress = phase.status === 'submitting' || phase.status === 'switching';
+	const isSwitched = phase.status === 'switched';
+	const switchedToBeta = isSwitched && phase.targetVersion === 'beta';
+	const switchedToLatest = isSwitched && phase.targetVersion === 'latest';
 
 	// Resolve the target version tag (e.g. "beta") to a display string (e.g. "7.0-RC2").
 	const { data: latestVersion = '' } = useQuery( wpOrgCoreVersionQuery() );
 	const { data: betaVersion = '' } = useQuery( wpOrgCoreVersionQuery( 'beta' ) );
 
 	const targetVersion = phase.status !== 'idle' ? phase.targetVersion : '';
+
+	let notice;
+	if ( isInProgress ) {
+		// Switching in progress — show backup/progress notices.
+		notice = (
+			<VersionSwitchNotice
+				backupState={ backupState }
+				targetVersion={ targetVersion === 'beta' ? betaVersion : latestVersion }
+			/>
+		);
+	} else if ( switchedToBeta || currentVersion === 'beta' ) {
+		// Just enrolled, or returning visit while on beta.
+		notice = (
+			<BetaProgramNotice
+				site={ site }
+				wpVersion={ betaVersion }
+				isJustEnrolled={ switchedToBeta }
+			/>
+		);
+	} else if ( switchedToLatest ) {
+		// Just switched back to stable.
+		notice = <LatestVersionNotice wpVersion={ latestVersion } />;
+	}
 
 	return (
 		<PageLayout
@@ -41,15 +69,7 @@ function WordPressSettingsForm( { siteSlug }: { siteSlug: string } ) {
 					description={ __( 'Manage your WordPress version.' ) }
 				/>
 			}
-			notices={
-				showNotice ? (
-					<VersionSwitchNotice
-						backupState={ backupState }
-						targetVersion={ targetVersion === 'beta' ? betaVersion : latestVersion }
-						isVersionSwitched={ phase.status === 'switched' }
-					/>
-				) : undefined
-			}
+			notices={ notice }
 		>
 			<VersionForm
 				key={ currentVersion }

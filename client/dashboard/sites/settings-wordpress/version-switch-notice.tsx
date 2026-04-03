@@ -5,27 +5,10 @@ import type { BackupState } from '../backups/use-backup-state';
 interface VersionSwitchNoticeProps {
 	backupState: BackupState;
 	targetVersion: string;
-	isVersionSwitched: boolean;
 }
 
-export function VersionSwitchNotice( {
-	backupState,
-	targetVersion,
-	isVersionSwitched,
-}: VersionSwitchNoticeProps ) {
+export function VersionSwitchNotice( { backupState, targetVersion }: VersionSwitchNoticeProps ) {
 	const { status, backup } = backupState;
-
-	if ( isVersionSwitched ) {
-		return (
-			<Notice variant="success" title={ __( 'WordPress version updated' ) }>
-				{ sprintf(
-					// translators: %s: WordPress version, e.g. "7.0-RC2"
-					__( 'Your site is now running WordPress %s.' ),
-					targetVersion
-				) }
-			</Notice>
-		);
-	}
 
 	if ( status === 'enqueued' ) {
 		return (
