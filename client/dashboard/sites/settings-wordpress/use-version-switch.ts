@@ -6,6 +6,7 @@ import {
 	siteWordPressVersionQuery,
 	siteWordPressVersionMutation,
 } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { usePrevious } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
@@ -89,8 +90,10 @@ export function useVersionSwitch( site: Site ): VersionSwitchState {
 		refetchInterval: isSwitching && backupState.hasRecentlyCompleted ? 5000 : false,
 	} );
 
+	const deferUntilBackupComplete = isEnabled( 'dashboard/wp-beta-program' );
+
 	const mutation = useMutation( {
-		...siteWordPressVersionMutation( site.ID ),
+		...siteWordPressVersionMutation( site.ID, { deferUntilBackupComplete } ),
 		onSuccess: ( _data, version ) => {
 			backupState.setEnqueued( true );
 			dispatch( { type: 'MUTATION_FIRED', targetVersion: version } );
