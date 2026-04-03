@@ -22,9 +22,9 @@ import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import memoizeLast from 'calypso/lib/memoize-last';
 import { isHttps } from 'calypso/lib/url';
 import Main from 'calypso/my-sites/stats/components/stats-main';
-import { STATS_HEADER_TITLE, STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
+import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import {
-	useStatsNavigationHistory,
+	useStatsBreadcrumbTrail,
 	recordCurrentScreen,
 } from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
 import StatsEmailModule from 'calypso/my-sites/stats/stats-email-module';
@@ -232,7 +232,7 @@ class StatsEmailDetail extends Component {
 			showViewLink,
 			previewUrl,
 			siteSlug,
-			lastScreen,
+			breadcrumbTrail,
 		} = this.props;
 		const { maxBars } = this.state;
 
@@ -266,7 +266,7 @@ class StatsEmailDetail extends Component {
 					fullWidthLayout
 					className={ clsx( 'stats__email-detail' ) }
 					breadcrumbs={ [
-						{ label: STATS_HEADER_TITLE, to: lastScreen?.url },
+						...breadcrumbTrail.map( ( item ) => ( { label: item.label, to: item.url } ) ),
 						{ label: navigationItems[ 1 ].label },
 					] }
 					pageActions={
@@ -442,8 +442,8 @@ class StatsEmailDetail extends Component {
 }
 
 const StatsEmailDetailWrapper = ( props ) => {
-	const lastScreen = useStatsNavigationHistory();
-	return <StatsEmailDetail { ...props } lastScreen={ lastScreen } />;
+	const breadcrumbTrail = useStatsBreadcrumbTrail();
+	return <StatsEmailDetail { ...props } breadcrumbTrail={ breadcrumbTrail } />;
 };
 
 const connectComponent = connect(

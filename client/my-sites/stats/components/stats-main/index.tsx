@@ -35,19 +35,30 @@ interface StatsMainProps extends MainProps {
 function StatsBreadcrumbs( { items }: { items: BreadcrumbItem[] } ) {
 	const translate = useTranslate();
 
+	// First item is always "Stats" with Jetpack logo, using the first item's URL.
+	const rootUrl = items[ 0 ]?.to;
+	const restItems = items.slice( 1 );
+
 	return (
 		<nav className="stats-breadcrumbs" aria-label={ translate( 'Breadcrumbs' ) }>
-			{ items.flatMap( ( item, index ) => {
-				const elements: ReactNode[] = [];
-				if ( index > 0 ) {
-					elements.push(
-						<span key={ `sep-${ index }` } className="stats-breadcrumbs__separator">
-							{ ' / ' }
-						</span>
-					);
-				}
-				if ( item.to ) {
-					elements.push(
+			{ rootUrl ? (
+				<a
+					className="stats-breadcrumbs__link"
+					href={ rootUrl }
+					onClick={ ( e ) => {
+						e.preventDefault();
+						page( rootUrl );
+					} }
+				>
+					{ STATS_HEADER_TITLE }
+				</a>
+			) : (
+				<span className="stats-breadcrumbs__current">{ STATS_HEADER_TITLE }</span>
+			) }
+			{ restItems.map( ( item, index ) => (
+				<span key={ index }>
+					<span className="stats-breadcrumbs__separator"> / </span>
+					{ item.to ? (
 						<a
 							key={ `item-${ index }` }
 							className="stats-breadcrumbs__link"
@@ -70,20 +81,11 @@ function StatsBreadcrumbs( { items }: { items: BreadcrumbItem[] } ) {
 						>
 							{ item.label }
 						</a>
-					);
-				} else {
-					elements.push(
-						<span
-							key={ `item-${ index }` }
-							className="stats-breadcrumbs__current"
-							aria-current="page"
-						>
-							{ item.label }
-						</span>
-					);
-				}
-				return elements;
-			} ) }
+					) : (
+						<span className="stats-breadcrumbs__current">{ item.label }</span>
+					) }
+				</span>
+			) ) }
 		</nav>
 	);
 }
