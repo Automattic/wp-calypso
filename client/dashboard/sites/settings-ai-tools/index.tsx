@@ -136,8 +136,16 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 	 ).filter( ( [ , tool ] ) => tool.visible !== false );
 	const readTools = availableTools.filter( ( [ toolId, tool ] ) => ! isWriteTool( toolId, tool ) );
 	const writeTools = availableTools.filter( ( [ toolId, tool ] ) => isWriteTool( toolId, tool ) );
-	const readBadge = getReadBadge( readTools );
-	const writeBadge = getWriteBadge( writeTools );
+	// When there are no site-specific overrides, use site_level_enabled_default as the effective
+	// state. True when account MCP is on for sites, false when disabled.
+	const hasSiteAbilityOverrides = Object.keys( siteAbilities ).length > 0;
+	const defaultToolEnabled =
+		( userSettings as any )?.mcp_abilities?.site_level_enabled_default ?? false;
+	const defaultBadge = defaultToolEnabled
+		? { text: __( 'All enabled' ), intent: 'success' as const }
+		: { text: __( 'Disabled' ) };
+	const readBadge = hasSiteAbilityOverrides ? getReadBadge( readTools ) : defaultBadge;
+	const writeBadge = hasSiteAbilityOverrides ? getWriteBadge( writeTools ) : defaultBadge;
 	const mcpMutation = useMutation( {
 		...userSettingsMutation(),
 		meta: {
@@ -270,7 +278,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 				</Card>
 				{ config.isEnabled( 'mcp-settings' ) && (
 					<>
-						<Card>
+						<Card className="mcp-settings__access-card">
 							<CardBody>
 								<VStack spacing={ 4 }>
 									<SectionHeader

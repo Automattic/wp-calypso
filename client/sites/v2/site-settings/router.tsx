@@ -37,21 +37,13 @@ const siteVisibilityRoute = createRoute( {
 );
 
 const aiToolsLayoutRoute = createRoute( {
-	// Bypass type issue by omitting the loader and head (both are typed against the dashboard router context).
-	// Use an empty object as the first arg to avoid mutating the shared options object.
-	...Object.assign( {}, appRouterSites.siteSettingsAIToolsRoute.options, {
-		loader: undefined,
-		head: undefined,
-	} ),
+	path: 'ai-tools',
 	getParentRoute: () => settingsRoute,
 	head: () => ( { meta: [ { title: __( 'AI tools' ) } ] } ),
 } );
 
-const { getParentRoute: _aiToolsIndexParent, ...aiToolsIndexRouteOptions } =
-	appRouterSites.siteSettingsAIToolsIndexRoute.options;
-
 const aiToolsIndexRoute = createRoute( {
-	...aiToolsIndexRouteOptions,
+	path: '/',
 	getParentRoute: () => aiToolsLayoutRoute,
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-ai-tools' ).then( ( d ) =>
@@ -61,15 +53,8 @@ const aiToolsIndexRoute = createRoute( {
 	)
 );
 
-const {
-	getParentRoute: _aiToolsReadParent,
-	loader: _aiToolsReadLoader,
-	head: _aiToolsReadHead,
-	...aiToolsReadRouteOptions
-} = appRouterSites.siteSettingsAIToolsReadRoute.options;
-
 const aiToolsReadRoute = createRoute( {
-	...aiToolsReadRouteOptions,
+	path: 'read',
 	getParentRoute: () => aiToolsLayoutRoute,
 	head: () => ( { meta: [ { title: __( 'Read' ) } ] } ),
 } ).lazy( () =>
@@ -80,15 +65,8 @@ const aiToolsReadRoute = createRoute( {
 	)
 );
 
-const {
-	getParentRoute: _aiToolsWriteParent,
-	loader: _aiToolsWriteLoader,
-	head: _aiToolsWriteHead,
-	...aiToolsWriteRouteOptions
-} = appRouterSites.siteSettingsAIToolsWriteRoute.options;
-
 const aiToolsWriteRoute = createRoute( {
-	...aiToolsWriteRouteOptions,
+	path: 'write',
 	getParentRoute: () => aiToolsLayoutRoute,
 	head: () => ( { meta: [ { title: __( 'Write' ) } ] } ),
 } ).lazy( () =>
@@ -99,15 +77,8 @@ const aiToolsWriteRoute = createRoute( {
 	)
 );
 
-const {
-	getParentRoute: _aiToolsSetupParent,
-	loader: _aiToolsSetupLoader,
-	head: _aiToolsSetupHead,
-	...aiToolsSetupRouteOptions
-} = appRouterSites.siteSettingsAIToolsSetupRoute.options;
-
 const aiToolsSetupRoute = createRoute( {
-	...aiToolsSetupRouteOptions,
+	path: 'setup',
 	getParentRoute: () => aiToolsLayoutRoute,
 	head: () => ( { meta: [ { title: __( 'Connect AI agent' ) } ] } ),
 } ).lazy( () =>

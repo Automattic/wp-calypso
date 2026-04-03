@@ -138,7 +138,7 @@ export default function McpAddSitePage( { path } ) {
 				sites: [
 					{
 						blog_id: siteId,
-						site_level_enabled: false,
+						site_level_enabled: null,
 					},
 				],
 			},

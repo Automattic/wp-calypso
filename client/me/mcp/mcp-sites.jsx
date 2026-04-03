@@ -133,7 +133,7 @@ export default function McpSitesPage( { path } ) {
 				sites: [
 					{
 						blog_id: siteId,
-						site_level_enabled: true,
+						site_level_enabled: null,
 					},
 				],
 			},

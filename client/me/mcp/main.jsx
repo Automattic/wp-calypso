@@ -89,17 +89,9 @@ function McpComponent( { path } ) {
 			accountAbilities[ toolId ] = enabled ? isReadTool( mcpAbilities[ toolId ] ) : false;
 		} );
 
-		const disabledSiteIds = getDisabledSiteIds( userSettings || {} );
-		const enabledSiteIds = getEnabledSiteIds( userSettings || {} );
-		const sitesToReset = [
-			...disabledSiteIds.map( ( id ) => ( { blog_id: id, site_level_enabled: true } ) ),
-			...enabledSiteIds.map( ( id ) => ( { blog_id: id, site_level_enabled: false } ) ),
-		];
-
 		mutation.mutate( {
 			mcp_abilities: {
 				account: accountAbilities,
-				...( sitesToReset.length > 0 && { sites: sitesToReset } ),
 			},
 		} );
 	};

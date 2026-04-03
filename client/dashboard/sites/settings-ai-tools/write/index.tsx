@@ -56,7 +56,21 @@ export default function SiteAIToolsWrite() {
 				Object.entries( accountAbilities ).filter( ( [ id ] ) => siteContextToolIds.has( id ) )
 		  )
 		: accountAbilities;
-	const mcpAbilities = mergeSiteMcpAbilities( siteAccountAbilities, siteAbilities );
+	const mergedAbilities = mergeSiteMcpAbilities( siteAccountAbilities, siteAbilities );
+
+	// When there are no site-specific overrides, use site_level_enabled_default as the effective
+	// enabled state for every tool. True when account MCP is on, false when it's disabled for sites.
+	const hasSiteAbilityOverrides = Object.keys( siteAbilities ).length > 0;
+	const defaultToolEnabled =
+		( userSettings as any )?.mcp_abilities?.site_level_enabled_default ?? false;
+	const mcpAbilities = hasSiteAbilityOverrides
+		? mergedAbilities
+		: Object.fromEntries(
+				Object.entries( mergedAbilities ).map( ( [ id, tool ] ) => [
+					id,
+					{ ...tool, enabled: defaultToolEnabled },
+				] )
+		  );
 
 	const allTools = ( Object.entries( mcpAbilities ) as Array< [ string, McpAbility ] > ).filter(
 		( [ , tool ] ) => tool.visible !== false
@@ -73,15 +87,26 @@ export default function SiteAIToolsWrite() {
 		},
 	} );
 
+	// When there are no existing overrides, materialize the implicit default alongside the change
+	// so subsequent edits have a full baseline to work from.
+	const buildAbilities = ( overrides: Record< string, boolean > ): Record< string, boolean > => {
+		if ( hasSiteAbilityOverrides ) {
+			return overrides;
+		}
+		const defaults: Record< string, boolean > = {};
+		allTools.forEach( ( [ id ] ) => {
+			defaults[ id ] = defaultToolEnabled;
+		} );
+		return { ...defaults, ...overrides };
+	};
+
 	const handleToolChange = ( toolId: string, enabled: boolean ) => {
 		mutation.mutate( {
 			mcp_abilities: {
 				sites: [
 					{
 						blog_id: site.ID,
-						abilities: {
-							[ toolId ]: enabled,
-						},
+						abilities: buildAbilities( { [ toolId ]: enabled } ),
 					},
 				],
 			},
@@ -89,16 +114,16 @@ export default function SiteAIToolsWrite() {
 	};
 
 	const handleEnableAll = ( categoryTools: Array< [ string, McpAbility ] >, enabled: boolean ) => {
-		const abilities: Record< string, boolean > = {};
+		const overrides: Record< string, boolean > = {};
 		categoryTools.forEach( ( [ toolId ] ) => {
-			abilities[ toolId ] = enabled;
+			overrides[ toolId ] = enabled;
 		} );
 		mutation.mutate( {
 			mcp_abilities: {
 				sites: [
 					{
 						blog_id: site.ID,
-						abilities,
+						abilities: buildAbilities( overrides ),
 					},
 				],
 			},
