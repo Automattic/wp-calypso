@@ -222,6 +222,7 @@ const FloatingCompactDemo: React.FC<{ currentTheme: 'light' | 'dark' }> = ( { cu
 		} );
 	}, [ registerMessageActions, feedbackActions ] );
 
+	// Register zoom action with `order: 1` so it appears before feedback actions.
 	useEffect( () => {
 		const zoomAction = {
 			id: 'zoom-toggle',
@@ -235,6 +236,7 @@ const FloatingCompactDemo: React.FC<{ currentTheme: 'light' | 'dark' }> = ( { cu
 			condition: ( message: UIMessage ) => message.role === 'agent',
 			tooltip: isZoomed ? 'Zoom to 100%' : 'Zoom to 50%',
 			pressed: isZoomed,
+			order: 1,
 		};
 
 		registerMessageActions( {

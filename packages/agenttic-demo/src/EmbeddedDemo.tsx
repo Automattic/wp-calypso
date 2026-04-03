@@ -191,7 +191,9 @@ const EmbeddedDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( {
 		};
 		feedbackManager.onChange( handleFeedbackChange );
 
-		// Register a demo "more menu" component action on agent messages
+		// Register a demo "more menu" component action on agent messages.
+		// Uses `order` to control position — lower values appear first.
+		// Feedback actions have no `order` so they appear at the end.
 		registerMessageActions( {
 			id: 'demo-more-menu',
 			actions: ( message: UIMessage ) => {
@@ -202,8 +204,8 @@ const EmbeddedDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( {
 					{
 						type: 'component' as const,
 						id: 'more-menu',
-						label: 'More actions',
 						component: DemoMoreMenu,
+						order: 1,
 					},
 				];
 			},

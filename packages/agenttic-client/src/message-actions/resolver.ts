@@ -37,6 +37,7 @@ export function resolveActionsForMessage(
 					label: action.label,
 					component: action.component,
 					componentProps: action.componentProps,
+					order: action.order,
 				};
 			}
 			return {
@@ -48,7 +49,9 @@ export function resolveActionsForMessage(
 				disabled: action.disabled || false,
 				pressed: action.pressed,
 				showLabel: action.showLabel,
+				order: action.order,
 			};
-		} );
+		} )
+		.sort( ( a, b ) => ( a.order ?? Infinity ) - ( b.order ?? Infinity ) );
 	return filteredActions;
 }
