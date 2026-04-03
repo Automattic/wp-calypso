@@ -71,6 +71,7 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
+		"@testing-library/dom": "^10.0.0",
 		"@testing-library/react": "^15.0.0",
 		"@testing-library/user-event": "^14.6.1",
 		"@types/react": "^18.3.1",
