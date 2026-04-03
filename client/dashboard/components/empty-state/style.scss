@@ -16,22 +16,22 @@
 		justify-content: center;
 		min-height: calc(100dvh - var(--dashboard-empty-state-offset, 30dvh) - var(--page-layout-block-padding, #{$grid-unit-40}));
 	}
-
-	&.is-compact {
-		min-height: 0;
-		justify-content: flex-start;
-	}
 }
+
+.dashboard-empty-state__wrapper.is-compact {
+	min-height: 0;
+	justify-content: flex-start;
+}
+
+.dashboard-empty-state__wrapper.is-compact .dashboard-empty-state__wrapper-content {
+	@include break-medium {
+			padding-block: 0;
+		}
+	}
 
 .dashboard-empty-state__wrapper-content {
 	@include break-medium {
 		padding-block: $grid-unit-40;
-	}
-}
-
-.is-compact .dashboard-empty-state__wrapper-content {
-	@include break-medium {
-		padding-block: 0;
 	}
 }
 
