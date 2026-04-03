@@ -94,6 +94,7 @@ export class Gravatar extends Component< Props > {
 				title={ title }
 				className={ classes }
 				src={ avatarURL }
+				loading="lazy"
 				width={ size }
 				height={ size }
 				onError={ this.onError }
