@@ -58,9 +58,11 @@
 	--sidebar-width-max: 160px;
 	--sidebar-width-min: 36px;
 
+	// Remove top padding — the admin-ui Page header is inside .admin-ui-page,
+	// so .layout__content no longer needs extra space above it.
 	& .layout__content,
 	&.theme-default .focus-content .layout__content {
-		padding-top: 32px;
+		padding-top: 0;
 		padding-left: 1px;
 	}
 	// Fixed header doesn't work well for WP-Admin, as the masterbar isn't fixed.
