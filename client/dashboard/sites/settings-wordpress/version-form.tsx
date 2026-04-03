@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { NavigationBlocker } from '../../app/navigation-blocker';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
@@ -24,23 +24,13 @@ export function VersionForm( { site, currentVersion, versionSwitch }: VersionFor
 
 	const { isSwitching, pendingVersion, switchVersion, isSaving } = versionSwitch;
 
-	const [ formData, setFormData ] = useState< { version: string } >( {
-		version: pendingVersion ?? currentVersion ?? '',
+	const [ formEdits, setFormEdits ] = useState< { version: string } >( {
+		version: '',
 	} );
 
-	// Sync form state when the pending version or current version changes.
-	// Pending version always takes priority over current version.
-	useEffect( () => {
-		if ( pendingVersion ) {
-			setFormData( { version: pendingVersion } );
-		}
-	}, [ pendingVersion ] );
-
-	useEffect( () => {
-		if ( currentVersion && ! pendingVersion ) {
-			setFormData( { version: currentVersion } );
-		}
-	}, [ currentVersion, pendingVersion ] );
+	const formData = {
+		version: formEdits.version || pendingVersion || currentVersion || '',
+	};
 
 	const currentWpVersion = site.options?.software_version ?? '';
 
@@ -86,7 +76,7 @@ export function VersionForm( { site, currentVersion, versionSwitch }: VersionFor
 								fields={ fields }
 								form={ form }
 								onChange={ ( edits: { version?: string } ) => {
-									setFormData( ( data ) => ( { ...data, ...edits } ) );
+									setFormEdits( ( data ) => ( { ...data, ...edits } ) );
 								} }
 							/>
 							<ButtonStack justify="flex-start">
