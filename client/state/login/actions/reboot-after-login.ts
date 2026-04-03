@@ -1,6 +1,10 @@
 import { clearStore, getStoredUserId } from 'calypso/lib/user/store';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getRedirectToSanitized, isTwoFactorEnabled } from 'calypso/state/login/selectors';
+import {
+	getRedirectToOriginal,
+	getRedirectToSanitized,
+	isTwoFactorEnabled,
+} from 'calypso/state/login/selectors';
 import type { CalypsoDispatch } from 'calypso/state/types';
 
 export const rebootAfterLogin =
@@ -13,8 +17,9 @@ export const rebootAfterLogin =
 			} )
 		);
 
-		// Redirects to / if no redirect url is available
-		const url = getRedirectToSanitized( getState() ) || '/';
+		// Redirects to / if no redirect url is available.
+		// Fall back to the original redirect_to from the URL query if the API didn't return one.
+		const url = getRedirectToSanitized( getState() ) || getRedirectToOriginal( getState() ) || '/';
 
 		// user ID is persisted in localstorage
 		// therefore we need to reset it before we redirect, otherwise we'll get

@@ -20,7 +20,16 @@ function isExternalUrl( url ) {
 			'agencies.automattic.com',
 		];
 
-		if ( allowedHostname.includes( urlObject.hostname ) && urlObject.protocol === 'https:' ) {
+		if ( urlObject.protocol !== 'https:' ) {
+			return true;
+		}
+
+		if ( allowedHostname.includes( urlObject.hostname ) ) {
+			return false;
+		}
+
+		// Allow *.wordpress.com subdomains (e.g., P2 sites like testp2020a8c.wordpress.com).
+		if ( urlObject.hostname.endsWith( '.wordpress.com' ) ) {
 			return false;
 		}
 	} catch {
