@@ -10,11 +10,13 @@ import {
 } from '../../../../me/mcp/utils';
 import Breadcrumbs from '../../../app/breadcrumbs';
 import { useAppContext } from '../../../app/context';
+import { siteSettingsAIToolsRoute } from '../../../app/router/sites';
 import { ActionList } from '../../../components/action-list';
 import { Card, CardBody } from '../../../components/card';
 import ComponentViewTracker from '../../../components/component-view-tracker';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
+import RouterLinkButton from '../../../components/router-link-button';
 import { SectionHeader } from '../../../components/section-header';
 import SiteIcon from '../../../components/site-icon';
 import { getSiteDisplayName } from '../../../utils/site-name';
@@ -163,13 +165,14 @@ export default function McpMcpSites() {
 									actions={
 										<>
 											{ site.slug && (
-												<Button
+												<RouterLinkButton
 													variant="tertiary"
 													size="compact"
-													href={ `/sites/${ site.slug }/settings/ai-tools` }
+													to={ siteSettingsAIToolsRoute.fullPath }
+													params={ { siteSlug: site.slug } }
 												>
 													{ __( 'Manage' ) }
-												</Button>
+												</RouterLinkButton>
 											) }
 											<Button
 												variant="secondary"
