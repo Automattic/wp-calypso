@@ -2,6 +2,7 @@ name: Linear Release Sync - Creators
 
 on:
   push:
+    branches: [trunk]
     paths:
       # Reader
       - 'client/reader/**'
@@ -20,6 +21,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: linear/linear-release-action@v0.5.0
+      - uses: linear/linear-release-action@v0.6.0
         with:
           access_key: ${{ secrets.LINEAR_RELEASE_KEY_CREATORS }}

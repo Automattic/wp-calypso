@@ -1,4 +1,3 @@
-// test v5
 import SubscribersPage from './main';
 
 export function subscribers( context, next ) {
