@@ -22,10 +22,10 @@ export function VersionForm( { site, currentVersion, versionSwitch }: VersionFor
 	const { data: latestVersion } = useQuery( wpOrgCoreVersionQuery() );
 	const { data: betaVersion } = useQuery( wpOrgCoreVersionQuery( 'beta' ) );
 
-	const { isSwitching, mutation } = versionSwitch;
+	const { isSwitching, targetVersion, switchVersion, isSaving } = versionSwitch;
 
 	const [ formData, setFormData ] = useState< { version: string } >( {
-		version: currentVersion ?? '',
+		version: isSwitching ? targetVersion : currentVersion ?? '',
 	} );
 
 	// Sync form state when the current version changes (e.g. after a version switch).
@@ -61,11 +61,10 @@ export function VersionForm( { site, currentVersion, versionSwitch }: VersionFor
 	};
 
 	const isDirty = formData.version !== currentVersion;
-	const { isPending } = mutation;
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		mutation.mutate( formData.version );
+		switchVersion( formData.version );
 	};
 
 	return (
@@ -87,8 +86,8 @@ export function VersionForm( { site, currentVersion, versionSwitch }: VersionFor
 								<Button
 									variant="primary"
 									type="submit"
-									isBusy={ isPending }
-									disabled={ isPending || ! isDirty || isSwitching }
+									isBusy={ isSaving }
+									disabled={ isSaving || ! isDirty || isSwitching }
 								>
 									{ __( 'Save' ) }
 								</Button>

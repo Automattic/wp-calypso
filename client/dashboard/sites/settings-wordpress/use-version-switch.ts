@@ -49,7 +49,8 @@ export interface VersionSwitchState {
 	isSwitched: boolean;
 	switchedToBeta: boolean;
 	switchedToLatest: boolean;
-	mutation: ReturnType< typeof useMutation< void, Error, string > >;
+	switchVersion: ( version: string ) => void;
+	isSaving: boolean;
 }
 
 export function useVersionSwitch( site: Site ): VersionSwitchState {
@@ -61,12 +62,13 @@ export function useVersionSwitch( site: Site ): VersionSwitchState {
 	const hasPendingVersion = !! pendingVersion;
 	const hadPendingVersion = usePrevious( hasPendingVersion );
 
-	// Pending version appeared → switching.
+	// Pending version appeared → switching. Also start backup tracking.
 	useEffect( () => {
 		if ( pendingVersion ) {
+			backupState.setEnqueued( true );
 			dispatch( { type: 'SWITCH_STARTED', targetVersion: pendingVersion } );
 		}
-	}, [ pendingVersion ] );
+	}, [ pendingVersion ] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	// Pending version cleared → switched.
 	useEffect( () => {
@@ -95,17 +97,17 @@ export function useVersionSwitch( site: Site ): VersionSwitchState {
 
 	const mutation = useMutation( {
 		...siteWordPressVersionMutation( site.ID, { deferUntilBackupComplete } ),
-		onSuccess: ( _data, version ) => {
-			backupState.setEnqueued( true );
-			dispatch( { type: 'VERSION_CHANGE_REQUESTED', targetVersion: version } );
-			queryClient.invalidateQueries( sitePendingWordPressVersionQuery( site.ID ) );
-		},
 		meta: {
 			snackbar: {
 				error: __( 'Failed to save WordPress version.' ),
 			},
 		},
 	} );
+
+	const switchVersion = ( version: string ) => {
+		dispatch( { type: 'VERSION_CHANGE_REQUESTED', targetVersion: version } );
+		mutation.mutate( version );
+	};
 
 	const targetVersion = phase.status !== 'idle' ? phase.targetVersion : '';
 	const isSwitched = phase.status === 'switched';
@@ -117,6 +119,7 @@ export function useVersionSwitch( site: Site ): VersionSwitchState {
 		isSwitched,
 		switchedToBeta: isSwitched && phase.targetVersion === 'beta',
 		switchedToLatest: isSwitched && phase.targetVersion === 'latest',
-		mutation,
+		switchVersion,
+		isSaving: mutation.isPending,
 	};
 }
