@@ -17,11 +17,9 @@ function EmptyState( { children }: { children?: ReactNode } ) {
 }
 
 function EmptyStateWrapper( {
-	expand = true,
 	isBorderless = false,
 	children,
 }: {
-	expand?: boolean;
 	isBorderless?: boolean;
 	children: ReactNode;
 } ) {
@@ -31,12 +29,12 @@ function EmptyStateWrapper( {
 	// This keeps the visual layout stable between view transitions. It's fine if
 	// the wrapper expands beyond this initial calculation after layout changes.
 	useLayoutEffect( () => {
-		if ( ! cardRef.current || ! expand ) {
+		if ( ! cardRef.current ) {
 			return;
 		}
 		const rect = cardRef.current.getBoundingClientRect();
 		cardRef.current.style.setProperty( '--dashboard-empty-state-offset', `${ rect.top }px` );
-	}, [ expand ] );
+	}, [] );
 
 	return (
 		<Card ref={ cardRef } className="dashboard-empty-state__wrapper" isBorderless={ isBorderless }>
