@@ -13,7 +13,7 @@ type PlanHeadersProps = {
 };
 
 const PlanHeaders = ( { options, renderedGridPlans }: PlanHeadersProps ) => {
-	return renderedGridPlans.map( ( { planSlug, planTitle } ) => {
+	return renderedGridPlans.map( ( { planSlug, planTitle, titleBadge } ) => {
 		const headerClasses = clsx( 'plan-features-2023-grid__header', getPlanClass( planSlug ) );
 
 		return (
@@ -26,6 +26,9 @@ const PlanHeaders = ( { options, renderedGridPlans }: PlanHeadersProps ) => {
 			>
 				<div role="columnheader" className={ headerClasses }>
 					<h4 className="plan-features-2023-grid__header-title">{ planTitle }</h4>
+					{ titleBadge && (
+						<span className="plan-features-2023-grid__header-badge">{ titleBadge }</span>
+					) }
 				</div>
 			</PlanDivOrTdContainer>
 		);

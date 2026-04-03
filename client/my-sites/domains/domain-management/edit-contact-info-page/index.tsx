@@ -27,7 +27,7 @@ const EditContactInfoPage = ( {
 	isRequestingWhois,
 	selectedDomainName,
 	selectedSite,
-	context = { showPageHeader: true },
+	context,
 }: EditContactInfoPageProps ) => {
 	const translate = useTranslate();
 
@@ -69,7 +69,7 @@ const EditContactInfoPage = ( {
 				href: previousPath,
 			},
 			{
-				label: translate( 'Edit contact infomation' ),
+				label: translate( 'Edit contact information' ),
 				subtitle: translate( 'Domain owners are required to provide correct contact information.' ),
 			},
 		];
@@ -145,7 +145,7 @@ const EditContactInfoPage = ( {
 	return (
 		<Main className="edit-contact-info-page" wideLayout>
 			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
-			{ context?.showPageHeader && renderHeader() }
+			{ context?.params?.showPageHeader !== false && renderHeader() }
 			<TwoColumnsLayout content={ renderContent() } sidebar={ renderSidebar() } />
 		</Main>
 	);

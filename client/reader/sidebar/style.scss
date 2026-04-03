@@ -220,10 +220,6 @@ body.is-section-reader {
 		color: var( --color-sidebar-menu-selected-text );
 	}
 
-	.sidebar__menu-item-site-icon {
-		border-radius: 4px;
-	}
-
 	.sidebar__menu-item-last-updated {
 		display: block;
 		font-size: 0.67rem; /* stylelint-disable-line scales/font-sizes */

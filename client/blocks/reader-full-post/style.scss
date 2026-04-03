@@ -139,6 +139,10 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	&:hover {
 		color: var( --color-link );
 	}
+
+	&:visited {
+		color: var( --color-text );
+	}
 }
 
 .reader-full-post__header-meta-separator {
@@ -882,7 +886,6 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 			}
 
 			.reader-full-post__site-icon {
-				border-radius: 50%;
 				height: 80px;
 				width: 80px;
 

@@ -14,7 +14,6 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import PageHeader from 'calypso/my-sites/stats/components/headers/page-header';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import { useSelector } from 'calypso/state';
@@ -153,8 +152,26 @@ const StatsPurchasePage = ( {
 		isForceProductRedirect,
 	] );
 
+	const showNavigation = ! isLoading && ! hasAnyPlan && query.from?.startsWith( 'cmp-red' );
+
 	return (
-		<Main fullWidthLayout>
+		<Main
+			fullWidthLayout
+			pageSubTitle={
+				showNavigation ? translate( 'Simple, powerful analytics to grow your site.' ) : undefined
+			}
+			pageTabs={
+				showNavigation ? (
+					<StatsNavigation
+						selectedItem="traffic"
+						interval="day"
+						siteId={ siteId }
+						slug={ siteSlug }
+						showLock
+					/>
+				) : undefined
+			}
+		>
 			<DocumentHead title={ STATS_PRODUCT_NAME } />
 			{ ! isLoading && (
 				<PageViewTracker
@@ -171,24 +188,6 @@ const StatsPurchasePage = ( {
 					'stats-purchase-page--is-wpcom': isWPCOMSite,
 				} ) }
 			>
-				{ /** Only show the navigation header on force redirections and site has no plans */ }
-				{ ! isLoading && ! hasAnyPlan && query.from?.startsWith( 'cmp-red' ) && (
-					<>
-						<PageHeader
-							titleProps={ {
-								subtitle: translate( 'Simple, powerful analytics to grow your site.' ),
-							} }
-						/>
-						<StatsNavigation
-							selectedItem="traffic"
-							interval="day"
-							siteId={ siteId }
-							slug={ siteSlug }
-							showLock
-						/>
-					</>
-				) }
-
 				{ /* Only query site purchases on Calypso via existing data component */ }
 				<QuerySitePurchases siteId={ siteId } />
 				<QueryProductsList type="jetpack" />

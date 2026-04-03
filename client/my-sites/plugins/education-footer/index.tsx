@@ -331,7 +331,7 @@ const EducationFooter = () => {
 				<LinkCard
 					image={
 						isMarketplaceRedesignEnabled
-							? '/calypso/images/plugins/what-are-plugins.png'
+							? '/calypso/images/plugins/what-are-plugins.webp'
 							: undefined
 					}
 					title={
@@ -348,7 +348,7 @@ const EducationFooter = () => {
 				<LinkCard
 					image={
 						isMarketplaceRedesignEnabled
-							? '/calypso/images/plugins/how-to-find-plugins.png'
+							? '/calypso/images/plugins/how-to-find-plugins.webp'
 							: undefined
 					}
 					title={
@@ -365,7 +365,7 @@ const EducationFooter = () => {
 				<LinkCard
 					image={
 						isMarketplaceRedesignEnabled
-							? '/calypso/images/plugins/how-to-install-plugins.png'
+							? '/calypso/images/plugins/how-to-install-plugins.webp'
 							: undefined
 					}
 					title={

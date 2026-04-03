@@ -9,6 +9,11 @@
 	background-color: var(--color-surface);
 	justify-content: flex-start;
 	font-weight: 400;
+
+	&.is-woo-hosted-basic-plan {
+		align-items: center;
+		gap: 12px;
+	}
 }
 
 .plan-features-2023-grid__header-logo {
@@ -205,6 +210,18 @@
 	letter-spacing: 0;
 }
 
+.plan-features-2023-grid__header-badge {
+	background-color: var(--studio-blue-5);
+	color: var(--studio-blue-50);
+	border-radius: 3px;
+	display: inline-block;
+	font-size: $font-body-extra-small;
+	font-weight: 500;
+	line-height: 20px;
+	padding: 0 8px;
+	white-space: nowrap;
+}
+
 .plan-features-2023-grid__header-tagline {
 	font-size: $font-body;
 	line-height: 24px;
@@ -355,6 +372,12 @@
 	flex-direction: column;
 	flex: 1 0 0;
 	width: 100%;
+
+	.plan-features-2023-grid__ai-website-builder-break {
+		@media ( max-width: 480px ) {
+			display: none;
+		}
+	}
 
 	.plan-features-2023-grid__item-title {
 		color: var(--studio-gray-80);

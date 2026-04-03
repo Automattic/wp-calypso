@@ -1,15 +1,17 @@
 import { formatNumber } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useEffect } from 'react';
+import { useMemo, useLayoutEffect } from 'react';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
-import { recordCurrentScreen } from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
+import {
+	useStatsBreadcrumbTrail,
+	recordCurrentScreen,
+} from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
 import DownloadCsv from 'calypso/my-sites/stats/stats-download-csv';
 import DownloadCsvUpsell from 'calypso/my-sites/stats/stats-download-csv-upsell';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import PageHeader from '../components/headers/page-header';
 import { STATS_FEATURE_DOWNLOAD_CSV } from '../constants';
 import {
 	TooltipWrapper,
@@ -22,8 +24,10 @@ import PageViewTracker from '../stats-page-view-tracker';
 import '../summary/style.scss';
 import '../stats-module/summary-nav.scss';
 
-// TODO: `query` was never passed from outside or defined in scope. Adding it to avoid a lint error.
-const StatsEmailSummary = ( { period, query, context } ) => {
+// Inner component that records the current screen before the wrapper reads breadcrumb trail.
+// useLayoutEffect fires before the parent wrapper's useEffect in useStatsBreadcrumbTrail,
+// ensuring the navigation history is updated before the breadcrumb trail is read.
+const StatsEmailSummaryInner = ( { period, query, context, breadcrumbTrail } ) => {
 	const StatsStrings = useStatsStrings();
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
@@ -61,22 +65,12 @@ const StatsEmailSummary = ( { period, query, context } ) => {
 		return [ { label: backLabel, href: backLink }, { label: title } ];
 	}, [ translate, siteSlug ] );
 
-	useEffect( () => {
+	useLayoutEffect( () => {
 		recordCurrentScreen( 'emailsummary', {
 			queryParams: context.query,
 			period: period.period,
 		} );
 	}, [ context.query, period.period ] );
-
-	const backLinkProps = {
-		text: navigationItems[ 0 ].label,
-		url: navigationItems[ 0 ].href,
-	};
-	const titleProps = {
-		title: navigationItems[ 1 ].label,
-		// Remove the default logo for Odyssey stats.
-		titleLogo: null,
-	};
 
 	const downloadCsvElement = shouldGateCsvDownloads ? (
 		<DownloadCsvUpsell siteId={ siteId } borderless />
@@ -99,18 +93,16 @@ const StatsEmailSummary = ( { period, query, context } ) => {
 	);
 
 	return (
-		<Main fullWidthLayout>
+		<Main
+			fullWidthLayout
+			breadcrumbs={ [
+				...breadcrumbTrail.map( ( item ) => ( { label: item.label, to: item.url } ) ),
+				{ label: navigationItems[ 1 ].label },
+			] }
+			pageActions={ <div className="stats-module__header-nav-button">{ downloadCsvElement }</div> }
+		>
 			<PageViewTracker path="/stats/emails/:site" title="Stats > Emails" />
 			<div className="stats stats-summary-view">
-				<PageHeader
-					className="stats__section-header modernized-header"
-					titleProps={ titleProps }
-					backLinkProps={ backLinkProps }
-					rightSection={
-						<div className="stats-module__header-nav-button">{ downloadCsvElement }</div>
-					}
-				/>
-
 				<div id="my-stats-content" className="stats-summary-view stats-summary__positioned">
 					<div className="stats-summary-nav">
 						<div className="stats-summary-nav__header">
@@ -189,6 +181,13 @@ const StatsEmailSummary = ( { period, query, context } ) => {
 			</div>
 		</Main>
 	);
+};
+
+// TODO: `query` was never passed from outside or defined in scope. Adding it to avoid a lint error.
+const StatsEmailSummary = ( props ) => {
+	const breadcrumbTrail = useStatsBreadcrumbTrail();
+
+	return <StatsEmailSummaryInner { ...props } breadcrumbTrail={ breadcrumbTrail } />;
 };
 
 export default StatsEmailSummary;

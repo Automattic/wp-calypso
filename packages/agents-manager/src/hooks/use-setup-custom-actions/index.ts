@@ -1,6 +1,7 @@
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useRef } from '@wordpress/element';
 import { useNavigate } from 'react-router-dom';
+import { useAgentsManagerContext } from '../../contexts';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 
@@ -30,6 +31,7 @@ export default function useSetupCustomActions( {
 		return store.getAgentsManagerState();
 	}, [] );
 	const { setIsOpen, setIsDocked } = useDispatch( AGENTS_MANAGER_STORE );
+	const { getActiveSessionId } = useAgentsManagerContext();
 	const navigate = useNavigate();
 	const resolveRef = useRef< ( ( state: AgentsManagerChatState ) => void ) | null >( null );
 
@@ -128,6 +130,7 @@ export default function useSetupCustomActions( {
 					resolveRef.current = resolve;
 				} );
 			},
+			getSessionId: getActiveSessionId,
 			setChatOpen,
 			setChatDocked,
 			setChatEnabled,
@@ -149,6 +152,7 @@ export default function useSetupCustomActions( {
 		setChatEnabled,
 		setChatCompactMode,
 		setChatDesktopMediaQuery,
+		getActiveSessionId,
 		navigate,
 	] );
 }

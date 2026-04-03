@@ -203,7 +203,11 @@ const PlanFeatures2023GridFeatures: React.FC< {
 														<FeatureBadge>{ currentFeature.badgeText }</FeatureBadge>
 													) }
 												</span>
-												{ shouldBreakAfterAiWebsiteBuilderTitle && <div>{ '\u00A0' }</div> }
+												{ shouldBreakAfterAiWebsiteBuilderTitle && (
+													<div className="plan-features-2023-grid__ai-website-builder-break">
+														{ '\u00A0' }
+													</div>
+												) }
 												{ currentFeature?.getSubFeatureObjects?.()?.length ? (
 													<ul className="plan-features-2023-grid__item-sub-feature-list">
 														{ currentFeature.getSubFeatureObjects().map( ( subFeature ) => (

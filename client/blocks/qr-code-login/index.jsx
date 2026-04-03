@@ -7,7 +7,7 @@ import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { QRCodeSVG } from 'qrcode.react';
 import { useEffect, useState } from 'react';
-import qrCenter from 'calypso/assets/images/qr-login/app.png';
+import qrCenter from 'calypso/assets/images/qr-login/app.webp';
 import { setStoredItem, getStoredItem } from 'calypso/lib/browser-storage';
 import { useInterval } from 'calypso/lib/interval';
 import { useLoginContext } from 'calypso/login/login-context';
