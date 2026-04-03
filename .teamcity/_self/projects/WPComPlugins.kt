@@ -12,6 +12,8 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.pullRequests
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.commitStatusPublisher
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 
+private const val CALYPSO_APPS_PR_LABEL = "Build Calypso apps"
+
 object WPComPlugins : Project({
 	id("WPComPlugins")
 	name = "WPCom Plugins"
@@ -56,7 +58,12 @@ object CalypsoApps: BuildType({
 	id("calypso_WPComPlugins_Build_Plugins")
 	uuid = "8453b8fe-226f-4e91-b5cc-8bdad15e0814"
 	name = "Build Calypso Apps"
-	description = "Builds all Calypso apps and saves release artifacts for each. This replaces the separate build configurations for each app."
+	description = """
+		Builds all Calypso apps and saves release artifacts for each. This replaces the separate build configurations for each app.
+		On pull request branches, runs only when the GitHub label "${CALYPSO_APPS_PR_LABEL}" is present (otherwise the build is canceled).
+		On the default branch, runs only when the commit is associated with a merged PR that had that label (otherwise canceled).
+		Other branch pushes are unchanged.
+	""".trimIndent()
 
 	buildNumberPattern = "%build.prefix%.%build.counter%"
 	params {
@@ -97,10 +104,8 @@ object CalypsoApps: BuildType({
 
 	triggers {
 		vcs {
-			branchFilter = """
-				+:*
-				-:pull*
-			""".trimIndent()
+			// Include refs like pull/<id>/head so PRs are built; gating is done in the first build step (label + trunk merge rules).
+			branchFilter = "+:*"
 			triggerRules = """
 				-:test/e2e/**
 				-:docs/**.md
@@ -128,6 +133,56 @@ object CalypsoApps: BuildType({
 	""".trimIndent()
 
 	steps {
+		bashNodeScript {
+			name = "Require \"$CALYPSO_APPS_PR_LABEL\" label (PR or labeled merge to trunk)"
+			scriptContent = """
+				LABEL='$CALYPSO_APPS_PR_LABEL'
+				REPO='Automattic/wp-calypso'
+				export GH_TOKEN='%matticbot_oauth_token%'
+				IS_DEFAULT='%teamcity.build.branch.is_default%'
+				BRANCH_RAW='%teamcity.build.branch%'
+				COMMIT_SHA='%build.vcs.number%'
+				BRANCH="${'$'}{BRANCH_RAW#refs/heads/}"
+
+				cancel() {
+					echo "##teamcity[buildStop comment='${'$'}1' readdToQueue='false']"
+				}
+
+				pr_json_has_label() {
+					echo "${'$'}1" | jq -e --arg want "${'$'}LABEL" '(.labels // []) | map(.name) | index(${'$'}want) != null' >/dev/null 2>&1
+				}
+
+				# Default branch (trunk): only if this commit is linked to a merged PR that has the label.
+				if [ "${'$'}IS_DEFAULT" = "true" ]; then
+					PULLS_JSON="${'$'}(curl -fsS -H "Authorization: token ${'$'}GH_TOKEN" -H "Accept: application/vnd.github.groot-preview+json" "https://api.github.com/repos/${'$'}REPO/commits/${'$'}COMMIT_SHA/pulls")"
+					FOUND='false'
+					while read -r pr_json; do
+						[ -z "${'$'}pr_json" ] && continue
+						if pr_json_has_label "${'$'}pr_json"; then
+							FOUND='true'
+							break
+						fi
+					done < <(echo "${'$'}PULLS_JSON" | jq -c '.[]')
+					if [ "${'$'}FOUND" != "true" ]; then
+						cancel "Skipped Calypso apps build - trunk commit is not linked to a PR with the required label"
+					fi
+					exit 0
+				fi
+
+				# GitHub pull request branch in TeamCity (pull/<n>/head or pull/<n>/merge).
+				if [[ "${'$'}BRANCH" =~ ^pull/([0-9]+)/(head|merge)${'$'} ]]; then
+					PR="${'$'}{BASH_REMATCH[1]}"
+					PR_JSON="${'$'}(curl -fsS -H "Authorization: token ${'$'}GH_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${'$'}REPO/pulls/${'$'}PR")"
+					if ! pr_json_has_label "${'$'}PR_JSON"; then
+						cancel "Skipped Calypso apps build - add the required label to this pull request"
+					fi
+					exit 0
+				fi
+
+				# Non-PR topic branches: keep previous behavior (build without label).
+				exit 0
+			"""
+		}
 		mergeTrunk()
 		bashNodeScript {
 			name = "Install dependencies"
