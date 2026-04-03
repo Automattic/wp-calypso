@@ -1,0 +1,31 @@
+// Override box-shadow-based hr divider which renders invisibly at zero height.
+.mcp-settings__sub-divider {
+	background: transparent;
+	border: 0;
+	border-top: 1px solid rgba( 0, 0, 0, 0.1 );
+	height: 0;
+	margin: 0;
+}
+
+// Clip children (summary button hover highlights) to the card's rounded corners,
+// and remove the double bottom border on the last summary button.
+.mcp-settings__access-card {
+	overflow: hidden;
+}
+
+.mcp-settings__access-card .summary-button:last-child {
+	border-bottom: 0 !important;
+}
+
+// Inset sub-group dividers on the Read/Write tool pages to match preferences/mcp/read appearance.
+// Clears the default CardDivider box-shadow in favour of a plain border-top (same as account-level
+// mcp-tools-subpage__sub-divider). width: auto + margin-inline overrides emotion's width: 100%.
+// 24px matches the horizontal padding of a medium-sized CardBody (space(6)).
+hr.mcp-settings__tool-group-divider {
+	background: transparent;
+	border: 0;
+	border-top: 1px solid var( --color-border-subtle );
+	height: 0;
+	width: auto;
+	margin-inline: 24px;
+}

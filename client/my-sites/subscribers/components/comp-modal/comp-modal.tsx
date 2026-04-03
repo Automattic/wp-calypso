@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Modal, Button } from '@wordpress/components';
+import { CheckboxControl, Modal, Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import ProductsSelector from 'calypso/my-sites/earn/components/add-edit-coupon-modal/products-selector';
@@ -22,6 +22,7 @@ type CompSubscriptionModalProps = {
 type Comp = {
 	user_id: number | string;
 	plan_id: number;
+	no_expiration?: boolean;
 };
 
 const CompSubscriptionModal = ( {
@@ -37,6 +38,7 @@ const CompSubscriptionModal = ( {
 	const dispatch = useDispatch();
 
 	const [ planId, setPlanId ] = useState( 0 );
+	const [ doesNotExpire, setDoesNotExpire ] = useState( false );
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 
 	const products: Product[] = useSelector( ( state ) => getProductsForSiteId( state, siteId ) );
@@ -80,6 +82,7 @@ const CompSubscriptionModal = ( {
 		const compDetails: Comp = {
 			plan_id: plan_id,
 			user_id: user_id,
+			...( doesNotExpire && { no_expiration: true } ),
 		};
 
 		dispatch( requestAddComp( siteId, compDetails, noticeText, onComplete ) );
@@ -109,6 +112,11 @@ const CompSubscriptionModal = ( {
 						allowMultiple={ false }
 						showLabel={ false }
 						excludeProductIds={ compedPlanIds }
+					/>
+					<CheckboxControl
+						label={ translate( "Doesn't expire" ) }
+						checked={ doesNotExpire }
+						onChange={ setDoesNotExpire }
 					/>
 					<div className="complimentary-subscription-modal__buttons">
 						<Button onClick={ onClose } variant="tertiary">

@@ -5,6 +5,7 @@ import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
+import { useExperiment } from 'calypso/lib/explat';
 import { useAnalytics } from '../../app/analytics';
 import { useAppContext } from '../../app/context';
 import { getCurrentDashboard } from '../../app/routing';
@@ -47,19 +48,8 @@ export function SiteLaunchButton( {
 		},
 	} );
 	const [ isLaunchModalOpen, setIsLaunchModalOpen ] = useState( false );
-
-	const handleTracksEvent = () => {
-		recordTracksEvent( 'calypso_dashboard_site_launch_button_click', { context: tracksContext } );
-	};
-
-	const handleLaunch = () => {
-		handleTracksEvent();
-		launchMutation.mutate( undefined, {
-			onSettled: () => {
-				setIsLaunchModalOpen( false );
-			},
-		} );
-	};
+	const [ , experimentData ] = useExperiment( 'calypso_standardized_site_launch_gating' );
+	const experimentAssignment = experimentData?.variationName;
 
 	const isSitePlanHostingTrial = site.plan?.product_slug === DotcomPlans.HOSTING_TRIAL_MONTHLY;
 	const isSitePlanPaidWithDomains = isSitePlanPaid( site ) && domains.length > 1;
@@ -87,6 +77,41 @@ export function SiteLaunchButton( {
 		} );
 	};
 
+	const handleTracksEvent = () => {
+		recordTracksEvent( 'calypso_dashboard_site_launch_button_click', { context: tracksContext } );
+	};
+
+	const handleLaunch = () => {
+		handleTracksEvent();
+		launchMutation.mutate( undefined, {
+			onSettled: () => {
+				setIsLaunchModalOpen( false );
+			},
+		} );
+	};
+
+	const handleUngatedLaunch = () => {
+		handleTracksEvent();
+		launchMutation.mutate( undefined, {
+			onSuccess: () => {
+				// Add query param to trigger celebration modal in parent component
+				window.history.replaceState(
+					null,
+					'',
+					addQueryArgs( window.location.href, { celebrateLaunch: 'true' } )
+				);
+			},
+			onSettled: () => {
+				setIsLaunchModalOpen( false );
+			},
+		} );
+	};
+
+	const handleGatedLaunchClick = () => {
+		handleTracksEvent();
+		window.location.assign( getLaunchUrl() );
+	};
+
 	const commonProps = {
 		size: 'compact' as const,
 		variant: 'primary' as const,
@@ -99,6 +124,7 @@ export function SiteLaunchButton( {
 		return null;
 	}
 
+	// Control variant and non-dashboard sites: preserve existing behavior
 	if ( site.is_a4a_dev_site ) {
 		if ( launchUrl ) {
 			return <Button { ...commonProps } onClick={ handleTracksEvent } href={ launchUrl } />;
@@ -120,6 +146,16 @@ export function SiteLaunchButton( {
 				) }
 			</>
 		);
+	}
+
+	// Handle gated_site_launch variant: redirect to the standardized launch flow
+	if ( experimentAssignment === 'gated_site_launch' ) {
+		return <Button { ...commonProps } onClick={ handleGatedLaunchClick } />;
+	}
+
+	// Handle ungated_site_launch variant: launch directly and show celebration modal
+	if ( experimentAssignment === 'ungated_site_launch' ) {
+		return <Button { ...commonProps } onClick={ handleUngatedLaunch } />;
 	}
 
 	if ( shouldImmediatelyLaunch ) {

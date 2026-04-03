@@ -6,6 +6,7 @@ import { wordpress } from '@wordpress/icons';
 import { useAuth } from '../../app/auth';
 import { useAppContext } from '../../app/context';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
+import type { Density } from '@automattic/components/src/summary-button/types';
 
 function useLandingPageLabel() {
 	const { data: landingPage } = useQuery( {
@@ -48,7 +49,7 @@ function usePrimarySiteName() {
 	return primarySite?.name ?? user.display_name;
 }
 
-export default function PreferencesDefaults() {
+export default function PreferencesDefaults( { density }: { density?: Density } ) {
 	const landingPageLabel = useLandingPageLabel();
 	const primarySiteName = usePrimarySiteName();
 
@@ -56,6 +57,7 @@ export default function PreferencesDefaults() {
 
 	return (
 		<RouterLinkSummaryButton
+			density={ density }
 			to="/me/preferences/defaults"
 			title={ __( 'WordPress.com defaults' ) }
 			description={ __( 'Set your starting point after you log in and primary site.' ) }
