@@ -41,14 +41,8 @@ function WordPressSettingsForm( { siteSlug }: { siteSlug: string } ) {
 			/>
 		);
 	} else if ( switchedToBeta || currentVersion === 'beta' ) {
-		// Just enrolled, or returning visit while on beta.
-		notice = (
-			<BetaProgramNotice
-				site={ site }
-				wpVersion={ betaVersion }
-				isJustEnrolled={ switchedToBeta }
-			/>
-		);
+		// Enrolled in beta — show program notice.
+		notice = <BetaProgramNotice site={ site } wpVersion={ betaVersion } />;
 	} else if ( switchedToLatest ) {
 		// Just switched back to stable.
 		notice = <LatestVersionNotice wpVersion={ latestVersion } />;

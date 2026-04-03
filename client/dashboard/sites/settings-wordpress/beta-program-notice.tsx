@@ -9,29 +9,20 @@ import type { Site } from '@automattic/api-core';
 interface BetaProgramNoticeProps {
 	site: Site;
 	wpVersion: string;
-	isJustEnrolled: boolean;
 }
 
-export function BetaProgramNotice( { site, wpVersion, isJustEnrolled }: BetaProgramNoticeProps ) {
+export function BetaProgramNotice( { site, wpVersion }: BetaProgramNoticeProps ) {
 	const backupUrl = getBackupUrl( site );
 	const { setShowHelpCenter } = useHelpCenter();
 
 	return (
 		<Notice
-			variant={ isJustEnrolled ? 'success' : 'info' }
-			title={
-				isJustEnrolled
-					? sprintf(
-							/* translators: %s is the WordPress version string e.g. "6.8 beta" */
-							__( 'Your site is now running WordPress %s' ),
-							wpVersion
-					  )
-					: sprintf(
-							/* translators: %s is the WordPress version string e.g. "6.8 beta" */
-							__( 'Your site is running WordPress %s' ),
-							wpVersion
-					  )
-			}
+			variant="info"
+			title={ sprintf(
+				/* translators: %s is the WordPress version string e.g. "6.8 beta" */
+				__( 'Your site is running WordPress %s' ),
+				wpVersion
+			) }
 		>
 			{ backupUrl
 				? createInterpolateElement(
