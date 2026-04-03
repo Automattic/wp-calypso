@@ -58,8 +58,8 @@ export function useVersionSwitch( site: Site ): VersionSwitchState {
 
 	// Check if there's a pending version switch.
 	const { data: pendingVersion } = useQuery( sitePendingWordPressVersionQuery( site.ID ) );
-	const isSwitching = !! pendingVersion;
-	const wasSwitching = usePrevious( isSwitching );
+	const hasPendingVersion = !! pendingVersion;
+	const hadPendingVersion = usePrevious( hasPendingVersion );
 
 	// Pending version appeared → switching.
 	useEffect( () => {
@@ -70,15 +70,15 @@ export function useVersionSwitch( site: Site ): VersionSwitchState {
 
 	// Pending version cleared → switched.
 	useEffect( () => {
-		if ( wasSwitching && ! isSwitching ) {
+		if ( hadPendingVersion && ! hasPendingVersion ) {
 			dispatch( { type: 'SWITCH_COMPLETED' } );
 			queryClient.invalidateQueries( siteWordPressVersionQuery( site.ID ) );
 			queryClient.invalidateQueries( siteBySlugQuery( site.slug ) );
 		}
-	}, [ wasSwitching, isSwitching, site.ID, site.slug ] );
+	}, [ hadPendingVersion, hasPendingVersion, site.ID, site.slug ] );
 
 	// Poll backups while a version switch is in progress (including right after mutation fires).
-	const shouldPollBackups = phase.status === 'submitting' || isSwitching;
+	const shouldPollBackups = phase.status === 'submitting' || hasPendingVersion;
 	useQuery( {
 		...siteBackupsQuery( site.ID ),
 		refetchInterval: shouldPollBackups ? 3000 : false,
@@ -88,7 +88,7 @@ export function useVersionSwitch( site: Site ): VersionSwitchState {
 	// After backup completes, poll pending version until it clears.
 	useQuery( {
 		...sitePendingWordPressVersionQuery( site.ID ),
-		refetchInterval: isSwitching && backupState.hasRecentlyCompleted ? 5000 : false,
+		refetchInterval: hasPendingVersion && backupState.hasRecentlyCompleted ? 5000 : false,
 	} );
 
 	const deferUntilBackupComplete = isEnabled( 'dashboard/wp-beta-program' );
