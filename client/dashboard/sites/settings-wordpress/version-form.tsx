@@ -28,12 +28,19 @@ export function VersionForm( { site, currentVersion, versionSwitch }: VersionFor
 		version: pendingVersion ?? currentVersion ?? '',
 	} );
 
-	// Sync form state when the current version changes (e.g. after a version switch).
+	// Sync form state when the pending version or current version changes.
+	// Pending version always takes priority over current version.
 	useEffect( () => {
-		if ( currentVersion ) {
+		if ( pendingVersion ) {
+			setFormData( { version: pendingVersion } );
+		}
+	}, [ pendingVersion ] );
+
+	useEffect( () => {
+		if ( currentVersion && ! pendingVersion ) {
 			setFormData( { version: currentVersion } );
 		}
-	}, [ currentVersion ] );
+	}, [ currentVersion, pendingVersion ] );
 
 	const currentWpVersion = site.options?.software_version ?? '';
 
