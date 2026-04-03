@@ -2,6 +2,8 @@
  * @jest-environment jsdom
  */
 
+import { domainsQuery } from '@automattic/api-queries';
+import { QueryClient } from '@tanstack/react-query';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from '../../../test-utils';
@@ -27,11 +29,23 @@ const createMockDomain = ( domain: string, hasSubscription = true ): DomainSumma
 		subscription_id: hasSubscription ? 123 : null,
 	} ) as DomainSummary;
 
+const createQueryClientWithDomains = ( domains: DomainSummary[] = [] ) => {
+	const queryClient = new QueryClient( {
+		defaultOptions: {
+			queries: { retry: false },
+		},
+	} );
+	queryClient.setQueryData( domainsQuery().queryKey, domains );
+	return queryClient;
+};
+
 describe( '<SiteLaunchCelebrationModal>', () => {
 	describe( 'Modal Display', () => {
 		test( 'renders modal with proper structure', () => {
 			const mockSite = createMockSite();
-			render( <SiteLaunchCelebrationModal site={ mockSite } onClose={ jest.fn() } /> );
+			render( <SiteLaunchCelebrationModal site={ mockSite } onClose={ jest.fn() } />, {
+				queryClient: createQueryClientWithDomains( [] ),
+			} );
 
 			expect( screen.getByRole( 'dialog' ) ).toBeInTheDocument();
 			expect( screen.getByRole( 'button', { name: 'Copy URL' } ) ).toBeInTheDocument();
@@ -46,13 +60,9 @@ describe( '<SiteLaunchCelebrationModal>', () => {
 			const customDomain = createMockDomain( 'example.com', true );
 			navigator.clipboard.writeText = jest.fn();
 
-			render(
-				<SiteLaunchCelebrationModal
-					site={ mockSite }
-					domains={ [ customDomain ] }
-					onClose={ jest.fn() }
-				/>
-			);
+			render( <SiteLaunchCelebrationModal site={ mockSite } onClose={ jest.fn() } />, {
+				queryClient: createQueryClientWithDomains( [ customDomain ] ),
+			} );
 
 			const copyButton = screen.getByRole( 'button', { name: 'Copy URL' } );
 			await user.click( copyButton );
@@ -67,13 +77,9 @@ describe( '<SiteLaunchCelebrationModal>', () => {
 			const domain2 = createMockDomain( 'second.com', true );
 			navigator.clipboard.writeText = jest.fn();
 
-			render(
-				<SiteLaunchCelebrationModal
-					site={ mockSite }
-					domains={ [ domain1, domain2 ] }
-					onClose={ jest.fn() }
-				/>
-			);
+			render( <SiteLaunchCelebrationModal site={ mockSite } onClose={ jest.fn() } />, {
+				queryClient: createQueryClientWithDomains( [ domain1, domain2 ] ),
+			} );
 
 			const copyButton = screen.getByRole( 'button', { name: 'Copy URL' } );
 			await user.click( copyButton );
@@ -89,13 +95,9 @@ describe( '<SiteLaunchCelebrationModal>', () => {
 			const activeDomain = createMockDomain( 'active.com', true );
 			navigator.clipboard.writeText = jest.fn();
 
-			render(
-				<SiteLaunchCelebrationModal
-					site={ mockSite }
-					domains={ [ unsubscribedDomain, activeDomain ] }
-					onClose={ jest.fn() }
-				/>
-			);
+			render( <SiteLaunchCelebrationModal site={ mockSite } onClose={ jest.fn() } />, {
+				queryClient: createQueryClientWithDomains( [ unsubscribedDomain, activeDomain ] ),
+			} );
 
 			const copyButton = screen.getByRole( 'button', { name: 'Copy URL' } );
 			await user.click( copyButton );
@@ -110,7 +112,9 @@ describe( '<SiteLaunchCelebrationModal>', () => {
 			const mockSite = createMockSite();
 			const replaceStateSpy = jest.spyOn( window.history, 'replaceState' );
 
-			render( <SiteLaunchCelebrationModal site={ mockSite } onClose={ jest.fn() } /> );
+			render( <SiteLaunchCelebrationModal site={ mockSite } onClose={ jest.fn() } />, {
+				queryClient: createQueryClientWithDomains( [] ),
+			} );
 
 			expect( replaceStateSpy ).toHaveBeenCalledWith(
 				null,
@@ -128,7 +132,9 @@ describe( '<SiteLaunchCelebrationModal>', () => {
 			const mockSite = createMockSite();
 			navigator.clipboard.writeText = jest.fn();
 
-			render( <SiteLaunchCelebrationModal site={ mockSite } onClose={ jest.fn() } /> );
+			render( <SiteLaunchCelebrationModal site={ mockSite } onClose={ jest.fn() } />, {
+				queryClient: createQueryClientWithDomains( [] ),
+			} );
 
 			const copyButton = screen.getByRole( 'button', { name: 'Copy URL' } );
 
@@ -144,7 +150,9 @@ describe( '<SiteLaunchCelebrationModal>', () => {
 	describe( 'View Site Navigation', () => {
 		test( 'view site link uses site URL and opens in new tab', () => {
 			const mockSite = createMockSite( { URL: 'https://mysite.wordpress.com' } );
-			render( <SiteLaunchCelebrationModal site={ mockSite } onClose={ jest.fn() } /> );
+			render( <SiteLaunchCelebrationModal site={ mockSite } onClose={ jest.fn() } />, {
+				queryClient: createQueryClientWithDomains( [] ),
+			} );
 
 			const viewLink = screen.getByRole( 'link', { name: 'View site' } );
 			expect( viewLink ).toHaveAttribute( 'href', 'https://mysite.wordpress.com' );
@@ -153,7 +161,9 @@ describe( '<SiteLaunchCelebrationModal>', () => {
 
 		test( 'handles missing URL gracefully', () => {
 			const mockSite = createMockSite( { URL: undefined } );
-			render( <SiteLaunchCelebrationModal site={ mockSite } onClose={ jest.fn() } /> );
+			render( <SiteLaunchCelebrationModal site={ mockSite } onClose={ jest.fn() } />, {
+				queryClient: createQueryClientWithDomains( [] ),
+			} );
 
 			// Should render a button instead of link when URL is missing
 			expect( screen.getByRole( 'button', { name: 'View site' } ) ).toBeInTheDocument();
@@ -163,7 +173,9 @@ describe( '<SiteLaunchCelebrationModal>', () => {
 	describe( 'Upsell Display Logic', () => {
 		test( 'shows upsell when no custom domain exists and plan is free', () => {
 			const mockSite = createMockSite( { plan: { is_free: true } as any } );
-			render( <SiteLaunchCelebrationModal site={ mockSite } onClose={ jest.fn() } /> );
+			render( <SiteLaunchCelebrationModal site={ mockSite } onClose={ jest.fn() } />, {
+				queryClient: createQueryClientWithDomains( [] ),
+			} );
 
 			// Upsell link should appear for free plan without custom domain
 			const links = screen.getAllByRole( 'link' );
@@ -176,13 +188,9 @@ describe( '<SiteLaunchCelebrationModal>', () => {
 		test( 'does not show upsell when custom domain exists', () => {
 			const mockSite = createMockSite( { plan: { is_free: true } as any } );
 			const customDomain = createMockDomain( 'example.com', true );
-			render(
-				<SiteLaunchCelebrationModal
-					site={ mockSite }
-					domains={ [ customDomain ] }
-					onClose={ jest.fn() }
-				/>
-			);
+			render( <SiteLaunchCelebrationModal site={ mockSite } onClose={ jest.fn() } />, {
+				queryClient: createQueryClientWithDomains( [ customDomain ] ),
+			} );
 
 			// Upsell link should NOT appear when custom domain is present
 			const links = screen.getAllByRole( 'link' );
@@ -197,7 +205,10 @@ describe( '<SiteLaunchCelebrationModal>', () => {
 		test( 'tracks celebration modal view on mount', () => {
 			const mockSite = createMockSite();
 			const { recordTracksEvent } = render(
-				<SiteLaunchCelebrationModal site={ mockSite } onClose={ jest.fn() } />
+				<SiteLaunchCelebrationModal site={ mockSite } onClose={ jest.fn() } />,
+				{
+					queryClient: createQueryClientWithDomains( [] ),
+				}
 			);
 
 			expect( recordTracksEvent ).toHaveBeenCalledWith(
@@ -211,7 +222,10 @@ describe( '<SiteLaunchCelebrationModal>', () => {
 		test( 'tracks event with undefined product_slug when plan is missing', () => {
 			const mockSite = createMockSite( { plan: undefined } );
 			const { recordTracksEvent } = render(
-				<SiteLaunchCelebrationModal site={ mockSite } onClose={ jest.fn() } />
+				<SiteLaunchCelebrationModal site={ mockSite } onClose={ jest.fn() } />,
+				{
+					queryClient: createQueryClientWithDomains( [] ),
+				}
 			);
 
 			expect( recordTracksEvent ).toHaveBeenCalledWith(
