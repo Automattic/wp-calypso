@@ -73,5 +73,43 @@ describe( 'redirectLoggedIn', () => {
 			redirectLoggedIn( { ...context, query: { redirect_to: 'https://test.com' } }, next );
 			expect( window.location ).toBe( '/' );
 		} );
+
+		test( 'should redirect to wordpress.com subdomain (P2 site)', () => {
+			isUserLoggedIn.mockReturnValue( true );
+			redirectLoggedIn(
+				{
+					...context,
+					query: { redirect_to: 'https://testp2020a8c.wordpress.com/' },
+				},
+				next
+			);
+			expect( window.location ).toBe( 'https://testp2020a8c.wordpress.com/' );
+		} );
+
+		test( 'should redirect to wordpress.com subdomain with path', () => {
+			isUserLoggedIn.mockReturnValue( true );
+			redirectLoggedIn(
+				{
+					...context,
+					query: {
+						redirect_to: 'https://testp2020a8c.wordpress.com/author/wrightcj03',
+					},
+				},
+				next
+			);
+			expect( window.location ).toBe( 'https://testp2020a8c.wordpress.com/author/wrightcj03' );
+		} );
+
+		test( 'should reject non-https wordpress.com subdomain', () => {
+			isUserLoggedIn.mockReturnValue( true );
+			redirectLoggedIn(
+				{
+					...context,
+					query: { redirect_to: 'http://testp2020a8c.wordpress.com/' },
+				},
+				next
+			);
+			expect( window.location ).toBe( '/' );
+		} );
 	} );
 } );
