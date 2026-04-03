@@ -5,9 +5,6 @@ import { isEditorPage } from './is-editor-page';
 import type { GetChatComponent } from './load-external-providers';
 import type { UIMessage } from '@automattic/agenttic-client';
 
-// Tool IDs that are silently dropped without a console warning.
-const SILENT_TOOL_IDS = [ 'big_sky__set_processing_state' ];
-
 /**
  * Scans message content blocks for JSON-encoded sources data and replaces
  * those blocks with a SourcesDisplay component. Text blocks that don't parse
@@ -223,10 +220,8 @@ export default function convertToolMessagesToComponents( {
 		}
 
 		// Remove unhandled tool messages to avoid displaying raw JSON to the user.
-		if ( ! SILENT_TOOL_IDS.includes( textData.tool_id ) ) {
-			// eslint-disable-next-line no-console
-			console.warn( `[AgentsManager] Unhandled tool message with tool_id: ${ textData.tool_id }` );
-		}
+		// eslint-disable-next-line no-console
+		console.warn( `[AgentsManager] Unhandled tool message with tool_id: ${ textData.tool_id }` );
 		return [];
 	} );
 }
