@@ -47,6 +47,7 @@ export default function McpMcpSites() {
 			id: siteId,
 			name: site ? getSiteDisplayName( site ) : String( siteId ),
 			displayUrl: site ? getSiteDisplayUrl( site ) : '',
+			slug: site?.slug ?? null,
 			site: site ?? null,
 		};
 	};
@@ -158,9 +159,18 @@ export default function McpMcpSites() {
 									key={ site.id }
 									title={ site.name }
 									description={ site.displayUrl || undefined }
-									decoration={ site.site ? <SiteIcon site={ site.site } size={ 32 } /> : undefined }
+									decoration={ site.site ? <SiteIcon site={ site.site } size={ 40 } /> : undefined }
 									actions={
 										<>
+											{ site.slug && (
+												<Button
+													variant="tertiary"
+													size="compact"
+													href={ `/sites/${ site.slug }/settings/ai-tools` }
+												>
+													{ __( 'Manage' ) }
+												</Button>
+											) }
 											<Button
 												variant="secondary"
 												size="compact"
