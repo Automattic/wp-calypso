@@ -8,19 +8,19 @@ import { unlock } from '../../utils/unlock-private-apis';
 import './style.scss';
 
 export default function ZoomActionButton() {
-	const isZoomed = useSelect( ( select ) => unlock( select( blockEditorStore ) ).isZoomOut(), [] );
+	const isZoomOut = useSelect( ( select ) => unlock( select( blockEditorStore ) ).isZoomOut(), [] );
 
 	return (
 		<Button
 			className="agents-manager-zoom-action-button"
 			icon={ zoomIcon }
 			label={
-				isZoomed
+				isZoomOut
 					? __( 'Zoom in', '__i18n_text_domain__' )
 					: __( 'Zoom out', '__i18n_text_domain__' )
 			}
 			onClick={ toggleZoom }
-			isPressed={ isZoomed }
+			isPressed={ isZoomOut }
 			size="compact"
 		/>
 	);
