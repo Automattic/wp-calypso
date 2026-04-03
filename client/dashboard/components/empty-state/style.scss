@@ -20,16 +20,18 @@
 	&.is-compact {
 		min-height: 0;
 		justify-content: flex-start;
-
-		.dashboard-empty-state__wrapper-content {
-			padding-block: 0;
-		}
 	}
 }
 
 .dashboard-empty-state__wrapper-content {
 	@include break-medium {
 		padding-block: $grid-unit-40;
+	}
+}
+
+.is-compact .dashboard-empty-state__wrapper-content {
+	@include break-medium {
+		padding-block: 0;
 	}
 }
 
