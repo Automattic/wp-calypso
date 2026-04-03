@@ -9,10 +9,11 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.ScriptBuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.perfmon
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.PullRequests
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.pullRequests
-import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.commitStatusPublisher
+import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 
 private const val CALYPSO_APPS_PR_LABEL = "Build Calypso apps"
+private const val GITHUB_STATUS_CONTEXT = "Build Calypso Apps"
 
 object WPComPlugins : Project({
 	id("WPComPlugins")
@@ -59,10 +60,9 @@ object CalypsoApps: BuildType({
 	uuid = "8453b8fe-226f-4e91-b5cc-8bdad15e0814"
 	name = "Build Calypso Apps"
 	description = """
-		Builds all Calypso apps and saves release artifacts for each. This replaces the separate build configurations for each app.
-		On pull request branches, runs only when the GitHub label "${CALYPSO_APPS_PR_LABEL}" is present (otherwise the build is canceled).
-		On the default branch, runs only when the commit is associated with a merged PR that had that label (otherwise canceled).
-		Other branch pushes are unchanged.
+		Builds all Calypso apps and saves release artifacts for each.
+		Gated by the "${CALYPSO_APPS_PR_LABEL}" GitHub label: only runs on labeled PRs and trunk merges from labeled PRs.
+		Build status is published to GitHub manually (no commit status publisher) so unlabeled builds stay invisible.
 	""".trimIndent()
 
 	buildNumberPattern = "%build.prefix%.%build.counter%"
@@ -89,15 +89,6 @@ object CalypsoApps: BuildType({
 					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
 				}
 				filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
-			}
-		}
-		commitStatusPublisher {
-			vcsRootExtId = "${Settings.WpCalypso.id}"
-			publisher = github {
-				githubUrl = "https://api.github.com"
-				authType = personalToken {
-					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
-				}
 			}
 		}
 	}
@@ -134,7 +125,7 @@ object CalypsoApps: BuildType({
 
 	steps {
 		bashNodeScript {
-			name = "Require \"$CALYPSO_APPS_PR_LABEL\" label (PR or labeled merge to trunk)"
+			name = "Check for required \"$CALYPSO_APPS_PR_LABEL\" label"
 			scriptContent = """
 				LABEL='$CALYPSO_APPS_PR_LABEL'
 				REPO='Automattic/wp-calypso'
@@ -143,16 +134,34 @@ object CalypsoApps: BuildType({
 				BRANCH_RAW='%teamcity.build.branch%'
 				COMMIT_SHA='%build.vcs.number%'
 				BRANCH="${'$'}{BRANCH_RAW#refs/heads/}"
+				BUILD_URL='%teamcity.serverUrl%/viewLog.html?buildId=%teamcity.build.id%'
+				CONTEXT='$GITHUB_STATUS_CONTEXT'
 
 				cancel() {
 					echo "##teamcity[buildStop comment='${'$'}1' readdToQueue='false']"
+				}
+
+				post_status() {
+					local json
+					json=${'$'}(jq -n --arg s "${'$'}1" --arg u "${'$'}BUILD_URL" --arg d "${'$'}2" --arg c "${'$'}CONTEXT" \
+						'{state: ${'$'}s, target_url: ${'$'}u, description: ${'$'}d, context: ${'$'}c}')
+					curl -fsS -X POST \
+						-H "Authorization: token ${'$'}GH_TOKEN" \
+						-H "Accept: application/vnd.github+json" \
+						"https://api.github.com/repos/${'$'}REPO/statuses/${'$'}COMMIT_SHA" \
+						-d "${'$'}json" || true
 				}
 
 				pr_json_has_label() {
 					echo "${'$'}1" | jq -e --arg want "${'$'}LABEL" '(.labels // []) | map(.name) | index(${'$'}want) != null' >/dev/null 2>&1
 				}
 
-				# Default branch (trunk): only if this commit is linked to a merged PR that has the label.
+				label_found() {
+					echo "##teamcity[setParameter name='env.CALYPSO_APPS_LABEL_FOUND' value='true']"
+					post_status "pending" "Build started"
+				}
+
+				# Default branch (trunk): only build if this commit came from a merged PR with the label.
 				if [ "${'$'}IS_DEFAULT" = "true" ]; then
 					PULLS_JSON="${'$'}(curl -fsS -H "Authorization: token ${'$'}GH_TOKEN" -H "Accept: application/vnd.github.groot-preview+json" "https://api.github.com/repos/${'$'}REPO/commits/${'$'}COMMIT_SHA/pulls")"
 					FOUND='false'
@@ -164,22 +173,26 @@ object CalypsoApps: BuildType({
 						fi
 					done < <(echo "${'$'}PULLS_JSON" | jq -c '.[]')
 					if [ "${'$'}FOUND" != "true" ]; then
-						cancel "Skipped Calypso apps build - trunk commit is not linked to a PR with the required label"
+						cancel "Skipped - trunk commit has no linked PR with the ${'$'}LABEL label"
+						exit 0
 					fi
+					label_found
 					exit 0
 				fi
 
-				# GitHub pull request branch in TeamCity (pull/<n>/head or pull/<n>/merge).
+				# Pull request branch (pull/<n>/head or pull/<n>/merge).
 				if [[ "${'$'}BRANCH" =~ ^pull/([0-9]+)/(head|merge)${'$'} ]]; then
 					PR="${'$'}{BASH_REMATCH[1]}"
 					PR_JSON="${'$'}(curl -fsS -H "Authorization: token ${'$'}GH_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${'$'}REPO/pulls/${'$'}PR")"
 					if ! pr_json_has_label "${'$'}PR_JSON"; then
-						cancel "Skipped Calypso apps build - add the required label to this pull request"
+						cancel "Skipped - add the ${'$'}LABEL label to PR #${'$'}PR"
+						exit 0
 					fi
+					label_found
 					exit 0
 				fi
 
-				cancel "Skipped Calypso apps build - branch is not a PR and not trunk"
+				cancel "Skipped - branch is not a PR and not trunk"
 			"""
 		}
 		mergeTrunk()
@@ -239,6 +252,45 @@ object CalypsoApps: BuildType({
 				export skip_build_diff="%skip_release_diff%"
 
 				node ./bin/process-calypso-app-artifacts.mjs
+			"""
+		}
+
+		bashNodeScript {
+			name = "Mark build successful"
+			scriptContent = """
+				echo "##teamcity[setParameter name='env.CALYPSO_APPS_BUILD_OK' value='true']"
+			"""
+		}
+
+		bashNodeScript {
+			name = "Report build status to GitHub"
+			executionMode = BuildStep.ExecutionMode.ALWAYS
+			scriptContent = """
+				if [ "${'$'}{CALYPSO_APPS_LABEL_FOUND:-}" != "true" ]; then
+					exit 0
+				fi
+
+				export GH_TOKEN='%matticbot_oauth_token%'
+				COMMIT_SHA='%build.vcs.number%'
+				BUILD_URL='%teamcity.serverUrl%/viewLog.html?buildId=%teamcity.build.id%'
+				CONTEXT='$GITHUB_STATUS_CONTEXT'
+				REPO='Automattic/wp-calypso'
+
+				if [ "${'$'}{CALYPSO_APPS_BUILD_OK:-}" = "true" ]; then
+					STATE='success'
+					DESC='Build finished successfully'
+				else
+					STATE='failure'
+					DESC='Build failed'
+				fi
+
+				json=${'$'}(jq -n --arg s "${'$'}STATE" --arg u "${'$'}BUILD_URL" --arg d "${'$'}DESC" --arg c "${'$'}CONTEXT" \
+					'{state: ${'$'}s, target_url: ${'$'}u, description: ${'$'}d, context: ${'$'}c}')
+				curl -fsS -X POST \
+					-H "Authorization: token ${'$'}GH_TOKEN" \
+					-H "Accept: application/vnd.github+json" \
+					"https://api.github.com/repos/${'$'}REPO/statuses/${'$'}COMMIT_SHA" \
+					-d "${'$'}json" || true
 			"""
 		}
 	}
