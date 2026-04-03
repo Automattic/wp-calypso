@@ -71,9 +71,10 @@ export default function McpMcpSites() {
 		mutation.mutate( {
 			mcp_abilities: {
 				sites: [
-					mcpEnabled
-						? { blog_id: siteId, account_tools_enabled: false } // add exception: disable this site
-						: { blog_id: siteId, site_level_enabled: true }, // add site: enable this site
+					{
+						blog_id: siteId,
+						site_level_enabled: mcpEnabled ? false : true,
+					},
 				],
 			},
 		} as any );
@@ -82,11 +83,7 @@ export default function McpMcpSites() {
 	const handleSiteRemove = ( siteId: number ) => {
 		mutation.mutate( {
 			mcp_abilities: {
-				sites: [
-					mcpEnabled
-						? { blog_id: siteId, account_tools_enabled: true } // remove exception: re-enable this site
-						: { blog_id: siteId, site_level_enabled: null }, // remove site: clear override
-				],
+				sites: [ { blog_id: siteId, site_level_enabled: null } ],
 			},
 		} as any );
 	};
