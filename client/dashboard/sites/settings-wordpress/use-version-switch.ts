@@ -45,6 +45,7 @@ export function reducer( state: Phase, action: Action ): Phase {
 export interface VersionSwitchState {
 	backupState: BackupState;
 	targetVersion: string;
+	pendingVersion: string | null | undefined;
 	isSwitching: boolean;
 	isSwitched: boolean;
 	switchedToBeta: boolean;
@@ -115,6 +116,7 @@ export function useVersionSwitch( site: Site ): VersionSwitchState {
 	return {
 		backupState,
 		targetVersion,
+		pendingVersion,
 		isSwitching: phase.status === 'submitting' || phase.status === 'switching',
 		isSwitched,
 		switchedToBeta: isSwitched && phase.targetVersion === 'beta',

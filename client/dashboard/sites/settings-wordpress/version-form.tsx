@@ -22,10 +22,10 @@ export function VersionForm( { site, currentVersion, versionSwitch }: VersionFor
 	const { data: latestVersion } = useQuery( wpOrgCoreVersionQuery() );
 	const { data: betaVersion } = useQuery( wpOrgCoreVersionQuery( 'beta' ) );
 
-	const { isSwitching, targetVersion, switchVersion, isSaving } = versionSwitch;
+	const { isSwitching, pendingVersion, switchVersion, isSaving } = versionSwitch;
 
 	const [ formData, setFormData ] = useState< { version: string } >( {
-		version: isSwitching ? targetVersion : currentVersion ?? '',
+		version: pendingVersion ?? currentVersion ?? '',
 	} );
 
 	// Sync form state when the current version changes (e.g. after a version switch).
