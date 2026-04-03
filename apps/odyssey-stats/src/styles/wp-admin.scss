@@ -76,6 +76,12 @@
 	& .is-section-stats .has-fixed-nav {
 		padding-top: 64px;
 	}
+	// Disable sticky header — in wp-admin the admin-ui-page forms its own
+	// scroll container, causing the header to stick and overlap content.
+	& .admin-ui-page__header {
+		position: static;
+	}
+
 	& .highlight-cards.has-odyssey-stats-bg-color,
 	& .inner-notice-container.has-odyssey-stats-bg-color {
 		background-color: var(--jetpack-white-off);
