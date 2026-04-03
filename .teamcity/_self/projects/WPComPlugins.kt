@@ -179,8 +179,7 @@ object CalypsoApps: BuildType({
 					exit 0
 				fi
 
-				# Non-PR topic branches: keep previous behavior (build without label).
-				exit 0
+				cancel "Skipped Calypso apps build - branch is not a PR and not trunk"
 			"""
 		}
 		mergeTrunk()
