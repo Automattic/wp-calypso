@@ -25,9 +25,9 @@
 
 .dashboard-empty-state__wrapper.is-compact .dashboard-empty-state__wrapper-content {
 	@include break-medium {
-			padding-block: 0;
-		}
+		padding-block: 0;
 	}
+}
 
 .dashboard-empty-state__wrapper-content {
 	@include break-medium {
