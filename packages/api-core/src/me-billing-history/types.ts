@@ -92,4 +92,5 @@ export interface Receipt {
 	credit: string;
 	items: ReceiptItem[];
 	tax_vendor_info?: TaxVendorInfo;
+	checkout_type?: string;
 }

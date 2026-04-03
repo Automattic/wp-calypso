@@ -50,6 +50,7 @@ interface AgentsManagerChatState {
  */
 interface AgentsManagerActions {
 	getChatState: () => Promise< AgentsManagerChatState >;
+	getSessionId: () => string;
 	setChatOpen: ( isOpen: boolean ) => void;
 	setChatDocked: ( isDocked: boolean ) => void;
 	setChatEnabled: ( isEnabled: boolean ) => void;

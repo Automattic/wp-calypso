@@ -149,64 +149,67 @@ export default function BlockedSites() {
 				/>
 			}
 		>
-			<DataViewsCard ref={ ref }>
-				<DataViews< BlockedSite >
-					data={ filteredData }
-					fields={ fields }
-					view={ view }
-					actions={ [
-						{
-							id: 'unblock',
-							label: __( 'Unblock' ),
-							icon: <Icon icon={ closeSmall } />,
-							isPrimary: true,
-							disabled: unblockSite.isPending,
-							callback: ( items: BlockedSite[] ) => {
-								const item = items[ 0 ];
-								unblockSite.mutate( item.ID, {
-									onSuccess: () => {
-										createSuccessNotice(
-											sprintf(
-												/* translators: %s - the name of the unblocked site */
-												__( '%s was unblocked.' ),
-												item.name
-											),
-											{
-												type: 'snackbar',
-											}
-										);
-									},
-									onError: () => {
-										createErrorNotice(
-											sprintf(
-												/* translators: %s - the name of the unblocked site */
-												__( 'Failed to unblock %s.' ),
-												item.name
-											),
-											{
-												type: 'snackbar',
-											}
-										);
-									},
-								} );
+			{ ! isLoading && sites.length === 0 ? (
+				<p>{ __( "You haven't blocked any sites yet." ) }</p>
+			) : (
+				<DataViewsCard ref={ ref }>
+					<DataViews< BlockedSite >
+						data={ filteredData }
+						fields={ fields }
+						view={ view }
+						actions={ [
+							{
+								id: 'unblock',
+								label: __( 'Unblock' ),
+								icon: <Icon icon={ closeSmall } />,
+								isPrimary: true,
+								disabled: unblockSite.isPending,
+								callback: ( items: BlockedSite[] ) => {
+									const item = items[ 0 ];
+									unblockSite.mutate( item.ID, {
+										onSuccess: () => {
+											createSuccessNotice(
+												sprintf(
+													/* translators: %s - the name of the unblocked site */
+													__( '%s was unblocked.' ),
+													item.name
+												),
+												{
+													type: 'snackbar',
+												}
+											);
+										},
+										onError: () => {
+											createErrorNotice(
+												sprintf(
+													/* translators: %s - the name of the unblocked site */
+													__( 'Failed to unblock %s.' ),
+													item.name
+												),
+												{
+													type: 'snackbar',
+												}
+											);
+										},
+									} );
+								},
 							},
-						},
-					] }
-					getItemId={ ( item ) => item.ID.toString() }
-					defaultLayouts={ { table: {} } }
-					paginationInfo={ {
-						...paginationInfo,
-						infiniteScrollHandler,
-					} }
-					empty={ <p>{ __( 'You haven’t blocked any sites yet.' ) }</p> }
-					isLoading={ isLoading }
-					onChangeView={ setView }
-				>
-					<>
-						<DataViews.Layout />
-					</>
-				</DataViews>
-			</DataViewsCard>
+						] }
+						getItemId={ ( item ) => item.ID.toString() }
+						defaultLayouts={ { table: {} } }
+						paginationInfo={ {
+							...paginationInfo,
+							infiniteScrollHandler,
+						} }
+						isLoading={ isLoading }
+						onChangeView={ setView }
+					>
+						<>
+							<DataViews.Layout />
+						</>
+					</DataViews>
+				</DataViewsCard>
+			) }
 		</PageLayout>
 	);
 }
