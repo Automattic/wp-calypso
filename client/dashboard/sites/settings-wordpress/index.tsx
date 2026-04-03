@@ -46,13 +46,13 @@ function WordPressSettingsForm( { siteSlug }: { siteSlug: string } ) {
 					<VersionSwitchNotice
 						backupState={ backupState }
 						targetVersion={ targetVersion === 'beta' ? betaVersion : latestVersion }
-						currentWpVersion={ site.options?.software_version ?? '' }
 						isVersionSwitched={ phase.status === 'switched' }
 					/>
 				) : undefined
 			}
 		>
 			<VersionForm
+				key={ currentVersion }
 				site={ site }
 				currentVersion={ currentVersion }
 				versionSwitch={ versionSwitch }

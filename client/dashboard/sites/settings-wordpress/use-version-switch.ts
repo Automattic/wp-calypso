@@ -24,13 +24,13 @@ export type Phase =
 	| { status: 'switched'; targetVersion: string };
 
 type Action =
-	| { type: 'MUTATION_FIRED'; targetVersion: string }
+	| { type: 'VERSION_CHANGE_REQUESTED'; targetVersion: string }
 	| { type: 'SWITCH_STARTED'; targetVersion: string }
 	| { type: 'SWITCH_COMPLETED' };
 
 export function reducer( state: Phase, action: Action ): Phase {
 	switch ( action.type ) {
-		case 'MUTATION_FIRED':
+		case 'VERSION_CHANGE_REQUESTED':
 			return { status: 'submitting', targetVersion: action.targetVersion };
 		case 'SWITCH_STARTED':
 			return { status: 'switching', targetVersion: action.targetVersion };
@@ -96,7 +96,7 @@ export function useVersionSwitch( site: Site ): VersionSwitchState {
 		...siteWordPressVersionMutation( site.ID, { deferUntilBackupComplete } ),
 		onSuccess: ( _data, version ) => {
 			backupState.setEnqueued( true );
-			dispatch( { type: 'MUTATION_FIRED', targetVersion: version } );
+			dispatch( { type: 'VERSION_CHANGE_REQUESTED', targetVersion: version } );
 			queryClient.invalidateQueries( sitePendingWordPressVersionQuery( site.ID ) );
 		},
 		meta: {
