@@ -22,11 +22,14 @@ function WordPressSettingsForm( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: currentVersion } = useQuery( siteWordPressVersionQuery( site.ID ) );
 	const versionSwitch = useVersionSwitch( site );
-	const { isSwitching, isSwitched, backupState, targetVersion } = versionSwitch;
+	const { phase, backupState } = versionSwitch;
+	const showNotice = phase.status !== 'idle';
 
 	// Resolve the target version tag (e.g. "beta") to a display string (e.g. "7.0-RC2").
 	const { data: latestVersion = '' } = useQuery( wpOrgCoreVersionQuery() );
 	const { data: betaVersion = '' } = useQuery( wpOrgCoreVersionQuery( 'beta' ) );
+
+	const targetVersion = phase.status !== 'idle' ? phase.targetVersion : '';
 
 	return (
 		<PageLayout
@@ -39,12 +42,12 @@ function WordPressSettingsForm( { siteSlug }: { siteSlug: string } ) {
 				/>
 			}
 			notices={
-				isSwitching || isSwitched ? (
+				showNotice ? (
 					<VersionSwitchNotice
 						backupState={ backupState }
 						targetVersion={ targetVersion === 'beta' ? betaVersion : latestVersion }
 						currentWpVersion={ site.options?.software_version ?? '' }
-						isVersionSwitched={ isSwitched }
+						isVersionSwitched={ phase.status === 'switched' }
 					/>
 				) : undefined
 			}

@@ -9,47 +9,74 @@ import {
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { usePrevious } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
-import { useEffect, useState } from 'react';
+import { useEffect, useReducer } from 'react';
 import { useBackupState } from '../backups/use-backup-state';
 import type { BackupState } from '../backups/use-backup-state';
 import type { Site } from '@automattic/api-core';
 
+// --- Explicit state machine ---
+
+export type Phase =
+	| { status: 'idle' }
+	| { status: 'submitting'; targetVersion: string }
+	| { status: 'switching'; targetVersion: string }
+	| { status: 'switched'; targetVersion: string };
+
+type Action =
+	| { type: 'MUTATION_FIRED'; targetVersion: string }
+	| { type: 'SWITCH_STARTED'; targetVersion: string }
+	| { type: 'SWITCH_COMPLETED' };
+
+export function reducer( state: Phase, action: Action ): Phase {
+	switch ( action.type ) {
+		case 'MUTATION_FIRED':
+			return { status: 'submitting', targetVersion: action.targetVersion };
+		case 'SWITCH_STARTED':
+			return { status: 'switching', targetVersion: action.targetVersion };
+		case 'SWITCH_COMPLETED':
+			if ( state.status !== 'switching' ) {
+				return state;
+			}
+			return { status: 'switched', targetVersion: state.targetVersion };
+		default:
+			return state;
+	}
+}
+
+// --- Public interface ---
+
 export interface VersionSwitchState {
 	backupState: BackupState;
-	/** The pending version tag while switching, or the last one after switch completes. */
-	targetVersion: string;
-	isSwitching: boolean;
-	isSwitched: boolean;
+	phase: Phase;
 	mutation: ReturnType< typeof useMutation< void, Error, string > >;
 }
 
 export function useVersionSwitch( site: Site ): VersionSwitchState {
 	const backupState = useBackupState( site.ID );
+	const [ phase, dispatch ] = useReducer( reducer, { status: 'idle' } );
 
 	// Check if there's a pending version switch.
 	const { data: pendingVersion } = useQuery( sitePendingWordPressVersionQuery( site.ID ) );
 	const isSwitching = !! pendingVersion;
 	const wasSwitching = usePrevious( isSwitching );
-	const [ isSwitched, setIsSwitched ] = useState( false );
-	const [ targetVersion, setTargetVersion ] = useState( '' );
 
-	// Remember the pending version so we can show it in the success notice.
+	// Pending version appeared → switching.
 	useEffect( () => {
 		if ( pendingVersion ) {
-			setTargetVersion( pendingVersion );
+			dispatch( { type: 'SWITCH_STARTED', targetVersion: pendingVersion } );
 		}
 	}, [ pendingVersion ] );
 
-	// Track the transition from switching to not switching.
+	// Pending version cleared → switched.
 	useEffect( () => {
 		if ( wasSwitching && ! isSwitching ) {
-			setIsSwitched( true );
+			dispatch( { type: 'SWITCH_COMPLETED' } );
 			queryClient.invalidateQueries( siteWordPressVersionQuery( site.ID ) );
 			queryClient.invalidateQueries( siteBySlugQuery( site.slug ) );
 		}
 	}, [ wasSwitching, isSwitching, site.ID, site.slug ] );
 
-	// Poll backups while a version switch is in progress.
+	// Poll backups while switching.
 	useQuery( {
 		...siteBackupsQuery( site.ID ),
 		refetchInterval: isSwitching ? 3000 : false,
@@ -64,9 +91,9 @@ export function useVersionSwitch( site: Site ): VersionSwitchState {
 
 	const mutation = useMutation( {
 		...siteWordPressVersionMutation( site.ID ),
-		onSuccess: () => {
+		onSuccess: ( _data, version ) => {
 			backupState.setEnqueued( true );
-			setIsSwitched( false );
+			dispatch( { type: 'MUTATION_FIRED', targetVersion: version } );
 			queryClient.invalidateQueries( sitePendingWordPressVersionQuery( site.ID ) );
 		},
 		meta: {
@@ -76,11 +103,5 @@ export function useVersionSwitch( site: Site ): VersionSwitchState {
 		},
 	} );
 
-	return {
-		backupState,
-		targetVersion,
-		isSwitching,
-		isSwitched,
-		mutation,
-	};
+	return { backupState, phase, mutation };
 }
