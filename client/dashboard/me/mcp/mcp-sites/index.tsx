@@ -71,10 +71,9 @@ export default function McpMcpSites() {
 		mutation.mutate( {
 			mcp_abilities: {
 				sites: [
-					{
-						blog_id: siteId,
-						account_tools_enabled: enabled,
-					},
+					enabled
+						? { blog_id: siteId, account_tools_enabled: true }
+						: { blog_id: siteId, site_level_enabled: null },
 				],
 			},
 		} as any );
