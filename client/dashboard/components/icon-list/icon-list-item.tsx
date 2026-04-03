@@ -58,9 +58,8 @@ function UnforwardedIconListItem(
 	const layoutConfig = LAYOUT_CONFIG[ layout ];
 	const { Component: LayoutComponent } = layoutConfig;
 
-	// Description forces top alignment in stacked layout; inline stays centered.
-	const outerAlignment =
-		layout === 'stacked' && description ? 'flex-start' : layoutConfig.outerAlignment;
+	// Description forces top alignment regardless of layout
+	const outerAlignment = description ? 'flex-start' : layoutConfig.outerAlignment;
 
 	return (
 		<VStack className={ clsx( 'icon-list-item', className ) } ref={ ref } as="span">
