@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/named
 import { fromApi } from '@automattic/api-core';
 
 describe( 'fromApi', () => {
