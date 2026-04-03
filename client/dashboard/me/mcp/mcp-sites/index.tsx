@@ -67,13 +67,25 @@ export default function McpMcpSites() {
 		},
 	} );
 
-	const handleSiteToggle = ( siteId: number, enabled: boolean ) => {
+	const handleSiteAdd = ( siteId: number ) => {
 		mutation.mutate( {
 			mcp_abilities: {
 				sites: [
-					enabled
-						? { blog_id: siteId, account_tools_enabled: true }
-						: { blog_id: siteId, site_level_enabled: null },
+					mcpEnabled
+						? { blog_id: siteId, account_tools_enabled: false } // add exception: disable this site
+						: { blog_id: siteId, site_level_enabled: true }, // add site: enable this site
+				],
+			},
+		} as any );
+	};
+
+	const handleSiteRemove = ( siteId: number ) => {
+		mutation.mutate( {
+			mcp_abilities: {
+				sites: [
+					mcpEnabled
+						? { blog_id: siteId, account_tools_enabled: true } // remove exception: re-enable this site
+						: { blog_id: siteId, site_level_enabled: null }, // remove site: clear override
 				],
 			},
 		} as any );
@@ -82,9 +94,7 @@ export default function McpMcpSites() {
 	const handleSitePickerSelect = ( siteIdStr: string | null | undefined ) => {
 		if ( siteIdStr ) {
 			const siteId = parseInt( siteIdStr, 10 );
-			// When account MCP is ON: disable for specific site (add exception)
-			// When account MCP is OFF: enable for specific site
-			handleSiteToggle( siteId, ! mcpEnabled );
+			handleSiteAdd( siteId );
 			setSelectedSiteId( null );
 		}
 	};
@@ -158,7 +168,7 @@ export default function McpMcpSites() {
 												variant="secondary"
 												size="compact"
 												disabled={ mutation.isPending }
-												onClick={ () => handleSiteToggle( site.id, mcpEnabled ) }
+												onClick={ () => handleSiteRemove( site.id ) }
 											>
 												{ __( 'Remove' ) }
 											</Button>
