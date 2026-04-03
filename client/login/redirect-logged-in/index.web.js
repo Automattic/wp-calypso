@@ -28,7 +28,7 @@ function isExternalUrl( url ) {
 			return false;
 		}
 
-		// Allow *.wordpress.com subdomains (e.g., P2 sites like testp2020a8c.wordpress.com).
+		// Allow *.wordpress.com subdomains (e.g., P2 sites like myteamp2.wordpress.com).
 		if ( urlObject.hostname.endsWith( '.wordpress.com' ) ) {
 			return false;
 		}

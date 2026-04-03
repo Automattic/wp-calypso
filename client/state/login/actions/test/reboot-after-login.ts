@@ -56,11 +56,11 @@ describe( 'rebootAfterLogin', () => {
 		const dispatch = jest.fn();
 		const getState = makeGetState( {
 			sanitized: null,
-			original: 'https://testp2020a8c.wordpress.com/',
+			original: 'https://testp2p2.wordpress.com/',
 		} );
 
 		await rebootAfterLogin( {} )( dispatch, getState );
-		expect( window.location.href ).toBe( 'https://testp2020a8c.wordpress.com/' );
+		expect( window.location.href ).toBe( 'https://testp2p2.wordpress.com/' );
 	} );
 
 	test( 'redirects to / when both sanitized and original are null', async () => {
@@ -75,7 +75,7 @@ describe( 'rebootAfterLogin', () => {
 		const dispatch = jest.fn();
 		const getState = makeGetState( {
 			sanitized: 'https://wordpress.com/home',
-			original: 'https://testp2020a8c.wordpress.com/',
+			original: 'https://testp2p2.wordpress.com/',
 		} );
 
 		await rebootAfterLogin( {} )( dispatch, getState );

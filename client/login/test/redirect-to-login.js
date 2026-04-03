@@ -79,11 +79,11 @@ describe( 'redirectLoggedIn', () => {
 			redirectLoggedIn(
 				{
 					...context,
-					query: { redirect_to: 'https://testp2020a8c.wordpress.com/' },
+					query: { redirect_to: 'https://testp2p2.wordpress.com/' },
 				},
 				next
 			);
-			expect( window.location ).toBe( 'https://testp2020a8c.wordpress.com/' );
+			expect( window.location ).toBe( 'https://testp2p2.wordpress.com/' );
 		} );
 
 		test( 'should redirect to wordpress.com subdomain with path', () => {
@@ -92,12 +92,12 @@ describe( 'redirectLoggedIn', () => {
 				{
 					...context,
 					query: {
-						redirect_to: 'https://testp2020a8c.wordpress.com/author/wrightcj03',
+						redirect_to: 'https://testp2p2.wordpress.com/author/janedoe',
 					},
 				},
 				next
 			);
-			expect( window.location ).toBe( 'https://testp2020a8c.wordpress.com/author/wrightcj03' );
+			expect( window.location ).toBe( 'https://testp2p2.wordpress.com/author/janedoe' );
 		} );
 
 		test( 'should reject non-https wordpress.com subdomain', () => {
@@ -105,7 +105,7 @@ describe( 'redirectLoggedIn', () => {
 			redirectLoggedIn(
 				{
 					...context,
-					query: { redirect_to: 'http://testp2020a8c.wordpress.com/' },
+					query: { redirect_to: 'http://testp2p2.wordpress.com/' },
 				},
 				next
 			);
