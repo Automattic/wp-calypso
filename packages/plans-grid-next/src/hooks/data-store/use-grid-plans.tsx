@@ -34,6 +34,7 @@ import { isSamePlan } from '../../lib/is-same-plan';
 import { UseGridPlansParams, UseGridPlansType } from './types';
 import useHighlightLabels from './use-highlight-labels';
 import usePlansFromTypes from './use-plans-from-types';
+import useTitleBadges from './use-title-badges';
 import type { HiddenPlans, PlansIntent } from '../../types';
 import type { TranslateResult } from 'i18n-calypso';
 
@@ -362,6 +363,11 @@ const useGridPlans: UseGridPlansType = ( {
 		isExperimentVariant,
 	} );
 
+	const titleBadges = useTitleBadges( {
+		intent,
+		planSlugs: planSlugsForIntent,
+	} );
+
 	// TODO: pricedAPIPlans to be queried from data-store package
 	const pricedAPIPlans = Plans.usePlans( { coupon } );
 	const pricingMeta = Plans.usePricingMetaForGridPlans( {
@@ -476,6 +482,7 @@ const useGridPlans: UseGridPlansType = ( {
 			isMonthlyPlan,
 			cartItemForPlan,
 			highlightLabel: highlightLabels[ planSlug ],
+			titleBadge: titleBadges[ planSlug ],
 			pricing: pricingMeta[ planSlug ],
 		};
 	} );

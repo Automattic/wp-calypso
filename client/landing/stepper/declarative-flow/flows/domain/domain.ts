@@ -131,6 +131,14 @@ const domain: FlowV2< typeof initialize > = {
 				}
 			}
 
+			// For CIAB domain registrations, include the purchased domain name
+			// in the redirect URL so the CIAB admin can show a setup notification.
+			if ( isCiab && domainCartItems?.length && domainCartItems[ 0 ].meta ) {
+				destination = addQueryArgs( destination, {
+					domain_purchased: domainCartItems[ 0 ].meta,
+				} );
+			}
+
 			// replace the location to delete processing step from history.
 			return window.location.replace(
 				addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {

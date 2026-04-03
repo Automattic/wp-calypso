@@ -515,14 +515,19 @@ import {
 	FEATURE_WOO_HOSTED_BASIC_STORAGE,
 	FEATURE_WOO_HOSTED_PRO_STORAGE,
 	FEATURE_WOO_HOSTED_SECURITY,
-	FEATURE_WOO_HOSTED_BASIC_EMAIL_SUBSCRIBERS,
-	FEATURE_WOO_HOSTED_PRO_EMAIL_SUBSCRIBERS,
 	FEATURE_WOO_HOSTED_AUTOMATED_EMAIL_FLOWS,
 	FEATURE_WOO_HOSTED_ABANDONED_CART_EMAILS,
 	FEATURE_WOO_HOSTED_POST_PURCHASE_EMAILS,
 	FEATURE_WOO_HOSTED_EMAIL_TEMPLATES,
 	FEATURE_WOO_HOSTED_SEO_TOOLS,
 	FEATURE_WOO_HOSTED_COUPONS,
+	FEATURE_WOO_HOSTED_POS_SYSTEM,
+	FEATURE_WOO_HOSTED_STAFF_ACCOUNTS,
+	FEATURE_WOO_HOSTED_STORAGE_SPACE,
+	FEATURE_WOO_HOSTED_EMAIL_CAMPAIGNS,
+	FEATURE_WOO_HOSTED_EMAIL_SUBSCRIBER_MGMT,
+	FEATURE_WOO_HOSTED_SALES_TAX,
+	FEATURE_WOO_HOSTED_SHIPPING_LABELS,
 	WPCOM_FEATURES_SCAN_SELF_SERVE,
 	WPCOM_FEATURES_BACKUPS_SELF_SERVE,
 } from './constants';
@@ -1615,26 +1620,29 @@ const getWooHostedPlanCompareFeatures = (): string[] => [
 	FEATURE_WOO_HOSTED_POWERFUL_COMMERCE_TOOLS,
 	FEATURE_WOO_HOSTED_AI_BUILDER,
 	FEATURE_WOO_HOSTED_FREE_DOMAIN_1_YEAR,
-	// Accept payments with WooPayments
+	// Accept payments
 	FEATURE_WOO_HOSTED_SEAMLESS_CHECKOUT,
 	FEATURE_WOO_HOSTED_ACCEPT_CARD_PAYMENTS,
-	FEATURE_WOO_HOSTED_POS_PAYMENTS,
 	// Sell products and bookable services
 	FEATURE_WOO_HOSTED_LIST_PRODUCTS,
 	FEATURE_WOO_HOSTED_BOOKINGS,
 	FEATURE_WOO_HOSTED_TEAM_BOOKINGS,
 	FEATURE_WOO_HOSTED_UPSELLS_CROSS_SELLS,
 	FEATURE_WOO_HOSTED_GIFT_CARDS,
-	// Manage your store (common features)
+	// Manage your store
 	FEATURE_WOO_HOSTED_MOBILE_APP,
-	FEATURE_AUTOMATED_SALES_TAXES,
-	FEATURE_PRINT_SHIPPING_LABELS,
+	FEATURE_WOO_HOSTED_STAFF_ACCOUNTS,
+	FEATURE_WOO_HOSTED_SALES_TAX,
+	FEATURE_WOO_HOSTED_SHIPPING_LABELS,
 	FEATURE_WOO_HOSTED_SHIPMENT_TRACKING,
 	FEATURE_WOO_HOSTED_USPS_UPS,
 	FEATURE_WOO_HOSTED_ANALYTICS_REPORTS,
+	FEATURE_WOO_HOSTED_STORAGE_SPACE,
 	FEATURE_WOO_HOSTED_SECURITY,
 	FEATURE_PRIORITY_24_7_SUPPORT,
-	// Grow your business (common features)
+	// Grow your business
+	FEATURE_WOO_HOSTED_EMAIL_CAMPAIGNS,
+	FEATURE_WOO_HOSTED_EMAIL_SUBSCRIBER_MGMT,
 	FEATURE_WOO_HOSTED_AUTOMATED_EMAIL_FLOWS,
 	FEATURE_WOO_HOSTED_ABANDONED_CART_EMAILS,
 	FEATURE_WOO_HOSTED_POST_PURCHASE_EMAILS,
@@ -1646,33 +1654,29 @@ const getWooHostedPlanCompareFeatures = (): string[] => [
 const getPlanWooHostedBasicDetails = (): IncompleteWPcomPlan => ( {
 	...getPlanEcommerceDetails(),
 	get2023PricingGridSignupWpcomFeatures: () => [
+		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_WOO_HOSTED_PACKAGE,
 		FEATURE_WOO_HOSTED_AI_BUILDER,
 		FEATURE_WOO_HOSTED_PAYPAL_INTEGRATON,
 		FEATURE_WOO_HOSTED_MARKETING_TOOLS,
-		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_WOO_HOSTED_BASIC_MAILPOET,
-		FEATURE_WOO_HOSTED_BASIC_ADMIN_USERS,
-		FEATURE_50GB_STORAGE,
-	],
-	getPlanCompareFeatures: () => [
-		...getWooHostedPlanCompareFeatures(),
 		FEATURE_WOO_HOSTED_BASIC_ADMIN_USERS,
 		FEATURE_WOO_HOSTED_BASIC_STORAGE,
-		FEATURE_WOO_HOSTED_BASIC_MAILPOET,
-		FEATURE_WOO_HOSTED_BASIC_EMAIL_SUBSCRIBERS,
 	],
-	get2023PlanComparisonFeatureOverride: () => [
-		...getWooHostedPlanCompareFeatures(),
-		FEATURE_WOO_HOSTED_BASIC_ADMIN_USERS,
-		FEATURE_WOO_HOSTED_BASIC_STORAGE,
-		FEATURE_WOO_HOSTED_BASIC_MAILPOET,
-		FEATURE_WOO_HOSTED_BASIC_EMAIL_SUBSCRIBERS,
-	],
+	getPlanCompareFeatures: () => [ ...getWooHostedPlanCompareFeatures() ],
+	get2023PlanComparisonFeatureOverride: () => [ ...getWooHostedPlanCompareFeatures() ],
+	getPlanComparisonFeatureLabels: () => ( {
+		[ FEATURE_WOO_HOSTED_ACCEPT_CARD_PAYMENTS ]: i18n.translate(
+			'Online card rates start at 2.9% + $0.30/transaction'
+		),
+		[ FEATURE_WOO_HOSTED_STAFF_ACCOUNTS ]: i18n.translate( '1 staff account' ),
+		[ FEATURE_WOO_HOSTED_STORAGE_SPACE ]: i18n.translate( '50 GB storage' ),
+		[ FEATURE_WOO_HOSTED_EMAIL_CAMPAIGNS ]: i18n.translate( 'Send up to 5,000 emails/month' ),
+		[ FEATURE_WOO_HOSTED_EMAIL_SUBSCRIBER_MGMT ]: i18n.translate( 'Up to 500 email subscribers' ),
+	} ),
 	getStorageFeature: () => FEATURE_50GB_STORAGE,
 	getTitle: () => i18n.translate( 'Basic' ),
-	getPlanTagline: () =>
-		i18n.translate( 'Everything you need to set up your store and start selling your products.' ),
+	getPlanTagline: () => i18n.translate( 'Everything you need to build and run your online store.' ),
 	getTagline: () =>
 		i18n.translate(
 			'Learn more about everything included with Woo Basic and take advantage of its powerful marketplace features.'
@@ -1682,34 +1686,43 @@ const getPlanWooHostedBasicDetails = (): IncompleteWPcomPlan => ( {
 const getPlanWooHostedProDetails = (): IncompleteWPcomPlan => ( {
 	...getPlanEcommerceDetails(),
 	get2023PricingGridSignupWpcomFeatures: () => [
+		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_WOO_HOSTED_PACKAGE,
 		FEATURE_WOO_HOSTED_AI_BUILDER,
 		FEATURE_WOO_HOSTED_PAYPAL_INTEGRATON,
 		FEATURE_WOO_HOSTED_MARKETING_TOOLS,
-		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_WOO_HOSTED_PRO_MAILPOET,
 		FEATURE_WOO_HOSTED_PRO_ADMIN_USERS,
-		FEATURE_100GB_STORAGE,
+		FEATURE_WOO_HOSTED_PRO_STORAGE,
 	],
 	getPlanCompareFeatures: () => [
 		...getWooHostedPlanCompareFeatures(),
+		FEATURE_WOO_HOSTED_POS_PAYMENTS,
+		FEATURE_WOO_HOSTED_POS_SYSTEM,
 		FEATURE_WOO_HOSTED_POS_NO_MONTHLY_FEES,
-		FEATURE_WOO_HOSTED_PRO_ADMIN_USERS,
-		FEATURE_WOO_HOSTED_PRO_STORAGE,
-		FEATURE_WOO_HOSTED_PRO_MAILPOET,
-		FEATURE_WOO_HOSTED_PRO_EMAIL_SUBSCRIBERS,
 	],
 	get2023PlanComparisonFeatureOverride: () => [
 		...getWooHostedPlanCompareFeatures(),
+		FEATURE_WOO_HOSTED_POS_PAYMENTS,
+		FEATURE_WOO_HOSTED_POS_SYSTEM,
 		FEATURE_WOO_HOSTED_POS_NO_MONTHLY_FEES,
-		FEATURE_WOO_HOSTED_PRO_ADMIN_USERS,
-		FEATURE_WOO_HOSTED_PRO_STORAGE,
-		FEATURE_WOO_HOSTED_PRO_MAILPOET,
-		FEATURE_WOO_HOSTED_PRO_EMAIL_SUBSCRIBERS,
 	],
+	getPlanComparisonFeatureLabels: () => ( {
+		[ FEATURE_WOO_HOSTED_ACCEPT_CARD_PAYMENTS ]: i18n.translate(
+			'Online card rates start at 2.9% + $0.30/transaction'
+		),
+		[ FEATURE_WOO_HOSTED_POS_PAYMENTS ]: i18n.translate(
+			'In-person card rates start at 2.7% + $0.10/transaction'
+		),
+		[ FEATURE_WOO_HOSTED_STAFF_ACCOUNTS ]: i18n.translate( 'Unlimited staff accounts' ),
+		[ FEATURE_WOO_HOSTED_STORAGE_SPACE ]: i18n.translate( '100 GB storage' ),
+		[ FEATURE_WOO_HOSTED_EMAIL_CAMPAIGNS ]: i18n.translate( 'Send up to 250,000 emails/month' ),
+		[ FEATURE_WOO_HOSTED_EMAIL_SUBSCRIBER_MGMT ]: i18n.translate( 'Unlimited email subscribers' ),
+	} ),
 	getStorageFeature: () => FEATURE_100GB_STORAGE,
 	getTitle: () => i18n.translate( 'Pro' ),
-	getPlanTagline: () => i18n.translate( 'Accelerate your growth with advanced features.' ),
+	getPlanTagline: () =>
+		i18n.translate( 'For businesses selling anywhere, reaching more customers, and growing fast.' ),
 	getTagline: () =>
 		i18n.translate(
 			'Learn more about everything included with Woo Pro and take advantage of its powerful marketplace features.'

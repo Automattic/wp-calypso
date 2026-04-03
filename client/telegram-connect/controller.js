@@ -6,6 +6,17 @@ import { login } from 'calypso/lib/paths';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import TelegramConnectPage from './main';
 
+export const LEGACY_TELEGRAM_CONNECT_PATH = '/telegram-connect';
+export const TELEGRAM_CONNECT_PATH = '/me/get-apps/telegram-connect';
+
+export function redirectLegacyTelegramConnect( context ) {
+	const queryString = context.path.includes( '?' )
+		? context.path.slice( context.path.indexOf( '?' ) )
+		: '';
+
+	page.redirect( `${ TELEGRAM_CONNECT_PATH }${ queryString }` );
+}
+
 export function telegramConnect( context, next ) {
 	if ( ! config.isEnabled( 'dolly/telegram' ) ) {
 		context.primary = createElement( EmptyContent, {

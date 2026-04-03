@@ -1,9 +1,9 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useAppContext } from '../../app/context';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { SummaryButtonList } from '../../components/summary-button-list';
 import PreferencesAiMcp from '../preferences-ai-mcp';
 import PreferencesBlockedSites from '../preferences-blocked-sites';
 import PreferencesDefaults from '../preferences-defaults';
@@ -24,14 +24,14 @@ export default function Preferences() {
 				/>
 			}
 		>
-			<VStack spacing={ 4 }>
-				{ optIn && <PreferencesNewHostingDashboard /> }
-				{ isEnabled( 'mcp-settings' ) && <PreferencesAiMcp /> }
+			<SummaryButtonList>
+				{ optIn ? <PreferencesNewHostingDashboard /> : null }
+				{ isEnabled( 'mcp-settings' ) ? <PreferencesAiMcp /> : null }
 				<PreferencesLanguage />
 				<PreferencesDefaults />
 				<PreferencesPrivacy />
-				{ supports.reader && <PreferencesBlockedSites /> }
-			</VStack>
+				{ supports.reader ? <PreferencesBlockedSites /> : null }
+			</SummaryButtonList>
 		</PageLayout>
 	);
 }
