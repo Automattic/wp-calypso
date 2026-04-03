@@ -61,7 +61,6 @@ function WordPressSettingsForm( { siteSlug }: { siteSlug: string } ) {
 			notices={ notice }
 		>
 			<VersionForm
-				key={ currentVersion }
 				site={ site }
 				currentVersion={ currentVersion }
 				versionSwitch={ versionSwitch }

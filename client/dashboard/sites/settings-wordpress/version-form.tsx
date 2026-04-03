@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { NavigationBlocker } from '../../app/navigation-blocker';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
@@ -27,6 +27,13 @@ export function VersionForm( { site, currentVersion, versionSwitch }: VersionFor
 	const [ formData, setFormData ] = useState< { version: string } >( {
 		version: currentVersion ?? '',
 	} );
+
+	// Sync form state when the current version changes (e.g. after a version switch).
+	useEffect( () => {
+		if ( currentVersion ) {
+			setFormData( { version: currentVersion } );
+		}
+	}, [ currentVersion ] );
 
 	const currentWpVersion = site.options?.software_version ?? '';
 
