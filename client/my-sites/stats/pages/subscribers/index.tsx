@@ -6,7 +6,6 @@ import { useEffect } from 'react';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import DocumentHead from 'calypso/components/data/document-head';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
-import PageHeader from 'calypso/my-sites/stats/components/headers/page-header';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import StatsModuleEmails from 'calypso/my-sites/stats/features/modules/stats-emails';
@@ -136,14 +135,16 @@ const StatsSubscribersPage = ( { period, context }: StatsSubscribersPageProps ) 
 	}
 
 	return (
-		<Main fullWidthLayout>
+		<Main
+			fullWidthLayout
+			pageSubTitle={ translate( 'Simple, powerful analytics to grow your site.' ) }
+			pageTabs={
+				<StatsNavigation selectedItem="subscribers" siteId={ siteId } slug={ siteSlug } />
+			}
+		>
 			<DocumentHead title={ STATS_PRODUCT_NAME } />
 			<PageViewTracker path="/stats/subscribers/:site" title="Stats > Subscribers" />
 			<div className={ subscribersPageClasses }>
-				<PageHeader
-					titleProps={ { subtitle: translate( 'Simple, powerful analytics to grow your site.' ) } }
-				/>
-				<StatsNavigation selectedItem="subscribers" siteId={ siteId } slug={ siteSlug } />
 				{ isLoading && <StatsModulePlaceholder className="is-subscriber-page" isLoading /> }
 				{ isError && <StatsSubscribersPageError /> }
 				{ ! isLoading &&

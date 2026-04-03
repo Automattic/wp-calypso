@@ -24,6 +24,7 @@
 		"catch-js-errors": true,
 		"ciab/allow-domain-features": true,
 		"ciab/custom-branding": true,
+		"posthog-tracking": true,
 		"cookie-banner": false,
 		"rum-tracking/logstash": true,
 		"dashboard/omnibar": false,
