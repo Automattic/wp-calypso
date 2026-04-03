@@ -40,12 +40,12 @@ function WordPressSettingsForm( { siteSlug }: { siteSlug: string } ) {
 				targetVersion={ targetVersion === 'beta' ? betaVersion : latestVersion }
 			/>
 		);
-	} else if ( switchedToBeta || currentVersion === 'beta' ) {
-		// Enrolled in beta — show program notice.
-		notice = <BetaProgramNotice site={ site } wpVersion={ betaVersion } />;
 	} else if ( switchedToLatest ) {
 		// Just switched back to stable.
 		notice = <LatestVersionNotice wpVersion={ latestVersion } />;
+	} else if ( switchedToBeta || currentVersion === 'beta' ) {
+		// Enrolled in beta — show program notice.
+		notice = <BetaProgramNotice site={ site } wpVersion={ betaVersion } />;
 	}
 
 	return (
