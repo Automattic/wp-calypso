@@ -15,8 +15,6 @@ import { useBackupState } from '../backups/use-backup-state';
 import type { BackupState } from '../backups/use-backup-state';
 import type { Site } from '@automattic/api-core';
 
-// --- Explicit state machine ---
-
 export type Phase =
 	| { status: 'idle' }
 	| { status: 'submitting'; targetVersion: string }
@@ -79,11 +77,12 @@ export function useVersionSwitch( site: Site ): VersionSwitchState {
 		}
 	}, [ wasSwitching, isSwitching, site.ID, site.slug ] );
 
-	// Poll backups while switching.
+	// Poll backups while a version switch is in progress (including right after mutation fires).
+	const shouldPollBackups = phase.status === 'submitting' || isSwitching;
 	useQuery( {
 		...siteBackupsQuery( site.ID ),
-		refetchInterval: isSwitching ? 3000 : false,
-		enabled: isSwitching,
+		refetchInterval: shouldPollBackups ? 3000 : false,
+		enabled: shouldPollBackups,
 	} );
 
 	// After backup completes, poll pending version until it clears.
