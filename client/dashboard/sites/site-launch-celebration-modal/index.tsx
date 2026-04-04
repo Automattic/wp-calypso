@@ -18,32 +18,37 @@ import type { Site } from '@automattic/api-core';
 import './styles.scss';
 
 interface SiteLaunchCelebrationModalProps {
-	site: Pick< Site, 'ID' | 'slug' | 'URL' > & {
-		plan?: Pick< Required< Site >[ 'plan' ], 'is_free' | 'product_slug' >;
-	};
-	onClose: () => void;
+	site: Site;
 }
 
-export default function SiteLaunchCelebrationModal( {
-	site,
-	onClose,
-}: SiteLaunchCelebrationModalProps ) {
+export default function SiteLaunchCelebrationModal( { site }: SiteLaunchCelebrationModalProps ) {
+	const [ isOpen, setIsOpen ] = useState( false );
+	const [ clipboardCopied, setClipboardCopied ] = useState( false );
 	const { recordTracksEvent } = useAnalytics();
 	const { queries } = useAppContext();
 	const { data: domains = [] } = useQuery( {
 		...queries.domainsQuery(),
+		enabled: isOpen,
 		select: ( data ) => data.filter( ( domain ) => domain.blog_id === site.ID ),
 	} );
-	const [ clipboardCopied, setClipboardCopied ] = useState( false );
 	const copyButtonRef = useRef< HTMLButtonElement >( null );
 
-	const isPaidPlan = ! site.plan?.is_free;
-	const isBilledMonthly = site.plan?.product_slug?.includes( 'monthly' );
-	const customDomains = domains.filter( ( domain ) => domain.subscription_id !== null );
-	const hasCustomDomain = customDomains.length > 0;
-	const siteDomain = hasCustomDomain ? customDomains[ 0 ].domain : site.slug;
+	// Check if celebration modal should be shown based on URL param and site launch status
+	useEffect( () => {
+		const hasCelebrateLaunch = new URLSearchParams( window.location.search ).has(
+			'celebrateLaunch'
+		);
+		if ( site.launch_status === 'launched' && hasCelebrateLaunch ) {
+			setIsOpen( true );
+		}
+	}, [ site.launch_status ] );
 
 	useEffect( () => {
+		// Only run cleanup and analytics when modal is open
+		if ( ! isOpen ) {
+			return;
+		}
+
 		// Remove the celebrateLaunch URL param without reloading the page
 		window.history.replaceState(
 			null,
@@ -55,7 +60,17 @@ export default function SiteLaunchCelebrationModal( {
 		recordTracksEvent( 'calypso_launchpad_celebration_modal_view', {
 			product_slug: site?.plan?.product_slug,
 		} );
-	}, [ site?.plan?.product_slug, recordTracksEvent ] );
+	}, [ isOpen, site?.plan?.product_slug, recordTracksEvent ] );
+
+	if ( ! isOpen ) {
+		return null;
+	}
+
+	const isPaidPlan = ! site.plan?.is_free;
+	const isBilledMonthly = site.plan?.product_slug?.includes( 'monthly' );
+	const customDomains = domains.filter( ( domain ) => domain.subscription_id !== null );
+	const hasCustomDomain = customDomains.length > 0;
+	const siteDomain = hasCustomDomain ? customDomains[ 0 ].domain : site.slug;
 
 	const handleCopy = () => {
 		navigator.clipboard.writeText( siteDomain );
@@ -131,7 +146,7 @@ export default function SiteLaunchCelebrationModal( {
 			className="celebration-modal"
 			title={ __( 'Congrats, your site is live!' ) }
 			size="medium"
-			onRequestClose={ onClose }
+			onRequestClose={ () => setIsOpen( false ) }
 		>
 			<ConfettiAnimation />
 			<VStack spacing={ 6 }>

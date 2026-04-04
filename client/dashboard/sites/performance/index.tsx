@@ -187,7 +187,7 @@ function SitePerformance() {
 
 	return (
 		<HostingFeatureGatedWithCallout site={ site } fullPage { ...getPerformanceCalloutProps() }>
-			{ site.is_coming_soon || site.is_private ? (
+			{ site.is_coming_soon || site.is_private || site.launch_status ? (
 				<PageLayout
 					size="small"
 					header={
