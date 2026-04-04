@@ -9,6 +9,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import { Fragment } from 'react';
 import { getAccountMcpAbilities } from '../../../../me/mcp/utils';
+import { useAnalytics } from '../../../app/analytics';
 import Breadcrumbs from '../../../app/breadcrumbs';
 import { Card, CardBody, CardDivider } from '../../../components/card';
 import ComponentViewTracker from '../../../components/component-view-tracker';
@@ -36,6 +37,7 @@ interface McpAbility {
 }
 
 export default function McpWrite() {
+	const { recordTracksEvent } = useAnalytics();
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
 	const mcpAbilities = getAccountMcpAbilities( userSettings || {} );
 
@@ -55,6 +57,7 @@ export default function McpWrite() {
 	} );
 
 	const handleToolChange = ( toolId: string, enabled: boolean ) => {
+		recordTracksEvent( 'calypso_dashboard_mcp_write_tool_toggled', { tool_id: toolId, enabled } );
 		mutation.mutate( {
 			mcp_abilities: {
 				account: {

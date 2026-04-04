@@ -9,6 +9,7 @@ import {
 	getDisabledSiteIds,
 	getEnabledSiteIds,
 } from '../../../me/mcp/utils';
+import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { Card, CardBody, CardDivider } from '../../components/card';
 import ComponentViewTracker from '../../components/component-view-tracker';
@@ -67,6 +68,7 @@ function getWriteBadge( tools: Array< [ string, McpAbility ] > ) {
 }
 
 function McpComponent() {
+	const { recordTracksEvent } = useAnalytics();
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
 
 	const mcpAbilities = getAccountMcpAbilities( userSettings || {} );
@@ -107,6 +109,7 @@ function McpComponent() {
 	} );
 
 	const handleMcpToggle = ( enabled: boolean ) => {
+		recordTracksEvent( 'calypso_dashboard_mcp_account_toggled', { enabled } );
 		const accountAbilities: Record< string, boolean > = {};
 		Object.keys( mcpAbilities ).forEach( ( toolId ) => {
 			const tool = mcpAbilities[ toolId ] as McpAbility;

@@ -159,6 +159,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 	} );
 
 	const handleMcpToggle = ( enabled: boolean ) => {
+		recordTracksEvent( 'calypso_dashboard_mcp_site_toggled', { enabled, site_id: site.ID } );
 		const abilities: Record< string, boolean > = {};
 		if ( enabled ) {
 			// Auto-enable all read tools; leave write tools unset (not explicitly disabled).

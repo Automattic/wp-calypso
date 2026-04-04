@@ -1,4 +1,5 @@
 import { sitesQuery, userSettingsQuery, userSettingsMutation } from '@automattic/api-queries';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import SummaryButton from '@automattic/components/src/summary-button';
@@ -83,6 +84,7 @@ function McpComponent( { path } ) {
 	const anyToolsEnabled = hasTools && visibleTools.some( ( [ , tool ] ) => tool.enabled );
 
 	const handleToggleAll = ( enabled ) => {
+		recordTracksEvent( 'calypso_dashboard_mcp_account_toggled', { enabled } );
 		const accountAbilities = {};
 		Object.keys( mcpAbilities ).forEach( ( toolId ) => {
 			// When enabling, only turn on read tools by default — write tools must be opted in explicitly.

@@ -1,4 +1,5 @@
 import { sitesQuery, userSettingsQuery, userSettingsMutation } from '@automattic/api-queries';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
@@ -40,6 +41,7 @@ import './style.scss';
  * @param {string} props.pageViewTitle
  * @param {string} props.headerTitle
  * @param {(tool: import('@automattic/api-core').McpAbility) => boolean} props.filterTool
+ * @param {'read'|'write'} props.toolCategory
  * @param {'categories'|undefined} [props.groupingMode] When `"categories"`, tools are grouped by Dashboard MCP display category (`getDisplayCategory` + `CATEGORY_ORDER`).
  */
 export default function McpToolsSubpage( {
@@ -47,6 +49,7 @@ export default function McpToolsSubpage( {
 	pageViewTitle,
 	headerTitle,
 	filterTool,
+	toolCategory,
 	groupingMode,
 } ) {
 	const translate = useTranslate();
@@ -88,6 +91,11 @@ export default function McpToolsSubpage( {
 	);
 
 	const handleToolChange = ( toolId, enabled ) => {
+		const eventName =
+			toolCategory === 'write'
+				? 'calypso_dashboard_mcp_write_tool_toggled'
+				: 'calypso_dashboard_mcp_read_tool_toggled';
+		recordTracksEvent( eventName, { tool_id: toolId, enabled } );
 		mutation.mutate( {
 			mcp_abilities: {
 				account: {

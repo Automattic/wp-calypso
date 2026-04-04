@@ -8,6 +8,7 @@ import {
 	getDisabledSiteIds,
 	getEnabledSiteIds,
 } from '../../../../me/mcp/utils';
+import { useAnalytics } from '../../../app/analytics';
 import Breadcrumbs from '../../../app/breadcrumbs';
 import { useAppContext } from '../../../app/context';
 import { siteSettingsAIToolsRoute } from '../../../app/router/sites';
@@ -25,6 +26,7 @@ import PreferencesLoginSiteDropdown from '../../preferences-primary-site/site-dr
 import type { Site } from '@automattic/api-core';
 
 export default function McpMcpSites() {
+	const { recordTracksEvent } = useAnalytics();
 	const { queries } = useAppContext();
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
 	const sitesQueryResult = useQuery(
@@ -71,6 +73,11 @@ export default function McpMcpSites() {
 	} );
 
 	const handleSiteAdd = ( siteId: number ) => {
+		if ( mcpEnabled ) {
+			recordTracksEvent( 'calypso_dashboard_mcp_site_exception_added', { site_id: siteId } );
+		} else {
+			recordTracksEvent( 'calypso_dashboard_mcp_site_added', { site_id: siteId } );
+		}
 		mutation.mutate( {
 			mcp_abilities: {
 				sites: [
@@ -84,6 +91,7 @@ export default function McpMcpSites() {
 	};
 
 	const handleSiteRemove = ( siteId: number ) => {
+		recordTracksEvent( 'calypso_dashboard_mcp_site_removed', { site_id: siteId } );
 		mutation.mutate( {
 			mcp_abilities: {
 				sites: [ { blog_id: siteId, site_level_enabled: null } ],
