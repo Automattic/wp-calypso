@@ -1,4 +1,4 @@
-import page from '@automattic/calypso-router';
+import './styles.scss';
 import { SiteDetails } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { SiteIcon } from 'calypso/blocks/site-icon';
@@ -9,28 +9,24 @@ import { getStreamUrl } from 'calypso/reader/route';
 import { useDispatch, useSelector } from 'calypso/state';
 import { successNotice } from 'calypso/state/notices/actions';
 import { getSite } from 'calypso/state/reader/sites/selectors';
+import { UserAvatarInfo } from '../..';
 
 interface PrimaryBlogCardProps {
 	primaryBlogId: number;
-	displayName?: string;
-	closeCard: () => void;
+	user: UserAvatarInfo;
 }
 
-function PrimaryBlogCard( {
-	primaryBlogId,
-	displayName,
-	closeCard,
-}: PrimaryBlogCardProps ): JSX.Element {
+function PrimaryBlogCard( { user, primaryBlogId }: PrimaryBlogCardProps ): JSX.Element {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const site = useSelector( ( state ) => getSite( state, primaryBlogId ) ) as SiteDetails;
 	const primaryBlogUrl = site?.URL;
+	const name = user?.display_name || user?.name || '';
+	const siteUrl = getStreamUrl( site?.feed_ID, primaryBlogId );
 
 	if ( ! primaryBlogUrl ) {
 		return <QueryReaderSite siteId={ primaryBlogId } />;
 	}
-
-	const linkUrl = getStreamUrl( site?.feed_ID, primaryBlogId );
 
 	const onFollowToggle = ( following: boolean ): void => {
 		const siteName = site?.title || site?.URL;
@@ -49,41 +45,29 @@ function PrimaryBlogCard( {
 		<>
 			<QueryReaderSite siteId={ primaryBlogId } />
 			<AutoDirection>
-				<div className="gravatar-hovercard__primary-blog-card">
-					<a
-						href={ linkUrl }
-						onClick={ ( e ) => {
-							e.preventDefault();
-							closeCard();
-							page( linkUrl );
-						} }
-					>
-						<div className="gravatar-hovercard__primary-blog-card-header">
+				<div className="user-hovercard__primary-blog">
+					<a className="user-hovercard__primary-blog-link" href={ siteUrl }>
+						<div className="user-hovercard__primary-blog-header">
 							<SiteIcon iconUrl={ site?.icon?.img || site?.icon?.ico } size={ 40 } />
-							<div className="gravatar-hovercard__primary-blog-card-site-info">
-								<h5 className="gravatar-hovercard__primary-blog-card-site-title">{ site.title }</h5>
 
-								{ displayName && (
-									<p className="gravatar-hovercard__primary-blog-card-username">
-										{ translate( 'By %(displayName)s', {
-											args: {
-												displayName: displayName || '',
-											},
-										} ) }
-									</p>
-								) }
+							<div className="user-hovercard__primary-blog-site-info">
+								<h5>{ site.title }</h5>
+								{ name && <p> { translate( 'By %(name)s', { args: { name } } ) } </p> }
 							</div>
 						</div>
+
+						{ site?.description && (
+							<p className="user-hovercard__primary-blog-description">{ site?.description }</p>
+						) }
 					</a>
 
-					<p className="gravatar-hovercard__primary-blog-card-description">{ site?.description }</p>
-
 					<ReaderFollowButton
-						className="gravatar-hovercard__primary-blog-card-follow-button"
+						className="user-hovercard__primary-blog-follow-button"
 						siteUrl={ primaryBlogUrl }
-						hasButtonStyle
-						followSource="gravatar-hovercard__primary-blog-card"
+						iconSize={ 26 }
+						followSource="user-hovercard__primary-blog"
 						onFollowToggle={ onFollowToggle }
+						hasButtonStyle
 					/>
 				</div>
 			</AutoDirection>
