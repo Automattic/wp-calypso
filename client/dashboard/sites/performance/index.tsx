@@ -174,18 +174,17 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 function SitePerformance() {
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-
-	// Check if celebration modal should be shown based on URL param
-	const searchQueryParams = window.location.search;
 	const [ isCelebrationModalOpen, setIsCelebrationModalOpen ] = useState( false );
 
 	useEffect( () => {
-		const hasCelebrateLaunch = new URLSearchParams( searchQueryParams ).has( 'celebrateLaunch' );
+		const hasCelebrateLaunch = new URLSearchParams( window.location.search ).has(
+			'celebrateLaunch'
+		);
 		// Only open the modal if the param is present; closing is handled by onClose
-		if ( hasCelebrateLaunch ) {
+		if ( site.launch_status === 'launched' && hasCelebrateLaunch ) {
 			setIsCelebrationModalOpen( true );
 		}
-	}, [ searchQueryParams ] );
+	}, [ site.launch_status ] );
 
 	return (
 		<HostingFeatureGatedWithCallout site={ site } fullPage { ...getPerformanceCalloutProps() }>
