@@ -22,6 +22,7 @@ export interface UserAvatarInfo {
 	description?: string;
 	site_ID?: number;
 	login?: string; // Represents username on source website i.e. WPCOM, Jetpack site, etc.
+	profile_URL?: string;
 	wpcom_id?: number;
 	wpcom_login?: string;
 }

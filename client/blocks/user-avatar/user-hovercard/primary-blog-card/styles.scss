@@ -42,10 +42,10 @@
 		}
 
 		p {
-			color: $gray-700;
 			font-size: 12px;
-			line-height: 1.4;
 			font-weight: normal;
+			line-height: 1.4;
+			color: $gray-700;
 			margin: 0;
 			overflow: hidden;
 			text-overflow: ellipsis;
@@ -58,6 +58,7 @@
 
 	.user-hovercard__primary-blog-description {
 		font-size: 13px;
+		font-weight: normal;
 		line-height: 1.4;
 		color: var( --color-text );
 		overflow: hidden;
@@ -74,5 +75,14 @@
 		justify-content: center;
 		height: 44px;
 		margin-top: 12px;
+	}
+
+	// This large selector is needed to override the specific styles applied to the follow button in the ReaderPostCard component.
+	.user-hovercard__primary-blog button.user-hovercard__primary-blog-follow-button {
+		&:hover span.follow-button__label,
+		span.follow-button__label {
+			color: #fff;
+			margin: 0;
+		}
 	}
 }

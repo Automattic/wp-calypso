@@ -13,7 +13,25 @@ interface UserHovercardProps {
 
 export default function UserHovercard( props: UserHovercardProps ): JSX.Element | null {
 	const { user } = props;
-	const { isLoading, data, error } = useUserHovercardQuery( user.wpcom_id || user.wpcom_login );
+	const wpcomIdOrLogin = user.wpcom_id || user.wpcom_login;
+	const { isLoading, data, error } = useUserHovercardQuery(
+		wpcomIdOrLogin || user.login,
+		wpcomIdOrLogin ? undefined : getGravatarEmailHash() // Send email hash only if wpcomIdOrLogin is not available, as it's an alternative way to fetch data from WPCOM.
+	);
+
+	function getGravatarEmailHash(): string | undefined {
+		if ( wpcomIdOrLogin ) {
+			return;
+		}
+
+		const profileURL = user.profile_URL;
+		if ( ! profileURL ) {
+			return;
+		}
+
+		const emailHashMatch = profileURL.match( /gravatar\.com\/([a-f0-9]{32})/ );
+		return emailHashMatch?.[ 1 ];
+	}
 
 	if ( isLoading ) {
 		return (

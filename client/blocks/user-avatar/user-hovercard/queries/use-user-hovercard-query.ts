@@ -1,4 +1,5 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
+import { addQueryArgs } from '@wordpress/url';
 import wpcom from 'calypso/lib/wp';
 
 export interface UserHovercardResponse {
@@ -25,17 +26,22 @@ export interface UserHovercardResponse {
 }
 
 export const useUserHovercardQuery = (
-	userIdOrLogin?: string | number
+	userIdOrLogin?: string | number,
+	md5Hash?: string
 ): UseQueryResult< UserHovercardResponse, Error > => {
 	return useQuery( {
-		queryKey: [ `reader--user-${ userIdOrLogin }-hovercard` ],
+		queryKey: [ 'reader-user-hovercard', userIdOrLogin, md5Hash ],
 		queryFn: () =>
 			wpcom.req.get( {
-				path: `/users/${ userIdOrLogin }/hovercard`,
+				path: addQueryArgs( `/users/${ userIdOrLogin }/hovercard`, {
+					md5_hash: md5Hash,
+				} ),
 				apiNamespace: 'wpcom/v2',
 			} ),
 		enabled: !! userIdOrLogin,
 		staleTime: 30 * 60000, // 30 minutes
+		retry: false,
+		retryOnMount: false,
 		refetchOnMount: false,
 		refetchOnWindowFocus: false,
 	} );
