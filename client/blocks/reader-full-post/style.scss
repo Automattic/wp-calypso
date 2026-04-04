@@ -102,12 +102,6 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 .reader-full-post__header-meta-avatars {
 	flex-shrink: 0;
 
-	.gravatar {
-		border-radius: 50%;
-		width: 40px;
-		height: 40px;
-	}
-
 	.gridicons-globe {
 		fill: var( --color-neutral-70 );
 	}

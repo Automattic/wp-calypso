@@ -9,7 +9,7 @@ interface UserHovercardHeaderProps {
 
 function UserHovercardHeader( { user }: UserHovercardHeaderProps ): JSX.Element {
 	const name: string = user.display_name || user.name || '';
-	const profilePageUrl: string = user.wpcom_login ? `/reader/users/${ user.wpcom_login }` : '';
+	const profilePageUrl = user.wpcom_login ? `/reader/users/${ user.wpcom_login }` : undefined;
 	const avatarUrl = getProcessedAvatarUrl( user.avatar_URL );
 
 	function getProcessedAvatarUrl( avatarUrl?: string ): string | null {

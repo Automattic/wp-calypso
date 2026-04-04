@@ -11,7 +11,7 @@ type UserAvatarProps = {
 	user?: UserAvatarInfo | null;
 	size?: number;
 	hideHovercard?: boolean;
-	onClick?: () => void; // Click handler to be executed when avatar is clicked.
+	onClose?: () => void; // Click handler to be executed when avatar is clicked.
 };
 
 export interface UserAvatarInfo {
@@ -31,7 +31,6 @@ export default function UserAvatar( {
 	user,
 	size = 32,
 	hideHovercard = false,
-	onClick = noop,
 }: UserAvatarProps ) {
 	const classes = clsx( 'user-avatar', className );
 	const wpcomProfileUrl = user?.wpcom_login ? getUserProfileUrl( user?.wpcom_login ) : null;
@@ -49,7 +48,7 @@ export default function UserAvatar( {
 	);
 
 	return (
-		<div className={ classes } onClick={ onClick } aria-hidden="true">
+		<div className={ classes } onClick={ noop } aria-hidden="true">
 			{ wpcomProfileUrl ? <a href={ wpcomProfileUrl }> { avatarImg }</a> : avatarImg }
 			{ user && ! hideHovercard && <UserHovercard user={ user } size={ size } /> }
 		</div>
