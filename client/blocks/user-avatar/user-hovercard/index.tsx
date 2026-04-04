@@ -35,7 +35,7 @@ export default function UserHovercard( props: UserHovercardProps ): JSX.Element 
 		<div className="user-hovercard">
 			<UserHovercardHeader user={ data.user } />
 			<PrimaryBlogCard user={ data.user } primaryBlog={ data.primary_blog } />
-			{ data.recommended_blogs_count && <RecommendedBlogs userLogin={ userLogin } /> }
+			{ data.recommended_blogs_count ? <RecommendedBlogs userLogin={ userLogin } /> : null }
 		</div>
 	);
 }

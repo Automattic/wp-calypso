@@ -42,9 +42,10 @@
 		}
 
 		p {
+			color: $gray-700;
 			font-size: 12px;
 			line-height: 1.4;
-			color: $gray-700;
+			font-weight: normal;
 			margin: 0;
 			overflow: hidden;
 			text-overflow: ellipsis;
