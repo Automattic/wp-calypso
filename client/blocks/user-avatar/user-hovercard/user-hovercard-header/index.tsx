@@ -10,7 +10,7 @@ interface UserHovercardHeaderProps {
 
 function UserHovercardHeader( { user }: UserHovercardHeaderProps ): JSX.Element {
 	const name: string = user.display_name || user.name || '';
-	const profilePageUrl = user.wpcom_login ? `/reader/users/${ user.wpcom_login }` : undefined;
+	const profilePageUrl = user.login ? `/reader/users/${ user.login }` : undefined; // Intentionally navigation only to the Reader Profile page. This keep the experience consistent.
 	const avatarUrl = getProcessedAvatarUrl( user.avatar_URL );
 
 	function getProcessedAvatarUrl( avatarUrl?: string ): string | null {

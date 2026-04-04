@@ -26,20 +26,18 @@ export interface UserHovercardResponse {
 }
 
 export const useUserHovercardQuery = (
-	userIdOrLogin?: string | number,
-	md5Hash?: string
+	userIdOrLogin?: string | number
 ): UseQueryResult< UserHovercardResponse, Error > => {
 	return useQuery( {
-		queryKey: [ 'reader-user-hovercard', userIdOrLogin, md5Hash ],
+		queryKey: [ 'reader-user-hovercard', userIdOrLogin ],
 		queryFn: () =>
 			wpcom.req.get( {
-				path: addQueryArgs( `/users/${ userIdOrLogin }/hovercard`, {
-					md5_hash: md5Hash,
-				} ),
+				path: addQueryArgs( `/users/${ userIdOrLogin }/hovercard` ),
 				apiNamespace: 'wpcom/v2',
 			} ),
 		enabled: !! userIdOrLogin,
-		staleTime: 30 * 60000, // 30 minutes
+		staleTime: 0,
+		// staleTime: 30 * 60000, // 30 minutes
 		retry: false,
 		retryOnMount: false,
 		refetchOnMount: false,

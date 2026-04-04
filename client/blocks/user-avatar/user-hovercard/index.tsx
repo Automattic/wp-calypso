@@ -2,6 +2,7 @@ import './styles.scss';
 import { Spinner } from '@wordpress/components';
 import { UserAvatarInfo } from '..';
 import PrimaryBlogCard from './primary-blog-card';
+import { useGravatarProfileV3Query } from './queries/use-gravatar-profile-v3-query';
 import { useUserHovercardQuery } from './queries/use-user-hovercard-query';
 import RecommendedBlogs from './recommended-blogs';
 import UserHovercardHeader from './user-hovercard-header';
@@ -12,28 +13,19 @@ interface UserHovercardProps {
 }
 
 export default function UserHovercard( props: UserHovercardProps ): JSX.Element | null {
-	const { user } = props;
-	const wpcomIdOrLogin = user.wpcom_id || user.wpcom_login;
-	const { isLoading, data, error } = useUserHovercardQuery(
-		wpcomIdOrLogin || user.login,
-		wpcomIdOrLogin ? undefined : getGravatarEmailHash() // Send email hash only if wpcomIdOrLogin is not available, as it's an alternative way to fetch data from WPCOM.
+	const { user: userProp } = props;
+	const wpcomIdOrLogin = userProp.wpcom_id || userProp.wpcom_login;
+
+	const { isLoading: isGravatarLoading, data: gravatarUser } = useGravatarProfileV3Query(
+		[ userProp.profile_URL, userProp.avatar_URL ],
+		! wpcomIdOrLogin
 	);
 
-	function getGravatarEmailHash(): string | undefined {
-		if ( wpcomIdOrLogin ) {
-			return;
-		}
+	const { isLoading: isWpcomLoading, data: wpcomData } = useUserHovercardQuery(
+		wpcomIdOrLogin || gravatarUser?.login
+	);
 
-		const profileURL = user.profile_URL;
-		if ( ! profileURL ) {
-			return;
-		}
-
-		const emailHashMatch = profileURL.match( /gravatar\.com\/([a-f0-9]{32})/ );
-		return emailHashMatch?.[ 1 ];
-	}
-
-	if ( isLoading ) {
+	if ( isWpcomLoading || isGravatarLoading ) {
 		return (
 			<div className="user-hovercard">
 				<div className="wp-spinner-wrapper" style={ { marginTop: '0' } }>
@@ -43,17 +35,20 @@ export default function UserHovercard( props: UserHovercardProps ): JSX.Element 
 		);
 	}
 
-	if ( error || ! data?.user ) {
+	const user = wpcomData?.user || gravatarUser || null;
+	if ( ! user ) {
 		return null;
 	}
 
-	const userLogin = data.user.login;
-
 	return (
 		<div className="user-hovercard">
-			<UserHovercardHeader user={ data.user } />
-			<PrimaryBlogCard user={ data.user } primaryBlog={ data.primary_blog } />
-			{ data.recommended_blogs_count ? <RecommendedBlogs userLogin={ userLogin } /> : null }
+			<UserHovercardHeader user={ user } />
+
+			{ wpcomData?.primary_blog ? (
+				<PrimaryBlogCard user={ user } primaryBlog={ wpcomData.primary_blog } />
+			) : null }
+
+			{ wpcomData?.recommended_blogs_count ? <RecommendedBlogs userLogin={ user.login } /> : null }
 		</div>
 	);
 }
