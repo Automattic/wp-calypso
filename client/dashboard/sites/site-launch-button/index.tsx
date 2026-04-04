@@ -111,7 +111,8 @@ export function SiteLaunchButton( {
 
 	const handleGatedLaunchClick = () => {
 		handleTracksEvent();
-		window.location.assign( getLaunchUrl() );
+		const url = backTo ? addQueryArgs( getLaunchUrl(), { back_to: backTo } ) : getLaunchUrl();
+		window.location.assign( url );
 	};
 
 	const commonProps = {
