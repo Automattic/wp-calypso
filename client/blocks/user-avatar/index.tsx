@@ -42,6 +42,7 @@ export default function UserAvatar( {
 			alt={ name }
 			width={ size }
 			height={ size }
+			style={ { maxWidth: size, height: size } } // Override global styles. Always render avatar at the specified size.
 		/>
 	) : (
 		<UserAvatarDefaultIcon iconSize={ size } />
