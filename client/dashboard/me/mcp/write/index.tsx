@@ -57,14 +57,23 @@ export default function McpWrite() {
 	} );
 
 	const handleToolChange = ( toolId: string, enabled: boolean ) => {
-		recordTracksEvent( 'calypso_dashboard_mcp_write_tool_toggled', { tool_id: toolId, enabled } );
-		mutation.mutate( {
-			mcp_abilities: {
-				account: {
-					[ toolId ]: enabled,
+		mutation.mutate(
+			{
+				mcp_abilities: {
+					account: {
+						[ toolId ]: enabled,
+					},
 				},
-			},
-		} as any );
+			} as any,
+			{
+				onSuccess: () => {
+					recordTracksEvent( 'calypso_dashboard_mcp_write_tool_toggled', {
+						tool_id: toolId,
+						enabled,
+					} );
+				},
+			}
+		);
 	};
 
 	const handleEnableAll = ( categoryTools: Array< [ string, McpAbility ] >, enabled: boolean ) => {

@@ -109,7 +109,6 @@ function McpComponent() {
 	} );
 
 	const handleMcpToggle = ( enabled: boolean ) => {
-		recordTracksEvent( 'calypso_dashboard_mcp_account_toggled', { enabled } );
 		const accountAbilities: Record< string, boolean > = {};
 		Object.keys( mcpAbilities ).forEach( ( toolId ) => {
 			const tool = mcpAbilities[ toolId ] as McpAbility;
@@ -127,12 +126,19 @@ function McpComponent() {
 			...enabledSiteIds.map( ( id ) => ( { blog_id: id, site_level_enabled: false } ) ),
 		];
 
-		mutation.mutate( {
-			mcp_abilities: {
-				account: accountAbilities,
-				...( sitesToReset.length > 0 && { sites: sitesToReset } ),
-			},
-		} as any );
+		mutation.mutate(
+			{
+				mcp_abilities: {
+					account: accountAbilities,
+					...( sitesToReset.length > 0 && { sites: sitesToReset } ),
+				},
+			} as any,
+			{
+				onSuccess: () => {
+					recordTracksEvent( 'calypso_dashboard_mcp_account_toggled', { enabled } );
+				},
+			}
+		);
 	};
 
 	if ( ! config.isEnabled( 'mcp-settings' ) ) {

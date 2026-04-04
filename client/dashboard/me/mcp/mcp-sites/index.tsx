@@ -73,30 +73,41 @@ export default function McpMcpSites() {
 	} );
 
 	const handleSiteAdd = ( siteId: number ) => {
-		if ( mcpEnabled ) {
-			recordTracksEvent( 'calypso_dashboard_mcp_site_exception_added', { site_id: siteId } );
-		} else {
-			recordTracksEvent( 'calypso_dashboard_mcp_site_added', { site_id: siteId } );
-		}
-		mutation.mutate( {
-			mcp_abilities: {
-				sites: [
-					{
-						blog_id: siteId,
-						site_level_enabled: mcpEnabled ? false : true,
-					},
-				],
-			},
-		} as any );
+		const eventName = mcpEnabled
+			? 'calypso_dashboard_mcp_site_exception_added'
+			: 'calypso_dashboard_mcp_site_added';
+		mutation.mutate(
+			{
+				mcp_abilities: {
+					sites: [
+						{
+							blog_id: siteId,
+							site_level_enabled: mcpEnabled ? false : true,
+						},
+					],
+				},
+			} as any,
+			{
+				onSuccess: () => {
+					recordTracksEvent( eventName, { site_id: siteId } );
+				},
+			}
+		);
 	};
 
 	const handleSiteRemove = ( siteId: number ) => {
-		recordTracksEvent( 'calypso_dashboard_mcp_site_removed', { site_id: siteId } );
-		mutation.mutate( {
-			mcp_abilities: {
-				sites: [ { blog_id: siteId, site_level_enabled: null } ],
-			},
-		} as any );
+		mutation.mutate(
+			{
+				mcp_abilities: {
+					sites: [ { blog_id: siteId, site_level_enabled: null } ],
+				},
+			} as any,
+			{
+				onSuccess: () => {
+					recordTracksEvent( 'calypso_dashboard_mcp_site_removed', { site_id: siteId } );
+				},
+			}
+		);
 	};
 
 	const handleSitePickerSelect = ( siteIdStr: string | null | undefined ) => {

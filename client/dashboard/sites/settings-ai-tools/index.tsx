@@ -159,7 +159,6 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 	} );
 
 	const handleMcpToggle = ( enabled: boolean ) => {
-		recordTracksEvent( 'calypso_dashboard_mcp_site_toggled', { enabled, site_id: site.ID } );
 		const abilities: Record< string, boolean > = {};
 		if ( enabled ) {
 			// Auto-enable all read tools; leave write tools unset (not explicitly disabled).
@@ -168,17 +167,27 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 			} );
 		}
 		// When disabling, send abilities: {} to clear all site-level tool access.
-		mcpMutation.mutate( {
-			mcp_abilities: {
-				sites: [
-					{
-						blog_id: site.ID,
-						site_level_enabled: enabled,
-						abilities,
-					},
-				],
+		mcpMutation.mutate(
+			{
+				mcp_abilities: {
+					sites: [
+						{
+							blog_id: site.ID,
+							site_level_enabled: enabled,
+							abilities,
+						},
+					],
+				},
 			},
-		} );
+			{
+				onSuccess: () => {
+					recordTracksEvent( 'calypso_dashboard_mcp_site_toggled', {
+						enabled,
+						site_id: site.ID,
+					} );
+				},
+			}
+		);
 	};
 
 	const mutation = useMutation( {
