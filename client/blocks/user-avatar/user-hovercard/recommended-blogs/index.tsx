@@ -1,5 +1,5 @@
 import './styles.scss';
-import page from '@automattic/calypso-router';
+import { Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { shuffle } from 'lodash';
 import { useMemo } from 'react';
@@ -7,31 +7,19 @@ import { useFeedRecommendationsQuery } from 'calypso/data/reader/use-feed-recomm
 import { RecommendedFeedsList } from 'calypso/reader/recommended-feeds-list';
 
 interface RecommendedBlogsProps {
-	userLogin?: string;
-	onCloseCard: () => void;
+	userLogin: string;
 }
 
-function RecommendedBlogs( { userLogin, onCloseCard }: RecommendedBlogsProps ): JSX.Element | null {
+function RecommendedBlogs( { userLogin }: RecommendedBlogsProps ): JSX.Element | null {
 	const translate = useTranslate();
-	const { data: recommendedBlogs } = useFeedRecommendationsQuery( userLogin, {
-		enabled: !! userLogin,
-	} );
-	const recommendedBlogsPath = `/reader/users/${ userLogin }/recommended-blogs`;
-	const shouldShowRecommendedBlogs = recommendedBlogs?.length && userLogin;
+	const { isLoading, data: recommendedBlogs } = useFeedRecommendationsQuery( userLogin );
 	const shuffledBlogs = useMemo(
-		() => shuffle( recommendedBlogs ).slice( 0, 3 ),
+		() =>
+			shuffle( recommendedBlogs )
+				.filter( ( blog ) => blog.feedUrl )
+				.slice( 0, 3 ),
 		[ recommendedBlogs ]
 	);
-
-	const handleViewAllClick = ( e: React.MouseEvent< HTMLAnchorElement > ): void => {
-		e.preventDefault();
-		onCloseCard();
-		page( recommendedBlogsPath );
-	};
-
-	if ( ! shouldShowRecommendedBlogs ) {
-		return null;
-	}
 
 	return (
 		<div className="user-hovercard__recommended-blogs">
@@ -41,17 +29,23 @@ function RecommendedBlogs( { userLogin, onCloseCard }: RecommendedBlogsProps ): 
 				</h5>
 				<a
 					className="user-hovercard__recommended-blogs-view-all"
-					href={ recommendedBlogsPath }
-					onClick={ handleViewAllClick }
+					href={ `/reader/users/${ userLogin }/recommended-blogs` }
 				>
 					{ translate( 'View all' ) }
 				</a>
 			</div>
-			<RecommendedFeedsList
-				feeds={ shuffledBlogs }
-				followSource="user-hovercard__recommended-feeds-list"
-				variant="compact"
-			/>
+
+			{ isLoading ? (
+				<div className="wp-spinner-wrapper" style={ { marginTop: '10px' } }>
+					<Spinner />
+				</div>
+			) : (
+				<RecommendedFeedsList
+					feeds={ shuffledBlogs }
+					followSource="user-hovercard__recommended-feeds-list"
+					variant="compact"
+				/>
+			) }
 		</div>
 	);
 }

@@ -1,35 +1,36 @@
 import './styles.scss';
-import { SiteDetails } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import AutoDirection from 'calypso/components/auto-direction';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { getStreamUrl } from 'calypso/reader/route';
-import { useDispatch, useSelector } from 'calypso/state';
+import { useDispatch } from 'calypso/state';
 import { successNotice } from 'calypso/state/notices/actions';
-import { getSite } from 'calypso/state/reader/sites/selectors';
-import { UserAvatarInfo } from '../..';
+import { UserHovercardResponse } from '../queries/use-user-hovercard-query';
 
 interface PrimaryBlogCardProps {
-	primaryBlogId: number;
-	user: UserAvatarInfo;
+	user: UserHovercardResponse[ 'user' ];
+	primaryBlog: UserHovercardResponse[ 'primary_blog' ];
 }
 
-function PrimaryBlogCard( { user, primaryBlogId }: PrimaryBlogCardProps ): JSX.Element {
+function PrimaryBlogCard( { user, primaryBlog }: PrimaryBlogCardProps ): JSX.Element | null {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const site = useSelector( ( state ) => getSite( state, primaryBlogId ) ) as SiteDetails;
-	const primaryBlogUrl = site?.URL;
-	const name = user?.display_name || user?.name || '';
-	const siteUrl = getStreamUrl( site?.feed_ID, primaryBlogId );
 
-	if ( ! primaryBlogUrl ) {
-		return <QueryReaderSite siteId={ primaryBlogId } />;
+	if ( ! primaryBlog ) {
+		return null;
 	}
 
+	const name =
+		user.display_name ||
+		( user.first_name && user.last_name ? `${ user.first_name } ${ user.last_name }` : '' ) ||
+		user.nice_name ||
+		'';
+	const siteUrl = getStreamUrl( primaryBlog.feed_ID, primaryBlog.ID );
+
 	const onFollowToggle = ( following: boolean ): void => {
-		const siteName = site?.title || site?.URL;
+		const siteName = primaryBlog.title || primaryBlog.URL;
 
 		dispatch(
 			successNotice(
@@ -43,27 +44,29 @@ function PrimaryBlogCard( { user, primaryBlogId }: PrimaryBlogCardProps ): JSX.E
 
 	return (
 		<>
-			<QueryReaderSite siteId={ primaryBlogId } />
+			<QueryReaderSite siteId={ primaryBlog.ID } />
 			<AutoDirection>
 				<div className="user-hovercard__primary-blog">
 					<a className="user-hovercard__primary-blog-link" href={ siteUrl }>
 						<div className="user-hovercard__primary-blog-header">
-							<SiteIcon iconUrl={ site?.icon?.img || site?.icon?.ico } size={ 40 } />
+							<SiteIcon iconUrl={ primaryBlog.avatar_URL } size={ 40 } />
 
 							<div className="user-hovercard__primary-blog-site-info">
-								<h5>{ site.title }</h5>
+								<h5>{ primaryBlog.title }</h5>
 								{ name && <p> { translate( 'By %(name)s', { args: { name } } ) } </p> }
 							</div>
 						</div>
 
-						{ site?.description && (
-							<p className="user-hovercard__primary-blog-description">{ site?.description }</p>
+						{ primaryBlog.description && (
+							<p className="user-hovercard__primary-blog-description">
+								{ primaryBlog.description }
+							</p>
 						) }
 					</a>
 
 					<ReaderFollowButton
 						className="user-hovercard__primary-blog-follow-button"
-						siteUrl={ primaryBlogUrl }
+						siteUrl={ primaryBlog.URL }
 						iconSize={ 26 }
 						followSource="user-hovercard__primary-blog"
 						onFollowToggle={ onFollowToggle }

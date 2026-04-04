@@ -1,11 +1,8 @@
 import './styles.scss';
-import { useEffect } from 'react';
-import { useSelector, useDispatch } from 'calypso/state';
-import { requestUser } from 'calypso/state/reader/users/actions';
-import getReaderUser from 'calypso/state/selectors/get-reader-user';
-import { AppState } from 'calypso/types';
+import { Spinner } from '@wordpress/components';
 import { UserAvatarInfo } from '..';
 import PrimaryBlogCard from './primary-blog-card';
+import { useUserHovercardQuery } from './queries/use-user-hovercard-query';
 import RecommendedBlogs from './recommended-blogs';
 import UserHovercardHeader from './user-hovercard-header';
 
@@ -14,30 +11,31 @@ interface UserHovercardProps {
 	size?: number;
 }
 
-export default function UserHovercard( props: UserHovercardProps ): JSX.Element {
-	const dispatch = useDispatch();
+export default function UserHovercard( props: UserHovercardProps ): JSX.Element | null {
 	const { user } = props;
-	// For some reason there are places where the user object passes in primary blog of -1. Lets
-	// find the read one with this selector.
-	const readerUserData = useSelector( ( state: AppState ) =>
-		getReaderUser( state, user.wpcom_id ?? 0, true )
-	);
-	const primaryBlogId = readerUserData?.primary_blog || user?.site_ID || 0;
-	const userLogin = user.wpcom_login || readerUserData?.user_login;
+	const { isLoading, data, error } = useUserHovercardQuery( user.wpcom_id || user.wpcom_login );
 
-	useEffect( () => {
-		if ( ! readerUserData && ! ( primaryBlogId > 0 ) && user?.wpcom_id ) {
-			dispatch( requestUser( user.wpcom_id, true ) );
-		}
-	}, [ user?.wpcom_id, dispatch, readerUserData, primaryBlogId ] );
+	if ( isLoading ) {
+		return (
+			<div className="user-hovercard">
+				<div className="wp-spinner-wrapper" style={ { marginTop: '0' } }>
+					<Spinner />
+				</div>
+			</div>
+		);
+	}
 
-	function onCloseCard() {}
+	if ( error || ! data?.user ) {
+		return null;
+	}
+
+	const userLogin = data.user.login;
 
 	return (
 		<div className="user-hovercard">
-			<UserHovercardHeader user={ user } />
-			{ primaryBlogId > 0 && <PrimaryBlogCard user={ user } primaryBlogId={ primaryBlogId } /> }
-			{ userLogin && <RecommendedBlogs userLogin={ userLogin } onCloseCard={ onCloseCard } /> }
+			<UserHovercardHeader user={ data.user } />
+			<PrimaryBlogCard user={ data.user } primaryBlog={ data.primary_blog } />
+			{ data.recommended_blogs_count && <RecommendedBlogs userLogin={ userLogin } /> }
 		</div>
 	);
 }

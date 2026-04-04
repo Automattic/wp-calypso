@@ -1,5 +1,6 @@
 import './styles.scss';
 import AutoDirection from 'calypso/components/auto-direction';
+import PreloadedImage from 'calypso/components/preloaded-image';
 import UserAvatarDefaultIcon from 'calypso/reader/components/icons/user-avatar-default-icon';
 import { UserAvatarInfo } from '../..';
 
@@ -34,7 +35,13 @@ function UserHovercardHeader( { user }: UserHovercardHeaderProps ): JSX.Element 
 				<div className="user-hovercard__avatar">
 					<a href={ profilePageUrl }>
 						{ avatarUrl ? (
-							<img src={ avatarUrl } alt={ name } width={ 102 } height={ 102 } />
+							<PreloadedImage
+								src={ avatarUrl }
+								alt={ name }
+								width={ 102 }
+								height={ 102 }
+								borderRadius="50%"
+							/>
 						) : (
 							<UserAvatarDefaultIcon iconSize={ 102 } />
 						) }

@@ -35,7 +35,7 @@ export const useUserHovercardQuery = (
 				apiNamespace: 'wpcom/v2',
 			} ),
 		enabled: !! userIdOrLogin,
-		staleTime: 3600000, // 1 hour
+		staleTime: 30 * 60000, // 30 minutes
 		refetchOnMount: false,
 		refetchOnWindowFocus: false,
 	} );
