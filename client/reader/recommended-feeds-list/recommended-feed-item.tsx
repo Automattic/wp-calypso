@@ -75,6 +75,7 @@ export function RecommendedFeedItem( {
 					feedId={ feedId ? Number( feedId ) : undefined }
 					siteId={ siteId ? Number( siteId ) : undefined }
 					siteUrl={ feedUrl }
+					iconSize={ 26 }
 					followSource={ followSource }
 					isButtonOnly={ isCompactView }
 					onFollowToggle={ onFollowToggle }

@@ -148,7 +148,7 @@ class PostCommentForm extends Component {
 	}
 
 	render() {
-		const { post, error, errorType, translate } = this.props;
+		const { post, error, errorType, translate, currentUser } = this.props;
 
 		// Don't display the form if comments are closed
 		if ( post && post.discussion && post.discussion.comments_open === false ) {
@@ -173,7 +173,13 @@ class PostCommentForm extends Component {
 			<form className="comments__form">
 				<ProtectFormGuard isChanged={ this.hasCommentText() } />
 				<FormFieldset>
-					<UserAvatar user={ this.props.currentUser } />
+					<UserAvatar
+						user={ {
+							avatar_URL: currentUser?.avatar_URL,
+							wpcom_login: currentUser?.username,
+						} }
+						hideHovercard
+					/>
 					<AutoresizingFormTextarea
 						value={ this.getCommentText() }
 						placeholder={ translate( 'Add a comment…' ) }
