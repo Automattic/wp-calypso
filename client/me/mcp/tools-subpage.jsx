@@ -95,14 +95,20 @@ export default function McpToolsSubpage( {
 			toolCategory === 'write'
 				? 'calypso_dashboard_mcp_write_tool_toggled'
 				: 'calypso_dashboard_mcp_read_tool_toggled';
-		recordTracksEvent( eventName, { tool_id: toolId, enabled } );
-		mutation.mutate( {
-			mcp_abilities: {
-				account: {
-					[ toolId ]: enabled,
+		mutation.mutate(
+			{
+				mcp_abilities: {
+					account: {
+						[ toolId ]: enabled,
+					},
 				},
 			},
-		} );
+			{
+				onSuccess: () => {
+					recordTracksEvent( eventName, { tool_id: toolId, enabled } );
+				},
+			}
+		);
 	};
 
 	/**
@@ -114,11 +120,24 @@ export default function McpToolsSubpage( {
 			return;
 		}
 		const account = Object.fromEntries( groupTools.map( ( [ toolId ] ) => [ toolId, enabled ] ) );
-		mutation.mutate( {
-			mcp_abilities: {
-				account,
+		const eventName =
+			toolCategory === 'write'
+				? 'calypso_dashboard_mcp_write_tool_toggled'
+				: 'calypso_dashboard_mcp_read_tool_toggled';
+		mutation.mutate(
+			{
+				mcp_abilities: {
+					account,
+				},
 			},
-		} );
+			{
+				onSuccess: () => {
+					groupTools.forEach( ( [ toolId ] ) => {
+						recordTracksEvent( eventName, { tool_id: toolId, enabled } );
+					} );
+				},
+			}
+		);
 	};
 
 	if ( userSettingsError ) {

@@ -81,11 +81,23 @@ export default function McpWrite() {
 		categoryTools.forEach( ( [ toolId ] ) => {
 			accountAbilities[ toolId ] = enabled;
 		} );
-		mutation.mutate( {
-			mcp_abilities: {
-				account: accountAbilities,
-			},
-		} as any );
+		mutation.mutate(
+			{
+				mcp_abilities: {
+					account: accountAbilities,
+				},
+			} as any,
+			{
+				onSuccess: () => {
+					categoryTools.forEach( ( [ toolId ] ) => {
+						recordTracksEvent( 'calypso_dashboard_mcp_write_tool_toggled', {
+							tool_id: toolId,
+							enabled,
+						} );
+					} );
+				},
+			}
+		);
 	};
 
 	// Group tools by display category

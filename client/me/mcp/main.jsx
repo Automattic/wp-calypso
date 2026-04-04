@@ -84,18 +84,24 @@ function McpComponent( { path } ) {
 	const anyToolsEnabled = hasTools && visibleTools.some( ( [ , tool ] ) => tool.enabled );
 
 	const handleToggleAll = ( enabled ) => {
-		recordTracksEvent( 'calypso_dashboard_mcp_account_toggled', { enabled } );
 		const accountAbilities = {};
 		Object.keys( mcpAbilities ).forEach( ( toolId ) => {
 			// When enabling, only turn on read tools by default — write tools must be opted in explicitly.
 			accountAbilities[ toolId ] = enabled ? isReadTool( mcpAbilities[ toolId ] ) : false;
 		} );
 
-		mutation.mutate( {
-			mcp_abilities: {
-				account: accountAbilities,
+		mutation.mutate(
+			{
+				mcp_abilities: {
+					account: accountAbilities,
+				},
 			},
-		} );
+			{
+				onSuccess: () => {
+					recordTracksEvent( 'calypso_dashboard_mcp_account_toggled', { enabled } );
+				},
+			}
+		);
 	};
 
 	const disabledSiteCount = getDisabledSiteIds( userSettings || {} ).length;
