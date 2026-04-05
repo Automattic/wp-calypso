@@ -14,8 +14,8 @@ import MenuDivider from '../../components/menu-divider';
 import { hasStagingSite } from '../../utils/site-staging-site';
 import { isSiteMigrationInProgress } from '../../utils/site-status';
 import { canManageSite, canSwitchEnvironment } from '../features';
-import SiteMenu from '../site-menu';
 import SiteLaunchCelebrationModal from '../site-launch-celebration-modal';
+import SiteMenu from '../site-menu';
 import EnvironmentSwitcher from './environment-switcher';
 import type { SiteSwitcherProps } from '../site-switcher/types';
 

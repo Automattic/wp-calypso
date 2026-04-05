@@ -14,6 +14,7 @@ const createMockSite = ( options: Partial< Site > = {} ): Site =>
 		ID: 1,
 		slug: 'test-site.wordpress.com',
 		URL: 'https://test-site.wordpress.com',
+		launch_status: 'launched' as const,
 		plan: {
 			is_free: false,
 			product_slug: 'business-monthly',
@@ -35,6 +36,13 @@ const mockDomainsApi = ( domains: DomainSummary[] = [] ) => {
 		.reply( 200, { domains } );
 };
 
+const setupCelebrateLaunchUrl = () => {
+	// Set the URL to include the celebrateLaunch param so the modal opens
+	const url = new URL( window.location.href );
+	url.searchParams.set( 'celebrateLaunch', 'true' );
+	window.history.pushState( {}, '', url.toString() );
+};
+
 describe( '<SiteLaunchCelebrationModal>', () => {
 	beforeEach( () => {
 		mockDomainsApi( [] );
@@ -45,18 +53,37 @@ describe( '<SiteLaunchCelebrationModal>', () => {
 	} );
 
 	describe( 'Modal Display', () => {
-		test( 'renders modal with proper structure', async () => {
+		test( 'renders modal with proper structure when conditions are met', async () => {
+			setupCelebrateLaunchUrl();
 			const mockSite = createMockSite();
-			render( <SiteLaunchCelebrationModal site={ mockSite } onClose={ jest.fn() } /> );
+			render( <SiteLaunchCelebrationModal site={ mockSite } /> );
 
-			expect( screen.getByRole( 'dialog' ) ).toBeVisible();
-			await screen.findByRole( 'button', { name: 'Copy URL' } );
+			expect( await screen.findByRole( 'dialog' ) ).toBeVisible();
+			expect( screen.getByRole( 'button', { name: 'Copy URL' } ) ).toBeVisible();
 			expect( screen.getByRole( 'link', { name: 'View site' } ) ).toBeVisible();
+		} );
+
+		test( 'does not render modal when celebrateLaunch param is missing', () => {
+			const mockSite = createMockSite();
+			render( <SiteLaunchCelebrationModal site={ mockSite } /> );
+
+			// Modal should not be rendered
+			expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'does not render modal when site launch_status is not launched', () => {
+			setupCelebrateLaunchUrl();
+			const mockSite = createMockSite( { launch_status: 'unlaunched' as const } );
+			render( <SiteLaunchCelebrationModal site={ mockSite } /> );
+
+			// Modal should not be rendered
+			expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
 		} );
 	} );
 
 	describe( 'Domain Selection Logic', () => {
 		test( 'copies custom domain to clipboard when available', async () => {
+			setupCelebrateLaunchUrl();
 			const user = userEvent.setup();
 			const mockSite = createMockSite();
 			const customDomain = createMockDomain( 'example.com', true );
@@ -64,7 +91,7 @@ describe( '<SiteLaunchCelebrationModal>', () => {
 
 			nock.cleanAll();
 			mockDomainsApi( [ customDomain ] );
-			render( <SiteLaunchCelebrationModal site={ mockSite } onClose={ jest.fn() } /> );
+			render( <SiteLaunchCelebrationModal site={ mockSite } /> );
 
 			await screen.findByText( 'example.com' );
 			const copyButton = screen.getByRole( 'button', { name: 'Copy URL' } );
@@ -74,6 +101,7 @@ describe( '<SiteLaunchCelebrationModal>', () => {
 		} );
 
 		test( 'copies first domain when multiple domains exist', async () => {
+			setupCelebrateLaunchUrl();
 			const user = userEvent.setup();
 			const mockSite = createMockSite();
 			const domain1 = createMockDomain( 'first.com', true );
@@ -82,7 +110,7 @@ describe( '<SiteLaunchCelebrationModal>', () => {
 
 			nock.cleanAll();
 			mockDomainsApi( [ domain1, domain2 ] );
-			render( <SiteLaunchCelebrationModal site={ mockSite } onClose={ jest.fn() } /> );
+			render( <SiteLaunchCelebrationModal site={ mockSite } /> );
 
 			await screen.findByText( 'first.com' );
 			const copyButton = screen.getByRole( 'button', { name: 'Copy URL' } );
@@ -93,6 +121,7 @@ describe( '<SiteLaunchCelebrationModal>', () => {
 		} );
 
 		test( 'skips domains without active subscription', async () => {
+			setupCelebrateLaunchUrl();
 			const user = userEvent.setup();
 			const mockSite = createMockSite();
 			const unsubscribedDomain = createMockDomain( 'unsubscribed.com', false );
@@ -101,7 +130,7 @@ describe( '<SiteLaunchCelebrationModal>', () => {
 
 			nock.cleanAll();
 			mockDomainsApi( [ unsubscribedDomain, activeDomain ] );
-			render( <SiteLaunchCelebrationModal site={ mockSite } onClose={ jest.fn() } /> );
+			render( <SiteLaunchCelebrationModal site={ mockSite } /> );
 
 			await screen.findByText( 'active.com' );
 			const copyButton = screen.getByRole( 'button', { name: 'Copy URL' } );
@@ -113,30 +142,28 @@ describe( '<SiteLaunchCelebrationModal>', () => {
 	} );
 
 	describe( 'Query Parameter Removal', () => {
-		test( 'removes celebrateLaunch query param on mount', () => {
-			// Store the original href to verify it changes
-			const originalHref = window.location.href;
-			window.history.pushState(
-				{},
-				'',
-				originalHref + ( originalHref.includes( '?' ) ? '&' : '?' ) + 'celebrateLaunch=true'
-			);
+		test( 'removes celebrateLaunch query param when modal opens', async () => {
+			setupCelebrateLaunchUrl();
 
 			const mockSite = createMockSite();
-			render( <SiteLaunchCelebrationModal site={ mockSite } onClose={ jest.fn() } /> );
+			render( <SiteLaunchCelebrationModal site={ mockSite } /> );
 
-			// After component mounts, the URL should not contain celebrateLaunch param
+			// Wait for modal to render
+			await screen.findByRole( 'dialog' );
+
+			// After component mounts and modal opens, the URL should not contain celebrateLaunch param
 			expect( window.location.href ).not.toContain( 'celebrateLaunch' );
 		} );
 	} );
 
 	describe( 'Copy Button Behavior', () => {
 		test( 'copies domain to clipboard and provides feedback', async () => {
+			setupCelebrateLaunchUrl();
 			const user = userEvent.setup();
 			const mockSite = createMockSite();
 			navigator.clipboard.writeText = jest.fn();
 
-			render( <SiteLaunchCelebrationModal site={ mockSite } onClose={ jest.fn() } /> );
+			render( <SiteLaunchCelebrationModal site={ mockSite } /> );
 
 			const copyButton = await screen.findByRole( 'button', { name: 'Copy URL' } );
 
@@ -155,9 +182,13 @@ describe( '<SiteLaunchCelebrationModal>', () => {
 	} );
 
 	describe( 'View Site Navigation', () => {
-		test( 'view site link uses site URL and opens in new tab', () => {
+		test( 'view site link uses site URL and opens in new tab', async () => {
+			setupCelebrateLaunchUrl();
 			const mockSite = createMockSite( { URL: 'https://mysite.wordpress.com' } );
-			render( <SiteLaunchCelebrationModal site={ mockSite } onClose={ jest.fn() } /> );
+			render( <SiteLaunchCelebrationModal site={ mockSite } /> );
+
+			// Wait for modal to render
+			await screen.findByRole( 'dialog' );
 
 			const viewLink = screen.getByRole( 'link', { name: 'View site' } );
 			expect( viewLink ).toHaveAttribute( 'href', 'https://mysite.wordpress.com' );
@@ -165,19 +196,26 @@ describe( '<SiteLaunchCelebrationModal>', () => {
 		} );
 
 		test( 'renders button instead of link when URL is missing', async () => {
+			setupCelebrateLaunchUrl();
 			const mockSite = createMockSite( { URL: undefined } );
-			render( <SiteLaunchCelebrationModal site={ mockSite } onClose={ jest.fn() } /> );
+			render( <SiteLaunchCelebrationModal site={ mockSite } /> );
 
 			// When href is undefined, WordPress Button renders as a button element, not a link
-			const viewButton = await screen.findByRole( 'button', { name: 'View site' } );
+			// Wait for the dialog to be sure the component rendered
+			await screen.findByRole( 'dialog' );
+			const viewButton = screen.getByRole( 'button', { name: 'View site' } );
 			expect( viewButton ).toBeVisible();
 		} );
 	} );
 
 	describe( 'Upsell Display Logic', () => {
 		test( 'shows upsell when no custom domain exists and plan is free', async () => {
+			setupCelebrateLaunchUrl();
 			const mockSite = createMockSite( { plan: { is_free: true } as any } );
-			render( <SiteLaunchCelebrationModal site={ mockSite } onClose={ jest.fn() } /> );
+			render( <SiteLaunchCelebrationModal site={ mockSite } /> );
+
+			// Wait for modal to render first
+			await screen.findByRole( 'dialog' );
 
 			// Upsell button should appear for free plan without custom domain
 			await screen.findByRole( 'link', { name: 'Get your domain' } );
@@ -188,12 +226,13 @@ describe( '<SiteLaunchCelebrationModal>', () => {
 		} );
 
 		test( 'does not show upsell when custom domain exists', async () => {
+			setupCelebrateLaunchUrl();
 			const mockSite = createMockSite( { plan: { is_free: true } as any } );
 			const customDomain = createMockDomain( 'example.com', true );
 
 			nock.cleanAll();
 			mockDomainsApi( [ customDomain ] );
-			render( <SiteLaunchCelebrationModal site={ mockSite } onClose={ jest.fn() } /> );
+			render( <SiteLaunchCelebrationModal site={ mockSite } /> );
 
 			// Wait for the domain to appear, confirming the API response is loaded
 			await screen.findByText( 'example.com' );
@@ -204,11 +243,13 @@ describe( '<SiteLaunchCelebrationModal>', () => {
 	} );
 
 	describe( 'Analytics Tracking', () => {
-		test( 'tracks celebration modal view on mount', () => {
+		test( 'tracks celebration modal view when modal opens', async () => {
+			setupCelebrateLaunchUrl();
 			const mockSite = createMockSite();
-			const { recordTracksEvent } = render(
-				<SiteLaunchCelebrationModal site={ mockSite } onClose={ jest.fn() } />
-			);
+			const { recordTracksEvent } = render( <SiteLaunchCelebrationModal site={ mockSite } /> );
+
+			// Wait for modal to render and analytics to fire
+			await screen.findByRole( 'dialog' );
 
 			expect( recordTracksEvent ).toHaveBeenCalledWith(
 				'calypso_launchpad_celebration_modal_view',
@@ -218,11 +259,13 @@ describe( '<SiteLaunchCelebrationModal>', () => {
 			);
 		} );
 
-		test( 'tracks event with undefined product_slug when plan is missing', () => {
+		test( 'tracks event with undefined product_slug when plan is missing', async () => {
+			setupCelebrateLaunchUrl();
 			const mockSite = createMockSite( { plan: undefined } );
-			const { recordTracksEvent } = render(
-				<SiteLaunchCelebrationModal site={ mockSite } onClose={ jest.fn() } />
-			);
+			const { recordTracksEvent } = render( <SiteLaunchCelebrationModal site={ mockSite } /> );
+
+			// Wait for modal to render and analytics to fire
+			await screen.findByRole( 'dialog' );
 
 			expect( recordTracksEvent ).toHaveBeenCalledWith(
 				'calypso_launchpad_celebration_modal_view',
