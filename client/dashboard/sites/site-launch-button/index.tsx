@@ -23,11 +23,15 @@ export function SiteLaunchButton( {
 	launchUrl,
 	LaunchModal,
 	backTo,
+	backToGattedVariant,
 }: {
 	site: Site;
 	tracksContext: string;
 	launchUrl?: string;
 	backTo?: string;
+	// temporary field, during experiment duration
+	// clean out after the experiment results and final decision
+	backToGattedVariant?: string;
 	LaunchModal?: React.ComponentType< {
 		isLaunching: boolean;
 		onClose: () => void;
@@ -74,7 +78,7 @@ export function SiteLaunchButton( {
 			siteSlug: site.slug,
 			new: site.name,
 			hide_initial_query: 'yes',
-			back_to: redirectToDashboardLink( { supportBackport: true } ),
+			back_to: backTo ? backTo : redirectToDashboardLink( { supportBackport: true } ),
 			dashboard: getCurrentDashboard(),
 		} );
 	};
@@ -111,7 +115,9 @@ export function SiteLaunchButton( {
 
 	const handleGatedLaunchClick = () => {
 		handleTracksEvent();
-		const url = backTo ? addQueryArgs( getLaunchUrl(), { back_to: backTo } ) : getLaunchUrl();
+		const url = backToGattedVariant
+			? addQueryArgs( getLaunchUrl(), { back_to: backToGattedVariant } )
+			: getLaunchUrl();
 		window.location.assign( url );
 	};
 

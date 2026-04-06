@@ -208,7 +208,7 @@ function SitePerformance() {
 								<SiteLaunchButton
 									site={ site }
 									tracksContext="site_performance"
-									backTo={ wpcomLink( `/sites/${ site.slug }/performance` ) }
+									backToGattedVariant={ wpcomLink( `/sites/${ site.slug }/performance` ) }
 								/>
 							}
 						>
