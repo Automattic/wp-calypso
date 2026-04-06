@@ -62,6 +62,7 @@ import Item from './item';
 import Masterbar from './masterbar';
 import { AgentsManagerIcon } from './masterbar-agents-manager/agents-manager-icon';
 import { HelpCenterIcon } from './masterbar-help-center/help-center-icon';
+import { MasterbarLaunchButton } from './masterbar-launch-button';
 import Notifications from './masterbar-notifications/notifications-button';
 
 class MasterbarLoggedIn extends Component {
@@ -617,7 +618,7 @@ class MasterbarLoggedIn extends Component {
 			return null;
 		}
 
-		return <AsyncLoad require="./masterbar-launch-button" placeholder={ null } siteId={ siteId } />;
+		return <MasterbarLaunchButton siteId={ siteId } />;
 	}
 
 	renderProfileMenu() {
