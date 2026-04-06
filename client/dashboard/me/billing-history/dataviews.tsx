@@ -392,10 +392,9 @@ function renderReceiptAmount( receipt: Receipt, taxName?: string ) {
 	const taxAmount = formatReceiptTaxAmount( receipt );
 	const includesTaxString = taxName
 		? sprintf(
-				/* translators: 1: a localized price like $12.34, 2: a tax name like VAT or GST */
-				__( '(includes %1$s %2$s)' ),
-				taxAmount,
-				taxName
+				/* translators: taxAmount is a localized price like $12.34, taxName is a tax name like VAT or GST */
+				__( '(includes %(taxAmount)s %(taxName)s)' ),
+				{ taxAmount, taxName }
 		  )
 		: sprintf(
 				/* translators: %s is a localized price, like $12.34 */
