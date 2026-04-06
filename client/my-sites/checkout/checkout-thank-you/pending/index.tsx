@@ -193,7 +193,7 @@ function useRedirectOnTransactionSuccess( {
 	const { reloadFromServer: reloadCart } = useShoppingCart( cartKey );
 
 	const firstItem = receipt?.items[ 0 ];
-	const isRenewal = receipt?.items.some( ( item ) => item.type === 'renewal' ) ?? false;
+	const isRenewal = receipt?.items.some( ( item ) => item.type === 'recurring' ) ?? false;
 	const productName = firstItem?.variation || firstItem?.product || '';
 	const blogId = firstItem?.site_id;
 	const saasRedirectUrl = receipt?.items.reduce< string | undefined >(
