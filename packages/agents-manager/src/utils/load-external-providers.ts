@@ -1,3 +1,9 @@
+// global.d.ts declares ambient globals (e.g. agentsManagerData) that are injected server-side.
+// Ambient declaration files cannot be `import`ed; a triple-slash reference is required to ensure
+// the global is visible when TypeScript resolves this file via the import graph rather than the
+// tsconfig include list (e.g. during sandbox / CI builds).
+// eslint-disable-next-line @typescript-eslint/triple-slash-reference
+/// <reference path="../global.d.ts" />
 /**
  * External Provider Loading Utility
  *
@@ -7,7 +13,7 @@
 
 import { getAgentManager, UIMessage } from '@automattic/agenttic-client';
 import type { ToolProvider, ContextProvider, Suggestion, BigSkyMessage } from '../types';
-import type { SubmitOptions, UseAgentChatReturn } from '@automattic/agenttic-client';
+import type { UseAgentChatReturn } from '@automattic/agenttic-client';
 import type {
 	MarkdownComponents,
 	MarkdownExtensions,
@@ -30,15 +36,19 @@ export function getUseUnifiedExperienceFromInlineData(): boolean | undefined {
 }
 
 /**
- * Navigation continuation hook type - provided by environments that support
- * navigation with conversation continuation (e.g., wp-admin/navigate)
- * This is needed to send a follow-up after full page reloads in wp-admin
+ * Hook that resumes the conversation after a full page navigation
+ * (e.g., `wp-admin/navigate`) by sending a tool result.
  */
 export type NavigationContinuationHook = ( props: {
 	isProcessing: boolean;
-	onSubmit: ( message: string, options?: SubmitOptions ) => Promise< void >;
+	sendToolResult: ( params: {
+		toolCallId: string;
+		toolId: string;
+		message: string;
+		sessionId: string;
+	} ) => Promise< void >;
 	sessionId: string;
-	agentId: string;
+	pathname: string;
 } ) => void;
 
 /**
@@ -126,6 +136,29 @@ export type UseImageUploadResult = {
 
 export type ImageUploadHook = () => UseImageUploadResult;
 
+/**
+ * Checkpoint return type - for saving and restoring editor state so that AI actions can be undone.
+ */
+export type UseCheckpointReturn = {
+	getLastEditorState: () => unknown;
+	setCheckpoint: ( id: string, keys?: string[] ) => void;
+	addCheckpointKeys: ( id: string, keys: string[] ) => void;
+	restoreCheckpoint: ( id: string ) => Promise< void >;
+	addNewPageToCheckpoint: ( pageId: string ) => void;
+	addPageRenameToCheckpoint: ( pageId: string, oldTitle: string, newTitle: string ) => void;
+	addPageRemovalToCheckpoint: (
+		pageId: string,
+		pageTitle: string,
+		options?: { shouldRestoreNavigation?: boolean }
+	) => void;
+	getLatestUserMessageId: () => string | undefined;
+	clearCheckpoint: ( userMessageId: string ) => void;
+	hasCheckpoint: ( id: string ) => boolean;
+};
+
+/** Hook that returns checkpoint utilities for the current editor session. */
+export type UseCheckpointHook = () => UseCheckpointReturn;
+
 export interface LoadedProviders {
 	toolProvider?: ToolProvider;
 	contextProvider?: ContextProvider;
@@ -139,6 +172,7 @@ export interface LoadedProviders {
 	getChatComponent?: GetChatComponent;
 	siteBuildUtils?: SiteBuildUtils;
 	useImageUpload?: ImageUploadHook;
+	useCheckpoint?: UseCheckpointHook;
 }
 
 /**
@@ -167,6 +201,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	let mergedUseSuggestions: UseSuggestionsHook | undefined;
 	let mergedSiteBuildUtils: SiteBuildUtils | undefined;
 	let mergedImageUpload: ImageUploadHook | undefined;
+	let mergedUseCheckpoint: UseCheckpointHook | undefined;
 
 	for ( const moduleId of agentProviders ) {
 		try {
@@ -207,6 +242,9 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 			if ( module.useImageUpload ) {
 				mergedImageUpload = module.useImageUpload;
 			}
+			if ( module.useCheckpoint ) {
+				mergedUseCheckpoint = module.useCheckpoint;
+			}
 
 			// eslint-disable-next-line no-console
 			console.log( `[AgentsManager] Loaded provider "${ moduleId }"` );
@@ -228,5 +266,6 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		getChatComponent: mergedGetChatComponent,
 		siteBuildUtils: mergedSiteBuildUtils,
 		useImageUpload: mergedImageUpload,
+		useCheckpoint: mergedUseCheckpoint,
 	};
 }

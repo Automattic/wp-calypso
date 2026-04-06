@@ -299,7 +299,7 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 				{ isMobile ? (
 					<MobileHeader
 						pageTitle={ currentPage?.label ?? '' }
-						pageSelector={ pageSelector }
+						{ ...( isSitePublic && { pageSelector } ) }
 						subtitle={ subtitle }
 					/>
 				) : (
@@ -309,13 +309,15 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 						subtitle={ subtitle }
 					/>
 				) }
-				{ ! isMobile && pageSelector }
-				<DeviceTabControls
-					showTitle={ ! isMobile }
-					onDeviceTabChange={ handleDeviceTabChange }
-					disabled={ disableControls }
-					value={ activeTab }
-				/>
+				{ ! isMobile && isSitePublic && pageSelector }
+				{ isSitePublic && (
+					<DeviceTabControls
+						showTitle={ ! isMobile }
+						onDeviceTabChange={ handleDeviceTabChange }
+						disabled={ disableControls }
+						value={ activeTab }
+					/>
+				) }
 			</div>
 			{ isLoadingPages && isSitePublic ? (
 				<PerformanceReportLoading isLoadingPages />

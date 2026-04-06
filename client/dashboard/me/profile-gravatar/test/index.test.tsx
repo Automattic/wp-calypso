@@ -79,11 +79,13 @@ describe( '<GravatarProfileSection>', () => {
 
 			const displayNameInput = screen.getByRole( 'textbox', { name: 'Display name' } );
 			await user.clear( displayNameInput );
-			await user.type( displayNameInput, 'a'.repeat( 251 ) );
+			await user.paste( 'a'.repeat( 251 ) );
 			await user.tab();
 
-			expect( screen.getByRole( 'button', { name: 'Save' } ) ).toBeDisabled();
-			expect( screen.getByText( 'Display name must be 250 characters or less.' ) ).toBeVisible();
+			await waitFor( () => {
+				expect( screen.getByRole( 'button', { name: 'Save' } ) ).toBeDisabled();
+				expect( screen.getByText( 'Display name must be 250 characters or less.' ) ).toBeVisible();
+			} );
 		} );
 	} );
 

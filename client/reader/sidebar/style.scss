@@ -13,13 +13,6 @@
 	}
 }
 :root:has(.is-reader-msd-enabled) {
-	.sidebar-menu-container {
-		display: flex;
-		flex-direction: column;
-		gap: 24px;
-		padding: 0 16px;
-	}
-
 	.sidebar-header {
 		display: flex;
 		justify-content: space-between;
@@ -31,7 +24,7 @@
 			font-size: 32px;
 			font-style: normal;
 			font-weight: 400;
-			line-height: normal;;
+			line-height: normal;
 		}
 		p {
 			display: none;
@@ -41,13 +34,6 @@
 
 //TODO: Remove this once the new reader MSD is enabled for all users (reader/enable-msd)
 :root:not(:has(.is-reader-msd-enabled)) {
-	.sidebar-menu-container {
-		display: flex;
-		flex-direction: column;
-		gap: 20px;
-		padding: 0 16px;
-	}
-
 	.sidebar-header {
 		display: flex;
 
@@ -73,6 +59,10 @@
 }
 
 body.is-section-reader {
+	.is-global-sidebar-visible {
+		--content-padding-top: 32px;
+	}
+
 	&.rtl .layout__content {
 		padding: calc( var( --masterbar-height ) + var( --content-padding-top ) )
 			calc( var( --sidebar-width-max ) ) var( --content-padding-bottom ) 16px;
@@ -84,10 +74,12 @@ body.is-section-reader {
 		min-height: 100vh;
 		padding-top: calc( var( --masterbar-height ) + var( --content-padding-top ) );
 		padding-bottom: var( --content-padding-bottom );
+
 		@media only screen and ( min-width: 782px ) {
 			padding: calc( var( --masterbar-height ) + var( --content-padding-top ) ) 16px
 				var( --content-padding-bottom ) calc( var( --sidebar-width-max ) ) !important;
 		}
+
 		.layout_primary > div {
 			padding-bottom: 0;
 		}
@@ -99,6 +91,21 @@ body.is-section-reader {
 
 	.has-no-masterbar .layout__content .main {
 		padding-top: var( --content-padding-top );
+	}
+
+	.sidebar__body {
+		padding-top: var(--content-padding-top);
+	}
+
+	.sidebar-menu-container {
+		display: flex;
+		flex-direction: column;
+		gap: 24px;
+		padding: 0 16px;
+
+		.app-title {
+			padding: 0;
+		}
 	}
 
 	@media only screen and ( max-width: 600px ) {
@@ -172,10 +179,10 @@ body.is-section-reader {
 			}
 		}
 	}
+
 	.sidebar__menu-icon {
 		margin-right: 12px;
 	}
-
 
 	.sidebar__menu-link-reader {
 		line-height: 1.8;
@@ -198,6 +205,7 @@ body.is-section-reader {
 		outline-color: currentColor;
 		color: currentColor;
 		margin: 0 auto;
+		align-self: self-start;
 	}
 
 	.sidebar__menu-link:hover .count {
@@ -210,13 +218,6 @@ body.is-section-reader {
 		background: transparent;
 		border-color: var( --color-sidebar-menu-selected-text );
 		color: var( --color-sidebar-menu-selected-text );
-	}
-
-	.sidebar__menu-item-siteicon {
-		margin-right: 15px;
-		position: relative;
-		flex-shrink: 0;
-		border-radius: 4px;
 	}
 
 	.sidebar__menu-item-last-updated {
@@ -232,11 +233,9 @@ body.is-section-reader {
 
 	.sidebar__menu-item-sitename {
 		line-height: 14px;
-		max-width: 80%;
 		text-overflow: ellipsis;
 		white-space: nowrap;
 		overflow: hidden;
-		margin-right: 8px;
 
 		// If the site name is marked with ltr or rtl, ensure we use that directionality.
 		&:has( span[direction='ltr'] ) {
@@ -284,11 +283,16 @@ body.is-section-reader {
 			}
 			margin-bottom: 16px;
 		}
+
+		&.has-counts .sidebar__menu-link {
+			grid-template-columns: 24px 1fr 36px;
+		}
+
 		.sidebar__menu-link {
 			display: grid;
-			grid-template-columns: 24px 1fr 36px;
+			grid-template-columns: 24px 1fr;
 			align-items: center;
-			gap: 4px;
+			gap: 6px;
 			line-height: 1.5;
 			padding: 12px 10px 12px 18px;
 			box-sizing: content-box;

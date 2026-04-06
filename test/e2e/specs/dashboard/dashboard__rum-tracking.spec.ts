@@ -122,25 +122,28 @@ test.describe( 'Dashboard: RUM Performance Tracking', { tag: [ tags.DASHBOARD_PR
 				.toBeTruthy();
 		} );
 
-		await test.step( 'When I navigate in-app to the plugins page', async function () {
+		await test.step( 'When I navigate in-app to the domains page', async function () {
 			if ( viewportName === 'mobile' ) {
 				await page.getByRole( 'button', { name: 'Menu' } ).click();
-				await page.getByRole( 'menuitem', { name: 'Plugins' } ).click();
+				await page
+					.getByRole( 'link', { name: 'Domains' } )
+					.or( page.getByRole( 'menuitem', { name: 'Domains' } ) )
+					.click();
 			} else {
-				await page.getByRole( 'link', { name: 'Plugins' } ).click();
+				await page.getByRole( 'link', { name: 'Domains' } ).click();
 			}
-			await page.waitForURL( /\/plugins\/manage/ );
+			await page.waitForURL( /domains$/ );
 		} );
 
-		await test.step( 'Then a perf.nav event is sent for /plugins/manage with fullPage false', async function () {
+		await test.step( 'Then a perf.nav event is sent for /domains with fullPage false', async function () {
 			await expect
-				.poll( () => events.find( ( e ) => e.id === '/plugins/manage' ), {
+				.poll( () => events.find( ( e ) => e.id === '/domains' ), {
 					timeout: 15000,
-					message: 'Expected logstash request with id "/plugins/manage"',
+					message: 'Expected logstash request with id "/domains"',
 				} )
 				.toBeTruthy();
 
-			const event = events.find( ( e ) => e.id === '/plugins/manage' )!;
+			const event = events.find( ( e ) => e.id === '/domains' )!;
 			expect( event.duration ).toBeGreaterThan( 0 );
 			expect( event.fullPage ).toBe( false );
 		} );

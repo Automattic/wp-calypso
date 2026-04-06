@@ -21,7 +21,7 @@ export class LoggedOutThemesPage {
 	 * @param {string} filter - The filter to apply.
 	 */
 	async filterBy( filter: string ) {
-		await this.page.getByRole( 'combobox', { name: 'Filters' } ).click();
+		await this.page.getByRole( 'combobox', { name: 'View' } ).click();
 		await this.page.getByRole( 'option', { name: filter } ).click();
 	}
 }

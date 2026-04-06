@@ -2,6 +2,7 @@ import {
 	PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG,
 	PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG,
 	PARTNER_DIRECTORY_DASHBOARD_SLUG,
+	PARTNER_DIRECTORY_LEAD_MATCHING_SLUG,
 } from 'calypso/a8c-for-agencies/sections/partner-directory/constants';
 import {
 	A4A_REPORTS_LINK,
@@ -63,6 +64,7 @@ import type { Agency } from 'calypso/state/a8c-for-agencies/types';
 const A4A_PARTNER_DIRECTORY_DASHBOARD_LINK = `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_DASHBOARD_SLUG }`;
 const A4A_PARTNER_DIRECTORY_AGENCY_DETAILS_LINK = `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG }`;
 const A4A_PARTNER_DIRECTORY_AGENCY_EXPERTISE_LINK = `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG }`;
+const A4A_PARTNER_DIRECTORY_LEAD_MATCHING_LINK = `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_LEAD_MATCHING_SLUG }`;
 
 const MEMBER_ACCESSIBLE_PATHS: Record< string, string[] > = {
 	[ A4A_SITES_LINK ]: [ 'a4a_read_managed_sites' ],
@@ -93,6 +95,7 @@ const MEMBER_ACCESSIBLE_PATHS: Record< string, string[] > = {
 	[ A4A_PARTNER_DIRECTORY_DASHBOARD_LINK ]: [ 'a4a_read_partner_directory' ],
 	[ A4A_PARTNER_DIRECTORY_AGENCY_DETAILS_LINK ]: [ 'a4a_read_partner_directory' ],
 	[ A4A_PARTNER_DIRECTORY_AGENCY_EXPERTISE_LINK ]: [ 'a4a_read_partner_directory' ],
+	[ A4A_PARTNER_DIRECTORY_LEAD_MATCHING_LINK ]: [ 'a4a_read_partner_directory' ],
 	[ A4A_PURCHASES_LINK ]: [ 'a4a_jetpack_licensing' ],
 	[ A4A_BILLING_LINK ]: [ 'a4a_jetpack_licensing' ],
 	[ A4A_INVOICES_LINK ]: [ 'a4a_jetpack_licensing' ],
@@ -173,6 +176,7 @@ const MEMBER_TIER_ACCESSIBLE_PATHS: Record< string, string[] > = {
 	[ A4A_PARTNER_DIRECTORY_DASHBOARD_LINK ]: [ 'a4a_feature_partner_directory' ],
 	[ A4A_PARTNER_DIRECTORY_AGENCY_DETAILS_LINK ]: [ 'a4a_feature_partner_directory' ],
 	[ A4A_PARTNER_DIRECTORY_AGENCY_EXPERTISE_LINK ]: [ 'a4a_feature_partner_directory' ],
+	[ A4A_PARTNER_DIRECTORY_LEAD_MATCHING_LINK ]: [ 'a4a_feature_partner_directory' ],
 };
 
 export const isPathAllowedForTier = ( pathname: string, agency: Agency | null ) => {

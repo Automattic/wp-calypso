@@ -24,11 +24,7 @@ const siteOverviewRoute = createRoute( {
 					? { large: 'wide' as WPBreakpoint, small: 'wide' as WPBreakpoint }
 					: { large: 'medium' as WPBreakpoint, small: 'medium' as WPBreakpoint };
 				return (
-					<d.default
-						siteSlug={ siteRoute.useParams().siteSlug }
-						hideSitePreview
-						breakpoints={ breakpoints }
-					/>
+					<d.default siteSlug={ siteRoute.useParams().siteSlug } breakpoints={ breakpoints } />
 				);
 			},
 		} )

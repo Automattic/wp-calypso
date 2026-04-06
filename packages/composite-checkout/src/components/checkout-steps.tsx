@@ -399,12 +399,14 @@ function CheckoutStepGroupWrapper( {
 	loadingContent,
 	loadingHeader,
 	onStepChanged,
+	scrollToStepOnForwardNavigation,
 	store,
 }: PropsWithChildren< {
 	className?: string;
 	loadingContent?: ReactNode;
 	loadingHeader?: ReactNode;
 	onStepChanged?: StepChangedCallback;
+	scrollToStepOnForwardNavigation?: boolean;
 	store: CheckoutStepGroupStore;
 } > ) {
 	const { isRTL } = useI18n();
@@ -435,12 +437,25 @@ function CheckoutStepGroupWrapper( {
 	// Call the `onStepChanged` callback when a step changes.
 	useEffect( () => {
 		if ( store.state.activeStepNumber !== previousStepNumber.current ) {
+			const prevStep = previousStepNumber.current;
+			const newStep = store.state.activeStepNumber;
 			onStepChanged?.( {
-				stepNumber: store.state.activeStepNumber,
-				previousStepNumber: previousStepNumber.current,
+				stepNumber: newStep,
+				previousStepNumber: prevStep,
 				paymentMethodId: activePaymentMethod?.id ?? '',
 			} );
-			previousStepNumber.current = store.state.activeStepNumber;
+			previousStepNumber.current = newStep;
+			// When moving forward through steps, scroll the newly active step into
+			// view. This corrects the viewport position on mobile after the previous
+			// step's content collapses and causes the layout to shift.
+			if ( scrollToStepOnForwardNavigation && newStep > prevStep ) {
+				const newStepId = Object.entries( store.state.stepIdMap ).find(
+					( [ , num ] ) => num === newStep
+				)?.[ 0 ];
+				if ( newStepId ) {
+					document.getElementById( newStepId )?.scrollIntoView?.( { block: 'start' } );
+				}
+			}
 		}
 		// We only want to run this when the step changes.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -486,6 +501,7 @@ export const CheckoutStep = ( {
 	isCompleteCallback,
 	canEditStep = true,
 	editButtonText,
+	editButtonElement,
 	editButtonAriaLabel,
 	nextStepButtonText,
 	nextStepButtonAriaLabel,
@@ -543,6 +559,7 @@ export const CheckoutStep = ( {
 		<CheckoutStepBody
 			onError={ onError }
 			editButtonText={ editButtonText || __( 'Edit' ) }
+			editButtonElement={ editButtonElement }
 			editButtonAriaLabel={ editButtonAriaLabel || __( 'Edit this step' ) }
 			nextStepButtonText={ nextStepButtonText || __( 'Continue' ) }
 			nextStepButtonAriaLabel={ nextStepButtonAriaLabel || __( 'Continue to the next step' ) }
@@ -815,6 +832,7 @@ const StepSummaryWrapper = styled.div< StepContentWrapperProps & HTMLAttributes<
 export function CheckoutStepBody( {
 	errorMessage,
 	editButtonText,
+	editButtonElement,
 	editButtonAriaLabel,
 	nextStepButtonText,
 	validatingButtonText,
@@ -848,7 +866,7 @@ export function CheckoutStepBody( {
 			errorMessage={ errorMessage || __( 'There was an error with this step.' ) }
 			onError={ onError }
 		>
-			<StepWrapper className={ className }>
+			<StepWrapper className={ className } id={ stepId }>
 				<CheckoutStepHeader
 					id={ stepId }
 					stepNumber={ stepNumber }
@@ -862,6 +880,7 @@ export function CheckoutStepBody( {
 							: undefined
 					}
 					editButtonText={ editButtonText || __( 'Edit' ) }
+					editButtonElement={ editButtonElement }
 					editButtonAriaLabel={ editButtonAriaLabel || __( 'Edit this step' ) }
 				/>
 				<StepContentWrapper
@@ -908,6 +927,7 @@ interface CheckoutStepBodyProps {
 	onError?: ( error: Error ) => void;
 	editButtonAriaLabel?: string;
 	editButtonText?: string;
+	editButtonElement?: ReactNode;
 	nextStepButtonText?: string;
 	nextStepButtonAriaLabel?: string;
 	isStepActive: boolean;
@@ -931,6 +951,7 @@ CheckoutStepBody.propTypes = {
 	onError: PropTypes.func,
 	editButtonAriaLabel: PropTypes.string,
 	editButtonText: PropTypes.string,
+	editButtonElement: PropTypes.node,
 	nextStepButtonText: PropTypes.string,
 	nextStepButtonAriaLabel: PropTypes.string,
 	isStepActive: PropTypes.bool.isRequired,
@@ -1027,6 +1048,7 @@ function CheckoutStepHeader( {
 	canEditStep,
 	onEdit,
 	editButtonText,
+	editButtonElement,
 	editButtonAriaLabel,
 }: {
 	id: string;
@@ -1038,6 +1060,7 @@ function CheckoutStepHeader( {
 	canEditStep?: boolean;
 	onEdit?: () => void;
 	editButtonText?: string;
+	editButtonElement?: ReactNode;
 	editButtonAriaLabel?: string;
 } ) {
 	const { __ } = useI18n();
@@ -1064,7 +1087,7 @@ function CheckoutStepHeader( {
 					onClick={ onEdit }
 					aria-label={ editButtonAriaLabel || __( 'Edit this step' ) }
 				>
-					{ editButtonText || __( 'Edit' ) }
+					{ editButtonElement ?? editButtonText ?? __( 'Edit' ) }
 				</HeaderEditButton>
 			) }
 		</StepHeaderWrapper>
@@ -1166,6 +1189,7 @@ CheckoutStepHeader.propTypes = {
 	isActive: PropTypes.bool,
 	isComplete: PropTypes.bool,
 	editButtonText: PropTypes.string,
+	editButtonElement: PropTypes.node,
 	editButtonAriaLabel: PropTypes.string,
 	onEdit: PropTypes.func,
 };
@@ -1212,6 +1236,7 @@ export function CheckoutStepGroup( {
 	stepAreaHeader,
 	store,
 	onStepChanged,
+	scrollToStepOnForwardNavigation,
 	loadingContent,
 	loadingHeader,
 }: PropsWithChildren< {
@@ -1219,6 +1244,7 @@ export function CheckoutStepGroup( {
 	stepAreaHeader?: ReactNode;
 	store?: CheckoutStepGroupStore;
 	onStepChanged?: StepChangedCallback;
+	scrollToStepOnForwardNavigation?: boolean;
 	loadingContent?: ReactNode;
 	loadingHeader?: ReactNode;
 } > ) {
@@ -1229,6 +1255,7 @@ export function CheckoutStepGroup( {
 			loadingContent={ loadingContent }
 			loadingHeader={ loadingHeader }
 			onStepChanged={ onStepChanged }
+			scrollToStepOnForwardNavigation={ scrollToStepOnForwardNavigation }
 		>
 			{ stepAreaHeader }
 			<CheckoutStepArea>

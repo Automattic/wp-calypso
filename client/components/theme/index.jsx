@@ -21,7 +21,10 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { updateThemes } from 'calypso/state/themes/actions/theme-update';
-import { isExternallyManagedTheme as getIsExternallyManagedTheme } from 'calypso/state/themes/selectors';
+import {
+	getThemeType,
+	isExternallyManagedTheme as getIsExternallyManagedTheme,
+} from 'calypso/state/themes/selectors';
 import { setThemesBookmark } from 'calypso/state/themes/themes-ui/actions';
 import ThemeMoreButton from './more-button';
 
@@ -348,7 +351,7 @@ export class Theme extends Component {
 	};
 
 	renderImageOverlay = () => {
-		const { isThemeShowcaseModern, buttonContents, theme } = this.props;
+		const { isThemeShowcaseModern, buttonContents, theme, themeType } = this.props;
 
 		if ( ! isThemeShowcaseModern ) {
 			return null;
@@ -361,6 +364,24 @@ export class Theme extends Component {
 			return null;
 		}
 
+		const eventProps = {
+			theme: theme.id,
+			theme_tier: theme.theme_tier?.slug,
+			theme_type: themeType,
+		};
+
+		const handlePreviewButtonClick = ( e ) => {
+			e.stopPropagation();
+			e.preventDefault();
+			this.props.recordTracksEvent( 'calypso_themeshowcase_theme_preview_click', eventProps );
+			previewOption.action?.( theme.id );
+		};
+
+		const handleSignupButtonClick = ( e ) => {
+			this.props.recordTracksEvent( 'calypso_themeshowcase_theme_signup_click', eventProps );
+			e.stopPropagation();
+		};
+
 		return (
 			<div className="theme__overlay-buttons">
 				{ previewOption && (
@@ -368,11 +389,7 @@ export class Theme extends Component {
 						__next40pxDefaultSize
 						variant="secondary"
 						className="theme__overlay-button theme__overlay-button-preview"
-						onClick={ ( e ) => {
-							e.stopPropagation();
-							e.preventDefault();
-							previewOption.action?.( theme.id );
-						} }
+						onClick={ handlePreviewButtonClick }
 					>
 						{ this.props.translate( 'Preview demo' ) }
 					</WPButton>
@@ -383,9 +400,7 @@ export class Theme extends Component {
 						variant="primary"
 						className="theme__overlay-button theme__overlay-button-get-started"
 						href={ signupOption.getUrl?.( theme.id ) }
-						onClick={ ( e ) => {
-							e.stopPropagation();
-						} }
+						onClick={ handleSignupButtonClick }
 					>
 						{ this.props.translate( 'Get started' ) }
 					</WPButton>
@@ -445,6 +460,7 @@ const ConnectedTheme = connect(
 			isExternallyManagedTheme,
 			siteSlug: getSiteSlug( state, siteId ),
 			isThemeShowcaseModern,
+			themeType: getThemeType( state, theme.id ),
 		};
 	},
 	{ recordTracksEvent, setThemesBookmark, updateThemes }

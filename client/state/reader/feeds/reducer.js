@@ -1,8 +1,7 @@
-import { omit, omitBy, merge, forEach } from 'lodash';
+import { omitBy, merge, forEach } from 'lodash';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { safeLink } from 'calypso/lib/post-normalizer/utils';
 import {
-	READER_FEED_REQUEST,
 	READER_FEED_REQUEST_SUCCESS,
 	READER_FEED_REQUEST_FAILURE,
 	READER_SEEN_MARK_AS_SEEN_RECEIVE,
@@ -18,6 +17,7 @@ function handleRequestFailure( state, action ) {
 		[ action.payload.feed_ID ]: {
 			feed_ID: action.payload.feed_ID,
 			is_error: true,
+			error: action.payload.error,
 		},
 		...state,
 	};
@@ -104,21 +104,6 @@ export const items = withSchemaValidation(
 	} )
 );
 
-export function queuedRequests( state = {}, action ) {
-	switch ( action.type ) {
-		case READER_FEED_REQUEST:
-			return {
-				...state,
-				[ action.payload.feed_ID ]: true,
-			};
-
-		case READER_FEED_REQUEST_SUCCESS:
-		case READER_FEED_REQUEST_FAILURE:
-			return omit( state, action.payload.feed_ID );
-	}
-	return state;
-}
-
 export const lastFetched = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case READER_FEED_REQUEST_SUCCESS:
@@ -134,5 +119,4 @@ export const lastFetched = ( state = {}, action ) => {
 export default combineReducers( {
 	items,
 	lastFetched,
-	queuedRequests,
 } );

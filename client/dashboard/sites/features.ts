@@ -1,4 +1,5 @@
 import { DotcomFeatures, HostingFeatures } from '@automattic/api-core';
+import { isEnabled } from '@automattic/calypso-config';
 import { isDashboardBackport } from '../utils/is-dashboard-backport';
 import { hasHostingFeature, hasPlanFeature } from '../utils/site-features';
 import { isSiteMigrationInProgress } from '../utils/site-status';
@@ -41,6 +42,9 @@ export function canViewHundredYearPlanSettings( site: Site ) {
 // Settings -> Server
 
 export function canViewWordPressSettings( site: Site ) {
+	if ( isEnabled( 'dashboard/wp-beta-program' ) ) {
+		return hasHostingFeature( site, HostingFeatures.BACKUPS_SELF_SERVE );
+	}
 	return site.is_wpcom_staging_site;
 }
 
@@ -62,6 +66,10 @@ export function canLeaveSite( site: Site ) {
 		! isP2( site ) &&
 		! isSelfHostedJetpackConnected( site )
 	);
+}
+
+export function canDisconnectSite( site: Site ) {
+	return !! site.capabilities?.manage_options && isSelfHostedJetpackConnected( site );
 }
 
 export function canResetSite( site: Site ) {

@@ -22,9 +22,7 @@ describe( 'DIFMBanner', () => {
 
 	test( 'renders subtitle', () => {
 		render( <DIFMBanner /> );
-		expect(
-			screen.getByText( /Built by WordPress\.com experts and fully managed for you/ )
-		).toBeVisible();
+		expect( screen.getByText( /Launch faster and sell smarter with features/ ) ).toBeVisible();
 	} );
 
 	test( 'renders CTA button linking to DIFM landing page', () => {

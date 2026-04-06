@@ -71,8 +71,8 @@ export type SiteSubscriptionsResponseItem = {
 	meta: SiteSubscriptionMeta;
 	is_wpforteams_site: boolean;
 	is_paid_subscription: boolean;
-	is_gift: boolean;
-	gift_id: number;
+	is_comp: boolean;
+	comp_id?: number;
 	is_rss: boolean;
 	isDeleted: boolean;
 	resubscribed: boolean;
@@ -167,7 +167,9 @@ export type SiteSubscriptionDetails< DateT = Date > = {
 };
 
 export type SiteSubscriptionPaymentDetails = {
-	is_gift: boolean;
+	is_comp: boolean;
+	/** @deprecated Legacy field from the API — plans with is_gift are filtered out. */
+	is_gift?: boolean;
 	ID: string;
 	site_id: string;
 	status: string;

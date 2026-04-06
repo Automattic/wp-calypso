@@ -1,13 +1,14 @@
 import { Step } from '@automattic/onboarding';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { getCiabConfigFromGarden } from 'calypso/lib/partner-branding';
+import { getPartnerConfigFromGarden } from 'calypso/lib/partner-branding';
 import normalizeInvite from 'calypso/my-sites/invites/invite-accept/utils/normalize-invite';
 import LoggedOutInviteAccept from 'calypso/my-sites/invites/invite-accept-logged-out';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import AcceptInviteScreen from './screens/accept-invite-screen';
 import AlreadyMemberScreen from './screens/already-member-screen';
-import { isAlreadyMemberError } from './utils';
+import InvalidInviteScreen from './screens/invalid-invite-screen';
+import { isAlreadyMemberError, isInvalidInviteError } from './utils';
 import type { Invite, InviteBlogDetails, InviteError } from './types';
 
 import './style.scss';
@@ -43,7 +44,7 @@ export function UnifiedInviteAccept( {
 	const blogDetails = ( inviteData as { blog_details?: InviteBlogDetails } )?.blog_details;
 	const branding =
 		blogDetails?.is_garden_site && blogDetails.garden
-			? getCiabConfigFromGarden( blogDetails.garden.partner, blogDetails.garden.name, {
+			? getPartnerConfigFromGarden( blogDetails.garden.partner, blogDetails.garden.name, {
 					persistToSession: true,
 			  } )
 			: null;
@@ -68,6 +69,11 @@ export function UnifiedInviteAccept( {
 
 	// Render logged-out invite signup in unified flow.
 	if ( ! isLoggedIn ) {
+		// Invalid invite → show invalid-invite screen (no user card needed)
+		if ( inviteError?.error && isInvalidInviteError( inviteError.error ) ) {
+			return <InvalidInviteScreen blogDetails={ blogDetails } inviteError={ inviteError } />;
+		}
+
 		if ( ! legacyLoggedOutInvite ) {
 			return null;
 		}
@@ -85,6 +91,11 @@ export function UnifiedInviteAccept( {
 	// Already a member → show already-member screen
 	if ( inviteError?.error && isAlreadyMemberError( inviteError.error ) ) {
 		return <AlreadyMemberScreen blogDetails={ blogDetails } />;
+	}
+
+	// Invalid invite → show invalid-invite screen
+	if ( inviteError?.error && isInvalidInviteError( inviteError.error ) ) {
+		return <InvalidInviteScreen blogDetails={ blogDetails } inviteError={ inviteError } />;
 	}
 
 	const invite = { ...inviteData, inviteKey, activationKey } as Invite;

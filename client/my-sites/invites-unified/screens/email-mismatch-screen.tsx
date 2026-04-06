@@ -7,6 +7,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { navigate } from 'calypso/lib/navigate';
+import { getPartnerFormattedWindowTitle, type PartnerConfig } from 'calypso/lib/partner-branding';
 import { login } from 'calypso/lib/paths';
 
 import './style.scss';
@@ -15,6 +16,7 @@ interface EmailMismatchScreenProps {
 	inviteSentTo: string;
 	isKnownUser: boolean;
 	topBarLogo?: React.ReactNode;
+	partnerConfig: PartnerConfig | null;
 	trackingProps: Record< string, unknown >;
 }
 
@@ -22,6 +24,7 @@ export function EmailMismatchScreen( {
 	inviteSentTo,
 	isKnownUser,
 	topBarLogo,
+	partnerConfig,
 	trackingProps,
 }: EmailMismatchScreenProps ) {
 	const translate = useTranslate();
@@ -60,7 +63,13 @@ export function EmailMismatchScreen( {
 
 	return (
 		<>
-			<DocumentHead title={ translate( 'Accept Invite', { textOnly: true } ) } />
+			<DocumentHead
+				title={ getPartnerFormattedWindowTitle(
+					translate( 'Accept Invite', { textOnly: true } ),
+					partnerConfig
+				) }
+				skipTitleFormatting
+			/>
 			<BodySectionCssClass bodyClass={ [ 'is-section-accept-invite-unified' ] } />
 			<Step.CenteredColumnLayout
 				columnWidth={ 4 }

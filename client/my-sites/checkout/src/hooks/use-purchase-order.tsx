@@ -26,6 +26,7 @@ export type PurchaseOrderStatus =
 	| 'error'
 	| 'processing'
 	| 'async-pending'
+	| 'payment-confirmed'
 	| 'payment-failure'
 	| 'success';
 type OrderTransactionStatus =
@@ -52,6 +53,8 @@ function transformPurchaseOrderStatusToOrderTransactionStatus(
 		case 'processing':
 			return PROCESSING;
 		case 'async-pending':
+			return ASYNC_PENDING;
+		case 'payment-confirmed':
 			return ASYNC_PENDING;
 		case 'payment-failure':
 			return FAILURE;
@@ -122,6 +125,9 @@ function isOrderComplete( order: undefined | OrderTransaction ): boolean {
 		return false;
 	}
 	if ( order.processingStatus === PROCESSING ) {
+		return false;
+	}
+	if ( order.processingStatus === ASYNC_PENDING ) {
 		return false;
 	}
 	return true;

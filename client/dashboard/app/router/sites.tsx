@@ -1,6 +1,7 @@
 import { HostingFeatures, DotcomFeatures, LogType } from '@automattic/api-core';
 import {
 	bigSkyPluginQuery,
+	userSettingsQuery,
 	codeDeploymentQuery,
 	codeDeploymentsQuery,
 	githubInstallationsQuery,
@@ -36,6 +37,7 @@ import {
 	siteStaticFile404SettingQuery,
 	siteWordPressVersionQuery,
 	queryClient,
+	wpOrgCoreVersionQuery,
 } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import { isSupportSession } from '@automattic/calypso-support-session';
@@ -53,6 +55,7 @@ import {
 	canViewHundredYearPlanSettings,
 	canViewWordPressSettings,
 } from '../../sites/features';
+import { shouldLoadWpVersionNotice } from '../../sites/overview/wp-version-notice';
 import {
 	getActivityLogHiddenGroups,
 	hasHostingFeature,
@@ -119,6 +122,13 @@ export const siteRoute = createRoute( {
 			throw redirectAsNotAllowed( { to: overviewUrl } );
 		}
 
+		if (
+			site.__inaccessible_jetpack_error &&
+			! matches.some( ( match ) => match.staticData?.availableToInaccessibleJetpackSites )
+		) {
+			throw redirect( { to: overviewUrl } );
+		}
+
 		const trialExpiredUrl = `/sites/${ siteSlug }/trial-ended`;
 		if ( hasSiteTrialEnded( site ) && ! location.pathname.includes( trialExpiredUrl ) ) {
 			throw redirect( { to: trialExpiredUrl } );
@@ -169,6 +179,7 @@ export const siteRoute = createRoute( {
 );
 
 export const siteOverviewRoute = createRoute( {
+	staticData: { availableToInaccessibleJetpackSites: true },
 	getParentRoute: () => siteRoute,
 	path: '/',
 	loader: async ( { params: { siteSlug }, preload } ) => {
@@ -191,11 +202,20 @@ export const siteOverviewRoute = createRoute( {
 				queryClient.ensureQueryData( purchaseQuery( currentPlan.id ) );
 			}
 		}
-		// Ensure storage specifically is loaded because the warning notice can cause a layout shift
-		await Promise.all( [
-			queryClient.ensureQueryData( siteMediaStorageQuery( site.ID ) ),
+
+		const [ preferences ] = await Promise.all( [
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+
+			// Ensure storage specifically is loaded because the warning notice can cause a layout shift
+			queryClient.ensureQueryData( siteMediaStorageQuery( site.ID ) ),
 		] );
+
+		if ( shouldLoadWpVersionNotice( site, preferences ) ) {
+			await Promise.all( [
+				queryClient.ensureQueryData( siteWordPressVersionQuery( site.ID ) ),
+				queryClient.ensureQueryData( wpOrgCoreVersionQuery( 'beta' ) ),
+			] );
+		}
 	},
 } ).lazy( () =>
 	import( '../../sites/overview' ).then( ( d ) =>
@@ -283,7 +303,7 @@ export const siteLogsPhpRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'PHP errors' ),
+				title: isEnabled( 'dashboard/omnibar' ) ? __( 'PHP errors' ) : undefined,
 			},
 		],
 	} ),
@@ -305,7 +325,7 @@ export const siteLogsServerRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Web server' ),
+				title: isEnabled( 'dashboard/omnibar' ) ? __( 'Web server' ) : undefined,
 			},
 		],
 	} ),
@@ -327,7 +347,7 @@ export const siteLogsActivityRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Activity' ),
+				title: isEnabled( 'dashboard/omnibar' ) ? __( 'Activity' ) : undefined,
 			},
 		],
 	} ),
@@ -378,7 +398,7 @@ export const siteScanActiveThreatsRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Active threats' ),
+				title: isEnabled( 'dashboard/omnibar' ) ? __( 'Active threats' ) : undefined,
 			},
 		],
 	} ),
@@ -396,7 +416,7 @@ export const siteScanHistoryRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'History' ),
+				title: isEnabled( 'dashboard/omnibar' ) ? __( 'History' ) : undefined,
 			},
 		],
 	} ),
@@ -516,6 +536,7 @@ export const siteBackupDownloadRoute = createRoute( {
 );
 
 export const siteDomainsRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'domains', availableToInaccessibleJetpackSites: true },
 	head: () => ( {
 		meta: [
 			{
@@ -648,12 +669,113 @@ export const siteSettingsAIToolsRoute = createRoute( {
 	},
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		await queryClient.ensureQueryData( bigSkyPluginQuery( site.ID ) );
+		await Promise.all( [
+			queryClient.ensureQueryData( bigSkyPluginQuery( site.ID ) ),
+			queryClient.ensureQueryData( userSettingsQuery() ),
+		] );
 	},
+} );
+
+export const siteSettingsAIToolsIndexRoute = createRoute( {
+	getParentRoute: () => siteSettingsAIToolsRoute,
+	path: '/',
 } ).lazy( () =>
 	import( '../../sites/settings-ai-tools' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-ai-tools' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+function redirectSiteAiToolsSubpageToHub( {
+	cause,
+	params: { siteSlug },
+}: {
+	cause: string;
+	params: { siteSlug: string };
+} ) {
+	if ( cause === 'preload' ) {
+		return;
+	}
+	if ( ! isEnabled( 'mcp-settings' ) ) {
+		throw redirect( {
+			to: siteSettingsAIToolsIndexRoute.fullPath,
+			params: { siteSlug },
+		} );
+	}
+}
+
+export const siteSettingsAIToolsReadRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Read' ),
+			},
+		],
+	} ),
+	getParentRoute: () => siteSettingsAIToolsRoute,
+	path: 'read',
+	beforeLoad: redirectSiteAiToolsSubpageToHub,
+	loader: async ( { params: { siteSlug } } ) => {
+		await Promise.all( [
+			queryClient.ensureQueryData( userSettingsQuery() ),
+			queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) ),
+		] );
+	},
+} ).lazy( () =>
+	import( '../../sites/settings-ai-tools/read' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-ai-tools-read' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const siteSettingsAIToolsWriteRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Write' ),
+			},
+		],
+	} ),
+	getParentRoute: () => siteSettingsAIToolsRoute,
+	path: 'write',
+	beforeLoad: redirectSiteAiToolsSubpageToHub,
+	loader: async ( { params: { siteSlug } } ) => {
+		await Promise.all( [
+			queryClient.ensureQueryData( userSettingsQuery() ),
+			queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) ),
+		] );
+	},
+} ).lazy( () =>
+	import( '../../sites/settings-ai-tools/write' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-ai-tools-write' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const siteSettingsAIToolsSetupRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Connect AI agent' ),
+			},
+		],
+	} ),
+	getParentRoute: () => siteSettingsAIToolsRoute,
+	path: 'setup',
+	beforeLoad: redirectSiteAiToolsSubpageToHub,
+	loader: async ( { params: { siteSlug } } ) => {
+		await Promise.all( [
+			queryClient.ensureQueryData( userSettingsQuery() ),
+			queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) ),
+		] );
+	},
+} ).lazy( () =>
+	import( '../../sites/settings-ai-tools/setup' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-ai-tools-setup' )( {
+			component: d.default,
 		} )
 	)
 );
@@ -1444,7 +1566,12 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 
 		// General
 		siteSettingsSiteVisibilityRoute,
-		siteSettingsAIToolsRoute,
+		siteSettingsAIToolsRoute.addChildren( [
+			siteSettingsAIToolsIndexRoute,
+			siteSettingsAIToolsReadRoute,
+			siteSettingsAIToolsWriteRoute,
+			siteSettingsAIToolsSetupRoute,
+		] ),
 		siteSettingsSubscriptionGiftingRoute,
 		siteSettingsAgencyRoute,
 		siteSettingsHundredYearPlanRoute,

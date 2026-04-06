@@ -74,17 +74,15 @@ const UniversalNavbarHeader = ( {
 	}, [] );
 
 	if ( ! startUrl ) {
+		const startPaths: Record< string, string > = {
+			plugins: '//wordpress.com/start/business',
+			reader: '//wordpress.com/start/reader',
+		};
+		const startPath = ( sectionName && startPaths[ sectionName ] ) ?? '//wordpress.com/start';
+
 		startUrl = addQueryArgs(
-			// url
-			sectionName === 'plugins'
-				? localizeUrl( '//wordpress.com/start/business', locale, isLoggedIn )
-				: localizeUrl( '//wordpress.com/start', locale, isLoggedIn ),
-			// query
-			sectionName
-				? {
-						ref: sectionName + '-lp',
-				  }
-				: {}
+			localizeUrl( startPath, locale, isLoggedIn ),
+			sectionName ? { ref: sectionName + '-lp' } : {}
 		);
 	}
 

@@ -1,3 +1,5 @@
+import debug from './debug';
+
 export const SURVICATE_WORKSPACE_ID = 'e4794374cce15378101b63de24117572';
 
 /**
@@ -12,10 +14,12 @@ export function shouldLoadSurvicate( {
 	isMobile: boolean;
 } ): boolean {
 	if ( ! locale.startsWith( 'en' ) ) {
+		debug( 'shouldLoadSurvicate: skipping, non-English locale "%s"', locale );
 		return false;
 	}
 
 	if ( isMobile ) {
+		debug( 'shouldLoadSurvicate: skipping, mobile device' );
 		return false;
 	}
 

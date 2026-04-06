@@ -121,6 +121,7 @@ export const sharingButtons = ( context, next ) => {
 };
 
 export const traffic = ( context, next ) => {
+	context.section.name = 'marketing-traffic';
 	context.primary = createElement( Traffic );
 
 	next();

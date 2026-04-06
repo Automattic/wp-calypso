@@ -19,9 +19,6 @@ $profile-dropdown-menu-height: 250px;
 
 .a4a-sidebar__profile-dropdown {
 	position: relative;
-}
-
-.a4a-sidebar__profile-dropdown.with-help-center {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
@@ -44,23 +41,6 @@ $profile-dropdown-menu-height: 250px;
 	height: 100%;
 
 	cursor: pointer;
-}
-
-.a4a-sidebar__profile-dropdown-button-label {
-	display: flex;
-	flex-direction: row;
-	justify-content: center;
-	align-items: flex-start;
-	gap: 4px;
-	color: var(--color-sidebar-text);
-}
-
-.a4a-sidebar__profile-dropdown-button-label-text {
-	max-width: 160px;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	position: relative;
 }
 
 html.accessible-focus .a4a-sidebar__profile-dropdown-button:focus {
@@ -167,6 +147,3 @@ a.a4a-sidebar__external-link {
 	}
 }
 
-.a4a-sidebar__profile-dropdown-button-label svg {
-	fill: var(--color-sidebar-text);
-}

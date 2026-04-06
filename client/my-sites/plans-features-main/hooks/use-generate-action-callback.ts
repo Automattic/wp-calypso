@@ -10,6 +10,7 @@ import {
 import page from '@automattic/calypso-router';
 import { AddOns, Plans } from '@automattic/data-stores';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
+import { WOO_HOSTED_PLANS_FLOW } from '@automattic/onboarding';
 import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
 import { useDispatch } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
@@ -31,11 +32,13 @@ function useUpgradeHandler( {
 	coupon,
 	cartHandler,
 	redirectTo,
+	pluginSlug,
 }: {
 	siteSlug?: string | null;
 	coupon?: string;
 	cartHandler?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
 	redirectTo?: string;
+	pluginSlug?: string;
 } ) {
 	const processCartItems = useCallback(
 		( cartItems?: MinimalRequestCartProduct[] | null ) => {
@@ -60,9 +63,16 @@ function useUpgradeHandler( {
 				? getPlanPath( cartItemForPlan.product_slug )
 				: '';
 
-			const checkoutUrl = cartItemForStorageAddOn
+			let checkoutUrl = cartItemForStorageAddOn
 				? `/checkout/${ siteSlug }/${ planPath },${ cartItemForStorageAddOn.product_slug }:-q-${ cartItemForStorageAddOn.quantity }`
 				: `/checkout/${ siteSlug }/${ planPath }`;
+
+			// Append plugin if present
+			if ( pluginSlug ) {
+				checkoutUrl = cartItemForStorageAddOn
+					? `${ checkoutUrl },${ pluginSlug }`
+					: `/checkout/${ siteSlug }/${ planPath },${ pluginSlug }`;
+			}
 
 			const checkoutUrlWithArgs = addQueryArgs(
 				{ ...( coupon && { coupon } ), ...( redirectTo && { redirect_to: redirectTo } ) },
@@ -72,7 +82,7 @@ function useUpgradeHandler( {
 			page( checkoutUrlWithArgs );
 			return;
 		},
-		[ siteSlug, coupon, cartHandler, redirectTo ]
+		[ siteSlug, coupon, cartHandler, redirectTo, pluginSlug ]
 	);
 
 	return useCallback(
@@ -161,6 +171,7 @@ function useGenerateActionCallback( {
 	coupon,
 	isGatingBusinessQ1,
 	redirectTo,
+	pluginSlug,
 }: {
 	currentPlan: Plans.SitePlan | undefined;
 	eligibleForFreeHostingTrial: boolean;
@@ -173,10 +184,11 @@ function useGenerateActionCallback( {
 	coupon?: string;
 	/**
 	 * When true, adds `is_gating_business_q1` to the plan cart item extra data.
-	 * Used for the pricing differentiation experiment (calypso_pricing_differentiation_202601_v1).
+	 * Used for the pricing differentiation experiment (calypso_pricing_differentiation_202603).
 	 */
 	isGatingBusinessQ1?: boolean;
 	redirectTo?: string;
+	pluginSlug?: string;
 } ): UseActionCallback {
 	const siteSlug = useSelector( ( state: IAppState ) => getSiteSlug( state, siteId ) );
 	const siteUrl = useSelector( ( state: IAppState ) => siteId && getSiteUrl( state, siteId ) );
@@ -195,6 +207,7 @@ function useGenerateActionCallback( {
 		coupon,
 		cartHandler,
 		redirectTo,
+		pluginSlug,
 	} );
 	const handleDowngradeClick = useDowngradeHandler( {
 		siteSlug,
@@ -253,7 +266,7 @@ function useGenerateActionCallback( {
 			/* 3. In the logged-in plans dashboard, handle plan downgrades and plan downgrade tracks events */
 			if (
 				sitePlanSlug &&
-				! flowName &&
+				( ! flowName || flowName === WOO_HOSTED_PLANS_FLOW ) &&
 				intent !== 'plans-p2' &&
 				intent !== 'plans-blog-onboarding' &&
 				! availableForPurchase

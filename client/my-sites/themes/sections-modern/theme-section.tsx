@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
 import clsx from 'clsx';
 import { useQueryThemes } from 'calypso/components/data/query-themes';
@@ -23,6 +24,7 @@ export type ThemeSectionProps = {
 	sectionSlug: string;
 	sectionIndex: number;
 	variant?: 'light' | 'dark';
+	banner?: React.ReactNode;
 	getActionLabel: ( themeId: string ) => string;
 	getOptions: ( themeId: string ) => void;
 	getScreenshotUrl: ( themeId: string ) => string;
@@ -37,6 +39,7 @@ export default function ThemeSection( {
 	sectionSlug,
 	sectionIndex,
 	variant = 'light',
+	banner,
 	getActionLabel,
 	getOptions,
 	getScreenshotUrl,
@@ -90,6 +93,9 @@ export default function ThemeSection( {
 	};
 
 	const handleSeeAll = () => {
+		recordTracksEvent( 'calypso_themeshowcase_section_see_all_click', {
+			section: sectionSlug,
+		} );
 		page( seeAllUrl );
 		window.scrollTo( { top: 0 } );
 	};
@@ -99,6 +105,7 @@ export default function ThemeSection( {
 			<ThemeSectionHeader
 				title={ title }
 				subtitle={ subtitle }
+				buttonHref={ seeAllUrl }
 				buttonLabel={ buttonLabel }
 				onButtonClick={ handleSeeAll }
 			/>
@@ -122,6 +129,7 @@ export default function ThemeSection( {
 						onStyleVariationClick={ onStyleVariationClick }
 					/>
 				) ) }
+				{ banner }
 			</div>
 		</div>
 	);

@@ -29,7 +29,8 @@ function SocialLogo( props: Assign< React.SVGProps< SVGSVGElement >, Props > ) {
 			onClick={ onClick }
 			{ ...otherProps }
 		>
-			<use xlinkHref={ `${ spritePath }#${ icon }` } />
+			{ /* href + xlinkHref: some browsers only resolve external SVG sprites with href. */ }
+			<use href={ `${ spritePath }#${ icon }` } xlinkHref={ `${ spritePath }#${ icon }` } />
 		</svg>
 	);
 }

@@ -41,12 +41,12 @@ object BuildDockerImage : BuildType({
 
     data class EnvConfig(
         val label: String,
-        val baseUrl: String = "https://calypso.live",
         val envQuery: String, // e.g. "" or "&env=jetpack"
         val qrEnv: String,    // e.g. "flags=oauth" or "env=jetpack&flags=oauth"
     )
 
     val imageBase = "registry.a8c.com/calypso/app"
+	val baseUrl = "https://calypso.live"
 
     val environments = listOf(
         EnvConfig(
@@ -71,9 +71,8 @@ object BuildDockerImage : BuildType({
 		),
 		EnvConfig(
 			label = "Dashboard Live (CIAB)",
-			baseUrl = "https://calypso.live/ciab",
-			envQuery = "&env=dashboard",
-			qrEnv = "env=dashboard&flags=oauth",
+			envQuery = "&env=dashboard-ciab",
+			qrEnv = "env=dashboard-ciab&flags=oauth",
 		)
     )
 
@@ -82,11 +81,11 @@ object BuildDockerImage : BuildType({
             appendLine(
                 """
                 <details>
-                  <summary>${env.label} <a href="${env.baseUrl}?image=$imageBase:build-%build.number%${env.envQuery}">(direct link)</a></summary>
+                  <summary>${env.label} <a href="${baseUrl}?image=$imageBase:build-%build.number%${env.envQuery}">(direct link)</a></summary>
                   <table>
                     <tr>
                       <td>
-                        <a href="${env.baseUrl}?image=$imageBase:build-%build.number%${env.envQuery}">${env.baseUrl}?image=$imageBase:build-%build.number%${env.envQuery}</a>
+                        <a href="${baseUrl}?image=$imageBase:build-%build.number%${env.envQuery}">${baseUrl}?image=$imageBase:build-%build.number%${env.envQuery}</a>
                       </td>
                     </tr>
                   </table>
@@ -98,7 +97,9 @@ object BuildDockerImage : BuildType({
     }
 
 	params {
+		text("cache_mode", "seed", label = "Docker build cache mode", description = "How the main Docker build sources warm caches. Allowed values: base, seed, none.", allowEmpty = false)
 		text("base_image", "registry.a8c.com/calypso/base:latest", label = "Base docker image", description = "Base docker image", allowEmpty = false)
+		text("cache_seed_image", "registry.a8c.com/calypso/cache-seed:latest", label = "Cache seed image", description = "Cache-only image used when cache_mode=seed", allowEmpty = false)
 		text("base_image_publish_tag", "latest", label = "Tag to use for the published base image", description = "Base docker image tag", allowEmpty = false)
 		checkbox(
 			name = "MANUAL_SENTRY_RELEASE",
@@ -112,7 +113,15 @@ object BuildDockerImage : BuildType({
 			name = "UPDATE_BASE_IMAGE_CACHE",
 			value = "false",
 			label = "Update the base image from the cache.",
-			description = "Updates the base image by copying .cache files from the current build. Runs on trunk by default if the cache invalidates during the build.",
+			description = "Updates the base image by copying .cache files from the current build. This applies only when cache_mode=base.",
+			checked = "true",
+			unchecked = "false"
+		)
+		checkbox(
+			name = "PROFILE",
+			value = "false",
+			label = "Enable profiling",
+			description = "Enables webpack progress and filesystem cache profiling inside the Docker build.",
 			checked = "true",
 			unchecked = "false"
 		)
@@ -183,14 +192,27 @@ object BuildDockerImage : BuildType({
 		// Note that this only happens on non-trunk
 		mergeTrunk( skipIfConflict = true )
 
+		script {
+			name = "Check Docker workspace COPY globs"
+			scriptContent = """
+				#!/usr/bin/env bash
+				node ./bin/check-docker-workspace-copy-globs.mjs
+			"""
+			dockerImage = "%docker_image_e2e%"
+			dockerRunParameters = "-u %env.UID%"
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+		}
+
 		val commonArgs = """
 			--label com.a8c.image-builder=teamcity
 			--label com.a8c.build-id=%teamcity.build.id%
 			--build-arg workers=32
 			--build-arg node_memory=16384
-			--build-arg use_cache=true
+			--build-arg cache_mode=%cache_mode%
 			--build-arg base_image=%base_image%
+			--build-arg cache_seed_image=%cache_seed_image%
 			--build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber}
+			--build-arg profile=%PROFILE%
 			--build-arg manual_sentry_release=%MANUAL_SENTRY_RELEASE%
 			--build-arg is_default_branch=%teamcity.build.branch.is_default%
 			--build-arg sentry_auth_token=%SENTRY_AUTH_TOKEN%
@@ -295,6 +317,7 @@ object BuildDockerImage : BuildType({
 		dockerCommand {
 			name = "Rebuild cache image"
 			conditions {
+				equals("cache_mode", "base")
 				equals("UPDATE_BASE_IMAGE_CACHE", "true")
 				equals("teamcity.build.branch.is_default", "true")
 			}
@@ -315,6 +338,7 @@ object BuildDockerImage : BuildType({
 		dockerCommand {
 			name = "Push cache image"
 			conditions {
+				equals("cache_mode", "base")
 				equals("UPDATE_BASE_IMAGE_CACHE", "true")
 				equals("teamcity.build.branch.is_default", "true")
 			}
@@ -382,6 +406,11 @@ object RunAllUnitTests : BuildType({
 		test_results => test_results
 		artifacts => artifacts
 	""".trimIndent()
+
+	params {
+		// Unit tests don't exercise Playwright browsers, so avoid downloading them during yarn install.
+		param("env.PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD", "1")
+	}
 
 	vcs {
 		root(Settings.WpCalypso)
@@ -497,12 +526,13 @@ object RunAllUnitTests : BuildType({
 		bashNodeScript {
 			name = "Tag build"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
+			conditions {
+				equals("teamcity.build.branch.is_default", "true")
+			}
 			scriptContent = """
 				set -x
 
-				if [[ "%teamcity.build.branch.is_default%" == "true" ]] ; then
-					curl -s -X POST -H "Content-Type: text/plain" --data "release-candidate" -u "%system.teamcity.auth.userId%:%system.teamcity.auth.password%" "%teamcity.serverUrl%/httpAuth/app/rest/builds/id:%teamcity.build.id%/tags/"
-				fi
+				curl -s -X POST -H "Content-Type: text/plain" --data "release-candidate" -u "%system.teamcity.auth.userId%:%system.teamcity.auth.password%" "%teamcity.serverUrl%/httpAuth/app/rest/builds/id:%teamcity.build.id%/tags/"
 			""".trimIndent()
 		}
 	}
@@ -517,7 +547,7 @@ object RunAllUnitTests : BuildType({
 	}
 
 	failureConditions {
-		executionTimeoutMin = 10
+		executionTimeoutMin = 15
 	}
 	features {
 		feature {

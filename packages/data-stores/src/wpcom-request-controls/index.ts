@@ -1,7 +1,8 @@
-import wpcomProxyRequest, {
+import {
 	reloadProxy as triggerReloadProxy,
 	requestAllBlogsAccess as triggerRequestAllBlogsAccess,
 } from 'wpcom-proxy-request';
+import wpcomProxyRequest from '../wpcom-request';
 
 type WpcomProxyRequestOptions = Parameters< typeof wpcomProxyRequest >[ 0 ];
 

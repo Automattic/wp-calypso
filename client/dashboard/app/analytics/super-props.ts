@@ -2,7 +2,7 @@ import { siteBySlugQuery, sitesQueryKey } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import type { User, Site } from '@automattic/api-core';
 import type { QueryClient } from '@tanstack/react-query';
-import type { AnyRouter } from '@tanstack/react-router';
+import type { AnyRouter, RouterState } from '@tanstack/react-router';
 
 export const getSuperProps = ( user: User, router: AnyRouter, queryClient: QueryClient ) => () => {
 	const superProps = {
@@ -42,9 +42,8 @@ export const getSuperProps = ( user: User, router: AnyRouter, queryClient: Query
 /**
  * Normalize the path by removing leading double slashes and trailing slashes.
  */
-export function getNormalizedPath( router: AnyRouter ) {
-	const leafMatch = router.state.matches.at( -1 );
-	const basePath = router.basepath ?? '';
+export function getNormalizedPath( matches: RouterState[ 'matches' ], basePath = '' ) {
+	const leafMatch = matches.at( -1 );
 	const routeId = leafMatch?.routeId ?? '';
 
 	const normalizedBasePath = basePath.endsWith( '/' ) ? basePath.slice( 0, -1 ) : basePath;

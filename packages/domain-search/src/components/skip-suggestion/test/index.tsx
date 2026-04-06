@@ -90,9 +90,7 @@ describe( 'SkipSuggestion', () => {
 				</TestDomainSearchWithSuggestions>
 			);
 
-			expect(
-				await screen.findByText( 'Start free with a WordPress.com subdomain' )
-			).toBeInTheDocument();
+			expect( await screen.findByText( /Start free with / ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Upgrade to a custom domain name anytime.' ) ).toBeInTheDocument();
 
 			const skipButton = screen.getByRole( 'button', {
@@ -106,26 +104,24 @@ describe( 'SkipSuggestion', () => {
 			expect( onSkip ).toHaveBeenCalledWith( freeSuggestion );
 		} );
 
-		it( 'includes .blog suggestions when the config allows it', async () => {
-			const freeSuggestion = buildFreeSuggestion( { domain_name: 'site.blog' } );
+		it( 'includes .blog suggestions when the config allows it and query is a .blog subdomain', async () => {
+			const freeSuggestion = buildFreeSuggestion( { domain_name: 'site.tech.blog' } );
 
 			const freeSuggestionQuery = mockGetFreeSuggestionQuery( {
-				params: { query: 'site', include_dotblogsubdomain: true },
+				params: { query: 'site.tech.blog', include_dotblogsubdomain: true },
 				freeSuggestion,
 			} );
 
 			render(
 				<TestDomainSearchWithSuggestions
-					query="site"
+					query="site.tech.blog"
 					config={ { skippable: true, includeDotBlogSubdomain: true } }
 				>
 					<SkipSuggestion />
 				</TestDomainSearchWithSuggestions>
 			);
 
-			expect(
-				await screen.findByText( 'Start free with a WordPress.com subdomain' )
-			).toBeInTheDocument();
+			expect( await screen.findByText( /Start free with / ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Upgrade to a custom domain name anytime.' ) ).toBeInTheDocument();
 
 			expect( freeSuggestionQuery.isDone() ).toBe( true );

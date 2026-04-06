@@ -4,6 +4,7 @@ import {
 	getPlan,
 } from '@automattic/calypso-products';
 import { Button, Card, FormLabel } from '@automattic/components';
+import { Page } from '@wordpress/admin-ui';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { pick } from 'lodash';
@@ -20,7 +21,6 @@ import FormTextarea from 'calypso/components/forms/form-textarea';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import JetpackTitle from 'calypso/components/jetpack-title';
 import Main from 'calypso/components/main';
-import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import { decodeEntities } from 'calypso/lib/formatting';
 import PodcastCoverImageSetting from 'calypso/my-sites/site-settings/podcast-cover-image-setting';
@@ -431,12 +431,12 @@ const PodcastingDetails = () => {
 	const translate = useTranslate();
 
 	return (
-		<Main wideLayout className="site-settings podcasting-details">
+		<Main fullWidthLayout className="site-settings podcasting-details">
 			<DocumentHead title={ translate( 'Podcasting' ) } />
-			<NavigationHeader
-				navigationItems={ [] }
-				title={ <JetpackTitle title={ translate( 'Podcasting' ) } /> }
-				subtitle={ translate(
+			<Page
+				hasPadding
+				showSidebarToggle={ false }
+				subTitle={ translate(
 					'Publish a podcast feed to Apple Podcasts and other podcasting services. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 					{
 						components: {
@@ -444,8 +444,10 @@ const PodcastingDetails = () => {
 						},
 					}
 				) }
-			/>
-			<PodcastingSettingsForm />
+				title={ <JetpackTitle title={ translate( 'Podcasting' ) } /> }
+			>
+				<PodcastingSettingsForm />
+			</Page>
 		</Main>
 	);
 };

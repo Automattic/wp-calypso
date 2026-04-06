@@ -4,6 +4,7 @@ import { __ } from '@wordpress/i18n';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { wpcomLink } from '../../utils/link';
 import { PauseAllEmails } from './pause-all-emails';
 import { SubscriptionSettings } from './subscription-settings';
 
@@ -18,7 +19,9 @@ export default function NotificationsEmails() {
 					description={ createInterpolateElement(
 						__( 'To manage individual site subscriptions, <link>go to the Reader</link>.' ),
 						{
-							link: <ExternalLink href="/reader/subscriptions" children={ null } />,
+							link: (
+								<ExternalLink href={ wpcomLink( '/reader/subscriptions' ) } children={ null } />
+							),
 						}
 					) }
 				/>

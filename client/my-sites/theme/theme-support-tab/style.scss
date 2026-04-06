@@ -1,7 +1,7 @@
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
 
-.theme__sheet-card-support {
+.card.theme__sheet-card-support {
 	align-items: center;
 	display: grid;
 	gap: 0 20px;

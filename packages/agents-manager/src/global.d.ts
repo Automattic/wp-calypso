@@ -10,6 +10,7 @@ declare const agentsManagerData:
 	| {
 			agentProviders?: string[];
 			useUnifiedExperience?: boolean;
+			agentId?: string;
 			helpCenterUrl?: string;
 	  }
 	| undefined;
@@ -49,6 +50,7 @@ interface AgentsManagerChatState {
  */
 interface AgentsManagerActions {
 	getChatState: () => Promise< AgentsManagerChatState >;
+	getSessionId: () => string;
 	setChatOpen: ( isOpen: boolean ) => void;
 	setChatDocked: ( isDocked: boolean ) => void;
 	setChatEnabled: ( isEnabled: boolean ) => void;

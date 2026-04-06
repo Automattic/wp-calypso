@@ -54,7 +54,6 @@ import { isJetpackSite, getJetpackStatsAdminVersion } from 'calypso/state/sites/
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getModuleToggles } from 'calypso/state/stats/module-toggles/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import PageHeader from './components/headers/page-header';
 import StatsModuleAuthors from './features/modules/stats-authors';
 import StatsModuleClicks from './features/modules/stats-clicks';
 import StatsModuleCountries from './features/modules/stats-countries';
@@ -77,7 +76,7 @@ import StatsModuleListing from './pages/shared/stats-module-listing';
 import PromoCards from './promo-cards';
 import StatsCardUpdateJetpackVersion from './stats-card-upsell/stats-card-update-jetpack-version';
 import ChartTabs from './stats-chart-tabs';
-import DatePicker from './stats-date-picker';
+import StatsDateLabel from './stats-date-label';
 import StatsNotices from './stats-notices';
 import PageViewTracker from './stats-page-view-tracker';
 import StatsPeriodHeader from './stats-period-header';
@@ -122,6 +121,13 @@ Object.defineProperty( CHART_VIEWS, 'label', {
 } );
 Object.defineProperty( CHART_VISITORS, 'label', {
 	get: () => translate( 'Visitors', { context: 'noun' } ),
+} );
+Object.defineProperty( CHART_VISITORS, 'aggregateNote', {
+	get: () =>
+		translate( 'Per-period sum, not unique overall.', {
+			comment:
+				'Explanation for the Visitors stats chart: the total visitors value is calculated by adding up the visitors count in each time bucket (day/week/month), so it may differ from the unique visitor count across the entire selected date range.',
+		} ),
 } );
 Object.defineProperty( CHART_LIKES, 'label', {
 	get: () => translate( 'Likes', { context: 'noun' } ),
@@ -571,10 +577,6 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 					<JetpackBackupCredsBanner event="stats-backup-credentials" />
 				</div>
 			) }
-			<PageHeader
-				titleProps={ { subtitle: translate( 'Simple, powerful analytics to grow your site.' ) } }
-			/>
-			<StatsNavigation selectedItem="traffic" interval={ period } siteId={ siteId } slug={ slug } />
 			<StatsNotices
 				siteId={ siteId }
 				isOdysseyStats={ isOdysseyStats }
@@ -611,7 +613,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 						}
 					>
 						{ ' ' }
-						<DatePicker
+						<StatsDateLabel
 							period={ period }
 							date={ date }
 							query={ query }
@@ -893,6 +895,7 @@ const StatsSite = ( props ) => {
 
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const siteId = useSelector( getSelectedSiteId );
+	const slug = useSelector( getSelectedSiteSlug );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 
 	useEffect(
@@ -914,7 +917,19 @@ const StatsSite = ( props ) => {
 	}, [ context.query, period ] );
 
 	return (
-		<Main fullWidthLayout ariaLabel={ STATS_PRODUCT_NAME }>
+		<Main
+			fullWidthLayout
+			ariaLabel={ STATS_PRODUCT_NAME }
+			pageSubTitle={ translate( 'Simple, powerful analytics to grow your site.' ) }
+			pageTabs={
+				<StatsNavigation
+					selectedItem="traffic"
+					interval={ period }
+					siteId={ siteId }
+					slug={ slug }
+				/>
+			}
+		>
 			{ /* Odyssey: Google Business Profile pages are currently unsupported. */ }
 			{ ! isOdysseyStats && (
 				<>

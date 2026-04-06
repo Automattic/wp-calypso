@@ -4,10 +4,12 @@ A utility for extracting translatable strings from JavaScript source.
 
 ## Using the CLI
 
-`wp-babel-makepot "<input_files>" -i "<ignore_patterns>" -b "<base_dir>" -d "<output_segments_dir>" -o "<output_file>" -p <babel_preset>`
+`wp-babel-makepot "<input_files>" -i "<ignore_patterns>" -b "<base_dir>" -d "<output_segments_dir>" -o "<output_file>" -p <babel_preset> -j <jobs>`
 
 Example:
-`wp-babel-makepot "./src/**/*.{js,jsx,ts,tsx}" -i "**/*.d.ts" -b "./src" -d "./build" -o "./build/bundle-strings.pot"`
+`wp-babel-makepot "./src/**/*.{js,jsx,ts,tsx}" -i "**/*.d.ts" -b "./src" -d "./build" -o "./build/bundle-strings.pot" -j auto`
+
+`--jobs` accepts a positive integer or `auto`.
 
 Docker:
 

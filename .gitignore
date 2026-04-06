@@ -127,8 +127,6 @@ packages/plans-grid-next/static/mockServiceWorker.js
 .phpunit.result.cache
 .phpunit.cache
 
-.docusaurus
-
 # Playwright
 playwright-report/
 .playwright-mcp/
@@ -139,4 +137,5 @@ output/
 # Allow user-contributed files, but keep Claude.md and main settings under version control
 **/.claude.md
 **/.claude/settings.local.json
+.claude/test-pr/
 CLAUDE.local.md

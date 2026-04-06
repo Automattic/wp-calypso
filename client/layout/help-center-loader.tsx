@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { HelpCenter } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
@@ -38,7 +37,6 @@ export default function HelpCenterLoader( { sectionName, loadHelpCenter, current
 	const selectedSite = useSelector( getSelectedSite );
 	const primarySiteSlug = useSelector( getPrimarySiteSlug );
 	const primarySite = useSelector( ( state ) => getSiteBySlug( state, primarySiteSlug ) );
-	const haveSurvicateEnabled = isEnabled( 'survicate_enabled_at_help_center' );
 
 	if ( ! loadHelpCenter ) {
 		return null;
@@ -68,7 +66,6 @@ export default function HelpCenterLoader( { sectionName, loadHelpCenter, current
 			site={ selectedSite || primarySite }
 			currentUser={ user }
 			hasPurchases={ hasPurchases }
-			haveSurvicateEnabled={ haveSurvicateEnabled }
 			// hide Calypso's version of the help-center on Desktop, because the Editor has its own help-center
 			hidden={ sectionName === 'gutenberg-editor' && isDesktop }
 			onboardingUrl={ onboardingUrl() }
