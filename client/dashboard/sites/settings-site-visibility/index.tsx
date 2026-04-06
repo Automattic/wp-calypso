@@ -49,25 +49,23 @@ export default function SiteVisibilitySettings( { siteSlug }: { siteSlug: string
 	};
 
 	return (
-		<>
-			<PageLayout
-				size="small"
-				header={
-					<PageHeader
-						prefix={ <Breadcrumbs length={ 2 } /> }
-						title={ __( 'Site visibility' ) }
-						description={ createInterpolateElement(
-							__( 'Control who can view your site. <learnMoreLink />' ),
-							{
-								learnMoreLink: <InlineSupportLink supportContext="privacy" />,
-							}
-						) }
-					/>
-				}
-			>
-				{ renderContent() }
-				{ renderBackButton() }
-			</PageLayout>
-		</>
+		<PageLayout
+			size="small"
+			header={
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
+					title={ __( 'Site visibility' ) }
+					description={ createInterpolateElement(
+						__( 'Control who can view your site. <learnMoreLink />' ),
+						{
+							learnMoreLink: <InlineSupportLink supportContext="privacy" />,
+						}
+					) }
+				/>
+			}
+		>
+			{ renderContent() }
+			{ renderBackButton() }
+		</PageLayout>
 	);
 }
