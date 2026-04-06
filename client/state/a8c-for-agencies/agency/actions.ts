@@ -13,6 +13,7 @@ import {
 	JETPACK_SET_AGENCY_CLIENT_USER,
 } from './action-types';
 import { getActiveAgency, isFetchingAgency } from './selectors';
+import type { LeadMatchingDetails } from 'calypso/a8c-for-agencies/sections/partner-directory/types';
 
 export function setActiveAgency( agency: Agency ): AgencyThunkAction {
 	return ( dispatch, getState ) => {
@@ -20,6 +21,73 @@ export function setActiveAgency( agency: Agency ): AgencyThunkAction {
 			return;
 		}
 		dispatch( { type: JETPACK_CURRENT_AGENCY_UPDATE, activeAgency: agency } );
+	};
+}
+
+export function updateActiveAgencyLeadMatching( {
+	draft,
+	profile,
+	sync,
+}: {
+	draft?: LeadMatchingDetails | null;
+	profile?: NonNullable< Agency[ 'lead_matching' ] >[ 'profile' ];
+	sync?: NonNullable< Agency[ 'lead_matching' ] >[ 'sync' ];
+} ): AgencyThunkAction {
+	return ( dispatch, getState ) => {
+		const agency = getActiveAgency( getState() );
+
+		if ( ! agency || isFetchingAgency( getState() ) ) {
+			return;
+		}
+
+		dispatch(
+			setActiveAgency( {
+				...agency,
+				lead_matching: {
+					...agency.lead_matching,
+					...( draft !== undefined ? { draft } : {} ),
+					...( profile !== undefined ? { profile } : {} ),
+					...( sync !== undefined ? { sync } : {} ),
+				},
+			} )
+		);
+	};
+}
+
+export function updateActiveAgencyAvailability( isAvailable: boolean ): AgencyThunkAction {
+	return ( dispatch, getState ) => {
+		const agency = getActiveAgency( getState() );
+
+		if ( ! agency || isFetchingAgency( getState() ) ) {
+			return;
+		}
+
+		dispatch(
+			setActiveAgency( {
+				...agency,
+				profile: {
+					...agency.profile,
+					listing_details: {
+						...agency.profile.listing_details,
+						is_available: isAvailable,
+					},
+				},
+				lead_matching: agency.lead_matching
+					? {
+							...agency.lead_matching,
+							profile: agency.lead_matching.profile
+								? {
+										...agency.lead_matching.profile,
+										availability: {
+											...agency.lead_matching.profile.availability,
+											accepting_work: isAvailable,
+										},
+								  }
+								: agency.lead_matching.profile,
+					  }
+					: agency.lead_matching,
+			} )
+		);
 	};
 }
 

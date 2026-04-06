@@ -5,9 +5,12 @@ import { __ } from '@wordpress/i18n';
 import { mobile } from '@wordpress/icons';
 import { useAuth } from '../../app/auth';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
-import type { SummaryButtonBadgeProps } from '@automattic/components/src/summary-button/types';
+import type {
+	Density,
+	SummaryButtonBadgeProps,
+} from '@automattic/components/src/summary-button/types';
 
-export default function SecurityTwoStepAuthSummary() {
+export default function SecurityTwoStepAuthSummary( { density }: { density?: Density } ) {
 	const { user } = useAuth();
 	const isEmailVerified = user?.email_verified;
 
@@ -31,6 +34,7 @@ export default function SecurityTwoStepAuthSummary() {
 
 	return (
 		<RouterLinkSummaryButton
+			density={ density }
 			disabled={ ! isEmailVerified }
 			to="/me/security/two-step-auth"
 			title={ __( 'Two-step authentication' ) }

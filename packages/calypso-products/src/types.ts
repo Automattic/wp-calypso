@@ -348,24 +348,16 @@ export type Plan = BillingTerm & {
 	 * Shows all features for each plan including base infrastructure features.
 	 */
 	getLongSetSignupWpcomFeatures?: () => Feature[];
-
 	/**
-	 * Incremental feature list for the long_set_stacked variant of the plans differentiators experiment.
-	 * Shows only features that are new compared to the previous plan tier, with "Everything in X, plus:" header.
+	 * Feature list for focused_more_premium and focused_new_copy (ExPlat) variants of the plans
+	 * differentiators experiment.
 	 */
-	getLongSetStackedSignupWpcomFeatures?: () => Feature[];
-
+	getVar41MorePremiumSignupWpcomFeatures?: () => Feature[];
 	/**
-	 * Incremental feature list for the short_set_stacked variant of the plans differentiators experiment.
-	 * Shows only features that are new compared to the previous plan tier, with "Everything in X, plus:" header.
+	 * Comprehensive feature list for the focused_no_ai variant of the plans differentiators experiment.
+	 * Plan-scoped pills match other pill variants except AI-labeled pills are not shown.
 	 */
-	getShortSetStackedSignupWpcomFeatures?: () => Feature[];
-
-	/**
-	 * Incremental feature list for the var5 variant of the plans differentiators experiment.
-	 * Shows only features that are new compared to the previous plan tier, with "Everything in X, plus:" header.
-	 */
-	getVar5StackedSignupWpcomFeatures?: () => Feature[];
+	getVar42NoAiSignupWpcomFeatures?: () => Feature[];
 
 	/**
 	 * This function returns the features that are to be overridden and shown in the plans comparison table.
@@ -374,9 +366,8 @@ export type Plan = BillingTerm & {
 	get2023PlanComparisonFeatureOverride?: () => Feature[];
 
 	/**
-	 * Experimental: Comparison grid features for experiment variants.
-	 * This function is used for all experiment variants (var1, var1d, var3, var4, var5) in the comparison grid.
-	 * When present, this takes precedence over get2023PlanComparisonFeatureOverride when isExperimentVariant is true.
+	 * Comparison grid feature list when the plans pricing differentiators experiment is active (non-control).
+	 * When present, takes precedence over get2023PlanComparisonFeatureOverride when isExperimentVariant is true.
 	 */
 	get2023PlanComparisonFeatureOverrideForExperiment?: () => Feature[];
 

@@ -107,6 +107,7 @@ describe( 'selectors', () => {
 				isInAppPurchase: false,
 				isRechargeable: true,
 				isRefundable: false,
+				isWithinInitialRefundWindow: false,
 				isRenewable: false,
 				isRenewal: false,
 				isWooExpressTrial: false,

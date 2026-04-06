@@ -88,7 +88,6 @@ describe( 'RecommendedFeedItem', () => {
 	test( 'renders recommended feed item correctly', () => {
 		renderComponent();
 
-		expect( document.querySelector( '.reader-avatar' ) ).toBeVisible();
 		expect( document.querySelector( '.site-icon' ) ).toBeVisible();
 		expect( screen.getByRole( 'heading', { level: 3 } ) ).toHaveTextContent( 'Test Blog' );
 		expect( screen.getByRole( 'link' ) ).toHaveAttribute( 'href', '/reader/feeds/789' );
@@ -96,8 +95,14 @@ describe( 'RecommendedFeedItem', () => {
 		expect( screen.getByTestId( 'follow-button' ) ).toBeVisible();
 	} );
 
-	test( 'fallback to feedUrl when feedId is empty', () => {
+	test( 'fallback to blogId when feedId is empty', () => {
 		renderComponent( { ...defaultProps, feed: { ...defaultFeed, feedId: '' } } );
+
+		expect( screen.getByRole( 'link' ) ).toHaveAttribute( 'href', '/reader/blogs/456' );
+	} );
+
+	test( 'fallback to URL when both feedId and blogId are empty', () => {
+		renderComponent( { ...defaultProps, feed: { ...defaultFeed, feedId: '', siteId: '' } } );
 
 		expect( screen.getByRole( 'link' ) ).toHaveAttribute( 'href', 'https://example.com/feed' );
 	} );

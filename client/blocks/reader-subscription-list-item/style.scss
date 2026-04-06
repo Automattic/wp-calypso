@@ -16,7 +16,6 @@
 .reader-subscription-list-item__site-excerpt {
 	display: -webkit-box;
 	color: var(--color-neutral-70);
-	font-weight: 600;
 	font-size: $font-body-extra-small;
 	line-height: 18px;
 	overflow: hidden;
@@ -34,10 +33,6 @@
 
 .reader-subscription-list-item .site-icon {
 	margin-top: 4px;
-
-	img {
-		border-radius: 100%;
-	}
 }
 
 .reader-subscription-list-item {

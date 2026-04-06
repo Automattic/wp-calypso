@@ -1,7 +1,6 @@
-import { fetchUser } from '@automattic/api-core';
 import { queryClient, siteByIdQuery } from '@automattic/api-queries';
 import { hydrateRoot } from 'react-dom/client';
-import { AUTH_QUERY_KEY } from '../auth';
+import { AUTH_QUERY_KEY, initializeCurrentUser } from '../auth';
 import type { OmnibarEvents } from './click-handlers';
 
 export default async function loadOmnibar( events: OmnibarEvents ) {
@@ -30,17 +29,17 @@ export default async function loadOmnibar( events: OmnibarEvents ) {
 
 	const [ { InterimOmnibar }, user ] = await Promise.all( [
 		import( './interim-omnibar' ),
-		queryClient.fetchQuery( { queryKey: AUTH_QUERY_KEY, queryFn: fetchUser } ),
+		queryClient.fetchQuery( { queryKey: AUTH_QUERY_KEY, queryFn: initializeCurrentUser } ),
 	] );
 
-	// Hydrate the server-rendered omnibar with null props to match SSR output,
-	// then immediately re-render with real data.  Suppress recoverable hydration
-	// errors caused by Suspense boundaries inside MasterbarLoggedIn that
-	// renderToString cannot serialize (see logged-in.jsx for the proper fix).
+	// Hydrate matching the SSR output: user when bootstrapped, null when not.
 	const root = hydrateRoot(
 		container,
-		<InterimOmnibar user={ null } site={ null } currentRoute={ window.location.pathname } />,
-		{ onRecoverableError() {} }
+		<InterimOmnibar
+			user={ window.currentUser ?? null }
+			site={ null }
+			currentRoute={ window.location.pathname }
+		/>
 	);
 
 	const site = user.primary_blog
@@ -53,7 +52,11 @@ export default async function loadOmnibar( events: OmnibarEvents ) {
 			site={ site }
 			currentRoute={ window.location.pathname }
 			onToggleMenu={ () => events.mobileMenu.emit() }
-			onToggleNotifications={ () => events.notifications.emit() }
+			onToggleNotifications={ () =>
+				events.notifications.emit(
+					container.querySelector< HTMLElement >( '.masterbar-notifications' )
+				)
+			}
 		/>
 	);
 }

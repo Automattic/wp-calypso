@@ -95,6 +95,12 @@
 	white-space: nowrap;
 	width: fit-content;
 
+	// Same colors as Badge type="info-green" (@automattic/components); only for pricing differentiators experiment (non-control).
+	&.is-plan-differentiators-experiment-badge {
+		background-color: rgba(184, 230, 191, 0.64);
+		color: var(--studio-green-80);
+	}
+
 	&.is-hidden {
 		visibility: hidden;
 	}

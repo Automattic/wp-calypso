@@ -1,7 +1,7 @@
 import { Substitution, useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import { preventWidows } from 'calypso/lib/formatting';
-import ogImage from 'calypso/my-sites/patterns/components/header/images/og-image.png';
+import ogImage from 'calypso/my-sites/patterns/components/header/images/og-image.webp';
 import { PatternsSearchField } from 'calypso/my-sites/patterns/components/search-field';
 import { usePatternsContext } from 'calypso/my-sites/patterns/context';
 import { PatternTypeFilter, type Category } from 'calypso/my-sites/patterns/types';

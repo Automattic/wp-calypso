@@ -8,7 +8,7 @@ import rocket from 'calypso/assets/images/customer-home/illustration--rocket.svg
 import earnIllustration from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
 import activityPubLogo from 'calypso/assets/images/icons/activitypub-logo.svg';
 import wordPressLogo from 'calypso/assets/images/icons/wordpress-logo.svg';
-import facebookLogo from 'calypso/assets/images/illustrations/facebook-logo.png';
+import facebookLogo from 'calypso/assets/images/illustrations/facebook-logo.webp';
 import { marketingConnections } from 'calypso/my-sites/marketing/paths';
 import * as T from 'calypso/types';
 import { MarketingToolsFeatureData } from './types';

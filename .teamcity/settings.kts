@@ -20,6 +20,7 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.dockerRegist
 import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.githubConnection
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.schedule
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
+import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.VcsTrigger
 import jetbrains.buildServer.configs.kotlin.v2019_2.vcs.GitVcsRoot
 import jetbrains.buildServer.configs.kotlin.v2019_2.version
 
@@ -245,8 +246,8 @@ object BuildBaseImages : BuildType({
 
 	triggers {
 		schedule {
-			schedulingPolicy = cron {
-				hours = "*/6"
+			schedulingPolicy = daily {
+				hour = 3
 			}
 			branchFilter = """
 				+:trunk
@@ -462,6 +463,7 @@ object BuildToolchainPreviewImages : BuildType({
 object BuildCacheSeedImages : BuildType({
 	name = "Build cache-seed images"
 	description = "Builds and publishes scheduled cache-seed images from Dockerfile.cache-seed."
+	maxRunningBuilds = 1
 
 	buildNumberPattern = "%build.prefix%.%build.counter%"
 
@@ -552,6 +554,17 @@ object BuildCacheSeedImages : BuildType({
 	}
 
 	triggers {
+		vcs {
+			branchFilter = "+:trunk"
+			triggerRules = """
+				+:yarn.lock
+				+:package.json
+				+:composer.lock
+				+:.nvmrc
+			""".trimIndent()
+			quietPeriodMode = VcsTrigger.QuietPeriodMode.USE_CUSTOM
+			quietPeriod = 600  // 10 minutes in seconds
+		}
 		schedule {
 			schedulingPolicy = cron {
 				hours = "3,9,15,21"

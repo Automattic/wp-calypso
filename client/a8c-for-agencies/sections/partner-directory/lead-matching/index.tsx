@@ -1,31 +1,40 @@
-import { Badge, Button } from '@automattic/components';
-import { Card, CardBody, TextControl, ToggleControl } from '@wordpress/components';
+import page from '@automattic/calypso-router';
+import { Badge } from '@automattic/components';
+import { Card, CardBody, TextControl, ToggleControl, Button } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
+import clsx from 'clsx';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Form from 'calypso/a8c-for-agencies/components/form';
 import FormField from 'calypso/a8c-for-agencies/components/form/field';
-import validateNonEmpty from 'calypso/a8c-for-agencies/components/form/hoc/with-error-handling/validators/non-empty';
 import FormSection from 'calypso/a8c-for-agencies/components/form/section';
 import { A4A_PARTNER_DIRECTORY_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { Stat } from 'calypso/a8c-for-agencies/components/stat';
+import useSubmitAgencyDetailsMutation from 'calypso/a8c-for-agencies/data/partner-directory/use-submit-agency-details';
 import MinimumBudgetSelector from 'calypso/a8c-for-agencies/sections/partner-directory/components/minimum-budget-selector';
 import TokenFieldSelector from 'calypso/a8c-for-agencies/sections/partner-directory/components/token-field-selector';
 import { useDispatch, useSelector } from 'calypso/state';
-import { setActiveAgency } from 'calypso/state/a8c-for-agencies/agency/actions';
+import {
+	updateActiveAgencyAvailability,
+	updateActiveAgencyLeadMatching,
+} from 'calypso/state/a8c-for-agencies/agency/actions';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
-import { Agency } from 'calypso/state/a8c-for-agencies/types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { useFormSelectors } from '../components/hooks/use-form-selectors';
 import LanguagesSelector from '../components/languages-selector';
-import { PARTNER_DIRECTORY_DASHBOARD_SLUG } from '../constants';
+import {
+	PARTNER_DIRECTORY_DASHBOARD_SLUG,
+	PARTNER_DIRECTORY_LEAD_MATCHING_SLUG,
+} from '../constants';
 import {
 	AgencyLeadMatchingProfile,
 	AgencyLeadMatchingResponse,
 	LeadMatchingDetails,
 } from '../types';
+import { mapAgencyDetailsFormData } from '../utils/map-application-form-data';
 import useLeadMatchingForm from './hooks/use-lead-matching-form';
 import useLeadMatchingFormValidation from './hooks/use-lead-matching-form-validation';
+import useLeadMatchingSaveState from './hooks/use-lead-matching-save-state';
 import useSubmitForm from './hooks/use-submit-form';
 
 import './style.scss';
@@ -35,9 +44,63 @@ type Props = {
 	profile?: AgencyLeadMatchingProfile | null;
 };
 
+const REQUIRED_LEAD_MATCHING_FIELD_COUNT = 11;
+const LEAD_MATCHING_ROUTE = `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_LEAD_MATCHING_SLUG }`;
+const LEAD_MATCHING_STICKY_CARD_MIN_WIDTH = 660;
+const REGIONS_AND_LANGUAGES_FIELDS = [ 'regions', 'languages' ] as const;
+const BUSINESS_DETAILS_FIELDS = [ 'businessTypes', 'idealBusinessTypes', 'companySizes' ] as const;
+const WEBSITE_NEEDS_AND_VISION_FIELDS = [ 'projectTypes', 'serviceLevels' ] as const;
+const PROJECT_BUDGET_AND_TIMELINE_FIELDS = [ 'budgetLevels', 'timingPreferences' ] as const;
+const DECISION_MAKING_FIELDS = [ 'decisionProcesses' ] as const;
+const SITE_MANAGEMENT_FIELDS = [ 'ongoingRelationships' ] as const;
+const REQUIRED_FIELDS_IN_ORDER = [
+	'regions',
+	'languages',
+	'businessTypes',
+	'idealBusinessTypes',
+	'companySizes',
+	'projectTypes',
+	'serviceLevels',
+	'budgetLevels',
+	'timingPreferences',
+	'decisionProcesses',
+	'ongoingRelationships',
+] as const;
+
+const getCompletedRequiredFieldCount = ( formData: LeadMatchingDetails ) =>
+	[
+		formData.regions.length > 0,
+		formData.languages.length > 0,
+		formData.businessTypes.length > 0,
+		formData.idealBusinessTypes.length > 0,
+		formData.companySizes.length > 0,
+		formData.projectTypes.length > 0,
+		formData.serviceLevels.length > 0,
+		formData.budgetLevels.length > 0,
+		formData.timingPreferences.length > 0,
+		formData.decisionProcesses.length > 0,
+		formData.ongoingRelationships.length > 0,
+	].filter( Boolean ).length;
+
+let hasRegisteredLeadMatchingExitHook = false;
+const leadMatchingExitSaveRef: { current: null | ( () => void ) } = { current: null };
+
+const ensureLeadMatchingExitHook = () => {
+	if ( hasRegisteredLeadMatchingExitHook ) {
+		return;
+	}
+
+	page.exit( LEAD_MATCHING_ROUTE, ( _context, next ) => {
+		leadMatchingExitSaveRef.current?.();
+		next();
+	} );
+	hasRegisteredLeadMatchingExitHook = true;
+};
+
 const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 	const dispatch = useDispatch();
 	const agency = useSelector( getActiveAgency );
+	const persistedAvailability = agency?.profile.listing_details.is_available ?? true;
 	const {
 		availableRegions,
 		availableBusinessTypes,
@@ -53,8 +116,11 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 		availableBudgetLevels,
 	} = useFormSelectors();
 	const { validate, validationError, updateValidationError } = useLeadMatchingFormValidation();
-	const { formData, updateField: updateFormField } = useLeadMatchingForm( { initialFormData } );
-
+	const { formData, updateField: updateFormField } = useLeadMatchingForm( {
+		agencyId: agency?.id,
+		initialFormData,
+	} );
+	const { mutateAsync: submitAgencyDetails } = useSubmitAgencyDetailsMutation();
 	const cardRef = useRef< HTMLDivElement >( null );
 	const placeholderRef = useRef< HTMLDivElement >( null );
 	const rafRef = useRef< number >( 0 );
@@ -66,12 +132,31 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 			return;
 		}
 
-		placeholderRef.current.style.height = `${ cardRef.current.offsetHeight }px`;
+		const resetCardPosition = () => {
+			if ( ! cardRef.current || ! placeholderRef.current ) {
+				return;
+			}
+
+			placeholderRef.current.style.height = '';
+			cardRef.current.style.position = '';
+			cardRef.current.style.top = '';
+			cardRef.current.style.left = '';
+			cardRef.current.style.width = '';
+			cardRef.current.classList.remove( 'is-stuck' );
+			lastStuckRef.current = false;
+		};
 
 		const updatePosition = () => {
 			if ( ! cardRef.current || ! placeholderRef.current ) {
 				return;
 			}
+
+			if ( window.innerWidth < LEAD_MATCHING_STICKY_CARD_MIN_WIDTH ) {
+				resetCardPosition();
+				return;
+			}
+
+			placeholderRef.current.style.height = `${ cardRef.current.offsetHeight }px`;
 
 			const placeholderRect = placeholderRef.current.getBoundingClientRect();
 			const containerRect = scrollContainer.getBoundingClientRect();
@@ -107,10 +192,12 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 			rafRef.current = requestAnimationFrame( updatePosition );
 		};
 
+		updatePosition();
 		scrollContainer.addEventListener( 'scroll', handleScroll, { passive: true } );
 		window.addEventListener( 'resize', handleScroll, { passive: true } );
 
 		return () => {
+			resetCardPosition();
 			scrollContainer.removeEventListener( 'scroll', handleScroll );
 			window.removeEventListener( 'resize', handleScroll );
 			if ( rafRef.current ) {
@@ -124,115 +211,193 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 	}, [ dispatch ] );
 
 	const [ hasSavedSuccessfully, setHasSavedSuccessfully ] = useState( false );
-	const [ isDirty, setIsDirty ] = useState( false );
+	const [ availabilityDraft, setAvailabilityDraft ] = useState< boolean | null >( null );
+	const currentAvailability = availabilityDraft ?? persistedAvailability;
+
+	useEffect( () => {
+		setAvailabilityDraft( ( currentDraft ) =>
+			currentDraft !== null && currentDraft === persistedAvailability ? null : currentDraft
+		);
+	}, [ persistedAvailability ] );
+
+	const getSectionClassName = useCallback(
+		( fields: ReadonlyArray< keyof typeof validationError > ) =>
+			clsx( 'partner-directory-lead-matching__form-section', {
+				'is-error': fields.some( ( field ) => Boolean( validationError[ field ] ) ),
+			} ),
+		[ validationError ]
+	);
 
 	const onSubmitSuccess = useCallback(
-		( response: AgencyLeadMatchingResponse ) => {
-			if ( agency ) {
-				setHasSavedSuccessfully( true );
-				setIsDirty( false );
-				dispatch(
-					setActiveAgency( {
-						...agency,
-						lead_matching: {
-							...agency.lead_matching,
-							profile: response.lead_matching_profile,
-							sync: response.sync,
-						},
-					} as Agency )
-				);
-			}
+		( response: AgencyLeadMatchingResponse, { source }: { source: 'manual' | 'exit' } ) => {
+			setHasSavedSuccessfully( true );
+			dispatch(
+				updateActiveAgencyLeadMatching( {
+					draft: null,
+					profile: response.lead_matching_profile,
+					sync: response.sync,
+				} )
+			);
 
 			dispatch(
 				recordTracksEvent( 'calypso_a4a_partner_directory_lead_matching_submit_success', {
 					agency_id: agency?.id,
-				} )
-			);
-			dispatch(
-				successNotice( __( 'Your lead matching preferences were saved!' ), {
-					displayOnNextPage: true,
-					duration: 6000,
+					source,
 				} )
 			);
 
-			const scrollContainer = document.querySelector( '.hosting-dashboard-layout__body' );
-			if ( scrollContainer ) {
-				scrollContainer.scrollTo( { top: 0, behavior: 'smooth' } );
+			if ( source === 'manual' ) {
+				dispatch(
+					successNotice( __( 'Your lead matching preferences were saved!' ), {
+						displayOnNextPage: true,
+						duration: 6000,
+					} )
+				);
+				const scrollContainer = document.querySelector( '.hosting-dashboard-layout__body' );
+				if ( scrollContainer ) {
+					scrollContainer.scrollTo( { top: 0, behavior: 'smooth' } );
+				}
 			}
 		},
 		[ agency, dispatch ]
 	);
 
-	const onSubmitError = useCallback( () => {
-		dispatch(
-			recordTracksEvent( 'calypso_a4a_partner_directory_lead_matching_submit_error', {
-				agency_id: agency?.id,
-			} )
-		);
-		dispatch(
-			errorNotice( __( 'Something went wrong saving your preferences.' ), {
-				duration: 6000,
-			} )
-		);
-	}, [ agency?.id, dispatch ] );
-
-	const updateField = useCallback(
-		< K extends keyof LeadMatchingDetails >( field: K, value: LeadMatchingDetails[ K ] ) => {
-			setIsDirty( true );
-			updateFormField( field, value );
+	const onSubmitError = useCallback(
+		( { source }: { source: 'manual' | 'exit' } ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_a4a_partner_directory_lead_matching_submit_error', {
+					agency_id: agency?.id,
+					source,
+				} )
+			);
+			if ( source === 'manual' ) {
+				dispatch(
+					errorNotice( __( 'Something went wrong saving your preferences.' ), {
+						duration: 6000,
+					} )
+				);
+			}
 		},
-		[ updateFormField ]
+		[ agency?.id, dispatch ]
 	);
-
-	const { onSubmit, isSubmitting } = useSubmitForm( {
-		formData,
-		profile,
-		onSubmitSuccess,
-		onSubmitError,
-	} );
 
 	const wasInitiallyComplete = useMemo( () => {
 		if ( ! initialFormData ) {
 			return false;
 		}
 
-		return (
-			initialFormData.regions.length > 0 &&
-			initialFormData.languages.length > 0 &&
-			initialFormData.businessTypes.length > 0 &&
-			initialFormData.idealBusinessTypes.length > 0 &&
-			initialFormData.companySizes.length > 0 &&
-			initialFormData.projectTypes.length > 0 &&
-			initialFormData.serviceLevels.length > 0 &&
-			initialFormData.budgetLevels.length > 0 &&
-			initialFormData.timingPreferences.length > 0 &&
-			initialFormData.decisionProcesses.length > 0 &&
-			initialFormData.ongoingRelationships.length > 0
-		);
+		return getCompletedRequiredFieldCount( initialFormData ) === REQUIRED_LEAD_MATCHING_FIELD_COUNT;
 	}, [ initialFormData ] );
 
 	const completionStatus = useMemo( () => {
-		const requiredFields = [
-			formData.regions.length > 0,
-			formData.languages.length > 0,
-			formData.businessTypes.length > 0,
-			formData.idealBusinessTypes.length > 0,
-			formData.companySizes.length > 0,
-			formData.projectTypes.length > 0,
-			formData.serviceLevels.length > 0,
-			formData.budgetLevels.length > 0,
-			formData.timingPreferences.length > 0,
-			formData.decisionProcesses.length > 0,
-			formData.ongoingRelationships.length > 0,
-		];
-
-		const total = requiredFields.length;
-		const completed = requiredFields.filter( Boolean ).length;
+		const total = REQUIRED_LEAD_MATCHING_FIELD_COUNT;
+		const completed = getCompletedRequiredFieldCount( formData );
 		return { completed, total, isComplete: completed === total };
 	}, [ formData ] );
 
+	const { onSubmit, isSubmitting } = useSubmitForm( { onSubmitSuccess, onSubmitError } );
+	const { saveStatus, hasUnsavedChanges, saveNow, saveOnExit } = useLeadMatchingSaveState( {
+		formData,
+		profile,
+		acceptingWork: currentAvailability,
+		onSubmit,
+	} );
+	const hasUnsavedAvailability = availabilityDraft !== null;
+	const hasUnsavedState = hasUnsavedChanges || hasUnsavedAvailability;
+
+	const updateField = useCallback(
+		< K extends keyof LeadMatchingDetails >( field: K, value: LeadMatchingDetails[ K ] ) => {
+			updateFormField( field, value );
+		},
+		[ updateFormField ]
+	);
+
+	const saveAvailability = useCallback(
+		async ( source: 'manual' | 'exit' ) => {
+			if ( ! agency || availabilityDraft === null ) {
+				return true;
+			}
+
+			const agencyDetails = mapAgencyDetailsFormData( agency );
+			if ( ! agencyDetails ) {
+				return false;
+			}
+
+			try {
+				await submitAgencyDetails( {
+					...agencyDetails,
+					isAvailable: currentAvailability,
+				} );
+
+				dispatch( updateActiveAgencyAvailability( currentAvailability ) );
+				setAvailabilityDraft( null );
+
+				return true;
+			} catch {
+				if ( source === 'manual' ) {
+					dispatch(
+						errorNotice( __( 'Something went wrong saving your availability.' ), {
+							duration: 6000,
+						} )
+					);
+				}
+				return false;
+			}
+		},
+		[ agency, availabilityDraft, currentAvailability, dispatch, submitAgencyDetails ]
+	);
+
+	const saveLeadMatchingPreferences = useCallback(
+		async ( source: 'manual' | 'exit' ) => {
+			const didSaveAvailability = await saveAvailability( source );
+
+			if ( ! didSaveAvailability ) {
+				return undefined;
+			}
+
+			const response = source === 'manual' ? await saveNow() : await saveOnExit();
+
+			if ( source === 'manual' && hasUnsavedAvailability && ! hasUnsavedChanges ) {
+				setHasSavedSuccessfully( true );
+				dispatch(
+					successNotice( __( 'Your lead matching preferences were saved!' ), {
+						duration: 6000,
+					} )
+				);
+			}
+
+			return response;
+		},
+		[ dispatch, hasUnsavedAvailability, hasUnsavedChanges, saveAvailability, saveNow, saveOnExit ]
+	);
+
+	useEffect( () => {
+		ensureLeadMatchingExitHook();
+
+		if ( ! hasUnsavedState ) {
+			leadMatchingExitSaveRef.current = null;
+			return;
+		}
+
+		const handleRouteExit = () => {
+			void saveLeadMatchingPreferences( 'exit' );
+		};
+
+		leadMatchingExitSaveRef.current = handleRouteExit;
+
+		return () => {
+			if ( leadMatchingExitSaveRef.current === handleRouteExit ) {
+				leadMatchingExitSaveRef.current = null;
+			}
+		};
+	}, [ hasUnsavedState, saveLeadMatchingPreferences ] );
+
 	const eligibilityState = useMemo( () => {
-		const hasSavedState = ( wasInitiallyComplete || hasSavedSuccessfully ) && ! isDirty;
+		if ( ! currentAvailability ) {
+			return 'not-accepting';
+		}
+
+		const hasSavedState = ( wasInitiallyComplete || hasSavedSuccessfully ) && ! hasUnsavedState;
 
 		if ( hasSavedState && completionStatus.isComplete ) {
 			return 'eligible';
@@ -241,7 +406,40 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 			return 'ready';
 		}
 		return 'in-progress';
-	}, [ completionStatus.isComplete, hasSavedSuccessfully, isDirty, wasInitiallyComplete ] );
+	}, [
+		completionStatus.isComplete,
+		currentAvailability,
+		hasSavedSuccessfully,
+		hasUnsavedState,
+		wasInitiallyComplete,
+	] );
+
+	const saveMessage = useMemo( () => {
+		if ( hasUnsavedAvailability && ! hasUnsavedChanges ) {
+			return __( 'Unsaved changes' );
+		}
+
+		switch ( saveStatus ) {
+			case 'unsaved':
+				return __( 'Unsaved changes' );
+			case 'saving':
+				return __( 'Saving…' );
+			case 'saved':
+				return __( 'Saved' );
+			case 'error':
+				return __( 'Couldn’t save changes' );
+			default:
+				return '';
+		}
+	}, [ hasUnsavedAvailability, hasUnsavedChanges, saveStatus ] );
+
+	const saveStatusTone = useMemo( () => {
+		if ( hasUnsavedAvailability && ! hasUnsavedChanges ) {
+			return 'unsaved';
+		}
+
+		return saveStatus;
+	}, [ hasUnsavedAvailability, hasUnsavedChanges, saveStatus ] );
 
 	const getProgressStrapline = () => {
 		const { completed, total } = completionStatus;
@@ -280,13 +478,22 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 	} );
 
 	const submitForm = () => {
-		const error = validate( formData );
-		if ( error ) {
-			const parent = document.getElementsByClassName( 'partner-directory__body' )?.[ 0 ];
-			if ( parent ) {
-				parent.scrollTo( { behavior: 'smooth', top: 0 } );
+		if ( hasUnsavedChanges ) {
+			const error = validate( formData );
+			if ( error ) {
+				const firstInvalidField = REQUIRED_FIELDS_IN_ORDER.find( ( field ) => error[ field ] );
+				if ( firstInvalidField ) {
+					document
+						.querySelector(
+							`.partner-directory-lead-matching [data-field-name="${ firstInvalidField }"]`
+						)
+						?.scrollIntoView( {
+							behavior: 'smooth',
+							block: 'center',
+						} );
+				}
+				return;
 			}
-			return;
 		}
 
 		dispatch(
@@ -296,7 +503,7 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 				total_fields: completionStatus.total,
 			} )
 		);
-		onSubmit();
+		void saveLeadMatchingPreferences( 'manual' );
 	};
 
 	const showOtherBusinessType = formData.businessTypes.includes( 'other' );
@@ -315,12 +522,22 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 								</span>
 							</>
 						) }
+						{ eligibilityState === 'not-accepting' && (
+							<>
+								<Badge type="warning">{ __( 'Not eligible' ) }</Badge>
+								<span className="partner-directory-lead-matching__status-text">
+									{ __(
+										'Turn on Accepting new clients to be included in lead matching and receive leads.'
+									) }
+								</span>
+							</>
+						) }
 						{ eligibilityState === 'ready' && (
 							<>
 								<Badge type="info-blue">{ __( '1 step left' ) }</Badge>
 								<span className="partner-directory-lead-matching__status-text">
 									{ __(
-										'All questions answered — click Save preferences to start receiving leads'
+										'All questions answered — click Update preferences to start receiving leads'
 									) }
 								</span>
 							</>
@@ -341,17 +558,45 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 				title={ __( 'Lead matching preferences' ) }
 				autocomplete="off"
 				description={ __(
-					'Help us match you with the right leads by specifying your ideal client criteria.'
+					'Tell us about your agency & ideal client profile so we can match you with the best leads. All fields are required unless noted.'
 				) }
 			>
-				<FormSection title={ __( 'Regions and languages' ) }>
+				<FormSection
+					title={ __( "Your agency's availability" ) }
+					className="partner-directory-lead-matching__form-section"
+				>
+					<FormField
+						label={ __( 'Availability' ) }
+						description={ __( 'Agencies not accepting new clients are not eligible for leads.' ) }
+					>
+						<ToggleControl
+							checked={ currentAvailability }
+							onChange={ ( value ) => {
+								dispatch(
+									recordTracksEvent(
+										'calypso_a4a_partner_directory_lead_matching_availability_toggle',
+										{
+											agency_id: agency?.id,
+											is_available: value,
+										}
+									)
+								);
+								setAvailabilityDraft( value === persistedAvailability ? null : value );
+							} }
+							label={ __( 'Accepting new clients' ) }
+						/>
+					</FormField>
+				</FormSection>
+
+				<FormSection
+					title={ __( 'Regions and languages' ) }
+					className={ getSectionClassName( REGIONS_AND_LANGUAGES_FIELDS ) }
+				>
 					<FormField
 						label={ __( 'Which regions / time zones do you serve?' ) }
 						description={ __( 'Select all that apply.' ) }
 						error={ validationError.regions }
-						field={ formData.regions }
-						checks={ [ validateNonEmpty() ] }
-						isRequired
+						fieldName="regions"
 					>
 						<TokenFieldSelector
 							availableOptions={ availableRegions }
@@ -375,9 +620,7 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 						label={ __( 'What languages does your agency support?' ) }
 						description={ __( 'Select all that apply.' ) }
 						error={ validationError.languages }
-						field={ formData.languages }
-						checks={ [ validateNonEmpty() ] }
-						isRequired
+						fieldName="languages"
 					>
 						<LanguagesSelector
 							selectedLanguages={ formData.languages }
@@ -389,14 +632,15 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 					</FormField>
 				</FormSection>
 
-				<FormSection title={ __( 'Business details' ) }>
+				<FormSection
+					title={ __( 'Business details' ) }
+					className={ getSectionClassName( BUSINESS_DETAILS_FIELDS ) }
+				>
 					<FormField
 						label={ __( 'Which business types does your agency support?' ) }
 						description={ __( 'Select all that apply.' ) }
 						error={ validationError.businessTypes }
-						field={ formData.businessTypes }
-						checks={ [ validateNonEmpty() ] }
-						isRequired
+						fieldName="businessTypes"
 					>
 						<TokenFieldSelector
 							availableOptions={ availableBusinessTypes }
@@ -423,9 +667,7 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 						label={ __( 'Which business types are an ideal fit for your agency?' ) }
 						description={ __( 'Select all that apply.' ) }
 						error={ validationError.idealBusinessTypes }
-						field={ formData.idealBusinessTypes }
-						checks={ [ validateNonEmpty() ] }
-						isRequired
+						fieldName="idealBusinessTypes"
 					>
 						<TokenFieldSelector
 							availableOptions={ availableBusinessTypes }
@@ -452,9 +694,7 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 						label={ __( 'Which company sizes are a good fit for your agency?' ) }
 						description={ __( 'Select all that apply.' ) }
 						error={ validationError.companySizes }
-						field={ formData.companySizes }
-						checks={ [ validateNonEmpty() ] }
-						isRequired
+						fieldName="companySizes"
 					>
 						<TokenFieldSelector
 							availableOptions={ availableCompanySizes }
@@ -467,7 +707,10 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 					</FormField>
 				</FormSection>
 
-				<FormSection title={ __( 'Current website' ) }>
+				<FormSection
+					title={ __( 'Hosting and Platforms' ) }
+					className="partner-directory-lead-matching__form-section"
+				>
 					<FormField
 						label={ __( 'Which hosting environments do you regularly work with?' ) }
 						description={ __( 'Select all that apply.' ) }
@@ -517,14 +760,15 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 					</FormField>
 				</FormSection>
 
-				<FormSection title={ __( 'Website needs and vision' ) }>
+				<FormSection
+					title={ __( 'Website needs and vision' ) }
+					className={ getSectionClassName( WEBSITE_NEEDS_AND_VISION_FIELDS ) }
+				>
 					<FormField
 						label={ __( 'Which types of projects do you generally support?' ) }
 						description={ __( 'Select all that apply.' ) }
 						error={ validationError.projectTypes }
-						field={ formData.projectTypes }
-						checks={ [ validateNonEmpty() ] }
-						isRequired
+						fieldName="projectTypes"
 					>
 						<TokenFieldSelector
 							availableOptions={ availableProjectTypes }
@@ -549,9 +793,7 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 						label={ __( 'Which max service level are you most comfortable with right now?' ) }
 						description={ __( 'Choose the highest level your agency can realistically support.' ) }
 						error={ validationError.serviceLevels }
-						field={ formData.serviceLevels }
-						checks={ [ validateNonEmpty() ] }
-						isRequired
+						fieldName="serviceLevels"
 					>
 						<TokenFieldSelector
 							availableOptions={ availableServiceLevels }
@@ -564,16 +806,17 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 					</FormField>
 				</FormSection>
 
-				<FormSection title={ __( 'Project budget and timeline' ) }>
+				<FormSection
+					title={ __( 'Project budget and timeline' ) }
+					className={ getSectionClassName( PROJECT_BUDGET_AND_TIMELINE_FIELDS ) }
+				>
 					<FormField
 						label={ __(
 							'What budget levels are typically a good fit for new projects you take on?'
 						) }
 						description={ __( 'Select all that apply.' ) }
 						error={ validationError.budgetLevels }
-						field={ formData.budgetLevels }
-						checks={ [ validateNonEmpty() ] }
-						isRequired
+						fieldName="budgetLevels"
 					>
 						<TokenFieldSelector
 							availableOptions={ availableBudgetLevels }
@@ -596,9 +839,7 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 						label={ __( 'What client start timing works well for you right now?' ) }
 						description={ __( 'Select all that apply and adjust as often as you need to.' ) }
 						error={ validationError.timingPreferences }
-						field={ formData.timingPreferences }
-						checks={ [ validateNonEmpty() ] }
-						isRequired
+						fieldName="timingPreferences"
 					>
 						<TokenFieldSelector
 							availableOptions={ availableTimingPreferences }
@@ -621,14 +862,15 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 					</div>
 				</FormSection>
 
-				<FormSection title={ __( 'Decision making' ) }>
+				<FormSection
+					title={ __( 'Decision making' ) }
+					className={ getSectionClassName( DECISION_MAKING_FIELDS ) }
+				>
 					<FormField
 						label={ __( 'What types of decision-making processes do you work well with?' ) }
 						description={ __( 'Select all that apply.' ) }
 						error={ validationError.decisionProcesses }
-						field={ formData.decisionProcesses }
-						checks={ [ validateNonEmpty() ] }
-						isRequired
+						fieldName="decisionProcesses"
 					>
 						<TokenFieldSelector
 							availableOptions={ availableDecisionProcesses }
@@ -641,14 +883,15 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 					</FormField>
 				</FormSection>
 
-				<FormSection title={ __( 'Site management' ) }>
+				<FormSection
+					title={ __( 'Site management' ) }
+					className={ getSectionClassName( SITE_MANAGEMENT_FIELDS ) }
+				>
 					<FormField
 						label={ __( 'What ongoing relationship do you support?' ) }
 						description={ __( 'Select all that apply.' ) }
 						error={ validationError.ongoingRelationships }
-						field={ formData.ongoingRelationships }
-						checks={ [ validateNonEmpty() ] }
-						isRequired
+						fieldName="ongoingRelationships"
 					>
 						<TokenFieldSelector
 							availableOptions={ availableOngoingRelationships }
@@ -669,19 +912,30 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 					</div>
 				</FormSection>
 
-				<div className="partner-directory-agency-cta__required-information">
-					{ __( '* indicates a required field' ) }
-				</div>
-
 				<div className="partner-directory-agency-cta__footer">
+					{ saveMessage && (
+						<span
+							className={ `partner-directory-lead-matching__save-status is-${ saveStatusTone }` }
+						>
+							{ saveMessage }
+						</span>
+					) }
+
 					<Button
+						__next40pxDefaultSize
+						variant="secondary"
 						href={ `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_DASHBOARD_SLUG }` }
 						disabled={ isSubmitting }
 					>
 						{ __( 'Cancel' ) }
 					</Button>
 
-					<Button primary onClick={ submitForm } disabled={ isSubmitting }>
+					<Button
+						__next40pxDefaultSize
+						variant="primary"
+						onClick={ submitForm }
+						disabled={ isSubmitting }
+					>
 						{ initialFormData ? __( 'Update preferences' ) : __( 'Save preferences' ) }
 					</Button>
 				</div>

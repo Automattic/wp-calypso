@@ -1,0 +1,55 @@
+.dolly__description {
+	margin-top: 16px;
+	margin-bottom: 16px;
+}
+
+.dolly__telegram-connection {
+	/* Keep logo + label + widget on one row (widget iframe can be wide / block-level). */
+	.social-login__header {
+		flex-wrap: nowrap;
+		align-items: center;
+		width: 100%;
+	}
+
+	.social-login__header-info {
+		flex: 1 1 auto;
+		min-width: 0;
+	}
+
+	.social-login__header-icon {
+		flex-shrink: 0;
+	}
+
+	.dolly__telegram-logo {
+		display: block;
+		width: 30px;
+		height: 30px;
+	}
+
+	.dolly__telegram-header-action {
+		flex: 0 0 auto;
+		flex-shrink: 0;
+		justify-content: flex-end;
+	}
+
+	.dolly__telegram-header-action iframe {
+		max-width: 100%;
+		vertical-align: middle;
+	}
+
+	.tgme_widget_login_user_photo,
+	.tgme_widget_login_user_photo.bgcolor4 {
+		display: none;
+	}
+
+	.dolly__telegram-connected-word {
+		font-weight: 700;
+		color: var(--color-success);
+	}
+
+	.dolly__telegram-connection-description {
+		color: var(--color-neutral-70);
+		margin-top: 8px;
+	}
+}
+
