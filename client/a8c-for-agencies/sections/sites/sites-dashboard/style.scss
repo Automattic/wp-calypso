@@ -316,6 +316,27 @@
 			background: none;
 		}
 
+		.button.backup-date-picker__button--previous,
+		.button.backup-date-picker__button--next,
+		.button.toolbar__button {
+			background: transparent;
+			border-color: transparent;
+			color: var(--color-neutral-70);
+
+			&:hover {
+				background: transparent;
+				border-color: transparent;
+				color: var(--color-neutral-70);
+			}
+
+			&:focus {
+				background: transparent;
+				border-color: transparent;
+				color: var(--color-neutral-70);
+				box-shadow: none;
+			}
+		}
+
 		.sites-overview__add-site-issue-license-buttons {
 			display: flex;
 			grid-gap: 8px;
