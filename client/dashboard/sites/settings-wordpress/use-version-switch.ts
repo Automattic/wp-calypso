@@ -6,69 +6,98 @@ import {
 	siteWordPressVersionQuery,
 	siteWordPressVersionMutation,
 } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { usePrevious } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
-import { useEffect, useState } from 'react';
+import { useEffect, useReducer } from 'react';
 import { useBackupState } from '../backups/use-backup-state';
 import type { BackupState } from '../backups/use-backup-state';
 import type { Site } from '@automattic/api-core';
 
+export type Phase =
+	| { status: 'idle' }
+	| { status: 'submitting'; targetVersion: string }
+	| { status: 'switching'; targetVersion: string }
+	| { status: 'switched'; targetVersion: string };
+
+type Action =
+	| { type: 'VERSION_CHANGE_REQUESTED'; targetVersion: string }
+	| { type: 'SWITCH_STARTED'; targetVersion: string }
+	| { type: 'SWITCH_COMPLETED' };
+
+export function reducer( state: Phase, action: Action ): Phase {
+	switch ( action.type ) {
+		case 'VERSION_CHANGE_REQUESTED':
+			return { status: 'submitting', targetVersion: action.targetVersion };
+		case 'SWITCH_STARTED':
+			return { status: 'switching', targetVersion: action.targetVersion };
+		case 'SWITCH_COMPLETED':
+			if ( state.status !== 'switching' ) {
+				return state;
+			}
+			return { status: 'switched', targetVersion: state.targetVersion };
+		default:
+			return state;
+	}
+}
+
 export interface VersionSwitchState {
 	backupState: BackupState;
-	/** The pending version tag while switching, or the last one after switch completes. */
 	targetVersion: string;
+	pendingVersion: string | null | undefined;
 	isSwitching: boolean;
 	isSwitched: boolean;
-	mutation: ReturnType< typeof useMutation< void, Error, string > >;
+	switchedToBeta: boolean;
+	switchedToLatest: boolean;
+	switchVersion: ( version: string ) => void;
+	isSaving: boolean;
 }
 
 export function useVersionSwitch( site: Site ): VersionSwitchState {
 	const backupState = useBackupState( site.ID );
+	const [ phase, dispatch ] = useReducer( reducer, { status: 'idle' } );
 
 	// Check if there's a pending version switch.
 	const { data: pendingVersion } = useQuery( sitePendingWordPressVersionQuery( site.ID ) );
-	const isSwitching = !! pendingVersion;
-	const wasSwitching = usePrevious( isSwitching );
-	const [ isSwitched, setIsSwitched ] = useState( false );
-	const [ targetVersion, setTargetVersion ] = useState( '' );
+	const hasPendingVersion = !! pendingVersion;
+	const hadPendingVersion = usePrevious( hasPendingVersion );
 
-	// Remember the pending version so we can show it in the success notice.
+	// Pending version appeared → switching. Also start backup tracking.
 	useEffect( () => {
 		if ( pendingVersion ) {
-			setTargetVersion( pendingVersion );
+			backupState.setEnqueued( true );
+			dispatch( { type: 'SWITCH_STARTED', targetVersion: pendingVersion } );
 		}
-	}, [ pendingVersion ] );
+	}, [ pendingVersion ] ); // eslint-disable-line react-hooks/exhaustive-deps
 
-	// Track the transition from switching to not switching.
+	// Pending version cleared → switched.
 	useEffect( () => {
-		if ( wasSwitching && ! isSwitching ) {
-			setIsSwitched( true );
+		if ( hadPendingVersion && ! hasPendingVersion ) {
+			dispatch( { type: 'SWITCH_COMPLETED' } );
 			queryClient.invalidateQueries( siteWordPressVersionQuery( site.ID ) );
 			queryClient.invalidateQueries( siteBySlugQuery( site.slug ) );
 		}
-	}, [ wasSwitching, isSwitching, site.ID, site.slug ] );
+	}, [ hadPendingVersion, hasPendingVersion, site.ID, site.slug ] );
 
-	// Poll backups while a version switch is in progress.
+	// Poll backups while a version switch is in progress (including right after mutation fires).
+	const shouldPollBackups = phase.status === 'submitting' || hasPendingVersion;
 	useQuery( {
 		...siteBackupsQuery( site.ID ),
-		refetchInterval: isSwitching ? 3000 : false,
-		enabled: isSwitching,
+		refetchInterval: shouldPollBackups ? 3000 : false,
+		enabled: shouldPollBackups,
 	} );
 
 	// After backup completes, poll pending version until it clears.
 	useQuery( {
 		...sitePendingWordPressVersionQuery( site.ID ),
-		refetchInterval: isSwitching && backupState.hasRecentlyCompleted ? 5000 : false,
+		refetchInterval: hasPendingVersion && backupState.hasRecentlyCompleted ? 5000 : false,
 	} );
 
+	const deferUntilBackupComplete = isEnabled( 'dashboard/wp-beta-program' );
+
 	const mutation = useMutation( {
-		...siteWordPressVersionMutation( site.ID ),
-		onSuccess: () => {
-			backupState.setEnqueued( true );
-			setIsSwitched( false );
-			queryClient.invalidateQueries( sitePendingWordPressVersionQuery( site.ID ) );
-		},
+		...siteWordPressVersionMutation( site.ID, { deferUntilBackupComplete } ),
 		meta: {
 			snackbar: {
 				error: __( 'Failed to save WordPress version.' ),
@@ -76,11 +105,23 @@ export function useVersionSwitch( site: Site ): VersionSwitchState {
 		},
 	} );
 
+	const switchVersion = ( version: string ) => {
+		dispatch( { type: 'VERSION_CHANGE_REQUESTED', targetVersion: version } );
+		mutation.mutate( version );
+	};
+
+	const targetVersion = phase.status !== 'idle' ? phase.targetVersion : '';
+	const isSwitched = phase.status === 'switched';
+
 	return {
 		backupState,
 		targetVersion,
-		isSwitching,
+		pendingVersion,
+		isSwitching: phase.status === 'submitting' || phase.status === 'switching',
 		isSwitched,
-		mutation,
+		switchedToBeta: isSwitched && phase.targetVersion === 'beta',
+		switchedToLatest: isSwitched && phase.targetVersion === 'latest',
+		switchVersion,
+		isSaving: mutation.isPending,
 	};
 }

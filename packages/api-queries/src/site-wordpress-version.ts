@@ -18,9 +18,13 @@ export const sitePendingWordPressVersionQuery = ( siteId: number ) =>
 		queryFn: () => fetchPendingWordPressVersion( siteId ),
 	} );
 
-export const siteWordPressVersionMutation = ( siteId: number ) =>
+export const siteWordPressVersionMutation = (
+	siteId: number,
+	options?: { deferUntilBackupComplete?: boolean }
+) =>
 	mutationOptions( {
-		mutationFn: ( version: string ) => updateWordPressVersion( siteId, version ),
+		mutationFn: ( version: string ) =>
+			updateWordPressVersion( siteId, version, options?.deferUntilBackupComplete ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( siteWordPressVersionQuery( siteId ) );
 			queryClient.invalidateQueries( sitePendingWordPressVersionQuery( siteId ) );

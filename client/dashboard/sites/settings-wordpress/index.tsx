@@ -14,6 +14,8 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
 import { canViewWordPressSettings } from '../features';
+import { BetaProgramNotice } from './beta-program-notice';
+import { LatestVersionNotice } from './latest-version-notice';
 import { useVersionSwitch } from './use-version-switch';
 import { VersionForm } from './version-form';
 import { VersionSwitchNotice } from './version-switch-notice';
@@ -22,11 +24,29 @@ function WordPressSettingsForm( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: currentVersion } = useQuery( siteWordPressVersionQuery( site.ID ) );
 	const versionSwitch = useVersionSwitch( site );
-	const { isSwitching, isSwitched, backupState, targetVersion } = versionSwitch;
+	const { isSwitching, switchedToBeta, switchedToLatest, backupState, targetVersion } =
+		versionSwitch;
 
 	// Resolve the target version tag (e.g. "beta") to a display string (e.g. "7.0-RC2").
 	const { data: latestVersion = '' } = useQuery( wpOrgCoreVersionQuery() );
 	const { data: betaVersion = '' } = useQuery( wpOrgCoreVersionQuery( 'beta' ) );
+
+	let notice;
+	if ( isSwitching ) {
+		// Switching in progress — show backup/progress notices.
+		notice = (
+			<VersionSwitchNotice
+				backupState={ backupState }
+				targetVersion={ targetVersion === 'beta' ? betaVersion : latestVersion }
+			/>
+		);
+	} else if ( switchedToLatest ) {
+		// Just switched back to stable.
+		notice = <LatestVersionNotice wpVersion={ latestVersion } />;
+	} else if ( switchedToBeta || currentVersion === 'beta' ) {
+		// Enrolled in beta — show program notice.
+		notice = <BetaProgramNotice site={ site } wpVersion={ betaVersion } />;
+	}
 
 	return (
 		<PageLayout
@@ -38,16 +58,7 @@ function WordPressSettingsForm( { siteSlug }: { siteSlug: string } ) {
 					description={ __( 'Manage your WordPress version.' ) }
 				/>
 			}
-			notices={
-				isSwitching || isSwitched ? (
-					<VersionSwitchNotice
-						backupState={ backupState }
-						targetVersion={ targetVersion === 'beta' ? betaVersion : latestVersion }
-						currentWpVersion={ site.options?.software_version ?? '' }
-						isVersionSwitched={ isSwitched }
-					/>
-				) : undefined
-			}
+			notices={ notice }
 		>
 			<VersionForm
 				site={ site }

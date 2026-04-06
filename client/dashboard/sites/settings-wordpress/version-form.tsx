@@ -22,11 +22,15 @@ export function VersionForm( { site, currentVersion, versionSwitch }: VersionFor
 	const { data: latestVersion } = useQuery( wpOrgCoreVersionQuery() );
 	const { data: betaVersion } = useQuery( wpOrgCoreVersionQuery( 'beta' ) );
 
-	const { isSwitching, mutation } = versionSwitch;
+	const { isSwitching, pendingVersion, switchVersion, isSaving } = versionSwitch;
 
-	const [ formData, setFormData ] = useState< { version: string } >( {
-		version: currentVersion ?? '',
+	const [ formEdits, setFormEdits ] = useState< { version: string } >( {
+		version: '',
 	} );
+
+	const formData = {
+		version: formEdits.version || pendingVersion || currentVersion || '',
+	};
 
 	const currentWpVersion = site.options?.software_version ?? '';
 
@@ -54,11 +58,10 @@ export function VersionForm( { site, currentVersion, versionSwitch }: VersionFor
 	};
 
 	const isDirty = formData.version !== currentVersion;
-	const { isPending } = mutation;
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		mutation.mutate( formData.version );
+		switchVersion( formData.version );
 	};
 
 	return (
@@ -73,15 +76,15 @@ export function VersionForm( { site, currentVersion, versionSwitch }: VersionFor
 								fields={ fields }
 								form={ form }
 								onChange={ ( edits: { version?: string } ) => {
-									setFormData( ( data ) => ( { ...data, ...edits } ) );
+									setFormEdits( ( data ) => ( { ...data, ...edits } ) );
 								} }
 							/>
 							<ButtonStack justify="flex-start">
 								<Button
 									variant="primary"
 									type="submit"
-									isBusy={ isPending }
-									disabled={ isPending || ! isDirty || isSwitching }
+									isBusy={ isSaving }
+									disabled={ isSaving || ! isDirty || isSwitching }
 								>
 									{ __( 'Save' ) }
 								</Button>
