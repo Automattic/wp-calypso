@@ -14,7 +14,7 @@ import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/laun
 import { getSite } from 'calypso/state/sites/selectors';
 import Item from './item';
 
-export const MasterbarLaunchButton = ( { siteId }: { siteId: number } ) => {
+const MasterbarLaunchButton = ( { siteId }: { siteId: number } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const site = useSelector( ( state ) => getSite( state, siteId ) );
@@ -81,3 +81,5 @@ export const MasterbarLaunchButton = ( { siteId }: { siteId: number } ) => {
 		</>
 	);
 };
+
+export default MasterbarLaunchButton;
