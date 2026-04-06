@@ -71,7 +71,7 @@ export default function useCopyAction( registerMessageActions: RegisterMessageAc
 						id: 'copy',
 						component: CopyActionButton,
 						componentProps: { text },
-						order: 5,
+						order: 4,
 					},
 				];
 			},
