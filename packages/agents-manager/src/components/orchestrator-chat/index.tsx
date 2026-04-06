@@ -15,6 +15,7 @@ import useConversation from '../../hooks/use-conversation';
 import useCopyAction from '../../hooks/use-copy-action';
 import useFeedbackAction from '../../hooks/use-feedback-action';
 import useSaveNewChatRoute from '../../hooks/use-save-new-chat-route';
+import useSourcesAction from '../../hooks/use-sources-action';
 import convertToolMessagesToComponents from '../../utils/convert-tool-messages-to-components';
 import { persistLastActivity } from '../../utils/persist-last-activity';
 import AgentChat from '../agent-chat';
@@ -158,6 +159,9 @@ export default function OrchestratorChat( {
 
 	// Register a "Copy" action on plain-text agent messages.
 	useCopyAction( registerMessageActions );
+
+	// Register a "Sources" action on agent messages with sources data.
+	useSourcesAction( registerMessageActions );
 
 	const imageUpload = useImageUpload?.();
 	const pendingImages = imageUpload?.pendingImages || [];
