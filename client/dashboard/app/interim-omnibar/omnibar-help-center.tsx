@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { Suspense, lazy, useCallback, useRef } from 'react';
+import { Suspense, lazy, useCallback, useState } from 'react';
 import { useAuth } from '../auth';
 import { useHelpCenter } from '../help-center';
 
@@ -18,18 +18,20 @@ const AsyncHelpCenterApp = lazy( () => import( '../help-center/help-center-app' 
 export default function OmnibarHelpCenter() {
 	const { user } = useAuth();
 	const { isShown, setShowHelpCenter } = useHelpCenter();
-	const hasBeenShownRef = useRef( false );
+	const [ hasBeenShown, setHasBeenShown ] = useState( false );
 
 	const handleClose = useCallback( () => {
 		setShowHelpCenter( false, undefined, true );
 	}, [ setShowHelpCenter ] );
 
-	if ( isShown ) {
-		hasBeenShownRef.current = true;
+	// Latch to true the first time the panel is shown. React will re-render
+	// immediately and discard this render's output.
+	if ( isShown && ! hasBeenShown ) {
+		setHasBeenShown( true );
 	}
 
 	// Defer the lazy chunk download until the first time the panel is opened.
-	if ( ! hasBeenShownRef.current ) {
+	if ( ! hasBeenShown ) {
 		return null;
 	}
 
