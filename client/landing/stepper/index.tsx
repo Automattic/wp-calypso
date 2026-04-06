@@ -6,6 +6,7 @@ import {
 	setRequester as setDataStoresRequester,
 	UserActions,
 	User as UserStore,
+	HelpCenter,
 } from '@automattic/data-stores';
 import {
 	AI_SITE_BUILDER_FLOW,
@@ -15,7 +16,7 @@ import {
 	setRequester as setOnboardingRequester,
 } from '@automattic/onboarding';
 import { QueryClientProvider } from '@tanstack/react-query';
-import { dispatch } from '@wordpress/data';
+import { useSelect, dispatch } from '@wordpress/data';
 import defaultCalypsoI18n from 'i18n-calypso';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
@@ -54,7 +55,7 @@ import { DEFAULT_FLOW, getFlowFromURL, getStepFromURL } from './utils/get-flow-f
 import { startStepperPerformanceTracking } from './utils/performance-tracking';
 import { getSessionId } from './utils/use-session-id';
 import { WindowLocaleEffectManager } from './utils/window-locale-effect-manager';
-import type { CurrentUser } from '@automattic/data-stores';
+import type { CurrentUser, HelpCenterSelect, HelpCenterDispatch } from '@automattic/data-stores';
 import type { AnyAction } from 'redux';
 import type { WpcomRequestParams } from 'wpcom-proxy-request';
 
@@ -84,8 +85,26 @@ const FLOWS_WITHOUT_HELP_CENTER = new Set< string >( [
 	AI_SITE_BUILDER_FLOW,
 	AI_SITE_BUILDER_SPEC_FLOW,
 	DOMAIN_FLOW,
-	WOO_HOSTED_PLANS_FLOW,
 ] );
+
+const HELP_CENTER_STORE = HelpCenter.register();
+
+/**
+ * Mounts the Help Center only when programmatically opened. Prevents the disruptive auto-open
+ * from persisted preferences while still allowing on-demand opens (e.g., plan downgrade support).
+ */
+function LazyHelpCenter( { currentUser }: { currentUser: UserStore.CurrentUser } ) {
+	const isHelpCenterShown = useSelect(
+		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).isHelpCenterShown(),
+		[]
+	);
+
+	if ( ! isHelpCenterShown ) {
+		return null;
+	}
+
+	return <AsyncHelpCenterApp currentUser={ currentUser } sectionName="stepper" />;
+}
 
 async function main() {
 	const { pathname, search } = window.location;
@@ -219,6 +238,12 @@ async function main() {
 		flow = enhanceFlowWithAuth( flow );
 	}
 
+	// Clear any persisted help_center_open preference before React renders so the
+	// isHelpCenterShown resolver won't auto-open the Help Center in this flow.
+	if ( flowName === WOO_HOSTED_PLANS_FLOW ) {
+		( dispatch( HELP_CENTER_STORE ) as HelpCenterDispatch[ 'dispatch' ] ).showHelpCenter( false );
+	}
+
 	const root = createRoot( document.getElementById( 'wpcom' ) as HTMLElement );
 
 	root.render(
@@ -237,13 +262,16 @@ async function main() {
 							id="notices"
 						/>
 					</BrowserRouter>
-					{ ! FLOWS_WITHOUT_HELP_CENTER.has( flowName ) && (
-						<AsyncHelpCenterApp
-							requireLogin
-							currentUser={ user as UserStore.CurrentUser }
-							sectionName="stepper"
-						/>
-					) }
+					{ ! FLOWS_WITHOUT_HELP_CENTER.has( flowName ) &&
+						( flowName === WOO_HOSTED_PLANS_FLOW ? (
+							<LazyHelpCenter currentUser={ user as UserStore.CurrentUser } />
+						) : (
+							<AsyncHelpCenterApp
+								requireLogin
+								currentUser={ user as UserStore.CurrentUser }
+								sectionName="stepper"
+							/>
+						) ) }
 					{ 'development' === process.env.NODE_ENV && (
 						<AsyncLoad require="calypso/components/webpack-build-monitor" placeholder={ null } />
 					) }

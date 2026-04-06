@@ -18,6 +18,17 @@
 	}
 }
 
+.dashboard-empty-state__wrapper.is-compact {
+	min-height: 0;
+	justify-content: flex-start;
+}
+
+.dashboard-empty-state__wrapper.is-compact .dashboard-empty-state__wrapper-content {
+	@include break-medium {
+		padding-block: 0;
+	}
+}
+
 .dashboard-empty-state__wrapper-content {
 	@include break-medium {
 		padding-block: $grid-unit-40;

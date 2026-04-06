@@ -16,7 +16,7 @@ import { __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
 import { useAnalytics } from '../../app/analytics';
 import ComponentViewTracker from '../../components/component-view-tracker';
-import illustrationUrl from './opt-in-welcome-modal-illustration.png';
+import illustrationUrl from './opt-in-welcome-modal-illustration.webp';
 import './opt-in-welcome-modal.scss';
 
 const preferenceName = 'hosting-dashboard-opt-in-welcome-modal-dismissed' as const;

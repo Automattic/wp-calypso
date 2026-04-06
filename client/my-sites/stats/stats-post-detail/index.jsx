@@ -18,10 +18,9 @@ import JetpackColophon from 'calypso/components/jetpack-colophon';
 import WebPreview from 'calypso/components/web-preview';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { isHttps } from 'calypso/lib/url';
-import PageHeader from 'calypso/my-sites/stats/components/headers/page-header';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import {
-	useStatsNavigationHistory,
+	useStatsBreadcrumbTrail,
 	recordCurrentScreen,
 } from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
 import StatsDetailsNavigation from 'calypso/my-sites/stats/stats-details-navigation';
@@ -211,7 +210,7 @@ class StatsPostDetail extends Component {
 			isSubscriptionsModuleActive,
 			supportsEmailStats,
 			isSimple,
-			lastScreen,
+			breadcrumbTrail,
 		} = this.props;
 
 		const isLoading = isRequestingStats && ! countViews;
@@ -240,17 +239,6 @@ class StatsPostDetail extends Component {
 		// TODO: Refactor navigationItems to a single object with backLink and title attributes.
 		const navigationItems = this.getNavigationItemsWithTitle( this.getTitle() );
 
-		const backLinkProps = {
-			text: lastScreen.text,
-			url: lastScreen.url,
-		};
-
-		const titleProps = {
-			title: navigationItems[ 1 ].label,
-			// Remove the default logo for Odyssey stats.
-			titleLogo: null,
-		};
-
 		const subscriptionsEnabled = isSimple || isSubscriptionsModuleActive;
 		// postId > 0: Show the tabs for posts except for the Home Page (postId = 0).
 		const isEmailTabsAvailable =
@@ -263,29 +251,14 @@ class StatsPostDetail extends Component {
 			supportsEmailStats;
 
 		return (
-			<Main fullWidthLayout>
-				<PageViewTracker
-					path={ `/stats/${ postType }/:post_id/:site` }
-					title={ `Stats > Single ${ titlecase( postType ) }` }
-				/>
-				{ siteId && ! isPostHomepage && <QueryPosts siteId={ siteId } postId={ postId } /> }
-				{ siteId && <QueryPostStats siteId={ siteId } postId={ postId } /> }
-				{ siteId && <QueryJetpackModules siteId={ siteId } /> }
-
-				<div className={ postDetailPageClasses }>
-					<PageHeader
-						backLinkProps={ backLinkProps }
-						titleProps={ titleProps }
-						rightSection={
-							showViewLink && (
-								<CoreButton onClick={ this.openPreview } variant="primary">
-									<span>{ actionLabel }</span>
-								</CoreButton>
-							)
-						}
-					/>
-
-					{ isEmailTabsAvailable && (
+			<Main
+				fullWidthLayout
+				breadcrumbs={ [
+					...breadcrumbTrail.map( ( item ) => ( { label: item.label, to: item.url } ) ),
+					{ label: navigationItems[ 1 ].label },
+				] }
+				pageTabs={
+					isEmailTabsAvailable ? (
 						<div
 							className={ clsx(
 								'stats-navigation',
@@ -295,8 +268,25 @@ class StatsPostDetail extends Component {
 						>
 							<StatsDetailsNavigation postId={ postId } givenSiteId={ siteId } />
 						</div>
-					) }
+					) : undefined
+				}
+				pageActions={
+					showViewLink && (
+						<CoreButton onClick={ this.openPreview } variant="primary" size="compact">
+							<span>{ actionLabel }</span>
+						</CoreButton>
+					)
+				}
+			>
+				<PageViewTracker
+					path={ `/stats/${ postType }/:post_id/:site` }
+					title={ `Stats > Single ${ titlecase( postType ) }` }
+				/>
+				{ siteId && ! isPostHomepage && <QueryPosts siteId={ siteId } postId={ postId } /> }
+				{ siteId && <QueryPostStats siteId={ siteId } postId={ postId } /> }
+				{ siteId && <QueryJetpackModules siteId={ siteId } /> }
 
+				<div className={ postDetailPageClasses }>
 					<PostDetailHighlightsSection siteId={ siteId } postId={ postId } post={ passedPost } />
 
 					<StatsPlaceholder isLoading={ isLoading } />
@@ -342,7 +332,7 @@ class StatsPostDetail extends Component {
 }
 
 const StatsPostDetailWrapper = ( props ) => {
-	const lastScreen = useStatsNavigationHistory();
+	const breadcrumbTrail = useStatsBreadcrumbTrail();
 
 	const supportLink = localizeUrl(
 		'https://wordpress.com/support/getting-more-views-and-traffic/'
@@ -366,7 +356,9 @@ const StatsPostDetailWrapper = ( props ) => {
 		}
 	};
 
-	return <StatsPostDetail { ...props } lastScreen={ lastScreen } openSupportDoc={ openDoc } />;
+	return (
+		<StatsPostDetail { ...props } breadcrumbTrail={ breadcrumbTrail } openSupportDoc={ openDoc } />
+	);
 };
 
 const connectComponent = connect( ( state, { postId } ) => {

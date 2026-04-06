@@ -194,6 +194,22 @@ export function renderNoVisibleSites( context ) {
 	clientRender( context );
 }
 
+function renderSelectedSiteNotFound( context ) {
+	setSectionMiddleware( { group: 'sites' } )( context );
+
+	context.primary = createElement( EmptyContentComponent, {
+		title: i18n.translate( "You don't have access to that site" ),
+		line: i18n.translate(
+			'You might not have permission to view this site, or it may not exist. Select a different site to continue.'
+		),
+		action: i18n.translate( 'Select a different site' ),
+		actionURL: '/sites',
+	} );
+
+	makeLayout( context, noop );
+	clientRender( context );
+}
+
 function renderSelectedSiteIsDIFMLiteInProgress( reactContext, selectedSite ) {
 	reactContext.primary = <DIFMLiteInProgress siteId={ selectedSite.ID } />;
 
@@ -315,6 +331,12 @@ function isPathAllowedForDIFMInProgressSite( path, slug, domains, contextParams 
 function onSelectedSiteAvailable( context ) {
 	const state = context.store.getState();
 	const selectedSite = getSelectedSite( state );
+
+	if ( ! selectedSite ) {
+		renderSelectedSiteNotFound( context );
+		return false;
+	}
+
 	// Use getSitePlanSlug() as it ignores expired plans.
 	const currentPlanSlug = getSitePlanSlug( state, selectedSite.ID );
 

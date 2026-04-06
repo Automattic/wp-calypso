@@ -33,17 +33,13 @@ export default async function loadOmnibar( events: OmnibarEvents ) {
 	] );
 
 	// Hydrate matching the SSR output: user when bootstrapped, null when not.
-	// Suppress recoverable hydration errors caused by Suspense boundaries inside
-	// MasterbarLoggedIn that renderToString cannot serialize.
 	const root = hydrateRoot(
 		container,
 		<InterimOmnibar
 			user={ window.currentUser ?? null }
 			site={ null }
 			currentRoute={ window.location.pathname }
-		/>,
-
-		{ onRecoverableError() {} }
+		/>
 	);
 
 	const site = user.primary_blog

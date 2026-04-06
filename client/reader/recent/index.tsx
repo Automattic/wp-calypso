@@ -1,3 +1,4 @@
+import './style.scss';
 import { WIDE_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { DataViews, filterSortAndPaginate, View } from '@wordpress/dataviews';
@@ -6,7 +7,7 @@ import { useState, useEffect, useCallback, useMemo, useLayoutEffect, useRef } fr
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { UnknownAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
-import ReaderAvatar from 'calypso/blocks/reader-avatar';
+import { SiteIcon } from 'calypso/blocks/site-icon';
 import AsyncLoad from 'calypso/components/async-load';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { getPostIcon } from 'calypso/reader/get-helpers';
@@ -23,8 +24,6 @@ import RecentPostField from './recent-post-field';
 import RecentPostSkeleton from './recent-post-skeleton';
 import type { PostItem, ReaderPost } from './types';
 import type { AppState } from 'calypso/types';
-
-import './style.scss';
 
 interface RecentProps {
 	viewToggle?: React.ReactNode;
@@ -131,7 +130,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 					}
 					const post = getPostFromItem( item );
 					const iconUrl = getPostIcon( post );
-					return iconUrl ? <ReaderAvatar siteIcon={ iconUrl } iconSize={ 24 } /> : null;
+					return iconUrl ? <SiteIcon iconUrl={ iconUrl } size={ 24 } /> : null;
 				},
 				enableHiding: false,
 				enableSorting: false,

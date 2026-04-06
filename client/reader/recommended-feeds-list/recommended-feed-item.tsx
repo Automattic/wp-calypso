@@ -1,6 +1,6 @@
 import { filterURLForDisplay } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import ReaderAvatar from 'calypso/blocks/reader-avatar';
+import { SiteIcon } from 'calypso/blocks/site-icon';
 import AutoDirection from 'calypso/components/auto-direction';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import { FeedRecommendation } from 'calypso/data/reader/use-feed-recommendations-query';
@@ -59,12 +59,7 @@ export function RecommendedFeedItem( {
 			<QueryReaderSite siteId={ siteId } />
 
 			<a className="recommended-feed-item__link" href={ linkUrl }>
-				<ReaderAvatar
-					isCompact={ isCompactView }
-					siteIcon={ siteIcon }
-					iconSize={ variant === 'default' ? 48 : 30 }
-					className="recommended-feed-icon"
-				/>
+				<SiteIcon iconUrl={ siteIcon } size={ variant === 'default' ? 48 : 30 } />
 
 				<AutoDirection>
 					<div className="recommended-feed-info">

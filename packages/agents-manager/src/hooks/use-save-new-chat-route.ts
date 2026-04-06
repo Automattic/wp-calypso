@@ -1,11 +1,10 @@
 import { select } from '@wordpress/data';
-import { useEffect, useRef } from '@wordpress/element';
+import { useEffect } from '@wordpress/element';
 import { useLocation } from 'react-router-dom';
 import { useAgentsManagerContext } from '../contexts';
 import { AGENTS_MANAGER_STORE } from '../stores';
 import { getSessionId } from '../utils/agent-session';
 import { persistAgentsManagerState } from '../utils/persist-agents-manager-state';
-import type { UIMessage } from '@automattic/agenttic-client';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 
 /**
@@ -35,32 +34,37 @@ function saveNewChatRoute( sessionId: string, siteKey: string ): void {
 }
 
 /**
- * Waits for the first AI reply (which creates the session ID),
- * then saves the chat route so the conversation can be resumed later.
+ * When the user sends a message in a new chat, polls for the session ID and saves
+ * the chat route so the conversation can be restored later.
  */
-export default function useSaveNewChatRoute( messages: UIMessage[] ) {
+export default function useSaveNewChatRoute( hasUserSentMessage: boolean ) {
 	const { agentConfig, siteKey } = useAgentsManagerContext();
-
-	const sessionId = getSessionId( agentConfig?.agentId ?? '' );
-	const prevSessionIdRef = useRef< string >( sessionId );
 	const { pathname, state } = useLocation();
 
 	useEffect( () => {
-		if ( pathname !== '/chat' || state?.sessionId ) {
+		if ( pathname !== '/chat' || state?.sessionId || ! hasUserSentMessage ) {
 			return;
 		}
 
-		// The session ID only exists after the AI agent has replied.
-		const hasServerMessage = messages.some( ( message ) => message.role === 'agent' );
+		let attempts = 0;
+		const MAX_ATTEMPTS = 120; // Stop after 60 seconds (120 × 500ms)
 
-		if ( ! hasServerMessage ) {
-			return;
-		}
+		const intervalId = setInterval( () => {
+			if ( attempts >= MAX_ATTEMPTS ) {
+				clearInterval( intervalId );
+				return;
+			}
 
-		// Save the route only when the session ID changes.
-		if ( sessionId && sessionId !== prevSessionIdRef.current ) {
-			saveNewChatRoute( sessionId, siteKey );
-			prevSessionIdRef.current = sessionId;
-		}
-	}, [ messages, pathname, sessionId, siteKey, state?.sessionId ] );
+			const sessionId = getSessionId( agentConfig?.agentId );
+
+			if ( sessionId ) {
+				saveNewChatRoute( sessionId, siteKey );
+				clearInterval( intervalId );
+			}
+
+			attempts++;
+		}, 500 );
+
+		return () => clearInterval( intervalId );
+	}, [ agentConfig?.agentId, hasUserSentMessage, pathname, siteKey, state?.sessionId ] );
 }

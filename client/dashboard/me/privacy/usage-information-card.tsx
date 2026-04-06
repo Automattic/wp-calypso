@@ -42,9 +42,7 @@ export default function UsageInformationCard() {
 	const fields: Field< { tracks_opt_out: boolean } >[] = [
 		{
 			id: 'tracks_opt_out',
-			label: __(
-				'Share information with our analytics tool about your use of services while logged in to your WordPress.com account.'
-			),
+			label: __( 'Enable usage information sharing' ),
 			Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
 				const { id, label, getValue } = field;
 				return (

@@ -1,6 +1,6 @@
 declare const __i18n_text_domain__: string;
 
-declare module '*.png' {
+declare module '*.webp' {
 	const url: string;
 	export default url;
 }

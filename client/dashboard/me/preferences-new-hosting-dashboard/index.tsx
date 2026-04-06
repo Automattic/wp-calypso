@@ -6,10 +6,11 @@ import { __ } from '@wordpress/i18n';
 import { grid } from '@wordpress/icons';
 import { useAuth } from '../../app/auth';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
+import type { Density } from '@automattic/components/src/summary-button/types';
 
 const OLDEST_ELIGIBLE_USER: number = config( 'dashboard_opt_in_oldest_eligible_user' );
 
-export default function PreferencesNewHostingDashboard() {
+export default function PreferencesNewHostingDashboard( { density }: { density?: Density } ) {
 	const { user } = useAuth();
 	const { data: optIn } = useSuspenseQuery( userPreferenceQuery( 'hosting-dashboard-opt-in' ) );
 	const isOptedIn = optIn.value === 'opt-in';
@@ -28,6 +29,7 @@ export default function PreferencesNewHostingDashboard() {
 
 	return (
 		<RouterLinkSummaryButton
+			density={ density }
 			to="/me/preferences/hosting-dashboard"
 			title={ __( 'New hosting dashboard' ) }
 			description={ __(

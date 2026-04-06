@@ -53,6 +53,7 @@ export interface GridPlan {
 		product_slug: string;
 	} | null;
 	highlightLabel?: React.ReactNode | null;
+	titleBadge?: React.ReactNode | null;
 }
 
 /***********************

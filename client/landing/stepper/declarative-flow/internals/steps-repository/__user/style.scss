@@ -18,9 +18,7 @@ $breakpoint-mobile: 660px;
 	}
 
 	.signup-form-social-first__tos-link,
-	.signup-form-social-first__tos-link-bottom,
-	.signup-form-social-first__email-tos-link,
-	.signup-form-social-first__login-link {
+	.signup-form-social-first__email-tos-link {
 		color: var(--studio-gray-60, #646970);
 		font-family: "SF Pro Text", sans-serif;
 		font-size: 0.875rem;
@@ -34,19 +32,9 @@ $breakpoint-mobile: 660px;
 		}
 	}
 
-	.signup-form-social-first__tos-link,
-	.signup-form-social-first__tos-link-bottom,
-	.signup-form-social-first__login-link {
+	.signup-form-social-first__tos-link {
 		margin-bottom: 2rem;
 		text-align: center;
-	}
-
-	.signup-form-social-first__tos-link-bottom {
-		margin-bottom: 0;
-	}
-
-	.signup-form-social-first__login-link {
-		margin-top: 2rem;
 	}
 
 	.signup-form-social-first-email {
@@ -263,10 +251,6 @@ $breakpoint-mobile: 660px;
 
 		@include break-small {
 			text-align: center;
-		}
-
-		&.is-left-aligned {
-			text-align: start;
 		}
 	}
 

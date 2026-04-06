@@ -78,13 +78,13 @@ exports[`JetpackSignup should render 1`] = `
             >
               <div
                 class="site-icon is-blank"
-                style="height: 32px; width: 32px; line-height: 32px; font-size: 32px;"
+                style="height: 32px; width: 32px;"
               >
                 <svg
                   class="gridicon gridicons-globe"
-                  height="28"
+                  height="27"
                   viewBox="0 0 24 24"
-                  width="28"
+                  width="27"
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <use
@@ -269,13 +269,13 @@ exports[`JetpackSignup should render with locale suggestions 1`] = `
             >
               <div
                 class="site-icon is-blank"
-                style="height: 32px; width: 32px; line-height: 32px; font-size: 32px;"
+                style="height: 32px; width: 32px;"
               >
                 <svg
                   class="gridicon gridicons-globe"
-                  height="28"
+                  height="27"
                   viewBox="0 0 24 24"
-                  width="28"
+                  width="27"
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <use

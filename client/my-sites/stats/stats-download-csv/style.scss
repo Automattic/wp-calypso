@@ -1,6 +1,7 @@
 @import "@wordpress/base-styles/breakpoints";
 
-.calypso-navigation-header {
+.calypso-navigation-header,
+.admin-ui-page__header-actions {
 	.stats-download-csv {
 		gap: 4px;
 
