@@ -50,8 +50,11 @@ export class ImportContentPage {
 		await this.importFileContentPage.dismissCookieBanner();
 
 		const gate = this.page.locator( '.email-verification-gate' );
-		if ( await gate.isVisible( { timeout: 5_000 } ).catch( () => false ) ) {
+		try {
+			await gate.waitFor( { state: 'visible', timeout: 5_000 } );
 			await gate.waitFor( { state: 'detached', timeout: 20_000 } );
+		} catch {
+			// Gate didn't appear — email is already verified or gate not used.
 		}
 	}
 }
