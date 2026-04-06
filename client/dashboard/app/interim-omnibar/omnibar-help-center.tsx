@@ -12,8 +12,7 @@ const AsyncHelpCenterApp = lazy( () => import( '../help-center/help-center-app' 
  * Once the panel has been opened for the first time, the inner `HelpCenter`
  * component is kept mounted and manages its own visibility via the help center
  * store. Unmounting it on close would tear down the Zendesk Smooch iframe
- * mid-request and surface "TypeError: Failed to fetch" in the console
- * (see DOTMSD-1197).
+ * mid-request and surface "TypeError: Failed to fetch" in the console.
  */
 export default function OmnibarHelpCenter() {
 	const { user } = useAuth();
