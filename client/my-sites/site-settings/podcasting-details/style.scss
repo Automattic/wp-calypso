@@ -4,14 +4,31 @@ body.is-section-settings-podcasting {
 	@include admin-ui-page-layout;
 	@include admin-ui-page-layout-constrained-content;
 
-	.layout,
-	.layout__content,
-	.layout__primary {
-		height: 100%;
-	}
+	.layout__content {
+		display: flex;
 
-	.layout__primary .main {
-		height: 100%;
+		.layout__primary {
+			flex: 1;
+			display: flex;
+
+			.main {
+				margin: 0;
+				flex-grow: 1;
+				position: relative;
+				padding-bottom: 65px;
+
+				.jetpack-footer {
+					position: fixed;
+					z-index: 1;
+					bottom: 0;
+					background-color: var( --wpds-color-bg-surface-neutral );
+
+					@include break-medium {
+						max-width: calc( 100% - var( --sidebar-width-max ) );
+					}
+				}
+			}
+		}
 	}
 }
 
