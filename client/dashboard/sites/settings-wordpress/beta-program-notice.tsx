@@ -24,22 +24,22 @@ export function BetaProgramNotice( { site, wpVersion }: BetaProgramNoticeProps )
 				wpVersion
 			) }
 		>
-			{ backupUrl
+			{ site.is_wpcom_staging_site
 				? createInterpolateElement(
+						__(
+							'If you notice anything unexpected, <support>let us know</support>. Your feedback helps shape WordPress. You can switch back to the stable release anytime.'
+						),
+						{
+							support: <Button variant="link" onClick={ () => setShowHelpCenter( true ) } />,
+						}
+				  )
+				: createInterpolateElement(
 						__(
 							'If you notice anything unexpected, <support>let us know</support>. Your feedback helps shape WordPress. You can switch back to the stable release anytime. A <backup>backup of your site</backup> is available if you ever need it.'
 						),
 						{
 							support: <Button variant="link" onClick={ () => setShowHelpCenter( true ) } />,
 							backup: <a href={ backupUrl } />,
-						}
-				  )
-				: createInterpolateElement(
-						__(
-							'If you notice anything unexpected, <support>let us know</support>. Your feedback helps shape WordPress. You can switch back to the stable release anytime.'
-						),
-						{
-							support: <Button variant="link" onClick={ () => setShowHelpCenter( true ) } />,
 						}
 				  ) }
 		</Notice>

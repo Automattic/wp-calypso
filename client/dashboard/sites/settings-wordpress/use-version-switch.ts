@@ -55,12 +55,18 @@ export interface VersionSwitchState {
 }
 
 export function useVersionSwitch( site: Site ): VersionSwitchState {
+	const deferUntilBackupComplete =
+		isEnabled( 'dashboard/wp-beta-program' ) && ! site.is_wpcom_staging_site;
+
 	const backupState = useBackupState( site.ID );
 	const [ phase, dispatch ] = useReducer( reducer, { status: 'idle' } );
 
 	// Check if there's a pending version switch.
-	const { data: pendingVersion } = useQuery( sitePendingWordPressVersionQuery( site.ID ) );
-	const hasPendingVersion = !! pendingVersion;
+	const { data: pendingVersion } = useQuery( {
+		...sitePendingWordPressVersionQuery( site.ID ),
+		enabled: deferUntilBackupComplete,
+	} );
+	const hasPendingVersion = deferUntilBackupComplete && !! pendingVersion;
 	const hadPendingVersion = usePrevious( hasPendingVersion );
 
 	// Pending version appeared → switching. Also start backup tracking.
@@ -97,19 +103,20 @@ export function useVersionSwitch( site: Site ): VersionSwitchState {
 		refetchInterval: hasPendingVersion && backupState.hasRecentlyCompleted ? 5000 : false,
 	} );
 
-	const deferUntilBackupComplete = isEnabled( 'dashboard/wp-beta-program' );
-
 	const mutation = useMutation( {
 		...siteWordPressVersionMutation( site.ID, { deferUntilBackupComplete } ),
 		meta: {
 			snackbar: {
+				...( ! deferUntilBackupComplete && { success: __( 'WordPress version saved.' ) } ),
 				error: __( 'Failed to save WordPress version.' ),
 			},
 		},
 	} );
 
 	const switchVersion = ( version: string ) => {
-		dispatch( { type: 'VERSION_CHANGE_REQUESTED', targetVersion: version } );
+		if ( deferUntilBackupComplete ) {
+			dispatch( { type: 'VERSION_CHANGE_REQUESTED', targetVersion: version } );
+		}
 		mutation.mutate( version );
 	};
 
