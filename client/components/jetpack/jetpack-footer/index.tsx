@@ -16,7 +16,7 @@ const JetpackFooter: FC = () => {
 			aria-label={ __( 'Jetpack', 'jetpack-components' ) }
 			role="contentinfo"
 			direction="row"
-			justify="flex-start"
+			justify="space-between"
 			align="center"
 			wrap="wrap"
 			gap="xl"
