@@ -41,7 +41,22 @@ export interface ReceiptItemCostOverride {
 
 export interface ReceiptItem {
 	id: number;
-	type: string;
+	type:
+		| 'new purchase'
+		| 'start trial'
+		| 'recurring'
+		| 'refund'
+		| 'refund_cancelled'
+		| 'refund_failed'
+		| 'cancellation'
+		| 'stop recurring'
+		| 'start recurring'
+		| 'transfer in'
+		| 'transfer out'
+		| 'authorize'
+		| 'update card'
+		| 'reactivation'
+		| 'receive gift renewal';
 	type_localized: string;
 	domain: string | null;
 	site_id: number;
