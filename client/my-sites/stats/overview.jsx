@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import { Fragment, Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
-import StatsNavigation from 'calypso/blocks/stats-navigation';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
@@ -96,7 +95,6 @@ class StatsOverview extends Component {
 					path={ `/stats/${ period }` }
 					title={ `Stats > ${ titlecase( period ) }` }
 				/>
-				<StatsNavigation selectedItem="traffic" interval={ period } isLegacy />
 				{ sites.length !== 0 ? sitesList : this.placeholders() }
 				<JetpackColophon />
 			</Main>

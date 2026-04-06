@@ -1,4 +1,6 @@
 @use "sass:math";
+@import "@wordpress/base-styles/variables";
+@import "calypso/components/jetpack-page-layout/admin-ui-page";
 @import "calypso/my-sites/stats/modernized-tooltip-styles";
 @import "calypso/my-sites/stats/modernized-chart-tabs-styles";
 @import "calypso/my-sites/stats/modernized-layout-styles";
@@ -88,12 +90,65 @@ $font-sf-pro-display: "SF Pro Display", $sans;
 
 // Stats section scoped styles
 .is-section-stats {
+	@include admin-ui-page-layout;
 	&.color-scheme.is-classic-dark {
 		@include apply-improved-classic-dark-colors();
 	}
 
 	.sticky-panel.is-sticky {
 		padding: 0;
+	}
+
+	// Pull stats-navigation tabs into the Page header area visually.
+	.admin-ui-page__header {
+		border-bottom: none;
+
+		// Allow the title to truncate when breadcrumb text is long.
+		> :first-child {
+			align-items: center;
+			height: $grid-unit-40;
+
+			> :first-child {
+				min-width: 0;
+			}
+		}
+
+		// Breadcrumb styling for detail pages.
+		.admin-ui-page__header-title {
+			display: flex;
+			align-items: center;
+		}
+
+		.stats-breadcrumbs {
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+			min-width: 0;
+
+			.jetpack-logo {
+				flex-shrink: 0;
+			}
+		}
+
+		.stats-breadcrumbs__link {
+			color: inherit;
+			text-decoration: underline;
+			flex-shrink: 0;
+		}
+
+		.stats-breadcrumbs__separator {
+			flex-shrink: 0;
+		}
+
+		.stats-breadcrumbs__current {
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+	}
+
+	.admin-ui-page > .stats-navigation {
+		background: var(--wpds-color-bg-surface-neutral-strong);
+		padding-inline: var(--wpds-dimension-padding-2xl, 24px);
 	}
 
 	// TODO: Remove other independent segmented control styles by this mixin.

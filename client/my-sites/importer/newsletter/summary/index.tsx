@@ -6,7 +6,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { fixMe, translate } from 'i18n-calypso';
 import { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react';
-import pauseSubstackBillingImg from 'calypso/assets/images/importer/pause-substack-billing.png';
+import pauseSubstackBillingImg from 'calypso/assets/images/importer/pause-substack-billing.webp';
 import { Steps, StepStatus } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 import { useSelector } from 'calypso/state';
 import { isJetpackSite, getSiteAdminUrl } from 'calypso/state/sites/selectors';

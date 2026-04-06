@@ -1,12 +1,12 @@
+import './style.scss';
 import React from 'react';
-import Gravatar from 'calypso/components/gravatar';
-import Favicon from 'calypso/reader/components/favicon';
+import { SiteIcon } from 'calypso/blocks/site-icon';
 import FollowButton from 'calypso/reader/follow-button';
 import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';
+import { getStreamUrl } from 'calypso/reader/route';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { useDispatch } from 'calypso/state';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import './style.scss';
 
 export const SuggestedFollowItem = ( { site, followSource } ) => {
 	const dispatch = useDispatch();
@@ -21,15 +21,7 @@ export const SuggestedFollowItem = ( { site, followSource } ) => {
 		);
 	};
 
-	let streamLink = null;
-
-	if ( site && site.feed_ID ) {
-		streamLink = `/reader/feeds/${ site.feed_ID }`;
-	} else if ( site && site.blog_ID ) {
-		// If subscription is missing a feed ID, fallback to blog stream
-		streamLink = `/reader/blogs/${ site.blog_ID }`;
-	}
-
+	const streamUrl = site ? getStreamUrl( site.feed_ID, site.blog_ID ) : null;
 	const urlForDisplay = site && site.URL ? formatUrlForDisplay( site.URL ) : '';
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -39,17 +31,14 @@ export const SuggestedFollowItem = ( { site, followSource } ) => {
 				<>
 					<a
 						className="reader-suggested-follow-item_link"
-						href={ streamLink }
+						href={ streamUrl }
 						onClick={ () => onSiteClick( site ) }
 						aria-hidden="true"
 						target="_blank"
 						rel="noreferrer"
 					>
-						<span className="reader-suggested-follow-item_siteicon">
-							{ site.site_icon && <Favicon site={ site } size={ 48 } /> }
-							{ ! site.site_icon && site.post_author && (
-								<Gravatar user={ site.post_author } size={ 48 } />
-							) }
+						<span>
+							<SiteIcon iconUrl={ site.site_icon } size={ 48 } />
 						</span>
 						<span className="reader-suggested-follow-item_sitename">
 							<span className="reader-suggested-follow-item_nameurl">

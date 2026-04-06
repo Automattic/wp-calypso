@@ -223,8 +223,8 @@
 	"blackbox_url": "https://blackbox-api.wp.com/v1/dist/v.js",
 	"blackbox_api_key": "e16ecd5d7848b169d97088e4c69065d8",
 	"site_spec": {
-		"script_url": "https://widgets.wp.com/site-spec/v1.4.8/index.js",
-		"css_url": "https://widgets.wp.com/site-spec/v1.4.8/style.css"
+		"script_url": "https://widgets.wp.com/site-spec/v1.5.0/index.js",
+		"css_url": "https://widgets.wp.com/site-spec/v1.5.0/style.css"
 	},
 	"dashboard_opt_in_oldest_eligible_user": 275231967
 }

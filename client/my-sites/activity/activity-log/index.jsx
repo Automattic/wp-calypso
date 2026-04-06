@@ -496,6 +496,9 @@ class ActivityLog extends Component {
 						"Keep tabs on all your site's activity — plugin and theme updates, user logins, setting modifications, and more."
 					) }
 				>
+					{ siteId && (
+						<TimeMismatchWarning siteId={ siteId } settingsUrl={ this.props.siteSettingsUrl } />
+					) }
 					{ siteId && isJetpack && ! isAtomic && <RewindAlerts siteId={ siteId } /> }
 					{ siteId && 'unavailable' === rewindState.state && (
 						<RewindUnavailabilityNotice siteId={ siteId } />
@@ -594,7 +597,7 @@ class ActivityLog extends Component {
 	render() {
 		const { siteId, translate } = this.props;
 
-		const { context, rewindState, siteSettingsUrl } = this.props;
+		const { context, rewindState } = this.props;
 
 		const rewindNoThanks = get( context, 'query.rewind-redirect', '' );
 		const rewindIsNotReady =
@@ -609,7 +612,6 @@ class ActivityLog extends Component {
 				{ siteId && <QueryRewindPolicies siteId={ siteId } /> }
 				{ siteId && <QueryRewindState siteId={ siteId } /> }
 				{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
-				{ siteId && <TimeMismatchWarning siteId={ siteId } settingsUrl={ siteSettingsUrl } /> }
 				{ '' !== rewindNoThanks && rewindIsNotReady
 					? siteId && <ActivityLogSwitch siteId={ siteId } redirect={ rewindNoThanks } />
 					: this.getActivityLog() }

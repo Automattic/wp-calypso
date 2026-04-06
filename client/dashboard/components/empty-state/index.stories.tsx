@@ -189,6 +189,26 @@ export const WithoutContentWrapper: Story = {
 	},
 };
 
+export const CompactWrapper: Story = {
+	render: ( args ) => (
+		<EmptyState.Wrapper isCompact>
+			<EmptyState { ...args } />
+		</EmptyState.Wrapper>
+	),
+	args: {
+		children: (
+			<>
+				<EmptyState.Header>
+					<EmptyState.Title>Site blocked</EmptyState.Title>
+					<EmptyState.Description>
+						This site has been blocked and is no longer accessible.
+					</EmptyState.Description>
+				</EmptyState.Header>
+			</>
+		),
+	},
+};
+
 export const WithContainerAndCallout: Story = {
 	render: ( args ) => (
 		<EmptyState.Wrapper>

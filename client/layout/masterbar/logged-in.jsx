@@ -60,6 +60,8 @@ import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import { getMostRecentlySelectedSiteId, getSectionGroup } from 'calypso/state/ui/selectors';
 import Item from './item';
 import Masterbar from './masterbar';
+import { AgentsManagerIcon } from './masterbar-agents-manager/agents-manager-icon';
+import { HelpCenterIcon } from './masterbar-help-center/help-center-icon';
 import { MasterbarLaunchButton } from './masterbar-launch-button';
 import Notifications from './masterbar-notifications/notifications-button';
 
@@ -82,6 +84,8 @@ class MasterbarLoggedIn extends Component {
 		useUnifiedAgent: PropTypes.bool,
 	};
 
+	state = { mounted: false };
+
 	handleLayoutFocus = ( currentSection ) => {
 		if ( currentSection !== this.props.section ) {
 			// When current section is not focused then open the sidebar.
@@ -95,6 +99,12 @@ class MasterbarLoggedIn extends Component {
 	};
 
 	componentDidMount() {
+		// We really do want to re-render after mounting. When the masterbar is rendered on the server we
+		// need the first client-side render to match the server-rendered elements. And then we can
+		// kick off another render with client-side-only features (like the async loaded help menu).
+		// eslint-disable-next-line react/no-did-mount-set-state
+		this.setState( { mounted: true } );
+
 		// Give a chance to direct URLs to open the sidebar on page load ( eg by clicking 'me' in wp-admin ).
 		const qryString = parse( document.location.search.replace( /^\?/, '' ) );
 		if ( qryString?.openSidebar === 'true' ) {
@@ -759,14 +769,38 @@ class MasterbarLoggedIn extends Component {
 		const { siteId, useUnifiedAgent } = this.props;
 
 		if ( useUnifiedAgent ) {
+			const placeholder = (
+				<Item
+					className="masterbar__item-agents-manager"
+					tooltip={ __( 'Help' ) }
+					icon={ <AgentsManagerIcon hasUnread={ false } /> }
+				/>
+			);
+
+			if ( ! this.state.mounted ) {
+				return placeholder;
+			}
+
 			return (
 				<AsyncLoad
 					require="./masterbar-agents-manager"
 					siteId={ siteId }
 					tooltip={ __( 'Help' ) }
-					placeholder={ null }
+					placeholder={ placeholder }
 				/>
 			);
+		}
+
+		const placeholder = (
+			<Item
+				className="masterbar__item-help"
+				tooltip={ __( 'Help' ) }
+				icon={ <HelpCenterIcon hasUnread={ false } /> }
+			/>
+		);
+
+		if ( ! this.state.mounted ) {
+			return placeholder;
 		}
 
 		return (
@@ -774,7 +808,7 @@ class MasterbarLoggedIn extends Component {
 				require="./masterbar-help-center"
 				siteId={ siteId }
 				tooltip={ __( 'Help' ) }
-				placeholder={ null }
+				placeholder={ placeholder }
 			/>
 		);
 	}

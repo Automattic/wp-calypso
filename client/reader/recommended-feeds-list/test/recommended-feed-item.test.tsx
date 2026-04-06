@@ -88,7 +88,6 @@ describe( 'RecommendedFeedItem', () => {
 	test( 'renders recommended feed item correctly', () => {
 		renderComponent();
 
-		expect( document.querySelector( '.reader-avatar' ) ).toBeVisible();
 		expect( document.querySelector( '.site-icon' ) ).toBeVisible();
 		expect( screen.getByRole( 'heading', { level: 3 } ) ).toHaveTextContent( 'Test Blog' );
 		expect( screen.getByRole( 'link' ) ).toHaveAttribute( 'href', '/reader/feeds/789' );

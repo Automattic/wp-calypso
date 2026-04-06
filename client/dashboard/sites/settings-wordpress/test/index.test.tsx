@@ -12,40 +12,59 @@ import type { Site } from '@automattic/api-core';
 const site = {
 	ID: 123,
 	slug: 'test-site.wordpress.com',
+	is_wpcom_atomic: true,
+	is_wpcom_staging_site: true,
+	plan: {
+		product_slug: 'business-bundle',
+		product_name_short: 'Business',
+		is_free: false,
+		features: {
+			active: [ 'atomic', 'sftp', 'backups' ],
+		},
+	},
 	options: {
 		software_version: '6.8.1',
 	},
 } as Site;
 
-function mockSite( mockedSite: Site ) {
+function mockApi() {
 	nock( 'https://public-api.wordpress.com' )
-		.get( `/rest/v1.1/sites/${ mockedSite.slug }` )
+		.get( `/rest/v1.1/sites/${ site.slug }` )
 		.query( true )
-		.reply( 200, mockedSite );
-}
+		.reply( 200, site );
 
-function mockWordPressVersion( version: string ) {
 	nock( 'https://public-api.wordpress.com' )
 		.get( `/wpcom/v2/sites/${ site.ID }/hosting/wp-version` )
 		.query( true )
-		.reply( 200, version );
+		.reply( 200, 'latest' );
+
+	nock( 'https://public-api.wordpress.com' )
+		.persist()
+		.get( `/wpcom/v2/sites/${ site.ID }/hosting/wp-version/pending` )
+		.query( true )
+		.reply( 200, null as unknown as nock.Body );
+
+	nock( 'https://public-api.wordpress.com' )
+		.persist()
+		.get( `/wpcom/v2/sites/${ site.ID }/rewind/backups` )
+		.query( true )
+		.reply( 200, [] );
 }
 
 function mockWordPressVersionSaved( expectedVersion: string ) {
 	return nock( 'https://public-api.wordpress.com' )
 		.post( `/wpcom/v2/sites/${ site.ID }/hosting/wp-version`, ( body ) => {
-			expect( body ).toEqual( { version: expectedVersion } );
+			expect( body ).toMatchObject( { version: expectedVersion } );
 			return true;
 		} )
 		.reply( 200 );
 }
 
 describe( '<WordPressSettings>', () => {
-	test( 'renders and saves the form for a staging site', async () => {
+	test( 'renders and saves the form for a Business+ site', async () => {
 		const user = userEvent.setup();
 
-		mockSite( { ...site, is_wpcom_staging_site: true } as Site );
-		mockWordPressVersion( 'latest' );
+		mockApi();
 
 		render( <WordPressSettings siteSlug={ site.slug } /> );
 		await screen.findByRole( 'heading', { name: 'WordPress' } );
@@ -62,31 +81,5 @@ describe( '<WordPressSettings>', () => {
 		await waitFor( () => {
 			expect( scope.isDone() ).toBe( true );
 		} );
-	} );
-
-	test( 'renders notice for a non-staging site', async () => {
-		mockSite( { ...site, is_wpcom_staging_site: false } as Site );
-
-		render( <WordPressSettings siteSlug={ site.slug } /> );
-		await screen.findByRole( 'heading', { name: 'WordPress' } );
-
-		expect(
-			screen.getByText( /Every WordPress.com site runs the latest WordPress version/ )
-		).toBeVisible();
-		expect( screen.queryByRole( 'button', { name: 'Save' } ) ).not.toBeInTheDocument();
-	} );
-
-	test( 'renders staging site suggestion for Atomic non-staging sites', async () => {
-		mockSite( {
-			...site,
-			is_wpcom_staging_site: false,
-			is_wpcom_atomic: true,
-		} as Site );
-
-		render( <WordPressSettings siteSlug={ site.slug } /> );
-		await screen.findByRole( 'heading', { name: 'WordPress' } );
-
-		expect( screen.getByText( /Switch to a staging site to test a beta version/ ) ).toBeVisible();
-		expect( screen.queryByRole( 'button', { name: 'Save' } ) ).not.toBeInTheDocument();
 	} );
 } );

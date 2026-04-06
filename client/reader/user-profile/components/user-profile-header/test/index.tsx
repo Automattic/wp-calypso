@@ -7,8 +7,8 @@ import userEvent from '@testing-library/user-event';
 import { UserProfileData } from 'calypso/lib/user/user';
 import UserProfileHeader from '../index';
 
-jest.mock( 'calypso/blocks/reader-avatar', () => ( { author }: { author: UserProfileData } ) => (
-	<div data-testid="reader-avatar" data-author-id={ author.ID }></div>
+jest.mock( 'calypso/blocks/user-avatar', () => ( { user }: { user: UserProfileData } ) => (
+	<div data-testid="user-avatar" data-user-id={ user?.ID }></div>
 ) );
 
 jest.mock(
@@ -36,9 +36,9 @@ describe( 'UserProfileHeader', () => {
 	test( 'should render the avatar with correct user information', () => {
 		render( <UserProfileHeader user={ defaultUser } view="posts" /> );
 
-		const avatar = screen.getByTestId( 'reader-avatar' );
+		const avatar = screen.getByTestId( 'user-avatar' );
 		expect( avatar ).toBeVisible();
-		expect( avatar ).toHaveAttribute( 'data-author-id', defaultUser.ID.toString() );
+		expect( avatar ).toHaveAttribute( 'data-user-id', defaultUser.ID.toString() );
 	} );
 
 	test( 'should render the user display name', () => {
