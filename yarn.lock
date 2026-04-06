@@ -194,7 +194,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@automattic/agenttic-ui@npm:^0.1.57, @automattic/agenttic-ui@npm:^0.1.58":
+"@automattic/agenttic-ui@npm:^0.1.58":
   version: 0.1.58
   resolution: "@automattic/agenttic-ui@npm:0.1.58"
   dependencies:
@@ -13397,7 +13397,7 @@ __metadata:
   dependencies:
     "@automattic/accessible-focus": "workspace:^"
     "@automattic/agents-manager": "workspace:^"
-    "@automattic/agenttic-ui": "npm:^0.1.57"
+    "@automattic/agenttic-ui": "npm:^0.1.58"
     "@automattic/api-core": "workspace:^"
     "@automattic/api-queries": "workspace:^"
     "@automattic/block-renderer": "workspace:^"
