@@ -52,6 +52,9 @@ const createMessage = ( id: string, role: 'user' | 'agent', text: string ): Mess
 	id,
 	role,
 	content: [ { type: 'text', text } ],
+	timestamp: Date.now(),
+	archived: false,
+	showIcon: true,
 } );
 
 /** Triggers the captured onFeedback callback with the given direction. */

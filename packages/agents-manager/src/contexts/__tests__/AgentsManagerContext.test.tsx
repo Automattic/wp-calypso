@@ -39,7 +39,7 @@ describe( 'AgentsManagerContext', () => {
 	describe( 'AgentsManagerContextProvider', () => {
 		it( 'provides `sectionName` to children', () => {
 			render(
-				<AgentsManagerContextProvider value={ { sectionName: 'gutenberg' } }>
+				<AgentsManagerContextProvider value={ { sectionName: 'gutenberg', siteKey: 'test' } }>
 					<ContextConsumer />
 				</AgentsManagerContextProvider>
 			);
@@ -56,7 +56,9 @@ describe( 'AgentsManagerContext', () => {
 			} as AgentsManagerContextType[ 'currentUser' ];
 
 			render(
-				<AgentsManagerContextProvider value={ { sectionName: 'wp-admin', currentUser: mockUser } }>
+				<AgentsManagerContextProvider
+					value={ { sectionName: 'wp-admin', siteKey: 'test', currentUser: mockUser } }
+				>
 					<ContextConsumer />
 				</AgentsManagerContextProvider>
 			);
@@ -71,7 +73,9 @@ describe( 'AgentsManagerContext', () => {
 			};
 
 			render(
-				<AgentsManagerContextProvider value={ { sectionName: 'wp-admin', site: mockSite } }>
+				<AgentsManagerContextProvider
+					value={ { sectionName: 'wp-admin', siteKey: 'test', site: mockSite } }
+				>
 					<ContextConsumer />
 				</AgentsManagerContextProvider>
 			);
@@ -81,7 +85,7 @@ describe( 'AgentsManagerContext', () => {
 
 		it( 'uses default values for unspecified fields', () => {
 			render(
-				<AgentsManagerContextProvider value={ { sectionName: 'custom-section' } }>
+				<AgentsManagerContextProvider value={ { sectionName: 'custom-section', siteKey: 'test' } }>
 					<ContextConsumer />
 				</AgentsManagerContextProvider>
 			);
@@ -97,7 +101,9 @@ describe( 'AgentsManagerContext', () => {
 			const mockUser = { ID: 123 } as AgentsManagerContextType[ 'currentUser' ];
 
 			render(
-				<AgentsManagerContextProvider value={ { sectionName: 'wp-admin', currentUser: mockUser } }>
+				<AgentsManagerContextProvider
+					value={ { sectionName: 'wp-admin', siteKey: 'test', currentUser: mockUser } }
+				>
 					<ContextConsumer />
 				</AgentsManagerContextProvider>
 			);
@@ -107,7 +113,7 @@ describe( 'AgentsManagerContext', () => {
 
 		it( 'derives `isLoggedIn` as `false` when `currentUser` is not provided', () => {
 			render(
-				<AgentsManagerContextProvider value={ { sectionName: 'wp-admin' } }>
+				<AgentsManagerContextProvider value={ { sectionName: 'wp-admin', siteKey: 'test' } }>
 					<ContextConsumer />
 				</AgentsManagerContextProvider>
 			);
@@ -122,6 +128,7 @@ describe( 'AgentsManagerContext', () => {
 				<AgentsManagerContextProvider
 					value={ {
 						sectionName: 'wp-admin',
+						siteKey: 'test',
 						currentUser: mockUser,
 						// `site` not provided - should use default (`null`)
 					} }
@@ -136,7 +143,7 @@ describe( 'AgentsManagerContext', () => {
 
 		it( 'always returns `isEligibleForChat` as `false` (hardcoded)', () => {
 			render(
-				<AgentsManagerContextProvider value={ { sectionName: 'wp-admin' } }>
+				<AgentsManagerContextProvider value={ { sectionName: 'wp-admin', siteKey: 'test' } }>
 					<ContextConsumer />
 				</AgentsManagerContextProvider>
 			);
@@ -146,7 +153,7 @@ describe( 'AgentsManagerContext', () => {
 
 		it( 'returns empty string from `getActiveSessionId` when no agentConfig is set', () => {
 			render(
-				<AgentsManagerContextProvider value={ { sectionName: 'wp-admin' } }>
+				<AgentsManagerContextProvider value={ { sectionName: 'wp-admin', siteKey: 'test' } }>
 					<ContextConsumer />
 				</AgentsManagerContextProvider>
 			);
