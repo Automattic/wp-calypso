@@ -10,11 +10,13 @@ import {
 } from '../../../../me/mcp/utils';
 import Breadcrumbs from '../../../app/breadcrumbs';
 import { useAppContext } from '../../../app/context';
+import { siteSettingsAIToolsRoute } from '../../../app/router/sites';
 import { ActionList } from '../../../components/action-list';
 import { Card, CardBody } from '../../../components/card';
 import ComponentViewTracker from '../../../components/component-view-tracker';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
+import RouterLinkButton from '../../../components/router-link-button';
 import { SectionHeader } from '../../../components/section-header';
 import SiteIcon from '../../../components/site-icon';
 import { getSiteDisplayName } from '../../../utils/site-name';
@@ -47,6 +49,7 @@ export default function McpMcpSites() {
 			id: siteId,
 			name: site ? getSiteDisplayName( site ) : String( siteId ),
 			displayUrl: site ? getSiteDisplayUrl( site ) : '',
+			slug: site?.slug ?? null,
 			site: site ?? null,
 		};
 	};
@@ -67,15 +70,23 @@ export default function McpMcpSites() {
 		},
 	} );
 
-	const handleSiteToggle = ( siteId: number, enabled: boolean ) => {
+	const handleSiteAdd = ( siteId: number ) => {
 		mutation.mutate( {
 			mcp_abilities: {
 				sites: [
 					{
 						blog_id: siteId,
-						account_tools_enabled: enabled,
+						site_level_enabled: mcpEnabled ? false : true,
 					},
 				],
+			},
+		} as any );
+	};
+
+	const handleSiteRemove = ( siteId: number ) => {
+		mutation.mutate( {
+			mcp_abilities: {
+				sites: [ { blog_id: siteId, site_level_enabled: null } ],
 			},
 		} as any );
 	};
@@ -83,9 +94,7 @@ export default function McpMcpSites() {
 	const handleSitePickerSelect = ( siteIdStr: string | null | undefined ) => {
 		if ( siteIdStr ) {
 			const siteId = parseInt( siteIdStr, 10 );
-			// When account MCP is ON: disable for specific site (add exception)
-			// When account MCP is OFF: enable for specific site
-			handleSiteToggle( siteId, ! mcpEnabled );
+			handleSiteAdd( siteId );
 			setSelectedSiteId( null );
 		}
 	};
@@ -152,14 +161,24 @@ export default function McpMcpSites() {
 									key={ site.id }
 									title={ site.name }
 									description={ site.displayUrl || undefined }
-									decoration={ site.site ? <SiteIcon site={ site.site } size={ 32 } /> : undefined }
+									decoration={ site.site ? <SiteIcon site={ site.site } size={ 40 } /> : undefined }
 									actions={
 										<>
+											{ site.slug && (
+												<RouterLinkButton
+													variant="tertiary"
+													size="compact"
+													to={ siteSettingsAIToolsRoute.fullPath }
+													params={ { siteSlug: site.slug } }
+												>
+													{ __( 'Manage' ) }
+												</RouterLinkButton>
+											) }
 											<Button
 												variant="secondary"
 												size="compact"
 												disabled={ mutation.isPending }
-												onClick={ () => handleSiteToggle( site.id, mcpEnabled ) }
+												onClick={ () => handleSiteRemove( site.id ) }
 											>
 												{ __( 'Remove' ) }
 											</Button>

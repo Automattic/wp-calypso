@@ -138,7 +138,7 @@ export default function McpAddSitePage( { path } ) {
 				sites: [
 					{
 						blog_id: siteId,
-						site_level_enabled: false,
+						site_level_enabled: null,
 					},
 				],
 			},
@@ -258,7 +258,7 @@ export default function McpAddSitePage( { path } ) {
 														<HStack spacing={ 4 } justify="flex-end" expanded={ false }>
 															{ slug && (
 																<Button
-																	variant="link"
+																	variant="tertiary"
 																	size="compact"
 																	href={ `/sites/${ slug }/settings/ai-tools` }
 																>

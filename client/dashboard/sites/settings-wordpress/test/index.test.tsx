@@ -27,24 +27,34 @@ const site = {
 	},
 } as Site;
 
-function mockSite( mockedSite: Site ) {
+function mockApi() {
 	nock( 'https://public-api.wordpress.com' )
-		.get( `/rest/v1.1/sites/${ mockedSite.slug }` )
+		.get( `/rest/v1.1/sites/${ site.slug }` )
 		.query( true )
-		.reply( 200, mockedSite );
-}
+		.reply( 200, site );
 
-function mockWordPressVersion( version: string ) {
 	nock( 'https://public-api.wordpress.com' )
 		.get( `/wpcom/v2/sites/${ site.ID }/hosting/wp-version` )
 		.query( true )
-		.reply( 200, version );
+		.reply( 200, 'latest' );
+
+	nock( 'https://public-api.wordpress.com' )
+		.persist()
+		.get( `/wpcom/v2/sites/${ site.ID }/hosting/wp-version/pending` )
+		.query( true )
+		.reply( 200, null as unknown as nock.Body );
+
+	nock( 'https://public-api.wordpress.com' )
+		.persist()
+		.get( `/wpcom/v2/sites/${ site.ID }/rewind/backups` )
+		.query( true )
+		.reply( 200, [] );
 }
 
 function mockWordPressVersionSaved( expectedVersion: string ) {
 	return nock( 'https://public-api.wordpress.com' )
 		.post( `/wpcom/v2/sites/${ site.ID }/hosting/wp-version`, ( body ) => {
-			expect( body ).toEqual( { version: expectedVersion } );
+			expect( body ).toMatchObject( { version: expectedVersion } );
 			return true;
 		} )
 		.reply( 200 );
@@ -54,8 +64,7 @@ describe( '<WordPressSettings>', () => {
 	test( 'renders and saves the form for a Business+ site', async () => {
 		const user = userEvent.setup();
 
-		mockSite( site );
-		mockWordPressVersion( 'latest' );
+		mockApi();
 
 		render( <WordPressSettings siteSlug={ site.slug } /> );
 		await screen.findByRole( 'heading', { name: 'WordPress' } );

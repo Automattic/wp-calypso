@@ -1,6 +1,5 @@
-import { HostingFeatures } from '@automattic/api-core';
 import { __ } from '@wordpress/i18n';
-import { hasHostingFeature } from './site-features';
+import { canViewWordPressSettings } from '../sites/features';
 import type { Site } from '@automattic/api-core';
 
 function getWordPressVersionTagName( versionTag: string ) {
@@ -17,11 +16,10 @@ export function getFormattedWordPressVersion(
 	site: Site,
 	versionTag: string | undefined = undefined
 ) {
-	const canManageVersion = hasHostingFeature( site, HostingFeatures.BACKUPS );
 	return formatWordPressVersion(
 		site.options?.software_version ?? '',
 		versionTag,
-		canManageVersion
+		canViewWordPressSettings( site )
 	);
 }
 
