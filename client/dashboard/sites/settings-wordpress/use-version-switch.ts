@@ -77,6 +77,9 @@ export function useVersionSwitch( site: Site ): VersionSwitchState {
 			dispatch( { type: 'SWITCH_COMPLETED' } );
 			queryClient.invalidateQueries( siteWordPressVersionQuery( site.ID ) );
 			queryClient.invalidateQueries( siteBySlugQuery( site.slug ) );
+			queryClient.invalidateQueries( {
+				queryKey: [ 'site', site.ID, 'backup-activity-log' ],
+			} );
 		}
 	}, [ hadPendingVersion, hasPendingVersion, site.ID, site.slug ] );
 
