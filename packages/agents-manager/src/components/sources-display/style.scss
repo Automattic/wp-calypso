@@ -10,6 +10,7 @@
 		background-color: transparent;
 		box-shadow: none;
 		margin: -32px 0 0;
+		pointer-events: none;
 	}
 
 	.foldable-card__header {
@@ -18,12 +19,15 @@
 		min-height: unset;
 		flex-direction: row-reverse;
 		justify-content: end;
+		align-self: flex-end;
 		gap: 4px;
 		padding: 0;
+		pointer-events: initial;
 	}
 
 	.foldable-card__content {
 		width: 100%;
+		pointer-events: initial;
 	}
 
 	.foldable-card__main,
