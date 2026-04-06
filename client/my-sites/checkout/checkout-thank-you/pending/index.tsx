@@ -413,7 +413,7 @@ function displayRenewalSuccessNotice( {
 	translate: ReturnType< typeof useTranslate >;
 	reduxDispatch: CalypsoDispatch;
 } ): void {
-	// showing notice for product that will not auto-renew
+	// show renewal success notice
 	reduxDispatch(
 		successNotice(
 			translate( 'Success! You renewed %(productName)s.', {
