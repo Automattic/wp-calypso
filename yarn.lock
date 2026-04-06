@@ -13515,6 +13515,7 @@ __metadata:
     "@wordpress/notices": "npm:5.23.0"
     "@wordpress/private-apis": "npm:^ 1.39.0"
     "@wordpress/react-i18n": "npm:^4.23.0"
+    "@wordpress/theme": "npm:^0.9.0"
     "@wordpress/ui": "npm:^0.9.0"
     "@wordpress/viewport": "npm:^6.23.0"
     "@wordpress/warning": "npm:^3.23.0"
