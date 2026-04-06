@@ -6,16 +6,16 @@ type RegisterMessageActions = UseAgentChatReturn[ 'registerMessageActions' ];
 
 /**
  * Returns the copyable text from a message, or an empty string if not copyable.
- * Only plain-text agent messages (no `component`, `context`, or tool parts) qualify.
+ * Messages with at least one text part are copyable; non-text parts (e.g. `data`) are ignored.
  */
 function getCopyableText( message: UIMessage ): string {
-	const hasNonTextParts = ! message.content?.every( ( part ) => part.type === 'text' );
-	if ( hasNonTextParts ) {
+	const textParts = message.content?.filter( ( part ) => part.type === 'text' );
+	if ( ! textParts?.length ) {
 		return '';
 	}
 
 	// Exclude tool messages (JSON text with a `tool_id` field).
-	const firstPartText = message.content[ 0 ]?.text ?? '';
+	const firstPartText = textParts[ 0 ]?.text ?? '';
 	try {
 		const parsed = JSON.parse( firstPartText );
 
@@ -41,7 +41,7 @@ function getCopyableText( message: UIMessage ): string {
 		// Not JSON — regular text.
 	}
 
-	return message.content
+	return textParts
 		.map( ( part ) => part.text ?? '' )
 		.join( '\n' )
 		.trim();
