@@ -117,7 +117,7 @@ const FlexFormFieldset = styled( FormFieldset )`
 const StyledFormFieldset = styled( FormFieldset, {
 	shouldForwardProp: ( prop ) => prop !== 'hasFillerContentCheckbox',
 } )( ( props ) => ( {
-	marginBottom: props.hasFillerContentCheckbox ? '12px' : '20px',
+	marginBottom: props.hasFillerContentCheckbox ? '4px' : '20px',
 } ) );
 
 const StyledFormCheckbox = styled( FormCheckbox )`
