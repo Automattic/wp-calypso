@@ -305,7 +305,6 @@ export function generateFlows( {
 			destination: getLaunchDestination,
 			description: 'A flow to launch a private site.',
 			providesDependenciesInQuery: [ 'siteSlug' ],
-			optionalDependenciesInQuery: [ 'back_to' ],
 			hideProgressIndicator: true,
 			lastModified: '2019-11-22',
 			excludeFromManageSiteFlows: true,
