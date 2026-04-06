@@ -2,11 +2,9 @@ import { receiptQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { invokeSurvicateEvent } from '@automattic/survicate';
-import { AUTO_RENEWAL } from '@automattic/urls';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState, useEffect, useRef } from 'react';
@@ -195,9 +193,8 @@ function useRedirectOnTransactionSuccess( {
 	const { reloadFromServer: reloadCart } = useShoppingCart( cartKey );
 
 	const firstItem = receipt?.items[ 0 ];
-	const isRenewal = receipt?.items.some( ( item ) => item.type === 'renewal' ) ?? false;
+	const isRenewal = receipt?.items.some( ( item ) => item.type === 'recurring' ) ?? false;
 	const productName = firstItem?.variation || firstItem?.product || '';
-	const willAutoRenew = firstItem?.will_auto_renew ?? false;
 	const blogId = firstItem?.site_id;
 	const saasRedirectUrl = receipt?.items.reduce< string | undefined >(
 		( url, item ) => url ?? ( item.saas_redirect_url || undefined ),
@@ -318,7 +315,6 @@ function useRedirectOnTransactionSuccess( {
 			redirectInstructions,
 			isRenewal,
 			productName,
-			willAutoRenew,
 			translate,
 			reduxDispatch,
 		} );
@@ -351,7 +347,6 @@ function useRedirectOnTransactionSuccess( {
 		siteSlug,
 		transaction,
 		translate,
-		willAutoRenew,
 		fromSiteSlug,
 	] );
 
@@ -368,14 +363,12 @@ function triggerPostRedirectNotices( {
 	redirectInstructions,
 	isRenewal,
 	productName,
-	willAutoRenew,
 	translate,
 	reduxDispatch,
 }: {
 	redirectInstructions: RedirectInstructions;
 	isRenewal: boolean;
 	productName: string;
-	willAutoRenew: boolean;
 	translate: ReturnType< typeof useTranslate >;
 	reduxDispatch: CalypsoDispatch;
 } ): void {
@@ -404,7 +397,6 @@ function triggerPostRedirectNotices( {
 	if ( isRenewal ) {
 		displayRenewalSuccessNotice( {
 			productName,
-			willAutoRenew,
 			translate,
 			reduxDispatch,
 		} );
@@ -414,34 +406,14 @@ function triggerPostRedirectNotices( {
 
 function displayRenewalSuccessNotice( {
 	productName,
-	willAutoRenew,
 	translate,
 	reduxDispatch,
 }: {
 	productName: string;
-	willAutoRenew: boolean;
 	translate: ReturnType< typeof useTranslate >;
 	reduxDispatch: CalypsoDispatch;
 } ): void {
-	if ( willAutoRenew ) {
-		// showing notice for product that will auto-renew
-		reduxDispatch(
-			successNotice(
-				translate( 'Success! You renewed %(productName)s. {{a}}Learn more about renewals{{/a}}', {
-					args: {
-						productName,
-					},
-					components: {
-						a: <a href={ localizeUrl( AUTO_RENEWAL ) } target="_blank" rel="noopener noreferrer" />,
-					},
-				} ),
-				{ displayOnNextPage: true }
-			)
-		);
-		return;
-	}
-
-	// showing notice for product that will not auto-renew
+	// show renewal success notice
 	reduxDispatch(
 		successNotice(
 			translate( 'Success! You renewed %(productName)s.', {
