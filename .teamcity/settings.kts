@@ -20,6 +20,7 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.dockerRegist
 import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.githubConnection
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.schedule
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
+import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.VcsTrigger
 import jetbrains.buildServer.configs.kotlin.v2019_2.vcs.GitVcsRoot
 import jetbrains.buildServer.configs.kotlin.v2019_2.version
 
@@ -245,8 +246,8 @@ object BuildBaseImages : BuildType({
 
 	triggers {
 		schedule {
-			schedulingPolicy = cron {
-				hours = "*/6"
+			schedulingPolicy = daily {
+				hour = 3
 			}
 			branchFilter = """
 				+:trunk
@@ -462,13 +463,13 @@ object BuildToolchainPreviewImages : BuildType({
 object BuildCacheSeedImages : BuildType({
 	name = "Build cache-seed images"
 	description = "Builds and publishes scheduled cache-seed images from Dockerfile.cache-seed."
+	maxRunningBuilds = 1
 
 	buildNumberPattern = "%build.prefix%.%build.counter%"
 
 	params {
 		param("build.prefix", "1.0")
 		param("image_tag", "latest")
-		param("CACHE_SEED_KEY", "")
 		checkbox(
 			name = "PROFILE",
 			value = "false",
@@ -485,19 +486,7 @@ object BuildCacheSeedImages : BuildType({
 	}
 
 	steps {
-		script {
-			name = "Compute cache-seed key"
-			scriptContent = """
-				#!/usr/bin/env bash
-				set -euo pipefail
-
-				cache_seed_key=$(bash ./bin/print-cache-seed-key.sh)
-				echo "Computed cache-seed key: ${'$'}cache_seed_key"
-				echo "##teamcity[setParameter name='CACHE_SEED_KEY' value='${'$'}cache_seed_key']"
-			""".trimIndent()
-		}
-
-		val commonArgs = "--pull --build-arg workers=32 --build-arg node_memory=16384 --build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber} --build-arg profile=%PROFILE% --build-arg cache_seed_key=%CACHE_SEED_KEY%"
+		val commonArgs = "--pull --build-arg workers=32 --build-arg node_memory=16384 --build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber} --build-arg profile=%PROFILE%"
 
 		dockerCommand {
 			name = "Build cache-seed image"
@@ -540,17 +529,14 @@ object BuildCacheSeedImages : BuildType({
 				set -euo pipefail
 
 				docker tag "registry.a8c.com/calypso/cache-seed:%build.number%" "registry.a8c.com/calypso/cache-seed:%image_tag%"
-				docker tag "registry.a8c.com/calypso/cache-seed:%build.number%" "registry.a8c.com/calypso/cache-seed:key-%CACHE_SEED_KEY%"
 
 				numbered_id=$(docker image inspect "registry.a8c.com/calypso/cache-seed:%build.number%" --format '{{.Id}}')
 				publish_id=$(docker image inspect "registry.a8c.com/calypso/cache-seed:%image_tag%" --format '{{.Id}}')
-				key_id=$(docker image inspect "registry.a8c.com/calypso/cache-seed:key-%CACHE_SEED_KEY%" --format '{{.Id}}')
 
 				echo "registry.a8c.com/calypso/cache-seed:%build.number% id=${'$'}numbered_id"
 				echo "registry.a8c.com/calypso/cache-seed:%image_tag% id=${'$'}publish_id"
-				echo "registry.a8c.com/calypso/cache-seed:key-%CACHE_SEED_KEY% id=${'$'}key_id"
 
-				if [[ "${'$'}numbered_id" != "${'$'}publish_id" || "${'$'}numbered_id" != "${'$'}key_id" ]]; then
+				if [[ "${'$'}numbered_id" != "${'$'}publish_id" ]]; then
 					echo "Tag mismatch for registry.a8c.com/calypso/cache-seed"
 					exit 1
 				fi
@@ -561,7 +547,6 @@ object BuildCacheSeedImages : BuildType({
 			commandType = push {
 				namesAndTags = """
 					registry.a8c.com/calypso/cache-seed:%image_tag%
-					registry.a8c.com/calypso/cache-seed:key-%CACHE_SEED_KEY%
 					registry.a8c.com/calypso/cache-seed:%build.number%
 				""".trimIndent()
 			}
@@ -569,6 +554,17 @@ object BuildCacheSeedImages : BuildType({
 	}
 
 	triggers {
+		vcs {
+			branchFilter = "+:trunk"
+			triggerRules = """
+				+:yarn.lock
+				+:package.json
+				+:composer.lock
+				+:.nvmrc
+			""".trimIndent()
+			quietPeriodMode = VcsTrigger.QuietPeriodMode.USE_CUSTOM
+			quietPeriod = 600  // 10 minutes in seconds
+		}
 		schedule {
 			schedulingPolicy = cron {
 				hours = "3,9,15,21"
@@ -602,7 +598,6 @@ object BuildCacheSeedPreviewImage : BuildType({
 
 	params {
 		param("build.prefix", "preview")
-		param("CACHE_SEED_KEY", "")
 		checkbox(
 			name = "PROFILE",
 			value = "false",
@@ -619,19 +614,7 @@ object BuildCacheSeedPreviewImage : BuildType({
 	}
 
 	steps {
-		script {
-			name = "Compute cache-seed key"
-			scriptContent = """
-				#!/usr/bin/env bash
-				set -euo pipefail
-
-				cache_seed_key=$(bash ./bin/print-cache-seed-key.sh)
-				echo "Computed cache-seed key: ${'$'}cache_seed_key"
-				echo "##teamcity[setParameter name='CACHE_SEED_KEY' value='${'$'}cache_seed_key']"
-			""".trimIndent()
-		}
-
-		val commonArgs = "--pull --build-arg workers=32 --build-arg node_memory=16384 --build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber} --build-arg profile=%PROFILE% --build-arg cache_seed_key=%CACHE_SEED_KEY%"
+		val commonArgs = "--pull --build-arg workers=32 --build-arg node_memory=16384 --build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber} --build-arg profile=%PROFILE%"
 
 		dockerCommand {
 			name = "Build cache-seed preview image"

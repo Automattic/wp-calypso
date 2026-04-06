@@ -1,6 +1,6 @@
 import { filterURLForDisplay } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import ReaderAvatar from 'calypso/blocks/reader-avatar';
+import { SiteIcon } from 'calypso/blocks/site-icon';
 import AutoDirection from 'calypso/components/auto-direction';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import { FeedRecommendation } from 'calypso/data/reader/use-feed-recommendations-query';
@@ -26,8 +26,14 @@ export function RecommendedFeedItem( {
 	const { image, name, feedUrl = '', siteId, feedId } = feed;
 	const site = useSelector( ( state ) => getSite( state, Number( siteId ) ) ) as SiteDetails;
 	const siteIcon = site?.icon?.img || site?.icon?.ico || image;
-	const linkUrl = feedId ? `/reader/feeds/${ feedId }` : feedUrl;
 	const isCompactView = variant === 'compact';
+
+	let linkUrl = feedUrl;
+	if ( feedId ) {
+		linkUrl = `/reader/feeds/${ feedId }`;
+	} else if ( siteId ) {
+		linkUrl = `/reader/blogs/${ siteId }`;
+	}
 
 	function onFollowToggle( isFollowing: boolean ): void {
 		const displayName: string = name || filterURLForDisplay( feedUrl ?? '' );
@@ -53,12 +59,7 @@ export function RecommendedFeedItem( {
 			<QueryReaderSite siteId={ siteId } />
 
 			<a className="recommended-feed-item__link" href={ linkUrl }>
-				<ReaderAvatar
-					isCompact={ isCompactView }
-					siteIcon={ siteIcon }
-					iconSize={ variant === 'default' ? 48 : 30 }
-					className="recommended-feed-icon"
-				/>
+				<SiteIcon iconUrl={ siteIcon } size={ variant === 'default' ? 48 : 30 } />
 
 				<AutoDirection>
 					<div className="recommended-feed-info">

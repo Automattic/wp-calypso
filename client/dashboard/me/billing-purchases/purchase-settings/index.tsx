@@ -1,6 +1,4 @@
 import {
-	ProductUpgradeMap,
-	AkismetUpgradesProductMap,
 	SubscriptionBillPeriod,
 	DomainProductSlugs,
 	useMyDomainInputMode,
@@ -94,6 +92,7 @@ import {
 	isInExpirationGracePeriod,
 	isA4ABillingDragonPurchase,
 } from '../../../utils/purchase';
+import { getSitePurchaseUpgradeUrl } from '../../../utils/site-url';
 import BillingFlexUsageCard from '../../billing-flex-usage';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
 import AkismetApiKeyCard from './akismet-api-key-card';
@@ -111,46 +110,6 @@ const SPACING = {
 
 function renewPurchase( purchase: Purchase ): void {
 	window.location.href = getRenewalUrlFromPurchase( purchase );
-}
-
-function getUpgradeUrl( purchase: Purchase ): string | undefined {
-	if ( isAkismetProduct( purchase ) ) {
-		// For the first Iteration of Calypso Akismet checkout we are only suggesting
-		// for immediate upgrades to the next plan. We will change this in the future
-		// with appropriate page.
-		const url = AkismetUpgradesProductMap[ purchase.product_slug ];
-		if ( ! url ) {
-			return undefined;
-		}
-		const isAbsolute =
-			url.startsWith( 'http://' ) || url.startsWith( 'https://' ) || url.startsWith( '//' );
-		if ( ! isAbsolute ) {
-			return wpcomLink( url );
-		}
-		return url;
-	}
-
-	const upgradeProductSlug = ProductUpgradeMap[ purchase.product_slug ];
-	if ( upgradeProductSlug ) {
-		return wpcomLink( `/checkout/${ purchase.site_slug }/${ upgradeProductSlug }` );
-	}
-
-	if ( purchase.is_jetpack_backup_t1 || isJetpackT1SecurityPlan( purchase ) ) {
-		return wpcomLink( `/plans/storage/${ purchase.site_slug }` );
-	}
-
-	if ( purchase.is_jetpack_plan_or_product ) {
-		return wpcomLink( `/plans/${ purchase.site_slug }` );
-	}
-
-	if ( purchase.is_woo_hosted_product ) {
-		return addQueryArgs( wpcomLink( '/setup/woo-hosted-plans' ), {
-			siteSlug: purchase.site_slug,
-			dashboard: getCurrentDashboard(),
-		} );
-	}
-
-	return getWpcomPlanGridUrl( purchase.site_slug );
 }
 
 function getExpiredNewPlanUrl( purchase: Purchase ): string {
@@ -181,7 +140,7 @@ function getWpcomPlanGridUrl( siteSlug: string | undefined ): string {
 function canPurchaseBeUpgraded( purchase: Purchase ): boolean {
 	return Boolean(
 		purchase.is_upgradable &&
-			getUpgradeUrl( purchase ) &&
+			getSitePurchaseUpgradeUrl( purchase ) &&
 			! isJetpackTemporarySitePurchase( purchase ) &&
 			! isA4ABillingDragonPurchase( purchase )
 	);
@@ -260,7 +219,7 @@ function PurchaseActionMenu( { purchase }: { purchase: Purchase } ) {
 	const { user } = useAuth();
 	const canBeRenewed =
 		purchase.can_explicit_renew && String( user.ID ) === String( purchase.user_id );
-	const upgradeUrl = getUpgradeUrl( purchase );
+	const upgradeUrl = getSitePurchaseUpgradeUrl( purchase );
 	const { recordTracksEvent } = useAnalytics();
 	const menuItems = [
 		canPurchaseBeUpgraded( purchase ) && upgradeUrl && (
@@ -366,7 +325,7 @@ function UpgradeActionButton( { purchase }: { purchase: Purchase } ) {
 	if ( ! canPurchaseBeUpgraded( purchase ) ) {
 		return null;
 	}
-	const upgradeUrl = getUpgradeUrl( purchase );
+	const upgradeUrl = getSitePurchaseUpgradeUrl( purchase );
 	if ( ! upgradeUrl ) {
 		return null;
 	}
@@ -1173,7 +1132,7 @@ export default function PurchaseSettings() {
 	} );
 	const formattedExpiry = useFormattedTime( purchase.expiry_date ?? '' );
 	const formattedRenewal = useFormattedTime( purchase.renew_date ?? '' );
-	const upgradeUrl = getUpgradeUrl( purchase );
+	const upgradeUrl = getSitePurchaseUpgradeUrl( purchase );
 	const willRenew = Boolean(
 		! isExpired( purchase ) && purchase.renew_date && ! isExpiring( purchase )
 	);

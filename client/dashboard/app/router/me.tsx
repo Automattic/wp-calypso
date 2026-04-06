@@ -80,20 +80,20 @@ export const meIndexRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: '/',
 	beforeLoad: () => {
-		throw redirect( { to: '/me/profile' } );
+		throw redirect( { to: '/me/account' } );
 	},
 } );
 
-export const profileRoute = createRoute( {
+export const accountRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Profile' ),
+				title: isEnabled( 'dashboard/omnibar' ) ? __( 'Account' ) : __( 'Profile' ),
 			},
 		],
 	} ),
 	getParentRoute: () => meRoute,
-	path: 'profile',
+	path: 'account',
 	loader: async () => {
 		await Promise.all( [
 			queryClient.ensureQueryData( userSettingsQuery() ),
@@ -101,8 +101,8 @@ export const profileRoute = createRoute( {
 		] );
 	},
 } ).lazy( () =>
-	import( '../../me/profile' ).then( ( d ) =>
-		createLazyRoute( 'profile' )( {
+	import( '../../me/account' ).then( ( d ) =>
+		createLazyRoute( 'account' )( {
 			component: d.default,
 		} )
 	)
@@ -878,6 +878,51 @@ export const hostingDashboardRoute = createRoute( {
 	)
 );
 
+export const languageRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Language' ),
+			},
+		],
+	} ),
+	getParentRoute: () => preferencesRoute,
+	path: 'language',
+	loader: async () => {
+		await queryClient.ensureQueryData( userSettingsQuery() );
+	},
+} ).lazy( () =>
+	import( '../../me/language' ).then( ( d ) =>
+		createLazyRoute( 'language' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const wordpressDefaultsRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'WordPress.com defaults' ),
+			},
+		],
+	} ),
+	getParentRoute: () => preferencesRoute,
+	path: 'defaults',
+	loader: async () => {
+		await Promise.all( [
+			queryClient.ensureQueryData( userSettingsQuery() ),
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+		] );
+	},
+} ).lazy( () =>
+	import( '../../me/wordpress-defaults' ).then( ( d ) =>
+		createLazyRoute( 'wordpress-defaults' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const appsRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -917,6 +962,14 @@ export const blockedSitesLegacyRedirectRoute = createRoute( {
 	path: 'blocked-sites',
 	beforeLoad: () => {
 		throw redirect( { to: '/me/preferences/blocked-sites' } );
+	},
+} );
+
+export const profileLegacyRedirectRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'profile',
+	beforeLoad: () => {
+		throw redirect( { to: '/me/account' } );
 	},
 } );
 
@@ -1032,10 +1085,12 @@ export const createMeRoutes = ( config: AppConfig ) => {
 		return [];
 	}
 
-	const preferencesChildren: AnyRoute[] = [ preferencesIndexRoute ];
-	if ( config.supports.me.privacy ) {
-		preferencesChildren.push( privacyRoute );
-	}
+	const preferencesChildren: AnyRoute[] = [
+		preferencesIndexRoute,
+		privacyRoute,
+		languageRoute,
+		wordpressDefaultsRoute,
+	];
 	if ( config.supports.reader ) {
 		preferencesChildren.push( blockedSitesRoute );
 	}
@@ -1055,13 +1110,14 @@ export const createMeRoutes = ( config: AppConfig ) => {
 	}
 	const meRoutes: AnyRoute[] = [
 		meIndexRoute,
-		profileRoute,
+		accountRoute,
 		preferencesChildren.length > 0
 			? preferencesRoute.addChildren( preferencesChildren )
 			: preferencesRoute,
 		mcpLegacyRedirectRoute,
 		privacyLegacyRedirectRoute,
 		blockedSitesLegacyRedirectRoute,
+		profileLegacyRedirectRoute,
 	];
 
 	meRoutes.push(

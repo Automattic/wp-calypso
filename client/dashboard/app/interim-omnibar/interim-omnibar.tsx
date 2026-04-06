@@ -5,6 +5,7 @@ import { Provider as ReduxProvider } from 'react-redux';
 import { MasterbarLoggedIn } from 'calypso/layout/masterbar/logged-in';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getLogoutUrl } from 'calypso/lib/user/shared-utils';
+import { getSiteDisplayName } from '../../utils/site-name';
 import type { User, Site } from '@automattic/api-core';
 
 const noop = () => {};
@@ -67,7 +68,7 @@ export function InterimOmnibar( {
 				siteId={ siteId }
 				site={ site }
 				siteSlug={ siteSlug }
-				siteTitle={ site?.name ?? '' }
+				siteTitle={ site ? getSiteDisplayName( site ) : '' }
 				siteUrl={ site?.URL ?? '' }
 				siteAdminUrl={ siteAdminUrl }
 				siteHomeUrl={ site?.URL ?? '' }
@@ -78,10 +79,11 @@ export function InterimOmnibar( {
 				isEcommerce={ isEcommercePlan( site?.plan?.product_slug ?? '' ) }
 				// isClassicView={ !! site && siteUsesWpAdminInterface( site ) }
 				isClassicView
-				isSimpleSite={ !! site && ! site.jetpack }
+				// TODO: Causes hydration mismatch unless client and server both have the same site object
+				isSimpleSite={ false }
 				isJetpackNotAtomic={ !! site && site.jetpack && ! site.is_wpcom_atomic }
 				domainOnlySite={ !! site?.options?.is_domain_only }
-				isUnlaunchedSite={ site?.launch_status === 'unlaunched' }
+				isUnlaunchedSite={ false }
 				isTrial={ false }
 				isSiteP2={ !! site?.options?.is_wpforteams_site }
 				isP2Hub={ !! site?.options?.p2_hub_blog_id && site.options.p2_hub_blog_id === site.ID }

@@ -15,9 +15,9 @@ import {
 } from '@wordpress/icons';
 import { useState } from 'react';
 import * as React from 'react';
-import imgConnectDomain from 'calypso/assets/images/cancellation/connect-domain.png';
-import imgLoadingTime from 'calypso/assets/images/cancellation/loading-time.png';
-import imgSEO from 'calypso/assets/images/cancellation/seo.png';
+import imgConnectDomain from 'calypso/assets/images/cancellation/connect-domain.webp';
+import imgLoadingTime from 'calypso/assets/images/cancellation/loading-time.webp';
+import imgSEO from 'calypso/assets/images/cancellation/seo.webp';
 import { useHelpCenter } from '../../../../../app/help-center';
 import { PageHeader } from '../../../../../components/page-header';
 

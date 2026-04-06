@@ -1,12 +1,10 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { Step } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useState, createInterpolateElement } from '@wordpress/element';
 import { chevronLeft } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import { FormDivider } from 'calypso/blocks/authentication';
 import { isGravatarOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { AccountCreateReturn } from 'calypso/lib/signup/api/type';
 import { isExistingAccountError } from 'calypso/lib/signup/is-existing-account-error';
@@ -48,10 +46,6 @@ interface SignupFormSocialFirst {
 	backButtonInFooter?: boolean;
 	passDataToNextStep?: boolean;
 	emailLabelText?: string;
-	isExperimentVariant?: boolean;
-	isEmailVariation?: boolean;
-	isMessagingVariation?: boolean;
-	isSliderVariation?: boolean;
 	allowedSocialServices?: SignupAllowedService[];
 	customTosElement?: JSX.Element;
 }
@@ -93,10 +87,6 @@ const SignupFormSocialFirst = ( {
 	passDataToNextStep,
 	backButtonInFooter = true,
 	emailLabelText,
-	isExperimentVariant,
-	isEmailVariation,
-	isMessagingVariation,
-	isSliderVariation,
 	allowedSocialServices,
 	customTosElement,
 }: SignupFormSocialFirst ) => {
@@ -126,8 +116,6 @@ const SignupFormSocialFirst = ( {
 				),
 				options
 			);
-		} else if ( isMessagingVariation ) {
-			tosText = __( 'Sign up for free to start creating your site.' );
 		} else {
 			tosText = createInterpolateElement(
 				__(
@@ -137,19 +125,11 @@ const SignupFormSocialFirst = ( {
 			);
 		}
 
-		return (
-			<p
-				className={ clsx( 'signup-form-social-first__tos-link', {
-					'is-left-aligned': isExperimentVariant,
-				} ) }
-			>
-				{ tosText }
-			</p>
-		);
+		return <p className="signup-form-social-first__tos-link">{ tosText }</p>;
 	};
 
 	const renderEmailStepTermsOfService = () => {
-		return isMessagingVariation ? null : (
+		return (
 			<p className="signup-form-social-first__email-tos-link">
 				{ createInterpolateElement(
 					__(
@@ -169,51 +149,11 @@ const SignupFormSocialFirst = ( {
 		} );
 	};
 
-	let emailLoginComponent = null;
-	if ( isEmailVariation ) {
-		emailLoginComponent = (
-			<>
-				<div className="signup-form-social-first-email">
-					<PasswordlessSignupForm
-						stepName={ stepName }
-						flowName={ flowName }
-						goToNextStep={ goToNextStep }
-						logInUrl={ logInUrl }
-						queryArgs={ queryArgs }
-						labelText={ emailLabelText ?? __( 'Your email' ) }
-						submitButtonLabel={ __( 'Continue' ) }
-						userEmail={ userEmail }
-						passDataToNextStep={ passDataToNextStep }
-						onCreateAccountError={ ( error: { error: string }, email: string ) => {
-							if ( isExistingAccountError( error.error ) ) {
-								window.location.assign(
-									addQueryArgs(
-										{
-											email_address: email,
-											is_signup_existing_account: true,
-											redirect_to: queryArgs?.redirect_to,
-										},
-										logInUrl
-									)
-								);
-							}
-						} }
-						onCreateAccountSuccess={ onCreateAccountSuccess }
-						inputPlaceholder={ isGravatar ? __( 'Enter your email address' ) : undefined }
-						submitButtonLoadingLabel={ isGravatar ? __( 'Continue' ) : undefined }
-					/>
-				</div>
-				<FormDivider isHorizontal />
-			</>
-		);
-	}
-
 	return (
 		<div className="signup-form signup-form-social-first">
 			<div className={ getVisibilityClassName( 'initial' ) }>
 				{ notice }
 				{ renderTermsOfService() }
-				{ emailLoginComponent }
 				<SocialSignupForm
 					handleResponse={ handleSocialResponse }
 					setCurrentStep={ setCurrentStep }
@@ -222,16 +162,9 @@ const SignupFormSocialFirst = ( {
 					disableTosText
 					compact
 					isSocialFirst={ isSocialFirst }
-					shouldShowEmailButton={ ! isEmailVariation }
+					shouldShowEmailButton
 					allowedSocialServices={ allowedSocialServices }
 				/>
-				{ isSliderVariation && (
-					<p className="signup-form-social-first__login-link">
-						{ createInterpolateElement( __( 'Have an account? <link>Log in</link>' ), {
-							link: <Step.LinkButton href={ logInUrl } />,
-						} ) }
-					</p>
-				) }
 			</div>
 			<div className={ getVisibilityClassName( 'email' ) }>
 				<div className="signup-form-social-first-email">

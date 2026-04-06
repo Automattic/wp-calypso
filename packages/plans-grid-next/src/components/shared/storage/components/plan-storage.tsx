@@ -1,6 +1,5 @@
 import { type PlanSlug, isWpcomEnterpriseGridPlan } from '@automattic/calypso-products';
 import { AddOns } from '@automattic/data-stores';
-import clsx from 'clsx';
 import { usePlansGridContext } from '../../../../grid-context';
 import { ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE } from '../constants';
 import StorageDropdown from './storage-dropdown';
@@ -21,7 +20,7 @@ const PlanStorage = ( {
 	options,
 	showUpgradeableStorage,
 }: Props ) => {
-	const { siteId, gridPlansIndex, isVar1dVariant } = usePlansGridContext();
+	const { siteId, gridPlansIndex } = usePlansGridContext();
 	const { availableForPurchase, current, planTitle } = gridPlansIndex[ planSlug ];
 	const availableStorageAddOns = AddOns.useAvailableStorageAddOns( { siteId } );
 
@@ -38,12 +37,8 @@ const PlanStorage = ( {
 		availableStorageAddOns.length &&
 		ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE.includes( planSlug );
 
-	const containerClasses = clsx( 'plans-grid-next-plan-storage', {
-		'is-var1d-variant': isVar1dVariant,
-	} );
-
 	return (
-		<div className={ containerClasses } data-plan-title={ planTitle }>
+		<div className="plans-grid-next-plan-storage" data-plan-title={ planTitle }>
 			{ canUpgradeStorageForPlan ? (
 				<StorageDropdown planSlug={ planSlug } onStorageAddOnClick={ onStorageAddOnClick } />
 			) : (

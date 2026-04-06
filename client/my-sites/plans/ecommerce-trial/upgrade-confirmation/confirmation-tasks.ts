@@ -1,10 +1,10 @@
 import { translate as i18nTranslate } from 'i18n-calypso';
-import customDomain from 'calypso/assets/images/plans/wpcom/custom-domain.png';
-import customize from 'calypso/assets/images/plans/wpcom/customize.png';
-import launch from 'calypso/assets/images/plans/wpcom/launch-store.png';
-import manageWooCommerce from 'calypso/assets/images/plans/wpcom/manage-woocommerce.png';
-import promote from 'calypso/assets/images/plans/wpcom/promote.png';
-import wayToPay from 'calypso/assets/images/plans/wpcom/way-to-pay.png';
+import customDomain from 'calypso/assets/images/plans/wpcom/custom-domain.webp';
+import customize from 'calypso/assets/images/plans/wpcom/customize.webp';
+import launch from 'calypso/assets/images/plans/wpcom/launch-store.webp';
+import manageWooCommerce from 'calypso/assets/images/plans/wpcom/manage-woocommerce.webp';
+import promote from 'calypso/assets/images/plans/wpcom/promote.webp';
+import wayToPay from 'calypso/assets/images/plans/wpcom/way-to-pay.webp';
 
 type ConfirmationTasksProps = {
 	translate: typeof i18nTranslate;

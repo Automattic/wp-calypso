@@ -10,12 +10,10 @@ import { Link } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { addQueryArgs } from '@wordpress/url';
 import { differenceInCalendarDays } from 'date-fns';
 import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
 import { changePaymentMethodRoute, purchaseSettingsRoute } from '../../../app/router/me';
-import { getCurrentDashboard } from '../../../app/routing';
 import Notice from '../../../components/notice';
 import { getRelativeTimeString } from '../../../utils/datetime';
 import { wpcomLink } from '../../../utils/link';
@@ -33,6 +31,7 @@ import {
 	isInExpirationGracePeriod,
 	isAkismetFreeProduct,
 } from '../../../utils/purchase';
+import { getSitePurchaseUpgradeUrl } from '../../../utils/site-url';
 import { CancellationOfferNotice } from './cancellation-offer-notice';
 import {
 	OtherRenewablePurchasesNotice,
@@ -321,26 +320,16 @@ function InAppPurchaseNotice( { purchase }: { purchase: Purchase } ) {
 function TrialNotice( { purchase }: { purchase: Purchase } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const onClickUpgrade = () => {
-		if ( purchase.product_slug === WooHostedPlans.WOO_HOSTED_FREE_TRIAL_PLAN_MONTHLY ) {
+		if (
+			purchase.product_slug === WooHostedPlans.WOO_HOSTED_FREE_TRIAL_PLAN_MONTHLY ||
+			purchase.product_slug === DotcomPlans.ECOMMERCE_TRIAL_MONTHLY
+		) {
 			recordTracksEvent( 'calypso_subscription_trial_notice_cta_clicked', {
 				current_plan_slug: purchase.product_slug,
 				to_checkout: false,
 			} );
 
-			window.location.href = addQueryArgs( wpcomLink( '/setup/woo-hosted-plans' ), {
-				siteSlug: purchase.site_slug ?? '',
-				dashboard: getCurrentDashboard(),
-			} );
-			return;
-		}
-
-		if ( purchase.product_slug === DotcomPlans.ECOMMERCE_TRIAL_MONTHLY ) {
-			recordTracksEvent( 'calypso_subscription_trial_notice_cta_clicked', {
-				current_plan_slug: purchase.product_slug,
-				to_checkout: false,
-			} );
-
-			window.location.href = wpcomLink( `/plans/${ purchase.site_slug ?? '' }` );
+			window.location.href = getSitePurchaseUpgradeUrl( purchase ) ?? '';
 			return;
 		}
 

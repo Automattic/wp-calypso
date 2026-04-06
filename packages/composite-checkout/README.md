@@ -195,6 +195,7 @@ Available props:
 - `loadingContent?: ReactNode`. A component that will be displayed while checkout is loading. The default is [LoadingContent](#LoadingContent).
 - `loadingHeader?: ReactNode`. A component that will be displayed above the main content while checkout is loading.
 - `onStepChanged?: ({ stepNumber: number | null; previousStepNumber: number; paymentMethodId: string }) => void`. A function to call when the active checkout step is changed.
+- `scrollToStepOnForwardNavigation?: boolean`. When `true`, the newly active step will be scrolled into view whenever the user moves forward through the checkout steps. This is useful on mobile to correct the viewport position after the previous step's content collapses and causes the layout to shift. Defaults to `false`.
 - `store?: CheckoutStepGroupStore`. A way to inject a data store for the step group created by [createCheckoutStepGroupStore](#createCheckoutStepGroupStore). If not provided, a store will be created automatically.
 
 ### FormStatus

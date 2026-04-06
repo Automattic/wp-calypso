@@ -12,6 +12,7 @@ import {
 	StepContainer,
 } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
+import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
@@ -21,6 +22,7 @@ import { useQueryHandler } from 'calypso/components/domains/wpcom-domain-search/
 import FormattedHeader from 'calypso/components/formatted-header';
 import { dashboardLink, dashboardOrigins } from 'calypso/dashboard/utils/link';
 import { isRelativeUrl } from 'calypso/dashboard/utils/url';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
@@ -43,6 +45,7 @@ import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-conta
 import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
 import type { Step as StepType } from '../../types';
 import type { FreeDomainSuggestion } from '@automattic/api-core';
+import type { OnboardSelect } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 const HUNDRED_YEAR_DOMAIN_TLDS = [ 'com', 'net', 'org', 'blog' ];
@@ -88,10 +91,15 @@ const DomainSearchStep: StepType< {
 
 	const isCiab = dashboard === 'ciab';
 
+	const storedSiteTitle = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
+		[]
+	);
+
 	// For CIAB sites, prefer the site title over the slug for domain suggestions
 	// since the slug is often randomly generated.
 	const siteTitle = isCiab && site?.name?.trim() ? site.name.trim() : '';
-	const initialQuery = queryParamNew || siteTitle;
+	const initialQuery = queryParamNew || siteTitle || storedSiteTitle;
 
 	// eslint-disable-next-line no-nested-ternary
 	const currentSiteUrl = site?.URL ? site.URL : siteSlug ? `https://${ siteSlug }` : undefined;

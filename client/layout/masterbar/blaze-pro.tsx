@@ -4,7 +4,7 @@ import { Button } from '@wordpress/components';
 import { createInterpolateElement, Fragment } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { localize } from 'i18n-calypso';
-import BlazeProLogo from 'calypso/assets/images/blaze/blaze-pro-logo.png';
+import BlazeProLogo from 'calypso/assets/images/blaze/blaze-pro-logo.webp';
 import './typekit';
 import './blaze-pro.scss';
 

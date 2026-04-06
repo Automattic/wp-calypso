@@ -1,18 +1,17 @@
 import { domainQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import { __experimentalVStack as VStack, useNavigator } from '@wordpress/components';
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { category, envelope } from '@wordpress/icons';
 import { useAppContext } from '../../app/context';
+import { domainRoute } from '../../app/router/domains';
 import { emailsRoute } from '../../app/router/emails';
 import { SidebarBackButton, SidebarMenu, SidebarMenuItem } from '../../components/sidebar';
 import DomainSwitcherItem from './domain-switcher-item';
 
 export default function DomainSidebar() {
-	const { params } = useNavigator();
-	const domainName = params.domainName as string;
-
+	const { domainName } = domainRoute.useParams();
 	const { data: domain } = useQuery( domainQuery( domainName ) );
 
 	if ( ! domain ) {

@@ -5,6 +5,7 @@ import { __experimentalText as Text, __experimentalVStack as VStack } from '@wor
 import { __, sprintf } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import { receiptRoute } from '../../app/router/me';
+import { isAkismetPro500Plan } from '../../utils/akismet';
 import {
 	formatReceiptAmount,
 	formatReceiptTaxAmount,
@@ -318,11 +319,21 @@ function renderServiceNameDescription( receipt: Receipt ) {
 
 	const receiptItem = receiptItems[ 0 ];
 	const termLabel = getTransactionTermLabel( receiptItem );
+	const isAkismet =
+		receiptItem.licensed_quantity && isAkismetPro500Plan( receiptItem.wpcom_product_slug );
+	const displayLabel = isAkismet
+		? sprintf(
+				/* translators: 1: product name like "Akismet Pro", 2: number of requests per month */
+				__( '%1$s (%2$d requests/month)' ),
+				label.replace( /\s*\(.*$/, '' ).trim(),
+				500 * parseInt( String( receiptItem.licensed_quantity ) )
+		  )
+		: label;
 
 	return (
 		<VStack spacing={ 1 }>
 			<Text isBlock weight={ 500 } size="13">
-				{ label }
+				{ displayLabel }
 			</Text>
 			{ receiptItem.domain && (
 				<Text isBlock variant="muted" size="12">
