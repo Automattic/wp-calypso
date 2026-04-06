@@ -1,17 +1,21 @@
 import page from '@automattic/calypso-router';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Button } from '@wordpress/components';
+import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSiteSettings } from 'calypso/blocks/plugins-scheduled-updates/hooks/use-site-settings';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
+import { AnalyticsProvider } from 'calypso/dashboard/app/analytics';
+import SiteLaunchCelebrationModal from 'calypso/dashboard/sites/site-launch-celebration-modal';
 import {
 	DeviceTabProvider,
 	useDeviceTab,
 } from 'calypso/hosting/performance/contexts/device-tab-context';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useExperiment } from 'calypso/lib/explat';
 import { TabType } from 'calypso/performance-profiler/components/header';
 import { profilerVersion } from 'calypso/performance-profiler/utils/profiler-version';
 import { trackReportCompletedEvent } from 'calypso/performance-profiler/utils/track-report-events';
@@ -34,8 +38,14 @@ import { ExpiredReportNotice } from './components/expired-report-notice/expired-
 import { usePerformanceReport } from './hooks/usePerformanceReport';
 import { useSitePerformancePageReports } from './hooks/useSitePerformancePageReports';
 import { getSupportLinkProps } from './utils';
+import type { Site as DashboardSite } from '@automattic/api-core';
 
 import './style.scss';
+
+const analyticsClient = {
+	recordTracksEvent,
+	recordPageView: () => {}, // Required by AnalyticsClient interface; unused by SiteLaunchCelebrationModal
+};
 
 const statType = 'statsTopPosts';
 const statsQuery = {
@@ -148,6 +158,31 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 		( state ) => getRequest( state, launchSite( siteId ) )?.isLoading ?? false
 	);
 
+	const [ isExperimentLoading, experimentData ] = useExperiment(
+		'calypso_standardized_site_launch_gating'
+	);
+	const experimentVariant = experimentData?.variationName;
+
+	const [ isCelebrationModalOpen, setIsCelebrationModalOpen ] = useState( false );
+	const prevSiteIsLaunchingRef = useRef( siteIsLaunching );
+
+	// calypso_standardized_site_launch_gating experiment: ungated_site_launch variant
+	// Show celebration modal when site launch completes
+	useEffect( () => {
+		const wasLaunching = prevSiteIsLaunchingRef.current;
+		prevSiteIsLaunchingRef.current = siteIsLaunching;
+
+		// Only show modal when launch completes (transitions from launching to not launching)
+		if (
+			experimentVariant === 'ungated_site_launch' &&
+			wasLaunching &&
+			! siteIsLaunching &&
+			isSitePublic
+		) {
+			setIsCelebrationModalOpen( true );
+		}
+	}, [ siteIsLaunching, isSitePublic, experimentVariant ] );
+
 	const retestPage = () => {
 		recordTracksEvent( 'calypso_performance_profiler_test_again_click' );
 		performance.mark( 'test-started' );
@@ -169,7 +204,6 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 			return;
 		}
 
-		dispatch( launchSite( siteId! ) );
 		recordTracksEvent( 'calypso_performance_profiler_launch_site_cta_click' );
 
 		// Additional event to align analysis across dashboards.
@@ -178,6 +212,20 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 			context: 'site_performance',
 			path,
 		} );
+
+		if ( experimentVariant === 'gated_site_launch' ) {
+			window.location.assign(
+				addQueryArgs( '/start/launch-site', {
+					siteSlug: site?.slug,
+					back_to: `/sites/performance/${ site?.slug }`,
+				} )
+			);
+			return;
+		}
+
+		// For both ungated and control: use Redux action
+		// (ungated variant will show celebration modal via useEffect)
+		dispatch( launchSite( siteId! ) );
 	};
 
 	const isMobile = useMobileBreakpoint();
@@ -325,7 +373,7 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 				<>
 					{ ! isSitePublic ? (
 						<ReportUnavailable
-							isLaunching={ siteIsLaunching }
+							isLaunching={ siteIsLaunching || isExperimentLoading }
 							onLaunchSiteClick={ onLaunchSiteClick }
 							ctaText={
 								site?.is_a4a_dev_site
@@ -349,6 +397,14 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 						</>
 					) }
 				</>
+			) }
+			{ isCelebrationModalOpen && site && (
+				<AnalyticsProvider client={ analyticsClient }>
+					<SiteLaunchCelebrationModal
+						site={ site as unknown as DashboardSite }
+						onClose={ () => setIsCelebrationModalOpen( false ) }
+					/>
+				</AnalyticsProvider>
 			) }
 		</div>
 	);

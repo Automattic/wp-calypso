@@ -637,8 +637,10 @@ class Signup extends Component {
 	getDependenciesInQuery = () => {
 		const flow = flows.getFlow( this.props.flowName, this.props.isLoggedIn );
 		const requiredDependenciesInQuery = flow?.providesDependenciesInQuery ?? [];
+		const optionalDependenciesInQuery = flow?.optionalDependenciesInQuery ?? [];
+		const allDependencies = [ ...requiredDependenciesInQuery, ...optionalDependenciesInQuery ];
 
-		return this.extractFlowDependenciesFromQuery( requiredDependenciesInQuery );
+		return this.extractFlowDependenciesFromQuery( allDependencies );
 	};
 
 	getCurrentFlowSupportedQueryParams = () => {
