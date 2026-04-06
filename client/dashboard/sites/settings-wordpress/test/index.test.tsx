@@ -42,7 +42,7 @@ function mockApi() {
 		.persist()
 		.get( `/wpcom/v2/sites/${ site.ID }/hosting/wp-version/pending` )
 		.query( true )
-		.reply( 200, null );
+		.reply( 200 );
 
 	nock( 'https://public-api.wordpress.com' )
 		.persist()
