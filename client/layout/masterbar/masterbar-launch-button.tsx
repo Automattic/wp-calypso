@@ -10,13 +10,14 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
 import { getSite } from 'calypso/state/sites/selectors';
+import { getSectionName } from 'calypso/state/ui/selectors';
 import Item from './item';
 
 export const MasterbarLaunchButton = ( { siteId }: { siteId: number } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const site = useSelector( ( state ) => getSite( state, siteId ) );
-
+	const sectionName = useSelector( getSectionName );
 	const launchSiteMutation = useMutation( siteLaunchMutation( siteId ) );
 
 	const { onSiteLaunched } = useCelebrateLaunchModalSideEffects( siteId );
@@ -24,7 +25,7 @@ export const MasterbarLaunchButton = ( { siteId }: { siteId: number } ) => {
 	const [ isLoading, data ] = useExperiment( 'calypso_standardized_site_launch_gating' );
 
 	const onLaunchSiteClick = () => {
-		dispatch( recordTracksEvent( 'calypso_masterbar_launch_site' ) );
+		dispatch( recordTracksEvent( 'calypso_masterbar_launch_site', { source: sectionName } ) );
 
 		if ( data?.variationName === 'gated_site_launch' ) {
 			window.location.assign(
