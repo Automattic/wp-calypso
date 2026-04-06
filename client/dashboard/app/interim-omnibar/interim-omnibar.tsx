@@ -1,12 +1,13 @@
 /* eslint-disable no-restricted-imports */
 import { isEcommercePlan } from '@automattic/calypso-products';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { MasterbarLoggedIn } from 'calypso/layout/masterbar/logged-in';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getLogoutUrl } from 'calypso/lib/user/shared-utils';
 import { getSiteDisplayName } from '../../utils/site-name';
+import { omnibarEvents } from './click-handlers';
 import type { User, Site } from '@automattic/api-core';
 
 const noop = () => {};
@@ -62,6 +63,15 @@ export function InterimOmnibar( {
 		() => createOmnibarStore( onToggleNotifications ),
 		[ onToggleNotifications ]
 	);
+
+	// Announce the bell button element to subscribers (e.g. the Notifications
+	// component) so they can anchor a popover to it. Re-runs on every commit so
+	// it stays correct if MasterbarLoggedIn re-renders and replaces the node.
+	useEffect( () => {
+		const container = document.getElementById( 'wpcom-omnibar' );
+		const bell = container?.querySelector< HTMLElement >( '.masterbar-notifications' ) ?? null;
+		omnibarEvents.notificationsAnchor.emit( bell );
+	} );
 
 	return (
 		<QueryClientProvider client={ omnibarQueryClient }>

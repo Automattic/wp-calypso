@@ -20,7 +20,10 @@ function createOmnibarEvent< T = void >() {
 
 export const omnibarEvents = {
 	mobileMenu: createOmnibarEvent(),
-	notifications: createOmnibarEvent< HTMLElement | null >(),
+	/** Announces the omnibar's notifications bell element so consumers can use it as a popover anchor. */
+	notificationsAnchor: createOmnibarEvent< HTMLElement | null >(),
+	/** Requests the notifications panel to toggle (e.g. user clicked the bell). */
+	notifications: createOmnibarEvent(),
 	linkClick: createOmnibarEvent< { href: string; event: MouseEvent } >(),
 };
 
