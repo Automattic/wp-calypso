@@ -90,7 +90,6 @@ const standardAssembledReceipt: ReceiptData = {
 			productSlug: 'domain-reg',
 			productType: 'domain',
 			registrarSupportUrl: 'something.com',
-			willAutoRenew: true,
 			saasRedirectUrl: '',
 			blogId: 999,
 			priceInteger: 10,
