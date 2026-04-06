@@ -64,6 +64,11 @@ body.is-section-settings-podcasting {
 	display: flex;
 	gap: 24px;
 	margin-bottom: 16px;
+	flex-direction: column;
+
+	@include break-medium {
+		flex-direction: row;
+	}
 
 	.podcast-cover-image-setting {
 		flex-shrink: 0;
