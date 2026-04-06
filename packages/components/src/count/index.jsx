@@ -20,7 +20,7 @@ export const Count = ( {
 	return (
 		<span
 			ref={ forwardRef }
-			className={ clsx( 'a8c-count count', { 'is-primary': primary } ) }
+			className={ clsx( 'a8c-count', { 'is-primary': primary } ) }
 			{ ...props }
 		>
 			{ compact ? formatNumberCompact( count ) : effectiveNumberFormat( count ) }

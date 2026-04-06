@@ -190,7 +190,7 @@ body.is-section-reader {
 		padding-bottom: 5px;
 	}
 
-	.sidebar__menu .count {
+	.sidebar__menu .a8c-count {
 		position: relative;
 		flex-shrink: 0;
 		top: 0;
@@ -208,13 +208,13 @@ body.is-section-reader {
 		align-self: self-start;
 	}
 
-	.sidebar__menu-link:hover .count {
+	.sidebar__menu-link:hover .a8c-count {
 		border-color: var( --color-sidebar-menu-hover-text );
 		outline-color: #f00;
 		color: var( --color-sidebar-menu-hover-text );
 	}
 
-	.selected .sidebar__menu-link .count {
+	.selected .sidebar__menu-link .a8c-count {
 		background: transparent;
 		border-color: var( --color-sidebar-menu-selected-text );
 		color: var( --color-sidebar-menu-selected-text );
