@@ -4,6 +4,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useState, useRef } from 'react';
 import { useMapStripePlanToProductMutation } from 'calypso/data/paid-newsletter/use-map-stripe-plan-to-product-mutation';
+import { useSetCompPlanMutation } from 'calypso/data/paid-newsletter/use-set-comp-plan-mutation';
 import RecurringPaymentsPlanAddEditModal from 'calypso/my-sites/earn/components/add-edit-plan-modal';
 import {
 	PLAN_YEARLY_FREQUENCY,
@@ -15,6 +16,7 @@ import { useSelector } from 'calypso/state';
 import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
 import { SubscribersStepProps } from '../../types';
 import StartImportButton from './../start-import-button';
+import { MapCompPlan } from './map-comp-plan';
 import { MapPlan, TierToAdd } from './map-plan';
 import NoPlans from './no-plans';
 import SuccessNotice from './success-notice';
@@ -36,10 +38,20 @@ function shouldEnableImporting( cardData: any ) {
 	const plans = cardData?.plans ?? [];
 	const map_plans = cardData?.map_plans ?? {};
 
-	// Check if all items in the map array have a value for each key
-	return Object.values( plans ).every(
+	const allPlansMapped = Object.values( plans ).every(
 		( item: any ) => map_plans[ item?.product_id ] !== undefined
 	);
+	if ( ! allPlansMapped ) {
+		return false;
+	}
+
+	// If there are comped subscribers, require a comp plan selection.
+	const compCount = parseInt( cardData?.meta?.comp_count || '0' );
+	if ( compCount > 0 && ! cardData?.comp_stripe_plan_id ) {
+		return false;
+	}
+
+	return true;
 }
 
 function findNewProduct( currentProducts: Array< Product >, previousProducts: Array< Product > ) {
@@ -74,6 +86,7 @@ export default function MapPlans( {
 	);
 	const { mapStripePlanToProduct, isPending: isSavingPlanMapping } =
 		useMapStripePlanToProductMutation();
+	const { setCompPlan, isPending: isSavingCompPlan } = useSetCompPlanMutation();
 	const newsletterTiersRef = useRef( newsletterTiers );
 	const stripePlanRef = useRef( '' );
 
@@ -153,7 +166,13 @@ export default function MapPlans( {
 		},
 	};
 
-	const isImportButtonDisabled = ! shouldEnableImporting( cardData ) || isSavingPlanMapping;
+	const isImportButtonDisabled =
+		! shouldEnableImporting( cardData ) || isSavingPlanMapping || isSavingCompPlan;
+
+	const compCount = parseInt( cardData?.meta?.comp_count || '0' );
+	const onCompPlanSelect = ( stripePlanId: string ) => {
+		setCompPlan( selectedSite.ID, engine, currentStep, stripePlanId );
+	};
 
 	const onProductSelect = ( stripePlanId: string, productId: string ) => {
 		mapStripePlanToProduct( selectedSite.ID, engine, currentStep, stripePlanId, productId );
@@ -202,6 +221,14 @@ export default function MapPlans( {
 						/>
 					);
 				} ) }
+				{ compCount > 0 && (
+					<MapCompPlan
+						compCount={ compCount }
+						plans={ cardData.plans }
+						selectedStripePlanId={ cardData.comp_stripe_plan_id ?? '' }
+						onCompPlanSelect={ onCompPlanSelect }
+					/>
+				) }
 			</div>
 
 			<StartImportButton
