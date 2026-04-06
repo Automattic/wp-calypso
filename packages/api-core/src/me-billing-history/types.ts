@@ -62,6 +62,8 @@ export interface ReceiptItem {
 	credits_used: number | null;
 	introductory_offer_terms: IntroductoryOfferTerms | null;
 	price_tier_slug: string;
+	will_auto_renew: boolean;
+	saas_redirect_url: string;
 }
 
 export interface Receipt {
@@ -90,4 +92,5 @@ export interface Receipt {
 	credit: string;
 	items: ReceiptItem[];
 	tax_vendor_info?: TaxVendorInfo;
+	checkout_type?: string;
 }

@@ -35,6 +35,7 @@
 		"cookie-banner": false,
 		"dev/auth-helper": true,
 		"dev/preferences-helper": true,
+		"dev/store-sandbox-helper": true,
 		"oauth": true,
 		"a4a/site-details-pane": true,
 		"a4a/site-migration": true,

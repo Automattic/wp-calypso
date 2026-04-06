@@ -24,6 +24,7 @@ export interface UserPreferences {
 	[ key: `hosting-dashboard-overview-storage-notice-dismissed-${ number }` ]: string | undefined; // Timestamp when the user dismissed the notice
 	[ key: `hosting-dashboard-tours-${ string }` ]: string; // ISO date string when the user completed the tours
 	[ key: `hosting-dashboard-time-mismatch-warning-dismissed-${ number }` ]: string | undefined; // Timestamp when the user dismissed the notice
+	[ key: `hosting-dashboard-wp-beta-notice-dismissed-${ number }` ]: string | undefined; // ISO timestamp when the user dismissed the beta notice for a site
 	'hosting-dashboard-welcome-notice-dismissed'?: string; // Timestamp when the user dismissed the notice
 	'reader-landing-page'?: ReaderLandingPage;
 	'sites-landing-page'?: SitesLandingPage;

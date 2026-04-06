@@ -878,6 +878,51 @@ export const hostingDashboardRoute = createRoute( {
 	)
 );
 
+export const languageRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Language' ),
+			},
+		],
+	} ),
+	getParentRoute: () => preferencesRoute,
+	path: 'language',
+	loader: async () => {
+		await queryClient.ensureQueryData( userSettingsQuery() );
+	},
+} ).lazy( () =>
+	import( '../../me/language' ).then( ( d ) =>
+		createLazyRoute( 'language' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const wordpressDefaultsRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'WordPress.com defaults' ),
+			},
+		],
+	} ),
+	getParentRoute: () => preferencesRoute,
+	path: 'defaults',
+	loader: async () => {
+		await Promise.all( [
+			queryClient.ensureQueryData( userSettingsQuery() ),
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+		] );
+	},
+} ).lazy( () =>
+	import( '../../me/wordpress-defaults' ).then( ( d ) =>
+		createLazyRoute( 'wordpress-defaults' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const appsRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -1040,7 +1085,12 @@ export const createMeRoutes = ( config: AppConfig ) => {
 		return [];
 	}
 
-	const preferencesChildren: AnyRoute[] = [ preferencesIndexRoute, privacyRoute ];
+	const preferencesChildren: AnyRoute[] = [
+		preferencesIndexRoute,
+		privacyRoute,
+		languageRoute,
+		wordpressDefaultsRoute,
+	];
 	if ( config.supports.reader ) {
 		preferencesChildren.push( blockedSitesRoute );
 	}

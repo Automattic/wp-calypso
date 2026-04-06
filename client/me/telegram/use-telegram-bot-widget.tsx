@@ -6,7 +6,7 @@ import wpcom from 'calypso/lib/wp';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { DEFAULT_NOTICE_DURATION } from 'calypso/state/notices/constants';
 
-/** Auto-dismiss options for Telegram connect/disconnect global notices (shared with `/telegram-connect`). */
+/** Auto-dismiss options for Telegram connect/disconnect global notices (shared with `/me/get-apps/telegram-connect`). */
 export const TELEGRAM_TRANSIENT_NOTICE = { duration: DEFAULT_NOTICE_DURATION };
 
 export type TelegramAuthPayload = {

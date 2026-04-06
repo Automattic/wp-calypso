@@ -138,7 +138,6 @@ body.is-reader-full-post {
 				}
 
 				.dataviews-view-list__media-wrapper {
-					border-radius: 50%;
 					width: 24px;
 					height: 24px;
 					background-color: transparent;
@@ -177,7 +176,7 @@ body.is-reader-full-post {
 					&__site-name {
 						font-weight: 400;
 						font-size: rem( 11px );
-						line-height: 1;
+						line-height: 14px;
 						@extend %text-shared;
 					}
 

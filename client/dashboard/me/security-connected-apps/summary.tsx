@@ -4,9 +4,12 @@ import { Icon } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { connection } from '@wordpress/icons';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
-import type { SummaryButtonBadgeProps } from '@automattic/components/src/summary-button/types';
+import type {
+	Density,
+	SummaryButtonBadgeProps,
+} from '@automattic/components/src/summary-button/types';
 
-export default function SecurityConnectedAppsSummary() {
+export default function SecurityConnectedAppsSummary( { density }: { density?: Density } ) {
 	const { data: connectedApplications } = useSuspenseQuery( connectedApplicationsQuery() );
 
 	const connectedApplicationsCount = connectedApplications.length;
@@ -30,6 +33,7 @@ export default function SecurityConnectedAppsSummary() {
 
 	return (
 		<RouterLinkSummaryButton
+			density={ density }
 			to="/me/security/connected-apps"
 			title={ __( 'Connected applications' ) }
 			description={ __( 'Manage applications connected to your WordPress.com account.' ) }

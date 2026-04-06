@@ -520,14 +520,19 @@ export const FEATURE_WOO_HOSTED_ANALYTICS_REPORTS = 'woo-hosted-analytics-report
 export const FEATURE_WOO_HOSTED_BASIC_STORAGE = 'woo-hosted-basic-storage';
 export const FEATURE_WOO_HOSTED_PRO_STORAGE = 'woo-hosted-pro-storage';
 export const FEATURE_WOO_HOSTED_SECURITY = 'woo-hosted-security';
-export const FEATURE_WOO_HOSTED_BASIC_EMAIL_SUBSCRIBERS = 'woo-hosted-basic-email-subscribers';
-export const FEATURE_WOO_HOSTED_PRO_EMAIL_SUBSCRIBERS = 'woo-hosted-pro-email-subscribers';
 export const FEATURE_WOO_HOSTED_AUTOMATED_EMAIL_FLOWS = 'woo-hosted-automated-email-flows';
 export const FEATURE_WOO_HOSTED_ABANDONED_CART_EMAILS = 'woo-hosted-abandoned-cart-emails';
 export const FEATURE_WOO_HOSTED_POST_PURCHASE_EMAILS = 'woo-hosted-post-purchase-emails';
 export const FEATURE_WOO_HOSTED_EMAIL_TEMPLATES = 'woo-hosted-email-templates';
 export const FEATURE_WOO_HOSTED_SEO_TOOLS = 'woo-hosted-seo-tools';
 export const FEATURE_WOO_HOSTED_COUPONS = 'woo-hosted-coupons';
+export const FEATURE_WOO_HOSTED_POS_SYSTEM = 'woo-hosted-pos-system';
+export const FEATURE_WOO_HOSTED_STAFF_ACCOUNTS = 'woo-hosted-staff-accounts';
+export const FEATURE_WOO_HOSTED_STORAGE_SPACE = 'woo-hosted-storage-space';
+export const FEATURE_WOO_HOSTED_EMAIL_CAMPAIGNS = 'woo-hosted-email-campaigns';
+export const FEATURE_WOO_HOSTED_EMAIL_SUBSCRIBER_MGMT = 'woo-hosted-email-subscriber-mgmt';
+export const FEATURE_WOO_HOSTED_SALES_TAX = 'woo-hosted-sales-tax';
+export const FEATURE_WOO_HOSTED_SHIPPING_LABELS = 'woo-hosted-shipping-labels';
 
 // Sensei Features
 export const FEATURE_SENSEI_SUPPORT = 'sensei-support';

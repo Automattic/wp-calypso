@@ -1,9 +1,9 @@
 import { useLocalizeUrl, useLocale } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import imagePreviewPublish from 'calypso/my-sites/patterns/components/get-started/images/preview-publish.png';
-import imagePageLayouts from 'calypso/my-sites/patterns/components/get-started/images/understand-page-layouts.png';
-import imageBlockPatterns from 'calypso/my-sites/patterns/components/get-started/images/use-block-patterns.png';
+import imagePreviewPublish from 'calypso/my-sites/patterns/components/get-started/images/preview-publish.webp';
+import imagePageLayouts from 'calypso/my-sites/patterns/components/get-started/images/understand-page-layouts.webp';
+import imageBlockPatterns from 'calypso/my-sites/patterns/components/get-started/images/use-block-patterns.webp';
 import { PatternsSection } from 'calypso/my-sites/patterns/components/section';
 import { getOnboardingUrl } from 'calypso/my-sites/patterns/paths';
 import { useSelector } from 'calypso/state';

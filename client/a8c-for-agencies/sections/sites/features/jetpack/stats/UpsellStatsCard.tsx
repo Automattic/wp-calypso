@@ -1,7 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import StatsImage from 'calypso/assets/images/jetpack/rna-image-stats.png';
+import StatsImage from 'calypso/assets/images/jetpack/rna-image-stats.webp';
 import JetpackRnaActionCard from 'calypso/components/jetpack/card/jetpack-rna-action-card';
 import { Site } from '../../../types';
 
