@@ -83,7 +83,7 @@ export function VersionForm( { site, currentVersion, versionSwitch }: VersionFor
 								<Button
 									variant="primary"
 									type="submit"
-									isBusy={ isSaving }
+									isBusy={ isSaving || isSwitching }
 									disabled={ isSaving || ! isDirty || isSwitching }
 								>
 									{ __( 'Save' ) }
