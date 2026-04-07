@@ -12,7 +12,9 @@ $profile-dropdown-menu-height: 250px;
 }
 
 .a4a-sidebar__agency-name {
-	flex: 1;
+	flex: 1 1 0;
+	min-width: 0;
+	max-width: 140px;
 	color: var(--color-sidebar-text);
 	font-size: 0.875rem;
 	font-weight: 500;
