@@ -15,7 +15,7 @@ module.exports.loader = ( {
 	publicPath,
 	emitFile = true,
 } = {} ) => ( {
-	test: /\.(?:gif|jpg|jpeg|png|svg)$/i,
+	test: /\.(?:gif|jpg|jpeg|png|svg|webp)$/i,
 	type: 'asset/resource',
 	generator: {
 		filename: path.join( outputPath, name ),

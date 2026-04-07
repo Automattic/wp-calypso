@@ -9,6 +9,13 @@ $padding-standard: 16px;
 
 body.is-section-subscribers,
 .theme-jetpack-cloud.is-group-jetpack-cloud.is-section-jetpack-subscribers {
+	// Prevent layout shift when the DataViews actions dropdown opens.
+	// Ariakit's modal dropdown sets overflow:hidden on the body to lock
+	// scrolling, which hides the viewport scrollbar and jerks the content.
+	// This page uses a fixed viewport height with internal scrolling,
+	// so body-level scrolling is unnecessary.
+	overflow: hidden;
+
 	.layout:not( .has-no-sidebar ),
 	.has-no-masterbar {
 		.layout__content {
@@ -84,6 +91,15 @@ body.is-section-subscribers,
 				overflow: hidden;
 				display: flex;
 				flex-direction: column;
+
+				// DataViews' height: 100% doesn't resolve inside the
+				// Page content flex layout. Use flex to fill remaining
+				// space so the internal scroll container works.
+				.dataviews-wrapper {
+					height: auto;
+					flex-grow: 1;
+					min-height: 0;
+				}
 
 				.navigation-header {
 					padding: $padding-standard 24px;

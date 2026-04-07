@@ -105,4 +105,4 @@ Install the [Playwright VSCode Extension](https://marketplace.visualstudio.com/i
 
 When opening the `wp-calypso` directory the extension should automatically detect the Playwright Test projects:
 
-![Playwright Test Extension](./files/PWT-extension.png)
+![Playwright Test Extension](./files/PWT-extension.webp)

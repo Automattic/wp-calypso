@@ -30,7 +30,10 @@ const artPromoFlow: FlowV2< typeof initialize > = {
 			} );
 
 			if (
-				availability.status !== DomainAvailabilityStatus.AVAILABLE ||
+				! [
+					DomainAvailabilityStatus.AVAILABLE,
+					DomainAvailabilityStatus.AVAILABLE_PREMIUM,
+				].includes( availability.status ) ||
 				! availability.product_slug
 			) {
 				return window.location.assign( '/domains' );

@@ -26,7 +26,6 @@ import PostEditButton from 'calypso/blocks/post-edit-button/docs/example';
 import PostLikes from 'calypso/blocks/post-likes/docs/example';
 import ProductPlanOverlapNotices from 'calypso/blocks/product-plan-overlap-notices/docs/example';
 import ReaderAuthorLink from 'calypso/blocks/reader-author-link/docs/example';
-import ReaderAvatar from 'calypso/blocks/reader-avatar/docs/example';
 import ReaderExportButton from 'calypso/blocks/reader-export-button/docs/example';
 import ReaderFeaturedVideo from 'calypso/blocks/reader-featured-video/docs/example';
 import ReaderImportButton from 'calypso/blocks/reader-import-button/docs/example';
@@ -43,6 +42,7 @@ import SiteIcon from 'calypso/blocks/site-icon/docs/example';
 import SupportArticleDialog from 'calypso/blocks/support-article-dialog/docs/example';
 import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning/docs/example';
 import UpsellNudge from 'calypso/blocks/upsell-nudge/docs/example';
+import UserAvatar from 'calypso/blocks/user-avatar/docs/example';
 import UserMentions from 'calypso/blocks/user-mentions/docs/example';
 import DocumentHead from 'calypso/components/data/document-head';
 import HappinessSupport from 'calypso/components/happiness-support/docs/example';
@@ -133,7 +133,7 @@ export default class AppComponents extends Component {
 					<PlanPrice />
 					<PlanThankYouCard readmeFilePath="plan-thank-you-card" />
 					<DismissibleCard readmeFilePath="dismissible-card" />
-					<ReaderAvatar readmeFilePath="reader-avatar" />
+					<UserAvatar readmeFilePath="reader-avatar" />
 					<ReaderPostOptionsMenu readmeFilePath="reader-post-options-menu" />
 					<PostLikes readmeFilePath="post-likes" />
 					<ReaderFeaturedVideo readmeFilePath="reader-featured-video" />

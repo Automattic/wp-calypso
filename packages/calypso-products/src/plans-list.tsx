@@ -346,10 +346,7 @@ import {
 	FEATURE_AUTOMATED_BACKUPS_SECURITY_SCAN,
 	FEATURE_SELL_EGIFTS_AND_VOUCHERS,
 	FEATURE_EMAIL_MARKETING,
-	FEATURE_ADVANCED_JETPACK_FORMS,
 	FEATURE_WORDPRESS_STUDIO_SYNC,
-	FEATURE_EARLY_ONBOARDING_CALLS,
-	FEATURE_BASIC_FORMS,
 	FEATURE_MARKETPLACE_SYNC_SOCIAL_MEDIA_INTEGRATION,
 	FEATURE_INTEGRATED_SHIPMENT_TRACKING,
 	FEATURE_BACK_IN_STOCK_NOTIFICATIONS,
@@ -467,13 +464,11 @@ import {
 	FEATURE_JETPACK_SOCIAL_V1_MONTHLY,
 	FEATURE_BIG_SKY_WEBSITE_BUILDER,
 	FEATURE_BIG_SKY_WEBSITE_BUILDER_CHECKOUT,
-	FEATURE_AI_WRITER_DESIGNER,
+	FEATURE_AI_WEBSITE_BUILDER,
+	FEATURE_AI_WEBSITE_BUILDER_LIMITED,
+	FEATURE_GUIDED_WEBSITE_BUILDER,
+	FEATURE_GUIDED_WEBSITE_BUILDER_LIMITED,
 	FEATURE_AI_WRITER_DESIGNER_LIMITED,
-	FEATURE_INCLUDED_IN_PLAN,
-	FEATURE_EVERYTHING_IN_FREE_PLUS,
-	FEATURE_EVERYTHING_IN_PERSONAL_PLUS,
-	FEATURE_EVERYTHING_IN_PREMIUM_PLUS,
-	FEATURE_EVERYTHING_IN_BUSINESS_PLUS,
 	FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
 	FEATURE_BLAZE_AD_CREDITS,
 	FEATURE_UPLOAD_VIDEO,
@@ -483,6 +478,8 @@ import {
 	FEATURE_SUPPORT_FROM_EXPERTS,
 	FEATURE_FREE_FAST_SUPPORT,
 	FEATURE_AI_ASSISTANT,
+	FEATURE_BUILT_IN_SITE_ASSISTANT,
+	FEATURE_ENHANCED_AI_ASSISTANT_AND_TOOLS,
 	FEATURE_ADVANCED_FORM_FEATURES_JP,
 	FEATURE_WOO_AUTOMATE,
 	FEATURE_WOO_SHIPPING_TRACKING,
@@ -518,14 +515,19 @@ import {
 	FEATURE_WOO_HOSTED_BASIC_STORAGE,
 	FEATURE_WOO_HOSTED_PRO_STORAGE,
 	FEATURE_WOO_HOSTED_SECURITY,
-	FEATURE_WOO_HOSTED_BASIC_EMAIL_SUBSCRIBERS,
-	FEATURE_WOO_HOSTED_PRO_EMAIL_SUBSCRIBERS,
 	FEATURE_WOO_HOSTED_AUTOMATED_EMAIL_FLOWS,
 	FEATURE_WOO_HOSTED_ABANDONED_CART_EMAILS,
 	FEATURE_WOO_HOSTED_POST_PURCHASE_EMAILS,
 	FEATURE_WOO_HOSTED_EMAIL_TEMPLATES,
 	FEATURE_WOO_HOSTED_SEO_TOOLS,
 	FEATURE_WOO_HOSTED_COUPONS,
+	FEATURE_WOO_HOSTED_POS_SYSTEM,
+	FEATURE_WOO_HOSTED_STAFF_ACCOUNTS,
+	FEATURE_WOO_HOSTED_STORAGE_SPACE,
+	FEATURE_WOO_HOSTED_EMAIL_CAMPAIGNS,
+	FEATURE_WOO_HOSTED_EMAIL_SUBSCRIBER_MGMT,
+	FEATURE_WOO_HOSTED_SALES_TAX,
+	FEATURE_WOO_HOSTED_SHIPPING_LABELS,
 	WPCOM_FEATURES_SCAN_SELF_SERVE,
 	WPCOM_FEATURES_BACKUPS_SELF_SERVE,
 } from './constants';
@@ -618,7 +620,6 @@ const isStatsFeatureTranslated = () => {
 
 	return isEnglishLocale || hasStatsTranslation;
 };
-
 const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 	...getDotcomPlanDetails(),
 	group: GROUP_WPCOM,
@@ -666,29 +667,8 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 	},
 
 	getLongSetSignupWpcomFeatures: () => [ FEATURE_UNLIMITED_ENTITIES ],
-
-	// Stacked variant: same as above for Free (no previous plan)
-	getLongSetStackedSignupWpcomFeatures: () => [
-		FEATURE_INCLUDED_IN_PLAN,
-		FEATURE_UNLIMITED_ENTITIES,
-		FEATURE_BANDWIDTH,
-		FEATURE_SECURITY_BRUTE_FORCE,
-		FEATURE_CDN,
-		FEATURE_FAST_DNS,
-	],
-
-	// Short set stacked: Free matches the long stacked base set (no previous plan)
-	getShortSetStackedSignupWpcomFeatures: () => [
-		FEATURE_INCLUDED_IN_PLAN,
-		FEATURE_UNLIMITED_ENTITIES,
-		FEATURE_BANDWIDTH,
-		FEATURE_SECURITY_BRUTE_FORCE,
-		FEATURE_CDN,
-		FEATURE_FAST_DNS,
-	],
-
-	// Var5 stacked: copies getShortSetStackedSignupWpcomFeatures for var5 variant
-	getVar5StackedSignupWpcomFeatures: () => [ FEATURE_INCLUDED_IN_PLAN, FEATURE_UNLIMITED_ENTITIES ],
+	getVar41MorePremiumSignupWpcomFeatures: () => [ FEATURE_UNLIMITED_ENTITIES ],
+	getVar42NoAiSignupWpcomFeatures: () => [ FEATURE_UNLIMITED_ENTITIES ],
 
 	get2023PlanComparisonFeatureOverride: () => {
 		return [
@@ -717,9 +697,7 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_FAST_DNS,
 		];
 	},
-	// Experimental: Comparison grid features for experiment variants.
-	// This function is used for all experiment variants (var1, var1d, var3, var4, var5) in the comparison grid.
-	// Currently a copy of get2023PlanComparisonFeatureOverride (control), will be modified according to Figma designs.
+	// Comparison grid when plans pricing differentiators experiment is active (non-control).
 	get2023PlanComparisonFeatureOverrideForExperiment: () => {
 		return [
 			FEATURE_AI_ASSISTANT,
@@ -990,38 +968,22 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_STATS_BASIC_20250206,
 		FEATURE_UPLOAD_PLUGINS,
 	],
-
-	// Stacked variant: only incremental features (matching screenshot order)
-	getLongSetStackedSignupWpcomFeatures: () => [
-		FEATURE_EVERYTHING_IN_FREE_PLUS,
+	getVar41MorePremiumSignupWpcomFeatures: () => [
+		FEATURE_UNLIMITED_ENTITIES,
 		FEATURE_CUSTOM_DOMAIN,
-		FEATURE_UPLOAD_PLUGINS,
-		FEATURE_AI_WRITER_DESIGNER_LIMITED,
-		WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
-		FEATURE_STATS_BASIC_20250206,
 		FEATURE_AD_FREE_EXPERIENCE,
-		FEATURE_STYLE_CUSTOMIZATION,
-		FEATURE_BASIC_FORMS,
-		FEATURE_SUPPORT_FROM_EXPERTS,
-	],
-
-	// Short set stacked: incremental features from Free
-	getShortSetStackedSignupWpcomFeatures: () => [
-		FEATURE_EVERYTHING_IN_FREE_PLUS,
-		FEATURE_CUSTOM_DOMAIN,
-		FEATURE_UPLOAD_PLUGINS,
-		FEATURE_AD_FREE_EXPERIENCE,
-		FEATURE_STYLE_CUSTOMIZATION,
-		FEATURE_SUPPORT_FROM_EXPERTS,
-	],
-
-	// Var5 stacked: copies getShortSetStackedSignupWpcomFeatures for var5 variant
-	getVar5StackedSignupWpcomFeatures: () => [
-		FEATURE_EVERYTHING_IN_FREE_PLUS,
-		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_AI_WEBSITE_BUILDER_LIMITED,
 		WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
 		FEATURE_SUPPORT_FROM_EXPERTS,
-		FEATURE_STATS_BASIC_20250206,
+		FEATURE_UPLOAD_PLUGINS,
+	],
+	getVar42NoAiSignupWpcomFeatures: () => [
+		FEATURE_UNLIMITED_ENTITIES,
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_AD_FREE_EXPERIENCE,
+		FEATURE_GUIDED_WEBSITE_BUILDER_LIMITED,
+		WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
+		FEATURE_SUPPORT_FROM_EXPERTS,
 		FEATURE_UPLOAD_PLUGINS,
 	],
 
@@ -1046,9 +1008,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 
 		return features;
 	},
-	// Experimental: Comparison grid features for experiment variants.
-	// This function is used for all experiment variants (var1, var1d, var3, var4, var5) in the comparison grid.
-	// Currently a copy of get2023PlanComparisonFeatureOverride (control), will be modified according to Figma designs.
+	// Comparison grid when plans pricing differentiators experiment is active (non-control).
 	get2023PlanComparisonFeatureOverrideForExperiment: () => {
 		const baseFeatures = [
 			FEATURE_CUSTOM_DOMAIN,
@@ -1291,47 +1251,45 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_DEV_TOOLS,
 		FEATURE_WOOCOMMERCE_HOSTING,
 	],
-
-	// Stacked variant: only incremental features (matching screenshot order)
-	getLongSetStackedSignupWpcomFeatures: () => [
-		FEATURE_EVERYTHING_IN_BUSINESS_PLUS,
+	getVar41MorePremiumSignupWpcomFeatures: () => [
+		FEATURE_UNLIMITED_ENTITIES,
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_AD_FREE_EXPERIENCE,
+		FEATURE_AI_WEBSITE_BUILDER,
 		FEATURE_PREMIUM_STORE_THEMES,
+		FEATURE_PRIORITY_24_7_SUPPORT,
+		FEATURE_UPLOAD_PLUGINS,
+		FEATURE_STATS_ADVANCED_20250206,
+		FEATURE_SIMPLE_PAYMENTS,
+		FEATURE_VIDEO_UPLOADS,
+		FEATURE_ENHANCED_AI_ASSISTANT_AND_TOOLS,
+		FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
+		FEATURE_EMAIL_MARKETING,
+		FEATURE_BLAZE_AD_CREDITS,
+		FEATURE_REALTIME_BACKUPS_JP,
+		FEATURE_DEV_TOOLS,
 		FEATURE_WOOCOMMERCE_HOSTING,
-		FEATURE_LIST_UNLIMITED_PRODUCTS,
-		FEATURE_INVENTORY_MGMT,
-		FEATURE_STREAMLINED_CHECKOUT,
 		FEATURE_SELL_60_COUNTRIES,
-		FEATURE_BACK_IN_STOCK_NOTIFICATIONS,
-		FEATURE_DYNAMIC_UPSELLS,
-		FEATURE_CUSTOM_MARKETING_AUTOMATION,
-		FEATURE_SHIPPING_INTEGRATIONS,
 	],
-
-	// Short set stacked: incremental features from Business
-	getShortSetStackedSignupWpcomFeatures: () => [
-		FEATURE_EVERYTHING_IN_BUSINESS_PLUS,
+	getVar42NoAiSignupWpcomFeatures: () => [
+		FEATURE_UNLIMITED_ENTITIES,
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_AD_FREE_EXPERIENCE,
+		FEATURE_GUIDED_WEBSITE_BUILDER,
 		FEATURE_PREMIUM_STORE_THEMES,
+		FEATURE_PRIORITY_24_7_SUPPORT,
+		FEATURE_UPLOAD_PLUGINS,
+		FEATURE_STATS_ADVANCED_20250206,
+		FEATURE_SIMPLE_PAYMENTS,
+		FEATURE_VIDEO_UPLOADS,
+		FEATURE_BUILT_IN_SITE_ASSISTANT,
+		FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
+		FEATURE_EMAIL_MARKETING,
+		FEATURE_BLAZE_AD_CREDITS,
+		FEATURE_REALTIME_BACKUPS_JP,
+		FEATURE_DEV_TOOLS,
 		FEATURE_WOOCOMMERCE_HOSTING,
-		FEATURE_LIST_UNLIMITED_PRODUCTS,
-		FEATURE_INVENTORY_MGMT,
-		FEATURE_STREAMLINED_CHECKOUT,
 		FEATURE_SELL_60_COUNTRIES,
-		FEATURE_BACK_IN_STOCK_NOTIFICATIONS,
-		FEATURE_DYNAMIC_UPSELLS,
-		FEATURE_CUSTOM_MARKETING_AUTOMATION,
-		FEATURE_SHIPPING_INTEGRATIONS,
-	],
-
-	// Var5 stacked: copies getShortSetStackedSignupWpcomFeatures for var5 variant
-	getVar5StackedSignupWpcomFeatures: () => [
-		FEATURE_EVERYTHING_IN_BUSINESS_PLUS,
-		FEATURE_PREMIUM_STORE_THEMES,
-		FEATURE_WOOCOMMERCE_HOSTING,
-		FEATURE_LIST_UNLIMITED_PRODUCTS,
-		FEATURE_INVENTORY_MGMT,
-		FEATURE_STREAMLINED_CHECKOUT,
-		FEATURE_SELL_60_COUNTRIES,
-		FEATURE_SHIPPING_INTEGRATIONS,
 	],
 
 	get2023PlanComparisonFeatureOverride: () => {
@@ -1358,7 +1316,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_STYLE_CUSTOMIZATION,
 		];
 	},
-	// Experimental: Comparison grid features for experiment variants.
+	// Comparison grid when plans pricing differentiators experiment is active (non-control).
 	get2023PlanComparisonFeatureOverrideForExperiment: () => {
 		return [
 			FEATURE_CUSTOM_DOMAIN,
@@ -1662,26 +1620,29 @@ const getWooHostedPlanCompareFeatures = (): string[] => [
 	FEATURE_WOO_HOSTED_POWERFUL_COMMERCE_TOOLS,
 	FEATURE_WOO_HOSTED_AI_BUILDER,
 	FEATURE_WOO_HOSTED_FREE_DOMAIN_1_YEAR,
-	// Accept payments with WooPayments
+	// Accept payments
 	FEATURE_WOO_HOSTED_SEAMLESS_CHECKOUT,
 	FEATURE_WOO_HOSTED_ACCEPT_CARD_PAYMENTS,
-	FEATURE_WOO_HOSTED_POS_PAYMENTS,
 	// Sell products and bookable services
 	FEATURE_WOO_HOSTED_LIST_PRODUCTS,
 	FEATURE_WOO_HOSTED_BOOKINGS,
 	FEATURE_WOO_HOSTED_TEAM_BOOKINGS,
 	FEATURE_WOO_HOSTED_UPSELLS_CROSS_SELLS,
 	FEATURE_WOO_HOSTED_GIFT_CARDS,
-	// Manage your store (common features)
+	// Manage your store
 	FEATURE_WOO_HOSTED_MOBILE_APP,
-	FEATURE_AUTOMATED_SALES_TAXES,
-	FEATURE_PRINT_SHIPPING_LABELS,
+	FEATURE_WOO_HOSTED_STAFF_ACCOUNTS,
+	FEATURE_WOO_HOSTED_SALES_TAX,
+	FEATURE_WOO_HOSTED_SHIPPING_LABELS,
 	FEATURE_WOO_HOSTED_SHIPMENT_TRACKING,
 	FEATURE_WOO_HOSTED_USPS_UPS,
 	FEATURE_WOO_HOSTED_ANALYTICS_REPORTS,
+	FEATURE_WOO_HOSTED_STORAGE_SPACE,
 	FEATURE_WOO_HOSTED_SECURITY,
 	FEATURE_PRIORITY_24_7_SUPPORT,
-	// Grow your business (common features)
+	// Grow your business
+	FEATURE_WOO_HOSTED_EMAIL_CAMPAIGNS,
+	FEATURE_WOO_HOSTED_EMAIL_SUBSCRIBER_MGMT,
 	FEATURE_WOO_HOSTED_AUTOMATED_EMAIL_FLOWS,
 	FEATURE_WOO_HOSTED_ABANDONED_CART_EMAILS,
 	FEATURE_WOO_HOSTED_POST_PURCHASE_EMAILS,
@@ -1693,33 +1654,29 @@ const getWooHostedPlanCompareFeatures = (): string[] => [
 const getPlanWooHostedBasicDetails = (): IncompleteWPcomPlan => ( {
 	...getPlanEcommerceDetails(),
 	get2023PricingGridSignupWpcomFeatures: () => [
+		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_WOO_HOSTED_PACKAGE,
 		FEATURE_WOO_HOSTED_AI_BUILDER,
 		FEATURE_WOO_HOSTED_PAYPAL_INTEGRATON,
 		FEATURE_WOO_HOSTED_MARKETING_TOOLS,
-		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_WOO_HOSTED_BASIC_MAILPOET,
-		FEATURE_WOO_HOSTED_BASIC_ADMIN_USERS,
-		FEATURE_50GB_STORAGE,
-	],
-	getPlanCompareFeatures: () => [
-		...getWooHostedPlanCompareFeatures(),
 		FEATURE_WOO_HOSTED_BASIC_ADMIN_USERS,
 		FEATURE_WOO_HOSTED_BASIC_STORAGE,
-		FEATURE_WOO_HOSTED_BASIC_MAILPOET,
-		FEATURE_WOO_HOSTED_BASIC_EMAIL_SUBSCRIBERS,
 	],
-	get2023PlanComparisonFeatureOverride: () => [
-		...getWooHostedPlanCompareFeatures(),
-		FEATURE_WOO_HOSTED_BASIC_ADMIN_USERS,
-		FEATURE_WOO_HOSTED_BASIC_STORAGE,
-		FEATURE_WOO_HOSTED_BASIC_MAILPOET,
-		FEATURE_WOO_HOSTED_BASIC_EMAIL_SUBSCRIBERS,
-	],
+	getPlanCompareFeatures: () => [ ...getWooHostedPlanCompareFeatures() ],
+	get2023PlanComparisonFeatureOverride: () => [ ...getWooHostedPlanCompareFeatures() ],
+	getPlanComparisonFeatureLabels: () => ( {
+		[ FEATURE_WOO_HOSTED_ACCEPT_CARD_PAYMENTS ]: i18n.translate(
+			'Online card rates start at 2.9% + $0.30/transaction'
+		),
+		[ FEATURE_WOO_HOSTED_STAFF_ACCOUNTS ]: i18n.translate( '1 staff account' ),
+		[ FEATURE_WOO_HOSTED_STORAGE_SPACE ]: i18n.translate( '50 GB storage' ),
+		[ FEATURE_WOO_HOSTED_EMAIL_CAMPAIGNS ]: i18n.translate( 'Send up to 5,000 emails/month' ),
+		[ FEATURE_WOO_HOSTED_EMAIL_SUBSCRIBER_MGMT ]: i18n.translate( 'Up to 500 email subscribers' ),
+	} ),
 	getStorageFeature: () => FEATURE_50GB_STORAGE,
 	getTitle: () => i18n.translate( 'Basic' ),
-	getPlanTagline: () =>
-		i18n.translate( 'Everything you need to set up your store and start selling your products.' ),
+	getPlanTagline: () => i18n.translate( 'Everything you need to build and run your online store.' ),
 	getTagline: () =>
 		i18n.translate(
 			'Learn more about everything included with Woo Basic and take advantage of its powerful marketplace features.'
@@ -1729,34 +1686,43 @@ const getPlanWooHostedBasicDetails = (): IncompleteWPcomPlan => ( {
 const getPlanWooHostedProDetails = (): IncompleteWPcomPlan => ( {
 	...getPlanEcommerceDetails(),
 	get2023PricingGridSignupWpcomFeatures: () => [
+		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_WOO_HOSTED_PACKAGE,
 		FEATURE_WOO_HOSTED_AI_BUILDER,
 		FEATURE_WOO_HOSTED_PAYPAL_INTEGRATON,
 		FEATURE_WOO_HOSTED_MARKETING_TOOLS,
-		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_WOO_HOSTED_PRO_MAILPOET,
 		FEATURE_WOO_HOSTED_PRO_ADMIN_USERS,
-		FEATURE_100GB_STORAGE,
+		FEATURE_WOO_HOSTED_PRO_STORAGE,
 	],
 	getPlanCompareFeatures: () => [
 		...getWooHostedPlanCompareFeatures(),
+		FEATURE_WOO_HOSTED_POS_PAYMENTS,
+		FEATURE_WOO_HOSTED_POS_SYSTEM,
 		FEATURE_WOO_HOSTED_POS_NO_MONTHLY_FEES,
-		FEATURE_WOO_HOSTED_PRO_ADMIN_USERS,
-		FEATURE_WOO_HOSTED_PRO_STORAGE,
-		FEATURE_WOO_HOSTED_PRO_MAILPOET,
-		FEATURE_WOO_HOSTED_PRO_EMAIL_SUBSCRIBERS,
 	],
 	get2023PlanComparisonFeatureOverride: () => [
 		...getWooHostedPlanCompareFeatures(),
+		FEATURE_WOO_HOSTED_POS_PAYMENTS,
+		FEATURE_WOO_HOSTED_POS_SYSTEM,
 		FEATURE_WOO_HOSTED_POS_NO_MONTHLY_FEES,
-		FEATURE_WOO_HOSTED_PRO_ADMIN_USERS,
-		FEATURE_WOO_HOSTED_PRO_STORAGE,
-		FEATURE_WOO_HOSTED_PRO_MAILPOET,
-		FEATURE_WOO_HOSTED_PRO_EMAIL_SUBSCRIBERS,
 	],
+	getPlanComparisonFeatureLabels: () => ( {
+		[ FEATURE_WOO_HOSTED_ACCEPT_CARD_PAYMENTS ]: i18n.translate(
+			'Online card rates start at 2.9% + $0.30/transaction'
+		),
+		[ FEATURE_WOO_HOSTED_POS_PAYMENTS ]: i18n.translate(
+			'In-person card rates start at 2.7% + $0.10/transaction'
+		),
+		[ FEATURE_WOO_HOSTED_STAFF_ACCOUNTS ]: i18n.translate( 'Unlimited staff accounts' ),
+		[ FEATURE_WOO_HOSTED_STORAGE_SPACE ]: i18n.translate( '100 GB storage' ),
+		[ FEATURE_WOO_HOSTED_EMAIL_CAMPAIGNS ]: i18n.translate( 'Send up to 250,000 emails/month' ),
+		[ FEATURE_WOO_HOSTED_EMAIL_SUBSCRIBER_MGMT ]: i18n.translate( 'Unlimited email subscribers' ),
+	} ),
 	getStorageFeature: () => FEATURE_100GB_STORAGE,
 	getTitle: () => i18n.translate( 'Pro' ),
-	getPlanTagline: () => i18n.translate( 'Accelerate your growth with advanced features.' ),
+	getPlanTagline: () =>
+		i18n.translate( 'For businesses selling anywhere, reaching more customers, and growing fast.' ),
 	getTagline: () =>
 		i18n.translate(
 			'Learn more about everything included with Woo Pro and take advantage of its powerful marketplace features.'
@@ -1922,38 +1888,29 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_UPLOAD_PLUGINS,
 		FEATURE_UPLOAD_VIDEO,
 	],
-
-	// Stacked variant: only incremental features (matching screenshot order)
-	getLongSetStackedSignupWpcomFeatures: () => [
-		FEATURE_EVERYTHING_IN_PERSONAL_PLUS,
+	getVar41MorePremiumSignupWpcomFeatures: () => [
+		FEATURE_UNLIMITED_ENTITIES,
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_AD_FREE_EXPERIENCE,
+		FEATURE_AI_WEBSITE_BUILDER,
 		WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
+		FEATURE_SUPPORT_FROM_EXPERTS,
+		FEATURE_UPLOAD_PLUGINS,
 		FEATURE_STATS_ADVANCED_20250206,
-		FEATURE_ADVANCED_SEO_TOOLS,
-		FEATURE_UPLOAD_VIDEO,
 		FEATURE_SIMPLE_PAYMENTS,
-		FEATURE_WORDADS,
-		FEATURE_FREE_FAST_SUPPORT,
-	],
-
-	// Short set stacked: incremental features from Personal
-	getShortSetStackedSignupWpcomFeatures: () => [
-		FEATURE_EVERYTHING_IN_PERSONAL_PLUS,
-		WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
-		FEATURE_STATS_ADVANCED_20250206,
-		FEATURE_ADVANCED_SEO_TOOLS,
-		FEATURE_SIMPLE_PAYMENTS,
-		FEATURE_WORDADS,
 		FEATURE_UPLOAD_VIDEO,
 	],
-
-	// Var5 stacked: copies getShortSetStackedSignupWpcomFeatures for var5 variant
-	getVar5StackedSignupWpcomFeatures: () => [
-		FEATURE_EVERYTHING_IN_PERSONAL_PLUS,
+	getVar42NoAiSignupWpcomFeatures: () => [
+		FEATURE_UNLIMITED_ENTITIES,
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_AD_FREE_EXPERIENCE,
+		FEATURE_GUIDED_WEBSITE_BUILDER,
 		WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
+		FEATURE_SUPPORT_FROM_EXPERTS,
+		FEATURE_UPLOAD_PLUGINS,
 		FEATURE_STATS_ADVANCED_20250206,
-		FEATURE_UPLOAD_VIDEO,
-		FEATURE_ADVANCED_SEO_TOOLS,
 		FEATURE_SIMPLE_PAYMENTS,
+		FEATURE_UPLOAD_VIDEO,
 	],
 
 	get2023PlanComparisonFeatureOverride: () => {
@@ -1972,9 +1929,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 
 		return baseFeatures;
 	},
-	// Experimental: Comparison grid features for experiment variants.
-	// This function is used for all experiment variants (var1, var1d, var3, var4, var5) in the comparison grid.
-	// Currently a copy of get2023PlanComparisonFeatureOverride (control), will be modified according to Figma designs.
+	// Comparison grid when plans pricing differentiators experiment is active (non-control).
 	get2023PlanComparisonFeatureOverrideForExperiment: () => {
 		const baseFeatures = [
 			FEATURE_CUSTOM_DOMAIN,
@@ -2226,52 +2181,39 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_REALTIME_BACKUPS_JP,
 		FEATURE_DEV_TOOLS,
 	],
-
-	// Stacked variant: only incremental features (matching screenshot order)
-	getLongSetStackedSignupWpcomFeatures: () => [
-		FEATURE_EVERYTHING_IN_PREMIUM_PLUS,
-		FEATURE_AI_WRITER_DESIGNER,
+	getVar41MorePremiumSignupWpcomFeatures: () => [
+		FEATURE_UNLIMITED_ENTITIES,
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_AD_FREE_EXPERIENCE,
+		FEATURE_AI_WEBSITE_BUILDER,
+		WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 		FEATURE_PRIORITY_24_7_SUPPORT,
+		FEATURE_UPLOAD_PLUGINS,
+		FEATURE_STATS_ADVANCED_20250206,
+		FEATURE_SIMPLE_PAYMENTS,
+		FEATURE_VIDEO_UPLOADS,
+		FEATURE_ENHANCED_AI_ASSISTANT_AND_TOOLS,
 		FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
 		FEATURE_EMAIL_MARKETING,
-		FEATURE_ADVANCED_JETPACK_FORMS,
+		FEATURE_BLAZE_AD_CREDITS,
 		FEATURE_REALTIME_BACKUPS_JP,
-		FEATURE_VIDEO_UPLOADS,
-		FEATURE_BLAZE_AD_CREDITS,
-		FEATURE_SITE_ACTIVITY_LOG_JP,
-		FEATURE_SITE_STAGING_SITES,
 		FEATURE_DEV_TOOLS,
-		FEATURE_WORDPRESS_STUDIO_SYNC,
-		FEATURE_EARLY_ONBOARDING_CALLS,
 	],
-
-	// Short set stacked: incremental features from Premium
-	getShortSetStackedSignupWpcomFeatures: () => [
-		FEATURE_EVERYTHING_IN_PREMIUM_PLUS,
-		FEATURE_AI_WRITER_DESIGNER,
+	getVar42NoAiSignupWpcomFeatures: () => [
+		FEATURE_UNLIMITED_ENTITIES,
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_AD_FREE_EXPERIENCE,
+		FEATURE_GUIDED_WEBSITE_BUILDER,
+		WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 		FEATURE_PRIORITY_24_7_SUPPORT,
-		FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
-		FEATURE_EMAIL_MARKETING,
-		FEATURE_ADVANCED_JETPACK_FORMS,
-		FEATURE_REALTIME_BACKUPS_JP,
+		FEATURE_UPLOAD_PLUGINS,
+		FEATURE_STATS_ADVANCED_20250206,
+		FEATURE_SIMPLE_PAYMENTS,
 		FEATURE_VIDEO_UPLOADS,
-		FEATURE_BLAZE_AD_CREDITS,
-		FEATURE_SITE_ACTIVITY_LOG_JP,
-		FEATURE_SITE_STAGING_SITES,
-		FEATURE_DEV_TOOLS,
-		FEATURE_WORDPRESS_STUDIO_SYNC,
-		FEATURE_EARLY_ONBOARDING_CALLS,
-	],
-
-	// Var5 stacked: copies getShortSetStackedSignupWpcomFeatures for var5 variant
-	getVar5StackedSignupWpcomFeatures: () => [
-		FEATURE_EVERYTHING_IN_PREMIUM_PLUS,
-		FEATURE_AI_WRITER_DESIGNER,
-		FEATURE_PRIORITY_24_7_SUPPORT,
+		FEATURE_BUILT_IN_SITE_ASSISTANT,
 		FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
 		FEATURE_EMAIL_MARKETING,
 		FEATURE_BLAZE_AD_CREDITS,
-		FEATURE_VIDEO_UPLOADS,
 		FEATURE_REALTIME_BACKUPS_JP,
 		FEATURE_DEV_TOOLS,
 	],
@@ -2306,9 +2248,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_STYLE_CUSTOMIZATION,
 		];
 	},
-	// Experimental: Comparison grid features for experiment variants.
-	// This function is used for all experiment variants (var1, var1d, var3, var4, var5) in the comparison grid.
-	// Currently a copy of get2023PlanComparisonFeatureOverride (control), will be modified according to Figma designs.
+	// Comparison grid when plans pricing differentiators experiment is active (non-control).
 	get2023PlanComparisonFeatureOverrideForExperiment: () => {
 		return [
 			FEATURE_CUSTOM_DOMAIN,
@@ -4421,7 +4361,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getBillingTimeFrame: () => translate( 'per user per month' ),
 	},
 };
-
 PLANS_LIST[ PLAN_P2_FREE ] = {
 	...PLANS_LIST[ PLAN_FREE ],
 	group: GROUP_P2,

@@ -29,11 +29,10 @@ export function useAgentConfig(): AgentConfig {
 
 	const inlineAgentId =
 		typeof agentsManagerData !== 'undefined' ? agentsManagerData?.agentId : undefined;
-	const defaultAgentId =
-		inlineAgentId || ( useUnifiedExperience ? UNIFIED_CHAT_AGENT_ID : ORCHESTRATOR_AGENT_ID );
+	const unifiedChatAgentId = useUnifiedExperience ? UNIFIED_CHAT_AGENT_ID : undefined;
 
 	return {
-		agentId: agentIdParam || defaultAgentId,
+		agentId: agentIdParam || inlineAgentId || unifiedChatAgentId || ORCHESTRATOR_AGENT_ID,
 		version: versionParam || undefined,
 		isLoading,
 	};

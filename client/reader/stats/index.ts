@@ -124,6 +124,10 @@ const Routes: RoutesMapping[] = [
 		route: matches( /^\/reader\/users\/[^/]+$/ ),
 		tracking: 'user_profile_posts',
 	},
+	{
+		route: matches( /^\/reader\/users\/[^/]+\/sites\/?$/ ),
+		tracking: 'user_profile_sites',
+	},
 ] as const;
 
 const findConfigByPath = ( path: string, searchParams: URLSearchParams ) => {

@@ -20,6 +20,7 @@ import {
 	getSimplifiedPlanFeaturesGroupedForFeaturesGrid,
 	getWordPressHostingFeaturesGroupedForFeaturesGrid,
 	isWooHostedPlan,
+	isWooHostedFreePlan,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
@@ -310,7 +311,12 @@ const PlansFeaturesMain = ( {
 	// Users can only select interval types that are equal to or longer than their current plan's interval
 	// Only apply this fix in the plan-upgrade flow to avoid breaking other flows
 	const currentPlanTerm =
-		isStepperUpgradeFlow && sitePlanSlug ? getPlan( sitePlanSlug )?.term : null;
+		isStepperUpgradeFlow &&
+		sitePlanSlug &&
+		! isFreePlan( sitePlanSlug ) &&
+		! isWooHostedFreePlan( sitePlanSlug )
+			? getPlan( sitePlanSlug )?.term
+			: null;
 	const compatibleIntervalType = useMemo(
 		() => ensureCompatibleIntervalType( currentPlanTerm, intervalType ),
 		[ currentPlanTerm, intervalType ]
@@ -390,13 +396,11 @@ const PlansFeaturesMain = ( {
 	const {
 		isLoading: isLoadingDifferentiatorsExperiment,
 		showDifferentiatorHeader,
-		variant: differentiatorsVariant,
-		useVar1Features,
-		useVar3Features,
-		useVar4Features,
-		useVar5Features,
-		isVar1dVariant,
-		isVar4Variant,
+		useFocusedComparisonFeatures,
+		useVar41MorePremiumFeatures,
+		useVar42NoAiFeatures,
+		showPricingDifferentiationFeaturePills,
+		useFocusedNewCopyTaglines,
 		isExperimentVariant,
 	} = usePlanDifferentiatorsExperiment( { flowName, isInSignup, siteId } );
 
@@ -438,7 +442,7 @@ const PlansFeaturesMain = ( {
 		showBillingDescriptionForIncreasedRenewalPrice: renewalPricingVariation,
 		enableCategorisedFeatures: showSimplifiedFeatures,
 		reflectStorageSelectionInPlanPrices: true,
-		isGatingBusinessQ1: !! differentiatorsVariant,
+		isGatingBusinessQ1: isExperimentVariant,
 		redirectTo,
 		pluginSlug,
 	} );
@@ -476,12 +480,12 @@ const PlansFeaturesMain = ( {
 		isDomainOnlySite,
 		reflectStorageSelectionInPlanPrices: true,
 		isInSignup,
-		useLongSetFeatures: useVar4Features,
-		useLongSetStackedFeatures: useVar3Features,
-		useShortSetStackedFeatures: useVar1Features,
-		useVar5Features,
+		useFocusedComparisonFeatures,
+		useVar41MorePremiumFeatures,
+		useVar42NoAiFeatures,
+		showPricingDifferentiationFeaturePills,
+		useFocusedNewCopyTaglines,
 		isExperimentVariant,
-		isVar1dVariant,
 	} );
 
 	// we need only the visible ones for features grid (these should extend into plans-ui data store selectors)
@@ -505,12 +509,12 @@ const PlansFeaturesMain = ( {
 		isDomainOnlySite,
 		term,
 		reflectStorageSelectionInPlanPrices: true,
-		useLongSetFeatures: useVar4Features,
-		useLongSetStackedFeatures: useVar3Features,
-		useShortSetStackedFeatures: useVar1Features,
-		useVar5Features,
+		useFocusedComparisonFeatures,
+		useVar41MorePremiumFeatures,
+		useVar42NoAiFeatures,
+		showPricingDifferentiationFeaturePills,
+		useFocusedNewCopyTaglines,
 		isExperimentVariant,
-		isVar1dVariant,
 	} );
 
 	// when `deemphasizeFreePlan` is enabled, the Free plan will be presented as a CTA link instead of a plan card in the features grid.
@@ -787,7 +791,11 @@ const PlansFeaturesMain = ( {
 		featureGroupMapForFeaturesGrid = getWooExpressFeaturesGroupedForFeaturesGrid();
 	} else if ( intent === 'plans-wordpress-hosting' ) {
 		featureGroupMapForFeaturesGrid = getWordPressHostingFeaturesGroupedForFeaturesGrid();
-	} else if ( useVar3Features || useVar4Features || useVar1Features || useVar5Features ) {
+	} else if (
+		useFocusedComparisonFeatures ||
+		useVar41MorePremiumFeatures ||
+		useVar42NoAiFeatures
+	) {
 		// Experiment: stacked variants should render a single, ordered list (no grouping),
 		// otherwise features get scattered across groups causing gaps and can be filtered out.
 		const featureGroups = getPlanFeaturesGroupedForFeaturesGrid();
@@ -981,9 +989,8 @@ const PlansFeaturesMain = ( {
 										enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }
 										showSimplifiedBillingDescription={ isInSignup }
 										showBillingDescriptionForIncreasedRenewalPrice={ renewalPricingVariation }
-										isVar1dVariant={ isVar1dVariant }
-										isVar4Variant={ isVar4Variant }
 										isExperimentVariant={ isExperimentVariant }
+										useFocusedComparisonFeatures={ useFocusedComparisonFeatures }
 									/>
 								) }
 								{ showEscapeHatch && hidePlansFeatureComparison && viewAllPlansButton }
