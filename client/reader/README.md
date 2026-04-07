@@ -77,7 +77,7 @@ These routes are served by the module:
 
 ### Legacy redirects
 
-All `/read/*` routes redirect to `/reader/*`. Routes like `/following`, `/following/manage`, and `/recommendations` are also redirected. Routes with a locale prefix (`/:lang/`) are supported on main routes.
+Many legacy `/read/*` routes redirect to Reader routes, often under `/reader/*`, but there are exceptions such as `/read/tag/:tag_name`, which redirects to `/tag/:tag_name`. Routes like `/following`, `/following/manage`, and `/recommendations` are also redirected. Routes with a locale prefix (`/:lang/`) are supported on main routes.
 
 ## Block Rendering Development
 
