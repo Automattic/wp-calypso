@@ -1,5 +1,6 @@
 import './style.scss';
 import { SiteIcon } from 'calypso/blocks/site-icon';
+import { decodeEntities } from 'calypso/lib/formatting';
 import useUserSitesQuery from 'calypso/reader/user-profile/queries/use-user-sites-query';
 
 interface UserTopSitesProps {
@@ -61,7 +62,7 @@ export default function UserTopSites( {
 					href={ getAnchorLink( site ) }
 				>
 					<SiteIcon siteId={ Number( site.ID ) } iconUrl={ site.image } size={ 16 } />
-					<p>{ site.name }</p>
+					<p>{ decodeEntities( site.name ) }</p>
 				</a>
 			) ) }
 
