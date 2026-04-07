@@ -18,6 +18,7 @@ These routes are served by the module:
 | `/reader/p2` | P2 posts |
 | `/reader/search` | Reader search |
 | `/reader/notifications` | Reader notifications |
+| `/reader/feeds/lookup/*` | Feed URL lookup (redirects to `/reader/feeds/:feed_id`) |
 | `/activities/likes` | Liked posts |
 
 ### Subscriptions
@@ -52,7 +53,6 @@ These routes are served by the module:
 |-------|-------------|
 | `/discover` | Freshly Pressed |
 | `/discover/recommended` | Recommended content |
-| `/discover/firstposts` | First posts |
 | `/discover/tags` | Featured tags |
 | `/discover/latest` | Latest posts |
 | `/discover/reddit` | Reddit content (requires login) |
