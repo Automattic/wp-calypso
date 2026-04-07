@@ -46,6 +46,7 @@ describe( 'UserRecommendedBlogs', () => {
 	const defaultUser: GetReaderUser = {
 		ID: 123,
 		user_login: 'test_user',
+		nice_name: 'nice_name',
 		display_name: 'Test User',
 		avatar_URL: 'https://example.com/avatar.jpg',
 		first_name: '',

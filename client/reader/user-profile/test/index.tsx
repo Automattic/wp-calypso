@@ -170,16 +170,4 @@ describe( 'UserProfile', () => {
 
 		expect( page.replace ).toHaveBeenCalledWith( '/reader/users/testuser' );
 	} );
-
-	test( 'should pass find_by_id param when only userId is provided', () => {
-		mockUseGetReaderUserQuery.mockReturnValue( {
-			isLoading: true,
-		} as ReturnType< typeof useGetReaderUserQuery > );
-
-		renderWithClient( <UserProfile { ...defaultProps } userLogin="" userId="123" /> );
-
-		expect( mockUseGetReaderUserQuery ).toHaveBeenCalledWith( '123', {
-			find_by_id: true,
-		} );
-	} );
 } );

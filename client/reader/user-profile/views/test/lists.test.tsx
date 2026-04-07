@@ -5,8 +5,8 @@
 
 import { render, screen } from '@testing-library/react';
 import React from 'react';
-import { UserData } from 'calypso/lib/user/user';
 import { List } from 'calypso/reader/list-manage/types';
+import { GetReaderUser } from 'calypso/reader/user-profile/queries/useGetReaderUserQuery';
 import { UserLists } from '../lists';
 
 jest.mock( 'calypso/components/empty-content', () => ( { icon, line } ) => (
@@ -17,11 +17,16 @@ jest.mock( 'calypso/components/empty-content', () => ( { icon, line } ) => (
 ) );
 
 describe( 'UserLists', () => {
-	const defaultUser: UserData = {
+	const defaultUser: GetReaderUser = {
 		ID: 123,
-		user_login: 'testuser',
+		user_login: 'test_user',
+		nice_name: 'nice_name',
 		display_name: 'Test User',
 		avatar_URL: 'https://example.com/avatar.jpg',
+		first_name: '',
+		last_name: '',
+		description: '',
+		profile_URL: '',
 	};
 
 	const mockRequestUserLists = jest.fn();
@@ -65,7 +70,7 @@ describe( 'UserLists', () => {
 				title: 'Test List 1',
 				description: 'This is test list 1',
 				slug: 'test-list-1',
-				owner: 'testuser',
+				owner: 'test_user',
 				is_public: true,
 				is_owner: true,
 			},
@@ -74,7 +79,7 @@ describe( 'UserLists', () => {
 				title: 'Test List 2',
 				description: 'This is test list 2',
 				slug: 'test-list-2',
-				owner: 'testuser',
+				owner: 'test_user',
 				is_public: true,
 				is_owner: true,
 			},
