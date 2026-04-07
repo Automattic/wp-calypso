@@ -5,10 +5,10 @@ import { useTranslate } from 'i18n-calypso';
 import { shuffle } from 'lodash';
 import { useMemo } from 'react';
 import { useFeedRecommendationsQuery } from 'calypso/data/reader/use-feed-recommendations-query';
-import { RecommendedFeedsList } from 'calypso/reader/recommended-feeds-list';
+import { ReaderSitesList } from 'calypso/reader/sites-list';
 
 interface RecommendedBlogsProps {
-	userLogin: string;
+	userLogin?: string;
 }
 
 function RecommendedBlogs( { userLogin }: RecommendedBlogsProps ): JSX.Element | null {
@@ -44,9 +44,9 @@ function RecommendedBlogs( { userLogin }: RecommendedBlogsProps ): JSX.Element |
 					<Spinner />
 				</div>
 			) : (
-				<RecommendedFeedsList
-					feeds={ shuffledBlogs }
-					followSource="user-hovercard__recommended-feeds-list"
+				<ReaderSitesList
+					sites={ shuffledBlogs }
+					followSource="user-hovercard__recommended-sites-list"
 					variant="compact"
 				/>
 			) }

@@ -1,6 +1,11 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { GetReaderUserResponse } from 'calypso/reader/user-profile/queries/useGetReaderUserQuery';
 
+interface useGravatarProfileV3Args {
+	profile_URL?: string;
+	avatar_URL?: string;
+}
+
 interface GravatarProfileV3ApiResponse {
 	display_name: string;
 	profile_url: string;
@@ -9,11 +14,13 @@ interface GravatarProfileV3ApiResponse {
 }
 
 export function useGravatarProfileV3Query(
-	urls: Array< string | undefined >,
+	args: useGravatarProfileV3Args,
 	enabled = true
 ): UseQueryResult< GetReaderUserResponse, Error > {
-	const allHashes = urls.map( extractHashFromUrl ).filter( Boolean ) as string[];
-	const hash = allHashes.find( ( h ) => h.length === 64 ) ?? allHashes[ 0 ] ?? null; // Prefer SHA256 hash if available.
+	// Gravatar profiles can be fetched using both MD5 and SHA256 hashes. We'll prefer SHA256 if available because it's newer.
+	const urls = [ args.profile_URL, args.avatar_URL ];
+	const allHashes = urls.map( extractHashFromUrl ).filter( Boolean );
+	const hash = allHashes.find( ( h ) => h?.length === 64 ) ?? allHashes[ 0 ] ?? null; // Prefer SHA256 hash if available.
 
 	return useQuery( {
 		queryKey: [ 'reader', 'gravatar-profile-v3', hash ],

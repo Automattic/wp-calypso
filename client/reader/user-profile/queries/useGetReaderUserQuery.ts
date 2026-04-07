@@ -3,15 +3,15 @@ import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { addQueryArgs } from '@wordpress/url';
 
 export interface GetReaderUserResponse {
-	ID: number;
-	user_login: string;
-	first_name: string;
-	last_name: string;
-	nice_name: string;
-	display_name: string;
-	description: string;
-	avatar_URL: string;
-	profile_URL: string;
+	ID?: number;
+	user_login?: string;
+	first_name?: string;
+	last_name?: string;
+	nice_name?: string;
+	display_name?: string;
+	description?: string;
+	avatar_URL?: string;
+	profile_URL?: string;
 	primary_blog: {
 		ID: number;
 		feed_ID: number;

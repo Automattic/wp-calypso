@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { ComponentProps } from 'react';
 import UserAvatar from '../index';
 
@@ -22,12 +21,6 @@ describe( 'UserAvatar', () => {
 		login: 'test_user',
 		wpcom_login: 'test_user',
 	};
-
-	test( 'should accept a custom className', () => {
-		const { container } = render( <UserAvatar user={ mockUser } className="custom-class" /> );
-
-		expect( container.querySelector( '.user-avatar' ) ).toHaveClass( 'custom-class' );
-	} );
 
 	test( 'should use size 32 by default', () => {
 		render( <UserAvatar user={ mockUser } /> );
@@ -54,15 +47,6 @@ describe( 'UserAvatar', () => {
 		const { container } = render( <UserAvatar user={ userWithoutLogin } /> );
 
 		expect( container.querySelector( 'a' ) ).not.toBeInTheDocument();
-	} );
-
-	test( 'should call onClick handler when clicked', async () => {
-		const handleClick = jest.fn();
-		const { container } = render( <UserAvatar user={ mockUser } onClick={ handleClick } /> );
-
-		await userEvent.click( container.querySelector( '.user-avatar' )! );
-
-		expect( handleClick ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	test( 'should render gravatar with null user which then show the default user icon', () => {

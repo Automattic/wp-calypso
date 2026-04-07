@@ -3,7 +3,6 @@ import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import AutoDirection from 'calypso/components/auto-direction';
-import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import { decodeEntities } from 'calypso/lib/formatting';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { getStreamUrl } from 'calypso/reader/route';
@@ -18,18 +17,18 @@ interface PrimaryBlogCardProps {
 function PrimaryBlogCard( { user }: PrimaryBlogCardProps ): JSX.Element | null {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const primaryBlog = user.primary_blog;
 
+	const primaryBlog = user.primary_blog;
 	if ( ! primaryBlog ) {
 		return null;
 	}
 
-	const name =
+	const name: string =
 		user.display_name ||
 		( user.first_name && user.last_name ? `${ user.first_name } ${ user.last_name }` : '' ) ||
 		user.nice_name ||
 		'';
-	const siteUrl = getStreamUrl( primaryBlog.feed_ID, primaryBlog.ID );
+	const siteUrl = getStreamUrl( primaryBlog.feed_ID, primaryBlog.ID )!;
 
 	const onFollowToggle = ( following: boolean ): void => {
 		const siteName = primaryBlog.title || primaryBlog.URL;
@@ -46,7 +45,6 @@ function PrimaryBlogCard( { user }: PrimaryBlogCardProps ): JSX.Element | null {
 
 	return (
 		<>
-			<QueryReaderSite siteId={ primaryBlog.ID } />
 			<AutoDirection>
 				<div className="user-hovercard__primary-blog">
 					<a

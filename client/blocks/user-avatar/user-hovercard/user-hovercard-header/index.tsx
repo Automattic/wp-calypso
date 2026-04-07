@@ -15,7 +15,7 @@ function UserHovercardHeader( { user }: UserHovercardHeaderProps ): JSX.Element 
 		user.display_name ||
 		( user.first_name && user.last_name ? `${ user.first_name } ${ user.last_name }` : '' ) ||
 		'';
-	const profilePageUrl = user.user_login ? `/reader/users/${ user.user_login }` : undefined; // Intentionally navigation only to the Reader Profile page. This keep the experience consistent.
+	const profilePageUrl = user.user_login ? `/reader/users/${ user.user_login }` : undefined; // Only navigate to profile page. Avoid navigating to any external links to keep UX consistent.
 	const avatarUrl = getProcessedGravatarUrl( user.avatar_URL );
 
 	function handleUserProfileClick(): void {

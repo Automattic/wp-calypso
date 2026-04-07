@@ -20,13 +20,14 @@ export default function UserHovercard( props: UserHovercardProps ): JSX.Element 
 	const { user: userProp } = props;
 	const wpcomIdOrLogin = userProp.wpcom_id || userProp.wpcom_login;
 
-	const { isLoading: isGravatarLoading, data: gravatarUser } = useGravatarProfileV3Query(
-		[ userProp.profile_URL, userProp.avatar_URL ],
-		! wpcomIdOrLogin
+	const { isLoading: isGravatarLoading, data: gravatarData } = useGravatarProfileV3Query(
+		userProp,
+		! wpcomIdOrLogin // Only fetch Gravatar profile if we don't have a WPCOM ID or login.
 	);
+	const gravatarUser = { ...gravatarData, primary_blog: null };
 
 	const { isLoading: isWpcomLoading, data: wpcomData } = useGetReaderUserQuery(
-		userProp.wpcom_login || gravatarUser?.user_login,
+		userProp.wpcom_login || gravatarUser?.user_login, // Use WPCOM login if available, otherwise fall back to Gravatar login.
 		userProp.wpcom_id
 	);
 
