@@ -44,7 +44,7 @@ export default async function loadOmnibar( events: OmnibarEvents ) {
 		container,
 		<InterimOmnibar
 			user={ window.currentUser ?? null }
-			site={ window.mostRecentSite ?? null }
+			site={ window.initialOmnibarSite ?? null }
 			currentRoute={ window.location.pathname }
 		/>
 	);

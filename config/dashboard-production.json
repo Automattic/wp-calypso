@@ -45,7 +45,7 @@
 		"wordpress-ai-tools": true,
 		"two-factor/enhanced-security": true,
 		"wpcom-user-bootstrap": true,
-		"wpcom-bootstrap-most-recent-site": true
+		"wpcom-bootstrap-omnibar-site": true
 	},
 	"enable_all_sections": false,
 	"sections": {

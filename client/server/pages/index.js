@@ -486,10 +486,10 @@ function setUpLoggedInRoute( req, res, next ) {
 
 		setupRequests.push( userPromise );
 
-		if ( config.isEnabled( 'wpcom-bootstrap-most-recent-site' ) ) {
+		if ( config.isEnabled( 'wpcom-bootstrap-omnibar-site' ) ) {
 			performanceMark( req.context, 'site_bootstrap', true );
 			const sitePromise = getBootstrappedSite( req, userPromise ).then( ( site ) => {
-				req.context.mostRecentSite = site;
+				req.context.initialOmnibarSite = site;
 				performanceMark( req.context, 'finish_site_bootstrap', true );
 			} );
 			setupRequests.push( sitePromise );

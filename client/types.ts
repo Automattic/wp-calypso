@@ -136,7 +136,7 @@ declare global {
 			isDebug?: boolean;
 			clientIp?: string;
 		};
-		mostRecentSite?: Site;
+		initialOmnibarSite?: Site;
 		currentUser?: User;
 		__REDUX_DEVTOOLS_EXTENSION__?: () => void;
 	}

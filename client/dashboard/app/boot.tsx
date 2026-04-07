@@ -34,11 +34,11 @@ function boot( config: AppConfig ) {
 		throw new Error( 'Multi-site Dashboard is not enabled' );
 	}
 
-	// If the server has bootstrapped a most recent site, then we can seed the query cache with it.
-	if ( window.mostRecentSite ) {
+	// If the server has bootstrapped a site for the omnibar, then we can seed the query cache with it.
+	if ( window.initialOmnibarSite ) {
 		queryClient.setQueryData(
-			siteBySlugQuery( window.mostRecentSite.slug ).queryKey,
-			window.mostRecentSite
+			siteBySlugQuery( window.initialOmnibarSite.slug ).queryKey,
+			window.initialOmnibarSite
 		);
 	}
 

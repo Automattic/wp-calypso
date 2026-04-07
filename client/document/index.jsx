@@ -36,7 +36,7 @@ class Document extends Component {
 			app,
 			authHelper,
 			badge,
-			mostRecentSite,
+			initialOmnibarSite,
 			branchName,
 			buildTimestamp,
 			chunkFiles,
@@ -83,8 +83,8 @@ class Document extends Component {
 			`var BUILD_TIMESTAMP = ${ jsonStringifyForHtml( buildTimestamp ) };\n` +
 			`var BUILD_TARGET = ${ jsonStringifyForHtml( target ) };\n` +
 			( user ? `var currentUser = ${ jsonStringifyForHtml( user ) };\n` : '' ) +
-			( mostRecentSite
-				? `var mostRecentSite = ${ jsonStringifyForHtml( mostRecentSite ) };\n`
+			( initialOmnibarSite
+				? `var initialOmnibarSite = ${ jsonStringifyForHtml( initialOmnibarSite ) };\n`
 				: '' ) +
 			( isSupportSession ? 'var isSupportSession = true;\n' : '' ) +
 			( isSSP ? 'var isSSP = true;\n' : '' ) +
@@ -172,7 +172,7 @@ class Document extends Component {
 						<div id="wpcom-omnibar">
 							<InterimOmnibar
 								user={ user || null }
-								site={ mostRecentSite || null }
+								site={ initialOmnibarSite || null }
 								currentRoute={ this.props.path ?? '/' }
 							/>
 						</div>
