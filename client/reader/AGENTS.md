@@ -16,9 +16,9 @@ yarn test-client client/reader/<path>  # Run Reader tests
 
 ### Data fetching migration
 
-The Reader uses two coexisting data fetching patterns, with new features using React Query via `@automattic/api-core` and `@automattic/api-queries` packages from the same codebase.
+The Reader is migrating from **Redux + data-layer** to **React Query** using the `@automattic/api-core` and `@automattic/api-queries` packages from the same codebase.
 
-- **Legacy (Redux + data-layer)**: still foundational for streams and most core features.
+- **Legacy (Redux + data-layer)**: still present in most streams and core features.
 - **Current (React Query)**: used in newer features like `discover/`, `new-subscription/`, and subscription management. New features should use `@automattic/api-core` for API definitions and `@automattic/api-queries` for React Query hooks.
 
 ### Stream keys
