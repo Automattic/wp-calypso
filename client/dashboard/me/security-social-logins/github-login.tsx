@@ -8,12 +8,13 @@ export default function GitHubLogin( { ...rest }: Props ) {
 		<OAuth2Login
 			service="github"
 			label="GitHub"
-			onClick={ ( e, redirectUri ) => {
+			onClick={ ( e, redirectUri, state ) => {
 				window.location.href = addQueryArgs(
 					'https://public-api.wordpress.com/wpcom/v2/hosting/github/app-authorize',
 					{
 						redirect_uri: redirectUri,
 						scope: encodeURIComponent( 'read:user,user:email' ),
+						state,
 						ux_mode: 'redirect',
 					}
 				);

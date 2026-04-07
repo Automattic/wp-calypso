@@ -1,3 +1,4 @@
+import { fetchGenerateAuthorizationNonce, type ConnectSocialUserArgs } from '@automattic/api-core';
 import { postLoginRequestMutation } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { useMutation } from '@tanstack/react-query';
@@ -9,12 +10,11 @@ import { getQueryArg } from '@wordpress/url';
 import { MouseEvent, useCallback, useEffect, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import type { SocialLoginButtonProps } from './types';
-import type { ConnectSocialUserArgs } from '@automattic/api-core';
 
 export type OAuth2LoginProps = SocialLoginButtonProps & {
 	service: 'github' | 'paypal';
 	label: string;
-	onClick?: ( event: MouseEvent< HTMLButtonElement >, redirectUri: string ) => void;
+	onClick?: ( event: MouseEvent< HTMLButtonElement >, redirectUri: string, state: string ) => void;
 };
 
 // This component supports typical OAuth2 Social Login.
@@ -38,6 +38,7 @@ export default function OAuth2Login( {
 
 	const code = ( getQueryArg( window.location.search, 'code' ) || '' ) as string;
 	const requestService = ( getQueryArg( window.location.search, 'service' ) || '' ) as string;
+	const state = ( getQueryArg( window.location.search, 'state' ) || '' ) as string;
 	const error = ( getQueryArg( window.location.search, 'error' ) || '' ) as string;
 
 	const [ showLoading, setShowLoading ] = useState< boolean >( false );
@@ -58,7 +59,7 @@ export default function OAuth2Login( {
 	}, [ createErrorNotice, label ] );
 
 	const exchangeCodeForToken = useCallback(
-		async ( auth_code: string ) => {
+		async ( auth_code: string, requestState: string ) => {
 			postLoginRequest(
 				{
 					action: 'exchange-social-auth-code',
@@ -67,11 +68,17 @@ export default function OAuth2Login( {
 						auth_code,
 						client_id: config( 'wpcom_signup_id' ),
 						client_secret: config( 'wpcom_signup_key' ),
+						state: requestState,
 					},
 				},
 				{
 					onSuccess: ( response ) => {
-						const { access_token } = response?.body?.data as ConnectSocialUserArgs;
+						const { access_token, exchange_token } = response?.body?.data as ConnectSocialUserArgs;
+						if ( exchange_token ) {
+							responseHandler( { exchange_token, service } );
+							return;
+						}
+
 						responseHandler( { access_token, service } );
 					},
 					onError: () => {
@@ -89,9 +96,9 @@ export default function OAuth2Login( {
 	useEffect( () => {
 		if ( code && requestService === service && ! isConnected ) {
 			setShowLoading( true );
-			exchangeCodeForToken( code );
+			exchangeCodeForToken( code, state );
 		}
-	}, [ code, requestService, service, isConnected, exchangeCodeForToken ] );
+	}, [ code, state, requestService, service, isConnected, exchangeCodeForToken ] );
 
 	useEffect( () => {
 		if ( requestService === service && error ) {
@@ -104,12 +111,32 @@ export default function OAuth2Login( {
 		return urlParts[ 0 ];
 	};
 
-	const handleClick = ( e: MouseEvent< HTMLButtonElement > ) => {
+	const handleClick = async ( e: MouseEvent< HTMLButtonElement > ) => {
 		e.preventDefault();
 		setShowLoading( true );
 		recordTracksEvent( 'calypso_dashboard_security_social_logins_' + service + '_login_click' );
 
-		onClick?.( e, stripQueryString( redirectUri ?? '' ) );
+		let nonce: string;
+		try {
+			nonce = await fetchGenerateAuthorizationNonce();
+		} catch {
+			setShowLoading( false );
+			createErrorNotice(
+				sprintf(
+					// Translators: %(service)s is the name of a third-party authentication provider, e.g. "Google", "Facebook", "Apple" ...
+					__( 'Error fetching authorization state for %(service)s. Please try again.' ),
+					{
+						service: label,
+					}
+				),
+				{
+					type: 'snackbar',
+				}
+			);
+			return;
+		}
+
+		onClick?.( e, stripQueryString( redirectUri ?? '' ), nonce );
 	};
 
 	return (

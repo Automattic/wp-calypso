@@ -14,6 +14,7 @@ export interface DisconnectSocialUserArgs {
 export interface ConnectSocialUserArgs {
 	service: string;
 	access_token?: string;
+	exchange_token?: string;
 	id_token?: string;
 	user_name?: string;
 	user_email?: string;

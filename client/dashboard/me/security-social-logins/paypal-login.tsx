@@ -8,11 +8,12 @@ export default function PayPalLogin( { ...rest }: Props ) {
 		<OAuth2Login
 			service="paypal"
 			label="PayPal"
-			onClick={ ( e, redirectUri ) => {
+			onClick={ ( e, redirectUri, state ) => {
 				window.location.href = addQueryArgs(
 					'https://public-api.wordpress.com/wpcom/v2/hosting/paypal/app-authorize',
 					{
 						redirect_uri: redirectUri,
+						state,
 						ux_mode: 'redirect',
 					}
 				);
