@@ -48,6 +48,7 @@ function RecommendedBlogs( { userLogin }: RecommendedBlogsProps ): JSX.Element |
 					sites={ shuffledBlogs }
 					followSource="user-hovercard__recommended-sites-list"
 					variant="compact"
+					iconSize={ 30 }
 				/>
 			) }
 		</div>

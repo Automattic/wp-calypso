@@ -24,7 +24,7 @@ export default function UserHovercard( props: UserHovercardProps ): JSX.Element 
 		userProp,
 		! wpcomIdOrLogin // Only fetch Gravatar profile if we don't have a WPCOM ID or login.
 	);
-	const gravatarUser = { ...gravatarData, primary_blog: null };
+	const gravatarUser = gravatarData ? { ...gravatarData, primary_blog: null } : null;
 
 	const { isLoading: isWpcomLoading, data: wpcomData } = useGetReaderUserQuery(
 		userProp.wpcom_login || gravatarUser?.user_login, // Use WPCOM login if available, otherwise fall back to Gravatar login.
