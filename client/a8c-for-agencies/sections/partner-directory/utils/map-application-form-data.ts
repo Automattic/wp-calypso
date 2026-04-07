@@ -15,9 +15,10 @@ const ALLOWED_BUSINESS_TYPES = new Set( [
 ] );
 
 const ALLOWED_HOSTING_ENVIRONMENTS = new Set( [
-	'wordpress_com',
-	'shared_or_managed_host',
-	'managed_wp_host',
+	'wpcom',
+	'shared_managed',
+	'managed_wp_hosts',
+	'self_hosted',
 ] );
 
 const ALLOWED_MIGRATION_PLATFORMS = new Set( [
@@ -28,13 +29,6 @@ const ALLOWED_MIGRATION_PLATFORMS = new Set( [
 	'custom',
 ] );
 
-const LEGACY_COMPLEXITY_VALUE_MAP: Record< string, string > = {
-	custom_pricing_catalogs: 'custom_pricing',
-	erp_inventory_pricing_integrations: 'erp_integrations',
-	customer_portals_gated_access: 'customer_portals',
-	simple_catalog: 'none_simple',
-};
-
 const ALLOWED_COMPLEXITY_FLAGS = new Set( [
 	'custom_pricing',
 	'erp_integrations',
@@ -44,36 +38,40 @@ const ALLOWED_COMPLEXITY_FLAGS = new Set( [
 	'none_simple',
 ] );
 
-const LEGACY_DECISION_PROCESS_VALUE_MAP: Record< string, string > = {
-	procurement_or_formal_approval: 'formal_procurement',
-};
+const ALLOWED_PROJECT_TYPES = new Set( [
+	'new_woocommerce',
+	'migration',
+	'custom_features',
+	'fix_ongoing_support',
+	'seo_marketing',
+	'performance_optimization',
+	'security_audit',
+	'accessibility',
+] );
 
 const ALLOWED_DECISION_PROCESSES = new Set( [
-	'solo_decider',
+	'individual',
 	'small_team',
 	'multi_stakeholder',
 	'formal_procurement',
 ] );
 
-const LEGACY_MINIMUM_BUDGET_VALUE_MAP: Record< string, string > = {
-	'30k_plus': 'above_30k',
-};
+const ALLOWED_BUDGET_LEVELS = new Set( [ 'affordable', 'mid-range', 'premium' ] );
 
-const normalizeValues = (
-	values: string[] | undefined,
-	allowedValues: Set< string >,
-	valueMap: Record< string, string > = {}
-) =>
-	Array.from(
-		new Set(
-			( values ?? [] )
-				.map( ( value ) => valueMap[ value ] ?? value )
-				.filter( ( value ) => allowedValues.has( value ) )
-		)
-	);
+const ALLOWED_MINIMUM_BUDGETS = new Set( [ 'under_3k', '3k_10k', '10k_30k', 'above_30k' ] );
 
-const normalizeMinimumBudget = ( value: string | undefined ) =>
-	LEGACY_MINIMUM_BUDGET_VALUE_MAP[ value ?? '' ] ?? value ?? '';
+const ALLOWED_TIMING_PREFERENCES = new Set( [
+	'right_away',
+	'within_month',
+	'book_1_3_months',
+	'flexible',
+] );
+
+const normalizeValues = ( values: string[] | undefined, allowedValues: Set< string > ) =>
+	Array.from( new Set( ( values ?? [] ).filter( ( value ) => allowedValues.has( value ) ) ) );
+
+const normalizeOptionalValue = ( value: string | undefined, allowedValues: Set< string > ) =>
+	allowedValues.has( value ?? '' ) ? value ?? '' : '';
 
 export function createDefaultLeadMatchingDetails(): LeadMatchingDetails {
 	return {
@@ -230,29 +228,37 @@ export function mapLeadMatchingProfileToFormData(
 		),
 		supportsHostingRecommendation: !! profile.platform_and_hosting?.can_recommend_better_hosting,
 		migrationPlatforms: normalizeValues(
-			( profile.platform_and_hosting?.migration_platforms ?? [] ).map( ( value ) =>
-				value === 'other' ? 'custom' : value
-			),
+			profile.platform_and_hosting?.migration_platforms,
 			ALLOWED_MIGRATION_PLATFORMS
 		),
 		storeComplexities: normalizeValues(
 			profile.ecommerce?.supported_complexity_flags,
-			ALLOWED_COMPLEXITY_FLAGS,
-			LEGACY_COMPLEXITY_VALUE_MAP
+			ALLOWED_COMPLEXITY_FLAGS
 		),
-		projectTypes: profile.project_types?.supported_project_types ?? [],
+		projectTypes: normalizeValues(
+			profile.project_types?.supported_project_types,
+			ALLOWED_PROJECT_TYPES
+		),
 		supportsQuickHelp: !! profile.project_types?.accepts_small_fixes,
 		serviceLevels: profile.service_and_budget?.max_service_level
 			? [ profile.service_and_budget.max_service_level ]
 			: [],
-		budgetLevels: profile.service_and_budget?.supported_budget_bands ?? [],
-		minimumBudget: normalizeMinimumBudget( profile.service_and_budget?.minimum_budget_band ),
-		timingPreferences: profile.timing?.supported_start_timings ?? [],
+		budgetLevels: normalizeValues(
+			profile.service_and_budget?.supported_budget_bands,
+			ALLOWED_BUDGET_LEVELS
+		),
+		minimumBudget: normalizeOptionalValue(
+			profile.service_and_budget?.minimum_budget_band,
+			ALLOWED_MINIMUM_BUDGETS
+		),
+		timingPreferences: normalizeValues(
+			profile.timing?.supported_start_timings,
+			ALLOWED_TIMING_PREFERENCES
+		),
 		supportsHardDeadlines: !! profile.timing?.supports_hard_deadlines,
 		decisionProcesses: normalizeValues(
 			profile.delivery_model?.supported_decision_processes,
-			ALLOWED_DECISION_PROCESSES,
-			LEGACY_DECISION_PROCESS_VALUE_MAP
+			ALLOWED_DECISION_PROCESSES
 		),
 		ongoingRelationships: [
 			...( profile.delivery_model?.offers_care_plans ? [ 'care_plans' ] : [] ),
@@ -270,7 +276,8 @@ export function mapLeadMatchingDetailsToProfile(
 	previousProfile?: AgencyLeadMatchingProfile | null
 ): AgencyLeadMatchingProfile {
 	const serviceLevel = formData.serviceLevels[ 0 ] ?? '';
-	const supportsEcommerceProjects = formData.projectTypes.includes( 'new_woocommerce_store' );
+	const supportsEcommerceProjects =
+		formData.projectTypes.includes( 'new_woocommerce' ) || formData.storeComplexities.length > 0;
 	const isComplete =
 		formData.regions.length > 0 &&
 		formData.languages.length > 0 &&
@@ -323,7 +330,10 @@ export function mapLeadMatchingDetailsToProfile(
 		service_and_budget: {
 			max_service_level: serviceLevel,
 			supported_budget_bands: formData.budgetLevels,
-			minimum_budget_band: normalizeMinimumBudget( formData.minimumBudget ),
+			minimum_budget_band: normalizeOptionalValue(
+				formData.minimumBudget,
+				ALLOWED_MINIMUM_BUDGETS
+			),
 		},
 		timing: {
 			supported_start_timings: formData.timingPreferences,

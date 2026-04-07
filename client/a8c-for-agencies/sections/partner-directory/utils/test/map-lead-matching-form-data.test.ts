@@ -31,7 +31,7 @@ describe( 'mapLeadMatchingFormData', () => {
 						supported_company_sizes: [ 'size_6_50' ],
 					},
 					platform_and_hosting: {
-						supported_hosting_environments: [ 'wordpress_com' ],
+						supported_hosting_environments: [ 'wpcom' ],
 						migration_platforms: [ 'shopify' ],
 						can_recommend_better_hosting: true,
 					},
@@ -41,7 +41,7 @@ describe( 'mapLeadMatchingFormData', () => {
 						supported_complexity_flags: [ 'traffic_spikes' ],
 					},
 					project_types: {
-						supported_project_types: [ 'new_woocommerce_store' ],
+						supported_project_types: [ 'new_woocommerce' ],
 						accepts_small_fixes: true,
 					},
 					service_and_budget: {
@@ -73,11 +73,11 @@ describe( 'mapLeadMatchingFormData', () => {
 			idealBusinessTypes: [ 'content_media' ],
 			otherIdealBusinessType: '',
 			companySizes: [ 'size_6_50' ],
-			hostingEnvironments: [ 'wordpress_com' ],
+			hostingEnvironments: [ 'wpcom' ],
 			supportsHostingRecommendation: true,
 			migrationPlatforms: [ 'shopify' ],
 			storeComplexities: [ 'traffic_spikes' ],
-			projectTypes: [ 'new_woocommerce_store' ],
+			projectTypes: [ 'new_woocommerce' ],
 			supportsQuickHelp: true,
 			serviceLevels: [ 'premium' ],
 			budgetLevels: [ 'premium' ],
@@ -112,7 +112,7 @@ describe( 'mapLeadMatchingProfileToFormData', () => {
 						supported_company_sizes: [ 'size_6_50' ],
 					},
 					platform_and_hosting: {
-						supported_hosting_environments: [ 'wordpress_com' ],
+						supported_hosting_environments: [ 'wpcom' ],
 						migration_platforms: [ 'shopify' ],
 						can_recommend_better_hosting: true,
 					},
@@ -122,7 +122,7 @@ describe( 'mapLeadMatchingProfileToFormData', () => {
 						supported_complexity_flags: [ 'traffic_spikes' ],
 					},
 					project_types: {
-						supported_project_types: [ 'new_woocommerce_store' ],
+						supported_project_types: [ 'new_woocommerce' ],
 						accepts_small_fixes: true,
 					},
 					service_and_budget: {
@@ -154,11 +154,11 @@ describe( 'mapLeadMatchingProfileToFormData', () => {
 			idealBusinessTypes: [ 'content_media' ],
 			otherIdealBusinessType: '',
 			companySizes: [ 'size_6_50' ],
-			hostingEnvironments: [ 'wordpress_com' ],
+			hostingEnvironments: [ 'wpcom' ],
 			supportsHostingRecommendation: true,
 			migrationPlatforms: [ 'shopify' ],
 			storeComplexities: [ 'traffic_spikes' ],
-			projectTypes: [ 'new_woocommerce_store' ],
+			projectTypes: [ 'new_woocommerce' ],
 			supportsQuickHelp: true,
 			serviceLevels: [ 'premium' ],
 			budgetLevels: [ 'premium' ],
@@ -181,14 +181,14 @@ describe( 'mapLeadMatchingDetailsToProfile', () => {
 		details.businessTypes = [ 'local_service' ];
 		details.idealBusinessTypes = [ 'content_media' ];
 		details.companySizes = [ 'size_1_5' ];
-		details.hostingEnvironments = [ 'wordpress_com' ];
+		details.hostingEnvironments = [ 'wpcom' ];
 		details.supportsHostingRecommendation = true;
 		details.migrationPlatforms = [ 'shopify' ];
 		details.storeComplexities = [ 'none_simple', 'traffic_spikes' ];
-		details.projectTypes = [ 'new_woocommerce_store', 'support_and_fixes' ];
+		details.projectTypes = [ 'new_woocommerce', 'fix_ongoing_support' ];
 		details.supportsQuickHelp = true;
 		details.serviceLevels = [ 'enhanced' ];
-		details.budgetLevels = [ 'mid_range' ];
+		details.budgetLevels = [ 'mid-range' ];
 		details.minimumBudget = 'above_30k';
 		details.timingPreferences = [ 'flexible' ];
 		details.supportsHardDeadlines = true;
@@ -261,7 +261,7 @@ describe( 'mapLeadMatchingDetailsToProfile', () => {
 				supported_company_sizes: [ 'size_1_5' ],
 			},
 			platform_and_hosting: {
-				supported_hosting_environments: [ 'wordpress_com' ],
+				supported_hosting_environments: [ 'wpcom' ],
 				migration_platforms: [ 'shopify' ],
 				can_recommend_better_hosting: true,
 			},
@@ -271,12 +271,12 @@ describe( 'mapLeadMatchingDetailsToProfile', () => {
 				supported_complexity_flags: [ 'none_simple' ],
 			},
 			project_types: {
-				supported_project_types: [ 'new_woocommerce_store', 'support_and_fixes' ],
+				supported_project_types: [ 'new_woocommerce', 'fix_ongoing_support' ],
 				accepts_small_fixes: true,
 			},
 			service_and_budget: {
 				max_service_level: 'enhanced',
-				supported_budget_bands: [ 'mid_range' ],
+				supported_budget_bands: [ 'mid-range' ],
 				minimum_budget_band: 'above_30k',
 			},
 			timing: {
@@ -293,7 +293,7 @@ describe( 'mapLeadMatchingDetailsToProfile', () => {
 		} );
 	} );
 
-	it( 'normalizes legacy inbound values to the current form contract', () => {
+	it( 'keeps only directly supported HubSpot-aligned values on hydration', () => {
 		expect(
 			mapLeadMatchingProfileToFormData( {
 				availability: {
@@ -312,35 +312,30 @@ describe( 'mapLeadMatchingDetailsToProfile', () => {
 					supported_company_sizes: [],
 				},
 				platform_and_hosting: {
-					supported_hosting_environments: [ 'wordpress_com', 'unknown', 'not_sure' ],
+					supported_hosting_environments: [ 'wpcom', 'unknown' ],
 					migration_platforms: [ 'shopify', 'wordpress', 'other' ],
 					can_recommend_better_hosting: false,
 				},
 				ecommerce: {
 					supports_ecommerce_projects: true,
 					ecommerce_focus: true,
-					supported_complexity_flags: [
-						'custom_pricing_catalogs',
-						'customer_portals_gated_access',
-						'simple_catalog',
-					],
+					supported_complexity_flags: [ 'custom_pricing', 'customer_portals', 'simple_catalog' ],
 				},
 				project_types: {
-					supported_project_types: [],
-					core_project_types: [ 'new_wordpress_site' ],
+					supported_project_types: [ 'migration', 'new_wordpress_site' ],
 					accepts_small_fixes: false,
 				},
 				service_and_budget: {
 					max_service_level: '',
-					supported_budget_bands: [],
-					minimum_budget_band: '30k_plus',
+					supported_budget_bands: [ 'mid-range', 'mid_range' ],
+					minimum_budget_band: 'above_30k',
 				},
 				timing: {
-					supported_start_timings: [],
+					supported_start_timings: [ 'book_1_3_months', 'planning_1_3_months' ],
 					supports_hard_deadlines: false,
 				},
 				delivery_model: {
-					supported_decision_processes: [ 'procurement_or_formal_approval' ],
+					supported_decision_processes: [ 'formal_procurement', 'solo_decider' ],
 					offers_care_plans: false,
 					trains_clients: false,
 					works_with_internal_technical_teams: false,
@@ -350,10 +345,13 @@ describe( 'mapLeadMatchingDetailsToProfile', () => {
 		).toMatchObject( {
 			businessTypes: [ 'local_service' ],
 			idealBusinessTypes: [ 'content_media' ],
-			hostingEnvironments: [ 'wordpress_com' ],
-			migrationPlatforms: [ 'shopify', 'custom' ],
-			storeComplexities: [ 'custom_pricing', 'customer_portals', 'none_simple' ],
+			hostingEnvironments: [ 'wpcom' ],
+			migrationPlatforms: [ 'shopify' ],
+			storeComplexities: [ 'custom_pricing', 'customer_portals' ],
+			projectTypes: [ 'migration' ],
+			budgetLevels: [ 'mid-range' ],
 			minimumBudget: 'above_30k',
+			timingPreferences: [ 'book_1_3_months' ],
 			decisionProcesses: [ 'formal_procurement' ],
 		} );
 	} );

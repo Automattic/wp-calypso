@@ -656,6 +656,7 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 						error={ validationError.idealBusinessTypes }
 						fieldName="idealBusinessTypes"
 					>
+						{ /* The free-text Other path stays disabled until HubSpot supports a separate field. */ }
 						<TokenFieldSelector
 							availableOptions={ availableBusinessTypes }
 							selectedSlugs={ formData.idealBusinessTypes }
