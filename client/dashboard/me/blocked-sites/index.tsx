@@ -153,9 +153,9 @@ export default function BlockedSites() {
 			{ ! isLoading && sites.length === 0 ? (
 				<EmptyState.Wrapper isCompact>
 					<EmptyState>
-						<EmptyState.Header>
-							<EmptyState.Title>{ __( ‘You haven\u2019t blocked any sites yet’ ) }</EmptyState.Title>
-						</EmptyState.Header>
+						<EmptyState.Description>
+							{ __( "You haven't blocked any sites yet." ) }
+						</EmptyState.Description>
 					</EmptyState>
 				</EmptyState.Wrapper>
 			) : (
