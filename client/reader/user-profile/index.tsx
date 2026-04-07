@@ -2,52 +2,30 @@ import './style.scss';
 import page from '@automattic/calypso-router';
 import { useTranslate, fixMe } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { connect } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
-import { UserProfileData } from 'calypso/lib/user/user';
 import ReaderBackButton from 'calypso/reader/components/back-button';
 import UserProfileHeader from 'calypso/reader/user-profile/components/user-profile-header';
+import { useReaderUserQuery } from 'calypso/reader/user-profile/queries/useReaderUserQuery';
 import UserLists from 'calypso/reader/user-profile/views/lists';
 import UserPosts from 'calypso/reader/user-profile/views/posts';
 import UserRecommendedBlogs from 'calypso/reader/user-profile/views/recommended-blogs';
 import UserSites from 'calypso/reader/user-profile/views/sites';
-import { requestUser } from 'calypso/state/reader/users/actions';
-import getReaderUser from 'calypso/state/selectors/get-reader-user';
 import ReaderMain from '../components/reader-main';
 
 export interface UserProfileProps {
 	userLogin: string;
 	userId: string;
-	user: UserProfileData | undefined;
 	path: string;
-	isLoading: boolean;
-	requestUser: ( userLogin: string, findById?: boolean ) => Promise< void >;
 	view: string;
 }
 
-type UserProfileState = {
-	reader: {
-		users: {
-			items: Record< string, UserProfileData >;
-			requesting: Record< string, boolean >;
-		};
-	};
-};
-
 export function UserProfile( props: UserProfileProps ): JSX.Element | null {
-	const { userLogin, userId, path, requestUser, user, isLoading, view } = props;
+	const { userLogin, userId, path, view } = props;
 	const translate = useTranslate();
-
-	useEffect( () => {
-		if ( ! user ) {
-			if ( userLogin ) {
-				requestUser( userLogin );
-			}
-			if ( userId ) {
-				requestUser( userId, true );
-			}
-		}
-	}, [ userLogin, requestUser, userId, user ] );
+	const { isLoading, data } = useReaderUserQuery( userLogin || userId, {
+		find_by_id: ! userLogin && !! userId, // If userLogin is not provided, we will try to find the user by ID. This is for backward compatibility with old URLs that use user ID.
+	} );
+	const user = data?.user;
 
 	useEffect( () => {
 		if ( path?.startsWith( '/reader/users/id/' ) && user ) {
@@ -102,16 +80,4 @@ export function UserProfile( props: UserProfileProps ): JSX.Element | null {
 	);
 }
 
-export default connect(
-	( state: UserProfileState, ownProps: UserProfileProps ) => ( {
-		// The following logic works because userLogin and userId are mutually exclusive via the
-		// routes.
-		user: getReaderUser(
-			state,
-			ownProps.userLogin || ownProps.userId,
-			ownProps.userLogin ? false : true
-		),
-		isLoading: state.reader.users.requesting[ ownProps.userLogin || ownProps.userId ] ?? false,
-	} ),
-	{ requestUser }
-)( UserProfile );
+export default UserProfile;

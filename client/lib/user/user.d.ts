@@ -16,7 +16,7 @@ export type UserProfileData = {
 	profile_URL: string;
 	user_login: string;
 	primary_blog?: UserProfilePrimaryBlog | null;
-	recommended_blogs_count: number;
+	recommended_blogs_count?: number;
 };
 
 interface UserProfilePrimaryBlog {

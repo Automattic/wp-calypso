@@ -3,8 +3,10 @@
  */
 
 import page from '@automattic/calypso-router';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import React from 'react';
+import { useReaderUserQuery } from 'calypso/reader/user-profile/queries/useReaderUserQuery';
 import { UserProfile, UserProfileProps } from '../index';
 
 jest.mock( '@automattic/calypso-router', () => ( {
@@ -52,113 +54,147 @@ jest.mock(
 		)
 );
 
-describe( 'UserProfile', () => {
-	const mockRequestUser = jest.fn().mockResolvedValue( undefined );
+jest.mock( 'calypso/reader/user-profile/queries/useReaderUserQuery' );
 
+const mockUseReaderUserQuery = useReaderUserQuery as jest.MockedFunction<
+	typeof useReaderUserQuery
+>;
+
+function renderWithClient( ui: React.ReactElement ) {
+	const queryClient = new QueryClient( {
+		defaultOptions: { queries: { retry: false } },
+	} );
+	return render( <QueryClientProvider client={ queryClient }>{ ui }</QueryClientProvider> );
+}
+
+describe( 'UserProfile', () => {
 	const defaultProps: UserProfileProps = {
 		userLogin: 'testuser',
 		userId: '',
 		path: '/reader/users/testuser',
-		requestUser: mockRequestUser,
-		user: undefined,
-		isLoading: false,
 		view: 'posts',
 	};
 
 	beforeEach( () => {
-		// Reset mock function calls between tests
 		jest.clearAllMocks();
 	} );
 
 	test( 'should render empty content when user is not found', () => {
-		render( <UserProfile { ...defaultProps } /> );
+		mockUseReaderUserQuery.mockReturnValue( {
+			isLoading: false,
+			data: undefined,
+		} as ReturnType< typeof useReaderUserQuery > );
 
-		expect( screen.getByTestId( 'empty-content' ) ).toBeInTheDocument();
-		expect( mockRequestUser ).toHaveBeenCalledWith( 'testuser' );
+		renderWithClient( <UserProfile { ...defaultProps } /> );
+
+		expect( screen.getByTestId( 'empty-content' ) ).toBeVisible();
 	} );
 
 	test( 'should render user profile when user is available', () => {
-		const user = {
-			ID: 123,
-			user_login: 'testuser',
-			display_name: 'Test User',
-			avatar_URL: 'https://example.com/avatar.jpg',
-		};
+		mockUseReaderUserQuery.mockReturnValue( {
+			isLoading: false,
+			data: {
+				user: {
+					ID: 123,
+					user_login: 'testuser',
+					display_name: 'Test User',
+					avatar_URL: 'https://example.com/avatar.jpg',
+				},
+			},
+		} as ReturnType< typeof useReaderUserQuery > );
 
-		render( <UserProfile { ...defaultProps } user={ user } /> );
+		renderWithClient( <UserProfile { ...defaultProps } /> );
 
-		expect( screen.getByTestId( 'user-profile-header' ) ).toBeInTheDocument();
-		expect( screen.getByTestId( 'user-posts' ) ).toBeInTheDocument();
+		expect( screen.getByTestId( 'user-profile-header' ) ).toBeVisible();
+		expect( screen.getByTestId( 'user-posts' ) ).toBeVisible();
 	} );
 
 	test( 'should render lists view when view is lists', () => {
-		const user = {
-			ID: 123,
-			user_login: 'testuser',
-			display_name: 'Test User',
-			avatar_URL: 'https://example.com/avatar.jpg',
-		};
+		mockUseReaderUserQuery.mockReturnValue( {
+			isLoading: false,
+			data: {
+				user: {
+					ID: 123,
+					user_login: 'testuser',
+					display_name: 'Test User',
+					avatar_URL: 'https://example.com/avatar.jpg',
+				},
+			},
+		} as ReturnType< typeof useReaderUserQuery > );
 
-		render(
-			<UserProfile
-				{ ...defaultProps }
-				user={ user }
-				view="lists"
-				path="/reader/users/testuser/lists"
-			/>
+		renderWithClient(
+			<UserProfile { ...defaultProps } view="lists" path="/reader/users/testuser/lists" />
 		);
 
-		expect( screen.getByTestId( 'user-profile-header' ) ).toBeInTheDocument();
-		expect( screen.getByTestId( 'user-lists' ) ).toBeInTheDocument();
+		expect( screen.getByTestId( 'user-profile-header' ) ).toBeVisible();
+		expect( screen.getByTestId( 'user-lists' ) ).toBeVisible();
 	} );
 
 	test( 'should render recommended-blogs view when view is recommended-blogs', () => {
-		const user = {
-			ID: 123,
-			user_login: 'testuser',
-			display_name: 'Test User',
-			avatar_URL: 'https://example.com/avatar.jpg',
-		};
+		mockUseReaderUserQuery.mockReturnValue( {
+			isLoading: false,
+			data: {
+				user: {
+					ID: 123,
+					user_login: 'testuser',
+					display_name: 'Test User',
+					avatar_URL: 'https://example.com/avatar.jpg',
+				},
+			},
+		} as ReturnType< typeof useReaderUserQuery > );
 
-		render(
+		renderWithClient(
 			<UserProfile
 				{ ...defaultProps }
-				user={ user }
 				view="recommended-blogs"
 				path="/reader/users/testuser/recommended-blogs"
 			/>
 		);
 
-		expect( screen.getByTestId( 'user-profile-header' ) ).toBeInTheDocument();
-		expect( screen.getByTestId( 'user-recommended-blogs' ) ).toBeInTheDocument();
+		expect( screen.getByTestId( 'user-profile-header' ) ).toBeVisible();
+		expect( screen.getByTestId( 'user-recommended-blogs' ) ).toBeVisible();
 	} );
 
 	test( 'should not show content when isLoading is true', () => {
-		render( <UserProfile { ...defaultProps } isLoading /> );
+		mockUseReaderUserQuery.mockReturnValue( {
+			isLoading: true,
+			data: undefined,
+		} as ReturnType< typeof useReaderUserQuery > );
+
+		renderWithClient( <UserProfile { ...defaultProps } /> );
 
 		expect( screen.queryByTestId( 'empty-content' ) ).not.toBeInTheDocument();
 		expect( screen.queryByTestId( 'user-profile-header' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'should redirect from user ID path to user login path when user is loaded', () => {
-		const user = {
-			ID: 123,
-			user_login: 'testuser',
-			display_name: 'Test User',
-			avatar_URL: 'https://example.com/avatar.jpg',
-		};
+		mockUseReaderUserQuery.mockReturnValue( {
+			isLoading: false,
+			data: {
+				user: {
+					ID: 123,
+					user_login: 'testuser',
+					display_name: 'Test User',
+					avatar_URL: 'https://example.com/avatar.jpg',
+				},
+			},
+		} as ReturnType< typeof useReaderUserQuery > );
 
-		render( <UserProfile { ...defaultProps } user={ user } path="/reader/users/id/123" /> );
+		renderWithClient( <UserProfile { ...defaultProps } path="/reader/users/id/123" /> );
 
-		// Verify the redirect was called with the correct path
 		expect( page.replace ).toHaveBeenCalledWith( '/reader/users/testuser' );
 	} );
 
-	test( 'should request user data with both login and ID when provided', () => {
-		render( <UserProfile { ...defaultProps } userLogin="testuser" userId="123" /> );
+	test( 'should pass find_by_id param when only userId is provided', () => {
+		mockUseReaderUserQuery.mockReturnValue( {
+			isLoading: true,
+			data: undefined,
+		} as ReturnType< typeof useReaderUserQuery > );
 
-		// Verify both API calls were made
-		expect( mockRequestUser ).toHaveBeenCalledWith( 'testuser' );
-		expect( mockRequestUser ).toHaveBeenCalledWith( '123', true );
+		renderWithClient( <UserProfile { ...defaultProps } userLogin="" userId="123" /> );
+
+		expect( mockUseReaderUserQuery ).toHaveBeenCalledWith( '123', {
+			find_by_id: true,
+		} );
 	} );
 } );
