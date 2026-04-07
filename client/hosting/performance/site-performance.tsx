@@ -38,7 +38,6 @@ import { ExpiredReportNotice } from './components/expired-report-notice/expired-
 import { usePerformanceReport } from './hooks/usePerformanceReport';
 import { useSitePerformancePageReports } from './hooks/useSitePerformancePageReports';
 import { getSupportLinkProps } from './utils';
-import type { Site as DashboardSite } from '@automattic/api-core';
 
 import './style.scss';
 
@@ -217,7 +216,7 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 			window.location.assign(
 				addQueryArgs( '/start/launch-site', {
 					siteSlug: site?.slug,
-					back_to: `/sites/performance/${ site?.slug }`,
+					back_to: window.location.pathname,
 				} )
 			);
 			return;
@@ -401,7 +400,7 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 			{ isCelebrationModalOpen && site && (
 				<AnalyticsProvider client={ analyticsClient }>
 					<SiteLaunchCelebrationModal
-						site={ site as unknown as DashboardSite }
+						site={ site }
 						onClose={ () => setIsCelebrationModalOpen( false ) }
 					/>
 				</AnalyticsProvider>

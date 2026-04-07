@@ -104,7 +104,7 @@ function getSignupDestination( { siteSlug, redirect_to, localeSlug, flowName } )
 }
 
 function getLaunchDestination( dependencies ) {
-	// If back_to is provided, redirect to that destination instead
+	// If a back_to parameter is provided, use it as the destination
 	if ( dependencies.back_to ) {
 		return dependencies.back_to;
 	}
