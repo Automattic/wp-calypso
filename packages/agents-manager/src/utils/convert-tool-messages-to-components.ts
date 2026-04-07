@@ -108,10 +108,13 @@ export default function convertToolMessagesToComponents( {
 				return [ componentMessage ];
 			}
 
+			// Omit `actions` so the parent message's actions don't leak into the next-step message.
+			const { actions, content, ...baseMessage } = message;
+
 			return [
 				componentMessage,
 				{
-					...message,
+					...baseMessage,
 					id: `${ message.id }-next-step`,
 					content: [
 						{

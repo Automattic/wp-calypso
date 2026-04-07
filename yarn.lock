@@ -151,26 +151,37 @@ __metadata:
     "@automattic/oauth-token": "workspace:^"
     "@automattic/support-articles": "workspace:^"
     "@automattic/urls": "workspace:^"
+    "@automattic/viewport": "workspace:^"
+    "@automattic/zendesk-client": "workspace:^"
     "@tanstack/react-query": "npm:^5.83.0"
+    "@testing-library/dom": "npm:^10.0.0"
+    "@testing-library/react": "npm:^15.0.0"
+    "@testing-library/user-event": "npm:^14.6.1"
     "@types/react": "npm:^18.3.1"
     "@types/react-dom": "npm:^18.3.1"
     "@wordpress/api-fetch": "npm:^7.23.0"
     "@wordpress/base-styles": "npm:^5.23.0"
+    "@wordpress/block-editor": "npm:^14.18.0"
+    "@wordpress/blocks": "npm:^14.12.0"
     "@wordpress/components": "npm:^32.1.0"
     "@wordpress/compose": "npm:^7.2.0"
+    "@wordpress/html-entities": "npm:^4.23.0"
     "@wordpress/i18n": "npm:^5.23.0"
     "@wordpress/icons": "npm:^10.23.0"
     "@wordpress/primitives": "npm:^4.23.0"
+    "@wordpress/private-apis": "npm:^1.39.0"
     clsx: "npm:^2.1.1"
+    history: "npm:^5.3.0"
     i18n-calypso: "workspace:^"
+    react: "npm:^18.3.1"
+    react-dom: "npm:^18.3.1"
     react-router-dom: "npm:^6.23.1"
+    smooch: "npm:^5.7.17"
     typescript: "npm:^5.8.3"
     wpcom-proxy-request: "workspace:^"
   peerDependencies:
     "@wordpress/data": ^10.23.0
     "@wordpress/element": ^6.23.0
-    react: ^18.3.1
-    react-dom: ^18.3.1
   languageName: unknown
   linkType: soft
 
