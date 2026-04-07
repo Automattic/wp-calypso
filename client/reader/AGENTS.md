@@ -16,9 +16,9 @@ yarn test-client client/reader/<path>  # Run Reader tests
 
 ### Data fetching migration
 
-The Reader is migrating from **Redux + data-layer** to **React Query** using the `@automattic/api-core` and `@automattic/api-queries` packages from the same codebase.
+The Reader uses two coexisting data fetching patterns, with new features using React Query via `@automattic/api-core` and `@automattic/api-queries` packages from the same codebase.
 
-- **Legacy (Redux + data-layer)**: still present in most streams and core features.
+- **Legacy (Redux + data-layer)**: still foundational for streams and most core features.
 - **Current (React Query)**: used in newer features like `discover/`, `new-subscription/`, and subscription management. New features should use `@automattic/api-core` for API definitions and `@automattic/api-queries` for React Query hooks.
 
 ### Stream keys
@@ -33,7 +33,7 @@ Posts are identified by objects with `{blogId, postId}` (blog posts) or `{feedId
 
 Post cards live in `client/blocks/reader-post-card/` with variants: `standard` (title, excerpt, image), `compact` (smaller layout for discovery), `photo` (image-focused), `gallery` (multiple images), and `conversation` (discussion thread).
 
-## Boundaries
+## Boundaries (for new code)
 
 - Do not use the `connect` HOC — use `useSelector`/`useDispatch` hooks instead.
 - Do not add new Redux data-layer handlers — use `@automattic/api-queries` for new API calls.

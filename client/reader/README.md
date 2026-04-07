@@ -51,7 +51,7 @@ These routes are served by the module:
 
 | Route | Description |
 |-------|-------------|
-| `/discover` | Freshly Pressed |
+| `/discover` | Discover (recommended content) |
 | `/discover/recommended` | Recommended content |
 | `/discover/tags` | Featured tags |
 | `/discover/latest` | Latest posts |
@@ -77,7 +77,7 @@ These routes are served by the module:
 
 ### Legacy redirects
 
-Many legacy `/read/*` routes redirect to Reader routes, often under `/reader/*`, but there are exceptions such as `/read/tag/:tag_name`, which redirects to `/tag/:tag_name`. Routes like `/following`, `/following/manage`, and `/recommendations` are also redirected. Routes with a locale prefix (`/:lang/`) are supported on main routes.
+Many legacy `/read/*` routes redirect to Reader routes, often under `/reader/*`, but there are exceptions such as `/read/tag/:tag_name`, which redirects to `/tag/:tag_name`. Routes like `/following`, `/following/manage`, and `/recommendations` are also redirected. Locale prefixes (`/:lang/`) are supported on: `/reader`, `/reader/search`, `/tag/:tag`, `/tags`, and `/discover/*`.
 
 ## Block Rendering Development
 
