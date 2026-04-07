@@ -4,7 +4,7 @@ import { Button } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useSiteSettings } from 'calypso/blocks/plugins-scheduled-updates/hooks/use-site-settings';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
@@ -157,30 +157,25 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 		( state ) => getRequest( state, launchSite( siteId ) )?.isLoading ?? false
 	);
 
+	const siteIsLaunched = useSelector(
+		( state ) => getRequest( state, launchSite( siteId ) )?.isLoading ?? false
+	);
+
 	const [ isExperimentLoading, experimentData ] = useExperiment(
 		'calypso_standardized_site_launch_gating'
 	);
 	const experimentVariant = experimentData?.variationName;
 
 	const [ isCelebrationModalOpen, setIsCelebrationModalOpen ] = useState( false );
-	const prevSiteIsLaunchingRef = useRef( siteIsLaunching );
 
 	// calypso_standardized_site_launch_gating experiment: ungated_site_launch variant
 	// Show celebration modal when site launch completes
 	useEffect( () => {
-		const wasLaunching = prevSiteIsLaunchingRef.current;
-		prevSiteIsLaunchingRef.current = siteIsLaunching;
-
 		// Only show modal when launch completes (transitions from launching to not launching)
-		if (
-			experimentVariant === 'ungated_site_launch' &&
-			wasLaunching &&
-			! siteIsLaunching &&
-			isSitePublic
-		) {
+		if ( experimentVariant === 'ungated_site_launch' && siteIsLaunched && isSitePublic ) {
 			setIsCelebrationModalOpen( true );
 		}
-	}, [ siteIsLaunching, isSitePublic, experimentVariant ] );
+	}, [ siteIsLaunched, isSitePublic, experimentVariant ] );
 
 	const retestPage = () => {
 		recordTracksEvent( 'calypso_performance_profiler_test_again_click' );
