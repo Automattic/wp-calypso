@@ -1,6 +1,7 @@
 import './style.scss';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import { decodeEntities } from 'calypso/lib/formatting';
+import { getStreamUrl } from 'calypso/reader/route';
 import useUserSitesQuery from 'calypso/reader/user-profile/queries/use-user-sites-query';
 
 interface UserTopSitesProps {
@@ -41,25 +42,13 @@ export default function UserTopSites( {
 		image: site.icon?.img || site.icon?.ico,
 	} ) );
 
-	function getAnchorLink( site: ( typeof topSites )[ 0 ] ): string {
-		if ( site.feedId ) {
-			return `/reader/feeds/${ site.feedId }`;
-		}
-
-		if ( site.siteId ) {
-			return `/reader/blogs/${ site.siteId }`;
-		}
-
-		return site.feedUrl || '#';
-	}
-
 	return (
 		<div className="user-top-sites">
 			{ topSites.map( ( site ) => (
 				<a
 					key={ `user-profile-header-site-${ site.ID }` }
 					className="user-top-site"
-					href={ getAnchorLink( site ) }
+					href={ getStreamUrl( site.feedId, site.siteId ) ?? site.feedUrl }
 				>
 					<SiteIcon siteId={ Number( site.ID ) } iconUrl={ site.image } size={ 16 } />
 					<p>{ decodeEntities( site.name ) }</p>
