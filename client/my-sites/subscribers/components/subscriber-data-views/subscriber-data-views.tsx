@@ -779,7 +779,9 @@ export default function SubscriberDataViews( {
 							subscriptionId={ getSubscriptionId( subscriberDetails ) }
 							onClose={ handleClose }
 							onUnsubscribe={ ( subscriber ) => handleUnsubscribe( [ subscriber ] ) }
-							onCompSubscription={ onCompSubscription }
+							onCompSubscription={
+								hasUncompedPlans( subscriberDetails ) ? onCompSubscription : undefined
+							}
 							onRemoveComp={ ( { planName, compId } ) =>
 								onRemoveComp( {
 									planName,
