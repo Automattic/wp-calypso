@@ -1,7 +1,14 @@
-import { queryClient, siteByIdQuery } from '@automattic/api-queries';
+import {
+	queryClient,
+	rawUserPreferencesQuery,
+	siteByIdQuery,
+	userPreferenceQuery,
+} from '@automattic/api-queries';
+import { QueryObserver } from '@tanstack/react-query';
 import { hydrateRoot } from 'react-dom/client';
 import { AUTH_QUERY_KEY, initializeCurrentUser } from '../auth';
 import type { OmnibarEvents } from './click-handlers';
+import type { UserPreferences } from '@automattic/api-core';
 
 export default async function loadOmnibar( events: OmnibarEvents ) {
 	const container = document.getElementById( 'wpcom-omnibar' );
@@ -42,21 +49,39 @@ export default async function loadOmnibar( events: OmnibarEvents ) {
 		/>
 	);
 
-	const site = user.primary_blog
-		? await queryClient.fetchQuery( siteByIdQuery( user.primary_blog ) )
-		: null;
+	const handleToggleMenu = () => events.mobileMenu.emit();
+	const handleToggleNotifications = () =>
+		events.notifications.emit(
+			container.querySelector< HTMLElement >( '.masterbar-notifications' )
+		);
 
-	root.render(
-		<InterimOmnibar
-			user={ user }
-			site={ site }
-			currentRoute={ window.location.pathname }
-			onToggleMenu={ () => events.mobileMenu.emit() }
-			onToggleNotifications={ () =>
-				events.notifications.emit(
-					container.querySelector< HTMLElement >( '.masterbar-notifications' )
-				)
-			}
-		/>
-	);
+	async function renderWithSiteId( siteId: number | undefined ) {
+		const site = siteId ? await queryClient.ensureQueryData( siteByIdQuery( siteId ) ) : null;
+		root.render(
+			<InterimOmnibar
+				user={ user }
+				site={ site }
+				currentRoute={ window.location.pathname }
+				onToggleMenu={ handleToggleMenu }
+				onToggleNotifications={ handleToggleNotifications }
+			/>
+		);
+	}
+
+	// Render with the initial recent site (or primary blog as fallback).
+	const recentSites = queryClient.getQueryData< UserPreferences >(
+		rawUserPreferencesQuery().queryKey
+	)?.recentSites;
+	const initialSiteId = recentSites?.[ 0 ] || user.primary_blog;
+	renderWithSiteId( initialSiteId );
+
+	// Re-render whenever recentSites changes (e.g. user navigates to a different site).
+	let currentSiteId = initialSiteId;
+	new QueryObserver( queryClient, userPreferenceQuery( 'recentSites' ) ).subscribe( ( result ) => {
+		const siteId = result.data?.[ 0 ] || user.primary_blog;
+		if ( siteId !== currentSiteId ) {
+			currentSiteId = siteId;
+			renderWithSiteId( siteId );
+		}
+	} );
 }
