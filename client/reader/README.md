@@ -25,18 +25,18 @@ These routes are served by the module:
 
 ### Subscriptions
 
-| Route | Description |
-|-------|-------------|
-| `/reader/subscriptions` | Site subscriptions manager |
-| `/reader/subscriptions/comments` | Comment subscriptions manager |
-| `/reader/subscriptions/pending` | Pending subscriptions |
-| `/reader/subscriptions/:subscription_id` | Individual subscription (by ID) |
-| `/reader/site/subscription/:blog_id` | Individual subscription (by blog ID) |
-| `/reader/new` | New subscription |
-| `/reader/new/reddit` | New Reddit subscription |
-| `/reader/new/youtube` | New YouTube subscription |
-| `/reader/new/tumblr` | New Tumblr subscription |
-| `/reader/new/substack` | New Substack subscription |
+| Route | Description | Requires login |
+|-------|-------------|----------------|
+| `/reader/subscriptions` | Site subscriptions manager | Yes |
+| `/reader/subscriptions/comments` | Comment subscriptions manager | Yes |
+| `/reader/subscriptions/pending` | Pending subscriptions | Yes |
+| `/reader/subscriptions/:subscription_id` | Individual subscription (by ID) | Yes |
+| `/reader/site/subscription/:blog_id` | Individual subscription (by blog ID) | Yes |
+| `/reader/new` | New subscription | Yes |
+| `/reader/new/reddit` | New Reddit subscription | Yes |
+| `/reader/new/youtube` | New YouTube subscription | Yes |
+| `/reader/new/tumblr` | New Tumblr subscription | Yes |
+| `/reader/new/substack` | New Substack subscription | Yes |
 
 ### Lists
 
