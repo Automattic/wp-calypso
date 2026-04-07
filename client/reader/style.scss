@@ -25,6 +25,19 @@ body.is-section-reader {
 			}
 		}
 	}
+
+	.wp-spinner-wrapper {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		margin-top: 70px;
+
+		p {
+			margin-top: 16px;
+			font-size: 0.875rem;
+		}
+	}
 }
 
 // Ensure this is only applied in logged in 'global' interface.
@@ -556,20 +569,5 @@ body.is-section-reader {
 	h1 {
 		font-size: 40px;
 		font-weight: 500;
-	}
-}
-
-body.is-reader-page {
-	.wp-spinner-wrapper {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		margin-top: 70px;
-
-		p {
-			margin-top: 16px;
-			font-size: 0.875rem;
-		}
 	}
 }
