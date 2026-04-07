@@ -10,6 +10,16 @@ $profile-dropdown-menu-height: 250px;
 	display: flex;
 	justify-content: space-between;
 }
+
+.a4a-sidebar__agency-name {
+	flex: 1;
+	color: var(--color-sidebar-text);
+	font-size: 0.875rem;
+	font-weight: 500;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
 .components-button .help-center__icon {
 	fill: var(--color-sidebar-text);
 }
