@@ -175,10 +175,14 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 
 	const [ isCelebrationModalOpen, setIsCelebrationModalOpen ] = useState( false );
 
-	// calypso_standardized_site_launch_gating experiment: ungated_site_launch variant
-	// Show celebration modal when site launch completes
 	useEffect( () => {
-		// Only show modal when launch completes (transitions from launching to not launching)
+		if (
+			experimentVariant === 'gated_site_launch' &&
+			new URLSearchParams( window.location.search ).has( 'celebrateLaunch' )
+		) {
+			setIsCelebrationModalOpen( true );
+		}
+
 		if ( experimentVariant === 'ungated_site_launch' && siteIsLaunched && isSitePublic ) {
 			setIsCelebrationModalOpen( true );
 		}
