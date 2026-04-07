@@ -2,6 +2,7 @@ import page from '@automattic/calypso-router';
 import { Popover } from '@wordpress/components';
 import { useRef, useState } from 'react';
 import UserHovercard from 'calypso/blocks/user-avatar/user-hovercard';
+import PreloadedImage from 'calypso/components/preloaded-image';
 import UserAvatarDefaultIcon from 'calypso/reader/components/icons/user-avatar-default-icon';
 import { useGetReaderUserQuery } from 'calypso/reader/user-profile/queries/useGetReaderUserQuery';
 import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
@@ -32,13 +33,13 @@ export default function UserAvatar( { user, size = 32, hideHovercard = false }: 
 	const name = user?.display_name || user?.name || '';
 	const avatarUrl = user?.avatar_URL ? getProcessedGravatarUrl( user.avatar_URL ) : null;
 	const avatarImg = avatarUrl ? (
-		<img
+		<PreloadedImage
 			className="user-avatar__image"
 			src={ avatarUrl }
 			alt={ name }
 			width={ size }
 			height={ size }
-			style={ { maxWidth: size, height: size, borderRadius: '50%' } } // Override global styles. Always render avatar at the specified size.
+			imgStyles={ { maxWidth: size, height: size, borderRadius: '50%' } } // Override global styles. Always render avatar at the specified size.
 		/>
 	) : (
 		<UserAvatarDefaultIcon iconSize={ size } />

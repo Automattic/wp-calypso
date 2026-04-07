@@ -3,12 +3,12 @@ import clsx from 'clsx';
 import { useState } from 'react';
 
 interface PreloadedImageProps {
-	borderRadius?: string;
 	className?: string;
 	src: string;
 	alt?: string;
 	width: number;
 	height: number;
+	imgStyles?: React.CSSProperties;
 }
 
 /**
@@ -16,17 +16,18 @@ interface PreloadedImageProps {
  * This is useful to prevent layout shifts and display a placeholder while the image is loading.
  */
 export default function PreloadedImage( props: PreloadedImageProps ) {
-	const { src, alt, className, width, height, borderRadius } = props;
+	const { src, alt, className, width, height, imgStyles } = props;
 	const [ isLoaded, setIsLoaded ] = useState( false );
 
 	return (
-		<div className="preloaded-image-wrapper" style={ { borderRadius } }>
+		<div className="preloaded-image-wrapper" style={ { borderRadius: imgStyles?.borderRadius } }>
 			<img
 				className={ clsx( className, { 'is-loaded': isLoaded } ) }
 				src={ src }
 				alt={ isLoaded ? alt : '' }
 				width={ width }
 				height={ height }
+				style={ imgStyles }
 				onLoad={ () => setIsLoaded( true ) }
 			/>
 		</div>
