@@ -28,15 +28,14 @@ Copy `.github/workflows/linear-release-creators.yml` as a starting point. You'll
 
 ## Gotchas
 
-### Issue detection may require a keyword prefix
+### How issue detection works
 
-During our pilot with CLI v0.5.0, bare issue IDs in commit messages (e.g., `NL-490 Fix thing`) were not detected. Adding a keyword prefix (`Fixes NL-490`, `Ref READ-432`) or including the issue ID in the branch name (`feat/NL-490-description`) resolved this. The upstream docs say the CLI "automatically scans commits for Linear issue identifiers" but do not clarify whether bare IDs work. Safest approach: always use a keyword prefix.
+The CLI uses two methods to link commits to Linear issues:
 
-| Works | Not reliably detected (as of v0.5.0) |
-|---|---|
-| `Fixes NL-490 Add celebration modal` | `NL-490 Add celebration modal` |
-| `Ref READ-432 Update feed layout` | `READ-432 Update feed layout` |
-| Branch name `feat/NL-490-description` | Bare ID in commit body without keyword |
+1. **PR linking (primary):** Squash merge commits include a PR reference. If that PR is linked to a Linear issue, the CLI detects it automatically. No special commit message format required.
+2. **Commit message keywords (fallback):** Direct commit-to-issue matching requires a [magic word](https://linear.app/docs/github#link-through-pull-requests) before the issue ID (`Fixes NL-490` works, bare `NL-490` does not). This follows the same rules as Linear's GitHub integration.
+
+For most teams using squash merges, method 1 handles everything as long as PRs are linked to their Linear issues. The keyword prefix only matters for commits without an associated PR.
 
 ### Action versioning is confusing
 
