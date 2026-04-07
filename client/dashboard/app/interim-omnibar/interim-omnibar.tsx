@@ -15,17 +15,34 @@ type StoreType = Parameters< typeof ReduxProvider >[ 0 ][ 'store' ];
 
 // Fake Redux store so child components using connect() (e.g. Notifications) don't crash.
 // Intercepts specific actions so the dashboard can handle them.
-function createOmnibarStore( onToggleNotifications?: () => void ): StoreType {
-	return {
-		getState: () => ( { ui: { section: false, isNotificationsOpen: false } } ),
-		dispatch: ( action: { type: string } ) => {
+function createOmnibarStore( user: User | null, onToggleNotifications?: () => void ): StoreType {
+	const listeners = new Set< () => void >();
+	let notificationsUnseenCount: number | undefined;
+
+	const store = {
+		getState: () => ( {
+			ui: { section: false, isNotificationsOpen: false },
+			currentUser: { user },
+			notificationsUnseenCount,
+		} ),
+		dispatch: ( action: { type: string; unseenCount?: number } ) => {
 			if ( action.type === 'NOTIFICATIONS_PANEL_TOGGLE' ) {
+				notificationsUnseenCount = 0;
+				listeners.forEach( ( listener ) => listener() );
 				onToggleNotifications?.();
+			}
+			if ( action.type === 'NOTIFICATIONS_UNSEEN_COUNT_SET' ) {
+				notificationsUnseenCount = action.unseenCount;
+				listeners.forEach( ( listener ) => listener() );
 			}
 			return action;
 		},
-		subscribe: () => () => {},
-	} as unknown as StoreType;
+		subscribe: ( listener: () => void ) => {
+			listeners.add( listener );
+			return () => listeners.delete( listener );
+		},
+	};
+	return store as unknown as StoreType;
 }
 
 // Separate query client for the legacy masterbar so its internal queries
@@ -59,8 +76,8 @@ export function InterimOmnibar( {
 	const siteSlug = site?.slug ?? null;
 	const siteAdminUrl = site?.options?.admin_url ?? null;
 	const store = useMemo(
-		() => createOmnibarStore( onToggleNotifications ),
-		[ onToggleNotifications ]
+		() => createOmnibarStore( user, onToggleNotifications ),
+		[ user, onToggleNotifications ]
 	);
 
 	return (
