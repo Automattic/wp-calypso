@@ -74,6 +74,14 @@ export function getLeadMatchingOptions() {
 			{ label: __( 'Simple catalog' ), value: 'none_simple' },
 		] satisfies LeadMatchingOption[],
 		supportedProjectTypes: [
+			{
+				label: __( 'Create new WordPress websites (from scratch or moving from another platform)' ),
+				value: 'new_website',
+			},
+			{
+				label: __( 'Improve or redesign existing WordPress / WooCommerce sites' ),
+				value: 'redesign',
+			},
 			{ label: __( 'New WooCommerce store' ), value: 'new_woocommerce' },
 			{ label: __( 'Site migration' ), value: 'migration' },
 			{ label: __( 'Performance optimization' ), value: 'performance_optimization' },

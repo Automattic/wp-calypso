@@ -39,6 +39,8 @@ const ALLOWED_COMPLEXITY_FLAGS = new Set( [
 ] );
 
 const ALLOWED_PROJECT_TYPES = new Set( [
+	'new_website',
+	'redesign',
 	'new_woocommerce',
 	'migration',
 	'custom_features',

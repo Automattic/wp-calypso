@@ -322,7 +322,7 @@ describe( 'mapLeadMatchingDetailsToProfile', () => {
 					supported_complexity_flags: [ 'custom_pricing', 'customer_portals', 'simple_catalog' ],
 				},
 				project_types: {
-					supported_project_types: [ 'migration', 'new_wordpress_site' ],
+					supported_project_types: [ 'migration', 'new_website', 'redesign', 'new_wordpress_site' ],
 					accepts_small_fixes: false,
 				},
 				service_and_budget: {
@@ -348,7 +348,7 @@ describe( 'mapLeadMatchingDetailsToProfile', () => {
 			hostingEnvironments: [ 'wpcom' ],
 			migrationPlatforms: [ 'shopify' ],
 			storeComplexities: [ 'custom_pricing', 'customer_portals' ],
-			projectTypes: [ 'migration' ],
+			projectTypes: [ 'migration', 'new_website', 'redesign' ],
 			budgetLevels: [ 'mid-range' ],
 			minimumBudget: 'above_30k',
 			timingPreferences: [ 'book_1_3_months' ],

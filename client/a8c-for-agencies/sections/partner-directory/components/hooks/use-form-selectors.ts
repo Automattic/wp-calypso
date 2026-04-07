@@ -140,6 +140,10 @@ export function useFormSelectors() {
 	};
 
 	const availableProjectTypes: Record< string, string > = {
+		new_website: translate(
+			'Create new WordPress websites (from scratch or moving from another platform)'
+		),
+		redesign: translate( 'Improve or redesign existing WordPress / WooCommerce sites' ),
 		new_woocommerce: translate( 'Set up new WooCommerce online stores' ),
 		migration: translate( 'Migrate sites or stores to WordPress / WooCommerce' ),
 		fix_ongoing_support: translate( 'Fix problems / maintenance / ongoing support' ),
