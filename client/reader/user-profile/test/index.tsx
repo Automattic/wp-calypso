@@ -57,7 +57,10 @@ jest.mock(
 		)
 );
 
-jest.mock( 'calypso/reader/user-profile/queries/useGetReaderUserQuery' );
+jest.mock( 'calypso/reader/user-profile/queries/useGetReaderUserQuery', () => ( {
+	...jest.requireActual( 'calypso/reader/user-profile/queries/useGetReaderUserQuery' ),
+	useGetReaderUserQuery: jest.fn(),
+} ) );
 
 const mockUseGetReaderUserQuery = useGetReaderUserQuery as jest.MockedFunction<
 	typeof useGetReaderUserQuery
