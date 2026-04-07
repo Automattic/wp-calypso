@@ -69,7 +69,6 @@ const createLeadMatchingProfile = (
 	},
 	project_types: {
 		supported_project_types: [],
-		core_project_types: [],
 		accepts_small_fixes: false,
 	},
 	service_and_budget: {
