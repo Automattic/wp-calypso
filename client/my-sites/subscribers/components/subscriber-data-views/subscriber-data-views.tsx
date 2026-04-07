@@ -9,7 +9,7 @@ import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { DataViews, type View, type ViewTable, type Action, Operator } from '@wordpress/dataviews';
 import { useMemo, useState, useCallback, useEffect } from '@wordpress/element';
 import { plus, trash } from '@wordpress/icons';
-import { translate } from 'i18n-calypso';
+import { fixMe, translate } from 'i18n-calypso';
 import JetpackTitle from 'calypso/components/jetpack-title';
 import { useSubscribedNewsletterCategories } from 'calypso/data/newsletter-categories';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -508,7 +508,13 @@ export default function SubscriberDataViews( {
 			},
 			{
 				id: 'remove',
-				label: translate( 'Remove' ),
+				label: String(
+					fixMe( {
+						text: 'Remove subscriber',
+						newCopy: translate( 'Remove subscriber' ),
+						oldCopy: translate( 'Remove' ),
+					} ) ?? translate( 'Remove' )
+				),
 				callback: handleUnsubscribe,
 				isPrimary: false,
 				supportsBulk: true,
