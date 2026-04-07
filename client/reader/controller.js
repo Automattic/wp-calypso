@@ -1,4 +1,3 @@
-// Linear Release sync test
 import page from '@automattic/calypso-router';
 import { getAnyLanguageRouteParam, getLanguageRouteParam } from '@automattic/i18n-utils';
 import i18n from 'i18n-calypso';
