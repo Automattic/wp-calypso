@@ -1,4 +1,5 @@
 import './styles.scss';
+import page from '@automattic/calypso-router';
 import { Popover } from '@wordpress/components';
 import clsx from 'clsx';
 import { useRef, useState } from 'react';
@@ -69,7 +70,14 @@ export default function UserAvatar( {
 			onMouseEnter={ () => setIsHovered( true ) }
 			onMouseLeave={ () => setIsHovered( false ) }
 		>
-			{ wpcomProfileUrl ? <a href={ wpcomProfileUrl }> { avatarImg }</a> : avatarImg }
+			{ wpcomProfileUrl ? (
+				<a href={ wpcomProfileUrl } onClick={ () => page( wpcomProfileUrl ) }>
+					{ avatarImg }
+				</a>
+			) : (
+				avatarImg
+			) }
+
 			{ user && ! hideHovercard && isHovered && (
 				<Popover
 					anchor={ avatarRef.current }

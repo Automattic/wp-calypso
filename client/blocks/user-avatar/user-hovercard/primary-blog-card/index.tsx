@@ -1,4 +1,5 @@
 import './styles.scss';
+import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import AutoDirection from 'calypso/components/auto-direction';
@@ -48,7 +49,13 @@ function PrimaryBlogCard( { user }: PrimaryBlogCardProps ): JSX.Element | null {
 			<QueryReaderSite siteId={ primaryBlog.ID } />
 			<AutoDirection>
 				<div className="user-hovercard__primary-blog">
-					<a className="user-hovercard__primary-blog-link" href={ siteUrl }>
+					<a
+						className="user-hovercard__primary-blog-link"
+						href={ siteUrl }
+						onClick={ () => {
+							page( siteUrl );
+						} }
+					>
 						<div className="user-hovercard__primary-blog-header">
 							<SiteIcon iconUrl={ primaryBlog.avatar_URL } size={ 40 } />
 
@@ -68,6 +75,8 @@ function PrimaryBlogCard( { user }: PrimaryBlogCardProps ): JSX.Element | null {
 					<ReaderFollowButton
 						className="user-hovercard__primary-blog-follow-button"
 						siteUrl={ primaryBlog.URL }
+						feedId={ primaryBlog.feed_ID }
+						siteId={ primaryBlog.ID }
 						iconSize={ 24 }
 						followSource="user-hovercard__primary-blog"
 						onFollowToggle={ onFollowToggle }
