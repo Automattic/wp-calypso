@@ -10,6 +10,7 @@
 		background-color: transparent;
 		box-shadow: none;
 		margin: -32px 0 0;
+		pointer-events: none;
 	}
 
 	.foldable-card__header {
@@ -18,12 +19,22 @@
 		min-height: unset;
 		flex-direction: row-reverse;
 		justify-content: end;
+		align-self: flex-end;
 		gap: 4px;
 		padding: 0;
+		pointer-events: initial;
+		border-radius: 4px;
+
+		&:has(:focus-visible) {
+			padding-left: 4px;
+			outline: 2px solid var(--color-ring);
+			outline-offset: -1px;
+		}
 	}
 
 	.foldable-card__content {
 		width: 100%;
+		pointer-events: initial;
 	}
 
 	.foldable-card__main,
@@ -35,6 +46,10 @@
 	.foldable-card__action {
 		position: relative;
 		width: 16px;
+
+		&:focus-visible {
+			outline: none;
+		}
 
 		svg.gridicon {
 			fill: var(--color-muted-foreground);
