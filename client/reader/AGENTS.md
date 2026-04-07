@@ -23,7 +23,7 @@ The Reader is migrating from **Redux + data-layer** to **React Query** using the
 
 ### Stream keys
 
-Each stream type is identified by a unique key: `following`, `feed:{feedId}`, `site:{siteId}`, `tag:{tagSlug}`, `search:{json}`, `discover:*`, `conversations`, `p2`, `a8c`, `likes`, `recommendations_posts`. These keys index state in `state.reader.streams`.
+Stream types are identified by unique keys. Examples of stream keys include `following`, `feed:{feedId}`, `site:{siteId}`, `tag:{tagSlug}`, `search:{json}`, `discover:*`, `conversations`, `conversations-a8c`, `p2`, `a8c`, `likes`, `recommendations_posts`, `recent`, `recent:{feedId}`, `list:{...}`, `user:{id}`, `tag_popular:{tag}`, and `custom_recs_*`. These keys index state in `state.reader.streams`.
 
 ### Post keys
 
