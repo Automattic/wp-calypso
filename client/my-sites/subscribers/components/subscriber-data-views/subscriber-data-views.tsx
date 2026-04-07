@@ -430,7 +430,9 @@ export default function SubscriberDataViews( {
 				id: 'plan',
 				label: translate( 'Subscription type' ),
 				getValue: ( { item }: { item: Subscriber } ) =>
-					item.plans?.length ? SubscribersFilterBy.Paid : SubscribersFilterBy.Free,
+					item.plans?.some( ( plan ) => ! plan.is_comp )
+						? SubscribersFilterBy.Paid
+						: SubscribersFilterBy.Free,
 				render: ( { item }: { item: Subscriber } ) => <SubscriptionTypeCell subscriber={ item } />,
 				elements: [
 					{ label: translate( 'Paid' ), value: SubscribersFilterBy.Paid },
