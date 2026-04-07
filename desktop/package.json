@@ -39,7 +39,7 @@
 		"@electron/notarize": "^2.4.0",
 		"@playwright/browser-chromium": "1.48.2",
 		"copy-webpack-plugin": "^10.2.4",
-		"electron": "26.2.4",
+		"electron": "39.8.5",
 		"electron-builder": "23.0.3",
 		"electron-rebuild": "^2.3.5",
 		"jest": "^29.7.0",
