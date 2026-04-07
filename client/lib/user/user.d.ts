@@ -25,5 +25,5 @@ interface UserProfilePrimaryBlog {
 	URL: string;
 	title: string;
 	description: string;
-	avatar_URL: string | null;
+	avatar_URL: string;
 }
