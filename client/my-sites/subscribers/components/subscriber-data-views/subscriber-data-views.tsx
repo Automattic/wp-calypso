@@ -17,7 +17,6 @@ import { Product } from 'calypso/my-sites/earn/types';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
-import { getCouponsAndGiftsEnabledForSiteId } from 'calypso/state/memberships/settings/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
@@ -164,16 +163,12 @@ export default function SubscriberDataViews( {
 	const [ filters, setFilters ] = useState< SubscribersFilterBy[] >( [ SubscribersFilterBy.All ] );
 	const [ selectedSubscriber, setSelectedSubscriber ] = useState< Subscriber | null >( null );
 
-	const couponsAndGiftsEnabled = useSelector( ( state ) =>
-		getCouponsAndGiftsEnabledForSiteId( state, siteId )
-	);
-
 	const products: Product[] = useSelector( ( state ) => getProductsForSiteId( state, siteId ) );
 
 	const hasUncompedPlans = useCallback(
 		( subscriber: Subscriber ) => {
 			if ( ! products?.length ) {
-				return true;
+				return false;
 			}
 			const compedIds = ( subscriber.plans ?? [] )
 				.filter( ( p ) => p.is_comp && p.subscription_id )
@@ -521,27 +516,25 @@ export default function SubscriberDataViews( {
 			},
 		];
 
-		if ( couponsAndGiftsEnabled ) {
-			baseActions.push( {
-				id: 'comp',
-				label: translate( 'Comp a subscription', {
-					textOnly: true,
-					comment:
-						'"Comp" is short for "complimentary" — granting a free subscription to a subscriber',
-				} ),
-				isEligible: ( subscriber: Subscriber ) =>
-					!! ( subscriber.user_id || subscriber.email_address ) && hasUncompedPlans( subscriber ),
-				callback: ( items: Subscriber[] ) => {
-					const subscriber = items[ 0 ];
-					if ( ! subscriber ) {
-						return;
-					}
+		baseActions.push( {
+			id: 'comp',
+			label: translate( 'Comp a subscription', {
+				textOnly: true,
+				comment:
+					'"Comp" is short for "complimentary" — granting a free subscription to a subscriber',
+			} ),
+			isEligible: ( subscriber: Subscriber ) =>
+				!! ( subscriber.user_id || subscriber.email_address ) && hasUncompedPlans( subscriber ),
+			callback: ( items: Subscriber[] ) => {
+				const subscriber = items[ 0 ];
+				if ( ! subscriber ) {
+					return;
+				}
 
-					onCompSubscription( subscriber );
-				},
-				isPrimary: false,
-			} );
-		}
+				onCompSubscription( subscriber );
+			},
+			isPrimary: false,
+		} );
 
 		return baseActions;
 	}, [
@@ -549,7 +542,6 @@ export default function SubscriberDataViews( {
 		handleSubscriberSelection,
 		handleUnsubscribe,
 		onCompSubscription,
-		couponsAndGiftsEnabled,
 		hasUncompedPlans,
 	] );
 
@@ -787,16 +779,13 @@ export default function SubscriberDataViews( {
 							subscriptionId={ getSubscriptionId( subscriberDetails ) }
 							onClose={ handleClose }
 							onUnsubscribe={ ( subscriber ) => handleUnsubscribe( [ subscriber ] ) }
-							onCompSubscription={ couponsAndGiftsEnabled ? onCompSubscription : undefined }
-							onRemoveComp={
-								couponsAndGiftsEnabled
-									? ( { planName, compId } ) =>
-											onRemoveComp( {
-												planName,
-												username: subscriberDetails.display_name,
-												compId,
-											} )
-									: undefined
+							onCompSubscription={ onCompSubscription }
+							onRemoveComp={ ( { planName, compId } ) =>
+								onRemoveComp( {
+									planName,
+									username: subscriberDetails.display_name,
+									compId,
+								} )
 							}
 							newsletterCategoriesEnabled={ subscribedNewsletterCategoriesData?.enabled }
 							newsletterCategories={ subscribedNewsletterCategoriesData?.newsletterCategories }

@@ -58,7 +58,6 @@ const mockDomainPurchase: ReceiptPurchase = {
 	isRootDomainWithUs: true,
 	isHundredYearDomain: false,
 	isRenewal: false,
-	willAutoRenew: true,
 	saasRedirectUrl: '',
 	newQuantity: undefined,
 	priceInteger: 1000,

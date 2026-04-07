@@ -4,6 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { capitalize, find } from 'lodash';
 import DocumentHead from 'calypso/components/data/document-head';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import JetpackFooter from 'calypso/components/jetpack/jetpack-footer';
 import JetpackTitle from 'calypso/components/jetpack-title';
 import Main from 'calypso/components/main';
 import SectionNav from 'calypso/components/section-nav';
@@ -48,6 +49,7 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 	const paidSubscriptionId = query?.paid_susbcription;
 	const isAtomicSite = useSelector( ( state ) => isSiteAutomatedTransfer( state, site?.ID ) );
 	const isJetpackNotAtomic = isJetpack && ! isAtomicSite;
+	const isJetpackPlatform = isJetpackCloud();
 
 	const layoutTitles = {
 		'ads-earnings': translate( '%(wordads)s Earnings', { args: { wordads: adsProgramName } } ),
@@ -193,7 +195,7 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 			<div className="earn-navigation">
 				<SectionNav
 					selectedText={ getEarnSelectedText() }
-					variation={ ! isJetpackCloud() ? 'minimal' : '' }
+					variation={ ! isJetpackPlatform ? 'minimal' : '' }
 				>
 					<NavTabs>
 						{ getEarnTabs().map( ( tabItem ) => {
@@ -270,7 +272,7 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 						'Explore tools to earn money with your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 						{
 							components: {
-								learnMoreLink: isJetpackCloud() ? (
+								learnMoreLink: isJetpackPlatform ? (
 									<a
 										href={ isJetpackNotAtomic ? jetpackLearnMoreLink : atomicLearnMoreLink }
 										target="_blank"
@@ -288,6 +290,7 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 			) : (
 				content
 			) }
+			{ ! isJetpackPlatform && <JetpackFooter /> }
 		</Main>
 	);
 };
