@@ -60,6 +60,12 @@ interface AgentsManagerActions {
 	isCompactMode?: boolean;
 	isChatEnabled?: boolean;
 	desktopMediaQuery?: string;
+	/**
+	 * Set to `true` once the actions API is fully populated and safe to call.
+	 * Hosts that load after Agents Manager can check this flag synchronously
+	 * instead of waiting for the `agents-manager-ready` event.
+	 */
+	isReady?: boolean;
 }
 
 /**
