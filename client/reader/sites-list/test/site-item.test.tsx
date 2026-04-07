@@ -105,6 +105,22 @@ describe( 'RecommendedFeedItem', () => {
 		expect( screen.getByRole( 'link' ) ).toHaveAttribute( 'href', 'https://example.com/feed' );
 	} );
 
+	describe( 'iconSize', () => {
+		test( 'uses default icon size of 42 when not specified', () => {
+			renderComponent();
+
+			const icon = document.querySelector( '.site-icon' );
+			expect( icon ).toHaveStyle( { height: '42px', width: '42px' } );
+		} );
+
+		test( 'passes custom icon size to SiteIcon', () => {
+			renderComponent( { ...defaultProps, iconSize: 64 } );
+
+			const icon = document.querySelector( '.site-icon' );
+			expect( icon ).toHaveStyle( { height: '64px', width: '64px' } );
+		} );
+	} );
+
 	describe( 'feed name variations', () => {
 		test( 'fallback to feedUrl when name is not provided', () => {
 			renderComponent( { ...defaultProps, site: { ...defaultFeed, name: undefined } } );
