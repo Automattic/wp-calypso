@@ -3,7 +3,6 @@ import { useTranslate } from 'i18n-calypso';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import AutoDirection from 'calypso/components/auto-direction';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
-import { FeedRecommendation } from 'calypso/data/reader/use-feed-recommendations-query';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { getStreamUrl } from 'calypso/reader/route';
 import { useSelector, useDispatch } from 'calypso/state';
@@ -11,24 +10,32 @@ import { successNotice } from 'calypso/state/notices/actions';
 import { getSite } from 'calypso/state/reader/sites/selectors';
 import type { SiteDetails } from '@automattic/data-stores';
 
-interface RecommendedFeedItemProps {
-	feed: FeedRecommendation;
+interface ReaderSiteItemProps {
+	site: ReaderSite;
 	variant: 'card' | 'compact' | 'default';
 	followSource: string;
 	iconSize?: number;
 }
 
-export function RecommendedFeedItem( {
-	feed,
+export interface ReaderSite {
+	siteId?: string;
+	feedId?: string;
+	name?: string;
+	feedUrl?: string;
+	image?: string;
+}
+
+export function ReaderSiteItem( {
+	site,
 	variant,
 	iconSize = 42,
 	followSource,
-}: RecommendedFeedItemProps ): JSX.Element {
+}: ReaderSiteItemProps ): JSX.Element {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const { image, name, feedUrl = '', siteId, feedId } = feed;
-	const site = useSelector( ( state ) => getSite( state, Number( siteId ) ) ) as SiteDetails;
-	const siteIcon = site?.icon?.img || site?.icon?.ico || image;
+	const { image, name, feedUrl = '', siteId, feedId } = site;
+	const siteDetails = useSelector( ( state ) => getSite( state, Number( siteId ) ) ) as SiteDetails;
+	const siteIcon = siteDetails?.icon?.img || siteDetails?.icon?.ico || image;
 	const isCompactView = variant === 'compact';
 	const linkUrl = getStreamUrl( feedId, siteId ) ?? feedUrl;
 
@@ -46,7 +53,7 @@ export function RecommendedFeedItem( {
 	}
 
 	return (
-		<li className="recommended-feed-item">
+		<li className="reader-site-item">
 			{ /* Query the site not just for the icon, but to ensure it is properly loaded in follows state.
 				One example being mapped domains: initial follows state may list by wpcom subdomain, and
 				the url here might be of a mapped domain. The site request success also updates follows
@@ -55,20 +62,22 @@ export function RecommendedFeedItem( {
 			*/ }
 			<QueryReaderSite siteId={ siteId } />
 
-			<a className="recommended-feed-item__link" href={ linkUrl }>
+			<a className="reader-site-item__link" href={ linkUrl }>
 				<SiteIcon iconUrl={ siteIcon } size={ iconSize } />
 
 				<AutoDirection>
-					<div className="recommended-feed-info">
+					<div className="reader-site-info">
 						<h3>{ name || feedUrl }</h3>
-						{ ! isCompactView && <p>{ site?.description || translate( 'No description.' ) }</p> }
+						{ ! isCompactView && (
+							<p>{ siteDetails?.description || translate( 'No description.' ) }</p>
+						) }
 					</div>
 				</AutoDirection>
 			</a>
 
 			{ feedUrl && (
 				<ReaderFollowButton
-					className="recommended-feed-subscribe-button"
+					className="reader-site-subscribe-button"
 					feedId={ feedId ? Number( feedId ) : undefined }
 					siteId={ siteId ? Number( siteId ) : undefined }
 					siteUrl={ feedUrl }

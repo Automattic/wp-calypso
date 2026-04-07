@@ -3,12 +3,11 @@
  */
 import { screen } from '@testing-library/react';
 import { ComponentProps } from 'react';
-import { FeedRecommendation } from 'calypso/data/reader/use-feed-recommendations-query';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { successNotice } from 'calypso/state/notices/actions';
 import readerReducer from 'calypso/state/reader/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
-import { RecommendedFeedItem } from '../recommended-feed-item';
+import { ReaderSite, ReaderSiteItem } from '../site-item';
 
 jest.mock( 'calypso/components/data/query-reader-site', () => ( {
 	__esModule: true,
@@ -46,8 +45,7 @@ jest.mock( 'calypso/reader/follow-button', () => ( {
 } ) );
 
 describe( 'RecommendedFeedItem', () => {
-	const defaultFeed: FeedRecommendation = {
-		ID: '123',
+	const defaultFeed: ReaderSite = {
 		name: 'Test Blog',
 		feedUrl: 'https://example.com/feed',
 		siteId: '456',
@@ -55,8 +53,8 @@ describe( 'RecommendedFeedItem', () => {
 		image: 'https://example.com/image.jpg',
 	};
 
-	const defaultProps: ComponentProps< typeof RecommendedFeedItem > = {
-		feed: defaultFeed,
+	const defaultProps: ComponentProps< typeof ReaderSiteItem > = {
+		site: defaultFeed,
 		variant: 'default' as const,
 		followSource: 'test-source',
 	};
@@ -65,7 +63,7 @@ describe( 'RecommendedFeedItem', () => {
 		props = defaultProps,
 		siteData?: object
 	): ReturnType< typeof renderWithProvider > =>
-		renderWithProvider( <RecommendedFeedItem { ...props } />, {
+		renderWithProvider( <ReaderSiteItem { ...props } />, {
 			initialState: {
 				reader: {
 					sites: { items: siteData ? { 456: siteData } : {} },
@@ -96,20 +94,20 @@ describe( 'RecommendedFeedItem', () => {
 	} );
 
 	test( 'fallback to blogId when feedId is empty', () => {
-		renderComponent( { ...defaultProps, feed: { ...defaultFeed, feedId: '' } } );
+		renderComponent( { ...defaultProps, site: { ...defaultFeed, feedId: '' } } );
 
 		expect( screen.getByRole( 'link' ) ).toHaveAttribute( 'href', '/reader/blogs/456' );
 	} );
 
 	test( 'fallback to URL when both feedId and blogId are empty', () => {
-		renderComponent( { ...defaultProps, feed: { ...defaultFeed, feedId: '', siteId: '' } } );
+		renderComponent( { ...defaultProps, site: { ...defaultFeed, feedId: '', siteId: '' } } );
 
 		expect( screen.getByRole( 'link' ) ).toHaveAttribute( 'href', 'https://example.com/feed' );
 	} );
 
 	describe( 'feed name variations', () => {
 		test( 'fallback to feedUrl when name is not provided', () => {
-			renderComponent( { ...defaultProps, feed: { ...defaultFeed, name: undefined } } );
+			renderComponent( { ...defaultProps, site: { ...defaultFeed, name: undefined } } );
 
 			expect( screen.getByRole( 'heading', { level: 3 } ) ).toHaveTextContent(
 				'https://example.com/feed'
@@ -139,7 +137,7 @@ describe( 'RecommendedFeedItem', () => {
 
 	describe( 'follow button variations', () => {
 		test( 'does not render when feedUrl is not provided', () => {
-			renderComponent( { ...defaultProps, feed: { ...defaultFeed, feedUrl: undefined } } );
+			renderComponent( { ...defaultProps, site: { ...defaultFeed, feedUrl: undefined } } );
 
 			expect( screen.queryByTestId( 'follow-button' ) ).not.toBeInTheDocument();
 		} );
