@@ -8,6 +8,7 @@ on:
       - 'client/reader/**'
       - 'client/blocks/reader-*/**'
       - 'client/blocks/conversation-*/**'
+      - 'client/blocks/conversations/**'
       - 'client/blocks/follow-button/**'
       - 'client/data/reader/**'
       - 'client/state/reader/**'
@@ -22,11 +23,11 @@ on:
       - 'client/my-sites/site-settings/settings-newsletter/**'
       - 'client/my-sites/importer/newsletter/**'
       - 'client/landing/stepper/declarative-flow/flows/newsletter/**'
+      - 'packages/data-stores/src/newsletter-categories/**'
       # Subscriptions
       - 'client/landing/subscriptions/**'
       - 'packages/subscriber/**'
       - 'packages/data-stores/src/subscriber/**'
-      - 'packages/data-stores/src/newsletter-categories/**'
 
 permissions:
   contents: read
