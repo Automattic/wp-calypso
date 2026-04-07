@@ -10,6 +10,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import EmptyContent from 'calypso/components/empty-content';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import JetpackFooter from 'calypso/components/jetpack/jetpack-footer';
 import JetpackTitle from 'calypso/components/jetpack-title';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -132,6 +133,7 @@ const SiteSettingsTraffic = ( {
 					{ isAdmin && <SiteVerification /> }
 				</div>
 			</Page>
+			<JetpackFooter />
 		</Main>
 	);
 };
