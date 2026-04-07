@@ -536,12 +536,40 @@ export default function SubscriberDataViews( {
 			isPrimary: false,
 		} );
 
+		baseActions.push( {
+			id: 'remove-comp',
+			label: translate( 'Remove comp', {
+				textOnly: true,
+				comment:
+					'"Comp" is short for "complimentary" — revoking a free subscription previously granted to a subscriber',
+			} ),
+			isEligible: ( subscriber: Subscriber ) =>
+				( subscriber.plans ?? [] ).some( ( p ) => p.is_comp && p.comp_id ),
+			callback: ( items: Subscriber[] ) => {
+				const subscriber = items[ 0 ];
+				if ( ! subscriber ) {
+					return;
+				}
+				const compPlan = ( subscriber.plans ?? [] ).find( ( p ) => p.is_comp && p.comp_id );
+				if ( ! compPlan ) {
+					return;
+				}
+				onRemoveComp( {
+					planName: compPlan.title ?? '',
+					username: subscriber.display_name,
+					compId: compPlan.comp_id,
+				} );
+			},
+			isPrimary: false,
+		} );
+
 		return baseActions;
 	}, [
 		selectedSubscriber,
 		handleSubscriberSelection,
 		handleUnsubscribe,
 		onCompSubscription,
+		onRemoveComp,
 		hasUncompedPlans,
 	] );
 
