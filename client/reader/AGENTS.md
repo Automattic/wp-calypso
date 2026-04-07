@@ -41,7 +41,7 @@ Post cards live in `client/blocks/reader-post-card/` with variants: `standard` (
 - Use `useTranslate()` from `i18n-calypso` — the `localize` HOC is legacy.
 - Use `renderWithProvider` from `calypso/test-helpers/testing-library` for Redux-dependent test components.
 - Prefer `nock` for HTTP mocking over mocking components — test real component behavior with mocked API responses.
-- Use [ARIA-based queries](https://playwright.dev/docs/locators) (`getByRole`, `getByLabelText`) to locate elements instead of CSS selectors or test IDs.
+- Use [ARIA-based queries](https://testing-library.com/docs/queries/about/) (`getByRole`, `getByLabelText`) to locate elements instead of CSS selectors or test IDs.
 - Prefer `@wordpress/components` primitives (Button, Modal, Card, Icon, VStack, HStack) over custom HTML elements with custom CSS.
 - Use layout components (VStack, HStack, Spacer, Grid) to build layouts instead of custom CSS.
 - Do not use `@automattic/components` — it is deprecated.
