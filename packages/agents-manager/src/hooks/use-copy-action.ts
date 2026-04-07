@@ -68,7 +68,7 @@ export default function useCopyAction( registerMessageActions: RegisterMessageAc
 
 				return [
 					{
-						type: 'component' as const,
+						type: 'component',
 						id: 'copy',
 						component: CopyActionButton,
 						componentProps: { text },
