@@ -40,7 +40,7 @@ export const useSetCompPlanMutation = (
 				{
 					engine: engine,
 					current_step: currentStep,
-					stripe_plan_id: stripePlanId,
+					comp_stripe_plan_id: stripePlanId,
 				}
 			);
 
