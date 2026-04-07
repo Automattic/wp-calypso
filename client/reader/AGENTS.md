@@ -43,7 +43,7 @@ Post cards live in `client/blocks/reader-post-card/` with variants: `standard` (
 - Prefer `nock` for HTTP mocking over mocking components — test real component behavior with mocked API responses.
 - Use [ARIA-based queries](https://testing-library.com/docs/queries/about/) (`getByRole`, `getByLabelText`) to locate elements instead of CSS selectors or test IDs.
 - Use [`userEvent`](https://testing-library.com/docs/user-event/intro) instead of `fireEvent` for simulating user interactions.
-- Use `it()` instead of `test()` for test declarations.
+- For test declarations, follow the existing style in the surrounding file/project and be consistent about using `it()` or `test()`.
 - Set up userEvent with `const user = userEvent.setup()` and call `user.click()` instead of `userEvent.click()` directly.
 - Prefer `@wordpress/components` primitives (Button, Modal, Card, Icon, VStack, HStack) over custom HTML elements with custom CSS.
 - Use layout components (VStack, HStack, Spacer, Grid) to build layouts instead of custom CSS.
