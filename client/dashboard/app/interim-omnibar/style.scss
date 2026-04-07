@@ -5,15 +5,15 @@ body:has(#wpcom-omnibar) #wpcom {
 }
 
 #wpcom-omnibar {
-	--color-masterbar-background: #1d2327;
-	--color-masterbar-text: #f0f0f1;
-	--color-masterbar-icon: rgba(240, 246, 252, 0.6);
-	--color-masterbar-highlight: #72aee6;
-	--color-masterbar-border: #8c8f94;
-	--color-masterbar-item-hover-background: #2c3338;
-	--color-masterbar-item-active-background: #23282d;
-	--color-masterbar-unread-dot-background: var(--color-accent-20, #d54e21);
-	--color-masterbar-submenu-text: #c3c4c7;
+	--color-masterbar-background: #1e1e1e;
+	--color-masterbar-text: #fff;
+	--color-masterbar-icon: #f3f1f1;
+	--color-masterbar-highlight: #7b90ff;
+	--color-masterbar-border: #303030;
+	--color-masterbar-item-hover-background: #0c0c0c;
+	--color-masterbar-item-active-background: #0c0c0c;
+	--color-masterbar-unread-dot-background: var(--studio-wordpress-blue-20, #3858e9);
+	--color-masterbar-submenu-text: #bcbcbc;
 
 	button.masterbar__item {
 		background: transparent;
