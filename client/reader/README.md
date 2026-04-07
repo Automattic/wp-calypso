@@ -11,9 +11,11 @@ These routes are served by the module:
 | `/reader` | Main stream (followed sites) |
 | `/reader/recent/:feed_id` | Recent stream for a specific feed |
 | `/reader/feeds/:feed_id` | Feed stream |
+| `/reader/feeds/:feed_id/posts` | Redirects to `/reader/feeds/:feed_id` |
 | `/reader/blogs/:blog_id` | Site/blog stream |
+| `/reader/blogs/:blog_id/posts` | Redirects to `/reader/blogs/:blog_id` |
 | `/reader/feeds/:feed/posts/:post` | Full post (via feed) |
-| `/reader/blogs/:blog/posts/:post` | Full post (via blog) |
+| `/reader/blogs/:blog_id/posts/:post` | Full post (via blog) |
 | `/reader/a8c` | Automattic employee posts |
 | `/reader/p2` | P2 posts |
 | `/reader/search` | Reader search |
