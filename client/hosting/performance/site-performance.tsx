@@ -1,5 +1,7 @@
+import { domainsQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
+import { useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
@@ -158,8 +160,13 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 	);
 
 	const siteIsLaunched = useSelector(
-		( state ) => getRequest( state, launchSite( siteId ) )?.isLoading ?? false
+		( state ) => getRequest( state, launchSite( siteId ) )?.hasLoaded ?? false
 	);
+
+	const { isFetchedAfterMount: isDomainsFetched } = useQuery( {
+		...domainsQuery(),
+		select: ( data ) => data.filter( ( domain ) => domain.blog_id === site?.ID ),
+	} );
 
 	const [ isExperimentLoading, experimentData ] = useExperiment(
 		'calypso_standardized_site_launch_gating'
@@ -392,7 +399,7 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 					) }
 				</>
 			) }
-			{ isCelebrationModalOpen && site && (
+			{ isCelebrationModalOpen && site && isDomainsFetched && (
 				<AnalyticsProvider client={ analyticsClient }>
 					<SiteLaunchCelebrationModal
 						site={ site }
