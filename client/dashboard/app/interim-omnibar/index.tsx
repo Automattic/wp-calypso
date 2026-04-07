@@ -5,7 +5,9 @@ import {
 	userPreferenceQuery,
 } from '@automattic/api-queries';
 import { QueryObserver } from '@tanstack/react-query';
+import { removeQueryArgs } from '@wordpress/url';
 import { hydrateRoot } from 'react-dom/client';
+import { setCurrentOmnibarSite } from '../../utils/omnibar';
 import { AUTH_QUERY_KEY, initializeCurrentUser } from '../auth';
 import type { OmnibarEvents } from './click-handlers';
 import type { UserPreferences } from '@automattic/api-core';
@@ -56,7 +58,9 @@ export default async function loadOmnibar( events: OmnibarEvents ) {
 		);
 
 	async function renderWithSiteId( siteId: number | undefined ) {
-		const site = siteId ? await queryClient.ensureQueryData( siteByIdQuery( siteId ) ) : null;
+		const site = siteId
+			? await queryClient.ensureQueryData( siteByIdQuery( siteId ) ).catch( () => null )
+			: null;
 		root.render(
 			<InterimOmnibar
 				user={ user }
@@ -68,11 +72,24 @@ export default async function loadOmnibar( events: OmnibarEvents ) {
 		);
 	}
 
-	// Render with the initial recent site (or primary blog as fallback).
+	const originSiteId = Number(
+		new URLSearchParams( window.location.search ).get( 'origin_site_id' )
+	);
+	if ( originSiteId ) {
+		setCurrentOmnibarSite( originSiteId );
+		window.history.replaceState(
+			null,
+			'',
+			removeQueryArgs( window.location.pathname + window.location.search, 'origin_site_id' )
+		);
+	}
+
 	const recentSites = queryClient.getQueryData< UserPreferences >(
 		rawUserPreferencesQuery().queryKey
 	)?.recentSites;
-	const initialSiteId = recentSites?.[ 0 ] || user.primary_blog;
+
+	// Render with the origin site, or the most recent site, or primary blog as fallback.
+	const initialSiteId = originSiteId || recentSites?.[ 0 ] || user.primary_blog;
 	renderWithSiteId( initialSiteId );
 
 	// Re-render whenever recentSites changes (e.g. user navigates to a different site).

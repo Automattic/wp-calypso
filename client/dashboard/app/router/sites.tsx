@@ -36,13 +36,11 @@ import {
 	siteSshAccessStatusQuery,
 	siteStaticFile404SettingQuery,
 	siteWordPressVersionQuery,
-	userPreferenceOptimisticMutation,
 	queryClient,
 	wpOrgCoreVersionQuery,
 } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import { isSupportSession } from '@automattic/calypso-support-session';
-import { MutationObserver } from '@tanstack/react-query';
 import {
 	createLazyRoute,
 	createRoute,
@@ -58,6 +56,7 @@ import {
 	canViewWordPressSettings,
 } from '../../sites/features';
 import { shouldLoadWpVersionNotice } from '../../sites/overview/wp-version-notice';
+import { setCurrentOmnibarSite } from '../../utils/omnibar';
 import {
 	getActivityLogHiddenGroups,
 	hasHostingFeature,
@@ -173,16 +172,8 @@ export const siteRoute = createRoute( {
 	},
 	onEnter: async ( { loaderData } ) => {
 		const siteId = loaderData?.site?.ID;
-		if ( ! siteId ) {
-			return;
-		}
-		const prefs = await queryClient.ensureQueryData( rawUserPreferencesQuery() );
-		const recentSites = prefs?.recentSites ?? [];
-		if ( siteId !== recentSites[ 0 ] ) {
-			const updated = [ ...new Set( [ siteId, ...recentSites ] ) ].slice( 0, 5 );
-			new MutationObserver( queryClient, userPreferenceOptimisticMutation( 'recentSites' ) ).mutate(
-				updated
-			);
+		if ( siteId ) {
+			setCurrentOmnibarSite( siteId );
 		}
 	},
 	errorComponent: lazyRouteComponent( () => import( '../../sites/site/error' ) ),
