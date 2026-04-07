@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import isDevEnvironment from 'calypso/lib/config/is-dev-environment';
 import { isLegacyRoute } from 'calypso/lib/route/legacy-routes';
 import { URL as URLString } from 'calypso/types';
 
@@ -6,8 +7,6 @@ import { URL as URLString } from 'calypso/types';
 // URLs, so we always need to provide a base of some sort.
 const BASE_HOSTNAME = 'base.invalid';
 const BASE_URL = `http://${ BASE_HOSTNAME }`;
-
-const DEV_ENV_IDS = new Set( [ 'development', 'wpcalypso' ] );
 
 export default function isExternal( url: URLString ): boolean {
 	// While TypeScript should ensure that `url` really is a string, this method
@@ -54,7 +53,7 @@ export default function isExternal( url: URLString ): boolean {
 
 	// On Calypso Live and dev environments, treat production wordpress.com
 	// routes as internal so sidebar links stay within the testing environment.
-	if ( DEV_ENV_IDS.has( config( 'env_id' ) ) && hostname === 'wordpress.com' ) {
+	if ( isDevEnvironment() && hostname === 'wordpress.com' ) {
 		return Boolean( hasLegacyPath );
 	}
 

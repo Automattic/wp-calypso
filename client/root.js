@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import globalPageInstance from '@automattic/calypso-router';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
+import isDevEnvironment from 'calypso/lib/config/is-dev-environment';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { fetchPreferences } from 'calypso/state/preferences/actions';
@@ -90,11 +91,10 @@ const waitForPrefs = () => async ( dispatch, getState ) => {
 
 // In development and Calypso Live environments, don't redirect to external domains
 // (Dashboard subdomain, wp-admin) as it navigates the user away from the testing environment.
-const isDevOrCalypsoLive = () => [ 'development', 'wpcalypso' ].includes( config( 'env_id' ) );
 
 const getSitesLink = ( isDashboardOptIn ) => {
 	// TODO: The workaround will need to change once we deprecate v1 /sites.
-	if ( isDashboardOptIn && ! isDevOrCalypsoLive() ) {
+	if ( isDashboardOptIn && ! isDevEnvironment() ) {
 		return dashboardLink( '/sites' );
 	}
 
@@ -137,10 +137,7 @@ async function getLoggedInLandingPage( { dispatch, getState } ) {
 	);
 
 	if ( isCustomerHomeEnabled ) {
-		if (
-			isAdminInterfaceWPAdmin( getState(), primaryOrSelectedSiteId ) &&
-			! isDevOrCalypsoLive()
-		) {
+		if ( isAdminInterfaceWPAdmin( getState(), primaryOrSelectedSiteId ) && ! isDevEnvironment() ) {
 			// This URL starts with 'https://' because it's the access to wp-admin.
 			return getSiteAdminUrl( getState(), primaryOrSelectedSiteId );
 		}
