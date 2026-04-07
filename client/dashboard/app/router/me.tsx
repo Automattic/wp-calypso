@@ -970,7 +970,7 @@ export const profileLegacyRedirectRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'profile',
 	beforeLoad: () => {
-		throw redirect( { to: '/me/account' } );
+		throw dashboardRedirect( { to: '/me/account' } );
 	},
 } );
 

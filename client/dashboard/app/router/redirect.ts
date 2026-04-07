@@ -5,9 +5,9 @@ import { redirect } from '@tanstack/react-router';
  * A wrapper around TanStack Router's `redirect()` that disables view transitions.
  * Redirects are automatic reroutes, not user-initiated navigations, so they
  * should not trigger a view transition animation.
+ *
+ * Typed as `typeof redirect` so callers get the same generic inference for
+ * `to`, `params`, and `search` as the underlying function.
  */
-export function dashboardRedirect(
-	options: Parameters< typeof redirect >[ 0 ]
-): ReturnType< typeof redirect > {
-	return redirect( { ...options, viewTransition: false } );
-}
+export const dashboardRedirect: typeof redirect = ( options ) =>
+	redirect( { ...options, viewTransition: false } );
