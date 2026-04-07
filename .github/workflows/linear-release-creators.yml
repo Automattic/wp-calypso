@@ -4,15 +4,30 @@ on:
   push:
     branches: [trunk]
     paths:
-      # Reader
+      # Reader - UI, state, data, utilities
       - 'client/reader/**'
       - 'client/blocks/reader-*/**'
-      # Newsletter
+      - 'client/blocks/conversation-*/**'
+      - 'client/blocks/follow-button/**'
+      - 'client/data/reader/**'
+      - 'client/state/reader/**'
+      - 'client/state/reader-ui/**'
+      - 'client/lib/reader/**'
+      - 'packages/data-stores/src/reader/**'
+      # Newsletter - settings, onboarding, import
       - 'client/data/newsletter-categories/**'
       - 'client/data/paid-newsletter/**'
       - 'client/mailing-lists/**'
       - 'client/my-sites/email/**'
       - 'client/my-sites/subscribers/**'
+      - 'client/my-sites/site-settings/settings-newsletter/**'
+      - 'client/my-sites/importer/newsletter/**'
+      - 'client/landing/stepper/declarative-flow/flows/newsletter/**'
+      # Subscriptions
+      - 'client/landing/subscriptions/**'
+      - 'packages/subscriber/**'
+      - 'packages/data-stores/src/subscriber/**'
+      - 'packages/data-stores/src/newsletter-categories/**'
 
 permissions:
   contents: read
