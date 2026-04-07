@@ -3,7 +3,7 @@ import { DropdownMenu, MenuGroup, MenuItemsChoice, Button } from '@wordpress/com
 import { sprintf } from '@wordpress/i18n';
 import { chevronDown, Icon, arrowRight } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { useState, KeyboardEvent } from 'react';
+import { useState } from 'react';
 import { Plan } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 
 type MapCompPlanProps = {
@@ -19,16 +19,16 @@ function displayPlan( plan?: Plan, fallback?: string ) {
 	}
 
 	return (
-		<div>
-			<strong>{ plan.name }</strong>
-			<p>
+		<span>
+			<strong>{ plan.name }</strong>{ ' ' }
+			<span>
 				{ formatCurrency( plan.plan_amount_decimal, plan.plan_currency, {
 					isSmallestUnit: true,
 					stripZeros: true,
 				} ) }
 				/{ plan.plan_interval }
-			</p>
-		</div>
+			</span>
+		</span>
 	);
 }
 
@@ -70,14 +70,8 @@ export function MapCompPlan( {
 			<div className="map-plan__select-product">
 				<Button
 					aria-haspopup="true"
-					tabIndex={ 0 }
 					className="map-plan__selected"
 					onClick={ () => setIsOpen( ! isOpen ) }
-					onKeyDown={ ( event: KeyboardEvent ) => {
-						if ( event.key === 'Enter' || event.key === ' ' ) {
-							setIsOpen( ! isOpen );
-						}
-					} }
 				>
 					{ displayPlan( selectedPlan, __( 'Select a plan' ) ) }
 				</Button>
