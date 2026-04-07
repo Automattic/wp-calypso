@@ -5,8 +5,8 @@ import type { UseAgentChatReturn, UIMessage } from '@automattic/agenttic-client'
 type RegisterMessageActions = UseAgentChatReturn[ 'registerMessageActions' ];
 
 /**
- * Returns the copyable text from a message, or an empty string if not copyable.
- * Messages with at least one text part are copyable; non-text parts (e.g. `data`) are ignored.
+ * Extracts copyable text from a message. For tool messages, only known tools with
+ * displayable content are included. Returns an empty string if nothing is copyable.
  */
 function getCopyableText( message: UIMessage ): string {
 	const textParts = message.content?.filter( ( part ) => part.type === 'text' );
@@ -14,37 +14,38 @@ function getCopyableText( message: UIMessage ): string {
 		return '';
 	}
 
-	// Exclude tool messages (JSON text with a `tool_id` field).
-	const firstPartText = textParts[ 0 ]?.text ?? '';
-	try {
-		const parsed = JSON.parse( firstPartText );
+	const copyableTexts: string[] = [];
 
-		// Tools with copyable text.
-		if ( parsed.tool_id ) {
-			if (
-				parsed.tool_id === 'big_sky__wordpress_com_support' &&
-				typeof parsed.data === 'string'
-			) {
-				return parsed.data.trim();
+	for ( const part of textParts ) {
+		const text = part.text ?? '';
+
+		try {
+			const parsed = JSON.parse( text );
+
+			// Tool messages (JSON text with a `tool_id` field).
+			if ( parsed.tool_id ) {
+				if (
+					parsed.tool_id === 'big_sky__wordpress_com_support' &&
+					typeof parsed.data === 'string'
+				) {
+					copyableTexts.push( parsed.data.trim() );
+				} else if (
+					parsed.tool_id === 'big_sky__apply_block_edits' &&
+					typeof parsed.data?.summary === 'string'
+				) {
+					copyableTexts.push( parsed.data.summary.trim() );
+				}
+				// Other tools: skip (not copyable).
+				continue;
 			}
-
-			if (
-				parsed.tool_id === 'big_sky__apply_block_edits' &&
-				typeof parsed.data?.summary === 'string'
-			) {
-				return parsed.data.summary.trim();
-			}
-
-			return '';
+		} catch {
+			// Not JSON — regular text.
 		}
-	} catch {
-		// Not JSON — regular text.
+
+		copyableTexts.push( text );
 	}
 
-	return textParts
-		.map( ( part ) => part.text ?? '' )
-		.join( '\n' )
-		.trim();
+	return copyableTexts.join( '\n' ).trim();
 }
 
 /**
