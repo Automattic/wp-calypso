@@ -5,12 +5,15 @@ import { FeedRecommendation } from 'calypso/data/reader/use-feed-recommendations
 import { RecommendedFeedItem } from './recommended-feed-item';
 
 interface RecommendedFeedsListProps
-	extends Pick< ComponentProps< typeof RecommendedFeedItem >, 'variant' | 'followSource' > {
+	extends Pick<
+		ComponentProps< typeof RecommendedFeedItem >,
+		'variant' | 'iconSize' | 'followSource'
+	> {
 	feeds: FeedRecommendation[];
 }
 
 export function RecommendedFeedsList( props: RecommendedFeedsListProps ): JSX.Element {
-	const { feeds, variant = 'default', followSource } = props;
+	const { feeds, variant = 'default', iconSize, followSource } = props;
 
 	return (
 		<ul className={ clsx( 'recommended-feeds-list', `is-${ variant }-view` ) }>
@@ -23,6 +26,7 @@ export function RecommendedFeedsList( props: RecommendedFeedsListProps ): JSX.El
 							feed={ feed }
 							followSource={ followSource }
 							variant={ variant }
+							iconSize={ iconSize }
 						/>
 					)
 				) }

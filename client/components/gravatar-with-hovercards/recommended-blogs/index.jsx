@@ -40,6 +40,7 @@ function RecommendedBlogs( { userLogin, closeCard } ) {
 				feeds={ shuffle( recommendedBlogs ).slice( 0, 3 ) }
 				followSource="gravatar-hovercard__recommended-feeds-list"
 				variant="compact"
+				iconSize={ 32 }
 			/>
 		</div>
 	);
