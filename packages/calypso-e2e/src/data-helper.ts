@@ -41,6 +41,9 @@ export function getNewTestUser( {
 
 	const siteName = getBlogName();
 
+	// Intentionally logged to stderr so it appears in CI build logs without
+	// interfering with Playwright's stdout test output. This helps debug
+	// which email provider a test used when investigating signup failures.
 	process.stderr.write( `[getNewTestUser] email=${ email }, useMailosaur=${ useMailosaur }\n` );
 
 	return {
