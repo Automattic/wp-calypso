@@ -1,34 +1,24 @@
-import { useEffect } from 'react';
+import './styles.scss';
 import ReactDOM from 'react-dom';
-import { useSelector, useDispatch } from 'calypso/state';
-import { requestUser } from 'calypso/state/reader/users/actions';
-import getReaderUser from 'calypso/state/selectors/get-reader-user';
+import { useReaderUserQuery } from 'calypso/reader/user-profile/queries/useReaderUserQuery';
 import GravatarHeader from './gravatar-header';
 import PrimaryBlog from './primary-blog-card';
 import RecommendedBlogs from './recommended-blogs';
 
-import './styles.scss';
-
 function HovercardContent( props ) {
-	const dispatch = useDispatch();
 	const { user, gravatarData, processedAvatarUrl, closeCard } = props;
 
 	// Prefer wpcom_id when it is given. Sometimes ID is specific to another site and wpcom_id is
 	// accurate. Use ID as a fallback as sometimes wpcom_id isn't provided (like self user data).
 	const userID = user.wpcom_id || user.ID;
+	const { data } = useReaderUserQuery( userID, { find_by_id: ! user.user_login && !! userID } );
 
 	// For some reason there are places where the user object passes in primary blog of -1. Lets
 	// find the read one with this selector.
-	const readerUserData = useSelector( ( state ) => getReaderUser( state, userID, true ) );
+	const readerUserData = data?.user;
 	const { display_name: displayName, user_login: userLogin } = readerUserData || {};
 
 	const primaryBlogId = readerUserData?.primary_blog || user?.primary_blog || user?.site_ID;
-
-	useEffect( () => {
-		if ( ! readerUserData && userID ) {
-			dispatch( requestUser( userID, true ) );
-		}
-	}, [ userID, dispatch, readerUserData ] );
 
 	return (
 		<>
