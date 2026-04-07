@@ -22,7 +22,6 @@
 	"wpcom_login_url": "https://wordpress.com/log-in",
 	"logout_url": "https://|subdomain|wordpress.com",
 	"features": {
-		"always_use_logout_url": true,
 		"calypso/ai-site-builder-flow": true,
 		"cancel-flow/solutions-cards-upsell": false,
 		"ciab/allow-domain-features": true,

@@ -5,8 +5,8 @@ import { useEffect, useMemo } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { MasterbarLoggedIn } from 'calypso/layout/masterbar/logged-in';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { getLogoutUrl } from 'calypso/lib/user/shared-utils';
 import { getSiteDisplayName } from '../../utils/site-name';
+import { logout } from '../auth';
 import { omnibarEvents } from './click-handlers';
 import type { User, Site } from '@automattic/api-core';
 
@@ -137,8 +137,7 @@ export function InterimOmnibar( {
 					requestAdminMenu={ noop }
 					redirectToLogout={ () => {
 						if ( userProp ) {
-							const logoutUrl = getLogoutUrl( userProp );
-							window.location.href = logoutUrl;
+							logout( userProp );
 						}
 					} }
 					launchSiteOrRedirectToLaunchSignupFlow={ noop }
