@@ -216,7 +216,7 @@ describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function 
 		} );
 
 		it( 'Navigated to Home dashboard', async function () {
-			await page.waitForURL( /home/ );
+			await page.waitForURL( /site-visibility/ );
 			const myHomePage = new MyHomePage( page );
 			await new Promise( ( r ) => setTimeout( r, 2000 ) );
 			await page.reload();
