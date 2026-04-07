@@ -50,7 +50,7 @@ These routes are served by the module:
 
 | Route | Description |
 |-------|-------------|
-| `/discover` | Discover (recommended) |
+| `/discover` | Freshly Pressed |
 | `/discover/recommended` | Recommended content |
 | `/discover/firstposts` | First posts |
 | `/discover/tags` | Featured tags |
