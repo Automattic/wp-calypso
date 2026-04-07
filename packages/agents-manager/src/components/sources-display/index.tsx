@@ -59,6 +59,7 @@ export default function SourcesDisplay( { sources }: Props ) {
 			screenReaderText={ __( 'More', '__i18n_text_domain__' ) }
 			iconSize={ 16 }
 			clickableHeader
+			useInert
 			smooth
 		>
 			<div className="agents-manager-sources-display__list">
