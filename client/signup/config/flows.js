@@ -109,10 +109,13 @@ function getLaunchDestination( dependencies ) {
 		return addQueryArgs( { celebrateLaunch: 'true' }, dependencies.back_to );
 	}
 
-	if ( dependencies.refParameter === 'wp-admin' ) {
+	const ref = dependencies.refParameter?.trim() ?? '';
+	const isWpAdminPath = ref === 'wp-admin' || ref.startsWith( 'wp-admin/' );
+
+	if ( isWpAdminPath ) {
 		return addQueryArgs(
 			{ 'celebrate-launch': 'true' },
-			`https://${ dependencies.siteSlug }/wp-admin`
+			`https://${ dependencies.siteSlug }/${ ref }`
 		);
 	}
 
