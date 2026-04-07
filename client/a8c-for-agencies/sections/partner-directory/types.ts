@@ -46,8 +46,10 @@ export interface LeadMatchingDetails {
 	supportsGlobal: boolean;
 	languages: string[];
 	businessTypes: string[];
+	// Dormant until a separate free-text contract exists for agency business types.
 	otherBusinessType: string;
 	idealBusinessTypes: string[];
+	// Dormant until a separate free-text contract exists for agency business types.
 	otherIdealBusinessType: string;
 	companySizes: string[];
 	hostingEnvironments: string[];
@@ -94,7 +96,7 @@ export interface AgencyLeadMatchingProfile {
 	};
 	project_types: {
 		supported_project_types: string[];
-		core_project_types: string[];
+		core_project_types?: string[];
 		accepts_small_fixes: boolean;
 	};
 	service_and_budget: {

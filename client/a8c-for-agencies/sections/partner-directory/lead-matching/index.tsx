@@ -1,6 +1,6 @@
 import page from '@automattic/calypso-router';
 import { Badge } from '@automattic/components';
-import { Card, CardBody, TextControl, ToggleControl, Button } from '@wordpress/components';
+import { Card, CardBody, ToggleControl, Button } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -506,9 +506,6 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 		void saveLeadMatchingPreferences( 'manual' );
 	};
 
-	const showOtherBusinessType = formData.businessTypes.includes( 'other' );
-	const showOtherIdealBusinessType = formData.idealBusinessTypes.includes( 'other' );
-
 	return (
 		<div className="partner-directory-lead-matching">
 			<div ref={ placeholderRef } className="partner-directory-lead-matching__status-placeholder">
@@ -653,16 +650,6 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 						/>
 					</FormField>
 
-					{ showOtherBusinessType && (
-						<FormField label={ __( 'Please specify other business type' ) }>
-							<TextControl
-								value={ formData.otherBusinessType }
-								onChange={ ( value ) => updateField( 'otherBusinessType', value ) }
-								placeholder={ __( 'Describe the other business type' ) }
-							/>
-						</FormField>
-					) }
-
 					<FormField
 						label={ __( 'Which business types are an ideal fit for your agency?' ) }
 						description={ __( 'Select all that apply.' ) }
@@ -679,16 +666,6 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 							sortSuggestions
 						/>
 					</FormField>
-
-					{ showOtherIdealBusinessType && (
-						<FormField label={ __( 'Please specify other ideal business type' ) }>
-							<TextControl
-								value={ formData.otherIdealBusinessType }
-								onChange={ ( value ) => updateField( 'otherIdealBusinessType', value ) }
-								placeholder={ __( 'Describe the other ideal business type' ) }
-							/>
-						</FormField>
-					) }
 
 					<FormField
 						label={ __( 'Which company sizes are a good fit for your agency?' ) }

@@ -6,6 +6,75 @@ import {
 	LeadMatchingDetails,
 } from '../types';
 
+const ALLOWED_BUSINESS_TYPES = new Set( [
+	'local_service',
+	'online_store_physical',
+	'online_store_digital',
+	'content_media',
+	'nonprofit_community',
+] );
+
+const ALLOWED_HOSTING_ENVIRONMENTS = new Set( [
+	'wordpress_com',
+	'shared_or_managed_host',
+	'managed_wp_host',
+] );
+
+const ALLOWED_MIGRATION_PLATFORMS = new Set( [
+	'shopify',
+	'wix',
+	'squarespace',
+	'webflow',
+	'custom',
+] );
+
+const LEGACY_COMPLEXITY_VALUE_MAP: Record< string, string > = {
+	custom_pricing_catalogs: 'custom_pricing',
+	erp_inventory_pricing_integrations: 'erp_integrations',
+	customer_portals_gated_access: 'customer_portals',
+	simple_catalog: 'none_simple',
+};
+
+const ALLOWED_COMPLEXITY_FLAGS = new Set( [
+	'custom_pricing',
+	'erp_integrations',
+	'customer_portals',
+	'subscriptions_memberships',
+	'traffic_spikes',
+	'none_simple',
+] );
+
+const LEGACY_DECISION_PROCESS_VALUE_MAP: Record< string, string > = {
+	procurement_or_formal_approval: 'formal_procurement',
+};
+
+const ALLOWED_DECISION_PROCESSES = new Set( [
+	'solo_decider',
+	'small_team',
+	'multi_stakeholder',
+	'formal_procurement',
+] );
+
+const LEGACY_MINIMUM_BUDGET_VALUE_MAP: Record< string, string > = {
+	'30k_plus': 'above_30k',
+};
+
+const normalizeValues = (
+	values: string[] | undefined,
+	allowedValues: Set< string >,
+	valueMap: Record< string, string > = {}
+) =>
+	Array.from(
+		new Set(
+			( values ?? [] )
+				.map( ( value ) => valueMap[ value ] ?? value )
+				.filter( ( value ) => allowedValues.has( value ) )
+		)
+	);
+
+const normalizeMinimumBudget = ( value: string | undefined ) =>
+	LEGACY_MINIMUM_BUDGET_VALUE_MAP[ value ?? '' ] ?? value ?? '';
+
 export function createDefaultLeadMatchingDetails(): LeadMatchingDetails {
 	return {
 		regions: [],
@@ -62,7 +131,6 @@ export function createDefaultLeadMatchingProfile(): AgencyLeadMatchingProfile {
 		},
 		project_types: {
 			supported_project_types: [],
-			core_project_types: [],
 			accepts_small_fixes: false,
 		},
 		service_and_budget: {
@@ -145,25 +213,47 @@ export function mapLeadMatchingProfileToFormData(
 		regions: profile.geography_and_language?.supported_regions ?? [],
 		supportsGlobal: !! profile.geography_and_language?.global_remote,
 		languages: profile.geography_and_language?.supported_languages ?? [],
-		businessTypes: profile.business_fit?.supported_business_types ?? [],
+		businessTypes: normalizeValues(
+			profile.business_fit?.supported_business_types,
+			ALLOWED_BUSINESS_TYPES
+		),
 		otherBusinessType: '',
-		idealBusinessTypes: profile.business_fit?.ideal_business_types ?? [],
+		idealBusinessTypes: normalizeValues(
+			profile.business_fit?.ideal_business_types,
+			ALLOWED_BUSINESS_TYPES
+		),
 		otherIdealBusinessType: '',
 		companySizes: profile.business_fit?.supported_company_sizes ?? [],
-		hostingEnvironments: profile.platform_and_hosting?.supported_hosting_environments ?? [],
+		hostingEnvironments: normalizeValues(
+			profile.platform_and_hosting?.supported_hosting_environments,
+			ALLOWED_HOSTING_ENVIRONMENTS
+		),
 		supportsHostingRecommendation: !! profile.platform_and_hosting?.can_recommend_better_hosting,
-		migrationPlatforms: profile.platform_and_hosting?.migration_platforms ?? [],
-		storeComplexities: profile.ecommerce?.supported_complexity_flags ?? [],
+		migrationPlatforms: normalizeValues(
+			( profile.platform_and_hosting?.migration_platforms ?? [] ).map( ( value ) =>
+				value === 'other' ? 'custom' : value
+			),
+			ALLOWED_MIGRATION_PLATFORMS
+		),
+		storeComplexities: normalizeValues(
+			profile.ecommerce?.supported_complexity_flags,
+			ALLOWED_COMPLEXITY_FLAGS,
+			LEGACY_COMPLEXITY_VALUE_MAP
+		),
 		projectTypes: profile.project_types?.supported_project_types ?? [],
 		supportsQuickHelp: !! profile.project_types?.accepts_small_fixes,
 		serviceLevels: profile.service_and_budget?.max_service_level
 			? [ profile.service_and_budget.max_service_level ]
 			: [],
 		budgetLevels: profile.service_and_budget?.supported_budget_bands ?? [],
-		minimumBudget: profile.service_and_budget?.minimum_budget_band ?? '',
+		minimumBudget: normalizeMinimumBudget( profile.service_and_budget?.minimum_budget_band ),
 		timingPreferences: profile.timing?.supported_start_timings ?? [],
 		supportsHardDeadlines: !! profile.timing?.supports_hard_deadlines,
-		decisionProcesses: profile.delivery_model?.supported_decision_processes ?? [],
+		decisionProcesses: normalizeValues(
+			profile.delivery_model?.supported_decision_processes,
+			ALLOWED_DECISION_PROCESSES,
+			LEGACY_DECISION_PROCESS_VALUE_MAP
+		),
 		ongoingRelationships: [
 			...( profile.delivery_model?.offers_care_plans ? [ 'care_plans' ] : [] ),
 			...( profile.delivery_model?.trains_clients ? [ 'training' ] : [] ),
@@ -222,19 +312,18 @@ export function mapLeadMatchingDetailsToProfile(
 		ecommerce: {
 			supports_ecommerce_projects: supportsEcommerceProjects,
 			ecommerce_focus: supportsEcommerceProjects && formData.storeComplexities.length > 0,
-			supported_complexity_flags: formData.storeComplexities.includes( 'simple_catalog' )
-				? [ 'simple_catalog' ]
-				: formData.storeComplexities.filter( ( value ) => value !== 'simple_catalog' ),
+			supported_complexity_flags: formData.storeComplexities.includes( 'none_simple' )
+				? [ 'none_simple' ]
+				: formData.storeComplexities.filter( ( value ) => value !== 'none_simple' ),
 		},
 		project_types: {
 			supported_project_types: formData.projectTypes,
-			core_project_types: formData.projectTypes,
 			accepts_small_fixes: formData.supportsQuickHelp,
 		},
 		service_and_budget: {
 			max_service_level: serviceLevel,
 			supported_budget_bands: formData.budgetLevels,
-			minimum_budget_band: formData.minimumBudget,
+			minimum_budget_band: normalizeMinimumBudget( formData.minimumBudget ),
 		},
 		timing: {
 			supported_start_timings: formData.timingPreferences,

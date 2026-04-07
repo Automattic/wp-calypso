@@ -35,7 +35,6 @@ export function getLeadMatchingOptions() {
 			{ label: __( 'Online stores with digital products' ), value: 'online_store_digital' },
 			{ label: __( 'Content and media' ), value: 'content_media' },
 			{ label: __( 'Nonprofits and communities' ), value: 'nonprofit_community' },
-			{ label: __( 'Other businesses' ), value: 'other' },
 		] satisfies LeadMatchingOption[],
 		supportedCompanySizes: [
 			{ label: __( '1–5 employees' ), value: 'size_1_5' },
@@ -48,31 +47,30 @@ export function getLeadMatchingOptions() {
 			{ label: __( 'WordPress.com' ), value: 'wordpress_com' },
 			{ label: __( 'Shared or managed hosting' ), value: 'shared_or_managed_host' },
 			{ label: __( 'Managed WordPress hosting' ), value: 'managed_wp_host' },
-			{ label: __( 'Unknown or not sure' ), value: 'unknown' },
 		] satisfies LeadMatchingOption[],
 		migrationPlatforms: [
-			{ label: __( 'WordPress' ), value: 'wordpress' },
-			{ label: __( 'WooCommerce' ), value: 'woocommerce' },
 			{ label: __( 'Shopify' ), value: 'shopify' },
 			{ label: __( 'Wix' ), value: 'wix' },
 			{ label: __( 'Squarespace' ), value: 'squarespace' },
 			{ label: __( 'Webflow' ), value: 'webflow' },
-			{ label: __( 'Custom platform' ), value: 'custom' },
-			{ label: __( 'Other platform' ), value: 'other' },
+			{
+				label: __( 'Other website builders / e-commerce platforms / custom platforms' ),
+				value: 'custom',
+			},
 		] satisfies LeadMatchingOption[],
 		supportedComplexityFlags: [
-			{ label: __( 'Custom pricing or catalogs' ), value: 'custom_pricing_catalogs' },
+			{ label: __( 'Custom pricing or catalogs' ), value: 'custom_pricing' },
 			{
 				label: __( 'ERP, inventory, or pricing integrations' ),
-				value: 'erp_inventory_pricing_integrations',
+				value: 'erp_integrations',
 			},
 			{
 				label: __( 'Customer portals or gated access' ),
-				value: 'customer_portals_gated_access',
+				value: 'customer_portals',
 			},
 			{ label: __( 'Subscriptions or memberships' ), value: 'subscriptions_memberships' },
 			{ label: __( 'Traffic spikes' ), value: 'traffic_spikes' },
-			{ label: __( 'Simple catalog' ), value: 'simple_catalog' },
+			{ label: __( 'Simple catalog' ), value: 'none_simple' },
 		] satisfies LeadMatchingOption[],
 		supportedProjectTypes: [
 			{ label: __( 'New WordPress site' ), value: 'new_wordpress_site' },
@@ -98,8 +96,8 @@ export function getLeadMatchingOptions() {
 			{ label: __( 'Small team' ), value: 'small_team' },
 			{ label: __( 'Multiple stakeholders' ), value: 'multi_stakeholder' },
 			{
-				label: __( 'Procurement or formal approval' ),
-				value: 'procurement_or_formal_approval',
+				label: __( 'Formal procurement / enterprise purchasing' ),
+				value: 'formal_procurement',
 			},
 		] satisfies LeadMatchingOption[],
 		maxServiceLevels: [
@@ -113,7 +111,7 @@ export function getLeadMatchingOptions() {
 			{ label: __( 'Under $3k' ), value: 'under_3k' },
 			{ label: __( '$3k-$10k' ), value: '3k_10k' },
 			{ label: __( '$10k-$30k' ), value: '10k_30k' },
-			{ label: __( '$30k+' ), value: '30k_plus' },
+			{ label: __( '$30k+' ), value: 'above_30k' },
 		] satisfies LeadMatchingOption[],
 	};
 }
