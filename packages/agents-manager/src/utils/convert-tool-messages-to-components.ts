@@ -1,46 +1,8 @@
 import { EscalationButton } from '../components/escalation-button';
-import SourcesDisplay from '../components/sources-display';
 import UnavailableToolMessage from '../components/unavailable-tool-message';
 import { isEditorPage } from './is-editor-page';
 import type { GetChatComponent } from './load-external-providers';
 import type { UIMessage } from '@automattic/agenttic-client';
-
-/**
- * Scans message content blocks for JSON-encoded sources data and replaces
- * those blocks with a SourcesDisplay component. Text blocks that don't parse
- * as JSON (i.e. the actual answer text) are left untouched.
- */
-function extractSourcesFromContent( messages: UIMessage[] ): UIMessage[] {
-	return messages.map( ( message ) => {
-		if ( message.role !== 'agent' ) {
-			return message;
-		}
-
-		let hasSourcesBlock = false;
-		const updatedContent = message.content.map( ( block ) => {
-			if (
-				block.type !== 'data' ||
-				! Array.isArray( block.data?.sources ) ||
-				block.data.sources.length === 0
-			) {
-				return block;
-			}
-
-			hasSourcesBlock = true;
-			return {
-				type: 'component' as const,
-				component: SourcesDisplay as React.ComponentType,
-				componentProps: { sources: block.data.sources },
-			};
-		} );
-
-		if ( ! hasSourcesBlock ) {
-			return message;
-		}
-
-		return { ...message, content: updatedContent };
-	} );
-}
 
 interface Options {
 	messages: UIMessage[];
@@ -56,10 +18,7 @@ export default function convertToolMessagesToComponents( {
 	getChatComponent,
 	currentPostId,
 }: Options ): UIMessage[] {
-	// First pass: extract sources data blocks into SourcesDisplay components.
-	const messagesWithSources = extractSourcesFromContent( messages );
-
-	return messagesWithSources.flatMap( ( message, index, array ) => {
+	return messages.flatMap( ( message, index, array ) => {
 		const firstContentText = message.content?.[ 0 ]?.text;
 
 		// @ts-expect-error -- `assistant` comes from Big Sky messages

@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
 import AsyncLoad from 'calypso/components/async-load';
 import Gravatar from 'calypso/components/gravatar';
-import { dashboardLink } from 'calypso/dashboard/utils/link';
+import { dashboardLink, wpcomLink } from 'calypso/dashboard/utils/link';
 import wpcom from 'calypso/lib/wp';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { preload } from 'calypso/sections-helper';
@@ -706,7 +706,7 @@ class MasterbarLoggedIn extends Component {
 			<Item
 				tipTarget="reader"
 				className="masterbar__reader"
-				url="/reader"
+				url={ wpcomLink( '/reader' ) }
 				icon={ <ReaderIcon className="masterbar__menu-icon masterbar_svg-reader" /> }
 				onClick={ this.clickReader }
 				isActive={ this.isActive( 'reader', true ) }
