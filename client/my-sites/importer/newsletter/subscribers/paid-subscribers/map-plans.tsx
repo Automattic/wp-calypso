@@ -45,10 +45,21 @@ function shouldEnableImporting( cardData: any ) {
 		return false;
 	}
 
-	// If there are comped subscribers, require a comp plan selection.
+	// If there are comped subscribers, require a comp plan selection that still
+	// resolves to a known Stripe plan (guards against stale selections after a
+	// Stripe account reconnect or plan deletion).
 	const compCount = parseInt( cardData?.meta?.comp_count || '0' );
-	if ( compCount > 0 && ! cardData?.comp_stripe_plan_id ) {
-		return false;
+	if ( compCount > 0 ) {
+		const compStripePlanId = cardData?.comp_stripe_plan_id;
+		if ( ! compStripePlanId ) {
+			return false;
+		}
+		const compPlanExists = ( plans as any[] ).some(
+			( item: any ) => item?.product_id === compStripePlanId
+		);
+		if ( ! compPlanExists ) {
+			return false;
+		}
 	}
 
 	return true;
@@ -138,8 +149,7 @@ export default function MapPlans( {
 	const monthyPlan = cardData.plans.find( ( plan: any ) => plan.plan_interval === 'month' );
 	const annualPlan = cardData.plans.find( ( plan: any ) => plan.plan_interval === 'year' );
 
-	// TODO what if those plans are undefined?
-	if ( ! monthyPlan || ! annualPlan ) {
+	if ( ! cardData.plans.length ) {
 		return (
 			<NoPlans
 				cardData={ cardData }
@@ -151,16 +161,20 @@ export default function MapPlans( {
 		);
 	}
 
+	// Fall back to whichever interval is present so the add-tier modal still has sane defaults.
+	const referenceMonth = monthyPlan ?? annualPlan;
+	const referenceYear = annualPlan ?? monthyPlan;
+
 	const tierToAdd = {
 		via: '',
-		currency: monthyPlan.plan_currency,
-		price: formatCurrencyFloat( monthyPlan.plan_amount_decimal, monthyPlan.plan_currency ),
+		currency: referenceMonth.plan_currency,
+		price: formatCurrencyFloat( referenceMonth.plan_amount_decimal, referenceMonth.plan_currency ),
 		type: TYPE_TIER,
 		title: __( 'Newsletter tier' ),
 		interval: PLAN_MONTHLY_FREQUENCY,
 		annualProduct: {
-			currency: annualPlan.plan_currency,
-			price: formatCurrencyFloat( annualPlan.plan_amount_decimal, annualPlan.plan_currency ),
+			currency: referenceYear.plan_currency,
+			price: formatCurrencyFloat( referenceYear.plan_amount_decimal, referenceYear.plan_currency ),
 			type: TYPE_TIER,
 			interval: PLAN_YEARLY_FREQUENCY,
 		},
