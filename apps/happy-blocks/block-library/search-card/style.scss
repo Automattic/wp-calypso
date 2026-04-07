@@ -359,6 +359,10 @@ $breakpoint-desktop: 1440px; //Desktop size.
 						cursor: pointer;
 						color: #fff;
 					}
+
+					&:focus {
+						outline: none;
+					}
 				}
 			}
 		}
