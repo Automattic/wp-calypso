@@ -18,6 +18,25 @@ Once the hook is mounted, `window.__agentsManagerActions` provides:
 | `setChatCompactMode`       | `(isCompact: boolean) => void`                          | Toggles compact mode (undocked only).                                                            |
 | `setChatDesktopMediaQuery` | `(query: string) => void`                               | Sets the media query used to determine whether the chat can dock into the sidebar.               |
 | `chatNavigate`             | `NavigateFunction`                                      | The `react-router-dom` navigate function. Accepts a path string with options or a numeric delta. |
+| `isReady`                  | `boolean`                                               | `true` once the actions API is fully populated and safe to call.                                 |
+
+## Ready signal
+
+Agents Manager dispatches a `agents-manager-ready` event on `window` once the actions API is fully populated. Hosts that need to invoke actions on initial load (e.g. `setChatOpen( true )`) should listen for this event instead of polling.
+
+For hosts that may load **after** Agents Manager has already mounted, check `window.__agentsManagerActions?.isReady` synchronously before subscribing — the event has already fired and won't fire again.
+
+```js
+function openChat() {
+	window.__agentsManagerActions?.setChatOpen( true );
+}
+
+if ( window.__agentsManagerActions?.isReady ) {
+	openChat();
+} else {
+	window.addEventListener( 'agents-manager-ready', openChat, { once: true } );
+}
+```
 
 ### Initial values
 

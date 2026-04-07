@@ -34,6 +34,7 @@ export default function useSetupCustomActions( {
 	const { getActiveSessionId } = useAgentsManagerContext();
 	const navigate = useNavigate();
 	const resolveRef = useRef< ( ( state: AgentsManagerChatState ) => void ) | null >( null );
+	const hasFiredReadyRef = useRef( false );
 
 	const setChatOpen = useCallback(
 		( shouldOpen: boolean ) => {
@@ -137,7 +138,16 @@ export default function useSetupCustomActions( {
 			setChatCompactMode,
 			setChatDesktopMediaQuery,
 			chatNavigate: navigate,
+			isReady: true,
 		};
+
+		// Fire the ready event exactly once per mount, after the global has
+		// been fully populated. Hosts (e.g. CIAB) listen for this to safely
+		// invoke actions like `setChatOpen` without polling.
+		if ( ! hasFiredReadyRef.current ) {
+			hasFiredReadyRef.current = true;
+			window.dispatchEvent( new CustomEvent( 'agents-manager-ready' ) );
+		}
 
 		return () => {
 			delete window.__agentsManagerActions;
