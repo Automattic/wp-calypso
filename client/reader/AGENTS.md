@@ -44,6 +44,6 @@ Post cards live in `client/blocks/reader-post-card/` with variants: `standard` (
 - Prefer `@wordpress/components` primitives (Button, Modal, Card, Icon, VStack, HStack) over custom HTML elements with custom CSS.
 - Use layout components (VStack, HStack, Spacer, Grid) to build layouts instead of custom CSS.
 - Do not use `@automattic/components` — it is deprecated.
-- Always use TypeScript (`.tsx`) for new components.
+- Always use TypeScript (`.tsx`) and functional components for new components.
 - Do not export component prop types. Consumers should use `React.ComponentProps<typeof Component>` to extract props.
 - Use named exports for new components instead of default exports from `index.tsx`.
