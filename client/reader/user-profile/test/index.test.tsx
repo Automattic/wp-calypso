@@ -98,9 +98,7 @@ describe( 'UserProfile', () => {
 	} );
 
 	test( 'should render empty content when user is not found', () => {
-		mockUseGetReaderUserQuery.mockReturnValue( {
-			data: undefined,
-		} as ReturnType< typeof useGetReaderUserQuery > );
+		mockUseGetReaderUserQuery.mockReturnValue( {} as ReturnType< typeof useGetReaderUserQuery > );
 
 		renderWithClient( <UserProfile { ...defaultProps } /> );
 
@@ -120,7 +118,6 @@ describe( 'UserProfile', () => {
 
 	test( 'should render lists view when view is lists', () => {
 		mockUseGetReaderUserQuery.mockReturnValue( {
-			isLoading: false,
 			data: defaultUserResponse,
 		} as ReturnType< typeof useGetReaderUserQuery > );
 
@@ -162,7 +159,6 @@ describe( 'UserProfile', () => {
 
 	test( 'should redirect from user ID path to user login path when user is loaded', () => {
 		mockUseGetReaderUserQuery.mockReturnValue( {
-			isLoading: false,
 			data: defaultUserResponse,
 		} as ReturnType< typeof useGetReaderUserQuery > );
 
