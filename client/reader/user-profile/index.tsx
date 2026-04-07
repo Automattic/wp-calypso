@@ -35,7 +35,7 @@ export function UserProfile( props: UserProfileProps ): JSX.Element | null {
 
 	if ( isLoading ) {
 		return (
-			<div className="wp-spinner-wrapper">
+			<div className="wp-spinner-wrapper" style={ { marginTop: '0' } }>
 				<Spinner />
 			</div>
 		);
