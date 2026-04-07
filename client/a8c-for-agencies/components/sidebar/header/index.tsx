@@ -1,4 +1,7 @@
+import { HStack } from '@wordpress/components';
 import { SidebarV2Header as SidebarHeader } from 'calypso/layout/sidebar-v2';
+import { useSelector } from 'calypso/state';
+import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import A4ALogo, { LOGO_COLOR_SECONDARY_ALT } from '../../a4a-logo';
 import ProfileDropdown from './profile-dropdown';
 
@@ -15,9 +18,14 @@ const AllSitesIcon = () => (
 );
 
 const Header = ( { withProfileDropdown }: Props ) => {
+	const agency = useSelector( getActiveAgency );
+
 	return (
 		<SidebarHeader className="a4a-sidebar__header">
-			<AllSitesIcon />
+			<HStack spacing={ 3 } alignment="center" justify="flex-start">
+				<AllSitesIcon />
+				{ agency?.name && <span className="a4a-sidebar__agency-name">{ agency.name }</span> }
+			</HStack>
 			{ withProfileDropdown && <ProfileDropdown /> }
 		</SidebarHeader>
 	);
