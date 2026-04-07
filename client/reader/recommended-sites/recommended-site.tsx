@@ -72,7 +72,7 @@ type RecommendedSiteProps = {
 	siteDescription: string;
 	siteDomain: string;
 	siteUrl: string;
-	streamUrl: string;
+	streamUrl?: string;
 	siteIcon?: string;
 	feedIcon?: string;
 	railcar?: Railcar; // Used for train-tracks

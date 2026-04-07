@@ -2,16 +2,16 @@ import { Spinner } from '@wordpress/components';
 import { siteLogo, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import EmptyContent from 'calypso/components/empty-content';
-import { FeedRecommendation } from 'calypso/data/reader/use-feed-recommendations-query';
 import { decodeEntities } from 'calypso/lib/formatting';
-import { UserProfileData } from 'calypso/lib/user/user';
-import { RecommendedFeedsList } from 'calypso/reader/recommended-feeds-list';
+import { ReaderSitesList } from 'calypso/reader/sites-list';
+import { ReaderSite } from 'calypso/reader/sites-list/site-item';
+import useUserSitesQuery from 'calypso/reader/user-profile/queries/use-user-sites-query';
+import { GetReaderUser } from 'calypso/reader/user-profile/queries/useGetReaderUserQuery';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import useUserSitesQuery from './use-user-sites-query';
 
 interface UserSitesProps {
-	user: UserProfileData;
+	user: GetReaderUser;
 }
 
 const UserSites = ( { user }: UserSitesProps ): JSX.Element | null => {
@@ -58,9 +58,8 @@ const UserSites = ( { user }: UserSitesProps ): JSX.Element | null => {
 		);
 	}
 
-	const feedsList = data.sites.map( ( site ): FeedRecommendation => {
+	const sitesList = data.sites.map( ( site ): ReaderSite => {
 		return {
-			ID: String( site.ID ),
 			siteId: site.ID ? String( site.ID ) : '',
 			feedId: site.feed_ID ? String( site.feed_ID ) : '',
 			name: decodeEntities( site.name ),
@@ -70,8 +69,8 @@ const UserSites = ( { user }: UserSitesProps ): JSX.Element | null => {
 	} );
 
 	return (
-		<RecommendedFeedsList
-			feeds={ feedsList }
+		<ReaderSitesList
+			sites={ sitesList }
 			followSource="user-profile-page__sites-tab__list"
 			variant="card"
 		/>

@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
 import AsyncLoad from 'calypso/components/async-load';
 import Gravatar from 'calypso/components/gravatar';
-import { dashboardLink } from 'calypso/dashboard/utils/link';
+import { dashboardLink, wpcomLink } from 'calypso/dashboard/utils/link';
 import wpcom from 'calypso/lib/wp';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { preload } from 'calypso/sections-helper';
@@ -62,6 +62,7 @@ import Item from './item';
 import Masterbar from './masterbar';
 import { AgentsManagerIcon } from './masterbar-agents-manager/agents-manager-icon';
 import { HelpCenterIcon } from './masterbar-help-center/help-center-icon';
+import { MasterbarLaunchButton } from './masterbar-launch-button';
 import Notifications from './masterbar-notifications/notifications-button';
 
 class MasterbarLoggedIn extends Component {
@@ -617,7 +618,7 @@ class MasterbarLoggedIn extends Component {
 			return null;
 		}
 
-		return <AsyncLoad require="./masterbar-launch-button" placeholder={ null } siteId={ siteId } />;
+		return <MasterbarLaunchButton siteId={ siteId } />;
 	}
 
 	renderProfileMenu() {
@@ -705,7 +706,7 @@ class MasterbarLoggedIn extends Component {
 			<Item
 				tipTarget="reader"
 				className="masterbar__reader"
-				url="/reader"
+				url={ wpcomLink( '/reader' ) }
 				icon={ <ReaderIcon className="masterbar__menu-icon masterbar_svg-reader" /> }
 				onClick={ this.clickReader }
 				isActive={ this.isActive( 'reader', true ) }

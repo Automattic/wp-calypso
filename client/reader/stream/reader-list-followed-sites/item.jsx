@@ -50,8 +50,7 @@ const ReaderListFollowingItem = ( props ) => {
 		}
 	};
 
-	const streamLink =
-		follow.feed || follow.blog_ID ? getStreamUrl( follow.feed_ID, follow.blog_ID ) : null;
+	const streamLink = getStreamUrl( follow.feed_ID, follow.blog_ID );
 	const urlForDisplay = formatUrlForDisplay( follow.URL );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */

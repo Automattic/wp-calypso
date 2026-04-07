@@ -104,6 +104,11 @@ function getSignupDestination( { siteSlug, redirect_to, localeSlug, flowName } )
 }
 
 function getLaunchDestination( dependencies ) {
+	// If a back_to parameter is provided, use it as the destination
+	if ( dependencies.back_to ) {
+		return addQueryArgs( { celebrateLaunch: 'true' }, dependencies.back_to );
+	}
+
 	if ( dependencies.refParameter === 'wp-admin' ) {
 		return addQueryArgs(
 			{ 'celebrate-launch': 'true' },

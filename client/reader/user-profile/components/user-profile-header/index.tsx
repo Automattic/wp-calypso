@@ -8,11 +8,12 @@ import AutoDirection from 'calypso/components/auto-direction';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
-import { UserProfileData } from 'calypso/lib/user/user';
 import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
+import { GetReaderUser } from '../../queries/useGetReaderUserQuery';
+import UserTopSites from '../top-sites';
 
 interface UserProfileHeaderProps {
-	user: UserProfileData;
+	user: GetReaderUser;
 	view: string;
 }
 
@@ -113,6 +114,8 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 						</div>
 					</AutoDirection>
 				) }
+
+				<UserTopSites userId={ user.ID } userLogin={ user.user_login } />
 			</header>
 			<SectionNav enforceTabsView variation="minimal">
 				<NavTabs>
