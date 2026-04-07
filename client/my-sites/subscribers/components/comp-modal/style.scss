@@ -10,9 +10,12 @@
 
 		.components-button.has-icon.has-text {
 			justify-content: space-between;
-			flex-direction: row-reverse;
 			width: 100%;
 			border: 1px solid var(--wp-components-color-gray-600, #949494);
+
+			svg {
+				order: 1;
+			}
 		}
 	}
 }
