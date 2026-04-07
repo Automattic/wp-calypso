@@ -46,4 +46,4 @@ Post cards live in `client/blocks/reader-post-card/` with variants: `standard` (
 - Do not use `@automattic/components` — it is deprecated.
 - Always use TypeScript (`.tsx`) and functional components for new components.
 - Do not export component prop types. Consumers should use `React.ComponentProps<typeof Component>` to extract props.
-- Use named exports for new components instead of default exports from `index.tsx`.
+- Use named exports for new components instead of default exports.
