@@ -23,10 +23,14 @@ describe( 'UserProfileHeader', () => {
 	const defaultUser: UserProfileData = {
 		ID: 123,
 		user_login: 'testuser',
+		first_name: 'First',
+		last_name: 'Last',
 		display_name: 'Test User',
 		avatar_URL: 'https://example.com/avatar.jpg',
 		profile_URL: 'https://wordpress.com/testuser',
-		bio: undefined,
+		description: 'This is a test user biography.',
+		primary_blog: null,
+		recommended_blogs_count: 0,
 	};
 
 	beforeEach( () => {
@@ -67,15 +71,15 @@ describe( 'UserProfileHeader', () => {
 	} );
 
 	test( 'should render bio section when user has a bio', () => {
-		const userWithBio = {
+		const userWithBio: UserProfileData = {
 			...defaultUser,
-			bio: 'This is my test biography that describes me as a test user.',
+			description: 'This is my test biography that describes me as a test user.',
 		};
 
 		render( <UserProfileHeader user={ userWithBio } view="posts" /> );
 
 		// Bio section should be present
-		const bioText = screen.getByText( userWithBio.bio );
+		const bioText = screen.getByText( userWithBio.description );
 		expect( bioText ).toBeVisible();
 	} );
 
@@ -91,9 +95,9 @@ describe( 'UserProfileHeader', () => {
 	} );
 
 	test( 'should not render Gravatar badge when user does not have profile_URL', () => {
-		const userWithoutGravatarProfile = {
+		const userWithoutGravatarProfile: UserProfileData = {
 			...defaultUser,
-			profile_URL: undefined,
+			profile_URL: '',
 		};
 
 		render( <UserProfileHeader user={ userWithoutGravatarProfile } view="posts" /> );
@@ -103,7 +107,7 @@ describe( 'UserProfileHeader', () => {
 
 	test( 'should show "Show more" button for long bio and expand on click', async () => {
 		const longBio = 'This is a very long biography that spans multiple lines. '.repeat( 10 ).trim();
-		const userWithLongBio = { ...defaultUser, bio: longBio };
+		const userWithLongBio: UserProfileData = { ...defaultUser, description: longBio };
 
 		const { rerender } = render( <UserProfileHeader user={ userWithLongBio } view="posts" /> );
 
@@ -116,7 +120,7 @@ describe( 'UserProfileHeader', () => {
 		Object.defineProperty( bioDesc, 'clientHeight', { value: 60, configurable: true } );
 		// Re-render with slightly different bio to trigger useLayoutEffect
 		rerender(
-			<UserProfileHeader user={ { ...userWithLongBio, bio: longBio + '.' } } view="posts" />
+			<UserProfileHeader user={ { ...userWithLongBio, description: longBio + '.' } } view="posts" />
 		);
 
 		const showMoreButton = screen.getByText( /show more/i );

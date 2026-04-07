@@ -28,7 +28,7 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 			const isOverflowing = bioElement.scrollHeight > bioElement.clientHeight;
 			setShowMoreToggle( isOverflowing );
 		}
-	}, [ user.bio ] );
+	}, [ user.description ] );
 
 	const handleShowMoreToggle = () => {
 		setIsExpanded( ! isExpanded );
@@ -89,7 +89,7 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 					</div>
 				</div>
 
-				{ user.bio && (
+				{ user.description && (
 					<AutoDirection>
 						<div className="user-profile-header__bio">
 							<p
@@ -99,7 +99,7 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 									'is-expanded': isExpanded,
 								} ) }
 							>
-								{ user.bio }
+								{ user.description }
 							</p>
 							{ showMoreToggle && (
 								<button
