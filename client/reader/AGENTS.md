@@ -9,7 +9,8 @@ See [README.md](./README.md) for the full list of Reader routes.
 ## Commands
 
 ```bash
-yarn test-client client/reader/<path>  # Run Reader tests
+yarn test-client client/reader/<path>        # Run Reader tests
+yarn test-client:watch client/reader/<path>  # Run Reader tests in watch mode
 ```
 
 ## Architecture decisions
