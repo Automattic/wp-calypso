@@ -199,6 +199,7 @@ export const receiptRoute = createRoute( {
 		await Promise.all( [
 			queryClient.ensureQueryData( receiptQuery( parseInt( receiptId ) ) ),
 			queryClient.ensureQueryData( userTaxDetailsQuery() ),
+			queryClient.ensureQueryData( countryListQuery() ),
 		] );
 	},
 	path: '$receiptId',
