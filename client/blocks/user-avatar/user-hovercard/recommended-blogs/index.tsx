@@ -1,4 +1,5 @@
 import './styles.scss';
+import page from '@automattic/calypso-router';
 import { Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { shuffle } from 'lodash';
@@ -25,11 +26,14 @@ function RecommendedBlogs( { userLogin }: RecommendedBlogsProps ): JSX.Element |
 		<div className="user-hovercard__recommended-blogs">
 			<div className="user-hovercard__recommended-blogs-header">
 				<h5 className="user-hovercard__recommended-blogs-title">
-					{ translate( 'Recommended blogs' ) }
+					{ translate( 'Recommended Blogs' ) }
 				</h5>
 				<a
 					className="user-hovercard__recommended-blogs-view-all"
 					href={ `/reader/users/${ userLogin }/recommended-blogs` }
+					onClick={ () => {
+						page( `/reader/users/${ userLogin }/recommended-blogs` );
+					} }
 				>
 					{ translate( 'View all' ) }
 				</a>

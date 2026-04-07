@@ -29,13 +29,14 @@ interface GetReaderUserQueryParams {
 }
 
 export const useGetReaderUserQuery = (
-	userIdOrLogin?: string | number,
-	params: GetReaderUserQueryParams = {}
+	userLogin?: string,
+	userId?: string | number
 ): UseQueryResult< GetReaderUserResponse, Error > => {
-	const filteredParams = Object.fromEntries(
-		Object.entries( params ).filter( ( [ , value ] ) => value !== undefined )
-	);
-	const paramsKey = Object.entries( filteredParams )
+	const userIdOrLogin = userLogin || userId;
+	const params: GetReaderUserQueryParams = {
+		find_by_id: ! userLogin && !! userId ? true : undefined, // If userLogin is not provided, we will try to find the user by ID. This is for backward compatibility with old URLs that use user ID.
+	};
+	const paramsKey = Object.entries( params )
 		.sort()
 		.map( ( [ key, value ] ) => `${ key }=${ value }` )
 		.join( '&' );
@@ -44,7 +45,7 @@ export const useGetReaderUserQuery = (
 		queryKey: [ 'v1.1', 'get-reader-user', userIdOrLogin, `params:${ paramsKey }` ], // eslint-disable-line @tanstack/query/exhaustive-deps
 		queryFn: () =>
 			callApi< GetReaderUserResponse >( {
-				path: addQueryArgs( `/users/${ userIdOrLogin }`, filteredParams ),
+				path: addQueryArgs( `/users/${ userIdOrLogin }`, params ),
 				method: 'GET',
 				isLoggedIn: true,
 			} ),

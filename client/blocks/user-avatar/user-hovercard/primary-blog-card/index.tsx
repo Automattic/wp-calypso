@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import AutoDirection from 'calypso/components/auto-direction';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
+import { decodeEntities } from 'calypso/lib/formatting';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { getStreamUrl } from 'calypso/reader/route';
 import { GetReaderUserResponse } from 'calypso/reader/user-profile/queries/useGetReaderUserQuery';
@@ -52,14 +53,14 @@ function PrimaryBlogCard( { user }: PrimaryBlogCardProps ): JSX.Element | null {
 							<SiteIcon iconUrl={ primaryBlog.avatar_URL } size={ 40 } />
 
 							<div className="user-hovercard__primary-blog-site-info">
-								<h5>{ primaryBlog.title }</h5>
+								<h5>{ decodeEntities( primaryBlog.title ) }</h5>
 								{ name && <p> { translate( 'By %(name)s', { args: { name } } ) } </p> }
 							</div>
 						</div>
 
 						{ primaryBlog.description && (
 							<p className="user-hovercard__primary-blog-description">
-								{ primaryBlog.description }
+								{ decodeEntities( primaryBlog.description ) }
 							</p>
 						) }
 					</a>
@@ -67,7 +68,7 @@ function PrimaryBlogCard( { user }: PrimaryBlogCardProps ): JSX.Element | null {
 					<ReaderFollowButton
 						className="user-hovercard__primary-blog-follow-button"
 						siteUrl={ primaryBlog.URL }
-						iconSize={ 26 }
+						iconSize={ 24 }
 						followSource="user-hovercard__primary-blog"
 						onFollowToggle={ onFollowToggle }
 						hasButtonStyle

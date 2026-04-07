@@ -175,8 +175,6 @@ describe( 'UserProfile', () => {
 
 		renderWithClient( <UserProfile { ...defaultProps } userLogin="" userId="123" /> );
 
-		expect( mockUseGetReaderUserQuery ).toHaveBeenCalledWith( '123', {
-			find_by_id: true,
-		} );
+		expect( mockUseGetReaderUserQuery ).toHaveBeenCalledWith( '', '123' );
 	} );
 } );

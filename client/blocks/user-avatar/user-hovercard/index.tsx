@@ -1,5 +1,8 @@
 import './styles.scss';
 import { Spinner } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
+import { useTranslate } from 'i18n-calypso';
+import UserAvatarDefaultIcon from 'calypso/reader/components/icons/user-avatar-default-icon';
 import { useGetReaderUserQuery } from 'calypso/reader/user-profile/queries/useGetReaderUserQuery';
 import { UserAvatarInfo } from '..';
 import PrimaryBlogCard from './primary-blog-card';
@@ -13,6 +16,7 @@ interface UserHovercardProps {
 }
 
 export default function UserHovercard( props: UserHovercardProps ): JSX.Element | null {
+	const translate = useTranslate();
 	const { user: userProp } = props;
 	const wpcomIdOrLogin = userProp.wpcom_id || userProp.wpcom_login;
 
@@ -22,7 +26,8 @@ export default function UserHovercard( props: UserHovercardProps ): JSX.Element 
 	);
 
 	const { isLoading: isWpcomLoading, data: wpcomData } = useGetReaderUserQuery(
-		wpcomIdOrLogin || gravatarUser?.user_login
+		userProp.wpcom_login || gravatarUser?.user_login,
+		userProp.wpcom_id
 	);
 
 	if ( isWpcomLoading || isGravatarLoading ) {
@@ -37,7 +42,21 @@ export default function UserHovercard( props: UserHovercardProps ): JSX.Element 
 
 	const user = wpcomData?.user_login ? wpcomData : gravatarUser;
 	if ( ! user ) {
-		return null;
+		return (
+			<div className="user-hovercard user-hovercard--not-found">
+				<UserAvatarDefaultIcon iconSize={ 102 } />
+				<p>
+					{ translate( 'User not found.' ) }
+					<br />
+					{ createInterpolateElement(
+						translate( 'Is this you? <link>Claim your free profile.</link>' ),
+						{
+							link: <a href="https://gravatar.com/signup?utm_source=wpcom-reader" />,
+						}
+					) }
+				</p>
+			</div>
+		);
 	}
 
 	return (

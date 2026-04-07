@@ -23,9 +23,7 @@ export interface UserProfileProps {
 export function UserProfile( props: UserProfileProps ): JSX.Element | null {
 	const { userLogin, userId, path, view } = props;
 	const translate = useTranslate();
-	const { isLoading, data: user } = useGetReaderUserQuery( userLogin || userId, {
-		find_by_id: ! userLogin && !! userId ? true : undefined, // If userLogin is not provided, we will try to find the user by ID. This is for backward compatibility with old URLs that use user ID.
-	} );
+	const { isLoading, data: user } = useGetReaderUserQuery( userLogin, userId );
 
 	useEffect( () => {
 		if ( path?.startsWith( '/reader/users/id/' ) && user ) {

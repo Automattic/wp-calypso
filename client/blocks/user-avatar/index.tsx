@@ -1,10 +1,12 @@
 import './styles.scss';
+import { Popover } from '@wordpress/components';
 import clsx from 'clsx';
+import { useRef, useState } from 'react';
 import UserHovercard from 'calypso/blocks/user-avatar/user-hovercard';
 import UserAvatarDefaultIcon from 'calypso/reader/components/icons/user-avatar-default-icon';
+import { useGetReaderUserQuery } from 'calypso/reader/user-profile/queries/useGetReaderUserQuery';
 import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
-
-const noop = () => undefined;
+import { getProcessedGravatarUrl } from './utils';
 
 type UserAvatarProps = {
 	className?: string;
@@ -33,13 +35,16 @@ export default function UserAvatar( {
 	size = 32,
 	hideHovercard = false,
 }: UserAvatarProps ) {
+	const [ isHovered, setIsHovered ] = useState( false );
+	const avatarRef = useRef< HTMLDivElement >( null );
 	const classes = clsx( 'user-avatar', className );
 	const wpcomProfileUrl = user?.wpcom_login ? getUserProfileUrl( user?.wpcom_login ) : null;
 	const name = user?.display_name || user?.name || '';
-	const avatarImg = user?.avatar_URL ? (
+	const avatarUrl = user?.avatar_URL ? getProcessedGravatarUrl( user.avatar_URL ) : null;
+	const avatarImg = avatarUrl ? (
 		<img
 			className="user-avatar__image"
-			src={ user.avatar_URL }
+			src={ avatarUrl }
 			alt={ name }
 			width={ size }
 			height={ size }
@@ -49,10 +54,33 @@ export default function UserAvatar( {
 		<UserAvatarDefaultIcon iconSize={ size } />
 	);
 
+	// Prefetching so that we can display WPCOM Hovercards instantly, Gravatar lookups will be triggered on hover.
+	useGetReaderUserQuery( user?.wpcom_login, user?.wpcom_id );
+
 	return (
-		<div className={ classes } onClick={ noop } aria-hidden="true">
+		<div
+			ref={ avatarRef }
+			className={ classes }
+			aria-hidden="true"
+			onClick={ ( event ) => {
+				event.preventDefault();
+				event.stopPropagation();
+			} }
+			onMouseEnter={ () => setIsHovered( true ) }
+			onMouseLeave={ () => setIsHovered( false ) }
+		>
 			{ wpcomProfileUrl ? <a href={ wpcomProfileUrl }> { avatarImg }</a> : avatarImg }
-			{ user && ! hideHovercard && <UserHovercard user={ user } size={ size } /> }
+			{ user && ! hideHovercard && isHovered && (
+				<Popover
+					anchor={ avatarRef.current }
+					variant="unstyled"
+					placement="bottom"
+					focusOnMount={ false }
+					noArrow
+				>
+					<UserHovercard user={ user } size={ size } />
+				</Popover>
+			) }
 		</div>
 	);
 }

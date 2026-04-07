@@ -1,31 +1,26 @@
 import './styles.scss';
+import page from '@automattic/calypso-router';
 import AutoDirection from 'calypso/components/auto-direction';
 import PreloadedImage from 'calypso/components/preloaded-image';
 import UserAvatarDefaultIcon from 'calypso/reader/components/icons/user-avatar-default-icon';
-import { UserAvatarInfo } from '../..';
+import { GetReaderUserResponse } from 'calypso/reader/user-profile/queries/useGetReaderUserQuery';
+import { getProcessedGravatarUrl } from '../../utils';
 
 interface UserHovercardHeaderProps {
-	user: UserAvatarInfo;
+	user: GetReaderUserResponse;
 }
 
 function UserHovercardHeader( { user }: UserHovercardHeaderProps ): JSX.Element {
-	const name: string = user.display_name || user.name || '';
-	const profilePageUrl = user.login ? `/reader/users/${ user.login }` : undefined; // Intentionally navigation only to the Reader Profile page. This keep the experience consistent.
-	const avatarUrl = getProcessedAvatarUrl( user.avatar_URL );
+	const name: string =
+		user.display_name ||
+		( user.first_name && user.last_name ? `${ user.first_name } ${ user.last_name }` : '' ) ||
+		'';
+	const profilePageUrl = user.user_login ? `/reader/users/${ user.user_login }` : undefined; // Intentionally navigation only to the Reader Profile page. This keep the experience consistent.
+	const avatarUrl = getProcessedGravatarUrl( user.avatar_URL );
 
-	function getProcessedAvatarUrl( avatarUrl?: string ): string | null {
-		if ( ! avatarUrl ) {
-			return null;
-		}
-
-		try {
-			const url = new URL( avatarUrl );
-			url.searchParams.set( 'd', 'mm' );
-			url.searchParams.set( 'r', 'G' );
-			url.searchParams.set( 's', '208' );
-			return url.toString();
-		} catch {
-			return null;
+	function handleUserProfileClick(): void {
+		if ( profilePageUrl ) {
+			page( profilePageUrl );
 		}
 	}
 
@@ -33,7 +28,7 @@ function UserHovercardHeader( { user }: UserHovercardHeaderProps ): JSX.Element 
 		<AutoDirection>
 			<div className="user-hovercard__header">
 				<div className="user-hovercard__avatar">
-					<a href={ profilePageUrl }>
+					<a href={ profilePageUrl } onClick={ handleUserProfileClick }>
 						{ avatarUrl ? (
 							<PreloadedImage
 								src={ avatarUrl }
@@ -50,7 +45,7 @@ function UserHovercardHeader( { user }: UserHovercardHeaderProps ): JSX.Element 
 
 				{ name && (
 					<div className="user-hovercard__name">
-						<a href={ profilePageUrl }>
+						<a href={ profilePageUrl } onClick={ handleUserProfileClick }>
 							<h4>{ name }</h4>
 						</a>
 					</div>
