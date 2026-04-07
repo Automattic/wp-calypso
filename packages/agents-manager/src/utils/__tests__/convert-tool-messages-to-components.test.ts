@@ -85,16 +85,19 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result ).toEqual( [] );
 	} );
 
-	it( 'appends `next-step-button` only to the last message with follow-up tasks', () => {
+	it( 'appends `next-step-button` only to the last message with follow-up tasks and omits `actions`', () => {
 		const data = { type: 'my-component', followUpTasks: true, isCurrent: true };
+		const actions = [
+			{ id: 'action-1', label: 'Do something', onClick: jest.fn() },
+		] as UIMessage[ 'actions' ];
 		const getChatComponent = jest.fn( ( type: string ) =>
 			type === 'my-component' ? MockComponent : MockNextStepButton
 		);
 
 		const result = convertToolMessagesToComponents( {
 			messages: [
-				createToolMessage( 'big_sky__show_component', data, { id: 'msg-1' } ),
-				createToolMessage( 'big_sky__show_component', data, { id: 'msg-2' } ),
+				createToolMessage( 'big_sky__show_component', data, { id: 'msg-1', actions } ),
+				createToolMessage( 'big_sky__show_component', data, { id: 'msg-2', actions } ),
 			],
 			getChatComponent,
 		} );
@@ -102,7 +105,9 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result ).toHaveLength( 3 );
 		expect( result[ 0 ].id ).toBe( 'msg-1' );
 		expect( result[ 1 ].id ).toBe( 'msg-2' );
+		expect( result[ 1 ].actions ).toBeDefined();
 		expect( result[ 2 ].id ).toBe( 'msg-2-next-step' );
+		expect( result[ 2 ].actions ).toBeUndefined();
 	} );
 
 	it( 'shows `UnavailableToolMessage` when not on an editor page', () => {
