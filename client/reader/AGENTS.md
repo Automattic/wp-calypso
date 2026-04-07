@@ -42,7 +42,7 @@ Post cards live in `client/blocks/reader-post-card/` with variants: `standard` (
 - Use `renderWithProvider` from `calypso/test-helpers/testing-library` for Redux-dependent test components.
 - Prefer `nock` for HTTP mocking over mocking components — test real component behavior with mocked API responses.
 - Use [ARIA-based queries](https://testing-library.com/docs/queries/about/) (`getByRole`, `getByLabelText`) to locate elements instead of CSS selectors or test IDs.
-- Use [`userEvent`](https://testing-library.com/docs/user-event/intro/#writing-tests-with-userevent) instead of `fireEvent` for simulating user interactions.
+- Use [`userEvent`](https://testing-library.com/docs/user-event/intro) instead of `fireEvent` for simulating user interactions.
 - Prefer `@wordpress/components` primitives (Button, Modal, Card, Icon, VStack, HStack) over custom HTML elements with custom CSS.
 - Use layout components (VStack, HStack, Spacer, Grid) to build layouts instead of custom CSS.
 - Do not use `@automattic/components` — it is deprecated.
