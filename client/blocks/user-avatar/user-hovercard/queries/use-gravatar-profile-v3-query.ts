@@ -1,5 +1,5 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
-import { UserHovercardResponse } from './use-user-hovercard-query';
+import { GetReaderUserResponse } from 'calypso/reader/user-profile/queries/useGetReaderUserQuery';
 
 interface GravatarProfileV3ApiResponse {
 	display_name: string;
@@ -11,12 +11,12 @@ interface GravatarProfileV3ApiResponse {
 export function useGravatarProfileV3Query(
 	urls: Array< string | undefined >,
 	enabled = true
-): UseQueryResult< UserHovercardResponse[ 'user' ], Error > {
+): UseQueryResult< GetReaderUserResponse, Error > {
 	const allHashes = urls.map( extractHashFromUrl ).filter( Boolean ) as string[];
 	const hash = allHashes.find( ( h ) => h.length === 64 ) ?? allHashes[ 0 ] ?? null; // Prefer SHA256 hash if available.
 
 	return useQuery( {
-		queryKey: [ 'gravatar-profile-v3', hash ],
+		queryKey: [ 'reader', 'gravatar-profile-v3', hash ],
 		queryFn: async () => {
 			const response = await fetch(
 				`https://api.gravatar.com/v3/profiles/${ hash }?source=hovercard`
@@ -51,7 +51,7 @@ function extractHashFromUrl( url?: string ): string | null {
 	return null;
 }
 
-function mapToHovercardUser( raw: GravatarProfileV3ApiResponse ): UserHovercardResponse[ 'user' ] {
+function mapToHovercardUser( raw: GravatarProfileV3ApiResponse ): GetReaderUserResponse {
 	const lastSegment = ( () => {
 		try {
 			return new URL( raw.profile_url ).pathname.split( '/' ).filter( Boolean ).pop();
@@ -65,7 +65,7 @@ function mapToHovercardUser( raw: GravatarProfileV3ApiResponse ): UserHovercardR
 
 	return {
 		ID: 0,
-		login: wpcomUsername,
+		user_login: wpcomUsername,
 		nice_name: wpcomUsername,
 		display_name: raw.display_name,
 		description: raw.description,
@@ -73,5 +73,6 @@ function mapToHovercardUser( raw: GravatarProfileV3ApiResponse ): UserHovercardR
 		profile_URL: raw.profile_url,
 		first_name: '',
 		last_name: '',
+		primary_blog: null,
 	};
 }

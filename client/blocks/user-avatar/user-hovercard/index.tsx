@@ -1,9 +1,9 @@
 import './styles.scss';
 import { Spinner } from '@wordpress/components';
+import { useGetReaderUserQuery } from 'calypso/reader/user-profile/queries/useGetReaderUserQuery';
 import { UserAvatarInfo } from '..';
 import PrimaryBlogCard from './primary-blog-card';
 import { useGravatarProfileV3Query } from './queries/use-gravatar-profile-v3-query';
-import { useUserHovercardQuery } from './queries/use-user-hovercard-query';
 import RecommendedBlogs from './recommended-blogs';
 import UserHovercardHeader from './user-hovercard-header';
 
@@ -21,8 +21,8 @@ export default function UserHovercard( props: UserHovercardProps ): JSX.Element 
 		! wpcomIdOrLogin
 	);
 
-	const { isLoading: isWpcomLoading, data: wpcomData } = useUserHovercardQuery(
-		wpcomIdOrLogin || gravatarUser?.login
+	const { isLoading: isWpcomLoading, data: wpcomData } = useGetReaderUserQuery(
+		wpcomIdOrLogin || gravatarUser?.user_login
 	);
 
 	if ( isWpcomLoading || isGravatarLoading ) {
@@ -35,7 +35,7 @@ export default function UserHovercard( props: UserHovercardProps ): JSX.Element 
 		);
 	}
 
-	const user = wpcomData?.user || gravatarUser || null;
+	const user = wpcomData?.user_login ? wpcomData : gravatarUser;
 	if ( ! user ) {
 		return null;
 	}
@@ -44,11 +44,11 @@ export default function UserHovercard( props: UserHovercardProps ): JSX.Element 
 		<div className="user-hovercard">
 			<UserHovercardHeader user={ user } />
 
-			{ wpcomData?.primary_blog ? (
-				<PrimaryBlogCard user={ user } primaryBlog={ wpcomData.primary_blog } />
-			) : null }
+			{ wpcomData?.primary_blog ? <PrimaryBlogCard user={ user } /> : null }
 
-			{ wpcomData?.recommended_blogs_count ? <RecommendedBlogs userLogin={ user.login } /> : null }
+			{ wpcomData?.recommended_blogs_count ? (
+				<RecommendedBlogs userLogin={ user.user_login } />
+			) : null }
 		</div>
 	);
 }

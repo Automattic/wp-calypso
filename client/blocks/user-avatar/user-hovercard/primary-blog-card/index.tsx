@@ -5,18 +5,18 @@ import AutoDirection from 'calypso/components/auto-direction';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { getStreamUrl } from 'calypso/reader/route';
+import { GetReaderUserResponse } from 'calypso/reader/user-profile/queries/useGetReaderUserQuery';
 import { useDispatch } from 'calypso/state';
 import { successNotice } from 'calypso/state/notices/actions';
-import { UserHovercardResponse } from '../queries/use-user-hovercard-query';
 
 interface PrimaryBlogCardProps {
-	user: UserHovercardResponse[ 'user' ];
-	primaryBlog: UserHovercardResponse[ 'primary_blog' ];
+	user: GetReaderUserResponse;
 }
 
-function PrimaryBlogCard( { user, primaryBlog }: PrimaryBlogCardProps ): JSX.Element | null {
+function PrimaryBlogCard( { user }: PrimaryBlogCardProps ): JSX.Element | null {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const primaryBlog = user.primary_blog;
 
 	if ( ! primaryBlog ) {
 		return null;
