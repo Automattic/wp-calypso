@@ -18,7 +18,6 @@ on:
       - 'client/data/newsletter-categories/**'
       - 'client/data/paid-newsletter/**'
       - 'client/mailing-lists/**'
-      - 'client/my-sites/email/**'
       - 'client/my-sites/subscribers/**'
       - 'client/my-sites/site-settings/settings-newsletter/**'
       - 'client/my-sites/importer/newsletter/**'
