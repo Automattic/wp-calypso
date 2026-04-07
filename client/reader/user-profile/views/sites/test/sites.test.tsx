@@ -6,8 +6,8 @@ import { ReaderSite } from 'calypso/reader/sites-list/site-item';
 import useUserSitesQuery, {
 	UserSitesResponse,
 } from 'calypso/reader/user-profile/queries/use-user-sites-query';
+import { GetReaderUser } from 'calypso/reader/user-profile/queries/useGetReaderUserQuery';
 import UserSites from '..';
-import type { UserProfileData } from 'calypso/lib/user/user';
 
 jest.mock( 'calypso/state', () => ( {
 	useSelector: jest.fn(),
@@ -31,7 +31,7 @@ jest.mock( 'calypso/reader/sites-list', () => ( {
 
 describe( 'UserSites', () => {
 	const { useSelector } = jest.requireMock( 'calypso/state' );
-	const defaultUser: UserProfileData = {
+	const defaultUser: GetReaderUser = {
 		ID: 123,
 		user_login: 'test_user',
 		display_name: 'Test User',

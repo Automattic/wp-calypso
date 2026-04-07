@@ -3,15 +3,15 @@ import { siteLogo, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import EmptyContent from 'calypso/components/empty-content';
 import { decodeEntities } from 'calypso/lib/formatting';
-import { UserProfileData } from 'calypso/lib/user/user';
 import { ReaderSitesList } from 'calypso/reader/sites-list';
 import { ReaderSite } from 'calypso/reader/sites-list/site-item';
 import useUserSitesQuery from 'calypso/reader/user-profile/queries/use-user-sites-query';
+import { GetReaderUser } from 'calypso/reader/user-profile/queries/useGetReaderUserQuery';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
 interface UserSitesProps {
-	user: UserProfileData;
+	user: GetReaderUser;
 }
 
 const UserSites = ( { user }: UserSitesProps ): JSX.Element | null => {

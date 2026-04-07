@@ -13,7 +13,7 @@ type UserAvatarProps = {
 	iconSize?: number | null;
 };
 
-type UserAvatarInfo = {
+export type UserAvatarInfo = {
 	ID?: number;
 	avatar_URL?: string;
 	display_name?: string;

@@ -6,7 +6,10 @@ import { useEffect } from 'react';
 import EmptyContent from 'calypso/components/empty-content';
 import ReaderBackButton from 'calypso/reader/components/back-button';
 import UserProfileHeader from 'calypso/reader/user-profile/components/user-profile-header';
-import { useGetReaderUserQuery } from 'calypso/reader/user-profile/queries/useGetReaderUserQuery';
+import {
+	mapGetReaderUserResponseToUser,
+	useGetReaderUserQuery,
+} from 'calypso/reader/user-profile/queries/useGetReaderUserQuery';
 import UserLists from 'calypso/reader/user-profile/views/lists';
 import UserPosts from 'calypso/reader/user-profile/views/posts';
 import UserRecommendedBlogs from 'calypso/reader/user-profile/views/recommended-blogs';
@@ -23,9 +26,10 @@ export interface UserProfileProps {
 export function UserProfile( props: UserProfileProps ): JSX.Element | null {
 	const { userLogin, userId, path, view } = props;
 	const translate = useTranslate();
-	const { isLoading, data: user } = useGetReaderUserQuery( userLogin || userId, {
+	const { isLoading, data } = useGetReaderUserQuery( userLogin || userId, {
 		find_by_id: ! userLogin && !! userId ? true : undefined, // If userLogin is not provided, we will try to find the user by ID. This is for backward compatibility with old URLs that use user ID.
 	} );
+	const user = mapGetReaderUserResponseToUser( data );
 
 	useEffect( () => {
 		if ( path?.startsWith( '/reader/users/id/' ) && user ) {

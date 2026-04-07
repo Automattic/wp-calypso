@@ -4,11 +4,12 @@
 
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { UserProfileData } from 'calypso/lib/user/user';
+import { UserAvatarInfo } from 'calypso/blocks/user-avatar';
 import useUserSitesQuery from 'calypso/reader/user-profile/queries/use-user-sites-query';
+import { GetReaderUser } from 'calypso/reader/user-profile/queries/useGetReaderUserQuery';
 import UserProfileHeader from '../index';
 
-jest.mock( 'calypso/blocks/user-avatar', () => ( { user }: { user: UserProfileData } ) => (
+jest.mock( 'calypso/blocks/user-avatar', () => ( { user }: { user: UserAvatarInfo } ) => (
 	<div data-testid="user-avatar" data-user-id={ user?.ID }></div>
 ) );
 
@@ -30,17 +31,16 @@ jest.mock(
 );
 
 describe( 'UserProfileHeader', () => {
-	const defaultUser: UserProfileData = {
+	const defaultUser: GetReaderUser = {
 		ID: 123,
-		user_login: 'testuser',
+		user_login: 'test_user',
+		nice_name: 'nice_name',
 		first_name: 'First',
 		last_name: 'Last',
 		display_name: 'Test User',
 		avatar_URL: 'https://example.com/avatar.jpg',
 		profile_URL: 'https://wordpress.com/testuser',
 		description: 'This is a test user biography.',
-		primary_blog: null,
-		recommended_blogs_count: 0,
 	};
 
 	jest.mocked( useUserSitesQuery ).mockReturnValue( {
@@ -124,7 +124,7 @@ describe( 'UserProfileHeader', () => {
 	} );
 
 	test( 'should render bio section when user has a bio', () => {
-		const userWithBio: UserProfileData = {
+		const userWithBio: GetReaderUser = {
 			...defaultUser,
 			description: 'This is my test biography that describes me as a test user.',
 		};
@@ -148,7 +148,7 @@ describe( 'UserProfileHeader', () => {
 	} );
 
 	test( 'should not render Gravatar badge when user does not have profile_URL', () => {
-		const userWithoutGravatarProfile: UserProfileData = {
+		const userWithoutGravatarProfile: GetReaderUser = {
 			...defaultUser,
 			profile_URL: '',
 		};
@@ -160,7 +160,7 @@ describe( 'UserProfileHeader', () => {
 
 	test( 'should show "Show more" button for long bio and expand on click', async () => {
 		const longBio = 'This is a very long biography that spans multiple lines. '.repeat( 10 ).trim();
-		const userWithLongBio: UserProfileData = { ...defaultUser, description: longBio };
+		const userWithLongBio: GetReaderUser = { ...defaultUser, description: longBio };
 
 		const { rerender } = render( <UserProfileHeader user={ userWithLongBio } view="posts" /> );
 
