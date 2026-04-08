@@ -123,6 +123,9 @@ const getSubscriptionIdString = ( subscriber: Subscriber ): string => {
 	return String( getSubscriptionIdFromSubscriber( subscriber ) );
 };
 
+const findRemovableComp = ( subscriber: Subscriber ) =>
+	( subscriber.plans ?? [] ).find( ( p ) => p.is_comp && p.comp_id );
+
 const defaultView: ViewTable = {
 	type: 'table',
 	titleField: 'name',
@@ -508,13 +511,11 @@ export default function SubscriberDataViews( {
 			},
 			{
 				id: 'remove',
-				label: String(
-					fixMe( {
-						text: 'Remove subscriber',
-						newCopy: translate( 'Remove subscriber' ),
-						oldCopy: translate( 'Remove' ),
-					} ) ?? translate( 'Remove' )
-				),
+				label: fixMe( {
+					text: 'Remove subscriber',
+					newCopy: translate( 'Remove subscriber' ),
+					oldCopy: translate( 'Remove' ),
+				} ) as string,
 				callback: handleUnsubscribe,
 				isPrimary: false,
 				supportsBulk: true,
@@ -549,14 +550,13 @@ export default function SubscriberDataViews( {
 				comment:
 					'"Comp" is short for "complimentary" — revoking a free subscription previously granted to a subscriber',
 			} ),
-			isEligible: ( subscriber: Subscriber ) =>
-				( subscriber.plans ?? [] ).some( ( p ) => p.is_comp && p.comp_id ),
+			isEligible: ( subscriber: Subscriber ) => !! findRemovableComp( subscriber ),
 			callback: ( items: Subscriber[] ) => {
 				const subscriber = items[ 0 ];
 				if ( ! subscriber ) {
 					return;
 				}
-				const compPlan = ( subscriber.plans ?? [] ).find( ( p ) => p.is_comp && p.comp_id );
+				const compPlan = findRemovableComp( subscriber );
 				if ( ! compPlan ) {
 					return;
 				}
