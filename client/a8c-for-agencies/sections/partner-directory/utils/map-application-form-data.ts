@@ -309,8 +309,8 @@ export function mapLeadMatchingDetailsToProfile(
 			supported_languages: formData.languages,
 		},
 		business_fit: {
-			supported_business_types: formData.businessTypes,
-			ideal_business_types: formData.idealBusinessTypes,
+			supported_business_types: normalizeValues( formData.businessTypes, ALLOWED_BUSINESS_TYPES ),
+			ideal_business_types: normalizeValues( formData.idealBusinessTypes, ALLOWED_BUSINESS_TYPES ),
 			supported_company_sizes: formData.companySizes,
 		},
 		platform_and_hosting: {

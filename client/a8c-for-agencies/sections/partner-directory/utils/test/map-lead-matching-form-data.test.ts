@@ -293,7 +293,19 @@ describe( 'mapLeadMatchingDetailsToProfile', () => {
 		} );
 	} );
 
-	it( 'keeps only directly supported HubSpot-aligned values on hydration', () => {
+	it( 'keeps online store business type values for the WPCOM endpoint payload', () => {
+		const details = createDefaultLeadMatchingDetails();
+		details.businessTypes = [ 'online_store_physical', 'content_media' ];
+		details.idealBusinessTypes = [ 'online_store_digital' ];
+
+		expect( mapLeadMatchingDetailsToProfile( details, null ).business_fit ).toEqual( {
+			supported_business_types: [ 'online_store_physical', 'content_media' ],
+			ideal_business_types: [ 'online_store_digital' ],
+			supported_company_sizes: [],
+		} );
+	} );
+
+	it( 'keeps only directly supported business type values on hydration', () => {
 		expect(
 			mapLeadMatchingProfileToFormData( {
 				availability: {
@@ -307,8 +319,8 @@ describe( 'mapLeadMatchingDetailsToProfile', () => {
 					supported_languages: [],
 				},
 				business_fit: {
-					supported_business_types: [ 'local_service', 'other' ],
-					ideal_business_types: [ 'content_media', 'other' ],
+					supported_business_types: [ 'local_service', 'online_store_physical', 'other' ],
+					ideal_business_types: [ 'content_media', 'online_store_digital', 'other' ],
 					supported_company_sizes: [],
 				},
 				platform_and_hosting: {
@@ -343,8 +355,8 @@ describe( 'mapLeadMatchingDetailsToProfile', () => {
 				},
 			} )
 		).toMatchObject( {
-			businessTypes: [ 'local_service' ],
-			idealBusinessTypes: [ 'content_media' ],
+			businessTypes: [ 'local_service', 'online_store_physical' ],
+			idealBusinessTypes: [ 'content_media', 'online_store_digital' ],
 			hostingEnvironments: [ 'wpcom' ],
 			migrationPlatforms: [ 'shopify' ],
 			storeComplexities: [ 'custom_pricing', 'customer_portals' ],
