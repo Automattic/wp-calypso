@@ -1547,10 +1547,7 @@ export const sitePlansRoute = createRoute( {
 	path: 'plans',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		await Promise.all( [
-			queryClient.ensureQueryData( sitePlansQuery( site.ID ) ),
-			queryClient.prefetchQuery( sitePurchasesQuery( site.ID ) ),
-		] );
+		await queryClient.ensureQueryData( sitePlansQuery( site.ID ) );
 	},
 } ).lazy( () =>
 	import( '../../sites/site-plans' ).then( ( d ) =>
