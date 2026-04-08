@@ -19,6 +19,7 @@ export default function UserHovercard( props: UserHovercardProps ): JSX.Element 
 	const translate = useTranslate();
 	const { user: userProp } = props;
 	const wpcomIdOrLogin = userProp.wpcom_id || userProp.wpcom_login;
+	const classNames = 'user-hovercard ignore-click';
 
 	const { isLoading: isGravatarLoading, data: gravatarData } = useGravatarProfileV3Query(
 		userProp,
@@ -33,7 +34,7 @@ export default function UserHovercard( props: UserHovercardProps ): JSX.Element 
 
 	if ( isWpcomLoading || isGravatarLoading ) {
 		return (
-			<div className="user-hovercard">
+			<div className={ classNames }>
 				<div className="wp-spinner-wrapper" style={ { marginTop: '0' } }>
 					<Spinner />
 				</div>
@@ -44,7 +45,7 @@ export default function UserHovercard( props: UserHovercardProps ): JSX.Element 
 	const user = wpcomData?.user_login ? wpcomData : gravatarUser;
 	if ( ! user ) {
 		return (
-			<div className="user-hovercard user-hovercard--not-found">
+			<div className={ `${ classNames } user-hovercard--not-found` }>
 				<UserAvatarDefaultIcon iconSize={ 102 } />
 				<p>
 					{ translate( 'User not found.' ) }
@@ -61,7 +62,7 @@ export default function UserHovercard( props: UserHovercardProps ): JSX.Element 
 	}
 
 	return (
-		<div className="user-hovercard">
+		<div className={ classNames }>
 			<UserHovercardHeader user={ user } />
 
 			{ wpcomData?.primary_blog ? <PrimaryBlogCard user={ user } /> : null }

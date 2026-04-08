@@ -1,4 +1,3 @@
-import page from '@automattic/calypso-router';
 import { Popover } from '@wordpress/components';
 import { useRef, useState } from 'react';
 import UserHovercard from 'calypso/blocks/user-avatar/user-hovercard';
@@ -51,23 +50,13 @@ export default function UserAvatar( { user, size = 32, hideHovercard = false }: 
 	return (
 		<div
 			ref={ avatarRef }
-			className="user-avatar"
+			className="user-avatar ignore-click"
 			aria-hidden="true"
 			style={ { flexShrink: 0 } }
-			onClick={ ( event ) => {
-				event.preventDefault();
-				event.stopPropagation();
-			} }
 			onMouseEnter={ () => setIsHovered( true ) }
 			onMouseLeave={ () => setIsHovered( false ) }
 		>
-			{ wpcomProfileUrl ? (
-				<a href={ wpcomProfileUrl } onClick={ () => page( wpcomProfileUrl ) }>
-					{ avatarImg }
-				</a>
-			) : (
-				avatarImg
-			) }
+			{ wpcomProfileUrl ? <a href={ wpcomProfileUrl }>{ avatarImg }</a> : avatarImg }
 
 			{ user && ! hideHovercard && isHovered && (
 				<Popover

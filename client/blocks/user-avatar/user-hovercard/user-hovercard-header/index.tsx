@@ -1,5 +1,4 @@
 import './styles.scss';
-import page from '@automattic/calypso-router';
 import AutoDirection from 'calypso/components/auto-direction';
 import PreloadedImage from 'calypso/components/preloaded-image';
 import UserAvatarDefaultIcon from 'calypso/reader/components/icons/user-avatar-default-icon';
@@ -18,17 +17,11 @@ function UserHovercardHeader( { user }: UserHovercardHeaderProps ): JSX.Element 
 	const profilePageUrl = user.user_login ? `/reader/users/${ user.user_login }` : undefined; // Only navigate to profile page. Avoid navigating to any external links to keep UX consistent.
 	const avatarUrl = getProcessedGravatarUrl( user.avatar_URL );
 
-	function handleUserProfileClick(): void {
-		if ( profilePageUrl ) {
-			page( profilePageUrl );
-		}
-	}
-
 	return (
 		<AutoDirection>
 			<div className="user-hovercard__header">
 				<div className="user-hovercard__avatar">
-					<a href={ profilePageUrl } onClick={ handleUserProfileClick }>
+					<a href={ profilePageUrl }>
 						{ avatarUrl ? (
 							<PreloadedImage
 								src={ avatarUrl }
@@ -45,7 +38,7 @@ function UserHovercardHeader( { user }: UserHovercardHeaderProps ): JSX.Element 
 
 				{ name && (
 					<div className="user-hovercard__name">
-						<a href={ profilePageUrl } onClick={ handleUserProfileClick }>
+						<a href={ profilePageUrl }>
 							<h4>{ name }</h4>
 						</a>
 					</div>
