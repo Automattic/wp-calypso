@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 // Required for modular state.
 import 'calypso/state/a8c-for-agencies/init';
+import { A4A_PARTNER_DIRECTORY_LEAD_MATCHING_FEATURE_FLAG } from 'calypso/a8c-for-agencies/sections/partner-directory/lib/lead-matching-visibility';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { NoticeActionOptions } from 'calypso/state/notices/types';
 import { APIError, Agency, AgencyThunkAction, UserBillingType } from '../types';
@@ -14,6 +15,10 @@ import {
 } from './action-types';
 import { getActiveAgency, isFetchingAgency } from './selectors';
 import type { LeadMatchingDetails } from 'calypso/a8c-for-agencies/sections/partner-directory/types';
+
+const LEAD_MATCHING_PILOT_AGENCY_IDS = new Set( [
+	232667176, 251102500, 234036126, 234278359, 232640028,
+] );
 
 export function setActiveAgency( agency: Agency ): AgencyThunkAction {
 	return ( dispatch, getState ) => {
@@ -151,6 +156,13 @@ export function receiveAgencies( agencies: Agency[] ): AgencyThunkAction {
 			// Enable the Partner Directory section
 			if ( ! config.isEnabled( 'a4a-partner-directory' ) && newAgency.partner_directory.allowed ) {
 				config.enable( 'a4a-partner-directory' );
+			}
+
+			if (
+				! config.isEnabled( A4A_PARTNER_DIRECTORY_LEAD_MATCHING_FEATURE_FLAG ) &&
+				LEAD_MATCHING_PILOT_AGENCY_IDS.has( newAgency.id )
+			) {
+				config.enable( A4A_PARTNER_DIRECTORY_LEAD_MATCHING_FEATURE_FLAG );
 			}
 		}
 	};
