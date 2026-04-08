@@ -3,6 +3,7 @@
 body.is-section-scan {
 	@include admin-ui-page-layout;
 	@include admin-ui-page-layout-constrained-content($max-width: 1040px);
+	@include admin-ui-page-sticky-footer;
 
 	.scan__wpcom-upsell .promo-card {
 		display: flex;
