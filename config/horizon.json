@@ -28,7 +28,7 @@
 		"cookie-banner": true,
 		"current-site/domain-warning": false,
 		"current-site/notice": true,
-		"dashboard/omnibar": false,
+		"dashboard/omnibar": true,
 		"dashboard/wp-beta-program": false,
 		"dashboard/opt-in-banners": false,
 		"dashboard/v2": true,
