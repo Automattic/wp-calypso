@@ -61,6 +61,26 @@ Post cards live in `client/blocks/reader-post-card/` with variants: `standard` (
 | `/activities/likes` | `client/reader/liked-stream/` |
 | `/reader/users/*` | `client/reader/user-profile/` |
 
+### SSR file variants
+
+Some routes have both `.node.js` (server) and `.web.js` (client) file variants for isomorphic rendering. Examples: `discover/index.node.js` / `discover/index.web.js`, `tags/index.node.js` / `tags/index.web.js`. The `.node.js` variant renders placeholder components for SSR, while `.web.js` uses `AsyncLoad` and full interactivity. When adding new routes that need SSR support, both variants are required.
+
+### Analytics
+
+Reader events use the `calypso_reader_*` prefix. Use the `recordReaderTracksEvent` Redux action for tracking — `recordTrack()` from `client/reader/stats` is deprecated. Every event automatically includes a `ui_algo` property derived from route pattern matching in `client/reader/stats/index.ts`.
+
+### URL builders
+
+Reuse the URL builders from `client/reader/route/index.js` instead of constructing Reader URLs manually: `getPostUrl(post)`, `getFeedUrl(feedId)`, `getSiteUrl(siteId)`, `getTagStreamUrl(tag)`. `getPostUrl()` automatically selects the correct format based on `feed_ID`, `site_ID`, and `is_external` flags.
+
+### Post display types
+
+Post display types in `client/state/reader/posts/display-types.js` are **bitwise flags** (not a mutually exclusive enum). They can be combined with XOR (`^=`): `PHOTO_ONLY` (1), `GALLERY` (32), `FEATURED_VIDEO` (512), `X_POST` (1024), etc.
+
+### Post normalization pipeline
+
+Post normalization (`client/state/reader/posts/normalization-rules.js`) runs in two phases: **fast rules** (synchronous — decoding, HTML stripping, content sanitization) and **slow rules** (asynchronous — waits for images to load, classifies display type, detects Reddit posts). New normalization rules must be added to the correct phase.
+
 ### Shared code boundaries
 
 The Reader owns `client/reader/` but depends on shared code that other clients also use. Be aware of the impact when modifying:
