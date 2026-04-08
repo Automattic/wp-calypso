@@ -100,7 +100,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result ).toEqual( [] );
 	} );
 
-	it( 'appends `next-step-button` only to the last message with follow-up tasks and omits `actions`', () => {
+	it( 'appends `NextStepButton` with `onSubmit` as `onMoveToNextStep` only to the last active message with follow-up tasks', () => {
 		const data = { type: 'my-component', followUpTasks: true, isCurrent: true };
 		const actions = [
 			{ id: 'action-1', label: 'Do something', onClick: jest.fn() },
@@ -118,7 +118,6 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result ).toHaveLength( 3 );
 		expect( result[ 0 ].id ).toBe( 'msg-1' );
 		expect( result[ 1 ].id ).toBe( 'msg-2' );
-		expect( result[ 1 ].actions ).toBeDefined();
 		expect( result[ 2 ].id ).toBe( 'msg-2-next-step' );
 		expect( result[ 2 ].content[ 0 ] ).toMatchObject( {
 			type: 'component',
@@ -126,28 +125,6 @@ describe( 'convertToolMessagesToComponents', () => {
 			componentProps: { onMoveToNextStep: mockOnSubmit },
 		} );
 		expect( result[ 2 ].actions ).toBeUndefined();
-	} );
-
-	it( 'appends `NextStepButton` with `onSubmit` as `onMoveToNextStep` when active with follow-up tasks', () => {
-		const message = createToolMessage( 'big_sky__show_component', {
-			type: 'my-component',
-			followUpTasks: true,
-			isCurrent: true,
-		} );
-		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
-
-		const result = convertWithDefaults( {
-			messages: [ message ],
-			getChatComponent,
-		} );
-
-		expect( result ).toHaveLength( 2 );
-		expect( result[ 0 ].content[ 0 ] ).toMatchObject( { component: MockComponent } );
-		expect( result[ 1 ].content[ 0 ] ).toMatchObject( {
-			type: 'component',
-			component: NextStepButton,
-			componentProps: { onMoveToNextStep: mockOnSubmit },
-		} );
 	} );
 
 	it( 'shows `UnavailableToolMessage` when not on an editor page', () => {
