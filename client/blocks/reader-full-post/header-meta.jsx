@@ -1,25 +1,29 @@
 import { TimeSince } from '@automattic/components';
 import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
 import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
 import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link';
 import UserAvatar from 'calypso/blocks/user-avatar';
 import { areEqualIgnoringWhitespaceAndCase } from 'calypso/lib/string';
 import { getStreamUrl } from 'calypso/reader/route';
+import { getFeed } from 'calypso/state/reader/feeds/selectors';
 
 const ReaderFullPostHeaderMeta = ( { post, author, siteName, feedId, siteId } ) => {
 	const streamUrl = getStreamUrl( feedId, siteId );
-
+	const feed = useSelector( ( state ) => getFeed( state, feedId ) );
 	const hasAuthorName = author?.name;
 	const hasMatchingAuthorAndSiteNames =
 		hasAuthorName &&
 		areEqualIgnoringWhitespaceAndCase( String( siteName ), String( author?.name ) );
 	const showAuthorLink = hasAuthorName && ! hasMatchingAuthorAndSiteNames;
+	const avatarUrl =
+		! author.avatar_URL && post.is_external ? feed?.site_icon || feed?.image : author?.avatar_URL;
 
 	return (
 		<div className="reader-full-post__header-meta-wrapper">
 			<UserAvatar
 				className="reader-full-post__header-meta-avatars"
-				user={ author }
+				user={ { ...author, avatar_URL: avatarUrl } }
 				iconSize={ 40 }
 			/>
 			<div className="reader-full-post__header-meta-info">
