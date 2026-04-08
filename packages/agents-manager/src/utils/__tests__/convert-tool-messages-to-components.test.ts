@@ -67,7 +67,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result ).toEqual( [ message ] );
 	} );
 
-	it( 'converts tool messages to components', () => {
+	it( 'renders tool messages as components', () => {
 		const message = createToolMessage( 'big_sky__show_component', {
 			type: 'my-component',
 			props: { name: 'test' },
@@ -127,7 +127,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result[ 2 ].actions ).toBeUndefined();
 	} );
 
-	it( 'shows `UnavailableToolMessage` when not on an editor page', () => {
+	it( 'renders `UnavailableToolMessage` when not on an editor page', () => {
 		( isEditorPage as jest.Mock ).mockReturnValue( false );
 		const message = createToolMessage( 'big_sky__show_component', { type: 'my-component' } );
 
@@ -143,7 +143,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 	} );
 
-	it( 'shows `UnavailableToolMessage` for the start-over tool', () => {
+	it( 'renders `UnavailableToolMessage` for the start-over tool', () => {
 		const message = createToolMessage( 'big_sky__client_assistants', {
 			assistantId: 'big-sky-site-admin',
 		} );
@@ -193,7 +193,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 	} );
 
-	it( 'returns `EscalationButton` when `forward_to_human_support` flag is set', () => {
+	it( 'renders `EscalationButton` when `forward_to_human_support` flag is set', () => {
 		const message = createMessage( {
 			content: [
 				{ type: 'text', text: 'Hello' },
@@ -223,7 +223,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result ).toEqual( [] );
 	} );
 
-	it( 'disables component messages when `isCurrent` is `false`', () => {
+	it( 'disables component when `isCurrent` is false', () => {
 		const message = createToolMessage( 'big_sky__show_component', {
 			type: 'my-component',
 			isCurrent: false,
@@ -239,7 +239,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result[ 0 ] ).toMatchObject( { disabled: true } );
 	} );
 
-	it( 'hides `next-step-button` when `isCurrent` is `false`', () => {
+	it( 'does not append `NextStepButton` when `isCurrent` is false', () => {
 		const message = createToolMessage( 'big_sky__show_component', {
 			type: 'my-component',
 			followUpTasks: true,
@@ -276,7 +276,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result[ 0 ] ).toMatchObject( { disabled: true } );
 	} );
 
-	it( 'hides `next-step-button` when `postId` differs from `currentPostId`', () => {
+	it( 'does not append `NextStepButton` when `postId` differs from `currentPostId`', () => {
 		const message = createToolMessage( 'big_sky__show_component', {
 			type: 'my-component',
 			followUpTasks: true,
@@ -297,7 +297,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 	} );
 
-	it( 'does not disable when `postId` matches `currentPostId`', () => {
+	it( 'does not disable component when `postId` matches `currentPostId`', () => {
 		const message = createToolMessage( 'big_sky__show_component', {
 			type: 'my-component',
 			isCurrent: true,
@@ -315,7 +315,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result[ 0 ] ).toMatchObject( { disabled: false } );
 	} );
 
-	it( 'does not disable when `postId` is missing from the tool message', () => {
+	it( 'does not disable component when `postId` is missing from the tool message', () => {
 		const message = createToolMessage( 'big_sky__show_component', {
 			type: 'my-component',
 			isCurrent: true,
@@ -332,7 +332,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result[ 0 ] ).toMatchObject( { disabled: false } );
 	} );
 
-	it( 'does not disable when `currentPostId` is `undefined`', () => {
+	it( 'does not disable component when `currentPostId` is undefined', () => {
 		const message = createToolMessage( 'big_sky__show_component', {
 			type: 'my-component',
 			isCurrent: true,
