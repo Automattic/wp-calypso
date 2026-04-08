@@ -4,6 +4,7 @@ import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { useQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { useDebounce } from 'use-debounce';
 import ReaderFeedItem from 'calypso/blocks/reader-feed-item';
 import FeedPreview from 'calypso/landing/subscriptions/components/feed-preview';
 import { SOURCE_SUBSCRIPTIONS_SEARCH_RECOMMENDATION_LIST } from 'calypso/landing/subscriptions/tracks';
@@ -17,6 +18,7 @@ interface Props {
 export const UnsubscribedFeedsSearchList = ( props: Props ) => {
 	const { hideTitle = false } = props;
 	const { searchTerm } = useSiteSubscriptionsQueryProps();
+	const [ debouncedSearchTerm ] = useDebounce( searchTerm, 500 );
 	const { isPending: isUnsubscribing } = useSiteUnsubscribeMutation();
 	const translate = useTranslate();
 	const {
@@ -30,7 +32,7 @@ export const UnsubscribedFeedsSearchList = ( props: Props ) => {
 		error: searchError,
 	} = useQuery(
 		readFeedSearchQuery( {
-			query: searchTerm,
+			query: debouncedSearchTerm,
 			excludeFollowed: true,
 		} )
 	);
