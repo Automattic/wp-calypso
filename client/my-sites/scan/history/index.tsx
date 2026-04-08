@@ -2,6 +2,7 @@ import { Page } from '@wordpress/admin-ui';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
+import JetpackFooter from 'calypso/components/jetpack/jetpack-footer';
 import ThreatHistoryList from 'calypso/components/jetpack/threat-history-list';
 import JetpackTitle from 'calypso/components/jetpack-title';
 import Main from 'calypso/components/main';
@@ -60,6 +61,7 @@ export default function ScanHistoryPage( { filter }: Props ) {
 			) : (
 				content
 			) }
+			{ isWpcom && <JetpackFooter /> }
 		</Main>
 	);
 }
