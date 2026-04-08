@@ -84,12 +84,7 @@ const HomeContent = ( {
 	const translate = useTranslate();
 	const isP2 = site?.options?.is_wpforteams_site;
 
-	const {
-		data: layout,
-		isLoading,
-		error: homeLayoutError,
-		refetch: refetchLayout,
-	} = useHomeLayoutQuery( siteId );
+	const { data: layout, isLoading, error: homeLayoutError } = useHomeLayoutQuery( siteId );
 	const { skipCurrentView } = useSkipCurrentViewMutation( siteId );
 
 	const [ focusedLaunchpadDismissed, setFocusedLaunchpadDismissed ] = useState( false );
@@ -150,9 +145,7 @@ const HomeContent = ( {
 		Array.isArray( layout?.secondary ) &&
 		layout.secondary.length > 0;
 
-	const { addCelebrateLaunchQueryParams } = useCelebrateLaunchModalSideEffects( siteId, {
-		refetch: refetchLayout,
-	} );
+	const { addCelebrateLaunchQueryParams } = useCelebrateLaunchModalSideEffects( siteId );
 
 	if ( ! canUserUseCustomerHome ) {
 		const title = translate( 'This page is not available on this site.' );

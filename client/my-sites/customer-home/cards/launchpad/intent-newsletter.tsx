@@ -1,4 +1,3 @@
-import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
 import { useCelebrateLaunchModalSideEffects } from 'calypso/my-sites/customer-home/celebrate-site-launch-modal/use-side-effects';
 import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/sites/selectors';
@@ -10,9 +9,7 @@ const LaunchpadIntentNewsletter = ( { checklistSlug }: { checklistSlug: string }
 	const siteId = useSelector( getSelectedSiteId ) || 0;
 	const site = useSelector( ( state: AppState ) => getSite( state, siteId ) );
 
-	const layoutQuery = useHomeLayoutQuery( siteId || null );
-
-	const { onSiteLaunched } = useCelebrateLaunchModalSideEffects( siteId, layoutQuery );
+	const { onSiteLaunched } = useCelebrateLaunchModalSideEffects( siteId );
 
 	return (
 		<CustomerHomeLaunchpad

@@ -4,7 +4,6 @@ import { Button } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
 import { useExperiment } from 'calypso/lib/explat';
 import { useCelebrateLaunchModalSideEffects } from 'calypso/my-sites/customer-home/celebrate-site-launch-modal/use-side-effects';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -20,8 +19,7 @@ export const MasterbarLaunchButton = ( { siteId }: { siteId: number } ) => {
 
 	const launchSiteMutation = useMutation( siteLaunchMutation( siteId ) );
 
-	const layout = useHomeLayoutQuery( siteId );
-	const { onSiteLaunched } = useCelebrateLaunchModalSideEffects( siteId, layout );
+	const { onSiteLaunched } = useCelebrateLaunchModalSideEffects( siteId );
 
 	const [ isLoading, data ] = useExperiment( 'calypso_standardized_site_launch_gating' );
 

@@ -3,7 +3,6 @@ import { AnalyticsProvider } from 'calypso/dashboard/app/analytics';
 import SiteLaunchCelebrationModal from 'calypso/dashboard/sites/site-launch-celebration-modal';
 import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { useCelebrateLaunchModalSideEffects } from 'calypso/my-sites/customer-home/celebrate-site-launch-modal/use-side-effects';
 import { useDispatch, useSelector } from 'calypso/state';
 import { setSiteLaunchCelebrationModalOpen } from 'calypso/state/sites/launch/actions';
 import { getSite } from 'calypso/state/sites/selectors';
@@ -20,7 +19,6 @@ const CelebrateSiteLaunchModal = ( { siteId }: { siteId: number } ) => {
 	}, [] );
 
 	const layout = useHomeLayoutQuery( siteId );
-	const { onModalClosed } = useCelebrateLaunchModalSideEffects( siteId, layout );
 
 	return (
 		<AnalyticsProvider client={ analyticsClient }>
@@ -32,7 +30,7 @@ const CelebrateSiteLaunchModal = ( { siteId }: { siteId: number } ) => {
 					} }
 					onClose={ () => {
 						dispatch( setSiteLaunchCelebrationModalOpen( false ) );
-						onModalClosed();
+						layout?.refetch();
 					} }
 				/>
 			) }

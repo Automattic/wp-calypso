@@ -1,4 +1,3 @@
-import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
 import { useExperiment } from 'calypso/lib/explat';
 import { useCelebrateLaunchModalSideEffects } from 'calypso/my-sites/customer-home/celebrate-site-launch-modal/use-side-effects';
 import { useSelector } from 'calypso/state';
@@ -17,8 +16,7 @@ const LaunchpadPreLaunch = ( props: LaunchpadPreLaunchProps ): JSX.Element => {
 	const site = useSelector( ( state: AppState ) => getSite( state, siteId ) );
 	const checklistSlug = site?.options?.site_intent ?? '';
 
-	const layout = useHomeLayoutQuery( siteId || null );
-	const { onSiteLaunched } = useCelebrateLaunchModalSideEffects( siteId, layout );
+	const { onSiteLaunched } = useCelebrateLaunchModalSideEffects( siteId );
 
 	const [ , experimentData ] = useExperiment( 'calypso_standardized_site_launch_gating' );
 	const experimentAssignment = experimentData?.variationName;
