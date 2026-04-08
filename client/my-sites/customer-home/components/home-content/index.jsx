@@ -143,7 +143,10 @@ const HomeContent = ( {
 		Array.isArray( layout?.secondary ) &&
 		layout.secondary.length > 0;
 
-	const { onSiteLaunched, onModalClosed } = useCelebrateLaunchModalSideEffects( siteId, layout );
+	const { addCelebrateLaunchQueryParams, onModalClosed } = useCelebrateLaunchModalSideEffects(
+		siteId,
+		layout
+	);
 
 	if ( ! canUserUseCustomerHome ) {
 		const title = translate( 'This page is not available on this site.' );
@@ -158,8 +161,8 @@ const HomeContent = ( {
 					await updateLaunchpadSettings( siteId, { launchpad_screen: 'skipped' } );
 					skipCurrentView( null, true );
 				} }
+				beforeSiteLaunchRefetch={ addCelebrateLaunchQueryParams }
 				onSiteLaunch={ () => {
-					onSiteLaunched( !! site?.is_wpcom_atomic );
 					setFocusedLaunchpadDismissed( true );
 				} }
 			/>

@@ -8,11 +8,16 @@ export function useCelebrateLaunchModalSideEffects(
 ) {
 	const dispatch = useDispatch();
 
+	const addCelebrateLaunchQueryParams = () => {
+		const url = new URL( window.location.href );
+		url.searchParams.set( 'celebrateLaunch', 'true' );
+		window.history.replaceState( {}, '', url.toString() );
+	};
+
 	return {
+		addCelebrateLaunchQueryParams,
 		onSiteLaunched: ( isWpcomAtomic: boolean ) => {
-			const url = new URL( window.location.href );
-			url.searchParams.set( 'celebrateLaunch', 'true' );
-			window.history.replaceState( {}, '', url.toString() );
+			addCelebrateLaunchQueryParams();
 
 			dispatch( requestSite( siteId ) );
 
