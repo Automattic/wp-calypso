@@ -26,7 +26,7 @@ export default function SiteLaunchCelebrationModal( { site }: SiteLaunchCelebrat
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
 	const { recordTracksEvent } = useAnalytics();
 	const { queries } = useAppContext();
-	const { data: domains = [] } = useQuery( {
+	const { data: domains = [], isFetchedAfterMount: isDomainsFetched } = useQuery( {
 		...queries.domainsQuery(),
 		enabled: isOpen,
 		select: ( data ) => data.filter( ( domain ) => domain.blog_id === site.ID ),
@@ -62,7 +62,7 @@ export default function SiteLaunchCelebrationModal( { site }: SiteLaunchCelebrat
 		} );
 	}, [ isOpen, site?.plan?.product_slug, recordTracksEvent ] );
 
-	if ( ! isOpen ) {
+	if ( ! isOpen || ! isDomainsFetched ) {
 		return null;
 	}
 
