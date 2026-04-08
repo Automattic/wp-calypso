@@ -36,6 +36,7 @@ import { login } from 'calypso/lib/paths';
 import loginRouter, { LOGIN_SECTION_DEFINITION } from 'calypso/login';
 import sections from 'calypso/sections';
 import isSectionEnabled from 'calypso/sections-filter';
+import { loadDashboardLocaleData } from 'calypso/server/dashboard-i18n';
 import { serverRouter, getCacheKey } from 'calypso/server/isomorphic-routing';
 import { isWpMobileApp, isWcMobileApp } from 'calypso/server/lib/is-mobile-app';
 import performanceMark from 'calypso/server/lib/performance-mark/index';
@@ -1075,7 +1076,7 @@ export default function pages() {
 	 * This approach allows requests to an SSR section to skip any section-specific
 	 * SSR middleware if the request wasn't going to be resolved with SSR anyways.
 	 */
-	function handleSectionPath( section, sectionPath, entrypoint, reqFilter ) {
+	function handleSectionPath( section, sectionPath, entrypoint, reqFilter, extraMiddleware ) {
 		const pathRegex = pathToRegExp( sectionPath );
 
 		app.get(
@@ -1095,6 +1096,7 @@ export default function pages() {
 				next();
 			},
 			setUpRoute, // For SSR requests, this will happen in the serverRouter.
+			...( extraMiddleware ? [ extraMiddleware ] : [] ),
 			serverRender
 		);
 	}
@@ -1117,7 +1119,8 @@ export default function pages() {
 				DOTCOM_DASHBOARD_SECTION_DEFINITION,
 				route,
 				'entry-dashboard-dotcom',
-				( req ) => isAllowedDotcomDashboardHostname( req.hostname )
+				( req ) => isAllowedDotcomDashboardHostname( req.hostname ),
+				loadDashboardLocaleData
 			);
 		} );
 		DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
@@ -1125,14 +1128,16 @@ export default function pages() {
 				CIAB_DASHBOARD_SECTION_DEFINITION,
 				route,
 				'entry-dashboard-ciab',
-				( req ) => isAllowedCiabDashboardHostname( req.hostname )
+				( req ) => isAllowedCiabDashboardHostname( req.hostname ),
+				loadDashboardLocaleData
 			);
 		} );
 		handleSectionPath(
 			CIAB_DASHBOARD_SECTION_DEFINITION,
 			'/start-store',
 			'entry-dashboard-ciab',
-			( req ) => isAllowedCiabDashboardHostname( req.hostname )
+			( req ) => isAllowedCiabDashboardHostname( req.hostname ),
+			loadDashboardLocaleData
 		);
 	}
 

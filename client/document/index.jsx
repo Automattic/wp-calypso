@@ -57,6 +57,7 @@ class Document extends Component {
 			isSSP,
 			lang,
 			languageRevisions,
+			localeData,
 			manifests,
 			params,
 			preferencesHelper,
@@ -95,6 +96,7 @@ class Document extends Component {
 			( languageRevisions
 				? `var languageRevisions = ${ jsonStringifyForHtml( languageRevisions ) };\n`
 				: '' ) +
+			( localeData ? `var dashboardLocaleData = ${ jsonStringifyForHtml( localeData ) };\n` : '' ) +
 			`var installedChunks = ${ jsonStringifyForHtml( installedChunks ) };\n` +
 			// Inject the locale if we can get it from the route via `getLanguageRouteParam`
 			( params && params.hasOwnProperty( 'lang' )
