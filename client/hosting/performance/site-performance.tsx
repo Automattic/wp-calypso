@@ -40,7 +40,6 @@ import { ExpiredReportNotice } from './components/expired-report-notice/expired-
 import { usePerformanceReport } from './hooks/usePerformanceReport';
 import { useSitePerformancePageReports } from './hooks/useSitePerformancePageReports';
 import { getSupportLinkProps } from './utils';
-import type { Site } from '@automattic/api-core';
 
 import './style.scss';
 
@@ -394,7 +393,7 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 			) }
 			{ site && (
 				<AnalyticsProvider client={ analyticsClient }>
-					<SiteLaunchCelebrationModal site={ site as unknown as Site } />
+					<SiteLaunchCelebrationModal site={ site } />
 				</AnalyticsProvider>
 			) }
 		</div>

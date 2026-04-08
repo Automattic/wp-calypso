@@ -18,7 +18,9 @@ import type { Site } from '@automattic/api-core';
 import './styles.scss';
 
 interface SiteLaunchCelebrationModalProps {
-	site: Site;
+	site: Pick< Site, 'ID' | 'slug' | 'URL' | 'launch_status' > & {
+		plan?: Pick< Required< Site >[ 'plan' ], 'is_free' | 'product_slug' >;
+	};
 }
 
 export default function SiteLaunchCelebrationModal( { site }: SiteLaunchCelebrationModalProps ) {
