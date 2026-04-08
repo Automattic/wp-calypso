@@ -16,7 +16,6 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import ResurrectedWelcomeModalGate from 'calypso/components/resurrected-welcome-modal';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import useDomainDiagnosticsQuery from 'calypso/data/domains/diagnostics/use-domain-diagnostics-query';
-import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import useHomeLayoutQuery, { getCacheKey } from 'calypso/data/home/use-home-layout-query';
 import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
 import { usePurchasePlanNotification } from 'calypso/landing/stepper/declarative-flow/internals/hooks/use-purchase-plan-notification';
@@ -24,6 +23,8 @@ import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { setDomainNotice } from 'calypso/lib/domains/set-domain-notice';
 import { preventWidows } from 'calypso/lib/formatting';
 import { getQueryArgs } from 'calypso/lib/query-args';
+import { CelebrateSiteLaunchModal } from 'calypso/my-sites/customer-home/celebrate-site-launch-modal';
+import { useCelebrateLaunchModalSideEffects } from 'calypso/my-sites/customer-home/celebrate-site-launch-modal/use-side-effects';
 import Primary from 'calypso/my-sites/customer-home/locations/primary';
 import Secondary from 'calypso/my-sites/customer-home/locations/secondary';
 import Tertiary from 'calypso/my-sites/customer-home/locations/tertiary';
@@ -52,7 +53,6 @@ import {
 } from 'calypso/state/sites/selectors';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import CelebrateLaunchModal from '../celebrate-launch-modal';
 import { FullScreenLaunchpad } from '../full-screen-launchpad';
 import openSyncUrlInStudio from './studio-deeplink';
 
@@ -85,14 +85,6 @@ const HomeContent = ( {
 	const { data: layout, isLoading, error: homeLayoutError } = useHomeLayoutQuery( siteId );
 	const { skipCurrentView } = useSkipCurrentViewMutation( siteId );
 
-	const {
-		data: allDomains = [],
-		isSuccess,
-		isFetchedAfterMount,
-	} = useGetDomainsQuery( site?.ID ?? null, {
-		retry: false,
-	} );
-
 	const [ focusedLaunchpadDismissed, setFocusedLaunchpadDismissed ] = useState( false );
 
 	const siteDomains = useSelector( ( state ) => getDomainsBySiteId( state, siteId ) );
@@ -113,12 +105,6 @@ const HomeContent = ( {
 	const [ dismissedEmailDnsDiagnostics, setDismissedEmailDnsDiagnostics ] = useState( false );
 
 	usePurchasePlanNotification( siteId, site?.plan?.product_slug );
-
-	useEffect( () => {
-		if ( getQueryArgs().celebrateLaunch === 'true' && isSuccess && isFetchedAfterMount ) {
-			setCelebrateLaunchModalIsOpen( true );
-		}
-	}, [ isSuccess, isFetchedAfterMount ] );
 
 	useEffect( () => {
 		if ( ! isSiteLaunching && launchedSiteId === siteId ) {
@@ -157,6 +143,8 @@ const HomeContent = ( {
 		Array.isArray( layout?.secondary ) &&
 		layout.secondary.length > 0;
 
+	const { onSiteLaunched, onModalClosed } = useCelebrateLaunchModalSideEffects( siteId, layout );
+
 	if ( ! canUserUseCustomerHome ) {
 		const title = translate( 'This page is not available on this site.' );
 		return <EmptyContent title={ preventWidows( title ) } />;
@@ -171,7 +159,7 @@ const HomeContent = ( {
 					skipCurrentView( null, true );
 				} }
 				onSiteLaunch={ () => {
-					setCelebrateLaunchModalIsOpen( true );
+					onSiteLaunched( !! site?.is_wpcom_atomic );
 					setFocusedLaunchpadDismissed( true );
 				} }
 			/>
@@ -362,13 +350,11 @@ const HomeContent = ( {
 					</div>
 				</>
 			) : null }
-			{ celebrateLaunchModalIsOpen && (
-				<CelebrateLaunchModal
-					setModalIsOpen={ setCelebrateLaunchModalIsOpen }
-					site={ site }
-					allDomains={ allDomains }
-				/>
-			) }
+			<CelebrateSiteLaunchModal
+				site={ site }
+				onOpen={ () => setCelebrateLaunchModalIsOpen( true ) }
+				onModalClosed={ onModalClosed }
+			/>
 			<ResurrectedWelcomeModalGate isSuppressed={ celebrateLaunchModalIsOpen } />
 			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
 		</div>

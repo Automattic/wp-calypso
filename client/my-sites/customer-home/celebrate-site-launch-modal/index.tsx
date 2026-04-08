@@ -6,9 +6,11 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 export const CelebrateSiteLaunchModal = ( {
 	site,
+	onOpen,
 	onModalClosed,
 }: {
 	site: SiteDetails | null | undefined;
+	onOpen?: () => void;
 	onModalClosed: () => void;
 } ) => {
 	const analyticsClient = useMemo( () => {
@@ -20,7 +22,9 @@ export const CelebrateSiteLaunchModal = ( {
 
 	return (
 		<AnalyticsProvider client={ analyticsClient }>
-			{ site && <SiteLaunchCelebrationModal site={ site } onClose={ onModalClosed } /> }
+			{ site && (
+				<SiteLaunchCelebrationModal site={ site } onOpen={ onOpen } onClose={ onModalClosed } />
+			) }
 		</AnalyticsProvider>
 	);
 };

@@ -6,6 +6,7 @@ import {
 	Button,
 	Modal,
 } from '@wordpress/components';
+import { useEvent } from '@wordpress/compose';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { copy, globe } from '@wordpress/icons';
@@ -21,11 +22,13 @@ interface SiteLaunchCelebrationModalProps {
 	site: Pick< Site, 'ID' | 'slug' | 'URL' | 'launch_status' > & {
 		plan?: Pick< Required< Site >[ 'plan' ], 'is_free' | 'product_slug' >;
 	};
+	onOpen?: () => void;
 	onClose?(): void;
 }
 
 export default function SiteLaunchCelebrationModal( {
 	site,
+	onOpen: externalOnOpen,
 	onClose,
 }: SiteLaunchCelebrationModalProps ) {
 	const [ isOpen, setIsOpen ] = useState( false );
@@ -39,15 +42,20 @@ export default function SiteLaunchCelebrationModal( {
 	} );
 	const copyButtonRef = useRef< HTMLButtonElement >( null );
 
+	const onOpen = useEvent( () => {
+		externalOnOpen?.();
+		setIsOpen( true );
+	} );
+
 	// Check if celebration modal should be shown based on URL param and site launch status
 	useEffect( () => {
 		const hasCelebrateLaunch = new URLSearchParams( window.location.search ).has(
 			'celebrateLaunch'
 		);
 		if ( site.launch_status === 'launched' && hasCelebrateLaunch ) {
-			setIsOpen( true );
+			onOpen();
 		}
-	}, [ site.launch_status ] );
+	}, [ site.launch_status, onOpen ] );
 
 	useEffect( () => {
 		// Only run cleanup and analytics when modal is open
