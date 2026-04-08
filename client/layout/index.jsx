@@ -43,6 +43,7 @@ import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'calypso/state/guided-tour
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import { isReaderMSDEnabled } from 'calypso/state/reader-ui/selectors';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
+import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import hasGravatarDomainQueryParam from 'calypso/state/selectors/has-gravatar-domain-query-param';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
@@ -51,6 +52,7 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import {
+	getMostRecentlySelectedSiteId,
 	getSelectedSiteId,
 	getSidebarIsCollapsed,
 	masterbarIsVisible,
@@ -202,6 +204,7 @@ class Layout extends Component {
 					/>
 				) }
 				<MasterbarComponent
+					siteId={ this.props.siteId }
 					section={ this.props.sectionGroup }
 					isCheckout={ this.props.sectionName === 'checkout' }
 					isCheckoutPending={ this.props.sectionName === 'checkout-pending' }
@@ -360,6 +363,11 @@ class Layout extends Component {
 				{ ! this.props.isMSDEnabledForReader && (
 					<AsyncLoad require="calypso/layout/global-notifications" placeholder={ null } />
 				) }
+				<AsyncLoad
+					require="calypso/my-sites/customer-home/celebrate-site-launch-modal"
+					placeholder={ null }
+					siteId={ this.props.siteId }
+				/>
 			</div>
 		);
 	}
@@ -370,7 +378,13 @@ export default withCurrentRoute(
 		const dashboard = getDashboardFromHostname( window?.location?.hostname );
 		const sectionGroup = currentSection?.group ?? null;
 		const sectionName = currentSection?.name ?? null;
-		const siteId = getSelectedSiteId( state );
+
+		// Falls back to using the user's primary site if no site has been selected
+		// by the user yet
+		const siteId =
+			getSelectedSiteId( state ) ||
+			getMostRecentlySelectedSiteId( state ) ||
+			getPrimarySiteId( state );
 		const sectionJitmPath = getMessagePathForJITM( currentRoute );
 		const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
 		const isJetpack =

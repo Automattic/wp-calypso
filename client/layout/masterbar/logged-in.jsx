@@ -27,7 +27,6 @@ import { getPreference } from 'calypso/state/preferences/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
-import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import getSiteMigrationStatus from 'calypso/state/selectors/get-site-migration-status';
 import hasGravatarDomainQueryParam from 'calypso/state/selectors/has-gravatar-domain-query-param';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
@@ -57,7 +56,7 @@ import isSimpleSite from 'calypso/state/sites/selectors/is-simple-site';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { activateNextLayoutFocus, setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
-import { getMostRecentlySelectedSiteId, getSectionGroup } from 'calypso/state/ui/selectors';
+import { getSectionGroup } from 'calypso/state/ui/selectors';
 import Item from './item';
 import Masterbar from './masterbar';
 import { AgentsManagerIcon } from './masterbar-agents-manager/agents-manager-icon';
@@ -848,12 +847,9 @@ class MasterbarLoggedIn extends Component {
 export { MasterbarLoggedIn };
 
 export default connect(
-	( state ) => {
+	( state, { siteId } ) => {
 		const sectionGroup = getSectionGroup( state );
 
-		// Falls back to using the user's primary site if no site has been selected
-		// by the user yet
-		const siteId = getMostRecentlySelectedSiteId( state ) || getPrimarySiteId( state );
 		const sitePlanSlug = getSitePlanSlug( state, siteId );
 		const isMigrationInProgress =
 			isSiteMigrationInProgress( state, siteId ) || isSiteMigrationActiveRoute( state );

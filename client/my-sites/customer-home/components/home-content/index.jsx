@@ -23,7 +23,6 @@ import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { setDomainNotice } from 'calypso/lib/domains/set-domain-notice';
 import { preventWidows } from 'calypso/lib/formatting';
 import { getQueryArgs } from 'calypso/lib/query-args';
-import { CelebrateSiteLaunchModal } from 'calypso/my-sites/customer-home/celebrate-site-launch-modal';
 import { useCelebrateLaunchModalSideEffects } from 'calypso/my-sites/customer-home/celebrate-site-launch-modal/use-side-effects';
 import Primary from 'calypso/my-sites/customer-home/locations/primary';
 import Secondary from 'calypso/my-sites/customer-home/locations/secondary';
@@ -45,6 +44,7 @@ import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-act
 import isUserRegistrationDaysWithinRange from 'calypso/state/selectors/is-user-registration-days-within-range';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { launchSite } from 'calypso/state/sites/launch/actions';
+import { getIsSiteLaunchCelebrationModalOpen } from 'calypso/state/sites/launch/selectors';
 import { isSiteOnWooExpressEcommerceTrial } from 'calypso/state/sites/plans/selectors';
 import {
 	canCurrentUserUseCustomerHome,
@@ -76,13 +76,20 @@ const HomeContent = ( {
 	isAdmin,
 	dashboardOptIn,
 } ) => {
-	const [ celebrateLaunchModalIsOpen, setCelebrateLaunchModalIsOpen ] = useState( false );
+	const celebrateLaunchModalIsOpen = useSelector( ( state ) =>
+		getIsSiteLaunchCelebrationModalOpen( state, siteId )
+	);
 	const [ launchedSiteId, setLaunchedSiteId ] = useState( null );
 	const queryClient = useQueryClient();
 	const translate = useTranslate();
 	const isP2 = site?.options?.is_wpforteams_site;
 
-	const { data: layout, isLoading, error: homeLayoutError } = useHomeLayoutQuery( siteId );
+	const {
+		data: layout,
+		isLoading,
+		error: homeLayoutError,
+		refetch: refetchLayout,
+	} = useHomeLayoutQuery( siteId );
 	const { skipCurrentView } = useSkipCurrentViewMutation( siteId );
 
 	const [ focusedLaunchpadDismissed, setFocusedLaunchpadDismissed ] = useState( false );
@@ -143,10 +150,9 @@ const HomeContent = ( {
 		Array.isArray( layout?.secondary ) &&
 		layout.secondary.length > 0;
 
-	const { addCelebrateLaunchQueryParams, onModalClosed } = useCelebrateLaunchModalSideEffects(
-		siteId,
-		layout
-	);
+	const { addCelebrateLaunchQueryParams } = useCelebrateLaunchModalSideEffects( siteId, {
+		refetch: refetchLayout,
+	} );
 
 	if ( ! canUserUseCustomerHome ) {
 		const title = translate( 'This page is not available on this site.' );
@@ -353,11 +359,6 @@ const HomeContent = ( {
 					</div>
 				</>
 			) : null }
-			<CelebrateSiteLaunchModal
-				site={ site }
-				onOpen={ () => setCelebrateLaunchModalIsOpen( true ) }
-				onModalClosed={ onModalClosed }
-			/>
 			<ResurrectedWelcomeModalGate isSuppressed={ celebrateLaunchModalIsOpen } />
 			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
 		</div>

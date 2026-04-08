@@ -1,10 +1,11 @@
 import { updateLaunchpadSettings } from '@automattic/data-stores';
+import { UseQueryResult } from '@tanstack/react-query';
 import { useDispatch } from 'calypso/state';
 import { requestSite } from 'calypso/state/sites/actions';
 
 export function useCelebrateLaunchModalSideEffects(
 	siteId: number,
-	layout: { refetch: () => void } | null
+	layout: UseQueryResult | null
 ) {
 	const dispatch = useDispatch();
 

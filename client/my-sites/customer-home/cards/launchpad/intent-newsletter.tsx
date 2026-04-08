@@ -1,5 +1,4 @@
 import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
-import { CelebrateSiteLaunchModal } from 'calypso/my-sites/customer-home/celebrate-site-launch-modal';
 import { useCelebrateLaunchModalSideEffects } from 'calypso/my-sites/customer-home/celebrate-site-launch-modal/use-side-effects';
 import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/sites/selectors';
@@ -13,19 +12,13 @@ const LaunchpadIntentNewsletter = ( { checklistSlug }: { checklistSlug: string }
 
 	const layoutQuery = useHomeLayoutQuery( siteId || null );
 
-	const { onSiteLaunched, onModalClosed } = useCelebrateLaunchModalSideEffects(
-		siteId,
-		layoutQuery
-	);
+	const { onSiteLaunched } = useCelebrateLaunchModalSideEffects( siteId, layoutQuery );
 
 	return (
-		<>
-			<CustomerHomeLaunchpad
-				checklistSlug={ checklistSlug }
-				onSiteLaunched={ () => onSiteLaunched( !! site?.is_wpcom_atomic ) }
-			/>
-			<CelebrateSiteLaunchModal site={ site } onModalClosed={ onModalClosed } />
-		</>
+		<CustomerHomeLaunchpad
+			checklistSlug={ checklistSlug }
+			onSiteLaunched={ () => onSiteLaunched( !! site?.is_wpcom_atomic ) }
+		/>
 	);
 };
 

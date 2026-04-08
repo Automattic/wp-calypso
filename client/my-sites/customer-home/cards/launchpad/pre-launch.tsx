@@ -1,6 +1,5 @@
 import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
 import { useExperiment } from 'calypso/lib/explat';
-import { CelebrateSiteLaunchModal } from 'calypso/my-sites/customer-home/celebrate-site-launch-modal';
 import { useCelebrateLaunchModalSideEffects } from 'calypso/my-sites/customer-home/celebrate-site-launch-modal/use-side-effects';
 import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/sites/selectors';
@@ -19,7 +18,7 @@ const LaunchpadPreLaunch = ( props: LaunchpadPreLaunchProps ): JSX.Element => {
 	const checklistSlug = site?.options?.site_intent ?? '';
 
 	const layout = useHomeLayoutQuery( siteId || null );
-	const { onSiteLaunched, onModalClosed } = useCelebrateLaunchModalSideEffects( siteId, layout );
+	const { onSiteLaunched } = useCelebrateLaunchModalSideEffects( siteId, layout );
 
 	const [ , experimentData ] = useExperiment( 'calypso_standardized_site_launch_gating' );
 	const experimentAssignment = experimentData?.variationName;
@@ -44,14 +43,11 @@ const LaunchpadPreLaunch = ( props: LaunchpadPreLaunchProps ): JSX.Element => {
 	};
 
 	return (
-		<>
-			<CustomerHomeLaunchpad
-				checklistSlug={ props.checklistSlug ?? checklistSlug }
-				onTaskClick={ handleTaskClick }
-				onSiteLaunched={ () => onSiteLaunched( !! site?.is_wpcom_atomic ) }
-			/>
-			<CelebrateSiteLaunchModal site={ site } onModalClosed={ onModalClosed } />
-		</>
+		<CustomerHomeLaunchpad
+			checklistSlug={ props.checklistSlug ?? checklistSlug }
+			onTaskClick={ handleTaskClick }
+			onSiteLaunched={ () => onSiteLaunched( !! site?.is_wpcom_atomic ) }
+		/>
 	);
 };
 
