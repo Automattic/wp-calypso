@@ -6,8 +6,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { omnibarEvents } from '../click-handlers';
-import { useInterimOmnibarData, type InterimOmnibarData } from '../interim-omnibar-container';
+import { useInterimOmnibarData, type InterimOmnibarData } from '../use-interim-omnibar-data';
+import type { OmnibarEvents } from '../click-handlers';
 import type { Site, User } from '@automattic/api-core';
 
 function createWrapper() {
@@ -17,6 +17,31 @@ function createWrapper() {
 	return function Wrapper( { children }: { children: React.ReactNode } ) {
 		return <QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>;
 	};
+}
+
+// Fresh event bus per test — avoids any subscription leaks from the shared
+// `omnibarEvents` module singleton if an assertion ever fails mid-test.
+function createTestEvents(): OmnibarEvents {
+	const make = < T = void, >() => {
+		const listeners = new Set< ( payload: T ) => void >();
+		return {
+			emit: ( ( payload?: T ) => {
+				listeners.forEach( ( fn ) => fn( payload as T ) );
+			} ) as never,
+			subscribe: ( fn: ( payload: T ) => void ) => {
+				listeners.add( fn );
+				return () => {
+					listeners.delete( fn );
+				};
+			},
+		};
+	};
+	return {
+		mobileMenu: make(),
+		notificationsAnchor: make< HTMLElement | null >(),
+		notifications: make(),
+		linkClick: make< { href: string; event: MouseEvent } >(),
+	} as unknown as OmnibarEvents;
 }
 
 const testUser = {
@@ -59,7 +84,10 @@ describe( 'useInterimOmnibarData', () => {
 		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 		let captured: InterimOmnibarData | undefined;
 		function Probe() {
-			captured = useInterimOmnibarData( { initialUser: testUser, events: omnibarEvents } );
+			captured = useInterimOmnibarData( {
+				initialUser: testUser,
+				events: createTestEvents(),
+			} );
 			return null;
 		}
 		renderToStaticMarkup(
@@ -78,13 +106,14 @@ describe( 'useInterimOmnibarData', () => {
 	test( 'post-hydration callbacks emit on the events bus', async () => {
 		mockPreferences( {} );
 
+		const events = createTestEvents();
 		const menuSpy = jest.fn();
 		const notificationsSpy = jest.fn();
-		const unsubMenu = omnibarEvents.mobileMenu.subscribe( menuSpy );
-		const unsubNotifications = omnibarEvents.notifications.subscribe( notificationsSpy );
+		events.mobileMenu.subscribe( menuSpy );
+		events.notifications.subscribe( notificationsSpy );
 
 		const { result } = renderHook(
-			() => useInterimOmnibarData( { initialUser: testUser, events: omnibarEvents } ),
+			() => useInterimOmnibarData( { initialUser: testUser, events } ),
 			{ wrapper: createWrapper() }
 		);
 
@@ -97,9 +126,6 @@ describe( 'useInterimOmnibarData', () => {
 
 		expect( menuSpy ).toHaveBeenCalledTimes( 1 );
 		expect( notificationsSpy ).toHaveBeenCalledTimes( 1 );
-
-		unsubMenu();
-		unsubNotifications();
 	} );
 
 	test( 'loads the first recent site from preferences and fetches its details', async () => {
@@ -107,7 +133,11 @@ describe( 'useInterimOmnibarData', () => {
 		mockSiteById( 42, testSite );
 
 		const { result } = renderHook(
-			() => useInterimOmnibarData( { initialUser: testUser, events: omnibarEvents } ),
+			() =>
+				useInterimOmnibarData( {
+					initialUser: testUser,
+					events: createTestEvents(),
+				} ),
 			{ wrapper: createWrapper() }
 		);
 
@@ -121,7 +151,11 @@ describe( 'useInterimOmnibarData', () => {
 		mockSiteById( 42, testSite );
 
 		const { result } = renderHook(
-			() => useInterimOmnibarData( { initialUser: testUser, events: omnibarEvents } ),
+			() =>
+				useInterimOmnibarData( {
+					initialUser: testUser,
+					events: createTestEvents(),
+				} ),
 			{ wrapper: createWrapper() }
 		);
 
