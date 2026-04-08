@@ -10,6 +10,7 @@ import wpcom from 'calypso/lib/wp';
 import { useAuth } from '../auth';
 import { useHelpCenter } from '../help-center';
 import { useOmnibarEvent } from '../interim-omnibar/click-handlers';
+import { omnibarState } from '../interim-omnibar/interim-omnibar';
 import { useLocale } from '../locale';
 import './style.scss';
 
@@ -45,6 +46,11 @@ export default function Notifications( {
 			setIsOpen( false );
 		}
 	}, [ isHelpCenterShown ] );
+
+	// Sync notification open state to the omnibar so the bell icon shows as active.
+	useEffect( () => {
+		omnibarState.setIsNotificationsOpen( isOpen );
+	}, [ isOpen ] );
 
 	const handleClose = () => {
 		handleToggle( false );

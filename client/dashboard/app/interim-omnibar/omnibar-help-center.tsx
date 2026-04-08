@@ -1,7 +1,8 @@
 import config from '@automattic/calypso-config';
-import { Suspense, lazy, useCallback, useState } from 'react';
+import { Suspense, lazy, useCallback, useEffect, useState } from 'react';
 import { useAuth } from '../auth';
 import { useHelpCenter } from '../help-center';
+import { omnibarState } from './interim-omnibar';
 
 const AsyncHelpCenterApp = lazy( () => import( '../help-center/help-center-app' ) );
 
@@ -22,6 +23,11 @@ export default function OmnibarHelpCenter() {
 	const handleClose = useCallback( () => {
 		setShowHelpCenter( false, undefined, true );
 	}, [ setShowHelpCenter ] );
+
+	// Sync help center open state to the omnibar so the icon shows as active.
+	useEffect( () => {
+		omnibarState.setIsHelpCenterOpen( isShown );
+	}, [ isShown ] );
 
 	// Latch to true the first time the panel is shown. React will re-render
 	// immediately and discard this render's output.

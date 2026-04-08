@@ -4,6 +4,10 @@ body:has(#wpcom-omnibar) #wpcom {
 	min-height: calc(100vh - var(--masterbar-height, 47px) );
 }
 
+#wpcom-omnibar.is-help-center-open .masterbar__item-help {
+	background: var(--color-masterbar-item-active-background);
+}
+
 #wpcom-omnibar {
 	--color-masterbar-background: #1e1e1e;
 	--color-masterbar-text: #fff;

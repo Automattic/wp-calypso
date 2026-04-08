@@ -13,33 +13,61 @@ const noop = () => {};
 
 type StoreType = Parameters< typeof ReduxProvider >[ 0 ][ 'store' ];
 
+// Module-level state shared between the exported setters and the fake store.
+// There is only ever one omnibar store instance at a time.
+let storeIsNotificationsOpen = false;
+const storeListeners = new Set< () => void >();
+
+function notifyStoreListeners() {
+	storeListeners.forEach( ( listener ) => listener() );
+}
+
+/**
+ * Setters that the dashboard calls to sync open/close state into the
+ * omnibar so that masterbar icons reflect the correct active state.
+ */
+export const omnibarState = {
+	/** Syncs into the fake Redux store so the notification bell's connect() re-renders. */
+	setIsNotificationsOpen( isOpen: boolean ) {
+		storeIsNotificationsOpen = isOpen;
+		notifyStoreListeners();
+	},
+	/**
+	 * Toggles a class on #wpcom-omnibar (which React doesn't own) so a CSS
+	 * rule can style the help icon without being overwritten by React.
+	 */
+	setIsHelpCenterOpen( isOpen: boolean ) {
+		document.getElementById( 'wpcom-omnibar' )?.classList.toggle( 'is-help-center-open', isOpen );
+	},
+};
+
 // Fake Redux store so child components using connect() (e.g. Notifications) don't crash.
 // Intercepts specific actions so the dashboard can handle them.
 function createOmnibarStore( user: User | null, onToggleNotifications?: () => void ): StoreType {
-	const listeners = new Set< () => void >();
 	let notificationsUnseenCount: number | undefined;
 
 	const store = {
 		getState: () => ( {
-			ui: { section: false, isNotificationsOpen: false },
+			ui: { section: false, isNotificationsOpen: storeIsNotificationsOpen },
 			currentUser: { user },
 			notificationsUnseenCount,
 		} ),
 		dispatch: ( action: { type: string; unseenCount?: number } ) => {
 			if ( action.type === 'NOTIFICATIONS_PANEL_TOGGLE' ) {
 				notificationsUnseenCount = 0;
-				listeners.forEach( ( listener ) => listener() );
+				notifyStoreListeners();
+
 				onToggleNotifications?.();
 			}
 			if ( action.type === 'NOTIFICATIONS_UNSEEN_COUNT_SET' ) {
 				notificationsUnseenCount = action.unseenCount;
-				listeners.forEach( ( listener ) => listener() );
+				notifyStoreListeners();
 			}
 			return action;
 		},
 		subscribe: ( listener: () => void ) => {
-			listeners.add( listener );
-			return () => listeners.delete( listener );
+			storeListeners.add( listener );
+			return () => storeListeners.delete( listener );
 		},
 	};
 	return store as unknown as StoreType;
