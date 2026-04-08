@@ -50,10 +50,7 @@ export default async function loadOmnibar( events: OmnibarEvents ) {
 	);
 
 	const handleToggleMenu = () => events.mobileMenu.emit();
-	const handleToggleNotifications = () =>
-		events.notifications.emit(
-			container.querySelector< HTMLElement >( '.masterbar-notifications' )
-		);
+	const handleToggleNotifications = () => events.notifications.emit();
 
 	async function renderWithSiteId( siteId: number | undefined ) {
 		const site = siteId ? await queryClient.ensureQueryData( siteByIdQuery( siteId ) ) : null;
