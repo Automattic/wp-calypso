@@ -75,7 +75,7 @@ export default async function loadOmnibar( events: OmnibarEvents ) {
 	const originSiteId = Number(
 		new URLSearchParams( window.location.search ).get( 'origin_site_id' )
 	);
-	if ( originSiteId ) {
+	if ( originSiteId > 0 ) {
 		setCurrentOmnibarSite( originSiteId );
 		window.history.replaceState(
 			null,
