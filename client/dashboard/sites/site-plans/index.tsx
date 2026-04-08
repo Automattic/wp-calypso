@@ -312,9 +312,6 @@ function PlanCard( {
 					{ isCurrentPlan && (
 						<span className="site-plans__current-badge">{ __( 'Your plan' ) }</span>
 					) }
-					{ ! isCurrentPlan && sitePlan.introductory_offer_formatted_price && (
-						<span className="site-plans__special-offer-badge">{ __( 'Special Offer' ) }</span>
-					) }
 				</div>
 				<VStack spacing={ 4 }>
 					<VStack spacing={ 1 }>
@@ -328,11 +325,16 @@ function PlanCard( {
 						) }
 					</VStack>
 
-					<PlanPrice
-						sitePlan={ sitePlan }
-						billingInterval={ billingInterval }
-						annualSitePlan={ annualSitePlan }
-					/>
+					<VStack spacing={ 1 }>
+						{ ! isCurrentPlan && sitePlan.introductory_offer_formatted_price && (
+							<span className="site-plans__special-offer-badge">{ __( 'Special Offer' ) }</span>
+						) }
+						<PlanPrice
+							sitePlan={ sitePlan }
+							billingInterval={ billingInterval }
+							annualSitePlan={ annualSitePlan }
+						/>
+					</VStack>
 
 					<PlanCardCTA
 						site={ site }
