@@ -314,7 +314,7 @@ export default function OrchestratorChat( {
 			messages: currentMessages,
 			getChatComponent,
 			currentPostId,
-			onSubmit,
+			onSubmit: onSubmitWithImages,
 		} );
 
 		return currentMessages;
@@ -324,7 +324,7 @@ export default function OrchestratorChat( {
 		getChatComponent,
 		isBuildingSite,
 		messages,
-		onSubmit,
+		onSubmitWithImages,
 		siteBuildUtils,
 		thinkingMessage,
 	] );

@@ -4,13 +4,13 @@ import { zoomIn } from '../../utils/canvas-zoom';
 import './style.scss';
 
 interface Props {
-	onMoveToNextStep: ( message: string ) => void;
+	onMoveToNextStep: ( message: string ) => void | Promise< void >;
 }
 
 export default function NextStepButton( { onMoveToNextStep }: Props ) {
-	const handleClick = () => {
+	const handleClick = async () => {
 		zoomIn();
-		onMoveToNextStep( 'Moving to next step' );
+		await onMoveToNextStep( 'Moving to next step' );
 	};
 
 	return (
