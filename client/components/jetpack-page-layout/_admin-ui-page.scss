@@ -50,7 +50,14 @@
 				margin: 0;
 				flex-grow: 1;
 				position: relative;
-				padding-bottom: 65px;
+
+				// Only reserve bottom space when a Jetpack footer is actually
+				// rendered. Pages without a footer (e.g. Jetpack Cloud views)
+				// get the fixed-primary structural hack without the wasted
+				// padding.
+				&:has(> .jetpack-footer) {
+					padding-bottom: 65px;
+				}
 
 				.jetpack-footer {
 					position: fixed;

@@ -3,13 +3,10 @@
 body.is-section-activity {
 	@include admin-ui-page-layout;
 	@include admin-ui-page-layout-constrained-content($max-width: 1040px);
+	@include admin-ui-page-sticky-footer;
 
 	.admin-ui-page {
 		background: var(--color-surface-backdrop);
-	}
-
-	.jetpack-colophon {
-		padding-bottom: 24px;
 	}
 }
 
