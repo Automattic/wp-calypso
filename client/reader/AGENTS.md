@@ -42,7 +42,7 @@ The Reader owns `client/reader/` but depends on shared code that other clients a
 - `client/blocks/reader-post-card/` — post card components. Used by Reader and Discover.
 - `client/blocks/reader-full-post/` — full post view. Shared across Reader surfaces.
 - `client/components/post-excerpt/` — shared post excerpt component.
-- `client/state/data-layer/wpcom/read/` — API handlers. Changes here affect all Reader data fetching.
+- `client/state/data-layer/wpcom/read/` — legacy API handlers. Do not add new handlers here; use `@automattic/api-queries` instead.
 
 ## Boundaries (for new code)
 
