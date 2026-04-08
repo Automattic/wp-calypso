@@ -50,7 +50,6 @@ const OPTIMIZE_TITLE_SUGGESTION = {
 
 /**
  * Find a block element by clientId in the main document or editor iframe.
- *
  * @param {string} clientId - The block's clientId.
  * @returns The block element, or null.
  */
@@ -123,7 +122,6 @@ function ensureProcessingStyles( doc: Document ): void {
 
 /**
  * Apply processing effect to a block element.
- *
  * @param el - The block element.
  */
 function applyProcessingEffect( el: HTMLElement ): void {
@@ -133,7 +131,6 @@ function applyProcessingEffect( el: HTMLElement ): void {
 
 /**
  * Remove processing effect and show a brief highlight.
- *
  * @param el - The block element.
  */
 function removeProcessingEffect( el: HTMLElement ): void {
@@ -165,7 +162,6 @@ function startBlockShimmer(): void {
 
 /**
  * Handle the select-title tool call: render TitlePicker in chat.
- *
  * @param {any} input - Tool input with titles array.
  * @returns {Object} Result with returnToAgent: false.
  */
@@ -221,7 +217,6 @@ function handleSelectTitle( input: any ): any {
 
 /**
  * Handle the update-block-content tool call: apply text changes to a block.
- *
  * @param {any} input - Tool input with clientId, content, and optional summary.
  * @returns {Object} Result with returnToAgent: false.
  */
@@ -276,7 +271,6 @@ function handleUpdateBlockContent( input: any ): any {
 
 /**
  * Check whether the `@wordpress/abilities` API is available.
- *
  * @returns {boolean} True when window.wp.abilities.getAbilities exists.
  */
 function hasAbilitiesApi(): boolean {
@@ -306,7 +300,7 @@ async function registerSelectTitleAbility(): Promise< void > {
 			category: 'jetpack-ai',
 			description: SELECT_TITLE_ABILITY.description,
 			input_schema: SELECT_TITLE_ABILITY.input_schema,
-			callback: async ( input: any ) => handleSelectTitle( input ),
+			callback: handleSelectTitle,
 		} );
 	} catch ( e: any ) {
 		if ( ! e?.message?.includes?.( 'already registered' ) ) {
@@ -325,10 +319,6 @@ registerSelectTitleAbility();
 
 /**
  * Captures AM's addMessage/clearSuggestions callbacks and registers abilities.
- *
- * @param {Object} actions                  - The actions object provided by AM.
- * @param          actions.addMessage
- * @param          actions.clearSuggestions
  */
 export function useAbilitiesSetup( actions: {
 	addMessage: ( message: any ) => void;
@@ -368,7 +358,6 @@ function setupAutoScrollFix(): void {
 
 /**
  * Normalize an ability name to the format used by agenttic-client for matching.
- *
  * @param {string} name - Ability name (e.g., 'wpcom/select-title').
  * @returns {string} Normalized name (e.g., 'wpcom__select_title').
  */
@@ -378,7 +367,6 @@ function normalizeAbilityName( name: string ): string {
 
 /**
  * Filter out an ability by name from a list.
- *
  * @param {any[]}  abilities - List of abilities.
  * @param {string} toolId    - Tool ID to remove.
  * @returns {any[]} Filtered list.
@@ -398,7 +386,6 @@ export const toolProvider = {
 	 * with versions that have callbacks returning returnToAgent: false.
 	 * This is necessary because agenttic-client's executeAbility path
 	 * hardcodes returnToAgent: true, but the callback path respects it.
-	 *
 	 * @returns {Promise<any[]>} Array of ability descriptors.
 	 */
 	async getAbilities(): Promise< any[] > {
@@ -424,11 +411,11 @@ export const toolProvider = {
 		abilities.unshift(
 			{
 				...SELECT_TITLE_ABILITY,
-				callback: async ( input: any ) => handleSelectTitle( input ),
+				callback: handleSelectTitle,
 			},
 			{
 				...UPDATE_BLOCK_CONTENT_ABILITY,
-				callback: async ( input: any ) => handleUpdateBlockContent( input ),
+				callback: handleUpdateBlockContent,
 			}
 		);
 
@@ -437,7 +424,6 @@ export const toolProvider = {
 
 	/**
 	 * Execute an ability by name (fallback when callback path is not used).
-	 *
 	 * @param {string} name - The ability identifier.
 	 * @param {any}    args - Arguments to pass to the ability.
 	 * @returns {Promise<{result: Record<string, unknown>, returnToAgent?: boolean}>} Execution result.
@@ -468,7 +454,6 @@ export const toolProvider = {
 
 /**
  * Serialize a block for the orchestrator's Page context class.
- *
  * @param {any} block - The block to serialize.
  * @returns {any} Serialized block with name, clientId, attributes, innerBlocks.
  */
@@ -484,7 +469,6 @@ function serializeBlock( block: any ): any {
 /**
  * Extract the full text content from a block's content attribute.
  * Handles both plain strings and RichTextData objects.
- *
  * @param {any} rawContent - The block's content attribute value.
  * @returns {string} The resolved HTML string.
  */
@@ -504,7 +488,6 @@ function resolveBlockContent( rawContent: any ): string {
 export const contextProvider = {
 	/**
 	 * Build the client context object sent with each message.
-	 *
 	 * @returns {any} Context with page content, selected block, and block content.
 	 */
 	getClientContext(): any {
@@ -552,7 +535,6 @@ export const contextProvider = {
 
 /**
  * Map component type strings to React components for rendering in the chat.
- *
  * @param {string} type - The component type identifier.
  * @returns {ComponentType|null} The matching component, or null.
  */
@@ -567,7 +549,6 @@ export function getChatComponent( type: string ): ComponentType | null {
 
 /**
  * Suggestions shown in the AM empty view (before any messages).
- *
  * @returns {Array} Array of suggestion objects.
  */
 export function getEmptyViewSuggestions(): Array< {
@@ -636,7 +617,6 @@ const BLOCK_SUGGESTIONS = [
  *
  * Returns contextual suggestions based on the selected block type.
  * Hides permanently once the conversation becomes active.
- *
  * @returns {Object} Object containing a suggestions array.
  */
 export function useSuggestions(): {

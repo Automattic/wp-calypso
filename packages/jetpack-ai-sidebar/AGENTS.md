@@ -4,23 +4,23 @@ Agents Manager (AM) provider for the Jetpack AI sidebar in Gutenberg. Bridges th
 
 ## File Guide (Read the Right File)
 
-| File                    | Purpose                                         | When to read                          |
-| ----------------------- | ----------------------------------------------- | ------------------------------------- |
-| **AGENTS.md** (this)    | Critical patterns, pitfalls, conventions         | Always read first for any code change |
-| [package.json](package.json) | Dependencies, build scripts                 | When modifying deps or build config   |
+| File                         | Purpose                                  | When to read                          |
+| ---------------------------- | ---------------------------------------- | ------------------------------------- |
+| **AGENTS.md** (this)         | Critical patterns, pitfalls, conventions | Always read first for any code change |
+| [package.json](package.json) | Dependencies, build scripts              | When modifying deps or build config   |
 
 ## Architecture
 
 This package exports the **AM provider contract** — a set of functions the Agents Manager calls to wire up a sidebar provider:
 
-| Export                   | Role                                                        |
-| ------------------------ | ----------------------------------------------------------- |
-| `useAbilitiesSetup`      | Captures AM's `addMessage` callback; registers WP abilities |
-| `toolProvider`           | Wraps `@wordpress/abilities` + Jetpack AI tool definitions  |
-| `contextProvider`        | Sends Gutenberg editor state to the orchestrator            |
-| `getChatComponent`       | Maps tool IDs → React components for in-chat rendering      |
-| `getEmptyViewSuggestions` | Static suggestions shown before conversation starts        |
-| `useSuggestions`         | Block-aware dynamic suggestions during conversation         |
+| Export                    | Role                                                        |
+| ------------------------- | ----------------------------------------------------------- |
+| `useAbilitiesSetup`       | Captures AM's `addMessage` callback; registers WP abilities |
+| `toolProvider`            | Wraps `@wordpress/abilities` + Jetpack AI tool definitions  |
+| `contextProvider`         | Sends Gutenberg editor state to the orchestrator            |
+| `getChatComponent`        | Maps tool IDs → React components for in-chat rendering      |
+| `getEmptyViewSuggestions` | Static suggestions shown before conversation starts         |
+| `useSuggestions`          | Block-aware dynamic suggestions during conversation         |
 
 All exports live in `src/index.ts`. This is intentionally a single-file provider — keep it that way unless the file exceeds ~800 lines.
 
@@ -28,16 +28,16 @@ All exports live in `src/index.ts`. This is intentionally a single-file provider
 
 - **Module-level state**: `addMessageFn` and `clearSuggestionsFn` are captured once via `useAbilitiesSetup`. These are module singletons — do NOT move them into React state or a store.
 - **`returnToAgent: false`**: Both tool handlers (`handleSelectTitle`, `handleUpdateBlockContent`) return `{ returnToAgent: false }`. This prevents the AM orchestrator from continuing automatically after the tool executes. Removing this breaks the UX flow.
-- **Ability registration guard**: `isAbilityRegistered` prevents duplicate `@wordpress/abilities` registration. The guard is set *before* the async `registerAbility` call to handle concurrent invocations. Don't move it after the await.
+- **Ability registration guard**: `isAbilityRegistered` prevents duplicate `@wordpress/abilities` registration. The guard is set _before_ the async `registerAbility` call to handle concurrent invocations. Don't move it after the await.
 - **Tool ID normalization**: AM normalizes tool IDs (`wpcom/select-title` → `wpcom__select_title`). The `isSelectTitleTool` and `isUpdateBlockContentTool` helpers handle both forms. Any new tool must follow this pattern.
 - **Processing shimmer**: The shimmer effect uses `Flow Block` font + CSS animations injected into the block's owning document (which may be an iframe). The `ensureProcessingStyles` function is idempotent — don't duplicate style injection.
 
 ## Tools
 
-| Tool ID                      | Handler                    | UI Component   | Description                              |
-| ---------------------------- | -------------------------- | -------------- | ---------------------------------------- |
-| `wpcom/select-title`        | `handleSelectTitle`        | `TitlePicker`  | Renders title suggestions in chat        |
-| `wpcom/update-block-content` | `handleUpdateBlockContent` | *(chat text)*  | Updates block content with shimmer effect |
+| Tool ID                      | Handler                    | UI Component  | Description                               |
+| ---------------------------- | -------------------------- | ------------- | ----------------------------------------- |
+| `wpcom/select-title`         | `handleSelectTitle`        | `TitlePicker` | Renders title suggestions in chat         |
+| `wpcom/update-block-content` | `handleUpdateBlockContent` | _(chat text)_ | Updates block content with shimmer effect |
 
 ### Adding a New Tool
 

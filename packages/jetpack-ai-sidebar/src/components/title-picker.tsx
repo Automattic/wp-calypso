@@ -31,7 +31,6 @@ interface TitlePickerProps {
  *
  * Renders title suggestions as clickable cards. Clicking a card selects it,
  * then the user confirms with "Use this title" to update the post.
- *
  * @param {TitlePickerProps} props - Component props.
  * @returns {import('react').ReactElement} The rendered component.
  */

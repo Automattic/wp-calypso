@@ -43,7 +43,7 @@
 		"typecheck": "tsc --build --dry"
 	},
 	"dependencies": {
-		"@automattic/agenttic-client": "^0.1.53",
+		"@automattic/agenttic-client": "^0.1.58",
 		"@wordpress/abilities": "^0.4.0",
 		"@wordpress/components": "^30.9.0",
 		"@wordpress/i18n": "^5.23.0"
