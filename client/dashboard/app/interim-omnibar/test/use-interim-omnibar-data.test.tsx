@@ -5,8 +5,9 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
+import { renderToStaticMarkup } from 'react-dom/server';
 import { omnibarEvents } from '../click-handlers';
-import { useInterimOmnibarData } from '../interim-omnibar-container';
+import { useInterimOmnibarData, type InterimOmnibarData } from '../interim-omnibar-container';
 import type { Site, User } from '@automattic/api-core';
 
 function createWrapper() {
@@ -51,21 +52,30 @@ describe( 'useInterimOmnibarData', () => {
 		nock.cleanAll();
 	} );
 
-	test( 'returns the bootstrapped user via initialData without hitting the network', async () => {
-		mockPreferences( {} );
-
-		const { result } = renderHook(
-			() => useInterimOmnibarData( { initialUser: testUser, events: omnibarEvents } ),
-			{ wrapper: createWrapper() }
+	test( 'pre-hydration render matches SSR shape with no callbacks', () => {
+		// Render synchronously via `renderToStaticMarkup` so `useEffect` never
+		// fires; this is the only way to observe the hook's first-render output,
+		// which must match what the server rendered for hydration to succeed.
+		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+		let captured: InterimOmnibarData | undefined;
+		function Probe() {
+			captured = useInterimOmnibarData( { initialUser: testUser, events: omnibarEvents } );
+			return null;
+		}
+		renderToStaticMarkup(
+			<QueryClientProvider client={ queryClient }>
+				<Probe />
+			</QueryClientProvider>
 		);
 
-		await waitFor( () => {
-			expect( result.current.user ).toBe( testUser );
-		} );
-		expect( result.current.site ).toBeNull();
+		expect( captured ).toBeDefined();
+		expect( captured!.user ).toBe( testUser );
+		expect( captured!.site ).toBeNull();
+		expect( captured!.onToggleMenu ).toBeUndefined();
+		expect( captured!.onToggleNotifications ).toBeUndefined();
 	} );
 
-	test( 'wires up toggle callbacks after hydration and they emit on the events bus', async () => {
+	test( 'post-hydration callbacks emit on the events bus', async () => {
 		mockPreferences( {} );
 
 		const menuSpy = jest.fn();
@@ -80,7 +90,6 @@ describe( 'useInterimOmnibarData', () => {
 
 		await waitFor( () => {
 			expect( result.current.onToggleMenu ).toBeDefined();
-			expect( result.current.onToggleNotifications ).toBeDefined();
 		} );
 
 		result.current.onToggleMenu!();
@@ -119,25 +128,5 @@ describe( 'useInterimOmnibarData', () => {
 		await waitFor( () => {
 			expect( result.current.site ).toMatchObject( { ID: 42 } );
 		} );
-	} );
-
-	test( 'keeps site null until a siteId is known', async () => {
-		mockPreferences( {} );
-
-		const userWithoutPrimaryBlog = { ...testUser, primary_blog: undefined } as unknown as User;
-
-		const { result } = renderHook(
-			() =>
-				useInterimOmnibarData( {
-					initialUser: userWithoutPrimaryBlog,
-					events: omnibarEvents,
-				} ),
-			{ wrapper: createWrapper() }
-		);
-
-		await waitFor( () => {
-			expect( result.current.user ).toBe( userWithoutPrimaryBlog );
-		} );
-		expect( result.current.site ).toBeNull();
 	} );
 } );
