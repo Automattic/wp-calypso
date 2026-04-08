@@ -37,6 +37,14 @@
 		.layout__primary {
 			flex: 1;
 			display: flex;
+			position: fixed;
+			top: var( --masterbar-height );
+			height: calc(100vh - var(--masterbar-height));
+			width: 100vw;
+
+			@include break-medium {
+				width: calc(100vw - var(--sidebar-width-max));
+			}
 
 			.main {
 				margin: 0;
