@@ -5,6 +5,7 @@
 import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, render, screen, waitFor } from '@testing-library/react';
+import nock from 'nock';
 import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
@@ -15,12 +16,18 @@ jest.mock( '@automattic/data-stores', () => ( {
 	updateLaunchpadSettings: jest.fn().mockResolvedValue( {} ),
 } ) );
 
-// Add this mock for FullScreenLaunchpad
 jest.mock( '../../full-screen-launchpad', () => ( {
-	FullScreenLaunchpad: ( { onClose, onSiteLaunch } ) => (
+	FullScreenLaunchpad: ( { onClose, onSiteLaunch, beforeSiteLaunchRefetch } ) => (
 		<div data-testid="full-screen-launchpad">
 			<button onClick={ onClose }>Skip to dashboard</button>
-			<button onClick={ onSiteLaunch }>Launch your site</button>
+			<button
+				onClick={ () => {
+					beforeSiteLaunchRefetch?.();
+					onSiteLaunch();
+				} }
+			>
+				Launch your site
+			</button>
 		</div>
 	),
 } ) );
@@ -30,6 +37,8 @@ jest.mock( 'calypso/components/resurrected-welcome-modal', () => () => null );
 const testSite = {
 	ID: 1,
 	slug: 'test-site',
+	launch_status: 'launched',
+	plan: { is_free: true, product_slug: 'free_plan' },
 	options: {
 		site_creation_flow: 'onboarding',
 	},
@@ -37,6 +46,13 @@ const testSite = {
 
 let mockLayoutViewName = '';
 const mockLayout = { view_name: mockLayoutViewName };
+
+const mockDomainsApi = ( domains: unknown[] = [] ) => {
+	nock( 'https://public-api.wordpress.com' )
+		.get( '/rest/v1.2/all-domains' )
+		.query( true )
+		.reply( 200, { domains } );
+};
 
 jest.mock( 'calypso/data/home/use-home-layout-query', () => {
 	const getCacheKey = ( siteId: number ) => [ 'home-layout', siteId ];
@@ -107,6 +123,15 @@ describe( 'HomeContent', () => {
 	beforeEach( () => {
 		queryClient.clear();
 		mockLayout.view_name = mockLayoutViewName;
+		nock.cleanAll();
+		mockDomainsApi( [] );
+		const url = new URL( window.location.href );
+		url.search = '';
+		window.history.replaceState( {}, '', url.pathname + url.search );
+	} );
+
+	afterEach( () => {
+		nock.cleanAll();
 	} );
 
 	describe( 'Focused Launchpad integration', () => {
