@@ -21,14 +21,18 @@ interface SiteLaunchCelebrationModalProps {
 	site: Pick< Site, 'ID' | 'slug' | 'URL' | 'launch_status' > & {
 		plan?: Pick< Required< Site >[ 'plan' ], 'is_free' | 'product_slug' >;
 	};
+	onClose?(): void;
 }
 
-export default function SiteLaunchCelebrationModal( { site }: SiteLaunchCelebrationModalProps ) {
+export default function SiteLaunchCelebrationModal( {
+	site,
+	onClose,
+}: SiteLaunchCelebrationModalProps ) {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
 	const { recordTracksEvent } = useAnalytics();
 	const { queries } = useAppContext();
-	const { data: domains = [], isFetchedAfterMount: isDomainsFetched } = useQuery( {
+	const { data: domains = [], isFetchedAfterMount: areDomainsFetched } = useQuery( {
 		...queries.domainsQuery(),
 		enabled: isOpen,
 		select: ( data ) => data.filter( ( domain ) => domain.blog_id === site.ID ),
@@ -64,7 +68,7 @@ export default function SiteLaunchCelebrationModal( { site }: SiteLaunchCelebrat
 		} );
 	}, [ isOpen, site?.plan?.product_slug, recordTracksEvent ] );
 
-	if ( ! isOpen || ! isDomainsFetched ) {
+	if ( ! isOpen || ! areDomainsFetched ) {
 		return null;
 	}
 
@@ -148,7 +152,10 @@ export default function SiteLaunchCelebrationModal( { site }: SiteLaunchCelebrat
 			className="celebration-modal"
 			title={ __( 'Congrats, your site is live!' ) }
 			size="medium"
-			onRequestClose={ () => setIsOpen( false ) }
+			onRequestClose={ () => {
+				setIsOpen( false );
+				onClose?.();
+			} }
 		>
 			<ConfettiAnimation />
 			<VStack spacing={ 6 }>

@@ -4,11 +4,10 @@ import { Button } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
 import { useExperiment } from 'calypso/lib/explat';
-import { useCelebrateLaunchModal } from 'calypso/my-sites/customer-home/cards/launchpad/use-celebrate-launch-modal';
-import CelebrateLaunchModal from 'calypso/my-sites/customer-home/components/celebrate-launch-modal';
+import { CelebrateSiteLaunchModal } from 'calypso/my-sites/customer-home/celebrate-site-launch-modal';
+import { useCelebrateLaunchModalSideEffects } from 'calypso/my-sites/customer-home/celebrate-site-launch-modal/use-side-effects';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
@@ -19,17 +18,13 @@ export const MasterbarLaunchButton = ( { siteId }: { siteId: number } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const site = useSelector( ( state ) => getSite( state, siteId ) );
-	const { data: allDomains = [], isFetchedAfterMount } = useGetDomainsQuery( site?.ID ?? null, {
-		retry: false,
-	} );
 	const layout = useHomeLayoutQuery( siteId );
-	const { isOpen, setModalIsOpen, handleSiteLaunched } = useCelebrateLaunchModal( siteId, layout );
+
+	const { onSiteLaunched, onModalClosed } = useCelebrateLaunchModalSideEffects( siteId, layout );
 
 	const launchSiteMutation = useMutation( {
 		...siteLaunchMutation( siteId ),
-		onSuccess: () => {
-			handleSiteLaunched( !! site?.is_wpcom_atomic );
-		},
+		onSuccess: () => onSiteLaunched( !! site?.is_wpcom_atomic ),
 	} );
 
 	const [ isLoading, data ] = useExperiment( 'calypso_standardized_site_launch_gating' );
@@ -77,13 +72,7 @@ export const MasterbarLaunchButton = ( { siteId }: { siteId: number } ) => {
 			>
 				{ translate( 'Launch site' ) }
 			</Item>
-			{ isOpen && isFetchedAfterMount && (
-				<CelebrateLaunchModal
-					setModalIsOpen={ setModalIsOpen }
-					site={ site }
-					allDomains={ allDomains }
-				/>
-			) }
+			<CelebrateSiteLaunchModal site={ site } onModalClosed={ onModalClosed } />
 		</>
 	);
 };
