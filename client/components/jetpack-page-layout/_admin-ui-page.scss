@@ -46,6 +46,14 @@
 				width: calc(100vw - var(--sidebar-width-max));
 			}
 
+			// When no admin-ui <Page> provides a .admin-ui-page__content
+			// scroll container (e.g. Jetpack Cloud views of Scan / Backup /
+			// AL v2, which render content directly inside <Main>), make the
+			// fixed-primary itself scrollable so content isn't clipped.
+			&:not(:has(.admin-ui-page)) {
+				overflow-y: auto;
+			}
+
 			.main {
 				// Only fill the fixed-primary column when the page renders an
 				// admin-ui <Page> inside <Main>. Pages that render content
