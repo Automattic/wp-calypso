@@ -18,6 +18,7 @@ import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import BackupActionsToolbar from 'calypso/components/jetpack/backup-actions-toolbar';
 import BackupPlaceholder from 'calypso/components/jetpack/backup-placeholder';
+import JetpackFooter from 'calypso/components/jetpack/jetpack-footer';
 import JetpackTitle from 'calypso/components/jetpack-title';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
@@ -97,6 +98,7 @@ const BackupPage = ( { queryDate } ) => {
 						<AdminContent selectedDate={ selectedDate } />
 					</>
 				) }
+				{ isWpcom && <JetpackFooter /> }
 			</Main>
 		</div>
 	);
