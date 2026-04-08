@@ -1,5 +1,6 @@
 import { toNumber } from '../normalize-utils';
 import { wpcom } from '../wpcom-fetcher';
+import type { SubscriptionBillPeriodValue } from '../constants';
 import type { SiteContextualPlan } from './types';
 
 /**
@@ -18,7 +19,7 @@ function normalizeSitePlan( plan: SiteContextualPlan ): SiteContextualPlan {
 		raw_discount_integer: toNumber( plan.raw_discount_integer ),
 		product_id: toNumber( plan.product_id ),
 		...( plan.interval !== undefined && {
-			interval: toNumber( plan.interval ),
+			interval: toNumber( plan.interval ) as SubscriptionBillPeriodValue,
 		} ),
 		cost_overrides: plan.cost_overrides.map( ( override ) => ( {
 			...override,

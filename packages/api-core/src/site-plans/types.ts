@@ -1,3 +1,6 @@
+import type { SubscriptionBillPeriodValue } from '../constants';
+import type { PlanCardFeature, PlanProductComparisonGroup } from '../plans/types';
+
 export interface SiteContextualPlanCostOverride {
 	old_price: number;
 	new_price: number;
@@ -34,7 +37,7 @@ export interface SiteContextualPlan {
 	is_domain_upgrade: boolean;
 
 	// Billing interval (conditional - if bill_period is set)
-	interval?: number;
+	interval?: SubscriptionBillPeriodValue;
 
 	// Coupon-related fields (conditional - when coupon is applied)
 	has_sale_coupon?: boolean;
@@ -76,4 +79,10 @@ export interface SiteContextualPlan {
 	/** product_id values for every billing-period variant of this plan family (inclusive).
 	 *  Use these to navigate between monthly / annual / biennial / triennial variants. */
 	product_tier_product_ids?: number[];
+
+	// Display/marketing content (conditional - only present when plan_card_order is set)
+	plan_card_name?: string | null;
+	tagline?: string | null;
+	plan_card_features?: PlanCardFeature[];
+	features_comparison?: PlanProductComparisonGroup[];
 }

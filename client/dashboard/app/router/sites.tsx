@@ -23,7 +23,6 @@ import {
 	sitePHPVersionQuery,
 	siteCurrentPlanQuery,
 	sitePlansQuery,
-	plansQuery,
 	siteBySlugQuery,
 	siteByIdQuery,
 	siteCrontabsQuery,
@@ -1550,7 +1549,6 @@ export const sitePlansRoute = createRoute( {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		await Promise.all( [
 			queryClient.ensureQueryData( sitePlansQuery( site.ID ) ),
-			queryClient.prefetchQuery( plansQuery() ),
 			queryClient.prefetchQuery( sitePurchasesQuery( site.ID ) ),
 		] );
 	},

@@ -1,5 +1,5 @@
 import { SubscriptionBillPeriod } from '@automattic/api-core';
-import { plansQuery, sitePlansQuery, siteBySlugQuery } from '@automattic/api-queries';
+import { sitePlansQuery, siteBySlugQuery } from '@automattic/api-queries';
 import { formatCurrency, getCurrencyObject } from '@automattic/number-formatters';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import {
@@ -20,7 +20,6 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { wpcomLink } from '../../utils/link';
 import type {
-	PlanProduct,
 	PlanProductComparisonGroup,
 	SiteContextualPlan,
 	Site,
@@ -291,7 +290,6 @@ function PlanCardCTA( {
 function PlanCard( {
 	site,
 	sitePlan,
-	planProduct,
 	billingInterval,
 	annualSitePlan,
 	tierRank,
@@ -299,7 +297,6 @@ function PlanCard( {
 }: {
 	site: Site;
 	sitePlan: SiteContextualPlan;
-	planProduct?: PlanProduct;
 	billingInterval: SubscriptionBillPeriodValue;
 	annualSitePlan?: SiteContextualPlan;
 	tierRank: number;
@@ -322,16 +319,11 @@ function PlanCard( {
 				<VStack spacing={ 4 }>
 					<VStack spacing={ 1 }>
 						<Text className="site-plans__plan-name" size={ 20 } weight={ 600 }>
-							{ planProduct?.plan_card_name ?? sitePlan.product_name }
+							{ sitePlan.plan_card_name ?? sitePlan.product_name }
 						</Text>
-						{ planProduct?.tagline && (
+						{ sitePlan.tagline && (
 							<Text className="site-plans__tagline" variant="muted">
-								{ planProduct.tagline }
-							</Text>
-						) }
-						{ ! planProduct?.tagline && planProduct?.description && (
-							<Text className="site-plans__tagline" variant="muted">
-								{ planProduct.description }
+								{ sitePlan.tagline }
 							</Text>
 						) }
 					</VStack>
@@ -345,14 +337,14 @@ function PlanCard( {
 					<PlanCardCTA
 						site={ site }
 						sitePlan={ sitePlan }
-						planCardName={ planProduct?.plan_card_name ?? sitePlan.product_name }
+						planCardName={ sitePlan.plan_card_name ?? sitePlan.product_name }
 						tierRank={ tierRank }
 						currentTierRank={ currentTierRank }
 					/>
 
-					{ planProduct?.plan_card_features && planProduct.plan_card_features.length > 0 && (
+					{ sitePlan.plan_card_features && sitePlan.plan_card_features.length > 0 && (
 						<ul className="site-plans__features">
-							{ planProduct.plan_card_features.map( ( feature ) => (
+							{ sitePlan.plan_card_features.map( ( feature ) => (
 								<li
 									key={ feature.text }
 									className={ `site-plans__feature-item${
@@ -532,12 +524,6 @@ export default function SitePlans() {
 		...sitePlansQuery( site.ID ),
 		enabled: !! site.ID,
 	} );
-	const { data: planProducts } = useQuery( plansQuery() );
-
-	const planProductMap = new Map< string, PlanProduct >(
-		( planProducts ?? [] ).map( ( p ) => [ p.product_slug, p ] )
-	);
-
 	// Index sitePlans by product_id for O(1) sibling lookups
 	const plansByProductId = new Map< number, SiteContextualPlan >(
 		( sitePlans ?? [] ).map( ( p ) => [ p.product_id, p ] )
@@ -562,11 +548,10 @@ export default function SitePlans() {
 					if ( ! sp ) {
 						return [];
 					}
-					const pp = planProductMap.get( sp.product_slug );
-					if ( ! pp || pp.bill_period <= 0 ) {
+					if ( ! sp.interval || sp.interval <= 0 ) {
 						return [];
 					}
-					return [ pp.bill_period ];
+					return [ sp.interval ];
 				} )
 			)
 		)
@@ -577,18 +562,11 @@ export default function SitePlans() {
 			.map( ( id ) => plansByProductId.get( id ) )
 			.filter( Boolean ) as SiteContextualPlan[];
 
-		const sitePlan =
-			siblings.find(
-				( p ) => planProductMap.get( p.product_slug )?.bill_period === billingInterval
-			) ?? canonicalPlan;
+		const sitePlan = siblings.find( ( p ) => p.interval === billingInterval ) ?? canonicalPlan;
 
 		const annualSitePlan =
 			billingInterval === SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD
-				? siblings.find(
-						( p ) =>
-							planProductMap.get( p.product_slug )?.bill_period ===
-							SubscriptionBillPeriod.PLAN_ANNUAL_PERIOD
-				  )
+				? siblings.find( ( p ) => p.interval === SubscriptionBillPeriod.PLAN_ANNUAL_PERIOD )
 				: undefined;
 
 		return { canonicalPlan, sitePlan, annualSitePlan, tierRank };
@@ -604,18 +582,17 @@ export default function SitePlans() {
 	);
 
 	const comparisonGroups = activePlans
-		.map( ( ap ) => planProductMap.get( ap.sitePlan.product_slug )?.features_comparison )
+		.map( ( ap ) => ap.sitePlan.features_comparison )
 		.find( Boolean );
 
 	// Comparison table columns keyed by product_tier_id, matching tiers[] in features_comparison
 	const planColumns = activePlans.map( ( ap ) => ( {
 		tierKey: ap.canonicalPlan.product_tier_id ?? 0,
-		planCardName:
-			planProductMap.get( ap.sitePlan.product_slug )?.plan_card_name ?? ap.sitePlan.product_name,
+		planCardName: ap.sitePlan.plan_card_name ?? ap.sitePlan.product_name,
 	} ) );
 
 	const billPeriod = activePlans
-		.map( ( ap ) => planProductMap.get( ap.sitePlan.product_slug )?.bill_period )
+		.map( ( ap ) => ap.sitePlan.interval as SubscriptionBillPeriodValue | undefined )
 		.find( ( v ) => v !== undefined );
 
 	return (
@@ -641,7 +618,6 @@ export default function SitePlans() {
 						key={ String( ap.canonicalPlan.product_tier_id ) }
 						site={ site }
 						sitePlan={ ap.sitePlan }
-						planProduct={ planProductMap.get( ap.sitePlan.product_slug ) }
 						billingInterval={ billingInterval }
 						annualSitePlan={ ap.annualSitePlan }
 						tierRank={ ap.tierRank }
