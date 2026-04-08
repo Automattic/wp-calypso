@@ -75,19 +75,16 @@ export default function Notifications( {
 		CLOSE_PANEL: [ handleClose ],
 	};
 
-	const handleOmnibarToggle = useCallback(
-		( element: HTMLElement | null ) => {
-			setAnchorEl( element );
-			setIsOpen( ( prev ) => {
-				if ( ! prev ) {
-					setShowHelpCenter( false, undefined, true );
-				}
-				return ! prev;
-			} );
-		},
-		[ setShowHelpCenter ]
-	);
+	const handleOmnibarToggle = useCallback( () => {
+		setIsOpen( ( prev ) => {
+			if ( ! prev ) {
+				setShowHelpCenter( false, undefined, true );
+			}
+			return ! prev;
+		} );
+	}, [ setShowHelpCenter ] );
 
+	useOmnibarEvent( 'notificationsAnchor', setAnchorEl );
 	useOmnibarEvent( 'notifications', handleOmnibarToggle );
 
 	useEffect( () => {
@@ -101,7 +98,7 @@ export default function Notifications( {
 			if ( event.key === 'n' ) {
 				event.stopPropagation();
 				event.preventDefault();
-				handleToggle( true );
+				handleOmnibarToggle();
 			}
 		};
 
@@ -109,7 +106,7 @@ export default function Notifications( {
 		return () => {
 			window.removeEventListener( 'keydown', handleKeyDown, false );
 		};
-	}, [] );
+	}, [ handleOmnibarToggle ] );
 
 	return (
 		<Dropdown

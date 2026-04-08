@@ -1,9 +1,9 @@
 .is-reader-page {
-	.recommended-feeds-list {
+	.reader-sites-list {
 		margin: 0;
 	}
 
-	.recommended-feed-item {
+	.reader-site-item {
 		border-bottom: 1px solid var( --color-neutral-5 );
 		display: flex;
 		list-style-type: none;
@@ -14,7 +14,7 @@
 		}
 	}
 
-	.recommended-feed-item__link {
+	.reader-site-item__link {
 		align-items: center;
 		display: flex;
 		flex-grow: 1;
@@ -25,7 +25,7 @@
 		text-decoration: none;
 	}
 
-	.recommended-feed-info {
+	.reader-site-info {
 		align-items: initial;
 		overflow: hidden;
 		width: 100%;
@@ -53,16 +53,16 @@
 		}
 	}
 
-	.recommended-feed-subscribe-button {
+	.reader-site-subscribe-button {
 		flex-shrink: 0;
 	}
 
 	.is-compact-view {
-		.recommended-feed-item {
+		.reader-site-item {
 			display: flex;
 		}
 
-		.recommended-feed-item__link {
+		.reader-site-item__link {
 			align-items: center;
 			border-bottom: none;
 			flex-grow: 1;
@@ -71,7 +71,7 @@
 			padding: 8px 0;
 		}
 
-		.recommended-feed-info h3 {
+		.reader-site-info h3 {
 			font-size: rem( 14px );
 			font-weight: normal;
 		}
@@ -84,11 +84,11 @@
 			margin: 16px 0 0 0;
 		}
 
-		.recommended-feed-item {
+		.reader-site-item {
 			border: none;
 		}
 
-		.recommended-feed-item__link {
+		.reader-site-item__link {
 			align-items: flex-start;
 			border: 1px solid var( --color-border-subtle );
 			border-radius: 8px;
@@ -108,7 +108,7 @@
 			}
 		}
 
-		.recommended-feed-info {
+		.reader-site-info {
 			display: flex;
 			flex: 1 1 auto;
 			flex-direction: column;
@@ -126,7 +126,7 @@
 			}
 		}
 
-		.recommended-feed-subscribe-button {
+		.reader-site-subscribe-button {
 			position: absolute;
 			right: 20px;
 			top: 20px;

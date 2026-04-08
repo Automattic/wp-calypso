@@ -40,7 +40,7 @@ const mockUseAgentsManagerContext = useAgentsManagerContext as jest.MockedFuncti
 >;
 
 const mockFetch = jest.fn().mockResolvedValue( { ok: true } );
-global.fetch = mockFetch;
+globalThis.fetch = mockFetch;
 
 const mockRegisterMessageActions = jest.fn();
 const mockRecordTracksEvent = recordTracksEvent as jest.MockedFunction< typeof recordTracksEvent >;
@@ -52,6 +52,9 @@ const createMessage = ( id: string, role: 'user' | 'agent', text: string ): Mess
 	id,
 	role,
 	content: [ { type: 'text', text } ],
+	timestamp: Date.now(),
+	archived: false,
+	showIcon: false,
 } );
 
 /** Triggers the captured onFeedback callback with the given direction. */
