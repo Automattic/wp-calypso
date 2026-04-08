@@ -256,7 +256,7 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 	);
 
 	return (
-		<Main fullWidthLayout={ showPageHeader } wideLayout={ ! showPageHeader } className="earn">
+		<Main fullWidthLayout className="earn">
 			<PageViewTracker
 				path={ section ? `${ earnPath }/${ section }/:site` : `${ earnPath }/:site` }
 				title={ `${ adsProgramName } ${ capitalize( section ) }` }
@@ -264,32 +264,33 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 			<DocumentHead
 				title={ layoutTitles[ section as keyof typeof layoutTitles ] ?? translate( 'Monetize' ) }
 			/>
-			{ showPageHeader ? (
-				<Page
-					showSidebarToggle={ false }
-					title={ <JetpackTitle title={ translate( 'Monetize' ) } /> }
-					subTitle={ translate(
-						'Explore tools to earn money with your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-						{
-							components: {
-								learnMoreLink: isJetpackPlatform ? (
-									<a
-										href={ isJetpackNotAtomic ? jetpackLearnMoreLink : atomicLearnMoreLink }
-										target="_blank"
-										rel="noopener noreferrer"
-									/>
-								) : (
-									<InlineSupportLink supportContext="earn" showIcon={ false } />
-								),
-							},
-						}
-					) }
-				>
-					{ content }
-				</Page>
-			) : (
-				content
-			) }
+			<Page
+				hasPadding
+				showSidebarToggle={ false }
+				title={ showPageHeader ? <JetpackTitle title={ translate( 'Monetize' ) } /> : undefined }
+				subTitle={
+					showPageHeader
+						? translate(
+								'Explore tools to earn money with your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+								{
+									components: {
+										learnMoreLink: isJetpackPlatform ? (
+											<a
+												href={ isJetpackNotAtomic ? jetpackLearnMoreLink : atomicLearnMoreLink }
+												target="_blank"
+												rel="noopener noreferrer"
+											/>
+										) : (
+											<InlineSupportLink supportContext="earn" showIcon={ false } />
+										),
+									},
+								}
+						  )
+						: undefined
+				}
+			>
+				{ content }
+			</Page>
 			{ ! isJetpackPlatform && <JetpackFooter /> }
 		</Main>
 	);
