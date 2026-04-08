@@ -7,8 +7,8 @@ import {
 import { QueryObserver } from '@tanstack/react-query';
 import { removeQueryArgs } from '@wordpress/url';
 import { hydrateRoot } from 'react-dom/client';
-import { setCurrentOmnibarSite } from '../../utils/omnibar';
 import { AUTH_QUERY_KEY, initializeCurrentUser } from '../auth';
+import { getCurrentOmnibarSiteId, setCurrentOmnibarSiteId } from '../omnibar/current-site';
 import type { OmnibarEvents } from './click-handlers';
 import type { UserPreferences } from '@automattic/api-core';
 
@@ -76,7 +76,7 @@ export default async function loadOmnibar( events: OmnibarEvents ) {
 		new URLSearchParams( window.location.search ).get( 'origin_site_id' )
 	);
 	if ( originSiteId > 0 ) {
-		setCurrentOmnibarSite( originSiteId );
+		setCurrentOmnibarSiteId( originSiteId );
 		window.history.replaceState(
 			null,
 			'',
@@ -88,16 +88,14 @@ export default async function loadOmnibar( events: OmnibarEvents ) {
 		rawUserPreferencesQuery().queryKey
 	)?.recentSites;
 
-	// Render with the origin site, or the most recent site, or primary blog as fallback.
-	const initialSiteId = originSiteId || recentSites?.[ 0 ] || user.primary_blog;
+	// Render with the origin site as higher priority.
+	const initialSiteId = originSiteId || getCurrentOmnibarSiteId( user, recentSites );
 	renderWithSiteId( initialSiteId );
 
 	// Re-render whenever recentSites changes (e.g. user navigates to a different site).
-	let currentSiteId = initialSiteId;
 	new QueryObserver( queryClient, userPreferenceQuery( 'recentSites' ) ).subscribe( ( result ) => {
-		const siteId = result.data?.[ 0 ] || user.primary_blog;
-		if ( siteId !== currentSiteId ) {
-			currentSiteId = siteId;
+		const siteId = getCurrentOmnibarSiteId( user, result.data );
+		if ( siteId !== initialSiteId ) {
 			renderWithSiteId( siteId );
 		}
 	} );

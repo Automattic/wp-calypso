@@ -56,7 +56,6 @@ import {
 	canViewWordPressSettings,
 } from '../../sites/features';
 import { shouldLoadWpVersionNotice } from '../../sites/overview/wp-version-notice';
-import { setCurrentOmnibarSite } from '../../utils/omnibar';
 import {
 	getActivityLogHiddenGroups,
 	hasHostingFeature,
@@ -68,6 +67,7 @@ import { hasSiteTrialEnded } from '../../utils/site-trial';
 import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { AUTH_QUERY_KEY } from '../auth';
+import { setCurrentOmnibarSiteId } from '../omnibar/current-site';
 import { rootRoute } from './root';
 import type { AppConfig } from '../context';
 import type { DifmWebsiteContentResponse, Site, User } from '@automattic/api-core';
@@ -173,7 +173,7 @@ export const siteRoute = createRoute( {
 	onEnter: async ( { loaderData } ) => {
 		const siteId = loaderData?.site?.ID;
 		if ( siteId ) {
-			setCurrentOmnibarSite( siteId );
+			setCurrentOmnibarSiteId( siteId );
 		}
 	},
 	errorComponent: lazyRouteComponent( () => import( '../../sites/site/error' ) ),
