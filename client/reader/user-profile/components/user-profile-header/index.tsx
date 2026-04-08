@@ -115,7 +115,9 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 					</AutoDirection>
 				) }
 
-				<UserTopSites userId={ user.ID } userLogin={ user.user_login } />
+				{ user.ID && user.user_login && (
+					<UserTopSites userId={ user.ID } userLogin={ user.user_login } />
+				) }
 			</header>
 			<SectionNav enforceTabsView variation="minimal">
 				<NavTabs>

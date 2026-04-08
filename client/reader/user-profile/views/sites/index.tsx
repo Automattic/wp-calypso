@@ -18,7 +18,7 @@ const UserSites = ( { user }: UserSitesProps ): JSX.Element | null => {
 	const { ID: userId, user_login: userLogin } = user;
 	const translate = useTranslate();
 	const currentUser = useSelector( getCurrentUser );
-	const { isLoading, data, error } = useUserSitesQuery( userId );
+	const { isLoading, data, error } = useUserSitesQuery( userId ?? 0 );
 
 	if ( isLoading ) {
 		return (

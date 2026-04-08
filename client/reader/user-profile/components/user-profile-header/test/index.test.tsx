@@ -58,7 +58,7 @@ describe( 'UserProfileHeader', () => {
 
 		const avatar = screen.getByTestId( 'user-avatar' );
 		expect( avatar ).toBeVisible();
-		expect( avatar ).toHaveAttribute( 'data-user-id', defaultUser.ID.toString() );
+		expect( avatar ).toHaveAttribute( 'data-user-id', defaultUser.ID?.toString() );
 	} );
 
 	test( 'should render the user display name', () => {
@@ -132,7 +132,7 @@ describe( 'UserProfileHeader', () => {
 		render( <UserProfileHeader user={ userWithBio } view="posts" /> );
 
 		// Bio section should be present
-		const bioText = screen.getByText( userWithBio.description );
+		const bioText = screen.getByText( userWithBio.description! );
 		expect( bioText ).toBeVisible();
 	} );
 
