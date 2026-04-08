@@ -13,10 +13,10 @@ const ReaderSubscriptionListItemPlaceholder = (): JSX.Element => {
 					{ translate( 'Site title' ) }
 				</span>
 				<div className="reader-subscription-list-item__site-excerpt is-placeholder">
-					{ translate( 'Description of the site' ) }
+					{ translate( 'The description of the site.' ) }
 				</div>
 				<span className="reader-subscription-list-item__by-text is-placeholder">
-					{ translate( 'by author name' ) }
+					{ translate( 'Author name' ) }
 				</span>
 				<span className="reader-subscription-list-item__site-url is-placeholder">
 					www.example.com
