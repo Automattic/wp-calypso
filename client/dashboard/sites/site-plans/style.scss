@@ -44,10 +44,30 @@
 	line-height: 21px;
 }
 
+.site-plans__plan-header {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.site-plans__plan-badge {
+	display: inline-block;
+	align-self: center;
+	margin-block-start: 4px;
+	background: var( --studio-gray-5, #f0f0f0 );
+	color: var( --studio-gray-70, #3c434a );
+	font-size: 12px;
+	font-weight: 500;
+	padding: 3px 10px;
+	border-radius: 4px;
+	line-height: 1.5;
+}
+
 .site-plans__plan-name {
 	font-size: 32px;
 	font-weight: 600;
-	line-height: 1.1;
+	line-height: 1;
 }
 
 .site-plans__price-display {

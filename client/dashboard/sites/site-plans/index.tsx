@@ -315,9 +315,16 @@ function PlanCard( {
 				</div>
 				<VStack spacing={ 4 }>
 					<VStack spacing={ 1 }>
-						<Text className="site-plans__plan-name" size={ 20 } weight={ 600 }>
-							{ sitePlan.plan_card_name ?? sitePlan.product_name }
-						</Text>
+						<div className="site-plans__plan-header">
+							<Text className="site-plans__plan-name" size={ 20 } weight={ 600 }>
+								{ sitePlan.plan_card_name ?? sitePlan.product_name }
+							</Text>
+							{ sitePlan.badges?.map( ( badge ) => (
+								<span key={ badge } className="site-plans__plan-badge">
+									{ badge }
+								</span>
+							) ) }
+						</div>
 						{ sitePlan.tagline && (
 							<Text className="site-plans__tagline" variant="muted">
 								{ sitePlan.tagline }

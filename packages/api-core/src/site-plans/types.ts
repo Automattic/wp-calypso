@@ -148,4 +148,5 @@ export interface SiteContextualPlan {
 	tagline?: string | null;
 	plan_card_features?: PlanCardFeature[];
 	features_comparison?: PlanProductComparisonGroup[];
+	badges?: string[];
 }
