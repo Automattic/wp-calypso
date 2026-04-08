@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
 import { useAgentsManagerContext } from '../../contexts';
 import { useRegisterCustomActions } from '../../hooks/custom-actions';
+import useAbilitiesRegistration from '../../hooks/use-abilities-registration';
 import useAgentTraceIds from '../../hooks/use-agent-trace-ids';
 import { useBroadcastConversationActivity } from '../../hooks/use-broadcast-conversation-activity';
 import useCheckpointAction from '../../hooks/use-checkpoint-action';
@@ -34,6 +35,7 @@ import {
 	type ExternalContextCard,
 	type ExternalContextCardAction,
 } from '../../utils/external-context';
+import isAmAbilitiesEnabled from '../../utils/is-am-abilities-enabled';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
 import { mergeEmptyViewSuggestions } from '../../utils/merge-empty-view-suggestions';
 import { getOrchestratorErrorMessage } from '../../utils/orchestrator-error-message';
@@ -205,7 +207,7 @@ export default function OrchestratorChat( {
 	useSuggestions,
 	getChatComponent,
 	siteBuildUtils,
-	useCheckpoint,
+	useCheckpoint: useExternalCheckpoint,
 	capabilities,
 	onHasMessagesChange,
 }: Props ) {
@@ -441,8 +443,7 @@ export default function OrchestratorChat( {
 	useSaveNewChatRoute( hasUserSentMessage );
 
 	// Register an "Undo" action on agent messages with checkpoints.
-	const checkpoint = useCheckpoint?.();
-	useCheckpointAction( registerMessageActions, checkpoint );
+	useCheckpointAction( registerMessageActions, useExternalCheckpoint?.() );
 
 	// Register thumbs-up/down feedback actions on agent messages.
 	const { showFeedbackInput, submitFeedbackText, resetFeedback, getFeedbackActionsForMessage } =
@@ -764,51 +765,63 @@ export default function OrchestratorChat( {
 	// Invoke abilities setup hook to register hook-based abilities that utilize React context.
 	// Provides custom action handlers for agent and chat interaction within Big Sky's AI store.
 	// The hook is stable as `OrchestratorChat` only renders after external providers have been loaded.
-	useAbilitiesSetup?.( {
-		addMessage: ( message: BigSkyMessage ) => {
-			// Transform Big Sky message format to `UIMessage` format and add to chat.
-			addMessage( convertBigSkyMessageToUIMessage( message ) );
-		},
-		clearMessages: () => loadMessages( [] ),
-		clearSuggestions,
-		getAgentManager,
-		isProcessing,
-		setIsThinking,
-		deleteMarkedMessages: ( msgs ) => {
-			const deleteDecisions = msgs.map( ( msg ) => {
-				const messageFromRequest = msg as Pick< UIMessage, 'id' > &
-					Partial< Pick< UIMessage, 'content' > >;
-				const fullMessage = messageFromRequest.content
-					? ( messageFromRequest as UIMessage )
-					: messagesRef.current.find( ( message ) => message.id === msg.id );
-				const isShowComponent = !! fullMessage && isShowComponentMessage( fullMessage );
+	if ( isAmAbilitiesEnabled() ) {
+		// eslint-disable-next-line react-hooks/rules-of-hooks -- stable conditional (URL param)
+		useAbilitiesRegistration( {
+			// TODO: compressed block IDs must match what the context provider sends to the LLM.
+			// Currently big-sky owns the context provider — decouple them together.
+			getClientIdMap: () => ( {} ),
+			// TODO: big-sky sets this when a site build starts. AM needs its own lifecycle trigger.
+			isBuildingSite,
+		} );
+	} else {
+		// eslint-disable-next-line react-hooks/rules-of-hooks -- stable conditional (URL param)
+		useAbilitiesSetup?.( {
+			addMessage: ( message: BigSkyMessage ) => {
+				// Transform Big Sky message format to `UIMessage` format and add to chat.
+				addMessage( convertBigSkyMessageToUIMessage( message ) );
+			},
+			clearMessages: () => loadMessages( [] ),
+			clearSuggestions,
+			getAgentManager,
+			isProcessing,
+			setIsThinking,
+			deleteMarkedMessages: ( msgs ) => {
+				const deleteDecisions = msgs.map( ( msg ) => {
+					const messageFromRequest = msg as Pick< UIMessage, 'id' > &
+						Partial< Pick< UIMessage, 'content' > >;
+					const fullMessage = messageFromRequest.content
+						? ( messageFromRequest as UIMessage )
+						: messagesRef.current.find( ( message ) => message.id === msg.id );
+					const isShowComponent = !! fullMessage && isShowComponentMessage( fullMessage );
 
-				return {
-					id: msg.id,
-					foundMessage: !! fullMessage,
-					isShowComponent,
-					tool: fullMessage ? getToolMessageData( fullMessage ) : undefined,
-					shouldDelete: fullMessage ? ! isShowComponent : false,
-				};
-			} );
+					return {
+						id: msg.id,
+						foundMessage: !! fullMessage,
+						isShowComponent,
+						tool: fullMessage ? getToolMessageData( fullMessage ) : undefined,
+						shouldDelete: fullMessage ? ! isShowComponent : false,
+					};
+				} );
 
-			const deletableMessages = msgs.filter(
-				( msg ) => deleteDecisions.find( ( decision ) => decision.id === msg.id )?.shouldDelete
-			);
-			if ( deletableMessages.length === 0 ) {
-				return;
-			}
+				const deletableMessages = msgs.filter(
+					( msg ) => deleteDecisions.find( ( decision ) => decision.id === msg.id )?.shouldDelete
+				);
+				if ( deletableMessages.length === 0 ) {
+					return;
+				}
 
-			setDeletedMessageIds(
-				( prevIds ) => new Set( [ ...prevIds, ...deletableMessages.map( ( msg ) => msg.id ) ] )
-			);
-		},
-		// This ensures the same session ID is used between Big Sky and Calypso agents,
-		// so that messages will be stored in the same conversation.
-		getSessionId: getActiveSessionId,
-		setIsBuildingSite,
-		setThinkingMessage,
-	} );
+				setDeletedMessageIds(
+					( prevIds ) => new Set( [ ...prevIds, ...deletableMessages.map( ( msg ) => msg.id ) ] )
+				);
+			},
+			// This ensures the same session ID is used between Big Sky and Calypso agents,
+			// so that messages will be stored in the same conversation.
+			getSessionId: getActiveSessionId,
+			setIsBuildingSite,
+			setThinkingMessage,
+		} );
+	}
 
 	const displayedMessages = useMemo< AgentsManagerUIMessage[] >( () => {
 		let currentMessages: AgentsManagerUIMessage[] = messages;

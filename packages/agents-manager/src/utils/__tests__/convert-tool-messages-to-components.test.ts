@@ -16,9 +16,22 @@ jest.mock( '../../components/escalation-button', () => ( {
 	EscalationButton: mockEscalationButton,
 } ) );
 jest.mock( '../is-editor-page' );
+jest.mock( '../is-am-abilities-enabled' );
+jest.mock( '../../components/button-picker', () => ( { __esModule: true, default: jest.fn() } ) );
+jest.mock( '../../components/color-picker', () => ( { __esModule: true, default: jest.fn() } ) );
+jest.mock( '../../components/font-picker', () => ( { __esModule: true, default: jest.fn() } ) );
+jest.mock( '../../components/pattern-picker', () => ( {
+	__esModule: true,
+	default: jest.fn(),
+} ) );
 
+import ButtonPicker from '../../components/button-picker';
+import ColorPicker from '../../components/color-picker';
+import FontPicker from '../../components/font-picker';
+import PatternPicker from '../../components/pattern-picker';
 import UnavailableToolMessage from '../../components/unavailable-tool-message';
 import convertToolMessagesToComponents from '../convert-tool-messages-to-components';
+import isAmAbilitiesEnabled from '../is-am-abilities-enabled';
 import { isEditorPage } from '../is-editor-page';
 import {
 	BIG_SKY_SHOW_COMPONENT_TOOL_ID,
@@ -50,7 +63,9 @@ const createToolMessage = (
 
 describe( 'convertToolMessagesToComponents', () => {
 	beforeEach( () => {
+		jest.clearAllMocks();
 		( isEditorPage as jest.Mock ).mockReturnValue( true );
+		( isAmAbilitiesEnabled as jest.Mock ).mockReturnValue( false );
 	} );
 
 	it( 'passes through user messages unchanged', () => {
@@ -603,4 +618,78 @@ describe( 'convertToolMessagesToComponents', () => {
 			expect( componentProps?.isMessageStale === true ).toBe( disabled );
 		}
 	);
+
+	describe( 'AM path', () => {
+		beforeEach( () => {
+			( isAmAbilitiesEnabled as jest.Mock ).mockReturnValue( true );
+		} );
+
+		it.each( [
+			[ 'button-picker', ButtonPicker ],
+			[ 'color-picker', ColorPicker ],
+			[ 'font-picker', FontPicker ],
+			[ 'pattern-picker', PatternPicker ],
+		] )( 'resolves %s to its AM component', ( type, expected ) => {
+			const message = createToolMessage( SHOW_COMPONENT_TOOL_ID, {
+				type,
+				props: { variations: [] },
+				isCurrent: true,
+			} );
+
+			const result = convertToolMessagesToComponents( {
+				messages: [ message ],
+			} );
+
+			expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
+				type: 'component',
+				component: expected,
+			} );
+		} );
+
+		it( 'passes props without `contentType`', () => {
+			const message = createToolMessage( SHOW_COMPONENT_TOOL_ID, {
+				type: 'color-picker',
+				props: { variations: [ { title: 'Bold' } ] },
+				isCurrent: true,
+			} );
+
+			const result = convertToolMessagesToComponents( {
+				messages: [ message ],
+			} );
+
+			expect( result[ 0 ].content[ 0 ].componentProps ).toEqual( {
+				variations: [ { title: 'Bold' } ],
+			} );
+		} );
+
+		it( 'drops unknown component types', () => {
+			const message = createToolMessage( SHOW_COMPONENT_TOOL_ID, {
+				type: 'unknown',
+				props: {},
+				isCurrent: true,
+			} );
+
+			const result = convertToolMessagesToComponents( {
+				messages: [ message ],
+			} );
+
+			expect( result ).toEqual( [] );
+		} );
+
+		it( 'does not call `getChatComponent`', () => {
+			const message = createToolMessage( SHOW_COMPONENT_TOOL_ID, {
+				type: 'color-picker',
+				props: { variations: [] },
+				isCurrent: true,
+			} );
+			const getChatComponent = jest.fn().mockReturnValue( jest.fn() );
+
+			convertToolMessagesToComponents( {
+				messages: [ message ],
+				getChatComponent,
+			} );
+
+			expect( getChatComponent ).not.toHaveBeenCalled();
+		} );
+	} );
 } );

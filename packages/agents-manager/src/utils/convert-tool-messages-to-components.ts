@@ -1,9 +1,15 @@
+import ButtonPicker from '../components/button-picker';
+import ColorPicker from '../components/color-picker';
 import { EscalationButton } from '../components/escalation-button';
+import FontPicker from '../components/font-picker';
+import PatternPicker from '../components/pattern-picker';
 import UnavailableToolMessage from '../components/unavailable-tool-message';
+import isAmAbilitiesEnabled from './is-am-abilities-enabled';
 import { isEditorPage } from './is-editor-page';
 import { isShowComponentTool } from './show-component-tools';
 import { getDisplayMessageFromToolData, isDisplayableToolMessageTool } from './tool-message-utils';
 import type { GetChatComponent } from './load-external-providers';
+import type { ShowComponentType } from '../abilities/types';
 import type { UIMessage } from '@automattic/agenttic-client';
 
 export interface AgentsManagerUIMessage extends UIMessage {
@@ -11,6 +17,24 @@ export interface AgentsManagerUIMessage extends UIMessage {
 	traceId?: string;
 	/** Suppress Agenttic's transient thinking indicator while this message is the latest one. */
 	suppressThinking?: boolean;
+}
+
+/**
+ * Resolves a `ShowComponentType` to its AM-owned React component.
+ */
+function getAmComponent( type: ShowComponentType ): React.ComponentType | null {
+	switch ( type ) {
+		case 'button-picker':
+			return ButtonPicker as React.ComponentType;
+		case 'color-picker':
+			return ColorPicker as React.ComponentType;
+		case 'font-picker':
+			return FontPicker as React.ComponentType;
+		case 'pattern-picker':
+			return PatternPicker as React.ComponentType;
+		default:
+			return null;
+	}
 }
 
 interface Options {
@@ -200,7 +224,10 @@ export default function convertToolMessagesToComponents( {
 
 			const toolData = textData.data ?? {};
 			const { type: contentType, props, followUpTasks, isCurrent, postId, summary } = toolData;
-			const Component = getChatComponent?.( contentType );
+			const useAmAbilities = isAmAbilitiesEnabled();
+			const Component = useAmAbilities
+				? getAmComponent( contentType )
+				: getChatComponent?.( contentType );
 
 			// No matching component found for this content type — drop the message to avoid showing raw JSON.
 			if ( ! Component ) {
@@ -242,7 +269,7 @@ export default function convertToolMessagesToComponents( {
 						componentProps: {
 							...props,
 							...( summaryText && { summary: summaryText } ),
-							contentType,
+							...( ! useAmAbilities && { contentType } ),
 							...( isStale && { isMessageStale: true } ),
 						},
 					},
