@@ -58,7 +58,7 @@ const ALLOWED_DECISION_PROCESSES = new Set( [
 	'formal_procurement',
 ] );
 
-const ALLOWED_BUDGET_LEVELS = new Set( [ 'affordable', 'mid-range', 'premium' ] );
+const ALLOWED_BUDGET_LEVELS = new Set( [ 'affordable', 'mid_range', 'premium' ] );
 
 const ALLOWED_MINIMUM_BUDGETS = new Set( [ 'under_3k', '3k_10k', '10k_30k', 'above_30k' ] );
 

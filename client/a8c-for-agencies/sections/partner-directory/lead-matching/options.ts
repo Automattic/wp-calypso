@@ -93,7 +93,7 @@ export function getLeadMatchingOptions() {
 		] satisfies LeadMatchingOption[],
 		supportedBudgetBands: [
 			{ label: __( 'Affordable' ), value: 'affordable' },
-			{ label: __( 'Mid-range' ), value: 'mid-range' },
+			{ label: __( 'Mid-range' ), value: 'mid_range' },
 			{ label: __( 'Premium' ), value: 'premium' },
 		] satisfies LeadMatchingOption[],
 		supportedStartTimings: [

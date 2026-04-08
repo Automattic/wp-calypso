@@ -188,7 +188,7 @@ export function useFormSelectors() {
 
 	const availableBudgetLevels: Record< string, string > = {
 		affordable: translate( 'Most "affordable" client types' ),
-		'mid-range': translate( 'Most "mid-range" client types' ),
+		mid_range: translate( 'Most "mid-range" client types' ),
 		premium: translate( 'Most "premium" client types' ),
 	};
 

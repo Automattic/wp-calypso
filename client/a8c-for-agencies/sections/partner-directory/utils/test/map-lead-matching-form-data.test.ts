@@ -188,7 +188,7 @@ describe( 'mapLeadMatchingDetailsToProfile', () => {
 		details.projectTypes = [ 'new_woocommerce', 'fix_ongoing_support' ];
 		details.supportsQuickHelp = true;
 		details.serviceLevels = [ 'enhanced' ];
-		details.budgetLevels = [ 'mid-range' ];
+		details.budgetLevels = [ 'mid_range' ];
 		details.minimumBudget = 'above_30k';
 		details.timingPreferences = [ 'flexible' ];
 		details.supportsHardDeadlines = true;
@@ -276,7 +276,7 @@ describe( 'mapLeadMatchingDetailsToProfile', () => {
 			},
 			service_and_budget: {
 				max_service_level: 'enhanced',
-				supported_budget_bands: [ 'mid-range' ],
+				supported_budget_bands: [ 'mid_range' ],
 				minimum_budget_band: 'above_30k',
 			},
 			timing: {
@@ -327,7 +327,7 @@ describe( 'mapLeadMatchingDetailsToProfile', () => {
 				},
 				service_and_budget: {
 					max_service_level: '',
-					supported_budget_bands: [ 'mid-range', 'mid_range' ],
+					supported_budget_bands: [ 'mid_range', 'mid-range' ],
 					minimum_budget_band: 'above_30k',
 				},
 				timing: {
@@ -349,7 +349,7 @@ describe( 'mapLeadMatchingDetailsToProfile', () => {
 			migrationPlatforms: [ 'shopify' ],
 			storeComplexities: [ 'custom_pricing', 'customer_portals' ],
 			projectTypes: [ 'migration', 'new_website', 'redesign' ],
-			budgetLevels: [ 'mid-range' ],
+			budgetLevels: [ 'mid_range' ],
 			minimumBudget: 'above_30k',
 			timingPreferences: [ 'book_1_3_months' ],
 			decisionProcesses: [ 'formal_procurement' ],
