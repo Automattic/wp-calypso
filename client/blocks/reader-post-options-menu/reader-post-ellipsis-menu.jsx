@@ -16,6 +16,7 @@ import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { isConversationFollowable } from 'calypso/reader/post/capabilities';
 import * as stats from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { successNotice } from 'calypso/state/notices/actions';
 import * as PostUtils from 'calypso/state/posts/utils';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { hasReaderFollowOrganization } from 'calypso/state/reader/follows/selectors';
@@ -65,9 +66,20 @@ class ReaderPostEllipsisMenu extends Component {
 		posts: [],
 	};
 
-	openSuggestedFollowsModal = ( shouldOpen ) => {
-		if ( shouldOpen ) {
-			this.props.openSuggestedFollows( shouldOpen );
+	onFollowToggle = ( isFollowing ) => {
+		const { post, translate } = this.props;
+		const displayName = post.site_name || post.feed_URL || post.site_URL;
+
+		this.props.successNotice(
+			isFollowing
+				? translate( 'Success! You are now subscribed to "%s".', { args: displayName } )
+				: translate( 'Success! You are now unsubscribed from "%s".', { args: displayName } ),
+			{ duration: 2000 }
+		);
+
+		if ( isFollowing ) {
+			this.props.openSuggestedFollows( isFollowing );
+			this.onMenuToggle();
 		}
 	};
 
@@ -298,12 +310,12 @@ class ReaderPostEllipsisMenu extends Component {
 					<ReaderFollowButton
 						tagName={ PopoverMenuItem }
 						feedId={ feedId }
-						siteId={ siteId }
+						siteId={ post.is_external ? null : siteId }
 						siteUrl={ post.feed_URL || post.site_URL }
 						followSource={ followSource }
 						iconSize={ 24 }
 						followingLabel={ translate( 'Subscribed' ) }
-						onFollowToggle={ this.openSuggestedFollowsModal }
+						onFollowToggle={ this.onFollowToggle }
 						railcar={ post.railcar }
 					/>
 				) }
@@ -413,5 +425,6 @@ export default connect(
 		requestMarkAsSeenBlog,
 		requestMarkAsUnseenBlog,
 		recordReaderTracksEvent,
+		successNotice,
 	}
 )( localize( ReaderPostEllipsisMenu ) );
