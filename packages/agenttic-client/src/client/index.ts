@@ -414,7 +414,6 @@ function conversationHistoryToDataParts(
  * @param taskId          - The task ID to continue
  * @param message         - The message to send to continue the task
  * @param requestConfig   - Request configuration
- * @param fetchCallback   - Fetch callback to use
  * @param toolProvider    - Tool provider for message enhancement
  * @param contextProvider - Context provider for message enhancement
  * @param sessionId       - Session identifier
@@ -425,7 +424,6 @@ async function continueTask(
 	taskId: string,
 	message: Message,
 	requestConfig: RequestConfig,
-	fetchCallback: typeof fetch,
 	toolProvider?: any,
 	contextProvider?: any,
 	sessionId?: string,
@@ -446,14 +444,9 @@ async function continueTask(
 		sessionId
 	);
 
-	return await executeRequest(
-		preparedRequest,
-		requestConfig,
-		{
-			abortSignal,
-		},
-		fetchCallback
-	);
+	return await executeRequest( preparedRequest, requestConfig, {
+		abortSignal,
+	} );
 }
 
 /**
@@ -462,7 +455,6 @@ async function continueTask(
  * @param taskId               - The task ID to continue
  * @param message              - The message to send to continue the task
  * @param requestConfig        - Request configuration
- * @param fetchCallback        - Fetch callback to use
  * @param toolProvider         - Tool provider for message enhancement
  * @param contextProvider      - Context provider for message enhancement
  * @param sessionId            - Session identifier
@@ -475,7 +467,6 @@ async function continueTaskStreamed(
 	taskId: string,
 	message: Message,
 	requestConfig: RequestConfig,
-	fetchCallback: typeof fetch,
 	toolProvider?: any,
 	contextProvider?: any,
 	sessionId?: string,
@@ -505,22 +496,16 @@ async function continueTaskStreamed(
 	);
 
 	// Create the stream and process it with shared logic
-	const stream = executeStreamingRequest(
-		preparedRequest,
-		requestConfig,
-		{
-			...options,
-			abortSignal,
-		},
-		fetchCallback
-	);
+	const stream = executeStreamingRequest( preparedRequest, requestConfig, {
+		...options,
+		abortSignal,
+	} );
 
 	return processAgentResponseStream(
 		stream,
 		toolProvider,
 		contextProvider,
 		requestConfig,
-		fetchCallback,
 		sessionId,
 		true, // withHistory
 		newConversationParts, // preserve conversation parts across continuation
@@ -543,7 +528,6 @@ async function continueTaskStreamed(
  * @param newConversationParts - Array to track conversation parts for history
  * @param abortSignal          - Optional abort signal
  * @param requestOptions       - Optional additional request options
- * @param fetchCallback        - Fetch callback to use
  * @return AsyncIterable of task updates
  */
 async function* processAgentResponseStream(
@@ -551,7 +535,6 @@ async function* processAgentResponseStream(
 	toolProvider: any,
 	contextProvider: any,
 	requestConfig: RequestConfig,
-	fetchCallback: typeof fetch,
 	sessionId?: string,
 	withHistory: boolean = true,
 	newConversationParts: Message[] = [],
@@ -1035,7 +1018,6 @@ export function createClient( config: ClientConfig ): Client {
 		toolProvider,
 		contextProvider,
 		enableStreaming = false,
-		fetchCallback = fetch,
 	} = config;
 
 	// Create request configuration
@@ -1071,8 +1053,7 @@ export function createClient( config: ClientConfig ): Client {
 			let currentTask = await executeRequest(
 				preparedRequest,
 				requestConfig,
-				{ abortSignal },
-				fetchCallback
+				{ abortSignal }
 			);
 
 			// Track all tool calls and results from the entire execution
@@ -1162,7 +1143,6 @@ export function createClient( config: ClientConfig ): Client {
 						currentTask.id,
 						toolResultMessage,
 						requestConfig,
-						fetchCallback,
 						toolProvider,
 						contextProvider,
 						sessionId,
@@ -1271,8 +1251,7 @@ export function createClient( config: ClientConfig ): Client {
 					enableTokenStreaming: useTokenStreaming, // Token streaming is optional
 					streamingTimeout: timeout,
 					abortSignal,
-				},
-				fetchCallback
+				}
 			);
 
 			yield* processAgentResponseStream(
@@ -1280,7 +1259,6 @@ export function createClient( config: ClientConfig ): Client {
 				toolProvider,
 				contextProvider,
 				requestConfig,
-				fetchCallback,
 				sessionId,
 				withHistory,
 				newConversationParts,
@@ -1306,7 +1284,6 @@ export function createClient( config: ClientConfig ): Client {
 				taskId,
 				userMessage,
 				requestConfig,
-				fetchCallback,
 				toolProvider,
 				contextProvider,
 				sessionId
@@ -1340,7 +1317,6 @@ export function createClient( config: ClientConfig ): Client {
 						currentTask.id,
 						toolResultMessage,
 						requestConfig,
-						fetchCallback,
 						toolProvider,
 						contextProvider,
 						sessionId

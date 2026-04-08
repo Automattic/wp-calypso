@@ -299,7 +299,6 @@ export interface UseAgentChatConfig {
 	contextProvider?: ContextProvider;
 	toolProvider?: ToolProvider;
 	authProvider?: AuthProvider;
-	fetchCallback?: typeof fetch;
 	enableStreaming?: boolean; // Enable token-by-token streaming
 	odieBotId?: string; // Odie bot ID for server-based conversation storage (e.g., 'wpcom-agent-wp_orchestrator'). When set, enables server storage.
 }
@@ -360,7 +359,6 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		agentUrl: config.agentUrl,
 		sessionId: config.sessionId,
 		sessionIdStorageKey: config.sessionIdStorageKey,
-		fetchCallback: config.fetchCallback,
 	};
 
 	// Validate configuration
@@ -432,7 +430,6 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 					authProvider: config.authProvider,
 					enableStreaming: config.enableStreaming,
 					odieBotId: config.odieBotId,
-					fetchCallback: agentConfig.fetchCallback,
 				} );
 
 				// Only load messages when creating a new agent (initial mount or after removeAgent)
