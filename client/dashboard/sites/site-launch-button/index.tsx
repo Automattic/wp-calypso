@@ -22,12 +22,10 @@ export function SiteLaunchButton( {
 	tracksContext,
 	launchUrl,
 	LaunchModal,
-	backTo,
 }: {
 	site: Site;
 	tracksContext: string;
 	launchUrl?: string;
-	backTo?: string;
 	LaunchModal?: React.ComponentType< {
 		isLaunching: boolean;
 		onClose: () => void;
@@ -111,8 +109,7 @@ export function SiteLaunchButton( {
 
 	const handleGatedLaunchClick = () => {
 		handleTracksEvent();
-		const url = backTo ? addQueryArgs( getLaunchUrl(), { back_to: backTo } ) : getLaunchUrl();
-		window.location.assign( url );
+		window.location.assign( getLaunchUrl() );
 	};
 
 	const commonProps = {

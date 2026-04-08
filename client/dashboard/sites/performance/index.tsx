@@ -13,7 +13,6 @@ import InlineSupportLink from '../../components/inline-support-link';
 import { Notice } from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { wpcomLink } from '../../utils/link';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import { SiteLaunchButton } from '../site-launch-button';
 import SiteLaunchCelebrationModal from '../site-launch-celebration-modal';
@@ -204,13 +203,7 @@ function SitePerformance() {
 					notices={
 						<Notice
 							title={ __( 'Launch your site to start measuring performance' ) }
-							actions={
-								<SiteLaunchButton
-									site={ site }
-									tracksContext="site_performance"
-									backTo={ wpcomLink( `/sites/${ site.slug }/performance` ) }
-								/>
-							}
+							actions={ <SiteLaunchButton site={ site } tracksContext="site_performance" /> }
 						>
 							{ __( 'Performance statistics are only available for public sites.' ) }
 						</Notice>
