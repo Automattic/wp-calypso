@@ -4,20 +4,31 @@ import { useCallback, useEffect, useState } from 'react';
 import { AUTH_QUERY_KEY, initializeCurrentUser } from '../auth';
 import { InterimOmnibar } from './interim-omnibar';
 import type { OmnibarEvents } from './click-handlers';
-import type { User } from '@automattic/api-core';
+import type { Site, User } from '@automattic/api-core';
 
 interface InterimOmnibarContainerProps {
 	initialUser: User | null;
 	events: OmnibarEvents;
 }
 
+export interface InterimOmnibarData {
+	user: User | null;
+	site: Site | null;
+	currentRoute: string;
+	onToggleMenu?: () => void;
+	onToggleNotifications?: () => void;
+}
+
 /**
- * Drives `InterimOmnibar` via TanStack Query hooks. The first render mirrors
- * the SSR output exactly (`user = initialUser`, `site = null`, no callbacks)
- * so hydration succeeds; after hydration commits, the component switches to
- * hook-driven data.
+ * Provides the props for `InterimOmnibar`. The first render mirrors the SSR
+ * output exactly (`user = initialUser`, `site = null`, no callbacks) so
+ * hydration succeeds; after hydration commits, the hook switches to
+ * query-driven data.
  */
-function InterimOmnibarDataProvider( { initialUser, events }: InterimOmnibarContainerProps ) {
+export function useInterimOmnibarData( {
+	initialUser,
+	events,
+}: InterimOmnibarContainerProps ): InterimOmnibarData {
 	const [ hydrated, setHydrated ] = useState( false );
 	useEffect( () => {
 		setHydrated( true );
@@ -46,24 +57,25 @@ function InterimOmnibarDataProvider( { initialUser, events }: InterimOmnibarCont
 	const onToggleNotifications = useCallback( () => events.notifications.emit(), [ events ] );
 
 	if ( ! hydrated ) {
-		return (
-			<InterimOmnibar
-				user={ initialUser }
-				site={ null }
-				currentRoute={ window.location.pathname }
-			/>
-		);
+		return {
+			user: initialUser,
+			site: null,
+			currentRoute: window.location.pathname,
+		};
 	}
 
-	return (
-		<InterimOmnibar
-			user={ user ?? null }
-			site={ site }
-			currentRoute={ window.location.pathname }
-			onToggleMenu={ onToggleMenu }
-			onToggleNotifications={ onToggleNotifications }
-		/>
-	);
+	return {
+		user: user ?? null,
+		site,
+		currentRoute: window.location.pathname,
+		onToggleMenu,
+		onToggleNotifications,
+	};
+}
+
+function InterimOmnibarDataProvider( props: InterimOmnibarContainerProps ) {
+	const data = useInterimOmnibarData( props );
+	return <InterimOmnibar { ...data } />;
 }
 
 export function InterimOmnibarContainer( props: InterimOmnibarContainerProps ) {
