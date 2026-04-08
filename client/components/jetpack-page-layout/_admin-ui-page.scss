@@ -24,6 +24,41 @@
 	}
 }
 
+// Stick the Jetpack footer to the viewport bottom while letting the page
+// body absorb remaining vertical space. Flex chain runs
+// .layout__content → .layout__primary → .main, with the footer pinned via
+// `position: fixed` and width-matched to the content column on desktop.
+// Usage: @include admin-ui-page-sticky-footer;
+// Must be called inside a `body.is-section-<name>` selector.
+@mixin admin-ui-page-sticky-footer {
+	.layout__content {
+		display: flex;
+
+		.layout__primary {
+			flex: 1;
+			display: flex;
+
+			.main {
+				margin: 0;
+				flex-grow: 1;
+				position: relative;
+				padding-bottom: 65px;
+
+				.jetpack-footer {
+					position: fixed;
+					z-index: 1;
+					bottom: 0;
+					background-color: var(--wpds-color-bg-surface-neutral);
+
+					@include break-medium {
+						max-width: calc(100% - var(--sidebar-width-max));
+					}
+				}
+			}
+		}
+	}
+}
+
 // Constrain admin-ui Page content width, centered.
 // Pass a $scope selector to limit to specific page variants (e.g. upsell pages).
 // Pass $max-width to override the default 660px (e.g. 1040px for wider content).
