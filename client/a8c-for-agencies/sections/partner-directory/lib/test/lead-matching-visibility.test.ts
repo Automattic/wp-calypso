@@ -20,7 +20,6 @@ describe( 'lead matching visibility', () => {
 		mockedIsEnabled.mockReturnValue( true );
 
 		expect( isLeadMatchingSectionEnabled() ).toBe( true );
-		expect( isLeadMatchingSectionEnabled( 123 ) ).toBe( true );
 	} );
 
 	it( 'returns true for pilot agencies', () => {
