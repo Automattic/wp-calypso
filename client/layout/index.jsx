@@ -42,6 +42,7 @@ import { getSidebarType, SidebarType } from 'calypso/state/global-sidebar/select
 import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'calypso/state/guided-tours/contexts';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import { isReaderMSDEnabled } from 'calypso/state/reader-ui/selectors';
+import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import hasGravatarDomainQueryParam from 'calypso/state/selectors/has-gravatar-domain-query-param';
@@ -228,7 +229,7 @@ class Layout extends Component {
 	}
 
 	renderCelebrateSiteLaunchModal() {
-		if ( ! this.state.initiallyUnlaunchedSite ) {
+		if ( ! this.state.initiallyUnlaunchedSite && ! this.props.hasCelebrateLaunchQueryParam ) {
 			return null;
 		}
 
@@ -519,6 +520,7 @@ export default withCurrentRoute(
 			sectionGroup,
 			sectionName,
 			sectionJitmPath,
+			hasCelebrateLaunchQueryParam: getInitialQueryArguments( state )?.celebrateLaunch === 'true',
 			currentLayoutFocus: getCurrentLayoutFocus( state ),
 			colorScheme,
 			needsColorScheme,
