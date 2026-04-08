@@ -22,7 +22,7 @@ interface SiteLaunchCelebrationModalProps {
 	site: Pick< Site, 'ID' | 'slug' | 'URL' | 'launch_status' > & {
 		plan?: Pick< Required< Site >[ 'plan' ], 'is_free' | 'product_slug' >;
 	};
-	onOpen?: () => void;
+	onOpen?(): void;
 	onClose?(): void;
 }
 
