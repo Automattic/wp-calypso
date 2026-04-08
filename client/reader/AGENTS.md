@@ -34,6 +34,16 @@ Posts are identified by objects with `{blogId, postId}` (blog posts) or `{feedId
 
 Post cards live in `client/blocks/reader-post-card/` with variants: `standard` (title, excerpt, image), `compact` (smaller layout for discovery), `photo` (image-focused), `gallery` (multiple images), and `conversation` (discussion thread).
 
+### Shared code boundaries
+
+The Reader owns `client/reader/` but depends on shared code that other clients also use. Be aware of the impact when modifying:
+
+- `client/state/reader/` — Reader Redux state. Owned by Reader, but consumed by other parts of Calypso.
+- `client/blocks/reader-post-card/` — post card components. Used by Reader and Discover.
+- `client/blocks/reader-full-post/` — full post view. Shared across Reader surfaces.
+- `client/components/post-excerpt/` — shared post excerpt component.
+- `client/state/data-layer/wpcom/read/` — API handlers. Changes here affect all Reader data fetching.
+
 ## Boundaries (for new code)
 
 - Do not use the `connect` HOC — use `useSelector`/`useDispatch` hooks instead.
