@@ -22,10 +22,7 @@ export const MasterbarLaunchButton = ( { siteId }: { siteId: number } ) => {
 
 	const { onSiteLaunched, onModalClosed } = useCelebrateLaunchModalSideEffects( siteId, layout );
 
-	const launchSiteMutation = useMutation( {
-		...siteLaunchMutation( siteId ),
-		onSuccess: () => onSiteLaunched( !! site?.is_wpcom_atomic ),
-	} );
+	const launchSiteMutation = useMutation( siteLaunchMutation( siteId ) );
 
 	const [ isLoading, data ] = useExperiment( 'calypso_standardized_site_launch_gating' );
 
@@ -43,7 +40,9 @@ export const MasterbarLaunchButton = ( { siteId }: { siteId: number } ) => {
 		}
 
 		if ( data?.variationName === 'ungated_site_launch' ) {
-			launchSiteMutation.mutate();
+			launchSiteMutation.mutate( undefined, {
+				onSuccess: () => onSiteLaunched( !! site?.is_wpcom_atomic ),
+			} );
 			return;
 		}
 
