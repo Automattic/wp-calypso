@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
@@ -142,17 +142,22 @@ describe( '<SiteLaunchCelebrationModal>', () => {
 	} );
 
 	describe( 'Query Parameter Removal', () => {
-		test( 'removes celebrateLaunch query param when modal opens', async () => {
+		test( 'removes celebrateLaunch query param when modal closes', async () => {
 			setupCelebrateLaunchUrl();
-
+			const user = userEvent.setup();
 			const mockSite = createMockSite();
 			render( <SiteLaunchCelebrationModal site={ mockSite } /> );
 
 			// Wait for modal to render
 			await screen.findByRole( 'dialog' );
 
+			// Close the modal
+			await user.click( screen.getByRole( 'button', { name: 'Close' } ) );
+
 			// After component mounts and modal opens, the URL should not contain celebrateLaunch param
-			expect( window.location.href ).not.toContain( 'celebrateLaunch' );
+			await waitFor( () => {
+				expect( window.location.href ).not.toContain( 'celebrateLaunch' );
+			} );
 		} );
 	} );
 

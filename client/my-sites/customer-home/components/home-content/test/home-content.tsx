@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-// @ts-nocheck - TODO: Fix TypeScript issues
 import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, render, screen, waitFor } from '@testing-library/react';
@@ -9,6 +8,7 @@ import nock from 'nock';
 import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import CelebrateSiteLaunchModal from 'calypso/my-sites/customer-home/celebrate-site-launch-modal';
 import HomeContent from '../index';
 
 jest.mock( '@automattic/data-stores', () => ( {
@@ -17,6 +17,7 @@ jest.mock( '@automattic/data-stores', () => ( {
 } ) );
 
 jest.mock( '../../full-screen-launchpad', () => ( {
+	// @ts-expect-error - TODO: Fix TypeScript issues
 	FullScreenLaunchpad: ( { onClose, onSiteLaunch, beforeSiteLaunchRefetch } ) => (
 		<div data-testid="full-screen-launchpad">
 			<button onClick={ onClose }>Skip to dashboard</button>
@@ -186,7 +187,13 @@ describe( 'HomeContent', () => {
 
 			it( 'should show celebrate launch modal when site is launched', async () => {
 				mockLayoutViewName = 'VIEW_FOCUSED_LAUNCHPAD';
-				renderWithProviders( <HomeContent /> );
+				window.history.pushState( {}, '', '/home?celebrateLaunch=true' );
+				renderWithProviders(
+					<>
+						<HomeContent />
+						<CelebrateSiteLaunchModal siteId={ testSite.ID } />
+					</>
+				);
 
 				const launchButton = screen.getByText( 'Launch your site' );
 				await act( async () => {
