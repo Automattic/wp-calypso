@@ -10,7 +10,7 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import Notice from '../../components/notice';
-import { a4aLink, wpcomLink } from '../../utils/link';
+import { a4aLink } from '../../utils/link';
 import { SiteLaunchButton } from '../site-launch-button';
 import AgencyDevelopmentSiteLaunchModal from '../site-launch-button/agency-development-site-launch-modal';
 import TrialUpsellNotice from './trial-upsell-notice';
@@ -92,7 +92,6 @@ export function LaunchAgencyDevelopmentSiteForm( { site }: { site: Site } ) {
 					<SiteLaunchButton
 						site={ site }
 						tracksContext="agency_site_settings"
-						backTo={ wpcomLink( `/home/${ site.slug }` ) }
 						{ ...( isBillingTypeBD
 							? {
 									launchUrl: a4aLink(
@@ -129,13 +128,7 @@ export function LaunchForm( { site }: { site: Site } ) {
 			<TrialUpsellNotice site={ site } />
 			<Notice
 				title={ __( 'Your site hasn’t been launched yet' ) }
-				actions={
-					<SiteLaunchButton
-						site={ site }
-						backTo={ wpcomLink( `/home/${ site.slug }` ) }
-						tracksContext="site_settings"
-					/>
-				}
+				actions={ <SiteLaunchButton site={ site } tracksContext="site_settings" /> }
 			>
 				{ __( 'It is hidden from visitors behind a “Coming Soon” notice until it is launched.' ) }
 			</Notice>
