@@ -53,7 +53,7 @@
 		white-space: pre-line;
 
 		&.is-clamped {
-			max-height: 60px; // 3 lines × 20px line-height.
+			max-height: 40px; // 2 line × 20px line-height.
 		}
 
 		&.is-expanded {
