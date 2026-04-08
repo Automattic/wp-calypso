@@ -67,6 +67,19 @@
 					position: relative;
 				}
 
+				// Pages without an admin-ui <Page> wrapper inherit the base
+				// `.main { margin: auto }` rule. In the now-flex
+				// .layout__primary that turns into vertical auto-margin
+				// absorption, centering short content in the viewport. Kill
+				// the vertical auto margins so content top-aligns normally;
+				// horizontal `margin: auto` still handles wideLayout
+				// centering.
+				&:not(:has(> .admin-ui-page)) {
+					margin-block: 0;
+					margin-inline: auto;
+					flex-grow: 1;
+				}
+
 				// Only reserve bottom space when a Jetpack footer is actually
 				// rendered. Pages without a footer (e.g. Jetpack Cloud views)
 				// get the fixed-primary structural hack without the wasted
