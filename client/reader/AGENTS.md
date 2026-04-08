@@ -34,6 +34,33 @@ Posts are identified by objects with `{blogId, postId}` (blog posts) or `{feedId
 
 Post cards live in `client/blocks/reader-post-card/` with variants: `standard` (title, excerpt, image), `compact` (smaller layout for discovery), `photo` (image-focused), `gallery` (multiple images), and `conversation` (discussion thread).
 
+### Page entrypoints
+
+| Route | Entrypoint |
+|-------|------------|
+| `/reader` | `client/reader/following/main.tsx` |
+| `/reader/feeds/:feed_id` | `client/reader/feed-stream/` |
+| `/reader/blogs/:blog_id` | `client/reader/site-stream/` |
+| `/reader/feeds/:feed/posts/:post` | `client/reader/full-post/` |
+| `/reader/blogs/:blog/posts/:post` | `client/reader/full-post/` |
+| `/reader/a8c` | `client/reader/a8c/main.jsx` |
+| `/reader/p2` | `client/reader/p2/main.jsx` |
+| `/reader/search` | `client/reader/search/` |
+| `/reader/notifications` | `client/reader/notifications/` |
+| `/reader/new` | `client/reader/new-subscription/` |
+| `/reader/subscriptions` | `client/reader/site-subscriptions-manager/` |
+| `/reader/subscriptions/comments` | `client/reader/site-subscriptions-manager/comment-subscriptions-manager/` |
+| `/reader/subscriptions/pending` | `client/reader/site-subscriptions-manager/pending-subscriptions-manager/` |
+| `/reader/subscriptions/:id` | `client/reader/site-subscription/` |
+| `/reader/site/subscription/:blog_id` | `client/reader/site-subscription/` |
+| `/reader/conversations` | `client/reader/conversations/` |
+| `/reader/list/*` | `client/reader/list/` |
+| `/discover/*` | `client/reader/discover/` |
+| `/tag/:tag` | `client/reader/tag-stream/` |
+| `/tags` | `client/reader/tags/` |
+| `/activities/likes` | `client/reader/liked-stream/` |
+| `/reader/users/*` | `client/reader/user-profile/` |
+
 ### Shared code boundaries
 
 The Reader owns `client/reader/` but depends on shared code that other clients also use. Be aware of the impact when modifying:
@@ -61,3 +88,4 @@ The Reader owns `client/reader/` but depends on shared code that other clients a
 - Always use TypeScript (`.tsx`) and functional components for new components.
 - Do not export component prop types. Consumers should use `React.ComponentProps<typeof Component>` to extract props.
 - Use named exports for new components instead of default exports.
+- New components must have accompanying tests.
