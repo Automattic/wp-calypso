@@ -1,5 +1,10 @@
 import { callApi } from '@automattic/data-stores/src/reader';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
+import { addQueryArgs } from '@wordpress/url';
+
+interface UserSitesQueryParams {
+	caller: string; // To identify the caller of the API which filter the sites accordingly.
+}
 
 export interface UserSitesResponse {
 	total: number;
@@ -31,7 +36,9 @@ export default function useUserSitesQuery(
 		queryFn: () =>
 			callApi< UserSitesResponse >( {
 				apiNamespace: 'wpcom/v2',
-				path: `/users/${ userId }/sites`,
+				path: addQueryArgs( `/users/${ userId }/sites`, {
+					caller: 'reader',
+				} as UserSitesQueryParams ),
 				method: 'GET',
 				isLoggedIn: true,
 				apiVersion: '2',
