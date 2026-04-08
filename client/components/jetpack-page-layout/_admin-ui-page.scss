@@ -47,9 +47,17 @@
 			}
 
 			.main {
-				margin: 0;
-				flex-grow: 1;
-				position: relative;
+				// Only fill the fixed-primary column when the page renders an
+				// admin-ui <Page> inside <Main>. Pages that render content
+				// directly in <Main> (e.g. wideLayout views without a <Page>
+				// wrapper like Earn's paid-subscription detail screen, or the
+				// JP Cloud code paths of Scan/Backup/AL v2) keep .main's
+				// default `margin: auto` + `max-width` centering.
+				&:has(> .admin-ui-page) {
+					margin: 0;
+					flex-grow: 1;
+					position: relative;
+				}
 
 				// Only reserve bottom space when a Jetpack footer is actually
 				// rendered. Pages without a footer (e.g. Jetpack Cloud views)

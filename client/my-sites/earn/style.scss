@@ -5,6 +5,7 @@
 
 body.is-section-earn {
 	@include admin-ui-page-layout;
+	@include admin-ui-page-sticky-footer;
 }
 
 .earn-navigation {
