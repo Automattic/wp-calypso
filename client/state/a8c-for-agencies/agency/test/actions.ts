@@ -1,10 +1,27 @@
-jest.mock( '@automattic/calypso-config', () => ( {
-	__esModule: true,
-	default: {
-		isEnabled: jest.fn(),
-		enable: jest.fn(),
-	},
-} ) );
+jest.mock( '@automattic/calypso-config', () => {
+	const isEnabled = jest.fn();
+	const enable = jest.fn();
+
+	return {
+		__esModule: true,
+		default: {
+			isEnabled,
+			enable,
+		},
+		isEnabled,
+		enable,
+	};
+} );
+
+jest.mock(
+	'calypso/a8c-for-agencies/sections/partner-directory/lib/lead-matching-visibility',
+	() => ( {
+		A4A_PARTNER_DIRECTORY_LEAD_MATCHING_FEATURE_FLAG: 'a4a-partner-directory-lead-matching',
+		A4A_PARTNER_DIRECTORY_LEAD_MATCHING_PILOT_AGENCY_IDS: new Set( [
+			232667176, 251102500, 234036126, 234278359, 232640028,
+		] ),
+	} )
+);
 
 import config from '@automattic/calypso-config';
 import { A4A_PARTNER_DIRECTORY_LEAD_MATCHING_FEATURE_FLAG } from 'calypso/a8c-for-agencies/sections/partner-directory/lib/lead-matching-visibility';
