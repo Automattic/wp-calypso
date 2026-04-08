@@ -125,24 +125,14 @@ export class UserSignupPage {
 	 * @returns {Promise<NewUserResponse>}
 	 */
 	private captureNewUserResponse(): Promise< NewUserResponse > {
-		return new Promise< NewUserResponse >( ( resolve, reject ) => {
-			this.page.route(
-				/.*\/users\/new\?.*/,
-				async ( route ) => {
-					try {
-						const response = await route.fetch();
-						const body = await response.body();
-						// Fulfill the original request
-						await route.fulfill( { response } );
-						// Resolve the promise with the parsed body
-						resolve( JSON.parse( body.toString() ) as NewUserResponse );
-					} catch ( error ) {
-						reject( error );
-					}
-				},
-				{ times: 1 }
-			);
-		} );
+		return this.page
+			.waitForResponse(
+				( response ) =>
+					/\/users\/new\?/.test( response.url() ) &&
+					response.ok() &&
+					response.request().method() === 'POST'
+			)
+			.then( ( response ) => response.json() );
 	}
 
 	/**

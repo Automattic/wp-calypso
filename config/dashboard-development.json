@@ -10,7 +10,6 @@
 		"my.woo.localhost": {
 			"oauth_client_id": 134404,
 			"wpcom_login_url": false,
-			"logout_url": false,
 			"features": { "oauth": true }
 		}
 	},
@@ -20,9 +19,7 @@
 	"wpcom_signup_key": "cOaYKdrkgXz8xY7aysv4fU6wL6sK5J8a6ojReEIAPwggsznj4Cb6mW0nffTxtYT8",
 	"wpcom_url": "http://calypso.localhost:3000",
 	"wpcom_login_url": "https://wordpress.com/log-in",
-	"logout_url": "https://|subdomain|wordpress.com",
 	"features": {
-		"always_use_logout_url": true,
 		"calypso/ai-site-builder-flow": true,
 		"cancel-flow/solutions-cards-upsell": false,
 		"ciab/allow-domain-features": true,

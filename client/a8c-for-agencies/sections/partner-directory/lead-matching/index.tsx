@@ -1,6 +1,6 @@
 import page from '@automattic/calypso-router';
 import { Badge } from '@automattic/components';
-import { Card, CardBody, TextControl, ToggleControl, Button } from '@wordpress/components';
+import { Card, CardBody, ToggleControl, Button } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -11,6 +11,7 @@ import { A4A_PARTNER_DIRECTORY_LINK } from 'calypso/a8c-for-agencies/components/
 import { Stat } from 'calypso/a8c-for-agencies/components/stat';
 import useSubmitAgencyDetailsMutation from 'calypso/a8c-for-agencies/data/partner-directory/use-submit-agency-details';
 import MinimumBudgetSelector from 'calypso/a8c-for-agencies/sections/partner-directory/components/minimum-budget-selector';
+import ServiceLevelSelector from 'calypso/a8c-for-agencies/sections/partner-directory/components/service-level-selector';
 import TokenFieldSelector from 'calypso/a8c-for-agencies/sections/partner-directory/components/token-field-selector';
 import { useDispatch, useSelector } from 'calypso/state';
 import {
@@ -109,7 +110,6 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 		availableMigrationPlatforms,
 		availableStoreComplexities,
 		availableProjectTypes,
-		availableServiceLevels,
 		availableTimingPreferences,
 		availableDecisionProcesses,
 		availableOngoingRelationships,
@@ -506,9 +506,6 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 		void saveLeadMatchingPreferences( 'manual' );
 	};
 
-	const showOtherBusinessType = formData.businessTypes.includes( 'other' );
-	const showOtherIdealBusinessType = formData.idealBusinessTypes.includes( 'other' );
-
 	return (
 		<div className="partner-directory-lead-matching">
 			<div ref={ placeholderRef } className="partner-directory-lead-matching__status-placeholder">
@@ -653,22 +650,13 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 						/>
 					</FormField>
 
-					{ showOtherBusinessType && (
-						<FormField label={ __( 'Please specify other business type' ) }>
-							<TextControl
-								value={ formData.otherBusinessType }
-								onChange={ ( value ) => updateField( 'otherBusinessType', value ) }
-								placeholder={ __( 'Describe the other business type' ) }
-							/>
-						</FormField>
-					) }
-
 					<FormField
 						label={ __( 'Which business types are an ideal fit for your agency?' ) }
 						description={ __( 'Select all that apply.' ) }
 						error={ validationError.idealBusinessTypes }
 						fieldName="idealBusinessTypes"
 					>
+						{ /* The free-text Other path stays disabled until HubSpot supports a separate field. */ }
 						<TokenFieldSelector
 							availableOptions={ availableBusinessTypes }
 							selectedSlugs={ formData.idealBusinessTypes }
@@ -679,16 +667,6 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 							sortSuggestions
 						/>
 					</FormField>
-
-					{ showOtherIdealBusinessType && (
-						<FormField label={ __( 'Please specify other ideal business type' ) }>
-							<TextControl
-								value={ formData.otherIdealBusinessType }
-								onChange={ ( value ) => updateField( 'otherIdealBusinessType', value ) }
-								placeholder={ __( 'Describe the other ideal business type' ) }
-							/>
-						</FormField>
-					) }
 
 					<FormField
 						label={ __( 'Which company sizes are a good fit for your agency?' ) }
@@ -795,11 +773,10 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 						error={ validationError.serviceLevels }
 						fieldName="serviceLevels"
 					>
-						<TokenFieldSelector
-							availableOptions={ availableServiceLevels }
-							selectedSlugs={ formData.serviceLevels }
-							onChange={ ( value ) => {
-								updateField( 'serviceLevels', value );
+						<ServiceLevelSelector
+							selectedServiceLevel={ formData.serviceLevels[ 0 ] ?? '' }
+							setServiceLevel={ ( value ) => {
+								updateField( 'serviceLevels', value ? [ value ] : [] );
 								updateValidationError( { serviceLevels: undefined } );
 							} }
 						/>

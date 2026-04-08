@@ -546,7 +546,11 @@ export class RestAPIClient {
 
 		// This portion validates whether the user represented by the
 		// instance of the RestAPIClient is in fact a test user.
-		if ( ! accountInformation.email.includes( 'mailosaur' ) ) {
+		const gmailBase = SecretsManager.secrets.gmailTestEmail?.split( '@' )[ 0 ];
+		const isTestEmail =
+			accountInformation.email.includes( 'mailosaur' ) ||
+			accountInformation.email.startsWith( `${ gmailBase }+` );
+		if ( ! isTestEmail ) {
 			console.warn(
 				'Aborting account closure: email address provided is not for an e2e test user.'
 			);

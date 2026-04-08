@@ -4,23 +4,23 @@
 import { render, screen } from '@testing-library/react';
 import { ComponentProps } from 'react';
 import { FeedRecommendation } from 'calypso/data/reader/use-feed-recommendations-query';
-import { RecommendedFeedsList } from '../index';
-import { RecommendedFeedItem } from '../recommended-feed-item';
+import { ReaderSitesList } from '../index';
+import { ReaderSiteItem } from '../site-item';
 
-jest.mock( '../recommended-feed-item', () => ( {
+jest.mock( '../site-item', () => ( {
 	__esModule: true,
-	RecommendedFeedItem: ( props: ComponentProps< typeof RecommendedFeedItem > ) => (
+	ReaderSiteItem: ( props: ComponentProps< typeof ReaderSiteItem > ) => (
 		<li
-			data-testid="recommended-feed-item"
+			data-testid="reader-site-item"
 			data-variant={ props.variant }
 			data-follow-source={ props.followSource }
 		>
-			{ props.feed.name }
+			{ props.site.name }
 		</li>
 	),
 } ) );
 
-describe( 'RecommendedFeedsList', () => {
+describe( 'ReaderSitesList', () => {
 	let idCounter = 0;
 
 	beforeEach( () => {
@@ -38,23 +38,23 @@ describe( 'RecommendedFeedsList', () => {
 	} );
 
 	test( 'applies variant CSS class to the list', () => {
-		render( <RecommendedFeedsList feeds={ [] } variant="compact" followSource="test" /> );
+		render( <ReaderSitesList sites={ [] } variant="compact" followSource="test" /> );
 
 		expect( screen.getByRole( 'list' ) ).toHaveClass( 'is-compact-view' );
 	} );
 
 	test( 'renders no feed item when feeds array is empty', () => {
-		render( <RecommendedFeedsList feeds={ [] } variant="default" followSource="test" /> );
+		render( <ReaderSitesList sites={ [] } variant="default" followSource="test" /> );
 
-		expect( screen.queryByTestId( 'recommended-feed-item' ) ).not.toBeInTheDocument();
+		expect( screen.queryByTestId( 'reader-site-item' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'renders one item per feed that has a feedUrl', () => {
 		const feeds = [ createFeed(), createFeed( { feedUrl: undefined } ), createFeed() ];
 
-		render( <RecommendedFeedsList feeds={ feeds } variant="default" followSource="my-source" /> );
+		render( <ReaderSitesList sites={ feeds } variant="default" followSource="my-source" /> );
 
-		const items = screen.getAllByTestId( 'recommended-feed-item' );
+		const items = screen.getAllByTestId( 'reader-site-item' );
 		expect( items ).toHaveLength( 2 );
 		expect( screen.getByText( 'Example Feed - 1' ) ).toBeVisible();
 		expect( screen.queryByText( 'Example Feed - 2' ) ).not.toBeInTheDocument();
