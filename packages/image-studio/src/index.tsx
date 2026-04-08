@@ -41,7 +41,7 @@ declare global {
  * environment they're running in.
  */
 function getCapabilities( environment?: ImageStudioData[ 'environment' ] ) {
-	const isWpAdmin = environment === 'wp-admin';
+	const isWpAdmin = ! environment || environment === 'wp-admin';
 
 	return {
 		// Link to the classic WP Media Library image editor.
