@@ -45,6 +45,11 @@ export default function SiteLaunchCelebrationModal( {
 	const onOpen = useEvent( () => {
 		externalOnOpen?.();
 		setIsOpen( true );
+
+		// Track the modal view
+		recordTracksEvent( 'calypso_launchpad_celebration_modal_view', {
+			product_slug: site?.plan?.product_slug,
+		} );
 	} );
 
 	// Check if celebration modal should be shown based on URL param and site launch status
@@ -56,25 +61,6 @@ export default function SiteLaunchCelebrationModal( {
 			onOpen();
 		}
 	}, [ site.launch_status, onOpen ] );
-
-	useEffect( () => {
-		// Only run cleanup and analytics when modal is open
-		if ( ! isOpen ) {
-			return;
-		}
-
-		// Remove the celebrateLaunch URL param without reloading the page
-		window.history.replaceState(
-			null,
-			'',
-			removeQueryArgs( window.location.href, 'celebrateLaunch' )
-		);
-
-		// Track the modal view
-		recordTracksEvent( 'calypso_launchpad_celebration_modal_view', {
-			product_slug: site?.plan?.product_slug,
-		} );
-	}, [ isOpen, site?.plan?.product_slug, recordTracksEvent ] );
 
 	if ( ! isOpen || ! isDomainsDataReady ) {
 		return null;
@@ -163,6 +149,13 @@ export default function SiteLaunchCelebrationModal( {
 			onRequestClose={ () => {
 				setIsOpen( false );
 				onClose?.();
+
+				// Remove the celebrateLaunch URL param without reloading the page
+				window.history.replaceState(
+					null,
+					'',
+					removeQueryArgs( window.location.href, 'celebrateLaunch' )
+				);
 			} }
 		>
 			<ConfettiAnimation />
