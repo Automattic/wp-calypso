@@ -11,8 +11,9 @@ This app bundles the package into 8 webpack entry points deployed to `widgets.wp
 cd apps/agents-manager
 yarn dev --sync
 
-# Production build
-yarn build
+# Production build + sync (use before deploying)
+cd apps/agents-manager
+yarn build --sync
 ```
 
 The `--sync` flag syncs bundles to `widgets.wp.com/agents-manager/` on your sandbox.
