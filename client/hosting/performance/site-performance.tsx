@@ -40,6 +40,7 @@ import { ExpiredReportNotice } from './components/expired-report-notice/expired-
 import { usePerformanceReport } from './hooks/usePerformanceReport';
 import { useSitePerformancePageReports } from './hooks/useSitePerformancePageReports';
 import { getSupportLinkProps } from './utils';
+import type { Site } from '@automattic/api-core';
 
 import './style.scss';
 
@@ -159,11 +160,7 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 		( state ) => getRequest( state, launchSite( siteId ) )?.isLoading ?? false
 	);
 
-	const siteIsLaunched = useSelector(
-		( state ) => getRequest( state, launchSite( siteId ) )?.hasLoaded ?? false
-	);
-
-	const { isFetchedAfterMount: isDomainsFetched } = useQuery( {
+	useQuery( {
 		...domainsQuery(),
 		select: ( data ) => data.filter( ( domain ) => domain.blog_id === site?.ID ),
 	} );
@@ -397,7 +394,7 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 			) }
 			{ site && (
 				<AnalyticsProvider client={ analyticsClient }>
-					<SiteLaunchCelebrationModal site={ site as unknown as DashboardSite } />
+					<SiteLaunchCelebrationModal site={ site as unknown as Site } />
 				</AnalyticsProvider>
 			) }
 		</div>
