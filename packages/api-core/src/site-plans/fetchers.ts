@@ -39,10 +39,10 @@ function normalizeSitePlan( plan: SiteContextualPlan ): SiteContextualPlan {
 		...( plan.id !== undefined && {
 			id: toNumber( plan.id ),
 		} ),
-		...( plan.plan_card_order != null && {
+		...( Boolean( plan.plan_card_order ) === true && {
 			plan_card_order: toNumber( plan.plan_card_order ),
 		} ),
-		...( plan.product_tier_id !== undefined && {
+		...( Boolean( plan.product_tier_id ) === true && {
 			product_tier_id: toNumber( plan.product_tier_id ),
 		} ),
 		...( plan.product_tier_product_ids !== undefined && {

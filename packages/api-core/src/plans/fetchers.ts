@@ -27,19 +27,8 @@ function normalizePlanProduct( plan: PlanProduct ): PlanProduct {
 		...( plan.introductory_offer_interval_count !== undefined && {
 			introductory_offer_interval_count: toNumber( plan.introductory_offer_interval_count ),
 		} ),
-		...( plan.product_tier_id !== undefined && {
+		...( Boolean( plan.product_tier_id ) === true && {
 			product_tier_id: toNumber( plan.product_tier_id ),
-		} ),
-		...( plan.features_comparison !== undefined && {
-			features_comparison: plan.features_comparison.map( ( group ) => ( {
-				...group,
-				features: group.features.map( ( feature ) => ( {
-					...feature,
-					...( feature.tiers !== undefined && {
-						tiers: feature.tiers.map( toNumber ),
-					} ),
-				} ) ),
-			} ) ),
 		} ),
 	};
 }
