@@ -20,13 +20,13 @@ jest.mock( 'calypso/reader/sites-list', () => ( {
 	ReaderSitesList: ( {
 		sites,
 		variant,
-		iconSize,
+		siteIconSize,
 		followSource,
 	}: ComponentProps< typeof ReaderSitesList > ) => (
 		<div
 			data-testid="reader-sites-list"
 			data-variant={ variant }
-			data-icon-size={ iconSize }
+			data-site-icon-size={ siteIconSize }
 			data-follow-source={ followSource }
 		>
 			{ sites.map( ( site ) => (
@@ -79,7 +79,7 @@ describe( 'RecommendedBlogs', () => {
 		expect( document.querySelector( '.wp-spinner-wrapper' ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'passes compact variant and iconSize 30 to ReaderSitesList', () => {
+	test( 'passes compact variant and siteIconSize 30 to ReaderSitesList', () => {
 		mockUseFeedRecommendationsQuery.mockReturnValue( {
 			isLoading: false,
 			data: [ createBlog() ],
@@ -90,7 +90,7 @@ describe( 'RecommendedBlogs', () => {
 
 		const list = screen.getByTestId( 'reader-sites-list' );
 		expect( list ).toHaveAttribute( 'data-variant', 'compact' );
-		expect( list ).toHaveAttribute( 'data-icon-size', '30' );
+		expect( list ).toHaveAttribute( 'data-site-icon-size', '30' );
 		expect( list ).toHaveAttribute(
 			'data-follow-source',
 			'user-hovercard__recommended-sites-list'
