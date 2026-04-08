@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import globalPageInstance from '@automattic/calypso-router';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
-import isDevEnvironment from 'calypso/lib/config/is-dev-environment';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { fetchPreferences } from 'calypso/state/preferences/actions';
@@ -89,12 +88,13 @@ const waitForPrefs = () => async ( dispatch, getState ) => {
 	}
 };
 
-// In development and Calypso Live environments, don't redirect to external domains
-// (Dashboard subdomain, wp-admin) as it navigates the user away from the testing environment.
-
 const getSitesLink = ( isDashboardOptIn ) => {
+	// In development environments, don't redirect to the Dashboard subdomain as it might not be the intent.
+	// For instance, developers might use the Calypso Live link to test something not in the Dashboard,
+	// but they get redirected to the Dashboard subdomain, and lose the Calypso Live domain in the process.
+	// As a temporary workaround, we send them to the v1 /sites instead.
 	// TODO: The workaround will need to change once we deprecate v1 /sites.
-	if ( isDashboardOptIn && ! isDevEnvironment() ) {
+	if ( isDashboardOptIn && ! [ 'development', 'wpcalypso' ].includes( config( 'env_id' ) ) ) {
 		return dashboardLink( '/sites' );
 	}
 
@@ -137,7 +137,12 @@ async function getLoggedInLandingPage( { dispatch, getState } ) {
 	);
 
 	if ( isCustomerHomeEnabled ) {
-		if ( isAdminInterfaceWPAdmin( getState(), primaryOrSelectedSiteId ) && ! isDevEnvironment() ) {
+		if ( isAdminInterfaceWPAdmin( getState(), primaryOrSelectedSiteId ) ) {
+			if ( [ 'development', 'wpcalypso' ].includes( config( 'env_id' ) ) ) {
+				// On Calypso Live and dev environments, don't redirect to wp-admin
+				// as it navigates the user away from the testing environment.
+				return getSitesLink( dashboardOptIn );
+			}
 			// This URL starts with 'https://' because it's the access to wp-admin.
 			return getSiteAdminUrl( getState(), primaryOrSelectedSiteId );
 		}

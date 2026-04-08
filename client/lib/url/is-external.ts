@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import isDevEnvironment from 'calypso/lib/config/is-dev-environment';
 import { isLegacyRoute } from 'calypso/lib/route/legacy-routes';
 import { URL as URLString } from 'calypso/types';
 
@@ -41,20 +40,16 @@ export default function isExternal( url: URLString ): boolean {
 		return false;
 	}
 
-	// Legacy routes (e.g. /support) are served outside Calypso even when the
-	// hostname matches — treat them as external.
-	const hasLegacyPath = pathname && isLegacyRoute( pathname.replace( '//', '/' ) );
-
 	if ( typeof window !== 'undefined' ) {
 		if ( hostname === window.location.hostname ) {
-			return Boolean( hasLegacyPath );
+			// even if hostname matches, the url might be outside calypso
+			// outside calypso should be considered external
+			// double separators are valid paths - but not handled correctly
+			if ( pathname && isLegacyRoute( pathname.replace( '//', '/' ) ) ) {
+				return true;
+			}
+			return false;
 		}
-	}
-
-	// On Calypso Live and dev environments, treat production wordpress.com
-	// routes as internal so sidebar links stay within the testing environment.
-	if ( isDevEnvironment() && hostname === 'wordpress.com' ) {
-		return Boolean( hasLegacyPath );
 	}
 
 	return hostname !== config( 'hostname' );
