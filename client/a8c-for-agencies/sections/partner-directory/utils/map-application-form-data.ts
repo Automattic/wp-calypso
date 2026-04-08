@@ -321,9 +321,10 @@ export function mapLeadMatchingDetailsToProfile(
 		ecommerce: {
 			supports_ecommerce_projects: supportsEcommerceProjects,
 			ecommerce_focus: supportsEcommerceProjects && formData.storeComplexities.length > 0,
-			supported_complexity_flags: formData.storeComplexities.includes( 'none_simple' )
-				? [ 'none_simple' ]
-				: formData.storeComplexities.filter( ( value ) => value !== 'none_simple' ),
+			supported_complexity_flags: normalizeValues(
+				formData.storeComplexities,
+				ALLOWED_COMPLEXITY_FLAGS
+			),
 		},
 		project_types: {
 			supported_project_types: formData.projectTypes,

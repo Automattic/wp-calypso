@@ -11,6 +11,7 @@ import { A4A_PARTNER_DIRECTORY_LINK } from 'calypso/a8c-for-agencies/components/
 import { Stat } from 'calypso/a8c-for-agencies/components/stat';
 import useSubmitAgencyDetailsMutation from 'calypso/a8c-for-agencies/data/partner-directory/use-submit-agency-details';
 import MinimumBudgetSelector from 'calypso/a8c-for-agencies/sections/partner-directory/components/minimum-budget-selector';
+import ServiceLevelSelector from 'calypso/a8c-for-agencies/sections/partner-directory/components/service-level-selector';
 import TokenFieldSelector from 'calypso/a8c-for-agencies/sections/partner-directory/components/token-field-selector';
 import { useDispatch, useSelector } from 'calypso/state';
 import {
@@ -109,7 +110,6 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 		availableMigrationPlatforms,
 		availableStoreComplexities,
 		availableProjectTypes,
-		availableServiceLevels,
 		availableTimingPreferences,
 		availableDecisionProcesses,
 		availableOngoingRelationships,
@@ -773,11 +773,10 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 						error={ validationError.serviceLevels }
 						fieldName="serviceLevels"
 					>
-						<TokenFieldSelector
-							availableOptions={ availableServiceLevels }
-							selectedSlugs={ formData.serviceLevels }
-							onChange={ ( value ) => {
-								updateField( 'serviceLevels', value );
+						<ServiceLevelSelector
+							selectedServiceLevel={ formData.serviceLevels[ 0 ] ?? '' }
+							setServiceLevel={ ( value ) => {
+								updateField( 'serviceLevels', value ? [ value ] : [] );
 								updateValidationError( { serviceLevels: undefined } );
 							} }
 						/>

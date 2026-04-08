@@ -268,7 +268,7 @@ describe( 'mapLeadMatchingDetailsToProfile', () => {
 			ecommerce: {
 				supports_ecommerce_projects: true,
 				ecommerce_focus: true,
-				supported_complexity_flags: [ 'none_simple' ],
+				supported_complexity_flags: [ 'none_simple', 'traffic_spikes' ],
 			},
 			project_types: {
 				supported_project_types: [ 'new_woocommerce', 'fix_ongoing_support' ],
