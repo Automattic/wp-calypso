@@ -33,9 +33,6 @@ export const SuggestedFollowItem = ( { site, followSource } ) => {
 						className="reader-suggested-follow-item_link"
 						href={ streamUrl }
 						onClick={ () => onSiteClick( site ) }
-						aria-hidden="true"
-						target="_blank"
-						rel="noreferrer"
 					>
 						<span>
 							<SiteIcon iconUrl={ site.site_icon } size={ 48 } />
