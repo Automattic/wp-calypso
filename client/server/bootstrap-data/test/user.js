@@ -1,7 +1,7 @@
 import { IncomingMessage } from 'http';
 import config from '@automattic/calypso-config';
 import nock from 'nock';
-import getBootstrappedUser from '../index';
+import getBootstrappedUser from '../user';
 
 jest.mock( '@automattic/calypso-config', () => {
 	const impl = jest.fn();
@@ -156,7 +156,7 @@ describe( 'User bootstrap', () => {
 
 			await expect( getBootstrappedUser( request ) ).rejects.toThrow(
 				new Error(
-					'Unable to bootstrap user because of invalid SUPPORT SESSION API key in secrets.json'
+					'Unable to bootstrap because of invalid SUPPORT SESSION API key in secrets.json'
 				)
 			);
 		} );
@@ -194,7 +194,7 @@ describe( 'User bootstrap', () => {
 			} );
 
 			await expect( getBootstrappedUser( request ) ).rejects.toThrow(
-				new Error( 'Unable to bootstrap user because of invalid API key in secrets.json' )
+				new Error( 'Unable to bootstrap because of invalid API key in secrets.json' )
 			);
 		} );
 

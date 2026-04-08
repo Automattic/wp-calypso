@@ -1,6 +1,6 @@
 import debugFactory from 'debug';
 import { decodeUserObject, filterUserObject } from 'calypso/lib/user/shared-utils';
-import { createAuthenticatedRequest } from '../bootstrap-auth';
+import { createAuthenticatedRequest } from './authenticated-request';
 
 const debug = debugFactory( 'calypso:bootstrap' );
 

@@ -65,7 +65,7 @@ jest.mock( 'calypso/server/render', () => ( {
 
 jest.mock( 'calypso/server/state-cache', () => new Map() );
 
-jest.mock( 'calypso/server/user-bootstrap', () => jest.fn() );
+jest.mock( 'calypso/server/bootstrap-data/user', () => jest.fn() );
 
 jest.mock( 'calypso/state', () => ( {
 	createReduxStore: jest.fn(),
@@ -149,7 +149,7 @@ const buildApp = ( environment ) => {
 		mocks.createReduxStore = require( 'calypso/state' ).createReduxStore;
 		mocks.execSync = require( 'child_process' ).execSync;
 		mocks.login = require( 'calypso/lib/paths' ).login;
-		mocks.getBootstrappedUser = require( 'calypso/server/user-bootstrap' );
+		mocks.getBootstrappedUser = require( 'calypso/server/bootstrap-data/user' );
 		mocks.setCurrentUser = require( 'calypso/state/current-user/actions' ).setCurrentUser;
 		mocks.analytics = require( 'calypso/server/lib/analytics' );
 

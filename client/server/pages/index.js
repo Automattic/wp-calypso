@@ -36,6 +36,8 @@ import { login } from 'calypso/lib/paths';
 import loginRouter, { LOGIN_SECTION_DEFINITION } from 'calypso/login';
 import sections from 'calypso/sections';
 import isSectionEnabled from 'calypso/sections-filter';
+import getBootstrappedSite from 'calypso/server/bootstrap-data/site';
+import getBootstrappedUser from 'calypso/server/bootstrap-data/user';
 import { serverRouter, getCacheKey } from 'calypso/server/isomorphic-routing';
 import { isWpMobileApp, isWcMobileApp } from 'calypso/server/lib/is-mobile-app';
 import performanceMark from 'calypso/server/lib/performance-mark/index';
@@ -47,9 +49,7 @@ import {
 	attachI18n,
 } from 'calypso/server/render';
 import sanitize from 'calypso/server/sanitize';
-import getBootstrappedSite from 'calypso/server/site-bootstrap';
 import stateCache from 'calypso/server/state-cache';
-import getBootstrappedUser from 'calypso/server/user-bootstrap';
 import { createReduxStore } from 'calypso/state';
 import { LOCALE_SET } from 'calypso/state/action-types';
 import { setCurrentUser } from 'calypso/state/current-user/actions';

@@ -43,6 +43,7 @@ export interface User {
 	meta: UserMetaData;
 	newest_note_type: string;
 	phone_account: boolean;
+	most_recent_blog?: number | null;
 	primary_blog: number;
 	primary_blog_is_jetpack: boolean;
 	primary_blog_url: string;
