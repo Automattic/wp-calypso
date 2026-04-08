@@ -3,6 +3,7 @@
 body.is-section-backup {
 	@include admin-ui-page-layout;
 	@include admin-ui-page-layout-constrained-content($max-width: 1040px);
+	@include admin-ui-page-sticky-footer;
 
 	.backup__wpcom-upsell .promo-card {
 		display: flex;
@@ -30,15 +31,6 @@ body.is-section-backup {
 		margin: 0;
 	}
 }
-.backup__page .main {
-	overflow-y: auto;
-	padding-bottom: 0;
-
-	@include breakpoint-deprecated( ">660px" ) {
-		overflow-y: visible;
-	}
-}
-
 .backup__main .formatted-header.is-left-align {
 	margin-top: 20px;
 
@@ -51,10 +43,6 @@ body.is-section-backup {
 .backup__main-wrap {
 	display: flex;
 	flex-direction: column;
-	height: calc(100vh - 120px);
-	@include breakpoint-deprecated( ">660px" ) {
-		height: auto;
-	}
 }
 
 .backup__search {
