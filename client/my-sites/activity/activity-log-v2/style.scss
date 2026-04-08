@@ -1,3 +1,18 @@
+@import "calypso/components/jetpack-page-layout/admin-ui-page";
+
+body.is-section-activity {
+	@include admin-ui-page-layout;
+	@include admin-ui-page-layout-constrained-content($max-width: 1040px);
+
+	.admin-ui-page {
+		background: var(--color-surface-backdrop);
+	}
+
+	.jetpack-colophon {
+		padding-bottom: 24px;
+	}
+}
+
 main.activity-log-v2 {
 	&:not(.wordpressdotcom) {
 		.activity-log-v2__header {

@@ -2,7 +2,7 @@ import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import ShareButton from 'calypso/blocks/reader-share';
-import { shouldShowReblog } from 'calypso/blocks/reader-share/helper';
+import { isRebloggable } from 'calypso/reader/post/capabilities';
 import { useSelector } from 'calypso/state';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import CommentLikeButtonContainer from './comment-likes';
@@ -25,7 +25,7 @@ const CommentActions = ( {
 	const showReplyButton = post && post.discussion && post.discussion.comments_open === true;
 	const showCancelReplyButton = activeReplyCommentId === commentId;
 	const hasSites = !! useSelector( getPrimarySiteId );
-	const showReblogButton = shouldShowReblog( post, hasSites );
+	const showReblogButton = isRebloggable( post, hasSites );
 
 	// Only render actions for non placeholders
 	if ( isPlaceholder ) {

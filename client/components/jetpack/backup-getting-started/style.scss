@@ -11,7 +11,6 @@ $content-max-width: 210px;
 	background-color: #f9f9f6;
 
 	@include break-medium {
-		height: $card-height-desktop;
 		background-image: url(calypso/assets/images/jetpack/getting-started-backup-bg.svg);
 		grid-template-columns: minmax(0, $preview-max-width) minmax($content-max-width, 1fr);
 		grid-column-gap: 1.5rem;

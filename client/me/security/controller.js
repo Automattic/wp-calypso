@@ -2,8 +2,8 @@ import page from '@automattic/calypso-router';
 import i18n from 'i18n-calypso';
 import { createElement } from 'react';
 import { getSocialServiceFromClientId } from 'calypso/lib/login';
-import AIAssistantComponent from 'calypso/me/ai-assistant';
 import ConnectedAppsComponent from 'calypso/me/connected-applications';
+import DollyComponent from 'calypso/me/dolly';
 import PasswordComponent from 'calypso/me/security/main';
 import SecurityAccountEmail from 'calypso/me/security-account-email';
 import AccountRecoveryComponent from 'calypso/me/security-account-recovery';
@@ -87,8 +87,8 @@ export function socialLogin( context, next ) {
 	next();
 }
 
-export function aiAssistant( context, next ) {
-	context.primary = createElement( AIAssistantComponent, {
+export function dolly( context, next ) {
+	context.primary = createElement( DollyComponent, {
 		path: context.path,
 	} );
 	next();

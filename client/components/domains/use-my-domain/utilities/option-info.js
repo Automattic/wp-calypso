@@ -12,7 +12,7 @@ const optionTitleText = {
 		return __( 'Transfer your domain name' );
 	},
 	get connect() {
-		return __( 'Connect your site address' );
+		return __( 'Connect your domain name' );
 	},
 };
 
@@ -43,7 +43,7 @@ const transferNotSupported = {
 		return optionTitleText.transfer;
 	},
 	get topText() {
-		return __( 'This domain cannot be transfered.' );
+		return __( 'This domain name cannot be transferred.' );
 	},
 	learnMoreLink: INCOMING_DOMAIN_TRANSFER,
 };
@@ -75,7 +75,7 @@ const connectNotSupported = {
 		return optionTitleText.connect;
 	},
 	get topText() {
-		return __( 'This domain cannot be connected.' );
+		return __( 'This domain name cannot be connected.' );
 	},
 	learnMoreLink: MAP_EXISTING_DOMAIN,
 };

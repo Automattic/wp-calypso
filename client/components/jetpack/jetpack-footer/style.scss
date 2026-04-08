@@ -1,30 +1,26 @@
-.jp-dashboard-footer {
+@import '@wordpress/theme/design-tokens.css';
+
+.jetpack-footer {
+	border-top: var(--wpds-border-width-xs, 1px) solid var(--wpds-color-stroke-surface-neutral-weak, #e0e0e0);
+	box-sizing: border-box;
 	display: flex;
-	flex-flow: row wrap;
-	justify-content: space-between;
-	align-items: center;
+	padding: var(--wpds-dimension-padding-xl) var(--wpds-dimension-padding-2xl);
+	width: 100%;
+}
 
-	padding: 32px 0;
+.jetpack-footer__logo {
+	flex-shrink: 0;
+}
 
-	color: #000;
+.jetpack-footer__logo-text {
+	font-size: var(--wpds-font-size-md);
+	font-weight: var(--wpds-font-weight-regular);
+	font-family: var(--wpds-font-family-body);
+	line-height: var(--wpds-font-line-height-sm);
+}
 
-	.jp-dashboard-footer__module-name,
-	.jp-dashboard-footer__jetpack-symbol {
-		vertical-align: middle;
-		display: inline-block;
-
-		a,
-		a:hover,
-		a:visited {
-			color: #000;
-			text-decoration: none;
-		}
+a.jetpack-footer__a8c {
+	svg {
+		fill: var(--wpds-color-fg-interactive-neutral-weak);
 	}
-
-	.jp-dashboard-footer__module-name {
-		margin-left: 5px;
-		font-size: $font-body-extra-small;
-		font-weight: 600;
-	}
-
 }

@@ -3,10 +3,10 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import QRCode from 'qrcode.react';
 import './style.scss';
-import iconWoo from './images/icon-woo.png';
-import qrCodeWoo from './images/qr-code-woo.png';
-import storeBadgeApple from './images/store-apple.png';
-import storeBadgeGoogle from './images/store-google.png';
+import iconWoo from './images/icon-woo.webp';
+import qrCodeWoo from './images/qr-code-woo.webp';
+import storeBadgeApple from './images/store-apple.webp';
+import storeBadgeGoogle from './images/store-google.webp';
 import { WordPressJetpackSVG } from './svg-icons';
 
 // Slugs as used by Jetpack Redirects.

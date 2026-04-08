@@ -7,10 +7,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { navigate } from 'calypso/lib/navigate';
-import {
-	getPartnerFormattedWindowTitle,
-	type CiabPartnerConfig,
-} from 'calypso/lib/partner-branding';
+import { getPartnerFormattedWindowTitle, type PartnerConfig } from 'calypso/lib/partner-branding';
 import { login } from 'calypso/lib/paths';
 
 import './style.scss';
@@ -19,7 +16,7 @@ interface EmailMismatchScreenProps {
 	inviteSentTo: string;
 	isKnownUser: boolean;
 	topBarLogo?: React.ReactNode;
-	ciabConfig: CiabPartnerConfig | null;
+	partnerConfig: PartnerConfig | null;
 	trackingProps: Record< string, unknown >;
 }
 
@@ -27,7 +24,7 @@ export function EmailMismatchScreen( {
 	inviteSentTo,
 	isKnownUser,
 	topBarLogo,
-	ciabConfig,
+	partnerConfig,
 	trackingProps,
 }: EmailMismatchScreenProps ) {
 	const translate = useTranslate();
@@ -69,7 +66,7 @@ export function EmailMismatchScreen( {
 			<DocumentHead
 				title={ getPartnerFormattedWindowTitle(
 					translate( 'Accept Invite', { textOnly: true } ),
-					ciabConfig
+					partnerConfig
 				) }
 				skipTitleFormatting
 			/>

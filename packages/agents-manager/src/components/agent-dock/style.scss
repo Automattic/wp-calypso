@@ -430,13 +430,11 @@ body.post-new-php.agents-manager-sidebar-container {
 			height: 32px;
 
 			.agents-manager-message-action-icon {
+				width: 30px;
+				height: 30px;
+
 				path {
 					fill: var( --color-muted-foreground );
-				}
-
-				&:not( .agents-manager-message-action-icon--copy ) {
-					width: 30px;
-					height: 30px;
 				}
 			}
 
@@ -542,6 +540,7 @@ body.post-new-php.agents-manager-sidebar-container {
 				span {
 					color: $white;
 				}
+
 				&:hover {
 					color: $white;
 					background-color: $alert-red;
@@ -606,6 +605,15 @@ body.post-new-php.agents-manager-sidebar-container {
 		left: auto;
 		right: 0;
 	}
+
+	.big-sky__dock__menu__variation-picker .edit-site-global-styles-variations_item {
+		&.is-active,
+		&:focus-visible {
+			.edit-site-global-styles-variations_item-preview {
+				outline: var(--wp-admin-theme-color, #3858e9) solid 2px !important;
+			}
+		}
+	}
 }
 
 /* Agenttic UI: Styles for the docked chat */
@@ -616,14 +624,6 @@ body.post-new-php.agents-manager-sidebar-container {
 				min-height: unset;
 
 				.edit-site-global-styles-variations_item {
-					&.is-active,
-					&:focus-visible {
-						.edit-site-global-styles-variations_item-preview {
-							outline: 1px solid $gray-400;
-							outline-offset: 1px;
-						}
-					}
-
 					&:not( .is-active ):hover {
 						.edit-site-global-styles-variations_item-preview {
 							outline-color: $gray-600;
@@ -671,13 +671,6 @@ body.post-new-php.agents-manager-sidebar-container {
 	z-index: 9999;
 
 	.big-sky__dock__menu__variation-picker .edit-site-global-styles-variations_item {
-		&.is-active,
-		&:focus-visible {
-			.edit-site-global-styles-variations_item-preview {
-				outline: 1px solid #0000001a;
-			}
-		}
-
 		&:not( .is-active ):hover {
 			.edit-site-global-styles-variations_item-preview {
 				outline-color: #00000080;

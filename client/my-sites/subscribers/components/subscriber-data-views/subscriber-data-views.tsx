@@ -13,9 +13,10 @@ import { translate } from 'i18n-calypso';
 import JetpackTitle from 'calypso/components/jetpack-title';
 import { useSubscribedNewsletterCategories } from 'calypso/data/newsletter-categories';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { Product } from 'calypso/my-sites/earn/types';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-import { getCouponsAndGiftsEnabledForSiteId } from 'calypso/state/memberships/settings/selectors';
+import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
@@ -62,21 +63,22 @@ const HELP_CENTER_STORE = HelpCenter.register();
 type SubscriberDataViewsProps = {
 	siteId: number | null;
 	isUnverified: boolean;
-	onGiftSubscription: ( subscriber: Subscriber ) => void;
+	onCompSubscription: ( subscriber: Subscriber ) => void;
+	onRemoveComp: ( params: { planName: string; username: string; compId?: number } ) => void;
 	subscriberId?: string;
 };
 
 const SubscriptionTypeCell = ( { subscriber }: { subscriber: Subscriber } ) => {
 	const plans = useSubscriptionPlans( subscriber );
 
-	// If there's a paid (non-gift, non-free) plan, show only that.
-	const paidPlans = plans.filter( ( p ) => ! p.is_gift && ! p.is_free );
+	// If there's a paid (non-comp, non-free) plan, show only that.
+	const paidPlans = plans.filter( ( p ) => ! p.is_complimentary && ! p.is_free );
 	if ( paidPlans.length > 0 ) {
 		return paidPlans.map( ( plan, index ) => <div key={ index }>{ plan.plan }</div> );
 	}
 
 	// If there are any comps, show just "Comp" (no title details).
-	const hasComp = plans.some( ( p ) => p.is_gift );
+	const hasComp = plans.some( ( p ) => p.is_complimentary );
 	if ( hasComp ) {
 		return (
 			<div>
@@ -141,7 +143,8 @@ const defaultView: ViewTable = {
 
 export default function SubscriberDataViews( {
 	siteId,
-	onGiftSubscription,
+	onCompSubscription,
+	onRemoveComp,
 	isUnverified,
 	subscriberId,
 }: SubscriberDataViewsProps ) {
@@ -160,8 +163,19 @@ export default function SubscriberDataViews( {
 	const [ filters, setFilters ] = useState< SubscribersFilterBy[] >( [ SubscribersFilterBy.All ] );
 	const [ selectedSubscriber, setSelectedSubscriber ] = useState< Subscriber | null >( null );
 
-	const couponsAndGiftsEnabled = useSelector( ( state ) =>
-		getCouponsAndGiftsEnabledForSiteId( state, siteId )
+	const products: Product[] = useSelector( ( state ) => getProductsForSiteId( state, siteId ) );
+
+	const hasUncompedPlans = useCallback(
+		( subscriber: Subscriber ) => {
+			if ( ! products?.length ) {
+				return false;
+			}
+			const compedIds = ( subscriber.plans ?? [] )
+				.filter( ( p ) => p.is_comp && p.subscription_id )
+				.map( ( p ) => p.subscription_id );
+			return products.some( ( product ) => ! compedIds.includes( product.ID ?? 0 ) );
+		},
+		[ products ]
 	);
 
 	const [ currentView, setCurrentView ] = useState< View >( {
@@ -502,35 +516,33 @@ export default function SubscriberDataViews( {
 			},
 		];
 
-		if ( couponsAndGiftsEnabled ) {
-			baseActions.push( {
-				id: 'gift',
-				label: translate( 'Comp a subscription', {
-					textOnly: true,
-					comment:
-						'"Comp" is short for "complimentary" — granting a free subscription to a subscriber',
-				} ),
-				isEligible: ( subscriber: Subscriber ) =>
-					!! ( subscriber.user_id || subscriber.email_address ),
-				callback: ( items: Subscriber[] ) => {
-					const subscriber = items[ 0 ];
-					if ( ! subscriber ) {
-						return;
-					}
+		baseActions.push( {
+			id: 'comp',
+			label: translate( 'Comp a subscription', {
+				textOnly: true,
+				comment:
+					'"Comp" is short for "complimentary" — granting a free subscription to a subscriber',
+			} ),
+			isEligible: ( subscriber: Subscriber ) =>
+				!! ( subscriber.user_id || subscriber.email_address ) && hasUncompedPlans( subscriber ),
+			callback: ( items: Subscriber[] ) => {
+				const subscriber = items[ 0 ];
+				if ( ! subscriber ) {
+					return;
+				}
 
-					onGiftSubscription( subscriber );
-				},
-				isPrimary: false,
-			} );
-		}
+				onCompSubscription( subscriber );
+			},
+			isPrimary: false,
+		} );
 
 		return baseActions;
 	}, [
 		selectedSubscriber,
 		handleSubscriberSelection,
 		handleUnsubscribe,
-		onGiftSubscription,
-		couponsAndGiftsEnabled,
+		onCompSubscription,
+		hasUncompedPlans,
 	] );
 
 	const handleViewChange = useCallback(
@@ -767,7 +779,16 @@ export default function SubscriberDataViews( {
 							subscriptionId={ getSubscriptionId( subscriberDetails ) }
 							onClose={ handleClose }
 							onUnsubscribe={ ( subscriber ) => handleUnsubscribe( [ subscriber ] ) }
-							onGiftSubscription={ couponsAndGiftsEnabled ? onGiftSubscription : undefined }
+							onCompSubscription={
+								hasUncompedPlans( subscriberDetails ) ? onCompSubscription : undefined
+							}
+							onRemoveComp={ ( { planName, compId } ) =>
+								onRemoveComp( {
+									planName,
+									username: subscriberDetails.display_name,
+									compId,
+								} )
+							}
 							newsletterCategoriesEnabled={ subscribedNewsletterCategoriesData?.enabled }
 							newsletterCategories={ subscribedNewsletterCategoriesData?.newsletterCategories }
 						/>

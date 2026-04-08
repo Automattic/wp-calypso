@@ -10,8 +10,8 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useDoNotSell } from 'calypso/lib/analytics/utils';
 import { preventWidows } from 'calypso/lib/formatting';
 import { addQueryArgs } from 'calypso/lib/url';
-import appStoreBadge from './assets/app-store-badge.png';
-import googlePlayBadge from './assets/google-play-badge.png';
+import appStoreBadge from './assets/app-store-badge.webp';
+import googlePlayBadge from './assets/google-play-badge.webp';
 import a8cLogo from './assets/logo-a8c-white.svg';
 import LocalSwitcher from './locale-switcher';
 

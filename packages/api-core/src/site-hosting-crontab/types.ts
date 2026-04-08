@@ -1,6 +1,8 @@
 export interface Crontab extends CrontabFormData {
 	cron_id: number;
 	requested_schedule: string;
+	created_by?: string;
+	created_at?: string;
 }
 
 export interface CrontabFormData {

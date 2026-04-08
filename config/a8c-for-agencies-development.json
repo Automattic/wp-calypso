@@ -35,13 +35,13 @@
 		"cookie-banner": false,
 		"dev/auth-helper": true,
 		"dev/preferences-helper": true,
+		"dev/store-sandbox-helper": true,
 		"oauth": true,
 		"a4a/site-details-pane": true,
 		"a4a/site-migration": true,
 		"a4a-partner-directory": false,
 		"a4a-partner-directory-lead-matching": true,
 		"a4a-pressable-referrals": true,
-		"a4a-pressable-premium-plans": true,
 		"a4a-updated-add-new-site": true,
 		"a4a-signup-v2": true,
 		"a4a-signup-v2-via-email": false,
@@ -49,7 +49,8 @@
 		"a4a-bd-checkout": false,
 		"jetpack/crm-downloads": true,
 		"upgrades/redirect-payments": true,
-		"a4a-bd-term-pricing": true
+		"a4a-bd-term-pricing": true,
+		"checkout/stripe-upi": true
 	},
 	"enable_all_sections": false,
 	"sections": {

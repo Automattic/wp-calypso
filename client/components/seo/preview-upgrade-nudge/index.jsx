@@ -18,7 +18,7 @@ import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import upgradeNudgeImage from './preview-upgrade-nudge.png';
+import upgradeNudgeImage from './preview-upgrade-nudge.webp';
 
 import './style.scss';
 

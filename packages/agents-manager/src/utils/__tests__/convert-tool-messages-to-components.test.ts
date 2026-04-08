@@ -1,5 +1,4 @@
 import { EscalationButton } from '../../components/escalation-button';
-import SourcesDisplay from '../../components/sources-display';
 import UnavailableToolMessage from '../../components/unavailable-tool-message';
 import convertToolMessagesToComponents from '../convert-tool-messages-to-components';
 import { isEditorPage } from '../is-editor-page';
@@ -14,10 +13,6 @@ jest.mock(
 	{ virtual: true }
 );
 jest.mock( '../is-editor-page' );
-jest.mock( '../../components/sources-display', () => ( {
-	__esModule: true,
-	default: jest.fn(),
-} ) );
 
 const MockComponent = jest.fn();
 const MockNextStepButton = jest.fn();
@@ -90,16 +85,19 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result ).toEqual( [] );
 	} );
 
-	it( 'appends `next-step-button` only to the last message with follow-up tasks', () => {
+	it( 'appends `next-step-button` only to the last message with follow-up tasks and omits `actions`', () => {
 		const data = { type: 'my-component', followUpTasks: true, isCurrent: true };
+		const actions = [
+			{ id: 'action-1', label: 'Do something', onClick: jest.fn() },
+		] as UIMessage[ 'actions' ];
 		const getChatComponent = jest.fn( ( type: string ) =>
 			type === 'my-component' ? MockComponent : MockNextStepButton
 		);
 
 		const result = convertToolMessagesToComponents( {
 			messages: [
-				createToolMessage( 'big_sky__show_component', data, { id: 'msg-1' } ),
-				createToolMessage( 'big_sky__show_component', data, { id: 'msg-2' } ),
+				createToolMessage( 'big_sky__show_component', data, { id: 'msg-1', actions } ),
+				createToolMessage( 'big_sky__show_component', data, { id: 'msg-2', actions } ),
 			],
 			getChatComponent,
 		} );
@@ -107,7 +105,9 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result ).toHaveLength( 3 );
 		expect( result[ 0 ].id ).toBe( 'msg-1' );
 		expect( result[ 1 ].id ).toBe( 'msg-2' );
+		expect( result[ 1 ].actions ).toBeDefined();
 		expect( result[ 2 ].id ).toBe( 'msg-2-next-step' );
+		expect( result[ 2 ].actions ).toBeUndefined();
 	} );
 
 	it( 'shows `UnavailableToolMessage` when not on an editor page', () => {
@@ -186,62 +186,6 @@ describe( 'convertToolMessagesToComponents', () => {
 			type: 'component',
 			component: EscalationButton,
 		} );
-	} );
-
-	it( 'replaces data blocks with sources into SourcesDisplay components', () => {
-		const sources = [
-			{ title: 'Article 1', url: 'https://example.com/1' },
-			{ title: 'Article 2', url: 'https://example.com/2' },
-		];
-		const message = createMessage( {
-			content: [
-				{ type: 'text', text: 'Here is your answer.' },
-				{ type: 'data', data: { sources } },
-			],
-		} );
-
-		const result = convertToolMessagesToComponents( { messages: [ message ] } );
-
-		expect( result ).toHaveLength( 1 );
-		expect( result[ 0 ].content ).toHaveLength( 2 );
-		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
-			type: 'text',
-			text: 'Here is your answer.',
-		} );
-		expect( result[ 0 ].content[ 1 ] ).toMatchObject( {
-			type: 'component',
-			component: SourcesDisplay,
-			componentProps: { sources },
-		} );
-	} );
-
-	it( 'does not modify messages without sources data blocks', () => {
-		const message = createMessage( {
-			content: [
-				{ type: 'text', text: 'Just a normal message.' },
-				{ type: 'data', data: { flags: null } },
-			],
-		} );
-
-		const result = convertToolMessagesToComponents( { messages: [ message ] } );
-
-		expect( result ).toHaveLength( 1 );
-		expect( result[ 0 ].content ).toHaveLength( 2 );
-		expect( result[ 0 ].content[ 1 ] ).toMatchObject( { type: 'data', data: { flags: null } } );
-	} );
-
-	it( 'ignores sources data blocks with an empty array', () => {
-		const message = createMessage( {
-			content: [
-				{ type: 'text', text: 'Answer text.' },
-				{ type: 'data', data: { sources: [] } },
-			],
-		} );
-
-		const result = convertToolMessagesToComponents( { messages: [ message ] } );
-
-		expect( result ).toHaveLength( 1 );
-		expect( result[ 0 ].content[ 1 ] ).toMatchObject( { type: 'data', data: { sources: [] } } );
 	} );
 
 	it( 'filters out unhandled tool messages', () => {

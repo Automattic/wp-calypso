@@ -13,6 +13,7 @@ import wpcom from 'calypso/lib/wp';
 import isDashboardEnv from '../utils/is-dashboard-env';
 import { handleOAuthCallback } from './auth/oauth-callback';
 import { loadPreferencesHelper } from './dev-tools/preferences';
+import { omnibarEvents } from './interim-omnibar/click-handlers';
 import Layout from './layout';
 import limitTotalSnackbars from './snackbars/limit-total-snackbars';
 import type { AppConfig } from './context';
@@ -46,7 +47,9 @@ function boot( config: AppConfig ) {
 	const root = createRoot( rootElement );
 
 	if ( isEnabled( 'dashboard/omnibar' ) ) {
-		import( './interim-omnibar' ).then( ( m ) => m.default() ).catch( captureException );
+		import( './interim-omnibar' )
+			.then( ( m ) => m.default( omnibarEvents ) )
+			.catch( captureException );
 	}
 
 	persistQueryClientPromise.then( () => {

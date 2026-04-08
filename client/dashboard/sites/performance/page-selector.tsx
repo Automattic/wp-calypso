@@ -2,6 +2,7 @@ import { CustomSelectControl } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
+import { VIEWPORT_BREAKPOINTS } from './constants';
 import type { SitePerformancePage } from '@automattic/api-core';
 import type { CSSProperties } from 'react';
 import './page-selector.scss';
@@ -41,7 +42,7 @@ export default function PageSelector( {
 	currentPage: SitePerformancePage | undefined;
 	onChange: ( page_id: string | null | undefined ) => void;
 } ) {
-	const isDesktop = useViewportMatch( 'medium' );
+	const isDesktop = useViewportMatch( VIEWPORT_BREAKPOINTS.desktop );
 	const pageOptions = useMemo( () => {
 		if ( ! pages ) {
 			return [];

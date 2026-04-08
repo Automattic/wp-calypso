@@ -7,6 +7,7 @@ import {
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { mobile, desktop } from '@wordpress/icons';
+import { VIEWPORT_BREAKPOINTS } from './constants';
 import type { DeviceToggleType } from './types';
 
 type DeviceToggleProps = {
@@ -16,7 +17,7 @@ type DeviceToggleProps = {
 };
 
 export default function DeviceToggle( { value, onChange, disabled }: DeviceToggleProps ) {
-	const isMobileViewPort = useViewportMatch( 'mobile', '<' );
+	const isMobileViewPort = useViewportMatch( VIEWPORT_BREAKPOINTS.mobile, '<' );
 	const options: { value: DeviceToggleType; label: string; icon: React.ReactElement }[] = [
 		{
 			value: 'mobile',

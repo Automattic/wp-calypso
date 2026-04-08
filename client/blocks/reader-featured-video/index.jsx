@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
-import playIconImage from 'calypso/assets/images/reader/play-icon.png';
+import playIconImage from 'calypso/assets/images/reader/play-icon.webp';
 import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
 import QueryReaderThumbnail from 'calypso/components/data/query-reader-thumbnails';
 import EmbedHelper from 'calypso/reader/embed-helper';

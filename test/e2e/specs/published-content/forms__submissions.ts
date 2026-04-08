@@ -37,6 +37,67 @@ const postTitle = DataHelper.getRandomPhrase();
 declare const browser: Browser;
 
 /**
+ * Searches for a form response by email across Inbox and Spam folders.
+ * Retries up to 3 times to handle delays in response processing.
+ *
+ * @returns Whether the response was found in the Spam folder.
+ */
+async function searchForResponse(
+	feedbackInboxPage: FeedbackInboxPage,
+	page: Page,
+	email: string,
+	name: string,
+	options: { clearFirst?: boolean } = {}
+): Promise< boolean > {
+	let isInSpam = false;
+
+	const attempt = async () => {
+		if ( options.clearFirst ) {
+			await feedbackInboxPage.clearSearch( true );
+		}
+
+		if ( await feedbackInboxPage.isCentralFormManagement() ) {
+			if ( options.clearFirst ) {
+				await feedbackInboxPage.clickFolderTab( 'Inbox' );
+			}
+			await feedbackInboxPage.searchResponses( email, true );
+			if ( await feedbackInboxPage.hasResponseRow( name ) ) {
+				return;
+			}
+			await feedbackInboxPage.clickFolderTab( 'Spam' );
+			await feedbackInboxPage.searchResponses( email, true );
+			if ( await feedbackInboxPage.hasResponseRow( name ) ) {
+				isInSpam = true;
+				return;
+			}
+			throw new Error( 'Response not found in Inbox or Spam' );
+		}
+
+		// Old dashboard: cross-folder search with per-tab counts.
+		await feedbackInboxPage.searchResponses( email );
+		const tabLocator = page
+			.getByRole( 'tab', { name: /(Inbox|Spam) 1/ } )
+			.or( page.getByRole( 'radio', { name: /(Inbox|Spam)\s*\(\s*1\s*\)/ } ) );
+		await tabLocator.click( { timeout: 4000 } );
+		const tabText = await tabLocator.textContent();
+		isInSpam = tabText?.toLowerCase().includes( 'spam' ) || false;
+	};
+
+	const MAX_ATTEMPTS = 3;
+	for ( let i = 1; i <= MAX_ATTEMPTS; i++ ) {
+		try {
+			await attempt();
+			return isInSpam;
+		} catch ( err ) {
+			if ( i === MAX_ATTEMPTS ) {
+				throw err;
+			}
+		}
+	}
+	return isInSpam;
+}
+
+/**
  * Tests the process of a user submitting a form and the site owner checking the received response.
  *
  * Keywords: Jetpack, Forms, Feedback
@@ -194,34 +255,12 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 		} );
 
 		it( 'Search for first response email until result shows up', async function () {
-			// There's a lot we have to account for to stably find the right response!
-			// First, there may be a delay in the response showing up.
-			// Second, the response may be in the spam folder!
-			// Fortunately, searching is the solution, as it triggers a data reload, and also shows result numbers in each folder.
-			// The email is unique to every run, so will only ever return one response result when the search is successful.
-			// So we loop over a search attempt on the email, looking for a folder tab with a result in it!
-			const searchAndClickFolderWithResult = async () => {
-				await feedbackInboxPage.searchResponses( formData1.email );
-				const tabLocator = page
-					.getByRole( 'tab', { name: /(Inbox|Spam) 1/ } )
-					.or( page.getByRole( 'radio', { name: /(Inbox|Spam)\s*\(\s*1\s*\)/ } ) );
-				await tabLocator.click( { timeout: 4000 } );
-				// Check if we're in spam folder
-				const tabText = await tabLocator.textContent();
-				isInSpam = tabText?.toLowerCase().includes( 'spam' ) || false;
-			};
-
-			const MAX_ATTEMPTS = 3;
-			for ( let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++ ) {
-				try {
-					await searchAndClickFolderWithResult();
-					return;
-				} catch ( err ) {
-					if ( attempt === MAX_ATTEMPTS ) {
-						throw err;
-					}
-				}
-			}
+			isInSpam = await searchForResponse(
+				feedbackInboxPage,
+				page,
+				formData1.email,
+				formData1.name
+			);
 		} );
 
 		it( 'If in Spam, mark as not spam', async function () {
@@ -256,31 +295,15 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 
 		it( 'Search for second response email until result shows up', async function () {
 			feedbackInboxPage = new FeedbackInboxPage( page );
-
-			const searchAndClickFolderWithResult = async () => {
-				// Don't clear/wait as it won't happen, results are cached.
-				await feedbackInboxPage.clearSearch( true );
-				await feedbackInboxPage.searchResponses( formData2.email );
-				const tabLocator = page
-					.getByRole( 'tab', { name: /(Inbox|Spam) 1/ } )
-					.or( page.getByRole( 'radio', { name: /(Inbox|Spam)\s*\(\s*1\s*\)/ } ) );
-				await tabLocator.click( { timeout: 4000 } );
-				// Check if we're in spam folder
-				const tabText = await tabLocator.textContent();
-				isInSpam = tabText?.toLowerCase().includes( 'spam' ) || false;
-			};
-
-			const MAX_ATTEMPTS = 3;
-			for ( let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++ ) {
-				try {
-					await searchAndClickFolderWithResult();
-					return;
-				} catch ( err ) {
-					if ( attempt === MAX_ATTEMPTS ) {
-						throw err;
-					}
+			isInSpam = await searchForResponse(
+				feedbackInboxPage,
+				page,
+				formData2.email,
+				formData2.name,
+				{
+					clearFirst: true,
 				}
-			}
+			);
 		} );
 
 		it( 'If in Spam, mark as not spam', async function () {
@@ -379,7 +402,11 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 		} );
 
 		it( 'Mark first response as read', async function () {
-			// Re-select the response after the action
+			if ( await feedbackInboxPage.isCentralFormManagement() ) {
+				// CFM auto-marks responses as read when viewed in the inspector,
+				// so the "Mark as read" button won't appear. The response is already read.
+				return;
+			}
 			await feedbackInboxPage.clickMarkAsReadAction();
 		} );
 
@@ -393,7 +420,7 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 		} );
 
 		it( 'Verify first response is in Spam', async function () {
-			await feedbackInboxPage.searchResponses( formData1.email );
+			await feedbackInboxPage.searchResponses( formData1.email, true );
 			await feedbackInboxPage.viewResponseRowByText( formData1.name );
 			await feedbackInboxPage.validateTextInSubmission( formData1.name );
 		} );

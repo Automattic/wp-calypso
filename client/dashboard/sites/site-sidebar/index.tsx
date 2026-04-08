@@ -2,7 +2,7 @@ import { HostingFeatures } from '@automattic/api-core';
 import { siteBySlugQuery } from '@automattic/api-queries';
 import { isSupportSession } from '@automattic/calypso-support-session';
 import { useQuery } from '@tanstack/react-query';
-import { __experimentalVStack as VStack, useNavigator } from '@wordpress/components';
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import {
 	backup,
@@ -15,9 +15,8 @@ import {
 	settings,
 	shield,
 } from '@wordpress/icons';
-import { Suspense, lazy, useMemo } from 'react';
-import { useAppContext } from '../../app/context';
 import {
+	siteRoute,
 	siteOverviewRoute,
 	siteDeploymentsRoute,
 	sitePerformanceRoute,
@@ -28,6 +27,7 @@ import {
 	siteDomainsRoute,
 	siteSettingsRoute,
 } from '../../app/router/sites';
+import { menuDot } from '../../components/icons';
 import {
 	SidebarBackButton,
 	SidebarExpandableMenuItem,
@@ -35,22 +35,19 @@ import {
 	SidebarMenuItem,
 } from '../../components/sidebar';
 import { hasHostingFeature } from '../../utils/site-features';
+import { isSiteMigrationInProgress } from '../../utils/site-status';
 import { hasSiteTrialEnded } from '../../utils/site-trial';
 import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { canSwitchEnvironment } from '../features';
-import EnvironmentSwitcher from '../site/environment-switcher-v2';
+import SidebarEnvironmentSwitcher from '../site/sidebar-environment-switcher';
+import SiteSwitcherItem from './site-switcher-item';
 import type { Site } from '@automattic/api-core';
 import type { AnyRoute } from '@tanstack/react-router';
 
 export default function SiteSidebar() {
-	const { params } = useNavigator();
-	const siteSlug = params.siteSlug as string;
-
+	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useQuery( siteBySlugQuery( siteSlug ) );
-
-	const { components } = useAppContext();
-	const SiteSwitcherV2 = useMemo( () => lazy( components.siteSwitcherV2 ), [ components ] );
 
 	if ( ! site ) {
 		return null;
@@ -60,12 +57,10 @@ export default function SiteSidebar() {
 		<VStack spacing={ 2 }>
 			<SidebarBackButton to="/sites">{ __( 'Back to Sites' ) }</SidebarBackButton>
 			<VStack spacing={ 4 }>
-				<Suspense fallback={ null }>
-					<SidebarMenu>
-						<SiteSwitcherV2 />
-						{ canSwitchEnvironment( site ) && <EnvironmentSwitcher site={ site } /> }
-					</SidebarMenu>
-				</Suspense>
+				<SidebarMenu>
+					<SiteSwitcherItem site={ site } />
+					{ canSwitchEnvironment( site ) && <SidebarEnvironmentSwitcher site={ site } /> }
+				</SidebarMenu>
 				<SiteMenuSidebar site={ site } />
 			</VStack>
 		</VStack>
@@ -75,6 +70,10 @@ export default function SiteSidebar() {
 function SiteMenuSidebar( { site }: { site: Site } ) {
 	const siteSlug = site.slug;
 	const siteTypeSupports = getSiteTypeFeatureSupports( site );
+
+	if ( isSiteMigrationInProgress( site ) ) {
+		return null;
+	}
 
 	if ( hasSiteTrialEnded( site ) ) {
 		return (
@@ -140,13 +139,13 @@ function SiteMenuSidebar( { site }: { site: Site } ) {
 					icon={ formatListBullets }
 					to={ `/sites/${ siteSlug }/logs` }
 				>
-					<SidebarMenuItem to={ `/sites/${ siteSlug }/logs/activity` }>
+					<SidebarMenuItem icon={ menuDot } to={ `/sites/${ siteSlug }/logs/activity` }>
 						{ __( 'Activity' ) }
 					</SidebarMenuItem>
-					<SidebarMenuItem to={ `/sites/${ siteSlug }/logs/php` }>
+					<SidebarMenuItem icon={ menuDot } to={ `/sites/${ siteSlug }/logs/php` }>
 						{ __( 'PHP errors' ) }
 					</SidebarMenuItem>
-					<SidebarMenuItem to={ `/sites/${ siteSlug }/logs/server` }>
+					<SidebarMenuItem icon={ menuDot } to={ `/sites/${ siteSlug }/logs/server` }>
 						{ __( 'Web server' ) }
 					</SidebarMenuItem>
 				</SidebarExpandableMenuItem>
@@ -159,10 +158,10 @@ function SiteMenuSidebar( { site }: { site: Site } ) {
 						icon={ shield }
 						to={ `/sites/${ siteSlug }/scan` }
 					>
-						<SidebarMenuItem to={ `/sites/${ siteSlug }/scan/active` }>
+						<SidebarMenuItem icon={ menuDot } to={ `/sites/${ siteSlug }/scan/active` }>
 							{ __( 'Active threats' ) }
 						</SidebarMenuItem>
-						<SidebarMenuItem to={ `/sites/${ siteSlug }/scan/history` }>
+						<SidebarMenuItem icon={ menuDot } to={ `/sites/${ siteSlug }/scan/history` }>
 							{ __( 'History' ) }
 						</SidebarMenuItem>
 					</SidebarExpandableMenuItem>

@@ -1,0 +1,35 @@
+@import "@wordpress/base-styles/colors";
+@import "@wordpress/base-styles/variables";
+
+.celebration-modal {
+	.flex-shrink-safe {
+		flex: 1;
+		min-width: 0;
+	}
+}
+
+.celebration-modal--content {
+	padding: $grid-unit-10 $grid-unit-20;
+	background-color: $gray-100;
+
+	a {
+		color: inherit;
+	}
+}
+
+.celebration-modal--url-container {
+	// Hide button by default
+	.components-button {
+		opacity: 0;
+		pointer-events: none;
+		transition: opacity 0.2s ease;
+	}
+
+	// Show on hover or when any child receives focus
+	&:hover .components-button,
+	&:focus-within .components-button {
+		color: inherit;
+		opacity: 1;
+		pointer-events: auto;
+	}
+}

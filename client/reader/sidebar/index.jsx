@@ -141,8 +141,7 @@ export class ReaderSidebar extends Component {
 		} );
 	};
 
-	handleSidebarMenuClick = ( key ) => ( event, path ) => {
-		const handler = TrackingKeys[ key ];
+	handleSidebarMenuClick = ( handler ) => ( event, path ) => {
 		if ( handler ) {
 			recordAction( handler.action );
 			recordGaEvent( handler.gaEvent );
@@ -286,8 +285,8 @@ export class ReaderSidebar extends Component {
 				onClick={ this.handleClick }
 				siteTitle={ i18n.translate( 'Reader' ) }
 			>
-				<ReaderSidebarNudges />
 				{ this.renderSidebarMenu() }
+				<ReaderSidebarNudges />
 			</GlobalSidebar>
 		);
 	}

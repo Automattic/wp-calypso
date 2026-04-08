@@ -1,4 +1,5 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
+import { SubscriptionBillPeriod } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
 import {
 	isPersonal,
@@ -486,24 +487,32 @@ class ManagePurchase extends Component<
 		if ( ! purchase ) {
 			return null;
 		}
-		const annualPrice = getRenewalPriceInSmallestUnit( purchase ) / 12;
-		const savings = Math.floor(
-			( 100 * ( relatedMonthlyPlanPrice - annualPrice ) ) / relatedMonthlyPlanPrice
-		);
 
-		return this.renderRenewalNavItem(
-			<div>
-				{ translate( 'Renew annually' ) }
-				<Badge className="manage-purchase__savings-badge" type="success">
-					{ translate( '%(savings)d%% cheaper than monthly', {
-						args: {
-							savings,
-						},
-					} ) }
-				</Badge>
-			</div>,
-			this.handleRenew
-		);
+		const billPeriodDays = purchase.billPeriodDays;
+		const isAnnualRenewal = billPeriodDays === SubscriptionBillPeriod.PLAN_ANNUAL_PERIOD;
+
+		if ( isAnnualRenewal ) {
+			const annualPrice = getRenewalPriceInSmallestUnit( purchase ) / 12;
+			const savings = Math.floor(
+				( 100 * ( relatedMonthlyPlanPrice - annualPrice ) ) / relatedMonthlyPlanPrice
+			);
+			return this.renderRenewalNavItem(
+				<div>
+					{ translate( 'Renew annually' ) }
+					<Badge className="manage-purchase__savings-badge" type="success">
+						{ translate( '%(savings)d%% cheaper than monthly', {
+							args: {
+								savings,
+							},
+						} ) }
+					</Badge>
+				</div>,
+				this.handleRenew
+			);
+		}
+
+		// All other use cases (monthly, biennially, triennially_)
+		return this.renderRenewButton();
 	}
 
 	renderRenewMonthlyNavItem() {

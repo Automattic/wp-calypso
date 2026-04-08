@@ -257,10 +257,11 @@ export const Benchmark: StoryObj< BenchmarkArgs > = {
 
 		const onRender = useCallback(
 			( _id: string, _phase: string, actualDuration: number, baseDuration: number ) => {
-				timingsRef.current = [
-					...timingsRef.current,
-					{ label: pendingLabel.current, actualDuration, baseDuration },
-				];
+				timingsRef.current.push( {
+					label: pendingLabel.current,
+					actualDuration,
+					baseDuration,
+				} );
 			},
 			[]
 		);

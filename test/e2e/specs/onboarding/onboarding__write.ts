@@ -21,7 +21,7 @@ declare const browser: Browser;
 describe( DataHelper.createSuiteTitle( 'Onboarding: Write Focus' ), function () {
 	const blogName = DataHelper.getBlogName();
 	const testUser = DataHelper.getNewTestUser( {
-		usernamePrefix: 'signupfree',
+		usernamePrefix: 'signup',
 	} );
 
 	let newUserDetails: NewUserResponse;
