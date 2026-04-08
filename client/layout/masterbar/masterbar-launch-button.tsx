@@ -1,6 +1,7 @@
 import { siteLaunchMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
+import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
@@ -37,7 +38,12 @@ export const MasterbarLaunchButton = ( { siteId }: { siteId: number } ) => {
 		dispatch( recordTracksEvent( 'calypso_masterbar_launch_site' ) );
 
 		if ( data?.variationName === 'gated_site_launch' ) {
-			window.location.assign( `/start/launch-site?siteSlug=${ site?.slug }` );
+			window.location.assign(
+				addQueryArgs( '/start/launch-site', {
+					siteSlug: site?.slug,
+					back_to: window.location.pathname,
+				} )
+			);
 			return;
 		}
 
