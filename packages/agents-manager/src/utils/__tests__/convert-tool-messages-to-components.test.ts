@@ -1,4 +1,5 @@
 import { EscalationButton } from '../../components/escalation-button';
+import NextStepButton from '../../components/next-step-button';
 import UnavailableToolMessage from '../../components/unavailable-tool-message';
 import convertToolMessagesToComponents from '../convert-tool-messages-to-components';
 import { isEditorPage } from '../is-editor-page';
@@ -15,7 +16,11 @@ jest.mock(
 jest.mock( '../is-editor-page' );
 
 const MockComponent = jest.fn();
-const MockNextStepButton = jest.fn();
+const mockOnSubmit = jest.fn();
+
+const convertWithDefaults = (
+	options: Omit< Parameters< typeof convertToolMessagesToComponents >[ 0 ], 'onSubmit' >
+) => convertToolMessagesToComponents( { ...options, onSubmit: mockOnSubmit } );
 
 const createMessage = ( overrides: Partial< UIMessage > = {} ): UIMessage =>
 	( {
@@ -43,7 +48,9 @@ describe( 'convertToolMessagesToComponents', () => {
 	it( 'passes through user messages unchanged', () => {
 		const message = createMessage( { role: 'user' } );
 
-		const result = convertToolMessagesToComponents( { messages: [ message ] } );
+		const result = convertWithDefaults( {
+			messages: [ message ],
+		} );
 
 		expect( result ).toEqual( [ message ] );
 	} );
@@ -53,7 +60,9 @@ describe( 'convertToolMessagesToComponents', () => {
 			content: [ { type: 'text', text: 'Hello, how can I help?' } ],
 		} );
 
-		const result = convertToolMessagesToComponents( { messages: [ message ] } );
+		const result = convertWithDefaults( {
+			messages: [ message ],
+		} );
 
 		expect( result ).toEqual( [ message ] );
 	} );
@@ -66,7 +75,10 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
 
-		const result = convertToolMessagesToComponents( { messages: [ message ], getChatComponent } );
+		const result = convertWithDefaults( {
+			messages: [ message ],
+			getChatComponent,
+		} );
 
 		expect( result ).toHaveLength( 1 );
 		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
@@ -80,7 +92,10 @@ describe( 'convertToolMessagesToComponents', () => {
 		const message = createToolMessage( 'big_sky__show_component', { type: 'unknown-component' } );
 		const getChatComponent = jest.fn().mockReturnValue( null );
 
-		const result = convertToolMessagesToComponents( { messages: [ message ], getChatComponent } );
+		const result = convertWithDefaults( {
+			messages: [ message ],
+			getChatComponent,
+		} );
 
 		expect( result ).toEqual( [] );
 	} );
@@ -90,11 +105,9 @@ describe( 'convertToolMessagesToComponents', () => {
 		const actions = [
 			{ id: 'action-1', label: 'Do something', onClick: jest.fn() },
 		] as UIMessage[ 'actions' ];
-		const getChatComponent = jest.fn( ( type: string ) =>
-			type === 'my-component' ? MockComponent : MockNextStepButton
-		);
+		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
 
-		const result = convertToolMessagesToComponents( {
+		const result = convertWithDefaults( {
 			messages: [
 				createToolMessage( 'big_sky__show_component', data, { id: 'msg-1', actions } ),
 				createToolMessage( 'big_sky__show_component', data, { id: 'msg-2', actions } ),
@@ -107,14 +120,43 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result[ 1 ].id ).toBe( 'msg-2' );
 		expect( result[ 1 ].actions ).toBeDefined();
 		expect( result[ 2 ].id ).toBe( 'msg-2-next-step' );
+		expect( result[ 2 ].content[ 0 ] ).toMatchObject( {
+			type: 'component',
+			component: NextStepButton,
+			componentProps: { onMoveToNextStep: mockOnSubmit },
+		} );
 		expect( result[ 2 ].actions ).toBeUndefined();
+	} );
+
+	it( 'appends `NextStepButton` with `onSubmit` as `onMoveToNextStep` when active with follow-up tasks', () => {
+		const message = createToolMessage( 'big_sky__show_component', {
+			type: 'my-component',
+			followUpTasks: true,
+			isCurrent: true,
+		} );
+		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
+
+		const result = convertWithDefaults( {
+			messages: [ message ],
+			getChatComponent,
+		} );
+
+		expect( result ).toHaveLength( 2 );
+		expect( result[ 0 ].content[ 0 ] ).toMatchObject( { component: MockComponent } );
+		expect( result[ 1 ].content[ 0 ] ).toMatchObject( {
+			type: 'component',
+			component: NextStepButton,
+			componentProps: { onMoveToNextStep: mockOnSubmit },
+		} );
 	} );
 
 	it( 'shows `UnavailableToolMessage` when not on an editor page', () => {
 		( isEditorPage as jest.Mock ).mockReturnValue( false );
 		const message = createToolMessage( 'big_sky__show_component', { type: 'my-component' } );
 
-		const result = convertToolMessagesToComponents( { messages: [ message ] } );
+		const result = convertWithDefaults( {
+			messages: [ message ],
+		} );
 
 		expect( result ).toHaveLength( 1 );
 		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
@@ -129,7 +171,9 @@ describe( 'convertToolMessagesToComponents', () => {
 			assistantId: 'big-sky-site-admin',
 		} );
 
-		const result = convertToolMessagesToComponents( { messages: [ message ] } );
+		const result = convertWithDefaults( {
+			messages: [ message ],
+		} );
 
 		expect( result ).toHaveLength( 1 );
 		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
@@ -143,7 +187,9 @@ describe( 'convertToolMessagesToComponents', () => {
 		const supportText = 'Here is some help for your domain question.';
 		const message = createToolMessage( 'big_sky__wordpress_com_support', supportText );
 
-		const result = convertToolMessagesToComponents( { messages: [ message ] } );
+		const result = convertWithDefaults( {
+			messages: [ message ],
+		} );
 
 		expect( result ).toHaveLength( 1 );
 		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
@@ -159,7 +205,9 @@ describe( 'convertToolMessagesToComponents', () => {
 			calypsoCheckpointId: 'checkpoint-1',
 		} );
 
-		const result = convertToolMessagesToComponents( { messages: [ message ] } );
+		const result = convertWithDefaults( {
+			messages: [ message ],
+		} );
 
 		expect( result ).toHaveLength( 1 );
 		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
@@ -179,7 +227,9 @@ describe( 'convertToolMessagesToComponents', () => {
 			],
 		} );
 
-		const result = convertToolMessagesToComponents( { messages: [ message ] } );
+		const result = convertWithDefaults( {
+			messages: [ message ],
+		} );
 
 		expect( result ).toHaveLength( 1 );
 		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
@@ -189,7 +239,7 @@ describe( 'convertToolMessagesToComponents', () => {
 	} );
 
 	it( 'filters out unhandled tool messages', () => {
-		const result = convertToolMessagesToComponents( {
+		const result = convertWithDefaults( {
 			messages: [ createToolMessage( 'other_tool' ) ],
 		} );
 
@@ -203,7 +253,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
 
-		const result = convertToolMessagesToComponents( {
+		const result = convertWithDefaults( {
 			messages: [ message ],
 			getChatComponent,
 		} );
@@ -218,11 +268,9 @@ describe( 'convertToolMessagesToComponents', () => {
 			followUpTasks: true,
 			isCurrent: false,
 		} );
-		const getChatComponent = jest.fn( ( type: string ) =>
-			type === 'my-component' ? MockComponent : MockNextStepButton
-		);
+		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
 
-		const result = convertToolMessagesToComponents( {
+		const result = convertWithDefaults( {
 			messages: [ message ],
 			getChatComponent,
 		} );
@@ -241,7 +289,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
 
-		const result = convertToolMessagesToComponents( {
+		const result = convertWithDefaults( {
 			messages: [ message ],
 			getChatComponent,
 			currentPostId: 20,
@@ -258,11 +306,9 @@ describe( 'convertToolMessagesToComponents', () => {
 			isCurrent: true,
 			postId: 10,
 		} );
-		const getChatComponent = jest.fn( ( type: string ) =>
-			type === 'my-component' ? MockComponent : MockNextStepButton
-		);
+		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
 
-		const result = convertToolMessagesToComponents( {
+		const result = convertWithDefaults( {
 			messages: [ message ],
 			getChatComponent,
 			currentPostId: 20,
@@ -282,7 +328,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
 
-		const result = convertToolMessagesToComponents( {
+		const result = convertWithDefaults( {
 			messages: [ message ],
 			getChatComponent,
 			currentPostId: 10,
@@ -299,7 +345,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
 
-		const result = convertToolMessagesToComponents( {
+		const result = convertWithDefaults( {
 			messages: [ message ],
 			getChatComponent,
 			currentPostId: 20,
@@ -317,7 +363,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
 
-		const result = convertToolMessagesToComponents( {
+		const result = convertWithDefaults( {
 			messages: [ message ],
 			getChatComponent,
 		} );
