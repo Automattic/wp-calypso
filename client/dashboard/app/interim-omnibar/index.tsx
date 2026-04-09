@@ -1,4 +1,6 @@
+import { defaultI18n } from '@wordpress/i18n';
 import { hydrateRoot } from 'react-dom/client';
+import { getUserLanguage, loadUserLocaleData } from '../shared-locale-loader';
 import type { OmnibarEvents } from './click-handlers';
 
 export default async function loadOmnibar( events: OmnibarEvents ) {
@@ -25,7 +27,16 @@ export default async function loadOmnibar( events: OmnibarEvents ) {
 		events.linkClick.emit( { href, event } );
 	} );
 
-	const { InterimOmnibarContainer } = await import( './interim-omnibar-container' );
+	// Apply the user's locale to `defaultI18n` before hydrating so the first
+	// client render matches the SSR-translated HTML. `getUserLanguage` mirrors
+	// the server's `setUpLoggedInRoute` derivation so both sides agree on the
+	// effective locale.
+	const [ { InterimOmnibarContainer }, localeData ] = await Promise.all( [
+		import( './interim-omnibar-container' ),
+		loadUserLocaleData( getUserLanguage( window.currentUser ?? null ) ),
+	] );
+
+	defaultI18n.resetLocaleData( localeData );
 
 	hydrateRoot(
 		container,
