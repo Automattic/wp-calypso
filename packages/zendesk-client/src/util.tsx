@@ -113,7 +113,8 @@ export const isTestModeEnvironment = () => {
 		console.warn( '[isTestModeEnvironment] failed to read `env` from config', error );
 	}
 
-	return env !== 'production';
+	// If `env` is not configured, default to production to avoid routing customers to staging.
+	return env !== undefined && env !== 'production';
 };
 
 export const getBadRatingReasons = () => {
