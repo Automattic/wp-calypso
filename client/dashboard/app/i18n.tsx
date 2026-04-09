@@ -1,8 +1,35 @@
-import { defaultI18n, type I18n } from '@wordpress/i18n';
+import { defaultI18n, type I18n, type LocaleData } from '@wordpress/i18n';
 import { I18nProvider as WPI18nProvider } from '@wordpress/react-i18n';
 import { useEffect, useState, type PropsWithChildren } from 'react';
 import { useAuth } from './auth';
-import { getUserLanguage, loadUserLocaleData } from './shared-locale-loader';
+import { getUserLanguage } from './shared-locale-loader';
+
+async function fetchLocaleData(
+	language: string,
+	signal: AbortSignal
+): Promise< [ string, LocaleData | undefined ] > {
+	if ( language === 'en' ) {
+		return [ language, undefined ];
+	}
+
+	try {
+		const response = await fetch(
+			`https://widgets.wp.com/languages/calypso/${ language }-v1.1.json`,
+			{ signal }
+		);
+
+		return [ language, await response.json() ];
+	} catch ( error ) {
+		// Only fall back to `en` when the error is not an abort
+		if ( error instanceof Error && error.name === 'AbortError' ) {
+			throw error;
+		}
+
+		// Fall back to `en` when fetching the language data fails. Without this
+		// the i18n provider would be stuck forever in a non-loaded state.
+		return [ 'en', undefined ];
+	}
+}
 
 function getHtmlLangAttribute( i18n: I18n, fallback: string ) {
 	// translation of this string contains the desired HTML attribute value
@@ -129,21 +156,23 @@ export function I18nProvider( { children }: PropsWithChildren ) {
 	const i18n = defaultI18n;
 
 	useEffect( () => {
-		let cancelled = false;
+		const abortController = new AbortController();
 
-		loadUserLocaleData( language ).then( ( data ) => {
-			if ( cancelled ) {
-				return;
-			}
-			i18n.resetLocaleData( data );
-			const realLanguage = data ? language : 'en';
-			setLoadedLocale( realLanguage );
-			setLocaleInDOM( i18n, realLanguage );
-			switchWebpackCSS( i18n.isRTL() );
-		} );
+		fetchLocaleData( language, abortController.signal )
+			.then( ( [ realLanguage, data ] ) => {
+				i18n.resetLocaleData( data );
+				// `realLanguage` can be different from `language` when loading language data fails
+				// and it falls back to `en`.
+				setLoadedLocale( realLanguage );
+				setLocaleInDOM( i18n, realLanguage );
+				switchWebpackCSS( i18n.isRTL() );
+			} )
+			.catch( () => {
+				// Ignore abort errors as they are expected during cleanup
+			} );
 
 		return () => {
-			cancelled = true;
+			abortController.abort();
 		};
 	}, [ i18n, language ] );
 
