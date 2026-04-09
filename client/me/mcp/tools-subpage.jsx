@@ -115,15 +115,15 @@ export default function McpToolsSubpage( {
 	 * @param {Array<[string, import('@automattic/api-core').McpAbility]>} groupTools
 	 * @param {boolean} enabled
 	 */
-	const handleGroupEnableAll = ( groupTools, enabled ) => {
+	const handleGroupEnableAll = ( groupTools, enabled, category ) => {
 		if ( groupTools.length === 0 ) {
 			return;
 		}
 		const account = Object.fromEntries( groupTools.map( ( [ toolId ] ) => [ toolId, enabled ] ) );
 		const eventName =
 			toolCategory === 'write'
-				? 'calypso_dashboard_mcp_write_tool_toggled'
-				: 'calypso_dashboard_mcp_read_tool_toggled';
+				? 'calypso_dashboard_mcp_write_enable_all_toggled'
+				: 'calypso_dashboard_mcp_read_enable_all_toggled';
 		mutation.mutate(
 			{
 				mcp_abilities: {
@@ -132,9 +132,7 @@ export default function McpToolsSubpage( {
 			},
 			{
 				onSuccess: () => {
-					groupTools.forEach( ( [ toolId ] ) => {
-						recordTracksEvent( eventName, { tool_id: toolId, enabled } );
-					} );
+					recordTracksEvent( eventName, { enabled, category } );
 				},
 			}
 		);
@@ -224,7 +222,9 @@ export default function McpToolsSubpage( {
 											checked={ allEnabled }
 											disabled={ mutation.isPending }
 											label={ translate( 'Enable all' ) }
-											onChange={ ( checked ) => handleGroupEnableAll( groupTools, checked ) }
+											onChange={ ( checked ) =>
+												handleGroupEnableAll( groupTools, checked, categoryName )
+											}
 										/>
 									</div>
 								</HStack>

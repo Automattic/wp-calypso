@@ -78,7 +78,11 @@ export default function McpRead() {
 		);
 	};
 
-	const handleEnableAll = ( categoryTools: Array< [ string, McpAbility ] >, enabled: boolean ) => {
+	const handleEnableAll = (
+		categoryTools: Array< [ string, McpAbility ] >,
+		enabled: boolean,
+		category: string
+	) => {
 		const accountAbilities: Record< string, boolean > = {};
 		categoryTools.forEach( ( [ toolId ] ) => {
 			accountAbilities[ toolId ] = enabled;
@@ -91,11 +95,9 @@ export default function McpRead() {
 			} as any,
 			{
 				onSuccess: () => {
-					categoryTools.forEach( ( [ toolId ] ) => {
-						recordTracksEvent( 'calypso_dashboard_mcp_read_tool_toggled', {
-							tool_id: toolId,
-							enabled,
-						} );
+					recordTracksEvent( 'calypso_dashboard_mcp_read_enable_all_toggled', {
+						enabled,
+						category,
 					} );
 				},
 			}
@@ -195,7 +197,9 @@ export default function McpRead() {
 										checked={ allEnabled }
 										disabled={ mutation.isPending }
 										label={ __( 'Enable all' ) }
-										onChange={ ( checked ) => handleEnableAll( categoryTools, checked ) }
+										onChange={ ( checked ) =>
+											handleEnableAll( categoryTools, checked, categoryName )
+										}
 									/>
 								</HStack>
 							</CardBody>
