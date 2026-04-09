@@ -75,5 +75,14 @@ export function loadUserLocale( language: string ): Promise< LocaleData | undefi
 			}
 			return data;
 		} )
-		.catch( () => undefined );
+		.catch( () => {
+			// Drop the cached rejection so a later call can retry.
+			dataPromises.delete( language );
+			// Callers treat `undefined` as English; make `defaultI18n` match.
+			if ( appliedLanguage !== 'en' ) {
+				defaultI18n.resetLocaleData();
+				appliedLanguage = 'en';
+			}
+			return undefined;
+		} );
 }
