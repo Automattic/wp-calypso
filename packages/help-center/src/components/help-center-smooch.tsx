@@ -217,10 +217,6 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 					return;
 				}
 
-				if ( smoochRef.current ) {
-					Smooch.render( smoochRef.current );
-				}
-
 				setIsChatLoaded( true );
 				recordTracksEvent( 'calypso_smooch_messenger_init', {
 					success: true,
@@ -241,6 +237,10 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 		};
 
 		initialize();
+
+		if ( smoochRef.current ) {
+			Smooch.render( smoochRef.current );
+		}
 
 		return () => {
 			isCancelled = true;
