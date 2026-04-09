@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { isEcommercePlan } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
+import { Gridicon } from '@automattic/components';
 import { Badge } from '@automattic/ui';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _x, sprintf } from '@wordpress/i18n';
@@ -660,7 +661,12 @@ class MasterbarLoggedIn extends Component {
 				label: (
 					<span className="button wpcom-button">
 						{ createInterpolateElement( __( 'My <wpcomIcon /> WordPress.com Account' ), {
-							wpcomIcon: this.wordpressIcon(),
+							wpcomIcon:
+								typeof this.wordpressIcon() !== 'string' ? (
+									this.wordpressIcon()
+								) : (
+									<Gridicon icon={ this.wordpressIcon() } size={ 24 } />
+								),
 						} ) }
 					</span>
 				),
