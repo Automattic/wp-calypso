@@ -54,45 +54,16 @@
 				width: calc(100vw - var(--sidebar-width-max));
 			}
 
-			// When no admin-ui <Page> provides a .admin-ui-page__content
-			// scroll container (e.g. Jetpack Cloud views of Scan / Backup /
-			// AL v2, which render content directly inside <Main>), make the
-			// fixed-primary itself scrollable so content isn't clipped.
-			&:not(:has(.admin-ui-page)) {
-				overflow: hidden auto;
-			}
-
 			.main {
-
+				flex-grow: 1;
+				position: relative;
 				margin-block: 0;
 
-				@include break-medium {	
+				@include break-medium {
 					body.theme-jetpack-cloud &,
 					body.theme-a8c-for-agencies & {
 						margin-block: var(--wpds-dimension-padding-2xl);
 					}
-				}
-				// Only fill the fixed-primary column when the page renders an
-				// admin-ui <Page> inside <Main>. Pages that render content
-				// directly in <Main> (e.g. wideLayout views without a <Page>
-				// wrapper like Earn's paid-subscription detail screen, or the
-				// JP Cloud code paths of Scan/Backup/AL v2) keep .main's
-				// default `margin: auto` + `max-width` centering.
-				&:has(> .admin-ui-page) {
-					flex-grow: 1;
-					position: relative;
-				}
-
-				// Pages without an admin-ui <Page> wrapper inherit the base
-				// `.main { margin: auto }` rule. In the now-flex
-				// .layout__primary that turns into vertical auto-margin
-				// absorption, centering short content in the viewport. Kill
-				// the vertical auto margins so content top-aligns normally;
-				// horizontal `margin: auto` still handles wideLayout
-				// centering.
-				&:not(:has(> .admin-ui-page)) {
-					margin-inline: auto;
-					flex-grow: 1;
 				}
 
 				// Only reserve bottom space when a Jetpack footer is actually
