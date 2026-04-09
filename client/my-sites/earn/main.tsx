@@ -269,9 +269,13 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 			<Page
 				hasPadding
 				showSidebarToggle={ false }
-				title={ showPageHeader ? <JetpackTitle title={ translate( 'Monetize' ) } /> : undefined }
+				title={
+					showPageHeader && ! isJetpackPlatform ? (
+						<JetpackTitle title={ translate( 'Monetize' ) } />
+					) : undefined
+				}
 				subTitle={
-					showPageHeader
+					showPageHeader && ! isJetpackPlatform
 						? translate(
 								'Explore tools to earn money with your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 								{
