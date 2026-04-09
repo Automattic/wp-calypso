@@ -65,36 +65,33 @@ const BackupPage = ( { queryDate } ) => {
 		keepLocalTime: !! queryDate,
 	} );
 
-	const isWpcom = ! ( isJetpackCloud() || isA8CForAgencies() );
+	const isJetpackPlatform = isJetpackCloud() || isA8CForAgencies();
+	const showHeader = ! isJetpackPlatform;
 
 	return (
 		<Main
-			fullWidthLayout={ isWpcom }
-			wideLayout={ ! isWpcom }
+			fullWidthLayout
 			className={ clsx( 'backup__page', {
-				wordpressdotcom: isWpcom,
+				wordpressdotcom: showHeader,
 				is_jetpackcom: isJetpackCloud(),
 			} ) }
 		>
 			{ isJetpackCloud() && <SidebarNavigation /> }
-			{ isWpcom ? (
-				<Page
-					hasPadding
-					showSidebarToggle={ false }
-					title={ <JetpackTitle title={ translate( 'Backup' ) } /> }
-					subTitle={ translate( 'Save changes and restore quickly with one-click recovery.' ) }
-					actions={ <BackupActionsToolbar siteId={ siteId } /> }
-				>
-					<TimeMismatchWarning siteId={ siteId } settingsUrl={ siteSettingsUrl } />
-					<AdminContent selectedDate={ selectedDate } />
-				</Page>
-			) : (
-				<>
-					<TimeMismatchWarning siteId={ siteId } settingsUrl={ siteSettingsUrl } />
-					<AdminContent selectedDate={ selectedDate } />
-				</>
-			) }
-			{ isWpcom && <JetpackFooter /> }
+			<Page
+				hasPadding
+				showSidebarToggle={ false }
+				title={ showHeader ? <JetpackTitle title={ translate( 'Backup' ) } /> : undefined }
+				subTitle={
+					showHeader
+						? translate( 'Save changes and restore quickly with one-click recovery.' )
+						: undefined
+				}
+				actions={ showHeader ? <BackupActionsToolbar siteId={ siteId } /> : undefined }
+			>
+				<TimeMismatchWarning siteId={ siteId } settingsUrl={ siteSettingsUrl } />
+				<AdminContent selectedDate={ selectedDate } />
+			</Page>
+			{ showHeader && <JetpackFooter /> }
 		</Main>
 	);
 };
