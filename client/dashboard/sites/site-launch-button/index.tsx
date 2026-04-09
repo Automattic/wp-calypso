@@ -1,5 +1,5 @@
 import { DotcomPlans } from '@automattic/api-core';
-import { queryClient, siteBySlugQuery, siteLaunchMutation } from '@automattic/api-queries';
+import { siteLaunchMutation } from '@automattic/api-queries';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -83,16 +83,11 @@ export function SiteLaunchButton( {
 		recordTracksEvent( 'calypso_dashboard_site_launch_button_click', { context: tracksContext } );
 	};
 
-	const onSiteLaunchSuccess = () => {
-		onSiteLaunch?.();
-		queryClient.invalidateQueries( siteBySlugQuery( site.slug ) );
-	};
-
 	const handleLaunch = () => {
 		handleTracksEvent();
 		launchMutation.mutate( undefined, {
 			onSuccess: () => {
-				onSiteLaunchSuccess();
+				onSiteLaunch?.();
 			},
 			onSettled: () => {
 				setIsLaunchModalOpen( false );
@@ -104,7 +99,7 @@ export function SiteLaunchButton( {
 		handleTracksEvent();
 		launchMutation.mutate( undefined, {
 			onSuccess: () => {
-				onSiteLaunchSuccess();
+				onSiteLaunch?.();
 
 				// Add query param to trigger celebration modal in parent component
 				window.history.replaceState(
