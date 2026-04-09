@@ -63,6 +63,7 @@ WORKDIR /calypso
 COPY ./env-config.sh /tmp/env-config.sh
 RUN bash /tmp/env-config.sh
 
+RUN apt-get update && apt-get install -y python3 make g++ bzip2 && rm -rf /var/lib/apt/lists/*
 # Build a "source" layer
 #
 # This layer is populated with up-to-date files from
