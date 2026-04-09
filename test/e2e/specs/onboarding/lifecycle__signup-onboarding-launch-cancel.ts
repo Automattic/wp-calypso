@@ -215,8 +215,8 @@ describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function 
 			await domainSearchComponent.skipPurchase();
 		} );
 
-		it( 'Navigated back to site visibility page', async function () {
-			await page.waitForURL( /site-visibility/ );
+		it( 'Navigated back to site overview', async function () {
+			await page.waitForURL( /sites/ );
 			const myHomePage = new MyHomePage( page );
 			await new Promise( ( r ) => setTimeout( r, 2000 ) );
 			await page.reload();
