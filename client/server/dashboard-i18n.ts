@@ -24,7 +24,7 @@ export const loadDashboardLocaleData: RequestHandler = ( req, res, next ) => {
 	}
 
 	const apply = ( data: LocaleData ) => {
-		defaultI18n.setLocaleData( data );
+		defaultI18n.resetLocaleData( data );
 		next();
 	};
 
