@@ -1,5 +1,5 @@
 import { queryClient, siteByIdQuery, userPreferenceQuery } from '@automattic/api-queries';
-import { QueryClientProvider, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useState } from 'react';
 import { AUTH_QUERY_KEY, initializeCurrentUser } from '../auth';
 import { InterimOmnibar } from './interim-omnibar';
@@ -34,24 +34,33 @@ function useInterimOmnibarData( {
 		setHydrated( true );
 	}, [] );
 
-	const { data: user } = useQuery( {
-		queryKey: AUTH_QUERY_KEY,
-		queryFn: initializeCurrentUser,
-		initialData: initialUser ?? undefined,
-		enabled: hydrated,
-	} );
+	const { data: user } = useQuery(
+		{
+			queryKey: AUTH_QUERY_KEY,
+			queryFn: initializeCurrentUser,
+			initialData: initialUser ?? undefined,
+			enabled: hydrated,
+		},
+		queryClient
+	);
 
-	const { data: recentSites, isLoading: isRecentSitesLoading } = useQuery( {
-		...userPreferenceQuery( 'recentSites' ),
-		enabled: hydrated,
-	} );
+	const { data: recentSites, isLoading: isRecentSitesLoading } = useQuery(
+		{
+			...userPreferenceQuery( 'recentSites' ),
+			enabled: hydrated,
+		},
+		queryClient
+	);
 
 	const siteId = recentSites?.[ 0 ] || user?.primary_blog;
 
-	const { data: site = null } = useQuery( {
-		...siteByIdQuery( siteId ?? 0 ),
-		enabled: hydrated && !! siteId && ! isRecentSitesLoading,
-	} );
+	const { data: site = null } = useQuery(
+		{
+			...siteByIdQuery( siteId ?? 0 ),
+			enabled: hydrated && !! siteId && ! isRecentSitesLoading,
+		},
+		queryClient
+	);
 
 	const onToggleMenu = useCallback( () => events.mobileMenu.emit(), [ events ] );
 	const onToggleNotifications = useCallback( () => events.notifications.emit(), [ events ] );
@@ -75,15 +84,7 @@ function useInterimOmnibarData( {
 	};
 }
 
-function InterimOmnibarDataProvider( props: InterimOmnibarContainerProps ) {
+export function InterimOmnibarContainer( props: InterimOmnibarContainerProps ) {
 	const data = useInterimOmnibarData( props );
 	return <InterimOmnibar { ...data } />;
-}
-
-export function InterimOmnibarContainer( props: InterimOmnibarContainerProps ) {
-	return (
-		<QueryClientProvider client={ queryClient }>
-			<InterimOmnibarDataProvider { ...props } />
-		</QueryClientProvider>
-	);
 }
