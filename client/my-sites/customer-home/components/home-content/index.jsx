@@ -16,7 +16,6 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import ResurrectedWelcomeModalGate from 'calypso/components/resurrected-welcome-modal';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import useDomainDiagnosticsQuery from 'calypso/data/domains/diagnostics/use-domain-diagnostics-query';
-import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import useHomeLayoutQuery, { getCacheKey } from 'calypso/data/home/use-home-layout-query';
 import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
 import { usePurchasePlanNotification } from 'calypso/landing/stepper/declarative-flow/internals/hooks/use-purchase-plan-notification';
@@ -24,6 +23,7 @@ import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { setDomainNotice } from 'calypso/lib/domains/set-domain-notice';
 import { preventWidows } from 'calypso/lib/formatting';
 import { getQueryArgs } from 'calypso/lib/query-args';
+import { useCelebrateLaunchModalSideEffects } from 'calypso/my-sites/customer-home/celebrate-site-launch-modal/use-side-effects';
 import Primary from 'calypso/my-sites/customer-home/locations/primary';
 import Secondary from 'calypso/my-sites/customer-home/locations/secondary';
 import Tertiary from 'calypso/my-sites/customer-home/locations/tertiary';
@@ -44,6 +44,7 @@ import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-act
 import isUserRegistrationDaysWithinRange from 'calypso/state/selectors/is-user-registration-days-within-range';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { launchSite } from 'calypso/state/sites/launch/actions';
+import { getIsSiteLaunchCelebrationModalOpen } from 'calypso/state/sites/launch/selectors';
 import { isSiteOnWooExpressEcommerceTrial } from 'calypso/state/sites/plans/selectors';
 import {
 	canCurrentUserUseCustomerHome,
@@ -52,7 +53,6 @@ import {
 } from 'calypso/state/sites/selectors';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import CelebrateLaunchModal from '../celebrate-launch-modal';
 import { FullScreenLaunchpad } from '../full-screen-launchpad';
 import openSyncUrlInStudio from './studio-deeplink';
 
@@ -76,7 +76,9 @@ const HomeContent = ( {
 	isAdmin,
 	dashboardOptIn,
 } ) => {
-	const [ celebrateLaunchModalIsOpen, setCelebrateLaunchModalIsOpen ] = useState( false );
+	const celebrateLaunchModalIsOpen = useSelector( ( state ) =>
+		getIsSiteLaunchCelebrationModalOpen( state, siteId )
+	);
 	const [ launchedSiteId, setLaunchedSiteId ] = useState( null );
 	const queryClient = useQueryClient();
 	const translate = useTranslate();
@@ -84,14 +86,6 @@ const HomeContent = ( {
 
 	const { data: layout, isLoading, error: homeLayoutError } = useHomeLayoutQuery( siteId );
 	const { skipCurrentView } = useSkipCurrentViewMutation( siteId );
-
-	const {
-		data: allDomains = [],
-		isSuccess,
-		isFetchedAfterMount,
-	} = useGetDomainsQuery( site?.ID ?? null, {
-		retry: false,
-	} );
 
 	const [ focusedLaunchpadDismissed, setFocusedLaunchpadDismissed ] = useState( false );
 
@@ -113,12 +107,6 @@ const HomeContent = ( {
 	const [ dismissedEmailDnsDiagnostics, setDismissedEmailDnsDiagnostics ] = useState( false );
 
 	usePurchasePlanNotification( siteId, site?.plan?.product_slug );
-
-	useEffect( () => {
-		if ( getQueryArgs().celebrateLaunch === 'true' && isSuccess && isFetchedAfterMount ) {
-			setCelebrateLaunchModalIsOpen( true );
-		}
-	}, [ isSuccess, isFetchedAfterMount ] );
 
 	useEffect( () => {
 		if ( ! isSiteLaunching && launchedSiteId === siteId ) {
@@ -157,6 +145,8 @@ const HomeContent = ( {
 		Array.isArray( layout?.secondary ) &&
 		layout.secondary.length > 0;
 
+	const { addCelebrateLaunchQueryParams } = useCelebrateLaunchModalSideEffects( siteId );
+
 	if ( ! canUserUseCustomerHome ) {
 		const title = translate( 'This page is not available on this site.' );
 		return <EmptyContent title={ preventWidows( title ) } />;
@@ -170,8 +160,8 @@ const HomeContent = ( {
 					await updateLaunchpadSettings( siteId, { launchpad_screen: 'skipped' } );
 					skipCurrentView( null, true );
 				} }
+				beforeSiteLaunchRefetch={ addCelebrateLaunchQueryParams }
 				onSiteLaunch={ () => {
-					setCelebrateLaunchModalIsOpen( true );
 					setFocusedLaunchpadDismissed( true );
 				} }
 			/>
@@ -362,13 +352,6 @@ const HomeContent = ( {
 					</div>
 				</>
 			) : null }
-			{ celebrateLaunchModalIsOpen && (
-				<CelebrateLaunchModal
-					setModalIsOpen={ setCelebrateLaunchModalIsOpen }
-					site={ site }
-					allDomains={ allDomains }
-				/>
-			) }
 			<ResurrectedWelcomeModalGate isSuppressed={ celebrateLaunchModalIsOpen } />
 			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
 		</div>

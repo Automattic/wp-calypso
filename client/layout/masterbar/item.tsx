@@ -35,6 +35,7 @@ interface MasterbarItemProps {
 	variant?: string;
 	ariaLabel?: string;
 	openSubMenuOnClick?: boolean;
+	isBusy?: boolean;
 }
 
 class MasterbarItem extends Component< MasterbarItemProps > {
@@ -244,6 +245,7 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 			onMouseEnter: this.preload,
 			disabled: this.props.disabled,
 			'aria-label': this.props.ariaLabel,
+			isBusy: this.props.isBusy,
 		};
 
 		return (

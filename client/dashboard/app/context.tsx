@@ -12,6 +12,7 @@ import type {
 	FetchPaginatedSitesOptions,
 	FetchDashboardSiteFiltersParams,
 } from '@automattic/api-core';
+import type { PostHogOverrides } from '@automattic/posthog';
 
 export type MeBillingSupports = {
 	monetizeSubscriptions: boolean;
@@ -52,7 +53,10 @@ export type AppConfig = {
 		startStoreRoute?: boolean;
 		siteOverview: SiteOverviewSupports;
 	};
-	posthog?: string;
+	posthog?: {
+		apiKey: string;
+		overrides?: PostHogOverrides;
+	};
 	optIn: boolean;
 	components: {
 		sites: () => Promise< { default: React.FC } >;

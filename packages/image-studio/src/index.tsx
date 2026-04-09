@@ -24,15 +24,32 @@ import {
 
 interface ImageStudioData {
 	enabled?: boolean | string;
+	environment?: 'wp-admin' | 'ciab-admin';
 }
-
-declare const imageStudioData: ImageStudioData | undefined;
 
 declare global {
 	interface Window {
 		__bigSkyImageStudioInitialized?: boolean;
+		imageStudioData?: ImageStudioData;
 	}
 }
+
+/**
+ * Environment-derived feature capabilities. Centralises environment checks so
+ * components can ask "is this feature available?" without knowing which
+ * environment they're running in.
+ */
+function getCapabilities( environment?: ImageStudioData[ 'environment' ] ) {
+	const isWpAdmin = ! environment || environment === 'wp-admin';
+
+	return {
+		// Link to the classic WP Media Library image editor.
+		classicMediaEditor: isWpAdmin,
+	};
+}
+
+// Computed once at module load — environment is a static global that never changes.
+const capabilities = getCapabilities( window.imageStudioData?.environment );
 
 /**
  * Initialize the Image Studio integration for WordPress Media Library.
@@ -47,7 +64,7 @@ function initImageStudioIntegration(): void {
 	window.__bigSkyImageStudioInitialized = true;
 
 	// Validate required globals
-	if ( typeof imageStudioData === 'undefined' || ! imageStudioData?.enabled ) {
+	if ( ! window.imageStudioData?.enabled ) {
 		return;
 	}
 
@@ -447,7 +464,9 @@ function ImageStudioIntegration(): JSX.Element | null {
 			onSave={ handleSave }
 			onDiscard={ handleDiscard }
 			onExit={ handleExit }
-			onClassicMediaEditorNavigation={ handleClassicMediaEditorNavigation }
+			onClassicMediaEditorNavigation={
+				capabilities.classicMediaEditor ? handleClassicMediaEditorNavigation : undefined
+			}
 			onNavigatePrevious={ isMediaLibraryContext ? handleNavigatePrevious : undefined }
 			onNavigateNext={ isMediaLibraryContext ? handleNavigateNext : undefined }
 			hasPreviousImage={ hasPreviousImage && ! hasUnsavedChanges }

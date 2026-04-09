@@ -21,7 +21,7 @@ export const SuggestedFollowItem = ( { site, followSource } ) => {
 		);
 	};
 
-	const streamUrl = site ? getStreamUrl( site.feed_ID, site.blog_ID ) : null;
+	const streamUrl = getStreamUrl( site?.feed_ID, site?.blog_ID );
 	const urlForDisplay = site && site.URL ? formatUrlForDisplay( site.URL ) : '';
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */

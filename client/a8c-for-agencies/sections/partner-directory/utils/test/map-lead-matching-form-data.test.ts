@@ -31,7 +31,7 @@ describe( 'mapLeadMatchingFormData', () => {
 						supported_company_sizes: [ 'size_6_50' ],
 					},
 					platform_and_hosting: {
-						supported_hosting_environments: [ 'wordpress_com' ],
+						supported_hosting_environments: [ 'wpcom' ],
 						migration_platforms: [ 'shopify' ],
 						can_recommend_better_hosting: true,
 					},
@@ -41,8 +41,7 @@ describe( 'mapLeadMatchingFormData', () => {
 						supported_complexity_flags: [ 'traffic_spikes' ],
 					},
 					project_types: {
-						supported_project_types: [ 'new_woocommerce_store' ],
-						core_project_types: [ 'new_woocommerce_store' ],
+						supported_project_types: [ 'new_woocommerce' ],
 						accepts_small_fixes: true,
 					},
 					service_and_budget: {
@@ -74,11 +73,11 @@ describe( 'mapLeadMatchingFormData', () => {
 			idealBusinessTypes: [ 'content_media' ],
 			otherIdealBusinessType: '',
 			companySizes: [ 'size_6_50' ],
-			hostingEnvironments: [ 'wordpress_com' ],
+			hostingEnvironments: [ 'wpcom' ],
 			supportsHostingRecommendation: true,
 			migrationPlatforms: [ 'shopify' ],
 			storeComplexities: [ 'traffic_spikes' ],
-			projectTypes: [ 'new_woocommerce_store' ],
+			projectTypes: [ 'new_woocommerce' ],
 			supportsQuickHelp: true,
 			serviceLevels: [ 'premium' ],
 			budgetLevels: [ 'premium' ],
@@ -113,7 +112,7 @@ describe( 'mapLeadMatchingProfileToFormData', () => {
 						supported_company_sizes: [ 'size_6_50' ],
 					},
 					platform_and_hosting: {
-						supported_hosting_environments: [ 'wordpress_com' ],
+						supported_hosting_environments: [ 'wpcom' ],
 						migration_platforms: [ 'shopify' ],
 						can_recommend_better_hosting: true,
 					},
@@ -123,8 +122,7 @@ describe( 'mapLeadMatchingProfileToFormData', () => {
 						supported_complexity_flags: [ 'traffic_spikes' ],
 					},
 					project_types: {
-						supported_project_types: [ 'new_woocommerce_store' ],
-						core_project_types: [ 'new_woocommerce_store' ],
+						supported_project_types: [ 'new_woocommerce' ],
 						accepts_small_fixes: true,
 					},
 					service_and_budget: {
@@ -156,11 +154,11 @@ describe( 'mapLeadMatchingProfileToFormData', () => {
 			idealBusinessTypes: [ 'content_media' ],
 			otherIdealBusinessType: '',
 			companySizes: [ 'size_6_50' ],
-			hostingEnvironments: [ 'wordpress_com' ],
+			hostingEnvironments: [ 'wpcom' ],
 			supportsHostingRecommendation: true,
 			migrationPlatforms: [ 'shopify' ],
 			storeComplexities: [ 'traffic_spikes' ],
-			projectTypes: [ 'new_woocommerce_store' ],
+			projectTypes: [ 'new_woocommerce' ],
 			supportsQuickHelp: true,
 			serviceLevels: [ 'premium' ],
 			budgetLevels: [ 'premium' ],
@@ -183,18 +181,18 @@ describe( 'mapLeadMatchingDetailsToProfile', () => {
 		details.businessTypes = [ 'local_service' ];
 		details.idealBusinessTypes = [ 'content_media' ];
 		details.companySizes = [ 'size_1_5' ];
-		details.hostingEnvironments = [ 'wordpress_com' ];
+		details.hostingEnvironments = [ 'wpcom' ];
 		details.supportsHostingRecommendation = true;
 		details.migrationPlatforms = [ 'shopify' ];
-		details.storeComplexities = [ 'simple_catalog', 'traffic_spikes' ];
-		details.projectTypes = [ 'new_woocommerce_store', 'support_and_fixes' ];
+		details.storeComplexities = [ 'none_simple', 'traffic_spikes' ];
+		details.projectTypes = [ 'new_woocommerce', 'fix_ongoing_support' ];
 		details.supportsQuickHelp = true;
 		details.serviceLevels = [ 'enhanced' ];
 		details.budgetLevels = [ 'mid_range' ];
-		details.minimumBudget = '3k_10k';
+		details.minimumBudget = 'above_30k';
 		details.timingPreferences = [ 'flexible' ];
 		details.supportsHardDeadlines = true;
-		details.decisionProcesses = [ 'small_team' ];
+		details.decisionProcesses = [ 'formal_procurement' ];
 		details.ongoingRelationships = [ 'care_plans', 'training' ];
 		details.requiresMaintenance = true;
 
@@ -227,7 +225,6 @@ describe( 'mapLeadMatchingDetailsToProfile', () => {
 				},
 				project_types: {
 					supported_project_types: [],
-					core_project_types: [],
 					accepts_small_fixes: false,
 				},
 				service_and_budget: {
@@ -264,36 +261,110 @@ describe( 'mapLeadMatchingDetailsToProfile', () => {
 				supported_company_sizes: [ 'size_1_5' ],
 			},
 			platform_and_hosting: {
-				supported_hosting_environments: [ 'wordpress_com' ],
+				supported_hosting_environments: [ 'wpcom' ],
 				migration_platforms: [ 'shopify' ],
 				can_recommend_better_hosting: true,
 			},
 			ecommerce: {
 				supports_ecommerce_projects: true,
 				ecommerce_focus: true,
-				supported_complexity_flags: [ 'simple_catalog' ],
+				supported_complexity_flags: [ 'none_simple', 'traffic_spikes' ],
 			},
 			project_types: {
-				supported_project_types: [ 'new_woocommerce_store', 'support_and_fixes' ],
-				core_project_types: [ 'new_woocommerce_store', 'support_and_fixes' ],
+				supported_project_types: [ 'new_woocommerce', 'fix_ongoing_support' ],
 				accepts_small_fixes: true,
 			},
 			service_and_budget: {
 				max_service_level: 'enhanced',
 				supported_budget_bands: [ 'mid_range' ],
-				minimum_budget_band: '3k_10k',
+				minimum_budget_band: 'above_30k',
 			},
 			timing: {
 				supported_start_timings: [ 'flexible' ],
 				supports_hard_deadlines: true,
 			},
 			delivery_model: {
-				supported_decision_processes: [ 'small_team' ],
+				supported_decision_processes: [ 'formal_procurement' ],
 				offers_care_plans: true,
 				trains_clients: true,
 				works_with_internal_technical_teams: false,
 				requires_maintenance_plan: true,
 			},
+		} );
+	} );
+
+	it( 'keeps online store business type values for the WPCOM endpoint payload', () => {
+		const details = createDefaultLeadMatchingDetails();
+		details.businessTypes = [ 'online_store_physical', 'content_media' ];
+		details.idealBusinessTypes = [ 'online_store_digital' ];
+
+		expect( mapLeadMatchingDetailsToProfile( details, null ).business_fit ).toEqual( {
+			supported_business_types: [ 'online_store_physical', 'content_media' ],
+			ideal_business_types: [ 'online_store_digital' ],
+			supported_company_sizes: [],
+		} );
+	} );
+
+	it( 'keeps only directly supported business type values on hydration', () => {
+		expect(
+			mapLeadMatchingProfileToFormData( {
+				availability: {
+					accepting_work: true,
+					lead_eligibility: 'ready',
+					profile_v2_complete: false,
+				},
+				geography_and_language: {
+					supported_regions: [],
+					global_remote: false,
+					supported_languages: [],
+				},
+				business_fit: {
+					supported_business_types: [ 'local_service', 'online_store_physical', 'other' ],
+					ideal_business_types: [ 'content_media', 'online_store_digital', 'other' ],
+					supported_company_sizes: [],
+				},
+				platform_and_hosting: {
+					supported_hosting_environments: [ 'wpcom', 'unknown' ],
+					migration_platforms: [ 'shopify', 'wordpress', 'other' ],
+					can_recommend_better_hosting: false,
+				},
+				ecommerce: {
+					supports_ecommerce_projects: true,
+					ecommerce_focus: true,
+					supported_complexity_flags: [ 'custom_pricing', 'customer_portals', 'simple_catalog' ],
+				},
+				project_types: {
+					supported_project_types: [ 'migration', 'new_website', 'redesign', 'new_wordpress_site' ],
+					accepts_small_fixes: false,
+				},
+				service_and_budget: {
+					max_service_level: '',
+					supported_budget_bands: [ 'mid_range', 'mid-range' ],
+					minimum_budget_band: 'above_30k',
+				},
+				timing: {
+					supported_start_timings: [ 'book_1_3_months', 'planning_1_3_months' ],
+					supports_hard_deadlines: false,
+				},
+				delivery_model: {
+					supported_decision_processes: [ 'formal_procurement', 'solo_decider' ],
+					offers_care_plans: false,
+					trains_clients: false,
+					works_with_internal_technical_teams: false,
+					requires_maintenance_plan: false,
+				},
+			} )
+		).toMatchObject( {
+			businessTypes: [ 'local_service', 'online_store_physical' ],
+			idealBusinessTypes: [ 'content_media', 'online_store_digital' ],
+			hostingEnvironments: [ 'wpcom' ],
+			migrationPlatforms: [ 'shopify' ],
+			storeComplexities: [ 'custom_pricing', 'customer_portals' ],
+			projectTypes: [ 'migration', 'new_website', 'redesign' ],
+			budgetLevels: [ 'mid_range' ],
+			minimumBudget: 'above_30k',
+			timingPreferences: [ 'book_1_3_months' ],
+			decisionProcesses: [ 'formal_procurement' ],
 		} );
 	} );
 } );

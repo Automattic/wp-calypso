@@ -18,7 +18,7 @@ import { bumpStat } from '../analytics';
 import CommandPalette from '../command-palette';
 import { useAppContext } from '../context';
 import Header from '../header';
-import { useOmnibarEvent } from '../interim-omnibar/click-handlers';
+import { useOmnibarEvent } from '../interim-omnibar/omnibar-events';
 import OmnibarHelpCenter from '../interim-omnibar/omnibar-help-center';
 import { NavigationBlockerRegistry } from '../navigation-blocker';
 import Notifications from '../notifications';

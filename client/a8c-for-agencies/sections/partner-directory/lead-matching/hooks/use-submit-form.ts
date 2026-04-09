@@ -25,6 +25,9 @@ type Props = {
 	onSubmitError?: ( context: SubmitContext ) => void;
 };
 
+const isSuccessfulResponse = ( data?: AgencyLeadMatchingResponse ) =>
+	!! data?.lead_matching_profile && data.sync?.status !== 'failed';
+
 export default function useSubmitForm( { onSubmitSuccess, onSubmitError }: Props ) {
 	const { mutateAsync: submit, isPending: isSubmitting } = useSubmitLeadMatchingProfileMutation();
 
@@ -44,7 +47,7 @@ export default function useSubmitForm( { onSubmitSuccess, onSubmitError }: Props
 			try {
 				const data = await submit( payload );
 
-				if ( data?.lead_matching_profile ) {
+				if ( isSuccessfulResponse( data ) ) {
 					onSubmitSuccess?.( data, context );
 					return data;
 				}
