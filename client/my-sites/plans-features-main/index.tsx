@@ -300,11 +300,17 @@ const PlansFeaturesMain = ( {
 		};
 	}, [ signupFlowSubdomain, wpcomFreeDomainSuggestion ] );
 
+	const currentPlanExpiryDate = Plans.useCurrentPlanExpiryDate( { siteId } );
+	const isPlanExpired = currentPlanExpiryDate
+		? currentPlanExpiryDate.getTime() < Date.now()
+		: false;
+
 	const filteredDisplayedIntervals = useFilteredDisplayedIntervals( {
 		productSlug: currentPlan?.productSlug,
 		displayedIntervals,
 		flowName,
 		paidDomainName,
+		isPlanExpired,
 	} );
 
 	// Ensure intervalType is compatible with the current plan's term

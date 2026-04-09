@@ -99,6 +99,8 @@ const PlansStepAdaptor: StepType< {
 		isStepperUpgradeFlow?: boolean;
 		selectedFeature?: string;
 		displayedIntervals?: SupportedIntervalTypes[];
+		headerText?: string;
+		fallbackSubHeaderText?: string;
 		hideFreePlan?: boolean;
 		hideEcommercePlan?: boolean;
 		hideEnterprisePlan?: boolean;
@@ -113,6 +115,8 @@ const PlansStepAdaptor: StepType< {
 } > = ( props ) => {
 	const {
 		displayedIntervals,
+		headerText,
+		fallbackSubHeaderText,
 		isInSignup,
 		isStepperUpgradeFlow,
 		selectedFeature,
@@ -265,6 +269,8 @@ const PlansStepAdaptor: StepType< {
 			isInSignup={ isInSignup }
 			isStepperUpgradeFlow={ isStepperUpgradeFlow }
 			selectedFeature={ selectedFeature }
+			headerText={ headerText }
+			fallbackSubHeaderText={ fallbackSubHeaderText }
 			hideEcommercePlan={ hideEcommercePlanProp }
 			hideEnterprisePlan={ hideEnterprisePlanProp }
 			hidePlansFeatureComparison={ hidePlansFeatureComparisonProp }

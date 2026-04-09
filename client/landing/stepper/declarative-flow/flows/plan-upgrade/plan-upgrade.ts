@@ -1,3 +1,4 @@
+import { getPlanPath } from '@automattic/calypso-products';
 import { PLAN_UPGRADE_FLOW } from '@automattic/onboarding';
 import { resolveSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
@@ -85,11 +86,16 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 				// Pass the feature parameter for feature-based plan filtering
 				selectedFeature,
 
-				// For expired-plan downgrades, hide plans that aren't eligible targets.
+				// For expired-plan downgrades, hide plans that aren't eligible targets
+				// and show a helpful subtitle.
 				hideFreePlan: isExpiredDowngrade || undefined,
 				hideEcommercePlan: isExpiredDowngrade || undefined,
 				hideEnterprisePlan: isExpiredDowngrade || undefined,
 				hidePlansFeatureComparison: isExpiredDowngrade || undefined,
+				headerText: isExpiredDowngrade ? __( 'Find your best fit' ) : undefined,
+				fallbackSubHeaderText: isExpiredDowngrade
+					? __( 'Compare plans and pick the one that works for where your site is headed.' )
+					: undefined,
 
 				// Provide a custom back handler that goes to back_to or /sites
 				wrapperProps: {
@@ -113,9 +119,10 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 				case STEPS.UNIFIED_PLANS.slug: {
 					// User selected plan, go directly to checkout
 					if ( providedDependencies?.cartItems && providedDependencies.cartItems.length > 0 ) {
-						const selectedPlan = providedDependencies.cartItems[ 0 ]?.product_slug;
-						if ( selectedPlan && siteSlug ) {
-							const checkoutUrl = `/checkout/${ encodeURIComponent( siteSlug ) }/${ selectedPlan }`;
+						const selectedPlanSlug = providedDependencies.cartItems[ 0 ]?.product_slug;
+						const planPath = selectedPlanSlug ? getPlanPath( selectedPlanSlug ) : undefined;
+						if ( planPath && siteSlug ) {
+							const checkoutUrl = `/checkout/${ encodeURIComponent( siteSlug ) }/${ planPath }`;
 							const currentPath = window.location.href.replace( window.location.origin, '' );
 
 							// Build checkout URL with query params

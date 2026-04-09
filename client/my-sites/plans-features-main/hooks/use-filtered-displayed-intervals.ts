@@ -14,6 +14,7 @@ interface Props {
 	displayedIntervals: UrlFriendlyTermType[];
 	paidDomainName?: string;
 	productSlug?: string;
+	isPlanExpired?: boolean;
 }
 
 const useFilteredDisplayedIntervals = ( {
@@ -21,6 +22,7 @@ const useFilteredDisplayedIntervals = ( {
 	displayedIntervals,
 	paidDomainName,
 	productSlug,
+	isPlanExpired,
 }: Props ) => {
 	const { shouldRestrict3YearPlans } = useFCCARestrictions();
 	const is3yearlyRestricted = shouldRestrict3YearPlans();
@@ -28,8 +30,14 @@ const useFilteredDisplayedIntervals = ( {
 	return useMemo( () => {
 		let filteredIntervals = displayedIntervals;
 
-		// Hide interval terms that are less than the current plan's term in months
-		if ( productSlug && ! isFreePlan( productSlug ) && ! isWooHostedFreePlan( productSlug ) ) {
+		// Hide interval terms that are less than the current plan's term in months.
+		// Skip this for expired plans — they're making a fresh purchase, so all terms are valid.
+		if (
+			productSlug &&
+			! isPlanExpired &&
+			! isFreePlan( productSlug ) &&
+			! isWooHostedFreePlan( productSlug )
+		) {
 			const currentPlanIntervalInMonths = getBillingMonthsForTerm(
 				getPlan( productSlug )?.term || ''
 			);
@@ -57,7 +65,14 @@ const useFilteredDisplayedIntervals = ( {
 		}
 
 		return filteredIntervals;
-	}, [ productSlug, displayedIntervals, flowName, paidDomainName, is3yearlyRestricted ] );
+	}, [
+		productSlug,
+		isPlanExpired,
+		displayedIntervals,
+		flowName,
+		paidDomainName,
+		is3yearlyRestricted,
+	] );
 };
 
 export default useFilteredDisplayedIntervals;
