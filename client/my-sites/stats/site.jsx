@@ -54,7 +54,6 @@ import { isJetpackSite, getJetpackStatsAdminVersion } from 'calypso/state/sites/
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getModuleToggles } from 'calypso/state/stats/module-toggles/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import PageHeader from './components/headers/page-header';
 import StatsModuleAuthors from './features/modules/stats-authors';
 import StatsModuleClicks from './features/modules/stats-clicks';
 import StatsModuleCountries from './features/modules/stats-countries';
@@ -578,10 +577,6 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 					<JetpackBackupCredsBanner event="stats-backup-credentials" />
 				</div>
 			) }
-			<PageHeader
-				titleProps={ { subtitle: translate( 'Simple, powerful analytics to grow your site.' ) } }
-			/>
-			<StatsNavigation selectedItem="traffic" interval={ period } siteId={ siteId } slug={ slug } />
 			<StatsNotices
 				siteId={ siteId }
 				isOdysseyStats={ isOdysseyStats }
@@ -900,6 +895,7 @@ const StatsSite = ( props ) => {
 
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const siteId = useSelector( getSelectedSiteId );
+	const slug = useSelector( getSelectedSiteSlug );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 
 	useEffect(
@@ -921,7 +917,19 @@ const StatsSite = ( props ) => {
 	}, [ context.query, period ] );
 
 	return (
-		<Main fullWidthLayout ariaLabel={ STATS_PRODUCT_NAME }>
+		<Main
+			fullWidthLayout
+			ariaLabel={ STATS_PRODUCT_NAME }
+			pageSubTitle={ translate( 'Simple, powerful analytics to grow your site.' ) }
+			pageTabs={
+				<StatsNavigation
+					selectedItem="traffic"
+					interval={ period }
+					siteId={ siteId }
+					slug={ slug }
+				/>
+			}
+		>
 			{ /* Odyssey: Google Business Profile pages are currently unsupported. */ }
 			{ ! isOdysseyStats && (
 				<>

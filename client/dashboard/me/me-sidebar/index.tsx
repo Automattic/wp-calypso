@@ -1,5 +1,4 @@
 import { userSettingsQuery } from '@automattic/api-queries';
-import { isEnabled } from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
@@ -14,9 +13,7 @@ import {
 	lock,
 	notAllowed,
 	payment,
-	seen,
 	settings,
-	starEmpty,
 } from '@wordpress/icons';
 import { useAppContext } from '../../app/context';
 import { SidebarMenu, SidebarMenuItem } from '../../components/sidebar';
@@ -62,8 +59,8 @@ function MeMenuSidebar() {
 
 	return (
 		<SidebarMenu>
-			<SidebarMenuItem icon={ commentAuthorAvatar } to="/me/profile">
-				{ __( 'Profile' ) }
+			<SidebarMenuItem icon={ commentAuthorAvatar } to="/me/account">
+				{ __( 'Account' ) }
 			</SidebarMenuItem>
 			<SidebarMenuItem icon={ settings } to="/me/preferences">
 				{ __( 'Preferences' ) }
@@ -74,11 +71,6 @@ function MeMenuSidebar() {
 			<SidebarMenuItem icon={ lock } to="/me/security">
 				{ __( 'Security' ) }
 			</SidebarMenuItem>
-			{ hasAppSupport( supports, 'privacy' ) && (
-				<SidebarMenuItem icon={ seen } to="/me/privacy">
-					{ __( 'Privacy' ) }
-				</SidebarMenuItem>
-			) }
 			{ supports.notifications && (
 				<SidebarMenuItem icon={ bell } to="/me/notifications">
 					{ __( 'Notifications' ) }
@@ -87,11 +79,6 @@ function MeMenuSidebar() {
 			{ supports.reader && (
 				<SidebarMenuItem icon={ notAllowed } to="/me/blocked-sites">
 					{ __( 'Blocked sites' ) }
-				</SidebarMenuItem>
-			) }
-			{ isEnabled( 'mcp-settings' ) && (
-				<SidebarMenuItem icon={ starEmpty } to="/me/mcp">
-					{ __( 'MCP' ) }
 				</SidebarMenuItem>
 			) }
 			{ hasAppSupport( supports, 'apps' ) && (

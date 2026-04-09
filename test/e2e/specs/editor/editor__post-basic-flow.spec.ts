@@ -86,7 +86,9 @@ test.describe(
 			await test.step( 'When I open Jetpack settings', async () => {
 				await pageEditor.openEditorOptionsMenu();
 				const editorParent = await pageEditor.getEditorParent();
-				await editorParent.getByRole( 'menuitemcheckbox', { name: 'Jetpack' } ).click();
+				await editorParent
+					.getByRole( 'menuitemcheckbox', { name: 'Jetpack', exact: true } )
+					.click();
 			} );
 
 			if ( envVariables.ATOMIC_VARIATION !== 'private' ) {

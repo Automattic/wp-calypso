@@ -14,6 +14,7 @@ test.describe(
 	{ tag: [ tags.CALYPSO_RELEASE ] },
 	() => {
 		const testUser = DataHelper.getNewTestUser( {
+			useMailosaur: true,
 			usernamePrefix: 'woo',
 		} );
 		const emailClient = new EmailClient();

@@ -14,7 +14,7 @@ import {
 	isIosOAuth2Client,
 	isStudioAppOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
-import { detectCiabConfig, getPartnerSignupTosElement } from 'calypso/lib/partner-branding';
+import { detectPartnerConfig, getPartnerSignupTosElement } from 'calypso/lib/partner-branding';
 import { login } from 'calypso/lib/paths';
 import OneLoginFooter from 'calypso/login/wp-login/components/one-login-footer';
 import OneLoginLayout from 'calypso/login/wp-login/components/one-login-layout';
@@ -112,7 +112,7 @@ export class MagicLogin extends Component {
 		// From `localize`
 		translate: PropTypes.func.isRequired,
 		isWooJPC: PropTypes.bool,
-		ciabConfig: PropTypes.object,
+		partnerConfig: PropTypes.object,
 	};
 
 	state = {
@@ -167,7 +167,7 @@ export class MagicLogin extends Component {
 
 		const isA4A = query?.redirect_to?.includes( 'agencies.automattic.com/client' ) ?? false;
 		const isMobileApp = isIosOAuth2Client( oauth2Client ) || isAndroidOAuth2Client( oauth2Client );
-		const hasPartnerBranding = Boolean( this.props.ciabConfig );
+		const hasPartnerBranding = Boolean( this.props.partnerConfig );
 
 		if ( showCheckYourEmail ) {
 			if ( isA4A || isMobileApp || hasPartnerBranding ) {
@@ -232,8 +232,8 @@ export class MagicLogin extends Component {
 	}
 
 	renderTos = () => {
-		const { ciabConfig, translate } = this.props;
-		const partnerTosElement = getPartnerSignupTosElement( ciabConfig, translate );
+		const { partnerConfig, translate } = this.props;
+		const partnerTosElement = getPartnerSignupTosElement( partnerConfig, translate );
 
 		if ( partnerTosElement ) {
 			return partnerTosElement;
@@ -351,10 +351,10 @@ export const getMagicLoginInitialHeaders = ( props, translate ) => {
 		return getCheckYourEmailHeaders( translate, { emailAddress } );
 	}
 
-	const headingOverride = props.ciabConfig?.displayName
+	const headingOverride = props.partnerConfig?.displayName
 		? translate( 'Log in to %(partnerName)s', {
 				args: {
-					partnerName: props.ciabConfig.displayName,
+					partnerName: props.partnerConfig.displayName,
 				},
 		  } )
 		: undefined;
@@ -399,7 +399,7 @@ const mapState = ( state ) => {
 			'jetpack-onboarding',
 		isWooJPC: isWooJPCFlow( state ),
 		publicToken: getMagicLoginPublicToken( state ),
-		ciabConfig: detectCiabConfig( getCurrentOAuth2Client( state ) ),
+		partnerConfig: detectPartnerConfig( getCurrentOAuth2Client( state ) ),
 	};
 };
 

@@ -13,7 +13,8 @@ test.describe(
 	{ tag: [ tags.CALYPSO_PR ] },
 	() => {
 		const testUser = DataHelper.getNewTestUser( {
-			usernamePrefix: 'signupfree',
+			useMailosaur: true,
+			usernamePrefix: 'signup',
 		} );
 		let newUserDetails: NewUserResponse | undefined;
 

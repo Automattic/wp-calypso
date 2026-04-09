@@ -1,13 +1,14 @@
 /**
  * @jest-environment jsdom
  */
-// @ts-nocheck - TODO: Fix TypeScript issues
 import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, render, screen, waitFor } from '@testing-library/react';
+import nock from 'nock';
 import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import CelebrateSiteLaunchModal from 'calypso/my-sites/customer-home/celebrate-site-launch-modal';
 import HomeContent from '../index';
 
 jest.mock( '@automattic/data-stores', () => ( {
@@ -15,12 +16,19 @@ jest.mock( '@automattic/data-stores', () => ( {
 	updateLaunchpadSettings: jest.fn().mockResolvedValue( {} ),
 } ) );
 
-// Add this mock for FullScreenLaunchpad
 jest.mock( '../../full-screen-launchpad', () => ( {
-	FullScreenLaunchpad: ( { onClose, onSiteLaunch } ) => (
+	// @ts-expect-error - TODO: Fix TypeScript issues
+	FullScreenLaunchpad: ( { onClose, onSiteLaunch, beforeSiteLaunchRefetch } ) => (
 		<div data-testid="full-screen-launchpad">
 			<button onClick={ onClose }>Skip to dashboard</button>
-			<button onClick={ onSiteLaunch }>Launch your site</button>
+			<button
+				onClick={ () => {
+					beforeSiteLaunchRefetch?.();
+					onSiteLaunch();
+				} }
+			>
+				Launch your site
+			</button>
 		</div>
 	),
 } ) );
@@ -30,6 +38,8 @@ jest.mock( 'calypso/components/resurrected-welcome-modal', () => () => null );
 const testSite = {
 	ID: 1,
 	slug: 'test-site',
+	launch_status: 'launched',
+	plan: { is_free: true, product_slug: 'free_plan' },
 	options: {
 		site_creation_flow: 'onboarding',
 	},
@@ -37,6 +47,13 @@ const testSite = {
 
 let mockLayoutViewName = '';
 const mockLayout = { view_name: mockLayoutViewName };
+
+const mockDomainsApi = ( domains: unknown[] = [] ) => {
+	nock( 'https://public-api.wordpress.com' )
+		.get( '/rest/v1.2/all-domains' )
+		.query( true )
+		.reply( 200, { domains } );
+};
 
 jest.mock( 'calypso/data/home/use-home-layout-query', () => {
 	const getCacheKey = ( siteId: number ) => [ 'home-layout', siteId ];
@@ -107,6 +124,15 @@ describe( 'HomeContent', () => {
 	beforeEach( () => {
 		queryClient.clear();
 		mockLayout.view_name = mockLayoutViewName;
+		nock.cleanAll();
+		mockDomainsApi( [] );
+		const url = new URL( window.location.href );
+		url.search = '';
+		window.history.replaceState( {}, '', url.pathname + url.search );
+	} );
+
+	afterEach( () => {
+		nock.cleanAll();
 	} );
 
 	describe( 'Focused Launchpad integration', () => {
@@ -161,7 +187,13 @@ describe( 'HomeContent', () => {
 
 			it( 'should show celebrate launch modal when site is launched', async () => {
 				mockLayoutViewName = 'VIEW_FOCUSED_LAUNCHPAD';
-				renderWithProviders( <HomeContent /> );
+				window.history.pushState( {}, '', '/home?celebrateLaunch=true' );
+				renderWithProviders(
+					<>
+						<HomeContent />
+						<CelebrateSiteLaunchModal siteId={ testSite.ID } />
+					</>
+				);
 
 				const launchButton = screen.getByText( 'Launch your site' );
 				await act( async () => {

@@ -18,7 +18,7 @@ test.describe(
 	() => {
 		const blogName = DataHelper.getBlogName();
 		const testUser = DataHelper.getNewTestUser( {
-			usernamePrefix: 'signupfree',
+			usernamePrefix: 'signup',
 		} );
 		let newUserDetails: NewUserResponse | undefined;
 

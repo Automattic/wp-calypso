@@ -2,7 +2,7 @@ import { useBlockEditContext } from '@wordpress/block-editor';
 import { Button } from '@wordpress/components';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { dispatch } from '@wordpress/data';
-import { useCallback } from '@wordpress/element';
+import { Component, useCallback } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { ImageStudioEntryPoint, store as imageStudioStore } from '../store';
 import { ImageStudioMode } from '../types';
@@ -25,7 +25,7 @@ export const withImageStudioGenerateButton = createHigherOrderComponent(
 			return allowedBlocks.includes( name );
 		};
 
-		const ImageStudioGenerateButton = ( props: any ) => {
+		const ImageStudioGenerateButtonInner = ( props: any ) => {
 			const { name } = useBlockEditContext();
 			const { render: originalRenderProp, ...rest } = props;
 			const { onSelect, multiple } = rest;
@@ -82,7 +82,14 @@ export const withImageStudioGenerateButton = createHigherOrderComponent(
 			return <OriginalComponent { ...rest } render={ render } />;
 		};
 
-		ImageStudioGenerateButton.displayName = 'ImageStudioGenerateButton';
+		// Class wrapper ensures compatibility with plugins that use
+		// `class extends` on the editor.MediaUpload filter result (e.g. AMP).
+		// Arrow functions have no [[Construct]], so `class extends arrowFn` throws.
+		class ImageStudioGenerateButton extends Component< any > {
+			render() {
+				return <ImageStudioGenerateButtonInner { ...this.props } />;
+			}
+		}
 
 		return ImageStudioGenerateButton;
 	},

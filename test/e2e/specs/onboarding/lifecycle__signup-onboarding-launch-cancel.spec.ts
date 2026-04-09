@@ -193,8 +193,8 @@ test.describe(
 				await domainSearchComponent.skipPurchase();
 			} );
 
-			await test.step( 'Then I am navigated to Home dashboard', async () => {
-				await page.waitForURL( /home/ );
+			await test.step( 'Then I am navigated back to site visibility page', async () => {
+				await page.waitForURL( /site-visibility/ );
 				const myHomePage = new MyHomePage( page );
 				await new Promise( ( r ) => setTimeout( r, 2000 ) );
 				await page.reload();

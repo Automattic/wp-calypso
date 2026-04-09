@@ -3,13 +3,13 @@ import JetpackLogo from 'calypso/components/jetpack-logo';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 
 type JetpackTitleProps = {
-	title: string;
+	title: React.ReactNode;
 };
 
 const JetpackTitle = ( { title }: JetpackTitleProps ) => (
 	<HStack alignment="center" justify="start" spacing={ 2 }>
 		{ ! isJetpackCloud() && <JetpackLogo size={ 20 } /> }
-		<span>{ title }</span>
+		{ typeof title === 'string' ? <span>{ title }</span> : title }
 	</HStack>
 );
 

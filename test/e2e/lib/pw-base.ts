@@ -605,7 +605,7 @@ export const test = base.extend<
 		await use( secrets );
 	},
 	sitePublic: async ( { page, clientEmail, helperData, pageLogin, pageUserSignUp }, use ) => {
-		const testUser = helperData.getNewTestUser();
+		const testUser = helperData.getNewTestUser( { useMailosaur: true } );
 		const siteName = helperData.getBlogName();
 		await pageLogin.visit();
 		await pageLogin.clickCreateNewAccount();

@@ -186,7 +186,14 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 
 		const initialize = async () => {
 			setIsChatLoaded( false );
-			await Smooch?.destroy?.();
+			try {
+				await Smooch?.destroy?.();
+			} catch ( error ) {
+				recordTracksEvent( 'calypso_smooch_messenger_destroy_error', {
+					error: ( error as Error ).message,
+					context: 'initialize',
+				} );
+			}
 
 			if ( isCancelled ) {
 				return;
@@ -227,7 +234,12 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 		return () => {
 			isCancelled = true;
 			clearTimeout( retryTimeout );
-			Smooch?.destroy?.();
+			Smooch?.destroy?.()?.catch?.( ( error: Error ) => {
+				recordTracksEvent( 'calypso_smooch_messenger_destroy_error', {
+					error: error.message,
+					context: 'cleanup',
+				} );
+			} );
 		};
 	}, [
 		isMessagingScriptLoaded,

@@ -14,6 +14,7 @@ test.describe(
 	{ tag: [ tags.CALYPSO_RELEASE ] },
 	() => {
 		const testUser = DataHelper.getNewTestUser( {
+			useMailosaur: true,
 			usernamePrefix: 'wpcc',
 		} );
 		const emailClient = new EmailClient();

@@ -1,6 +1,7 @@
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useRef } from '@wordpress/element';
 import { useNavigate } from 'react-router-dom';
+import { useAgentsManagerContext } from '../../contexts';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 
@@ -30,8 +31,10 @@ export default function useSetupCustomActions( {
 		return store.getAgentsManagerState();
 	}, [] );
 	const { setIsOpen, setIsDocked } = useDispatch( AGENTS_MANAGER_STORE );
+	const { getActiveSessionId } = useAgentsManagerContext();
 	const navigate = useNavigate();
 	const resolveRef = useRef< ( ( state: AgentsManagerChatState ) => void ) | null >( null );
+	const hasFiredReadyRef = useRef( false );
 
 	const setChatOpen = useCallback(
 		( shouldOpen: boolean ) => {
@@ -128,13 +131,23 @@ export default function useSetupCustomActions( {
 					resolveRef.current = resolve;
 				} );
 			},
+			getSessionId: getActiveSessionId,
 			setChatOpen,
 			setChatDocked,
 			setChatEnabled,
 			setChatCompactMode,
 			setChatDesktopMediaQuery,
 			chatNavigate: navigate,
+			isReady: true,
 		};
+
+		// Fire the ready event exactly once per mount, after the global has
+		// been fully populated. Hosts (e.g. CIAB) listen for this to safely
+		// invoke actions like `setChatOpen` without polling.
+		if ( ! hasFiredReadyRef.current ) {
+			hasFiredReadyRef.current = true;
+			window.dispatchEvent( new CustomEvent( 'agents-manager-ready' ) );
+		}
 
 		return () => {
 			delete window.__agentsManagerActions;
@@ -149,6 +162,7 @@ export default function useSetupCustomActions( {
 		setChatEnabled,
 		setChatCompactMode,
 		setChatDesktopMediaQuery,
+		getActiveSessionId,
 		navigate,
 	] );
 }

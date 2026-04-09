@@ -41,7 +41,7 @@ export const partnerDirectoryDashboardContext: Callback = ( context, next ) => {
 			<PageViewTracker
 				title={
 					selectedSection === PARTNER_DIRECTORY_LEAD_MATCHING_SLUG
-						? 'Partner Directory > Lead Matching'
+						? 'Partner Directory > Lead matching'
 						: 'Partner Directory > Dashboard'
 				}
 				path={ context.path }

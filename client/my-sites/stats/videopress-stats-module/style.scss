@@ -1,6 +1,7 @@
 @import "@automattic/typography/styles/variables";
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/components/src/styles/typography";
+@import "https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese&display=swap";
 
 .stats-module__date-picker-header {
 	margin: 20px 0;

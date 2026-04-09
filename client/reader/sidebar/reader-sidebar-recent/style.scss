@@ -1,19 +1,9 @@
 .reader-sidebar-recent {
-	$recent-item-padding-x: 18px;
-	$recent-site-icon-size: 16px;
-	$recent-item-gap: 8px;
-
 	&__site {
 		&-name {
 			overflow: hidden;
 			white-space: nowrap;
 			text-overflow: ellipsis;
-		}
-
-		&-icon {
-			border-radius: 50%;
-			width: $recent-site-icon-size;
-			height: $recent-site-icon-size;
 		}
 
 		&-count {

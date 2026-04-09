@@ -1,26 +1,34 @@
-import { fetchUser } from '@automattic/api-core';
-import { queryClient, siteByIdQuery } from '@automattic/api-queries';
 import { hydrateRoot } from 'react-dom/client';
-import { AUTH_QUERY_KEY } from '../auth';
+import type { OmnibarEvents } from './omnibar-events';
 
-export default async function loadOmnibar() {
+export default async function loadOmnibar( events: OmnibarEvents ) {
 	const container = document.getElementById( 'wpcom-omnibar' );
 	if ( ! container ) {
 		return;
 	}
 
-	const [ { InterimOmnibar }, user ] = await Promise.all( [
-		import( './interim-omnibar' ),
-		queryClient.fetchQuery( { queryKey: AUTH_QUERY_KEY, queryFn: fetchUser } ),
-	] );
+	container.addEventListener( 'click', ( event ) => {
+		if ( event.metaKey || event.ctrlKey || event.shiftKey || event.altKey ) {
+			return;
+		}
 
-	// Hydrate the server-rendered omnibar with null props first to match SSR output,
-	// then immediately re-render with real data.
-	const root = hydrateRoot( container, <InterimOmnibar user={ null } site={ null } /> );
+		const anchor = ( event.target as Element ).closest< HTMLAnchorElement >( 'a[href]' );
+		if ( ! anchor || anchor.target === '_blank' ) {
+			return;
+		}
 
-	const site = user.primary_blog
-		? await queryClient.fetchQuery( siteByIdQuery( user.primary_blog ) )
-		: null;
+		const href = anchor.getAttribute( 'href' );
+		if ( ! href ) {
+			return;
+		}
 
-	root.render( <InterimOmnibar user={ user } site={ site } /> );
+		events.linkClick.emit( { href, event } );
+	} );
+
+	const { InterimOmnibarContainer } = await import( './interim-omnibar-container' );
+
+	hydrateRoot(
+		container,
+		<InterimOmnibarContainer initialUser={ window.currentUser ?? null } events={ events } />
+	);
 }

@@ -2,8 +2,8 @@ import { userSettingsQuery, userSettingsMutation } from '@automattic/api-queries
 import config from '@automattic/calypso-config';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { Icon, __experimentalVStack as VStack, ToggleControl } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
-import { seen, pencil, notAllowed, connection } from '@wordpress/icons';
+import { __, sprintf } from '@wordpress/i18n';
+import { seen, pencil, notAllowed, connection, globe } from '@wordpress/icons';
 import {
 	getAccountMcpAbilities,
 	getDisabledSiteIds,
@@ -39,9 +39,13 @@ function getReadBadge( tools: Array< [ string, McpAbility ] > ) {
 		return { text: __( 'All enabled' ), intent: 'success' as const };
 	}
 	if ( enabledCount === 0 ) {
-		return { text: __( 'None enabled' ), intent: 'warning' as const };
+		return { text: __( 'None enabled' ) };
 	}
-	return { text: `${ enabledCount } of ${ tools.length }` };
+	return {
+		/* translators: %1$d is the number of enabled tools, %2$d is the total number of tools */
+		text: sprintf( __( '%1$d of %2$d enabled' ), enabledCount, tools.length ),
+		intent: 'info' as const,
+	};
 }
 
 function getWriteBadge( tools: Array< [ string, McpAbility ] > ) {
@@ -55,7 +59,11 @@ function getWriteBadge( tools: Array< [ string, McpAbility ] > ) {
 	if ( enabledCount === 0 ) {
 		return { text: __( 'Disabled' ) };
 	}
-	return { text: `${ enabledCount } of ${ tools.length }` };
+	return {
+		/* translators: %1$d is the number of enabled tools, %2$d is the total number of tools */
+		text: sprintf( __( '%1$d of %2$d enabled' ), enabledCount, tools.length ),
+		intent: 'info' as const,
+	};
 }
 
 function McpComponent() {
@@ -79,6 +87,11 @@ function McpComponent() {
 		exceptionCount > 0
 			? { text: `${ exceptionCount } exceptions`, intent: 'warning' as const }
 			: { text: __( 'No exceptions' ) };
+
+	const addSiteBadge =
+		enabledSiteIds.length > 0
+			? { text: `${ enabledSiteIds.length } sites`, intent: 'success' as const }
+			: { text: __( 'No sites added' ) };
 
 	const readBadge = getReadBadge( readTools );
 	const writeBadge = getWriteBadge( writeTools );
@@ -130,7 +143,7 @@ function McpComponent() {
 				<PageHeader
 					title={ __( 'AI and MCP' ) }
 					description={ __(
-						'Allow external AI agents to access your WordPress.com account and sites via MCP.'
+						'Control how AI assistants interact with your WordPress.com account and sites.'
 					) }
 					prefix={ <Breadcrumbs length={ 2 } /> }
 				/>
@@ -181,6 +194,18 @@ function McpComponent() {
 								title={ __( 'Site exceptions' ) }
 								decoration={ <Icon icon={ notAllowed } size={ 24 } /> }
 								badges={ [ exceptionBadge ] }
+							/>
+						</>
+					) }
+					{ ! mcpEnabled && (
+						<>
+							<CardDivider />
+							<RouterLinkSummaryButton
+								to="/me/preferences/mcp/mcp-sites"
+								density="medium"
+								title={ __( 'Add to specific sites' ) }
+								decoration={ <Icon icon={ globe } size={ 24 } /> }
+								badges={ [ addSiteBadge ] }
 							/>
 						</>
 					) }

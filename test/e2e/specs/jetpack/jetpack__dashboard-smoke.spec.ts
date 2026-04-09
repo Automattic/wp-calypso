@@ -64,7 +64,6 @@ test.describe(
 				'Sharing',
 				'Discussion',
 				'Traffic',
-				'Newsletter',
 			] as SettingsTabs[] ) {
 				await test.step( `Click on ${ tab } tab in the Settings view`, async () => {
 					await jetpackDashboardPage.clickTab( { view: 'Settings', tab } );
