@@ -2,6 +2,7 @@ import type { SubscriptionBillPeriodValue } from '../constants';
 
 export interface SitePlansPageContext {
 	header_message?: string;
+	page_title?: string;
 }
 
 export interface PlanCardFeature {

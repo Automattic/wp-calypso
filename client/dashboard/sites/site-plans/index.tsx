@@ -609,20 +609,21 @@ export default function SitePlans() {
 	return (
 		<PageLayout
 			header={
-				<PageHeader
-					actions={
+				<div className="site-plans__header-wrap">
+					<PageHeader title={ pageContext?.page_title } />
+					{ pageContext?.header_message && (
+						<Text className="site-plans__subheader">{ pageContext.header_message }</Text>
+					) }
+					<div className="site-plans__interval-selector-wrap">
 						<BillingIntervalSelector
 							billingInterval={ billingInterval }
 							availableBillPeriods={ availableBillPeriods }
 							onChange={ setBillingInterval }
 						/>
-					}
-				/>
+					</div>
+				</div>
 			}
 		>
-			{ pageContext?.header_message && (
-				<Text className="site-plans__subheader">{ pageContext.header_message }</Text>
-			) }
 			<div
 				className="site-plans__grid"
 				style={ { '--plan-count': shownPlans.length } as React.CSSProperties }

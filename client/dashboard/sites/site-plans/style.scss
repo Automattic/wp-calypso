@@ -1,10 +1,21 @@
+.site-plans__header-wrap {
+	max-width: 660px;
+	margin-inline: auto;
+	width: 100%;
+}
+
 .site-plans__subheader {
 	display: block;
-	margin-block-end: 24px;
+	margin-block-start: 8px;
 	color: var( --wp-components-color-gray-600, #757575 );
 }
 
+.site-plans__interval-selector-wrap {
+	margin-block-start: 48px;
+}
+
 .site-plans__grid {
+	margin-block-start: 16px;
 	display: grid;
 	grid-template-columns: repeat( auto-fit, minmax( 240px, 1fr ) );
 	gap: 0;
