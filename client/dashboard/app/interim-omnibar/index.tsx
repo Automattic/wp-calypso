@@ -26,11 +26,14 @@ export default async function loadOmnibar( events: OmnibarEvents ) {
 		events.linkClick.emit( { href, event } );
 	} );
 
-	// Apply the user's locale to `defaultI18n` before hydrating, so the first
-	// client render matches the SSR-translated HTML.
-	await loadUserLocale( getUserLanguage( window.currentUser ?? null ) );
-
-	const { InterimOmnibarContainer } = await import( './interim-omnibar-container' );
+	// Apply the user's locale to `defaultI18n` before hydrating so the first
+	// client render matches the SSR-translated HTML. `getUserLanguage` mirrors
+	// the server's `setUpLoggedInRoute` derivation so both sides agree on the
+	// effective locale (including honoring `use_fallback_for_incomplete_languages`).
+	const [ { InterimOmnibarContainer } ] = await Promise.all( [
+		import( './interim-omnibar-container' ),
+		loadUserLocale( getUserLanguage( window.currentUser ?? null ) ),
+	] );
 
 	hydrateRoot(
 		container,

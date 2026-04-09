@@ -1,14 +1,40 @@
+import { isTranslatedIncompletely } from '@automattic/i18n-utils';
 import { defaultI18n, type LocaleData } from '@wordpress/i18n';
 import type { User } from '@automattic/api-core';
 
 const dataPromises = new Map< string, Promise< LocaleData > >();
 let appliedLanguage: string | null = null;
 
+/**
+ * Derives the effective locale slug for a user. Mirrors the server's
+ * `setUpLoggedInRoute` logic so SSR and client produce the same value:
+ *
+ *   - Falls back to English when the user has
+ *     `use_fallback_for_incomplete_languages` enabled and their language
+ *     is not fully translated.
+ *   - Otherwise returns the bootstrap-provided `localeSlug` (preferred),
+ *     or the REST `locale_variant` / `language` for non-bootstrapped
+ *     sessions.
+ *
+ * The server's incompleteness check uses `localeVariant || localeSlug`,
+ * so we mirror that here.
+ */
 export function getUserLanguage( user: User | null | undefined ): string {
 	if ( ! user ) {
 		return 'en';
 	}
-	return user.localeVariant || user.localeSlug || user.locale_variant || user.language || 'en';
+
+	const slug = user.localeSlug || user.locale_variant || user.language;
+	if ( ! slug ) {
+		return 'en';
+	}
+
+	const checkAgainst = user.localeVariant || slug;
+	if ( user.use_fallback_for_incomplete_languages && isTranslatedIncompletely( checkAgainst ) ) {
+		return 'en';
+	}
+
+	return slug;
 }
 
 /**
