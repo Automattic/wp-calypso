@@ -25,7 +25,7 @@
 		"ciab/custom-branding": true,
 		"cookie-banner": false,
 		"rum-tracking/logstash": true,
-		"dashboard/omnibar": false,
+		"dashboard/omnibar": true,
 		"dashboard/wp-beta-program": false,
 		"dashboard/v2": false,
 		"dev/auth-helper": true,
