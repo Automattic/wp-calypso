@@ -54,40 +54,79 @@ async function downloadLanguagesRevions() {
 }
 
 // Request and write language files
+//
+const sleep = ( ms ) => new Promise( ( resolve ) => setTimeout( resolve, ms ) );
+
+async function fetchJsonWithRetry( url, { retries = 3, baseDelayMs = 500 } = {} ) {
+	let lastError;
+
+	for ( let attempt = 0; attempt <= retries; attempt++ ) {
+		try {
+			const response = await fetch( url );
+
+			if ( response.ok ) {
+				return await response.json();
+			}
+
+			const retryable = response.status === 429 || response.status >= 500;
+			const error = Object.assign( new Error( `Request failed with HTTP ${ response.status }.` ), {
+				retryable,
+			} );
+
+			throw error;
+		} catch ( error ) {
+			lastError = error;
+
+			const isLastAttempt = attempt === retries;
+			if ( isLastAttempt || error.retryable === false ) {
+				throw lastError;
+			}
+
+			const delay = baseDelayMs * 2 ** attempt;
+			console.warn( `Request failed (${ error.message }). Retrying in ${ delay }ms...` );
+
+			await sleep( delay );
+		}
+	}
+
+	throw lastError;
+}
+
 async function downloadLanguages( languageRevisions ) {
 	return await Promise.all(
 		langSlugs.map( async ( langSlug ) => {
 			const filename = `${ langSlug }-v1.1.json`;
-
 			const output = `${ OUTPUT_PATH }/${ filename }`;
 			const translationUrl = `${ LANGUAGES_BASE_URL }/${ filename }`;
 
 			console.log( `Downloading ${ filename }...` );
 
-			const response = await fetch( translationUrl );
-			if ( response.status !== 200 ) {
-				// Script should exit with an error if any of the
-				// translation download jobs for a language included
-				// in language revisions file fails.
-				// Failed downloads for languages that are not
-				// included in language revisions file could be skipped
-				// without interrupting the script.
+			try {
+				const json = await fetchJsonWithRetry( translationUrl, {
+					retries: 3,
+					baseDelayMs: 500,
+				} );
+
+				await writeFile( output, JSON.stringify( json ) );
+
+				console.log( `Downloading ${ filename } complete.` );
+
+				return { langSlug, languageTranslations: json };
+			} catch ( error ) {
 				if ( langSlug in languageRevisions ) {
-					throw new Error( `Failed to download translations for "${ langSlug }".` );
+					console.log( `Failed to download translations for "${ langSlug }" after retries.` );
+					console.log( translationUrl );
+
+					throw new Error( `Failed to download translations for "${ langSlug }" after retries.` );
 				}
+
+				console.warn( `Skipping optional language "${ langSlug }": ${ error.message }` );
+
 				return { langSlug, failed: true };
 			}
-
-			const json = await response.json();
-			await writeFile( output, JSON.stringify( json ) );
-
-			console.log( `Downloading ${ filename } complete.` );
-
-			return { langSlug, languageTranslations: json };
 		} )
 	);
 }
-
 // Split language translations into chunks
 function buildLanguageChunks( downloadedLanguages, languageRevisions ) {
 	console.log( 'Building language chunks...' );
