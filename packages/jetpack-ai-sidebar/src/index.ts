@@ -562,18 +562,7 @@ export function getEmptyViewSuggestions(): Array< {
 // ---------- useSuggestions ----------
 
 /** Block types that support text editing suggestions. */
-const TEXT_BLOCK_TYPES = [
-	'core/paragraph',
-	'core/heading',
-	'core/list',
-	'core/quote',
-	'core/pullquote',
-	'core/verse',
-	'core/preformatted',
-	'core/freeform',
-	'core/list-item',
-	'core/table',
-];
+const TEXT_BLOCK_TYPES = [ 'core/paragraph', 'core/heading' ];
 
 /** Block types that support image-related suggestions. */
 const IMAGE_BLOCK_TYPES = [ 'core/image', 'core/media-text', 'core/cover', 'core/gallery' ];
