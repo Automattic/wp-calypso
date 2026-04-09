@@ -27,7 +27,6 @@ interface ImageStudioData {
 	environment?: 'wp-admin' | 'ciab-admin';
 }
 
-declare const imageStudioData: ImageStudioData | undefined;
 declare global {
 	interface Window {
 		__bigSkyImageStudioInitialized?: boolean;
@@ -49,6 +48,9 @@ function getCapabilities( environment?: ImageStudioData[ 'environment' ] ) {
 	};
 }
 
+// Computed once at module load — environment is a static global that never changes.
+const capabilities = getCapabilities( window.imageStudioData?.environment );
+
 /**
  * Initialize the Image Studio integration for WordPress Media Library.
  * Uses WordPress data store patterns instead of DOM manipulation.
@@ -62,7 +64,7 @@ function initImageStudioIntegration(): void {
 	window.__bigSkyImageStudioInitialized = true;
 
 	// Validate required globals
-	if ( typeof imageStudioData === 'undefined' || ! imageStudioData?.enabled ) {
+	if ( ! window.imageStudioData?.enabled ) {
 		return;
 	}
 
@@ -100,8 +102,6 @@ function ImageStudioIntegration(): JSX.Element | null {
 		} ),
 		[]
 	);
-
-	const capabilities = getCapabilities( imageStudioData?.environment );
 
 	// Navigation is only available when opened from media library
 	const isMediaLibraryContext = window.pagenow === 'upload';
