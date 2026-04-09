@@ -93,20 +93,22 @@ describe( '<SiteOverview>', () => {
 			.reply( 200, { max_storage_bytes: 1073741824, storage_used_bytes: 100000000 } );
 
 		nock( 'https://public-api.wordpress.com' )
-			.get( `/rest/v1.3/sites/${ site.ID }/plans` )
+			.get( `/rest/v1.4/sites/${ site.ID }/plans` )
 			.query( true )
 			.reply( 200, {
-				1: {
-					product_id: 1,
-					product_slug: 'business-bundle',
-					product_name_short: 'Business',
-					current_plan: true,
-					original_price: { amount: 0 },
-					raw_price: 0,
-					raw_price_integer: 0,
-					raw_discount: 0,
-					raw_discount_integer: 0,
-					cost_overrides: [],
+				plans: {
+					1: {
+						product_id: 1,
+						product_slug: 'business-bundle',
+						product_name_short: 'Business',
+						current_plan: true,
+						original_price: { amount: 0 },
+						raw_price: 0,
+						raw_price_integer: 0,
+						raw_discount: 0,
+						raw_discount_integer: 0,
+						cost_overrides: [],
+					},
 				},
 			} );
 
