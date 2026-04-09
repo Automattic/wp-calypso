@@ -204,6 +204,10 @@
 	color: var( --wp-components-color-gray-600, #757575 );
 }
 
+.site-plans__comparison-feature-title {
+	max-width: 450px;
+}
+
 .site-plans__comparison-check-cell {
 	width: 100px;
 	text-align: center;

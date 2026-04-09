@@ -498,7 +498,7 @@ function PlanComparisonSection( {
 										! feature.billing_periods.includes( billPeriod );
 									return (
 										<tr key={ feature.key }>
-											<td>{ feature.title }</td>
+											<td className="site-plans__comparison-feature-title">{ feature.title }</td>
 											{ planColumns.map( ( col ) => (
 												<td key={ col.tierKey } className="site-plans__comparison-check-cell">
 													<TierCell
