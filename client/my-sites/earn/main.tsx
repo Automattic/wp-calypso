@@ -10,6 +10,7 @@ import Main from 'calypso/components/main';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
+import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import AdsSettings from 'calypso/my-sites/earn/ads/form-settings';
@@ -264,6 +265,7 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 			<DocumentHead
 				title={ layoutTitles[ section as keyof typeof layoutTitles ] ?? translate( 'Monetize' ) }
 			/>
+			{ isJetpackPlatform && <SidebarNavigation /> }
 			<Page
 				hasPadding
 				showSidebarToggle={ false }
