@@ -1,7 +1,5 @@
-import { queryClient, siteByIdQuery } from '@automattic/api-queries';
 import { hydrateRoot } from 'react-dom/client';
-import { AUTH_QUERY_KEY, initializeCurrentUser } from '../auth';
-import type { OmnibarEvents } from './click-handlers';
+import type { OmnibarEvents } from './omnibar-events';
 
 export default async function loadOmnibar( events: OmnibarEvents ) {
 	const container = document.getElementById( 'wpcom-omnibar' );
@@ -27,40 +25,10 @@ export default async function loadOmnibar( events: OmnibarEvents ) {
 		events.linkClick.emit( { href, event } );
 	} );
 
-	const [ { InterimOmnibar }, user ] = await Promise.all( [
-		import( './interim-omnibar' ),
-		queryClient.fetchQuery( { queryKey: AUTH_QUERY_KEY, queryFn: initializeCurrentUser } ),
-	] );
+	const { InterimOmnibarContainer } = await import( './interim-omnibar-container' );
 
-	// Hydrate matching the SSR output: user when bootstrapped, null when not.
-	// Suppress recoverable hydration errors caused by Suspense boundaries inside
-	// MasterbarLoggedIn that renderToString cannot serialize.
-	const root = hydrateRoot(
+	hydrateRoot(
 		container,
-		<InterimOmnibar
-			user={ window.currentUser ?? null }
-			site={ null }
-			currentRoute={ window.location.pathname }
-		/>,
-
-		{ onRecoverableError() {} }
-	);
-
-	const site = user.primary_blog
-		? await queryClient.fetchQuery( siteByIdQuery( user.primary_blog ) )
-		: null;
-
-	root.render(
-		<InterimOmnibar
-			user={ user }
-			site={ site }
-			currentRoute={ window.location.pathname }
-			onToggleMenu={ () => events.mobileMenu.emit() }
-			onToggleNotifications={ () =>
-				events.notifications.emit(
-					container.querySelector< HTMLElement >( '.masterbar-notifications' )
-				)
-			}
-		/>
+		<InterimOmnibarContainer initialUser={ window.currentUser ?? null } events={ events } />
 	);
 }

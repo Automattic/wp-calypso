@@ -1,0 +1,31 @@
+.is-reader-page {
+	.user-top-sites {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 12px;
+		margin-top: 16px;
+
+		.skeleton {
+			@include placeholder( --color-neutral-5 );
+			width: 110px;
+			height: 30px;
+			border-radius: 2px;
+		}
+	}
+
+	.user-top-site {
+		display: flex;
+		background-color: #f0f0f0;
+		align-items: center;
+		gap: 8px;
+		border-radius: 2px;
+		padding: 6px 8px;
+		font-size: rem( 13px );
+		color: var( --studio-gray-90 );
+		text-decoration: none;
+
+		p {
+			margin: 0;
+		}
+	}
+}

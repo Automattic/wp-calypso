@@ -116,6 +116,17 @@ describe( 'withImageStudioToolbarButton', () => {
 		jest.clearAllMocks();
 	} );
 
+	it( 'should return a component compatible with class extends', () => {
+		const Wrapped = withImageStudioToolbarButton( BlockEdit );
+
+		// This must not throw — plugins like AMP use `class extends`
+		// on editor filter results.
+		expect( () => {
+			class TestExtend extends ( Wrapped as any ) {}
+			return TestExtend;
+		} ).not.toThrow();
+	} );
+
 	it( 'should always render BlockEdit regardless of button visibility', () => {
 		renderToolbar( { name: 'core/paragraph' } );
 		expect( screen.getByTestId( 'block-edit' ) ).toBeInTheDocument();

@@ -5,11 +5,21 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { UserProfileData } from 'calypso/lib/user/user';
+import useUserSitesQuery from 'calypso/reader/user-profile/queries/use-user-sites-query';
 import UserProfileHeader from '../index';
 
 jest.mock( 'calypso/blocks/user-avatar', () => ( { user }: { user: UserProfileData } ) => (
 	<div data-testid="user-avatar" data-user-id={ user?.ID }></div>
 ) );
+
+jest.mock( 'calypso/blocks/site-icon', () => ( {
+	SiteIcon: ( { siteId }: { siteId: number } ) => <span data-testid={ `site-icon-${ siteId }` } />,
+} ) );
+
+jest.mock( 'calypso/reader/user-profile/queries/use-user-sites-query', () => ( {
+	__esModule: true,
+	default: jest.fn(),
+} ) );
 
 jest.mock(
 	'calypso/components/section-nav/tabs',
@@ -29,6 +39,12 @@ describe( 'UserProfileHeader', () => {
 		bio: undefined,
 	};
 
+	jest.mocked( useUserSitesQuery ).mockReturnValue( {
+		isFetching: true,
+		data: undefined,
+		error: null,
+	} as ReturnType< typeof useUserSitesQuery > );
+
 	beforeEach( () => {
 		jest.clearAllMocks();
 	} );
@@ -46,6 +62,43 @@ describe( 'UserProfileHeader', () => {
 
 		const displayNameEl = screen.getByText( defaultUser.display_name ?? '' );
 		expect( displayNameEl ).toBeVisible();
+	} );
+
+	test( 'should render top sites of the user', () => {
+		const mockSites = [
+			{
+				ID: 1,
+				name: 'Site 1',
+				feed_ID: 101,
+				URL: 'https://site1.com',
+				icon: { img: 'https://site1.com/icon.png' },
+				subscribers_count: 50,
+			},
+			{
+				ID: 2,
+				name: 'Site 2',
+				feed_ID: 102,
+				URL: 'https://site2.com',
+				icon: { img: 'https://site2.com/icon.png' },
+				subscribers_count: 30,
+			},
+		];
+
+		jest.mocked( useUserSitesQuery ).mockReturnValue( {
+			isFetching: false,
+			data: { sites: mockSites, total: mockSites.length, primary_site_id: 1 },
+			error: null,
+		} as ReturnType< typeof useUserSitesQuery > );
+
+		render( <UserProfileHeader user={ defaultUser } view="posts" /> );
+
+		mockSites.forEach( ( site ) => {
+			const siteNameEl = screen.getByText( site.name );
+			expect( siteNameEl ).toBeVisible();
+
+			const siteIcon = screen.getByTestId( `site-icon-${ site.ID }` );
+			expect( siteIcon ).toBeVisible();
+		} );
 	} );
 
 	test( 'should render navigation tabs with Posts, Sites, Lists, and Recommended Blogs options', () => {

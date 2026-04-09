@@ -34,7 +34,8 @@ type StripeUpiTransactionRequest = {
 export default async function upiProcessor(
 	submitData: unknown,
 	options: PaymentProcessorOptions,
-	translate: LocalizeProps[ 'translate' ]
+	translate: LocalizeProps[ 'translate' ],
+	fromExternalCheckout?: boolean
 ): Promise< PaymentProcessorResponse > {
 	if ( ! isValidTransactionData( submitData ) ) {
 		throw new Error( 'Required purchase data is missing' );
@@ -64,6 +65,7 @@ export default async function upiProcessor(
 	const successUrl = addUrlToPendingPageRedirect( thankYouUrl, {
 		siteSlug,
 		fromSiteSlug,
+		fromExternalCheckout,
 		urlType: 'absolute',
 	} );
 	const cancelUrl = `${ origin }${ pathname }${ search }`;
@@ -121,6 +123,7 @@ export default async function upiProcessor(
 			const pendingPageUrl = addUrlToPendingPageRedirect( thankYouUrl, {
 				siteSlug,
 				fromSiteSlug,
+				fromExternalCheckout,
 				orderId: response.order_id,
 				urlType: 'absolute',
 			} );

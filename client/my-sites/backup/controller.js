@@ -17,13 +17,13 @@ import { setFilter } from 'calypso/state/activity-log/actions';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
+import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import BackupContentsPage from './backup-contents-page';
 import { FileBrowserProvider } from './backup-contents-page/file-browser/file-browser-context';
 import BackupUpsell from './backup-upsell';
 import BackupCloneFlow from './clone-flow';
 import BackupsPage from './main';
-import MultisiteNoBackupPlanSwitch from './multisite-no-backup-plan-switch';
 import BackupRewindFlow, { RewindFlowPurpose } from './rewind-flow';
 import WPCOMBackupUpsell from './wpcom-backup-upsell';
 import WpcomBackupUpsellPlaceholder from './wpcom-backup-upsell-placeholder';
@@ -110,19 +110,15 @@ export function showUnavailableForVaultPressSites( context, next ) {
 }
 
 export function showUnavailableForMultisites( context, next ) {
-	debug( 'controller: showUnavailableForMultisites', context.params );
-
-	// Only show "Multisite not supported" card if the multisite does not already own a Backup subscription.
-	// https://href.li/?https://wp.me/pbuNQi-1jg
-	const message = isJetpackCloud() ? (
-		<BackupUpsell reason="multisite_not_supported" />
-	) : (
-		<WPCOMBackupUpsell reason="multisite_not_supported" />
-	);
-
-	context.primary = (
-		<MultisiteNoBackupPlanSwitch trueComponent={ message } falseComponent={ context.primary } />
-	);
+	const state = context.store.getState();
+	const siteId = getSelectedSiteId( state );
+	if ( isJetpackSiteMultiSite( state, siteId ) ) {
+		context.primary = isJetpackCloud() ? (
+			<BackupUpsell reason="multisite_not_supported" />
+		) : (
+			<WPCOMBackupUpsell reason="multisite_not_supported" />
+		);
+	}
 
 	next();
 }

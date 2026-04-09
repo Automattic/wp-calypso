@@ -1,6 +1,7 @@
 import { HostingFeatures, DotcomFeatures, LogType } from '@automattic/api-core';
 import {
 	bigSkyPluginQuery,
+	userSettingsQuery,
 	codeDeploymentQuery,
 	codeDeploymentsQuery,
 	githubInstallationsQuery,
@@ -35,10 +36,13 @@ import {
 	siteSshAccessStatusQuery,
 	siteStaticFile404SettingQuery,
 	siteWordPressVersionQuery,
+	userPreferenceOptimisticMutation,
 	queryClient,
+	wpOrgCoreVersionQuery,
 } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import { isSupportSession } from '@automattic/calypso-support-session';
+import { MutationObserver } from '@tanstack/react-query';
 import {
 	createLazyRoute,
 	createRoute,
@@ -53,6 +57,7 @@ import {
 	canViewHundredYearPlanSettings,
 	canViewWordPressSettings,
 } from '../../sites/features';
+import { shouldLoadWpVersionNotice } from '../../sites/overview/wp-version-notice';
 import {
 	getActivityLogHiddenGroups,
 	hasHostingFeature,
@@ -166,6 +171,20 @@ export const siteRoute = createRoute( {
 
 		return { site };
 	},
+	onEnter: async ( { loaderData } ) => {
+		const siteId = loaderData?.site?.ID;
+		if ( ! siteId ) {
+			return;
+		}
+		const prefs = await queryClient.ensureQueryData( rawUserPreferencesQuery() );
+		const recentSites = prefs?.recentSites ?? [];
+		if ( siteId !== recentSites[ 0 ] ) {
+			const updated = [ ...new Set( [ siteId, ...recentSites ] ) ].slice( 0, 5 );
+			new MutationObserver( queryClient, userPreferenceOptimisticMutation( 'recentSites' ) ).mutate(
+				updated
+			);
+		}
+	},
 	errorComponent: lazyRouteComponent( () => import( '../../sites/site/error' ) ),
 } ).lazy( () =>
 	import( '../../sites/site' ).then( ( d ) =>
@@ -199,11 +218,20 @@ export const siteOverviewRoute = createRoute( {
 				queryClient.ensureQueryData( purchaseQuery( currentPlan.id ) );
 			}
 		}
-		// Ensure storage specifically is loaded because the warning notice can cause a layout shift
-		await Promise.all( [
-			queryClient.ensureQueryData( siteMediaStorageQuery( site.ID ) ),
+
+		const [ preferences ] = await Promise.all( [
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+
+			// Ensure storage specifically is loaded because the warning notice can cause a layout shift
+			queryClient.ensureQueryData( siteMediaStorageQuery( site.ID ) ),
 		] );
+
+		if ( shouldLoadWpVersionNotice( site, preferences ) ) {
+			await Promise.all( [
+				queryClient.ensureQueryData( siteWordPressVersionQuery( site.ID ) ),
+				queryClient.ensureQueryData( wpOrgCoreVersionQuery( 'beta' ) ),
+			] );
+		}
 	},
 } ).lazy( () =>
 	import( '../../sites/overview' ).then( ( d ) =>
@@ -657,12 +685,113 @@ export const siteSettingsAIToolsRoute = createRoute( {
 	},
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		await queryClient.ensureQueryData( bigSkyPluginQuery( site.ID ) );
+		await Promise.all( [
+			queryClient.ensureQueryData( bigSkyPluginQuery( site.ID ) ),
+			queryClient.ensureQueryData( userSettingsQuery() ),
+		] );
 	},
+} );
+
+export const siteSettingsAIToolsIndexRoute = createRoute( {
+	getParentRoute: () => siteSettingsAIToolsRoute,
+	path: '/',
 } ).lazy( () =>
 	import( '../../sites/settings-ai-tools' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-ai-tools' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+function redirectSiteAiToolsSubpageToHub( {
+	cause,
+	params: { siteSlug },
+}: {
+	cause: string;
+	params: { siteSlug: string };
+} ) {
+	if ( cause === 'preload' ) {
+		return;
+	}
+	if ( ! isEnabled( 'mcp-settings' ) ) {
+		throw redirect( {
+			to: siteSettingsAIToolsIndexRoute.fullPath,
+			params: { siteSlug },
+		} );
+	}
+}
+
+export const siteSettingsAIToolsReadRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Read' ),
+			},
+		],
+	} ),
+	getParentRoute: () => siteSettingsAIToolsRoute,
+	path: 'read',
+	beforeLoad: redirectSiteAiToolsSubpageToHub,
+	loader: async ( { params: { siteSlug } } ) => {
+		await Promise.all( [
+			queryClient.ensureQueryData( userSettingsQuery() ),
+			queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) ),
+		] );
+	},
+} ).lazy( () =>
+	import( '../../sites/settings-ai-tools/read' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-ai-tools-read' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const siteSettingsAIToolsWriteRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Write' ),
+			},
+		],
+	} ),
+	getParentRoute: () => siteSettingsAIToolsRoute,
+	path: 'write',
+	beforeLoad: redirectSiteAiToolsSubpageToHub,
+	loader: async ( { params: { siteSlug } } ) => {
+		await Promise.all( [
+			queryClient.ensureQueryData( userSettingsQuery() ),
+			queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) ),
+		] );
+	},
+} ).lazy( () =>
+	import( '../../sites/settings-ai-tools/write' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-ai-tools-write' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const siteSettingsAIToolsSetupRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Connect AI agent' ),
+			},
+		],
+	} ),
+	getParentRoute: () => siteSettingsAIToolsRoute,
+	path: 'setup',
+	beforeLoad: redirectSiteAiToolsSubpageToHub,
+	loader: async ( { params: { siteSlug } } ) => {
+		await Promise.all( [
+			queryClient.ensureQueryData( userSettingsQuery() ),
+			queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) ),
+		] );
+	},
+} ).lazy( () =>
+	import( '../../sites/settings-ai-tools/setup' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-ai-tools-setup' )( {
+			component: d.default,
 		} )
 	)
 );
@@ -1453,7 +1582,12 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 
 		// General
 		siteSettingsSiteVisibilityRoute,
-		siteSettingsAIToolsRoute,
+		siteSettingsAIToolsRoute.addChildren( [
+			siteSettingsAIToolsIndexRoute,
+			siteSettingsAIToolsReadRoute,
+			siteSettingsAIToolsWriteRoute,
+			siteSettingsAIToolsSetupRoute,
+		] ),
 		siteSettingsSubscriptionGiftingRoute,
 		siteSettingsAgencyRoute,
 		siteSettingsHundredYearPlanRoute,
