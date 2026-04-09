@@ -14,6 +14,7 @@ import {
 import { __, sprintf } from '@wordpress/i18n';
 import { check, lineSolid } from '@wordpress/icons';
 import React, { Fragment, useState } from 'react';
+import { useHelpCenter } from '../../app/help-center';
 import { siteRoute } from '../../app/router/sites';
 import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
@@ -259,6 +260,7 @@ function PlanCardCTA( {
 	tierRank: number;
 	currentTierRank: number;
 } ) {
+	const { setNewMessagingChat } = useHelpCenter();
 	const isCurrentPlan =
 		sitePlan.current_plan === true || ( currentTierRank >= 0 && tierRank === currentTierRank );
 
@@ -283,8 +285,26 @@ function PlanCardCTA( {
 		);
 	}
 
-	// Higher-tier plan is current; downgrade not offered
-	return null;
+	return (
+		<Button
+			variant="secondary"
+			className="site-plans__cta-button"
+			onClick={ () =>
+				setNewMessagingChat( {
+					initialMessage: sprintf(
+						/* translators: %s is the plan name, e.g. "Starter" */
+						__( 'I would like to downgrade my plan to %s.' ),
+						planCardName
+					),
+					section: 'plans',
+					siteUrl: site.URL,
+					siteId: String( site.ID ),
+				} )
+			}
+		>
+			{ __( 'Downgrade' ) }
+		</Button>
+	);
 }
 
 function PlanCard( {
