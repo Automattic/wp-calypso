@@ -34,17 +34,20 @@ const siteVisibilityRoute = createRoute( {
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-site-visibility' ).then( ( d ) =>
 		createLazyRoute( 'site-visibility' )( {
-			component: () => {
-				// eslint-disable-next-line react-hooks/rules-of-hooks
+			component: function CalypsoDashboardSiteVisibilitySettings() {
 				const siteId = useSelector( getSelectedSiteId );
-				// eslint-disable-next-line react-hooks/rules-of-hooks
 				const dispatch = useDispatch();
+
+				if ( ! siteId ) {
+					throw new Error( 'No site ID selected. This is a bug.' );
+				}
 
 				return (
 					<d.default
 						siteSlug={ siteRoute.useParams().siteSlug }
 						onSiteLaunch={ () => {
-							dispatch( requestSite( siteId! ) );
+							// The site launch celebration modal reads the site data from Redux, not React Query, so we need to refetch it.
+							dispatch( requestSite( siteId ) );
 						} }
 					/>
 				);
