@@ -93,8 +93,8 @@ export const isTestModeEnvironment = () => {
 		return false;
 	}
 
-	// Test environments are identified by env_id ending with development, horizon, or stage
-	const testEnvironmentSuffixes = [ 'development', 'horizon', 'stage' ];
+	// Test environments are identified by env_id ending with development, horizon, stage, or staging
+	const testEnvironmentSuffixes = [ 'development', 'horizon', 'stage', 'staging' ];
 	const isTestEnvironment = testEnvironmentSuffixes.some(
 		( suffix ) => envId === suffix || envId?.endsWith( `-${ suffix }` )
 	);
