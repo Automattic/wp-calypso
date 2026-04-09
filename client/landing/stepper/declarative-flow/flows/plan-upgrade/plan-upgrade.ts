@@ -111,6 +111,7 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 		const query = useQuery();
 		const siteSlug = query.get( 'siteSlug' );
 		const redirectTo = query.get( 'redirect_to' );
+		const isExpiredDowngrade = query.get( 'expired_downgrade' ) === 'true';
 
 		const submit: SubmitHandler< typeof initialize > = ( submittedStep ) => {
 			const { slug, providedDependencies } = submittedStep;
@@ -129,7 +130,7 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 							// Note: Not using goToCheckout utility because it hardcodes signup=1
 							// Checkout validates redirect_to to prevent open redirects
 							const postCheckoutUrl = isExpiredDowngrade
-								? addQueryArgs( dashboardLink( '/me/purchases' ), { plan_changed: 'true' } )
+								? `/checkout/${ encodeURIComponent( siteSlug ) }/plan-changed`
 								: redirectTo || dashboardLink( '/sites' );
 
 							const finalUrl = addQueryArgs( checkoutUrl, {

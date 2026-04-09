@@ -356,6 +356,10 @@ function UpgradeActionButton( { purchase }: { purchase: Purchase } ) {
 
 function ReSubscribeActionButton( { purchase }: { purchase: Purchase } ) {
 	const { recordTracksEvent } = useAnalytics();
+	const { data: site } = useQuery( {
+		...siteBySlugQuery( purchase.site_slug ?? '' ),
+		enabled: Boolean( purchase.site_slug ),
+	} );
 	const isPurchaseExpiredOrGracePeriod =
 		isExpired( purchase ) || isInExpirationGracePeriod( purchase );
 
@@ -363,9 +367,17 @@ function ReSubscribeActionButton( { purchase }: { purchase: Purchase } ) {
 		return null;
 	}
 
+	// Exclude sites with a pending migration — checkout fails for these.
+	const migrationStatus = site?.site_migration?.migration_status ?? '';
+	const isMigrating =
+		migrationStatus.startsWith( 'migration-pending' ) ||
+		migrationStatus.startsWith( 'migration-started' ) ||
+		migrationStatus.startsWith( 'migration-in-progress' );
+
 	const isEligibleForDowngrade =
 		config.isEnabled( 'plans/expired-plan-downgrade' ) &&
 		purchase.is_plan &&
+		! isMigrating &&
 		/^(personal|premium|business)-bundle/.test( purchase.product_slug );
 
 	if ( isEligibleForDowngrade ) {
@@ -391,9 +403,14 @@ function ReSubscribeActionButton( { purchase }: { purchase: Purchase } ) {
 		);
 	}
 
+	// Only show "Pick another plan" for plan purchases, not domains, migrating sites, or other products.
+	if ( ! purchase.is_plan || isMigrating ) {
+		return null;
+	}
+
 	return (
 		<ActionList.ActionItem
-			title={ purchase.is_plan ? __( 'Pick another plan' ) : __( 'Pick another product' ) }
+			title={ __( 'Pick another plan' ) }
 			description={ __( 'Find the best fit for your needs.' ) }
 			actions={
 				<Button
@@ -407,7 +424,7 @@ function ReSubscribeActionButton( { purchase }: { purchase: Purchase } ) {
 						window.location.href = getExpiredNewPlanUrl( purchase );
 					} }
 				>
-					{ purchase.is_plan ? __( 'Pick another plan' ) : __( 'Pick another product' ) }
+					{ __( 'Pick another plan' ) }
 				</Button>
 			}
 		/>

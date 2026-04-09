@@ -572,13 +572,29 @@ function getLoggedInPlansAction( {
 		);
 	}
 
-	// Expired plan: show "Downgrade" for lower-tier plans.
+	// Expired plan: show "Downgrade" (secondary) for lower-tier, "Upgrade" (primary) for higher-tier.
 	if (
 		isPlanExpired &&
 		sitePlanSlug &&
 		getPlanClass( planSlug ) !== getPlanClass( sitePlanSlug )
 	) {
-		return createLoggedInPlansAction( translate( 'Downgrade', { context: 'verb' } ), 'secondary' );
+		const tierOrder: Record< string, number > = {
+			'is-free-plan': 0,
+			'is-personal-plan': 1,
+			'is-premium-plan': 2,
+			'is-business-plan': 3,
+			'is-ecommerce-plan': 4,
+		};
+		const currentTier = tierOrder[ getPlanClass( sitePlanSlug ) ] ?? 0;
+		const targetTier = tierOrder[ getPlanClass( planSlug ) ] ?? 0;
+
+		if ( targetTier < currentTier ) {
+			return createLoggedInPlansAction(
+				translate( 'Downgrade', { context: 'verb' } ),
+				'secondary'
+			);
+		}
+		return createLoggedInPlansAction( translate( 'Upgrade', { context: 'verb' } ) );
 	}
 
 	/**

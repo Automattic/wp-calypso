@@ -495,6 +495,27 @@ const PlansFeaturesMain = ( {
 	} );
 
 	// we need only the visible ones for features grid (these should extend into plans-ui data store selectors)
+	// When the plan is expired, suppress all badges except "Your plan" to reduce visual noise
+	// on the downgrade selection page. Only Premium ("Popular") and Business ("Best for devs")
+	// get badges by default, so we only need to override those.
+	const expiredPlanHighlightOverrides = useMemo( () => {
+		if ( ! isPlanExpired ) {
+			return undefined;
+		}
+		// Build null overrides for all Premium and Business slug variants.
+		const suppressedSlugs = [
+			'value_bundle',
+			'value_bundle_monthly',
+			'value_bundle-2y',
+			'value_bundle-3y',
+			'business-bundle',
+			'business-bundle-monthly',
+			'business-bundle-2y',
+			'business-bundle-3y',
+		] as const;
+		return Object.fromEntries( suppressedSlugs.map( ( slug ) => [ slug, null ] ) );
+	}, [ isPlanExpired ] );
+
 	const gridPlansForFeaturesGridRaw = useGridPlansForFeaturesGrid( {
 		allFeaturesList: getFeaturesList(),
 		coupon,
@@ -512,6 +533,7 @@ const PlansFeaturesMain = ( {
 		siteId,
 		useCheckPlanAvailabilityForPurchase,
 		useFreeTrialPlanSlugs,
+		highlightLabelOverrides: expiredPlanHighlightOverrides,
 		isDomainOnlySite,
 		term,
 		reflectStorageSelectionInPlanPrices: true,
