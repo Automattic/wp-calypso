@@ -133,6 +133,7 @@ export function LaunchForm( { site, onSiteLaunch }: { site: Site; onSiteLaunch?:
 						site={ site }
 						tracksContext="site_settings"
 						onSiteLaunch={ onSiteLaunch }
+						backTo={ `/sites/${ site.slug }` }
 					/>
 				}
 			>
