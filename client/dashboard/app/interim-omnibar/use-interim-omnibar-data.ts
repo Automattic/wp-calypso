@@ -60,6 +60,8 @@ export function useInterimOmnibarData( {
 			user: initialUser,
 			site: null,
 			currentRoute: window.location.pathname,
+			onToggleMenu,
+			onToggleNotifications,
 		};
 	}
 
