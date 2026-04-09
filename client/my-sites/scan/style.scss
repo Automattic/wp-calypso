@@ -10,9 +10,13 @@ body.is-section-scan {
 		gap: 24px;
 	}
 
-	.scan__content > .card {
+}
 
-		justify-content: center;
+// Card on both Calypso and A4A needs flex
+body.is-section-scan,
+.hosting-dashboard-item-view__content {
+
+	.scan__content > .card {
 
 		.security-icon {
 			margin: 0 auto;
@@ -23,6 +27,7 @@ body.is-section-scan {
 			display: flex;
 			gap: 24px;
 			align-items: flex-start;
+			justify-content: center;
 
 			.scan__header {
 				flex-shrink: 0;

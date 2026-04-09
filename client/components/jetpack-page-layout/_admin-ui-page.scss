@@ -55,6 +55,12 @@
 			}
 
 			.main {
+
+				margin-block: 0;
+
+				@include break-medium {	
+					margin-block: var(--wpds-dimension-padding-2xl);
+				}
 				// Only fill the fixed-primary column when the page renders an
 				// admin-ui <Page> inside <Main>. Pages that render content
 				// directly in <Main> (e.g. wideLayout views without a <Page>
@@ -62,7 +68,6 @@
 				// JP Cloud code paths of Scan/Backup/AL v2) keep .main's
 				// default `margin: auto` + `max-width` centering.
 				&:has(> .admin-ui-page) {
-					margin: 0;
 					flex-grow: 1;
 					position: relative;
 				}
@@ -75,7 +80,6 @@
 				// horizontal `margin: auto` still handles wideLayout
 				// centering.
 				&:not(:has(> .admin-ui-page)) {
-					margin-block: 0;
 					margin-inline: auto;
 					flex-grow: 1;
 				}
