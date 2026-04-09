@@ -40,7 +40,7 @@ export function useInterimOmnibarData( {
 		enabled: hydrated,
 	} );
 
-	const { data: recentSites } = useQuery( {
+	const { data: recentSites, isLoading: isRecentSitesLoading } = useQuery( {
 		...userPreferenceQuery( 'recentSites' ),
 		enabled: hydrated,
 	} );
@@ -49,7 +49,7 @@ export function useInterimOmnibarData( {
 
 	const { data: site = null } = useQuery( {
 		...siteByIdQuery( siteId ?? 0 ),
-		enabled: hydrated && !! siteId,
+		enabled: hydrated && !! siteId && ! isRecentSitesLoading,
 	} );
 
 	const onToggleMenu = useCallback( () => events.mobileMenu.emit(), [ events ] );
