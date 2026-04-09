@@ -1,13 +1,15 @@
 import { EscalationButton } from '../components/escalation-button';
+import NextStepButton from '../components/next-step-button';
 import UnavailableToolMessage from '../components/unavailable-tool-message';
 import { isEditorPage } from './is-editor-page';
 import type { GetChatComponent } from './load-external-providers';
-import type { UIMessage } from '@automattic/agenttic-client';
+import type { UIMessage, UseAgentChatReturn } from '@automattic/agenttic-client';
 
 interface Options {
 	messages: UIMessage[];
 	getChatComponent?: GetChatComponent;
 	currentPostId?: number;
+	onSubmit: UseAgentChatReturn[ 'onSubmit' ];
 }
 
 /**
@@ -17,6 +19,7 @@ export default function convertToolMessagesToComponents( {
 	messages,
 	getChatComponent,
 	currentPostId,
+	onSubmit,
 }: Options ): UIMessage[] {
 	return messages.flatMap( ( message, index, array ) => {
 		const firstContentText = message.content?.[ 0 ]?.text;
@@ -103,8 +106,7 @@ export default function convertToolMessagesToComponents( {
 			};
 
 			// Only show `next-step-button` when the component is active and has follow-up tasks.
-			const NextStepButton = getChatComponent?.( 'next-step-button' );
-			if ( isStale || ! followUpTasks || ! NextStepButton ) {
+			if ( isStale || ! followUpTasks ) {
 				return [ componentMessage ];
 			}
 
@@ -119,7 +121,8 @@ export default function convertToolMessagesToComponents( {
 					content: [
 						{
 							type: 'component' as const,
-							component: NextStepButton,
+							component: NextStepButton as React.ComponentType,
+							componentProps: { onMoveToNextStep: onSubmit },
 						},
 					],
 				},

@@ -7,27 +7,11 @@ import { MasterbarLoggedIn } from 'calypso/layout/masterbar/logged-in';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { logout } from '../auth';
-import { omnibarEvents } from './click-handlers';
+import { omnibarEvents } from './omnibar-events';
+import { createOmnibarStore } from './omnibar-store';
 import type { User, Site } from '@automattic/api-core';
 
 const noop = () => {};
-
-type StoreType = Parameters< typeof ReduxProvider >[ 0 ][ 'store' ];
-
-// Fake Redux store so child components using connect() (e.g. Notifications) don't crash.
-// Intercepts specific actions so the dashboard can handle them.
-function createOmnibarStore( onToggleNotifications?: () => void ): StoreType {
-	return {
-		getState: () => ( { ui: { section: false, isNotificationsOpen: false } } ),
-		dispatch: ( action: { type: string } ) => {
-			if ( action.type === 'NOTIFICATIONS_PANEL_TOGGLE' ) {
-				onToggleNotifications?.();
-			}
-			return action;
-		},
-		subscribe: () => () => {},
-	} as unknown as StoreType;
-}
 
 // Separate query client for the legacy masterbar so its internal queries
 // (e.g. useGetDomainsQuery in MasterbarLaunchButton) don't pollute the Dashboard cache.

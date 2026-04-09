@@ -1,9 +1,9 @@
 // @ts-nocheck - TODO: Fix TypeScript issues
 import * as AnonId from '../anon-id';
 
-const mockLogError = jest.fn();
+const mockLogInfo = jest.fn();
 jest.mock( '../log-error', () => ( {
-	logError: ( ...args ) => mockLogError( ...args ),
+	logInfo: ( ...args ) => mockLogInfo( ...args ),
 } ) );
 
 jest.mock( 'calypso/lib/wp' );
@@ -37,14 +37,14 @@ beforeEach( () => {
 } );
 
 describe( 'initializeAnonId', () => {
-	it( 'should return null and log error when run under SSR', async () => {
+	it( 'should return null and log info when run under SSR', async () => {
 		setSsrContext();
 		await expect( AnonId.initializeAnonId() ).resolves.toBe( null );
-		expect( mockLogError.mock.calls ).toMatchInlineSnapshot( `
+		expect( mockLogInfo.mock.calls ).toMatchInlineSnapshot( `
 		Array [
 		  Array [
 		    Object {
-		      "message": "Trying to initialize anonId outside of a browser context.",
+		      "message": "Skipping anonId initialization outside of a browser context.",
 		    },
 		  ],
 		]
@@ -144,14 +144,14 @@ describe( 'initializeAnonId', () => {
 } );
 
 describe( 'getAnonId', () => {
-	it( 'should return null and log in SSR', async () => {
+	it( 'should return null and log info in SSR', async () => {
 		setSsrContext();
 		expect( await AnonId.getAnonId() ).toBeNull();
-		expect( mockLogError.mock.calls ).toMatchInlineSnapshot( `
+		expect( mockLogInfo.mock.calls ).toMatchInlineSnapshot( `
 		Array [
 		  Array [
 		    Object {
-		      "message": "Trying to getAnonId in non browser context.",
+		      "message": "Skipping getAnonId in non-browser context.",
 		    },
 		  ],
 		]

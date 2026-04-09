@@ -28,9 +28,11 @@ import './full-screen-launchpad.scss';
 export const FullScreenLaunchpad = ( {
 	onClose,
 	onSiteLaunch,
+	beforeSiteLaunchRefetch,
 }: {
 	onClose: () => void;
 	onSiteLaunch: () => void;
+	beforeSiteLaunchRefetch: () => void;
 } ): JSX.Element | null => {
 	const dispatch = useDispatch();
 	const { __ } = useI18n();
@@ -71,6 +73,7 @@ export const FullScreenLaunchpad = ( {
 
 					await refetch?.();
 					await layout?.refetch();
+					beforeSiteLaunchRefetch();
 					await dispatch( requestSite( siteId ) );
 					recordTracksEvent( 'calypso_full_screen_launchpad_launch_site', {
 						context: launchpadContext,

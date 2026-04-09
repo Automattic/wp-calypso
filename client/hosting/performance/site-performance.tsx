@@ -159,11 +159,7 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 		( state ) => getRequest( state, launchSite( siteId ) )?.isLoading ?? false
 	);
 
-	const siteIsLaunched = useSelector(
-		( state ) => getRequest( state, launchSite( siteId ) )?.hasLoaded ?? false
-	);
-
-	const { isFetchedAfterMount: isDomainsFetched } = useQuery( {
+	useQuery( {
 		...domainsQuery(),
 		select: ( data ) => data.filter( ( domain ) => domain.blog_id === site?.ID ),
 	} );
@@ -172,22 +168,6 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 		'calypso_standardized_site_launch_gating'
 	);
 	const experimentVariant = experimentData?.variationName;
-
-	const [ isCelebrationModalOpen, setIsCelebrationModalOpen ] = useState( false );
-
-	useEffect( () => {
-		if (
-			experimentVariant === 'gated_site_launch' &&
-			new URLSearchParams( window.location.search ).has( 'celebrateLaunch' )
-		) {
-			setIsCelebrationModalOpen( true );
-		}
-
-		if ( experimentVariant === 'ungated_site_launch' && siteIsLaunched && isSitePublic ) {
-			setIsCelebrationModalOpen( true );
-		}
-	}, [ siteIsLaunched, isSitePublic, experimentVariant ] );
-
 	const retestPage = () => {
 		recordTracksEvent( 'calypso_performance_profiler_test_again_click' );
 		performance.mark( 'test-started' );
@@ -228,8 +208,16 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 			return;
 		}
 
-		// For both ungated and control: use Redux action
-		// (ungated variant will show celebration modal via useEffect)
+		if ( experimentVariant === 'ungated_site_launch' ) {
+			// Add celebrateLaunch param immediately so it's ready when site status updates
+			const url = new URL( window.location.href );
+			url.searchParams.set( 'celebrateLaunch', 'true' );
+			window.history.replaceState( {}, '', url.toString() );
+			dispatch( launchSite( siteId! ) );
+			return;
+		}
+
+		// default / control variant
 		dispatch( launchSite( siteId! ) );
 	};
 
@@ -403,12 +391,9 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 					) }
 				</>
 			) }
-			{ isCelebrationModalOpen && site && isDomainsFetched && (
+			{ site && (
 				<AnalyticsProvider client={ analyticsClient }>
-					<SiteLaunchCelebrationModal
-						site={ site }
-						onClose={ () => setIsCelebrationModalOpen( false ) }
-					/>
+					<SiteLaunchCelebrationModal site={ site } />
 				</AnalyticsProvider>
 			) }
 		</div>
