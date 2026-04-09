@@ -1,6 +1,6 @@
 import { DotcomPlans } from '@automattic/api-core';
-import { siteLaunchMutation } from '@automattic/api-queries';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { siteBySlugQuery, siteLaunchMutation } from '@automattic/api-queries';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
@@ -32,6 +32,7 @@ export function SiteLaunchButton( {
 		onLaunch: () => void;
 	} >;
 } ) {
+	const queryClient = useQueryClient();
 	const { queries } = useAppContext();
 	const { recordTracksEvent } = useAnalytics();
 	const { data: domains = [], isLoading } = useQuery( {
@@ -94,6 +95,7 @@ export function SiteLaunchButton( {
 		handleTracksEvent();
 		launchMutation.mutate( undefined, {
 			onSuccess: () => {
+				queryClient.invalidateQueries( siteBySlugQuery( site.slug ) );
 				// Add query param to trigger celebration modal in parent component
 				window.history.replaceState(
 					null,
