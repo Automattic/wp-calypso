@@ -1,3 +1,5 @@
+import { ensureBlackboxLoginScript } from 'calypso/blocks/login/utils/ensure-blackbox-login-script';
+
 /**
  * Retrieve a Blackbox bot-detection session ID, if the library is loaded.
  *
@@ -22,6 +24,8 @@ async function runBlackboxCollect() {
 }
 
 export async function getBlackboxSessionId() {
+	await ensureBlackboxLoginScript();
+
 	if ( ! window.Blackbox?.getSessionId ) {
 		return undefined;
 	}

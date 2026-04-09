@@ -1,6 +1,11 @@
 /**
  * @jest-environment jsdom
  */
+
+jest.mock( 'calypso/blocks/login/utils/ensure-blackbox-login-script', () => ( {
+	ensureBlackboxLoginScript: jest.fn( () => Promise.resolve() ),
+} ) );
+
 import { getBlackboxSessionId } from '../get-blackbox-session-id';
 
 describe( 'getBlackboxSessionId', () => {

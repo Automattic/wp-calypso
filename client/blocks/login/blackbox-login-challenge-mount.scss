@@ -1,0 +1,7 @@
+.login__form-blackbox-challenge {
+	width: 100%;
+
+	&:not( :empty ) {
+		margin-bottom: 12px;
+	}
+}

@@ -15,6 +15,7 @@ import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import { FormDivider } from 'calypso/blocks/authentication';
 import JetpackConnectSiteOnly from 'calypso/blocks/jetpack-connect-site-only';
+import BlackboxLoginChallengeMount from 'calypso/blocks/login/blackbox-login-challenge-mount';
 import LoginSubmitButton from 'calypso/blocks/login/login-submit-button';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -852,6 +853,7 @@ export class LoginForm extends Component {
 						{ shouldRenderForgotPasswordLink && this.renderLostPasswordLink() }
 
 						<div className="login__form-action">
+							<BlackboxLoginChallengeMount />
 							<LoginSubmitButton
 								isWoo={ isWoo }
 								isSendingEmail={ isSendingEmail }
