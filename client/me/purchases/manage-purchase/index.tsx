@@ -581,16 +581,9 @@ class ManagePurchase extends Component<
 		}
 
 		// For expired plans eligible for self-serve downgrade, use the simpler plan-upgrade flow.
-		// Exclude sites with a pending migration — checkout fails for these.
-		const migrationStatus = this.props.site?.site_migration?.status ?? '';
-		const isMigrating =
-			migrationStatus.startsWith( 'migration-pending' ) ||
-			migrationStatus.startsWith( 'migration-started' ) ||
-			migrationStatus.startsWith( 'migration-in-progress' );
 		if (
 			config.isEnabled( 'plans/expired-plan-downgrade' ) &&
 			purchase &&
-			! isMigrating &&
 			( isExpired( purchase ) || isInExpirationGracePeriod( purchase ) ) &&
 			isPlan( purchase ) &&
 			( isPersonal( purchase ) || isPremium( purchase ) || isBusiness( purchase ) )
