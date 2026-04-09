@@ -143,6 +143,7 @@ export const useCreateZendeskConversation = () => {
 					createdAt: Date.now(),
 					...( activeInteractionId ? { supportInteractionId: activeInteractionId } : {} ),
 					...( chatId ? { odieChatId: chatId } : {} ),
+					'zen:ticket_field:48062253321620': userFieldFlowName || '',
 				},
 			} );
 		} catch ( error ) {
