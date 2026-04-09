@@ -35,7 +35,7 @@ export function BetaProgramNotice( { site, wpVersion }: BetaProgramNoticeProps )
 				  )
 				: createInterpolateElement(
 						__(
-							'If you notice anything unexpected, <support>let us know</support>. Your feedback helps shape WordPress. You can switch back to the stable release anytime. A <backup>backup of your site</backup> is available if you ever need it.'
+							'If you notice anything unexpected, <support>let us know</support>. Your feedback helps shape WordPress. You can switch back to the stable release or <backup>restore your backup</backup> anytime.'
 						),
 						{
 							support: <Button variant="link" onClick={ () => setShowHelpCenter( true ) } />,
