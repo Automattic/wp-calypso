@@ -1,10 +1,13 @@
 // eslint-disable-next-line import/no-nodejs-modules
 import { readFile } from 'fs/promises';
-import { defaultI18n } from '@wordpress/i18n';
+import { defaultI18n, type LocaleData } from '@wordpress/i18n';
+import { type Request, type RequestHandler } from 'express';
 import getAssetFilePath from 'calypso/lib/get-asset-file-path';
 import { getLanguageFile } from 'calypso/lib/i18n-utils/switch-locale';
 
-const localeDataCache = new Map();
+const localeDataCache = new Map< string, LocaleData >();
+
+type CalypsoRequest = Request & { context?: { lang?: string } };
 
 /**
  * Populates `defaultI18n` with the bootstrapped user's locale for the duration
@@ -12,15 +15,15 @@ const localeDataCache = new Map();
  * emits translated strings. Loads from `public/languages/` when available and
  * falls back to the Calypso CDN otherwise.
  */
-export function loadDashboardLocaleData( req, res, next ) {
-	const language = req.context?.lang;
+export const loadDashboardLocaleData: RequestHandler = ( req, res, next ) => {
+	const language = ( req as CalypsoRequest ).context?.lang;
 	if ( ! language || language === 'en' ) {
 		defaultI18n.resetLocaleData();
 		next();
 		return;
 	}
 
-	const apply = ( data ) => {
+	const apply = ( data: LocaleData ) => {
 		defaultI18n.setLocaleData( data );
 		next();
 	};
@@ -32,8 +35,8 @@ export function loadDashboardLocaleData( req, res, next ) {
 	}
 
 	readFile( getAssetFilePath( `languages/${ language }-v1.1.json` ), 'utf-8' )
-		.then( ( raw ) => JSON.parse( raw ) )
-		.catch( () => getLanguageFile( language ) )
+		.then( ( raw ) => JSON.parse( raw ) as LocaleData )
+		.catch( () => getLanguageFile( language ) as Promise< LocaleData > )
 		.then( ( data ) => {
 			localeDataCache.set( language, data );
 			apply( data );
@@ -42,4 +45,4 @@ export function loadDashboardLocaleData( req, res, next ) {
 			defaultI18n.resetLocaleData();
 			next();
 		} );
-}
+};
