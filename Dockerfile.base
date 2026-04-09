@@ -27,7 +27,7 @@ ENV COMMIT_SHA $commit_sha
 
 ## If you're testing running on a mac architecture, you may need to add the following
 ## line to make lzma work:
-## RUN apt-get update && apt-get install -y python3 make g++ bzip2 && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y python3 make g++ bzip2 && rm -rf /var/lib/apt/lists/*
 
 COPY . .
 

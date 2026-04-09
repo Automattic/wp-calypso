@@ -19,6 +19,7 @@ ENV SKIP_CALYPSO_POSTINSTALL=true
 ENV SKIP_CALYPSO_PACKAGE_BUILDS=true
 ENV IS_CI=true
 
+RUN apt-get update && apt-get install -y python3 make g++ bzip2 && rm -rf /var/lib/apt/lists/*
 # Build a "base" layer
 #
 # This layer should never change unless env-config.sh

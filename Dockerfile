@@ -44,7 +44,7 @@ ENV CONTAINER=docker
 ENV IS_CI=true
 
 # For Sentry uploads
-RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y python3 make g++ bzip2 && rm -rf /var/lib/apt/lists/*
 # Build a "base" layer
 #
 # This layer should never change unless env-config.sh
@@ -113,6 +113,7 @@ WORKDIR /calypso
 #
 # This layer is populated with up-to-date files from
 # Calypso development.
+RUN apt-get update && apt-get install -y python3 make g++ bzip2 && rm -rf /var/lib/apt/lists/*
 COPY . /calypso/
 RUN yarn run build-packages:web
 
