@@ -1,5 +1,9 @@
 import type { SubscriptionBillPeriodValue } from '../constants';
 
+export interface SitePlansPageContext {
+	header_message?: string;
+}
+
 export interface PlanCardFeature {
 	text: string;
 	available: boolean;

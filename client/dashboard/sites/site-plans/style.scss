@@ -1,3 +1,9 @@
+.site-plans__subheader {
+	display: block;
+	margin-block-end: 24px;
+	color: var( --wp-components-color-gray-600, #757575 );
+}
+
 .site-plans__grid {
 	display: grid;
 	grid-template-columns: repeat( auto-fit, minmax( 240px, 1fr ) );

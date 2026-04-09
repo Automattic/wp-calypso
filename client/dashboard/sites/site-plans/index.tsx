@@ -529,10 +529,12 @@ export default function SitePlans() {
 		SubscriptionBillPeriod.PLAN_ANNUAL_PERIOD
 	);
 
-	const { data: sitePlans } = useQuery( {
+	const { data: sitePlansData } = useQuery( {
 		...sitePlansQuery( site.ID ),
 		enabled: !! site.ID,
 	} );
+	const sitePlans = sitePlansData?.plans;
+	const pageContext = sitePlansData?.pageContext;
 	// Index sitePlans by product_id for O(1) sibling lookups
 	const plansByProductId = new Map< number, SiteContextualPlan >(
 		( sitePlans ?? [] ).map( ( p ) => [ p.product_id, p ] )
@@ -618,6 +620,9 @@ export default function SitePlans() {
 				/>
 			}
 		>
+			{ pageContext?.header_message && (
+				<Text className="site-plans__subheader">{ pageContext.header_message }</Text>
+			) }
 			<div
 				className="site-plans__grid"
 				style={ { '--plan-count': shownPlans.length } as React.CSSProperties }

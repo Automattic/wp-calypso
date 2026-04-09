@@ -1,7 +1,7 @@
 import { toNumber } from '../normalize-utils';
 import { wpcom } from '../wpcom-fetcher';
 import type { SubscriptionBillPeriodValue } from '../constants';
-import type { SiteContextualPlan } from './types';
+import type { SiteContextualPlan, SitePlansPageContext } from './types';
 
 /**
  * Normalizes a product object to ensure all number fields are actual numbers.
@@ -54,13 +54,19 @@ function normalizeSitePlan( plan: SiteContextualPlan ): SiteContextualPlan {
 export async function fetchSitePlans(
 	siteId: number,
 	coupon?: string
-): Promise< SiteContextualPlan[] > {
+): Promise< { plans: SiteContextualPlan[]; pageContext?: SitePlansPageContext } > {
 	const params = new URLSearchParams();
 	coupon && params.append( 'coupon_code', coupon );
-	const plansByProductId: Record< string, SiteContextualPlan > = await wpcom.req.get( {
+	const response: {
+		plans: Record< string, SiteContextualPlan >;
+		page_context?: SitePlansPageContext;
+	} = await wpcom.req.get( {
 		path: `/sites/${ siteId }/plans`,
-		apiVersion: '1.3',
+		apiVersion: '1.4',
 		query: params.toString(),
 	} );
-	return Object.values( plansByProductId ).map( normalizeSitePlan );
+	return {
+		plans: Object.values( response.plans ).map( normalizeSitePlan ),
+		pageContext: response.page_context,
+	};
 }
