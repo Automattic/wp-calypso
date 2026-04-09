@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1.20
+# syntax=docker/dockerfile:1
 
 ARG cache_mode=seed
 ARG node_version=22.9.0
