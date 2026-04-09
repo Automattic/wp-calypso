@@ -14,7 +14,6 @@ export const DollyCard = () => {
 		useTelegramBotWidget( {
 			trackAuthCallback: ( user: TelegramAuthPayload ) =>
 				recordTracksEvent( 'wpcom_dolly_agent_auth_callback', {
-					channel: 'telegram',
 					has_username: user?.username ? 1 : 0,
 					auth_date: user?.auth_date,
 				} ),
