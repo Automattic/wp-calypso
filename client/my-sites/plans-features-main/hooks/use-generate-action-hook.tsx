@@ -572,27 +572,13 @@ function getLoggedInPlansAction( {
 		);
 	}
 
-	// Expired plan: show "Get {plan}" for lower-tier plans (fresh purchase, not a "downgrade").
+	// Expired plan: show "Downgrade" for lower-tier plans.
 	if (
 		isPlanExpired &&
 		sitePlanSlug &&
 		getPlanClass( planSlug ) !== getPlanClass( sitePlanSlug )
 	) {
-		return createLoggedInPlansAction(
-			translate( 'Get %(plan)s', {
-				textOnly: true,
-				args: {
-					plan: planTitle ?? '',
-				},
-			} ),
-			'primary',
-			translate( 'Get %(plan)s plan', {
-				textOnly: true,
-				args: {
-					plan: planTitle ?? '',
-				},
-			} )
-		);
+		return createLoggedInPlansAction( translate( 'Downgrade', { context: 'verb' } ), 'secondary' );
 	}
 
 	/**

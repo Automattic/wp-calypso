@@ -43,7 +43,7 @@ import type { Purchase } from '@automattic/api-core';
 
 export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 	const { user } = useAuth();
-	const { refunded } = purchaseSettingsRoute.useSearch();
+	const { refunded, plan_changed } = purchaseSettingsRoute.useSearch();
 	const { data: purchaseAttachedTo } = useQuery( {
 		...purchaseQuery( purchase.attached_to_purchase_id ?? 0 ),
 		enabled: Boolean( purchase.attached_to_purchase_id ),
@@ -69,6 +69,19 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 			} }
 		/>
 	) : null;
+
+	// Show success notice after a plan change (e.g. expired-plan downgrade checkout).
+	if ( plan_changed ) {
+		return (
+			<Notice variant="success">
+				{ sprintf(
+					// translators: %s is the name of the plan, e.g. "WordPress.com Personal"
+					__( 'Your plan has been updated to %s.' ),
+					purchase.product_name
+				) }
+			</Notice>
+		);
+	}
 
 	if ( purchase.async_pending_payment_block_is_set ) {
 		return <AsyncPendingNotice />;

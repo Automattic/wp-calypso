@@ -232,11 +232,15 @@ export const purchasesIndexRoute = createRoute( {
 		queryClient.prefetchQuery( userPaymentMethodsQuery( {} ) );
 		queryClient.prefetchQuery( allSitesQuery() );
 	},
-	validateSearch: ( search ): { page?: number; search?: string; site?: number } => {
+	validateSearch: (
+		search
+	): { page?: number; search?: string; site?: number; plan_changed?: true } => {
+		const isPlanChanged = search.plan_changed === true || search.plan_changed === 'true';
 		return {
 			page: typeof search.page === 'number' ? search.page : undefined,
 			search: typeof search.search === 'string' ? search.search : undefined,
 			site: typeof search.site === 'number' ? search.site : undefined,
+			...( isPlanChanged ? { plan_changed: true } : {} ),
 		};
 	},
 } ).lazy( () =>
@@ -263,9 +267,13 @@ export const purchaseSettingsRoute = createRoute( {
 		};
 	},
 	path: '$purchaseId',
-	validateSearch: ( search ): { refunded?: true } => {
+	validateSearch: ( search ): { refunded?: true; plan_changed?: true } => {
 		const isRefunded = search.refunded === true || search.refunded === 'true';
-		return isRefunded ? { refunded: true } : {};
+		const isPlanChanged = search.plan_changed === true || search.plan_changed === 'true';
+		return {
+			...( isRefunded ? { refunded: true } : {} ),
+			...( isPlanChanged ? { plan_changed: true } : {} ),
+		};
 	},
 } );
 

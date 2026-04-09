@@ -14,6 +14,7 @@ import { usePersistentView } from '../../app/hooks/use-persistent-view';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { purchasesRoute } from '../../app/router/me';
 import { DataViews, DataViewsCard } from '../../components/dataviews';
+import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { adjustDataViewFieldsForWidth } from '../../utils/dataviews-width';
@@ -88,6 +89,9 @@ export default function PurchasesList() {
 				/>
 			}
 		>
+			{ currentSearchParams.plan_changed && (
+				<Notice variant="success">{ __( 'Your plan has been updated.' ) }</Notice>
+			) }
 			<div ref={ ref }>
 				<DataViewsCard className="purchases-list__wrapper">
 					{ ! isLoading && <PerformanceTrackerStop /> }
