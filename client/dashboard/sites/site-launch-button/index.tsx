@@ -48,7 +48,7 @@ export function SiteLaunchButton( {
 		},
 	} );
 	const [ isLaunchModalOpen, setIsLaunchModalOpen ] = useState( false );
-	const [ , experimentData ] = useExperiment( 'calypso_standardized_site_launch_gating' );
+	const [ , experimentData ] = useExperiment( 'calypso_standardized_site_launch_gating_202603_v1' );
 	const experimentAssignment = experimentData?.variationName;
 
 	const isSitePlanHostingTrial = site.plan?.product_slug === DotcomPlans.HOSTING_TRIAL_MONTHLY;
@@ -149,7 +149,7 @@ export function SiteLaunchButton( {
 	}
 
 	// Handle gated_site_launch variant: redirect to the standardized launch flow
-	if ( experimentAssignment === 'gated_site_launch' ) {
+	if ( experimentAssignment === 'semi_gated_site_launch' ) {
 		return <Button { ...commonProps } onClick={ handleGatedLaunchClick } />;
 	}
 
