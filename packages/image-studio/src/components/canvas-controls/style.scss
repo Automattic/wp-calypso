@@ -69,6 +69,19 @@
 	.agents-manager-feedback-input {
 		width: 300px;
 
+		.components-base-control__label {
+			color: var( --color-muted-foreground );
+		}
+
+		.components-button.is-tertiary {
+			color: var( --color-muted-foreground );
+
+			&:hover,
+			&:focus {
+				color: var( --color-foreground );
+			}
+		}
+
 		&,
 		&__inner {
 			margin: 0;

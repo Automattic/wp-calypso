@@ -13,6 +13,7 @@ export {
 export type { TrackingPrefs } from './utils/get-tracking-prefs';
 export { default as setTrackingPrefs } from './utils/set-tracking-prefs';
 export { default as isRegionInStsZone } from './utils/is-region-in-sts-zone';
+export { isRegionInCcpaZone, isCountryInGdprZone } from './utils/geo-privacy';
 export {
 	recordTracksPageView,
 	recordTracksPageViewWithPageParams,

@@ -4,9 +4,12 @@ import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { lifesaver } from '@wordpress/icons';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
-import type { SummaryButtonBadgeProps } from '@automattic/components/src/summary-button/types';
+import type {
+	Density,
+	SummaryButtonBadgeProps,
+} from '@automattic/components/src/summary-button/types';
 
-export default function SecurityAccountRecoverySummary() {
+export default function SecurityAccountRecoverySummary( { density }: { density?: Density } ) {
 	const { data: accountRecovery } = useSuspenseQuery( accountRecoveryQuery() );
 
 	const { email, email_validated, phone, phone_validated } = accountRecovery;
@@ -39,6 +42,7 @@ export default function SecurityAccountRecoverySummary() {
 
 	return (
 		<RouterLinkSummaryButton
+			density={ density }
 			to="/me/security/account-recovery"
 			title={ __( 'Account recovery' ) }
 			description={ __( 'Set up recovery email & SMS number.' ) }

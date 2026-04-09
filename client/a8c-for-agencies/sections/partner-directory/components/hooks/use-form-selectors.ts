@@ -97,7 +97,6 @@ export function useFormSelectors() {
 		online_store_digital: translate( 'Online stores – digital products / subscriptions only' ),
 		content_media: translate( 'Content / blog / media' ),
 		nonprofit_community: translate( 'Non-profit / community' ),
-		other: translate( 'Other' ),
 	};
 
 	const availableCompanySizes: Record< string, string > = {
@@ -115,47 +114,46 @@ export function useFormSelectors() {
 	};
 
 	const availableHostingEnvironments: Record< string, string > = {
-		wordpress_com: 'WordPress.com',
-		shared_or_managed_host: translate(
+		wpcom: 'WordPress.com',
+		shared_managed: translate(
 			'Common shared / managed hosting (SiteGround, Bluehost, GoDaddy, etc.)'
 		),
-		managed_wp_host: translate( 'Managed WordPress hosts (WP Engine, Kinsta, etc.)' ),
-		unknown: translate( 'Not sure / unknown' ),
+		managed_wp_hosts: translate( 'Managed WordPress hosts (WP Engine, Kinsta, etc.)' ),
+		self_hosted: translate( 'Self-hosted / custom hosting' ),
 	};
 
 	const availableMigrationPlatforms: Record< string, string > = {
-		wordpress: 'WordPress',
-		woocommerce: 'WooCommerce',
 		shopify: 'Shopify',
 		wix: 'Wix',
 		squarespace: 'Squarespace',
 		webflow: 'Webflow',
 		custom: translate( 'Other website builders / e-commerce platforms / custom platforms' ),
-		other: translate( 'Other platform' ),
 	};
 
 	const availableStoreComplexities: Record< string, string > = {
-		custom_pricing_catalogs: translate(
-			'Custom pricing or catalogs (e.g., by customer type or region)'
-		),
-		erp_inventory_pricing_integrations: translate( 'ERP, inventory, or pricing integrations' ),
-		customer_portals_gated_access: translate( 'Customer portals or gated access' ),
+		custom_pricing: translate( 'Custom pricing or catalogs (e.g., by customer type or region)' ),
+		erp_integrations: translate( 'ERP, inventory, or pricing integrations' ),
+		customer_portals: translate( 'Customer portals or gated access' ),
 		subscriptions_memberships: translate( 'Subscriptions or memberships' ),
 		traffic_spikes: translate( 'Traffic spikes (e.g., product drops, seasonal events)' ),
-		simple_catalog: translate( 'None of the above / Simple catalog' ),
+		none_simple: translate( 'None of the above / Simple catalog' ),
 	};
 
 	const availableProjectTypes: Record< string, string > = {
-		new_wordpress_site: translate(
+		new_website: translate(
 			'Create new WordPress websites (from scratch or moving from another platform)'
 		),
-		new_woocommerce_store: translate( 'Set up new WooCommerce online stores' ),
-		improve_or_redesign: translate( 'Improve or redesign existing WordPress / WooCommerce sites' ),
-		support_and_fixes: translate( 'Fix problems / maintenance / ongoing support' ),
+		redesign: translate( 'Improve or redesign existing WordPress / WooCommerce sites' ),
+		new_woocommerce: translate( 'Set up new WooCommerce online stores' ),
+		migration: translate( 'Migrate sites or stores to WordPress / WooCommerce' ),
+		fix_ongoing_support: translate( 'Fix problems / maintenance / ongoing support' ),
 		performance_optimization: translate( 'Performance / speed optimization' ),
 		custom_features: translate(
 			'Custom features (e.g. custom checkout, memberships, integrations with other tools)'
 		),
+		seo_marketing: translate( 'SEO and marketing support' ),
+		security_audit: translate( 'Security audits and hardening' ),
+		accessibility: translate( 'Accessibility improvements and audits' ),
 	};
 
 	const availableServiceLevels: Record< string, string > = {
@@ -167,15 +165,15 @@ export function useFormSelectors() {
 	const availableTimingPreferences: Record< string, string > = {
 		right_away: translate( 'Can start right away for some projects' ),
 		within_month: translate( 'Prefer to start within the next month' ),
-		planning_1_3_months: translate( 'Prefer to book 1–3 months in advance' ),
+		book_1_3_months: translate( 'Prefer to book 1–3 months in advance' ),
 		flexible: translate( 'Flexible / depends on project size' ),
 	};
 
 	const availableDecisionProcesses: Record< string, string > = {
-		solo_decider: translate( 'Individual decision-makers' ),
+		individual: translate( 'Individual decision-makers' ),
 		small_team: translate( 'Small team decisions (2–3 people)' ),
 		multi_stakeholder: translate( 'Multi-stakeholder processes across departments' ),
-		procurement_or_formal_approval: translate( 'Formal procurement / enterprise purchasing' ),
+		formal_procurement: translate( 'Formal procurement / enterprise purchasing' ),
 	};
 
 	const availableOngoingRelationships: Record< string, string > = {
@@ -198,7 +196,7 @@ export function useFormSelectors() {
 		under_3k: translate( '$3,000 and below' ),
 		'3k_10k': translate( '$3,000–$10,000' ),
 		'10k_30k': translate( '$10,000–$30,000' ),
-		'30k_plus': translate( 'Above $30,000' ),
+		above_30k: translate( 'Above $30,000' ),
 	};
 
 	return {

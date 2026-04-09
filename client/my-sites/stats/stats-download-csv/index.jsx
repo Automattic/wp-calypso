@@ -116,6 +116,7 @@ class StatsDownloadCsv extends Component {
 				onClick={ this.downloadCsv }
 				disabled={ disabled }
 				icon={ download }
+				size="compact"
 			>
 				{ ! skipQuery && siteId && statType && query && (
 					<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />

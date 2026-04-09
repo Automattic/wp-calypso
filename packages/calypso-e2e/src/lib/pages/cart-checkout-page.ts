@@ -122,10 +122,12 @@ export class CartCheckoutPage {
 		if ( expectedDescription ) {
 			return this.page
 				.locator( selectors.cartItem( expectedCartItemName ), { hasText: expectedDescription } )
-				.waitFor( { state: 'visible' } );
+				.waitFor( { state: 'visible', timeout: 30 * 1000 } );
 		}
 
-		await this.page.waitForSelector( selectors.cartItem( expectedCartItemName ) );
+		await this.page
+			.locator( selectors.cartItem( expectedCartItemName ) )
+			.waitFor( { state: 'visible', timeout: 30 * 1000 } );
 	}
 
 	/**
@@ -144,8 +146,8 @@ export class CartCheckoutPage {
 	 * Validates that the cart contains the expected number of items.
 	 */
 	async validateCartItemsCount( totalItems: number ): Promise< void > {
-		await this.page.waitForSelector( selectors.cartItems );
 		const cartItemsLocator = this.page.locator( selectors.cartItems );
+		await cartItemsLocator.first().waitFor( { state: 'visible', timeout: 30 * 1000 } );
 		const itemsCount = await cartItemsLocator.count();
 		if ( itemsCount !== totalItems ) {
 			throw new Error( `Expected ${ totalItems } items in cart, but found ${ itemsCount }` );
@@ -158,8 +160,9 @@ export class CartCheckoutPage {
 	 * @returns {string} Content of the payment button.
 	 */
 	async getPaymentButtonText(): Promise< string > {
-		const elementHandle = await this.page.waitForSelector( selectors.paymentButton );
-		return await elementHandle.innerText();
+		const paymentButtonLocator = this.page.locator( selectors.paymentButton );
+		await paymentButtonLocator.waitFor( { state: 'visible', timeout: 30 * 1000 } );
+		return await paymentButtonLocator.innerText();
 	}
 
 	/**

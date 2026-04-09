@@ -226,7 +226,11 @@ export default function useFeedbackAction( {
 
 		const feedbackRegistration = {
 			id: 'agents-manager-feedback',
-			actions: ( message: Message ) => feedbackManager.getActionsForMessage( message ),
+			actions: ( message: Message ) =>
+				feedbackManager.getActionsForMessage( message ).map( ( action, index ) => ( {
+					...action,
+					order: 2 + index,
+				} ) ),
 		};
 
 		registerMessageActions( feedbackRegistration );

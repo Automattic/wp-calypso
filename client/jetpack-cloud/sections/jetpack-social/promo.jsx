@@ -8,7 +8,7 @@ import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { connect, useDispatch } from 'react-redux';
-import SocialImage from 'calypso/assets/images/jetpack/rna-image-social.png';
+import SocialImage from 'calypso/assets/images/jetpack/rna-image-social.webp';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryIntroOffers from 'calypso/components/data/query-intro-offers';
 import QueryProductsList from 'calypso/components/data/query-products-list';

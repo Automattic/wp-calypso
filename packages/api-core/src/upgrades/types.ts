@@ -136,6 +136,13 @@ export interface Purchase {
 	 */
 	cost_to_unbundle_display: undefined | string;
 
+	/**
+	 * True if this subscription is within the refund window of its initial
+	 * purchase (i.e. not a renewal). Used to determine whether a bundled domain
+	 * can be cancelled together with its plan for a full refund.
+	 */
+	is_within_initial_refund_window: boolean;
+
 	price_text: string;
 	price_tier_list: Array< PriceTierEntry >;
 	currency_code: string;

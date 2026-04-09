@@ -115,7 +115,7 @@ export default function PromotePostTabBar( { tabs, selectedTab }: Props ) {
 							>
 								<span ref={ ( el ) => ( tabsRef.current[ id ] = el ) }>{ name }</span>
 								{ itemCount && itemCount !== 0 ? (
-									<span className="count">
+									<span className="a8c-count">
 										{ isCountAmount ? '$' : null }
 										{ formatNumber( itemCount, { decimals: isCountAmount ? 2 : 0 } ) }
 										<span className="sr-only">{ label }</span>

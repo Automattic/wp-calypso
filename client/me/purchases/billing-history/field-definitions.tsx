@@ -1,3 +1,4 @@
+import { isAkismetPro500, getAkismetPro500ProductDisplayName } from '@automattic/calypso-products';
 import { type Fields, type Operator } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
 import { capitalPDangit } from 'calypso/lib/formatting';
@@ -19,7 +20,13 @@ function renderServiceNameDescription(
 	transaction: BillingTransactionItem,
 	translate: ReturnType< typeof useTranslate >
 ) {
-	const plan = capitalPDangit( transaction.variation );
+	const isAkismet = isAkismetPro500( { product_slug: transaction.wpcom_product_slug } );
+	const planName = isAkismet
+		? String(
+				getAkismetPro500ProductDisplayName( transaction.variation, transaction.licensed_quantity )
+		  )
+		: transaction.variation;
+	const plan = capitalPDangit( planName );
 	const termLabel = getTransactionTermLabel( transaction, translate );
 
 	return (
@@ -159,7 +166,16 @@ export function getFieldDefinitions(
 				if ( transactionItem.product === transactionItem.variation ) {
 					return String( transactionItem.product );
 				}
-				return capitalPDangit( transactionItem.variation );
+				const isAkismet = isAkismetPro500( { product_slug: transactionItem.wpcom_product_slug } );
+				const name = isAkismet
+					? String(
+							getAkismetPro500ProductDisplayName(
+								transactionItem.variation,
+								transactionItem.licensed_quantity
+							)
+					  )
+					: transactionItem.variation;
+				return capitalPDangit( name );
 			},
 		},
 		{

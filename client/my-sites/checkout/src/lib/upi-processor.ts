@@ -1,4 +1,8 @@
-import { makeErrorResponse, makeSuccessResponse } from '@automattic/composite-checkout';
+import {
+	makeErrorResponse,
+	makeRedirectResponse,
+	makeSuccessResponse,
+} from '@automattic/composite-checkout';
 import { createElement } from 'react';
 import { Root, createRoot } from 'react-dom/client';
 import { PurchaseOrderStatus, fetchPurchaseOrder } from '../hooks/use-purchase-order';
@@ -30,7 +34,8 @@ type StripeUpiTransactionRequest = {
 export default async function upiProcessor(
 	submitData: unknown,
 	options: PaymentProcessorOptions,
-	translate: LocalizeProps[ 'translate' ]
+	translate: LocalizeProps[ 'translate' ],
+	fromExternalCheckout?: boolean
 ): Promise< PaymentProcessorResponse > {
 	if ( ! isValidTransactionData( submitData ) ) {
 		throw new Error( 'Required purchase data is missing' );
@@ -60,6 +65,7 @@ export default async function upiProcessor(
 	const successUrl = addUrlToPendingPageRedirect( thankYouUrl, {
 		siteSlug,
 		fromSiteSlug,
+		fromExternalCheckout,
 		urlType: 'absolute',
 	} );
 	const cancelUrl = `${ origin }${ pathname }${ search }`;
@@ -114,6 +120,14 @@ export default async function upiProcessor(
 				throw new Error( genericErrorMessage );
 			}
 
+			const pendingPageUrl = addUrlToPendingPageRedirect( thankYouUrl, {
+				siteSlug,
+				fromSiteSlug,
+				fromExternalCheckout,
+				orderId: response.order_id,
+				urlType: 'absolute',
+			} );
+
 			let isModalActive = true;
 			let explicitClosureMessage: string | undefined;
 			displayModal( {
@@ -134,6 +148,10 @@ export default async function upiProcessor(
 			let orderStatus = 'processing';
 			while ( isModalActive && [ 'processing', 'async-pending' ].includes( orderStatus ) ) {
 				orderStatus = await pollForOrderStatus( response.order_id, 2000, genericErrorMessage );
+			}
+			if ( orderStatus === 'payment-confirmed' ) {
+				safeDismissModal();
+				return makeRedirectResponse( pendingPageUrl );
 			}
 			if ( orderStatus !== 'success' ) {
 				throw new Error( explicitClosureMessage ?? genericFailureMessage );
@@ -164,7 +182,10 @@ async function pollForOrderStatus(
 		console.error( 'Order was not found.' );
 		throw new Error( genericErrorMessage );
 	}
-	if ( orderData.processing_status === 'success' ) {
+	if (
+		orderData.processing_status === 'success' ||
+		orderData.processing_status === 'payment-confirmed'
+	) {
 		return orderData.processing_status;
 	}
 	await new Promise( ( resolve ) => setTimeout( resolve, pollInterval ) );

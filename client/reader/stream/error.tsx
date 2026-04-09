@@ -2,6 +2,8 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import EmptyContent from 'calypso/components/empty-content';
+import { useDispatch } from 'calypso/state';
+import { errorNotice } from 'calypso/state/notices/actions';
 
 /**
  * Props for the StreamError component.
@@ -11,10 +13,24 @@ import EmptyContent from 'calypso/components/empty-content';
 interface StreamErrorProps {
 	onTryAgain?: () => void;
 	streamKey: string;
+	error: {
+		message: string;
+	};
 }
 
-export const StreamError = ( { onTryAgain, streamKey }: StreamErrorProps ) => {
+export const StreamError = ( { onTryAgain, streamKey, error }: StreamErrorProps ) => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
+
+	useEffect( () => {
+		if ( ! error.message ) {
+			return;
+		}
+
+		dispatch(
+			errorNotice( translate( 'Stream error: %s', { args: error.message } ), { duration: 3000 } )
+		);
+	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_reader_stream_error', {

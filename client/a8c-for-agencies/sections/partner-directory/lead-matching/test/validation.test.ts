@@ -27,11 +27,11 @@ describe( 'validateLeadMatchingDetails', () => {
 		details.businessTypes = [ 'local_service' ];
 		details.idealBusinessTypes = [ 'content_media' ];
 		details.companySizes = [ 'size_1_5' ];
-		details.projectTypes = [ 'new_wordpress_site' ];
+		details.projectTypes = [ 'migration' ];
 		details.serviceLevels = [ 'essential' ];
 		details.budgetLevels = [ 'affordable' ];
 		details.timingPreferences = [ 'right_away' ];
-		details.decisionProcesses = [ 'solo_decider' ];
+		details.decisionProcesses = [ 'individual' ];
 		details.ongoingRelationships = [ 'care_plans' ];
 
 		expect( validateLeadMatchingDetails( details ) ).toBeNull();

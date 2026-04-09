@@ -18,7 +18,11 @@ export const Count = ( {
 	const effectiveNumberFormat = numberFormatFromProps ?? formatNumber;
 
 	return (
-		<span ref={ forwardRef } className={ clsx( 'count', { 'is-primary': primary } ) } { ...props }>
+		<span
+			ref={ forwardRef }
+			className={ clsx( 'a8c-count', { 'is-primary': primary } ) }
+			{ ...props }
+		>
 			{ compact ? formatNumberCompact( count ) : effectiveNumberFormat( count ) }
 		</span>
 	);
