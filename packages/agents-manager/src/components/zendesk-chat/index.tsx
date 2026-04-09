@@ -1,6 +1,7 @@
 import { type MarkdownComponents, type MarkdownExtensions } from '@automattic/agenttic-ui';
 import { useManagedZendeskChat } from '@automattic/zendesk-client';
 import { useEffect } from '@wordpress/element';
+import { useAgentsManagerContext } from '../../contexts';
 import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import ConcludedConversationFooter from '../concluded-conversation-footer';
@@ -36,6 +37,10 @@ export default function ZendeskChat( {
 	markdownExtensions = {},
 	onHasMessagesChange,
 }: Props ) {
+	const context = useAgentsManagerContext();
+	const environment = context.agentConfig?.contextProvider?.getClientContext?.()?.environment;
+	const messagingFlowName = environment === 'ciab-admin' ? 'messaging_flow_commerce_in_a_box' : '';
+
 	const {
 		agentticMessages,
 		onSubmit,
@@ -46,7 +51,7 @@ export default function ZendeskChat( {
 		supportedImageTypes,
 		notice,
 		hasInteractionEnded,
-	} = useManagedZendeskChat();
+	} = useManagedZendeskChat( messagingFlowName );
 
 	// Notify parent when has-messages state changes
 	const hasMessages = agentticMessages.length > 0;

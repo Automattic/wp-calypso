@@ -161,6 +161,7 @@ function sendMessage(
 
 /**
  * Returns a complete API for managing a Zendesk chat.
+ * @param messagingFlowName - The name of the messaging flow to use.
  * @returns An object with the following properties:
  * - typingStatus: The status of the typing.
  * - clientId: The ID of the client.
@@ -169,7 +170,7 @@ function sendMessage(
  * - agentticMessages: The messages in the conversation in Agenttic-compatible format.
  * - sendMessage: A function to send a message to the conversation.
  */
-export const useManagedZendeskChat = () => {
+export const useManagedZendeskChat = ( messagingFlowName: string = '' ) => {
 	const [ attachmentsNotice, setAttachmentNotice ] = useState< NoticeConfig | undefined >();
 	const { state } = useLocation();
 	const conversationId = state?.conversationId;
@@ -271,6 +272,7 @@ export const useManagedZendeskChat = () => {
 					createdAt: Date.now(),
 					started_from: 'chat',
 					chat_session_id: startedFromChatId,
+					'zen:ticket_field:48062253321620': messagingFlowName || '',
 				},
 			} ).then( ( conversation ) => {
 				setConversation( conversation );
@@ -278,7 +280,15 @@ export const useManagedZendeskChat = () => {
 				Smooch.loadConversation( conversation.id );
 			} );
 		}
-	}, [ Smooch, conversationId, navigate, conversation, Smooch?.render, startedFromChatId ] );
+	}, [
+		Smooch,
+		conversationId,
+		navigate,
+		conversation,
+		Smooch?.render,
+		startedFromChatId,
+		messagingFlowName,
+	] );
 
 	const currentTypingStatus = typingStatus[ conversation?.id ?? '' ];
 
