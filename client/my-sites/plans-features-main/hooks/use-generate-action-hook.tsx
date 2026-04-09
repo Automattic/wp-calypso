@@ -555,6 +555,7 @@ function getLoggedInPlansAction( {
 		sitePlanSlug &&
 		! current &&
 		! isTrialPlan &&
+		! isPlanExpired &&
 		currentPlanBillingPeriod &&
 		billingPeriod &&
 		currentPlanBillingPeriod > billingPeriod
@@ -562,6 +563,29 @@ function getLoggedInPlansAction( {
 		return createLoggedInPlansAction(
 			translate( 'Contact support', { context: 'verb' } ),
 			'secondary'
+		);
+	}
+
+	// Expired plan: show "Get {plan}" for lower-tier plans (fresh purchase, not a "downgrade").
+	if (
+		isPlanExpired &&
+		sitePlanSlug &&
+		getPlanClass( planSlug ) !== getPlanClass( sitePlanSlug )
+	) {
+		return createLoggedInPlansAction(
+			translate( 'Get %(plan)s', {
+				textOnly: true,
+				args: {
+					plan: planTitle ?? '',
+				},
+			} ),
+			'primary',
+			translate( 'Get %(plan)s plan', {
+				textOnly: true,
+				args: {
+					plan: planTitle ?? '',
+				},
+			} )
 		);
 	}
 

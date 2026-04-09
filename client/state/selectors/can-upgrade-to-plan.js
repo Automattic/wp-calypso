@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	PLAN_FREE,
 	PLAN_JETPACK_FREE,
@@ -6,6 +7,7 @@ import {
 	isWpComBusinessPlan,
 	isWpComEcommercePlan,
 	isFreePlan,
+	isLowerPlanPurchasableForExpiredSite,
 } from '@automattic/calypso-products';
 import { get } from 'lodash';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
@@ -55,6 +57,20 @@ export default function ( state, siteId, planKey ) {
 	// 2024-04-02 Disable upgrade to P2+
 	if ( PLAN_P2_PLUS === planKey ) {
 		return false;
+	}
+
+	// When the current plan is expired, allow purchasing lower-tier plans through normal checkout.
+	if ( isEnabled( 'plans/expired-plan-downgrade' ) && purchase ) {
+		const isExpiredPurchase =
+			purchase.expiryStatus === 'expired' ||
+			( purchase.expiryDate && new Date( purchase.expiryDate ) < new Date() );
+
+		if (
+			isExpiredPurchase &&
+			isLowerPlanPurchasableForExpiredSite( currentPlanSlug, planKey, purchase.expiryDate )
+		) {
+			return true;
+		}
 	}
 
 	return get( getPlan( planKey ), [ 'availableFor' ], () => false )( currentPlanSlug );
