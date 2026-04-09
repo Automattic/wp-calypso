@@ -21,7 +21,7 @@ interface InterimOmnibarData {
 
 /**
  * Provides the props for `InterimOmnibar`. The first render mirrors the SSR
- * output exactly (`user = initialUser`, `site = null`, no callbacks) so
+ * output exactly (`user = initialUser`, `site = null`) so
  * hydration succeeds; after hydration commits, the hook switches to
  * query-driven data.
  */
