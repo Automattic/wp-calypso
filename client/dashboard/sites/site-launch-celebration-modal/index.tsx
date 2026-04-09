@@ -57,7 +57,9 @@ export default function SiteLaunchCelebrationModal( {
 		const hasCelebrateLaunch = new URLSearchParams( window.location.search ).has(
 			'celebrateLaunch'
 		);
-		if ( site.launch_status === 'launched' && hasCelebrateLaunch ) {
+		const isSiteLaunched = site.launch_status === 'launched' || site.launch_status === false;
+
+		if ( isSiteLaunched && hasCelebrateLaunch ) {
 			onOpen();
 		}
 	}, [ site.launch_status, onOpen ] );
