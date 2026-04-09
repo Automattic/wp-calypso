@@ -13,55 +13,51 @@ describe( 'getBlackboxSessionId', () => {
 		delete window.Blackbox;
 	} );
 
-	test( 'calls collect before getSessionId when both exist', async () => {
-		const order = [];
+	test( 'returns session id when collect returns a string', async () => {
 		window.Blackbox = {
-			collect: jest.fn( () => {
-				order.push( 'collect' );
-			} ),
-			getSessionId: jest.fn( () => {
-				order.push( 'getSessionId' );
-				return Promise.resolve( 'session-id' );
-			} ),
+			collect: jest.fn( () => Promise.resolve( 'session-id' ) ),
 		};
 
 		await expect( getBlackboxSessionId() ).resolves.toBe( 'session-id' );
-		expect( order ).toEqual( [ 'collect', 'getSessionId' ] );
+		expect( window.Blackbox.collect ).toHaveBeenCalled();
 	} );
 
-	test( 'works when collect is missing', async () => {
+	test( 'returns session id when collect returns an object payload', async () => {
 		window.Blackbox = {
-			getSessionId: jest.fn( () => Promise.resolve( 'session-id' ) ),
+			collect: jest.fn( () => Promise.resolve( { sessionId: 'session-id' } ) ),
 		};
 
 		await expect( getBlackboxSessionId() ).resolves.toBe( 'session-id' );
-		expect( window.Blackbox.getSessionId ).toHaveBeenCalled();
+		expect( window.Blackbox.collect ).toHaveBeenCalled();
 	} );
 
-	test( 'awaits async collect before getSessionId', async () => {
-		const order = [];
+	test( 'returns undefined when collect is missing', async () => {
 		window.Blackbox = {
-			collect: jest.fn( () =>
-				Promise.resolve().then( () => {
-					order.push( 'collect' );
-				} )
-			),
-			getSessionId: jest.fn( () => {
-				order.push( 'getSessionId' );
-				return Promise.resolve( 'session-id' );
-			} ),
-		};
-
-		await expect( getBlackboxSessionId() ).resolves.toBe( 'session-id' );
-		expect( order ).toEqual( [ 'collect', 'getSessionId' ] );
-	} );
-
-	test( 'returns undefined when getSessionId is missing', async () => {
-		window.Blackbox = {
-			collect: jest.fn(),
+			reset: jest.fn(),
 		};
 
 		await expect( getBlackboxSessionId() ).resolves.toBeUndefined();
-		expect( window.Blackbox.collect ).not.toHaveBeenCalled();
+	} );
+
+	test( 'awaits async collect result', async () => {
+		window.Blackbox = {
+			collect: jest.fn( () =>
+				Promise.resolve().then( () => {
+					return 'session-id';
+				} )
+			),
+		};
+
+		await expect( getBlackboxSessionId() ).resolves.toBe( 'session-id' );
+		expect( window.Blackbox.collect ).toHaveBeenCalled();
+	} );
+
+	test( 'returns undefined when collect result has no session id', async () => {
+		window.Blackbox = {
+			collect: jest.fn( () => Promise.resolve( { error: true } ) ),
+		};
+
+		await expect( getBlackboxSessionId() ).resolves.toBeUndefined();
+		expect( window.Blackbox.collect ).toHaveBeenCalled();
 	} );
 } );

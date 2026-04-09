@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { screen } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import cookie from 'cookie';
 import LoginForm from 'calypso/blocks/login/login-form';
@@ -181,5 +181,22 @@ describe( 'LoginForm', () => {
 		} );
 
 		expect( screen.getByText( 'Your username' ) ).toBeInTheDocument();
+	} );
+
+	test( 'disables and re-enables submit button on Blackbox challenge events', async () => {
+		render( <LoginForm /> );
+
+		const submitButton = screen.getByRole( 'button', { name: /^Continue$/i } );
+		expect( submitButton ).toBeEnabled();
+
+		act( () => {
+			window.dispatchEvent( new CustomEvent( 'blackbox:challenge-start' ) );
+		} );
+		await waitFor( () => expect( submitButton ).toBeDisabled() );
+
+		act( () => {
+			window.dispatchEvent( new CustomEvent( 'blackbox:challenge-complete' ) );
+		} );
+		await waitFor( () => expect( submitButton ).toBeEnabled() );
 	} );
 } );

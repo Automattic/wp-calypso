@@ -110,6 +110,7 @@ export class LoginForm extends Component {
 
 	state = {
 		isFormDisabledWhileLoading: true,
+		isBlackboxChallengeActive: false,
 		usernameOrEmail: this.props.socialAccountLinkEmail || this.props.userEmail || '',
 		emailSuggestion: '',
 		emailSuggestionError: false,
@@ -117,8 +118,19 @@ export class LoginForm extends Component {
 		lastUsedAuthenticationMethod: this.getLastUsedAuthenticationMethod(),
 	};
 
+	handleBlackboxChallengeStart = () => {
+		this.setState( { isBlackboxChallengeActive: true } );
+	};
+
+	handleBlackboxChallengeComplete = () => {
+		this.setState( { isBlackboxChallengeActive: false } );
+	};
+
 	componentDidMount() {
 		const { disableAutoFocus } = this.props;
+
+		window.addEventListener( 'blackbox:challenge-start', this.handleBlackboxChallengeStart );
+		window.addEventListener( 'blackbox:challenge-complete', this.handleBlackboxChallengeComplete );
 
 		// eslint-disable-next-line react/no-did-mount-set-state
 		this.setState( { isFormDisabledWhileLoading: false }, () => {
@@ -130,6 +142,14 @@ export class LoginForm extends Component {
 			url.searchParams.delete( 'username_only' );
 			window.history.replaceState( {}, document.title, url );
 		}
+	}
+
+	componentWillUnmount() {
+		window.removeEventListener( 'blackbox:challenge-start', this.handleBlackboxChallengeStart );
+		window.removeEventListener(
+			'blackbox:challenge-complete',
+			this.handleBlackboxChallengeComplete
+		);
 	}
 
 	componentDidUpdate( prevProps, prevState ) {
@@ -639,7 +659,7 @@ export class LoginForm extends Component {
 		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
 		const isEmailOrUsernameInputDisabled =
 			isFormDisabled || this.isPasswordView() || isGravatarFixedAccountLogin;
-		const isSubmitButtonDisabled = isFormDisabled;
+		const isSubmitButtonDisabled = isFormDisabled || this.state.isBlackboxChallengeActive;
 		let loginUrl;
 		const isPasswordHidden = this.isUsernameOrEmailView();
 		const signupUrl = this.getSignupUrl();

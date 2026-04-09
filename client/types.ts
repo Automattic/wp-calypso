@@ -143,6 +143,18 @@ declare global {
 			collect?: () => unknown;
 			getSessionId?: () => Promise< unknown >;
 			reset?: () => void;
+			configure?: ( config: {
+				apiKey?: string;
+				challengeContainer?: string | HTMLElement;
+				onChallengeStart?: () => void;
+				onChallengeComplete?: () => void;
+			} ) => void;
+			setConfig?: ( config: {
+				apiKey?: string;
+				challengeContainer?: string | HTMLElement;
+				onChallengeStart?: () => void;
+				onChallengeComplete?: () => void;
+			} ) => void;
 		};
 	}
 }

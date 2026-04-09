@@ -8,37 +8,25 @@ import { ensureBlackboxLoginScript } from 'calypso/blocks/login/utils/ensure-bla
  * third-party script misbehaves — Blackbox must never block login.
  * @returns {Promise<string|undefined>} Session ID, or undefined on failure.
  */
-async function runBlackboxCollect() {
-	if ( ! window.Blackbox?.collect ) {
-		return;
-	}
-
-	try {
-		const out = window.Blackbox.collect();
-		if ( out && typeof out.then === 'function' ) {
-			await Promise.race( [ out, new Promise( ( resolve ) => setTimeout( resolve, 2000 ) ) ] );
-		}
-	} catch {
-		// Intentionally ignored — Blackbox must never block login.
-	}
-}
-
 export async function getBlackboxSessionId() {
 	await ensureBlackboxLoginScript();
 
-	if ( ! window.Blackbox?.getSessionId ) {
+	if ( ! window.Blackbox?.collect ) {
 		return undefined;
 	}
 
 	try {
-		await runBlackboxCollect();
-
 		const result = await Promise.race( [
-			window.Blackbox.getSessionId(),
+			window.Blackbox.collect(),
 			new Promise( ( resolve ) => setTimeout( resolve, 2000 ) ),
 		] );
+
 		if ( typeof result === 'string' ) {
 			return result;
+		}
+
+		if ( result && typeof result.sessionId === 'string' ) {
+			return result.sessionId;
 		}
 	} catch {
 		// Intentionally ignored — Blackbox must never block login.
