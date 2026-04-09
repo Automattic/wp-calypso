@@ -64,6 +64,7 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 	useStepsProps() {
 		const query = useQuery();
 		const selectedFeature = query.get( 'feature' ) ?? undefined;
+		const isExpiredDowngrade = query.get( 'expired_downgrade' ) === 'true';
 		const backTo = query.get( 'back_to' ) ?? query.get( 'cancel_to' ) ?? undefined;
 
 		// Validate back_to to prevent open redirect - must not be external (expect for allowed origins).
@@ -83,6 +84,12 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 
 				// Pass the feature parameter for feature-based plan filtering
 				selectedFeature,
+
+				// For expired-plan downgrades, hide plans that aren't eligible targets.
+				hideFreePlan: isExpiredDowngrade || undefined,
+				hideEcommercePlan: isExpiredDowngrade || undefined,
+				hideEnterprisePlan: isExpiredDowngrade || undefined,
+				hidePlansFeatureComparison: isExpiredDowngrade || undefined,
 
 				// Provide a custom back handler that goes to back_to or /sites
 				wrapperProps: {

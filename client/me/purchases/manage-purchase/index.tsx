@@ -62,6 +62,7 @@ import {
 	Icon,
 	payment,
 	reusableBlock,
+	shuffle,
 	tool,
 	trash,
 	upload,
@@ -101,6 +102,7 @@ import {
 	isPaidWithCredits,
 	canAutoRenewBeTurnedOff,
 	isExpired,
+	isInExpirationGracePeriod,
 	isOneTimePurchase,
 	isPartnerPurchase,
 	isRenewable,
@@ -579,6 +581,27 @@ class ManagePurchase extends Component<
 			return `/plans/storage/${ siteSlug }`;
 		}
 
+		// For expired plans eligible for self-serve downgrade, use the simpler plan-upgrade flow.
+		if (
+			config.isEnabled( 'plans/expired-plan-downgrade' ) &&
+			purchase &&
+			( isExpired( purchase ) || isInExpirationGracePeriod( purchase ) ) &&
+			isPlan( purchase ) &&
+			( isPersonal( purchase ) || isPremium( purchase ) || isBusiness( purchase ) )
+		) {
+			const cancelTo = this.props.isSiteLevel
+				? `/purchases/subscriptions/${ siteSlug }/${ purchase.id }`
+				: `/me/purchases/${ siteSlug }/${ purchase.id }`;
+			return addQueryArgs(
+				{
+					siteSlug,
+					cancel_to: cancelTo,
+					expired_downgrade: 'true',
+				},
+				'/setup/plan-upgrade'
+			);
+		}
+
 		return `/plans/${ siteSlug }`;
 	}
 
@@ -619,8 +642,8 @@ class ManagePurchase extends Component<
 				? translate( 'Pick another plan' )
 				: translate( 'Pick another product' );
 		} else {
-			icon = upload;
-			buttonText = isUpgradeablePlan ? translate( 'Upgrade plan' ) : translate( 'Upgrade product' );
+			icon = shuffle;
+			buttonText = isUpgradeablePlan ? translate( 'Change plan' ) : translate( 'Upgrade product' );
 		}
 
 		const upgradeUrl = this.getUpgradeUrl();

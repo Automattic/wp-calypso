@@ -60,6 +60,7 @@ export interface UnifiedPlansStepProps {
 	hidePremiumPlan?: boolean;
 	hideEnterprisePlan?: boolean;
 	hideEcommercePlan?: boolean;
+	hidePlansFeatureComparison?: boolean;
 
 	flowName: string;
 	stepName: string;
@@ -206,6 +207,7 @@ function UnifiedPlansStep( {
 	hidePersonalPlan,
 	hidePremiumPlan,
 	hideEnterprisePlan,
+	hidePlansFeatureComparison,
 	saveSignupStep: saveSignupStepFromProps,
 	submitSignupStep: submitSignupStepFromProps,
 	customerType: customerTypeFromProps,
@@ -595,6 +597,7 @@ function UnifiedPlansStep( {
 				hidePremiumPlan={ hidePremiumPlan }
 				hideEcommercePlan={ shouldHideEcommercePlan() }
 				hideEnterprisePlan={ hideEnterprisePlan }
+				hidePlansFeatureComparison={ hidePlansFeatureComparison }
 				removePaidDomain={ handleRemovePaidDomain }
 				setSiteUrlAsFreeDomainSuggestion={ handleSetSiteUrlAsFreeDomainSuggestion }
 				coupon={ coupon ?? undefined }

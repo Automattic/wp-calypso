@@ -200,7 +200,7 @@ const ActionButton = ( {
 						disabled={ ! callback || 'disabled' === status }
 						busy={ busy }
 						onClick={ callback }
-						current={ current }
+						current={ current && variant !== 'primary' }
 						ariaLabel={ String( ariaLabel || '' ) }
 					>
 						{ text }

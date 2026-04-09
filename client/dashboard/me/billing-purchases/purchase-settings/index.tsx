@@ -15,6 +15,7 @@ import {
 	reinstallMarketplacePluginsQuery,
 	siteBySlugQuery,
 } from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
 import { domainManagementEdit, domainUseMyDomain } from '@automattic/domains-table/src/utils/paths';
 import { formatCurrency } from '@automattic/number-formatters';
 import { INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS } from '@automattic/urls';
@@ -112,7 +113,7 @@ function renewPurchase( purchase: Purchase ): void {
 	window.location.href = getRenewalUrlFromPurchase( purchase );
 }
 
-function getExpiredNewPlanUrl( purchase: Purchase ): string {
+function getExpiredNewPlanUrl( purchase: Purchase, isDowngrade = false ): string {
 	if ( purchase.is_jetpack_backup_t1 || isJetpackT1SecurityPlan( purchase ) ) {
 		return wpcomLink( `/plans/storage/${ purchase.site_slug }` );
 	}
@@ -122,7 +123,8 @@ function getExpiredNewPlanUrl( purchase: Purchase ): string {
 	}
 
 	if ( purchase.is_plan ) {
-		return getWpcomPlanGridUrl( purchase.site_slug );
+		const url = getWpcomPlanGridUrl( purchase.site_slug );
+		return isDowngrade ? addQueryArgs( url, { expired_downgrade: 'true' } ) : url;
 	}
 
 	return wpcomLink( `/plans/${ purchase.site_slug }` );
@@ -354,9 +356,41 @@ function UpgradeActionButton( { purchase }: { purchase: Purchase } ) {
 
 function ReSubscribeActionButton( { purchase }: { purchase: Purchase } ) {
 	const { recordTracksEvent } = useAnalytics();
-	if ( ! isExpired( purchase ) ) {
+	const isPurchaseExpiredOrGracePeriod =
+		isExpired( purchase ) || isInExpirationGracePeriod( purchase );
+
+	if ( ! isPurchaseExpiredOrGracePeriod ) {
 		return null;
 	}
+
+	const isEligibleForDowngrade =
+		config.isEnabled( 'plans/expired-plan-downgrade' ) &&
+		purchase.is_plan &&
+		/^(personal|premium|business)-bundle/.test( purchase.product_slug );
+
+	if ( isEligibleForDowngrade ) {
+		return (
+			<ActionList.ActionItem
+				title={ __( 'Change plan' ) }
+				description={ __( 'Find the best fit for your needs.' ) }
+				actions={
+					<Button
+						variant="secondary"
+						size="compact"
+						onClick={ () => {
+							recordTracksEvent( 'calypso_expired_plan_change_plan_click', {
+								current_plan: purchase.product_slug,
+							} );
+							window.location.href = getExpiredNewPlanUrl( purchase, true );
+						} }
+					>
+						{ __( 'See plans' ) }
+					</Button>
+				}
+			/>
+		);
+	}
+
 	return (
 		<ActionList.ActionItem
 			title={ purchase.is_plan ? __( 'Pick another plan' ) : __( 'Pick another product' ) }

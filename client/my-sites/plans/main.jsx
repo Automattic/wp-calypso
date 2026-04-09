@@ -5,6 +5,9 @@ import {
 	getPlan,
 	is100Year,
 	isFreePlanProduct,
+	isPersonalPlan,
+	isPremiumPlan,
+	isBusinessPlan,
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	PLAN_HOSTING_TRIAL_MONTHLY,
@@ -141,7 +144,7 @@ class PlansComponent extends Component {
 	};
 
 	renderPlansMain() {
-		const { selectedSite, isUntangled, isWPForTeamsSite } = this.props;
+		const { selectedSite, isUntangled, isWPForTeamsSite, purchase } = this.props;
 
 		if ( isEnabled( 'p2/p2-plus' ) && isWPForTeamsSite ) {
 			return (
@@ -160,6 +163,17 @@ class PlansComponent extends Component {
 		// The Jetpack mobile app wants to display a specific selection of plans
 		const plansIntent = this.props.jetpackAppPlans ? 'plans-jetpack-app' : null;
 
+		// Expired-plan downgrade: show a simplified plans grid with only lower-tier options.
+		const currentPlanSlug = selectedSite?.plan?.product_slug;
+		const isPlanExpired =
+			isEnabled( 'plans/expired-plan-downgrade' ) &&
+			purchase &&
+			( purchase.expiryStatus === 'expired' ||
+				( purchase.expiryDate && new Date( purchase.expiryDate ) < new Date() ) ) &&
+			( isPersonalPlan( currentPlanSlug ) ||
+				isPremiumPlan( currentPlanSlug ) ||
+				isBusinessPlan( currentPlanSlug ) );
+
 		return (
 			<PlansFeaturesMain
 				isInSiteDashboard={ isUntangled }
@@ -176,8 +190,12 @@ class PlansComponent extends Component {
 				plansWithScroll={ false }
 				showLegacyStorageFeature={ this.props.siteHasLegacyStorage }
 				intent={ plansIntent }
-				isSpotlightOnCurrentPlan={ ! isUntangled }
+				isSpotlightOnCurrentPlan={ ! isUntangled && ! isPlanExpired }
 				showPlanTypeSelectorDropdown={ isEnabled( 'onboarding/interval-dropdown' ) }
+				hideFreePlan={ isPlanExpired }
+				hideEcommercePlan={ isPlanExpired }
+				hideEnterprisePlan={ isPlanExpired }
+				hidePlansFeatureComparison={ isPlanExpired }
 			/>
 		);
 	}

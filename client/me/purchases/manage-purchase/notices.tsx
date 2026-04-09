@@ -1118,7 +1118,6 @@ class PurchaseNotice extends Component<
 			return (
 				<Notice showDismiss={ false } status="is-error" text={ noticeText }>
 					{ this.renderRenewNoticeAction( this.handleExpiredNoticeRenewal ) }
-					{ this.renderSeeOtherPlansAction( currentPurchase ) }
 					{ this.trackImpression( 'purchase-expired' ) }
 				</Notice>
 			);

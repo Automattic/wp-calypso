@@ -517,7 +517,12 @@ function getLoggedInPlansAction( {
 			return createLoggedInPlansAction( translate( 'Keep my plan', { context: 'verb' } ) );
 		}
 		if ( canUserManageCurrentPlan && isPlanExpired ) {
-			return createLoggedInPlansAction( translate( 'Renew plan' ) );
+			return createLoggedInPlansAction(
+				translate( 'Renew %(plan)s', {
+					textOnly: true,
+					args: { plan: planTitle ?? '' },
+				} )
+			);
 		}
 
 		if ( canUserManageCurrentPlan ) {
@@ -527,8 +532,9 @@ function getLoggedInPlansAction( {
 		return createLoggedInPlansAction( translate( 'View plan' ), 'secondary' );
 	}
 
-	// Downgrade action if the plan is not available for purchase
-	if ( ! availableForPurchase ) {
+	// Downgrade action if the plan is not available for purchase.
+	// Skip this when the plan is expired — let it fall through to the "Get {plan}" block.
+	if ( ! availableForPurchase && ! isPlanExpired ) {
 		if ( isEnabled( 'plans/self-service-downgrade' ) ) {
 			return {
 				primary: {
