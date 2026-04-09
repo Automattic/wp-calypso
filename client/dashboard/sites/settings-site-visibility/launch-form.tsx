@@ -122,13 +122,19 @@ export function LaunchAgencyDevelopmentSiteForm( { site }: { site: Site } ) {
 	);
 }
 
-export function LaunchForm( { site }: { site: Site } ) {
+export function LaunchForm( { site, onSiteLaunch }: { site: Site; onSiteLaunch?: () => void } ) {
 	return (
 		<>
 			<TrialUpsellNotice site={ site } />
 			<Notice
 				title={ __( 'Your site hasn’t been launched yet' ) }
-				actions={ <SiteLaunchButton site={ site } tracksContext="site_settings" /> }
+				actions={
+					<SiteLaunchButton
+						site={ site }
+						tracksContext="site_settings"
+						onSiteLaunch={ onSiteLaunch }
+					/>
+				}
 			>
 				{ __( 'It is hidden from visitors behind a “Coming Soon” notice until it is launched.' ) }
 			</Notice>

@@ -1,5 +1,5 @@
 import { DotcomPlans } from '@automattic/api-core';
-import { siteLaunchMutation } from '@automattic/api-queries';
+import { queryClient, siteBySlugQuery, siteLaunchMutation } from '@automattic/api-queries';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -22,6 +22,7 @@ export function SiteLaunchButton( {
 	tracksContext,
 	launchUrl,
 	LaunchModal,
+	onSiteLaunch,
 }: {
 	site: Site;
 	tracksContext: string;
@@ -31,6 +32,7 @@ export function SiteLaunchButton( {
 		onClose: () => void;
 		onLaunch: () => void;
 	} >;
+	onSiteLaunch?: () => void;
 } ) {
 	const { queries } = useAppContext();
 	const { recordTracksEvent } = useAnalytics();
@@ -81,9 +83,17 @@ export function SiteLaunchButton( {
 		recordTracksEvent( 'calypso_dashboard_site_launch_button_click', { context: tracksContext } );
 	};
 
+	const onSiteLaunchSuccess = () => {
+		onSiteLaunch?.();
+		queryClient.invalidateQueries( siteBySlugQuery( site.slug ) );
+	};
+
 	const handleLaunch = () => {
 		handleTracksEvent();
 		launchMutation.mutate( undefined, {
+			onSuccess: () => {
+				onSiteLaunchSuccess();
+			},
 			onSettled: () => {
 				setIsLaunchModalOpen( false );
 			},
@@ -94,6 +104,8 @@ export function SiteLaunchButton( {
 		handleTracksEvent();
 		launchMutation.mutate( undefined, {
 			onSuccess: () => {
+				onSiteLaunchSuccess();
+
 				// Add query param to trigger celebration modal in parent component
 				window.history.replaceState(
 					null,

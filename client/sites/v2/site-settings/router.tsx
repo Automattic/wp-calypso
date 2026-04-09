@@ -4,6 +4,9 @@ import { __ } from '@wordpress/i18n';
 import { APP_CONTEXT_DEFAULT_CONFIG } from 'calypso/dashboard/app/context';
 import { handleOnCatch } from 'calypso/dashboard/app/logger';
 import * as appRouterSites from 'calypso/dashboard/app/router/sites';
+import { useDispatch, useSelector } from 'calypso/state';
+import { requestSite } from 'calypso/state/sites/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { rootRoute, dashboardSitesCompatibilityRoute, siteRoute } from '../router';
 import { getRouterOptions, createBrowserHistoryAndMemoryRouterSync } from '../utils/router';
 import type { AppConfig } from 'calypso/dashboard/app/context';
@@ -31,7 +34,21 @@ const siteVisibilityRoute = createRoute( {
 } ).lazy( () =>
 	import( 'calypso/dashboard/sites/settings-site-visibility' ).then( ( d ) =>
 		createLazyRoute( 'site-visibility' )( {
-			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+			component: () => {
+				// eslint-disable-next-line react-hooks/rules-of-hooks
+				const siteId = useSelector( getSelectedSiteId );
+				// eslint-disable-next-line react-hooks/rules-of-hooks
+				const dispatch = useDispatch();
+
+				return (
+					<d.default
+						siteSlug={ siteRoute.useParams().siteSlug }
+						onSiteLaunch={ () => {
+							dispatch( requestSite( siteId! ) );
+						} }
+					/>
+				);
+			},
 		} )
 	)
 );
