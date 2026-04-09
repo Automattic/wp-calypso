@@ -93,7 +93,10 @@ export const isTestModeEnvironment = () => {
 		return false;
 	}
 
-	// Test environments are identified by env_id ending with development, horizon, stage, or staging
+	// In the Calypso SPA context, env_id follows the config file convention and ends with
+	// 'development', 'horizon', or 'stage' (e.g. 'dashboard-stage', 'jetpack-cloud-horizon').
+	// In the widgets.wp.com bundle context (apps/help-center, apps/agents-manager), config.js
+	// sets env_id to 'staging' for proxied/dev users. Both map to test mode.
 	const testEnvironmentSuffixes = [ 'development', 'horizon', 'stage', 'staging' ];
 	const isTestEnvironment = testEnvironmentSuffixes.some(
 		( suffix ) => envId === suffix || envId?.endsWith( `-${ suffix }` )
