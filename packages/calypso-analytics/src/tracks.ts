@@ -253,7 +253,11 @@ export function recordTracksEvent( eventName: string, eventProperties?: any ) {
 		}
 	}
 
-	debug( 'Record event "%s" called with props %o', eventName, eventProperties );
+	debug(
+		'Record event "%s" called with props %o',
+		eventName,
+		JSON.stringify( eventProperties, null, 2 )
+	);
 
 	if ( ! isValidEventSource( eventName ) && ! EVENT_NAME_EXCEPTIONS.includes( eventName ) ) {
 		debug( '- Event name must be prefixed by a known source or added to `EVENT_NAME_EXCEPTIONS`' );
@@ -271,7 +275,7 @@ export function recordTracksEvent( eventName: string, eventProperties?: any ) {
 		Object.entries( eventProperties ).filter( ( [ , val ] ) => typeof val !== 'undefined' )
 	);
 
-	debug( 'Recording event "%s" with actual props %o', eventName, eventProperties );
+	// debug( 'Recording event "%s" with actual props %o', eventName, eventProperties );
 
 	pushEventToTracksQueue( [ 'recordEvent', eventName, eventProperties ] );
 	analyticsEvents.emit( 'record-event', eventName, eventProperties );

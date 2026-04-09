@@ -5,9 +5,7 @@ import { isEmpty } from 'lodash';
 import { createElement } from 'react';
 import store from 'store';
 import { notFound } from 'calypso/controller';
-import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { login } from 'calypso/lib/paths';
-import { sectionify } from 'calypso/lib/route';
 import { addQueryArgs } from 'calypso/lib/url';
 import flows from 'calypso/signup/config/flows';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -40,11 +38,6 @@ import {
 	getFlowPageTitle,
 	shouldForceLogin,
 } from './utils';
-/**
- * Constants
- */
-const basePageTitle = 'Signup'; // used for analytics, doesn't require translation
-
 /**
  * Module variables
  */
@@ -213,7 +206,6 @@ export default {
 
 	async start( context, next ) {
 		const userLoggedIn = isUserLoggedIn( context.store.getState() );
-		const basePath = sectionify( context.path );
 		const flowName = getFlowName( context.params, userLoggedIn );
 		const stepName = getStepName( context.params );
 		const stepSectionName = getStepSectionName( context.params );
@@ -236,12 +228,6 @@ export default {
 
 		// wait for the step component module to load
 		const stepComponent = await getStepComponent( stepName );
-
-		const params = {
-			flow: flowName,
-		};
-
-		recordPageView( basePath, basePageTitle + ' > Start > ' + flowName + ' > ' + stepName, params );
 
 		context.store.dispatch( setLayoutFocus( 'content' ) );
 		context.store.dispatch( setCurrentFlowName( flowName ) );
