@@ -17,6 +17,9 @@ export function getUserLanguage( user: User | null | undefined ): string {
  */
 export function loadUserLocale( language: string ): Promise< LocaleData | undefined > {
 	if ( ! language || language === 'en' ) {
+		// Clear any previously-loaded locale so switching to English
+		// mid-session doesn't leave stale translations in `defaultI18n`.
+		defaultI18n.resetLocaleData();
 		return Promise.resolve( undefined );
 	}
 
