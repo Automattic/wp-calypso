@@ -147,6 +147,7 @@ class Signup extends Component {
 	};
 
 	_recordedSteps = new Set();
+	_recordedPageViewPaths = new Set();
 
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
@@ -321,10 +322,13 @@ class Signup extends Component {
 		const basePath = overrideStepName
 			? `/start/${ flowName }/${ overrideStepName }`
 			: sectionify( this.props.path );
-		recordPageView( basePath, 'Signup > Start > ' + flowName + ' > ' + stepName, {
-			flow: flowName,
-			...skipStepRenderProps,
-		} );
+		if ( ! this._recordedPageViewPaths.has( basePath ) ) {
+			recordPageView( basePath, 'Signup > Start > ' + flowName + ' > ' + stepName, {
+				flow: flowName,
+				...skipStepRenderProps,
+			} );
+			this._recordedPageViewPaths.add( basePath );
+		}
 	}
 
 	isStepFulfillmentReady = ( stepName, nextProps = this.props ) => {
@@ -358,7 +362,9 @@ class Signup extends Component {
 					} );
 					this._recordedSteps.add( step );
 				} else if ( includeCurrentStep && step === targetStep ) {
-					this.recordSignupStepAndPageView();
+					this.recordSignupStepAndPageView( {
+						overrideStepName: targetStep !== this.props.stepName ? targetStep : undefined,
+					} );
 					this._recordedSteps.add( step );
 				}
 			}
