@@ -36,11 +36,7 @@ export default async function loadOmnibar( events: OmnibarEvents ) {
 		loadUserLocaleData( getUserLanguage( window.currentUser ?? null ) ),
 	] );
 
-	if ( localeData ) {
-		defaultI18n.resetLocaleData( localeData );
-	} else {
-		defaultI18n.resetLocaleData();
-	}
+	defaultI18n.resetLocaleData( localeData );
 
 	hydrateRoot(
 		container,

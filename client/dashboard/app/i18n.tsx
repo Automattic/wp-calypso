@@ -135,11 +135,7 @@ export function I18nProvider( { children }: PropsWithChildren ) {
 			if ( cancelled ) {
 				return;
 			}
-			if ( data ) {
-				i18n.resetLocaleData( data );
-			} else {
-				i18n.resetLocaleData();
-			}
+			i18n.resetLocaleData( data );
 			const realLanguage = data ? language : 'en';
 			setLoadedLocale( realLanguage );
 			setLocaleInDOM( i18n, realLanguage );
