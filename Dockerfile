@@ -130,6 +130,8 @@ ENV NODE_ENV production
 
 RUN node -e 'const v8=require("node:v8"); console.log(JSON.stringify({NODE_OPTIONS: process.env.NODE_OPTIONS, heapLimitMB: Math.round(v8.getHeapStatistics().heap_size_limit/1024/1024)}))'
 RUN node -e 'const v8=require("node:v8"); const h=v8.getHeapSpaceStatistics(); const ns=h.filter(s=>s.space_name.includes("new")); console.log(JSON.stringify(ns))'
+RUN cat /sys/fs/cgroup/memory.max 2>/dev/null || cat /sys/fs/cgroup/memory/memory.limit_in_bytes 2>/dev/null || echo "no cgroup info"
+
 
 RUN yarn run build 2>&1 | tee /tmp/build_log.txt \
      && find /calypso/build /calypso/public -name "*.*.map" -delete
