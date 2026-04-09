@@ -124,6 +124,7 @@ RUN yarn run build-packages:web
 # This contains built environments of Calypso. It will
 # change any time any of the Calypso source-code changes.
 ENV NODE_ENV production
+RUN node -e 'const v8=require("node:v8"); console.log(JSON.stringify({NODE_OPTIONS: process.env.NODE_OPTIONS, heapLimitMB: Math.round(v8.getHeapStatistics().heap_size_limit/1024/1024)}))'
 # Delete sourcemaps in the same layer as the build so trunk's hidden-source-map
 # artifacts do not have to be committed and then whiteouted in a later snapshot.
 RUN yarn run build 2>&1 | tee /tmp/build_log.txt \
