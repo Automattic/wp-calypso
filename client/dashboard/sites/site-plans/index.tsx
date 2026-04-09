@@ -333,7 +333,7 @@ function PlanCard( {
 					</VStack>
 
 					<VStack spacing={ 1 }>
-						{ ! isCurrentPlan && sitePlan.introductory_offer_formatted_price && (
+						{ sitePlan.introductory_offer_formatted_price && (
 							<span className="site-plans__special-offer-badge">{ __( 'Special Offer' ) }</span>
 						) }
 						<PlanPrice
