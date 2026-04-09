@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef } from '@wordpress/element';
 import { useNavigate } from 'react-router-dom';
 import { useAgentsManagerContext } from '../../contexts';
 import { AGENTS_MANAGER_STORE } from '../../stores';
+import { setTrackingHandler, setDefaultTracksEnabled } from '../../tracking';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 
 interface Props {
@@ -141,11 +142,25 @@ export default function useSetupCustomActions( {
 			isReady: true,
 		};
 
-		// Fire the ready event exactly once per mount, after the global has
-		// been fully populated. Hosts (e.g. CIAB) listen for this to safely
-		// invoke actions like `setChatOpen` without polling.
+		// One-time per-mount setup: read host-injected tracking configuration
+		// from the global and fire the ready event. Both flow through the
+		// same `hasFiredReadyRef` guard so they run exactly once per mount
+		// even though the effect re-runs on state changes.
 		if ( ! hasFiredReadyRef.current ) {
 			hasFiredReadyRef.current = true;
+
+			// Wire host-injected tracking handler and default-tracks switch.
+			// Both are pre-set on `window.__agentsManagerActions` by the host
+			// before this hook mounts, following the same pattern as
+			// `isCompactMode`, `isChatEnabled`, and `desktopMediaQuery`.
+			setTrackingHandler( window.__agentsManagerActions?.trackingHandler );
+			if ( window.__agentsManagerActions?.disableDefaultTracks ) {
+				setDefaultTracksEnabled( false );
+			}
+
+			// Fire the ready event after the global has been fully populated
+			// and tracking is wired. Hosts (e.g. CIAB) listen for this to
+			// safely invoke actions like `setChatOpen` without polling.
 			window.dispatchEvent( new CustomEvent( 'agents-manager-ready' ) );
 		}
 

@@ -66,6 +66,20 @@ interface AgentsManagerActions {
 	 * instead of waiting for the `agents-manager-ready` event.
 	 */
 	isReady?: boolean;
+	/**
+	 * Host-injected tracking handler. When set (before Agents Manager mounts),
+	 * every event fired by the package is also delivered to this function
+	 * with the unprefixed semantic name. Allows hosts to route chat telemetry
+	 * into their own pipelines (e.g. CIAB routes to `assistant_*`).
+	 */
+	trackingHandler?: ( event: string, props?: Record< string, string | number | boolean > ) => void;
+	/**
+	 * When set to `true` before Agents Manager mounts, suppresses the default
+	 * Calypso tracks path. Events still flow through `trackingHandler` if one
+	 * is registered. Use this when a host wants to fully own chat telemetry
+	 * routing without Calypso-namespace events firing alongside.
+	 */
+	disableDefaultTracks?: boolean;
 }
 
 /**

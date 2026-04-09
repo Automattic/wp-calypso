@@ -11,6 +11,8 @@ import {
 } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { AI } from '../../components/icons';
+import { useAgentsManagerContext } from '../../contexts';
+import { trackEvent } from '../../tracking';
 
 interface Options {
 	sidebarContainer?: string | HTMLElement;
@@ -45,6 +47,7 @@ export default function useAgentLayoutManager( {
 	onDock = () => {},
 	onUndock = () => {},
 }: Options = {} ): ReturnValue {
+	const { sectionName } = useAgentsManagerContext();
 	const portalRef = useRef< HTMLDivElement >();
 	const wasOpenRef = useRef( defaultOpen );
 	const [ isPortalReady, setIsPortalReady ] = useState( false );
@@ -180,8 +183,13 @@ export default function useAgentLayoutManager( {
 		wasOpenRef.current = true;
 		container.classList.add( 'agents-manager-sidebar-container--sidebar-open' );
 
+		trackEvent( 'panel_view', {
+			chat_state: 'sidebar',
+			section_name: sectionName,
+		} );
+
 		onOpenSidebarRef.current();
-	}, [ canDock, container, isReady ] );
+	}, [ canDock, container, isReady, sectionName ] );
 
 	const handleCloseSidebar = useCallback( () => {
 		if ( ! isReady || ! container || ! canDock ) {
@@ -191,8 +199,13 @@ export default function useAgentLayoutManager( {
 		wasOpenRef.current = false;
 		container.classList.remove( 'agents-manager-sidebar-container--sidebar-open' );
 
+		trackEvent( 'panel_close', {
+			chat_state: 'sidebar',
+			section_name: sectionName,
+		} );
+
 		onCloseSidebarRef.current();
-	}, [ canDock, container, isReady ] );
+	}, [ canDock, container, isReady, sectionName ] );
 
 	const dock = useCallback( () => {
 		if ( ! isReady || ! container ) {

@@ -15,6 +15,7 @@ import useAgentLayoutManager from '../../hooks/use-agent-layout-manager';
 import useSetupCustomActions from '../../hooks/use-setup-custom-actions';
 import { useShouldUseUnifiedAgent } from '../../hooks/use-should-use-unified-agent';
 import { AGENTS_MANAGER_STORE } from '../../stores';
+import { trackEvent } from '../../tracking';
 import { LocalConversationListItem } from '../../types';
 import { persistLastActivity } from '../../utils/persist-last-activity';
 import AgentHistory from '../agent-history';
@@ -147,9 +148,25 @@ export default function AgentDock( {
 		[]
 	);
 
-	const handleClose = isDocked ? closeSidebar : () => setIsOpen( false );
+	const handleClose = () => {
+		if ( isDocked ) {
+			// Docked close goes through useAgentLayoutManager.handleCloseSidebar,
+			// which fires the panel_close event itself.
+			closeSidebar();
+		} else {
+			trackEvent( 'panel_close', {
+				chat_state: 'pop_out',
+				section_name: sectionName,
+			} );
+			setIsOpen( false );
+		}
+	};
 
 	const handleExpand = () => {
+		trackEvent( 'panel_view', {
+			chat_state: isDocked ? 'sidebar' : 'pop_out',
+			section_name: sectionName,
+		} );
 		setIsOpen( true );
 		if ( pathname === '/history' ) {
 			navigate( '/' );
@@ -157,6 +174,12 @@ export default function AgentDock( {
 	};
 
 	const handleSelectConversation = ( conversation: LocalConversationListItem ) => {
+		trackEvent( 'button_click', {
+			button_label: 'select_conversation',
+			conversation_type: conversation.is_zendesk ? 'zendesk' : 'orchestrator',
+			section_name: sectionName,
+		} );
+
 		if ( conversation.is_zendesk ) {
 			navigate( '/zendesk', { state: { conversationId: conversation.conversation_id } } );
 		} else {
@@ -174,7 +197,13 @@ export default function AgentDock( {
 				icon: comment,
 				title: __( 'New chat', '__i18n_text_domain__' ),
 				isDisabled: pathname === '/chat' && isOrchestratorChatEmpty,
-				onClick: () => navigate( '/' ),
+				onClick: () => {
+					trackEvent( 'button_click', {
+						button_label: 'new_chat',
+						section_name: sectionName,
+					} );
+					navigate( '/' );
+				},
 			},
 			shouldUseUnifiedAgent && {
 				icon: lifesaver,
@@ -189,6 +218,11 @@ export default function AgentDock( {
 				icon: login,
 				title: __( 'Pop out sidebar', '__i18n_text_domain__' ),
 				onClick: () => {
+					trackEvent( 'panel_mode_change', {
+						previous_state: 'sidebar',
+						new_state: 'pop_out',
+						section_name: sectionName,
+					} );
 					undock();
 					setIsDocked( false );
 				},
@@ -198,6 +232,11 @@ export default function AgentDock( {
 					icon: drawerRight,
 					title: __( 'Move to sidebar', '__i18n_text_domain__' ),
 					onClick: () => {
+						trackEvent( 'panel_mode_change', {
+							previous_state: 'pop_out',
+							new_state: 'sidebar',
+							section_name: sectionName,
+						} );
 						dock();
 						setIsDocked( true );
 					},

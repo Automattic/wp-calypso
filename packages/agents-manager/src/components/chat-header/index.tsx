@@ -2,6 +2,8 @@ import { Button, DropdownMenu } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { close, moreVertical, backup, chevronLeft, Icon } from '@wordpress/icons';
 import { useNavigate } from 'react-router-dom';
+import { useAgentsManagerContext } from '../../contexts';
+import { trackEvent } from '../../tracking';
 import type { ComponentProps } from 'react';
 import './style.scss';
 
@@ -16,6 +18,15 @@ interface Props {
 
 export default function ChatHeader( { onClose, options, title, onBack }: Props ) {
 	const navigate = useNavigate();
+	const { sectionName } = useAgentsManagerContext();
+
+	const handleViewHistory = () => {
+		trackEvent( 'button_click', {
+			button_label: 'view_history',
+			section_name: sectionName,
+		} );
+		navigate( '/history' );
+	};
 
 	return (
 		<div className="agents-manager-chat-header">
@@ -41,7 +52,7 @@ export default function ChatHeader( { onClose, options, title, onBack }: Props )
 				<Button
 					className="agents-manager-chat-header__history-btn"
 					icon={ backup }
-					onClick={ () => navigate( '/history' ) }
+					onClick={ handleViewHistory }
 					label={ __( 'View history', '__i18n_text_domain__' ) }
 					size="small"
 				/>

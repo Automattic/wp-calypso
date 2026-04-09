@@ -42,11 +42,13 @@ if ( window.__agentsManagerActions?.isReady ) {
 
 Properties can be pre-set on `window.__agentsManagerActions` **before** the hook mounts to control initial state:
 
-| Property            | Type      | Default     | Description                              |
-| ------------------- | --------- | ----------- | ---------------------------------------- |
-| `isCompactMode`     | `boolean` | `false`     | Initial compact mode state.              |
-| `isChatEnabled`     | `boolean` | `true`      | Initial chat rendering state.            |
-| `desktopMediaQuery` | `string`  | `undefined` | Initial media query for sidebar docking. |
+| Property               | Type       | Default     | Description                                                                                                                                                                 |
+| ---------------------- | ---------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `isCompactMode`        | `boolean`  | `false`     | Initial compact mode state.                                                                                                                                                 |
+| `isChatEnabled`        | `boolean`  | `true`      | Initial chat rendering state.                                                                                                                                               |
+| `desktopMediaQuery`    | `string`   | `undefined` | Initial media query for sidebar docking.                                                                                                                                    |
+| `trackingHandler`      | `function` | `undefined` | Host-injected tracking handler. Receives every tracks event fired by the package with the unprefixed semantic name (e.g. `agents_manager_link_click`, `panel_view`).        |
+| `disableDefaultTracks` | `boolean`  | `false`     | When `true`, suppresses the default Calypso tracks path. Events still flow through `trackingHandler` if one is registered. Use when a host wants to fully own chat telemetry routing. |
 
 ## Examples
 
