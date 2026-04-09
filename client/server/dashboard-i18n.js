@@ -2,21 +2,15 @@
 import { readFile } from 'fs/promises';
 import { defaultI18n } from '@wordpress/i18n';
 import getAssetFilePath from 'calypso/lib/get-asset-file-path';
+import { getLanguageFile } from 'calypso/lib/i18n-utils/switch-locale';
 
 const localeDataCache = new Map();
 
 /**
- * Express middleware that loads the bootstrapped user's locale data from disk
- * and applies it to the global `defaultI18n` singleton from `@wordpress/i18n`
- * for the duration of the request's render. The data is also stashed on
- * `req.context.localeData` so the document component can inline it into the
- * HTML response, allowing the client to apply the same data before any
- * components render — which is what makes hydration of the SSR-translated
- * interim omnibar match.
- *
- * Falls back silently to the default English locale if the locale file is
- * missing or unreadable; the client-side `I18nProvider` will fetch the JSON
- * from the CDN as a backup.
+ * Populates `defaultI18n` with the bootstrapped user's locale for the duration
+ * of the request's render, so the server-side render of the interim omnibar
+ * emits translated strings. Loads from `public/languages/` when available and
+ * falls back to the Calypso CDN otherwise.
  */
 export function loadDashboardLocaleData( req, res, next ) {
 	const language = req.context?.lang;
@@ -28,7 +22,6 @@ export function loadDashboardLocaleData( req, res, next ) {
 
 	const apply = ( data ) => {
 		defaultI18n.setLocaleData( data );
-		req.context.localeData = data;
 		next();
 	};
 
@@ -40,6 +33,7 @@ export function loadDashboardLocaleData( req, res, next ) {
 
 	readFile( getAssetFilePath( `languages/${ language }-v1.1.json` ), 'utf-8' )
 		.then( ( raw ) => JSON.parse( raw ) )
+		.catch( () => getLanguageFile( language ) )
 		.then( ( data ) => {
 			localeDataCache.set( language, data );
 			apply( data );
