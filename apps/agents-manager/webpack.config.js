@@ -2,6 +2,7 @@ const path = require( 'path' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
 const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
 const ReadableJsAssetsWebpackPlugin = require( '@wordpress/readable-js-assets-webpack-plugin' );
+const CopyPlugin = require( 'copy-webpack-plugin' );
 const webpack = require( 'webpack' );
 const GenerateChunksMapPlugin = require( '../../build-tools/webpack/generate-chunks-map-plugin' );
 
@@ -106,7 +107,19 @@ function getIndividualConfig( options = {} ) {
 function getWebpackConfig( env = { source: '' }, argv = {} ) {
 	env.WP = true;
 
-	return [
+	// Copy the ESM provider wrapper for jetpack-ai-sidebar to dist.
+	// This file is pure ESM and doesn't need webpack processing — AM
+	// loads it via dynamic import() at runtime.
+	const copyEsmProviders = new CopyPlugin( {
+		patterns: [
+			{
+				from: path.join( __dirname, 'jetpack-ai-sidebar.provider.mjs' ),
+				to: path.join( __dirname, 'dist', 'jetpack-ai-sidebar.provider.mjs' ),
+			},
+		],
+	} );
+
+	const configs = [
 		getIndividualConfig( { env, argv, name: 'agents-manager-gutenberg' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-wp-admin' } ),
 		getIndividualConfig( { env, argv, name: 'image-studio' } ),
@@ -118,6 +131,11 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 		getIndividualConfig( { env, argv, name: 'agents-manager-ciab' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-wooai' } ),
 	];
+
+	// Attach the copy plugin to the first config.
+	configs[ 0 ].plugins.push( copyEsmProviders );
+
+	return configs;
 }
 
 module.exports = getWebpackConfig;
