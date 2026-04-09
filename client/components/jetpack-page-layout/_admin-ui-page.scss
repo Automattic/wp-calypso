@@ -42,6 +42,14 @@
 			height: calc(100vh - var(--masterbar-height));
 			width: 100vw;
 
+			// Jetpack Cloud uses 100vh except on mobile where it shows a sidebar navigation on top (73px)
+			&:has(header.current-section) {
+				height: calc(100vh - 73px);
+				@include break-medium {
+					height: 100vh;
+				}
+			}
+
 			@include break-medium {
 				width: calc(100vw - var(--sidebar-width-max));
 			}
@@ -51,7 +59,7 @@
 			// AL v2, which render content directly inside <Main>), make the
 			// fixed-primary itself scrollable so content isn't clipped.
 			&:not(:has(.admin-ui-page)) {
-				overflow-y: auto;
+				overflow: hidden auto;
 			}
 
 			.main {
@@ -59,7 +67,10 @@
 				margin-block: 0;
 
 				@include break-medium {	
-					margin-block: var(--wpds-dimension-padding-2xl);
+					body.theme-jetpack-cloud &,
+					body.theme-a8c-for-agencies & {
+						margin-block: var(--wpds-dimension-padding-2xl);
+					}
 				}
 				// Only fill the fixed-primary column when the page renders an
 				// admin-ui <Page> inside <Main>. Pages that render content
