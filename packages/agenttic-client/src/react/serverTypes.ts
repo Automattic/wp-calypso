@@ -24,10 +24,12 @@ export interface ServerFilePart {
 }
 
 /**
- * Context structure that may contain file parts
+ * Context structure that may contain file parts, sources, and flags (e.g. forward_to_human_support)
  */
 export interface ServerMessageContext {
 	file_parts?: ServerFilePart[];
+	sources?: unknown;
+	flags?: Record< string, unknown >;
 	[ key: string ]: unknown;
 }
 
@@ -151,18 +153,27 @@ export function serverMessageToMessage(
 		}
 	}
 
-	// Preserve sources from context as a data part for UI consumption.
-	if (
-		context &&
-		! Array.isArray( context ) &&
-		Array.isArray( context.sources ) &&
-		context.sources.length > 0
-	) {
-		const dataPart: DataPart = {
-			type: 'data',
-			data: { sources: context.sources },
-		};
-		parts.push( dataPart );
+	// Preserve flags (e.g. forward_to_human_support) and sources from context as a data part.
+	if ( context && ! Array.isArray( context ) ) {
+		const ctx = context as ServerMessageContext;
+		const hasFlags =
+			ctx.flags && typeof ctx.flags === 'object' && ctx.flags !== null;
+		const hasSources =
+			Array.isArray( ctx.sources ) && ctx.sources.length > 0;
+
+		if ( hasFlags || hasSources ) {
+			const data: Record< string, unknown > = {};
+			if ( hasFlags ) {
+				data.flags = ctx.flags;
+			}
+			if ( hasSources ) {
+				data.sources = ctx.sources;
+			}
+			parts.push( {
+				type: 'data',
+				data,
+			} );
+		}
 	}
 
 	// Tool calls and tool results are intentionally not included in parts

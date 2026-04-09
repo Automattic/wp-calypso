@@ -57,6 +57,14 @@ interface StoredMessage {
 		result: any;
 		error?: string;
 	} >;
+	/**
+	 * Agent metadata data part (flags/sources), e.g. forward_to_human_support.
+	 * Stored separately from tool calls so it survives sessionStorage round-trip.
+	 */
+	agentMessageData?: {
+		flags?: Record< string, unknown >;
+		sources?: unknown;
+	};
 }
 
 /**
@@ -124,6 +132,35 @@ function extractStorableContent( message: Message ): StoredMessage {
 			uri: part.file.uri,
 		} ) );
 
+	// Preserve agent UI data parts (forward_to_human_support, sources) — not tool payloads
+	let agentMessageData: StoredMessage[ 'agentMessageData' ];
+	for ( const part of message.parts ) {
+		if (
+			part.type !== 'data' ||
+			! part.data ||
+			typeof part.data !== 'object'
+		) {
+			continue;
+		}
+		if ( 'toolCallId' in part.data ) {
+			continue;
+		}
+		const data = part.data as Record< string, unknown >;
+		const flags = data.flags;
+		if (
+			flags &&
+			typeof flags === 'object' &&
+			flags !== null &&
+			'forward_to_human_support' in flags
+		) {
+			agentMessageData = {
+				flags: flags as Record< string, unknown >,
+				...( 'sources' in data && { sources: data.sources } ),
+			};
+			break;
+		}
+	}
+
 	// Determine the role - if this message contains tool interactions, store as "agent"
 	// regardless of the original message role
 	const hasToolInteractions = toolCalls.length > 0 || toolResults.length > 0;
@@ -144,6 +181,7 @@ function extractStorableContent( message: Message ): StoredMessage {
 		...( files.length > 0 && { files } ),
 		...( toolCalls.length > 0 && { toolCalls } ),
 		...( toolResults.length > 0 && { toolResults } ),
+		...( agentMessageData && { agentMessageData } ),
 	};
 }
 
@@ -206,6 +244,20 @@ function restoreMessage( stored: StoredMessage ): Message {
 					...( toolResult.error && { error: toolResult.error } ),
 				},
 			} );
+		}
+	}
+
+	// Restore agent metadata data part (e.g. forward_to_human_support)
+	if ( stored.agentMessageData ) {
+		const data: Record< string, unknown > = {};
+		if ( stored.agentMessageData.flags !== undefined ) {
+			data.flags = stored.agentMessageData.flags;
+		}
+		if ( 'sources' in stored.agentMessageData ) {
+			data.sources = stored.agentMessageData.sources ?? null;
+		}
+		if ( Object.keys( data ).length > 0 ) {
+			parts.push( { type: 'data', data } );
 		}
 	}
 
