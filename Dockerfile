@@ -98,6 +98,7 @@ ENV SENTRY_AUTH_TOKEN $sentry_auth_token
 ARG commit_sha="(unknown)"
 ARG workers=4
 ARG node_memory=8192
+ARG node_semi_space=64
 ARG profile=false
 ENV CONTAINER 'docker'
 ENV PROFILE=$profile
@@ -105,7 +106,7 @@ ENV COMMIT_SHA $commit_sha
 ENV CALYPSO_ENV production
 ENV WORKERS $workers
 ENV BUILD_TRANSLATION_CHUNKS true
-ENV NODE_OPTIONS --max-old-space-size=$node_memory
+ENV NODE_OPTIONS="--max-old-space-size=${node_memory} --max-semi-space-size=${node_semi_space}"
 ENV IS_CI=true
 WORKDIR /calypso
 
