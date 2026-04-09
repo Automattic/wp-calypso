@@ -98,7 +98,7 @@ ENV SENTRY_AUTH_TOKEN $sentry_auth_token
 ARG commit_sha="(unknown)"
 ARG workers=4
 ARG node_memory=8192
-ARG node_semi_space=64
+ARG node_semi_space=128
 ARG profile=false
 ENV CONTAINER 'docker'
 ENV PROFILE=$profile
