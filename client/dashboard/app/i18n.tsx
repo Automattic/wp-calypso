@@ -2,7 +2,7 @@ import { defaultI18n, type I18n } from '@wordpress/i18n';
 import { I18nProvider as WPI18nProvider } from '@wordpress/react-i18n';
 import { useEffect, useState, type PropsWithChildren } from 'react';
 import { useAuth } from './auth';
-import { getUserLanguage, loadUserLocale } from './shared-locale-loader';
+import { getUserLanguage, loadUserLocaleData } from './shared-locale-loader';
 
 function getHtmlLangAttribute( i18n: I18n, fallback: string ) {
 	// translation of this string contains the desired HTML attribute value
@@ -131,13 +131,15 @@ export function I18nProvider( { children }: PropsWithChildren ) {
 	useEffect( () => {
 		let cancelled = false;
 
-		loadUserLocale( language ).then( ( data ) => {
+		loadUserLocaleData( language ).then( ( data ) => {
 			if ( cancelled ) {
 				return;
 			}
-			// `loadUserLocale` applies the data to `defaultI18n` itself. It
-			// returns `undefined` for English or on error, in which case we
-			// just mark as loaded without touching the locale.
+			if ( data ) {
+				i18n.resetLocaleData( data );
+			} else {
+				i18n.resetLocaleData();
+			}
 			const realLanguage = data ? language : 'en';
 			setLoadedLocale( realLanguage );
 			setLocaleInDOM( i18n, realLanguage );

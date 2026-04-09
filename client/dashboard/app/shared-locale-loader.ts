@@ -1,9 +1,8 @@
 import { isTranslatedIncompletely } from '@automattic/i18n-utils';
-import { defaultI18n, type LocaleData } from '@wordpress/i18n';
+import { type LocaleData } from '@wordpress/i18n';
 import type { User } from '@automattic/api-core';
 
 const dataPromises = new Map< string, Promise< LocaleData > >();
-let appliedLanguage: string | null = null;
 
 /**
  * Derives the effective locale slug for a user. Mirrors the server's
@@ -38,19 +37,16 @@ export function getUserLanguage( user: User | null | undefined ): string {
 }
 
 /**
- * Fetches the user's locale JSON from the Calypso CDN and applies it to the
- * `defaultI18n` singleton. Returns a cached raw-data promise per language so
- * concurrent callers share a single network request. On each call, if the
- * currently-applied locale differs from what was requested, the data is
- * re-applied via `resetLocaleData` — this keeps in-session language switches
- * clean instead of merging old + new translations.
+ * Fetches the user's locale JSON from the Calypso CDN and returns a cached
+ * promise per language, so concurrent callers share a single network
+ * request. Returns `undefined` for English (nothing to load) or on error.
+ *
+ * Pure cache + fetch — no singleton mutation. Callers are responsible for
+ * applying the result to `defaultI18n` (typically via `resetLocaleData`),
+ * gated on their own cancellation state.
  */
-export function loadUserLocale( language: string ): Promise< LocaleData | undefined > {
+export function loadUserLocaleData( language: string ): Promise< LocaleData | undefined > {
 	if ( ! language || language === 'en' ) {
-		if ( appliedLanguage !== 'en' ) {
-			defaultI18n.resetLocaleData();
-			appliedLanguage = 'en';
-		}
 		return Promise.resolve( undefined );
 	}
 
@@ -67,22 +63,9 @@ export function loadUserLocale( language: string ): Promise< LocaleData | undefi
 		dataPromises.set( language, dataPromise );
 	}
 
-	return dataPromise
-		.then( ( data ) => {
-			if ( appliedLanguage !== language ) {
-				defaultI18n.resetLocaleData( data );
-				appliedLanguage = language;
-			}
-			return data;
-		} )
-		.catch( () => {
-			// Drop the cached rejection so a later call can retry.
-			dataPromises.delete( language );
-			// Callers treat `undefined` as English; make `defaultI18n` match.
-			if ( appliedLanguage !== 'en' ) {
-				defaultI18n.resetLocaleData();
-				appliedLanguage = 'en';
-			}
-			return undefined;
-		} );
+	return dataPromise.catch( () => {
+		// Drop the cached rejection so a later call can retry.
+		dataPromises.delete( language );
+		return undefined;
+	} );
 }
