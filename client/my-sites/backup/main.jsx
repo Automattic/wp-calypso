@@ -177,32 +177,30 @@ function BackupStatus( { selectedDate, needCredentials, onDateChange } ) {
 
 	return (
 		<div className="backup__main-wrap">
-			<div className="backup__last-backup-status">
-				{ ( isJetpackCloud() || isA8CForAgencies() ) && (
-					<div className="backup__header">
-						<div className="backup__header-left">
-							<div className="backup__header-title">{ translate( 'Latest Backups' ) }</div>
-							<div className="backup__header-text">
-								{ translate( 'This is a list of your latest generated backups' ) }
-							</div>
-						</div>
-						<div className="backup__header-right">
-							<BackupActionsToolbar siteId={ siteId } />
+			{ ( isJetpackCloud() || isA8CForAgencies() ) && (
+				<div className="backup__header">
+					<div className="backup__header-left">
+						<div className="backup__header-title">{ translate( 'Latest Backups' ) }</div>
+						<div className="backup__header-text">
+							{ translate( 'This is a list of your latest generated backups' ) }
 						</div>
 					</div>
-				) }
+					<div className="backup__header-right">
+						<BackupActionsToolbar siteId={ siteId } />
+					</div>
+				</div>
+			) }
 
-				{ needCredentials && <EnableRestoresBanner /> }
-				{ ! needCredentials && hasRealtimeBackups && <BackupsMadeRealtimeBanner /> }
+			{ needCredentials && <EnableRestoresBanner /> }
+			{ ! needCredentials && hasRealtimeBackups && <BackupsMadeRealtimeBanner /> }
 
-				<BackupDatePicker onDateChange={ onDateChange } selectedDate={ selectedDate } />
-				<BackupStorageSpace />
-				{ hasRealtimeBackups ? (
-					<RealtimeStatus selectedDate={ selectedDate } />
-				) : (
-					<DailyStatus selectedDate={ selectedDate } />
-				) }
-			</div>
+			<BackupDatePicker onDateChange={ onDateChange } selectedDate={ selectedDate } />
+			<BackupStorageSpace />
+			{ hasRealtimeBackups ? (
+				<RealtimeStatus selectedDate={ selectedDate } />
+			) : (
+				<DailyStatus selectedDate={ selectedDate } />
+			) }
 		</div>
 	);
 }
