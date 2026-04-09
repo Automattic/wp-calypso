@@ -47,7 +47,7 @@ export default function useSourcesAction( registerMessageActions: RegisterMessag
 
 				return [
 					{
-						type: 'component' as const,
+						type: 'component',
 						id: 'sources',
 						label: 'Sources',
 						component: SourcesDisplay,
