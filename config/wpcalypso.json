@@ -28,7 +28,6 @@
 		"calypso/big-sky": true,
 		"calypso/domains-dataviews": true,
 		"catch-js-errors": false,
-		"checkout/ebanx-pix": true,
 		"checkout/google-pay": true,
 		"checkout/checkout-version": true,
 		"help-center/logged-out": true,

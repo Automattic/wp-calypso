@@ -139,28 +139,22 @@ export function useCreateCreditCard( {
 }
 
 function useCreatePix(): PaymentMethod | null {
-	const isPixEnabled = isEnabled( 'checkout/ebanx-pix' );
 	return useMemo(
 		() =>
-			isPixEnabled
-				? createPixPaymentMethod( {
-						submitButtonContent: <CheckoutSubmitButtonContent />,
-				  } )
-				: null,
-		[ isPixEnabled ]
+			createPixPaymentMethod( {
+				submitButtonContent: <CheckoutSubmitButtonContent />,
+			} ),
+		[]
 	);
 }
 
 function useCreatePixAutomatico(): PaymentMethod | null {
-	const isPixEnabled = isEnabled( 'checkout/ebanx-pix' );
 	return useMemo(
 		() =>
-			isPixEnabled
-				? createPixAutomaticoPaymentMethod( {
-						submitButtonContent: <CheckoutSubmitButtonContent />,
-				  } )
-				: null,
-		[ isPixEnabled ]
+			createPixAutomaticoPaymentMethod( {
+				submitButtonContent: <CheckoutSubmitButtonContent />,
+			} ),
+		[]
 	);
 }
 
