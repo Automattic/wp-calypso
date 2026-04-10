@@ -374,11 +374,17 @@ function ReSubscribeActionButton( { purchase }: { purchase: Purchase } ) {
 		migrationStatus.startsWith( 'migration-started' ) ||
 		migrationStatus.startsWith( 'migration-in-progress' );
 
+	// Match the wpcom plan slugs: Personal, Premium (value_bundle), Business.
+	// Includes monthly, 2y, 3y variants.
+	const isDowngradeEligiblePlan = /^(personal-bundle|value_bundle|business-bundle)/.test(
+		purchase.product_slug
+	);
+
 	const isEligibleForDowngrade =
 		config.isEnabled( 'plans/expired-plan-downgrade' ) &&
 		purchase.is_plan &&
 		! isMigrating &&
-		/^(personal|premium|business)-bundle/.test( purchase.product_slug );
+		isDowngradeEligiblePlan;
 
 	if ( isEligibleForDowngrade ) {
 		return (

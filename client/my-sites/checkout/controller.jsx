@@ -41,7 +41,6 @@ import GiftThankYou from './checkout-thank-you/gift/gift-thank-you';
 import HundredYearThankYou from './checkout-thank-you/hundred-year-thank-you';
 import JetpackCheckoutThankYou from './checkout-thank-you/jetpack-checkout-thank-you';
 import CheckoutPending from './checkout-thank-you/pending';
-import PlanChangedRedirect from './plan-changed-redirect';
 import UpsellNudge, {
 	CONCIERGE_SUPPORT_SESSION,
 	CONCIERGE_QUICKSTART_SESSION,
@@ -50,11 +49,6 @@ import UpsellNudge, {
 import { getProductSlugFromContext, isContextJetpackSitelessCheckout } from './utils';
 
 const debug = debugFactory( 'calypso:checkout-controller' );
-
-export function planChangedRedirect( context, next ) {
-	context.primary = <PlanChangedRedirect />;
-	next();
-}
 
 export function checkoutFailedPurchases( context, next ) {
 	context.primary = <FailedPurchasePage />;

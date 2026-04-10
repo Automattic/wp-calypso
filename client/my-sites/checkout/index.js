@@ -18,7 +18,6 @@ import {
 	checkoutUnifiedSiteless,
 	checkoutA4ASiteless,
 	checkoutRenewalBySubscriptionId,
-	planChangedRedirect,
 	checkoutThankYou,
 	licensingPendingAsyncActivation,
 	licensingThankYouManualActivationInstructions,
@@ -368,17 +367,6 @@ export default function () {
 		redirectLoggedOut,
 		noSite,
 		checkoutRenewalBySubscriptionId,
-		makeLayout,
-		clientRender
-	);
-
-	// After a plan-change checkout, resolve the new purchase and redirect to settings.
-	// Must be registered before generic /checkout/:product routes.
-	page(
-		'/checkout/:site/plan-changed',
-		redirectLoggedOut,
-		siteSelection,
-		planChangedRedirect,
 		makeLayout,
 		clientRender
 	);

@@ -2,6 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { WordPressLogo } from '@automattic/components/src/logos/wordpress-logo';
 import { useQueryClient, useIsFetching } from '@tanstack/react-query';
 import { CatchNotFound, Outlet, useRouterState, useRouter } from '@tanstack/react-router';
+import { __ } from '@wordpress/i18n';
 import {
 	Suspense,
 	lazy,
@@ -35,6 +36,29 @@ const WebpackBuildMonitor = lazy(
 
 const SLOW_THRESHOLD_MS = 100;
 const VERY_SLOW_THRESHOLD_MS = 6000;
+
+/**
+ * Matches the purchase-by-site resolver route (post-checkout plan change flow).
+ * On this path, we show a custom "Updating your plan…" loader instead of the
+ * default WP logo, so users see a seamless single-loader transition from
+ * checkout to the new purchase settings page.
+ */
+function isPlanChangedResolverPath( pathname: string ): boolean {
+	return /^\/me\/billing\/purchases\/by-site\//.test( pathname );
+}
+
+function PlanChangedLoader() {
+	return (
+		<div className="dashboard-root__plan-changed-loader">
+			<div className="dashboard-root__plan-changed-loader-content">
+				<h1 className="dashboard-root__plan-changed-loader-title">
+					{ __( 'Updating your plan…' ) }
+				</h1>
+				<LoadingLine variant="progress" progressDuration="4000ms" />
+			</div>
+		</div>
+	);
+}
 
 function Root() {
 	const isOmnibarEnabled = isEnabled( 'dashboard/omnibar' );
@@ -178,9 +202,12 @@ function Root() {
 		document.title = title ? `${ title } – ${ name }` : name;
 	}, [ name, title ] );
 
+	const isPlanChangedResolver =
+		typeof window !== 'undefined' && isPlanChangedResolverPath( window.location.pathname );
+
 	return (
 		<div className="dashboard-root__layout">
-			{ ( isFetching > 0 || isSlowNavigation ) && (
+			{ ( isFetching > 0 || isSlowNavigation ) && ! isPlanChangedResolver && (
 				<LoadingLine
 					variant={
 						isSlowNavigation || loadingQueryRequestedFullPageLoader ? 'progress' : 'spinner'
@@ -188,7 +215,12 @@ function Root() {
 					progressDuration={ `${ VERY_SLOW_THRESHOLD_MS }ms` }
 				/>
 			) }
-			{ ( isInitialLoad || isVerySlowNavigation ) && <LoadingLogo className="wpcom-site__logo" /> }
+			{ ( isInitialLoad || isVerySlowNavigation ) &&
+				( isPlanChangedResolver ? (
+					<PlanChangedLoader />
+				) : (
+					<LoadingLogo className="wpcom-site__logo" />
+				) ) }
 			{ renderHeader() }
 			{ renderBody() }
 			{ supports.commandPalette && <CommandPalette /> }

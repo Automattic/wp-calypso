@@ -130,7 +130,9 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 							// Note: Not using goToCheckout utility because it hardcodes signup=1
 							// Checkout validates redirect_to to prevent open redirects
 							const postCheckoutUrl = isExpiredDowngrade
-								? `/checkout/${ encodeURIComponent( siteSlug ) }/plan-changed`
+								? dashboardLink(
+										`/me/billing/purchases/by-site/${ encodeURIComponent( siteSlug ) }`
+								  )
 								: redirectTo || dashboardLink( '/sites' );
 
 							const finalUrl = addQueryArgs( checkoutUrl, {
