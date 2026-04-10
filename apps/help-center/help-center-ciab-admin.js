@@ -2,7 +2,7 @@
 import './config';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
-import { dispatch, select } from '@wordpress/data';
+import { dispatch, select, subscribe } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
 import { createRoot } from 'react-dom/client';
 import './help-center.scss';
@@ -98,9 +98,14 @@ async function shouldAutoLoadHelpCenter() {
 	return preferences?.help_center_open;
 }
 
-// Check if the user had the Help Center open in a previous session.
-shouldAutoLoadHelpCenter().then( ( shouldAutoLoad ) => {
-	if ( shouldAutoLoad ) {
-		loadHelpCenter();
+const unsubscribe = subscribe( () => {
+	if ( select( 'next-admin' )?.getMetaMenuItems?.( 'wp-logo' )?.length > 1 ) {
+		unsubscribe();
+		// Check if the user has the HC already open from a previous session.
+		shouldAutoLoadHelpCenter().then( ( shouldAutoLoad ) => {
+			if ( shouldAutoLoad ) {
+				loadHelpCenter();
+			}
+		} );
 	}
 } );
