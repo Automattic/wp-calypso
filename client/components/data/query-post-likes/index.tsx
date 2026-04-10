@@ -14,6 +14,23 @@ interface Props {
 
 /**
  * Fetches post likes using React Query and bridges the result into Redux for retro-compatibility.
+ *
+ * ## Cache invalidation strategy (temporary)
+ *
+ * Like/unlike actions still go through the Redux data layer, which optimistically updates
+ * `iLike` and `found` in the Redux store. Because the React Query cache is unaware of these
+ * mutations, it can hold stale data that would overwrite the optimistic update on the next
+ * mount or refetch.
+ *
+ * To keep both caches in sync we track the last `iLike` and `found` values that React Query
+ * returned (via a ref) and watch the corresponding Redux selectors. When they diverge — meaning
+ * a local like/unlike happened outside of React Query — we invalidate the query so fresh data
+ * is fetched from the API.
+ *
+ * This bridge is temporary: once the like/unlike flow is migrated to React Query mutations
+ * (using `postLikeMutation`/`postUnlikeMutation`), the mutations will invalidate the cache
+ * directly in their `onSuccess` callback and this mechanism can be removed.
+ *
  * @deprecated Use postLikesQuery + useQuery directly in new components.
  */
 export default function QueryPostLikes( { siteId, postId }: Props ) {
