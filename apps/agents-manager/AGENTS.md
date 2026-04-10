@@ -2,7 +2,7 @@
 
 Build and deployment layer for the Agents Manager. Most code lives in `packages/agents-manager/` — see its `AGENTS.md` for architecture and conventions.
 
-This app bundles the package into 8 webpack entry points deployed to `widgets.wp.com/agents-manager/`. Jetpack enqueues these on Simple, Atomic, and CIAB sites.
+This app bundles the package into 7 webpack entry points deployed to `widgets.wp.com/agents-manager/`. Jetpack enqueues these on Simple, Atomic, and CIAB sites.
 
 ## Build & Sync
 
