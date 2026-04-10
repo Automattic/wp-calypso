@@ -211,4 +211,12 @@ body.is-section-signup {
 	.step-wrapper__header {
 		margin: 24px 20px 38px;
 	}
+
+	.step-wrapper__content .is-pricing-grid-2023-plans-features-main {
+		padding-inline: 16px;
+
+		@include break-small {
+			padding-inline: 48px;
+		}
+	}
 }
