@@ -4,6 +4,7 @@ import { WordPressLogo } from '@automattic/components';
 import { isLocaleRtl } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import clsx from 'clsx';
+import defaultCalypsoI18n, { I18NContext } from 'i18n-calypso';
 import { useMemo, Component } from 'react';
 import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
 import EnvironmentBadge, {
@@ -163,16 +164,18 @@ class Document extends Component {
 						'is-mobile-app-view': app?.isWpMobileApp || app?.isWcMobileApp,
 					} ) }
 				>
-					{ /* eslint-disable wpcalypso/jsx-classname-namespace, react/no-danger */ }
 					{ dashboard && config.isEnabled( 'dashboard/omnibar' ) && (
 						<div id="wpcom-omnibar">
-							<InterimOmnibar
-								user={ user || null }
-								site={ null }
-								currentRoute={ this.props.path ?? '/' }
-							/>
+							<I18NContext.Provider value={ this.props.i18nCalypso || defaultCalypsoI18n }>
+								<InterimOmnibar
+									user={ user || null }
+									site={ null }
+									currentRoute={ this.props.path ?? '/' }
+								/>
+							</I18NContext.Provider>
 						</div>
 					) }
+					{ /* eslint-disable react/no-danger */ }
 					{ renderedLayout ? (
 						<div
 							id="wpcom"
