@@ -7,7 +7,7 @@ import {
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { comment, drawerRight, login, lifesaver } from '@wordpress/icons';
+import { comment, drawerRight, help, login, lifesaver } from '@wordpress/icons';
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useAgentsManagerContext } from '../../contexts';
 import useAdminBarIntegration from '../../hooks/use-admin-bar-integration';
@@ -184,6 +184,13 @@ export default function AgentDock( {
 					handleAbort();
 					navigate( '/zendesk' );
 				},
+			},
+			// TODO: For testing. Remove before release.
+			{
+				icon: help,
+				title: __( 'Support guides', '__i18n_text_domain__' ),
+				isDisabled: pathname === '/support-guides',
+				onClick: () => navigate( '/support-guides' ),
 			},
 			isDocked && {
 				icon: login,
