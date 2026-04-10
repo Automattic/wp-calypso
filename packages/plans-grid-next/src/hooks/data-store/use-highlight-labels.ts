@@ -21,10 +21,6 @@ interface Props {
 	};
 	highlightLabelOverrides?: { [ K in PlanSlug ]?: TranslateResult };
 	isDomainOnlySite: boolean;
-	/**
-	 * When true (pricing differentiators experiment eligible), use treatment copy for grid badges.
-	 */
-	isExperimentVariant?: boolean;
 }
 
 // TODO clk: move to plans data store
@@ -36,7 +32,6 @@ const useHighlightLabels = ( {
 	plansAvailabilityForPurchase,
 	highlightLabelOverrides,
 	isDomainOnlySite,
-	isExperimentVariant,
 }: Props ) => {
 	const translate = useTranslate();
 	const isVisualSplitIntent =
@@ -80,9 +75,9 @@ const useHighlightLabels = ( {
 			} else if ( 'plans-affiliate' === intent && isBusinessPlan( planSlug ) ) {
 				label = translate( 'Popular' );
 			} else if ( isBusinessPlan( planSlug ) && ! selectedPlan && ! isVisualSplitIntent ) {
-				label = isExperimentVariant ? translate( 'Best value' ) : translate( 'Best for devs' );
+				label = translate( 'Best value' );
 			} else if ( isPopularPlan( planSlug ) && ! selectedPlan && ! isVisualSplitIntent ) {
-				label = isExperimentVariant ? translate( 'Most popular' ) : translate( 'Popular' );
+				label = translate( 'Most popular' );
 			}
 
 			return {
