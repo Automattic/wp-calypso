@@ -15,7 +15,6 @@ import {
 	READER_LIST_UPDATE_SUCCESS,
 	READER_LIST_UPDATE_FAILURE,
 	READER_LISTS_RECEIVE,
-	READER_LISTS_REQUEST,
 	READER_LIST_ITEMS_RECEIVE,
 	READER_LIST_ITEM_ADD_FEED,
 	READER_LIST_ITEM_DELETE_FEED,
@@ -206,22 +205,6 @@ export function isUpdatingList( state = false, action ) {
 }
 
 /**
- * Returns the updated requests state after an action has been dispatched.
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @returns {Object}        Updated state
- */
-export function isRequestingLists( state = false, action ) {
-	switch ( action.type ) {
-		case READER_LISTS_REQUEST:
-		case READER_LISTS_RECEIVE:
-			return READER_LISTS_REQUEST === action.type;
-	}
-
-	return state;
-}
-
-/**
  * This object tracks all list requests that have been made
  * and whether those requests are in progress or not.
  * @param  {Object} state  Current state
@@ -309,7 +292,6 @@ export default combineReducers( {
 	subscribedLists,
 	isCreatingList,
 	isRequestingList,
-	isRequestingLists,
 	isUpdatingList,
 	listRequests,
 	userLists,

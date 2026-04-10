@@ -254,40 +254,11 @@ describe( 'selectors', () => {
 									slug: 'ants',
 								},
 							},
-							isRequestingLists: false,
 						},
 					},
 				},
 				'lister',
 				'bananas'
-			);
-
-			expect( isMissing ).toEqual( false );
-		} );
-
-		test( 'should return false if lists are still being requested', () => {
-			const isMissing = isMissingByOwnerAndSlug(
-				{
-					reader: {
-						lists: {
-							items: {
-								123: {
-									ID: 123,
-									owner: 'lister',
-									slug: 'bananas',
-								},
-								456: {
-									ID: 456,
-									owner: 'lister',
-									slug: 'ants',
-								},
-							},
-							isRequestingLists: true,
-						},
-					},
-				},
-				'lister',
-				'kittens'
 			);
 
 			expect( isMissing ).toEqual( false );
@@ -310,7 +281,6 @@ describe( 'selectors', () => {
 									slug: 'ants',
 								},
 							},
-							isRequestingLists: false,
 						},
 					},
 				},

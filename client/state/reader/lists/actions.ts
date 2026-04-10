@@ -23,7 +23,6 @@ import {
 	READER_LIST_ITEM_ADD_TAG,
 	READER_LIST_ITEM_ADD_TAG_RECEIVE,
 	READER_LISTS_RECEIVE,
-	READER_LISTS_REQUEST,
 	READER_USER_LISTS_REQUEST,
 	READER_RECOMMENDED_BLOGS_ITEMS_RECEIVE,
 	READER_RECOMMENDED_BLOGS_ITEMS_REQUEST,
@@ -63,16 +62,6 @@ export function receiveLists( lists: ReaderList[] ): ReaderListAction {
 	return {
 		type: READER_LISTS_RECEIVE,
 		lists,
-	};
-}
-
-/**
- * Request the current user's subscribed lists.
- * @returns Action object
- */
-export function requestSubscribedLists(): ReaderListAction {
-	return {
-		type: READER_LISTS_REQUEST,
 	};
 }
 

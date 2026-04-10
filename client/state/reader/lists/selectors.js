@@ -143,11 +143,7 @@ export function hasRequestedListByOwnerAndSlug( state, owner, slug ) {
  * @returns {boolean} Is the list missing?
  */
 export function isMissingByOwnerAndSlug( state, owner, slug ) {
-	return (
-		! state.reader?.lists?.isRequestingLists &&
-		! state.reader?.lists?.isRequestingList &&
-		! getListByOwnerAndSlug( state, owner, slug )
-	);
+	return ! state.reader?.lists?.isRequestingList && ! getListByOwnerAndSlug( state, owner, slug );
 }
 
 /**

@@ -2,7 +2,6 @@ import {
 	READER_LIST_DELETE,
 	READER_LIST_REQUEST,
 	READER_LISTS_RECEIVE,
-	READER_LISTS_REQUEST,
 	READER_LIST_FOLLOW,
 	READER_LIST_UNFOLLOW,
 	READER_LIST_ITEM_ADD_FEED,
@@ -14,7 +13,6 @@ import {
 	deleteReaderList,
 	receiveLists,
 	requestList,
-	requestSubscribedLists,
 	followList,
 	unfollowList,
 	requestUserRecommendedBlogs,
@@ -44,16 +42,6 @@ describe( 'actions', () => {
 				type: READER_LIST_REQUEST,
 				listOwner: 'pob',
 				listSlug: 'things-i-like',
-			} );
-		} );
-	} );
-
-	describe( '#requestSubscribedLists()', () => {
-		test( 'should return an action object', () => {
-			const action = requestSubscribedLists();
-
-			expect( action ).toEqual( {
-				type: READER_LISTS_REQUEST,
 			} );
 		} );
 	} );
