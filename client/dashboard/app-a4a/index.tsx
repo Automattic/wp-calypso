@@ -20,7 +20,8 @@ boot( {
 	mainRoute: '/overview',
 	Logo,
 	supports: {
-		agency: true,
+		agency: { overview: true },
+		agencyClient: { subscriptions: true },
 		sites: true,
 		domains: false,
 		emails: false,
@@ -32,6 +33,9 @@ boot( {
 		plugins: false,
 		commandPalette: false,
 		domainOnlySites: false,
+		siteOverview: {
+			preview: false,
+		},
 	},
 	optIn: false,
 	components: {

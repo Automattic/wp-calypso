@@ -1,4 +1,5 @@
 import {
+	agencyQuery,
 	rawUserPreferencesQuery,
 	jetpackSiteUrlsQuery,
 	queryClient,
@@ -30,6 +31,10 @@ export const rootRoute = createRootRouteWithContext< RootRouterContext >()( {
 		if ( cause === 'enter' ) {
 			// We are priming the query cache with Jetpack URLs so we can detect "site collisions" (i.e. two sites have the same slug)
 			queryClient.prefetchQuery( jetpackSiteUrlsQuery() );
+
+			if ( context.config.name === 'A4A' ) {
+				queryClient.prefetchQuery( agencyQuery() );
+			}
 		}
 
 		if ( ! context.config.optIn ) {

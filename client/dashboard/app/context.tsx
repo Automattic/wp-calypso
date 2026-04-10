@@ -14,6 +14,14 @@ import type {
 } from '@automattic/api-core';
 import type { PostHogOverrides } from '@automattic/posthog';
 
+export type AgencySupports = {
+	overview: boolean;
+};
+
+export type AgencyClientSupports = {
+	subscriptions: boolean;
+};
+
 export type MeBillingSupports = {
 	monetizeSubscriptions: boolean;
 };
@@ -39,7 +47,8 @@ export type AppConfig = {
 	Logo: React.FC | null;
 	LoadingLogo?: React.FC;
 	supports: {
-		agency: boolean;
+		agency: AgencySupports | false;
+		agencyClient: AgencyClientSupports | false;
 		sites: boolean;
 		plugins: boolean;
 		domains: boolean;
@@ -86,6 +95,7 @@ export const APP_CONTEXT_DEFAULT_CONFIG: AppConfig = {
 	LoadingLogo: undefined,
 	supports: {
 		agency: false,
+		agencyClient: false,
 		sites: false,
 		plugins: false,
 		domains: false,

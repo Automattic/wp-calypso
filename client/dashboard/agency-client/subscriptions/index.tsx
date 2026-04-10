@@ -1,15 +1,15 @@
-import { __ } from '@wordpress/i18n';
+import { PageHeader } from '../../components/page-header';
+import PageLayout from '../../components/page-layout';
 
 export default function AgencyClientSubscriptions() {
 	return (
-		<div>
-			<h1>{ __( 'Agency client subscriptions', 'full-site-editing' ) }</h1>
-			<p>
-				{ __(
-					'Minimal placeholder for the A4A agency client subscriptions overview.',
-					'full-site-editing'
-				) }
-			</p>
-		</div>
+		<PageLayout
+			header={
+				<PageHeader
+					title="Agency Client Subscriptions"
+					description="This is a sample subscriptions page."
+				/>
+			}
+		></PageLayout>
 	);
 }
