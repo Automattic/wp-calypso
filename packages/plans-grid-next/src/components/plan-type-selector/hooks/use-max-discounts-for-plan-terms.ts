@@ -76,8 +76,11 @@ export default function useMaxDiscountsForPlanTerms(
 			const variantPlanSlug =
 				getPlanSlugForTermVariant( lowestTermPlanSlug, termMapping.term ) ?? '';
 			const variantPlanPricing = plansPricing?.[ variantPlanSlug ];
-			const variantTermPrice =
-				variantPlanPricing?.discountedPrice?.full || variantPlanPricing?.originalPrice?.full || 0;
+			const isOnIntroOffer =
+				variantPlanPricing?.introOffer && ! variantPlanPricing.introOffer.isOfferComplete;
+			const variantTermPrice = isOnIntroOffer
+				? variantPlanPricing?.originalPrice?.full || 0
+				: variantPlanPricing?.discountedPrice?.full || variantPlanPricing?.originalPrice?.full || 0;
 			if ( ! variantTermPrice ) {
 				return 0;
 			}

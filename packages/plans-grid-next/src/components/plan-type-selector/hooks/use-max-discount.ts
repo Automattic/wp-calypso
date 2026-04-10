@@ -45,10 +45,12 @@ export default function useMaxDiscount(
 			return 0;
 		}
 
-		const yearlyPlanAnnualCost =
-			yearlyPlansPricing?.[ yearlyVariantPlanSlug ]?.discountedPrice.full ||
-			yearlyPlansPricing?.[ yearlyVariantPlanSlug ]?.originalPrice.full ||
-			0;
+		const yearlyVariantPricing = yearlyPlansPricing?.[ yearlyVariantPlanSlug ];
+		const isOnIntroOffer =
+			yearlyVariantPricing?.introOffer && ! yearlyVariantPricing.introOffer.isOfferComplete;
+		const yearlyPlanAnnualCost = isOnIntroOffer
+			? yearlyVariantPricing?.originalPrice.full || 0
+			: yearlyVariantPricing?.discountedPrice.full || yearlyVariantPricing?.originalPrice.full || 0;
 
 		return Math.floor(
 			( ( monthlyPlanAnnualCost - yearlyPlanAnnualCost ) / ( monthlyPlanAnnualCost || 1 ) ) * 100
