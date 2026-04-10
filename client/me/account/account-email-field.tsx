@@ -1,4 +1,5 @@
 import { FormInputValidation, FormLabel } from '@automattic/components';
+import { createSelector } from '@automattic/state-utils';
 import { Button } from '@wordpress/components';
 import { removeQueryArgs } from '@wordpress/url';
 import emailValidator from 'email-validator';
@@ -106,23 +107,27 @@ const getEmailDomain = ( email: string ): string | null => {
 };
 
 /**
- * Returns the user's custom (non-WPCOM) registered domain names, lowercased.
+ * Memoized selector that returns the user's custom (non-WPCOM) domain names, lowercased.
+ * Only recomputes when the flat domains list changes.
  */
-const useUserCustomDomainNames = (): string[] => {
-	const allDomains = useSelector( getFlatDomainsList ) as Array< {
-		domain?: string;
-		isWPCOMDomain?: boolean;
-		isWpcomStagingDomain?: boolean;
-	} >;
-	const names = new Set< string >();
-	allDomains?.forEach( ( domain ) => {
-		if ( ! domain?.domain || domain.isWPCOMDomain || domain.isWpcomStagingDomain ) {
-			return;
-		}
-		names.add( domain.domain.toLowerCase() );
-	} );
-	return Array.from( names );
-};
+const getUserCustomDomainNames = createSelector(
+	( state ) => {
+		const allDomains = getFlatDomainsList( state ) as Array< {
+			domain?: string;
+			isWPCOMDomain?: boolean;
+			isWpcomStagingDomain?: boolean;
+		} >;
+		const names = new Set< string >();
+		allDomains?.forEach( ( domain ) => {
+			if ( ! domain?.domain || domain.isWPCOMDomain || domain.isWpcomStagingDomain ) {
+				return;
+			}
+			names.add( domain.domain.toLowerCase() );
+		} );
+		return Array.from( names );
+	},
+	( state ) => [ getFlatDomainsList( state ) ]
+);
 
 const AccountEmailOwnedDomainNotice = ( {
 	email,
@@ -214,7 +219,7 @@ const AccountEmailField = ( {
 	const translate = useTranslate();
 	const isEmailChangePending = useSelector( isPendingEmailChange );
 	const currentQuery = useSelector( getCurrentQueryArguments );
-	const ownedDomains = useUserCustomDomainNames();
+	const ownedDomains = useSelector( getUserCustomDomainNames );
 	const [ emailInvalidReason, setEmailInvalidReason ] = useState< AccountEmailValidationReason >(
 		EMAIL_VALIDATION_REASON_IS_VALID
 	);
@@ -309,7 +314,7 @@ const AccountEmailField = ( {
 
 				{ emailInvalidReason === EMAIL_VALIDATION_REASON_IS_VALID && (
 					<AccountEmailOwnedDomainNotice
-						email={ emailAddress as string }
+						email={ String( emailAddress ) }
 						ownedDomains={ ownedDomains }
 					/>
 				) }

@@ -86,4 +86,19 @@ describe( 'AccountEmailField — owned-domain warning', () => {
 		renderFieldWithEmail( 'me@user.wordpress.com' );
 		expect( screen.queryByText( WARNING_MATCHER ) ).toBeNull();
 	} );
+
+	it( 'does not show the warning for an empty email', () => {
+		renderFieldWithEmail( '' );
+		expect( screen.queryByText( WARNING_MATCHER ) ).toBeNull();
+	} );
+
+	it( 'does not show the warning for an email without an @ symbol', () => {
+		renderFieldWithEmail( 'invalidemail' );
+		expect( screen.queryByText( WARNING_MATCHER ) ).toBeNull();
+	} );
+
+	it( 'does not show the warning for an email ending with @', () => {
+		renderFieldWithEmail( 'user@' );
+		expect( screen.queryByText( WARNING_MATCHER ) ).toBeNull();
+	} );
 } );
