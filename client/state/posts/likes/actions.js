@@ -7,8 +7,6 @@ import {
 	POST_UNLIKE,
 } from 'calypso/state/action-types';
 
-import 'calypso/state/data-layer/wpcom/sites/posts/likes';
-
 import 'calypso/state/posts/init';
 
 /**

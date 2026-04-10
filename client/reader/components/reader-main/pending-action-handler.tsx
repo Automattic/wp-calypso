@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
+import { usePostLikeMutation } from 'calypso/blocks/like-button/use-post-like-mutation';
 import { useDispatch, useSelector } from 'calypso/state';
 import { likeComment } from 'calypso/state/comments/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { like } from 'calypso/state/posts/likes/actions';
 import { follow } from 'calypso/state/reader/follows/actions';
 import { requestFollowTag } from 'calypso/state/reader/tags/items/actions';
 import { clearLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
@@ -10,6 +10,7 @@ import { getPersistedLastActionPriorToLogin } from 'calypso/state/reader-ui/sele
 
 export const ReaderPendingActionHandler = () => {
 	const dispatch = useDispatch();
+	const { likePost } = usePostLikeMutation();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const pendingAction = useSelector( getPersistedLastActionPriorToLogin );
 
@@ -26,7 +27,7 @@ export const ReaderPendingActionHandler = () => {
 		setTimeout( () => {
 			switch ( pendingAction.type ) {
 				case 'like':
-					dispatch( like( pendingAction.siteId, pendingAction.postId ) );
+					likePost( pendingAction.siteId, pendingAction.postId );
 					break;
 				case 'comment-like':
 					dispatch(
@@ -43,7 +44,7 @@ export const ReaderPendingActionHandler = () => {
 		}, 2000 );
 
 		dispatch( clearLastActionRequiresLogin() );
-	}, [ isLoggedIn, pendingAction, dispatch ] );
+	}, [ isLoggedIn, pendingAction, dispatch, likePost ] );
 
 	return null;
 };

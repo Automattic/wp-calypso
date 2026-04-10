@@ -9,6 +9,7 @@ import * as React from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import AppPromo from 'calypso/blocks/app-promo';
+import { withPostLikeMutation } from 'calypso/blocks/like-button/with-post-like-mutation';
 import InfiniteList from 'calypso/components/infinite-list';
 import ListEnd from 'calypso/components/list-end';
 import SectionNav from 'calypso/components/section-nav';
@@ -28,7 +29,6 @@ import { showSelectedPost, getStreamType } from 'calypso/reader/utils';
 import XPostHelper from 'calypso/reader/xpost-helper';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { PER_FETCH, INITIAL_FETCH } from 'calypso/state/data-layer/wpcom/read/streams';
-import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/likes/actions';
 import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
 import { getReaderOrganizations } from 'calypso/state/reader/organizations/selectors';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
@@ -855,8 +855,6 @@ export default connect(
 	{
 		clearStream,
 		resetCardExpansions,
-		likePost,
-		unlikePost,
 		requestPage,
 		selectItem,
 		selectNextItem,
@@ -865,4 +863,4 @@ export default connect(
 		showUpdates,
 		viewStream,
 	}
-)( localize( withDimensions( ReaderStream ) ) );
+)( withPostLikeMutation( localize( withDimensions( ReaderStream ) ) ) );

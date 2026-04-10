@@ -9,6 +9,7 @@ import { getPostLikeCount } from 'calypso/state/posts/selectors/get-post-like-co
 import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
 import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 import LikeButton from './button';
+import { withPostLikeMutation } from './with-post-like-mutation';
 
 const noop = () => {};
 
@@ -79,4 +80,4 @@ export default connect(
 	{ like, unlike, registerLastActionRequiresLogin },
 	null,
 	{ forwardRef: true }
-)( LikeButtonContainer );
+)( withPostLikeMutation( LikeButtonContainer ) );

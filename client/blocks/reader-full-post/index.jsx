@@ -9,6 +9,7 @@ import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import Comments from 'calypso/blocks/comments';
 import { COMMENTS_FILTER_ALL } from 'calypso/blocks/comments/comments-filters';
+import { withPostLikeMutation } from 'calypso/blocks/like-button/with-post-like-mutation';
 import ReaderFullPostFeaturedImage from 'calypso/blocks/reader-full-post/featured-image';
 import { scrollToComments } from 'calypso/blocks/reader-full-post/scroll-to-comments';
 import WPiFrameResize from 'calypso/blocks/reader-full-post/wp-iframe-resize';
@@ -40,7 +41,6 @@ import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/
 import { getPostTitleFallback, showSelectedPost } from 'calypso/reader/utils';
 import { requestPostComments } from 'calypso/state/comments/actions';
 import { isCommentsApiDisabled } from 'calypso/state/comments/selectors/get-comments-api-disabled';
-import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/likes/actions';
 import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import {
@@ -988,8 +988,6 @@ export default connect(
 		markPostSeen,
 		setViewingFullPostKey,
 		unsetViewingFullPostKey,
-		likePost,
-		unlikePost,
 		requestMarkAsSeen,
 		requestMarkAsUnseen,
 		requestMarkAsSeenBlog,
@@ -997,4 +995,4 @@ export default connect(
 		showSelectedPost,
 		requestPostComments,
 	}
-)( FullPostView );
+)( withPostLikeMutation( FullPostView ) );
