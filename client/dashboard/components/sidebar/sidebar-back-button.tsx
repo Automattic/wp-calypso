@@ -7,7 +7,7 @@ export function SidebarBackButton( { to, children }: { to: string; children: Rea
 	return (
 		<SidebarMenu>
 			<RouterLinkButton className="dashboard-sidebar__back-button" size="small" to={ to }>
-				<span aria-hidden="true">←</span> { children }
+				← { children }
 			</RouterLinkButton>
 		</SidebarMenu>
 	);
