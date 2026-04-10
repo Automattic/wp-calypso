@@ -7,7 +7,6 @@ Agents Manager (AM) provider for the Jetpack AI sidebar in Gutenberg. Bridges th
 | File                         | Purpose                                  | When to read                          |
 | ---------------------------- | ---------------------------------------- | ------------------------------------- |
 | **AGENTS.md** (this)         | Critical patterns, pitfalls, conventions | Always read first for any code change |
-| [README.md](README.md)       | Overview, install, usage                 | When onboarding or linking externally |
 | [package.json](package.json) | Dependencies, build scripts              | When modifying deps or build config   |
 
 ## Architecture
@@ -37,10 +36,10 @@ All exports live in `src/index.ts`. This is intentionally a single-file provider
 
 ## Tools
 
-| Tool ID                      | Handler                    | UI Component  | Description                                     |
-| ---------------------------- | -------------------------- | ------------- | ----------------------------------------------- |
-| `big_sky__show_component`    | `handleShowComponent`      | via `getChatComponent` | Renders interactive pickers (currently title-picker) |
-| `wpcom/update-block-content` | `handleUpdateBlockContent` | _(chat text)_ | Updates block content with shimmer effect       |
+| Tool ID                      | Handler                    | UI Component             | Description                                          |
+| ---------------------------- | -------------------------- | ------------------------ | ---------------------------------------------------- |
+| `big_sky__show_component`    | `handleShowComponent`      | via `getChatComponent`   | Renders interactive pickers (currently title-picker) |
+| `wpcom/update-block-content` | `handleUpdateBlockContent` | _(chat text)_            | Updates block content with shimmer effect            |
 
 ### Show-component pattern
 

@@ -264,7 +264,11 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		}
 	}
 
-	// Merge toolProviders: chain getAbilities (dedupe by name), chain executeAbility.
+	// Merge toolProviders: first-write-wins by ability name, matching the
+	// resolution order of every other merged provider export (contextProvider,
+	// getChatComponent, useSuggestions, etc). Providers are processed in the
+	// order they were registered; earlier providers win on ability-name
+	// collisions, and executeAbility tries earlier providers first.
 	if ( allToolProviders.length === 1 ) {
 		mergedToolProvider = allToolProviders[ 0 ];
 	} else if ( allToolProviders.length > 1 ) {
@@ -274,17 +278,25 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 				const seen = new Map< string, unknown >();
 				for ( const abilities of results ) {
 					for ( const ability of abilities ) {
-						seen.set( ability.name, ability );
+						if ( ! seen.has( ability.name ) ) {
+							seen.set( ability.name, ability );
+						}
 					}
 				}
 				return [ ...seen.values() ] as Awaited< ReturnType< ToolProvider[ 'getAbilities' ] > >;
 			},
 			executeAbility: async ( name: string, args: unknown ) => {
-				for ( let i = allToolProviders.length - 1; i >= 0; i-- ) {
-					try {
-						return await allToolProviders[ i ].executeAbility( name, args );
-					} catch {
-						// Try next provider
+				// Identify the owning provider by walking `getAbilities` in the
+				// same order as the dedupe above (first-write-wins), then
+				// delegate to that single provider. This avoids the older
+				// approach of iterating with `try/catch { /* try next */ }`,
+				// which silently swallowed real errors from a provider that
+				// DID own the ability but genuinely failed.
+				for ( const provider of allToolProviders ) {
+					const abilities = await provider.getAbilities();
+					const owns = abilities.some( ( a: { name?: string } ) => a?.name === name );
+					if ( owns ) {
+						return provider.executeAbility( name, args );
 					}
 				}
 				throw new Error( `No provider handled ability: ${ name }` );
