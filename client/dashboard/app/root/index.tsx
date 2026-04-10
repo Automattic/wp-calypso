@@ -2,7 +2,6 @@ import { isEnabled } from '@automattic/calypso-config';
 import { WordPressLogo } from '@automattic/components/src/logos/wordpress-logo';
 import { useQueryClient, useIsFetching } from '@tanstack/react-query';
 import { CatchNotFound, Outlet, useRouterState, useRouter } from '@tanstack/react-router';
-import { removeQueryArgs } from '@wordpress/url';
 import {
 	Suspense,
 	lazy,
@@ -21,9 +20,9 @@ import { useAppContext } from '../context';
 import Header from '../header';
 import { useOmnibarEvent } from '../interim-omnibar/omnibar-events';
 import OmnibarHelpCenter from '../interim-omnibar/omnibar-help-center';
-import { setOmnibarCurrentSiteId } from '../interim-omnibar/omnibar-site';
 import { NavigationBlockerRegistry } from '../navigation-blocker';
 import Notifications from '../notifications';
+import { useInitializeOmnibarCurrentSite } from '../omnibar/current-site';
 import ResponsiveSidebar from '../responsive-sidebar';
 import Snackbars from '../snackbars';
 import './style.scss';
@@ -47,6 +46,8 @@ function Root() {
 	const queryCache = queryClient.getQueryCache();
 	const [ isSidebarOpen, setIsSidebarOpen ] = useState( false );
 	const closeSidebar = useCallback( () => setIsSidebarOpen( false ), [ setIsSidebarOpen ] );
+
+	useInitializeOmnibarCurrentSite();
 	useOmnibarEvent( 'mobileMenu', () => setIsSidebarOpen( ( v ) => ! v ) );
 	useOmnibarEvent( 'linkClick', ( { href, event } ) => {
 		const url = new URL( href, window.location.origin );
@@ -81,11 +82,10 @@ function Root() {
 		}
 	);
 
-	const { routeMeta, isNavigating, isInitialLoad, location } = useRouterState( {
+	const { routeMeta, isNavigating, isInitialLoad } = useRouterState( {
 		select: ( state ) => ( {
 			routeMeta: state.matches.map( ( match ) => match.meta! ).filter( Boolean ),
 			isNavigating: state.status === 'pending',
-			location: state.location,
 
 			// A little trick after investigation router state: it will initially be
 			// empty, but remain set after subsequent navigations.
@@ -180,23 +180,6 @@ function Root() {
 	useEffect( () => {
 		document.title = title ? `${ title } – ${ name }` : name;
 	}, [ name, title ] );
-
-	// When coming from a site's wp-admin, the URL could contain an `origin_site_id` query param.
-	// If so, set the omnibar's current site id to that value and remove the query param from the URL.
-	useEffect( () => {
-		const originSiteId = Number(
-			( location.search as Record< string, string | undefined > ).origin_site_id
-		);
-		if ( originSiteId > 0 ) {
-			setOmnibarCurrentSiteId( originSiteId );
-
-			window.history.replaceState(
-				null,
-				'',
-				removeQueryArgs( window.location.pathname + window.location.search, 'origin_site_id' )
-			);
-		}
-	}, [ location.search ] );
 
 	return (
 		<div className="dashboard-root__layout">

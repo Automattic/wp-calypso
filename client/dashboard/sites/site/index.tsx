@@ -4,9 +4,8 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { notFound, Outlet } from '@tanstack/react-router';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { Suspense, useEffect, useMemo, lazy } from 'react';
+import { Suspense, useMemo, lazy } from 'react';
 import { useAppContext } from '../../app/context';
-import { setOmnibarCurrentSiteId } from '../../app/interim-omnibar/omnibar-site';
 import { siteRoute } from '../../app/router/sites';
 import StagingSiteSyncMonitor from '../../app/staging-site-sync-monitor';
 import FlashMessage from '../../components/flash-message';
@@ -29,10 +28,6 @@ function Site() {
 			lazy( components.siteSwitcher ) as React.LazyExoticComponent< React.FC< SiteSwitcherProps > >,
 		[ components ]
 	);
-
-	useEffect( () => {
-		setOmnibarCurrentSiteId( site.ID );
-	}, [ site.ID ] );
 
 	if ( isError ) {
 		throw error;

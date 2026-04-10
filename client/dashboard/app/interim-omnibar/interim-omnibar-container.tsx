@@ -1,14 +1,8 @@
-import {
-	omnibarCurrentSiteIdQuery,
-	queryClient,
-	siteByIdQuery,
-	userPreferenceQuery,
-} from '@automattic/api-queries';
+import { omnibarCurrentSiteIdQuery, queryClient, siteByIdQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useState } from 'react';
 import { AUTH_QUERY_KEY, initializeCurrentUser } from '../auth';
 import { InterimOmnibar } from './interim-omnibar';
-import { getOmnibarSiteId } from './omnibar-site';
 import type { OmnibarEvents } from './omnibar-events';
 import type { Site, User } from '@automattic/api-core';
 
@@ -58,20 +52,10 @@ function useInterimOmnibarData( {
 		queryClient
 	);
 
-	const { data: recentSiteIds } = useQuery(
-		{
-			...userPreferenceQuery( 'recentSites' ),
-			enabled: hydrated,
-		},
-		queryClient
-	);
-
-	const siteId = getOmnibarSiteId( currentSiteId, recentSiteIds, user );
-
 	const { data: site = null } = useQuery(
 		{
-			...siteByIdQuery( siteId ?? 0 ),
-			enabled: hydrated && !! siteId,
+			...siteByIdQuery( currentSiteId ?? 0 ),
+			enabled: hydrated && !! currentSiteId,
 		},
 		queryClient
 	);
