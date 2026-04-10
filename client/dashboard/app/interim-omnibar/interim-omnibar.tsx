@@ -8,6 +8,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { logout } from '../auth';
 import { omnibarEvents } from './omnibar-events';
+import { OmnibarLaunchButton } from './omnibar-launch-button';
 import { createOmnibarStore } from './omnibar-store';
 import type { User, Site } from '@automattic/api-core';
 
@@ -83,7 +84,8 @@ export function InterimOmnibar( {
 					isSimpleSite={ false }
 					isJetpackNotAtomic={ !! site && site.jetpack && ! site.is_wpcom_atomic }
 					domainOnlySite={ !! site?.options?.is_domain_only }
-					isUnlaunchedSite={ false }
+					isUnlaunchedSite={ site?.launch_status === 'unlaunched' }
+					launchButtonSlot={ siteId ? <OmnibarLaunchButton siteId={ siteId } /> : undefined }
 					isTrial={ false }
 					isSiteP2={ !! site?.options?.is_wpforteams_site }
 					isP2Hub={ !! site?.options?.p2_hub_blog_id && site.options.p2_hub_blog_id === site.ID }

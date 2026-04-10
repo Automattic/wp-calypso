@@ -13,24 +13,44 @@ import { getSite } from 'calypso/state/sites/selectors';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import Item from './item';
 
-export const MasterbarLaunchButton = ( { siteId }: { siteId: number } ) => {
-	const translate = useTranslate();
-	const dispatch = useDispatch();
-	const site = useSelector( ( state ) => getSite( state, siteId ) );
-	const sectionName = useSelector( getSectionName );
-	const launchSiteMutation = useMutation( siteLaunchMutation( siteId ) );
+interface MasterbarLaunchButtonViewProps {
+	siteId: number;
+	siteSlug: string | undefined;
+	isWpcomAtomic: boolean;
+	trackingSource: string | null;
+	recordTracks: ( eventName: string, eventProps: Record< string, unknown > ) => void;
+	onDefaultLaunch: () => void;
+	onSiteLaunched: ( isWpcomAtomic: boolean ) => void;
+}
 
-	const { onSiteLaunched } = useCelebrateLaunchModalSideEffects( siteId );
+/**
+ * Pure presentation + onClick orchestration for the masterbar Launch button.
+ *
+ * All data and side-effect callbacks are injected as props, so the button can be
+ * reused in any context that provides a QueryClientProvider and the ExPlat
+ * provider (currently classic Calypso and the Dashboard interim omnibar).
+ */
+export function MasterbarLaunchButtonView( {
+	siteId,
+	siteSlug,
+	isWpcomAtomic,
+	trackingSource,
+	recordTracks,
+	onDefaultLaunch,
+	onSiteLaunched,
+}: MasterbarLaunchButtonViewProps ) {
+	const translate = useTranslate();
+	const launchSiteMutation = useMutation( siteLaunchMutation( siteId ) );
 
 	const [ isLoading, data ] = useExperiment( 'calypso_standardized_site_launch_gating_202603_v1' );
 
 	const onLaunchSiteClick = () => {
-		dispatch( recordTracksEvent( 'calypso_masterbar_launch_site', { source: sectionName } ) );
+		recordTracks( 'calypso_masterbar_launch_site', { source: trackingSource } );
 
 		if ( data?.variationName === 'semi_gated_site_launch' ) {
 			window.location.assign(
 				addQueryArgs( '/start/launch-site', {
-					siteSlug: site?.slug,
+					siteSlug,
 					back_to: window.location.pathname,
 				} )
 			);
@@ -39,12 +59,12 @@ export const MasterbarLaunchButton = ( { siteId }: { siteId: number } ) => {
 
 		if ( data?.variationName === 'ungated_site_launch' ) {
 			launchSiteMutation.mutate( undefined, {
-				onSuccess: () => onSiteLaunched( !! site?.is_wpcom_atomic ),
+				onSuccess: () => onSiteLaunched( isWpcomAtomic ),
 			} );
 			return;
 		}
 
-		dispatch( launchSiteOrRedirectToLaunchSignupFlow( siteId ) );
+		onDefaultLaunch();
 	};
 
 	return (
@@ -69,5 +89,28 @@ export const MasterbarLaunchButton = ( { siteId }: { siteId: number } ) => {
 		>
 			{ translate( 'Launch site' ) }
 		</Item>
+	);
+}
+
+/**
+ * Classic Calypso container. Reads site/section from Redux and wires the
+ * thunk-based launch action into the pure view.
+ */
+export const MasterbarLaunchButton = ( { siteId }: { siteId: number } ) => {
+	const dispatch = useDispatch();
+	const site = useSelector( ( state ) => getSite( state, siteId ) );
+	const sectionName = useSelector( getSectionName );
+	const { onSiteLaunched } = useCelebrateLaunchModalSideEffects( siteId );
+
+	return (
+		<MasterbarLaunchButtonView
+			siteId={ siteId }
+			siteSlug={ site?.slug }
+			isWpcomAtomic={ !! site?.is_wpcom_atomic }
+			trackingSource={ sectionName }
+			recordTracks={ ( name, props ) => dispatch( recordTracksEvent( name, props ) ) }
+			onDefaultLaunch={ () => dispatch( launchSiteOrRedirectToLaunchSignupFlow( siteId ) ) }
+			onSiteLaunched={ onSiteLaunched }
+		/>
 	);
 };
