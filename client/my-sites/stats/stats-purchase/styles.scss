@@ -212,6 +212,12 @@ $button-padding: 8px 32px;
 		flex: 2 2 auto;
 		max-width: var(--stats-purchase-left-max-width);
 
+		// When the right panel is hidden due to the sidebar (between medium and large breakpoints),
+		// remove the max-width constraint so the left panel fills the full card width.
+		@media (min-width: $break-medium) and (max-width: #{$break-large - 1px}) {
+			max-width: none;
+		}
+
 		@media (max-width: $break-medium) {
 			padding: 32px 24px;
 		}
