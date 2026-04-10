@@ -55,9 +55,11 @@ const StatsCommercialOwned = ( { siteSlug } ) => {
 				) }
 			</p>
 			<StatsBenefitsCommercial />
-			<Button variant="secondary" onClick={ handleClick }>
-				{ translate( 'See your stats' ) }
-			</Button>
+			<div className="stats-purchase-wizard__actions">
+				<Button variant="secondary" onClick={ handleClick }>
+					{ translate( 'See your stats' ) }
+				</Button>
+			</div>
 		</>
 	);
 };
@@ -88,17 +90,19 @@ const StatsPWYWOwnedNotice = ( { siteId, siteSlug } ) => {
 				) }
 			</p>
 			<StatsBenefitsPersonal />
-			<Button variant="secondary" onClick={ handleClick }>
-				{ translate( 'See your stats' ) }
-			</Button>
-			<Button
-				variant="primary"
-				onClick={ ( e ) =>
-					handleUpgradeClick( e, getStatsPurchaseURL( siteId, 'commercial' ), isOdysseyStats )
-				}
-			>
-				{ translate( 'Upgrade my Stats' ) }
-			</Button>
+			<div className="stats-purchase-wizard__actions">
+				<Button
+					variant="primary"
+					onClick={ ( e ) =>
+						handleUpgradeClick( e, getStatsPurchaseURL( siteId, 'commercial' ), isOdysseyStats )
+					}
+				>
+					{ translate( 'Upgrade my Stats' ) }
+				</Button>
+				<Button variant="secondary" onClick={ handleClick }>
+					{ translate( 'See your stats' ) }
+				</Button>
+			</div>
 		</StatsSingleItemPagePurchaseFrame>
 	);
 };
@@ -129,18 +133,19 @@ const StatsFreeOwnedNotice = ( { siteId, siteSlug } ) => {
 				) }
 			</p>
 			<StatsBenefitsFree />
-			<Button variant="secondary" onClick={ handleClick }>
-				{ translate( 'See your stats' ) }
-			</Button>
-
-			<Button
-				variant="primary"
-				onClick={ ( e ) =>
-					handleUpgradeClick( e, getStatsPurchaseURL( siteId, 'personal' ), isOdysseyStats )
-				}
-			>
-				{ translate( 'Upgrade my Stats' ) }
-			</Button>
+			<div className="stats-purchase-wizard__actions">
+				<Button
+					variant="primary"
+					onClick={ ( e ) =>
+						handleUpgradeClick( e, getStatsPurchaseURL( siteId, 'personal' ), isOdysseyStats )
+					}
+				>
+					{ translate( 'Upgrade my Stats' ) }
+				</Button>
+				<Button variant="secondary" onClick={ handleClick }>
+					{ translate( 'See your stats' ) }
+				</Button>
+			</div>
 		</StatsSingleItemPagePurchaseFrame>
 	);
 };
