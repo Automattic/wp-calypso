@@ -143,10 +143,10 @@ const AccountEmailOwnedDomainNotice = ( {
 			isError={ false }
 			isWarning
 			text={ translate(
-				'This email uses %(domain)s, a custom domain registered to your account. ' +
-					'If that domain ever expires, you may lose access to your WordPress.com account ' +
-					'and password recovery. We recommend using an email address on a provider ' +
-					'you do not manage here.',
+				'This email uses %(domain)s, a custom domain on your account. ' +
+					'If this domain expires, you could lose access to your WordPress.com account ' +
+					'and password recovery. We recommend using an email from a free provider ' +
+					"like Gmail or Outlook that doesn't depend on your domain's status.",
 				{ args: { domain: emailDomain } }
 			) }
 		/>
