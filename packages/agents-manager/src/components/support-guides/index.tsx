@@ -101,7 +101,7 @@ export default function SupportGuides( {
 	onAbort,
 	onClose,
 }: SupportGuidesProps ) {
-	const { state } = useLocation() as { state?: { searchQuery?: string } };
+	const { state } = useLocation();
 	const [ searchInput, setSearchInput, debouncedSearchInput ] = useDebouncedInput(
 		state?.searchQuery ?? ''
 	);
