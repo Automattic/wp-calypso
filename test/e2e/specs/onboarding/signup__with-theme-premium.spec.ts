@@ -42,7 +42,7 @@ test.describe(
 				return;
 			}
 			const restAPIClient = new RestAPIClient(
-				{ username: testUser.username, password: testUser.password },
+				{ username: newUserDetails.body.username, password: testUser.password },
 				newUserDetails.body.bearer_token
 			);
 			await apiCloseAccount( restAPIClient, {

@@ -97,6 +97,7 @@ export function useFormSelectors() {
 		online_store_digital: translate( 'Online stores – digital products / subscriptions only' ),
 		content_media: translate( 'Content / blog / media' ),
 		nonprofit_community: translate( 'Non-profit / community' ),
+		other: translate( 'Other' ),
 	};
 
 	const availableCompanySizes: Record< string, string > = {

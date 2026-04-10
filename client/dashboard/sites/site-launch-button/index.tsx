@@ -9,7 +9,7 @@ import { useExperiment } from 'calypso/lib/explat';
 import { useAnalytics } from '../../app/analytics';
 import { useAppContext } from '../../app/context';
 import { getCurrentDashboard } from '../../app/routing';
-import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
+import { dashboardLinkWithBackport, redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import {
 	isSitePlanLaunchable as getIsSitePlanLaunchable,
 	isSitePlanBigSkyTrial,
@@ -22,6 +22,8 @@ export function SiteLaunchButton( {
 	tracksContext,
 	launchUrl,
 	LaunchModal,
+	onSiteLaunch,
+	backTo,
 }: {
 	site: Site;
 	tracksContext: string;
@@ -31,6 +33,8 @@ export function SiteLaunchButton( {
 		onClose: () => void;
 		onLaunch: () => void;
 	} >;
+	onSiteLaunch?: () => void;
+	backTo?: string;
 } ) {
 	const { queries } = useAppContext();
 	const { recordTracksEvent } = useAnalytics();
@@ -48,7 +52,7 @@ export function SiteLaunchButton( {
 		},
 	} );
 	const [ isLaunchModalOpen, setIsLaunchModalOpen ] = useState( false );
-	const [ , experimentData ] = useExperiment( 'calypso_standardized_site_launch_gating' );
+	const [ , experimentData ] = useExperiment( 'calypso_standardized_site_launch_gating_202603_v1' );
 	const experimentAssignment = experimentData?.variationName;
 
 	const isSitePlanHostingTrial = site.plan?.product_slug === DotcomPlans.HOSTING_TRIAL_MONTHLY;
@@ -72,7 +76,9 @@ export function SiteLaunchButton( {
 			siteSlug: site.slug,
 			new: site.name,
 			hide_initial_query: 'yes',
-			back_to: redirectToDashboardLink( { supportBackport: true } ),
+			back_to: backTo
+				? dashboardLinkWithBackport( backTo )
+				: redirectToDashboardLink( { supportBackport: true } ),
 			dashboard: getCurrentDashboard(),
 		} );
 	};
@@ -84,6 +90,9 @@ export function SiteLaunchButton( {
 	const handleLaunch = () => {
 		handleTracksEvent();
 		launchMutation.mutate( undefined, {
+			onSuccess: () => {
+				onSiteLaunch?.();
+			},
 			onSettled: () => {
 				setIsLaunchModalOpen( false );
 			},
@@ -94,6 +103,8 @@ export function SiteLaunchButton( {
 		handleTracksEvent();
 		launchMutation.mutate( undefined, {
 			onSuccess: () => {
+				onSiteLaunch?.();
+
 				// Add query param to trigger celebration modal in parent component
 				window.history.replaceState(
 					null,
@@ -149,7 +160,7 @@ export function SiteLaunchButton( {
 	}
 
 	// Handle gated_site_launch variant: redirect to the standardized launch flow
-	if ( experimentAssignment === 'gated_site_launch' ) {
+	if ( experimentAssignment === 'semi_gated_site_launch' ) {
 		return <Button { ...commonProps } onClick={ handleGatedLaunchClick } />;
 	}
 

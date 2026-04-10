@@ -12,6 +12,7 @@ const ALLOWED_BUSINESS_TYPES = new Set( [
 	'online_store_digital',
 	'content_media',
 	'nonprofit_community',
+	'other',
 ] );
 
 const ALLOWED_HOSTING_ENVIRONMENTS = new Set( [

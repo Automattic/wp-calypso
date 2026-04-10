@@ -27,6 +27,9 @@ export class MeSidebarComponent {
 	 */
 	async openMobileMenu() {
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+			// Wait for the masterbar to finish re-rendering after page navigation
+			// before clicking, otherwise the element can be detached mid-click.
+			await this.page.waitForLoadState( 'networkidle' );
 			await this.page.getByTitle( 'Menu' ).click();
 		}
 	}

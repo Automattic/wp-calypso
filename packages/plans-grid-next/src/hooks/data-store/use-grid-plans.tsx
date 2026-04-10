@@ -312,7 +312,6 @@ const useGridPlans: UseGridPlansType = ( {
 	isDomainOnlySite,
 	reflectStorageSelectionInPlanPrices,
 	useFocusedNewCopyTaglines,
-	isExperimentVariant,
 } ) => {
 	const translate = useTranslate();
 	const freeTrialPlanSlugs = useFreeTrialPlanSlugs?.( {
@@ -360,7 +359,6 @@ const useGridPlans: UseGridPlansType = ( {
 		plansAvailabilityForPurchase,
 		highlightLabelOverrides,
 		isDomainOnlySite: isDomainOnlySite || false,
-		isExperimentVariant,
 	} );
 
 	const titleBadges = useTitleBadges( {

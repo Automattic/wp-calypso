@@ -1,5 +1,6 @@
 import { useEffect } from '@wordpress/element';
 import ZoomActionButton from '../components/zoom-action-button';
+import { isEditorPage } from '../utils/is-editor-page';
 import type { UseAgentChatReturn, UIMessage } from '@automattic/agenttic-client';
 
 type RegisterMessageActions = UseAgentChatReturn[ 'registerMessageActions' ];
@@ -12,7 +13,7 @@ export default function useZoomAction( registerMessageActions: RegisterMessageAc
 		registerMessageActions( {
 			id: 'agents-manager-zoom',
 			actions: ( message: UIMessage ) => {
-				if ( message.role !== 'agent' ) {
+				if ( message.role !== 'agent' || ! isEditorPage() ) {
 					return [];
 				}
 
@@ -30,7 +31,7 @@ export default function useZoomAction( registerMessageActions: RegisterMessageAc
 				return [
 					{
 						type: 'component',
-						id: 'zoom-toggle',
+						id: 'zoom',
 						component: ZoomActionButton,
 						order: 5,
 					},

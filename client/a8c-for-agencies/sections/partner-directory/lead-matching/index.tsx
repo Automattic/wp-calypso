@@ -633,6 +633,7 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 					title={ __( 'Business details' ) }
 					className={ getSectionClassName( BUSINESS_DETAILS_FIELDS ) }
 				>
+					{ /* Keep the dormant Other text-field path disabled for now. `other` is a valid saved option. */ }
 					<FormField
 						label={ __( 'Which business types does your agency support?' ) }
 						description={ __( 'Select all that apply.' ) }
@@ -656,7 +657,6 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 						error={ validationError.idealBusinessTypes }
 						fieldName="idealBusinessTypes"
 					>
-						{ /* The free-text Other path stays disabled until HubSpot supports a separate field. */ }
 						<TokenFieldSelector
 							availableOptions={ availableBusinessTypes }
 							selectedSlugs={ formData.idealBusinessTypes }

@@ -79,6 +79,14 @@ describe( '<SiteLaunchCelebrationModal>', () => {
 			// Modal should not be rendered
 			expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
 		} );
+
+		test( 'renders modal when launch_status is false (API missing option) and celebrateLaunch is present', async () => {
+			setupCelebrateLaunchUrl();
+			const mockSite = createMockSite( { launch_status: false } );
+			render( <SiteLaunchCelebrationModal site={ mockSite } /> );
+
+			expect( await screen.findByRole( 'dialog' ) ).toBeVisible();
+		} );
 	} );
 
 	describe( 'Domain Selection Logic', () => {

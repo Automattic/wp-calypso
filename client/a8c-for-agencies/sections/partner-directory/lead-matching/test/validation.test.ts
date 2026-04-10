@@ -36,4 +36,23 @@ describe( 'validateLeadMatchingDetails', () => {
 
 		expect( validateLeadMatchingDetails( details ) ).toBeNull();
 	} );
+
+	it( 'allows other as a normal option without requiring the dormant text fields', () => {
+		const details = createDefaultLeadMatchingDetails();
+		details.regions = [ 'americas' ];
+		details.languages = [ 'en' ];
+		details.businessTypes = [ 'other' ];
+		details.idealBusinessTypes = [ 'other' ];
+		details.companySizes = [ 'size_1_5' ];
+		details.projectTypes = [ 'migration' ];
+		details.serviceLevels = [ 'essential' ];
+		details.budgetLevels = [ 'affordable' ];
+		details.timingPreferences = [ 'right_away' ];
+		details.decisionProcesses = [ 'individual' ];
+		details.ongoingRelationships = [ 'care_plans' ];
+
+		expect( details.otherBusinessType ).toBe( '' );
+		expect( details.otherIdealBusinessType ).toBe( '' );
+		expect( validateLeadMatchingDetails( details ) ).toBeNull();
+	} );
 } );
