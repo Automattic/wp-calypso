@@ -48,3 +48,18 @@ export interface ReadListItemsResponse {
 	number: number;
 	total_items: number;
 }
+
+export interface ReaderListItem {
+	ID: number;
+	title: string;
+	slug: string;
+	description: string;
+	owner: string;
+	is_owner: boolean;
+	is_public: boolean;
+	is_immutable?: boolean;
+}
+
+export interface ReadSubscribedListsResponse {
+	lists: ReaderListItem[];
+}

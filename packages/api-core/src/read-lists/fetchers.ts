@@ -1,6 +1,6 @@
 import { addQueryArgs } from '@wordpress/url';
 import { wpcom } from '../wpcom-fetcher';
-import type { ReadListItemsResponse } from './types';
+import type { ReadListItemsResponse, ReadSubscribedListsResponse } from './types';
 
 export const fetchReadListItems = (
 	userLogin: string,
@@ -17,5 +17,14 @@ export const fetchReadListItems = (
 		} ),
 		apiVersion: '1.2',
 		method: 'GET',
+	} );
+};
+
+export const fetchReadSubscribedLists = (): Promise< ReadSubscribedListsResponse > => {
+	return wpcom.req.get( {
+		path: addQueryArgs( '/read/lists', {
+			create_recommended_blogs_list: 'true',
+		} ),
+		apiVersion: '1.2',
 	} );
 };
