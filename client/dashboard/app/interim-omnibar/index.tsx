@@ -1,5 +1,5 @@
 import { hydrateRoot } from 'react-dom/client';
-import type { OmnibarEvents } from './click-handlers';
+import type { OmnibarEvents } from './omnibar-events';
 
 export default async function loadOmnibar( events: OmnibarEvents ) {
 	const container = document.getElementById( 'wpcom-omnibar' );

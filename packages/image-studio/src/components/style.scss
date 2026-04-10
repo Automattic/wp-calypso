@@ -208,7 +208,7 @@ body.js.is-image-studio-open {
 	display: inline-block;
 	background-color: #1f2c70;
 	color: #9fadfb;
-	font-size: 12px;
+	font-size: $text-xs;
 	font-weight: 400;
 	line-height: 20px;
 }
@@ -238,7 +238,7 @@ body.js.is-image-studio-open {
 			padding-bottom: 1em;
 			position: relative;
 			padding-top: 1em;
-			padding-right: 1rem;
+			padding-right: 1em;
 			gap: 0;
 			scrollbar-width: thin;
 			scrollbar-color: rgba(255, 255, 255, 0.5) transparent;
@@ -270,8 +270,6 @@ body.js.is-image-studio-open {
 
 	.Message-module_message {
 		color: #fff;
-		font-size: 0.875rem;
-		line-height: 1.6;
 		padding-bottom: 0;
 
 		p {
@@ -329,16 +327,12 @@ body.js.is-image-studio-open {
 		}
 
 		&_heading {
-			font-size: 0.875rem;
-			line-height: 1.6;
 			color: #fff;
 			padding: 0 12px;
 			margin-bottom: 48px !important;
 		}
 
 		&_help {
-			font-size: 0.875rem;
-			line-height: 1.6;
 			color: #fff;
 			padding: 0 12px;
 		}
@@ -424,8 +418,6 @@ body.js.is-image-studio-open {
 
 	.Textarea-module_textarea {
 		color: #e0e0e0;
-		font-size: 0.875rem;
-		line-height: 1.625;
 		box-shadow: none;
 		background-color: transparent;
 
@@ -565,7 +557,7 @@ body.js.is-image-studio-open {
 
 	// Style label below image
 	&__label {
-		font-size: 0.75rem;
+		font-size: $text-xs;
 		font-weight: 400;
 		text-align: center;
 		line-height: 1.3;

@@ -165,7 +165,7 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 	} );
 
 	const [ isExperimentLoading, experimentData ] = useExperiment(
-		'calypso_standardized_site_launch_gating'
+		'calypso_standardized_site_launch_gating_202603_v1'
 	);
 	const experimentVariant = experimentData?.variationName;
 	const retestPage = () => {
@@ -198,7 +198,7 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 			path,
 		} );
 
-		if ( experimentVariant === 'gated_site_launch' ) {
+		if ( experimentVariant === 'semi_gated_site_launch' ) {
 			window.location.assign(
 				addQueryArgs( '/start/launch-site', {
 					siteSlug: site?.slug,

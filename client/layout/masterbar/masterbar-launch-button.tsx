@@ -22,12 +22,12 @@ export const MasterbarLaunchButton = ( { siteId }: { siteId: number } ) => {
 
 	const { onSiteLaunched } = useCelebrateLaunchModalSideEffects( siteId );
 
-	const [ isLoading, data ] = useExperiment( 'calypso_standardized_site_launch_gating' );
+	const [ isLoading, data ] = useExperiment( 'calypso_standardized_site_launch_gating_202603_v1' );
 
 	const onLaunchSiteClick = () => {
 		dispatch( recordTracksEvent( 'calypso_masterbar_launch_site', { source: sectionName } ) );
 
-		if ( data?.variationName === 'gated_site_launch' ) {
+		if ( data?.variationName === 'semi_gated_site_launch' ) {
 			window.location.assign(
 				addQueryArgs( '/start/launch-site', {
 					siteSlug: site?.slug,

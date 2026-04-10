@@ -15,7 +15,13 @@ import { LaunchAgencyDevelopmentSiteForm, LaunchForm } from './launch-form';
 import { PrivacyForm } from './privacy-form';
 import { ShareSiteForm } from './share-site-form';
 
-export default function SiteVisibilitySettings( { siteSlug }: { siteSlug: string } ) {
+export default function SiteVisibilitySettings( {
+	siteSlug,
+	onSiteLaunch,
+}: {
+	siteSlug: string;
+	onSiteLaunch?: () => void;
+} ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: settings } = useSuspenseQuery( siteSettingsQuery( site.ID ) );
 	const { back_to } = useSearch( {
@@ -29,7 +35,7 @@ export default function SiteVisibilitySettings( { siteSlug }: { siteSlug: string
 					{ site.is_a4a_dev_site ? (
 						<LaunchAgencyDevelopmentSiteForm site={ site } />
 					) : (
-						<LaunchForm site={ site } />
+						<LaunchForm site={ site } onSiteLaunch={ onSiteLaunch } />
 					) }
 					{ site.is_coming_soon && <ShareSiteForm site={ site } /> }
 				</>

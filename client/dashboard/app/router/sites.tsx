@@ -43,13 +43,7 @@ import {
 import { isEnabled } from '@automattic/calypso-config';
 import { isSupportSession } from '@automattic/calypso-support-session';
 import { MutationObserver } from '@tanstack/react-query';
-import {
-	createLazyRoute,
-	createRoute,
-	lazyRouteComponent,
-	notFound,
-	redirect,
-} from '@tanstack/react-router';
+import { createLazyRoute, createRoute, lazyRouteComponent, notFound } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import {
 	canManageSite,
@@ -69,6 +63,7 @@ import { hasSiteTrialEnded } from '../../utils/site-trial';
 import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { AUTH_QUERY_KEY } from '../auth';
+import { dashboardRedirect } from './redirect';
 import { rootRoute } from './root';
 import type { AppConfig } from '../context';
 import type { DifmWebsiteContentResponse, Site, User } from '@automattic/api-core';
@@ -128,12 +123,12 @@ export const siteRoute = createRoute( {
 			site.__inaccessible_jetpack_error &&
 			! matches.some( ( match ) => match.staticData?.availableToInaccessibleJetpackSites )
 		) {
-			throw redirect( { to: overviewUrl } );
+			throw dashboardRedirect( { to: overviewUrl } );
 		}
 
 		const trialExpiredUrl = `/sites/${ siteSlug }/trial-ended`;
 		if ( hasSiteTrialEnded( site ) && ! location.pathname.includes( trialExpiredUrl ) ) {
-			throw redirect( { to: trialExpiredUrl } );
+			throw dashboardRedirect( { to: trialExpiredUrl } );
 		}
 
 		const difmUrl = `/sites/${ siteSlug }/site-building-in-progress`;
@@ -143,12 +138,12 @@ export const siteRoute = createRoute( {
 			! isSupportSession() &&
 			! matches.some( ( match ) => difmAllowedRoutes.includes( match.routeId ) )
 		) {
-			throw redirect( { to: difmUrl } );
+			throw dashboardRedirect( { to: difmUrl } );
 		}
 
 		const migrationUrl = `/sites/${ siteSlug }/migration-overview`;
 		if ( isSiteMigrationInProgress( site ) && ! location.pathname.includes( migrationUrl ) ) {
-			throw redirect( { to: migrationUrl } );
+			throw dashboardRedirect( { to: migrationUrl } );
 		}
 
 		// Check site type support for matched routes
@@ -311,7 +306,7 @@ export const siteLogsIndexRoute = createRoute( {
 	getParentRoute: () => siteLogsRoute,
 	path: '/',
 	beforeLoad: ( { params } ) => {
-		throw redirect( { to: `/sites/${ params.siteSlug }/logs/${ LogType.ACTIVITY }` } );
+		throw dashboardRedirect( { to: `/sites/${ params.siteSlug }/logs/${ LogType.ACTIVITY }` } );
 	},
 } );
 
@@ -406,7 +401,7 @@ export const siteScanIndexRoute = createRoute( {
 	getParentRoute: () => siteScanRoute,
 	path: '/',
 	beforeLoad: ( { params } ) => {
-		throw redirect( { to: `/sites/${ params.siteSlug }/scan/active` } );
+		throw dashboardRedirect( { to: `/sites/${ params.siteSlug }/scan/active` } );
 	},
 } );
 
@@ -714,7 +709,7 @@ function redirectSiteAiToolsSubpageToHub( {
 		return;
 	}
 	if ( ! isEnabled( 'mcp-settings' ) ) {
-		throw redirect( {
+		throw dashboardRedirect( {
 			to: siteSettingsAIToolsIndexRoute.fullPath,
 			params: { siteSlug },
 		} );
@@ -1404,7 +1399,7 @@ export const siteTrialEndedRoute = createRoute( {
 
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		if ( ! hasSiteTrialEnded( site ) ) {
-			throw redirect( { to: siteOverviewRoute.fullPath, params: { siteSlug } } );
+			throw dashboardRedirect( { to: siteOverviewRoute.fullPath, params: { siteSlug } } );
 		}
 	},
 } ).lazy( () =>
@@ -1434,7 +1429,7 @@ export const siteDifmLiteInProgressRoute = createRoute( {
 
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		if ( ! site.options?.is_difm_lite_in_progress ) {
-			throw redirect( { to: siteOverviewRoute.fullPath, params: { siteSlug } } );
+			throw dashboardRedirect( { to: siteOverviewRoute.fullPath, params: { siteSlug } } );
 		}
 	},
 	loader: async ( { params: { siteSlug } } ) => {
@@ -1488,7 +1483,7 @@ export const siteMigrationOverviewRoute = createRoute( {
 
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		if ( ! isSiteMigrationInProgress( site ) ) {
-			throw redirect( { to: siteOverviewRoute.fullPath, params: { siteSlug } } );
+			throw dashboardRedirect( { to: siteOverviewRoute.fullPath, params: { siteSlug } } );
 		}
 
 		return {
@@ -1643,7 +1638,7 @@ function redirectAsNotAllowed( options: {
 	params?: Record< string, string >;
 	search?: Record< string, unknown >;
 } ) {
-	return redirect( {
+	return dashboardRedirect( {
 		...options,
 		search: {
 			...options.search,

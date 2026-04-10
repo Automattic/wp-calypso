@@ -18,7 +18,7 @@ const LaunchpadPreLaunch = ( props: LaunchpadPreLaunchProps ): JSX.Element => {
 
 	const { onSiteLaunched } = useCelebrateLaunchModalSideEffects( siteId );
 
-	const [ , experimentData ] = useExperiment( 'calypso_standardized_site_launch_gating' );
+	const [ , experimentData ] = useExperiment( 'calypso_standardized_site_launch_gating_202603_v1' );
 	const experimentAssignment = experimentData?.variationName;
 
 	const handleTaskClick = ( task: Task ) => {
@@ -32,7 +32,7 @@ const LaunchpadPreLaunch = ( props: LaunchpadPreLaunchProps ): JSX.Element => {
 			return;
 		}
 
-		if ( experimentAssignment === 'gated_site_launch' ) {
+		if ( experimentAssignment === 'semi_gated_site_launch' ) {
 			window.location.assign( `/start/launch-site?siteSlug=${ site?.slug }` );
 			return false;
 		}

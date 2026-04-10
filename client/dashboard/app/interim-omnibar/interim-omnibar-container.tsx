@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useState } from 'react';
 import { AUTH_QUERY_KEY, initializeCurrentUser } from '../auth';
 import { InterimOmnibar } from './interim-omnibar';
-import type { OmnibarEvents } from './click-handlers';
+import type { OmnibarEvents } from './omnibar-events';
 import type { Site, User } from '@automattic/api-core';
 
 interface InterimOmnibarContainerProps {

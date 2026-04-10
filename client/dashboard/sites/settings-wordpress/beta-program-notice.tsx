@@ -1,9 +1,11 @@
+import { Link } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useHelpCenter } from '../../app/help-center';
 import { Notice } from '../../components/notice';
 import { getBackupUrl } from '../../utils/site-backup';
+import { isRelativeUrl } from '../../utils/url';
 import type { Site } from '@automattic/api-core';
 
 interface BetaProgramNoticeProps {
@@ -35,11 +37,15 @@ export function BetaProgramNotice( { site, wpVersion }: BetaProgramNoticeProps )
 				  )
 				: createInterpolateElement(
 						__(
-							'If you notice anything unexpected, <support>let us know</support>. Your feedback helps shape WordPress. You can switch back to the stable release anytime. A <backup>backup of your site</backup> is available if you ever need it.'
+							'If you notice anything unexpected, <support>let us know</support>. Your feedback helps shape WordPress. You can switch back to the stable release or <backup>restore your backup</backup> anytime.'
 						),
 						{
 							support: <Button variant="link" onClick={ () => setShowHelpCenter( true ) } />,
-							backup: <a href={ backupUrl } />,
+							backup: isRelativeUrl( backupUrl ) ? (
+								<Link to={ backupUrl } />
+							) : (
+								<a href={ backupUrl } />
+							),
 						}
 				  ) }
 		</Notice>
