@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import isPendingEmailChange from 'calypso/state/selectors/is-pending-email-change';
+import { getFlatDomainsList } from 'calypso/state/sites/domains/selectors';
 import {
 	cancelPendingEmailChange,
 	removeUnsavedUserSetting,
@@ -92,6 +93,66 @@ const AccountEmailValidationNotice = ( {
 	return <FormInputValidation isError text={ noticeText } />;
 };
 
+/**
+ * Extracts the domain part of an email address (lowercased). Returns null
+ * if the value does not look like an email with a domain.
+ */
+const getEmailDomain = ( email: string ): string | null => {
+	const atIndex = email.lastIndexOf( '@' );
+	if ( atIndex < 0 || atIndex === email.length - 1 ) {
+		return null;
+	}
+	return email.slice( atIndex + 1 ).toLowerCase();
+};
+
+/**
+ * Returns the user's custom (non-WPCOM) registered domain names, lowercased.
+ */
+const useUserCustomDomainNames = (): string[] => {
+	const allDomains = useSelector( getFlatDomainsList ) as Array< {
+		domain?: string;
+		isWPCOMDomain?: boolean;
+		isWpcomStagingDomain?: boolean;
+	} >;
+	const names = new Set< string >();
+	allDomains?.forEach( ( domain ) => {
+		if ( ! domain?.domain || domain.isWPCOMDomain || domain.isWpcomStagingDomain ) {
+			return;
+		}
+		names.add( domain.domain.toLowerCase() );
+	} );
+	return Array.from( names );
+};
+
+const AccountEmailOwnedDomainNotice = ( {
+	email,
+	ownedDomains,
+}: {
+	email: string;
+	ownedDomains: string[];
+} ) => {
+	const translate = useTranslate();
+
+	const emailDomain = getEmailDomain( email );
+	if ( ! emailDomain || ! ownedDomains.includes( emailDomain ) ) {
+		return null;
+	}
+
+	return (
+		<FormInputValidation
+			isError={ false }
+			isWarning
+			text={ translate(
+				'This email uses %(domain)s, a custom domain registered to your account. ' +
+					'If that domain ever expires, you may lose access to your WordPress.com account ' +
+					'and password recovery. We recommend using an email address on a provider ' +
+					'you do not manage here.',
+				{ args: { domain: emailDomain } }
+			) }
+		/>
+	);
+};
+
 const EmailFieldExplanationText = ( {
 	unlockRef,
 }: {
@@ -153,6 +214,7 @@ const AccountEmailField = ( {
 	const translate = useTranslate();
 	const isEmailChangePending = useSelector( isPendingEmailChange );
 	const currentQuery = useSelector( getCurrentQueryArguments );
+	const ownedDomains = useUserCustomDomainNames();
 	const [ emailInvalidReason, setEmailInvalidReason ] = useState< AccountEmailValidationReason >(
 		EMAIL_VALIDATION_REASON_IS_VALID
 	);
@@ -244,6 +306,13 @@ const AccountEmailField = ( {
 					unsavedUserSettings={ unsavedUserSettings }
 					userSettings={ userSettings }
 				/>
+
+				{ emailInvalidReason === EMAIL_VALIDATION_REASON_IS_VALID && (
+					<AccountEmailOwnedDomainNotice
+						email={ emailAddress as string }
+						ownedDomains={ ownedDomains }
+					/>
+				) }
 
 				<FormSettingExplanation>
 					<EmailFieldExplanationText unlockRef={ unlockRef } />
