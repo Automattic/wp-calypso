@@ -4,6 +4,8 @@ The Reader module handles the view and routing logic for the _Reader_ section of
 
 These routes are served by the module:
 
+## Routes
+
 ### Main routes
 
 | Route                                | Description                                             |
