@@ -9,6 +9,7 @@ import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt';
 import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackScan from 'calypso/components/data/query-jetpack-scan';
+import JetpackFooter from 'calypso/components/jetpack/jetpack-footer';
 import ScanPlaceholder from 'calypso/components/jetpack/scan-placeholder';
 import ScanThreats from 'calypso/components/jetpack/scan-threats';
 import SecurityIcon from 'calypso/components/jetpack/security-icon';
@@ -386,6 +387,7 @@ class ScanPage extends Component< Props > {
 				) : (
 					content
 				) }
+				{ isWpcom && <JetpackFooter /> }
 			</Main>
 		);
 	}
