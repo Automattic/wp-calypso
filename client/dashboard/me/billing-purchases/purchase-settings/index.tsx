@@ -78,7 +78,6 @@ import {
 	isOneTimePurchase,
 	isMarketplaceTemporarySitePurchase,
 	isMarketplacePlugin,
-	isJetpackTemporarySitePurchase,
 	isAkismetProduct,
 	isJetpackCrmProduct,
 	isTitanMail,
@@ -135,15 +134,6 @@ function getWpcomPlanGridUrl( siteSlug: string | undefined ): string {
 		cancel_to: backUrl,
 		dashboard: getCurrentDashboard(),
 	} );
-}
-
-function canPurchaseBeUpgraded( purchase: Purchase ): boolean {
-	return Boolean(
-		purchase.is_upgradable &&
-			getSitePurchaseUpgradeUrl( purchase ) &&
-			! isJetpackTemporarySitePurchase( purchase ) &&
-			! isA4ABillingDragonPurchase( purchase )
-	);
 }
 
 function isAutoRenewToggleDisabled( purchase: Purchase, user: User ): boolean {
@@ -222,7 +212,7 @@ function PurchaseActionMenu( { purchase }: { purchase: Purchase } ) {
 	const upgradeUrl = getSitePurchaseUpgradeUrl( purchase );
 	const { recordTracksEvent } = useAnalytics();
 	const menuItems = [
-		canPurchaseBeUpgraded( purchase ) && upgradeUrl && (
+		purchase.is_upgradable && upgradeUrl && (
 			<MenuItem
 				onClick={ () => {
 					recordTracksEvent( 'calypso_purchases_upgrade_plan', {
@@ -322,7 +312,7 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 
 function UpgradeActionButton( { purchase }: { purchase: Purchase } ) {
 	const { recordTracksEvent } = useAnalytics();
-	if ( ! canPurchaseBeUpgraded( purchase ) ) {
+	if ( ! purchase.is_upgradable ) {
 		return null;
 	}
 	const upgradeUrl = getSitePurchaseUpgradeUrl( purchase );
@@ -1167,7 +1157,7 @@ export default function PurchaseSettings() {
 						actions={
 							site?.options?.admin_url && (
 								<HStack justify="space-between">
-									{ canPurchaseBeUpgraded( purchase ) && upgradeUrl && (
+									{ purchase.is_upgradable && upgradeUrl && (
 										<Button __next40pxDefaultSize variant="primary" href={ upgradeUrl }>
 											{ _x( 'Upgrade', 'Change to a plan with more features.' ) }
 										</Button>
