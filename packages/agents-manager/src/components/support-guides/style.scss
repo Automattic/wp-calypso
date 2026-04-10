@@ -10,6 +10,10 @@
 		font-size: $font-size-small;
 		color: var( --color-muted-foreground );
 		padding: 16px;
+
+		.agent-manager-support-guides__retry {
+			font-size: inherit;
+		}
 	}
 
 	.components-search-control {

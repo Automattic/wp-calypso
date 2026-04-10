@@ -1,6 +1,7 @@
 import { AgentUI } from '@automattic/agenttic-ui';
 import { AgentsManagerSelect } from '@automattic/data-stores';
 import {
+	Button,
 	SearchControl,
 	__experimentalVStack as VStack,
 	__experimentalItemGroup as ItemGroup,
@@ -23,7 +24,7 @@ interface SearchResultsProps {
 
 function SearchResults( { searchInput }: SearchResultsProps ) {
 	const trimmedInput = searchInput.trim();
-	const { data: searchData, isFetching: isSearching } = useHelpSearchQuery( trimmedInput );
+	const { data, isFetching, isError, refetch } = useHelpSearchQuery( trimmedInput );
 
 	if ( ! trimmedInput ) {
 		return (
@@ -33,11 +34,30 @@ function SearchResults( { searchInput }: SearchResultsProps ) {
 		);
 	}
 
-	if ( isSearching ) {
-		return <Spinner />;
+	if ( isFetching ) {
+		return (
+			<div className="agent-manager-support-guides__status">
+				<Spinner />
+			</div>
+		);
 	}
 
-	if ( ! searchData?.length ) {
+	if ( isError ) {
+		return (
+			<div className="agent-manager-support-guides__status">
+				{ __( 'Something went wrong.', '__i18n_text_domain__' ) }{ ' ' }
+				<Button
+					className="agent-manager-support-guides__retry"
+					variant="link"
+					onClick={ () => refetch() }
+				>
+					{ __( 'Try again', '__i18n_text_domain__' ) }
+				</Button>
+			</div>
+		);
+	}
+
+	if ( ! data?.length ) {
 		return (
 			<div className="agent-manager-support-guides__status">
 				{ __( 'No results found.', '__i18n_text_domain__' ) }
@@ -47,7 +67,7 @@ function SearchResults( { searchInput }: SearchResultsProps ) {
 
 	return (
 		<ItemGroup isSeparated isBordered isRounded>
-			{ searchData?.map( ( item ) => (
+			{ data?.map( ( item ) => (
 				<Item key={ item.post_id }>
 					<Link
 						to={ `/post?link=${ encodeURIComponent( item.link ) }` }
@@ -81,7 +101,7 @@ export default function SupportGuides( {
 	onAbort,
 	onClose,
 }: SupportGuidesProps ) {
-	const { state } = useLocation();
+	const { state } = useLocation() as { state?: { searchQuery?: string } };
 	const [ searchInput, setSearchInput, debouncedSearchInput ] = useDebouncedInput(
 		state?.searchQuery ?? ''
 	);

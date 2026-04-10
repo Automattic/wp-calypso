@@ -48,8 +48,10 @@ const fetchArticlesAPI = async (
 				path: `/help-center/search?${ queryString }`,
 		  } as ApiFetchOptions );
 
+	const results = Array.isArray( searchResults ) ? searchResults : [];
+
 	// Record TrainTracks render events
-	searchResults.forEach( ( result, index ) => {
+	results.forEach( ( result, index ) => {
 		if ( result.railcar ) {
 			queueMicrotask( () => {
 				recordTracksEvent( 'calypso_agents_manager_search_traintracks_render', {
@@ -61,7 +63,7 @@ const fetchArticlesAPI = async (
 		}
 	} );
 
-	return searchResults;
+	return results;
 };
 
 export default function useHelpSearchQuery(
