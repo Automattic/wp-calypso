@@ -91,7 +91,7 @@ export class MyHomePage {
 		// But, innerText doesn't work on SVG nodes, so we need this locator to actually fetch the text.
 		const parentDivLocator = this.anchor.locator( '.domain-upsell-illustration' );
 		try {
-			await svgLocator.waitFor();
+			await svgLocator.waitFor( { timeout: 20_000 } );
 			return await parentDivLocator.innerText();
 		} catch {
 			return '';

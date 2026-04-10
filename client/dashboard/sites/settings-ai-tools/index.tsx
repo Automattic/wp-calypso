@@ -167,17 +167,27 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 			} );
 		}
 		// When disabling, send abilities: {} to clear all site-level tool access.
-		mcpMutation.mutate( {
-			mcp_abilities: {
-				sites: [
-					{
-						blog_id: site.ID,
-						site_level_enabled: enabled,
-						abilities,
-					},
-				],
+		mcpMutation.mutate(
+			{
+				mcp_abilities: {
+					sites: [
+						{
+							blog_id: site.ID,
+							site_level_enabled: enabled,
+							abilities,
+						},
+					],
+				},
 			},
-		} );
+			{
+				onSuccess: () => {
+					recordTracksEvent( 'calypso_dashboard_mcp_site_toggled', {
+						enabled,
+						site_id: site.ID,
+					} );
+				},
+			}
+		);
 	};
 
 	const mutation = useMutation( {

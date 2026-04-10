@@ -32,6 +32,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import { startedInHostingFlow } from 'calypso/landing/stepper/utils/hosting-flow';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
+import { recordPageView } from 'calypso/lib/analytics/page-view';
 import {
 	recordSignupStart,
 	recordSignupComplete,
@@ -47,6 +48,7 @@ import {
 	isPartnerPortalOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { detectPartnerConfig, getPartnerFormattedWindowTitle } from 'calypso/lib/partner-branding';
+import { sectionify } from 'calypso/lib/route';
 import SignupFlowController from 'calypso/lib/signup/flow-controller';
 import FlowProgressIndicator from 'calypso/signup/flow-progress-indicator';
 import SignupHeader from 'calypso/signup/signup-header';
@@ -66,7 +68,11 @@ import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { submitSignupStep, removeStep, addStep } from 'calypso/state/signup/progress/actions';
 import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
-import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import {
+	getDomainsBySiteId,
+	hasLoadedSiteDomains,
+	isRequestingSiteDomains,
+} from 'calypso/state/sites/domains/selectors';
 import {
 	getSiteId,
 	isCurrentPlanPaid,
@@ -140,6 +146,9 @@ class Signup extends Component {
 		previousFlowName: null,
 	};
 
+	_recordedSteps = new Set();
+	_recordedPageViewPaths = new Set();
+
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		let providedDependencies = this.getDependenciesInQuery();
@@ -164,8 +173,6 @@ class Signup extends Component {
 			reduxStore: this.props.store,
 			onComplete: this.handleSignupFlowControllerCompletion,
 		} );
-
-		this.removeFulfilledSteps( this.props );
 
 		this.updateShouldShowLoadingScreen();
 		this.completeFlowAfterLoggingIn();
@@ -203,7 +210,18 @@ class Signup extends Component {
 		const { stepName, flowName, progress } = nextProps;
 
 		if ( this.props.stepName !== stepName ) {
+			if ( ! this._recordedSteps.has( this.props.stepName ) ) {
+				this._recordStepsInOrder( { includeCurrentStep: true } );
+			}
 			this.removeFulfilledSteps( nextProps );
+			if (
+				! this.state.shouldShowLoadingScreen &&
+				this.isStepFulfillmentReady( stepName, nextProps ) &&
+				! includes( flows.excludedSteps, stepName ) &&
+				! this._recordedSteps.has( stepName )
+			) {
+				this._recordStepsInOrder( { includeCurrentStep: true, forStep: stepName } );
+			}
 		}
 
 		if ( stepName === this.state.resumingStep ) {
@@ -231,14 +249,11 @@ class Signup extends Component {
 		}
 
 		recordSignupStart( this.props.flowName, this.props.refParameter, this.getRecordProps() );
+		this.removeFulfilledSteps( this.props );
 
-		// User-social is recorded as user, to avoid messing up the tracks funnels that we have
 		if ( ! this.state.shouldShowLoadingScreen ) {
-			recordSignupStep(
-				this.props.flowName,
-				this.props.stepName === 'user-social' ? 'user' : this.props.stepName,
-				this.getRecordProps()
-			);
+			const shouldDeferCurrentStep = ! this.isStepFulfillmentReady( this.props.stepName );
+			this._recordStepsInOrder( { includeCurrentStep: ! shouldDeferCurrentStep } );
 		}
 		this.preloadNextStep();
 	}
@@ -246,17 +261,16 @@ class Signup extends Component {
 	componentDidUpdate( prevProps ) {
 		const { flowName, stepName, sitePlanName, sitePlanSlug, signupDependencies, siteDomains } =
 			this.props;
+		const didCurrentStepBecomeFulfillmentReady =
+			! this.isStepFulfillmentReady( stepName, prevProps ) &&
+			this.isStepFulfillmentReady( stepName );
 
 		if (
 			( flowName !== prevProps.flowName || stepName !== prevProps.stepName ) &&
 			! this.state.shouldShowLoadingScreen
 		) {
-			// User-social is recorded as user, to avoid messing up the tracks funnels that we have
-			recordSignupStep(
-				flowName,
-				stepName === 'user-social' ? 'user' : stepName,
-				this.getRecordProps()
-			);
+			const shouldDeferCurrentStep = ! this.isStepFulfillmentReady( stepName );
+			this._recordStepsInOrder( { includeCurrentStep: ! shouldDeferCurrentStep } );
 		}
 
 		if ( stepName !== prevProps.stepName ) {
@@ -284,10 +298,80 @@ class Signup extends Component {
 			clearDomainsDependencies();
 		}
 
-		// Re-check fulfilled steps when siteDomains data changes
-		// This ensures that isDomainFulfilled is called again when domain data loads
-		if ( flowName === 'launch-site' && siteDomains !== prevProps.siteDomains ) {
+		if ( siteDomains !== prevProps.siteDomains || didCurrentStepBecomeFulfillmentReady ) {
 			this.removeFulfilledSteps( this.props );
+
+			if ( ! includes( flows.excludedSteps, stepName ) && ! this._recordedSteps.has( stepName ) ) {
+				this._recordStepsInOrder( { includeCurrentStep: true } );
+			}
+		}
+	}
+
+	recordSignupStepAndPageView( { skipStepRender = false, overrideStepName } = {} ) {
+		const { flowName } = this.props;
+		const stepName = overrideStepName || this.props.stepName;
+
+		const recordedStepName = stepName === 'user-social' ? 'user' : stepName;
+		const skipStepRenderProps = skipStepRender ? { skip_step_render: true } : {};
+
+		recordSignupStep( flowName, recordedStepName, {
+			...this.getRecordProps(),
+			...skipStepRenderProps,
+		} );
+
+		const basePath = overrideStepName
+			? `/start/${ flowName }/${ overrideStepName }`
+			: sectionify( this.props.path );
+		if ( ! this._recordedPageViewPaths.has( basePath ) ) {
+			recordPageView( basePath, 'Signup > Start > ' + flowName + ' > ' + stepName, {
+				flow: flowName,
+				...skipStepRenderProps,
+			} );
+			this._recordedPageViewPaths.add( basePath );
+		}
+	}
+
+	isStepFulfillmentReady = ( stepName, nextProps = this.props ) => {
+		const stepConfig = steps[ stepName ];
+		if ( ! stepConfig?.fulfilledStepCallback ) {
+			return true;
+		}
+
+		const readinessCheck = stepConfig.isReadyForFulfillmentCheck;
+		if ( ! readinessCheck ) {
+			return true;
+		}
+
+		return readinessCheck( stepName, stepConfig.defaultDependencies, nextProps );
+	};
+
+	_recordStepsInOrder( { includeCurrentStep = false, forStep } = {} ) {
+		const { flowName } = this.props;
+		const targetStep = forStep || this.props.stepName;
+		const rawFlow = flows.getFlows()[ flowName ];
+		if ( ! rawFlow ) {
+			return;
+		}
+
+		for ( const step of rawFlow.steps ) {
+			if ( ! this._recordedSteps.has( step ) ) {
+				if ( includes( flows.excludedSteps, step ) ) {
+					this.recordSignupStepAndPageView( {
+						skipStepRender: true,
+						overrideStepName: step,
+					} );
+					this._recordedSteps.add( step );
+				} else if ( includeCurrentStep && step === targetStep ) {
+					this.recordSignupStepAndPageView( {
+						overrideStepName: targetStep !== this.props.stepName ? targetStep : undefined,
+					} );
+					this._recordedSteps.add( step );
+				}
+			}
+
+			if ( step === targetStep ) {
+				break;
+			}
 		}
 	}
 
@@ -446,17 +530,56 @@ class Signup extends Component {
 	processFulfilledSteps = ( stepName, nextProps ) => {
 		const isFulfilledCallback = steps[ stepName ].fulfilledStepCallback;
 		const defaultDependencies = steps[ stepName ].defaultDependencies;
-		isFulfilledCallback && isFulfilledCallback( stepName, defaultDependencies, nextProps );
+		if ( ! this.isStepFulfillmentReady( stepName, nextProps ) ) {
+			return;
+		}
+		if ( ! isFulfilledCallback ) {
+			return;
+		}
+
+		let propsForFulfillment = nextProps;
+		if ( stepName === nextProps.stepName && ! this._recordedSteps.has( stepName ) ) {
+			const originalSubmitSignupStep = nextProps.submitSignupStep;
+			propsForFulfillment = {
+				...nextProps,
+				submitSignupStep: ( signupStepData, providedDependencies ) => {
+					if (
+						signupStepData?.stepName === stepName &&
+						signupStepData?.wasSkipped &&
+						! this._recordedSteps.has( stepName )
+					) {
+						this.recordSignupStepAndPageView( {
+							skipStepRender: true,
+							overrideStepName: stepName,
+						} );
+						this._recordedSteps.add( stepName );
+					}
+					return originalSubmitSignupStep( signupStepData, providedDependencies );
+				},
+			};
+		}
+
+		isFulfilledCallback( stepName, defaultDependencies, propsForFulfillment );
 	};
 
 	removeFulfilledSteps = ( nextProps ) => {
 		const { flowName, isLoggedIn, stepName } = nextProps;
 		const flowSteps = flows.getFlow( flowName, isLoggedIn ).steps;
-		const excludedSteps = clone( flows.excludedSteps );
-		map( excludedSteps, ( flowStepName ) => this.processFulfilledSteps( flowStepName, nextProps ) );
-		map( flowSteps, ( flowStepName ) => this.processFulfilledSteps( flowStepName, nextProps ) );
+		const currentStepIndex = flowSteps.indexOf( stepName );
+		const stepsToProcess =
+			currentStepIndex >= 0 ? flowSteps.slice( 0, currentStepIndex + 1 ) : flowSteps;
+		const previouslyExcludedSteps = clone( flows.excludedSteps );
+		map( previouslyExcludedSteps, ( flowStepName ) => {
+			if ( includes( stepsToProcess, flowStepName ) ) {
+				this.processFulfilledSteps( flowStepName, nextProps );
+			}
+		} );
+		map( stepsToProcess, ( flowStepName ) =>
+			this.processFulfilledSteps( flowStepName, nextProps )
+		);
 
 		if ( includes( flows.excludedSteps, stepName ) ) {
+			this._recordStepsInOrder( { forStep: stepName } );
 			this.goToNextStep( flowName );
 		}
 	};
@@ -940,6 +1063,8 @@ export default connect(
 			sitePlanName: getSitePlanName( state, siteId ),
 			sitePlanSlug: getSitePlanSlug( state, siteId ),
 			siteDomains,
+			hasLoadedSiteDomains: hasLoadedSiteDomains( state, siteId ),
+			isRequestingSiteDomains: isRequestingSiteDomains( state, siteId ),
 			siteId,
 			localeSlug: getCurrentLocaleSlug( state ),
 			oauth2Client,

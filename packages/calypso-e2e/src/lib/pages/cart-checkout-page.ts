@@ -245,6 +245,12 @@ export class CartCheckoutPage {
 	 * @param {RegistrarDetails} registrarDetails Domain registrar details.
 	 */
 	async enterDomainRegistrarDetails( registrarDetails: RegistrarDetails ): Promise< void > {
+		// The registrar form appears after a checkout page navigation. Wait for it
+		// to be visible with a generous timeout before filling to avoid timing out
+		// while the page is still loading.
+		await this.page
+			.locator( selectors.firstNameInput )
+			.waitFor( { state: 'visible', timeout: 30_000 } );
 		await this.page.fill( selectors.firstNameInput, registrarDetails.firstName );
 		await this.page.fill( selectors.lastNameInput, registrarDetails.lastName );
 		await this.page.selectOption( selectors.phoneSelect, registrarDetails.countryCode );

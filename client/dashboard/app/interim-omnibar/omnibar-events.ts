@@ -22,6 +22,7 @@ export const omnibarEvents = {
 	mobileMenu: createOmnibarEvent(),
 	notificationsAnchor: createOmnibarEvent< HTMLElement | null >(),
 	notifications: createOmnibarEvent(),
+	notificationsUnseenCount: createOmnibarEvent< number >(),
 	linkClick: createOmnibarEvent< { href: string; event: MouseEvent } >(),
 };
 
