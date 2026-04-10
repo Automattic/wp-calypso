@@ -23,12 +23,12 @@ export default function Overview() {
 	const translate = useTranslate();
 	const title = translate( 'Agency overview' );
 
-	const { hasActivity } = useHasCommissionActivity();
+	const { hasActivity, isLoading: isLoadingActivity } = useHasCommissionActivity();
 
 	return (
 		<Layout title={ title } wide>
 			<LayoutTop>
-				{ hasActivity && <MissingPaymentSettingsNotice /> }
+				{ ! isLoadingActivity && hasActivity && <MissingPaymentSettingsNotice /> }
 				<A4AAgencyApprovalNotice />
 				<PressableUsageLimitNotice />
 
