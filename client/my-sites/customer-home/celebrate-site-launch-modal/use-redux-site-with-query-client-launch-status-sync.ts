@@ -2,7 +2,7 @@ import { siteByIdQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
-import { receiveSite } from 'calypso/state/sites/actions';
+import { requestSite } from 'calypso/state/sites/actions';
 import { getSite } from 'calypso/state/sites/selectors';
 
 /**
@@ -27,9 +27,9 @@ export function useReduxSiteWithQueryClientLaunchStatusSync( siteId: number ) {
 		}
 
 		if ( site.launch_status !== cachedReduxSiteLaunchStatus.current ) {
-			dispatch( receiveSite( site ) );
+			dispatch( requestSite( siteId ) );
 		}
-	}, [ site, dispatch ] );
+	}, [ site, siteId, dispatch ] );
 
 	return reduxSite;
 }
