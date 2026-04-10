@@ -17,6 +17,7 @@ import {
 	getChatComponent,
 	getEmptyViewSuggestions,
 	useSuggestions,
+	useCheckpoint,
 } from '@automattic/jetpack-ai-sidebar';
 
 // Expose on window for the ESM wrapper to re-export
@@ -27,4 +28,5 @@ window.__JetpackAIProvider = {
 	getChatComponent,
 	getEmptyViewSuggestions,
 	useSuggestions,
+	useCheckpoint,
 };

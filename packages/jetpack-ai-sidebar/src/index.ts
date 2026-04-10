@@ -3,9 +3,11 @@
  *
  * Exports the full AM provider contract:
  * - useAbilitiesSetup: captures AM's addMessage callback
- * - toolProvider: wraps `@wordpress/abilities` and adds Jetpack AI abilities
- * - contextProvider: sends gutenberg editor state to the orchestrator
- * - getChatComponent: maps tool IDs to React components
+ * - toolProvider: surfaces Jetpack AI's client-side abilities to AM
+ * - contextProvider: sends Gutenberg editor state to the orchestrator
+ * - getChatComponent: resolves `title-picker` to the TitlePicker component
+ *   for AM's show-component pipeline
+ * - useCheckpoint: post-title snapshots for AM's native Undo action
  * - getEmptyViewSuggestions: initial suggestions before conversation starts
  * - useSuggestions: block-aware dynamic suggestions during conversation
  */
@@ -24,9 +26,6 @@ import { __ } from '@wordpress/i18n';
 import TitlePicker from './components/title-picker';
 import './components/title-picker.scss';
 import {
-	SELECT_TITLE_TOOL_ID,
-	SELECT_TITLE_ABILITY,
-	isSelectTitleTool,
 	UPDATE_BLOCK_CONTENT_TOOL_ID,
 	UPDATE_BLOCK_CONTENT_ABILITY,
 	isUpdateBlockContentTool,
@@ -37,7 +36,18 @@ import type { ComponentType } from 'react';
 
 let addMessageFn: ( ( message: any ) => void ) | null = null;
 let clearSuggestionsFn: ( () => void ) | null = null;
-let isAbilityRegistered = false;
+
+/**
+ * Checkpoint API shared between the React `useCheckpoint` hook (which AM
+ * calls) and the synchronous `handleShowComponent` callback (which needs to
+ * snapshot state before the picker renders).
+ */
+interface CheckpointApi {
+	setCheckpoint: ( id: string ) => void;
+	hasCheckpoint: ( id: string ) => boolean;
+	restoreCheckpoint: ( id: string ) => Promise< void >;
+}
+let moduleCheckpointApi: CheckpointApi | null = null;
 
 /** Default suggestion shown when no block is selected. */
 const OPTIMIZE_TITLE_SUGGESTION = {
@@ -161,61 +171,6 @@ function startBlockShimmer(): void {
 // ---------- Ability callbacks ----------
 
 /**
- * Handle the select-title tool call: render TitlePicker in chat.
- * @param {any} input - Tool input with titles array.
- * @returns {Object} Result with returnToAgent: false.
- */
-function handleSelectTitle( input: any ): any {
-	const titles = input?.titles;
-	if ( ! titles?.length ) {
-		return { success: false, error: 'No titles provided', returnToAgent: false };
-	}
-
-	// When running as an AM provider, addMessageFn is set by useAbilitiesSetup
-	// and we inject the TitlePicker component directly into the chat.
-	if ( addMessageFn ) {
-		addMessageFn( {
-			id: `title-picker-${ Date.now() }`,
-			role: 'assistant',
-			content: [
-				{
-					type: 'component',
-					component: TitlePicker,
-					componentProps: { titles },
-				},
-			],
-			created_at: Math.floor( Date.now() / 1000 ),
-			showIcon: true,
-		} );
-		return { success: true, returnToAgent: false };
-	}
-
-	// When running alongside Big Sky standalone (no AM provider setup),
-	// use Big Sky's AI store to inject the TitlePicker into the chat.
-	try {
-		const wpData = ( window as any ).wp?.data;
-		const aiStore = wpData?.dispatch?.( 'ai-assembler' );
-		if ( aiStore?.addMessage ) {
-			aiStore.addMessage( {
-				role: 'assistant',
-				content: [
-					{
-						type: 'component',
-						component: TitlePicker,
-						componentProps: { titles },
-					},
-				],
-			} );
-			return { success: true, returnToAgent: false, followUpTasks: false };
-		}
-	} catch {
-		// ignore
-	}
-
-	return { success: false, error: 'No chat interface available', returnToAgent: false };
-}
-
-/**
  * Handle the update-block-content tool call: apply text changes to a block.
  * @param {any} input - Tool input with clientId, content, and optional summary.
  * @returns {Object} Result with returnToAgent: false.
@@ -267,7 +222,94 @@ function handleUpdateBlockContent( input: any ): any {
 	} );
 }
 
-// ---------- WP Abilities registration ----------
+// ---------- Show-component ability ----------
+
+const SHOW_COMPONENT_TOOL_ID = 'big_sky__show_component';
+
+/**
+ * Client-side ability definition for `big_sky__show_component`.
+ *
+ * Surfaced to AM via `toolProvider.getAbilities()` so the orchestrator
+ * recognizes the tool_id on self-hosted Jetpack sites where Big Sky's own
+ * registration isn't present. Same pattern as update-block-content.
+ */
+const SHOW_COMPONENT_ABILITY: any = {
+	id: SHOW_COMPONENT_TOOL_ID,
+	name: SHOW_COMPONENT_TOOL_ID,
+	label: 'Show component',
+	category: 'jetpack-ai',
+	description: 'Render an interactive component in the chat.',
+	input_schema: {
+		type: 'object',
+		properties: {
+			type: { type: 'string' },
+			props: { type: 'object' },
+		},
+		required: [ 'type' ],
+	},
+};
+
+/**
+ * Handles `big_sky__show_component` tool calls from the wpcom ability.
+ *
+ * Follows the Big Sky unified-experience pattern: instead of injecting the
+ * picker directly via `addMessage`, we return an `agentMessage` envelope.
+ * agenttic-client wraps it as an `{ role: 'agent', parts: [text] }` message,
+ * AM's `convert-tool-messages-to-components` transforms it into a component
+ * message via `getChatComponent(type)`, and AgentChat's action bar (thumbs,
+ * Undo) attaches because the original message had a text content part.
+ *
+ * Before returning, we snapshot the current post title via the shared
+ * checkpoint API so AM's native `use-checkpoint-action` can restore it when
+ * the user clicks Undo. The picker disables canvas zoom since title edits
+ * don't change block content.
+ * @param {any} input - Tool call arguments: `{ type, props, toolCallId, ... }`.
+ * @returns {Object} Result containing the `agentMessage` to re-emit.
+ */
+function handleShowComponent( input: any ): any {
+	const { type, props } = input || {};
+
+	if ( ! type ) {
+		return { success: false, error: 'show-component: missing type', returnToAgent: false };
+	}
+
+	if ( ! getChatComponent( type ) ) {
+		return {
+			success: false,
+			error: `show-component: no component registered for type "${ type }"`,
+			returnToAgent: false,
+		};
+	}
+
+	// Snapshot state for Undo. Tool call id doubles as the checkpoint id so
+	// it matches the identifier AM reads from the rendered message.
+	const checkpointId: string =
+		input?.toolCallId || input?.calypsoCheckpointId || `show-component-${ type }-${ Date.now() }`;
+	if ( moduleCheckpointApi && ! moduleCheckpointApi.hasCheckpoint( checkpointId ) ) {
+		try {
+			moduleCheckpointApi.setCheckpoint( checkpointId );
+		} catch {
+			// Non-fatal — Undo just won't attach if the snapshot fails.
+		}
+	}
+
+	const agentMessage = JSON.stringify( {
+		tool_id: SHOW_COMPONENT_TOOL_ID,
+		data: {
+			type,
+			props: props ?? {},
+			calypsoCheckpointId: checkpointId,
+			isCurrent: true,
+			hideZoomAction: true,
+		},
+	} );
+
+	return {
+		result: 'Component displayed successfully',
+		returnToAgent: false,
+		agentMessage,
+	};
+}
 
 /**
  * Check whether the `@wordpress/abilities` API is available.
@@ -281,44 +323,11 @@ function hasAbilitiesApi(): boolean {
 	}
 }
 
-/**
- * Register wpcom/select-title as a client-side ability via `@wordpress/abilities`.
- */
-async function registerSelectTitleAbility(): Promise< void > {
-	if ( isAbilityRegistered || ! hasAbilitiesApi() ) {
-		return;
-	}
-
-	// Set guard before await to prevent concurrent registration attempts.
-	isAbilityRegistered = true;
-
-	try {
-		const { registerAbility } = ( window as any ).wp.abilities;
-		await registerAbility( {
-			name: SELECT_TITLE_TOOL_ID,
-			label: 'Select title',
-			category: 'jetpack-ai',
-			description: SELECT_TITLE_ABILITY.description,
-			input_schema: SELECT_TITLE_ABILITY.input_schema,
-			callback: handleSelectTitle,
-		} );
-	} catch ( e: any ) {
-		if ( ! e?.message?.includes?.( 'already registered' ) ) {
-			isAbilityRegistered = false; // Reset on genuine failure.
-			// eslint-disable-next-line no-console
-			console.warn( '[Jetpack AI] Failed to register select-title ability:', e );
-		}
-	}
-}
-
-// Register on module load so standalone integrations (without AM setup hooks)
-// still have the Jetpack AI abilities available.
-registerSelectTitleAbility();
-
 // ---------- useAbilitiesSetup ----------
 
 /**
- * Captures AM's addMessage/clearSuggestions callbacks and registers abilities.
+ * Captures AM's addMessage/clearSuggestions callbacks so the
+ * update-block-content handler can post a summary line after applying edits.
  */
 export function useAbilitiesSetup( actions: {
 	addMessage: ( message: any ) => void;
@@ -329,7 +338,6 @@ export function useAbilitiesSetup( actions: {
 	if ( actions.clearSuggestions ) {
 		clearSuggestionsFn = actions.clearSuggestions;
 	}
-	registerSelectTitleAbility();
 	setupAutoScrollFix();
 }
 
@@ -358,8 +366,8 @@ function setupAutoScrollFix(): void {
 
 /**
  * Normalize an ability name to the format used by agenttic-client for matching.
- * @param {string} name - Ability name (e.g., 'wpcom/select-title').
- * @returns {string} Normalized name (e.g., 'wpcom__select_title').
+ * @param {string} name - Ability name (e.g., 'wpcom/update-block-content').
+ * @returns {string} Normalized name (e.g., 'wpcom__update_block_content').
  */
 function normalizeAbilityName( name: string ): string {
 	return name.replace( /\//g, '__' ).replace( /-/g, '_' );
@@ -378,14 +386,18 @@ function filterAbility( abilities: any[], toolId: string ): any[] {
 	);
 }
 
+function isShowComponentTool( toolId: string ): boolean {
+	return toolId === SHOW_COMPONENT_TOOL_ID || toolId === 'big_sky__show_component';
+}
+
 export const toolProvider = {
 	/**
-	 * Return all available abilities with Jetpack AI callbacks.
-	 *
-	 * Replaces any existing select-title and update-block-content abilities
-	 * with versions that have callbacks returning returnToAgent: false.
-	 * This is necessary because agenttic-client's executeAbility path
-	 * hardcodes returnToAgent: true, but the callback path respects it.
+	 * Return the client-side abilities this provider handles:
+	 * - `wpcom/update-block-content`: applies block edits and posts a summary.
+	 * - `big_sky__show_component`: renders interactive pickers (title-picker)
+	 *   via `handleShowComponent`. Registered here so the tool_id is known
+	 *   to the orchestrator on self-hosted Jetpack sites where Big Sky's
+	 *   own registration is unavailable.
 	 * @returns {Promise<any[]>} Array of ability descriptors.
 	 */
 	async getAbilities(): Promise< any[] > {
@@ -404,18 +416,16 @@ export const toolProvider = {
 			}
 		}
 
-		// Remove existing versions and add ours with callbacks
-		abilities = filterAbility( abilities, SELECT_TITLE_TOOL_ID );
 		abilities = filterAbility( abilities, UPDATE_BLOCK_CONTENT_TOOL_ID );
-
+		abilities = filterAbility( abilities, SHOW_COMPONENT_TOOL_ID );
 		abilities.unshift(
-			{
-				...SELECT_TITLE_ABILITY,
-				callback: handleSelectTitle,
-			},
 			{
 				...UPDATE_BLOCK_CONTENT_ABILITY,
 				callback: handleUpdateBlockContent,
+			},
+			{
+				...SHOW_COMPONENT_ABILITY,
+				callback: handleShowComponent,
 			}
 		);
 
@@ -432,13 +442,13 @@ export const toolProvider = {
 		name: string,
 		args: any
 	): Promise< { result: Record< string, unknown >; returnToAgent?: boolean } > {
-		if ( isSelectTitleTool( name ) ) {
-			return { result: handleSelectTitle( args ), returnToAgent: false };
-		}
-
 		if ( isUpdateBlockContentTool( name ) ) {
 			const result = await handleUpdateBlockContent( args );
 			return { result, returnToAgent: false };
+		}
+
+		if ( isShowComponentTool( name ) ) {
+			return { result: handleShowComponent( args ), returnToAgent: false };
 		}
 
 		if ( hasAbilitiesApi() ) {
@@ -539,10 +549,65 @@ export const contextProvider = {
  * @returns {ComponentType|null} The matching component, or null.
  */
 export function getChatComponent( type: string ): ComponentType | null {
-	if ( type === 'title-picker' || isSelectTitleTool( type ) ) {
+	if ( type === 'title-picker' ) {
 		return TitlePicker as ComponentType;
 	}
 	return null;
+}
+
+// ---------- useCheckpoint ----------
+
+/**
+ * Provider hook consumed by AM's `use-checkpoint-action` so Undo buttons
+ * can attach to show-component messages. Snapshots the post title on
+ * `setCheckpoint(id)` and restores it on `restoreCheckpoint(id)` via
+ * `core/editor` dispatch. Stubs the rest of AM's `UseCheckpointReturn`
+ * interface — only the three methods above are used on this path.
+ * @returns {Object} The checkpoint API AM consumes.
+ */
+const titleSnapshots: Map< string, string > = new Map();
+
+export function useCheckpoint(): any {
+	const api: CheckpointApi = {
+		setCheckpoint( id: string ) {
+			const wpData = ( window as any ).wp?.data;
+			const current =
+				( wpData?.select?.( 'core/editor' )?.getEditedPostAttribute?.( 'title' ) as string ) ?? '';
+			titleSnapshots.set( id, current );
+		},
+		hasCheckpoint( id: string ): boolean {
+			return titleSnapshots.has( id );
+		},
+		async restoreCheckpoint( id: string ): Promise< void > {
+			const previous = titleSnapshots.get( id );
+			if ( previous === undefined ) {
+				return;
+			}
+			const wpData = ( window as any ).wp?.data;
+			wpData?.dispatch?.( 'core/editor' )?.editPost?.( { title: previous } );
+			// Intentionally NOT deleting the snapshot here — the user can keep
+			// clicking titles in the picker and use Undo again to revert back
+			// to the original title (the state before the picker appeared).
+			// clearCheckpoint() removes the snapshot when AM resets the session.
+		},
+	};
+	moduleCheckpointApi = api;
+
+	// Return the full shape AM's UseCheckpointReturn expects. Methods we
+	// don't implement are safe no-op stubs — AM only calls the three above
+	// for the show-component / title-picker flow.
+	return {
+		...api,
+		getLastEditorState: () => null,
+		addCheckpointKeys: () => undefined,
+		addNewPageToCheckpoint: () => undefined,
+		addPageRenameToCheckpoint: () => undefined,
+		addPageRemovalToCheckpoint: () => undefined,
+		getLatestUserMessageId: () => undefined,
+		clearCheckpoint: ( id: string ) => {
+			titleSnapshots.delete( id );
+		},
+	};
 }
 
 // ---------- getEmptyViewSuggestions ----------
