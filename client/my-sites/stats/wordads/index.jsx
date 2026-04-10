@@ -16,7 +16,6 @@ import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
-import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -249,8 +248,6 @@ class WordAds extends Component {
 							</div>
 
 							<PromoCards isOdysseyStats={ isOdysseyStats } pageSlug="ads" slug={ slug } />
-
-							<JetpackColophon />
 						</Fragment>
 					) }
 				</div>

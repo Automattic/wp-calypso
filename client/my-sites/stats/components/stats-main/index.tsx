@@ -6,6 +6,7 @@ import { useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
+import JetpackFooter from 'calypso/components/jetpack/jetpack-footer';
 import JetpackTitle from 'calypso/components/jetpack-title';
 import Main, { MainProps } from 'calypso/components/main';
 import useWPAdminTheme from 'calypso/my-sites/stats/hooks/use-wp-admin-theme';
@@ -128,6 +129,7 @@ export default function StatsMain( {
 				{ pageTabs }
 				{ children }
 			</Page>
+			<JetpackFooter />
 			{ upsellModalView && <StatsUpsellModal siteId={ siteId } /> }
 		</Main>
 	);
