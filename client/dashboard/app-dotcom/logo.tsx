@@ -22,8 +22,8 @@ function ClassicLogo() {
 	return (
 		<svg
 			style={ { display: 'block' } }
-			width="153"
-			height="24"
+			width="170"
+			height="27"
 			viewBox="0 0 153 24"
 			fill="none"
 			xmlns="http://www.w3.org/2000/svg"
