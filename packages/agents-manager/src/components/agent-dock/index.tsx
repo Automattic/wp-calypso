@@ -70,7 +70,7 @@ export default function AgentDock( {
 	useImageUpload,
 	useCheckpoint,
 }: Props ) {
-	const { site, siteKey, sectionName, isEligibleForChat, agentConfig } = useAgentsManagerContext();
+	const { siteKey, sectionName, agentConfig } = useAgentsManagerContext();
 
 	const [ isCompactMode, setIsCompactMode ] = useState(
 		window.__agentsManagerActions?.isCompactMode ?? false
@@ -263,13 +263,10 @@ export default function AgentDock( {
 
 	const SupportGuideRoute = (
 		<SupportGuide
-			isEligibleForChat={ isEligibleForChat }
 			onAbort={ handleAbort }
 			onClose={ closeSidebar }
 			isDocked={ isDocked }
 			isOpen={ isPersistedOpen }
-			sectionName={ sectionName }
-			currentSiteDomain={ site?.domain }
 			chatHeaderOptions={ chatHeaderOptions }
 		/>
 	);

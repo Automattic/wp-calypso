@@ -6,11 +6,12 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useAgentsManagerContext } from '../../contexts';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import './style.scss';
 
-interface Props {
+interface SupportGuideProps {
 	/** Chat header menu options. */
 	chatHeaderOptions: ChatHeaderOptions;
 	/** Indicates if the chat is docked in the sidebar. */
@@ -21,12 +22,6 @@ interface Props {
 	onAbort: () => void;
 	/** Called when the chat is closed. */
 	onClose: () => void;
-	/** The current site domain for contextual support. */
-	currentSiteDomain?: string;
-	/** The current Calypso section name. */
-	sectionName: string;
-	/** Indicates if the user is eligible for live chat support. */
-	isEligibleForChat: boolean;
 }
 
 export default function SupportGuide( {
@@ -35,10 +30,8 @@ export default function SupportGuide( {
 	isDocked,
 	onAbort,
 	onClose,
-	currentSiteDomain,
-	sectionName,
-	isEligibleForChat,
-}: Props ) {
+}: SupportGuideProps ) {
+	const { site, sectionName, isEligibleForChat } = useAgentsManagerContext();
 	const navigate = useNavigate();
 	const { state } = useLocation();
 	const { setFloatingPosition } = useDispatch( AGENTS_MANAGER_STORE );
@@ -86,7 +79,7 @@ export default function SupportGuide( {
 					<div className="agent-manager-support-guide-content help-center__container-content">
 						<HelpCenterArticle
 							sectionName={ sectionName }
-							currentSiteDomain={ currentSiteDomain }
+							currentSiteDomain={ site?.domain }
 							isEligibleForChat={ isEligibleForChat }
 							forceEmailSupport={ false }
 						/>
