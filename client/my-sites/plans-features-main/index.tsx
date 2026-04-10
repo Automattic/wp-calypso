@@ -315,9 +315,11 @@ const PlansFeaturesMain = ( {
 
 	// Ensure intervalType is compatible with the current plan's term
 	// Users can only select interval types that are equal to or longer than their current plan's interval
-	// Only apply this fix in the plan-upgrade flow to avoid breaking other flows
+	// Only apply this fix in the plan-upgrade flow to avoid breaking other flows.
+	// Skip for expired plans — they're making a fresh purchase and can pick any term.
 	const currentPlanTerm =
 		isStepperUpgradeFlow &&
+		! isPlanExpired &&
 		sitePlanSlug &&
 		! isFreePlan( sitePlanSlug ) &&
 		! isWooHostedFreePlan( sitePlanSlug )
