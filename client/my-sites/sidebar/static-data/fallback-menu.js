@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 /* eslint-disable jsdoc/require-param */
 /**
@@ -560,17 +559,13 @@ export default function buildFallbackResponse( {
 					type: 'submenu-item',
 					url: `/settings/reading/${ siteDomain }`,
 				},
-				...( config.isEnabled( 'settings/newsletter-settings-page' )
-					? [
-							{
-								parent: 'options-general.php',
-								slug: 'options-newsletter-php',
-								title: translate( 'Newsletter' ),
-								type: 'submenu-item',
-								url: `/settings/newsletter/${ siteDomain }`,
-							},
-					  ]
-					: [] ),
+				{
+					parent: 'options-general.php',
+					slug: 'options-newsletter-php',
+					title: translate( 'Newsletter' ),
+					type: 'submenu-item',
+					url: `https://${ siteDomain }/wp-admin/admin.php?page=jetpack-newsletter`,
+				},
 				{
 					parent: 'options-podcasting.php',
 					slug: 'options-podcasting-php',

@@ -224,11 +224,7 @@ export default function Summary( {
 				<p>{ __( 'What would you like to do next?' ) }</p>
 				<ImporterActionButtonContainer noSpacing>
 					<ImporterActionButton
-						href={
-							isJetpack
-								? `${ siteAdmminUrl }admin.php?page=jetpack#/newsletter`
-								: `/settings/newsletter/${ selectedSite.slug }`
-						}
+						href={ `${ siteAdmminUrl }admin.php?page=jetpack-newsletter` }
 						primary
 					>
 						{ __( 'Customize your newsletter' ) }
