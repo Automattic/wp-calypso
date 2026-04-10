@@ -1,5 +1,8 @@
-import { BadgeType } from '@automattic/components';
+import { BadgeType, Popover } from '@automattic/components';
+import { Button } from '@wordpress/components';
+import { Icon, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { useRef, useState } from 'react';
 import StatusBadge from 'calypso/a8c-for-agencies/components/step-section-item/status-badge';
 import FormattedDate from 'calypso/components/formatted-date';
 import { urlToSlug } from 'calypso/lib/url/http-utils';
@@ -15,8 +18,16 @@ export const MigratedOnColumn = ( { migratedOn }: { migratedOn: number } ) => {
 	return <FormattedDate date={ date } format={ DETAILS_DATE_FORMAT_SHORT } />;
 };
 
-export const ReviewStatusColumn = ( { reviewStatus }: { reviewStatus: string } ) => {
+export const ReviewStatusColumn = ( {
+	reviewStatus,
+	rejectionReason,
+}: {
+	reviewStatus: string;
+	rejectionReason?: string;
+} ) => {
 	const translate = useTranslate();
+	const buttonRef = useRef< HTMLButtonElement | null >( null );
+	const [ isPopoverVisible, setIsPopoverVisible ] = useState( false );
 
 	// Don't show a badge if status is empty
 	if ( ! reviewStatus ) {
@@ -40,6 +51,11 @@ export const ReviewStatusColumn = ( { reviewStatus }: { reviewStatus: string } )
 					statusText: translate( 'Rejected' ),
 					statusType: 'error',
 				};
+			case 'pending-re-verification':
+				return {
+					statusText: translate( 'Pending re-verification' ),
+					statusType: 'info',
+				};
 			case 'pending':
 				return {
 					statusText: translate( 'Pending' ),
@@ -56,7 +72,8 @@ export const ReviewStatusColumn = ( { reviewStatus }: { reviewStatus: string } )
 	if ( ! statusProps ) {
 		return null;
 	}
-	return (
+
+	const badge = (
 		<StatusBadge
 			statusProps={ {
 				children: statusProps.statusText,
@@ -64,4 +81,37 @@ export const ReviewStatusColumn = ( { reviewStatus }: { reviewStatus: string } )
 			} }
 		/>
 	);
+
+	if ( reviewStatus === 'rejected' && rejectionReason ) {
+		return (
+			<span className="commission-columns__rejected-status">
+				{ badge }
+				<Button
+					ref={ buttonRef }
+					className="commission-columns__rejection-reason-button"
+					onClick={ () => setIsPopoverVisible( ! isPopoverVisible ) }
+					aria-label={ translate( 'View rejection reason' ) }
+				>
+					<Icon icon={ info } size={ 18 } />
+				</Button>
+				{ isPopoverVisible && (
+					<Popover
+						context={ buttonRef.current }
+						isVisible
+						position="bottom"
+						onClose={ () => setIsPopoverVisible( false ) }
+					>
+						<div className="commission-columns__rejection-reason-popover">
+							<div className="commission-columns__rejection-reason-title">
+								{ translate( 'Rejection reason' ) }
+							</div>
+							<div className="commission-columns__rejection-reason-text">{ rejectionReason }</div>
+						</div>
+					</Popover>
+				) }
+			</span>
+		);
+	}
+
+	return badge;
 };
