@@ -17,4 +17,8 @@
 		overflow: clip;
 		overflow-clip-margin: 2px;
 	}
+
+	.dashboard-sidebar__menu-item {
+		min-block-size: 32px;
+	}
 }
