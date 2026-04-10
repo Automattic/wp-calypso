@@ -7,7 +7,7 @@ import { MasterbarLoggedIn } from 'calypso/layout/masterbar/logged-in';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { logout } from '../auth';
-import { omnibarEvents } from './omnibar-events';
+import { omnibarEvents, useOmnibarEvent } from './omnibar-events';
 import { createOmnibarStore } from './omnibar-store';
 import type { User, Site } from '@automattic/api-core';
 
@@ -55,6 +55,19 @@ export function InterimOmnibar( {
 		const container = document.getElementById( 'wpcom-omnibar' );
 		const bell = container?.querySelector< HTMLElement >( '.masterbar-notifications' ) ?? null;
 		omnibarEvents.notificationsAnchor.emit( bell );
+	} );
+
+	// Dispatch the user's unseen note count to the store so the unread marker appears.
+	useEffect( () => {
+		store.dispatch( {
+			type: 'NOTIFICATIONS_UNSEEN_COUNT_SET',
+			unseenCount: Number( !! user.has_unseen_notes ),
+		} );
+	}, [ store, user.has_unseen_notes ] );
+
+	// Also dispatch the emitted unseen note count from the notifications panel.
+	useOmnibarEvent( 'notificationsUnseenCount', ( unseenCount ) => {
+		store.dispatch( { type: 'NOTIFICATIONS_UNSEEN_COUNT_SET', unseenCount } );
 	} );
 
 	return (

@@ -9,7 +9,7 @@ import { Suspense, lazy, useCallback, useEffect, useState } from 'react';
 import wpcom from 'calypso/lib/wp';
 import { useAuth } from '../auth';
 import { useHelpCenter } from '../help-center';
-import { useOmnibarEvent } from '../interim-omnibar/omnibar-events';
+import { omnibarEvents, useOmnibarEvent } from '../interim-omnibar/omnibar-events';
 import { useLocale } from '../locale';
 import './style.scss';
 
@@ -54,6 +54,7 @@ export default function Notifications( {
 		APP_RENDER_NOTES: [
 			( store: unknown, { newNoteCount }: { newNoteCount: number } ) => {
 				setHasUnseenNotifications( newNoteCount > 0 );
+				omnibarEvents.notificationsUnseenCount.emit( newNoteCount );
 			},
 		],
 		VIEW_SETTINGS: [
