@@ -50,7 +50,7 @@ const renderFieldWithEmail = ( email: string ) =>
 		}
 	);
 
-const WARNING_MATCHER = /custom domain registered to your account/i;
+const WARNING_MATCHER = /custom domain on your account/i;
 
 describe( 'AccountEmailField — owned-domain warning', () => {
 	beforeAll( () => {
