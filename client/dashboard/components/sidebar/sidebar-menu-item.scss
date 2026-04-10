@@ -14,7 +14,7 @@
 		color: var( --wp-admin-theme-color );
 
 		&:hover {
-			background: transparent;
+			background: color-mix( in srgb, var( --wp-admin-theme-color ) 8%, transparent );
 		}
 	}
 }
