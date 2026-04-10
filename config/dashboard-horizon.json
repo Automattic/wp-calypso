@@ -26,7 +26,7 @@
 		"cookie-banner": false,
 		"rum-tracking/logstash": true,
 		"dashboard/omnibar": true,
-		"dashboard/wp-beta-program": false,
+		"dashboard/wp-beta-program": true,
 		"dashboard/v2": false,
 		"dev/auth-helper": true,
 		"dev/preferences-helper": true,

@@ -310,7 +310,8 @@ class ManagePurchase extends Component<
 		const isSitelessRenewal =
 			purchase &&
 			( isAkismetTemporarySitePurchase( purchase ) ||
-				isMarketplaceTemporarySitePurchase( purchase ) );
+				isMarketplaceTemporarySitePurchase( purchase ) ||
+				isA4ATemporarySitePurchase( purchase ) );
 
 		if ( ! purchase ) {
 			return;

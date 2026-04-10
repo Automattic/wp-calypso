@@ -32,7 +32,7 @@ import {
 	userTransferredPurchasesQuery,
 } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
-import { createRoute, createLazyRoute, redirect } from '@tanstack/react-router';
+import { createRoute, createLazyRoute } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { getMonetizeSubscriptionsPageTitle } from '../../me/billing-monetize-subscriptions/title';
 import { reauthRequiredLink } from '../../utils/link';
@@ -43,6 +43,7 @@ import {
 	isDotcomPlan,
 	CANCEL_FLOW_TYPE,
 } from '../../utils/purchase';
+import { dashboardRedirect } from './redirect';
 import { rootRoute } from './root';
 import type { AppConfig } from '../context';
 import type { Purchase } from '@automattic/api-core';
@@ -80,7 +81,7 @@ export const meIndexRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: '/',
 	beforeLoad: () => {
-		throw redirect( { to: '/me/account' } );
+		throw dashboardRedirect( { to: '/me/account' } );
 	},
 } );
 
@@ -945,7 +946,7 @@ export const mcpLegacyRedirectRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'mcp',
 	beforeLoad: () => {
-		throw redirect( { to: '/me/preferences/mcp' } );
+		throw dashboardRedirect( { to: '/me/preferences/mcp' } );
 	},
 } );
 
@@ -953,7 +954,7 @@ export const privacyLegacyRedirectRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'privacy',
 	beforeLoad: () => {
-		throw redirect( { to: '/me/preferences/privacy' } );
+		throw dashboardRedirect( { to: '/me/preferences/privacy' } );
 	},
 } );
 
@@ -961,7 +962,7 @@ export const blockedSitesLegacyRedirectRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'blocked-sites',
 	beforeLoad: () => {
-		throw redirect( { to: '/me/preferences/blocked-sites' } );
+		throw dashboardRedirect( { to: '/me/preferences/blocked-sites' } );
 	},
 } );
 
@@ -969,7 +970,7 @@ export const profileLegacyRedirectRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'profile',
 	beforeLoad: () => {
-		throw redirect( { to: '/me/account' } );
+		throw dashboardRedirect( { to: '/me/account' } );
 	},
 } );
 

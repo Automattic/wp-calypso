@@ -346,7 +346,7 @@ export default {
 		const signupDependencies = getSignupDependencyStore( getState() );
 		let siteIdOrSlug;
 
-		if ( 'woocommerce-install' === flowName ) {
+		if ( 'woocommerce-install' === flowName || 'launch-site' === flowName ) {
 			// forces query precedence on woocommerce-install
 			siteIdOrSlug = context.query?.siteSlug || signupDependencies?.siteSlug;
 		} else {
