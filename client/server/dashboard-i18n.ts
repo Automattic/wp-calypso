@@ -1,30 +1,37 @@
 // eslint-disable-next-line import/no-nodejs-modules
 import { readFile } from 'fs/promises';
-import { defaultI18n, type LocaleData } from '@wordpress/i18n';
 import { type Request, type RequestHandler } from 'express';
+import { I18N } from 'i18n-calypso';
 import getAssetFilePath from 'calypso/lib/get-asset-file-path';
 import { getLanguageFile } from 'calypso/lib/i18n-utils/switch-locale';
 
+type LocaleData = Parameters< I18N[ 'setLocale' ] >[ 0 ];
+
 const localeDataCache = new Map< string, LocaleData >();
 
-type CalypsoRequest = Request & { context?: { lang?: string } };
+type CalypsoRequest = Request & { context?: { lang?: string; i18nCalypso?: I18N } };
 
 /**
- * Populates `defaultI18n` with the bootstrapped user's locale for the duration
- * of the request's render, so the server-side render of the interim omnibar
- * emits translated strings. Loads from `public/languages/` when available and
- * falls back to the Calypso CDN otherwise.
+ * Creates a per-request i18n-calypso instance loaded with the user's locale so
+ * the server-side render of the interim omnibar emits translated strings
+ * without mutating any global singleton. The instance is stored on
+ * `req.context.i18nCalypso` and provided to the React tree via
+ * `I18NContext.Provider`.
  */
 export const loadDashboardLocaleData: RequestHandler = ( req, res, next ) => {
 	const language = ( req as CalypsoRequest ).context?.lang;
 	if ( ! language || language === 'en' ) {
-		defaultI18n.resetLocaleData();
 		next();
 		return;
 	}
 
 	const apply = ( data: LocaleData ) => {
-		defaultI18n.resetLocaleData( data );
+		const i18n = new I18N();
+		i18n.setLocale( data );
+		const ctx = ( req as CalypsoRequest ).context;
+		if ( ctx ) {
+			ctx.i18nCalypso = i18n;
+		}
 		next();
 	};
 
@@ -36,13 +43,12 @@ export const loadDashboardLocaleData: RequestHandler = ( req, res, next ) => {
 
 	readFile( getAssetFilePath( `languages/${ language }-v1.1.json` ), 'utf-8' )
 		.then( ( raw ) => JSON.parse( raw ) as LocaleData )
-		.catch( () => getLanguageFile( language ) as Promise< LocaleData > )
+		.catch( () => getLanguageFile( language ) as unknown as Promise< LocaleData > )
 		.then( ( data ) => {
 			localeDataCache.set( language, data );
 			apply( data );
 		} )
 		.catch( () => {
-			defaultI18n.resetLocaleData();
 			next();
 		} );
 };
