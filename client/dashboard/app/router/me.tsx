@@ -357,7 +357,7 @@ export const purchaseBySiteResolverRoute = createRoute( {
 		const planPurchase = sitePlans[ 0 ];
 
 		if ( planPurchase ) {
-			throw redirect( {
+			throw dashboardRedirect( {
 				to: '/me/billing/purchases/$purchaseId',
 				params: { purchaseId: String( planPurchase.ID ) },
 				search: { plan_changed: true },
@@ -366,7 +366,7 @@ export const purchaseBySiteResolverRoute = createRoute( {
 		}
 
 		// Fallback: no matching plan found, go to the purchases list.
-		throw redirect( {
+		throw dashboardRedirect( {
 			to: '/me/billing/purchases',
 			search: { plan_changed: true },
 			replace: true,
