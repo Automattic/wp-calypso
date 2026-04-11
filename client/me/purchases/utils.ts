@@ -38,38 +38,28 @@ export function getAddNewPaymentMethodPath(): string {
 	return addNewPaymentMethod;
 }
 
-export function isTemporarySitePurchase( purchase: Purchase ): boolean {
-	const { domain } = purchase;
-	// Currently only Jetpack, Akismet, A4A, and some Marketplace products allow siteless/userless(license-based) purchases which require a temporary
-	// site(s) to work. This function may need to be updated in the future as additional products types
-	// incorporate siteless/userless(licensebased) product based purchases..
-	return /^siteless\.(jetpack|akismet|marketplace\.wp|agencies\.automattic|a4a)\.com$/.test(
-		domain
-	);
-}
-
 export function getTemporarySiteType( purchase: Purchase ): string | null {
 	const { productType } = purchase;
-	return isTemporarySitePurchase( purchase ) ? productType : null;
+	return purchase.isAttachedToHoldingSite ? productType : null;
 }
 
 export function isAkismetTemporarySitePurchase( purchase: Purchase ): boolean {
 	const { productType } = purchase;
-	return isTemporarySitePurchase( purchase ) && productType === 'akismet';
+	return purchase.isAttachedToHoldingSite && productType === 'akismet';
 }
 
 export function isMarketplaceTemporarySitePurchase( purchase: Purchase ): boolean {
 	const { productType } = purchase;
-	return isTemporarySitePurchase( purchase ) && productType === 'saas_plugin';
+	return purchase.isAttachedToHoldingSite && productType === 'saas_plugin';
 }
 
 export function isJetpackTemporarySitePurchase( purchase: Purchase ): boolean {
 	const { productType } = purchase;
-	return isTemporarySitePurchase( purchase ) && productType === 'jetpack';
+	return purchase.isAttachedToHoldingSite && productType === 'jetpack';
 }
 
 export function isA4ATemporarySitePurchase( purchase: Purchase ): boolean {
-	return isTemporarySitePurchase( purchase ) && isA4ABillingDragonPurchase( purchase );
+	return purchase.isAttachedToHoldingSite && isA4ABillingDragonPurchase( purchase );
 }
 
 export function isA4ABillingDragonPurchase( purchase: Purchase ): boolean {

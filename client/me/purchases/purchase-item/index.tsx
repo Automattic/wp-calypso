@@ -55,7 +55,6 @@ import getSiteIconUrl from 'calypso/state/selectors/get-site-icon-url';
 import { getSite } from 'calypso/state/sites/selectors';
 import { isTransferredOwnership } from '../hooks/use-is-transferred-ownership';
 import {
-	isTemporarySitePurchase,
 	isJetpackTemporarySitePurchase,
 	isAkismetTemporarySitePurchase,
 	isMarketplaceTemporarySitePurchase,
@@ -173,7 +172,7 @@ export function PurchaseItemProduct( {
 	showSite?: boolean;
 	isDisconnectedSite?: boolean;
 } ) {
-	if ( isTemporarySitePurchase( purchase ) ) {
+	if ( purchase.isAttachedToHoldingSite ) {
 		return null;
 	}
 
@@ -885,7 +884,7 @@ class PurchaseItem extends Component<
 			if (
 				! isDisconnectedSite ||
 				purchase.isJetpackPlanOrProduct ||
-				isTemporarySitePurchase( purchase ) ||
+				purchase.isAttachedToHoldingSite ||
 				isA4ABillingDragonPurchase( purchase )
 			) {
 				onClick = () => {

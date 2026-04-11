@@ -33,7 +33,7 @@ import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { getAllDomains } from 'calypso/state/sites/domains/selectors';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import { managePurchase } from '../paths';
-import { isAkismetTemporarySitePurchase, isTemporarySitePurchase } from '../utils';
+import { isAkismetTemporarySitePurchase } from '../utils';
 import PurchaseMetaAutoRenewCouponDetail from './purchase-meta-auto-renew-coupon-detail';
 import PurchaseMetaExpiration from './purchase-meta-expiration';
 import PurchaseMetaIntroductoryOfferDetail from './purchase-meta-introductory-offer-detail';
@@ -292,7 +292,7 @@ function RenewErrorMessage( {
 
 	const isJetpack = purchase && ( isJetpackPlan( purchase ) || isJetpackProduct( purchase ) );
 
-	if ( isTemporarySitePurchase( purchase ) ) {
+	if ( purchase.isAttachedToHoldingSite ) {
 		return null;
 	}
 

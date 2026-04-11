@@ -29,16 +29,6 @@ export const CANCEL_FLOW_TYPE = {
 } as const;
 export type CancelFlowType = ( typeof CANCEL_FLOW_TYPE )[ keyof typeof CANCEL_FLOW_TYPE ];
 
-export function isTemporarySitePurchase( purchase: Purchase ): boolean {
-	const { domain } = purchase;
-	// Currently only Jetpack, Akismet, A4A, and some Marketplace products allow siteless/userless(license-based) purchases which require a temporary
-	// site(s) to work. This function may need to be updated in the future as additional products types
-	// incorporate siteless/userless(licensebased) product based purchases..
-	return /^siteless\.(jetpack|akismet|marketplace\.wp|agencies\.automattic|a4a)\.com$/.test(
-		domain
-	);
-}
-
 export function isRenewing( purchase: Purchase ): boolean {
 	return [ 'active', 'auto-renewing' ].includes( purchase.expiry_status );
 }
@@ -213,11 +203,11 @@ export function isA4ABillingDragonPurchase( purchase: Purchase ): boolean {
 }
 
 export function isA4ATemporarySitePurchase( purchase: Purchase ): boolean {
-	return isTemporarySitePurchase( purchase ) && isA4ABillingDragonPurchase( purchase );
+	return purchase.is_attached_to_holding_site && isA4ABillingDragonPurchase( purchase );
 }
 
 export function isAkismetTemporarySitePurchase( purchase: Purchase ): boolean {
-	return isTemporarySitePurchase( purchase ) && purchase.product_type === 'akismet';
+	return purchase.is_attached_to_holding_site && purchase.product_type === 'akismet';
 }
 
 export function isMarketplacePlugin( purchase: Purchase ): boolean {
@@ -227,11 +217,11 @@ export function isMarketplacePlugin( purchase: Purchase ): boolean {
 }
 
 export function isMarketplaceTemporarySitePurchase( purchase: Purchase ): boolean {
-	return isTemporarySitePurchase( purchase ) && purchase.product_type === 'saas_plugin';
+	return purchase.is_attached_to_holding_site && purchase.product_type === 'saas_plugin';
 }
 
 export function isJetpackTemporarySitePurchase( purchase: Purchase ): boolean {
-	return isTemporarySitePurchase( purchase ) && purchase.product_type === 'jetpack';
+	return purchase.is_attached_to_holding_site && purchase.product_type === 'jetpack';
 }
 
 /**
@@ -385,15 +375,15 @@ export function getSubtitleForDisplay( purchase: Purchase ): string | null {
 		return purchase.product_name;
 	}
 
-	if ( isTemporarySitePurchase( purchase ) && purchase.product_type === 'akismet' ) {
+	if ( purchase.is_attached_to_holding_site && purchase.product_type === 'akismet' ) {
 		return null;
 	}
 
-	if ( isTemporarySitePurchase( purchase ) && purchase.product_type === 'saas_plugin' ) {
+	if ( purchase.is_attached_to_holding_site && purchase.product_type === 'saas_plugin' ) {
 		return null;
 	}
 
-	if ( isTemporarySitePurchase( purchase ) && isA4ATemporarySitePurchase( purchase ) ) {
+	if ( purchase.is_attached_to_holding_site && isA4ATemporarySitePurchase( purchase ) ) {
 		return null;
 	}
 

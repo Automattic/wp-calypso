@@ -180,6 +180,13 @@ export interface Purchase {
 	is_cancelable: boolean;
 
 	/**
+	 * True if the site associated with this subscription is a holding site.
+	 * That is, a site created only to hold the subscription for the user
+	 * rather than a regular wpcom site that a user can view and manage.
+	 */
+	is_attached_to_holding_site: boolean;
+
+	/**
 	 * True if the subscription can be removed by the user (directly removed,
 	 * without a refund). A subscription can still be cancelled (see
 	 * `is_cancelable`) or refunded (see `is_refundable`) even if it is not
