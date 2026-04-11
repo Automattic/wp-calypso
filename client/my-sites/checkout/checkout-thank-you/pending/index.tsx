@@ -295,6 +295,7 @@ function useRedirectOnTransactionSuccess( {
 			saasRedirectUrl,
 			fromSiteSlug,
 			purchaseId: resolvedPurchaseId,
+			receipt,
 		} );
 
 		if ( ! redirectInstructions ) {
@@ -354,6 +355,7 @@ function useRedirectOnTransactionSuccess( {
 		translate,
 		fromSiteSlug,
 		resolvedPurchaseId,
+		receipt,
 	] );
 
 	return { headingText };
