@@ -43,22 +43,22 @@ export function getTemporarySiteType( purchase: Purchase ): string | null {
 	return purchase.isAttachedToHoldingSite ? productType : null;
 }
 
-export function isAkismetTemporarySitePurchase( purchase: Purchase ): boolean {
+export function isAkismetHoldingSitePurchase( purchase: Purchase ): boolean {
 	const { productType } = purchase;
 	return purchase.isAttachedToHoldingSite && productType === 'akismet';
 }
 
-export function isMarketplaceTemporarySitePurchase( purchase: Purchase ): boolean {
+export function isMarketplaceHoldingSitePurchase( purchase: Purchase ): boolean {
 	const { productType } = purchase;
 	return purchase.isAttachedToHoldingSite && productType === 'saas_plugin';
 }
 
-export function isJetpackTemporarySitePurchase( purchase: Purchase ): boolean {
+export function isJetpackHoldingSitePurchase( purchase: Purchase ): boolean {
 	const { productType } = purchase;
 	return purchase.isAttachedToHoldingSite && productType === 'jetpack';
 }
 
-export function isA4ATemporarySitePurchase( purchase: Purchase ): boolean {
+export function isA4AHoldingSitePurchase( purchase: Purchase ): boolean {
 	return purchase.isAttachedToHoldingSite && isA4ABillingDragonPurchase( purchase );
 }
 

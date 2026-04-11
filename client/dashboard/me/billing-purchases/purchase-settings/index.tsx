@@ -76,7 +76,7 @@ import {
 	isRenewing,
 	isIncludedWithPlan,
 	isOneTimePurchase,
-	isMarketplaceTemporarySitePurchase,
+	isMarketplaceHoldingSitePurchase,
 	isMarketplacePlugin,
 	isAkismetProduct,
 	isJetpackCrmProduct,
@@ -448,7 +448,7 @@ function ReinstallButton( { purchase }: { purchase: Purchase } ) {
 	if ( ! isMarketplacePlugin( purchase ) ) {
 		return null;
 	}
-	if ( isMarketplaceTemporarySitePurchase( purchase ) ) {
+	if ( isMarketplaceHoldingSitePurchase( purchase ) ) {
 		return null;
 	}
 

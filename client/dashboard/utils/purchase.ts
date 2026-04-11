@@ -202,11 +202,11 @@ export function isA4ABillingDragonPurchase( purchase: Purchase ): boolean {
 	return purchase.meta === 'is-a4a';
 }
 
-export function isA4ATemporarySitePurchase( purchase: Purchase ): boolean {
+export function isA4AHoldingSitePurchase( purchase: Purchase ): boolean {
 	return purchase.is_attached_to_holding_site && isA4ABillingDragonPurchase( purchase );
 }
 
-export function isAkismetTemporarySitePurchase( purchase: Purchase ): boolean {
+export function isAkismetHoldingSitePurchase( purchase: Purchase ): boolean {
 	return purchase.is_attached_to_holding_site && purchase.product_type === 'akismet';
 }
 
@@ -216,11 +216,11 @@ export function isMarketplacePlugin( purchase: Purchase ): boolean {
 	);
 }
 
-export function isMarketplaceTemporarySitePurchase( purchase: Purchase ): boolean {
+export function isMarketplaceHoldingSitePurchase( purchase: Purchase ): boolean {
 	return purchase.is_attached_to_holding_site && purchase.product_type === 'saas_plugin';
 }
 
-export function isJetpackTemporarySitePurchase( purchase: Purchase ): boolean {
+export function isJetpackHoldingSitePurchase( purchase: Purchase ): boolean {
 	return purchase.is_attached_to_holding_site && purchase.product_type === 'jetpack';
 }
 
@@ -383,7 +383,7 @@ export function getSubtitleForDisplay( purchase: Purchase ): string | null {
 		return null;
 	}
 
-	if ( purchase.is_attached_to_holding_site && isA4ATemporarySitePurchase( purchase ) ) {
+	if ( purchase.is_attached_to_holding_site && isA4AHoldingSitePurchase( purchase ) ) {
 		return null;
 	}
 
@@ -507,7 +507,7 @@ function getServicePathForCheckoutFromPurchase( purchase: Purchase ): string {
 	if ( isAkismetProduct( purchase ) ) {
 		return 'akismet/';
 	}
-	if ( isMarketplaceTemporarySitePurchase( purchase ) ) {
+	if ( isMarketplaceHoldingSitePurchase( purchase ) ) {
 		return 'marketplace/';
 	}
 	return '';

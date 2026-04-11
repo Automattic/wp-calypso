@@ -33,7 +33,7 @@ import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { getAllDomains } from 'calypso/state/sites/domains/selectors';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import { managePurchase } from '../paths';
-import { isAkismetTemporarySitePurchase } from '../utils';
+import { isAkismetHoldingSitePurchase } from '../utils';
 import PurchaseMetaAutoRenewCouponDetail from './purchase-meta-auto-renew-coupon-detail';
 import PurchaseMetaExpiration from './purchase-meta-expiration';
 import PurchaseMetaIntroductoryOfferDetail from './purchase-meta-introductory-offer-detail';
@@ -84,7 +84,7 @@ export default function PurchaseMeta( {
 	}
 
 	const showJetpackUserLicense = isJetpackProduct( purchase ) || isJetpackPlan( purchase );
-	const isAkismetPurchase = isAkismetTemporarySitePurchase( purchase );
+	const isAkismetPurchase = isAkismetHoldingSitePurchase( purchase );
 
 	const domainDetails = allDomains?.[ purchase.siteId ]?.find(
 		( domain: ResponseDomain ) => domain.domain === purchase.meta

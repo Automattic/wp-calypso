@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 import { ConfirmDialog, DialogContent, DialogFooter } from 'calypso/components/confirm-dialog';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import CancelAutoRenewalForm from 'calypso/components/marketing-survey/cancel-auto-renewal-form';
-import { isAkismetTemporarySitePurchase } from 'calypso/me/purchases/utils';
+import { isAkismetHoldingSitePurchase } from 'calypso/me/purchases/utils';
 import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
 import type { Purchases } from '@automattic/data-stores';
 
@@ -78,7 +78,7 @@ class AutoRenewDisablingDialog extends Component<
 			return 'email';
 		}
 
-		if ( isAkismetTemporarySitePurchase( purchase ) ) {
+		if ( isAkismetHoldingSitePurchase( purchase ) ) {
 			return 'siteless';
 		}
 

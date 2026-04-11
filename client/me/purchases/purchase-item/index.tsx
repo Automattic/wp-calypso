@@ -55,10 +55,10 @@ import getSiteIconUrl from 'calypso/state/selectors/get-site-icon-url';
 import { getSite } from 'calypso/state/sites/selectors';
 import { isTransferredOwnership } from '../hooks/use-is-transferred-ownership';
 import {
-	isJetpackTemporarySitePurchase,
-	isAkismetTemporarySitePurchase,
-	isMarketplaceTemporarySitePurchase,
-	isA4ATemporarySitePurchase,
+	isJetpackHoldingSitePurchase,
+	isAkismetHoldingSitePurchase,
+	isMarketplaceHoldingSitePurchase,
+	isA4AHoldingSitePurchase,
 	isA4ABillingDragonPurchase,
 } from '../utils';
 import OwnerInfo from './owner-info';
@@ -117,14 +117,14 @@ export function PurchaseItemSiteIcon( {
 } ) {
 	let content = <SiteIcon site={ site ?? undefined } size={ 36 } />;
 
-	if ( isAkismetTemporarySitePurchase( purchase ) ) {
+	if ( isAkismetHoldingSitePurchase( purchase ) ) {
 		content = (
 			<div className="purchase-item__static-icon">
 				<img src={ akismetIcon } alt="Akismet icon" />
 			</div>
 		);
 	}
-	if ( isMarketplaceTemporarySitePurchase( purchase ) ) {
+	if ( isMarketplaceHoldingSitePurchase( purchase ) ) {
 		if ( purchase.productSlug.startsWith( 'passport' ) ) {
 			content = (
 				<div className="purchase-item__static-icon">
@@ -355,12 +355,12 @@ export function PurchaseItemStatus( {
 
 	if (
 		isDisconnectedSite &&
-		! isAkismetTemporarySitePurchase( purchase ) &&
-		! isMarketplaceTemporarySitePurchase( purchase ) &&
-		! isA4ATemporarySitePurchase( purchase ) &&
+		! isAkismetHoldingSitePurchase( purchase ) &&
+		! isMarketplaceHoldingSitePurchase( purchase ) &&
+		! isA4AHoldingSitePurchase( purchase ) &&
 		! isA4ABillingDragonPurchase( purchase )
 	) {
-		if ( isJetpackTemporarySitePurchase( purchase ) ) {
+		if ( isJetpackHoldingSitePurchase( purchase ) ) {
 			return (
 				<>
 					<span className="purchase-item__is-error">
