@@ -1,6 +1,7 @@
 import {
 	BrowserManager,
 	CartCheckoutPage,
+	PlansPage,
 	PluginsPage,
 	RestAPIClient,
 	SecretsManager,
@@ -46,6 +47,11 @@ test.describe( 'Plugins: Add multiple to cart', { tag: [ tags.CALYPSO_RELEASE ] 
 
 			await test.step( `Click on install button for ${ pluginName }`, async () => {
 				await pluginsPage.clickInstallPlugin();
+			} );
+
+			await test.step( `Select a plan on the plans page for ${ pluginName }`, async () => {
+				const plansPage = new PlansPage( page );
+				await plansPage.selectPlan( 'Personal' );
 			} );
 
 			await test.step( `WordPress.com is added to cart after adding ${ pluginName }`, async () => {
