@@ -18,7 +18,7 @@ import { useResizeObserver } from '@wordpress/compose';
 import { useDispatch } from '@wordpress/data';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
-import { info, cautionFilled as warning } from '@wordpress/icons';
+import { info, cautionFilled } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState, useMemo } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
@@ -400,7 +400,7 @@ function getFields( {
 					</Text>
 				) : (
 					<HStack justify="flex-start">
-						<Icon icon={ warning } size={ 16 } style={ { fill: 'currentColor' } } />
+						<Icon icon={ cautionFilled } size={ 16 } style={ { fill: 'currentColor' } } />
 						<Text intent="warning">{ __( 'Missing information' ) }</Text>
 					</HStack>
 				);

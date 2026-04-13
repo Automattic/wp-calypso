@@ -1,4 +1,4 @@
-import { category, code, starEmpty, tool, cautionFilled as warning } from '@wordpress/icons';
+import { category, code, starEmpty, tool, cautionFilled } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import useFetchPendingSites from 'calypso/a8c-for-agencies/data/sites/use-fetch-pending-sites';
@@ -40,7 +40,7 @@ const useSitesMenuItems = ( path: string ) => {
 		if ( ! noActiveSite ) {
 			items.push( {
 				id: 'sites-needs-attention-menu-item',
-				icon: warning,
+				icon: cautionFilled,
 				path: A4A_SITES_LINK,
 				link: A4A_SITES_LINK_NEEDS_ATTENTION,
 				title: translate( 'Needs attention' ),

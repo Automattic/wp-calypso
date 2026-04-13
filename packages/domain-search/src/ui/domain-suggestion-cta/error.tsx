@@ -1,5 +1,5 @@
 import { Button, Tooltip } from '@wordpress/components';
-import { cautionFilled as warning } from '@wordpress/icons';
+import { cautionFilled } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { useDomainSuggestionContainerContext } from '../../hooks/use-domain-suggestion-container';
@@ -35,7 +35,7 @@ export const DomainSuggestionErrorCTA = ( {
 					__next40pxDefaultSize
 					label={ __( 'Add to cart' ) }
 					onClick={ callback }
-					icon={ warning }
+					icon={ cautionFilled }
 				>
 					{ listContext.isFeatured ? __( 'Add to cart' ) : undefined }
 				</Button>

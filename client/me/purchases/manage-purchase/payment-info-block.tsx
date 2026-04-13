@@ -1,4 +1,4 @@
-import { Icon, cautionFilled as warning } from '@wordpress/icons';
+import { Icon, cautionFilled } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import PaymentLogo from 'calypso/components/payment-logo';
@@ -41,7 +41,7 @@ export default function PaymentInfoBlock( {
 		return (
 			<PaymentInfoBlockWrapper>
 				<div className="manage-purchase__no-payment-method">
-					<Icon icon={ warning } />
+					<Icon icon={ cautionFilled } />
 					{ translate( 'You don’t have a payment method to renew this subscription' ) }
 				</div>
 			</PaymentInfoBlockWrapper>
@@ -110,7 +110,7 @@ export default function PaymentInfoBlock( {
 		return (
 			<PaymentInfoBlockWrapper>
 				<div className="manage-purchase__no-payment-method">
-					<Icon icon={ warning } />
+					<Icon icon={ cautionFilled } />
 					{ translate( 'You don’t have a payment method to renew this subscription' ) }
 				</div>
 			</PaymentInfoBlockWrapper>
@@ -125,7 +125,7 @@ export default function PaymentInfoBlock( {
 		return (
 			<PaymentInfoBlockWrapper>
 				<div className="manage-purchase__no-payment-method">
-					<Icon icon={ warning } />
+					<Icon icon={ cautionFilled } />
 					{ translate( 'You don’t have a payment method to renew this subscription' ) }
 				</div>
 			</PaymentInfoBlockWrapper>

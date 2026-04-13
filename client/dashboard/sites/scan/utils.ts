@@ -1,12 +1,5 @@
 import { Threat } from '@automattic/api-core';
-import {
-	wordpress,
-	code,
-	plugins,
-	brush,
-	blockTable,
-	cautionFilled as warning,
-} from '@wordpress/icons';
+import { wordpress, code, plugins, brush, blockTable, cautionFilled } from '@wordpress/icons';
 
 export function getThreatType(
 	threat: Threat
@@ -61,7 +54,7 @@ export const getThreatIcon = ( threat: Threat ) => {
 			return blockTable;
 		case 'none':
 		default:
-			return warning;
+			return cautionFilled;
 	}
 };
 

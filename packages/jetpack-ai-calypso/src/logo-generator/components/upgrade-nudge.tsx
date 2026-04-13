@@ -5,7 +5,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { Icon, cautionFilled as warning } from '@wordpress/icons';
+import { Icon, cautionFilled } from '@wordpress/icons';
 /**
  * Internal dependencies
  */
@@ -37,7 +37,7 @@ export const UpgradeNudge = () => {
 		<div className="jetpack-upgrade-plan-banner">
 			<div className="jetpack-upgrade-plan-banner__wrapper">
 				<div>
-					<Icon className="jetpack-upgrade-plan-banner__icon" icon={ warning } />
+					<Icon className="jetpack-upgrade-plan-banner__icon" icon={ cautionFilled } />
 					<span className="jetpack-upgrade-plan-banner__banner-description">
 						{ upgradeMessage }
 					</span>

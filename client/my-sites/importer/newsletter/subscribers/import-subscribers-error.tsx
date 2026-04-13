@@ -1,6 +1,6 @@
 import { FormInputValidation } from '@automattic/components';
 import { Subscriber } from '@automattic/data-stores';
-import { Icon, cautionFilled as warning } from '@wordpress/icons';
+import { Icon, cautionFilled } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 
 type Props = {
@@ -21,7 +21,7 @@ export default function PaidImportSubscribersError( { error }: Props ) {
 
 	return (
 		<FormInputValidation icon="warning" isError={ false } isWarning text="">
-			<Icon icon={ warning } />
+			<Icon icon={ cautionFilled } />
 			{ ( (): React.ReactNode => {
 				switch ( error.code ) {
 					case HANDLED_ERROR.IMPORT_LIMIT:
