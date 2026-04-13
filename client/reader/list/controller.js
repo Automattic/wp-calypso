@@ -5,7 +5,9 @@ import {
 	trackScrollPage,
 } from 'calypso/reader/controller-helper';
 import { recordTrack } from 'calypso/reader/stats';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import renderHeaderSection from '../lib/header-section';
 
 const analyticsPageTitle = 'Reader';
 
@@ -41,6 +43,10 @@ export const listListing = ( context, next ) => {
 		},
 		{ pathnameOverride: getCurrentRoute( state ) }
 	);
+
+	if ( ! isUserLoggedIn( state ) ) {
+		context.renderHeaderSection = renderHeaderSection;
+	}
 
 	context.primary = (
 		<AsyncLoad

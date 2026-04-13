@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { getAnyLanguageRouteParam } from '@automattic/i18n-utils';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { sidebar, setBeforePrimary } from 'calypso/reader/controller';
 import {
@@ -11,6 +12,8 @@ import {
 } from './controller';
 
 export default function () {
+	const defined = getAnyLanguageRouteParam();
+
 	page(
 		'/reader/list/:user/:list/edit/items',
 		sidebar,
@@ -44,6 +47,16 @@ export default function () {
 		sidebar,
 		setBeforePrimary,
 		deleteList,
+		makeLayout,
+		clientRender
+	);
+
+	// Locale-prefixed route for logged-out users
+	page(
+		`/${ defined }/reader/list/:user/:list`,
+		sidebar,
+		setBeforePrimary,
+		listListing,
 		makeLayout,
 		clientRender
 	);
