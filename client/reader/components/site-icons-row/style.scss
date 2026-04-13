@@ -1,0 +1,37 @@
+.site-icons-row {
+	display: flex;
+	align-items: center;
+}
+
+.site-icons-row__icon {
+	width: 34px;
+	height: 34px;
+	border-radius: 50%;
+	border: 2px solid var( --color-surface );
+	flex-shrink: 0;
+	object-fit: cover;
+
+	&:not(:first-child) {
+		margin-inline-start: -8px;
+	}
+}
+
+.site-icons-row__icon--initials {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: var( --color-neutral-10 );
+	color: var( --color-neutral-70 );
+	font-size: 11px;
+	font-weight: 600;
+}
+
+.site-icons-row__overflow {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: var( --color-neutral-5 );
+	color: var( --color-neutral-70 );
+	font-size: 10px;
+	font-weight: 600;
+}
