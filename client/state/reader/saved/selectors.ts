@@ -1,20 +1,7 @@
 import { keyToString } from 'calypso/reader/post-key';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import type { PostKey, SavedPostItem } from './types';
-
-interface ReaderSavedState {
-	items: SavedPostItem[];
-	isLoading: boolean;
-	error: string | null;
-}
-
-interface AppState {
-	reader: {
-		saved: ReaderSavedState;
-		posts: { items: Record< string, unknown > };
-		[ key: string ]: unknown;
-	};
-}
+import type { AppState } from 'calypso/types';
 
 export function getSavedPosts( state: AppState ): SavedPostItem[] {
 	return state.reader.saved.items;
@@ -26,7 +13,8 @@ export function getSavedPostsCount( state: AppState ): number {
 
 export function isPostSaved( state: AppState, postKey: PostKey ): boolean {
 	const key = keyToString( postKey );
-	return state.reader.saved.items.some( ( item ) => keyToString( item.postKey ) === key );
+	const items: SavedPostItem[] = state.reader.saved.items;
+	return items.some( ( item ) => keyToString( item.postKey ) === key );
 }
 
 export function isSavedPostsLoading( state: AppState ): boolean {
@@ -38,7 +26,8 @@ export function getSavedPostsError( state: AppState ): string | null {
 }
 
 export function getSavedPostsTotalReadingTime( state: AppState ): number {
-	return state.reader.saved.items.reduce( ( total, item ) => {
+	const items: SavedPostItem[] = state.reader.saved.items;
+	return items.reduce( ( total: number, item: SavedPostItem ) => {
 		const post = getPostByKey( state, item.postKey );
 		const minutes = post?.minutes_to_read ?? 0;
 		return total + minutes;

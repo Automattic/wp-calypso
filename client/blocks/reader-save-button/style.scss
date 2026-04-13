@@ -1,0 +1,13 @@
+.reader-save-button {
+	&.tooltip {
+		@include tooltip-base;
+		@include tooltip-top;
+	}
+
+	&.is-saved {
+		svg {
+			fill: var(--color-primary);
+			opacity: 1;
+		}
+	}
+}
