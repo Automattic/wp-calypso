@@ -1,22 +1,12 @@
 import { useTranslate } from 'i18n-calypso';
-import { ReaderSitesList } from 'calypso/reader/sites-list';
+import { ReaderSiteItem } from 'calypso/reader/sites-list/site-item';
 import type { PublicListItem } from './use-public-list-query';
-import type { ReaderSite } from 'calypso/reader/sites-list/site-item';
 
 import './list-sites-directory.scss';
 
 interface ListSitesDirectoryProps {
 	items: PublicListItem[];
 	followSource: string;
-}
-
-function mapItemToReaderSite( item: PublicListItem ): ReaderSite {
-	return {
-		siteId: item.blog_id ? String( item.blog_id ) : undefined,
-		feedId: String( item.feed_id ),
-		name: item.site_name,
-		feedUrl: item.site_url,
-	};
 }
 
 export function ListSitesDirectory( {
@@ -33,26 +23,33 @@ export function ListSitesDirectory( {
 		);
 	}
 
-	const sites = items.map( mapItemToReaderSite );
-
 	return (
 		<div className="list-sites-directory">
-			<ReaderSitesList sites={ sites } variant="default" followSource={ followSource } />
-			{ items.map(
-				( item ) =>
-					item.fediverse_handle &&
-					item.fediverse_handle_url && (
-						<div
-							key={ `fediverse-${ item.feed_id }` }
-							className="list-sites-directory__fediverse-handle"
-							data-feed-id={ item.feed_id }
-						>
-							<a href={ item.fediverse_handle_url } target="_blank" rel="noopener noreferrer">
-								{ item.fediverse_handle }
-							</a>
-						</div>
-					)
-			) }
+			{ items
+				.filter( ( item ) => item.site_url )
+				.map( ( item ) => (
+					<div key={ `list-site-${ item.feed_id }` } className="list-sites-directory__site">
+						<ul className="reader-sites-list is-default-view">
+							<ReaderSiteItem
+								site={ {
+									siteId: item.blog_id ? String( item.blog_id ) : undefined,
+									feedId: String( item.feed_id ),
+									name: item.site_name,
+									feedUrl: item.site_url,
+								} }
+								followSource={ followSource }
+								variant="default"
+							/>
+						</ul>
+						{ item.fediverse_handle && item.fediverse_handle_url && (
+							<div className="list-sites-directory__fediverse-handle">
+								<a href={ item.fediverse_handle_url } target="_blank" rel="noopener noreferrer">
+									{ item.fediverse_handle }
+								</a>
+							</div>
+						) }
+					</div>
+				) ) }
 		</div>
 	);
 }

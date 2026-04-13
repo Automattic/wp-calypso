@@ -6,14 +6,10 @@ import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ListSitesDirectory } from '../list-sites-directory';
 import type { PublicListItem } from '../use-public-list-query';
 
-// Mock ReaderSitesList to avoid deep dependency chain
-jest.mock( 'calypso/reader/sites-list', () => ( {
-	ReaderSitesList: ( { sites }: { sites: Array< { name: string } > } ) => (
-		<ul data-testid="mock-sites-list">
-			{ sites.map( ( site ) => (
-				<li key={ site.name }>{ site.name }</li>
-			) ) }
-		</ul>
+// Mock ReaderSiteItem to avoid deep dependency chain
+jest.mock( 'calypso/reader/sites-list/site-item', () => ( {
+	ReaderSiteItem: ( { site }: { site: { name: string } } ) => (
+		<li data-testid="mock-site-item">{ site.name }</li>
 	),
 } ) );
 

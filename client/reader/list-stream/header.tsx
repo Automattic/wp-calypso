@@ -66,7 +66,7 @@ const ListStreamHeader = ( {
 					</div>
 				) }
 
-				{ showFollow && items && items.length > 0 && (
+				{ items && items.length > 0 && (
 					<FollowAllSitesButton items={ items } followSource="reader-list-header" />
 				) }
 

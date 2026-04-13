@@ -8,9 +8,24 @@
 	color: var( --studio-gray-40 );
 }
 
+.list-sites-directory__site {
+	border-bottom: 1px solid var( --color-neutral-5 );
+
+	&:last-child {
+		border-bottom: none;
+	}
+
+	.reader-sites-list {
+		margin: 0;
+	}
+
+	.reader-site-item {
+		border-bottom: none;
+	}
+}
+
 .list-sites-directory__fediverse-handle {
-	margin-top: -12px;
-	margin-bottom: 12px;
+	padding-bottom: 12px;
 	padding-inline-start: 54px;
 	font-size: rem( 13px );
 
