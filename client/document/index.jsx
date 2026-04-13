@@ -359,6 +359,12 @@ function LoadingPlaceholder( {
 		);
 	}
 
+	// CIAB dashboard routes render their own loading logo in the dashboard Root
+	// after hydration. Skipping the SSR logo avoids a double-flash with jitter.
+	if ( dashboard === 'ciab' ) {
+		return null;
+	}
+
 	const LoadingLogo = chooseLoadingLogo( {
 		isWpMobileApp: app?.isWpMobileApp,
 		isWcMobileApp: app?.isWcMobileApp,
