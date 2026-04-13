@@ -1,4 +1,4 @@
-import { Icon, warning, info, check, closeSmall } from '@wordpress/icons';
+import { Icon, cautionFilled, info, check, closeSmall } from '@wordpress/icons';
 import clsx from 'clsx';
 import React from 'react';
 import { alert } from '../icons';
@@ -35,7 +35,7 @@ const getIconByLevel = ( level: NoticeBannerProps[ 'level' ] ) => {
 		case 'success':
 			return check;
 		default:
-			return warning;
+			return cautionFilled;
 	}
 };
 
