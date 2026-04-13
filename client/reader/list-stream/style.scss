@@ -76,6 +76,10 @@
 	}
 }
 
+.navigation-header__actions .split-button {
+	flex-shrink: 0;
+}
+
 .list-stream__tabs {
 	margin-bottom: 16px;
 }
