@@ -5,6 +5,7 @@ import QueryReaderList from 'calypso/components/data/query-reader-list';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
+import ReaderMain from 'calypso/reader/components/reader-main';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import Stream from 'calypso/reader/stream';
 import { useSelector, useDispatch } from 'calypso/state';
@@ -109,7 +110,7 @@ function ListStream( props ) {
 	}
 
 	return (
-		<>
+		<ReaderMain>
 			<DocumentHead
 				title={ translate( '%s ‹ Reader', {
 					args: pageTitle,
@@ -170,6 +171,7 @@ function ListStream( props ) {
 			{ activeTab === TAB_POSTS && (
 				<Stream
 					{ ...props }
+					isMain={ false }
 					listName={ pageTitle }
 					emptyContent={ EmptyContentWithList }
 					showFollowInHeader={ false }
@@ -179,7 +181,7 @@ function ListStream( props ) {
 			{ activeTab === TAB_SITES && publicListData && (
 				<ListSitesDirectory items={ publicListData.items } followSource="reader-list-sites-tab" />
 			) }
-		</>
+		</ReaderMain>
 	);
 }
 
