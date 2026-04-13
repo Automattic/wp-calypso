@@ -1,5 +1,6 @@
 import { PaymentPartners } from '@automattic/api-core';
 import {
+	countryListQuery,
 	receiptQuery,
 	sendReceiptEmailMutation,
 	userTaxDetailsQuery,
@@ -25,6 +26,7 @@ import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { isAkismetPro500Plan } from '../../utils/akismet';
+import { getTaxName } from '../../utils/tax';
 import {
 	formatReceiptAmount,
 	formatReceiptTaxAmount,
@@ -318,6 +320,8 @@ function getPaymentMethodText( receipt: Receipt ): string | null {
 
 function ReceiptLineItems( { receipt }: { receipt: Receipt } ) {
 	const groupedItems = groupDomainProducts( receipt.items );
+	const { data: countryList } = useSuspenseQuery( countryListQuery() );
+	const taxName = getTaxName( countryList, receipt.tax_country_code );
 
 	return (
 		<VStack spacing={ 4 } alignment="flex-start">
@@ -343,7 +347,7 @@ function ReceiptLineItems( { receipt }: { receipt: Receipt } ) {
 					{ transactionIncludesTax( receipt ) && (
 						<VStack className="receipt-tax-row">
 							<HStack justify="space-between">
-								<span>{ __( 'Tax' ) }</span>
+								<span>{ taxName ?? __( 'Tax' ) }</span>
 								<span>{ formatReceiptTaxAmount( receipt ) }</span>
 							</HStack>
 						</VStack>
