@@ -101,6 +101,7 @@
 		"purchases/new-payment-methods": true,
 		"reader/full-errors": false,
 		"reader/msd-enabled": true,
+		"reader/saved-posts": true,
 		"readymade-templates/showcase": false,
 		"redirect-fallback-browsers": true,
 		"safari-idb-mitigation": true,
