@@ -5,6 +5,7 @@ export interface PublicListItem {
 	feed_id: number;
 	site_name: string;
 	site_url: string;
+	site_icon: string | null;
 	fediverse_handle: string | null;
 	fediverse_handle_url: string | null;
 }
