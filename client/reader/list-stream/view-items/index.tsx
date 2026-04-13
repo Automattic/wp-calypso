@@ -95,6 +95,12 @@ export function ListViewItems( { owner, slug }: ListViewItemsProps ) {
 				showFollow
 			/>
 
+			<p>
+				{ translate(
+					'Browse the sites in this list. Select any site to read its posts or subscribe to it.'
+				) }
+			</p>
+
 			<ReaderSitesList sites={ sites } followSource="reader-list-view-items" variant="card" />
 		</ReaderMain>
 	);

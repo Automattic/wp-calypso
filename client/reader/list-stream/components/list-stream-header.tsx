@@ -1,5 +1,6 @@
 import './list-stream-header.style.scss';
-import { Gridicon, Button } from '@automattic/components';
+import { Button } from '@wordpress/components';
+import { Icon, lock, formatListBullets } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import FollowButton from 'calypso/blocks/follow-button/button';
 import AutoDirection from 'calypso/components/auto-direction';
@@ -44,9 +45,15 @@ const ListStreamHeader = ( {
 	return (
 		<AutoDirection>
 			<NavigationHeader title={ formattedTitle } subtitle={ formattedDescription }>
+				<div className="list-stream__header-view">
+					<Button href={ `/lists/${ title }` }>
+						<Icon icon={ formatListBullets } size={ 24 } />
+					</Button>
+				</div>
+
 				{ ! isPublic && (
-					<div className="list-stream__header-title-privacy">
-						<Gridicon icon="lock" size={ 24 } title={ translate( 'Private list' ) } />
+					<div className="list-stream__header-title-privacy" title={ translate( 'Private list' ) }>
+						<Icon icon={ lock } size={ 24 } />
 					</div>
 				) }
 
