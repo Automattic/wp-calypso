@@ -46,6 +46,10 @@ export const listListing = ( context, next ) => {
 
 	if ( ! isUserLoggedIn( state ) ) {
 		context.renderHeaderSection = renderHeaderSection;
+		recordTrack( 'calypso_reader_list_viewed_logged_out', {
+			list_owner: context.params.user,
+			list_slug: context.params.list,
+		} );
 	}
 
 	context.primary = (
