@@ -1,18 +1,16 @@
-.is-reader-page {
-	.list-tags {
+.list-tags {
 		display: flex;
 		flex-wrap: wrap;
 		gap: 12px;
 		margin-top: 16px;
 	}
 
-	.list-tags__tag {
-		display: flex;
-		background-color: #f0f0f0;
-		align-items: center;
-		border-radius: 2px;
-		padding: 6px 8px;
-		font-size: rem( 13px );
-		color: var( --studio-gray-90 );
-	}
+.list-tags__tag {
+	display: flex;
+	background-color: #f0f0f0;
+	align-items: center;
+	border-radius: 2px;
+	padding: 6px 8px;
+	font-size: rem( 13px );
+	color: var( --studio-gray-90 );
 }
