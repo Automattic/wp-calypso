@@ -4,6 +4,7 @@ import {
 	siteWordPressVersionQuery,
 	wpOrgCoreVersionQuery,
 } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, __experimentalText as Text } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
@@ -14,7 +15,6 @@ import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
-import { canViewWordPressSettings } from '../features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import { BetaProgramNotice } from './beta-program-notice';
 import { LatestVersionNotice } from './latest-version-notice';
@@ -70,45 +70,53 @@ export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) 
 		/>
 	);
 
-	if ( ! canViewWordPressSettings( site ) ) {
+	if ( isEnabled( 'dashboard/wp-beta-program' ) ) {
 		return (
 			<PageLayout size="small" header={ header }>
-				<Notice>
-					<VStack>
-						<Text as="p">
-							{ sprintf(
-								// translators: %s: WordPress version, e.g. 6.8
-								__( 'Every WordPress.com site runs the latest WordPress version (%s).' ),
-								getFormattedWordPressVersion( site )
-							) }
-						</Text>
-						{ site.is_wpcom_atomic && (
-							<Text as="p">
-								{ createInterpolateElement(
-									__(
-										'Switch to a staging site to test a beta version of the next WordPress release. <learnMoreLink />'
-									),
-									{
-										learnMoreLink: <InlineSupportLink supportContext="switch-to-staging-site" />,
-									}
-								) }
-							</Text>
-						) }
-					</VStack>
-				</Notice>
+				<HostingFeatureGatedWithCallout
+					site={ site }
+					feature={ HostingFeatures.BACKUPS_SELF_SERVE }
+					upsellId="site-settings-wordpress"
+				>
+					<VersionManagement site={ site } />
+				</HostingFeatureGatedWithCallout>
+			</PageLayout>
+		);
+	}
+
+	if ( site.is_wpcom_staging_site ) {
+		return (
+			<PageLayout size="small" header={ header }>
+				<VersionManagement site={ site } />
 			</PageLayout>
 		);
 	}
 
 	return (
 		<PageLayout size="small" header={ header }>
-			<HostingFeatureGatedWithCallout
-				site={ site }
-				feature={ HostingFeatures.BACKUPS_SELF_SERVE }
-				upsellId="site-settings-wordpress"
-			>
-				<VersionManagement site={ site } />
-			</HostingFeatureGatedWithCallout>
+			<Notice>
+				<VStack>
+					<Text as="p">
+						{ sprintf(
+							// translators: %s: WordPress version, e.g. 6.8
+							__( 'Every WordPress.com site runs the latest WordPress version (%s).' ),
+							getFormattedWordPressVersion( site )
+						) }
+					</Text>
+					{ site.is_wpcom_atomic && (
+						<Text as="p">
+							{ createInterpolateElement(
+								__(
+									'Switch to a staging site to test a beta version of the next WordPress release. <learnMoreLink />'
+								),
+								{
+									learnMoreLink: <InlineSupportLink supportContext="switch-to-staging-site" />,
+								}
+							) }
+						</Text>
+					) }
+				</VStack>
+			</Notice>
 		</PageLayout>
 	);
 }

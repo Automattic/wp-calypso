@@ -109,4 +109,24 @@ describe( '<WordPressSettings>', () => {
 		expect( screen.getByRole( 'button', { name: 'Activate' } ) ).toBeVisible();
 		expect( screen.queryByRole( 'button', { name: 'Save' } ) ).not.toBeInTheDocument();
 	} );
+
+	test( 'renders upsell when the site does not have the plan feature', async () => {
+		mockSite( {
+			...site,
+			is_wpcom_atomic: false,
+			is_wpcom_staging_site: false,
+			plan: {
+				product_slug: 'personal-bundle',
+				product_name_short: 'Personal',
+				is_free: false,
+				features: { active: [] },
+			},
+		} as unknown as Site );
+
+		render( <WordPressSettings siteSlug={ site.slug } /> );
+		await screen.findByRole( 'heading', { name: 'WordPress' } );
+
+		expect( screen.getByRole( 'button', { name: 'Upgrade plan' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'button', { name: 'Save' } ) ).not.toBeInTheDocument();
+	} );
 } );
