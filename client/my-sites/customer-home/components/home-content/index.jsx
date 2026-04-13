@@ -1,5 +1,4 @@
 import { Button } from '@automattic/components';
-import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { SET_UP_EMAIL_AUTHENTICATION_FOR_YOUR_DOMAIN } from '@automattic/urls';
 import { useQueryClient } from '@tanstack/react-query';
@@ -17,13 +16,11 @@ import ResurrectedWelcomeModalGate from 'calypso/components/resurrected-welcome-
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import useDomainDiagnosticsQuery from 'calypso/data/domains/diagnostics/use-domain-diagnostics-query';
 import useHomeLayoutQuery, { getCacheKey } from 'calypso/data/home/use-home-layout-query';
-import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
 import { usePurchasePlanNotification } from 'calypso/landing/stepper/declarative-flow/internals/hooks/use-purchase-plan-notification';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { setDomainNotice } from 'calypso/lib/domains/set-domain-notice';
 import { preventWidows } from 'calypso/lib/formatting';
 import { getQueryArgs } from 'calypso/lib/query-args';
-import { useCelebrateLaunchModalSideEffects } from 'calypso/my-sites/customer-home/celebrate-site-launch-modal/use-side-effects';
 import Primary from 'calypso/my-sites/customer-home/locations/primary';
 import Secondary from 'calypso/my-sites/customer-home/locations/secondary';
 import Tertiary from 'calypso/my-sites/customer-home/locations/tertiary';
@@ -53,7 +50,6 @@ import {
 } from 'calypso/state/sites/selectors';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { FullScreenLaunchpad } from '../full-screen-launchpad';
 import openSyncUrlInStudio from './studio-deeplink';
 
 import './style.scss';
@@ -85,9 +81,6 @@ const HomeContent = ( {
 	const isP2 = site?.options?.is_wpforteams_site;
 
 	const { data: layout, isLoading, error: homeLayoutError } = useHomeLayoutQuery( siteId );
-	const { skipCurrentView } = useSkipCurrentViewMutation( siteId );
-
-	const [ focusedLaunchpadDismissed, setFocusedLaunchpadDismissed ] = useState( false );
 
 	const siteDomains = useSelector( ( state ) => getDomainsBySiteId( state, siteId ) );
 	const customDomains = siteDomains?.filter( ( domain ) => ! domain.isWPCOMDomain );
@@ -145,27 +138,9 @@ const HomeContent = ( {
 		Array.isArray( layout?.secondary ) &&
 		layout.secondary.length > 0;
 
-	const { addCelebrateLaunchQueryParams } = useCelebrateLaunchModalSideEffects( siteId );
-
 	if ( ! canUserUseCustomerHome ) {
 		const title = translate( 'This page is not available on this site.' );
 		return <EmptyContent title={ preventWidows( title ) } />;
-	}
-
-	if ( layout?.view_name === 'VIEW_FOCUSED_LAUNCHPAD' && ! focusedLaunchpadDismissed ) {
-		return (
-			<FullScreenLaunchpad
-				onClose={ async () => {
-					setFocusedLaunchpadDismissed( true );
-					await updateLaunchpadSettings( siteId, { launchpad_screen: 'skipped' } );
-					skipCurrentView( null, true );
-				} }
-				beforeSiteLaunchRefetch={ addCelebrateLaunchQueryParams }
-				onSiteLaunch={ () => {
-					setFocusedLaunchpadDismissed( true );
-				} }
-			/>
-		);
 	}
 
 	// Ecommerce Plan's Home redirects to WooCommerce Home, so we show a placeholder
