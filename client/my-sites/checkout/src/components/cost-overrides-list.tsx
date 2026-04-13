@@ -3,7 +3,6 @@ import {
 	isDIFMProduct,
 	isMonthlyProduct,
 	isTriennially,
-	isWpComPlan,
 	isYearly,
 } from '@automattic/calypso-products';
 import colorStudio from '@automattic/color-studio';
@@ -237,21 +236,13 @@ function LineItemCostOverride( {
 		);
 	}
 
-	const shouldShowDiscount = isWpComPlan( product.product_slug );
-
 	return (
 		<div className="cost-overrides-list-item" key={ costOverride.humanReadableReason }>
 			<span className="cost-overrides-list-item__reason cost-overrides-list-item__reason--is-discount">
 				{ costOverride.humanReadableReason }
 			</span>
-			<span className="cost-overrides-list-item__discount">
-				{ costOverride.discountAmount &&
-					shouldShowDiscount &&
-					formatCurrency( -costOverride.discountAmount, product.currency, {
-						isSmallestUnit: true,
-						signForPositive: true, // TODO clk numberFormatCurrency signForPositive only usage
-					} ) }
-			</span>
+			{ /* Empty grid placeholder to push LineItemIntroOfferCostOverrideDetail to its own row. */ }
+			<span className="cost-overrides-list-item__discount" />
 			<LineItemIntroOfferCostOverrideDetail product={ product } costOverride={ costOverride } />
 		</div>
 	);
