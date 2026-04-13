@@ -4,6 +4,14 @@ import './load-env';
 import { defineConfig, devices, type ReporterDescription } from 'playwright/test';
 import { tags, type CustomOptions } from './lib/pw-base';
 
+const port = process.env.PORT || process.env.CMUX_PORT || process.env.CONDUCTOR_PORT;
+if ( port && ! process.env.CALYPSO_BASE_URL ) {
+	process.env.CALYPSO_BASE_URL = `http://calypso.localhost:${ port }`;
+}
+if ( port && ! process.env.DASHBOARD_BASE_URL ) {
+	process.env.DASHBOARD_BASE_URL = `http://my.localhost:${ port }`;
+}
+
 /**
  * Creates a use config object with custom options.
  * This helper exists to provide type safety for our custom Playwright options.

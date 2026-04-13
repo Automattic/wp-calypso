@@ -60,7 +60,7 @@ module.exports = function ( configPath, defaultOpts ) {
 	// `protocol`, `hostname` and `port` config values can be overridden by env variables
 	data.protocol = process.env.PROTOCOL || data.protocol;
 	data.hostname = process.env.HOST || data.hostname;
-	data.port = process.env.PORT || data.port;
+	data.port = process.env.PORT || process.env.CMUX_PORT || process.env.CONDUCTOR_PORT || data.port;
 
 	const serverData = Object.assign( {}, data, getDataFromFile( secretsPath ) );
 	const clientData = Object.assign( {}, data );
