@@ -3,6 +3,11 @@ import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import { addQueryArgs } from '@wordpress/url';
 
 export interface GetListItemsResponse {
+	success: boolean;
+	items: ReaderListItem[];
+}
+
+export interface ReaderListItem {
 	ID: string;
 	feed_ID: number;
 	site_ID: number;
@@ -16,7 +21,6 @@ export interface GetListItemsResponse {
 		};
 	};
 }
-
 interface ListItemFeed {
 	blog_ID: string;
 	feed_ID: string;
@@ -57,7 +61,7 @@ export default function useGetListItemsQuery(
 		queryKey: [ 'v1.2', 'GET', 'reader', userLogin, listName, params ],
 		queryFn: () =>
 			callApi< GetListItemsResponse >( {
-				path: addQueryArgs( `/lists/${ userLogin }/${ listName }/items`, params ),
+				path: addQueryArgs( `/read/lists/${ userLogin }/${ listName }/items`, params ),
 				method: 'GET',
 				isLoggedIn: true,
 				apiVersion: '1.2',

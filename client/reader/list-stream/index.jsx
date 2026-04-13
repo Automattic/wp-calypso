@@ -17,7 +17,7 @@ import {
 	hasRequestedListByOwnerAndSlug,
 	isMissingByOwnerAndSlug,
 } from 'calypso/state/reader/lists/selectors';
-import EmptyContent from './empty';
+import EmptyContent from './components/list-empty';
 
 const createEmptyContent = ( list ) => {
 	const EmptyContentWithList = () => <EmptyContent list={ list } />;
