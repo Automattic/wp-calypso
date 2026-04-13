@@ -20,14 +20,13 @@ import {
 	doesIntroductoryOfferHavePriceIncrease,
 	filterCostOverridesForLineItem,
 	getLabel,
-	getSubtotalWithoutDiscountsForProduct,
 	isOverrideCodeIntroductoryOffer,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import useEquivalentMonthlyTotals, {
-	getOriginalAmountIntegerForDisplay,
+	getSimulatedCostBeforeDiscounts,
 } from 'calypso/my-sites/checkout/utils/use-equivalent-monthly-totals';
 import { useSelector } from 'calypso/state';
 import {
@@ -382,36 +381,39 @@ const WPCheckoutCheckIcon = styled( CheckIcon )`
 	}
 `;
 
+/**
+ * Return two formatted prices. `actualAmountDisplay` should be the final
+ * subtotal after all cost overrides are applied. `crossedOutAmountDisplay`
+ * should be the price before cost overrides, but only if it's higher (some
+ * cost overrides can _increase_ the price).
+ *
+ * `crossedOutAmountDisplay` (the amount before discounts) may also be
+ * _increased_ by an amount as if the original cost of the product was 12 times
+ * the product's monthly cost. This simulates a discount granted by purchasing
+ * an annual version of the product, but it's not a "real" discount in the
+ * sense that no price changes were applied to the annual product in that case;
+ * it's just the result of comparing the prices of the annual to the monthly
+ * product.
+ */
 function getLineItemPriceDisplay(
 	product: ResponseCartProduct,
 	monthlyPrices: Record< string, number >
 ): { actualAmountDisplay: string; crossedOutAmountDisplay: string | undefined } {
 	const fmt = ( amount: number ) =>
 		formatCurrency( amount, product.currency, { isSmallestUnit: true, stripZeros: true } );
-	const originalAmountInteger = getOriginalAmountIntegerForDisplay( product, monthlyPrices );
-	const itemSubtotalInteger =
-		product.item_subtotal_integer + ( product.coupon_savings_integer ?? 0 );
-	const isDiscounted = itemSubtotalInteger < originalAmountInteger;
 
-	// For products with a price-increasing intro offer followed by a sale
-	// coupon (e.g. premium domains: $80 → $1,100 → $275), show the peak
-	// price crossed out with the final price.
-	const priceBeforeDiscountsInteger = getSubtotalWithoutDiscountsForProduct( product );
-	if (
-		priceBeforeDiscountsInteger > originalAmountInteger &&
-		product.item_subtotal_integer < priceBeforeDiscountsInteger
-	) {
-		return {
-			actualAmountDisplay: fmt( product.item_subtotal_integer ),
-			crossedOutAmountDisplay: fmt( priceBeforeDiscountsInteger ),
-		};
-	}
+	// This is the simulated cost before cost overrides. It's similar to
+	// cost before cost overrides but it may include an increase based on the
+	// monthly cost of a related product in the same tier (eg: it will be 12
+	// times the cost of the monthly version of the same plan, if one exists).
+	const simulatedPriceBeforeDiscounts = getSimulatedCostBeforeDiscounts( product, monthlyPrices );
 
-	// Default: show the pre-coupon subtotal, with the original crossed out
-	// when the product is discounted.
+	// Show the actual amount as the amount the user will pay and include the
+	// amount before cost overrides if it is greater.
+	const isDiscounted = product.item_subtotal_integer < simulatedPriceBeforeDiscounts;
 	return {
-		actualAmountDisplay: fmt( itemSubtotalInteger ),
-		crossedOutAmountDisplay: isDiscounted ? fmt( originalAmountInteger ) : undefined,
+		actualAmountDisplay: fmt( product.item_subtotal_integer ),
+		crossedOutAmountDisplay: isDiscounted ? fmt( simulatedPriceBeforeDiscounts ) : undefined,
 	};
 }
 
