@@ -128,8 +128,12 @@ export class PlansPage {
 	 * Opens the escape hatch modal by clicking the "start with a free plan" trigger link.
 	 */
 	async openEscapeHatch(): Promise< void > {
-		const locator = this.page.getByText( 'start with a free plan' );
-		await locator.first().click();
+		// The click handler calls both `onUpgradeClick(null)` and `onSubmit(null)`,
+		// the latter of which can kick off a step navigation that Playwright's
+		// default click() will wait on, exceeding the action timeout. Opt out of
+		// the post-click navigation wait since we only need the dialog to appear.
+		const locator = this.page.getByText( 'start with a free plan' ).first();
+		await locator.click( { noWaitAfter: true } );
 	}
 
 	/**

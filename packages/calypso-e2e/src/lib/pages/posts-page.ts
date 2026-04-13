@@ -89,8 +89,15 @@ export class PostsPage {
 	 */
 	async newPost(): Promise< void > {
 		const locator = this.page.locator( selectors.addNewPostButton );
+		// Wait for `domcontentloaded` rather than `load`: wp-admin post-new.php
+		// keeps network activity pending (Jetpack iframes, stats beacons) long
+		// after the editor is interactive, so the top-frame `load` event often
+		// never fires within a reasonable budget.
 		await Promise.all( [
-			this.page.waitForNavigation( { url: /post-new.php/, timeout: 20 * 1000 } ),
+			this.page.waitForURL( /post-new.php/, {
+				timeout: 20 * 1000,
+				waitUntil: 'domcontentloaded',
+			} ),
 			locator.click(),
 		] );
 	}
