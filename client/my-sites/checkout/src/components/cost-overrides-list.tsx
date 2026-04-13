@@ -121,20 +121,6 @@ function LineItemIntroOfferCostOverrideDetail( {
 		return false;
 	}
 
-	// We only want to display this info for introductory offers which have
-	// pricing that is difficult to display as a simple discount. Currently
-	// that is offers with different term lengths or price increases.
-	if (
-		! doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
-			product.cost_overrides,
-			product.introductory_offer_terms,
-			product.months_per_bill_period
-		) &&
-		! doesIntroductoryOfferHavePriceIncrease( product )
-	) {
-		return null;
-	}
-
 	// Introductory offer manual renewals often have prorated prices that are
 	// difficult to display as a simple discount so we keep their display
 	// simple.
