@@ -21,7 +21,7 @@ interface JetpackFooterProps {
 }
 
 /**
- * JetpackFooter component displays a tiny Jetpack logo on the left and the Automattic Airline "by line" on the right.
+ * JetpackFooter component displays a tiny Jetpack logo with the product name on the left and the Automattic Airline "by line" on the right.
  */
 const JetpackFooter: FC< JetpackFooterProps > = ( { className, menu } ) => {
 	return (
@@ -41,9 +41,10 @@ const JetpackFooter: FC< JetpackFooterProps > = ( { className, menu } ) => {
 				<span className="jetpack-footer__logo-text">Jetpack</span>
 			</Stack>
 			{ menu && menu.length > 0 && (
-				<ul className="jetpack-footer__menu">
+				<Stack render={ <ul /> } direction="row" gap="lg" wrap="wrap">
 					{ menu.map( ( item ) => {
 						const isButton = item.role === 'button';
+
 						return (
 							<li key={ item.label }>
 								{ isButton ? (
@@ -70,7 +71,7 @@ const JetpackFooter: FC< JetpackFooterProps > = ( { className, menu } ) => {
 							</li>
 						);
 					} ) }
-				</ul>
+				</Stack>
 			) }
 			<a
 				className="jetpack-footer__a8c"
