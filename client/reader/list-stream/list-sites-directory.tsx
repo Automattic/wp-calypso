@@ -41,13 +41,6 @@ export function ListSitesDirectory( {
 								variant="default"
 							/>
 						</ul>
-						{ item.fediverse_handle && item.fediverse_handle_url && (
-							<div className="list-sites-directory__fediverse-handle">
-								<a href={ item.fediverse_handle_url } target="_blank" rel="noopener noreferrer">
-									{ item.fediverse_handle }
-								</a>
-							</div>
-						) }
 					</div>
 				) ) }
 		</div>

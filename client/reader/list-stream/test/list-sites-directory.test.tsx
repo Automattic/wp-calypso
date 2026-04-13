@@ -40,23 +40,6 @@ describe( 'ListSitesDirectory', () => {
 		expect( screen.getByText( 'Another Blog' ) ).toBeVisible();
 	} );
 
-	test( 'shows fediverse handle when available', () => {
-		renderWithProvider( <ListSitesDirectory items={ mockItems } followSource="reader-list" /> );
-
-		expect( screen.getByText( '@smittenkitchen@smittenkitchen.com' ) ).toBeVisible();
-		expect(
-			screen.getByRole( 'link', { name: '@smittenkitchen@smittenkitchen.com' } )
-		).toHaveAttribute( 'href', 'https://smittenkitchen.com/@smittenkitchen' );
-	} );
-
-	test( 'does not show fediverse handle when null', () => {
-		renderWithProvider(
-			<ListSitesDirectory items={ [ mockItems[ 1 ] ] } followSource="reader-list" />
-		);
-
-		expect( screen.queryByText( /@.*@/ ) ).not.toBeInTheDocument();
-	} );
-
 	test( 'renders empty state when items is empty', () => {
 		renderWithProvider( <ListSitesDirectory items={ [] } followSource="reader-list" /> );
 

@@ -23,18 +23,3 @@
 		border-bottom: none;
 	}
 }
-
-.list-sites-directory__fediverse-handle {
-	padding-bottom: 12px;
-	padding-inline-start: 54px;
-	font-size: rem( 13px );
-
-	a {
-		color: var( --studio-gray-40 );
-		text-decoration: none;
-
-		&:hover {
-			text-decoration: underline;
-		}
-	}
-}
