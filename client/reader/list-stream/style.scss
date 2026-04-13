@@ -49,11 +49,16 @@
 	}
 }
 
-.list-stream__header-edit {
-	margin-left: auto;
+.list-stream__header-edit-link {
+	font-size: rem( 13px );
+	color: var( --studio-gray-40 );
+	text-decoration: none;
+	margin-top: 4px;
+	display: inline-block;
 
-	.list-stream__header-action-icon .gridicon {
-		fill: var(--color-neutral-dark);
+	&:hover {
+		text-decoration: underline;
+		color: var( --color-primary );
 	}
 }
 

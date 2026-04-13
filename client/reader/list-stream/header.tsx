@@ -1,8 +1,7 @@
-import { Gridicon, Button } from '@automattic/components';
+import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import AutoDirection from 'calypso/components/auto-direction';
 import NavigationHeader from 'calypso/components/navigation-header';
-import { isExternal } from 'calypso/lib/url';
 import { FollowAllSitesButton } from './follow-all-sites-button';
 import { ListTags } from './list-tags';
 import type { PublicListItem } from './use-public-list-query';
@@ -64,15 +63,12 @@ const ListStreamHeader = ( {
 						onSubscribeToggle={ onFollowToggle }
 					/>
 				) }
-
-				{ showEdit && editUrl && (
-					<div className="list-stream__header-edit">
-						<Button rel={ isExternal( editUrl ) ? 'external' : '' } href={ editUrl }>
-							{ translate( 'Edit' ) }
-						</Button>
-					</div>
-				) }
 			</NavigationHeader>
+			{ showEdit && editUrl && (
+				<a className="list-stream__header-edit-link" href={ editUrl }>
+					{ translate( 'Edit list' ) }
+				</a>
+			) }
 			<ListTags tags={ tags } />
 		</AutoDirection>
 	);
