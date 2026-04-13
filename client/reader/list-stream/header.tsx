@@ -4,6 +4,9 @@ import FollowButton from 'calypso/blocks/follow-button/button';
 import AutoDirection from 'calypso/components/auto-direction';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { isExternal } from 'calypso/lib/url';
+import { FollowAllSitesButton } from './follow-all-sites-button';
+import { ListTags } from './list-tags';
+import type { PublicListItem } from './use-public-list-query';
 
 interface ListStreamHeaderProps {
 	isPublic?: boolean;
@@ -14,6 +17,8 @@ interface ListStreamHeaderProps {
 	showFollow?: boolean;
 	following?: boolean;
 	onFollowToggle?: () => void;
+	tags?: string[];
+	items?: PublicListItem[];
 }
 
 const ListStreamHeader = ( {
@@ -25,6 +30,8 @@ const ListStreamHeader = ( {
 	showFollow,
 	following,
 	onFollowToggle,
+	tags,
+	items,
 }: ListStreamHeaderProps ) => {
 	const translate = useTranslate();
 
@@ -59,6 +66,10 @@ const ListStreamHeader = ( {
 					</div>
 				) }
 
+				{ showFollow && items && items.length > 0 && (
+					<FollowAllSitesButton items={ items } followSource="reader-list-header" />
+				) }
+
 				{ showEdit && editUrl && (
 					<div className="list-stream__header-edit">
 						<Button rel={ isExternal( editUrl ) ? 'external' : '' } href={ editUrl }>
@@ -67,6 +78,7 @@ const ListStreamHeader = ( {
 					</div>
 				) }
 			</NavigationHeader>
+			<ListTags tags={ tags } />
 		</AutoDirection>
 	);
 };
