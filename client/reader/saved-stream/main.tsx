@@ -3,14 +3,19 @@ import DocumentHead from 'calypso/components/data/document-head';
 import NavigationHeader from 'calypso/components/navigation-header';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { useSelector } from 'calypso/state';
-import { getSavedPostsCount } from 'calypso/state/reader/saved/selectors';
+import {
+	getSavedPostsCount,
+	getSavedPostsTotalReadingTime,
+} from 'calypso/state/reader/saved/selectors';
 import EmptyContent from './empty';
+import { SavedPostsList } from './saved-posts-list';
 
 import './style.scss';
 
 export default function SavedPostsStream() {
 	const translate = useTranslate();
 	const count = useSelector( getSavedPostsCount );
+	const totalReadingTime = useSelector( getSavedPostsTotalReadingTime );
 
 	const title = translate( 'Saved' );
 	const documentTitle = translate( '%s ‹ Reader', {
@@ -28,7 +33,18 @@ export default function SavedPostsStream() {
 				<EmptyContent />
 			) : (
 				<div className="saved-stream__list">
-					{ /* Phase 4: SavedPostsList with drag-and-drop will go here */ }
+					<p className="saved-stream__summary">
+						{ translate( '%(count)d article', '%(count)d articles', {
+							count,
+							args: { count },
+						} ) }
+						{ totalReadingTime > 0 &&
+							translate( ' · ~%(minutes)d min total', {
+								args: { minutes: totalReadingTime },
+								comment: 'Total reading time for saved posts',
+							} ) }
+					</p>
+					<SavedPostsList />
 				</div>
 			) }
 		</ReaderMain>

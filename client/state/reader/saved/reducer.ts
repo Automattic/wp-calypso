@@ -10,7 +10,7 @@ import {
 	READER_SAVED_POST_MARK_UNREAD,
 } from 'calypso/state/reader/action-types';
 import { combineReducers } from 'calypso/state/utils';
-import { persistToLocalStorage } from './local-storage';
+import { loadFromLocalStorage, persistToLocalStorage } from './local-storage';
 import type { PostKey, SavedPostItem } from './types';
 
 interface PostKeyAction {
@@ -35,7 +35,9 @@ interface ErrorAction {
 
 type SavedPostAction = PostKeyAction | ItemsAction | ReorderAction | ErrorAction | { type: string };
 
-function items( state: SavedPostItem[] = [], action: SavedPostAction ) {
+const initialItems = typeof window !== 'undefined' ? loadFromLocalStorage() : [];
+
+function items( state: SavedPostItem[] = initialItems, action: SavedPostAction ) {
 	let newState: SavedPostItem[];
 
 	switch ( action.type ) {
