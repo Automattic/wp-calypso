@@ -1,3 +1,4 @@
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
@@ -84,12 +85,9 @@ export function FollowAllSitesButton( {
 
 	if ( ! showSubscribeToList ) {
 		return (
-			<SplitButton
-				label={ label }
-				onClick={ handleFollowAll }
-				disabled={ isFollowing }
-				disableMenu
-			/>
+			<Button variant="secondary" onClick={ handleFollowAll } disabled={ isFollowing }>
+				{ label }
+			</Button>
 		);
 	}
 
