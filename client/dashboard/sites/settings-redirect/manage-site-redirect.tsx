@@ -28,7 +28,7 @@ export default function ManageSiteRedirect( { siteId, currentRedirect }: ManageS
 	const handleSubmit = ( formData: SiteRedirectFormData ) => {
 		updateSiteRedirect( formData.redirect ?? '', {
 			onSuccess: () => {
-				createSuccessNotice( __( 'Site redirect updated successfully.' ), {
+				createSuccessNotice( __( 'Site redirect updated.' ), {
 					type: 'snackbar',
 				} );
 			},

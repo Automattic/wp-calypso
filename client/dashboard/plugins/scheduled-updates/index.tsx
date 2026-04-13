@@ -208,7 +208,7 @@ export default function PluginsScheduledUpdates() {
 		try {
 			setIsDeletingSchedule( true );
 			await deleteSchedules();
-			createSuccessNotice( __( 'Schedule deleted successfully.' ), { type: 'snackbar' } );
+			createSuccessNotice( __( 'Schedule deleted.' ), { type: 'snackbar' } );
 		} catch ( e ) {
 			const message = e instanceof Error ? e.message : __( 'Failed to delete schedule.' );
 			createErrorNotice( message, { type: 'snackbar' } );

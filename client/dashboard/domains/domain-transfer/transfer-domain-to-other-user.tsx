@@ -116,7 +116,7 @@ export default function TransferDomainToOtherUser() {
 				createSuccessNotice(
 					sprintf(
 						/* Translators: %s: domainName is the domain name, %s: selectedUserDisplay is the selected user display */
-						__( '%(selectedDomainName)s has been transferred to %(selectedUserDisplay)s' ),
+						__( '%(selectedDomainName)s transferred to %(selectedUserDisplay)s.' ),
 						{
 							args: {
 								selectedDomainName: domainName,

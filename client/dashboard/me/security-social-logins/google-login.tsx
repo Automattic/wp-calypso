@@ -114,7 +114,7 @@ export default function GoogleLogin( {
 
 		if ( ! googleSignIn ) {
 			setShowLoading( false );
-			createErrorNotice( __( 'Something went wrong while trying to load Google sign-in.' ), {
+			createErrorNotice( __( 'Failed to load Google sign-in.' ), {
 				type: 'snackbar',
 			} );
 			return;

@@ -47,7 +47,7 @@ export const useDeleteEmailForwardAction = (): Action< Email > => {
 					createSuccessNotice(
 						sprintf(
 							/* translators: %1$s is the email and %2$s is the forwarding destination address. */
-							__( 'Forwarder from %1$s to %2$s has been removed.' ),
+							__( 'Forwarder from %1$s to %2$s removed.' ),
 							email.emailAddress,
 							email.forwardingTo as string
 						),

@@ -162,7 +162,7 @@ export function PendingContentInfo( {
 									onClick={ () => {
 										navigator.clipboard.writeText( migrationKey );
 										recordTracksEvent( 'calypso_dashboard_migration_in_progress_copy_key_click' );
-										createSuccessNotice( __( 'Migration key copied successfully.' ), {
+										createSuccessNotice( __( 'Migration key copied.' ), {
 											type: 'snackbar',
 										} );
 									} }

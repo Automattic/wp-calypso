@@ -180,7 +180,7 @@ function SiteDeleteConfirmContent( { site, onClose }: { site: Site; onClose: () 
 				createSuccessNotice(
 					sprintf(
 						/* translators: %s: site name */
-						__( '%s has been deleted.' ),
+						__( '%s deleted.' ),
 						site.slug
 					),
 					{ type: 'snackbar' }

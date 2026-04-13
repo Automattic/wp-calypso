@@ -35,7 +35,7 @@ export default function NameServers() {
 		meta: {
 			snackbar: {
 				/* translators: %s is the domain name */
-				success: sprintf( __( 'Name servers for %s updated successfully.' ), domainName ),
+				success: sprintf( __( 'Name servers for %s updated.' ), domainName ),
 				error: { source: 'server' },
 			},
 		},

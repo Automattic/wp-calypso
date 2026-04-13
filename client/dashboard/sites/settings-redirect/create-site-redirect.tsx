@@ -46,7 +46,9 @@ export default function CreateSiteRedirect( {
 		);
 		const { data, isError, error } = await refetch();
 		if ( isError || ! data.can_redirect ) {
-			createErrorNotice( error?.message ?? __( 'Something went wrong' ), { type: 'snackbar' } );
+			createErrorNotice( error?.message ?? __( 'Failed to create site redirect.' ), {
+				type: 'snackbar',
+			} );
 			setIsSubmitting( false );
 			return;
 		}

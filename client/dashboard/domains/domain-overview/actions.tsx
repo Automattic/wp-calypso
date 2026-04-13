@@ -80,7 +80,7 @@ export default function Actions( { isDisabled }: { isDisabled?: boolean } ) {
 			purchase &&
 			deleteDomain( purchase.ID, {
 				onSuccess: () => {
-					createSuccessNotice( __( 'The domain deletion has been completed.' ), {
+					createSuccessNotice( __( 'Domain deleted.' ), {
 						type: 'snackbar',
 					} );
 					router.navigate( { to: domainsIndexRoute.fullPath } );

@@ -67,7 +67,7 @@ export default function DomainContactInfo() {
 		meta: {
 			snackbar: {
 				/* translators: %s is the domain name */
-				success: sprintf( __( 'Privacy has been successfully updated for %s!' ), domainName ),
+				success: sprintf( __( 'Privacy protection saved for %s.' ), domainName ),
 				error: { source: 'server' },
 			},
 		},
@@ -77,11 +77,7 @@ export default function DomainContactInfo() {
 		...domainPrivacyDiscloseSaveMutation( domainName ),
 		meta: {
 			snackbar: {
-				success: sprintf(
-					/* translators: %s is the domain name */
-					__( 'Your contact information for %s is now publicly visible!' ),
-					domainName
-				),
+				success: __( 'Contact information disclosed.' ),
 				error: { source: 'server' },
 			},
 		},
@@ -90,8 +86,7 @@ export default function DomainContactInfo() {
 		...domainPrivacyDiscloseSaveMutation( domainName ),
 		meta: {
 			snackbar: {
-				/* translators: %s is the domain name */
-				success: sprintf( __( 'Your contact information for %s is now redacted!' ), domainName ),
+				success: __( 'Contact information redacted.' ),
 				error: { source: 'server' },
 			},
 		},

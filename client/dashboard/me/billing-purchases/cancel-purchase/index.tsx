@@ -579,7 +579,7 @@ export default function CancelPurchase() {
 	] );
 
 	if ( offerApplyError ) {
-		createErrorNotice( __( 'There was an error getting the discount!' ), { type: 'snackbar' } );
+		createErrorNotice( __( 'Failed to get discount.' ), { type: 'snackbar' } );
 	}
 
 	const recordClickRadioEvent = ( option: string, value: string ) => {

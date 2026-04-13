@@ -91,7 +91,7 @@ export default function DomainContactVerification() {
 		} );
 		domainContactVerification( formData, {
 			onSuccess: () => {
-				createSuccessNotice( __( 'Files submitted successfully.' ), { type: 'snackbar' } );
+				createSuccessNotice( __( 'Files submitted.' ), { type: 'snackbar' } );
 				setSubmitted( true );
 			},
 			onError: () => {

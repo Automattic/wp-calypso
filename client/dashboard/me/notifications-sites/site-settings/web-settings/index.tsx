@@ -52,7 +52,7 @@ export const WebSettings = ( { siteId }: { siteId: number } ) => {
 					} );
 				},
 				onError: () => {
-					createErrorNotice( __( 'There was a problem saving your changes. Please, try again.' ), {
+					createErrorNotice( __( 'Failed to save changes.' ), {
 						type: 'snackbar',
 					} );
 				},
@@ -83,7 +83,7 @@ export const WebSettings = ( { siteId }: { siteId: number } ) => {
 						stream: 'timeline',
 						site_to_be_used_as_template: siteId,
 					} );
-					createSuccessNotice( __( 'Settings saved successfully.' ), { type: 'snackbar' } );
+					createSuccessNotice( __( 'Settings saved.' ), { type: 'snackbar' } );
 
 					setIsConfirmDialogOpen( false );
 				},

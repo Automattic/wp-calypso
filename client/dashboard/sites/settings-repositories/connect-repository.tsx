@@ -47,7 +47,7 @@ export default function ConnectRepository() {
 			header={
 				<PageHeader
 					prefix={ <Breadcrumbs length={ 3 } /> }
-					title={ __( 'Connect Repository' ) }
+					title={ __( 'Connect repository' ) }
 					description={ __( 'Deploy code from GitHub to your WordPress.com site.' ) }
 				/>
 			}
@@ -62,8 +62,8 @@ export default function ConnectRepository() {
 						onCancel={ handleCancel }
 						mutation={ createMutation }
 						initialValues={ initialValues }
-						submitText={ __( 'Connect Repository' ) }
-						successMessage={ __( 'Repository connected successfully.' ) }
+						submitText={ __( 'Connect repository' ) }
+						successMessage={ __( 'Repository connected.' ) }
 						errorMessage={
 							// translators: "reason" is why connecting the repository failed.
 							__( 'Failed to connect repository: %(reason)s' )

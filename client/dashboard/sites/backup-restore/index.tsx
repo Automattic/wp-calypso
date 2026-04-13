@@ -58,7 +58,7 @@ function SiteBackupRestore() {
 	const handleRestoreComplete = () => {
 		recordTracksEvent( 'calypso_dashboard_backups_restore_completed' );
 		setCurrentStep( 'success' );
-		createSuccessNotice( __( 'Site restore completed.' ), {
+		createSuccessNotice( __( 'Site restored.' ), {
 			type: 'snackbar',
 		} );
 	};

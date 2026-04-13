@@ -153,7 +153,7 @@ export default function EmailVerificationBanner( { userData }: EmailVerification
 			>
 				{ wasEmailChange
 					? __( 'Make sure you update your contact information for any registered domains.' )
-					: __( 'Your email address has been verified successfully.' ) }
+					: __( 'Your email address has been verified.' ) }
 			</Notice>
 		);
 	}

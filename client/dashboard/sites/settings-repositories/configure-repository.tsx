@@ -58,7 +58,7 @@ export default function ConfigureRepository() {
 				header={
 					<PageHeader
 						prefix={ <Breadcrumbs length={ 3 } /> }
-						title={ __( 'Configure Repository' ) }
+						title={ __( 'Configure repository' ) }
 						description={ __(
 							'Update the GitHub repository connection to deploy code to your WordPress site.'
 						) }
@@ -75,8 +75,8 @@ export default function ConfigureRepository() {
 							onCancel={ handleCancel }
 							mutation={ updateMutation }
 							initialValues={ initialValues }
-							submitText={ __( 'Update Connection' ) }
-							successMessage={ __( 'Repository settings updated successfully.' ) }
+							submitText={ __( 'Update connection' ) }
+							successMessage={ __( 'Repository settings updated.' ) }
 							errorMessage={
 								// translators: "reason" is why updating the repository failed.
 								__( 'Failed to update repository: %(reason)s' )

@@ -116,7 +116,7 @@ function ContentConfirmDisconnect( {
 				createSuccessNotice(
 					sprintf(
 						/* translators: %s: site domain */
-						__( '%s has been disconnected.' ),
+						__( '%s disconnected.' ),
 						site.slug
 					),
 					{ type: 'snackbar' }

@@ -175,7 +175,7 @@ export default function UserTaxForm() {
 				createSuccessNotice(
 					sprintf(
 						/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
-						__( 'Your %s details have been updated!' ),
+						__( '%s details saved.' ),
 						taxName ?? __( 'VAT' )
 					),
 					{

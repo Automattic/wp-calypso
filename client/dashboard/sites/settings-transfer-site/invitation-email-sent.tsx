@@ -37,7 +37,7 @@ export function InvitationEmailSent( {
 						createSuccessNotice(
 							sprintf(
 								/* translators: %(newOwnerEmail)s - the new owner's email */
-								__( 'The site has been successfully transferred to %(newOwnerEmail)s.' ),
+								__( 'Site transferred to %(newOwnerEmail)s.' ),
 								{
 									newOwnerEmail: new_owner_email,
 								}

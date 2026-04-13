@@ -37,7 +37,7 @@ export const useResendVerificationAction = (): Action< Email > => {
 					createSuccessNotice(
 						sprintf(
 							/* translators: %1$s is the forwarding source email address, %2$s is the destination address. */
-							__( 'Successfully sent confirmation email for %1$s to %2$s.' ),
+							__( 'Confirmation email sent for %1$s to %2$s.' ),
 							email.emailAddress,
 							email.forwardingTo
 						),

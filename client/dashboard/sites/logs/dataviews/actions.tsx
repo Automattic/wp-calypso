@@ -53,7 +53,7 @@ export function useActions( {
 						await navigator.clipboard.writeText( message );
 						createSuccessNotice( __( 'Copied message.' ), { type: 'snackbar' } );
 					} catch ( e ) {
-						createErrorNotice( __( 'Message could not be copied.' ), { type: 'snackbar' } );
+						createErrorNotice( __( 'Failed to copy message.' ), { type: 'snackbar' } );
 					}
 				},
 			};
@@ -89,7 +89,7 @@ export function useActions( {
 					await navigator.clipboard.writeText( url );
 					createSuccessNotice( __( 'Copied request URL.' ), { type: 'snackbar' } );
 				} catch ( e ) {
-					createErrorNotice( __( 'Request URL could not be copied.' ), { type: 'snackbar' } );
+					createErrorNotice( __( 'Failed to copy URL.' ), { type: 'snackbar' } );
 				}
 			},
 		};

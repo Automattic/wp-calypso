@@ -57,7 +57,7 @@ export default function StagingSiteDeleteModal( {
 		mutation.mutate( undefined, {
 			onError: ( error: Error ) => {
 				recordTracksEvent( 'calypso_hosting_configuration_staging_site_delete_failure' );
-				createErrorNotice( error.message || __( 'Failed to delete staging site' ), {
+				createErrorNotice( error.message || __( 'Failed to delete staging site.' ), {
 					type: 'snackbar',
 				} );
 			},

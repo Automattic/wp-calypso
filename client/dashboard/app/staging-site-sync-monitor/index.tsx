@@ -31,7 +31,7 @@ export default function StagingSiteSyncMonitor( { site }: StagingSiteSyncMonitor
 	useEffect( () => {
 		if ( productionSiteId && wasSyncingRef.current && ! isSyncing ) {
 			if ( stagingSiteSyncState?.status === 'completed' ) {
-				createSuccessNotice( __( 'Synchronization completed successfully.' ), {
+				createSuccessNotice( __( 'Synchronization completed.' ), {
 					type: 'snackbar',
 					explicitDismiss: true,
 				} );

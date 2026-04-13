@@ -70,7 +70,7 @@ export default function TransferDomainToAnyUser() {
 			...updateDomainTransferRequestMutation( domainName, domain.site_slug ),
 			meta: {
 				snackbar: {
-					success: __( 'A domain transfer request has been emailed to the recipient’s address.' ),
+					success: __( 'Domain transfer request sent.' ),
 					error: __( 'Failed to initiate domain transfer.' ),
 				},
 			},

@@ -167,12 +167,12 @@ function StopSubscriptionButton( {
 					onClick={ () => {
 						stopSubscription( null, {
 							onSuccess: () => {
-								createSuccessNotice( __( 'This item has been removed.' ), { type: 'snackbar' } );
+								createSuccessNotice( __( 'Item removed.' ), { type: 'snackbar' } );
 								navigate( { to: monetizeSubscriptionsRoute.fullPath } );
 							},
 							onError: () => {
 								if ( isProduct ) {
-									createErrorNotice( __( 'There was a problem while removing your product.' ), {
+									createErrorNotice( __( 'Failed to remove product.' ), {
 										actions: [
 											{
 												url: CALYPSO_CONTACT,

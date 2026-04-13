@@ -46,8 +46,8 @@ export function SiteLaunchButton( {
 		...siteLaunchMutation( site.ID ),
 		meta: {
 			snackbar: {
-				success: __( 'Your site has been launched; now you can share it with the world!' ),
-				error: __( 'Failed to launch site' ),
+				success: __( 'Site launched.' ),
+				error: __( 'Failed to launch site.' ),
 			},
 		},
 	} );

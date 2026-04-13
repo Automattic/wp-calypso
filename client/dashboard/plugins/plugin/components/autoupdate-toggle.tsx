@@ -64,7 +64,7 @@ export const AutoupdateToggle = ( {
 			} }
 			successOn={ sprintf(
 				// translators: %s is the name of the plugin.
-				__( 'Auto‑updates for %s have been enabled.' ),
+				__( 'Auto‑updates for %s enabled.' ),
 				plugin?.name ?? ''
 			) }
 			errorOn={ sprintf(
@@ -74,7 +74,7 @@ export const AutoupdateToggle = ( {
 			) }
 			successOff={ sprintf(
 				// translators: %s is the name of the plugin.
-				__( 'Auto‑updates for %s have been disabled.' ),
+				__( 'Auto‑updates for %s disabled.' ),
 				plugin?.name ?? ''
 			) }
 			errorOff={ sprintf(

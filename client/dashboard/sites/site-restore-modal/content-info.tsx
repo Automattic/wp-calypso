@@ -30,7 +30,7 @@ export default function SiteRestoreContentInfo( { site, onClose }: ContentInfoPr
 			onSuccess: () => {
 				createSuccessNotice(
 					/* translators: %s: site domain */
-					sprintf( __( '%s has been restored.' ), siteSlug ),
+					sprintf( __( '%s restored.' ), siteSlug ),
 					{ type: 'snackbar' }
 				);
 

@@ -25,7 +25,7 @@ export default function DomainEditDNS() {
 		meta: {
 			snackbar: {
 				/* translators: %s is the domain name */
-				success: sprintf( __( 'DNS record updated successfully for %s.' ), domainName ),
+				success: sprintf( __( 'DNS record updated for %s.' ), domainName ),
 				error: { source: 'server' },
 			},
 		},

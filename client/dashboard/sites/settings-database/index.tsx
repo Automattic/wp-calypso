@@ -56,7 +56,7 @@ export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string }
 
 	const handleResetPasswordSuccess = () => {
 		setIsResetPasswordModalOpen( false );
-		createSuccessNotice( __( 'Your database password has been restored.' ), {
+		createSuccessNotice( __( 'Database password restored.' ), {
 			type: 'snackbar',
 		} );
 	};

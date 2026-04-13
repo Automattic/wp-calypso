@@ -125,7 +125,7 @@ export default function GravatarProfileSection() {
 		mutation.mutate( edits, {
 			onSuccess: () => {
 				setEdits( {} );
-				createSuccessNotice( __( 'Public Gravatar profile saved successfully.' ), {
+				createSuccessNotice( __( 'Public Gravatar profile saved.' ), {
 					type: 'snackbar',
 				} );
 			},

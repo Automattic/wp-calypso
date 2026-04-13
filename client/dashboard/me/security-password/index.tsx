@@ -106,7 +106,7 @@ export default function SecurityPassword() {
 				/>
 			}
 		>
-			<FlashMessage id="password" message={ __( 'Your password was saved successfully.' ) } />
+			<FlashMessage id="password" message={ __( 'Password saved.' ) } />
 			<Card className="security-password-card">
 				<CardBody>
 					<form onSubmit={ handleSubmit }>

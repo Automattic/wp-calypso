@@ -153,7 +153,7 @@ export default function DomainTransferSetup() {
 				createSuccessNotice(
 					sprintf(
 						// translators: %s is a domain name
-						__( 'Domain transfer for %s has started successfully.' ),
+						__( 'Domain transfer for %s started.' ),
 						domainName
 					),
 					{ type: 'snackbar' }

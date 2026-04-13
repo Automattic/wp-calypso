@@ -84,7 +84,7 @@ export const DevicesSettings = () => {
 					);
 				},
 				onError: () => {
-					createErrorNotice( __( 'There was a problem saving your changes. Please, try again.' ), {
+					createErrorNotice( __( 'Failed to save changes.' ), {
 						type: 'snackbar',
 					} );
 				},

@@ -87,7 +87,7 @@ export default function HostingDashboard() {
 					<CardBody>
 						<VStack spacing={ 4 } alignment="flex-start">
 							<SectionHeader
-								title={ __( 'New hosting dashboard' ) }
+								title={ __( 'New Hosting Dashboard' ) }
 								description={ __(
 									"We've recently updated the dashboard with a modern design and smarter tools for managing your hosting."
 								) }
@@ -96,7 +96,7 @@ export default function HostingDashboard() {
 							<ToggleControl
 								__nextHasNoMarginBottom
 								checked={ isEnabled }
-								label={ __( 'Enable new hosting dashboard' ) }
+								label={ __( 'Enable new Hosting Dashboard' ) }
 								disabled={ isPending }
 								onChange={ handleToggle }
 							/>

@@ -237,7 +237,7 @@ describe( 'EmailSettings', () => {
 			expect( updatedSettingsApi.isDone() ).toBe( true );
 			const snackbar = notificationSnackBar();
 			expect( snackbar ).toBeVisible();
-			expect( snackbar ).toHaveTextContent( 'Settings saved successfully.' );
+			expect( snackbar ).toHaveTextContent( 'Settings saved.' );
 			expect(
 				screen.queryByRole( 'dialog', { name: 'Apply to all sites?' } )
 			).not.toBeInTheDocument();

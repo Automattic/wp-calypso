@@ -102,7 +102,7 @@ export default function DomainConnection() {
 				setConnectionMode( data.mode );
 			},
 			onError: () => {
-				createErrorNotice( __( 'We could not verify your domain connection. Please try again.' ), {
+				createErrorNotice( __( 'Failed to verify domain connection.' ), {
 					type: 'snackbar',
 				} );
 			},
@@ -129,7 +129,7 @@ export default function DomainConnection() {
 				} );
 			},
 			onError: () => {
-				createErrorNotice( __( 'We could not restart your domain connection. Please try again.' ), {
+				createErrorNotice( __( 'Failed to restart domain connection.' ), {
 					type: 'snackbar',
 				} );
 			},

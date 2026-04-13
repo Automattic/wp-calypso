@@ -248,14 +248,14 @@ const ConfirmNewSiteAddressForm = ( {
 					createSuccessNotice(
 						sprintf(
 							/* translators: %s: site name */
-							__( 'The site address has been changed to %s successfully.' ),
+							__( 'Site address changed to %s.' ),
 							newSiteAddress
 						),
 						{ type: 'snackbar' }
 					);
 				},
 				onError: ( error: Error ) => {
-					createErrorNotice( error.message || __( 'Failed to change site address' ), {
+					createErrorNotice( error.message || __( 'Failed to change site address.' ), {
 						type: 'snackbar',
 					} );
 				},

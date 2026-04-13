@@ -29,7 +29,7 @@ export default function SitePreview( {
 			loading="lazy"
 			// @ts-expect-error For some reason there's no inert type.
 			inert="true"
-			title={ __( 'Site Preview' ) }
+			title={ __( 'Site preview' ) }
 			// Hide banners + `preview` hides cookie banners + `iframe` hides
 			// admin bar for atomic sites.
 			src={ `${ secureUrl }/?hide_banners=true&preview=true&iframe=true` }

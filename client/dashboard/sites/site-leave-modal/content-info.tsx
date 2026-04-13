@@ -138,7 +138,7 @@ function ContentLeaveSite( { site, onClose }: ContentInfoProps ) {
 				recordTracksEvent( 'calypso_sites_dashboard_site_leave_modal_leave_site_success' );
 				createSuccessNotice(
 					/* translators: %s: site domain */
-					sprintf( __( 'You have left %s successfully.' ), site.slug ),
+					sprintf( __( 'You left %s.' ), site.slug ),
 					{ type: 'snackbar' }
 				);
 

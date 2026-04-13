@@ -497,7 +497,7 @@ export const SitesWithThisPlugin = ( {
 				onExecute={ updateAction }
 				onActionPerformed={ invalidatePlugins }
 				onRequestClose={ closeUpdateModal }
-				title={ __( 'Update Plugin' ) }
+				title={ __( 'Update plugin' ) }
 			/>
 		</div>
 	);

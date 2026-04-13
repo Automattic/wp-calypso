@@ -22,7 +22,7 @@ export default function DomainAddDNS() {
 		meta: {
 			snackbar: {
 				/* translators: %s is the domain name */
-				success: sprintf( __( 'DNS record added successfully for %s.' ), domainName ),
+				success: sprintf( __( 'DNS record added for %s.' ), domainName ),
 				error: { source: 'server' },
 			},
 		},

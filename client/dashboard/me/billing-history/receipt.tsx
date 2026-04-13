@@ -191,7 +191,7 @@ function UserVatDetails( { receipt }: { receipt: Receipt } ) {
 		...sendReceiptEmailMutation(),
 		meta: {
 			snackbar: {
-				success: __( 'Your receipt was sent by email successfully.' ),
+				success: __( 'Receipt sent by email.' ),
 				error: __(
 					'There was a problem sending your receipt. Please try again later or contact support.'
 				),

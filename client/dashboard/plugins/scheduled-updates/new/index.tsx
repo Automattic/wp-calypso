@@ -29,7 +29,7 @@ function ScheduledUpdatesNew() {
 	const handleSave: ScheduledUpdatesFormOnSubmit = useCallback(
 		async ( inputs ) => {
 			await runCreate( inputs );
-			createSuccessNotice( __( 'Schedule created successfully.' ), { type: 'snackbar' } );
+			createSuccessNotice( __( 'Schedule created.' ), { type: 'snackbar' } );
 			navigate( { to: pluginsScheduledUpdatesRoute.to } );
 		},
 		[ navigate, runCreate, createSuccessNotice ]

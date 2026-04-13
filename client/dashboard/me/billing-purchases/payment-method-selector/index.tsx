@@ -184,7 +184,7 @@ function onPaymentSelectComplete( {
 	if ( purchase ) {
 		showSuccessMessage( __( 'Your payment method has been set.' ) );
 	} else {
-		showSuccessMessage( __( 'Your payment method has been added successfully.' ) );
+		showSuccessMessage( __( 'Payment method added.' ) );
 	}
 	successCallback();
 }

@@ -182,7 +182,7 @@ export default function SiteResetModal( { site, onClose }: { site: Site; onClose
 		createSuccessNotice(
 			sprintf(
 				/* translators: %s: site domain */
-				__( '%s has been reset.' ),
+				__( '%s reset.' ),
 				site.slug
 			),
 			{ type: 'snackbar' }
