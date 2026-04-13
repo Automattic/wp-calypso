@@ -1,6 +1,5 @@
 import { Gridicon, Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import FollowButton from 'calypso/blocks/follow-button/button';
 import AutoDirection from 'calypso/components/auto-direction';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { isExternal } from 'calypso/lib/url';
@@ -16,7 +15,7 @@ interface ListStreamHeaderProps {
 	editUrl?: string;
 	showFollow?: boolean;
 	following?: boolean;
-	onFollowToggle?: () => void;
+	onFollowToggle?: ( isFollowRequested: boolean ) => void;
 	tags?: string[];
 	items?: PublicListItem[];
 }
@@ -56,18 +55,14 @@ const ListStreamHeader = ( {
 					</div>
 				) }
 
-				{ showFollow && (
-					<div className="list-stream__header-follow">
-						<FollowButton
-							iconSize={ 24 }
-							following={ following }
-							onFollowToggle={ onFollowToggle }
-						/>
-					</div>
-				) }
-
 				{ items && items.length > 0 && (
-					<FollowAllSitesButton items={ items } followSource="reader-list-header" />
+					<FollowAllSitesButton
+						items={ items }
+						followSource="reader-list-header"
+						showSubscribeToList={ showFollow }
+						isSubscribedToList={ following }
+						onSubscribeToggle={ onFollowToggle }
+					/>
 				) }
 
 				{ showEdit && editUrl && (

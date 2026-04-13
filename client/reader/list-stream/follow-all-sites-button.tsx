@@ -1,6 +1,7 @@
-import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import SplitButton from 'calypso/components/split-button';
 import { useDispatch, useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { successNotice } from 'calypso/state/notices/actions';
@@ -12,9 +13,17 @@ import type { PublicListItem } from './use-public-list-query';
 interface FollowAllSitesButtonProps {
 	items: PublicListItem[];
 	followSource: string;
+	showSubscribeToList?: boolean;
+	isSubscribedToList?: boolean;
+	onSubscribeToggle?: ( isFollowRequested: boolean ) => void;
 }
 
-export function FollowAllSitesButton( { items }: FollowAllSitesButtonProps ): JSX.Element | null {
+export function FollowAllSitesButton( {
+	items,
+	showSubscribeToList,
+	isSubscribedToList,
+	onSubscribeToggle,
+}: FollowAllSitesButtonProps ): JSX.Element | null {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const isLoggedIn = useSelector( isUserLoggedIn );
@@ -24,7 +33,7 @@ export function FollowAllSitesButton( { items }: FollowAllSitesButtonProps ): JS
 		return null;
 	}
 
-	async function handleFollowAll() {
+	function handleFollowAll() {
 		dispatch(
 			recordReaderTracksEvent( 'calypso_reader_list_follow_all_clicked', {
 				site_count: items.length,
@@ -65,14 +74,32 @@ export function FollowAllSitesButton( { items }: FollowAllSitesButtonProps ): JS
 		setIsFollowing( false );
 	}
 
+	function handleSubscribeToggle() {
+		if ( onSubscribeToggle ) {
+			onSubscribeToggle( ! isSubscribedToList );
+		}
+	}
+
+	const label = isFollowing ? translate( 'Subscribing\u2026' ) : translate( 'Follow all sites' );
+
+	if ( ! showSubscribeToList ) {
+		return (
+			<SplitButton
+				label={ label }
+				onClick={ handleFollowAll }
+				disabled={ isFollowing }
+				disableMenu
+			/>
+		);
+	}
+
 	return (
-		<Button
-			variant="secondary"
-			onClick={ handleFollowAll }
-			isBusy={ isFollowing }
-			disabled={ isFollowing }
-		>
-			{ isFollowing ? translate( 'Subscribing\u2026' ) : translate( 'Follow all sites' ) }
-		</Button>
+		<SplitButton label={ label } onClick={ handleFollowAll } disabled={ isFollowing }>
+			<PopoverMenuItem onClick={ handleSubscribeToggle }>
+				{ isSubscribedToList
+					? translate( 'Unsubscribe from list' )
+					: translate( 'Subscribe to list' ) }
+			</PopoverMenuItem>
+		</SplitButton>
 	);
 }
