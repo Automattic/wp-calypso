@@ -1,4 +1,3 @@
-import deepfreeze from 'deep-freeze';
 import {
 	savePost,
 	unsavePost,
@@ -95,7 +94,7 @@ describe( 'saved posts reducer', () => {
 		} );
 
 		it( 'should reorder items', () => {
-			const items = deepfreeze( [
+			const items = Object.freeze( [
 				makeItem( postKeyA, 0 ),
 				makeItem( postKeyB, 1 ),
 				makeItem( postKeyC, 2 ),
@@ -111,14 +110,14 @@ describe( 'saved posts reducer', () => {
 		} );
 
 		it( 'should not reorder with invalid indices', () => {
-			const items = deepfreeze( [ makeItem( postKeyA, 0 ), makeItem( postKeyB, 1 ) ] );
+			const items = Object.freeze( [ makeItem( postKeyA, 0 ), makeItem( postKeyB, 1 ) ] );
 			const initial = { items, isLoading: false, error: null };
 			const state = reducer( initial, reorderSavedPosts( -1, 1 ) );
 			expect( state.items ).toBe( items );
 		} );
 
 		it( 'should not reorder when indices are equal', () => {
-			const items = deepfreeze( [ makeItem( postKeyA, 0 ), makeItem( postKeyB, 1 ) ] );
+			const items = Object.freeze( [ makeItem( postKeyA, 0 ), makeItem( postKeyB, 1 ) ] );
 			const initial = { items, isLoading: false, error: null };
 			const state = reducer( initial, reorderSavedPosts( 0, 0 ) );
 			expect( state.items ).toBe( items );

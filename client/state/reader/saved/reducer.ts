@@ -13,23 +13,34 @@ import { combineReducers } from 'calypso/state/utils';
 import { persistToLocalStorage } from './local-storage';
 import type { PostKey, SavedPostItem } from './types';
 
-interface SavedPostAction {
+interface PostKeyAction {
 	type: string;
-	payload?: {
-		postKey?: PostKey;
-		items?: SavedPostItem[];
-		oldIndex?: number;
-		newIndex?: number;
-		error?: string;
-	};
+	payload: { postKey: PostKey };
 }
+
+interface ItemsAction {
+	type: string;
+	payload: { items: SavedPostItem[] };
+}
+
+interface ReorderAction {
+	type: string;
+	payload: { oldIndex: number; newIndex: number };
+}
+
+interface ErrorAction {
+	type: string;
+	payload: { error: string };
+}
+
+type SavedPostAction = PostKeyAction | ItemsAction | ReorderAction | ErrorAction | { type: string };
 
 function items( state: SavedPostItem[] = [], action: SavedPostAction ) {
 	let newState: SavedPostItem[];
 
 	switch ( action.type ) {
 		case READER_SAVED_POST_SAVE: {
-			const { postKey } = action.payload;
+			const { postKey } = ( action as PostKeyAction ).payload;
 			const key = keyToString( postKey );
 			const alreadySaved = state.some( ( item ) => keyToString( item.postKey ) === key );
 			if ( alreadySaved ) {
@@ -50,7 +61,7 @@ function items( state: SavedPostItem[] = [], action: SavedPostAction ) {
 		}
 
 		case READER_SAVED_POST_UNSAVE: {
-			const { postKey } = action.payload;
+			const { postKey } = ( action as PostKeyAction ).payload;
 			const key = keyToString( postKey );
 			newState = state
 				.filter( ( item ) => keyToString( item.postKey ) !== key )
@@ -60,10 +71,10 @@ function items( state: SavedPostItem[] = [], action: SavedPostAction ) {
 		}
 
 		case READER_SAVED_POSTS_RECEIVE:
-			return action.payload.items;
+			return ( action as ItemsAction ).payload.items;
 
 		case READER_SAVED_POSTS_REORDER: {
-			const { oldIndex, newIndex } = action.payload;
+			const { oldIndex, newIndex } = ( action as ReorderAction ).payload;
 			if (
 				oldIndex < 0 ||
 				oldIndex >= state.length ||
@@ -82,7 +93,7 @@ function items( state: SavedPostItem[] = [], action: SavedPostAction ) {
 		}
 
 		case READER_SAVED_POST_MARK_READ: {
-			const { postKey } = action.payload;
+			const { postKey } = ( action as PostKeyAction ).payload;
 			const key = keyToString( postKey );
 			newState = state.map( ( item ) =>
 				keyToString( item.postKey ) === key ? { ...item, isRead: true } : item
@@ -92,7 +103,7 @@ function items( state: SavedPostItem[] = [], action: SavedPostAction ) {
 		}
 
 		case READER_SAVED_POST_MARK_UNREAD: {
-			const { postKey } = action.payload;
+			const { postKey } = ( action as PostKeyAction ).payload;
 			const key = keyToString( postKey );
 			newState = state.map( ( item ) =>
 				keyToString( item.postKey ) === key ? { ...item, isRead: false } : item
@@ -124,7 +135,7 @@ function error( state: string | null = null, action: SavedPostAction ) {
 		case READER_SAVED_POSTS_RECEIVE:
 			return null;
 		case READER_SAVED_POSTS_REQUEST_FAILURE:
-			return action.payload.error;
+			return ( action as ErrorAction ).payload.error;
 		default:
 			return state;
 	}
