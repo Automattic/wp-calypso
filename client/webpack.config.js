@@ -3,6 +3,9 @@
  */
 
 const path = require( 'path' );
+require( 'dotenv' ).config( {
+	path: [ path.resolve( __dirname, '..', '.env.local' ), path.resolve( __dirname, '..', '.env' ) ],
+} );
 const FileConfig = require( '@automattic/calypso-build/webpack/file-loader' );
 const Minify = require( '@automattic/calypso-build/webpack/minify' );
 const SassConfig = require( '@automattic/calypso-build/webpack/sass' );

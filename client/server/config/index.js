@@ -1,4 +1,10 @@
 const configPath = require( 'path' ).resolve( __dirname, '..', '..', '..', 'config' );
+require( 'dotenv' ).config( {
+	path: [
+		require( 'path' ).resolve( configPath, '..', '.env.local' ),
+		require( 'path' ).resolve( configPath, '..', '.env' ),
+	],
+} );
 const { default: createConfig, resolveTemplates } = require( '@automattic/create-calypso-config' );
 const parser = require( './parser' );
 

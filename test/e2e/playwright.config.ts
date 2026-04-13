@@ -1,5 +1,11 @@
+import { resolve } from 'path';
+import { config } from 'dotenv';
 import { defineConfig, devices, type ReporterDescription } from 'playwright/test';
 import { tags, type CustomOptions } from './lib/pw-base';
+
+config( {
+	path: [ resolve( __dirname, '../../.env.local' ), resolve( __dirname, '../../.env' ) ],
+} );
 
 /**
  * Creates a use config object with custom options.

@@ -3,6 +3,9 @@
  */
 
 const path = require( 'path' );
+require( 'dotenv' ).config( {
+	path: [ path.resolve( __dirname, '..', '.env.local' ), path.resolve( __dirname, '..', '.env' ) ],
+} );
 const FileConfig = require( '@automattic/calypso-build/webpack/file-loader' );
 const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
 const { shouldTranspileDependency } = require( '@automattic/calypso-build/webpack/util' );
