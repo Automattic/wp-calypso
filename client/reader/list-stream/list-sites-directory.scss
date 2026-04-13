@@ -1,0 +1,27 @@
+.is-reader-page {
+	.list-sites-directory {
+		margin-top: 16px;
+	}
+
+	.list-sites-directory__empty {
+		padding: 40px 0;
+		text-align: center;
+		color: var( --studio-gray-40 );
+	}
+
+	.list-sites-directory__fediverse-handle {
+		margin-top: -12px;
+		margin-bottom: 12px;
+		padding-inline-start: 54px;
+		font-size: rem( 13px );
+
+		a {
+			color: var( --studio-gray-40 );
+			text-decoration: none;
+
+			&:hover {
+				text-decoration: underline;
+			}
+		}
+	}
+}
