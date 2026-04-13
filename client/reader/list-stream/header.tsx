@@ -44,12 +44,9 @@ const ListStreamHeader = ( {
 			<div>
 				{ description }
 				{ showEdit && editUrl && (
-					<>
-						{ ' ' }
-						<a className="list-stream__header-edit-link" href={ editUrl }>
-							{ translate( 'Edit list' ) }
-						</a>
-					</>
+					<div className="list-stream__header-edit-link">
+						<a href={ editUrl }>{ translate( 'Edit list' ) }</a>
+					</div>
 				) }
 			</div>
 		</AutoDirection>

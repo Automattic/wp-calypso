@@ -50,12 +50,16 @@
 }
 
 .list-stream__header-edit-link {
-	color: var( --studio-gray-40 );
-	text-decoration: none;
+	margin-top: 8px;
 
-	&:hover {
-		text-decoration: underline;
+	a {
+		font-size: rem( 13px );
 		color: var( --color-primary );
+		text-decoration: none;
+
+		&:hover {
+			text-decoration: underline;
+		}
 	}
 }
 
