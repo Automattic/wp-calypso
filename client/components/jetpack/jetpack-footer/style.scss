@@ -19,7 +19,34 @@
 	line-height: var(--wpds-font-line-height-sm);
 }
 
+.jetpack-footer__menu {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--wpds-dimension-gap-lg, 16px);
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.jetpack-footer__menu-item {
+	font-size: var(--wpds-font-size-md);
+	font-family: var(--wpds-font-family-body);
+
+	&:any-link,
+	&[role="button"] {
+		color: var(--wpds-color-fg-interactive-neutral-weak);
+		cursor: pointer;
+		text-decoration: none;
+	}
+
+	&:hover {
+		text-decoration: underline;
+	}
+}
+
 a.jetpack-footer__a8c {
+	margin-inline-start: auto;
+
 	svg {
 		fill: var(--wpds-color-fg-interactive-neutral-weak);
 	}

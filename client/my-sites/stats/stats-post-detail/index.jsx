@@ -14,7 +14,6 @@ import QueryPostStats from 'calypso/components/data/query-post-stats';
 import QueryPosts from 'calypso/components/data/query-posts';
 import EmptyContent from 'calypso/components/empty-content';
 import useSupportDocData from 'calypso/components/inline-support-link/use-support-doc-data';
-import JetpackColophon from 'calypso/components/jetpack-colophon';
 import WebPreview from 'calypso/components/web-preview';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { isHttps } from 'calypso/lib/url';
@@ -313,8 +312,6 @@ class StatsPostDetail extends Component {
 							<PostDetailTableSection siteId={ siteId } postId={ postId } />
 						</>
 					) }
-
-					<JetpackColophon />
 				</div>
 
 				<WebPreview

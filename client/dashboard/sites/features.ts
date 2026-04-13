@@ -43,9 +43,13 @@ export function canViewHundredYearPlanSettings( site: Site ) {
 
 export function canViewWordPressSettings( site: Site ) {
 	if ( isEnabled( 'dashboard/wp-beta-program' ) ) {
-		return hasHostingFeature( site, HostingFeatures.BACKUPS_SELF_SERVE );
+		return hasPlanFeature( site, HostingFeatures.BACKUPS_SELF_SERVE );
 	}
 	return site.is_wpcom_staging_site;
+}
+
+export function canSwitchWordPressVersion( site: Site ) {
+	return hasHostingFeature( site, HostingFeatures.BACKUPS_SELF_SERVE );
 }
 
 // Settings -> Actions & danger zone

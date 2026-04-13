@@ -15,7 +15,6 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import { SiteLaunchButton } from '../site-launch-button';
-import SiteLaunchCelebrationModal from '../site-launch-celebration-modal';
 import DeviceToggle from './device-toggle';
 import PageSelector from './page-selector';
 import { getPerformanceCalloutProps } from './performance-callout';
@@ -202,7 +201,6 @@ function SitePerformance() {
 				<SitePerformanceContent site={ site } />
 			) }
 			<PerformanceTrackerStop />
-			<SiteLaunchCelebrationModal site={ site } />
 		</HostingFeatureGatedWithCallout>
 	);
 }
