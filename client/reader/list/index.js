@@ -9,6 +9,7 @@ import {
 	editListItems,
 	exportList,
 	listListing,
+	listsLanding,
 } from './controller';
 
 export default function () {
@@ -27,6 +28,19 @@ export default function () {
 		sidebar,
 		setBeforePrimary,
 		editList,
+		makeLayout,
+		clientRender
+	);
+
+	// Lists landing page (must be before /reader/list/:user/:list)
+	page( '/reader/lists', sidebar, setBeforePrimary, listsLanding, makeLayout, clientRender );
+
+	// Locale-prefixed route for logged-out users
+	page(
+		`/${ defined }/reader/lists`,
+		sidebar,
+		setBeforePrimary,
+		listsLanding,
 		makeLayout,
 		clientRender
 	);

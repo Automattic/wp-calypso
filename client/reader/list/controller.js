@@ -25,6 +25,24 @@ export const createList = ( context, next ) => {
 	next();
 };
 
+export const listsLanding = ( context, next ) => {
+	const basePath = '/reader/lists';
+	const fullAnalyticsPageTitle = `${ analyticsPageTitle } > Lists`;
+	const mcKey = 'lists';
+	const state = context.store.getState();
+
+	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
+	recordTrack( 'calypso_reader_lists_landing_loaded' );
+
+	if ( ! isUserLoggedIn( state ) ) {
+		context.renderHeaderSection = renderHeaderSection;
+		recordTrack( 'calypso_reader_lists_landing_viewed_logged_out' );
+	}
+
+	context.primary = <AsyncLoad require="calypso/reader/lists-landing" key="lists-landing" />;
+	next();
+};
+
 export const listListing = ( context, next ) => {
 	const basePath = '/reader/list/:owner/:slug';
 	const fullAnalyticsPageTitle =
