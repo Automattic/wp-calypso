@@ -11,7 +11,7 @@ import {
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
-import { commerceGardenPlan } from '../../components/icons';
+import { commerceGardenDashboard } from '../../components/icons';
 import OverviewCard from '../../components/overview-card';
 import { PurchaseExpiryStatus } from '../../components/purchase-expiry-status';
 import {
@@ -171,7 +171,7 @@ function CommerceGardenPlanCard( {
 	return (
 		<OverviewCard
 			title={ __( 'Plan' ) }
-			icon={ commerceGardenPlan }
+			icon={ commerceGardenDashboard }
 			heading={ getSitePlanDisplayName( site ) }
 			description={ getCardDescription( site, purchase ) }
 			link={ getSitePlanUrl( site, purchase ) }
