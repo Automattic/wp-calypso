@@ -69,7 +69,7 @@ export function PluginsFAQ() {
 				},
 			} ),
 			answer: translate(
-				'Yes. If you’re on a paid plan, you can install plugins from the directory or upload your own. Free plans include built-in features, but don’t support installing plugins.'
+				'Yes. Plugin installation is now included on all WordPress.com paid plans, starting with Personal. You have access to over 50,000 plugins from the WordPress.org repository. This capability was expanded to all paid plans to give our customers full flexibility from day one.'
 			),
 		},
 		{
@@ -160,7 +160,7 @@ export function PluginsFAQ() {
 				},
 			} ),
 			answer: translate(
-				'Plugin installation is available on all paid plans. Free plans come with a curated set of built-in features instead of external plugins.'
+				'Plugin installation is now available on all WordPress.com paid plans, starting with Personal. Free plans come with a curated set of built-in features instead of external plugins.'
 			),
 		},
 		{
