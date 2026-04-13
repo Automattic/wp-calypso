@@ -15,7 +15,9 @@ const StatsEmptyActionEmail: React.FC< StatsEmptyActionProps > = ( { from } ) =>
 	const translate = useTranslate();
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const siteId = useSelector( getSelectedSiteId );
-	const siteUrl = useSelector( ( state: AppState ) => getSiteUrl( state, siteId ) );
+	const siteUrl = useSelector( ( state: AppState ) =>
+		siteId ? getSiteUrl( state, siteId ) : null
+	);
 	const isJetpack = useSelector( ( state ) =>
 		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
 	);
