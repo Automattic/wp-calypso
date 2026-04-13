@@ -1,8 +1,11 @@
+import './style.scss';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryReaderList from 'calypso/components/data/query-reader-list';
+import ListMissing from 'calypso/reader/list-stream/components/list-missing';
+import ListStreamHeader from 'calypso/reader/list-stream/components/list-stream-header';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import Stream from 'calypso/reader/stream';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -15,9 +18,6 @@ import {
 	isMissingByOwnerAndSlug,
 } from 'calypso/state/reader/lists/selectors';
 import EmptyContent from './empty';
-import ListStreamHeader from './header';
-import ListMissing from './missing';
-import './style.scss';
 
 const createEmptyContent = ( list ) => {
 	const EmptyContentWithList = () => <EmptyContent list={ list } />;
@@ -81,7 +81,7 @@ class ListStream extends Component {
 		}
 
 		if ( this.props.isMissing ) {
-			return <ListMissing owner={ this.props.owner } slug={ this.props.slug } />;
+			return <ListMissing />;
 		}
 
 		return (

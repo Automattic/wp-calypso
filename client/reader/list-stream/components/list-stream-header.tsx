@@ -1,3 +1,4 @@
+import './list-stream-header.style.scss';
 import { Gridicon, Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import FollowButton from 'calypso/blocks/follow-button/button';
