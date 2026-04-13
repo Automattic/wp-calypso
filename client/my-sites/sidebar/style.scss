@@ -1062,7 +1062,7 @@ $font-size: rem(14px);
 		}
 
 		.focus-content:not(.has-no-sidebar):not(.has-no-masterbar) .layout__content {
-			padding-top: 62px;
+			padding-top: var(--masterbar-height, 62px); // keep old value as fallback
 			padding-bottom: 0;
 		}
 
