@@ -9,12 +9,13 @@ import { JETPACK_SUPPORT_NEWSLETTER_URL } from 'calypso/my-sites/stats/const';
 import { isJetpackSite, getSiteUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { StatsEmptyActionProps } from './';
+import type { AppState } from 'calypso/types';
 
 const StatsEmptyActionEmail: React.FC< StatsEmptyActionProps > = ( { from } ) => {
 	const translate = useTranslate();
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const siteId = useSelector( getSelectedSiteId );
-	const siteUrl = useSelector( ( state ) => getSiteUrl( state, siteId ) );
+	const siteUrl = useSelector( ( state: AppState ) => getSiteUrl( state, siteId ) );
 	const isJetpack = useSelector( ( state ) =>
 		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
 	);
