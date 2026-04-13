@@ -62,17 +62,9 @@ function VersionManagement( { site }: { site: Site } ) {
 export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 
-	const header = (
-		<PageHeader
-			prefix={ <Breadcrumbs length={ 2 } /> }
-			title="WordPress"
-			description={ __( 'Manage your WordPress version.' ) }
-		/>
-	);
-
-	if ( isEnabled( 'dashboard/wp-beta-program' ) ) {
-		return (
-			<PageLayout size="small" header={ header }>
+	const renderContent = () => {
+		if ( isEnabled( 'dashboard/wp-beta-program' ) ) {
+			return (
 				<HostingFeatureGatedWithCallout
 					site={ site }
 					feature={ HostingFeatures.BACKUPS_SELF_SERVE }
@@ -80,20 +72,14 @@ export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) 
 				>
 					<VersionManagement site={ site } />
 				</HostingFeatureGatedWithCallout>
-			</PageLayout>
-		);
-	}
+			);
+		}
 
-	if ( site.is_wpcom_staging_site ) {
+		if ( site.is_wpcom_staging_site ) {
+			return <VersionManagement site={ site } />;
+		}
+
 		return (
-			<PageLayout size="small" header={ header }>
-				<VersionManagement site={ site } />
-			</PageLayout>
-		);
-	}
-
-	return (
-		<PageLayout size="small" header={ header }>
 			<Notice>
 				<VStack>
 					<Text as="p">
@@ -117,6 +103,21 @@ export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) 
 					) }
 				</VStack>
 			</Notice>
+		);
+	};
+
+	return (
+		<PageLayout
+			size="small"
+			header={
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
+					title="WordPress"
+					description={ __( 'Manage your WordPress version.' ) }
+				/>
+			}
+		>
+			{ renderContent() }
 		</PageLayout>
 	);
 }
