@@ -41,7 +41,17 @@ const ListStreamHeader = ( {
 
 	const formattedDescription = (
 		<AutoDirection>
-			<div>{ description }</div>
+			<div>
+				{ description }
+				{ showEdit && editUrl && (
+					<>
+						{ ' ' }
+						<a className="list-stream__header-edit-link" href={ editUrl }>
+							{ translate( 'Edit list' ) }
+						</a>
+					</>
+				) }
+			</div>
 		</AutoDirection>
 	);
 
@@ -64,11 +74,6 @@ const ListStreamHeader = ( {
 					/>
 				) }
 			</NavigationHeader>
-			{ showEdit && editUrl && (
-				<a className="list-stream__header-edit-link" href={ editUrl }>
-					{ translate( 'Edit list' ) }
-				</a>
-			) }
 			<ListTags tags={ tags } />
 		</AutoDirection>
 	);

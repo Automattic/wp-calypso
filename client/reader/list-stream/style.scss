@@ -50,11 +50,8 @@
 }
 
 .list-stream__header-edit-link {
-	font-size: rem( 13px );
 	color: var( --studio-gray-40 );
 	text-decoration: none;
-	margin-top: 4px;
-	display: inline-block;
 
 	&:hover {
 		text-decoration: underline;
