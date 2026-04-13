@@ -131,6 +131,7 @@
 		"push-notifications": true,
 		"reader/full-errors": false,
 		"reader/msd-enabled": true,
+		"reader/saved-posts": true,
 		"readymade-templates/showcase": false,
 		"redirect-fallback-browsers": true,
 		"rum-tracking/logstash": true,
