@@ -936,7 +936,7 @@ __metadata:
     "@wordpress/date": "npm:5.23.0"
     "@wordpress/html-entities": "npm:4.23.0"
     "@wordpress/i18n": "npm:^5.23.0"
-    "@wordpress/icons": "npm:^10.23.0"
+    "@wordpress/icons": "npm:^12.1.0"
     "@wordpress/primitives": "npm:^4.23.0"
     "@wordpress/react-i18n": "npm:^4.23.0"
     "@wordpress/url": "npm:^4.23.0"
@@ -11112,14 +11112,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/icons@npm:^10.23.0":
-  version: 10.23.0
-  resolution: "@wordpress/icons@npm:10.23.0"
+"@wordpress/icons@npm:^12.1.0":
+  version: 12.1.0
+  resolution: "@wordpress/icons@npm:12.1.0"
   dependencies:
-    "@babel/runtime": "npm:7.25.7"
-    "@wordpress/element": "npm:^6.23.0"
-    "@wordpress/primitives": "npm:^4.23.0"
-  checksum: e6a4248571f8a74dc60d8aa8d9ad3341b198a3331c48015ceca498c76c8d66ad6a19b883dbafd13af90373bba03c593ff0f77de055ef0bcdf12cbe03f17f24c6
+    "@wordpress/element": "npm:^6.43.0"
+    "@wordpress/primitives": "npm:^4.43.0"
+    change-case: "npm:4.1.2"
+  peerDependencies:
+    react: ^18.0.0
+  checksum: 867480f27fe5f7f32a3c321475474d9714e938a4c82baeade8b8405f8d5aa6d9ae356c661cb3142f8b7f4cb732b756642d3435a01f7227b340285b6184b138ad
   languageName: node
   linkType: hard
 
@@ -33475,7 +33477,7 @@ __metadata:
     "@wordpress/format-library": "npm:^5.23.0"
     "@wordpress/hooks": "npm:^4.23.0"
     "@wordpress/i18n": "npm:^5.23.0"
-    "@wordpress/icons": "npm:^10.23.0"
+    "@wordpress/icons": "npm:^12.1.0"
     "@wordpress/is-shallow-equal": "npm:^ 5.39.0"
     "@wordpress/keyboard-shortcuts": "npm:^5.23.0"
     "@wordpress/keycodes": "npm:^4.23.0"
