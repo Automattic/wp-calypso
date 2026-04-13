@@ -14,12 +14,11 @@ function SkeletonItem() {
 	);
 }
 
-export function Loading() {
+export function Loading( { title } ) {
 	return (
 		<div class="post-feed">
 			<div class="post-feed__header">
-				<h2 class="post-feed__title">Recent</h2>
-				<p class="post-feed__subtitle">Latest from your subscriptions.</p>
+				<h2 class="post-feed__title">{ title }</h2>
 			</div>
 			<div class="post-feed__list">
 				<SkeletonItem />
