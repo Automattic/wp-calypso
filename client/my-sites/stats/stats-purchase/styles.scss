@@ -586,8 +586,8 @@ $button-padding: 8px 32px;
 .stats-purchase-single__personal-checklist {
 	margin-bottom: 24px;
 
-	ul li {
-		margin-bottom: 12px;
+	ul li + li {
+		margin-top: 12px;
 	}
 }
 
