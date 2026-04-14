@@ -1,5 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
+import { CreateListInvitation } from 'calypso/reader/components/create-list-invitation';
 import { ListCard } from 'calypso/reader/components/list-card';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { usePublicListQuery } from 'calypso/reader/list-stream/use-public-list-query';
@@ -61,10 +62,15 @@ function ListsLandingSkeleton() {
 
 function ListsLanding() {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const { data, isLoading } = usePopularListsQuery();
 
 	const lists = data?.lists?.slice( 0, MAX_DISPLAYED_LISTS ) ?? [];
 	const isEmpty = ! isLoading && lists.length === 0;
+
+	function handleCreateListClick() {
+		dispatch( recordReaderTracksEvent( 'calypso_reader_lists_landing_create_clicked' ) );
+	}
 
 	return (
 		<ReaderMain>
@@ -94,6 +100,8 @@ function ListsLanding() {
 				{ lists.map( ( list ) => (
 					<ListCardWithDetails key={ list.ID } list={ list } />
 				) ) }
+
+				{ ! isLoading && <CreateListInvitation onCreateClick={ handleCreateListClick } /> }
 			</div>
 		</ReaderMain>
 	);
