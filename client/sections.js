@@ -490,7 +490,7 @@ const sections = [
 	},
 	{
 		name: 'reader',
-		paths: [ '/reader/list' ],
+		paths: [ '/reader/list', '/reader/lists' ],
 		module: 'calypso/reader/list',
 		group: 'reader',
 		enableLoggedOut: true,
