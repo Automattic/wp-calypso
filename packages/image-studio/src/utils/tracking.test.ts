@@ -6,7 +6,7 @@
 import { recordTracksEvent as recordTracksEventBase } from '@automattic/calypso-analytics';
 import { select } from '@wordpress/data';
 import { ImageStudioEntryPoint } from '../store';
-import { trackImageStudioOpened } from './tracking';
+import { trackImageStudioClosed, trackImageStudioOpened } from './tracking';
 
 // Mock session
 jest.mock( '../utils/session', () => ( {
@@ -84,5 +84,59 @@ describe( 'trackImageStudioOpened', () => {
 				attachment_id: 42,
 			} )
 		);
+	} );
+} );
+
+describe( 'recordImageStudioEvent — is_test property', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+		selectMock.mockReturnValue( {
+			getEntryPoint: jest.fn( () => null ),
+		} );
+		delete ( window as any ).imageStudioData;
+		delete ( window as any ).pagenow;
+		delete ( window as any ).typenow;
+	} );
+
+	afterEach( () => {
+		delete ( window as any ).imageStudioData;
+	} );
+
+	it( 'should include is_test when imageStudioData.isDevMode is true', () => {
+		( window as any ).imageStudioData = { enabled: true, isDevMode: true };
+
+		trackImageStudioClosed( { mode: 'edit' } );
+
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_closed',
+			expect.objectContaining( { is_test: true } )
+		);
+	} );
+
+	it( 'should include is_test as false when imageStudioData.isDevMode is false', () => {
+		( window as any ).imageStudioData = { enabled: true, isDevMode: false };
+
+		trackImageStudioClosed( { mode: 'edit' } );
+
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_closed',
+			expect.objectContaining( { is_test: false } )
+		);
+	} );
+
+	it( 'should not include is_test when imageStudioData is absent', () => {
+		trackImageStudioClosed( { mode: 'edit' } );
+
+		const callArgs = recordTracksEventMock.mock.calls[ 0 ][ 1 ];
+		expect( callArgs ).not.toHaveProperty( 'is_test' );
+	} );
+
+	it( 'should not include is_test when isDevMode is not set', () => {
+		( window as any ).imageStudioData = { enabled: true };
+
+		trackImageStudioClosed( { mode: 'edit' } );
+
+		const callArgs = recordTracksEventMock.mock.calls[ 0 ][ 1 ];
+		expect( callArgs ).not.toHaveProperty( 'is_test' );
 	} );
 } );
