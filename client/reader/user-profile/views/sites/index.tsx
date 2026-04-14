@@ -5,13 +5,13 @@ import EmptyContent from 'calypso/components/empty-content';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { ReaderSitesList } from 'calypso/reader/sites-list';
 import { ReaderSite } from 'calypso/reader/sites-list/site-item';
+import { ReaderUser } from 'calypso/reader/user-profile/queries/use-get-reader-user-query';
 import useUserSitesQuery from 'calypso/reader/user-profile/queries/use-user-sites-query';
-import { GetReaderUser } from 'calypso/reader/user-profile/queries/useGetReaderUserQuery';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
 interface UserSitesProps {
-	user: GetReaderUser;
+	user: ReaderUser;
 }
 
 const UserSites = ( { user }: UserSitesProps ): JSX.Element | null => {

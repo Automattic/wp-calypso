@@ -9,7 +9,7 @@ import UserProfileHeader from 'calypso/reader/user-profile/components/user-profi
 import {
 	mapGetReaderUserResponseToUser,
 	useGetReaderUserQuery,
-} from 'calypso/reader/user-profile/queries/useGetReaderUserQuery';
+} from 'calypso/reader/user-profile/queries/use-get-reader-user-query';
 import UserLists from 'calypso/reader/user-profile/views/lists';
 import UserPosts from 'calypso/reader/user-profile/views/posts';
 import UserRecommendedBlogs from 'calypso/reader/user-profile/views/recommended-blogs';

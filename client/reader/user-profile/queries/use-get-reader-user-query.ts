@@ -23,7 +23,7 @@ export interface GetReaderUserResponse {
 	recommended_blogs_count?: number;
 }
 
-export type GetReaderUser = Pick<
+export type ReaderUser = Pick<
 	GetReaderUserResponse,
 	| 'ID'
 	| 'user_login'
@@ -49,13 +49,9 @@ export const useGetReaderUserQuery = (
 	const params: GetReaderUserQueryParams = {
 		find_by_id: ! userLogin && userId ? true : undefined, // If userLogin is not provided, we will try to find the user by ID.
 	};
-	const paramsKey = Object.entries( params )
-		.sort()
-		.map( ( [ key, value ] ) => `${ key }=${ value }` )
-		.join( '&' );
 
 	return useQuery( {
-		queryKey: [ 'v1.1', 'get-reader-user', userIdOrLogin, paramsKey ], // eslint-disable-line @tanstack/query/exhaustive-deps
+		queryKey: [ 'v1.1', 'get-reader-user', userIdOrLogin, params ], // eslint-disable-line @tanstack/query/exhaustive-deps
 		queryFn: () =>
 			callApi< GetReaderUserResponse >( {
 				path: addQueryArgs( `/users/${ userIdOrLogin }`, params ),
@@ -73,7 +69,7 @@ export const useGetReaderUserQuery = (
 
 export function mapGetReaderUserResponseToUser(
 	response?: GetReaderUserResponse
-): GetReaderUser | null {
+): ReaderUser | null {
 	return response
 		? {
 				ID: response.ID,

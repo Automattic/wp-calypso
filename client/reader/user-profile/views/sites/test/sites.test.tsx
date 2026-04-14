@@ -3,10 +3,10 @@
  */
 import { render, screen } from '@testing-library/react';
 import { ReaderSite } from 'calypso/reader/sites-list/site-item';
+import { ReaderUser } from 'calypso/reader/user-profile/queries/use-get-reader-user-query';
 import useUserSitesQuery, {
 	UserSitesResponse,
 } from 'calypso/reader/user-profile/queries/use-user-sites-query';
-import { GetReaderUser } from 'calypso/reader/user-profile/queries/useGetReaderUserQuery';
 import UserSites from '..';
 
 jest.mock( 'calypso/state', () => ( {
@@ -31,7 +31,7 @@ jest.mock( 'calypso/reader/sites-list', () => ( {
 
 describe( 'UserSites', () => {
 	const { useSelector } = jest.requireMock( 'calypso/state' );
-	const defaultUser: GetReaderUser = {
+	const defaultUser: ReaderUser = {
 		ID: 123,
 		user_login: 'test_user',
 		nice_name: 'nice_name',

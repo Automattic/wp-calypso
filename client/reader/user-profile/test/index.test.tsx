@@ -9,7 +9,7 @@ import React from 'react';
 import {
 	useGetReaderUserQuery,
 	GetReaderUserResponse,
-} from 'calypso/reader/user-profile/queries/useGetReaderUserQuery';
+} from 'calypso/reader/user-profile/queries/use-get-reader-user-query';
 import { UserProfile, UserProfileProps } from '../index';
 
 jest.mock( '@automattic/calypso-router', () => ( {
@@ -57,8 +57,8 @@ jest.mock(
 		)
 );
 
-jest.mock( 'calypso/reader/user-profile/queries/useGetReaderUserQuery', () => ( {
-	...jest.requireActual( 'calypso/reader/user-profile/queries/useGetReaderUserQuery' ),
+jest.mock( 'calypso/reader/user-profile/queries/use-get-reader-user-query', () => ( {
+	...jest.requireActual( 'calypso/reader/user-profile/queries/use-get-reader-user-query' ),
 	useGetReaderUserQuery: jest.fn(),
 } ) );
 

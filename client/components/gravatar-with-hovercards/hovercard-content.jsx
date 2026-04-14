@@ -1,6 +1,6 @@
 import './styles.scss';
 import ReactDOM from 'react-dom';
-import { useGetReaderUserQuery } from 'calypso/reader/user-profile/queries/useGetReaderUserQuery';
+import { useGetReaderUserQuery } from 'calypso/reader/user-profile/queries/use-get-reader-user-query';
 import GravatarHeader from './gravatar-header';
 import PrimaryBlog from './primary-blog-card';
 import RecommendedBlogs from './recommended-blogs';
