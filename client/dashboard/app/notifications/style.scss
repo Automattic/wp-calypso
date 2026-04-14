@@ -1,4 +1,4 @@
-// The Dropdown component doesn't support to hide the header if the `expandOnMobile` is enabled.
+// The Popover component doesn't support hiding the header when `expandOnMobile` is enabled.
 .dashboard-notifications.components-popover.is-expanded {
 	.components-popover__header {
 		display: none;
@@ -7,6 +7,15 @@
 	.components-popover__content {
 		height: 100%;
 	}
+}
+
+// The panel is always mounted so that @automattic/notifications can open its
+// socket on first render and pre-populate the unseen count — without this the
+// socket only connects once the user clicks the bell, so the badge is missing
+// on initial page load.
+.dashboard-notifications.components-popover.dashboard-notifications--hidden {
+	visibility: hidden;
+	pointer-events: none;
 }
 
 .dashboard-notifications__icon {
