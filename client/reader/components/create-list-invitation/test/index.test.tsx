@@ -7,10 +7,10 @@ import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { CreateListInvitation } from '../index';
 
 describe( 'CreateListInvitation', () => {
-	test( 'renders the title', () => {
+	test( 'renders the prompt text', () => {
 		renderWithProvider( <CreateListInvitation /> );
 
-		expect( screen.getByRole( 'heading', { name: /create your own list/i } ) ).toBeVisible();
+		expect( screen.getByText( /create your own list/i ) ).toBeVisible();
 	} );
 
 	test( 'renders the description', () => {

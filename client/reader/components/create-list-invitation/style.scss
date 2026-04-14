@@ -1,27 +1,42 @@
+@import "@wordpress/base-styles/variables";
+
 .create-list-invitation {
-	border: 1px solid var( --color-border-subtle );
-	border-radius: 8px;
-	padding: 24px;
-	background: var( --color-neutral-0 );
-	text-align: center;
 	margin-block-end: 16px;
 }
 
-.create-list-invitation__title {
-	font-size: 1rem;
-	font-weight: 600;
+.create-list-invitation__header {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-block-end: 16px;
+	color: var( --color-text-subtle );
+	font-size: $font-body-small;
+}
+
+.create-list-invitation__icon {
+	fill: var( --studio-gray-50 );
+	flex-shrink: 0;
+}
+
+.create-list-invitation__label {
+	color: var( --studio-gray-80 );
+}
+
+.create-list-invitation__prompt {
+	font-size: $font-title-small;
+	font-weight: 500;
+	line-height: 1.4;
 	margin: 0 0 8px;
-	color: var( --color-text );
+	color: var( --studio-gray-80 );
 }
 
 .create-list-invitation__description {
-	font-size: 0.875rem;
+	font-size: $font-body-small;
 	color: var( --color-text-subtle );
 	line-height: 1.5;
-	margin: 0 auto 16px;
-	max-width: 520px;
+	margin: 0 0 16px;
 }
 
-.create-list-invitation__button {
-	justify-content: center;
+.create-list-invitation__footer {
+	display: flex;
 }
