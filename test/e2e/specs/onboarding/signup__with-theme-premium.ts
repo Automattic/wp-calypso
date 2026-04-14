@@ -80,7 +80,7 @@ describe( 'Lifecyle: Premium theme signup, onboard, launch and cancel subscripti
 
 			if ( ! newUserDetails.body.bearer_token ) {
 				throw new Error(
-					'Signup response missing bearer_token — account was likely not created (possible Bkismet rejection)'
+					`Signup response missing bearer_token for ${ testUser.email } — account was likely not created (possible Bkismet rejection)`
 				);
 			}
 		} );
