@@ -1,5 +1,5 @@
-const CLIENT_ID = '137246';
-const REDIRECT_URI = 'https://bpobocnnmpaelfgjoclhafalohdlchdp.chromiumapp.org/';
+const CLIENT_ID = '<WPCOM_CLIENT_ID>';
+const REDIRECT_URI = '<WPCOM_REDIRECT_URI>';
 const AUTH_URL = `https://public-api.wordpress.com/oauth2/authorize?client_id=${ CLIENT_ID }&redirect_uri=${ encodeURIComponent(
 	REDIRECT_URI
 ) }&response_type=token&scope=global`;
