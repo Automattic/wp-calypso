@@ -42,6 +42,7 @@ export function invokeSurvicateEvent( eventName: string ): () => void {
 
 	const handler = () => {
 		if ( isSuppressed ) {
+			debug( 'Deferred Survicate event "%s" suppressed at SurvicateReady time', eventName );
 			return;
 		}
 		if ( typeof window._sva !== 'undefined' && window._sva.invokeEvent ) {
