@@ -1,11 +1,6 @@
 import { useState, useEffect, useCallback } from 'preact/hooks';
 import { getStoredToken, login, removeToken } from './api/auth';
-import {
-	fetchFreshlyPressed,
-	fetchFollowing,
-	fetchMe,
-	getCachedPosts,
-} from './api/freshly-pressed';
+import { fetchFollowing, fetchMe, getCachedPosts } from './api/freshly-pressed';
 import { Header } from './components/header';
 import { Loading } from './components/loading';
 import { LoginScreen } from './components/login-screen';
@@ -19,7 +14,6 @@ export function App() {
 	const [ loadingMore, setLoadingMore ] = useState( false );
 	const [ hasMore, setHasMore ] = useState( true );
 	const [ error, setError ] = useState( null );
-	const [ showFreshlyPressed, setShowFreshlyPressed ] = useState( false );
 	const [ avatarUrl, setAvatarUrl ] = useState( null );
 	const [ layout, setLayout ] = useState( () => localStorage.getItem( 'reader_layout' ) || 'grid' );
 
@@ -32,7 +26,7 @@ export function App() {
 		getStoredToken().then( ( storedToken ) => {
 			if ( storedToken ) {
 				setToken( storedToken );
-				const cached = getCachedPosts( true );
+				const cached = getCachedPosts();
 				if ( cached ) {
 					setPosts( cached );
 					setLoading( false );
@@ -76,37 +70,13 @@ export function App() {
 						setLoading( false );
 					}
 				} );
-		} else if ( showFreshlyPressed ) {
-			loadFreshlyPressed();
 		} else {
 			setLoading( false );
 		}
-	}, [ token, authChecked, showFreshlyPressed ] );
-
-	function loadFreshlyPressed() {
-		setLoading( true );
-		const cached = getCachedPosts( false );
-		if ( cached ) {
-			setPosts( cached );
-			setLoading( false );
-		}
-		fetchFreshlyPressed()
-			.then( ( freshPosts ) => {
-				setPosts( freshPosts );
-				setLoading( false );
-				setError( null );
-				setHasMore( freshPosts.length >= 20 );
-			} )
-			.catch( ( err ) => {
-				if ( posts.length === 0 ) {
-					setError( err.message );
-					setLoading( false );
-				}
-			} );
-	}
+	}, [ token, authChecked ] );
 
 	const handleLoadMore = useCallback( () => {
-		if ( loadingMore || ! hasMore || posts.length === 0 ) {
+		if ( loadingMore || ! hasMore || posts.length === 0 || ! token ) {
 			return;
 		}
 
@@ -114,9 +84,7 @@ export function App() {
 		const lastPost = posts[ posts.length - 1 ];
 		const before = lastPost.date;
 
-		const fetcher = token ? fetchFollowing( token, before ) : fetchFreshlyPressed( before );
-
-		fetcher
+		fetchFollowing( token, before )
 			.then( ( morePosts ) => {
 				setPosts( ( prev ) => [ ...prev, ...morePosts ] );
 				setHasMore( morePosts.length >= 20 );
@@ -132,15 +100,10 @@ export function App() {
 			.then( ( accessToken ) => {
 				setToken( accessToken );
 				setLoading( true );
-				setShowFreshlyPressed( false );
 			} )
 			.catch( ( err ) => {
 				setError( err.message );
 			} );
-	}
-
-	function handleSkipToFreshlyPressed() {
-		setShowFreshlyPressed( true );
 	}
 
 	function handleRetry() {
@@ -157,8 +120,6 @@ export function App() {
 					setError( err.message );
 					setLoading( false );
 				} );
-		} else {
-			loadFreshlyPressed();
 		}
 	}
 
@@ -173,21 +134,19 @@ export function App() {
 		);
 	}
 
-	if ( ! token && ! showFreshlyPressed ) {
+	if ( ! token ) {
 		return (
 			<div class="app">
 				<Header token={ null } avatarUrl={ null } onLogin={ handleLogin } />
 				<main class="app__content">
-					<LoginScreen onLogin={ handleLogin } onSkip={ handleSkipToFreshlyPressed } />
+					<LoginScreen onLogin={ handleLogin } />
 				</main>
 			</div>
 		);
 	}
 
 	const feedTitle = 'Recent';
-	const feedSubtitle = token
-		? 'Latest from your subscriptions.'
-		: 'Freshly pressed from across WordPress.com.';
+	const feedSubtitle = 'Latest from your subscriptions.';
 
 	return (
 		<div class="app">

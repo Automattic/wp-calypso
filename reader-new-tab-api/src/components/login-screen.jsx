@@ -1,4 +1,4 @@
-export function LoginScreen( { onLogin, onSkip } ) {
+export function LoginScreen( { onLogin } ) {
 	return (
 		<div class="login-screen">
 			<svg
@@ -18,20 +18,6 @@ export function LoginScreen( { onLogin, onSkip } ) {
 			<button class="login-screen__button" onClick={ onLogin }>
 				Sign in with WordPress.com
 			</button>
-			<p class="login-screen__skip">
-				Or view{ ' ' }
-				<a
-					href="#"
-					class="login-screen__link"
-					onClick={ ( e ) => {
-						e.preventDefault();
-						onSkip();
-					} }
-				>
-					Freshly Pressed
-				</a>{ ' ' }
-				posts without signing in.
-			</p>
 		</div>
 	);
 }
