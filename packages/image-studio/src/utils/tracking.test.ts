@@ -124,19 +124,23 @@ describe( 'recordImageStudioEvent — is_test property', () => {
 		);
 	} );
 
-	it( 'should not include is_test when imageStudioData is absent', () => {
+	it( 'should default is_test to false when imageStudioData is absent', () => {
 		trackImageStudioClosed( { mode: 'edit' } );
 
-		const callArgs = recordTracksEventMock.mock.calls[ 0 ][ 1 ];
-		expect( callArgs ).not.toHaveProperty( 'is_test' );
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_closed',
+			expect.objectContaining( { is_test: false } )
+		);
 	} );
 
-	it( 'should not include is_test when isDevMode is not set', () => {
+	it( 'should default is_test to false when isDevMode is not set', () => {
 		( window as any ).imageStudioData = { enabled: true };
 
 		trackImageStudioClosed( { mode: 'edit' } );
 
-		const callArgs = recordTracksEventMock.mock.calls[ 0 ][ 1 ];
-		expect( callArgs ).not.toHaveProperty( 'is_test' );
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_closed',
+			expect.objectContaining( { is_test: false } )
+		);
 	} );
 } );

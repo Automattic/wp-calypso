@@ -82,9 +82,7 @@ function recordImageStudioEvent(
 	}
 
 	// Add dev mode flag for filtering test/internal traffic
-	if ( win.imageStudioData && typeof win.imageStudioData.isDevMode === 'boolean' ) {
-		baseProps.is_test = win.imageStudioData.isDevMode;
-	}
+	baseProps.is_test = !! win.imageStudioData?.isDevMode;
 
 	recordTracksEvent( eventName, baseProps );
 }
