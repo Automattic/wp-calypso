@@ -97,6 +97,18 @@ const DeleteButton = styled( Button )< { theme?: Theme } >`
 	color: ${ ( props ) => props.theme.colors.textColorLight };
 `;
 
+function getTosDataForProduct( product: ResponseCartProduct, responseCart: ResponseCart ) {
+	return responseCart.terms_of_service?.find( ( tos ) => {
+		if ( ! new RegExp( `product_id:${ product.product_id }` ).test( tos.key ) ) {
+			return false;
+		}
+		if ( product.meta && ! new RegExp( `meta:${ product.meta }` ).test( tos.key ) ) {
+			return false;
+		}
+		return true;
+	} )?.args;
+}
+
 /**
  * Introductory offers sometimes have complex pricing plans that are not easy
  * to display as a simple discount. This component displays more details about
@@ -117,7 +129,21 @@ function LineItemIntroOfferCostOverrideDetail( {
 	}
 
 	if ( ! isOverrideCodeIntroductoryOffer( costOverride.overrideCode ) ) {
-		return false;
+		return null;
+	}
+
+	// We only want to display this info for introductory offers which have
+	// pricing that is difficult to display as a simple discount. Currently
+	// that is offers with different term lengths or price increases.
+	if (
+		! doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
+			product.cost_overrides,
+			product.introductory_offer_terms,
+			product.months_per_bill_period
+		) &&
+		! doesIntroductoryOfferHavePriceIncrease( product )
+	) {
+		return null;
 	}
 
 	// Introductory offer manual renewals often have prorated prices that are
@@ -127,15 +153,7 @@ function LineItemIntroOfferCostOverrideDetail( {
 		return null;
 	}
 
-	const tosData = responseCart.terms_of_service?.find( ( tos ) => {
-		if ( ! new RegExp( `product_id:${ product.product_id }` ).test( tos.key ) ) {
-			return false;
-		}
-		if ( product.meta && ! new RegExp( `meta:${ product.meta }` ).test( tos.key ) ) {
-			return false;
-		}
-		return true;
-	} )?.args;
+	const tosData = getTosDataForProduct( product, responseCart );
 	const dueDate =
 		tosData && 'subscription_auto_renew_date' in tosData
 			? tosData.subscription_auto_renew_date
@@ -236,13 +254,24 @@ function LineItemCostOverride( {
 		);
 	}
 
+	// We only show the discount amount for introductory offers.
+	const shouldShowDiscount = product.cost_overrides.some( ( override ) =>
+		isOverrideCodeIntroductoryOffer( override.override_code )
+	);
+
 	return (
 		<div className="cost-overrides-list-item" key={ costOverride.humanReadableReason }>
 			<span className="cost-overrides-list-item__reason cost-overrides-list-item__reason--is-discount">
 				{ costOverride.humanReadableReason }
 			</span>
-			{ /* Empty grid placeholder to push LineItemIntroOfferCostOverrideDetail to its own row. */ }
-			<span className="cost-overrides-list-item__discount" />
+			<span className="cost-overrides-list-item__discount">
+				{ costOverride.discountAmount &&
+					shouldShowDiscount &&
+					formatCurrency( -costOverride.discountAmount, product.currency, {
+						isSmallestUnit: true,
+						signForPositive: true, // TODO clk numberFormatCurrency signForPositive only usage
+					} ) }
+			</span>
 			<LineItemIntroOfferCostOverrideDetail product={ product } costOverride={ costOverride } />
 		</div>
 	);
@@ -374,6 +403,7 @@ const WPCheckoutCheckIcon = styled( CheckIcon )`
  */
 function getLineItemPriceDisplay(
 	product: ResponseCartProduct,
+	responseCart: ResponseCart,
 	monthlyPrices: Record< string, number >
 ): { actualAmountDisplay: string; crossedOutAmountDisplay: string | undefined } {
 	const fmt = ( amount: number ) =>
@@ -385,8 +415,24 @@ function getLineItemPriceDisplay(
 	// times the cost of the monthly version of the same plan, if one exists).
 	const simulatedPriceBeforeDiscounts = getSimulatedCostBeforeDiscounts( product, monthlyPrices );
 
+	const isIntroOffer = product.cost_overrides.some( ( override ) =>
+		isOverrideCodeIntroductoryOffer( override.override_code )
+	);
+	if ( isIntroOffer ) {
+		// For an introductory offer, show the recurring amount as the amount the user will pay and include the
+		// simulated amount as the crossed-out number if it is greater.
+		const tosData = getTosDataForProduct( product, responseCart );
+		if ( tosData ) {
+			const isDiscounted = tosData.regular_renewal_price_integer < simulatedPriceBeforeDiscounts;
+			return {
+				actualAmountDisplay: fmt( tosData.regular_renewal_price_integer ),
+				crossedOutAmountDisplay: isDiscounted ? fmt( simulatedPriceBeforeDiscounts ) : undefined,
+			};
+		}
+	}
+
 	// Show the actual amount as the amount the user will pay and include the
-	// amount before cost overrides if it is greater.
+	// amount before cost overrides as the crossed-out number if it is greater.
 	const isDiscounted = product.item_subtotal_integer < simulatedPriceBeforeDiscounts;
 	return {
 		actualAmountDisplay: fmt( product.item_subtotal_integer ),
@@ -394,7 +440,13 @@ function getLineItemPriceDisplay(
 	};
 }
 
-function SingleProductAndCostOverridesList( { product }: { product: ResponseCartProduct } ) {
+function SingleProductAndCostOverridesList( {
+	product,
+	responseCart,
+}: {
+	product: ResponseCartProduct;
+	responseCart: ResponseCart;
+} ) {
 	const translate = useTranslate();
 	const costOverridesList = filterCostOverridesForLineItem( product, translate );
 	const label = getLabel( product );
@@ -403,6 +455,7 @@ function SingleProductAndCostOverridesList( { product }: { product: ResponseCart
 
 	const { actualAmountDisplay, crossedOutAmountDisplay } = getLineItemPriceDisplay(
 		product,
+		responseCart,
 		monthlyPrices
 	);
 
@@ -484,7 +537,11 @@ export function ProductsAndCostOverridesList( { responseCart }: { responseCart: 
 	return (
 		<ProductsAndCostOverridesListWrapper>
 			{ responseCart.products.map( ( product ) => (
-				<SingleProductAndCostOverridesList product={ product } key={ product.uuid } />
+				<SingleProductAndCostOverridesList
+					product={ product }
+					responseCart={ responseCart }
+					key={ product.uuid }
+				/>
 			) ) }
 			<CouponCostOverride responseCart={ responseCart } />
 		</ProductsAndCostOverridesListWrapper>
