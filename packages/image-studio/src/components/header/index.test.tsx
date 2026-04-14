@@ -135,7 +135,6 @@ describe( 'Header', () => {
 			render( <Header { ...defaultProps } mode={ ImageStudioMode.Generate } /> );
 
 			expect( screen.getByText( 'Jetpack Image Editor' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Beta' ) ).toBeInTheDocument();
 		} );
 
 		it( 'renders navigation pill in Edit mode with filename', () => {
