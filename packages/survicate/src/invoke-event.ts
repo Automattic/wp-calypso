@@ -1,19 +1,19 @@
+import { select } from '@wordpress/data';
 import debug from './debug';
 
-let isSuppressed = false;
+const HELP_CENTER_STORE = 'automattic/help-center';
 
 /**
- * Suppresses or unsuppresses Survicate event invocations.
- * When suppressed, `invokeSurvicateEvent` returns a no-op without firing.
+ * Checks whether the Help Center is currently open by reading its
+ * `@wordpress/data` store. Returns `false` if the store is not registered
+ * (e.g. in contexts where the Help Center is not loaded).
  */
-export function setSurvicateEventSuppression( suppressed: boolean ): void {
-	isSuppressed = suppressed;
-	debug( 'Survicate event suppression set to %s', suppressed );
-
-	// If a survey is already open, close it immediately.
-	if ( suppressed && typeof window._sva !== 'undefined' && window._sva.closeSurvey ) {
-		window._sva.closeSurvey();
-		debug( 'Survicate survey closed' );
+function isHelpCenterOpen(): boolean {
+	try {
+		const store = select( HELP_CENTER_STORE ) as { isHelpCenterShown?: () => boolean } | undefined;
+		return !! store?.isHelpCenterShown?.();
+	} catch {
+		return false;
 	}
 }
 
@@ -21,11 +21,17 @@ export function setSurvicateEventSuppression( suppressed: boolean ): void {
  * Invokes a Survicate event by name.
  * If the SDK is already loaded, fires immediately. Otherwise waits for the
  * `SurvicateReady` window event before invoking.
+ *
+ * Events are suppressed while the Help Center is open.
+ *
  * @returns A cleanup function that removes the event listener.
  */
 export function invokeSurvicateEvent( eventName: string ): () => void {
-	if ( isSuppressed ) {
-		debug( 'Survicate event suppressed. No event invoked.' );
+	if ( isHelpCenterOpen() ) {
+		debug( 'Survicate event "%s" suppressed (Help Center is open)', eventName );
+		if ( typeof window._sva !== 'undefined' && window._sva.closeSurvey ) {
+			window._sva.closeSurvey();
+		}
 		return () => {};
 	}
 
@@ -35,7 +41,7 @@ export function invokeSurvicateEvent( eventName: string ): () => void {
 	}
 
 	const handler = () => {
-		if ( isSuppressed ) {
+		if ( isHelpCenterOpen() ) {
 			debug( 'Deferred Survicate event "%s" suppressed at SurvicateReady time', eventName );
 			return;
 		}

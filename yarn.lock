@@ -1399,7 +1399,6 @@ __metadata:
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/odie-client": "workspace:^"
     "@automattic/support-articles": "workspace:^"
-    "@automattic/survicate": "workspace:^"
     "@automattic/viewport": "workspace:^"
     "@automattic/viewport-react": "workspace:^"
     "@automattic/zendesk-client": "workspace:^"
@@ -2208,6 +2207,8 @@ __metadata:
     debug: "npm:^4.4.1"
     tslib: "npm:^2.8.1"
     typescript: "npm:^5.8.3"
+  peerDependencies:
+    "@wordpress/data": "*"
   languageName: unknown
   linkType: soft
 

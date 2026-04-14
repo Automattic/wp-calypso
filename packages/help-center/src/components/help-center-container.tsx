@@ -15,7 +15,6 @@ import Draggable, { DraggableProps } from 'react-draggable';
  */
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useActionHooks } from '../hooks';
-import { useSurvicateSuppression } from '../hooks/use-survicate-suppression';
 import { HELP_CENTER_STORE } from '../stores';
 import { Container } from '../types';
 import HelpCenterContent from './help-center-content';
@@ -65,7 +64,6 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, curr
 	} );
 
 	useActionHooks();
-	useSurvicateSuppression();
 
 	const onDismiss = useCallback( () => {
 		handleClose();

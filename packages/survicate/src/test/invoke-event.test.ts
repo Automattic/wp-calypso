@@ -2,17 +2,34 @@
  * @jest-environment jsdom
  */
 
-import { invokeSurvicateEvent, setSurvicateEventSuppression } from '../invoke-event';
+jest.mock( '@wordpress/data', () => ( {
+	select: jest.fn(),
+} ) );
+
+import { select } from '@wordpress/data';
+import { invokeSurvicateEvent } from '../invoke-event';
+
+const mockSelect = select as jest.Mock;
+
+function setHelpCenterOpen( open: boolean ) {
+	mockSelect.mockReturnValue( { isHelpCenterShown: () => open } );
+}
+
+function setHelpCenterStoreUnavailable() {
+	mockSelect.mockImplementation( () => {
+		throw new Error( 'Store not registered' );
+	} );
+}
 
 describe( 'invokeSurvicateEvent', () => {
 	beforeEach( () => {
 		window._sva = undefined;
-		setSurvicateEventSuppression( false );
+		setHelpCenterOpen( false );
 	} );
 
 	afterEach( () => {
 		window._sva = undefined;
-		setSurvicateEventSuppression( false );
+		mockSelect.mockReset();
 	} );
 
 	test( 'should call invokeEvent immediately when window._sva.invokeEvent exists', () => {
@@ -99,22 +116,22 @@ describe( 'invokeSurvicateEvent', () => {
 	} );
 } );
 
-describe( 'setSurvicateEventSuppression', () => {
+describe( 'Help Center suppression', () => {
 	beforeEach( () => {
 		window._sva = undefined;
-		setSurvicateEventSuppression( false );
+		setHelpCenterOpen( false );
 	} );
 
 	afterEach( () => {
 		window._sva = undefined;
-		setSurvicateEventSuppression( false );
+		mockSelect.mockReset();
 	} );
 
-	test( 'should prevent invokeSurvicateEvent from firing when suppressed', () => {
+	test( 'should suppress event when Help Center is open', () => {
 		const invokeEvent = jest.fn();
 		window._sva = { invokeEvent };
 
-		setSurvicateEventSuppression( true );
+		setHelpCenterOpen( true );
 		invokeSurvicateEvent( 'testEvent' );
 
 		expect( invokeEvent ).not.toHaveBeenCalled();
@@ -123,55 +140,65 @@ describe( 'setSurvicateEventSuppression', () => {
 	test( 'should return a no-op cleanup when suppressed', () => {
 		window._sva = { invokeEvent: jest.fn() };
 
-		setSurvicateEventSuppression( true );
+		setHelpCenterOpen( true );
 		const cleanup = invokeSurvicateEvent( 'testEvent' );
 
 		expect( typeof cleanup ).toBe( 'function' );
 		expect( () => cleanup() ).not.toThrow();
 	} );
 
-	test( 'should allow events again after suppression is turned off', () => {
-		const invokeEvent = jest.fn();
-		window._sva = { invokeEvent };
-
-		setSurvicateEventSuppression( true );
-		invokeSurvicateEvent( 'testEvent' );
-		expect( invokeEvent ).not.toHaveBeenCalled();
-
-		setSurvicateEventSuppression( false );
-		invokeSurvicateEvent( 'testEvent' );
-		expect( invokeEvent ).toHaveBeenCalledWith( 'testEvent' );
-	} );
-
-	test( 'should call closeSurvey when suppression is enabled and _sva is available', () => {
+	test( 'should close open survey when event is suppressed', () => {
 		const closeSurvey = jest.fn();
-		window._sva = { closeSurvey };
+		window._sva = { invokeEvent: jest.fn(), closeSurvey };
 
-		setSurvicateEventSuppression( true );
+		setHelpCenterOpen( true );
+		invokeSurvicateEvent( 'testEvent' );
 
 		expect( closeSurvey ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	test( 'should not call closeSurvey when suppression is disabled', () => {
-		const closeSurvey = jest.fn();
-		window._sva = { closeSurvey };
+	test( 'should allow events when Help Center is closed', () => {
+		const invokeEvent = jest.fn();
+		window._sva = { invokeEvent };
 
-		setSurvicateEventSuppression( false );
+		setHelpCenterOpen( false );
+		invokeSurvicateEvent( 'testEvent' );
 
-		expect( closeSurvey ).not.toHaveBeenCalled();
+		expect( invokeEvent ).toHaveBeenCalledWith( 'testEvent' );
 	} );
 
-	test( 'should suppress deferred events queued before suppression was enabled', () => {
+	test( 'should suppress deferred event when Help Center opens before SurvicateReady', () => {
 		const invokeEvent = jest.fn();
 		window._sva = undefined;
 
+		setHelpCenterOpen( false );
 		invokeSurvicateEvent( 'testEvent' );
 
-		setSurvicateEventSuppression( true );
+		setHelpCenterOpen( true );
 
 		window._sva = { invokeEvent };
 		window.dispatchEvent( new Event( 'SurvicateReady' ) );
 
 		expect( invokeEvent ).not.toHaveBeenCalled();
+	} );
+
+	test( 'should not throw when Help Center store is not registered', () => {
+		const invokeEvent = jest.fn();
+		window._sva = { invokeEvent };
+
+		setHelpCenterStoreUnavailable();
+		invokeSurvicateEvent( 'testEvent' );
+
+		expect( invokeEvent ).toHaveBeenCalledWith( 'testEvent' );
+	} );
+
+	test( 'should handle select returning undefined gracefully', () => {
+		const invokeEvent = jest.fn();
+		window._sva = { invokeEvent };
+
+		mockSelect.mockReturnValue( undefined );
+		invokeSurvicateEvent( 'testEvent' );
+
+		expect( invokeEvent ).toHaveBeenCalledWith( 'testEvent' );
 	} );
 } );
