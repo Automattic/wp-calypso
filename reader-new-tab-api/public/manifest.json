@@ -11,5 +11,6 @@
 		"48": "icons/icon-48.png",
 		"128": "icons/icon-128.png"
 	},
-	"permissions": [ "identity", "storage" ]
+	"permissions": [ "identity", "storage", "search" ],
+	"host_permissions": [ "https://public-api.wordpress.com/*" ]
 }

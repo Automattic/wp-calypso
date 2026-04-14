@@ -58,6 +58,7 @@ import EmptyContent from './empty';
 import { StreamError } from './error';
 import PostLifecycle from './post-lifecycle';
 import PostPlaceholder from './post-placeholder';
+import { ReaderChromeExtensionBanner } from './reader-chrome-extension-banner';
 
 // minimal size for the two-column layout to show without cut off
 // 64 is padding, 8 is margin
@@ -708,6 +709,7 @@ class ReaderStream extends Component {
 				body = (
 					<div className="reader__content">
 						{ isReaderCouncilStream && <CustomerCouncilBanner translate={ translate } /> }
+						<ReaderChromeExtensionBanner />
 						{ bodyContent }
 					</div>
 				);
@@ -717,6 +719,7 @@ class ReaderStream extends Component {
 						<div className="reader__content">
 							{ streamHeader?.() }
 							{ isReaderCouncilStream && <CustomerCouncilBanner translate={ translate } /> }
+							<ReaderChromeExtensionBanner />
 							{ bodyContent }
 						</div>
 						<div className="stream__right-column">{ SidebarContent }</div>
@@ -732,6 +735,9 @@ class ReaderStream extends Component {
 								<CustomerCouncilBanner translate={ translate } />
 							</div>
 						) }
+						<div style={ { margin: '32px 16px 0' } }>
+							<ReaderChromeExtensionBanner />
+						</div>
 						<div className="stream__container">
 							<div className="stream__header">
 								<SectionNav selectedText={ this.state.selectedTab }>

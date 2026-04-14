@@ -32,6 +32,12 @@ test-results*.xml
 checkstyle.xml
 /apps/notifications/stats.json
 
+# reader-new-tab-api build artifacts
+reader-new-tab-api/dist/
+reader-new-tab-api/*.crx
+reader-new-tab-api/*.pem
+reader-new-tab-api/*.zip
+
 # added during build
 /config/secrets.json
 

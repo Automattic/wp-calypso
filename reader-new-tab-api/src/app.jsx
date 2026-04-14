@@ -1,6 +1,12 @@
-import { useState, useEffect } from 'preact/hooks';
+import { useState, useEffect, useCallback } from 'preact/hooks';
 import { getStoredToken, login, removeToken } from './api/auth';
-import { fetchFreshlyPressed, fetchFollowing, getCachedPosts } from './api/freshly-pressed';
+import {
+	fetchFreshlyPressed,
+	fetchFollowing,
+	fetchMe,
+	getCachedPosts,
+} from './api/freshly-pressed';
+import { Header } from './components/header';
 import { Loading } from './components/loading';
 import { LoginScreen } from './components/login-screen';
 import { PostFeed } from './components/post-feed';
@@ -10,8 +16,17 @@ export function App() {
 	const [ authChecked, setAuthChecked ] = useState( false );
 	const [ posts, setPosts ] = useState( [] );
 	const [ loading, setLoading ] = useState( true );
+	const [ loadingMore, setLoadingMore ] = useState( false );
+	const [ hasMore, setHasMore ] = useState( true );
 	const [ error, setError ] = useState( null );
 	const [ showFreshlyPressed, setShowFreshlyPressed ] = useState( false );
+	const [ avatarUrl, setAvatarUrl ] = useState( null );
+	const [ layout, setLayout ] = useState( () => localStorage.getItem( 'reader_layout' ) || 'grid' );
+
+	const handleLayoutChange = ( newLayout ) => {
+		setLayout( newLayout );
+		localStorage.setItem( 'reader_layout', newLayout );
+	};
 
 	useEffect( () => {
 		getStoredToken().then( ( storedToken ) => {
@@ -28,6 +43,16 @@ export function App() {
 	}, [] );
 
 	useEffect( () => {
+		if ( token ) {
+			fetchMe( token )
+				.then( ( me ) => setAvatarUrl( me.avatar_URL || null ) )
+				.catch( () => {} );
+		} else {
+			setAvatarUrl( null );
+		}
+	}, [ token ] );
+
+	useEffect( () => {
 		if ( ! authChecked ) {
 			return;
 		}
@@ -38,6 +63,7 @@ export function App() {
 					setPosts( freshPosts );
 					setLoading( false );
 					setError( null );
+					setHasMore( freshPosts.length >= 20 );
 				} )
 				.catch( ( err ) => {
 					if ( err.message === 'auth_expired' ) {
@@ -69,6 +95,7 @@ export function App() {
 				setPosts( freshPosts );
 				setLoading( false );
 				setError( null );
+				setHasMore( freshPosts.length >= 20 );
 			} )
 			.catch( ( err ) => {
 				if ( posts.length === 0 ) {
@@ -77,6 +104,28 @@ export function App() {
 				}
 			} );
 	}
+
+	const handleLoadMore = useCallback( () => {
+		if ( loadingMore || ! hasMore || posts.length === 0 ) {
+			return;
+		}
+
+		setLoadingMore( true );
+		const lastPost = posts[ posts.length - 1 ];
+		const before = lastPost.date;
+
+		const fetcher = token ? fetchFollowing( token, before ) : fetchFreshlyPressed( before );
+
+		fetcher
+			.then( ( morePosts ) => {
+				setPosts( ( prev ) => [ ...prev, ...morePosts ] );
+				setHasMore( morePosts.length >= 20 );
+				setLoadingMore( false );
+			} )
+			.catch( () => {
+				setLoadingMore( false );
+			} );
+	}, [ loadingMore, hasMore, posts, token ] );
 
 	function handleLogin() {
 		login()
@@ -102,6 +151,7 @@ export function App() {
 				.then( ( freshPosts ) => {
 					setPosts( freshPosts );
 					setLoading( false );
+					setHasMore( freshPosts.length >= 20 );
 				} )
 				.catch( ( err ) => {
 					setError( err.message );
@@ -115,6 +165,7 @@ export function App() {
 	if ( ! authChecked ) {
 		return (
 			<div class="app">
+				<Header token={ null } avatarUrl={ null } onLogin={ handleLogin } />
 				<main class="app__content">
 					<Loading title="Loading..." />
 				</main>
@@ -125,6 +176,7 @@ export function App() {
 	if ( ! token && ! showFreshlyPressed ) {
 		return (
 			<div class="app">
+				<Header token={ null } avatarUrl={ null } onLogin={ handleLogin } />
 				<main class="app__content">
 					<LoginScreen onLogin={ handleLogin } onSkip={ handleSkipToFreshlyPressed } />
 				</main>
@@ -132,10 +184,14 @@ export function App() {
 		);
 	}
 
-	const feedTitle = token ? 'Following' : 'WordPress.com Freshly Pressed Posts';
+	const feedTitle = 'Recent';
+	const feedSubtitle = token
+		? 'Latest from your subscriptions.'
+		: 'Freshly pressed from across WordPress.com.';
 
 	return (
 		<div class="app">
+			<Header token={ token } avatarUrl={ avatarUrl } onLogin={ handleLogin } />
 			<main class="app__content">
 				{ error && (
 					<div class="error">
@@ -144,7 +200,18 @@ export function App() {
 					</div>
 				) }
 				{ loading && <Loading title={ feedTitle } /> }
-				{ ! loading && ! error && <PostFeed posts={ posts } title={ feedTitle } /> }
+				{ ! loading && ! error && (
+					<PostFeed
+						posts={ posts }
+						title={ feedTitle }
+						subtitle={ feedSubtitle }
+						onLoadMore={ handleLoadMore }
+						loadingMore={ loadingMore }
+						hasMore={ hasMore }
+						layout={ layout }
+						onLayoutChange={ handleLayoutChange }
+					/>
+				) }
 			</main>
 		</div>
 	);
