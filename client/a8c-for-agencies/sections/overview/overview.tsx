@@ -11,6 +11,7 @@ import LayoutHeader, {
 	LayoutHeaderTitle as Title,
 } from 'calypso/layout/hosting-dashboard/header';
 import { MissingPaymentSettingsNotice } from '../referrals/common/missing-payment-settings-notice';
+import useHasCommissionActivity from '../referrals/common/missing-payment-settings-notice/use-has-commission-activity';
 import OverviewBody from './body';
 import OverviewHeaderActions from './header-actions';
 import PartnerDirectoryOnboardingCard from './partner-directory-onboarding-card';
@@ -22,10 +23,12 @@ export default function Overview() {
 	const translate = useTranslate();
 	const title = translate( 'Agency overview' );
 
+	const { hasActivity, isLoading: isLoadingActivity } = useHasCommissionActivity();
+
 	return (
 		<Layout title={ title } wide>
 			<LayoutTop>
-				<MissingPaymentSettingsNotice />
+				{ ! isLoadingActivity && hasActivity && <MissingPaymentSettingsNotice /> }
 				<A4AAgencyApprovalNotice />
 				<PressableUsageLimitNotice />
 

@@ -1,7 +1,8 @@
+import { isEnabled } from '@automattic/calypso-config';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import CommentButton from 'calypso/blocks/comment-button';
+import ReaderSaveButton from 'calypso/blocks/reader-save-button';
 import ShareButton from 'calypso/blocks/reader-share';
 import ReaderCommentIcon from 'calypso/reader/components/icons/comment-icon';
 import LikeButton from 'calypso/reader/like-button';
@@ -26,7 +27,6 @@ const ReaderPostActions = ( {
 	fullPost,
 	commentsApiDisabled = false,
 } ) => {
-	const translate = useTranslate();
 	const hasSites = !! useSelector( getPrimarySiteId );
 	const showShare = isSharable( post );
 	const showReblog = isRebloggable( post, hasSites );
@@ -55,6 +55,11 @@ const ReaderPostActions = ( {
 					/>
 				</li>
 			) }
+			{ isEnabled( 'reader/saved-posts' ) && (
+				<li className="reader-post-actions__item">
+					<ReaderSaveButton post={ post } iconSize={ iconSize } />
+				</li>
+			) }
 			{ showComments && ! commentsApiDisabled && (
 				<li className="reader-post-actions__item">
 					<CommentButton
@@ -67,7 +72,6 @@ const ReaderPostActions = ( {
 							iconSize,
 							viewBox: '0 -1 20 20',
 						} ) }
-						defaultLabel={ translate( 'Comment' ) }
 						alwaysShowTooltip
 					/>
 				</li>
@@ -86,7 +90,6 @@ const ReaderPostActions = ( {
 						iconSize={ iconSize }
 						showZeroCount={ false }
 						likeSource="reader"
-						defaultLabel={ translate( 'Like' ) }
 					/>
 				</li>
 			) }
