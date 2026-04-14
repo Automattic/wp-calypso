@@ -165,7 +165,14 @@ export function ensureBlackboxLoginScript( inlineScriptNonce?: string ): Promise
 			scriptAttributes.nonce = inlineScriptNonce;
 		}
 
-		loadScript( config( 'blackbox_url' ), undefined, scriptAttributes ).then(
+		const blackboxUrl = config( 'blackbox_url' );
+		if ( ! blackboxUrl ) {
+			clearTimeout( timeoutId );
+			finishOnce();
+			return;
+		}
+
+		loadScript( blackboxUrl, undefined, scriptAttributes ).then(
 			() => {
 				clearTimeout( timeoutId );
 				finishOnce();
