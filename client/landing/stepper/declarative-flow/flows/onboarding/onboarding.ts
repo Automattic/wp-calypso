@@ -1,7 +1,7 @@
 import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import { clearStepPersistedState, ONBOARDING_FLOW, SITE_SETUP_FLOW } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
 import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
@@ -25,7 +25,7 @@ import { State } from '../../../../../../packages/data-stores/src/plans/reducer'
 import { isPlanProductFree } from '../../../../../../packages/data-stores/src/plans/selectors';
 import { useFlowLocale } from '../../../hooks/use-flow-locale';
 import { useQuery } from '../../../hooks/use-query';
-import { ONBOARD_STORE } from '../../../stores';
+import { ONBOARD_STORE, SITE_STORE } from '../../../stores';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { getOnboardingPostCheckoutDestination } from '../../helpers/get-onboarding-post-checkout-destination';
 import { withLocale } from '../../helpers/with-locale';
@@ -123,7 +123,9 @@ const onboarding: FlowV2< typeof initialize > = {
 
 			if ( refParameter === WOO_HOSTING_SOLUTIONS_REF ) {
 				const siteSlug = providedDependencies.siteSlug as string;
-				return [ `https://${ siteSlug }/wp-admin/admin.php?page=wc-admin`, null ];
+				const site = await resolveSelect( SITE_STORE ).getSite( siteSlug );
+				const adminUrl = site?.options?.admin_url ?? `https://${ siteSlug }/wp-admin/`;
+				return [ `${ adminUrl }admin.php?page=wc-admin`, null ];
 			}
 
 			return getOnboardingPostCheckoutDestination( {
