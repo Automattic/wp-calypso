@@ -70,7 +70,7 @@ function getPlansIntent( flowName: string | null ): PlansIntent | null {
 				return getVisualSplitPlansIntent( search.get( 'intent' )! );
 			}
 			if ( search.get( 'ref' ) === 'woo-hosting-solutions-flow' ) {
-				return 'plans-woo-hosted';
+				return 'plans-woo-hosting-solutions';
 			}
 			break;
 		case ONBOARDING_UNIFIED_FLOW:
