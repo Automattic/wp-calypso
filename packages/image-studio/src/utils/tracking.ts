@@ -180,12 +180,10 @@ export function trackImageStudioOpened( {
 	if ( attachmentId ) {
 		properties.attachment_id = attachmentId;
 	}
-	// For the opened event, use the passed entry point since the store hasn't been updated yet
 	if ( entryPoint ) {
 		properties.placement = entryPoint;
 	}
-	// Don't use recordImageStudioEvent here since we're manually adding placement
-	recordTracksEvent( 'image_studio_opened', properties );
+	recordImageStudioEvent( 'image_studio_opened', properties );
 }
 
 /**
