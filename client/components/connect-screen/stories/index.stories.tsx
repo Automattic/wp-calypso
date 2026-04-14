@@ -1,7 +1,15 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { StoryObj, Meta } from '@storybook/react';
 import { IconType } from '@wordpress/components';
-import { seen, edit, cog, check, chartBar, postList, commentAuthorAvatar } from '@wordpress/icons';
+import {
+	seen,
+	pencil,
+	cog,
+	check,
+	chartBar,
+	postList,
+	commentAuthorAvatar,
+} from '@wordpress/icons';
 import { useState } from 'react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
@@ -122,7 +130,7 @@ const mockUserWithSiteCount = {
 
 const mockPermissions = [
 	{ icon: seen, label: 'View your profile information' },
-	{ icon: edit, label: 'Edit your posts and pages' },
+	{ icon: pencil, label: 'Edit your posts and pages' },
 	{ icon: cog, label: 'Manage your site settings' },
 	{ icon: check, label: 'Access your media library' },
 	{ icon: chartBar, label: 'View your site statistics' },
@@ -405,7 +413,7 @@ export const FullInviteScreen: StoryObj = {
 			<PermissionsList
 				title="As an editor, you'll be able to:"
 				permissions={ [
-					{ icon: edit, label: 'Create and edit posts' },
+					{ icon: pencil, label: 'Create and edit posts' },
 					{ icon: chartBar, label: 'View site statistics' },
 					{ icon: cog, label: 'Manage media uploads' },
 				] }

@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { edit, external, Icon, seen, published, unseen } from '@wordpress/icons';
+import { pencil, external, Icon, seen, published, unseen } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { size, map } from 'lodash';
 import PropTypes from 'prop-types';
@@ -360,7 +360,12 @@ class ReaderPostEllipsisMenu extends Component {
 				) }
 
 				{ this.props.showEditPost && isEditPossible && (
-					<PopoverMenuItem onClick={ this.editPost } icon={ edit } useWordPressIcon iconSize={ 24 }>
+					<PopoverMenuItem
+						onClick={ this.editPost }
+						icon={ pencil }
+						useWordPressIcon
+						iconSize={ 24 }
+					>
 						{ translate( 'Edit post' ) }
 					</PopoverMenuItem>
 				) }

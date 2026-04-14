@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { edit } from '@wordpress/icons';
+import { pencil } from '@wordpress/icons';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getEditCommentLink } from '../../panel/helpers/notes';
@@ -11,7 +11,7 @@ const EditButton = ( { editComment, note } ) => {
 	const { site: siteId, post: postId, comment: commentId } = note?.meta?.ids ?? {};
 	return (
 		<ActionButton
-			icon={ edit }
+			icon={ pencil }
 			isActive={ false }
 			hotkey="e"
 			onToggle={ () => editComment( siteId, postId, commentId, getEditCommentLink( note ) ) }

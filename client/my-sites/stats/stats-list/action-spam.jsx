@@ -1,6 +1,6 @@
 import { Dialog } from '@automattic/components';
 import { Tooltip } from '@wordpress/components';
-import { Icon, warning } from '@wordpress/icons';
+import { Icon, cautionFilled } from '@wordpress/icons';
 import clsx from 'clsx';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
@@ -89,7 +89,7 @@ class StatsActionSpam extends Component {
 			<li className="stats-list__spam-action module-content-list-item-action">
 				<Tooltip position="top" text={ title }>
 					<button onClick={ this.clickHandler } className={ wrapperClass } aria-label={ title }>
-						<Icon className="stats-icon" icon={ warning } size={ 22 } />
+						<Icon className="stats-icon" icon={ cautionFilled } size={ 22 } />
 						<span className="stats-list__spam-label module-content-list-item-action-label">
 							{ label }
 						</span>
