@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { canViewWordPressSettings } from '../sites/features';
+import { canSwitchWordPressVersion } from '../sites/features';
 import type { Site } from '@automattic/api-core';
 
 function getWordPressVersionTagName( versionTag: string ) {
@@ -19,7 +19,7 @@ export function getFormattedWordPressVersion(
 	return formatWordPressVersion(
 		site.options?.software_version ?? '',
 		versionTag,
-		canViewWordPressSettings( site )
+		canSwitchWordPressVersion( site )
 	);
 }
 

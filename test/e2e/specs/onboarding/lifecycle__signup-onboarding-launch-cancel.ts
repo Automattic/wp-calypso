@@ -175,7 +175,7 @@ describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function 
 			await startSiteFlow.clickButton( 'Continue' );
 		} );
 
-		it( 'Focused Launchpad is shown', async function () {
+		it( 'Launchpad is shown', async function () {
 			const title = await page.getByText( "Let's get started!" );
 			if ( ! ( await title.isVisible() ) ) {
 				return;
@@ -202,7 +202,7 @@ describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function 
 		} );
 	} );
 
-	describe( 'Launch site without Focused Launchpad', function () {
+	describe( 'Launch site from settings', function () {
 		it( 'Start site launch', async function () {
 			const siteSettingsPage = new SiteSettingsPage( page );
 			await siteSettingsPage.visit( newSiteDetails.blog_details.site_slug, 'site-visibility' );
