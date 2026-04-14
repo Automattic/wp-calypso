@@ -161,7 +161,7 @@ test.describe(
 				await startSiteFlow.clickButton( 'Continue' );
 			} );
 
-			await test.step( 'Then Focused Launchpad is shown (if applicable)', async () => {
+			await test.step( 'Then Launchpad is shown (if applicable)', async () => {
 				const title = page.getByText( "Let's get started!" );
 				if ( ! ( await title.isVisible() ) ) {
 					return;
