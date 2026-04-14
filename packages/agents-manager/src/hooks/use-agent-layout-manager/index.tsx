@@ -12,6 +12,8 @@ import {
 import { __ } from '@wordpress/i18n';
 import { AI } from '../../components/icons';
 
+const SIDEBAR_TRANSITION_DURATION_MS = 200;
+
 interface Options {
 	sidebarContainer?: string | HTMLElement;
 	isReady?: boolean;
@@ -57,6 +59,7 @@ export default function useAgentLayoutManager( {
 	const canDock = isDesktop && hasEnoughHeight;
 	const shouldRenderSidebar = canDock && isDocked;
 	const openSidebarTimeoutRef = useRef< ReturnType< typeof setTimeout > >();
+	const closeSidebarTimeoutRef = useRef< ReturnType< typeof setTimeout > >();
 
 	// Store default state refs to avoid stale closures and prevent unnecessary re-renders
 	const defaultDockedRef = useRef( defaultDocked );
@@ -137,9 +140,11 @@ export default function useAgentLayoutManager( {
 
 			onDockRef.current();
 		} else {
+			clearTimeout( closeSidebarTimeoutRef.current );
 			container.classList.remove(
 				'agents-manager-sidebar-container',
-				'agents-manager-sidebar-container--sidebar-open'
+				'agents-manager-sidebar-container--sidebar-open',
+				'agents-manager-sidebar-container--closing'
 			);
 			portalRef.current.classList.add( 'agents-manager-chat--undocked' );
 			portalRef.current.classList.remove( 'agents-manager-chat--docked' );
@@ -153,13 +158,15 @@ export default function useAgentLayoutManager( {
 	useLayoutEffect(
 		() => () => {
 			clearTimeout( openSidebarTimeoutRef.current );
+			clearTimeout( closeSidebarTimeoutRef.current );
 			setIsDocked( null );
 			setIsPortalReady( false );
 
 			if ( container ) {
 				container.classList.remove(
 					'agents-manager-sidebar-container',
-					'agents-manager-sidebar-container--sidebar-open'
+					'agents-manager-sidebar-container--sidebar-open',
+					'agents-manager-sidebar-container--closing'
 				);
 
 				if ( portalRef.current ) {
@@ -178,6 +185,8 @@ export default function useAgentLayoutManager( {
 		}
 
 		wasOpenRef.current = true;
+		clearTimeout( closeSidebarTimeoutRef.current );
+		container.classList.remove( 'agents-manager-sidebar-container--closing' );
 		container.classList.add( 'agents-manager-sidebar-container--sidebar-open' );
 
 		onOpenSidebarRef.current();
@@ -188,8 +197,21 @@ export default function useAgentLayoutManager( {
 			return;
 		}
 
+		const wasSidebarOpen = container.classList.contains(
+			'agents-manager-sidebar-container--sidebar-open'
+		);
+
 		wasOpenRef.current = false;
 		container.classList.remove( 'agents-manager-sidebar-container--sidebar-open' );
+
+		// Only suppress admin bar pointer events during an actual sidebar-close transition.
+		if ( wasSidebarOpen ) {
+			container.classList.add( 'agents-manager-sidebar-container--closing' );
+			clearTimeout( closeSidebarTimeoutRef.current );
+			closeSidebarTimeoutRef.current = setTimeout( () => {
+				container?.classList.remove( 'agents-manager-sidebar-container--closing' );
+			}, SIDEBAR_TRANSITION_DURATION_MS );
+		}
 
 		onCloseSidebarRef.current();
 	}, [ canDock, container, isReady ] );
