@@ -388,10 +388,38 @@ const WPCheckoutCheckIcon = styled( CheckIcon )`
 `;
 
 /**
+ * For intro offers, determine the crossed-out price to display. Returns the
+ * simulated pre-discount price if it's higher than the renewal price, or the
+ * intro offer's own elevated price if the intro offer increased the price
+ * (e.g. $80 → $250 before a coupon reduces it further).
+ */
+function getIntroOfferCrossedOutPrice(
+	product: ResponseCartProduct,
+	renewalPrice: number,
+	simulatedPriceBeforeDiscounts: number
+): number | undefined {
+	if ( renewalPrice < simulatedPriceBeforeDiscounts ) {
+		return simulatedPriceBeforeDiscounts;
+	}
+
+	const introOverride = product.cost_overrides.find( ( override ) =>
+		isOverrideCodeIntroductoryOffer( override.override_code )
+	);
+	if ( introOverride && introOverride.new_subtotal_integer > introOverride.old_subtotal_integer ) {
+		return introOverride.new_subtotal_integer;
+	}
+
+	return undefined;
+}
+
+/**
  * Return two formatted prices. `actualAmountDisplay` should be the final
  * subtotal after all cost overrides are applied. `crossedOutAmountDisplay`
  * should be the price before cost overrides, but only if it's higher (some
  * cost overrides can _increase_ the price).
+ *
+ * There are also several cases where actualAmountDisplay will be the renewal
+ * price instead (see inline comments).
  *
  * `crossedOutAmountDisplay` (the amount before discounts) may also be
  * _increased_ by an amount as if the original cost of the product was 12 times
@@ -424,29 +452,14 @@ function getLineItemPriceDisplay(
 		const tosData = getTosDataForProduct( product, responseCart );
 		if ( tosData ) {
 			const renewalPrice = tosData.regular_renewal_price_integer;
-			const isDiscounted = renewalPrice < simulatedPriceBeforeDiscounts;
-
-			// Some intro offers temporarily increase the price (e.g. $80 → $250),
-			// even if other overrides (coupons) then reduce it. Detect this by
-			// checking the intro override's own before/after subtotals.
-			const introOverride = product.cost_overrides.find( ( override ) =>
-				isOverrideCodeIntroductoryOffer( override.override_code )
+			const crossedOutPrice = getIntroOfferCrossedOutPrice(
+				product,
+				renewalPrice,
+				simulatedPriceBeforeDiscounts
 			);
-			const introOfferIncreasedPrice =
-				introOverride && introOverride.new_subtotal_integer > introOverride.old_subtotal_integer;
-
-			let crossedOutAmountDisplay: string | undefined;
-			if ( isDiscounted ) {
-				crossedOutAmountDisplay = fmt( simulatedPriceBeforeDiscounts );
-			} else if ( introOfferIncreasedPrice ) {
-				// Cross out the elevated intro price so the user sees the lower
-				// renewal price as the ongoing cost.
-				crossedOutAmountDisplay = fmt( introOverride.new_subtotal_integer );
-			}
-
 			return {
 				actualAmountDisplay: fmt( renewalPrice ),
-				crossedOutAmountDisplay,
+				crossedOutAmountDisplay: crossedOutPrice ? fmt( crossedOutPrice ) : undefined,
 			};
 		}
 	}
