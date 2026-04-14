@@ -206,8 +206,7 @@ export const Header = ( {
 								'image-studio-sr-only': showTitle,
 							} ) }
 						>
-							{ __( 'Image Editor', __i18n_text_domain__ ) }{ ' ' }
-							<span className="image-studio-badge">{ __( 'Beta', __i18n_text_domain__ ) }</span>
+							{ __( 'Jetpack Image Editor', __i18n_text_domain__ ) }
 						</h2>
 					) }
 				</div>
