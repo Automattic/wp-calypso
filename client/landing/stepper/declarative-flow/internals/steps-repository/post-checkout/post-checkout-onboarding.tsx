@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_BIG_SKY, isBusiness, isPersonal, isPremium } from '@automattic/calypso-products';
 import { SiteIntent } from '@automattic/data-stores/src/onboard';
-import { isWooHostingSolutionsRef, Step } from '@automattic/onboarding';
+import { getOnboardingRefBehavior, Step } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import Loading from 'calypso/components/loading';
@@ -99,14 +99,12 @@ const PostCheckoutOnboarding: StepType< {
 		await waitForLatestSiteData();
 	};
 
-	const pluginByGoal = usePluginByGoal();
-	const hasPluginByGoal = !! pluginByGoal;
+	const goalPlugin = usePluginByGoal();
+	const hasPluginByGoal = !! goalPlugin;
 
-	// Users arriving via the Woo hosting-solutions landing page should have WooCommerce
-	// installed automatically on the new Atomic site.
 	const refParameter = useQuery().get( 'ref' );
-	const installWooCommerce = isWooHostingSolutionsRef( refParameter );
-	const pluginToInstall = installWooCommerce ? 'woocommerce' : pluginByGoal;
+	const pluginToInstall = getOnboardingRefBehavior( refParameter ).pluginToInstall ?? goalPlugin;
+	const shouldInstallPlugin = Boolean( pluginToInstall );
 
 	/**
 	 * If an externally managed theme is selected, we need to check the following:
@@ -155,7 +153,7 @@ const PostCheckoutOnboarding: StepType< {
 
 			if ( siteTransferStatusData?.isTransferring ) {
 				await waitForAtomic();
-			} else if ( hasExternalTheme || hasPluginByGoal || installWooCommerce ) {
+			} else if ( hasExternalTheme || shouldInstallPlugin ) {
 				await waitForInitiateTransfer( pluginToInstall );
 				await waitForAtomic();
 			}
@@ -178,8 +176,7 @@ const PostCheckoutOnboarding: StepType< {
 		selectedDesign,
 		isMarketplaceThemeSubscribed,
 		isExternallyManagedThemeAvailable,
-		hasPluginByGoal,
-		installWooCommerce,
+		shouldInstallPlugin,
 	] );
 
 	if ( shouldUseStepContainerV2( flow ) ) {

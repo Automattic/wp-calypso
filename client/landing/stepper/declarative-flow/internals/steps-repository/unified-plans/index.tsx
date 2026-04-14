@@ -10,7 +10,7 @@ import {
 	PLAN_UPGRADE_FLOW,
 	START_WRITING_FLOW,
 	WOO_HOSTED_PLANS_FLOW,
-	isWooHostingSolutionsRef,
+	getOnboardingRefBehavior,
 	Step,
 	useStepPersistedState,
 } from '@automattic/onboarding';
@@ -63,17 +63,19 @@ function getPlansIntent( flowName: string | null ): PlansIntent | null {
 			return 'plans-new-hosted-site';
 		case AI_SITE_BUILDER_FLOW:
 			return 'plans-ai-assembler-free-trial';
-		case ONBOARDING_FLOW:
+		case ONBOARDING_FLOW: {
 			if ( search.has( 'playground' ) ) {
 				return playgroundPlansIntent( search.get( 'playground' )! );
 			}
 			if ( search.has( 'intent' ) ) {
 				return getVisualSplitPlansIntent( search.get( 'intent' )! );
 			}
-			if ( isWooHostingSolutionsRef( search.get( 'ref' ) ) ) {
-				return 'plans-woo-hosting-solutions';
+			const refPlansIntent = getOnboardingRefBehavior( search.get( 'ref' ) ).plansIntent;
+			if ( refPlansIntent ) {
+				return refPlansIntent;
 			}
 			break;
+		}
 		case ONBOARDING_UNIFIED_FLOW:
 			return 'plans-affiliate';
 		case PLAN_UPGRADE_FLOW:
