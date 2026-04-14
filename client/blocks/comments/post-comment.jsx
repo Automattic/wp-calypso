@@ -355,6 +355,7 @@ class PostComment extends PureComponent {
 						href={ authorUrl }
 						target="_blank"
 						rel="noopener noreferrer"
+						aria-label={ translate( "Visit %(name)s's site", { args: { name: authorName } } ) }
 					>
 						<Icon icon={ external } size={ 18 } />
 					</a>
