@@ -142,4 +142,47 @@ describe( 'setSurvicateEventSuppression', () => {
 		invokeSurvicateEvent( 'testEvent' );
 		expect( invokeEvent ).toHaveBeenCalledWith( 'testEvent' );
 	} );
+
+	test( 'should call closeSurvey when suppression is enabled and _sva is available', () => {
+		const closeSurvey = jest.fn();
+		window._sva = { closeSurvey };
+
+		setSurvicateEventSuppression( true );
+
+		expect( closeSurvey ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	test( 'should not call closeSurvey when suppression is disabled', () => {
+		const closeSurvey = jest.fn();
+		window._sva = { closeSurvey };
+
+		setSurvicateEventSuppression( false );
+
+		expect( closeSurvey ).not.toHaveBeenCalled();
+	} );
+
+	test( 'should set visitor trait when _sva is available', () => {
+		const setVisitorTraits = jest.fn();
+		window._sva = { setVisitorTraits };
+
+		setSurvicateEventSuppression( true );
+		expect( setVisitorTraits ).toHaveBeenCalledWith( { support_chat_active: 'true' } );
+
+		setSurvicateEventSuppression( false );
+		expect( setVisitorTraits ).toHaveBeenCalledWith( { support_chat_active: 'false' } );
+	} );
+
+	test( 'should suppress deferred events queued before suppression was enabled', () => {
+		const invokeEvent = jest.fn();
+		window._sva = undefined;
+
+		invokeSurvicateEvent( 'testEvent' );
+
+		setSurvicateEventSuppression( true );
+
+		window._sva = { invokeEvent };
+		window.dispatchEvent( new Event( 'SurvicateReady' ) );
+
+		expect( invokeEvent ).not.toHaveBeenCalled();
+	} );
 } );
