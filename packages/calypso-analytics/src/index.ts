@@ -31,5 +31,6 @@ export {
 	recordTrainTracksInteract,
 	getNewRailcarId,
 } from './train-tracks';
+export { getWebVitalsProps } from './utils/web-vitals';
 
 export type { Railcar } from './train-tracks';

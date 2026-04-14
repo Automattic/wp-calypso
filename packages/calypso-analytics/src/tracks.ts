@@ -8,6 +8,7 @@ import { getCurrentUser, setCurrentUser } from './utils/current-user';
 import debug from './utils/debug';
 import getDoNotTrack from './utils/do-not-track';
 import getTrackingPrefs from './utils/get-tracking-prefs';
+import { getWebVitalsProps } from './utils/web-vitals';
 
 declare global {
 	interface Window {
@@ -352,6 +353,7 @@ export function getGenericSuperPropsGetter( config: ( key: string ) => string ) 
 			Object.assign( superProps, {
 				vph: window.innerHeight,
 				vpw: window.innerWidth,
+				...getWebVitalsProps(),
 			} );
 		}
 
