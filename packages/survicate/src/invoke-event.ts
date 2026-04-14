@@ -10,12 +10,6 @@ export function setSurvicateEventSuppression( suppressed: boolean ): void {
 	isSuppressed = suppressed;
 	debug( 'Survicate event suppression set to %s', suppressed );
 
-	// Set visitor trait so Survicate dashboard targeting rules can exclude active Help Center sessions.
-	if ( typeof window._sva !== 'undefined' && window._sva.setVisitorTraits ) {
-		window._sva.setVisitorTraits( { support_chat_active: suppressed ? 'true' : 'false' } );
-		debug( 'Survicate visitor trait support_chat_active set to %s', suppressed );
-	}
-
 	// If a survey is already open, close it immediately.
 	if ( suppressed && typeof window._sva !== 'undefined' && window._sva.closeSurvey ) {
 		window._sva.closeSurvey();

@@ -161,17 +161,6 @@ describe( 'setSurvicateEventSuppression', () => {
 		expect( closeSurvey ).not.toHaveBeenCalled();
 	} );
 
-	test( 'should set visitor trait when _sva is available', () => {
-		const setVisitorTraits = jest.fn();
-		window._sva = { setVisitorTraits };
-
-		setSurvicateEventSuppression( true );
-		expect( setVisitorTraits ).toHaveBeenCalledWith( { support_chat_active: 'true' } );
-
-		setSurvicateEventSuppression( false );
-		expect( setVisitorTraits ).toHaveBeenCalledWith( { support_chat_active: 'false' } );
-	} );
-
 	test( 'should suppress deferred events queued before suppression was enabled', () => {
 		const invokeEvent = jest.fn();
 		window._sva = undefined;
