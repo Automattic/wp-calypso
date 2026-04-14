@@ -69,6 +69,9 @@ function getPlansIntent( flowName: string | null ): PlansIntent | null {
 			if ( search.has( 'intent' ) ) {
 				return getVisualSplitPlansIntent( search.get( 'intent' )! );
 			}
+			if ( search.get( 'ref' ) === 'woo-hosting-solutions-flow' ) {
+				return 'plans-woo-hosted';
+			}
 			break;
 		case ONBOARDING_UNIFIED_FLOW:
 			return 'plans-affiliate';

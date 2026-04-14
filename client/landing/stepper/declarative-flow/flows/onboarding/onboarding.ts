@@ -1,5 +1,10 @@
 import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
-import { clearStepPersistedState, ONBOARDING_FLOW, SITE_SETUP_FLOW } from '@automattic/onboarding';
+import {
+	clearStepPersistedState,
+	INSTALL_WOO_ON_PLANS_FLOW,
+	ONBOARDING_FLOW,
+	SITE_SETUP_FLOW,
+} from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs } from '@wordpress/url';
@@ -76,6 +81,7 @@ const onboarding: FlowV2< typeof initialize > = {
 			[]
 		);
 		const coupon = useQuery().get( 'coupon' );
+		const refParameter = useQuery().get( 'ref' );
 
 		const { setShouldShowNotification } = usePurchasePlanNotification();
 
@@ -115,6 +121,15 @@ const onboarding: FlowV2< typeof initialize > = {
 
 				return [
 					addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), params ),
+					null,
+				];
+			}
+
+			if ( refParameter === 'woo-hosting-solutions-flow' ) {
+				return [
+					addQueryArgs( `/setup/${ INSTALL_WOO_ON_PLANS_FLOW }`, {
+						siteSlug: providedDependencies.siteSlug as string,
+					} ),
 					null,
 				];
 			}
