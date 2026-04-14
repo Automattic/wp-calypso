@@ -44,50 +44,7 @@ export default function MigrationsCommissions() {
 		refetch: fetchMigratedSites,
 	} = useFetchTaggedSitesForMigration();
 
-	// Demo sample sites for testing different statuses
-	const demoSites = useMemo(
-		() => [
-			{
-				id: 90001,
-				blog_id: 90001,
-				created_at: Math.floor( Date.now() / 1000 ) - 86400 * 10,
-				url: 'demo-rejected-site.example.com',
-				state: 'active',
-				tags: [ { name: 'migration' } ],
-				incentive_status: 'rejected',
-				rejection_reason:
-					'The site does not appear to have been migrated from the specified hosting provider.',
-			},
-			{
-				id: 90002,
-				blog_id: 90002,
-				created_at: Math.floor( Date.now() / 1000 ) - 86400 * 5,
-				url: 'demo-rejected-shop.example.com',
-				state: 'active',
-				tags: [ { name: 'migration' } ],
-				incentive_status: 'rejected',
-				rejection_reason:
-					'The site was already hosted on WordPress.com before the migration period.',
-			},
-			{
-				id: 90003,
-				blog_id: 90003,
-				created_at: Math.floor( Date.now() / 1000 ) - 86400 * 2,
-				url: 'demo-re-verification.example.com',
-				state: 'active',
-				tags: [ { name: 'migration' } ],
-				incentive_status: 'pending-re-verification',
-			},
-		],
-		[]
-	);
-
-	const allSites = useMemo(
-		() => [ ...( taggedSites ?? [] ), ...demoSites ],
-		[ taggedSites, demoSites ]
-	);
-
-	const showEmptyState = ! allSites?.length;
+	const showEmptyState = ! taggedSites?.length;
 
 	const content = useMemo( () => {
 		if ( isLoading ) {
@@ -106,9 +63,9 @@ export default function MigrationsCommissions() {
 			/>
 		) : (
 			<div className="migrations-commissions__content">
-				<MigrationsConsolidatedCommissions items={ allSites } />
+				<MigrationsConsolidatedCommissions items={ taggedSites } />
 				<MigrationsCommissionsList
-					items={ allSites }
+					items={ taggedSites }
 					fetchMigratedSites={ fetchMigratedSites }
 					migrationTags={ migrationTags }
 				/>
@@ -118,7 +75,7 @@ export default function MigrationsCommissions() {
 		isLoading,
 		showEmptyState,
 		canTagSitesForCommission,
-		allSites,
+		taggedSites,
 		fetchMigratedSites,
 		migrationTags,
 	] );

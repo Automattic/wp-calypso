@@ -1,9 +1,4 @@
-import {
-	Button,
-	TextControl,
-	TextareaControl,
-	__experimentalSpacer as Spacer,
-} from '@wordpress/components';
+import { Button, TextareaControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import A4AModal from 'calypso/a8c-for-agencies/components/a4a-modal';
@@ -93,11 +88,14 @@ export default function RequestReviewModal( {
 				</Button>
 			}
 			title={ translate( 'Request another verification' ) }
-			subtile={ translate( 'Please specify why this site needs to be verified again.' ) }
+			subtile={ translate(
+				'Please specify why {{strong}}%(siteUrl)s{{/strong}} needs to be verified again.',
+				{
+					components: { strong: <strong /> },
+					args: { siteUrl: site.url },
+				}
+			) }
 		>
-			<Spacer marginBottom={ 4 } />
-			<TextControl label={ translate( 'Site URL' ) } value={ site.url } readOnly />
-			<Spacer marginBottom={ 4 } />
 			<TextareaControl
 				label={ translate( 'Reason for re-verification' ) }
 				value={ reason }

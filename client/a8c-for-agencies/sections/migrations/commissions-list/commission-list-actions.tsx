@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -34,6 +35,10 @@ const CommissionListActions = ( { fetchMigratedSites, site, migrationTags }: Pro
 	const isRejected = useMemo( () => {
 		return site.incentive_status === 'rejected';
 	}, [ site.incentive_status ] );
+
+	const isRequestVerificationEnabled = isEnabled( 'a4a-migrations-request-verification' );
+
+	const canRequestVerification = isRequestVerificationEnabled && ( isRejected || isPendingReview );
 
 	const hasActions = isPendingReview || isRejected;
 
@@ -101,7 +106,7 @@ const CommissionListActions = ( { fetchMigratedSites, site, migrationTags }: Pro
 				onClose={ closeDropdown }
 				position="bottom left"
 			>
-				{ isRejected && (
+				{ canRequestVerification && (
 					<PopoverMenuItem
 						localizeUrl={ false }
 						onClick={ () => {
@@ -109,7 +114,9 @@ const CommissionListActions = ( { fetchMigratedSites, site, migrationTags }: Pro
 							setShowRequestReviewModal( true );
 						} }
 					>
-						{ translate( 'Request another verification' ) }
+						{ isRejected
+							? translate( 'Request another verification' )
+							: translate( 'Request verification' ) }
 					</PopoverMenuItem>
 				) }
 				{ isPendingReview && (

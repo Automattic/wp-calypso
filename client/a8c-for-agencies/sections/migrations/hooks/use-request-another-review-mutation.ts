@@ -20,7 +20,7 @@ function mutationRequestAnotherReview( {
 
 	return wpcom.req.post( {
 		apiNamespace: 'wpcom/v2',
-		path: `/agency/${ agencyId }/sites/${ siteId }/request-review`,
+		path: `/agency/${ agencyId }/sites/${ siteId }/request-migration-reverification`,
 		body: {
 			reason,
 		},
