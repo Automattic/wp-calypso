@@ -4,6 +4,7 @@ import {
 	INSTALL_WOO_ON_PLANS_FLOW,
 	ONBOARDING_FLOW,
 	SITE_SETUP_FLOW,
+	WOO_HOSTING_SOLUTIONS_REF,
 } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -125,7 +126,7 @@ const onboarding: FlowV2< typeof initialize > = {
 				];
 			}
 
-			if ( refParameter === 'woo-hosting-solutions-flow' ) {
+			if ( refParameter === WOO_HOSTING_SOLUTIONS_REF ) {
 				return [
 					addQueryArgs( `/setup/${ INSTALL_WOO_ON_PLANS_FLOW }`, {
 						siteSlug: providedDependencies.siteSlug as string,

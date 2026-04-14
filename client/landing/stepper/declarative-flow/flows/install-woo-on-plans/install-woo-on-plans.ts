@@ -1,6 +1,5 @@
 import { INSTALL_WOO_ON_PLANS_FLOW } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
-import { useEffect } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
@@ -25,14 +24,12 @@ const installWooOnPlans: Flow = {
 		const { setBundledPluginSlug } = useDispatch( SITE_STORE );
 		const dispatch = useReduxDispatch();
 
-		// BUNDLE_TRANSFER reads the software set via useSitePluginSlug(), which reads
-		// getBundledPluginSlug(siteSlug) from SITE_STORE. Prime it so the step installs
-		// WooCommerce once the atomic transfer completes.
-		useEffect( () => {
-			if ( siteSlug ) {
-				setBundledPluginSlug( siteSlug, WOO_ON_PLANS_SOFTWARE_SET );
-			}
-		}, [ setBundledPluginSlug, siteSlug ] );
+		// BUNDLE_TRANSFER reads the software set via useSitePluginSlug() →
+		// SITE_STORE.getBundledPluginSlug(siteSlug). Prime it here so the step
+		// installs WooCommerce once the atomic transfer completes.
+		if ( siteSlug ) {
+			setBundledPluginSlug( siteSlug, WOO_ON_PLANS_SOFTWARE_SET );
+		}
 
 		const exitFlow = ( to: string ) => {
 			window.location.assign( to );

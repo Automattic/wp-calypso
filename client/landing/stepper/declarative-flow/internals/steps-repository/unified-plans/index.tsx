@@ -10,6 +10,7 @@ import {
 	PLAN_UPGRADE_FLOW,
 	START_WRITING_FLOW,
 	WOO_HOSTED_PLANS_FLOW,
+	WOO_HOSTING_SOLUTIONS_REF,
 	Step,
 	useStepPersistedState,
 } from '@automattic/onboarding';
@@ -69,7 +70,7 @@ function getPlansIntent( flowName: string | null ): PlansIntent | null {
 			if ( search.has( 'intent' ) ) {
 				return getVisualSplitPlansIntent( search.get( 'intent' )! );
 			}
-			if ( search.get( 'ref' ) === 'woo-hosting-solutions-flow' ) {
+			if ( search.get( 'ref' ) === WOO_HOSTING_SOLUTIONS_REF ) {
 				return 'plans-woo-hosting-solutions';
 			}
 			break;
