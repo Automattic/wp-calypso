@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { loadScript } from '@automattic/load-script';
 import { BLACKBOX_CHALLENGE_ROOT_ID } from 'calypso/blocks/login/utils/blackbox-challenge-root-id';
 
 const BLACKBOX_HOST_MARKER = 'blackbox-api.wp.com';
@@ -13,14 +14,6 @@ function dispatchBlackboxChallengeStart() {
 
 function dispatchBlackboxChallengeComplete() {
 	window.dispatchEvent( new CustomEvent( 'blackbox:challenge-complete' ) );
-}
-
-function getCspNonceForScripts(): string | undefined {
-	const el = document.querySelector( 'script[nonce]' );
-	if ( el instanceof HTMLScriptElement && el.nonce ) {
-		return el.nonce;
-	}
-	return el?.getAttribute( 'nonce' ) ?? undefined;
 }
 
 /**
@@ -106,7 +99,7 @@ function tryRegisterBlackboxRuntimeCallbacks() {
  * Injects Blackbox-js after the login form mount so the library does not run at page boot.
  * The challenge container node must already be in the DOM before the script executes.
  */
-export function ensureBlackboxLoginScript(): Promise< void > {
+export function ensureBlackboxLoginScript( inlineScriptNonce?: string ): Promise< void > {
 	if ( typeof document === 'undefined' ) {
 		return Promise.resolve();
 	}
@@ -150,32 +143,38 @@ export function ensureBlackboxLoginScript(): Promise< void > {
 			return;
 		}
 
-		const script = document.createElement( 'script' );
-		script.src = config( 'blackbox_url' );
-		const nonce = getCspNonceForScripts();
-		if ( nonce ) {
-			script.nonce = nonce;
-		}
-		script.setAttribute( 'data-apikey', config( 'blackbox_api_key' ) );
-		script.setAttribute( 'data-challenge-container', `#${ BLACKBOX_CHALLENGE_ROOT_ID }` );
-		script.setAttribute( 'data-on-challenge-start', BLACKBOX_CHALLENGE_START_HANDLER );
-		script.setAttribute( 'data-on-challenge-complete', BLACKBOX_CHALLENGE_COMPLETE_HANDLER );
-
-		script.addEventListener(
-			'load',
-			() => {
-				tryRegisterBlackboxRuntimeCallbacks();
-				finish();
-			},
-			{ once: true }
-		);
-		script.addEventListener( 'error', finish, { once: true } );
-		setTimeout( () => {
+		let isFinished = false;
+		const finishOnce = () => {
+			if ( isFinished ) {
+				return;
+			}
+			isFinished = true;
 			tryRegisterBlackboxRuntimeCallbacks();
 			finish();
-		}, 10000 );
+		};
+		const timeoutId = setTimeout( finishOnce, 10000 );
 
-		document.body.appendChild( script );
+		const scriptAttributes: Record< string, string > = {
+			'data-apikey': config( 'blackbox_api_key' ),
+			'data-challenge-container': `#${ BLACKBOX_CHALLENGE_ROOT_ID }`,
+			'data-on-challenge-start': BLACKBOX_CHALLENGE_START_HANDLER,
+			'data-on-challenge-complete': BLACKBOX_CHALLENGE_COMPLETE_HANDLER,
+		};
+
+		if ( inlineScriptNonce ) {
+			scriptAttributes.nonce = inlineScriptNonce;
+		}
+
+		loadScript( config( 'blackbox_url' ), undefined, scriptAttributes ).then(
+			() => {
+				clearTimeout( timeoutId );
+				finishOnce();
+			},
+			() => {
+				clearTimeout( timeoutId );
+				finishOnce();
+			}
+		);
 	} );
 
 	return loadPromise;

@@ -1,4 +1,5 @@
 import { ensureBlackboxLoginScript } from 'calypso/blocks/login/utils/ensure-blackbox-login-script';
+import { getInlineScriptNonce } from 'calypso/blocks/login/utils/get-inline-script-nonce';
 
 /**
  * Retrieve a Blackbox bot-detection session ID, if the library is loaded.
@@ -9,7 +10,7 @@ import { ensureBlackboxLoginScript } from 'calypso/blocks/login/utils/ensure-bla
  * @returns {Promise<string|undefined>} Session ID, or undefined on failure.
  */
 export async function getBlackboxSessionId() {
-	await ensureBlackboxLoginScript();
+	await ensureBlackboxLoginScript( getInlineScriptNonce() );
 
 	if ( ! window.Blackbox?.collect ) {
 		return undefined;
