@@ -241,9 +241,11 @@ export function IntroOfferBillingInterval( { product }: { product: ResponseCartP
 function LineItemCostOverride( {
 	costOverride,
 	product,
+	shouldShowDiscount,
 }: {
 	costOverride: LineItemCostOverrideForDisplay;
 	product: ResponseCartProduct;
+	shouldShowDiscount: boolean;
 } ) {
 	const isPriceIncrease = doesIntroductoryOfferHavePriceIncrease( product );
 	if ( isPriceIncrease ) {
@@ -253,11 +255,6 @@ function LineItemCostOverride( {
 			</div>
 		);
 	}
-
-	// We only show the discount amount for introductory offers.
-	const shouldShowDiscount = product.cost_overrides.some( ( override ) =>
-		isOverrideCodeIntroductoryOffer( override.override_code )
-	);
 
 	return (
 		<div className="cost-overrides-list-item" key={ costOverride.humanReadableReason }>
@@ -280,9 +277,11 @@ function LineItemCostOverride( {
 export function LineItemCostOverrides( {
 	costOverridesList,
 	product,
+	shouldShowDiscount,
 }: {
 	costOverridesList: LineItemCostOverrideForDisplay[];
 	product: ResponseCartProduct;
+	shouldShowDiscount: boolean;
 } ) {
 	return (
 		<CostOverridesListStyle>
@@ -290,6 +289,7 @@ export function LineItemCostOverrides( {
 				<LineItemCostOverride
 					product={ product }
 					costOverride={ costOverride }
+					shouldShowDiscount={ shouldShowDiscount }
 					key={ costOverride.humanReadableReason }
 				/>
 			) ) }
@@ -451,6 +451,17 @@ function getLineItemPriceDisplay(
 		}
 	}
 
+	// When the simulated price comes from the monthly equivalent, show the
+	// product's own original cost as the actual amount and the monthly-based
+	// simulated price as the crossed-out number (if greater).
+	if ( simulatedPriceBeforeDiscounts !== product.item_original_subtotal_integer ) {
+		const isDiscounted = product.item_original_subtotal_integer < simulatedPriceBeforeDiscounts;
+		return {
+			actualAmountDisplay: fmt( product.item_original_subtotal_integer ),
+			crossedOutAmountDisplay: isDiscounted ? fmt( simulatedPriceBeforeDiscounts ) : undefined,
+		};
+	}
+
 	// Show the actual amount as the amount the user will pay and include the
 	// amount before cost overrides as the crossed-out number if it is greater.
 	const isDiscounted = product.item_subtotal_integer < simulatedPriceBeforeDiscounts;
@@ -479,6 +490,15 @@ function SingleProductAndCostOverridesList( {
 		monthlyPrices
 	);
 
+	// Show the discount amount when the crossed-out price is simulated from the
+	// monthly equivalent, or when there's an introductory offer.
+	const shouldShowDiscount =
+		getSimulatedCostBeforeDiscounts( product, monthlyPrices ) !==
+			product.item_original_subtotal_integer ||
+		product.cost_overrides.some( ( override ) =>
+			isOverrideCodeIntroductoryOffer( override.override_code )
+		);
+
 	return (
 		<SimplifiedSingleProductAndCostOverridesListWrapper className="cost-overrides-list-product-wrapper">
 			<WPCheckoutCheckIcon />
@@ -489,7 +509,11 @@ function SingleProductAndCostOverridesList( {
 					crossedOutAmount={ crossedOutAmountDisplay }
 				/>
 			</ProductTitleAreaForCostOverridesList>
-			<LineItemCostOverrides product={ product } costOverridesList={ costOverridesList } />
+			<LineItemCostOverrides
+				product={ product }
+				costOverridesList={ costOverridesList }
+				shouldShowDiscount={ shouldShowDiscount }
+			/>
 		</SimplifiedSingleProductAndCostOverridesListWrapper>
 	);
 }
