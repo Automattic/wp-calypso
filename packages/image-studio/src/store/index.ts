@@ -349,7 +349,7 @@ const initialState: ImageStudioState = {
 	navigationCurrentPage: 1,
 	navigationHasMorePages: true,
 	isSidebarOpen: getSidebarIsOpenStateFromLocalStorage(),
-	selectedStyle: '',
+	selectedStyle: null,
 	selectedAspectRatio: null,
 	lastAgentMessageId: null,
 };

@@ -30,8 +30,7 @@ interface StylePickerProps {
 }
 
 export const STYLE_OPTIONS = [
-	{ label: __( 'Select style', __i18n_text_domain__ ), value: 'none', preview: null },
-	{ label: __( 'None', __i18n_text_domain__ ), value: '', preview: nonePreview },
+	{ label: __( 'None', __i18n_text_domain__ ), value: 'none', preview: nonePreview },
 	{
 		label: __( 'Vivid', __i18n_text_domain__ ),
 		value: 'vivid',
@@ -125,7 +124,7 @@ export function StylePicker( { disabled = false, mode }: StylePickerProps ) {
 	const handleStyleSelect = ( value: string ) => {
 		setSelectedStyle( value );
 		// Track style selection
-		trackImageStudioStyleSelected( { style: value || 'none', mode } );
+		trackImageStudioStyleSelected( { style: value, mode } );
 		// Close dropdown by triggering a mousedown event outside the InputToolbar container
 		// We use requestAnimationFrame to ensure the state update completes first
 		requestAnimationFrame( () => {
@@ -141,7 +140,7 @@ export function StylePicker( { disabled = false, mode }: StylePickerProps ) {
 
 	const selectedLabel =
 		STYLE_OPTIONS.find( ( opt ) => opt.value === selectedStyle )?.label ??
-		__( 'Styles', __i18n_text_domain__ );
+		__( 'Style', __i18n_text_domain__ );
 
 	return (
 		<AgentUI.InputToolbar
@@ -151,7 +150,7 @@ export function StylePicker( { disabled = false, mode }: StylePickerProps ) {
 			disabled={ disabled }
 		>
 			<div className="image-studio-input-toolbar-dialog-grid">
-				{ STYLE_OPTIONS.filter( ( opt ) => opt.preview ).map( ( option ) => (
+				{ STYLE_OPTIONS.map( ( option ) => (
 					<button
 						key={ option.value }
 						type="button"
