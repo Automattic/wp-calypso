@@ -1,7 +1,8 @@
 import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import {
 	clearStepPersistedState,
-	getOnboardingRefBehavior,
+	getWooAdminDestination,
+	isWooHostingSolutionsRef,
 	ONBOARDING_FLOW,
 	SITE_SETUP_FLOW,
 } from '@automattic/onboarding';
@@ -125,10 +126,8 @@ const onboarding: FlowV2< typeof initialize > = {
 				];
 			}
 
-			const refPostCheckoutDestination =
-				getOnboardingRefBehavior( refParameter ).postCheckoutDestination;
-			if ( refPostCheckoutDestination ) {
-				return [ refPostCheckoutDestination( providedDependencies.siteSlug as string ), null ];
+			if ( isWooHostingSolutionsRef( refParameter ) ) {
+				return [ getWooAdminDestination( providedDependencies.siteSlug as string ), null ];
 			}
 
 			return getOnboardingPostCheckoutDestination( {

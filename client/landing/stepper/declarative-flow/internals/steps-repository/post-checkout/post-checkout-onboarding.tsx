@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_BIG_SKY, isBusiness, isPersonal, isPremium } from '@automattic/calypso-products';
 import { SiteIntent } from '@automattic/data-stores/src/onboard';
-import { getOnboardingRefBehavior, Step } from '@automattic/onboarding';
+import { isWooHostingSolutionsRef, Step } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import Loading from 'calypso/components/loading';
@@ -103,7 +103,7 @@ const PostCheckoutOnboarding: StepType< {
 	const hasPluginByGoal = !! goalPlugin;
 
 	const refParameter = useQuery().get( 'ref' );
-	const pluginToInstall = getOnboardingRefBehavior( refParameter ).pluginToInstall ?? goalPlugin;
+	const pluginToInstall = isWooHostingSolutionsRef( refParameter ) ? 'woocommerce' : goalPlugin;
 	const shouldInstallPlugin = Boolean( pluginToInstall );
 
 	/**
