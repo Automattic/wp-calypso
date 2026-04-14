@@ -38,11 +38,6 @@ export function getAddNewPaymentMethodPath(): string {
 	return addNewPaymentMethod;
 }
 
-export function getTemporarySiteType( purchase: Purchase ): string | null {
-	const { productType } = purchase;
-	return purchase.isAttachedToHoldingSite ? productType : null;
-}
-
 export function isAkismetHoldingSitePurchase( purchase: Purchase ): boolean {
 	const { productType } = purchase;
 	return purchase.isAttachedToHoldingSite && productType === 'akismet';
