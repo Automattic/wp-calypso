@@ -2,15 +2,17 @@
  * @jest-environment jsdom
  */
 
-import { invokeSurvicateEvent } from '../invoke-event';
+import { invokeSurvicateEvent, setSurvicateEventSuppression } from '../invoke-event';
 
 describe( 'invokeSurvicateEvent', () => {
 	beforeEach( () => {
 		window._sva = undefined;
+		setSurvicateEventSuppression( false );
 	} );
 
 	afterEach( () => {
 		window._sva = undefined;
+		setSurvicateEventSuppression( false );
 	} );
 
 	test( 'should call invokeEvent immediately when window._sva.invokeEvent exists', () => {
@@ -94,5 +96,50 @@ describe( 'invokeSurvicateEvent', () => {
 
 		window._sva = { invokeEvent: jest.fn() };
 		expect( () => invokeSurvicateEvent( 'testEvent' ) ).not.toThrow();
+	} );
+} );
+
+describe( 'setSurvicateEventSuppression', () => {
+	beforeEach( () => {
+		window._sva = undefined;
+		setSurvicateEventSuppression( false );
+	} );
+
+	afterEach( () => {
+		window._sva = undefined;
+		setSurvicateEventSuppression( false );
+	} );
+
+	test( 'should prevent invokeSurvicateEvent from firing when suppressed', () => {
+		const invokeEvent = jest.fn();
+		window._sva = { invokeEvent };
+
+		setSurvicateEventSuppression( true );
+		invokeSurvicateEvent( 'testEvent' );
+
+		expect( invokeEvent ).not.toHaveBeenCalled();
+	} );
+
+	test( 'should return a no-op cleanup when suppressed', () => {
+		window._sva = { invokeEvent: jest.fn() };
+
+		setSurvicateEventSuppression( true );
+		const cleanup = invokeSurvicateEvent( 'testEvent' );
+
+		expect( typeof cleanup ).toBe( 'function' );
+		expect( () => cleanup() ).not.toThrow();
+	} );
+
+	test( 'should allow events again after suppression is turned off', () => {
+		const invokeEvent = jest.fn();
+		window._sva = { invokeEvent };
+
+		setSurvicateEventSuppression( true );
+		invokeSurvicateEvent( 'testEvent' );
+		expect( invokeEvent ).not.toHaveBeenCalled();
+
+		setSurvicateEventSuppression( false );
+		invokeSurvicateEvent( 'testEvent' );
+		expect( invokeEvent ).toHaveBeenCalledWith( 'testEvent' );
 	} );
 } );
