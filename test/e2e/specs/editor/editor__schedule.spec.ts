@@ -78,7 +78,11 @@ test.describe(
 
 			await test.step( 'Then I can view the post as the author', async () => {
 				const tmpPage = await page.context().newPage();
-				await tmpPage.goto( postURL!.href );
+				// wp-admin/wpcom published post pages keep network activity
+				// pending (Jetpack iframes, stats beacons) long after the
+				// document is interactive, so the `load` event often never
+				// fires within a reasonable budget.
+				await tmpPage.goto( postURL!.href, { waitUntil: 'domcontentloaded' } );
 				await new PublishedPostPage( tmpPage ).validateTextInPost( postContent );
 				await tmpPage.close();
 			} );
@@ -87,7 +91,7 @@ test.describe(
 				const browser = page.context().browser();
 				const incognito = await browser!.newContext();
 				const tmpPage = await incognito.newPage();
-				await tmpPage.goto( postURL!.href );
+				await tmpPage.goto( postURL!.href, { waitUntil: 'domcontentloaded' } );
 				await tmpPage.locator( 'body.error404' ).waitFor();
 				await tmpPage.close();
 				await incognito.close();

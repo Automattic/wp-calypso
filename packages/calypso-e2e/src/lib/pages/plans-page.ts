@@ -101,6 +101,11 @@ export class PlansPage {
 		const combobox = this.page.locator( selectors.addOnCombobox( plan ) );
 
 		const comboboxSelect = combobox.locator( selectors.addOnComboboxButton );
+		// Callers resolve on API responses (e.g. `/users/new?`), which can
+		// return before the React step transition has rendered the plans grid.
+		// Wait for the combobox itself so the action timeout is spent on the
+		// click, not on the preceding navigation.
+		await comboboxSelect.first().waitFor( { state: 'visible', timeout: 30_000 } );
 		await comboboxSelect.first().click();
 
 		const comboboxOption = combobox.locator(
