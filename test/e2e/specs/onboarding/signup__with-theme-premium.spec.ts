@@ -38,7 +38,7 @@ test.describe(
 		let themeSlug: string | null = null;
 
 		test.afterAll( async () => {
-			if ( ! newUserDetails ) {
+			if ( ! newUserDetails || ! newUserDetails.body.bearer_token ) {
 				return;
 			}
 			const restAPIClient = new RestAPIClient(
@@ -76,6 +76,12 @@ test.describe(
 			await test.step( 'Sign up as new user', async () => {
 				const userSignupPage = new UserSignupPage( page );
 				newUserDetails = await userSignupPage.signupSocialFirstWithEmail( testUser.email );
+
+				if ( ! newUserDetails.body.bearer_token ) {
+					throw new Error(
+						`Signup response missing bearer_token for ${ testUser.email } — account was likely not created (possible Bkismet rejection)`
+					);
+				}
 			} );
 
 			await test.step( 'Skip domain selection', async () => {
