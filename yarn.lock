@@ -1399,6 +1399,7 @@ __metadata:
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/odie-client": "workspace:^"
     "@automattic/support-articles": "workspace:^"
+    "@automattic/survicate": "workspace:^"
     "@automattic/viewport": "workspace:^"
     "@automattic/viewport-react": "workspace:^"
     "@automattic/zendesk-client": "workspace:^"
