@@ -160,4 +160,29 @@ describe( 'resolveFillWidths', () => {
 		const result = resolveFillWidths( keys( items ), makeMap( items ), 6 );
 		expect( result.get( 'fill' ) ).toBe( 6 );
 	} );
+
+	it( 'every item gets 1 column when maxColumns is 1', () => {
+		const items: GridLayoutItem[] = [
+			{ key: 'a', width: 3 },
+			{ key: 'fill', fillWidth: true },
+			{ key: 'b', width: 2 },
+		];
+		const result = resolveFillWidths( keys( items ), makeMap( items ), 1 );
+		expect( result.get( 'fill' ) ).toBe( 1 );
+	} );
+
+	it( 'returns empty map for an empty layout', () => {
+		const result = resolveFillWidths( [], new Map(), 6 );
+		expect( result.size ).toBe( 0 );
+	} );
+
+	it( 'fill item with explicit width still gets resolved fill span', () => {
+		const items: GridLayoutItem[] = [
+			{ key: 'sidebar', width: 1 },
+			{ key: 'fill', fillWidth: true, width: 2 },
+		];
+		// fillWidth takes precedence — should resolve to 5, not 2
+		const result = resolveFillWidths( keys( items ), makeMap( items ), 6 );
+		expect( result.get( 'fill' ) ).toBe( 5 );
+	} );
 } );

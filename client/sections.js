@@ -478,6 +478,13 @@ const sections = [
 	},
 	{
 		name: 'reader',
+		paths: [ '/read/saved' ],
+		module: 'calypso/reader/saved-stream',
+		group: 'reader',
+		trackLoadPerformance: true,
+	},
+	{
+		name: 'reader',
 		paths: [
 			'/reader/search',
 			'/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/reader/search',

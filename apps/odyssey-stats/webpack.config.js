@@ -186,10 +186,6 @@ module.exports = {
 			path.resolve( __dirname, 'src/lib/config-api' )
 		),
 		new webpack.NormalModuleReplacementPlugin(
-			/^calypso\/components\/jetpack-colophon$/,
-			'calypso/components/jetpack/jetpack-footer'
-		),
-		new webpack.NormalModuleReplacementPlugin(
 			/^calypso\/components\/formatted-header$/,
 			( resource ) => {
 				// Only replace for the navigation-header context

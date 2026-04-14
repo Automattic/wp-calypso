@@ -66,6 +66,7 @@ export interface Purchase {
 	isLocked: boolean;
 	isRechargeable: boolean;
 	isRefundable: boolean;
+	isWithinInitialRefundWindow: boolean;
 	isRenewable: boolean;
 	isRenewal: boolean;
 	isWooExpressTrial: boolean;
@@ -219,6 +220,7 @@ export interface RefundOptions {
 
 export interface RawPurchaseIntroductoryOffer {
 	cost_per_interval: number;
+	cost_per_interval_integer: number;
 	end_date: string;
 	interval_count: number;
 	interval_unit: string;
@@ -232,6 +234,7 @@ export interface RawPurchaseIntroductoryOffer {
 
 export interface PurchaseIntroductoryOffer {
 	costPerInterval: number;
+	costPerIntervalInteger: number;
 	endDate: string;
 	intervalCount: number;
 	intervalUnit: string;

@@ -1,9 +1,17 @@
-import languages from '@automattic/languages';
-
-export const availableLanguages = languages.reduce( ( acc: Record< string, string >, lang ) => {
-	acc[ lang.langSlug ] = lang.name;
-	return acc;
-}, {} );
+export const availableLanguages: Record< string, string > = {
+	en: 'English',
+	es: 'Spanish',
+	fr: 'French',
+	de: 'German',
+	pt: 'Portuguese',
+	it: 'Italian',
+	nl: 'Dutch',
+	ja: 'Japanese',
+	zh: 'Chinese',
+	ko: 'Korean',
+	ar: 'Arabic',
+	hi: 'Hindi',
+};
 
 export function findIsoCodeByLanguage( language: string ) {
 	for ( const [ key, value ] of Object.entries( availableLanguages ) ) {

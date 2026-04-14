@@ -13,6 +13,7 @@ export enum SubscribersFilterBy {
 	WPCOM = 'wpcom',
 	Free = 'free',
 	Paid = 'paid',
+	Comp = 'comp',
 	ReaderSubscriber = 'reader_subscriber',
 	UnconfirmedSubscriber = 'unconfirmed_subscriber',
 	EmailSubscriber = 'email_subscriber',

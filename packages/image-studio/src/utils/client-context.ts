@@ -11,6 +11,7 @@ import type { BlockEditorSelectors, CoreDataSelectors, WPBlock } from '../types/
 
 export interface ImageStudioMetadata {
 	id?: number;
+	url?: string;
 	title?: string;
 	alt?: string;
 	width?: number;
@@ -229,6 +230,7 @@ function detectImageEntity(): ImageStudioData | null {
 		if ( attachment ) {
 			imageStudio.metadata = {
 				id: attachment.id,
+				url: attachment.source_url,
 				title: getRenderedText( attachment.title ),
 				alt: attachment.alt_text,
 				width: attachment.media_details?.width,

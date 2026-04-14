@@ -14,14 +14,20 @@ import MenuDivider from '../../components/menu-divider';
 import { hasStagingSite } from '../../utils/site-staging-site';
 import { isSiteMigrationInProgress } from '../../utils/site-status';
 import { canManageSite, canSwitchEnvironment } from '../features';
+import SiteLaunchCelebrationModal from '../site-launch-celebration-modal';
 import SiteMenu from '../site-menu';
 import EnvironmentSwitcher from './environment-switcher';
+import type { SiteSwitcherProps } from '../site-switcher/types';
 
 function Site() {
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site, isError, error } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { components } = useAppContext();
-	const SiteSwitcher = useMemo( () => lazy( components.siteSwitcher ), [ components ] );
+	const SiteSwitcher = useMemo(
+		() =>
+			lazy( components.siteSwitcher ) as React.LazyExoticComponent< React.FC< SiteSwitcherProps > >,
+		[ components ]
+	);
 
 	if ( isError ) {
 		throw error;
@@ -38,7 +44,7 @@ function Site() {
 				<HeaderBar>
 					<HStack spacing={ 3 }>
 						<HeaderBar.Title>
-							<SiteSwitcher />
+							<SiteSwitcher site={ site } />
 							{ canSwitchEnvironment( site ) && (
 								<>
 									<MenuDivider />
@@ -57,6 +63,7 @@ function Site() {
 					type="error"
 					message={ __( 'You don’t have permission to view the requested page.' ) }
 				/>
+				<SiteLaunchCelebrationModal site={ site } />
 				<Outlet />
 			</Suspense>
 		</Suspense>

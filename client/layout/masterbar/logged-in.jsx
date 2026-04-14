@@ -1,11 +1,10 @@
 import config from '@automattic/calypso-config';
 import { isEcommercePlan } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
+import { Gridicon } from '@automattic/components';
 import { Badge } from '@automattic/ui';
-import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _x, sprintf } from '@wordpress/i18n';
-import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { parse } from 'qs';
 import { Component } from 'react';
@@ -13,7 +12,7 @@ import { connect } from 'react-redux';
 import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
 import AsyncLoad from 'calypso/components/async-load';
 import Gravatar from 'calypso/components/gravatar';
-import { dashboardLink } from 'calypso/dashboard/utils/link';
+import { dashboardLink, wpcomLink } from 'calypso/dashboard/utils/link';
 import wpcom from 'calypso/lib/wp';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { preload } from 'calypso/sections-helper';
@@ -29,7 +28,6 @@ import { getPreference } from 'calypso/state/preferences/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
-import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import getSiteMigrationStatus from 'calypso/state/selectors/get-site-migration-status';
 import hasGravatarDomainQueryParam from 'calypso/state/selectors/has-gravatar-domain-query-param';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
@@ -41,7 +39,6 @@ import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import getIsUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { updateSiteMigrationMeta } from 'calypso/state/sites/actions';
-import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
 import { isTrialSite } from 'calypso/state/sites/plans/selectors';
 import {
 	getSiteSlug,
@@ -60,9 +57,12 @@ import isSimpleSite from 'calypso/state/sites/selectors/is-simple-site';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { activateNextLayoutFocus, setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
-import { getMostRecentlySelectedSiteId, getSectionGroup } from 'calypso/state/ui/selectors';
+import { getSectionGroup } from 'calypso/state/ui/selectors';
 import Item from './item';
 import Masterbar from './masterbar';
+import { AgentsManagerIcon } from './masterbar-agents-manager/agents-manager-icon';
+import { HelpCenterIcon } from './masterbar-help-center/help-center-icon';
+import { MasterbarLaunchButton } from './masterbar-launch-button';
 import Notifications from './masterbar-notifications/notifications-button';
 
 class MasterbarLoggedIn extends Component {
@@ -84,6 +84,8 @@ class MasterbarLoggedIn extends Component {
 		useUnifiedAgent: PropTypes.bool,
 	};
 
+	state = { mounted: false };
+
 	handleLayoutFocus = ( currentSection ) => {
 		if ( currentSection !== this.props.section ) {
 			// When current section is not focused then open the sidebar.
@@ -97,6 +99,12 @@ class MasterbarLoggedIn extends Component {
 	};
 
 	componentDidMount() {
+		// We really do want to re-render after mounting. When the masterbar is rendered on the server we
+		// need the first client-side render to match the server-rendered elements. And then we can
+		// kick off another render with client-side-only features (like the async loaded help menu).
+		// eslint-disable-next-line react/no-did-mount-set-state
+		this.setState( { mounted: true } );
+
 		// Give a chance to direct URLs to open the sidebar on page load ( eg by clicking 'me' in wp-admin ).
 		const qryString = parse( document.location.search.replace( /^\?/, '' ) );
 		if ( qryString?.openSidebar === 'true' ) {
@@ -610,30 +618,7 @@ class MasterbarLoggedIn extends Component {
 			return null;
 		}
 
-		return (
-			<Item
-				as={ Button }
-				variant="primary"
-				// Keep the Launch button always in blueberry (default scheme: modern) like in wp-admin.
-				className={ clsx( 'masterbar__item-launch-site', 'color-scheme', 'is-global' ) }
-				icon={
-					<svg viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-						<path
-							fillRule="evenodd"
-							clipRule="evenodd"
-							d="M10.6242 9.74354L7.62419 12.1261V13.2995C7.62419 13.4418 7.77653 13.5322 7.90147 13.4641L10.5265 12.0322C10.5867 11.9994 10.6242 11.9363 10.6242 11.8676V9.74354ZM6.49919 12.0875L3.91203 9.50037H2.7001C1.70383 9.50037 1.07079 8.43399 1.54786 7.55937L2.97968 4.93437C3.20967 4.51272 3.65161 4.25036 4.13191 4.25036H7.17569C9.1325 2.16798 11.3176 0.754637 14.1427 0.531305C14.9004 0.471402 15.5282 1.09911 15.4682 1.85687C15.2449 4.68199 13.8316 6.86706 11.7492 8.82386V11.8676C11.7492 12.3479 11.4868 12.7899 11.0652 13.0199L8.44018 14.4517C7.56557 14.9288 6.49919 14.2957 6.49919 13.2995V12.0875ZM6.25602 5.37536H4.13191C4.0633 5.37536 4.00017 5.41284 3.96731 5.47308L2.53549 8.09808C2.46734 8.22303 2.55777 8.37536 2.7001 8.37536H3.87344L6.25602 5.37536Z"
-						/>
-						<path d="M0.498047 13.3962C0.498047 12.2341 1.44011 11.2921 2.60221 11.2921C3.76431 11.2921 4.70638 12.2341 4.70638 13.3962C4.70638 14.5583 3.76431 15.5004 2.60221 15.5004H1.06055C0.749887 15.5004 0.498047 15.2486 0.498047 14.9379V13.3962Z" />
-					</svg>
-				}
-				onClick={ () => {
-					this.props.recordTracksEvent( 'calypso_masterbar_launch_site' );
-					this.props.launchSiteOrRedirectToLaunchSignupFlow( siteId );
-				} }
-			>
-				{ __( 'Launch site' ) }
-			</Item>
-		);
+		return <MasterbarLaunchButton siteId={ siteId } />;
 	}
 
 	renderProfileMenu() {
@@ -676,7 +661,12 @@ class MasterbarLoggedIn extends Component {
 				label: (
 					<span className="button wpcom-button">
 						{ createInterpolateElement( __( 'My <wpcomIcon /> WordPress.com Account' ), {
-							wpcomIcon: this.wordpressIcon(),
+							wpcomIcon:
+								typeof this.wordpressIcon() !== 'string' ? (
+									this.wordpressIcon()
+								) : (
+									<Gridicon icon={ this.wordpressIcon() } size={ 24 } />
+								),
 						} ) }
 					</span>
 				),
@@ -697,13 +687,15 @@ class MasterbarLoggedIn extends Component {
 				subItems={ [ profileActions, wpcomActions ] }
 				hasGlobalBorderStyle
 			>
-				<span className="masterbar__item-howdy-howdy">
-					{ sprintf(
-						/* translators: %s is the user's display name */
-						__( 'Howdy, %s' ),
-						user.display_name
-					) }
-				</span>
+				{ user.display_name && (
+					<span className="masterbar__item-howdy-howdy">
+						{ sprintf(
+							/* translators: %s is the user's display name */
+							__( 'Howdy, %s' ),
+							user.display_name
+						) }
+					</span>
+				) }
 				<Gravatar
 					className="masterbar__item-howdy-gravatar"
 					role="presentation"
@@ -719,7 +711,7 @@ class MasterbarLoggedIn extends Component {
 			<Item
 				tipTarget="reader"
 				className="masterbar__reader"
-				url="/reader"
+				url={ wpcomLink( '/reader' ) }
 				icon={ <ReaderIcon className="masterbar__menu-icon masterbar_svg-reader" /> }
 				onClick={ this.clickReader }
 				isActive={ this.isActive( 'reader', true ) }
@@ -782,14 +774,38 @@ class MasterbarLoggedIn extends Component {
 		const { siteId, useUnifiedAgent } = this.props;
 
 		if ( useUnifiedAgent ) {
+			const placeholder = (
+				<Item
+					className="masterbar__item-agents-manager"
+					tooltip={ __( 'Help' ) }
+					icon={ <AgentsManagerIcon hasUnread={ false } /> }
+				/>
+			);
+
+			if ( ! this.state.mounted ) {
+				return placeholder;
+			}
+
 			return (
 				<AsyncLoad
 					require="./masterbar-agents-manager"
 					siteId={ siteId }
 					tooltip={ __( 'Help' ) }
-					placeholder={ null }
+					placeholder={ placeholder }
 				/>
 			);
+		}
+
+		const placeholder = (
+			<Item
+				className="masterbar__item-help"
+				tooltip={ __( 'Help' ) }
+				icon={ <HelpCenterIcon hasUnread={ false } /> }
+			/>
+		);
+
+		if ( ! this.state.mounted ) {
+			return placeholder;
 		}
 
 		return (
@@ -797,7 +813,7 @@ class MasterbarLoggedIn extends Component {
 				require="./masterbar-help-center"
 				siteId={ siteId }
 				tooltip={ __( 'Help' ) }
-				placeholder={ null }
+				placeholder={ placeholder }
 			/>
 		);
 	}
@@ -837,12 +853,9 @@ class MasterbarLoggedIn extends Component {
 export { MasterbarLoggedIn };
 
 export default connect(
-	( state ) => {
+	( state, { siteId } ) => {
 		const sectionGroup = getSectionGroup( state );
 
-		// Falls back to using the user's primary site if no site has been selected
-		// by the user yet
-		const siteId = getMostRecentlySelectedSiteId( state ) || getPrimarySiteId( state );
 		const sitePlanSlug = getSitePlanSlug( state, siteId );
 		const isMigrationInProgress =
 			isSiteMigrationInProgress( state, siteId ) || isSiteMigrationActiveRoute( state );
@@ -901,6 +914,5 @@ export default connect(
 		savePreference,
 		requestAdminMenu,
 		redirectToLogout,
-		launchSiteOrRedirectToLaunchSignupFlow,
 	}
 )( MasterbarLoggedIn );

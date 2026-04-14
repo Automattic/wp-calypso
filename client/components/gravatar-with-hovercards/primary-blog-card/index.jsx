@@ -1,9 +1,10 @@
 import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
-import ReaderAvatar from 'calypso/blocks/reader-avatar';
+import { SiteIcon } from 'calypso/blocks/site-icon';
 import AutoDirection from 'calypso/components/auto-direction';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import ReaderFollowButton from 'calypso/reader/follow-button';
+import { getStreamUrl } from 'calypso/reader/route';
 import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/reader/sites/selectors';
 
@@ -16,7 +17,7 @@ function PrimaryBlog( { primaryBlogId, displayName, closeCard } ) {
 		return <QueryReaderSite siteId={ primaryBlogId } />;
 	}
 
-	const linkUrl = site?.feed_ID ? `/reader/feeds/${ site?.feed_ID }` : primaryBlogUrl;
+	const linkUrl = getStreamUrl( site?.feed_ID, primaryBlogId );
 
 	return (
 		<>
@@ -32,9 +33,9 @@ function PrimaryBlog( { primaryBlogId, displayName, closeCard } ) {
 						} }
 					>
 						<div className="gravatar-hovercard__primary-blog-card-header">
-							<ReaderAvatar
-								isCompact
-								siteIcon={ site?.icon?.img || site?.icon?.ico }
+							<SiteIcon
+								iconUrl={ site?.icon?.img || site?.icon?.ico }
+								size={ 40 }
 								className="gravatar-hovercard__primary-blog-card-site-icon"
 							/>
 							<div className="gravatar-hovercard__primary-blog-card-site-info">

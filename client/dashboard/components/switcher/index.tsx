@@ -1,14 +1,10 @@
-import {
-	__experimentalHStack as HStack,
-	Dropdown,
-	Button,
-	ScrollLock,
-} from '@wordpress/components';
+import { Dropdown, Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { chevronDownSmall } from '@wordpress/icons';
 import { useState, type ComponentProps } from 'react';
 import SwitcherContent from './switcher-content';
-import { RenderItemTitle, RenderItemMedia, RenderItemDescription } from './types';
+import SwitcherItem from './switcher-item';
+import { RenderItem } from './types';
 import type { Field, View } from '@wordpress/dataviews';
 
 interface RenderCallbackProps {
@@ -23,12 +19,11 @@ export type SwitcherProps< T > = {
 	searchableFields: Field< T >[];
 	children?: ( props: RenderCallbackProps ) => React.ReactNode;
 	getItemUrl: ( item: T ) => string;
-	renderItemMedia: RenderItemMedia< T >;
-	renderItemTitle: RenderItemTitle< T >;
-	renderItemDescription?: RenderItemDescription< T >;
+	renderItem: RenderItem< T >;
+	icon?: React.JSX.Element;
 	onItemClick?: () => void;
 	renderToggle?: RenderToggle;
-} & Pick< ComponentProps< typeof Dropdown >, 'open' | 'onToggle' | 'defaultOpen' >; // For controlled usage of the switcher
+} & Pick< ComponentProps< typeof Dropdown >, 'open' | 'onToggle' | 'defaultOpen' >;
 
 const DEFAULT_VIEW: View = {
 	type: 'list',
@@ -37,15 +32,14 @@ const DEFAULT_VIEW: View = {
 	sort: { field: 'name', direction: 'asc' },
 };
 
-export default function Switcher< T >( {
+function Switcher< T >( {
 	items,
 	value,
 	searchableFields,
 	children,
 	getItemUrl,
-	renderItemMedia,
-	renderItemTitle,
-	renderItemDescription,
+	renderItem,
+	icon = chevronDownSmall,
 	onItemClick,
 	open,
 	onToggle,
@@ -62,7 +56,7 @@ export default function Switcher< T >( {
 		return (
 			<Button
 				className="dashboard-menu__item active"
-				icon={ chevronDownSmall }
+				icon={ icon }
 				iconPosition="right"
 				onClick={ () => onToggle() }
 				onKeyDown={ ( event: React.KeyboardEvent ) => {
@@ -73,15 +67,14 @@ export default function Switcher< T >( {
 				} }
 				aria-haspopup="true"
 				aria-expanded={ isOpen }
-				style={ { width: '100%', justifyContent: 'flex-start' } }
+				style={ {
+					width: '100%',
+					justifyContent: 'flex-start',
+					overflow: 'hidden',
+					maxWidth: isDesktop ? 'calc(30vw)' : '100%',
+				} }
 			>
-				<HStack
-					alignment="center"
-					style={ { overflow: 'hidden', maxWidth: isDesktop ? 'calc(30vw)' : '100%' } }
-				>
-					{ renderItemMedia( { item: value, context: 'dropdown', size: 16 } ) }
-					{ renderItemTitle( { item: value, context: 'dropdown' } ) }
-				</HStack>
+				{ renderItem( { item: value, context: 'dropdown' } ) }
 			</Button>
 		);
 	};
@@ -93,24 +86,23 @@ export default function Switcher< T >( {
 			defaultOpen={ defaultOpen }
 			renderToggle={ renderDropdownToggle }
 			renderContent={ ( { onClose } ) => (
-				<>
-					<ScrollLock />
-					<SwitcherContent
-						items={ items }
-						searchableFields={ searchableFields }
-						getItemUrl={ getItemUrl }
-						renderItemMedia={ renderItemMedia }
-						renderItemTitle={ renderItemTitle }
-						renderItemDescription={ renderItemDescription }
-						view={ view }
-						onChangeView={ setView }
-						onClose={ onClose }
-						onItemClick={ onItemClick }
-					>
-						{ children?.( { onClose } ) }
-					</SwitcherContent>
-				</>
+				<SwitcherContent
+					items={ items }
+					searchableFields={ searchableFields }
+					getItemUrl={ getItemUrl }
+					renderItem={ renderItem }
+					view={ view }
+					onChangeView={ setView }
+					onClose={ onClose }
+					onItemClick={ onItemClick }
+				>
+					{ children?.( { onClose } ) }
+				</SwitcherContent>
 			) }
 		/>
 	);
 }
+
+Switcher.Item = SwitcherItem;
+
+export default Switcher;

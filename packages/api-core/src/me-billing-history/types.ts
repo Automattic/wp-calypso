@@ -41,7 +41,22 @@ export interface ReceiptItemCostOverride {
 
 export interface ReceiptItem {
 	id: number;
-	type: string;
+	type:
+		| 'new purchase'
+		| 'start trial'
+		| 'recurring'
+		| 'refund'
+		| 'refund_cancelled'
+		| 'refund_failed'
+		| 'cancellation'
+		| 'stop recurring'
+		| 'start recurring'
+		| 'transfer in'
+		| 'transfer out'
+		| 'authorize'
+		| 'update card'
+		| 'reactivation'
+		| 'receive gift renewal';
 	type_localized: string;
 	domain: string | null;
 	site_id: number;
@@ -62,6 +77,7 @@ export interface ReceiptItem {
 	credits_used: number | null;
 	introductory_offer_terms: IntroductoryOfferTerms | null;
 	price_tier_slug: string;
+	saas_redirect_url: string;
 }
 
 export interface Receipt {
@@ -90,4 +106,5 @@ export interface Receipt {
 	credit: string;
 	items: ReceiptItem[];
 	tax_vendor_info?: TaxVendorInfo;
+	checkout_type?: string;
 }

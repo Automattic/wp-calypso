@@ -1,26 +1,38 @@
 # syntax=docker/dockerfile:1.20
 
-ARG use_cache=false
+ARG cache_mode=seed
 ARG node_version=22.9.0
-ARG base_image=registry.a8c.com/calypso/base:latest
+ARG cache_seed_image=registry.a8c.com/calypso/cache-seed:latest
 
 ###################
-FROM node:${node_version}-bullseye-slim AS builder-cache-false
+FROM node:${node_version}-bullseye-slim AS builder-cache-none
 
-
-###################
-# This image contains a directory /calypso/.cache which includes caches
-# for yarn, terser, css-loader and babel.
-FROM ${base_image} AS builder-cache-true
-
+WORKDIR /calypso
+ENV HOME=/calypso
 ENV NPM_CONFIG_CACHE=/calypso/.cache
 ENV PERSISTENT_CACHE=true
+
+RUN mkdir -p /calypso/.cache /calypso/.yarn
+
+###################
+FROM ${cache_seed_image} AS cache-seed-source
+
+###################
+FROM node:${node_version}-bullseye-slim AS builder-cache-seed
+
+WORKDIR /calypso
+ENV HOME=/calypso
+ENV NPM_CONFIG_CACHE=/calypso/.cache
+ENV PERSISTENT_CACHE=true
+
+COPY --from=cache-seed-source /calypso/.cache /calypso/.cache
+COPY --from=cache-seed-source /calypso/.yarn /calypso/.yarn
 
 ###################
 # Dedicated dependency-install stage.
 # By copying only manifests and the lockfile first, we can cache
 # the slow yarn install and skip it when only source files change.
-FROM builder-cache-${use_cache} AS deps
+FROM builder-cache-${cache_mode} AS deps
 
 WORKDIR /calypso
 ENV PLAYWRIGHT_SKIP_DOWNLOAD=true
@@ -31,6 +43,8 @@ ENV SKIP_CALYPSO_PACKAGE_BUILDS=true
 ENV CONTAINER=docker
 ENV IS_CI=true
 
+# For Sentry uploads
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates && rm -rf /var/lib/apt/lists/*
 # Build a "base" layer
 #
 # This layer should never change unless env-config.sh
@@ -110,23 +124,13 @@ RUN yarn run build-packages:web
 # This contains built environments of Calypso. It will
 # change any time any of the Calypso source-code changes.
 ENV NODE_ENV production
-ARG generate_cache_image=false
 # Delete sourcemaps in the same layer as the build so trunk's hidden-source-map
 # artifacts do not have to be committed and then whiteouted in a later snapshot.
-RUN GENERATE_CACHE_IMAGE=$generate_cache_image yarn run build 2>&1 | tee /tmp/build_log.txt \
-	&& find /calypso/build /calypso/public -name "*.*.map" -delete
+RUN yarn run build 2>&1 | tee /tmp/build_log.txt \
+     && find /calypso/build /calypso/public -name "*.*.map" -delete
 
 # This will output a service message to TeamCity if the build cache was invalidated as seen in the build_log file.
 RUN ./bin/check-log-for-cache-invalidation.sh /tmp/build_log.txt
-
-###################
-# A cache-only update can be generated with "docker build --target update-base-cache"
-FROM ${base_image} AS update-base-cache
-
-# Update webpack cache in the base image so that it can be re-used in future builds.
-# We only copy this part of the cache to make --push faster, and because webpack
-# is the main thing which will impact build performance when the cache invalidates.
-COPY --from=builder /calypso/.cache/evergreen/webpack /calypso/.cache/evergreen/webpack
 
 ###################
 FROM node:${node_version}-alpine AS app

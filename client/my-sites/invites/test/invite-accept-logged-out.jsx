@@ -47,7 +47,7 @@ jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 } ) );
 
 jest.mock( 'calypso/lib/partner-branding', () => ( {
-	getCiabConfigFromGarden: ( ...args ) => mockGetCiabConfigFromGarden( ...args ),
+	getPartnerConfigFromGarden: ( ...args ) => mockGetCiabConfigFromGarden( ...args ),
 } ) );
 
 jest.mock( 'calypso/lib/paths', () => ( {

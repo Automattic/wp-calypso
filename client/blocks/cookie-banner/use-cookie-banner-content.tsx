@@ -31,6 +31,7 @@ export const useCookieBannerContent = (): CookieBannerProps[ 'content' ] => {
 			),
 			acceptAllButton: translate( 'Accept all' ),
 			customizeButton: translate( 'Customize' ),
+			declineNonEssentialButton: translate( 'Decline non-essential cookies' ),
 		},
 		customizedConsent: {
 			description: translate(

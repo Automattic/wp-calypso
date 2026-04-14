@@ -1,4 +1,4 @@
-import { userReceiptsQuery } from '@automattic/api-queries';
+import { countryListQuery, userReceiptsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useResizeObserver } from '@wordpress/compose';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
@@ -26,6 +26,7 @@ const emptyReceipts: Receipt[] = [];
 
 export default function BillingHistory() {
 	const { data: receipts = emptyReceipts, isLoading } = useQuery( userReceiptsQuery() );
+	const { data: countryList = [] } = useQuery( countryListQuery() );
 
 	const searchParams = billingHistoryRoute.useSearch();
 	const [ defaultView, setDefaultView ] = useState( DEFAULT_VIEW );
@@ -48,7 +49,7 @@ export default function BillingHistory() {
 		}
 	} );
 
-	const fields = getFields( receipts );
+	const fields = useMemo( () => getFields( receipts, countryList ), [ receipts, countryList ] );
 
 	const { data: filteredReceipts, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( receipts, view, fields );

@@ -11,10 +11,43 @@ import {
 	type MutationCacheNotifyEvent,
 } from '@tanstack/react-query';
 import { createContext, useContext, useMemo, useEffect, useRef, useCallback } from 'react';
+import { useAppContext } from '../context';
 import { OAUTH_CALLBACK_PATH } from './oauth-callback';
 import type { WPError } from '@automattic/api-core';
 
 export const AUTH_QUERY_KEY = [ 'auth', 'user' ];
+
+function getOAuthAuthorizeUrl( {
+	state,
+	next = '',
+	isLogout = false,
+	isNewUser = false,
+}: {
+	state: string;
+	next?: string;
+	isLogout?: boolean;
+	isNewUser?: boolean;
+} ): string {
+	const redirectUri = new URL( OAUTH_CALLBACK_PATH, window.location.origin );
+
+	if ( next ) {
+		redirectUri.search = new URLSearchParams( { next } ).toString();
+	}
+
+	const authUri = new URL( 'https://public-api.wordpress.com/oauth2/authorize' );
+	authUri.search = new URLSearchParams( {
+		response_type: 'token',
+		client_id: String( config( 'oauth_client_id' ) ),
+		redirect_uri: redirectUri.toString(),
+		scope: 'global',
+		blog_id: '0',
+		state,
+		...( isLogout === true ? { implicit: 'false' } : {} ),
+		...( isNewUser === true ? { 'new-user': '1' } : {} ),
+	} ).toString();
+
+	return authUri.toString();
+}
 
 interface AuthContextType {
 	user: User;
@@ -22,7 +55,7 @@ interface AuthContextType {
 }
 export const AuthContext = createContext< AuthContextType | undefined >( undefined );
 
-async function initializeCurrentUser(): Promise< User > {
+export async function initializeCurrentUser(): Promise< User > {
 	// In support user session the `currentUser` refers to the wrong person so we should request
 	// the user object. Note we do not check `isSupportNextSession()` because in "next" support
 	// sessions the server does bootstrap the correct `currentUser`.
@@ -47,6 +80,7 @@ async function initializeCurrentUser(): Promise< User > {
  */
 export function AuthProvider( { children }: { children: React.ReactNode } ) {
 	const authErrorHandled = useRef( false );
+	const { supports } = useAppContext();
 	const queryClient = useQueryClient();
 	const {
 		data: user,
@@ -82,25 +116,20 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 		authErrorHandled.current = true;
 
 		if ( config.isEnabled( 'oauth' ) ) {
-			const redirectUri = new URL( OAUTH_CALLBACK_PATH, window.location.origin );
-			redirectUri.search = new URLSearchParams( {
-				next: window.location.pathname + window.location.search,
-			} ).toString();
-
 			const state = crypto.randomUUID();
 			sessionStorage.setItem( 'wpcom_oauth_state', state );
 
-			const authUri = new URL( 'https://public-api.wordpress.com/oauth2/authorize' );
-			authUri.search = new URLSearchParams( {
-				response_type: 'token',
-				client_id: String( config( 'oauth_client_id' ) ),
-				redirect_uri: redirectUri.toString(),
-				scope: 'global',
-				blog_id: '0',
-				state,
-			} ).toString();
+			// Default to the signup screen rather than the login screen for certain routes.
+			const isNewUser =
+				supports.startStoreRoute === true && window.location.pathname === '/start-store';
 
-			window.location.replace( authUri.toString() );
+			window.location.replace(
+				getOAuthAuthorizeUrl( {
+					state,
+					isNewUser,
+					next: window.location.pathname + window.location.search,
+				} )
+			);
 			return;
 		}
 
@@ -166,21 +195,34 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 }
 
 export async function logout( user: User ): Promise< void > {
+	let configLogoutUrl = config( 'logout_url' ) as string | false;
+
+	// Apply locale subdomain to static logout URLs (e.g., |subdomain|wordpress.com)
+	if ( configLogoutUrl ) {
+		const subdomain = magnificentNonEnLocales.includes( user.language ) ? user.language + '.' : '';
+		configLogoutUrl = configLogoutUrl.replace( '|subdomain|', subdomain );
+	}
+
+	// Determine where to send the user after logout. Priority:
+	//
+	// 1. OAuth dashboards with no static logout_url: redirect through the
+	//    OAuth flow with implicit=false, allowing the user to switch accounts.
+	// 2. always_use_logout_url: force the static logout_url from config,
+	//    ignoring the user's API-provided logout URL.
+	// 3. user.logout_URL: the WP.com logout URL from the /me API response.
+	// 4. Fallback: the static logout_url from config, or the dashboard root.
 	let logoutUrl = '';
+	if ( config.isEnabled( 'oauth' ) && ! configLogoutUrl ) {
+		const state = crypto.randomUUID();
+		sessionStorage.setItem( 'wpcom_oauth_state', state );
 
-	// If logout_URL isn't set, then go ahead and return the logout URL
-	// without a proper nonce as a fallback.
-	// Note: we never want to use logout_URL in the desktop app
-	if ( ! user.logout_URL || config.isEnabled( 'always_use_logout_url' ) ) {
-		// Use localized version of the homepage in the redirect
-		let subdomain = '';
-		if ( magnificentNonEnLocales.includes( user.language ) ) {
-			subdomain = user.language + '.';
-		}
-
-		logoutUrl = ( config( 'logout_url' ) as string ).replace( '|subdomain|', subdomain );
-	} else {
+		logoutUrl = getOAuthAuthorizeUrl( { state, isLogout: true } );
+	} else if ( config.isEnabled( 'always_use_logout_url' ) && configLogoutUrl ) {
+		logoutUrl = configLogoutUrl;
+	} else if ( user.logout_URL ) {
 		logoutUrl = user.logout_URL;
+	} else {
+		logoutUrl = configLogoutUrl || window.location.origin;
 	}
 
 	disablePersistQueryClient();

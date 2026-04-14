@@ -95,7 +95,7 @@ export default function useGenerateActionHook( {
 	reflectStorageSelectionInPlanPrices?: boolean;
 	/**
 	 * When true, adds `is_gating_business_q1` to the plan cart item extra data.
-	 * Used for the pricing differentiation experiment (calypso_pricing_differentiation_202601_v1).
+	 * Used for the pricing differentiation experiment (calypso_pricing_differentiation_202603).
 	 */
 	isGatingBusinessQ1?: boolean;
 	redirectTo?: string;

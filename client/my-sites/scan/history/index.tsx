@@ -1,10 +1,10 @@
+import { Page } from '@wordpress/admin-ui';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import ThreatHistoryList from 'calypso/components/jetpack/threat-history-list';
 import JetpackTitle from 'calypso/components/jetpack-title';
 import Main from 'calypso/components/main';
-import NavigationHeader from 'calypso/components/navigation-header';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -21,25 +21,10 @@ interface Props {
 export default function ScanHistoryPage( { filter }: Props ) {
 	const translate = useTranslate();
 	const isJetpackPlatform = isJetpackCloud();
+	const isWpcom = ! ( isJetpackPlatform || isA8CForAgencies() );
 
-	return (
-		<Main
-			wideLayout
-			className={ clsx( 'scan history', {
-				is_jetpackcom: isJetpackPlatform,
-			} ) }
-		>
-			<DocumentHead title={ translate( 'Scan' ) } />
-			{ isJetpackPlatform && <SidebarNavigation /> }
-			<PageViewTracker path="/scan/history/:site" title="Scan History" />
-			{ ! ( isJetpackPlatform || isA8CForAgencies() ) && (
-				<NavigationHeader
-					navigationItems={ [] }
-					title={ <JetpackTitle title={ translate( 'Scan' ) } /> }
-					subtitle={ translate( 'Automated malware scanning and firewall protection.' ) }
-				/>
-			) }
-
+	const content = (
+		<>
 			<ScanNavigation section="history" />
 			<section className="history__body">
 				<p className="history__description">
@@ -49,6 +34,32 @@ export default function ScanHistoryPage( { filter }: Props ) {
 				</p>
 				<ThreatHistoryList filter={ filter } />
 			</section>
+		</>
+	);
+
+	return (
+		<Main
+			fullWidthLayout={ isWpcom }
+			wideLayout={ ! isWpcom }
+			className={ clsx( 'scan history', {
+				is_jetpackcom: isJetpackPlatform,
+			} ) }
+		>
+			<DocumentHead title={ translate( 'Scan' ) } />
+			{ isJetpackPlatform && <SidebarNavigation /> }
+			<PageViewTracker path="/scan/history/:site" title="Scan History" />
+			{ isWpcom ? (
+				<Page
+					hasPadding
+					showSidebarToggle={ false }
+					title={ <JetpackTitle title={ translate( 'Scan' ) } /> }
+					subTitle={ translate( 'Automated malware scanning and firewall protection.' ) }
+				>
+					{ content }
+				</Page>
+			) : (
+				content
+			) }
 		</Main>
 	);
 }

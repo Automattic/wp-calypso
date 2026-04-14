@@ -60,7 +60,7 @@ function showAppWindow() {
 	}
 
 	if ( process.platform === 'linux' ) {
-		windowConfig.icon = getPath( 'linux-icon.png' );
+		windowConfig.icon = getPath( 'linux-icon.webp' );
 	}
 
 	mainWindow = new BrowserWindow( {

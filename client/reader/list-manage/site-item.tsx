@@ -5,6 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import FollowButton from 'calypso/blocks/follow-button/button';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
+import { SiteIcon } from 'calypso/blocks/site-icon';
 import { useDispatch, useSelector } from 'calypso/state';
 import { addReaderListSite, deleteReaderListSite } from 'calypso/state/reader/lists/actions';
 import { getMatchingItem } from 'calypso/state/reader/lists/selectors';
@@ -24,10 +25,7 @@ function renderSite( site: Site ) {
 		<div className="site-item list-item">
 			<a className="list-item__content" href={ `/reader/feeds/${ site.feed_ID }` }>
 				<div className="list-item__icon">
-					{ site.icon?.img && (
-						<img src={ site.icon.img } className="list-item__img image" alt="" />
-					) }
-					{ ! site.icon?.img && <Gridicon icon="site" size={ 36 } /> }
+					<SiteIcon iconUrl={ site.icon?.img } />
 				</div>
 
 				<div className="list-item__info">

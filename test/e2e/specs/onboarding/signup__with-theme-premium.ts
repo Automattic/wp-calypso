@@ -171,7 +171,7 @@ describe( 'Lifecyle: Premium theme signup, onboard, launch and cancel subscripti
 
 		const restAPIClient = new RestAPIClient(
 			{
-				username: testUser.username,
+				username: newUserDetails.body.username,
 				password: testUser.password,
 			},
 			newUserDetails.body.bearer_token

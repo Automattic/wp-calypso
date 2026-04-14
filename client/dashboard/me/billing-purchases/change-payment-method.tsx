@@ -8,6 +8,7 @@ import {
 } from '@automattic/api-queries';
 import { RazorpayHookProvider } from '@automattic/calypso-razorpay';
 import { StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
+import { isAllowedRedirectUrl } from '@automattic/calypso-url';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { __experimentalVStack as VStack } from '@wordpress/components';
@@ -64,20 +65,13 @@ function ChangePaymentMethod() {
 	}
 
 	const successCallback = () => {
-		if ( redirect_to ) {
-			try {
-				const parsed = new URL( redirect_to );
-				if (
-					purchase.domain &&
-					( parsed.protocol === 'https:' || parsed.protocol === 'http:' ) &&
-					parsed.hostname === purchase.domain
-				) {
-					window.location.href = redirect_to;
-					return;
-				}
-			} catch {
-				// Invalid URL — fall through to default navigation.
-			}
+		if (
+			redirect_to &&
+			purchase.domain &&
+			isAllowedRedirectUrl( redirect_to, [ purchase.domain ] )
+		) {
+			window.location.href = redirect_to;
+			return;
 		}
 		navigate( { to: purchaseSettingsRoute.fullPath, params: { purchaseId: purchase.ID } } );
 	};

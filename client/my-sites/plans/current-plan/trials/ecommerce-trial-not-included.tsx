@@ -1,9 +1,9 @@
 import { localize, translate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
-import connect from 'calypso/assets/images/plans/wpcom/ecommerce-trial/connect.png';
-import launch from 'calypso/assets/images/plans/wpcom/ecommerce-trial/launch.png';
-import promote from 'calypso/assets/images/plans/wpcom/ecommerce-trial/promote.png';
-import shipping from 'calypso/assets/images/plans/wpcom/ecommerce-trial/shipping2.png';
+import connect from 'calypso/assets/images/plans/wpcom/ecommerce-trial/connect.webp';
+import launch from 'calypso/assets/images/plans/wpcom/ecommerce-trial/launch.webp';
+import promote from 'calypso/assets/images/plans/wpcom/ecommerce-trial/promote.webp';
+import shipping from 'calypso/assets/images/plans/wpcom/ecommerce-trial/shipping2.webp';
 import FeatureNotIncludedCard from '../feature-not-included-card';
 
 interface Props {
