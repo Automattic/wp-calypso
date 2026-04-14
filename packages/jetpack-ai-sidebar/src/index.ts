@@ -25,6 +25,7 @@ import { __ } from '@wordpress/i18n';
  */
 import TitlePicker from './components/title-picker';
 import './components/title-picker.scss';
+import './auto-scroll-fix.scss';
 import {
 	UPDATE_BLOCK_CONTENT_TOOL_ID,
 	UPDATE_BLOCK_CONTENT_ABILITY,
@@ -338,28 +339,6 @@ export function useAbilitiesSetup( actions: {
 	if ( actions.clearSuggestions ) {
 		clearSuggestionsFn = actions.clearSuggestions;
 	}
-	setupAutoScrollFix();
-}
-
-/**
- * Override the AM's bottomMessages CSS so messages start from the top
- * instead of being pinned to the bottom via margin-top: auto.
- * This makes the chat push content upward when new messages arrive.
- */
-function setupAutoScrollFix(): void {
-	if ( ( window as any ).__jetpackAiScrollFixActive ) {
-		return;
-	}
-	( window as any ).__jetpackAiScrollFixActive = true;
-
-	const style = document.createElement( 'style' );
-	style.id = 'jetpack-ai-scroll-fix';
-	style.textContent = `
-		[data-slot="messages"] > *:first-child {
-			margin-top: 0 !important;
-		}
-	`;
-	document.head.appendChild( style );
 }
 
 // ---------- toolProvider ----------
