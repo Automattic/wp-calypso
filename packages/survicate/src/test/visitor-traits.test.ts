@@ -2,11 +2,7 @@
  * @jest-environment jsdom
  */
 
-import {
-	getAccountAgeInDays,
-	setSurvicateSupportChatActive,
-	setSurvicateVisitorTraits,
-} from '../visitor-traits';
+import { getAccountAgeInDays, setSurvicateVisitorTraits } from '../visitor-traits';
 
 const DAY_IN_MS = 86400000;
 
@@ -141,45 +137,5 @@ describe( 'setSurvicateVisitorTraits', () => {
 
 			expect( setVisitorTraits ).toHaveBeenCalledTimes( 1 );
 		} );
-	} );
-} );
-
-describe( 'setSurvicateSupportChatActive', () => {
-	beforeEach( () => {
-		window._sva = undefined;
-	} );
-
-	afterEach( () => {
-		window._sva = undefined;
-	} );
-
-	test( 'should set support_chat_active trait to "true" when active', () => {
-		const setVisitorTraits = jest.fn();
-		window._sva = { setVisitorTraits };
-
-		setSurvicateSupportChatActive( true );
-
-		expect( setVisitorTraits ).toHaveBeenCalledWith( { support_chat_active: 'true' } );
-	} );
-
-	test( 'should set support_chat_active trait to "false" when inactive', () => {
-		const setVisitorTraits = jest.fn();
-		window._sva = { setVisitorTraits };
-
-		setSurvicateSupportChatActive( false );
-
-		expect( setVisitorTraits ).toHaveBeenCalledWith( { support_chat_active: 'false' } );
-	} );
-
-	test( 'should no-op when _sva is not available', () => {
-		window._sva = undefined;
-
-		expect( () => setSurvicateSupportChatActive( true ) ).not.toThrow();
-	} );
-
-	test( 'should no-op when setVisitorTraits is not available on _sva', () => {
-		window._sva = {};
-
-		expect( () => setSurvicateSupportChatActive( true ) ).not.toThrow();
 	} );
 } );

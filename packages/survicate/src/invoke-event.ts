@@ -1,3 +1,5 @@
+import debug from './debug';
+
 let isSuppressed = false;
 
 /**
@@ -6,6 +8,13 @@ let isSuppressed = false;
  */
 export function setSurvicateEventSuppression( suppressed: boolean ): void {
 	isSuppressed = suppressed;
+	debug( 'Survicate event suppression set to %s', suppressed );
+
+	// if survicate is open, close it immediately
+	if ( suppressed && typeof window._sva !== 'undefined' && window._sva.closeSurvey ) {
+		window._sva.closeSurvey();
+		debug( 'Survicate survey closed' );
+	}
 }
 
 /**
@@ -16,6 +25,7 @@ export function setSurvicateEventSuppression( suppressed: boolean ): void {
  */
 export function invokeSurvicateEvent( eventName: string ): () => void {
 	if ( isSuppressed ) {
+		debug( 'Survicate event suppressed. No event invoked.' );
 		return () => {};
 	}
 

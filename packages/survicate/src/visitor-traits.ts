@@ -7,23 +7,13 @@ declare global {
 			addEventListener?: ( event: string, handler: () => void ) => void;
 			removeEventListener?: ( event: string, handler: () => void ) => void;
 			invokeEvent?: ( event: string ) => void;
+			closeSurvey?: () => void;
 			destroyVisitor?: () => void;
 		};
 	}
 }
 
 const DAY_IN_MS = 86400000;
-
-/**
- * Sets the `support_chat_active` visitor trait so Survicate targeting rules
- * can suppress surveys while the Help Center is open.
- * No-ops if the Survicate SDK is not loaded (nothing to suppress).
- */
-export function setSurvicateSupportChatActive( active: boolean ): void {
-	if ( typeof window._sva !== 'undefined' && window._sva.setVisitorTraits ) {
-		window._sva.setVisitorTraits( { support_chat_active: active ? 'true' : 'false' } );
-	}
-}
 
 /**
  * Returns the number of whole days between a given date and now.
