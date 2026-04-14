@@ -361,7 +361,7 @@ function PlanCard( {
 						) ) }
 				</div>
 				<VStack spacing={ 4 }>
-					<VStack spacing={ 1 }>
+					<VStack spacing={ 1 } className="site-plans__plan-info">
 						<div className="site-plans__plan-header">
 							<Text className="site-plans__plan-name" size={ 20 } weight={ 600 }>
 								{ sitePlan.plan_card_name ?? sitePlan.product_name }
