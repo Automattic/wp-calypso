@@ -97,6 +97,16 @@ const DeleteButton = styled( Button )< { theme?: Theme } >`
 	color: ${ ( props ) => props.theme.colors.textColorLight };
 `;
 
+function doesIntroOfferUseDetailDisplay( product: ResponseCartProduct ): boolean {
+	return (
+		doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
+			product.cost_overrides,
+			product.introductory_offer_terms,
+			product.months_per_bill_period
+		) || doesIntroductoryOfferHavePriceIncrease( product )
+	);
+}
+
 function getTosDataForProduct( product: ResponseCartProduct, responseCart: ResponseCart ) {
 	return responseCart.terms_of_service?.find( ( tos ) => {
 		if ( ! new RegExp( `product_id:${ product.product_id }` ).test( tos.key ) ) {
@@ -135,14 +145,7 @@ function LineItemIntroOfferCostOverrideDetail( {
 	// We only want to display this info for introductory offers which have
 	// pricing that is difficult to display as a simple discount. Currently
 	// that is offers with different term lengths or price increases.
-	if (
-		! doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
-			product.cost_overrides,
-			product.introductory_offer_terms,
-			product.months_per_bill_period
-		) &&
-		! doesIntroductoryOfferHavePriceIncrease( product )
-	) {
+	if ( ! doesIntroOfferUseDetailDisplay( product ) ) {
 		return null;
 	}
 
@@ -388,28 +391,16 @@ const WPCheckoutCheckIcon = styled( CheckIcon )`
 `;
 
 /**
- * For intro offers, determine the crossed-out price to display. Returns the
- * simulated pre-discount price if it's higher than the renewal price, or the
- * intro offer's own elevated price if the intro offer increased the price
- * (e.g. $80 → $250 before a coupon reduces it further).
+ * For intro offers whose pricing is simple enough not to need a detail
+ * breakdown, determine the crossed-out price to display. Returns the simulated
+ * pre-discount price if it's higher than the renewal price, otherwise
+ * undefined.
  */
 function getIntroOfferCrossedOutPrice(
-	product: ResponseCartProduct,
 	renewalPrice: number,
 	simulatedPriceBeforeDiscounts: number
 ): number | undefined {
-	if ( renewalPrice < simulatedPriceBeforeDiscounts ) {
-		return simulatedPriceBeforeDiscounts;
-	}
-
-	const introOverride = product.cost_overrides.find( ( override ) =>
-		isOverrideCodeIntroductoryOffer( override.override_code )
-	);
-	if ( introOverride && introOverride.new_subtotal_integer > introOverride.old_subtotal_integer ) {
-		return introOverride.new_subtotal_integer;
-	}
-
-	return undefined;
+	return renewalPrice < simulatedPriceBeforeDiscounts ? simulatedPriceBeforeDiscounts : undefined;
 }
 
 /**
@@ -446,14 +437,16 @@ function getLineItemPriceDisplay(
 	const isIntroOffer = product.cost_overrides.some( ( override ) =>
 		isOverrideCodeIntroductoryOffer( override.override_code )
 	);
-	if ( isIntroOffer ) {
+	// When LineItemIntroOfferCostOverrideDetail renders (different term length or
+	// price increase), it already displays the full pricing breakdown, so we fall
+	// through to the regular logic below.
+	if ( isIntroOffer && ! doesIntroOfferUseDetailDisplay( product ) ) {
 		// For an introductory offer, show the recurring amount as the amount the user will pay and include the
 		// simulated amount as the crossed-out number if it is greater.
 		const tosData = getTosDataForProduct( product, responseCart );
 		if ( tosData ) {
 			const renewalPrice = tosData.regular_renewal_price_integer;
 			const crossedOutPrice = getIntroOfferCrossedOutPrice(
-				product,
 				renewalPrice,
 				simulatedPriceBeforeDiscounts
 			);
