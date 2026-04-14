@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { renderHook, act } from '@testing-library/react';
-import useAgentLayoutManager from '../index';
+import useAgentLayoutManager from '../use-agent-layout-manager/index';
 
 // Stub out external deps that aren't relevant to the closing-class logic
 jest.mock( '@automattic/viewport', () => ( {
