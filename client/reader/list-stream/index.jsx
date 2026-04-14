@@ -32,7 +32,7 @@ function ListStream( props ) {
 	const { owner, slug } = props;
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const [ activeTab, setActiveTab ] = useState( TAB_POSTS );
+	const [ activeTab, setActiveTab ] = useState( TAB_SITES );
 
 	const list = useSelector( ( state ) => getListByOwnerAndSlug( state, owner, slug ) );
 	const isSubscribed = useSelector( ( state ) => isSubscribedByOwnerAndSlug( state, owner, slug ) );
