@@ -5,7 +5,7 @@ import { SiteIconsRow } from 'calypso/reader/components/site-icons-row';
 import './style.scss';
 
 interface ListCardItem {
-	site_name: string;
+	site_name: string | null;
 	site_icon: string | null;
 }
 
