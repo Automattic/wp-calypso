@@ -298,6 +298,7 @@ function isRedirectAllowed( url: string, siteSlug: string | undefined ): boolean
 		'cloud.jetpack.com',
 		'jetpack.com',
 		'akismet.com',
+		'gravatar.com',
 		'difmrequest.com',
 		'agencies.automattic.com',
 		'agencies.localhost',
