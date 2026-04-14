@@ -278,6 +278,40 @@ describe( 'StylePicker', () => {
 			} );
 		} );
 
+		it( 'sends "none" sentinel when the None style is selected', async () => {
+			const user = userEvent.setup();
+
+			render( <StylePicker mode={ ImageStudioMode.Generate } /> );
+
+			// Open dropdown
+			await user.click( screen.getByTestId( 'toolbar-button' ) );
+
+			// The "None" option has value: '' and is the first option with a preview.
+			// Distinguish it from the placeholder 'Select style' option (which has no preview
+			// and is filtered out of the rendered UI).
+			const noneButton = screen
+				.getAllByRole( 'button' )
+				.find(
+					( button ) =>
+						button.textContent?.trim() === 'None' &&
+						button.getAttribute( 'data-testid' ) !== 'toolbar-button'
+				);
+
+			expect( noneButton ).toBeDefined();
+			await user.click( noneButton! );
+
+			// The Redux store must still receive the empty string — the client-context
+			// truthy check relies on '' to mean "no style selected".
+			expect( mockSetSelectedStyle ).toHaveBeenCalledWith( '' );
+
+			// But the tracking event should receive the 'none' sentinel so the event
+			// is not logged with an empty style value.
+			expect( mockTrackStyleSelected ).toHaveBeenCalledWith( {
+				style: 'none',
+				mode: ImageStudioMode.Generate,
+			} );
+		} );
+
 		it( 'closes dropdown after style selection', async () => {
 			const user = userEvent.setup();
 

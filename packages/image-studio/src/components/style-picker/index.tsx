@@ -125,7 +125,7 @@ export function StylePicker( { disabled = false, mode }: StylePickerProps ) {
 	const handleStyleSelect = ( value: string ) => {
 		setSelectedStyle( value );
 		// Track style selection
-		trackImageStudioStyleSelected( { style: value, mode } );
+		trackImageStudioStyleSelected( { style: value || 'none', mode } );
 		// Close dropdown by triggering a mousedown event outside the InputToolbar container
 		// We use requestAnimationFrame to ensure the state update completes first
 		requestAnimationFrame( () => {
