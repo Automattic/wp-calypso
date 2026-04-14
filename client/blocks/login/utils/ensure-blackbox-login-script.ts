@@ -166,21 +166,19 @@ export function ensureBlackboxLoginScript( inlineScriptNonce?: string ): Promise
 		}
 
 		const blackboxUrl = config( 'blackbox_url' );
-		if ( ! blackboxUrl ) {
+		if ( typeof blackboxUrl !== 'string' || ! blackboxUrl ) {
 			clearTimeout( timeoutId );
 			finishOnce();
 			return;
 		}
 
-		loadScript( blackboxUrl, undefined, scriptAttributes ).then(
+		loadScript(
+			blackboxUrl,
 			() => {
 				clearTimeout( timeoutId );
 				finishOnce();
 			},
-			() => {
-				clearTimeout( timeoutId );
-				finishOnce();
-			}
+			scriptAttributes
 		);
 	} );
 
