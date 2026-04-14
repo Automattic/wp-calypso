@@ -1,3 +1,4 @@
+import { getPlan, PLAN_PERSONAL } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
@@ -28,6 +29,8 @@ export function PluginsFAQ() {
 		},
 		[ dispatch ]
 	);
+
+	const personalPlanName = getPlan( PLAN_PERSONAL )?.getTitle() ?? '';
 
 	const faqItems: FAQItem[] = [
 		{
@@ -69,7 +72,8 @@ export function PluginsFAQ() {
 				},
 			} ),
 			answer: translate(
-				'Yes. Plugin installation is now included on all WordPress.com paid plans, starting with Personal. You have access to over 50,000 plugins from the WordPress.org repository. This capability was expanded to all paid plans to give our customers full flexibility from day one.'
+				'Yes. Plugin installation is now included on all WordPress.com paid plans, starting with %(planName)s. You have access to over 50,000 plugins from the WordPress.org repository. This capability was expanded to all paid plans to give our customers full flexibility from day one.',
+				{ args: { planName: personalPlanName } }
 			),
 		},
 		{
@@ -160,7 +164,8 @@ export function PluginsFAQ() {
 				},
 			} ),
 			answer: translate(
-				'Plugin installation is now available on all WordPress.com paid plans, starting with Personal. Free plans come with a curated set of built-in features instead of external plugins.'
+				'Plugin installation is now available on all WordPress.com paid plans, starting with %(planName)s. Free plans come with a curated set of built-in features instead of external plugins.',
+				{ args: { planName: personalPlanName } }
 			),
 		},
 		{
