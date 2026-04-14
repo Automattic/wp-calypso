@@ -2,6 +2,7 @@ import { SubscriptionBillPeriod } from '@automattic/api-core';
 import { sitePlansQuery, siteBySlugQuery } from '@automattic/api-queries';
 import { formatCurrency, getCurrencyObject } from '@automattic/number-formatters';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useSearch } from '@tanstack/react-router';
 import {
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
@@ -12,14 +13,16 @@ import {
 	SelectControl,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { check, lineSolid } from '@wordpress/icons';
+import { check, chevronLeft, lineSolid } from '@wordpress/icons';
+import { addQueryArgs } from '@wordpress/url';
 import React, { Fragment, useState } from 'react';
 import { useHelpCenter } from '../../app/help-center';
-import { siteRoute } from '../../app/router/sites';
+import { siteRoute, sitePlansRoute } from '../../app/router/sites';
 import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { wpcomLink } from '../../utils/link';
+import { dashboardLink, wpcomLink } from '../../utils/link';
+import { isRelativeUrl } from '../../utils/url';
 import type {
 	PlanProductComparisonGroup,
 	SiteContextualPlan,
@@ -253,12 +256,14 @@ function PlanCardCTA( {
 	planCardName,
 	tierRank,
 	currentTierRank,
+	redirectAfterPurchase,
 }: {
 	site: Site;
 	sitePlan: SiteContextualPlan;
 	planCardName: string;
 	tierRank: number;
 	currentTierRank: number;
+	redirectAfterPurchase: string;
 } ) {
 	const { setNewMessagingChat } = useHelpCenter();
 	const isCurrentPlan =
@@ -273,7 +278,11 @@ function PlanCardCTA( {
 	}
 
 	if ( tierRank > currentTierRank ) {
-		const checkoutURL = wpcomLink( `/checkout/${ site.slug }/${ sitePlan.product_slug }` );
+		const cancelTo = window.location.pathname + window.location.search;
+		const checkoutURL = addQueryArgs(
+			wpcomLink( `/checkout/${ site.slug }/${ sitePlan.product_slug }` ),
+			{ redirect_to: redirectAfterPurchase, cancel_to: cancelTo }
+		);
 		return (
 			<Button variant="primary" href={ checkoutURL } className="site-plans__cta-button">
 				{ sprintf(
@@ -314,6 +323,7 @@ function PlanCard( {
 	annualSitePlan,
 	tierRank,
 	currentTierRank,
+	redirectAfterPurchase,
 }: {
 	site: Site;
 	sitePlan: SiteContextualPlan;
@@ -321,6 +331,7 @@ function PlanCard( {
 	annualSitePlan?: SiteContextualPlan;
 	tierRank: number;
 	currentTierRank: number;
+	redirectAfterPurchase: string;
 } ) {
 	const isCurrentPlan =
 		sitePlan.current_plan === true || ( currentTierRank >= 0 && tierRank === currentTierRank );
@@ -352,7 +363,7 @@ function PlanCard( {
 						) }
 					</VStack>
 
-					<VStack spacing={ 1 }>
+					<VStack spacing={ 1 } className="site-plans__price-area">
 						{ sitePlan.introductory_offer_formatted_price && (
 							<span className="site-plans__special-offer-badge">{ __( 'Special Offer' ) }</span>
 						) }
@@ -369,6 +380,7 @@ function PlanCard( {
 						planCardName={ sitePlan.plan_card_name ?? sitePlan.product_name }
 						tierRank={ tierRank }
 						currentTierRank={ currentTierRank }
+						redirectAfterPurchase={ redirectAfterPurchase }
 					/>
 
 					{ sitePlan.plan_card_features && sitePlan.plan_card_features.length > 0 && (
@@ -469,14 +481,12 @@ function BillingIntervalSelector( {
 function PlanComparisonSection( {
 	comparisonGroups,
 	planColumns,
-	billPeriod,
 	billingInterval,
 	availableBillPeriods,
 	onBillingIntervalChange,
 }: {
 	comparisonGroups: PlanProductComparisonGroup[];
 	planColumns: Array< { tierKey: number; planCardName: string | undefined } >;
-	billPeriod: SubscriptionBillPeriodValue | undefined;
 	billingInterval: SubscriptionBillPeriodValue;
 	availableBillPeriods: SubscriptionBillPeriodValue[];
 	onBillingIntervalChange: ( value: SubscriptionBillPeriodValue ) => void;
@@ -514,8 +524,7 @@ function PlanComparisonSection( {
 								{ group.features.map( ( feature ) => {
 									const isUnavailableOnMonthly =
 										!! feature.billing_periods &&
-										billPeriod !== undefined &&
-										! feature.billing_periods.includes( billPeriod );
+										! feature.billing_periods.includes( billingInterval );
 									return (
 										<tr key={ feature.key }>
 											<td className="site-plans__comparison-feature-title">{ feature.title }</td>
@@ -543,11 +552,15 @@ function PlanComparisonSection( {
 
 export default function SitePlans() {
 	const { siteSlug } = siteRoute.useParams();
+	const { redirect_to } = useSearch( { from: sitePlansRoute.fullPath } );
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 
 	const [ billingInterval, setBillingInterval ] = useState< SubscriptionBillPeriodValue >(
 		SubscriptionBillPeriod.PLAN_ANNUAL_PERIOD
 	);
+
+	const backUrl = redirect_to && isRelativeUrl( redirect_to ) ? redirect_to : undefined;
+	const redirectAfterPurchase = backUrl ?? dashboardLink( '/sites' );
 
 	const { data: sitePlansData } = useQuery( {
 		...sitePlansQuery( site.ID ),
@@ -622,15 +635,20 @@ export default function SitePlans() {
 		planCardName: ap.sitePlan.plan_card_name ?? ap.sitePlan.product_name,
 	} ) );
 
-	const billPeriod = activePlans
-		.map( ( ap ) => ap.sitePlan.interval as SubscriptionBillPeriodValue | undefined )
-		.find( ( v ) => v !== undefined );
-
 	return (
 		<PageLayout
 			header={
 				<div className="site-plans__header-wrap">
-					<PageHeader title={ pageContext?.page_title } />
+					<PageHeader
+						title={ pageContext?.page_title }
+						prefix={
+							backUrl ? (
+								<Button variant="tertiary" icon={ chevronLeft } href={ backUrl } size="compact">
+									{ __( 'Back' ) }
+								</Button>
+							) : undefined
+						}
+					/>
 					{ pageContext?.header_message && (
 						<Text className="site-plans__subheader">{ pageContext.header_message }</Text>
 					) }
@@ -657,6 +675,7 @@ export default function SitePlans() {
 						annualSitePlan={ ap.annualSitePlan }
 						tierRank={ ap.tierRank }
 						currentTierRank={ currentTierRank }
+						redirectAfterPurchase={ redirectAfterPurchase }
 					/>
 				) ) }
 			</div>
@@ -664,7 +683,6 @@ export default function SitePlans() {
 				<PlanComparisonSection
 					comparisonGroups={ comparisonGroups }
 					planColumns={ planColumns }
-					billPeriod={ billPeriod }
 					billingInterval={ billingInterval }
 					availableBillPeriods={ availableBillPeriods }
 					onBillingIntervalChange={ setBillingInterval }

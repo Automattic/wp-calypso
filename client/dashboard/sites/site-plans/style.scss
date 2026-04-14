@@ -131,6 +131,20 @@
 	font-size: 14px;
 }
 
+.site-plans__card.components-card {
+	height: 100%;
+}
+
+.site-plans__card .components-card__body {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+
+.site-plans__price-area.components-v-stack {
+	flex: 1;
+}
+
 .site-plans__cta-button.components-button {
 	width: 100%;
 	justify-content: center;
