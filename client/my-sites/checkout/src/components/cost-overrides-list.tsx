@@ -423,10 +423,30 @@ function getLineItemPriceDisplay(
 		// simulated amount as the crossed-out number if it is greater.
 		const tosData = getTosDataForProduct( product, responseCart );
 		if ( tosData ) {
-			const isDiscounted = tosData.regular_renewal_price_integer < simulatedPriceBeforeDiscounts;
+			const renewalPrice = tosData.regular_renewal_price_integer;
+			const isDiscounted = renewalPrice < simulatedPriceBeforeDiscounts;
+
+			// Some intro offers temporarily increase the price (e.g. $80 → $250),
+			// even if other overrides (coupons) then reduce it. Detect this by
+			// checking the intro override's own before/after subtotals.
+			const introOverride = product.cost_overrides.find( ( override ) =>
+				isOverrideCodeIntroductoryOffer( override.override_code )
+			);
+			const introOfferIncreasedPrice =
+				introOverride && introOverride.new_subtotal_integer > introOverride.old_subtotal_integer;
+
+			let crossedOutAmountDisplay: string | undefined;
+			if ( isDiscounted ) {
+				crossedOutAmountDisplay = fmt( simulatedPriceBeforeDiscounts );
+			} else if ( introOfferIncreasedPrice ) {
+				// Cross out the elevated intro price so the user sees the lower
+				// renewal price as the ongoing cost.
+				crossedOutAmountDisplay = fmt( introOverride.new_subtotal_integer );
+			}
+
 			return {
-				actualAmountDisplay: fmt( tosData.regular_renewal_price_integer ),
-				crossedOutAmountDisplay: isDiscounted ? fmt( simulatedPriceBeforeDiscounts ) : undefined,
+				actualAmountDisplay: fmt( renewalPrice ),
+				crossedOutAmountDisplay,
 			};
 		}
 	}
