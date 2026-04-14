@@ -1,10 +1,11 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_BIG_SKY, isBusiness, isPersonal, isPremium } from '@automattic/calypso-products';
 import { SiteIntent } from '@automattic/data-stores/src/onboard';
-import { isWooHostingSolutionsRef, Step } from '@automattic/onboarding';
+import { Step } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import Loading from 'calypso/components/loading';
+import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { useExperiment } from 'calypso/lib/explat';
@@ -103,7 +104,7 @@ const PostCheckoutOnboarding: StepType< {
 	const hasPluginByGoal = !! goalPlugin;
 
 	const refParameter = useQuery().get( 'ref' );
-	const pluginToInstall = isWooHostingSolutionsRef( refParameter ) ? 'woocommerce' : goalPlugin;
+	const pluginToInstall = refParameter === WOO_HOSTING_SOLUTIONS_REF ? 'woocommerce' : goalPlugin;
 	const shouldInstallPlugin = Boolean( pluginToInstall );
 
 	/**

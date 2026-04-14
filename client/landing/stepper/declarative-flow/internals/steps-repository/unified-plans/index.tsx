@@ -10,7 +10,6 @@ import {
 	PLAN_UPGRADE_FLOW,
 	START_WRITING_FLOW,
 	WOO_HOSTED_PLANS_FLOW,
-	isWooHostingSolutionsRef,
 	Step,
 	useStepPersistedState,
 } from '@automattic/onboarding';
@@ -18,6 +17,7 @@ import { useSelect, useDispatch as useWPDispatch } from '@wordpress/data';
 import { useState, useEffect } from 'react';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
 import Loading from 'calypso/components/loading';
+import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
@@ -70,7 +70,7 @@ function getPlansIntent( flowName: string | null ): PlansIntent | null {
 			if ( search.has( 'intent' ) ) {
 				return getVisualSplitPlansIntent( search.get( 'intent' )! );
 			}
-			if ( isWooHostingSolutionsRef( search.get( 'ref' ) ) ) {
+			if ( search.get( 'ref' ) === WOO_HOSTING_SOLUTIONS_REF ) {
 				return 'plans-woo-hosting-solutions';
 			}
 			break;

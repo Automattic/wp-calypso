@@ -1,15 +1,10 @@
 import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
-import {
-	clearStepPersistedState,
-	getWooAdminDestination,
-	isWooHostingSolutionsRef,
-	ONBOARDING_FLOW,
-	SITE_SETUP_FLOW,
-} from '@automattic/onboarding';
+import { clearStepPersistedState, ONBOARDING_FLOW, SITE_SETUP_FLOW } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
+import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { addSurvicate } from 'calypso/lib/analytics/survicate';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
@@ -126,8 +121,9 @@ const onboarding: FlowV2< typeof initialize > = {
 				];
 			}
 
-			if ( isWooHostingSolutionsRef( refParameter ) ) {
-				return [ getWooAdminDestination( providedDependencies.siteSlug as string ), null ];
+			if ( refParameter === WOO_HOSTING_SOLUTIONS_REF ) {
+				const siteSlug = providedDependencies.siteSlug as string;
+				return [ `https://${ siteSlug }/wp-admin/admin.php?page=wc-admin`, null ];
 			}
 
 			return getOnboardingPostCheckoutDestination( {
