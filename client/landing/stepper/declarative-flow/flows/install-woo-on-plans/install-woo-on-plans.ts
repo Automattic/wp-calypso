@@ -1,5 +1,5 @@
 import { INSTALL_WOO_ON_PLANS_FLOW } from '@automattic/onboarding';
-import { useDispatch } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { useDispatch as useReduxDispatch } from 'react-redux';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
@@ -7,6 +7,7 @@ import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
 import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import type { Flow, ProvidedDependencies } from '../../internals/types';
+import type { SiteSelect } from '@automattic/data-stores';
 
 const WOO_ON_PLANS_SOFTWARE_SET = 'woo-on-plans';
 
@@ -23,6 +24,15 @@ const installWooOnPlans: Flow = {
 		const { siteId, siteSlug } = useSiteData();
 		const { setBundledPluginSlug } = useDispatch( SITE_STORE );
 		const dispatch = useReduxDispatch();
+		const adminUrl = useSelect(
+			( select ) =>
+				siteId
+					? String(
+							( select( SITE_STORE ) as SiteSelect ).getSiteOption( siteId, 'admin_url' ) || ''
+					  )
+					: '',
+			[ siteId ]
+		);
 
 		// BUNDLE_TRANSFER reads the software set via useSitePluginSlug() →
 		// SITE_STORE.getBundledPluginSlug(siteSlug). Prime it here so the step
@@ -46,7 +56,11 @@ const installWooOnPlans: Flow = {
 						return navigate( 'error' );
 					}
 					dispatch( requestAdminMenu( siteId ) );
-					return exitFlow( `https://${ siteSlug }/wp-admin/admin.php?page=wc-admin` );
+					return exitFlow(
+						adminUrl
+							? `${ adminUrl }admin.php?page=wc-admin`
+							: `https://${ siteSlug }/wp-admin/admin.php?page=wc-admin`
+					);
 				}
 			}
 		}

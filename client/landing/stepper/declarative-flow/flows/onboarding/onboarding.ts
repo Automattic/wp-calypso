@@ -2,9 +2,9 @@ import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import {
 	clearStepPersistedState,
 	INSTALL_WOO_ON_PLANS_FLOW,
+	isWooHostingSolutionsRef,
 	ONBOARDING_FLOW,
 	SITE_SETUP_FLOW,
-	WOO_HOSTING_SOLUTIONS_REF,
 } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -126,9 +126,9 @@ const onboarding: FlowV2< typeof initialize > = {
 				];
 			}
 
-			if ( refParameter === WOO_HOSTING_SOLUTIONS_REF ) {
+			if ( isWooHostingSolutionsRef( refParameter ) ) {
 				return [
-					addQueryArgs( `/setup/${ INSTALL_WOO_ON_PLANS_FLOW }`, {
+					addQueryArgs( withLocale( `/setup/${ INSTALL_WOO_ON_PLANS_FLOW }`, locale ), {
 						siteSlug: providedDependencies.siteSlug as string,
 					} ),
 					null,
@@ -273,6 +273,7 @@ const onboarding: FlowV2< typeof initialize > = {
 											withLocale( '/setup/onboarding/post-checkout-onboarding', locale ),
 											{
 												siteSlug,
+												...( refParameter ? { ref: refParameter } : {} ),
 											}
 									  );
 
