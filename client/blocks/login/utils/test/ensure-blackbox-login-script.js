@@ -18,7 +18,11 @@ jest.mock( '@automattic/calypso-config', () => {
 } );
 
 jest.mock( '@automattic/load-script', () => ( {
-	loadScript: jest.fn( () => Promise.resolve() ),
+	loadScript: jest.fn( ( _url, callback ) => {
+		if ( typeof callback === 'function' ) {
+			callback( null );
+		}
+	} ),
 } ) );
 
 describe( 'ensureBlackboxLoginScript', () => {
@@ -42,7 +46,7 @@ describe( 'ensureBlackboxLoginScript', () => {
 
 		expect( loadScript ).toHaveBeenCalledWith(
 			'https://blackbox-api.wp.com/v.js',
-			undefined,
+			expect.any( Function ),
 			expect.objectContaining( {
 				nonce: 'inline-nonce',
 				'data-apikey': 'api-key',
@@ -55,7 +59,9 @@ describe( 'ensureBlackboxLoginScript', () => {
 
 	test( 'resolves when loadScript rejects', async () => {
 		const { loadScript } = require( '@automattic/load-script' );
-		loadScript.mockRejectedValueOnce( new Error( 'load failed' ) );
+		loadScript.mockImplementationOnce( ( _url, callback ) => {
+			callback( new Error( 'load failed' ) );
+		} );
 		const { ensureBlackboxLoginScript } = require( '../ensure-blackbox-login-script' );
 
 		await expect( ensureBlackboxLoginScript( 'inline-nonce' ) ).resolves.toBeUndefined();
@@ -78,7 +84,7 @@ describe( 'ensureBlackboxLoginScript', () => {
 
 	test( 'times out and resolves if external script hangs', async () => {
 		const { loadScript } = require( '@automattic/load-script' );
-		loadScript.mockImplementationOnce( () => new Promise( () => {} ) );
+		loadScript.mockImplementationOnce( () => {} );
 		const { ensureBlackboxLoginScript } = require( '../ensure-blackbox-login-script' );
 
 		const result = ensureBlackboxLoginScript( 'inline-nonce' );
