@@ -187,7 +187,7 @@ async function pollForOrderStatus(
 }
 
 function getRenderRoot( genericErrorMessage: string ) {
-	const dialogTarget = document.querySelector( '.pix-modal-target' );
+	const dialogTarget = document.querySelector( '.pix-automatico-modal-target' );
 	if ( ! dialogTarget ) {
 		// eslint-disable-next-line no-console
 		console.error( 'Dialog target was not found.' );

@@ -96,7 +96,9 @@ export function createPixAutomaticoPaymentMethod( {
 		paymentProcessorId: 'pix_automatico',
 		label: <PixAutomaticoLabel />,
 		activeContent: <PixForm state={ state } />,
-		submitButton: <PixPayButton submitButtonContent={ submitButtonContent } state={ state } />,
+		submitButton: (
+			<PixAutomaticoPayButton submitButtonContent={ submitButtonContent } state={ state } />
+		),
 		getAriaLabel: () => 'Pix Automático',
 	};
 }
@@ -304,6 +306,51 @@ function PixPayButton( {
 		>
 			{ submitButtonContent }
 			<div className="pix-modal-target" />
+		</Button>
+	);
+}
+
+function PixAutomaticoPayButton( {
+	disabled,
+	onClick,
+	submitButtonContent,
+	state,
+}: {
+	disabled?: boolean;
+	onClick?: ProcessPayment;
+	submitButtonContent: ReactNode;
+	state: PixPaymentMethodState;
+} ) {
+	const { formStatus } = useFormStatus();
+
+	if ( ! onClick ) {
+		throw new Error(
+			'Missing onClick prop; PixAutomaticoPayButton must be used as a payment button in CheckoutSubmitButton'
+		);
+	}
+
+	return (
+		<Button
+			disabled={ disabled }
+			onClick={ () => {
+				onClick( {
+					name: state.data.cardholderName,
+					countryCode: countryCode,
+					state: state.data.state,
+					city: state.data.city,
+					postalCode: state.data.postalCode,
+					address: state.data.address,
+					streetNumber: state.data.streetNumber,
+					phoneNumber: state.data.phoneNumber,
+					document: state.data.taxpayerId,
+				} );
+			} }
+			buttonType="primary"
+			isBusy={ FormStatus.SUBMITTING === formStatus }
+			fullWidth
+		>
+			{ submitButtonContent }
+			<div className="pix-automatico-modal-target" />
 		</Button>
 	);
 }
