@@ -127,7 +127,7 @@ function getDomainSignupFlowDestination( { designType, siteSlug, flowName } ) {
 
 	// For Gravatar domain purchases, redirect back to Gravatar
 	if ( isDomainForGravatarFlow( flowName ) ) {
-		return 'https://gravatar.com/profile/';
+		return 'https://gravatar.com/profile/?modal=account-settings&path=profile-url';
 	}
 
 	// This designType represents a new site.
