@@ -1,10 +1,11 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_BIG_SKY, isBusiness, isPersonal, isPremium } from '@automattic/calypso-products';
 import { SiteIntent } from '@automattic/data-stores/src/onboard';
-import { Step } from '@automattic/onboarding';
+import { isWooHostingSolutionsRef, Step } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import Loading from 'calypso/components/loading';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { useExperiment } from 'calypso/lib/explat';
 import { useMarketplaceThemeProducts } from '../../../../hooks/use-marketplace-theme-products';
@@ -101,6 +102,12 @@ const PostCheckoutOnboarding: StepType< {
 	const pluginByGoal = usePluginByGoal();
 	const hasPluginByGoal = !! pluginByGoal;
 
+	// Users arriving via the Woo hosting-solutions landing page should have WooCommerce
+	// installed automatically on the new Atomic site.
+	const refParameter = useQuery().get( 'ref' );
+	const installWooCommerce = isWooHostingSolutionsRef( refParameter );
+	const pluginToInstall = installWooCommerce ? 'woocommerce' : pluginByGoal;
+
 	/**
 	 * If an externally managed theme is selected, we need to check the following:
 	 * - Ensure the theme is available. If it's not, we do nothing, as the user may remove the theme product during checkout.
@@ -148,8 +155,8 @@ const PostCheckoutOnboarding: StepType< {
 
 			if ( siteTransferStatusData?.isTransferring ) {
 				await waitForAtomic();
-			} else if ( hasExternalTheme || hasPluginByGoal ) {
-				await waitForInitiateTransfer( pluginByGoal );
+			} else if ( hasExternalTheme || hasPluginByGoal || installWooCommerce ) {
+				await waitForInitiateTransfer( pluginToInstall );
 				await waitForAtomic();
 			}
 
@@ -172,6 +179,7 @@ const PostCheckoutOnboarding: StepType< {
 		isMarketplaceThemeSubscribed,
 		isExternallyManagedThemeAvailable,
 		hasPluginByGoal,
+		installWooCommerce,
 	] );
 
 	if ( shouldUseStepContainerV2( flow ) ) {

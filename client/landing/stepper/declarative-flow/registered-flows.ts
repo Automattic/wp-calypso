@@ -5,7 +5,6 @@ import {
 	DOMAIN_FLOW,
 	NEW_HOSTED_SITE_FLOW,
 	TRANSFERRING_HOSTED_SITE_FLOW,
-	INSTALL_WOO_ON_PLANS_FLOW,
 	DOMAIN_TRANSFER,
 	HUNDRED_YEAR_DOMAIN_TRANSFER,
 	REBLOGGING_FLOW,
@@ -116,11 +115,6 @@ export const deprecatedV1Flows: Record< string, () => Promise< { default: Flow }
 	[ TRANSFERRING_HOSTED_SITE_FLOW ]: () =>
 		import(
 			/* webpackChunkName: "transferring-hosted-site-flow" */ './flows/transferring-hosted-site-flow/transferring-hosted-site-flow'
-		),
-
-	[ INSTALL_WOO_ON_PLANS_FLOW ]: () =>
-		import(
-			/* webpackChunkName: "install-woo-on-plans-flow" */ './flows/install-woo-on-plans/install-woo-on-plans'
 		),
 
 	[ DOMAIN_TRANSFER ]: () =>

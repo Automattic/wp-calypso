@@ -1,7 +1,6 @@
 import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import {
 	clearStepPersistedState,
-	INSTALL_WOO_ON_PLANS_FLOW,
 	isWooHostingSolutionsRef,
 	ONBOARDING_FLOW,
 	SITE_SETUP_FLOW,
@@ -127,12 +126,8 @@ const onboarding: FlowV2< typeof initialize > = {
 			}
 
 			if ( isWooHostingSolutionsRef( refParameter ) ) {
-				return [
-					addQueryArgs( withLocale( `/setup/${ INSTALL_WOO_ON_PLANS_FLOW }`, locale ), {
-						siteSlug: providedDependencies.siteSlug as string,
-					} ),
-					null,
-				];
+				const siteSlug = providedDependencies.siteSlug as string;
+				return [ `https://${ siteSlug }/wp-admin/admin.php?page=wc-admin`, null ];
 			}
 
 			return getOnboardingPostCheckoutDestination( {

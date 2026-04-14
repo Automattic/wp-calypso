@@ -3,7 +3,6 @@ export const NEWSLETTER_FLOW = 'newsletter';
 export const HOSTING_LP_FLOW = 'hosting-start';
 export const NEW_HOSTED_SITE_FLOW = 'new-hosted-site';
 export const TRANSFERRING_HOSTED_SITE_FLOW = 'transferring-hosted-site';
-export const INSTALL_WOO_ON_PLANS_FLOW = 'install-woo-on-plans';
 export const WOO_HOSTING_SOLUTIONS_REF = 'woo-hosting-solutions-flow';
 
 export const isWooHostingSolutionsRef = ( ref: string | null | undefined ): boolean =>
