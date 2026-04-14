@@ -122,8 +122,13 @@ function getLaunchDestination( dependencies ) {
 	return addQueryArgs( { celebrateLaunch: 'true' }, `/home/${ dependencies.siteSlug }` );
 }
 
-function getDomainSignupFlowDestination( { designType, siteSlug } ) {
+function getDomainSignupFlowDestination( { designType, siteSlug, flowName } ) {
 	const dashboardType = new URLSearchParams( window.location.search ).get( 'dashboard' );
+
+	// For Gravatar domain purchases, redirect back to Gravatar
+	if ( isDomainForGravatarFlow( flowName ) ) {
+		return 'https://gravatar.com/profile/';
+	}
 
 	// This designType represents a new site.
 	if ( designType === 'page' ) {
