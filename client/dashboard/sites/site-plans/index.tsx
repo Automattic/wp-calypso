@@ -324,6 +324,7 @@ function PlanCard( {
 	tierRank,
 	currentTierRank,
 	redirectAfterPurchase,
+	totalPlanCount,
 }: {
 	site: Site;
 	sitePlan: SiteContextualPlan;
@@ -332,9 +333,17 @@ function PlanCard( {
 	tierRank: number;
 	currentTierRank: number;
 	redirectAfterPurchase: string;
+	totalPlanCount: number;
 } ) {
 	const isCurrentPlan =
 		sitePlan.current_plan === true || ( currentTierRank >= 0 && tierRank === currentTierRank );
+
+	// When displaying more than 2 plan cards side-by-side, the card width will
+	// be small enough that badges are unlikely to fit next to the plan title,
+	// causing them to wrap to the next line, which pushes the card layout off
+	// compared to its neighbors. To help prevent that, we move the badge to
+	// the top.
+	const showBadgesAtTop = totalPlanCount > 2;
 
 	return (
 		<Card className={ `site-plans__card${ isCurrentPlan ? ' site-plans__card--current' : '' }` }>
@@ -343,6 +352,13 @@ function PlanCard( {
 					{ isCurrentPlan && (
 						<span className="site-plans__current-badge">{ __( 'Your plan' ) }</span>
 					) }
+					{ showBadgesAtTop &&
+						! isCurrentPlan &&
+						sitePlan.badges?.map( ( badge ) => (
+							<span key={ badge } className="site-plans__plan-badge">
+								{ badge }
+							</span>
+						) ) }
 				</div>
 				<VStack spacing={ 4 }>
 					<VStack spacing={ 1 }>
@@ -350,11 +366,12 @@ function PlanCard( {
 							<Text className="site-plans__plan-name" size={ 20 } weight={ 600 }>
 								{ sitePlan.plan_card_name ?? sitePlan.product_name }
 							</Text>
-							{ sitePlan.badges?.map( ( badge ) => (
-								<span key={ badge } className="site-plans__plan-badge">
-									{ badge }
-								</span>
-							) ) }
+							{ ! showBadgesAtTop &&
+								sitePlan.badges?.map( ( badge ) => (
+									<span key={ badge } className="site-plans__plan-badge">
+										{ badge }
+									</span>
+								) ) }
 						</div>
 						{ sitePlan.tagline && (
 							<Text className="site-plans__tagline" variant="muted">
@@ -676,6 +693,7 @@ export default function SitePlans() {
 						tierRank={ ap.tierRank }
 						currentTierRank={ currentTierRank }
 						redirectAfterPurchase={ redirectAfterPurchase }
+						totalPlanCount={ shownPlans.length }
 					/>
 				) ) }
 			</div>
