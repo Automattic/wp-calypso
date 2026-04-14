@@ -2,6 +2,10 @@
 
 .create-list-invitation {
 	margin-block-end: 16px;
+
+	.components-card__body {
+		padding: 24px;
+	}
 }
 
 .create-list-invitation__header {
