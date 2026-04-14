@@ -107,13 +107,12 @@ function init(): void {
 }
 
 /**
- * Lazily initializes Performance Observer collectors on first call and
- * returns the current snapshot of web-vital metrics plus connection info.
+ * Returns the current snapshot of web-vital metrics and connection info.
  *
- * Safe to call during SSR — returns an empty object on the server.
- * Values populate progressively: TTFB and FCP are available immediately,
- * LCP and CLS arrive via observers and update the same cached object,
- * so every subsequent event gets the latest readings.
+ * Observers are started eagerly at module load (guarded by `typeof window`
+ * so SSR gets an empty object).  TTFB and FCP are available immediately;
+ * LCP and CLS arrive asynchronously via PerformanceObserver and update the
+ * same cached object, so every subsequent call reflects the latest readings.
  */
 export function getWebVitalsProps(): WebVitalsProps {
 	return vitals;
