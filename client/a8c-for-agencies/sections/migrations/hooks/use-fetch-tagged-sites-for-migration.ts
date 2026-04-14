@@ -32,7 +32,7 @@ export default function useFetchTaggedSitesForMigration() {
 				status === 'verified' ||
 				status === 'paid' ||
 				status === 'rejected' ||
-				status === 'pending-re-verification'
+				status === 'reverification'
 			);
 		} );
 	}, [ query.data ] );

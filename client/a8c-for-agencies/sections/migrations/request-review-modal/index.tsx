@@ -38,7 +38,7 @@ export default function RequestReviewModal( {
 				onSuccess: () => {
 					fetchMigratedSites();
 					dispatch(
-						recordTracksEvent( 'calypso_a8c_migrations_request_another_review_success', {
+						recordTracksEvent( 'calypso_a4a_migrations_request_another_review_success', {
 							site_id: site.id,
 						} )
 					);
@@ -62,7 +62,7 @@ export default function RequestReviewModal( {
 			}
 		);
 		dispatch(
-			recordTracksEvent( 'calypso_a8c_migrations_request_another_review_submit', {
+			recordTracksEvent( 'calypso_a4a_migrations_request_another_review_submit', {
 				site_id: site.id,
 			} )
 		);
@@ -70,7 +70,7 @@ export default function RequestReviewModal( {
 
 	const handleOnClose = () => {
 		onClose();
-		dispatch( recordTracksEvent( 'calypso_a8c_migrations_request_another_review_close' ) );
+		dispatch( recordTracksEvent( 'calypso_a4a_migrations_request_another_review_close' ) );
 	};
 
 	return (

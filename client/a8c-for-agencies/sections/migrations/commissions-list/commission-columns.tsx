@@ -51,7 +51,7 @@ export const ReviewStatusColumn = ( {
 					statusText: translate( 'Rejected' ),
 					statusType: 'error',
 				};
-			case 'pending-re-verification':
+			case 'reverification':
 				return {
 					statusText: translate( 'Pending re-verification' ),
 					statusType: 'info',
