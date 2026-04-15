@@ -43,7 +43,6 @@ function initialize() {
 		STEPS.SITE_CREATION_STEP,
 		STEPS.PROCESSING,
 		STEPS.POST_CHECKOUT_ONBOARDING,
-		STEPS.WAIT_FOR_PLUGIN_INSTALL,
 		STEPS.SETUP_YOUR_SITE_AI,
 	];
 
@@ -67,7 +66,6 @@ const onboarding: FlowV2< typeof initialize > = {
 			setSiteUrl,
 			setSignupDomainOrigin,
 			setHideFreePlan,
-			setPluginsToVerify,
 		} = useDispatch( ONBOARD_STORE ) as OnboardActions;
 		const locale = useFlowLocale();
 		const { signupDomainOrigin, planCartItem, blueprint } = useSelect(
@@ -80,10 +78,6 @@ const onboarding: FlowV2< typeof initialize > = {
 		);
 		const coupon = useQuery().get( 'coupon' );
 		const refParameter = useQuery().get( 'ref' );
-
-		if ( refParameter === WOO_HOSTING_SOLUTIONS_REF ) {
-			setPluginsToVerify( [ 'woocommerce' ] );
-		}
 
 		const { setShouldShowNotification } = usePurchasePlanNotification();
 
@@ -218,15 +212,6 @@ const onboarding: FlowV2< typeof initialize > = {
 					return navigate( 'processing', undefined, true );
 				case 'post-checkout-onboarding': {
 					setShouldShowNotification( providedDependencies?.siteId as number );
-					if ( refParameter === WOO_HOSTING_SOLUTIONS_REF ) {
-						return navigate( 'waitForPluginInstall', {
-							siteId: providedDependencies?.siteId as number,
-							siteSlug: providedDependencies?.siteSlug as string,
-						} );
-					}
-					return navigate( 'processing' );
-				}
-				case 'waitForPluginInstall': {
 					return navigate( 'processing' );
 				}
 				case 'setup-your-site-ai': {
