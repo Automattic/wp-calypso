@@ -1077,8 +1077,9 @@ export default function pages() {
 	 */
 	// ── ActivityPub content negotiation for Reader Lists ──
 	// When a request for /reader/list/:owner/:slug comes in with
-	// Accept: application/activity+json, return an OrderedCollection
-	// instead of the HTML page.
+	// Accept: application/activity+json, return a Collection compatible with
+	// both the Pixelfed Starter Kit format (inline Person objects) and the
+	// Mastodon FEP format (orderedItems + attributedTo).
 	app.get( '/reader/list/:owner/:slug', async ( req, res, next ) => {
 		const accept = req.headers.accept || '';
 		if (
@@ -1108,9 +1109,23 @@ export default function pages() {
 				owner
 			) }/${ encodeURIComponent( slug ) }`;
 
+			// Build items as inline Person objects (Pixelfed format) for
+			// maximum compatibility. The WordPress ActivityPub plugin importer
+			// reads items[].id to extract actor URIs.
 			const items = ( list.items || [] )
 				.filter( ( item ) => item.fediverse_handle_url )
-				.map( ( item ) => item.fediverse_handle_url );
+				.map( ( item ) => ( {
+					type: 'Person',
+					id: item.fediverse_handle_url,
+					name: item.site_name || '',
+					url: item.site_url || item.fediverse_handle_url,
+				} ) );
+
+			// Include tags from the list metadata.
+			const tags = ( list.tags || [] ).map( ( tag ) => ( {
+				type: 'Hashtag',
+				name: `#${ tag }`,
+			} ) );
 
 			res.set( 'Content-Type', 'application/activity+json; charset=utf-8' );
 			res.json( {
@@ -1119,8 +1134,10 @@ export default function pages() {
 				id: listUrl,
 				name: list.title,
 				summary: list.description || '',
-				totalItems: items.length,
-				orderedItems: items,
+				attributedTo: `https://wordpress.com/reader/users/${ encodeURIComponent( owner ) }`,
+				published: new Date().toISOString(),
+				totalItems: items.length + tags.length,
+				orderedItems: [ ...items, ...tags ],
 			} );
 		} catch {
 			return res.status( 502 ).json( { error: 'Failed to fetch list data' } );
