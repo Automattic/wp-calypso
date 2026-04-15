@@ -85,13 +85,13 @@ export function FediFollowAllButton( { items, listSlug }: FediFollowAllButtonPro
 
 	return (
 		<>
-			<Button
-				variant="secondary"
+			<button
+				className="list-stream__export-button"
 				onClick={ handleFollowAll }
 				disabled={ isFollowing || isAuthenticating }
 			>
 				{ label }
-			</Button>
+			</button>
 
 			{ showModal && (
 				<Modal
