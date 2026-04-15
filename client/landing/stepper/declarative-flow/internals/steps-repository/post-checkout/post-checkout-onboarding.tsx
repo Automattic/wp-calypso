@@ -105,7 +105,8 @@ const PostCheckoutOnboarding: StepType< {
 	const hasPluginByGoal = !! goalPlugin;
 
 	const refParameter = useQuery().get( 'ref' );
-	const pluginToInstall = refParameter === WOO_HOSTING_SOLUTIONS_REF ? 'woocommerce' : goalPlugin;
+	const isWooHostingSolutions = refParameter === WOO_HOSTING_SOLUTIONS_REF;
+	const pluginToInstall = isWooHostingSolutions ? 'woocommerce' : goalPlugin;
 	const shouldInstallPlugin = Boolean( pluginToInstall );
 
 	/**
@@ -160,8 +161,8 @@ const PostCheckoutOnboarding: StepType< {
 				await waitForAtomic();
 			}
 
-			if ( refParameter === WOO_HOSTING_SOLUTIONS_REF ) {
-				await waitForPluginsActive( site.ID, [ 'woocommerce' ] );
+			if ( isWooHostingSolutions && pluginToInstall ) {
+				await waitForPluginsActive( site.ID, [ pluginToInstall ] );
 			}
 
 			return providedDependencies;

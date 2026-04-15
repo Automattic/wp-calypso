@@ -1,53 +1,52 @@
 import wpcom from 'calypso/lib/wp';
 import type { PluginsResponse } from '../declarative-flow/internals/types';
 
-const wait = ( ms: number ) => new Promise( ( resolve ) => setTimeout( resolve, ms ) );
-
-interface WaitForPluginsActiveOptions {
-	timeoutMs?: number;
-	initialBackoffMs?: number;
-}
+const wait = ( ms: number ) => new Promise( ( res ) => setTimeout( res, ms ) );
 
 /**
- * Poll /sites/:siteId/plugins until every plugin in `pluginSlugs` is installed
- * and active. Errors from the endpoint are swallowed (it returns 403 until
- * the site is Atomic), so callers should ensure the transfer is in progress
- * before invoking this. Throws on timeout.
+ * Poll /sites/:siteId/plugins until every plugin in `pluginsToVerify` is
+ * installed and active. Errors are swallowed (the endpoint 403s until the
+ * site is Atomic). Throws on timeout.
  */
 export const waitForPluginsActive = async (
 	siteId: number,
-	pluginSlugs: string[],
-	{ timeoutMs = 1000 * 300, initialBackoffMs = 1000 }: WaitForPluginsActiveOptions = {}
+	pluginsToVerify: string[] | undefined
 ): Promise< void > => {
-	if ( pluginSlugs.length === 0 ) {
-		return;
-	}
+	const startTime = new Date().getTime();
+	const totalTimeout = 1000 * 300;
+	const maxFinishTime = startTime + totalTimeout;
 
-	const maxFinishTime = Date.now() + timeoutMs;
-	let backoff = initialBackoffMs;
+	// Poll for transfer status. If there are no plugins to verify, we can skip this step.
+	let stopPollingPlugins = ! pluginsToVerify || pluginsToVerify.length <= 0;
+	let backoffTime = 1000;
 
-	while ( true ) {
-		await wait( backoff );
+	while ( ! stopPollingPlugins ) {
+		await wait( backoffTime );
 
 		try {
 			const response: PluginsResponse = await wpcom.req.get( {
 				path: `/sites/${ siteId }/plugins`,
 				apiVersion: '1.1',
 			} );
-			const allActive = pluginSlugs.every(
-				( slug ) => response?.plugins?.some( ( plugin ) => plugin.slug === slug && plugin.active )
-			);
-			if ( allActive ) {
-				return;
+
+			// Check that all plugins to verify have been installed and activated.
+			// If they _have_ been installed and activated, we can stop polling.
+			if ( response?.plugins && pluginsToVerify ) {
+				stopPollingPlugins = pluginsToVerify.every( ( slug ) => {
+					return response?.plugins.find(
+						( plugin: { slug: string; active: boolean } ) =>
+							plugin.slug === slug && plugin.active === true
+					);
+				} );
 			}
-		} catch {
-			// Ignore: the endpoint 403s until the site is Atomic.
+		} catch ( err ) {
+			// Ignore errors. It's normal to get errors the first couple of times we poll. The timeout will eventually catch it if the failures continue.
 		}
 
-		if ( Date.now() >= maxFinishTime ) {
-			throw new Error( `plugin check timeout exceeded ${ timeoutMs / 1000 }s` );
+		if ( maxFinishTime <= new Date().getTime() ) {
+			throw new Error( `plugin check timeout exceeded ${ totalTimeout / 1000 }s` );
 		}
 
-		backoff *= 2;
+		backoffTime *= 2;
 	}
 };
