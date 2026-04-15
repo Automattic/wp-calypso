@@ -517,7 +517,7 @@ export const ConnectRepositoryForm = ( {
 				),
 				createRepo: (
 					<ExternalLink
-						href="https://developer.wordpress.com/docs/developer-tools/github-deployments/create-repo-existing-source/"
+						href="https://developer.wordpress.com/docs/get-started/github/"
 						children={ null }
 					/>
 				),
