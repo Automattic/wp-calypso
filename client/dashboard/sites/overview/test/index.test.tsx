@@ -50,11 +50,21 @@ async function getCard( text: string ) {
 		const card = screen
 			.getAllByRole( 'article' )
 			.find( ( el ) => el.textContent?.includes( text ) );
+		// waitFor only retries when the callback throws; find() returns undefined
+		// silently, so without this throw the helper wouldn't wait for late cards.
 		if ( ! card ) {
 			throw new Error( `Card with text "${ text }" was not rendered` );
 		}
 		return card;
 	} );
+}
+
+// HostingFeatureGate re-evaluates when the plan query resolves, which remounts
+// feature-gated cards (Performance, Last scan, …) and detaches nodes getCard()
+// has already returned. Call this before asserting on those cards so the gate
+// has settled first.
+async function waitForFeatureGatedCards( planName: string ) {
+	await screen.findByText( planName );
 }
 
 describe( '<SiteOverview>', () => {
@@ -147,7 +157,7 @@ describe( '<SiteOverview>', () => {
 
 		render( <SiteOverview siteSlug={ site.slug } /> );
 		await screen.findByRole( 'heading', { name: 'Test Site' } );
-		await screen.findByText( 'Free' );
+		await waitForFeatureGatedCards( 'Free' );
 
 		expect( screen.getByRole( 'link', { name: /WP Admin/ } ) ).toBeVisible();
 
@@ -165,7 +175,7 @@ describe( '<SiteOverview>', () => {
 
 		render( <SiteOverview siteSlug={ site.slug } /> );
 		await screen.findByRole( 'heading', { name: 'Test Site' } );
-		await screen.findByText( 'Business' );
+		await waitForFeatureGatedCards( 'Business' );
 
 		expect( screen.getByRole( 'link', { name: /WP Admin/ } ) ).toBeVisible();
 
@@ -183,7 +193,7 @@ describe( '<SiteOverview>', () => {
 
 		render( <SiteOverview siteSlug={ site.slug } /> );
 		await screen.findByRole( 'heading', { name: 'Test Site' } );
-		await screen.findByText( 'Business' );
+		await waitForFeatureGatedCards( 'Business' );
 
 		expect( screen.getByRole( 'link', { name: /WP Admin/ } ) ).toBeVisible();
 
@@ -203,7 +213,7 @@ describe( '<SiteOverview>', () => {
 		render( <SiteOverview siteSlug={ site.slug } /> );
 
 		await screen.findByRole( 'heading', { name: 'Test Site' } );
-		await screen.findByText( 'Business' );
+		await waitForFeatureGatedCards( 'Business' );
 
 		expect( screen.getByRole( 'link', { name: /WP Admin/ } ) ).toBeVisible();
 
@@ -258,7 +268,7 @@ describe( '<SiteOverview>', () => {
 
 		render( <SiteOverview siteSlug={ site.slug } /> );
 		await screen.findByRole( 'heading', { name: 'Test Site' } );
-		await screen.findByText( 'Business' );
+		await waitForFeatureGatedCards( 'Business' );
 
 		expect( screen.getByRole( 'link', { name: /WP Admin/ } ) ).toBeVisible();
 
@@ -276,7 +286,7 @@ describe( '<SiteOverview>', () => {
 
 		render( <SiteOverview siteSlug={ site.slug } /> );
 		await screen.findByRole( 'heading', { name: 'Test Site' } );
-		await screen.findByText( 'Business' );
+		await waitForFeatureGatedCards( 'Business' );
 
 		expect( screen.getByRole( 'link', { name: /WP Admin/ } ) ).toBeVisible();
 
