@@ -2,13 +2,18 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useCallback, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
+import EmptyContent from 'calypso/components/empty-content';
 import Loading from 'calypso/components/loading';
 import { useInterval } from 'calypso/lib/interval';
 import wpcom from 'calypso/lib/wp';
 import { TELEGRAM_TRANSIENT_NOTICE } from 'calypso/me/telegram/use-telegram-bot-widget';
+import {
+	getCurrentUserDisplayName,
+	getCurrentUserName,
+} from 'calypso/state/current-user/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 import './style.scss';
@@ -30,15 +35,17 @@ function TelegramConnectMessageLayout( { documentTitle, title, children } ) {
 export default function TelegramConnectPage( { telegramId, token, ts } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const [ status, setStatus ] = useState( 'loading' ); // 'loading' | 'success' | 'error' | 'missing_params'
+	const displayName = useSelector( getCurrentUserDisplayName );
+	const userLogin = useSelector( getCurrentUserName );
+	const username =
+		displayName && userLogin && displayName !== userLogin
+			? `${ displayName } (@${ userLogin })`
+			: displayName || userLogin;
+	const hasParams = !! telegramId && !! token && !! ts;
+	const [ status, setStatus ] = useState( hasParams ? 'confirm' : 'missing_params' );
 
 	const [ tick, setTick ] = useState( 0 );
 	const [ hasStarted, setHasStarted ] = useState( false );
-
-	useEffect( () => {
-		const id = setTimeout( () => setHasStarted( true ), 750 );
-		return () => clearTimeout( id );
-	}, [] );
 
 	const showProgress = status === 'loading' || status === 'success';
 
@@ -54,11 +61,9 @@ export default function TelegramConnectPage( { telegramId, token, ts } ) {
 		progressValue = Math.min( 95, 10 + tick * 2 );
 	}
 
-	useEffect( () => {
-		if ( ! telegramId || ! token || ! ts ) {
-			setStatus( 'missing_params' );
-			return;
-		}
+	const handleConnect = useCallback( () => {
+		setStatus( 'loading' );
+		setTimeout( () => setHasStarted( true ), 750 );
 
 		wpcom.req
 			.post(
@@ -92,6 +97,26 @@ export default function TelegramConnectPage( { telegramId, token, ts } ) {
 				setStatus( 'error' );
 			} );
 	}, [ telegramId, token, ts, dispatch, translate ] );
+
+	if ( status === 'confirm' ) {
+		const title = username
+			? translate( 'Allow Telegram to connect to your WordPress.com account %(username)s?', {
+					args: { username },
+			  } )
+			: translate( 'Allow Telegram to connect to your WordPress.com account?' );
+		return (
+			<>
+				<DocumentHead title={ title } />
+				<EmptyContent
+					title={ title }
+					action={ translate( 'Connect' ) }
+					actionCallback={ handleConnect }
+					secondaryAction={ translate( 'Cancel' ) }
+					secondaryActionURL={ DEVELOPER_PATH }
+				/>
+			</>
+		);
+	}
 
 	if ( status === 'missing_params' ) {
 		const title = translate( 'Invalid link. Missing Telegram connection parameters.' );
