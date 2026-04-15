@@ -17,7 +17,7 @@ const ReaderFullPostHeaderMeta = ( { post, author, siteName, feedId, siteId } ) 
 		areEqualIgnoringWhitespaceAndCase( String( siteName ), String( author?.name ) );
 	const showAuthorLink = hasAuthorName && ! hasMatchingAuthorAndSiteNames;
 	const avatarUrl =
-		! author.avatar_URL && post.is_external ? feed?.site_icon || feed?.image : author?.avatar_URL;
+		! author?.avatar_URL && post.is_external ? feed?.site_icon || feed?.image : author?.avatar_URL;
 
 	return (
 		<div className="reader-full-post__header-meta-wrapper">
