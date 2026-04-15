@@ -1109,10 +1109,32 @@ export default function pages() {
 				owner
 			) }/${ encodeURIComponent( slug ) }`;
 
-			// Build items as inline Person objects (Pixelfed format) for
-			// maximum compatibility. The WordPress ActivityPub plugin importer
-			// reads items[].id to extract actor URIs.
-			const items = ( list.items || [] )
+			// Build items that work with both formats:
+			// - Pixelfed consumers read items[].id to get actor URIs (Person objects)
+			// - Mastodon FEP consumers read orderedItems[].featuredObject from FeaturedItem wrappers
+			// We include both: each item is a FeaturedItem wrapping a Person.
+			// Pixelfed-style consumers that don't understand FeaturedItem can
+			// fall back to the inline Person object in orderedItems.
+			const fediItems = ( list.items || [] )
+				.filter( ( item ) => item.fediverse_handle_url )
+				.map( ( item, index ) => ( {
+					type: 'FeaturedItem',
+					id: `${ listUrl }/items/${ index + 1 }`,
+					featuredObject: item.fediverse_handle_url,
+					featuredObjectType: 'Person',
+					name: item.site_name || '',
+					url: item.site_url || item.fediverse_handle_url,
+				} ) );
+
+			// Include tags as topic + tag fields (Mastodon FEP style).
+			const tags = ( list.tags || [] ).map( ( tag ) => ( {
+				type: 'Hashtag',
+				name: `#${ tag }`,
+			} ) );
+
+			// Also build a plain items array with Person objects for
+			// Pixelfed-format consumers (WP plugin importer, fedidevs.com).
+			const personItems = ( list.items || [] )
 				.filter( ( item ) => item.fediverse_handle_url )
 				.map( ( item ) => ( {
 					type: 'Person',
@@ -1121,23 +1143,21 @@ export default function pages() {
 					url: item.site_url || item.fediverse_handle_url,
 				} ) );
 
-			// Include tags from the list metadata.
-			const tags = ( list.tags || [] ).map( ( tag ) => ( {
-				type: 'Hashtag',
-				name: `#${ tag }`,
-			} ) );
-
 			res.set( 'Content-Type', 'application/activity+json; charset=utf-8' );
 			res.json( {
 				'@context': 'https://www.w3.org/ns/activitystreams',
-				type: 'OrderedCollection',
+				type: [ 'OrderedCollection', 'FeaturedCollection' ],
 				id: listUrl,
 				name: list.title,
 				summary: list.description || '',
 				attributedTo: `https://wordpress.com/reader/users/${ encodeURIComponent( owner ) }`,
 				published: new Date().toISOString(),
-				totalItems: items.length + tags.length,
-				orderedItems: [ ...items, ...tags ],
+				totalItems: fediItems.length,
+				// orderedItems: FeaturedItem wrappers (Mastodon FEP format)
+				orderedItems: fediItems,
+				// items: plain Person objects (Pixelfed format)
+				items: [ ...personItems, ...tags ],
+				tag: tags,
 			} );
 		} catch {
 			return res.status( 502 ).json( { error: 'Failed to fetch list data' } );
