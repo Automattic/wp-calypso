@@ -57,7 +57,8 @@
 	"enable_all_sections": false,
 	"sections": {
 		"signup": true,
-		"checkout": true
+		"checkout": true,
+		"a8c-for-agencies-signup": true
 	},
 	"site_filter": [],
 	"theme": "dashboard",

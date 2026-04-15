@@ -25,7 +25,11 @@ import { isAllowedCiabDashboardHostname } from 'calypso/dashboard/app-ciab/routi
 import { CIAB_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-ciab/section';
 import { isAllowedDotcomDashboardHostname } from 'calypso/dashboard/app-dotcom/routing';
 import { DOTCOM_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-dotcom/section';
-import { A4A_DASHBOARD_EXTRA_PATHS, DASHBOARD_SECTION_PATHS } from 'calypso/dashboard/section';
+import {
+	A4A_DASHBOARD_EXTRA_PATHS,
+	A4A_SIGNUP_PATHS,
+	DASHBOARD_SECTION_PATHS,
+} from 'calypso/dashboard/section';
 import isDashboardEnv from 'calypso/dashboard/utils/is-dashboard-env';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { STEPPER_SECTION_DEFINITION } from 'calypso/landing/stepper/section';
@@ -1234,6 +1238,14 @@ export default function pages() {
 		handleSectionPath( STEPPER_SECTION_DEFINITION, '/setup', 'entry-stepper', ( req ) =>
 			isAllowedDashboardRoute( { hostname: req.hostname, path: req.path } )
 		);
+		const a4aSignupSectionDefinition = sections.find(
+			( s ) => s.name === 'a8c-for-agencies-signup'
+		);
+		A4A_SIGNUP_PATHS.forEach( ( a4aSignupPath ) => {
+			handleSectionPath( a4aSignupSectionDefinition, a4aSignupPath, undefined, ( req ) =>
+				isAllowedDashboardRoute( { hostname: req.hostname, path: req.path } )
+			);
+		} );
 		DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
 			handleSectionPath(
 				DOTCOM_DASHBOARD_SECTION_DEFINITION,
@@ -1260,19 +1272,13 @@ export default function pages() {
 			loadDashboardLocaleData
 		);
 		DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
-			handleSectionPath(
-				A4A_DASHBOARD_SECTION_DEFINITION,
-				route,
-				'entry-dashboard-a4a',
-				( req ) => isAllowedA4ADashboardHostname( req.hostname )
+			handleSectionPath( A4A_DASHBOARD_SECTION_DEFINITION, route, 'entry-dashboard-a4a', ( req ) =>
+				isAllowedA4ADashboardHostname( req.hostname )
 			);
 		} );
 		A4A_DASHBOARD_EXTRA_PATHS.forEach( ( route ) => {
-			handleSectionPath(
-				A4A_DASHBOARD_SECTION_DEFINITION,
-				route,
-				'entry-dashboard-a4a',
-				( req ) => isAllowedA4ADashboardHostname( req.hostname )
+			handleSectionPath( A4A_DASHBOARD_SECTION_DEFINITION, route, 'entry-dashboard-a4a', ( req ) =>
+				isAllowedA4ADashboardHostname( req.hostname )
 			);
 		} );
 	}
