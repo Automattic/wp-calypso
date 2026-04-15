@@ -73,22 +73,28 @@ export function FediFollowAllButton( { items, listSlug }: FediFollowAllButtonPro
 
 	let label;
 	if ( isAuthenticating ) {
-		label = translate( 'Connecting\u2026' );
+		label = '\u2042 ' + translate( 'Connecting\u2026' );
 	} else if ( isFollowing ) {
-		label = translate( 'Following\u2026 (%(done)d/%(total)d)', {
-			args: { done: followProgress[ 0 ], total: followProgress[ 1 ] },
-		} );
-	} else if ( succeeded > 0 ) {
-		label = translate( '%(count)d followed on Fediverse', { args: { count: succeeded } } );
-		if ( failed > 0 ) {
-			label = translate( '%(succeeded)d followed, %(failed)d failed', {
-				args: { succeeded, failed },
+		label =
+			'\u2042 ' +
+			translate( 'Following\u2026 (%(done)d/%(total)d)', {
+				args: { done: followProgress[ 0 ], total: followProgress[ 1 ] },
 			} );
+	} else if ( succeeded > 0 ) {
+		label = '\u2042 ' + translate( '%(count)d followed', { args: { count: succeeded } } );
+		if ( failed > 0 ) {
+			label =
+				'\u2042 ' +
+				translate( '%(succeeded)d followed, %(failed)d failed', {
+					args: { succeeded, failed },
+				} );
 		}
 	} else {
-		label = translate( 'Follow %(count)d on Fediverse', {
-			args: { count: fediAccounts.length },
-		} );
+		label =
+			'\u2042 ' +
+			translate( 'Follow %(count)d on Fediverse', {
+				args: { count: fediAccounts.length },
+			} );
 	}
 
 	const modal = showModal && (

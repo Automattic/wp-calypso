@@ -1,6 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
-import { download, people } from '@wordpress/icons';
+import { download } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import AutoDirection from 'calypso/components/auto-direction';
 import NavigationHeader from 'calypso/components/navigation-header';
@@ -82,7 +82,7 @@ const ListStreamHeader = ( {
 						/>
 						{ isLoggedOut && (
 							<>
-								<FediFollowAllButton items={ items } listSlug={ slug || '' } icon={ people } />
+								<FediFollowAllButton items={ items } listSlug={ slug || '' } />
 								<Button
 									variant="secondary"
 									icon={ download }
