@@ -301,6 +301,100 @@ describe( 'usePricingMetaForGridPlans', () => {
 		}
 	);
 
+	describe( 'multi-year plan expiry normalisation', () => {
+		afterEach( () => {
+			jest.spyOn( Date, 'now' ).mockRestore();
+		} );
+
+		it( 'should normalise discountedPrice to a per-year equivalent when current plan has a far-future expiry', () => {
+			// Simulate Date.now() at a fixed point so the years-remaining calculation is deterministic.
+			const mockNow = new Date( '2026-01-01T00:00:00Z' ).getTime();
+			jest.spyOn( Date, 'now' ).mockReturnValue( mockNow );
+
+			Plans.useCurrentPlan.mockImplementation( () => ( {
+				productSlug: PLAN_PERSONAL,
+				planSlug: PLAN_PERSONAL,
+				expiry: '2030-01-01T00:00:00Z', // 4 years from mockNow
+			} ) );
+
+			Plans.useSitePlans.mockImplementation( () => ( {
+				isLoading: false,
+				data: {
+					[ PLAN_BUSINESS ]: {
+						...SITE_PLANS[ PLAN_BUSINESS ],
+						pricing: {
+							...SITE_PLANS[ PLAN_BUSINESS ].pricing,
+							// Simulate the API returning a 4-year prorated total
+							discountedPrice: {
+								full: 2000,
+								monthly: 200,
+							},
+						},
+					},
+				},
+			} ) );
+
+			const pricingMeta = usePricingMetaForGridPlans( {
+				planSlugs: [ PLAN_BUSINESS ],
+				siteId,
+				coupon: undefined,
+				useCheckPlanAvailabilityForPurchase,
+			} );
+
+			// discountedPrice should be divided by 4 (years remaining)
+			expect( pricingMeta?.[ PLAN_BUSINESS ]?.discountedPrice ).toEqual( {
+				full: 500, // 2000 / 4
+				monthly: 50, // 200 / 4
+			} );
+			// originalPrice should be unchanged
+			expect( pricingMeta?.[ PLAN_BUSINESS ]?.originalPrice ).toEqual(
+				SITE_PLANS[ PLAN_BUSINESS ].pricing.originalPrice
+			);
+		} );
+
+		it( 'should not normalise discountedPrice when current plan expires within one year', () => {
+			const mockNow = new Date( '2026-01-01T00:00:00Z' ).getTime();
+			jest.spyOn( Date, 'now' ).mockReturnValue( mockNow );
+
+			Plans.useCurrentPlan.mockImplementation( () => ( {
+				productSlug: PLAN_PERSONAL,
+				planSlug: PLAN_PERSONAL,
+				expiry: '2026-10-01T00:00:00Z', // < 1 year from mockNow
+			} ) );
+
+			const pricingMeta = usePricingMetaForGridPlans( {
+				planSlugs: [ PLAN_BUSINESS ],
+				siteId,
+				coupon: undefined,
+				useCheckPlanAvailabilityForPurchase,
+			} );
+
+			// discountedPrice should be unchanged
+			expect( pricingMeta?.[ PLAN_BUSINESS ]?.discountedPrice ).toEqual(
+				SITE_PLANS[ PLAN_BUSINESS ].pricing.discountedPrice
+			);
+		} );
+
+		it( 'should not normalise discountedPrice when current plan has no expiry', () => {
+			Plans.useCurrentPlan.mockImplementation( () => ( {
+				productSlug: PLAN_PERSONAL,
+				planSlug: PLAN_PERSONAL,
+				// no expiry field
+			} ) );
+
+			const pricingMeta = usePricingMetaForGridPlans( {
+				planSlugs: [ PLAN_BUSINESS ],
+				siteId,
+				coupon: undefined,
+				useCheckPlanAvailabilityForPurchase,
+			} );
+
+			expect( pricingMeta?.[ PLAN_BUSINESS ]?.discountedPrice ).toEqual(
+				SITE_PLANS[ PLAN_BUSINESS ].pricing.discountedPrice
+			);
+		} );
+	} );
+
 	it( 'should return intro offer when available', () => {
 		Plans.useIntroOffers.mockImplementation( () => ( {
 			[ PLAN_BUSINESS ]: introOffer,
