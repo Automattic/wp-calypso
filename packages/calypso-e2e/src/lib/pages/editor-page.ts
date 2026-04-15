@@ -483,21 +483,27 @@ export class EditorPage {
 		const editorParent = await this.editor.parent();
 
 		await inserter.searchBlockInserter( patternName );
+
+		// Register the snackbar listener before the click so we don't miss a
+		// toast that appears and dismisses while the click's post-action
+		// navigation wait still resolves on slow CI.
+		const insertConfirmationToastLocator = exactMatch
+			? editorParent.locator(
+					`.components-snackbar__content:text('Block pattern "${ patternName }" inserted.')`
+			  )
+			: editorParent
+					.locator( '.components-snackbar__content', {
+						hasText: /^Block pattern ".+" inserted\.$/,
+					} )
+					.first();
+		const toastPromise = insertConfirmationToastLocator.waitFor();
+
 		const locator = await inserter.selectBlockInserterResult( patternName, {
 			type: 'pattern',
 			exactMatch,
 		} );
 
-		// For partial matches, get the actual pattern name from the selected element.
-		let actualPatternName = patternName;
-		if ( ! exactMatch ) {
-			actualPatternName = ( await locator.getAttribute( 'aria-label' ) ) ?? '';
-		}
-
-		const insertConfirmationToastLocator = editorParent.locator(
-			`.components-snackbar__content:text('Block pattern "${ actualPatternName }" inserted.')`
-		);
-		await insertConfirmationToastLocator.waitFor();
+		await toastPromise;
 		return locator;
 	}
 

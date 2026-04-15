@@ -118,7 +118,9 @@ export class EditorSidebarBlockInserterComponent {
 		}
 
 		await Promise.all( [ locator.hover(), locator.focus() ] );
-		await locator.click();
+		// Pattern insertion does not navigate but can emit events that Playwright
+		// treats as "scheduled navigation" on slow CI, hanging the click auto-wait.
+		await locator.click( type === 'pattern' ? { noWaitAfter: true } : undefined );
 
 		return locator;
 	}
