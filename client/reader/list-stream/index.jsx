@@ -1,7 +1,7 @@
-import { Button } from '@wordpress/components';
-import { download } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import ReaderExportButton from 'calypso/blocks/reader-export-button';
+import { READER_EXPORT_TYPE_LIST } from 'calypso/blocks/reader-export-button/constants';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryReaderList from 'calypso/components/data/query-reader-list';
 import SectionNav from 'calypso/components/section-nav';
@@ -25,7 +25,6 @@ import EmptyContent from './empty';
 import ListStreamHeader from './header';
 import { ListSitesDirectory } from './list-sites-directory';
 import ListMissing from './missing';
-import { downloadListOpml } from './opml-export';
 import { usePublicListQuery } from './use-public-list-query';
 import './style.scss';
 
@@ -173,21 +172,13 @@ function ListStream( props ) {
 							{ translate( 'Sites' ) }
 						</NavItem>
 					</NavTabs>
-					{ publicListData?.items && publicListData.items.length > 0 && (
-						<Button
+					{ ( list?.ID || publicListData?.ID ) && (
+						<ReaderExportButton
 							className="list-stream__export-button"
+							exportType={ READER_EXPORT_TYPE_LIST }
+							listId={ list?.ID || publicListData?.ID }
 							variant="tertiary"
-							icon={ download }
-							onClick={ () =>
-								downloadListOpml(
-									list?.title || 'Reader List',
-									slug || 'list',
-									publicListData.items
-								)
-							}
-						>
-							{ translate( 'Export' ) }
-						</Button>
+						/>
 					) }
 				</SectionNav>
 
