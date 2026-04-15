@@ -8,6 +8,7 @@ import Loading from 'calypso/components/loading';
 import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
+import { waitForPluginsActive } from 'calypso/landing/stepper/utils/wait-for-plugins-active';
 import { useExperiment } from 'calypso/lib/explat';
 import { useMarketplaceThemeProducts } from '../../../../hooks/use-marketplace-theme-products';
 import { useSiteData } from '../../../../hooks/use-site-data';
@@ -157,6 +158,10 @@ const PostCheckoutOnboarding: StepType< {
 			} else if ( hasExternalTheme || shouldInstallPlugin ) {
 				await waitForInitiateTransfer( pluginToInstall );
 				await waitForAtomic();
+			}
+
+			if ( refParameter === WOO_HOSTING_SOLUTIONS_REF ) {
+				await waitForPluginsActive( site.ID, [ 'woocommerce' ] );
 			}
 
 			return providedDependencies;
