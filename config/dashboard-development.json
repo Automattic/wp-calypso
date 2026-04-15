@@ -17,7 +17,7 @@
 	"port": 3000,
 	"wpcom_signup_id": "39911",
 	"wpcom_signup_key": "cOaYKdrkgXz8xY7aysv4fU6wL6sK5J8a6ojReEIAPwggsznj4Cb6mW0nffTxtYT8",
-	"wpcom_url": "http://calypso.localhost:3000",
+	"wpcom_url": "http://calypso.localhost:{{port}}",
 	"wpcom_login_url": "https://wordpress.com/log-in",
 	"features": {
 		"calypso/ai-site-builder-flow": true,

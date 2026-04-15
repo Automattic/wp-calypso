@@ -2,12 +2,14 @@
  * These are the known places that Calypso is allowed to run.
  * Note that https://wordpress.com is not included as it's the default.
  */
-const ALLOWED_ORIGINS = [
-	'https://horizon.wordpress.com',
-	'https://wpcalypso.wordpress.com',
-	'http://calypso.localhost:3000',
-	'https://calypso.localhost:3000',
-];
+const ALLOWED_ORIGINS = [ 'https://horizon.wordpress.com', 'https://wpcalypso.wordpress.com' ];
+
+/**
+ * Checks if the origin is a local Calypso development server on any port.
+ */
+function isCalypsoLocalhost( origin: string ) {
+	return /^https?:\/\/calypso\.localhost(:\d+)?$/.test( origin );
+}
 
 /**
  * Checks if the origin is allowed by checking against ALLOWED_ORIGINS and Calypso Live sites.
@@ -15,7 +17,9 @@ const ALLOWED_ORIGINS = [
  * @returns true if the origin is allowed
  */
 function isAllowedOrigin( origin: string ) {
-	return ALLOWED_ORIGINS.includes( origin ) || isCalypsoLive( origin );
+	return (
+		ALLOWED_ORIGINS.includes( origin ) || isCalypsoLocalhost( origin ) || isCalypsoLive( origin )
+	);
 }
 
 /**

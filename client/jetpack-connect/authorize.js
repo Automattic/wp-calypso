@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 	WPCOM_FEATURES_BACKUPS,
@@ -340,10 +341,9 @@ export class JetpackAuthorize extends Component {
 				// The /jetpack/connect/authorize controller requires `redirectAfterAuth` to be a
 				// valid well-formed uri (via validUrl.isWebUri()), so here we are removing the url
 				// host so that it becomes a relative url.
-				redirectAfterAuth.replace(
-					/^(https?:\/\/wordpress\.com|http:\/\/calypso\.localhost:3000)/,
-					''
-				)
+				redirectAfterAuth
+					.replace( /^https?:\/\/wordpress\.com/, '' )
+					.replace( `http://calypso.localhost:${ config( 'port' ) ?? 3000 }`, '' )
 			);
 		} else if ( this.isFromJetpackBackupPlugin() && ! siteHasBackups ) {
 			debug( `Redirecting directly to cart with ${ PRODUCT_JETPACK_BACKUP_T1_YEARLY } in cart.` );

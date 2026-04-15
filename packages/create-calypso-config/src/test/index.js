@@ -1,4 +1,4 @@
-import createConfig from '../';
+import createConfig, { resolveTemplates } from '../';
 
 describe( 'index', () => {
 	describe( 'config without data', () => {
@@ -121,6 +121,37 @@ describe( 'index', () => {
 				config.disable( 'flagZXY' );
 				expect( config.isEnabled( 'flagZXY' ) ).toBe( false );
 			} );
+		} );
+	} );
+
+	describe( 'template resolution', () => {
+		test( 'resolves {{key}} from top-level config values', () => {
+			const config = createConfig( {
+				port: 4321,
+				wpcom_url: 'http://calypso.localhost:{{port}}',
+			} );
+			expect( config( 'wpcom_url' ) ).toBe( 'http://calypso.localhost:4321' );
+		} );
+
+		test( 'resolves templates in nested objects', () => {
+			const config = createConfig( {
+				port: 3000,
+				overrides: { logout_url: 'http://my.woo.localhost:{{port}}' },
+			} );
+			expect( config( 'overrides' ).logout_url ).toBe( 'http://my.woo.localhost:3000' );
+		} );
+
+		test( 'leaves unrecognized templates unchanged', () => {
+			const config = createConfig( {
+				url: 'http://localhost:{{unknown}}',
+			} );
+			expect( config( 'url' ) ).toBe( 'http://localhost:{{unknown}}' );
+		} );
+
+		test( 'resolveTemplates returns plain data object', () => {
+			const data = { port: 4321, wpcom_url: 'http://calypso.localhost:{{port}}' };
+			const resolved = resolveTemplates( data );
+			expect( resolved ).toEqual( { port: 4321, wpcom_url: 'http://calypso.localhost:4321' } );
 		} );
 	} );
 } );
