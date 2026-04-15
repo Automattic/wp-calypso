@@ -77,6 +77,12 @@ describe( 'Lifecyle: Premium theme signup, onboard, launch and cancel subscripti
 		it( 'Sign up as new user', async function () {
 			const userSignupPage = new UserSignupPage( page );
 			newUserDetails = await userSignupPage.signupSocialFirstWithEmail( testUser.email );
+
+			if ( ! newUserDetails.body.bearer_token ) {
+				throw new Error(
+					`Signup response missing bearer_token for ${ testUser.email } — account was likely not created (possible Bkismet rejection)`
+				);
+			}
 		} );
 
 		it( 'Skip domain selection', async function () {
@@ -165,7 +171,7 @@ describe( 'Lifecyle: Premium theme signup, onboard, launch and cancel subscripti
 	} );
 
 	afterAll( async function () {
-		if ( ! newUserDetails ) {
+		if ( ! newUserDetails || ! newUserDetails.body.bearer_token ) {
 			return;
 		}
 

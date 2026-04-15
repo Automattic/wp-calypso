@@ -90,6 +90,7 @@ export type PlansIntent =
 	| 'plans-wordpress-hosting'
 	| 'plans-website-builder'
 	| 'plans-woo-hosted'
+	| 'plans-woo-hosting-solutions'
 	| 'plans-migration'
 	| 'default';
 

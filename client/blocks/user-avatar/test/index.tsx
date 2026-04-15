@@ -29,26 +29,14 @@ describe( 'UserAvatar', () => {
 		expect( container.querySelector( '.user-avatar' ) ).toHaveClass( 'custom-class' );
 	} );
 
-	test( 'should apply is-compact class when isCompact is true', () => {
-		const { container } = render( <UserAvatar user={ mockUser } isCompact /> );
-
-		expect( container.querySelector( '.user-avatar' ) ).toHaveClass( 'is-compact' );
-	} );
-
-	test( 'should use iconSize 96 by default when not compact', () => {
+	test( 'should use size 32 by default', () => {
 		render( <UserAvatar user={ mockUser } /> );
 
-		expect( screen.getByTestId( 'gravatar' ) ).toHaveAttribute( 'data-size', '96' );
+		expect( screen.getByTestId( 'gravatar' ) ).toHaveAttribute( 'data-size', '32' );
 	} );
 
-	test( 'should use iconSize 40 when isCompact is true', () => {
-		render( <UserAvatar user={ mockUser } isCompact /> );
-
-		expect( screen.getByTestId( 'gravatar' ) ).toHaveAttribute( 'data-size', '40' );
-	} );
-
-	test( 'should use custom iconSize when provided', () => {
-		render( <UserAvatar user={ mockUser } iconSize={ 64 } /> );
+	test( 'should use custom size when provided', () => {
+		render( <UserAvatar user={ mockUser } size={ 64 } /> );
 
 		expect( screen.getByTestId( 'gravatar' ) ).toHaveAttribute( 'data-size', '64' );
 	} );
@@ -62,7 +50,7 @@ describe( 'UserAvatar', () => {
 	} );
 
 	test( 'should not wrap avatar in link when user has no wpcom_login', () => {
-		const userWithoutLogin = { ...mockUser, wpcom_login: undefined };
+		const userWithoutLogin = { ...mockUser, wpcom_login: undefined, login: undefined };
 		const { container } = render( <UserAvatar user={ userWithoutLogin } /> );
 
 		expect( container.querySelector( 'a' ) ).not.toBeInTheDocument();
