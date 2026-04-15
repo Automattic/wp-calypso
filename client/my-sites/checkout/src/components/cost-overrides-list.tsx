@@ -404,6 +404,21 @@ function getIntroOfferCrossedOutPrice(
 }
 
 /**
+ * Return the item subtotal with the coupon discount added back. Since coupon
+ * discounts are displayed as a dedicated line item (via CouponCostOverride),
+ * we strip them from the per-product price to avoid showing the discount twice.
+ */
+function getItemSubtotalExcludingCoupon( product: ResponseCartProduct ): number {
+	const couponOverride = product.cost_overrides.find(
+		( override ) => override.override_code === 'coupon-discount'
+	);
+	const couponDiscountAmount = couponOverride
+		? couponOverride.old_subtotal_integer - couponOverride.new_subtotal_integer
+		: 0;
+	return product.item_subtotal_integer + couponDiscountAmount;
+}
+
+/**
  * Return two formatted prices. `actualAmountDisplay` should be the final
  * subtotal after all cost overrides are applied. `crossedOutAmountDisplay`
  * should be the price before cost overrides, but only if it's higher (some
@@ -468,11 +483,13 @@ function getLineItemPriceDisplay(
 		};
 	}
 
-	// Show the actual amount as the amount the user will pay and include the
-	// amount before cost overrides as the crossed-out number if it is greater.
-	const isDiscounted = product.item_subtotal_integer < simulatedPriceBeforeDiscounts;
+	// Show the actual amount as the amount the user will pay (before coupon) and
+	// include the amount before cost overrides as the crossed-out number if it is
+	// greater.
+	const itemSubtotalWithoutCoupon = getItemSubtotalExcludingCoupon( product );
+	const isDiscounted = itemSubtotalWithoutCoupon < simulatedPriceBeforeDiscounts;
 	return {
-		actualAmountDisplay: fmt( product.item_subtotal_integer ),
+		actualAmountDisplay: fmt( itemSubtotalWithoutCoupon ),
 		crossedOutAmountDisplay: isDiscounted ? fmt( simulatedPriceBeforeDiscounts ) : undefined,
 	};
 }
