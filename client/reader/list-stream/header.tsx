@@ -12,6 +12,7 @@ import type { PublicListItem } from './use-public-list-query';
 
 interface ListStreamHeaderProps {
 	isPublic?: boolean;
+	isLoggedOut?: boolean;
 	title: React.ReactNode;
 	listTitle?: string;
 	slug?: string;
@@ -27,6 +28,7 @@ interface ListStreamHeaderProps {
 
 const ListStreamHeader = ( {
 	isPublic,
+	isLoggedOut,
 	title,
 	listTitle,
 	slug,
@@ -78,16 +80,20 @@ const ListStreamHeader = ( {
 							isSubscribedToList={ following }
 							onSubscribeToggle={ onFollowToggle }
 						/>
-						<FediFollowAllButton items={ items } listSlug={ slug || '' } />
-						<Button
-							variant="secondary"
-							icon={ download }
-							onClick={ () =>
-								downloadListOpml( listTitle || 'Reader List', slug || 'list', items )
-							}
-						>
-							{ translate( 'OPML' ) }
-						</Button>
+						{ isLoggedOut && (
+							<>
+								<FediFollowAllButton items={ items } listSlug={ slug || '' } />
+								<Button
+									variant="secondary"
+									icon={ download }
+									onClick={ () =>
+										downloadListOpml( listTitle || 'Reader List', slug || 'list', items )
+									}
+								>
+									{ translate( 'OPML' ) }
+								</Button>
+							</>
+						) }
 					</>
 				) }
 			</NavigationHeader>

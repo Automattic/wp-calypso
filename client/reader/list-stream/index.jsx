@@ -122,6 +122,7 @@ function ListStream( props ) {
 				<QueryReaderList owner={ owner } slug={ slug } />
 				<ListStreamHeader
 					isPublic={ list?.is_public }
+					isLoggedOut={ ! currentUser }
 					listTitle={ list?.title }
 					slug={ slug }
 					icon={
