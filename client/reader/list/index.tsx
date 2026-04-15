@@ -1,18 +1,17 @@
+import { readListQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
-import QueryReaderList from 'calypso/components/data/query-reader-list';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import ReaderListHeader from 'calypso/reader/list/components/list-header';
 import ListMissing from 'calypso/reader/list/components/missing';
 import ListPosts from 'calypso/reader/list/views/posts';
 import ListSites from 'calypso/reader/list/views/sites';
-import {
-	getListByOwnerAndSlug,
-	hasRequestedListByOwnerAndSlug,
-	isMissingByOwnerAndSlug,
-} from 'calypso/state/reader/lists/selectors';
+import { receiveReaderList } from 'calypso/state/reader/lists/actions';
+import { getListByOwnerAndSlug } from 'calypso/state/reader/lists/selectors';
 import type { ReaderList } from 'calypso/reader/list-manage/types';
 import type { AppState } from 'calypso/types';
 
@@ -27,22 +26,24 @@ interface ReaderListProps {
 
 export default function ReaderList( props: ReaderListProps ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const { owner, slug, view } = props;
 	const list = useSelector( ( state: AppState ) =>
 		getListByOwnerAndSlug( state, owner, slug )
 	) as ReaderList;
-	const hasRequested = useSelector( ( state: AppState ) =>
-		hasRequestedListByOwnerAndSlug( state, owner, slug )
-	);
-	const isMissing = useSelector( ( state: AppState ) =>
-		isMissingByOwnerAndSlug( state, owner, slug )
-	);
+	const { data, isFetched } = useQuery( readListQuery( owner, slug ) );
 
-	if ( ! hasRequested ) {
-		return <QueryReaderList owner={ owner } slug={ slug } />;
+	useEffect( () => {
+		if ( data?.list ) {
+			dispatch( receiveReaderList( { list: data.list } ) );
+		}
+	}, [ data, dispatch ] );
+
+	if ( ! isFetched ) {
+		return null;
 	}
 
-	if ( isMissing ) {
+	if ( isFetched && ! data?.list ) {
 		return <ListMissing />;
 	}
 

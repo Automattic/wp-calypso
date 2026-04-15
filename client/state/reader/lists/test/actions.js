@@ -1,6 +1,5 @@
 import {
 	READER_LIST_DELETE,
-	READER_LIST_REQUEST,
 	READER_LISTS_RECEIVE,
 	READER_LIST_FOLLOW,
 	READER_LIST_UNFOLLOW,
@@ -12,7 +11,6 @@ import {
 import {
 	deleteReaderList,
 	receiveLists,
-	requestList,
 	followList,
 	unfollowList,
 	requestUserRecommendedBlogs,
@@ -30,18 +28,6 @@ describe( 'actions', () => {
 			expect( action ).toEqual( {
 				type: READER_LISTS_RECEIVE,
 				lists,
-			} );
-		} );
-	} );
-
-	describe( '#requestList()', () => {
-		test( 'should return an action object', () => {
-			const action = requestList( 'pob', 'things-i-like' );
-
-			expect( action ).toEqual( {
-				type: READER_LIST_REQUEST,
-				listOwner: 'pob',
-				listSlug: 'things-i-like',
 			} );
 		} );
 	} );

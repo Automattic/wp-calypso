@@ -8,8 +8,6 @@ import {
 	READER_LIST_ITEM_DELETE_FEED,
 	READER_LIST_ITEM_DELETE_SITE,
 	READER_LIST_ITEM_DELETE_TAG,
-	READER_LIST_REQUEST,
-	READER_LIST_REQUEST_FAILURE,
 	READER_LIST_RECEIVE,
 	READER_LIST_CREATE_SUCCESS,
 	READER_LIST_CREATE_FAILURE,
@@ -70,16 +68,6 @@ export function createReaderList( list: ReaderList ): ReaderListAction {
 }
 
 /**
- * Request a single Reader list.
- * @param listOwner - List owner
- * @param listSlug - List slug
- * @returns Action object
- */
-export function requestList( listOwner: string, listSlug: string ): ReaderListAction {
-	return { type: READER_LIST_REQUEST, listOwner, listSlug };
-}
-
-/**
  * Receive a single Reader list.
  * @param data - List data
  * @param data.list - Reader list object
@@ -87,15 +75,6 @@ export function requestList( listOwner: string, listSlug: string ): ReaderListAc
  */
 export function receiveReaderList( data: { list: ReaderList } ): ReaderListAction {
 	return { type: READER_LIST_RECEIVE, data };
-}
-
-export function handleRequestListFailure( errorInfo: ErrorInfo ): ReaderListAction {
-	return {
-		type: READER_LIST_REQUEST_FAILURE,
-		error: errorInfo.error,
-		owner: errorInfo.owner,
-		slug: errorInfo.slug,
-	};
 }
 
 export function receiveCreateReaderList( data: { list: ReaderList } ): ReaderListAction {

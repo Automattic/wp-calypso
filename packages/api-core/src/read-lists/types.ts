@@ -63,3 +63,7 @@ export interface ReaderListItem {
 export interface ReadSubscribedListsResponse {
 	lists: ReaderListItem[];
 }
+
+export interface ReadListResponse {
+	list: ReaderListItem;
+}

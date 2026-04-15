@@ -5,16 +5,6 @@ import getCurrentIntlCollator from 'calypso/state/selectors/get-current-intl-col
 import 'calypso/state/reader/init';
 
 /**
- * Returns true if currently requesting Reader lists, or
- * false otherwise.
- * @param  {Object}  state  Global state tree
- * @returns {boolean}        Whether lists are being requested
- */
-export function isRequestingList( state ) {
-	return !! state.reader.lists.isRequestingList;
-}
-
-/**
  * Returns true if currently creating a Reader list.
  * @param  {Object}  state  Global state tree
  * @returns {boolean}        Whether lists are being requested
@@ -122,28 +112,6 @@ export function isSubscribedByOwnerAndSlug( state, owner, slug ) {
 		return false;
 	}
 	return state.reader.lists.subscribedLists.includes( list.ID );
-}
-
-/**
- * Check if the requested list has been requested
- * @param  {Object}  state  Global state tree
- * @param  {string}  owner  List owner
- * @param  {string}  slug  List slug
- * @returns {boolean} Does the list request exist?
- */
-export function hasRequestedListByOwnerAndSlug( state, owner, slug ) {
-	return state.reader?.lists?.listRequests?.hasOwnProperty( `${ owner }:${ slug }` );
-}
-
-/**
- * Check if the requested list is missing (i.e. API 404ed when requesting it)
- * @param  {Object}  state  Global state tree
- * @param  {string}  owner  List owner
- * @param  {string}  slug  List slug
- * @returns {boolean} Is the list missing?
- */
-export function isMissingByOwnerAndSlug( state, owner, slug ) {
-	return ! state.reader?.lists?.isRequestingList && ! getListByOwnerAndSlug( state, owner, slug );
 }
 
 /**

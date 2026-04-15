@@ -1,9 +1,11 @@
+import { readListQuery } from '@automattic/api-queries';
 import { Card } from '@automattic/components';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ReaderExportButton from 'calypso/blocks/reader-export-button';
 import { READER_EXPORT_TYPE_LIST } from 'calypso/blocks/reader-export-button/constants';
-import QueryReaderList from 'calypso/components/data/query-reader-list';
 import QueryReaderListItems from 'calypso/components/data/query-reader-list-items';
 import EmptyContent from 'calypso/components/empty-content';
 import NavigationHeader from 'calypso/components/navigation-header';
@@ -13,13 +15,16 @@ import NavTabs from 'calypso/components/section-nav/tabs';
 import { preventWidows } from 'calypso/lib/formatting';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import ListMissing from 'calypso/reader/list/components/missing';
-import { createReaderList, updateReaderList } from 'calypso/state/reader/lists/actions';
+import {
+	createReaderList,
+	receiveReaderList,
+	updateReaderList,
+} from 'calypso/state/reader/lists/actions';
 import {
 	getListByOwnerAndSlug,
 	getListItems,
 	isCreatingList as isCreatingListSelector,
 	isUpdatingList as isUpdatingListSelector,
-	isMissingByOwnerAndSlug,
 } from 'calypso/state/reader/lists/selectors';
 import ItemAdder from './item-adder';
 import ListDelete from './list-delete';
@@ -107,10 +112,16 @@ function ReaderListCreate() {
 function ReaderListEdit( props ) {
 	const { selectedSection } = props;
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const list = useSelector( ( state ) => getListByOwnerAndSlug( state, props.owner, props.slug ) );
-	const isMissing = useSelector( ( state ) =>
-		isMissingByOwnerAndSlug( state, props.owner, props.slug )
-	);
+	const { data, isFetched } = useQuery( readListQuery( props.owner, props.slug ) );
+	const isMissing = isFetched && ! list;
+
+	useEffect( () => {
+		if ( data?.list ) {
+			dispatch( receiveReaderList( { list: data.list } ) );
+		}
+	}, [ data, dispatch ] );
 	const listItems = useSelector( ( state ) =>
 		list ? getListItems( state, list.ID ) : undefined
 	);
@@ -132,7 +143,6 @@ function ReaderListEdit( props ) {
 
 	return (
 		<>
-			{ ! list && <QueryReaderList owner={ props.owner } slug={ props.slug } /> }
 			{ ! listItems && list && <QueryReaderListItems owner={ props.owner } slug={ props.slug } /> }
 			<ReaderMain>
 				<NavigationHeader

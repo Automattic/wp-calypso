@@ -1,39 +1,11 @@
 import {
-	isRequestingList,
 	getSubscribedLists,
 	getListByOwnerAndSlug,
 	getMatchingItem,
 	isSubscribedByOwnerAndSlug,
-	isMissingByOwnerAndSlug,
 } from '../selectors';
 
 describe( 'selectors', () => {
-	describe( '#isRequestingList()', () => {
-		test( 'should return false if not fetching', () => {
-			const isRequesting = isRequestingList( {
-				reader: {
-					lists: {
-						isRequestingList: false,
-					},
-				},
-			} );
-
-			expect( isRequesting ).toBeFalsy();
-		} );
-
-		test( 'should return true if fetching', () => {
-			const isRequesting = isRequestingList( {
-				reader: {
-					lists: {
-						isRequestingList: true,
-					},
-				},
-			} );
-
-			expect( isRequesting ).toBeTruthy();
-		} );
-	} );
-
 	describe( '#getSubscribedLists()', () => {
 		test( 'should return an empty array if the user is not subscribed to any lists', () => {
 			const subscribedLists = getSubscribedLists( {
@@ -233,62 +205,6 @@ describe( 'selectors', () => {
 			);
 
 			expect( isSubscribed ).toEqual( true );
-		} );
-	} );
-
-	describe( '#isMissingByOwnerAndSlug()', () => {
-		test( 'should return false if the missing list does not exist', () => {
-			const isMissing = isMissingByOwnerAndSlug(
-				{
-					reader: {
-						lists: {
-							items: {
-								123: {
-									ID: 123,
-									owner: 'lister',
-									slug: 'bananas',
-								},
-								456: {
-									ID: 456,
-									owner: 'lister',
-									slug: 'ants',
-								},
-							},
-						},
-					},
-				},
-				'lister',
-				'bananas'
-			);
-
-			expect( isMissing ).toEqual( false );
-		} );
-
-		test( 'should return true if the owner and slug match a missing list', () => {
-			const isMissing = isMissingByOwnerAndSlug(
-				{
-					reader: {
-						lists: {
-							items: {
-								123: {
-									ID: 123,
-									owner: 'lister',
-									slug: 'bananas',
-								},
-								456: {
-									ID: 456,
-									owner: 'lister',
-									slug: 'ants',
-								},
-							},
-						},
-					},
-				},
-				'lister',
-				'kittens'
-			);
-
-			expect( isMissing ).toEqual( true );
 		} );
 	} );
 } );

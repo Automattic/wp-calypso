@@ -5,8 +5,6 @@ import {
 	READER_LIST_CREATE,
 	READER_LIST_DELETE,
 	READER_LIST_FOLLOW_RECEIVE,
-	READER_LIST_REQUEST,
-	READER_LIST_REQUEST_FAILURE,
 	READER_LIST_RECEIVE,
 	READER_LIST_CREATE_SUCCESS,
 	READER_LIST_CREATE_FAILURE,
@@ -152,25 +150,6 @@ export const subscribedLists = withSchemaValidation(
 );
 
 /**
- * Returns the updated requests state after an action has been dispatched.
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @returns {Object}        Updated state
- */
-export function isRequestingList( state = false, action ) {
-	switch ( action.type ) {
-		case READER_LIST_REQUEST:
-		case READER_LIST_RECEIVE:
-		case READER_LIST_REQUEST_FAILURE:
-		case READER_LIST_CREATE_SUCCESS:
-		case READER_LIST_CREATE_FAILURE:
-			return READER_LIST_REQUEST === action.type;
-	}
-
-	return state;
-}
-
-/**
  * Records if there is a pending list creation request.
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
@@ -201,29 +180,6 @@ export function isUpdatingList( state = false, action ) {
 			return READER_LIST_UPDATE === action.type;
 	}
 
-	return state;
-}
-
-/**
- * This object tracks all list requests that have been made
- * and whether those requests are in progress or not.
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @returns {Object}        Updated state
- */
-export function listRequests( state = {}, action ) {
-	switch ( action.type ) {
-		case READER_LIST_REQUEST:
-			return {
-				...state,
-				[ `${ action.listOwner }:${ action.listSlug }` ]: true,
-			};
-		case READER_LIST_RECEIVE:
-			return {
-				...state,
-				[ `${ action.data.list.owner }:${ action.data.list.slug }` ]: false,
-			};
-	}
 	return state;
 }
 
@@ -291,9 +247,7 @@ export default combineReducers( {
 	listItems,
 	subscribedLists,
 	isCreatingList,
-	isRequestingList,
 	isUpdatingList,
-	listRequests,
 	userLists,
 	isRequestingUserLists,
 	userRecommendedBlogs,

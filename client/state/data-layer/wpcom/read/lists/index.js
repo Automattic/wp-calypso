@@ -8,7 +8,6 @@ import { DEFAULT_NOTICE_DURATION } from 'calypso/state/notices/constants';
 import {
 	READER_LIST_CREATE,
 	READER_LIST_FOLLOW,
-	READER_LIST_REQUEST,
 	READER_LIST_UNFOLLOW,
 	READER_LIST_UPDATE,
 	READER_USER_LISTS_REQUEST,
@@ -16,10 +15,8 @@ import {
 } from 'calypso/state/reader/action-types';
 import {
 	handleCreateReaderListFailure,
-	handleRequestListFailure,
 	handleUpdateListDetailsError,
 	receiveFollowList,
-	receiveReaderList,
 	receiveUnfollowList,
 	receiveCreateReaderList,
 	receiveUpdatedListDetails,
@@ -78,21 +75,6 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/index.js', {
 				return receiveFollowList( list );
 			},
 			onError: () => [ errorNotice( translate( 'Unable to follow list.' ) ) ],
-		} ),
-	],
-	[ READER_LIST_REQUEST ]: [
-		dispatchRequest( {
-			fetch: ( action ) =>
-				http(
-					{
-						method: 'GET',
-						path: `/read/lists/${ action.listOwner }/${ action.listSlug }`,
-						apiVersion: '1.2',
-					},
-					action
-				),
-			onSuccess: ( action, { list } ) => receiveReaderList( { list } ),
-			onError: ( action, error ) => [ handleRequestListFailure( error ) ],
 		} ),
 	],
 	[ READER_LIST_UNFOLLOW ]: [

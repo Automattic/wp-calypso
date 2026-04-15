@@ -1,12 +1,12 @@
 /**
  * @jest-environment jsdom
  */
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, waitFor } from '@testing-library/react';
+import { QueryClient } from '@tanstack/react-query';
+import { waitFor } from '@testing-library/react';
 import nock from 'nock';
-import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import { READER_LISTS_RECEIVE } from 'calypso/state/reader/action-types';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import QueryReaderLists from '../index';
 
 function createTestStore() {
@@ -18,21 +18,6 @@ function createTestStore() {
 		return originalDispatch( action );
 	};
 	return { store, actions };
-}
-
-function renderWithProviders( ui: React.ReactElement ) {
-	const queryClient = new QueryClient( {
-		defaultOptions: { queries: { retry: false } },
-	} );
-	const { store, actions } = createTestStore();
-
-	const result = render(
-		<Provider store={ store }>
-			<QueryClientProvider client={ queryClient }>{ ui }</QueryClientProvider>
-		</Provider>
-	);
-
-	return { ...result, actions, queryClient };
 }
 
 describe( 'QueryReaderLists', () => {
@@ -63,7 +48,12 @@ describe( 'QueryReaderLists', () => {
 			.query( { create_recommended_blogs_list: 'true' } )
 			.reply( 200, { lists } );
 
-		const { actions } = renderWithProviders( <QueryReaderLists /> );
+		const { store, actions } = createTestStore();
+		const queryClient = new QueryClient( {
+			defaultOptions: { queries: { retry: false } },
+		} );
+
+		renderWithProvider( <QueryReaderLists />, { store, queryClient } );
 
 		await waitFor( () => {
 			const receiveAction = actions.find( ( a ) => a.type === READER_LISTS_RECEIVE );
@@ -78,7 +68,12 @@ describe( 'QueryReaderLists', () => {
 			.query( { create_recommended_blogs_list: 'true' } )
 			.reply( 200, { lists: [] } );
 
-		const { container } = renderWithProviders( <QueryReaderLists /> );
+		const { store } = createTestStore();
+		const queryClient = new QueryClient( {
+			defaultOptions: { queries: { retry: false } },
+		} );
+
+		const { container } = renderWithProvider( <QueryReaderLists />, { store, queryClient } );
 		expect( container.innerHTML ).toBe( '' );
 	} );
 } );
