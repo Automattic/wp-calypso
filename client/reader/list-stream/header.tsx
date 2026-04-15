@@ -1,20 +1,16 @@
 import { Gridicon } from '@automattic/components';
-import { Button } from '@wordpress/components';
-import { download } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import AutoDirection from 'calypso/components/auto-direction';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { FediFollowAllButton } from './fedi-follow-button';
 import { FollowAllSitesButton } from './follow-all-sites-button';
 import { ListTags } from './list-tags';
-import { downloadListOpml } from './opml-export';
 import type { PublicListItem } from './use-public-list-query';
 
 interface ListStreamHeaderProps {
 	isPublic?: boolean;
 	isLoggedOut?: boolean;
 	title: React.ReactNode;
-	listTitle?: string;
 	slug?: string;
 	description?: string;
 	showEdit?: boolean;
@@ -30,7 +26,6 @@ const ListStreamHeader = ( {
 	isPublic,
 	isLoggedOut,
 	title,
-	listTitle,
 	slug,
 	description,
 	showEdit,
@@ -73,6 +68,7 @@ const ListStreamHeader = ( {
 
 				{ items && items.length > 0 && (
 					<>
+						<span className="list-stream__follow-label">{ translate( 'Follow on' ) }</span>
 						<FollowAllSitesButton
 							items={ items }
 							followSource="reader-list-header"
@@ -80,20 +76,7 @@ const ListStreamHeader = ( {
 							isSubscribedToList={ following }
 							onSubscribeToggle={ onFollowToggle }
 						/>
-						{ isLoggedOut && (
-							<>
-								<FediFollowAllButton items={ items } listSlug={ slug || '' } />
-								<Button
-									variant="secondary"
-									icon={ download }
-									onClick={ () =>
-										downloadListOpml( listTitle || 'Reader List', slug || 'list', items )
-									}
-								>
-									{ translate( 'Export' ) }
-								</Button>
-							</>
-						) }
+						{ isLoggedOut && <FediFollowAllButton items={ items } listSlug={ slug || '' } /> }
 					</>
 				) }
 			</NavigationHeader>

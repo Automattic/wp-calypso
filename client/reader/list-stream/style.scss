@@ -93,4 +93,20 @@
 
 .list-stream__tabs {
 	margin-bottom: 16px;
+
+	.section-nav__panel {
+		display: flex;
+		align-items: center;
+	}
+}
+
+.list-stream__export-button {
+	margin-inline-start: auto;
+	flex-shrink: 0;
+}
+
+.list-stream__follow-label {
+	font-size: 0.875rem;
+	color: var( --color-text-subtle );
+	white-space: nowrap;
 }

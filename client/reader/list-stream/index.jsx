@@ -1,3 +1,5 @@
+import { Button } from '@wordpress/components';
+import { download } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -23,6 +25,7 @@ import EmptyContent from './empty';
 import ListStreamHeader from './header';
 import { ListSitesDirectory } from './list-sites-directory';
 import ListMissing from './missing';
+import { downloadListOpml } from './opml-export';
 import { usePublicListQuery } from './use-public-list-query';
 import './style.scss';
 
@@ -123,7 +126,6 @@ function ListStream( props ) {
 				<ListStreamHeader
 					isPublic={ list?.is_public }
 					isLoggedOut={ ! currentUser }
-					listTitle={ list?.title }
 					slug={ slug }
 					icon={
 						<svg
@@ -171,6 +173,22 @@ function ListStream( props ) {
 							{ translate( 'Sites' ) }
 						</NavItem>
 					</NavTabs>
+					{ publicListData?.items && publicListData.items.length > 0 && (
+						<Button
+							className="list-stream__export-button"
+							variant="tertiary"
+							icon={ download }
+							onClick={ () =>
+								downloadListOpml(
+									list?.title || 'Reader List',
+									slug || 'list',
+									publicListData.items
+								)
+							}
+						>
+							{ translate( 'Export' ) }
+						</Button>
+					) }
 				</SectionNav>
 
 				{ activeTab === TAB_POSTS && (
