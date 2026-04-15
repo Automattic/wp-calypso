@@ -181,7 +181,7 @@ function useRedirectOnTransactionSuccess( {
 		isSuccess: isReceiptSuccess,
 		isError: isReceiptError,
 	} = useQuery( {
-		...receiptQuery( finalReceiptId ?? 0 ),
+		...receiptQuery( finalReceiptId ?? 0, true ),
 		enabled: !! finalReceiptId,
 	} );
 	const isReceiptLoaded = isReceiptSuccess || isReceiptError;
