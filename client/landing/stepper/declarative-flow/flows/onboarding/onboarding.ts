@@ -121,7 +121,7 @@ const onboarding: FlowV2< typeof initialize > = {
 				];
 			}
 
-			if ( refParameter === WOO_HOSTING_SOLUTIONS_REF ) {
+			if ( refParameter === WOO_HOSTING_SOLUTIONS_REF && providedDependencies.siteSlug ) {
 				const siteSlug = providedDependencies.siteSlug as string;
 				const site = await resolveSelect( SITE_STORE ).getSite( siteSlug );
 				const adminUrl = site?.options?.admin_url ?? `https://${ siteSlug }/wp-admin/`;
