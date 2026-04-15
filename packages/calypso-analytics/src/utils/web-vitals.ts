@@ -2,7 +2,6 @@ declare global {
 	interface NavigatorConnection {
 		rtt?: number;
 		downlink?: number;
-		effectiveType?: string;
 	}
 
 	interface Navigator {
@@ -10,68 +9,36 @@ declare global {
 	}
 }
 
-interface WebVitalsProps {
-	perf_ttfb?: number;
-	perf_fcp?: number;
-	perf_lcp?: number;
-	perf_cls?: number;
+interface ConnectionProps {
 	net_rtt?: number;
+	net_rtt_connection?: number;
+	net_rtt_estimated?: number;
 	net_downlink?: number;
 }
 
-const vitals: WebVitalsProps = {};
+const props: ConnectionProps = {};
 let initialized = false;
 
-function collectNavigationMetrics(): void {
-	const [ nav ] = performance.getEntriesByType( 'navigation' ) as PerformanceNavigationTiming[];
-	if ( nav ) {
-		vitals.perf_ttfb = Math.round( nav.responseStart );
+/**
+ * Approximates RTT from Navigation Timing when the Network Information API
+ * is unavailable (Firefox, Safari).  Uses `responseStart − requestStart`
+ * which includes server processing time, so it over-estimates slightly.
+ * Tries the Level 2 PerformanceNavigationTiming entry first, then falls
+ * back to the deprecated Level 1 `performance.timing` object.
+ */
+function estimateRttFromNavTiming(): number | undefined {
+	const navEntries = performance.getEntriesByType( 'navigation' ) as PerformanceNavigationTiming[];
+	if ( navEntries.length && navEntries[ 0 ].requestStart > 0 ) {
+		return Math.round( navEntries[ 0 ].responseStart - navEntries[ 0 ].requestStart );
 	}
 
-	const fcp = performance
-		.getEntriesByType( 'paint' )
-		.find( ( e ) => e.name === 'first-contentful-paint' );
-	if ( fcp ) {
-		vitals.perf_fcp = Math.round( fcp.startTime );
+	// Navigation Timing Level 1 fallback (deprecated but widely supported).
+	const timing = performance.timing;
+	if ( timing && timing.requestStart > 0 ) {
+		return Math.round( timing.responseStart - timing.requestStart );
 	}
-}
 
-function observeLCP(): void {
-	new PerformanceObserver( ( list ) => {
-		const entries = list.getEntries();
-		const last = entries[ entries.length - 1 ];
-		if ( last ) {
-			vitals.perf_lcp = Math.round( last.startTime );
-		}
-	} ).observe( { type: 'largest-contentful-paint', buffered: true } );
-}
-
-function observeCLS(): void {
-	let clsValue = 0;
-	new PerformanceObserver( ( list ) => {
-		for ( const entry of list.getEntries() as ( PerformanceEntry & {
-			hadRecentInput: boolean;
-			value: number;
-		} )[] ) {
-			if ( ! entry.hadRecentInput ) {
-				clsValue += entry.value;
-			}
-		}
-		vitals.perf_cls = Math.round( clsValue * 1000 ) / 1000;
-	} ).observe( { type: 'layout-shift', buffered: true } );
-}
-
-function snapshotConnection(): void {
-	const conn = navigator.connection;
-	if ( ! conn ) {
-		return;
-	}
-	if ( typeof conn.rtt === 'number' ) {
-		vitals.net_rtt = conn.rtt;
-	}
-	if ( typeof conn.downlink === 'number' ) {
-		vitals.net_downlink = conn.downlink;
-	}
+	return undefined;
 }
 
 function init(): void {
@@ -81,41 +48,36 @@ function init(): void {
 	initialized = true;
 
 	try {
-		collectNavigationMetrics();
-	} catch {
-		// Navigation/Paint Timing not supported.
-	}
-
-	if ( typeof PerformanceObserver !== 'undefined' ) {
-		try {
-			observeLCP();
-		} catch {
-			// LCP observation not supported.
+		const conn = navigator.connection;
+		if ( conn ) {
+			if ( typeof conn.rtt === 'number' ) {
+				props.net_rtt_connection = conn.rtt;
+			}
+			if ( typeof conn.downlink === 'number' ) {
+				props.net_downlink = conn.downlink;
+			}
 		}
-		try {
-			observeCLS();
-		} catch {
-			// Layout Shift observation not supported.
-		}
-	}
 
-	try {
-		snapshotConnection();
+		props.net_rtt_estimated = estimateRttFromNavTiming();
+		props.net_rtt = props.net_rtt_connection ?? props.net_rtt_estimated;
 	} catch {
-		// Network Information API not supported.
+		// Network / Navigation Timing APIs not supported.
 	}
 }
 
 /**
- * Returns the current snapshot of web-vital metrics and connection info.
+ * Returns cached connection quality metrics.
  *
- * Observers are started eagerly at module load (guarded by `typeof window`
- * so SSR gets an empty object).  TTFB and FCP are available immediately;
- * LCP and CLS arrive asynchronously via PerformanceObserver and update the
- * same cached object, so every subsequent call reflects the latest readings.
+ * Collected eagerly at module load (guarded by `typeof window` so SSR
+ * gets an empty object).
+ *
+ * - `net_rtt_connection`  — from `navigator.connection.rtt` (Chromium only)
+ * - `net_rtt_estimated`   — approximated from Navigation Timing
+ * - `net_rtt`             — whichever is available, connection preferred
+ * - `net_downlink`        — from `navigator.connection.downlink`
  */
-export function getWebVitalsProps(): WebVitalsProps {
-	return vitals;
+export function getWebVitalsProps(): ConnectionProps {
+	return props;
 }
 
 init();
