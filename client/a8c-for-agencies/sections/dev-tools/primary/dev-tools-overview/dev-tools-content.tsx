@@ -88,7 +88,7 @@ export default function DevToolsContent() {
 				] }
 				cta={ {
 					label: __( 'Automate your deploys' ),
-					href: 'https://developer.wordpress.com/docs/developer-tools/github-deployments/',
+					href: 'https://developer.wordpress.com/docs/get-started/github/',
 					onClick: handleGithubClick,
 				} }
 				image={ {

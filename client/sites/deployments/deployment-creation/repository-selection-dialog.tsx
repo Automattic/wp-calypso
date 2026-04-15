@@ -45,7 +45,7 @@ export const RepositorySelectionDialog = ( {
 						{
 							docsLink: (
 								<ExternalLink
-									href="https://developer.wordpress.com/docs/developer-tools/github-deployments/create-github-deployment-source-files/"
+									href="https://developer.wordpress.com/docs/get-started/github/"
 									target="_blank"
 								/>
 							),
