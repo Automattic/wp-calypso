@@ -118,7 +118,7 @@ export function FediFollowAllButton( { items, listSlug }: FediFollowAllButtonPro
 					}
 				} }
 			/>
-			<div style={ { display: 'flex', justifyContent: 'flex-end', gap: '8px' } }>
+			<div style={ { display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '16px' } }>
 				<Button variant="tertiary" onClick={ () => setShowModal( false ) }>
 					{ translate( 'Cancel' ) }
 				</Button>
