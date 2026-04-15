@@ -1,7 +1,5 @@
-import { useSortable } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
 import { Button } from '@wordpress/components';
-import { closeSmall, dragHandle, Icon } from '@wordpress/icons';
+import { closeSmall } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -9,7 +7,7 @@ import resizeImageUrl from 'calypso/lib/resize-image-url';
 import { getPostUrl } from 'calypso/reader/route';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
-import { unsavePost, markSavedPostRead } from 'calypso/state/reader/saved/actions';
+import { markSavedPostRead, unsavePost } from 'calypso/state/reader/saved/actions';
 import type { SavedPostItem as SavedPostItemType } from 'calypso/state/reader/saved/types';
 
 interface Props {
@@ -21,19 +19,6 @@ export function SavedPostItem( { item }: Props ) {
 	const dispatch = useDispatch();
 	const moment = useLocalizedMoment();
 	const post = useSelector( ( state ) => getPostByKey( state, item.postKey ) );
-
-	const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable( {
-		id: `${ item.postKey.blogId ?? item.postKey.feedId }-${ item.postKey.postId }`,
-	} );
-
-	const verticalOnly = transform ? { ...transform, x: 0 } : transform;
-
-	const style = {
-		transform: CSS.Translate.toString( verticalOnly ),
-		transition,
-		zIndex: isDragging ? 2 : undefined,
-		opacity: isDragging ? 0.8 : undefined,
-	};
 
 	const title = post?.title || translate( 'Untitled' );
 	const siteName = post?.site_name || post?.site_URL || '';
@@ -58,21 +43,7 @@ export function SavedPostItem( { item }: Props ) {
 	].filter( Boolean );
 
 	return (
-		<div
-			ref={ setNodeRef }
-			style={ style }
-			className={ clsx( 'saved-post-item', { 'is-read': item.isRead } ) }
-			{ ...attributes }
-		>
-			<button
-				className="saved-post-item__drag-handle"
-				{ ...listeners }
-				tabIndex={ -1 }
-				aria-label={ translate( 'Drag to reorder' ) }
-			>
-				<Icon icon={ dragHandle } size={ 24 } />
-			</button>
-
+		<div className={ clsx( 'saved-post-item', { 'is-read': item.isRead } ) }>
 			{ thumbnail && (
 				<div className="saved-post-item__thumbnail">
 					<img src={ thumbnail } alt="" loading="lazy" />
