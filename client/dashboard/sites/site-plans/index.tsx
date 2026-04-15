@@ -12,6 +12,7 @@ import {
 	Icon,
 	SelectControl,
 } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { check, chevronLeft, lineSolid } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
@@ -19,6 +20,8 @@ import React, { Fragment, useState } from 'react';
 import { useHelpCenter } from '../../app/help-center';
 import { siteRoute, sitePlansRoute } from '../../app/router/sites';
 import { Card, CardBody } from '../../components/card';
+import InlineSupportLink from '../../components/inline-support-link';
+import { Notice } from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { dashboardLink, wpcomLink } from '../../utils/link';
@@ -30,6 +33,137 @@ import type {
 	SubscriptionBillPeriodValue,
 } from '@automattic/api-core';
 import './style.scss';
+
+type UpgradeCreditsSource = 'plan' | 'domain' | 'other-upgrades' | 'domain-and-other-upgrades';
+
+type UpgradeCredit = { amount: number; currencyCode: string; source: UpgradeCreditsSource };
+
+/**
+ * Computes the upgrade credit to display in the notice banner, or null if none applies.
+ *
+ * A plan has upgrade credits when its raw_discount > 0 (proration from a current plan,
+ * domain, or other upgrade). Returns the maximum credit across all upgradeable plans and
+ * infers the source label from cost_overrides for the message text.
+ */
+function getUpgradeCredit(
+	activePlans: Array< { sitePlan: SiteContextualPlan; tierRank: number } >,
+	currentTierRank: number
+): UpgradeCredit | null {
+	let amount = 0;
+	let currencyCode = '';
+	let hasDomainProration = false;
+	let hasOtherProration = false;
+
+	for ( const ap of activePlans ) {
+		if ( ap.tierRank <= currentTierRank ) {
+			continue;
+		}
+		const plan = ap.sitePlan;
+		if ( ! plan.has_sale_coupon && plan.raw_discount > amount ) {
+			amount = plan.raw_discount;
+			currencyCode = plan.currency_code;
+		}
+		for ( const override of plan.cost_overrides ) {
+			if ( override.override_code === 'recent-domain-proration' ) {
+				hasDomainProration = true;
+			}
+			if ( override.override_code === 'recent-plan-proration' ) {
+				hasOtherProration = true;
+			}
+		}
+	}
+
+	if ( amount <= 0 ) {
+		return null;
+	}
+
+	let source: UpgradeCreditsSource;
+	if ( hasDomainProration && hasOtherProration ) {
+		source = 'domain-and-other-upgrades';
+	} else if ( hasDomainProration ) {
+		source = 'domain';
+	} else if ( hasOtherProration ) {
+		source = 'other-upgrades';
+	} else {
+		// No explicit override code: infer from whether the user has a shown plan.
+		// If they do (currentTierRank >= 0), this is likely a paid-plan upgrade credit.
+		source = currentTierRank >= 0 ? 'plan' : 'other-upgrades';
+	}
+
+	return { amount, currencyCode, source };
+}
+
+function UpgradeCreditsNotice( {
+	amount,
+	currencyCode,
+	source,
+}: {
+	amount: number;
+	currencyCode: string;
+	source: UpgradeCreditsSource;
+} ) {
+	const formattedAmount = formatCurrency( amount, currencyCode );
+	const linkMap = { a: <InlineSupportLink supportContext="plans-upgrade-credit" /> };
+
+	let message: React.ReactNode;
+	switch ( source ) {
+		case 'plan':
+			message = createInterpolateElement(
+				sprintf(
+					/* translators: %s is a formatted currency amount, e.g. "$0.08". The <a> tags wrap a link to the upgrade credits support article. */
+					__(
+						'You have %s in <a>upgrade credits</a> available from your current plan. This credit will be applied to the pricing below at checkout if you upgrade today!'
+					),
+					formattedAmount
+				),
+				linkMap
+			);
+			break;
+		case 'domain':
+			message = createInterpolateElement(
+				sprintf(
+					/* translators: %s is a formatted currency amount, e.g. "$0.08". The <a> tags wrap a link to the upgrade credits support article. */
+					__(
+						'You have %s in <a>upgrade credits</a> available from your current domain. This credit will be applied to the pricing below at checkout if you purchase a plan today!'
+					),
+					formattedAmount
+				),
+				linkMap
+			);
+			break;
+		case 'domain-and-other-upgrades':
+			message = createInterpolateElement(
+				sprintf(
+					/* translators: %s is a formatted currency amount, e.g. "$0.08". The <a> tags wrap a link to the upgrade credits support article. */
+					__(
+						'You have %s in <a>upgrade credits</a> available from your current domain and other upgrades. This credit will be applied to the pricing below at checkout if you purchase a plan today!'
+					),
+					formattedAmount
+				),
+				linkMap
+			);
+			break;
+		default: // 'other-upgrades'
+			message = createInterpolateElement(
+				sprintf(
+					/* translators: %s is a formatted currency amount, e.g. "$0.08". The <a> tags wrap a link to the upgrade credits support article. */
+					__(
+						'You have %s in <a>upgrade credits</a> available from other upgrades. This credit will be applied to the pricing below at checkout if you purchase a plan today!'
+					),
+					formattedAmount
+				),
+				linkMap
+			);
+	}
+
+	return (
+		<div className="site-plans__upgrade-credit-notice">
+			<Notice variant="success" density="high">
+				{ message }
+			</Notice>
+		</div>
+	);
+}
 
 function getBillingPeriodMonths( billPeriod: SubscriptionBillPeriodValue ): number {
 	if ( billPeriod === SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD ) {
@@ -652,6 +786,8 @@ export default function SitePlans() {
 		planCardName: ap.sitePlan.plan_card_name ?? ap.sitePlan.product_name,
 	} ) );
 
+	const upgradeCredit = getUpgradeCredit( activePlans, currentTierRank );
+
 	return (
 		<PageLayout
 			header={
@@ -679,6 +815,13 @@ export default function SitePlans() {
 				</div>
 			}
 		>
+			{ upgradeCredit && (
+				<UpgradeCreditsNotice
+					amount={ upgradeCredit.amount }
+					currencyCode={ upgradeCredit.currencyCode }
+					source={ upgradeCredit.source }
+				/>
+			) }
 			<div
 				className="site-plans__grid"
 				style={ { '--plan-count': shownPlans.length } as React.CSSProperties }
