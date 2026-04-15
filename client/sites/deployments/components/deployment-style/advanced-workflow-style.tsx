@@ -81,7 +81,9 @@ export const AdvancedWorkflowStyle = ( {
 						'You can start with our basic workflow file and extend it. Looking for inspiration? Check out our <a>workflow recipes</a>.'
 					),
 					{
-						a: <ExternalLink href="https://developer.wordpress.com/docs/get-started/github/" />,
+						a: (
+							<ExternalLink href="https://developer.wordpress.com/docs/get-started/github/#github-deployments-workflow-recipes" />
+						),
 					}
 				) }
 			</p>
