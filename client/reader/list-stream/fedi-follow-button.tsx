@@ -1,5 +1,5 @@
-import { Button, Spinner } from '@wordpress/components';
-import { Icon, check, cautionFilled, people } from '@wordpress/icons';
+import { Button, Modal, TextControl } from '@wordpress/components';
+import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
 import { useFediConnectionContext } from 'calypso/lib/fediverse';
 import { publicListItemsToFediAccounts } from './fedi-account-mapper';
@@ -10,17 +10,10 @@ interface FediFollowAllButtonProps {
 	listSlug: string;
 }
 
-function InstanceInput( props: React.InputHTMLAttributes< HTMLInputElement > ) {
-	const ref = useRef< HTMLInputElement >( null );
-	useEffect( () => {
-		ref.current?.focus();
-	}, [] );
-	return <input ref={ ref } { ...props } />;
-}
-
 export function FediFollowAllButton( { items, listSlug }: FediFollowAllButtonProps ) {
+	const translate = useTranslate();
 	const [ connectionState, actions ] = useFediConnectionContext();
-	const [ showInstanceInput, setShowInstanceInput ] = useState( false );
+	const [ showModal, setShowModal ] = useState( false );
 	const [ instanceDomain, setInstanceDomain ] = useState( '' );
 	const pendingFollowTriggered = useRef( false );
 
@@ -32,7 +25,6 @@ export function FediFollowAllButton( { items, listSlug }: FediFollowAllButtonPro
 		isFollowing,
 		followResults,
 		followProgress,
-		error,
 		pendingAction,
 	} = connectionState;
 
@@ -49,7 +41,6 @@ export function FediFollowAllButton( { items, listSlug }: FediFollowAllButtonPro
 		}
 	}, [ pendingAction, connectedInstance, isFollowing, listSlug, fediAccounts, actions ] );
 
-	// Don't render if no items have fediverse handles.
 	if ( fediAccounts.length === 0 ) {
 		return null;
 	}
@@ -59,87 +50,85 @@ export function FediFollowAllButton( { items, listSlug }: FediFollowAllButtonPro
 			actions.followAll( connectedInstance, listSlug, fediAccounts );
 			return;
 		}
-
-		if ( ! showInstanceInput ) {
-			setShowInstanceInput( true );
-			return;
-		}
-
-		if ( instanceDomain.trim() ) {
-			actions.followAll( instanceDomain.trim(), listSlug, fediAccounts );
-		}
+		setShowModal( true );
 	};
 
-	const handleKeyDown = ( e: React.KeyboardEvent ) => {
-		if ( e.key === 'Enter' ) {
-			handleFollowAll();
-		}
-		if ( e.key === 'Escape' ) {
-			setShowInstanceInput( false );
-			setInstanceDomain( '' );
+	const handleConnect = () => {
+		if ( instanceDomain.trim() ) {
+			setShowModal( false );
+			actions.followAll( instanceDomain.trim(), listSlug, fediAccounts );
 		}
 	};
 
 	const succeeded = followResults.filter( ( r ) => r.success ).length;
 	const failed = followResults.filter( ( r ) => ! r.success ).length;
 
-	return (
-		<div className="fedi-follow-button">
-			{ connectedInstance && (
-				<span className="fedi-follow-button__status">
-					{ connectedInstance }
-					<Button variant="link" size="compact" label="Disconnect" onClick={ actions.disconnect }>
-						&times;
-					</Button>
-				</span>
-			) }
+	let label;
+	if ( isAuthenticating ) {
+		label = translate( 'Connecting\u2026' );
+	} else if ( isFollowing ) {
+		label = translate( 'Following\u2026 (%(done)d/%(total)d)', {
+			args: { done: followProgress[ 0 ], total: followProgress[ 1 ] },
+		} );
+	} else if ( succeeded > 0 ) {
+		label = translate( '%(count)d followed on Fediverse', { args: { count: succeeded } } );
+		if ( failed > 0 ) {
+			label = translate( '%(succeeded)d followed, %(failed)d failed', {
+				args: { succeeded, failed },
+			} );
+		}
+	} else {
+		label = translate( 'Follow %(count)d on Fediverse', {
+			args: { count: fediAccounts.length },
+		} );
+	}
 
-			<div className="fedi-follow-button__row">
-				{ ! connectedInstance && showInstanceInput && (
-					<InstanceInput
-						type="text"
-						className="fedi-follow-button__instance-input"
+	return (
+		<>
+			<Button
+				variant="secondary"
+				onClick={ handleFollowAll }
+				disabled={ isFollowing || isAuthenticating }
+			>
+				{ label }
+			</Button>
+
+			{ showModal && (
+				<Modal
+					title={ translate( 'Connect your Fediverse instance' ) }
+					onRequestClose={ () => setShowModal( false ) }
+				>
+					<p>
+						{ translate(
+							'Enter your Mastodon or Fediverse instance to follow %(count)d accounts.',
+							{ args: { count: fediAccounts.length } }
+						) }
+					</p>
+					<TextControl
+						label={ translate( 'Instance domain' ) }
 						placeholder="mastodon.social"
 						value={ instanceDomain }
-						onChange={ ( e ) => setInstanceDomain( e.target.value ) }
-						onKeyDown={ handleKeyDown }
+						onChange={ setInstanceDomain }
+						onKeyDown={ ( e: React.KeyboardEvent ) => {
+							if ( e.key === 'Enter' ) {
+								handleConnect();
+							}
+						} }
 					/>
-				) }
-				<Button
-					variant="secondary"
-					icon={ people }
-					onClick={ handleFollowAll }
-					disabled={ isFollowing || isAuthenticating }
-				>
-					{ isAuthenticating && 'Connecting\u2026' }
-					{ isFollowing && `Following\u2026 (${ followProgress[ 0 ] }/${ followProgress[ 1 ] })` }
-					{ ! isAuthenticating && ! isFollowing && `Follow ${ fediAccounts.length } on Fediverse` }
-				</Button>
-				{ isFollowing && <Spinner /> }
-			</div>
-
-			{ ( succeeded > 0 || failed > 0 || error ) && (
-				<div className="fedi-follow-button__results">
-					{ succeeded > 0 && (
-						<span className="fedi-follow-button__result fedi-follow-button__result--success">
-							<Icon icon={ check } size={ 18 } />
-							{ succeeded } followed
-						</span>
-					) }
-					{ failed > 0 && (
-						<span className="fedi-follow-button__result fedi-follow-button__result--error">
-							<Icon icon={ cautionFilled } size={ 18 } />
-							{ failed } failed
-						</span>
-					) }
-					{ error && (
-						<span className="fedi-follow-button__result fedi-follow-button__result--error">
-							<Icon icon={ cautionFilled } size={ 18 } />
-							{ error }
-						</span>
-					) }
-				</div>
+					<div style={ { display: 'flex', justifyContent: 'flex-end', gap: '8px' } }>
+						<Button variant="tertiary" onClick={ () => setShowModal( false ) }>
+							{ translate( 'Cancel' ) }
+						</Button>
+						<Button
+							variant="primary"
+							onClick={ handleConnect }
+							disabled={ ! instanceDomain.trim() }
+						>
+							{ translate( 'Connect & Follow' ) }
+						</Button>
+					</div>
+				</Modal>
 			) }
-		</div>
+		</>
 	);
 }
