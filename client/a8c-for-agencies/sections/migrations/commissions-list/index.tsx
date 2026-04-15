@@ -61,7 +61,7 @@ export default function MigrationsCommissionsList( {
 					return (
 						<ReviewStatusColumn
 							reviewStatus={ item.incentive_status }
-							rejectionReason={ item.rejection_reason }
+							rejectionReason={ item.incentive_rejection_reason }
 						/>
 					);
 				},
