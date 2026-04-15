@@ -1545,6 +1545,14 @@ export const sitePlansRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'plans',
+	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+		if ( ! isEnabled( 'dashboard/plans' ) ) {
+			throw redirectAsNotAllowed( { to: siteRoute.fullPath, params: { siteSlug } } );
+		}
+	},
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		await queryClient.ensureQueryData( sitePlansQuery( site.ID ) );
