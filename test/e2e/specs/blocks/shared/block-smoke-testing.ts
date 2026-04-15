@@ -35,29 +35,29 @@ export function createBlockTests(
 			},
 		] );
 
-		test( `${ specName }: smoke test blocks`, async ( { page, pageEditor } ) => {
-			let editorContext: EditorContext;
-			let publishedPostContext: PublishedPostContext;
+		for ( const blockFlow of blockFlows ) {
+			const prefix = blockFlow.blockTestName ?? blockFlow.blockSidebarName;
 
-			await test.step( 'Given I am authenticated', async () => {
-				const testAccount = new TestAccount( accountName );
-				await testAccount.authenticate( page );
-			} );
+			test( `${ specName }: smoke test ${ prefix }`, async ( { page, pageEditor } ) => {
+				let editorContext: EditorContext;
+				let publishedPostContext: PublishedPostContext;
 
-			await test.step( 'When I visit the new post page', async () => {
-				await pageEditor.visit( 'post' );
-			} );
+				await test.step( 'Given I am authenticated', async () => {
+					const testAccount = new TestAccount( accountName );
+					await testAccount.authenticate( page );
+				} );
 
-			await test.step( 'When I enter the post title', async () => {
-				await pageEditor.enterTitle(
-					`${ specName } - ${ DataHelper.getDateString( 'ISO-8601' ) }`
-				);
-			} );
+				await test.step( 'When I visit the new post page', async () => {
+					await pageEditor.visit( 'post' );
+				} );
 
-			for ( const blockFlow of blockFlows ) {
-				const prefix = blockFlow.blockTestName ?? blockFlow.blockSidebarName;
+				await test.step( 'When I enter the post title', async () => {
+					await pageEditor.enterTitle(
+						`${ specName } - ${ prefix } - ${ DataHelper.getDateString( 'ISO-8601' ) }`
+					);
+				} );
 
-				await test.step( `${ prefix }: Add the block from the sidebar`, async () => {
+				await test.step( `When I add the ${ prefix } block from the sidebar`, async () => {
 					const blockHandle = await pageEditor.addBlockFromSidebar(
 						blockFlow.blockSidebarName,
 						blockFlow.blockEditorSelector,
@@ -78,34 +78,30 @@ export function createBlockTests(
 					};
 				} );
 
-				await test.step( `${ prefix }: Configure the block`, async () => {
+				await test.step( `When I configure the ${ prefix } block`, async () => {
 					if ( blockFlow.configure ) {
 						await blockFlow.configure( editorContext );
 					}
 				} );
 
-				await test.step( `${ prefix }: There are no block warnings or errors in the editor`, async () => {
+				await test.step( 'Then there are no block warnings or errors in the editor', async () => {
 					expect( await pageEditor.editorHasBlockWarnings() ).toBe( false );
 				} );
-			}
 
-			await test.step( 'When I publish and visit the post', async () => {
-				await pageEditor.publish( { visit: true, timeout: 15 * 1000 } );
-				publishedPostContext = {
-					browser: page.context().browser()!,
-					page,
-				};
-			} );
+				await test.step( 'When I publish and visit the post', async () => {
+					await pageEditor.publish( { visit: true, timeout: 15 * 1000 } );
+					publishedPostContext = {
+						browser: page.context().browser()!,
+						page,
+					};
+				} );
 
-			for ( const blockFlow of blockFlows ) {
-				const prefix = blockFlow.blockTestName ?? blockFlow.blockSidebarName;
-
-				await test.step( `${ prefix }: Expected content is in published post`, async () => {
+				await test.step( `Then the expected ${ prefix } content is in the published post`, async () => {
 					if ( blockFlow.validateAfterPublish ) {
 						await blockFlow.validateAfterPublish( publishedPostContext );
 					}
 				} );
-			}
-		} );
+			} );
+		}
 	} );
 }

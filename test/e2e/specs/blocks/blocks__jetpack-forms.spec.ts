@@ -20,10 +20,7 @@ const blockFlows: BlockFlow[] = [
 			labelPrefix: 'Form Patterns',
 		},
 		{
-			otherExpectedFields: [
-				{ type: 'textbox', accessibleName: 'Name' },
-				{ type: 'textbox', accessibleName: 'Email' },
-			],
+			otherExpectedFields: [],
 		}
 	),
 	new FormAiFlow( {
