@@ -1075,6 +1075,58 @@ export default function pages() {
 	 * This approach allows requests to an SSR section to skip any section-specific
 	 * SSR middleware if the request wasn't going to be resolved with SSR anyways.
 	 */
+	// ── ActivityPub content negotiation for Reader Lists ──
+	// When a request for /reader/list/:owner/:slug comes in with
+	// Accept: application/activity+json, return an OrderedCollection
+	// instead of the HTML page.
+	app.get( '/reader/list/:owner/:slug', async ( req, res, next ) => {
+		const accept = req.headers.accept || '';
+		if (
+			! accept.includes( 'application/activity+json' ) &&
+			! accept.includes( 'application/ld+json' )
+		) {
+			return next();
+		}
+
+		const { owner, slug } = req.params;
+
+		try {
+			const apiResponse = await fetch(
+				`https://public-api.wordpress.com/wpcom/v2/read/lists/${ encodeURIComponent(
+					owner
+				) }/${ encodeURIComponent( slug ) }`
+			);
+
+			if ( ! apiResponse.ok ) {
+				return res.status( apiResponse.status ).json( {
+					error: 'List not found',
+				} );
+			}
+
+			const list = await apiResponse.json();
+			const listUrl = `https://wordpress.com/reader/list/${ encodeURIComponent(
+				owner
+			) }/${ encodeURIComponent( slug ) }`;
+
+			const items = ( list.items || [] )
+				.filter( ( item ) => item.fediverse_handle_url )
+				.map( ( item ) => item.fediverse_handle_url );
+
+			res.set( 'Content-Type', 'application/activity+json; charset=utf-8' );
+			res.json( {
+				'@context': 'https://www.w3.org/ns/activitystreams',
+				type: 'OrderedCollection',
+				id: listUrl,
+				name: list.title,
+				summary: list.description || '',
+				totalItems: items.length,
+				orderedItems: items,
+			} );
+		} catch {
+			return res.status( 502 ).json( { error: 'Failed to fetch list data' } );
+		}
+	} );
+
 	function handleSectionPath( section, sectionPath, entrypoint, reqFilter ) {
 		const pathRegex = pathToRegExp( sectionPath );
 
