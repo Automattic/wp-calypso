@@ -137,21 +137,41 @@ describe( 'Header', () => {
 			expect( screen.getByText( 'Jetpack Image Editor' ) ).toBeInTheDocument();
 		} );
 
-		it( 'renders navigation pill in Edit mode with filename', () => {
-			render( <Header { ...defaultProps } mode={ ImageStudioMode.Edit } /> );
+		describe( 'navigation pill', () => {
+			const originalPagenow = ( window as any ).pagenow;
 
-			expect( screen.getByText( 'test-image.jpg' ) ).toBeInTheDocument();
-		} );
+			afterEach( () => {
+				( window as any ).pagenow = originalPagenow;
+			} );
 
-		it( 'does not render navigation pill when filename is missing', () => {
-			const propsWithoutFilename = {
-				...defaultProps,
-				config: {},
-			};
+			it( 'renders in Edit mode with filename on the uploads page', () => {
+				( window as any ).pagenow = 'upload';
 
-			render( <Header { ...propsWithoutFilename } mode={ ImageStudioMode.Edit } /> );
+				render( <Header { ...defaultProps } mode={ ImageStudioMode.Edit } /> );
 
-			expect( screen.queryByText( 'test-image.jpg' ) ).not.toBeInTheDocument();
+				expect( screen.getByText( 'test-image.jpg' ) ).toBeInTheDocument();
+			} );
+
+			it( 'does not render when filename is missing', () => {
+				( window as any ).pagenow = 'upload';
+
+				const propsWithoutFilename = {
+					...defaultProps,
+					config: {},
+				};
+
+				render( <Header { ...propsWithoutFilename } mode={ ImageStudioMode.Edit } /> );
+
+				expect( screen.queryByText( 'test-image.jpg' ) ).not.toBeInTheDocument();
+			} );
+
+			it( 'does not render when not on the uploads page', () => {
+				( window as any ).pagenow = 'post';
+
+				render( <Header { ...defaultProps } mode={ ImageStudioMode.Edit } /> );
+
+				expect( screen.queryByText( 'test-image.jpg' ) ).not.toBeInTheDocument();
+			} );
 		} );
 
 		it( 'renders toolbar in Edit mode', () => {
@@ -473,6 +493,16 @@ describe( 'Header', () => {
 	} );
 
 	describe( 'Navigation', () => {
+		const originalPagenow = ( window as any ).pagenow;
+
+		beforeEach( () => {
+			( window as any ).pagenow = 'upload';
+		} );
+
+		afterEach( () => {
+			( window as any ).pagenow = originalPagenow;
+		} );
+
 		it( 'calls onNavigatePrevious when previous button is clicked', async () => {
 			const onNavigatePrevious = jest.fn();
 			const user = userEvent.setup();
