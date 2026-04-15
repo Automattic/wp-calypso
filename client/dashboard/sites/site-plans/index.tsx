@@ -805,6 +805,13 @@ export default function SitePlans() {
 					{ pageContext?.header_message && (
 						<Text className="site-plans__subheader">{ pageContext.header_message }</Text>
 					) }
+					{ upgradeCredit && (
+						<UpgradeCreditsNotice
+							amount={ upgradeCredit.amount }
+							currencyCode={ upgradeCredit.currencyCode }
+							source={ upgradeCredit.source }
+						/>
+					) }
 					<div className="site-plans__interval-selector-wrap">
 						<BillingIntervalSelector
 							billingInterval={ billingInterval }
@@ -815,13 +822,6 @@ export default function SitePlans() {
 				</div>
 			}
 		>
-			{ upgradeCredit && (
-				<UpgradeCreditsNotice
-					amount={ upgradeCredit.amount }
-					currencyCode={ upgradeCredit.currencyCode }
-					source={ upgradeCredit.source }
-				/>
-			) }
 			<div
 				className="site-plans__grid"
 				style={ { '--plan-count': shownPlans.length } as React.CSSProperties }
