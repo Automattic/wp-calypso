@@ -76,7 +76,7 @@ function init(): void {
  * - `net_rtt`             — whichever is available, connection preferred
  * - `net_downlink`        — from `navigator.connection.downlink`
  */
-export function getWebVitalsProps(): ConnectionProps {
+export function getConnectionSpeedData(): ConnectionProps {
 	return props;
 }
 

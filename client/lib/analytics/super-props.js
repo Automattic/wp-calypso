@@ -1,4 +1,4 @@
-import { getWebVitalsProps } from '@automattic/calypso-analytics';
+import { getConnectionSpeedData } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { shouldReportOmitBlogId } from 'calypso/lib/analytics/utils';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
@@ -27,7 +27,7 @@ const getSuperProps = ( reduxStore ) => ( eventProperties ) => {
 		Object.assign( superProps, {
 			vph: window.innerHeight,
 			vpw: window.innerWidth,
-			...getWebVitalsProps(),
+			...getConnectionSpeedData(),
 		} );
 	}
 
