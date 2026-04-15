@@ -98,8 +98,9 @@ export const Header = ( {
 
 	const showTools = mode === ImageStudioMode.Edit;
 	const showTitle = mode === ImageStudioMode.Generate;
-	// Always show navigation pill in Edit mode if we have a filename to display
-	const showNavigationPill = mode === ImageStudioMode.Edit && !! config?.imageData?.filename;
+	// Show navigation pill in Edit mode on uploads page, if we have a filename to display
+	const showNavigationPill =
+		mode === ImageStudioMode.Edit && !! config?.imageData?.filename && window.pagenow === 'upload';
 
 	// Generate classic editor URL if we have an attachment ID
 	const classicEditorUrl = config?.attachmentId
