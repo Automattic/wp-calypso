@@ -5,6 +5,7 @@ import QueryReaderList from 'calypso/components/data/query-reader-list';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
+import { FediConnectionProvider } from 'calypso/lib/fediverse';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import Stream from 'calypso/reader/stream';
@@ -110,78 +111,82 @@ function ListStream( props ) {
 	}
 
 	return (
-		<ReaderMain>
-			<DocumentHead
-				title={ translate( '%s ‹ Reader', {
-					args: pageTitle,
-					comment: '%s is the section name. For example: "My Likes"',
-				} ) }
-			/>
-			<QueryReaderList owner={ owner } slug={ slug } />
-			<ListStreamHeader
-				isPublic={ list?.is_public }
-				icon={
-					<svg
-						className={ listStreamIconClasses }
-						height="32"
-						width="32"
-						xmlns="http://www.w3.org/2000/svg"
-						viewBox="0 0 24 24"
-					>
-						<g>
-							<path
-								d="M9 19h10v-2H9v2zm0-6h10v-2H9v2zm0-8v2h10V5H9zm-3-.5c-.828
+		<FediConnectionProvider>
+			<ReaderMain>
+				<DocumentHead
+					title={ translate( '%s ‹ Reader', {
+						args: pageTitle,
+						comment: '%s is the section name. For example: "My Likes"',
+					} ) }
+				/>
+				<QueryReaderList owner={ owner } slug={ slug } />
+				<ListStreamHeader
+					isPublic={ list?.is_public }
+					listTitle={ list?.title }
+					slug={ slug }
+					icon={
+						<svg
+							className={ listStreamIconClasses }
+							height="32"
+							width="32"
+							xmlns="http://www.w3.org/2000/svg"
+							viewBox="0 0 24 24"
+						>
+							<g>
+								<path
+									d="M9 19h10v-2H9v2zm0-6h10v-2H9v2zm0-8v2h10V5H9zm-3-.5c-.828
 								0-1.5.672-1.5 1.5S5.172 7.5 6 7.5 7.5 6.828 7.5 6 6.828 4.5 6
 								4.5zm0 6c-.828 0-1.5.672-1.5 1.5s.672 1.5 1.5 1.5 1.5-.672
 								1.5-1.5-.672-1.5-1.5-1.5zm0 6c-.828 0-1.5.672-1.5 1.5s.672 1.5
 								1.5 1.5 1.5-.672 1.5-1.5-.672-1.5-1.5-1.5z"
-							/>
-						</g>
-					</svg>
-				}
-				title={ formattedTitle }
-				description={ list?.description }
-				showFollow={ shouldShowFollow }
-				following={ isSubscribed }
-				onFollowToggle={ toggleFollowing }
-				showEdit={ list && list.is_owner }
-				editUrl={ window.location.href + '/edit' }
-				tags={ publicListData?.tags }
-				items={ publicListData?.items }
-			/>
-
-			<SectionNav className="list-stream__tabs" variation="minimal">
-				<NavTabs>
-					<NavItem
-						selected={ activeTab === TAB_POSTS }
-						onClick={ () => handleTabChange( TAB_POSTS ) }
-					>
-						{ translate( 'Posts' ) }
-					</NavItem>
-					<NavItem
-						selected={ activeTab === TAB_SITES }
-						onClick={ () => handleTabChange( TAB_SITES ) }
-						count={ publicListData?.item_count }
-					>
-						{ translate( 'Sites' ) }
-					</NavItem>
-				</NavTabs>
-			</SectionNav>
-
-			{ activeTab === TAB_POSTS && (
-				<Stream
-					{ ...props }
-					isMain={ false }
-					listName={ pageTitle }
-					emptyContent={ EmptyContentWithList }
-					showFollowInHeader={ false }
+								/>
+							</g>
+						</svg>
+					}
+					title={ formattedTitle }
+					description={ list?.description }
+					showFollow={ shouldShowFollow }
+					following={ isSubscribed }
+					onFollowToggle={ toggleFollowing }
+					showEdit={ list && list.is_owner }
+					editUrl={ window.location.href + '/edit' }
+					tags={ publicListData?.tags }
+					items={ publicListData?.items }
 				/>
-			) }
 
-			{ activeTab === TAB_SITES && publicListData && (
-				<ListSitesDirectory items={ publicListData.items } followSource="reader-list-sites-tab" />
-			) }
-		</ReaderMain>
+				<SectionNav className="list-stream__tabs" variation="minimal">
+					<NavTabs>
+						<NavItem
+							selected={ activeTab === TAB_POSTS }
+							onClick={ () => handleTabChange( TAB_POSTS ) }
+						>
+							{ translate( 'Posts' ) }
+						</NavItem>
+						<NavItem
+							selected={ activeTab === TAB_SITES }
+							onClick={ () => handleTabChange( TAB_SITES ) }
+							count={ publicListData?.item_count }
+						>
+							{ translate( 'Sites' ) }
+						</NavItem>
+					</NavTabs>
+				</SectionNav>
+
+				{ activeTab === TAB_POSTS && (
+					<Stream
+						{ ...props }
+						isMain={ false }
+						listName={ pageTitle }
+						emptyContent={ EmptyContentWithList }
+						showFollowInHeader={ false }
+					/>
+				) }
+
+				{ activeTab === TAB_SITES && publicListData && (
+					<ListSitesDirectory items={ publicListData.items } followSource="reader-list-sites-tab" />
+				) }
+			</ReaderMain>
+		</FediConnectionProvider>
 	);
 }
 
