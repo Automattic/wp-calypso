@@ -150,17 +150,18 @@ const PostCheckoutOnboarding: StepType< {
 					: {} ),
 			};
 
-			if ( isJetpackOrAtomic ) {
-				return providedDependencies;
+			if ( ! isJetpackOrAtomic ) {
+				if ( siteTransferStatusData?.isTransferring ) {
+					await waitForAtomic();
+				} else if ( hasExternalTheme || shouldInstallPlugin ) {
+					await waitForInitiateTransfer( pluginToInstall );
+					await waitForAtomic();
+				}
 			}
 
-			if ( siteTransferStatusData?.isTransferring ) {
-				await waitForAtomic();
-			} else if ( hasExternalTheme || shouldInstallPlugin ) {
-				await waitForInitiateTransfer( pluginToInstall );
-				await waitForAtomic();
-			}
-
+			// Poll for the Woo ref regardless of the atomic path above — the
+			// site may already be Atomic when this effect mounts while
+			// WooCommerce is still finishing installation.
 			if ( isWooHostingSolutions && pluginToInstall ) {
 				await waitForPluginsActive( site.ID, [ pluginToInstall ] );
 			}
