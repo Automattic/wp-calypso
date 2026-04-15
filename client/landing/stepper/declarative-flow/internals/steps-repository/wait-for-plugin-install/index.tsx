@@ -63,7 +63,9 @@ const WaitForPluginInstall: StepType = function WaitForAtomic( { navigation, dat
 		setPendingAction( async () => {
 			const totalTimeoutSeconds = 300;
 			try {
-				await waitForPluginsActive( siteId as number, pluginsToVerify );
+				await waitForPluginsActive( siteId as number, pluginsToVerify, {
+					totalTimeoutSeconds,
+				} );
 			} catch ( err ) {
 				handlePluginCheckFailure( {
 					type: 'plugin_check_timeout',
