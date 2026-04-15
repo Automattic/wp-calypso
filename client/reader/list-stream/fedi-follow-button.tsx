@@ -8,9 +8,10 @@ import type { PublicListItem } from './use-public-list-query';
 interface FediFollowAllButtonProps {
 	items: PublicListItem[];
 	listSlug: string;
+	icon?: JSX.Element;
 }
 
-export function FediFollowAllButton( { items, listSlug }: FediFollowAllButtonProps ) {
+export function FediFollowAllButton( { items, listSlug, icon }: FediFollowAllButtonProps ) {
 	const translate = useTranslate();
 	const [ connectionState, actions ] = useFediConnectionContext();
 	const [ showModal, setShowModal ] = useState( false );
@@ -85,13 +86,14 @@ export function FediFollowAllButton( { items, listSlug }: FediFollowAllButtonPro
 
 	return (
 		<>
-			<button
-				className="list-stream__export-button"
+			<Button
+				variant="secondary"
+				icon={ icon }
 				onClick={ handleFollowAll }
 				disabled={ isFollowing || isAuthenticating }
 			>
 				{ label }
-			</button>
+			</Button>
 
 			{ showModal && (
 				<Modal

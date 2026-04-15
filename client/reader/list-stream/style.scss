@@ -85,18 +85,3 @@
 .list-stream__tabs {
 	margin-bottom: 16px;
 }
-
-.list-stream__export-button {
-	padding: 7px 14px;
-	border: 1px solid var( --color-neutral-10 );
-	border-radius: 4px;
-	background: transparent;
-	font-size: 0.875rem;
-	font-family: inherit;
-	cursor: pointer;
-	white-space: nowrap;
-
-	&:hover {
-		border-color: var( --color-neutral-20 );
-	}
-}
