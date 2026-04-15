@@ -1,32 +1,17 @@
 /* eslint-disable no-restricted-imports */
 import { isEcommercePlan } from '@automattic/calypso-products';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { MasterbarLoggedIn } from 'calypso/layout/masterbar/logged-in';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { getLogoutUrl } from 'calypso/lib/user/shared-utils';
 import { getSiteDisplayName } from '../../utils/site-name';
+import { logout } from '../auth';
+import { omnibarEvents, useOmnibarEvent } from './omnibar-events';
+import { createOmnibarStore } from './omnibar-store';
 import type { User, Site } from '@automattic/api-core';
 
 const noop = () => {};
-
-type StoreType = Parameters< typeof ReduxProvider >[ 0 ][ 'store' ];
-
-// Fake Redux store so child components using connect() (e.g. Notifications) don't crash.
-// Intercepts specific actions so the dashboard can handle them.
-function createOmnibarStore( onToggleNotifications?: () => void ): StoreType {
-	return {
-		getState: () => ( { ui: { section: false, isNotificationsOpen: false } } ),
-		dispatch: ( action: { type: string } ) => {
-			if ( action.type === 'NOTIFICATIONS_PANEL_TOGGLE' ) {
-				onToggleNotifications?.();
-			}
-			return action;
-		},
-		subscribe: () => () => {},
-	} as unknown as StoreType;
-}
 
 // Separate query client for the legacy masterbar so its internal queries
 // (e.g. useGetDomainsQuery in MasterbarLaunchButton) don't pollute the Dashboard cache.
@@ -62,6 +47,28 @@ export function InterimOmnibar( {
 		() => createOmnibarStore( onToggleNotifications ),
 		[ onToggleNotifications ]
 	);
+
+	// Announce the bell button element to subscribers (e.g. the Notifications
+	// component) so they can anchor a popover to it. Re-runs on every commit so
+	// it stays correct if MasterbarLoggedIn re-renders and replaces the node.
+	useEffect( () => {
+		const container = document.getElementById( 'wpcom-omnibar' );
+		const bell = container?.querySelector< HTMLElement >( '.masterbar-notifications' ) ?? null;
+		omnibarEvents.notificationsAnchor.emit( bell );
+	} );
+
+	// Dispatch the user's unseen note count to the store so the unread marker appears.
+	useEffect( () => {
+		store.dispatch( {
+			type: 'NOTIFICATIONS_UNSEEN_COUNT_SET',
+			unseenCount: Number( !! user.has_unseen_notes ),
+		} );
+	}, [ store, user.has_unseen_notes ] );
+
+	// Also dispatch the emitted unseen note count from the notifications panel.
+	useOmnibarEvent( 'notificationsUnseenCount', ( unseenCount ) => {
+		store.dispatch( { type: 'NOTIFICATIONS_UNSEEN_COUNT_SET', unseenCount } );
+	} );
 
 	return (
 		<QueryClientProvider client={ omnibarQueryClient }>
@@ -127,8 +134,7 @@ export function InterimOmnibar( {
 					requestAdminMenu={ noop }
 					redirectToLogout={ () => {
 						if ( userProp ) {
-							const logoutUrl = getLogoutUrl( userProp );
-							window.location.href = logoutUrl;
+							logout( userProp );
 						}
 					} }
 					launchSiteOrRedirectToLaunchSignupFlow={ noop }

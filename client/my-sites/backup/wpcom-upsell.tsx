@@ -8,6 +8,7 @@ import { Page } from '@wordpress/admin-ui';
 import { useTranslate } from 'i18n-calypso';
 import JetpackBackupSVG from 'calypso/assets/images/illustrations/jetpack-backup.svg';
 import DocumentHead from 'calypso/components/data/document-head';
+import JetpackFooter from 'calypso/components/jetpack/jetpack-footer';
 import WhatIsJetpack from 'calypso/components/jetpack/what-is-jetpack';
 import JetpackTitle from 'calypso/components/jetpack-title';
 import Main from 'calypso/components/main';
@@ -114,6 +115,7 @@ export default function WPCOMUpsellPage() {
 
 				<WhatIsJetpack />
 			</Page>
+			<JetpackFooter />
 		</Main>
 	);
 }

@@ -6,6 +6,7 @@ import {
 	Button,
 	Modal,
 } from '@wordpress/components';
+import { useEvent } from '@wordpress/compose';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { copy, globe } from '@wordpress/icons';
@@ -18,44 +19,60 @@ import type { Site } from '@automattic/api-core';
 import './styles.scss';
 
 interface SiteLaunchCelebrationModalProps {
-	site: Pick< Site, 'ID' | 'slug' | 'URL' > & {
+	site: Pick< Site, 'ID' | 'slug' | 'URL' | 'launch_status' > & {
 		plan?: Pick< Required< Site >[ 'plan' ], 'is_free' | 'product_slug' >;
 	};
-	onClose: () => void;
+	onOpen?(): void;
+	onClose?(): void;
 }
 
 export default function SiteLaunchCelebrationModal( {
 	site,
+	onOpen: externalOnOpen,
 	onClose,
 }: SiteLaunchCelebrationModalProps ) {
+	const [ isOpen, setIsOpen ] = useState( false );
+	const [ clipboardCopied, setClipboardCopied ] = useState( false );
 	const { recordTracksEvent } = useAnalytics();
 	const { queries } = useAppContext();
-	const { data: domains = [] } = useQuery( {
+	const { data: domains = [], isFetchedAfterMount: isDomainsDataReady } = useQuery( {
 		...queries.domainsQuery(),
+		enabled: isOpen,
 		select: ( data ) => data.filter( ( domain ) => domain.blog_id === site.ID ),
 	} );
-	const [ clipboardCopied, setClipboardCopied ] = useState( false );
 	const copyButtonRef = useRef< HTMLButtonElement >( null );
+
+	const onOpen = useEvent( () => {
+		externalOnOpen?.();
+		setIsOpen( true );
+
+		// Track the modal view
+		recordTracksEvent( 'calypso_launchpad_celebration_modal_view', {
+			product_slug: site?.plan?.product_slug,
+		} );
+	} );
+
+	// Check if celebration modal should be shown based on URL param and site launch status
+	useEffect( () => {
+		const hasCelebrateLaunch = new URLSearchParams( window.location.search ).has(
+			'celebrateLaunch'
+		);
+		const isSiteLaunched = site.launch_status === 'launched' || site.launch_status === false;
+
+		if ( isSiteLaunched && hasCelebrateLaunch ) {
+			onOpen();
+		}
+	}, [ site.launch_status, onOpen ] );
+
+	if ( ! isOpen || ! isDomainsDataReady ) {
+		return null;
+	}
 
 	const isPaidPlan = ! site.plan?.is_free;
 	const isBilledMonthly = site.plan?.product_slug?.includes( 'monthly' );
 	const customDomains = domains.filter( ( domain ) => domain.subscription_id !== null );
 	const hasCustomDomain = customDomains.length > 0;
 	const siteDomain = hasCustomDomain ? customDomains[ 0 ].domain : site.slug;
-
-	useEffect( () => {
-		// Remove the celebrateLaunch URL param without reloading the page
-		window.history.replaceState(
-			null,
-			'',
-			removeQueryArgs( window.location.href, 'celebrateLaunch' )
-		);
-
-		// Track the modal view
-		recordTracksEvent( 'calypso_launchpad_celebration_modal_view', {
-			product_slug: site?.plan?.product_slug,
-		} );
-	}, [ site?.plan?.product_slug, recordTracksEvent ] );
 
 	const handleCopy = () => {
 		navigator.clipboard.writeText( siteDomain );
@@ -131,7 +148,17 @@ export default function SiteLaunchCelebrationModal( {
 			className="celebration-modal"
 			title={ __( 'Congrats, your site is live!' ) }
 			size="medium"
-			onRequestClose={ onClose }
+			onRequestClose={ () => {
+				setIsOpen( false );
+				onClose?.();
+
+				// Remove the celebrateLaunch URL param without reloading the page
+				window.history.replaceState(
+					null,
+					'',
+					removeQueryArgs( window.location.href, 'celebrateLaunch' )
+				);
+			} }
 		>
 			<ConfettiAnimation />
 			<VStack spacing={ 6 }>

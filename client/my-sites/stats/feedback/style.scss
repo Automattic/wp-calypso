@@ -1,5 +1,10 @@
 @import '@automattic/components/src/styles/typography';
 @import '@wordpress/base-styles/breakpoints';
+@import 'calypso/my-sites/stats/components/highlight-cards/variables';
+
+.stats-feedback-container {
+	margin-bottom: $vertical-margin;
+}
 
 .stats-feedback-content {
 	font-family: $font-sf-pro-text;

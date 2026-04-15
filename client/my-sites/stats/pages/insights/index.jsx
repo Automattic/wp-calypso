@@ -5,7 +5,6 @@ import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import DocumentHead from 'calypso/components/data/document-head';
-import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import { STATS_FEATURE_PAGE_INSIGHTS, STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import StatsModuleComments from 'calypso/my-sites/stats/features/modules/stats-comments';
@@ -125,7 +124,6 @@ function StatsInsights( { context } ) {
 								/>
 							) }
 						</StatsModuleListing>
-						<JetpackColophon />
 					</>
 				) }
 			</div>

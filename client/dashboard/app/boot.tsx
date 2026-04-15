@@ -13,7 +13,7 @@ import wpcom from 'calypso/lib/wp';
 import isDashboardEnv from '../utils/is-dashboard-env';
 import { handleOAuthCallback } from './auth/oauth-callback';
 import { loadPreferencesHelper } from './dev-tools/preferences';
-import { omnibarEvents } from './interim-omnibar/click-handlers';
+import { omnibarEvents } from './interim-omnibar/omnibar-events';
 import Layout from './layout';
 import limitTotalSnackbars from './snackbars/limit-total-snackbars';
 import type { AppConfig } from './context';

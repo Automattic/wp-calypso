@@ -69,7 +69,7 @@ export const HelpCenterContactForm = () => {
 	const [ hasSubmittingError, setHasSubmittingError ] = useState< boolean >( false );
 	const locale = useLocale();
 	const { isPending: isSubmitting, mutateAsync: submitTicket } = useSubmitTicketMutation();
-	const { data: userSites } = useUserSites( currentUser.ID );
+	const { data: userSites } = useUserSites( currentUser?.ID ?? 0 );
 	const userWithNoSites = userSites?.sites.length === 0;
 	const [ isSelfDeclaredSite, setIsSelfDeclaredSite ] = useState< boolean >( false );
 	const [ gptResponse, setGptResponse ] = useState< JetpackSearchAIResult >();
@@ -113,7 +113,7 @@ export const HelpCenterContactForm = () => {
 
 	let ownershipResult: AnalysisReport = useSiteAnalysis(
 		// pass user email as query cache key
-		currentUser.ID,
+		currentUser?.ID ?? 0,
 		userDeclaredSiteUrl,
 		isSelfDeclaredSite
 	);
@@ -297,7 +297,7 @@ export const HelpCenterContactForm = () => {
 						// wait 30 seconds until support-history endpoint actually updates
 						// yup, it takes that long (tried 5, and 10)
 						queryClient.invalidateQueries( {
-							queryKey: [ 'help-support-history', 'ticket', currentUser.ID ],
+							queryKey: [ 'help-support-history', 'ticket', currentUser?.ID ?? null ],
 						} );
 					}, 30000 );
 				} )

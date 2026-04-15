@@ -4,10 +4,10 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { logToLogstash } from 'calypso/lib/logstash';
-import wpcom from 'calypso/lib/wp';
 import { ONBOARD_STORE } from '../../../../stores';
+import { waitForPluginsActive } from '../../../../utils/wait-for-plugins-active';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
-import type { Step as StepType, PluginsResponse, FailureInfo } from '../../types';
+import type { Step as StepType, FailureInfo } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 
 export const installedStates = {
@@ -15,8 +15,6 @@ export const installedStates = {
 	INSTALLED: 'installed',
 	ERROR: 'error',
 } as const;
-
-const wait = ( ms: number ) => new Promise( ( res ) => setTimeout( res, ms ) );
 
 const WaitForPluginInstall: StepType = function WaitForAtomic( { navigation, data, flow } ) {
 	const { submit } = navigation;
@@ -63,47 +61,15 @@ const WaitForPluginInstall: StepType = function WaitForAtomic( { navigation, dat
 		}
 
 		setPendingAction( async () => {
-			const startTime = new Date().getTime();
-			const totalTimeout = 1000 * 300;
-			const maxFinishTime = startTime + totalTimeout;
-
-			// Poll for transfer status. If there are no plugins to verify, we can skip this step.
-			let stopPollingPlugins = ! pluginsToVerify || pluginsToVerify.length <= 0;
-			let backoffTime = 1000;
-
-			while ( ! stopPollingPlugins ) {
-				await wait( backoffTime );
-
-				try {
-					const response: PluginsResponse = await wpcom.req.get( {
-						path: `/sites/${ siteId }/plugins`,
-						apiVersion: '1.1',
-					} );
-
-					// Check that all plugins to verify have been installed and activated.
-					// If they _have_ been installed and activated, we can stop polling.
-					if ( response?.plugins && pluginsToVerify ) {
-						stopPollingPlugins = pluginsToVerify.every( ( slug ) => {
-							return response?.plugins.find(
-								( plugin: { slug: string; active: boolean } ) =>
-									plugin.slug === slug && plugin.active === true
-							);
-						} );
-					}
-				} catch ( err ) {
-					// Ignore errors. It's normal to get errors the first couple of times we poll. The timeout will eventually catch it if the failures continue.
-				}
-
-				if ( maxFinishTime <= new Date().getTime() ) {
-					handlePluginCheckFailure( {
-						type: 'plugin_check_timeout',
-						error: `plugin check took too long (${ totalTimeout / 1000 }s))`,
-						code: 'plugin_check_timeout',
-					} );
-					throw new Error( `plugin check timeout exceeded ${ totalTimeout / 1000 }s` );
-				}
-
-				backoffTime *= 2;
+			try {
+				await waitForPluginsActive( siteId as number, pluginsToVerify );
+			} catch ( err ) {
+				handlePluginCheckFailure( {
+					type: 'plugin_check_timeout',
+					error: ( err as Error ).message,
+					code: 'plugin_check_timeout',
+				} );
+				throw err;
 			}
 
 			// Add potential pending actions from other steps.

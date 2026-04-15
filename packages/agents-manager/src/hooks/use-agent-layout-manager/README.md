@@ -70,6 +70,7 @@ The hook manages the sidebar DOM structure and CSS classes. Customize the styles
 The hook automatically manages these CSS classes based on the chat state:
 - `agents-manager-sidebar-container` is added when docked on desktop
 - `agents-manager-sidebar-container--sidebar-open` is added when the sidebar is open
+- `agents-manager-sidebar-container--closing` is added during the close transition and removed once complete
 - `agents-manager-chat--docked` or `agents-manager-chat--undocked` based on mode
 
 **SCSS Example:**
@@ -85,6 +86,10 @@ The hook automatically manages these CSS classes based on the chat state:
 		.agents-manager-sidebar-fab {
 			display: none;
 		}
+	}
+
+	&.agents-manager-sidebar-container--closing {
+		// Styles during the close transition (briefly applied while the sidebar animates out)
 	}
 }
 

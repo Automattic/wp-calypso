@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import JetpackScanSVG from 'calypso/assets/images/illustrations/jetpack-scan.svg';
 import QueryJetpackScan from 'calypso/components/data/query-jetpack-scan';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
+import JetpackFooter from 'calypso/components/jetpack/jetpack-footer';
 import WPCOMBusinessAT from 'calypso/components/jetpack/wpcom-business-at';
 import JetpackTitle from 'calypso/components/jetpack-title';
 import Main from 'calypso/components/main';
@@ -38,6 +39,7 @@ const ScanLoadingPlaceholder = () => {
 			>
 				<div className="business-at-switch placeholder__primary-promo"></div>
 			</Page>
+			<JetpackFooter />
 		</Main>
 	);
 };

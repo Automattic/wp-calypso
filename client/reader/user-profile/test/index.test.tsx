@@ -166,4 +166,10 @@ describe( 'UserProfile', () => {
 
 		expect( page.replace ).toHaveBeenCalledWith( '/reader/users/testuser' );
 	} );
+
+	test( 'should request user data with both login and ID when provided', () => {
+		render( <UserProfile { ...defaultProps } userLogin="testuser" userId={ 123 } /> );
+
+		expect( mockUseGetReaderUserQuery ).toHaveBeenCalledWith( 'testuser', 123 );
+	} );
 } );

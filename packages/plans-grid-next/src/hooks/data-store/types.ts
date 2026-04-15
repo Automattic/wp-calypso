@@ -59,7 +59,7 @@ export interface UseGridPlansParams {
 	 */
 	useFocusedNewCopyTaglines?: boolean;
 	/**
-	 * When true, the user is in an experiment variant (not control).
+	 * When true, use experiment-variant feature lists and comparison grid copy.
 	 */
 	isExperimentVariant?: boolean;
 }
