@@ -82,6 +82,15 @@
 	flex-shrink: 0;
 }
 
+// Match @wordpress/components Button sizing to Calypso's .button sizing
+// used by the SplitButton so all header action buttons look the same.
+.navigation-header__actions .components-button.is-secondary {
+	height: 38px;
+	padding: 8px 14px;
+	font-size: 0.875rem;
+	line-height: 20px;
+}
+
 .list-stream__tabs {
 	margin-bottom: 16px;
 }
