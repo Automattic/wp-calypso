@@ -26,6 +26,7 @@ import { DOTCOM_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-dotco
 import { DASHBOARD_SECTION_PATHS } from 'calypso/dashboard/section';
 import isDashboardEnv from 'calypso/dashboard/utils/is-dashboard-env';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
+import { STARTER_PACKS_SECTION_DEFINITION } from 'calypso/landing/starter-packs/section';
 import { STEPPER_SECTION_DEFINITION } from 'calypso/landing/stepper/section';
 import { SUBSCRIPTIONS_SECTION_DEFINITION } from 'calypso/landing/subscriptions/section';
 import { isInStepContainerV2FlowContext } from 'calypso/layout/utils';
@@ -1167,6 +1168,135 @@ export default function pages() {
 
 	handleSectionPath( STEPPER_SECTION_DEFINITION, '/setup', 'entry-stepper' );
 	handleSectionPath( SUBSCRIPTIONS_SECTION_DEFINITION, '/subscriptions', 'entry-subscriptions' );
+	// Serve OPML files for starter packs as real XML.
+	// Data is inlined here because the packs module is client-side TypeScript.
+	const starterPacksData = {
+		'wordpress-community': {
+			title: 'WordPress Community',
+			accounts: [
+				{
+					displayName: 'Matt Mullenweg',
+					username: 'matt',
+					instance: 'ma.tt',
+					feedUrl: 'https://ma.tt/@matt.rss',
+				},
+				{
+					displayName: 'Matthias Pfefferle',
+					username: 'pfefferle',
+					instance: 'mastodon.social',
+					feedUrl: 'https://mastodon.social/@pfefferle.rss',
+				},
+				{
+					displayName: 'WordPress',
+					username: 'WordPress',
+					instance: 'mastodon.social',
+					feedUrl: 'https://mastodon.social/@WordPress.rss',
+				},
+				{
+					displayName: 'WordPress Community',
+					username: 'wordpress',
+					instance: 'floss.social',
+					feedUrl: 'https://floss.social/@wordpress.rss',
+				},
+			],
+		},
+		'fediverse-developers': {
+			title: 'Fediverse Developers',
+			accounts: [
+				{
+					displayName: 'Eugen Rochko',
+					username: 'Gargron',
+					instance: 'mastodon.social',
+					feedUrl: 'https://mastodon.social/@Gargron.rss',
+				},
+				{
+					displayName: 'Evan Prodromou',
+					username: 'evan',
+					instance: 'cosocial.ca',
+					feedUrl: 'https://cosocial.ca/@evan.rss',
+				},
+				{
+					displayName: 'Hong Minhee',
+					username: 'hongminhee',
+					instance: 'hollo.social',
+					feedUrl: 'https://hollo.social/@hongminhee.rss',
+				},
+				{
+					displayName: 'Mike Macgirvin',
+					username: 'mike',
+					instance: 'macgirvin.com',
+					feedUrl: 'https://macgirvin.com/channel/mike.rss',
+				},
+			],
+		},
+		indieweb: {
+			title: 'IndieWeb',
+			accounts: [
+				{
+					displayName: 'Tantek \u00C7elik',
+					username: 'tantek',
+					instance: 'tantek.com',
+					feedUrl: 'https://tantek.com/updates.atom',
+				},
+				{
+					displayName: 'Aaron Parecki',
+					username: 'aaronpk',
+					instance: 'aaronparecki.com',
+					feedUrl: 'https://aaronparecki.com/feed.xml',
+				},
+				{
+					displayName: 'James',
+					username: 'jamesg',
+					instance: 'coffeehouse.jamesg.blog',
+					feedUrl: 'https://jamesg.blog/feed.xml',
+				},
+				{
+					displayName: 'David Shanske',
+					username: 'david',
+					instance: 'david.shanske.com',
+					feedUrl: 'https://david.shanske.com/feed/',
+				},
+			],
+		},
+	};
+
+	app.get( '/starter-packs/:slug/opml', ( req, res ) => {
+		const pack = starterPacksData[ req.params.slug ];
+		if ( ! pack ) {
+			return res.status( 404 ).send( 'Pack not found' );
+		}
+
+		const esc = ( s ) =>
+			s
+				.replace( /&/g, '&amp;' )
+				.replace( /</g, '&lt;' )
+				.replace( />/g, '&gt;' )
+				.replace( /"/g, '&quot;' );
+
+		const outlines = pack.accounts
+			.filter( ( a ) => a.feedUrl )
+			.map( ( a ) => {
+				const t = esc( `${ a.displayName } (@${ a.username }@${ a.instance })` );
+				const h = esc( `https://${ a.instance }/@${ a.username }` );
+				const x = esc( a.feedUrl );
+				return `      <outline text="${ t }" title="${ t }" type="rss" xmlUrl="${ x }" htmlUrl="${ h }" />`;
+			} )
+			.join( '\n' );
+
+		const t = esc( pack.title );
+		const opml =
+			`<?xml version="1.0" encoding="UTF-8"?>\n` +
+			`<opml version="2.0">\n` +
+			`  <head>\n    <title>${ t }</title>\n  </head>\n` +
+			`  <body>\n    <outline text="${ t }" title="${ t }">\n` +
+			outlines +
+			`\n    </outline>\n  </body>\n</opml>`;
+
+		res.set( 'Content-Type', 'text/xml; charset=utf-8' );
+		return res.send( opml );
+	} );
+
+	handleSectionPath( STARTER_PACKS_SECTION_DEFINITION, '/starter-packs', 'entry-starter-packs' );
 
 	// Redirect legacy `/new` routes to the corresponding `/start`
 	app.get( [ '/new', '/new/*' ], ( req, res ) => {

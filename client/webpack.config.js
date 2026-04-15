@@ -231,6 +231,7 @@ const webpackConfig = {
 		'entry-stepper': [ path.join( __dirname, 'landing', 'stepper' ) ],
 		'entry-browsehappy': [ path.join( __dirname, 'landing', 'browsehappy' ) ],
 		'entry-subscriptions': [ path.join( __dirname, 'landing', 'subscriptions' ) ],
+		'entry-starter-packs': [ path.join( __dirname, 'landing', 'starter-packs' ) ],
 		'entry-dashboard-dotcom': [ path.join( __dirname, 'dashboard', 'app-dotcom' ) ],
 		'entry-dashboard-ciab': [ path.join( __dirname, 'dashboard', 'app-ciab' ) ],
 		'entry-reauth-required': [ path.join( __dirname, 'reauth-required', 'bundle' ) ],

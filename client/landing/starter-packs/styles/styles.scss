@@ -1,0 +1,402 @@
+/*
+	Global styles for the starter packs app
+*/
+@import "@wordpress/components/build-style/style.css";
+@import "@automattic/calypso-color-schemes";
+@import "@automattic/typography/styles/fonts";
+@import "@automattic/color-studio/dist/color-variables";
+@import "@wordpress/base-styles/breakpoints";
+
+body {
+	background-color: $studio-white;
+	font-family: $sans;
+	text-rendering: optimizeLegibility;
+	-moz-osx-font-smoothing: grayscale;
+	-webkit-font-smoothing: antialiased;
+	margin: 0;
+	line-height: 1.5;
+
+	h1,
+	h2,
+	h3,
+	p {
+		font-family: $sans;
+		font-weight: 400;
+		margin: 0;
+	}
+
+	button {
+		background-color: transparent;
+		border: none;
+	}
+}
+
+// Shared avatar styles
+.avatar {
+	border-radius: 50%;
+	object-fit: cover;
+	display: inline-block;
+	vertical-align: middle;
+
+	&--default {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		background: $studio-gray-5;
+		color: $studio-gray-40;
+	}
+}
+
+// Main layout
+.starter-packs__main {
+	max-width: 960px;
+	margin: 0 auto;
+	padding: 48px 62px;
+
+	@media screen and (max-width: $break-medium) {
+		padding: 30px 24px;
+	}
+}
+
+// Directory page
+.starter-packs-directory {
+	.formatted-header {
+		margin: 0 0 40px;
+
+		&__title {
+			font-size: $font-headline-medium;
+			line-height: $font-headline-large;
+			color: $studio-gray-100;
+			margin-block-end: 12px;
+		}
+
+		&__subtitle {
+			font-size: $font-body;
+			line-height: $font-title-medium;
+			color: $studio-gray-60;
+		}
+	}
+}
+
+.starter-packs-directory__grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+	gap: 24px;
+}
+
+// Pack card
+.pack-card {
+	display: flex;
+	flex-direction: column;
+	background: $studio-white;
+	border: 1px solid $studio-gray-5;
+	border-radius: 4px;
+	padding: 24px;
+	text-decoration: none;
+	color: inherit;
+	transition: box-shadow 0.15s ease, border-color 0.15s ease;
+
+	&,
+	&:visited {
+		color: inherit;
+	}
+
+	&:hover {
+		border-color: var(--color-primary);
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+	}
+}
+
+.pack-card__avatars {
+	display: flex;
+	margin-block-end: 16px;
+
+	.avatar {
+		border: 2px solid $studio-white;
+
+		& + .avatar {
+			margin-inline-start: -10px;
+		}
+	}
+}
+
+.pack-card__avatar-more {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 36px;
+	height: 36px;
+	border-radius: 50%;
+	background: $studio-gray-5;
+	font-size: $font-body-extra-small;
+	font-weight: 600;
+	color: $studio-gray-50;
+	margin-inline-start: -10px;
+	border: 2px solid $studio-white;
+}
+
+.pack-card__title {
+	font-size: $font-title-small;
+	font-weight: 600;
+	margin: 0 0 8px;
+	color: $studio-gray-100;
+}
+
+.pack-card__description {
+	font-size: $font-body-small;
+	color: $studio-gray-50;
+	line-height: 1.5;
+	margin: 0 0 12px;
+	flex: 1;
+}
+
+.pack-card__count {
+	font-size: $font-body-extra-small;
+	color: $studio-gray-40;
+	font-weight: 500;
+}
+
+// Pack detail page
+.pack-detail {
+	.formatted-header {
+		margin: 0 0 32px;
+
+		&__title {
+			font-size: $font-headline-medium;
+			line-height: $font-headline-large;
+			color: $studio-gray-100;
+			margin-block-end: 8px;
+		}
+
+		&__subtitle {
+			font-size: $font-body;
+			line-height: $font-title-medium;
+			color: $studio-gray-60;
+		}
+	}
+}
+
+.pack-detail--not-found {
+	text-align: center;
+	padding: 80px 24px;
+
+	h1 {
+		font-size: $font-title-medium;
+		font-weight: 600;
+		margin-block-end: 12px;
+	}
+
+	a {
+		color: var(--color-link);
+
+		&:hover {
+			text-decoration: underline;
+		}
+	}
+}
+
+.pack-detail__back {
+	display: inline-flex;
+	align-items: center;
+	gap: 2px;
+	font-size: $font-body-small;
+	color: var(--color-link);
+	text-decoration: none;
+	margin-block-end: 24px;
+
+	&:hover {
+		text-decoration: underline;
+	}
+
+	svg {
+		fill: currentColor;
+	}
+}
+
+// Subscribe actions
+.subscribe-actions {
+	background: $studio-gray-0;
+	border: 1px solid $studio-gray-5;
+	border-radius: 4px;
+	padding: 20px;
+	margin-block-end: 32px;
+}
+
+.subscribe-actions__status {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: $font-body-small;
+	color: $studio-gray-60;
+	margin-block-end: 12px;
+	padding-block-end: 12px;
+	border-block-end: 1px solid $studio-gray-5;
+
+	strong {
+		font-weight: 600;
+		color: $studio-gray-80;
+	}
+}
+
+.subscribe-actions__row--spread {
+	justify-content: space-between;
+}
+
+.subscribe-actions__row-start,
+.subscribe-actions__row-end {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.subscribe-actions__messages {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+	padding-block-end: 32px;
+	font-size: $font-body-small;
+}
+
+.subscribe-actions__message {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+
+	svg {
+		flex-shrink: 0;
+	}
+
+	&--success {
+		color: var(--color-success);
+	}
+
+	&--error {
+		color: var(--color-error);
+	}
+}
+
+.subscribe-actions__hint {
+	font-size: $font-body-extra-small;
+	color: $studio-gray-40;
+	font-style: italic;
+}
+
+.subscribe-actions__row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	align-items: center;
+
+	& + & {
+		margin-block-start: 12px;
+		padding-block-start: 12px;
+		border-block-start: 1px solid $studio-gray-5;
+	}
+}
+
+.subscribe-actions__instance-input {
+	flex: 1;
+	min-width: 180px;
+	padding: 6px 12px;
+	border: 1px solid $studio-gray-10;
+	border-radius: 2px;
+	font-size: $font-body-small;
+	font-family: $sans;
+
+	&:focus {
+		outline: none;
+		border-color: var(--color-primary);
+		box-shadow: 0 0 0 1px var(--color-primary);
+	}
+}
+
+// Account card
+.account-card {
+	display: flex;
+	align-items: flex-start;
+	gap: 16px;
+	padding: 20px;
+	background: $studio-white;
+	border: 1px solid $studio-gray-5;
+	border-radius: 4px;
+
+	& + & {
+		margin-block-start: 12px;
+	}
+
+	@media (max-width: $break-small) {
+		flex-direction: column;
+	}
+}
+
+.account-card__profile-link {
+	flex-shrink: 0;
+	line-height: 0; // Remove extra space below avatar
+}
+
+.account-card__info {
+	flex: 1;
+	min-width: 0;
+}
+
+.account-card__name-link {
+	text-decoration: none;
+
+	&,
+	&:visited {
+		color: inherit;
+	}
+
+	&:hover .account-card__display-name {
+		text-decoration: underline;
+	}
+}
+
+.account-card__display-name {
+	display: block;
+	font-size: $font-body;
+	font-weight: 600;
+	color: $studio-gray-100;
+}
+
+.account-card__handle {
+	display: block;
+	font-size: $font-body-extra-small;
+	color: $studio-gray-40;
+	margin-block-start: 2px;
+}
+
+.account-card__bio {
+	font-size: $font-body-small;
+	color: $studio-gray-50;
+	line-height: 1.5;
+	margin: 6px 0 0;
+}
+
+.account-card__actions {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-shrink: 0;
+}
+
+.account-card__instance-input {
+	width: 140px;
+	padding: 4px 10px;
+	border: 1px solid $studio-gray-10;
+	border-radius: 2px;
+	font-size: $font-body-extra-small;
+	font-family: $sans;
+
+	&:focus {
+		outline: none;
+		border-color: var(--color-primary);
+		box-shadow: 0 0 0 1px var(--color-primary);
+	}
+}
+
+// Pack detail accounts list
+.pack-detail__accounts {
+	display: flex;
+	flex-direction: column;
+}
