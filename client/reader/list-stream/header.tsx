@@ -1,19 +1,20 @@
 import { Gridicon } from '@automattic/components';
+import { Button } from '@wordpress/components';
+import { download } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import ReaderExportButton from 'calypso/blocks/reader-export-button';
-import { READER_EXPORT_TYPE_LIST } from 'calypso/blocks/reader-export-button/constants';
 import AutoDirection from 'calypso/components/auto-direction';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { FediFollowAllButton } from './fedi-follow-button';
 import { FollowAllSitesButton } from './follow-all-sites-button';
 import { ListTags } from './list-tags';
+import { downloadListOpml } from './opml-export';
 import type { PublicListItem } from './use-public-list-query';
 
 interface ListStreamHeaderProps {
 	isPublic?: boolean;
 	isLoggedOut?: boolean;
 	title: React.ReactNode;
-	listId?: number;
+	listTitle?: string;
 	slug?: string;
 	description?: string;
 	showEdit?: boolean;
@@ -29,7 +30,7 @@ const ListStreamHeader = ( {
 	isPublic,
 	isLoggedOut,
 	title,
-	listId,
+	listTitle,
 	slug,
 	description,
 	showEdit,
@@ -82,13 +83,15 @@ const ListStreamHeader = ( {
 						{ isLoggedOut && (
 							<>
 								<FediFollowAllButton items={ items } listSlug={ slug || '' } />
-								{ listId && (
-									<ReaderExportButton
-										exportType={ READER_EXPORT_TYPE_LIST }
-										listId={ listId }
-										variant="secondary"
-									/>
-								) }
+								<Button
+									variant="secondary"
+									icon={ download }
+									onClick={ () =>
+										downloadListOpml( listTitle || 'Reader List', slug || 'list', items )
+									}
+								>
+									{ translate( 'Export' ) }
+								</Button>
 							</>
 						) }
 					</>

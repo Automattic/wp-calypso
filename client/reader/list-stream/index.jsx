@@ -123,7 +123,7 @@ function ListStream( props ) {
 				<ListStreamHeader
 					isPublic={ list?.is_public }
 					isLoggedOut={ ! currentUser }
-					listId={ list?.ID || publicListData?.ID }
+					listTitle={ list?.title }
 					slug={ slug }
 					icon={
 						<svg
