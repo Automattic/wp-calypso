@@ -81,7 +81,7 @@ export function FollowAllSitesButton( {
 		}
 	}
 
-	const label = isFollowing ? translate( 'Subscribing\u2026' ) : translate( 'Follow all sites' );
+	const label = isFollowing ? translate( 'Subscribing\u2026' ) : translate( 'Reader' );
 
 	if ( ! showSubscribeToList ) {
 		return (

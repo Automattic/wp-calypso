@@ -90,11 +90,7 @@ export function FediFollowAllButton( { items, listSlug }: FediFollowAllButtonPro
 				} );
 		}
 	} else {
-		label =
-			'\u2042 ' +
-			translate( 'Follow %(count)d', {
-				args: { count: fediAccounts.length },
-			} );
+		label = '\u2042 ' + translate( 'Social Web' );
 	}
 
 	const modal = showModal && (
