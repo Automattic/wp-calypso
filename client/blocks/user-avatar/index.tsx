@@ -11,7 +11,7 @@ type UserAvatarProps = {
 	onClick?: () => void; // Click handler to be executed when avatar is clicked.
 };
 
-export type UserAvatarInfo = {
+type UserAvatarInfo = {
 	ID?: number; // Represents user ID on source website i.e. WPCOM, Jetpack site, etc.
 	avatar_URL?: string;
 	display_name?: string;

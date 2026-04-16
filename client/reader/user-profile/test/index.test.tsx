@@ -3,8 +3,9 @@
  */
 
 import page from '@automattic/calypso-router';
-import { useQuery } from '@tanstack/react-query';
-import { render, screen } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { render, screen, waitFor } from '@testing-library/react';
+import nock from 'nock';
 import React from 'react';
 import { UserProfile, UserProfileProps } from '../index';
 import type { GetReaderUserResponse } from '@automattic/api-core';
@@ -54,13 +55,6 @@ jest.mock(
 		)
 );
 
-jest.mock( '@tanstack/react-query', () => ( {
-	...jest.requireActual( '@tanstack/react-query' ),
-	useQuery: jest.fn(),
-} ) );
-
-const mockUseQuery = useQuery as jest.MockedFunction< typeof useQuery >;
-
 describe( 'UserProfile', () => {
 	const defaultProps: UserProfileProps = {
 		userLogin: 'testuser',
@@ -81,46 +75,70 @@ describe( 'UserProfile', () => {
 		primary_blog: null,
 	};
 
+	let queryClient: QueryClient;
+
 	beforeEach( () => {
 		jest.clearAllMocks();
+		nock.disableNetConnect();
+		queryClient = new QueryClient( {
+			defaultOptions: {
+				queries: { retry: false },
+			},
+		} );
 	} );
 
-	test( 'should render empty content when user is not found', () => {
-		mockUseQuery.mockReturnValue( {} as ReturnType< typeof useQuery > );
-
-		render( <UserProfile { ...defaultProps } /> );
-
-		expect( screen.getByTestId( 'empty-content' ) ).toBeVisible();
+	afterEach( () => {
+		nock.cleanAll();
 	} );
 
-	test( 'should render user profile when user is available', () => {
-		mockUseQuery.mockReturnValue( {
-			data: defaultUserResponse,
-		} as ReturnType< typeof useQuery > );
+	function renderWithClient( ui: React.ReactNode ) {
+		return render( <QueryClientProvider client={ queryClient }>{ ui }</QueryClientProvider> );
+	}
 
-		render( <UserProfile { ...defaultProps } /> );
+	function nockGetUser( userLogin: string, response: GetReaderUserResponse | number ) {
+		const scope = nock( 'https://public-api.wordpress.com' ).get(
+			`/rest/v1.1/users/${ userLogin }`
+		);
 
-		expect( screen.getByTestId( 'user-profile-header' ) ).toBeVisible();
+		if ( typeof response === 'number' ) {
+			return scope.reply( response, { error: 'not_found', message: 'User not found' } );
+		}
+
+		return scope.reply( 200, response );
+	}
+
+	test( 'should render empty content when user is not found', async () => {
+		nockGetUser( 'testuser', 404 );
+
+		renderWithClient( <UserProfile { ...defaultProps } /> );
+
+		expect( await screen.findByTestId( 'empty-content' ) ).toBeVisible();
+	} );
+
+	test( 'should render user profile when user is available', async () => {
+		nockGetUser( 'testuser', defaultUserResponse );
+
+		renderWithClient( <UserProfile { ...defaultProps } /> );
+
+		expect( await screen.findByTestId( 'user-profile-header' ) ).toBeVisible();
 		expect( screen.getByTestId( 'user-posts' ) ).toBeVisible();
 	} );
 
-	test( 'should render lists view when view is lists', () => {
-		mockUseQuery.mockReturnValue( {
-			data: defaultUserResponse,
-		} as ReturnType< typeof useQuery > );
+	test( 'should render lists view when view is lists', async () => {
+		nockGetUser( 'testuser', defaultUserResponse );
 
-		render( <UserProfile { ...defaultProps } view="lists" path="/reader/users/testuser/lists" /> );
+		renderWithClient(
+			<UserProfile { ...defaultProps } view="lists" path="/reader/users/testuser/lists" />
+		);
 
-		expect( screen.getByTestId( 'user-profile-header' ) ).toBeVisible();
+		expect( await screen.findByTestId( 'user-profile-header' ) ).toBeVisible();
 		expect( screen.getByTestId( 'user-lists' ) ).toBeVisible();
 	} );
 
-	test( 'should render recommended-blogs view when view is recommended-blogs', () => {
-		mockUseQuery.mockReturnValue( {
-			data: defaultUserResponse,
-		} as ReturnType< typeof useQuery > );
+	test( 'should render recommended-blogs view when view is recommended-blogs', async () => {
+		nockGetUser( 'testuser', defaultUserResponse );
 
-		render(
+		renderWithClient(
 			<UserProfile
 				{ ...defaultProps }
 				view="recommended-blogs"
@@ -128,28 +146,24 @@ describe( 'UserProfile', () => {
 			/>
 		);
 
-		expect( screen.getByTestId( 'user-profile-header' ) ).toBeVisible();
+		expect( await screen.findByTestId( 'user-profile-header' ) ).toBeVisible();
 		expect( screen.getByTestId( 'user-recommended-blogs' ) ).toBeVisible();
 	} );
 
 	test( 'should not show content when isLoading is true', () => {
-		mockUseQuery.mockReturnValue( {
-			isLoading: true,
-		} as ReturnType< typeof useQuery > );
-
-		render( <UserProfile { ...defaultProps } /> );
+		renderWithClient( <UserProfile { ...defaultProps } /> );
 
 		expect( screen.queryByTestId( 'empty-content' ) ).not.toBeInTheDocument();
 		expect( screen.queryByTestId( 'user-profile-header' ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'should redirect from user ID path to user login path when user is loaded', () => {
-		mockUseQuery.mockReturnValue( {
-			data: defaultUserResponse,
-		} as ReturnType< typeof useQuery > );
+	test( 'should redirect from user ID path to user login path when user is loaded', async () => {
+		nockGetUser( 'testuser', defaultUserResponse );
 
-		render( <UserProfile { ...defaultProps } path="/reader/users/id/123" /> );
+		renderWithClient( <UserProfile { ...defaultProps } path="/reader/users/id/123" /> );
 
-		expect( page.replace ).toHaveBeenCalledWith( '/reader/users/testuser' );
+		await waitFor( () => {
+			expect( page.replace ).toHaveBeenCalledWith( '/reader/users/testuser' );
+		} );
 	} );
 } );
