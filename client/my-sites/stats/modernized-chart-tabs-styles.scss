@@ -7,8 +7,11 @@ $custom-stats-tab-mobile-break: $break-medium;
 
 .stats > .stats-content {
 	padding-top: $vertical-margin;
+	padding-bottom: $vertical-margin;
+
 	@media (max-width: $custom-mobile-breakpoint) {
 		padding-top: 0;
+		padding-bottom: 0;
 	}
 }
 

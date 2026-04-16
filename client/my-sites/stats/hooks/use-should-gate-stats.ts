@@ -6,7 +6,7 @@ import {
 	FEATURE_STATS_BASIC,
 } from '@automattic/calypso-products';
 import { useSelector } from 'calypso/state';
-import getSiteFeatures from 'calypso/state/selectors/get-site-features';
+import hasLoadedSiteFeatures from 'calypso/state/selectors/has-loaded-site-features';
 import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -245,14 +245,13 @@ export const shouldGateStats = ( state: object, siteId: number | null, statType:
 		return [ ...jetpackStatsAdvancedPaywall ].includes( statType );
 	}
 
-	const siteFeatures = getSiteFeatures( state, siteId );
 	const siteHasCommercialStats = siteHasFeature( state, siteId, FEATURE_STATS_COMMERCIAL );
 	const siteHasFreeStats = siteHasFeature( state, siteId, FEATURE_STATS_FREE );
 	const siteHasPaidStats = siteHasFeature( state, siteId, FEATURE_STATS_PAID );
 	const siteHasBasicStats = siteHasFeature( state, siteId, FEATURE_STATS_BASIC );
 
 	// Check if the site features have loaded.
-	if ( ! siteFeatures ) {
+	if ( ! hasLoadedSiteFeatures( state, siteId ) ) {
 		return false;
 	}
 

@@ -15,6 +15,7 @@ import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate
 import { recordCurrentScreen } from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
 import { useSelector } from 'calypso/state';
 import { STATS_PLAN_USAGE_RECEIVE } from 'calypso/state/action-types';
+import hasLoadedSiteFeatures from 'calypso/state/selectors/has-loaded-site-features';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import useStatsStrings from '../../hooks/use-stats-strings';
@@ -24,6 +25,7 @@ import AnnualHighlightsSection from '../../sections/annual-highlights-section';
 import PostingActivity from '../../sections/posting-activity-section';
 import PageViewTracker from '../../stats-page-view-tracker';
 import StatsUpsell from '../../stats-upsell/insights-upsell';
+import PageLoading from '../shared/page-loading';
 import StatsModuleListing from '../shared/stats-module-listing';
 
 function StatsInsights( { context } ) {
@@ -33,6 +35,7 @@ function StatsInsights( { context } ) {
 	const moduleStrings = useStatsStrings();
 	const { isPending, data: usageInfo } = usePlanUsageQuery( siteId );
 	const reduxDispatch = useDispatch();
+	const hasLoadedFeatures = useSelector( ( state ) => hasLoadedSiteFeatures( state, siteId ) );
 
 	// Dispatch the plan usage data to the Redux store for monthly views check in shouldGateStats.
 	useEffect( () => {
@@ -70,6 +73,55 @@ function StatsInsights( { context } ) {
 	const isWPAdmin = config.isEnabled( 'is_odyssey' );
 	const insightsPageClasses = clsx( 'stats', { 'is-odyssey-stats': isWPAdmin } );
 
+	let content = PageLoading;
+	if ( hasLoadedFeatures ) {
+		content = shouldRendeUpsell ? (
+			<div id="my-stats-content" className="stats-content">
+				<StatsUpsell siteId={ siteId } />
+			</div>
+		) : (
+			<>
+				<AnnualHighlightsSection siteId={ siteId } />
+				<AllTimeHighlightsSection siteId={ siteId } siteSlug={ siteSlug } />
+				<PostingActivity siteId={ siteId } />
+				<AllTimeViewsSection siteId={ siteId } slug={ siteSlug } />
+				<StatsModuleListing className="stats__module-list--insights" siteId={ siteId }>
+					<StatsModuleTags
+						moduleStrings={ moduleStrings.tags }
+						hideSummaryLink
+						className={ clsx(
+							{
+								'stats__flexible-grid-item--half': isJetpack,
+								'stats__flexible-grid-item--full--large': isJetpack,
+							},
+							{
+								'stats__flexible-grid-item--full': ! isJetpack,
+							}
+						) }
+					/>
+
+					<StatsModuleComments
+						className={ clsx(
+							'stats__flexible-grid-item--half',
+							'stats__flexible-grid-item--full--large'
+						) }
+					/>
+
+					{ /** TODO: The feature depends on Jetpack Sharing module and is disabled for all Jetpack Sites for now. */ }
+					{ ! isJetpack && (
+						<StatShares
+							siteId={ siteId }
+							className={ clsx(
+								'stats__flexible-grid-item--half',
+								'stats__flexible-grid-item--full--large'
+							) }
+						/>
+					) }
+				</StatsModuleListing>
+			</>
+		);
+	}
+
 	// TODO: should be refactored into separate components
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
@@ -80,53 +132,7 @@ function StatsInsights( { context } ) {
 		>
 			<DocumentHead title={ STATS_PRODUCT_NAME } />
 			<PageViewTracker path="/stats/insights/:site" title="Stats > Insights" />
-			<div className={ insightsPageClasses }>
-				{ shouldRendeUpsell ? (
-					<div id="my-stats-content" className="stats-content">
-						<StatsUpsell siteId={ siteId } />
-					</div>
-				) : (
-					<>
-						<AnnualHighlightsSection siteId={ siteId } />
-						<AllTimeHighlightsSection siteId={ siteId } siteSlug={ siteSlug } />
-						<PostingActivity siteId={ siteId } />
-						<AllTimeViewsSection siteId={ siteId } slug={ siteSlug } />
-						<StatsModuleListing className="stats__module-list--insights" siteId={ siteId }>
-							<StatsModuleTags
-								moduleStrings={ moduleStrings.tags }
-								hideSummaryLink
-								className={ clsx(
-									{
-										'stats__flexible-grid-item--half': isJetpack,
-										'stats__flexible-grid-item--full--large': isJetpack,
-									},
-									{
-										'stats__flexible-grid-item--full': ! isJetpack,
-									}
-								) }
-							/>
-
-							<StatsModuleComments
-								className={ clsx(
-									'stats__flexible-grid-item--half',
-									'stats__flexible-grid-item--full--large'
-								) }
-							/>
-
-							{ /** TODO: The feature depends on Jetpack Sharing module and is disabled for all Jetpack Sites for now. */ }
-							{ ! isJetpack && (
-								<StatShares
-									siteId={ siteId }
-									className={ clsx(
-										'stats__flexible-grid-item--half',
-										'stats__flexible-grid-item--full--large'
-									) }
-								/>
-							) }
-						</StatsModuleListing>
-					</>
-				) }
-			</div>
+			<div className={ insightsPageClasses }>{ content }</div>
 		</Main>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
