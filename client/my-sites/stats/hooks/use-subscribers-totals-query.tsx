@@ -195,7 +195,7 @@ function useSubscribersTotalsQueries( siteId: number | null, filterAdmin?: boole
 				.sort( sortByDateDesc )
 				.slice( 0, MAX_SUBSCRIBERS_TO_RETURN ),
 		},
-		isLoading: results.some( ( result ) => result.isLoading ),
+		isLoading: results.some( ( result ) => result.isPending ),
 		isError: results.some( ( result ) => result.isError ),
 	};
 }
