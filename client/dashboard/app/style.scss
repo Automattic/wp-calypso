@@ -61,6 +61,23 @@ a {
 	border-color: var( --dashboard__border-color ) !important;
 }
 
+// `@wordpress/components` Modal frame bakes `background: $white; color: $gray-900;` into its shipped CSS
+// (node_modules/@wordpress/components/src/modal/style.scss:35,41,51,178).
+.components-modal__frame {
+	background: var( --wp-components-color-background ) !important;
+	color: var( --dashboard__text-color );
+
+	h1,
+	h2,
+	h3 {
+		color: var( --dashboard__text-color );
+	}
+}
+
+.components-modal__content.has-scrolled-content:not(.hide-header) .components-modal__header {
+	border-bottom-color: var( --dashboard__border-color-strong );
+}
+
 // `@wordpress/components` Popover bakes `background: $white` into its shipped CSS
 // (node_modules/@wordpress/components/src/popover/style.scss:29,62,130). Override so
 // popovers (calendar, dropdowns, tooltips, etc.) follow the theme.
