@@ -61,6 +61,42 @@ a {
 	border-color: var( --dashboard__border-color ) !important;
 }
 
+// `@wordpress/components` Popover bakes `background: $white` into its shipped CSS
+// (node_modules/@wordpress/components/src/popover/style.scss:29,62,130). Override so
+// popovers (calendar, dropdowns, tooltips, etc.) follow the theme.
+.components-popover__content,
+.components-popover__header {
+	background: var( --wp-components-color-background ) !important;
+	color: var( --dashboard__text-color );
+}
+
+// Popover border is drawn as the first layer of a box-shadow in a hardcoded $gray-400.
+// Restate it with our theme border plus the original drop-shadow layers.
+.components-popover__content {
+	box-shadow:
+		0 0 0 1px var( --dashboard__border-color-strong ),
+		0 2px 3px rgba( 0, 0, 0, 0.05 ),
+		0 4px 5px rgba( 0, 0, 0, 0.04 ),
+		0 12px 12px rgba( 0, 0, 0, 0.03 ),
+		0 16px 16px rgba( 0, 0, 0, 0.02 );
+}
+
+// Arrow fill (matches popover bg) + stroke (matches popover border).
+.components-popover__triangle-bg {
+	fill: var( --wp-components-color-background );
+}
+
+.components-popover__triangle-border {
+	stroke: var( --dashboard__border-color-strong );
+}
+
+// `<Text variant="muted">` from @wordpress/components emits an emotion class ending in `-muted`
+// that hardcodes `color: #757575` (node_modules/@wordpress/components/src/text/styles.ts:31).
+// Match the class by substring so text follows the theme token instead.
+.components-truncate[class*="-muted"] {
+	color: var( --dashboard__text-color-muted ) !important;
+}
+
 // @wordpress/dataviews ships a compiled stylesheet with many literal #fff / #f0f0f0 / #e0e0e0 values
 // that don't respond to our theme tokens. The wrapper exposes `--wp-dataviews-color-background`;
 // set it, and override the remaining literal-color selectors in the same cascade.
@@ -98,8 +134,15 @@ a {
 }
 
 .dataviews-view-grid .dataviews-view-grid__media,
-.dataviews-view-grid__card .dataviews-view-grid__media-actions .dataviews-all-actions-button {
+.dataviews-view-grid__card .dataviews-view-grid__media-actions .dataviews-all-actions-button,
+.dataviews-view-list .dataviews-view-list__media-wrapper {
 	background-color: var( --wp-components-color-background );
+}
+
+// `.dataviews-view-list__media-wrapper::after` paints an inset `1px rgba(0, 0, 0, 0.1)` border
+// that disappears on dark backgrounds. Retarget it to the theme border token.
+.dataviews-view-list .dataviews-view-list__media-wrapper::after {
+	box-shadow: inset 0 0 0 1px var( --dashboard__border-color-strong );
 }
 
 // Selected-row blends in the table view use `color-mix( ... , #fff )`; restate them against the theme bg.

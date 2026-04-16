@@ -69,3 +69,9 @@
 	flex-shrink: 0;
 	align-self: stretch;
 }
+
+// `<Text variant="muted">` from @wordpress/components hardcodes color: #757575 via emotion.
+// Override it explicitly so the description follows the theme token (more readable in dark mode).
+.dashboard-section-header__description {
+	color: var(--dashboard__text-color-muted) !important;
+}

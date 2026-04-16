@@ -16,8 +16,10 @@
 	box-sizing: border-box;
 	position: absolute;
 	width: 244px;
-	background-color: var(--studio-gray-100);
-	color: var(--studio-white);
+	// Inverted surface so the tooltip contrasts the page bg in both themes:
+	// light bg → dark tooltip (var(--studio-gray-100)); dark bg → light tooltip (--dashboard__text-color = #e0e0e0).
+	background-color: var(--dashboard__text-color, var(--studio-gray-100));
+	color: var(--dashboard__background-color, var(--studio-white));
 	padding: 16px 24px;
 	border-radius: 4px;
 	pointer-events: none;
@@ -28,7 +30,7 @@
 		top: -12px;
 		right: 30px;
 		border-top: 7px solid transparent;
-		border-bottom: 7px solid var(--studio-gray-100);
+		border-bottom: 7px solid var(--dashboard__text-color, var(--studio-gray-100));
 		border-left: 7px solid transparent;
 		border-right: 7px solid transparent;
 	}
@@ -86,7 +88,7 @@
 }
 
 .pie-chart__chart-drawing-empty {
-	fill: var(--color-neutral-light);
+	fill: var(--dashboard__surface-color-hover, var(--color-neutral-light));
 }
 
 .pie-chart__legend {
@@ -122,5 +124,5 @@
 
 .pie-chart__placeholder-drawing-element {
 	@include placeholder();
-	fill: var(--color-neutral-0);
+	fill: var(--dashboard__surface-color, var(--color-neutral-0));
 }

@@ -100,7 +100,7 @@
 	--dashboard__background-color: #1e1e1e;
 	--dashboard__text-color: #e0e0e0;
 	--dashboard__text-color-secondary: #bdbdbd;
-	--dashboard__text-color-muted: #a0a0a0;
+	--dashboard__text-color-muted: #b5b5b5;
 	--dashboard__surface-color: #2a2a2a;
 	--dashboard__surface-color-hover: #3a3a3a;
 	--dashboard__border-color: #2f2f2f;
@@ -117,6 +117,26 @@
 	--dashboard-secondary-menu-item__color: #e0e0e0;
 
 	--dashboard-overview__divider-color: #2f2f2f;
+
+	// Jetpack grayscale, inverted so darker numbers render as lighter shades on dark.
+	// `--jp-black` / `--jp-white` stay literal — they're brand constants, and many usages
+	// (white text on colored bg, black outlines) depend on them being literal.
+	--jp-black-80: #e0e0e0;
+	--jp-white-off: #2a2a2a;
+	--jp-gray: #3a3a3a;
+	--jp-gray-0: #2a2a2a;
+	--jp-gray-5: #3a3a3a;
+	--jp-gray-10: #4a4a4a;
+	--jp-gray-20: #5a5a5a;
+	--jp-gray-30: #757575;
+	--jp-gray-40: #8a8a8a;
+	--jp-gray-50: #a0a0a0;
+	--jp-gray-60: #b0b0b0;
+	--jp-gray-70: #bdbdbd;
+	--jp-gray-80: #e0e0e0;
+	--jp-gray-90: #eaeaea;
+	--jp-gray-100: #f0f0f0;
+	--jp-gray-off: #2a2a2a;
 }
 
 :root[data-theme="dark"] {
