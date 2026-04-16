@@ -26,6 +26,13 @@ import PageViewTracker from '../../stats-page-view-tracker';
 import StatsUpsell from '../../stats-upsell/insights-upsell';
 import StatsModuleListing from '../shared/stats-module-listing';
 
+export const shouldRenderInsightsUpsell = (
+	isStatsPaidWpcomV3Enabled,
+	isPending,
+	siteId,
+	shouldGateInsights
+) => isStatsPaidWpcomV3Enabled && ! isPending && !! siteId && shouldGateInsights;
+
 function StatsInsights( { context } ) {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state, siteId ) );
@@ -46,7 +53,12 @@ function StatsInsights( { context } ) {
 	}, [ reduxDispatch, isPending, siteId, usageInfo ] );
 
 	const shouldGateInsights = useShouldGateStats( STATS_FEATURE_PAGE_INSIGHTS );
-	const shouldRendeUpsell = config.isEnabled( 'stats/paid-wpcom-v3' ) && shouldGateInsights;
+	const shouldRenderUpsell = shouldRenderInsightsUpsell(
+		config.isEnabled( 'stats/paid-wpcom-v3' ),
+		isPending,
+		siteId,
+		shouldGateInsights
+	);
 
 	useEffect(
 		() =>
@@ -81,7 +93,7 @@ function StatsInsights( { context } ) {
 			<DocumentHead title={ STATS_PRODUCT_NAME } />
 			<PageViewTracker path="/stats/insights/:site" title="Stats > Insights" />
 			<div className={ insightsPageClasses }>
-				{ shouldRendeUpsell ? (
+				{ shouldRenderUpsell ? (
 					<div id="my-stats-content" className="stats-content">
 						<StatsUpsell siteId={ siteId } />
 					</div>
