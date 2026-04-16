@@ -1,10 +1,11 @@
 /**
  * TitlePicker — renders title suggestions in the chat sidebar.
  *
- * Displayed when the backend ability returns a Tool_Call_Result with
- * tool_id 'wpcom__select_title'. Clicking a title card applies it to the
- * post immediately. The picker stays visible so users can try different
- * titles in real time; the currently-applied option is highlighted.
+ * Displayed when the orchestrator renders a show-component response via
+ * 'big_sky__show_component' with data.type set to 'title-picker'.
+ * Clicking a title card applies it to the post immediately. The picker
+ * stays visible so users can try different titles in real time; the
+ * currently-applied option is highlighted.
  *
  * Response feedback (thumbs up/down) is provided by Agents Manager's
  * native feedback action bar, which attaches to the orchestrator's
@@ -59,11 +60,11 @@ export default function TitlePicker( { titles, onComplete }: TitlePickerProps ) 
 				{ __( 'Choose a title for your post:', 'jetpack' ) }
 			</p>
 			<div className="jetpack-ai-title-picker__options">
-				{ titles.map( ( option ) => {
+				{ titles.map( ( option, index ) => {
 					const isApplied = option.title === appliedTitle;
 					return (
 						<button
-							key={ option.title }
+							key={ `${ option.title }-${ index }` }
 							type="button"
 							className={ `jetpack-ai-title-picker__card${ isApplied ? ' is-applied' : '' }` }
 							onClick={ () => handleApply( option.title ) }

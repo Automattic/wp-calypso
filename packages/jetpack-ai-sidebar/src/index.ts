@@ -178,7 +178,7 @@ function startBlockShimmer(): void {
  */
 function handleUpdateBlockContent( input: any ): any {
 	const { clientId, content, summary } = input;
-	if ( ! clientId || ! content ) {
+	if ( ! clientId || content === undefined || content === null ) {
 		return { success: false, error: 'clientId and content are required', returnToAgent: false };
 	}
 

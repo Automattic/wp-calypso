@@ -3,7 +3,7 @@
  *
  * Entry point for the standalone Jetpack AI sidebar provider bundle.
  * This is built as an IIFE and loaded by the PHP loader in Jetpack.
- * The ESM wrapper (jetpack-ai-provider-esm.mjs) re-exports from
+ * The ESM wrapper (jetpack-ai-sidebar.provider.mjs) re-exports from
  * window.__JetpackAIProvider for Agents Manager to consume.
  */
 

@@ -287,14 +287,30 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		// executeAbility can look up the owning provider in O(1) instead of
 		// re-querying getAbilities() on every call.
 		const allAbilityResults = await Promise.all(
-			allToolProviders.map( ( tp ) => tp.getAbilities() )
+			allToolProviders.map( async ( tp ) => {
+				try {
+					return await tp.getAbilities();
+				} catch ( error ) {
+					// eslint-disable-next-line no-console
+					console.warn( '[AgentsManager] Failed to load abilities from provider:', error );
+					return [];
+				}
+			} )
 		);
 		const abilityProviderMap = new Map< string, ToolProvider >();
 		const seenAbilities = new Map< string, unknown >();
+		// Normalize ability names: AM converts `/` → `__` and `-` → `_`
+		// when routing tool calls. Index both raw and normalized forms
+		// so executeAbility matches regardless of which form the caller uses.
+		const normalize = ( name: string ) => name.replace( /\//g, '__' ).replace( /-/g, '_' );
 		for ( let i = 0; i < allToolProviders.length; i++ ) {
 			for ( const ability of allAbilityResults[ i ] ) {
 				if ( ! abilityProviderMap.has( ability.name ) ) {
 					abilityProviderMap.set( ability.name, allToolProviders[ i ] );
+					const normalized = normalize( ability.name );
+					if ( normalized !== ability.name ) {
+						abilityProviderMap.set( normalized, allToolProviders[ i ] );
+					}
 					seenAbilities.set( ability.name, ability );
 				}
 			}

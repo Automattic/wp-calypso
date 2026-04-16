@@ -130,7 +130,7 @@ The IIFE bundle actually served to widgets.wp.com is built from `apps/agents-man
 
 Test files go alongside source: `foo.ts` → `foo.test.ts`.
 
-**Coverage**: This package currently has **0% test coverage**. All changes need manual testing in the Gutenberg editor with the AM sidebar enabled.
+**Coverage**: Unit tests exist in `src/index.test.ts` covering tool provider abilities, show-component handling, and checkpoint logic. Coverage is still partial — changes outside tested paths need manual testing in the Gutenberg editor with the AM sidebar enabled.
 
 ## PR Guidelines
 
