@@ -429,6 +429,17 @@ export function getRedirectFromPendingPage( {
 	// (eg: for free purchases which do not use Orders), then the order must
 	// already be complete. In that case, we can redirect immediately.
 	if ( receiptId && ! isLoadingOrder && ! transaction ) {
+		// Check for partial failures before redirecting to the normal thank-you flow.
+		if ( receipt?.failed_purchases && Object.keys( receipt.failed_purchases ).length > 0 ) {
+			return {
+				url: filterAllowedRedirect(
+					`${ errorUrl }?receipt_id=${ receiptId }`,
+					siteSlug || fromSiteSlug,
+					errorUrl
+				),
+			};
+		}
+
 		return buildSuccessRedirect( {
 			effectiveReceiptId: receiptId,
 			redirectTo,
