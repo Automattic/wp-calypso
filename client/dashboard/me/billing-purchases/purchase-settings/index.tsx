@@ -1,6 +1,4 @@
 import {
-	ProductUpgradeMap,
-	AkismetUpgradesProductMap,
 	SubscriptionBillPeriod,
 	DomainProductSlugs,
 	useMyDomainInputMode,
@@ -78,9 +76,8 @@ import {
 	isRenewing,
 	isIncludedWithPlan,
 	isOneTimePurchase,
-	isMarketplaceTemporarySitePurchase,
+	isMarketplaceHoldingSitePurchase,
 	isMarketplacePlugin,
-	isJetpackTemporarySitePurchase,
 	isAkismetProduct,
 	isJetpackCrmProduct,
 	isTitanMail,
@@ -88,12 +85,12 @@ import {
 	isDotcomPlan,
 	getRenewalUrlFromPurchase,
 	isJetpackT1SecurityPlan,
-	isTemporarySitePurchase,
 	isWpcomFlexSubscription,
 	isAkismetFreeProduct,
 	isInExpirationGracePeriod,
 	isA4ABillingDragonPurchase,
 } from '../../../utils/purchase';
+import { getSitePurchaseUpgradeUrl } from '../../../utils/site-url';
 import BillingFlexUsageCard from '../../billing-flex-usage';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
 import AkismetApiKeyCard from './akismet-api-key-card';
@@ -111,46 +108,6 @@ const SPACING = {
 
 function renewPurchase( purchase: Purchase ): void {
 	window.location.href = getRenewalUrlFromPurchase( purchase );
-}
-
-function getUpgradeUrl( purchase: Purchase ): string | undefined {
-	if ( isAkismetProduct( purchase ) ) {
-		// For the first Iteration of Calypso Akismet checkout we are only suggesting
-		// for immediate upgrades to the next plan. We will change this in the future
-		// with appropriate page.
-		const url = AkismetUpgradesProductMap[ purchase.product_slug ];
-		if ( ! url ) {
-			return undefined;
-		}
-		const isAbsolute =
-			url.startsWith( 'http://' ) || url.startsWith( 'https://' ) || url.startsWith( '//' );
-		if ( ! isAbsolute ) {
-			return wpcomLink( url );
-		}
-		return url;
-	}
-
-	const upgradeProductSlug = ProductUpgradeMap[ purchase.product_slug ];
-	if ( upgradeProductSlug ) {
-		return wpcomLink( `/checkout/${ purchase.site_slug }/${ upgradeProductSlug }` );
-	}
-
-	if ( purchase.is_jetpack_backup_t1 || isJetpackT1SecurityPlan( purchase ) ) {
-		return wpcomLink( `/plans/storage/${ purchase.site_slug }` );
-	}
-
-	if ( purchase.is_jetpack_plan_or_product ) {
-		return wpcomLink( `/plans/${ purchase.site_slug }` );
-	}
-
-	if ( purchase.is_woo_hosted_product ) {
-		return addQueryArgs( wpcomLink( '/setup/woo-hosted-plans' ), {
-			siteSlug: purchase.site_slug,
-			dashboard: getCurrentDashboard(),
-		} );
-	}
-
-	return getWpcomPlanGridUrl( purchase.site_slug );
 }
 
 function getExpiredNewPlanUrl( purchase: Purchase ): string {
@@ -176,15 +133,6 @@ function getWpcomPlanGridUrl( siteSlug: string | undefined ): string {
 		cancel_to: backUrl,
 		dashboard: getCurrentDashboard(),
 	} );
-}
-
-function canPurchaseBeUpgraded( purchase: Purchase ): boolean {
-	return Boolean(
-		purchase.is_upgradable &&
-			getUpgradeUrl( purchase ) &&
-			! isJetpackTemporarySitePurchase( purchase ) &&
-			! isA4ABillingDragonPurchase( purchase )
-	);
 }
 
 function isAutoRenewToggleDisabled( purchase: Purchase, user: User ): boolean {
@@ -260,10 +208,10 @@ function PurchaseActionMenu( { purchase }: { purchase: Purchase } ) {
 	const { user } = useAuth();
 	const canBeRenewed =
 		purchase.can_explicit_renew && String( user.ID ) === String( purchase.user_id );
-	const upgradeUrl = getUpgradeUrl( purchase );
+	const upgradeUrl = getSitePurchaseUpgradeUrl( purchase );
 	const { recordTracksEvent } = useAnalytics();
 	const menuItems = [
-		canPurchaseBeUpgraded( purchase ) && upgradeUrl && (
+		purchase.is_upgradable && upgradeUrl && (
 			<MenuItem
 				onClick={ () => {
 					recordTracksEvent( 'calypso_purchases_upgrade_plan', {
@@ -363,10 +311,10 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 
 function UpgradeActionButton( { purchase }: { purchase: Purchase } ) {
 	const { recordTracksEvent } = useAnalytics();
-	if ( ! canPurchaseBeUpgraded( purchase ) ) {
+	if ( ! purchase.is_upgradable ) {
 		return null;
 	}
-	const upgradeUrl = getUpgradeUrl( purchase );
+	const upgradeUrl = getSitePurchaseUpgradeUrl( purchase );
 	if ( ! upgradeUrl ) {
 		return null;
 	}
@@ -500,7 +448,7 @@ function ReinstallButton( { purchase }: { purchase: Purchase } ) {
 	if ( ! isMarketplacePlugin( purchase ) ) {
 		return null;
 	}
-	if ( isMarketplaceTemporarySitePurchase( purchase ) ) {
+	if ( isMarketplaceHoldingSitePurchase( purchase ) ) {
 		return null;
 	}
 
@@ -1165,7 +1113,7 @@ export default function PurchaseSettings() {
 	const { data: purchase } = useSuspenseQuery( purchaseQuery( parseInt( purchaseId ) ) );
 	const { data: site } = useQuery( {
 		...siteBySlugQuery( purchase.site_slug ?? '' ),
-		enabled: Boolean( purchase.site_slug ) && ! isTemporarySitePurchase( purchase ),
+		enabled: Boolean( purchase.site_slug ) && ! purchase.is_attached_to_holding_site,
 	} );
 	const { data: domain } = useQuery( {
 		...domainQuery( purchase.meta ?? '' ),
@@ -1173,7 +1121,7 @@ export default function PurchaseSettings() {
 	} );
 	const formattedExpiry = useFormattedTime( purchase.expiry_date ?? '' );
 	const formattedRenewal = useFormattedTime( purchase.renew_date ?? '' );
-	const upgradeUrl = getUpgradeUrl( purchase );
+	const upgradeUrl = getSitePurchaseUpgradeUrl( purchase );
 	const willRenew = Boolean(
 		! isExpired( purchase ) && purchase.renew_date && ! isExpiring( purchase )
 	);
@@ -1208,7 +1156,7 @@ export default function PurchaseSettings() {
 						actions={
 							site?.options?.admin_url && (
 								<HStack justify="space-between">
-									{ canPurchaseBeUpgraded( purchase ) && upgradeUrl && (
+									{ purchase.is_upgradable && upgradeUrl && (
 										<Button __next40pxDefaultSize variant="primary" href={ upgradeUrl }>
 											{ _x( 'Upgrade', 'Change to a plan with more features.' ) }
 										</Button>
@@ -1322,7 +1270,7 @@ export default function PurchaseSettings() {
 					{ purchase.is_jetpack_plan_or_product && (
 						<JetpackLicenseKeyCard purchaseId={ purchase.ID } />
 					) }
-					{ isAkismetProduct( purchase ) && isTemporarySitePurchase( purchase ) && (
+					{ isAkismetProduct( purchase ) && purchase.is_attached_to_holding_site && (
 						<AkismetApiKeyCard />
 					) }
 				</Grid>

@@ -5,6 +5,7 @@
 import page from '@automattic/calypso-router';
 import { render, screen } from '@testing-library/react';
 import React from 'react';
+import { UserProfileData } from 'calypso/lib/user/user';
 import { UserProfile, UserProfileProps } from '../index';
 
 jest.mock( '@automattic/calypso-router', () => ( {
@@ -64,6 +65,16 @@ describe( 'UserProfile', () => {
 		isLoading: false,
 		view: 'posts',
 	};
+	const defaultUser: UserProfileData = {
+		ID: 123,
+		user_login: 'testuser',
+		display_name: 'Test User',
+		avatar_URL: 'https://example.com/avatar.jpg',
+		first_name: '',
+		last_name: '',
+		description: '',
+		profile_URL: '',
+	};
 
 	beforeEach( () => {
 		// Reset mock function calls between tests
@@ -78,31 +89,17 @@ describe( 'UserProfile', () => {
 	} );
 
 	test( 'should render user profile when user is available', () => {
-		const user = {
-			ID: 123,
-			user_login: 'testuser',
-			display_name: 'Test User',
-			avatar_URL: 'https://example.com/avatar.jpg',
-		};
-
-		render( <UserProfile { ...defaultProps } user={ user } /> );
+		render( <UserProfile { ...defaultProps } user={ defaultUser } /> );
 
 		expect( screen.getByTestId( 'user-profile-header' ) ).toBeInTheDocument();
 		expect( screen.getByTestId( 'user-posts' ) ).toBeInTheDocument();
 	} );
 
 	test( 'should render lists view when view is lists', () => {
-		const user = {
-			ID: 123,
-			user_login: 'testuser',
-			display_name: 'Test User',
-			avatar_URL: 'https://example.com/avatar.jpg',
-		};
-
 		render(
 			<UserProfile
 				{ ...defaultProps }
-				user={ user }
+				user={ defaultUser }
 				view="lists"
 				path="/reader/users/testuser/lists"
 			/>
@@ -113,17 +110,10 @@ describe( 'UserProfile', () => {
 	} );
 
 	test( 'should render recommended-blogs view when view is recommended-blogs', () => {
-		const user = {
-			ID: 123,
-			user_login: 'testuser',
-			display_name: 'Test User',
-			avatar_URL: 'https://example.com/avatar.jpg',
-		};
-
 		render(
 			<UserProfile
 				{ ...defaultProps }
-				user={ user }
+				user={ defaultUser }
 				view="recommended-blogs"
 				path="/reader/users/testuser/recommended-blogs"
 			/>
@@ -141,14 +131,7 @@ describe( 'UserProfile', () => {
 	} );
 
 	test( 'should redirect from user ID path to user login path when user is loaded', () => {
-		const user = {
-			ID: 123,
-			user_login: 'testuser',
-			display_name: 'Test User',
-			avatar_URL: 'https://example.com/avatar.jpg',
-		};
-
-		render( <UserProfile { ...defaultProps } user={ user } path="/reader/users/id/123" /> );
+		render( <UserProfile { ...defaultProps } user={ defaultUser } path="/reader/users/id/123" /> );
 
 		// Verify the redirect was called with the correct path
 		expect( page.replace ).toHaveBeenCalledWith( '/reader/users/testuser' );

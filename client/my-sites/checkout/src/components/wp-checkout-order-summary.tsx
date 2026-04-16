@@ -33,7 +33,7 @@ import {
 	getTotalLineItemFromCart,
 	getCreditsLineItemFromCart,
 } from '@automattic/wpcom-checkout';
-import { keyframes } from '@emotion/react';
+import { css, keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Icon, reusableBlock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -42,10 +42,11 @@ import { hasFreeCouponTransfersOnly } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import useEquivalentMonthlyTotals, {
-	getOriginalAmountIntegerForDisplay,
+	getSimulatedCostBeforeDiscounts,
 } from 'calypso/my-sites/checkout/utils/use-equivalent-monthly-totals';
 import { useSelector } from 'calypso/state';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import { useCheckoutUiRedesignExperiment } from '../hooks/use-checkout-ui-redesign-experiment';
 import getAkismetProductFeatures from '../lib/get-akismet-product-features';
 import getJetpackProductFeatures from '../lib/get-jetpack-product-features';
 import getPlanFeatures from '../lib/get-plan-features';
@@ -90,7 +91,7 @@ export function WPCheckoutOrderSummary( {
 	const isCartUpdating = FormStatus.VALIDATING === formStatus;
 	return (
 		<CheckoutSummaryCard
-			className={ isCartUpdating ? 'is-loading' : '' }
+			className={ `checkout__summary-card${ isCartUpdating ? ' is-loading' : '' }` }
 			data-e2e-cart-is-loading={ isCartUpdating }
 		>
 			{ showFeaturesList && (
@@ -150,7 +151,7 @@ const TaxNotCalculatedLineItemWrapper = styled.div`
 function TaxNotCalculatedLineItem() {
 	const translate = useTranslate();
 	return (
-		<TaxNotCalculatedLineItemWrapper>
+		<TaxNotCalculatedLineItemWrapper className="wp-checkout-order-summary__tax-not-calculated">
 			{ translate( 'Tax: to be calculated', {
 				textOnly: true,
 			} ) }
@@ -166,9 +167,10 @@ function CheckoutSummaryPriceList() {
 	const totalLineItem = getTotalLineItemFromCart( responseCart );
 	const translate = useTranslate();
 	const monthlyPrices = useEquivalentMonthlyTotals( responseCart.products );
+	const [ , isCheckoutUiRedesignV1 ] = useCheckoutUiRedesignExperiment();
 
 	const subtotalBeforeDiscounts = responseCart.products.reduce( ( subtotal, product ) => {
-		const originalAmountInteger = getOriginalAmountIntegerForDisplay( product, monthlyPrices );
+		const originalAmountInteger = getSimulatedCostBeforeDiscounts( product, monthlyPrices );
 		// In specific cases (e.g. premium domains) the original price (renewal) is lower than the due price.
 		return subtotal + Math.max( product.item_subtotal_integer, originalAmountInteger );
 	}, 0 );
@@ -176,13 +178,17 @@ function CheckoutSummaryPriceList() {
 
 	return (
 		<>
-			<CheckoutSummaryTitle>
+			<CheckoutSummaryTitle className="wp-checkout-order-summary__section-title">
 				<span>{ translate( 'Your order' ) }</span>
 			</CheckoutSummaryTitle>
 			<ProductsAndCostOverridesList responseCart={ responseCart } />
-			<CheckoutSummaryAmountWrapper>
-				<CheckoutSubtotalSection>
-					<CheckoutSummarySubtotal key="checkout-summary-line-item-subtotal">
+			<CheckoutSummaryAmountWrapper className="wp-checkout-order-summary__amount-wrapper">
+				<CheckoutSubtotalSection className="wp-checkout-order-summary__subtotal-section">
+					<CheckoutSummarySubtotal
+						key="checkout-summary-line-item-subtotal"
+						className="wp-checkout-order-summary__subtotal"
+						isCheckoutUiRedesignV1={ isCheckoutUiRedesignV1 }
+					>
 						<span>{ translate( 'Subtotal' ) }</span>
 						<span className="wp-checkout-order-summary__subtotal-price">
 							{ totalDiscount > 0 && (
@@ -202,7 +208,7 @@ function CheckoutSummaryPriceList() {
 						</span>
 					</CheckoutSummarySubtotal>
 					{ totalDiscount > 0 && (
-						<CheckoutSummaryTotalDiscount>
+						<CheckoutSummaryTotalDiscount className="wp-checkout-order-summary__line-item">
 							<span>{ translate( 'Discount' ) }</span>
 							<span className="wp-checkout-order-summary__subtotal-discount">
 								{ formatCurrency( totalDiscount, responseCart.currency, {
@@ -214,21 +220,27 @@ function CheckoutSummaryPriceList() {
 					) }
 
 					{ taxLineItems.map( ( taxLineItem ) => (
-						<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + taxLineItem.id }>
+						<CheckoutSummaryLineItem
+							key={ 'checkout-summary-line-item-' + taxLineItem.id }
+							className="wp-checkout-order-summary__line-item"
+						>
 							<span>{ taxLineItem.label }</span>
 							<span>{ taxLineItem.formattedAmount }</span>
 						</CheckoutSummaryLineItem>
 					) ) }
 					{ isBillingInfoEmpty( responseCart ) && <TaxNotCalculatedLineItem /> }
 					{ creditsLineItem && responseCart.sub_total_integer > 0 && (
-						<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + creditsLineItem.id }>
+						<CheckoutSummaryLineItem
+							key={ 'checkout-summary-line-item-' + creditsLineItem.id }
+							className="wp-checkout-order-summary__line-item"
+						>
 							<span>{ creditsLineItem.label }</span>
 							<span>{ creditsLineItem.formattedAmount }</span>
 						</CheckoutSummaryLineItem>
 					) }
 				</CheckoutSubtotalSection>
 
-				<CheckoutSummaryTotal>
+				<CheckoutSummaryTotal className="wp-checkout-order-summary__total">
 					<span className="wp-checkout-order-summary__label">
 						{ translate( 'Total', {
 							context: 'The label of the total line item in checkout',
@@ -911,12 +923,21 @@ const CheckoutSummaryLineItem = styled.div< { isDiscount?: boolean } >`
 	}
 `;
 
-const CheckoutSummarySubtotal = styled( CheckoutSummaryLineItem )`
+const CheckoutSummarySubtotal = styled( CheckoutSummaryLineItem )< {
+	isCheckoutUiRedesignV1?: boolean;
+} >`
 	color: ${ ( props ) => props.theme.colors.textColorDark };
 	font-weight: ${ ( props ) => props.theme.weights.bold };
 	line-height: 26px;
 	margin-bottom: 0px;
 	font-size: 20px;
+	${ ( { isCheckoutUiRedesignV1 } ) =>
+		isCheckoutUiRedesignV1 &&
+		css`
+			& > span:first-child {
+				font-size: 14px;
+			}
+		` }
 	& .wp-checkout-order-summary__subtotal-price {
 		font-size: 14px;
 

@@ -6,7 +6,6 @@ import { isRemovedFlow } from 'calypso/landing/stepper/utils/flow-redirect-handl
 import { getQueryArgs } from 'calypso/lib/query-args';
 import { getSiteFragment } from 'calypso/lib/route';
 import { bumpStat } from 'calypso/state/analytics/actions';
-import { shouldShowLaunchpadFirst } from 'calypso/state/selectors/should-show-launchpad-first';
 import { requestSite } from 'calypso/state/sites/actions';
 import isSiteBigSkyTrial from 'calypso/state/sites/plans/selectors/is-site-big-sky-trial';
 import { canCurrentUserUseCustomerHome, getSiteUrl } from 'calypso/state/sites/selectors';
@@ -70,10 +69,6 @@ export async function maybeRedirect( context, next ) {
 	}
 
 	const site = getSelectedSite( state );
-
-	if ( await shouldShowLaunchpadFirst( site ) ) {
-		return next();
-	}
 
 	try {
 		const isSiteLaunched = site?.launch_status === 'launched' || false;

@@ -13,7 +13,7 @@
 
 import { getAgentManager, UIMessage } from '@automattic/agenttic-client';
 import type { ToolProvider, ContextProvider, Suggestion, BigSkyMessage } from '../types';
-import type { SubmitOptions, UseAgentChatReturn } from '@automattic/agenttic-client';
+import type { UseAgentChatReturn } from '@automattic/agenttic-client';
 import type {
 	MarkdownComponents,
 	MarkdownExtensions,
@@ -36,15 +36,19 @@ export function getUseUnifiedExperienceFromInlineData(): boolean | undefined {
 }
 
 /**
- * Navigation continuation hook type - provided by environments that support
- * navigation with conversation continuation (e.g., wp-admin/navigate)
- * This is needed to send a follow-up after full page reloads in wp-admin
+ * Hook that resumes the conversation after a full page navigation
+ * (e.g., `wp-admin/navigate`) by sending a tool result.
  */
 export type NavigationContinuationHook = ( props: {
 	isProcessing: boolean;
-	onSubmit: ( message: string, options?: SubmitOptions ) => Promise< void >;
+	sendToolResult: ( params: {
+		toolCallId: string;
+		toolId: string;
+		message: string;
+		sessionId: string;
+	} ) => Promise< void >;
 	sessionId: string;
-	agentId: string;
+	pathname: string;
 } ) => void;
 
 /**

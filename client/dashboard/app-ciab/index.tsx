@@ -6,8 +6,8 @@ import {
 	domainsQuery,
 } from '@automattic/api-queries';
 /* eslint-enable no-restricted-imports */
-import config from '@automattic/calypso-config';
 import boot from '../app/boot';
+import { getPostHogConfig } from './posthog';
 import './translations';
 import type {
 	FetchSitesOptions,
@@ -18,7 +18,7 @@ import './style.scss';
 
 boot( {
 	name: 'CIAB',
-	posthog: config.isEnabled( 'posthog-tracking' ) ? config( 'ciab_posthog_api_key' ) : undefined,
+	posthog: getPostHogConfig(),
 	basePath: '/',
 	mainRoute: '/sites',
 	Logo: null,
@@ -37,7 +37,6 @@ boot( {
 			security: {
 				sshKey: false,
 			},
-			privacy: true,
 			apps: false,
 		},
 		plugins: false,

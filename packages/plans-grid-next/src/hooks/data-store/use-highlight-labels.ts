@@ -21,7 +21,6 @@ interface Props {
 	};
 	highlightLabelOverrides?: { [ K in PlanSlug ]?: TranslateResult };
 	isDomainOnlySite: boolean;
-	isExperimentVariant?: boolean;
 }
 
 // TODO clk: move to plans data store
@@ -33,7 +32,6 @@ const useHighlightLabels = ( {
 	plansAvailabilityForPurchase,
 	highlightLabelOverrides,
 	isDomainOnlySite,
-	isExperimentVariant,
 }: Props ) => {
 	const translate = useTranslate();
 	const isVisualSplitIntent =
@@ -77,9 +75,9 @@ const useHighlightLabels = ( {
 			} else if ( 'plans-affiliate' === intent && isBusinessPlan( planSlug ) ) {
 				label = translate( 'Popular' );
 			} else if ( isBusinessPlan( planSlug ) && ! selectedPlan && ! isVisualSplitIntent ) {
-				label = isExperimentVariant ? translate( 'Best for growth' ) : translate( 'Best for devs' );
+				label = translate( 'Best value' );
 			} else if ( isPopularPlan( planSlug ) && ! selectedPlan && ! isVisualSplitIntent ) {
-				label = translate( 'Popular' );
+				label = translate( 'Most popular' );
 			}
 
 			return {

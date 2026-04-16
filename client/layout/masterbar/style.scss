@@ -1155,6 +1155,61 @@ a.masterbar__quick-language-switcher {
 	}
 }
 
+.masterbar--is-checkout.masterbar--is-checkout-redesign-v1 {
+	--color-checkout-masterbar-text: var(--studio-gray-100);
+}
+
+.masterbar--is-checkout-redesign-v1 {
+	padding-inline-start: 1.5em;
+
+	.masterbar__secure-checkout {
+		gap: 0;
+	}
+
+	.masterbar__wp-circle-logo {
+		display: block;
+		fill: currentColor;
+	}
+
+	.masterbar__redesign-divider {
+		width: 1px;
+		height: 16px;
+		background-color: currentColor;
+		opacity: 0.3;
+		margin-inline: 12px;
+	}
+
+	.masterbar__back-button {
+		display: flex;
+		align-items: center;
+		gap: 2px;
+		background: none;
+		border: none;
+		cursor: pointer;
+		font-size: 0.875rem;
+		font-weight: 500;
+		color: inherit;
+		padding: 0;
+		line-height: 1;
+
+		svg {
+			fill: currentColor;
+		}
+	}
+
+	.masterbar__need-help-button {
+		margin-left: auto;
+		background: none;
+		border: none;
+		cursor: pointer;
+		font-size: 0.875rem;
+		font-weight: 400;
+		text-decoration: underline;
+		color: inherit;
+		padding: 0;
+	}
+}
+
 .masterbar__item-help {
 	@media only screen and (min-width: 782px) {
 		padding: 0 11px;

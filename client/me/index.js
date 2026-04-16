@@ -6,6 +6,7 @@ import {
 	maybeRedirectToMultiSiteDashboard,
 } from 'calypso/controller';
 import { setupPreferences } from 'calypso/controller/preferences';
+import { TELEGRAM_CONNECT_PATH, telegramConnect } from 'calypso/telegram-connect/controller';
 import * as controller from './controller';
 
 import './style.scss';
@@ -30,6 +31,8 @@ export default function () {
 	// Redirect legacy URLs
 	page( '/me/trophies', controller.profileRedirect, makeLayout, clientRender );
 	page( '/me/find-friends', controller.profileRedirect, makeLayout, clientRender );
+
+	page( TELEGRAM_CONNECT_PATH, setupPreferences, telegramConnect, makeLayout, clientRender );
 
 	page(
 		'/me/get-apps',

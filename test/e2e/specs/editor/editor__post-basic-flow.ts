@@ -114,7 +114,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 			await editorPage.openEditorOptionsMenu();
 			const page = await editorPage.getEditorParent();
 
-			await page.getByRole( 'menuitemcheckbox', { name: 'Jetpack' } ).click();
+			await page.getByRole( 'menuitemcheckbox', { name: 'Jetpack', exact: true } ).click();
 		} );
 
 		skipDescribeIf( envVariables.ATOMIC_VARIATION === 'private' )( 'Link preview', function () {

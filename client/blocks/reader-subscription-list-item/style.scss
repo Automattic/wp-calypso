@@ -16,7 +16,6 @@
 .reader-subscription-list-item__site-excerpt {
 	display: -webkit-box;
 	color: var(--color-neutral-70);
-	font-weight: 600;
 	font-size: $font-body-extra-small;
 	line-height: 18px;
 	overflow: hidden;
@@ -34,10 +33,6 @@
 
 .reader-subscription-list-item .site-icon {
 	margin-top: 4px;
-
-	img {
-		border-radius: 100%;
-	}
 }
 
 .reader-subscription-list-item {
@@ -187,6 +182,7 @@
 
 // Placeholders
 .reader-subscription-list-item.reader-subscription-list-item__placeholder {
+	.reader-subscription-list-item__site-avatar,
 	.reader-subscription-list-item__site-title,
 	.reader-subscription-list-item__site-excerpt,
 	.reader-subscription-list-item__by-text,
@@ -198,6 +194,13 @@
 	.reader-subscription-list-item__site-excerpt {
 		margin-top: 2px;
 		max-width: 80%;
+	}
+
+	.reader-subscription-list-item__site-avatar {
+		border-radius: 4px;
+		display: inline-block;
+		width: 32px;
+		height: 32px;
 	}
 
 	.reader-subscription-list-item__site-title {

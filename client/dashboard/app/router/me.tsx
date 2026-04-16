@@ -32,17 +32,17 @@ import {
 	userTransferredPurchasesQuery,
 } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
-import { createRoute, createLazyRoute, redirect } from '@tanstack/react-router';
+import { createRoute, createLazyRoute } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { getMonetizeSubscriptionsPageTitle } from '../../me/billing-monetize-subscriptions/title';
 import { reauthRequiredLink } from '../../utils/link';
 import {
-	isTemporarySitePurchase,
 	getTitleForDisplay,
 	getPurchaseCancellationFlowType,
 	isDotcomPlan,
 	CANCEL_FLOW_TYPE,
 } from '../../utils/purchase';
+import { dashboardRedirect } from './redirect';
 import { rootRoute } from './root';
 import type { AppConfig } from '../context';
 import type { Purchase } from '@automattic/api-core';
@@ -80,20 +80,20 @@ export const meIndexRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: '/',
 	beforeLoad: () => {
-		throw redirect( { to: '/me/profile' } );
+		throw dashboardRedirect( { to: '/me/account' } );
 	},
 } );
 
-export const profileRoute = createRoute( {
+export const accountRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Profile' ),
+				title: isEnabled( 'dashboard/omnibar' ) ? __( 'Account' ) : __( 'Profile' ),
 			},
 		],
 	} ),
 	getParentRoute: () => meRoute,
-	path: 'profile',
+	path: 'account',
 	loader: async () => {
 		await Promise.all( [
 			queryClient.ensureQueryData( userSettingsQuery() ),
@@ -101,8 +101,8 @@ export const profileRoute = createRoute( {
 		] );
 	},
 } ).lazy( () =>
-	import( '../../me/profile' ).then( ( d ) =>
-		createLazyRoute( 'profile' )( {
+	import( '../../me/account' ).then( ( d ) =>
+		createLazyRoute( 'account' )( {
 			component: d.default,
 		} )
 	)
@@ -199,6 +199,7 @@ export const receiptRoute = createRoute( {
 		await Promise.all( [
 			queryClient.ensureQueryData( receiptQuery( parseInt( receiptId ) ) ),
 			queryClient.ensureQueryData( userTaxDetailsQuery() ),
+			queryClient.ensureQueryData( countryListQuery() ),
 		] );
 	},
 	path: '$receiptId',
@@ -275,7 +276,7 @@ export const purchaseSettingsIndexRoute = createRoute( {
 		const purchase = await queryClient.ensureQueryData( purchaseQuery( parseInt( purchaseId ) ) );
 
 		// Preload site and storage data for wpcom plans
-		if ( purchase.site_slug && purchase.blog_id && ! isTemporarySitePurchase( purchase ) ) {
+		if ( purchase.site_slug && purchase.blog_id && ! purchase.is_attached_to_holding_site ) {
 			await Promise.all( [
 				queryClient.ensureQueryData( siteBySlugQuery( purchase.site_slug ) ).catch( () => {
 					// Some sites cannot be reached; like disconnected Jetpack sites. We can safely ignore those.
@@ -854,6 +855,75 @@ export const blockedSitesRoute = createRoute( {
 	)
 );
 
+export const hostingDashboardRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'New hosting dashboard' ),
+			},
+		],
+	} ),
+	getParentRoute: () => preferencesRoute,
+	path: 'hosting-dashboard',
+	loader: async () => {
+		await Promise.all( [
+			queryClient.ensureQueryData( userSettingsQuery() ),
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+		] );
+	},
+} ).lazy( () =>
+	import( '../../me/hosting-dashboard' ).then( ( d ) =>
+		createLazyRoute( 'hosting-dashboard' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const languageRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Language' ),
+			},
+		],
+	} ),
+	getParentRoute: () => preferencesRoute,
+	path: 'language',
+	loader: async () => {
+		await queryClient.ensureQueryData( userSettingsQuery() );
+	},
+} ).lazy( () =>
+	import( '../../me/language' ).then( ( d ) =>
+		createLazyRoute( 'language' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const wordpressDefaultsRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'WordPress.com defaults' ),
+			},
+		],
+	} ),
+	getParentRoute: () => preferencesRoute,
+	path: 'defaults',
+	loader: async () => {
+		await Promise.all( [
+			queryClient.ensureQueryData( userSettingsQuery() ),
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+		] );
+	},
+} ).lazy( () =>
+	import( '../../me/wordpress-defaults' ).then( ( d ) =>
+		createLazyRoute( 'wordpress-defaults' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const appsRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -876,7 +946,7 @@ export const mcpLegacyRedirectRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'mcp',
 	beforeLoad: () => {
-		throw redirect( { to: '/me/preferences/mcp' } );
+		throw dashboardRedirect( { to: '/me/preferences/mcp' } );
 	},
 } );
 
@@ -884,7 +954,7 @@ export const privacyLegacyRedirectRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'privacy',
 	beforeLoad: () => {
-		throw redirect( { to: '/me/preferences/privacy' } );
+		throw dashboardRedirect( { to: '/me/preferences/privacy' } );
 	},
 } );
 
@@ -892,7 +962,15 @@ export const blockedSitesLegacyRedirectRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'blocked-sites',
 	beforeLoad: () => {
-		throw redirect( { to: '/me/preferences/blocked-sites' } );
+		throw dashboardRedirect( { to: '/me/preferences/blocked-sites' } );
+	},
+} );
+
+export const profileLegacyRedirectRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'profile',
+	beforeLoad: () => {
+		throw dashboardRedirect( { to: '/me/account' } );
 	},
 } );
 
@@ -1008,12 +1086,17 @@ export const createMeRoutes = ( config: AppConfig ) => {
 		return [];
 	}
 
-	const preferencesChildren: AnyRoute[] = [ preferencesIndexRoute ];
-	if ( config.supports.me.privacy ) {
-		preferencesChildren.push( privacyRoute );
-	}
+	const preferencesChildren: AnyRoute[] = [
+		preferencesIndexRoute,
+		privacyRoute,
+		languageRoute,
+		wordpressDefaultsRoute,
+	];
 	if ( config.supports.reader ) {
 		preferencesChildren.push( blockedSitesRoute );
+	}
+	if ( config.optIn ) {
+		preferencesChildren.push( hostingDashboardRoute );
 	}
 	if ( isEnabled( 'mcp-settings' ) ) {
 		preferencesChildren.push(
@@ -1028,13 +1111,14 @@ export const createMeRoutes = ( config: AppConfig ) => {
 	}
 	const meRoutes: AnyRoute[] = [
 		meIndexRoute,
-		profileRoute,
+		accountRoute,
 		preferencesChildren.length > 0
 			? preferencesRoute.addChildren( preferencesChildren )
 			: preferencesRoute,
 		mcpLegacyRedirectRoute,
 		privacyLegacyRedirectRoute,
 		blockedSitesLegacyRedirectRoute,
+		profileLegacyRedirectRoute,
 	];
 
 	meRoutes.push(

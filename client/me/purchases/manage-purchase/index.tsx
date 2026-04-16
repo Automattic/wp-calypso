@@ -1,4 +1,5 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
+import { SubscriptionBillPeriod } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
 import {
 	isPersonal,
@@ -165,10 +166,10 @@ import {
 	canEditPaymentDetails,
 	getAddNewPaymentMethodPath,
 	getChangePaymentMethodPath,
-	isJetpackTemporarySitePurchase,
-	isAkismetTemporarySitePurchase,
-	isMarketplaceTemporarySitePurchase,
-	isA4ATemporarySitePurchase,
+	isJetpackHoldingSitePurchase,
+	isAkismetHoldingSitePurchase,
+	isMarketplaceHoldingSitePurchase,
+	isA4AHoldingSitePurchase,
 	isA4ABillingDragonPurchase,
 	getCancelPurchaseSurveyCompletedPreferenceKey,
 } from '../utils';
@@ -308,8 +309,9 @@ class ManagePurchase extends Component<
 		const options = redirectTo ? { redirectTo } : undefined;
 		const isSitelessRenewal =
 			purchase &&
-			( isAkismetTemporarySitePurchase( purchase ) ||
-				isMarketplaceTemporarySitePurchase( purchase ) );
+			( isAkismetHoldingSitePurchase( purchase ) ||
+				isMarketplaceHoldingSitePurchase( purchase ) ||
+				isA4AHoldingSitePurchase( purchase ) );
 
 		if ( ! purchase ) {
 			return;
@@ -373,8 +375,8 @@ class ManagePurchase extends Component<
 			( isPartnerPurchase( purchase ) && ! isA4ABillingDragonPurchase( purchase ) ) ||
 			! isRenewable( purchase ) ||
 			( ! this.props.site &&
-				! isAkismetTemporarySitePurchase( purchase ) &&
-				! isMarketplaceTemporarySitePurchase( purchase ) &&
+				! isAkismetHoldingSitePurchase( purchase ) &&
+				! isMarketplaceHoldingSitePurchase( purchase ) &&
 				! isA4ABillingDragonPurchase( purchase ) ) ||
 			isAkismetFreeProduct( purchase ) ||
 			( is100Year( purchase ) && ! isCloseToExpiration( purchase ) )
@@ -456,8 +458,8 @@ class ManagePurchase extends Component<
 			( isPartnerPurchase( purchase ) && ! isA4ABillingDragonPurchase( purchase ) ) ||
 			! isRenewable( purchase ) ||
 			( ! this.props.site &&
-				! isAkismetTemporarySitePurchase( purchase ) &&
-				! isMarketplaceTemporarySitePurchase( purchase ) &&
+				! isAkismetHoldingSitePurchase( purchase ) &&
+				! isMarketplaceHoldingSitePurchase( purchase ) &&
 				! isA4ABillingDragonPurchase( purchase ) ) ||
 			isAkismetFreeProduct( purchase )
 		) {
@@ -486,24 +488,32 @@ class ManagePurchase extends Component<
 		if ( ! purchase ) {
 			return null;
 		}
-		const annualPrice = getRenewalPriceInSmallestUnit( purchase ) / 12;
-		const savings = Math.floor(
-			( 100 * ( relatedMonthlyPlanPrice - annualPrice ) ) / relatedMonthlyPlanPrice
-		);
 
-		return this.renderRenewalNavItem(
-			<div>
-				{ translate( 'Renew annually' ) }
-				<Badge className="manage-purchase__savings-badge" type="success">
-					{ translate( '%(savings)d%% cheaper than monthly', {
-						args: {
-							savings,
-						},
-					} ) }
-				</Badge>
-			</div>,
-			this.handleRenew
-		);
+		const billPeriodDays = purchase.billPeriodDays;
+		const isAnnualRenewal = billPeriodDays === SubscriptionBillPeriod.PLAN_ANNUAL_PERIOD;
+
+		if ( isAnnualRenewal ) {
+			const annualPrice = getRenewalPriceInSmallestUnit( purchase ) / 12;
+			const savings = Math.floor(
+				( 100 * ( relatedMonthlyPlanPrice - annualPrice ) ) / relatedMonthlyPlanPrice
+			);
+			return this.renderRenewalNavItem(
+				<div>
+					{ translate( 'Renew annually' ) }
+					<Badge className="manage-purchase__savings-badge" type="success">
+						{ translate( '%(savings)d%% cheaper than monthly', {
+							args: {
+								savings,
+							},
+						} ) }
+					</Badge>
+				</div>,
+				this.handleRenew
+			);
+		}
+
+		// All other use cases (monthly, biennially, triennially_)
+		return this.renderRenewButton();
 	}
 
 	renderRenewMonthlyNavItem() {
@@ -655,8 +665,8 @@ class ManagePurchase extends Component<
 
 		if (
 			! this.props.site &&
-			! isAkismetTemporarySitePurchase( purchase ) &&
-			! isMarketplaceTemporarySitePurchase( purchase ) &&
+			! isAkismetHoldingSitePurchase( purchase ) &&
+			! isMarketplaceHoldingSitePurchase( purchase ) &&
 			! isA4ABillingDragonPurchase( purchase )
 		) {
 			return null;
@@ -925,7 +935,7 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
-		if ( isMarketplaceTemporarySitePurchase( purchase ) ) {
+		if ( isMarketplaceHoldingSitePurchase( purchase ) ) {
 			return null;
 		}
 
@@ -1198,10 +1208,7 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
-		if (
-			isMarketplaceTemporarySitePurchase( purchase ) ||
-			isA4ATemporarySitePurchase( purchase )
-		) {
+		if ( isMarketplaceHoldingSitePurchase( purchase ) || isA4AHoldingSitePurchase( purchase ) ) {
 			return null;
 		}
 
@@ -1458,7 +1465,7 @@ class ManagePurchase extends Component<
 						{ /* We don't want to show the Renew/Upgrade nav item for "Jetpack" temporary sites, but we DO
 						show it for "Akismet" temporary sites. (And all other types of purchases) */ }
 						{ /* TODO: Add ability to Renew Akismet subscription */ }
-						{ ! isJetpackTemporarySitePurchase( purchase ) && this.renderUpgradeNavItem() }
+						{ ! isJetpackHoldingSitePurchase( purchase ) && this.renderUpgradeNavItem() }
 						{ this.renderEditPaymentMethodNavItem() }
 						{ config.isEnabled( 'jetpack/crm-downloads' ) && this.renderCrmDownloadsNavItem() }
 						{ this.renderReinstall() }

@@ -356,6 +356,7 @@ const streamApis = {
 		path: ( { streamKey } ) => `/users/${ streamKeySuffix( streamKey ) }/posts`,
 		dateProperty: 'date',
 		apiVersion: '1',
+		pollQuery: () => getQueryStringForPoll( [], { number: 20 } ),
 	},
 };
 

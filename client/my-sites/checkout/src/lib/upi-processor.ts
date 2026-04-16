@@ -1,4 +1,8 @@
-import { makeErrorResponse, makeSuccessResponse } from '@automattic/composite-checkout';
+import {
+	makeErrorResponse,
+	makeRedirectResponse,
+	makeSuccessResponse,
+} from '@automattic/composite-checkout';
 import { createElement } from 'react';
 import { Root, createRoot } from 'react-dom/client';
 import { PurchaseOrderStatus, fetchPurchaseOrder } from '../hooks/use-purchase-order';
@@ -15,7 +19,36 @@ import type {
 	WPCOMTransactionEndpointResponse,
 	WPCOMTransactionEndpointResponseSuccess,
 } from '@automattic/wpcom-checkout';
+import type { Stripe } from '@stripe/stripe-js';
 import type { LocalizeProps } from 'i18n-calypso';
+
+// stripe.confirmUpiSetup is not yet included in the installed @stripe/stripe-js types (v1.54.2).
+// TODO: Remove this local type once @stripe/stripe-js is upgraded to a version that includes it,
+// and verify the real signature matches before removing.
+type StripeWithUpiSetup = Stripe & {
+	confirmUpiSetup: (
+		clientSecret: string,
+		data: {
+			payment_method: {
+				upi: Record< string, never >;
+				billing_details?: { name?: string };
+			};
+			mandate_data: {
+				customer_acceptance: {
+					type: 'online';
+					online: { infer_from_client: boolean };
+				};
+			};
+		}
+	) => Promise< {
+		setupIntent?: {
+			next_action?: {
+				upi_qr_code?: { hosted_instructions_url: string };
+			};
+		};
+		error?: { message?: string };
+	} >;
+};
 
 type StripeUpiTransactionRequest = {
 	name: string;
@@ -30,7 +63,8 @@ type StripeUpiTransactionRequest = {
 export default async function upiProcessor(
 	submitData: unknown,
 	options: PaymentProcessorOptions,
-	translate: LocalizeProps[ 'translate' ]
+	translate: LocalizeProps[ 'translate' ],
+	fromExternalCheckout?: boolean
 ): Promise< PaymentProcessorResponse > {
 	if ( ! isValidTransactionData( submitData ) ) {
 		throw new Error( 'Required purchase data is missing' );
@@ -60,6 +94,7 @@ export default async function upiProcessor(
 	const successUrl = addUrlToPendingPageRedirect( thankYouUrl, {
 		siteSlug,
 		fromSiteSlug,
+		fromExternalCheckout,
 		urlType: 'absolute',
 	} );
 	const cancelUrl = `${ origin }${ pathname }${ search }`;
@@ -102,23 +137,32 @@ export default async function upiProcessor(
 
 	return submitWpcomTransaction( formattedTransactionData, options )
 		.then( async ( response?: WPCOMTransactionEndpointResponse ) => {
-			if ( ! response?.redirect_url ) {
-				// eslint-disable-next-line no-console
-				console.error( 'Transaction response was missing required redirect url' );
-				throw new Error( genericErrorMessage );
-			}
-
-			if ( ! response.order_id ) {
+			if ( ! response?.order_id ) {
 				// eslint-disable-next-line no-console
 				console.error( 'Transaction response was missing required order ID' );
 				throw new Error( genericErrorMessage );
 			}
 
+			const redirectUrl = await getRedirectUrl(
+				response,
+				submitData,
+				options,
+				genericErrorMessage
+			);
+
+			const pendingPageUrl = addUrlToPendingPageRedirect( thankYouUrl, {
+				siteSlug,
+				fromSiteSlug,
+				fromExternalCheckout,
+				orderId: response.order_id,
+				urlType: 'absolute',
+			} );
+
 			let isModalActive = true;
 			let explicitClosureMessage: string | undefined;
 			displayModal( {
 				root,
-				redirectUrl: response.redirect_url,
+				redirectUrl,
 				cancel: () => {
 					safeDismissModal();
 					isModalActive = false;
@@ -134,6 +178,10 @@ export default async function upiProcessor(
 			let orderStatus = 'processing';
 			while ( isModalActive && [ 'processing', 'async-pending' ].includes( orderStatus ) ) {
 				orderStatus = await pollForOrderStatus( response.order_id, 2000, genericErrorMessage );
+			}
+			if ( orderStatus === 'payment-confirmed' ) {
+				safeDismissModal();
+				return makeRedirectResponse( pendingPageUrl );
 			}
 			if ( orderStatus !== 'success' ) {
 				throw new Error( explicitClosureMessage ?? genericFailureMessage );
@@ -153,6 +201,76 @@ export default async function upiProcessor(
 		} );
 }
 
+/**
+ * Determines the hosted instructions URL for the UPI iframe.
+ *
+ * For a regular payment (PaymentIntent), the backend confirms the Stripe intent
+ * server-side and returns the hosted_instructions_url directly as redirect_url.
+ *
+ * For a free trial (SetupIntent), the backend returns a setup_intent_client_secret
+ * that must be confirmed client-side via stripe.confirmUpiSetup(), which returns
+ * the hosted_instructions_url for the iframe.
+ */
+async function getRedirectUrl(
+	response: WPCOMTransactionEndpointResponse,
+	submitData: StripeUpiTransactionRequest,
+	options: PaymentProcessorOptions,
+	genericErrorMessage: string
+): Promise< string > {
+	const message = ( response as { message?: unknown } ).message;
+	if ( message && typeof message === 'object' && 'setup_intent_client_secret' in message ) {
+		return confirmUpiSetupIntent(
+			String( ( message as { setup_intent_client_secret: string } ).setup_intent_client_secret ),
+			submitData.name ?? '',
+			options,
+			genericErrorMessage
+		);
+	}
+
+	const redirectUrl = ( response as { redirect_url?: string } ).redirect_url;
+	if ( ! redirectUrl ) {
+		// eslint-disable-next-line no-console
+		console.error( 'Transaction response was missing required redirect url' );
+		throw new Error( genericErrorMessage );
+	}
+	return redirectUrl;
+}
+
+async function confirmUpiSetupIntent(
+	clientSecret: string,
+	name: string,
+	options: PaymentProcessorOptions,
+	genericErrorMessage: string
+): Promise< string > {
+	if ( ! options.stripe ) {
+		throw new Error( genericErrorMessage );
+	}
+	const stripe = options.stripe as unknown as StripeWithUpiSetup;
+	const { setupIntent, error } = await stripe.confirmUpiSetup( clientSecret, {
+		payment_method: {
+			upi: {},
+			billing_details: { name },
+		},
+		mandate_data: {
+			customer_acceptance: {
+				type: 'online',
+				online: {
+					// infer_from_client tells Stripe to collect the customer's IP and
+					// user agent directly from the network request, which is the correct
+					// approach for browser-initiated mandate acceptance.
+					infer_from_client: true,
+				},
+			},
+		},
+	} );
+	if ( error || ! setupIntent?.next_action?.upi_qr_code?.hosted_instructions_url ) {
+		// eslint-disable-next-line no-console
+		console.error( 'Failed to confirm UPI setup intent', error );
+		throw new Error( genericErrorMessage );
+	}
+	return setupIntent.next_action.upi_qr_code.hosted_instructions_url;
+}
+
 async function pollForOrderStatus(
 	orderId: number,
 	pollInterval: number,
@@ -164,7 +282,10 @@ async function pollForOrderStatus(
 		console.error( 'Order was not found.' );
 		throw new Error( genericErrorMessage );
 	}
-	if ( orderData.processing_status === 'success' ) {
+	if (
+		orderData.processing_status === 'success' ||
+		orderData.processing_status === 'payment-confirmed'
+	) {
 		return orderData.processing_status;
 	}
 	await new Promise( ( resolve ) => setTimeout( resolve, pollInterval ) );

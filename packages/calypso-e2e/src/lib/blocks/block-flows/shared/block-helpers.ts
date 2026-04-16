@@ -34,7 +34,11 @@ export async function validatePublishedFormFields(
 ) {
 	for ( const expectedField of expectedFormFields ) {
 		const { type, accessibleName } = expectedField;
-		await publishedPage.getByRole( type, { name: accessibleName } ).first().waitFor();
+		const field = publishedPage.getByRole( type, { name: accessibleName } ).first();
+		// Wait for the element in the DOM first, then scroll to make it visible.
+		await field.waitFor( { state: 'attached' } );
+		await field.scrollIntoViewIfNeeded();
+		await field.waitFor( { state: 'visible' } );
 	}
 }
 

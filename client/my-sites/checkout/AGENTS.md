@@ -121,6 +121,6 @@ Steps 6-7 are the ones agents miss — without slug mapping the method never app
 9. **Atomic sites use `.wpcomstaging.com`** — Thank-you URL logic replaces
    `.wordpress.com` with `.wpcomstaging.com` for Atomic sites.
 
-10. **Siteless purchases** — Some products (Akismet, Jetpack, Marketplace) use temporary sites (`siteless.{jetpack|akismet|marketplace.wp|a4a}.com`). Guard with `isTemporarySitePurchase()`. Never query site data for these.
+10. **Siteless purchases** — Some products (Akismet, Jetpack, Marketplace) use temporary sites (`siteless.{jetpack|akismet|marketplace.wp|a4a}.com`). Guard with `purchase.isAttachedToHoldingSite`. Never query site data for these.
 
 11. **Transferred purchases** — Always check ownership before allowing purchase actions.

@@ -20,9 +20,7 @@ if ( $is_forums ) {
 } else {
 	$show_search_card = $is_front_page || $is_404_page;
 }
-$enable_odie_answers = ! is_user_logged_in() && ( 'treatment' === \ExPlat\assign_maybe_anon_user( 'wpcom_ai_on_logged_out_support_pages_v3' )
-// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- We are not processing any data here.
-	|| ( isset( $_GET['dotcom_support_enable_odie_answers'] ) && 'true' === $_GET['dotcom_support_enable_odie_answers'] ) );
+$enable_odie_answers           = ! is_user_logged_in();
 $should_show_search_navigation = ( $is_front_page && $enable_odie_answers ) || ( ! $is_front_page && ! $is_404_page );
 
 $form_class              = isset( $args['form_class'] ) ? $args['form_class'] : '';

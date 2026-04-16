@@ -92,7 +92,7 @@ describe( 'StylePicker', () => {
 
 		mockUseSelect.mockImplementation( ( selector: any ) => {
 			const result = selector( () => ( {
-				getSelectedStyle: () => '',
+				getSelectedStyle: () => null,
 			} ) );
 			return result;
 		} );
@@ -115,8 +115,8 @@ describe( 'StylePicker', () => {
 		it( 'renders style picker with default label', () => {
 			render( <StylePicker mode={ ImageStudioMode.Generate } /> );
 
-			// When selectedStyle is '', it shows 'None' (the label for value: '')
-			expect( screen.getByTestId( 'toolbar-button' ) ).toHaveTextContent( 'None' );
+			// When selectedStyle is null (initial state), it shows the fallback label 'Style'
+			expect( screen.getByTestId( 'toolbar-button' ) ).toHaveTextContent( 'Style' );
 		} );
 
 		it( 'renders style picker with selected style label', () => {
@@ -146,14 +146,11 @@ describe( 'StylePicker', () => {
 			// Open dropdown
 			await user.click( screen.getByTestId( 'toolbar-button' ) );
 
-			// Filter out the first option which has no preview
-			const optionsWithPreviews = STYLE_OPTIONS.filter( ( opt ) => opt.preview );
-
 			const styleButtons = screen.getAllByRole( 'button' ).filter( ( button ) => {
 				return button.querySelector( 'img' ) !== null;
 			} );
 
-			expect( styleButtons ).toHaveLength( optionsWithPreviews.length );
+			expect( styleButtons ).toHaveLength( STYLE_OPTIONS.length );
 		} );
 
 		it( 'renders style option labels', async () => {
@@ -275,6 +272,37 @@ describe( 'StylePicker', () => {
 			expect( mockTrackStyleSelected ).toHaveBeenCalledWith( {
 				style: 'anime',
 				mode: ImageStudioMode.Edit,
+			} );
+		} );
+
+		it( 'tracks "none" when the None style is selected', async () => {
+			const user = userEvent.setup();
+
+			render( <StylePicker mode={ ImageStudioMode.Generate } /> );
+
+			// Open dropdown
+			await user.click( screen.getByTestId( 'toolbar-button' ) );
+
+			// The "None" option has value: 'none' — a real, non-empty value that is
+			// distinct from the initial null state.
+			const noneButton = screen
+				.getAllByRole( 'button' )
+				.find(
+					( button ) =>
+						button.textContent?.trim() === 'None' &&
+						button.getAttribute( 'data-testid' ) !== 'toolbar-button'
+				);
+
+			expect( noneButton ).toBeDefined();
+			await user.click( noneButton! );
+
+			// The store receives 'none' directly.
+			expect( mockSetSelectedStyle ).toHaveBeenCalledWith( 'none' );
+
+			// The tracking event receives the same 'none' value — no sentinel translation.
+			expect( mockTrackStyleSelected ).toHaveBeenCalledWith( {
+				style: 'none',
+				mode: ImageStudioMode.Generate,
 			} );
 		} );
 
@@ -409,7 +437,7 @@ describe( 'StylePicker', () => {
 
 			// Test a few key mappings
 			const testCases = [
-				{ label: 'None', value: '' },
+				{ label: 'None', value: 'none' },
 				{ label: 'Vivid', value: 'vivid' },
 				{ label: '3D Model', value: '3d-model' },
 				{ label: 'Pixel Art', value: 'pixel-art' },
@@ -443,8 +471,8 @@ describe( 'StylePicker', () => {
 		it( 'updates label when selected style changes', () => {
 			const { rerender } = render( <StylePicker mode={ ImageStudioMode.Generate } /> );
 
-			// When selectedStyle is '', it matches the 'None' option
-			expect( screen.getByTestId( 'toolbar-button' ) ).toHaveTextContent( 'None' );
+			// When selectedStyle is null (initial state), it shows the fallback label 'Style'
+			expect( screen.getByTestId( 'toolbar-button' ) ).toHaveTextContent( 'Style' );
 
 			// Update selected style
 			mockUseSelect.mockImplementation( ( selector: any ) => {
@@ -469,9 +497,9 @@ describe( 'StylePicker', () => {
 
 			render( <StylePicker mode={ ImageStudioMode.Generate } /> );
 
-			// Should fall back to 'Styles' when value doesn't match any option
+			// Should fall back to 'Style' when value doesn't match any option
 			const toolbarButton = screen.getByTestId( 'toolbar-button' );
-			expect( toolbarButton ).toHaveTextContent( 'Styles' );
+			expect( toolbarButton ).toHaveTextContent( 'Style' );
 		} );
 
 		it( 'reflects selection state across multiple instances', async () => {

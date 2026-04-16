@@ -10,7 +10,6 @@
 		"my.woo.ai": {
 			"oauth_client_id": 134405,
 			"wpcom_login_url": false,
-			"logout_url": false,
 			"features": { "oauth": true, "wpcom-user-bootstrap": false }
 		}
 	},
@@ -26,8 +25,10 @@
 		"ciab/custom-branding": true,
 		"cookie-banner": false,
 		"rum-tracking/logstash": true,
-		"dashboard/omnibar": false,
+		"dashboard/omnibar": true,
+		"dashboard/wp-beta-program": true,
 		"dashboard/v2": false,
+		"dashboard/plans": true,
 		"dev/auth-helper": true,
 		"dev/preferences-helper": true,
 		"dev/store-sandbox-helper": true,

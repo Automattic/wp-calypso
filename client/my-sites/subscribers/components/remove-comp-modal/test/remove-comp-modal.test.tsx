@@ -21,8 +21,8 @@ jest.mock( 'calypso/state', () => ( {
 	useDispatch: () => mockDispatch,
 } ) );
 
-jest.mock( 'calypso/state/memberships/gifts/actions', () => ( {
-	requestDeleteGift: jest.fn( () => () => Promise.resolve() ),
+jest.mock( 'calypso/state/memberships/comps/actions', () => ( {
+	requestDeleteComp: jest.fn( () => () => Promise.resolve() ),
 } ) );
 
 jest.mock( '@automattic/calypso-analytics', () => ( {
@@ -36,7 +36,7 @@ function renderModal( props = {} ) {
 	const queryClient = new QueryClient();
 	const defaultProps = {
 		siteId: 123,
-		giftId: 456,
+		compId: 789,
 		planName: 'Premium Newsletter',
 		username: 'testuser',
 		onClose: jest.fn(),
@@ -74,28 +74,33 @@ describe( 'RemoveCompModal', () => {
 		expect( props.onClose ).toHaveBeenCalled();
 	} );
 
-	it( 'calls requestDeleteGift and onRemoved when Remove is clicked', async () => {
-		const { requestDeleteGift } = jest.requireMock( 'calypso/state/memberships/gifts/actions' );
+	it( 'calls requestDeleteComp and onRemoved when Remove is clicked', async () => {
+		const { requestDeleteComp } = jest.requireMock( 'calypso/state/memberships/comps/actions' );
 		const user = userEvent.setup();
 		const { props } = renderModal();
 
 		await user.click( screen.getByRole( 'button', { name: 'Remove' } ) );
 
-		expect( requestDeleteGift ).toHaveBeenCalledWith( 123, 456, expect.any( String ) );
-		// Wait for the promise to resolve
+		expect( requestDeleteComp ).toHaveBeenCalledWith( 123, 789, expect.any( String ) );
 		await screen.findByRole( 'button', { name: 'Remove' } );
 		expect( props.onRemoved ).toHaveBeenCalled();
 	} );
 
 	it( 'disables Remove button while submitting', async () => {
-		const { requestDeleteGift } = jest.requireMock( 'calypso/state/memberships/gifts/actions' );
+		const { requestDeleteComp } = jest.requireMock( 'calypso/state/memberships/comps/actions' );
 		// Make the request hang indefinitely
-		requestDeleteGift.mockImplementation( () => () => new Promise( () => {} ) );
+		requestDeleteComp.mockImplementation( () => () => new Promise( () => {} ) );
 
 		const user = userEvent.setup();
 		renderModal();
 
 		await user.click( screen.getByRole( 'button', { name: 'Remove' } ) );
+
+		expect( screen.getByRole( 'button', { name: 'Remove' } ) ).toBeDisabled();
+	} );
+
+	it( 'disables Remove button when compId is missing', () => {
+		renderModal( { compId: undefined } );
 
 		expect( screen.getByRole( 'button', { name: 'Remove' } ) ).toBeDisabled();
 	} );

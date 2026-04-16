@@ -3,13 +3,14 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useLayoutEffect, useRef, useState } from 'react';
 import GravatarIcon from 'calypso/assets/images/icons/gravatar.svg';
-import ReaderAvatar from 'calypso/blocks/reader-avatar';
+import UserAvatar from 'calypso/blocks/user-avatar';
 import AutoDirection from 'calypso/components/auto-direction';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import { UserProfileData } from 'calypso/lib/user/user';
 import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
+import UserTopSites from '../top-sites';
 
 interface UserProfileHeaderProps {
 	user: UserProfileData;
@@ -28,7 +29,7 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 			const isOverflowing = bioElement.scrollHeight > bioElement.clientHeight;
 			setShowMoreToggle( isOverflowing );
 		}
-	}, [ user.bio ] );
+	}, [ user.description ] );
 
 	const handleShowMoreToggle = () => {
 		setIsExpanded( ! isExpanded );
@@ -40,6 +41,11 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 			label: translate( 'Posts' ),
 			path: userProfileUrl,
 			selected: view === 'posts',
+		},
+		{
+			label: translate( 'Sites' ),
+			path: `${ userProfileUrl }/sites`,
+			selected: view === 'sites',
 		},
 		{
 			label: translate( 'Lists' ),
@@ -57,7 +63,7 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 		<>
 			<header className="user-profile-header">
 				<div className="user-profile-header__user-info">
-					<ReaderAvatar author={ { ...user, has_avatar: !! user.avatar_URL } } iconSize={ 56 } />
+					<UserAvatar user={ user } size={ 56 } />
 					<div className="user-profile-header__names">
 						<h1>
 							{ user.display_name }
@@ -84,7 +90,7 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 					</div>
 				</div>
 
-				{ user.bio && (
+				{ user.description && (
 					<AutoDirection>
 						<div className="user-profile-header__bio">
 							<p
@@ -94,7 +100,7 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 									'is-expanded': isExpanded,
 								} ) }
 							>
-								{ user.bio }
+								{ user.description }
 							</p>
 							{ showMoreToggle && (
 								<button
@@ -108,6 +114,8 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 						</div>
 					</AutoDirection>
 				) }
+
+				<UserTopSites userId={ user.ID } userLogin={ user.user_login } />
 			</header>
 			<SectionNav enforceTabsView variation="minimal">
 				<NavTabs>

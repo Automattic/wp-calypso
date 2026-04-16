@@ -4,9 +4,9 @@ import { Button, ExternalLink, Icon } from '@wordpress/components';
 import { trash } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import SubscriptionPeriodLabel from 'calypso/components/subscription-period-label';
 import { NewsletterCategory } from 'calypso/data/newsletter-categories/types';
 import { useSubscriptionPlans } from '../../hooks';
-import { SubscriptionPlanData } from '../../hooks/use-subscription-plans';
 import { Subscriber, SubscriberDetails as SubscriberDetailsType } from '../../types';
 import { SubscriberProfile } from '../subscriber-profile';
 import { SubscriberStats } from '../subscriber-stats';
@@ -22,8 +22,8 @@ type SubscriberDetailsProps = {
 	newsletterCategories?: NewsletterCategory[];
 	onClose?: () => void;
 	onUnsubscribe?: ( subscriber: Subscriber ) => void;
-	onGiftSubscription?: ( subscriber: Subscriber ) => void;
-	onRemoveComp?: ( giftId: number, planName: string ) => void;
+	onCompSubscription?: ( subscriber: Subscriber ) => void;
+	onRemoveComp?: ( params: { planName: string; compId?: number } ) => void;
 };
 
 const SubscriberDetails = ( {
@@ -35,7 +35,7 @@ const SubscriberDetails = ( {
 	newsletterCategories,
 	onClose,
 	onUnsubscribe,
-	onGiftSubscription,
+	onCompSubscription,
 	onRemoveComp,
 }: SubscriberDetailsProps ) => {
 	const translate = useTranslate();
@@ -48,55 +48,6 @@ const SubscriberDetails = ( {
 		[ newsletterCategories ]
 	);
 	const { avatar, date_subscribed, display_name, email_address, country, url } = subscriber;
-
-	const notApplicableLabel = translate( 'N/A', {
-		context: 'For free subscriptions the plan description is displayed as N/A (not applicable)',
-	} );
-
-	const displayPaidUpgrade = ( subscriptionPlan: SubscriptionPlanData, index: number ) => {
-		if ( subscriptionPlan.is_gift ) {
-			return (
-				<div className="subscriber-details__content-value" key={ index }>
-					{ translate( 'Comp', {
-						comment: 'Short for "complimentary" — a free subscription granted by the site creator',
-					} ) }
-					{ onRemoveComp && subscriptionPlan.gift_id && (
-						<Button
-							className="subscriber-details__remove-comp-button"
-							variant="tertiary"
-							aria-label={ String(
-								translate( 'Remove complimentary subscription: %(planName)s', {
-									args: { planName: subscriptionPlan.title ?? '' },
-								} )
-							) }
-							onClick={ () =>
-								onRemoveComp( subscriptionPlan.gift_id!, subscriptionPlan.title ?? '' )
-							}
-						>
-							<Icon icon={ trash } size={ 18 } />
-						</Button>
-					) }
-				</div>
-			);
-		}
-
-		if ( subscriptionPlan.startDate ) {
-			return (
-				<TimeSince
-					className="subscriber-details__content-value"
-					date={ subscriptionPlan.startDate }
-					dateFormat="LL"
-					key={ index }
-				/>
-			);
-		}
-
-		return (
-			<div className="subscriber-details__content-value" key={ index }>
-				{ notApplicableLabel }
-			</div>
-		);
-	};
 
 	return (
 		<div className="subscriber-details">
@@ -159,16 +110,48 @@ const SubscriberDetails = ( {
 						{ subscriptionPlans &&
 							subscriptionPlans.map( ( subscriptionPlan, index ) => (
 								<div className="subscriber-details__content-value" key={ index }>
-									{ ! subscriptionPlan.is_gift && subscriptionPlan.title
+									{ ! subscriptionPlan.is_complimentary && subscriptionPlan.title
 										? `${ subscriptionPlan.title } - `
 										: '' }
 									{ subscriptionPlan.plan }
+									{ subscriptionPlan.is_complimentary &&
+										onRemoveComp &&
+										subscriptionPlan.comp_id && (
+											<Button
+												className="subscriber-details__remove-comp-button"
+												variant="tertiary"
+												aria-label={ String(
+													translate( 'Remove complimentary subscription: %(planName)s', {
+														args: {
+															planName: subscriptionPlan.title ?? '',
+														},
+													} )
+												) }
+												onClick={ () =>
+													onRemoveComp( {
+														planName: subscriptionPlan.title ?? '',
+														compId: subscriptionPlan.comp_id,
+													} )
+												}
+											>
+												<Icon icon={ trash } size={ 18 } />
+											</Button>
+										) }
 								</div>
 							) ) }
 					</div>
 					<div className="subscriber-details__content-column">
-						<div className="subscriber-details__content-label">{ translate( 'Paid upgrade' ) }</div>
-						{ subscriptionPlans && subscriptionPlans.map( displayPaidUpgrade ) }
+						<div className="subscriber-details__content-label">{ translate( 'Period' ) }</div>
+						{ subscriptionPlans &&
+							subscriptionPlans.map( ( subscriptionPlan, index ) => (
+								<div className="subscriber-details__content-value" key={ index }>
+									<SubscriptionPeriodLabel
+										endDate={ subscriptionPlan.endDate }
+										isComp={ subscriptionPlan.is_complimentary }
+										isFree={ subscriptionPlan.is_free }
+									/>
+								</div>
+							) ) }
 					</div>
 				</div>
 			</div>
@@ -197,12 +180,12 @@ const SubscriberDetails = ( {
 					) }
 				</div>
 			</div>
-			{ ( onGiftSubscription || onUnsubscribe ) && (
+			{ ( onCompSubscription || onUnsubscribe ) && (
 				<div className="subscriber-details__footer">
-					{ onGiftSubscription && (
+					{ onCompSubscription && (
 						<Button
-							className="subscriber-details__gift-button"
-							onClick={ () => onGiftSubscription( subscriber ) }
+							className="subscriber-details__comp-button"
+							onClick={ () => onCompSubscription( subscriber ) }
 							variant="primary"
 						>
 							{ translate( 'Comp a subscription' ) }

@@ -25,6 +25,22 @@ export default function () {
 		return page.redirect( `/sites/${ context.params.site }/settings` );
 	} );
 
+	// `/:feature?` is a single segment; nested paths like `ai-tools/read` must be registered explicitly
+	// or page.js will not match after TanStack sync calls `page.show()` → embed unmounts (blank screen).
+	const dashboardBackportSiteSettingsStack = [
+		siteSelection,
+		setupPreferences,
+		maybeRedirectToMultiSiteDashboard(),
+		navigation,
+		dashboardBackportSiteSettings,
+		siteDashboard( SETTINGS_SITE ),
+		makeLayout,
+		clientRender,
+	];
+	page( '/sites/:site/settings/ai-tools/read', ...dashboardBackportSiteSettingsStack );
+	page( '/sites/:site/settings/ai-tools/write', ...dashboardBackportSiteSettingsStack );
+	page( '/sites/:site/settings/ai-tools/setup', ...dashboardBackportSiteSettingsStack );
+
 	page(
 		'/sites/:site/settings/:feature?',
 		siteSelection,

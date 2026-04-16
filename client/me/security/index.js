@@ -10,7 +10,7 @@ import { sidebar } from 'calypso/me/controller';
 import {
 	accountRecovery,
 	connectedApplications,
-	aiAssistant,
+	dolly,
 	password,
 	securityAccountEmail,
 	securityCheckup,
@@ -66,7 +66,7 @@ export default function () {
 		setupPreferences,
 		maybeRedirectToMultiSiteDashboard( '/me/security/ai-assistant' ),
 		sidebar,
-		aiAssistant,
+		dolly,
 		makeLayout,
 		clientRender
 	);

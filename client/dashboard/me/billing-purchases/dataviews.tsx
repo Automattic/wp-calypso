@@ -15,8 +15,8 @@ import SiteIcon from '../../components/site-icon';
 import {
 	isRenewing,
 	isTransferredOwnership,
-	isAkismetTemporarySitePurchase,
-	isMarketplaceTemporarySitePurchase,
+	isAkismetHoldingSitePurchase,
+	isMarketplaceHoldingSitePurchase,
 	getTitleForListDisplay,
 } from '../../utils/purchase';
 import { PurchasePaymentMethod } from './purchase-payment-method';
@@ -88,7 +88,7 @@ function PurchaseItemSiteIcon( { site, purchase }: { site?: Site; purchase: Purc
 	}
 
 	if (
-		isMarketplaceTemporarySitePurchase( purchase ) &&
+		isMarketplaceHoldingSitePurchase( purchase ) &&
 		purchase.product_slug.startsWith( 'passport' )
 	) {
 		return (
@@ -100,7 +100,7 @@ function PurchaseItemSiteIcon( { site, purchase }: { site?: Site; purchase: Purc
 		);
 	}
 
-	if ( isAkismetTemporarySitePurchase( purchase ) ) {
+	if ( isAkismetHoldingSitePurchase( purchase ) ) {
 		return (
 			<img
 				src={ akismetIcon }

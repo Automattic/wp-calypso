@@ -28,9 +28,10 @@ import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { wpcomLink } from '../../utils/link';
 import { getSiteBadge } from '../../utils/site-badge';
 import { hasHostingFeature, hasJetpackModule } from '../../utils/site-features';
+import { getSitePlanUpgradeUrl } from '../../utils/site-url';
 import { getVisibilityLabels } from '../../utils/site-visibility';
 import { canManageSite } from '../features';
-import { isSitePlanTrial, isSitePlanWooHosted } from '../plans';
+import { isSitePlanTrial } from '../plans';
 import SitePreview from '../site-preview';
 import { JetpackLogo } from './jetpack-logo';
 import type { SiteBadge, SiteBlockingStatus, SiteVisibility } from '../../types';
@@ -350,12 +351,9 @@ function SiteLaunchNag( { siteSlug }: { siteSlug: string } ) {
 	);
 }
 
-function PlanRenewNag( { site, source }: { site: Pick< Site, 'slug' | 'plan' >; source: string } ) {
+function PlanRenewNag( { site, source }: { site: Site; source: string } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const isTrial = isSitePlanTrial( site );
-	const upgradeLink = isSitePlanWooHosted( site )
-		? wpcomLink( `/setup/woo-hosted-plans/${ site.slug }` )
-		: wpcomLink( `/plans/${ site.slug }` );
 
 	return (
 		<>
@@ -366,7 +364,7 @@ function PlanRenewNag( { site, source }: { site: Pick< Site, 'slug' | 'plan' >; 
 			<ExternalLink
 				href={
 					isTrial
-						? upgradeLink
+						? getSitePlanUpgradeUrl( site )
 						: wpcomLink( `/checkout/${ site.slug }/${ site.plan?.product_slug }` )
 				}
 				onClick={ () => {
@@ -410,7 +408,7 @@ export function Plan( {
 	isOwner,
 	value,
 }: {
-	nag: { isExpired: false } | { isExpired: true; site: Pick< Site, 'slug' | 'plan' > };
+	nag: { isExpired: false } | { isExpired: true; site: Site };
 	isSelfHostedJetpackConnected: boolean;
 	isJetpack: boolean;
 	isOwner?: boolean;

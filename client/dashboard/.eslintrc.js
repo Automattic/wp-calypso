@@ -68,6 +68,7 @@ module.exports = {
 							'!@automattic/search',
 							'!@automattic/calypso-razorpay',
 							'!@automattic/calypso-stripe',
+							'!@automattic/calypso-url',
 							'!@automattic/composite-checkout',
 							'!@automattic/shopping-cart',
 							'!@automattic/ui',
@@ -121,6 +122,12 @@ module.exports = {
 							'CardMedia',
 						],
 						message: 'Use local components exported from client/dashboard/components/card instead.',
+					},
+					{
+						name: '@tanstack/react-router',
+						importNames: [ 'redirect' ],
+						message:
+							'Use dashboardRedirect from client/dashboard/app/router/redirect instead. It disables view transitions on redirects.',
 					},
 					{
 						name: '@automattic/api-queries',

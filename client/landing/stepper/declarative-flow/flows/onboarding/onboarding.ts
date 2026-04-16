@@ -1,9 +1,10 @@
 import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import { clearStepPersistedState, ONBOARDING_FLOW, SITE_SETUP_FLOW } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
+import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { addSurvicate } from 'calypso/lib/analytics/survicate';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
@@ -24,7 +25,7 @@ import { State } from '../../../../../../packages/data-stores/src/plans/reducer'
 import { isPlanProductFree } from '../../../../../../packages/data-stores/src/plans/selectors';
 import { useFlowLocale } from '../../../hooks/use-flow-locale';
 import { useQuery } from '../../../hooks/use-query';
-import { ONBOARD_STORE } from '../../../stores';
+import { ONBOARD_STORE, SITE_STORE } from '../../../stores';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { getOnboardingPostCheckoutDestination } from '../../helpers/get-onboarding-post-checkout-destination';
 import { withLocale } from '../../helpers/with-locale';
@@ -34,7 +35,7 @@ import { ProcessingResult } from '../../internals/steps-repository/processing-st
 import { type FlowV2, type ProvidedDependencies, type SubmitHandler } from '../../internals/types';
 import type { DomainSuggestion } from '@automattic/api-core';
 
-async function initialize() {
+function initialize() {
 	const steps = [
 		STEPS.DOMAIN_SEARCH,
 		STEPS.USE_MY_DOMAIN,
@@ -44,8 +45,6 @@ async function initialize() {
 		STEPS.POST_CHECKOUT_ONBOARDING,
 		STEPS.SETUP_YOUR_SITE_AI,
 	];
-
-	await loadExperimentAssignment( 'calypso_account_step_improvement_202601' );
 
 	return [ ...stepsWithRequiredLogin( steps ), STEPS.PLAYGROUND, STEPS.BLUEPRINT ];
 }
@@ -78,6 +77,7 @@ const onboarding: FlowV2< typeof initialize > = {
 			[]
 		);
 		const coupon = useQuery().get( 'coupon' );
+		const refParameter = useQuery().get( 'ref' );
 
 		const { setShouldShowNotification } = usePurchasePlanNotification();
 
@@ -119,6 +119,13 @@ const onboarding: FlowV2< typeof initialize > = {
 					addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), params ),
 					null,
 				];
+			}
+
+			if ( refParameter === WOO_HOSTING_SOLUTIONS_REF && providedDependencies.siteSlug ) {
+				const siteSlug = providedDependencies.siteSlug as string;
+				const site = await resolveSelect( SITE_STORE ).getSite( siteSlug );
+				const adminUrl = site?.options?.admin_url ?? `https://${ siteSlug }/wp-admin/`;
+				return [ `${ adminUrl }admin.php?page=wc-admin`, null ];
 			}
 
 			return getOnboardingPostCheckoutDestination( {
@@ -259,6 +266,7 @@ const onboarding: FlowV2< typeof initialize > = {
 											withLocale( '/setup/onboarding/post-checkout-onboarding', locale ),
 											{
 												siteSlug,
+												...( refParameter ? { ref: refParameter } : {} ),
 											}
 									  );
 

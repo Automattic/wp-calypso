@@ -89,6 +89,13 @@ export class EditorPage {
 		);
 		this.editorPopoverMenuComponent = new EditorPopoverMenuComponent( page, this.editor );
 		this.cookieBannerComponent = new CookieBannerComponent( page, this.editor );
+
+		// Automatically dismiss the Real-Time Collaboration notice modal whenever
+		// it appears and blocks an action. Using addLocatorHandler ensures it is
+		// caught regardless of when during the test it pops up.
+		this.page.addLocatorHandler( this.page.locator( '.rtc-notice-modal' ), async () => {
+			await this.page.locator( '.rtc-notice-modal' ).getByRole( 'button' ).first().click();
+		} );
 	}
 
 	//#region Generic and Shell Methods
@@ -786,8 +793,25 @@ export class EditorPage {
 		// Every publish action requires at least one click on the EditorToolbarComponent.
 		actionsArray.push( this.editorToolbarComponent.clickPublish() );
 
-		// Trigger a secondary/confirmation click if needed
-		actionsArray.push( this.editorPublishPanelComponent.publish() );
+		// Trigger a secondary/confirmation click if needed.
+		// When multiple entities need saving (e.g., a post + a synced jetpack_form),
+		// Gutenberg shows a multi-entity save panel instead of the normal publish panel.
+		// Race both so whichever panel appears first gets handled immediately.
+		actionsArray.push(
+			( async () => {
+				// Try the normal publish panel first (returns gracefully after 5s if not found).
+				await this.editorPublishPanelComponent.publish();
+				// If the normal panel wasn't found, try the multi-entity save panel
+				// (shown when a post + synced jetpack_form both need saving).
+				const editorParent = await this.editor.parent();
+				const saveButton = editorParent.locator(
+					'.entities-saved-states__panel button:has-text("Save")'
+				);
+				if ( await saveButton.isVisible( { timeout: 2000 } ).catch( () => false ) ) {
+					await saveButton.click();
+				}
+			} )()
+		);
 
 		// Resolve the promises.
 		const [ response ] = await Promise.all( [

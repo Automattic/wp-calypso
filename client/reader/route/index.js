@@ -14,7 +14,11 @@ export function getStreamUrl( feedID, siteID ) {
 		return getFeedUrl( feedID );
 	}
 
-	return getSiteUrl( siteID );
+	if ( siteID ) {
+		return getSiteUrl( siteID );
+	}
+
+	return undefined;
 }
 
 export function getStreamUrlFromPost( post ) {

@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import ConversationFollowButton from 'calypso/blocks/conversation-follow-button';
-import { shouldShowConversationFollowButton } from 'calypso/blocks/conversation-follow-button/helper';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import ReaderFollowConversationIcon from 'calypso/reader/components/icons/follow-conversation-icon';
@@ -14,6 +13,7 @@ import ReaderFollowButton from 'calypso/reader/follow-button';
 import { READER_POST_OPTIONS_MENU } from 'calypso/reader/follow-sources';
 import { canBeMarkedAsSeen, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
+import { isConversationFollowable } from 'calypso/reader/post/capabilities';
 import * as stats from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import * as PostUtils from 'calypso/state/posts/utils';
@@ -284,7 +284,7 @@ class ReaderPostEllipsisMenu extends Component {
 
 		const isTeamMember = isAutomatticTeamMember( teams );
 		const showConversationFollowButton =
-			this.props.showConversationFollow && shouldShowConversationFollowButton( post );
+			this.props.showConversationFollow && isConversationFollowable( post );
 
 		return (
 			<EllipsisMenu

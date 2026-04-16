@@ -42,15 +42,19 @@ import { getSidebarType, SidebarType } from 'calypso/state/global-sidebar/select
 import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'calypso/state/guided-tours/contexts';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import { isReaderMSDEnabled } from 'calypso/state/reader-ui/selectors';
+import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
+import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import hasGravatarDomainQueryParam from 'calypso/state/selectors/has-gravatar-domain-query-param';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import getSite from 'calypso/state/sites/selectors/get-site';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import {
+	getMostRecentlySelectedSiteId,
 	getSelectedSiteId,
 	getSidebarIsCollapsed,
 	masterbarIsVisible,
@@ -144,6 +148,7 @@ class Layout extends Component {
 		super( props );
 		this.state = {
 			isDesktop: isWithinBreakpoint( '>=782px' ),
+			initiallyUnlaunchedSite: false,
 		};
 	}
 
@@ -162,6 +167,15 @@ class Layout extends Component {
 
 	componentDidUpdate( prevProps ) {
 		refreshColorScheme( prevProps.colorScheme, this.props.colorScheme );
+	}
+
+	static getDerivedStateFromProps( props ) {
+		if ( props.site?.launch_status === 'unlaunched' ) {
+			return {
+				initiallyUnlaunchedSite: true,
+			};
+		}
+		return null;
 	}
 
 	renderMasterbar( loadHelpCenterIcon ) {
@@ -202,6 +216,7 @@ class Layout extends Component {
 					/>
 				) }
 				<MasterbarComponent
+					siteId={ this.props.siteId }
 					section={ this.props.sectionGroup }
 					isCheckout={ this.props.sectionName === 'checkout' }
 					isCheckoutPending={ this.props.sectionName === 'checkout-pending' }
@@ -210,6 +225,20 @@ class Layout extends Component {
 					isGlobalSidebarVisible={ this.props.isGlobalSidebarVisible }
 				/>
 			</>
+		);
+	}
+
+	renderCelebrateSiteLaunchModal() {
+		if ( ! this.state.initiallyUnlaunchedSite && ! this.props.hasCelebrateLaunchQueryParam ) {
+			return null;
+		}
+
+		return (
+			<AsyncLoad
+				require="calypso/my-sites/customer-home/celebrate-site-launch-modal"
+				placeholder={ null }
+				siteId={ this.props.siteId }
+			/>
 		);
 	}
 
@@ -360,6 +389,7 @@ class Layout extends Component {
 				{ ! this.props.isMSDEnabledForReader && (
 					<AsyncLoad require="calypso/layout/global-notifications" placeholder={ null } />
 				) }
+				{ this.renderCelebrateSiteLaunchModal() }
 			</div>
 		);
 	}
@@ -370,7 +400,13 @@ export default withCurrentRoute(
 		const dashboard = getDashboardFromHostname( window?.location?.hostname );
 		const sectionGroup = currentSection?.group ?? null;
 		const sectionName = currentSection?.name ?? null;
-		const siteId = getSelectedSiteId( state );
+
+		// Falls back to using the user's primary site if no site has been selected
+		// by the user yet
+		const siteId =
+			getSelectedSiteId( state ) ||
+			getMostRecentlySelectedSiteId( state ) ||
+			getPrimarySiteId( state );
 		const sectionJitmPath = getMessagePathForJITM( currentRoute );
 		const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
 		const isJetpack =
@@ -484,11 +520,13 @@ export default withCurrentRoute(
 			sectionGroup,
 			sectionName,
 			sectionJitmPath,
+			hasCelebrateLaunchQueryParam: getInitialQueryArguments( state )?.celebrateLaunch === 'true',
 			currentLayoutFocus: getCurrentLayoutFocus( state ),
 			colorScheme,
 			needsColorScheme,
 			isFetchingColorScheme: isFetchingAdminColor( state, siteId ),
 			siteId,
+			site: getSite( state, siteId ),
 			// We avoid requesting sites in the Jetpack Connect authorization step, because this would
 			// request all sites before authorization has finished. That would cause the "all sites"
 			// request to lack the newly authorized site, and when the request finishes after

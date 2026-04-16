@@ -66,6 +66,7 @@ export interface Purchase {
 	isLocked: boolean;
 	isRechargeable: boolean;
 	isRefundable: boolean;
+	isWithinInitialRefundWindow: boolean;
 	isRenewable: boolean;
 	isRenewal: boolean;
 	isWooExpressTrial: boolean;
@@ -193,6 +194,7 @@ export interface Purchase {
 	autoRenewCouponDiscountPercentage: number | null;
 
 	isJetpackPlanOrProduct: boolean;
+	isAttachedToHoldingSite: boolean;
 }
 
 export interface PurchasePriceTier {

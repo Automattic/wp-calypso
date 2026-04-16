@@ -5,26 +5,46 @@ import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { bellUnread, bell } from '@wordpress/icons';
 import clsx from 'clsx';
-import { Suspense, lazy, useEffect, useState } from 'react';
+import { Suspense, lazy, useCallback, useEffect, useState } from 'react';
 import wpcom from 'calypso/lib/wp';
 import { useAuth } from '../auth';
-import { useOmnibarEvent } from '../interim-omnibar/click-handlers';
+import { useHelpCenter } from '../help-center';
+import { omnibarEvents, useOmnibarEvent } from '../interim-omnibar/omnibar-events';
 import { useLocale } from '../locale';
 import './style.scss';
 
 const AsyncNotificationApp = lazy( () => import( '@automattic/notifications/src/app' ) );
 
-export default function Notifications( { className }: { className: string } ) {
+export default function Notifications( {
+	className,
+	anchor,
+}: {
+	className?: string;
+	/** When true, hides the built-in toggle button (the omnibar provides its own). */
+	anchor?: boolean;
+} ) {
 	const navigate = useNavigate();
 	const { user } = useAuth();
 	const locale = useLocale();
 	const isMobileViewport = useViewportMatch( 'small', '<' );
+	const { isShown: isHelpCenterShown, setShowHelpCenter } = useHelpCenter();
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ hasUnseenNotifications, setHasUnseenNotifications ] = useState( user.has_unseen_notes );
+	const [ anchorEl, setAnchorEl ] = useState< HTMLElement | null >( null );
 
 	const handleToggle = ( willOpen: boolean ) => {
+		if ( willOpen ) {
+			setShowHelpCenter( false, undefined, true );
+		}
 		setIsOpen( willOpen );
 	};
+
+	// Close notifications when help center opens.
+	useEffect( () => {
+		if ( isHelpCenterShown ) {
+			setIsOpen( false );
+		}
+	}, [ isHelpCenterShown ] );
 
 	const handleClose = () => {
 		handleToggle( false );
@@ -34,6 +54,7 @@ export default function Notifications( { className }: { className: string } ) {
 		APP_RENDER_NOTES: [
 			( store: unknown, { newNoteCount }: { newNoteCount: number } ) => {
 				setHasUnseenNotifications( newNoteCount > 0 );
+				omnibarEvents.notificationsUnseenCount.emit( newNoteCount );
 			},
 		],
 		VIEW_SETTINGS: [
@@ -55,7 +76,17 @@ export default function Notifications( { className }: { className: string } ) {
 		CLOSE_PANEL: [ handleClose ],
 	};
 
-	useOmnibarEvent( 'notifications', () => setIsOpen( ( v ) => ! v ) );
+	const handleOmnibarToggle = useCallback( () => {
+		setIsOpen( ( prev ) => {
+			if ( ! prev ) {
+				setShowHelpCenter( false, undefined, true );
+			}
+			return ! prev;
+		} );
+	}, [ setShowHelpCenter ] );
+
+	useOmnibarEvent( 'notificationsAnchor', setAnchorEl );
+	useOmnibarEvent( 'notifications', handleOmnibarToggle );
 
 	useEffect( () => {
 		const handleKeyDown = ( event: KeyboardEvent ) => {
@@ -68,7 +99,7 @@ export default function Notifications( { className }: { className: string } ) {
 			if ( event.key === 'n' ) {
 				event.stopPropagation();
 				event.preventDefault();
-				handleToggle( true );
+				handleOmnibarToggle();
 			}
 		};
 
@@ -76,7 +107,7 @@ export default function Notifications( { className }: { className: string } ) {
 		return () => {
 			window.removeEventListener( 'keydown', handleKeyDown, false );
 		};
-	}, [] );
+	}, [ handleOmnibarToggle ] );
 
 	return (
 		<Dropdown
@@ -85,6 +116,7 @@ export default function Notifications( { className }: { className: string } ) {
 				placement: 'bottom-end',
 				offset: 8,
 				focusOnMount: true,
+				...( anchorEl && { anchor: anchorEl } ),
 				...( isEnabled( 'dashboard/omnibar' ) && {
 					onFocusOutside: () => {
 						// When focus moves to the omnibar (e.g. clicking the
@@ -104,16 +136,18 @@ export default function Notifications( { className }: { className: string } ) {
 			open={ isOpen }
 			expandOnMobile={ isMobileViewport }
 			onToggle={ handleToggle }
-			renderToggle={ ( { isOpen, onToggle } ) => (
-				<Button
-					className={ clsx( className, 'dashboard-notifications__icon' ) }
-					onClick={ onToggle }
-					aria-expanded={ isOpen }
-					variant="tertiary"
-					label={ __( 'Notifications' ) }
-					icon={ hasUnseenNotifications ? bellUnread : bell }
-				/>
-			) }
+			renderToggle={ ( { isOpen, onToggle } ) =>
+				anchor ? null : (
+					<Button
+						className={ clsx( className, 'dashboard-notifications__icon' ) }
+						onClick={ onToggle }
+						aria-expanded={ isOpen }
+						variant="tertiary"
+						label={ __( 'Notifications' ) }
+						icon={ hasUnseenNotifications ? bellUnread : bell }
+					/>
+				)
+			}
 			renderContent={ () => (
 				<div
 					style={ {
