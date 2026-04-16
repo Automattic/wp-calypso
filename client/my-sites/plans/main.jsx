@@ -5,6 +5,10 @@ import {
 	getPlan,
 	is100Year,
 	isFreePlanProduct,
+	isPersonalPlan,
+	isPremiumPlan,
+	isBusinessPlan,
+	isEcommercePlan,
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	PLAN_HOSTING_TRIAL_MONTHLY,
@@ -180,6 +184,31 @@ class PlansComponent extends Component {
 				? { [ currentPlan.productSlug ]: this.props.translate( 'Current plan' ) }
 				: undefined;
 
+		// Experiment: hide plans below current plan for variants A and B
+		let hideFreePlanForExperiment = false;
+		let hidePersonalPlanForExperiment = false;
+		let hidePremiumPlanForExperiment = false;
+		let hideBusinessPlanForExperiment = false;
+
+		if ( isExperimentVariant && currentPlan?.productSlug ) {
+			const slug = currentPlan.productSlug;
+			if ( isPersonalPlan( slug ) ) {
+				hideFreePlanForExperiment = true;
+			} else if ( isPremiumPlan( slug ) ) {
+				hideFreePlanForExperiment = true;
+				hidePersonalPlanForExperiment = true;
+			} else if ( isBusinessPlan( slug ) ) {
+				hideFreePlanForExperiment = true;
+				hidePersonalPlanForExperiment = true;
+				hidePremiumPlanForExperiment = true;
+			} else if ( isEcommercePlan( slug ) ) {
+				hideFreePlanForExperiment = true;
+				hidePersonalPlanForExperiment = true;
+				hidePremiumPlanForExperiment = true;
+				hideBusinessPlanForExperiment = true;
+			}
+		}
+
 		return (
 			<PlansFeaturesMain
 				isInSiteDashboard={ isUntangled }
@@ -198,6 +227,10 @@ class PlansComponent extends Component {
 				intent={ plansIntent }
 				isSpotlightOnCurrentPlan={ showSpotlight }
 				highlightLabelOverrides={ highlightLabelOverrides }
+				hideFreePlan={ hideFreePlanForExperiment || undefined }
+				hidePersonalPlan={ hidePersonalPlanForExperiment || undefined }
+				hidePremiumPlan={ hidePremiumPlanForExperiment || undefined }
+				hideBusinessPlan={ hideBusinessPlanForExperiment || undefined }
 				hideEnterprisePlan={ hideEnterprise }
 				hideEcommercePlan={ hideEcommerce }
 				showPlanTypeSelectorDropdown={ isEnabled( 'onboarding/interval-dropdown' ) }
