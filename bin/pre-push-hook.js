@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const execSync = require( 'child_process' ).execSync;
+const fs = require( 'fs' );
 const readline = require( 'readline-sync' );
 
 console.log(
@@ -9,9 +9,19 @@ console.log(
 		'GPLv2 compatible licenses — see docs/CONTRIBUTING.md for details.\n\n'
 );
 
-const currentBranch = execSync( 'git rev-parse --abbrev-ref HEAD' ).toString().trim();
+// Git pre-push hooks receive pushed refs on stdin as:
+// <local ref> <local sha> <remote ref> <remote sha>
+const input = fs.readFileSync( '/dev/stdin', 'utf8' );
+const pushingToTrunk = input
+	.split( '\n' )
+	.filter( Boolean )
+	.some( ( line ) => line.split( ' ' )[ 2 ] === 'refs/heads/trunk' );
 
-if ( 'trunk' === currentBranch ) {
+if ( pushingToTrunk ) {
+	if ( ! process.stdin.isTTY ) {
+		console.log( 'Pushing to trunk is not allowed in non-interactive environments.' );
+		process.exit( 1 );
+	}
 	if ( ! readline.keyInYN( "You're about to push !!![ trunk ]!!!, is that what you intended?" ) ) {
 		process.exit( 1 );
 	}
