@@ -76,7 +76,7 @@ body.is-section-plans {
 }
 
 .plans.is-de-emphasized-current-plan {
-	.plan-features-2023-grid__popular-badge.is-free-plan .plans-grid__plan-pill {
+	td.is-current-plan .plans-grid__plan-pill {
 		background: var(--color-neutral-0) !important;
 		color: var(--color-neutral-80) !important;
 		text-transform: none !important;
