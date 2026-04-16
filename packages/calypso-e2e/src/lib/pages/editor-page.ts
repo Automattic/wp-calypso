@@ -484,9 +484,6 @@ export class EditorPage {
 
 		await inserter.searchBlockInserter( patternName );
 
-		// Register the snackbar listener before the click so we don't miss a
-		// toast that appears and dismisses while the click's post-action
-		// navigation wait still resolves on slow CI.
 		const insertConfirmationToastLocator = exactMatch
 			? editorParent.locator(
 					`.components-snackbar__content:text('Block pattern "${ patternName }" inserted.')`
@@ -496,14 +493,18 @@ export class EditorPage {
 						hasText: /^Block pattern ".+" inserted\.$/,
 					} )
 					.first();
-		const toastPromise = insertConfirmationToastLocator.waitFor();
 
 		const locator = await inserter.selectBlockInserterResult( patternName, {
 			type: 'pattern',
 			exactMatch,
 		} );
 
-		await toastPromise;
+		// Wait for the insertion confirmation toast after the click so each
+		// operation (click stability + toast appearance) gets its own timeout
+		// window. The click uses noWaitAfter for patterns, resolving immediately
+		// after firing, and WordPress snackbar toasts stay visible for ~10 s,
+		// so there is no practical risk of missing the toast.
+		await insertConfirmationToastLocator.waitFor();
 		return locator;
 	}
 
