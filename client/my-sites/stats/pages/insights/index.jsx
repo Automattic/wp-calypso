@@ -26,12 +26,12 @@ import PageViewTracker from '../../stats-page-view-tracker';
 import StatsUpsell from '../../stats-upsell/insights-upsell';
 import StatsModuleListing from '../shared/stats-module-listing';
 
-export const shouldRenderInsightsUpsell = (
+export const shouldRenderInsightsUpsell = ( {
 	isStatsPaidWpcomV3Enabled,
 	isPending,
 	siteId,
-	shouldGateInsights
-) => isStatsPaidWpcomV3Enabled && ! isPending && !! siteId && shouldGateInsights;
+	shouldGateInsights,
+} ) => isStatsPaidWpcomV3Enabled && ! isPending && !! siteId && shouldGateInsights;
 
 function StatsInsights( { context } ) {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
@@ -53,12 +53,12 @@ function StatsInsights( { context } ) {
 	}, [ reduxDispatch, isPending, siteId, usageInfo ] );
 
 	const shouldGateInsights = useShouldGateStats( STATS_FEATURE_PAGE_INSIGHTS );
-	const shouldRenderUpsell = shouldRenderInsightsUpsell(
-		config.isEnabled( 'stats/paid-wpcom-v3' ),
+	const shouldRenderUpsell = shouldRenderInsightsUpsell( {
+		isStatsPaidWpcomV3Enabled: config.isEnabled( 'stats/paid-wpcom-v3' ),
 		isPending,
 		siteId,
-		shouldGateInsights
-	);
+		shouldGateInsights,
+	} );
 
 	useEffect(
 		() =>
