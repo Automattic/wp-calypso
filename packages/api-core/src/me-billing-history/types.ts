@@ -110,4 +110,14 @@ export interface Receipt {
 	items: ReceiptItem[];
 	tax_vendor_info?: TaxVendorInfo;
 	checkout_type?: string;
+	failed_purchases?: Record<
+		string,
+		Array< {
+			product_meta: string;
+			product_id: string | number;
+			product_slug: string;
+			product_cost: string | number;
+			product_name: string;
+		} >
+	>;
 }

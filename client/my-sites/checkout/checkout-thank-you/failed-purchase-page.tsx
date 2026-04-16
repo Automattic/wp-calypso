@@ -27,7 +27,7 @@ export function FailedPurchasePage() {
 	// Fetch receipt if not already loaded
 	useEffect( () => {
 		if ( receiptIdNum && ! receipt?.data ) {
-			dispatch( fetchReceipt( receiptIdNum ) );
+			dispatch( fetchReceipt( receiptIdNum, true ) );
 		}
 	}, [ receiptIdNum, receipt?.data, dispatch ] );
 
