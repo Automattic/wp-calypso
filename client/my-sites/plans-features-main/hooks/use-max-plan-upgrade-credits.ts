@@ -24,20 +24,41 @@ export function useMaxPlanUpgradeCredits( { siteId, plans }: Props ): number {
 		useCheckPlanAvailabilityForPurchase,
 		withProratedDiscounts: true,
 	} );
+	const { data: sitePlans } = Plans.useSitePlans( { siteId, coupon: undefined } );
 
 	if ( ! siteId || ! pricing ) {
 		return 0;
 	}
 
 	const creditsPerPlan = plans.map( ( planSlug ) => {
+		if ( ! planAvailabilityForPurchase[ planSlug ] ) {
+			return 0;
+		}
+
+		/**
+		 * For multi-year prorated upgrades (e.g. a site with a far-future expiry), the API
+		 * returns the total N-year proration credit in the cost_overrides entry rather than in
+		 * raw_discount_integer (which only carries the per-year equivalent). Using oldPrice –
+		 * newPrice from the override gives the full credit the user will see at checkout.
+		 */
+		const sitePlan = sitePlans?.[ planSlug ];
+		const proratedOverride = sitePlan?.pricing?.costOverrides?.find(
+			( { overrideCode } ) =>
+				overrideCode === Plans.COST_OVERRIDE_REASONS.RECENT_PLAN_PRORATION ||
+				overrideCode === Plans.COST_OVERRIDE_REASONS.RECENT_DOMAIN_PRORATION
+		);
+		if ( proratedOverride ) {
+			// old_price / new_price in cost_overrides are in major currency units (dollars),
+			// whereas the rest of the pricing data uses smallest units (cents). Convert here
+			// so the caller receives a consistent smallest-unit value.
+			return Math.round( ( proratedOverride.oldPrice - proratedOverride.newPrice ) * 100 );
+		}
+
+		// Fallback: non-prorated discounts (e.g. sale coupons with upgrade credits).
 		const discountedPrice = pricing?.[ planSlug ]?.discountedPrice.full;
 		const originalPrice = pricing?.[ planSlug ]?.originalPrice.full;
 
-		if (
-			! planAvailabilityForPurchase[ planSlug ] ||
-			typeof discountedPrice !== 'number' ||
-			typeof originalPrice !== 'number'
-		) {
+		if ( typeof discountedPrice !== 'number' || typeof originalPrice !== 'number' ) {
 			return 0;
 		}
 
