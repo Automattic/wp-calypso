@@ -14,7 +14,7 @@
 // When displaying URLs in the DataViews, using the --wp-admin-theme-color link color is overwhelming.
 // Using this class name, we override the link color with the text color.
 a.dataviews-url-field {
-	color: $gray-700;
+	color: var(--dashboard__text-color-secondary);
 
 	&:hover {
 		color: var(--wp-admin-theme-color);
@@ -33,7 +33,7 @@ a.dataviews-url-field {
 
 .dashboard-dataviews-empty-state__heading {
 	@include heading-x-large;
-	color: $gray-900;
+	color: var(--dashboard__text-color);
 	margin: 0;
 }
 

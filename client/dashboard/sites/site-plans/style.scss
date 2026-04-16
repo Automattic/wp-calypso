@@ -212,7 +212,7 @@
 	}
 
 	thead tr {
-		border-block-end: 1px solid #e0e0e0;
+		border-block-end: 1px solid var(--dashboard__border-color-strong);
 
 		th {
 			font-weight: 600;
@@ -220,7 +220,7 @@
 	}
 
 	tbody tr {
-		border-block-end: 1px solid #e0e0e0;
+		border-block-end: 1px solid var(--dashboard__border-color-strong);
 
 		&:last-child {
 			border-block-end: none;
@@ -235,7 +235,7 @@
 
 .site-plans__comparison-group-row th {
 	font-weight: 600;
-	background: #f6f7f7;
+	background: var(--dashboard__surface-color);
 	font-size: 11px;
 	text-transform: uppercase;
 	letter-spacing: 0.5px;

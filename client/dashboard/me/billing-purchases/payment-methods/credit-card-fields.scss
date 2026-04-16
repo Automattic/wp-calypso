@@ -5,7 +5,7 @@
 	font-weight: 500;
 	line-height: 1.4;
 	text-transform: uppercase;
-	color: #1e1e1e;
+	color: var(--dashboard__text-color);
 }
 
 .credit-card-field__stripe-element {
@@ -16,16 +16,16 @@
 		display: block;
 		width: 100%;
 		box-sizing: border-box;
-		border: 1px solid #949494;
+		border: 1px solid var(--dashboard__border-color-strong);
 		border-radius: 2px;
 		padding: 10px 16px;
 		font-size: 13px;
 		line-height: 20px;
-		background-color: #fff;
+		background-color: var(--wp-components-color-background);
 		transition: border-color 0.1s ease-in-out, box-shadow 0.1s ease-in-out;
 
 		&:hover {
-			border-color: #1e1e1e;
+			border-color: var(--dashboard__text-color);
 		}
 
 		&--focus {

@@ -10,7 +10,7 @@
 
 .celebration-modal--content {
 	padding: $grid-unit-10 $grid-unit-20;
-	background-color: $gray-100;
+	background-color: var(--dashboard__surface-color);
 
 	a {
 		color: inherit;

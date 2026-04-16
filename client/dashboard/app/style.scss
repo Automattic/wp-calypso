@@ -16,7 +16,10 @@ body,
 	height: 100%;
 }
 
-body {
+// `html body` (specificity 0,0,2) beats Calypso's global `body { color: var(--color-text); }` rule
+// in `client/assets/stylesheets/_main.scss`, which also loads in this mount and would otherwise
+// win on cascade order and leak `--color-text` (= #1e1e1e) into every unstyled text node.
+html body {
 	margin: 0;
 	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell,
 		'Helvetica Neue', sans-serif;
@@ -35,6 +38,139 @@ body {
 
 a {
 	color: var( --wp-admin-theme-color );
+}
+
+// Surface / Card from @wordpress/components bake a literal white background into emotion-generated CSS
+// (node_modules/@wordpress/components/src/utils/config-values.js `surfaceColor: COLORS.white`), so the
+// `--wp-components-color-*` tokens don't reach them. !important is needed because the emotion rule is
+// injected at runtime and would otherwise win on cascade order.
+.components-card,
+.components-surface {
+	background-color: var( --wp-components-color-background ) !important;
+	color: var( --dashboard__text-color ) !important;
+}
+
+// Card border is rendered via box-shadow with a hardcoded rgba(0, 0, 0, 0.1), which disappears on dark
+// backgrounds. Replace with a themed border color.
+.components-card {
+	box-shadow: 0 0 0 1px var( --dashboard__border-color-strong ) !important;
+}
+
+.components-card__header,
+.components-card__footer {
+	border-color: var( --dashboard__border-color ) !important;
+}
+
+// @wordpress/dataviews ships a compiled stylesheet with many literal #fff / #f0f0f0 / #e0e0e0 values
+// that don't respond to our theme tokens. The wrapper exposes `--wp-dataviews-color-background`;
+// set it, and override the remaining literal-color selectors in the same cascade.
+.dataviews-wrapper {
+	--wp-dataviews-color-background: var( --dashboard__background-color );
+}
+
+.dataviews-filters__summary-chip-container .dataviews-filters__summary-chip {
+	background: var( --dashboard__surface-color );
+	color: var( --dashboard__text-color );
+
+	&:hover,
+	&:focus-visible,
+	&[aria-expanded="true"] {
+		background: var( --dashboard__surface-color-hover );
+		color: var( --dashboard__text-color );
+	}
+}
+
+.dataviews-filters__search-widget-listitem {
+	.dataviews-filters__search-widget-listitem-single-selection:checked::before,
+	.dataviews-filters__search-widget-listitem-single-selection.is-selected::before {
+		background-color: var( --wp-components-color-background );
+		border-color: var( --wp-components-color-background );
+	}
+
+	.dataviews-filters__search-widget-listitem-multi-selection {
+		background: var( --wp-components-color-background );
+		color: var( --dashboard__text-color );
+	}
+}
+
+.dataviews-filters__search-widget-filter-combobox__wrapper .dataviews-filters__search-widget-filter-combobox__input:focus {
+	background: var( --wp-components-color-background );
+}
+
+.dataviews-view-grid .dataviews-view-grid__media,
+.dataviews-view-grid__card .dataviews-view-grid__media-actions .dataviews-all-actions-button {
+	background-color: var( --wp-components-color-background );
+}
+
+// Selected-row blends in the table view use `color-mix( ... , #fff )`; restate them against the theme bg.
+.dataviews-view-table tr.is-selected,
+.dataviews-view-table tr.is-selected .dataviews-view-table__actions-column--sticky,
+.dataviews-view-table.has-bulk-actions tr.is-selected .dataviews-view-table__actions-column--sticky,
+.dataviews-view-table.has-bulk-actions tr.is-selected:hover .dataviews-view-table__actions-column--sticky {
+	background-color: color-mix( in srgb, rgb( var( --wp-admin-theme-color--rgb ) ) 4%, var( --dashboard__background-color ) );
+}
+
+// Text colors inside DataViews are hardcoded (#1e1e1e / #2f2f2f for primary, #757575 for muted) —
+// unreadable on dark backgrounds. Remap to theme tokens.
+.dataviews-title-field,
+.dataviews-title-field a,
+.dataviews-title-field button.components-button.is-link,
+.dataviews-title-field--clickable,
+.dataviews-bulk-actions-footer__item-count,
+.dataviews-view-grid__group-header,
+.dataviews-view-grid .dataviews-view-grid__card.is-selected .dataviews-view-grid__fields .dataviews-view-grid__field .dataviews-view-grid__field-value,
+.dataviews-view-list__group-header,
+.dataviews-view-list div[role="row"].is-selected .dataviews-view-list__item-wrapper,
+.dataviews-view-list div[role="row"].is-selected:focus-within .dataviews-view-list__item-wrapper,
+.dataviews-view-list div[role="article"].is-selected .dataviews-view-list__item-wrapper,
+.dataviews-view-list div[role="article"].is-selected:focus-within .dataviews-view-list__item-wrapper,
+.dataviews-view-list div[role="row"].is-selected .dataviews-view-list__item-wrapper .dataviews-title-field,
+.dataviews-view-list div[role="row"].is-selected .dataviews-view-list__item-wrapper .dataviews-view-list__field,
+.dataviews-view-list div[role="row"].is-selected:focus-within .dataviews-view-list__item-wrapper .dataviews-title-field,
+.dataviews-view-list div[role="row"].is-selected:focus-within .dataviews-view-list__item-wrapper .dataviews-view-list__field,
+.dataviews-view-list div[role="article"].is-selected .dataviews-view-list__item-wrapper .dataviews-title-field,
+.dataviews-view-list div[role="article"].is-selected .dataviews-view-list__item-wrapper .dataviews-view-list__field,
+.dataviews-view-list div[role="article"].is-selected:focus-within .dataviews-view-list__item-wrapper .dataviews-title-field,
+.dataviews-view-list div[role="article"].is-selected:focus-within .dataviews-view-list__item-wrapper .dataviews-view-list__field,
+.dataviews-view-table th,
+.dataviews-view-table .dataviews-view-table-header-button:not(:hover),
+.dataviews-view-table__group-header-row .dataviews-view-table__group-header-cell,
+.dataviews-view-picker-grid .dataviews-view-picker-grid__card.is-selected .dataviews-view-picker-grid__fields .dataviews-view-picker-grid__field .dataviews-view-picker-grid__field-value,
+.dataviews-view-picker-grid-group__header {
+	color: var( --dashboard__text-color );
+}
+
+.dataviews-filters__summary-operators-container .dataviews-filters__summary-operators-filter-name,
+.dataviews-filters__search-widget-listitem .dataviews-filters__search-widget-listitem-description,
+.dataviews-view-grid .dataviews-view-grid__fields .dataviews-view-grid__field .dataviews-view-grid__field-name,
+.dataviews-view-list .dataviews-view-list__field,
+.dataviews-view-table,
+.dataviews-view-table tr.is-selected,
+.dataviews-view-picker-grid .dataviews-view-picker-grid__fields .dataviews-view-picker-grid__field .dataviews-view-picker-grid__field-name,
+.dataviews-view-activity .dataviews-view-activity__item-content .dataviews-view-activity__item-fields {
+	color: var( --dashboard__text-color-muted );
+}
+
+.dataviews-filters__search-widget-filter-combobox__wrapper .dataviews-filters__search-widget-filter-combobox__input::placeholder {
+	color: var( --dashboard__text-color-muted );
+}
+
+// Row, column, and panel dividers are hardcoded #f0f0f0 / #e0e0e0 — invisible on dark.
+.dataviews-view-list div[role="row"],
+.dataviews-view-list div[role="article"],
+.dataviews-view-table tr,
+.dataviews-footer {
+	border-top-color: var( --dashboard__border-color );
+}
+
+.dataviews-filters__summary-operators-container:has(+ .dataviews-filters__search-widget-listbox),
+.dataviews-filters__summary-operators-container:has(+ .dataviews-filters__search-widget-no-elements),
+.dataviews-filters__summary-operators-container:has(+ .dataviews-filters__user-input-widget) {
+	border-bottom-color: var( --dashboard__border-color );
+}
+
+.dataviews-filters__search-widget-filter-combobox-list {
+	border-top-color: var( --dashboard__border-color );
 }
 
 // This is a temporary fix to ensure the tooltip has a box-shadow.

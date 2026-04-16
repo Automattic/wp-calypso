@@ -2,7 +2,7 @@
 
 .marked-lines {
 	padding: 0;
-	background-color: #f5f5f5;
+	background-color: var(--dashboard__surface-color);
 	font-family: "Courier 10 Pitch", Courier, monospace;
 	display: flex;
 	flex-direction: row;
@@ -21,8 +21,8 @@
 
 .marked-lines__line-number {
 	padding: 0 4px;
-	background-color: $gray-100;
-	color: $gray-700;
+	background-color: var(--dashboard__surface-color);
+	color: var(--dashboard__text-color-secondary);
 
 	&.marked-lines__marked-line {
 		background-color: color-mix(in srgb, $alert-red 15%, transparent);

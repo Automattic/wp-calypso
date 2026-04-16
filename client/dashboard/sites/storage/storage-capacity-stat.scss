@@ -9,11 +9,11 @@
 		font-size: $font-size-large;
 		font-weight: $font-weight-medium;
 		line-height: $font-line-height-small;
-		color: $gray-900;
+		color: var(--dashboard__text-color);
 	}
 
 	&__description {
-		color: $gray-700;
+		color: var(--dashboard__text-color-secondary);
 		font-size: $font-size-small;
 		line-height: $font-line-height-small;
 	}
@@ -22,7 +22,7 @@
 		display: flex;
 		height: $grid-unit-05;
 		margin-block: 0.25 * $grid-unit;
-		background-color: $gray-100;
+		background-color: var(--dashboard__surface-color);
 		border-radius: 4px;
 		overflow: hidden;
 	}

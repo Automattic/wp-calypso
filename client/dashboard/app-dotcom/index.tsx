@@ -44,6 +44,7 @@ boot( {
 		siteOverview: {
 			preview: ! isEnabled( 'dashboard/omnibar' ),
 		},
+		colorScheme: true,
 	},
 	optIn: true,
 	components: {

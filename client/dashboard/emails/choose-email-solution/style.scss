@@ -2,11 +2,11 @@
 @import '@wordpress/base-styles/mixins';
 
 .email-providers {
-	border: 1px solid $gray-200;
+	border: 1px solid var(--dashboard__border-color);
 	border-radius: 8px;
 	display: flex;
 	flex-direction: column;
-	background-color: #fff;
+	background-color: var(--wp-components-color-background);
 
 	@include break-small {
 		flex-direction: row;
@@ -18,11 +18,11 @@
 	justify-content: flex-start;
 
 	&:not(:first-child) {
-		border-top: 1px solid $gray-200;
+		border-top: 1px solid var(--dashboard__border-color-strong);
 
 		@include break-small {
 			border-top: none;
-			border-inline-start: 1px solid $gray-200;
+			border-inline-start: 1px solid var(--dashboard__border-color-strong);
 		}
 	}
 }

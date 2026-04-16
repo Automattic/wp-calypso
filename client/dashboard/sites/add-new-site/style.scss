@@ -9,7 +9,7 @@
 	color: inherit !important; // avoid changing the color on hover
 
 	&:hover {
-		background: $gray-100;
+		background: var(--dashboard__surface-color);
 		border-radius: $radius-medium;
 	}
 }
@@ -20,7 +20,7 @@
 }
 
 .dashboard-add-new-site__banner {
-	background: $gray-100;
+	background: var(--dashboard__surface-color);
 	border-radius: $radius-medium;
 	padding: $grid-unit-20;
 }

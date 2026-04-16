@@ -6,7 +6,7 @@
 		min-width: 0;
 
 		> a {
-			color: $gray-800;
+			color: var(--dashboard__text-color);
 			font-weight: 500;
 			min-width: 0;
 			text-decoration: none;
@@ -18,7 +18,7 @@
 	}
 
 	&__url a {
-		color: $gray-700;
+		color: var(--dashboard__text-color-secondary);
 		display: flex;
 		flex: 1 1 100%;
 		min-width: 0;

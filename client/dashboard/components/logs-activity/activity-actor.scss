@@ -7,14 +7,14 @@
 
     .site-activity-logs__actor-icon-server,
     .site-activity-logs__actor-icon-default {
-        background-color: $gray-300;
-        fill: $gray-700;
+        background-color: var(--dashboard__surface-color-hover);
+        fill: var(--dashboard__text-color-secondary);
     }
 
     .site-activity-logs__actor-mcp {
         display: block;
         font-size: 0.75rem;
-        color: $gray-600;
+        color: var(--dashboard__text-color-muted);
         margin-block-start: 2px;
     }
 }
