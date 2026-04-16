@@ -73,6 +73,11 @@ const PostCheckoutOnboarding: StepType< {
 		[]
 	);
 
+	const planCartItem = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
+		[]
+	);
+
 	const isJetpack = useSelect(
 		( select ) => site && ( select( SITE_STORE ) as SiteSelect ).isJetpackSite( site.ID ),
 		[ site ]
@@ -113,7 +118,11 @@ const PostCheckoutOnboarding: StepType< {
 	const refParameter = useQuery().get( 'ref' );
 	const isWooHostingSolutions = refParameter === WOO_HOSTING_SOLUTIONS_REF;
 
-	const isCommercePlan = !! site?.plan && isEcommerce( site.plan );
+	// Prefer the cart item (what the user just bought — freshest signal during
+	// post-checkout) over site.plan (which can be stale before the site's plan
+	// assignment syncs).
+	const effectivePlan = planCartItem ?? site?.plan;
+	const isCommercePlan = !! effectivePlan && isEcommerce( effectivePlan );
 
 	// Woo-hosting-solutions ref:
 	// - Commerce plans: the backend auto-provisions the Atomic transfer and
