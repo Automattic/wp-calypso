@@ -1,5 +1,11 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { FEATURE_BIG_SKY, isBusiness, isPersonal, isPremium } from '@automattic/calypso-products';
+import {
+	FEATURE_BIG_SKY,
+	isBusiness,
+	isEcommerce,
+	isPersonal,
+	isPremium,
+} from '@automattic/calypso-products';
 import { SiteIntent } from '@automattic/data-stores/src/onboard';
 import { Step } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -106,7 +112,17 @@ const PostCheckoutOnboarding: StepType< {
 
 	const refParameter = useQuery().get( 'ref' );
 	const isWooHostingSolutions = refParameter === WOO_HOSTING_SOLUTIONS_REF;
-	const pluginToInstall = isWooHostingSolutions ? 'woocommerce' : goalPlugin;
+
+	const isCommercePlan = !! site?.plan && isEcommerce( site.plan );
+
+	// Woo-hosting-solutions ref:
+	// - Commerce plans: the backend auto-provisions the Atomic transfer and
+	//   installs WooCommerce, so we skip frontend initiation and only wait for
+	//   readiness below.
+	// - Business plans: must initiate an Atomic transfer with WooCommerce so
+	//   the plugin gets installed as part of the transfer.
+	const shouldInitiateWooTransfer = isWooHostingSolutions && ! isCommercePlan;
+	const pluginToInstall = shouldInitiateWooTransfer ? 'woocommerce' : goalPlugin;
 	const shouldInstallPlugin = Boolean( pluginToInstall );
 
 	/**
@@ -161,9 +177,11 @@ const PostCheckoutOnboarding: StepType< {
 
 			// Poll for the Woo ref regardless of the atomic path above — the
 			// site may already be Atomic when this effect mounts while
-			// WooCommerce is still finishing installation.
-			if ( isWooHostingSolutions && pluginToInstall ) {
-				await waitForPluginsActive( site.ID, [ pluginToInstall ] );
+			// WooCommerce is still finishing installation. This covers both the
+			// Commerce plan (backend auto-install) and the Business plan (install
+			// via the transfer initiated above).
+			if ( isWooHostingSolutions ) {
+				await waitForPluginsActive( site.ID, [ 'woocommerce' ] );
 			}
 
 			return providedDependencies;
