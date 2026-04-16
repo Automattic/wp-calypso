@@ -39,9 +39,17 @@ export async function fetchUserReceipts(): Promise< Receipt[] > {
 	return fullBillingHistory;
 }
 
-export async function fetchReceipt( receiptId: number ): Promise< Receipt > {
+export async function fetchReceipt(
+	receiptId: number,
+	includeFailedPurchases = false
+): Promise< Receipt > {
+	let path = `/me/billing-history/receipt/${ receiptId }`;
+	if ( includeFailedPurchases ) {
+		path += '?include_failed_purchases=true';
+	}
+
 	return wpcom.req.get( {
-		path: `/me/billing-history/receipt/${ receiptId }`,
+		path,
 		apiVersion: '1.2',
 	} );
 }

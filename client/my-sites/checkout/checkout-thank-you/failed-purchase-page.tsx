@@ -1,6 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import Loading from 'calypso/components/loading';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -13,11 +12,10 @@ import './style.scss';
 
 export function FailedPurchasePage() {
 	const translate = useTranslate();
-	const location = useLocation();
 	const dispatch = useDispatch();
 
 	// Get receipt ID from query param: /checkout/failed-purchases?receipt_id=12345
-	const params = new URLSearchParams( location.search );
+	const params = new URLSearchParams( window.location.search );
 	const receiptId = params.get( 'receipt_id' );
 	const receiptIdNum = receiptId ? parseInt( receiptId, 10 ) : null;
 

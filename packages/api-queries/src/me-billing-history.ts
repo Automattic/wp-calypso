@@ -16,11 +16,7 @@ export const receiptQueryKey = ( receiptId: number, includeFailedPurchases = fal
 export const receiptQuery = ( receiptId: number, includeFailedPurchases = false ) =>
 	queryOptions( {
 		queryKey: receiptQueryKey( receiptId, includeFailedPurchases ),
-		queryFn: () =>
-			fetchReceipt(
-				receiptId,
-				includeFailedPurchases ? { includeFailedPurchases: 'true' } : undefined
-			),
+		queryFn: () => fetchReceipt( receiptId, includeFailedPurchases ),
 	} );
 
 export const sendReceiptEmailMutation = () =>
