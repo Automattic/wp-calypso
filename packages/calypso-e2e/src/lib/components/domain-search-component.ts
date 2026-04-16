@@ -41,6 +41,8 @@ export class DomainSearchComponent {
 	 * @param {string} keyword Keyword to use in domain search.
 	 */
 	async search( keyword: string ): Promise< void > {
+		const container = this.getContainer();
+
 		/**
 		 *
 		 * Closure to pass into the retry method.
@@ -48,6 +50,16 @@ export class DomainSearchComponent {
 		 * @param {Page} page Page object.
 		 */
 		async function searchDomainClosure( page: Page ): Promise< void > {
+			// Capture the first suggestion's title before searching. If
+			// suggestions are already visible (e.g. pre-populated from the
+			// site slug), this lets us detect when React re-renders the list
+			// with new results after the API response arrives.
+			const firstListitem = container.getByRole( 'listitem' ).first();
+			let previousTitle: string | null = null;
+			if ( ( await firstListitem.count() ) > 0 ) {
+				previousTitle = await firstListitem.getAttribute( 'title' );
+			}
+
 			const searchAndPressEnter = async () => {
 				await page.getByRole( 'searchbox' ).fill( keyword );
 				await page.getByRole( 'searchbox' ).press( 'Enter' );
@@ -63,6 +75,21 @@ export class DomainSearchComponent {
 				throw new Error(
 					`Encountered error while searching for domain.\nOriginal error: ${ errorText }`
 				);
+			}
+
+			// Wait for the DOM to reflect the new search results. The API
+			// response resolves before React re-renders the suggestion list
+			// (TanStack Query keeps isLoading false on refetch while prior
+			// data is cached), so without this guard selectFirstSuggestion
+			// can read a stale title from the previous search.
+			if ( previousTitle ) {
+				for ( let attempt = 0; attempt < 50; attempt++ ) {
+					const current = await firstListitem.getAttribute( 'title' );
+					if ( current !== previousTitle ) {
+						break;
+					}
+					await page.waitForTimeout( 200 );
+				}
 			}
 		}
 
