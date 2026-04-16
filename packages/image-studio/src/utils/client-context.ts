@@ -212,7 +212,7 @@ function detectImageEntity(): ImageStudioData | null {
 			metadata: {},
 		};
 
-		if ( selectedStyle ) {
+		if ( selectedStyle && selectedStyle !== 'none' ) {
 			imageStudio.style = selectedStyle;
 		}
 

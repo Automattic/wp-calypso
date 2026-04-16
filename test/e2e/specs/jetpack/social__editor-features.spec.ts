@@ -257,8 +257,10 @@ test.describe(
 
 						await section.getByRole( 'button', { name: 'Select' } ).click();
 
-						const popoverGroup = page.getByRole( 'group', { name: 'For link preview' } );
-						const templatebutton = popoverGroup.getByRole( 'menuitem', { name: 'Use template' } );
+						const popoverGroup = page.getByRole( 'group', { name: 'Link preview' } );
+						const templatebutton = popoverGroup.getByRole( 'menuitem', {
+							name: 'Social image template',
+						} );
 
 						await expect( templatebutton ).toBeVisible();
 						await expect( templatebutton ).toBeEnabled();

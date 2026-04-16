@@ -2207,6 +2207,8 @@ __metadata:
     debug: "npm:^4.4.1"
     tslib: "npm:^2.8.1"
     typescript: "npm:^5.8.3"
+  peerDependencies:
+    "@wordpress/data": "*"
   languageName: unknown
   linkType: soft
 

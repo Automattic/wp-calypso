@@ -68,6 +68,7 @@
 		"dashboard/opt-in-banners": false,
 		"dashboard/v2": true,
 		"dashboard/v2/backport/site-overview": true,
+		"dashboard/plans": true,
 		"design-picker/use-assembler-styles": true,
 		"dev/account-settings-helper": true,
 		"dev/auth-helper": true,

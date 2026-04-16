@@ -1,7 +1,9 @@
+import './post-comment.scss';
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Gridicon, TimeSince } from '@automattic/components';
-import { isURL, getProtocol, getAuthority } from '@wordpress/url';
+import { Icon, external } from '@wordpress/icons';
+import { isURL, getAuthority, getProtocol } from '@wordpress/url';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { get, some, flatMap } from 'lodash';
@@ -9,7 +11,7 @@ import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import ConversationCaterpillar from 'calypso/blocks/conversation-caterpillar';
-import GravatarWithHovercards from 'calypso/components/gravatar-with-hovercards';
+import UserAvatar from 'calypso/blocks/user-avatar';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { navigate } from 'calypso/lib/navigate';
 import { createAccountUrl } from 'calypso/lib/paths';
@@ -28,8 +30,6 @@ import PostCommentForm from './form';
 import PostCommentContent from './post-comment-content';
 import PostCommentWithError from './post-comment-with-error';
 import PostTrackback from './post-trackback';
-
-import './post-comment.scss';
 
 const noop = () => {};
 
@@ -334,7 +334,9 @@ class PostComment extends PureComponent {
 	};
 
 	renderAuthorTag = ( { authorName, authorUrl, commentId, className } ) => {
-		return authorUrl ? (
+		const isExternalUrl = authorUrl?.startsWith( '/reader/users/' ) === false;
+
+		return authorUrl && ! isExternalUrl ? (
 			<a
 				href={ authorUrl }
 				className={ className }
@@ -346,6 +348,18 @@ class PostComment extends PureComponent {
 		) : (
 			<strong className={ className } id={ `comment-${ commentId }` }>
 				{ authorName }
+
+				{ isExternalUrl && (
+					<a
+						className="comments__external-link"
+						href={ authorUrl }
+						target="_blank"
+						rel="noopener noreferrer"
+						aria-label={ translate( "Visit %(name)s's site", { args: { name: authorName } } ) }
+					>
+						<Icon icon={ external } size={ 18 } />
+					</a>
+				) }
 			</strong>
 		);
 	};
@@ -446,13 +460,7 @@ class PostComment extends PureComponent {
 		return (
 			<li className={ postCommentClassnames }>
 				<div className="comments__comment-author">
-					{ commentAuthorUrl ? (
-						<a href={ commentAuthorUrl } onClick={ this.handleAuthorClick } tabIndex={ -1 }>
-							<GravatarWithHovercards user={ comment.author } />
-						</a>
-					) : (
-						<GravatarWithHovercards user={ comment.author } />
-					) }
+					<UserAvatar user={ comment.author } />
 
 					{ this.renderAuthorTag( {
 						authorUrl: commentAuthorUrl,

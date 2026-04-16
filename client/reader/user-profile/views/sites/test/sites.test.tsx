@@ -36,6 +36,10 @@ describe( 'UserSites', () => {
 		user_login: 'test_user',
 		display_name: 'Test User',
 		avatar_URL: 'https://example.com/avatar.jpg',
+		first_name: '',
+		last_name: '',
+		description: '',
+		profile_URL: '',
 	};
 
 	beforeEach( () => {
