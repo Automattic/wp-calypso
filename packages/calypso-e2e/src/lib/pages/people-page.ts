@@ -114,15 +114,25 @@ export class PeoplePage {
 	}
 
 	/**
-	 * Removes a user from site.
+	 * Removes a user from site. Handles both the team member edit page
+	 * (Remove button) and the invite detail page (Clear button).
 	 * @param username Username of the user to remove.
 	 */
 	async removeUserFromSite( username: string ): Promise< void > {
-		await this.page.getByRole( 'button', { name: `Remove ${ username }` } ).click();
-		await this.page.getByRole( 'button', { name: 'Remove', exact: true } ).click();
-		await this.page
-			.getByText( `Successfully removed @${ username }` )
-			.waitFor( { state: 'visible' } );
+		const removeButton = this.page.getByRole( 'button', {
+			name: `Remove ${ username }`,
+		} );
+
+		if ( await removeButton.isVisible() ) {
+			await removeButton.click();
+			await this.page.getByRole( 'button', { name: 'Remove', exact: true } ).click();
+			await this.page
+				.getByText( `Successfully removed @${ username }` )
+				.waitFor( { state: 'visible' } );
+		} else {
+			await this.clearUserButton.click();
+			await this.page.getByText( 'Invite deleted' ).waitFor( { state: 'visible' } );
+		}
 	}
 
 	/**
@@ -148,9 +158,14 @@ export class PeoplePage {
 	}
 
 	/**
-	 * Navigates to the team member user details page with a direct URL. Waits for the page to load by checking the presence of the Remove button.
-	 * @param baseURL Calypso URL.
-	 * @param siteURL User's primary site URL.
+	 * Navigates to the team member user details page by searching for
+	 * the user in the team members list and clicking their profile link.
+	 *
+	 * Callers must navigate to the Users > All Users page before calling
+	 * this method (e.g. via componentSidebar.navigate).
+	 *
+	 * @param baseURL Calypso URL (unused, kept for backward compatibility).
+	 * @param siteURL User's primary site URL (unused, kept for backward compatibility).
 	 * @param username Username of the team member.
 	 */
 	async visitTeamMemberUserDetails(
@@ -158,17 +173,23 @@ export class PeoplePage {
 		siteURL: string,
 		username: string
 	): Promise< void > {
-		if ( ! baseURL ) {
-			throw new Error( 'baseURL is required' );
-		}
-		if ( ! siteURL ) {
-			throw new Error( 'siteURL is required' );
-		}
 		if ( ! username ) {
 			throw new Error( 'username is required' );
 		}
 
-		await this.page.goto( `${ baseURL }/people/edit/${ siteURL }/${ username }` );
-		await this.page.getByRole( 'button', { name: 'Remove' } ).waitFor( { state: 'visible' } );
+		// Open the pinned search and filter by username.
+		await this.page.getByRole( 'button', { name: 'Open Search' } ).click();
+		await this.page.getByRole( 'searchbox', { name: 'Search' } ).fill( username );
+
+		// Wait for filtered results, then click on the user's profile link.
+		const userLink = this.page.getByRole( 'link', { name: username } );
+		await userLink.first().click();
+
+		// The user may land on the team member edit page (Remove button) or
+		// the invite detail page (Clear button) depending on whether a
+		// pending invite record still exists for the user.
+		const removeButton = this.page.getByRole( 'button', { name: 'Remove' } );
+		const clearButton = this.page.getByRole( 'button', { name: 'Clear' } );
+		await removeButton.or( clearButton ).first().waitFor( { state: 'visible' } );
 	}
 }
