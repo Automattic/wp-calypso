@@ -5,8 +5,8 @@
 
 import { render, screen } from '@testing-library/react';
 import React from 'react';
-import { ReaderUser } from 'calypso/reader/user-profile/queries/use-get-reader-user-query';
 import UserPosts from '../posts';
+import type { ReaderUser } from '@automattic/api-core';
 
 jest.mock(
 	'calypso/reader/stream',

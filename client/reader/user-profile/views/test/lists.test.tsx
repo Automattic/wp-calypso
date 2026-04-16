@@ -6,8 +6,8 @@
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 import { List } from 'calypso/reader/list-manage/types';
-import { ReaderUser } from 'calypso/reader/user-profile/queries/use-get-reader-user-query';
 import { UserLists } from '../lists';
+import type { ReaderUser } from '@automattic/api-core';
 
 jest.mock( 'calypso/components/empty-content', () => ( { icon, line } ) => (
 	<div data-testid="empty-content">

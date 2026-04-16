@@ -3,14 +3,11 @@
  */
 
 import page from '@automattic/calypso-router';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import React from 'react';
-import {
-	useGetReaderUserQuery,
-	GetReaderUserResponse,
-} from 'calypso/reader/user-profile/queries/use-get-reader-user-query';
 import { UserProfile, UserProfileProps } from '../index';
+import type { GetReaderUserResponse } from '@automattic/api-core';
 
 jest.mock( '@automattic/calypso-router', () => ( {
 	replace: jest.fn(),
@@ -57,21 +54,12 @@ jest.mock(
 		)
 );
 
-jest.mock( 'calypso/reader/user-profile/queries/use-get-reader-user-query', () => ( {
-	...jest.requireActual( 'calypso/reader/user-profile/queries/use-get-reader-user-query' ),
-	useGetReaderUserQuery: jest.fn(),
+jest.mock( '@tanstack/react-query', () => ( {
+	...jest.requireActual( '@tanstack/react-query' ),
+	useQuery: jest.fn(),
 } ) );
 
-const mockUseGetReaderUserQuery = useGetReaderUserQuery as jest.MockedFunction<
-	typeof useGetReaderUserQuery
->;
-
-function renderWithClient( ui: React.ReactElement ) {
-	const queryClient = new QueryClient( {
-		defaultOptions: { queries: { retry: false } },
-	} );
-	return render( <QueryClientProvider client={ queryClient }>{ ui }</QueryClientProvider> );
-}
+const mockUseQuery = useQuery as jest.MockedFunction< typeof useQuery >;
 
 describe( 'UserProfile', () => {
 	const defaultProps: UserProfileProps = {
@@ -98,43 +86,41 @@ describe( 'UserProfile', () => {
 	} );
 
 	test( 'should render empty content when user is not found', () => {
-		mockUseGetReaderUserQuery.mockReturnValue( {} as ReturnType< typeof useGetReaderUserQuery > );
+		mockUseQuery.mockReturnValue( {} as ReturnType< typeof useQuery > );
 
-		renderWithClient( <UserProfile { ...defaultProps } /> );
+		render( <UserProfile { ...defaultProps } /> );
 
 		expect( screen.getByTestId( 'empty-content' ) ).toBeVisible();
 	} );
 
 	test( 'should render user profile when user is available', () => {
-		mockUseGetReaderUserQuery.mockReturnValue( {
+		mockUseQuery.mockReturnValue( {
 			data: defaultUserResponse,
-		} as ReturnType< typeof useGetReaderUserQuery > );
+		} as ReturnType< typeof useQuery > );
 
-		renderWithClient( <UserProfile { ...defaultProps } /> );
+		render( <UserProfile { ...defaultProps } /> );
 
 		expect( screen.getByTestId( 'user-profile-header' ) ).toBeVisible();
 		expect( screen.getByTestId( 'user-posts' ) ).toBeVisible();
 	} );
 
 	test( 'should render lists view when view is lists', () => {
-		mockUseGetReaderUserQuery.mockReturnValue( {
+		mockUseQuery.mockReturnValue( {
 			data: defaultUserResponse,
-		} as ReturnType< typeof useGetReaderUserQuery > );
+		} as ReturnType< typeof useQuery > );
 
-		renderWithClient(
-			<UserProfile { ...defaultProps } view="lists" path="/reader/users/testuser/lists" />
-		);
+		render( <UserProfile { ...defaultProps } view="lists" path="/reader/users/testuser/lists" /> );
 
 		expect( screen.getByTestId( 'user-profile-header' ) ).toBeVisible();
 		expect( screen.getByTestId( 'user-lists' ) ).toBeVisible();
 	} );
 
 	test( 'should render recommended-blogs view when view is recommended-blogs', () => {
-		mockUseGetReaderUserQuery.mockReturnValue( {
+		mockUseQuery.mockReturnValue( {
 			data: defaultUserResponse,
-		} as ReturnType< typeof useGetReaderUserQuery > );
+		} as ReturnType< typeof useQuery > );
 
-		renderWithClient(
+		render(
 			<UserProfile
 				{ ...defaultProps }
 				view="recommended-blogs"
@@ -147,29 +133,23 @@ describe( 'UserProfile', () => {
 	} );
 
 	test( 'should not show content when isLoading is true', () => {
-		mockUseGetReaderUserQuery.mockReturnValue( {
+		mockUseQuery.mockReturnValue( {
 			isLoading: true,
-		} as ReturnType< typeof useGetReaderUserQuery > );
+		} as ReturnType< typeof useQuery > );
 
-		renderWithClient( <UserProfile { ...defaultProps } /> );
+		render( <UserProfile { ...defaultProps } /> );
 
 		expect( screen.queryByTestId( 'empty-content' ) ).not.toBeInTheDocument();
 		expect( screen.queryByTestId( 'user-profile-header' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'should redirect from user ID path to user login path when user is loaded', () => {
-		mockUseGetReaderUserQuery.mockReturnValue( {
+		mockUseQuery.mockReturnValue( {
 			data: defaultUserResponse,
-		} as ReturnType< typeof useGetReaderUserQuery > );
+		} as ReturnType< typeof useQuery > );
 
-		renderWithClient( <UserProfile { ...defaultProps } path="/reader/users/id/123" /> );
+		render( <UserProfile { ...defaultProps } path="/reader/users/id/123" /> );
 
 		expect( page.replace ).toHaveBeenCalledWith( '/reader/users/testuser' );
-	} );
-
-	test( 'should request user data with both login and ID when provided', () => {
-		render( <UserProfile { ...defaultProps } userLogin="testuser" userId={ 123 } /> );
-
-		expect( mockUseGetReaderUserQuery ).toHaveBeenCalledWith( 'testuser', 123 );
 	} );
 } );

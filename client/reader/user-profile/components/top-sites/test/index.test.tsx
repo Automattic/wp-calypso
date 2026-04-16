@@ -1,15 +1,14 @@
 /**
  * @jest-environment jsdom
  */
+import { useQuery } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
-import useUserSitesQuery, {
-	UserSitesResponse,
-} from 'calypso/reader/user-profile/queries/use-user-sites-query';
 import UserTopSites from '..';
+import type { UserSitesResponse } from '@automattic/api-core';
 
-jest.mock( 'calypso/reader/user-profile/queries/use-user-sites-query', () => ( {
-	__esModule: true,
-	default: jest.fn(),
+jest.mock( '@tanstack/react-query', () => ( {
+	...jest.requireActual( '@tanstack/react-query' ),
+	useQuery: jest.fn(),
 } ) );
 
 jest.mock( 'calypso/blocks/site-icon', () => ( {
@@ -27,11 +26,11 @@ describe( 'UserTopSites', () => {
 	} );
 
 	test( 'should render skeleton when fetching', () => {
-		jest.mocked( useUserSitesQuery ).mockReturnValue( {
+		jest.mocked( useQuery ).mockReturnValue( {
 			isFetching: true,
 			data: undefined,
 			error: null,
-		} as ReturnType< typeof useUserSitesQuery > );
+		} as ReturnType< typeof useQuery > );
 
 		const { container } = render( <UserTopSites { ...defaultProps } /> );
 
@@ -39,11 +38,11 @@ describe( 'UserTopSites', () => {
 	} );
 
 	test( 'should return null when there is an error', () => {
-		jest.mocked( useUserSitesQuery ).mockReturnValue( {
+		jest.mocked( useQuery ).mockReturnValue( {
 			isFetching: false,
 			data: undefined,
 			error: { message: 'Network error' },
-		} as ReturnType< typeof useUserSitesQuery > );
+		} as ReturnType< typeof useQuery > );
 
 		const { container } = render( <UserTopSites { ...defaultProps } /> );
 
@@ -51,11 +50,11 @@ describe( 'UserTopSites', () => {
 	} );
 
 	test( 'should return null when there are no sites', () => {
-		jest.mocked( useUserSitesQuery ).mockReturnValue( {
+		jest.mocked( useQuery ).mockReturnValue( {
 			isFetching: false,
 			data: { sites: [], total: 0, primary_site_id: 0 } as UserSitesResponse,
 			error: null,
-		} as ReturnType< typeof useUserSitesQuery > );
+		} as ReturnType< typeof useQuery > );
 
 		const { container } = render( <UserTopSites { ...defaultProps } /> );
 
@@ -114,11 +113,11 @@ describe( 'UserTopSites', () => {
 			},
 		];
 
-		jest.mocked( useUserSitesQuery ).mockReturnValue( {
+		jest.mocked( useQuery ).mockReturnValue( {
 			isFetching: false,
 			data: { sites: mockSites, total: 4, primary_site_id: 1 } as UserSitesResponse,
 			error: null,
-		} as ReturnType< typeof useUserSitesQuery > );
+		} as ReturnType< typeof useQuery > );
 
 		render( <UserTopSites { ...defaultProps } /> );
 
@@ -197,11 +196,11 @@ describe( 'UserTopSites', () => {
 			},
 		];
 
-		jest.mocked( useUserSitesQuery ).mockReturnValue( {
+		jest.mocked( useQuery ).mockReturnValue( {
 			isFetching: false,
 			data: { sites: mockSites, total: 5, primary_site_id: 1 } as UserSitesResponse,
 			error: null,
-		} as ReturnType< typeof useUserSitesQuery > );
+		} as ReturnType< typeof useQuery > );
 
 		render( <UserTopSites { ...defaultProps } /> );
 
@@ -238,11 +237,11 @@ describe( 'UserTopSites', () => {
 			},
 		];
 
-		jest.mocked( useUserSitesQuery ).mockReturnValue( {
+		jest.mocked( useQuery ).mockReturnValue( {
 			isFetching: false,
 			data: { sites: mockSites, total: 2, primary_site_id: 1 } as UserSitesResponse,
 			error: null,
-		} as ReturnType< typeof useUserSitesQuery > );
+		} as ReturnType< typeof useQuery > );
 
 		render( <UserTopSites { ...defaultProps } /> );
 
@@ -265,11 +264,11 @@ describe( 'UserTopSites', () => {
 			},
 		];
 
-		jest.mocked( useUserSitesQuery ).mockReturnValue( {
+		jest.mocked( useQuery ).mockReturnValue( {
 			isFetching: false,
 			data: { sites: mockSites, total: 1, primary_site_id: 1 } as UserSitesResponse,
 			error: null,
-		} as ReturnType< typeof useUserSitesQuery > );
+		} as ReturnType< typeof useQuery > );
 
 		render( <UserTopSites { ...defaultProps } /> );
 
@@ -293,11 +292,11 @@ describe( 'UserTopSites', () => {
 			},
 		];
 
-		jest.mocked( useUserSitesQuery ).mockReturnValue( {
+		jest.mocked( useQuery ).mockReturnValue( {
 			isFetching: false,
 			data: { sites: mockSites, total: 1, primary_site_id: 1 } as UserSitesResponse,
 			error: null,
-		} as ReturnType< typeof useUserSitesQuery > );
+		} as ReturnType< typeof useQuery > );
 
 		render( <UserTopSites { ...defaultProps } /> );
 
@@ -321,11 +320,11 @@ describe( 'UserTopSites', () => {
 			},
 		];
 
-		jest.mocked( useUserSitesQuery ).mockReturnValue( {
+		jest.mocked( useQuery ).mockReturnValue( {
 			isFetching: false,
 			data: { sites: mockSites, total: 1, primary_site_id: 1 } as UserSitesResponse,
 			error: null,
-		} as ReturnType< typeof useUserSitesQuery > );
+		} as ReturnType< typeof useQuery > );
 
 		render( <UserTopSites { ...defaultProps } /> );
 

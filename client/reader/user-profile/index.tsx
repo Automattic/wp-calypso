@@ -1,15 +1,14 @@
 import './style.scss';
+import { GetReaderUserResponse, ReaderUser } from '@automattic/api-core';
+import { getReaderUserQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
+import { useQuery } from '@tanstack/react-query';
 import { Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import EmptyContent from 'calypso/components/empty-content';
 import ReaderBackButton from 'calypso/reader/components/back-button';
 import UserProfileHeader from 'calypso/reader/user-profile/components/user-profile-header';
-import {
-	mapGetReaderUserResponseToUser,
-	useGetReaderUserQuery,
-} from 'calypso/reader/user-profile/queries/use-get-reader-user-query';
 import UserLists from 'calypso/reader/user-profile/views/lists';
 import UserPosts from 'calypso/reader/user-profile/views/posts';
 import UserRecommendedBlogs from 'calypso/reader/user-profile/views/recommended-blogs';
@@ -26,7 +25,7 @@ export interface UserProfileProps {
 export function UserProfile( props: UserProfileProps ): JSX.Element | null {
 	const { userLogin, userId, path, view } = props;
 	const translate = useTranslate();
-	const { isLoading, data } = useGetReaderUserQuery( userLogin, userId );
+	const { isLoading, data } = useQuery( getReaderUserQuery( userLogin, userId ) );
 	const user = mapGetReaderUserResponseToUser( data );
 
 	useEffect( () => {
@@ -34,6 +33,24 @@ export function UserProfile( props: UserProfileProps ): JSX.Element | null {
 			page.replace( `/reader/users/${ user.user_login }` );
 		}
 	}, [ path, user ] );
+
+	function mapGetReaderUserResponseToUser( response?: GetReaderUserResponse ): ReaderUser | null {
+		if ( ! response ) {
+			return null;
+		}
+
+		return {
+			ID: response.ID,
+			user_login: response.user_login,
+			first_name: response.first_name,
+			last_name: response.last_name,
+			nice_name: response.nice_name,
+			display_name: response.display_name,
+			description: response.description,
+			avatar_URL: response.avatar_URL,
+			profile_URL: response.profile_URL,
+		};
+	}
 
 	if ( isLoading ) {
 		return (

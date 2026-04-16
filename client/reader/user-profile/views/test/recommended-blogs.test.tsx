@@ -7,8 +7,8 @@ import {
 	useFeedRecommendationsQuery,
 } from 'calypso/data/reader/use-feed-recommendations-query';
 import { ReaderSite } from 'calypso/reader/sites-list/site-item';
-import { ReaderUser } from 'calypso/reader/user-profile/queries/use-get-reader-user-query';
 import UserRecommendedBlogs from '../recommended-blogs';
+import type { ReaderUser } from '@automattic/api-core';
 
 jest.mock( '@automattic/components', () => ( {
 	LoadingPlaceholder: () => <div data-testid="loading-placeholder">Loading...</div>,

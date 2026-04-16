@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
 import { List } from 'calypso/reader/list-manage/types';
 import { requestUserLists } from 'calypso/state/reader/lists/actions';
-import { ReaderUser } from '../queries/use-get-reader-user-query';
+import type { ReaderUser } from '@automattic/api-core';
 
 interface AppState {
 	reader: {

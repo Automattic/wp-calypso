@@ -2,12 +2,12 @@
  * @jest-environment jsdom
  */
 
+import { useQuery } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { UserAvatarInfo } from 'calypso/blocks/user-avatar';
-import { ReaderUser } from 'calypso/reader/user-profile/queries/use-get-reader-user-query';
-import useUserSitesQuery from 'calypso/reader/user-profile/queries/use-user-sites-query';
 import UserProfileHeader from '../index';
+import type { ReaderUser } from '@automattic/api-core';
 
 jest.mock( 'calypso/blocks/user-avatar', () => ( { user }: { user: UserAvatarInfo } ) => (
 	<div data-testid="user-avatar" data-user-id={ user?.ID }></div>
@@ -17,9 +17,9 @@ jest.mock( 'calypso/blocks/site-icon', () => ( {
 	SiteIcon: ( { siteId }: { siteId: number } ) => <span data-testid={ `site-icon-${ siteId }` } />,
 } ) );
 
-jest.mock( 'calypso/reader/user-profile/queries/use-user-sites-query', () => ( {
-	__esModule: true,
-	default: jest.fn(),
+jest.mock( '@tanstack/react-query', () => ( {
+	...jest.requireActual( '@tanstack/react-query' ),
+	useQuery: jest.fn(),
 } ) );
 
 jest.mock(
@@ -43,11 +43,11 @@ describe( 'UserProfileHeader', () => {
 		description: 'This is a test user biography.',
 	};
 
-	jest.mocked( useUserSitesQuery ).mockReturnValue( {
+	jest.mocked( useQuery ).mockReturnValue( {
 		isFetching: true,
 		data: undefined,
 		error: null,
-	} as ReturnType< typeof useUserSitesQuery > );
+	} as ReturnType< typeof useQuery > );
 
 	beforeEach( () => {
 		jest.clearAllMocks();
@@ -88,11 +88,11 @@ describe( 'UserProfileHeader', () => {
 			},
 		];
 
-		jest.mocked( useUserSitesQuery ).mockReturnValue( {
+		jest.mocked( useQuery ).mockReturnValue( {
 			isFetching: false,
 			data: { sites: mockSites, total: mockSites.length, primary_site_id: 1 },
 			error: null,
-		} as ReturnType< typeof useUserSitesQuery > );
+		} as ReturnType< typeof useQuery > );
 
 		render( <UserProfileHeader user={ defaultUser } view="posts" /> );
 

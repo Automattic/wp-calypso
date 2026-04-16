@@ -1,21 +1,19 @@
 /**
  * @jest-environment jsdom
  */
+import { useQuery } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import { ReaderSite } from 'calypso/reader/sites-list/site-item';
-import { ReaderUser } from 'calypso/reader/user-profile/queries/use-get-reader-user-query';
-import useUserSitesQuery, {
-	UserSitesResponse,
-} from 'calypso/reader/user-profile/queries/use-user-sites-query';
 import UserSites from '..';
+import type { ReaderUser, UserSitesResponse } from '@automattic/api-core';
 
 jest.mock( 'calypso/state', () => ( {
 	useSelector: jest.fn(),
 } ) );
 
-jest.mock( 'calypso/reader/user-profile/queries/use-user-sites-query', () => ( {
-	__esModule: true,
-	default: jest.fn(),
+jest.mock( '@tanstack/react-query', () => ( {
+	...jest.requireActual( '@tanstack/react-query' ),
+	useQuery: jest.fn(),
 } ) );
 
 // Mocking ReaderSitesList because it uses useDispatch internally which would require a full Redux store setup.
@@ -49,9 +47,7 @@ describe( 'UserSites', () => {
 	} );
 
 	test( 'should render Spinner when fetching sites', () => {
-		jest
-			.mocked( useUserSitesQuery )
-			.mockReturnValue( { isLoading: true } as ReturnType< typeof useUserSitesQuery > );
+		jest.mocked( useQuery ).mockReturnValue( { isLoading: true } as ReturnType< typeof useQuery > );
 
 		render( <UserSites user={ defaultUser } /> );
 
@@ -59,9 +55,9 @@ describe( 'UserSites', () => {
 	} );
 
 	test( 'should render error message when fetch fails', () => {
-		jest.mocked( useUserSitesQuery ).mockReturnValue( {
+		jest.mocked( useQuery ).mockReturnValue( {
 			error: { message: 'Network error' },
-		} as ReturnType< typeof useUserSitesQuery > );
+		} as ReturnType< typeof useQuery > );
 
 		render( <UserSites user={ defaultUser } /> );
 
@@ -69,9 +65,9 @@ describe( 'UserSites', () => {
 	} );
 
 	test( 'should render EmptyContent when no sites available', () => {
-		jest.mocked( useUserSitesQuery ).mockReturnValue( {
+		jest.mocked( useQuery ).mockReturnValue( {
 			data: { sites: [], total: 0, primary_site_id: 0 } as UserSitesResponse,
-		} as ReturnType< typeof useUserSitesQuery > );
+		} as ReturnType< typeof useQuery > );
 
 		render( <UserSites user={ defaultUser } /> );
 
@@ -84,9 +80,9 @@ describe( 'UserSites', () => {
 	test( 'should show "Create your first site" button when viewing own empty profile', () => {
 		useSelector.mockReturnValue( { username: 'test_user' } );
 
-		jest.mocked( useUserSitesQuery ).mockReturnValue( {
+		jest.mocked( useQuery ).mockReturnValue( {
 			data: { sites: [], total: 0, primary_site_id: 0 } as UserSitesResponse,
-		} as ReturnType< typeof useUserSitesQuery > );
+		} as ReturnType< typeof useQuery > );
 
 		render( <UserSites user={ defaultUser } /> );
 
@@ -126,9 +122,9 @@ describe( 'UserSites', () => {
 			},
 		];
 
-		jest.mocked( useUserSitesQuery ).mockReturnValue( {
+		jest.mocked( useQuery ).mockReturnValue( {
 			data: { sites: mockSites, total: 2, primary_site_id: 1 } as UserSitesResponse,
-		} as ReturnType< typeof useUserSitesQuery > );
+		} as ReturnType< typeof useQuery > );
 
 		render( <UserSites user={ defaultUser } /> );
 

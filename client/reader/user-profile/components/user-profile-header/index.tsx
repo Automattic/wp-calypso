@@ -9,8 +9,8 @@ import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
-import { ReaderUser } from '../../queries/use-get-reader-user-query';
 import UserTopSites from '../top-sites';
+import type { ReaderUser } from '@automattic/api-core';
 
 interface UserProfileHeaderProps {
 	user: ReaderUser;
