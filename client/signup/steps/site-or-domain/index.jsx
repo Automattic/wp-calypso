@@ -3,11 +3,12 @@ import { Gridicon } from '@automattic/components';
 import { SelectItems } from '@automattic/onboarding';
 import { globe, addCard, layout } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
-import { Component } from 'react';
+import { Component, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { getUserSiteCountForPlatform } from 'calypso/components/site-selector/utils';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import { getDomainProductSlug } from 'calypso/lib/domains';
+import { useExperiment } from 'calypso/lib/explat';
 import { preventWidows } from 'calypso/lib/formatting';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { isUserLoggedIn, getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -266,6 +267,62 @@ class SiteOrDomain extends Component {
 	}
 }
 
+function SiteOrDomainWithExperiment( props ) {
+	const [ isLoadingExperiment, experimentAssignment ] = useExperiment(
+		'calypso_signup_domain_only_checkout_simplification_v1'
+	);
+	const isTreatment = ! isLoadingExperiment && experimentAssignment?.variationName === 'treatment';
+
+	useEffect( () => {
+		if ( ! isTreatment ) {
+			return;
+		}
+
+		const { stepName, signupDependencies, flowName, submitSignupStep: submit, goToStep } = props;
+		const domainCart = signupDependencies?.domainCart ?? [];
+		const domain = domainCart[ 0 ]?.meta;
+
+		if ( ! domain ) {
+			return;
+		}
+
+		const productSlug = getDomainProductSlug( domain );
+		const domainItem = domainRegistration( {
+			productSlug,
+			domain,
+			extra: { flow_name: flowName },
+		} );
+		const siteUrl = domain;
+
+		// Submit this step as domain-only, mirroring handleClickChoice( 'domain' )
+		submit(
+			{
+				stepName,
+				domainItem,
+				designType: 'domain',
+				siteSlug: domain,
+				siteUrl,
+				isPurchasingItem: true,
+				domainCart,
+			},
+			{ designType: 'domain', domainItem, siteUrl, domainCart }
+		);
+		// Skip site-picker and plans-site-selected — the user is just buying a domain
+		submit(
+			{ stepName: 'site-picker', wasSkipped: true, domainCart },
+			{ themeSlugWithRepo: 'pub/twentysixteen' }
+		);
+		submit( { stepName: 'plans-site-selected', wasSkipped: true }, { cartItems: null } );
+		goToStep( config.isEnabled( 'signup/social-first' ) ? 'user-social' : 'user' );
+	}, [ isTreatment ] ); // eslint-disable-line react-hooks/exhaustive-deps
+
+	if ( isLoadingExperiment || isTreatment ) {
+		return null;
+	}
+
+	return <SiteOrDomain { ...props } />;
+}
+
 export default connect(
 	( state ) => {
 		const user = getCurrentUser( state );
@@ -276,4 +333,4 @@ export default connect(
 		};
 	},
 	{ submitSignupStep }
-)( localize( SiteOrDomain ) );
+)( localize( SiteOrDomainWithExperiment ) );
