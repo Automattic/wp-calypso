@@ -28,6 +28,7 @@
 		"dashboard/omnibar": true,
 		"dashboard/wp-beta-program": true,
 		"dashboard/v2": false,
+		"dashboard/plans": true,
 		"dev/auth-helper": true,
 		"dev/preferences-helper": true,
 		"dev/store-sandbox-helper": true,

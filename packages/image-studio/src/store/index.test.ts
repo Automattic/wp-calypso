@@ -92,7 +92,7 @@ describe( 'Image Studio Store', () => {
 				navigationCurrentPage: 1,
 				navigationHasMorePages: true,
 				isSidebarOpen: false,
-				selectedStyle: '',
+				selectedStyle: null,
 				selectedAspectRatio: null,
 				lastAgentMessageId: null,
 			} );

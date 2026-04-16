@@ -33,6 +33,7 @@
 		"dashboard/opt-in-banners": false,
 		"dashboard/v2": true,
 		"dashboard/v2/backport/site-overview": true,
+		"dashboard/plans": true,
 		"design-picker/use-assembler-styles": true,
 		"devdocs": false,
 		"domain-transfer-redesign": true,

@@ -1,3 +1,4 @@
+import './styles.scss';
 import { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { useSelector, useDispatch } from 'calypso/state';
@@ -7,28 +8,20 @@ import GravatarHeader from './gravatar-header';
 import PrimaryBlog from './primary-blog-card';
 import RecommendedBlogs from './recommended-blogs';
 
-import './styles.scss';
-
 function HovercardContent( props ) {
 	const dispatch = useDispatch();
 	const { user, gravatarData, processedAvatarUrl, closeCard } = props;
-
-	// Prefer wpcom_id when it is given. Sometimes ID is specific to another site and wpcom_id is
-	// accurate. Use ID as a fallback as sometimes wpcom_id isn't provided (like self user data).
-	const userID = user.wpcom_id || user.ID;
-
 	// For some reason there are places where the user object passes in primary blog of -1. Lets
 	// find the read one with this selector.
-	const readerUserData = useSelector( ( state ) => getReaderUser( state, userID, true ) );
+	const readerUserData = useSelector( ( state ) => getReaderUser( state, user.wpcom_id, true ) );
 	const { display_name: displayName, user_login: userLogin } = readerUserData || {};
-
 	const primaryBlogId = readerUserData?.primary_blog || user?.primary_blog || user?.site_ID;
 
 	useEffect( () => {
-		if ( ! readerUserData && userID ) {
-			dispatch( requestUser( userID, true ) );
+		if ( ! readerUserData && user?.wpcom_id ) {
+			dispatch( requestUser( user.wpcom_id, true ) );
 		}
-	}, [ userID, dispatch, readerUserData ] );
+	}, [ user?.wpcom_id, dispatch, readerUserData ] );
 
 	return (
 		<>
@@ -50,7 +43,7 @@ function HovercardContent( props ) {
 				</div>
 
 				{ /* Below is custom for wpcom users, and can use wpcom data more freely */ }
-				{ !! userID && (
+				{ !! user?.wpcom_id && (
 					<>
 						<div className="gravatar-hovercard__body">
 							<PrimaryBlog

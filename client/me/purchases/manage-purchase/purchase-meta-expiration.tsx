@@ -22,8 +22,8 @@ import {
 	isInExpirationGracePeriod,
 } from 'calypso/lib/purchases';
 import {
-	isAkismetTemporarySitePurchase,
-	isA4ATemporarySitePurchase,
+	isAkismetHoldingSitePurchase,
+	isA4AHoldingSitePurchase,
 	isA4ABillingDragonPurchase,
 } from 'calypso/me/purchases/utils';
 import { useSelector } from 'calypso/state';
@@ -63,7 +63,7 @@ function PurchaseMetaExpiration( {
 	const isProductOwner = purchase?.userId === useSelector( getCurrentUserId );
 	const isJetpackPurchase = isJetpackPlan( purchase ) || isJetpackProduct( purchase );
 	const isCancellableSitelessPurchase =
-		isAkismetTemporarySitePurchase( purchase ) || isA4ATemporarySitePurchase( purchase );
+		isAkismetHoldingSitePurchase( purchase ) || isA4AHoldingSitePurchase( purchase );
 	const isAutorenewalEnabled = purchase?.isAutoRenewEnabled ?? false;
 	const isJetpackPurchaseUsingPrimaryCancellationFlow =
 		isJetpackPurchase && config.isEnabled( 'jetpack/cancel-through-main-flow' );

@@ -1,25 +1,29 @@
-import UserAvatar from 'calypso/blocks/user-avatar';
+import { useTranslate } from 'i18n-calypso';
 
-const ReaderSubscriptionListItemPlaceholder = () => {
+const ReaderSubscriptionListItemPlaceholder = (): JSX.Element => {
+	const translate = useTranslate();
+
 	return (
 		<div className="reader-subscription-list-item reader-subscription-list-item__placeholder">
 			<div>
-				<UserAvatar isCompact iconSize={ 32 } />
+				<span className="reader-subscription-list-item__site-avatar is-placeholder"></span>
 			</div>
 			<div className="reader-subscription-list-item__byline">
-				<span className="reader-subscription-list-item__site-title is-placeholder">Site title</span>
+				<span className="reader-subscription-list-item__site-title is-placeholder">
+					{ translate( 'Site title' ) }
+				</span>
 				<div className="reader-subscription-list-item__site-excerpt is-placeholder">
-					Description of the site
+					{ translate( 'Description of the site' ) }
 				</div>
 				<span className="reader-subscription-list-item__by-text is-placeholder">
-					by author name
+					{ translate( 'by author name' ) }
 				</span>
 				<span className="reader-subscription-list-item__site-url is-placeholder">
 					www.example.com
 				</span>
 			</div>
 			<div className="reader-subscription-list-item__options">
-				<div className="reader-subscription-list-item__follow">Follow here</div>
+				<div className="reader-subscription-list-item__follow">{ translate( 'Follow here' ) }</div>
 			</div>
 		</div>
 	);
