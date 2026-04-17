@@ -81,13 +81,23 @@ export function FediFollowAllButton( { items, listSlug }: FediFollowAllButtonPro
 				args: { done: followProgress[ 0 ], total: followProgress[ 1 ] },
 			} );
 	} else if ( succeeded > 0 ) {
-		label = '\u2042 ' + translate( '%(count)d followed', { args: { count: succeeded } } );
+		label =
+			'\u2042 ' +
+			translate( '%(count)d followed', '%(count)d followed', {
+				count: succeeded,
+				args: { count: succeeded },
+			} );
 		if ( failed > 0 ) {
 			label =
 				'\u2042 ' +
-				translate( '%(succeeded)d followed, %(failed)d failed', {
-					args: { succeeded, failed },
-				} );
+				translate(
+					'%(succeeded)d followed, %(failed)d failed',
+					'%(succeeded)d followed, %(failed)d failed',
+					{
+						count: failed,
+						args: { succeeded, failed },
+					}
+				);
 		}
 	} else {
 		label = '\u2042 ' + translate( 'Social Web' );
@@ -99,9 +109,14 @@ export function FediFollowAllButton( { items, listSlug }: FediFollowAllButtonPro
 			onRequestClose={ () => setShowModal( false ) }
 		>
 			<p>
-				{ translate( 'Enter your Mastodon or Fediverse instance to follow %(count)d accounts.', {
-					args: { count: fediAccounts.length },
-				} ) }
+				{ translate(
+					'Enter your Mastodon or Fediverse instance to follow %(count)d account.',
+					'Enter your Mastodon or Fediverse instance to follow %(count)d accounts.',
+					{
+						count: fediAccounts.length,
+						args: { count: fediAccounts.length },
+					}
+				) }
 			</p>
 			<TextControl
 				label={ translate( 'Instance domain' ) }
