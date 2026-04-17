@@ -113,6 +113,10 @@ function getPostLevelSuggestions( currentPostType?: string ) {
 
 // ---------- Show-component ability ----------
 
+// Ability registration uses the slash-form name required by the WP Abilities
+// API (lowercase alphanumeric + dashes + forward slash). AM normalizes this
+// to `big_sky__show_component` for tool routing and envelope matching.
+const SHOW_COMPONENT_ABILITY_NAME = 'big-sky/show-component';
 const SHOW_COMPONENT_TOOL_ID = 'big_sky__show_component';
 
 /**
@@ -123,8 +127,8 @@ const SHOW_COMPONENT_TOOL_ID = 'big_sky__show_component';
  * registration isn't present. Same pattern as update-block-content.
  */
 const SHOW_COMPONENT_ABILITY: any = {
-	id: SHOW_COMPONENT_TOOL_ID,
-	name: SHOW_COMPONENT_TOOL_ID,
+	id: SHOW_COMPONENT_ABILITY_NAME,
+	name: SHOW_COMPONENT_ABILITY_NAME,
 	label: 'Show component',
 	category: 'jetpack-ai',
 	description: 'Render an interactive component in the chat.',
@@ -257,7 +261,7 @@ function filterAbility( abilities: any[], toolId: string ): any[] {
 }
 
 function isShowComponentTool( toolId: string ): boolean {
-	return toolId === SHOW_COMPONENT_TOOL_ID || toolId === 'big_sky__show_component';
+	return toolId === SHOW_COMPONENT_ABILITY_NAME || toolId === SHOW_COMPONENT_TOOL_ID;
 }
 
 export const toolProvider = {

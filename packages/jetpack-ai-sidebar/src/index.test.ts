@@ -294,17 +294,17 @@ describe( 'toolProvider', () => {
 	} );
 
 	describe( 'getAbilities', () => {
-		it( 'includes update-block-content and big_sky__show_component', async () => {
+		it( 'includes update-block-content and show-component', async () => {
 			const abilities = await toolProvider.getAbilities();
 			const names = abilities.map( ( a: any ) => a.name );
 
 			expect( names ).toContain( 'wpcom/update-block-content' );
-			expect( names ).toContain( 'big_sky__show_component' );
+			expect( names ).toContain( 'big-sky/show-component' );
 		} );
 
 		it( 'wires a callback on each provided ability', async () => {
 			const abilities = await toolProvider.getAbilities();
-			const showComponent = abilities.find( ( a: any ) => a.name === 'big_sky__show_component' );
+			const showComponent = abilities.find( ( a: any ) => a.name === 'big-sky/show-component' );
 			const updateBlock = abilities.find( ( a: any ) => a.name === 'wpcom/update-block-content' );
 
 			expect( typeof showComponent?.callback ).toBe( 'function' );
