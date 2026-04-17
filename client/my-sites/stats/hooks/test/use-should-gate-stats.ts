@@ -60,6 +60,7 @@ describe( 'shouldGateStats in Calypso', () => {
 			sites: {
 				features: {
 					[ siteId ]: {
+						hasLoadedFromServer: true,
 						data: {
 							active: [],
 						},
@@ -87,6 +88,7 @@ describe( 'shouldGateStats in Calypso', () => {
 			sites: {
 				features: {
 					[ siteId ]: {
+						hasLoadedFromServer: true,
 						data: {
 							active: [ FEATURE_STATS_PAID ],
 						},
@@ -114,6 +116,7 @@ describe( 'shouldGateStats in Calypso', () => {
 			sites: {
 				features: {
 					[ siteId ]: {
+						hasLoadedFromServer: true,
 						data: {
 							active: [ FEATURE_STATS_PAID ],
 						},
@@ -141,6 +144,7 @@ describe( 'shouldGateStats in Calypso', () => {
 			sites: {
 				features: {
 					[ siteId ]: {
+						hasLoadedFromServer: true,
 						data: {
 							active: [],
 						},
@@ -168,6 +172,7 @@ describe( 'shouldGateStats in Calypso', () => {
 			sites: {
 				features: {
 					[ siteId ]: {
+						hasLoadedFromServer: true,
 						data: {
 							active: [],
 						},
@@ -195,6 +200,7 @@ describe( 'shouldGateStats in Calypso', () => {
 			sites: {
 				features: {
 					[ siteId ]: {
+						hasLoadedFromServer: true,
 						data: {
 							active: [],
 						},
@@ -222,6 +228,7 @@ describe( 'shouldGateStats in Calypso', () => {
 			sites: {
 				features: {
 					[ siteId ]: {
+						hasLoadedFromServer: true,
 						data: {
 							active: [],
 						},
@@ -254,6 +261,7 @@ describe( 'shouldGateStats in Calypso', () => {
 			sites: {
 				features: {
 					[ siteId ]: {
+						hasLoadedFromServer: true,
 						data: {
 							active: [ FEATURE_STATS_PAID ], // FEATURE_STATS_COMMERCIAL
 						},
@@ -281,6 +289,7 @@ describe( 'shouldGateStats in Calypso', () => {
 			sites: {
 				features: {
 					[ siteId ]: {
+						hasLoadedFromServer: true,
 						data: {
 							active: [ FEATURE_STATS_PAID ], // FEATURE_STATS_COMMERCIAL
 						},
