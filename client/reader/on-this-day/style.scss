@@ -232,16 +232,6 @@
 		}
 	}
 
-	.on-this-day__empty {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		height: 100%;
-		color: var( --studio-gray-40 );
-		padding: 24px;
-		text-align: center;
-	}
-
 	.on-this-day-post-skeleton {
 		max-width: 720px;
 		padding: 32px 24px;

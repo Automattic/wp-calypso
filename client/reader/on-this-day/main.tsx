@@ -1,6 +1,5 @@
 import { Card, CardBody } from '@wordpress/components';
-import clsx from 'clsx';
-import { fixMe, translate } from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import NavigationHeader from 'calypso/components/navigation-header';
@@ -85,12 +84,8 @@ function OnThisDayStream() {
 				<ReaderStream streamKey="on_this_day" className="following">
 					<NavigationHeader
 						title={ translate( 'On This Day' ) }
-						subtitle={ fixMe( {
-							text: 'Posts from this day in previous years.',
-							newCopy: translate( 'Posts from this day in previous years.' ),
-							oldCopy: translate( 'Posts from this day in previous years.' ),
-						} ) }
-						className={ clsx( 'following-stream-header' ) }
+						subtitle={ translate( 'Posts from this day in previous years.' ) }
+						className="following-stream-header"
 					>
 						<ViewToggle />
 					</NavigationHeader>
