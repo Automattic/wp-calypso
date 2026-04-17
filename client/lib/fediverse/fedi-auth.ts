@@ -513,11 +513,35 @@ export function getOAuthCallbackState(): string | null {
 }
 
 /**
+ * OAuth error returned to the redirect URI (RFC 6749 §4.1.2.1).
+ */
+export interface OAuthCallbackError {
+	error: string;
+	errorDescription?: string;
+}
+
+/**
+ * If the current URL contains an OAuth error response, return it; otherwise null.
+ */
+export function getOAuthCallbackError(): OAuthCallbackError | null {
+	const params = new URLSearchParams( window.location.search );
+	const error = params.get( 'error' );
+	if ( ! error ) {
+		return null;
+	}
+	const errorDescription = params.get( 'error_description' );
+	return errorDescription ? { error, errorDescription } : { error };
+}
+
+/**
  * Clean OAuth params from the URL without triggering navigation.
  */
 export function cleanOAuthParams(): void {
 	const url = new URL( window.location.href );
 	url.searchParams.delete( 'code' );
 	url.searchParams.delete( 'state' );
+	url.searchParams.delete( 'error' );
+	url.searchParams.delete( 'error_description' );
+	url.searchParams.delete( 'error_uri' );
 	window.history.replaceState( {}, '', url.toString() );
 }

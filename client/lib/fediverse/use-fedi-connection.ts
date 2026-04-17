@@ -14,6 +14,7 @@ import {
 	completeOAuthFlow,
 	getActiveConnection,
 	getOAuthCallbackCode,
+	getOAuthCallbackError,
 	getOAuthCallbackState,
 	cleanOAuthParams,
 	startOAuthFlow,
@@ -73,6 +74,21 @@ export default function useFediConnection(): [ FediConnectionState, FediConnecti
 
 	// On mount, check for OAuth callback code and complete the flow.
 	useEffect( () => {
+		// Handle explicit error responses from the authorization server
+		// (e.g. user denied access) before attempting the code exchange.
+		const callbackError = getOAuthCallbackError();
+		if ( callbackError ) {
+			cleanOAuthParams();
+			clearAuthState();
+			setState( ( prev ) => ( {
+				...prev,
+				instance: null,
+				isAuthenticating: false,
+				error: callbackError.errorDescription || callbackError.error,
+			} ) );
+			return;
+		}
+
 		const code = getOAuthCallbackCode();
 		if ( ! code ) {
 			return;

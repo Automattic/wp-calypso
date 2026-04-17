@@ -4,6 +4,7 @@ export {
 	completeOAuthFlow,
 	getOAuthCallbackCode,
 	getOAuthCallbackState,
+	getOAuthCallbackError,
 	cleanOAuthParams,
 	getActiveConnection,
 	getAuthState,
