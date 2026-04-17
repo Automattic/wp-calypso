@@ -1091,11 +1091,17 @@ export default function pages() {
 
 		const { owner, slug } = req.params;
 
+		// Bound the upstream fetch so a stalled public-api call can't hang the
+		// request (and by extension the node worker) indefinitely.
+		const controller = new AbortController();
+		const timeoutId = setTimeout( () => controller.abort(), 5000 );
+
 		try {
 			const apiResponse = await fetch(
 				`https://public-api.wordpress.com/wpcom/v2/read/lists/${ encodeURIComponent(
 					owner
-				) }/${ encodeURIComponent( slug ) }`
+				) }/${ encodeURIComponent( slug ) }`,
+				{ signal: controller.signal }
 			);
 
 			if ( ! apiResponse.ok ) {
@@ -1159,8 +1165,13 @@ export default function pages() {
 				items: [ ...personItems, ...tags ],
 				tag: tags,
 			} );
-		} catch {
+		} catch ( err ) {
+			if ( err && err.name === 'AbortError' ) {
+				return res.status( 504 ).json( { error: 'Upstream request timed out' } );
+			}
 			return res.status( 502 ).json( { error: 'Failed to fetch list data' } );
+		} finally {
+			clearTimeout( timeoutId );
 		}
 	} );
 
