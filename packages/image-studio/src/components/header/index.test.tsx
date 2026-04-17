@@ -568,7 +568,7 @@ describe( 'Header', () => {
 			expect( screen.getByLabelText( /Next image/ ) ).toBeDisabled();
 		} );
 
-		it( 'hides the navigation pill when there are drafts', () => {
+		it( 'disables navigation when there are drafts', () => {
 			mockUseSelect.mockImplementation( ( selector: any ) => {
 				const result = selector( () => ( {
 					getImageStudioAiProcessing: () => false,
@@ -584,12 +584,12 @@ describe( 'Header', () => {
 				<Header { ...defaultProps } mode={ ImageStudioMode.Edit } hasPreviousImage hasNextImage />
 			);
 
-			expect( screen.queryByText( 'test-image.jpg' ) ).not.toBeInTheDocument();
-			expect( screen.queryByLabelText( /Previous image/ ) ).not.toBeInTheDocument();
-			expect( screen.queryByLabelText( /Next image/ ) ).not.toBeInTheDocument();
+			expect( screen.getByText( 'test-image.jpg' ) ).toBeInTheDocument();
+			expect( screen.getByLabelText( /Previous image/ ) ).toBeDisabled();
+			expect( screen.getByLabelText( /Next image/ ) ).toBeDisabled();
 		} );
 
-		it( 'hides the navigation pill when metadata has been updated', () => {
+		it( 'disables navigation when metadata has been updated', () => {
 			mockUseSelect.mockImplementation( ( selector: any ) => {
 				const result = selector( () => ( {
 					getImageStudioAiProcessing: () => false,
@@ -605,9 +605,9 @@ describe( 'Header', () => {
 				<Header { ...defaultProps } mode={ ImageStudioMode.Edit } hasPreviousImage hasNextImage />
 			);
 
-			expect( screen.queryByText( 'test-image.jpg' ) ).not.toBeInTheDocument();
-			expect( screen.queryByLabelText( /Previous image/ ) ).not.toBeInTheDocument();
-			expect( screen.queryByLabelText( /Next image/ ) ).not.toBeInTheDocument();
+			expect( screen.getByText( 'test-image.jpg' ) ).toBeInTheDocument();
+			expect( screen.getByLabelText( /Previous image/ ) ).toBeDisabled();
+			expect( screen.getByLabelText( /Next image/ ) ).toBeDisabled();
 		} );
 
 		it( 'disables navigation when AI is processing', () => {
