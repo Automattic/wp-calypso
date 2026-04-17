@@ -41,6 +41,7 @@ import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
 import { setCurrentFlowName } from 'calypso/state/signup/flow/actions';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
+import { LiveAIAssistant } from './components/live-ai-assistant';
 import { FlowRenderer } from './declarative-flow/internals';
 import { tryPreload } from './declarative-flow/internals/hooks/use-preload-steps';
 import 'calypso/assets/stylesheets/style.scss';
@@ -253,6 +254,7 @@ async function main() {
 					<WindowLocaleEffectManager />
 					<BrowserRouter basename="setup">
 						<FlowRenderer flow={ flow } steps={ flowSteps } />
+						<LiveAIAssistant />
 						{ config.isEnabled( 'cookie-banner' ) && (
 							<AsyncLoad require="calypso/blocks/cookie-banner" placeholder={ null } />
 						) }
