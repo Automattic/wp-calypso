@@ -181,7 +181,7 @@ function useRedirectOnTransactionSuccess( {
 		isSuccess: isReceiptSuccess,
 		isError: isReceiptError,
 	} = useQuery( {
-		...receiptQuery( finalReceiptId ?? 0, true ),
+		...receiptQuery( finalReceiptId ?? 0, { includeFailedPurchases: true } ),
 		enabled: !! finalReceiptId,
 	} );
 	const isReceiptLoaded = isReceiptSuccess || isReceiptError;
@@ -346,6 +346,7 @@ function useRedirectOnTransactionSuccess( {
 		blogId,
 		orderId,
 		productName,
+		receipt,
 		receiptId,
 		redirectTo,
 		reduxDispatch,

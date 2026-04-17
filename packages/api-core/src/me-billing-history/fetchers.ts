@@ -41,10 +41,10 @@ export async function fetchUserReceipts(): Promise< Receipt[] > {
 
 export async function fetchReceipt(
 	receiptId: number,
-	includeFailedPurchases = false
+	options?: { includeFailedPurchases?: boolean }
 ): Promise< Receipt > {
 	let path = `/me/billing-history/receipt/${ receiptId }`;
-	if ( includeFailedPurchases ) {
+	if ( options?.includeFailedPurchases ) {
 		path += '?include_failed_purchases=true';
 	}
 

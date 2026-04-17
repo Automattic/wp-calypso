@@ -12,20 +12,15 @@ import type { WPCOMTransactionEndpointResponseSuccess } from '@automattic/wpcom-
 
 import 'calypso/state/receipts/init';
 
-export function fetchReceipt( receiptId: number, includeFailedPurchases = false ) {
+export function fetchReceipt( receiptId: number ) {
 	return ( dispatch: CalypsoDispatch ) => {
 		dispatch( {
 			type: RECEIPT_FETCH,
 			receiptId,
 		} );
 
-		let path = `/me/billing-history/receipt/${ receiptId }`;
-		if ( includeFailedPurchases ) {
-			path += '?include_failed_purchases=true';
-		}
-
 		return wpcom.req
-			.get( path )
+			.get( `/me/billing-history/receipt/${ receiptId }` )
 			.then( ( data: RawReceiptData ) => {
 				dispatch( fetchReceiptCompleted( receiptId, data ) );
 			} )
