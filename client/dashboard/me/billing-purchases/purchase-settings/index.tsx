@@ -14,6 +14,7 @@ import {
 	reinstallMarketplacePluginsQuery,
 	siteBySlugQuery,
 } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { domainManagementEdit, domainUseMyDomain } from '@automattic/domains-table/src/utils/paths';
 import { formatCurrency } from '@automattic/number-formatters';
 import { INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS } from '@automattic/urls';
@@ -89,11 +90,17 @@ import {
 	isInExpirationGracePeriod,
 	isA4ABillingDragonPurchase,
 	isCentennialPurchase,
+	hasAmountAvailableToRefund,
 } from '../../../utils/purchase';
 import { getSitePurchaseUpgradeUrl } from '../../../utils/site-url';
 import BillingFlexUsageCard from '../../billing-flex-usage';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
 import AkismetApiKeyCard from './akismet-api-key-card';
+import {
+	getCancelButtonCopy,
+	getRemoveButtonCopy,
+	isDomainTransfer,
+} from './get-cancel-remove-copy';
 import JetpackLicenseKeyCard from './jetpack-license-key-card';
 import { PurchaseNotice } from './purchase-notice';
 import type { User, Purchase, Site } from '@automattic/api-core';
@@ -254,9 +261,95 @@ function PurchaseActionMenu( { purchase }: { purchase: Purchase } ) {
 
 function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 	const navigate = useNavigate();
+	const locale = useLocale();
+	const isSplitEnabled = isEnabled( 'purchases/update-cancel-refunds' );
 	// FIXME: render renderWordAdsEligibilityWarningDialog for refund/cancel
 	// FIXME: render renderNonPrimaryDomainWarningDialog for refund/cancel
 	// FIXME: render "Domain transfers can take anywhere from five to seven days to complete." next to cancel button (see domainTransferDuration)
+
+	const goToCancel = () =>
+		navigate( {
+			to: cancelPurchaseRoute.fullPath,
+			params: { purchaseId: purchase.ID },
+		} );
+
+	if ( isSplitEnabled ) {
+		const hasRefund = hasAmountAvailableToRefund( purchase );
+		const autoRenewOn = purchase.is_auto_renew_enabled;
+		// Domain transfer gate: non-refundable transfers can't be cancelled without
+		// support intervention (preserves legacy behavior on classic; adds it to
+		// dashboard). Remove button is unaffected — a completed transfer with
+		// auto-renew off can still be removed below.
+		const isTransferNonRefundable = isDomainTransfer( purchase ) && ! hasRefund;
+		// Visibility is driven by what actions make sense for the user + what the
+		// backend will actually accept. Verified via the wpcom-billing endpoint
+		// code: cancel / disable-auto-renew / delete all accept mutations in the
+		// pending-renewal ("is_locked") state — the `is_locked` flag is not
+		// enforced by these endpoints, so we don't gate on it.
+		//
+		// - Cancel: only makes sense for live subscriptions (auto-renew on, not
+		//   expired). For expired/grace state, renew or remove is the path.
+		// - Remove: show whenever the user has reason to end the subscription —
+		//   already cancelled, refund available, or expired/pending (where
+		//   removing stops any retry schedule).
+		const isExpiredOrGrace = isExpired( purchase ) || isInExpirationGracePeriod( purchase );
+		const showCancel = autoRenewOn && ! isTransferNonRefundable && ! isExpiredOrGrace;
+		const showRemove = ! autoRenewOn || hasRefund || isExpiredOrGrace;
+
+		if ( ! showCancel && ! showRemove ) {
+			return null;
+		}
+
+		// Use non-breaking spaces in the date so it doesn't wrap mid-date
+		// (e.g. "April\n16, 2027") in narrow viewports.
+		const expiryDateFormatted = purchase.expiry_date
+			? formatDate( new Date( purchase.expiry_date ), locale, {
+					dateStyle: 'long',
+			  } ).replace( / /g, '\u00A0' )
+			: '';
+
+		const cancelCopy = showCancel ? getCancelButtonCopy( purchase, expiryDateFormatted ) : null;
+		const removeCopy = showRemove ? getRemoveButtonCopy( purchase, hasRefund, autoRenewOn ) : null;
+
+		return (
+			<>
+				{ cancelCopy && (
+					<ActionList.ActionItem
+						title={ cancelCopy.label }
+						description={ cancelCopy.description }
+						actions={
+							<Button
+								variant="secondary"
+								// When Remove is shown alongside Cancel, keep Cancel neutral so
+								// the destructive emphasis goes to Remove only. When Cancel is
+								// the lone destructive action, make it red.
+								isDestructive={ ! showRemove }
+								size="compact"
+								onClick={ goToCancel }
+							>
+								{ _x( 'Cancel', 'Stop the subscription from automatically charging and renewing' ) }
+							</Button>
+						}
+					/>
+				) }
+				{ removeCopy && (
+					<ActionList.ActionItem
+						title={ removeCopy.label }
+						description={ removeCopy.description }
+						actions={
+							<Button variant="secondary" isDestructive size="compact" onClick={ goToCancel }>
+								{ _x(
+									'Remove',
+									'Remove the cancelled or expired subscription from the list of active purchases.'
+								) }
+							</Button>
+						}
+					/>
+				) }
+			</>
+		);
+	}
+
 	if ( purchase.is_cancelable ) {
 		return (
 			<ActionList.ActionItem

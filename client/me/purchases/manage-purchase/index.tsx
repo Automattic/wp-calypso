@@ -173,6 +173,7 @@ import {
 	isA4ABillingDragonPurchase,
 	getCancelPurchaseSurveyCompletedPreferenceKey,
 } from '../utils';
+import { getCancelButtonCopy, getRemoveButtonCopy } from './get-cancel-remove-copy';
 import PurchaseNotice from './notices';
 import PurchasePlanDetails from './plan-details';
 import PurchaseMeta from './purchase-meta';
@@ -762,20 +763,86 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
-		if ( canAutoRenewBeTurnedOff( purchase ) ) {
+		const isSplitEnabled = config.isEnabled( 'purchases/update-cancel-refunds' );
+		const canRefund = hasAmountAvailableToRefund( purchase );
+		const autoRenewOn = !! purchase.isAutoRenewEnabled;
+
+		// Visibility:
+		//   Off flag → mutually exclusive with Cancel (preserves today's behavior).
+		//   On flag  → show when the subscription is already off (auto-renew off,
+		//              expired), OR when auto-renew is still on and a refund is
+		//              available (the new dual-button case alongside Cancel).
+		if ( isSplitEnabled ) {
+			if ( autoRenewOn && ! canRefund ) {
+				return null;
+			}
+		} else if ( canAutoRenewBeTurnedOff( purchase ) ) {
 			return null;
 		}
 
 		const isPlanPurchase = isPlan( purchase );
+
+		// 100-year domains cannot be removed by the user.
+		if ( isDomainRegistration( purchase ) && this.isHundredYearDomain( purchase ) ) {
+			return null;
+		}
+
+		if ( isSplitEnabled ) {
+			const removeCopy = getRemoveButtonCopy( purchase, canRefund, autoRenewOn, translate );
+
+			// Refundable (dual-button on active, or just-cancelled still in window):
+			// route through the cancel URL so the existing refund flow runs. The
+			// inline <RemovePurchase> component skips refund processing AND hides
+			// itself when `hasAmountAvailableToRefund` is true, so we can't use it
+			// for any refundable state. A future PR replaces this hop with a
+			// dedicated refund confirmation screen.
+			if ( canRefund ) {
+				const link = ( this.props.getCancelPurchaseUrlFor ?? cancelPurchase )(
+					this.props.siteSlug,
+					purchase.id
+				);
+				return (
+					<CompactCard href={ link } className="remove-purchase__card">
+						<Icon icon={ trash } className="card__icon" />
+						{ removeCopy.label }
+						{ this.renderActionDetailsText( removeCopy.description, {
+							className: 'manage-purchase__refund-text',
+						} ) }
+					</CompactCard>
+				);
+			}
+
+			// Non-refundable: auto-renew is off (enforced by the early return above)
+			// and there's no refund to process. Use <RemovePurchase> for the direct
+			// DELETE path.
+			return (
+				<RemovePurchase
+					hasLoadedSites={ hasLoadedSites }
+					hasLoadedUserPurchasesFromServer={ this.props.hasLoadedPurchasesFromServer }
+					hasNonPrimaryDomainsFlag={ hasNonPrimaryDomainsFlag }
+					hasSetupAds={ this.props.hasSetupAds }
+					hasCustomPrimaryDomain={ hasCustomPrimaryDomain }
+					activeSubscriptions={ this.getActiveMarketplaceSubscriptions() }
+					site={ site }
+					purchase={ purchase }
+					purchaseListUrl={ purchaseListUrl ?? purchasesRoot }
+					linkIcon="chevron-right"
+					skipRemovePlanSurvey={ isPlanPurchase && hasCompletedCancelPurchaseSurvey }
+				>
+					<Icon icon={ trash } className="card__icon" />
+					{ removeCopy.label }
+					{ this.renderActionDetailsText( removeCopy.description, {
+						className: 'manage-purchase__refund-text',
+					} ) }
+				</RemovePurchase>
+			);
+		}
+
 		let text = translate( 'Cancel subscription' );
 
 		if ( isPlanPurchase ) {
 			text = translate( 'Cancel plan' );
 		} else if ( isDomainRegistration( purchase ) ) {
-			// 100-year domains cannot be removed by the user
-			if ( this.isHundredYearDomain( purchase ) ) {
-				return null;
-			}
 			text = translate( 'Cancel domain subscription' );
 		}
 
@@ -968,8 +1035,18 @@ class ManagePurchase extends Component<
 			return null;
 		}
 		const { id } = purchase;
+		const isSplitEnabled = config.isEnabled( 'purchases/update-cancel-refunds' );
 
 		if ( ! canAutoRenewBeTurnedOff( purchase ) ) {
+			return null;
+		}
+
+		// Under flag: only show the Cancel button when auto-renew is still on
+		// (i.e. the user hasn't already cancelled the subscription). The Remove
+		// button owns the auto-renew-off state. `canAutoRenewBeTurnedOff` returns
+		// true for refundable purchases even when auto-renew is already off, so
+		// the explicit `isAutoRenewEnabled` check is needed.
+		if ( isSplitEnabled && ! purchase.isAutoRenewEnabled ) {
 			return null;
 		}
 
@@ -988,11 +1065,19 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
+		// Use non-breaking spaces so the formatted date stays on one line in narrow viewports.
+		const expiryDateFormatted = moment( purchase.expiryDate )
+			.format( 'LL' )
+			.replace( / /g, '\u00A0' );
+		const cancelCopy = isSplitEnabled
+			? getCancelButtonCopy( purchase, expiryDateFormatted, translate )
+			: null;
+
 		const onClick = ( event: { preventDefault: () => void } ) => {
 			recordTracksEvent( 'calypso_purchases_manage_purchase_cancel_click', {
 				product_slug: purchase.productSlug,
 				is_atomic: isAtomicSite,
-				link_text: getCancelPurchaseNavText( purchase, translate ),
+				link_text: cancelCopy ? cancelCopy.label : getCancelPurchaseNavText( purchase, translate ),
 			} );
 
 			if ( this.shouldShowWordAdsEligibilityWarning() ) {
@@ -1009,14 +1094,18 @@ class ManagePurchase extends Component<
 		return (
 			<CompactCard href={ link } className="remove-purchase__card" onClick={ onClick }>
 				<Icon icon={ trash } className="card__icon" />
-				{ getCancelPurchaseNavText( purchase, translate ) }
-				{ this.renderActionDetails(
-					String(
-						translate( 'Will remain active until %(expiryDate)s', {
-							args: { expiryDate: moment( purchase.expiryDate ).format( 'LL' ) },
-						} )
-					)
-				) }
+				{ cancelCopy ? cancelCopy.label : getCancelPurchaseNavText( purchase, translate ) }
+				{ cancelCopy
+					? this.renderActionDetailsText( cancelCopy.description, {
+							className: 'manage-purchase__refund-text',
+					  } )
+					: this.renderActionDetails(
+							String(
+								translate( 'Will remain active until %(expiryDate)s', {
+									args: { expiryDate: expiryDateFormatted },
+								} )
+							)
+					  ) }
 			</CompactCard>
 		);
 	}
