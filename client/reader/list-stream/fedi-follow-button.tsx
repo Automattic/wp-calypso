@@ -1,4 +1,4 @@
-import { Button, Modal, TextControl } from '@wordpress/components';
+import { Button, Modal, TextControl, __experimentalHStack as HStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
@@ -129,14 +129,14 @@ export function FediFollowAllButton( { items, listSlug }: FediFollowAllButtonPro
 					}
 				} }
 			/>
-			<div style={ { display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '16px' } }>
+			<HStack justify="flex-end" spacing={ 2 } style={ { marginTop: '16px' } }>
 				<Button variant="tertiary" onClick={ () => setShowModal( false ) }>
 					{ translate( 'Cancel' ) }
 				</Button>
 				<Button variant="primary" onClick={ handleConnect } disabled={ ! instanceDomain.trim() }>
 					{ translate( 'Connect & Follow' ) }
 				</Button>
-			</div>
+			</HStack>
 		</Modal>
 	);
 
