@@ -172,7 +172,7 @@ async function discoverOutboxFromActor(
 
 		const actor = await response.json();
 		return actor.outbox || null;
-	} catch ( err ) {
+	} catch {
 		return null;
 	}
 }

@@ -1,6 +1,6 @@
 import { Button, Modal, TextControl, __experimentalHStack as HStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SplitButton from 'calypso/components/split-button';
 import { useFediConnectionContext } from 'calypso/lib/fediverse';
@@ -19,7 +19,7 @@ export function FediFollowAllButton( { items, listSlug }: FediFollowAllButtonPro
 	const [ instanceDomain, setInstanceDomain ] = useState( '' );
 	const pendingFollowTriggered = useRef( false );
 
-	const fediAccounts = publicListItemsToFediAccounts( items );
+	const fediAccounts = useMemo( () => publicListItemsToFediAccounts( items ), [ items ] );
 
 	const {
 		instance: connectedInstance,
