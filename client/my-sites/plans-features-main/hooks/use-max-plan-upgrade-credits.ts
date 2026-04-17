@@ -48,10 +48,18 @@ export function useMaxPlanUpgradeCredits( { siteId, plans }: Props ): number {
 				overrideCode === Plans.COST_OVERRIDE_REASONS.RECENT_DOMAIN_PRORATION
 		);
 		if ( proratedOverride ) {
-			// old_price / new_price in cost_overrides are in major currency units (dollars),
-			// whereas the rest of the pricing data uses smallest units (cents). Convert here
-			// so the caller receives a consistent smallest-unit value.
-			return Math.round( ( proratedOverride.oldPrice - proratedOverride.newPrice ) * 100 );
+			// old_price / new_price in cost_overrides are in major currency units (e.g. dollars),
+			// whereas the rest of the pricing data uses smallest units (e.g. cents). Convert to
+			// smallest units using Intl.NumberFormat so zero-decimal currencies (e.g. JPY) are
+			// handled correctly rather than hardcoding * 100.
+			const currencyCode = sitePlan?.pricing?.currencyCode ?? 'USD';
+			const precision = new Intl.NumberFormat( 'en-US', {
+				style: 'currency',
+				currency: currencyCode,
+			} ).resolvedOptions().maximumFractionDigits;
+			return Math.round(
+				( proratedOverride.oldPrice - proratedOverride.newPrice ) * 10 ** ( precision ?? 2 )
+			);
 		}
 
 		// Fallback: non-prorated discounts (e.g. sale coupons with upgrade credits).
