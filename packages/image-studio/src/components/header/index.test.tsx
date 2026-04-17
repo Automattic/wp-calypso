@@ -568,7 +568,7 @@ describe( 'Header', () => {
 			expect( screen.getByLabelText( /Next image/ ) ).toBeDisabled();
 		} );
 
-		it( 'disables navigation when there are drafts', () => {
+		it( 'hides the navigation pill when there are drafts', () => {
 			mockUseSelect.mockImplementation( ( selector: any ) => {
 				const result = selector( () => ( {
 					getImageStudioAiProcessing: () => false,
@@ -584,12 +584,30 @@ describe( 'Header', () => {
 				<Header { ...defaultProps } mode={ ImageStudioMode.Edit } hasPreviousImage hasNextImage />
 			);
 
-			// When there are drafts, the nav button labels change to a tooltip message
-			const navButtons = screen.getAllByLabelText( /Save or discard your changes/ );
-			expect( navButtons ).toHaveLength( 2 );
-			navButtons.forEach( ( button ) => {
-				expect( button ).toBeDisabled();
+			expect( screen.queryByText( 'test-image.jpg' ) ).not.toBeInTheDocument();
+			expect( screen.queryByLabelText( /Previous image/ ) ).not.toBeInTheDocument();
+			expect( screen.queryByLabelText( /Next image/ ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'hides the navigation pill when metadata has been updated', () => {
+			mockUseSelect.mockImplementation( ( selector: any ) => {
+				const result = selector( () => ( {
+					getImageStudioAiProcessing: () => false,
+					getHasUpdatedMetadata: () => true,
+					getIsAnnotationMode: () => false,
+					getDraftIds: () => [],
+					getEntryPoint: () => ImageStudioEntryPoint.MediaLibrary,
+				} ) );
+				return result;
 			} );
+
+			render(
+				<Header { ...defaultProps } mode={ ImageStudioMode.Edit } hasPreviousImage hasNextImage />
+			);
+
+			expect( screen.queryByText( 'test-image.jpg' ) ).not.toBeInTheDocument();
+			expect( screen.queryByLabelText( /Previous image/ ) ).not.toBeInTheDocument();
+			expect( screen.queryByLabelText( /Next image/ ) ).not.toBeInTheDocument();
 		} );
 
 		it( 'disables navigation when AI is processing', () => {

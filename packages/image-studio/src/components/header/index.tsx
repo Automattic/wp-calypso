@@ -98,9 +98,15 @@ export const Header = ( {
 
 	const showTools = mode === ImageStudioMode.Edit;
 	const showTitle = mode === ImageStudioMode.Generate;
-	// Show navigation pill in Edit mode on uploads page, if we have a filename to display
+	// Hide the pill while the user has unsaved edits: the displayed filename
+	// tracks the current canvas image across variants, which makes the disabled
+	// library navigation buttons look like they should work.
 	const showNavigationPill =
-		mode === ImageStudioMode.Edit && !! config?.imageData?.filename && window.pagenow === 'upload';
+		mode === ImageStudioMode.Edit &&
+		!! config?.imageData?.filename &&
+		window.pagenow === 'upload' &&
+		! hasDrafts &&
+		! hasUpdatedMetadata;
 
 	// Generate classic editor URL if we have an attachment ID
 	const classicEditorUrl = config?.attachmentId
