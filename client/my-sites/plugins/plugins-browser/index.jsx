@@ -119,6 +119,33 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 
 	const isMarketplaceRedesignEnabled = useIsMarketplaceRedesignEnabled();
 
+	let documentTitle;
+	if ( category && ! search ) {
+		documentTitle = translate( '%(categoryName)s Plugins', { args: { categoryName } } );
+	} else if ( ! search ) {
+		documentTitle = translate( 'WordPress Plugins for SEO, Forms, Stores & More' );
+	} else {
+		documentTitle = translate( 'Plugins' );
+	}
+
+	let metaDescription = null;
+	if ( ! search ) {
+		if ( category ) {
+			metaDescription = translate(
+				'Browse %(categoryName)s plugins for WordPress.com. Add new features to your site with thousands of plugins — available on all paid plans.',
+				{ args: { categoryName } }
+			);
+		} else {
+			metaDescription = translate(
+				'Explore WordPress plugins for SEO, ecommerce, analytics, and more. Available on all paid WordPress.com plans.'
+			);
+		}
+	}
+
+	const metas = ! shouldUseLoggedInView
+		? [ { name: 'description', content: metaDescription } ]
+		: undefined;
+
 	// this is a temporary hack until we merge Phase 4 of the refactor
 	const renderList = () => {
 		if ( search ) {
@@ -173,13 +200,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 				trackPageViews={ trackPageViews }
 				isLoggedIn={ isLoggedIn }
 			/>
-			<DocumentHead
-				title={
-					category && ! search
-						? translate( '%(categoryName)s Plugins', { args: { categoryName } } )
-						: translate( 'Plugins' )
-				}
-			/>
+			<DocumentHead title={ documentTitle } meta={ metas } />
 
 			<PluginsNavigationHeader
 				navigationHeaderRef={ navigationHeaderRef }

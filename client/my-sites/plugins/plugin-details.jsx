@@ -313,6 +313,38 @@ function PluginDetails( props ) {
 		} );
 	};
 
+	const canonicalUrl = 'https://wordpress.com' + props.path;
+	const metaDescription =
+		! isLoggedIn && fullPlugin.name
+			? translate(
+					'%(pluginName)s plugin for WordPress.com: %(shortDescription)s Install it on your site today.',
+					{
+						args: {
+							pluginName: fullPlugin.name,
+							shortDescription: fullPlugin.short_description
+								? fullPlugin.short_description.trim().replace( /\.?\s*$/, '. ' )
+								: '',
+						},
+						textOnly: true,
+					}
+			  )
+			: null;
+
+	const metas =
+		! isLoggedIn && fullPlugin.name
+			? [
+					{
+						name: 'description',
+						property: 'og:description',
+						content: metaDescription,
+					},
+					{ property: 'og:title', content: getPageTitle() },
+					{ property: 'og:url', content: canonicalUrl },
+					{ property: 'og:type', content: 'website' },
+					{ property: 'og:site_name', content: 'WordPress.com' },
+			  ]
+			: undefined;
+
 	if ( ! isRequestingSites && ! userCanManagePlugins ) {
 		return <NoPermissionsError title={ getPageTitle() } />;
 	}
@@ -405,7 +437,7 @@ function PluginDetails( props ) {
 			fullWidthLayout={ isMarketplaceRedesignEnabled }
 			isLoggedOut={ ! isLoggedIn }
 		>
-			<DocumentHead title={ getPageTitle() } />
+			<DocumentHead title={ getPageTitle() } meta={ metas } />
 			<PageViewTracker
 				path={ analyticsPath }
 				title="Plugins > Plugin Details"
