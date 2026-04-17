@@ -116,6 +116,7 @@ __metadata:
     "@automattic/calypso-apps-builder": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/image-studio": "workspace:^"
+    "@automattic/jetpack-ai-sidebar": "workspace:^"
     "@automattic/wp-babel-makepot": "workspace:^"
     "@tanstack/react-query": "npm:^5.83.0"
     "@wordpress/components": "npm:^28.23.0"
@@ -125,6 +126,7 @@ __metadata:
     "@wordpress/i18n": "npm:^6.13.0"
     "@wordpress/plugins": "npm:^7.23.0"
     "@wordpress/readable-js-assets-webpack-plugin": "npm:^3.24.0"
+    copy-webpack-plugin: "npm:^10.2.4"
     webpack: "npm:^5.99.8"
   peerDependencies:
     "@automattic/calypso-router": "workspace:^"
@@ -1541,6 +1543,26 @@ __metadata:
   peerDependenciesMeta:
     "@babel/runtime":
       optional: true
+  languageName: unknown
+  linkType: soft
+
+"@automattic/jetpack-ai-sidebar@workspace:^, @automattic/jetpack-ai-sidebar@workspace:packages/jetpack-ai-sidebar":
+  version: 0.0.0-use.local
+  resolution: "@automattic/jetpack-ai-sidebar@workspace:packages/jetpack-ai-sidebar"
+  dependencies:
+    "@automattic/agenttic-client": "npm:^0.1.58"
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@types/react": "npm:^18.3.1"
+    "@types/react-dom": "npm:^18.3.1"
+    "@wordpress/abilities": "npm:^0.4.0"
+    "@wordpress/components": "npm:^30.9.0"
+    "@wordpress/i18n": "npm:^5.23.0"
+    typescript: "npm:^5.8.3"
+  peerDependencies:
+    "@wordpress/data": ^10.23.0
+    "@wordpress/element": ^6.23.0
+    react: ^18.3.1
+    react-dom: ^18.3.1
   languageName: unknown
   linkType: soft
 

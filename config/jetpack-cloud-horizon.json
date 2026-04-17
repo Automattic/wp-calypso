@@ -28,7 +28,6 @@
 	"features": {
 		"activity-log/v2": true,
 		"always_use_logout_url": false,
-		"checkout/ebanx-pix": true,
 		"checkout/google-pay": true,
 		"checkout/checkout-version": false,
 		"checkout/razorpay": false,

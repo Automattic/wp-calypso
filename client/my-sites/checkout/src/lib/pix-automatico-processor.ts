@@ -33,7 +33,7 @@ type EbanxCardTransactionRequest = {
 	document: string;
 };
 
-export async function pixProcessor(
+export async function pixAutomaticoProcessor(
 	submitData: unknown,
 	options: PaymentProcessorOptions,
 	translate: LocalizeProps[ 'translate' ]
@@ -51,7 +51,7 @@ export async function pixProcessor(
 		responseCart,
 		contactDetails,
 	} = options;
-	const paymentMethodId = 'pix';
+	const paymentMethodId = 'pix_automatico';
 
 	reduxDispatch( recordTransactionBeginAnalytics( { paymentMethodId } ) );
 
@@ -95,7 +95,7 @@ export async function pixProcessor(
 				getDomainDetails( contactDetails, { includeDomainDetails, includeGSuiteDetails } ) ?? null,
 			responseCart,
 		} ),
-		paymentMethodType: 'WPCOM_Billing_Ebanx_Redirect_Brazil_Pix',
+		paymentMethodType: 'WPCOM_Billing_Ebanx_Redirect_Brazil_Pix_Automatico',
 	} );
 
 	const genericErrorMessage = translate(
@@ -146,7 +146,7 @@ export async function pixProcessor(
 				},
 				isAkismet: options.isAkismetSitelessCheckout,
 				isJetpackNotAtomic: options.isJetpackNotAtomic,
-				isPixAutomatico: false,
+				isPixAutomatico: true,
 			} );
 
 			let orderStatus = 'processing';
@@ -188,7 +188,7 @@ async function pollForOrderStatus(
 }
 
 function getRenderRoot( genericErrorMessage: string ) {
-	const dialogTarget = document.querySelector( '.pix-modal-target' );
+	const dialogTarget = document.querySelector( '.pix-automatico-modal-target' );
 	if ( ! dialogTarget ) {
 		// eslint-disable-next-line no-console
 		console.error( 'Dialog target was not found.' );

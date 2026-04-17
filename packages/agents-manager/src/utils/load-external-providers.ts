@@ -203,55 +203,200 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	let mergedImageUpload: ImageUploadHook | undefined;
 	let mergedUseCheckpoint: UseCheckpointHook | undefined;
 
-	for ( const moduleId of agentProviders ) {
-		try {
-			// Dynamic import of registered script module
-			// The webpackIgnore comment tells webpack not to bundle this - it's loaded at runtime
-			const module = await import( /* webpackIgnore: true */ moduleId );
+	// Collect exports that need to be merged across all providers.
+	const allToolProviders: ToolProvider[] = [];
+	const allGetChatComponents: GetChatComponent[] = [];
+	const allAbilitiesSetups: AbilitiesSetupHook[] = [];
+	const allUseSuggestions: UseSuggestionsHook[] = [];
+	const allGetEmptyViewSuggestions: ( () => Suggestion[] )[] = [];
 
-			if ( module.toolProvider ) {
-				mergedToolProvider = module.toolProvider;
+	// Load all providers in parallel to avoid serializing network/module fetches.
+	// Results are processed in registration order to preserve first-write-wins semantics.
+	const loadedModules = await Promise.all(
+		agentProviders.map( async ( moduleId ) => {
+			try {
+				// Dynamic import of registered script module
+				// The webpackIgnore comment tells webpack not to bundle this - it's loaded at runtime
+				const module = await import( /* webpackIgnore: true */ moduleId );
+				// eslint-disable-next-line no-console
+				console.log( `[AgentsManager] Loaded provider "${ moduleId }"` );
+				return module;
+			} catch ( error ) {
+				// eslint-disable-next-line no-console
+				console.warn( `[AgentsManager] Failed to load provider "${ moduleId }":`, error );
+				return null;
 			}
-			if ( module.contextProvider ) {
-				mergedContextProvider = module.contextProvider;
-			}
-			if ( module.getEmptyViewSuggestions ) {
-				mergedGetEmptyViewSuggestions = module.getEmptyViewSuggestions;
-			}
-			if ( module.markdownComponents ) {
-				mergedMarkdownComponents = module.markdownComponents;
-			}
-			if ( module.markdownExtensions ) {
-				mergedMarkdownExtensions = module.markdownExtensions;
-			}
-			if ( module.useNavigationContinuation ) {
-				mergedNavigationContinuation = module.useNavigationContinuation;
-			}
-			if ( module.useAbilitiesSetup ) {
-				mergedAbilitiesSetup = module.useAbilitiesSetup;
-			}
-			if ( module.useSuggestions ) {
-				mergedUseSuggestions = module.useSuggestions;
-			}
-			if ( module.getChatComponent ) {
-				mergedGetChatComponent = module.getChatComponent;
-			}
-			if ( module.siteBuildUtils ) {
-				mergedSiteBuildUtils = module.siteBuildUtils;
-			}
-			if ( module.useImageUpload ) {
-				mergedImageUpload = module.useImageUpload;
-			}
-			if ( module.useCheckpoint ) {
-				mergedUseCheckpoint = module.useCheckpoint;
-			}
+		} )
+	);
 
-			// eslint-disable-next-line no-console
-			console.log( `[AgentsManager] Loaded provider "${ moduleId }"` );
-		} catch ( error ) {
-			// eslint-disable-next-line no-console
-			console.warn( `[AgentsManager] Failed to load provider "${ moduleId }":`, error );
+	for ( const module of loadedModules ) {
+		if ( ! module ) {
+			continue;
 		}
+
+		// These exports are merged across all providers.
+		if ( module.toolProvider ) {
+			allToolProviders.push( module.toolProvider );
+		}
+		if ( module.getChatComponent ) {
+			allGetChatComponents.push( module.getChatComponent );
+		}
+		if ( module.useAbilitiesSetup ) {
+			allAbilitiesSetups.push( module.useAbilitiesSetup );
+		}
+		if ( module.useSuggestions ) {
+			allUseSuggestions.push( module.useSuggestions );
+		}
+		if ( module.getEmptyViewSuggestions ) {
+			allGetEmptyViewSuggestions.push( module.getEmptyViewSuggestions );
+		}
+
+		// First-write-wins for singleton exports.
+		if ( module.contextProvider && ! mergedContextProvider ) {
+			mergedContextProvider = module.contextProvider;
+		}
+		if ( module.markdownComponents && ! mergedMarkdownComponents ) {
+			mergedMarkdownComponents = module.markdownComponents;
+		}
+		if ( module.markdownExtensions && ! mergedMarkdownExtensions ) {
+			mergedMarkdownExtensions = module.markdownExtensions;
+		}
+		if ( module.useNavigationContinuation && ! mergedNavigationContinuation ) {
+			mergedNavigationContinuation = module.useNavigationContinuation;
+		}
+		if ( module.siteBuildUtils && ! mergedSiteBuildUtils ) {
+			mergedSiteBuildUtils = module.siteBuildUtils;
+		}
+		if ( module.useImageUpload && ! mergedImageUpload ) {
+			mergedImageUpload = module.useImageUpload;
+		}
+		if ( module.useCheckpoint && ! mergedUseCheckpoint ) {
+			mergedUseCheckpoint = module.useCheckpoint;
+		}
+	}
+
+	// Merge toolProviders: first-write-wins by ability name, matching the
+	// resolution order of every other merged provider export (contextProvider,
+	// getChatComponent, useSuggestions, etc). Providers are processed in the
+	// order they were registered; earlier providers win on ability-name
+	// collisions.
+	if ( allToolProviders.length === 1 ) {
+		mergedToolProvider = allToolProviders[ 0 ];
+	} else if ( allToolProviders.length > 1 ) {
+		// Fetch all abilities once and build a name→provider map so that
+		// executeAbility can look up the owning provider in O(1) instead of
+		// re-querying getAbilities() on every call.
+		const allAbilityResults = await Promise.all(
+			allToolProviders.map( async ( tp ) => {
+				try {
+					return await tp.getAbilities();
+				} catch ( error ) {
+					// eslint-disable-next-line no-console
+					console.warn( '[AgentsManager] Failed to load abilities from provider:', error );
+					return [];
+				}
+			} )
+		);
+		const abilityProviderMap = new Map< string, ToolProvider >();
+		const seenAbilities = new Map< string, unknown >();
+		// Normalize ability names: AM converts `/` → `__` and `-` → `_`
+		// when routing tool calls. Index both raw and normalized forms
+		// so executeAbility matches regardless of which form the caller uses.
+		const normalize = ( name: string ) => name.replace( /\//g, '__' ).replace( /-/g, '_' );
+		for ( let i = 0; i < allToolProviders.length; i++ ) {
+			for ( const ability of allAbilityResults[ i ] ) {
+				if ( ! abilityProviderMap.has( ability.name ) ) {
+					abilityProviderMap.set( ability.name, allToolProviders[ i ] );
+					const normalized = normalize( ability.name );
+					if ( normalized !== ability.name ) {
+						abilityProviderMap.set( normalized, allToolProviders[ i ] );
+					}
+					seenAbilities.set( ability.name, ability );
+				}
+			}
+		}
+		const cachedAbilities = [ ...seenAbilities.values() ] as Awaited<
+			ReturnType< ToolProvider[ 'getAbilities' ] >
+		>;
+
+		mergedToolProvider = {
+			getAbilities: async () => cachedAbilities,
+			executeAbility: async ( name: string, args: unknown ) => {
+				// Use the pre-built map — avoids re-querying getAbilities() on
+				// every call and surfaces real errors from the owning provider
+				// instead of silently swallowing them.
+				const provider = abilityProviderMap.get( name );
+				if ( provider ) {
+					return provider.executeAbility( name, args );
+				}
+				throw new Error( `No provider handled ability: ${ name }` );
+			},
+		};
+	}
+
+	// Merge getChatComponent: try each provider, return first non-null.
+	if ( allGetChatComponents.length === 1 ) {
+		mergedGetChatComponent = allGetChatComponents[ 0 ];
+	} else if ( allGetChatComponents.length > 1 ) {
+		mergedGetChatComponent = ( ( type: string ) => {
+			for ( const fn of allGetChatComponents ) {
+				const result = fn( type as ChatComponentType );
+				if ( result ) {
+					return result;
+				}
+			}
+			return null;
+		} ) as GetChatComponent;
+	}
+
+	// Merge useAbilitiesSetup: call ALL providers' hooks.
+	if ( allAbilitiesSetups.length === 1 ) {
+		mergedAbilitiesSetup = allAbilitiesSetups[ 0 ];
+	} else if ( allAbilitiesSetups.length > 1 ) {
+		mergedAbilitiesSetup = ( ( actions ) => {
+			for ( const fn of allAbilitiesSetups ) {
+				fn( actions );
+			}
+		} ) as AbilitiesSetupHook;
+	}
+
+	// Merge useSuggestions: combine from all providers, dedupe by id.
+	if ( allUseSuggestions.length === 1 ) {
+		mergedUseSuggestions = allUseSuggestions[ 0 ];
+	} else if ( allUseSuggestions.length > 1 ) {
+		mergedUseSuggestions = ( ( maxSuggestions?: number ) => {
+			const combined: Suggestion[] = [];
+			const seenIds = new Set< string >();
+			for ( const hook of allUseSuggestions ) {
+				const { suggestions } = hook( maxSuggestions );
+				for ( const s of suggestions ) {
+					if ( ! seenIds.has( s.id ) ) {
+						seenIds.add( s.id );
+						combined.push( s );
+					}
+				}
+			}
+			return { suggestions: combined };
+		} ) as UseSuggestionsHook;
+	}
+
+	// Merge getEmptyViewSuggestions: combine from all providers, dedupe by id.
+	if ( allGetEmptyViewSuggestions.length === 1 ) {
+		mergedGetEmptyViewSuggestions = allGetEmptyViewSuggestions[ 0 ];
+	} else if ( allGetEmptyViewSuggestions.length > 1 ) {
+		mergedGetEmptyViewSuggestions = () => {
+			const combined: Suggestion[] = [];
+			const seenIds = new Set< string >();
+			for ( const fn of allGetEmptyViewSuggestions ) {
+				for ( const s of fn() ) {
+					if ( ! seenIds.has( s.id ) ) {
+						seenIds.add( s.id );
+						combined.push( s );
+					}
+				}
+			}
+			return combined;
+		};
 	}
 
 	return {
