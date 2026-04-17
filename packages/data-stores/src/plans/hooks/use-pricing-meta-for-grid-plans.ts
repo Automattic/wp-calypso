@@ -110,28 +110,6 @@ const usePricingMetaForGridPlans = ( {
 		shouldIgnorePlanOwnership: !! currentPlan?.purchaseId,
 	} );
 
-	/**
-	 * When a site's current plan has a far-future expiry (e.g. from multiple manual renewals or
-	 * HE intervention), the /sites/[siteId]/plans endpoint returns raw_price_integer as the
-	 * *total* prorated upgrade cost for the full remaining period rather than a per-year amount.
-	 * We normalise the displayed discountedPrice to a per-year equivalent so the plans grid
-	 * shows a sensible upgrade price instead of N× the annual cost.
-	 *
-	 * TODO: Long-term, the REST endpoint should return a `billing_years` field so clients don't
-	 * have to derive the normalisation factor from currentPlan.expiry. See SHILL-1709.
-	 */
-	const currentPlanYearsRemaining = ( () => {
-		if ( ! currentPlan?.expiry ) {
-			return 1;
-		}
-		return Math.max(
-			1,
-			Math.round(
-				( new Date( currentPlan.expiry ).getTime() - Date.now() ) / ( 365.25 * 24 * 60 * 60 * 1000 )
-			)
-		);
-	} )();
-
 	let planPrices:
 		| {
 				[ planSlug in PlanSlug ]?: {
@@ -307,25 +285,12 @@ const usePricingMetaForGridPlans = ( {
 						];
 					}
 
-					/**
-					 * Only normalise when NOT in withProratedDiscounts mode. When withProratedDiscounts
-					 * is true the caller (e.g. useMaxPlanUpgradeCredits) needs the raw multi-year total
-					 * so it can compute the correct overall credit from the cost_overrides directly.
-					 */
-					const normalizeToAnnual = ( price: number | null | undefined ) =>
-						price != null && currentPlanYearsRemaining > 1 && ! withProratedDiscounts
-							? Math.round( ( price / currentPlanYearsRemaining ) * 100 ) / 100
-							: price ?? null;
-
 					const discountedPrice = {
 						monthly: getTotalPrice(
-							normalizeToAnnual( sitePlan?.pricing.discountedPrice.monthly ),
+							sitePlan?.pricing.discountedPrice.monthly,
 							storageAddOnPriceMonthly
 						),
-						full: getTotalPrice(
-							normalizeToAnnual( sitePlan?.pricing.discountedPrice.full ),
-							storageAddOnPriceYearly
-						),
+						full: getTotalPrice( sitePlan?.pricing.discountedPrice.full, storageAddOnPriceYearly ),
 					};
 
 					return [
