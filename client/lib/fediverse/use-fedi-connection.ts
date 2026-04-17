@@ -14,6 +14,7 @@ import {
 	completeOAuthFlow,
 	getActiveConnection,
 	getOAuthCallbackCode,
+	getOAuthCallbackState,
 	cleanOAuthParams,
 	startOAuthFlow,
 } from './fedi-auth';
@@ -77,10 +78,11 @@ export default function useFediConnection(): [ FediConnectionState, FediConnecti
 			return;
 		}
 
+		const returnedState = getOAuthCallbackState();
 		cleanOAuthParams();
 		setState( ( prev ) => ( { ...prev, isAuthenticating: true, error: null } ) );
 
-		completeOAuthFlow( code )
+		completeOAuthFlow( code, returnedState )
 			.then( ( authState ) => {
 				setState( ( prev ) => ( {
 					...prev,

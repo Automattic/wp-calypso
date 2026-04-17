@@ -23,6 +23,9 @@ export interface FediAuthState {
 	codeVerifier?: string;
 	// Actor URL discovered during or after auth (e.g. from token response `me` field).
 	actorUrl?: string;
+	// OAuth `state` token (RFC 6749 §10.12) — random value issued at flow start and
+	// verified on callback to prevent CSRF.
+	oauthState?: string;
 	// Common
 	accessToken?: string;
 	packSlug?: string;
@@ -97,6 +100,15 @@ export function getActiveConnection(): FediAuthState | null {
  */
 function generateCodeVerifier(): string {
 	const array = new Uint8Array( 32 );
+	crypto.getRandomValues( array );
+	return base64UrlEncode( array );
+}
+
+/**
+ * Generate a random `state` value for CSRF protection (RFC 6749 §10.12).
+ */
+function generateOAuthState(): string {
+	const array = new Uint8Array( 16 );
 	crypto.getRandomValues( array );
 	return base64UrlEncode( array );
 }
@@ -206,12 +218,14 @@ async function startMastodonOAuthFlow(
 	accountHandle?: string
 ): Promise< void > {
 	const { clientId, clientSecret } = await registerMastodonApp( instance );
+	const oauthState = generateOAuthState();
 
 	saveAuthState( {
 		instance,
 		authType: 'mastodon',
 		clientId,
 		clientSecret,
+		oauthState,
 		packSlug,
 		action,
 		accountHandle,
@@ -222,6 +236,7 @@ async function startMastodonOAuthFlow(
 		redirect_uri: getRedirectUri(),
 		response_type: 'code',
 		scope: 'read follow',
+		state: oauthState,
 	} );
 
 	window.location.href = `https://${ instance }/oauth/authorize?${ params.toString() }`;
@@ -253,7 +268,11 @@ async function completeMastodonOAuthFlow(
 	}
 
 	const data = await response.json();
-	const updatedState = { ...state, accessToken: data.access_token };
+	const updatedState = {
+		...state,
+		accessToken: data.access_token,
+		oauthState: undefined, // One-shot; regenerated on next flow.
+	};
 	saveAuthState( updatedState );
 	return updatedState;
 }
@@ -305,6 +324,7 @@ async function startActivityPubOAuthFlow(
 ): Promise< void > {
 	const codeVerifier = generateCodeVerifier();
 	const codeChallenge = await generateCodeChallenge( codeVerifier );
+	const oauthState = generateOAuthState();
 
 	// Register a client dynamically if the server supports it (preferred).
 	// Falls back to using the app origin as client_id for servers without registration.
@@ -328,6 +348,7 @@ async function startActivityPubOAuthFlow(
 		tokenEndpoint: metadata.token_endpoint,
 		introspectionEndpoint: metadata.introspection_endpoint,
 		codeVerifier,
+		oauthState,
 		packSlug,
 		action,
 		accountHandle,
@@ -340,6 +361,7 @@ async function startActivityPubOAuthFlow(
 		scope: 'read write follow',
 		code_challenge: codeChallenge,
 		code_challenge_method: 'S256',
+		state: oauthState,
 	} );
 
 	window.location.href = `${ metadata.authorization_endpoint }?${ params.toString() }`;
@@ -383,6 +405,7 @@ async function completeActivityPubOAuthFlow(
 		// Some servers return the actor URL in the token response (IndieAuth `me` field).
 		actorUrl: data.me || data.actor || state.actorUrl,
 		codeVerifier: undefined, // No longer needed
+		oauthState: undefined, // One-shot; regenerated on next flow.
 	};
 	saveAuthState( updatedState );
 	return updatedState;
@@ -431,11 +454,23 @@ export async function startOAuthFlow(
 /**
  * Complete the OAuth flow by exchanging the authorization code for a token.
  * Auto-detects the auth type from stored state.
+ *
+ * Verifies the `state` parameter matches the one issued when the flow started
+ * (RFC 6749 §10.12) to prevent CSRF. Servers that legitimately omit `state` from
+ * the redirect are tolerated only when no state was stored locally either.
  */
-export async function completeOAuthFlow( code: string ): Promise< FediAuthState > {
+export async function completeOAuthFlow(
+	code: string,
+	returnedState?: string | null
+): Promise< FediAuthState > {
 	const state = getAuthState();
 	if ( ! state ) {
 		throw new Error( 'No auth state found — OAuth flow was not started.' );
+	}
+
+	if ( state.oauthState && state.oauthState !== returnedState ) {
+		clearAuthState();
+		throw new Error( 'OAuth state mismatch — possible CSRF attempt.' );
 	}
 
 	if ( state.authType === 'activitypub' ) {
@@ -451,6 +486,14 @@ export async function completeOAuthFlow( code: string ): Promise< FediAuthState 
 export function getOAuthCallbackCode(): string | null {
 	const params = new URLSearchParams( window.location.search );
 	return params.get( 'code' );
+}
+
+/**
+ * Return the `state` parameter from the current URL, if any.
+ */
+export function getOAuthCallbackState(): string | null {
+	const params = new URLSearchParams( window.location.search );
+	return params.get( 'state' );
 }
 
 /**
