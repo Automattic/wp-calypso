@@ -95,6 +95,7 @@ describe( 'Image Studio Store', () => {
 				selectedStyle: null,
 				selectedAspectRatio: null,
 				lastAgentMessageId: null,
+				sessionFeedback: null,
 			} );
 		} );
 
@@ -851,6 +852,55 @@ describe( 'Image Studio Store', () => {
 
 				expect( state.lastAgentMessageId ).toBe( 'msg-123' );
 			} );
+
+			it( 'SET_SESSION_FEEDBACK', () => {
+				const state = reducer( getInitialState(), actions.setSessionFeedback( 'up' ) );
+
+				expect( state.sessionFeedback ).toBe( 'up' );
+			} );
+
+			it( 'SET_SESSION_FEEDBACK clears feedback when set to null', () => {
+				const initial: ImageStudioState = { ...getInitialState(), sessionFeedback: 'down' };
+				const state = reducer( initial, actions.setSessionFeedback( null ) );
+
+				expect( state.sessionFeedback ).toBeNull();
+			} );
+
+			it( 'preserves sessionFeedback when UPDATE_IMAGE_STUDIO_CANVAS fires', () => {
+				const initial: ImageStudioState = { ...getInitialState(), sessionFeedback: 'up' };
+				const state = reducer(
+					initial,
+					actions.updateImageStudioCanvas( 'https://example.com/v2.jpg', 456 )
+				);
+
+				expect( state.sessionFeedback ).toBe( 'up' );
+			} );
+
+			it( 'resets sessionFeedback on OPEN_IMAGE_STUDIO', () => {
+				const initial: ImageStudioState = { ...getInitialState(), sessionFeedback: 'up' };
+				const state = reducer( initial, actions.openImageStudio( 123 ) );
+
+				expect( state.sessionFeedback ).toBeNull();
+			} );
+
+			it( 'resets sessionFeedback on CLOSE_IMAGE_STUDIO', () => {
+				const initial: ImageStudioState = { ...getInitialState(), sessionFeedback: 'down' };
+				const state = reducer( initial, actions.closeImageStudio() );
+
+				expect( state.sessionFeedback ).toBeNull();
+			} );
+
+			it( 'resets sessionFeedback on NAVIGATE_TO_ATTACHMENT (new working session)', () => {
+				const initial: ImageStudioState = {
+					...getInitialState(),
+					sessionFeedback: 'up',
+					navigableAttachmentIds: [ 100, 200 ],
+					currentNavigationIndex: 0,
+				};
+				const state = reducer( initial, actions.navigateToAttachment( 200 ) );
+
+				expect( state.sessionFeedback ).toBeNull();
+			} );
 		} );
 	} );
 
@@ -1022,6 +1072,11 @@ describe( 'Image Studio Store', () => {
 		it( 'getLastAgentMessageId', () => {
 			const state: ImageStudioState = { ...getInitialState(), lastAgentMessageId: 'msg-123' };
 			expect( selectors.getLastAgentMessageId( state ) ).toBe( 'msg-123' );
+		} );
+
+		it( 'getSessionFeedback', () => {
+			const state: ImageStudioState = { ...getInitialState(), sessionFeedback: 'up' };
+			expect( selectors.getSessionFeedback( state ) ).toBe( 'up' );
 		} );
 
 		describe( 'getHasUnsavedChanges', () => {

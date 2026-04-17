@@ -105,6 +105,8 @@ export interface ImageStudioState {
 	selectedAspectRatio: string | null;
 	// Last agent message ID for feedback tracking
 	lastAgentMessageId: string | null;
+	// Feedback submitted for the current session; once set, the rating buttons stay disabled
+	sessionFeedback: 'up' | 'down' | null;
 }
 
 /**
@@ -254,6 +256,11 @@ type SetLastAgentMessageIdAction = {
 	payload: string | null;
 };
 
+type SetSessionFeedbackAction = {
+	type: 'SET_SESSION_FEEDBACK';
+	payload: 'up' | 'down' | null;
+};
+
 type ResetCanvasHistoryAction = {
 	type: 'RESET_CANVAS_HISTORY';
 };
@@ -285,6 +292,7 @@ type ImageStudioAction =
 	| SetSelectedStyleAction
 	| SetSelectedAspectRatioAction
 	| SetLastAgentMessageIdAction
+	| SetSessionFeedbackAction
 	| ResetCanvasHistoryAction;
 
 /**
@@ -352,6 +360,7 @@ const initialState: ImageStudioState = {
 	selectedStyle: null,
 	selectedAspectRatio: null,
 	lastAgentMessageId: null,
+	sessionFeedback: null,
 };
 
 /**
@@ -590,6 +599,8 @@ const reducer = (
 				onCloseCallback: null,
 				entryPoint: null,
 				blockType: null,
+				// Reset feedback for the new file since it's a new working session
+				sessionFeedback: null,
 				// Keep navigation state (navigableAttachmentIds, currentNavigationIndex, pagination)
 				// Keep user preferences (isSidebarOpen, selectedStyle, selectedAspectRatio)
 			};
@@ -630,6 +641,12 @@ const reducer = (
 			return {
 				...state,
 				lastAgentMessageId: action.payload,
+			};
+
+		case 'SET_SESSION_FEEDBACK':
+			return {
+				...state,
+				sessionFeedback: action.payload,
 			};
 
 		case 'RESET_CANVAS_HISTORY':
@@ -710,6 +727,7 @@ export interface ImageStudioActions {
 	setSelectedStyle: ( style: string | null ) => Promise< SetSelectedStyleAction >;
 	setSelectedAspectRatio: ( aspectRatio: string | null ) => Promise< SetSelectedAspectRatioAction >;
 	setLastAgentMessageId: ( messageId: string | null ) => Promise< SetLastAgentMessageIdAction >;
+	setSessionFeedback: ( feedback: 'up' | 'down' | null ) => Promise< SetSessionFeedbackAction >;
 	resetCanvasHistory: () => Promise< ResetCanvasHistoryAction >;
 }
 
@@ -927,6 +945,13 @@ const actions = {
 		};
 	},
 
+	setSessionFeedback( feedback: 'up' | 'down' | null ): SetSessionFeedbackAction {
+		return {
+			type: 'SET_SESSION_FEEDBACK',
+			payload: feedback,
+		};
+	},
+
 	resetCanvasHistory(): ResetCanvasHistoryAction {
 		return {
 			type: 'RESET_CANVAS_HISTORY',
@@ -972,6 +997,7 @@ export interface ImageStudioSelectors {
 	getSelectedStyle: ( state: ImageStudioState ) => string | null;
 	getSelectedAspectRatio: ( state: ImageStudioState ) => string | null;
 	getLastAgentMessageId: ( state: ImageStudioState ) => string | null;
+	getSessionFeedback: ( state: ImageStudioState ) => 'up' | 'down' | null;
 	getSupportedMimeTypes: () => readonly string[];
 }
 
@@ -1144,6 +1170,10 @@ const selectors = {
 
 	getLastAgentMessageId( state: ImageStudioState ): string | null {
 		return state.lastAgentMessageId;
+	},
+
+	getSessionFeedback( state: ImageStudioState ): 'up' | 'down' | null {
+		return state.sessionFeedback;
 	},
 
 	getSupportedMimeTypes(): readonly string[] {
