@@ -42,10 +42,10 @@ export const CanvasControls = ( {
 	onSubmitFeedbackText,
 }: CanvasControlsProps ) => {
 	const selectedFeedback = useSelect(
-		( select ) => select( imageStudioStore ).getSessionFeedback(),
-		[]
+		( select ) => select( imageStudioStore ).getImageRating( attachmentId ),
+		[ attachmentId ]
 	);
-	const { setSessionFeedback } = useDispatch( imageStudioStore ) as ImageStudioActions;
+	const { setImageRating } = useDispatch( imageStudioStore ) as ImageStudioActions;
 	const [ showFeedbackPopover, setShowFeedbackPopover ] = useState( false );
 	const feedbackAnchorRef = useRef< HTMLDivElement | null >( null );
 
@@ -56,12 +56,12 @@ export const CanvasControls = ( {
 
 	const handleFeedback = useCallback(
 		( feedback: 'up' | 'down' ) => {
-			// Don't allow changing feedback once selected in this session
-			if ( selectedFeedback !== null ) {
+			// Don't allow changing feedback once submitted for this image
+			if ( selectedFeedback !== null || attachmentId === null ) {
 				return;
 			}
 
-			setSessionFeedback( feedback );
+			setImageRating( attachmentId, feedback );
 			trackImageStudioImageFeedback( { feedback, attachmentId, mode } );
 			onFeedback?.( feedback );
 
@@ -69,7 +69,7 @@ export const CanvasControls = ( {
 				setShowFeedbackPopover( true );
 			}
 		},
-		[ mode, attachmentId, selectedFeedback, onFeedback, onSubmitFeedbackText, setSessionFeedback ]
+		[ mode, attachmentId, selectedFeedback, onFeedback, onSubmitFeedbackText, setImageRating ]
 	);
 
 	const handleCloseFeedbackPopover = useCallback( () => {

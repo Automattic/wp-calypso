@@ -95,7 +95,7 @@ describe( 'Image Studio Store', () => {
 				selectedStyle: null,
 				selectedAspectRatio: null,
 				lastAgentMessageId: null,
-				sessionFeedback: null,
+				imageRatings: {},
 			} );
 		} );
 
@@ -853,53 +853,65 @@ describe( 'Image Studio Store', () => {
 				expect( state.lastAgentMessageId ).toBe( 'msg-123' );
 			} );
 
-			it( 'SET_SESSION_FEEDBACK', () => {
-				const state = reducer( getInitialState(), actions.setSessionFeedback( 'up' ) );
+			it( 'SET_IMAGE_RATING records a rating for an attachment', () => {
+				const state = reducer( getInitialState(), actions.setImageRating( 123, 'up' ) );
 
-				expect( state.sessionFeedback ).toBe( 'up' );
+				expect( state.imageRatings ).toEqual( { 123: 'up' } );
 			} );
 
-			it( 'SET_SESSION_FEEDBACK clears feedback when set to null', () => {
-				const initial: ImageStudioState = { ...getInitialState(), sessionFeedback: 'down' };
-				const state = reducer( initial, actions.setSessionFeedback( null ) );
+			it( 'SET_IMAGE_RATING preserves ratings for other attachments', () => {
+				const initial: ImageStudioState = {
+					...getInitialState(),
+					imageRatings: { 123: 'up' },
+				};
+				const state = reducer( initial, actions.setImageRating( 456, 'down' ) );
 
-				expect( state.sessionFeedback ).toBeNull();
+				expect( state.imageRatings ).toEqual( { 123: 'up', 456: 'down' } );
 			} );
 
-			it( 'preserves sessionFeedback when UPDATE_IMAGE_STUDIO_CANVAS fires', () => {
-				const initial: ImageStudioState = { ...getInitialState(), sessionFeedback: 'up' };
+			it( 'preserves imageRatings when UPDATE_IMAGE_STUDIO_CANVAS fires', () => {
+				const initial: ImageStudioState = {
+					...getInitialState(),
+					imageRatings: { 123: 'up' },
+				};
 				const state = reducer(
 					initial,
 					actions.updateImageStudioCanvas( 'https://example.com/v2.jpg', 456 )
 				);
 
-				expect( state.sessionFeedback ).toBe( 'up' );
+				expect( state.imageRatings ).toEqual( { 123: 'up' } );
 			} );
 
-			it( 'resets sessionFeedback on OPEN_IMAGE_STUDIO', () => {
-				const initial: ImageStudioState = { ...getInitialState(), sessionFeedback: 'up' };
-				const state = reducer( initial, actions.openImageStudio( 123 ) );
-
-				expect( state.sessionFeedback ).toBeNull();
-			} );
-
-			it( 'resets sessionFeedback on CLOSE_IMAGE_STUDIO', () => {
-				const initial: ImageStudioState = { ...getInitialState(), sessionFeedback: 'down' };
-				const state = reducer( initial, actions.closeImageStudio() );
-
-				expect( state.sessionFeedback ).toBeNull();
-			} );
-
-			it( 'resets sessionFeedback on NAVIGATE_TO_ATTACHMENT (new working session)', () => {
+			it( 'resets imageRatings on OPEN_IMAGE_STUDIO', () => {
 				const initial: ImageStudioState = {
 					...getInitialState(),
-					sessionFeedback: 'up',
+					imageRatings: { 123: 'up' },
+				};
+				const state = reducer( initial, actions.openImageStudio( 123 ) );
+
+				expect( state.imageRatings ).toEqual( {} );
+			} );
+
+			it( 'resets imageRatings on CLOSE_IMAGE_STUDIO', () => {
+				const initial: ImageStudioState = {
+					...getInitialState(),
+					imageRatings: { 123: 'down' },
+				};
+				const state = reducer( initial, actions.closeImageStudio() );
+
+				expect( state.imageRatings ).toEqual( {} );
+			} );
+
+			it( 'resets imageRatings on NAVIGATE_TO_ATTACHMENT (new working session)', () => {
+				const initial: ImageStudioState = {
+					...getInitialState(),
+					imageRatings: { 100: 'up' },
 					navigableAttachmentIds: [ 100, 200 ],
 					currentNavigationIndex: 0,
 				};
 				const state = reducer( initial, actions.navigateToAttachment( 200 ) );
 
-				expect( state.sessionFeedback ).toBeNull();
+				expect( state.imageRatings ).toEqual( {} );
 			} );
 		} );
 	} );
@@ -1074,9 +1086,37 @@ describe( 'Image Studio Store', () => {
 			expect( selectors.getLastAgentMessageId( state ) ).toBe( 'msg-123' );
 		} );
 
-		it( 'getSessionFeedback', () => {
-			const state: ImageStudioState = { ...getInitialState(), sessionFeedback: 'up' };
-			expect( selectors.getSessionFeedback( state ) ).toBe( 'up' );
+		describe( 'getImageRating', () => {
+			it( 'returns the rating for an attachment', () => {
+				const state: ImageStudioState = {
+					...getInitialState(),
+					imageRatings: { 123: 'up', 456: 'down' },
+				};
+				expect( selectors.getImageRating( state, 123 ) ).toBe( 'up' );
+				expect( selectors.getImageRating( state, 456 ) ).toBe( 'down' );
+			} );
+
+			it( 'returns null for an unrated attachment', () => {
+				const state: ImageStudioState = {
+					...getInitialState(),
+					imageRatings: { 123: 'up' },
+				};
+				expect( selectors.getImageRating( state, 999 ) ).toBeNull();
+			} );
+
+			it( 'returns null when attachmentId is null', () => {
+				const state: ImageStudioState = {
+					...getInitialState(),
+					imageRatings: { 123: 'up' },
+				};
+				expect( selectors.getImageRating( state, null ) ).toBeNull();
+			} );
+		} );
+
+		it( 'getImageRatings returns the full map', () => {
+			const ratings = { 123: 'up' as const, 456: 'down' as const };
+			const state: ImageStudioState = { ...getInitialState(), imageRatings: ratings };
+			expect( selectors.getImageRatings( state ) ).toEqual( ratings );
 		} );
 
 		describe( 'getHasUnsavedChanges', () => {

@@ -105,8 +105,10 @@ export interface ImageStudioState {
 	selectedAspectRatio: string | null;
 	// Last agent message ID for feedback tracking
 	lastAgentMessageId: string | null;
-	// Feedback submitted for the current session; once set, the rating buttons stay disabled
-	sessionFeedback: 'up' | 'down' | null;
+	// Ratings the user has submitted in this session, keyed by attachment ID.
+	// Once a rating is recorded for an image it stays for the session so the
+	// buttons remain disabled when navigating back to that image.
+	imageRatings: Record< number, 'up' | 'down' >;
 }
 
 /**
@@ -256,9 +258,12 @@ type SetLastAgentMessageIdAction = {
 	payload: string | null;
 };
 
-type SetSessionFeedbackAction = {
-	type: 'SET_SESSION_FEEDBACK';
-	payload: 'up' | 'down' | null;
+type SetImageRatingAction = {
+	type: 'SET_IMAGE_RATING';
+	payload: {
+		attachmentId: number;
+		rating: 'up' | 'down';
+	};
 };
 
 type ResetCanvasHistoryAction = {
@@ -292,7 +297,7 @@ type ImageStudioAction =
 	| SetSelectedStyleAction
 	| SetSelectedAspectRatioAction
 	| SetLastAgentMessageIdAction
-	| SetSessionFeedbackAction
+	| SetImageRatingAction
 	| ResetCanvasHistoryAction;
 
 /**
@@ -360,7 +365,7 @@ const initialState: ImageStudioState = {
 	selectedStyle: null,
 	selectedAspectRatio: null,
 	lastAgentMessageId: null,
-	sessionFeedback: null,
+	imageRatings: {},
 };
 
 /**
@@ -599,8 +604,8 @@ const reducer = (
 				onCloseCallback: null,
 				entryPoint: null,
 				blockType: null,
-				// Reset feedback for the new file since it's a new working session
-				sessionFeedback: null,
+				// Reset ratings for the new file since it's a new working session
+				imageRatings: {},
 				// Keep navigation state (navigableAttachmentIds, currentNavigationIndex, pagination)
 				// Keep user preferences (isSidebarOpen, selectedStyle, selectedAspectRatio)
 			};
@@ -643,10 +648,13 @@ const reducer = (
 				lastAgentMessageId: action.payload,
 			};
 
-		case 'SET_SESSION_FEEDBACK':
+		case 'SET_IMAGE_RATING':
 			return {
 				...state,
-				sessionFeedback: action.payload,
+				imageRatings: {
+					...state.imageRatings,
+					[ action.payload.attachmentId ]: action.payload.rating,
+				},
 			};
 
 		case 'RESET_CANVAS_HISTORY':
@@ -727,7 +735,10 @@ export interface ImageStudioActions {
 	setSelectedStyle: ( style: string | null ) => Promise< SetSelectedStyleAction >;
 	setSelectedAspectRatio: ( aspectRatio: string | null ) => Promise< SetSelectedAspectRatioAction >;
 	setLastAgentMessageId: ( messageId: string | null ) => Promise< SetLastAgentMessageIdAction >;
-	setSessionFeedback: ( feedback: 'up' | 'down' | null ) => Promise< SetSessionFeedbackAction >;
+	setImageRating: (
+		attachmentId: number,
+		rating: 'up' | 'down'
+	) => Promise< SetImageRatingAction >;
 	resetCanvasHistory: () => Promise< ResetCanvasHistoryAction >;
 }
 
@@ -945,10 +956,10 @@ const actions = {
 		};
 	},
 
-	setSessionFeedback( feedback: 'up' | 'down' | null ): SetSessionFeedbackAction {
+	setImageRating( attachmentId: number, rating: 'up' | 'down' ): SetImageRatingAction {
 		return {
-			type: 'SET_SESSION_FEEDBACK',
-			payload: feedback,
+			type: 'SET_IMAGE_RATING',
+			payload: { attachmentId, rating },
 		};
 	},
 
@@ -997,7 +1008,8 @@ export interface ImageStudioSelectors {
 	getSelectedStyle: ( state: ImageStudioState ) => string | null;
 	getSelectedAspectRatio: ( state: ImageStudioState ) => string | null;
 	getLastAgentMessageId: ( state: ImageStudioState ) => string | null;
-	getSessionFeedback: ( state: ImageStudioState ) => 'up' | 'down' | null;
+	getImageRatings: ( state: ImageStudioState ) => Record< number, 'up' | 'down' >;
+	getImageRating: ( state: ImageStudioState, attachmentId: number | null ) => 'up' | 'down' | null;
 	getSupportedMimeTypes: () => readonly string[];
 }
 
@@ -1172,8 +1184,15 @@ const selectors = {
 		return state.lastAgentMessageId;
 	},
 
-	getSessionFeedback( state: ImageStudioState ): 'up' | 'down' | null {
-		return state.sessionFeedback;
+	getImageRatings( state: ImageStudioState ): Record< number, 'up' | 'down' > {
+		return state.imageRatings;
+	},
+
+	getImageRating( state: ImageStudioState, attachmentId: number | null ): 'up' | 'down' | null {
+		if ( attachmentId === null ) {
+			return null;
+		}
+		return state.imageRatings[ attachmentId ] ?? null;
 	},
 
 	getSupportedMimeTypes(): readonly string[] {
