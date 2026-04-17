@@ -101,13 +101,11 @@ async function requestJWTToken(
 
 	try {
 		if ( canAccessWpcomApis() ) {
-			// WordPress.com simple site
-			if ( ! effectiveSiteId ) {
-				throw new Error( 'Site ID is required for simple sites' );
-			}
+			// WordPress.com simple site — use /ai/jwt (supports user-only and site-scoped tokens)
 			data = await apiFetch< { token: string; blog_id: string } >( {
-				path: '/wpcom/v2/sites/' + effectiveSiteId + '/jetpack-openai-query/jwt',
+				path: '/wpcom/v2/ai/jwt',
 				method: 'POST',
+				data: effectiveSiteId ? { blog_id: Number( effectiveSiteId ) } : {},
 			} );
 		} else {
 			// Jetpack-connected site
@@ -141,17 +139,19 @@ async function requestJWTToken(
 }
 
 /**
- * Request a JWT token using wpcomRequest (for Calypso contexts)
- * @param siteId - Site ID for fetching JWT tokens
+ * Request a JWT token using wpcomRequest (for Calypso contexts).
+ * Uses the /wpcom/v2/ai/jwt endpoint which supports both site-scoped
+ * and user-only tokens.
+ *
+ * @param siteId - Optional site ID. When provided, the JWT includes site context.
  * @param useCachedToken - Whether to use cached token (default: true)
  */
 async function requestJWTTokenViaWpcom(
-	siteId: string | number,
+	siteId?: string | number,
 	useCachedToken = true
 ): Promise< string | null > {
-	const cacheKey = `${ JWT_TOKEN_ID }-wpcom-${ siteId }`;
+	const cacheKey = siteId ? `${ JWT_TOKEN_ID }-wpcom-${ siteId }` : `${ JWT_TOKEN_ID }-wpcom`;
 
-	// Check for cached token
 	if ( useCachedToken ) {
 		const cached = getCachedJwtToken( cacheKey );
 		if ( cached ) {
@@ -161,22 +161,20 @@ async function requestJWTTokenViaWpcom(
 
 	try {
 		const data = ( await wpcomRequest( {
-			path: `/sites/${ siteId }/jetpack-openai-query/jwt`,
+			path: '/ai/jwt',
 			apiNamespace: 'wpcom/v2',
 			method: 'POST',
-		} ) ) as { token?: string; jwt?: string };
+			body: siteId ? { blog_id: Number( siteId ) } : {},
+		} ) ) as { token?: string; blog_id?: number; success?: boolean };
 
-		const token = data?.token || data?.jwt;
+		const token = data?.token;
 
 		if ( token ) {
-			// Cache the token
-			const tokenData: TokenData = {
+			setCachedJwtToken( cacheKey, {
 				token,
-				blogId: String( siteId ),
+				blogId: String( data?.blog_id || siteId || '' ),
 				expire: Date.now() + JWT_TOKEN_EXPIRATION_TIME,
-			};
-
-			setCachedJwtToken( cacheKey, tokenData );
+			} );
 		}
 
 		return token || null;
@@ -235,13 +233,11 @@ export const createCalypsoAuthProvider = ( siteId?: string | number ): AuthProvi
 				return headers;
 			}
 
-			// Fallback to JWT via wpcomRequest
-			if ( siteId ) {
-				const jwtToken = await requestJWTTokenViaWpcom( siteId );
-				if ( jwtToken ) {
-					headers.Authorization = `Bearer ${ jwtToken }`;
-					return headers;
-				}
+			// Fallback to JWT via /ai/jwt (works with or without siteId)
+			const jwtToken = await requestJWTTokenViaWpcom( siteId );
+			if ( jwtToken ) {
+				headers.Authorization = `Bearer ${ jwtToken }`;
+				return headers;
 			}
 		} else {
 			// Not in Calypso: Use JWT token from apiFetch (wp-admin context)

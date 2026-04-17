@@ -266,11 +266,19 @@ async function main() {
 						( flowName === WOO_HOSTED_PLANS_FLOW ? (
 							<LazyHelpCenter currentUser={ user as UserStore.CurrentUser } />
 						) : (
-							<AsyncHelpCenterApp
-								requireLogin
-								currentUser={ user as UserStore.CurrentUser }
-								sectionName="stepper"
-							/>
+							<>
+								<AsyncHelpCenterApp
+									requireLogin
+									currentUser={ user as UserStore.CurrentUser }
+									sectionName="stepper"
+								/>
+								<AsyncLoad
+									require="calypso/layout/agents-manager-loader"
+									placeholder={ null }
+									sectionName={ flowName }
+									loadAgentsManager
+								/>
+							</>
 						) ) }
 					{ 'development' === process.env.NODE_ENV && (
 						<AsyncLoad require="calypso/components/webpack-build-monitor" placeholder={ null } />

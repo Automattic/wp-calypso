@@ -32,7 +32,6 @@
 		"ciab/allow-domain-features": true,
 		"ciab/custom-branding": true,
 		"posthog-tracking": true,
-		"checkout/ebanx-pix": true,
 		"checkout/google-pay": true,
 		"checkout/razorpay": true,
 		"checkout/stripe-upi": true,
