@@ -24,3 +24,22 @@ offer a way of handling all types of URLs.
 
 **IMPORTANT NOTE**: URL part names are different between Node's `url` and `lib/url`. This is because
 `lib/url` is aligned to the `URL` / `URLSearchParam` standard in detriment of the legacy API.
+
+## Exported utilities
+
+- `addQueryArgs` — adds or replaces query parameters on any URL type (absolute, scheme-relative, or path-relative)
+- `withoutHttp` — strips the `http://` or `https://` scheme from a URL string
+- `urlToSlug` — converts a URL to a site slug (strips scheme and trailing slash)
+- `urlToDomainAndPath` — returns the domain plus path portion of a URL
+- `urlToDomain` — returns only the domain portion of a URL
+- `omitUrlParams` — removes specified query parameters from a URL
+- `isExternal` — returns `true` if the URL points outside the current Calypso application
+- `isOutsideCalypso` — returns `true` if the URL is external or a legacy route not handled by Calypso
+- `isHttps` — returns `true` if the URL uses the `https://` scheme
+- `resemblesUrl` — heuristically checks whether a string looks like a URL
+- `addSchemeIfMissing` — prepends a scheme to a URL if none is present
+- `setUrlScheme` — replaces the scheme of a URL with the given one
+- `decodeURIIfValid` — decodes a URI, returning the original string if decoding fails
+- `decodeURIComponentIfValid` — decodes a URI component, returning the original string if decoding fails
+- `resolveRelativePath` — resolves a relative path against a base path
+- `pathToUrl` — converts a Calypso path to a full absolute URL using the configured hostname
