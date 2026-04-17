@@ -54,9 +54,19 @@ function getRedirectUri(): string {
 }
 
 /**
+ * Whether we have a usable localStorage (browser, not SSR).
+ */
+function hasLocalStorage(): boolean {
+	return typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+}
+
+/**
  * Store auth state in localStorage to survive the OAuth redirect.
  */
 export function saveAuthState( state: FediAuthState ): void {
+	if ( ! hasLocalStorage() ) {
+		return;
+	}
 	localStorage.setItem( STORAGE_KEY, JSON.stringify( state ) );
 }
 
@@ -64,6 +74,9 @@ export function saveAuthState( state: FediAuthState ): void {
  * Retrieve stored auth state.
  */
 export function getAuthState(): FediAuthState | null {
+	if ( ! hasLocalStorage() ) {
+		return null;
+	}
 	const stored = localStorage.getItem( STORAGE_KEY );
 	if ( ! stored ) {
 		return null;
@@ -79,6 +92,9 @@ export function getAuthState(): FediAuthState | null {
  * Clear stored auth state.
  */
 export function clearAuthState(): void {
+	if ( ! hasLocalStorage() ) {
+		return;
+	}
 	localStorage.removeItem( STORAGE_KEY );
 }
 
