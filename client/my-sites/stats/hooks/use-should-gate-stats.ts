@@ -301,3 +301,19 @@ export const useShouldGateStats = ( statType: string ) => {
 
 	return isGatedStats;
 };
+
+/*
+ * Returns true while the data needed to determine gating is still loading.
+ * QuerySiteFeatures is skipped when running inside a Jetpack site's wp-admin
+ * (is_running_in_jetpack_site), so features will never load in that context.
+ */
+export const useIsGateStatsLoading = () => {
+	const siteId = useSelector( getSelectedSiteId );
+	const hasLoadedFeatures = useSelector( ( state ) => hasLoadedSiteFeatures( state, siteId ) );
+
+	if ( isEnabled( 'is_running_in_jetpack_site' ) ) {
+		return false;
+	}
+
+	return ! hasLoadedFeatures;
+};

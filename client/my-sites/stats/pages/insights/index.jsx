@@ -11,11 +11,13 @@ import StatsModuleComments from 'calypso/my-sites/stats/features/modules/stats-c
 import StatShares from 'calypso/my-sites/stats/features/modules/stats-shares';
 import StatsModuleTags from 'calypso/my-sites/stats/features/modules/stats-tags';
 import usePlanUsageQuery from 'calypso/my-sites/stats/hooks/use-plan-usage-query';
-import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
+import {
+	useShouldGateStats,
+	useIsGateStatsLoading,
+} from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
 import { recordCurrentScreen } from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
 import { useSelector } from 'calypso/state';
 import { STATS_PLAN_USAGE_RECEIVE } from 'calypso/state/action-types';
-import hasLoadedSiteFeatures from 'calypso/state/selectors/has-loaded-site-features';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import useStatsStrings from '../../hooks/use-stats-strings';
@@ -35,8 +37,6 @@ function StatsInsights( { context } ) {
 	const moduleStrings = useStatsStrings();
 	const { isPending, data: usageInfo } = usePlanUsageQuery( siteId );
 	const reduxDispatch = useDispatch();
-	const hasLoadedFeatures = useSelector( ( state ) => hasLoadedSiteFeatures( state, siteId ) );
-
 	// Dispatch the plan usage data to the Redux store for monthly views check in shouldGateStats.
 	useEffect( () => {
 		if ( ! isPending ) {
@@ -49,6 +49,7 @@ function StatsInsights( { context } ) {
 	}, [ reduxDispatch, isPending, siteId, usageInfo ] );
 
 	const shouldGateInsights = useShouldGateStats( STATS_FEATURE_PAGE_INSIGHTS );
+	const isGateLoading = useIsGateStatsLoading();
 	const shouldRendeUpsell = config.isEnabled( 'stats/paid-wpcom-v3' ) && shouldGateInsights;
 
 	useEffect(
@@ -74,7 +75,7 @@ function StatsInsights( { context } ) {
 	const insightsPageClasses = clsx( 'stats', { 'is-odyssey-stats': isWPAdmin } );
 
 	let content = PageLoading;
-	if ( hasLoadedFeatures ) {
+	if ( ! isGateLoading ) {
 		content = shouldRendeUpsell ? (
 			<div id="my-stats-content" className="stats-content">
 				<StatsUpsell siteId={ siteId } />
