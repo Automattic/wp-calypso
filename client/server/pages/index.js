@@ -1157,7 +1157,6 @@ export default function pages() {
 				name: list.title,
 				summary: list.description || '',
 				attributedTo: `https://wordpress.com/reader/users/${ encodeURIComponent( owner ) }`,
-				published: new Date().toISOString(),
 				totalItems: fediItems.length,
 				// orderedItems: FeaturedItem wrappers (Mastodon FEP format)
 				orderedItems: fediItems,
