@@ -1646,7 +1646,7 @@ __metadata:
     "@wordpress/url": "npm:^4.23.0"
     clsx: "npm:^2.1.1"
     msw: "npm:^2.1.7"
-    msw-storybook-addon: "npm:2.0.4"
+    msw-storybook-addon: "npm:2.0.7"
     postcss: "npm:^8.5.3"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
@@ -1963,7 +1963,7 @@ __metadata:
     clsx: "npm:^2.1.1"
     i18n-calypso: "workspace:^"
     msw: "npm:^2.2.14"
-    msw-storybook-addon: "npm:^2.0.4"
+    msw-storybook-addon: "npm:^2.0.7"
     react-intersection-observer: "npm:^9.4.3"
     react-transition-group: "npm:^4.3.0"
     resize-observer-polyfill: "npm:^1.5.1"
@@ -24397,14 +24397,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"msw-storybook-addon@npm:2.0.4, msw-storybook-addon@npm:^2.0.4":
-  version: 2.0.4
-  resolution: "msw-storybook-addon@npm:2.0.4"
+"msw-storybook-addon@npm:2.0.7, msw-storybook-addon@npm:^2.0.7":
+  version: 2.0.7
+  resolution: "msw-storybook-addon@npm:2.0.7"
   dependencies:
     is-node-process: "npm:^1.0.1"
   peerDependencies:
     msw: ^2.0.0
-  checksum: 91cd85b0d6e3bdf8cc4f519b29da644d4df324a3fc6753a98b472488986aee888dfe4fc6a216a41057b01d10899e1e3a16ad253f63d7ae06f3dc3560fe5e561d
+  checksum: 0df84f0212de1d224daa422e10174c7f079fab959b4e2bb449a5bd875dc65ec78f2f211d64588af08c947142b37e478f049906eaf60d1898667e3158cc0bcec1
   languageName: node
   linkType: hard
 
