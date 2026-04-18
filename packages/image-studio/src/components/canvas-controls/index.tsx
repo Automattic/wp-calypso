@@ -8,10 +8,8 @@
 import { FeedbackInput } from '@automattic/agents-manager';
 import { MessageActions, ThumbsDownIcon, ThumbsUpIcon } from '@automattic/agenttic-ui';
 import { Popover, __unstableMotion as motion } from '@wordpress/components';
-import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { type ImageStudioActions, store as imageStudioStore } from '../../store';
 import { trackImageStudioImageFeedback } from '../../utils/tracking';
 import { ImageActionsMenu } from '../image-actions-menu';
 import { RevisionNavigator } from './revision-navigator';
@@ -41,27 +39,24 @@ export const CanvasControls = ( {
 	onFeedback,
 	onSubmitFeedbackText,
 }: CanvasControlsProps ) => {
-	const selectedFeedback = useSelect(
-		( select ) => select( imageStudioStore ).getImageRating( attachmentId ),
-		[ attachmentId ]
-	);
-	const { setImageRating } = useDispatch( imageStudioStore ) as ImageStudioActions;
+	const [ selectedFeedback, setSelectedFeedback ] = useState< 'up' | 'down' | null >( null );
 	const [ showFeedbackPopover, setShowFeedbackPopover ] = useState( false );
 	const feedbackAnchorRef = useRef< HTMLDivElement | null >( null );
 
-	// Close feedback popover when navigating to a different image
+	// Reset feedback when image changes
 	useEffect( () => {
+		setSelectedFeedback( null );
 		setShowFeedbackPopover( false );
 	}, [ imageUrl ] );
 
 	const handleFeedback = useCallback(
 		( feedback: 'up' | 'down' ) => {
-			// Don't allow changing feedback once submitted for this image
-			if ( selectedFeedback !== null || attachmentId === null ) {
+			// Don't allow changing feedback once selected
+			if ( selectedFeedback !== null ) {
 				return;
 			}
 
-			setImageRating( attachmentId, feedback );
+			setSelectedFeedback( feedback );
 			trackImageStudioImageFeedback( { feedback, attachmentId, mode } );
 			onFeedback?.( feedback );
 
@@ -69,7 +64,7 @@ export const CanvasControls = ( {
 				setShowFeedbackPopover( true );
 			}
 		},
-		[ mode, attachmentId, selectedFeedback, onFeedback, onSubmitFeedbackText, setImageRating ]
+		[ mode, attachmentId, selectedFeedback, onFeedback, onSubmitFeedbackText ]
 	);
 
 	const handleCloseFeedbackPopover = useCallback( () => {

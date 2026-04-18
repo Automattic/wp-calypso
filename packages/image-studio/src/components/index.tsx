@@ -438,11 +438,10 @@ const ImageStudioContent = withInstanceId(
 			<AnnotationCanvas imageUrl={ finalDisplayUrl } imageElement={ imageRef.current } />
 		) : null;
 
-		// Show feedback buttons only for AI-generated/edited images — never for the
-		// original attachment — and not while annotating (suggestions differ there).
-		const isOriginalImage = attachmentId !== null && attachmentId === originalAttachmentId;
+		// Show feedback buttons when image is AI-processed and not in other states
+		// Don't show for annotated images as they will have different suggestions
 		const showFeedbackButtons =
-			! isCurrentAttachmentAnnotated && !! isAiProcessed && !! finalDisplayUrl && ! isOriginalImage;
+			! isCurrentAttachmentAnnotated && !! isAiProcessed && !! finalDisplayUrl;
 
 		// Show actions menu only in Edit mode after AI has made changes.
 		// canRevert already checks: originalAttachmentId exists, image changed, not processing
