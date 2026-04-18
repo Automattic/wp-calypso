@@ -34,14 +34,14 @@ window.agentsManagerData.siteName = readerConfig.siteName || '';
 window.agentsManagerData.siteUrl = readerConfig.siteUrl || '';
 
 /**
- * Build suggested prompts based on the current page context.
- * These appear in the empty chat view.
+ * Build fallback suggested prompts based on the current page context.
+ * These appear immediately while AI-generated suggestions fetch, and
+ * stay if the AI call fails.
  */
-function getReaderSuggestions() {
+function getFallbackSuggestions() {
 	const post = readerConfig.currentPost;
 
 	if ( ! post ) {
-		// On non-singular pages (home, archive), show general suggestions.
 		return [
 			{
 				id: 'popular',
@@ -61,13 +61,12 @@ function getReaderSuggestions() {
 		];
 	}
 
-	// On a specific post, tailor suggestions to its content.
 	const title = post.title || 'this post';
 
 	return [
 		{
 			id: 'summarize',
-			label: `Summarize this post`,
+			label: 'Summarize this post',
 			prompt: `Can you summarize "${ title }" for me?`,
 		},
 		{
@@ -81,6 +80,56 @@ function getReaderSuggestions() {
 			prompt: `What other posts on this blog are related to "${ title }"?`,
 		},
 	];
+}
+
+/**
+ * Fetch AI-generated suggestions from the jetpack/suggest-reader-questions
+ * ability. Falls back to static templates if the call fails or returns
+ * empty.
+ *
+ * Called fire-and-forget after mount — the empty view shows fallback
+ * chips immediately and re-renders with AI suggestions when they arrive.
+ */
+async function fetchAiSuggestions() {
+	const post = readerConfig.currentPost;
+	const siteId = readerConfig.siteId;
+
+	// No post context (stream views) or no site = skip AI call.
+	if ( ! post?.url || ! siteId ) {
+		return null;
+	}
+
+	const endpoint = `https://public-api.wordpress.com/wp/v2/sites/${ siteId }/wp-abilities/v1/abilities/jetpack/suggest-reader-questions/run`;
+
+	try {
+		const response = await fetch( endpoint, {
+			method: 'POST',
+			credentials: 'include',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify( { input: { post_url: post.url } } ),
+		} );
+
+		if ( ! response.ok ) {
+			return null;
+		}
+
+		const body = await response.json();
+		const suggestions = Array.isArray( body ) ? body : body?.data;
+
+		if ( ! Array.isArray( suggestions ) || suggestions.length === 0 ) {
+			return null;
+		}
+
+		// Validate shape before returning — bad payloads should not crash
+		// the empty-view renderer.
+		const valid = suggestions.filter(
+			( s ) => s && typeof s.label === 'string' && typeof s.prompt === 'string'
+		);
+
+		return valid.length > 0 ? valid : null;
+	} catch {
+		return null;
+	}
 }
 
 function ReaderChatApp() {
@@ -107,8 +156,20 @@ function ReaderChatApp() {
 
 const container = document.getElementById( 'jetpack-reader-chat' );
 if ( container ) {
-	// Inject suggestions into agentsManagerData for the empty view.
-	window.agentsManagerData.readerSuggestions = getReaderSuggestions();
+	// Paint immediately with fallback suggestions — the chat UI never waits
+	// on the AI suggestion call.
+	window.agentsManagerData.readerSuggestions = getFallbackSuggestions();
 
-	createRoot( container ).render( <ReaderChatApp /> );
+	const root = createRoot( container );
+	root.render( <ReaderChatApp /> );
+
+	// When AI suggestions arrive, swap them in and re-render so the empty
+	// view picks up the new chips. Failures or null responses leave the
+	// fallback in place.
+	fetchAiSuggestions().then( ( aiSuggestions ) => {
+		if ( aiSuggestions ) {
+			window.agentsManagerData.readerSuggestions = aiSuggestions;
+			root.render( <ReaderChatApp /> );
+		}
+	} );
 }

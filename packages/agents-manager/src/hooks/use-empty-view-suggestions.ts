@@ -19,9 +19,35 @@ interface UseEmptyViewSuggestionsOptions {
  * @param params.loadedProviders - External providers loaded from plugins (e.g., Big Sky)
  * @returns The computed suggestions (either from Big Sky or defaults), or null while loading
  */
+/**
+ * Direct override path: a host that renders AgentsManager (e.g. reader-chat
+ * on a blog frontend) can set `window.agentsManagerData.readerSuggestions`
+ * to a Suggestion[] and this hook will return it verbatim, bypassing the
+ * provider flow. Reassigning the global and forcing a re-render causes
+ * the empty view to update with fresh suggestions.
+ */
+function readOverrideSuggestions(): Suggestion[] | null {
+	if ( typeof window === 'undefined' ) {
+		return null;
+	}
+	const data = ( window as unknown as { agentsManagerData?: { readerSuggestions?: unknown } } )
+		.agentsManagerData;
+	const override = data?.readerSuggestions;
+	if ( ! Array.isArray( override ) || override.length === 0 ) {
+		return null;
+	}
+	const valid = override.filter(
+		( s ): s is Suggestion =>
+			!! s && typeof s === 'object' && 'label' in s && 'prompt' in s && 'id' in s
+	);
+	return valid.length > 0 ? valid : null;
+}
+
 export function useEmptyViewSuggestions( {
 	loadedProviders,
 }: UseEmptyViewSuggestionsOptions ): Suggestion[] | null {
+	const overrideSuggestions = readOverrideSuggestions();
+
 	// Default suggestions - used when Big Sky doesn't provide custom ones
 	const defaultSuggestions = useMemo(
 		() => [
@@ -71,7 +97,20 @@ export function useEmptyViewSuggestions( {
 	const [ emptyViewSuggestions, setEmptyViewSuggestions ] = useState< Suggestion[] | null >( null );
 
 	useEffect( () => {
-		if ( ! loadedProviders || ! isCoreStoreReady || emptyViewSuggestions !== null ) {
+		if ( ! loadedProviders || ! isCoreStoreReady ) {
+			return;
+		}
+
+		// Re-read override on every effect run so that callers who update
+		// window.agentsManagerData.readerSuggestions and force a re-render
+		// see their new suggestions reflected.
+		const currentOverride = readOverrideSuggestions();
+		if ( currentOverride ) {
+			setEmptyViewSuggestions( currentOverride );
+			return;
+		}
+
+		if ( emptyViewSuggestions !== null ) {
 			return;
 		}
 
@@ -96,6 +135,7 @@ export function useEmptyViewSuggestions( {
 		hasBigSkySuggestions,
 		defaultSuggestions,
 		emptyViewSuggestions,
+		overrideSuggestions,
 	] );
 
 	return emptyViewSuggestions;
