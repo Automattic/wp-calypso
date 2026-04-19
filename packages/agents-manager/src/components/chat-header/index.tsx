@@ -14,6 +14,20 @@ interface Props {
 	onBack?: () => void;
 }
 
+/**
+ * Public reader-chat runs on blog frontends where session history isn't
+ * user-accessible (no account, per-visit local storage). Hide the history
+ * icon for that context — it navigates to a route with nothing to show.
+ */
+function isReaderChatAgent(): boolean {
+	if ( typeof window === 'undefined' ) {
+		return false;
+	}
+	const agentId = ( window as unknown as { agentsManagerData?: { agentId?: string } } )
+		.agentsManagerData?.agentId;
+	return agentId === 'reader-chat' || agentId === 'p2-reader-chat';
+}
+
 export default function ChatHeader( { onClose, options, title, onBack }: Props ) {
 	const navigate = useNavigate();
 
@@ -38,13 +52,15 @@ export default function ChatHeader( { onClose, options, title, onBack }: Props )
 					label={ __( 'More Options', '__i18n_text_domain__' ) }
 					toggleProps={ { size: 'small' } }
 				/>
-				<Button
-					className="agents-manager-chat-header__history-btn"
-					icon={ backup }
-					onClick={ () => navigate( '/history' ) }
-					label={ __( 'View history', '__i18n_text_domain__' ) }
-					size="small"
-				/>
+				{ ! isReaderChatAgent() && (
+					<Button
+						className="agents-manager-chat-header__history-btn"
+						icon={ backup }
+						onClick={ () => navigate( '/history' ) }
+						label={ __( 'View history', '__i18n_text_domain__' ) }
+						size="small"
+					/>
+				) }
 				<Button
 					className="agents-manager-chat-header__close-btn"
 					icon={ close }

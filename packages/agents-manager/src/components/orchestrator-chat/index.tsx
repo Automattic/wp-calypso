@@ -116,7 +116,13 @@ export default function OrchestratorChat( {
 		progressMessage,
 	} = useAgentChat( agentConfig! );
 
+	// Reader-chat sessions are short (usually < 50 messages) — don't waste
+	// time paginating 10 pages deep. One page covers typical use.
+	const readerChatAgentIds = [ 'reader-chat', 'p2-reader-chat' ];
+	const isReaderChat = readerChatAgentIds.includes( agentConfig?.agentId || '' );
+
 	const { isLoading: isLoadingConversation } = useConversation( {
+		maxPages: isReaderChat ? 1 : 10,
 		onSuccess: ( loadedMessages, serverSessionId ) => {
 			// Update the UI with the loaded messages
 			loadMessages( loadedMessages );

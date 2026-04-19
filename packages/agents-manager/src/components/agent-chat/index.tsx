@@ -93,6 +93,45 @@ const DEFAULT_ACCEPTED_IMAGE_TYPES = [
 	'image/heif-sequence',
 ];
 
+/**
+ * Returns the empty-view greeting, with a reader-chat override.
+ * reader-chat hosts can customize via `window.agentsManagerData.emptyViewHeading`;
+ * anything else falls back to the orchestrator default.
+ */
+function getEmptyViewHeading(): string {
+	if ( typeof window !== 'undefined' ) {
+		const data = (
+			window as unknown as {
+				agentsManagerData?: { agentId?: string; emptyViewHeading?: string };
+			}
+		 ).agentsManagerData;
+		if ( data?.emptyViewHeading ) {
+			return data.emptyViewHeading;
+		}
+		if ( data?.agentId === 'reader-chat' || data?.agentId === 'p2-reader-chat' ) {
+			return __( 'Ask me anything about this blog.', '__i18n_text_domain__' );
+		}
+	}
+	return __( 'Howdy! How can I help you today?', '__i18n_text_domain__' );
+}
+
+function getEmptyViewHelp(): string {
+	if ( typeof window !== 'undefined' ) {
+		const data = (
+			window as unknown as {
+				agentsManagerData?: { agentId?: string; emptyViewHelp?: string };
+			}
+		 ).agentsManagerData;
+		if ( data?.emptyViewHelp ) {
+			return data.emptyViewHelp;
+		}
+		if ( data?.agentId === 'reader-chat' || data?.agentId === 'p2-reader-chat' ) {
+			return __( 'Or type your own question below.', '__i18n_text_domain__' );
+		}
+	}
+	return __( 'Got a different request? Ask away.', '__i18n_text_domain__' );
+}
+
 export default function AgentChat( {
 	messages,
 	suggestions,
@@ -181,12 +220,8 @@ export default function AgentChat( {
 					<ChatMessageSkeleton count={ 3 } />
 				) : (
 					<EmptyView
-						heading={ __( 'Howdy! How can I help you today?', '__i18n_text_domain__' ) }
-						help={
-							emptyViewSuggestions.length > 0
-								? __( 'Got a different request? Ask away.', '__i18n_text_domain__' )
-								: undefined
-						}
+						heading={ getEmptyViewHeading() }
+						help={ emptyViewSuggestions.length > 0 ? getEmptyViewHelp() : undefined }
 						suggestions={ emptyViewSuggestions }
 						icon={ <AI size={ 32 } /> }
 					/>
