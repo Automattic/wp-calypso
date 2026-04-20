@@ -806,10 +806,11 @@ class ManagePurchase extends Component<
 			// for any refundable state. A future PR replaces this hop with a
 			// dedicated refund confirmation screen.
 			if ( canRefund ) {
-				const link = ( this.props.getCancelPurchaseUrlFor ?? cancelPurchase )(
+				const baseLink = ( this.props.getCancelPurchaseUrlFor ?? cancelPurchase )(
 					this.props.siteSlug,
 					purchase.id
 				);
+				const link = `${ baseLink }?intent=remove`;
 				return (
 					<CompactCard href={ link } className="remove-purchase__card">
 						<Icon icon={ trash } className="card__icon" />
@@ -822,8 +823,12 @@ class ManagePurchase extends Component<
 			}
 
 			// Non-refundable: auto-renew is off (enforced by the early return above)
-			// and there's no refund to process. Use <RemovePurchase> for the direct
-			// DELETE path.
+			// and there's no refund to process. The legacy cancel-purchase page's
+			// isDataValid guard redirects non-cancelable purchases away, so we
+			// cannot route to `?intent=remove` for this case without also
+			// teaching the cancel page to handle REMOVE-flow purchases. Use the
+			// existing inline <RemovePurchase> dialog for now — a follow-up PR
+			// can unify the screen.
 			return (
 				<RemovePurchase
 					hasLoadedSites={ hasLoadedSites }
@@ -1059,10 +1064,13 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
-		const link = ( this.props.getCancelPurchaseUrlFor ?? cancelPurchase )(
+		const baseLink = ( this.props.getCancelPurchaseUrlFor ?? cancelPurchase )(
 			this.props.siteSlug,
 			id
 		);
+		// Under flag, carry the user's intent through to the confirmation screen so
+		// it renders the matching variant (Cancel copy + disable-auto-renew mutation).
+		const link = isSplitEnabled ? `${ baseLink }?intent=cancel` : baseLink;
 		const canRefund = hasAmountAvailableToRefund( purchase );
 
 		if ( ! canRefund && isDomainTransfer( purchase ) ) {

@@ -4,16 +4,40 @@ import CancelPurchaseButton from './button';
 import type { CancelPurchaseButtonProps } from './button';
 import type moment from 'moment';
 
-interface RefundEligibilityNoticeProps {
+interface RefundEligibilityNoticePromoProps {
 	refundAmount: string;
+	mode?: 'promo';
 	cancelButtonProps: CancelPurchaseButtonProps & { moment: typeof moment };
 }
 
-const RefundEligibilityNotice = ( {
-	refundAmount,
-	cancelButtonProps,
-}: RefundEligibilityNoticeProps ) => {
+interface RefundEligibilityNoticeConfirmedProps {
+	refundAmount: string;
+	mode: 'confirmed';
+	cancelButtonProps?: never;
+}
+
+type RefundEligibilityNoticeProps =
+	| RefundEligibilityNoticePromoProps
+	| RefundEligibilityNoticeConfirmedProps;
+
+const RefundEligibilityNotice = ( props: RefundEligibilityNoticeProps ) => {
 	const translate = useTranslate();
+
+	if ( props.mode === 'confirmed' ) {
+		return (
+			<Notice className="cancel-purchase__refund-eligibility-notice" showDismiss={ false }>
+				<p className="cancel-purchase__refund-eligibility-text">
+					{ translate(
+						"You'll receive a %(refundText)s refund when you remove your plan. Your features will be unavailable right away.",
+						{
+							args: { refundText: props.refundAmount },
+							context: 'refundText is a monetary amount in the form "[currency-symbol][amount]"',
+						}
+					) }
+				</p>
+			</Notice>
+		);
+	}
 
 	return (
 		<Notice className="cancel-purchase__refund-eligibility-notice" showDismiss={ false }>
@@ -21,12 +45,12 @@ const RefundEligibilityNotice = ( {
 				{ translate(
 					"You're eligible for a %(refundText)s refund if you remove your plan now. Your features will be unavailable right away.",
 					{
-						args: { refundText: refundAmount },
+						args: { refundText: props.refundAmount },
 						context: 'refundText is a monetary amount in the form "[currency-symbol][amount]"',
 					}
 				) }{ ' ' }
 				<CancelPurchaseButton
-					{ ...cancelButtonProps }
+					{ ...props.cancelButtonProps }
 					textVariant="remove-plan-and-claim-refund"
 					isLinkStyle
 					isInline

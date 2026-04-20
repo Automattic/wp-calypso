@@ -92,6 +92,9 @@ export function addCreditCard( context, next ) {
 }
 
 export function cancelPurchase( context, next ) {
+	const rawIntent = context.query?.intent;
+	const intent = rawIntent === 'cancel' || rawIntent === 'remove' ? rawIntent : null;
+
 	const CancelPurchaseWrapper = localize( () => {
 		return (
 			<PurchasesWrapper title={ titles.cancelPurchase }>
@@ -99,6 +102,7 @@ export function cancelPurchase( context, next ) {
 					<CancelPurchase
 						purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 						siteSlug={ context.params.site }
+						intent={ intent }
 					/>
 				</Main>
 			</PurchasesWrapper>

@@ -136,6 +136,7 @@ export interface CancelPurchaseProps {
 	purchaseId: number;
 	purchaseListUrl?: string;
 	siteSlug: string;
+	intent?: 'cancel' | 'remove' | null;
 }
 
 export type CancelPurchaseAllProps = CancelPurchaseProps &
@@ -616,6 +617,12 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 	};
 
 	shouldUseAutoRenewFlow = ( purchase: Purchases.Purchase ) => {
+		// When the user clicked Cancel on Purchase Settings, always take the
+		// auto-renew flow (disable auto-renew, keep features until expiry) —
+		// regardless of the experiment assignment.
+		if ( this.props.intent === 'cancel' ) {
+			return true;
+		}
 		return Boolean(
 			this.props.isRefundEligibilityNoticeEnabled &&
 				hasAmountAvailableToRefund( purchase ) &&
@@ -625,6 +632,19 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 	};
 
 	getCancelFlowType = ( purchase: Purchases.Purchase ) => {
+		const { intent } = this.props;
+
+		// URL intent is authoritative when present: it was set at the Purchase
+		// Settings button click.
+		if ( intent === 'cancel' ) {
+			return CANCEL_FLOW_TYPE.CANCEL_AUTORENEW;
+		}
+		if ( intent === 'remove' ) {
+			return hasAmountAvailableToRefund( purchase )
+				? CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND
+				: CANCEL_FLOW_TYPE.REMOVE;
+		}
+
 		if ( ! this.shouldUseAutoRenewFlow( purchase ) ) {
 			return getPurchaseCancellationFlowType( purchase );
 		}
@@ -660,6 +680,18 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 				isPlan( purchase ) ) ||
 			( isDomainRegistrationPurchase && ! this.state.domainConfirmationConfirmed );
 
+		// cancelIntentOverride drives the CancelPurchaseButton's label + mutation
+		// choice. URL intent is authoritative when present:
+		// - intent=cancel  → autorenew (disable auto-renew)
+		// - intent=remove  → refund (cancel-and-refund; for non-refundable falls
+		//   through to REMOVE via the button's existing logic)
+		let urlIntentOverride: 'refund' | 'autorenew' | undefined;
+		if ( this.props.intent === 'cancel' ) {
+			urlIntentOverride = 'autorenew';
+		} else if ( this.props.intent === 'remove' ) {
+			urlIntentOverride = 'refund';
+		}
+
 		return {
 			purchase,
 			includedDomainPurchase,
@@ -667,9 +699,10 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			siteSlug,
 			cancelBundledDomain: this.state.cancelBundledDomain,
 			purchaseListUrl: purchaseListUrl ?? purchasesRoot,
-			cancelIntentOverride: this.shouldUseAutoRenewFlow( purchase )
-				? ( 'autorenew' as const )
-				: undefined,
+			displayVariant: this.props.intent === 'remove' ? ( 'remove' as const ) : undefined,
+			cancelIntentOverride:
+				urlIntentOverride ??
+				( this.shouldUseAutoRenewFlow( purchase ) ? ( 'autorenew' as const ) : undefined ),
 			activeSubscriptions: this.getActiveMarketplaceSubscriptions(),
 			onCancellationStart: this.onCancellationStart,
 			onCancellationComplete: this.onCancellationComplete,
@@ -929,19 +962,27 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			return null;
 		}
 
-		const { purchase, isJetpack, isAkismet, isDomainRegistrationPurchase } = this.props;
+		const { purchase, isJetpack, isAkismet, isDomainRegistrationPurchase, intent } = this.props;
 		const purchaseName = getName( purchase );
 		const { siteName, siteId } = purchase;
 
 		let heading;
 
-		if ( isDomainRegistration( purchase ) || isOneTimePurchase( purchase ) ) {
+		if ( intent === 'remove' ) {
+			if ( isPlan( purchase ) ) {
+				heading = this.props.translate( 'Remove plan' );
+			} else if ( isDomainRegistration( purchase ) ) {
+				heading = this.props.translate( 'Remove domain' );
+			} else {
+				heading = this.props.translate( 'Remove %(purchaseName)s', { args: { purchaseName } } );
+			}
+		} else if ( isDomainRegistration( purchase ) || isOneTimePurchase( purchase ) ) {
 			heading = this.props.translate( 'Cancel %(purchaseName)s', {
 				args: { purchaseName },
 			} );
 		}
 
-		if ( isSubscription( purchase ) ) {
+		if ( ! heading && isSubscription( purchase ) ) {
 			heading = this.props.translate( 'Cancel your %(purchaseName)s subscription', {
 				args: { purchaseName },
 			} );
@@ -958,8 +999,11 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			includedDomainHasRadioButtons || this.state.cancelBundledDomain,
 			this.props.includedDomainPurchase
 		);
+		// Promo banner (with "Remove plan and claim refund" CTA) is suppressed
+		// when URL intent is set — the user has already expressed intent at the
+		// button click, so a redundant CTA would be noise.
 		const shouldShowRefundEligibilityNotice =
-			Boolean( refundAmountString ) && this.shouldUseAutoRenewFlow( purchase );
+			! intent && Boolean( refundAmountString ) && this.shouldUseAutoRenewFlow( purchase );
 
 		const cancelButtonProps = this.getCancelPurchaseButtonProps();
 
@@ -1004,9 +1048,13 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 						align="left"
 					/>
 
-					{ shouldShowRefundEligibilityNotice &&
+					{ ! this.state.showDomainOptionsStep && refundAmountString && intent === 'remove' && (
+						<RefundEligibilityNotice refundAmount={ refundAmountString } mode="confirmed" />
+					) }
+					{ ! this.state.showDomainOptionsStep &&
 						refundAmountString &&
-						! this.state.showDomainOptionsStep && (
+						! intent &&
+						shouldShowRefundEligibilityNotice && (
 							<RefundEligibilityNotice
 								refundAmount={ refundAmountString }
 								cancelButtonProps={ cancelButtonProps }
