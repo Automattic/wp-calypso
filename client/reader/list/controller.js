@@ -54,9 +54,7 @@ export const listListing = ( context, next ) => {
 	context.primary = (
 		<AsyncLoad
 			require={ () =>
-				import(
-					/* webpackChunkName: "async-load-calypso-reader-list-stream" */ 'calypso/reader/list-stream'
-				)
+				import( /* webpackChunkName: "async-load-calypso-reader-list" */ 'calypso/reader/list' )
 			}
 			key={ 'tag-' + context.params.user + '-' + context.params.list }
 			streamKey={ streamKey }
