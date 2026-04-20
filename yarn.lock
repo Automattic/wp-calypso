@@ -296,22 +296,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/babel-plugin-transform-wpcalypso-async@workspace:^, @automattic/babel-plugin-transform-wpcalypso-async@workspace:packages/babel-plugin-transform-wpcalypso-async":
-  version: 0.0.0-use.local
-  resolution: "@automattic/babel-plugin-transform-wpcalypso-async@workspace:packages/babel-plugin-transform-wpcalypso-async"
-  dependencies:
-    "@automattic/calypso-typescript-config": "workspace:^"
-    "@babel/core": "npm:^7.27.1"
-    lodash: "npm:^4.17.21"
-  languageName: unknown
-  linkType: soft
-
 "@automattic/blaze-dashboard@workspace:apps/blaze-dashboard":
   version: 0.0.0-use.local
   resolution: "@automattic/blaze-dashboard@workspace:apps/blaze-dashboard"
   dependencies:
     "@automattic/accessible-focus": "workspace:^"
-    "@automattic/babel-plugin-transform-wpcalypso-async": "workspace:^"
     "@automattic/calypso-apps-builder": "workspace:^"
     "@automattic/calypso-babel-config": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
@@ -460,7 +449,6 @@ __metadata:
   dependencies:
     "@automattic/babel-plugin-i18n-calypso": "workspace:^"
     "@automattic/babel-plugin-preserve-i18n": "workspace:^"
-    "@automattic/babel-plugin-transform-wpcalypso-async": "workspace:^"
     "@babel/cli": "npm:^7.27.2"
     "@babel/core": "npm:^7.27.1"
     "@babel/helpers": "npm:^7.27.1"
@@ -1849,7 +1837,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/odyssey-stats@workspace:apps/odyssey-stats"
   dependencies:
-    "@automattic/babel-plugin-transform-wpcalypso-async": "workspace:^"
     "@automattic/calypso-apps-builder": "workspace:^"
     "@automattic/calypso-babel-config": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
