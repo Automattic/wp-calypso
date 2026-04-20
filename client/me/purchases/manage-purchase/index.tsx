@@ -1065,12 +1065,11 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
-		// Use non-breaking spaces so the formatted date stays on one line in narrow viewports.
-		const expiryDateFormatted = moment( purchase.expiryDate )
-			.format( 'LL' )
-			.replace( / /g, '\u00A0' );
+		const expiryDateDisplay = moment( purchase.expiryDate ).format( 'LL' );
+		// Under flag: use non-breaking spaces so the formatted date stays on one
+		// line in narrow viewports. Off flag we preserve trunk's exact output.
 		const cancelCopy = isSplitEnabled
-			? getCancelButtonCopy( purchase, expiryDateFormatted, translate )
+			? getCancelButtonCopy( purchase, expiryDateDisplay.replace( / /g, '\u00A0' ), translate )
 			: null;
 
 		const onClick = ( event: { preventDefault: () => void } ) => {
@@ -1102,7 +1101,7 @@ class ManagePurchase extends Component<
 					: this.renderActionDetails(
 							String(
 								translate( 'Will remain active until %(expiryDate)s', {
-									args: { expiryDate: expiryDateFormatted },
+									args: { expiryDate: expiryDateDisplay },
 								} )
 							)
 					  ) }
