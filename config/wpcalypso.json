@@ -38,7 +38,7 @@
 		"current-site/domain-warning": false,
 		"current-site/notice": true,
 		"dashboard/omnibar": false,
-		"dashboard/wp-beta-program": false,
+		"dashboard/wp-beta-program": true,
 		"dashboard/opt-in-banners": false,
 		"dashboard/v2": true,
 		"dashboard/v2/backport/site-overview": true,
