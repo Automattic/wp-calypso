@@ -151,7 +151,7 @@ class PodcastCoverImageSetting extends PureComponent {
 	}
 
 	preloadModal() {
-		asyncRequire( 'calypso/post-editor/media-modal' );
+		import( 'calypso/post-editor/media-modal' );
 	}
 
 	renderChangeButton() {
@@ -213,7 +213,7 @@ class PodcastCoverImageSetting extends PureComponent {
 		return (
 			hasToggledModal && (
 				<AsyncLoad
-					require="calypso/post-editor/media-modal"
+					require={ () => import( 'calypso/post-editor/media-modal' ) }
 					placeholder={ <EditorMediaModalDialog isVisible /> }
 					siteId={ siteId }
 					onClose={ this.editSelectedMedia }

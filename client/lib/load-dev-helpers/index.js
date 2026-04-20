@@ -5,7 +5,7 @@ export default function loadDevHelpers( reduxStore ) {
 	const badge = document.querySelector( '.environment-badge' );
 	if ( badge ) {
 		// goofy import for environment badge, which is SSR'd
-		asyncRequire( 'calypso/components/environment-badge/style.scss' );
+		import( 'calypso/components/environment-badge/style.scss' );
 
 		// Show/hide Dev Tools menu as mouse enters/leaves
 		const remove = debounce( () => {
@@ -23,7 +23,7 @@ export default function loadDevHelpers( reduxStore ) {
 	if ( reduxStore && config.isEnabled( 'dev/account-settings-helper' ) ) {
 		const el = document.querySelector( '.environment.is-account-settings' );
 		if ( el ) {
-			asyncRequire( 'calypso/lib/account-settings-helper' ).then( ( helper ) =>
+			import( 'calypso/lib/account-settings-helper' ).then( ( helper ) =>
 				helper.default( el, reduxStore )
 			);
 		}
@@ -32,7 +32,7 @@ export default function loadDevHelpers( reduxStore ) {
 	if ( config.isEnabled( 'dev/auth-helper' ) ) {
 		const el = document.querySelector( '.environment.is-auth' );
 		if ( el ) {
-			asyncRequire( 'calypso/lib/auth-helper' ).then( ( helper ) => helper.default( el ) );
+			import( 'calypso/lib/auth-helper' ).then( ( helper ) => helper.default( el ) );
 		}
 	}
 
@@ -41,7 +41,7 @@ export default function loadDevHelpers( reduxStore ) {
 	if ( reduxStore && config.isEnabled( 'dev/preferences-helper' ) ) {
 		const el = document.querySelector( '.environment.is-prefs' );
 		if ( el ) {
-			asyncRequire( 'calypso/lib/preferences-helper' ).then( ( helper ) =>
+			import( 'calypso/lib/preferences-helper' ).then( ( helper ) =>
 				helper.default( el, reduxStore )
 			);
 		}
@@ -50,14 +50,14 @@ export default function loadDevHelpers( reduxStore ) {
 	if ( config.isEnabled( 'dev/features-helper' ) ) {
 		const el = document.querySelector( '.environment.is-features' );
 		if ( el ) {
-			asyncRequire( 'calypso/lib/features-helper' ).then( ( helper ) => helper.default( el ) );
+			import( 'calypso/lib/features-helper' ).then( ( helper ) => helper.default( el ) );
 		}
 	}
 
 	if ( config.isEnabled( 'dev/react-query-devtools' ) ) {
 		const el = document.querySelector( '.environment.is-react-query-devtools' );
 		if ( el ) {
-			asyncRequire( 'calypso/lib/react-query-devtools-helper' ).then( ( helper ) =>
+			import( 'calypso/lib/react-query-devtools-helper' ).then( ( helper ) =>
 				helper.default( el )
 			);
 		}
@@ -66,7 +66,7 @@ export default function loadDevHelpers( reduxStore ) {
 	if ( config.isEnabled( 'dev/store-sandbox-helper' ) ) {
 		const el = document.querySelector( '.environment.is-store-sandbox' );
 		if ( el ) {
-			asyncRequire( 'calypso/lib/store-sandbox-helper' ).then( ( helper ) => helper.default( el ) );
+			import( 'calypso/lib/store-sandbox-helper' ).then( ( helper ) => helper.default( el ) );
 		}
 	}
 }
