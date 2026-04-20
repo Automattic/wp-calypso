@@ -2,13 +2,14 @@
  * @jest-environment jsdom
  */
 
-import { useQuery } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import nock from 'nock';
 import { ComponentProps } from 'react';
 import UserAvatar from 'calypso/blocks/user-avatar';
 import UserProfileHeader from '../index';
-import type { ReaderUser } from '@automattic/api-core';
+import type { ReaderUser, UserSitesResponse } from '@automattic/api-core';
 
 jest.mock(
 	'calypso/blocks/user-avatar',
@@ -20,11 +21,6 @@ jest.mock(
 
 jest.mock( 'calypso/blocks/site-icon', () => ( {
 	SiteIcon: ( { siteId }: { siteId: number } ) => <span data-testid={ `site-icon-${ siteId }` } />,
-} ) );
-
-jest.mock( '@tanstack/react-query', () => ( {
-	...jest.requireActual( '@tanstack/react-query' ),
-	useQuery: jest.fn(),
 } ) );
 
 jest.mock(
@@ -48,18 +44,35 @@ describe( 'UserProfileHeader', () => {
 		description: 'This is a test user biography.',
 	};
 
-	jest.mocked( useQuery ).mockReturnValue( {
-		isFetching: true,
-		data: undefined,
-		error: null,
-	} as ReturnType< typeof useQuery > );
+	let queryClient: QueryClient;
 
 	beforeEach( () => {
 		jest.clearAllMocks();
+		nock.disableNetConnect();
+		queryClient = new QueryClient( {
+			defaultOptions: {
+				queries: { retry: false },
+			},
+		} );
 	} );
 
+	afterEach( () => {
+		nock.cleanAll();
+	} );
+
+	function renderWithClient( ui: React.ReactNode ) {
+		return render( <QueryClientProvider client={ queryClient }>{ ui }</QueryClientProvider> );
+	}
+
+	function nockGetUserSites( userId: number, response: UserSitesResponse ) {
+		return nock( 'https://public-api.wordpress.com' )
+			.get( `/wpcom/v2/users/${ userId }/sites` )
+			.query( true )
+			.reply( 200, response );
+	}
+
 	test( 'should render the avatar with correct user information', () => {
-		render( <UserProfileHeader user={ defaultUser } view="posts" /> );
+		renderWithClient( <UserProfileHeader user={ defaultUser } view="posts" /> );
 
 		const avatar = screen.getByTestId( 'user-avatar' );
 		expect( avatar ).toBeVisible();
@@ -67,51 +80,59 @@ describe( 'UserProfileHeader', () => {
 	} );
 
 	test( 'should render the user display name', () => {
-		render( <UserProfileHeader user={ defaultUser } view="posts" /> );
+		renderWithClient( <UserProfileHeader user={ defaultUser } view="posts" /> );
 
 		const displayNameEl = screen.getByText( defaultUser.display_name ?? '' );
 		expect( displayNameEl ).toBeVisible();
 	} );
 
-	test( 'should render top sites of the user', () => {
-		const mockSites = [
+	test( 'should render top sites of the user', async () => {
+		const mockSites: UserSitesResponse[ 'sites' ] = [
 			{
 				ID: 1,
 				name: 'Site 1',
+				description: '',
 				feed_ID: 101,
 				URL: 'https://site1.com',
 				icon: { img: 'https://site1.com/icon.png' },
+				is_following: false,
+				last_published: '2024-01-01',
+				posts_count: 10,
 				subscribers_count: 50,
 			},
 			{
 				ID: 2,
 				name: 'Site 2',
+				description: '',
 				feed_ID: 102,
 				URL: 'https://site2.com',
 				icon: { img: 'https://site2.com/icon.png' },
+				is_following: false,
+				last_published: '2024-01-02',
+				posts_count: 20,
 				subscribers_count: 30,
 			},
 		];
 
-		jest.mocked( useQuery ).mockReturnValue( {
-			isFetching: false,
-			data: { sites: mockSites, total: mockSites.length, primary_site_id: 1 },
-			error: null,
-		} as ReturnType< typeof useQuery > );
+		nockGetUserSites( defaultUser.ID, {
+			sites: mockSites,
+			total: mockSites.length,
+			primary_site_id: 1,
+		} );
 
-		render( <UserProfileHeader user={ defaultUser } view="posts" /> );
+		renderWithClient( <UserProfileHeader user={ defaultUser } view="posts" /> );
 
-		mockSites.forEach( ( site ) => {
-			const siteNameEl = screen.getByText( site.name );
+		for ( const site of mockSites ) {
+			const siteNameEl = await screen.findByText( site.name );
 			expect( siteNameEl ).toBeVisible();
 
 			const siteIcon = screen.getByTestId( `site-icon-${ site.ID }` );
 			expect( siteIcon ).toBeVisible();
-		} );
+		}
 	} );
 
 	test( 'should render navigation tabs with Posts, Sites, Lists, and Recommended Blogs options', () => {
-		render( <UserProfileHeader user={ defaultUser } view="posts" /> );
+		renderWithClient( <UserProfileHeader user={ defaultUser } view="posts" /> );
 
 		const navItems = screen.getAllByRole( 'menuitem' );
 		expect( navItems.length ).toBe( 4 );
@@ -123,7 +144,9 @@ describe( 'UserProfileHeader', () => {
 	} );
 
 	test( 'should not render bio section when user has no bio', () => {
-		render( <UserProfileHeader user={ defaultUser } view="posts" /> );
+		const userWithNoBio: ReaderUser = { ...defaultUser, description: '' };
+
+		renderWithClient( <UserProfileHeader user={ userWithNoBio } view="posts" /> );
 
 		expect( screen.queryByText( /show more/i ) ).not.toBeInTheDocument();
 	} );
@@ -134,7 +157,7 @@ describe( 'UserProfileHeader', () => {
 			description: 'This is my test biography that describes me as a test user.',
 		};
 
-		render( <UserProfileHeader user={ userWithBio } view="posts" /> );
+		renderWithClient( <UserProfileHeader user={ userWithBio } view="posts" /> );
 
 		// Bio section should be present
 		const bioText = screen.getByText( userWithBio.description! );
@@ -142,7 +165,7 @@ describe( 'UserProfileHeader', () => {
 	} );
 
 	test( 'should render Gravatar badge when user has profile_URL', () => {
-		render( <UserProfileHeader user={ defaultUser } view="posts" /> );
+		renderWithClient( <UserProfileHeader user={ defaultUser } view="posts" /> );
 
 		const gravatarBadge = screen.getByRole( 'link', { name: /gravatar/i } );
 		expect( gravatarBadge ).toBeVisible();
@@ -158,7 +181,7 @@ describe( 'UserProfileHeader', () => {
 			profile_URL: '',
 		};
 
-		render( <UserProfileHeader user={ userWithoutGravatarProfile } view="posts" /> );
+		renderWithClient( <UserProfileHeader user={ userWithoutGravatarProfile } view="posts" /> );
 
 		expect( screen.queryByRole( 'link', { name: /gravatar/i } ) ).not.toBeInTheDocument();
 	} );
@@ -167,7 +190,9 @@ describe( 'UserProfileHeader', () => {
 		const longBio = 'This is a very long biography that spans multiple lines. '.repeat( 10 ).trim();
 		const userWithLongBio: ReaderUser = { ...defaultUser, description: longBio };
 
-		const { rerender } = render( <UserProfileHeader user={ userWithLongBio } view="posts" /> );
+		const { rerender } = renderWithClient(
+			<UserProfileHeader user={ userWithLongBio } view="posts" />
+		);
 
 		const bioDesc = screen.getByText( longBio );
 		expect( bioDesc ).toBeVisible();
@@ -176,9 +201,15 @@ describe( 'UserProfileHeader', () => {
 		// Mock scrollHeight to simulate overflow (needed for useLayoutEffect check)
 		Object.defineProperty( bioDesc, 'scrollHeight', { value: 200, configurable: true } );
 		Object.defineProperty( bioDesc, 'clientHeight', { value: 60, configurable: true } );
+
 		// Re-render with slightly different bio to trigger useLayoutEffect
 		rerender(
-			<UserProfileHeader user={ { ...userWithLongBio, description: longBio + '.' } } view="posts" />
+			<QueryClientProvider client={ queryClient }>
+				<UserProfileHeader
+					user={ { ...userWithLongBio, description: longBio + '.' } }
+					view="posts"
+				/>
+			</QueryClientProvider>
 		);
 
 		const showMoreButton = screen.getByText( /show more/i );

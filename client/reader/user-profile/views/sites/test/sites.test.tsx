@@ -1,19 +1,15 @@
 /**
  * @jest-environment jsdom
  */
-import { useQuery } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
+import nock from 'nock';
 import { ReaderSite } from 'calypso/reader/sites-list/site-item';
 import UserSites from '..';
 import type { ReaderUser, UserSitesResponse } from '@automattic/api-core';
 
 jest.mock( 'calypso/state', () => ( {
 	useSelector: jest.fn(),
-} ) );
-
-jest.mock( '@tanstack/react-query', () => ( {
-	...jest.requireActual( '@tanstack/react-query' ),
-	useQuery: jest.fn(),
 } ) );
 
 // Mocking ReaderSitesList because it uses useDispatch internally which would require a full Redux store setup.
@@ -41,52 +37,73 @@ describe( 'UserSites', () => {
 		profile_URL: '',
 	};
 
+	let queryClient: QueryClient;
+
 	beforeEach( () => {
 		jest.clearAllMocks();
 		useSelector.mockReturnValue( null );
+		nock.disableNetConnect();
+		queryClient = new QueryClient( {
+			defaultOptions: {
+				queries: { retry: false },
+			},
+		} );
 	} );
 
-	test( 'should render Spinner when fetching sites', () => {
-		jest.mocked( useQuery ).mockReturnValue( { isLoading: true } as ReturnType< typeof useQuery > );
+	afterEach( () => {
+		nock.cleanAll();
+	} );
 
-		render( <UserSites user={ defaultUser } /> );
+	function renderWithClient( ui: React.ReactNode ) {
+		return render( <QueryClientProvider client={ queryClient }>{ ui }</QueryClientProvider> );
+	}
+
+	function nockGetUserSites( userId: number, response: UserSitesResponse | number ) {
+		const scope = nock( 'https://public-api.wordpress.com' ).get(
+			`/wpcom/v2/users/${ userId }/sites`
+		);
+
+		if ( typeof response === 'number' ) {
+			return scope.query( true ).reply( response, { error: 'error', message: 'Error' } );
+		}
+
+		return scope.query( true ).reply( 200, response );
+	}
+
+	test( 'should render Spinner when fetching sites', () => {
+		// Rendering without awaiting the nock response.
+		renderWithClient( <UserSites user={ defaultUser } /> );
 
 		expect( screen.getByText( 'Loading sites' ) ).toBeVisible();
 	} );
 
-	test( 'should render error message when fetch fails', () => {
-		jest.mocked( useQuery ).mockReturnValue( {
-			error: { message: 'Network error' },
-		} as ReturnType< typeof useQuery > );
+	test( 'should render error message when fetch fails', async () => {
+		nockGetUserSites( defaultUser.ID, 500 );
 
-		render( <UserSites user={ defaultUser } /> );
+		renderWithClient( <UserSites user={ defaultUser } /> );
 
-		expect( screen.getByText( 'Sorry, something went wrong.' ) ).toBeVisible();
+		expect( await screen.findByText( 'Sorry, something went wrong.' ) ).toBeVisible();
 	} );
 
-	test( 'should render EmptyContent when no sites available', () => {
-		jest.mocked( useQuery ).mockReturnValue( {
-			data: { sites: [], total: 0, primary_site_id: 0 } as UserSitesResponse,
-		} as ReturnType< typeof useQuery > );
+	test( 'should render EmptyContent when no sites available', async () => {
+		nockGetUserSites( defaultUser.ID, { sites: [], total: 0, primary_site_id: 0 } );
 
-		render( <UserSites user={ defaultUser } /> );
+		renderWithClient( <UserSites user={ defaultUser } /> );
 
-		expect( screen.getByText( 'No sites have been created yet.' ) ).toBeVisible();
+		expect( await screen.findByText( 'No sites have been created yet.' ) ).toBeVisible();
 		expect(
 			screen.queryByRole( 'link', { name: 'Create your first site' } )
 		).not.toBeInTheDocument();
 	} );
 
-	test( 'should show "Create your first site" button when viewing own empty profile', () => {
+	test( 'should show "Create your first site" button when viewing own empty profile', async () => {
 		useSelector.mockReturnValue( { username: 'test_user' } );
 
-		jest.mocked( useQuery ).mockReturnValue( {
-			data: { sites: [], total: 0, primary_site_id: 0 } as UserSitesResponse,
-		} as ReturnType< typeof useQuery > );
+		nockGetUserSites( defaultUser.ID, { sites: [], total: 0, primary_site_id: 0 } );
 
-		render( <UserSites user={ defaultUser } /> );
+		renderWithClient( <UserSites user={ defaultUser } /> );
 
-		const createSiteButton = screen.getByRole( 'link', { name: 'Create your first site' } );
+		const createSiteButton = await screen.findByRole( 'link', { name: 'Create your first site' } );
 		expect( createSiteButton ).toBeVisible();
 		expect( createSiteButton ).toHaveAttribute(
 			'href',
@@ -94,8 +111,8 @@ describe( 'UserSites', () => {
 		);
 	} );
 
-	test( 'should render sites list when sites are available', () => {
-		const mockSites: Pick< UserSitesResponse, 'sites' >[ 'sites' ] = [
+	test( 'should render sites list when sites are available', async () => {
+		const mockSites: UserSitesResponse[ 'sites' ] = [
 			{
 				ID: 1,
 				name: 'Test Site 1',
@@ -122,13 +139,11 @@ describe( 'UserSites', () => {
 			},
 		];
 
-		jest.mocked( useQuery ).mockReturnValue( {
-			data: { sites: mockSites, total: 2, primary_site_id: 1 } as UserSitesResponse,
-		} as ReturnType< typeof useQuery > );
+		nockGetUserSites( defaultUser.ID, { sites: mockSites, total: 2, primary_site_id: 1 } );
 
-		render( <UserSites user={ defaultUser } /> );
+		renderWithClient( <UserSites user={ defaultUser } /> );
 
-		const sitesList = screen.getByTestId( 'reader-sites-list' );
+		const sitesList = await screen.findByTestId( 'reader-sites-list' );
 		expect( sitesList ).toBeVisible();
 		expect( screen.getByText( 'Test Site 1' ) ).toBeVisible();
 		expect( screen.getByText( 'Test Site 2' ) ).toBeVisible();

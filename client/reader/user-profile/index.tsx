@@ -1,5 +1,4 @@
 import './style.scss';
-import { GetReaderUserResponse, ReaderUser } from '@automattic/api-core';
 import { getReaderUserQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { useQuery } from '@tanstack/react-query';
@@ -25,32 +24,13 @@ export interface UserProfileProps {
 export function UserProfile( props: UserProfileProps ): JSX.Element | null {
 	const { userLogin, userId, path, view } = props;
 	const translate = useTranslate();
-	const { isLoading, data } = useQuery( getReaderUserQuery( userLogin, userId ) );
-	const user = mapGetReaderUserResponseToUser( data );
+	const { isLoading, data: user } = useQuery( getReaderUserQuery( userLogin, userId ) );
 
 	useEffect( () => {
 		if ( path?.startsWith( '/reader/users/id/' ) && user ) {
 			page.replace( `/reader/users/${ user.user_login }` );
 		}
 	}, [ path, user ] );
-
-	function mapGetReaderUserResponseToUser( response?: GetReaderUserResponse ): ReaderUser | null {
-		if ( ! response ) {
-			return null;
-		}
-
-		return {
-			ID: response.ID,
-			user_login: response.user_login,
-			first_name: response.first_name,
-			last_name: response.last_name,
-			nice_name: response.nice_name,
-			display_name: response.display_name,
-			description: response.description,
-			avatar_URL: response.avatar_URL,
-			profile_URL: response.profile_URL,
-		};
-	}
 
 	if ( isLoading ) {
 		return (
