@@ -1,58 +1,57 @@
 import { getFeatureByKey } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { getName } from 'calypso/lib/purchases';
+import { getFallbackLossItems } from './get-confirmation-copy';
 import type { Purchases } from '@automattic/data-stores';
+import type { DisplayVariant } from 'calypso/lib/purchases/utils';
 
 const CancelPurchaseFeatureList = ( {
 	purchase,
+	displayVariant,
 	cancellationFeatures,
-	useRefundableWpcomCopy = false,
 }: {
 	purchase: Purchases.Purchase;
+	displayVariant: DisplayVariant;
 	cancellationFeatures: string[];
-	useRefundableWpcomCopy?: boolean;
 } ) => {
 	const translate = useTranslate();
 
-	if ( ! cancellationFeatures.length ) {
-		return;
+	// When no server-provided features list, fall back to a per-product-type
+	// item so every confirmation screen shows at least one concrete thing the
+	// user is giving up.
+	const items: Array< { key: string; title: string } > = cancellationFeatures.length
+		? cancellationFeatures.map( ( feature ) => ( {
+				key: feature,
+				title: getFeatureByKey( feature ).getTitle() as string,
+		  } ) )
+		: getFallbackLossItems( purchase ).map( ( title, idx ) => ( {
+				key: `fallback-${ idx }`,
+				title,
+		  } ) );
+
+	if ( ! items.length ) {
+		return null;
 	}
+
+	const intro =
+		displayVariant === 'remove'
+			? translate( 'When you remove your subscription, you’ll lose access to:' )
+			: translate( 'You’ll lose access to:' );
 
 	return (
 		<div className="cancel-purchase__features">
-			<p>
-				{ ! useRefundableWpcomCopy
-					? translate(
-							'By canceling the %(productName)s plan, these features will no longer be available on your site:',
-							{
-								args: {
-									productName: getName( purchase ),
-								},
-							}
-					  )
-					: translate(
-							'These features will no longer be available on your site when your %(productName)s plan expires:',
-							{
-								args: {
-									productName: getName( purchase ),
-								},
-							}
-					  ) }
-			</p>
+			<p>{ intro }</p>
 			<ul className="cancel-purchase__features-list">
-				{ cancellationFeatures.map( ( feature ) => {
-					return (
-						<li key={ feature }>
-							<Gridicon
-								className="cancel-purchase__refund-information--item-cross-small"
-								size={ 24 }
-								icon="cross-small"
-							/>
-							<span>{ getFeatureByKey( feature ).getTitle() }</span>
-						</li>
-					);
-				} ) }
+				{ items.map( ( item ) => (
+					<li key={ item.key }>
+						<Gridicon
+							className="cancel-purchase__refund-information--item-cross-small"
+							size={ 24 }
+							icon="cross-small"
+						/>
+						<span>{ item.title }</span>
+					</li>
+				) ) }
 			</ul>
 		</div>
 	);
