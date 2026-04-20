@@ -98,6 +98,47 @@ import type { ChangeEvent } from 'react';
 
 import './style.scss';
 
+type TopNoticeArgs = {
+	surveyShown?: boolean;
+	showDomainOptionsStep?: boolean;
+	displayVariant: 'cancel' | 'remove';
+	purchase: Purchase;
+	intent: 'cancel' | 'remove' | null;
+	showRefundEligibilityNotice: boolean;
+	onClaimRefund: () => void;
+};
+
+function renderTopNotice( args: TopNoticeArgs ) {
+	const {
+		surveyShown,
+		showDomainOptionsStep,
+		displayVariant,
+		purchase,
+		intent,
+		showRefundEligibilityNotice,
+		onClaimRefund,
+	} = args;
+
+	if ( surveyShown || showDomainOptionsStep ) {
+		return null;
+	}
+
+	// 1. Intent-remove with a refund → confirmed refund-amount notice (no CTA,
+	//    replaces the promo banner for split-button users).
+	if ( displayVariant === 'remove' && hasAmountAvailableToRefund( purchase ) ) {
+		return <RefundEligibilityNotice purchase={ purchase } mode="confirmed" />;
+	}
+
+	// 2. No URL intent + experiment treatment + refund → today's promo banner.
+	if ( ! intent && showRefundEligibilityNotice ) {
+		return <RefundEligibilityNotice purchase={ purchase } onClaimRefund={ onClaimRefund } />;
+	}
+
+	// 3. Everything else → time-remaining notice (itself suppressed on
+	//    the Remove variant via its own displayVariant check).
+	return <TimeRemainingNotice purchase={ purchase } displayVariant={ displayVariant } />;
+}
+
 const willShowDomainOptionsRadioButtons = (
 	includedDomainPurchase: Purchase,
 	purchase: Purchase
@@ -1394,22 +1435,15 @@ export default function CancelPurchase() {
 					description={ description }
 				/>
 			}
-			notices={
-				! state.surveyShown &&
-				! state.showDomainOptionsStep &&
-				// Suppress the "Remove plan and claim refund" promo banner when
-				// intent is already set from the URL — the user has expressed
-				// intent; the banner CTA would be redundant (and contradictory
-				// for intent=cancel).
-				( ! intent && showRefundEligibilityNotice ? (
-					<RefundEligibilityNotice
-						purchase={ purchase }
-						onClaimRefund={ onCancellationStartForRefund }
-					/>
-				) : (
-					<TimeRemainingNotice purchase={ purchase } displayVariant={ displayVariant } />
-				) )
-			}
+			notices={ renderTopNotice( {
+				surveyShown: state.surveyShown,
+				showDomainOptionsStep: state.showDomainOptionsStep,
+				displayVariant,
+				purchase,
+				intent,
+				showRefundEligibilityNotice,
+				onClaimRefund: onCancellationStartForRefund,
+			} ) }
 		>
 			{ isSolutionsStep ? (
 				<CancelPurchaseForm
