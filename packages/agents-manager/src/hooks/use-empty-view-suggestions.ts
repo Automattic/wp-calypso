@@ -83,6 +83,11 @@ export function useEmptyViewSuggestions( {
 			const suggestions = loadedProviders.getEmptyViewSuggestions?.();
 			if ( suggestions && suggestions.length > 0 ) {
 				setEmptyViewSuggestions( suggestions );
+			} else {
+				// Provider exists but returned empty/undefined (e.g. lazy proxy
+				// race where the IIFE hasn't set window globals yet). Fall back
+				// to defaults so the AM still renders.
+				setEmptyViewSuggestions( defaultSuggestions );
 			}
 		}
 	}, [

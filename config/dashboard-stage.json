@@ -27,7 +27,7 @@
 		"cookie-banner": false,
 		"rum-tracking/logstash": true,
 		"dashboard/omnibar": false,
-		"dashboard/wp-beta-program": false,
+		"dashboard/wp-beta-program": true,
 		"dashboard/v2": false,
 		"dev/store-sandbox-helper": true,
 		"domain-transfer-redesign": true,
