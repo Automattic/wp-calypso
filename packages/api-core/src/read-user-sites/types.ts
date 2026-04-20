@@ -4,7 +4,7 @@ export interface UserSitesResponse {
 	sites: UserSiteResponse[];
 }
 
-export interface UserSiteResponse {
+interface UserSiteResponse {
 	ID: number;
 	name: string;
 	description: string;
