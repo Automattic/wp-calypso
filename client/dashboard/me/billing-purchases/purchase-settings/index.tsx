@@ -150,20 +150,20 @@ function isAutoRenewToggleDisabled( purchase: Purchase, user: User ): boolean {
 		// Special case!
 		return false;
 	}
-	// Under the split-cancel-refunds flag, always let the user disable auto-renew
-	// when it's on — matches legacy behavior. The server's `can_disable_auto_renew`
-	// goes false during pending-renewal retries, but the actual
-	// `/upgrades/{id}/disable-auto-renew` endpoint accepts the call and stops the
-	// retry loop (verified in wpcom-billing backend trace).
-	if (
-		purchase.is_auto_renew_enabled &&
-		! purchase.can_disable_auto_renew &&
-		! isEnabled( 'purchases/update-cancel-refunds' )
-	) {
-		return true;
-	}
-	if ( ! purchase.is_auto_renew_enabled && ! purchase.can_reenable_auto_renewal ) {
-		return true;
+	// Under the split-cancel-refunds flag, keep the toggle active in both
+	// directions — matches legacy Calypso. The server's `can_disable_auto_renew`
+	// and `can_reenable_auto_renewal` go false during pending-renewal retries,
+	// but the actual disable/re-enable endpoints accept the call (verified in
+	// wpcom-billing backend trace). Off-flag we preserve trunk's behavior of
+	// trusting the server flags.
+	const splitCancelRefundsEnabled = isEnabled( 'purchases/update-cancel-refunds' );
+	if ( ! splitCancelRefundsEnabled ) {
+		if ( purchase.is_auto_renew_enabled && ! purchase.can_disable_auto_renew ) {
+			return true;
+		}
+		if ( ! purchase.is_auto_renew_enabled && ! purchase.can_reenable_auto_renewal ) {
+			return true;
+		}
 	}
 	return false;
 }
