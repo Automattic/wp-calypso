@@ -228,11 +228,11 @@ export function getCancelLossIntro( purchase: Purchase, fullExpiryDate: string )
 	switch ( category ) {
 		case 'plan':
 			return sprintf(
-				/* translators: %(date)s is the full subscription expiry date, e.g. "April 16, 2027" */
+				/* translators: %(productName)s is the plan name, e.g. "WordPress.com Business"; %(date)s is the full subscription expiry date, e.g. "April 16, 2027" */
 				__(
-					'When you cancel your subscription, your plan features will expire on %(date)s and you’ll lose access to:'
+					'When you cancel your subscription, your %(productName)s plan features will expire on %(date)s and you’ll lose access to:'
 				),
-				{ date: fullExpiryDate }
+				{ productName: purchase.product_name, date: fullExpiryDate }
 			);
 		case 'domain':
 			return sprintf(

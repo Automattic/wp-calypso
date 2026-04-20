@@ -46,6 +46,30 @@
 	}
 }
 
+.cancel-purchase__support {
+	margin-top: 24px;
+
+	.cancel-purchase__support-heading {
+		margin: 0 0 4px;
+		font-size: $font-body-small;
+	}
+
+	.cancel-purchase__support-text {
+		margin: 0;
+		font-size: $font-body-small;
+	}
+}
+
+.cancel-purchase__divider {
+	border: none;
+	border-top: 1px solid var(--color-neutral-5);
+	margin: 24px 0;
+}
+
+.cancel-purchase__confirm-section {
+	margin-bottom: 24px;
+}
+
 .cancel-purchase__domain-options {
 	margin-bottom: 16px;
 

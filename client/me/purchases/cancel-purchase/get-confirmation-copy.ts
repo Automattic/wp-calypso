@@ -210,8 +210,8 @@ export function getCancelLossIntro( purchase: Purchases.Purchase, fullExpiryDate
 	switch ( category ) {
 		case 'plan':
 			return translate(
-				'When you cancel your subscription, your plan features will expire on %(date)s and you’ll lose access to:',
-				{ args: { date: fullExpiryDate } }
+				'When you cancel your subscription, your %(productName)s plan features will expire on %(date)s and you’ll lose access to:',
+				{ args: { productName: getName( purchase ), date: fullExpiryDate } }
 			) as string;
 		case 'domain':
 			return translate(
