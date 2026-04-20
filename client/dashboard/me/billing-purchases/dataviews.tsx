@@ -375,7 +375,7 @@ export function getFields( {
 		},
 		{
 			id: 'status',
-			label: __( 'Renewal/Expiry' ),
+			label: __( 'Renewal/expiry' ),
 			type: 'text',
 			enableGlobalSearch: true,
 			enableSorting: true,
