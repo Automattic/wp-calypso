@@ -377,11 +377,29 @@ export const addPaymentMethodRoute = createRoute( {
 
 export const cancelPurchaseRoute = createRoute( {
 	head: ( { loaderData }: { loaderData?: { purchase?: Purchase } } ) => {
+		// URL intent is authoritative — if the user clicked Remove on Purchase
+		// Settings the tab title should say "Remove" regardless of the
+		// underlying flow type. Fall back to today's heuristic when intent is
+		// absent (flag-off or old deep link). Using window.location directly
+		// because TanStack Router's head context types don't expose the child
+		// route's search here.
+		const search =
+			typeof window !== 'undefined' ? new URLSearchParams( window.location.search ) : null;
+		const intent = search?.get( 'intent' );
 		const purchase = loaderData?.purchase;
-		const title =
-			purchase && getPurchaseCancellationFlowType( purchase ) === CANCEL_FLOW_TYPE.REMOVE
-				? __( 'Remove' )
-				: __( 'Cancel' );
+		let title: string;
+		if ( intent === 'remove' ) {
+			title = __( 'Remove' );
+		} else if ( intent === 'cancel' ) {
+			title = __( 'Cancel' );
+		} else if (
+			purchase &&
+			getPurchaseCancellationFlowType( purchase ) === CANCEL_FLOW_TYPE.REMOVE
+		) {
+			title = __( 'Remove' );
+		} else {
+			title = __( 'Cancel' );
+		}
 		return {
 			meta: [
 				{

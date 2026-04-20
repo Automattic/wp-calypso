@@ -1,7 +1,11 @@
 import { getFeatureByKey } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
-import { useTranslate } from 'i18n-calypso';
-import { getFallbackLossItems } from './get-confirmation-copy';
+import moment from 'moment';
+import {
+	getCancelLossIntro,
+	getFallbackLossItems,
+	getRemoveLossIntro,
+} from './get-confirmation-copy';
 import type { Purchases } from '@automattic/data-stores';
 import type { DisplayVariant } from 'calypso/lib/purchases/utils';
 
@@ -14,8 +18,6 @@ const CancelPurchaseFeatureList = ( {
 	displayVariant: DisplayVariant;
 	cancellationFeatures: string[];
 } ) => {
-	const translate = useTranslate();
-
 	// When no server-provided features list, fall back to a per-product-type
 	// item so every confirmation screen shows at least one concrete thing the
 	// user is giving up.
@@ -33,10 +35,11 @@ const CancelPurchaseFeatureList = ( {
 		return null;
 	}
 
+	const fullExpiryDate = purchase.expiryDate ? moment( purchase.expiryDate ).format( 'LL' ) : '';
 	const intro =
 		displayVariant === 'remove'
-			? translate( 'When you remove your subscription, you’ll lose access to:' )
-			: translate( 'You’ll lose access to:' );
+			? getRemoveLossIntro( purchase )
+			: getCancelLossIntro( purchase, fullExpiryDate );
 
 	return (
 		<div className="cancel-purchase__features">

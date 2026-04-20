@@ -5,9 +5,14 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { close, info } from '@wordpress/icons';
+import { intlFormat } from 'date-fns';
 import { Text } from '../../../components/text';
 import { DisplayVariant } from '../../../utils/purchase';
-import { getFallbackLossItems } from './get-confirmation-copy';
+import {
+	getCancelLossIntro,
+	getFallbackLossItems,
+	getRemoveLossIntro,
+} from './get-confirmation-copy';
 import type { Purchase, CancellationFeature } from '@automattic/api-core';
 
 type FeatureObject = {
@@ -42,10 +47,16 @@ const CancelPurchaseFeatureList = ( {
 		return null;
 	}
 
+	// Full date ("April 16, 2027") — not abbreviated — in the intro so the user
+	// sees the exact expiry before the losses list. Only for Cancel variant;
+	// Remove happens immediately, no future date to surface.
+	const fullExpiryDate = purchase.expiry_date
+		? intlFormat( purchase.expiry_date, { dateStyle: 'long' }, { locale: 'en-US' } )
+		: '';
 	const introCopy =
 		displayVariant === 'remove'
-			? __( 'When you remove your subscription, you’ll lose access to:' )
-			: __( 'You’ll lose access to:' );
+			? getRemoveLossIntro( purchase )
+			: getCancelLossIntro( purchase, fullExpiryDate );
 
 	return (
 		<VStack spacing={ 6 }>

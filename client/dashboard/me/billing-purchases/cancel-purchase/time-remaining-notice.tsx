@@ -1,4 +1,4 @@
-import { intlFormat, isToday, isBefore } from 'date-fns';
+import { isToday, isBefore } from 'date-fns';
 import Notice from '../../../components/notice';
 import { isPartnerPurchase, DisplayVariant, CancelIntent } from '../../../utils/purchase';
 import { getTopNoticeCopy } from './get-confirmation-copy';
@@ -27,25 +27,14 @@ export default function TimeRemainingNotice( {
 		return null;
 	}
 
-	// Don't show "active until" for a purchase that's already expired or expires today.
+	// Don't show for a purchase that's already expired or expires today.
 	const purchaseExpiryDate = new Date( purchase.expiry_date );
 	const now = new Date();
 	if ( isToday( purchaseExpiryDate ) || isBefore( purchaseExpiryDate, now ) ) {
 		return null;
 	}
 
-	const expiryDateFormatted = intlFormat(
-		purchase.expiry_date,
-		{ dateStyle: 'medium' },
-		{ locale: 'en-US' }
-	);
-
-	const copy = getTopNoticeCopy( {
-		purchase,
-		intent: intent ?? 'cancel',
-		expiryDateFormatted,
-	} );
-
+	const copy = getTopNoticeCopy( { purchase, intent: intent ?? 'cancel' } );
 	if ( ! copy ) {
 		return null;
 	}

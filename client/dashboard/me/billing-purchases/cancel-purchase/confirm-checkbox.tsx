@@ -6,7 +6,6 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { intlFormat } from 'date-fns';
 import { Text } from '../../../components/text';
 import { DisplayVariant } from '../../../utils/purchase';
 import { getCheckboxLabel } from './get-confirmation-copy';
@@ -39,15 +38,7 @@ export default function ConfirmCheckbox( {
 			? __( 'Have a question before removing?' )
 			: __( 'Have a question before cancelling?' );
 
-	const expiryDateFormatted = purchase.expiry_date
-		? intlFormat( purchase.expiry_date, { dateStyle: 'medium' }, { locale: 'en-US' } )
-		: '';
-
-	const planConfirmationLabel = getCheckboxLabel( {
-		purchase,
-		intent: displayVariant === 'remove' ? 'remove' : 'cancel',
-		expiryDateFormatted,
-	} );
+	const planConfirmationLabel = getCheckboxLabel();
 
 	return (
 		<VStack spacing={ 4 }>
