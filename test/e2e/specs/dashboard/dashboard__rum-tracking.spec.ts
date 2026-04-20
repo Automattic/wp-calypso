@@ -123,7 +123,18 @@ test.describe( 'Dashboard: RUM Performance Tracking', { tag: [ tags.DASHBOARD_PR
 		} );
 
 		await test.step( 'When I navigate in-app to the domains page', async function () {
-			if ( viewportName === 'mobile' ) {
+			// The dashboard/omnibar feature flag changes the navigation structure.
+			// Detect it by the presence of `#wpcom-omnibar`, the hydration root.
+			const isOmnibarEnabled = ( await page.locator( '#wpcom-omnibar' ).count() ) > 0;
+
+			if ( isOmnibarEnabled ) {
+				// With omnibar: click Domains in the responsive sidebar.
+				// On mobile, open the sidebar first via the masterbar menu button.
+				if ( viewportName === 'mobile' ) {
+					await page.getByTitle( 'Menu', { exact: true } ).click();
+				}
+				await page.getByRole( 'link', { name: 'Domains' } ).click();
+			} else if ( viewportName === 'mobile' ) {
 				await page.getByRole( 'button', { name: 'Menu' } ).click();
 				await page
 					.getByRole( 'link', { name: 'Domains' } )

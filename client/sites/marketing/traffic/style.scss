@@ -3,6 +3,7 @@
 body.is-section-marketing-traffic {
 	@include admin-ui-page-layout;
 	@include admin-ui-page-layout-constrained-content;
+	@include admin-ui-page-sticky-footer;
 }
 
 .settings-traffic.site-settings {

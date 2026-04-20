@@ -1,5 +1,6 @@
 import 'calypso/my-sites/sidebar/style.scss'; // Copy styles from the My Sites sidebar.
 import './style.scss';
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Icon, plus } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -22,6 +23,7 @@ import ReaderConversationsIcon from 'calypso/reader/components/icons/conversatio
 import ReaderDiscoverIcon from 'calypso/reader/components/icons/discover-icon';
 import ReaderLikesIcon from 'calypso/reader/components/icons/likes-icon';
 import ReaderManageSubscriptionsIcon from 'calypso/reader/components/icons/manage-subscriptions-icon';
+import ReaderSavedIcon from 'calypso/reader/components/icons/saved-icon';
 import ReaderSearchIcon from 'calypso/reader/components/icons/search-icon';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { getTagStreamUrl } from 'calypso/reader/route';
@@ -80,6 +82,11 @@ const TrackingKeys = {
 		action: 'clicked_reader_sidebar_manage_subscriptions',
 		gaEvent: 'Clicked Reader Sidebar Manage Subscriptions',
 		tracksEvent: 'calypso_reader_sidebar_manage_subscriptions_clicked',
+	},
+	saved: {
+		action: 'clicked_reader_sidebar_saved',
+		gaEvent: 'Clicked Reader Sidebar Saved',
+		tracksEvent: 'calypso_reader_sidebar_saved_clicked',
 	},
 };
 
@@ -197,6 +204,18 @@ export class ReaderSidebar extends Component {
 							'sidebar-activity__likes': true,
 						} ) }
 					/>
+
+					{ isEnabled( 'reader/saved-posts' ) && (
+						<SidebarItem
+							label={ translate( 'Saved' ) }
+							onNavigate={ this.handleSidebarMenuClick( TrackingKeys.saved ) }
+							customIcon={ <ReaderSavedIcon viewBox="0 0 24 24" /> }
+							link="/read/saved"
+							className={ ReaderSidebarHelper.itemLinkClass( '/read/saved', path, {
+								'sidebar-streams__saved': true,
+							} ) }
+						/>
+					) }
 
 					<SidebarItem
 						className={ ReaderSidebarHelper.itemLinkClass( '/reader/conversations', path, {

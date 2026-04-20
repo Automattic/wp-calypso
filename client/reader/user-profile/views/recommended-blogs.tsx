@@ -4,12 +4,12 @@ import { useTranslate } from 'i18n-calypso';
 import EmptyContent from 'calypso/components/empty-content';
 import { useFeedRecommendationsQuery } from 'calypso/data/reader/use-feed-recommendations-query';
 import { ReaderSitesList } from 'calypso/reader/sites-list';
-import { GetReaderUser } from 'calypso/reader/user-profile/queries/useGetReaderUserQuery';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import type { ReaderUser } from '@automattic/api-core';
 
 interface UserRecommendedBlogsProps {
-	user: GetReaderUser;
+	user: ReaderUser;
 }
 
 const UserRecommendedBlogs = ( { user }: UserRecommendedBlogsProps ): JSX.Element | null => {

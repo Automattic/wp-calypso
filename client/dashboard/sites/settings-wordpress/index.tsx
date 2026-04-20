@@ -1,8 +1,10 @@
+import { HostingFeatures } from '@automattic/api-core';
 import {
 	siteBySlugQuery,
 	siteWordPressVersionQuery,
 	wpOrgCoreVersionQuery,
 } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, __experimentalText as Text } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
@@ -13,15 +15,15 @@ import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
-import { canViewWordPressSettings } from '../features';
+import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import { BetaProgramNotice } from './beta-program-notice';
 import { LatestVersionNotice } from './latest-version-notice';
 import { useVersionSwitch } from './use-version-switch';
 import { VersionForm } from './version-form';
 import { VersionSwitchNotice } from './version-switch-notice';
+import type { Site } from '@automattic/api-core';
 
-function WordPressSettingsForm( { siteSlug }: { siteSlug: string } ) {
-	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+function VersionManagement( { site }: { site: Site } ) {
 	const { data: currentVersion } = useQuery( siteWordPressVersionQuery( site.ID ) );
 	const versionSwitch = useVersionSwitch( site );
 	const { isSwitching, switchedToBeta, switchedToLatest, backupState, targetVersion } =
@@ -33,7 +35,6 @@ function WordPressSettingsForm( { siteSlug }: { siteSlug: string } ) {
 
 	let notice;
 	if ( isSwitching ) {
-		// Switching in progress — show backup/progress notices.
 		notice = (
 			<VersionSwitchNotice
 				backupState={ backupState }
@@ -41,52 +42,44 @@ function WordPressSettingsForm( { siteSlug }: { siteSlug: string } ) {
 			/>
 		);
 	} else if ( switchedToLatest ) {
-		// Just switched back to stable.
 		notice = <LatestVersionNotice wpVersion={ latestVersion } />;
 	} else if ( switchedToBeta || currentVersion === 'beta' ) {
-		// Enrolled in beta — show program notice.
 		notice = <BetaProgramNotice site={ site } wpVersion={ betaVersion } />;
 	}
 
 	return (
-		<PageLayout
-			size="small"
-			header={
-				<PageHeader
-					prefix={ <Breadcrumbs length={ 2 } /> }
-					title="WordPress"
-					description={ __( 'Manage your WordPress version.' ) }
-				/>
-			}
-			notices={ notice }
-		>
+		<VStack spacing={ 6 }>
+			{ notice }
 			<VersionForm
 				site={ site }
 				currentVersion={ currentVersion }
 				versionSwitch={ versionSwitch }
 			/>
-		</PageLayout>
+		</VStack>
 	);
 }
 
 export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 
-	if ( canViewWordPressSettings( site ) ) {
-		return <WordPressSettingsForm siteSlug={ siteSlug } />;
-	}
+	const renderContent = () => {
+		if ( isEnabled( 'dashboard/wp-beta-program' ) ) {
+			return (
+				<HostingFeatureGatedWithCallout
+					site={ site }
+					feature={ HostingFeatures.BACKUPS_SELF_SERVE }
+					upsellId="site-settings-wordpress"
+				>
+					<VersionManagement site={ site } />
+				</HostingFeatureGatedWithCallout>
+			);
+		}
 
-	return (
-		<PageLayout
-			size="small"
-			header={
-				<PageHeader
-					prefix={ <Breadcrumbs length={ 2 } /> }
-					title="WordPress"
-					description={ __( 'Manage your WordPress version.' ) }
-				/>
-			}
-		>
+		if ( site.is_wpcom_staging_site ) {
+			return <VersionManagement site={ site } />;
+		}
+
+		return (
 			<Notice>
 				<VStack>
 					<Text as="p">
@@ -110,6 +103,21 @@ export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) 
 					) }
 				</VStack>
 			</Notice>
+		);
+	};
+
+	return (
+		<PageLayout
+			size="small"
+			header={
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
+					title="WordPress"
+					description={ __( 'Manage your WordPress version.' ) }
+				/>
+			}
+		>
+			{ renderContent() }
 		</PageLayout>
 	);
 }

@@ -1,11 +1,11 @@
 import './styles.scss';
+import { GetReaderUserResponse } from '@automattic/api-core';
 import { useTranslate } from 'i18n-calypso';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import AutoDirection from 'calypso/components/auto-direction';
 import { decodeEntities } from 'calypso/lib/formatting';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { getStreamUrl } from 'calypso/reader/route';
-import { GetReaderUserResponse } from 'calypso/reader/user-profile/queries/useGetReaderUserQuery';
 import { useDispatch } from 'calypso/state';
 import { successNotice } from 'calypso/state/notices/actions';
 

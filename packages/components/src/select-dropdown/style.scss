@@ -91,7 +91,7 @@ $compact-header-height: 35;
 		padding-right: #{$side-margin * 0.5}px;
 		font-size: $font-body-extra-small;
 
-		.count {
+		.a8c-count {
 			border-width: 0;
 			right: 25px;
 			top: #{( $compact-header-height - 18 ) * 0.5}px;
@@ -110,7 +110,7 @@ $compact-header-height: 35;
 		}
 	}
 
-	.is-loading & .count,
+	.is-loading & .a8c-count,
 	.is-loading & .select-dropdown__header-text {
 		animation: loading-fade 1.6s ease-in-out infinite;
 		color: var(--color-neutral-50);
@@ -130,7 +130,7 @@ $compact-header-height: 35;
 		box-shadow: 0 0 0 2px var(--color-primary-light);
 	}
 
-	.count {
+	.a8c-count {
 		position: absolute;
 		right: 40px;
 		top: #{( $header-height - 18 - 2 ) * 0.5}px;
@@ -224,7 +224,7 @@ $compact-header-height: 35;
 		background-color: var(--color-accent);
 		color: var(--color-text-inverted);
 
-		.count {
+		.a8c-count {
 			border-color: var(--color-border-inverted);
 			color: var(--color-text-inverted);
 		}
@@ -267,7 +267,7 @@ $compact-header-height: 35;
 		opacity: 0;
 	}
 
-	.count {
+	.a8c-count {
 		position: absolute;
 		top: #{( $option-height - 18 ) * 0.5}px;
 		right: #{$side-margin}px;

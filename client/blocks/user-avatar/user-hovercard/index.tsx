@@ -1,9 +1,10 @@
 import './styles.scss';
+import { getReaderUserQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
 import { Spinner } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import UserAvatarDefaultIcon from 'calypso/reader/components/icons/user-avatar-default-icon';
-import { useGetReaderUserQuery } from 'calypso/reader/user-profile/queries/useGetReaderUserQuery';
 import { UserAvatarInfo } from '..';
 import PrimaryBlogCard from './primary-blog-card';
 import { useGravatarProfileV3Query } from './queries/use-gravatar-profile-v3-query';
@@ -27,9 +28,11 @@ export default function UserHovercard( props: UserHovercardProps ): JSX.Element 
 	);
 	const gravatarUser = gravatarData ? { ...gravatarData, primary_blog: null } : null;
 
-	const { isLoading: isWpcomLoading, data: wpcomData } = useGetReaderUserQuery(
-		userProp.wpcom_login || gravatarUser?.user_login, // Use WPCOM login if available, otherwise fall back to Gravatar login.
-		userProp.wpcom_id
+	const { isLoading: isWpcomLoading, data: wpcomData } = useQuery(
+		getReaderUserQuery(
+			userProp.wpcom_login || gravatarUser?.user_login, // Use WPCOM login if available, otherwise fall back to Gravatar login.
+			userProp.wpcom_id
+		)
 	);
 
 	if ( isWpcomLoading || isGravatarLoading ) {

@@ -5,9 +5,9 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import UserAvatar, { UserAvatarInfo } from '../index';
 
-jest.mock( 'calypso/reader/user-profile/queries/useGetReaderUserQuery', () => ( {
-	...jest.requireActual( 'calypso/reader/user-profile/queries/useGetReaderUserQuery' ),
-	useGetReaderUserQuery: jest.fn(),
+jest.mock( '@tanstack/react-query', () => ( {
+	...jest.requireActual( '@tanstack/react-query' ),
+	useQuery: jest.fn(),
 } ) );
 
 jest.mock( 'calypso/blocks/user-avatar/user-hovercard', () => ( {

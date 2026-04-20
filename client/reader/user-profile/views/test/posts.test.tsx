@@ -5,8 +5,8 @@
 
 import { render, screen } from '@testing-library/react';
 import React from 'react';
-import { GetReaderUser } from 'calypso/reader/user-profile/queries/useGetReaderUserQuery';
 import UserPosts from '../posts';
+import type { ReaderUser } from '@automattic/api-core';
 
 jest.mock(
 	'calypso/reader/stream',
@@ -40,7 +40,7 @@ jest.mock( 'calypso/components/empty-content', () => ( { icon, line } ) => (
 ) );
 
 describe( 'UserPosts', () => {
-	const defaultUser: GetReaderUser = {
+	const defaultUser: ReaderUser = {
 		ID: 123,
 		user_login: 'test_user',
 		nice_name: 'nice_name',

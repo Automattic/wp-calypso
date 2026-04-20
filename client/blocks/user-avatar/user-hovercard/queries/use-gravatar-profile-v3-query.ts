@@ -1,5 +1,5 @@
+import { GetReaderUserResponse } from '@automattic/api-core';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
-import { GetReaderUserResponse } from 'calypso/reader/user-profile/queries/useGetReaderUserQuery';
 
 interface useGravatarProfileV3Args {
 	profile_URL?: string;

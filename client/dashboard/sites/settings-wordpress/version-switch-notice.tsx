@@ -16,11 +16,11 @@ export function VersionSwitchNotice( { backupState, targetVersion }: VersionSwit
 				variant="info"
 				title={ sprintf(
 					// translators: %s: WordPress version, e.g. "7.0-RC2"
-					__( 'Switching to WordPress %s…' ),
+					__( 'Switching to WordPress %s' ),
 					targetVersion
 				) }
 			>
-				{ __( 'Creating a backup of your site before switching.' ) }
+				{ __( 'Backing up your site.' ) }
 			</Notice>
 		);
 	}
@@ -31,15 +31,13 @@ export function VersionSwitchNotice( { backupState, targetVersion }: VersionSwit
 				variant="info"
 				title={ sprintf(
 					// translators: %s: WordPress version, e.g. "7.0-RC2"
-					__( 'Switching to WordPress %s…' ),
+					__( 'Switching to WordPress %s' ),
 					targetVersion
 				) }
 			>
 				{ sprintf(
 					// translators: %s: backup progress percentage
-					__(
-						'Generating backup… (%s%% progress). A backup is being created before switching. This may take a few minutes.'
-					),
+					__( 'Backing up your site… (%s%% progress). This may take a few minutes.' ),
 					backup?.percent ?? '0'
 				) }
 			</Notice>
@@ -52,11 +50,11 @@ export function VersionSwitchNotice( { backupState, targetVersion }: VersionSwit
 				variant="info"
 				title={ sprintf(
 					// translators: %s: WordPress version, e.g. "7.0-RC2"
-					__( 'Switching to WordPress %s…' ),
+					__( 'Switching to WordPress %s' ),
 					targetVersion
 				) }
 			>
-				{ __( 'Backup completed. Now switching WordPress version…' ) }
+				{ __( 'Backup complete. Switching versions now.' ) }
 			</Notice>
 		);
 	}
@@ -75,11 +73,11 @@ export function VersionSwitchNotice( { backupState, targetVersion }: VersionSwit
 			variant="info"
 			title={ sprintf(
 				// translators: %s: WordPress version, e.g. "7.0-RC2"
-				__( 'Switching to WordPress %s…' ),
+				__( 'Switching to WordPress %s' ),
 				targetVersion
 			) }
 		>
-			{ __( 'Preparing to switch WordPress version…' ) }
+			{ __( 'Starting version switch.' ) }
 		</Notice>
 	);
 }

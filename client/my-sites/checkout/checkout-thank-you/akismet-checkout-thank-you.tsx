@@ -12,7 +12,7 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import Main from 'calypso/components/main';
 import useAkismetKeyQuery from 'calypso/data/akismet/use-akismet-key-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { isAkismetTemporarySitePurchase } from 'calypso/me/purchases/utils';
+import { isAkismetHoldingSitePurchase } from 'calypso/me/purchases/utils';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isProductsListFetching, getProductName } from 'calypso/state/products-list/selectors';
@@ -47,7 +47,7 @@ const AkismetCheckoutThankYou: FunctionComponent< AkismetCheckoutThankYouProps >
 
 	const { thanksHeadline, thanksMessage } = useMemo( () => {
 		const akismetPurchases = userActivePurchases.filter(
-			( purchase ) => isAkismetProduct( purchase ) && isAkismetTemporarySitePurchase( purchase )
+			( purchase ) => isAkismetProduct( purchase ) && isAkismetHoldingSitePurchase( purchase )
 		);
 
 		let thanksHeadline = (

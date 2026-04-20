@@ -1,9 +1,10 @@
+import { getReaderUserQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
 import { Popover } from '@wordpress/components';
 import { useRef, useState } from 'react';
 import UserHovercard from 'calypso/blocks/user-avatar/user-hovercard';
 import PreloadedImage from 'calypso/components/preloaded-image';
 import UserAvatarDefaultIcon from 'calypso/reader/components/icons/user-avatar-default-icon';
-import { useGetReaderUserQuery } from 'calypso/reader/user-profile/queries/useGetReaderUserQuery';
 import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
 import { getProcessedGravatarUrl } from './utils';
 
@@ -45,7 +46,7 @@ export default function UserAvatar( { user, size = 32, hideHovercard = false }: 
 	);
 
 	// Prefetching so that we can display WPCOM users Hovercards instantly, Gravatar lookups will be triggered on hover.
-	useGetReaderUserQuery( user?.wpcom_login, user?.wpcom_id );
+	useQuery( getReaderUserQuery( user?.wpcom_login, user?.wpcom_id ) );
 
 	return (
 		<div

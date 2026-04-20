@@ -89,6 +89,13 @@ export class EditorPage {
 		);
 		this.editorPopoverMenuComponent = new EditorPopoverMenuComponent( page, this.editor );
 		this.cookieBannerComponent = new CookieBannerComponent( page, this.editor );
+
+		// Automatically dismiss the Real-Time Collaboration notice modal whenever
+		// it appears and blocks an action. Using addLocatorHandler ensures it is
+		// caught regardless of when during the test it pops up.
+		this.page.addLocatorHandler( this.page.locator( '.rtc-notice-modal' ), async () => {
+			await this.page.locator( '.rtc-notice-modal' ).getByRole( 'button' ).first().click();
+		} );
 	}
 
 	//#region Generic and Shell Methods

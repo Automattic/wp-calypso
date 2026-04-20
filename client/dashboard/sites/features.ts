@@ -41,7 +41,7 @@ export function canViewHundredYearPlanSettings( site: Site ) {
 
 // Settings -> Server
 
-export function canViewWordPressSettings( site: Site ) {
+export function canSwitchWordPressVersion( site: Site ) {
 	if ( isEnabled( 'dashboard/wp-beta-program' ) ) {
 		return hasHostingFeature( site, HostingFeatures.BACKUPS_SELF_SERVE );
 	}
@@ -73,7 +73,7 @@ export function canDisconnectSite( site: Site ) {
 }
 
 export function canResetSite( site: Site ) {
-	return ! site.is_wpcom_staging_site && ! isCommerceGarden( site );
+	return ! isCommerceGarden( site );
 }
 
 export function canRestoreSite( site: Site ) {

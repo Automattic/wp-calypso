@@ -30,8 +30,6 @@ $button-padding: 8px 32px;
 		}
 
 		.stats-purchase-single__personal-checklist {
-			margin-bottom: 24px;
-
 			.components-checkbox-control__input[type="checkbox"] {
 				&:checked {
 					background-color: var(--studio-jetpack-green-50);
@@ -578,10 +576,18 @@ $button-padding: 8px 32px;
 }
 
 .stats-purchase-wizard__actions {
-	.components-button {
+	button {
 		display: block;
 		width: 100%;
 		margin-bottom: 12px;
+	}
+}
+
+.stats-purchase-single__personal-checklist {
+	margin-bottom: 24px;
+
+	ul li + li {
+		margin-top: 12px;
 	}
 }
 

@@ -124,6 +124,12 @@ module.exports = {
 						message: 'Use local components exported from client/dashboard/components/card instead.',
 					},
 					{
+						name: '@tanstack/react-router',
+						importNames: [ 'redirect' ],
+						message:
+							'Use dashboardRedirect from client/dashboard/app/router/redirect instead. It disables view transitions on redirects.',
+					},
+					{
 						name: '@automattic/api-queries',
 						importNames: [ 'sitesQuery', 'dashboardSiteListQuery', 'dashboardSiteFiltersQuery' ],
 						message: 'Use local queries exported from either context or useAppContext instead.',

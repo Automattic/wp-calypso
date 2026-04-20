@@ -3,7 +3,7 @@ import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Gridicon, TimeSince } from '@automattic/components';
 import { Icon, external } from '@wordpress/icons';
-import { isURL, getAuthority, prependHTTPS } from '@wordpress/url';
+import { isURL, getAuthority, getProtocol } from '@wordpress/url';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { get, some, flatMap } from 'lodash';
@@ -319,10 +319,12 @@ class PostComment extends PureComponent {
 		} else if ( commentAuthor.site_ID ) {
 			commentAuthorUrl = getStreamUrl( null, commentAuthor.site_ID );
 		} else {
-			const urlToCheck = prependHTTPS( commentAuthor?.URL );
+			const urlToCheck = commentAuthor?.URL;
 			if ( urlToCheck && isURL( urlToCheck ) ) {
+				const protocol = getProtocol( urlToCheck );
 				const domain = getAuthority( urlToCheck );
-				if ( ! domain.includes( '%' ) ) {
+				// isURL uses URL() which allows '%20' in Chromium but not Firefox, so we check ourselves.
+				if ( protocol === 'https:' && ! domain.includes( '%' ) ) {
 					commentAuthorUrl = urlToCheck;
 				}
 			}
@@ -353,6 +355,7 @@ class PostComment extends PureComponent {
 						href={ authorUrl }
 						target="_blank"
 						rel="noopener noreferrer"
+						aria-label={ translate( "Visit %(name)s's site", { args: { name: authorName } } ) }
 					>
 						<Icon icon={ external } size={ 18 } />
 					</a>

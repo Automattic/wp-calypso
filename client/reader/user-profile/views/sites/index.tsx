@@ -1,3 +1,5 @@
+import { getReaderUserSitesQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
 import { Spinner } from '@wordpress/components';
 import { siteLogo, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -5,20 +7,19 @@ import EmptyContent from 'calypso/components/empty-content';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { ReaderSitesList } from 'calypso/reader/sites-list';
 import { ReaderSite } from 'calypso/reader/sites-list/site-item';
-import useUserSitesQuery from 'calypso/reader/user-profile/queries/use-user-sites-query';
-import { GetReaderUser } from 'calypso/reader/user-profile/queries/useGetReaderUserQuery';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import type { ReaderUser } from '@automattic/api-core';
 
 interface UserSitesProps {
-	user: GetReaderUser;
+	user: ReaderUser;
 }
 
 const UserSites = ( { user }: UserSitesProps ): JSX.Element | null => {
 	const { ID: userId, user_login: userLogin } = user;
 	const translate = useTranslate();
 	const currentUser = useSelector( getCurrentUser );
-	const { isLoading, data, error } = useUserSitesQuery( userId ?? 0 );
+	const { isLoading, data, error } = useQuery( getReaderUserSitesQuery( userId ) );
 
 	if ( isLoading ) {
 		return (

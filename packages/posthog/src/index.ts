@@ -9,6 +9,16 @@ export interface PostHogUser {
 	username?: string;
 }
 
+export interface PostHogOverrides {
+	debug?: boolean;
+	session_recording?: {
+		maskAllInputs?: boolean;
+		maskTextSelector?: string;
+		maskTextFn?: ( text: string, element?: HTMLElement ) => string;
+		blockSelector?: string;
+	};
+}
+
 export function getSessionId(): string | undefined {
 	return posthog.get_session_id?.();
 }
@@ -18,7 +28,7 @@ export function reset() {
 	initialized = false;
 }
 
-export function init( apiKey: string, user?: PostHogUser ) {
+export function init( apiKey: string, user?: PostHogUser, overrides?: PostHogOverrides ) {
 	if ( initialized || ! apiKey ) {
 		return;
 	}
@@ -30,19 +40,32 @@ export function init( apiKey: string, user?: PostHogUser ) {
 
 	initialized = true;
 
-	posthog.init( apiKey, {
+	const posthogConfig = {
 		api_host: 'https://us.i.posthog.com',
 		autocapture: true,
-		defaults: '2026-01-30',
+		defaults: '2026-01-30' as const,
 		capture_pageleave: true,
-		debug: false,
+		debug: overrides?.debug ?? false,
+		session_recording: {
+			maskAllInputs: true,
+			maskTextSelector: '*',
+			...overrides?.session_recording,
+		},
 		...( user?.ID && {
 			bootstrap: {
 				distinctID: String( user.ID ),
 				isIdentifiedID: true,
 			},
 		} ),
-	} );
+	};
+
+	const urlDebug =
+		new URLSearchParams( window.location.search ).get( '__posthog_debug' ) === 'true';
+	if ( overrides?.debug || urlDebug ) {
+		( window as unknown as Record< string, unknown > ).__posthogConfig = posthogConfig;
+	}
+
+	posthog.init( apiKey, posthogConfig );
 
 	if ( user?.ID ) {
 		posthog.identify( String( user.ID ), {

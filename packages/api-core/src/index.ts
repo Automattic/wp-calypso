@@ -75,6 +75,8 @@ export * from './products';
 export * from './plans';
 export * from './read-feeds';
 export * from './read-sites';
+export * from './read-users';
+export * from './read-user-sites';
 export * from './read-teams';
 export * from './site';
 export * from './site-activity-log';

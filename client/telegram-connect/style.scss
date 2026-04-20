@@ -7,6 +7,8 @@
  * or multi-line titles clip and the action overlaps the text.
  */
 .wpcom__loading.telegram-connect__wpcom-loading {
+	max-width: 720px;
+
 	.wpcom__loading-title {
 		height: auto;
 		line-height: 1.35;
@@ -20,5 +22,6 @@
 		text-align: center;
 		display: flex;
 		justify-content: center;
+		gap: 12px;
 	}
 }

@@ -2,10 +2,10 @@ import { Icon, postList } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import EmptyContent from 'calypso/components/empty-content';
 import Stream from 'calypso/reader/stream';
-import { GetReaderUser } from 'calypso/reader/user-profile/queries/useGetReaderUserQuery';
+import type { ReaderUser } from '@automattic/api-core';
 
 interface UserPostsProps {
-	user: GetReaderUser;
+	user: ReaderUser;
 }
 
 const UserPosts = ( { user }: UserPostsProps ): JSX.Element => {

@@ -8,13 +8,13 @@ import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { __, sprintf } from '@wordpress/i18n';
 import Notice from '../../components/notice';
 import RouterLinkButton from '../../components/router-link-button';
-import { canViewWordPressSettings } from '../features';
+import { canSwitchWordPressVersion } from '../features';
 import type { Site, UserPreferences } from '@automattic/api-core';
 
 const PREFERENCE_KEY = 'hosting-dashboard-wp-beta-notice-dismissed' as const;
 
 export function shouldLoadWpVersionNotice( site: Site, preferences: UserPreferences ) {
-	const canView = canViewWordPressSettings( site ) && ! site.is_wpcom_staging_site;
+	const canView = canSwitchWordPressVersion( site ) && ! site.is_wpcom_staging_site;
 	const isDismissed = preferences[ `${ PREFERENCE_KEY }-${ site.ID }` ];
 
 	return canView && ! isDismissed;

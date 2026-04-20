@@ -11,6 +11,7 @@ test.describe( 'Invite: New User', { tag: [ tags.CALYPSO_PR ] }, () => {
 	skipIfMailosaurLimitReached();
 	const role = 'Editor';
 	const testUser = DataHelper.getNewTestUser( {
+		useMailosaur: true,
 		usernamePrefix: 'invited',
 	} );
 

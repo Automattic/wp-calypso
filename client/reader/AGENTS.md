@@ -1,0 +1,111 @@
+# Reader
+
+The Reader is the WordPress.com feed reader. It allows users to follow sites, discover content, manage subscriptions, like posts, and participate in conversations.
+
+## Routes
+
+See [README.md](./README.md) for the full list of Reader routes.
+
+## Commands
+
+```bash
+yarn test-client client/reader/<path>        # Run Reader tests
+yarn test-client:watch client/reader/<path>  # Run Reader tests in watch mode
+```
+
+## Architecture decisions
+
+### Data fetching migration
+
+The Reader is migrating from **Redux + data-layer** to **React Query** using the `@automattic/api-core` and `@automattic/api-queries` packages from the same codebase.
+
+- **Legacy (Redux + data-layer)**: still present in most streams and core features.
+- **Current (React Query)**: used in newer features like `discover/`, `new-subscription/`, and subscription management. New features should use `@automattic/api-core` for API definitions and `@automattic/api-queries` for React Query hooks.
+
+### Stream keys
+
+Stream types are identified by unique keys. Examples of stream keys include `following`, `feed:{feedId}`, `site:{siteId}`, `tag:{tagSlug}`, `search:{json}`, `discover:*`, `conversations`, `conversations-a8c`, `p2`, `a8c`, `likes`, `recommendations_posts`, `recent`, `recent:{feedId}`, `list:{...}`, `user:{id}`, `tag_popular:{tag}`, and `custom_recs_*`. These keys index state in `state.reader.streams`.
+
+### Post keys
+
+Posts are identified by objects with `{blogId, postId}` (blog posts) or `{feedId, postId}` (external feed posts). Special variants include `{isGap, from, to}` for temporal gaps in the stream, `{isRecommendationBlock, index}` for recommendation blocks, and `{isPromptBlock, index}` for blogging prompts.
+
+### Post cards
+
+Post cards live in `client/blocks/reader-post-card/` with variants: `standard` (title, excerpt, image), `compact` (smaller layout for discovery), `photo` (image-focused), `gallery` (multiple images), and `conversation` (discussion thread).
+
+### Page entrypoints
+
+| Route                                | Entrypoint                                                                |
+| ------------------------------------ | ------------------------------------------------------------------------- |
+| `/reader`                            | `client/reader/following/main.tsx`                                        |
+| `/reader/feeds/:feed_id`             | `client/reader/feed-stream/`                                              |
+| `/reader/blogs/:blog_id`             | `client/reader/site-stream/`                                              |
+| `/reader/feeds/:feed/posts/:post`    | `client/reader/full-post/`                                                |
+| `/reader/blogs/:blog/posts/:post`    | `client/reader/full-post/`                                                |
+| `/reader/a8c`                        | `client/reader/a8c/main.jsx`                                              |
+| `/reader/p2`                         | `client/reader/p2/main.jsx`                                               |
+| `/reader/search`                     | `client/reader/search/`                                                   |
+| `/reader/notifications`              | `client/reader/notifications/`                                            |
+| `/reader/new`                        | `client/reader/new-subscription/`                                         |
+| `/reader/subscriptions`              | `client/reader/site-subscriptions-manager/`                               |
+| `/reader/subscriptions/comments`     | `client/reader/site-subscriptions-manager/comment-subscriptions-manager/` |
+| `/reader/subscriptions/pending`      | `client/reader/site-subscriptions-manager/pending-subscriptions-manager/` |
+| `/reader/subscriptions/:id`          | `client/reader/site-subscription/`                                        |
+| `/reader/site/subscription/:blog_id` | `client/reader/site-subscription/`                                        |
+| `/reader/conversations`              | `client/reader/conversations/`                                            |
+| `/reader/list/*`                     | `client/reader/list/`                                                     |
+| `/discover/*`                        | `client/reader/discover/`                                                 |
+| `/tag/:tag`                          | `client/reader/tag-stream/`                                               |
+| `/tags`                              | `client/reader/tags/`                                                     |
+| `/activities/likes`                  | `client/reader/liked-stream/`                                             |
+| `/reader/users/*`                    | `client/reader/user-profile/`                                             |
+
+### SSR file variants
+
+Some routes have both `.node.js` (server) and `.web.js` (client) file variants for isomorphic rendering. Examples: `discover/index.node.js` / `discover/index.web.js`, `tags/index.node.js` / `tags/index.web.js`. The `.node.js` variant renders placeholder components for SSR, while `.web.js` uses `AsyncLoad` and full interactivity. When adding new routes that need SSR support, both variants are required.
+
+### Analytics
+
+Reader events use the `calypso_reader_*` prefix. Use the `recordReaderTracksEvent` Redux action for tracking — `recordTrack()` from `client/reader/stats` is deprecated. Every event automatically includes a `ui_algo` property derived from route pattern matching in `client/reader/stats/index.ts`.
+
+### URL builders
+
+Reuse the URL builders from `client/reader/route/index.js` instead of constructing Reader URLs manually: `getPostUrl(post)`, `getFeedUrl(feedId)`, `getSiteUrl(siteId)`, `getTagStreamUrl(tag)`. `getPostUrl()` automatically selects the correct format based on `feed_ID`, `site_ID`, and `is_external` flags.
+
+### Post display types
+
+Post display types in `client/state/reader/posts/display-types.js` are **bitwise flags** (not a mutually exclusive enum). They can be combined with XOR (`^=`): `PHOTO_ONLY` (1), `GALLERY` (32), `FEATURED_VIDEO` (512), `X_POST` (1024), etc.
+
+### Post normalization pipeline
+
+Post normalization (`client/state/reader/posts/normalization-rules.js`) runs in two phases: **fast rules** (synchronous — decoding, HTML stripping, content sanitization) and **slow rules** (asynchronous — waits for images to load, classifies display type, detects Reddit posts). New normalization rules must be added to the correct phase.
+
+### Shared code boundaries
+
+The Reader owns `client/reader/` but depends on shared code that other clients also use. Be aware of the impact when modifying:
+
+- `client/state/reader/` — Reader Redux state. Owned by Reader, but consumed by other parts of Calypso.
+- `client/blocks/reader-post-card/` — post card components. Used by Reader and Discover.
+- `client/blocks/reader-full-post/` — full post view. Shared across Reader surfaces.
+- `client/components/post-excerpt/` — shared post excerpt component.
+- `client/state/data-layer/wpcom/read/` — legacy API handlers. Do not add new handlers here; use `@automattic/api-queries` instead.
+
+## Boundaries (for new code)
+
+- Do not use the `connect` HOC — use `useSelector`/`useDispatch` hooks instead.
+- Do not add new Redux data-layer handlers — use `@automattic/api-queries` for new API calls.
+- Use `useTranslate()` from `i18n-calypso` — the `localize` HOC is legacy.
+- Use `renderWithProvider` from `calypso/test-helpers/testing-library` for Redux-dependent test components.
+- Prefer `nock` for HTTP mocking over mocking components — test real component behavior with mocked API responses.
+- Use [ARIA-based queries](https://testing-library.com/docs/queries/about/) (`getByRole`, `getByLabelText`) to locate elements instead of CSS selectors or test IDs.
+- Use [`userEvent`](https://testing-library.com/docs/user-event/intro) instead of `fireEvent` for simulating user interactions.
+- For test declarations, follow the existing style in the surrounding file/project and be consistent about using `it()` or `test()`.
+- Set up userEvent with `const user = userEvent.setup()` and call `user.click()` instead of `userEvent.click()` directly.
+- Prefer `@wordpress/components` primitives (Button, Modal, Card, Icon, VStack, HStack) over custom HTML elements with custom CSS.
+- Use layout components (VStack, HStack, Spacer, Grid) to build layouts instead of custom CSS.
+- Do not use `@automattic/components` — it is deprecated.
+- Always use TypeScript (`.tsx`) and functional components for new components.
+- Do not export component prop types. Consumers should use `React.ComponentProps<typeof Component>` to extract props.
+- Use named exports for new components instead of default exports.
+- New components must have accompanying tests.

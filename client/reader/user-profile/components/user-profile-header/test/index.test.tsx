@@ -2,24 +2,29 @@
  * @jest-environment jsdom
  */
 
+import { useQuery } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { UserAvatarInfo } from 'calypso/blocks/user-avatar';
-import useUserSitesQuery from 'calypso/reader/user-profile/queries/use-user-sites-query';
-import { GetReaderUser } from 'calypso/reader/user-profile/queries/useGetReaderUserQuery';
+import { ComponentProps } from 'react';
+import { UserAvatar } from 'calypso/blocks/user-avatar';
 import UserProfileHeader from '../index';
+import type { ReaderUser } from '@automattic/api-core';
 
-jest.mock( 'calypso/blocks/user-avatar', () => ( { user }: { user: UserAvatarInfo } ) => (
-	<div data-testid="user-avatar" data-user-id={ user?.ID }></div>
-) );
+jest.mock(
+	'calypso/blocks/user-avatar',
+	() =>
+		( { user }: { user: ComponentProps< typeof UserAvatar >[ 'user' ] } ) => (
+			<div data-testid="user-avatar" data-user-id={ user?.ID }></div>
+		)
+);
 
 jest.mock( 'calypso/blocks/site-icon', () => ( {
 	SiteIcon: ( { siteId }: { siteId: number } ) => <span data-testid={ `site-icon-${ siteId }` } />,
 } ) );
 
-jest.mock( 'calypso/reader/user-profile/queries/use-user-sites-query', () => ( {
-	__esModule: true,
-	default: jest.fn(),
+jest.mock( '@tanstack/react-query', () => ( {
+	...jest.requireActual( '@tanstack/react-query' ),
+	useQuery: jest.fn(),
 } ) );
 
 jest.mock(
@@ -31,7 +36,7 @@ jest.mock(
 );
 
 describe( 'UserProfileHeader', () => {
-	const defaultUser: GetReaderUser = {
+	const defaultUser: ReaderUser = {
 		ID: 123,
 		user_login: 'test_user',
 		nice_name: 'nice_name',
@@ -43,11 +48,11 @@ describe( 'UserProfileHeader', () => {
 		description: 'This is a test user biography.',
 	};
 
-	jest.mocked( useUserSitesQuery ).mockReturnValue( {
+	jest.mocked( useQuery ).mockReturnValue( {
 		isFetching: true,
 		data: undefined,
 		error: null,
-	} as ReturnType< typeof useUserSitesQuery > );
+	} as ReturnType< typeof useQuery > );
 
 	beforeEach( () => {
 		jest.clearAllMocks();
@@ -88,11 +93,11 @@ describe( 'UserProfileHeader', () => {
 			},
 		];
 
-		jest.mocked( useUserSitesQuery ).mockReturnValue( {
+		jest.mocked( useQuery ).mockReturnValue( {
 			isFetching: false,
 			data: { sites: mockSites, total: mockSites.length, primary_site_id: 1 },
 			error: null,
-		} as ReturnType< typeof useUserSitesQuery > );
+		} as ReturnType< typeof useQuery > );
 
 		render( <UserProfileHeader user={ defaultUser } view="posts" /> );
 
@@ -124,7 +129,7 @@ describe( 'UserProfileHeader', () => {
 	} );
 
 	test( 'should render bio section when user has a bio', () => {
-		const userWithBio: GetReaderUser = {
+		const userWithBio: ReaderUser = {
 			...defaultUser,
 			description: 'This is my test biography that describes me as a test user.',
 		};
@@ -148,7 +153,7 @@ describe( 'UserProfileHeader', () => {
 	} );
 
 	test( 'should not render Gravatar badge when user does not have profile_URL', () => {
-		const userWithoutGravatarProfile: GetReaderUser = {
+		const userWithoutGravatarProfile: ReaderUser = {
 			...defaultUser,
 			profile_URL: '',
 		};
@@ -160,7 +165,7 @@ describe( 'UserProfileHeader', () => {
 
 	test( 'should show "Show more" button for long bio and expand on click', async () => {
 		const longBio = 'This is a very long biography that spans multiple lines. '.repeat( 10 ).trim();
-		const userWithLongBio: GetReaderUser = { ...defaultUser, description: longBio };
+		const userWithLongBio: ReaderUser = { ...defaultUser, description: longBio };
 
 		const { rerender } = render( <UserProfileHeader user={ userWithLongBio } view="posts" /> );
 

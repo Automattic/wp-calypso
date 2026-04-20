@@ -1,16 +1,17 @@
 /**
  * @jest-environment jsdom
  */
+import { GetReaderUserResponse } from '@automattic/api-core';
+import { useQuery } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
-import { GetReaderUserResponse } from 'calypso/reader/user-profile/queries/useGetReaderUserQuery';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { UserAvatarInfo } from '../../index';
 import UserHovercard from '../index';
 import { useGravatarProfileV3Query } from '../queries/use-gravatar-profile-v3-query';
 
-jest.mock( 'calypso/reader/user-profile/queries/useGetReaderUserQuery', () => ( {
-	...jest.requireActual( 'calypso/reader/user-profile/queries/useGetReaderUserQuery' ),
-	useGetReaderUserQuery: jest.fn(),
+jest.mock( '@tanstack/react-query', () => ( {
+	...jest.requireActual( '@tanstack/react-query' ),
+	useQuery: jest.fn(),
 } ) );
 
 jest.mock( '../queries/use-gravatar-profile-v3-query', () => ( {
@@ -29,10 +30,7 @@ jest.mock( '../recommended-blogs', () => ( {
 	),
 } ) );
 
-const { useGetReaderUserQuery } = jest.requireMock(
-	'calypso/reader/user-profile/queries/useGetReaderUserQuery'
-);
-const mockUseGetReaderUserQuery = useGetReaderUserQuery as jest.Mock;
+const mockUseQuery = jest.mocked( useQuery );
 const mockUseGravatarProfileV3Query = jest.mocked( useGravatarProfileV3Query );
 
 const defaultUserProp: UserAvatarInfo = {
@@ -79,10 +77,10 @@ function setupMocks( {
 		data: gravatarData,
 	} as ReturnType< typeof useGravatarProfileV3Query > );
 
-	mockUseGetReaderUserQuery.mockReturnValue( {
+	mockUseQuery.mockReturnValue( {
 		isLoading: wpcomLoading,
 		data: wpcomData,
-	} );
+	} as ReturnType< typeof useQuery > );
 }
 
 describe( 'UserHovercard', () => {

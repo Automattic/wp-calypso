@@ -58,17 +58,17 @@ export class JetpackDashboardPage {
 		await this.page.waitForURL( new RegExp( `page=jetpack#/${ param.view }`, 'i' ) );
 
 		if ( param.view === 'Settings' ) {
-			// Settings tabs are NavLink elements inside a <nav> landmark.
+			// Settings tabs use @wordpress/ui.
 			const nav = this.page
 				.getByRole( 'main' )
-				.getByRole( 'navigation', { name: 'Jetpack settings sections' } );
+				.getByRole( 'tablist', { name: 'Jetpack settings sections' } );
 
-			await nav.getByRole( 'link', { name: param.tab, exact: true } ).click();
+			await nav.getByRole( 'tab', { name: param.tab, exact: true } ).click();
 
-			// Verify the clicked tab is now active (NavLink sets aria-current="page").
+			// Verify the clicked tab is now active.
 			await nav
-				.getByRole( 'link', { name: param.tab, exact: true } )
-				.and( this.page.locator( '[aria-current="page"]' ) )
+				.getByRole( 'tab', { name: param.tab, exact: true } )
+				.and( this.page.locator( '[aria-selected="true"]' ) )
 				.waitFor();
 		} else {
 			// Dashboard tabs use NavItem components (role="menuitem" + .is-selected).

@@ -30,6 +30,9 @@ type DraftState = {
 	snapshot: string;
 };
 
+const isSuccessfulResponse = ( response?: AgencyLeadMatchingResponse ) =>
+	!! response?.lead_matching_profile && response.sync?.status !== 'failed';
+
 const getProfileSnapshot = ( profile: AgencyLeadMatchingProfile ) => {
 	const { availability, ...snapshotProfile } = profile;
 	return JSON.stringify( snapshotProfile );
@@ -99,7 +102,7 @@ export default function useLeadMatchingSaveState( {
 				source,
 			} );
 
-			if ( response?.lead_matching_profile ) {
+			if ( isSuccessfulResponse( response ) ) {
 				const savedSnapshot = snapshot;
 				lastSavedSnapshotRef.current = savedSnapshot;
 				if ( isMountedRef.current ) {
