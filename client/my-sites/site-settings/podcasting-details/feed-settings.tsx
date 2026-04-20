@@ -4,24 +4,18 @@ import {
 	getPlan,
 } from '@automattic/calypso-products';
 import { Button, Card, FormLabel } from '@automattic/components';
-import { Page } from '@wordpress/admin-ui';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { pick } from 'lodash';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, type ComponentType, type FormEvent } from 'react';
 import TermTreeSelector from 'calypso/blocks/term-tree-selector';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import DocumentHead from 'calypso/components/data/document-head';
 import QueryTerms from 'calypso/components/data/query-terms';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
-import InlineSupportLink from 'calypso/components/inline-support-link';
-import JetpackFooter from 'calypso/components/jetpack/jetpack-footer';
-import JetpackTitle from 'calypso/components/jetpack-title';
-import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import { decodeEntities } from 'calypso/lib/formatting';
 import PodcastCoverImageSetting from 'calypso/my-sites/site-settings/podcast-cover-image-setting';
@@ -39,17 +33,65 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import PodcastFeedUrl from './feed-url';
+import PodcastFeedUrlRaw from './feed-url';
 import PodcastingNoPermissionsMessage from './no-permissions';
 import PodcastingNotSupportedMessage from './not-supported';
 import PodcastingPrivateSiteMessage from './private-site';
-import PodcastingPublishNotice from './publish-notice';
-import TopicsSelector from './topics-selector';
+import PodcastingPublishNoticeRaw from './publish-notice';
+import TopicsSelectorRaw from './topics-selector';
 
-import './style.scss';
+const PodcastingPublishNotice = PodcastingPublishNoticeRaw as ComponentType< {
+	podcastingCategoryId: number;
+} >;
+const PodcastFeedUrl = PodcastFeedUrlRaw as ComponentType< { categoryId: number } >;
+const TopicsSelector = TopicsSelectorRaw as ComponentType< {
+	id: string;
+	name: string;
+	onChange: ( event: React.ChangeEvent< HTMLSelectElement > ) => void;
+	value: string | number;
+	disabled: boolean;
+} >;
 
-const getFormSettings = ( settings ) => {
-	return pick( settings, [
+type PodcastingFields = {
+	podcasting_category_id?: string;
+	podcasting_title?: string;
+	podcasting_talent_name?: string;
+	podcasting_summary?: string;
+	podcasting_copyright?: string;
+	podcasting_explicit?: string;
+	podcasting_image?: string;
+	podcasting_category_1?: string | number;
+	podcasting_category_2?: string | number;
+	podcasting_category_3?: string | number;
+	podcasting_email?: string;
+	podcasting_image_id?: string;
+};
+
+type PodcastingSettings = PodcastingFields & {
+	blogname?: string;
+};
+
+type PodcastingSettingsFormProps = {
+	fields: PodcastingFields;
+	handleSubmitForm: ( event?: FormEvent< HTMLFormElement > ) => void;
+	handleSelect: ( event: React.ChangeEvent< HTMLSelectElement > ) => void;
+	isRequestingSettings: boolean;
+	isSavingSettings: boolean;
+	onChangeField: ( field: string ) => ( event: React.ChangeEvent< HTMLInputElement > ) => void;
+	settings?: PodcastingSettings;
+	updateFields: ( fields: Partial< PodcastingFields >, callback?: () => void ) => void;
+	submitForm: () => void;
+};
+
+type TextFieldArgs = {
+	FormComponent?: ComponentType< Record< string, unknown > >;
+	key: keyof PodcastingFields;
+	label: string;
+	explanation?: string;
+};
+
+const getFormSettings = ( settings?: PodcastingSettings ): PodcastingFields => {
+	return pick( settings ?? {}, [
 		'podcasting_category_id',
 		'podcasting_title',
 		'podcasting_talent_name',
@@ -65,7 +107,7 @@ const getFormSettings = ( settings ) => {
 	] );
 };
 
-const PodcastingSettingsForm = wrapSettingsForm( getFormSettings )( ( {
+const PodcastingFeedSettings = wrapSettingsForm( getFormSettings )( ( {
 	fields,
 	handleSubmitForm,
 	handleSelect,
@@ -75,7 +117,7 @@ const PodcastingSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 	settings,
 	updateFields,
 	submitForm,
-} ) => {
+}: PodcastingSettingsFormProps ) => {
 	const translate = useTranslate();
 	const [ isCoverImageUploading, setIsCoverImageUploading ] = useState( false );
 	const [ isEnabling, setIsEnabling ] = useState( false );
@@ -113,14 +155,12 @@ const PodcastingSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 	const newPostUrl = `/post/${ siteSlug }`;
 
 	const onTogglePodcasting = useCallback(
-		( isEnabled ) => {
+		( isEnabled: boolean ) => {
 			if ( disabled ) {
 				return;
 			}
 
 			if ( isEnabled ) {
-				// Show settings so the user can pick a category and fill in details.
-				// Pre-fill the title from the site name if not already set.
 				setIsEnabling( true );
 				if ( ! fields.podcasting_title ) {
 					updateFields( { podcasting_title: settings?.blogname || '' } );
@@ -128,7 +168,6 @@ const PodcastingSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 			} else {
 				setIsEnabling( false );
 				if ( isPodcastingEnabled ) {
-					// Disable: clear category and save immediately to stop the feed.
 					updateFields( { podcasting_category_id: '0' }, () => {
 						submitForm();
 					} );
@@ -146,7 +185,7 @@ const PodcastingSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 	);
 
 	const onCategorySelected = useCallback(
-		( category ) => {
+		( category: { ID: number } ) => {
 			updateFields( { podcasting_category_id: String( category.ID ) } );
 			setIsEnabling( false );
 		},
@@ -161,7 +200,7 @@ const PodcastingSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 	}, [ updateFields ] );
 
 	const onCoverImageSelected = useCallback(
-		( coverId, coverUrl ) => {
+		( coverId: number, coverUrl: string ) => {
 			updateFields( {
 				podcasting_image_id: String( coverId ),
 				podcasting_image: coverUrl,
@@ -174,7 +213,6 @@ const PodcastingSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 		return null;
 	}
 
-	// Error states — render inside a Card so they sit within the page layout.
 	if ( isPrivate ) {
 		return (
 			<Card className="site-settings__card">
@@ -197,14 +235,19 @@ const PodcastingSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 		);
 	}
 
-	const renderTextField = ( { FormComponent = FormInput, key, label, explanation } ) => (
+	const renderTextField = ( {
+		FormComponent = FormInput,
+		key,
+		label,
+		explanation,
+	}: TextFieldArgs ) => (
 		<FormFieldset key={ key }>
 			<FormLabel htmlFor={ key }>{ label }</FormLabel>
 			{ explanation && <FormSettingExplanation>{ explanation }</FormSettingExplanation> }
 			<FormComponent
 				id={ key }
 				name={ key }
-				value={ decodeEntities( fields[ key ] ) || '' }
+				value={ decodeEntities( String( fields[ key ] ?? '' ) ) || '' }
 				onChange={ onChangeField( key ) }
 				disabled={ disabled }
 			/>
@@ -213,15 +256,20 @@ const PodcastingSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 
 	return (
 		<form id="site-settings" onSubmit={ handleSubmitForm }>
+			<header className="podcasting-details__section-header">
+				<h2 className="podcasting-details__section-heading">{ translate( 'Feed settings' ) }</h2>
+				<p className="podcasting-details__section-description">
+					{ translate( 'Configure your podcast feed and directory listing.' ) }
+				</p>
+			</header>
 			<QueryTerms siteId={ siteId } taxonomy="category" />
 
-			{ /* Podcasting enable toggle */ }
 			<Card className="site-settings__card">
 				<ToggleControl
 					checked={ isPodcastingEnabled || isEnabling }
 					onChange={ onTogglePodcasting }
 					disabled={ disabled }
-					label={ translate( 'Enable podcasting on this site' ) }
+					label={ translate( 'Enable podcasting on this site' ) as string }
 				/>
 				{ isPodcastingEnabled && (
 					<FormSettingExplanation>
@@ -232,12 +280,11 @@ const PodcastingSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 				) }
 			</Card>
 
-			{ /* Upsell nudge for audio upload */ }
 			{ ( isPodcastingEnabled || isEnabling ) && plansDataLoaded && ! isAudioUploadEnabled && (
 				<UpsellNudge
 					plan={ PLAN_PERSONAL }
 					title={ translate( 'Upload Audio with WordPress.com %(personalPlanName)s', {
-						args: { personalPlanName: getPlan( PLAN_PERSONAL ).getTitle() },
+						args: { personalPlanName: getPlan( PLAN_PERSONAL )?.getTitle() ?? '' },
 					} ) }
 					description={ translate( 'Embed podcast episodes directly from your media library.' ) }
 					feature={ WPCOM_FEATURES_UPLOAD_AUDIO_FILES }
@@ -250,7 +297,6 @@ const PodcastingSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 
 			{ ( isPodcastingEnabled || isEnabling ) && (
 				<>
-					{ /* Podcast category */ }
 					<SettingsSectionHeader
 						disabled={ disabled || ! isPodcastingEnabled }
 						id="podcast-category"
@@ -308,7 +354,6 @@ const PodcastingSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 						) }
 					</Card>
 
-					{ /* Podcast details */ }
 					<SettingsSectionHeader
 						disabled={ disabled || ! isPodcastingEnabled }
 						id="podcast-details"
@@ -325,7 +370,7 @@ const PodcastingSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 						</FormSettingExplanation>
 						<div className="podcasting-details__cover-and-info">
 							<PodcastCoverImageSetting
-								coverImageId={ parseInt( fields.podcasting_image_id, 10 ) || 0 }
+								coverImageId={ parseInt( String( fields.podcasting_image_id ?? '0' ), 10 ) || 0 }
 								coverImageUrl={ fields.podcasting_image }
 								onRemove={ onCoverImageRemoved }
 								onSelect={ onCoverImageSelected }
@@ -335,26 +380,25 @@ const PodcastingSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 							<div className="podcasting-details__title-subtitle-wrapper">
 								{ renderTextField( {
 									key: 'podcasting_title',
-									label: translate( 'Title' ),
+									label: translate( 'Title' ) as string,
 								} ) }
 								{ renderTextField( {
 									FormComponent: FormTextarea,
 									key: 'podcasting_summary',
-									label: translate( 'Summary/Description' ),
+									label: translate( 'Summary/Description' ) as string,
 								} ) }
 							</div>
 						</div>
 						{ renderTextField( {
 							key: 'podcasting_talent_name',
-							label: translate( 'Hosts/Artist/Producer' ),
+							label: translate( 'Hosts/Artist/Producer' ) as string,
 						} ) }
 						{ renderTextField( {
 							key: 'podcasting_copyright',
-							label: translate( 'Copyright' ),
+							label: translate( 'Copyright' ) as string,
 						} ) }
 					</Card>
 
-					{ /* Feed settings */ }
 					<SettingsSectionHeader
 						disabled={ disabled || ! isPodcastingEnabled }
 						id="feed-settings"
@@ -416,10 +460,10 @@ const PodcastingSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 						</FormFieldset>
 						{ renderTextField( {
 							key: 'podcasting_email',
-							label: translate( 'Email address' ),
+							label: translate( 'Email address' ) as string,
 							explanation: translate(
 								'This email address will be displayed in the feed and is required for some services such as Google Play.'
-							),
+							) as string,
 						} ) }
 					</Card>
 				</>
@@ -428,30 +472,4 @@ const PodcastingSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 	);
 } );
 
-const PodcastingDetails = () => {
-	const translate = useTranslate();
-
-	return (
-		<Main fullWidthLayout className="site-settings podcasting-details">
-			<DocumentHead title={ translate( 'Podcasting' ) } />
-			<Page
-				hasPadding
-				showSidebarToggle={ false }
-				subTitle={ translate(
-					'Publish a podcast feed to Apple Podcasts and other podcasting services. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-					{
-						components: {
-							learnMoreLink: <InlineSupportLink supportContext="podcasting" showIcon={ false } />,
-						},
-					}
-				) }
-				title={ <JetpackTitle title={ translate( 'Podcasting' ) } /> }
-			>
-				<PodcastingSettingsForm />
-			</Page>
-			<JetpackFooter />
-		</Main>
-	);
-};
-
-export default PodcastingDetails;
+export default PodcastingFeedSettings;

@@ -4,6 +4,9 @@ import type { Callback } from '@automattic/calypso-router';
 
 export const createPodcastSettings: Callback = ( context, next ) => {
 	context.section.name = 'settings-podcasting';
-	context.primary = createElement( PodcastingDetails );
+	context.primary = createElement( PodcastingDetails, {
+		section: context.params.section,
+		path: context.path,
+	} );
 	next();
 };
