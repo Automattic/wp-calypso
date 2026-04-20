@@ -48,7 +48,7 @@ export const ReviewStatusColumn = ( {
 				};
 			case 'rejected':
 				return {
-					statusText: translate( 'Rejected' ),
+					statusText: translate( 'Ineligible' ),
 					statusType: 'error',
 				};
 			case 'reverification':
@@ -90,7 +90,7 @@ export const ReviewStatusColumn = ( {
 					ref={ buttonRef }
 					className="commission-columns__rejection-reason-button"
 					onClick={ () => setIsPopoverVisible( ! isPopoverVisible ) }
-					aria-label={ translate( 'View rejection reason' ) }
+					aria-label={ translate( 'View ineligibility reason' ) }
 				>
 					<Icon icon={ info } size={ 18 } />
 				</Button>
@@ -103,7 +103,7 @@ export const ReviewStatusColumn = ( {
 					>
 						<div className="commission-columns__rejection-reason-popover">
 							<div className="commission-columns__rejection-reason-title">
-								{ translate( 'Rejection reason' ) }
+								{ translate( 'Ineligibility reason' ) }
 							</div>
 							<div className="commission-columns__rejection-reason-text">{ rejectionReason }</div>
 						</div>
