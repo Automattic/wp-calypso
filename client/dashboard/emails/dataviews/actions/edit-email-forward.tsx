@@ -14,6 +14,7 @@ import emailValidator from 'email-validator';
 import { useEffect, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { Text } from '../../../components/text';
+import { wpcomLink } from '../../../utils/link';
 import type { Email } from '../../types';
 import type { Action } from '@wordpress/dataviews';
 
@@ -89,7 +90,7 @@ export const useEditEmailForwardAction = (): Action< Email > => {
 									{ emailAddress: email.emailAddress }
 							  ),
 						{
-							actions: [ { label: __( 'Support' ), url: CALYPSO_CONTACT } ],
+							actions: [ { label: __( 'Support' ), url: wpcomLink( CALYPSO_CONTACT ) } ],
 							type: 'snackbar',
 						}
 					);
