@@ -275,10 +275,11 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 	// FIXME: render renderNonPrimaryDomainWarningDialog for refund/cancel
 	// FIXME: render "Domain transfers can take anywhere from five to seven days to complete." next to cancel button (see domainTransferDuration)
 
-	const goToCancel = () =>
+	const goToCancel = ( intent?: 'cancel' | 'remove' ) =>
 		navigate( {
 			to: cancelPurchaseRoute.fullPath,
 			params: { purchaseId: purchase.ID },
+			...( intent ? { search: { intent } } : {} ),
 		} );
 
 	if ( isSplitEnabled ) {
@@ -336,7 +337,7 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 								// the lone destructive action, make it red.
 								isDestructive={ ! showRemove }
 								size="compact"
-								onClick={ goToCancel }
+								onClick={ () => goToCancel( 'cancel' ) }
 							>
 								{ _x( 'Cancel', 'Stop the subscription from automatically charging and renewing' ) }
 							</Button>
@@ -348,7 +349,12 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 						title={ removeCopy.label }
 						description={ removeCopy.description }
 						actions={
-							<Button variant="secondary" isDestructive size="compact" onClick={ goToCancel }>
+							<Button
+								variant="secondary"
+								isDestructive
+								size="compact"
+								onClick={ () => goToCancel( 'remove' ) }
+							>
 								{ _x(
 									'Remove',
 									'Remove the cancelled or expired subscription from the list of active purchases.'
