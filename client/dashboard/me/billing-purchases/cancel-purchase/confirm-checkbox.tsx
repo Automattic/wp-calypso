@@ -6,8 +6,10 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { intlFormat } from 'date-fns';
 import { Text } from '../../../components/text';
 import { DisplayVariant } from '../../../utils/purchase';
+import { getCheckboxLabel } from './get-confirmation-copy';
 import type { CancelPurchaseState } from './types';
 import type { Purchase, AtomicTransfer } from '@automattic/api-core';
 
@@ -32,22 +34,20 @@ export default function ConfirmCheckbox( {
 }: ConfirmCheckboxProps ) {
 	const isDomainRegistrationPurchase = purchase && purchase.is_domain_registration;
 
-	const supportHeadingText = ( () => {
-		if ( displayVariant === 'remove' ) {
-			return __( 'Have a question before removing?' );
-		}
-		return __( 'Have a question before cancelling?' );
-	} )();
+	const supportHeadingText =
+		displayVariant === 'remove'
+			? __( 'Have a question before removing?' )
+			: __( 'Have a question before cancelling?' );
 
-	const planConfirmationLabel = ( () => {
-		if ( displayVariant === 'remove' ) {
-			if ( purchase.is_plan ) {
-				return __( 'I understand my site will change when I remove my plan.' );
-			}
-			return __( 'I understand my site will change when I remove this product.' );
-		}
-		return __( 'I understand my site will change when my plan expires.' );
-	} )();
+	const expiryDateFormatted = purchase.expiry_date
+		? intlFormat( purchase.expiry_date, { dateStyle: 'medium' }, { locale: 'en-US' } )
+		: '';
+
+	const planConfirmationLabel = getCheckboxLabel( {
+		purchase,
+		intent: displayVariant === 'remove' ? 'remove' : 'cancel',
+		expiryDateFormatted,
+	} );
 
 	return (
 		<VStack spacing={ 4 }>

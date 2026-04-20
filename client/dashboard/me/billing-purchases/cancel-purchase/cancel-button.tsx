@@ -1,12 +1,8 @@
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import {
-	hasAmountAvailableToRefund,
-	isNonDomainSubscription,
-	isOneTimePurchase,
-	DisplayVariant,
-} from '../../../utils/purchase';
+import { DisplayVariant } from '../../../utils/purchase';
 import { ATOMIC_REVERT_STEP } from './cancel-purchase-form/steps';
+import { getButtonLabels } from './get-confirmation-copy';
 import type { CancelPurchaseState } from './types';
 import type { Purchase, AtomicTransfer } from '@automattic/api-core';
 
@@ -46,43 +42,12 @@ export default function CancelButton( {
 		( isDomainRegistrationPurchase && ! state.domainConfirmationConfirmed ) ||
 		( ! state.showDomainOptionsStep && ! state.customerConfirmedUnderstanding );
 
-	const cancelButtonText = ( () => {
-		if ( includedDomainPurchase ) {
-			return __( 'Continue with cancellation' );
-		}
-
-		if ( displayVariant === 'remove' && isNonDomainSubscription( purchase ) ) {
-			if ( purchase.is_plan ) {
-				return __( 'Remove plan' );
-			}
-
-			return __( 'Remove product' );
-		}
-
-		if ( displayVariant === 'remove' && purchase.is_domain_registration ) {
-			return __( 'Remove domain' );
-		}
-
-		if ( hasAmountAvailableToRefund( purchase ) && displayVariant !== 'remove' ) {
-			if ( purchase.is_domain_registration ) {
-				return __( 'Cancel domain and refund' );
-			}
-			if ( isNonDomainSubscription( purchase ) ) {
-				return __( 'Cancel plan' );
-			}
-			if ( isOneTimePurchase( purchase ) ) {
-				return __( 'Cancel and refund' );
-			}
-		}
-
-		if ( purchase.is_domain_registration ) {
-			return __( 'Cancel domain' );
-		}
-
-		if ( isNonDomainSubscription( purchase ) ) {
-			return __( 'Cancel plan' );
-		}
-	} )();
+	const cancelButtonText = includedDomainPurchase
+		? __( 'Continue with cancellation' )
+		: getButtonLabels( {
+				purchase,
+				intent: displayVariant === 'remove' ? 'remove' : 'cancel',
+		  } ).primary;
 
 	return (
 		<Button

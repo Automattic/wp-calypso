@@ -1,9 +1,7 @@
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { ButtonStack } from '../../../components/button-stack';
-import { Text } from '../../../components/text';
 import { DisplayVariant } from '../../../utils/purchase';
 import CancelButton from './cancel-button';
-import CancellationFullText from './cancellation-full-text';
 import ConfirmCheckbox from './confirm-checkbox';
 import KeepSubscriptionButton from './keep-subscription-button';
 import type { CancelPurchaseState } from './types';
@@ -12,7 +10,6 @@ import type { Purchase, AtomicTransfer } from '@automattic/api-core';
 interface PlanProductRevertContentProps {
 	purchase: Purchase;
 	displayVariant: DisplayVariant;
-	isCancelIntent?: boolean;
 	includedDomainPurchase?: Purchase;
 	atomicTransfer?: AtomicTransfer;
 	state: CancelPurchaseState;
@@ -26,7 +23,6 @@ interface PlanProductRevertContentProps {
 export default function PlanProductRevertContent( {
 	purchase,
 	displayVariant,
-	isCancelIntent,
 	includedDomainPurchase,
 	atomicTransfer,
 	state,
@@ -38,18 +34,6 @@ export default function PlanProductRevertContent( {
 }: PlanProductRevertContentProps ) {
 	return (
 		<VStack spacing={ 6 }>
-			{ ! includedDomainPurchase && displayVariant !== 'remove' && (
-				<Text>
-					<CancellationFullText
-						purchase={ purchase }
-						displayVariant={ displayVariant }
-						isCancelIntent={ isCancelIntent }
-						cancelBundledDomain={ state.cancelBundledDomain ?? false }
-						includedDomainPurchase={ includedDomainPurchase }
-					/>
-				</Text>
-			) }
-
 			{ ! state.surveyShown && (
 				<ConfirmCheckbox
 					purchase={ purchase }

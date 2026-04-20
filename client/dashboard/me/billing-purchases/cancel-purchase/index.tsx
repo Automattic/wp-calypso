@@ -136,7 +136,13 @@ function renderTopNotice( args: TopNoticeArgs ) {
 
 	// 3. Everything else → time-remaining notice (itself suppressed on
 	//    the Remove variant via its own displayVariant check).
-	return <TimeRemainingNotice purchase={ purchase } displayVariant={ displayVariant } />;
+	return (
+		<TimeRemainingNotice
+			purchase={ purchase }
+			displayVariant={ displayVariant }
+			intent={ intent }
+		/>
+	);
 }
 
 const willShowDomainOptionsRadioButtons = (
@@ -1583,7 +1589,6 @@ export default function CancelPurchase() {
 								<CancellationPreSurveyContent
 									purchase={ purchase }
 									displayVariant={ displayVariant }
-									isCancelIntent={ intent === 'cancel' }
 									includedDomainPurchase={ includedDomainPurchase }
 									atomicTransfer={ atomicTransfer }
 									selectedDomain={ selectedDomain }
