@@ -150,7 +150,16 @@ function isAutoRenewToggleDisabled( purchase: Purchase, user: User ): boolean {
 		// Special case!
 		return false;
 	}
-	if ( purchase.is_auto_renew_enabled && ! purchase.can_disable_auto_renew ) {
+	// Under the split-cancel-refunds flag, always let the user disable auto-renew
+	// when it's on — matches legacy behavior. The server's `can_disable_auto_renew`
+	// goes false during pending-renewal retries, but the actual
+	// `/upgrades/{id}/disable-auto-renew` endpoint accepts the call and stops the
+	// retry loop (verified in wpcom-billing backend trace).
+	if (
+		purchase.is_auto_renew_enabled &&
+		! purchase.can_disable_auto_renew &&
+		! isEnabled( 'purchases/update-cancel-refunds' )
+	) {
 		return true;
 	}
 	if ( ! purchase.is_auto_renew_enabled && ! purchase.can_reenable_auto_renewal ) {
@@ -281,20 +290,14 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 		// dashboard). Remove button is unaffected — a completed transfer with
 		// auto-renew off can still be removed below.
 		const isTransferNonRefundable = isDomainTransfer( purchase ) && ! hasRefund;
-		// Visibility is driven by what actions make sense for the user + what the
-		// backend will actually accept. Verified via the wpcom-billing endpoint
-		// code: cancel / disable-auto-renew / delete all accept mutations in the
-		// pending-renewal ("is_locked") state — the `is_locked` flag is not
-		// enforced by these endpoints, so we don't gate on it.
-		//
-		// - Cancel: only makes sense for live subscriptions (auto-renew on, not
-		//   expired). For expired/grace state, renew or remove is the path.
-		// - Remove: show whenever the user has reason to end the subscription —
-		//   already cancelled, refund available, or expired/pending (where
-		//   removing stops any retry schedule).
-		const isExpiredOrGrace = isExpired( purchase ) || isInExpirationGracePeriod( purchase );
-		const showCancel = autoRenewOn && ! isTransferNonRefundable && ! isExpiredOrGrace;
-		const showRemove = ! autoRenewOn || hasRefund || isExpiredOrGrace;
+		// Visibility is driven purely by what the user controls:
+		// - Cancel: auto-renew is on (stopping it halts any upcoming retry too).
+		// - Remove: auto-renew is off, or a refund is available (dual-button).
+		// Verified against wpcom-billing backend — cancel / disable-auto-renew /
+		// delete endpoints all accept the call in pending-renewal state, so we
+		// don't need to special-case it.
+		const showCancel = autoRenewOn && ! isTransferNonRefundable;
+		const showRemove = ! autoRenewOn || hasRefund;
 
 		if ( ! showCancel && ! showRemove ) {
 			return null;
