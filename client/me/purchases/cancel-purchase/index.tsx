@@ -12,6 +12,7 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import { invokeSurvicateEvent } from '@automattic/survicate';
 import { localize, LocalizeProps } from 'i18n-calypso';
@@ -64,7 +65,6 @@ import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { refreshSitePlans } from 'calypso/state/sites/plans/actions';
 import { isRequestingSites, getSite } from 'calypso/state/sites/selectors';
-import SupportLink from '../cancel-purchase-support-link/support-link';
 import AtomicRevertChanges from './atomic-revert-changes';
 import CancelPurchaseButton from './button';
 import CancelPurchaseDomainOptions, { willShowDomainOptionsRadioButtons } from './domain-options';
@@ -593,7 +593,8 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			( needsAtomicRevertConfirmation &&
 				! this.state.atomicRevertConfirmed &&
 				isPlan( purchase ) ) ||
-			( isDomainRegistrationPurchase && ! this.state.domainConfirmationConfirmed );
+			( isDomainRegistrationPurchase && ! this.state.domainConfirmationConfirmed ) ||
+			( ! this.state.surveyShown && ! this.state.customerConfirmedUnderstanding );
 
 		// cancelIntentOverride drives the CancelPurchaseButton's label + mutation
 		// choice. URL intent is authoritative when present:
@@ -725,8 +726,21 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 								: translate( 'Have a question before cancelling?' ) }
 						</strong>
 					</p>
-					<SupportLink usage="cancel-purchase" purchase={ purchase } />
+					<p className="cancel-purchase__support-text">
+						{ translate( 'Our support team is here for you. {{a}}Contact us{{/a}}', {
+							components: {
+								a: (
+									<a
+										href={ localizeUrl( 'https://wordpress.com/help/contact' ) }
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								),
+							},
+						} ) }
+					</p>
 				</div>
+				<hr className="cancel-purchase__divider" />
 
 				{ ! this.state.surveyShown && (
 					<div className="cancel-purchase__confirm-section">
