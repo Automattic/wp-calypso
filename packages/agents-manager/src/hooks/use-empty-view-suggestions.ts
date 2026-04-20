@@ -19,6 +19,37 @@ interface UseEmptyViewSuggestionsOptions {
  * @param params.loadedProviders - External providers loaded from plugins (e.g., Big Sky)
  * @returns The computed suggestions (either from Big Sky or defaults), or null while loading
  */
+/**
+ * Direct override path: a host that renders AgentsManager (e.g. reader-chat
+ * on a blog frontend) can set `window.agentsManagerData.readerSuggestions`
+ * to a Suggestion[] and this hook will return it verbatim, bypassing the
+ * provider flow. Reassigning the global and forcing a re-render causes
+ * the empty view to update with fresh suggestions.
+ */
+function readOverrideSuggestions(): Suggestion[] | null {
+	if ( typeof window === 'undefined' ) {
+		return null;
+	}
+	const data = ( window as unknown as { agentsManagerData?: { readerSuggestions?: unknown } } )
+		.agentsManagerData;
+	const override = data?.readerSuggestions;
+	// Key absent entirely — no host override, fall through to defaults.
+	if ( ! Array.isArray( override ) ) {
+		return null;
+	}
+	// Empty array is an explicit "no chips yet" signal (host is fetching
+	// AI suggestions and wants the empty view to show nothing until they
+	// arrive). Return it verbatim rather than falling through to defaults.
+	if ( override.length === 0 ) {
+		return [];
+	}
+	const valid = override.filter(
+		( s ): s is Suggestion =>
+			!! s && typeof s === 'object' && 'label' in s && 'prompt' in s && 'id' in s
+	);
+	return valid.length > 0 ? valid : null;
+}
+
 export function useEmptyViewSuggestions( {
 	loadedProviders,
 }: UseEmptyViewSuggestionsOptions ): Suggestion[] | null {
@@ -70,8 +101,46 @@ export function useEmptyViewSuggestions( {
 	// Compute empty view suggestions once when store is ready
 	const [ emptyViewSuggestions, setEmptyViewSuggestions ] = useState< Suggestion[] | null >( null );
 
+	// Signal that bumps whenever the host dispatches
+	// `reader-chat-suggestions-updated`. Reader chat fires this after async
+	// AI suggestions arrive so the empty view re-reads the override without
+	// the component tree having to re-mount.
+	const [ overrideVersion, setOverrideVersion ] = useState( 0 );
 	useEffect( () => {
-		if ( ! loadedProviders || ! isCoreStoreReady || emptyViewSuggestions !== null ) {
+		if ( typeof window === 'undefined' ) {
+			return;
+		}
+		const handler = () => setOverrideVersion( ( v ) => v + 1 );
+		window.addEventListener( 'reader-chat-suggestions-updated', handler );
+		return () => {
+			window.removeEventListener( 'reader-chat-suggestions-updated', handler );
+		};
+	}, [] );
+
+	useEffect( () => {
+		if ( ! loadedProviders || ! isCoreStoreReady ) {
+			return;
+		}
+
+		// Re-read override on every effect run. We compare by JSON-identity
+		// against the current state so we only call setState when the
+		// override content actually changes — otherwise a fresh array
+		// reference every render would loop infinitely.
+		const currentOverride = readOverrideSuggestions();
+		if ( currentOverride ) {
+			const currentKey = JSON.stringify(
+				currentOverride.map( ( s ) => [ s.id, s.label, s.prompt ] )
+			);
+			const stateKey = emptyViewSuggestions
+				? JSON.stringify( emptyViewSuggestions.map( ( s ) => [ s.id, s.label, s.prompt ] ) )
+				: null;
+			if ( currentKey !== stateKey ) {
+				setEmptyViewSuggestions( currentOverride );
+			}
+			return;
+		}
+
+		if ( emptyViewSuggestions !== null ) {
 			return;
 		}
 
@@ -96,6 +165,7 @@ export function useEmptyViewSuggestions( {
 		hasBigSkySuggestions,
 		defaultSuggestions,
 		emptyViewSuggestions,
+		overrideVersion,
 	] );
 
 	return emptyViewSuggestions;

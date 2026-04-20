@@ -8,6 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef } from '@wordpress/element';
 import { API_BASE_URL } from '../constants';
 import { useAgentsManagerContext } from '../contexts';
+import { isFreshSession } from '../utils/agent-session';
 
 interface Config {
 	maxPages?: number;
@@ -50,7 +51,10 @@ export default function useConversation( { maxPages = 10, onSuccess = () => {} }
 				true
 			);
 		},
-		enabled: !! sessionId,
+		// Skip server fetch for brand-new client-created sessions — they
+		// have no history to load and the extra round-trip blocks the
+		// skeleton unnecessarily.
+		enabled: !! sessionId && ! isFreshSession( agentId ),
 		refetchOnWindowFocus: false,
 	} );
 

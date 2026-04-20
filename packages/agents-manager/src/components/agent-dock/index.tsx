@@ -5,7 +5,7 @@ import {
 	type Suggestion,
 } from '@automattic/agenttic-ui';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useCallback, useState } from '@wordpress/element';
+import { useCallback, useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { comment, drawerRight, help, login, lifesaver } from '@wordpress/icons';
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
@@ -16,6 +16,7 @@ import useSetupCustomActions from '../../hooks/use-setup-custom-actions';
 import { useShouldUseUnifiedAgent } from '../../hooks/use-should-use-unified-agent';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { LocalConversationListItem } from '../../types';
+import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
 import { persistLastActivity } from '../../utils/persist-last-activity';
 import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
@@ -168,6 +169,45 @@ export default function AgentDock( {
 		}
 	};
 
+	// Reader-chat runs on public blog frontends where there's no wp-admin
+	// sidebar to dock into. Detect that context so we can hide options that
+	// don't apply (Move to sidebar / Pop out sidebar).
+	const isReaderChat = isReaderChatAgent( agentId );
+
+	// Persist reader-chat open/closed state across page navigations via
+	// localStorage — the AGENTS_MANAGER_STORE is in-memory only, so a fresh
+	// page load resets isOpen to false by default. Read the stored flag on
+	// mount and restore; write it on every toggle.
+	const OPEN_STORAGE_KEY = `jetpack-reader-chat-open-${ agentId }`;
+	useEffect( () => {
+		if ( ! isReaderChat ) {
+			return;
+		}
+		try {
+			if ( localStorage.getItem( OPEN_STORAGE_KEY ) === '1' && ! isPersistedOpen ) {
+				setIsOpen( true );
+			}
+		} catch {
+			// ignore
+		}
+		// Only restore on first mount.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
+	useEffect( () => {
+		if ( ! isReaderChat ) {
+			return;
+		}
+		try {
+			if ( isPersistedOpen ) {
+				localStorage.setItem( OPEN_STORAGE_KEY, '1' );
+			} else {
+				localStorage.removeItem( OPEN_STORAGE_KEY );
+			}
+		} catch {
+			// ignore
+		}
+	}, [ isPersistedOpen, isReaderChat, OPEN_STORAGE_KEY ] );
+
 	const getChatHeaderOptions = (): ChatHeaderOptions => {
 		return [
 			{
@@ -186,21 +226,26 @@ export default function AgentDock( {
 				},
 			},
 			// TODO: For testing. Remove before release.
-			{
+			! isReaderChat && {
 				icon: help,
 				title: __( 'Support guides', '__i18n_text_domain__' ),
 				isDisabled: pathname === '/support-guides',
 				onClick: () => navigate( '/support-guides' ),
 			},
-			isDocked && {
-				icon: login,
-				title: __( 'Pop out sidebar', '__i18n_text_domain__' ),
-				onClick: () => {
-					undock();
-					setIsDocked( false );
+			// Sidebar docking only makes sense in wp-admin where a block-editor
+			// sidebar slot exists. On public reader-chat frontends there's no
+			// sidebar to dock into — the click does nothing, so hide the option.
+			! isReaderChat &&
+				isDocked && {
+					icon: login,
+					title: __( 'Pop out sidebar', '__i18n_text_domain__' ),
+					onClick: () => {
+						undock();
+						setIsDocked( false );
+					},
 				},
-			},
-			! isDocked &&
+			! isReaderChat &&
+				! isDocked &&
 				canDock && {
 					icon: drawerRight,
 					title: __( 'Move to sidebar', '__i18n_text_domain__' ),
