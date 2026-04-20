@@ -213,24 +213,33 @@ This test validates support-only rows that are not expected in regular customer 
 
 ---
 
-## Part 3: Total credits needed
+### Test 6 (quick add-on): Blog RC verification
 
-| Test | Plan | Pages | Extra pages | Amount (USD) |
-|------|------|-------|------------|-------------|
-| 1 | Premium | 10 | 5 | $844 |
-| 2 | Business | 10 | 5 | $844 |
-| 3 | E-commerce | 10 | 5 | $844 |
-| 4 | Free (coupon) | 10 | - | $0 |
-| **Total (paid)** | | | | **$2,532** |
+Run one quick sanity check using the **Blog RC** Calypso tool after DIFM form submission.
 
-**Recommended credits to add:** **$2,600 USD** to cover the three paid tests with a small buffer.
+- **Priority:** High confidence check, but lightweight.
+- **Scope:** One completed DIFM flow is enough.
+- **Goal:** Confirm that after the form is submitted, **Blog RC** can generate pages via the DIFM Tools section.
+
+**Result:** [x] Verified — after form submission, Blog RC can generate pages via DIFM Tools.
+
+---
+
+### Test 7 (quick add-on): Mobile picker sanity check
+
+Quick mobile validation only; do not block release on this.
+
+- **Priority:** Nice-to-have, non-blocking.
+- **Scope:** Use a mobile device or responsive emulation (small viewport) in one flow.
+- **Goal:** Ensure adding/removing extra pages still works on mobile layout.
+
+**Checklist:** [ ] On mobile viewport, open page picker and add/remove optional pages. [ ] Add at least one Custom page via **Add a Custom Page**. [ ] Confirm Home remains required (and Shop remains required in store flow). [ ] Continue to checkout and verify selected page count still matches.
 
 ---
 
 ## Summary
 
-- **Pricing:** Base **USD 499.00** (5 pages); **USD 69.00** per additional page.
 - **UI:** Thumbnail grid with toggles; **no stepper**; **Home** always on; **Shop** required and locked in store flow; multiple pages only via **Custom** repeats.
 - **Page coverage:** Tests 1–4 cover the picker’s standard types (Careers and Case Studies are **not** in the grid) plus **3× Custom** per test. Test 5 covers support-only Custom Blog/Shop rows.
+- **Extra validation:** Test 6 adds a quick Blog RC content-creation check; Test 7 adds a quick mobile picker sanity check (non-blocking).
 - **Manual QA progress:** Tests **1–3** done; **Test 4** in progress.
-- **Credits:** Add **$2,600** for the three paid tests; Test 4 uses no credits.
