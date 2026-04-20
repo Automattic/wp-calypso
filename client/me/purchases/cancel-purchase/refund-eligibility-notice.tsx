@@ -1,7 +1,9 @@
 import { useTranslate } from 'i18n-calypso';
 import Notice from 'calypso/components/notice';
 import CancelPurchaseButton from './button';
+import { getRefundNoticeCopy } from './get-confirmation-copy';
 import type { CancelPurchaseButtonProps } from './button';
+import type { Purchases } from '@automattic/data-stores';
 import type moment from 'moment';
 
 interface RefundEligibilityNoticePromoProps {
@@ -13,6 +15,7 @@ interface RefundEligibilityNoticePromoProps {
 interface RefundEligibilityNoticeConfirmedProps {
 	refundAmount: string;
 	mode: 'confirmed';
+	purchase: Purchases.Purchase;
 	cancelButtonProps?: never;
 }
 
@@ -27,13 +30,10 @@ const RefundEligibilityNotice = ( props: RefundEligibilityNoticeProps ) => {
 		return (
 			<Notice className="cancel-purchase__refund-eligibility-notice" showDismiss={ false }>
 				<p className="cancel-purchase__refund-eligibility-text">
-					{ translate(
-						"You'll receive a %(refundText)s refund when you remove your plan. Your features will be unavailable right away.",
-						{
-							args: { refundText: props.refundAmount },
-							context: 'refundText is a monetary amount in the form "[currency-symbol][amount]"',
-						}
-					) }
+					{ getRefundNoticeCopy( {
+						purchase: props.purchase,
+						refundAmount: props.refundAmount,
+					} ) }
 				</p>
 			</Notice>
 		);

@@ -1,4 +1,5 @@
-import { __, sprintf } from '@wordpress/i18n';
+import { _n, __, sprintf } from '@wordpress/i18n';
+import { intervalToDuration } from 'date-fns';
 import {
 	isAkismetProduct,
 	isGSuiteOrGoogleWorkspaceProductSlug,
@@ -48,154 +49,332 @@ export function getProductCategory( purchase: Purchase ): ProductCategory {
 	return 'other';
 }
 
+/**
+ * "1 month and 11 days" / "14 days" / "2 years and 3 months" etc.
+ * Returns an empty string when the expiry is today or in the past.
+ * Months + days combo captures normal annual subscriptions; years + months
+ * captures longer 100-year-style purchases without drowning the string in
+ * unnecessary units.
+ */
+export function formatTimeRemaining( expiryDate: string | Date, from: Date = new Date() ): string {
+	const end = typeof expiryDate === 'string' ? new Date( expiryDate ) : expiryDate;
+	if ( ! ( end instanceof Date ) || isNaN( end.getTime() ) ) {
+		return '';
+	}
+	if ( end.getTime() <= from.getTime() ) {
+		return '';
+	}
+
+	const { years = 0, months = 0, days = 0 } = intervalToDuration( { start: from, end } );
+
+	const parts: string[] = [];
+	if ( years > 0 ) {
+		parts.push(
+			sprintf(
+				/* translators: %d is a count of years */
+				_n( '%d year', '%d years', years ),
+				years
+			)
+		);
+	}
+	if ( months > 0 ) {
+		parts.push(
+			sprintf(
+				/* translators: %d is a count of months */
+				_n( '%d month', '%d months', months ),
+				months
+			)
+		);
+	}
+	// Only include the days portion when we have fewer than a year. Past that,
+	// "2 years and 3 months and 14 days" is noise.
+	if ( days > 0 && years === 0 ) {
+		parts.push(
+			sprintf(
+				/* translators: %d is a count of days */
+				_n( '%d day', '%d days', days ),
+				days
+			)
+		);
+	}
+
+	if ( parts.length === 0 ) {
+		return '';
+	}
+	if ( parts.length === 1 ) {
+		return parts[ 0 ];
+	}
+	if ( parts.length === 2 ) {
+		return sprintf(
+			/* translators: joins two duration parts, e.g. "1 month and 11 days" */
+			__( '%1$s and %2$s' ),
+			parts[ 0 ],
+			parts[ 1 ]
+		);
+	}
+	return sprintf(
+		/* translators: joins three duration parts, e.g. "2 years, 3 months, and 14 days" */
+		__( '%1$s, %2$s, and %3$s' ),
+		parts[ 0 ],
+		parts[ 1 ],
+		parts[ 2 ]
+	);
+}
+
 type ConfirmationCopyArgs = {
 	purchase: Purchase;
 	intent: CancelIntent;
-	expiryDateFormatted: string;
 };
 
 /**
- * Screen heading, e.g. "Cancel plan" / "Remove domain".
+ * Screen heading.
+ * - Cancel intent → always "Cancel subscription" to match the button copy.
+ * - Remove intent → product-type-aware ("Remove plan", "Remove domain",
+ *   "Remove {productName}" for individual products).
  */
 export function getCancellationHeading( { purchase, intent }: ConfirmationCopyArgs ): string {
-	const category = getProductCategory( purchase );
-	if ( intent === 'remove' ) {
-		switch ( category ) {
-			case 'plan':
-				return __( 'Remove plan' );
-			case 'domain':
-				return __( 'Remove domain' );
-			case 'email':
-				return __( 'Remove email' );
-			case 'one-time':
-				return __( 'Remove purchase' );
-			default:
-				return __( 'Remove subscription' );
-		}
+	if ( intent === 'cancel' ) {
+		return __( 'Cancel subscription' );
 	}
+	const category = getProductCategory( purchase );
 	switch ( category ) {
 		case 'plan':
-			return __( 'Cancel plan' );
+			return __( 'Remove plan' );
 		case 'domain':
-			return __( 'Cancel domain' );
+			return __( 'Remove domain' );
 		case 'email':
-			return __( 'Cancel email' );
+			return __( 'Remove email' );
+		case 'jetpack':
+		case 'akismet':
+		case 'marketplace':
 		case 'one-time':
-			return __( 'Cancel purchase' );
+			return sprintf(
+				/* translators: %(productName)s is the product name, e.g. "Remove Jetpack Search" */
+				__( 'Remove %(productName)s' ),
+				{ productName: purchase.product_name }
+			);
 		default:
-			return __( 'Cancel subscription' );
+			return __( 'Remove subscription' );
 	}
 }
 
 /**
- * Top-of-screen notice for the Cancel variant. Returns null when there's no
- * useful date to surface (e.g. one-time purchases).
+ * Top-of-screen notice for the Cancel variant. Returns null for Remove, for
+ * one-time purchases, and when we can't compute a duration (e.g. partner-
+ * managed or already-expired purchases).
  */
-export function getTopNoticeCopy( {
-	purchase,
-	intent,
-	expiryDateFormatted,
-}: ConfirmationCopyArgs ): string | null {
+export function getTopNoticeCopy( { purchase, intent }: ConfirmationCopyArgs ): string | null {
 	if ( intent !== 'cancel' ) {
 		return null;
 	}
-	if ( ! expiryDateFormatted ) {
+	if ( ! purchase.expiry_date ) {
 		return null;
 	}
+	const duration = formatTimeRemaining( purchase.expiry_date );
+	if ( ! duration ) {
+		return null;
+	}
+
 	const category = getProductCategory( purchase );
 	switch ( category ) {
 		case 'plan':
 			return sprintf(
-				/* translators: %(date)s is the subscription expiry date */
-				__( 'Your plan is active until %(date)s.' ),
-				{ date: expiryDateFormatted }
+				/* translators: %(duration)s is a human-readable duration, e.g. "1 month and 11 days" */
+				__(
+					'Your plan features will be available for another %(duration)s after you cancel your subscription.'
+				),
+				{ duration }
 			);
 		case 'domain':
 			return sprintf(
-				/* translators: %(date)s is the subscription expiry date */
-				__( 'Your domain is active until %(date)s.' ),
-				{ date: expiryDateFormatted }
+				/* translators: %(duration)s is a human-readable duration, e.g. "1 month and 11 days" */
+				__( 'Your domain will remain active for another %(duration)s after you cancel.' ),
+				{ duration }
 			);
 		case 'email':
 			return sprintf(
-				/* translators: %(date)s is the subscription expiry date */
-				__( 'Your email is active until %(date)s.' ),
-				{ date: expiryDateFormatted }
+				/* translators: %(duration)s is a human-readable duration, e.g. "1 month and 11 days" */
+				__( 'Your email will remain active for another %(duration)s after you cancel.' ),
+				{ duration }
 			);
 		case 'one-time':
 			return null;
 		default:
 			return sprintf(
-				/* translators: %(productName)s is the product name, %(date)s is the expiry date */
-				__( 'Your %(productName)s subscription is active until %(date)s.' ),
-				{ productName: purchase.product_name, date: expiryDateFormatted }
+				/* translators: %(productName)s is the product name; %(duration)s is a human-readable duration */
+				__(
+					'%(productName)s will remain active for another %(duration)s after you cancel your subscription.'
+				),
+				{ productName: purchase.product_name, duration }
 			);
 	}
 }
 
 /**
- * Checkbox label the user must tick before confirming. Always includes the
- * expiry date for Cancel variant (the one date we keep on the screen).
+ * Intro for the losses list on the Cancel variant.
+ * Full form: "When you cancel your subscription, {subject} will expire on
+ * {date} and you'll lose access to:"
+ *
+ * {subject} follows the same product-category rules as the Remove intro:
+ * "your plan features" / "your domain" / "your email" / "Jetpack Search"
+ * (product name for individual products) / "your subscription" (fallback).
  */
-export function getCheckboxLabel( {
-	purchase,
-	intent,
-	expiryDateFormatted,
-}: ConfirmationCopyArgs ): string {
+export function getCancelLossIntro( purchase: Purchase, fullExpiryDate: string ): string {
 	const category = getProductCategory( purchase );
-	if ( intent === 'remove' ) {
-		switch ( category ) {
-			case 'plan':
-				return __( 'I understand my plan will be removed immediately.' );
-			case 'domain':
-				return __( 'I understand my domain will be removed immediately.' );
-			case 'email':
-				return __( 'I understand my email will be removed immediately.' );
-			default:
-				return __( 'I understand my subscription will be removed immediately.' );
-		}
-	}
-
-	// Cancel variant
-	if ( ! expiryDateFormatted ) {
-		// One-time or partner-managed: no meaningful date
-		return __( 'I understand my subscription will be cancelled.' );
+	if ( ! fullExpiryDate ) {
+		// No meaningful expiry: fall back to a simpler intro without the date.
+		return __( 'You’ll lose access to:' );
 	}
 	switch ( category ) {
 		case 'plan':
 			return sprintf(
-				/* translators: %(date)s is the expiry date */
-				__( 'I understand my plan will expire on %(date)s.' ),
-				{ date: expiryDateFormatted }
+				/* translators: %(date)s is the full subscription expiry date, e.g. "April 16, 2027" */
+				__(
+					'When you cancel your subscription, your plan features will expire on %(date)s and you’ll lose access to:'
+				),
+				{ date: fullExpiryDate }
 			);
 		case 'domain':
 			return sprintf(
-				/* translators: %(date)s is the expiry date */
-				__( 'I understand my domain will expire on %(date)s.' ),
-				{ date: expiryDateFormatted }
+				/* translators: %(date)s is the full subscription expiry date */
+				__(
+					'When you cancel your subscription, your domain will expire on %(date)s and you’ll lose access to:'
+				),
+				{ date: fullExpiryDate }
 			);
 		case 'email':
 			return sprintf(
-				/* translators: %(date)s is the expiry date */
-				__( 'I understand my email will expire on %(date)s.' ),
-				{ date: expiryDateFormatted }
+				/* translators: %(date)s is the full subscription expiry date */
+				__(
+					'When you cancel your subscription, your email will expire on %(date)s and you’ll lose access to:'
+				),
+				{ date: fullExpiryDate }
+			);
+		case 'jetpack':
+		case 'akismet':
+		case 'marketplace':
+		case 'one-time':
+			return sprintf(
+				/* translators: %(productName)s is the product name; %(date)s is the expiry date */
+				__(
+					'When you cancel your subscription, %(productName)s will expire on %(date)s and you’ll lose access to:'
+				),
+				{ productName: purchase.product_name, date: fullExpiryDate }
 			);
 		default:
 			return sprintf(
-				/* translators: %(date)s is the expiry date */
-				__( 'I understand my subscription will expire on %(date)s.' ),
-				{ date: expiryDateFormatted }
+				/* translators: %(date)s is the full subscription expiry date */
+				__(
+					'When you cancel your subscription, it will expire on %(date)s and you’ll lose access to:'
+				),
+				{ date: fullExpiryDate }
 			);
 	}
+}
+
+/**
+ * Intro for the losses list on the Remove variant.
+ * Uses the product-type category noun or the product name (same rules as the
+ * heading), so users see "When you remove your plan…" vs. "When you remove
+ * your domain…" vs. "When you remove Jetpack Search…".
+ */
+export function getRemoveLossIntro( purchase: Purchase ): string {
+	const category = getProductCategory( purchase );
+	switch ( category ) {
+		case 'plan':
+			return __( 'When you remove your plan, you’ll lose access to:' );
+		case 'domain':
+			return __( 'When you remove your domain, you’ll lose access to:' );
+		case 'email':
+			return __( 'When you remove your email, you’ll lose access to:' );
+		case 'jetpack':
+		case 'akismet':
+		case 'marketplace':
+		case 'one-time':
+			return sprintf(
+				/* translators: %(productName)s is the product name, e.g. "When you remove Jetpack Search, you'll lose access to:" */
+				__( 'When you remove %(productName)s, you’ll lose access to:' ),
+				{ productName: purchase.product_name }
+			);
+		default:
+			return __( 'When you remove your subscription, you’ll lose access to:' );
+	}
+}
+
+/**
+ * Two-sentence copy for the confirmed refund notice on the Remove screen.
+ * Product-type-aware: "remove your plan" / "remove your domain" / "remove
+ * Jetpack Search", and "Your plan features will be removed" / "Your domain
+ * will be removed" / "Jetpack Search will be removed".
+ */
+export function getRefundNoticeCopy( {
+	purchase,
+	refundAmount,
+}: {
+	purchase: Purchase;
+	refundAmount: string;
+} ): string {
+	const category = getProductCategory( purchase );
+	switch ( category ) {
+		case 'plan':
+			return sprintf(
+				/* translators: %(refundAmount)s is a monetary amount */
+				__(
+					'You’ll receive a %(refundAmount)s refund when you remove your plan. Your plan features will be removed right away.'
+				),
+				{ refundAmount }
+			);
+		case 'domain':
+			return sprintf(
+				/* translators: %(refundAmount)s is a monetary amount */
+				__(
+					'You’ll receive a %(refundAmount)s refund when you remove your domain. Your domain will be removed right away.'
+				),
+				{ refundAmount }
+			);
+		case 'email':
+			return sprintf(
+				/* translators: %(refundAmount)s is a monetary amount */
+				__(
+					'You’ll receive a %(refundAmount)s refund when you remove your email. Your email will be removed right away.'
+				),
+				{ refundAmount }
+			);
+		case 'jetpack':
+		case 'akismet':
+		case 'marketplace':
+		case 'one-time':
+			return sprintf(
+				/* translators: %(refundAmount)s is a monetary amount; %(productName)s is the product name */
+				__(
+					'You’ll receive a %(refundAmount)s refund when you remove %(productName)s. %(productName)s will be removed right away.'
+				),
+				{ refundAmount, productName: purchase.product_name }
+			);
+		default:
+			return sprintf(
+				/* translators: %(refundAmount)s is a monetary amount */
+				__(
+					'You’ll receive a %(refundAmount)s refund when you remove your subscription. Your subscription will be removed right away.'
+				),
+				{ refundAmount }
+			);
+	}
+}
+
+/**
+ * Universal confirm checkbox — same on Cancel and Remove, any product type.
+ * Expiry date lives in the feature-list intro and the top notice; the
+ * checkbox is a final "I read the above" ack.
+ */
+export function getCheckboxLabel(): string {
+	return __( 'I’ve reviewed what I’ll lose and want to proceed.' );
 }
 
 /**
  * Primary and secondary button labels.
  */
-export function getButtonLabels( {
-	purchase,
-	intent,
-}: Omit< ConfirmationCopyArgs, 'expiryDateFormatted' > ): {
+export function getButtonLabels( { purchase, intent }: ConfirmationCopyArgs ): {
 	primary: string;
 	secondary: string;
 } {
@@ -215,25 +394,17 @@ export function getButtonLabels( {
 				};
 		}
 	}
-	switch ( category ) {
-		case 'plan':
-			return { primary: __( 'Cancel plan' ), secondary: __( 'Keep plan' ) };
-		case 'domain':
-			return { primary: __( 'Cancel domain' ), secondary: __( 'Keep domain' ) };
-		case 'email':
-			return { primary: __( 'Cancel email' ), secondary: __( 'Keep email' ) };
-		default:
-			return {
-				primary: __( 'Cancel subscription' ),
-				secondary: __( 'Keep subscription' ),
-			};
-	}
+	// Cancel intent: always "Cancel subscription" / "Keep subscription" to match
+	// the heading and Purchase Settings button.
+	return {
+		primary: __( 'Cancel subscription' ),
+		secondary: __( 'Keep subscription' ),
+	};
 }
 
 /**
  * One-item fallback losses list for products without a server-provided
- * cancellation features list. Keeps every confirmation screen showing at
- * least one concrete item the user is giving up.
+ * cancellation features list.
  */
 export function getFallbackLossItems( purchase: Purchase ): string[] {
 	const category = getProductCategory( purchase );

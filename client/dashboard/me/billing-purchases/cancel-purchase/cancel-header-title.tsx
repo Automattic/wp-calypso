@@ -21,6 +21,5 @@ export default function CancelHeaderTitle( {
 	return getCancellationHeading( {
 		purchase,
 		intent: displayVariant === 'remove' ? 'remove' : 'cancel',
-		expiryDateFormatted: '',
 	} );
 }

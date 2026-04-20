@@ -3,6 +3,7 @@
  */
 
 import {
+	formatTimeRemaining,
 	getProductCategory,
 	getCancellationHeading,
 	getTopNoticeCopy,
@@ -20,6 +21,7 @@ function makePurchase( overrides: Partial< Purchase > = {} ): Purchase {
 		is_domain_registration: false,
 		is_jetpack_plan_or_product: false,
 		expiry_status: 'auto-renewing',
+		expiry_date: '2027-04-16T00:00:00+00:00',
 		meta: '',
 		domain: 'example.com',
 		product_type: '',
@@ -27,7 +29,31 @@ function makePurchase( overrides: Partial< Purchase > = {} ): Purchase {
 	} as Purchase;
 }
 
-const DATE = 'April 16, 2027';
+const NOW = new Date( '2027-03-05T00:00:00+00:00' ); // 1 month and 11 days before the default expiry
+
+describe( 'formatTimeRemaining', () => {
+	test( 'months + days', () => {
+		expect( formatTimeRemaining( '2027-04-16T00:00:00Z', NOW ) ).toBe( '1 month and 11 days' );
+	} );
+	test( 'only days', () => {
+		expect( formatTimeRemaining( '2027-03-19T00:00:00Z', NOW ) ).toBe( '14 days' );
+	} );
+	test( 'only months', () => {
+		expect( formatTimeRemaining( '2027-06-05T00:00:00Z', NOW ) ).toBe( '3 months' );
+	} );
+	test( 'years + months (days omitted past the one-year mark)', () => {
+		expect( formatTimeRemaining( '2029-06-05T00:00:00Z', NOW ) ).toBe( '2 years and 3 months' );
+	} );
+	test( 'singular units', () => {
+		expect( formatTimeRemaining( '2027-04-06T00:00:00Z', NOW ) ).toBe( '1 month and 1 day' );
+	} );
+	test( 'already expired returns empty string', () => {
+		expect( formatTimeRemaining( '2027-01-01T00:00:00Z', NOW ) ).toBe( '' );
+	} );
+	test( 'same day returns empty string', () => {
+		expect( formatTimeRemaining( '2027-03-05T00:00:00Z', NOW ) ).toBe( '' );
+	} );
+} );
 
 describe( 'getProductCategory', () => {
 	test( 'plan', () => {
@@ -68,16 +94,6 @@ describe( 'getProductCategory', () => {
 			)
 		).toBe( 'jetpack' );
 	} );
-	test( 'marketplace', () => {
-		expect(
-			getProductCategory(
-				makePurchase( {
-					is_plan: false,
-					product_type: 'marketplace_plugin',
-				} as Partial< Purchase > )
-			)
-		).toBe( 'marketplace' );
-	} );
 	test( 'one-time', () => {
 		expect(
 			getProductCategory( makePurchase( { is_plan: false, expiry_status: 'one-time-purchase' } ) )
@@ -86,131 +102,140 @@ describe( 'getProductCategory', () => {
 } );
 
 describe( 'getCancellationHeading', () => {
-	test.each( [
-		[ 'plan', 'Cancel plan', 'Remove plan' ],
-		[ 'domain', 'Cancel domain', 'Remove domain' ],
-		[ 'email', 'Cancel email', 'Remove email' ],
-		[ 'one-time', 'Cancel purchase', 'Remove purchase' ],
-		[ 'other', 'Cancel subscription', 'Remove subscription' ],
-	] )( '%s variant', ( category, cancelHeading, removeHeading ) => {
-		const purchase = makePurchaseForCategory( category );
+	test( 'Cancel intent is always "Cancel subscription" regardless of product', () => {
+		for ( const category of [ 'plan', 'domain', 'email', 'jetpack', 'other' ] ) {
+			const purchase = makePurchaseForCategory( category );
+			expect( getCancellationHeading( { purchase, intent: 'cancel' } ) ).toBe(
+				'Cancel subscription'
+			);
+		}
+	} );
+	test( 'Remove uses category heading for plan / domain / email', () => {
 		expect(
-			getCancellationHeading( { purchase, intent: 'cancel', expiryDateFormatted: DATE } )
-		).toBe( cancelHeading );
+			getCancellationHeading( {
+				purchase: makePurchaseForCategory( 'plan' ),
+				intent: 'remove',
+			} )
+		).toBe( 'Remove plan' );
 		expect(
-			getCancellationHeading( { purchase, intent: 'remove', expiryDateFormatted: DATE } )
-		).toBe( removeHeading );
+			getCancellationHeading( {
+				purchase: makePurchaseForCategory( 'domain' ),
+				intent: 'remove',
+			} )
+		).toBe( 'Remove domain' );
+		expect(
+			getCancellationHeading( {
+				purchase: makePurchaseForCategory( 'email' ),
+				intent: 'remove',
+			} )
+		).toBe( 'Remove email' );
+	} );
+	test( 'Remove uses product name for Jetpack / Akismet / marketplace / one-time', () => {
+		expect(
+			getCancellationHeading( {
+				purchase: makePurchaseForCategory( 'jetpack', { product_name: 'Jetpack Search' } ),
+				intent: 'remove',
+			} )
+		).toBe( 'Remove Jetpack Search' );
+		expect(
+			getCancellationHeading( {
+				purchase: makePurchaseForCategory( 'one-time', {
+					product_name: 'Do it for me: Website Design',
+				} ),
+				intent: 'remove',
+			} )
+		).toBe( 'Remove Do it for me: Website Design' );
+	} );
+	test( 'Remove generic fallback is "Remove subscription"', () => {
+		expect(
+			getCancellationHeading( {
+				purchase: makePurchaseForCategory( 'other' ),
+				intent: 'remove',
+			} )
+		).toBe( 'Remove subscription' );
 	} );
 } );
 
 describe( 'getTopNoticeCopy', () => {
+	// The live duration depends on "now", so we just assert the notice shape
+	// rather than the exact number of months/days.
 	test( 'returns null for Remove intent', () => {
-		expect(
-			getTopNoticeCopy( {
-				purchase: makePurchase(),
-				intent: 'remove',
-				expiryDateFormatted: DATE,
-			} )
-		).toBeNull();
+		expect( getTopNoticeCopy( { purchase: makePurchase(), intent: 'remove' } ) ).toBeNull();
 	} );
 	test( 'returns null with no expiry date', () => {
 		expect(
 			getTopNoticeCopy( {
-				purchase: makePurchase(),
+				purchase: makePurchase( { expiry_date: '' } ),
 				intent: 'cancel',
-				expiryDateFormatted: '',
 			} )
 		).toBeNull();
 	} );
-	test( 'plan', () => {
+	test( 'returns null when expiry is in the past', () => {
 		expect(
 			getTopNoticeCopy( {
-				purchase: makePurchaseForCategory( 'plan' ),
+				purchase: makePurchase( { expiry_date: '2000-01-01T00:00:00Z' } ),
 				intent: 'cancel',
-				expiryDateFormatted: DATE,
-			} )
-		).toBe( `Your plan is active until ${ DATE }.` );
-	} );
-	test( 'domain', () => {
-		expect(
-			getTopNoticeCopy( {
-				purchase: makePurchaseForCategory( 'domain' ),
-				intent: 'cancel',
-				expiryDateFormatted: DATE,
-			} )
-		).toBe( `Your domain is active until ${ DATE }.` );
-	} );
-	test( 'email', () => {
-		expect(
-			getTopNoticeCopy( {
-				purchase: makePurchaseForCategory( 'email' ),
-				intent: 'cancel',
-				expiryDateFormatted: DATE,
-			} )
-		).toBe( `Your email is active until ${ DATE }.` );
-	} );
-	test( 'one-time returns null (no meaningful date)', () => {
-		expect(
-			getTopNoticeCopy( {
-				purchase: makePurchaseForCategory( 'one-time' ),
-				intent: 'cancel',
-				expiryDateFormatted: DATE,
 			} )
 		).toBeNull();
 	} );
-	test( 'jetpack uses productName fallback', () => {
-		const purchase = makePurchaseForCategory( 'jetpack', { product_name: 'Jetpack Security' } );
-		expect( getTopNoticeCopy( { purchase, intent: 'cancel', expiryDateFormatted: DATE } ) ).toBe(
-			`Your Jetpack Security subscription is active until ${ DATE }.`
-		);
+	test( 'plan copy mentions "after you cancel your subscription"', () => {
+		const copy = getTopNoticeCopy( {
+			purchase: makePurchaseForCategory( 'plan', {
+				expiry_date: new Date( Date.now() + 30 * 24 * 60 * 60 * 1000 ).toISOString(),
+			} ),
+			intent: 'cancel',
+		} );
+		expect( copy ).toMatch( /^Your plan features will be available for another /i );
+		expect( copy ).toMatch( /after you cancel your subscription/i );
+	} );
+	test( 'one-time returns null', () => {
+		expect(
+			getTopNoticeCopy( {
+				purchase: makePurchaseForCategory( 'one-time', {
+					expiry_date: new Date( Date.now() + 30 * 24 * 60 * 60 * 1000 ).toISOString(),
+				} ),
+				intent: 'cancel',
+			} )
+		).toBeNull();
+	} );
+	test( 'jetpack uses the product name', () => {
+		const copy = getTopNoticeCopy( {
+			purchase: makePurchaseForCategory( 'jetpack', {
+				product_name: 'Jetpack Security',
+				expiry_date: new Date( Date.now() + 30 * 24 * 60 * 60 * 1000 ).toISOString(),
+			} ),
+			intent: 'cancel',
+		} );
+		expect( copy ).toMatch( /^Jetpack Security will remain active for another /i );
 	} );
 } );
 
 describe( 'getCheckboxLabel', () => {
-	test( 'cancel variant includes the expiry date', () => {
-		expect(
-			getCheckboxLabel( {
-				purchase: makePurchaseForCategory( 'plan' ),
-				intent: 'cancel',
-				expiryDateFormatted: DATE,
-			} )
-		).toBe( `I understand my plan will expire on ${ DATE }.` );
-	} );
-	test( 'remove variant omits the date', () => {
-		expect(
-			getCheckboxLabel( {
-				purchase: makePurchaseForCategory( 'plan' ),
-				intent: 'remove',
-				expiryDateFormatted: DATE,
-			} )
-		).toBe( 'I understand my plan will be removed immediately.' );
-	} );
-	test( 'cancel + no expiry falls back to generic copy', () => {
-		expect(
-			getCheckboxLabel( {
-				purchase: makePurchaseForCategory( 'one-time' ),
-				intent: 'cancel',
-				expiryDateFormatted: '',
-			} )
-		).toBe( 'I understand my subscription will be cancelled.' );
+	test( 'universal copy — same for Cancel and Remove, any product', () => {
+		expect( getCheckboxLabel() ).toBe( 'I’ve reviewed what I’ll lose and want to proceed.' );
 	} );
 } );
 
 describe( 'getButtonLabels', () => {
-	test( 'cancel plan', () => {
-		expect(
-			getButtonLabels( { purchase: makePurchaseForCategory( 'plan' ), intent: 'cancel' } )
-		).toEqual( { primary: 'Cancel plan', secondary: 'Keep plan' } );
+	test( 'Cancel intent always uses "Cancel subscription" / "Keep subscription"', () => {
+		for ( const category of [ 'plan', 'domain', 'email', 'jetpack', 'one-time', 'other' ] ) {
+			const purchase = makePurchaseForCategory( category );
+			expect( getButtonLabels( { purchase, intent: 'cancel' } ) ).toEqual( {
+				primary: 'Cancel subscription',
+				secondary: 'Keep subscription',
+			} );
+		}
 	} );
-	test( 'remove domain', () => {
+	test( 'Remove uses category labels', () => {
+		expect(
+			getButtonLabels( { purchase: makePurchaseForCategory( 'plan' ), intent: 'remove' } )
+		).toEqual( { primary: 'Remove plan', secondary: 'Keep plan' } );
 		expect(
 			getButtonLabels( { purchase: makePurchaseForCategory( 'domain' ), intent: 'remove' } )
 		).toEqual( { primary: 'Remove domain', secondary: 'Keep domain' } );
-	} );
-	test( 'other (subscription) cancel', () => {
 		expect(
-			getButtonLabels( { purchase: makePurchaseForCategory( 'jetpack' ), intent: 'cancel' } )
-		).toEqual( { primary: 'Cancel subscription', secondary: 'Keep subscription' } );
+			getButtonLabels( { purchase: makePurchaseForCategory( 'email' ), intent: 'remove' } )
+		).toEqual( { primary: 'Remove email', secondary: 'Keep email' } );
 	} );
 } );
 

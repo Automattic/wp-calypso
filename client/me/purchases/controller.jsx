@@ -1,6 +1,6 @@
 import page from '@automattic/calypso-router';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
-import { localize, useTranslate } from 'i18n-calypso';
+import i18n, { localize, useTranslate } from 'i18n-calypso';
 import { Fragment, useCallback } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
@@ -94,10 +94,14 @@ export function addCreditCard( context, next ) {
 export function cancelPurchase( context, next ) {
 	const rawIntent = context.query?.intent;
 	const intent = rawIntent === 'cancel' || rawIntent === 'remove' ? rawIntent : null;
+	// Match the browser-tab/page title to the button the user clicked on
+	// Purchase Settings — "Remove" for Remove, "Cancel Purchase" otherwise.
+	const pageTitle =
+		intent === 'remove' ? i18n.translate( 'Remove Purchase' ) : titles.cancelPurchase;
 
 	const CancelPurchaseWrapper = localize( () => {
 		return (
-			<PurchasesWrapper title={ titles.cancelPurchase }>
+			<PurchasesWrapper title={ pageTitle }>
 				<Main wideLayout className="purchases__cancel">
 					<CancelPurchase
 						purchaseId={ parseInt( context.params.purchaseId, 10 ) }

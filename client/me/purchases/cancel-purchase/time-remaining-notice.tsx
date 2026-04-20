@@ -16,28 +16,17 @@ export default function TimeRemainingNotice( {
 	displayVariant,
 	intent,
 }: TimeRemainingNoticeProps ) {
-	// Suppress on Remove variant — the product is going away immediately.
 	if ( displayVariant === 'remove' ) {
 		return null;
 	}
-
-	// Partner-managed or no expiry date → nothing meaningful to say.
 	if ( isPartnerPurchase( purchase ) || ! purchase.expiryDate ) {
 		return null;
 	}
-
-	// Suppress if already expired or expiring today.
-	const expiry = moment( purchase.expiryDate );
-	if ( expiry.isSameOrBefore( moment(), 'day' ) ) {
+	if ( moment( purchase.expiryDate ).isSameOrBefore( moment(), 'day' ) ) {
 		return null;
 	}
 
-	const copy = getTopNoticeCopy( {
-		purchase,
-		intent: intent ?? 'cancel',
-		expiryDateFormatted: expiry.format( 'LL' ),
-	} );
-
+	const copy = getTopNoticeCopy( { purchase, intent: intent ?? 'cancel' } );
 	if ( ! copy ) {
 		return null;
 	}

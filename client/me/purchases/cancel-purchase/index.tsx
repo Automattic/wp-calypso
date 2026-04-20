@@ -674,14 +674,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			plan && 'getCancellationFeatures' in plan ? plan.getCancellationFeatures?.() ?? [] : [];
 
 		const displayVariant: 'cancel' | 'remove' = intent === 'remove' ? 'remove' : 'cancel';
-		const expiryDateFormatted = purchase?.expiryDate
-			? this.props.moment( purchase.expiryDate ).format( 'LL' )
-			: '';
-		const checkboxLabel = getCheckboxLabel( {
-			purchase,
-			intent: displayVariant,
-			expiryDateFormatted,
-		} );
+		const checkboxLabel = getCheckboxLabel();
 
 		// Check if we should show domain options inline (when they don't need radio buttons)
 		const shouldShowDomainOptionsInline =
@@ -859,14 +852,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		const { siteName, siteId } = purchase;
 
 		const displayVariant: 'cancel' | 'remove' = intent === 'remove' ? 'remove' : 'cancel';
-		const expiryDateFormatted = purchase?.expiryDate
-			? this.props.moment( purchase.expiryDate ).format( 'LL' )
-			: '';
-		const heading = getCancellationHeading( {
-			purchase,
-			intent: displayVariant,
-			expiryDateFormatted,
-		} );
+		const heading = getCancellationHeading( { purchase, intent: displayVariant } );
 
 		// When a plan has an included domain that can be cancelled together,
 		// show the higher (full) refund amount in the notice since the user
@@ -929,7 +915,11 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 					/>
 
 					{ ! this.state.showDomainOptionsStep && refundAmountString && intent === 'remove' && (
-						<RefundEligibilityNotice refundAmount={ refundAmountString } mode="confirmed" />
+						<RefundEligibilityNotice
+							refundAmount={ refundAmountString }
+							mode="confirmed"
+							purchase={ purchase }
+						/>
 					) }
 					{ ! this.state.showDomainOptionsStep &&
 						refundAmountString &&
