@@ -47,6 +47,7 @@ export interface CancelPurchaseButtonProps {
 	includedDomainPurchase: Purchases.Purchase;
 	disabled?: boolean;
 	textVariant?: string;
+	displayVariant?: 'cancel' | 'remove';
 	isLinkStyle?: boolean;
 	isInline?: boolean;
 	cancelIntentOverride?: 'refund' | 'autorenew';
@@ -161,6 +162,19 @@ class CancelPurchaseButton extends Component<
 
 			if ( includedDomainPurchase && needsDomainOptionsStep ) {
 				return translate( 'Continue with cancellation' );
+			}
+
+			if ( this.props.displayVariant === 'remove' ) {
+				if ( isJetpackPlan( purchase ) || isJetpackProduct( purchase ) ) {
+					return translate( 'Remove subscription' );
+				}
+				if ( isDomainRegistration( purchase ) ) {
+					return translate( 'Remove domain' );
+				}
+				if ( isSubscription( purchase ) ) {
+					return translate( 'Remove plan' );
+				}
+				return translate( 'Remove' );
 			}
 
 			if ( hasAmountAvailableToRefund( purchase ) ) {
