@@ -322,7 +322,7 @@ private object JetpackE2ETestsBuildTemplate : Template({
 		notifications {
 			notifierSettings = slackNotifier {
 				connection = "PROJECT_EXT_11"
-				sendTo = "#notif-test"
+				sendTo = "#jetpack-alerts"
 				messageFormat = verboseMessageFormat {
 					addStatusText = true
 				}
