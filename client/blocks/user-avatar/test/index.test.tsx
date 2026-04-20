@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen } from '@testing-library/react';
+import { render, screen, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import UserAvatar, { UserAvatarInfo } from '../index';
 
@@ -22,6 +22,15 @@ describe( 'UserAvatar', () => {
 		wpcom_login: 'testuser',
 		wpcom_id: 123,
 	};
+
+	beforeEach( () => {
+		jest.useFakeTimers();
+		jest.clearAllMocks();
+	} );
+
+	afterEach( () => {
+		jest.useRealTimers();
+	} );
 
 	test( 'renders avatar image when avatar_URL is provided', () => {
 		render( <UserAvatar user={ defaultUser } size={ 48 } /> );
@@ -69,36 +78,49 @@ describe( 'UserAvatar', () => {
 	} );
 
 	test( 'does not show hovercard when hideHovercard is true', async () => {
+		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
 		render( <UserAvatar user={ defaultUser } hideHovercard /> );
 
-		await userEvent.hover( document.querySelector( '.user-avatar' )! );
+		await user.hover( document.querySelector( '.user-avatar' )! );
+		act( () => jest.advanceTimersByTime( 200 ) );
 
 		expect( screen.queryByTestId( 'user-hovercard' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'does not show hovercard when user is null', async () => {
+		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
 		render( <UserAvatar user={ null } /> );
 
-		await userEvent.hover( document.querySelector( '.user-avatar' )! );
+		await user.hover( document.querySelector( '.user-avatar' )! );
+		act( () => jest.advanceTimersByTime( 200 ) );
 
 		expect( screen.queryByTestId( 'user-hovercard' ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'shows hovercard on mouse enter', async () => {
+	test( 'shows hovercard after hover delay', async () => {
+		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
 		render( <UserAvatar user={ defaultUser } /> );
 		expect( screen.queryByTestId( 'user-hovercard' ) ).not.toBeInTheDocument();
 
-		await userEvent.hover( document.querySelector( '.user-avatar' )! );
+		await user.hover( document.querySelector( '.user-avatar' )! );
+
+		// Should not appear immediately.
+		expect( screen.queryByTestId( 'user-hovercard' ) ).not.toBeInTheDocument();
+
+		// Should appear after the delay.
+		act( () => jest.advanceTimersByTime( 200 ) );
 		expect( screen.getByTestId( 'user-hovercard' ) ).toBeInTheDocument();
 	} );
 
 	test( 'hides hovercard on mouse leave', async () => {
+		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
 		render( <UserAvatar user={ defaultUser } /> );
 
-		await userEvent.hover( document.querySelector( '.user-avatar' )! );
+		await user.hover( document.querySelector( '.user-avatar' )! );
+		act( () => jest.advanceTimersByTime( 200 ) );
 		expect( screen.getByTestId( 'user-hovercard' ) ).toBeInTheDocument();
 
-		await userEvent.unhover( document.querySelector( '.user-avatar' )! );
+		await user.unhover( document.querySelector( '.user-avatar' )! );
 		expect( screen.queryByTestId( 'user-hovercard' ) ).not.toBeInTheDocument();
 	} );
 } );

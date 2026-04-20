@@ -16,31 +16,34 @@ function UserHovercardHeader( { user }: UserHovercardHeaderProps ): JSX.Element 
 		'';
 	const profilePageUrl = user.user_login ? `/reader/users/${ user.user_login }` : undefined; // Only navigate to profile page. Avoid navigating to any external links to keep UX consistent.
 	const avatarUrl = getProcessedGravatarUrl( user.avatar_URL );
+	const avatarImg = avatarUrl ? (
+		<PreloadedImage
+			src={ avatarUrl }
+			alt={ name }
+			width={ 102 }
+			height={ 102 }
+			imgStyles={ { borderRadius: '50%' } }
+		/>
+	) : (
+		<UserAvatarDefaultIcon iconSize={ 102 } />
+	);
 
 	return (
 		<AutoDirection>
 			<div className="user-hovercard__header">
 				<div className="user-hovercard__avatar">
-					<a href={ profilePageUrl }>
-						{ avatarUrl ? (
-							<PreloadedImage
-								src={ avatarUrl }
-								alt={ name }
-								width={ 102 }
-								height={ 102 }
-								imgStyles={ { borderRadius: '50%' } }
-							/>
-						) : (
-							<UserAvatarDefaultIcon iconSize={ 102 } />
-						) }
-					</a>
+					{ profilePageUrl ? <a href={ profilePageUrl }>{ avatarImg }</a> : avatarImg }
 				</div>
 
 				{ name && (
 					<div className="user-hovercard__name">
-						<a href={ profilePageUrl }>
+						{ profilePageUrl ? (
+							<a href={ profilePageUrl }>
+								<h4>{ name }</h4>
+							</a>
+						) : (
 							<h4>{ name }</h4>
-						</a>
+						) }
 					</div>
 				) }
 

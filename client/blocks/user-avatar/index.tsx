@@ -1,7 +1,9 @@
+import './style.scss';
+
 import { getReaderUserQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { Popover } from '@wordpress/components';
-import { useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import UserHovercard from 'calypso/blocks/user-avatar/user-hovercard';
 import PreloadedImage from 'calypso/components/preloaded-image';
 import UserAvatarDefaultIcon from 'calypso/reader/components/icons/user-avatar-default-icon';
@@ -29,6 +31,8 @@ export interface UserAvatarInfo {
 export default function UserAvatar( { user, size = 32, hideHovercard = false }: UserAvatarProps ) {
 	const [ isHovered, setIsHovered ] = useState( false );
 	const avatarRef = useRef< HTMLDivElement >( null );
+	// Using this to add a delay before showing the hovercard, to avoid it flashing when the user is just moving their mouse across the avatar.
+	const hoverTimerRef = useRef< ReturnType< typeof setTimeout > | null >( null );
 	const wpcomProfileUrl = user?.wpcom_login ? getUserProfileUrl( user?.wpcom_login ) : null; // Only navigate to profile page. Avoid navigating to any external links to keep UX consistent.
 	const name = user?.display_name || user?.name || '';
 	const avatarUrl = user?.avatar_URL ? getProcessedGravatarUrl( user.avatar_URL ) : null;
@@ -46,16 +50,26 @@ export default function UserAvatar( { user, size = 32, hideHovercard = false }: 
 	);
 
 	// Prefetching so that we can display WPCOM users Hovercards instantly, Gravatar lookups will be triggered on hover.
-	useQuery( getReaderUserQuery( user?.wpcom_login, user?.wpcom_id ) );
+	useQuery( getReaderUserQuery( user?.wpcom_login, user?.wpcom_id, ! hideHovercard ) );
+
+	const handleMouseEnter = useCallback( () => {
+		hoverTimerRef.current = setTimeout( () => setIsHovered( true ), 200 );
+	}, [] );
+
+	const handleMouseLeave = useCallback( () => {
+		if ( hoverTimerRef.current ) {
+			clearTimeout( hoverTimerRef.current );
+			hoverTimerRef.current = null;
+		}
+		setIsHovered( false );
+	}, [] );
 
 	return (
 		<div
 			ref={ avatarRef }
 			className="user-avatar ignore-click"
-			aria-hidden="true"
-			style={ { flexShrink: 0 } }
-			onMouseEnter={ () => setIsHovered( true ) }
-			onMouseLeave={ () => setIsHovered( false ) }
+			onMouseEnter={ handleMouseEnter }
+			onMouseLeave={ handleMouseLeave }
 		>
 			{ wpcomProfileUrl ? <a href={ wpcomProfileUrl }>{ avatarImg }</a> : avatarImg }
 
