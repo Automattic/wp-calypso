@@ -16,6 +16,7 @@ import useSetupCustomActions from '../../hooks/use-setup-custom-actions';
 import { useShouldUseUnifiedAgent } from '../../hooks/use-should-use-unified-agent';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { LocalConversationListItem } from '../../types';
+import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
 import { persistLastActivity } from '../../utils/persist-last-activity';
 import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
@@ -171,7 +172,7 @@ export default function AgentDock( {
 	// Reader-chat runs on public blog frontends where there's no wp-admin
 	// sidebar to dock into. Detect that context so we can hide options that
 	// don't apply (Move to sidebar / Pop out sidebar).
-	const isReaderChat = agentId === 'reader-chat' || agentId === 'p2-reader-chat';
+	const isReaderChat = isReaderChatAgent( agentId );
 
 	// Persist reader-chat open/closed state across page navigations via
 	// localStorage — the AGENTS_MANAGER_STORE is in-memory only, so a fresh

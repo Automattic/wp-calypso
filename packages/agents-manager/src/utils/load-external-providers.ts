@@ -12,7 +12,7 @@
  */
 
 import { getAgentManager, UIMessage } from '@automattic/agenttic-client';
-import { useState as useReactState, useEffect as useReactEffect } from '@wordpress/element';
+import { useReaderFollowupSuggestions } from './reader-followup-hook';
 import type { ToolProvider, ContextProvider, Suggestion, BigSkyMessage } from '../types';
 import type { UseAgentChatReturn } from '@automattic/agenttic-client';
 import type {
@@ -187,51 +187,20 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	const agentProviders =
 		typeof agentsManagerData !== 'undefined' ? agentsManagerData?.agentProviders || [] : [];
 
-	// Reader-chat follow-up suggestions bridge. reader-chat.js sets
-	// `window.__jetpackReaderFollowupChips` and dispatches
-	// `reader-chat-followups-updated` after each agent reply. This hook
-	// reads both using the AgentsManager package's own React instance
-	// (critical — cross-bundle React hooks don't work). Opting in by
-	// agentId so other hosts aren't affected.
-	const useReaderFollowupHook: UseSuggestionsHook = () => {
-		const win =
-			typeof window !== 'undefined'
-				? ( window as unknown as {
-						__jetpackReaderFollowupChips?: Suggestion[];
-				  } )
-				: undefined;
-		const initial = (
-			win && Array.isArray( win.__jetpackReaderFollowupChips )
-				? win.__jetpackReaderFollowupChips
-				: []
-		) as Suggestion[];
-		const [ chips, setChips ] = useReactState< Suggestion[] >( initial );
-		useReactEffect( () => {
-			if ( typeof window === 'undefined' ) {
-				return;
-			}
-			const handler = () => {
-				setChips(
-					Array.isArray( win?.__jetpackReaderFollowupChips )
-						? ( win.__jetpackReaderFollowupChips as Suggestion[] )
-						: []
-				);
-			};
-			window.addEventListener( 'reader-chat-followups-updated', handler );
-			return () => window.removeEventListener( 'reader-chat-followups-updated', handler );
-		}, [] );
-		return { suggestions: chips };
-	};
-	const isReaderChatHost =
+	// Only the public reader-chat entry registers the follow-up chip globals
+	// (`window.__jetpackReaderFollowupChips` / `reader-chat-followups-updated`).
+	// Keep the host check narrow so we don't wire the hook on variants that
+	// don't populate them.
+	const registerReaderFollowups =
 		typeof window !== 'undefined' &&
 		( window as unknown as { agentsManagerData?: { agentId?: string } } ).agentsManagerData
 			?.agentId === 'reader-chat';
 
 	if ( agentProviders.length === 0 ) {
-		// Even with no external agentProviders, return our reader-chat hook
-		// if this host is reader-chat. Previously this path early-returned
-		// an empty object, so the hook never registered.
-		return isReaderChatHost ? { useSuggestions: useReaderFollowupHook } : {};
+		// Even with no external agentProviders, register the reader-chat
+		// follow-up hook if this host is reader-chat. Previously this path
+		// early-returned an empty object, so the hook never registered.
+		return registerReaderFollowups ? { useSuggestions: useReaderFollowupSuggestions } : {};
 	}
 
 	let mergedToolProvider: ToolProvider | undefined;
@@ -255,9 +224,9 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	const allGetEmptyViewSuggestions: ( () => Suggestion[] )[] = [];
 
 	// Also add reader-chat hook to the merge path when there ARE other
-	// providers (declared above the early return).
-	if ( isReaderChatHost ) {
-		allUseSuggestions.push( useReaderFollowupHook );
+	// providers.
+	if ( registerReaderFollowups ) {
+		allUseSuggestions.push( useReaderFollowupSuggestions );
 	}
 
 	// Load all providers in parallel to avoid serializing network/module fetches.

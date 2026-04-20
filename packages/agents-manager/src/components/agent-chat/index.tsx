@@ -15,6 +15,7 @@ import { useMemo, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { AGENTS_MANAGER_STORE } from '../../stores';
+import { isReaderChatHost } from '../../utils/is-reader-chat-agent';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import ChatMessageSkeleton from '../chat-message-skeleton';
 import CustomALink from '../custom-a-link';
@@ -94,40 +95,46 @@ const DEFAULT_ACCEPTED_IMAGE_TYPES = [
 ];
 
 /**
- * Returns the empty-view greeting, with a reader-chat override.
- * reader-chat hosts can customize via `window.agentsManagerData.emptyViewHeading`;
- * anything else falls back to the orchestrator default.
+ * Read a string override from `window.agentsManagerData[key]`. Reader-chat
+ * hosts can customize the empty-view greeting/help copy by setting these
+ * keys before AgentsManager mounts.
+ */
+function readAgentsManagerDataString(
+	key: 'emptyViewHeading' | 'emptyViewHelp'
+): string | undefined {
+	if ( typeof window === 'undefined' ) {
+		return undefined;
+	}
+	const data = ( window as unknown as { agentsManagerData?: Record< string, unknown > } )
+		.agentsManagerData;
+	const value = data?.[ key ];
+	return typeof value === 'string' ? value : undefined;
+}
+
+/**
+ * Returns the empty-view greeting. Priority:
+ *   1. Explicit host override via `window.agentsManagerData.emptyViewHeading`.
+ *   2. Reader-chat default (contextual to blog frontends).
+ *   3. Orchestrator default.
  */
 function getEmptyViewHeading(): string {
-	if ( typeof window !== 'undefined' ) {
-		const data = (
-			window as unknown as {
-				agentsManagerData?: { agentId?: string; emptyViewHeading?: string };
-			}
-		 ).agentsManagerData;
-		if ( data?.emptyViewHeading ) {
-			return data.emptyViewHeading;
-		}
-		if ( data?.agentId === 'reader-chat' || data?.agentId === 'p2-reader-chat' ) {
-			return __( 'Ask me anything about this blog.', '__i18n_text_domain__' );
-		}
+	const override = readAgentsManagerDataString( 'emptyViewHeading' );
+	if ( override ) {
+		return override;
+	}
+	if ( isReaderChatHost() ) {
+		return __( 'Ask me anything about this blog.', '__i18n_text_domain__' );
 	}
 	return __( 'Howdy! How can I help you today?', '__i18n_text_domain__' );
 }
 
 function getEmptyViewHelp(): string {
-	if ( typeof window !== 'undefined' ) {
-		const data = (
-			window as unknown as {
-				agentsManagerData?: { agentId?: string; emptyViewHelp?: string };
-			}
-		 ).agentsManagerData;
-		if ( data?.emptyViewHelp ) {
-			return data.emptyViewHelp;
-		}
-		if ( data?.agentId === 'reader-chat' || data?.agentId === 'p2-reader-chat' ) {
-			return __( 'Or type your own question below.', '__i18n_text_domain__' );
-		}
+	const override = readAgentsManagerDataString( 'emptyViewHelp' );
+	if ( override ) {
+		return override;
+	}
+	if ( isReaderChatHost() ) {
+		return __( 'Or type your own question below.', '__i18n_text_domain__' );
 	}
 	return __( 'Got a different request? Ask away.', '__i18n_text_domain__' );
 }

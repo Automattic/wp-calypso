@@ -157,103 +157,15 @@ function getFallbackSuggestions() {
 	];
 }
 
-/**
- * Fetch AI-generated suggestions from the jetpack/suggest-reader-questions
- * ability. Falls back to static templates if the call fails or returns
- * empty.
- *
- * Called fire-and-forget after mount — the empty view shows fallback
- * chips immediately and re-renders with AI suggestions when they arrive.
- */
-async function fetchAiSuggestions() {
-	const post = readerConfig.currentPost;
-	const siteId = readerConfig.siteId;
-	const siteName = readerConfig.siteName || '';
-	const siteUrl = readerConfig.siteUrl || '';
+const SUGGESTIONS_ENDPOINT =
+	'https://public-api.wordpress.com/wpcom/v2/ai/agent/reader-chat-suggestions';
 
-	// Call the dedicated reader-chat-suggestions agent. The /wpcom/v2/ai/agent
-	// endpoint isn't site-specific, so it routes directly to wpcom without
-	// going through jetpack-bridge — works on wpcom-native AND Jetpack sites.
-	const endpoint = 'https://public-api.wordpress.com/wpcom/v2/ai/agent/reader-chat-suggestions';
-
-	// Build the message: post-specific if we're on a singular view, site-level
-	// if we're on the home/archive. The agent handles both — it just needs a
-	// prose description of what the reader is looking at.
-	const messageText = post?.url
-		? `Context: reader is on a specific blog post.\nPost title: ${
-				post.title || ''
-		  }\n\nPost excerpt:\n${
-				post.excerpt || ''
-		  }\n\nGenerate 3 questions a reader might click to learn more ABOUT THIS POST specifically.`
-		: `Context: reader is on the home/stream of a blog (no specific post selected).\nSite name: ${ siteName }\nSite URL: ${ siteUrl }\n\nGenerate 3 questions a reader might click to explore THIS BLOG overall — its topics, recent posts, or recommendations. Infer topics from the site name and URL.`;
-
-	const body = {
-		jsonrpc: '2.0',
-		id: `reader-suggestions-${ Date.now() }`,
-		method: 'message/stream',
-		params: {
-			message: {
-				role: 'user',
-				parts: [
-					{ type: 'text', text: messageText },
-					{
-						type: 'data',
-						data: {
-							clientContext: {
-								post_url: post?.url || '',
-								selectedSiteId: siteId,
-							},
-						},
-					},
-				],
-				kind: 'message',
-				messageId: `msg-${ Date.now() }`,
-			},
-		},
-		tokenStreaming: false,
-	};
-
-	try {
-		const response = await fetch( endpoint, {
-			method: 'POST',
-			credentials: 'omit',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify( body ),
-		} );
-
-		if ( ! response.ok ) {
-			return null;
-		}
-
-		// SSE response wraps a JSON-RPC result; we read the whole thing and
-		// pull out the assistant message text from the first completed event.
-		const raw = await response.text();
-		const text = parseAgentSseResponse( raw );
-		if ( ! text ) {
-			return null;
-		}
-
-		const suggestions = JSON.parse( text );
-		if ( ! Array.isArray( suggestions ) || suggestions.length === 0 ) {
-			return null;
-		}
-
-		const valid = suggestions.filter(
-			( s ) => s && typeof s.label === 'string' && typeof s.prompt === 'string'
-		);
-		if ( valid.length === 0 ) {
-			return null;
-		}
-
-		// Normalize: ensure every item has an id (stable React key).
-		return valid.slice( 0, 3 ).map( ( s, i ) => ( {
-			id: s.id || `ai-suggestion-${ i }-${ slugify( s.label ) }`,
-			label: s.label,
-			prompt: s.prompt,
-		} ) );
-	} catch {
-		return null;
-	}
+function slugify( label ) {
+	return String( label || '' )
+		.toLowerCase()
+		.replace( /[^a-z0-9]+/g, '-' )
+		.replace( /^-|-$/g, '' )
+		.slice( 0, 40 );
 }
 
 /**
@@ -288,36 +200,23 @@ function parseAgentSseResponse( raw ) {
 	return null;
 }
 
-function slugify( label ) {
-	return String( label || '' )
-		.toLowerCase()
-		.replace( /[^a-z0-9]+/g, '-' )
-		.replace( /^-|-$/g, '' )
-		.slice( 0, 40 );
-}
-
 /**
- * Fetch 2-3 follow-up questions based on the last user+agent turn.
- * Reuses the reader-chat-suggestions agent endpoint with a different
- * message shape that describes the exchange and asks for follow-ups.
+ * Call the reader-chat-suggestions agent with an arbitrary user message and
+ * return a list of {id,label,prompt} suggestions, or null on failure.
+ *
+ * Both the initial contextual chips and the post-turn follow-ups use this
+ * path — the only differences are the prompt text, the JSON-RPC request-id
+ * prefix, and the fallback id prefix applied to normalized results.
+ * @param   {Object} params                 Parameters.
+ * @param   {string} params.messageText     Prose message to send to the agent.
+ * @param   {string} params.requestIdPrefix JSON-RPC request id prefix (debugging aid).
+ * @param   {string} params.resultIdPrefix  Prefix used when synthesizing missing ids on returned items.
+ * @returns {Promise<Array|null>}           Normalized suggestions, or null on failure.
  */
-async function fetchFollowupSuggestions( userText, agentText ) {
-	const siteId = readerConfig.siteId;
-	if ( ! userText || ! agentText ) {
-		return null;
-	}
-	const endpoint = 'https://public-api.wordpress.com/wpcom/v2/ai/agent/reader-chat-suggestions';
-	const messageText = `The reader just had this exchange on a blog:
-
-Reader asked: ${ userText }
-
-Blog replied: ${ agentText }
-
-Generate 2-3 follow-up questions the reader might want to ask next, based on what was discussed. Questions should feel like natural next-step curiosity — go deeper on a point, connect to a related theme, or explore an implication. Not generic.`;
-
+async function fetchSuggestions( { messageText, requestIdPrefix, resultIdPrefix } ) {
 	const body = {
 		jsonrpc: '2.0',
-		id: `reader-followup-${ Date.now() }`,
+		id: `${ requestIdPrefix }-${ Date.now() }`,
 		method: 'message/stream',
 		params: {
 			message: {
@@ -329,7 +228,7 @@ Generate 2-3 follow-up questions the reader might want to ask next, based on wha
 						data: {
 							clientContext: {
 								post_url: readerConfig.currentPost?.url || '',
-								selectedSiteId: siteId,
+								selectedSiteId: readerConfig.siteId,
 							},
 						},
 					},
@@ -342,7 +241,7 @@ Generate 2-3 follow-up questions the reader might want to ask next, based on wha
 	};
 
 	try {
-		const response = await fetch( endpoint, {
+		const response = await fetch( SUGGESTIONS_ENDPOINT, {
 			method: 'POST',
 			credentials: 'omit',
 			headers: { 'Content-Type': 'application/json' },
@@ -351,10 +250,13 @@ Generate 2-3 follow-up questions the reader might want to ask next, based on wha
 		if ( ! response.ok ) {
 			return null;
 		}
+		// SSE response wraps a JSON-RPC result; we read the whole thing and
+		// pull out the assistant message text from the first completed event.
 		const text = parseAgentSseResponse( await response.text() );
 		if ( ! text ) {
 			return null;
 		}
+
 		const parsed = JSON.parse( text );
 		const items = Array.isArray( parsed ) ? parsed : [];
 		const valid = items.filter(
@@ -363,14 +265,70 @@ Generate 2-3 follow-up questions the reader might want to ask next, based on wha
 		if ( valid.length === 0 ) {
 			return null;
 		}
+		// Normalize: ensure every item has an id (stable React key).
 		return valid.slice( 0, 3 ).map( ( s, i ) => ( {
-			id: s.id || `followup-${ i }-${ slugify( s.label ) }`,
+			id: s.id || `${ resultIdPrefix }-${ i }-${ slugify( s.label ) }`,
 			label: s.label,
 			prompt: s.prompt,
 		} ) );
 	} catch {
 		return null;
 	}
+}
+
+/**
+ * Fetch AI-generated suggestions based on the current page context.
+ * Falls back to static templates if the call fails or returns empty.
+ *
+ * Called fire-and-forget after mount — the empty view shows fallback
+ * chips immediately and re-renders with AI suggestions when they arrive.
+ */
+function fetchAiSuggestions() {
+	const post = readerConfig.currentPost;
+	const siteName = readerConfig.siteName || '';
+	const siteUrl = readerConfig.siteUrl || '';
+
+	// Build the message: post-specific if we're on a singular view, site-level
+	// if we're on the home/archive. The agent handles both — it just needs a
+	// prose description of what the reader is looking at.
+	const messageText = post?.url
+		? `Context: reader is on a specific blog post.\nPost title: ${
+				post.title || ''
+		  }\n\nPost excerpt:\n${
+				post.excerpt || ''
+		  }\n\nGenerate 3 questions a reader might click to learn more ABOUT THIS POST specifically.`
+		: `Context: reader is on the home/stream of a blog (no specific post selected).\nSite name: ${ siteName }\nSite URL: ${ siteUrl }\n\nGenerate 3 questions a reader might click to explore THIS BLOG overall — its topics, recent posts, or recommendations. Infer topics from the site name and URL.`;
+
+	return fetchSuggestions( {
+		messageText,
+		requestIdPrefix: 'reader-suggestions',
+		resultIdPrefix: 'ai-suggestion',
+	} );
+}
+
+/**
+ * Fetch 2-3 follow-up questions based on the last user+agent turn.
+ * Reuses the reader-chat-suggestions agent with a message shape that
+ * describes the exchange and asks for follow-ups.
+ */
+function fetchFollowupSuggestions( userText, agentText ) {
+	if ( ! userText || ! agentText ) {
+		return Promise.resolve( null );
+	}
+
+	const messageText = `The reader just had this exchange on a blog:
+
+Reader asked: ${ userText }
+
+Blog replied: ${ agentText }
+
+Generate 2-3 follow-up questions the reader might want to ask next, based on what was discussed. Questions should feel like natural next-step curiosity — go deeper on a point, connect to a related theme, or explore an implication. Not generic.`;
+
+	return fetchSuggestions( {
+		messageText,
+		requestIdPrefix: 'reader-followup',
+		resultIdPrefix: 'followup',
+	} );
 }
 
 /**
@@ -504,3 +462,6 @@ if ( container ) {
 		window.dispatchEvent( new Event( 'reader-chat-suggestions-updated' ) );
 	} );
 }
+
+// Exported for unit tests only — these are pure helpers with no side effects.
+export { parseAgentSseResponse, slugify, getFallbackSuggestions };
