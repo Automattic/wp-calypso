@@ -7,7 +7,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { close, info } from '@wordpress/icons';
 import { intlFormat } from 'date-fns';
 import { Text } from '../../../components/text';
-import { getPurchaseCancellationFlowType, CANCEL_FLOW_TYPE } from '../../../utils/purchase';
+import { DisplayVariant } from '../../../utils/purchase';
 import type { Purchase, CancellationFeature } from '@automattic/api-core';
 
 type FeatureObject = {
@@ -17,10 +17,12 @@ type FeatureObject = {
 
 const CancelPurchaseFeatureList = ( {
 	purchase,
+	displayVariant,
 	cancellationFeatures,
 	cancellationChanges,
 }: {
 	purchase: Purchase;
+	displayVariant: DisplayVariant;
 	cancellationFeatures: CancellationFeature[];
 	cancellationChanges: FeatureObject[];
 } ) => {
@@ -32,11 +34,7 @@ const CancelPurchaseFeatureList = ( {
 	const expirationDate = intlFormat( expiryDate, { dateStyle: 'medium' }, { locale: 'en-US' } );
 
 	const introCopy = ( () => {
-		const flowType = getPurchaseCancellationFlowType( purchase );
-		if (
-			flowType === CANCEL_FLOW_TYPE.REMOVE ||
-			flowType === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND
-		) {
+		if ( displayVariant === 'remove' ) {
 			return __( 'When you remove your plan, you will lose access to:' );
 		}
 		return sprintf(

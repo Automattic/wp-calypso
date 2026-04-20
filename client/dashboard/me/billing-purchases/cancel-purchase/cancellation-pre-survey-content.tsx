@@ -1,3 +1,4 @@
+import { DisplayVariant } from '../../../utils/purchase';
 import CancellationMainContent from './cancellation-main-content';
 import DomainOptionsContent from './domain-options-content';
 import type { CancelPurchaseState } from './types';
@@ -10,6 +11,7 @@ import type {
 
 interface CancellationPreSurveyContentProps {
 	purchase: Purchase;
+	displayVariant: DisplayVariant;
 	includedDomainPurchase?: Purchase;
 	atomicTransfer?: AtomicTransfer;
 	selectedDomain?: Domain;
@@ -28,6 +30,7 @@ interface CancellationPreSurveyContentProps {
 
 export default function CancellationPreSurveyContent( {
 	purchase,
+	displayVariant,
 	includedDomainPurchase,
 	atomicTransfer,
 	selectedDomain,
@@ -46,6 +49,7 @@ export default function CancellationPreSurveyContent( {
 	return state.showDomainOptionsStep ? (
 		<DomainOptionsContent
 			purchase={ purchase }
+			displayVariant={ displayVariant }
 			includedDomainPurchase={ includedDomainPurchase }
 			atomicTransfer={ atomicTransfer }
 			state={ state }
@@ -56,6 +60,7 @@ export default function CancellationPreSurveyContent( {
 	) : (
 		<CancellationMainContent
 			purchase={ purchase }
+			displayVariant={ displayVariant }
 			includedDomainPurchase={ includedDomainPurchase }
 			atomicTransfer={ atomicTransfer }
 			selectedDomain={ selectedDomain }

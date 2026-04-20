@@ -27,7 +27,7 @@ import {
 import config from '@automattic/calypso-config';
 import { invokeSurvicateEvent } from '@automattic/survicate';
 import { useSuspenseQuery, useQuery, useMutation } from '@tanstack/react-query';
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, useSearch } from '@tanstack/react-router';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { _n, sprintf, __ } from '@wordpress/i18n';
@@ -45,7 +45,10 @@ import { shuffleArray } from '../../../utils/collection';
 import {
 	CANCEL_FLOW_TYPE,
 	CancelFlowType,
+	getCancelIntentFromSearch,
+	getDisplayVariant,
 	getIncludedDomainPurchase,
+	getMutationFlowType,
 	getPurchaseCancellationFlowType,
 	hasAmountAvailableToRefund,
 	hasMarketplaceProduct,
@@ -387,6 +390,13 @@ export default function CancelPurchase() {
 		surveyCompletedMutator.mutate( 'true' );
 	};
 	const flowType = getPurchaseCancellationFlowType( purchase );
+	// Intent is set when the user clicks either Cancel or Remove on Purchase
+	// Settings (behind the purchases/update-cancel-refunds flag). When present,
+	// it drives both the screen variant (copy) and the backend mutation.
+	// When absent (flag-off, old deep link), fall back to today's flowType heuristic.
+	const intent = getCancelIntentFromSearch( useSearch( { from: cancelPurchaseRoute.fullPath } ) );
+	const displayVariant = getDisplayVariant( intent, flowType );
+	const mutationFlowType = getMutationFlowType( intent, purchase );
 
 	const cancellationOffer = cancellationOffers?.length ? cancellationOffers[ 0 ] : undefined;
 
@@ -1098,16 +1108,22 @@ export default function CancelPurchase() {
 		// Set loading state to show busy button
 		setState( ( state ) => ( { ...state, isLoading: true } ) );
 
-		// Determine effective flow type based on cancel intent
-		let effectiveFlowType = flowType;
-
-		// If user clicked refund button, use refund flow
-		if ( state.cancelIntent === 'refund' ) {
-			effectiveFlowType = CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND;
-		}
-		// If default Cancel button on refundable wpcom plan, use auto-renew flow
-		else if ( flowType === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND && showRefundEligibilityNotice ) {
-			effectiveFlowType = CANCEL_FLOW_TYPE.CANCEL_AUTORENEW;
+		// When intent is URL-sourced (user arrived via the Purchase Settings
+		// Cancel/Remove buttons), mutationFlowType is already the correct choice.
+		// When intent is absent, fall back to today's banner-driven override:
+		// refund intent set by the eligibility banner forces the refund flow;
+		// the default Cancel on a refundable plan + treatment banner falls back to
+		// auto-renew off.
+		let effectiveFlowType: CancelFlowType = mutationFlowType;
+		if ( ! intent ) {
+			if ( state.cancelIntent === 'refund' ) {
+				effectiveFlowType = CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND;
+			} else if (
+				flowType === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND &&
+				showRefundEligibilityNotice
+			) {
+				effectiveFlowType = CANCEL_FLOW_TYPE.CANCEL_AUTORENEW;
+			}
 		}
 
 		switch ( effectiveFlowType ) {
@@ -1332,7 +1348,7 @@ export default function CancelPurchase() {
 				size="small"
 				header={
 					<PageHeader
-						title={ <CancelHeaderTitle flowType={ flowType } purchase={ purchase } /> }
+						title={ <CancelHeaderTitle displayVariant={ displayVariant } purchase={ purchase } /> }
 						prefix={ <Breadcrumbs length={ 4 } /> }
 						description={ __( 'Please confirm that you want to remove this domain.' ) }
 					/>
@@ -1369,7 +1385,7 @@ export default function CancelPurchase() {
 				<PageHeader
 					title={
 						<CancelHeaderTitle
-							flowType={ flowType }
+							displayVariant={ displayVariant }
 							purchase={ purchase }
 							surveyStep={ state.surveyStep }
 						/>
@@ -1381,13 +1397,17 @@ export default function CancelPurchase() {
 			notices={
 				! state.surveyShown &&
 				! state.showDomainOptionsStep &&
-				( showRefundEligibilityNotice ? (
+				// Suppress the "Remove plan and claim refund" promo banner when
+				// intent is already set from the URL — the user has expressed
+				// intent; the banner CTA would be redundant (and contradictory
+				// for intent=cancel).
+				( ! intent && showRefundEligibilityNotice ? (
 					<RefundEligibilityNotice
 						purchase={ purchase }
 						onClaimRefund={ onCancellationStartForRefund }
 					/>
 				) : (
-					<TimeRemainingNotice purchase={ purchase } />
+					<TimeRemainingNotice purchase={ purchase } displayVariant={ displayVariant } />
 				) )
 			}
 		>
@@ -1505,6 +1525,7 @@ export default function CancelPurchase() {
 							{ ! state.surveyShown && (
 								<CancellationPreSurveyContent
 									purchase={ purchase }
+									displayVariant={ displayVariant }
 									includedDomainPurchase={ includedDomainPurchase }
 									atomicTransfer={ atomicTransfer }
 									selectedDomain={ selectedDomain }

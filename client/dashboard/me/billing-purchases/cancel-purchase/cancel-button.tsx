@@ -4,8 +4,7 @@ import {
 	hasAmountAvailableToRefund,
 	isNonDomainSubscription,
 	isOneTimePurchase,
-	getPurchaseCancellationFlowType,
-	CANCEL_FLOW_TYPE,
+	DisplayVariant,
 } from '../../../utils/purchase';
 import { ATOMIC_REVERT_STEP } from './cancel-purchase-form/steps';
 import type { CancelPurchaseState } from './types';
@@ -13,6 +12,7 @@ import type { Purchase, AtomicTransfer } from '@automattic/api-core';
 
 interface CancelButtonProps {
 	purchase: Purchase;
+	displayVariant: DisplayVariant;
 	includedDomainPurchase?: Purchase;
 	atomicTransfer?: AtomicTransfer;
 	state: CancelPurchaseState;
@@ -23,6 +23,7 @@ interface CancelButtonProps {
 
 export default function CancelButton( {
 	purchase,
+	displayVariant,
 	includedDomainPurchase,
 	atomicTransfer,
 	state,
@@ -50,10 +51,7 @@ export default function CancelButton( {
 			return __( 'Continue with cancellation' );
 		}
 
-		if (
-			getPurchaseCancellationFlowType( purchase ) === CANCEL_FLOW_TYPE.REMOVE &&
-			isNonDomainSubscription( purchase )
-		) {
+		if ( displayVariant === 'remove' && isNonDomainSubscription( purchase ) ) {
 			if ( purchase.is_plan ) {
 				return __( 'Remove plan' );
 			}
@@ -61,7 +59,11 @@ export default function CancelButton( {
 			return __( 'Remove product' );
 		}
 
-		if ( hasAmountAvailableToRefund( purchase ) ) {
+		if ( displayVariant === 'remove' && purchase.is_domain_registration ) {
+			return __( 'Remove domain' );
+		}
+
+		if ( hasAmountAvailableToRefund( purchase ) && displayVariant !== 'remove' ) {
 			if ( purchase.is_domain_registration ) {
 				return __( 'Cancel domain and refund' );
 			}

@@ -2,18 +2,18 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { intlFormat, isToday, isBefore } from 'date-fns';
 import Notice from '../../../components/notice';
-import {
-	isPartnerPurchase,
-	getPurchaseCancellationFlowType,
-	CANCEL_FLOW_TYPE,
-} from '../../../utils/purchase';
+import { isPartnerPurchase, DisplayVariant } from '../../../utils/purchase';
 import type { Purchase } from '@automattic/api-core';
 
 interface TimeRemainingNoticeProps {
 	purchase: Purchase;
+	displayVariant: DisplayVariant;
 }
 
-export default function TimeRemainingNotice( { purchase }: TimeRemainingNoticeProps ) {
+export default function TimeRemainingNotice( {
+	purchase,
+	displayVariant,
+}: TimeRemainingNoticeProps ) {
 	// returns early if there's no product or accounting for the edge case that the plan expires today (or somehow already expired)
 	// in this case, do not show the time remaining for the plan
 	const purchaseExpiryDate = new Date( purchase.expiry_date );
@@ -22,10 +22,9 @@ export default function TimeRemainingNotice( { purchase }: TimeRemainingNoticePr
 		return null;
 	}
 
-	// If the plan is being immediately removed (refund or explicit removal), don't show
+	// If the plan is being immediately removed (Remove confirmation), don't show
 	// "available until [date]" — the plan won't be available, it's being removed now.
-	const flowType = getPurchaseCancellationFlowType( purchase );
-	if ( flowType === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND || flowType === CANCEL_FLOW_TYPE.REMOVE ) {
+	if ( displayVariant === 'remove' ) {
 		return null;
 	}
 
