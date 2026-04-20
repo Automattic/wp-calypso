@@ -301,7 +301,7 @@ export function getPurchasesFieldDefinitions( {
 		},
 		{
 			id: 'status',
-			label: translate( 'Expires/Renews on' ),
+			label: translate( 'Renewal/Expiry' ),
 			type: 'text',
 			enableGlobalSearch: true,
 			enableSorting: true,
