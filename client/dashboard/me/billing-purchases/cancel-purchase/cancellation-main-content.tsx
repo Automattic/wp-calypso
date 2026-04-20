@@ -3,8 +3,7 @@ import { sprintf, __ } from '@wordpress/i18n';
 import {
 	isAkismetProduct,
 	isGSuiteOrGoogleWorkspaceProductSlug,
-	getPurchaseCancellationFlowType,
-	CANCEL_FLOW_TYPE,
+	DisplayVariant,
 } from '../../../utils/purchase';
 import BackupRetentionOptionOnCancelPurchase from './backup-retention-management/retention-option-on-cancel-purchase';
 import CancelPurchaseDomainOptions from './domain-options';
@@ -22,6 +21,7 @@ import type {
 
 interface CancellationMainContentProps {
 	purchase: Purchase;
+	displayVariant: DisplayVariant;
 	includedDomainPurchase?: Purchase;
 	atomicTransfer?: AtomicTransfer;
 	selectedDomain?: Domain;
@@ -50,6 +50,7 @@ const willShowDomainOptionsRadioButtons = (
 
 export default function CancellationMainContent( {
 	purchase,
+	displayVariant,
 	includedDomainPurchase,
 	atomicTransfer,
 	selectedDomain,
@@ -142,11 +143,12 @@ export default function CancellationMainContent( {
 
 			<CancelPurchaseFeatureList
 				purchase={ purchase }
+				displayVariant={ displayVariant }
 				cancellationFeatures={ cancellationFeatures }
 				cancellationChanges={ cancellationChanges }
 			/>
 
-			{ getPurchaseCancellationFlowType( purchase ) !== CANCEL_FLOW_TYPE.REMOVE && (
+			{ displayVariant !== 'remove' && (
 				<CancelPurchaseRefundInformation
 					purchase={ purchase }
 					isJetpackPurchase={ isJetpack }
@@ -156,6 +158,7 @@ export default function CancellationMainContent( {
 
 			<PlanProductRevertContent
 				purchase={ purchase }
+				displayVariant={ displayVariant }
 				includedDomainPurchase={ includedDomainPurchase }
 				atomicTransfer={ atomicTransfer }
 				state={ state }

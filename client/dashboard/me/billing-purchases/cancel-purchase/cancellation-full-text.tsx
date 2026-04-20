@@ -1,18 +1,21 @@
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { intlFormat } from 'date-fns';
+import { DisplayVariant } from '../../../utils/purchase';
 import RefundAmountString from './refund-amount-string';
 import { useShowRefundEligibilityNotice } from './use-show-refund-eligibility-notice';
 import type { Purchase } from '@automattic/api-core';
 
 interface CancellationFullTextProps {
 	purchase: Purchase;
+	displayVariant: DisplayVariant;
 	cancelBundledDomain: boolean;
 	includedDomainPurchase?: Purchase;
 }
 
 export default function CancellationFullText( {
 	purchase,
+	displayVariant,
 	cancelBundledDomain,
 	includedDomainPurchase,
 }: CancellationFullTextProps ) {
@@ -25,6 +28,12 @@ export default function CancellationFullText( {
 		cancelBundledDomain,
 		includedDomainPurchase,
 	} );
+
+	// On the Remove confirmation screen we surface refund amount inline (not via
+	// the refund-text block), so this component has nothing to say.
+	if ( displayVariant === 'remove' ) {
+		return null;
+	}
 
 	// Skip refund text for refundable dotcom plans since refund is offered via the notice
 	if ( refundAmountString && ! showRefundEligibilityNotice ) {

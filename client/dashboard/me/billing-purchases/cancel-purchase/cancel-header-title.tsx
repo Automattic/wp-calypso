@@ -1,23 +1,23 @@
 import { __ } from '@wordpress/i18n';
-import { CANCEL_FLOW_TYPE, CancelFlowType } from '../../../utils/purchase';
+import { DisplayVariant } from '../../../utils/purchase';
 import { CANCELLATION_OFFER_STEP } from './cancel-purchase-form/steps';
 import type { Purchase } from '@automattic/api-core';
 
 interface CancelHeaderTitleProps {
-	flowType: CancelFlowType;
+	displayVariant: DisplayVariant;
 	purchase: Purchase;
 	surveyStep?: string;
 }
 
 export default function CancelHeaderTitle( {
-	flowType,
+	displayVariant,
 	purchase,
 	surveyStep,
 }: CancelHeaderTitleProps ) {
 	if ( surveyStep === CANCELLATION_OFFER_STEP ) {
 		return __( 'Thanks for your feedback' );
 	}
-	if ( flowType === CANCEL_FLOW_TYPE.REMOVE ) {
+	if ( displayVariant === 'remove' ) {
 		if ( purchase.is_plan ) {
 			return __( 'Remove plan' );
 		}
