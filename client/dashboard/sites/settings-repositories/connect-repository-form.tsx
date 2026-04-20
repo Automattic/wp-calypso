@@ -506,7 +506,7 @@ export const ConnectRepositoryForm = ( {
 
 		return createInterpolateElement(
 			__(
-				'Missing GitHub repositories? <adjustPermissions>Adjust permissions on GitHub</adjustPermissions> or <createRepo>learn how to create a repository</createRepo>.'
+				'Missing GitHub repositories? <adjustPermissions>Adjust permissions on GitHub</adjustPermissions> or <createRepo>create a new repository</createRepo>.'
 			),
 			{
 				adjustPermissions: (
@@ -515,12 +515,7 @@ export const ConnectRepositoryForm = ( {
 						children={ null }
 					/>
 				),
-				createRepo: (
-					<ExternalLink
-						href="https://developer.wordpress.com/docs/developer-tools/github-deployments/create-repo-existing-source/"
-						children={ null }
-					/>
-				),
+				createRepo: <ExternalLink href="https://github.com/new" children={ null } />,
 			}
 		);
 	}, [ isLoadingRepositories, repositories, selectedInstallation ] );

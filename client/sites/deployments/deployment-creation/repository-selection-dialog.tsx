@@ -41,14 +41,9 @@ export const RepositorySelectionDialog = ( {
 					align="left"
 					headerText={ __( 'Select repository' ) }
 					subHeaderText={ createInterpolateElement(
-						__( 'Pick an existing repository or <docsLink>create a new one</docsLink>.' ),
+						__( 'Pick an existing repository or <docsLink>create a new repository</docsLink>.' ),
 						{
-							docsLink: (
-								<ExternalLink
-									href="https://developer.wordpress.com/docs/developer-tools/github-deployments/create-github-deployment-source-files/"
-									target="_blank"
-								/>
-							),
+							docsLink: <ExternalLink href="https://github.com/new" target="_blank" />,
 						}
 					) }
 				/>
