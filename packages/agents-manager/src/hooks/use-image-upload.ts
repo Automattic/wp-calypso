@@ -169,3 +169,5 @@ export function useImageUpload(): UseImageUploadResult {
 		uploadImagesToWordPress,
 	};
 }
+
+export type ImageUploadHook = typeof useImageUpload;

@@ -12,14 +12,10 @@
  */
 
 import { getAgentManager, UIMessage } from '@automattic/agenttic-client';
+import type { ImageUploadHook } from '../hooks/use-image-upload';
 import type { ToolProvider, ContextProvider, Suggestion, BigSkyMessage } from '../types';
 import type { UseAgentChatReturn } from '@automattic/agenttic-client';
-import type {
-	MarkdownComponents,
-	MarkdownExtensions,
-	UploadedImage,
-	UploadingImage,
-} from '@automattic/agenttic-ui';
+import type { MarkdownComponents, MarkdownExtensions } from '@automattic/agenttic-ui';
 
 /**
  * Check if the unified experience flag is set via agentsManagerData.
@@ -99,43 +95,6 @@ type ChatComponentType =
  */
 export type GetChatComponent = ( type: ChatComponentType ) => React.ComponentType< unknown > | null;
 
-export type ImagePreview = {
-	id: string;
-	url: string;
-	name: string;
-	alt: string;
-	mime_type: string;
-	file: File;
-};
-
-export type MediaObject = {
-	id: number;
-	title: string;
-	fileName: string;
-	fileType: string;
-	fileSize: number;
-	dimensions: {
-		width: number;
-		height: number;
-	};
-	uploadDate: string;
-	uploadedBy: number;
-	url: string;
-	alt: string;
-	caption: string;
-};
-
-export type UseImageUploadResult = {
-	pendingImages: ImagePreview[];
-	uploadingImages: UploadingImage[];
-	isUploadingImages: boolean;
-	handleFilesSelected: ( files: File[] ) => Promise< void >;
-	handleRemoveImage: ( image: UploadedImage ) => void;
-	uploadImagesToWordPress: () => Promise< MediaObject[] >;
-};
-
-export type ImageUploadHook = () => UseImageUploadResult;
-
 /**
  * Checkpoint return type - for saving and restoring editor state so that AI actions can be undone.
  */
@@ -158,6 +117,8 @@ export type UseCheckpointReturn = {
 
 /** Hook that returns checkpoint utilities for the current editor session. */
 export type UseCheckpointHook = () => UseCheckpointReturn;
+
+export type { ImageUploadHook };
 
 export interface LoadedProviders {
 	toolProvider?: ToolProvider;

@@ -15,8 +15,8 @@ import { AGENTS_MANAGER_STORE } from '../stores';
 import { clearSessionId } from '../utils/agent-session';
 import { createAgentConfig } from '../utils/create-agent-config';
 import {
-	ImageUploadHook,
 	loadExternalProviders,
+	type ImageUploadHook,
 	type LoadedProviders,
 } from '../utils/load-external-providers';
 import AgentDock from './agent-dock';
