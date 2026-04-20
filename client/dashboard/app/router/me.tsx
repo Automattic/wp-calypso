@@ -392,6 +392,11 @@ export const cancelPurchaseRoute = createRoute( {
 	},
 	getParentRoute: () => purchaseSettingsRoute,
 	path: 'cancel',
+	validateSearch: ( search ): { intent?: 'cancel' | 'remove' } => {
+		return search.intent === 'cancel' || search.intent === 'remove'
+			? { intent: search.intent }
+			: {};
+	},
 	loader: async ( { parentMatchPromise } ) => {
 		const parentMatch = await parentMatchPromise;
 		const purchase = parentMatch.loaderData?.purchase;
