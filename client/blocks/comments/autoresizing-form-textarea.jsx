@@ -18,6 +18,7 @@ const AutoresizingFormTextarea = (
 		onBlur,
 		onChange,
 		enableAutoFocus,
+		siteId,
 		...otherProps
 	},
 	forwardedRef
