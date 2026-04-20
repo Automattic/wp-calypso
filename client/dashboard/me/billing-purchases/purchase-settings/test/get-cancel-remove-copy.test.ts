@@ -1,19 +1,3 @@
-/**
- * @jest-environment node
- */
-jest.mock( '@wordpress/i18n', () => {
-	const format = ( tpl: string, args?: Record< string, string | number > ) => {
-		if ( ! args ) {
-			return tpl;
-		}
-		return tpl.replace( /%\((\w+)\)[sd]/g, ( _, key ) => String( args[ key ] ?? '' ) );
-	};
-	return {
-		__: ( text: string ) => text,
-		sprintf: ( tpl: string, args: Record< string, string | number > ) => format( tpl, args ),
-	};
-} );
-
 import {
 	getCancelButtonCopy,
 	getRemoveButtonCopy,

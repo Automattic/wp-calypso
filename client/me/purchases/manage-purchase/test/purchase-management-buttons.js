@@ -165,8 +165,8 @@ describe( 'Purchase Management Buttons', () => {
 				</ReduxProvider>
 			</QueryClientProvider>
 		);
-		expect( await screen.findByText( /will be removed immediately/ ) ).toBeInTheDocument();
-		expect( await screen.findByText( /Remove plan/ ) ).toBeInTheDocument();
+		expect( await screen.findByText( /will be removed immediately/ ) ).toBeVisible();
+		expect( await screen.findByText( /Remove plan/ ) ).toBeVisible();
 		expect( screen.queryByText( /Cancel subscription/ ) ).not.toBeInTheDocument();
 	} );
 
@@ -198,10 +198,8 @@ describe( 'Purchase Management Buttons', () => {
 
 		// Multiple elements may contain "remove" text (button + notice), so use findAllByText
 		expect( ( await screen.findAllByText( /remove/i ) ).length ).toBeGreaterThan( 0 );
-		expect(
-			await screen.findByText( /Akismet Plus will be removed immediately/ )
-		).toBeInTheDocument();
-		expect( await screen.findByText( /Remove Akismet Plus/ ) ).toBeInTheDocument();
+		expect( await screen.findByText( /Akismet Plus will be removed immediately/ ) ).toBeVisible();
+		expect( await screen.findByText( /Remove Akismet Plus/ ) ).toBeVisible();
 	} );
 
 	it( "does't render renew buttons for domain with pending registration at registry", async () => {
