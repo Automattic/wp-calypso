@@ -1,6 +1,6 @@
 import { __experimentalVStack as VStack, ToggleControl } from '@wordpress/components';
-import { useMemo, useCallback } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { useMemo, useCallback } from 'react';
 import { Card, CardBody } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
 import { Text } from '../../../components/text';

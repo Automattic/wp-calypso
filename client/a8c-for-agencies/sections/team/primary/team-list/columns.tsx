@@ -179,11 +179,6 @@ export const ActionColumn = ( {
 			  ]
 			: [
 					{
-						name: 'password-reset',
-						label: translate( 'Send password reset' ),
-						isEnabled: false, // FIXME: Implement this action
-					},
-					{
 						name: 'transfer-ownership',
 						label: translate( 'Transfer ownership' ),
 						isEnabled: member.status === 'active' && currentUser.email !== member.email,

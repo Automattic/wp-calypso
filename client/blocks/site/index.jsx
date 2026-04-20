@@ -1,5 +1,5 @@
+import './style.scss';
 import { isEnabled } from '@automattic/calypso-config';
-import { Gridicon } from '@automattic/components';
 import { Icon, chevronDown } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
@@ -22,8 +22,6 @@ import {
 } from 'calypso/state/sites/domains/selectors';
 import { isTrialSite } from 'calypso/state/sites/plans/selectors';
 import { getSite, getSiteOption } from 'calypso/state/sites/selectors';
-
-import './style.scss';
 
 const noop = () => {};
 
@@ -66,6 +64,7 @@ class Site extends Component {
 		isP2Hub: PropTypes.bool,
 		isSiteP2: PropTypes.bool,
 		defaultIcon: PropTypes.node,
+		iconSize: PropTypes.number,
 	};
 
 	onSelect = ( event ) => {
@@ -186,10 +185,9 @@ class Site extends Component {
 					aria-label={ site.domain }
 				>
 					<SiteIcon
-						// eslint-disable-next-line wpcalypso/jsx-gridicon-size
-						defaultIcon={ this.props.defaultIcon || <Gridicon icon="globe" size={ 28 } /> }
+						defaultIcon={ this.props.defaultIcon }
 						site={ site }
-						size={ 32 }
+						size={ this.props.iconSize || 32 }
 					/>
 					<div className="site__info">
 						{ ! this.props.showChevronDownIcon ? (

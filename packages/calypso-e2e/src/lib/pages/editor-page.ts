@@ -89,6 +89,13 @@ export class EditorPage {
 		);
 		this.editorPopoverMenuComponent = new EditorPopoverMenuComponent( page, this.editor );
 		this.cookieBannerComponent = new CookieBannerComponent( page, this.editor );
+
+		// Automatically dismiss the Real-Time Collaboration notice modal whenever
+		// it appears and blocks an action. Using addLocatorHandler ensures it is
+		// caught regardless of when during the test it pops up.
+		this.page.addLocatorHandler( this.page.locator( '.rtc-notice-modal' ), async () => {
+			await this.page.locator( '.rtc-notice-modal' ).getByRole( 'button' ).first().click();
+		} );
 	}
 
 	//#region Generic and Shell Methods
@@ -708,13 +715,21 @@ export class EditorPage {
 	}
 
 	/**
-	 * Enters SEO details on the Editor sidebar.
+	 * Enters SEO details on the document sidebar.
+	 *
+	 * The SEO fields are located in the main document sidebar under the
+	 * Post/Page tab, not the Jetpack sidebar.
 	 *
 	 * @param param0 Keyed object parameter.
 	 * @param {string} param0.title SEO title.
 	 * @param {string} param0.description SEO description.
 	 */
 	async enterSEODetails( { title, description }: { title: string; description: string } ) {
+		await Promise.race( [
+			this.editorSettingsSidebarComponent.clickTab( 'Page' ),
+			this.editorSettingsSidebarComponent.clickTab( 'Post' ),
+		] );
+		await this.editorSettingsSidebarComponent.expandSection( 'SEO' );
 		await this.editorSettingsSidebarComponent.enterText( title, { label: 'SEO TITLE' } );
 		await this.editorSettingsSidebarComponent.enterText( description, {
 			label: 'SEO DESCRIPTION',
@@ -778,8 +793,25 @@ export class EditorPage {
 		// Every publish action requires at least one click on the EditorToolbarComponent.
 		actionsArray.push( this.editorToolbarComponent.clickPublish() );
 
-		// Trigger a secondary/confirmation click if needed
-		actionsArray.push( this.editorPublishPanelComponent.publish() );
+		// Trigger a secondary/confirmation click if needed.
+		// When multiple entities need saving (e.g., a post + a synced jetpack_form),
+		// Gutenberg shows a multi-entity save panel instead of the normal publish panel.
+		// Race both so whichever panel appears first gets handled immediately.
+		actionsArray.push(
+			( async () => {
+				// Try the normal publish panel first (returns gracefully after 5s if not found).
+				await this.editorPublishPanelComponent.publish();
+				// If the normal panel wasn't found, try the multi-entity save panel
+				// (shown when a post + synced jetpack_form both need saving).
+				const editorParent = await this.editor.parent();
+				const saveButton = editorParent.locator(
+					'.entities-saved-states__panel button:has-text("Save")'
+				);
+				if ( await saveButton.isVisible( { timeout: 2000 } ).catch( () => false ) ) {
+					await saveButton.click();
+				}
+			} )()
+		);
 
 		// Resolve the promises.
 		const [ response ] = await Promise.all( [
@@ -909,8 +941,8 @@ export class EditorPage {
 		 * Closure to confirm that post is shown on screen as expected.
 		 *
 		 * In rare cases, visiting the post immediately after it has been published can result
-		 * in the post not being visible to the public yet. In such cases, an error message is
-		 * instead shown to the user.
+		 * in the post not being visible to the public yet. In such cases, an error message or
+		 * 404 page is instead shown to the user.
 		 *
 		 * When used in conjunction with `reloadAndRetry` this method will reload the page
 		 * multiple times to ensure the post content is shown.
@@ -918,7 +950,14 @@ export class EditorPage {
 		 * @param page
 		 */
 		async function confirmPostShown( page: Page ): Promise< void > {
-			await page.getByRole( 'main' ).waitFor( { timeout: timeout } );
+			const main = page.getByRole( 'main' );
+			await main.waitFor( { timeout: timeout } );
+
+			const error404 = main.locator( 'div.error-404' );
+			if ( ( await error404.count() ) > 0 ) {
+				await page.waitForTimeout( 1000 ); // Give it a second before retrying.
+				throw new Error( 'Post not found - 404 error displayed' );
+			}
 		}
 	}
 

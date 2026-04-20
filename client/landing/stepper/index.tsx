@@ -2,14 +2,25 @@ import '@automattic/calypso-polyfills';
 import accessibleFocus from '@automattic/accessible-focus';
 import { initializeAnalytics } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import { UserActions, User as UserStore } from '@automattic/data-stores';
+import {
+	setRequester as setDataStoresRequester,
+	UserActions,
+	User as UserStore,
+	HelpCenter,
+} from '@automattic/data-stores';
+import {
+	AI_SITE_BUILDER_FLOW,
+	AI_SITE_BUILDER_SPEC_FLOW,
+	DOMAIN_FLOW,
+	WOO_HOSTED_PLANS_FLOW,
+	setRequester as setOnboardingRequester,
+} from '@automattic/onboarding';
 import { QueryClientProvider } from '@tanstack/react-query';
-import { dispatch } from '@wordpress/data';
+import { useSelect, dispatch } from '@wordpress/data';
 import defaultCalypsoI18n from 'i18n-calypso';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
-import { requestAllBlogsAccess } from 'wpcom-proxy-request';
 import { setupCountryCode } from 'calypso/boot/geolocation';
 import { setupLocale } from 'calypso/boot/locale';
 import AsyncLoad from 'calypso/components/async-load';
@@ -21,6 +32,7 @@ import loadDevHelpers from 'calypso/lib/load-dev-helpers';
 import { addQueryArgs } from 'calypso/lib/url';
 import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
 import { onDisablePersistence } from 'calypso/lib/user/store';
+import wpcom from 'calypso/lib/wp';
 import { createReduxStore } from 'calypso/state';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
 import { getInitialState, getStateFromCache, persistOnChange } from 'calypso/state/initial-state';
@@ -30,6 +42,7 @@ import { setStore } from 'calypso/state/redux-store';
 import { setCurrentFlowName } from 'calypso/state/signup/flow/actions';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { FlowRenderer } from './declarative-flow/internals';
+import { tryPreload } from './declarative-flow/internals/hooks/use-preload-steps';
 import 'calypso/assets/stylesheets/style.scss';
 import { createSessionId } from './declarative-flow/internals/state-manager/create-session-id';
 import availableFlows from './declarative-flow/registered-flows';
@@ -38,12 +51,13 @@ import { setupWpDataDebug } from './utils/devtools';
 import { enhanceFlowWithUtilityFunctions } from './utils/enhance-flow-with-utils';
 import { enhanceFlowWithAuth, injectUserStepInSteps } from './utils/enhanceFlowWithAuth';
 import redirectPathIfNecessary from './utils/flow-redirect-handler';
-import { DEFAULT_FLOW, getFlowFromURL } from './utils/get-flow-from-url';
+import { DEFAULT_FLOW, getFlowFromURL, getStepFromURL } from './utils/get-flow-from-url';
 import { startStepperPerformanceTracking } from './utils/performance-tracking';
 import { getSessionId } from './utils/use-session-id';
 import { WindowLocaleEffectManager } from './utils/window-locale-effect-manager';
-import type { CurrentUser } from '@automattic/data-stores';
+import type { CurrentUser, HelpCenterSelect, HelpCenterDispatch } from '@automattic/data-stores';
 import type { AnyAction } from 'redux';
+import type { WpcomRequestParams } from 'wpcom-proxy-request';
 
 declare const window: AppWindow;
 
@@ -61,6 +75,37 @@ const getSiteIdFromURL = () => {
 	return siteId ? Number( siteId ) : null;
 };
 
+/**
+ * Flows that should not render the Help Center. The stepper has no masterbar or help button, so
+ * the Help Center can only auto-open from persisted preferences in these flows, which is
+ * disruptive. Flows that programmatically open the Help Center (e.g., hundred-year-plan,
+ * do-it-for-me) should NOT be added to this set.
+ */
+const FLOWS_WITHOUT_HELP_CENTER = new Set< string >( [
+	AI_SITE_BUILDER_FLOW,
+	AI_SITE_BUILDER_SPEC_FLOW,
+	DOMAIN_FLOW,
+] );
+
+const HELP_CENTER_STORE = HelpCenter.register();
+
+/**
+ * Mounts the Help Center only when programmatically opened. Prevents the disruptive auto-open
+ * from persisted preferences while still allowing on-demand opens (e.g., plan downgrade support).
+ */
+function LazyHelpCenter( { currentUser }: { currentUser: UserStore.CurrentUser } ) {
+	const isHelpCenterShown = useSelect(
+		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).isHelpCenterShown(),
+		[]
+	);
+
+	if ( ! isHelpCenterShown ) {
+		return null;
+	}
+
+	return <AsyncHelpCenterApp currentUser={ currentUser } sectionName="stepper" />;
+}
+
 async function main() {
 	const { pathname, search } = window.location;
 
@@ -70,6 +115,33 @@ async function main() {
 	}
 	// Sympathy mode clears cache randomly, Stepper uses the cache to persist state (not really a cache).
 	config.enable( 'no-force-sympathy' );
+
+	if ( config.isEnabled( 'oauth' ) ) {
+		// Build a requester that delegates to wpcom.req.get/post so requests go
+		// through the standard lib/wp path (which injects the OAuth token via
+		// sendRequest). We decompose the flat WpcomRequestParams into the
+		// (params, query, [body], callback) signature that req.get/post expect.
+		const requester = < T, >( params: WpcomRequestParams ) => {
+			const { query, body, method, ...rest } = params;
+			const queryObj =
+				typeof query === 'string'
+					? Object.fromEntries( new URLSearchParams( query ) )
+					: query || {};
+
+			return new Promise< T >( ( resolve, reject ) => {
+				const cb = ( error: Error, response: T ) => {
+					error ? reject( error ) : resolve( response );
+				};
+				if ( method && ( method as string ).toUpperCase() !== 'GET' ) {
+					wpcom.req.post( { ...rest, method }, queryObj, body, cb );
+				} else {
+					wpcom.req.get( rest, queryObj, cb );
+				}
+			} );
+		};
+		setDataStoresRequester( requester );
+		setOnboardingRequester( requester );
+	}
 
 	const flowName = getFlowFromURL();
 	const flowLoader = availableFlows[ flowName ];
@@ -88,10 +160,6 @@ async function main() {
 
 	// Start tracking performance, bearing in mind this is a full page load.
 	startStepperPerformanceTracking( { fullPageLoad: true } );
-
-	// put the proxy iframe in "all blog access" mode
-	// see https://github.com/Automattic/wp-calypso/pull/60773#discussion_r799208216
-	requestAllBlogsAccess();
 
 	setupWpDataDebug();
 
@@ -153,9 +221,27 @@ async function main() {
 		flowSteps = injectUserStepInSteps( flowSteps ) as typeof flowSteps;
 		flow.__flowSteps = flowSteps;
 		enhanceFlowWithUtilityFunctions( flow );
+
+		// Warm the initial step's chunk so it's ready by the time React.lazy
+		// hits the Suspense boundary.
+		const findStep = ( slug?: string ) =>
+			flowSteps.find( ( s: { slug: string } ) => s.slug === slug );
+
+		tryPreload( findStep( getStepFromURL() || flowSteps[ 0 ]?.slug ) );
+
+		// Logged-out users get redirected to the auth step first; warm it too.
+		if ( ! user ) {
+			tryPreload( findStep( 'user' ) );
+		}
 	} else if ( 'useSteps' in flow ) {
 		// V1 flows have to be enhanced by changing their `useSteps` hook.
 		flow = enhanceFlowWithAuth( flow );
+	}
+
+	// Clear any persisted help_center_open preference before React renders so the
+	// isHelpCenterShown resolver won't auto-open the Help Center in this flow.
+	if ( flowName === WOO_HOSTED_PLANS_FLOW ) {
+		( dispatch( HELP_CENTER_STORE ) as HelpCenterDispatch[ 'dispatch' ] ).showHelpCenter( false );
 	}
 
 	const root = createRoot( document.getElementById( 'wpcom' ) as HTMLElement );
@@ -176,7 +262,24 @@ async function main() {
 							id="notices"
 						/>
 					</BrowserRouter>
-					<AsyncHelpCenterApp currentUser={ user as UserStore.CurrentUser } sectionName="stepper" />
+					{ ! FLOWS_WITHOUT_HELP_CENTER.has( flowName ) &&
+						( flowName === WOO_HOSTED_PLANS_FLOW ? (
+							<LazyHelpCenter currentUser={ user as UserStore.CurrentUser } />
+						) : (
+							<>
+								<AsyncHelpCenterApp
+									requireLogin
+									currentUser={ user as UserStore.CurrentUser }
+									sectionName="stepper"
+								/>
+								<AsyncLoad
+									require="calypso/layout/agents-manager-loader"
+									placeholder={ null }
+									sectionName={ flowName }
+									loadAgentsManager
+								/>
+							</>
+						) ) }
 					{ 'development' === process.env.NODE_ENV && (
 						<AsyncLoad require="calypso/components/webpack-build-monitor" placeholder={ null } />
 					) }

@@ -1,0 +1,14 @@
+.concluded-conversation-footer {
+	width: 100%;
+	text-align: center;
+
+	button.components-button.is-primary {
+		width: 100%;
+		background: var( --color-accent );
+		justify-content: center;
+
+		&:hover {
+			background: var( --color-accent-dark );
+		}
+	}
+}

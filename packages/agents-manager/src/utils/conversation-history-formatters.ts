@@ -7,6 +7,20 @@ import { __, sprintf } from '@wordpress/i18n';
 import { getLocaleSlug } from 'i18n-calypso';
 
 /**
+ * Parse a date string as UTC and return its timestamp
+ * Handles both ISO 8601 ("2025-12-17T13:08:44.000Z") and space-separated ("2025-12-17 13:08:44") formats.
+ * @param dateStr - Date string to parse
+ * @returns UTC timestamp in milliseconds, or `0` if `undefined`
+ */
+export function parseUTCTimestamp( dateStr: string | undefined ): number {
+	if ( ! dateStr ) {
+		return 0;
+	}
+	const normalized = dateStr.includes( 'T' ) ? dateStr : dateStr.replace( ' ', 'T' ) + 'Z';
+	return new Date( normalized ).getTime();
+}
+
+/**
  * Check if two dates represent the same calendar day in the user's local timezone
  * @param date1 - First date to compare
  * @param date2 - Second date to compare

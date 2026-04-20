@@ -3,15 +3,15 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { purchasesRoute } from '../../app/router/me';
 import RouterLinkButton from '../../components/router-link-button';
-import { isTemporarySitePurchase, getSubtitleForDisplay } from '../../utils/purchase';
+import { getSubtitleForDisplay } from '../../utils/purchase';
 import type { Purchase, Site } from '@automattic/api-core';
 
 export function PurchaseProduct( { purchase, site }: { purchase: Purchase; site?: Site } ) {
-	if ( isTemporarySitePurchase( purchase ) ) {
+	if ( purchase.is_attached_to_holding_site ) {
 		return null;
 	}
 
-	const productType = getSubtitleForDisplay( purchase );
+	const productType = purchase.is_domain_registration ? null : getSubtitleForDisplay( purchase );
 
 	if ( site ) {
 		if ( productType && site.name && site.slug ) {

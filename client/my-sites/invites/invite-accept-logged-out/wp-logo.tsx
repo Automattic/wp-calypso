@@ -1,6 +1,27 @@
 import React from 'react';
+import type { PartnerConfig } from 'calypso/lib/partner-branding';
 
-export const WpLoggedOutInviteLogo: React.FC = () => {
+interface WpLoggedOutInviteLogoProps {
+	partnerConfig?: PartnerConfig | null;
+}
+
+export const WpLoggedOutInviteLogo: React.FC< WpLoggedOutInviteLogoProps > = ( {
+	partnerConfig,
+} ) => {
+	const logo = partnerConfig?.logo;
+
+	if ( logo?.src ) {
+		return (
+			<img
+				className="logged-out-wp-logo"
+				src={ logo.src }
+				alt={ logo.alt }
+				width={ logo.width }
+				height={ logo.height }
+			/>
+		);
+	}
+
 	return (
 		<svg
 			className="logged-out-wp-logo"

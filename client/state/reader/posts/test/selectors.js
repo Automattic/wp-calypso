@@ -48,6 +48,46 @@ describe( 'selectors', () => {
 			);
 			expect( call1 ).toBe( call2 );
 		} );
+
+		describe( 'verify getPostMapByPostKey method', () => {
+			test( 'returns the same post when looked up by blogId or feedId key format', () => {
+				const post = { global_ID: 3333, ID: 5, site_ID: 100, feed_ID: 200, feed_item_ID: 50 };
+				const newState = {
+					reader: { posts: { items: { [ post.global_ID ]: post } } },
+				};
+
+				const byBlogKey = getPostByKey( newState, { postId: 5, blogId: 100 } );
+				const byFeedKey = getPostByKey( newState, { postId: 50, feedId: 200 } );
+
+				expect( byBlogKey ).toBe( post );
+				expect( byFeedKey ).toBe( post );
+				expect( byBlogKey ).toBe( byFeedKey );
+			} );
+
+			test( 'returns the same post for any of multiple feed_item_IDs', () => {
+				const post = {
+					global_ID: 4444,
+					ID: 6,
+					site_ID: 101,
+					feed_ID: 201,
+					feed_item_ID: 60,
+					feed_item_IDs: [ 60, 61, 62 ],
+				};
+				const newState = {
+					reader: { posts: { items: { [ post.global_ID ]: post } } },
+				};
+
+				const byFirstFeedItemId = getPostByKey( newState, { postId: 60, feedId: 201 } );
+				const bySecondFeedItemId = getPostByKey( newState, { postId: 61, feedId: 201 } );
+				const byThirdFeedItemId = getPostByKey( newState, { postId: 62, feedId: 201 } );
+				const byBlogKey = getPostByKey( newState, { postId: 6, blogId: 101 } );
+
+				expect( byFirstFeedItemId ).toBe( post );
+				expect( bySecondFeedItemId ).toBe( post );
+				expect( byThirdFeedItemId ).toBe( post );
+				expect( byBlogKey ).toBe( post );
+			} );
+		} );
 	} );
 
 	describe( '#getPostsByKeys()', () => {

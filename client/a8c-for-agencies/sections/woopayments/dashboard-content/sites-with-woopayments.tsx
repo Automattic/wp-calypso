@@ -20,6 +20,7 @@ import {
 	CommissionsPaidColumn,
 	TimeframeCommissionsColumn,
 	WooPaymentsStatusColumn,
+	CommissionEligibilityColumn,
 } from './site-columns';
 import type { SitesWithWooPaymentsState } from '../types';
 
@@ -53,6 +54,7 @@ export default function SitesWithWooPayments() {
 			'commissionsPaid',
 			'timeframeCommissions',
 			'woopaymentsStatus',
+			'commissionEligibility',
 		],
 	} );
 
@@ -115,7 +117,17 @@ export default function SitesWithWooPayments() {
 				label: translate( 'WooPayments Status' ).toUpperCase(),
 				getValue: () => '-',
 				render: ( { item } ) => (
-					<WooPaymentsStatusColumn
+					<WooPaymentsStatusColumn state={ item.state } siteId={ item.blogId } />
+				),
+				enableHiding: false,
+				enableSorting: false,
+			},
+			{
+				id: 'commissionEligibility',
+				label: translate( 'Commission Eligibility' ).toUpperCase(),
+				getValue: () => '-',
+				render: ( { item } ) => (
+					<CommissionEligibilityColumn
 						state={ item.state }
 						siteId={ item.blogId }
 						woopaymentsData={ woopaymentsData }

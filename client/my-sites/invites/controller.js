@@ -5,6 +5,11 @@ import { useTranslate } from 'i18n-calypso';
 import store from 'store';
 import DocumentHead from 'calypso/components/data/document-head';
 import { navigate } from 'calypso/lib/navigate';
+import {
+	detectPartnerConfig,
+	getPartnerConfigFromGarden,
+	getPartnerFormattedWindowTitle,
+} from 'calypso/lib/partner-branding';
 import InviteAccept from 'calypso/my-sites/invites/invite-accept';
 import { getRedirectAfterAccept } from 'calypso/my-sites/invites/utils';
 import { setUserEmailVerified } from 'calypso/state/current-user/actions';
@@ -26,6 +31,11 @@ export function redirectWithoutLocaleifLoggedIn( context, next ) {
 }
 
 export function acceptInvite( context, next ) {
+	// Skip if unified invite flow is handling this request
+	if ( context.useUnifiedInvite ) {
+		return next();
+	}
+
 	const acceptedInvite = store.get( 'invite_accepted' );
 	if ( acceptedInvite ) {
 		debug( 'invite_accepted is set in localStorage' );
@@ -55,8 +65,23 @@ export function acceptInvite( context, next ) {
 
 	const AcceptInviteTitle = () => {
 		const translate = useTranslate();
+		const blogDetails = context.inviteData?.blog_details;
+		const partnerConfig =
+			blogDetails?.is_garden_site && blogDetails.garden
+				? getPartnerConfigFromGarden( blogDetails.garden.partner, blogDetails.garden.name, {
+						persistToSession: true,
+				  } )
+				: detectPartnerConfig();
 
-		return <DocumentHead title={ translate( 'Accept Invite', { textOnly: true } ) } />;
+		return (
+			<DocumentHead
+				title={ getPartnerFormattedWindowTitle(
+					translate( 'Accept Invite', { textOnly: true } ),
+					partnerConfig
+				) }
+				skipTitleFormatting
+			/>
+		);
 	};
 
 	context.primary = (
@@ -69,6 +94,7 @@ export function acceptInvite( context, next ) {
 				authKey={ context.params.auth_key }
 				locale={ context.params.locale }
 				path={ context.path }
+				prefetchedInvite={ context.inviteData }
 			/>
 		</>
 	);

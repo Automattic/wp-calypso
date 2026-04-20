@@ -9,6 +9,7 @@ import { useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { useSiteAdminInterfaceData } from 'calypso/state/sites/hooks';
 import type { SiteExcerptData } from '@automattic/sites';
+import type { View } from '@wordpress/dataviews';
 
 export default function SiteIcon( {
 	site,
@@ -21,7 +22,7 @@ export default function SiteIcon( {
 		site: SiteExcerptData,
 		source: 'site_field' | 'action' | 'list_row_click' | 'environment_switcher'
 	) => void;
-	viewType: 'list' | 'table' | 'grid' | 'breadcrumb' | 'pickerGrid' | 'pickerTable';
+	viewType: View[ 'type' ] | 'breadcrumb';
 	disableClick?: boolean;
 } ) {
 	const { adminUrl } = useSiteAdminInterfaceData( site.ID );

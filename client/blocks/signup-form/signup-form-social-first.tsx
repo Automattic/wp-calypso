@@ -14,6 +14,7 @@ import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selector
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import PasswordlessSignupForm from './passwordless';
 import SocialSignupForm from './social';
+import type { SignupAllowedService } from 'calypso/components/social-buttons/utils';
 import './style.scss';
 
 interface QueryArgs {
@@ -45,6 +46,8 @@ interface SignupFormSocialFirst {
 	backButtonInFooter?: boolean;
 	passDataToNextStep?: boolean;
 	emailLabelText?: string;
+	allowedSocialServices?: SignupAllowedService[];
+	customTosElement?: JSX.Element;
 }
 
 const options = {
@@ -84,6 +87,8 @@ const SignupFormSocialFirst = ( {
 	passDataToNextStep,
 	backButtonInFooter = true,
 	emailLabelText,
+	allowedSocialServices,
+	customTosElement,
 }: SignupFormSocialFirst ) => {
 	const [ currentStep, setCurrentStep ] = useState< Screen >( userEmail ? 'email' : 'initial' );
 	const { __ } = useI18n();
@@ -92,6 +97,11 @@ const SignupFormSocialFirst = ( {
 	const isGravatar = isGravatarOAuth2Client( oauth2Client );
 
 	const renderTermsOfService = () => {
+		// Custom ToS element takes priority (from partner branding)
+		if ( customTosElement ) {
+			return <p className="signup-form-social-first__tos-link">{ customTosElement }</p>;
+		}
+
 		let tosText;
 
 		if ( isWoo ) {
@@ -152,6 +162,8 @@ const SignupFormSocialFirst = ( {
 					disableTosText
 					compact
 					isSocialFirst={ isSocialFirst }
+					shouldShowEmailButton
+					allowedSocialServices={ allowedSocialServices }
 				/>
 			</div>
 			<div className={ getVisibilityClassName( 'email' ) }>

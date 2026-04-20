@@ -133,10 +133,6 @@
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
-
-	&::after {
-		@include long-content-fade();
-	}
 }
 
 .site__badge {

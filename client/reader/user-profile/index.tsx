@@ -1,3 +1,4 @@
+import './style.scss';
 import page from '@automattic/calypso-router';
 import { useTranslate, fixMe } from 'i18n-calypso';
 import { useEffect } from 'react';
@@ -9,9 +10,10 @@ import UserProfileHeader from 'calypso/reader/user-profile/components/user-profi
 import UserLists from 'calypso/reader/user-profile/views/lists';
 import UserPosts from 'calypso/reader/user-profile/views/posts';
 import UserRecommendedBlogs from 'calypso/reader/user-profile/views/recommended-blogs';
+import UserSites from 'calypso/reader/user-profile/views/sites';
 import { requestUser } from 'calypso/state/reader/users/actions';
 import getReaderUser from 'calypso/state/selectors/get-reader-user';
-import './style.scss';
+import ReaderMain from '../components/reader-main';
 
 export interface UserProfileProps {
 	userLogin: string;
@@ -74,10 +76,12 @@ export function UserProfile( props: UserProfileProps ): JSX.Element | null {
 		);
 	}
 
-	const renderContent = (): React.ReactNode => {
+	const renderSelectedTabContent = (): React.ReactNode => {
 		switch ( view ) {
 			case 'posts':
 				return <UserPosts user={ user } />;
+			case 'sites':
+				return <UserSites user={ user } />;
 			case 'lists':
 				return <UserLists user={ user } />;
 			case 'recommended-blogs':
@@ -89,13 +93,11 @@ export function UserProfile( props: UserProfileProps ): JSX.Element | null {
 
 	return (
 		<div className="user-profile">
-			<div className="user-profile__wrapper">
+			<ReaderMain>
 				<ReaderBackButton />
-				<div className="user-profile__wrapper-content">
-					<UserProfileHeader user={ user } view={ view } />
-					{ renderContent() }
-				</div>
-			</div>
+				<UserProfileHeader user={ user } view={ view } />
+				{ renderSelectedTabContent() }
+			</ReaderMain>
 		</div>
 	);
 }

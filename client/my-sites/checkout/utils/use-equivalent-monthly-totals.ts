@@ -58,3 +58,33 @@ export default function useEquivalentMonthlyTotals(
 		[ eligibleProducts, pricing ]
 	);
 }
+
+/**
+ * Returns the amount for a product before discounts used for displaying a
+ * crossed-out price in checkout.
+ *
+ * It's similar to the product's cost before cost overrides are applied, but it
+ * may include an increase based on the monthly cost of a related product in
+ * the same tier (eg: it will be 12 times the cost of the monthly version of
+ * the same plan, if one exists). This is to simulate a discount originating
+ * from the comparison to a monthly version of the same product.
+ *
+ * For renewals, this is always the product's own original subtotal (not the
+ * monthly equivalent), since the monthly comparison is only meaningful for new
+ * purchases.
+ *
+ * The returned value is in the smallest unit for the currency.
+ * @param product - The cart product.
+ * @param monthlyPrices - Map of plan slug to equivalent monthly total, from `useEquivalentMonthlyTotals`.
+ */
+export function getSimulatedCostBeforeDiscounts(
+	product: ResponseCartProduct,
+	monthlyPrices: Record< PlanSlug, number >
+): number {
+	if ( product.is_renewal ) {
+		return product.item_original_subtotal_integer;
+	}
+	return (
+		monthlyPrices[ product.product_slug as PlanSlug ] || product.item_original_subtotal_integer
+	);
+}

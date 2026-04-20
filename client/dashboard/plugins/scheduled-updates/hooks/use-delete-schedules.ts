@@ -4,7 +4,7 @@ import {
 	siteUpdateSchedulesQuery,
 	hostingUpdateSchedulesQuery,
 } from '@automattic/api-queries';
-import { useCallback } from '@wordpress/element';
+import { useCallback } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { normalizeScheduleId } from '../helpers';
 import { useEligibleSites } from './use-eligible-sites';

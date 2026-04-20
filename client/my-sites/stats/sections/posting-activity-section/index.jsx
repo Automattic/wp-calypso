@@ -48,6 +48,7 @@ class PostingActivitySection extends Component {
 
 				<div className="post-trends__heading">
 					<h3 className="post-trends__title">{ translate( 'Posting activity' ) }</h3>
+					<span className="post-trends__subtitle">{ translate( 'Last 12 months' ) }</span>
 				</div>
 				<div ref={ this.wrapperRef } className="post-trends__wrapper">
 					<div ref={ this.yearRef } className="post-trends__year">

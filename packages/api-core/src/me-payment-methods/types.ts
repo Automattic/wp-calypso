@@ -1,5 +1,5 @@
 /**
- * A saved payment method (card, PayPal agreement, or Razorpay emandate).
+ * A saved payment method (card, PayPal agreement or vaulted method, or Razorpay emandate).
  *
  * Used by the `/me/payment-methods` endpoint after version 1.1.
  */
@@ -80,4 +80,4 @@ export interface StoredPaymentMethodTaxLocation {
 	is_for_business?: boolean | undefined;
 }
 
-export type PaymentMethodRequestType = 'card' | 'agreement' | 'all';
+export type PaymentMethodRequestType = 'card' | 'agreement' | 'vault-token' | 'all';

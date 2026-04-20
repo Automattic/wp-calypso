@@ -1,5 +1,0 @@
----
-description: Rules that applies for e2e testing
----
-Use the rules in [e2e-test-rules.mdc](mdc:.rules/e2e-test-rules.mdc)
-

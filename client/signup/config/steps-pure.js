@@ -28,9 +28,6 @@ export function generateSteps( {
 	createSite = noop,
 	createSiteOrDomain = noop,
 	createSiteWithCart = noop,
-	setOptionsOnSite = noop,
-	setStoreFeatures = noop,
-	setIntentOnSite = noop,
 	addDomainToCart = noop,
 	launchSiteApi = noop,
 	isPlanFulfilled = noop,
@@ -45,6 +42,8 @@ export function generateSteps( {
 			stepName: 'domains-launch',
 			apiRequestFunction: addDomainToCart,
 			fulfilledStepCallback: isDomainFulfilled,
+			isReadyForFulfillmentCheck: ( stepName, defaultDependencies, props ) =>
+				props.hasLoadedSiteDomains && ! props.isRequestingSiteDomains,
 			providesDependencies: [
 				'domainItem',
 				'shouldHideFreePlan',
@@ -193,37 +192,6 @@ export function generateSteps( {
 			},
 		},
 
-		'site-options': {
-			stepName: 'site-options',
-			dependencies: [ 'siteSlug', 'siteTitle', 'tagline' ],
-			providesDependencies: [ 'siteTitle', 'tagline', 'searchTerms', 'newOrExistingSiteChoice' ],
-			optionalDependencies: [ 'searchTerms', 'newOrExistingSiteChoice' ],
-			apiRequestFunction: setOptionsOnSite,
-			delayApiRequestUntilComplete: true,
-		},
-
-		'store-options': {
-			stepName: 'store-options',
-			dependencies: [ 'siteSlug', 'siteTitle', 'tagline' ],
-			providesDependencies: [ 'siteTitle', 'tagline', 'searchTerms', 'newOrExistingSiteChoice' ],
-			optionalDependencies: [ 'searchTerms', 'newOrExistingSiteChoice' ],
-			apiRequestFunction: setOptionsOnSite,
-		},
-
-		'store-features': {
-			stepName: 'store-features',
-			dependencies: [ 'siteSlug' ],
-			apiRequestFunction: setStoreFeatures,
-			providesDependencies: [ 'storeType' ],
-			optionalDependencies: [ 'storeType' ],
-		},
-
-		'starting-point': {
-			stepName: 'starting-point',
-			providesDependencies: [ 'startingPoint' ],
-			optionalDependencies: [ 'startingPoint' ],
-		},
-
 		plans: {
 			stepName: 'plans',
 			apiRequestFunction: addPlanToCart,
@@ -329,11 +297,15 @@ export function generateSteps( {
 			stepName: 'plans-launch',
 			apiRequestFunction: addPlanToCart,
 			fulfilledStepCallback: isPlanFulfilled,
+			isReadyForFulfillmentCheck: ( stepName, defaultDependencies, props ) =>
+				props.isPaidPlan != null,
 			dependencies: [ 'siteSlug' ],
 			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
 			optionalDependencies: [ 'themeSlugWithRepo' ],
 			props: {
 				isLaunchPage: true,
+				isCustomDomainAllowedOnFreePlan: true,
+				deemphasizeFreePlan: true,
 			},
 		},
 
@@ -759,14 +731,6 @@ export function generateSteps( {
 				cartItem: PLAN_BUSINESS_3_YEARS,
 			},
 		},
-		intent: {
-			stepName: 'intent',
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'intent' ],
-			optionalDependencies: [ 'intent' ],
-			apiRequestFunction: setIntentOnSite,
-			delayApiRequestUntilComplete: true,
-		},
 
 		'new-or-existing-site': {
 			stepName: 'new-or-existing-site',
@@ -871,9 +835,6 @@ export function generateSteps( {
 			stepName: 'website-content',
 			dependencies: [ 'siteSlug' ],
 			apiRequestFunction: submitWebsiteContent,
-		},
-		courses: {
-			stepName: 'courses',
 		},
 
 		// Woocommerce Install steps.

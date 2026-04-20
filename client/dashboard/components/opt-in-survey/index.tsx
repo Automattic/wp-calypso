@@ -1,9 +1,10 @@
 import { userPreferenceQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
-import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import { useAppContext } from '../../app/context';
 import { ButtonStack } from '../button-stack';
 import { Notice } from '../notice';
 
@@ -61,17 +62,40 @@ function checkEligible( welcomeNoticeDismissedAt: string | null ) {
 	return Date.now() >= lastDismissedDate.getTime() + RESHOW_AFTER_MS;
 }
 
-export default function OptInSurvey() {
-	const { recordTracksEvent } = useAnalytics();
-	const [ isDismissed, setIsDismissed ] = useState( false );
+export function useShouldShowOptInSurvey() {
+	const { optIn } = useAppContext();
 
+	const { data: dashboardOptIn } = useSuspenseQuery(
+		userPreferenceQuery( 'hosting-dashboard-opt-in' )
+	);
 	const { data: welcomeNoticeDismissedAt } = useSuspenseQuery(
 		userPreferenceQuery( 'hosting-dashboard-welcome-notice-dismissed' )
 	);
 
-	const [ isEligible ] = useState( () => checkEligible( welcomeNoticeDismissedAt ) );
+	const [ isEligible ] = useState( () =>
+		checkEligible(
+			dashboardOptIn?.value === 'forced-opt-in'
+				? dashboardOptIn?.updated_at
+				: welcomeNoticeDismissedAt
+		)
+	);
 
-	if ( ! isEligible || isDismissed ) {
+	return optIn && isEligible;
+}
+
+export default function OptInSurvey() {
+	const shouldShow = useShouldShowOptInSurvey();
+	const { recordTracksEvent } = useAnalytics();
+	const [ isDismissed, setIsDismissed ] = useState( false );
+
+	const { data: dashboardOptIn } = useSuspenseQuery(
+		userPreferenceQuery( 'hosting-dashboard-opt-in' )
+	);
+	const { data: welcomeNoticeDismissedAt } = useSuspenseQuery(
+		userPreferenceQuery( 'hosting-dashboard-welcome-notice-dismissed' )
+	);
+
+	if ( ! shouldShow || isDismissed ) {
 		return null;
 	}
 
@@ -101,7 +125,11 @@ export default function OptInSurvey() {
 
 	return (
 		<Notice
-			title={ __( 'How’s your experience with the new Hosting Dashboard?' ) }
+			title={
+				dashboardOptIn?.value === 'forced-opt-in'
+					? __( 'How’s your experience with the Hosting Dashboard?' )
+					: __( 'How’s your experience with the new Hosting Dashboard?' )
+			}
 			onClose={ dismiss }
 			actions={
 				<ButtonStack justify="flex-start">

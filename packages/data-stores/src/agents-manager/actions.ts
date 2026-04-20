@@ -1,7 +1,7 @@
 import { default as apiFetchPromise } from '@wordpress/api-fetch';
-import { Location } from 'history';
-import { default as wpcomRequestPromise, canAccessWpcomApis } from 'wpcom-proxy-request';
 import { GeneratorReturnType } from '../mapped-types';
+import { default as wpcomRequestPromise, canAccessWpcomApis } from '../wpcom-request';
+import { PerSiteLastActivity, PerSiteRouterHistory } from './types';
 import type { APIFetchOptions } from '../shared-types';
 
 /**
@@ -49,10 +49,10 @@ export function* saveAgentsManagerState( state: AgentsManagerState ) {
 	if ( canAccessWpcomApis() ) {
 		// Use the promise version to do that action without waiting for the result.
 		wpcomRequestPromise( {
-			path: '/me/preferences',
+			path: '/agents-manager/state',
 			apiNamespace: 'wpcom/v2',
-			method: 'PUT',
-			body: { calypso_preferences: saveState },
+			method: 'POST',
+			body: { state: saveState },
 		} ).catch( () => {} );
 	} else {
 		// Use the promise version to do that action without waiting for the result.
@@ -65,7 +65,7 @@ export function* saveAgentsManagerState( state: AgentsManagerState ) {
 	}
 }
 
-export function setRouterHistory( history: { entries: Location[]; index: number } | undefined ) {
+export function setRouterHistory( history: PerSiteRouterHistory | undefined ) {
 	return {
 		type: 'AGENTS_MANAGER_SET_ROUTER_HISTORY',
 		history,
@@ -108,6 +108,13 @@ export function* setFloatingPosition(
 	} as const;
 }
 
+export function setLastActivity( lastActivity: PerSiteLastActivity | undefined ) {
+	return {
+		type: 'AGENTS_MANAGER_SET_LAST_ACTIVITY',
+		lastActivity,
+	} as const;
+}
+
 export function setIsLoading( isLoading: boolean ) {
 	return {
 		type: 'AGENTS_MANAGER_SET_LOADING',
@@ -124,6 +131,7 @@ export function setHasLoaded( hasLoaded: boolean ) {
 
 export type AgentsManagerAction =
 	| ReturnType< typeof setRouterHistory >
+	| ReturnType< typeof setLastActivity >
 	| ReturnType< typeof setIsLoading >
 	| ReturnType< typeof setHasLoaded >
 	| GeneratorReturnType< typeof setIsOpen >

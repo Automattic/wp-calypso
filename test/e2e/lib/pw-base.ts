@@ -51,6 +51,7 @@ import {
 	IncognitoPage,
 	InvitePeoplePage,
 	JetpackTrafficPage,
+	LaunchCelebrationComponent,
 	LoginPage,
 	LOHPThemeSignupFlow,
 	MarketingPage,
@@ -68,6 +69,7 @@ import {
 	SidebarComponent,
 	SiteSelectComponent,
 	SignupPickPlanPage,
+	StartImportFlow,
 	StartWritingFlow,
 	TestAccount,
 	ThemesDetailPage,
@@ -169,6 +171,10 @@ export const test = base.extend<
 		 */
 		componentSelectItems: SelectItemsComponent;
 		/**
+		 * Component for asserting the site launch celebration modal.
+		 */
+		componentLaunchCelebration: LaunchCelebrationComponent;
+		/**
 		 * Environment variables for the tests.
 		 */
 		environment: typeof envVariables;
@@ -176,6 +182,10 @@ export const test = base.extend<
 		 * Flow encapsulating the LOHP Theme Signup onboarding process.
 		 */
 		flowLOHPThemeSignup: LOHPThemeSignupFlow;
+		/**
+		 * Flow encapsulating the Start Import onboarding process.
+		 */
+		flowStartImport: StartImportFlow;
 		/**
 		 * Flow encapsulating the Start Writing onboarding process.
 		 */
@@ -414,6 +424,10 @@ export const test = base.extend<
 		const selectItemsComponent = new SelectItemsComponent( page );
 		await use( selectItemsComponent );
 	},
+	componentLaunchCelebration: async ( { page }, use ) => {
+		const launchCelebrationComponent = new LaunchCelebrationComponent( page );
+		await use( launchCelebrationComponent );
+	},
 	componentSidebar: async ( { page }, use ) => {
 		const sidebarComponent = new SidebarComponent( page );
 		await use( sidebarComponent );
@@ -432,6 +446,10 @@ export const test = base.extend<
 	flowLOHPThemeSignup: async ( { page }, use ) => {
 		const lohpThemeSignupFlow = new LOHPThemeSignupFlow( page );
 		await use( lohpThemeSignupFlow );
+	},
+	flowStartImport: async ( { page }, use ) => {
+		const startImportFlow = new StartImportFlow( page );
+		await use( startImportFlow );
 	},
 	flowStartWriting: async ( { page }, use ) => {
 		const startWritingFlow = new StartWritingFlow( page );
@@ -587,7 +605,7 @@ export const test = base.extend<
 		await use( secrets );
 	},
 	sitePublic: async ( { page, clientEmail, helperData, pageLogin, pageUserSignUp }, use ) => {
-		const testUser = helperData.getNewTestUser();
+		const testUser = helperData.getNewTestUser( { useMailosaur: true } );
 		const siteName = helperData.getBlogName();
 		await pageLogin.visit();
 		await pageLogin.clickCreateNewAccount();
@@ -628,7 +646,6 @@ export const tags = {
 	CALYPSO_PR: '@calypso-pr',
 	CALYPSO_RELEASE: '@calypso-release',
 	DASHBOARD_PR: '@dashboard-pr',
-	DASHBOARD_RELEASE: '@dashboard-release',
 	DESKTOP_ONLY: '@desktop-only',
 	EXAMPLE_BLOCKS: '@example-blocks',
 	GUTENBERG: '@gutenberg',

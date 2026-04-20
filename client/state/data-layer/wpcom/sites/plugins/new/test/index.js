@@ -1,3 +1,4 @@
+import { MAX_UPLOAD_ZIP_SIZE } from 'calypso/lib/automated-transfer/constants';
 import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
 import { PLUGIN_INSTALL_REQUEST_SUCCESS } from 'calypso/state/action-types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -126,7 +127,9 @@ describe( 'receiveError', () => {
 				type: 'NOTICE_CREATE',
 				notice: expect.objectContaining( {
 					status: 'is-error',
-					text: 'The plugin zip file must be smaller than 10MB.',
+					text: `The plugin zip file must be smaller than ${ Math.floor(
+						MAX_UPLOAD_ZIP_SIZE / 1000000
+					) } MB.`,
 					showDismiss: true,
 				} ),
 			} )

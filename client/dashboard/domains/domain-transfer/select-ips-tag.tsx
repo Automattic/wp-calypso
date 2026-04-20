@@ -107,7 +107,7 @@ export default function SelectIpsTag( { domain, isDomainLocked }: SelectIpsTagPr
 				<FormTokenField
 					__next40pxDefaultSize
 					__nextHasNoMarginBottom
-					label="IPS tag"
+					label={ __( 'IPS tag' ) }
 					placeholder={ __( 'Start typing an IPS tag…' ) }
 					onChange={ ( tokens ) => {
 						setIpsTag( tokens.length > 0 ? ( tokens[ tokens.length - 1 ] as string ) : null );

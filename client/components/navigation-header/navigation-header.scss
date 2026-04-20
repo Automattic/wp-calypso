@@ -2,6 +2,7 @@
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
 @import "@automattic/typography/styles/variables";
+@import "@automattic/components/src/styles/typography";
 
 .calypso-navigation-header {
 	background-color: var(--wp-components-color-background, #fff);
@@ -19,7 +20,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		padding-bottom: 24px;
+		padding-bottom: 12px;
 	}
 
 	&__left-section {
@@ -58,6 +59,19 @@
 		svg {
 			margin-right: $grid-unit-10;
 		}
+	}
+
+	&__title-group {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+	}
+
+	&__subtitle {
+		font-family: $font-sf-pro-text;
+		color: var(--wp-components-color-gray-700, $gray-700);
+		line-height: $font-line-height-small;
+		margin: 0;
 	}
 
 	&__title {

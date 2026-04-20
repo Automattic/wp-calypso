@@ -11,8 +11,9 @@
 	"google_recaptcha_site_key": false,
 	"hotjar_enabled": false,
 	"survicate_enabled": false,
-	"survicate_enabled_at_help_center": true,
 	"hostname": false,
+	"hostname_allowlist": false,
+	"hostname_overrides": false,
 	"i18n_default_locale_slug": "en",
 	"lasagna_url": "wss://rt-api.wordpress.com/socket",
 	"login_url": false,
@@ -33,6 +34,7 @@
 	"github_app_slug": "wordpress-com-for-developers",
 	"github_oauth_client_id": "Iv1.a72902e7053ea8aa",
 	"google_oauth_client_id": "108380595987-j91sm1alavcdgd81i2655kp8q1lbtvrc.apps.googleusercontent.com",
+	"ciab_posthog_api_key": "phc_tHmeIeJcb4zGfiX4akJwyGq7lioUpCoHd65LKbVPcoR",
 	"facebook_app_id": "611241942420191",
 	"livechat_support_locales": [ "en", "en-gb" ],
 	"dsp_stripe_pub_key": "pk_live_51LYYzQF53KN4RFN0oHFYHpzmHGpuUAXZ6ygDAFxM4XkRArRsET0orrofmsynkd9DhFaOGEsDZ3RC4f8mgI0zhEyN000X8i0Mqx",
@@ -181,6 +183,7 @@
 		"a8c-for-agencies-woopayments": false,
 		"a8c-for-agencies-express-checkout": false,
 		"a8c-for-agencies-learn": false,
+		"a8c-for-agencies-dev-tools": false,
 		"a8c-for-agencies-exclusive-offers": false,
 		"jetpack-cloud": false,
 		"jetpack-cloud-overview": false,
@@ -211,10 +214,17 @@
 	"theme_color": "",
 	"theme_color_admin_color_scheme_override": true,
 	"100_year_plan_calendly_id": "wpcom-100-years/30min",
+	"dolly_telegram_auth_url": "",
+	"dolly_telegram_bot_username": "wordpressagentbot",
+	"dolly_telegram_request_access": "",
+	"dolly_telegram_widget_size": "medium",
+	"dolly_telegram_show_userpic": false,
 	"bilmur_url": "https://s0.wp.com/wp-content/js/bilmur.min.js",
+	"blackbox_url": "https://blackbox-api.wp.com/v1/dist/v.js",
+	"blackbox_api_key": "e16ecd5d7848b169d97088e4c69065d8",
 	"site_spec": {
-		"script_url": "https://widgets.wp.com/site-spec/v1.3.13/index.js",
-		"css_url": "https://widgets.wp.com/site-spec/v1.3.13/style.css"
+		"script_url": "https://widgets.wp.com/site-spec/v1.5.0/index.js",
+		"css_url": "https://widgets.wp.com/site-spec/v1.5.0/style.css"
 	},
 	"dashboard_opt_in_oldest_eligible_user": 275231967
 }

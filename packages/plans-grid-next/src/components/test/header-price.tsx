@@ -4,6 +4,8 @@
 /**
  * Default mock implementations
  */
+const mockUseHeaderPriceContext = jest.fn();
+
 jest.mock( '@wordpress/element', () => ( {
 	...jest.requireActual( '@wordpress/element' ),
 	useCallback: jest.fn(),
@@ -24,10 +26,7 @@ jest.mock( '@automattic/data-stores', () => ( {
 } ) );
 
 jest.mock( '../shared/header-price/header-price-context', () => ( {
-	useHeaderPriceContext: () => ( {
-		isAnyPlanPriceDiscounted: false,
-		setIsAnyPlanPriceDiscounted: jest.fn(),
-	} ),
+	useHeaderPriceContext: () => mockUseHeaderPriceContext(),
 } ) );
 
 import {
@@ -35,7 +34,9 @@ import {
 	PLAN_ANNUAL_PERIOD,
 	PLAN_ENTERPRISE_GRID_WPCOM,
 	PLAN_PERSONAL,
+	PLAN_PERSONAL_MONTHLY,
 } from '@automattic/calypso-products';
+import { Plans } from '@automattic/data-stores';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render } from '@testing-library/react';
 import React, { useMemo } from 'react';
@@ -57,6 +58,11 @@ describe( 'HeaderPrice', () => {
 
 	beforeEach( () => {
 		jest.clearAllMocks();
+		mockUseHeaderPriceContext.mockReturnValue( {
+			isAnyPlanPriceDiscounted: false,
+			setIsAnyPlanPriceDiscounted: jest.fn(),
+		} );
+		( Plans.usePricingMetaForGridPlans as jest.Mock ).mockReturnValue( {} );
 	} );
 
 	test( 'should render raw and discounted prices when discount exists', () => {
@@ -185,5 +191,81 @@ describe( 'HeaderPrice', () => {
 		const badge = container.querySelector( '.plans-grid-next-header-price__badge' );
 
 		expect( badge ).toHaveTextContent( 'One time discount' );
+	} );
+
+	test( 'should display "Save x%" badge in renewal experiment for downgraded-site style pricing', () => {
+		const pricing = {
+			currencyCode: 'USD',
+			originalPrice: { full: 120, monthly: 10 },
+			discountedPrice: { full: null, monthly: null },
+			billingPeriod: PLAN_ANNUAL_PERIOD,
+		};
+
+		mockUseHeaderPriceContext.mockReturnValue( {
+			isAnyPlanPriceDiscounted: true,
+			setIsAnyPlanPriceDiscounted: jest.fn(),
+		} );
+		( Plans.usePricingMetaForGridPlans as jest.Mock ).mockReturnValue( {
+			[ PLAN_PERSONAL_MONTHLY ]: {
+				originalPrice: { monthly: 20, full: 240 },
+				discountedPrice: { monthly: null, full: null },
+			},
+		} );
+
+		usePlansGridContext.mockImplementation( () => ( {
+			gridPlansIndex: {
+				[ PLAN_PERSONAL ]: {
+					current: false,
+					isMonthlyPlan: true,
+					pricing,
+				},
+			},
+			showBillingDescriptionForIncreasedRenewalPrice: 'crossed_price',
+		} ) );
+
+		const { container } = render( <HeaderPrice { ...defaultProps } />, { wrapper: Wrapper } );
+		const badge = container.querySelector( '.plans-grid-next-header-price__badge' );
+
+		expect( badge ).toHaveTextContent( 'Save 50%' );
+	} );
+
+	test( 'should keep the fallback badge hidden in crossed_price when savings is zero', () => {
+		const pricing = {
+			currencyCode: 'USD',
+			originalPrice: { full: 120, monthly: 10 },
+			discountedPrice: { full: null, monthly: null },
+			billingPeriod: PLAN_ANNUAL_PERIOD,
+		};
+
+		mockUseHeaderPriceContext.mockReturnValue( {
+			isAnyPlanPriceDiscounted: true,
+			setIsAnyPlanPriceDiscounted: jest.fn(),
+		} );
+		( Plans.usePricingMetaForGridPlans as jest.Mock ).mockReturnValue( {
+			[ PLAN_PERSONAL_MONTHLY ]: {
+				originalPrice: { monthly: 10, full: 120 },
+				discountedPrice: { monthly: null, full: null },
+			},
+		} );
+
+		usePlansGridContext.mockImplementation( () => ( {
+			gridPlansIndex: {
+				[ PLAN_PERSONAL ]: {
+					current: false,
+					isMonthlyPlan: true,
+					pricing,
+				},
+			},
+			showBillingDescriptionForIncreasedRenewalPrice: 'crossed_price',
+		} ) );
+
+		const { container } = render( <HeaderPrice { ...defaultProps } />, { wrapper: Wrapper } );
+		const visibleBadge = container.querySelector(
+			'.plans-grid-next-header-price__badge:not(.is-hidden)'
+		);
+		const hiddenBadge = container.querySelector( '.plans-grid-next-header-price__badge.is-hidden' );
+
+		expect( visibleBadge ).toBeNull();
+		expect( hiddenBadge ).toBeInTheDocument();
 	} );
 } );

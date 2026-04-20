@@ -14,6 +14,7 @@ function PayoutAmount( {
 	payoutDate,
 	isFetching,
 	footerText,
+	footerAction,
 	popoverTitle,
 	handleHalfQuarter,
 }: {
@@ -22,6 +23,7 @@ function PayoutAmount( {
 	payoutDate: string;
 	isFetching: boolean;
 	footerText: string;
+	footerAction?: React.ReactNode;
 	popoverTitle: string;
 	handleHalfQuarter?: boolean;
 } ) {
@@ -32,6 +34,7 @@ function PayoutAmount( {
 		<ConsolidatedStatsCard
 			value={ formatCurrency( expectedCommission, 'USD' ) }
 			footerText={ footerText }
+			footerAction={ footerAction }
 			popoverTitle={ popoverTitle }
 			popoverContent={
 				<div className="payout-cards__description">
@@ -89,11 +92,13 @@ export default function PayoutCards( {
 	previousQuarterExpectedCommission,
 	currentQuarterExpectedCommission,
 	isWooPayments,
+	footerAction,
 }: {
 	isFetching: boolean;
 	previousQuarterExpectedCommission: number;
 	currentQuarterExpectedCommission: number;
 	isWooPayments?: boolean;
+	footerAction?: React.ReactNode;
 } ) {
 	const translate = useTranslate();
 
@@ -123,6 +128,7 @@ export default function PayoutCards( {
 					payoutDate={ nextPayoutDate }
 					isFetching={ isFetching }
 					footerText={ previousQuarterTitle }
+					footerAction={ footerAction }
 					popoverTitle={ previousQuarterTitle }
 				/>
 			) }

@@ -63,7 +63,8 @@ describe( 'Webpack RTL Plugin', () => {
 						}
 						done();
 					} );
-				} )
+				} ),
+			30000
 		);
 
 		it( 'should create a second bundle', () => {

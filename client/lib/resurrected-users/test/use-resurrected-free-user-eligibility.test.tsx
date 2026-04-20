@@ -3,13 +3,11 @@
  */
 import config from '@automattic/calypso-config';
 import { waitFor } from '@testing-library/react';
-import { useExperiment } from 'calypso/lib/explat';
 import { fetchUserPurchases } from 'calypso/state/purchases/actions';
 import userSettingsReducer from 'calypso/state/user-settings/reducer';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
-import { WELCOME_BACK_VARIATIONS } from '../constants';
+import { WELCOME_BACK_VARIATION_MANUAL } from '../constants';
 import { useResurrectedFreeUserEligibility } from '../use-resurrected-free-user-eligibility';
-import type { ExperimentAssignment } from '@automattic/explat-client';
 
 const selectorsState = {
 	purchases: null as Array< { type: string; status: string } > | null,
@@ -39,15 +37,10 @@ jest.mock( 'calypso/lib/purchases', () => ( {
 	isRenewing: ( purchase: { status: string } ) => purchase.status === 'active',
 } ) );
 
-jest.mock( 'calypso/lib/explat', () => ( {
-	useExperiment: jest.fn(),
-} ) );
-
 jest.mock( 'calypso/state/purchases/actions', () => ( {
 	fetchUserPurchases: jest.fn( () => () => Promise.resolve( [] ) ),
 } ) );
 
-const mockUseExperiment = useExperiment as jest.MockedFunction< typeof useExperiment >;
 const mockFetchUserPurchases = fetchUserPurchases as jest.MockedFunction<
 	typeof fetchUserPurchases
 >;
@@ -88,7 +81,6 @@ describe( 'useResurrectedFreeUserEligibility', () => {
 		selectorsState.purchases = null;
 		selectorsState.hasLoaded = false;
 		selectorsState.isFetching = false;
-		mockUseExperiment.mockReturnValue( [ false, null ] );
 		mockIsFeatureEnabled.mockReturnValue( false );
 		mockFetchUserPurchases.mockImplementation( () => () => Promise.resolve( [] ) );
 		mockFetchUserPurchases.mockClear();
@@ -121,20 +113,11 @@ describe( 'useResurrectedFreeUserEligibility', () => {
 		expect( result.current.hasActivePaidSubscription ).toBe( true );
 		expect( result.current.isEligible ).toBe( false );
 		expect( result.current.isForcedVariation ).toBe( false );
-		expect( mockUseExperiment ).toHaveBeenCalledWith(
-			'calypso_resurrected_users_welcome_back_modal_202511',
-			expect.objectContaining( { isEligible: false } )
-		);
 	} );
 
-	it( 'returns experiment data when resurrected and free of active subscriptions', () => {
+	it( 'returns MANUAL variation when resurrected and free of active subscriptions', () => {
 		selectorsState.purchases = [];
 		selectorsState.hasLoaded = true;
-
-		mockUseExperiment.mockReturnValue( [
-			false,
-			{ variationName: WELCOME_BACK_VARIATIONS.AI_ONLY } as ExperimentAssignment,
-		] );
 
 		const initialState = createState( { lastSeenOffsetDays: 400 } );
 
@@ -146,31 +129,14 @@ describe( 'useResurrectedFreeUserEligibility', () => {
 		expect( result.current.isResurrectedSixMonths ).toBe( true );
 		expect( result.current.hasActivePaidSubscription ).toBe( false );
 		expect( result.current.isEligible ).toBe( true );
-		expect( result.current.variationName ).toBe( WELCOME_BACK_VARIATIONS.AI_ONLY );
+		expect( result.current.variationName ).toBe( WELCOME_BACK_VARIATION_MANUAL );
 		expect( result.current.isLoading ).toBe( false );
 		expect( result.current.isForcedVariation ).toBe( false );
 	} );
 
-	it( 'remains ineligible when the experiment does not return a variation', () => {
-		selectorsState.purchases = [];
-		selectorsState.hasLoaded = true;
-		mockUseExperiment.mockReturnValue( [ false, null ] );
-
-		const initialState = createState( { lastSeenOffsetDays: 400 } );
-
-		const { result } = renderHookWithProvider( () => useResurrectedFreeUserEligibility(), {
-			initialState,
-			reducers,
-		} );
-
-		expect( result.current.variationName ).toBeNull();
-		expect( result.current.isEligible ).toBe( false );
-		expect( result.current.isForcedVariation ).toBe( false );
-	} );
-
-	it( 'forces eligibility when a variation flag is enabled', () => {
+	it( 'forces eligibility when welcome-back-modal-manual flag is enabled', () => {
 		mockIsFeatureEnabled.mockImplementation(
-			( flagName ) => flagName === 'welcome-back-modal-ai-only'
+			( flagName ) => flagName === 'welcome-back-modal-manual'
 		);
 		selectorsState.purchases = null;
 		selectorsState.hasLoaded = false;
@@ -184,7 +150,7 @@ describe( 'useResurrectedFreeUserEligibility', () => {
 
 		expect( result.current.isEligible ).toBe( true );
 		expect( result.current.isLoading ).toBe( false );
-		expect( result.current.variationName ).toBe( WELCOME_BACK_VARIATIONS.AI_ONLY );
+		expect( result.current.variationName ).toBe( WELCOME_BACK_VARIATION_MANUAL );
 		expect( result.current.isForcedVariation ).toBe( true );
 	} );
 } );

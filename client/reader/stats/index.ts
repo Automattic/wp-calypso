@@ -1,5 +1,4 @@
 import { Railcar } from '@automattic/calypso-analytics';
-import { isEnabled } from '@automattic/calypso-config';
 import debugFactory from 'debug';
 import { pick } from 'lodash';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
@@ -85,14 +84,10 @@ const Routes: RoutesMapping[] = [
 
 	{
 		route: exactMatch( '/discover' ),
-		tracking: () => {
-			const isFreshlyPressedEnabled = isEnabled( 'reader/discover/freshly-pressed' );
-			return isFreshlyPressedEnabled ? 'freshly-pressed' : 'discover_recommended';
-		},
+		tracking: 'freshly-pressed',
 	},
 	// Discover
 	{ route: startsWith( '/discover/add-new' ), tracking: 'discover_addnew' },
-	{ route: startsWith( '/discover/firstposts' ), tracking: 'discover_firstposts' },
 	{ route: startsWith( '/discover/reddit' ), tracking: 'discover_reddit' },
 	{ route: startsWith( '/discover/latest' ), tracking: 'discover_latest' },
 	{ route: startsWith( '/discover/recommended' ), tracking: 'discover_recommended' },
@@ -117,6 +112,22 @@ const Routes: RoutesMapping[] = [
 	{ route: exactMatch( '/reader' ), tracking: 'following' },
 
 	{ route: startsWith( '/reader/recent/' ), tracking: 'following' },
+	{
+		route: matches( /^\/reader\/users\/[^/]+\/recommended-blogs\/?$/ ),
+		tracking: 'user_profile_recommended_blogs',
+	},
+	{
+		route: matches( /^\/reader\/users\/[^/]+\/lists\/?$/ ),
+		tracking: 'user_profile_lists',
+	},
+	{
+		route: matches( /^\/reader\/users\/[^/]+$/ ),
+		tracking: 'user_profile_posts',
+	},
+	{
+		route: matches( /^\/reader\/users\/[^/]+\/sites\/?$/ ),
+		tracking: 'user_profile_sites',
+	},
 ] as const;
 
 const findConfigByPath = ( path: string, searchParams: URLSearchParams ) => {

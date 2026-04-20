@@ -1,6 +1,4 @@
 import {
-	ProductUpgradeMap,
-	AkismetUpgradesProductMap,
 	SubscriptionBillPeriod,
 	DomainProductSlugs,
 	useMyDomainInputMode,
@@ -34,12 +32,19 @@ import {
 	ToggleControl,
 	Notice,
 	ExternalLink,
+	Icon,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
-import { __, _n, sprintf } from '@wordpress/i18n';
-import { moreVertical, calendar, currencyDollar, commentAuthorAvatar } from '@wordpress/icons';
+import { __, _n, _x, sprintf } from '@wordpress/i18n';
+import {
+	moreVertical,
+	calendar,
+	currencyDollar,
+	commentAuthorAvatar,
+	layout,
+} from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
@@ -48,6 +53,7 @@ import { useLocale } from '../../../app/locale';
 import { domainRoute } from '../../../app/router/domains';
 import { emailsRoute } from '../../../app/router/emails';
 import { cancelPurchaseRoute, purchaseSettingsRoute } from '../../../app/router/me';
+import { getCurrentDashboard } from '../../../app/routing';
 import { ActionList } from '../../../components/action-list';
 import { Card, CardBody } from '../../../components/card';
 import ClipboardInputControl from '../../../components/clipboard-input-control';
@@ -60,7 +66,7 @@ import SiteIcon from '../../../components/site-icon';
 import SiteBandwidthStat from '../../../sites/overview-plan-card/site-bandwidth-stat';
 import SiteStorageStat from '../../../sites/overview-plan-card/site-storage-stat';
 import { formatDate } from '../../../utils/datetime';
-import { getCurrentDashboard, redirectToDashboardLink, wpcomLink } from '../../../utils/link';
+import { redirectToDashboardLink, wpcomLink } from '../../../utils/link';
 import {
 	getBillPeriodLabel,
 	getTitleForDisplay,
@@ -70,9 +76,8 @@ import {
 	isRenewing,
 	isIncludedWithPlan,
 	isOneTimePurchase,
-	isMarketplaceTemporarySitePurchase,
+	isMarketplaceHoldingSitePurchase,
 	isMarketplacePlugin,
-	isJetpackTemporarySitePurchase,
 	isAkismetProduct,
 	isJetpackCrmProduct,
 	isTitanMail,
@@ -80,11 +85,12 @@ import {
 	isDotcomPlan,
 	getRenewalUrlFromPurchase,
 	isJetpackT1SecurityPlan,
-	isTemporarySitePurchase,
 	isWpcomFlexSubscription,
 	isAkismetFreeProduct,
 	isInExpirationGracePeriod,
+	isA4ABillingDragonPurchase,
 } from '../../../utils/purchase';
+import { getSitePurchaseUpgradeUrl } from '../../../utils/site-url';
 import BillingFlexUsageCard from '../../billing-flex-usage';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
 import AkismetApiKeyCard from './akismet-api-key-card';
@@ -102,46 +108,6 @@ const SPACING = {
 
 function renewPurchase( purchase: Purchase ): void {
 	window.location.href = getRenewalUrlFromPurchase( purchase );
-}
-
-function getUpgradeUrl( purchase: Purchase ): string | undefined {
-	if ( isAkismetProduct( purchase ) ) {
-		// For the first Iteration of Calypso Akismet checkout we are only suggesting
-		// for immediate upgrades to the next plan. We will change this in the future
-		// with appropriate page.
-		const url = AkismetUpgradesProductMap[ purchase.product_slug ];
-		if ( ! url ) {
-			return undefined;
-		}
-		const isAbsolute =
-			url.startsWith( 'http://' ) || url.startsWith( 'https://' ) || url.startsWith( '//' );
-		if ( ! isAbsolute ) {
-			return wpcomLink( url );
-		}
-		return url;
-	}
-
-	const upgradeProductSlug = ProductUpgradeMap[ purchase.product_slug ];
-	if ( upgradeProductSlug ) {
-		return wpcomLink( `/checkout/${ purchase.site_slug }/${ upgradeProductSlug }` );
-	}
-
-	if ( purchase.is_jetpack_backup_t1 || isJetpackT1SecurityPlan( purchase ) ) {
-		return wpcomLink( `/plans/storage/${ purchase.site_slug }` );
-	}
-
-	if ( purchase.is_jetpack_plan_or_product ) {
-		return wpcomLink( `/plans/${ purchase.site_slug }` );
-	}
-
-	if ( purchase.is_woo_hosted_product ) {
-		return addQueryArgs( wpcomLink( '/setup/woo-hosted-plans' ), {
-			siteSlug: purchase.site_slug,
-			dashboard: getCurrentDashboard(),
-		} );
-	}
-
-	return getWpcomPlanGridUrl( purchase.site_slug );
 }
 
 function getExpiredNewPlanUrl( purchase: Purchase ): string {
@@ -167,14 +133,6 @@ function getWpcomPlanGridUrl( siteSlug: string | undefined ): string {
 		cancel_to: backUrl,
 		dashboard: getCurrentDashboard(),
 	} );
-}
-
-function canPurchaseBeUpgraded( purchase: Purchase ): boolean {
-	return Boolean(
-		purchase.is_upgradable &&
-			getUpgradeUrl( purchase ) &&
-			! isJetpackTemporarySitePurchase( purchase )
-	);
 }
 
 function isAutoRenewToggleDisabled( purchase: Purchase, user: User ): boolean {
@@ -250,10 +208,10 @@ function PurchaseActionMenu( { purchase }: { purchase: Purchase } ) {
 	const { user } = useAuth();
 	const canBeRenewed =
 		purchase.can_explicit_renew && String( user.ID ) === String( purchase.user_id );
-	const upgradeUrl = getUpgradeUrl( purchase );
+	const upgradeUrl = getSitePurchaseUpgradeUrl( purchase );
 	const { recordTracksEvent } = useAnalytics();
 	const menuItems = [
-		canPurchaseBeUpgraded( purchase ) && upgradeUrl && (
+		purchase.is_upgradable && upgradeUrl && (
 			<MenuItem
 				onClick={ () => {
 					recordTracksEvent( 'calypso_purchases_upgrade_plan', {
@@ -263,7 +221,7 @@ function PurchaseActionMenu( { purchase }: { purchase: Purchase } ) {
 					upgradePurchase( upgradeUrl );
 				} }
 			>
-				{ __( 'Upgrade' ) }
+				{ _x( 'Upgrade', 'Change to a plan with more features.' ) }
 			</MenuItem>
 		),
 		canBeRenewed && (
@@ -275,7 +233,10 @@ function PurchaseActionMenu( { purchase }: { purchase: Purchase } ) {
 					renewPurchase( purchase );
 				} }
 			>
-				{ __( 'Renew' ) }
+				{ _x(
+					'Renew',
+					'Immediately pay for and receive another term of the subscription, extending the expiration date by another term.'
+				) }
 			</MenuItem>
 		),
 	].filter( Boolean );
@@ -313,7 +274,7 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 							} )
 						}
 					>
-						{ __( 'Cancel' ) }
+						{ _x( 'Cancel', 'Stop the subscription from automatically charging and renewing' ) }
 					</Button>
 				}
 			/>
@@ -336,7 +297,10 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 							} )
 						}
 					>
-						{ __( 'Remove' ) }
+						{ _x(
+							'Remove',
+							'Remove the cancelled or expired subscription from the list of active purchases.'
+						) }
 					</Button>
 				}
 			/>
@@ -347,10 +311,10 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 
 function UpgradeActionButton( { purchase }: { purchase: Purchase } ) {
 	const { recordTracksEvent } = useAnalytics();
-	if ( ! canPurchaseBeUpgraded( purchase ) ) {
+	if ( ! purchase.is_upgradable ) {
 		return null;
 	}
-	const upgradeUrl = getUpgradeUrl( purchase );
+	const upgradeUrl = getSitePurchaseUpgradeUrl( purchase );
 	if ( ! upgradeUrl ) {
 		return null;
 	}
@@ -370,7 +334,7 @@ function UpgradeActionButton( { purchase }: { purchase: Purchase } ) {
 						upgradePurchase( upgradeUrl );
 					} }
 				>
-					{ __( 'Upgrade' ) }
+					{ _x( 'Upgrade', 'Change to a plan with more features.' ) }
 				</Button>
 			}
 		/>
@@ -429,7 +393,10 @@ function RenewActionButton( { purchase }: { purchase: Purchase } ) {
 						renewPurchase( purchase );
 					} }
 				>
-					{ __( 'Renew' ) }
+					{ _x(
+						'Renew',
+						'Immediately pay for and receive another term of the subscription, extending the expiration date by another term.'
+					) }
 				</Button>
 			}
 		/>
@@ -481,7 +448,7 @@ function ReinstallButton( { purchase }: { purchase: Purchase } ) {
 	if ( ! isMarketplacePlugin( purchase ) ) {
 		return null;
 	}
-	if ( isMarketplaceTemporarySitePurchase( purchase ) ) {
+	if ( isMarketplaceHoldingSitePurchase( purchase ) ) {
 		return null;
 	}
 
@@ -581,6 +548,42 @@ function getFields( {
 					}
 					return undefined;
 				} )();
+				if ( purchase.is_jetpack_plan_or_product ) {
+					if ( purchase.is_auto_renew_enabled ) {
+						return (
+							<ActionList.ActionItem
+								title={ __( 'Subscription renewal' ) }
+								description={ ( (): string => {
+									return typeof helpText === 'string' ? helpText : '';
+								} )() }
+								actions={ <></> }
+							/>
+						);
+					}
+					return (
+						<ActionList.ActionItem
+							title={ __( 'Your subscription is inactive' ) }
+							description={ sprintf(
+								// translators: date is a formatted expiry date
+								__( 'Expires on %(date)s.' ),
+								{
+									date: formatDate( new Date( purchase.expiry_date ), locale, {
+										dateStyle: 'long',
+									} ),
+								}
+							) }
+							actions={
+								<Button
+									variant="secondary"
+									size="compact"
+									onClick={ () => onChange( { is_auto_renew_enabled: true } ) }
+								>
+									{ __( 'Re-activate subscription' ) }
+								</Button>
+							}
+						/>
+					);
+				}
 				return (
 					<ToggleControl
 						__nextHasNoMarginBottom
@@ -600,6 +603,7 @@ function getFields( {
 		},
 		{
 			id: 'purchase_payment_method',
+			isVisible: ( item ) => item.is_auto_renew_enabled,
 			Edit: ( { data: purchase } ) => {
 				return <PurchasePaymentMethod purchase={ purchase } showUpdateButton />;
 			},
@@ -652,7 +656,7 @@ function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 }
 
 function PurchasePriceCard( { purchase }: { purchase: Purchase } ) {
-	if ( purchase.partner_name ) {
+	if ( purchase.partner_name && ! isA4ABillingDragonPurchase( purchase ) ) {
 		return (
 			<OverviewCard
 				icon={ currencyDollar }
@@ -686,6 +690,16 @@ function PurchasePriceCard( { purchase }: { purchase: Purchase } ) {
 			/>
 		);
 	}
+	const isOffer = purchase.regular_price_integer !== purchase.price_integer;
+	const offerText = isOffer
+		? /* translators: %(regularPrice) is a monetary amount that the customer will be charged after this offer ends */
+		  sprintf( __( 'After the offer ends, the subscription price will be %(regularPrice)s.' ), {
+				regularPrice: formatCurrency( purchase.regular_price_integer, purchase.currency_code, {
+					isSmallestUnit: true,
+					stripZeros: true,
+				} ),
+		  } )
+		: '';
 	return (
 		<OverviewCard
 			icon={ currencyDollar }
@@ -693,7 +707,9 @@ function PurchasePriceCard( { purchase }: { purchase: Purchase } ) {
 			heading={ formatCurrency( purchase.price_integer, purchase.currency_code, {
 				isSmallestUnit: true,
 			} ) }
-			description={ getBillPeriodLabel( purchase ) + ' ' + __( 'Excludes taxes.' ) }
+			description={
+				getBillPeriodLabel( purchase ) + ' ' + __( 'Excludes taxes.' ) + ' ' + offerText
+			}
 		/>
 	);
 }
@@ -989,8 +1005,12 @@ function DomainTransferInfo( { purchase }: { purchase: Purchase } ) {
 	return null;
 }
 
-function PurchaseSecondSubtitle( { purchase }: { purchase: Purchase } ) {
+function PurchaseSecondSubtitle( { purchase, site }: { purchase: Purchase; site?: Site } ) {
 	if ( purchase.is_domain ) {
+		if ( site?.options?.is_domain_only ) {
+			return null;
+		}
+
 		if ( purchase.bill_period_days === SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD ) {
 			return (
 				<Text variant="muted">
@@ -1093,11 +1113,15 @@ export default function PurchaseSettings() {
 	const { data: purchase } = useSuspenseQuery( purchaseQuery( parseInt( purchaseId ) ) );
 	const { data: site } = useQuery( {
 		...siteBySlugQuery( purchase.site_slug ?? '' ),
-		enabled: Boolean( purchase.site_slug ) && ! isTemporarySitePurchase( purchase ),
+		enabled: Boolean( purchase.site_slug ) && ! purchase.is_attached_to_holding_site,
+	} );
+	const { data: domain } = useQuery( {
+		...domainQuery( purchase.meta ?? '' ),
+		enabled: Boolean( purchase.meta ) && purchase.is_domain,
 	} );
 	const formattedExpiry = useFormattedTime( purchase.expiry_date ?? '' );
 	const formattedRenewal = useFormattedTime( purchase.renew_date ?? '' );
-	const upgradeUrl = getUpgradeUrl( purchase );
+	const upgradeUrl = getSitePurchaseUpgradeUrl( purchase );
 	const willRenew = Boolean(
 		! isExpired( purchase ) && purchase.renew_date && ! isExpiring( purchase )
 	);
@@ -1132,9 +1156,9 @@ export default function PurchaseSettings() {
 						actions={
 							site?.options?.admin_url && (
 								<HStack justify="space-between">
-									{ canPurchaseBeUpgraded( purchase ) && upgradeUrl && (
+									{ purchase.is_upgradable && upgradeUrl && (
 										<Button __next40pxDefaultSize variant="primary" href={ upgradeUrl }>
-											{ __( 'Upgrade' ) }
+											{ _x( 'Upgrade', 'Change to a plan with more features.' ) }
 										</Button>
 									) }
 									<PageHeader.ActionMenu>
@@ -1152,7 +1176,7 @@ export default function PurchaseSettings() {
 						}
 					/>
 
-					<PurchaseSecondSubtitle purchase={ purchase } />
+					<PurchaseSecondSubtitle purchase={ purchase } site={ site } />
 
 					{ purchase.product_slug === DomainProductSlugs.TRANSFER_IN && (
 						<DomainTransferInfo purchase={ purchase } />
@@ -1209,15 +1233,28 @@ export default function PurchaseSettings() {
 						} )() }
 					/>
 					<PurchasePriceCard purchase={ purchase } />
-					{ site && (
-						<OverviewCard
-							icon={ <SiteIcon site={ site } /> }
-							title={ __( 'Site' ) }
-							heading={ site.name }
-							description={ purchase.site_slug }
-							link={ `/sites/${ purchase.site_slug }` }
-						/>
-					) }
+					{ site &&
+						( site.options?.is_domain_only &&
+						purchase.is_domain &&
+						purchase.product_slug !== DomainProductSlugs.TRANSFER_IN &&
+						domain?.can_transfer_to_other_site ? (
+							<OverviewCard
+								icon={ <Icon icon={ layout } /> }
+								title={ __( 'Attach to a site' ) }
+								heading={ __( 'No site attached' ) }
+								description={ __( 'Attach this domain name to an existing site.' ) }
+								link={ `/domains/${ purchase.meta }/transfer/other-site` }
+								intent="upsell"
+							/>
+						) : (
+							<OverviewCard
+								icon={ <SiteIcon site={ site } /> }
+								title={ __( 'Site' ) }
+								heading={ site.name }
+								description={ purchase.site_slug }
+								link={ `/sites/${ purchase.site_slug }` }
+							/>
+						) ) }
 					<OverviewCard
 						icon={ commentAuthorAvatar }
 						title={ __( 'Owner' ) }
@@ -1233,7 +1270,7 @@ export default function PurchaseSettings() {
 					{ purchase.is_jetpack_plan_or_product && (
 						<JetpackLicenseKeyCard purchaseId={ purchase.ID } />
 					) }
-					{ isAkismetProduct( purchase ) && isTemporarySitePurchase( purchase ) && (
+					{ isAkismetProduct( purchase ) && purchase.is_attached_to_holding_site && (
 						<AkismetApiKeyCard />
 					) }
 				</Grid>

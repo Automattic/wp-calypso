@@ -1,7 +1,7 @@
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { DataForm, Field, useFormValidity } from '@wordpress/dataviews';
-import { useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { useState, useMemo } from 'react';
 import { NavigationBlocker } from '../../app/navigation-blocker';
 import { ButtonStack } from '../../components/button-stack';
 import { validateHostname } from '../../domains/name-servers/utils';

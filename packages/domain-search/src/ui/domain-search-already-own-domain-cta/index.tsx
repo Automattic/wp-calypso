@@ -15,7 +15,7 @@ export const DomainSearchAlreadyOwnDomainCTA = ( { onClick }: Props ) => {
 		<SummaryButton
 			className="domain-search-already-own-domain-cta"
 			title={ __( 'Already have a domain?' ) }
-			description={ __( 'Connect a domain you already own to WordPress.com.' ) }
+			description={ __( 'Bring it over to WordPress.com.' ) }
 			decoration={ <Icon icon={ globe } /> }
 			onClick={ onClick }
 		/>

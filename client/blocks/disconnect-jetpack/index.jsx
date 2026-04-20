@@ -3,7 +3,7 @@ import {
 	WPCOM_FEATURES_BACKUPS,
 	WPCOM_FEATURES_PRIORITY_SUPPORT,
 	WPCOM_FEATURES_REAL_TIME_BACKUPS,
-	WPCOM_FEATURES_SCAN,
+	WPCOM_FEATURES_SCAN_SELF_SERVE,
 	WPCOM_FEATURES_SEO_PREVIEW_TOOLS,
 	WPCOM_FEATURES_VIDEO_HOSTING,
 	WPCOM_FEATURES_VIDEOPRESS_UNLIMITED_STORAGE,
@@ -295,7 +295,7 @@ export default connect(
 			hasDailyBackups: siteHasFeature( state, siteId, WPCOM_FEATURES_BACKUPS ),
 			hasPrioritySupport: siteHasFeature( state, siteId, WPCOM_FEATURES_PRIORITY_SUPPORT ),
 			hasRealTimeBackups: siteHasFeature( state, siteId, WPCOM_FEATURES_REAL_TIME_BACKUPS ),
-			hasScan: siteHasFeature( state, siteId, WPCOM_FEATURES_SCAN ),
+			hasScan: siteHasFeature( state, siteId, WPCOM_FEATURES_SCAN_SELF_SERVE ),
 			hasSeoPreviewTools: siteHasFeature( state, siteId, WPCOM_FEATURES_SEO_PREVIEW_TOOLS ),
 			hasVideoHosting: siteHasFeature( state, siteId, WPCOM_FEATURES_VIDEO_HOSTING ),
 			hasVideoPressUnlimitedStorage: siteHasFeature(

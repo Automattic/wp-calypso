@@ -1,0 +1,23 @@
+.connect-screen-consent-text {
+	font-size: 0.875rem;
+	line-height: 1.6;
+	color: var( --color-text-subtle );
+	text-align: center;
+	margin: 1.5rem 0 0;
+	width: 100%;
+
+	a {
+		color: var( --studio-gray-70 );
+		text-decoration-line: underline;
+		text-decoration-style: solid;
+		text-decoration-skip-ink: none;
+		text-decoration-thickness: auto;
+		text-underline-offset: auto;
+		text-underline-position: from-font;
+
+		&:hover,
+		&:focus {
+			color: var( --studio-gray-70 );
+		}
+	}
+}

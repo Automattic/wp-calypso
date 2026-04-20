@@ -13,6 +13,18 @@
 	box-shadow: var( --color-border-subtle ) 0 1px 0 inset;
 	background-color: var( --color-surface );
 
+	&--no-box-shadow {
+		box-shadow: none;
+	}
+
+	&--has-transparent-background {
+		background-color: transparent;
+	}
+
+	&--center-text {
+		text-align: center;
+	}
+
 	&-left-element,
 	&-center-element,
 	&-right-element {
@@ -32,5 +44,13 @@
 	&-right-element {
 		margin-left: auto;
 		margin-right: 1rem;
+	}
+
+	&--full-width {
+		.step-container-v2__sticky-bottom-bar-left-element,
+		.step-container-v2__sticky-bottom-bar-center-element,
+		.step-container-v2__sticky-bottom-bar-right-element {
+			flex-grow: 1;
+		}
 	}
 }

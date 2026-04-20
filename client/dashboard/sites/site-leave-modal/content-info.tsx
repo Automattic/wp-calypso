@@ -1,5 +1,5 @@
 import {
-	siteHasCancelablePurchasesQuery,
+	sitePurchasesQuery,
 	siteCurrentUserQuery,
 	siteUserDeleteMutation,
 } from '@automattic/api-queries';
@@ -214,9 +214,15 @@ function ContentLeaveSite( { site, onClose }: ContentInfoProps ) {
 
 export default function ContentInfo( { site, onClose }: ContentInfoProps ) {
 	const { user } = useAuth();
-	const { data: hasPurchasesCancelable, isLoading: isLoadingHasPurchasesCancelable } = useQuery(
-		siteHasCancelablePurchasesQuery( site.ID, user.ID )
-	);
+	const { data: hasPurchasesCancelable, isLoading: isLoadingHasPurchasesCancelable } = useQuery( {
+		...sitePurchasesQuery( site.ID ),
+		select: ( purchases ) =>
+			purchases.some(
+				( purchase ) =>
+					purchase.user_id === user.ID &&
+					( purchase.is_refundable || purchase.product_slug !== 'premium_theme' )
+			),
+	} );
 
 	if ( isLoadingHasPurchasesCancelable ) {
 		return null;

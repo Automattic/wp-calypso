@@ -7,6 +7,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useState, useMemo } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { sitePerformanceRoute, siteRoute } from '../../app/router/sites';
 import InlineSupportLink from '../../components/inline-support-link';
 import { Notice } from '../../components/notice';
@@ -173,11 +174,7 @@ function SitePerformance() {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 
 	return (
-		<HostingFeatureGatedWithCallout
-			site={ site }
-			overlay={ <PageLayout header={ <PageHeader /> } /> }
-			{ ...getPerformanceCalloutProps() }
-		>
+		<HostingFeatureGatedWithCallout site={ site } fullPage { ...getPerformanceCalloutProps() }>
 			{ site.is_coming_soon || site.is_private ? (
 				<PageLayout
 					size="small"
@@ -203,6 +200,7 @@ function SitePerformance() {
 			) : (
 				<SitePerformanceContent site={ site } />
 			) }
+			<PerformanceTrackerStop />
 		</HostingFeatureGatedWithCallout>
 	);
 }

@@ -1,6 +1,9 @@
+import { domainsQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
+import { useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
+import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
 import { useEffect, useMemo, useState } from 'react';
@@ -12,6 +15,7 @@ import {
 	useDeviceTab,
 } from 'calypso/hosting/performance/contexts/device-tab-context';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useExperiment } from 'calypso/lib/explat';
 import { TabType } from 'calypso/performance-profiler/components/header';
 import { profilerVersion } from 'calypso/performance-profiler/utils/profiler-version';
 import { trackReportCompletedEvent } from 'calypso/performance-profiler/utils/track-report-events';
@@ -148,6 +152,15 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 		( state ) => getRequest( state, launchSite( siteId ) )?.isLoading ?? false
 	);
 
+	useQuery( {
+		...domainsQuery(),
+		select: ( data ) => data.filter( ( domain ) => domain.blog_id === site?.ID ),
+	} );
+
+	const [ isExperimentLoading, experimentData ] = useExperiment(
+		'calypso_standardized_site_launch_gating_202603_v1'
+	);
+	const experimentVariant = experimentData?.variationName;
 	const retestPage = () => {
 		recordTracksEvent( 'calypso_performance_profiler_test_again_click' );
 		performance.mark( 'test-started' );
@@ -169,7 +182,6 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 			return;
 		}
 
-		dispatch( launchSite( siteId! ) );
 		recordTracksEvent( 'calypso_performance_profiler_launch_site_cta_click' );
 
 		// Additional event to align analysis across dashboards.
@@ -178,6 +190,28 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 			context: 'site_performance',
 			path,
 		} );
+
+		if ( experimentVariant === 'semi_gated_site_launch' ) {
+			window.location.assign(
+				addQueryArgs( '/start/launch-site', {
+					siteSlug: site?.slug,
+					back_to: window.location.pathname,
+				} )
+			);
+			return;
+		}
+
+		if ( experimentVariant === 'ungated_site_launch' ) {
+			// Add celebrateLaunch param immediately so it's ready when site status updates
+			const url = new URL( window.location.href );
+			url.searchParams.set( 'celebrateLaunch', 'true' );
+			window.history.replaceState( {}, '', url.toString() );
+			dispatch( launchSite( siteId! ) );
+			return;
+		}
+
+		// default / control variant
+		dispatch( launchSite( siteId! ) );
 	};
 
 	const isMobile = useMobileBreakpoint();
@@ -299,7 +333,7 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 				{ isMobile ? (
 					<MobileHeader
 						pageTitle={ currentPage?.label ?? '' }
-						pageSelector={ pageSelector }
+						{ ...( isSitePublic && { pageSelector } ) }
 						subtitle={ subtitle }
 					/>
 				) : (
@@ -309,13 +343,15 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 						subtitle={ subtitle }
 					/>
 				) }
-				{ ! isMobile && pageSelector }
-				<DeviceTabControls
-					showTitle={ ! isMobile }
-					onDeviceTabChange={ handleDeviceTabChange }
-					disabled={ disableControls }
-					value={ activeTab }
-				/>
+				{ ! isMobile && isSitePublic && pageSelector }
+				{ isSitePublic && (
+					<DeviceTabControls
+						showTitle={ ! isMobile }
+						onDeviceTabChange={ handleDeviceTabChange }
+						disabled={ disableControls }
+						value={ activeTab }
+					/>
+				) }
 			</div>
 			{ isLoadingPages && isSitePublic ? (
 				<PerformanceReportLoading isLoadingPages />
@@ -323,7 +359,7 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 				<>
 					{ ! isSitePublic ? (
 						<ReportUnavailable
-							isLaunching={ siteIsLaunching }
+							isLaunching={ siteIsLaunching || isExperimentLoading }
 							onLaunchSiteClick={ onLaunchSiteClick }
 							ctaText={
 								site?.is_a4a_dev_site

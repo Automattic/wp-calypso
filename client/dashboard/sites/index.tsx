@@ -1,15 +1,12 @@
 import { isAutomatticianQuery, siteBySlugQuery, siteByIdQuery } from '@automattic/api-queries';
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	useQuery,
 	useQueryClient,
 	useSuspenseQuery,
 	keepPreviousData,
 } from '@tanstack/react-query';
-import { useNavigate } from '@tanstack/react-router';
 import { Button, Modal } from '@wordpress/components';
-import { filterSortAndPaginate } from '@wordpress/dataviews';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { getISOWeek, getISOWeekYear } from 'date-fns';
 import deepmerge from 'deepmerge';
 import { useState, useEffect } from 'react';
@@ -19,7 +16,7 @@ import { useAuth } from '../app/auth';
 import { useAppContext } from '../app/context';
 import { usePersistentView } from '../app/hooks/use-persistent-view';
 import { sitesRoute } from '../app/router/sites';
-import { DataViewsEmptyState } from '../components/dataviews';
+import { DataViewsEmptyStateLayout } from '../components/dataviews';
 import OptInSurvey from '../components/opt-in-survey';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
@@ -33,45 +30,17 @@ import {
 	recordViewChanges,
 	sanitizeFields,
 } from './dataviews';
+import { EmptySitesStateContent, EmptySitesSearchStateContent } from './empty-sites-state';
 import { InviteAcceptedFlashMessage } from './invite-accepted-flash-message';
-import noSitesIllustration from './no-sites-illustration.svg';
 import { SitesNotices } from './notices';
 import { OptInWelcomeModal } from './welcome-modal';
-import type {
-	FetchSitesOptions,
-	FetchPaginatedSitesOptions,
-	Site,
-	DashboardFilters,
-} from '@automattic/api-core';
+import type { FetchPaginatedSitesOptions, Site, DashboardFilters } from '@automattic/api-core';
 import type { View, Filter } from '@wordpress/dataviews';
 
 type SiteListQueryOptions = {
 	isDefaultView?: boolean;
 	isRestoringAccount: boolean;
 	isAutomattician: boolean;
-};
-
-const getFetchSitesOptions = (
-	view: View,
-	{ isRestoringAccount, isAutomattician }: SiteListQueryOptions
-): FetchSitesOptions => {
-	const filters = view.filters ?? [];
-
-	// Include A8C sites unless explicitly excluded from the filter.
-	const shouldIncludeA8COwned =
-		isAutomattician &&
-		! filters.some( ( item: Filter ) => item.field === 'is_a8c' && item.value === false );
-
-	if ( filters.find( ( item: Filter ) => item.field === 'is_deleted' && item.value === true ) ) {
-		return { site_visibility: 'deleted', include_a8c_owned: shouldIncludeA8COwned };
-	}
-
-	return {
-		// Some P2 sites are not retrievable unless site_visibility is set to 'all'.
-		// See: https://github.com/Automattic/wp-calypso/pull/104220.
-		site_visibility: view.search || shouldIncludeA8COwned || isRestoringAccount ? 'all' : 'visible',
-		include_a8c_owned: shouldIncludeA8COwned,
-	};
 };
 
 const getFetchPaginatedSitesOptions = (
@@ -126,51 +95,46 @@ const getFetchPaginatedSitesOptions = (
  * Enables the correct site query based on feature flags.
  */
 export function useSiteListQuery( view: View, options: SiteListQueryOptions ) {
+	const queryClient = useQueryClient();
+
 	const { queries } = useAppContext();
 
 	const { data: siteFilters } = useQuery( {
 		...queries.dashboardSiteFiltersQuery( [ 'plan' ] ),
 		staleTime: 5 * 60 * 1000, // Consider valid for 5 minutes
-		enabled:
-			isEnabled( 'dashboard/v2/paginated-site-list' ) &&
-			!! view.filters?.find( ( filter ) => filter.field === 'plan' ),
-	} );
-
-	const sitesQueryResult = useQuery( {
-		...queries.sitesQuery( getFetchSitesOptions( view, options ) ),
-		placeholderData: keepPreviousData,
-		enabled: ! isEnabled( 'dashboard/v2/paginated-site-list' ),
+		enabled: !! view.filters?.find( ( filter ) => filter.field === 'plan' ),
 	} );
 
 	const paginatedSitesQueryResult = useQuery( {
 		...queries.paginatedSitesQuery( getFetchPaginatedSitesOptions( view, options, siteFilters ) ),
 		placeholderData: keepPreviousData,
-		enabled: isEnabled( 'dashboard/v2/paginated-site-list' ),
 		meta: {
 			fullPageLoader: true,
 		},
 	} );
 
-	if ( isEnabled( 'dashboard/v2/paginated-site-list' ) ) {
-		return {
-			sites: paginatedSitesQueryResult.data?.sites,
-			hasNoData: paginatedSitesQueryResult.data?.sites.length === 0,
-			isLoadingSites: paginatedSitesQueryResult.isLoading,
-			isPlaceholderData: paginatedSitesQueryResult.isPlaceholderData,
-			totalItems: paginatedSitesQueryResult.data?.total,
-		};
-	}
-
-	return {
-		sites: sitesQueryResult.data,
-		hasNoData: sitesQueryResult.data?.length === 0,
-		isLoadingSites: sitesQueryResult.isLoading,
-		isPlaceholderData: sitesQueryResult.isPlaceholderData,
-		totalItems: sitesQueryResult.data?.length,
+	const result = {
+		sites: paginatedSitesQueryResult.data?.sites,
+		hasNoData: paginatedSitesQueryResult.data?.sites.length === 0,
+		isLoadingSites: paginatedSitesQueryResult.isLoading,
+		isPlaceholderData: paginatedSitesQueryResult.isPlaceholderData,
+		totalItems: paginatedSitesQueryResult.data?.total,
 	};
+
+	useEffect( () => {
+		if ( result.sites ) {
+			result.sites.forEach( ( site ) => {
+				const updater = ( oldData?: Site ) => ( oldData ? deepmerge( oldData, site ) : site );
+				queryClient.setQueryData( siteBySlugQuery( site.slug ).queryKey, updater );
+				queryClient.setQueryData( siteByIdQuery( site.ID ).queryKey, updater );
+			} );
+		}
+	}, [ result.sites, queryClient ] );
+
+	return result;
 }
 
-function filterSortAndPaginateSites( sites: Site[], view: View, totalItems: number ) {
+export function filterSortAndPaginateSites( sites: Site[], view: View, totalItems: number ) {
 	return {
 		data: sites,
 		paginationInfo: {
@@ -182,8 +146,6 @@ function filterSortAndPaginateSites( sites: Site[], view: View, totalItems: numb
 
 export default function Sites() {
 	const { recordTracksEvent } = useAnalytics();
-	const navigate = useNavigate( { from: sitesRoute.fullPath } );
-	const queryClient = useQueryClient();
 	const currentSearchParams = sitesRoute.useSearch();
 	const isRestoringAccount = !! currentSearchParams.restored;
 
@@ -191,7 +153,7 @@ export default function Sites() {
 	const { data: isAutomattician } = useSuspenseQuery( isAutomatticianQuery() );
 
 	const defaultView = getDefaultView( {
-		user,
+		siteCount: user.site_count,
 		isAutomattician,
 		isRestoringAccount,
 	} );
@@ -218,75 +180,16 @@ export default function Sites() {
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 
 	const handleViewChange = ( nextView: View ) => {
-		if ( nextView.type === 'list' ) {
-			return;
-		}
-
 		recordViewChanges( view, nextView, recordTracksEvent );
-
 		updateView( nextView );
 	};
 
-	const hasFilterOrSearch = ( view.filters && view.filters.length > 0 ) || view.search;
+	const userHasSites = user.site_count > 0;
 
-	const emptyTitle = hasFilterOrSearch ? __( 'No sites found' ) : __( 'No sites' );
-
-	let emptyDescription = __( 'Get started by creating a new site.' );
-	if ( view.search ) {
-		emptyDescription = sprintf(
-			// Translators: %s is the search term used when looking for sites by title or domain name.
-			__(
-				'Your search for “%s” did not match any sites. Try searching by the site title or domain name.'
-			),
-			view.search
-		);
-	} else if ( hasFilterOrSearch ) {
-		emptyDescription = __( 'Your search did not match any sites.' );
-	}
-
-	useEffect( () => {
-		if ( sites ) {
-			sites.forEach( ( site ) => {
-				const updater = ( oldData?: Site ) => ( oldData ? deepmerge( oldData, site ) : site );
-				queryClient.setQueryData( siteBySlugQuery( site.slug ).queryKey, updater );
-				queryClient.setQueryData( siteByIdQuery( site.ID ).queryKey, updater );
-			} );
-		}
-	}, [ sites, queryClient ] );
-
-	const { data: filteredData, paginationInfo } = isEnabled( 'dashboard/v2/paginated-site-list' )
-		? filterSortAndPaginateSites( sites ?? [], view, totalItems ?? 0 )
-		: filterSortAndPaginate( sites ?? [], view, fields );
-
-	const emptyState = (
-		<DataViewsEmptyState
-			title={ emptyTitle }
-			description={ emptyDescription }
-			illustration={ <img src={ noSitesIllustration } alt="" width={ 408 } height={ 280 } /> }
-			actions={
-				<>
-					{ view.search && (
-						<Button
-							__next40pxDefaultSize
-							variant="secondary"
-							onClick={ () => {
-								navigate( {
-									search: {
-										...currentSearchParams,
-										search: undefined,
-									},
-								} );
-							} }
-						>
-							{ __( 'Clear search' ) }
-						</Button>
-					) }
-					<Button __next40pxDefaultSize variant="primary" onClick={ () => setIsModalOpen( true ) }>
-						{ __( 'Add new site' ) }
-					</Button>
-				</>
-			}
-		/>
+	const { data: filteredData, paginationInfo } = filterSortAndPaginateSites(
+		sites ?? [],
+		view,
+		totalItems ?? 0
 	);
 
 	return (
@@ -303,13 +206,15 @@ export default function Sites() {
 					<PageHeader
 						title={ __( 'Sites' ) }
 						actions={
-							<Button
-								variant="primary"
-								onClick={ () => setIsModalOpen( true ) }
-								__next40pxDefaultSize
-							>
-								{ __( 'Add new site' ) }
-							</Button>
+							userHasSites && (
+								<Button
+									variant="primary"
+									onClick={ () => setIsModalOpen( true ) }
+									__next40pxDefaultSize
+								>
+									{ __( 'Add new site' ) }
+								</Button>
+							)
 						}
 					/>
 				}
@@ -320,18 +225,37 @@ export default function Sites() {
 					</>
 				}
 			>
-				<SitesDataViews
-					view={ view }
-					sites={ filteredData }
-					fields={ fields }
-					actions={ actions }
-					isLoading={ isLoadingSites || ( isPlaceholderData && hasNoData ) }
-					isPlaceholderData={ isPlaceholderData }
-					empty={ emptyState }
-					paginationInfo={ paginationInfo }
-					onChangeView={ handleViewChange }
-					onResetView={ resetView }
-				/>
+				{ userHasSites ? (
+					<SitesDataViews
+						view={ view }
+						sites={ filteredData }
+						fields={ fields }
+						actions={ actions }
+						isLoading={ isLoadingSites || ( isPlaceholderData && hasNoData ) }
+						isPlaceholderData={ isPlaceholderData }
+						empty={
+							<DataViewsEmptyStateLayout
+								title={ __( 'No sites match your search' ) }
+								description={ __( 'Try again, or start a new site with the options below.' ) }
+								isBorderless
+							>
+								<EmptySitesSearchStateContent />
+							</DataViewsEmptyStateLayout>
+						}
+						paginationInfo={ paginationInfo }
+						onChangeView={ handleViewChange }
+						onResetView={ resetView }
+					/>
+				) : (
+					<DataViewsEmptyStateLayout
+						title={ __( 'You don’t have any sites yet' ) }
+						description={ __(
+							'Start a site and begin creating, coding, or exploring what WordPress can do.'
+						) }
+					>
+						<EmptySitesStateContent />
+					</DataViewsEmptyStateLayout>
+				) }
 			</PageLayout>
 			{ /* ExPlat's Evergreen A/A Test Experiment:
 			 *

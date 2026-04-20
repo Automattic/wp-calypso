@@ -86,7 +86,7 @@ export const SITE_REQUEST_OPTIONS = [
 	'site_creation_flow',
 	'site_source_slug',
 	'is_difm_lite_in_progress',
-	'is_summer_special_2025',
+	'is_gating_business_q1',
 	'site_intent',
 	'site_partner_bundle',
 	'theme_slug',

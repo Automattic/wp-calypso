@@ -52,6 +52,7 @@ export const FEATURE_3GB_STORAGE = '3gb-storage';
 export const FEATURE_6GB_STORAGE = '6gb-storage';
 export const FEATURE_13GB_STORAGE = '13gb-storage';
 export const FEATURE_50GB_STORAGE = '50gb-storage';
+export const FEATURE_100GB_STORAGE = '100gb-storage'; // Woo Hosted Only
 export const FEATURE_200GB_STORAGE = '200gb-storage';
 export const FEATURE_LEGACY_STORAGE_200GB = 'upload-space-200gb';
 export const FEATURE_UNLIMITED_STORAGE = 'unlimited-storage';
@@ -74,7 +75,6 @@ export const FEATURE_WORDADS_INSTANT = 'wordads-instant';
 export const FEATURE_NO_BRANDING = 'no-wp-branding';
 export const FEATURE_ADVANCED_SEO = 'advanced-seo';
 export const FEATURE_UPLOAD_PLUGINS = 'upload-plugins';
-export const FEATURE_UPLOAD_PLUGINS_SUMMER_SPECIAL = 'upload-plugins-summer-special';
 export const FEATURE_INSTALL_PLUGINS = 'install-plugins';
 export const FEATURE_INSTALL_THEMES = 'install-themes';
 export const FEATURE_UPLOAD_THEMES = 'upload-themes';
@@ -273,6 +273,7 @@ export const WPCOM_FEATURES_AKISMET = 'akismet';
 export const WPCOM_FEATURES_ANTISPAM = 'antispam';
 export const WPCOM_FEATURES_ATOMIC = 'atomic';
 export const WPCOM_FEATURES_BACKUPS = 'backups';
+export const WPCOM_FEATURES_BACKUPS_SELF_SERVE = 'backups-self-serve';
 export const WPCOM_FEATURES_BIG_SKY = 'big-sky';
 export const WPCOM_FEATURES_BACKUPS_RESTORE = 'restore';
 export const WPCOM_FEATURES_CLASSIC_SEARCH = 'search';
@@ -305,6 +306,7 @@ export const WPCOM_FEATURES_SENSEI_THEMES = 'sensei-themes';
 export const WPCOM_FEATURES_PRIORITY_SUPPORT = 'priority_support';
 export const WPCOM_FEATURES_REAL_TIME_BACKUPS = 'real-time-backups';
 export const WPCOM_FEATURES_SCAN = 'scan';
+export const WPCOM_FEATURES_SCAN_SELF_SERVE = 'scan-self-serve';
 export const WPCOM_FEATURES_SCHEDULED_UPDATES = 'scheduled-updates';
 export const WPCOM_FEATURES_SEO_PREVIEW_TOOLS = 'seo-preview-tools';
 export const WPCOM_FEATURES_SUBSCRIPTION_GIFTING = 'subscription-gifting';
@@ -494,11 +496,44 @@ export const FEATURE_AI_ASSISTED_PRODUCT_DESCRIPTION = 'ai-assisted-product-desc
 // Woo Hosted Features
 export const FEATURE_WOO_HOSTED_PACKAGE = 'woo-hosted-package';
 export const FEATURE_WOO_HOSTED_AI_BUILDER = 'woo-hosted-ai-builder';
+export const FEATURE_WOO_HOSTED_PAYPAL_INTEGRATON = 'woo-hosted-paypal-integration';
 export const FEATURE_WOO_HOSTED_MARKETING_TOOLS = 'woo-hosted-marketing-tools';
 export const FEATURE_WOO_HOSTED_BASIC_MAILPOET = 'woo-hosted-basic-mailpoet';
 export const FEATURE_WOO_HOSTED_PRO_MAILPOET = 'woo-hosted-pro-mailpoet';
 export const FEATURE_WOO_HOSTED_BASIC_ADMIN_USERS = 'woo-hosted-basic-admin-users';
 export const FEATURE_WOO_HOSTED_PRO_ADMIN_USERS = 'woo-hosted-pro-admin-users';
+export const FEATURE_WOO_HOSTED_POWERFUL_COMMERCE_TOOLS = 'woo-hosted-powerful-commerce-tools';
+export const FEATURE_WOO_HOSTED_FREE_DOMAIN_1_YEAR = 'woo-hosted-free-domain-1-year';
+export const FEATURE_WOO_HOSTED_SEAMLESS_CHECKOUT = 'woo-hosted-seamless-checkout';
+export const FEATURE_WOO_HOSTED_ACCEPT_CARD_PAYMENTS = 'woo-hosted-accept-card-payments';
+export const FEATURE_WOO_HOSTED_POS_PAYMENTS = 'woo-hosted-pos-payments';
+export const FEATURE_WOO_HOSTED_POS_NO_MONTHLY_FEES = 'woo-hosted-pos-no-monthly-fees';
+export const FEATURE_WOO_HOSTED_LIST_PRODUCTS = 'woo-hosted-list-products';
+export const FEATURE_WOO_HOSTED_BOOKINGS = 'woo-hosted-bookings';
+export const FEATURE_WOO_HOSTED_TEAM_BOOKINGS = 'woo-hosted-team-bookings';
+export const FEATURE_WOO_HOSTED_UPSELLS_CROSS_SELLS = 'woo-hosted-upsells-cross-sells';
+export const FEATURE_WOO_HOSTED_GIFT_CARDS = 'woo-hosted-gift-cards';
+export const FEATURE_WOO_HOSTED_MOBILE_APP = 'woo-hosted-mobile-app';
+export const FEATURE_WOO_HOSTED_SHIPMENT_TRACKING = 'woo-hosted-shipment-tracking';
+export const FEATURE_WOO_HOSTED_USPS_UPS = 'woo-hosted-usps-ups';
+export const FEATURE_WOO_HOSTED_ANALYTICS_REPORTS = 'woo-hosted-analytics-reports';
+export const FEATURE_WOO_HOSTED_BASIC_STORAGE = 'woo-hosted-basic-storage';
+export const FEATURE_WOO_HOSTED_PRO_STORAGE = 'woo-hosted-pro-storage';
+export const FEATURE_WOO_HOSTED_SECURITY = 'woo-hosted-security';
+export const FEATURE_WOO_HOSTED_AUTOMATED_EMAIL_FLOWS = 'woo-hosted-automated-email-flows';
+export const FEATURE_WOO_HOSTED_ABANDONED_CART_EMAILS = 'woo-hosted-abandoned-cart-emails';
+export const FEATURE_WOO_HOSTED_POST_PURCHASE_EMAILS = 'woo-hosted-post-purchase-emails';
+export const FEATURE_WOO_HOSTED_EMAIL_TEMPLATES = 'woo-hosted-email-templates';
+export const FEATURE_WOO_HOSTED_SEO_TOOLS = 'woo-hosted-seo-tools';
+export const FEATURE_WOO_HOSTED_COUPONS = 'woo-hosted-coupons';
+export const FEATURE_WOO_HOSTED_POS_SYSTEM = 'woo-hosted-pos-system';
+export const FEATURE_WOO_HOSTED_STAFF_ACCOUNTS = 'woo-hosted-staff-accounts';
+export const FEATURE_WOO_HOSTED_STORAGE_SPACE = 'woo-hosted-storage-space';
+export const FEATURE_WOO_HOSTED_EMAIL_CAMPAIGNS = 'woo-hosted-email-campaigns';
+export const FEATURE_WOO_HOSTED_EMAIL_SUBSCRIBER_MGMT = 'woo-hosted-email-subscriber-mgmt';
+export const FEATURE_WOO_HOSTED_SALES_TAX = 'woo-hosted-sales-tax';
+export const FEATURE_WOO_HOSTED_SHIPPING_LABELS = 'woo-hosted-shipping-labels';
+export const FEATURE_WOO_HOSTED_PRIORITY_SUPPORT = 'woo-hosted-priority-support';
 
 // Sensei Features
 export const FEATURE_SENSEI_SUPPORT = 'sensei-support';
@@ -539,17 +574,12 @@ export const FEATURE_BIG_SKY_WEBSITE_BUILDER_CHECKOUT = 'feature-big-sky-website
 // AI features for plan differentiators experiment
 export const FEATURE_AI_WEBSITE_BUILDER = 'feature-ai-website-builder';
 export const FEATURE_AI_WEBSITE_BUILDER_LIMITED = 'feature-ai-website-builder-limited';
+export const FEATURE_GUIDED_WEBSITE_BUILDER = 'feature-guided-website-builder';
+export const FEATURE_GUIDED_WEBSITE_BUILDER_LIMITED = 'feature-guided-website-builder-limited';
 export const FEATURE_AI_WRITER_DESIGNER = 'feature-ai-writer-designer';
 export const FEATURE_AI_WRITER_DESIGNER_LIMITED = 'feature-ai-writer-designer-limited';
-
-// "Everything in X, plus:" features for stacked variants
-export const FEATURE_EVERYTHING_IN_FREE_PLUS = 'feature-everything-in-free-plus';
-export const FEATURE_EVERYTHING_IN_PERSONAL_PLUS = 'feature-everything-in-personal-plus';
-export const FEATURE_EVERYTHING_IN_PREMIUM_PLUS = 'feature-everything-in-premium-plus';
-export const FEATURE_EVERYTHING_IN_BUSINESS_PLUS = 'feature-everything-in-business-plus';
-
-// "Included in plan:" header for Free plan in stacked variants
-export const FEATURE_INCLUDED_IN_PLAN = 'feature-included-in-plan';
+export const FEATURE_ENHANCED_AI_ASSISTANT_AND_TOOLS = 'feature-enhanced-ai-assistant-and-tools';
+export const FEATURE_BUILT_IN_SITE_ASSISTANT = 'feature-built-in-site-assistant';
 
 // Additional features for plan differentiators experiment
 export const FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR = 'feature-professional-email-free-year';

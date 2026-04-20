@@ -31,7 +31,7 @@ import './setup';
 
 declare global {
 	interface Window {
-		qp: ( ...args: string[] ) => void;
+		qp: ( ...args: any[] ) => void;
 		twq: ( ...args: any[] ) => void;
 		fbq: ( ...args: any[] ) => void;
 		gtag: ( ...args: any[] ) => void;
@@ -108,9 +108,9 @@ export async function recordOrder(
 	}
 
 	if ( mayWeTrackByTracker( 'quora' ) ) {
-		const params = [ 'track', 'Generic' ];
+		const params = [ 'track', 'Purchase' ];
 		debug( 'recordOrder: [Quora]', params );
-		window.qp( ...params );
+		window.qp( 'track', 'Purchase', { value: usdTotalCost } );
 	}
 
 	if ( mayWeTrackByTracker( 'iconMedia' ) ) {

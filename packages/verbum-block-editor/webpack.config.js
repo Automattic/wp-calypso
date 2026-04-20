@@ -2,19 +2,45 @@ const path = require( 'path' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
 const webpack = require( 'webpack' );
 
-/* Arguments to this function replicate webpack's so this config can be used on the command line,
- * with individual options overridden by command line args.
- * @see {@link https://webpack.js.org/configuration/configuration-types/#exporting-a-function}
- * @see {@link https://webpack.js.org/api/cli/}
- * @param   {Object}  env                           environment options
- * @param   {string}  env.source                    plugin slugs, comma separated list
- * @param   {Object}  argv                          options map
- * @param   {string}  argv.entry                    entry path
- * @returns {Object}                                webpack config
+/**
+ * Consolidated stub that replaces all unused heavy modules.
  */
+const stubModule = path.join( __dirname, 'src', 'stubs', 'index.js' );
+
+/**
+ * Modules to stub out for bundle size reduction.
+ * These are transitive dependencies not needed for the comment editor.
+ */
+const modulesToStub = [
+	// Collaborative editing (~500KB with yjs/lib0/simple-peer)
+	/^@wordpress\/sync$/,
+
+	// Date/time functionality (~2.5MB total with date-fns, moment-timezone)
+	/^@wordpress\/date$/,
+	/^date-fns/,
+	/^@date-fns\/tz/,
+	/^react-day-picker/,
+	/@wordpress\/components\/build-module\/date-time(?:$|\/)/,
+	/@wordpress\/components\/build-module\/calendar(?:$|\/)/,
+	/@wordpress\/block-editor\/build-module\/components\/date-format-picker(?:$|\/)/,
+	/@wordpress\/block-editor\/build-module\/components\/publish-date-time-picker(?:$|\/)/,
+
+	// Command palette (~33KB)
+	/^@wordpress\/commands$/,
+
+	// Unused @wordpress/components (~250KB total)
+	/@wordpress\/components\/build-module\/navigation(?:$|\/)/,
+	/@wordpress\/components\/build-module\/focal-point-picker(?:$|\/)/,
+	/@wordpress\/components\/build-module\/color-picker(?:$|\/)/,
+	/@wordpress\/components\/build-module\/palette-edit(?:$|\/)/,
+
+	// Other unused libraries
+	/^showdown$/, // Markdown parser (~156KB)
+	/^react-easy-crop$/, // Image cropping (~46KB)
+];
+
 function getWebpackConfig( env = { source: '' }, argv = {} ) {
 	const outputPath = path.join( __dirname, 'dist' );
-
 	const webpackConfig = getBaseWebpackConfig( env, argv );
 
 	return {
@@ -26,13 +52,7 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 		output: {
 			...webpackConfig.output,
 			path: outputPath,
-			// Unfortunately, we can't set the name to `[name].js` for the
-			// dev env because at runtime we'd also need a way to detect
-			// if the env was dev or prod, as the file is enqueued in WP
-			// and there's no way to do that now. The simpler alternative
-			// is to generate a .min.js for dev and prod, even though the
-			// file is not really minified in the dev env.
-			filename: '[name].min.js', // dynamic filename
+			filename: '[name].min.js',
 			library: 'verbumBlockEditor',
 		},
 		externals: {
@@ -43,6 +63,17 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 			new webpack.DefinePlugin( {
 				'process.env.IS_GUTENBERG_PLUGIN': true,
 			} ),
+
+			// Ignore moment.js locales
+			new webpack.IgnorePlugin( {
+				resourceRegExp: /^\.\/locale$/,
+				contextRegExp: /moment$/,
+			} ),
+
+			// Replace all stubbed modules with consolidated stub
+			...modulesToStub.map(
+				( pattern ) => new webpack.NormalModuleReplacementPlugin( pattern, stubModule )
+			),
 		],
 	};
 }

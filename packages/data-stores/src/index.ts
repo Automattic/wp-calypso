@@ -67,7 +67,10 @@ export type {
 } from './help-center/types';
 export type {
 	AgentsManagerSelect,
+	AgentsManagerSite,
 	Dispatch as AgentsManagerDispatch,
+	PerSiteRouterHistory,
+	SingleRouterHistory,
 } from './agents-manager/types';
 export type { OnboardSelect, OnboardActions } from './onboard';
 export type { StepperInternalSelect } from './stepper-internal';
@@ -75,3 +78,4 @@ export type { SiteActions } from './site';
 export type { UserActions } from './user';
 export type { Member, UseQuery, UsersQuery } from './users/types';
 export { isE2ETest, isInSupportSession } from './utils';
+export { setRequester } from './wpcom-request';

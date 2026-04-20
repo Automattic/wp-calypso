@@ -194,6 +194,22 @@ export function renderNoVisibleSites( context ) {
 	clientRender( context );
 }
 
+function renderSelectedSiteNotFound( context ) {
+	setSectionMiddleware( { group: 'sites' } )( context );
+
+	context.primary = createElement( EmptyContentComponent, {
+		title: i18n.translate( "You don't have access to that site" ),
+		line: i18n.translate(
+			'You might not have permission to view this site, or it may not exist. Select a different site to continue.'
+		),
+		action: i18n.translate( 'Select a different site' ),
+		actionURL: '/sites',
+	} );
+
+	makeLayout( context, noop );
+	clientRender( context );
+}
+
 function renderSelectedSiteIsDIFMLiteInProgress( reactContext, selectedSite ) {
 	reactContext.primary = <DIFMLiteInProgress siteId={ selectedSite.ID } />;
 
@@ -315,6 +331,12 @@ function isPathAllowedForDIFMInProgressSite( path, slug, domains, contextParams 
 function onSelectedSiteAvailable( context ) {
 	const state = context.store.getState();
 	const selectedSite = getSelectedSite( state );
+
+	if ( ! selectedSite ) {
+		renderSelectedSiteNotFound( context );
+		return false;
+	}
+
 	// Use getSitePlanSlug() as it ignores expired plans.
 	const currentPlanSlug = getSitePlanSlug( state, selectedSite.ID );
 
@@ -492,6 +514,7 @@ export function noSite( context, next ) {
 	const isDomainOnlyFlow = context.query?.isDomainOnly === '1' || ! siteFragment;
 	const isJetpackCheckoutFlow = context.pathname.includes( '/checkout/jetpack' );
 	const isAkismetCheckoutFlow = context.pathname.includes( '/checkout/akismet' );
+	const is100YearCheckoutFlow = context.pathname.includes( '/checkout/100-year' );
 
 	// /checkout/marketplace/ is for standard siteless checkout, while
 	// /checkout/passport/ allows to use customized URL for Passport as well as custom branding.
@@ -512,6 +535,7 @@ export function noSite( context, next ) {
 		! isUnifiedCheckoutFlow &&
 		! isGiftCheckoutFlow &&
 		! isDomainsManage &&
+		! is100YearCheckoutFlow &&
 		// We allow renewals without a site through because we want to show these
 		// users an error message on the checkout page.
 		! isRenewal &&
@@ -644,6 +668,8 @@ export function siteSelection( context, next ) {
 		dispatch( requestSite( siteFragment ) )
 			.catch( () => null )
 			.then( ( site ) => {
+				let freshSiteId;
+
 				// If we found a site using the fragment and the fragment matches the *.wordpress.com domain for a site with a mapped domain,
 				// redirect to the mapped domain, e.g /site-editor/example.wordpress.com -> /site-editor/example.com
 				if ( site && site.ID ) {
@@ -654,9 +680,11 @@ export function siteSelection( context, next ) {
 						const hash = context.hashstring ? `#${ context.hashstring }` : '';
 						return page.redirect( context.path.replace( siteFragment, siteSlug ) + hash );
 					}
+
+					freshSiteId = site.ID;
 				}
 
-				let freshSiteId = getSiteId( getState(), siteFragment );
+				freshSiteId ??= getSiteId( getState(), siteFragment );
 
 				if ( ! freshSiteId ) {
 					const wpcomStagingFragment = siteFragment

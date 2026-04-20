@@ -23,6 +23,7 @@ export function createPurchaseObject( purchase: RawPurchase ): Purchase {
 		domainRegistrationAgreementUrl: purchase.domain_registration_agreement_url || null,
 		blogCreatedDate: purchase.blog_created_date,
 		expiryDate: purchase.expiry_date,
+		paymentExpiryDate: purchase.payment_expiry_date,
 		expiryStatus: snakeToCamelCase( purchase.expiry_status ),
 		iapPurchaseManagementLink: purchase.iap_purchase_management_link,
 		includedDomain: purchase.included_domain,
@@ -30,6 +31,7 @@ export function createPurchaseObject( purchase: RawPurchase ): Purchase {
 		introductoryOffer: purchase.introductory_offer
 			? {
 					costPerInterval: Number( purchase.introductory_offer.cost_per_interval ),
+					costPerIntervalInteger: Number( purchase.introductory_offer.cost_per_interval_integer ),
 					endDate: String( purchase.introductory_offer.end_date ),
 					intervalCount: Number( purchase.introductory_offer.interval_count ),
 					intervalUnit: String( purchase.introductory_offer.interval_unit ),
@@ -57,6 +59,7 @@ export function createPurchaseObject( purchase: RawPurchase ): Purchase {
 		isInAppPurchase: Boolean( purchase.is_iap_purchase ),
 		isRechargeable: Boolean( purchase.is_rechargeable ),
 		isRefundable: Boolean( purchase.is_refundable ),
+		isWithinInitialRefundWindow: Boolean( purchase.is_within_initial_refund_window ),
 		isRenewable: Boolean( purchase.is_renewable ),
 		isRenewal: Boolean( purchase.is_renewal ),
 		isWooExpressTrial: Boolean( purchase.is_woo_express_trial ),
@@ -114,6 +117,7 @@ export function createPurchaseObject( purchase: RawPurchase ): Purchase {
 		userId: Number( purchase.user_id ),
 		isAutoRenewEnabled: purchase.is_auto_renew_enabled,
 		isJetpackPlanOrProduct: purchase.is_jetpack_plan_or_product,
+		isAttachedToHoldingSite: Boolean( purchase.is_attached_to_holding_site ),
 	};
 
 	if ( isCreditCardPurchase( purchase ) ) {

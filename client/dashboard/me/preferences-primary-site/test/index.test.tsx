@@ -30,6 +30,7 @@ jest.mock( '@wordpress/data', () => ( {
 jest.mock(
 	'@automattic/api-queries',
 	() => ( {
+		startSiteCollisionListener: jest.fn( () => jest.fn() ),
 		userSettingsQuery: jest.fn( () => ( {
 			queryKey: [ 'me', 'settings' ],
 			queryFn: jest.fn(),
@@ -95,7 +96,6 @@ function renderPreferencesPrimarySite() {
 }
 
 afterEach( () => {
-	jest.clearAllMocks();
 	mockSitesQuery.mockClear();
 } );
 

@@ -95,6 +95,18 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	} );
 
 	describe( 'Jetpack features', function () {
+		skipItIf( envVariables.TEST_ON_ATOMIC !== true )(
+			'Enter SEO title and description',
+			async function () {
+				await editorPage.openSettings( 'Settings' );
+				await editorPage.enterSEODetails( {
+					title: seoTitle,
+					description: seoDescription,
+				} );
+				await editorPage.closeSettings();
+			}
+		);
+
 		it( 'Open Jetpack settings', async function () {
 			// @TODO https://github.com/Automattic/wp-calypso/pull/82301
 			// Works around the scenario where the Jetpack icon isn't pinned on the
@@ -102,18 +114,8 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 			await editorPage.openEditorOptionsMenu();
 			const page = await editorPage.getEditorParent();
 
-			await page.getByRole( 'menuitemcheckbox', { name: 'Jetpack' } ).click();
+			await page.getByRole( 'menuitemcheckbox', { name: 'Jetpack', exact: true } ).click();
 		} );
-
-		skipItIf( envVariables.TEST_ON_ATOMIC !== true )(
-			'Enter SEO title and preview',
-			async function () {
-				await editorPage.enterSEODetails( {
-					title: seoTitle,
-					description: seoDescription,
-				} );
-			}
-		);
 
 		skipDescribeIf( envVariables.ATOMIC_VARIATION === 'private' )( 'Link preview', function () {
 			it( 'Open link preview', async function () {

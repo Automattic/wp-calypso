@@ -11,6 +11,32 @@ Verbum Block Editor is a lightweight Gutenberg editor, tailored specifically for
 - Efficiently handles embeds by integrating all necessary API middlewares.
 - Incorporates an iframed editor to minimize CSS collisions.
 
+## Bundle Size Optimization
+
+The Verbum Block Editor stubs out heavy dependencies that are pulled in transitively by the Gutenberg editor but aren't needed for the comment editing use case. This reduces the bundle size by ~50% (from 4.2 MiB to 2.1 MiB).
+
+### Stubbed Modules
+
+| Module                                                                               | Reason                                       | Size Savings |
+| ------------------------------------------------------------------------------------ | -------------------------------------------- | ------------ |
+| `@wordpress/sync`                                                                    | Collaborative editing (yjs/lib0/simple-peer) | ~500KB       |
+| `@wordpress/date`, `date-fns`, `react-day-picker`                                    | Date/time pickers                            | ~2.5MB       |
+| `@wordpress/commands`                                                                | Command palette                              | ~33KB        |
+| `@wordpress/components` (navigation, focal-point-picker, color-picker, palette-edit) | Unused UI components                         | ~250KB       |
+| `showdown`                                                                           | Markdown parser                              | ~156KB       |
+| `react-easy-crop`                                                                    | Image cropping                               | ~46KB        |
+
+### How It Works
+
+The webpack config uses `NormalModuleReplacementPlugin` to replace these modules with a consolidated stub file (`src/stubs/index.js`) that exports no-op functions and null components.
+
+### Adding New Stubs
+
+1. Identify unused modules via bundle analysis (`yarn build --analyze`)
+2. Add the module pattern to `modulesToStub` in `webpack.config.js`
+3. Add any required exports to `src/stubs/index.js`
+4. Test the comment editor to ensure no regressions
+
 ## Development
 
 This package can be utilized in two primary ways:

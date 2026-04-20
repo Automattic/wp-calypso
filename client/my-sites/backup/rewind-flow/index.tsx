@@ -133,7 +133,7 @@ const BackupRewindFlow: FunctionComponent< Props > = ( { rewindId, purpose } ) =
 	};
 
 	return (
-		<Main className="rewind-flow">
+		<Main wideLayout className="rewind-flow">
 			<DocumentHead
 				title={
 					purpose === RewindFlowPurpose.RESTORE ? translate( 'Restore' ) : translate( 'Download' )

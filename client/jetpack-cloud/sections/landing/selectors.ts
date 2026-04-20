@@ -2,7 +2,7 @@ import {
 	FEATURE_SOCIAL_SHARES_1000,
 	WPCOM_FEATURES_BACKUPS,
 	WPCOM_FEATURES_INSTANT_SEARCH,
-	WPCOM_FEATURES_SCAN,
+	WPCOM_FEATURES_SCAN_SELF_SERVE,
 } from '@automattic/calypso-products';
 import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -42,7 +42,7 @@ export const getLandingPath = ( state: AppState, siteId: number | null ) => {
 		return `/backup/${ siteSlug }`;
 	}
 
-	const hasScan = siteHasFeature( state, siteId, WPCOM_FEATURES_SCAN );
+	const hasScan = siteHasFeature( state, siteId, WPCOM_FEATURES_SCAN_SELF_SERVE );
 	if ( hasScan ) {
 		return `/scan/${ siteSlug }`;
 	}

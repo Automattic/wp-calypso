@@ -17,13 +17,15 @@ import {
 	purchaseQuery,
 	siteByIdQuery,
 	sitePurchasesQuery,
-	userPreferencesMutation,
+	userPreferenceMutation,
 	hasPurchaseBeenExtendedQuery,
 	siteLatestAtomicTransferQuery,
 	siteFeaturesQuery,
 	removePurchaseMutation,
 	userPreferenceQuery,
 } from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
+import { invokeSurvicateEvent } from '@automattic/survicate';
 import { useSuspenseQuery, useQuery, useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { __experimentalVStack as VStack } from '@wordpress/components';
@@ -34,6 +36,7 @@ import { intlFormat } from 'date-fns';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import Breadcrumbs from '../../../app/breadcrumbs';
+import { useLocale } from '../../../app/locale';
 import { cancelPurchaseRoute, purchaseSettingsRoute, purchasesRoute } from '../../../app/router/me';
 import { Card, CardBody } from '../../../components/card';
 import { PageHeader } from '../../../components/page-header';
@@ -47,10 +50,10 @@ import {
 	hasAmountAvailableToRefund,
 	hasMarketplaceProduct,
 	isAgencyPartnerType,
-	isAkismetTemporarySitePurchase,
+	isAkismetHoldingSitePurchase,
 	isExpired,
 	isGSuiteOrGoogleWorkspaceProductSlug,
-	isJetpackTemporarySitePurchase,
+	isJetpackHoldingSitePurchase,
 	isAkismetProduct,
 	isPartnerPurchase,
 	isOneTimePurchase,
@@ -67,18 +70,20 @@ import {
 	CANCELLATION_OFFER_STEP,
 	FEEDBACK_STEP,
 	NEXT_ADVENTURE_STEP,
-	OFFER_ACCEPTED_STEP,
 	REMOVE_PLAN_STEP,
 	UPSELL_STEP,
 } from './cancel-purchase-form/steps';
 import CancellationPreSurveyContent from './cancellation-pre-survey-content';
 import DomainRemovalFlow from './domain-removal-flow';
 import enrichedSurveyData from './enriched-survey-data';
+import { getSolutionsForReason } from './get-solutions-for-reason';
 import { getUpsellType } from './get-upsell-type';
 import initialSurveyState from './initial-survey-state';
 import MarketPlaceSubscriptionsDialog from './marketplace-subscriptions-dialog';
 import nextStep from './next-step';
+import RefundEligibilityNotice from './refund-eligibility-notice';
 import TimeRemainingNotice from './time-remaining-notice';
+import { useShowRefundEligibilityNotice } from './use-show-refund-eligibility-notice';
 import type { CancelPurchaseState } from './types';
 import type {
 	Purchase,
@@ -87,6 +92,7 @@ import type {
 	UserPreferences,
 } from '@automattic/api-core';
 import type { ChangeEvent } from 'react';
+
 import './style.scss';
 
 const willShowDomainOptionsRadioButtons = (
@@ -96,7 +102,8 @@ const willShowDomainOptionsRadioButtons = (
 	return (
 		includedDomainPurchase.is_domain_registration &&
 		purchase.is_refundable &&
-		includedDomainPurchase.is_refundable
+		!! includedDomainPurchase.cost_to_unbundle_display &&
+		includedDomainPurchase.is_within_initial_refund_window
 	);
 };
 
@@ -143,17 +150,13 @@ function getOfferDiscountBasedOnPurchasePrice(
 	return Math.round( offerDiscountPercentage );
 }
 
-function availableJetpackSurveySteps(
-	purchase: Purchase,
-	flowType: CancelFlowType,
-	cancellationOffer: CancellationOffer | undefined
-): string[] {
+function availableJetpackSurveySteps( purchase: Purchase, flowType: CancelFlowType ): string[] {
 	const availableSteps = [];
 
 	// If the plan is already expired or is a temporary Jetpack purchase (license),
 	// we only need one "confirm" step for the survey is the removal confirmation
 	// A product that is not in use does not need to collect the survey or show benefits
-	if ( isExpired( purchase ) || isJetpackTemporarySitePurchase( purchase ) ) {
+	if ( isExpired( purchase ) || isJetpackHoldingSitePurchase( purchase ) ) {
 		return [ CANCEL_CONFIRM_STEP ];
 	}
 
@@ -166,6 +169,18 @@ function availableJetpackSurveySteps(
 	}
 
 	if ( CANCEL_FLOW_TYPE.REMOVE === flowType ) {
+		availableSteps.push( FEEDBACK_STEP );
+	}
+
+	return availableSteps;
+}
+
+function shouldAddCancellationOfferStep(
+	purchase: Purchase,
+	flowType: CancelFlowType,
+	cancellationOffer: CancellationOffer | undefined
+): boolean {
+	if ( CANCEL_FLOW_TYPE.REMOVE === flowType ) {
 		const isOfferPriceSameOrLowerThanPurchasePrice = cancellationOffer
 			? purchase.amount >= cancellationOffer.original_price
 			: false;
@@ -174,25 +189,19 @@ function availableJetpackSurveySteps(
 			cancellationOffer
 		);
 
-		availableSteps.push( FEEDBACK_STEP );
-		if ( isOfferPriceSameOrLowerThanPurchasePrice && offerDiscountBasedFromPurchasePrice >= 10 ) {
-			availableSteps.push( CANCELLATION_OFFER_STEP );
-		}
+		return isOfferPriceSameOrLowerThanPurchasePrice && offerDiscountBasedFromPurchasePrice >= 10;
 	}
-
-	return availableSteps;
+	return false;
 }
 
 function getBasicSurveySteps( {
 	purchase,
 	upsell,
-	cancellationOffer,
 	hasQuestionTwo,
 	plans,
 }: {
 	purchase: Purchase;
 	upsell: CancelPurchaseState[ 'upsell' ];
-	cancellationOffer: CancellationOffer | undefined;
 	hasQuestionTwo: boolean;
 	plans: PlanProduct[];
 } ): string[] {
@@ -210,7 +219,7 @@ function getBasicSurveySteps( {
 		return [];
 	}
 	if ( isJetpack ) {
-		return availableJetpackSurveySteps( purchase, flowType, cancellationOffer );
+		return availableJetpackSurveySteps( purchase, flowType );
 	}
 	if ( purchase.is_domain_registration ) {
 		return [ FEEDBACK_STEP, NEXT_ADVENTURE_STEP ];
@@ -249,7 +258,6 @@ function getAllSurveySteps( {
 	let steps = getBasicSurveySteps( {
 		purchase,
 		upsell,
-		cancellationOffer,
 		hasQuestionTwo,
 		plans,
 	} );
@@ -267,12 +275,17 @@ function getAllSurveySteps( {
 		steps = [ REMOVE_PLAN_STEP, ...steps ];
 	}
 
+	if ( shouldAddCancellationOfferStep( purchase, flowType, cancellationOffer ) ) {
+		steps.push( CANCELLATION_OFFER_STEP );
+	}
+
 	return steps;
 }
 
 export default function CancelPurchase() {
 	const { createSuccessNotice, removeNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { recordTracksEvent } = useAnalytics();
+	const locale = useLocale();
 	const [ state, setState ] = useState< CancelPurchaseState >( {
 		questionOneOrder: [],
 		initialized: false,
@@ -329,20 +342,25 @@ export default function CancelPurchase() {
 	const cancelAndRefundMutation = useMutation( cancelAndRefundPurchaseMutation() );
 	const removePurchaseMutator = useMutation( removePurchaseMutation() );
 	const extendWithFreeMonthMutation = useMutation( extendPurchaseWithFreeMonthMutation() );
-	const userPreferencesMutator = useMutation( userPreferencesMutation() );
+	const surveyCompletedMutator = useMutation(
+		userPreferenceMutation( getCancelPurchaseSurveyCompletedPreferenceKey( purchase.ID ) )
+	);
 	const {
-		mutate: applyCancellationOffer,
+		mutateAsync: applyCancellationOffer,
 		isPending: isApplyingOffer,
 		isSuccess: offerApplySuccess,
 		error: offerApplyError,
 	} = useMutation( applyCancellationOfferMutation( purchase.blog_id, purchase.ID ) );
 	const marketingSurveyMutate = useMutation( marketingSurveyMutation() );
 
+	const showRefundEligibilityNotice = useShowRefundEligibilityNotice( purchase );
+
 	// Handler helpers
 	const purchases = purchase && sitePurchases;
 	const includedDomainPurchase = getIncludedDomainPurchase( purchases ?? [], purchase );
 
 	const productSlug = purchase ? purchase.product_slug : null;
+	const isAkismet = purchase ? isAkismetProduct( purchase ) : false;
 
 	const navigate = useNavigate();
 	const redirectBack = useCallback( () => {
@@ -365,13 +383,8 @@ export default function CancelPurchase() {
 			} );
 		}
 	}, [ productSlug, recordTracksEvent ] );
-	const savePreference = ( key: string | number, value: unknown ) => () => {
-		const payload = {
-			[ 'calypso_preferences' ]: {
-				[ key ]: value,
-			},
-		};
-		userPreferencesMutator.mutate( payload );
+	const cancelPurchaseSurveyCompleted = () => {
+		surveyCompletedMutator.mutate( 'true' );
 	};
 	const flowType = getPurchaseCancellationFlowType( purchase );
 
@@ -470,9 +483,6 @@ export default function CancelPurchase() {
 		setState( ( state ) => ( { ...state, isShowingMarketplaceSubscriptionsDialog: true } ) );
 	};
 
-	const cancelPurchaseSurveyCompleted = ( purchaseId: number ) => () => {
-		savePreference( getCancelPurchaseSurveyCompletedPreferenceKey( purchaseId ), true )();
-	};
 	const atomicRevertOnClickCheckOne = ( isChecked: boolean ) =>
 		setState( ( state ) => ( { ...state, atomicRevertCheckOne: isChecked } ) );
 
@@ -532,18 +542,35 @@ export default function CancelPurchase() {
 		},
 		[ recordEvent, state.upsell ]
 	);
-	const onGetCancellationOffer = useCallback( () => {
-		changeSurveyStep( OFFER_ACCEPTED_STEP );
-		recordEvent( 'calypso_purchases_cancel_get_discount' );
-	}, [ changeSurveyStep, recordEvent ] );
+	const offerDiscountBasedFromPurchasePrice = getOfferDiscountBasedOnPurchasePrice(
+		purchase,
+		cancellationOffer
+	);
+	const onGetCancellationOffer = useCallback(
+		( newPurchaseId?: string ) => {
+			if ( ! newPurchaseId ) {
+				redirectBack();
+				return;
+			}
+			recordEvent( 'calypso_purchases_cancel_get_discount' );
+			navigate( { to: purchasesRoute.to + `/${ newPurchaseId }` } );
+		},
+		[ redirectBack, navigate, recordEvent ]
+	);
 
 	const onClickAcceptForCancellationOffer = useCallback( () => {
 		// is the offer being claimed/ is there already a success or error
 		if ( ! isApplyingOffer && offerApplySuccess === false && ! offerApplyError ) {
-			applyCancellationOffer();
-			onGetCancellationOffer(); // Takes care of analytics.
+			applyCancellationOffer().then( ( data ) => {
+				if ( data.success ) {
+					onGetCancellationOffer( data.new_purchase_id ); // Takes care of analytics.
+				} else {
+					redirectBack();
+				}
+			} );
 		}
 	}, [
+		redirectBack,
 		isApplyingOffer,
 		offerApplySuccess,
 		offerApplyError,
@@ -577,7 +604,7 @@ export default function CancelPurchase() {
 	const downgradeClick = () => {
 		if ( ! state.isSubmitting ) {
 			if ( ! downgradePlan ) {
-				createErrorNotice( 'Cannot find a plan to downgrade to', { type: 'snackbar' } );
+				createErrorNotice( __( 'Cannot find a plan to downgrade to.' ), { type: 'snackbar' } );
 				return;
 			}
 
@@ -635,11 +662,17 @@ export default function CancelPurchase() {
 	const onCancelConfirmationStateChange = ( newState: Partial< CancelPurchaseState > ) => {
 		setState( ( state ) => ( {
 			...state,
-			newState,
+			...newState,
 		} ) );
 	};
 
 	const onCancellationComplete = () => {
+		recordTracksEvent( 'calypso_purchases_cancel_form_start', {
+			cancellation_flow: flowType,
+			product_slug: purchase.product_slug,
+			is_atomic: site?.is_wpcom_atomic ?? false,
+			user_lang: locale,
+		} );
 		setState( ( state ) => ( {
 			...state,
 			surveyShown: true,
@@ -647,21 +680,50 @@ export default function CancelPurchase() {
 		} ) );
 	};
 
-	const onCancellationStart = () => {
-		// Only show domain options as a separate step if radio buttons will be displayed
-		if (
+	const onCancellationStart = (
+		cancelIntent: CancelPurchaseState[ 'cancelIntent' ] = null,
+		customerConfirmedUnderstanding = false
+	) => {
+		// When the eligibility notice is active and the user clicks the default cancel button
+		// (not the refund link), they're opting for an auto-renew cancellation — no refund, so
+		// no need to ask about the domain. Skip straight to the survey.
+		const skippingDomainOptionsForAutoRenew =
+			showRefundEligibilityNotice && cancelIntent !== 'refund';
+
+		const needsDomainOptions =
+			! skippingDomainOptionsForAutoRenew &&
 			includedDomainPurchase &&
-			willShowDomainOptionsRadioButtons( includedDomainPurchase, purchase )
-		) {
+			willShowDomainOptionsRadioButtons( includedDomainPurchase, purchase );
+
+		if ( needsDomainOptions ) {
 			setState( ( state ) => ( {
 				...state,
+				cancelIntent,
+				customerConfirmedUnderstanding,
 				siteId: purchase.blog_id,
 				showDomainOptionsStep: true,
 			} ) );
 		} else {
-			// For direct cancellations (no domain options step), show survey directly
-			setState( ( state ) => ( { ...state, siteId: purchase.blog_id, surveyShown: true } ) );
+			recordTracksEvent( 'calypso_purchases_cancel_form_start', {
+				cancellation_flow: flowType,
+				product_slug: purchase.product_slug,
+				is_atomic: site?.is_wpcom_atomic ?? false,
+				user_lang: locale,
+			} );
+			setState( ( state ) => ( {
+				...state,
+				cancelIntent,
+				customerConfirmedUnderstanding,
+				siteId: purchase.blog_id,
+				surveyShown: true,
+			} ) );
 		}
+	};
+
+	const onCancellationStartForRefund = () => {
+		// Explicitly clicking the refund notice button is the user's confirmation — skip the
+		// confirmation checkbox that would otherwise be required on the pre-survey screen.
+		onCancellationStart( 'refund', true );
 	};
 
 	const clickNext = () => {
@@ -715,16 +777,19 @@ export default function CancelPurchase() {
 			recordClickRadioEvent( 'radio_1_2', value );
 		}
 
+		const upsellType = getUpsellType( value, purchase, {
+			canDowngrade: !! downgradeClick,
+			canOfferFreeMonth: !! freeMonthOfferClick && ! hasBeenExtended && ! purchase.is_refundable,
+		} );
+		const hasSolutionsCards =
+			config.isEnabled( 'cancel-flow/solutions-cards-upsell' ) &&
+			( getSolutionsForReason( value )?.length ?? 0 ) > 0;
+
 		setState( ( state ) => ( {
 			...state,
 			questionOneText: value,
 			questionOneDetails: detailsValue || questionOneDetails,
-			upsell:
-				getUpsellType( value, purchase, {
-					canDowngrade: !! downgradeClick,
-					canOfferFreeMonth:
-						!! freeMonthOfferClick && ! hasBeenExtended && ! purchase.is_refundable,
-				} ) || '',
+			upsell: upsellType || ( hasSolutionsCards ? 'solutions-cards' : '' ),
 		} ) );
 	};
 
@@ -865,9 +930,11 @@ export default function CancelPurchase() {
 								type: 'snackbar',
 							}
 						);
+						invokeSurvicateEvent( 'purchaseRefunded' );
 						navigate( {
 							to: purchaseSettingsRoute.fullPath,
 							params: { purchaseId: purchase.ID },
+							search: { refunded: true },
 						} );
 					},
 					onError: ( error: Error ) => {
@@ -938,8 +1005,8 @@ export default function CancelPurchase() {
 					siteName: purchase.domain,
 				} );
 				if (
-					isAkismetTemporarySitePurchase( purchase ) ||
-					isJetpackTemporarySitePurchase( purchase )
+					isAkismetHoldingSitePurchase( purchase ) ||
+					isJetpackHoldingSitePurchase( purchase )
 				) {
 					/* translators: %(productName)s is the name of a product (e.g., "WordPress.com Premium") */
 					successMessage = sprintf( __( '%(productName)s was removed from your account.' ), {
@@ -956,6 +1023,7 @@ export default function CancelPurchase() {
 					);
 				}
 				createSuccessNotice( successMessage, { type: 'snackbar' } );
+				invokeSurvicateEvent( 'purchaseRemoved' );
 				navigate( {
 					to: purchaseSettingsRoute.fullPath,
 					params: { purchaseId: purchase.ID },
@@ -978,14 +1046,77 @@ export default function CancelPurchase() {
 		} );
 	};
 
+	const submitTurnOffAutoRenew = ( purchase: Purchase ) => {
+		setPurchaseAutoRenewMutation.mutate(
+			{ purchaseId: purchase.ID, autoRenew: false },
+			{
+				onSuccess: () => {
+					const purchaseName = purchase.is_domain ? purchase.meta : purchase.product_name;
+					const subscriptionEndDate = intlFormat(
+						purchase.expiry_date,
+						{ dateStyle: 'medium' },
+						{ locale: 'en-US' }
+					);
+					createSuccessNotice(
+						sprintf(
+							/* translators: %(purchaseName)s is the name of the product that was purchased, %(subscriptionEndDate)s is the date the product will no longer be available because the subscription has ended */
+							__(
+								'%(purchaseName)s was successfully cancelled. It will be available for use until it expires on %(subscriptionEndDate)s.'
+							),
+							{
+								purchaseName,
+								subscriptionEndDate,
+							}
+						),
+						{ type: 'snackbar' }
+					);
+					invokeSurvicateEvent( 'purchaseCancelled' );
+					navigate( {
+						to: purchaseSettingsRoute.fullPath,
+						params: { purchaseId: purchase.ID },
+					} );
+				},
+				onError: () => {
+					const purchaseName = purchase.is_domain ? purchase.meta : purchase.product_name;
+					createErrorNotice(
+						sprintf(
+							/* translators: %(purchaseName)s is the name of the product that was purchased. */
+							__(
+								'There was a problem canceling %(purchaseName)s. Please try again later or contact support.'
+							),
+							{ purchaseName }
+						),
+						{ type: 'snackbar' }
+					);
+					setState( ( state ) => ( { ...state, surveyShown: false, isLoading: false } ) );
+				},
+			}
+		);
+	};
+
 	const onSurveyComplete = () => {
 		// Set loading state to show busy button
 		setState( ( state ) => ( { ...state, isLoading: true } ) );
-		switch ( flowType ) {
+
+		// Determine effective flow type based on cancel intent
+		let effectiveFlowType = flowType;
+
+		// If user clicked refund button, use refund flow
+		if ( state.cancelIntent === 'refund' ) {
+			effectiveFlowType = CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND;
+		}
+		// If default Cancel button on refundable wpcom plan, use auto-renew flow
+		else if ( flowType === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND && showRefundEligibilityNotice ) {
+			effectiveFlowType = CANCEL_FLOW_TYPE.CANCEL_AUTORENEW;
+		}
+
+		switch ( effectiveFlowType ) {
 			case CANCEL_FLOW_TYPE.REMOVE:
 				submitRemovePurchase( purchase );
 				break;
 			case CANCEL_FLOW_TYPE.CANCEL_AUTORENEW:
+				submitTurnOffAutoRenew( purchase );
+				break;
 			case CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND:
 				submitCancelAndRefundPurchase( purchase );
 				break;
@@ -1023,7 +1154,7 @@ export default function CancelPurchase() {
 		} );
 
 		if ( flowType === CANCEL_FLOW_TYPE.CANCEL_AUTORENEW ) {
-			cancelPurchaseSurveyCompleted( purchase.ID );
+			cancelPurchaseSurveyCompleted();
 		}
 
 		if ( onSurveyComplete ) {
@@ -1183,12 +1314,15 @@ export default function CancelPurchase() {
 		setState( ( state ) => ( { ...state, customerConfirmedUnderstanding: checked } ) );
 	};
 
+	const onCustomerConfirmedUnderstandingAtomicPlanRevert = ( checked: boolean ) => {
+		setState( ( state ) => ( { ...state, atomicRevertConfirmed: checked } ) );
+	};
+
 	if ( isHundredYearDomain ) {
 		redirectBack();
 		return null;
 	}
 
-	const isAkismet = isAkismetProduct( purchase );
 	const planName = purchase.is_domain_registration ? purchase.meta : purchase.product_name;
 	const isDomainRemoval = flowType === CANCEL_FLOW_TYPE.REMOVE && purchase.is_domain_registration;
 
@@ -1213,116 +1347,204 @@ export default function CancelPurchase() {
 		);
 	}
 
-	const offerDiscountBasedFromPurchasePrice = getOfferDiscountBasedOnPurchasePrice(
-		purchase,
-		cancellationOffer
+	const cancellationOfferDescription = sprintf(
+		/* Translators: %(brand)s is either Akismet or Jetpack */
+		__(
+			'We’d love to help make %(brand)s work for you. Would the special offer below interest you?'
+		),
+		{
+			brand: isAkismet ? 'Akismet' : 'Jetpack',
+		}
 	);
+	const description =
+		state.surveyStep === CANCELLATION_OFFER_STEP ? cancellationOfferDescription : null;
+	const isSolutionsStep =
+		state.surveyStep === UPSELL_STEP &&
+		config.isEnabled( 'cancel-flow/solutions-cards-upsell' ) &&
+		( getSolutionsForReason( state.questionOneText ?? '' )?.length ?? 0 ) > 0;
 	return (
 		<PageLayout
 			size="small"
 			header={
 				<PageHeader
-					title={ <CancelHeaderTitle flowType={ flowType } purchase={ purchase } /> }
+					title={
+						<CancelHeaderTitle
+							flowType={ flowType }
+							purchase={ purchase }
+							surveyStep={ state.surveyStep }
+						/>
+					}
 					prefix={ <Breadcrumbs length={ 4 } /> }
+					description={ description }
 				/>
 			}
-			notices={ ! state.surveyShown && <TimeRemainingNotice purchase={ purchase } /> }
+			notices={
+				! state.surveyShown &&
+				! state.showDomainOptionsStep &&
+				( showRefundEligibilityNotice ? (
+					<RefundEligibilityNotice
+						purchase={ purchase }
+						onClaimRefund={ onCancellationStartForRefund }
+					/>
+				) : (
+					<TimeRemainingNotice purchase={ purchase } />
+				) )
+			}
 		>
-			<Card>
-				<CardBody>
-					<VStack spacing={ 6 }>
-						<CancelPurchaseForm
-							atomicRevertCheckOne={ state.atomicRevertCheckOne }
-							atomicRevertCheckTwo={ state.atomicRevertCheckTwo }
-							atomicRevertOnClickCheckOne={ atomicRevertOnClickCheckOne }
-							atomicRevertOnClickCheckTwo={ atomicRevertOnClickCheckTwo }
-							atomicTransfer={ atomicTransfer }
-							cancelBundledDomain={ state.cancelBundledDomain }
-							cancellationInProgress={ state.isLoading }
-							cancellationOffer={ cancellationOffer }
-							clickNext={ clickNext }
-							closeDialog={ closeDialog }
-							disableButtons={ state.isLoading }
-							downgradeClick={ downgradeClick }
-							downgradePlan={ downgradePlan }
-							flowType={ flowType }
-							freeMonthOfferClick={ freeMonthOfferClick }
-							hasBackupsFeature={ hasBackupsFeature }
-							importQuestionRadio={ state.importQuestionRadio }
-							includedDomainPurchase={ includedDomainPurchase }
-							isAkismet={ isAkismet }
-							isApplyingOffer={ isApplyingOffer }
-							isImport={ isImport }
-							isNextAdventureValid={ state.isNextAdventureValid }
-							isShowing={ state.isShowingMarketplaceSubscriptionsDialog }
-							isSubmitting={ state.isSubmitting }
-							isVisible={ state.surveyShown }
-							offerDiscountBasedFromPurchasePrice={ offerDiscountBasedFromPurchasePrice }
-							onClickAcceptForCancellationOffer={ onClickAcceptForCancellationOffer }
-							onGetCancellationOffer={ onGetCancellationOffer }
-							onImportRadioChange={ onImportRadioChange }
-							onNextAdventureValidationChange={ onNextAdventureValidationChange }
-							onRadioOneChange={ onRadioOneChange }
-							onRadioTwoChange={ onRadioTwoChange }
-							onSubmit={ onSubmit }
-							onSurveyComplete={ onSurveyComplete }
-							onTextOneChange={ onTextOneChange }
-							onTextThreeChange={ onTextThreeChange }
-							onTextTwoChange={ onTextTwoChange }
-							plans={ plans }
-							purchase={ purchase }
-							questionOneOrder={ state.questionOneOrder }
-							questionOneRadio={ state.questionOneRadio }
-							questionOneText={ state.questionOneText }
-							questionTwoOrder={ state.questionTwoOrder }
-							questionTwoRadio={ state.questionTwoRadio }
-							questionTwoText={ state.questionTwoText }
-							refundAmount={ purchase.total_refund_amount }
-							siteSlug={ siteSlug }
-							solution={ state.solution }
-							surveyStep={ state.surveyStep }
-							allSteps={ allSteps }
-							upsell={ state.upsell }
-						/>
-						{ ! state.surveyShown && (
-							<CancellationPreSurveyContent
-								purchase={ purchase }
-								includedDomainPurchase={ includedDomainPurchase }
+			{ isSolutionsStep ? (
+				<CancelPurchaseForm
+					atomicRevertCheckOne={ state.atomicRevertCheckOne }
+					atomicRevertCheckTwo={ state.atomicRevertCheckTwo }
+					atomicRevertOnClickCheckOne={ atomicRevertOnClickCheckOne }
+					atomicRevertOnClickCheckTwo={ atomicRevertOnClickCheckTwo }
+					atomicTransfer={ atomicTransfer }
+					cancelBundledDomain={ state.cancelBundledDomain }
+					cancellationInProgress={ state.isLoading }
+					cancellationOffer={ cancellationOffer }
+					clickNext={ clickNext }
+					closeDialog={ closeDialog }
+					disableButtons={ state.isLoading }
+					downgradeClick={ downgradeClick }
+					downgradePlan={ downgradePlan }
+					flowType={ flowType }
+					freeMonthOfferClick={ freeMonthOfferClick }
+					hasBackupsFeature={ hasBackupsFeature }
+					importQuestionRadio={ state.importQuestionRadio }
+					includedDomainPurchase={ includedDomainPurchase }
+					isAkismet={ isAkismet }
+					isApplyingOffer={ isApplyingOffer }
+					isImport={ isImport }
+					isNextAdventureValid={ state.isNextAdventureValid }
+					isShowing={ state.isShowingMarketplaceSubscriptionsDialog }
+					isSubmitting={ state.isSubmitting }
+					isVisible={ state.surveyShown }
+					offerDiscountBasedFromPurchasePrice={ offerDiscountBasedFromPurchasePrice }
+					onClickAcceptForCancellationOffer={ onClickAcceptForCancellationOffer }
+					onGetCancellationOffer={ onGetCancellationOffer }
+					onImportRadioChange={ onImportRadioChange }
+					onNextAdventureValidationChange={ onNextAdventureValidationChange }
+					onRadioOneChange={ onRadioOneChange }
+					onRadioTwoChange={ onRadioTwoChange }
+					onSubmit={ onSubmit }
+					onSurveyComplete={ onSurveyComplete }
+					onTextOneChange={ onTextOneChange }
+					onTextThreeChange={ onTextThreeChange }
+					onTextTwoChange={ onTextTwoChange }
+					plans={ plans }
+					purchase={ purchase }
+					questionOneOrder={ state.questionOneOrder }
+					questionOneRadio={ state.questionOneRadio }
+					questionOneText={ state.questionOneText }
+					questionTwoOrder={ state.questionTwoOrder }
+					questionTwoRadio={ state.questionTwoRadio }
+					questionTwoText={ state.questionTwoText }
+					refundAmount={ purchase.total_refund_amount }
+					siteSlug={ siteSlug }
+					solution={ state.solution }
+					surveyStep={ state.surveyStep }
+					allSteps={ allSteps }
+					upsell={ state.upsell }
+				/>
+			) : (
+				<Card>
+					<CardBody>
+						<VStack spacing={ 6 }>
+							<CancelPurchaseForm
+								atomicRevertCheckOne={ state.atomicRevertCheckOne }
+								atomicRevertCheckTwo={ state.atomicRevertCheckTwo }
+								atomicRevertOnClickCheckOne={ atomicRevertOnClickCheckOne }
+								atomicRevertOnClickCheckTwo={ atomicRevertOnClickCheckTwo }
 								atomicTransfer={ atomicTransfer }
-								selectedDomain={ selectedDomain }
-								state={ state }
-								purchaseCancelFeatures={ purchaseCancelFeatures }
-								onCancelConfirmationStateChange={ onCancelConfirmationStateChange }
-								onDomainConfirmationChange={ onDomainConfirmationChange }
-								onCustomerConfirmedUnderstandingChange={ onCustomerConfirmedUnderstandingChange }
-								onKeepSubscriptionClick={ onKeepSubscriptionClick }
-								onCancellationComplete={ onCancellationComplete }
-								onCancellationStart={ onCancellationStart }
-								shouldHandleMarketplaceSubscriptions={ shouldHandleMarketplaceSubscriptions }
-								showMarketplaceDialog={ showMarketplaceDialog }
+								cancelBundledDomain={ state.cancelBundledDomain }
+								cancellationInProgress={ state.isLoading }
+								cancellationOffer={ cancellationOffer }
+								clickNext={ clickNext }
+								closeDialog={ closeDialog }
+								disableButtons={ state.isLoading }
+								downgradeClick={ downgradeClick }
+								downgradePlan={ downgradePlan }
+								flowType={ flowType }
+								freeMonthOfferClick={ freeMonthOfferClick }
+								hasBackupsFeature={ hasBackupsFeature }
+								importQuestionRadio={ state.importQuestionRadio }
+								includedDomainPurchase={ includedDomainPurchase }
+								isAkismet={ isAkismet }
+								isApplyingOffer={ isApplyingOffer }
+								isImport={ isImport }
+								isNextAdventureValid={ state.isNextAdventureValid }
+								isShowing={ state.isShowingMarketplaceSubscriptionsDialog }
+								isSubmitting={ state.isSubmitting }
+								isVisible={ state.surveyShown }
+								offerDiscountBasedFromPurchasePrice={ offerDiscountBasedFromPurchasePrice }
+								onClickAcceptForCancellationOffer={ onClickAcceptForCancellationOffer }
+								onGetCancellationOffer={ onGetCancellationOffer }
+								onImportRadioChange={ onImportRadioChange }
+								onNextAdventureValidationChange={ onNextAdventureValidationChange }
+								onRadioOneChange={ onRadioOneChange }
+								onRadioTwoChange={ onRadioTwoChange }
+								onSubmit={ onSubmit }
+								onSurveyComplete={ onSurveyComplete }
+								onTextOneChange={ onTextOneChange }
+								onTextThreeChange={ onTextThreeChange }
+								onTextTwoChange={ onTextTwoChange }
+								plans={ plans }
+								purchase={ purchase }
+								questionOneOrder={ state.questionOneOrder }
+								questionOneRadio={ state.questionOneRadio }
+								questionOneText={ state.questionOneText }
+								questionTwoOrder={ state.questionTwoOrder }
+								questionTwoRadio={ state.questionTwoRadio }
+								questionTwoText={ state.questionTwoText }
+								refundAmount={ purchase.total_refund_amount }
+								siteSlug={ siteSlug }
+								solution={ state.solution }
+								surveyStep={ state.surveyStep }
+								allSteps={ allSteps }
+								upsell={ state.upsell }
 							/>
-						) }
-						{ shouldHandleMarketplaceSubscriptions() && (
-							<MarketPlaceSubscriptionsDialog
-								activeSubscriptions={ activeSubscriptions }
-								bodyParagraphText={ _n(
-									'This subscription will be cancelled. It will be removed when it expires.',
-									'These subscriptions will be cancelled. They will be removed when they expire.',
-									activeSubscriptions.length
-								) }
-								closeDialog={ closeMarketplaceSubscriptionsDialog }
-								isDialogVisible
-								planName={ planName ?? '' }
-								/* Translators: This button cancels the active plan and all active Marketplace subscriptions on the site */
-								primaryButtonText={ __( 'Continue' ) }
-								removePlan={ handleMarketplaceDialogContinue }
-								/* Translators: %(plan)s is the name of the plan being cancelled */
-								sectionHeadingText={ sprintf( __( 'Cancel %(plan)s' ), { plan: planName } ) }
-							/>
-						) }
-					</VStack>
-				</CardBody>
-			</Card>
+							{ ! state.surveyShown && (
+								<CancellationPreSurveyContent
+									purchase={ purchase }
+									includedDomainPurchase={ includedDomainPurchase }
+									atomicTransfer={ atomicTransfer }
+									selectedDomain={ selectedDomain }
+									state={ state }
+									purchaseCancelFeatures={ purchaseCancelFeatures }
+									onCancelConfirmationStateChange={ onCancelConfirmationStateChange }
+									onDomainConfirmationChange={ onDomainConfirmationChange }
+									onCustomerConfirmedUnderstandingChange={ onCustomerConfirmedUnderstandingChange }
+									onCustomerConfirmedUnderstandingAtomicPlanRevert={
+										onCustomerConfirmedUnderstandingAtomicPlanRevert
+									}
+									onKeepSubscriptionClick={ onKeepSubscriptionClick }
+									onCancellationComplete={ onCancellationComplete }
+									onCancellationStart={ onCancellationStart }
+									shouldHandleMarketplaceSubscriptions={ shouldHandleMarketplaceSubscriptions }
+									showMarketplaceDialog={ showMarketplaceDialog }
+								/>
+							) }
+							{ shouldHandleMarketplaceSubscriptions() && (
+								<MarketPlaceSubscriptionsDialog
+									activeSubscriptions={ activeSubscriptions }
+									bodyParagraphText={ _n(
+										'This subscription will be cancelled. It will be removed when it expires.',
+										'These subscriptions will be cancelled. They will be removed when they expire.',
+										activeSubscriptions.length
+									) }
+									closeDialog={ closeMarketplaceSubscriptionsDialog }
+									isDialogVisible
+									planName={ planName ?? '' }
+									/* Translators: This button cancels the active plan and all active Marketplace subscriptions on the site */
+									primaryButtonText={ __( 'Continue' ) }
+									removePlan={ handleMarketplaceDialogContinue }
+									/* Translators: %(plan)s is the name of the plan being cancelled */
+									sectionHeadingText={ sprintf( __( 'Cancel %(plan)s' ), { plan: planName } ) }
+								/>
+							) }
+						</VStack>
+					</CardBody>
+				</Card>
+			) }
 		</PageLayout>
 	);
 }

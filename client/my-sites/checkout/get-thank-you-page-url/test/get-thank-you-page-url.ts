@@ -23,6 +23,7 @@ import {
 	ResponseCart,
 	CartKey,
 } from '@automattic/shopping-cart';
+import { getDashboardFromQuery } from 'calypso/dashboard/app/routing';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { addQueryArgs } from 'calypso/lib/url';
 import getThankYouPageUrl from 'calypso/my-sites/checkout/get-thank-you-page-url';
@@ -31,6 +32,9 @@ jest.mock( 'calypso/lib/jetpack/is-jetpack-cloud', () => jest.fn() );
 jest.mock( '@automattic/calypso-products', () => ( {
 	...( jest.requireActual( '@automattic/calypso-products' ) as object ),
 	redirectCheckoutToWpAdmin: jest.fn(),
+} ) );
+jest.mock( 'calypso/dashboard/app/routing', () => ( {
+	getDashboardFromQuery: jest.fn(),
 } ) );
 
 const samplePurchaseId = 12342424241;
@@ -68,6 +72,7 @@ describe( 'getThankYouPageUrl', () => {
 	beforeEach( () => {
 		jest.mocked( isJetpackCloud ).mockReturnValue( false );
 		jest.mocked( redirectCheckoutToWpAdmin ).mockReturnValue( false );
+		jest.mocked( getDashboardFromQuery ).mockReturnValue( undefined );
 	} );
 
 	it( 'redirects to the root page when no site is set', () => {
@@ -928,6 +933,27 @@ describe( 'getThankYouPageUrl', () => {
 			receiptId: samplePurchaseId,
 		} );
 		expect( url ).toBe( `/checkout/thank-you/no-site/${ samplePurchaseId }?isGravatarDomain=1` );
+	} );
+
+	it( 'redirects to thank-you page with dashboard query param if present', () => {
+		jest.mocked( getDashboardFromQuery ).mockReturnValue( 'ciab' );
+		const cart = {
+			...getMockCart(),
+			cart_key: 'no-site' as CartKey,
+			products: [
+				{
+					...getEmptyResponseCartProduct(),
+					id: '123',
+				},
+			],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'no-site',
+			cart,
+			receiptId: samplePurchaseId,
+		} );
+		expect( url ).toBe( `/checkout/thank-you/no-site/${ samplePurchaseId }?dashboard=ciab` );
 	} );
 
 	it( 'redirects to thank-you page followed by purchase id if no cookie url is set, there is no site, and there is no receipt', () => {
@@ -1965,7 +1991,7 @@ describe( 'getThankYouPageUrl', () => {
 			);
 		} );
 
-		it( 'should fall through to other logic when cookie URL does not contain post-checkout-onboarding path', () => {
+		it( 'should return /?checkout_type=unified fallback when cookie URL does not contain post-checkout-onboarding path even if siteSlug is provided', () => {
 			const getUrlFromCookie = jest.fn( () => '/some/other/path' );
 			const siteId = 12345;
 
@@ -1977,10 +2003,10 @@ describe( 'getThankYouPageUrl', () => {
 				getUrlFromCookie,
 			} );
 
-			expect( url ).toBe( '/checkout/thank-you/foo.bar/:receiptId' );
+			expect( url ).toBe( '/?checkout_type=unified' );
 		} );
 
-		it( 'should fall through to other logic when no cookie URL is available', () => {
+		it( 'should return /?checkout_type=unified fallback when no cookie URL is available even if siteSlug is provided', () => {
 			const getUrlFromCookie = jest.fn( () => undefined );
 			const siteId = 12345;
 
@@ -1992,10 +2018,10 @@ describe( 'getThankYouPageUrl', () => {
 				getUrlFromCookie,
 			} );
 
-			expect( url ).toBe( '/checkout/thank-you/foo.bar/:receiptId' );
+			expect( url ).toBe( '/?checkout_type=unified' );
 		} );
 
-		it( 'should fall through to other logic when cookie URL is empty string', () => {
+		it( 'should return /?checkout_type=unified fallback when cookie URL is empty string even if siteSlug is provided', () => {
 			const getUrlFromCookie = jest.fn( () => '' );
 			const siteId = 12345;
 
@@ -2007,7 +2033,7 @@ describe( 'getThankYouPageUrl', () => {
 				getUrlFromCookie,
 			} );
 
-			expect( url ).toBe( '/checkout/thank-you/foo.bar/:receiptId' );
+			expect( url ).toBe( '/?checkout_type=unified' );
 		} );
 
 		it( 'should redirect to checkout thank you page when cart has ecommerce plan', () => {
@@ -2062,6 +2088,65 @@ describe( 'getThankYouPageUrl', () => {
 			} );
 
 			expect( url ).toBe( '/setup/onboarding-unified/post-checkout-onboarding?siteId=12345' );
+		} );
+
+		it( 'should append :siteId placeholder when cookie URL contains post-checkout-onboarding path but siteId is undefined', () => {
+			const getUrlFromCookie = jest.fn(
+				() => '/setup/onboarding-unified/post-checkout-onboarding'
+			);
+
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				sitelessCheckoutType: 'unified',
+				siteId: undefined,
+				getUrlFromCookie,
+			} );
+
+			expect( url ).toBe( '/setup/onboarding-unified/post-checkout-onboarding?siteId=:siteId' );
+		} );
+
+		it( 'should append :siteId placeholder after existing query params when siteId is undefined', () => {
+			const getUrlFromCookie = jest.fn(
+				() => '/setup/onboarding-unified/post-checkout-onboarding?existing=param'
+			);
+
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				sitelessCheckoutType: 'unified',
+				siteId: undefined,
+				getUrlFromCookie,
+			} );
+
+			expect( url ).toBe(
+				'/setup/onboarding-unified/post-checkout-onboarding?existing=param&siteId=:siteId'
+			);
+		} );
+
+		it( 'should use :siteId placeholder in ecommerce thank-you URL when siteId is undefined', () => {
+			const getUrlFromCookie = jest.fn(
+				() => '/setup/onboarding-unified/post-checkout-onboarding'
+			);
+			const receiptId = 67890;
+			const cart = {
+				...getMockCart(),
+				products: [
+					{
+						...getEmptyResponseCartProduct(),
+						product_slug: PLAN_ECOMMERCE,
+					},
+				],
+			};
+
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				sitelessCheckoutType: 'unified',
+				siteId: undefined,
+				receiptId,
+				cart,
+				getUrlFromCookie,
+			} );
+
+			expect( url ).toBe( '/checkout/thank-you/:siteId/67890' );
 		} );
 	} );
 } );

@@ -2,10 +2,14 @@ import { __experimentalVStack as VStack, CardFooter, ExternalLink } from '@wordp
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState, useEffect, useMemo } from 'react';
+import { useSelector } from 'react-redux';
+import { getActions } from '../../panel/helpers/notes';
 import { html } from '../../panel/indices-to-html';
 import { bumpStat } from '../../panel/rest-client/bump-stat';
 import { wpcom } from '../../panel/rest-client/wpcom';
+import getIsNoteApproved from '../../panel/state/selectors/get-is-note-approved';
 import { p, zipWithSignature } from '../../panel/templates/functions';
+import PendingApprovalBadge from '../../shared/pending-approval-badge';
 import NoteActions from './actions';
 import Comment from './block-comment';
 import Post from './block-post';
@@ -96,6 +100,13 @@ export const ActionBlock = ( { note, goBack }: { note: Note; goBack: () => void 
 
 export const NoteBody = ( { note }: { note: Note } ) => {
 	const blocks: BlockWithSignature[] = zipWithSignature( note.body, note );
+	const isApproved = useSelector( ( state ) => getIsNoteApproved( state, note ) );
+	const actions = getActions( note );
+	const hasAction = ( types: string | string[] ) => {
+		const typeArray = Array.isArray( types ) ? types : [ types ];
+		return typeArray.some( ( type ) => actions.hasOwnProperty( type ) );
+	};
+	const showPendingApprovalBadge = hasAction( 'approve-comment' ) && ! isApproved;
 
 	const firstNonTextBlockIndex = blocks.findIndex( ( block ) => {
 		return 'text' !== block.signature.type;
@@ -134,6 +145,11 @@ export const NoteBody = ( { note }: { note: Note } ) => {
 	return (
 		<VStack className="wpnc__body">
 			{ preface }
+			{ showPendingApprovalBadge && (
+				<div className="wpnc__pending-approval-section">
+					<PendingApprovalBadge note={ note } />
+				</div>
+			) }
 			<div className="wpnc__body-content">{ body }</div>
 			<ReplyBlock note={ note } />
 		</VStack>

@@ -1,7 +1,12 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import { UrlFriendlyTermType, isDomainTransfer } from '@automattic/calypso-products';
+import {
+	UrlFriendlyTermType,
+	isDomainTransfer,
+	PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY,
+} from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
+import { Plans } from '@automattic/data-stores';
 import { FREE_THEME } from '@automattic/design-picker';
 import {
 	DOMAIN_FLOW,
@@ -18,6 +23,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useMemo, useState } from '@wordpress/element';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import moment from 'moment';
 import { parse as parseQs } from 'qs';
 import AsyncLoad from 'calypso/components/async-load';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -119,7 +125,6 @@ export interface UnifiedPlansStepProps {
 		isExtraWideLayout: boolean;
 	};
 
-	hideLogo?: boolean;
 	shouldHideNavButtons?: boolean;
 	intent?: PlansIntent;
 	onIntentChange?: ( intent: PlansIntent ) => void;
@@ -220,7 +225,6 @@ function UnifiedPlansStep( {
 	step,
 	signupDependencies,
 	displayedIntervals,
-	hideLogo,
 	headerText,
 	useEmailOnboardingSubheader,
 	onPlanIntervalUpdate,
@@ -355,6 +359,9 @@ function UnifiedPlansStep( {
 		]
 	);
 
+	const siteId = selectedSite?.ID ?? signupDependencies.siteId;
+	const currentPlan = Plans.useCurrentPlan( { siteId } );
+
 	const handleRemovePaidDomain = useCallback( () => {
 		const domainItem = undefined;
 
@@ -466,7 +473,28 @@ function UnifiedPlansStep( {
 		}
 
 		if ( intent === 'plans-woo-hosted' ) {
-			return translate( 'Your free trial ends soon - select a plan to keep your online store.' );
+			if ( ! currentPlan && ! selectedSite?.plan ) {
+				return null;
+			}
+			const isOnTrial =
+				currentPlan?.productSlug === PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY ||
+				selectedSite?.plan?.product_slug === PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY;
+
+			if ( isOnTrial ) {
+				const daysLeft = currentPlan?.expiry
+					? Math.ceil( moment.utc( currentPlan.expiry ).diff( moment().utc(), 'days', true ) )
+					: null;
+
+				if ( daysLeft !== null && daysLeft >= 1 ) {
+					return translate(
+						'Your free trial ends in %(daysLeft)d day — select a plan to keep your online store.',
+						'Your free trial ends in %(daysLeft)d days — select a plan to keep your online store.',
+						{ count: daysLeft, args: { daysLeft } }
+					);
+				}
+				return translate( 'Your free trial ends soon — select a plan to keep your online store.' );
+			}
+			return translate( 'Choose the plan that fits your business.' );
 		}
 
 		if ( useEmailOnboardingSubheader ) {
@@ -600,7 +628,6 @@ function UnifiedPlansStep( {
 					className="step-container-v2--plans"
 					topBar={
 						<Step.TopBar
-							hideLogo={ hideLogo }
 							leftElement={
 								goBack ? (
 									<Step.BackButton onClick={ goBack }>{ backLabelText }</Step.BackButton>

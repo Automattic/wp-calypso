@@ -1,7 +1,7 @@
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { DataForm, useFormValidity } from '@wordpress/dataviews';
-import { useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { useState, useMemo } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import SuffixInputControl from '../../components/input-control/suffix-input-control';

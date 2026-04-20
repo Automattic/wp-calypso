@@ -1,8 +1,8 @@
 import { useRouter } from '@tanstack/react-router';
 import { Icon } from '@wordpress/components';
-import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { backup } from '@wordpress/icons';
+import { useMemo } from 'react';
 import { Activity } from '../../..//components/logs-activity/types';
 import { useAnalytics } from '../../../app/analytics';
 import { siteBackupDetailRoute } from '../../../app/router/sites';

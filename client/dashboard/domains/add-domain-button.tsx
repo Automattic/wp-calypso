@@ -1,45 +1,97 @@
+import { siteBySlugQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
+import { useRouter } from '@tanstack/react-router';
 import { Button, Dropdown, MenuItem } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { search, globe, chevronUp, chevronDown } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
-import { getCurrentDashboard, redirectToDashboardLink, wpcomLink } from '../utils/link';
+import { useAppContext } from '../app/context';
+import { siteRoute } from '../app/router/sites';
+import { getCurrentDashboard } from '../app/routing';
+import { getDomainConnectionSetupTemplateUrl } from '../utils/domain-url';
+import { redirectToDashboardLink, wpcomLink } from '../utils/link';
 
-export function AddDomainButton( {
-	siteSlug,
-	domainConnectionSetupUrl,
-}: {
-	siteSlug?: string;
-	domainConnectionSetupUrl?: string;
-} ) {
-	const buildQueryArgs = () => {
-		const queryArgs: Record< string, string > = {};
-		if ( siteSlug ) {
-			queryArgs.siteSlug = siteSlug;
-		}
-		if ( domainConnectionSetupUrl ) {
-			queryArgs.domainConnectionSetupUrl = domainConnectionSetupUrl;
-		}
+function buildDomainQueryArgs( siteSlug?: string, adminUrl?: string ) {
+	const queryArgs: Record< string, string > = {};
 
-		queryArgs.dashboard = getCurrentDashboard();
-		queryArgs.back_to = redirectToDashboardLink();
-		return queryArgs;
-	};
+	if ( siteSlug ) {
+		queryArgs.siteSlug = siteSlug;
+		queryArgs.domainConnectionSetupUrl = getDomainConnectionSetupTemplateUrl();
+	}
 
-	const navigateTo = ( urlWithSite: string, urlWithoutSite: string ) => {
-		const queryArgs = buildQueryArgs();
-		window.location.href = addQueryArgs( siteSlug ? urlWithSite : urlWithoutSite, queryArgs );
-		return false;
-	};
+	const dashboard = getCurrentDashboard();
+	queryArgs.dashboard = dashboard;
 
-	const onSearchClick = () =>
-		navigateTo( wpcomLink( '/setup/domain' ), wpcomLink( '/start/domain' ) );
+	if ( dashboard === 'ciab' && adminUrl ) {
+		queryArgs.redirect_to = `${ adminUrl }admin.php?page=next-admin&p=%2Fwoocommerce%2Fonboarding`;
+	}
 
-	const onTransferOrConnectClick = () =>
-		navigateTo(
-			wpcomLink( '/setup/domain/use-my-domain' ),
-			wpcomLink( '/setup/domain/use-my-domain' )
+	queryArgs.back_to = redirectToDashboardLink();
+
+	return queryArgs;
+}
+
+function DomainOnlyAddDomainButton() {
+	const router = useRouter();
+	const { siteSlug } = router.matchRoute( siteRoute.fullPath );
+	const { data: site } = useQuery( siteBySlugQuery( siteSlug ) );
+	const queryArgs = buildDomainQueryArgs( siteSlug, site?.options?.admin_url );
+
+	const onSearchClick = () => {
+		window.location.href = addQueryArgs(
+			wpcomLink( siteSlug ? '/setup/domain' : '/start/domain' ),
+			queryArgs
 		);
+	};
 
+	const onTransferOrConnectClick = () => {
+		window.location.href = addQueryArgs(
+			wpcomLink( siteSlug ? '/setup/domain/use-my-domain' : '/setup/domain-transfer' ),
+			queryArgs
+		);
+	};
+
+	return (
+		<AddDomainDropdown
+			onSearchClick={ onSearchClick }
+			onTransferOrConnectClick={ onTransferOrConnectClick }
+			transferLabel={ siteSlug ? __( 'Use a domain name I own' ) : __( 'Transfer domain name' ) }
+		/>
+	);
+}
+
+function DefaultAddDomainButton() {
+	const router = useRouter();
+	const { siteSlug } = router.matchRoute( siteRoute.fullPath );
+	const { data: site } = useQuery( siteBySlugQuery( siteSlug ) );
+	const queryArgs = buildDomainQueryArgs( siteSlug, site?.options?.admin_url );
+
+	const onSearchClick = () => {
+		window.location.href = addQueryArgs( wpcomLink( '/setup/domain' ), queryArgs );
+	};
+
+	const onTransferOrConnectClick = () => {
+		window.location.href = addQueryArgs( wpcomLink( '/setup/domain/use-my-domain' ), queryArgs );
+	};
+
+	return (
+		<AddDomainDropdown
+			onSearchClick={ onSearchClick }
+			onTransferOrConnectClick={ onTransferOrConnectClick }
+			transferLabel={ __( 'Use a domain name I own' ) }
+		/>
+	);
+}
+
+function AddDomainDropdown( {
+	onSearchClick,
+	onTransferOrConnectClick,
+	transferLabel,
+}: {
+	onSearchClick: () => void;
+	onTransferOrConnectClick: () => void;
+	transferLabel: string;
+} ) {
 	return (
 		<Dropdown
 			renderToggle={ ( { isOpen, onToggle } ) => (
@@ -60,10 +112,20 @@ export function AddDomainButton( {
 						{ __( 'Search domain names' ) }
 					</MenuItem>
 					<MenuItem iconPosition="left" icon={ globe } onClick={ onTransferOrConnectClick }>
-						{ __( 'Use a domain name I own' ) }
+						{ transferLabel }
 					</MenuItem>
 				</>
 			) }
 		/>
 	);
+}
+
+export default function AddDomainButton() {
+	const { supports } = useAppContext();
+
+	if ( supports.domainOnlySites ) {
+		return <DomainOnlyAddDomainButton />;
+	}
+
+	return <DefaultAddDomainButton />;
 }

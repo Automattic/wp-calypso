@@ -3,9 +3,12 @@ import {
 	sitesQuery,
 	paginatedSitesQuery,
 	dashboardSiteFiltersQuery,
+	domainsQuery,
 } from '@automattic/api-queries';
 /* eslint-enable no-restricted-imports */
 import boot from '../app/boot';
+import { getPostHogConfig } from './posthog';
+import CiabDashboardStepperLogo from './stepper-logo';
 import './translations';
 import type {
 	FetchSitesOptions,
@@ -16,9 +19,11 @@ import './style.scss';
 
 boot( {
 	name: 'CIAB',
-	basePath: '/ciab',
+	posthog: getPostHogConfig(),
+	basePath: '/',
 	mainRoute: '/sites',
 	Logo: null,
+	LoadingLogo: CiabDashboardStepperLogo,
 	supports: {
 		sites: true,
 		domains: true,
@@ -34,11 +39,15 @@ boot( {
 			security: {
 				sshKey: false,
 			},
-			privacy: false,
 			apps: false,
 		},
 		plugins: false,
 		commandPalette: false,
+		domainOnlySites: false,
+		startStoreRoute: true,
+		siteOverview: {
+			preview: true,
+		},
 	},
 	optIn: false,
 	components: {
@@ -52,5 +61,6 @@ boot( {
 			paginatedSitesQuery( [ 'commerce-garden' ], fetchSitesOptions ),
 		dashboardSiteFiltersQuery: ( fields: FetchDashboardSiteFiltersParams[ 'fields' ] ) =>
 			dashboardSiteFiltersQuery( [ 'commerce-garden' ], fields ),
+		domainsQuery: () => domainsQuery( { garden: 'commerce' } ),
 	},
 } );

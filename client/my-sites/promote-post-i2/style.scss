@@ -209,6 +209,11 @@ body.is-section-promote-post-i2 {
 					width: auto;
 				}
 
+				.promote-post-i2__aux-wrapper.promote-post-credits__notice-container {
+					padding: 0;
+					border: none;
+				}
+
 
 				.promote-post-i2__search-bar-wrapper {
 					display: flex;
@@ -294,7 +299,6 @@ body.is-section-promote-post-i2 {
 				box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 			}
 		}
-
 	}
 
 	&__payment-blocked-notice {
@@ -394,7 +398,7 @@ body.is-section-promote-post-i2 {
 		}
 
 
-		.section-nav-tab__link .count {
+		.section-nav-tab__link .a8c-count {
 			background: var(--studio-gray-0);
 			color: $studio-gray-80;
 		}
@@ -475,7 +479,7 @@ body.is-section-promote-post-i2 {
 					vertical-align: middle; // Position tabs Posts and Campaigns vertically equal
 				}
 
-				.count {
+				.a8c-count {
 					border: none;
 					border-radius: 2px;
 					color: $studio-gray-80;
@@ -720,7 +724,7 @@ body.is-section-promote-post-i2 {
 		.section-nav-tab {
 			&__link {
 				.section-nav-tab__text {
-					.count {
+					.a8c-count {
 						font-size: 0.75rem;
 						display: none;
 					}

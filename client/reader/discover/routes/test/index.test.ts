@@ -1,4 +1,4 @@
-import { getCurrentTab, getLocalizedRoutes, getPrivateRoutes } from '..';
+import { getLocalizedRoutes, getPrivateRoutes } from '..';
 
 describe( 'getLocalizedRoutes', () => {
 	it( 'returns the routes with the locale prefix', () => {
@@ -34,23 +34,5 @@ describe( 'getLocalizedRoutes', () => {
 		const routes = getPrivateRoutes( 'en', privateRoutes );
 
 		expect( routes ).toEqual( [ '/en/discover/private', '/discover/private' ] );
-	} );
-} );
-
-describe( 'getCurrentTab', () => {
-	it( 'returns the current tab', () => {
-		expect( getCurrentTab( '/discover/firstposts' ) ).toEqual( 'firstposts' );
-	} );
-
-	it( 'ignores the locale', () => {
-		expect( getCurrentTab( '/en/discover/firstposts' ) ).toEqual( 'firstposts' );
-	} );
-
-	it( 'ignores the query params', () => {
-		expect( getCurrentTab( '/discover/firstposts?foo=bar' ) ).toEqual( 'firstposts' );
-	} );
-
-	it( 'returns the default tab when there is no tab', () => {
-		expect( getCurrentTab( '/discover', 'my-default-tab' ) ).toEqual( 'my-default-tab' );
 	} );
 } );

@@ -8,7 +8,7 @@ import {
 	queryClient,
 	siteUpdateSchedulesQuery,
 } from '@automattic/api-queries';
-import { useCallback } from '@wordpress/element';
+import { useCallback } from 'react';
 
 /**
  * Toggle schedule active state with optimistic updates, mirroring legacy behavior.

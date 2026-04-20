@@ -1,4 +1,5 @@
 import { DotcomFeatures, HostingFeatures } from '@automattic/api-core';
+import { isEnabled } from '@automattic/calypso-config';
 import { isDashboardBackport } from '../utils/is-dashboard-backport';
 import { hasHostingFeature, hasPlanFeature } from '../utils/site-features';
 import { isSiteMigrationInProgress } from '../utils/site-status';
@@ -6,6 +7,12 @@ import { isCommerceGarden, isSelfHostedJetpackConnected, isP2 } from '../utils/s
 import type { Site, User } from '@automattic/api-core';
 
 export function canManageSite( site: Site ) {
+	// Edge case: slug can be missing when the current user does not have
+	// permission to manage the site.
+	if ( ! site.slug ) {
+		return false;
+	}
+
 	if ( site.is_deleted || ! site.capabilities?.manage_options ) {
 		return false;
 	}
@@ -32,14 +39,12 @@ export function canViewHundredYearPlanSettings( site: Site ) {
 	);
 }
 
-export function canViewSiteVisibilitySettings( site: Site ) {
-	// Site Visibility is a Jetpack feature; Flex sites don't have Jetpack by default.
-	return ! site.is_wpcom_flex;
-}
-
 // Settings -> Server
 
-export function canViewWordPressSettings( site: Site ) {
+export function canSwitchWordPressVersion( site: Site ) {
+	if ( isEnabled( 'dashboard/wp-beta-program' ) ) {
+		return hasHostingFeature( site, HostingFeatures.BACKUPS_SELF_SERVE );
+	}
 	return site.is_wpcom_staging_site;
 }
 
@@ -63,8 +68,12 @@ export function canLeaveSite( site: Site ) {
 	);
 }
 
+export function canDisconnectSite( site: Site ) {
+	return !! site.capabilities?.manage_options && isSelfHostedJetpackConnected( site );
+}
+
 export function canResetSite( site: Site ) {
-	return ! site.is_wpcom_staging_site && ! isCommerceGarden( site );
+	return ! isCommerceGarden( site );
 }
 
 export function canRestoreSite( site: Site ) {

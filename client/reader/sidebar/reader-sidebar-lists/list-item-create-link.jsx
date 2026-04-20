@@ -1,11 +1,11 @@
+import { Icon } from '@wordpress/components';
+import { plus } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
-import ReaderAddIcon from 'calypso/reader/components/icons/add-icon';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import ReaderSidebarHelper from '../helper';
 import { MenuItem, MenuItemLink } from '../menu';
-
 export default function ReaderSidebarListsListItemCreateLink( { path } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -20,12 +20,14 @@ export default function ReaderSidebarListsListItemCreateLink( { path } ) {
 	const selected = ReaderSidebarHelper.pathStartsWithOneOf( [ newListPath ], path );
 
 	return (
-		<MenuItem className="sidebar__menu-item--create-reader-list-link" selected={ selected }>
-			<MenuItemLink href={ newListPath } onClick={ handleListSidebarClick }>
-				<div className="sidebar__menu-item-title">
-					<ReaderAddIcon />
-					<span className="sidebar__menu-item-title-text">{ translate( 'Create new list' ) }</span>
-				</div>
+		<MenuItem selected={ selected }>
+			<MenuItemLink
+				href={ newListPath }
+				onClick={ handleListSidebarClick }
+				className="sidebar__menu-link"
+			>
+				<Icon icon={ plus } viewBox="2 0 24 24" />
+				<span>{ translate( 'Create new list' ) }</span>
 			</MenuItemLink>
 		</MenuItem>
 	);

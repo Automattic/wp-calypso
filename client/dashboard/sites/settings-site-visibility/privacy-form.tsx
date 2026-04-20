@@ -1,11 +1,12 @@
 import { DomainSubtype } from '@automattic/api-core';
-import { domainsQuery, siteSettingsMutation } from '@automattic/api-queries';
+import { siteSettingsMutation } from '@automattic/api-queries';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Button, CheckboxControl } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { useState } from 'react';
+import { useLayoutEffect, useMemo, useState } from 'react';
+import { useAppContext } from '../../app/context';
 import { NavigationBlocker } from '../../app/navigation-blocker';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
@@ -118,8 +119,9 @@ const robotForm = {
 } satisfies Form;
 
 export function PrivacyForm( { site, settings }: { site: Site; settings: SiteSettings } ) {
+	const { queries } = useAppContext();
 	const { data: domains = [] } = useQuery( {
-		...domainsQuery(),
+		...queries.domainsQuery(),
 		select: ( data ) => {
 			return data.filter( ( domain ) => domain.blog_id === site.ID );
 		},
@@ -144,12 +146,20 @@ export function PrivacyForm( { site, settings }: { site: Site; settings: SiteSet
 		( domain ) => domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS
 	);
 
-	const initialData = fromSiteSettings( settings );
+	const initialData = useMemo( () => fromSiteSettings( settings ), [ settings ] );
 	const [ formData, setFormData ] = useState( () => ( {
 		...initialData,
 		preventThirdPartySharing:
 			initialData.discourageSearchEngines || initialData.preventThirdPartySharing,
 	} ) );
+
+	useLayoutEffect( () => {
+		setFormData( {
+			...initialData,
+			preventThirdPartySharing:
+				initialData.discourageSearchEngines || initialData.preventThirdPartySharing,
+		} );
+	}, [ initialData ] );
 
 	const isDirty = Object.entries( initialData ).some(
 		( [ key, value ] ) => formData[ key as keyof PrivacyFormData ] !== value

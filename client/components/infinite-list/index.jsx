@@ -3,7 +3,6 @@
 
 import page from '@automattic/calypso-router';
 import debugFactory from 'debug';
-import { omit } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import ReactDom from 'react-dom';
@@ -30,6 +29,7 @@ export default class InfiniteList extends Component {
 		renderItem: PropTypes.func.isRequired,
 		renderLoadingPlaceholders: PropTypes.func.isRequired,
 		renderTrailingItems: PropTypes.func,
+		restoreScroll: PropTypes.bool,
 		context: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 		selectedItem: PropTypes.object,
 	};
@@ -37,6 +37,7 @@ export default class InfiniteList extends Component {
 	static defaultProps = {
 		itemsPerRow: 1,
 		renderTrailingItems: noop,
+		restoreScroll: true,
 	};
 
 	lastScrollTop = -1;
@@ -391,20 +392,8 @@ export default class InfiniteList extends Component {
 	}
 
 	render() {
-		const {
-			items,
-			fetchingNextPage,
-			lastPage,
-			guessedItemHeight,
-			itemsPerRow,
-			fetchNextPage,
-			getItemRef,
-			renderItem,
-			renderLoadingPlaceholders,
-			renderTrailingItems,
-			context,
-			...propsToTransfer
-		} = this.props;
+		const { items, fetchingNextPage, renderItem, renderLoadingPlaceholders, renderTrailingItems } =
+			this.props;
 		const spacerClassName = 'infinite-list__spacer';
 		let i;
 		let lastRenderedIndex = this.state.lastRenderedIndex;
@@ -434,7 +423,7 @@ export default class InfiniteList extends Component {
 		}
 
 		return (
-			<div { ...omit( propsToTransfer, 'selectedItem' ) }>
+			<div className={ this.props.className }>
 				<div
 					ref={ this.topPlaceholderRef }
 					className={ spacerClassName }
@@ -452,10 +441,15 @@ export default class InfiniteList extends Component {
 	}
 
 	_setContainerY( position ) {
+		if ( ! this.props.restoreScroll ) {
+			return;
+		}
+
 		if ( this.props.context && this.props.context !== window ) {
 			this.props.context.scrollTop = position;
 			return;
 		}
+
 		window.scrollTo( 0, position );
 	}
 
@@ -465,8 +459,10 @@ export default class InfiniteList extends Component {
 	 * HTML5 history.
 	 */
 	_overrideHistoryScroll() {
+		const { selectedItem, restoreScroll } = this.props;
+
 		// If we have a selected item, assume scroll is handled elsewhere.
-		if ( ! this._contextLoaded() || this.props.selectedItem ) {
+		if ( ! this._contextLoaded() || selectedItem || ! restoreScroll ) {
 			return;
 		}
 		this._scrollContainer.addEventListener( 'scroll', this._resetScroll );

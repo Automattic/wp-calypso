@@ -6,9 +6,9 @@ import {
 	Button,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { useEffect } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { useEffect } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { Text } from '../../../components/text';
 import type { Email } from '../../types';
@@ -109,6 +109,6 @@ export const useDeleteEmailForwardAction = (): Action< Email > => {
 				</VStack>
 			);
 		},
-		isEligible: ( item: Email ) => item.type === 'forwarding' && !! ( item?.forwardingTo ?? false ),
+		isEligible: ( item: Email ) => item.type === 'forwarding' && !! item.forwardingTo,
 	};
 };

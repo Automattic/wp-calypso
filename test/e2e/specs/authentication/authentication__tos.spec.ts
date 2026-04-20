@@ -25,7 +25,7 @@ test.describe( 'Authentication: TOS', { tag: [ tags.AUTHENTICATION ] }, () => {
 			await expect(
 				page.getByText(
 					// WARNING! Please contact the legal team if this text changes!
-					'Just a little reminder that by continuing with any of the options below, you agree to our Terms of Service and Privacy Policy.'
+					'By continuing with any of the options below, you agree to our Terms of Service and have read our Privacy Policy.'
 				)
 			).toBeVisible();
 		} );

@@ -7,8 +7,6 @@ export const JETPACK_SUPPORT_URL_TRAFFIC =
 
 // eslint-disable-next-line wpcalypso/i18n-unlocalized-url
 export const SUBSCRIBERS_SUPPORT_URL = 'https://wordpress.com/support/subscribers/';
-// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
-export const NEWSLETTER_SUPPORT_URL = 'https://wordpress.com/support/newsletter/';
 export const INSIGHTS_SUPPORT_URL =
 	// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
 	'https://wordpress.com/support/stats/learn-insights-about-your-website/';

@@ -221,7 +221,7 @@ export const SubscriptionSettingsForm = ( { data, isAutomattician, onChange }: F
 			{
 				children: [ 'subscription_delivery_day', 'subscription_delivery_hour' ],
 				id: 'subscription_delivery_window',
-				label: 'Email delivery window',
+				label: __( 'Email delivery window' ),
 				layout: {
 					type: 'row' as const,
 					alignment: 'start' as const,

@@ -1,0 +1,31 @@
+@import "@wordpress/base-styles/breakpoints";
+
+.dev-tools-overview {
+	.hosting-dashboard-layout__body-wrapper {
+		max-width: unset;
+		padding-inline: 0;
+		margin: 0;
+	}
+}
+
+.dev-tools-overview__intro {
+	max-width: 650px;
+	margin-inline: 16px;
+
+	@include break-medium {
+		margin-inline: 64px;
+	}
+
+	+ .page-section-columns {
+		padding-block-start: 0;
+	}
+}
+
+.dev-tools-overview .page-section-columns__heading {
+	flex-wrap: wrap;
+	margin-block-end: 16px;
+}
+
+.dev-tools-overview__tagline {
+	flex-basis: 100%;
+}

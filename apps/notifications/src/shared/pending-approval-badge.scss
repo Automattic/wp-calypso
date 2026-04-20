@@ -1,0 +1,39 @@
+.wpnc__note .wpnc__body .wpnc__pending-approval-section,
+.wpnc__body .wpnc__pending-approval-section {
+	margin: 0 0 0 14px;
+	box-shadow: inset 4px 0 0 var(--color-warning);
+}
+
+.wpnc__main .wpnc-pending-approval-badge {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 12px;
+	background-color: color-mix(in srgb, var(--color-warning, #f0b849) 10%, transparent);
+	font-size: 13px;
+	color: var(--color-text);
+
+	svg {
+		fill: var(--color-warning, #f0b849);
+		flex-shrink: 0;
+	}
+
+	.wpnc-pending-approval-badge__text {
+		font-weight: 500;
+		color: var(--color-warning-80, #614200);
+	}
+
+	.wpnc-pending-approval-badge__link {
+		margin-inline-start: auto;
+		color: var(--color-warning-80, #614200);
+		text-decoration: none;
+		font-weight: 500;
+		opacity: 0.5;
+		white-space: nowrap;
+
+		&:hover {
+			text-decoration: underline;
+			opacity: 1;
+		}
+	}
+}

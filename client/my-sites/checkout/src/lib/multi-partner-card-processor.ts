@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { createStripePaymentMethod } from '@automattic/calypso-stripe';
 import {
 	makeSuccessResponse,
@@ -8,7 +7,6 @@ import {
 } from '@automattic/composite-checkout';
 import { getContactDetailsType } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
-import { createEbanxToken } from 'calypso/lib/store-transactions';
 import { assignNewCardProcessor } from 'calypso/me/purchases/manage-purchase/payment-method-selector/assignment-processor-functions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { logStashEvent, recordTransactionBeginAnalytics } from '../lib/analytics';
@@ -64,11 +62,6 @@ type EbanxCardTransactionRequest = {
 	phoneNumber: string;
 	document: string;
 	vgsTokens?: VgsTokens;
-};
-
-type EbanxToken = {
-	deviceId: string;
-	token: string;
 };
 
 async function stripeCardProcessor(
@@ -208,26 +201,16 @@ async function ebanxCardProcessor(
 	reduxDispatch( recordTransactionBeginAnalytics( { paymentMethodId: 'ebanx' } ) );
 
 	let paymentMethodToken;
-	let ebanxTokenResponse: EbanxToken | EbanxTokenizeResponse;
+	let ebanxTokenResponse: EbanxTokenizeResponse;
 	try {
-		if ( isEnabled( 'checkout/vgs-ebanx' ) ) {
-			if ( ! submitData.vgsTokens ) {
-				throw new Error( 'VGS tokens are required for VGS checkout' );
-			}
-			ebanxTokenResponse = await createEbanxTokenVgs( 'new_purchase', {
-				country: submitData.countryCode,
-				name: submitData.name,
-				vgsTokens: submitData.vgsTokens,
-			} );
-		} else {
-			ebanxTokenResponse = await createEbanxToken( 'new_purchase', {
-				country: submitData.countryCode,
-				name: submitData.name,
-				number: submitData.number ?? '',
-				cvv: submitData.cvv ?? '',
-				'expiration-date': submitData[ 'expiration-date' ] ?? '',
-			} );
+		if ( ! submitData.vgsTokens ) {
+			throw new Error( 'VGS tokens are required for VGS checkout' );
 		}
+		ebanxTokenResponse = await createEbanxTokenVgs( 'new_purchase', {
+			country: submitData.countryCode,
+			name: submitData.name,
+			vgsTokens: submitData.vgsTokens,
+		} );
 		paymentMethodToken = ebanxTokenResponse;
 	} catch ( error ) {
 		debug( 'transaction failed' );

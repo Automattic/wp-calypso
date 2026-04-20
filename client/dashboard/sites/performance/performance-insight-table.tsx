@@ -108,7 +108,7 @@ const PerformanceInsightTable = ( {
 	const view = {
 		fields: fields.map( ( field ) => field.id ),
 		type: 'table' as const,
-		groupByField: details.isEntityGrouped ? 'entity' : undefined,
+		groupBy: details.isEntityGrouped ? { field: 'entity', direction: 'asc' as const } : undefined,
 		layout: {
 			enableMoving: false,
 		},

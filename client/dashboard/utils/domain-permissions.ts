@@ -4,6 +4,13 @@ import { isSupportSession } from '@automattic/calypso-support-session';
 import { __, sprintf } from '@wordpress/i18n';
 import type { Domain } from '@automattic/api-core';
 
+export class DomainPermissionError extends Error {
+	constructor( message: string ) {
+		super( message );
+		this.name = 'DomainPermissionError';
+	}
+}
+
 /**
  * Individual domain check functions
  * Each function checks a specific condition and returns true if the check passes, false if it fails
@@ -202,7 +209,7 @@ function checkDomainPermissions(
 
 	for ( const { check, getErrorMessage } of checks ) {
 		if ( ! check( domain ) ) {
-			throw new Error( getErrorMessage( domain ) );
+			throw new DomainPermissionError( getErrorMessage( domain ) );
 		}
 	}
 }

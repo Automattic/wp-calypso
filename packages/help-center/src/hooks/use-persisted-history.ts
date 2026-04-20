@@ -1,7 +1,7 @@
 import { HelpCenterDispatch, HelpCenterSelect } from '@automattic/data-stores';
 import { dispatch, useSelect } from '@wordpress/data';
 import { Action, Location } from 'history';
-import { useState, useEffect, useLayoutEffect } from 'react';
+import { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import { HELP_CENTER_STORE } from '../stores';
 export interface HistoryEvent {
 	action: Action;
@@ -131,21 +131,43 @@ export const usePersistedHistory = () => {
 		action: history.action,
 		location: history.location,
 	} );
-	const persistedHistory = useSelect(
-		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getHelpCenterRouterHistory(),
-		[]
-	);
+	const { persistedHistory, navigateToRoute } = useSelect( ( select ) => {
+		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+		return {
+			persistedHistory: store.getHelpCenterRouterHistory(),
+			navigateToRoute: store.getNavigateToRoute(),
+		};
+	}, [] );
+
+	// Track if we've already restored history to prevent infinite loop.
+	// The loop happens because: navigation -> notifyListeners -> setHelpCenterRouterHistory
+	// -> persistedHistory changes -> useEffect runs -> creates new MemoryHistory -> loop
+	const hasRestoredHistory = useRef( false );
 
 	useLayoutEffect( () => {
 		return history.listen( setState );
 	}, [ history ] );
 
 	useEffect( () => {
+		if ( hasRestoredHistory.current ) {
+			return;
+		}
+
+		// Skip restoring persisted history when there's a pending navigation route
+		// (e.g., from a "Learn more" link calling setShowSupportDoc). The navigateToRoute
+		// will handle navigation in HelpCenterContent, and restoring old history here
+		// would show the wrong article.
+		if ( navigateToRoute?.route ) {
+			hasRestoredHistory.current = true;
+			return;
+		}
+
 		const urlParams = new URLSearchParams( window.location.search );
 		// Skip persisted history if help-center=happiness-engineer to allow escalation to live chat, otherwise the location is overwritten.
 		const helpCenterParam = urlParams.get( 'help-center' );
 
 		if ( persistedHistory && helpCenterParam !== 'happiness-engineer' ) {
+			hasRestoredHistory.current = true;
 			const history = new MemoryHistory( persistedHistory.entries, persistedHistory.index );
 			setHistory( history );
 
@@ -154,7 +176,7 @@ export const usePersistedHistory = () => {
 				location: history.location,
 			} );
 		}
-	}, [ persistedHistory ] );
+	}, [ persistedHistory, navigateToRoute ] );
 
 	return { history, state };
 };

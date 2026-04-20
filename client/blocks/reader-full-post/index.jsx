@@ -9,8 +9,7 @@ import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import Comments from 'calypso/blocks/comments';
 import { COMMENTS_FILTER_ALL } from 'calypso/blocks/comments/comments-filters';
-import { shouldShowComments } from 'calypso/blocks/comments/helper';
-import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
+import ReaderFullPostFeaturedImage from 'calypso/blocks/reader-full-post/featured-image';
 import { scrollToComments } from 'calypso/blocks/reader-full-post/scroll-to-comments';
 import WPiFrameResize from 'calypso/blocks/reader-full-post/wp-iframe-resize';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
@@ -32,17 +31,13 @@ import ReaderBackButton from 'calypso/reader/components/back-button';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { canBeMarkedAsSeen, getSiteName, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import readerContentWidth from 'calypso/reader/lib/content-width';
+import { isCommentsOpen, isLoginRequiredToComment } from 'calypso/reader/post/capabilities';
 import PostExcerptLink from 'calypso/reader/post-excerpt-link';
 import { keyForPost } from 'calypso/reader/post-key';
 import { ReaderPerformanceTrackerStop } from 'calypso/reader/reader-performance-tracker';
 import { getStreamUrlFromPost } from 'calypso/reader/route';
-import {
-	recordAction,
-	recordGaEvent,
-	recordTrackForPost,
-	recordPermalinkClick,
-} from 'calypso/reader/stats';
-import { showSelectedPost } from 'calypso/reader/utils';
+import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
+import { getPostTitleFallback, showSelectedPost } from 'calypso/reader/utils';
 import { requestPostComments } from 'calypso/state/comments/actions';
 import { isCommentsApiDisabled } from 'calypso/state/comments/selectors/get-comments-api-disabled';
 import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/likes/actions';
@@ -77,6 +72,7 @@ import ReaderFullPostActionBar from './action-bar';
 import ContentProcessor from './content-processor';
 import ReaderFullPostHeader from './header';
 import ReaderFullPostContentPlaceholder from './placeholders/content';
+import ReaderFullPostNavigation from './post-navigation';
 import ScrollTracker from './scroll-tracker';
 import ReaderFullPostUnavailable from './unavailable';
 import './style.scss';
@@ -173,6 +169,7 @@ export class FullPostView extends Component {
 				this.trackExitBeforeCompletion( prevProps.post );
 				this.setReadingStartTime();
 				this.resetScroll();
+				this.focusPostTitle();
 			}
 
 			// Check comments API availability when post changes
@@ -262,25 +259,27 @@ export class FullPostView extends Component {
 			return;
 		}
 
-		switch ( event.keyCode ) {
-			// Close full post - Esc
-			case 27: {
+		switch ( event.key ) {
+			// Close full post.
+			case 'Escape': {
 				return this.handleBack( event );
 			}
 
-			// Like post - l
-			case 76: {
+			// Like post.
+			case 'l': {
 				return this.handleLike();
 			}
 
-			// Next post - j
-			case 74: {
-				return this.goToPost( this.props.nextPost );
+			// Next post.
+			case 'ArrowRight':
+			case 'j': {
+				return this.goToPost( this.props.nextPostKey );
 			}
 
-			// Previous post - k
-			case 75: {
-				return this.goToPost( this.props.previousPost );
+			// Previous post.
+			case 'ArrowLeft':
+			case 'k': {
+				return this.goToPost( this.props.previousPostKey );
 			}
 		}
 	};
@@ -486,10 +485,6 @@ export class FullPostView extends Component {
 		recordTrackForPost( 'calypso_reader_related_post_from_same_site_clicked', this.props.post );
 	};
 
-	handleVisitSiteClick = () => {
-		recordPermalinkClick( 'full_post_visit_link', this.props.post );
-	};
-
 	handleRelatedPostFromOtherSiteClicked = () => {
 		recordTrackForPost( 'calypso_reader_related_post_from_other_site_clicked', this.props.post );
 	};
@@ -578,15 +573,39 @@ export class FullPostView extends Component {
 		}
 	};
 
-	goToPost = ( post ) => {
+	goToPost = ( postKey ) => {
 		const { layout, setSelectedItem, showSelectedPost: showPost } = this.props;
-		if ( post ) {
+		if ( postKey ) {
+			// Track navigation usage
+			let direction = 'unknown';
+			if ( postKey === this.props.nextPostKey ) {
+				direction = 'next';
+			} else if ( postKey === this.props.previousPostKey ) {
+				direction = 'previous';
+			}
+			recordTrackForPost( 'calypso_reader_article_navigation_clicked', this.props.post, {
+				direction,
+			} );
+
 			if ( layout === 'recent' && setSelectedItem ) {
-				setSelectedItem( post );
+				setSelectedItem( postKey );
 			} else {
-				showPost( { postKey: post } );
+				showPost( { postKey } );
 			}
 		}
+	};
+
+	focusPostTitle = () => {
+		// Small delay to ensure DOM has updated after navigation
+		setTimeout( () => {
+			// Try to focus the title link, or the title itself, or the back button as fallback
+			const focusTarget =
+				document.querySelector( '.reader-full-post__header-title-link' ) ||
+				document.querySelector( '.reader-full-post__header-title' ) ||
+				document.querySelector( '.reader-back-button' );
+
+			focusTarget?.focus();
+		}, 100 );
 	};
 
 	markAsSeen = () => {
@@ -733,7 +752,9 @@ export class FullPostView extends Component {
 					{ ! post || post._state === 'pending' ? (
 						<DocumentHead title={ translate( 'Loading' ) } />
 					) : (
-						<DocumentHead title={ `${ post.title } ‹ ${ siteName } ‹ Reader` } />
+						<DocumentHead
+							title={ `${ post.title || getPostTitleFallback( post ) } ‹ ${ siteName } ‹ Reader` }
+						/>
 					) }
 					{ post && post.feed_ID && <QueryReaderFeed feedId={ +post.feed_ID } /> }
 					{ post && ! post.is_external && post.site_ID && (
@@ -741,6 +762,18 @@ export class FullPostView extends Component {
 					) }
 					{ referral && ! referralPost && <QueryReaderPost postKey={ referral } /> }
 					{ ! post || ( isLoading && <QueryReaderPost postKey={ postKey } /> ) }
+					{ ! isLoading &&
+						post &&
+						! post.is_error &&
+						this.props.previousPostKey &&
+						! this.props.previousPost && (
+							<QueryReaderPost postKey={ this.props.previousPostKey } />
+						) }
+					{ ! isLoading &&
+						post &&
+						! post.is_error &&
+						this.props.nextPostKey &&
+						! this.props.nextPost && <QueryReaderPost postKey={ this.props.nextPostKey } /> }
 					<ReaderBackButton
 						handleBack={ this.handleBack }
 						// We will always prevent the back button here from triggering a route
@@ -772,7 +805,11 @@ export class FullPostView extends Component {
 									onCommentClick={ this.handleCommentClick }
 									onEditClick={ this.onEditClick }
 									commentsApiDisabled={ commentsApiDisabled }
-									showComments={ shouldShowComments( post ) }
+									showComments={
+										isCommentsOpen( post ) ||
+										isLoginRequiredToComment( post ) ||
+										post.discussion?.comment_count > 0
+									}
 									renderMarkAsSeenButton={
 										shouldShowMarkAsSeen ? this.renderMarkAsSenButton : null
 									}
@@ -783,13 +820,7 @@ export class FullPostView extends Component {
 							) }
 
 							{ post.featured_image && ! isFeaturedImageInContent( post ) && (
-								<ReaderFeaturedImage
-									canonicalMedia={ null }
-									imageUrl={ post.featured_image }
-									href={ getStreamUrlFromPost( post ) }
-									imageWidth={ contentWidth }
-									children={ <div style={ { width: contentWidth } } /> }
-								/>
+								<ReaderFullPostFeaturedImage post={ post } maxWidth={ contentWidth } />
 							) }
 							{ isLoading && <ReaderFullPostContentPlaceholder /> }
 							{ post.use_excerpt ? (
@@ -820,22 +851,35 @@ export class FullPostView extends Component {
 							{ ! isLoading && <ReaderPerformanceTrackerStop /> }
 
 							<div className="reader-full-post__comments-wrapper" ref={ this.commentsWrapper }>
-								{ ! commentsApiDisabled && shouldShowComments( post ) && (
-									<Comments
-										showNestingReplyArrow
-										post={ post }
-										initialSize={ startingCommentId ? commentCount : 10 }
-										pageSize={ 25 }
-										startingCommentId={ startingCommentId }
-										commentCount={ commentCount }
-										maxDepth={ 1 }
-										commentsFilterDisplay={ COMMENTS_FILTER_ALL }
-										showConversationFollowButton
-										shouldPollForNewComments={ config.isEnabled( 'reader/comment-polling' ) }
-										shouldHighlightNew
-									/>
-								) }
+								{ ! commentsApiDisabled &&
+									( isCommentsOpen( post ) ||
+										isLoginRequiredToComment( post ) ||
+										post.discussion?.comment_count > 0 ) && (
+										<Comments
+											showNestingReplyArrow
+											post={ post }
+											initialSize={ startingCommentId ? commentCount : 10 }
+											pageSize={ 25 }
+											startingCommentId={ startingCommentId }
+											commentCount={ commentCount }
+											maxDepth={ 1 }
+											commentsFilterDisplay={ COMMENTS_FILTER_ALL }
+											showConversationFollowButton
+											shouldPollForNewComments={ config.isEnabled( 'reader/comment-polling' ) }
+											shouldHighlightNew
+										/>
+									) }
 							</div>
+
+							{ isDefaultLayout && (
+								<ReaderFullPostNavigation
+									previousPost={ this.props.previousPost }
+									nextPost={ this.props.nextPost }
+									previousPostKey={ this.props.previousPostKey }
+									nextPostKey={ this.props.nextPostKey }
+									onNavigate={ this.goToPost }
+								/>
+							) }
 
 							{ showRelatedPosts && (
 								<RelatedPostsFromSameSite
@@ -931,8 +975,16 @@ export default connect(
 
 		const currentStreamKey = getCurrentStream( state );
 		if ( currentStreamKey ) {
-			props.previousPost = getPreviousItem( state, postKey );
-			props.nextPost = getNextItem( state, postKey );
+			const previousPostKey = getPreviousItem( state, postKey );
+			const nextPostKey = getNextItem( state, postKey );
+
+			// Fetch full post data for navigation
+			props.previousPost = previousPostKey ? getPostByKey( state, previousPostKey ) : null;
+			props.nextPost = nextPostKey ? getPostByKey( state, nextPostKey ) : null;
+
+			// Keep the keys for navigation
+			props.previousPostKey = previousPostKey;
+			props.nextPostKey = nextPostKey;
 		}
 
 		return props;

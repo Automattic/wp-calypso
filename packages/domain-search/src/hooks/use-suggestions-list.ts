@@ -1,7 +1,12 @@
 import { type DomainAvailability, DomainAvailabilityStatus } from '@automattic/api-core';
 import { DefinedUseQueryResult, useQueries, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useMemo } from 'react';
-import { getTld } from '../helpers';
+import {
+	getTld,
+	isFreeSubdomainQuery,
+	isWpcomSubdomainQuery,
+	stripWpcomSubdomainSuffix,
+} from '../helpers';
 import { addAvailabilityAsSuggestion } from '../helpers/add-availability-as-suggestion';
 import { isSupportedPremiumDomain } from '../helpers/is-supported-premium-domain';
 import { partitionSuggestions } from '../helpers/partition-suggestions';
@@ -27,19 +32,26 @@ const availablePremiumDomainsCombinator = (
 export const useSuggestionsList = () => {
 	const { query, queries, config } = useDomainSearch();
 
+	const isFreeSubdomain = isFreeSubdomainQuery( query );
+	const freeSuggestionQuery = isWpcomSubdomainQuery( query )
+		? stripWpcomSubdomainSuffix( query )
+		: query;
+
 	const { data: suggestions = [], isLoading: isLoadingSuggestions } = useQuery( {
 		...queries.domainSuggestions( query ),
 		enabled: true,
 	} );
 
+	const isFqdnQuery = ! isFreeSubdomain && !! getTld( query );
+
 	const { isLoading: isLoadingFreeSuggestion } = useQuery( {
-		...queries.freeSuggestion( query ),
-		enabled: config.skippable,
+		...queries.freeSuggestion( freeSuggestionQuery ),
+		enabled: config.skippable && ! isFqdnQuery,
 	} );
 
 	const { isLoading: isLoadingQueryAvailability, data: fqdnAvailability } = useQuery( {
 		...queries.domainAvailability( query ),
-		enabled: !! getTld( query ),
+		enabled: isFqdnQuery,
 	} );
 
 	const premiumSuggestions = useMemo(

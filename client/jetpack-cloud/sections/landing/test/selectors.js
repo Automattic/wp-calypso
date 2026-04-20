@@ -4,7 +4,7 @@ import {
 	WPCOM_FEATURES_AKISMET,
 	WPCOM_FEATURES_BACKUPS,
 	WPCOM_FEATURES_INSTANT_SEARCH,
-	WPCOM_FEATURES_SCAN,
+	WPCOM_FEATURES_SCAN_SELF_SERVE,
 	WPCOM_FEATURES_VIDEOPRESS,
 } from '@automattic/calypso-products';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -64,10 +64,10 @@ describe( 'getLandingPath', () => {
 	} );
 
 	it.each( [
-		[ WPCOM_FEATURES_SCAN ],
+		[ WPCOM_FEATURES_SCAN_SELF_SERVE ],
 		[ WPCOM_FEATURES_INSTANT_SEARCH ],
 		[ FEATURE_SOCIAL_SHARES_1000 ],
-		[ WPCOM_FEATURES_SCAN, WPCOM_FEATURES_INSTANT_SEARCH, FEATURE_SOCIAL_SHARES_1000 ],
+		[ WPCOM_FEATURES_SCAN_SELF_SERVE, WPCOM_FEATURES_INSTANT_SEARCH, FEATURE_SOCIAL_SHARES_1000 ],
 	] )(
 		'should return /backup/<site> for eligible sites with Backup and other features',
 		( otherFeatures ) => {
@@ -85,7 +85,7 @@ describe( 'getLandingPath', () => {
 	it( 'should return /scan/<site> for sites with Scan but not Backup', () => {
 		isJetpackSite.mockReturnValue( true );
 		getSiteSlug.mockReturnValue( FAKE_SITE_SLUG );
-		siteHasFeature.mockImplementation( mockSiteFeatures( WPCOM_FEATURES_SCAN ) );
+		siteHasFeature.mockImplementation( mockSiteFeatures( WPCOM_FEATURES_SCAN_SELF_SERVE ) );
 
 		const landingPath = getLandingPath( {}, 0 );
 		expect( landingPath ).toEqual( `/scan/${ FAKE_SITE_SLUG }` );
@@ -101,7 +101,7 @@ describe( 'getLandingPath', () => {
 			isJetpackSite.mockReturnValue( true );
 			getSiteSlug.mockReturnValue( FAKE_SITE_SLUG );
 			siteHasFeature.mockImplementation(
-				mockSiteFeatures( WPCOM_FEATURES_SCAN, ...otherFeatures )
+				mockSiteFeatures( WPCOM_FEATURES_SCAN_SELF_SERVE, ...otherFeatures )
 			);
 
 			const landingPath = getLandingPath( {}, 0 );

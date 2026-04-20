@@ -256,13 +256,14 @@ function getDiscountForCostOverrideForDisplay( costOverride: ResponseCartCostOve
 }
 
 function getBillPeriodMonthsForIntroductoryOfferInterval(
-	interval: IntroductoryOfferUnit
+	interval: IntroductoryOfferUnit,
+	intervalCount: number = 1
 ): number {
 	switch ( interval ) {
 		case 'month':
-			return 1;
+			return intervalCount;
 		case 'year':
-			return 12;
+			return 12 * intervalCount;
 		default:
 			return 0;
 	}
@@ -289,8 +290,10 @@ export function doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
 		return false;
 	}
 	if (
-		getBillPeriodMonthsForIntroductoryOfferInterval( introductoryOfferTerms.interval_unit ) ===
-		monthsPerBillPeriodForProduct
+		getBillPeriodMonthsForIntroductoryOfferInterval(
+			introductoryOfferTerms.interval_unit,
+			introductoryOfferTerms.interval_count
+		) === monthsPerBillPeriodForProduct
 	) {
 		return false;
 	}
@@ -313,7 +316,8 @@ function doesIntroductoryOfferCostOverrideHavePriceIncrease(
 	const monthsForProductBeforeOverride = product.months_per_bill_period ?? 1;
 	const priceBeforeOverrideMonthly = priceBeforeOverride / monthsForProductBeforeOverride;
 	const monthsForProductAfterOverride = getBillPeriodMonthsForIntroductoryOfferInterval(
-		product.introductory_offer_terms.interval_unit
+		product.introductory_offer_terms.interval_unit,
+		product.introductory_offer_terms.interval_count
 	);
 	const priceAfterOverrideMonthly = priceAfterOverride / monthsForProductAfterOverride;
 

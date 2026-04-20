@@ -2,6 +2,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { intlFormat } from 'date-fns';
 import RefundAmountString from './refund-amount-string';
+import { useShowRefundEligibilityNotice } from './use-show-refund-eligibility-notice';
 import type { Purchase } from '@automattic/api-core';
 
 interface CancellationFullTextProps {
@@ -17,6 +18,7 @@ export default function CancellationFullText( {
 }: CancellationFullTextProps ) {
 	const { expiry_date: expiryDate } = purchase;
 	const expirationDate = intlFormat( expiryDate, { dateStyle: 'medium' }, { locale: 'en-US' } );
+	const showRefundEligibilityNotice = useShowRefundEligibilityNotice( purchase );
 
 	const refundAmountString = RefundAmountString( {
 		purchase,
@@ -24,7 +26,8 @@ export default function CancellationFullText( {
 		includedDomainPurchase,
 	} );
 
-	if ( refundAmountString ) {
+	// Skip refund text for refundable dotcom plans since refund is offered via the notice
+	if ( refundAmountString && ! showRefundEligibilityNotice ) {
 		return createInterpolateElement(
 			sprintf(
 				/* translators: $(refundText)s is of the form "[currency-symbol][amount]" i.e. "$20" */

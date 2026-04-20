@@ -91,13 +91,18 @@ export default function OverviewCard( {
 		return <>&nbsp;</>;
 	};
 
-	const isRelativeLink = link && ( isRelativeUrl( link ) || isOnboardingUrl( link ) );
+	// Stepper/onboarding flows are not considered relative links because they can't be loaded by TanStack Router.
+	const isOnboarding = link && isOnboardingUrl( link );
+	const isRelativeLink = link && isRelativeUrl( link ) && ! isOnboarding;
 
 	let relativeLink: string | undefined = undefined;
+	let onboardingLink: string | undefined = undefined;
 	let externalLink: string | undefined = undefined;
 
 	if ( externalLinkProp ) {
 		externalLink = externalLinkProp;
+	} else if ( isOnboarding ) {
+		onboardingLink = link;
 	} else if ( isRelativeLink ) {
 		relativeLink = link;
 	} else {
@@ -125,7 +130,7 @@ export default function OverviewCard( {
 							{ title }
 						</Text>
 					</HStack>
-					{ relativeLink && ! progress && (
+					{ ( relativeLink || onboardingLink ) && ! progress && (
 						<Icon
 							className="dashboard-overview-card__link-icon"
 							icon={ isRTL() ? chevronLeft : chevronRight }
@@ -209,6 +214,18 @@ export default function OverviewCard( {
 			);
 		}
 
+		if ( onboardingLink ) {
+			return (
+				<a
+					href={ onboardingLink }
+					className="dashboard-overview-card__link"
+					onClick={ handleClick }
+				>
+					{ topContent }
+				</a>
+			);
+		}
+
 		if ( externalLink ) {
 			return (
 				<a
@@ -239,6 +256,7 @@ export default function OverviewCard( {
 
 	return (
 		<Card
+			role="article"
 			className={ clsx( 'dashboard-overview-card', {
 				[ `dashboard-overview-card--${ intent }` ]: intent,
 				'dashboard-overview-card--disabled': isLoading || disabled,

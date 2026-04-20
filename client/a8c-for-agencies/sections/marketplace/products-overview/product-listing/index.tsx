@@ -2,6 +2,7 @@ import { JetpackLogo } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useContext, useEffect, useMemo, useRef } from 'react';
+import pressableIcon from 'calypso/assets/images/a8c-for-agencies/product-logos/pressable.svg';
 import WooLogoColor from 'calypso/assets/images/icons/Woo_logo_color.svg';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { parseQueryStringProducts } from 'calypso/jetpack-cloud/sections/partner-portal/lib/querystring-products';
@@ -13,8 +14,9 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { MarketplaceTypeContext, ShoppingCartContext } from '../../context';
 import { useProductTermAvailabilityTooltip } from '../../hooks/use-marketplace';
-import useProductAndPlans from '../../hooks/use-product-and-plans';
+import usePressableAddonVisibility from '../../hooks/use-pressable-addon-visibility';
 import { SelectedFilters } from '../../lib/product-filter';
+import useProductAndPlansWithPressableVisibility from '../hooks/use-product-and-plans-with-pressable-visibility';
 import { getSupportedBundleSizes } from '../hooks/use-product-bundle-size';
 import useSubmitForm from '../hooks/use-submit-form';
 import ProductCard from '../product-card';
@@ -60,22 +62,31 @@ export default function ProductListing( {
 		() => ( isReferralMode ? 1 : selectedBundleSize ),
 		[ isReferralMode, selectedBundleSize ]
 	);
+	const { hasActiveAgencyPressablePlanLicense, hasActiveReferralPressablePlanLicense } =
+		usePressableAddonVisibility();
+	const canShowPressableAddonsByMode = isReferralMode
+		? hasActiveReferralPressablePlanLicense
+		: hasActiveAgencyPressablePlanLicense;
 
 	const {
 		filteredProductsAndBundles,
 		isLoadingProducts,
 		jetpackPlans,
 		jetpackBackupAddons,
+		pressableAddons,
 		jetpackProducts,
 		wooExtensions,
 		featuredProducts,
 		data,
 		suggestedProductSlugs,
-	} = useProductAndPlans( {
-		selectedSite,
-		selectedProductFilters: selectedFilters,
-		productSearchQuery,
-	} );
+	} = useProductAndPlansWithPressableVisibility(
+		{
+			selectedSite,
+			selectedProductFilters: selectedFilters,
+			productSearchQuery,
+		},
+		canShowPressableAddonsByMode
+	);
 
 	const isEmptyList = ! filteredProductsAndBundles.length;
 
@@ -377,6 +388,17 @@ export default function ProductListing( {
 					stickyHeadingTopOffset={ stickyHeadingTopOffset }
 				>
 					{ getProductCards( jetpackBackupAddons ) }
+				</ProductListingSection>
+			) }
+
+			{ pressableAddons.length > 0 && (
+				<ProductListingSection
+					icon={ <img src={ pressableIcon } width={ 26 } height={ 26 } alt="Pressable" /> }
+					title={ translate( 'Pressable Add-ons' ) }
+					description={ translate( 'Increase your plan limits and features with plan add-ons.' ) }
+					stickyHeadingTopOffset={ stickyHeadingTopOffset }
+				>
+					{ getProductCards( pressableAddons ) }
 				</ProductListingSection>
 			) }
 		</>

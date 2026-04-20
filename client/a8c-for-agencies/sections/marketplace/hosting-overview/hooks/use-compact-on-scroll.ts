@@ -1,9 +1,5 @@
 import { useCallback, useRef, useState, useEffect } from 'react';
 
-const SCROLL_THRESHOLD_PERCENTAGE = 0.2;
-const SCROLL_THRESHOLD_NORMAL_BUFFER = 5;
-const SCROLL_THRESHOLD_COMPACT_BUFFER = 15;
-
 const TABS_GAP = 39;
 const MINIMUM_COMPACT_HEIGHT = 74; // Header height
 
@@ -54,23 +50,11 @@ export default function useCompactOnScroll() {
 			const scrollPosition = event.currentTarget.scrollTop;
 			const isScrollingDown = scrollPosition > lastScrollPosition;
 
-			const normalHeight = ref.current?.clientHeight ?? 0;
-
-			const normalScrollThreshold = normalHeight * SCROLL_THRESHOLD_PERCENTAGE;
-
-			if (
-				isScrollingDown &&
-				! isCompact &&
-				scrollPosition > normalScrollThreshold + SCROLL_THRESHOLD_NORMAL_BUFFER
-			) {
+			if ( isScrollingDown && ! isCompact ) {
 				setIsCompact( true );
 				setIsTransitioning( true );
 				ref.current?.addEventListener( 'transitionend', onTransitionEnd );
-			} else if (
-				! isScrollingDown &&
-				isCompact &&
-				scrollPosition < normalScrollThreshold - SCROLL_THRESHOLD_COMPACT_BUFFER
-			) {
+			} else if ( ! isScrollingDown && scrollPosition === 0 ) {
 				setIsCompact( false );
 				setIsTransitioning( true );
 				ref.current?.addEventListener( 'transitionend', onTransitionEnd );

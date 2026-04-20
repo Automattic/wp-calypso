@@ -1,9 +1,10 @@
 import { FormLabel } from '@automattic/components';
-import { Button } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
+import { ActionButtons } from 'calypso/components/connect-screen/action-buttons';
+import { ConsentText } from 'calypso/components/connect-screen/consent-text';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import LoggedOutForm from 'calypso/components/logged-out-form';
@@ -33,7 +34,7 @@ import EmailedLoginLinkSuccessfully from './emailed-login-link-successfully';
 import EmailedLoginLinkSuccessfullyJetpackConnect from './emailed-login-link-successfully-jetpack-connect';
 import { getCheckYourEmailHeaders, getEmailLinkHeaders } from './utils/heading-utils';
 
-class RequestLoginEmailForm extends Component {
+export class RequestLoginEmailForm extends Component {
 	static propTypes = {
 		// mapped to state
 		currentUser: PropTypes.object,
@@ -134,12 +135,12 @@ class RequestLoginEmailForm extends Component {
 		}
 	}
 
-	componentDidUpdate( prevProps ) {
+	componentDidUpdate( prevProps, prevState ) {
 		if ( ! prevProps.requestError && this.props.requestError ) {
 			this.usernameOrEmailRef.current?.focus();
 		}
 
-		if ( this.state.site?.name && prevProps.site?.name !== this.state.site?.name ) {
+		if ( this.state.site?.name && prevState.site?.name !== this.state.site?.name ) {
 			this.setRequestLoginHeaders();
 		}
 
@@ -308,7 +309,11 @@ class RequestLoginEmailForm extends Component {
 							placeholder={ inputPlaceholder }
 							isError={ isEmailInputError }
 						/>
-						{ tosComponent }
+						{ tosComponent && (
+							<ConsentText className="magic-login__tos wp-login__one-login-layout-tos">
+								{ tosComponent }
+							</ConsentText>
+						) }
 						{ requestError && (
 							<Notice
 								duration={ 10000 }
@@ -330,15 +335,12 @@ class RequestLoginEmailForm extends Component {
 							/>
 						) }
 						<div className="magic-login__form-action">
-							<Button
-								variant="primary"
-								disabled={ ! submitEnabled }
-								isBusy={ isSubmitButtonBusy }
-								type="submit"
-								__next40pxDefaultSize
-							>
-								{ submitButtonLabel || buttonLabel }
-							</Button>
+							<ActionButtons
+								primaryLabel={ submitButtonLabel || buttonLabel }
+								primaryType="submit"
+								primaryDisabled={ ! submitEnabled }
+								primaryLoading={ isSubmitButtonBusy }
+							/>
 						</div>
 					</FormFieldset>
 				</LoggedOutForm>

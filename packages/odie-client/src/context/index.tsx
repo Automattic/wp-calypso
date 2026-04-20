@@ -47,7 +47,6 @@ export const OdieAssistantContext = createContext< OdieAssistantContextInterface
 	setChat: noop,
 	setChatStatus: noop,
 	setExperimentVariationName: noop,
-	setMessageLikedStatus: noop,
 	trackEvent: noop,
 	forceEmailSupport: false,
 	isChatRestricted: false,
@@ -155,24 +154,6 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 		setMainChatState( ( prevChat ) => ( { ...prevChat, status } ) );
 	};
 
-	/**
-	 * Set the liked status of a message.
-	 */
-	const setMessageLikedStatus = ( message: Message, liked: boolean ) => {
-		setMainChatState( ( prevChat ) => {
-			const messageIndex = prevChat.messages.findIndex( ( m ) => m === message );
-			const updatedMessage = { ...message, liked };
-			return {
-				...prevChat,
-				messages: [
-					...prevChat.messages.slice( 0, messageIndex ),
-					updatedMessage,
-					...prevChat.messages.slice( messageIndex + 1 ),
-				],
-			};
-		} );
-	};
-
 	useOdieBroadcastWithCallbacks( { addMessage }, odieBroadcastClientId );
 
 	/**
@@ -207,7 +188,6 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				userFieldFlowName,
 				setChatStatus,
 				setExperimentVariationName,
-				setMessageLikedStatus,
 				trackEvent,
 				version: overriddenVersion,
 				forceEmailSupport,

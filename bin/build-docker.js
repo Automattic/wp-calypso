@@ -17,4 +17,7 @@ const sha = String( execSync( 'git rev-parse HEAD' ) ).trim();
 const args = [ 'build', '--build-arg', 'commit_sha=' + sha, '-t', 'wp-calypso', '.' ];
 
 console.log( 'docker ' + args.join( ' ' ) );
-spawnSync( 'docker', args, { stdio: 'inherit' } );
+spawnSync( 'docker', args, {
+	env: { ...process.env, DOCKER_BUILDKIT: process.env.DOCKER_BUILDKIT || '1' },
+	stdio: 'inherit',
+} );

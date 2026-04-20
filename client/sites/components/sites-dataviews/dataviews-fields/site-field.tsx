@@ -11,18 +11,12 @@ import { useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { useSiteAdminInterfaceData } from 'calypso/state/sites/hooks';
 import { isTrialSite } from 'calypso/state/sites/plans/selectors';
+import type { SitePreviewPane } from '../../types';
 import type { SiteExcerptData } from '@automattic/sites';
 
 type Props = {
 	site: SiteExcerptData;
-	sitePreviewPane: {
-		open: (
-			site: SiteExcerptData,
-			source: 'site_field' | 'action' | 'list_row_click' | 'environment_switcher',
-			openInNewTab?: boolean
-		) => void;
-		getUrl: ( site: SiteExcerptData ) => string;
-	};
+	sitePreviewPane: SitePreviewPane;
 };
 
 /**

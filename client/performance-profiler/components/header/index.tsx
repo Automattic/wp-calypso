@@ -2,7 +2,6 @@ import { Popover } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { Icon, mobile, desktop, share } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import moment from 'moment';
 import { useState, useRef } from 'react';
 import WPcomBadge from 'calypso/assets/images/performance-profiler/wpcom-badge.svg';
 import SectionNav from 'calypso/components/section-nav';
@@ -58,7 +57,12 @@ export const PerformanceProfilerHeader = ( props: HeaderProps ) => {
 			{ timestamp && (
 				<span>
 					{ translate( 'Tested on %(date)s', {
-						args: { date: moment( timestamp ).format( 'MMMM Do, YYYY h:mm:ss A' ) },
+						args: {
+							date: new Intl.DateTimeFormat( translate.localeSlug || 'en-US', {
+								dateStyle: 'long',
+								timeStyle: 'medium',
+							} ).format( new Date( timestamp ) ),
+						},
 					} ) }
 				</span>
 			) }

@@ -18,5 +18,5 @@ export default function getProductShortTitle(
 		return getProductVariantShortTitle( title );
 	}
 
-	return title.replaceAll( /(?:Woocommerce\s|[)(])/gi, '' );
+	return title.replaceAll( /(?:Woocommerce\s|Pressable\s|[)(])/gi, '' );
 }

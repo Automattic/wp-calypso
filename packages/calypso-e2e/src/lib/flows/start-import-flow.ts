@@ -159,7 +159,7 @@ export class StartImportFlow {
 	 * Validates that we've landed on the importer drag page.
 	 */
 	async validateImporterDragPage( importer: string ): Promise< void > {
-		await this.page.locator( selectors.importerDrag( importer ) ).waitFor();
+		await this.page.locator( selectors.importerDrag( importer ) ).waitFor( { timeout: 60_000 } );
 	}
 
 	/**
@@ -168,7 +168,7 @@ export class StartImportFlow {
 	async validateImporterListPage(): Promise< void > {
 		await this.page
 			.locator( selectors.startBuildingHeader( 'Import content from another platform or file' ) )
-			.waitFor();
+			.waitFor( { timeout: 60_000 } );
 	}
 
 	/**
@@ -249,7 +249,7 @@ export class StartImportFlow {
 		await this.page.click( selectors.importerListButton( index ) );
 		await this.page
 			.locator( selectors.startBuildingHeader( 'Import content from WordPress' ) )
-			.waitFor();
+			.waitFor( { timeout: 60_000 } );
 	}
 
 	/**

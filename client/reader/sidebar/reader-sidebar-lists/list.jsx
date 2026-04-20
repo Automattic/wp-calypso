@@ -16,6 +16,7 @@ export default class ReaderSidebarListsList extends Component {
 
 		return (
 			<>
+				<ListItemCreateLink path={ path } />
 				{ lists.map( ( list ) => (
 					<ListItem
 						key={ list.ID }
@@ -25,7 +26,6 @@ export default class ReaderSidebarListsList extends Component {
 						currentListSlug={ currentListSlug }
 					/>
 				) ) }
-				<ListItemCreateLink path={ path } />
 			</>
 		);
 	}

@@ -7,6 +7,7 @@ import { __ } from '@wordpress/i18n';
 import { info } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState, useCallback } from 'react';
+import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import {
 	pluginsScheduledUpdatesEditRoute,
 	pluginsScheduledUpdatesNewRoute,
@@ -161,7 +162,7 @@ export const defaultView: View = {
 	titleField: 'site',
 	fields: [ 'lastUpdate', 'nextUpdate', 'schedule', 'plugins', 'active' ],
 	sort: { field: 'site', direction: 'asc' },
-	groupByField: 'scheduleId',
+	groupBy: { field: 'scheduleId', direction: 'asc' },
 	mediaField: 'icon.ico',
 	showMedia: true,
 };
@@ -242,6 +243,7 @@ export default function PluginsScheduledUpdates() {
 				}
 			>
 				<DataViewsCard>
+					{ ! isLoading && <PerformanceTrackerStop /> }
 					<DataViews
 						paginationInfo={ paginationInfo }
 						fields={ fields }

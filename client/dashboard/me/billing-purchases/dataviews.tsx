@@ -15,9 +15,9 @@ import SiteIcon from '../../components/site-icon';
 import {
 	isRenewing,
 	isTransferredOwnership,
-	isAkismetTemporarySitePurchase,
-	isMarketplaceTemporarySitePurchase,
-	getTitleForDisplay,
+	isAkismetHoldingSitePurchase,
+	isMarketplaceHoldingSitePurchase,
+	getTitleForListDisplay,
 } from '../../utils/purchase';
 import { PurchasePaymentMethod } from './purchase-payment-method';
 import { PurchaseProduct } from './purchase-product';
@@ -88,7 +88,7 @@ function PurchaseItemSiteIcon( { site, purchase }: { site?: Site; purchase: Purc
 	}
 
 	if (
-		isMarketplaceTemporarySitePurchase( purchase ) &&
+		isMarketplaceHoldingSitePurchase( purchase ) &&
 		purchase.product_slug.startsWith( 'passport' )
 	) {
 		return (
@@ -100,7 +100,7 @@ function PurchaseItemSiteIcon( { site, purchase }: { site?: Site; purchase: Purc
 		);
 	}
 
-	if ( isAkismetTemporarySitePurchase( purchase ) ) {
+	if ( isAkismetHoldingSitePurchase( purchase ) ) {
 		return (
 			<img
 				src={ akismetIcon }
@@ -252,7 +252,7 @@ export function getFields( {
 				const site = sites.find( ( site ) => site.ID === item.blog_id );
 				// Render a bunch of things to make this easily searchable.
 				return (
-					getTitleForDisplay( item ) +
+					getTitleForListDisplay( item ) +
 					' ' +
 					item.blogname +
 					' ' +
@@ -266,7 +266,7 @@ export function getFields( {
 				return (
 					<HStack justify="flex-start" spacing={ 1 }>
 						<PurchaseSettingLink purchase={ item } disabled={ isTransferred }>
-							{ getTitleForDisplay( item ) }
+							{ getTitleForListDisplay( item ) }
 						</PurchaseSettingLink>
 						<OwnerInfo purchase={ item } isTransferredOwnership={ isTransferred } />
 					</HStack>
@@ -393,7 +393,7 @@ export function getFields( {
 				const site = sites.find( ( site ) => site.ID === item.blog_id );
 				return (
 					<div>
-						<PurchaseExpiryStatus purchase={ item } isDisconnectedSite={ ! site } />
+						<PurchaseExpiryStatus purchase={ item } isSiteMissing={ ! site } />
 					</div>
 				);
 			},
@@ -427,7 +427,7 @@ export function getFields( {
 				const site = sites.find( ( site ) => site.ID === item.blog_id );
 				return (
 					<HStack justify="flex-start" spacing={ 1 }>
-						<PurchasePaymentMethod purchase={ item } isDisconnectedSite={ ! site } />
+						<PurchasePaymentMethod purchase={ item } isSiteMissing={ ! site } />
 						{ isBackupMethodAvailable && isRenewing( item ) && <BackupPaymentMethodNotice /> }
 					</HStack>
 				);

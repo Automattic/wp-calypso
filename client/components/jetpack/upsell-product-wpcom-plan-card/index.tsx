@@ -12,10 +12,10 @@ import { Gridicon } from '@automattic/components';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import BackupImage from 'calypso/assets/images/jetpack/rna-image-backup.png';
-import DefaultImage from 'calypso/assets/images/jetpack/rna-image-default.png';
-import ScanImage from 'calypso/assets/images/jetpack/rna-image-scan.png';
-import SearchImage from 'calypso/assets/images/jetpack/rna-image-search.png';
+import BackupImage from 'calypso/assets/images/jetpack/rna-image-backup.webp';
+import DefaultImage from 'calypso/assets/images/jetpack/rna-image-default.webp';
+import ScanImage from 'calypso/assets/images/jetpack/rna-image-scan.webp';
+import SearchImage from 'calypso/assets/images/jetpack/rna-image-search.webp';
 import DisplayPrice from 'calypso/components/jetpack/card/jetpack-product-card/display-price';
 import JetpackRnaActionCard from 'calypso/components/jetpack/card/jetpack-rna-action-card';
 import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-selector-product';
@@ -116,7 +116,13 @@ export const UpsellProductWpcomPlanCard: React.FC< UpsellProductWpcomPlanCardPro
 	const renderProductCardBody = () => {
 		return (
 			<>
-				<div className="upsell-product-card__price-plan">Creator plan</div>
+				<div className="upsell-product-card__price-plan">
+					{ translate( '%(planName)s plan', {
+						args: {
+							planName: plan.getTitle(),
+						},
+					} ) }
+				</div>
 				<div className="upsell-product-card__price-container">
 					<DisplayPrice
 						isFree={ ! isFetchingPrices && originalPrice === 0 }

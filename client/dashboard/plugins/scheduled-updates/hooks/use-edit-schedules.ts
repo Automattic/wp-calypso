@@ -4,7 +4,7 @@ import {
 	type Site,
 } from '@automattic/api-core';
 import { queryClient, siteUpdateSchedulesQuery } from '@automattic/api-queries';
-import { useCallback } from '@wordpress/element';
+import { useCallback } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { normalizeScheduleId, prepareTimestamp } from '../helpers';
 import { useEligibleSites } from './use-eligible-sites';

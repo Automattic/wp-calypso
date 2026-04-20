@@ -318,3 +318,31 @@ $theme-card-info-margin-top: 16px;
 		margin-bottom: 27px;
 	}
 }
+
+.theme-card__image-overlay {
+	align-items: center;
+	background: rgba(0, 0, 0, 0.5);
+	display: flex;
+	gap: 8px;
+	inset: 0;
+	justify-content: center;
+	opacity: 0;
+	pointer-events: none;
+	position: absolute;
+	transition: opacity 200ms ease-in-out;
+	z-index: 1;
+}
+
+.theme-card__image-container:hover .theme-card__image-overlay,
+.theme-card__image-container:focus-within .theme-card__image-overlay {
+	opacity: 1;
+}
+
+.theme-card__image-overlay > * {
+	pointer-events: auto;
+}
+
+.theme-card--has-overlay:hover .theme-card__image-container,
+.theme-card--has-overlay:focus-within .theme-card__image-container {
+	border-color: rgba(220, 220, 222, 0.4);
+}

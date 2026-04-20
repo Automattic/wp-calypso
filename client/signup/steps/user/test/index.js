@@ -44,7 +44,7 @@ describe( '#signupStep User', () => {
 		);
 
 		expect( getSubHeaderEl( container ) ).toHaveTextContent(
-			'Just a little reminder that by continuing with any of the options below'
+			'By continuing with any of the options below'
 		);
 	} );
 
@@ -60,7 +60,7 @@ describe( '#signupStep User', () => {
 		);
 
 		expect( getSubHeaderEl( container ) ).toHaveTextContent(
-			'Just a little reminder that by continuing with any of the options below'
+			'By continuing with any of the options below'
 		);
 	} );
 
@@ -86,7 +86,7 @@ describe( '#signupStep User', () => {
 			);
 
 			expect( getSubHeaderEl( container ) ).toHaveTextContent(
-				'Just a little reminder that by continuing with any of the options below'
+				'By continuing with any of the options below'
 			);
 		} );
 
@@ -111,7 +111,7 @@ describe( '#signupStep User', () => {
 			);
 
 			expect( getSubHeaderEl( container ) ).toHaveTextContent(
-				'Just a little reminder that by continuing with any of the options below'
+				'By continuing with any of the options below'
 			);
 		} );
 	} );

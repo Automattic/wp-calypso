@@ -112,4 +112,66 @@ describe( 'index', () => {
 			expect( onCloseSpy ).toHaveBeenCalledTimes( 1 );
 		} );
 	} );
+
+	describe( 'siteFilter', () => {
+		test( 'should filter out deleted sites when hideDeleted is true', () => {
+			const fakeContext = {
+				props: {
+					hideDeleted: true,
+					filter: undefined,
+				},
+			};
+
+			const deletedSite = { ID: 123, is_deleted: true };
+			const activeSite = { ID: 456, is_deleted: false };
+
+			expect( SitesDropdown.prototype.siteFilter.call( fakeContext, deletedSite ) ).toBe( false );
+			expect( SitesDropdown.prototype.siteFilter.call( fakeContext, activeSite ) ).toBe( true );
+		} );
+
+		test( 'should not filter out deleted sites when hideDeleted is false', () => {
+			const fakeContext = {
+				props: {
+					hideDeleted: false,
+					filter: undefined,
+				},
+			};
+
+			const deletedSite = { ID: 123, is_deleted: true };
+			const activeSite = { ID: 456, is_deleted: false };
+
+			expect( SitesDropdown.prototype.siteFilter.call( fakeContext, deletedSite ) ).toBe( true );
+			expect( SitesDropdown.prototype.siteFilter.call( fakeContext, activeSite ) ).toBe( true );
+		} );
+
+		test( 'should apply custom filter after hideDeleted check', () => {
+			const customFilter = jest.fn().mockReturnValue( true );
+			const fakeContext = {
+				props: {
+					hideDeleted: true,
+					filter: customFilter,
+				},
+			};
+
+			const activeSite = { ID: 456, is_deleted: false };
+
+			expect( SitesDropdown.prototype.siteFilter.call( fakeContext, activeSite ) ).toBe( true );
+			expect( customFilter ).toHaveBeenCalledWith( 456 );
+		} );
+
+		test( 'should not call custom filter for deleted sites when hideDeleted is true', () => {
+			const customFilter = jest.fn().mockReturnValue( true );
+			const fakeContext = {
+				props: {
+					hideDeleted: true,
+					filter: customFilter,
+				},
+			};
+
+			const deletedSite = { ID: 123, is_deleted: true };
+
+			expect( SitesDropdown.prototype.siteFilter.call( fakeContext, deletedSite ) ).toBe( false );
+			expect( customFilter ).not.toHaveBeenCalled();
+		} );
+	} );
 } );

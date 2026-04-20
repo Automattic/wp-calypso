@@ -112,9 +112,9 @@ export default function CheckoutTerms( { cart }: { cart: ResponseCart } ) {
 				{ ! isGiftPurchase && <AdditionalTermsOfServiceInCart /> }
 				{ ! isGiftPurchase && <ThirdPartyPluginsTermsOfService cart={ cart } /> }
 				{ ! isGiftPurchase && <TitanTermsOfService cart={ cart } /> }
+				{ shouldShowRefundPolicy && <RefundPolicies cart={ cart } /> }
 
 				<CheckoutTermsReadMore>
-					{ shouldShowRefundPolicy && <RefundPolicies cart={ cart } /> }
 					{ shouldShowBundledDomainNotice && <BundledDomainNotice cart={ cart } /> }
 					{ shouldShowInternationalFeeNotice && <InternationalFeeNotice /> }
 					{ shouldShowJetpackSocialAdvancedPricingDisclaimer && (

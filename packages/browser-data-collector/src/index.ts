@@ -30,6 +30,15 @@ export const start = async (
 };
 
 /**
+ * Cancels an in-flight report without sending it.
+ * @see startPerformanceTracking in client/dashboard for why this is needed.
+ * @param id id of the report to cancel
+ */
+export const cancel = ( id: string ) => {
+	inFlightReporters.delete( id );
+};
+
+/**
  * Stops a report and sends it to the transporter.
  * @param id id of the report to send, comes from `start()`
  * @param obj options

@@ -32,7 +32,11 @@ import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 import { getPurchaseFlowState } from 'calypso/state/marketplace/purchase-flow/selectors';
 import { MARKETPLACE_ASYNC_PROCESS_STATUS } from 'calypso/state/marketplace/types';
-import { installPlugin, activatePlugin } from 'calypso/state/plugins/installed/actions';
+import {
+	installPlugin,
+	activatePlugin,
+	fetchSitePlugins,
+} from 'calypso/state/plugins/installed/actions';
 import {
 	getPluginOnSite,
 	getStatusForPlugin,
@@ -297,6 +301,22 @@ const MarketplaceProductInstall = ( {
 
 	// Prefer fresh URL when available; if in atomic flow, wait for fresh URL
 	const pluginsUrlFinal = atomicFlow ? pluginsUrlFresh : pluginsUrlFresh || pluginsUrlSelector;
+
+	// For marketplace plugins (e.g. sensei-pro), the atomic transfer + plugin install
+	// is initiated during checkout, not by this component. The wporg data is unavailable,
+	// so atomicFlow is never set. Once the site is atomic, poll for installed plugins
+	// so that the existing redirect (installedPlugin && pluginActive) fires.
+	const isMarketplacePluginFlow =
+		! atomicFlow &&
+		! isPluginUploadFlow &&
+		!! pluginSlug &&
+		!! freshSite?.is_wpcom_atomic &&
+		wporgPlugin?.wporg === false;
+
+	useInterval(
+		() => dispatch( fetchSitePlugins( siteId ) ),
+		isMarketplacePluginFlow && ! pluginActive ? 3000 : null
+	);
 
 	const canManagePlugins = useSelector( ( state ) => {
 		return siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_MANAGE_PLUGINS );

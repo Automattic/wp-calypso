@@ -38,6 +38,12 @@ export interface Purchase {
 
 	domainRegistrationAgreementUrl: string | null;
 	expiryDate: string;
+
+	/**
+	 * The expiry date in ISO 8601 (YYYY-MM-DD) if the payment method has one.
+	 */
+	paymentExpiryDate: string | undefined;
+
 	expiryStatus: string;
 	iapPurchaseManagementLink: string | null;
 	id: number;
@@ -60,6 +66,7 @@ export interface Purchase {
 	isLocked: boolean;
 	isRechargeable: boolean;
 	isRefundable: boolean;
+	isWithinInitialRefundWindow: boolean;
 	isRenewable: boolean;
 	isRenewal: boolean;
 	isWooExpressTrial: boolean;
@@ -187,6 +194,7 @@ export interface Purchase {
 	autoRenewCouponDiscountPercentage: number | null;
 
 	isJetpackPlanOrProduct: boolean;
+	isAttachedToHoldingSite: boolean;
 }
 
 export interface PurchasePriceTier {
@@ -213,6 +221,7 @@ export interface RefundOptions {
 
 export interface RawPurchaseIntroductoryOffer {
 	cost_per_interval: number;
+	cost_per_interval_integer: number;
 	end_date: string;
 	interval_count: number;
 	interval_unit: string;
@@ -226,6 +235,7 @@ export interface RawPurchaseIntroductoryOffer {
 
 export interface PurchaseIntroductoryOffer {
 	costPerInterval: number;
+	costPerIntervalInteger: number;
 	endDate: string;
 	intervalCount: number;
 	intervalUnit: string;
@@ -243,6 +253,11 @@ export interface PurchasePayment {
 	countryCode: string | undefined | null;
 	countryName: string | undefined;
 	storedDetailsId: string | number | undefined | null;
+	/**
+	 * The expiry date in MM/YY if the payment method has one.
+	 *
+	 * Use `paymentExpiryDate` on the Purchase if possible as it will be more accurate.
+	 */
 	expiryDate?: string;
 	creditCard?: PurchasePaymentCreditCard;
 	paymentPartner?: string;
@@ -257,6 +272,11 @@ export type PurchasePaymentWithPayPal = PurchasePayment & {
 	countryName: string | undefined;
 	storedDetailsId: string | number;
 	type: string;
+	/**
+	 * The expiry date in MM/YY if the payment method has one.
+	 *
+	 * Use `paymentExpiryDate` on the Purchase if possible as it will be more accurate.
+	 */
 	expiryDate: string;
 };
 
@@ -279,5 +299,10 @@ export interface PurchasePaymentCreditCard {
 	displayBrand: string | null;
 	processor: string;
 	number: string;
+	/**
+	 * The expiry date in MM/YY if the payment method has one.
+	 *
+	 * Use `paymentExpiryDate` on the Purchase if possible as it will be more accurate.
+	 */
 	expiryDate: string;
 }

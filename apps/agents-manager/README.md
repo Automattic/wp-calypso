@@ -1,12 +1,22 @@
-# Agents Manager App
+# Agents Manager
 
-The Agents Manager app provides a standalone application for loading the Unified AI Agent component.
+The Agents Manager is the unified AI agent experience for WordPress.com users, providing chat, support guides, and AI-powered tools across multiple environments.
 
 ## Development
 
-TBD
+The Agents Manager runs in multiple different environments:
 
-### How to debug the Agents Manager
+1. In Calypso.
+2. In Simple sites
+   - as a plugin to Gutenberg editor.
+   - as a wpadminbar menu item.
+3. In Atomic sites
+   - as a plugin to Gutenberg editor.
+   - as a wpadminbar menu item.
+4. In CIAB (Commerce in a Box)
+   - as a Next Admin SPA integration.
+
+### How to develop the Agents Manager
 
 #### In Calypso
 
@@ -28,13 +38,26 @@ If you only interested in making JS and CSS changes, you're in luck; you don't n
 
 If you do want to modify PHP files. Please follow the development process of [`jetpack-mu-plugin`](https://github.com/Automattic/jetpack/blob/trunk/projects/packages/jetpack-mu-wpcom/README.md).
 
-### Data Structure
-
-TBD
-
 ### Translations
 
 Translations are uploaded to widgets.wp.com/agents-manager/languages. They're then downloaded in Jetpack during the build process.
 
+### Deployment
 
+After every change to the Agents Manager, the development process is two parts:
 
+#### Deploy Calypso
+
+This simply means deploying Calypso as you normally would.
+
+#### Deploy the Agents Manager for Jetpack consumption
+1. Connect to your sandbox and run: `install-plugin.sh am --release`
+2. When prompted where to push the branch, select the WPCOM repository.
+3. This will create a PR on the WPCOM repository.
+4. Once checks pass, merge the PR.
+5. Deploy wpcom: `deploy wpcom`
+
+This will deploy the Agents Manager app for Jetpack consumption. Along with the languages files.
+
+> [!IMPORTANT]
+> If you add new phrases to the Agents Manager. They will only be translated in Atomic sites after `jetpack-mu-plugin` is released. Which happens twice a day.

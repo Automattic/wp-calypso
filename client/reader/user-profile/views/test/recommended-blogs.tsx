@@ -6,6 +6,7 @@ import {
 	FeedRecommendation,
 	useFeedRecommendationsQuery,
 } from 'calypso/data/reader/use-feed-recommendations-query';
+import { ReaderSite } from 'calypso/reader/sites-list/site-item';
 import UserRecommendedBlogs from '../recommended-blogs';
 import type { UserProfileData } from 'calypso/lib/user/user';
 
@@ -13,14 +14,14 @@ jest.mock( '@automattic/components', () => ( {
 	LoadingPlaceholder: () => <div data-testid="loading-placeholder">Loading...</div>,
 } ) );
 
-jest.mock( 'calypso/reader/recommended-feed', () => ( {
-	RecommendedFeed: ( {
-		blog,
-		classPrefix,
-	}: {
-		blog: { ID: number; name: string };
-		classPrefix: string;
-	} ) => <li data-class-prefix={ classPrefix }>{ blog.name }</li>,
+jest.mock( 'calypso/reader/sites-list', () => ( {
+	ReaderSitesList: ( { sites }: { sites: ReaderSite[] } ) => (
+		<div>
+			{ sites.map( ( site ) => (
+				<p key={ site.siteId }>{ site.name }</p>
+			) ) }
+		</div>
+	),
 } ) );
 
 jest.mock( 'calypso/components/empty-content', () => ( {
@@ -44,9 +45,13 @@ describe( 'UserRecommendedBlogs', () => {
 
 	const defaultUser: UserProfileData = {
 		ID: 123,
-		user_login: 'testuser',
+		user_login: 'test_user',
 		display_name: 'Test User',
 		avatar_URL: 'https://example.com/avatar.jpg',
+		first_name: '',
+		last_name: '',
+		description: '',
+		profile_URL: '',
 	};
 
 	const mockDispatch = jest.fn();

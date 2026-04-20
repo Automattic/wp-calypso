@@ -68,7 +68,7 @@ Please note that `--color-primary` in the default color scheme is a different sh
 
 All of the above has been systematized with WordPress.com’s dashboard color schemes in mind. Please test new designs under of all them.
 
-![Color scheme thumbnails](../packages/calypso-color-schemes/screenshot@2x.png)
+![Color scheme thumbnails](../packages/calypso-color-schemes/screenshot@2x.webp)
 
 ### Adding a New Scheme
 

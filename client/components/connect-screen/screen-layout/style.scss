@@ -1,0 +1,28 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.connect-screen-layout {
+	position: fixed;
+	top: 0;
+	inset-inline-start: 0;
+	bottom: 0;
+	width: 100vw;
+	background: var( --color-surface, #fff );
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+.connect-screen-layout__container {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	min-height: 100%;
+	width: 100%;
+	max-width: 480px;
+	margin: 0 auto;
+	padding: 2rem 1.5rem;
+
+	@include break-mobile {
+		padding: 3rem 1.5rem;
+	}
+}

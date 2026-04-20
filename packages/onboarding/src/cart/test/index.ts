@@ -6,7 +6,6 @@ describe( 'getNewSiteParams', () => {
 	function testParams( partialParams: Partial< Parameters< typeof getNewSiteParams >[ 0 ] > = {} ) {
 		return {
 			flowToCheck: 'test-flow',
-			isPurchasingDomainItem: false,
 			themeSlugWithRepo: 'pub/test-theme',
 			siteTitle: 'test site title',
 			siteAccentColor: '#deface',
@@ -14,6 +13,7 @@ describe( 'getNewSiteParams', () => {
 			siteVisibility: Visibility.Private,
 			username: 'testuser',
 			...partialParams,
+			partnerBundle: partialParams.partnerBundle ?? null,
 		} satisfies Parameters< typeof getNewSiteParams >[ 0 ];
 	}
 
@@ -126,28 +126,45 @@ describe( 'getNewSiteParams', () => {
 					siteUrl: 'testing123.wordpress.com',
 					siteTitle: 'Testing Inc.',
 					username: 'janedoe',
-					isPurchasingDomainItem: true,
 				} )
 			)
 		).toEqual(
 			expect.objectContaining( {
 				blog_name: 'testing123',
-				find_available_url: true,
+				find_available_url: false,
 			} )
 		);
+	} );
 
+	test( 'find_available_url is true when siteUrl is a custom domain', () => {
 		expect(
 			getNewSiteParams(
 				testParams( {
-					siteUrl: 'testing123.wordpress.com',
+					siteUrl: 'example.com',
 					siteTitle: 'Testing Inc.',
 					username: 'janedoe',
-					isPurchasingDomainItem: false,
 				} )
 			)
 		).toEqual(
 			expect.objectContaining( {
-				blog_name: 'testing123',
+				blog_name: 'example.com',
+				find_available_url: true,
+			} )
+		);
+	} );
+
+	test( 'find_available_url is false when siteUrl is a free .blog subdomain', () => {
+		expect(
+			getNewSiteParams(
+				testParams( {
+					siteUrl: 'mysite.tech.blog',
+					siteTitle: 'Testing Inc.',
+					username: 'janedoe',
+				} )
+			)
+		).toEqual(
+			expect.objectContaining( {
+				blog_name: 'mysite.tech.blog',
 				find_available_url: false,
 			} )
 		);

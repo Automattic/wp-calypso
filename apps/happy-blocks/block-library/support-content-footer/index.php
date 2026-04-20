@@ -81,6 +81,19 @@ if ( 'contact' === $current_page_slug ) {
 						<p class="support-footer__card-description"><?php esc_html_e( 'Get answers from our AI assistant, with access to 24/7 expert human support on paid plans.', 'happy-blocks' ); ?></p>
 					</div>
 				</a>
+			<?php if ( 'support-forums' === $current_page_slug ) : ?>
+				<a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/support/guides/' ) ); ?>" class="support-content-resource" data-track-destination="guides">
+					<div class="support-content-resource__content">
+						<div class="support-footer__icon-wrapper">
+							<svg class="support-footer__icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+								<path d="M4 19.5V4.5C4 3.7 4.3 3 4.9 2.4C5.5 1.8 6.2 1.5 7 1.5H20V17.5H7C6.2 17.5 5.5 17.8 4.9 18.4C4.3 19 4 19.7 4 20.5M7 19.5H20V15.5H7C6.7 15.5 6.5 15.6 6.3 15.8C6.1 16 6 16.2 6 16.5V17.5C6 17.8 6.1 18 6.3 18.2C6.5 18.4 6.7 18.5 7 18.5" fill="white"/>
+							</svg>
+						</div>
+						<h3 class="support-footer__card-title"><?php esc_html_e( 'Browse our guides', 'happy-blocks' ); ?></h3>
+						<p class="support-footer__card-description"><?php echo esc_html( fixme__( 'Find step-by-step solutions to common questions in our comprehensive guides.', __( 'Clear step-by-step guides for your WordPress.com journey.', 'happy-blocks' ) ) ); ?></p>
+					</div>
+				</a>
+			<?php else : ?>
 				<a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/forums/' ) ); ?>" class="support-content-resource" data-track-destination="forums">
 					<div class="support-content-resource__content">
 						<div class="support-footer__icon-wrapper">
@@ -92,6 +105,7 @@ if ( 'contact' === $current_page_slug ) {
 						<p class="support-footer__card-description"><?php esc_html_e( 'Browse questions and get answers from other experienced users.', 'happy-blocks' ); ?></p>
 					</div>
 				</a>
+			<?php endif; ?>
 			</div>
 		</div>
 	<?php

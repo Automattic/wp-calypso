@@ -1,4 +1,5 @@
 import { EmailDeliveryFrequency } from '../constants';
+import type { Railcar } from '@automattic/calypso-analytics';
 
 export type EmailFormatType = 'html' | 'text';
 
@@ -70,8 +71,8 @@ export type SiteSubscriptionsResponseItem = {
 	meta: SiteSubscriptionMeta;
 	is_wpforteams_site: boolean;
 	is_paid_subscription: boolean;
-	is_gift: boolean;
-	gift_id: number;
+	is_comp: boolean;
+	comp_id?: number;
 	is_rss: boolean;
 	isDeleted: boolean;
 	resubscribed: boolean;
@@ -166,7 +167,9 @@ export type SiteSubscriptionDetails< DateT = Date > = {
 };
 
 export type SiteSubscriptionPaymentDetails = {
-	is_gift: boolean;
+	is_comp: boolean;
+	/** @deprecated Legacy field from the API — plans with is_gift are filtered out. */
+	is_gift?: boolean;
 	ID: string;
 	site_id: string;
 	status: string;
@@ -202,3 +205,31 @@ export type SiteSubscriptionDetailsErrorResponse = ErrorResponse<
 export type SiteSubscriptionDetailsResponse< DateT = Date > =
 	| SiteSubscriptionDetails< DateT >
 	| SiteSubscriptionDetailsErrorResponse;
+
+export interface FeedItem {
+	ID: string;
+	URL: string;
+	blog_ID: string;
+	description: string;
+	feed_ID: string;
+	feed_URL: string;
+	image: string;
+	is_following: boolean;
+	last_checked: string;
+	last_update: string;
+	marked_for_refresh: boolean;
+	meta: {
+		links?: {
+			self: string;
+			[ key: string ]: string;
+		};
+	};
+	name: string;
+	next_refresh_time: string | null;
+	organization_id: number;
+	railcar?: Railcar;
+	subscribe_URL: string;
+	subscribers_count: number;
+	unseen_count: number;
+	subscription_id?: number; // Only present if the user is subscribed to the feed.
+}

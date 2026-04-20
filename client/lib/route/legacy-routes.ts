@@ -3,7 +3,6 @@
  * to reload the page.
  */
 
-import { isEnabled } from '@automattic/calypso-config';
 import { URL as URLString } from 'calypso/types';
 
 interface LegacyRoute {
@@ -14,7 +13,6 @@ interface LegacyRoute {
 
 const legacyRoutes: LegacyRoute[] = [
 	{ match: /.php$/ },
-	{ match: /^\/?$/, predicate: () => ! isEnabled( 'reader' ) },
 	{ match: /^\/manage/ },
 	{ match: /^\/plans/ },
 	{

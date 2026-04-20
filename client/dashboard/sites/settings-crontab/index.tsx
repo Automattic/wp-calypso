@@ -1,0 +1,324 @@
+import { HostingFeatures } from '@automattic/api-core';
+import {
+	siteBySlugQuery,
+	siteCrontabsQuery,
+	siteCrontabDeleteMutation,
+} from '@automattic/api-queries';
+import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useRouter } from '@tanstack/react-router';
+import {
+	Icon,
+	Button,
+	__experimentalText as Text,
+	__experimentalHStack as HStack,
+} from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
+import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
+import { createInterpolateElement } from '@wordpress/element';
+import { __, sprintf } from '@wordpress/i18n';
+import { scheduled, trash, copy, people, calendar } from '@wordpress/icons';
+import { store as noticesStore } from '@wordpress/notices';
+import { useState } from 'react';
+import Breadcrumbs from '../../app/breadcrumbs';
+import { useLocale } from '../../app/locale';
+import { siteSettingsCrontabAddRoute, siteSettingsCrontabEditRoute } from '../../app/router/sites';
+import ConfirmModal from '../../components/confirm-modal';
+import { DataViewsCard } from '../../components/dataviews';
+import InlineSupportLink from '../../components/inline-support-link';
+import { PageHeader } from '../../components/page-header';
+import PageLayout from '../../components/page-layout';
+import TimeSince, { useTimeSince } from '../../components/time-since';
+import { hasHostingFeature } from '../../utils/site-features';
+import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
+import { parseRequestedScheduleForBackwardCompatibility } from './parse-requested-schedule-for-backward-compatibility';
+import { formatScheduleLabel, formatScheduleDescription } from './schedules';
+import type { Crontab } from '@automattic/api-core';
+import type { View } from '@wordpress/dataviews';
+
+const metaIconStyle = { color: 'var(--color-text-subtle, #646970)', flexShrink: 0 } as const;
+
+function CrontabCreatedInfo( { item }: { item: Crontab } ) {
+	const timeSince = useTimeSince( item.created_at ?? '' );
+
+	if ( ! item.created_by && ! item.created_at ) {
+		return null;
+	}
+
+	return (
+		<HStack spacing={ 3 } alignment="left" expanded={ false }>
+			{ item.created_by && (
+				<HStack
+					role="img"
+					aria-label={ sprintf(
+						/* translators: %s: username */
+						__( 'Created by %s' ),
+						item.created_by
+					) }
+					spacing={ 1 }
+					alignment="left"
+					expanded={ false }
+				>
+					<Icon icon={ people } size={ 18 } style={ metaIconStyle } aria-hidden />
+					<Text variant="muted" size={ 12 } aria-hidden>
+						{ item.created_by }
+					</Text>
+				</HStack>
+			) }
+			{ item.created_at && (
+				<HStack
+					role="img"
+					aria-label={ sprintf(
+						/* translators: %s: relative time, e.g. "3d ago" */
+						__( 'Created %s' ),
+						timeSince
+					) }
+					spacing={ 1 }
+					alignment="left"
+					expanded={ false }
+				>
+					<Icon icon={ calendar } size={ 18 } style={ metaIconStyle } aria-hidden />
+					<Text variant="muted" size={ 12 } aria-hidden>
+						<TimeSince timestamp={ item.created_at } />
+					</Text>
+				</HStack>
+			) }
+		</HStack>
+	);
+}
+
+const DEFAULT_VIEW: View = {
+	type: 'table',
+	perPage: 20,
+	page: 1,
+	fields: [ 'command' ],
+	titleField: 'schedule',
+	descriptionField: 'created_info',
+	showDescription: true,
+};
+
+export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
+	const router = useRouter();
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const locale = useLocale();
+
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+
+	const hasSshFeature = hasHostingFeature( site, HostingFeatures.SSH );
+
+	const { data: crontabs = [], isLoading: isLoadingCrontabs } = useQuery( {
+		...siteCrontabsQuery( site.ID ),
+		enabled: hasSshFeature,
+	} );
+
+	const [ selectedCrontabToRemove, setSelectedCrontabToRemove ] = useState< Crontab | null >(
+		null
+	);
+	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
+
+	const { mutate: deleteCrontab, isPending: isDeletingCrontab } = useMutation(
+		siteCrontabDeleteMutation( site.ID )
+	);
+
+	const handleDelete = () => {
+		if ( selectedCrontabToRemove ) {
+			deleteCrontab( selectedCrontabToRemove.cron_id, {
+				onSuccess: () => {
+					createSuccessNotice( __( 'Scheduled job deleted.' ), { type: 'snackbar' } );
+				},
+				onError: () => {
+					createErrorNotice( __( 'Failed to delete scheduled job.' ), { type: 'snackbar' } );
+				},
+				onSettled: () => {
+					setSelectedCrontabToRemove( null );
+				},
+			} );
+		}
+	};
+
+	const handleCopyCommand = async ( command: string ) => {
+		try {
+			await navigator.clipboard.writeText( command );
+			createSuccessNotice( __( 'Command copied.' ), { type: 'snackbar' } );
+		} catch {
+			createErrorNotice( __( 'Failed to copy command.' ), { type: 'snackbar' } );
+		}
+	};
+
+	const fields = [
+		{
+			id: 'schedule',
+			label: __( 'Schedule' ),
+			getValue: ( { item }: { item: Crontab } ) => {
+				const requestedSchedule = parseRequestedScheduleForBackwardCompatibility(
+					item.requested_schedule
+				);
+
+				const label = formatScheduleLabel( requestedSchedule );
+				const description = formatScheduleDescription( requestedSchedule, item.schedule, locale );
+
+				return `${ label } ${ description } ${ item.schedule }`;
+			},
+			render: ( { item }: { item: Crontab } ) => {
+				const requestedSchedule = parseRequestedScheduleForBackwardCompatibility(
+					item.requested_schedule
+				);
+
+				const label = formatScheduleLabel( requestedSchedule );
+				const description = formatScheduleDescription( requestedSchedule, item.schedule, locale );
+
+				return (
+					<div>
+						<Text>{ label }</Text>{ ' ' }
+						<Text variant="muted" size={ 12 }>
+							({ description })
+						</Text>
+					</div>
+				);
+			},
+			enableGlobalSearch: true,
+		},
+		{
+			id: 'command',
+			label: __( 'Command' ),
+			getValue: ( { item }: { item: Crontab } ) => item.command,
+			render: ( { item }: { item: Crontab } ) => (
+				<code
+					style={ {
+						maxWidth: '300px',
+						overflow: 'hidden',
+						textOverflow: 'ellipsis',
+						whiteSpace: 'nowrap',
+						display: 'block',
+					} }
+					title={ item.command }
+				>
+					{ item.command }
+				</code>
+			),
+			enableGlobalSearch: true,
+		},
+		{
+			id: 'created_info',
+			label: __( 'Added by' ),
+			getValue: ( { item }: { item: Crontab } ) => item.created_by ?? '',
+			render: ( { item }: { item: Crontab } ) => <CrontabCreatedInfo item={ item } />,
+		},
+	];
+
+	const { data: filteredData, paginationInfo } = filterSortAndPaginate( crontabs, view, fields );
+
+	const actions = [
+		{
+			id: 'copy-command',
+			label: __( 'Copy command' ),
+			icon: <Icon icon={ copy } />,
+			callback: ( items: Crontab[] ) => {
+				handleCopyCommand( items[ 0 ].command );
+			},
+		},
+		{
+			id: 'edit',
+			label: __( 'Edit' ),
+			callback: ( items: Crontab[] ) => {
+				router.navigate( {
+					to: siteSettingsCrontabEditRoute.fullPath,
+					params: { siteSlug, cronId: items[ 0 ].cron_id },
+				} );
+			},
+		},
+		{
+			id: 'delete',
+			isDestructive: true,
+			icon: <Icon icon={ trash } />,
+			label: __( 'Delete' ),
+			callback: ( items: Crontab[] ) => {
+				setSelectedCrontabToRemove( items[ 0 ] );
+			},
+		},
+	];
+
+	const hasFilterOrSearch = ( view.filters && view.filters.length > 0 ) || view.search;
+	const emptyTitle = hasFilterOrSearch ? __( 'No jobs found' ) : __( 'No jobs scheduled.' );
+
+	return (
+		<PageLayout
+			size="small"
+			header={
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
+					title={ __( 'Cron' ) }
+					description={ createInterpolateElement(
+						__(
+							'Schedule commands to run automatically at specified intervals. <learnMoreLink />'
+						),
+						{
+							learnMoreLink: <InlineSupportLink supportContext="hosting-cron" />,
+						}
+					) }
+					actions={
+						hasSshFeature && (
+							<Button
+								variant="primary"
+								__next40pxDefaultSize
+								onClick={ () =>
+									router.navigate( {
+										to: siteSettingsCrontabAddRoute.fullPath,
+										params: { siteSlug },
+									} )
+								}
+							>
+								{ __( 'Add scheduled job' ) }
+							</Button>
+						)
+					}
+				/>
+			}
+		>
+			<HostingFeatureGatedWithCallout
+				site={ site }
+				feature={ HostingFeatures.SSH }
+				upsellId="site-settings-crontab"
+				upsellIcon={ scheduled }
+				upsellTitle={ __( 'Automate tasks with cron jobs' ) }
+				upsellDescription={ __( 'Schedule commands to run automatically at specified intervals.' ) }
+			>
+				<DataViewsCard>
+					<DataViews< Crontab >
+						getItemId={ ( item ) => String( item.cron_id ) }
+						data={ filteredData }
+						fields={ filteredData.length > 0 ? fields : [] }
+						actions={ filteredData.length > 0 ? actions : [] }
+						view={ view }
+						onChangeView={ setView }
+						isLoading={ isLoadingCrontabs }
+						defaultLayouts={ { table: {} } }
+						paginationInfo={ paginationInfo }
+						empty={ <p>{ emptyTitle }</p> }
+					/>
+				</DataViewsCard>
+			</HostingFeatureGatedWithCallout>
+			<ConfirmModal
+				isOpen={ !! selectedCrontabToRemove }
+				confirmButtonProps={ {
+					label: __( 'Delete' ),
+					isBusy: isDeletingCrontab,
+					disabled: isDeletingCrontab,
+					isDestructive: true,
+				} }
+				onCancel={ () => setSelectedCrontabToRemove( null ) }
+				onConfirm={ handleDelete }
+			>
+				{ createInterpolateElement(
+					__(
+						'Are you sure you want to delete this scheduled job? The command <command /> will no longer run automatically.'
+					),
+					{
+						command: (
+							<code style={ { wordBreak: 'break-all' } }>{ selectedCrontabToRemove?.command }</code>
+						),
+					}
+				) }
+			</ConfirmModal>
+		</PageLayout>
+	);
+}

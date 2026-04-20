@@ -1,6 +1,5 @@
 import config, { isEnabled } from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
-import { WooDashboardLogo } from '@automattic/components';
 import { Step } from '@automattic/onboarding';
 import { UniversalNavbarHeader, UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
 import clsx from 'clsx';
@@ -13,6 +12,8 @@ import ReaderJoinConversationDialog from 'calypso/blocks/reader-join-conversatio
 import AsyncLoad from 'calypso/components/async-load';
 import { withCurrentRoute } from 'calypso/components/route';
 import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
+import { getDashboardFromHostname } from 'calypso/dashboard/app/routing';
+import { getDashboardStepperLogo } from 'calypso/dashboard/app/stepper-logo';
 import MasterbarLoggedOut from 'calypso/layout/masterbar/logged-out';
 import OauthClientMasterbar from 'calypso/layout/masterbar/oauth-client';
 import { isInStepContainerV2FlowContext } from 'calypso/layout/utils';
@@ -30,6 +31,7 @@ import {
 	isAndroidOAuth2Client,
 	isIosOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
+import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getOnboardingUrl as getPatternLibraryOnboardingUrl } from 'calypso/my-sites/patterns/paths';
@@ -90,22 +92,18 @@ const LayoutLoggedOut = ( {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const currentRoute = useSelector( getCurrentRoute );
 	const loggedInAction = useSelector( getLastActionRequiresLogin );
+	const { partnerConfig } = usePartnerBranding();
 
+	const dashboard =
+		typeof window !== 'undefined' && getDashboardFromHostname( window.location.hostname );
 	const stepContainerV2Context = useMemo( () => {
-		// Detect CIAB dashboard for Woo branding.
-		const isWooDashboard =
-			typeof window !== 'undefined' &&
-			new URLSearchParams( window.location.search ).get( 'dashboard' ) === 'ciab';
-
 		return {
 			flowName: '',
 			stepName: '',
 			recordTracksEvent,
-			// Show Woo logo for CIAB dashboard; null lets TopBar use default WordPress logo.
-			// Login screens use compactLogo='always' which applies to the default logo.
-			logo: isWooDashboard ? <WooDashboardLogo /> : null,
+			logo: getDashboardStepperLogo( dashboard ),
 		};
-	}, [] );
+	}, [ dashboard ] );
 
 	const isCheckout = sectionName === 'checkout';
 	const isCheckoutPending = sectionName === 'checkout-pending';
@@ -145,6 +143,11 @@ const LayoutLoggedOut = ( {
 				currentRoute?.startsWith( '/start/do-it-for-me/' ) ) &&
 			userAllowedToHelpCenter );
 
+	const isThemeShowcaseModern =
+		[ 'themes', 'theme' ].includes( sectionName ) &&
+		isEnabled( 'themes/showcase-modern' ) &&
+		! isLoggedIn;
+
 	const classes = {
 		[ 'is-group-' + sectionGroup ]: sectionGroup,
 		[ 'is-section-' + sectionName ]: sectionName,
@@ -166,11 +169,13 @@ const LayoutLoggedOut = ( {
 		'is-wpcom-magic-login': isWpcomMagicLogin,
 		'is-woo-passwordless': isWoo,
 		'is-blaze-pro': isBlazePro,
+		'is-ciab-font-system': partnerConfig?.fontStyle === 'system',
 		'two-factor-auth-enabled': twoFactorEnabled,
 		'is-woo-com-oauth': isWooOAuth2Client( oauth2Client ),
 		woo: isWoo,
 		'feature-flag-woocommerce-core-profiler-passwordless-auth': true,
 		'jetpack-cloud': isJetpackCloud,
+		'is-theme-showcase-modern': isThemeShowcaseModern,
 	};
 
 	let masterbar = null;
@@ -236,6 +241,7 @@ const LayoutLoggedOut = ( {
 					! nonMonochromeSections.includes( sectionName ) && {
 						logoColor: 'white',
 					} ) }
+				{ ...( isThemeShowcaseModern && { logoColor: 'var(--studio-black)' } ) }
 				{ ...( sectionName === 'subscriptions' && { variant: 'minimal' } ) }
 				{ ...( sectionName === 'patterns' && {
 					startUrl: getPatternLibraryOnboardingUrl( locale, isLoggedIn ),

@@ -19,7 +19,7 @@ import {
 } from 'calypso/sites-dashboard/utils';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import type { Action, RenderModalProps } from '@wordpress/dataviews';
+import type { Action, RenderModalProps, View } from '@wordpress/dataviews';
 
 type Capabilities = Record< string, Record< string, boolean > >;
 
@@ -131,7 +131,7 @@ export const isActionEligible = (
 export function useActions( {
 	viewType,
 }: {
-	viewType: 'list' | 'table' | 'grid' | 'pickerGrid' | 'pickerTable';
+	viewType: View[ 'type' ];
 } ): Action< SiteExcerptData >[] {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();

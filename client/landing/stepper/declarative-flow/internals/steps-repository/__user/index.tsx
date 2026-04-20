@@ -1,7 +1,8 @@
+import config from '@automattic/calypso-config';
 import { Step, StepContainer } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
+import { useEffect, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { AnyAction } from 'redux';
 import { reloadProxy, requestAllBlogsAccess } from 'wpcom-proxy-request';
@@ -12,6 +13,7 @@ import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import { login } from 'calypso/lib/paths';
 import { AccountCreateReturn } from 'calypso/lib/signup/api/type';
 import wpcom from 'calypso/lib/wp';
@@ -24,6 +26,7 @@ import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-conta
 import { Step as StepType } from '../../types';
 import { useHandleSocialResponse } from './handle-social-response';
 import { useSocialService } from './use-social-service';
+
 import './style.scss';
 
 const UserStepComponent: StepType = function UserStep( {
@@ -40,12 +43,15 @@ const UserStepComponent: StepType = function UserStep( {
 	const { handleSocialResponse, notice, accountCreateResponse } = useHandleSocialResponse( flow );
 	const [ wpAccountCreateResponse, setWpAccountCreateResponse ] = useState< AccountCreateReturn >();
 	const { socialServiceResponse } = useSocialService();
+	const { topBarLogo, partnerConfig, signupTosElement } = usePartnerBranding();
 
 	useEffect( () => {
 		if ( wpAccountCreateResponse && 'bearer_token' in wpAccountCreateResponse ) {
 			wpcom.loadToken( wpAccountCreateResponse.bearer_token );
-			reloadProxy();
-			requestAllBlogsAccess();
+			if ( ! config.isEnabled( 'oauth' ) ) {
+				reloadProxy();
+				requestAllBlogsAccess();
+			}
 			// Allow retries of fetching new users after creation. New user sign-ups go to one DC
 			// but follow-up API calls go to the closest DC, which may be different and might not
 			// have replicated the user data yet.
@@ -64,6 +70,7 @@ const UserStepComponent: StepType = function UserStep( {
 		signupUrl,
 		redirectTo,
 		locale,
+		from: partnerConfig?.id ?? queryArgs.get( 'from' ) ?? undefined,
 	} );
 
 	const shouldRenderLocaleSuggestions = ! isLoggedIn; // For logged-in users, we respect the user language settings
@@ -102,6 +109,8 @@ const UserStepComponent: StepType = function UserStep( {
 				onCreateAccountSuccess={ handleCreateAccountSuccess }
 				backButtonInFooter={ ! isStepContainerV2 }
 				emailLabelText={ isStepContainerV2 ? translate( 'Enter your email' ) : undefined }
+				allowedSocialServices={ partnerConfig?.ssoProviders }
+				customTosElement={ signupTosElement }
 			/>
 			{ accountCreateResponse && 'bearer_token' in accountCreateResponse && (
 				<WpcomLoginForm
@@ -114,16 +123,24 @@ const UserStepComponent: StepType = function UserStep( {
 	);
 
 	if ( isStepContainerV2 ) {
+		let headingText = translate( 'Create your account' );
+		if ( partnerConfig ) {
+			headingText = translate( 'Create an account for %(partner)s', {
+				args: { partner: partnerConfig.displayName },
+				textOnly: true,
+			} );
+		}
 		const heading = (
 			// The locale suggestions are going to be reworked. Don't worry about it now.
 			<>
 				{ localeSuggestions }
-				<Step.Heading text={ translate( 'Create your account' ) } />
+				<Step.Heading text={ headingText } />
 			</>
 		);
 
 		const topBar = (
 			<Step.TopBar
+				logo={ topBarLogo }
 				leftElement={
 					navigation.goBack ? <Step.BackButton onClick={ navigation.goBack } /> : undefined
 				}

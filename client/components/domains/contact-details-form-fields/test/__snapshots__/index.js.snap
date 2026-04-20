@@ -95,9 +95,6 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
               class="components-notice__content"
             >
               By completing the organization field, you agree that the listed organization will be considered the legal domain owner and that this information will be publicly visible. You can choose to hide it using {{a}}privacy protection{{/a}}.
-              <div
-                class="components-notice__actions"
-              />
             </div>
           </div>
         </p>

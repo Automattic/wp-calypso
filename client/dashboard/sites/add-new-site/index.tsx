@@ -1,22 +1,19 @@
 import { BigSkyLogo } from '@automattic/components/src/logos/big-sky-logo';
 import { JetpackLogo } from '@automattic/components/src/logos/jetpack-logo';
 import { WordPressLogo } from '@automattic/components/src/logos/wordpress-logo';
-import { formatNumber } from '@automattic/number-formatters';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
-	__experimentalText as Text,
-	Button,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { reusableBlock } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import { useContext } from 'react';
-import devSiteBanner from 'calypso/assets/images/a8c-for-agencies/dev-site-banner.svg';
 import { useAnalytics } from '../../app/analytics';
 import { AuthContext } from '../../app/auth';
 import { useHelpCenter } from '../../app/help-center';
+import OfferCard from '../../components/offer-card';
 import { wpcomLink } from '../../utils/link';
 import { userHasFlag } from '../../utils/user';
 import Column from './column';
@@ -55,13 +52,6 @@ function AddNewSite( { context = 'unknown' }: AddNewSiteProps ) {
 
 	const isDesktop = useViewportMatch( 'medium' );
 	const Wrapper = isDesktop ? HStack : VStack;
-	const offer = sprintf(
-		// translators: %s is a percentage like 55% off
-		__( 'Get a free domain and up to %s off' ),
-		formatNumber( 0.55, {
-			numberFormatOptions: { style: 'percent' },
-		} )
-	);
 
 	const { setShowHelpCenter } = useHelpCenter();
 
@@ -129,35 +119,7 @@ function AddNewSite( { context = 'unknown' }: AddNewSiteProps ) {
 				/>
 			</Column>
 
-			<Button
-				href={ wpcomLink( '/setup/onboarding' ) }
-				onClick={ offerClick }
-				style={ {
-					display: 'block',
-					height: 'auto',
-					textAlign: 'left',
-					width: isDesktop ? '260px' : '100%',
-					padding: 0,
-				} }
-				aria-label={ __( 'Get special offer: Free domain and up to 55% off annual plans' ) }
-			>
-				<VStack className="dashboard-add-new-site__banner">
-					<img src={ devSiteBanner } alt="" aria-hidden="true" />
-					<Text size="title">{ offer }</Text>
-					<Text variant="muted" as="p">
-						{ sprintf(
-							// translators: %s is a percentage like 55% off
-							__(
-								'Save up to %s on annual plans and get a free custom domain for a year. Your next site is just a step away.'
-							),
-							formatNumber( 0.55, {
-								numberFormatOptions: { style: 'percent' },
-							} )
-						) }
-					</Text>
-					<div aria-hidden="true">{ __( 'Unlock offer' ) }</div>
-				</VStack>
-			</Button>
+			<OfferCard layout="stacked" onClick={ offerClick } />
 		</Wrapper>
 	);
 }

@@ -2,6 +2,7 @@ import { useRazorpay } from '@automattic/calypso-razorpay';
 import { useStripe } from '@automattic/calypso-stripe';
 import colorStudio from '@automattic/color-studio';
 import { CheckoutProvider, checkoutTheme } from '@automattic/composite-checkout';
+import { Step } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import {
 	isValueTruthy,
@@ -15,7 +16,9 @@ import { useSelect } from '@wordpress/data';
 import debugFactory from 'debug';
 import DOMPurify from 'dompurify';
 import { useTranslate } from 'i18n-calypso';
-import { Fragment, useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
+import { getDashboardFromHostname } from 'calypso/dashboard/app/routing';
+import { getDashboardStepperLogo } from 'calypso/dashboard/app/stepper-logo';
 import { useCheckoutMigrationIntroductoryOfferSticker } from 'calypso/data/site-migration/use-checkout-migration-introductory-offer-sticker';
 import { recordAddEvent } from 'calypso/lib/analytics/cart';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -31,9 +34,11 @@ import { isJetpackSite, isCommerceGardenSite } from 'calypso/state/sites/selecto
 import useActOnceOnStrings from '../hooks/use-act-once-on-strings';
 import useAddProductsFromUrl from '../hooks/use-add-products-from-url';
 import useCheckoutFlowTrackKey from '../hooks/use-checkout-flow-track-key';
+import { useCheckoutUiRedesignExperiment } from '../hooks/use-checkout-ui-redesign-experiment';
 import useCountryList from '../hooks/use-country-list';
 import useCreatePaymentMethods from '../hooks/use-create-payment-methods';
 import { existingCardPrefix } from '../hooks/use-create-payment-methods/use-create-existing-cards';
+import { existingPayPalPPCPPrefix } from '../hooks/use-create-payment-methods/use-create-existing-paypal-ppcp';
 import useCreatePaymentSubmittedAndProcessingCallback from '../hooks/use-create-payment-submitted-and-processing-callback';
 import useDetectedCountryCode from '../hooks/use-detected-country-code';
 import useGetThankYouUrl from '../hooks/use-get-thank-you-url';
@@ -44,14 +49,17 @@ import useRemoveFromCartAndRedirect from '../hooks/use-remove-from-cart-and-redi
 import { useStoredPaymentMethods } from '../hooks/use-stored-payment-methods';
 import { logStashLoadErrorEvent, logStashEvent, convertErrorToString } from '../lib/analytics';
 import existingCardProcessor from '../lib/existing-card-processor';
+import existingPayPalPPCPProcessor from '../lib/existing-paypal-ppcp-processor';
 import freePurchaseProcessor from '../lib/free-purchase-processor';
 import genericRedirectProcessor from '../lib/generic-redirect-processor';
 import multiPartnerCardProcessor from '../lib/multi-partner-card-processor';
 import payPalProcessor from '../lib/paypal-express-processor';
 import { payPalJsProcessor } from '../lib/paypal-js-processor';
+import { pixAutomaticoProcessor } from '../lib/pix-automatico-processor';
 import { pixProcessor } from '../lib/pix-processor';
 import razorpayProcessor from '../lib/razorpay-processor';
 import { translateResponseCartToWPCOMCart } from '../lib/translate-cart';
+import upiProcessor from '../lib/upi-processor';
 import weChatProcessor from '../lib/we-chat-processor';
 import webPayProcessor from '../lib/web-pay-processor';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
@@ -145,15 +153,52 @@ export default function CheckoutMain( {
 		} ) || sitelessCheckoutType === 'jetpack';
 	const isPrivate = useSelector( ( state ) => siteId && isPrivateSite( state, siteId ) ) || false;
 	const isGravatarDomain = useSelector( hasGravatarDomainQueryParam );
-	const isSiteless =
-		sitelessCheckoutType === 'jetpack' ||
-		sitelessCheckoutType === 'akismet' ||
-		sitelessCheckoutType === 'marketplace' ||
-		sitelessCheckoutType === 'a4a';
+	const cartKey = useCartKey();
+
+	/**
+	 * The definition of what makes "siteless checkout" varies considerably.
+	 *
+	 * All subscriptions must be assigned to a user and a site before or during
+	 * their purchase, but which site is used and when that site is created
+	 * differentiates the flows.
+	 *
+	 * If `sitelessCheckoutType` is set, then this checkout is siteless, which
+	 * also means that the shopping cart has no `blog_id` set. However,
+	 * sometimes a `blog_id` will be set automatically on the server by the
+	 * shopping cart (for example, if the cart item is a renewal and the site
+	 * has not already been provided in the checkout URL).
+	 *
+	 * Unified siteless checkout (siteless checkout for wpcom products) creates
+	 * one site per purchase. Jetpack siteless checkout and Domain-only flows
+	 * have a holding site created during the transactions endpoint, one per
+	 * purchase (although the created sites are flagged in special ways).
+	 *
+	 * The same is true for Akismet, A4A, and Marketplace siteless checkout but
+	 * for these we only create one holding site per user and that is re-used
+	 * for additional purchases.
+	 *
+	 * Gift purchases (renewals for another user's subscription) are also
+	 * siteless in the sense that no `blog_id` is set when they are in the
+	 * cart, but they are renewing a subscription on an existing site.
+	 *
+	 * Logged-out siteless checkout flows include a temporary userless and
+	 * siteless cart but then create a user just in time before the transaction
+	 * is submitted, and therefore their carts always have a user by the time
+	 * they are processed. Sometimes a site is also created when the user is
+	 * created (this happens if createUserAndSiteBeforeTransaction is true AND
+	 * newSiteParams is set in the createAccount helper) in which case the
+	 * transaction is also submitted with a `blog_id` and no site is created
+	 * during the transaction itself.
+	 */
+	const createUserAndSiteBeforeTransaction = ( () => {
+		if ( sitelessCheckoutType && cartKey === 'no-user' ) {
+			return true;
+		}
+		return false;
+	} )();
+
 	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
 	const { razorpayConfiguration, isRazorpayLoading, razorpayLoadingError } = useRazorpay();
-	const createUserAndSiteBeforeTransaction =
-		Boolean( isLoggedOutCart || isNoSiteCart ) && ! isSiteless;
 	const reduxDispatch = useDispatch();
 
 	const updatedSiteSlug = useMemo( () => {
@@ -224,7 +269,6 @@ export default function CheckoutMain( {
 		hostingIntent,
 	} );
 
-	const cartKey = useCartKey();
 	const {
 		applyCoupon,
 		replaceProductInCart,
@@ -240,8 +284,12 @@ export default function CheckoutMain( {
 	const { shouldSetMigrationSticker, isLoading: isStickerLoading } =
 		useCheckoutMigrationIntroductoryOfferSticker( siteId, reloadFromServer );
 
-	// For site-less checkouts, get the blog ID from the cart response
-	const updatedSiteId = isSiteless ? parseInt( String( responseCart.blog_id ), 10 ) : siteId;
+	// For siteless checkouts, possibly get the blog ID from the cart response
+	// in cases where the server has assigned it automatically. If so, we
+	// override the blog ID set in the checkout URL (if any).
+	const updatedSiteId = sitelessCheckoutType
+		? parseInt( String( responseCart.blog_id ), 10 )
+		: siteId;
 
 	const isInitialCartLoading = useAddProductsFromUrl( {
 		isLoadingCart,
@@ -361,7 +409,7 @@ export default function CheckoutMain( {
 		error: storedCardsError,
 	} = useStoredPaymentMethods( {
 		isLoggedOut: isLoggedOutCart,
-		type: 'card',
+		type: 'all',
 		isForBusiness,
 	} );
 
@@ -524,6 +572,8 @@ export default function CheckoutMain( {
 				} ),
 			pix: ( transactionData: unknown ) =>
 				pixProcessor( transactionData, dataForProcessor, translate ),
+			pix_automatico: ( transactionData: unknown ) =>
+				pixAutomaticoProcessor( transactionData, dataForProcessor, translate ),
 			alipay: ( transactionData: unknown ) =>
 				genericRedirectProcessor( 'alipay', transactionData, dataForProcessor ),
 			p24: ( transactionData: unknown ) =>
@@ -540,17 +590,26 @@ export default function CheckoutMain( {
 				genericRedirectProcessor( 'sofort', transactionData, dataForProcessor ),
 			eps: ( transactionData: unknown ) =>
 				genericRedirectProcessor( 'eps', transactionData, dataForProcessor ),
+			'stripe-upi': ( transactionData: unknown ) =>
+				upiProcessor(
+					transactionData,
+					dataForProcessor,
+					translate,
+					sitelessCheckoutType === 'a4a'
+				),
 			'existing-card': ( transactionData: unknown ) =>
 				existingCardProcessor( transactionData, dataForProcessor ),
 			'existing-card-ebanx': ( transactionData: unknown ) =>
 				existingCardProcessor( transactionData, dataForProcessor ),
+			'existing-paypal-ppcp': ( transactionData: unknown ) =>
+				existingPayPalPPCPProcessor( transactionData, dataForProcessor ),
 			'paypal-express': () => payPalProcessor( dataForProcessor ),
 			'paypal-js': ( transactionData: unknown ) =>
 				payPalJsProcessor( transactionData, dataForProcessor ),
 			razorpay: ( transactionData: unknown ) =>
 				razorpayProcessor( transactionData, dataForProcessor, translate ),
 		} ),
-		[ dataForProcessor, translate ]
+		[ dataForProcessor, sitelessCheckoutType, translate ]
 	);
 
 	// Gravatar Theme
@@ -604,6 +663,7 @@ export default function CheckoutMain( {
 	};
 
 	const isCheckoutV2ExperimentLoading = false;
+	const [ isCheckoutUiRedesignLoading ] = useCheckoutUiRedesignExperiment();
 
 	// This variable determines if we see the loading page or if checkout can
 	// render its steps.
@@ -629,6 +689,7 @@ export default function CheckoutMain( {
 		},
 		{ name: translate( 'Loading countries list' ), isLoading: countriesList.length < 1 },
 		{ name: translate( 'Loading Site' ), isLoading: isCheckoutV2ExperimentLoading },
+		{ name: translate( 'Loading checkout' ), isLoading: isCheckoutUiRedesignLoading },
 	];
 
 	if ( shouldSetMigrationSticker ) {
@@ -810,8 +871,19 @@ export default function CheckoutMain( {
 		paymentMethods
 	);
 
+	const dashboard = getDashboardFromHostname( window?.location?.hostname );
+	const stepContainerV2Context = useMemo(
+		() => ( {
+			flowName: '',
+			stepName: '',
+			recordTracksEvent: () => {},
+			logo: getDashboardStepperLogo( dashboard ),
+		} ),
+		[ dashboard ]
+	);
+
 	return (
-		<Fragment>
+		<Step.StepContainerV2Provider value={ stepContainerV2Context }>
 			<PageViewTracker
 				path={ analyticsPath }
 				title="Checkout"
@@ -850,7 +922,10 @@ export default function CheckoutMain( {
 						countriesList={ countriesList }
 						createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 						infoMessage={
-							<PrePurchaseNotices siteId={ updatedSiteId } isSiteless={ isSiteless } />
+							<PrePurchaseNotices
+								siteId={ updatedSiteId }
+								shouldQueryUserPurchases={ Boolean( sitelessCheckoutType ) }
+							/>
 						}
 						isLoggedOutCart={ !! isLoggedOutCart }
 						onPageLoadError={ onPageLoadError }
@@ -871,7 +946,7 @@ export default function CheckoutMain( {
 					}
 				</CheckoutProvider>
 			</VGSCollectProvider>
-		</Fragment>
+		</Step.StepContainerV2Provider>
 	);
 }
 
@@ -939,9 +1014,19 @@ function getInitiallySelectedPaymentMethodId(
 	if ( ! firstRenewalWithPaymentMethod ) {
 		return undefined;
 	}
-	const matchingCheckoutPaymentMethod = paymentMethods.find(
+	// Check for existing card first
+	let matchingCheckoutPaymentMethod = paymentMethods.find(
 		( method ) =>
 			method.id === `${ existingCardPrefix }${ firstRenewalWithPaymentMethod.stored_details_id }`
+	);
+	if ( matchingCheckoutPaymentMethod ) {
+		return matchingCheckoutPaymentMethod.id;
+	}
+	// Check for existing PayPal PPCP
+	matchingCheckoutPaymentMethod = paymentMethods.find(
+		( method ) =>
+			method.id ===
+			`${ existingPayPalPPCPPrefix }${ firstRenewalWithPaymentMethod.stored_details_id }`
 	);
 	if ( matchingCheckoutPaymentMethod ) {
 		return matchingCheckoutPaymentMethod.id;

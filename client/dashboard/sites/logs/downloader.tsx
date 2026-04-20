@@ -12,10 +12,10 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { download } from '@wordpress/icons';
 import { format } from 'date-fns';
+import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import type { FilterType } from '@automattic/api-core';
 

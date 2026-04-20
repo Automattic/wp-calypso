@@ -1,12 +1,7 @@
-import { isEnabled } from '@automattic/calypso-config';
-
 const DEFAULT_DISCOVER_TAGS = [ 'dailyprompt', 'wordpress' ];
 export const RECOMMENDED_TAB = 'recommended';
 export const FRESHLY_PRESSED_TAB = 'freshly-pressed';
 export const LATEST_TAB = 'latest';
-export const FIRST_POSTS_TAB = 'firstposts';
-export const ADD_NEW_TAB = 'add-new';
-export const REDDIT_TAB = 'reddit';
 export const TAGS_TAB = 'tags';
 
 /**
@@ -26,10 +21,6 @@ export function getDiscoverStreamTags( tags: string[] | null, isLoggedIn: boolea
 		return DEFAULT_DISCOVER_TAGS;
 	}
 	return tags;
-}
-
-export function getDefaultTab() {
-	return isEnabled( 'reader/discover/freshly-pressed' ) ? FRESHLY_PRESSED_TAB : RECOMMENDED_TAB;
 }
 
 /**

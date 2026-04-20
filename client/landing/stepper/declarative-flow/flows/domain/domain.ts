@@ -3,9 +3,9 @@ import { isDomainMapping, isDomainTransfer } from '@automattic/calypso-products'
 import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import {
 	DOMAIN_FLOW,
-	addPlanToCart,
 	addProductsToCart,
 	clearStepPersistedState,
+	replaceProductsInCart,
 } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -25,8 +25,9 @@ import {
 	persistSignupDestination,
 	setSignupCompleteSlug,
 } from 'calypso/signup/storageUtils';
-import { useDispatch as useReduxDispatch } from 'calypso/state';
+import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
+import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 import { useQuery } from '../../../hooks/use-query';
 import { useSiteData } from '../../../hooks/use-site-data';
 import { ONBOARD_STORE } from '../../../stores';
@@ -61,12 +62,16 @@ const domain: FlowV2< typeof initialize > = {
 	initialize,
 	useAssertConditions() {
 		const { site, siteSlug } = useSiteData();
+		const selectedSite = useSelector( getSelectedSite );
 
 		if ( ! siteSlug ) {
 			return { state: AssertConditionState.SUCCESS };
 		}
 
-		return { state: site ? AssertConditionState.SUCCESS : AssertConditionState.CHECKING };
+		// We want to render the step only if the site and selected site are in the Redux store
+		return {
+			state: site && selectedSite ? AssertConditionState.SUCCESS : AssertConditionState.CHECKING,
+		};
 	},
 	useStepNavigation( currentStepSlug, navigate ) {
 		const {
@@ -90,7 +95,11 @@ const domain: FlowV2< typeof initialize > = {
 			[]
 		);
 
+		const dashboard = useQuery().get( 'dashboard' ) || undefined;
+		const isCiab = dashboard === 'ciab';
+
 		const redirectTo = useQuery().get( 'redirect_to' ) || undefined;
+		const backTo = useQuery().get( 'back_to' ) || undefined;
 		const defaultRedirect = dashboardLink( `/sites/${ siteSlug }/domains` );
 
 		const goToCheckout = ( siteSlug: string ) => {
@@ -122,13 +131,26 @@ const domain: FlowV2< typeof initialize > = {
 				}
 			}
 
+			// For CIAB domain registrations, include the purchased domain name
+			// in the redirect URL so the CIAB admin can show a setup notification.
+			if ( isCiab && domainCartItems?.length && domainCartItems[ 0 ].meta ) {
+				destination = addQueryArgs( destination, {
+					domain_purchased: domainCartItems[ 0 ].meta,
+				} );
+			}
+
 			// replace the location to delete processing step from history.
 			return window.location.replace(
 				addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
 					redirect_to: destination,
 					signup: 1,
 					cancel_to: new URL(
-						addQueryArgs( '/setup/domain', { siteSlug, redirect_to: redirectTo } ),
+						addQueryArgs( '/setup/domain', {
+							siteSlug,
+							redirect_to: redirectTo,
+							...( backTo && { back_to: backTo } ),
+							...( dashboard && { dashboard } ),
+						} ),
 						window.location.href
 					).href,
 				} )
@@ -176,7 +198,12 @@ const domain: FlowV2< typeof initialize > = {
 							redirect_to: redirectTo || defaultRedirect,
 							signup: 0,
 							cancel_to: new URL(
-								addQueryArgs( '/setup/domain', { siteSlug, redirect_to: redirectTo } ),
+								addQueryArgs( '/setup/domain', {
+									siteSlug,
+									redirect_to: redirectTo,
+									...( backTo && { back_to: backTo } ),
+									...( dashboard && { dashboard } ),
+								} ),
 								window.location.href
 							).href,
 						} )
@@ -319,6 +346,8 @@ const domain: FlowV2< typeof initialize > = {
 
 				case STEPS.SITE_PICKER.slug: {
 					if ( ! siteHasPaidPlan( providedDependencies.site ) ) {
+						setSiteUrl( providedDependencies.siteSlug );
+
 						return navigate(
 							`${ STEPS.UNIFIED_PLANS.slug }?siteSlug=${ providedDependencies.siteSlug }`
 						);
@@ -344,7 +373,15 @@ const domain: FlowV2< typeof initialize > = {
 								};
 							}
 
-							await addProductsToCart( providedDependencies.siteSlug, this.name, domainCartItems );
+							if ( isCiab ) {
+								await replaceProductsInCart( providedDependencies.siteSlug, domainCartItems );
+							} else {
+								await addProductsToCart(
+									providedDependencies.siteSlug,
+									this.name,
+									domainCartItems
+								);
+							}
 						}
 
 						return {
@@ -367,6 +404,30 @@ const domain: FlowV2< typeof initialize > = {
 					// Make sure to put the rest of products into the cart, e.g. the storage add-ons.
 					setProductCartItems( addOns );
 
+					const addItemsToCartAndGoToCheckout = () => {
+						setPendingAction( async () => {
+							const aggregatedCartItems = [
+								...( pickedPlan ? [ pickedPlan ] : [] ),
+								...( addOns.length > 0 ? addOns : [] ),
+								...( domainCartItems && domainCartItems.length > 0 ? domainCartItems : [] ),
+							];
+
+							if ( isCiab ) {
+								await replaceProductsInCart( siteSlug, aggregatedCartItems );
+							} else {
+								await addProductsToCart( siteSlug, this.name, aggregatedCartItems );
+							}
+
+							return {
+								siteSlug,
+								goToCheckout: true,
+								siteCreated: false,
+							};
+						} );
+
+						return navigate( STEPS.PROCESSING.slug );
+					};
+
 					if ( ! pickedPlan ) {
 						// Since we're removing the paid domain, it means that the user chose to continue
 						// with a free domain. Because signupDomainOrigin should reflect the last domain
@@ -379,30 +440,10 @@ const domain: FlowV2< typeof initialize > = {
 						}
 
 						if ( siteSlug ) {
-							return goToCheckout( siteSlug );
+							return addItemsToCartAndGoToCheckout();
 						}
 					} else if ( siteSlug ) {
-						setPendingAction( async () => {
-							if ( pickedPlan ) {
-								await addPlanToCart( siteSlug, this.name, true, '', pickedPlan );
-							}
-
-							if ( addOns.length > 0 ) {
-								await addProductsToCart( siteSlug, this.name, addOns );
-							}
-
-							if ( domainCartItems ) {
-								await addProductsToCart( siteSlug, this.name, domainCartItems );
-							}
-
-							return {
-								siteSlug,
-								goToCheckout: true,
-								siteCreated: false,
-							};
-						} );
-
-						return navigate( STEPS.PROCESSING.slug );
+						return addItemsToCartAndGoToCheckout();
 					}
 
 					setSignupCompleteFlowName( this.name );

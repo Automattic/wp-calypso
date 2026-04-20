@@ -1,0 +1,19 @@
+.connect-screen-loading {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	min-height: 200px;
+	padding: 2rem;
+
+	.components-spinner {
+		margin-bottom: 1rem;
+	}
+}
+
+.connect-screen-loading__message {
+	font-size: 0.875rem;
+	color: var( --color-text-subtle );
+	margin: 0;
+	text-align: center;
+}

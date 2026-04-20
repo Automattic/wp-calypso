@@ -83,7 +83,7 @@ export function classifyPost( post ) {
 	const imagesForGallery = getImagesFromPostToDisplay( post, GALLERY_MAX_IMAGES );
 	let displayType = DISPLAY_TYPES.UNCLASSIFIED;
 
-	if ( imagesForGallery.length >= GALLERY_MIN_IMAGES ) {
+	if ( ! post.featured_image && imagesForGallery.length >= GALLERY_MIN_IMAGES ) {
 		displayType ^= DISPLAY_TYPES.GALLERY;
 	} else if (
 		post.content_images?.length === 1 &&

@@ -25,6 +25,103 @@ Use `@testing-library/react` to test whole slices of the front-end dashboard and
 
 Use the `render()` function from `client/dashboard/test-utils.tsx`, which will render your component with context providers so that hooks work as expected. You can also avoid some manual mocking by using `nock` to mock and assert against network requests.
 
+### Mocking Network Requests
+
+Use `nock` to intercept HTTP requests made by queries and mutations. All dashboard API calls go through `https://public-api.wordpress.com`.
+
+```tsx
+import nock from 'nock';
+```
+
+Note: `nock.cleanAll()` is already called globally after each test, so you don't need `afterEach( () => nock.cleanAll() )` in your test files.
+
+**URL path rules:**
+
+- `apiNamespace: 'wpcom/v2'` → path starts with `/wpcom/v2/…`
+- REST API (no namespace) → path starts with `/rest/v1.1/…`
+
+**Intercepting a query (GET):**
+
+```tsx
+nock( 'https://public-api.wordpress.com' )
+  .get( `/wpcom/v2/sites/${ siteId }/hosting/error-logs` )
+  .query( true ) // match any query string
+  .reply( 200, { data: { logs: [], total_results: 0, scroll_id: null } } );
+```
+
+**Intercepting a mutation (POST):**
+
+```tsx
+const scope = nock( 'https://public-api.wordpress.com' )
+  .post( '/rest/v1.1/me/preferences', ( body ) => {
+    // optionally inspect the request body
+    return true;
+  } )
+  .reply( 200, { calypso_preferences: {} } );
+
+// …trigger the mutation…
+
+// Optionally assert all endpoints in the scope have been called.
+expect( scope.isDone() ).toBe( true );
+```
+
+**DELETE requests:** `wpcom.req.post( { method: 'DELETE', … } )` sends an actual HTTP
+DELETE, so use `.delete()` not `.post()`:
+
+```tsx
+nock( 'https://public-api.wordpress.com' )
+  .delete( `/wpcom/v2/sites/${ productionSiteId }/staging-site/${ stagingSiteId }` )
+  .reply( 200, {} );
+```
+
+**Tips:**
+
+- Avoid `nock.delay()` — it leaves open handles causing "Jest did not exit" warnings.
+- Use `scope.isDone()` to assert the request was actually made.
+- Use `.query( true )` when you don't care about specific query string values.
+
+#### Asserting the request body
+
+Assert the request body inside nock's body callback using Jest matchers, then use
+`scope.isDone()` to verify the request was actually made.
+
+```tsx
+const scope = nock( 'https://public-api.wordpress.com' )
+  .post( '/rest/v1.1/me/preferences', ( body ) => {
+    expect( body ).toEqual(
+      expect.objectContaining( {
+        my_key: 'strict string check',
+        some_string: expect.any( String ),
+        pi: expect.closeTo( 3.14 ),
+      } )
+    );
+    return true;
+  } )
+  .reply( 200, { calypso_preferences: {} } );
+
+// …trigger the mutation…
+
+await waitFor( () => {
+  expect( scope.isDone() ).toBe( true );
+} );
+```
+
+### Mocking Query Cache Data
+
+Do not mock `@tanstack/react-query` or `@automattic/api-queries`. If the data which needs to be mocked can not be done at the network level (e.g. staging site delete progress), create a fresh `QueryClient` and pass it to `render()` in your test function.
+
+Wherever possible, prefer to mock network requests (see above).
+
+```tsx
+import { QueryClient } from '@tanstack/react-query';
+import { render } from '../../test-utils';
+
+const queryClient = new QueryClient();
+queryClient.setQueryData( [ 'staging-site', 1, 'is-deleting' ], true );
+
+render( <MyComponent />, { queryClient } );
+```
+
 ### Utility Function Tests
 
 Some utility functions do little more than destructure or perform a single boolean operation.
@@ -36,4 +133,3 @@ When adding test coverage for utility functions:
 3. **If yes:** Write isolated unit tests covering edge cases.
 
 **Example:** A simple utility like `isP2()` should get coverage from an integration test like `"button is disabled for P2s"`, not its own test file.
-

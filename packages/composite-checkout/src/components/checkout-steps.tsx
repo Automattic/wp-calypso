@@ -30,6 +30,7 @@ import type {
 	CheckoutStepProps,
 	StepCompleteCallback,
 	SetStepComplete,
+	CompleteAllSteps,
 	CheckoutStepGroupState,
 	CheckoutStepCompleteStatus,
 	CheckoutStepGroupStore,
@@ -64,10 +65,12 @@ const CheckoutStepGroupContext = createContext< CheckoutStepGroupStore >( {
 		totalSteps: 0,
 		stepIdMap: {},
 		stepCompleteCallbackMap: {},
+		stepSkipValidationOnSubmitMap: {},
 	},
 	actions: {
 		makeStepActive: noop,
 		setStepComplete: noop,
+		completeAllSteps: noop,
 		setActiveStepNumber: noop,
 		setStepCompleteStatus: noop,
 		setStepCompleteCallback: noop,
@@ -96,6 +99,7 @@ function createCheckoutStepGroupState(): CheckoutStepGroupState {
 		stepCompleteStatus: {},
 		stepIdMap: {},
 		stepCompleteCallbackMap: {},
+		stepSkipValidationOnSubmitMap: {},
 	};
 }
 
@@ -162,10 +166,12 @@ function createCheckoutStepGroupActions(
 	const setStepCompleteCallback = (
 		stepNumber: number,
 		stepId: string,
-		callback: StepCompleteCallback
+		callback: StepCompleteCallback,
+		skipValidationOnSubmit?: boolean
 	) => {
 		state.stepIdMap[ stepId ] = stepNumber;
 		state.stepCompleteCallbackMap[ stepNumber ] = callback;
+		state.stepSkipValidationOnSubmitMap[ stepNumber ] = skipValidationOnSubmit ?? false;
 	};
 
 	const getStepCompleteCallback = ( stepNumber: number ) => {
@@ -232,6 +238,22 @@ function createCheckoutStepGroupActions(
 		return true;
 	};
 
+	// A programmatic way to attempt to complete all steps without needing to know which is last.
+	const completeAllSteps = async () => {
+		debug( `attempting to complete all steps (totalSteps: ${ state.totalSteps })` );
+		// Try to complete all steps in order, ignoring steps that are already complete.
+		for ( let step = 1; step <= state.totalSteps; step++ ) {
+			if ( ! state.stepCompleteStatus[ step ] ) {
+				const didStepComplete = await getStepCompleteCallback( step )();
+				debug( `attempting to complete all steps; step ${ step } result was ${ didStepComplete }` );
+				if ( ! didStepComplete ) {
+					return false;
+				}
+			}
+		}
+		return true;
+	};
+
 	return {
 		setActiveStepNumber,
 		setStepCompleteStatus,
@@ -240,6 +262,7 @@ function createCheckoutStepGroupActions(
 		getStepCompleteCallback,
 		setTotalSteps,
 		setStepComplete,
+		completeAllSteps,
 		makeStepActive,
 	};
 }
@@ -376,12 +399,14 @@ function CheckoutStepGroupWrapper( {
 	loadingContent,
 	loadingHeader,
 	onStepChanged,
+	scrollToStepOnForwardNavigation,
 	store,
 }: PropsWithChildren< {
 	className?: string;
 	loadingContent?: ReactNode;
 	loadingHeader?: ReactNode;
 	onStepChanged?: StepChangedCallback;
+	scrollToStepOnForwardNavigation?: boolean;
 	store: CheckoutStepGroupStore;
 } > ) {
 	const { isRTL } = useI18n();
@@ -412,12 +437,25 @@ function CheckoutStepGroupWrapper( {
 	// Call the `onStepChanged` callback when a step changes.
 	useEffect( () => {
 		if ( store.state.activeStepNumber !== previousStepNumber.current ) {
+			const prevStep = previousStepNumber.current;
+			const newStep = store.state.activeStepNumber;
 			onStepChanged?.( {
-				stepNumber: store.state.activeStepNumber,
-				previousStepNumber: previousStepNumber.current,
+				stepNumber: newStep,
+				previousStepNumber: prevStep,
 				paymentMethodId: activePaymentMethod?.id ?? '',
 			} );
-			previousStepNumber.current = store.state.activeStepNumber;
+			previousStepNumber.current = newStep;
+			// When moving forward through steps, scroll the newly active step into
+			// view. This corrects the viewport position on mobile after the previous
+			// step's content collapses and causes the layout to shift.
+			if ( scrollToStepOnForwardNavigation && newStep > prevStep ) {
+				const newStepId = Object.entries( store.state.stepIdMap ).find(
+					( [ , num ] ) => num === newStep
+				)?.[ 0 ];
+				if ( newStepId ) {
+					document.getElementById( newStepId )?.scrollIntoView?.( { block: 'start' } );
+				}
+			}
 		}
 		// We only want to run this when the step changes.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -463,11 +501,13 @@ export const CheckoutStep = ( {
 	isCompleteCallback,
 	canEditStep = true,
 	editButtonText,
+	editButtonElement,
 	editButtonAriaLabel,
 	nextStepButtonText,
 	nextStepButtonAriaLabel,
 	validatingButtonText,
 	validatingButtonAriaLabel,
+	skipValidationOnSubmit,
 	onPageLoadError,
 }: CheckoutStepProps ) => {
 	const { __ } = useI18n();
@@ -501,7 +541,7 @@ export const CheckoutStep = ( {
 		setFormReady();
 		return completeResult;
 	};
-	setStepCompleteCallback( stepNumber, stepId, goToNextStep );
+	setStepCompleteCallback( stepNumber, stepId, goToNextStep, skipValidationOnSubmit );
 
 	const classNames = [
 		'checkout-step',
@@ -519,6 +559,7 @@ export const CheckoutStep = ( {
 		<CheckoutStepBody
 			onError={ onError }
 			editButtonText={ editButtonText || __( 'Edit' ) }
+			editButtonElement={ editButtonElement }
 			editButtonAriaLabel={ editButtonAriaLabel || __( 'Edit this step' ) }
 			nextStepButtonText={ nextStepButtonText || __( 'Continue' ) }
 			nextStepButtonAriaLabel={ nextStepButtonAriaLabel || __( 'Continue to the next step' ) }
@@ -649,8 +690,9 @@ export function CheckoutFormSubmit( {
 	submitButton?: ReactNode;
 	onPageLoadError?: CheckoutPageErrorCallback;
 } ) {
-	const { state } = useContext( CheckoutStepGroupContext );
-	const { activeStepNumber, totalSteps, stepCompleteStatus } = state;
+	const { state, actions } = useContext( CheckoutStepGroupContext );
+	const { activeStepNumber, totalSteps, stepCompleteStatus, stepSkipValidationOnSubmitMap } = state;
+	const { getStepCompleteCallback, setStepCompleteStatus } = actions;
 	const isThereAnotherNumberedStep = activeStepNumber < totalSteps;
 	const areAllStepsComplete = Object.values( stepCompleteStatus ).every(
 		( isComplete ) => isComplete === true
@@ -663,6 +705,48 @@ export function CheckoutFormSubmit( {
 	const submitWrapperRef = useCustomPropertyForHeight< HTMLDivElement >(
 		customPropertyForSubmitButtonHeight
 	);
+
+	// Wrap validateForm to first validate any active step before submission
+	const wrappedValidateForm = useCallback( async () => {
+		// Only validate if there's an actual active step (within the range of registered steps)
+		const hasActiveStep = activeStepNumber > 0 && activeStepNumber <= totalSteps;
+
+		if ( hasActiveStep ) {
+			// Check if this step should skip validation on submit
+			const shouldSkipValidation = stepSkipValidationOnSubmitMap[ activeStepNumber ];
+
+			if ( ! shouldSkipValidation ) {
+				// Validate the active step (whether it's complete or incomplete)
+				debug( `Validating active step ${ activeStepNumber } before submission` );
+				const stepCompleteCallback = getStepCompleteCallback( activeStepNumber );
+				const isStepComplete = await stepCompleteCallback();
+				debug( `Active step ${ activeStepNumber } validation result: ${ isStepComplete }` );
+
+				if ( ! isStepComplete ) {
+					// Step validation failed, don't proceed with submission
+					return false;
+				}
+
+				// Step validated successfully, mark it as complete
+				setStepCompleteStatus( { [ activeStepNumber ]: true } );
+			}
+		}
+
+		// Now run the payment method validation if provided
+		if ( validateForm ) {
+			return await validateForm();
+		}
+
+		return true;
+	}, [
+		activeStepNumber,
+		totalSteps,
+		stepCompleteStatus,
+		stepSkipValidationOnSubmitMap,
+		getStepCompleteCallback,
+		setStepCompleteStatus,
+		validateForm,
+	] );
 
 	const isDisabled = ( () => {
 		if ( disableSubmitButton ) {
@@ -685,7 +769,7 @@ export function CheckoutFormSubmit( {
 			{ submitButtonHeader || null }
 			{ submitButton || (
 				<CheckoutSubmitButton
-					validateForm={ validateForm }
+					validateForm={ wrappedValidateForm }
 					disabled={ isDisabled }
 					onLoadError={ onSubmitButtonLoadError }
 				/>
@@ -748,6 +832,7 @@ const StepSummaryWrapper = styled.div< StepContentWrapperProps & HTMLAttributes<
 export function CheckoutStepBody( {
 	errorMessage,
 	editButtonText,
+	editButtonElement,
 	editButtonAriaLabel,
 	nextStepButtonText,
 	validatingButtonText,
@@ -781,7 +866,7 @@ export function CheckoutStepBody( {
 			errorMessage={ errorMessage || __( 'There was an error with this step.' ) }
 			onError={ onError }
 		>
-			<StepWrapper className={ className }>
+			<StepWrapper className={ className } id={ stepId }>
 				<CheckoutStepHeader
 					id={ stepId }
 					stepNumber={ stepNumber }
@@ -795,6 +880,7 @@ export function CheckoutStepBody( {
 							: undefined
 					}
 					editButtonText={ editButtonText || __( 'Edit' ) }
+					editButtonElement={ editButtonElement }
 					editButtonAriaLabel={ editButtonAriaLabel || __( 'Edit this step' ) }
 				/>
 				<StepContentWrapper
@@ -841,6 +927,7 @@ interface CheckoutStepBodyProps {
 	onError?: ( error: Error ) => void;
 	editButtonAriaLabel?: string;
 	editButtonText?: string;
+	editButtonElement?: ReactNode;
 	nextStepButtonText?: string;
 	nextStepButtonAriaLabel?: string;
 	isStepActive: boolean;
@@ -864,6 +951,7 @@ CheckoutStepBody.propTypes = {
 	onError: PropTypes.func,
 	editButtonAriaLabel: PropTypes.string,
 	editButtonText: PropTypes.string,
+	editButtonElement: PropTypes.node,
 	nextStepButtonText: PropTypes.string,
 	nextStepButtonAriaLabel: PropTypes.string,
 	isStepActive: PropTypes.bool.isRequired,
@@ -897,6 +985,11 @@ export function useIsStepComplete(): boolean {
 export function useSetStepComplete(): SetStepComplete {
 	const store = useContext( CheckoutStepGroupContext );
 	return store.actions.setStepComplete;
+}
+
+export function useCompleteAllSteps(): CompleteAllSteps {
+	const store = useContext( CheckoutStepGroupContext );
+	return store.actions.completeAllSteps;
 }
 
 export function useMakeStepActive(): MakeStepActive {
@@ -955,6 +1048,7 @@ function CheckoutStepHeader( {
 	canEditStep,
 	onEdit,
 	editButtonText,
+	editButtonElement,
 	editButtonAriaLabel,
 }: {
 	id: string;
@@ -966,6 +1060,7 @@ function CheckoutStepHeader( {
 	canEditStep?: boolean;
 	onEdit?: () => void;
 	editButtonText?: string;
+	editButtonElement?: ReactNode;
 	editButtonAriaLabel?: string;
 } ) {
 	const { __ } = useI18n();
@@ -992,7 +1087,7 @@ function CheckoutStepHeader( {
 					onClick={ onEdit }
 					aria-label={ editButtonAriaLabel || __( 'Edit this step' ) }
 				>
-					{ editButtonText || __( 'Edit' ) }
+					{ editButtonElement ?? editButtonText ?? __( 'Edit' ) }
 				</HeaderEditButton>
 			) }
 		</StepHeaderWrapper>
@@ -1094,6 +1189,7 @@ CheckoutStepHeader.propTypes = {
 	isActive: PropTypes.bool,
 	isComplete: PropTypes.bool,
 	editButtonText: PropTypes.string,
+	editButtonElement: PropTypes.node,
 	editButtonAriaLabel: PropTypes.string,
 	onEdit: PropTypes.func,
 };
@@ -1140,6 +1236,7 @@ export function CheckoutStepGroup( {
 	stepAreaHeader,
 	store,
 	onStepChanged,
+	scrollToStepOnForwardNavigation,
 	loadingContent,
 	loadingHeader,
 }: PropsWithChildren< {
@@ -1147,6 +1244,7 @@ export function CheckoutStepGroup( {
 	stepAreaHeader?: ReactNode;
 	store?: CheckoutStepGroupStore;
 	onStepChanged?: StepChangedCallback;
+	scrollToStepOnForwardNavigation?: boolean;
 	loadingContent?: ReactNode;
 	loadingHeader?: ReactNode;
 } > ) {
@@ -1157,6 +1255,7 @@ export function CheckoutStepGroup( {
 			loadingContent={ loadingContent }
 			loadingHeader={ loadingHeader }
 			onStepChanged={ onStepChanged }
+			scrollToStepOnForwardNavigation={ scrollToStepOnForwardNavigation }
 		>
 			{ stepAreaHeader }
 			<CheckoutStepArea>

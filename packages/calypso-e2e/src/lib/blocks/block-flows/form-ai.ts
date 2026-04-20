@@ -1,4 +1,8 @@
-import { makeSelectorFromBlockName, validatePublishedFormFields } from './shared';
+import {
+	disableFormEmailNotifications,
+	makeSelectorFromBlockName,
+	validatePublishedFormFields,
+} from './shared';
 import { BlockFlow, EditorContext, PublishedPostContext } from '.';
 
 interface ConfigurationData {
@@ -16,6 +20,7 @@ interface ValidationData {
 export class FormAiFlow implements BlockFlow {
 	private configurationData: ConfigurationData;
 	private validationData: ValidationData | undefined;
+	private hasNoRequestsRemaining = false;
 
 	/**
 	 * Constructs an instance of this block flow with data to be used when configuring and validating the block.
@@ -60,9 +65,20 @@ export class FormAiFlow implements BlockFlow {
 		const sendButtonLocator = aiInputParentLocator.getByRole( 'button', {
 			name: 'Send request',
 		} );
+
+		// Check if the user has no requests remaining and end the test early if so
+		const noRequestsLocator = aiInputParentLocator.getByText( 'You have 0 requests remaining.' );
+		const hasNoRequests = await noRequestsLocator.count();
+		if ( hasNoRequests > 0 ) {
+			this.hasNoRequestsRemaining = true;
+			return;
+		}
+
 		await aiInputReadyLocator.fill( this.configurationData.prompt );
 		await sendButtonLocator.click();
 		await aiInputBusyLocator.waitFor( { state: 'detached' } );
+		await disableFormEmailNotifications( context.page, context.addedBlockLocator );
+
 		// Grab a first sample input label and submit button text to use for validation.
 		this.validationData = {
 			sampleInputLabel: await this.getFirstTextFieldLabel( context ),
@@ -109,6 +125,12 @@ export class FormAiFlow implements BlockFlow {
 	 * @param {PublishedPostContext} context The current context for the published post at the point of test execution
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
+		// If we had no requests remaining, skip validation as this is expected
+		if ( this.hasNoRequestsRemaining ) {
+			return;
+		}
+
+		// If validationData is not set at this point, it's an actual error
 		if ( ! this.validationData ) {
 			throw new Error( 'Unable to find fields in the editor from the AI form.' );
 		}

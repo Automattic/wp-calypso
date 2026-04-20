@@ -2,7 +2,8 @@ import { TrialPlans } from '@automattic/api-core';
 import {
 	p2HubP2sQuery,
 	siteDeleteMutation,
-	siteHasCancelablePurchasesQuery,
+	sitePurchasesQuery,
+	stagingSiteSyncStateQuery,
 } from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
@@ -19,12 +20,16 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { useAuth } from '../../app/auth';
 import { purchasesRoute } from '../../app/router/me';
 import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
 import RouterLinkButton from '../../components/router-link-button';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
+import {
+	getProductionSiteId,
+	hasStagingSite,
+	isStagingSiteSyncing,
+} from '../../utils/site-staging-site';
 import type { Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
@@ -141,6 +146,13 @@ function SiteDeleteConfirmContent( { site, onClose }: { site: Site; onClose: () 
 	const [ formData, setFormData ] = useState< SiteDeleteFormData >( { domain: '' } );
 	const mutation = useMutation( siteDeleteMutation( site.ID ) );
 
+	const productionSiteId = getProductionSiteId( site );
+	const { data: stagingSiteSyncState } = useQuery( {
+		...stagingSiteSyncStateQuery( productionSiteId ?? 0 ),
+		enabled: !! productionSiteId && hasStagingSite( site ),
+	} );
+	const isSyncing = isStagingSiteSyncing( stagingSiteSyncState );
+
 	const fields: Field< SiteDeleteFormData >[] = [
 		{
 			id: 'domain',
@@ -184,6 +196,15 @@ function SiteDeleteConfirmContent( { site, onClose }: { site: Site; onClose: () 
 
 	return (
 		<>
+			{ isSyncing && (
+				<Notice variant="warning" density="medium">
+					<Text>
+						{ __(
+							'A sync is currently in progress. Deleting this site will cancel the sync and any unfinished changes will be lost.'
+						) }
+					</Text>
+				</Notice>
+			) }
 			<Notice variant="warning" density="medium">
 				<Text>
 					{ createInterpolateElement(
@@ -222,7 +243,7 @@ function SiteDeleteConfirmContent( { site, onClose }: { site: Site; onClose: () 
 						<Button
 							__next40pxDefaultSize
 							variant="tertiary"
-							disabled={ mutation.isPending }
+							disabled={ mutation.isPending || mutation.isSuccess }
 							onClick={ onClose }
 						>
 							{ __( 'Cancel' ) }
@@ -232,7 +253,7 @@ function SiteDeleteConfirmContent( { site, onClose }: { site: Site; onClose: () 
 							variant="primary"
 							type="submit"
 							isDestructive
-							isBusy={ mutation.isPending }
+							isBusy={ mutation.isPending || mutation.isSuccess }
 							disabled={ formData.domain !== site.slug }
 						>
 							{ __( 'Delete site' ) }
@@ -245,12 +266,12 @@ function SiteDeleteConfirmContent( { site, onClose }: { site: Site; onClose: () 
 }
 
 export default function SiteDeleteModal( { site, onClose }: { site: Site; onClose: () => void } ) {
-	const { user } = useAuth();
-	const { isLoading, data: hasPurchasesCancelable } = useQuery(
-		siteHasCancelablePurchasesQuery( site.ID, user.ID )
-	);
+	const { isLoading, data: hasPurchasesThatBlockSiteDeletion } = useQuery( {
+		...sitePurchasesQuery( site.ID ),
+		select: ( purchases ) => purchases.some( ( purchase ) => purchase.blocks_site_deletion ),
+	} );
 
-	const canBeDeleted = canDeleteSite( site ) && ! hasPurchasesCancelable;
+	const canBeDeleted = canDeleteSite( site ) && ! hasPurchasesThatBlockSiteDeletion;
 	const title = canBeDeleted ? __( 'Delete site' ) : __( 'Unable to delete site' );
 
 	if ( isLoading ) {

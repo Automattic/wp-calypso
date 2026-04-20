@@ -489,6 +489,15 @@ const assertDefaultContext = ( { url, entry } ) => {
 		expect( request.context.useTranslationChunks ).toEqual( true );
 	} );
 
+	it( 'sets dashboard according to the request hostname', async () => {
+		const { request } = await app.run( {
+			request: {
+				hostname: 'my.woo.localhost',
+			},
+		} );
+		expect( request.context.dashboard ).toEqual( 'ciab' );
+	} );
+
 	it( 'sets the client ip', async () => {
 		const { request } = await app.run( { request: { ip: '192.168.0.1' } } );
 		expect( request.context.app.clientIp ).toEqual( '192.168.0.1' );

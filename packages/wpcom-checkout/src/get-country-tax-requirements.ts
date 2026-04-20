@@ -24,7 +24,7 @@ export function getCountryTaxRequirements(
 	if ( ! countries?.length ) {
 		// eslint-disable-next-line no-console
 		console.error(
-			'Error: getCountryVatRequirements was called without a countries list. This will result in incorrect data!'
+			'Error: getCountryTaxRequirements was called without a countries list. This will result in incorrect data!'
 		);
 		return {};
 	}
@@ -36,7 +36,7 @@ export function getCountryTaxRequirements(
 	if ( ! countryListItem ) {
 		// eslint-disable-next-line no-console
 		console.warn(
-			`Warning: getCountryVatRequirements could not find the country "${ countryCode }"!`
+			`Warning: getCountryTaxRequirements could not find the country "${ countryCode }"!`
 		);
 		return {};
 	}

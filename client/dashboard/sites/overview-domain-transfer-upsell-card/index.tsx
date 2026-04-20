@@ -1,9 +1,10 @@
 import { __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
+import { getCurrentDashboard } from '../../app/routing';
 import { Callout } from '../../components/callout';
 import UpsellCTAButton from '../../components/upsell-cta-button';
-import { getCurrentDashboard, wpcomLink } from '../../utils/link';
+import { wpcomLink } from '../../utils/link';
 import illustrationTransferDomainUrl from './upsell-illustration-transfer-domain.svg';
 
 export default function DomainTransferUpsellCard() {

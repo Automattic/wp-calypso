@@ -55,7 +55,8 @@ describe( 'CoBlocks: Blocks', function () {
 	} );
 
 	it( 'Go to the new post page', async () => {
-		await editorPage.visit( 'post' );
+		const siteSlug = testAccount.getSiteURL( { protocol: false } );
+		await editorPage.visit( 'post', { siteSlug } );
 	} );
 
 	it( `Insert ${ PricingTableBlock.blockName } block and enter prices`, async function () {

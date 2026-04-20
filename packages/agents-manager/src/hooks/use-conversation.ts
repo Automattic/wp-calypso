@@ -1,16 +1,15 @@
 import {
 	loadAllMessagesFromServer,
 	createOdieBotId,
+	isOdieBotId,
 	type Message,
 } from '@automattic/agenttic-client';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef } from '@wordpress/element';
 import { API_BASE_URL } from '../constants';
+import { useAgentsManagerContext } from '../contexts';
 
 interface Config {
-	agentId: string;
-	sessionId: string;
-	authProvider?: () => Promise< Record< string, string > >;
 	maxPages?: number;
 	onSuccess?: ( messages: Message[], sessionId: string ) => void;
 }
@@ -21,14 +20,14 @@ interface Result {
 	isError: boolean;
 }
 
-export default function useConversation( {
-	agentId,
-	sessionId,
-	authProvider,
-	maxPages = 10,
-	onSuccess = () => {},
-}: Config ): Result {
-	// Keep refs to the latest callbacks
+/**
+ * Fetches a conversation from the server when a `sessionId` is available.
+ */
+export default function useConversation( { maxPages = 10, onSuccess = () => {} }: Config ): Result {
+	const { agentConfig } = useAgentsManagerContext();
+	const { agentId, sessionId, authProvider } = agentConfig!;
+
+	// Keep a ref to the latest callback to avoid re-triggering effects when it changes.
 	const onSuccessRef = useRef( onSuccess );
 	onSuccessRef.current = onSuccess;
 
@@ -36,17 +35,23 @@ export default function useConversation( {
 		// eslint-disable-next-line @tanstack/query/exhaustive-deps -- we only want to refetch when sessionId changes
 		queryKey: [ 'agents-manager-conversation', sessionId ],
 		queryFn: async () => {
+			const urlSearchParams = new URLSearchParams( window.location.search );
+			const hasAgentParam = urlSearchParams.has( 'agent' );
+			const botId = hasAgentParam || isOdieBotId( agentId ) ? agentId : createOdieBotId( agentId );
+
 			return await loadAllMessagesFromServer(
 				sessionId,
 				{
-					botId: createOdieBotId( agentId ),
+					botId,
 					apiBaseUrl: API_BASE_URL,
 					authProvider,
 				},
-				maxPages
+				maxPages,
+				true
 			);
 		},
 		enabled: !! sessionId,
+		refetchOnWindowFocus: false,
 	} );
 
 	useEffect(

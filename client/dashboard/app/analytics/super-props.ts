@@ -2,7 +2,7 @@ import { siteBySlugQuery, sitesQueryKey } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import type { User, Site } from '@automattic/api-core';
 import type { QueryClient } from '@tanstack/react-query';
-import type { AnyRouter } from '@tanstack/react-router';
+import type { AnyRouter, RouterState } from '@tanstack/react-router';
 
 export const getSuperProps = ( user: User, router: AnyRouter, queryClient: QueryClient ) => () => {
 	const superProps = {
@@ -42,9 +42,8 @@ export const getSuperProps = ( user: User, router: AnyRouter, queryClient: Query
 /**
  * Normalize the path by removing leading double slashes and trailing slashes.
  */
-export function getNormalizedPath( router: AnyRouter ) {
-	const leafMatch = router.state.matches.at( -1 );
-	const basePath = router.basepath ?? '';
+export function getNormalizedPath( matches: RouterState[ 'matches' ], basePath = '' ) {
+	const leafMatch = matches.at( -1 );
 	const routeId = leafMatch?.routeId ?? '';
 
 	const normalizedBasePath = basePath.endsWith( '/' ) ? basePath.slice( 0, -1 ) : basePath;
@@ -59,16 +58,21 @@ export function getNormalizedPath( router: AnyRouter ) {
  * hoping to attach site info if it happens to be available. So I think checking
  * both caches represents a "best effort" attempt.
  */
-function getSiteFromCache( queryClient: QueryClient, siteSlug: string ): Site | undefined {
+export function getSiteFromCache( queryClient: QueryClient, siteSlug: string ): Site | undefined {
 	const site = queryClient.getQueryData< Site >( siteBySlugQuery( siteSlug ).queryKey );
 	if ( site ) {
 		return site;
 	}
 
-	const sitesQueries = queryClient.getQueriesData< Site[] >( { queryKey: sitesQueryKey } );
+	const sitesQueries = queryClient.getQueriesData< Site[] | { sites: Site[] } >( {
+		queryKey: sitesQueryKey,
+	} );
 	const sitesBySlug = new Map(
 		sitesQueries
-			.map( ( [ , sites ] ) => ( sites || [] ).map( ( site ) => [ site.slug, site ] ) )
+			.map( ( [ , data ] ) => {
+				const sites = Array.isArray( data ) ? data : data?.sites;
+				return ( sites || [] ).map( ( site ) => [ site.slug, site ] as const );
+			} )
 			.flat() as [ string, Site ][]
 	);
 

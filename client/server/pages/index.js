@@ -18,11 +18,12 @@ import { get, includes } from 'lodash';
 import { stringify } from 'qs';
 // eslint-disable-next-line no-restricted-imports
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
-import {
-	DASHBOARD_SECTION_PATHS,
-	DASHBOARD_SECTION_DEFINITION,
-	DASHBOARD_CIAB_SECTION_DEFINITION,
-} from 'calypso/dashboard/section';
+import { getDashboardFromHostname, isAllowedDashboardRoute } from 'calypso/dashboard/app/routing';
+import { isAllowedCiabDashboardHostname } from 'calypso/dashboard/app-ciab/routing';
+import { CIAB_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-ciab/section';
+import { isAllowedDotcomDashboardHostname } from 'calypso/dashboard/app-dotcom/routing';
+import { DOTCOM_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-dotcom/section';
+import { DASHBOARD_SECTION_PATHS } from 'calypso/dashboard/section';
 import isDashboardEnv from 'calypso/dashboard/utils/is-dashboard-env';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { STEPPER_SECTION_DEFINITION } from 'calypso/landing/stepper/section';
@@ -208,6 +209,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 			request.query.hasOwnProperty( 'useTranslationChunks' ),
 		showGdprBanner,
 		showStepContainerV2Loader: isInStepContainerV2FlowContext( request.path, request.query ),
+		dashboard: getDashboardFromHostname( request.hostname ),
 	} );
 
 	context.app = {
@@ -551,9 +553,11 @@ function setUpCSP( req, res, next ) {
 			'https://snap.licdn.com', // LinkedIn analytics
 			'www.redditstatic.com', // Reddit tracking pixel
 			'https://analytics.tiktok.com', // TikTok tracking pixel
+			'https://a.quora.com', // Quora tracking pixel.
 			'www.googletagmanager.com',
 			'https://accounts.google.com',
 			'https://bat.bing.com', // Bing Ads JS
+			'https://blackbox-api.wp.com', // Blackbox bot detection
 		],
 		'base-uri': [ "'none'" ],
 		'style-src': [
@@ -620,6 +624,7 @@ function setUpCSP( req, res, next ) {
 			'https://woocommerce.com', // WooCommerce marketplace
 			'localhost:8888',
 			'p.typekit.net',
+			'https://q.quora.com', //Quora tracking pixel image.
 		],
 		'frame-src': [
 			"'self'",
@@ -635,6 +640,7 @@ function setUpCSP( req, res, next ) {
 			'*.verygoodsecurity.com', // VGS Collect secure iframes
 			'www.paypal.com', // PayPal checkout flow
 			'*.paypal.com', // PayPal additional flows
+			'https://blackbox-api.wp.com', // Blackbox iframe transport
 		],
 		'font-src': [
 			"'self'",
@@ -667,6 +673,7 @@ function setUpCSP( req, res, next ) {
 			'*.sentry.io',
 			'*.reddit.com',
 			'https://analytics.tiktok.com', // TikTok tracking pixel
+			'https://a.quora.com', //Quora tracking pixel
 			// Payment provider APIs (for tokenization and payment processing)
 			'*.stripe.com', // Stripe API calls
 			'api.stripe.com', // Stripe API endpoint
@@ -806,7 +813,7 @@ function validateRedirect( req, url ) {
 function wpcomPages( app ) {
 	// redirect homepage if the Reader is disabled
 	app.get( '/', function ( request, response, next ) {
-		if ( ! config.isEnabled( 'reader' ) && config.isEnabled( 'stats' ) ) {
+		if ( config.isEnabled( 'stats' ) ) {
 			response.redirect( '/stats' );
 		} else {
 			next();
@@ -1068,11 +1075,12 @@ export default function pages() {
 	 * This approach allows requests to an SSR section to skip any section-specific
 	 * SSR middleware if the request wasn't going to be resolved with SSR anyways.
 	 */
-	function handleSectionPath( section, sectionPath, entrypoint ) {
+	function handleSectionPath( section, sectionPath, entrypoint, reqFilter ) {
 		const pathRegex = pathToRegExp( sectionPath );
 
 		app.get(
 			pathRegex,
+			( req, res, next ) => ( ! reqFilter || reqFilter( req ) ? next() : next( 'route' ) ),
 			setupDefaultContext( entrypoint, section.name ),
 			setUpSectionContext( section, entrypoint ),
 			// Skip the rest of the middleware chain if SSR compatible. Further
@@ -1091,75 +1099,41 @@ export default function pages() {
 		);
 	}
 
-	// Multi-site Dashboard routing for development {calypso.localhost, wpcalypso.wordpress.com}.
-	if ( calypsoEnv !== 'production' && config.isEnabled( 'dashboard/v2' ) ) {
-		const handleRoute = ( section, sectionPath, entrypoint, reqFilter ) => {
-			app.get(
-				pathToRegExp( sectionPath ),
-				( req, res, next ) => ( ! reqFilter || reqFilter( req ) ? next() : next( 'route' ) ),
-				setupDefaultContext( entrypoint, section.name ),
-				setUpSectionContext( section, entrypoint ),
-				setUpRoute,
-				serverRender
-			);
-		};
-
+	// Multi-site Dashboard routing.
+	if ( isDashboardEnv() || calypsoEnv === 'development' ) {
+		const signupSectionDefinition = sections.find( ( s ) => s.name === 'signup' );
+		handleSectionPath( signupSectionDefinition, '/start', undefined, ( req ) =>
+			isAllowedDashboardRoute( { hostname: req.hostname, path: req.path } )
+		);
+		const checkoutSectionDefinition = sections.find( ( s ) => s.name === 'checkout' );
+		handleSectionPath( checkoutSectionDefinition, '/checkout', undefined, ( req ) =>
+			isAllowedDashboardRoute( { hostname: req.hostname, path: req.path } )
+		);
+		handleSectionPath( STEPPER_SECTION_DEFINITION, '/setup', 'entry-stepper', ( req ) =>
+			isAllowedDashboardRoute( { hostname: req.hostname, path: req.path } )
+		);
 		DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
-			handleRoute( DASHBOARD_SECTION_DEFINITION, route, 'entry-dashboard-dotcom', ( req ) => {
-				// Allow dashboard routes under my.localhost.
-				return req.get( 'host' ).startsWith( 'my.localhost' );
-			} );
+			handleSectionPath(
+				DOTCOM_DASHBOARD_SECTION_DEFINITION,
+				route,
+				'entry-dashboard-dotcom',
+				( req ) => isAllowedDotcomDashboardHostname( req.hostname )
+			);
 		} );
-
-		handleRoute( DASHBOARD_CIAB_SECTION_DEFINITION, '/ciab', 'entry-dashboard-ciab', ( req ) => {
-			// Allow CIAB routes under my.localhost.
-			return req.get( 'host' ).startsWith( 'my.localhost' );
+		DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
+			handleSectionPath(
+				CIAB_DASHBOARD_SECTION_DEFINITION,
+				route,
+				'entry-dashboard-ciab',
+				( req ) => isAllowedCiabDashboardHostname( req.hostname )
+			);
 		} );
-
-		// Temporary support redirection for the /v2 route for backwards compatibility.
-		app.get( [ '/v2', '/v2/*' ], ( req, res, next ) => {
-			const host = req.get( 'host' );
-			const query = Object.keys( req.query ).length > 0 ? `?${ stringify( req.query ) }` : '';
-
-			if ( host.startsWith( 'calypso.localhost' ) ) {
-				const protocol = req.get( 'X-Forwarded-Proto' ) === 'https' ? 'https' : 'http';
-				const port = host.includes( ':' ) ? host.substring( host.indexOf( ':' ) ) : ':3000';
-
-				const redirectUrl = `${ protocol }://my.localhost${ port }${ req.path.slice(
-					'/v2'.length
-				) }${ query }`;
-				return res.redirect( 301, redirectUrl );
-			}
-
-			if ( host.startsWith( 'wpcalypso.wordpress.com' ) ) {
-				const redirectUrl = `https://my.wordpress.com${ req.path.slice( '/v2'.length ) }${ query }`;
-				return res.redirect( 301, redirectUrl );
-			}
-
-			next();
-		} );
-
-		// Temporary support redirection for the /ciab route for backwards compatibility.
-		// TODO: Remove /ciab once we no longer need to support the old testing link.
-		app.get( [ '/ciab', '/ciab/*' ], ( req, res, next ) => {
-			const host = req.get( 'host' );
-			const query = Object.keys( req.query ).length > 0 ? `?${ stringify( req.query ) }` : '';
-
-			if ( host.startsWith( 'calypso.localhost' ) ) {
-				const protocol = req.get( 'X-Forwarded-Proto' ) === 'https' ? 'https' : 'http';
-				const port = host.includes( ':' ) ? host.substring( host.indexOf( ':' ) ) : ':3000';
-
-				const redirectUrl = `${ protocol }://my.localhost${ port }${ req.path }${ query }`;
-				return res.redirect( 301, redirectUrl );
-			}
-
-			if ( host.startsWith( 'wpcalypso.wordpress.com' ) ) {
-				const redirectUrl = `https://my.wordpress.com${ req.path }${ query }`;
-				return res.redirect( 301, redirectUrl );
-			}
-
-			next();
-		} );
+		handleSectionPath(
+			CIAB_DASHBOARD_SECTION_DEFINITION,
+			'/start-store',
+			'entry-dashboard-ciab',
+			( req ) => isAllowedCiabDashboardHostname( req.hostname )
+		);
 	}
 
 	sections
@@ -1185,14 +1159,9 @@ export default function pages() {
 	// Register CSP report route
 	registerCspReportRoute( app );
 
-	// Multi-site Dashboard routing for my.wordpress.com.
+	// Multi-site Dashboard routing.
 	// Return earlier since we don't need to set up any other routes.
 	if ( isDashboardEnv() ) {
-		DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
-			handleSectionPath( DASHBOARD_SECTION_DEFINITION, route, 'entry-dashboard-dotcom' );
-		} );
-
-		handleSectionPath( DASHBOARD_CIAB_SECTION_DEFINITION, '/ciab', 'entry-dashboard-ciab' );
 		return app;
 	}
 

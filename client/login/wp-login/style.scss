@@ -56,6 +56,14 @@ body.is-section-login {
 		}
 	}
 	/* End: Jetpack Cloud font styles for login page */
+
+	/* Start: CIAB partner branding font styles for login page */
+	&.is-ciab-font-system {
+		.wp-login__one-login-layout-heading-text {
+			font-family: $default-font;
+		}
+	}
+	/* End: CIAB partner branding font styles for login page */
 }
 
 .wp-login__main {

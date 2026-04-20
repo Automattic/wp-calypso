@@ -36,10 +36,6 @@ const createMockPropagationStatus = (
 describe( 'DomainPropagationStatus', () => {
 	const mockUseQuery = useQuery as jest.MockedFunction< typeof useQuery >;
 
-	beforeEach( () => {
-		jest.clearAllMocks();
-	} );
-
 	describe( 'Successful data loading', () => {
 		test( 'renders component with title when data is loaded', () => {
 			const mockData = createMockPropagationStatus();

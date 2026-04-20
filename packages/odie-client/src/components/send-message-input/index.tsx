@@ -1,6 +1,10 @@
 import '@automattic/agenttic-ui/index.css';
 import { useInput } from '@automattic/agenttic-ui';
+import { HelpCenterSelect } from '@automattic/data-stores';
 import { EmailFallbackNotice } from '@automattic/help-center/src/components/notices';
+import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
+import { useConnectionStatusNotice } from '@automattic/zendesk-client';
+import { useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useSearchParams } from 'react-router-dom';
@@ -8,7 +12,7 @@ import Smooch from 'smooch';
 import { useOdieAssistantContext } from '../../context';
 import { useSendChatMessage } from '../../hooks';
 import { AgentUIFooter } from '../chat-footer';
-import { useConnectionStatusNotice, useMessageSizeErrorNotice } from '../notices';
+import { useMessageSizeErrorNotice } from '../notices';
 import { useAttachmentHandler } from './use-attachment-handler';
 import { useSendMessageHandler } from './use-send-message-handler';
 
@@ -37,14 +41,26 @@ export const OdieSendMessageButton = () => {
 	const isLiveChat = chat.provider?.startsWith( 'zendesk' );
 	const [ searchParams ] = useSearchParams();
 	const queryFromParam = searchParams.get( 'query' ) || '';
-	const [ initialQuery, setInitialQuery ] = useState( queryFromParam );
+	const chatIdFromParam = searchParams.get( 'chatId' );
+	const queryForNewChat = chatIdFromParam ? '' : queryFromParam;
+	const [ initialQuery, setInitialQuery ] = useState( queryForNewChat );
 	const [ inputValue, setInputValue ] = useState( initialQuery );
 	const messageSizeNotice = useMessageSizeErrorNotice( inputValue.trim().length );
-	const connectionNotice = useConnectionStatusNotice( isLiveChat );
+
+	const connectionStatus = useSelect( ( select ) => {
+		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
+		return helpCenterSelect.getZendeskConnectionStatus();
+	}, [] );
+
+	const connectionNotice = useConnectionStatusNotice( connectionStatus, isLiveChat );
 
 	useEffect( () => {
-		setInitialQuery( queryFromParam );
-	}, [ queryFromParam ] );
+		// Only process query param for new conversations (no chatId)
+		// This prevents refilling the input when navigating back to an existing chat
+		if ( ! chatIdFromParam ) {
+			setInitialQuery( queryFromParam );
+		}
+	}, [ queryFromParam, chatIdFromParam ] );
 
 	// I'm only using adjustHeight from agenttic-ui
 	const { textareaRef } = useInput( {

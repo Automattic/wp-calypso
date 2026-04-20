@@ -179,15 +179,15 @@ const PrePurchaseNoticesWrapper = () => {
 
 function PrePurchaseNoticesQueryContainer( {
 	siteId,
-	isSiteless,
+	shouldQueryUserPurchases,
 }: {
 	siteId: number | undefined;
-	isSiteless: boolean;
+	shouldQueryUserPurchases: boolean;
 } ) {
 	return (
 		<>
 			<QuerySitePurchases siteId={ siteId } />
-			{ isSiteless && <QueryUserPurchases /> }
+			{ shouldQueryUserPurchases && <QueryUserPurchases /> }
 			<PrePurchaseNoticesWrapper />
 		</>
 	);

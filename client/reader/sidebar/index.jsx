@@ -1,8 +1,11 @@
+import 'calypso/my-sites/sidebar/style.scss'; // Copy styles from the My Sites sidebar.
+import './style.scss';
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { Button } from '@wordpress/components';
+import { Icon, plus } from '@wordpress/icons';
 import clsx from 'clsx';
 import closest from 'component-closest';
-import i18n, { localize, useTranslate } from 'i18n-calypso';
+import i18n, { localize } from 'i18n-calypso';
 import { defer, startsWith } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -20,6 +23,7 @@ import ReaderConversationsIcon from 'calypso/reader/components/icons/conversatio
 import ReaderDiscoverIcon from 'calypso/reader/components/icons/discover-icon';
 import ReaderLikesIcon from 'calypso/reader/components/icons/likes-icon';
 import ReaderManageSubscriptionsIcon from 'calypso/reader/components/icons/manage-subscriptions-icon';
+import ReaderSavedIcon from 'calypso/reader/components/icons/saved-icon';
 import ReaderSearchIcon from 'calypso/reader/components/icons/search-icon';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { getTagStreamUrl } from 'calypso/reader/route';
@@ -47,30 +51,6 @@ import ReaderSidebarNudges from './reader-sidebar-nudges';
 import ReaderSidebarOrganizations from './reader-sidebar-organizations';
 import ReaderSidebarRecent from './reader-sidebar-recent';
 import ReaderSidebarTags from './reader-sidebar-tags';
-import 'calypso/my-sites/sidebar/style.scss'; // Copy styles from the My Sites sidebar.
-import './style.scss';
-
-//TODO: Remove this component once the new reader MSD is enabled for all users
-const DeprecatedReaderSidebarHeader = ( { onSearchClicked } ) => {
-	const translate = useTranslate();
-	return (
-		<div className="sidebar-header">
-			<div>
-				<h3>{ translate( 'Reader' ) }</h3>
-				<p>{ translate( 'Keep up with your interests.' ) }</p>
-			</div>
-			<Button
-				className="reader-search-icon"
-				variant="tertiary"
-				href="/reader/search"
-				onClick={ onSearchClicked }
-				aria-label={ translate( 'Search' ) }
-			>
-				<ReaderSearchIcon />
-			</Button>
-		</div>
-	);
-};
 
 const TrackingKeys = {
 	conversations: {
@@ -102,6 +82,11 @@ const TrackingKeys = {
 		action: 'clicked_reader_sidebar_manage_subscriptions',
 		gaEvent: 'Clicked Reader Sidebar Manage Subscriptions',
 		tracksEvent: 'calypso_reader_sidebar_manage_subscriptions_clicked',
+	},
+	saved: {
+		action: 'clicked_reader_sidebar_saved',
+		gaEvent: 'Clicked Reader Sidebar Saved',
+		tracksEvent: 'calypso_reader_sidebar_saved_clicked',
 	},
 };
 
@@ -163,8 +148,7 @@ export class ReaderSidebar extends Component {
 		} );
 	};
 
-	handleSidebarMenuClick = ( key ) => ( event, path ) => {
-		const handler = TrackingKeys[ key ];
+	handleSidebarMenuClick = ( handler ) => ( event, path ) => {
 		if ( handler ) {
 			recordAction( handler.action );
 			recordGaEvent( handler.gaEvent );
@@ -178,12 +162,7 @@ export class ReaderSidebar extends Component {
 
 		return (
 			<div className="sidebar-menu-container">
-				{ ! this.props.isMSDEnabled && (
-					<DeprecatedReaderSidebarHeader
-						onSearchClicked={ this.handleSidebarMenuClick( TrackingKeys.search ) }
-					/>
-				) }
-				{ this.props.isMSDEnabled && <AppTitle /> }
+				<AppTitle />
 				<SidebarMenu>
 					<QueryReaderLists />
 					<QueryReaderTeams />
@@ -225,6 +204,18 @@ export class ReaderSidebar extends Component {
 							'sidebar-activity__likes': true,
 						} ) }
 					/>
+
+					{ isEnabled( 'reader/saved-posts' ) && (
+						<SidebarItem
+							label={ translate( 'Saved' ) }
+							onNavigate={ this.handleSidebarMenuClick( TrackingKeys.saved ) }
+							customIcon={ <ReaderSavedIcon viewBox="0 0 24 24" /> }
+							link="/read/saved"
+							className={ ReaderSidebarHelper.itemLinkClass( '/read/saved', path, {
+								'sidebar-streams__saved': true,
+							} ) }
+						/>
+					) }
 
 					<SidebarItem
 						className={ ReaderSidebarHelper.itemLinkClass( '/reader/conversations', path, {
@@ -279,6 +270,13 @@ export class ReaderSidebar extends Component {
 					<SidebarSeparator />
 
 					<SidebarItem
+						label={ translate( 'New Subscription' ) }
+						onNavigate={ () => recordReaderTracksEvent( 'calypso_reader_sidebar_add_new_clicked' ) }
+						customIcon={ <Icon className="sidebar__menu-icon" icon={ plus } viewBox="2 0 24 24" /> }
+						link="/reader/new"
+					/>
+
+					<SidebarItem
 						className={ ReaderSidebarHelper.itemLinkClass( '/reader/subscriptions', path, {
 							'sidebar-streams__manage-subscriptions': true,
 						} ) }
@@ -306,8 +304,8 @@ export class ReaderSidebar extends Component {
 				onClick={ this.handleClick }
 				siteTitle={ i18n.translate( 'Reader' ) }
 			>
-				<ReaderSidebarNudges />
 				{ this.renderSidebarMenu() }
+				<ReaderSidebarNudges />
 			</GlobalSidebar>
 		);
 	}

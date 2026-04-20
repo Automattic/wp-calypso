@@ -5,7 +5,6 @@ import {
 import { useMemo } from '@wordpress/element';
 import useGridPlans from './use-grid-plans';
 import useRestructuredPlanFeaturesForComparisonGrid from './use-restructured-plan-features-for-comparison-grid';
-import { useSummerSpecialStatus } from './use-summer-special-status';
 import type { UseGridPlansParams } from './types';
 import type { GridPlan } from '../../types';
 
@@ -19,7 +18,6 @@ const useGridPlansForComparisonGrid = ( {
 	hiddenPlans,
 	intent,
 	isDisplayingPlansNeededForFeature,
-	isInSignup,
 	isSubdomainNotGenerated,
 	selectedFeature,
 	selectedPlan,
@@ -30,12 +28,12 @@ const useGridPlansForComparisonGrid = ( {
 	useFreeTrialPlanSlugs,
 	isDomainOnlySite,
 	reflectStorageSelectionInPlanPrices,
-	useLongSetFeatures,
-	useLongSetStackedFeatures,
-	useShortSetStackedFeatures,
-	useVar5Features,
+	useFocusedComparisonFeatures,
+	useVar41MorePremiumFeatures,
+	useVar42NoAiFeatures,
+	showPricingDifferentiationFeaturePills,
+	useFocusedNewCopyTaglines,
 	isExperimentVariant,
-	isVar1dVariant,
 }: UseGridPlansParams ): GridPlan[] | null => {
 	const gridPlans = useGridPlans( {
 		allFeaturesList,
@@ -54,11 +52,8 @@ const useGridPlansForComparisonGrid = ( {
 		useFreeTrialPlanSlugs,
 		isDomainOnlySite,
 		reflectStorageSelectionInPlanPrices,
-		isExperimentVariant,
+		useFocusedNewCopyTaglines,
 	} );
-
-	// Get summer special status
-	const isSummerSpecial = useSummerSpecialStatus( { isInSignup, siteId } );
 
 	const planFeaturesForComparisonGrid = useRestructuredPlanFeaturesForComparisonGrid( {
 		gridPlans: gridPlans || [],
@@ -67,13 +62,11 @@ const useGridPlansForComparisonGrid = ( {
 		intent,
 		selectedFeature,
 		showLegacyStorageFeature,
-		isSummerSpecial,
-		useLongSetFeatures,
-		useLongSetStackedFeatures,
-		useShortSetStackedFeatures,
-		useVar5Features,
+		useFocusedComparisonFeatures,
+		useVar41MorePremiumFeatures,
+		useVar42NoAiFeatures,
+		showPricingDifferentiationFeaturePills,
 		isExperimentVariant,
-		isVar1dVariant,
 	} );
 
 	return useMemo( () => {

@@ -1,9 +1,13 @@
-import { isJetpackBackupSlug, WPCOM_FEATURES_BACKUPS } from '@automattic/calypso-products';
+import {
+	isJetpackBackupSlug,
+	WPCOM_FEATURES_BACKUPS_SELF_SERVE,
+} from '@automattic/calypso-products';
 import Debug from 'debug';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import HasVaultPressSwitch from 'calypso/components/jetpack/has-vaultpress-switch';
 import IsCurrentUserAdminSwitch from 'calypso/components/jetpack/is-current-user-admin-switch';
 import IsJetpackDisconnectedSwitch from 'calypso/components/jetpack/is-jetpack-disconnected-switch';
+import NoFeatureSwitch from 'calypso/components/jetpack/no-feature-switch';
 import NotAuthorizedPage from 'calypso/components/jetpack/not-authorized-page';
 import { UpsellProductCardPlaceholder } from 'calypso/components/jetpack/upsell-product-card';
 import UpsellSwitch from 'calypso/components/jetpack/upsell-switch';
@@ -13,13 +17,13 @@ import { setFilter } from 'calypso/state/activity-log/actions';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
+import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import BackupContentsPage from './backup-contents-page';
 import { FileBrowserProvider } from './backup-contents-page/file-browser/file-browser-context';
 import BackupUpsell from './backup-upsell';
 import BackupCloneFlow from './clone-flow';
 import BackupsPage from './main';
-import MultisiteNoBackupPlanSwitch from './multisite-no-backup-plan-switch';
 import BackupRewindFlow, { RewindFlowPurpose } from './rewind-flow';
 import WPCOMBackupUpsell from './wpcom-backup-upsell';
 import WpcomBackupUpsellPlaceholder from './wpcom-backup-upsell-placeholder';
@@ -50,7 +54,7 @@ export function showUpsellIfNoBackup( context, next ) {
 				}
 				display={ context.primary }
 				productSlugTest={ ( slug ) =>
-					isJetpackBackupSlug( slug ) || slug === WPCOM_FEATURES_BACKUPS
+					isJetpackBackupSlug( slug ) || slug === WPCOM_FEATURES_BACKUPS_SELF_SERVE
 				}
 			>
 				{ isJetpackCloud() && <SidebarNavigation /> }
@@ -106,18 +110,30 @@ export function showUnavailableForVaultPressSites( context, next ) {
 }
 
 export function showUnavailableForMultisites( context, next ) {
-	debug( 'controller: showUnavailableForMultisites', context.params );
+	const state = context.store.getState();
+	const siteId = getSelectedSiteId( state );
+	if ( isJetpackSiteMultiSite( state, siteId ) ) {
+		context.primary = isJetpackCloud() ? (
+			<BackupUpsell reason="multisite_not_supported" />
+		) : (
+			<WPCOMBackupUpsell reason="multisite_not_supported" />
+		);
+	}
 
-	// Only show "Multisite not supported" card if the multisite does not already own a Backup subscription.
-	// https://href.li/?https://wp.me/pbuNQi-1jg
-	const message = isJetpackCloud() ? (
-		<BackupUpsell reason="multisite_not_supported" />
-	) : (
-		<WPCOMBackupUpsell reason="multisite_not_supported" />
-	);
+	next();
+}
+
+export function showUpsellIfNoBackupRestoreFeature( context, next ) {
+	debug( 'controller: showUpsellIfNoBackupRestoreFeature', context.params );
+
+	const UpsellComponent = isJetpackCloud() ? BackupUpsell : WPCOMBackupUpsell;
 
 	context.primary = (
-		<MultisiteNoBackupPlanSwitch trueComponent={ message } falseComponent={ context.primary } />
+		<NoFeatureSwitch
+			feature={ WPCOM_FEATURES_BACKUPS_SELF_SERVE }
+			trueComponent={ <UpsellComponent /> }
+			falseComponent={ context.primary }
+		/>
 	);
 
 	next();

@@ -25,12 +25,11 @@ import {
 	getDomainNameValidationErrorMessage,
 } from 'calypso/components/domains/use-my-domain/utilities';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { getDashboardFromString } from 'calypso/dashboard/utils/link';
+import { getDashboardFromQuery } from 'calypso/dashboard/app/routing';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getWpcomRegistrationStatus } from 'calypso/lib/domains/get-wpcom-registration-status';
 import wpcom from 'calypso/lib/wp';
 import { fetchSiteDomains } from 'calypso/my-sites/domains/domain-management/domains-table-fetch-functions';
-import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { isUpdatingPrimaryDomain } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import UseMyDomainInput from './domain-input';
@@ -374,7 +373,7 @@ function UseMyDomain( props ) {
 	const headerText = useMemo( () => {
 		switch ( mode ) {
 			case inputMode.domainInput:
-				return __( 'Use a domain I own' );
+				return __( 'Use a domain name I own' );
 			case inputMode.transferDomain:
 				return createInterpolateElement(
 					sprintf(
@@ -393,7 +392,7 @@ function UseMyDomain( props ) {
 				return createInterpolateElement(
 					sprintf(
 						/* translators: %(domainName)s - the name of the domain the user will add to their site */
-						__( 'Use a domain I own: <span>%(domainName)s</span>' ),
+						__( 'Use a domain name I own: <span>%(domainName)s</span>' ),
 						{
 							domainName,
 						}
@@ -503,8 +502,7 @@ UseMyDomain.propTypes = {
 };
 
 export default connect( ( state ) => ( {
-	dashboard:
-		getDashboardFromString( getCurrentQueryArguments( state )?.dashboard?.toString() ) ?? undefined,
+	dashboard: getDashboardFromQuery(),
 	selectedSite: getSelectedSite( state ),
 	updatingPrimaryDomain: isUpdatingPrimaryDomain( state, getSelectedSite( state )?.ID ),
 } ) )( UseMyDomain );

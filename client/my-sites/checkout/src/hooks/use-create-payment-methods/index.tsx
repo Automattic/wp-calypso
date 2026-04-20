@@ -14,6 +14,7 @@ import {
 	createAlipayMethod,
 	createAlipayPaymentMethodStore,
 	createRazorpayMethod,
+	createStripeUpiMethod,
 	isValueTruthy,
 	translateCheckoutPaymentMethodToWpcomPaymentMethod,
 	type StoredPaymentMethod,
@@ -34,9 +35,13 @@ import {
 } from '../../payment-methods/netbanking';
 import { createPayPalMethod, createPayPalStore } from '../../payment-methods/paypal';
 import { createPayPal } from '../../payment-methods/paypal-js';
-import { createPixPaymentMethod } from '../../payment-methods/pix';
+import {
+	createPixPaymentMethod,
+	createPixAutomaticoPaymentMethod,
+} from '../../payment-methods/pix';
 import { createWeChatMethod, createWeChatPaymentMethodStore } from '../../payment-methods/wechat';
 import useCreateExistingCards from './use-create-existing-cards';
+import useCreateExistingPayPalPPCP from './use-create-existing-paypal-ppcp';
 import type { RazorpayConfiguration, RazorpayLoadingError } from '@automattic/calypso-razorpay';
 import type { StripeConfiguration, StripeLoadingError } from '@automattic/calypso-stripe';
 import type { PaymentMethod } from '@automattic/composite-checkout';
@@ -47,6 +52,7 @@ import type { ReactNode } from 'react';
 const debug = debugFactory( 'calypso:use-create-payment-methods' );
 
 export { useCreateExistingCards };
+export { default as useCreateExistingPayPalPPCP } from './use-create-existing-paypal-ppcp';
 
 export function useCreatePayPalExpress( {
 	labelText,
@@ -63,8 +69,15 @@ export function useCreatePayPalExpress( {
 	return paypalMethod;
 }
 
-export function useCreatePayPalPPCP(): PaymentMethod | null {
-	return useMemo( () => createPayPal(), [] );
+export function useCreatePayPalPPCP( {
+	hasExistingPayPalPPCPMethods,
+}: {
+	hasExistingPayPalPPCPMethods?: boolean;
+} = {} ): PaymentMethod | null {
+	return useMemo(
+		() => createPayPal( { hasExistingPayPalPPCPMethods } ),
+		[ hasExistingPayPalPPCPMethods ]
+	);
 }
 
 export function useCreateCreditCard( {
@@ -97,7 +110,6 @@ export function useCreateCreditCard( {
 			} ),
 		[ initialUseForAllSubscriptions, allowUseForAllSubscriptions ]
 	);
-	const shouldUseVgs = isEnabled( 'checkout/vgs-ebanx' ) && shouldUseEbanx;
 
 	const stripeMethod = useMemo(
 		() =>
@@ -106,7 +118,6 @@ export function useCreateCreditCard( {
 						currency,
 						store: stripePaymentMethodStore,
 						shouldUseEbanx,
-						shouldUseVgs,
 						shouldShowTaxFields,
 						submitButtonContent,
 						allowUseForAllSubscriptions,
@@ -118,7 +129,6 @@ export function useCreateCreditCard( {
 			shouldLoadStripeMethod,
 			stripePaymentMethodStore,
 			shouldUseEbanx,
-			shouldUseVgs,
 			shouldShowTaxFields,
 			submitButtonContent,
 			allowUseForAllSubscriptions,
@@ -129,15 +139,22 @@ export function useCreateCreditCard( {
 }
 
 function useCreatePix(): PaymentMethod | null {
-	const isPixEnabled = isEnabled( 'checkout/ebanx-pix' );
 	return useMemo(
 		() =>
-			isPixEnabled
-				? createPixPaymentMethod( {
-						submitButtonContent: <CheckoutSubmitButtonContent />,
-				  } )
-				: null,
-		[ isPixEnabled ]
+			createPixPaymentMethod( {
+				submitButtonContent: <CheckoutSubmitButtonContent />,
+			} ),
+		[]
+	);
+}
+
+function useCreatePixAutomatico(): PaymentMethod | null {
+	return useMemo(
+		() =>
+			createPixAutomaticoPaymentMethod( {
+				submitButtonContent: <CheckoutSubmitButtonContent />,
+			} ),
+		[]
 	);
 }
 
@@ -351,6 +368,26 @@ function useCreateGooglePay( {
 	}, [ stripe, stripeConfiguration, isStripeReady, cartKey ] );
 }
 
+function useCreateStripeUpi( {
+	isStripeLoading,
+	stripeLoadingError,
+}: {
+	isStripeLoading: boolean;
+	stripeLoadingError: StripeLoadingError;
+} ): PaymentMethod | null {
+	const shouldLoad =
+		! isStripeLoading && ! stripeLoadingError && isEnabled( 'checkout/stripe-upi' );
+	return useMemo(
+		() =>
+			shouldLoad
+				? createStripeUpiMethod( {
+						submitButtonContent: <CheckoutSubmitButtonContent />,
+				  } )
+				: null,
+		[ shouldLoad ]
+	);
+}
+
 function useCreateRazorpay( {
 	isRazorpayLoading,
 	razorpayLoadingError,
@@ -422,8 +459,6 @@ export default function useCreatePaymentMethods( {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const { currency } = responseCart;
-	const paypalExpressMethod = useCreatePayPalExpress( {} );
-	const paypalPPCPMethod = useCreatePayPalPPCP();
 
 	const idealMethod = useCreateIdeal( {
 		isStripeLoading,
@@ -431,7 +466,7 @@ export default function useCreatePaymentMethods( {
 	} );
 
 	const pixMethod = useCreatePix();
-
+	const pixAutomaticoMethod = useCreatePixAutomatico();
 	const alipayMethod = useCreateAlipay( {
 		isStripeLoading,
 		stripeLoadingError,
@@ -471,7 +506,17 @@ export default function useCreatePaymentMethods( {
 		submitButtonContent: <CheckoutSubmitButtonContent />,
 	} );
 
+	const existingPayPalPPCPMethods = useCreateExistingPayPalPPCP( {
+		storedPaymentMethods: storedCards,
+		submitButtonContent: <CheckoutSubmitButtonContent />,
+	} );
+
 	const hasExistingCardMethods = existingCardMethods && existingCardMethods.length > 0;
+	const hasExistingPayPalPPCPMethods =
+		existingPayPalPPCPMethods && existingPayPalPPCPMethods.length > 0;
+
+	const paypalExpressMethod = useCreatePayPalExpress( {} );
+	const paypalPPCPMethod = useCreatePayPalPPCP( { hasExistingPayPalPPCPMethods } );
 
 	const shouldUseEbanx = responseCart.allowed_payment_methods.includes(
 		translateCheckoutPaymentMethodToWpcomPaymentMethod( 'ebanx' ) ?? ''
@@ -510,6 +555,11 @@ export default function useCreatePaymentMethods( {
 		cartKey,
 	} );
 
+	const stripeUpiMethod = useCreateStripeUpi( {
+		isStripeLoading,
+		stripeLoadingError,
+	} );
+
 	const razorpayMethod = useCreateRazorpay( {
 		isRazorpayLoading,
 		razorpayLoadingError,
@@ -524,6 +574,7 @@ export default function useCreatePaymentMethods( {
 	// `filterAppropriatePaymentMethods()`.
 	let paymentMethods = [
 		...existingCardMethods,
+		...existingPayPalPPCPMethods,
 		applePayMethod,
 		googlePayMethod,
 		stripeMethod,
@@ -534,12 +585,14 @@ export default function useCreatePaymentMethods( {
 		sofortMethod,
 		netbankingMethod,
 		pixMethod,
+		pixAutomaticoMethod,
 		alipayMethod,
 		p24Method,
 		epsMethod,
 		wechatMethod,
 		bancontactMethod,
 		razorpayMethod,
+		stripeUpiMethod,
 	].filter( isValueTruthy );
 
 	// In Germany, PayPal is the preferred option, so we display it before
@@ -547,6 +600,7 @@ export default function useCreatePaymentMethods( {
 	if ( currentTaxCountryCode?.toUpperCase() === 'DE' ) {
 		paymentMethods = [
 			...existingCardMethods,
+			...existingPayPalPPCPMethods,
 			applePayMethod,
 			googlePayMethod,
 			paypalExpressMethod,
@@ -557,12 +611,14 @@ export default function useCreatePaymentMethods( {
 			sofortMethod,
 			netbankingMethod,
 			pixMethod,
+			pixAutomaticoMethod,
 			alipayMethod,
 			p24Method,
 			epsMethod,
 			wechatMethod,
 			bancontactMethod,
 			razorpayMethod,
+			stripeUpiMethod,
 		].filter( isValueTruthy );
 	}
 

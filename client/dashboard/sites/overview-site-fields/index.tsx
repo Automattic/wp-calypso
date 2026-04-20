@@ -1,14 +1,16 @@
 import { HostingFeatures } from '@automattic/api-core';
 import { siteAgencyBlogQuery } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { __experimentalText as Text, ExternalLink } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { MetadataList, MetadataItem } from '../../components/metadata-list';
 import { hasHostingFeature } from '../../utils/site-features';
 import { getSiteProviderName, DEFAULT_PROVIDER_NAME } from '../../utils/site-provider';
 import { isSelfHostedJetpackConnected, isCommerceGarden } from '../../utils/site-types';
-import { getSiteDisplayUrl, getSiteFormattedUrl } from '../../utils/site-url';
+import { getSiteDisplayUrl } from '../../utils/site-url';
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
 import { PHPVersion } from '../site-fields';
 import type { Site } from '@automattic/api-core';
@@ -44,34 +46,42 @@ const HostingProvider = ( { site }: { site: Site } ) => {
 };
 
 const SiteOverviewFields = ( { site }: { site: Site } ) => {
-	const url = getSiteFormattedUrl( site );
+	const url = site.URL;
 	const wpVersion = getFormattedWordPressVersion( site );
 	const hasPHPFeature = hasHostingFeature( site, HostingFeatures.PHP );
 	const hasSiteRedirect = site.options?.is_redirect;
 
-	const fields: React.ReactElement[] = [
-		<MetadataItem key="url">
-			<ExternalLink href={ url } style={ { overflowWrap: 'anywhere' } }>
-				{ getSiteDisplayUrl( site ) }
-			</ExternalLink>
-		</MetadataItem>,
-	];
+	const fields: React.ReactElement[] = [];
 
 	if ( hasSiteRedirect ) {
 		fields.push(
 			<MetadataItem key="redirect">
 				<Text variant="muted">
-					{ sprintf(
-						/* translators: %s: the URL this site is redirected to, e.g.: http://example.com */
-						__( 'Redirects to %s' ),
-						site.URL
+					{ createInterpolateElement(
+						/* translators: link: the URL this site is redirected to, e.g.: http://example.com */
+						__( 'Redirects to <link />' ),
+						{
+							link: (
+								<ExternalLink href={ site.URL } style={ { overflowWrap: 'anywhere' } }>
+									{ getSiteDisplayUrl( site ) }
+								</ExternalLink>
+							),
+						}
 					) }
 				</Text>
 			</MetadataItem>
 		);
+	} else if ( ! isEnabled( 'dashboard/omnibar' ) ) {
+		fields.push(
+			<MetadataItem key="url">
+				<ExternalLink href={ url } style={ { overflowWrap: 'anywhere' } }>
+					{ getSiteDisplayUrl( site ) }
+				</ExternalLink>
+			</MetadataItem>
+		);
 	}
 
-	if ( wpVersion ) {
+	if ( wpVersion && ! site.__inaccessible_jetpack_error ) {
 		fields.push(
 			<MetadataItem key="wp-version" title={ __( 'WordPress' ) }>
 				{ isSelfHostedJetpackConnected( site ) ? (
@@ -83,7 +93,7 @@ const SiteOverviewFields = ( { site }: { site: Site } ) => {
 		);
 	}
 
-	if ( hasPHPFeature ) {
+	if ( hasPHPFeature && ! site.__inaccessible_jetpack_error ) {
 		fields.push(
 			<MetadataItem key="php" title={ __( 'PHP' ) }>
 				<Link to={ `/sites/${ site.slug }/settings/php` }>

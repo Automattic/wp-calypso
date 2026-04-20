@@ -27,23 +27,22 @@
 	],
 	"oauth_client_id": 95932,
 	"features": {
-		"a4a-help-center": true,
 		"ad-tracking": true,
 		"a8c-for-agencies": true,
 		"cookie-banner": true,
 		"oauth": true,
 		"a4a-partner-directory": false,
-		"a4a-dev-sites": true,
+		"a4a-partner-directory-lead-matching": false,
 		"a4a-pressable-referrals": true,
 		"a4a-updated-add-new-site": true,
 		"a4a-signup-v2": true,
 		"a4a-signup-v2-via-email": false,
 		"a4a-unified-onboarding-tour": true,
 		"a4a-bd-checkout": false,
-		"a4a-vip-partner-opportunity-referrals": true,
 		"jetpack/crm-downloads": true,
 		"upgrades/redirect-payments": true,
-		"a4a-bd-term-pricing": true
+		"a4a-bd-term-pricing": true,
+		"checkout/stripe-upi": true
 	},
 	"enable_all_sections": false,
 	"sections": {
@@ -67,7 +66,8 @@
 		"a8c-for-agencies-agency-tier": true,
 		"a8c-for-agencies-woopayments": true,
 		"a8c-for-agencies-express-checkout": false,
-		"a8c-for-agencies-learn": false,
+		"a8c-for-agencies-learn": true,
+		"a8c-for-agencies-dev-tools": true,
 		"a8c-for-agencies-exclusive-offers": true
 	},
 	"site_filter": [],

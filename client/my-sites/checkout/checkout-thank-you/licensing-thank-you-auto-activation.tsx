@@ -3,7 +3,7 @@ import { Button, FormInputValidation, Gridicon, SelectDropdown } from '@automatt
 import clsx from 'clsx';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { FC, useState, useCallback, useEffect, useMemo } from 'react';
-import footerCardImg from 'calypso/assets/images/jetpack/licensing-card.png';
+import footerCardImg from 'calypso/assets/images/jetpack/licensing-card.webp';
 import QueryProducts from 'calypso/components/data/query-products-list';
 import LicensingActivation from 'calypso/components/jetpack/licensing-activation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';

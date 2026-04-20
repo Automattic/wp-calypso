@@ -63,6 +63,7 @@ export const PLAN_PREMIUM_MONTHLY = 'value_bundle_monthly';
 export const PLAN_PREMIUM = 'value_bundle';
 export const PLAN_PREMIUM_2_YEARS = 'value_bundle-2y';
 export const PLAN_PREMIUM_3_YEARS = 'value_bundle-3y';
+export const PLAN_PERSONAL_TRIAL_MONTHLY = 'wp-personal-bundle-free-trial-monthly';
 export const PLAN_PERSONAL_MONTHLY = 'personal-bundle-monthly';
 export const PLAN_PERSONAL = 'personal-bundle';
 export const PLAN_PERSONAL_2_YEARS = 'personal-bundle-2y';
@@ -113,6 +114,7 @@ export const WPCOM_PLANS = < const >[
 	PLAN_PREMIUM,
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PREMIUM_3_YEARS,
+	PLAN_PERSONAL_TRIAL_MONTHLY,
 	PLAN_PERSONAL_MONTHLY,
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
@@ -157,6 +159,7 @@ export const WPCOM_MONTHLY_PLANS = < const >[
 	PLAN_PREMIUM_MONTHLY,
 	PLAN_PERSONAL_MONTHLY,
 	PLAN_ECOMMERCE_MONTHLY,
+	PLAN_PERSONAL_TRIAL_MONTHLY,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	PLAN_MIGRATION_TRIAL_MONTHLY,
 	PLAN_HOSTING_TRIAL_MONTHLY,

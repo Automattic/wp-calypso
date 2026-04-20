@@ -1,8 +1,6 @@
-import { removeLocaleFromPathLocaleInFront } from '@automattic/i18n-utils';
-
 type Route = { path: string; requiresAuth?: boolean };
-const DISCOVER_PREFIX = 'discover';
-const DEFAULT_TAB = 'recommended';
+export const DISCOVER_PREFIX = 'discover';
+export const DEFAULT_DISCOVER_TAB = 'recommended';
 
 /**
  * The routes for the discover page.
@@ -12,7 +10,6 @@ const DEFAULT_TAB = 'recommended';
 const ROUTES: Route[] = [
 	{ path: `/${ DISCOVER_PREFIX }` },
 	{ path: `/${ DISCOVER_PREFIX }/recommended` },
-	{ path: `/${ DISCOVER_PREFIX }/firstposts` },
 	{ path: `/${ DISCOVER_PREFIX }/tags` },
 	{ path: `/${ DISCOVER_PREFIX }/latest` },
 	{ path: `/${ DISCOVER_PREFIX }/reddit`, requiresAuth: true },
@@ -44,19 +41,4 @@ export const getPrivateRoutes = ( anyLangParam: string, routes: Route[] = ROUTES
 
 export const getDiscoverRoutes = ( langParam: string | undefined ) => {
 	return getLocalizedRoutes( langParam, ROUTES );
-};
-
-export const getCurrentTab = ( fullPath: string, defaultTab: string = DEFAULT_TAB ) => {
-	const pathWithoutQuery = fullPath.split( '?' )[ 0 ];
-	const cleanedPath = removeLocaleFromPathLocaleInFront( pathWithoutQuery );
-	const path = cleanedPath
-		.split( `/${ DISCOVER_PREFIX }` )
-		.filter( ( path ) => path !== '' )
-		?.at( 0 );
-
-	if ( ! path ) {
-		return defaultTab;
-	}
-
-	return path.replace( /^\//, '' );
 };

@@ -1,7 +1,7 @@
 @import "calypso/assets/stylesheets/shared/mixins/breakpoints";
 @import "@automattic/typography/styles/variables";
 
-.section-nav-tab .count {
+.section-nav-tab .a8c-count {
 	margin-left: 8px;
 }
 
@@ -65,7 +65,7 @@
 		background-color: var(--color-primary);
 
 		@include breakpoint-deprecated( "<480px" ) {
-			.count {
+			.a8c-count {
 				color: var(--color-text-inverted);
 				border-color: var(--color-border-inverted);
 			}
@@ -181,7 +181,7 @@
 	}
 }
 .section-nav-updated.section-nav {
-	.is-selected.section-nav-tab .section-nav-tab__link .count {
+	.is-selected.section-nav-tab .section-nav-tab__link .a8c-count {
 		color: var(--color-text);
 	}
 
@@ -207,7 +207,7 @@
 	}
 
 	.section-nav__mobile-header {
-		.count {
+		.a8c-count {
 			margin-inline-start: 8px;
 		}
 		.gridicon {
@@ -215,7 +215,7 @@
 		}
 	}
 
-	.count {
+	.a8c-count {
 		background: var(--studio-gray-5);
 		border-radius: 3px;
 		border: none;
@@ -232,11 +232,11 @@
 		.section-nav-tabs.is-dropdown {
 			margin: 8px 0;
 			z-index: 99;
-			.select-dropdown__header .count {
+			.select-dropdown__header .a8c-count {
 				top: unset;
 				margin-inline-end: 20px;
 			}
-			.select-dropdown__item-count .count {
+			.select-dropdown__item-count .a8c-count {
 				position: static;
 				color: var(--color-primary);
 			}

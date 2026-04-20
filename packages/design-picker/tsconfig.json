@@ -10,6 +10,7 @@
 	"exclude": [ "**/__tests__/*", "**/__mocks__/*", "**/*.stories.tsx" ],
 	"references": [
 		{ "path": "../calypso-config" },
+		{ "path": "../design-types" },
 		{ "path": "../global-styles" },
 		{ "path": "../js-utils" },
 		{ "path": "../onboarding" },

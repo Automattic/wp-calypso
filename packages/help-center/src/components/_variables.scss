@@ -1,3 +1,15 @@
+@import "@automattic/typography/styles/variables";
+
+/**
+ * Typography overrides: em-based so sizes are independent of host page html font-size.
+ * Container sets font-size: 16px; same variable names as base typography.
+ */
+$font-body-extra-small: 0.75em;
+$font-body-small: 0.875em;
+$font-body: 1em;
+$font-title-small: 1.25em;
+$root-font-size: 1em;
+
 $head-foot-height: 56px;
 $help-center-z-index: 500000;
 $help-center-blue: #3858e9;

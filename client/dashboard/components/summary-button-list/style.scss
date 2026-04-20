@@ -20,7 +20,8 @@
 		}
 	}
 
-	&.has-density-medium {
+	&.has-density-medium,
+	&.has-density-medium-low {
 		.dashboard-summary-button-list__children-list-wrapper {
 			// TODO: remove once the `CardBody` natively supports having no padding.
 			padding: 0;

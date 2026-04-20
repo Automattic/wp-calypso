@@ -27,6 +27,7 @@ import usePostsQueryPaged, {
 } from 'calypso/data/promote-post/use-promote-post-posts-query-paged';
 import { useJetpackBlazeVersionCheck } from 'calypso/lib/promote-post';
 import CampaignsList from 'calypso/my-sites/promote-post-i2/components/campaigns-list';
+import CreditsNotice from 'calypso/my-sites/promote-post-i2/components/credits-notice';
 import PaymentLinks from 'calypso/my-sites/promote-post-i2/components/payment-links';
 import PaymentsList from 'calypso/my-sites/promote-post-i2/components/payments-list';
 import { PaymentReceipt } from 'calypso/my-sites/promote-post-i2/components/payments-receipt';
@@ -38,7 +39,10 @@ import {
 	SORT_OPTIONS_DEFAULT,
 	SearchOptions,
 } from 'calypso/my-sites/promote-post-i2/components/search-bar';
-import { getPagedBlazeSearchData } from 'calypso/my-sites/promote-post-i2/utils';
+import {
+	getAdvertisingDashboardPath,
+	getPagedBlazeSearchData,
+} from 'calypso/my-sites/promote-post-i2/utils';
 import { useSelector } from 'calypso/state';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -46,7 +50,6 @@ import BlazePageViewTracker from './components/blaze-page-view-tracker';
 import CampaignsTotalStats from './components/campaigns-total-stats';
 import MainWrapper from './components/main-wrapper';
 import useOpenPromoteWidget from './hooks/use-open-promote-widget';
-import { getAdvertisingDashboardPath } from './utils';
 
 export const TAB_OPTIONS = [ 'posts', 'campaigns', 'credits', 'payments' ] as const;
 const isWooStore = config.isEnabled( 'is_running_in_woo_site' );
@@ -296,12 +299,17 @@ export default function PromotedPosts( { tab, receiptId }: Props ) {
 				// TODO: Uncomment when DebtNotifier is implemented
 				/* <DebtNotifier /> */
 			 }
+
 			<CampaignsTotalStats
 				totalImpressions={ campaignsStats?.total_impressions }
 				totalClicks={ campaignsStats?.total_clicks }
 			/>
 
 			<PromotePostTabBar tabs={ tabs } selectedTab={ selectedTab } />
+
+			<div className="promote-post-i2__aux-wrapper promote-post-credits__notice-container">
+				<CreditsNotice />
+			</div>
 
 			{ ! isLoadingBillingSummary && paymentBlocked && (
 				<Notice

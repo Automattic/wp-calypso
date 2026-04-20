@@ -8,8 +8,8 @@ import {
 	PLAN_CATEGORY_SIGNATURE,
 	PLAN_CATEGORY_SIGNATURE_HIGH,
 } from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/constants';
-import ProfileAvatar1 from 'calypso/assets/images/a8c-for-agencies/hosting/premier-testimonial-1.png';
-import ProfileAvatar2 from 'calypso/assets/images/a8c-for-agencies/hosting/premier-testimonial-2.png';
+import ProfileAvatar1 from 'calypso/assets/images/a8c-for-agencies/hosting/premier-testimonial-1.webp';
+import ProfileAvatar2 from 'calypso/assets/images/a8c-for-agencies/hosting/premier-testimonial-2.webp';
 import {
 	LicenseFilter,
 	LicenseSortDirection,
@@ -20,6 +20,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import HostingAdditionalFeaturesSection from '../../../common/hosting-additional-features-section';
 import HostingTestimonialsSection from '../../../common/hosting-testimonials-section';
 import { MarketplaceTypeContext, TermPricingContext } from '../../../context';
+import { isPressableAddonProduct } from '../../../lib/hosting';
 import useGetPressablePlanByProductId from '../../../pressable-overview/hooks/use-get-pressable-plan-by-product-id';
 import getPressablePlan from '../../../pressable-overview/lib/get-pressable-plan';
 import usePressableOwnershipType from '../../hooks/use-pressable-ownership-type';
@@ -61,9 +62,12 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 
 	const licenses = data?.items;
 
-	// Find the first occurrence for of Pressable license with its referral as null
+	// Find the first non-referral Pressable plan license (exclude Pressable add-ons).
 	const agencyPressableLicense = licenses?.find(
-		( license ) => license.licenseKey.startsWith( 'pressable' ) && ! license.referral
+		( license ) =>
+			license.licenseKey.startsWith( 'pressable' ) &&
+			! isPressableAddonProduct( license.licenseKey ) &&
+			! license.referral
 	);
 
 	const agencyPressablePlan = useGetPressablePlanByProductId( {

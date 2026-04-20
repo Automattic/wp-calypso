@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { isEnabled } from '@automattic/calypso-config';
 import { getPlan, PLAN_PERSONAL, PLAN_BUSINESS } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { HelpCenter } from '@automattic/data-stores';
@@ -8,12 +9,12 @@ import { Button } from '@wordpress/components';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import imgBuiltBy from 'calypso/assets/images/cancellation/built-by.png';
-import imgBusinessPlan from 'calypso/assets/images/cancellation/business-plan.png';
-import imgFreeMonth from 'calypso/assets/images/cancellation/free-month.png';
-import imgLiveChat from 'calypso/assets/images/cancellation/live-chat.png';
-import imgMonthlyPayments from 'calypso/assets/images/cancellation/monthly-payments.png';
-import imgSwitchPlan from 'calypso/assets/images/cancellation/switch-plan.png';
+import imgBuiltBy from 'calypso/assets/images/cancellation/built-by.webp';
+import imgBusinessPlan from 'calypso/assets/images/cancellation/business-plan.webp';
+import imgFreeMonth from 'calypso/assets/images/cancellation/free-month.webp';
+import imgLiveChat from 'calypso/assets/images/cancellation/live-chat.webp';
+import imgMonthlyPayments from 'calypso/assets/images/cancellation/monthly-payments.webp';
+import imgSwitchPlan from 'calypso/assets/images/cancellation/switch-plan.webp';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
@@ -31,7 +32,7 @@ type UpsellProps = {
 	acceptButtonUrl?: string;
 	declineButtonText?: TranslateResult;
 	onAccept?: () => void;
-	onDecline: () => void;
+	onDecline?: () => void;
 };
 
 function Upsell( { image, ...props }: UpsellProps ) {
@@ -42,9 +43,11 @@ function Upsell( { image, ...props }: UpsellProps ) {
 	return (
 		<div className="cancel-purchase-form__upsell">
 			<div className="cancel-purchase-form__upsell-content">
-				<div className="cancel-purchase-form__upsell-subheader">
-					{ translate( 'Here is an idea' ) }
-				</div>
+				{ ! isEnabled( 'cancel-flow/solutions-cards-upsell' ) && (
+					<div className="cancel-purchase-form__upsell-subheader">
+						{ translate( 'Here is an idea' ) }
+					</div>
+				) }
 				<FormattedHeader brandFont headerText={ props.title } />
 				<div className="cancel-purchase-form__upsell-text">{ props.children }</div>
 				<div className="cancel-purchase-form__upsell-buttons">
@@ -98,15 +101,15 @@ type StepProps = {
 	upsell: UpsellType;
 	site: SiteDetails;
 	purchase: Purchase;
-	refundAmount: string;
-	downgradePlanPrice: number | null;
-	closeDialog: () => void;
-	cancelBundledDomain: boolean;
-	includedDomainPurchase: object;
-	onDeclineUpsell: () => void;
+	refundAmount?: string;
+	downgradePlanPrice?: number | null;
+	closeDialog?: () => void;
+	cancelBundledDomain?: boolean;
+	includedDomainPurchase?: object;
+	onDeclineUpsell?: () => void;
 	onClickFreeMonthOffer?: () => void;
 	onClickDowngrade?: ( upsell: string ) => void;
-	cancellationReason: string;
+	cancellationReason?: string;
 };
 
 export default function UpsellStep( { upsell, site, purchase, ...props }: StepProps ) {
@@ -153,7 +156,7 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 							siteId: site.ID,
 						} );
 
-						props.closeDialog();
+						props.closeDialog?.();
 					} }
 					onDecline={ props.onDeclineUpsell }
 					image={ imgLiveChat }
@@ -263,7 +266,10 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 									'You can downgrade immediately and get a partial refund of %(refundAmount)s.',
 									{
 										args: {
-											refundAmount: formatCurrency( parseFloat( refundAmount ), currencyCode ),
+											refundAmount: formatCurrency(
+												parseFloat( refundAmount ?? '0' ),
+												currencyCode
+											),
 										},
 									}
 							  )

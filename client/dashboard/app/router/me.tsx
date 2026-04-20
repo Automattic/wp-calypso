@@ -5,6 +5,7 @@ import {
 	allSitesQuery,
 	connectedApplicationsQuery,
 	countryListQuery,
+	domainQuery,
 	geoLocationQuery,
 	isAutomatticianQuery,
 	monetizeSubscriptionsQuery,
@@ -31,17 +32,17 @@ import {
 	userTransferredPurchasesQuery,
 } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
-import { createRoute, createLazyRoute, redirect } from '@tanstack/react-router';
+import { createRoute, createLazyRoute } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { getMonetizeSubscriptionsPageTitle } from '../../me/billing-monetize-subscriptions/title';
 import { reauthRequiredLink } from '../../utils/link';
 import {
-	isTemporarySitePurchase,
 	getTitleForDisplay,
 	getPurchaseCancellationFlowType,
 	isDotcomPlan,
 	CANCEL_FLOW_TYPE,
 } from '../../utils/purchase';
+import { dashboardRedirect } from './redirect';
 import { rootRoute } from './root';
 import type { AppConfig } from '../context';
 import type { Purchase } from '@automattic/api-core';
@@ -79,20 +80,20 @@ export const meIndexRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: '/',
 	beforeLoad: () => {
-		throw redirect( { to: '/me/profile' } );
+		throw dashboardRedirect( { to: '/me/account' } );
 	},
 } );
 
-export const profileRoute = createRoute( {
+export const accountRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Profile' ),
+				title: isEnabled( 'dashboard/omnibar' ) ? __( 'Account' ) : __( 'Profile' ),
 			},
 		],
 	} ),
 	getParentRoute: () => meRoute,
-	path: 'profile',
+	path: 'account',
 	loader: async () => {
 		await Promise.all( [
 			queryClient.ensureQueryData( userSettingsQuery() ),
@@ -100,8 +101,8 @@ export const profileRoute = createRoute( {
 		] );
 	},
 } ).lazy( () =>
-	import( '../../me/profile' ).then( ( d ) =>
-		createLazyRoute( 'profile' )( {
+	import( '../../me/account' ).then( ( d ) =>
+		createLazyRoute( 'account' )( {
 			component: d.default,
 		} )
 	)
@@ -117,6 +118,11 @@ export const preferencesRoute = createRoute( {
 	} ),
 	getParentRoute: () => meRoute,
 	path: 'preferences',
+} );
+
+export const preferencesIndexRoute = createRoute( {
+	getParentRoute: () => preferencesRoute,
+	path: '/',
 	loader: async () => {
 		await Promise.all( [
 			queryClient.ensureQueryData( userSettingsQuery() ),
@@ -193,6 +199,7 @@ export const receiptRoute = createRoute( {
 		await Promise.all( [
 			queryClient.ensureQueryData( receiptQuery( parseInt( receiptId ) ) ),
 			queryClient.ensureQueryData( userTaxDetailsQuery() ),
+			queryClient.ensureQueryData( countryListQuery() ),
 		] );
 	},
 	path: '$receiptId',
@@ -256,6 +263,10 @@ export const purchaseSettingsRoute = createRoute( {
 		};
 	},
 	path: '$purchaseId',
+	validateSearch: ( search ): { refunded?: true } => {
+		const isRefunded = search.refunded === true || search.refunded === 'true';
+		return isRefunded ? { refunded: true } : {};
+	},
 } );
 
 export const purchaseSettingsIndexRoute = createRoute( {
@@ -265,7 +276,7 @@ export const purchaseSettingsIndexRoute = createRoute( {
 		const purchase = await queryClient.ensureQueryData( purchaseQuery( parseInt( purchaseId ) ) );
 
 		// Preload site and storage data for wpcom plans
-		if ( purchase.site_slug && purchase.blog_id && ! isTemporarySitePurchase( purchase ) ) {
+		if ( purchase.site_slug && purchase.blog_id && ! purchase.is_attached_to_holding_site ) {
 			await Promise.all( [
 				queryClient.ensureQueryData( siteBySlugQuery( purchase.site_slug ) ).catch( () => {
 					// Some sites cannot be reached; like disconnected Jetpack sites. We can safely ignore those.
@@ -274,6 +285,11 @@ export const purchaseSettingsIndexRoute = createRoute( {
 					? queryClient.ensureQueryData( siteMediaStorageQuery( purchase.blog_id ) )
 					: undefined,
 			] );
+		}
+
+		// Preload domain data to avoid layout shift for the "Attach to a site" card
+		if ( purchase.meta && purchase.is_domain ) {
+			await queryClient.ensureQueryData( domainQuery( purchase.meta ) ).catch( () => {} );
 		}
 	},
 } ).lazy( () =>
@@ -297,6 +313,11 @@ export const changePaymentMethodRoute = createRoute( {
 	loader: () => {
 		queryClient.prefetchQuery( allowedPaymentMethodsQuery() );
 		queryClient.prefetchQuery( userPaymentMethodsQuery( { type: 'card' } ) );
+	},
+	validateSearch: ( search ): { redirect_to?: string } => {
+		return {
+			redirect_to: typeof search.redirect_to === 'string' ? search.redirect_to : undefined,
+		};
 	},
 } ).lazy( () =>
 	import( '../../me/billing-purchases/change-payment-method' ).then( ( d ) =>
@@ -705,7 +726,7 @@ export const privacyRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => meRoute,
+	getParentRoute: () => preferencesRoute,
 	path: 'privacy',
 } ).lazy( () =>
 	import( '../../me/privacy' ).then( ( d ) =>
@@ -824,11 +845,80 @@ export const blockedSitesRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => meRoute,
+	getParentRoute: () => preferencesRoute,
 	path: 'blocked-sites',
 } ).lazy( () =>
 	import( '../../me/blocked-sites' ).then( ( d ) =>
 		createLazyRoute( 'blocked-sites' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const hostingDashboardRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'New hosting dashboard' ),
+			},
+		],
+	} ),
+	getParentRoute: () => preferencesRoute,
+	path: 'hosting-dashboard',
+	loader: async () => {
+		await Promise.all( [
+			queryClient.ensureQueryData( userSettingsQuery() ),
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+		] );
+	},
+} ).lazy( () =>
+	import( '../../me/hosting-dashboard' ).then( ( d ) =>
+		createLazyRoute( 'hosting-dashboard' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const languageRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Language' ),
+			},
+		],
+	} ),
+	getParentRoute: () => preferencesRoute,
+	path: 'language',
+	loader: async () => {
+		await queryClient.ensureQueryData( userSettingsQuery() );
+	},
+} ).lazy( () =>
+	import( '../../me/language' ).then( ( d ) =>
+		createLazyRoute( 'language' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const wordpressDefaultsRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'WordPress.com defaults' ),
+			},
+		],
+	} ),
+	getParentRoute: () => preferencesRoute,
+	path: 'defaults',
+	loader: async () => {
+		await Promise.all( [
+			queryClient.ensureQueryData( userSettingsQuery() ),
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+		] );
+	},
+} ).lazy( () =>
+	import( '../../me/wordpress-defaults' ).then( ( d ) =>
+		createLazyRoute( 'wordpress-defaults' )( {
 			component: d.default,
 		} )
 	)
@@ -852,15 +942,47 @@ export const appsRoute = createRoute( {
 	)
 );
 
+export const mcpLegacyRedirectRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'mcp',
+	beforeLoad: () => {
+		throw dashboardRedirect( { to: '/me/preferences/mcp' } );
+	},
+} );
+
+export const privacyLegacyRedirectRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'privacy',
+	beforeLoad: () => {
+		throw dashboardRedirect( { to: '/me/preferences/privacy' } );
+	},
+} );
+
+export const blockedSitesLegacyRedirectRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'blocked-sites',
+	beforeLoad: () => {
+		throw dashboardRedirect( { to: '/me/preferences/blocked-sites' } );
+	},
+} );
+
+export const profileLegacyRedirectRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'profile',
+	beforeLoad: () => {
+		throw dashboardRedirect( { to: '/me/account' } );
+	},
+} );
+
 export const mcpRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'MCP Account Settings' ),
+				title: __( 'AI and MCP' ),
 			},
 		],
 	} ),
-	getParentRoute: () => meRoute,
+	getParentRoute: () => preferencesRoute,
 	path: 'mcp',
 	loader: async () => {
 		await queryClient.ensureQueryData( userSettingsQuery() );
@@ -896,12 +1018,108 @@ export const mcpSetupRoute = createRoute( {
 	)
 );
 
+export const mcpMcpSitesRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Add MCP to specific sites' ),
+			},
+		],
+	} ),
+	getParentRoute: () => mcpRoute,
+	path: 'mcp-sites',
+	loader: async () => {
+		await queryClient.ensureQueryData( userSettingsQuery() );
+	},
+} ).lazy( () =>
+	import( '../../me/mcp/mcp-sites' ).then( ( d ) =>
+		createLazyRoute( 'mcp-mcp-sites' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const mcpReadRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Read' ),
+			},
+		],
+	} ),
+	getParentRoute: () => mcpRoute,
+	path: 'read',
+	loader: async () => {
+		await queryClient.ensureQueryData( userSettingsQuery() );
+	},
+} ).lazy( () =>
+	import( '../../me/mcp/read' ).then( ( d ) =>
+		createLazyRoute( 'mcp-read' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const mcpWriteRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Write' ),
+			},
+		],
+	} ),
+	getParentRoute: () => mcpRoute,
+	path: 'write',
+	loader: async () => {
+		await queryClient.ensureQueryData( userSettingsQuery() );
+	},
+} ).lazy( () =>
+	import( '../../me/mcp/write' ).then( ( d ) =>
+		createLazyRoute( 'mcp-write' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const createMeRoutes = ( config: AppConfig ) => {
 	if ( ! config.supports.me ) {
 		return [];
 	}
 
-	const meRoutes: AnyRoute[] = [ meIndexRoute, profileRoute, preferencesRoute ];
+	const preferencesChildren: AnyRoute[] = [
+		preferencesIndexRoute,
+		privacyRoute,
+		languageRoute,
+		wordpressDefaultsRoute,
+	];
+	if ( config.supports.reader ) {
+		preferencesChildren.push( blockedSitesRoute );
+	}
+	if ( config.optIn ) {
+		preferencesChildren.push( hostingDashboardRoute );
+	}
+	if ( isEnabled( 'mcp-settings' ) ) {
+		preferencesChildren.push(
+			mcpRoute.addChildren( [
+				mcpIndexRoute,
+				mcpSetupRoute,
+				mcpMcpSitesRoute,
+				mcpReadRoute,
+				mcpWriteRoute,
+			] )
+		);
+	}
+	const meRoutes: AnyRoute[] = [
+		meIndexRoute,
+		accountRoute,
+		preferencesChildren.length > 0
+			? preferencesRoute.addChildren( preferencesChildren )
+			: preferencesRoute,
+		mcpLegacyRedirectRoute,
+		privacyLegacyRedirectRoute,
+		blockedSitesLegacyRedirectRoute,
+		profileLegacyRedirectRoute,
+	];
 
 	meRoutes.push(
 		billingRoute.addChildren( [
@@ -956,18 +1174,6 @@ export const createMeRoutes = ( config: AppConfig ) => {
 			notificationsExtrasRoute,
 		] )
 	);
-
-	if ( config.supports.me.privacy ) {
-		meRoutes.push( privacyRoute );
-	}
-
-	if ( config.supports.reader ) {
-		meRoutes.push( blockedSitesRoute );
-	}
-
-	if ( isEnabled( 'mcp-settings' ) ) {
-		meRoutes.push( mcpRoute.addChildren( [ mcpIndexRoute, mcpSetupRoute ] ) );
-	}
 
 	if ( config.supports.me.apps ) {
 		meRoutes.push( appsRoute );

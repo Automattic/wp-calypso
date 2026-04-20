@@ -1,5 +1,5 @@
-import { Chat } from '../../types';
-import { hasRecentEscalationAttempt } from '../chat-utils';
+import { Chat, OdieChat } from '../../types';
+import { convertOdieChatToOdieConversation, hasRecentEscalationAttempt } from '../chat-utils';
 
 // Helper to create a date string in the format 'YYYY-MM-DD HH:MM:SS'
 const formatDate = ( date: Date ): string => {
@@ -99,5 +99,46 @@ describe( 'hasRecentEscalationAttempt', () => {
 		};
 
 		expect( hasRecentEscalationAttempt( chat ) ).toBe( false );
+	} );
+} );
+
+describe( 'convertOdieChatToOdieConversation', () => {
+	const sessionId = 'test-session-id';
+	const botSlug = 'wpcom-support-chat';
+
+	it( 'does not throw and falls back to createdAt 0 when messages array is empty', () => {
+		const emptyChatLoggedOut: OdieChat = {
+			odieId: 42,
+			messages: [],
+		};
+
+		const result = convertOdieChatToOdieConversation( emptyChatLoggedOut, sessionId, botSlug );
+
+		expect( result.id ).toBe( '42' );
+		expect( result.createdAt ).toBe( 0 );
+		expect( result.metadata.createdAt ).toBe( 0 );
+		expect( result.messages ).toHaveLength( 0 );
+	} );
+
+	it( 'converts an OdieChat with messages correctly', () => {
+		const ts = 1700000000;
+		const chatWithMessages: OdieChat = {
+			odieId: 7,
+			messages: [
+				{ role: 'user', type: 'message', content: 'Hello', ts },
+				{ role: 'bot', type: 'message', content: 'Hi there', ts: ts + 10 },
+			],
+		};
+
+		const result = convertOdieChatToOdieConversation( chatWithMessages, sessionId, botSlug );
+
+		expect( result.id ).toBe( '7' );
+		expect( result.createdAt ).toBe( ts );
+		expect( result.metadata.odieChatId ).toBe( 7 );
+		expect( result.metadata.createdAt ).toBe( ts );
+		expect( result.metadata.sessionId ).toBe( sessionId );
+		expect( result.metadata.botSlug ).toBe( botSlug );
+		expect( result.messages ).toHaveLength( 2 );
+		expect( result.messages[ 0 ] ).toEqual( { received: ts, role: 'user', text: 'Hello' } );
 	} );
 } );

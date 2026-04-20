@@ -230,6 +230,7 @@ class DeleteSite extends Component {
 					</PanelCard>
 				) : (
 					<DeleteSiteWarnings
+						siteSlug={ this.props.siteSlug }
 						isAtomicRemovalInProgress={ isAtomicRemovalInProgress }
 						p2HubP2Count={ this.props.p2HubP2Count }
 						isTrialSite={ this.props.isTrialSite }

@@ -14,12 +14,12 @@ import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
 import useHelpCenter from 'calypso/a8c-for-agencies/hooks/use-help-center';
 import { formatCurrencyCompact } from 'calypso/a8c-for-agencies/lib/currency';
 import { extractStrings } from 'calypso/a8c-for-agencies/lib/translation';
-import cartImage from 'calypso/assets/images/a8c-for-agencies/woopayments/cart.png';
-import ccImage from 'calypso/assets/images/a8c-for-agencies/woopayments/cc-image.png';
-import demoImage from 'calypso/assets/images/a8c-for-agencies/woopayments/demo.png';
-import earnMoreImage from 'calypso/assets/images/a8c-for-agencies/woopayments/earn-more.png';
-import iconStorePlus from 'calypso/assets/images/a8c-for-agencies/woopayments/icon-store-plus.png';
-import iconStore from 'calypso/assets/images/a8c-for-agencies/woopayments/icon-store.png';
+import cartImage from 'calypso/assets/images/a8c-for-agencies/woopayments/cart.webp';
+import ccImage from 'calypso/assets/images/a8c-for-agencies/woopayments/cc-image.webp';
+import demoImage from 'calypso/assets/images/a8c-for-agencies/woopayments/demo.webp';
+import earnMoreImage from 'calypso/assets/images/a8c-for-agencies/woopayments/earn-more.webp';
+import iconStorePlus from 'calypso/assets/images/a8c-for-agencies/woopayments/icon-store-plus.webp';
+import iconStore from 'calypso/assets/images/a8c-for-agencies/woopayments/icon-store.webp';
 import wooPaymentsLogo from 'calypso/assets/images/a8c-for-agencies/woopayments/logo.svg';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {

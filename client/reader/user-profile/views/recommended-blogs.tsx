@@ -4,7 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import EmptyContent from 'calypso/components/empty-content';
 import { useFeedRecommendationsQuery } from 'calypso/data/reader/use-feed-recommendations-query';
 import { UserProfileData } from 'calypso/lib/user/user';
-import { RecommendedFeed } from 'calypso/reader/recommended-feed';
+import { ReaderSitesList } from 'calypso/reader/sites-list';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
@@ -47,11 +47,11 @@ const UserRecommendedBlogs = ( { user }: UserRecommendedBlogsProps ): JSX.Elemen
 	}
 
 	return (
-		<ul className="user-profile__recommended-blogs-list">
-			{ recommendedBlogs.map( ( blog ) => (
-				<RecommendedFeed key={ blog.ID } blog={ blog } classPrefix="user-profile" />
-			) ) }
-		</ul>
+		<ReaderSitesList
+			sites={ recommendedBlogs }
+			followSource="user-profile-page__recommended-feeds-list"
+			variant="card"
+		/>
 	);
 };
 

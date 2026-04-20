@@ -26,7 +26,11 @@ function UnforwardedCallout(
 ) {
 	const isMobileViewport = useViewportMatch( 'mobile', '<' );
 	return (
-		<Card ref={ ref } className={ `dashboard-callout is-${ variant } is-image-${ imageVariant }` }>
+		<Card
+			ref={ ref }
+			role="article"
+			className={ `dashboard-callout is-${ variant } is-image-${ imageVariant }` }
+		>
 			<HStack
 				className="dashboard-callout__h-container"
 				spacing="6"

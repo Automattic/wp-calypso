@@ -1,4 +1,4 @@
-import { useState } from '@wordpress/element';
+import { useState } from 'react';
 import AlternativesModal from './alternatives-modal';
 import FinalConfirmationModal from './final-confirmation-modal';
 import PurchasesModal from './purchases-modal';

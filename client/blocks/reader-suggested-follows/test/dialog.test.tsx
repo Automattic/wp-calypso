@@ -5,6 +5,7 @@ import { render, screen } from '@testing-library/react';
 import ReactModal from 'react-modal';
 import { FeedRecommendation } from 'calypso/data/reader/use-feed-recommendations-query';
 import { RelatedSite } from 'calypso/data/reader/use-related-sites';
+import { ReaderSite } from 'calypso/reader/sites-list/site-item';
 import ReaderSuggestedFollowsDialog from '../dialog';
 import { useRecommendOrRelatedSitesQuery } from '../hooks/use-recommend-or-related-sites-query';
 
@@ -12,8 +13,10 @@ jest.mock( '../hooks/use-recommend-or-related-sites-query' );
 jest.mock( 'calypso/state', () => ( {
 	useDispatch: () => jest.fn(),
 } ) );
-jest.mock( '../recommended-feed', () => ( {
-	RecommendedFeed: ( { feed }: { feed: FeedRecommendation } ) => <div>{ feed.name }</div>,
+jest.mock( 'calypso/reader/sites-list', () => ( {
+	ReaderSitesList: ( { sites }: { sites: ReaderSite[] } ) => (
+		<div>{ sites.map( ( site ) => site.name ).join( ', ' ) }</div>
+	),
 } ) );
 
 jest.mock( 'calypso/blocks/reader-suggested-follows', () => ( {

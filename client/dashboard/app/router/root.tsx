@@ -1,10 +1,15 @@
-import { rawUserPreferencesQuery, queryClient } from '@automattic/api-queries';
+import {
+	rawUserPreferencesQuery,
+	jetpackSiteUrlsQuery,
+	queryClient,
+} from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
-import { createRootRouteWithContext, redirect } from '@tanstack/react-router';
+import { createRootRouteWithContext } from '@tanstack/react-router';
 import { wpcomLink } from '../../utils/link';
 import { AUTH_QUERY_KEY } from '../auth';
 import Root from '../root';
 import NotFoundRoot from '../root/error';
+import { dashboardRedirect } from './redirect';
 import type { AppConfig } from '../context';
 import type { User } from '@automattic/api-core';
 
@@ -17,8 +22,17 @@ export type RootRouterContext = {
 export const rootRoute = createRootRouteWithContext< RootRouterContext >()( {
 	component: Root,
 	notFoundComponent: NotFoundRoot,
-	beforeLoad: async ( { cause } ) => {
+	beforeLoad: async ( { cause, context } ) => {
 		if ( cause === 'preload' ) {
+			return;
+		}
+
+		if ( cause === 'enter' ) {
+			// We are priming the query cache with Jetpack URLs so we can detect "site collisions" (i.e. two sites have the same slug)
+			queryClient.prefetchQuery( jetpackSiteUrlsQuery() );
+		}
+
+		if ( ! context.config.optIn ) {
 			return;
 		}
 
@@ -33,6 +47,6 @@ export const rootRoute = createRootRouteWithContext< RootRouterContext >()( {
 			return;
 		}
 
-		throw redirect( { href: wpcomLink( '/' ), replace: true } );
+		throw dashboardRedirect( { href: wpcomLink( '/' ), replace: true } );
 	},
 } );
