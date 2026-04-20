@@ -115,13 +115,6 @@ export default class DevdocsSidebar extends PureComponent {
 					/>
 					<SidebarItem
 						className="devdocs__navigation-item"
-						icon="code"
-						label="Playground"
-						link="/devdocs/playground"
-						selected={ this.isItemSelected( '/devdocs/playground', false ) }
-					/>
-					<SidebarItem
-						className="devdocs__navigation-item"
 						icon="image-multiple"
 						label="WordPress Components"
 						link="/devdocs/wordpress-components-gallery"

@@ -21,10 +21,6 @@ const loadDesign = () =>
 	import( /* webpackChunkName: "async-load-calypso-devdocs-design" */ './design' );
 const loadBlocks = () =>
 	import( /* webpackChunkName: "async-load-calypso-devdocs-design-blocks" */ './design/blocks' );
-const loadPlayground = () =>
-	import(
-		/* webpackChunkName: "async-load-calypso-devdocs-design-playground" */ './design/playground'
-	);
 const loadWordpressComponentsGallery = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-devdocs-design-wordpress-components-gallery" */ './design/wordpress-components-gallery'
@@ -113,13 +109,6 @@ const devdocs = {
 	// App Blocks
 	blocks: function ( context, next ) {
 		context.primary = <AsyncLoad component={ context.params.component } require={ loadBlocks } />;
-		next();
-	},
-
-	playground: function ( context, next ) {
-		context.primary = (
-			<AsyncLoad component={ context.params.component } require={ loadPlayground } />
-		);
 		next();
 	},
 
