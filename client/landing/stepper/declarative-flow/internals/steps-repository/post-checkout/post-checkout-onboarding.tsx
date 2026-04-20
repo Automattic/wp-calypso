@@ -1,5 +1,11 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { FEATURE_BIG_SKY, isBusiness, isPersonal, isPremium } from '@automattic/calypso-products';
+import {
+	FEATURE_BIG_SKY,
+	isBusiness,
+	isEcommerce,
+	isPersonal,
+	isPremium,
+} from '@automattic/calypso-products';
 import { SiteIntent } from '@automattic/data-stores/src/onboard';
 import { Step } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -67,6 +73,11 @@ const PostCheckoutOnboarding: StepType< {
 		[]
 	);
 
+	const planCartItem = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
+		[]
+	);
+
 	const isJetpack = useSelect(
 		( select ) => site && ( select( SITE_STORE ) as SiteSelect ).isJetpackSite( site.ID ),
 		[ site ]
@@ -106,7 +117,21 @@ const PostCheckoutOnboarding: StepType< {
 
 	const refParameter = useQuery().get( 'ref' );
 	const isWooHostingSolutions = refParameter === WOO_HOSTING_SOLUTIONS_REF;
-	const pluginToInstall = isWooHostingSolutions ? 'woocommerce' : goalPlugin;
+
+	// Prefer the cart item (what the user just bought — freshest signal during
+	// post-checkout) over site.plan (which can be stale before the site's plan
+	// assignment syncs).
+	const effectivePlan = planCartItem ?? site?.plan;
+	const isCommercePlan = !! effectivePlan && isEcommerce( effectivePlan );
+
+	// Woo-hosting-solutions ref:
+	// - Commerce plans: the backend auto-provisions the Atomic transfer and
+	//   installs WooCommerce, so we skip frontend initiation and only wait for
+	//   readiness below.
+	// - Business plans: must initiate an Atomic transfer with WooCommerce so
+	//   the plugin gets installed as part of the transfer.
+	const shouldInitiateWooTransfer = isWooHostingSolutions && ! isCommercePlan;
+	const pluginToInstall = shouldInitiateWooTransfer ? 'woocommerce' : goalPlugin;
 	const shouldInstallPlugin = Boolean( pluginToInstall );
 
 	/**
@@ -161,9 +186,11 @@ const PostCheckoutOnboarding: StepType< {
 
 			// Poll for the Woo ref regardless of the atomic path above — the
 			// site may already be Atomic when this effect mounts while
-			// WooCommerce is still finishing installation.
-			if ( isWooHostingSolutions && pluginToInstall ) {
-				await waitForPluginsActive( site.ID, [ pluginToInstall ] );
+			// WooCommerce is still finishing installation. This covers both the
+			// Commerce plan (backend auto-install) and the Business plan (install
+			// via the transfer initiated above).
+			if ( isWooHostingSolutions ) {
+				await waitForPluginsActive( site.ID, [ 'woocommerce' ] );
 			}
 
 			return providedDependencies;

@@ -67,11 +67,11 @@ function getPlansIntent( flowName: string | null ): PlansIntent | null {
 			if ( search.has( 'playground' ) ) {
 				return playgroundPlansIntent( search.get( 'playground' )! );
 			}
-			if ( search.has( 'intent' ) ) {
-				return getVisualSplitPlansIntent( search.get( 'intent' )! );
-			}
 			if ( search.get( 'ref' ) === WOO_HOSTING_SOLUTIONS_REF ) {
 				return 'plans-woo-hosting-solutions';
+			}
+			if ( search.has( 'intent' ) ) {
+				return getVisualSplitPlansIntent( search.get( 'intent' )! );
 			}
 			break;
 		case ONBOARDING_UNIFIED_FLOW:

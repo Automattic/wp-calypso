@@ -6,7 +6,6 @@ import Site from 'calypso/blocks/site';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
 import QuerySites from 'calypso/components/data/query-sites';
 import { getSite } from 'calypso/state/sites/selectors';
-import { isTemporarySitePurchase } from '../utils';
 
 import './header.scss';
 
@@ -46,7 +45,7 @@ class PurchaseSiteHeader extends Component {
 
 		// Both the domain and name of a Jetpack temporary site don't provide any
 		// meaningful information to the user.
-		if ( purchase && isTemporarySitePurchase( purchase ) ) {
+		if ( purchase && purchase.isAttachedToHoldingSite ) {
 			return null;
 		}
 

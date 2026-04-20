@@ -12,7 +12,6 @@ import {
 	isExpiring,
 	isCloseToExpiration,
 	isRecentMonthlyPurchase,
-	isTemporarySitePurchase,
 	getRenewalUrlFromPurchase,
 	isInExpirationGracePeriod,
 } from '../../../utils/purchase';
@@ -154,7 +153,7 @@ function ExpiringText( { purchase }: { purchase: Purchase } ) {
 	if ( purchase.bill_period_days === SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD ) {
 		const daysToExpiry = differenceInCalendarDays( new Date( purchase.expiry_date ), new Date() );
 
-		if ( isTemporarySitePurchase( purchase ) ) {
+		if ( purchase.is_attached_to_holding_site ) {
 			return sprintf(
 				// translators: purchaseName is the name of the plan and daysToExpiry is a number of days
 				__( '%(purchaseName)s will expire and be removed in %(daysToExpiry)d days.' ),
@@ -175,7 +174,7 @@ function ExpiringText( { purchase }: { purchase: Purchase } ) {
 		);
 	}
 
-	if ( isTemporarySitePurchase( purchase ) ) {
+	if ( purchase.is_attached_to_holding_site ) {
 		// translators: purchaseName is the name of the plan and expiry is a formatted string like "in 3 months".
 		return sprintf( __( '%(purchaseName)s will expire and be removed %(expiry)s.' ), {
 			purchaseName,

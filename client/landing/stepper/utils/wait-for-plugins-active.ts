@@ -10,10 +10,11 @@ const wait = ( ms: number ) => new Promise( ( res ) => setTimeout( res, ms ) );
  */
 export const waitForPluginsActive = async (
 	siteId: number,
-	pluginsToVerify: string[] | undefined
+	pluginsToVerify: string[] | undefined,
+	{ totalTimeoutSeconds = 300 }: { totalTimeoutSeconds?: number } = {}
 ): Promise< void > => {
 	const startTime = new Date().getTime();
-	const totalTimeout = 1000 * 300;
+	const totalTimeout = 1000 * totalTimeoutSeconds;
 	const maxFinishTime = startTime + totalTimeout;
 
 	// Poll for transfer status. If there are no plugins to verify, we can skip this step.
@@ -44,7 +45,7 @@ export const waitForPluginsActive = async (
 		}
 
 		if ( maxFinishTime <= new Date().getTime() ) {
-			throw new Error( `plugin check timeout exceeded ${ totalTimeout / 1000 }s` );
+			throw new Error( `plugin check timeout exceeded ${ totalTimeoutSeconds }s` );
 		}
 
 		backoffTime *= 2;

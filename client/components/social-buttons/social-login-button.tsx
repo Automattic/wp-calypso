@@ -57,8 +57,11 @@ export const SocialLoginButton = ( {
 	const redirectUri = useSelector(
 		( state: AppState ) => overrideRedirectUri || getRedirectUri( service, state, isLogin )
 	);
-	const { code, service: requestService } =
-		useSelector( ( state: AppState ) => state.route?.query?.initial ) ?? {};
+	const {
+		code,
+		service: requestService,
+		state: requestState,
+	} = useSelector( ( state: AppState ) => state.route?.query?.initial ) ?? {};
 
 	const authError = useSelector( ( state: AppState ) => {
 		const path = state?.route?.path?.current;
@@ -95,12 +98,13 @@ export const SocialLoginButton = ( {
 	}, [ dispatch, translate, label ] );
 
 	const exchangeCodeForToken = useCallback(
-		async ( auth_code: string ) => {
+		async ( auth_code: string, auth_state: string ) => {
 			let response;
 			try {
 				response = await postLoginRequest( 'exchange-social-auth-code', {
 					service,
 					auth_code,
+					state: auth_state,
 					client_id: config( 'wpcom_signup_id' ),
 					client_secret: config( 'wpcom_signup_key' ),
 				} );
@@ -151,9 +155,9 @@ export const SocialLoginButton = ( {
 
 	useEffect( () => {
 		if ( code && requestService === service && ! userHasDisconnected ) {
-			exchangeCodeForToken( code );
+			exchangeCodeForToken( code, requestState );
 		}
-	}, [ code, requestService, service, userHasDisconnected, exchangeCodeForToken ] );
+	}, [ code, requestState, requestService, service, userHasDisconnected, exchangeCodeForToken ] );
 
 	useEffect( () => {
 		if ( requestService === service && authError ) {

@@ -80,6 +80,7 @@ const allowedExternalSites = [
 	'jetpack.cloud.localhost',
 	'jetpack.com',
 	'akismet.com',
+	'gravatar.com',
 	'difmrequest.com',
 ];
 

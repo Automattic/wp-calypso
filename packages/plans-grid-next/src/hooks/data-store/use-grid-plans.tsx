@@ -279,7 +279,7 @@ export const usePlanTypesWithIntent = ( {
 		// Used by the woo-hosting-solutions-flow ref: only show plans that support
 		// post-checkout WooCommerce auto-install.
 		case 'plans-woo-hosting-solutions':
-			planTypes = [ TYPE_BUSINESS, TYPE_ECOMMERCE ];
+			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
 			break;
 		case 'plans-migration':
 			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
