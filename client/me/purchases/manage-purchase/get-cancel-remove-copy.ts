@@ -6,9 +6,9 @@ import {
 	isTitanMail,
 } from '@automattic/calypso-products';
 import type { Purchase } from 'calypso/lib/purchases/types';
-import type { useTranslate } from 'i18n-calypso';
+import type { LocalizeProps } from 'i18n-calypso';
 
-type Translate = ReturnType< typeof useTranslate >;
+type Translate = LocalizeProps[ 'translate' ];
 
 export interface CancelCopy {
 	label: string;
