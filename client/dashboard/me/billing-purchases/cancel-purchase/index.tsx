@@ -439,6 +439,21 @@ export default function CancelPurchase() {
 	const displayVariant = getDisplayVariant( intent, flowType );
 	const mutationFlowType = getMutationFlowType( intent, purchase );
 
+	// TanStack Router keeps the component mounted across search-param changes,
+	// so stale state from a prior cancel-flow run can persist (e.g. surveyShown
+	// flipped to true after the user advanced past the confirmation). When
+	// intent arrives (or changes) from the URL, re-init state so the matching
+	// confirmation screen renders fresh.
+	const prevIntentRef = useRef< 'cancel' | 'remove' | null >( intent );
+	useEffect( () => {
+		if ( intent !== prevIntentRef.current ) {
+			prevIntentRef.current = intent;
+			if ( intent ) {
+				setState( ( prev ) => ( { ...prev, initialized: false } ) );
+			}
+		}
+	}, [ intent ] );
+
 	const cancellationOffer = cancellationOffers?.length ? cancellationOffers[ 0 ] : undefined;
 
 	let questionOneOrder = [];
