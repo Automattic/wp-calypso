@@ -115,7 +115,7 @@ export function useFields() {
 			},
 			{
 				id: 'expiry',
-				label: translate( 'Renewal/Expiry' ),
+				label: translate( 'Renewal/expiry' ),
 				enableHiding: false,
 				enableSorting: true,
 				getValue: ( { item }: { item: PartialDomainData } ) =>
