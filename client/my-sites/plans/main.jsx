@@ -67,6 +67,26 @@ import WooExpressPlansPage from './woo-express-plans-page';
 
 import './style.scss';
 
+// Plan tiers from lowest to highest, used to filter the visible plans list
+// for the de-emphasized current plan card experiment.
+const PLAN_TIERS = [ 'free', 'personal', 'premium', 'business', 'ecommerce' ];
+
+function getPlanTier( planSlug ) {
+	if ( isPersonalPlan( planSlug ) ) {
+		return 'personal';
+	}
+	if ( isPremiumPlan( planSlug ) ) {
+		return 'premium';
+	}
+	if ( isBusinessPlan( planSlug ) ) {
+		return 'business';
+	}
+	if ( isEcommercePlan( planSlug ) ) {
+		return 'ecommerce';
+	}
+	return null;
+}
+
 class PlansComponent extends Component {
 	static propTypes = {
 		context: PropTypes.object.isRequired,
@@ -184,30 +204,12 @@ class PlansComponent extends Component {
 				? { [ currentPlan.productSlug ]: this.props.translate( 'Current plan' ) }
 				: undefined;
 
-		// Experiment: hide plans below current plan for variants A and B
-		let hideFreePlanForExperiment = false;
-		let hidePersonalPlanForExperiment = false;
-		let hidePremiumPlanForExperiment = false;
-		let hideBusinessPlanForExperiment = false;
-
-		if ( isExperimentVariant && currentPlan?.productSlug ) {
-			const slug = currentPlan.productSlug;
-			if ( isPersonalPlan( slug ) ) {
-				hideFreePlanForExperiment = true;
-			} else if ( isPremiumPlan( slug ) ) {
-				hideFreePlanForExperiment = true;
-				hidePersonalPlanForExperiment = true;
-			} else if ( isBusinessPlan( slug ) ) {
-				hideFreePlanForExperiment = true;
-				hidePersonalPlanForExperiment = true;
-				hidePremiumPlanForExperiment = true;
-			} else if ( isEcommercePlan( slug ) ) {
-				hideFreePlanForExperiment = true;
-				hidePersonalPlanForExperiment = true;
-				hidePremiumPlanForExperiment = true;
-				hideBusinessPlanForExperiment = true;
-			}
-		}
+		// Experiment: filter the visible plan tiers to those at or above the current plan.
+		const currentTier = currentPlan?.productSlug ? getPlanTier( currentPlan.productSlug ) : null;
+		const visiblePlanTiers =
+			isExperimentVariant && currentTier
+				? PLAN_TIERS.slice( PLAN_TIERS.indexOf( currentTier ) )
+				: PLAN_TIERS;
 
 		return (
 			<PlansFeaturesMain
@@ -227,10 +229,10 @@ class PlansComponent extends Component {
 				intent={ plansIntent }
 				isSpotlightOnCurrentPlan={ showSpotlight }
 				highlightLabelOverrides={ highlightLabelOverrides }
-				hideFreePlan={ hideFreePlanForExperiment || undefined }
-				hidePersonalPlan={ hidePersonalPlanForExperiment || undefined }
-				hidePremiumPlan={ hidePremiumPlanForExperiment || undefined }
-				hideBusinessPlan={ hideBusinessPlanForExperiment || undefined }
+				hideFreePlan={ ! visiblePlanTiers.includes( 'free' ) || undefined }
+				hidePersonalPlan={ ! visiblePlanTiers.includes( 'personal' ) || undefined }
+				hidePremiumPlan={ ! visiblePlanTiers.includes( 'premium' ) || undefined }
+				hideBusinessPlan={ ! visiblePlanTiers.includes( 'business' ) || undefined }
 				hideEnterprisePlan={ hideEnterprise }
 				hideEcommercePlan={ hideEcommerce }
 				showPlanTypeSelectorDropdown={ isEnabled( 'onboarding/interval-dropdown' ) }
