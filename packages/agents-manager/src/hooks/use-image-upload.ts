@@ -106,15 +106,12 @@ export function useImageUpload(): UseImageUploadResult {
 	const [ uploadingImages, setUploadingImages ] = useState< UploadingImage[] >( [] );
 	const [ isUploadingImages, setIsUploadingImages ] = useState< boolean >( false );
 
-	const handleFilesSelected = useCallback(
-		async ( files: File[] ) => {
-			const previewFiles = await Promise.all(
-				files.map( ( file ) => createImagePreviewFromFile( file ) )
-			);
-			setPendingImages( [ ...pendingImages, ...previewFiles ] );
-		},
-		[ pendingImages ]
-	);
+	const handleFilesSelected = useCallback( async ( files: File[] ) => {
+		const previewFiles = await Promise.all(
+			files.map( ( file ) => createImagePreviewFromFile( file ) )
+		);
+		setPendingImages( ( prevImages ) => [ ...prevImages, ...previewFiles ] );
+	}, [] );
 
 	const handleRemoveImage = useCallback( ( image: UploadedImage ) => {
 		setPendingImages( ( prevImages ) => prevImages.filter( ( img ) => img.id !== image.id ) );
