@@ -22,6 +22,7 @@ import type {
 interface CancellationMainContentProps {
 	purchase: Purchase;
 	displayVariant: DisplayVariant;
+	isCancelIntent: boolean;
 	includedDomainPurchase?: Purchase;
 	atomicTransfer?: AtomicTransfer;
 	selectedDomain?: Domain;
@@ -51,6 +52,7 @@ const willShowDomainOptionsRadioButtons = (
 export default function CancellationMainContent( {
 	purchase,
 	displayVariant,
+	isCancelIntent,
 	includedDomainPurchase,
 	atomicTransfer,
 	selectedDomain,
@@ -153,12 +155,14 @@ export default function CancellationMainContent( {
 					purchase={ purchase }
 					isJetpackPurchase={ isJetpack }
 					selectedDomain={ selectedDomain }
+					isCancelIntent={ isCancelIntent }
 				/>
 			) }
 
 			<PlanProductRevertContent
 				purchase={ purchase }
 				displayVariant={ displayVariant }
+				isCancelIntent={ isCancelIntent }
 				includedDomainPurchase={ includedDomainPurchase }
 				atomicTransfer={ atomicTransfer }
 				state={ state }

@@ -483,6 +483,14 @@ export default function CancelPurchase() {
 		const [ firstStep ] = allSteps;
 
 		const hasExpired = purchase.expiry_status === 'expired';
+		// When intent is URL-sourced (user clicked Cancel or Remove on Purchase
+		// Settings), the pre-survey confirmation MUST render first — regardless
+		// of prior survey completion cache or expired state. The existing
+		// short-circuit (surveyShown: true when REMOVE_PLAN_STEP is first, or
+		// when expired) bypasses our confirmation screen. Gate it on intent
+		// absence so flag-on users always see the matching confirmation.
+		const shortCircuitToSurvey = REMOVE_PLAN_STEP === firstStep || hasExpired;
+		const surveyShownInitial = intent ? false : shortCircuitToSurvey;
 
 		const newState: CancelPurchaseState = {
 			...initialSurveyState(),
@@ -494,7 +502,7 @@ export default function CancelPurchase() {
 			customerConfirmedUnderstanding: false,
 			domainConfirmationConfirmed: false,
 			initialized: true,
-			isLoading: REMOVE_PLAN_STEP !== firstStep && ! hasExpired,
+			isLoading: ! surveyShownInitial,
 			isNextAdventureValid: false,
 			isSubmitting: false,
 			questionOneOrder,
@@ -508,7 +516,7 @@ export default function CancelPurchase() {
 			showDomainOptionsStep: false,
 			siteId: undefined,
 			solution: '',
-			surveyShown: REMOVE_PLAN_STEP === firstStep || hasExpired,
+			surveyShown: surveyShownInitial,
 			surveyStep: firstStep,
 			upsell: '',
 		};
@@ -1560,6 +1568,7 @@ export default function CancelPurchase() {
 								<CancellationPreSurveyContent
 									purchase={ purchase }
 									displayVariant={ displayVariant }
+									isCancelIntent={ intent === 'cancel' }
 									includedDomainPurchase={ includedDomainPurchase }
 									atomicTransfer={ atomicTransfer }
 									selectedDomain={ selectedDomain }
