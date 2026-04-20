@@ -2,6 +2,7 @@
 import { readFile } from 'fs/promises';
 import { type Request, type RequestHandler } from 'express';
 import { I18N } from 'i18n-calypso';
+import { getUserLanguage } from 'calypso/dashboard/app/shared-locale-loader';
 import getAssetFilePath from 'calypso/lib/get-asset-file-path';
 import { getLanguageFile } from 'calypso/lib/i18n-utils/switch-locale';
 
@@ -9,7 +10,9 @@ type LocaleData = Parameters< I18N[ 'setLocale' ] >[ 0 ];
 
 const localeDataCache = new Map< string, LocaleData >();
 
-type CalypsoRequest = Request & { context?: { lang?: string; i18nCalypso?: I18N } };
+type CalypsoRequest = Request & {
+	context?: { user?: Parameters< typeof getUserLanguage >[ 0 ]; i18nCalypso?: I18N };
+};
 
 /**
  * Creates a per-request i18n-calypso instance loaded with the user's locale so
@@ -19,7 +22,8 @@ type CalypsoRequest = Request & { context?: { lang?: string; i18nCalypso?: I18N 
  * `I18NContext.Provider`.
  */
 export const loadDashboardLocaleData: RequestHandler = ( req, res, next ) => {
-	const language = ( req as CalypsoRequest ).context?.lang;
+	const user = ( req as CalypsoRequest ).context?.user;
+	const language = getUserLanguage( user );
 	if ( ! language || language === 'en' ) {
 		next();
 		return;

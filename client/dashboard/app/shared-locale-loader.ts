@@ -5,25 +5,24 @@ import type { User } from '@automattic/api-core';
 const dataPromises = new Map< string, Promise< LocaleData > >();
 
 /**
- * Derives the effective locale slug for a user. Mirrors the server's
- * `setUpLoggedInRoute` logic so SSR and client produce the same value:
+ * Derives the effective locale slug for a user. Called by both the dashboard
+ * SSR middleware (`loadDashboardLocaleData`) and the client hydration path
+ * (`loadOmnibar`), so the two agree on which locale file to load:
  *
  *   - Falls back to English when the user has
  *     `use_fallback_for_incomplete_languages` enabled and their language
- *     is not fully translated.
- *   - Otherwise returns the bootstrap-provided `localeSlug` (preferred),
- *     or the REST `locale_variant` / `language` for non-bootstrapped
- *     sessions.
- *
- * The server's incompleteness check uses `localeVariant || localeSlug`,
- * so we mirror that here.
+ *     is not fully translated (checked against `localeVariant || localeSlug`,
+ *     matching `setUpLoggedInRoute`).
+ *   - Prefers `localeVariant` (e.g. `es-mx`) so users get region-specific
+ *     translations, falling back to `localeSlug`, then to the REST
+ *     `locale_variant` / `language` fields for non-bootstrapped sessions.
  */
 export function getUserLanguage( user: User | null | undefined ): string {
 	if ( ! user ) {
 		return 'en';
 	}
 
-	const slug = user.localeSlug || user.locale_variant || user.language;
+	const slug = user.localeVariant || user.localeSlug || user.locale_variant || user.language;
 	if ( ! slug ) {
 		return 'en';
 	}
