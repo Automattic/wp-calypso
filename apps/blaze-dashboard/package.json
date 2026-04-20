@@ -54,7 +54,6 @@
 		"wpcom-proxy-request": "workspace:^"
 	},
 	"devDependencies": {
-		"@automattic/babel-plugin-transform-wpcalypso-async": "workspace:^",
 		"@automattic/calypso-apps-builder": "workspace:^",
 		"@automattic/calypso-babel-config": "workspace:^",
 		"@automattic/calypso-build": "workspace:^",
