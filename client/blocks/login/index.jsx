@@ -412,7 +412,7 @@ class Login extends Component {
 		if ( socialConnect ) {
 			return (
 				<AsyncLoad
-					require="calypso/blocks/login/social-connect-prompt"
+					require={ () => import( './social-connect-prompt' ) }
 					onSuccess={ this.handleValidLogin }
 				/>
 			);
@@ -423,7 +423,7 @@ class Login extends Component {
 				<Fragment>
 					<div className="login__lost-password-form-wrapper">
 						<AsyncLoad
-							require="calypso/blocks/login/lost-password-form"
+							require={ () => import( './lost-password-form' ) }
 							redirectToAfterLoginUrl={ this.props.redirectTo }
 							oauth2ClientId={ this.props.oauth2Client && this.props.oauth2Client.id }
 							locale={ locale }
@@ -441,7 +441,7 @@ class Login extends Component {
 			return (
 				<Fragment>
 					<AsyncLoad
-						require="calypso/blocks/login/two-factor-authentication/two-factor-content"
+						require={ () => import( './two-factor-authentication/two-factor-content' ) }
 						isBrowserSupported={ this.state.isBrowserSupported }
 						isJetpack={ isJetpack }
 						isBlazePro={ isBlazePro }

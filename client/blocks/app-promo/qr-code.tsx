@@ -16,7 +16,7 @@ export const QrCode = ( { campaign = 'calypso-app-promo', size = 150 }: QrCodePr
 		<div className="app-promo__qr-code">
 			<div className="app-promo__qr-code-canvas">
 				<AsyncLoad
-					require="qrcode.react"
+					require={ () => import( 'qrcode.react' ) }
 					placeholder={
 						<div
 							className="app-promo__qr-code-placeholder"

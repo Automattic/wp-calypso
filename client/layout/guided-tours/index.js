@@ -21,7 +21,7 @@ function GuidedTours() {
 		return null;
 	}
 
-	return <AsyncLoad require="calypso/layout/guided-tours/component" />;
+	return <AsyncLoad require={ () => import( './component' ) } />;
 }
 
 export default GuidedTours;

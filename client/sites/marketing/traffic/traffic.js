@@ -99,7 +99,7 @@ const SiteSettingsTraffic = ( {
 					{ isAdmin && (
 						<AsyncLoad
 							key={ siteId }
-							require="calypso/my-sites/site-settings/seo-settings/form"
+							require={ () => import( 'calypso/my-sites/site-settings/seo-settings/form' ) }
 							placeholder={ null }
 						/>
 					) }

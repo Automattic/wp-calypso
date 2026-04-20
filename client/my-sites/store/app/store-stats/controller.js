@@ -72,18 +72,14 @@ export default function StatsController( context, next ) {
 	switch ( props.type ) {
 		case 'orders':
 			asyncComponent = (
-				<AsyncLoad
-					placeholder={ placeholder }
-					require="../../../store/app/store-stats"
-					{ ...props }
-				/>
+				<AsyncLoad placeholder={ placeholder } require={ () => import( '.' ) } { ...props } />
 			);
 			break;
 		default:
 			asyncComponent = (
 				<AsyncLoad
 					placeholder={ placeholder }
-					require="../../../store/app/store-stats/listview"
+					require={ () => import( './listview' ) }
 					{ ...props }
 				/>
 			);

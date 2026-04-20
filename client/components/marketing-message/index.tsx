@@ -92,7 +92,7 @@ function slugify( text: string ) {
 const limitedTimeOfferDiscountNudge = () => {
 	return (
 		<AsyncLoad
-			require="calypso/blocks/jitm"
+			require={ () => import( 'calypso/blocks/jitm' ) }
 			placeholder={ null }
 			messagePath="calypso:plans:lto_notices"
 			onClick={ ( jitm: JITMTProps ) => {

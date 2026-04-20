@@ -1793,7 +1793,7 @@ function PlanOverlapNotice( {
 		}
 		return (
 			<AsyncLoad
-				require="calypso/blocks/product-plan-overlap-notices"
+				require={ () => import( 'calypso/blocks/product-plan-overlap-notices' ) }
 				placeholder={ null }
 				plans={ JETPACK_PLANS }
 				products={ JETPACK_PRODUCTS_LIST }
@@ -1808,7 +1808,7 @@ function PlanOverlapNotice( {
 	}
 	return (
 		<AsyncLoad
-			require="calypso/blocks/product-plan-overlap-notices"
+			require={ () => import( 'calypso/blocks/product-plan-overlap-notices' ) }
 			placeholder={ null }
 			plans={ JETPACK_PLANS }
 			products={ JETPACK_PRODUCTS_LIST }

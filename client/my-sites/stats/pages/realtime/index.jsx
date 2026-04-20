@@ -120,7 +120,7 @@ function StatsRealtime( { context } ) {
 			<div className="stats">
 				<StatsRealtimeHeader />
 				<AsyncLoad
-					require="calypso/my-sites/stats/pages/realtime/chart"
+					require={ () => import( 'calypso/my-sites/stats/pages/realtime/chart' ) }
 					siteId={ siteId }
 					placeholder={ PageLoading }
 				/>

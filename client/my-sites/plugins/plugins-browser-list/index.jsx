@@ -213,7 +213,7 @@ const PluginsBrowserList = ( {
 			) }
 			{ listName === 'paid' && (
 				<AsyncLoad
-					require="calypso/blocks/jitm"
+					require={ () => import( 'calypso/blocks/jitm' ) }
 					template="spotlight"
 					placeholder={ null }
 					messagePath="calypso:plugins:spotlight"
@@ -221,7 +221,7 @@ const PluginsBrowserList = ( {
 			) }
 			{ listType === 'search' && (
 				<AsyncLoad
-					require="calypso/blocks/jitm"
+					require={ () => import( 'calypso/blocks/jitm' ) }
 					template="spotlight"
 					jitmPlaceholder={ SpotlightPlaceholder }
 					messagePath="calypso:plugins:search"
@@ -230,7 +230,7 @@ const PluginsBrowserList = ( {
 			) }
 			{ listType === 'browse' && (
 				<AsyncLoad
-					require="calypso/blocks/jitm"
+					require={ () => import( 'calypso/blocks/jitm' ) }
 					template="spotlight"
 					jitmPlaceholder={ SpotlightPlaceholder }
 					messagePath={ `calypso:${ sectionJitmPath }:spotlight` }

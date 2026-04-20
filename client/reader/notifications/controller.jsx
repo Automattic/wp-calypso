@@ -49,7 +49,7 @@ export function notifications( context, next ) {
 			<NotificationTitle />
 			<div className="reader-notifications__panel">
 				<AsyncLoad
-					require="calypso/notifications"
+					require={ () => import( 'calypso/notifications' ) }
 					isShowing
 					checkToggle={ () => {} }
 					placeholder={ null }

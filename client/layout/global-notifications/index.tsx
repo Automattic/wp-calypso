@@ -79,7 +79,7 @@ const GlobalNotifications = () => {
 	return (
 		<div className="global-notifications" ref={ containerRef }>
 			<AsyncLoad
-				require="calypso/notifications"
+				require={ () => import( 'calypso/notifications' ) }
 				isShowing={ isNotificationsOpen }
 				checkToggle={ checkToggleNotes }
 				placeholder={ null }

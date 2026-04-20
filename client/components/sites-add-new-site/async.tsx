@@ -5,7 +5,7 @@ import type { AddNewSiteProps } from '../../dashboard/sites/add-new-site/types';
 export const AsyncContent = ( props: AddNewSiteProps ) => {
 	return (
 		<AsyncLoad
-			require="calypso/dashboard/sites/add-new-site"
+			require={ () => import( 'calypso/dashboard/sites/add-new-site' ) }
 			placeholder={ <Spinner /> }
 			{ ...props }
 		/>

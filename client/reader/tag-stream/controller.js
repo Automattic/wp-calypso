@@ -63,7 +63,7 @@ export const tagListing = ( context, next ) => {
 				} ) }
 			/>
 			<AsyncLoad
-				require="calypso/reader/tag-stream/main"
+				require={ () => import( 'calypso/reader/tag-stream/main' ) }
 				key={ 'tag-' + encodedTag }
 				streamKey={ streamKey }
 				encodedTagSlug={ encodedTag }

@@ -517,7 +517,7 @@ class ThemeShowcase extends Component {
 		if ( config.isEnabled( 'jitms' ) && ! loggedOutComponent ) {
 			return (
 				<AsyncLoad
-					require="calypso/blocks/jitm"
+					require={ () => import( 'calypso/blocks/jitm' ) }
 					placeholder={ null }
 					messagePath="calypso:themes:showcase-website-design"
 				/>

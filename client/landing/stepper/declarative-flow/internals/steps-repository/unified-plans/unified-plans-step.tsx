@@ -609,7 +609,7 @@ function UnifiedPlansStep( {
 
 					return (
 						<AsyncLoad
-							require="calypso/my-sites/plans-features-main/components/plan-faq"
+							require={ () => import( 'calypso/my-sites/plans-features-main/components/plan-faq' ) }
 							placeholder={ null }
 						/>
 					);
@@ -693,7 +693,7 @@ function UnifiedPlansStep( {
 						/**
 						 * Common Start/Stepper props [START]
 						 */
-						require="calypso/signup/step-wrapper"
+						require={ () => import( 'calypso/signup/step-wrapper' ) }
 						flowName={ flowName }
 						stepName={ stepName }
 						stepContent={ stepContent }

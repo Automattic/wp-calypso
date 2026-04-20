@@ -184,11 +184,19 @@ class Layout extends Component {
 		}
 		if ( this.props.isWooJPC ) {
 			return (
-				<AsyncLoad require="calypso/layout/masterbar/woo-core-profiler" placeholder={ null } />
+				<AsyncLoad
+					require={ () => import( 'calypso/layout/masterbar/woo-core-profiler' ) }
+					placeholder={ null }
+				/>
 			);
 		}
 		if ( this.props.isBlazePro ) {
-			return <AsyncLoad require="calypso/layout/masterbar/blaze-pro" placeholder={ null } />;
+			return (
+				<AsyncLoad
+					require={ () => import( 'calypso/layout/masterbar/blaze-pro' ) }
+					placeholder={ null }
+				/>
+			);
 		}
 
 		if ( this.props.needsColorScheme && this.props.isFetchingColorScheme ) {
@@ -196,7 +204,12 @@ class Layout extends Component {
 		}
 
 		if ( this.props.isMSDEnabledForReader ) {
-			return <AsyncLoad require="calypso/reader/components/header" placeholder={ null } />;
+			return (
+				<AsyncLoad
+					require={ () => import( 'calypso/reader/components/header' ) }
+					placeholder={ null }
+				/>
+			);
 		}
 
 		const MasterbarComponent = config.isEnabled( 'jetpack-cloud' )
@@ -235,7 +248,7 @@ class Layout extends Component {
 
 		return (
 			<AsyncLoad
-				require="calypso/my-sites/customer-home/celebrate-site-launch-modal"
+				require={ () => import( 'calypso/my-sites/customer-home/celebrate-site-launch-modal' ) }
 				placeholder={ null }
 				siteId={ this.props.siteId }
 			/>
@@ -328,29 +341,38 @@ class Layout extends Component {
 				<QuerySiteAdminColor siteId={ this.props.siteId } />
 				<UserVerificationChecker />
 				{ config.isEnabled( 'layout/guided-tours' ) && (
-					<AsyncLoad require="calypso/layout/guided-tours" placeholder={ null } />
+					<AsyncLoad
+						require={ () => import( 'calypso/layout/guided-tours' ) }
+						placeholder={ null }
+					/>
 				) }
 				<div className="layout__header-section">{ this.renderMasterbar( loadHelpCenter ) }</div>
 				<LayoutLoader />
 				{ isJetpackCloud() && (
-					<AsyncLoad require="calypso/jetpack-cloud/style" placeholder={ null } />
+					<AsyncLoad
+						require={ () => import( 'calypso/jetpack-cloud/style' ) }
+						placeholder={ null }
+					/>
 				) }
 				{ isA8CForAgencies() && (
 					<>
-						<AsyncLoad require="calypso/a8c-for-agencies/style" placeholder={ null } />
+						<AsyncLoad
+							require={ () => import( 'calypso/a8c-for-agencies/style' ) }
+							placeholder={ null }
+						/>
 						<QueryAgencies />
 					</>
 				) }
 				<div id="content" className="layout__content">
 					{ config.isEnabled( 'jitms' ) && this.props.isEligibleForJITM && (
 						<AsyncLoad
-							require="calypso/blocks/jitm"
+							require={ () => import( 'calypso/blocks/jitm' ) }
 							placeholder={ null }
 							messagePath={ `calypso:${ this.props.sectionJitmPath }:admin_notices` }
 						/>
 					) }
 					<AsyncLoad
-						require="calypso/components/global-notices"
+						require={ () => import( 'calypso/components/global-notices' ) }
 						placeholder={ null }
 						id="notices"
 					/>
@@ -366,28 +388,46 @@ class Layout extends Component {
 						</>
 					) }
 				</div>
-				<AsyncLoad require="calypso/layout/community-translator" placeholder={ null } />
+				<AsyncLoad
+					require={ () => import( 'calypso/layout/community-translator' ) }
+					placeholder={ null }
+				/>
 				{ 'development' === process.env.NODE_ENV && (
 					<>
 						<SympathyDevWarning />
-						<AsyncLoad require="calypso/components/webpack-build-monitor" placeholder={ null } />
+						<AsyncLoad
+							require={ () => import( 'calypso/components/webpack-build-monitor' ) }
+							placeholder={ null }
+						/>
 					</>
 				) }
 				{ config.isEnabled( 'layout/support-article-dialog' ) && (
-					<AsyncLoad require="calypso/blocks/support-article-dialog" placeholder={ null } />
+					<AsyncLoad
+						require={ () => import( 'calypso/blocks/support-article-dialog' ) }
+						placeholder={ null }
+					/>
 				) }
 				{ config.isEnabled( 'cookie-banner' ) && (
-					<AsyncLoad require="calypso/blocks/cookie-banner" placeholder={ null } />
+					<AsyncLoad
+						require={ () => import( 'calypso/blocks/cookie-banner' ) }
+						placeholder={ null }
+					/>
 				) }
 				{ config.isEnabled( 'layout/app-banner' ) && (
-					<AsyncLoad require="calypso/blocks/app-banner" placeholder={ null } />
+					<AsyncLoad require={ () => import( 'calypso/blocks/app-banner' ) } placeholder={ null } />
 				) }
 				{ config.isEnabled( 'legal-updates-banner' ) && (
-					<AsyncLoad require="calypso/blocks/legal-updates-banner" placeholder={ null } />
+					<AsyncLoad
+						require={ () => import( 'calypso/blocks/legal-updates-banner' ) }
+						placeholder={ null }
+					/>
 				) }
 
 				{ ! this.props.isMSDEnabledForReader && (
-					<AsyncLoad require="calypso/layout/global-notifications" placeholder={ null } />
+					<AsyncLoad
+						require={ () => import( 'calypso/layout/global-notifications' ) }
+						placeholder={ null }
+					/>
 				) }
 				{ this.renderCelebrateSiteLaunchModal() }
 			</div>

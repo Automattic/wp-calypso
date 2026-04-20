@@ -61,7 +61,7 @@ export class JetpackHeader extends PureComponent {
 						partnerName="DreamHost"
 					>
 						<AsyncLoad
-							require="calypso/components/jetpack-header/dreamhost"
+							require={ () => import( './dreamhost' ) }
 							darkColorScheme={ darkColorScheme }
 							placeholder={ null }
 						/>
@@ -76,7 +76,7 @@ export class JetpackHeader extends PureComponent {
 						partnerName="Pressable"
 					>
 						<AsyncLoad
-							require="calypso/components/jetpack-header/pressable"
+							require={ () => import( './pressable' ) }
 							darkColorScheme={ darkColorScheme }
 							placeholder={ null }
 						/>
@@ -91,7 +91,7 @@ export class JetpackHeader extends PureComponent {
 						partnerName="Bluehost"
 					>
 						<AsyncLoad
-							require="calypso/components/jetpack-header/bluehost"
+							require={ () => import( './bluehost' ) }
 							darkColorScheme={ darkColorScheme }
 							placeholder={ null }
 						/>
@@ -106,7 +106,7 @@ export class JetpackHeader extends PureComponent {
 						partnerName="InMotion"
 					>
 						<AsyncLoad
-							require="calypso/components/jetpack-header/inmotion"
+							require={ () => import( './inmotion' ) }
 							darkColorScheme={ darkColorScheme }
 							placeholder={ null }
 						/>
@@ -117,7 +117,7 @@ export class JetpackHeader extends PureComponent {
 				// This is a raster logo that contains the Jetpack logo already.
 				return (
 					<AsyncLoad
-						require="calypso/components/jetpack-header/milesweb"
+						require={ () => import( './milesweb' ) }
 						darkColorScheme={ darkColorScheme }
 						placeholder={ null }
 					/>
@@ -131,7 +131,7 @@ export class JetpackHeader extends PureComponent {
 						partnerName="Liquid Web"
 					>
 						<AsyncLoad
-							require="calypso/components/jetpack-header/liquidweb"
+							require={ () => import( './liquidweb' ) }
 							darkColorScheme={ darkColorScheme }
 							placeholder={ null }
 						/>
@@ -145,7 +145,7 @@ export class JetpackHeader extends PureComponent {
 						partnerName="EuroDNS"
 					>
 						<AsyncLoad
-							require="calypso/components/jetpack-header/eurodns"
+							require={ () => import( './eurodns' ) }
 							darkColorScheme={ darkColorScheme }
 							placeholder={ null }
 						/>

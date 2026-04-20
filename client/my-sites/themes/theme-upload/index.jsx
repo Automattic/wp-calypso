@@ -288,7 +288,7 @@ class Upload extends Component {
 				<Card>
 					{ ! inProgress && ! complete && (
 						<AsyncLoad
-							require="calypso/blocks/upload-drop-zone"
+							require={ () => import( 'calypso/blocks/upload-drop-zone' ) }
 							placeholder={ null }
 							doUpload={ uploadAction }
 							disabled={ isDisabled }

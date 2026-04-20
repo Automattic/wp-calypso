@@ -120,7 +120,10 @@ export function sitesDashboard( context: Context, next: () => void ) {
 			<Global styles={ sitesDashboardGlobalStyles } />
 			<PageViewTracker path="/sites" title="Sites Management Page" delay={ 500 } />
 			<ResurrectedWelcomeModalGate />
-			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
+			<AsyncLoad
+				require={ () => import( 'calypso/lib/analytics/track-resurrections' ) }
+				placeholder={ null }
+			/>
 			<SitesDashboard queryParams={ getQueryParams( context ) } />
 		</>
 	);

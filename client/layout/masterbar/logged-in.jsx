@@ -311,7 +311,7 @@ class MasterbarLoggedIn extends Component {
 
 		return (
 			<AsyncLoad
-				require="calypso/layout/masterbar/checkout"
+				require={ () => import( './checkout.tsx' ) }
 				placeholder={ null }
 				title={ title }
 				isJetpackNotAtomic={ isJetpackNotAtomic }
@@ -728,7 +728,9 @@ class MasterbarLoggedIn extends Component {
 
 	renderLanguageSwitcher() {
 		if ( this.props.isSupportSession || config.isEnabled( 'quick-language-switcher' ) ) {
-			return <AsyncLoad require="./quick-language-switcher" placeholder={ null } />;
+			return (
+				<AsyncLoad require={ () => import( './quick-language-switcher' ) } placeholder={ null } />
+			);
 		}
 		return null;
 	}
@@ -741,7 +743,7 @@ class MasterbarLoggedIn extends Component {
 		}
 		return (
 			<AsyncLoad
-				require="./masterbar-cart/masterbar-cart-wrapper"
+				require={ () => import( './masterbar-cart/masterbar-cart-wrapper' ) }
 				placeholder={ null }
 				goToCheckout={ this.goToCheckout }
 				onRemoveProduct={ this.onRemoveCartProduct }
@@ -788,7 +790,7 @@ class MasterbarLoggedIn extends Component {
 
 			return (
 				<AsyncLoad
-					require="./masterbar-agents-manager"
+					require={ () => import( './masterbar-agents-manager' ) }
 					siteId={ siteId }
 					tooltip={ __( 'Help' ) }
 					placeholder={ placeholder }
@@ -810,7 +812,7 @@ class MasterbarLoggedIn extends Component {
 
 		return (
 			<AsyncLoad
-				require="./masterbar-help-center"
+				require={ () => import( './masterbar-help-center' ) }
 				siteId={ siteId }
 				tooltip={ __( 'Help' ) }
 				placeholder={ placeholder }

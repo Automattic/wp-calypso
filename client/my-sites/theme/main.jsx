@@ -611,7 +611,7 @@ class ThemeSheet extends Component {
 			<div className="theme__sheet-content">
 				{ config.isEnabled( 'jitms' ) && this.props.siteSlug && (
 					<AsyncLoad
-						require="calypso/blocks/jitm"
+						require={ () => import( 'calypso/blocks/jitm' ) }
 						placeholder={ null }
 						messagePath="calypso:theme:admin_notices"
 					/>
@@ -1246,7 +1246,11 @@ class ThemeSheet extends Component {
 					title={ analyticsPageTitle }
 					properties={ { is_logged_in: isLoggedIn } }
 				/>
-				<AsyncLoad require="calypso/components/global-notices" placeholder={ null } id="notices" />
+				<AsyncLoad
+					require={ () => import( 'calypso/components/global-notices' ) }
+					placeholder={ null }
+					id="notices"
+				/>
 				{
 					siteId && (
 						<QueryActiveTheme siteId={ siteId } />

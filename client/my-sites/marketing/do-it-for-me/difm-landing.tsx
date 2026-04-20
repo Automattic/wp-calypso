@@ -134,7 +134,7 @@ export default function DIFMLanding( {
 				</ContentSection>
 				<ImageSection>
 					<AsyncLoad
-						require="./site-build-showcase"
+						require={ () => import( './site-build-showcase' ) }
 						placeholder={ <LoadingEllipsis /> }
 						isStoreFlow={ isStoreFlow }
 					/>

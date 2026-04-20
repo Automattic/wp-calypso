@@ -69,7 +69,7 @@ const exported = {
 				<div>
 					<div>
 						<AsyncLoad
-							require="calypso/reader/search-stream"
+							require={ () => import( 'calypso/reader/search-stream' ) }
 							key="search"
 							streamKey={ streamKey }
 							isSuggestion={ isQuerySuggestion }

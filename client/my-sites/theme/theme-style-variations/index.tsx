@@ -23,7 +23,9 @@ const ThemeStyleVariations = ( {
 		<div className="theme__sheet-style-variations">
 			<div className="theme__sheet-style-variations-previews">
 				<AsyncLoad
-					require="@automattic/global-styles/src/components/global-styles-variations"
+					require={ () =>
+						import( '@automattic/global-styles/src/components/global-styles-variations' )
+					}
 					placeholder={ null }
 					globalStylesVariations={ variations }
 					selectedGlobalStylesVariation={ selectedVariation }

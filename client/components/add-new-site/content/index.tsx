@@ -5,13 +5,7 @@ import type { AddNewSiteContentProps } from 'calypso/components/add-new-site/typ
 // Always ensure that we load env-specific content asychronously
 const AddNewSiteContent = ( props: AddNewSiteContentProps ) => {
 	if ( isA8CForAgencies() ) {
-		return (
-			<AsyncLoad
-				{ ...props }
-				require="calypso/components/add-new-site/content/a4a"
-				placeholder={ null }
-			/>
-		);
+		return <AsyncLoad { ...props } require={ () => import( './a4a' ) } placeholder={ null } />;
 	}
 };
 

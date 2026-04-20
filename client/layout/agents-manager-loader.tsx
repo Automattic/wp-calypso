@@ -26,7 +26,7 @@ export default function AgentsManagerLoader( {
 
 	return (
 		<AsyncLoad
-			require="@automattic/agents-manager"
+			require={ () => import( '@automattic/agents-manager' ) }
 			placeholder={ null }
 			currentUser={ user }
 			sectionName={ sectionName }

@@ -27,7 +27,7 @@ export function blogPost( context, next ) {
 
 	context.primary = (
 		<AsyncLoad
-			require="calypso/blocks/reader-full-post"
+			require={ () => import( 'calypso/blocks/reader-full-post' ) }
 			blogId={ blogId }
 			postId={ postId }
 			referral={ referral }
@@ -36,7 +36,11 @@ export function blogPost( context, next ) {
 
 	if ( isUserLoggedIn( state ) ) {
 		context.secondary = (
-			<AsyncLoad require="calypso/reader/sidebar" path={ context.path } placeholder={ null } />
+			<AsyncLoad
+				require={ () => import( 'calypso/reader/sidebar' ) }
+				path={ context.path }
+				placeholder={ null }
+			/>
 		);
 	}
 	scrollTopIfNoHash();
@@ -53,12 +57,20 @@ export function feedPost( context, next ) {
 	trackPageLoad( basePath, fullPageTitle, 'full_post' );
 
 	context.primary = (
-		<AsyncLoad require="calypso/blocks/reader-full-post" feedId={ feedId } postId={ postId } />
+		<AsyncLoad
+			require={ () => import( 'calypso/blocks/reader-full-post' ) }
+			feedId={ feedId }
+			postId={ postId }
+		/>
 	);
 
 	if ( isUserLoggedIn( state ) ) {
 		context.secondary = (
-			<AsyncLoad require="calypso/reader/sidebar" path={ context.path } placeholder={ null } />
+			<AsyncLoad
+				require={ () => import( 'calypso/reader/sidebar' ) }
+				path={ context.path }
+				placeholder={ null }
+			/>
 		);
 	}
 

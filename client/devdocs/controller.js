@@ -78,7 +78,9 @@ const devdocs = {
 
 	// UI components
 	design: function ( context, next ) {
-		context.primary = <AsyncLoad component={ context.params.component } require="./design" />;
+		context.primary = (
+			<AsyncLoad component={ context.params.component } require={ () => import( './design' ) } />
+		);
 		next();
 	},
 
@@ -90,27 +92,30 @@ const devdocs = {
 	// App Blocks
 	blocks: function ( context, next ) {
 		context.primary = (
-			<AsyncLoad component={ context.params.component } require="./design/blocks" />
+			<AsyncLoad
+				component={ context.params.component }
+				require={ () => import( './design/blocks' ) }
+			/>
 		);
 		next();
 	},
 
 	playground: function ( context, next ) {
-		context.primary = (
-			<AsyncLoad component={ context.params.component } require="./design/playground" />
-		);
+		context.primary = <AsyncLoad require={ () => import( './design/playground' ) } />;
 		next();
 	},
 
 	wpComponentsGallery( context, next ) {
-		context.primary = <AsyncLoad require="./design/wordpress-components-gallery" />;
+		context.primary = (
+			<AsyncLoad require={ () => import( './design/wordpress-components-gallery' ) } />
+		);
 		next();
 	},
 
 	selectors: function ( context, next ) {
 		context.primary = (
 			<AsyncLoad
-				require="./docs-selectors"
+				require={ () => import( './docs-selectors' ) }
 				search={ context.query.search }
 				selector={ context.params.selector }
 			/>
@@ -120,14 +125,20 @@ const devdocs = {
 
 	typography: function ( context, next ) {
 		context.primary = (
-			<AsyncLoad component={ context.params.component } require="./design/typography" />
+			<AsyncLoad
+				component={ context.params.component }
+				require={ () => import( './design/typography' ) }
+			/>
 		);
 		next();
 	},
 
 	illustrations: function ( context, next ) {
 		context.primary = (
-			<AsyncLoad component={ context.params.component } require="./design/illustrations" />
+			<AsyncLoad
+				component={ context.params.component }
+				require={ () => import( './design/illustrations' ) }
+			/>
 		);
 		next();
 	},

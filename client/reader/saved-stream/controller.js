@@ -13,7 +13,11 @@ const exported = {
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
 		context.primary = (
-			<AsyncLoad require="calypso/reader/saved-stream/main" key="saved" placeholder={ null } />
+			<AsyncLoad
+				require={ () => import( 'calypso/reader/saved-stream/main' ) }
+				key="saved"
+				placeholder={ null }
+			/>
 		);
 		next();
 	},

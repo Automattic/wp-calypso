@@ -18,7 +18,7 @@ const JITMWrapper: React.FC< StatsNoticeProps > = ( { isOdysseyStats } ) => {
 			} ) }
 		>
 			<AsyncLoad
-				require="calypso/blocks/jitm"
+				require={ () => import( 'calypso/blocks/jitm' ) }
 				placeholder={ null }
 				messagePath={ messagePath }
 				searchQuery="page%3Dstats"

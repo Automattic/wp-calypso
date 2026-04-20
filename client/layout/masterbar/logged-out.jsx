@@ -124,7 +124,7 @@ class MasterbarLoggedOut extends Component {
 
 		return (
 			<AsyncLoad
-				require="./masterbar-help-center"
+				require={ () => import( './masterbar-help-center' ) }
 				siteId={ siteId }
 				tooltip={ translate( 'Help' ) }
 				placeholder={ null }
@@ -237,7 +237,7 @@ class MasterbarLoggedOut extends Component {
 		if ( isCheckout || isCheckoutPending || isCheckoutFailed ) {
 			return (
 				<AsyncLoad
-					require="calypso/layout/masterbar/checkout.tsx"
+					require={ () => import( './checkout.tsx' ) }
 					placeholder={ null }
 					title={ title }
 					isLeavingAllowed={ ! isCheckoutPending }

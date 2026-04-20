@@ -289,7 +289,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 				{ data?.items.length > 0 && selectedItem && getPostFromItem( selectedItem ) && (
 					<>
 						<AsyncLoad
-							require="calypso/blocks/reader-full-post"
+							require={ () => import( 'calypso/blocks/reader-full-post' ) }
 							feedId={ selectedItem.feedId }
 							postId={ selectedItem.postId }
 							onClose={ () => {

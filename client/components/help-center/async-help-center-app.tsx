@@ -7,7 +7,7 @@ const AsyncHelpCenterApp = ( props: HelpCenterAppProps ) => {
 	}
 	return (
 		<AsyncLoad
-			require="./help-center-app"
+			require={ () => import( './help-center-app' ) }
 			placeholder={ null }
 			{ ...props }
 			locale={ props.locale ?? props.currentUser.language }

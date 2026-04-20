@@ -252,7 +252,10 @@ const LayoutLoggedOut = ( {
 		classes.woo = true;
 		classes[ 'has-no-masterbar' ] = false;
 		masterbar = (
-			<AsyncLoad require="calypso/layout/masterbar/woo-core-profiler" placeholder={ null } />
+			<AsyncLoad
+				require={ () => import( 'calypso/layout/masterbar/woo-core-profiler' ) }
+				placeholder={ null }
+			/>
 		);
 	} else {
 		masterbar = ! masterbarIsHidden && (
@@ -292,14 +295,20 @@ const LayoutLoggedOut = ( {
 					) }
 				</div>
 				{ isJetpackCloudEnvironment() && (
-					<AsyncLoad require="calypso/jetpack-cloud/style" placeholder={ null } />
+					<AsyncLoad
+						require={ () => import( 'calypso/jetpack-cloud/style' ) }
+						placeholder={ null }
+					/>
 				) }
 				{ isA8CForAgencies() && (
-					<AsyncLoad require="calypso/a8c-for-agencies/style" placeholder={ null } />
+					<AsyncLoad
+						require={ () => import( 'calypso/a8c-for-agencies/style' ) }
+						placeholder={ null }
+					/>
 				) }
 				<div id="content" className="layout__content">
 					<AsyncLoad
-						require="calypso/components/global-notices"
+						require={ () => import( 'calypso/components/global-notices' ) }
 						placeholder={ null }
 						id="notices"
 					/>
@@ -319,7 +328,10 @@ const LayoutLoggedOut = ( {
 						<UniversalNavbarFooter currentRoute={ currentRoute } isLoggedIn={ isLoggedIn } />
 
 						{ config.isEnabled( 'layout/support-article-dialog' ) && (
-							<AsyncLoad require="calypso/blocks/support-article-dialog" placeholder={ null } />
+							<AsyncLoad
+								require={ () => import( 'calypso/blocks/support-article-dialog' ) }
+								placeholder={ null }
+							/>
 						) }
 					</>
 				) }

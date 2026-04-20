@@ -17,7 +17,11 @@ export default function Layout( { sectionGroup, sectionName, primary, secondary 
 	return (
 		<div className={ sectionClass }>
 			<div id="content" className="layout__content">
-				<AsyncLoad require="calypso/components/global-notices" placeholder={ null } id="notices" />
+				<AsyncLoad
+					require={ () => import( 'calypso/components/global-notices' ) }
+					placeholder={ null }
+					id="notices"
+				/>
 				<div id="secondary" className="layout__secondary" role="navigation">
 					{ secondary }
 				</div>

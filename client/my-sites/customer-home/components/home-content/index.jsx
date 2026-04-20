@@ -336,7 +336,10 @@ const HomeContent = ( {
 				</>
 			) : null }
 			<ResurrectedWelcomeModalGate isSuppressed={ celebrateLaunchModalIsOpen } />
-			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
+			<AsyncLoad
+				require={ () => import( 'calypso/lib/analytics/track-resurrections' ) }
+				placeholder={ null }
+			/>
 		</div>
 	);
 };

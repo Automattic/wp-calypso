@@ -8,7 +8,7 @@ function SupportArticleDialogLoader() {
 		return null;
 	}
 
-	return <AsyncLoad require="calypso/blocks/support-article-dialog/dialog" placeholder={ null } />;
+	return <AsyncLoad require={ () => import( './dialog' ) } placeholder={ null } />;
 }
 
 export default SupportArticleDialogLoader;

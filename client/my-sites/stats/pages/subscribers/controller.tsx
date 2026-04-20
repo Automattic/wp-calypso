@@ -5,7 +5,7 @@ import { getSiteFilters, rangeOfPeriod, type SiteFilterType } from '../shared/he
 import PageLoading from '../shared/page-loading';
 import type { Context } from '@automattic/calypso-router';
 
-setTimeout( () => import( 'calypso/my-sites/stats/pages/subscribers' ), 3000 );
+setTimeout( () => import( '.' ), 3000 );
 
 function subscribers( context: Context, next: () => void ) {
 	const givenSiteId = context.params.site;
@@ -23,7 +23,7 @@ function subscribers( context: Context, next: () => void ) {
 
 	context.primary = (
 		<AsyncLoad
-			require="calypso/my-sites/stats/pages/subscribers"
+			require={ () => import( '.' ) }
 			placeholder={ PageLoading }
 			period={ rangeOfPeriod( activeFilter?.period || 'day', date ) }
 			context={ context }

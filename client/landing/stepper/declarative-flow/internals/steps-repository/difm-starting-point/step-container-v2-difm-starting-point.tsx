@@ -82,7 +82,9 @@ export const StepContainerV2DIFMStartingPoint = ( {
 						{ isLargeViewport && (
 							<div className="step-container-v2--difm-starting-point__right-column">
 								<AsyncLoad
-									require="calypso/my-sites/marketing/do-it-for-me/site-build-showcase"
+									require={ () =>
+										import( 'calypso/my-sites/marketing/do-it-for-me/site-build-showcase' )
+									}
 									placeholder={ <LoadingEllipsis /> }
 									isStoreFlow={ false }
 								/>

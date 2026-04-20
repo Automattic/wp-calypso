@@ -23,7 +23,7 @@ function renderTemplate( template, props ) {
 			return (
 				<AsyncLoad
 					{ ...props }
-					require="calypso/blocks/jitm/templates/notice"
+					require={ () => import( './templates/notice' ) }
 					placeholder={ null }
 				/>
 			);
@@ -31,7 +31,7 @@ function renderTemplate( template, props ) {
 			return (
 				<AsyncLoad
 					{ ...props }
-					require="calypso/blocks/jitm/templates/sidebar-banner"
+					require={ () => import( './templates/sidebar-banner' ) }
 					placeholder={ null }
 				/>
 			);
@@ -39,7 +39,7 @@ function renderTemplate( template, props ) {
 			return (
 				<AsyncLoad
 					{ ...props }
-					require="calypso/blocks/jitm/templates/home-task"
+					require={ () => import( './templates/home-task' ) }
 					placeholder={ null }
 				/>
 			);
@@ -47,7 +47,7 @@ function renderTemplate( template, props ) {
 			return (
 				<AsyncLoad
 					{ ...props }
-					require="calypso/blocks/jitm/templates/spotlight"
+					require={ () => import( './templates/spotlight' ) }
 					placeholder={ null }
 				/>
 			);
@@ -57,7 +57,7 @@ function renderTemplate( template, props ) {
 			return (
 				<AsyncLoad
 					{ ...props }
-					require="calypso/blocks/jitm/templates/modal"
+					require={ () => import( './templates/modal' ) }
 					placeholder={ null }
 				/>
 			);
@@ -65,7 +65,7 @@ function renderTemplate( template, props ) {
 			return (
 				<AsyncLoad
 					{ ...props }
-					require="calypso/blocks/jitm/templates/default"
+					require={ () => import( './templates/default' ) }
 					placeholder={ null }
 				/>
 			);

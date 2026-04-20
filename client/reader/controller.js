@@ -37,7 +37,11 @@ export function sidebar( context, next ) {
 	const state = context.store.getState();
 	if ( isUserLoggedIn( state ) ) {
 		context.secondary = (
-			<AsyncLoad require="calypso/reader/sidebar" path={ context.path } placeholder={ null } />
+			<AsyncLoad
+				require={ () => import( 'calypso/reader/sidebar' ) }
+				path={ context.path }
+				placeholder={ null }
+			/>
 		);
 	}
 
@@ -100,7 +104,10 @@ export function following( context, next ) {
 export function loadNewSubscriptionPage( context, next ) {
 	const selectedTab = getCurrentTabFromURL( context.path, 'reader/new', 'add-new' );
 	context.primary = (
-		<AsyncLoad require="calypso/reader/new-subscription" selectedTab={ selectedTab } />
+		<AsyncLoad
+			require={ () => import( 'calypso/reader/new-subscription' ) }
+			selectedTab={ selectedTab }
+		/>
 	);
 
 	trackPageLoad( '/reader/new', 'Reader > New Subscription', 'reader-new-subscription' );
@@ -158,7 +165,7 @@ export const setBeforePrimary = ( context, next ) => {
 	const state = context.store.getState();
 	const isMSDEnabledForReader = isReaderMSDEnabled( state );
 	context.beforePrimary = isMSDEnabledForReader ? (
-		<AsyncLoad require="calypso/reader/components/mobile-header" />
+		<AsyncLoad require={ () => import( 'calypso/reader/components/mobile-header' ) } />
 	) : null;
 	next();
 };
@@ -179,7 +186,7 @@ export function feedListing( context, next ) {
 
 	context.primary = (
 		<AsyncLoad
-			require="calypso/reader/feed-stream"
+			require={ () => import( 'calypso/reader/feed-stream' ) }
 			key={ 'feed-' + feedId }
 			streamKey={ 'feed:' + feedId }
 			feedId={ +feedId }
@@ -212,7 +219,7 @@ export function blogListing( context, next ) {
 
 	context.primary = (
 		<AsyncLoad
-			require="calypso/reader/site-stream"
+			require={ () => import( 'calypso/reader/site-stream' ) }
 			key={ 'site-' + blogId }
 			streamKey={ streamKey }
 			siteId={ +blogId }
@@ -245,7 +252,7 @@ export function readA8C( context, next ) {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	context.primary = (
 		<AsyncLoad
-			require="calypso/reader/a8c/main"
+			require={ () => import( 'calypso/reader/a8c/main' ) }
 			key="read-a8c"
 			className="is-a8c"
 			listName="Automattic"
@@ -280,7 +287,7 @@ export function readFollowingP2( context, next ) {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	context.primary = (
 		<AsyncLoad
-			require="calypso/reader/p2/main"
+			require={ () => import( 'calypso/reader/p2/main' ) }
 			key="read-p2"
 			listName="P2"
 			streamKey={ streamKey }
@@ -332,7 +339,9 @@ export async function siteSubscriptionsManager( context, next ) {
 	const mcKey = 'subscription-sites';
 	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
-	context.primary = <AsyncLoad require="calypso/reader/site-subscriptions-manager" />;
+	context.primary = (
+		<AsyncLoad require={ () => import( 'calypso/reader/site-subscriptions-manager' ) } />
+	);
 	next();
 }
 
@@ -355,7 +364,7 @@ export async function siteSubscription( context, next ) {
 
 	context.primary = (
 		<AsyncLoad
-			require="calypso/reader/site-subscription"
+			require={ () => import( 'calypso/reader/site-subscription' ) }
 			subscriptionId={ context.params.subscription_id }
 			blogId={ context.params.blog_id }
 			transition={ context.query.transition === 'true' }
@@ -371,7 +380,11 @@ export async function commentSubscriptionsManager( context, next ) {
 	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
 	context.primary = (
-		<AsyncLoad require="calypso/reader/site-subscriptions-manager/comment-subscriptions-manager" />
+		<AsyncLoad
+			require={ () =>
+				import( 'calypso/reader/site-subscriptions-manager/comment-subscriptions-manager' )
+			}
+		/>
 	);
 	next();
 }
@@ -383,7 +396,11 @@ export async function pendingSubscriptionsManager( context, next ) {
 	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
 	context.primary = (
-		<AsyncLoad require="calypso/reader/site-subscriptions-manager/pending-subscriptions-manager" />
+		<AsyncLoad
+			require={ () =>
+				import( 'calypso/reader/site-subscriptions-manager/pending-subscriptions-manager' )
+			}
+		/>
 	);
 	next();
 }

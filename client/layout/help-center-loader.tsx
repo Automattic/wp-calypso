@@ -57,7 +57,7 @@ export default function HelpCenterLoader( { sectionName, loadHelpCenter, current
 
 	return (
 		<AsyncLoad
-			require="@automattic/help-center"
+			require={ () => import( '@automattic/help-center' ) }
 			placeholder={ null }
 			handleClose={ handleClose }
 			currentRoute={ currentRoute }

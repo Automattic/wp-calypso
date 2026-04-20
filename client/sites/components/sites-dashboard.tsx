@@ -451,7 +451,7 @@ const SitesDashboard = ( {
 			);
 		}
 
-		return <AsyncLoad require="../v2/sites-list" placeholder={ null } />;
+		return <AsyncLoad require={ () => import( '../v2/sites-list' ) } placeholder={ null } />;
 	};
 
 	return (

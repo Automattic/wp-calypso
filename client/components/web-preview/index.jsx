@@ -7,9 +7,9 @@ const WebPreview = ( props ) => {
 
 	return (
 		<AsyncLoad
-			{ ...props }
-			require="calypso/components/web-preview/component"
+			require={ () => import( 'calypso/components/web-preview/component' ) }
 			placeholder={ null }
+			{ ...props }
 		/>
 	);
 };
