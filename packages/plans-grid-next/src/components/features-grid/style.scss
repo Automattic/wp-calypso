@@ -531,9 +531,9 @@
 		border-right: none;
 		background-color: transparent;
 
-		// The extra `:is(td)` is needed so this rule is at the same specificity as the rule
-		// which originally added the border-left, which uses an `:is` selector.
-		&:first-of-type:is(td) {
+		// Match both `td` and `th` so the first header cell has its border-left removed too;
+		// the `:is()` keeps the specificity aligned with the rule that adds the border-left above.
+		&:first-of-type:is(td, th) {
 			border-left: none;
 		}
 
