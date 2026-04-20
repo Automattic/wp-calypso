@@ -9,6 +9,7 @@ import type { Purchase } from '@automattic/api-core';
 interface CancellationFullTextProps {
 	purchase: Purchase;
 	displayVariant: DisplayVariant;
+	isCancelIntent?: boolean;
 	cancelBundledDomain: boolean;
 	includedDomainPurchase?: Purchase;
 }
@@ -16,6 +17,7 @@ interface CancellationFullTextProps {
 export default function CancellationFullText( {
 	purchase,
 	displayVariant,
+	isCancelIntent,
 	cancelBundledDomain,
 	includedDomainPurchase,
 }: CancellationFullTextProps ) {
@@ -35,8 +37,12 @@ export default function CancellationFullText( {
 		return null;
 	}
 
-	// Skip refund text for refundable dotcom plans since refund is offered via the notice
-	if ( refundAmountString && ! showRefundEligibilityNotice ) {
+	// Skip refund text when the user explicitly clicked Cancel (not Remove):
+	// their intent is to disable auto-renew, not claim a refund. Show the
+	// "will be removed on {expiry}" text instead.
+	// Also skip for refundable dotcom plans when the eligibility notice is
+	// taking over (flag-off experiment path).
+	if ( refundAmountString && ! showRefundEligibilityNotice && ! isCancelIntent ) {
 		return createInterpolateElement(
 			sprintf(
 				/* translators: $(refundText)s is of the form "[currency-symbol][amount]" i.e. "$20" */

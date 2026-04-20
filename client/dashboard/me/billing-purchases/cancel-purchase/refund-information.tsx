@@ -10,19 +10,23 @@ interface CancelPurchaseRefundInformationProps {
 	purchase: Purchase;
 	isJetpackPurchase: boolean;
 	selectedDomain: Domain | null | undefined;
+	isCancelIntent?: boolean;
 }
 
 const CancelPurchaseRefundInformation = ( {
 	purchase,
 	isJetpackPurchase,
 	selectedDomain,
+	isCancelIntent,
 }: CancelPurchaseRefundInformationProps ) => {
 	const isGravatarRestrictedDomain = selectedDomain?.is_gravatar_restricted_domain;
 	const { refund_period_in_days: refundPeriodInDays } = purchase;
 	let text;
 
-	// Treat refundable dotcom plans as non-refundable since refund is offered via the notice
-	const treatAsNonRefundable = useShowRefundEligibilityNotice( purchase );
+	// Treat refundable dotcom plans as non-refundable since refund is offered via the notice.
+	// Also treat as non-refundable when the user explicitly clicked Cancel (not Remove):
+	// their intent is to disable auto-renew and keep features until expiry, not get a refund.
+	const treatAsNonRefundable = useShowRefundEligibilityNotice( purchase ) || isCancelIntent;
 
 	if ( purchase.is_refundable && ! treatAsNonRefundable ) {
 		if ( purchase.is_domain_registration ) {

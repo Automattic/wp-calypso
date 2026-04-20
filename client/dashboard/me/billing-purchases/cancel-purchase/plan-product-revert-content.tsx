@@ -12,6 +12,7 @@ import type { Purchase, AtomicTransfer } from '@automattic/api-core';
 interface PlanProductRevertContentProps {
 	purchase: Purchase;
 	displayVariant: DisplayVariant;
+	isCancelIntent?: boolean;
 	includedDomainPurchase?: Purchase;
 	atomicTransfer?: AtomicTransfer;
 	state: CancelPurchaseState;
@@ -25,6 +26,7 @@ interface PlanProductRevertContentProps {
 export default function PlanProductRevertContent( {
 	purchase,
 	displayVariant,
+	isCancelIntent,
 	includedDomainPurchase,
 	atomicTransfer,
 	state,
@@ -41,6 +43,7 @@ export default function PlanProductRevertContent( {
 					<CancellationFullText
 						purchase={ purchase }
 						displayVariant={ displayVariant }
+						isCancelIntent={ isCancelIntent }
 						cancelBundledDomain={ state.cancelBundledDomain ?? false }
 						includedDomainPurchase={ includedDomainPurchase }
 					/>

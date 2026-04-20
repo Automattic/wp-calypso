@@ -12,6 +12,7 @@ import type {
 interface CancellationPreSurveyContentProps {
 	purchase: Purchase;
 	displayVariant: DisplayVariant;
+	isCancelIntent: boolean;
 	includedDomainPurchase?: Purchase;
 	atomicTransfer?: AtomicTransfer;
 	selectedDomain?: Domain;
@@ -31,6 +32,7 @@ interface CancellationPreSurveyContentProps {
 export default function CancellationPreSurveyContent( {
 	purchase,
 	displayVariant,
+	isCancelIntent,
 	includedDomainPurchase,
 	atomicTransfer,
 	selectedDomain,
@@ -61,6 +63,7 @@ export default function CancellationPreSurveyContent( {
 		<CancellationMainContent
 			purchase={ purchase }
 			displayVariant={ displayVariant }
+			isCancelIntent={ isCancelIntent }
 			includedDomainPurchase={ includedDomainPurchase }
 			atomicTransfer={ atomicTransfer }
 			selectedDomain={ selectedDomain }
