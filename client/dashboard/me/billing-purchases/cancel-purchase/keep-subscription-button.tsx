@@ -1,7 +1,7 @@
 import { useNavigate } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
 import { purchaseSettingsRoute } from '../../../app/router/me';
+import { getButtonLabels } from './get-confirmation-copy';
 import type { Purchase } from '@automattic/api-core';
 
 interface KeepSubscriptionButtonProps {
@@ -15,6 +15,11 @@ export default function KeepSubscriptionButton( {
 }: KeepSubscriptionButtonProps ) {
 	const navigate = useNavigate();
 
+	// Secondary label uses the Cancel intent by default. The primary-button
+	// label (Remove vs. Cancel) carries the destructive verb; the secondary is
+	// just "Keep {category}", which is the same in either intent.
+	const label = getButtonLabels( { purchase, intent: 'cancel' } ).secondary;
+
 	return (
 		<Button
 			variant="secondary"
@@ -23,7 +28,7 @@ export default function KeepSubscriptionButton( {
 				onKeepSubscriptionClick();
 			} }
 		>
-			{ purchase.is_plan ? __( 'Keep plan' ) : __( 'Keep product' ) }
+			{ label }
 		</Button>
 	);
 }

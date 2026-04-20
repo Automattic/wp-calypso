@@ -3,11 +3,11 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { close, info } from '@wordpress/icons';
-import { intlFormat } from 'date-fns';
 import { Text } from '../../../components/text';
 import { DisplayVariant } from '../../../utils/purchase';
+import { getFallbackLossItems } from './get-confirmation-copy';
 import type { Purchase, CancellationFeature } from '@automattic/api-core';
 
 type FeatureObject = {
@@ -26,71 +26,67 @@ const CancelPurchaseFeatureList = ( {
 	cancellationFeatures: CancellationFeature[];
 	cancellationChanges: FeatureObject[];
 } ) => {
-	if ( ! cancellationFeatures.length && ! cancellationChanges.length ) {
-		return;
+	// When the server returns no feature list, fall back to a per-product-type
+	// item so every confirmation screen shows at least one concrete thing the
+	// user is giving up.
+	const lossItems: Array< { key: string; title: string } > = cancellationFeatures.length
+		? cancellationFeatures
+				.filter( ( feature ): feature is CancellationFeature => Boolean( feature ) )
+				.map( ( feature ) => ( { key: String( feature.feature_id ), title: feature.title } ) )
+		: getFallbackLossItems( purchase ).map( ( title, idx ) => ( {
+				key: `fallback-${ idx }`,
+				title,
+		  } ) );
+
+	if ( ! lossItems.length && ! cancellationChanges.length ) {
+		return null;
 	}
 
-	const { expiry_date: expiryDate } = purchase;
-	const expirationDate = intlFormat( expiryDate, { dateStyle: 'medium' }, { locale: 'en-US' } );
-
-	const introCopy = ( () => {
-		if ( displayVariant === 'remove' ) {
-			return __( 'When you remove your plan, you will lose access to:' );
-		}
-		return sprintf(
-			/* translators: %(expire)s is the date the product will expire */
-			__( 'Your plan will expire on %(expiry)s and you’ll lose access to:' ),
-			{
-				expiry: expirationDate,
-			}
-		);
-	} )();
+	const introCopy =
+		displayVariant === 'remove'
+			? __( 'When you remove your subscription, you’ll lose access to:' )
+			: __( 'You’ll lose access to:' );
 
 	return (
 		<VStack spacing={ 6 }>
-			<VStack spacing={ 2 }>
-				<Text as="p">{ introCopy }</Text>
-				<VStack as="ul" spacing={ 1 } style={ { listStyle: 'none', padding: 0, margin: 0 } }>
-					{ cancellationFeatures.map( ( feature ) => {
-						if ( ! feature ) {
-							return null;
-						}
-						return (
-							<li key={ feature.feature_id }>
+			{ lossItems.length > 0 && (
+				<VStack spacing={ 2 }>
+					<Text as="p">{ introCopy }</Text>
+					<VStack as="ul" spacing={ 1 } style={ { listStyle: 'none', padding: 0, margin: 0 } }>
+						{ lossItems.map( ( item ) => (
+							<li key={ item.key }>
 								<HStack alignment="topLeft">
 									<Icon
 										size={ 20 }
 										icon={ close }
 										style={ { flexShrink: 0, fill: 'var( --dashboard__foreground-color-error )' } }
 									/>
-									<span>{ feature.title }</span>
+									<span>{ item.title }</span>
 								</HStack>
 							</li>
-						);
-					} ) }
+						) ) }
+					</VStack>
 				</VStack>
-			</VStack>
+			) }
 			{ cancellationChanges.length > 0 && (
 				<VStack spacing={ 2 }>
 					<Text as="p">{ __( 'We will also make these changes to your site:' ) }</Text>
 					<VStack as="ul" spacing={ 1 } style={ { listStyle: 'none', padding: 0, margin: 0 } }>
-						{ cancellationChanges.map( ( change ) => {
-							return (
-								<li key={ change.getSlug() }>
-									<HStack alignment="topLeft">
-										<Icon
-											size={ 20 }
-											icon={ info }
-											style={ {
-												flexShrink: 0,
-												fill: 'var( --dashboard__foreground-color-warning )',
-											} }
-										/>
-										<span>{ change.getTitle() }</span>
-									</HStack>
-								</li>
-							);
-						} ) }
+						{ cancellationChanges.map( ( change ) => (
+							<li key={ change.getSlug() }>
+								<HStack alignment="topLeft">
+									<Icon
+										size={ 20 }
+										icon={ info }
+										style={ {
+											flexShrink: 0,
+											fill: 'var( --dashboard__foreground-color-warning )',
+										} }
+									/>
+									<span>{ change.getTitle() }</span>
+								</HStack>
+							</li>
+						) ) }
 					</VStack>
 				</VStack>
 			) }

@@ -10,7 +10,6 @@ import CancelPurchaseDomainOptions from './domain-options';
 import CancelPurchaseFeatureList from './feature-list';
 import GSuiteAccessMessage from './gsuite-access-message';
 import PlanProductRevertContent from './plan-product-revert-content';
-import CancelPurchaseRefundInformation from './refund-information';
 import type { CancelPurchaseState } from './types';
 import type {
 	Purchase,
@@ -22,7 +21,6 @@ import type {
 interface CancellationMainContentProps {
 	purchase: Purchase;
 	displayVariant: DisplayVariant;
-	isCancelIntent: boolean;
 	includedDomainPurchase?: Purchase;
 	atomicTransfer?: AtomicTransfer;
 	selectedDomain?: Domain;
@@ -52,7 +50,6 @@ const willShowDomainOptionsRadioButtons = (
 export default function CancellationMainContent( {
 	purchase,
 	displayVariant,
-	isCancelIntent,
 	includedDomainPurchase,
 	atomicTransfer,
 	selectedDomain,
@@ -150,19 +147,9 @@ export default function CancellationMainContent( {
 				cancellationChanges={ cancellationChanges }
 			/>
 
-			{ displayVariant !== 'remove' && (
-				<CancelPurchaseRefundInformation
-					purchase={ purchase }
-					isJetpackPurchase={ isJetpack }
-					selectedDomain={ selectedDomain }
-					isCancelIntent={ isCancelIntent }
-				/>
-			) }
-
 			<PlanProductRevertContent
 				purchase={ purchase }
 				displayVariant={ displayVariant }
-				isCancelIntent={ isCancelIntent }
 				includedDomainPurchase={ includedDomainPurchase }
 				atomicTransfer={ atomicTransfer }
 				state={ state }

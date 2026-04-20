@@ -1,6 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import { DisplayVariant } from '../../../utils/purchase';
 import { CANCELLATION_OFFER_STEP } from './cancel-purchase-form/steps';
+import { getCancellationHeading } from './get-confirmation-copy';
 import type { Purchase } from '@automattic/api-core';
 
 interface CancelHeaderTitleProps {
@@ -17,21 +18,9 @@ export default function CancelHeaderTitle( {
 	if ( surveyStep === CANCELLATION_OFFER_STEP ) {
 		return __( 'Thanks for your feedback' );
 	}
-	if ( displayVariant === 'remove' ) {
-		if ( purchase.is_plan ) {
-			return __( 'Remove plan' );
-		}
-		if ( purchase.is_domain_registration ) {
-			return __( 'Remove domain' );
-		}
-		return __( 'Remove product' );
-	}
-
-	if ( purchase.is_plan ) {
-		return __( 'Cancel plan' );
-	}
-	if ( purchase.is_domain_registration ) {
-		return __( 'Cancel domain' );
-	}
-	return __( 'Cancel product' );
+	return getCancellationHeading( {
+		purchase,
+		intent: displayVariant === 'remove' ? 'remove' : 'cancel',
+		expiryDateFormatted: '',
+	} );
 }
