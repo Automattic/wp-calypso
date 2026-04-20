@@ -365,7 +365,7 @@ private object JetpackAtomicE2ETests : BuildType({
 	id("WPComTests_jetpack_atomic_deployment_e2e_desktop")
 	uuid = "81015cf6-27e7-40bd-a52d-df6bd19ffb01"
 	name = "Jetpack Atomic E2E Tests"
-	description = "Runs Jetpack WPCOM integration tests on all Atomic variations"
+	description = "Runs E2E tests validating a Jetpack release candidate for full WPCOM Atomic deployment. Runs all tests on all Atomic environment variations."
 
 	params {
 		param("PROJECT", "desktop")
@@ -385,6 +385,10 @@ private object JetpackAtomicE2ETests : BuildType({
 				value("ecomm-plan", label = "Ecomm"),
 			))
 		}
+	}
+
+	failureConditions {
+		executionTimeoutMin = 51
 	}
 })
 
