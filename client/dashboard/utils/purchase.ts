@@ -708,6 +708,13 @@ export function getPurchaseCancellationFlowType( purchase: Purchase ): CancelFlo
 /**
  * Returns true if a list of products includes a product with a matching product or store product slug.
  */
+export function isCentennialPurchase( purchase: Purchase ): boolean {
+	return (
+		purchase.bill_period_days === SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD ||
+		purchase.is_hundred_year_domain
+	);
+}
+
 export const hasMarketplaceProduct = ( productsList: Product[], searchSlug: string ): boolean =>
 	// storeProductSlug is from the legacy store_products system, billing_product_slug is from
 	// the non-legacy billing system and for marketplace plugins will match the slug of the plugin

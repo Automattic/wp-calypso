@@ -1,5 +1,4 @@
 import {
-	SubscriptionBillPeriod,
 	DomainProductSlugs,
 	useMyDomainInputMode,
 	WPCOM_DIFM_LITE,
@@ -89,6 +88,7 @@ import {
 	isAkismetFreeProduct,
 	isInExpirationGracePeriod,
 	isA4ABillingDragonPurchase,
+	isCentennialPurchase,
 } from '../../../utils/purchase';
 import { getSitePurchaseUpgradeUrl } from '../../../utils/site-url';
 import BillingFlexUsageCard from '../../billing-flex-usage';
@@ -105,13 +105,6 @@ const SPACING = {
 	DEFAULT: 6,
 	SMALL: 4,
 };
-
-function isCentennialPurchase( purchase: Purchase ): boolean {
-	return (
-		purchase.bill_period_days === SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD ||
-		purchase.is_hundred_year_domain
-	);
-}
 
 function renewPurchase( purchase: Purchase ): void {
 	window.location.href = getRenewalUrlFromPurchase( purchase );
