@@ -1,0 +1,23 @@
+@import "./components/search-input/style";
+@import "./components/result-card/style";
+@import "./components/source-filter/style";
+@import "./components/ai-summary/style";
+
+.content-research-sidebar {
+	&__results {
+		max-height: 60vh;
+		overflow-y: auto;
+	}
+
+	&__empty,
+	&__error {
+		padding: 16px;
+		font-size: 13px;
+		color: #757575;
+		text-align: center;
+	}
+
+	&__error {
+		color: #cc1818;
+	}
+}
