@@ -252,18 +252,18 @@ export function ExpiringLaterText( {
 	if ( purchase.payment_type ) {
 		if ( purchase.is_rechargeable ) {
 			if ( autoRenewingUpgradesAction ) {
-				const message = isDomainOnlySite
-					? // translators: purchaseName is the name of the domain and expiry is a formatted string like "in 3 months".
-					  __(
-							'%(purchaseName)s will expire and be removed from your account %(expiry)s – please enable auto-renewal so you don‘t lose out on your paid features! You also have <link>other upgrades</link> on this site that are scheduled to renew soon.'
-					  )
-					: // translators: purchaseName is the name of the plan and expiry is a formatted string like "in 3 months".
-					  __(
-							'%(purchaseName)s will expire and be removed from your site %(expiry)s – please enable auto-renewal so you don‘t lose out on your paid features! You also have <link>other upgrades</link> on this site that are scheduled to renew soon.'
-					  );
-				return createInterpolateElement( sprintf( message, { purchaseName, expiry } ), {
-					link: <Button variant="link" onClick={ autoRenewingUpgradesAction } />,
-				} );
+				return createInterpolateElement(
+					sprintf(
+						// translators: purchaseName is the name of the plan and expiry is a formatted string like "in 3 months".
+						__(
+							'%(purchaseName)s will expire and be removed from your site %(expiry)s – please enable auto-renewal so you don’t lose out on your paid features! You also have <link>other upgrades</link> on this site that are scheduled to renew soon.'
+						),
+						{ purchaseName, expiry }
+					),
+					{
+						link: <Button variant="link" onClick={ autoRenewingUpgradesAction } />,
+					}
+				);
 			}
 
 			const message = isDomainOnlySite
@@ -279,18 +279,18 @@ export function ExpiringLaterText( {
 		}
 
 		if ( autoRenewingUpgradesAction ) {
-			const message = isDomainOnlySite
-				? // translators: purchaseName is the name of the domain and expiry is a formatted string like "in 3 months".
-				  __(
-						'%(purchaseName)s will expire and be removed from your account %(expiry)s – please renew before expiry so you don‘t lose out on your paid features! You also have <link>other upgrades</link> on this site that are scheduled to renew soon.'
-				  )
-				: // translators: purchaseName is the name of the plan and expiry is a formatted string like "in 3 months".
-				  __(
-						'%(purchaseName)s will expire and be removed from your site %(expiry)s – please renew before expiry so you don‘t lose out on your paid features! You also have <link>other upgrades</link> on this site that are scheduled to renew soon.'
-				  );
-			return createInterpolateElement( sprintf( message, { purchaseName, expiry } ), {
-				link: <Button variant="link" onClick={ autoRenewingUpgradesAction } />,
-			} );
+			return createInterpolateElement(
+				sprintf(
+					// translators: purchaseName is the name of the plan and expiry is a formatted string like "in 3 months".
+					__(
+						'%(purchaseName)s will expire and be removed from your site %(expiry)s – please renew before expiry so you don’t lose out on your paid features! You also have <link>other upgrades</link> on this site that are scheduled to renew soon.'
+					),
+					{ purchaseName, expiry }
+				),
+				{
+					link: <Button variant="link" onClick={ autoRenewingUpgradesAction } />,
+				}
+			);
 		}
 
 		const message = isDomainOnlySite
@@ -306,18 +306,18 @@ export function ExpiringLaterText( {
 	}
 
 	if ( autoRenewingUpgradesAction ) {
-		const message = isDomainOnlySite
-			? // translators: purchaseName is the name of the domain and expiry is a formatted string like "in 3 months".
-			  __(
-					'%(purchaseName)s will expire and be removed from your account %(expiry)s – update your payment information so you don‘t lose out on your paid features! You also have <link>other upgrades</link> on this site that are scheduled to renew soon.'
-			  )
-			: // translators: purchaseName is the name of the plan and expiry is a formatted string like "in 3 months".
-			  __(
-					'%(purchaseName)s will expire and be removed from your site %(expiry)s – update your payment information so you don‘t lose out on your paid features! You also have <link>other upgrades</link> on this site that are scheduled to renew soon.'
-			  );
-		return createInterpolateElement( sprintf( message, { purchaseName, expiry } ), {
-			link: <Button variant="link" onClick={ autoRenewingUpgradesAction } />,
-		} );
+		return createInterpolateElement(
+			sprintf(
+				// translators: purchaseName is the name of the plan and expiry is a formatted string like "in 3 months".
+				__(
+					'%(purchaseName)s will expire and be removed from your site %(expiry)s – update your payment information so you don’t lose out on your paid features! You also have <link>other upgrades</link> on this site that are scheduled to renew soon.'
+				),
+				{ purchaseName, expiry }
+			),
+			{
+				link: <Button variant="link" onClick={ autoRenewingUpgradesAction } />,
+			}
+		);
 	}
 
 	const message = isDomainOnlySite
