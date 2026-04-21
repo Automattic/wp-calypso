@@ -75,7 +75,7 @@ object WPComTests : Project({
 	// Jetpack E2E Tests (Playwright)
 	template(JetpackE2ETestsBuildTemplate);
 	buildType(jetpackSimpleE2ETests());
-	buildType(JetpackAtomicE2ETests);
+	buildType(jetpackAtomicE2ETests());
 	buildType(JetpackAtomicSmokeE2ETests);
 })
 
@@ -605,33 +605,37 @@ fun jetpackSimpleE2ETests(
 	}
 }
 
-private object JetpackAtomicE2ETests : BuildType({
-	templates(JetpackE2ETestsBuildTemplate, CalypsoE2ETestsBuildTemplate)
-	id("WPComTests_JetpackAtomicE2ETests")
-	uuid = "a1b2c3d4-5e6f-7a8b-9c0d-1e2f3a4b5c6d"
-	name = "Jetpack Atomic E2E Tests"
-	description = "Runs Jetpack WPCOM integration tests on all Atomic variations"
+fun jetpackAtomicE2ETests(
+	id: String = "WPComTests_JetpackAtomicE2ETests",
+	uuid: String = "a1b2c3d4-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
+	name: String = "Jetpack Atomic E2E Tests",
+	description: String = "Runs Jetpack WPCOM integration tests on all Atomic variations",
+	variations: List<String> = JETPACK_ATOMIC_VARIATIONS,
+): BuildType {
+	val buildId = id
+	val buildUuid = uuid
+	val buildName = name
+	val buildDescription = description
+	return BuildType({
+		templates(JetpackE2ETestsBuildTemplate, CalypsoE2ETestsBuildTemplate)
+		id(buildId)
+		this.uuid = buildUuid
+		this.name = buildName
+		this.description = buildDescription
 
-	params {
-		param("PROJECT", "desktop")
-		param("env.TEST_ON_ATOMIC", "true")
-		param("env.PW_WORKERS", "5")
-	}
-
-	features {
-		matrix {
-			param("env.ATOMIC_VARIATION", listOf(
-				value("default", label = "Default"),
-				value("php-old", label = "PHP Old"),
-				value("php-new", label = "PHP New"),
-				value("wp-beta", label = "WP Beta"),
-				value("wp-previous", label = "WP Previous"),
-				value("private", label = "Private"),
-				value("ecomm-plan", label = "Ecomm"),
-			))
+		params {
+			param("PROJECT", "desktop")
+			param("env.TEST_ON_ATOMIC", "true")
+			param("env.PW_WORKERS", "5")
 		}
+
+		failureConditions {
+			executionTimeoutMin = 51
+		}
+	}).apply {
+		applyAtomicVariations(variations)
 	}
-})
+}
 
 private object JetpackAtomicSmokeE2ETests : BuildType({
 	templates(JetpackE2ETestsBuildTemplate, CalypsoE2ETestsBuildTemplate)
