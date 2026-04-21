@@ -24,8 +24,7 @@ export function loadBlackboxSdk() {
 	}
 
 	if ( ! config.isEnabled( 'blackbox-login' ) || ! config( 'blackbox_api_key' ) ) {
-		loadPromise = Promise.resolve();
-		return loadPromise;
+		return Promise.resolve();
 	}
 
 	if ( loadPromise ) {
@@ -34,8 +33,7 @@ export function loadBlackboxSdk() {
 
 	const blackboxUrl = config( 'blackbox_url' );
 	if ( typeof blackboxUrl !== 'string' || ! blackboxUrl ) {
-		loadPromise = Promise.resolve();
-		return loadPromise;
+		return Promise.resolve();
 	}
 
 	loadPromise = new Promise( ( resolve ) => {

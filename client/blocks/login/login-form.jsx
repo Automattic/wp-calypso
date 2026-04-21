@@ -154,8 +154,10 @@ export class LoginForm extends Component {
 	}
 
 	componentWillUnmount() {
-		challengeCallbacks.onChallengeStart = null;
-		challengeCallbacks.onChallengeComplete = null;
+		if ( config.isEnabled( 'blackbox-login' ) && config( 'blackbox_api_key' ) ) {
+			challengeCallbacks.onChallengeStart = null;
+			challengeCallbacks.onChallengeComplete = null;
+		}
 	}
 
 	componentDidUpdate( prevProps, prevState ) {
