@@ -786,7 +786,10 @@ class ManagePurchase extends Component<
 
 		const isPlanPurchase = isPlan( purchase );
 
-		// 100-year domains cannot be removed by the user.
+		// 100-year plans and domains can't be removed via self-serve.
+		if ( is100Year( purchase ) ) {
+			return null;
+		}
 		if ( isDomainRegistration( purchase ) && this.isHundredYearDomain( purchase ) ) {
 			return null;
 		}
@@ -1068,7 +1071,10 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
-		// If it's a 100-year domain, don't show the cancel button
+		// 100-year plans and domains can't be cancelled via self-serve.
+		if ( is100Year( purchase ) ) {
+			return null;
+		}
 		if ( this.isHundredYearDomain( purchase ) ) {
 			return null;
 		}

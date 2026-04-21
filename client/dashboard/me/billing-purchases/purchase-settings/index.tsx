@@ -271,6 +271,11 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 	const navigate = useNavigate();
 	const locale = useLocale();
 	const isSplitEnabled = isEnabled( 'purchases/update-cancel-refunds' );
+
+	// 100-year plans and domains can't be cancelled or removed via self-serve.
+	if ( purchase.bill_period_days === SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD ) {
+		return null;
+	}
 	// FIXME: render renderWordAdsEligibilityWarningDialog for refund/cancel
 	// FIXME: render renderNonPrimaryDomainWarningDialog for refund/cancel
 	// FIXME: render "Domain transfers can take anywhere from five to seven days to complete." next to cancel button (see domainTransferDuration)
@@ -578,6 +583,12 @@ function ReinstallButton( { purchase }: { purchase: Purchase } ) {
 }
 
 function PurchaseSettingsActions( { purchase }: { purchase: Purchase } ) {
+	// 100-year plans and domains have no self-serve actions (no upgrade, no
+	// renew, no cancel/remove). Skip the card entirely so we don't render an
+	// empty shell.
+	if ( purchase.bill_period_days === SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD ) {
+		return null;
+	}
 	return (
 		<VStack spacing={ 4 }>
 			<ActionList>
