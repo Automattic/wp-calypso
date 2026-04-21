@@ -137,6 +137,23 @@ export function PurchaseExpiryStatus( {
 		);
 	}
 
+	const isCentennial =
+		purchase.bill_period_days === SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD ||
+		purchase.is_hundred_year_domain;
+
+	if ( isCentennial ) {
+		if ( isIncludedWithPlan( purchase ) ) {
+			return __( 'Included with plan' );
+		}
+		return createInterpolateElement(
+			// translators: date is a formatted expiry date
+			__( 'Paid until <date />' ),
+			{
+				date: <FormattedExpiryDate locale={ locale } purchase={ purchase } />,
+			}
+		);
+	}
+
 	const isIntroductoryOfferFreeTrial = purchase.introductory_offer?.cost_per_interval === 0;
 	if (
 		purchase.introductory_offer?.is_within_period &&
