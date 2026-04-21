@@ -584,12 +584,30 @@ describe( 'Header', () => {
 				<Header { ...defaultProps } mode={ ImageStudioMode.Edit } hasPreviousImage hasNextImage />
 			);
 
-			// When there are drafts, the nav button labels change to a tooltip message
-			const navButtons = screen.getAllByLabelText( /Save or discard your changes/ );
-			expect( navButtons ).toHaveLength( 2 );
-			navButtons.forEach( ( button ) => {
-				expect( button ).toBeDisabled();
+			expect( screen.getByText( 'test-image.jpg' ) ).toBeInTheDocument();
+			expect( screen.getByLabelText( /Previous image/ ) ).toBeDisabled();
+			expect( screen.getByLabelText( /Next image/ ) ).toBeDisabled();
+		} );
+
+		it( 'disables navigation when metadata has been updated', () => {
+			mockUseSelect.mockImplementation( ( selector: any ) => {
+				const result = selector( () => ( {
+					getImageStudioAiProcessing: () => false,
+					getHasUpdatedMetadata: () => true,
+					getIsAnnotationMode: () => false,
+					getDraftIds: () => [],
+					getEntryPoint: () => ImageStudioEntryPoint.MediaLibrary,
+				} ) );
+				return result;
 			} );
+
+			render(
+				<Header { ...defaultProps } mode={ ImageStudioMode.Edit } hasPreviousImage hasNextImage />
+			);
+
+			expect( screen.getByText( 'test-image.jpg' ) ).toBeInTheDocument();
+			expect( screen.getByLabelText( /Previous image/ ) ).toBeDisabled();
+			expect( screen.getByLabelText( /Next image/ ) ).toBeDisabled();
 		} );
 
 		it( 'disables navigation when AI is processing', () => {
