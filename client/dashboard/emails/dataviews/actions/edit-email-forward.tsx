@@ -76,14 +76,14 @@ export const useEditEmailForwardAction = (): Action< Email > => {
 					createErrorNotice(
 						apiMessage
 							? sprintf(
-									/* translators: %1$s is the email address, %2$s is the error message returned by the API. */
+									/* translators: %(emailAddress)s is the email address, %(message)s is the error message returned by the API. */
 									__(
-										'Failed to update forwarder %(emailAddress)s with message "%(message)s". Please try again or contact support.'
+										'Failed to update forwarder %(emailAddress)s with message “%(message)s”. Please try again or contact support.'
 									),
 									{ emailAddress: email.emailAddress, message: apiMessage }
 							  )
 							: sprintf(
-									/* translators: %1$s is the email address. */
+									/* translators: %(emailAddress)s is the email address. */
 									__(
 										'Failed to update forwarder %(emailAddress)s. Please try again or contact support.'
 									),
