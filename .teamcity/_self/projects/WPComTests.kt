@@ -60,13 +60,11 @@ object WPComTests : Project({
 	buildType(jetpackSimpleDeploymentE2eBuildType("desktop", "3007d7a1-5642-4dbf-9935-d93f3cdb4dcc"));
 	buildType(jetpackSimpleDeploymentE2eBuildType("mobile", "ccfe7d2c-8f04-406b-8b83-3db6c8475661"));
 
-	// E2E Tests for Jetpack Atomic Deployment
-	// Just desktop to start
-	buildType(jetpackAtomicDeploymentE2eBuildType("desktop", "81015cf6-27e7-40bd-a52d-df6bd19ffb01"));
+	// E2E Tests for Jetpack Atomic Deployment (desktop only)
+	buildType(jetpackAtomicDeploymentE2eBuildType("81015cf6-27e7-40bd-a52d-df6bd19ffb01"));
 
-	// E2E Tests for smoke testing each new Jetpack build on Atomic
-	// Also just desktop to start
-	buildType(jetpackAtomicBuildSmokeE2eBuildType("desktop", "f39587ab-f526-42aa-a88b-814702135af3"));
+	// E2E Tests for smoke testing each new Jetpack build on Atomic (desktop only)
+	buildType(jetpackAtomicBuildSmokeE2eBuildType("f39587ab-f526-42aa-a88b-814702135af3"));
 
 	buildType(I18NTests);
 	buildType(P2E2ETests);
@@ -83,16 +81,6 @@ private val JETPACK_SIMPLE_VIEWPORTS = listOf("desktop", "mobile")
 
 private val JETPACK_ATOMIC_VARIATIONS = listOf(
 	"default", "php-old", "php-new", "wp-beta", "wp-previous", "private", "ecomm-plan"
-)
-
-private val JETPACK_ATOMIC_VARIATION_LABELS = mapOf(
-	"default" to "Default",
-	"php-old" to "PHP Old",
-	"php-new" to "PHP New",
-	"wp-beta" to "WP Beta",
-	"wp-previous" to "WP Previous",
-	"private" to "Private",
-	"ecomm-plan" to "Ecomm",
 )
 
 private fun BuildType.applyViewports(viewports: List<String>) {
@@ -112,13 +100,22 @@ private fun BuildType.applyViewports(viewports: List<String>) {
 
 private fun BuildType.applyAtomicVariations(variations: List<String>) {
 	require(variations.isNotEmpty()) { "variations must not be empty" }
+	val labels = mapOf(
+		"default" to "Default",
+		"php-old" to "PHP Old",
+		"php-new" to "PHP New",
+		"wp-beta" to "WP Beta",
+		"wp-previous" to "WP Previous",
+		"private" to "Private",
+		"ecomm-plan" to "Ecomm",
+	)
 	if (variations.size == 1) {
 		params { param("env.ATOMIC_VARIATION", variations.single()) }
 	} else {
 		features {
 			matrix {
 				param("env.ATOMIC_VARIATION", variations.map {
-					value(it, label = JETPACK_ATOMIC_VARIATION_LABELS[it] ?: it)
+					value(it, label = labels[it] ?: it)
 				})
 			}
 		}
@@ -222,31 +219,31 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 
 fun jetpackSimpleDeploymentE2eBuildType(targetDevice: String, buildUuid: String): BuildType =
 	jetpackSimpleE2ETests(
-		id = "WPComTests_jetpack_simple_deployment_e2e_$targetDevice",
-		uuid = buildUuid,
-		name = "Jetpack Simple Deployment E2E Tests ($targetDevice)",
-		description = "Runs E2E tests validating the deployment of Jetpack on Simple sites on $targetDevice viewport",
+		buildId = "WPComTests_jetpack_simple_deployment_e2e_$targetDevice",
+		buildUuid = buildUuid,
+		buildName = "Jetpack Simple Deployment E2E Tests ($targetDevice)",
+		buildDescription = "Runs E2E tests validating the deployment of Jetpack on Simple sites on $targetDevice viewport",
 		viewports = listOf(targetDevice),
 	).apply {
 		params { param("SLACK_NOTIFY_CHANNEL", "#jetpack-alerts") }
 	}
 
-fun jetpackAtomicDeploymentE2eBuildType(targetDevice: String, buildUuid: String): BuildType =
+fun jetpackAtomicDeploymentE2eBuildType(buildUuid: String): BuildType =
 	jetpackAtomicE2ETests(
-		id = "WPComTests_jetpack_atomic_deployment_e2e_$targetDevice",
-		uuid = buildUuid,
-		name = "Jetpack Atomic Deployment E2E Tests ($targetDevice)",
-		description = "Runs E2E tests validating a Jetpack release candidate for full WPCOM Atomic deployment. Runs all tests on all Atomic environment variations.",
+		buildId = "WPComTests_jetpack_atomic_deployment_e2e_desktop",
+		buildUuid = buildUuid,
+		buildName = "Jetpack Atomic Deployment E2E Tests (desktop)",
+		buildDescription = "Runs E2E tests validating a Jetpack release candidate for full WPCOM Atomic deployment. Runs all tests on all Atomic environment variations.",
 	).apply {
 		params { param("SLACK_NOTIFY_CHANNEL", "#jetpack-alerts") }
 	}
 
-fun jetpackAtomicBuildSmokeE2eBuildType(targetDevice: String, buildUuid: String): BuildType =
+fun jetpackAtomicBuildSmokeE2eBuildType(buildUuid: String): BuildType =
 	jetpackAtomicSmokeE2ETests(
-		id = "WPComTests_jetpack_atomic_build_smoke_e2e_$targetDevice",
-		uuid = buildUuid,
-		name = "Jetpack Atomic Build Smoke E2E Tests ($targetDevice)",
-		description = "Runs E2E tests to smoke test the most recent Jetpack build on Atomic staging sites. It uses a randomized mix of Atomic environment variations.",
+		buildId = "WPComTests_jetpack_atomic_build_smoke_e2e_desktop",
+		buildUuid = buildUuid,
+		buildName = "Jetpack Atomic Build Smoke E2E Tests (desktop)",
+		buildDescription = "Runs E2E tests to smoke test the most recent Jetpack build on Atomic staging sites. It uses a randomized mix of Atomic environment variations.",
 	).apply {
 		params { param("SLACK_NOTIFY_CHANNEL", "#jetpack-alerts") }
 	}
@@ -426,83 +423,67 @@ private object JetpackE2ETestsBuildTemplate : Template({
 })
 
 fun jetpackSimpleE2ETests(
-	id: String = "WPComTests_JetpackSimpleE2ETests",
-	uuid: String = "f8a2c9d1-3b4e-5f6a-7c8d-9e0f1a2b3c4d",
-	name: String = "Jetpack Simple E2E Tests",
-	description: String = "Runs Jetpack WPCOM integration tests on Simple sites",
+	buildId: String = "WPComTests_JetpackSimpleE2ETests",
+	buildUuid: String = "f8a2c9d1-3b4e-5f6a-7c8d-9e0f1a2b3c4d",
+	buildName: String = "Jetpack Simple E2E Tests",
+	buildDescription: String = "Runs Jetpack WPCOM integration tests on Simple sites",
 	viewports: List<String> = JETPACK_SIMPLE_VIEWPORTS,
-): BuildType {
-	val buildId = id
-	val buildUuid = uuid
-	val buildName = name
-	val buildDescription = description
-	return BuildType({
-		templates(JetpackE2ETestsBuildTemplate, CalypsoE2ETestsBuildTemplate)
-		id(buildId)
-		this.uuid = buildUuid
-		this.name = buildName
-		this.description = buildDescription
-	}).apply {
-		applyViewports(viewports)
-	}
+): BuildType = BuildType({
+	templates(JetpackE2ETestsBuildTemplate, CalypsoE2ETestsBuildTemplate)
+	id(buildId)
+	uuid = buildUuid
+	name = buildName
+	description = buildDescription
+}).apply {
+	applyViewports(viewports)
 }
 
 fun jetpackAtomicE2ETests(
-	id: String = "WPComTests_JetpackAtomicE2ETests",
-	uuid: String = "a1b2c3d4-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
-	name: String = "Jetpack Atomic E2E Tests",
-	description: String = "Runs Jetpack WPCOM integration tests on all Atomic variations",
+	buildId: String = "WPComTests_JetpackAtomicE2ETests",
+	buildUuid: String = "a1b2c3d4-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
+	buildName: String = "Jetpack Atomic E2E Tests",
+	buildDescription: String = "Runs Jetpack WPCOM integration tests on all Atomic variations",
 	variations: List<String> = JETPACK_ATOMIC_VARIATIONS,
-): BuildType {
-	val buildId = id
-	val buildUuid = uuid
-	val buildName = name
-	val buildDescription = description
-	return BuildType({
-		templates(JetpackE2ETestsBuildTemplate, CalypsoE2ETestsBuildTemplate)
-		id(buildId)
-		this.uuid = buildUuid
-		this.name = buildName
-		this.description = buildDescription
+): BuildType = BuildType({
+	templates(JetpackE2ETestsBuildTemplate, CalypsoE2ETestsBuildTemplate)
+	id(buildId)
+	uuid = buildUuid
+	name = buildName
+	description = buildDescription
 
-		params {
-			param("PROJECT", "desktop")
-			param("env.TEST_ON_ATOMIC", "true")
-			param("env.PW_WORKERS", "5")
-		}
-
-		failureConditions {
-			// Overrides CalypsoE2ETestsBuildTemplate's 30-min default. The 7-variation
-			// sweep needs more headroom; 51 matches the long-running Atomic baseline.
-			executionTimeoutMin = 51
-		}
-	}).apply {
-		applyAtomicVariations(variations)
+	params {
+		param("PROJECT", "desktop")
+		param("env.TEST_ON_ATOMIC", "true")
+		param("env.PW_WORKERS", "5")
 	}
+
+	failureConditions {
+		// Overrides CalypsoE2ETestsBuildTemplate's 30-min default. The 7-variation
+		// sweep needs more headroom; 51 matches the long-running Atomic baseline.
+		executionTimeoutMin = 51
+	}
+}).apply {
+	applyAtomicVariations(variations)
 }
 
+// Smoke runs a single TeamCity build with env.ATOMIC_VARIATION="mixed"; the test
+// runner randomizes the variation per worker, so no matrix is needed here.
 fun jetpackAtomicSmokeE2ETests(
-	id: String = "WPComTests_JetpackAtomicSmokeE2ETests",
-	uuid: String = "b2c3d4e5-6f7a-8b9c-0d1e-2f3a4b5c6d7e",
-	name: String = "Jetpack Atomic E2E Tests - Mixed Variations",
-	description: String = "Runs Jetpack WPCOM integration tests on Atomic with mixed variations",
-): BuildType {
-	val buildId = id
-	val buildUuid = uuid
-	val buildName = name
-	val buildDescription = description
-	return BuildType({
-		templates(JetpackE2ETestsBuildTemplate, CalypsoE2ETestsBuildTemplate)
-		id(buildId)
-		this.uuid = buildUuid
-		this.name = buildName
-		this.description = buildDescription
+	buildId: String = "WPComTests_JetpackAtomicSmokeE2ETests",
+	buildUuid: String = "b2c3d4e5-6f7a-8b9c-0d1e-2f3a4b5c6d7e",
+	buildName: String = "Jetpack Atomic E2E Tests - Mixed Variations",
+	buildDescription: String = "Runs Jetpack WPCOM integration tests on Atomic with mixed variations",
+): BuildType = BuildType({
+	templates(JetpackE2ETestsBuildTemplate, CalypsoE2ETestsBuildTemplate)
+	id(buildId)
+	uuid = buildUuid
+	name = buildName
+	description = buildDescription
 
-		params {
-			param("PROJECT", "desktop")
-			param("env.TEST_ON_ATOMIC", "true")
-			param("env.PW_WORKERS", "14")
-			param("env.ATOMIC_VARIATION", "mixed")
-		}
-	})
-}
+	params {
+		param("PROJECT", "desktop")
+		param("env.TEST_ON_ATOMIC", "true")
+		param("env.PW_WORKERS", "14")
+		param("env.ATOMIC_VARIATION", "mixed")
+	}
+})
