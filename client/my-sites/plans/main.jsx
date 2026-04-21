@@ -5,10 +5,6 @@ import {
 	getPlan,
 	is100Year,
 	isFreePlanProduct,
-	isPersonalPlan,
-	isPremiumPlan,
-	isBusinessPlan,
-	isEcommercePlan,
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	PLAN_HOSTING_TRIAL_MONTHLY,
@@ -17,6 +13,11 @@ import {
 	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
 	PLAN_WOOEXPRESS_SMALL,
 	PLAN_WOOEXPRESS_SMALL_MONTHLY,
+	TYPE_BUSINESS,
+	TYPE_ECOMMERCE,
+	TYPE_FREE,
+	TYPE_PERSONAL,
+	TYPE_PREMIUM,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Plans } from '@automattic/data-stores';
@@ -69,23 +70,7 @@ import './style.scss';
 
 // Plan tiers from lowest to highest, used to filter the visible plans list
 // for the de-emphasized current plan card experiment.
-const PLAN_TIERS = [ 'free', 'personal', 'premium', 'business', 'ecommerce' ];
-
-function getPlanTier( planSlug ) {
-	if ( isPersonalPlan( planSlug ) ) {
-		return 'personal';
-	}
-	if ( isPremiumPlan( planSlug ) ) {
-		return 'premium';
-	}
-	if ( isBusinessPlan( planSlug ) ) {
-		return 'business';
-	}
-	if ( isEcommercePlan( planSlug ) ) {
-		return 'ecommerce';
-	}
-	return null;
-}
+const PLAN_TIERS = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
 
 class PlansComponent extends Component {
 	static propTypes = {
@@ -205,9 +190,9 @@ class PlansComponent extends Component {
 				: undefined;
 
 		// Experiment: filter the visible plan tiers to those at or above the current plan.
-		const currentTier = currentPlan?.productSlug ? getPlanTier( currentPlan.productSlug ) : null;
+		const currentTier = getPlan( currentPlan?.productSlug )?.type;
 		const visiblePlanTiers =
-			isExperimentVariant && currentTier
+			isExperimentVariant && currentTier && PLAN_TIERS.includes( currentTier )
 				? PLAN_TIERS.slice( PLAN_TIERS.indexOf( currentTier ) )
 				: PLAN_TIERS;
 
@@ -229,10 +214,10 @@ class PlansComponent extends Component {
 				intent={ plansIntent }
 				isSpotlightOnCurrentPlan={ showSpotlight }
 				highlightLabelOverrides={ highlightLabelOverrides }
-				hideFreePlan={ ! visiblePlanTiers.includes( 'free' ) || undefined }
-				hidePersonalPlan={ ! visiblePlanTiers.includes( 'personal' ) || undefined }
-				hidePremiumPlan={ ! visiblePlanTiers.includes( 'premium' ) || undefined }
-				hideBusinessPlan={ ! visiblePlanTiers.includes( 'business' ) || undefined }
+				hideFreePlan={ ! visiblePlanTiers.includes( TYPE_FREE ) || undefined }
+				hidePersonalPlan={ ! visiblePlanTiers.includes( TYPE_PERSONAL ) || undefined }
+				hidePremiumPlan={ ! visiblePlanTiers.includes( TYPE_PREMIUM ) || undefined }
+				hideBusinessPlan={ ! visiblePlanTiers.includes( TYPE_BUSINESS ) || undefined }
 				hideEnterprisePlan={ hideEnterprise }
 				hideEcommercePlan={ hideEcommerce }
 				showPlanTypeSelectorDropdown={ isEnabled( 'onboarding/interval-dropdown' ) }
