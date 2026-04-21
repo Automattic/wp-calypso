@@ -22,6 +22,7 @@ import {
 	siteMediaStorageQuery,
 	sitePHPVersionQuery,
 	siteCurrentPlanQuery,
+	sitePlansQuery,
 	siteBySlugQuery,
 	siteByIdQuery,
 	siteCrontabsQuery,
@@ -36,13 +37,11 @@ import {
 	siteSshAccessStatusQuery,
 	siteStaticFile404SettingQuery,
 	siteWordPressVersionQuery,
-	userPreferenceOptimisticMutation,
 	queryClient,
 	wpOrgCoreVersionQuery,
 } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import { isSupportSession } from '@automattic/calypso-support-session';
-import { MutationObserver } from '@tanstack/react-query';
 import { createLazyRoute, createRoute, lazyRouteComponent, notFound } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import {
@@ -165,20 +164,6 @@ export const siteRoute = createRoute( {
 		}
 
 		return { site };
-	},
-	onEnter: async ( { loaderData } ) => {
-		const siteId = loaderData?.site?.ID;
-		if ( ! siteId ) {
-			return;
-		}
-		const prefs = await queryClient.ensureQueryData( rawUserPreferencesQuery() );
-		const recentSites = prefs?.recentSites ?? [];
-		if ( siteId !== recentSites[ 0 ] ) {
-			const updated = [ ...new Set( [ siteId, ...recentSites ] ) ].slice( 0, 5 );
-			new MutationObserver( queryClient, userPreferenceOptimisticMutation( 'recentSites' ) ).mutate(
-				updated
-			);
-		}
 	},
 	errorComponent: lazyRouteComponent( () => import( '../../sites/site/error' ) ),
 } ).lazy( () =>
@@ -1534,6 +1519,36 @@ export const siteSSHMigrationCompleteRoute = createRoute( {
 	)
 );
 
+export const sitePlansRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Plans' ),
+			},
+		],
+	} ),
+	getParentRoute: () => siteRoute,
+	path: 'plans',
+	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+		if ( ! isEnabled( 'dashboard/plans' ) ) {
+			throw redirectAsNotAllowed( { to: siteRoute.fullPath, params: { siteSlug } } );
+		}
+	},
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		await queryClient.ensureQueryData( sitePlansQuery( site.ID ) );
+	},
+} ).lazy( () =>
+	import( '../../sites/site-plans' ).then( ( d ) =>
+		createLazyRoute( 'site-plans' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const createSitesRoutes = ( config: AppConfig ) => {
 	if ( ! config.supports.sites ) {
 		return [];
@@ -1569,6 +1584,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 			siteScanHistoryRoute,
 		] ),
 		siteDomainsRoute,
+		sitePlansRoute,
 	];
 
 	const settingsRoutes: AnyRoute[] = [

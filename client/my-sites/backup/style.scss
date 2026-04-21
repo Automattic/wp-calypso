@@ -3,6 +3,7 @@
 body.is-section-backup {
 	@include admin-ui-page-layout;
 	@include admin-ui-page-layout-constrained-content($max-width: 1040px);
+	@include admin-ui-page-sticky-footer;
 
 	.backup__wpcom-upsell .promo-card {
 		display: flex;
@@ -20,25 +21,6 @@ body.is-section-backup {
 	--color-accent-60: var(--studio-jetpack-green-70);
 }
 
-.backup__last-backup-status {
-	background: var(--studio-white);
-	padding: 16px 16px 0;
-
-	@include breakpoint-deprecated( ">660px" ) {
-		background: var(--color-surface-backdrop);
-		padding: 0;
-		margin: 0;
-	}
-}
-.backup__page .main {
-	overflow-y: auto;
-	padding-bottom: 0;
-
-	@include breakpoint-deprecated( ">660px" ) {
-		overflow-y: visible;
-	}
-}
-
 .backup__main .formatted-header.is-left-align {
 	margin-top: 20px;
 
@@ -49,12 +31,11 @@ body.is-section-backup {
 }
 
 .backup__main-wrap {
-	display: flex;
-	flex-direction: column;
-	height: calc(100vh - 120px);
-	@include breakpoint-deprecated( ">660px" ) {
-		height: auto;
-	}
+	// Plain block layout (not flex). Cards inside have `margin: 0 auto` from
+	// `.card`, which is harmless on block children (computes to 0) but in a
+	// flex column container would override `align-items: stretch` and shrink
+	// each card to its content width.
+	display: block;
 }
 
 .backup__search {
@@ -126,11 +107,6 @@ body.is-section-backup {
 	.backup__main-wrap {
 		margin-left: auto;
 		margin-right: auto;
-	}
-
-	.backup__last-backup-status {
-		padding: initial;
-		background: initial;
 	}
 
 	.button {

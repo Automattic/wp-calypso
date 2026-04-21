@@ -297,10 +297,12 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 					await section.getByRole( 'button', { name: 'Select' } ).click();
 
 					const popoverGroup = page.getByRole( 'group', {
-						name: 'For link preview',
+						name: 'Link preview',
 					} );
 
-					const templatebutton = popoverGroup.getByRole( 'menuitem', { name: 'Use template' } );
+					const templatebutton = popoverGroup.getByRole( 'menuitem', {
+						name: 'Social image template',
+					} );
 
 					expect( await templatebutton.isVisible() ).toBe( true );
 

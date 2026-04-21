@@ -112,6 +112,9 @@ test.describe(
 				await expect
 					.poll( async () => page.url() )
 					.toBe( `${ environment.WOO_BASE_URL }/my-dashboard/` );
+
+				// The Log Out link is only visible to authenticated users.
+				await expect( page.getByRole( 'link', { name: /log ?out/i } ) ).toBeVisible();
 			} );
 		} );
 	}

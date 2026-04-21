@@ -146,6 +146,7 @@ export async function pixProcessor(
 				},
 				isAkismet: options.isAkismetSitelessCheckout,
 				isJetpackNotAtomic: options.isJetpackNotAtomic,
+				isPixAutomatico: false,
 			} );
 
 			let orderStatus = 'processing';
@@ -209,6 +210,7 @@ function displayModal( {
 	error,
 	isAkismet,
 	isJetpackNotAtomic,
+	isPixAutomatico,
 }: {
 	root: Root;
 	qrCode: string;
@@ -218,6 +220,7 @@ function displayModal( {
 	error: () => void;
 	isAkismet: boolean;
 	isJetpackNotAtomic: boolean;
+	isPixAutomatico: boolean;
 } ) {
 	root.render(
 		createElement( PixConfirmation, {
@@ -227,6 +230,7 @@ function displayModal( {
 			cancel,
 			isAkismet,
 			isJetpackNotAtomic,
+			isPixAutomatico,
 		} )
 	);
 

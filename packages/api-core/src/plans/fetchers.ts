@@ -27,6 +27,9 @@ function normalizePlanProduct( plan: PlanProduct ): PlanProduct {
 		...( plan.introductory_offer_interval_count !== undefined && {
 			introductory_offer_interval_count: toNumber( plan.introductory_offer_interval_count ),
 		} ),
+		...( Boolean( plan.product_tier_id ) === true && {
+			product_tier_id: toNumber( plan.product_tier_id ),
+		} ),
 	};
 }
 

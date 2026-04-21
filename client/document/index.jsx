@@ -349,6 +349,13 @@ function LoadingPlaceholder( {
 		);
 	}
 
+	// Dashboard apps render their own loading logo in the dashboard Root after
+	// hydration. Skipping the SSR logo avoids a double-render with positional
+	// jitter between the SSR and Root containers.
+	if ( dashboard ) {
+		return null;
+	}
+
 	const LoadingLogo = chooseLoadingLogo( {
 		isWpMobileApp: app?.isWpMobileApp,
 		isWcMobileApp: app?.isWcMobileApp,

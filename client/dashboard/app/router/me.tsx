@@ -37,7 +37,6 @@ import { __ } from '@wordpress/i18n';
 import { getMonetizeSubscriptionsPageTitle } from '../../me/billing-monetize-subscriptions/title';
 import { reauthRequiredLink } from '../../utils/link';
 import {
-	isTemporarySitePurchase,
 	getTitleForDisplay,
 	getPurchaseCancellationFlowType,
 	isDotcomPlan,
@@ -277,7 +276,7 @@ export const purchaseSettingsIndexRoute = createRoute( {
 		const purchase = await queryClient.ensureQueryData( purchaseQuery( parseInt( purchaseId ) ) );
 
 		// Preload site and storage data for wpcom plans
-		if ( purchase.site_slug && purchase.blog_id && ! isTemporarySitePurchase( purchase ) ) {
+		if ( purchase.site_slug && purchase.blog_id && ! purchase.is_attached_to_holding_site ) {
 			await Promise.all( [
 				queryClient.ensureQueryData( siteBySlugQuery( purchase.site_slug ) ).catch( () => {
 					// Some sites cannot be reached; like disconnected Jetpack sites. We can safely ignore those.

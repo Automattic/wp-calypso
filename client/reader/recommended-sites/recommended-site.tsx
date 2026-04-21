@@ -82,13 +82,13 @@ type RecommendedSiteProps = {
 const RecommendedSite = ( {
 	siteId,
 	feedId,
+	feedIcon,
 	siteTitle,
 	streamUrl,
 	siteDescription,
 	siteDomain,
 	siteUrl,
 	siteIcon,
-	feedIcon,
 	railcar,
 	uiPosition,
 }: RecommendedSiteProps ) => {

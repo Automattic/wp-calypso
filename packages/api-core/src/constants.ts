@@ -222,6 +222,8 @@ export const SubscriptionBillPeriod = {
 	PLAN_DECENNIAL_PERIOD: 3650,
 	PLAN_CENTENNIAL_PERIOD: 36500,
 } as const;
+export type SubscriptionBillPeriodValue =
+	( typeof SubscriptionBillPeriod )[ keyof typeof SubscriptionBillPeriod ];
 
 export const WPCOM_DIFM_LITE = 'wp_difm_lite';
 

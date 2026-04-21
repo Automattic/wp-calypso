@@ -76,7 +76,7 @@ import {
 	isRenewing,
 	isIncludedWithPlan,
 	isOneTimePurchase,
-	isMarketplaceTemporarySitePurchase,
+	isMarketplaceHoldingSitePurchase,
 	isMarketplacePlugin,
 	isAkismetProduct,
 	isJetpackCrmProduct,
@@ -85,7 +85,6 @@ import {
 	isDotcomPlan,
 	getRenewalUrlFromPurchase,
 	isJetpackT1SecurityPlan,
-	isTemporarySitePurchase,
 	isWpcomFlexSubscription,
 	isAkismetFreeProduct,
 	isInExpirationGracePeriod,
@@ -449,7 +448,7 @@ function ReinstallButton( { purchase }: { purchase: Purchase } ) {
 	if ( ! isMarketplacePlugin( purchase ) ) {
 		return null;
 	}
-	if ( isMarketplaceTemporarySitePurchase( purchase ) ) {
+	if ( isMarketplaceHoldingSitePurchase( purchase ) ) {
 		return null;
 	}
 
@@ -1114,7 +1113,7 @@ export default function PurchaseSettings() {
 	const { data: purchase } = useSuspenseQuery( purchaseQuery( parseInt( purchaseId ) ) );
 	const { data: site } = useQuery( {
 		...siteBySlugQuery( purchase.site_slug ?? '' ),
-		enabled: Boolean( purchase.site_slug ) && ! isTemporarySitePurchase( purchase ),
+		enabled: Boolean( purchase.site_slug ) && ! purchase.is_attached_to_holding_site,
 	} );
 	const { data: domain } = useQuery( {
 		...domainQuery( purchase.meta ?? '' ),
@@ -1271,7 +1270,7 @@ export default function PurchaseSettings() {
 					{ purchase.is_jetpack_plan_or_product && (
 						<JetpackLicenseKeyCard purchaseId={ purchase.ID } />
 					) }
-					{ isAkismetProduct( purchase ) && isTemporarySitePurchase( purchase ) && (
+					{ isAkismetProduct( purchase ) && purchase.is_attached_to_holding_site && (
 						<AkismetApiKeyCard />
 					) }
 				</Grid>
