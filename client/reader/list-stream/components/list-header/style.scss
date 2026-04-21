@@ -43,10 +43,6 @@
 		background-color: var(--color-neutral-0);
 		animation: loading-fade 1.6s ease-in-out infinite;
 	}
-
-	.list-stream__header-title-privacy {
-		display: none;
-	}
 }
 
 .list-stream__header-edit {
@@ -72,7 +68,7 @@
 
 	.list-stream__nav {
 		.section-nav-tab__link {
-			padding-top: 0;
+			padding-top: 0; // Removing padding from top of tabs to make the view more compact.
 		}
 	}
 }
