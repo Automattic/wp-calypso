@@ -254,13 +254,13 @@ const usePricingMetaForGridPlans = ( {
 					// If there is, however, a sale coupon, show the discounted price
 					// without proration. This isn't ideal, but is intentional. Because of
 					// this, the price will differ between the plans grid and checkout screen.
-					const costOverrideCode = sitePlan?.pricing?.costOverrides?.[ 0 ]?.overrideCode;
-					const hasProratedCostOverride =
-						costOverrideCode &&
-						[
-							COST_OVERRIDE_REASONS.RECENT_PLAN_PRORATION,
-							COST_OVERRIDE_REASONS.RECENT_DOMAIN_PRORATION,
-						].includes( costOverrideCode );
+					const hasProratedCostOverride = sitePlan?.pricing?.costOverrides?.some(
+						( { overrideCode } ) =>
+							[
+								COST_OVERRIDE_REASONS.RECENT_PLAN_PRORATION,
+								COST_OVERRIDE_REASONS.RECENT_DOMAIN_PRORATION,
+							].includes( overrideCode )
+					);
 					if (
 						! sitePlan?.pricing?.hasSaleCoupon &&
 						! withProratedDiscounts &&

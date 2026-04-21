@@ -2,6 +2,7 @@ const path = require( 'path' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
 const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
 const ReadableJsAssetsWebpackPlugin = require( '@wordpress/readable-js-assets-webpack-plugin' );
+const CopyPlugin = require( 'copy-webpack-plugin' );
 const webpack = require( 'webpack' );
 const GenerateChunksMapPlugin = require( '../../build-tools/webpack/generate-chunks-map-plugin' );
 
@@ -79,7 +80,9 @@ function getIndividualConfig( options = {} ) {
 					// Bundle @wordpress/abilities into image-studio so it works on
 					// self-hosted sites where the package isn't registered as a script.
 					if (
-						( name === 'image-studio' || name === 'block-notes' ) &&
+						( name === 'image-studio' ||
+							name === 'block-notes' ||
+							name === 'jetpack-ai-sidebar' ) &&
 						request === '@wordpress/abilities'
 					) {
 						return null;
@@ -104,10 +107,23 @@ function getIndividualConfig( options = {} ) {
 function getWebpackConfig( env = { source: '' }, argv = {} ) {
 	env.WP = true;
 
-	return [
+	// Copy the ESM provider wrapper for jetpack-ai-sidebar to dist.
+	// This file is pure ESM and doesn't need webpack processing — AM
+	// loads it via dynamic import() at runtime.
+	const copyEsmProviders = new CopyPlugin( {
+		patterns: [
+			{
+				from: path.join( __dirname, 'jetpack-ai-sidebar.provider.mjs' ),
+				to: path.join( __dirname, 'dist', 'jetpack-ai-sidebar.provider.mjs' ),
+			},
+		],
+	} );
+
+	const configs = [
 		getIndividualConfig( { env, argv, name: 'agents-manager-gutenberg' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-wp-admin' } ),
 		getIndividualConfig( { env, argv, name: 'image-studio' } ),
+		getIndividualConfig( { env, argv, name: 'jetpack-ai-sidebar' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-gutenberg-disconnected' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-wp-admin-disconnected' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-ciab-disconnected' } ),
@@ -115,6 +131,11 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 		getIndividualConfig( { env, argv, name: 'agents-manager-ciab' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-wooai' } ),
 	];
+
+	// Attach the copy plugin to the first config.
+	configs[ 0 ].plugins.push( copyEsmProviders );
+
+	return configs;
 }
 
 module.exports = getWebpackConfig;
