@@ -5,8 +5,6 @@ $card-height-desktop: 250px;
 $preview-max-width: 360px;
 $content-max-width: 210px;
 
-// Compound selector to beat `.card { display: block }` from @automattic/components,
-// which is loaded after this file and would otherwise override `display: grid`.
 .card.backup-getting-started {
 	display: grid;
 	grid-template-columns: 1fr;
