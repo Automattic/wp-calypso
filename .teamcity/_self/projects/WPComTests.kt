@@ -516,13 +516,14 @@ private object JetpackE2ETestsBuildTemplate : Template({
 		param("TEST_GROUP", "@jetpack-wpcom-integration")
 		param("CALYPSO_BASE_URL", "https://wordpress.com")
 		param("env.JETPACK_TARGET", "wpcom-deployment")
+		param("SLACK_NOTIFY_CHANNEL", "#notif-test")
 	}
 
 	features {
 		notifications {
 			notifierSettings = slackNotifier {
 				connection = "PROJECT_EXT_11"
-				sendTo = "#notif-test"
+				sendTo = "%SLACK_NOTIFY_CHANNEL%"
 				messageFormat = verboseMessageFormat {
 					addStatusText = true
 				}
