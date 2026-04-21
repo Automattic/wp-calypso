@@ -5,9 +5,6 @@
 jest.mock( 'calypso/blocks/login/utils/ensure-blackbox-login-script', () => ( {
 	ensureBlackboxLoginScript: jest.fn( () => Promise.resolve() ),
 } ) );
-jest.mock( 'calypso/blocks/login/utils/get-inline-script-nonce', () => ( {
-	getInlineScriptNonce: jest.fn( () => 'inline-nonce' ),
-} ) );
 
 import { ensureBlackboxLoginScript } from 'calypso/blocks/login/utils/ensure-blackbox-login-script';
 import { getBlackboxSessionId } from '../get-blackbox-session-id';
@@ -23,7 +20,7 @@ describe( 'getBlackboxSessionId', () => {
 		};
 
 		await expect( getBlackboxSessionId() ).resolves.toBe( 'session-id' );
-		expect( ensureBlackboxLoginScript ).toHaveBeenCalledWith( 'inline-nonce' );
+		expect( ensureBlackboxLoginScript ).toHaveBeenCalledWith();
 		expect( window.Blackbox.collect ).toHaveBeenCalled();
 	} );
 

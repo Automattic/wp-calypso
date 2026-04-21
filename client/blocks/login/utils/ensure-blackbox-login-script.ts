@@ -99,7 +99,7 @@ function tryRegisterBlackboxRuntimeCallbacks() {
  * Injects Blackbox-js after the login form mount so the library does not run at page boot.
  * The challenge container node must already be in the DOM before the script executes.
  */
-export function ensureBlackboxLoginScript( inlineScriptNonce?: string ): Promise< void > {
+export function ensureBlackboxLoginScript(): Promise< void > {
 	if ( typeof document === 'undefined' ) {
 		return Promise.resolve();
 	}
@@ -160,10 +160,6 @@ export function ensureBlackboxLoginScript( inlineScriptNonce?: string ): Promise
 			'data-on-challenge-start': BLACKBOX_CHALLENGE_START_HANDLER,
 			'data-on-challenge-complete': BLACKBOX_CHALLENGE_COMPLETE_HANDLER,
 		};
-
-		if ( inlineScriptNonce ) {
-			scriptAttributes.nonce = inlineScriptNonce;
-		}
 
 		const blackboxUrl = config( 'blackbox_url' );
 		if ( typeof blackboxUrl !== 'string' || ! blackboxUrl ) {

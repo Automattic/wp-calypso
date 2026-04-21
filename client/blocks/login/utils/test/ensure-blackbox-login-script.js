@@ -38,17 +38,16 @@ describe( 'ensureBlackboxLoginScript', () => {
 		jest.useRealTimers();
 	} );
 
-	test( 'loads blackbox via loadScript with nonce and data attributes', async () => {
+	test( 'loads blackbox via loadScript with data attributes', async () => {
 		const { ensureBlackboxLoginScript } = require( '../ensure-blackbox-login-script' );
 		const { loadScript } = require( '@automattic/load-script' );
 
-		await ensureBlackboxLoginScript( 'inline-nonce' );
+		await ensureBlackboxLoginScript();
 
 		expect( loadScript ).toHaveBeenCalledWith(
 			'https://blackbox-api.wp.com/v.js',
 			expect.any( Function ),
 			expect.objectContaining( {
-				nonce: 'inline-nonce',
 				'data-apikey': 'api-key',
 				'data-challenge-container': '#blackbox-challenge-root',
 				'data-on-challenge-start': '__calypsoBlackboxOnChallengeStart',
@@ -64,7 +63,7 @@ describe( 'ensureBlackboxLoginScript', () => {
 		} );
 		const { ensureBlackboxLoginScript } = require( '../ensure-blackbox-login-script' );
 
-		await expect( ensureBlackboxLoginScript( 'inline-nonce' ) ).resolves.toBeUndefined();
+		await expect( ensureBlackboxLoginScript() ).resolves.toBeUndefined();
 	} );
 
 	test( 'uses existing script branch without calling loadScript', async () => {
@@ -75,7 +74,7 @@ describe( 'ensureBlackboxLoginScript', () => {
 		const { ensureBlackboxLoginScript } = require( '../ensure-blackbox-login-script' );
 		const { loadScript } = require( '@automattic/load-script' );
 
-		const result = ensureBlackboxLoginScript( 'inline-nonce' );
+		const result = ensureBlackboxLoginScript();
 		expect( loadScript ).not.toHaveBeenCalled();
 
 		existing.dispatchEvent( new Event( 'load' ) );
@@ -87,7 +86,7 @@ describe( 'ensureBlackboxLoginScript', () => {
 		loadScript.mockImplementationOnce( () => {} );
 		const { ensureBlackboxLoginScript } = require( '../ensure-blackbox-login-script' );
 
-		const result = ensureBlackboxLoginScript( 'inline-nonce' );
+		const result = ensureBlackboxLoginScript();
 
 		jest.advanceTimersByTime( 10000 );
 		await expect( result ).resolves.toBeUndefined();
@@ -99,7 +98,7 @@ describe( 'ensureBlackboxLoginScript', () => {
 		};
 		const { ensureBlackboxLoginScript } = require( '../ensure-blackbox-login-script' );
 
-		await ensureBlackboxLoginScript( 'inline-nonce' );
+		await ensureBlackboxLoginScript();
 
 		expect( window.Blackbox.configure ).toHaveBeenCalledWith(
 			expect.objectContaining( {
