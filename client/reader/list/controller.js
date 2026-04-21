@@ -19,7 +19,11 @@ export const createList = ( context, next ) => {
 
 	context.primary = (
 		<AsyncLoad
-			require={ () => import( 'calypso/reader/list-manage' ) }
+			require={ () =>
+				import(
+					/* webpackChunkName: "async-load-calypso-reader-list-manage" */ 'calypso/reader/list-manage'
+				)
+			}
 			key="list-manage"
 			isCreateForm
 		/>
@@ -50,7 +54,9 @@ export const listListing = ( context, next ) => {
 	context.primary = (
 		<AsyncLoad
 			require={ () =>
-				import( /** webpackChunkName: "calypso/reader/list-stream" */ 'calypso/reader/list-stream' )
+				import(
+					/* webpackChunkName: "async-load-calypso-reader-list-stream" */ 'calypso/reader/list-stream'
+				)
 			}
 			key={ 'tag-' + context.params.user + '-' + context.params.list }
 			streamKey={ streamKey }
@@ -83,7 +89,11 @@ export const editList = ( context, next ) => {
 
 	context.primary = (
 		<AsyncLoad
-			require={ () => import( 'calypso/reader/list-manage' ) }
+			require={ () =>
+				import(
+					/* webpackChunkName: "async-load-calypso-reader-list-manage" */ 'calypso/reader/list-manage'
+				)
+			}
 			key="list-manage"
 			owner={ encodeURIComponent( context.params.user ) }
 			slug={ encodeURIComponent( context.params.list ) }
@@ -106,7 +116,11 @@ export const editListItems = ( context, next ) => {
 
 	context.primary = (
 		<AsyncLoad
-			require={ () => import( 'calypso/reader/list-manage' ) }
+			require={ () =>
+				import(
+					/* webpackChunkName: "async-load-calypso-reader-list-manage" */ 'calypso/reader/list-manage'
+				)
+			}
 			key="list-manage"
 			owner={ encodeURIComponent( context.params.user ) }
 			slug={ encodeURIComponent( context.params.list ) }
@@ -129,7 +143,11 @@ export const exportList = ( context, next ) => {
 
 	context.primary = (
 		<AsyncLoad
-			require={ () => import( 'calypso/reader/list-manage' ) }
+			require={ () =>
+				import(
+					/* webpackChunkName: "async-load-calypso-reader-list-manage" */ 'calypso/reader/list-manage'
+				)
+			}
 			key="list-manage"
 			owner={ encodeURIComponent( context.params.user ) }
 			slug={ encodeURIComponent( context.params.list ) }
@@ -152,7 +170,11 @@ export const deleteList = ( context, next ) => {
 
 	context.primary = (
 		<AsyncLoad
-			require={ () => import( 'calypso/reader/list-manage' ) }
+			require={ () =>
+				import(
+					/* webpackChunkName: "async-load-calypso-reader-list-manage" */ 'calypso/reader/list-manage'
+				)
+			}
 			key="list-manage"
 			owner={ encodeURIComponent( context.params.user ) }
 			slug={ encodeURIComponent( context.params.list ) }

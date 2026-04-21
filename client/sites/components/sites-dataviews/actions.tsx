@@ -236,7 +236,7 @@ export function useActions( {
 						<AsyncLoad
 							require={ () =>
 								import(
-									'calypso/sites/settings/administration/tools/restore-site/restore-site-form'
+									/* webpackChunkName: "async-load-calypso-sites-settings-administration-tools-restore-site-restore-site-form" */ 'calypso/sites/settings/administration/tools/restore-site/restore-site-form'
 								)
 							}
 							placeholder={ null }
@@ -258,7 +258,7 @@ export function useActions( {
 						<AsyncLoad
 							require={ () =>
 								import(
-									'calypso/sites/settings/administration/tools/leave-site/leave-site-modal-form'
+									/* webpackChunkName: "async-load-calypso-sites-settings-administration-tools-leave-site-leave-site-modal-form" */ 'calypso/sites/settings/administration/tools/leave-site/leave-site-modal-form'
 								)
 							}
 							placeholder={ null }

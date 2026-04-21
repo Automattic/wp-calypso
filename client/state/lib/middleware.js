@@ -64,7 +64,7 @@ const handler = async ( dispatch, action, getState ) => {
 		case SITE_RECEIVE:
 		case SITES_RECEIVE: {
 			const { fetchAutomatedTransferStatusForSelectedSite } = await import(
-				'calypso/state/lib/automated-transfer-middleware'
+				/* webpackChunkName: "async-load-calypso-state-lib-automated-transfer-middleware" */ 'calypso/state/lib/automated-transfer-middleware'
 			);
 			fetchAutomatedTransferStatusForSelectedSite( dispatch, getState );
 			return;

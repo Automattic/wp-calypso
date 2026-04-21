@@ -83,7 +83,9 @@ export const StepContainerV2DIFMStartingPoint = ( {
 							<div className="step-container-v2--difm-starting-point__right-column">
 								<AsyncLoad
 									require={ () =>
-										import( 'calypso/my-sites/marketing/do-it-for-me/site-build-showcase' )
+										import(
+											/* webpackChunkName: "async-load-calypso-my-sites-marketing-do-it-for-me-site-build-showcase" */ 'calypso/my-sites/marketing/do-it-for-me/site-build-showcase'
+										)
 									}
 									placeholder={ <LoadingEllipsis /> }
 									isStoreFlow={ false }

@@ -121,7 +121,11 @@ export function sitesDashboard( context: Context, next: () => void ) {
 			<PageViewTracker path="/sites" title="Sites Management Page" delay={ 500 } />
 			<ResurrectedWelcomeModalGate />
 			<AsyncLoad
-				require={ () => import( 'calypso/lib/analytics/track-resurrections' ) }
+				require={ () =>
+					import(
+						/* webpackChunkName: "async-load-calypso-lib-analytics-track-resurrections" */ 'calypso/lib/analytics/track-resurrections'
+					)
+				}
 				placeholder={ null }
 			/>
 			<SitesDashboard queryParams={ getQueryParams( context ) } />

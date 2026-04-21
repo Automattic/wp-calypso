@@ -72,14 +72,26 @@ export default function StatsController( context, next ) {
 	switch ( props.type ) {
 		case 'orders':
 			asyncComponent = (
-				<AsyncLoad placeholder={ placeholder } require={ () => import( '.' ) } { ...props } />
+				<AsyncLoad
+					placeholder={ placeholder }
+					require={ () =>
+						import(
+							/* webpackChunkName: "async-load-calypso-my-sites-store-app-store-stats" */ '.'
+						)
+					}
+					{ ...props }
+				/>
 			);
 			break;
 		default:
 			asyncComponent = (
 				<AsyncLoad
 					placeholder={ placeholder }
-					require={ () => import( './listview' ) }
+					require={ () =>
+						import(
+							/* webpackChunkName: "async-load-calypso-my-sites-store-app-store-stats-listview" */ './listview'
+						)
+					}
 					{ ...props }
 				/>
 			);

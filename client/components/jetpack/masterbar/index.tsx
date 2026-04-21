@@ -49,7 +49,11 @@ const JetpackCloudMasterBar: React.FC = () => {
 				<JetpackLogo size={ 28 } full={ ! isNarrow || isExteriorPage } aria={ { hidden: true } } />
 			</a>
 			<AsyncLoad
-				require={ () => import( 'calypso/components/jetpack/portal-nav' ) }
+				require={ () =>
+					import(
+						/* webpackChunkName: "async-load-calypso-components-jetpack-portal-nav" */ 'calypso/components/jetpack/portal-nav'
+					)
+				}
 				placeholder={ null }
 			/>
 			{ headerTitle && <h1 className="masterbar__item-title">{ headerTitle }</h1> }

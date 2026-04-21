@@ -2,11 +2,20 @@ import AsyncLoad from 'calypso/components/async-load';
 import PageLoading from '../shared/page-loading';
 import type { Context } from '@automattic/calypso-router';
 
-setTimeout( () => import( '.' ), 3000 );
+setTimeout(
+	() => import( /* webpackChunkName: "async-load-calypso-my-sites-stats-pages-realtime" */ '.' ),
+	3000
+);
 
 function realtime( context: Context, next: () => void ) {
 	context.primary = (
-		<AsyncLoad require={ () => import( '.' ) } placeholder={ PageLoading } context={ context } />
+		<AsyncLoad
+			require={ () =>
+				import( /* webpackChunkName: "async-load-calypso-my-sites-stats-pages-realtime" */ '.' )
+			}
+			placeholder={ PageLoading }
+			context={ context }
+		/>
 	);
 	next();
 }

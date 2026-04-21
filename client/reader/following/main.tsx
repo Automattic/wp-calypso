@@ -77,7 +77,11 @@ function FollowingStream( { ...props } ) {
 						<Card className="following-stream__quick-post-card">
 							<CardBody>
 								<AsyncLoad
-									require={ () => import( 'calypso/reader/components/quick-post' ) }
+									require={ () =>
+										import(
+											/* webpackChunkName: "async-load-calypso-reader-components-quick-post" */ 'calypso/reader/components/quick-post'
+										)
+									}
 									placeholder={ <QuickPostSkeleton /> }
 								/>
 							</CardBody>
@@ -91,7 +95,11 @@ function FollowingStream( { ...props } ) {
 			) }
 			<ResurrectedWelcomeModalGate onVisibilityChange={ setIsResurrectedModalVisible } />
 			<AsyncLoad
-				require={ () => import( 'calypso/lib/analytics/track-resurrections' ) }
+				require={ () =>
+					import(
+						/* webpackChunkName: "async-load-calypso-lib-analytics-track-resurrections" */ 'calypso/lib/analytics/track-resurrections'
+					)
+				}
 				placeholder={ null }
 			/>
 		</>

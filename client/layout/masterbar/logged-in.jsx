@@ -311,7 +311,11 @@ class MasterbarLoggedIn extends Component {
 
 		return (
 			<AsyncLoad
-				require={ () => import( './checkout.tsx' ) }
+				require={ () =>
+					import(
+						/* webpackChunkName: "async-load-calypso-layout-masterbar-checkout" */ './checkout.tsx'
+					)
+				}
 				placeholder={ null }
 				title={ title }
 				isJetpackNotAtomic={ isJetpackNotAtomic }
@@ -729,7 +733,14 @@ class MasterbarLoggedIn extends Component {
 	renderLanguageSwitcher() {
 		if ( this.props.isSupportSession || config.isEnabled( 'quick-language-switcher' ) ) {
 			return (
-				<AsyncLoad require={ () => import( './quick-language-switcher' ) } placeholder={ null } />
+				<AsyncLoad
+					require={ () =>
+						import(
+							/* webpackChunkName: "async-load-calypso-layout-masterbar-quick-language-switcher" */ './quick-language-switcher'
+						)
+					}
+					placeholder={ null }
+				/>
 			);
 		}
 		return null;
@@ -743,7 +754,11 @@ class MasterbarLoggedIn extends Component {
 		}
 		return (
 			<AsyncLoad
-				require={ () => import( './masterbar-cart/masterbar-cart-wrapper' ) }
+				require={ () =>
+					import(
+						/* webpackChunkName: "async-load-calypso-layout-masterbar-masterbar-cart-masterbar-cart-wrapper" */ './masterbar-cart/masterbar-cart-wrapper'
+					)
+				}
 				placeholder={ null }
 				goToCheckout={ this.goToCheckout }
 				onRemoveProduct={ this.onRemoveCartProduct }
@@ -790,7 +805,11 @@ class MasterbarLoggedIn extends Component {
 
 			return (
 				<AsyncLoad
-					require={ () => import( './masterbar-agents-manager' ) }
+					require={ () =>
+						import(
+							/* webpackChunkName: "async-load-calypso-layout-masterbar-masterbar-agents-manager" */ './masterbar-agents-manager'
+						)
+					}
 					siteId={ siteId }
 					tooltip={ __( 'Help' ) }
 					placeholder={ placeholder }
@@ -812,7 +831,11 @@ class MasterbarLoggedIn extends Component {
 
 		return (
 			<AsyncLoad
-				require={ () => import( './masterbar-help-center' ) }
+				require={ () =>
+					import(
+						/* webpackChunkName: "async-load-calypso-layout-masterbar-masterbar-help-center" */ './masterbar-help-center'
+					)
+				}
 				siteId={ siteId }
 				tooltip={ __( 'Help' ) }
 				placeholder={ placeholder }

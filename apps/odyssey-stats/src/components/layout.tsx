@@ -18,7 +18,11 @@ export default function Layout( { sectionGroup, sectionName, primary, secondary 
 		<div className={ sectionClass }>
 			<div id="content" className="layout__content">
 				<AsyncLoad
-					require={ () => import( 'calypso/components/global-notices' ) }
+					require={ () =>
+						import(
+							/* webpackChunkName: "async-load-calypso-components-global-notices" */ 'calypso/components/global-notices'
+						)
+					}
 					placeholder={ null }
 					id="notices"
 				/>

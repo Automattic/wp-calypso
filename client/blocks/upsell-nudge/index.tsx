@@ -231,7 +231,11 @@ export const UpsellNudge = ( {
 		<>
 			{ showPurchaseModal && (
 				<AsyncLoad
-					require={ () => import( './purchase-modal-wrapper' ) }
+					require={ () =>
+						import(
+							/* webpackChunkName: "async-load-calypso-blocks-upsell-nudge-purchase-modal-wrapper" */ './purchase-modal-wrapper'
+						)
+					}
 					plan={ upsellPlan }
 					siteSlug={ siteSlug }
 					setShowPurchaseModal={ setShowPurchaseModal }
@@ -324,7 +328,7 @@ export default function Wrapper( props: OwnProps ) {
 			<AsyncLoad
 				require={ () =>
 					import(
-						'calypso/my-sites/checkout/purchase-modal/is-eligible-for-one-click-checkout-wrapper'
+						/* webpackChunkName: "async-load-calypso-my-sites-checkout-purchase-modal-is-eligible-for-one-click-checkout-wrapper" */ 'calypso/my-sites/checkout/purchase-modal/is-eligible-for-one-click-checkout-wrapper'
 					)
 				}
 				component={ ConnectedUpsellNudge }

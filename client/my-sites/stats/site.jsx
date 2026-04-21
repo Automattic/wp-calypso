@@ -797,14 +797,24 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 				<StatsPlanUsage siteId={ siteId } isOdysseyStats={ isOdysseyStats } />
 			) }
 			{ ! shouldShowUpsells ? null : (
-				<AsyncLoad require={ () => import( 'calypso/my-sites/stats/jetpack-upsell-section' ) } />
+				<AsyncLoad
+					require={ () =>
+						import(
+							/* webpackChunkName: "async-load-calypso-my-sites-stats-jetpack-upsell-section" */ 'calypso/my-sites/stats/jetpack-upsell-section'
+						)
+					}
+				/>
 			) }
 			{ ! wpcomShowUpsell && (
 				<PromoCards isOdysseyStats={ isOdysseyStats } pageSlug="traffic" slug={ slug } />
 			) }
 			{ supportUserFeedback && <StatsFeedbackPresentor siteId={ siteId } /> }
 			<AsyncLoad
-				require={ () => import( 'calypso/lib/analytics/track-resurrections' ) }
+				require={ () =>
+					import(
+						/* webpackChunkName: "async-load-calypso-lib-analytics-track-resurrections" */ 'calypso/lib/analytics/track-resurrections'
+					)
+				}
 				placeholder={ null }
 			/>
 		</div>

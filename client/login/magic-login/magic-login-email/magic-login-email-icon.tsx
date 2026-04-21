@@ -9,35 +9,55 @@ export function MagicLoginEmailIcon( { icon }: MagicLoginEmailIconProps ) {
 		case 'apple':
 			return (
 				<AsyncLoad
-					require={ () => import( 'calypso/components/social-icons/apple' ) }
+					require={ () =>
+						import(
+							/* webpackChunkName: "async-load-calypso-components-social-icons-apple" */ 'calypso/components/social-icons/apple'
+						)
+					}
 					placeholder={ null }
 				/>
 			);
 		case 'gmail':
 			return (
 				<AsyncLoad
-					require={ () => import( 'calypso/components/social-icons/gmail' ) }
+					require={ () =>
+						import(
+							/* webpackChunkName: "async-load-calypso-components-social-icons-gmail" */ 'calypso/components/social-icons/gmail'
+						)
+					}
 					placeholder={ null }
 				/>
 			);
 		case 'outlook':
 			return (
 				<AsyncLoad
-					require={ () => import( 'calypso/components/social-icons/outlook' ) }
+					require={ () =>
+						import(
+							/* webpackChunkName: "async-load-calypso-components-social-icons-outlook" */ 'calypso/components/social-icons/outlook'
+						)
+					}
 					placeholder={ null }
 				/>
 			);
 		case 'yahoo':
 			return (
 				<AsyncLoad
-					require={ () => import( 'calypso/components/social-icons/yahoo' ) }
+					require={ () =>
+						import(
+							/* webpackChunkName: "async-load-calypso-components-social-icons-yahoo" */ 'calypso/components/social-icons/yahoo'
+						)
+					}
 					placeholder={ null }
 				/>
 			);
 		case 'aol':
 			return (
 				<AsyncLoad
-					require={ () => import( 'calypso/components/social-icons/aol' ) }
+					require={ () =>
+						import(
+							/* webpackChunkName: "async-load-calypso-components-social-icons-aol" */ 'calypso/components/social-icons/aol'
+						)
+					}
 					placeholder={ null }
 				/>
 			);

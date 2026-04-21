@@ -8,7 +8,16 @@ function SupportArticleDialogLoader() {
 		return null;
 	}
 
-	return <AsyncLoad require={ () => import( './dialog' ) } placeholder={ null } />;
+	return (
+		<AsyncLoad
+			require={ () =>
+				import(
+					/* webpackChunkName: "async-load-calypso-blocks-support-article-dialog-dialog" */ './dialog'
+				)
+			}
+			placeholder={ null }
+		/>
+	);
 }
 
 export default SupportArticleDialogLoader;

@@ -255,12 +255,20 @@ async function main() {
 						<FlowRenderer flow={ flow } steps={ flowSteps } />
 						{ config.isEnabled( 'cookie-banner' ) && (
 							<AsyncLoad
-								require={ () => import( 'calypso/blocks/cookie-banner' ) }
+								require={ () =>
+									import(
+										/* webpackChunkName: "async-load-calypso-blocks-cookie-banner" */ 'calypso/blocks/cookie-banner'
+									)
+								}
 								placeholder={ null }
 							/>
 						) }
 						<AsyncLoad
-							require={ () => import( 'calypso/components/global-notices' ) }
+							require={ () =>
+								import(
+									/* webpackChunkName: "async-load-calypso-components-global-notices" */ 'calypso/components/global-notices'
+								)
+							}
 							placeholder={ null }
 							id="notices"
 						/>
@@ -276,7 +284,11 @@ async function main() {
 									sectionName="stepper"
 								/>
 								<AsyncLoad
-									require={ () => import( 'calypso/layout/agents-manager-loader' ) }
+									require={ () =>
+										import(
+											/* webpackChunkName: "async-load-calypso-layout-agents-manager-loader" */ 'calypso/layout/agents-manager-loader'
+										)
+									}
 									placeholder={ null }
 									sectionName={ flowName }
 									loadAgentsManager
@@ -285,7 +297,11 @@ async function main() {
 						) ) }
 					{ 'development' === process.env.NODE_ENV && (
 						<AsyncLoad
-							require={ () => import( 'calypso/components/webpack-build-monitor' ) }
+							require={ () =>
+								import(
+									/* webpackChunkName: "async-load-calypso-components-webpack-build-monitor" */ 'calypso/components/webpack-build-monitor'
+								)
+							}
 							placeholder={ null }
 						/>
 					) }

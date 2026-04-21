@@ -79,7 +79,12 @@ const devdocs = {
 	// UI components
 	design: function ( context, next ) {
 		context.primary = (
-			<AsyncLoad component={ context.params.component } require={ () => import( './design' ) } />
+			<AsyncLoad
+				component={ context.params.component }
+				require={ () =>
+					import( /* webpackChunkName: "async-load-calypso-devdocs-design" */ './design' )
+				}
+			/>
 		);
 		next();
 	},
@@ -94,20 +99,38 @@ const devdocs = {
 		context.primary = (
 			<AsyncLoad
 				component={ context.params.component }
-				require={ () => import( './design/blocks' ) }
+				require={ () =>
+					import(
+						/* webpackChunkName: "async-load-calypso-devdocs-design-blocks" */ './design/blocks'
+					)
+				}
 			/>
 		);
 		next();
 	},
 
 	playground: function ( context, next ) {
-		context.primary = <AsyncLoad require={ () => import( './design/playground' ) } />;
+		context.primary = (
+			<AsyncLoad
+				require={ () =>
+					import(
+						/* webpackChunkName: "async-load-calypso-devdocs-design-playground" */ './design/playground'
+					)
+				}
+			/>
+		);
 		next();
 	},
 
 	wpComponentsGallery( context, next ) {
 		context.primary = (
-			<AsyncLoad require={ () => import( './design/wordpress-components-gallery' ) } />
+			<AsyncLoad
+				require={ () =>
+					import(
+						/* webpackChunkName: "async-load-calypso-devdocs-design-wordpress-components-gallery" */ './design/wordpress-components-gallery'
+					)
+				}
+			/>
 		);
 		next();
 	},
@@ -115,7 +138,11 @@ const devdocs = {
 	selectors: function ( context, next ) {
 		context.primary = (
 			<AsyncLoad
-				require={ () => import( './docs-selectors' ) }
+				require={ () =>
+					import(
+						/* webpackChunkName: "async-load-calypso-devdocs-docs-selectors" */ './docs-selectors'
+					)
+				}
 				search={ context.query.search }
 				selector={ context.params.selector }
 			/>
@@ -127,7 +154,11 @@ const devdocs = {
 		context.primary = (
 			<AsyncLoad
 				component={ context.params.component }
-				require={ () => import( './design/typography' ) }
+				require={ () =>
+					import(
+						/* webpackChunkName: "async-load-calypso-devdocs-design-typography" */ './design/typography'
+					)
+				}
 			/>
 		);
 		next();
@@ -137,7 +168,11 @@ const devdocs = {
 		context.primary = (
 			<AsyncLoad
 				component={ context.params.component }
-				require={ () => import( './design/illustrations' ) }
+				require={ () =>
+					import(
+						/* webpackChunkName: "async-load-calypso-devdocs-design-illustrations" */ './design/illustrations'
+					)
+				}
 			/>
 		);
 		next();

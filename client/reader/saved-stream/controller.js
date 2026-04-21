@@ -14,7 +14,11 @@ const exported = {
 
 		context.primary = (
 			<AsyncLoad
-				require={ () => import( 'calypso/reader/saved-stream/main' ) }
+				require={ () =>
+					import(
+						/* webpackChunkName: "async-load-calypso-reader-saved-stream-main" */ 'calypso/reader/saved-stream/main'
+					)
+				}
 				key="saved"
 				placeholder={ null }
 			/>

@@ -24,7 +24,9 @@ const ThemeStyleVariations = ( {
 			<div className="theme__sheet-style-variations-previews">
 				<AsyncLoad
 					require={ () =>
-						import( '@automattic/global-styles/src/components/global-styles-variations' )
+						import(
+							/* webpackChunkName: "async-load-automattic-global-styles-src-components-global-styles-variations" */ '@automattic/global-styles/src/components/global-styles-variations'
+						)
 					}
 					placeholder={ null }
 					globalStylesVariations={ variations }
