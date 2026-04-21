@@ -24,3 +24,21 @@ offer a way of handling all types of URLs.
 
 **IMPORTANT NOTE**: URL part names are different between Node's `url` and `lib/url`. This is because
 `lib/url` is aligned to the `URL` / `URLSearchParam` standard in detriment of the legacy API.
+
+## Exported Utilities
+
+- `addQueryArgs( args, url )` — Adds or updates query parameters on a URL of any type (absolute, protocol-relative, path-absolute, path-relative).
+- `withoutHttp( url )` — Strips the `http://` or `https://` scheme from a URL.
+- `urlToSlug( url )` — Converts a URL to a site slug by removing the scheme and replacing `/` with `::`.
+- `urlToDomainAndPath( url )` — Removes the protocol and trailing slash from a URL.
+- `urlToDomain( url )` — Removes the protocol and path from a URL, returning only the domain.
+- `omitUrlParams( url, paramsToOmit )` — Removes the specified query parameter(s) from a URL.
+- `isExternal( url )` — Returns `true` if the URL points to a host other than the current Calypso instance.
+- `isOutsideCalypso( url )` — Returns `true` if the URL is external or resolves to a legacy non-Calypso route (e.g. `/support`, `/forums`).
+- `isHttps( url )` — Returns `true` if the URL uses the `https://` scheme.
+- `addSchemeIfMissing( url, scheme )` — Prepends `scheme://` to a URL if it has no scheme.
+- `setUrlScheme( url, scheme )` — Replaces the scheme of a URL with the given scheme.
+- `decodeURIIfValid( encodedURI )` — Safely calls `decodeURI`, returning the original string on error.
+- `decodeURIComponentIfValid( encodedURIComponent )` — Safely calls `decodeURIComponent`, returning the original string on error.
+- `resolveRelativePath( basePath, relativePath )` — Resolves a relative path against an absolute base path.
+- `pathToUrl( path )` — Converts a path into a full URL using the configured Calypso hostname and protocol.
