@@ -136,6 +136,33 @@ function HelpCenterContent() {
 		};
 	}, [ isDesktop, adminBarButton, handleToggleHelpCenter, setShowHelpCenter ] );
 
+	// On mobile, close the Help Center as soon as the user taps a button in
+	// the editor header or the admin bar. The panel has a very high z-index
+	// and sits below both; without this, Gutenberg popovers (block inserter,
+	// document settings, publish, etc.) and admin-bar menus open behind the
+	// panel and the tap looks silent. The admin bar's Help Center toggle is
+	// excluded so its own open/close handler runs unimpeded.
+	useEffect( () => {
+		if ( isDesktop || ! isShown ) {
+			return;
+		}
+		const editorBar = document.querySelector( '.editor-header' );
+		const adminBar = document.getElementById( 'wpadminbar' );
+		const closeOnDismissableTap = () => setShowHelpCenter( false );
+		const closeOnAdminBarTap = ( event ) => {
+			if ( event.target.closest( '#wp-admin-bar-help-center' ) ) {
+				return;
+			}
+			setShowHelpCenter( false );
+		};
+		editorBar?.addEventListener( 'pointerdown', closeOnDismissableTap );
+		adminBar?.addEventListener( 'pointerdown', closeOnAdminBarTap );
+		return () => {
+			editorBar?.removeEventListener( 'pointerdown', closeOnDismissableTap );
+			adminBar?.removeEventListener( 'pointerdown', closeOnAdminBarTap );
+		};
+	}, [ isDesktop, isShown, setShowHelpCenter ] );
+
 	// Menu items for the dropdown
 	const menuControls = useMemo(
 		() => [
