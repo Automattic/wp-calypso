@@ -254,19 +254,16 @@ export function getCancelLossIntro( purchase: Purchase, fullExpiryDate: string )
 export function getRemoveLossIntro( purchase: Purchase ): string {
 	const category = getProductCategory( purchase );
 	switch ( category ) {
-		case 'plan':
-		case 'jetpack':
-		case 'akismet':
-		case 'marketplace':
-			return __( 'These features will be removed immediately:' );
 		case 'domain':
 			return sprintf(
 				/* translators: %(domainName)s is a domain name, e.g. "example.com" */
 				__( 'After you remove %(domainName)s:' ),
 				{ domainName: purchase.meta ?? purchase.domain }
 			);
+		case 'email':
+			return __( 'After you remove your email:' );
 		default:
-			return __( 'These will be removed immediately:' );
+			return __( 'These features will be removed immediately:' );
 	}
 }
 

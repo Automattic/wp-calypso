@@ -228,17 +228,14 @@ export function getCancelLossIntro( purchase: Purchases.Purchase, fullExpiryDate
 export function getRemoveLossIntro( purchase: Purchases.Purchase ): string {
 	const category = getProductCategory( purchase );
 	switch ( category ) {
-		case 'plan':
-		case 'jetpack':
-		case 'akismet':
-		case 'marketplace':
-			return translate( 'These features will be removed immediately:' ) as string;
 		case 'domain':
 			return translate( 'After you remove %(domainName)s:', {
 				args: { domainName: purchase.meta ?? purchase.domain ?? getName( purchase ) },
 			} ) as string;
+		case 'email':
+			return translate( 'After you remove your email:' ) as string;
 		default:
-			return translate( 'These will be removed immediately:' ) as string;
+			return translate( 'These features will be removed immediately:' ) as string;
 	}
 }
 
