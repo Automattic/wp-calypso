@@ -1,6 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
+import ReaderMain from 'calypso/reader/components/reader-main';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { useDispatch } from 'calypso/state';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
@@ -16,7 +17,7 @@ export function ListMissing() {
 	};
 
 	return (
-		<>
+		<ReaderMain>
 			<DocumentHead title={ translate( 'List not found' ) } />
 			<EmptyContent
 				title={ translate( 'List not found' ) }
@@ -25,7 +26,7 @@ export function ListMissing() {
 				actionURL="/reader"
 				actionCallback={ trackAction }
 			/>
-		</>
+		</ReaderMain>
 	);
 }
 

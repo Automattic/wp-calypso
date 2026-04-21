@@ -4,26 +4,21 @@ import { Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
+import { ReaderList } from 'calypso/reader/list-manage/types';
 import { ReaderSitesList } from 'calypso/reader/sites-list';
 import ListEmpty from '../components/empty';
 import type { ReadListItem } from '@automattic/api-core';
 import type { ReaderSite } from 'calypso/reader/sites-list/site-item';
 
 interface ListSitesProps {
-	list: {
-		ID: number;
-		slug: string;
-		title: string;
-		owner: string;
-		is_owner: boolean;
-	};
+	list?: ReaderList;
 }
 
 export default function ListSites( props: ListSitesProps ) {
 	const translate = useTranslate();
 	const { list } = props;
 	const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery(
-		readListItemsInfiniteQuery( list.owner, list.slug, 'feed,site' ) // Adding meta to include feed and site data in each list item.
+		readListItemsInfiniteQuery( list?.owner ?? '', list?.slug ?? '', 'feed,site' ) // Adding meta to include feed and site data in each list item.
 	);
 	const { ref: spinnerRef, inView } = useInView();
 

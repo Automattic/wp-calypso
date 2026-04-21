@@ -6,7 +6,7 @@ import documentHeadReducer from 'calypso/state/document-head/reducer';
 import readerReducer from 'calypso/state/reader/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
-import ListStream from '..';
+import ReaderList from '..';
 
 // Stream has deep dependency chains (post cards, infinite scroll, data layer).
 jest.mock( 'calypso/reader/stream', () => ( {
@@ -17,19 +17,19 @@ jest.mock( 'calypso/reader/stream', () => ( {
 } ) );
 
 // ListSites uses useInfiniteQuery with its own nock-based tests.
-jest.mock( 'calypso/reader/list-stream/views/sites', () => ( {
+jest.mock( 'calypso/reader/list/views/sites', () => ( {
 	__esModule: true,
 	default: () => <div data-testid="list-sites" />,
 } ) );
 
 // ReaderListHeader uses useQuery and IntersectionObserver, tested separately.
-jest.mock( 'calypso/reader/list-stream/components/list-header', () => ( {
+jest.mock( 'calypso/reader/list/components/list-header', () => ( {
 	__esModule: true,
 	default: ( { view }: { view: string } ) => <div data-testid="list-header" data-view={ view } />,
 } ) );
 
 // ListEmpty uses data-layer query components, tested separately.
-jest.mock( 'calypso/reader/list-stream/components/empty', () => ( {
+jest.mock( 'calypso/reader/list/components/empty', () => ( {
 	__esModule: true,
 	default: () => <div data-testid="list-empty" />,
 } ) );
@@ -71,10 +71,10 @@ function readerListsState( {
 	};
 }
 
-describe( 'ListStream', () => {
+describe( 'ReaderList', () => {
 	test( 'renders missing state when list is not found after request', () => {
 		renderWithProvider(
-			<ListStream owner="test_user" slug="my-list" view="posts" streamKey="list:1" />,
+			<ReaderList owner="test_user" slug="my-list" view="posts" streamKey="list:1" />,
 			{ reducers, initialState: readerListsState( { list: null } ) }
 		);
 
@@ -83,7 +83,7 @@ describe( 'ListStream', () => {
 
 	test( 'renders Stream for the default posts view', () => {
 		renderWithProvider(
-			<ListStream owner="test_user" slug="my-list" view="posts" streamKey="list:1" />,
+			<ReaderList owner="test_user" slug="my-list" view="posts" streamKey="list:1" />,
 			{ reducers, initialState: readerListsState() }
 		);
 
@@ -93,7 +93,7 @@ describe( 'ListStream', () => {
 
 	test( 'renders ListSites in the sites view', () => {
 		renderWithProvider(
-			<ListStream owner="test_user" slug="my-list" view="sites" streamKey="list:1" />,
+			<ReaderList owner="test_user" slug="my-list" view="sites" streamKey="list:1" />,
 			{ reducers, initialState: readerListsState() }
 		);
 

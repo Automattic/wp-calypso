@@ -2,17 +2,12 @@ import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import QueryReaderListItems from 'calypso/components/data/query-reader-list-items';
 import EmptyContent from 'calypso/components/empty-content';
+import { ReaderList } from 'calypso/reader/list-manage/types';
 import { getListItems } from 'calypso/state/reader/lists/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 
 interface ListEmptyProps {
-	list?: {
-		title: string;
-		owner: string;
-		slug: string;
-		is_owner: boolean;
-		ID: number;
-	};
+	list?: ReaderList;
 }
 
 export default function ListEmpty( { list }: ListEmptyProps ): JSX.Element {
