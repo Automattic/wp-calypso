@@ -74,7 +74,7 @@ object WPComTests : Project({
 
 	// Jetpack E2E Tests (Playwright)
 	template(JetpackE2ETestsBuildTemplate);
-	buildType(JetpackSimpleE2ETests);
+	buildType(jetpackSimpleE2ETests());
 	buildType(JetpackAtomicE2ETests);
 	buildType(JetpackAtomicSmokeE2ETests);
 })
@@ -583,22 +583,27 @@ private object JetpackE2ETestsBuildTemplate : Template({
 	}
 })
 
-private object JetpackSimpleE2ETests : BuildType({
-	templates(JetpackE2ETestsBuildTemplate, CalypsoE2ETestsBuildTemplate)
-	id("WPComTests_JetpackSimpleE2ETests")
-	uuid = "f8a2c9d1-3b4e-5f6a-7c8d-9e0f1a2b3c4d"
-	name = "Jetpack Simple E2E Tests"
-	description = "Runs Jetpack WPCOM integration tests on Simple sites"
-
-	features {
-		matrix {
-			param("PROJECT", listOf(
-				value("desktop", label = "Desktop"),
-				value("mobile", label = "Mobile"),
-			))
-		}
+fun jetpackSimpleE2ETests(
+	id: String = "WPComTests_JetpackSimpleE2ETests",
+	uuid: String = "f8a2c9d1-3b4e-5f6a-7c8d-9e0f1a2b3c4d",
+	name: String = "Jetpack Simple E2E Tests",
+	description: String = "Runs Jetpack WPCOM integration tests on Simple sites",
+	viewports: List<String> = JETPACK_SIMPLE_VIEWPORTS,
+): BuildType {
+	val buildId = id
+	val buildUuid = uuid
+	val buildName = name
+	val buildDescription = description
+	return BuildType({
+		templates(JetpackE2ETestsBuildTemplate, CalypsoE2ETestsBuildTemplate)
+		id(buildId)
+		this.uuid = buildUuid
+		this.name = buildName
+		this.description = buildDescription
+	}).apply {
+		applyViewports(viewports)
 	}
-})
+}
 
 private object JetpackAtomicE2ETests : BuildType({
 	templates(JetpackE2ETestsBuildTemplate, CalypsoE2ETestsBuildTemplate)
