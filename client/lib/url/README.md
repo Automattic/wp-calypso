@@ -4,6 +4,27 @@ This library provides both generic and Calypso-specific utilities for handling U
 
 You may be able to use the `@automattic/calypso-url` module, so check there first.
 
+## Exported utilities
+
+| Export | Description |
+|---|---|
+| `addQueryArgs` | Adds or updates query parameters on any URL type (absolute, protocol-relative, path-absolute, or path-relative) |
+| `withoutHttp` | Strips the `http://` or `https://` scheme from a URL |
+| `urlToSlug` | Converts a URL to a site slug by removing the scheme and replacing `/` with `::` |
+| `urlToDomainAndPath` | Removes the protocol and trailing slash from a URL |
+| `urlToDomain` | Removes the protocol and path, returning only the domain |
+| `omitUrlParams` | Removes specified query parameters from a URL |
+| `isExternal` | Returns `true` if the URL points outside the current Calypso instance |
+| `resemblesUrl` | Returns `true` if the string looks like a valid URL |
+| `isOutsideCalypso` | Returns `true` if the URL is external or points to a path not handled by Calypso (e.g. `/support`, `/forums`) |
+| `isHttps` | Returns `true` if the URL uses the `https://` scheme |
+| `addSchemeIfMissing` | Prepends a scheme to a URL if one is not already present |
+| `setUrlScheme` | Replaces the scheme of a URL with the given scheme |
+| `decodeURIIfValid` | Safe wrapper around `decodeURI` that swallows `URIError` on invalid input |
+| `decodeURIComponentIfValid` | Safe wrapper around `decodeURIComponent` that swallows `URIError` on invalid input |
+| `resolveRelativePath` | Resolves a relative path against an absolute base path |
+| `pathToUrl` | Converts a Calypso-relative path to a full absolute URL using the configured hostname |
+
 ## Migrating from Node's `url`
 
 Node's `url` is deprecated and may be abandoned at any point in the future. As such, it shouldn't be
