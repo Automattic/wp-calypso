@@ -102,7 +102,7 @@ function PurchaseItemSiteIcon( { site, purchase }: { site?: Site; purchase: Purc
 		return (
 			<img
 				src={ jetpackIcon }
-				alt="Jetpack icon"
+				alt={ __( 'Jetpack icon' ) }
 				style={ { display: 'block', width: size, height: size, minWidth: size } }
 			/>
 		);
@@ -115,7 +115,7 @@ function PurchaseItemSiteIcon( { site, purchase }: { site?: Site; purchase: Purc
 		return (
 			<img
 				src={ passportIcon }
-				alt="Passport icon"
+				alt={ __( 'Passport icon' ) }
 				style={ { width: size, height: size, minWidth: size } }
 			/>
 		);
@@ -125,18 +125,18 @@ function PurchaseItemSiteIcon( { site, purchase }: { site?: Site; purchase: Purc
 		return (
 			<img
 				src={ akismetIcon }
-				alt="Akismet icon"
+				alt={ __( 'Akismet icon' ) }
 				style={ { width: size, height: size, minWidth: size } }
 			/>
 		);
 	}
 
 	if ( isGSuiteOrGoogleWorkspaceProductSlug( purchase.product_slug ) || isTitanMail( purchase ) ) {
-		return <ProductIcon icon={ envelope } label="Email icon" />;
+		return <ProductIcon icon={ envelope } label={ __( 'Email icon' ) } />;
 	}
 
 	if ( isMarketplacePlugin( purchase ) ) {
-		return <ProductIcon icon={ plugins } label="Plugin icon" />;
+		return <ProductIcon icon={ plugins } label={ __( 'Plugin icon' ) } />;
 	}
 
 	if (
@@ -145,11 +145,11 @@ function PurchaseItemSiteIcon( { site, purchase }: { site?: Site; purchase: Purc
 		purchase.product_slug === 'premium_theme' ||
 		purchase.product_slug === 'unlimited_themes'
 	) {
-		return <ProductIcon icon={ brush } label="Theme icon" />;
+		return <ProductIcon icon={ brush } label={ __( 'Theme icon' ) } />;
 	}
 
 	if ( purchase.product_slug === 'custom-design' ) {
-		return <ProductIcon icon={ code } label="CSS icon" />;
+		return <ProductIcon icon={ code } label={ __( 'CSS icon' ) } />;
 	}
 
 	if (
@@ -162,11 +162,11 @@ function PurchaseItemSiteIcon( { site, purchase }: { site?: Site; purchase: Purc
 			'wordpress_com_1gb_space_addon_yearly',
 		].includes( purchase.product_slug )
 	) {
-		return <ProductIcon icon={ cloud } label="Storage icon" />;
+		return <ProductIcon icon={ cloud } label={ __( 'Storage icon' ) } />;
 	}
 
 	if ( ! site ) {
-		return <ProductIcon icon={ globe } label="Domain icon" />;
+		return <ProductIcon icon={ globe } label={ __( 'Domain icon' ) } />;
 	}
 
 	return <SiteIcon site={ site } size={ size } />;
