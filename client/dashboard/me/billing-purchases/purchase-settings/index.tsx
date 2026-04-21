@@ -1096,7 +1096,7 @@ function PurchaseSubtitle( { purchase }: { purchase: Purchase } ) {
 		purchase.bill_period_days === SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD &&
 		purchase.meta
 	) {
-		return <MetadataItem title={ purchase.meta } />;
+		return <MetadataItem title={ getTitleForDisplay( purchase ) } />;
 	}
 
 	const subtitle = getSubtitleForDisplay( purchase );
@@ -1168,7 +1168,11 @@ export default function PurchaseSettings() {
 				<VStack>
 					<PageHeader
 						prefix={ <Breadcrumbs length={ 3 } /> }
-						title={ getTitleForDisplay( purchase ) }
+						title={
+							purchase.is_domain && isCentennial && purchase.meta
+								? purchase.meta
+								: getTitleForDisplay( purchase )
+						}
 						actions={
 							site?.options?.admin_url &&
 							! isCentennial && (
