@@ -6,9 +6,11 @@ type Translate = LocalizeProps[ 'translate' ];
 /**
  * Copy for the Cancel and Remove buttons on legacy Purchase Settings.
  * A parallel helper lives on the new dashboard at
- * `client/dashboard/me/billing-purchases/purchase-settings/get-cancel-remove-copy.ts`
- * and must stay in lockstep — both surfaces get the same English strings,
- * each using its native i18n library.
+ * `client/dashboard/me/billing-purchases/purchase-settings/get-cancel-remove-copy.ts` —
+ * both surfaces use the same English strings via their native i18n
+ * library. Parity is enforced by
+ * `client/me/purchases/manage-purchase/test/cancel-remove-copy-parity.test.ts`:
+ * if you change a string here, change it there too, or CI will fail.
  */
 
 export interface CancelCopy {

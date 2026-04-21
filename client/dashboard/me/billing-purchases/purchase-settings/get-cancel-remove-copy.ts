@@ -4,9 +4,11 @@ import type { CancelRemoveCategory } from '@automattic/api-core';
 /**
  * Copy for the Cancel and Remove buttons on the dashboard Purchase
  * Settings screen. A parallel helper lives on legacy at
- * `client/me/purchases/manage-purchase/get-cancel-remove-copy.ts` and
- * must stay in lockstep — both surfaces get the same English strings,
- * each using its native i18n library.
+ * `client/me/purchases/manage-purchase/get-cancel-remove-copy.ts` —
+ * both surfaces use the same English strings via their native i18n
+ * library. Parity is enforced by
+ * `client/me/purchases/manage-purchase/test/cancel-remove-copy-parity.test.ts`:
+ * if you change a string here, change it there too, or CI will fail.
  */
 
 export interface CancelCopy {
