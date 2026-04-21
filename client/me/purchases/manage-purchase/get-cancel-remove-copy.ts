@@ -23,8 +23,10 @@ export interface RemoveCopy {
 /**
  * Copy strings for the Cancel and Remove buttons on legacy Purchase Settings.
  *
- * Button titles are intentionally generic ("Cancel subscription" /
- * "Remove subscription"); product type is surfaced in the micro-copy.
+ * Cancel always reads "Cancel subscription" (cancelling stops auto-renewal —
+ * the plan/domain/email itself stays active until expiry). Remove labels are
+ * product-aware ("Remove plan" / "Remove domain" / "Remove email" / "Remove
+ * %(productName)s") to match the confirmation-screen heading.
  */
 
 export function getCancelButtonCopy(
@@ -76,17 +78,10 @@ export function getCancelButtonCopy(
 export function getRemoveButtonCopy(
 	purchase: Purchase,
 	hasRefund: boolean,
-	autoRenewOn: boolean,
+	_autoRenewOn: boolean,
 	translate: Translate
 ): RemoveCopy {
-	// When auto-renew is OFF, the subscription has already been cancelled —
-	// the label shouldn't say "subscription" (there isn't one anymore). Name
-	// the thing being removed (plan, domain, email, or product name). When
-	// auto-renew is ON, "Remove subscription" is accurate because the user is
-	// ending a live subscription in exchange for a refund.
-	const label = autoRenewOn
-		? String( translate( 'Remove subscription' ) )
-		: getRemoveLabelByCategory( purchase, translate );
+	const label = getRemoveLabelByCategory( purchase, translate );
 
 	if ( isPlan( purchase ) ) {
 		return {

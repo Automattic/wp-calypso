@@ -312,7 +312,7 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 			: '';
 
 		const cancelCopy = showCancel ? getCancelButtonCopy( purchase, expiryDateFormatted ) : null;
-		const removeCopy = showRemove ? getRemoveButtonCopy( purchase, hasRefund, autoRenewOn ) : null;
+		const removeCopy = showRemove ? getRemoveButtonCopy( purchase, hasRefund ) : null;
 
 		return (
 			<>

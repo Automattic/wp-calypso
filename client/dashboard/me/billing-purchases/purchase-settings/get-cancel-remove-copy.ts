@@ -5,11 +5,10 @@ import type { Purchase } from '@automattic/api-core';
 /**
  * Copy strings for the Cancel and Remove buttons on Purchase Settings.
  *
- * The button titles are intentionally generic ("Cancel subscription" /
- * "Remove subscription"). Product-specific language lives in the micro-copy:
- * - Plan / Domain / Email → generic category language ("plan features", "your
- *   domain", "your email").
- * - Jetpack / Akismet / other → product-name language ("Jetpack Stats").
+ * Cancel always reads "Cancel subscription" (cancelling stops auto-renewal —
+ * the plan/domain/email itself stays active until expiry). Remove labels are
+ * product-aware ("Remove plan" / "Remove domain" / "Remove email" / "Remove
+ * %(productName)s") to match the confirmation-screen heading.
  */
 
 export interface CancelCopy {
@@ -65,17 +64,8 @@ export function getCancelButtonCopy( purchase: Purchase, expiryDateFormatted: st
 	};
 }
 
-export function getRemoveButtonCopy(
-	purchase: Purchase,
-	hasRefund: boolean,
-	autoRenewOn: boolean
-): RemoveCopy {
-	// When auto-renew is OFF, the subscription has already been cancelled — the
-	// label shouldn't say "subscription" because there's no active subscription
-	// left. Name the thing being removed (plan, domain, email, product name).
-	// When auto-renew is ON (dual-button case), "Remove subscription" is accurate:
-	// the user is ending a live subscription in exchange for a refund.
-	const label = autoRenewOn ? __( 'Remove subscription' ) : getRemoveLabelByCategory( purchase );
+export function getRemoveButtonCopy( purchase: Purchase, hasRefund: boolean ): RemoveCopy {
+	const label = getRemoveLabelByCategory( purchase );
 
 	if ( purchase.is_plan ) {
 		return {

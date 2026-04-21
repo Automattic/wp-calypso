@@ -28,7 +28,7 @@ function make( overrides: Partial< Purchase > = {} ): Purchase {
 }
 
 describe( 'classic getCancelButtonCopy', () => {
-	test( 'plan — generic label, plan-features micro-copy', () => {
+	test( 'plan — generic cancel label, plan-features micro-copy', () => {
 		const copy = getCancelButtonCopy( make( { productSlug: 'value_bundle' } ), DATE, t );
 		expect( copy.label ).toBe( 'Cancel subscription' );
 		expect( copy.description ).toBe( `Stop future payments. Keep plan features until ${ DATE }.` );
@@ -56,7 +56,7 @@ describe( 'classic getCancelButtonCopy', () => {
 		expect( copy.description ).toContain( 'Keep your email until' );
 	} );
 
-	test( 'Jetpack / other uses product name in micro-copy', () => {
+	test( 'Jetpack / other uses subscription label and product-name micro-copy', () => {
 		const copy = getCancelButtonCopy(
 			make( { productSlug: 'jetpack_stats_yearly', productName: 'Jetpack Stats' } ),
 			DATE,
@@ -68,31 +68,31 @@ describe( 'classic getCancelButtonCopy', () => {
 } );
 
 describe( 'classic getRemoveButtonCopy', () => {
-	test( 'plan with refund, auto-renew on (dual-button) — generic subscription label', () => {
+	test( 'plan with refund — product-aware label, refund description', () => {
 		const copy = getRemoveButtonCopy( make( { productSlug: 'value_bundle' } ), true, true, t );
-		expect( copy.label ).toBe( 'Remove subscription' );
+		expect( copy.label ).toBe( 'Remove plan' );
 		expect( copy.description ).toBe( 'Get a refund and remove plan features immediately.' );
 	} );
 
-	test( 'plan, auto-renew off — product-specific label', () => {
+	test( 'plan, no refund — product-aware label', () => {
 		const copy = getRemoveButtonCopy( make( { productSlug: 'value_bundle' } ), false, false, t );
 		expect( copy.label ).toBe( 'Remove plan' );
 		expect( copy.description ).toBe( 'Plan features will be removed immediately.' );
 	} );
 
-	test( 'domain with refund, auto-renew on', () => {
+	test( 'domain with refund', () => {
 		const copy = getRemoveButtonCopy(
 			make( { productSlug: 'dotlive_domain', isDomainRegistration: true } ),
 			true,
 			true,
 			t
 		);
-		expect( copy.label ).toBe( 'Remove subscription' );
+		expect( copy.label ).toBe( 'Remove domain' );
 		expect( copy.description ).toContain( 'Get a refund' );
 		expect( copy.description ).toContain( 'your domain' );
 	} );
 
-	test( 'domain, auto-renew off', () => {
+	test( 'domain, no refund', () => {
 		const copy = getRemoveButtonCopy(
 			make( { productSlug: 'dotlive_domain', isDomainRegistration: true } ),
 			false,
@@ -103,27 +103,27 @@ describe( 'classic getRemoveButtonCopy', () => {
 		expect( copy.description ).toBe( 'Domain will be removed immediately.' );
 	} );
 
-	test( 'email, auto-renew off', () => {
+	test( 'email', () => {
 		const copy = getRemoveButtonCopy( make( { productSlug: 'gapps' } ), false, false, t );
 		expect( copy.label ).toBe( 'Remove email' );
 		expect( copy.description ).toBe( 'Email will be removed immediately.' );
 	} );
 
-	test( 'Jetpack product: label uses product name when auto-renew off, generic when on', () => {
+	test( 'Jetpack product: label uses product name', () => {
 		const purchase = make( {
 			productSlug: 'jetpack_stats_yearly',
 			productName: 'Jetpack Stats',
 		} );
-		const dualButton = getRemoveButtonCopy( purchase, true, true, t );
-		expect( dualButton.label ).toBe( 'Remove subscription' );
-		expect( dualButton.description ).toBe( 'Get a refund and remove Jetpack Stats immediately.' );
+		const withRefund = getRemoveButtonCopy( purchase, true, true, t );
+		expect( withRefund.label ).toBe( 'Remove Jetpack Stats' );
+		expect( withRefund.description ).toBe( 'Get a refund and remove Jetpack Stats immediately.' );
 
-		const afterCancel = getRemoveButtonCopy( purchase, false, false, t );
-		expect( afterCancel.label ).toBe( 'Remove Jetpack Stats' );
-		expect( afterCancel.description ).toBe( 'Jetpack Stats will be removed immediately.' );
+		const noRefund = getRemoveButtonCopy( purchase, false, false, t );
+		expect( noRefund.label ).toBe( 'Remove Jetpack Stats' );
+		expect( noRefund.description ).toBe( 'Jetpack Stats will be removed immediately.' );
 	} );
 
-	test( 'Akismet product: product name on both axes when auto-renew off', () => {
+	test( 'Akismet product: product name on both axes', () => {
 		const purchase = make( {
 			productSlug: 'ak_pro5h_yearly',
 			productName: 'Akismet Pro 500',
