@@ -106,6 +106,13 @@ const SPACING = {
 	SMALL: 4,
 };
 
+function isCentennialPurchase( purchase: Purchase ): boolean {
+	return (
+		purchase.bill_period_days === SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD ||
+		Boolean( purchase.product_slug?.includes( '100-year' ) )
+	);
+}
+
 function renewPurchase( purchase: Purchase ): void {
 	window.location.href = getRenewalUrlFromPurchase( purchase );
 }
@@ -656,7 +663,7 @@ function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 }
 
 function PurchasePriceCard( { purchase }: { purchase: Purchase } ) {
-	const isCentennial = purchase.bill_period_days === SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD;
+	const isCentennial = isCentennialPurchase( purchase );
 	if ( isCentennial ) {
 		return (
 			<OverviewCard
@@ -1023,7 +1030,7 @@ function PurchaseSecondSubtitle( { purchase, site }: { purchase: Purchase; site?
 			return null;
 		}
 
-		if ( purchase.bill_period_days === SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD ) {
+		if ( isCentennialPurchase( purchase ) ) {
 			return null;
 		}
 
@@ -1091,11 +1098,7 @@ function PurchaseSecondSubtitle( { purchase, site }: { purchase: Purchase; site?
 }
 
 function PurchaseSubtitle( { purchase }: { purchase: Purchase } ) {
-	if (
-		purchase.is_domain &&
-		purchase.bill_period_days === SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD &&
-		purchase.meta
-	) {
+	if ( purchase.is_domain && isCentennialPurchase( purchase ) && purchase.meta ) {
 		return <MetadataItem title={ getTitleForDisplay( purchase ) } />;
 	}
 
@@ -1146,7 +1149,7 @@ export default function PurchaseSettings() {
 		if ( isInExpirationGracePeriod( purchase ) ) {
 			return __( 'Expired' );
 		}
-		if ( purchase.bill_period_days === SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD ) {
+		if ( isCentennialPurchase( purchase ) ) {
 			return __( 'Paid until' );
 		}
 		if ( willRenew ) {
@@ -1155,7 +1158,7 @@ export default function PurchaseSettings() {
 		return __( 'Expires' );
 	} )();
 
-	const isCentennial = purchase.bill_period_days === SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD;
+	const isCentennial = isCentennialPurchase( purchase );
 
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
 	const columns = isSmallViewport ? 1 : 2;
