@@ -175,66 +175,52 @@ export function getTopNoticeCopy( { purchase, intent }: ConfirmationCopyArgs ): 
 	const category = getProductCategory( purchase );
 	switch ( category ) {
 		case 'plan':
-			return translate(
-				'Your plan features will be available for another %(duration)s after you cancel your subscription.',
-				{
-					args: { duration },
-					comment: '%(duration)s is a human-readable duration, e.g. "1 month and 11 days"',
-				}
-			) as string;
+			return translate( 'Your plan features will be available for another %(duration)s.', {
+				args: { duration },
+				comment: '%(duration)s is a human-readable duration, e.g. "1 month and 11 days"',
+			} ) as string;
 		case 'domain':
-			return translate(
-				'Your domain will remain active for another %(duration)s after you cancel.',
-				{ args: { duration } }
-			) as string;
+			return translate( 'Your domain will remain active for another %(duration)s.', {
+				args: { duration },
+			} ) as string;
 		case 'email':
-			return translate(
-				'Your email will remain active for another %(duration)s after you cancel.',
-				{ args: { duration } }
-			) as string;
+			return translate( 'Your email will remain active for another %(duration)s.', {
+				args: { duration },
+			} ) as string;
 		case 'one-time':
 			return null;
 		default:
-			return translate(
-				'%(productName)s will remain active for another %(duration)s after you cancel your subscription.',
-				{ args: { productName: getName( purchase ), duration } }
-			) as string;
+			return translate( '%(productName)s will remain active for another %(duration)s.', {
+				args: { productName: getName( purchase ), duration },
+			} ) as string;
 	}
 }
 
 export function getCancelLossIntro( purchase: Purchases.Purchase, fullExpiryDate: string ): string {
-	const category = getProductCategory( purchase );
 	if ( ! fullExpiryDate ) {
 		return translate( 'You’ll lose access to:' );
 	}
+	const category = getProductCategory( purchase );
 	switch ( category ) {
 		case 'plan':
-			return translate(
-				'When you cancel your subscription, your %(productName)s plan features will expire on %(date)s and you’ll lose access to:',
-				{ args: { productName: getName( purchase ), date: fullExpiryDate } }
-			) as string;
+			return translate( 'On %(date)s, your plan will expire and you’ll lose access to:', {
+				args: { date: fullExpiryDate },
+				comment: '%(date)s is a localized date like "April 16, 2027"',
+			} ) as string;
 		case 'domain':
-			return translate(
-				'When you cancel your subscription, your domain will expire on %(date)s and you’ll lose access to:',
-				{ args: { date: fullExpiryDate } }
-			) as string;
+			return translate( 'On %(date)s, your domain will expire and you’ll lose access to:', {
+				args: { date: fullExpiryDate },
+			} ) as string;
 		case 'email':
-			return translate(
-				'When you cancel your subscription, your email will expire on %(date)s and you’ll lose access to:',
-				{ args: { date: fullExpiryDate } }
-			) as string;
-		case 'jetpack':
-		case 'akismet':
-		case 'marketplace':
-		case 'one-time':
-			return translate(
-				'When you cancel your subscription, %(productName)s will expire on %(date)s and you’ll lose access to:',
-				{ args: { productName: getName( purchase ), date: fullExpiryDate } }
-			) as string;
+			return translate( 'On %(date)s, your email will expire and you’ll lose access to:', {
+				args: { date: fullExpiryDate },
+			} ) as string;
 		default:
 			return translate(
-				'When you cancel your subscription, it will expire on %(date)s and you’ll lose access to:',
-				{ args: { date: fullExpiryDate } }
+				'On %(date)s, your %(productName)s subscription will expire and you’ll lose access to:',
+				{
+					args: { date: fullExpiryDate, productName: getName( purchase ) },
+				}
 			) as string;
 	}
 }
@@ -243,20 +229,9 @@ export function getRemoveLossIntro( purchase: Purchases.Purchase ): string {
 	const category = getProductCategory( purchase );
 	switch ( category ) {
 		case 'plan':
-			return translate( 'When you remove your plan, you’ll lose access to:' );
-		case 'domain':
-			return translate( 'When you remove your domain, you’ll lose access to:' );
-		case 'email':
-			return translate( 'When you remove your email, you’ll lose access to:' );
-		case 'jetpack':
-		case 'akismet':
-		case 'marketplace':
-		case 'one-time':
-			return translate( 'When you remove %(productName)s, you’ll lose access to:', {
-				args: { productName: getName( purchase ) },
-			} ) as string;
+			return translate( 'These features will be removed immediately:' ) as string;
 		default:
-			return translate( 'When you remove your subscription, you’ll lose access to:' );
+			return translate( 'These will be removed immediately:' ) as string;
 	}
 }
 
@@ -270,31 +245,28 @@ export function getRefundNoticeCopy( {
 	const category = getProductCategory( purchase );
 	switch ( category ) {
 		case 'plan':
-			return translate(
-				'You’ll receive a %(refundAmount)s refund when you remove your plan. Your plan features will be removed right away.',
-				{ args: { refundAmount } }
-			) as string;
+			return translate( 'You’ll receive a %(refundAmount)s refund when you remove your plan.', {
+				args: { refundAmount },
+			} ) as string;
 		case 'domain':
-			return translate(
-				'You’ll receive a %(refundAmount)s refund when you remove your domain. Your domain will be removed right away.',
-				{ args: { refundAmount } }
-			) as string;
+			return translate( 'You’ll receive a %(refundAmount)s refund when you remove your domain.', {
+				args: { refundAmount },
+			} ) as string;
 		case 'email':
-			return translate(
-				'You’ll receive a %(refundAmount)s refund when you remove your email. Your email will be removed right away.',
-				{ args: { refundAmount } }
-			) as string;
+			return translate( 'You’ll receive a %(refundAmount)s refund when you remove your email.', {
+				args: { refundAmount },
+			} ) as string;
 		case 'jetpack':
 		case 'akismet':
 		case 'marketplace':
 		case 'one-time':
 			return translate(
-				'You’ll receive a %(refundAmount)s refund when you remove %(productName)s. %(productName)s will be removed right away.',
+				'You’ll receive a %(refundAmount)s refund when you remove %(productName)s.',
 				{ args: { refundAmount, productName: getName( purchase ) } }
 			) as string;
 		default:
 			return translate(
-				'You’ll receive a %(refundAmount)s refund when you remove your subscription. Your subscription will be removed right away.',
+				'You’ll receive a %(refundAmount)s refund when you remove your subscription.',
 				{ args: { refundAmount } }
 			) as string;
 	}

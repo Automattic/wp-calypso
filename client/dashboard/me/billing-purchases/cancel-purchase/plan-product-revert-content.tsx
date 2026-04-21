@@ -59,6 +59,7 @@ export default function PlanProductRevertContent( {
 				/>
 				<KeepSubscriptionButton
 					purchase={ purchase }
+					intent={ displayVariant }
 					onKeepSubscriptionClick={ onKeepSubscriptionClick }
 				/>
 			</ButtonStack>

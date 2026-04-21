@@ -178,7 +178,7 @@ describe( 'getTopNoticeCopy', () => {
 			} )
 		).toBeNull();
 	} );
-	test( 'plan copy mentions "after you cancel your subscription"', () => {
+	test( 'plan copy is the tightened "available for another {duration}." form', () => {
 		const copy = getTopNoticeCopy( {
 			purchase: makePurchaseForCategory( 'plan', {
 				expiry_date: new Date( Date.now() + 30 * 24 * 60 * 60 * 1000 ).toISOString(),
@@ -186,7 +186,7 @@ describe( 'getTopNoticeCopy', () => {
 			intent: 'cancel',
 		} );
 		expect( copy ).toMatch( /^Your plan features will be available for another /i );
-		expect( copy ).toMatch( /after you cancel your subscription/i );
+		expect( copy ).not.toMatch( /after you cancel/i );
 	} );
 	test( 'one-time returns null', () => {
 		expect(

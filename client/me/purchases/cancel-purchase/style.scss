@@ -61,13 +61,17 @@
 }
 
 .cancel-purchase__divider {
-	border: none;
-	border-top: 1px solid var(--color-neutral-5);
+	border: 0;
 	margin: 24px 0;
 }
 
 .cancel-purchase__confirm-section {
 	margin-bottom: 24px;
+}
+
+.cancel-purchase__confirm-checkbox {
+	cursor: pointer;
+	display: inline-block;
 }
 
 .cancel-purchase__domain-options {
@@ -123,7 +127,7 @@
 	line-height: 1.4;
 
 	p {
-		margin: 16px 0 8px 0;
+		margin: 0 0 8px 0;
 		font-size: $font-body-small;
 		line-height: 1.4;
 	}

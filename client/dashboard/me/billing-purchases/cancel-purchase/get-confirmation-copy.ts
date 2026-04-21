@@ -180,21 +180,19 @@ export function getTopNoticeCopy( { purchase, intent }: ConfirmationCopyArgs ): 
 		case 'plan':
 			return sprintf(
 				/* translators: %(duration)s is a human-readable duration, e.g. "1 month and 11 days" */
-				__(
-					'Your plan features will be available for another %(duration)s after you cancel your subscription.'
-				),
+				__( 'Your plan features will be available for another %(duration)s.' ),
 				{ duration }
 			);
 		case 'domain':
 			return sprintf(
 				/* translators: %(duration)s is a human-readable duration, e.g. "1 month and 11 days" */
-				__( 'Your domain will remain active for another %(duration)s after you cancel.' ),
+				__( 'Your domain will remain active for another %(duration)s.' ),
 				{ duration }
 			);
 		case 'email':
 			return sprintf(
 				/* translators: %(duration)s is a human-readable duration, e.g. "1 month and 11 days" */
-				__( 'Your email will remain active for another %(duration)s after you cancel.' ),
+				__( 'Your email will remain active for another %(duration)s.' ),
 				{ duration }
 			);
 		case 'one-time':
@@ -202,9 +200,7 @@ export function getTopNoticeCopy( { purchase, intent }: ConfirmationCopyArgs ): 
 		default:
 			return sprintf(
 				/* translators: %(productName)s is the product name; %(duration)s is a human-readable duration */
-				__(
-					'%(productName)s will remain active for another %(duration)s after you cancel your subscription.'
-				),
+				__( '%(productName)s will remain active for another %(duration)s.' ),
 				{ productName: purchase.product_name, duration }
 			);
 	}
@@ -212,100 +208,62 @@ export function getTopNoticeCopy( { purchase, intent }: ConfirmationCopyArgs ): 
 
 /**
  * Intro for the losses list on the Cancel variant.
- * Full form: "When you cancel your subscription, {subject} will expire on
- * {date} and you'll lose access to:"
- *
- * {subject} follows the same product-category rules as the Remove intro:
- * "your plan features" / "your domain" / "your email" / "Jetpack Search"
- * (product name for individual products) / "your subscription" (fallback).
+ * Form: "Your {category} will expire on {date} and you’ll lose access to:"
+ * Falls back to a date-less form when no expiry is available.
  */
 export function getCancelLossIntro( purchase: Purchase, fullExpiryDate: string ): string {
 	const category = getProductCategory( purchase );
 	if ( ! fullExpiryDate ) {
-		// No meaningful expiry: fall back to a simpler intro without the date.
 		return __( 'You’ll lose access to:' );
 	}
 	switch ( category ) {
 		case 'plan':
 			return sprintf(
-				/* translators: %(productName)s is the plan name, e.g. "WordPress.com Business"; %(date)s is the full subscription expiry date, e.g. "April 16, 2027" */
-				__(
-					'When you cancel your subscription, your %(productName)s plan features will expire on %(date)s and you’ll lose access to:'
-				),
-				{ productName: purchase.product_name, date: fullExpiryDate }
+				/* translators: %(date)s is the full subscription expiry date, e.g. "April 16, 2027" */
+				__( 'On %(date)s, your plan will expire and you’ll lose access to:' ),
+				{ date: fullExpiryDate }
 			);
 		case 'domain':
 			return sprintf(
-				/* translators: %(date)s is the full subscription expiry date */
-				__(
-					'When you cancel your subscription, your domain will expire on %(date)s and you’ll lose access to:'
-				),
+				/* translators: %(date)s is the full subscription expiry date, e.g. "April 16, 2027" */
+				__( 'On %(date)s, your domain will expire and you’ll lose access to:' ),
 				{ date: fullExpiryDate }
 			);
 		case 'email':
 			return sprintf(
-				/* translators: %(date)s is the full subscription expiry date */
-				__(
-					'When you cancel your subscription, your email will expire on %(date)s and you’ll lose access to:'
-				),
+				/* translators: %(date)s is the full subscription expiry date, e.g. "April 16, 2027" */
+				__( 'On %(date)s, your email will expire and you’ll lose access to:' ),
 				{ date: fullExpiryDate }
-			);
-		case 'jetpack':
-		case 'akismet':
-		case 'marketplace':
-		case 'one-time':
-			return sprintf(
-				/* translators: %(productName)s is the product name; %(date)s is the expiry date */
-				__(
-					'When you cancel your subscription, %(productName)s will expire on %(date)s and you’ll lose access to:'
-				),
-				{ productName: purchase.product_name, date: fullExpiryDate }
 			);
 		default:
 			return sprintf(
-				/* translators: %(date)s is the full subscription expiry date */
+				/* translators: %(date)s is the full expiry date; %(productName)s is the product name */
 				__(
-					'When you cancel your subscription, it will expire on %(date)s and you’ll lose access to:'
+					'On %(date)s, your %(productName)s subscription will expire and you’ll lose access to:'
 				),
-				{ date: fullExpiryDate }
+				{ date: fullExpiryDate, productName: purchase.product_name }
 			);
 	}
 }
 
 /**
- * Intro for the losses list on the Remove variant.
- * Uses the product-type category noun or the product name (same rules as the
- * heading), so users see "When you remove your plan…" vs. "When you remove
- * your domain…" vs. "When you remove Jetpack Search…".
+ * Intro for the losses list on the Remove variant. Frames the list as the set
+ * of things being removed right now (vs. the Cancel variant, which frames it
+ * as a future loss).
  */
 export function getRemoveLossIntro( purchase: Purchase ): string {
 	const category = getProductCategory( purchase );
 	switch ( category ) {
 		case 'plan':
-			return __( 'When you remove your plan, you’ll lose access to:' );
-		case 'domain':
-			return __( 'When you remove your domain, you’ll lose access to:' );
-		case 'email':
-			return __( 'When you remove your email, you’ll lose access to:' );
-		case 'jetpack':
-		case 'akismet':
-		case 'marketplace':
-		case 'one-time':
-			return sprintf(
-				/* translators: %(productName)s is the product name, e.g. "When you remove Jetpack Search, you'll lose access to:" */
-				__( 'When you remove %(productName)s, you’ll lose access to:' ),
-				{ productName: purchase.product_name }
-			);
+			return __( 'These features will be removed immediately:' );
 		default:
-			return __( 'When you remove your subscription, you’ll lose access to:' );
+			return __( 'These will be removed immediately:' );
 	}
 }
 
 /**
- * Two-sentence copy for the confirmed refund notice on the Remove screen.
- * Product-type-aware: "remove your plan" / "remove your domain" / "remove
- * Jetpack Search", and "Your plan features will be removed" / "Your domain
- * will be removed" / "Jetpack Search will be removed".
+ * Single-sentence refund notice on the Remove screen. The losses list intro
+ * carries the "removed immediately" timing, so we don't repeat it here.
  */
 export function getRefundNoticeCopy( {
 	purchase,
@@ -318,26 +276,20 @@ export function getRefundNoticeCopy( {
 	switch ( category ) {
 		case 'plan':
 			return sprintf(
-				/* translators: %(refundAmount)s is a monetary amount */
-				__(
-					'You’ll receive a %(refundAmount)s refund when you remove your plan. Your plan features will be removed right away.'
-				),
+				/* translators: %(refundAmount)s is a monetary amount, e.g. "$96.00" */
+				__( 'You’ll receive a %(refundAmount)s refund when you remove your plan.' ),
 				{ refundAmount }
 			);
 		case 'domain':
 			return sprintf(
 				/* translators: %(refundAmount)s is a monetary amount */
-				__(
-					'You’ll receive a %(refundAmount)s refund when you remove your domain. Your domain will be removed right away.'
-				),
+				__( 'You’ll receive a %(refundAmount)s refund when you remove your domain.' ),
 				{ refundAmount }
 			);
 		case 'email':
 			return sprintf(
 				/* translators: %(refundAmount)s is a monetary amount */
-				__(
-					'You’ll receive a %(refundAmount)s refund when you remove your email. Your email will be removed right away.'
-				),
+				__( 'You’ll receive a %(refundAmount)s refund when you remove your email.' ),
 				{ refundAmount }
 			);
 		case 'jetpack':
@@ -346,17 +298,13 @@ export function getRefundNoticeCopy( {
 		case 'one-time':
 			return sprintf(
 				/* translators: %(refundAmount)s is a monetary amount; %(productName)s is the product name */
-				__(
-					'You’ll receive a %(refundAmount)s refund when you remove %(productName)s. %(productName)s will be removed right away.'
-				),
+				__( 'You’ll receive a %(refundAmount)s refund when you remove %(productName)s.' ),
 				{ refundAmount, productName: purchase.product_name }
 			);
 		default:
 			return sprintf(
 				/* translators: %(refundAmount)s is a monetary amount */
-				__(
-					'You’ll receive a %(refundAmount)s refund when you remove your subscription. Your subscription will be removed right away.'
-				),
+				__( 'You’ll receive a %(refundAmount)s refund when you remove your subscription.' ),
 				{ refundAmount }
 			);
 	}

@@ -63,6 +63,7 @@ export default function DomainOptionsContent( {
 				/>
 				<KeepSubscriptionButton
 					purchase={ purchase }
+					intent={ displayVariant }
 					onKeepSubscriptionClick={ onKeepSubscriptionClick }
 				/>
 			</ButtonStack>

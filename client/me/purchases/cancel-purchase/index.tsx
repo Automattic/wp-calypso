@@ -722,8 +722,8 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 					<p className="cancel-purchase__support-heading">
 						<strong>
 							{ displayVariant === 'remove'
-								? translate( 'Have a question before removing?' )
-								: translate( 'Have a question before cancelling?' ) }
+								? translate( 'Questions before you remove?' )
+								: translate( 'Have a question before canceling?' ) }
 						</strong>
 					</p>
 					<p className="cancel-purchase__support-text">
@@ -760,7 +760,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 								</span>
 							</div>
 						) }
-						<div className="cancel-purchase__confirm-checkbox">
+						<label className="cancel-purchase__confirm-checkbox">
 							<FormCheckbox
 								checked={ this.state.customerConfirmedUnderstanding ?? false }
 								onChange={ ( event: { target: { checked: boolean } } ) =>
@@ -768,7 +768,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 								}
 							/>
 							<span>{ checkboxLabel }</span>
-						</div>
+						</label>
 					</div>
 				) }
 
@@ -944,13 +944,14 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 								cancelButtonProps={ cancelButtonProps }
 							/>
 						) }
-					{ ! this.state.showDomainOptionsStep && ! refundAmountString && (
-						<TimeRemainingNotice
-							purchase={ purchase }
-							displayVariant={ displayVariant }
-							intent={ intent ?? null }
-						/>
-					) }
+					{ ! this.state.showDomainOptionsStep &&
+						( ! refundAmountString || intent === 'cancel' ) && (
+							<TimeRemainingNotice
+								purchase={ purchase }
+								displayVariant={ displayVariant }
+								intent={ intent ?? null }
+							/>
+						) }
 
 					<div className="cancel-purchase__inner-wrapper">
 						<div className="cancel-purchase__left">
