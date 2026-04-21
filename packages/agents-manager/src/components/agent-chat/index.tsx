@@ -21,7 +21,7 @@ import CustomALink from '../custom-a-link';
 import FeedbackInput from '../feedback-input';
 import { AI } from '../icons';
 import SelectedBlock from '../selected-block';
-import type { UseImageUploadResult } from '../../utils/load-external-providers';
+import type { UseImageUploadResult } from '../../hooks/use-image-upload';
 import type { Message, NoticeConfig } from '@automattic/agenttic-ui/dist/types';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 

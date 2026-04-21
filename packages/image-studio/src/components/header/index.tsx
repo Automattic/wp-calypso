@@ -98,7 +98,6 @@ export const Header = ( {
 
 	const showTools = mode === ImageStudioMode.Edit;
 	const showTitle = mode === ImageStudioMode.Generate;
-	// Show navigation pill in Edit mode on uploads page, if we have a filename to display
 	const showNavigationPill =
 		mode === ImageStudioMode.Edit && !! config?.imageData?.filename && window.pagenow === 'upload';
 
@@ -108,7 +107,7 @@ export const Header = ( {
 		: null;
 
 	const modKeySymbol = isAppleOS() ? '⌘' : '^';
-	const isNavDisabled = hasDrafts || isAiProcessing || isSaving;
+	const isNavDisabled = hasDrafts || hasUpdatedMetadata || isAiProcessing || isSaving;
 
 	// Get entry point from store with fallback for navigation
 	const entryPoint = useSelect(
@@ -147,11 +146,6 @@ export const Header = ( {
 				return __( 'Save displayed image to Media Library', __i18n_text_domain__ );
 		}
 	};
-
-	let navButtonDisabledTooltip: string | undefined;
-	if ( hasDrafts || hasUpdatedMetadata ) {
-		navButtonDisabledTooltip = __( 'Save or discard your changes', __i18n_text_domain__ );
-	}
 
 	useKeyboardShortcut( 'mod+z', () => onAnnotationUndo?.(), {
 		isDisabled: ! isAnnotationMode || ! hasPendingAnnotations,
@@ -220,16 +214,12 @@ export const Header = ( {
 								icon={ chevronLeft }
 								onClick={ onNavigatePrevious }
 								disabled={ ! hasPreviousImage || isNavDisabled }
-								label={
-									navButtonDisabledTooltip ||
-									sprintf(
-										/* translators: %s: modifier key (command or control) */
-										__( 'Previous image %s←', __i18n_text_domain__ ),
-										modKeySymbol
-									)
-								}
+								label={ sprintf(
+									/* translators: %s: modifier key (command or control) */
+									__( 'Previous image %s←', __i18n_text_domain__ ),
+									modKeySymbol
+								) }
 								showTooltip
-								accessibleWhenDisabled={ !! navButtonDisabledTooltip }
 								className="image-studio-header__nav-button"
 							/>
 							<span className="image-studio-header__filename">
@@ -240,16 +230,12 @@ export const Header = ( {
 								icon={ chevronRight }
 								onClick={ onNavigateNext }
 								disabled={ ! hasNextImage || isNavDisabled }
-								label={
-									navButtonDisabledTooltip ||
-									sprintf(
-										/* translators: %s: modifier key (command or control) */
-										__( 'Next image %s→', __i18n_text_domain__ ),
-										modKeySymbol
-									)
-								}
+								label={ sprintf(
+									/* translators: %s: modifier key (command or control) */
+									__( 'Next image %s→', __i18n_text_domain__ ),
+									modKeySymbol
+								) }
 								showTooltip
-								accessibleWhenDisabled={ !! navButtonDisabledTooltip }
 								className="image-studio-header__nav-button"
 							/>
 						</div>
