@@ -8,7 +8,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import React from 'react';
 import { UserProfile, UserProfileProps } from '../index';
-import type { GetReaderUserResponse } from '@automattic/api-core';
+import type { UserResponse } from '@automattic/api-core';
 
 jest.mock( '@automattic/calypso-router', () => ( {
 	replace: jest.fn(),
@@ -62,7 +62,7 @@ describe( 'UserProfile', () => {
 		path: '/reader/users/testuser',
 		view: 'posts',
 	};
-	const defaultUserResponse: GetReaderUserResponse = {
+	const defaultUserResponse: UserResponse = {
 		ID: 123,
 		user_login: 'testuser',
 		display_name: 'Test User',
@@ -95,7 +95,7 @@ describe( 'UserProfile', () => {
 		return render( <QueryClientProvider client={ queryClient }>{ ui }</QueryClientProvider> );
 	}
 
-	function nockGetUser( userLogin: string, response: GetReaderUserResponse | number ) {
+	function nockGetUser( userLogin: string, response: UserResponse | number ) {
 		const scope = nock( 'https://public-api.wordpress.com' ).get(
 			`/rest/v1.1/users/${ userLogin }`
 		);

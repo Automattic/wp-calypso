@@ -1,12 +1,12 @@
 /**
  * @jest-environment jsdom
  */
+import { ReaderUser, UserSitesResponse } from '@automattic/api-core';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import nock from 'nock';
 import { ReaderSite } from 'calypso/reader/sites-list/site-item';
 import UserSites from '..';
-import type { ReaderUser, UserSitesResponse } from '@automattic/api-core';
 
 jest.mock( 'calypso/state', () => ( {
 	useSelector: jest.fn(),

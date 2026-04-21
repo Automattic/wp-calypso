@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import { ReaderUser, UserSitesResponse } from '@automattic/api-core';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -9,7 +10,6 @@ import nock from 'nock';
 import { ComponentProps } from 'react';
 import UserAvatar from 'calypso/blocks/user-avatar';
 import UserProfileHeader from '../index';
-import type { ReaderUser, UserSitesResponse } from '@automattic/api-core';
 
 jest.mock(
 	'calypso/blocks/user-avatar',

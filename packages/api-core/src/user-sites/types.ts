@@ -1,10 +1,10 @@
 export interface UserSitesResponse {
 	total: number;
 	primary_site_id: number;
-	sites: UserSiteResponse[];
+	sites: UserSite[];
 }
 
-interface UserSiteResponse {
+export interface UserSite {
 	ID: number;
 	name: string;
 	description: string;

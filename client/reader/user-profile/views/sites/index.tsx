@@ -1,4 +1,4 @@
-import { getReaderUserSitesQuery } from '@automattic/api-queries';
+import { userSitesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { Spinner } from '@wordpress/components';
 import { siteLogo, Icon } from '@wordpress/icons';
@@ -19,7 +19,7 @@ const UserSites = ( { user }: UserSitesProps ): JSX.Element | null => {
 	const { ID: userId, user_login: userLogin } = user;
 	const translate = useTranslate();
 	const currentUser = useSelector( getCurrentUser );
-	const { isLoading, data, error } = useQuery( getReaderUserSitesQuery( userId ) );
+	const { isLoading, data, error } = useQuery( userSitesQuery( userId ) );
 
 	if ( isLoading ) {
 		return (

@@ -1,5 +1,5 @@
 import './style.scss';
-import { getReaderUserQuery } from '@automattic/api-queries';
+import { userQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { useQuery } from '@tanstack/react-query';
 import { Spinner } from '@wordpress/components';
@@ -24,7 +24,7 @@ export interface UserProfileProps {
 export function UserProfile( props: UserProfileProps ): JSX.Element | null {
 	const { userLogin, userId, path, view } = props;
 	const translate = useTranslate();
-	const { isLoading, data: user } = useQuery( getReaderUserQuery( userLogin, userId ) );
+	const { isLoading, data: user } = useQuery( userQuery( userLogin, userId ) );
 
 	useEffect( () => {
 		if ( path?.startsWith( '/reader/users/id/' ) && user ) {

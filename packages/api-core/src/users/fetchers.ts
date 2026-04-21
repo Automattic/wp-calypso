@@ -1,15 +1,15 @@
 import { addQueryArgs } from '@wordpress/url';
 import { wpcom } from '../wpcom-fetcher';
-import type { GetReaderUserResponse } from './types';
+import type { UserResponse } from './types';
 
-interface GetReaderUserParams {
+interface FetchUserParams {
 	find_by_id?: boolean;
 }
 
-export const fetchReaderUser = (
+export const fetchUserProfile = (
 	userIdOrLogin: string | number,
-	params?: GetReaderUserParams
-): Promise< GetReaderUserResponse > => {
+	params?: FetchUserParams
+): Promise< UserResponse > => {
 	return wpcom.req.get( {
 		path: addQueryArgs( `/users/${ userIdOrLogin }`, params ?? {} ),
 		apiVersion: '1.1',

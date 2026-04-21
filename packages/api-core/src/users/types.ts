@@ -1,4 +1,4 @@
-export interface GetReaderUserResponse {
+export interface UserResponse {
 	ID: number;
 	user_login: string;
 	first_name: string;
@@ -20,7 +20,7 @@ export interface GetReaderUserResponse {
 }
 
 export type ReaderUser = Pick<
-	GetReaderUserResponse,
+	UserResponse,
 	| 'ID'
 	| 'user_login'
 	| 'first_name'
