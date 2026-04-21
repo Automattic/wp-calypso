@@ -109,7 +109,7 @@ const SPACING = {
 function isCentennialPurchase( purchase: Purchase ): boolean {
 	return (
 		purchase.bill_period_days === SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD ||
-		Boolean( purchase.product_slug?.includes( '100-year' ) )
+		purchase.is_hundred_year_domain
 	);
 }
 
