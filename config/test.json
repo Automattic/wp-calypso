@@ -35,6 +35,8 @@
 		"cookie-banner": false,
 		"current-site/domain-warning": false,
 		"current-site/notice": true,
+		"dashboard/opt-in-banners": false,
+		"dashboard/v2": true,
 		"devdocs": true,
 		"devdocs/redirect-loggedout-homepage": true,
 		"global-styles/on-personal-plan": false,
@@ -65,10 +67,10 @@
 		"legal-updates-banner": true,
 		"login/last-used-method": true,
 		"mailchimp": true,
-		"mcp-settings": true,
 		"marketplace-fetch-all-dynamic-products": true,
 		"marketplace-personal-premium": false,
 		"marketplace-redesign": true,
+		"mcp-settings": true,
 		"me/account-close": true,
 		"migration-flow/introductory-offer": true,
 		"migration/ssh-migration": false,
@@ -77,8 +79,8 @@
 		"onboarding/import": true,
 		"onboarding/import-from-blogger": true,
 		"onboarding/import-from-medium": true,
-		"onboarding/import-from-substack": true,
 		"onboarding/import-from-squarespace": true,
+		"onboarding/import-from-substack": true,
 		"onboarding/import-from-wix": true,
 		"onboarding/import-from-wordpress": true,
 		"onboarding/post-checkout-ai-step": false,
@@ -113,8 +115,6 @@
 		"upgrades/redirect-payments": true,
 		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,
-		"wpcom-user-bootstrap": false,
-		"dashboard/opt-in-banners": false,
-		"dashboard/v2": true
+		"wpcom-user-bootstrap": false
 	}
 }
