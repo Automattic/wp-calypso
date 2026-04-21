@@ -79,6 +79,52 @@ object WPComTests : Project({
 	buildType(JetpackAtomicSmokeE2ETests);
 })
 
+private val JETPACK_SIMPLE_VIEWPORTS = listOf("desktop", "mobile")
+
+private val JETPACK_ATOMIC_VARIATIONS = listOf(
+	"default", "php-old", "php-new", "wp-beta", "wp-previous", "private", "ecomm-plan"
+)
+
+private val JETPACK_ATOMIC_VARIATION_LABELS = mapOf(
+	"default" to "Default",
+	"php-old" to "PHP Old",
+	"php-new" to "PHP New",
+	"wp-beta" to "WP Beta",
+	"wp-previous" to "WP Previous",
+	"private" to "Private",
+	"ecomm-plan" to "Ecomm",
+)
+
+private fun BuildType.applyViewports(viewports: List<String>) {
+	require(viewports.isNotEmpty()) { "viewports must not be empty" }
+	if (viewports.size == 1) {
+		params { param("PROJECT", viewports.single()) }
+	} else {
+		features {
+			matrix {
+				param("PROJECT", viewports.map {
+					value(it, label = it.replaceFirstChar { c -> c.uppercase() })
+				})
+			}
+		}
+	}
+}
+
+private fun BuildType.applyAtomicVariations(variations: List<String>) {
+	require(variations.isNotEmpty()) { "variations must not be empty" }
+	if (variations.size == 1) {
+		params { param("env.ATOMIC_VARIATION", variations.single()) }
+	} else {
+		features {
+			matrix {
+				param("env.ATOMIC_VARIATION", variations.map {
+					value(it, label = JETPACK_ATOMIC_VARIATION_LABELS[it] ?: it)
+				})
+			}
+		}
+	}
+}
+
 fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomic: Boolean = false, edge: Boolean = false, nightly: Boolean = false): BuildType {
 	val siteType = if (atomic) "atomic" else "simple"
 	val releaseType = when {
