@@ -25,6 +25,8 @@ const PRODUCT_NAMES: Record< CancelRemoveCategory, string > = {
 	plan: 'WordPress.com Business',
 	domain: 'example.com',
 	email: 'Google Workspace',
+	marketplace_plugin: 'WPBakery Page Builder',
+	marketplace_theme: 'Divi',
 	other: 'Jetpack Stats',
 };
 
@@ -43,7 +45,14 @@ function translate( tpl: string, options?: { args?: Record< string, string | num
 const t = translate as any;
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
-const CATEGORIES: CancelRemoveCategory[] = [ 'plan', 'domain', 'email', 'other' ];
+const CATEGORIES: CancelRemoveCategory[] = [
+	'plan',
+	'domain',
+	'email',
+	'marketplace_plugin',
+	'marketplace_theme',
+	'other',
+];
 
 describe( 'Cancel/Remove copy parity across dashboard + legacy', () => {
 	describe.each( CATEGORIES )( 'getCancelButtonCopy (%s)', ( category ) => {

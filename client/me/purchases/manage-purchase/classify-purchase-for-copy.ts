@@ -18,5 +18,15 @@ export function classifyPurchaseForCopy( purchase: Purchase ): CancelRemoveCateg
 	if ( isTitanMail( purchase ) || isGSuiteOrGoogleWorkspace( purchase ) ) {
 		return 'email';
 	}
+	if ( purchase.productType === 'marketplace_theme' ) {
+		return 'marketplace_theme';
+	}
+	if (
+		purchase.productType === 'marketplace_plugin' ||
+		purchase.productType === 'saas_plugin' ||
+		purchase.productType?.startsWith( 'marketplace' )
+	) {
+		return 'marketplace_plugin';
+	}
 	return 'other';
 }

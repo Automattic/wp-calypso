@@ -42,6 +42,28 @@ describe( 'getCancelButtonCopy (dashboard)', () => {
 		expect( copy.label ).toBe( 'Cancel subscription' );
 		expect( copy.description ).toBe( `Stop future payments. Keep Jetpack Stats until ${ DATE }.` );
 	} );
+
+	test( 'marketplace_plugin uses product-name micro-copy', () => {
+		const copy = getCancelButtonCopy( {
+			category: 'marketplace_plugin',
+			productName: 'WPBakery Page Builder',
+			expiryDateFormatted: DATE,
+		} );
+		expect( copy.label ).toBe( 'Cancel subscription' );
+		expect( copy.description ).toBe(
+			`Stop future payments. Keep WPBakery Page Builder until ${ DATE }.`
+		);
+	} );
+
+	test( 'marketplace_theme uses product-name micro-copy', () => {
+		const copy = getCancelButtonCopy( {
+			category: 'marketplace_theme',
+			productName: 'Divi',
+			expiryDateFormatted: DATE,
+		} );
+		expect( copy.label ).toBe( 'Cancel subscription' );
+		expect( copy.description ).toBe( `Stop future payments. Keep Divi until ${ DATE }.` );
+	} );
 } );
 
 describe( 'getRemoveButtonCopy (dashboard)', () => {
@@ -123,5 +145,45 @@ describe( 'getRemoveButtonCopy (dashboard)', () => {
 		} );
 		expect( copy.label ).toBe( 'Remove Akismet Pro 500' );
 		expect( copy.description ).toBe( 'Akismet Pro 500 will be removed immediately.' );
+	} );
+
+	test( 'marketplace_plugin, no refund', () => {
+		const copy = getRemoveButtonCopy( {
+			category: 'marketplace_plugin',
+			productName: 'WPBakery Page Builder',
+			hasRefund: false,
+		} );
+		expect( copy.label ).toBe( 'Remove plugin' );
+		expect( copy.description ).toBe( 'Plugin will be removed immediately.' );
+	} );
+
+	test( 'marketplace_plugin with refund', () => {
+		const copy = getRemoveButtonCopy( {
+			category: 'marketplace_plugin',
+			productName: 'WPBakery Page Builder',
+			hasRefund: true,
+		} );
+		expect( copy.label ).toBe( 'Remove plugin' );
+		expect( copy.description ).toBe( 'Get a refund and remove plugin immediately.' );
+	} );
+
+	test( 'marketplace_theme, no refund', () => {
+		const copy = getRemoveButtonCopy( {
+			category: 'marketplace_theme',
+			productName: 'Divi',
+			hasRefund: false,
+		} );
+		expect( copy.label ).toBe( 'Remove theme' );
+		expect( copy.description ).toBe( 'Theme will be removed immediately.' );
+	} );
+
+	test( 'marketplace_theme with refund', () => {
+		const copy = getRemoveButtonCopy( {
+			category: 'marketplace_theme',
+			productName: 'Divi',
+			hasRefund: true,
+		} );
+		expect( copy.label ).toBe( 'Remove theme' );
+		expect( copy.description ).toBe( 'Get a refund and remove theme immediately.' );
 	} );
 } );

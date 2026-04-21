@@ -4,4 +4,10 @@
  * `Purchase` shape into one of these categories, then uses that category
  * to pick the right English copy in its own i18n helper.
  */
-export type CancelRemoveCategory = 'plan' | 'domain' | 'email' | 'other';
+export type CancelRemoveCategory =
+	| 'plan'
+	| 'domain'
+	| 'email'
+	| 'marketplace_plugin'
+	| 'marketplace_theme'
+	| 'other';

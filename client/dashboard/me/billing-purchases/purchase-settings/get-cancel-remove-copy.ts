@@ -68,6 +68,8 @@ export function getCancelButtonCopy( {
 					{ date: expiryDateFormatted }
 				),
 			};
+		case 'marketplace_plugin':
+		case 'marketplace_theme':
 		case 'other':
 			return {
 				label,
@@ -99,6 +101,10 @@ function getRemoveLabel( category: CancelRemoveCategory, productName: string ): 
 			return __( 'Remove domain' );
 		case 'email':
 			return __( 'Remove email' );
+		case 'marketplace_plugin':
+			return __( 'Remove plugin' );
+		case 'marketplace_theme':
+			return __( 'Remove theme' );
 		case 'other':
 			return sprintf(
 				// translators: %(productName)s is a product name like "Jetpack Stats"
@@ -126,6 +132,14 @@ function getRemoveDescription(
 			return hasRefund
 				? __( 'Get a refund and remove your email immediately.' )
 				: __( 'Email will be removed immediately.' );
+		case 'marketplace_plugin':
+			return hasRefund
+				? __( 'Get a refund and remove plugin immediately.' )
+				: __( 'Plugin will be removed immediately.' );
+		case 'marketplace_theme':
+			return hasRefund
+				? __( 'Get a refund and remove theme immediately.' )
+				: __( 'Theme will be removed immediately.' );
 		case 'other':
 			return hasRefund
 				? sprintf(

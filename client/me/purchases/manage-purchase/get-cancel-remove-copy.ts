@@ -73,6 +73,8 @@ export function getCancelButtonCopy( {
 					} )
 				),
 			};
+		case 'marketplace_plugin':
+		case 'marketplace_theme':
 		case 'other':
 			return {
 				label,
@@ -109,6 +111,10 @@ function getRemoveLabel(
 			return String( translate( 'Remove domain' ) );
 		case 'email':
 			return String( translate( 'Remove email' ) );
+		case 'marketplace_plugin':
+			return String( translate( 'Remove plugin' ) );
+		case 'marketplace_theme':
+			return String( translate( 'Remove theme' ) );
 		case 'other':
 			return String(
 				translate( 'Remove %(productName)s', {
@@ -142,6 +148,18 @@ function getRemoveDescription(
 				hasRefund
 					? translate( 'Get a refund and remove your email immediately.' )
 					: translate( 'Email will be removed immediately.' )
+			);
+		case 'marketplace_plugin':
+			return String(
+				hasRefund
+					? translate( 'Get a refund and remove plugin immediately.' )
+					: translate( 'Plugin will be removed immediately.' )
+			);
+		case 'marketplace_theme':
+			return String(
+				hasRefund
+					? translate( 'Get a refund and remove theme immediately.' )
+					: translate( 'Theme will be removed immediately.' )
 			);
 		case 'other':
 			return String(
