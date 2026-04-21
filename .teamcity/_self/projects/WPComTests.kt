@@ -76,7 +76,7 @@ object WPComTests : Project({
 	template(JetpackE2ETestsBuildTemplate);
 	buildType(jetpackSimpleE2ETests());
 	buildType(jetpackAtomicE2ETests());
-	buildType(JetpackAtomicSmokeE2ETests);
+	buildType(jetpackAtomicSmokeE2ETests());
 })
 
 private val JETPACK_SIMPLE_VIEWPORTS = listOf("desktop", "mobile")
@@ -639,17 +639,28 @@ fun jetpackAtomicE2ETests(
 	}
 }
 
-private object JetpackAtomicSmokeE2ETests : BuildType({
-	templates(JetpackE2ETestsBuildTemplate, CalypsoE2ETestsBuildTemplate)
-	id("WPComTests_JetpackAtomicSmokeE2ETests")
-	uuid = "b2c3d4e5-6f7a-8b9c-0d1e-2f3a4b5c6d7e"
-	name = "Jetpack Atomic E2E Tests - Mixed Variations"
-	description = "Runs Jetpack WPCOM integration tests on Atomic with mixed variations"
+fun jetpackAtomicSmokeE2ETests(
+	id: String = "WPComTests_JetpackAtomicSmokeE2ETests",
+	uuid: String = "b2c3d4e5-6f7a-8b9c-0d1e-2f3a4b5c6d7e",
+	name: String = "Jetpack Atomic E2E Tests - Mixed Variations",
+	description: String = "Runs Jetpack WPCOM integration tests on Atomic with mixed variations",
+): BuildType {
+	val buildId = id
+	val buildUuid = uuid
+	val buildName = name
+	val buildDescription = description
+	return BuildType({
+		templates(JetpackE2ETestsBuildTemplate, CalypsoE2ETestsBuildTemplate)
+		id(buildId)
+		this.uuid = buildUuid
+		this.name = buildName
+		this.description = buildDescription
 
-	params {
-		param("PROJECT", "desktop")
-		param("env.TEST_ON_ATOMIC", "true")
-		param("env.PW_WORKERS", "14")
-		param("env.ATOMIC_VARIATION", "mixed")
-	}
-})
+		params {
+			param("PROJECT", "desktop")
+			param("env.TEST_ON_ATOMIC", "true")
+			param("env.PW_WORKERS", "14")
+			param("env.ATOMIC_VARIATION", "mixed")
+		}
+	})
+}
