@@ -55,13 +55,13 @@ const ReaderListHeader = ( props: ReaderListHeaderProps ) => {
 
 	const formattedTitle = (
 		<AutoDirection>
-			<div>{ title }</div>
+			<span>{ title }</span>
 		</AutoDirection>
 	);
 
 	const formattedDescription = (
 		<AutoDirection>
-			<div>{ list?.description }</div>
+			<span>{ list?.description }</span>
 		</AutoDirection>
 	);
 
