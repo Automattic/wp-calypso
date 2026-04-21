@@ -533,6 +533,7 @@ export const FEATURE_WOO_HOSTED_EMAIL_CAMPAIGNS = 'woo-hosted-email-campaigns';
 export const FEATURE_WOO_HOSTED_EMAIL_SUBSCRIBER_MGMT = 'woo-hosted-email-subscriber-mgmt';
 export const FEATURE_WOO_HOSTED_SALES_TAX = 'woo-hosted-sales-tax';
 export const FEATURE_WOO_HOSTED_SHIPPING_LABELS = 'woo-hosted-shipping-labels';
+export const FEATURE_WOO_HOSTED_PRIORITY_SUPPORT = 'woo-hosted-priority-support';
 
 // Sensei Features
 export const FEATURE_SENSEI_SUPPORT = 'sensei-support';

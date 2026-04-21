@@ -104,7 +104,7 @@ marketplace subscriptions on site.
 5. **Survey completion tracked per-purchase** — Stored in user preferences to avoid
    re-surveying. A new survey won't appear for a purchase that was already surveyed.
 
-6. **Siteless purchases** — Some products (Akismet, Jetpack, Marketplace) use temporary sites (`siteless.{jetpack|akismet|marketplace.wp|a4a}.com`). Guard with `isTemporarySitePurchase()`. Never call `siteBySlugQuery()` for these — use `purchase.domain` or `purchase.blog_id` for display, skip site-dependent UI entirely.
+6. **Siteless purchases** — Some products (Akismet, Jetpack, Marketplace) use temporary sites (`siteless.{jetpack|akismet|marketplace.wp|a4a}.com`). Guard with `purchase.is_attached_to_holding_site`. Never call `siteBySlugQuery()` for these — use `purchase.domain` or `purchase.blog_id` for display, skip site-dependent UI entirely.
 
 7. **Transferred purchases** — Always check ownership before allowing purchase actions.
 

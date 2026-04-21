@@ -35,6 +35,7 @@ export function getLeadMatchingOptions() {
 			{ label: __( 'Online stores with digital products' ), value: 'online_store_digital' },
 			{ label: __( 'Content and media' ), value: 'content_media' },
 			{ label: __( 'Nonprofits and communities' ), value: 'nonprofit_community' },
+			{ label: __( 'Other' ), value: 'other' },
 		] satisfies LeadMatchingOption[],
 		supportedCompanySizes: [
 			{ label: __( '1–5 employees' ), value: 'size_1_5' },

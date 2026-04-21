@@ -1,9 +1,8 @@
+import '@gravatar-com/hovercards/dist/style.css';
 import { useHovercards } from '@gravatar-com/hovercards/react';
 import { useEffect, useRef, useState } from 'react';
 import Gravatar from '../gravatar';
 import HovercardContentPortal from './hovercard-content';
-
-import '@gravatar-com/hovercards/dist/style.css';
 
 export default function GravatarWithHovercards( props ) {
 	const containerRef = useRef( null );

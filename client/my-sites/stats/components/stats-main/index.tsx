@@ -6,6 +6,7 @@ import { useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
+import JetpackFooter from 'calypso/components/jetpack/jetpack-footer';
 import JetpackTitle from 'calypso/components/jetpack-title';
 import Main, { MainProps } from 'calypso/components/main';
 import useWPAdminTheme from 'calypso/my-sites/stats/hooks/use-wp-admin-theme';
@@ -15,6 +16,7 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getUpsellModalView } from 'calypso/state/stats/paid-stats-upsell/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { STATS_HEADER_TITLE } from '../../constants';
+import type { JetpackFooterMenuItem } from 'calypso/components/jetpack/jetpack-footer';
 
 export interface BreadcrumbItem {
 	label: string;
@@ -109,6 +111,20 @@ export default function StatsMain( {
 	// Make the upsell modal view available on all Stats pages.
 	const upsellModalView = useSelector( ( state ) => getUpsellModalView( state, siteId ) );
 
+	const translate = useTranslate();
+	const footerMenu: JetpackFooterMenuItem[] = isWPAdminAndNotSimpleSite
+		? [
+				{
+					label: translate( 'Products' ),
+					href: 'admin.php?page=my-jetpack#/products',
+				},
+				{
+					label: translate( 'Help' ),
+					href: 'admin.php?page=my-jetpack#/help',
+				},
+		  ]
+		: [];
+
 	const titleContent = breadcrumbs ? (
 		<StatsBreadcrumbs items={ breadcrumbs } />
 	) : (
@@ -128,6 +144,7 @@ export default function StatsMain( {
 				{ pageTabs }
 				{ children }
 			</Page>
+			<JetpackFooter menu={ footerMenu } />
 			{ upsellModalView && <StatsUpsellModal siteId={ siteId } /> }
 		</Main>
 	);

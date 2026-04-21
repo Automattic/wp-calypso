@@ -55,6 +55,7 @@ import genericRedirectProcessor from '../lib/generic-redirect-processor';
 import multiPartnerCardProcessor from '../lib/multi-partner-card-processor';
 import payPalProcessor from '../lib/paypal-express-processor';
 import { payPalJsProcessor } from '../lib/paypal-js-processor';
+import { pixAutomaticoProcessor } from '../lib/pix-automatico-processor';
 import { pixProcessor } from '../lib/pix-processor';
 import razorpayProcessor from '../lib/razorpay-processor';
 import { translateResponseCartToWPCOMCart } from '../lib/translate-cart';
@@ -571,6 +572,8 @@ export default function CheckoutMain( {
 				} ),
 			pix: ( transactionData: unknown ) =>
 				pixProcessor( transactionData, dataForProcessor, translate ),
+			pix_automatico: ( transactionData: unknown ) =>
+				pixAutomaticoProcessor( transactionData, dataForProcessor, translate ),
 			alipay: ( transactionData: unknown ) =>
 				genericRedirectProcessor( 'alipay', transactionData, dataForProcessor ),
 			p24: ( transactionData: unknown ) =>

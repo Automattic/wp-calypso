@@ -10,6 +10,7 @@ export default function McpReadToolsPage( props ) {
 			pageViewTitle="MCP Read Access"
 			headerTitle={ translate( 'Read' ) }
 			filterTool={ isReadTool }
+			toolCategory="read"
 			groupingMode="categories"
 		/>
 	);

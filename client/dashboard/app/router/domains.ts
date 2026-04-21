@@ -24,7 +24,6 @@ import {
 	createRoute,
 	createLazyRoute,
 	notFound,
-	redirect,
 	lazyRouteComponent,
 	Outlet,
 } from '@tanstack/react-router';
@@ -39,6 +38,7 @@ import {
 	checkDomainContactVerificationPermissions,
 } from '../../utils/domain-permissions';
 import { queryParamToArray } from '../../utils/url';
+import { dashboardRedirect } from './redirect';
 import { rootRoute } from './root';
 
 const domainsRoute = createRoute( {
@@ -86,7 +86,7 @@ export const domainsContactInfoRoute = createRoute( {
 		const selected = queryParamToArray( ( search as { selected: unknown } ).selected );
 
 		if ( selected.length === 0 ) {
-			throw redirect( { to: '/domains' } );
+			throw dashboardRedirect( { to: '/domains' } );
 		}
 	},
 	loaderDeps: ( { search } ) => {
@@ -148,7 +148,7 @@ export const domainRoute = createRoute( {
 					__( 'You do not have permission to transfer this domain.' ),
 					{ type: 'snackbar' }
 				);
-				throw redirect( {
+				throw dashboardRedirect( {
 					to: '/domains/$domainName',
 					params: { domainName },
 				} );
@@ -257,7 +257,7 @@ export const domainDnsEditRoute = createRoute( {
 		const dnsRecords = await queryClient.ensureQueryData( domainDnsQuery( domainName ) );
 		const record = dnsRecords?.records.find( ( record ) => record.id === recordId );
 		if ( ! record ) {
-			throw redirect( { to: '/domains/$domainName/dns', params: { domainName } } );
+			throw dashboardRedirect( { to: '/domains/$domainName/dns', params: { domainName } } );
 		}
 	},
 	loader: ( { params: { domainName } } ) => {
@@ -592,7 +592,10 @@ export const domainTransferIndexRoute = createRoute( {
 
 		if ( domain.transfer_status === DomainTransferStatus.PENDING_START ) {
 			if ( ! domain.last_transfer_error ) {
-				throw redirect( { to: domainTransferSetupRoute.fullPath, params: { domainName } } );
+				throw dashboardRedirect( {
+					to: domainTransferSetupRoute.fullPath,
+					params: { domainName },
+				} );
 			}
 			// If there was a transfer error, the user should see the transfer failed page
 			return domain;
@@ -602,7 +605,7 @@ export const domainTransferIndexRoute = createRoute( {
 			DomainTransferStatus.PENDING_REGISTRY !== domain.transfer_status &&
 			DomainTransferStatus.CANCELLED !== domain.transfer_status
 		) {
-			throw redirect( { to: domainOverviewRoute.fullPath, params: { domainName } } );
+			throw dashboardRedirect( { to: domainOverviewRoute.fullPath, params: { domainName } } );
 		}
 
 		return domain;

@@ -10,8 +10,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { useSiteSettings } from 'calypso/blocks/plugins-scheduled-updates/hooks/use-site-settings';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
-import { AnalyticsProvider } from 'calypso/dashboard/app/analytics';
-import SiteLaunchCelebrationModal from 'calypso/dashboard/sites/site-launch-celebration-modal';
 import {
 	DeviceTabProvider,
 	useDeviceTab,
@@ -42,11 +40,6 @@ import { useSitePerformancePageReports } from './hooks/useSitePerformancePageRep
 import { getSupportLinkProps } from './utils';
 
 import './style.scss';
-
-const analyticsClient = {
-	recordTracksEvent,
-	recordPageView: () => {}, // Required by AnalyticsClient interface; unused by SiteLaunchCelebrationModal
-};
 
 const statType = 'statsTopPosts';
 const statsQuery = {
@@ -159,35 +152,15 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 		( state ) => getRequest( state, launchSite( siteId ) )?.isLoading ?? false
 	);
 
-	const siteIsLaunched = useSelector(
-		( state ) => getRequest( state, launchSite( siteId ) )?.hasLoaded ?? false
-	);
-
-	const { isFetchedAfterMount: isDomainsFetched } = useQuery( {
+	useQuery( {
 		...domainsQuery(),
 		select: ( data ) => data.filter( ( domain ) => domain.blog_id === site?.ID ),
 	} );
 
 	const [ isExperimentLoading, experimentData ] = useExperiment(
-		'calypso_standardized_site_launch_gating'
+		'calypso_standardized_site_launch_gating_202603_v1'
 	);
 	const experimentVariant = experimentData?.variationName;
-
-	const [ isCelebrationModalOpen, setIsCelebrationModalOpen ] = useState( false );
-
-	useEffect( () => {
-		if (
-			experimentVariant === 'gated_site_launch' &&
-			new URLSearchParams( window.location.search ).has( 'celebrateLaunch' )
-		) {
-			setIsCelebrationModalOpen( true );
-		}
-
-		if ( experimentVariant === 'ungated_site_launch' && siteIsLaunched && isSitePublic ) {
-			setIsCelebrationModalOpen( true );
-		}
-	}, [ siteIsLaunched, isSitePublic, experimentVariant ] );
-
 	const retestPage = () => {
 		recordTracksEvent( 'calypso_performance_profiler_test_again_click' );
 		performance.mark( 'test-started' );
@@ -218,7 +191,7 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 			path,
 		} );
 
-		if ( experimentVariant === 'gated_site_launch' ) {
+		if ( experimentVariant === 'semi_gated_site_launch' ) {
 			window.location.assign(
 				addQueryArgs( '/start/launch-site', {
 					siteSlug: site?.slug,
@@ -228,8 +201,16 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 			return;
 		}
 
-		// For both ungated and control: use Redux action
-		// (ungated variant will show celebration modal via useEffect)
+		if ( experimentVariant === 'ungated_site_launch' ) {
+			// Add celebrateLaunch param immediately so it's ready when site status updates
+			const url = new URL( window.location.href );
+			url.searchParams.set( 'celebrateLaunch', 'true' );
+			window.history.replaceState( {}, '', url.toString() );
+			dispatch( launchSite( siteId! ) );
+			return;
+		}
+
+		// default / control variant
 		dispatch( launchSite( siteId! ) );
 	};
 
@@ -402,14 +383,6 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 						</>
 					) }
 				</>
-			) }
-			{ isCelebrationModalOpen && site && isDomainsFetched && (
-				<AnalyticsProvider client={ analyticsClient }>
-					<SiteLaunchCelebrationModal
-						site={ site }
-						onClose={ () => setIsCelebrationModalOpen( false ) }
-					/>
-				</AnalyticsProvider>
 			) }
 		</div>
 	);

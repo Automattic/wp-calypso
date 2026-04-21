@@ -432,11 +432,20 @@ export default function SubscriberDataViews( {
 			{
 				id: 'plan',
 				label: translate( 'Subscription type' ),
-				getValue: ( { item }: { item: Subscriber } ) =>
-					item.plans?.length ? SubscribersFilterBy.Paid : SubscribersFilterBy.Free,
+				getValue: ( { item }: { item: Subscriber } ) => {
+					const hasNonCompPlan = item.plans?.some( ( plan ) => ! plan.is_comp );
+					if ( hasNonCompPlan ) {
+						return SubscribersFilterBy.Paid;
+					}
+					if ( item.plans?.length ) {
+						return SubscribersFilterBy.Comp;
+					}
+					return SubscribersFilterBy.Free;
+				},
 				render: ( { item }: { item: Subscriber } ) => <SubscriptionTypeCell subscriber={ item } />,
 				elements: [
 					{ label: translate( 'Paid' ), value: SubscribersFilterBy.Paid },
+					{ label: translate( 'Comp' ), value: SubscribersFilterBy.Comp },
 					{ label: translate( 'Free' ), value: SubscribersFilterBy.Free },
 				],
 				filterBy: {

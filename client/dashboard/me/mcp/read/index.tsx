@@ -9,6 +9,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import { Fragment } from 'react';
 import { getAccountMcpAbilities } from '../../../../me/mcp/utils';
+import { useAnalytics } from '../../../app/analytics';
 import Breadcrumbs from '../../../app/breadcrumbs';
 import { Card, CardBody, CardDivider } from '../../../components/card';
 import ComponentViewTracker from '../../../components/component-view-tracker';
@@ -36,6 +37,7 @@ interface McpAbility {
 }
 
 export default function McpRead() {
+	const { recordTracksEvent } = useAnalytics();
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
 	const mcpAbilities = getAccountMcpAbilities( userSettings || {} );
 
@@ -57,25 +59,49 @@ export default function McpRead() {
 	} );
 
 	const handleToolChange = ( toolId: string, enabled: boolean ) => {
-		mutation.mutate( {
-			mcp_abilities: {
-				account: {
-					[ toolId ]: enabled,
+		mutation.mutate(
+			{
+				mcp_abilities: {
+					account: {
+						[ toolId ]: enabled,
+					},
 				},
-			},
-		} as any );
+			} as any,
+			{
+				onSuccess: () => {
+					recordTracksEvent( 'calypso_dashboard_mcp_read_tool_toggled', {
+						tool_id: toolId,
+						enabled,
+					} );
+				},
+			}
+		);
 	};
 
-	const handleEnableAll = ( categoryTools: Array< [ string, McpAbility ] >, enabled: boolean ) => {
+	const handleEnableAll = (
+		categoryTools: Array< [ string, McpAbility ] >,
+		enabled: boolean,
+		category: string
+	) => {
 		const accountAbilities: Record< string, boolean > = {};
 		categoryTools.forEach( ( [ toolId ] ) => {
 			accountAbilities[ toolId ] = enabled;
 		} );
-		mutation.mutate( {
-			mcp_abilities: {
-				account: accountAbilities,
-			},
-		} as any );
+		mutation.mutate(
+			{
+				mcp_abilities: {
+					account: accountAbilities,
+				},
+			} as any,
+			{
+				onSuccess: () => {
+					recordTracksEvent( 'calypso_dashboard_mcp_read_enable_all_toggled', {
+						enabled,
+						category,
+					} );
+				},
+			}
+		);
 	};
 
 	// Group tools by display category
@@ -171,7 +197,9 @@ export default function McpRead() {
 										checked={ allEnabled }
 										disabled={ mutation.isPending }
 										label={ __( 'Enable all' ) }
-										onChange={ ( checked ) => handleEnableAll( categoryTools, checked ) }
+										onChange={ ( checked ) =>
+											handleEnableAll( categoryTools, checked, categoryName )
+										}
 									/>
 								</HStack>
 							</CardBody>

@@ -355,8 +355,8 @@ describe( 'mapLeadMatchingDetailsToProfile', () => {
 				},
 			} )
 		).toMatchObject( {
-			businessTypes: [ 'local_service', 'online_store_physical' ],
-			idealBusinessTypes: [ 'content_media', 'online_store_digital' ],
+			businessTypes: [ 'local_service', 'online_store_physical', 'other' ],
+			idealBusinessTypes: [ 'content_media', 'online_store_digital', 'other' ],
 			hostingEnvironments: [ 'wpcom' ],
 			migrationPlatforms: [ 'shopify' ],
 			storeComplexities: [ 'custom_pricing', 'customer_portals' ],
@@ -365,6 +365,27 @@ describe( 'mapLeadMatchingDetailsToProfile', () => {
 			minimumBudget: 'above_30k',
 			timingPreferences: [ 'book_1_3_months' ],
 			decisionProcesses: [ 'formal_procurement' ],
+		} );
+	} );
+
+	it( 'round-trips other as a valid saved business type option', () => {
+		const details = createDefaultLeadMatchingDetails();
+		details.businessTypes = [ 'local_service', 'other' ];
+		details.idealBusinessTypes = [ 'other' ];
+
+		const profile = mapLeadMatchingDetailsToProfile( details, null );
+		const hydratedDetails = mapLeadMatchingProfileToFormData( profile );
+
+		expect( profile.business_fit ).toEqual( {
+			supported_business_types: [ 'local_service', 'other' ],
+			ideal_business_types: [ 'other' ],
+			supported_company_sizes: [],
+		} );
+		expect( hydratedDetails ).toMatchObject( {
+			businessTypes: [ 'local_service', 'other' ],
+			idealBusinessTypes: [ 'other' ],
+			otherBusinessType: '',
+			otherIdealBusinessType: '',
 		} );
 	} );
 } );

@@ -42,6 +42,8 @@ export function generateSteps( {
 			stepName: 'domains-launch',
 			apiRequestFunction: addDomainToCart,
 			fulfilledStepCallback: isDomainFulfilled,
+			isReadyForFulfillmentCheck: ( stepName, defaultDependencies, props ) =>
+				props.hasLoadedSiteDomains && ! props.isRequestingSiteDomains,
 			providesDependencies: [
 				'domainItem',
 				'shouldHideFreePlan',
@@ -295,6 +297,8 @@ export function generateSteps( {
 			stepName: 'plans-launch',
 			apiRequestFunction: addPlanToCart,
 			fulfilledStepCallback: isPlanFulfilled,
+			isReadyForFulfillmentCheck: ( stepName, defaultDependencies, props ) =>
+				props.isPaidPlan != null,
 			dependencies: [ 'siteSlug' ],
 			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
 			optionalDependencies: [ 'themeSlugWithRepo' ],

@@ -12,6 +12,7 @@ import JetpackBackupSVG from 'calypso/assets/images/illustrations/jetpack-backup
 import VaultPressLogo from 'calypso/assets/images/jetpack/vaultpress-logo.svg';
 import DocumentHead from 'calypso/components/data/document-head';
 import JetpackDisconnectedWPCOM from 'calypso/components/jetpack/jetpack-disconnected-wpcom';
+import JetpackFooter from 'calypso/components/jetpack/jetpack-footer';
 import WhatIsJetpack from 'calypso/components/jetpack/what-is-jetpack';
 import JetpackTitle from 'calypso/components/jetpack-title';
 import Main from 'calypso/components/main';
@@ -291,6 +292,7 @@ export default function WPCOMUpsellPage( { reason }: { reason: string } ) {
 			>
 				{ body }
 			</Page>
+			<JetpackFooter />
 		</Main>
 	);
 }

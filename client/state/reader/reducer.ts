@@ -9,6 +9,7 @@ import organizations from './organizations/reducer';
 import posts from './posts/reducer';
 import recommendedSites from './recommended-sites/reducer';
 import relatedPosts from './related-posts/reducer';
+import saved from './saved/reducer';
 import siteBlocks from './site-blocks/reducer';
 import sites from './sites/reducer';
 import streams from './streams/reducer';
@@ -25,6 +26,7 @@ const combinedReducer = combineReducers( {
 	posts,
 	recommendedSites,
 	relatedPosts,
+	saved,
 	siteBlocks,
 	sites,
 	streams,
