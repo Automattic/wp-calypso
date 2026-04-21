@@ -241,65 +241,15 @@ fun jetpackAtomicDeploymentE2eBuildType(targetDevice: String, buildUuid: String)
 		params { param("SLACK_NOTIFY_CHANNEL", "#jetpack-alerts") }
 	}
 
-fun jetpackAtomicBuildSmokeE2eBuildType( targetDevice: String, buildUuid: String ): BuildType {
-	return BuildType({
-		id("WPComTests_jetpack_atomic_build_smoke_e2e_$targetDevice")
-		uuid = buildUuid
-		name = "Jetpack Atomic Build Smoke E2E Tests ($targetDevice)"
-		description = "Runs E2E tests to smoke test the most recent Jetpack build on Atomic staging sites. It uses a randomized mix of Atomic environment variations."
-
-		artifactRules = defaultE2eArtifactRules();
-
-		vcs {
-			root(Settings.WpCalypso)
-			cleanCheckout = true
-		}
-
-		params {
-			defaultE2eParams()
-			calypsoBaseUrlParam()
-			param("env.VIEWPORT_NAME", "$targetDevice")
-			param("env.JETPACK_TARGET", "wpcom-deployment")
-			param("env.TEST_ON_ATOMIC", "true")
-			param("env.ATOMIC_VARIATION", "mixed")
-			// We need to be careful of overwhelming the Atomic sites under test.
-			// The mixing of Atomic variations happens per-worker.
-			// There are currently 7 variations. So let's do 2 workers per variation for 14 workers total.
-			param("JEST_E2E_WORKERS", "14")
-		}
-
-		steps {
-			prepareE2eEnvironment()
-
-			runE2eTestsWithRetry(testGroup = "jetpack-wpcom-integration")
-
-			collectE2eResults()
-		}
-
-		features {
-			perfmon {}
-
-			notifications {
-				notifierSettings = slackNotifier {
-					connection = "PROJECT_EXT_11"
-					sendTo = "#jetpack-alerts"
-					messageFormat = verboseMessageFormat {
-						addStatusText = true
-					}
-				}
-				branchFilter = "+:<default>"
-				buildFailedToStart = true
-				buildFailed = true
-				buildFinishedSuccessfully = false
-				buildProbablyHanging = true
-			}
-		}
-
-		failureConditions {
-			defaultE2eFailureConditions()
-		}
-	});
-}
+fun jetpackAtomicBuildSmokeE2eBuildType(targetDevice: String, buildUuid: String): BuildType =
+	jetpackAtomicSmokeE2ETests(
+		id = "WPComTests_jetpack_atomic_build_smoke_e2e_$targetDevice",
+		uuid = buildUuid,
+		name = "Jetpack Atomic Build Smoke E2E Tests ($targetDevice)",
+		description = "Runs E2E tests to smoke test the most recent Jetpack build on Atomic staging sites. It uses a randomized mix of Atomic environment variations.",
+	).apply {
+		params { param("SLACK_NOTIFY_CHANNEL", "#jetpack-alerts") }
+	}
 
 private object I18NTests : BuildType({
 	templates(CalypsoE2ETestsBuildTemplate)
