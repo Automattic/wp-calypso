@@ -53,7 +53,6 @@ export function getCancelButtonCopy( purchase: Purchase, expiryDateFormatted: st
 			),
 		};
 	}
-	// Jetpack / Akismet / other: use the product name in the micro-copy.
 	return {
 		label,
 		description: sprintf(
@@ -91,7 +90,6 @@ export function getRemoveButtonCopy( purchase: Purchase, hasRefund: boolean ): R
 				: __( 'Email will be removed immediately.' ),
 		};
 	}
-	// Jetpack / Akismet / other: use the product name in the micro-copy.
 	const productName = purchase.product_name;
 	return {
 		label,

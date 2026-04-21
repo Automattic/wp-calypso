@@ -113,7 +113,6 @@ export function getRemoveButtonCopy(
 			),
 		};
 	}
-	// Jetpack / Akismet / other: product name in micro-copy.
 	const productName = purchase.productName;
 	return {
 		label,
