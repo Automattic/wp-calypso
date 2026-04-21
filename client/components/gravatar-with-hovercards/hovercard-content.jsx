@@ -1,5 +1,5 @@
 import './styles.scss';
-import { getReaderUserQuery } from '@automattic/api-queries';
+import { userQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import ReactDOM from 'react-dom';
 import GravatarHeader from './gravatar-header';
@@ -8,7 +8,7 @@ import RecommendedBlogs from './recommended-blogs';
 
 function HovercardContent( props ) {
 	const { user, gravatarData, processedAvatarUrl, closeCard } = props;
-	const { data } = useQuery( getReaderUserQuery( user.user_login, user.wpcom_id ) );
+	const { data } = useQuery( userQuery( user.user_login, user.wpcom_id ) );
 	const readerUserData = data?.user;
 	const { display_name: displayName, user_login: userLogin } = readerUserData || {};
 	const primaryBlogId = readerUserData?.primary_blog || user?.primary_blog || user?.site_ID;
