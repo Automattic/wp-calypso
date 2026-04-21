@@ -231,80 +231,15 @@ fun jetpackSimpleDeploymentE2eBuildType(targetDevice: String, buildUuid: String)
 		params { param("SLACK_NOTIFY_CHANNEL", "#jetpack-alerts") }
 	}
 
-fun jetpackAtomicDeploymentE2eBuildType( targetDevice: String, buildUuid: String ): BuildType {
-	val atomicVariations = listOf("default", "php-old", "php-new", "wp-beta", "wp-previous", "private", "ecomm-plan")
-
-	return BuildType({
-		id("WPComTests_jetpack_atomic_deployment_e2e_$targetDevice")
-		uuid = buildUuid
-		name = "Jetpack Atomic Deployment E2E Tests ($targetDevice)"
-		description = "Runs E2E tests validating a Jetpack release candidate for full WPCOM Atomic deployment. Runs all tests on all Atomic environment variations."
-
-		artifactRules = defaultE2eArtifactRules();
-
-		vcs {
-			root(Settings.WpCalypso)
-			cleanCheckout = true
-		}
-
-		params {
-			defaultE2eParams()
-			calypsoBaseUrlParam()
-			param("env.VIEWPORT_NAME", "$targetDevice")
-			param("env.JETPACK_TARGET", "wpcom-deployment")
-			param("env.TEST_ON_ATOMIC", "true")
-			// We run all the tests on all variations, and go through each variation sequentially.
-			// We can easily overwhlem the target Atomic site under test if we have too much parallelization.
-			// This number of works plays nicely with the expected load handling on these Atomic sites.
-			// See: pMz3w-ix0-p2
-			param("JEST_E2E_WORKERS", "5")
-		}
-
-		steps {
-			prepareE2eEnvironment()
-
-			atomicVariations.forEach { variation ->
-				runE2eTestsWithRetry(
-					testGroup = "jetpack-wpcom-integration",
-					additionalEnvVars = mapOf(
-						"ATOMIC_VARIATION" to variation,
-						"RUN_ID" to "Atomic: $variation"
-					),
-					stepName = "Run Atomic Jetpack E2E Tests: $variation",
-				)
-			}
-
-			collectE2eResults()
-		}
-
-		features {
-			perfmon {}
-
-			notifications {
-				notifierSettings = slackNotifier {
-					connection = "PROJECT_EXT_11"
-					sendTo = "#jetpack-alerts"
-					messageFormat = verboseMessageFormat {
-						addStatusText = true
-					}
-				}
-				branchFilter = "+:<default>"
-				buildFailedToStart = true
-				buildFailed = true
-				buildFinishedSuccessfully = false
-				buildProbablyHanging = true
-			}
-		}
-
-		failureConditions {
-			defaultE2eFailureConditions()
-			// These are long-running tests, and we have to scale back the parallelization too.
-			// Let's give them some more breathing room.
-			// This number is arbitrary, but tests in mid-2024 tend to run longer than 30 minutes.
-			executionTimeoutMin = 51
-		}
-	});
-}
+fun jetpackAtomicDeploymentE2eBuildType(targetDevice: String, buildUuid: String): BuildType =
+	jetpackAtomicE2ETests(
+		id = "WPComTests_jetpack_atomic_deployment_e2e_$targetDevice",
+		uuid = buildUuid,
+		name = "Jetpack Atomic Deployment E2E Tests ($targetDevice)",
+		description = "Runs E2E tests validating a Jetpack release candidate for full WPCOM Atomic deployment. Runs all tests on all Atomic environment variations.",
+	).apply {
+		params { param("SLACK_NOTIFY_CHANNEL", "#jetpack-alerts") }
+	}
 
 fun jetpackAtomicBuildSmokeE2eBuildType( targetDevice: String, buildUuid: String ): BuildType {
 	return BuildType({
