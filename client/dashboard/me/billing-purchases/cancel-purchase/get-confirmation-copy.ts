@@ -144,9 +144,13 @@ export function getCancellationHeading( { purchase, intent }: ConfirmationCopyAr
 			return __( 'Remove domain' );
 		case 'email':
 			return __( 'Remove email' );
+		case 'marketplace':
+			if ( purchase.product_type === 'marketplace_theme' ) {
+				return __( 'Remove theme' );
+			}
+			return __( 'Remove plugin' );
 		case 'jetpack':
 		case 'akismet':
-		case 'marketplace':
 		case 'one-time':
 			return sprintf(
 				/* translators: %(productName)s is the product name, e.g. "Remove Jetpack Search" */
@@ -154,7 +158,7 @@ export function getCancellationHeading( { purchase, intent }: ConfirmationCopyAr
 				{ productName: purchase.product_name }
 			);
 		default:
-			return __( 'Remove subscription' );
+			return __( 'Remove upgrade' );
 	}
 }
 
@@ -220,26 +224,26 @@ export function getCancelLossIntro( purchase: Purchase, fullExpiryDate: string )
 		case 'plan':
 			return sprintf(
 				/* translators: %(date)s is the full subscription expiry date, e.g. "April 16, 2027" */
-				__( 'On %(date)s, your plan will expire and you’ll lose access to:' ),
+				__( 'On %(date)s, your plan will expire. Here’s what you’ll lose:' ),
 				{ date: fullExpiryDate }
 			);
 		case 'domain':
 			return sprintf(
 				/* translators: %(date)s is the full subscription expiry date, e.g. "April 16, 2027" */
-				__( 'On %(date)s, your domain will expire and you’ll lose access to:' ),
+				__( 'On %(date)s, your domain will expire. Here’s what you’ll lose:' ),
 				{ date: fullExpiryDate }
 			);
 		case 'email':
 			return sprintf(
 				/* translators: %(date)s is the full subscription expiry date, e.g. "April 16, 2027" */
-				__( 'On %(date)s, your email will expire and you’ll lose access to:' ),
+				__( 'On %(date)s, your email will expire. Here’s what you’ll lose:' ),
 				{ date: fullExpiryDate }
 			);
 		default:
 			return sprintf(
 				/* translators: %(date)s is the full expiry date; %(productName)s is the product name */
 				__(
-					'On %(date)s, your %(productName)s subscription will expire and you’ll lose access to:'
+					'On %(date)s, your %(productName)s subscription will expire. Here’s what you’ll lose:'
 				),
 				{ date: fullExpiryDate, productName: purchase.product_name }
 			);
@@ -253,17 +257,26 @@ export function getCancelLossIntro( purchase: Purchase, fullExpiryDate: string )
  */
 export function getRemoveLossIntro( purchase: Purchase ): string {
 	const category = getProductCategory( purchase );
+	const productName = purchase.product_name;
 	switch ( category ) {
+		case 'plan':
+			return sprintf(
+				/* translators: %(productName)s is the plan name, e.g. "WordPress.com Business plan" */
+				__( "Your %(productName)s plan will be removed immediately. Here's what you'll lose:" ),
+				{ productName }
+			);
 		case 'domain':
 			return sprintf(
 				/* translators: %(domainName)s is a domain name, e.g. "example.com" */
-				__( 'After you remove %(domainName)s:' ),
+				__( "%(domainName)s will be removed immediately. Here's what you'll lose:" ),
 				{ domainName: purchase.meta ?? purchase.domain }
 			);
-		case 'email':
-			return __( 'After you remove your email:' );
 		default:
-			return __( 'These features will be removed immediately:' );
+			return sprintf(
+				/* translators: %(productName)s is the product name, e.g. "Jetpack Search", "G Suite" */
+				__( "%(productName)s will be removed immediately. Here's what you'll lose:" ),
+				{ productName }
+			);
 	}
 }
 
@@ -341,6 +354,11 @@ export function getButtonLabels( { purchase, intent }: ConfirmationCopyArgs ): {
 				return { primary: __( 'Remove domain' ), secondary: __( 'Keep domain' ) };
 			case 'email':
 				return { primary: __( 'Remove email' ), secondary: __( 'Keep email' ) };
+			case 'marketplace':
+				if ( purchase.product_type === 'marketplace_theme' ) {
+					return { primary: __( 'Remove theme' ), secondary: __( 'Keep theme' ) };
+				}
+				return { primary: __( 'Remove plugin' ), secondary: __( 'Keep plugin' ) };
 			default:
 				return {
 					primary: __( 'Remove subscription' ),
