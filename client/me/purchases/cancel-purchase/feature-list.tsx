@@ -1,4 +1,3 @@
-import { getFeatureByKey } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import moment from 'moment';
 import {
@@ -6,6 +5,7 @@ import {
 	getFallbackLossItems,
 	getRemoveLossIntro,
 } from './get-confirmation-copy';
+import type { CancellationFeature } from '@automattic/api-core';
 import type { Purchases } from '@automattic/data-stores';
 import type { DisplayVariant } from 'calypso/lib/purchases/utils';
 
@@ -16,15 +16,13 @@ const CancelPurchaseFeatureList = ( {
 }: {
 	purchase: Purchases.Purchase;
 	displayVariant: DisplayVariant;
-	cancellationFeatures: string[];
+	cancellationFeatures: CancellationFeature[];
 } ) => {
-	// When no server-provided features list, fall back to a per-product-type
-	// item so every confirmation screen shows at least one concrete thing the
-	// user is giving up.
+	// When the server returns no features, fall back to a per-product-type item.
 	const items: Array< { key: string; title: string } > = cancellationFeatures.length
 		? cancellationFeatures.map( ( feature ) => ( {
-				key: feature,
-				title: getFeatureByKey( feature ).getTitle() as string,
+				key: feature.feature_id,
+				title: feature.title,
 		  } ) )
 		: getFallbackLossItems( purchase ).map( ( title, idx ) => ( {
 				key: `fallback-${ idx }`,
