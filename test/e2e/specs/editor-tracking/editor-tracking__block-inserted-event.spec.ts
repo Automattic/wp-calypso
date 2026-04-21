@@ -118,10 +118,6 @@ test.describe.fixme(
 		} );
 
 		test.describe( 'In the site editor', () => {
-			const siteEditorAccountName = getTestAccountByFeature( {
-				...features,
-				variant: 'siteEditor',
-			} );
 			let testAccount: TestAccount;
 			let templatePartName: string;
 			let fullSiteEditorPage: FullSiteEditorPage;
@@ -136,6 +132,10 @@ test.describe.fixme(
 			} );
 
 			test( 'block inserted event fires with entity_context', async ( { page } ) => {
+				const siteEditorAccountName = getTestAccountByFeature( {
+					...features,
+					variant: 'siteEditor',
+				} );
 				await test.step( 'Given I am authenticated', async () => {
 					testAccount = new TestAccount( siteEditorAccountName );
 					await testAccount.authenticate( page );

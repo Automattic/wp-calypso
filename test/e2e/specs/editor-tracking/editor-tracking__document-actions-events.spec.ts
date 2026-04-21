@@ -14,9 +14,9 @@ test.describe.fixme(
 	{ tag: [ tags.EDITOR_TRACKING ] },
 	() => {
 		const features = envToFeatureKey( envVariables );
-		const accountName = getTestAccountByFeature( { ...features, variant: 'siteEditor' } );
 
 		test( '"wpcom_site_editor_document_actions_dropdown_open" event fires', async ( { page } ) => {
+			const accountName = getTestAccountByFeature( { ...features, variant: 'siteEditor' } );
 			let testAccount: TestAccount;
 			let fullSiteEditorPage: FullSiteEditorPage;
 			let editorTracksEventManager: EditorTracksEventManager;
@@ -52,6 +52,7 @@ test.describe.fixme(
 		test( '"wpcom_site_editor_document_actions_template_area_click" event fires for header', async ( {
 			page,
 		} ) => {
+			const accountName = getTestAccountByFeature( { ...features, variant: 'siteEditor' } );
 			let testAccount: TestAccount;
 			let fullSiteEditorPage: FullSiteEditorPage;
 			let editorTracksEventManager: EditorTracksEventManager;
@@ -96,6 +97,7 @@ test.describe.fixme(
 		} );
 
 		test( '"wpcom_site_editor_document_actions_revert_click" event fires', async ( { page } ) => {
+			const accountName = getTestAccountByFeature( { ...features, variant: 'siteEditor' } );
 			let testAccount: TestAccount;
 			let fullSiteEditorPage: FullSiteEditorPage;
 			let editorTracksEventManager: EditorTracksEventManager;
@@ -146,6 +148,7 @@ test.describe.fixme(
 		} );
 
 		test( '"wpcom_site_editor_document_actions_show_all_click" event fires', async ( { page } ) => {
+			const accountName = getTestAccountByFeature( { ...features, variant: 'siteEditor' } );
 			let testAccount: TestAccount;
 			let fullSiteEditorPage: FullSiteEditorPage;
 			let editorTracksEventManager: EditorTracksEventManager;

@@ -14,12 +14,12 @@ test.describe.fixme(
 	{ tag: [ tags.EDITOR_TRACKING ] },
 	() => {
 		const features = envToFeatureKey( envVariables );
-		const accountName = getTestAccountByFeature( features );
 
 		test( '"wpcom_pattern_inserted" event fires from sidebar and inline inserters', async ( {
 			page,
 			pageEditor,
 		} ) => {
+			const accountName = getTestAccountByFeature( features );
 			let editorTracksEventManager: EditorTracksEventManager;
 
 			await test.step( 'Given I am authenticated', async () => {

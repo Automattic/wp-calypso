@@ -20,7 +20,6 @@ test.describe.fixme(
 	{ tag: [ tags.EDITOR_TRACKING ] },
 	() => {
 		const features = envToFeatureKey( envVariables );
-		const accountName = getTestAccountByFeature( { ...features, variant: 'siteEditor' } );
 
 		test.describe( '"wpcom_block_editor_create_template_part" event fires', () => {
 			let testAccount: TestAccount;
@@ -36,6 +35,7 @@ test.describe.fixme(
 			} );
 
 			test( 'event fires after creating a template part', async ( { page } ) => {
+				const accountName = getTestAccountByFeature( { ...features, variant: 'siteEditor' } );
 				await test.step( 'Given I am authenticated', async () => {
 					testAccount = new TestAccount( accountName );
 					await testAccount.authenticate( page );
@@ -78,6 +78,7 @@ test.describe.fixme(
 		test( '"wpcom_block_editor_template_part_choose_existing" and "replace" events fire correctly', async ( {
 			page,
 		} ) => {
+			const accountName = getTestAccountByFeature( { ...features, variant: 'siteEditor' } );
 			let testAccount: TestAccount;
 			let fullSiteEditorPage: FullSiteEditorPage;
 			let editorTracksEventManager: EditorTracksEventManager;
@@ -165,6 +166,7 @@ test.describe.fixme(
 			} );
 
 			test( 'convert and detach events fire with correct properties', async ( { page } ) => {
+				const accountName = getTestAccountByFeature( { ...features, variant: 'siteEditor' } );
 				await test.step( 'Given I am authenticated', async () => {
 					testAccount = new TestAccount( accountName );
 					await testAccount.authenticate( page );

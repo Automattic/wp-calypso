@@ -19,14 +19,14 @@ import { ALT_TEST_IMAGE_PATH, TEST_IMAGE_PATH } from '../constants';
  *
  * Keywords: Jetpack, Media Block, Story
  */
-test.describe.fixme(
+test.describe(
 	DataHelper.createSuiteTitle( 'Blocks: Jetpack Story' ),
 	{ tag: [ tags.GUTENBERG, tags.JETPACK_WPCOM_INTEGRATION ] },
 	() => {
 		const features = envToFeatureKey( envVariables );
-		const accountName = getTestAccountByFeature( features );
 
 		test( 'As a user, I can use the Story block in a post', async ( { page, pageEditor } ) => {
+			const accountName = getTestAccountByFeature( features );
 			const testFiles: TestFile[] = [];
 
 			await test.step( 'Given I am authenticated', async () => {

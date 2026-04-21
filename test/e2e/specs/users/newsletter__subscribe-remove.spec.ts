@@ -20,7 +20,7 @@ import {
 } from '@automattic/calypso-e2e';
 import { expect, tags, test } from '../../lib/pw-base';
 
-test.describe.fixme(
+test.describe(
 	DataHelper.createSuiteTitle( 'Newsletter: Subscribe and Remove' ),
 	{ tag: [ tags.JETPACK_WPCOM_INTEGRATION ] },
 	() => {
@@ -30,11 +30,10 @@ test.describe.fixme(
 		const testEmail = emailClient.getTestEmailAddress( inboxID );
 
 		const features = envToFeatureKey( envVariables );
-		const accountName = getTestAccountByFeature( features );
-		const testAccount = new TestAccount( accountName );
 
 		let newPostDetails: PostResponse;
 		let restAPIClient: RestAPIClient;
+		let testAccount: TestAccount;
 
 		test.afterAll( async () => {
 			try {
@@ -57,6 +56,8 @@ test.describe.fixme(
 		test( 'As a user, I can subscribe to a newsletter and be removed by the publisher', async ( {
 			page,
 		} ) => {
+			const accountName = getTestAccountByFeature( features );
+			testAccount = new TestAccount( accountName );
 			test.skip(
 				envVariables.ATOMIC_VARIATION === 'private',
 				'Newsletter subscriptions not supported on private sites'

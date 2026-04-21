@@ -20,13 +20,12 @@ if ( isAtomic ) {
  * This spec requires the following:
  * 	- theme: a non-block-based theme (eg. Twenty-Twenty One)
  */
-test.describe.fixme( 'CoBlocks: Extensions: Gutter Control', { tag: [ tags.GUTENBERG ] }, () => {
-	const accountName = getTestAccountByFeature( features );
-
+test.describe( 'CoBlocks: Extensions: Gutter Control', { tag: [ tags.GUTENBERG ] }, () => {
 	test( 'As a user, I can change CoBlocks gutter control settings', async ( {
 		page,
 		pageEditor,
 	} ) => {
+		const accountName = getTestAccountByFeature( features );
 		let pricingTableBlock: PricingTableBlock;
 
 		await test.step( 'Given I am authenticated', async () => {

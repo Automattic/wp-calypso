@@ -20,9 +20,9 @@ test.describe.fixme(
 	{ tag: [ tags.JETPACK_WPCOM_INTEGRATION ] },
 	() => {
 		const features = envToFeatureKey( envVariables );
-		const accountName = getTestAccountByFeature( features );
 
 		test( 'As a user, I can use Jetpack Instant Search', async ( { page } ) => {
+			const accountName = getTestAccountByFeature( features );
 			test.skip(
 				envVariables.ATOMIC_VARIATION === 'private',
 				'Search not available on private sites'

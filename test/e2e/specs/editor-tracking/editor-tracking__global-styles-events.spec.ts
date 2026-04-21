@@ -14,11 +14,11 @@ test.describe.fixme(
 	{ tag: [ tags.EDITOR_TRACKING ] },
 	() => {
 		const features = envToFeatureKey( envVariables );
-		const accountName = getTestAccountByFeature( { ...features, variant: 'siteEditor' } );
 
 		test( '"wpcom_block_editor_global_styles_panel_toggle" event fires on open and close', async ( {
 			page,
 		} ) => {
+			const accountName = getTestAccountByFeature( { ...features, variant: 'siteEditor' } );
 			let testAccount: TestAccount;
 			let fullSiteEditorPage: FullSiteEditorPage;
 			let editorTracksEventManager: EditorTracksEventManager;
@@ -71,6 +71,7 @@ test.describe.fixme(
 		test( '"wpcom_block_editor_global_styles_menu_selected" event fires for Typography and Blocks', async ( {
 			page,
 		} ) => {
+			const accountName = getTestAccountByFeature( { ...features, variant: 'siteEditor' } );
 			let testAccount: TestAccount;
 			let fullSiteEditorPage: FullSiteEditorPage;
 			let editorTracksEventManager: EditorTracksEventManager;
@@ -131,6 +132,7 @@ test.describe.fixme(
 		test( '"wpcom_block_editor_global_styles_update" event fires for color and typography changes', async ( {
 			page,
 		} ) => {
+			const accountName = getTestAccountByFeature( { ...features, variant: 'siteEditor' } );
 			let testAccount: TestAccount;
 			let fullSiteEditorPage: FullSiteEditorPage;
 			let editorTracksEventManager: EditorTracksEventManager;
@@ -240,6 +242,7 @@ test.describe.fixme(
 			} );
 
 			test( 'event fires with correct style properties', async ( { page } ) => {
+				const accountName = getTestAccountByFeature( { ...features, variant: 'siteEditor' } );
 				await test.step( 'Given I am authenticated', async () => {
 					testAccount = new TestAccount( accountName );
 					await testAccount.authenticate( page );

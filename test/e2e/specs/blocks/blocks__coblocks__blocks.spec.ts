@@ -25,15 +25,14 @@ if ( envVariables.TEST_ON_ATOMIC ) {
  * This spec requires the following:
  * 	- theme: a non-block-based theme (eg. Twenty-Twenty One)
  */
-test.describe.fixme( 'CoBlocks: Blocks', { tag: [ tags.GUTENBERG ] }, () => {
-	const accountName = getTestAccountByFeature( features );
-
+test.describe( 'CoBlocks: Blocks', { tag: [ tags.GUTENBERG ] }, () => {
 	// Test data
 	const pricingTableBlockPrices = [ 4.99, 9.99 ];
 	const heroBlockHeading = 'Hero heading';
 	const clicktoTweetBlockTweet = 'Tweet text';
 
 	test( 'As a user, I can use CoBlocks in a post', async ( { page, pageEditor } ) => {
+		const accountName = getTestAccountByFeature( features );
 		let pricingTableBlock: PricingTableBlock;
 		let logoImage: TestFile;
 
