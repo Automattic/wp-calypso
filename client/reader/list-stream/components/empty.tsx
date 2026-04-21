@@ -5,7 +5,7 @@ import EmptyContent from 'calypso/components/empty-content';
 import { getListItems } from 'calypso/state/reader/lists/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 
-interface ListEmptyContentProps {
+interface ListEmptyProps {
 	list?: {
 		title: string;
 		owner: string;
@@ -15,7 +15,7 @@ interface ListEmptyContentProps {
 	};
 }
 
-export default function ListEmptyContent( { list }: ListEmptyContentProps ): JSX.Element {
+export default function ListEmpty( { list }: ListEmptyProps ): JSX.Element {
 	const translate = useTranslate();
 	const previousRoute: string = useSelector( getPreviousRoute );
 	const listItems = useSelector( ( state ) =>

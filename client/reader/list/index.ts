@@ -7,7 +7,6 @@ import {
 	editList,
 	editListItems,
 	exportList,
-	listViewItems,
 	listListing,
 } from './controller';
 
@@ -59,10 +58,10 @@ export default function () {
 	);
 
 	page(
-		'/reader/list/:user/:list/items',
+		'/reader/list/:user/:list/:view',
 		sidebar,
 		setBeforePrimary,
-		listViewItems,
+		listListing,
 		makeLayout,
 		clientRender
 	);

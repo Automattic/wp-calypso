@@ -25,6 +25,7 @@ export const createList = ( context, next ) => {
 
 export const listListing = ( context, next ) => {
 	const basePath = '/reader/list/:owner/:slug';
+	const view = context.params.view || 'posts';
 	const fullAnalyticsPageTitle =
 		analyticsPageTitle + ' > List > ' + context.params.user + ' - ' + context.params.list;
 	const mcKey = 'list';
@@ -49,6 +50,7 @@ export const listListing = ( context, next ) => {
 			streamKey={ streamKey }
 			owner={ encodeURIComponent( context.params.user ) }
 			slug={ encodeURIComponent( context.params.list ) }
+			view={ view }
 			trackScrollPage={ trackScrollPage.bind(
 				null,
 				basePath,
@@ -57,28 +59,6 @@ export const listListing = ( context, next ) => {
 				mcKey
 			) }
 			onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
-		/>
-	);
-	next();
-};
-
-export const listViewItems = ( context, next ) => {
-	const basePath = '/reader/list/:owner/:slug/items';
-	const fullAnalyticsPageTitle = `${ analyticsPageTitle } > User > ${ context.params.user } > List > ${ context.params.list } > View Items`;
-	const mcKey = 'list';
-
-	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
-	recordTrack( 'calypso_reader_view_list_items_loaded', {
-		list_owner: context.params.user,
-		list_slug: context.params.list,
-	} );
-
-	context.primary = (
-		<AsyncLoad
-			require="calypso/reader/list-stream/view-items"
-			key="reader-list-view-items"
-			owner={ encodeURIComponent( context.params.user ) }
-			slug={ encodeURIComponent( context.params.list ) }
 		/>
 	);
 	next();
