@@ -220,59 +220,16 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 	})
 }
 
-fun jetpackSimpleDeploymentE2eBuildType( targetDevice: String, buildUuid: String ): BuildType {
-	return BuildType({
-		id("WPComTests_jetpack_simple_deployment_e2e_$targetDevice")
-		uuid = buildUuid
-		name = "Jetpack Simple Deployment E2E Tests ($targetDevice)"
-		description = "Runs E2E tests validating the deployment of Jetpack on Simple sites on $targetDevice viewport"
-
-		artifactRules = defaultE2eArtifactRules();
-
-		vcs {
-			root(Settings.WpCalypso)
-			cleanCheckout = true
-		}
-
-		params {
-			defaultE2eParams()
-			calypsoBaseUrlParam()
-			param("env.VIEWPORT_NAME", "$targetDevice")
-			param("env.JETPACK_TARGET", "wpcom-deployment")
-		}
-
-		steps {
-			prepareE2eEnvironment()
-
-			runE2eTestsWithRetry(testGroup = "jetpack-wpcom-integration")
-
-			collectE2eResults()
-		}
-
-		features {
-			perfmon {}
-
-			notifications {
-				notifierSettings = slackNotifier {
-					connection = "PROJECT_EXT_11"
-					sendTo = "#jetpack-alerts"
-					messageFormat = verboseMessageFormat {
-						addStatusText = true
-					}
-				}
-				branchFilter = "+:<default>"
-				buildFailedToStart = true
-				buildFailed = true
-				buildFinishedSuccessfully = false
-				buildProbablyHanging = true
-			}
-		}
-
-		failureConditions {
-			defaultE2eFailureConditions()
-		}
-	});
-}
+fun jetpackSimpleDeploymentE2eBuildType(targetDevice: String, buildUuid: String): BuildType =
+	jetpackSimpleE2ETests(
+		id = "WPComTests_jetpack_simple_deployment_e2e_$targetDevice",
+		uuid = buildUuid,
+		name = "Jetpack Simple Deployment E2E Tests ($targetDevice)",
+		description = "Runs E2E tests validating the deployment of Jetpack on Simple sites on $targetDevice viewport",
+		viewports = listOf(targetDevice),
+	).apply {
+		params { param("SLACK_NOTIFY_CHANNEL", "#jetpack-alerts") }
+	}
 
 fun jetpackAtomicDeploymentE2eBuildType( targetDevice: String, buildUuid: String ): BuildType {
 	val atomicVariations = listOf("default", "php-old", "php-new", "wp-beta", "wp-previous", "private", "ecomm-plan")
