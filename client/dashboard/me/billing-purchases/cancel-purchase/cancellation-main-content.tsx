@@ -137,7 +137,7 @@ export default function CancellationMainContent( {
 
 			<BackupRetentionOptionOnCancelPurchase siteId={ purchase.blog_id } purchase={ purchase } />
 
-			{ isGSuite && ! config.isEnabled( 'purchases/update-cancel-refunds' ) && (
+			{ isGSuite && ! config.isEnabled( 'purchases/split-cancel-remove' ) && (
 				<GSuiteAccessMessage purchase={ purchase } selectedDomain={ selectedDomain } />
 			) }
 

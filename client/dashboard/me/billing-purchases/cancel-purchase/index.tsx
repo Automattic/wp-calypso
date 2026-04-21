@@ -438,7 +438,7 @@ export default function CancelPurchase() {
 	};
 	const flowType = getPurchaseCancellationFlowType( purchase );
 	// Intent is set when the user clicks either Cancel or Remove on Purchase
-	// Settings (behind the purchases/update-cancel-refunds flag). When present,
+	// Settings (behind the purchases/split-cancel-remove flag). When present,
 	// it drives both the screen variant (copy) and the backend mutation.
 	// When absent (flag-off, old deep link), fall back to today's flowType heuristic.
 	const intent = getCancelIntentFromSearch( useSearch( { from: cancelPurchaseRoute.fullPath } ) );
@@ -1410,7 +1410,7 @@ export default function CancelPurchase() {
 	}
 
 	const planName = purchase.is_domain_registration ? purchase.meta : purchase.product_name;
-	const isSplitEnabled = config.isEnabled( 'purchases/update-cancel-refunds' );
+	const isSplitEnabled = config.isEnabled( 'purchases/split-cancel-remove' );
 	const isDomainRemoval = flowType === CANCEL_FLOW_TYPE.REMOVE && purchase.is_domain_registration;
 
 	if ( isDomainRemoval && ! isSplitEnabled ) {
