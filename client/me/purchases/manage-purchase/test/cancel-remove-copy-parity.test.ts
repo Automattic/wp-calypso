@@ -13,7 +13,7 @@
 import {
 	getCancelButtonCopy as dashboardGetCancelButtonCopy,
 	getRemoveButtonCopy as dashboardGetRemoveButtonCopy,
-} from '../../../../dashboard/me/billing-purchases/purchase-settings/get-cancel-remove-copy';
+} from 'calypso/dashboard/me/billing-purchases/purchase-settings/get-cancel-remove-copy';
 import {
 	getCancelButtonCopy as legacyGetCancelButtonCopy,
 	getRemoveButtonCopy as legacyGetRemoveButtonCopy,
