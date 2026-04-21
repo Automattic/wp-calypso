@@ -5,7 +5,7 @@ import {
 	isPlan,
 	isTitanMail,
 } from '@automattic/calypso-products';
-import type { CancelRemoveCategory } from '@automattic/calypso-products';
+import type { CancelRemoveCategory } from '@automattic/api-core';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
 export function classifyPurchaseForCopy( purchase: Purchase ): CancelRemoveCategory {

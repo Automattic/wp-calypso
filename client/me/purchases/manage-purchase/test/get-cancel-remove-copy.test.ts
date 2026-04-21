@@ -1,13 +1,30 @@
-import { getCancelButtonCopy, getRemoveButtonCopy } from '../cancel-remove-copy';
+/**
+ * @jest-environment node
+ */
+import { getCancelButtonCopy, getRemoveButtonCopy } from '../get-cancel-remove-copy';
 
 const DATE = 'January 1, 2027';
 
-describe( 'getCancelButtonCopy', () => {
+// A minimal i18n-calypso `translate` shim that formats %(name)s placeholders.
+function translate( tpl: string, options?: { args?: Record< string, string | number > } ): string {
+	const args = options?.args;
+	if ( ! args ) {
+		return tpl;
+	}
+	return tpl.replace( /%\((\w+)\)[sd]/g, ( _, key ) => String( args[ key ] ?? '' ) );
+}
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+const t = translate as any;
+/* eslint-enable @typescript-eslint/no-explicit-any */
+
+describe( 'legacy getCancelButtonCopy', () => {
 	test( 'plan — generic label, plan-features micro-copy', () => {
 		const copy = getCancelButtonCopy( {
 			category: 'plan',
 			productName: 'WordPress.com Business',
 			expiryDateFormatted: DATE,
+			translate: t,
 		} );
 		expect( copy.label ).toBe( 'Cancel subscription' );
 		expect( copy.description ).toBe( `Stop future payments. Keep plan features until ${ DATE }.` );
@@ -18,6 +35,7 @@ describe( 'getCancelButtonCopy', () => {
 			category: 'domain',
 			productName: 'example.com',
 			expiryDateFormatted: DATE,
+			translate: t,
 		} );
 		expect( copy.label ).toBe( 'Cancel subscription' );
 		expect( copy.description ).toBe( `Stop future payments. Keep your domain until ${ DATE }.` );
@@ -28,6 +46,7 @@ describe( 'getCancelButtonCopy', () => {
 			category: 'email',
 			productName: 'Google Workspace',
 			expiryDateFormatted: DATE,
+			translate: t,
 		} );
 		expect( copy.label ).toBe( 'Cancel subscription' );
 		expect( copy.description ).toBe( `Stop future payments. Keep your email until ${ DATE }.` );
@@ -38,18 +57,20 @@ describe( 'getCancelButtonCopy', () => {
 			category: 'other',
 			productName: 'Jetpack Stats',
 			expiryDateFormatted: DATE,
+			translate: t,
 		} );
 		expect( copy.label ).toBe( 'Cancel subscription' );
 		expect( copy.description ).toBe( `Stop future payments. Keep Jetpack Stats until ${ DATE }.` );
 	} );
 } );
 
-describe( 'getRemoveButtonCopy', () => {
+describe( 'legacy getRemoveButtonCopy', () => {
 	test( 'plan with refund — product-aware label, refund description', () => {
 		const copy = getRemoveButtonCopy( {
 			category: 'plan',
 			productName: 'WordPress.com Business',
 			hasRefund: true,
+			translate: t,
 		} );
 		expect( copy.label ).toBe( 'Remove plan' );
 		expect( copy.description ).toBe( 'Get a refund and remove plan features immediately.' );
@@ -60,6 +81,7 @@ describe( 'getRemoveButtonCopy', () => {
 			category: 'plan',
 			productName: 'WordPress.com Business',
 			hasRefund: false,
+			translate: t,
 		} );
 		expect( copy.label ).toBe( 'Remove plan' );
 		expect( copy.description ).toBe( 'Plan features will be removed immediately.' );
@@ -70,6 +92,7 @@ describe( 'getRemoveButtonCopy', () => {
 			category: 'domain',
 			productName: 'example.com',
 			hasRefund: true,
+			translate: t,
 		} );
 		expect( copy.label ).toBe( 'Remove domain' );
 		expect( copy.description ).toBe( 'Get a refund and remove your domain immediately.' );
@@ -80,6 +103,7 @@ describe( 'getRemoveButtonCopy', () => {
 			category: 'domain',
 			productName: 'example.com',
 			hasRefund: false,
+			translate: t,
 		} );
 		expect( copy.label ).toBe( 'Remove domain' );
 		expect( copy.description ).toBe( 'Domain will be removed immediately.' );
@@ -90,6 +114,7 @@ describe( 'getRemoveButtonCopy', () => {
 			category: 'email',
 			productName: 'Google Workspace',
 			hasRefund: true,
+			translate: t,
 		} );
 		expect( copy.label ).toBe( 'Remove email' );
 		expect( copy.description ).toBe( 'Get a refund and remove your email immediately.' );
@@ -100,6 +125,7 @@ describe( 'getRemoveButtonCopy', () => {
 			category: 'email',
 			productName: 'Google Workspace',
 			hasRefund: false,
+			translate: t,
 		} );
 		expect( copy.label ).toBe( 'Remove email' );
 		expect( copy.description ).toBe( 'Email will be removed immediately.' );
@@ -110,6 +136,7 @@ describe( 'getRemoveButtonCopy', () => {
 			category: 'other',
 			productName: 'Jetpack Stats',
 			hasRefund: true,
+			translate: t,
 		} );
 		expect( copy.label ).toBe( 'Remove Jetpack Stats' );
 		expect( copy.description ).toBe( 'Get a refund and remove Jetpack Stats immediately.' );
@@ -120,6 +147,7 @@ describe( 'getRemoveButtonCopy', () => {
 			category: 'other',
 			productName: 'Akismet Pro 500',
 			hasRefund: false,
+			translate: t,
 		} );
 		expect( copy.label ).toBe( 'Remove Akismet Pro 500' );
 		expect( copy.description ).toBe( 'Akismet Pro 500 will be removed immediately.' );

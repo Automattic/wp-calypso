@@ -1,9 +1,5 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-import {
-	SubscriptionBillPeriod,
-	getCancelButtonCopy,
-	getRemoveButtonCopy,
-} from '@automattic/api-core';
+import { SubscriptionBillPeriod } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
 import {
 	isPersonal,
@@ -178,6 +174,7 @@ import {
 	getCancelPurchaseSurveyCompletedPreferenceKey,
 } from '../utils';
 import { classifyPurchaseForCopy } from './classify-purchase-for-copy';
+import { getCancelButtonCopy, getRemoveButtonCopy } from './get-cancel-remove-copy';
 import PurchaseNotice from './notices';
 import PurchasePlanDetails from './plan-details';
 import PurchaseMeta from './purchase-meta';
@@ -799,6 +796,7 @@ class ManagePurchase extends Component<
 				category: classifyPurchaseForCopy( purchase ),
 				productName: purchase.productName,
 				hasRefund: canRefund,
+				translate,
 			} );
 
 			// Refundable (dual-button on active, or just-cancelled still in window):
@@ -1087,6 +1085,7 @@ class ManagePurchase extends Component<
 					category: classifyPurchaseForCopy( purchase ),
 					productName: purchase.productName,
 					expiryDateFormatted: expiryDateDisplay.replace( / /g, '\u00A0' ),
+					translate,
 			  } )
 			: null;
 

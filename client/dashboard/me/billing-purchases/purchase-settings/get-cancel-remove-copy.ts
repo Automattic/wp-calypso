@@ -1,16 +1,13 @@
 import { __, sprintf } from '@wordpress/i18n';
+import type { CancelRemoveCategory } from '@automattic/api-core';
 
 /**
- * Shared copy for the Cancel and Remove buttons on Purchase Settings,
- * consumed by both the legacy (`client/me/purchases/`) and the new
- * dashboard (`client/dashboard/me/billing-purchases/`) surfaces.
- *
- * Each surface classifies its own `Purchase` shape into a
- * `CancelRemoveCategory` and calls these helpers with primitives, so the
- * English copy and the branching tree live in one place.
+ * Copy for the Cancel and Remove buttons on the dashboard Purchase
+ * Settings screen. A parallel helper lives on legacy at
+ * `client/me/purchases/manage-purchase/get-cancel-remove-copy.ts` and
+ * must stay in lockstep — both surfaces get the same English strings,
+ * each using its native i18n library.
  */
-
-export type CancelRemoveCategory = 'plan' | 'domain' | 'email' | 'other';
 
 export interface CancelCopy {
 	label: string;
