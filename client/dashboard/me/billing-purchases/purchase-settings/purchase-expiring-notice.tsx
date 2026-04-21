@@ -1,6 +1,4 @@
 import { SubscriptionBillPeriod } from '@automattic/api-core';
-import { siteBySlugQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
@@ -62,9 +60,11 @@ export function shouldShowExpiringNotice(
 export function PurchaseExpiringNotice( {
 	purchase,
 	purchaseAttachedTo,
+	isDomainWithoutSite,
 }: {
 	purchase: Purchase;
 	purchaseAttachedTo: Purchase | undefined;
+	isDomainWithoutSite: boolean;
 } ) {
 	// For purchases included with a plan (for example, a domain mapping
 	// bundled with the plan), the plan purchase is used on this page when
@@ -78,12 +78,6 @@ export function PurchaseExpiringNotice( {
 		usePlanInsteadOfIncludedPurchase && purchaseAttachedTo ? purchaseAttachedTo : purchase;
 
 	const includedPurchase = purchase;
-
-	const { data: site } = useQuery( {
-		...siteBySlugQuery( currentPurchase.site_slug ?? '' ),
-		enabled: Boolean( currentPurchase.site_slug ) && ! currentPurchase.is_attached_to_holding_site,
-	} );
-	const isDomainOnlySite = Boolean( site?.options?.is_domain_only && currentPurchase.is_domain );
 
 	if ( usePlanInsteadOfIncludedPurchase && purchase.site_slug ) {
 		// We can't show the action here, because it would try to renew the
@@ -142,24 +136,24 @@ export function PurchaseExpiringNotice( {
 				) : undefined
 			}
 		>
-			<ExpiringText purchase={ currentPurchase } isDomainOnlySite={ isDomainOnlySite } />
+			<ExpiringText purchase={ currentPurchase } isDomainWithoutSite={ isDomainWithoutSite } />
 		</Notice>
 	);
 }
 
 function ExpiringText( {
 	purchase,
-	isDomainOnlySite,
+	isDomainWithoutSite,
 }: {
 	purchase: Purchase;
-	isDomainOnlySite: boolean;
+	isDomainWithoutSite: boolean;
 } ) {
 	if (
 		purchase.site_slug &&
 		purchase.expiry_status === 'manual-renew' &&
 		purchase.bill_period_days !== SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD
 	) {
-		return <ExpiringLaterText purchase={ purchase } isDomainOnlySite={ isDomainOnlySite } />;
+		return <ExpiringLaterText purchase={ purchase } isDomainWithoutSite={ isDomainWithoutSite } />;
 	}
 
 	const purchaseName = purchase.is_domain ? purchase.meta ?? '' : purchase.product_name;
@@ -178,7 +172,7 @@ function ExpiringText( {
 			);
 		}
 
-		const message = isDomainOnlySite
+		const message = isDomainWithoutSite
 			? // translators: purchaseName is the name of the domain and daysToExpiry is a number of days
 			  __(
 					'%(purchaseName)s will expire and be removed from your account in %(daysToExpiry)d days.'
@@ -201,7 +195,7 @@ function ExpiringText( {
 		} );
 	}
 
-	const message = isDomainOnlySite
+	const message = isDomainWithoutSite
 		? // translators: purchaseName is the name of the domain and expiry is a formatted string like "in 3 months".
 		  __( '%(purchaseName)s will expire and be removed from your account %(expiry)s.' )
 		: // translators: purchaseName is the name of the plan and expiry is a formatted string like "in 3 months".
@@ -215,11 +209,11 @@ function ExpiringText( {
 export function ExpiringLaterText( {
 	purchase,
 	autoRenewingUpgradesAction,
-	isDomainOnlySite = false,
+	isDomainWithoutSite = false,
 }: {
 	purchase: Purchase;
 	autoRenewingUpgradesAction?: () => void;
-	isDomainOnlySite?: boolean;
+	isDomainWithoutSite?: boolean;
 } ) {
 	const purchaseName = purchase.is_domain ? purchase.meta ?? '' : purchase.product_name;
 	const expiry = getRelativeTimeString( new Date( purchase.expiry_date ) );
@@ -266,7 +260,7 @@ export function ExpiringLaterText( {
 				);
 			}
 
-			const message = isDomainOnlySite
+			const message = isDomainWithoutSite
 				? // translators: purchaseName is the name of the domain and expiry is a formatted string like "in 3 months".
 				  __(
 						'%(purchaseName)s will expire and be removed from your account %(expiry)s. Please enable auto-renewal so you don‘t lose out on your paid features!'
@@ -293,7 +287,7 @@ export function ExpiringLaterText( {
 			);
 		}
 
-		const message = isDomainOnlySite
+		const message = isDomainWithoutSite
 			? // translators: purchaseName is the name of the domain and expiry is a formatted string like "in 3 months".
 			  __(
 					'%(purchaseName)s will expire and be removed from your account %(expiry)s. Please renew before expiry so you don‘t lose out on your paid features!'
@@ -320,7 +314,7 @@ export function ExpiringLaterText( {
 		);
 	}
 
-	const message = isDomainOnlySite
+	const message = isDomainWithoutSite
 		? // translators: purchaseName is the name of the domain and expiry is a formatted string like "in 3 months".
 		  __(
 				'%(purchaseName)s will expire and be removed from your account %(expiry)s. Update your payment information so you don‘t lose out on your paid features!'

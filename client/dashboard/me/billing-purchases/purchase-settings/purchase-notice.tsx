@@ -41,7 +41,13 @@ import { PurchaseExpiringNotice, shouldShowExpiringNotice } from './purchase-exp
 import { RenewNoticeAction, shouldShowRenewNoticeAction } from './renew-notice-action';
 import type { Purchase } from '@automattic/api-core';
 
-export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
+export function PurchaseNotice( {
+	purchase,
+	isDomainWithoutSite,
+}: {
+	purchase: Purchase;
+	isDomainWithoutSite: boolean;
+} ) {
 	const { user } = useAuth();
 	const { refunded } = purchaseSettingsRoute.useSearch();
 	const { data: purchaseAttachedTo } = useQuery( {
@@ -130,7 +136,11 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 		return (
 			<>
 				{ cancellationOfferNotice && cancellationOfferNotice }
-				<PurchaseExpiringNotice purchase={ purchase } purchaseAttachedTo={ purchaseAttachedTo } />
+				<PurchaseExpiringNotice
+					purchase={ purchase }
+					purchaseAttachedTo={ purchaseAttachedTo }
+					isDomainWithoutSite={ isDomainWithoutSite }
+				/>
 			</>
 		);
 	}
