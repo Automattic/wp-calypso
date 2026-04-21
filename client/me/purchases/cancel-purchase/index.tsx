@@ -201,16 +201,13 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			return true;
 		}
 
-		// Under the split flag, domain registrations reached via ?intent=remove
-		// render the unified confirmation screen instead of the old
-		// RemoveDomainDialog modal. Treat them as valid regardless of
+		// Under the split flag, any purchase reached via ?intent=remove renders
+		// the unified confirmation screen. Allow through regardless of
 		// canAutoRenewBeTurnedOff so the page doesn't redirect away.
 		if (
 			! isValidForCancellation &&
 			config.isEnabled( 'purchases/split-cancel-remove' ) &&
-			props.intent === 'remove' &&
-			isDomainRegistration( purchase ) &&
-			! isDomainTransfer( purchase )
+			props.intent === 'remove'
 		) {
 			return true;
 		}
