@@ -472,8 +472,8 @@ fun jetpackAtomicE2ETests(
 		}
 
 		failureConditions {
-			// Overrides CalypsoE2ETestsBuildTemplate's 30-min default. The 7-variation sweep
-			// needs more headroom; 51 matches the legacy Jest Atomic timeout.
+			// Overrides CalypsoE2ETestsBuildTemplate's 30-min default. The 7-variation
+			// sweep needs more headroom; 51 matches the long-running Atomic baseline.
 			executionTimeoutMin = 51
 		}
 	}).apply {
