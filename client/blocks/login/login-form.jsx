@@ -16,6 +16,7 @@ import { connect } from 'react-redux';
 import { FormDivider } from 'calypso/blocks/authentication';
 import JetpackConnectSiteOnly from 'calypso/blocks/jetpack-connect-site-only';
 import LoginSubmitButton from 'calypso/blocks/login/login-submit-button';
+import { loadBlackboxSdk, challengeCallbacks } from 'calypso/blocks/login/utils/blackbox-sdk';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { LastUsedSocialButton } from 'calypso/components/social-buttons';
@@ -114,6 +115,15 @@ export class LoginForm extends Component {
 		emailSuggestionError: false,
 		password: '',
 		lastUsedAuthenticationMethod: this.getLastUsedAuthenticationMethod(),
+		isBlackboxChallengeActive: false,
+	};
+
+	handleBlackboxChallengeStart = () => {
+		this.setState( { isBlackboxChallengeActive: true } );
+	};
+
+	handleBlackboxChallengeComplete = () => {
+		this.setState( { isBlackboxChallengeActive: false } );
 	};
 
 	componentDidMount() {
@@ -129,6 +139,23 @@ export class LoginForm extends Component {
 			url.searchParams.delete( 'username_only' );
 			window.history.replaceState( {}, document.title, url );
 		}
+
+		if ( config.isEnabled( 'blackbox-login' ) && config( 'blackbox_api_key' ) ) {
+			// Write callbacks into the slots before triggering load. The slots are
+			// read by wrapper closures inside configure(), so they're live even if
+			// configure() was already called (script cached from a prior mount).
+			challengeCallbacks.onChallengeStart = this.handleBlackboxChallengeStart;
+			challengeCallbacks.onChallengeComplete = this.handleBlackboxChallengeComplete;
+
+			// #blackbox-challenge-root is now in the DOM (render() completed before
+			// componentDidMount). Safe to inject the script.
+			loadBlackboxSdk();
+		}
+	}
+
+	componentWillUnmount() {
+		challengeCallbacks.onChallengeStart = null;
+		challengeCallbacks.onChallengeComplete = null;
 	}
 
 	componentDidUpdate( prevProps, prevState ) {
@@ -638,7 +665,7 @@ export class LoginForm extends Component {
 		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
 		const isEmailOrUsernameInputDisabled =
 			isFormDisabled || this.isPasswordView() || isGravatarFixedAccountLogin;
-		const isSubmitButtonDisabled = isFormDisabled;
+		const isSubmitButtonDisabled = isFormDisabled || this.state.isBlackboxChallengeActive;
 		let loginUrl;
 		const isPasswordHidden = this.isUsernameOrEmailView();
 		const signupUrl = this.getSignupUrl();
@@ -850,6 +877,10 @@ export class LoginForm extends Component {
 						{ isGravPoweredClient && <p className="login__form-terms">{ renderTerms() }</p> }
 
 						{ shouldRenderForgotPasswordLink && this.renderLostPasswordLink() }
+
+						{ config.isEnabled( 'blackbox-login' ) && config( 'blackbox_api_key' ) && (
+							<div id="blackbox-challenge-root" className="login__form-blackbox-challenge" />
+						) }
 
 						<div className="login__form-action">
 							<LoginSubmitButton
