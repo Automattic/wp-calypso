@@ -42,6 +42,7 @@
 		"jetpack/crm-downloads": true,
 		"upgrades/redirect-payments": true,
 		"a4a-bd-term-pricing": true,
+		"a4a-migrations-request-verification": false,
 		"checkout/stripe-upi": true
 	},
 	"enable_all_sections": false,

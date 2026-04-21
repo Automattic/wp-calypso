@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -8,6 +9,7 @@ import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { useDispatch } from 'calypso/state';
 import { successNotice } from 'calypso/state/notices/actions';
 import useUpdateSiteTagsMutation from '../../sites/site-preview-pane/hooks/use-update-site-tags-mutation';
+import RequestReviewModal from '../request-review-modal';
 import type { TaggedSite } from '../types';
 
 type Props = {
@@ -23,11 +25,22 @@ const CommissionListActions = ( { fetchMigratedSites, site, migrationTags }: Pro
 	const buttonActionRef = useRef< HTMLButtonElement | null >( null );
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ showRemoveSiteDialog, setShowRemoveSiteDialog ] = useState( false );
+	const [ showRequestReviewModal, setShowRequestReviewModal ] = useState( false );
 	const { mutate, isPending } = useUpdateSiteTagsMutation();
 
 	const isPendingReview = useMemo( () => {
 		return site.incentive_status === 'pending';
 	}, [ site.incentive_status ] );
+
+	const isRejected = useMemo( () => {
+		return site.incentive_status === 'rejected';
+	}, [ site.incentive_status ] );
+
+	const isRequestVerificationEnabled = isEnabled( 'a4a-migrations-request-verification' );
+
+	const canRequestVerification = isRequestVerificationEnabled && ( isRejected || isPendingReview );
+
+	const hasActions = isPendingReview || isRejected;
 
 	const showActions = useCallback( () => {
 		setIsOpen( true );
@@ -77,8 +90,8 @@ const CommissionListActions = ( { fetchMigratedSites, site, migrationTags }: Pro
 		translate,
 	] );
 
-	// Only render actions if the site is pending review
-	if ( ! isPendingReview ) {
+	// Only render actions if the site is pending review or rejected
+	if ( ! hasActions ) {
 		return null;
 	}
 
@@ -93,14 +106,29 @@ const CommissionListActions = ( { fetchMigratedSites, site, migrationTags }: Pro
 				onClose={ closeDropdown }
 				position="bottom left"
 			>
-				<PopoverMenuItem
-					localizeUrl={ false }
-					onClick={ () => {
-						setShowRemoveSiteDialog( true );
-					} }
-				>
-					{ translate( 'Untag site' ) }
-				</PopoverMenuItem>
+				{ canRequestVerification && (
+					<PopoverMenuItem
+						localizeUrl={ false }
+						onClick={ () => {
+							closeDropdown();
+							setShowRequestReviewModal( true );
+						} }
+					>
+						{ isRejected
+							? translate( 'Request another verification' )
+							: translate( 'Request verification' ) }
+					</PopoverMenuItem>
+				) }
+				{ isPendingReview && (
+					<PopoverMenuItem
+						localizeUrl={ false }
+						onClick={ () => {
+							setShowRemoveSiteDialog( true );
+						} }
+					>
+						{ translate( 'Untag site' ) }
+					</PopoverMenuItem>
+				) }
 			</PopoverMenu>
 
 			{ showRemoveSiteDialog && (
@@ -120,6 +148,14 @@ const CommissionListActions = ( { fetchMigratedSites, site, migrationTags }: Pro
 							comment: '%(site)s is the site name',
 						}
 					) }
+				/>
+			) }
+
+			{ showRequestReviewModal && (
+				<RequestReviewModal
+					onClose={ () => setShowRequestReviewModal( false ) }
+					site={ site }
+					fetchMigratedSites={ fetchMigratedSites }
 				/>
 			) }
 		</div>
