@@ -1,6 +1,11 @@
 import { combineReducers } from '@wordpress/data';
 import { AnyAction } from 'redux';
-import { SITE_LAUNCH, SITE_LAUNCH_SUCCESS, SITE_LAUNCH_FAILURE } from 'calypso/state/action-types';
+import {
+	SITE_LAUNCH,
+	SITE_LAUNCH_SUCCESS,
+	SITE_LAUNCH_FAILURE,
+	SITE_LAUNCH_CELEBRATION_MODAL_OPEN_SET,
+} from 'calypso/state/action-types';
 
 const addInProgressSiteLaunch = ( state: number[], siteId: number ) => {
 	if ( state.includes( siteId ) ) {
@@ -25,7 +30,17 @@ export const siteLaunchesInProgress = ( state: number[] = [], action: AnyAction 
 	}
 };
 
+const celebrationModalOpen = ( state: boolean = false, action: AnyAction ) => {
+	switch ( action.type ) {
+		case SITE_LAUNCH_CELEBRATION_MODAL_OPEN_SET:
+			return action.isOpen;
+		default:
+			return state;
+	}
+};
+
 export default combineReducers( {
 	// Add more site launch related reducers here if needed
 	inProgress: siteLaunchesInProgress,
+	celebrationModalOpen,
 } );

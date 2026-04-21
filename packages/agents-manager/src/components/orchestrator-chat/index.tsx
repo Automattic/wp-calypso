@@ -15,6 +15,8 @@ import useConversation from '../../hooks/use-conversation';
 import useCopyAction from '../../hooks/use-copy-action';
 import useFeedbackAction from '../../hooks/use-feedback-action';
 import useSaveNewChatRoute from '../../hooks/use-save-new-chat-route';
+import useSourcesAction from '../../hooks/use-sources-action';
+import useZoomAction from '../../hooks/use-zoom-action';
 import convertToolMessagesToComponents from '../../utils/convert-tool-messages-to-components';
 import { persistLastActivity } from '../../utils/persist-last-activity';
 import AgentChat from '../agent-chat';
@@ -158,6 +160,12 @@ export default function OrchestratorChat( {
 
 	// Register a "Copy" action on plain-text agent messages.
 	useCopyAction( registerMessageActions );
+
+	// Register zoom-in/zoom-out actions on agent messages.
+	useZoomAction( registerMessageActions );
+
+	// Register a "Sources" action on agent messages with sources data.
+	useSourcesAction( registerMessageActions );
 
 	const imageUpload = useImageUpload?.();
 	const pendingImages = imageUpload?.pendingImages || [];
@@ -306,6 +314,7 @@ export default function OrchestratorChat( {
 			messages: currentMessages,
 			getChatComponent,
 			currentPostId,
+			onSubmit: onSubmitWithImages,
 		} );
 
 		return currentMessages;
@@ -315,6 +324,7 @@ export default function OrchestratorChat( {
 		getChatComponent,
 		isBuildingSite,
 		messages,
+		onSubmitWithImages,
 		siteBuildUtils,
 		thinkingMessage,
 	] );

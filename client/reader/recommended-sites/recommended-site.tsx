@@ -72,7 +72,7 @@ type RecommendedSiteProps = {
 	siteDescription: string;
 	siteDomain: string;
 	siteUrl: string;
-	streamUrl: string;
+	streamUrl?: string;
 	siteIcon?: string;
 	feedIcon?: string;
 	railcar?: Railcar; // Used for train-tracks
@@ -82,13 +82,13 @@ type RecommendedSiteProps = {
 const RecommendedSite = ( {
 	siteId,
 	feedId,
+	feedIcon,
 	siteTitle,
 	streamUrl,
 	siteDescription,
 	siteDomain,
 	siteUrl,
 	siteIcon,
-	feedIcon,
 	railcar,
 	uiPosition,
 }: RecommendedSiteProps ) => {

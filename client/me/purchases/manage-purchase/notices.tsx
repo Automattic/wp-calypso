@@ -52,7 +52,7 @@ import { getTrialCheckoutUrl } from 'calypso/lib/trials/get-trial-checkout-url';
 import { managePurchase } from 'calypso/me/purchases/paths';
 import UpcomingRenewalsDialog from 'calypso/me/purchases/upcoming-renewals/upcoming-renewals-dialog';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getAddNewPaymentMethodPath, isTemporarySitePurchase } from '../utils';
+import { getAddNewPaymentMethodPath } from '../utils';
 import type { SiteDetails } from '@automattic/data-stores';
 import type {
 	GetManagePurchaseUrlFor,
@@ -111,7 +111,7 @@ class PurchaseNotice extends Component<
 		if ( isMonthlyPurchase( purchase ) ) {
 			const daysToExpiry = expiry.diff( moment(), 'days' );
 
-			if ( isTemporarySitePurchase( purchase ) ) {
+			if ( purchase.isAttachedToHoldingSite ) {
 				return translate( '%(purchaseName)s will expire and be removed in %(daysToExpiry)d days.', {
 					args: {
 						purchaseName: getName( purchase ),
@@ -131,7 +131,7 @@ class PurchaseNotice extends Component<
 			);
 		}
 
-		if ( isTemporarySitePurchase( purchase ) ) {
+		if ( purchase.isAttachedToHoldingSite ) {
 			return translate( '%(purchaseName)s will expire and be removed %(expiry)s.', {
 				args: {
 					purchaseName: getName( purchase ),

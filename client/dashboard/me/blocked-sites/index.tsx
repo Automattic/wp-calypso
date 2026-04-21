@@ -11,6 +11,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { DataViewsCard } from '../../components/dataviews';
+import EmptyState from '../../components/empty-state';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -150,7 +151,13 @@ export default function BlockedSites() {
 			}
 		>
 			{ ! isLoading && sites.length === 0 ? (
-				<p>{ __( "You haven't blocked any sites yet." ) }</p>
+				<EmptyState.Wrapper isCompact>
+					<EmptyState>
+						<EmptyState.Description>
+							{ __( "You haven't blocked any sites yet." ) }
+						</EmptyState.Description>
+					</EmptyState>
+				</EmptyState.Wrapper>
 			) : (
 				<DataViewsCard ref={ ref }>
 					<DataViews< BlockedSite >

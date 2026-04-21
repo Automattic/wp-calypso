@@ -104,18 +104,31 @@ function getSignupDestination( { siteSlug, redirect_to, localeSlug, flowName } )
 }
 
 function getLaunchDestination( dependencies ) {
-	if ( dependencies.refParameter === 'wp-admin' ) {
+	// If a back_to parameter is provided, use it as the destination
+	if ( dependencies.back_to ) {
+		return addQueryArgs( { celebrateLaunch: 'true' }, dependencies.back_to );
+	}
+
+	const ref = dependencies.refParameter?.trim() ?? '';
+	const isWpAdminPath = ref === 'wp-admin' || ref.startsWith( 'wp-admin/' );
+
+	if ( isWpAdminPath ) {
 		return addQueryArgs(
 			{ 'celebrate-launch': 'true' },
-			`https://${ dependencies.siteSlug }/wp-admin`
+			`https://${ dependencies.siteSlug }/${ ref }`
 		);
 	}
 
 	return addQueryArgs( { celebrateLaunch: 'true' }, `/home/${ dependencies.siteSlug }` );
 }
 
-function getDomainSignupFlowDestination( { designType, siteSlug } ) {
+function getDomainSignupFlowDestination( { designType, siteSlug, flowName } ) {
 	const dashboardType = new URLSearchParams( window.location.search ).get( 'dashboard' );
+
+	// For Gravatar domain purchases, redirect back to Gravatar
+	if ( isDomainForGravatarFlow( flowName ) ) {
+		return 'https://gravatar.com/profile/?modal=account-settings&path=profile-url';
+	}
 
 	// This designType represents a new site.
 	if ( designType === 'page' ) {

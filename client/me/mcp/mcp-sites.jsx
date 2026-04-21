@@ -120,7 +120,7 @@ export default function McpSitesPage( { path } ) {
 				sites: [
 					{
 						blog_id: blogId,
-						account_tools_enabled: false,
+						site_level_enabled: false,
 					},
 				],
 			},
@@ -133,7 +133,7 @@ export default function McpSitesPage( { path } ) {
 				sites: [
 					{
 						blog_id: siteId,
-						account_tools_enabled: true,
+						site_level_enabled: null,
 					},
 				],
 			},

@@ -138,6 +138,11 @@ async function getLoggedInLandingPage( { dispatch, getState } ) {
 
 	if ( isCustomerHomeEnabled ) {
 		if ( isAdminInterfaceWPAdmin( getState(), primaryOrSelectedSiteId ) ) {
+			if ( [ 'development', 'wpcalypso' ].includes( config( 'env_id' ) ) ) {
+				// On Calypso Live and dev environments, don't redirect to wp-admin
+				// as it navigates the user away from the testing environment.
+				return getSitesLink( dashboardOptIn );
+			}
 			// This URL starts with 'https://' because it's the access to wp-admin.
 			return getSiteAdminUrl( getState(), primaryOrSelectedSiteId );
 		}

@@ -107,6 +107,39 @@ describe( 'useLeadMatchingSaveState', () => {
 		} );
 	} );
 
+	it( 'marks the save as error when sync fails', async () => {
+		const formData = createDefaultLeadMatchingDetails();
+		const updatedFormData = {
+			...formData,
+			regions: [ 'americas' ],
+		};
+		const onSubmit = jest.fn().mockResolvedValue( {
+			...createResponse( updatedFormData ),
+			sync: {
+				status: 'failed',
+			},
+		} );
+
+		const { result, rerender } = renderHook(
+			( currentFormData ) =>
+				useLeadMatchingSaveState( {
+					formData: currentFormData,
+					profile: null,
+					onSubmit,
+				} ),
+			{ initialProps: formData }
+		);
+
+		rerender( updatedFormData );
+
+		await act( async () => {
+			await result.current.saveNow();
+		} );
+
+		await waitFor( () => expect( result.current.saveStatus ).toBe( 'error' ) );
+		expect( result.current.hasUnsavedChanges ).toBe( true );
+	} );
+
 	it( 'does not mark availability-only profile changes as unsaved lead matching edits', () => {
 		const formData = createDefaultLeadMatchingDetails();
 		const profile = mapLeadMatchingDetailsToProfile( formData, null );

@@ -18,6 +18,7 @@ export interface ReaderLandingPage extends LandingPagePreference {
 }
 
 export interface UserPreferences {
+	recentSites?: number[];
 	'hosting-dashboard-opt-in'?: HostingDashboardOptIn;
 	'hosting-dashboard-opt-in-welcome-modal-dismissed'?: string; // Timestamp when the user dismissed the modal
 	[ key: `hosting-dashboard-dataviews-view-${ string }` ]: View | undefined;

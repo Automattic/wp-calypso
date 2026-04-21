@@ -169,6 +169,7 @@ function ImageStudioAgentChat( {
 			inputValue={ inputValue }
 			onInputChange={ setInputValue }
 			onSuggestionClick={ handleSuggestionClick }
+			maxInputLength={ 1000 }
 		>
 			<AgentUI.ConversationView showHeader={ false }>
 				<AgentUI.Messages />
@@ -437,10 +438,11 @@ const ImageStudioContent = withInstanceId(
 			<AnnotationCanvas imageUrl={ finalDisplayUrl } imageElement={ imageRef.current } />
 		) : null;
 
-		// Show feedback buttons when image is AI-processed and not in other states
-		// Don't show for annotated images as they will have different suggestions
+		// Show feedback buttons only for AI-generated/edited images — never for the
+		// original attachment — and not while annotating (suggestions differ there).
+		const isOriginalImage = attachmentId !== null && attachmentId === originalAttachmentId;
 		const showFeedbackButtons =
-			! isCurrentAttachmentAnnotated && !! isAiProcessed && !! finalDisplayUrl;
+			! isCurrentAttachmentAnnotated && !! isAiProcessed && !! finalDisplayUrl && ! isOriginalImage;
 
 		// Show actions menu only in Edit mode after AI has made changes.
 		// canRevert already checks: originalAttachmentId exists, image changed, not processing

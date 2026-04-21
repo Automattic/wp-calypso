@@ -54,7 +54,7 @@ function ReaderSubscriptionListItem( {
 	const authorName = getSiteAuthorName( site );
 	const siteIcon = get( site, 'icon.img' );
 	const feedIcon = feed ? feed.site_icon ?? get( feed, 'image' ) : null;
-	let streamUrl = feedId || siteId ? getStreamUrl( feedId, siteId ) : null;
+	let streamUrl = getStreamUrl( feedId, siteId );
 	const feedUrl = url || getFeedUrl( { feed, site } );
 	let siteUrl = getSiteUrl( { feed, site } );
 	const isMultiAuthor = get( site, 'is_multi_author', false );

@@ -9,9 +9,21 @@ export type UserData = User;
 export type UserProfileData = {
 	ID: number;
 	avatar_URL: string;
-	bio?: string;
+	first_name: string;
+	last_name: string;
+	description: string;
 	display_name: string;
-	primary_blog?: number;
-	profile_URL?: string;
+	profile_URL: string;
 	user_login: string;
+	primary_blog?: UserProfilePrimaryBlog | null;
+	recommended_blogs_count?: number;
 };
+
+interface UserProfilePrimaryBlog {
+	ID: number;
+	feed_ID: number;
+	URL: string;
+	title: string;
+	description: string;
+	avatar_URL: string | null;
+}

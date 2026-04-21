@@ -9,10 +9,11 @@
  * without touching the admin bar or Site Hub.
  */
 
+import { useImageUpload } from '@automattic/agents-manager';
 import { createRoot } from 'react-dom/client';
 import AgentsManagerWithProvider from './agents-manager-with-provider';
 
 const container = document.createElement( 'div' );
 container.id = 'agents-manager-root';
 document.body.appendChild( container );
-createRoot( container ).render( <AgentsManagerWithProvider /> );
+createRoot( container ).render( <AgentsManagerWithProvider useImageUpload={ useImageUpload } /> );

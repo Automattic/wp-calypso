@@ -187,7 +187,7 @@ class CrossPost extends PureComponent {
 
 		return (
 			<Card tagName="article" onClick={ this.handleCardClick } className={ articleClasses }>
-				<UserAvatar user={ post.author } onClick={ this.handleTitleClick } isCompact />
+				<UserAvatar user={ post.author } size={ 40 } onClick={ this.handleTitleClick } />
 
 				<div className="reader__x-post">
 					{ post.title && (

@@ -3,7 +3,6 @@
  */
 .current-section {
 	position: relative;
-	margin: 0 -16px;
 
 	@include breakpoint-deprecated( ">660px" ) {
 		display: none;
