@@ -42,8 +42,8 @@ export default function ListSites( props: ListSitesProps ) {
 		const site = item.meta?.data?.site;
 
 		return {
-			siteId: feed?.blog_ID || String( site?.ID ),
-			feedId: feed?.feed_ID || String( site?.feed_ID ),
+			siteId: feed?.blog_ID || String( site?.ID ?? '' ),
+			feedId: feed?.feed_ID || String( site?.feed_ID ?? '' ),
 			name: feed?.name || site?.name,
 			feedUrl: feed?.feed_URL || site?.feed_URL,
 			image: feed?.image || ( site?.icon?.img ?? site?.icon?.ico ),

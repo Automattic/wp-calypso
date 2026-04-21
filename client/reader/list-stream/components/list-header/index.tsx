@@ -4,7 +4,6 @@ import { Icon, lock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import FollowButton from 'calypso/blocks/follow-button/button';
 import AutoDirection from 'calypso/components/auto-direction';
-import DocumentHead from 'calypso/components/data/document-head';
 import NavigationHeader from 'calypso/components/navigation-header';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
@@ -77,13 +76,6 @@ const ReaderListHeader = ( props: ReaderListHeaderProps ) => {
 
 	return (
 		<>
-			<DocumentHead
-				title={ translate( '%s ‹ Reader', {
-					args: list?.title,
-					comment: '%s is the section name. For example: "My Likes"',
-				} ) }
-			/>
-
 			<AutoDirection>
 				<NavigationHeader title={ formattedTitle } subtitle={ formattedDescription }>
 					{ ! isPublic && (

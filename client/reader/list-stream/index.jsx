@@ -1,6 +1,7 @@
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import DocumentHead from 'calypso/components/data/document-head';
 import QueryReaderList from 'calypso/components/data/query-reader-list';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import ListEmpty from 'calypso/reader/list-stream/components/empty';
@@ -61,14 +62,24 @@ class ListStream extends Component {
 			return <ListMissing />;
 		}
 
+		const title = list?.title || this.title;
+
 		const headerElement = (
-			<ReaderListHeader
-				list={ list }
-				currentUser={ this.props.currentUser }
-				following={ this.props.isSubscribed }
-				onFollowToggle={ this.toggleFollowing }
-				view={ this.props.view }
-			/>
+			<>
+				<DocumentHead
+					title={ this.props.translate( '%s ‹ Reader', {
+						args: title,
+						comment: '%s is the section name. For example: "My Likes"',
+					} ) }
+				/>
+				<ReaderListHeader
+					list={ list }
+					currentUser={ this.props.currentUser }
+					following={ this.props.isSubscribed }
+					onFollowToggle={ this.toggleFollowing }
+					view={ this.props.view }
+				/>
+			</>
 		);
 
 		switch ( this.props.view ) {
