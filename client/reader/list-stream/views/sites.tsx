@@ -11,11 +11,11 @@ import type { ReaderSite } from 'calypso/reader/sites-list/site-item';
 
 interface ListSitesProps {
 	list: {
+		ID: number;
+		slug: string;
 		title: string;
 		owner: string;
-		slug: string;
 		is_owner: boolean;
-		ID: number;
 	};
 }
 
