@@ -148,14 +148,14 @@ function isAutoRenewToggleDisabled( purchase: Purchase, user: User ): boolean {
 		// Special case!
 		return false;
 	}
-	// Under the split-cancel-refunds flag, keep the toggle active in both
+	// Under the split-cancel-remove flag, keep the toggle active in both
 	// directions — matches legacy Calypso. The server's `can_disable_auto_renew`
 	// and `can_reenable_auto_renewal` go false during pending-renewal retries,
 	// but the actual disable/re-enable endpoints accept the call (verified in
 	// wpcom-billing backend trace). Off-flag we preserve trunk's behavior of
 	// trusting the server flags.
-	const splitCancelRefundsEnabled = isEnabled( 'purchases/update-cancel-refunds' );
-	if ( ! splitCancelRefundsEnabled ) {
+	const splitCancelRemoveEnabled = isEnabled( 'purchases/split-cancel-remove' );
+	if ( ! splitCancelRemoveEnabled ) {
 		if ( purchase.is_auto_renew_enabled && ! purchase.can_disable_auto_renew ) {
 			return true;
 		}
@@ -269,7 +269,7 @@ function PurchaseActionMenu( { purchase }: { purchase: Purchase } ) {
 function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 	const navigate = useNavigate();
 	const locale = useLocale();
-	const isSplitEnabled = isEnabled( 'purchases/update-cancel-refunds' );
+	const isSplitEnabled = isEnabled( 'purchases/split-cancel-remove' );
 
 	// FIXME: render renderWordAdsEligibilityWarningDialog for refund/cancel
 	// FIXME: render renderNonPrimaryDomainWarningDialog for refund/cancel

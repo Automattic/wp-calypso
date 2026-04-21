@@ -764,7 +764,7 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
-		const isSplitEnabled = config.isEnabled( 'purchases/update-cancel-refunds' );
+		const isSplitEnabled = config.isEnabled( 'purchases/split-cancel-remove' );
 		const canRefund = hasAmountAvailableToRefund( purchase );
 		const autoRenewOn = !! purchase.isAutoRenewEnabled;
 
@@ -1044,7 +1044,7 @@ class ManagePurchase extends Component<
 			return null;
 		}
 		const { id } = purchase;
-		const isSplitEnabled = config.isEnabled( 'purchases/update-cancel-refunds' );
+		const isSplitEnabled = config.isEnabled( 'purchases/split-cancel-remove' );
 
 		if ( ! canAutoRenewBeTurnedOff( purchase ) ) {
 			return null;

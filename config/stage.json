@@ -129,7 +129,7 @@
 		"press-this": true,
 		"publicize-preview": true,
 		"purchases/new-payment-methods": true,
-		"purchases/update-cancel-refunds": false,
+		"purchases/split-cancel-remove": false,
 		"push-notifications": true,
 		"reader/achievements": false,
 		"reader/full-errors": false,
