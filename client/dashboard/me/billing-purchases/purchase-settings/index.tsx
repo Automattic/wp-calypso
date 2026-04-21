@@ -656,6 +656,18 @@ function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 }
 
 function PurchasePriceCard( { purchase }: { purchase: Purchase } ) {
+	const isCentennial = purchase.bill_period_days === SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD;
+	if ( isCentennial ) {
+		return (
+			<OverviewCard
+				icon={ currencyDollar }
+				title={ __( 'Price' ) }
+				heading={ formatCurrency( purchase.price_integer, purchase.currency_code, {
+					isSmallestUnit: true,
+				} ) }
+			/>
+		);
+	}
 	if ( purchase.partner_name && ! isA4ABillingDragonPurchase( purchase ) ) {
 		return (
 			<OverviewCard
@@ -1012,13 +1024,7 @@ function PurchaseSecondSubtitle( { purchase, site }: { purchase: Purchase; site?
 		}
 
 		if ( purchase.bill_period_days === SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD ) {
-			return (
-				<Text variant="muted">
-					{ __(
-						'Your stories, achievements, and memories preserved for generations to come. One payment. One hundred years of legacy.'
-					) }
-				</Text>
-			);
+			return null;
 		}
 
 		return (
@@ -1085,6 +1091,14 @@ function PurchaseSecondSubtitle( { purchase, site }: { purchase: Purchase; site?
 }
 
 function PurchaseSubtitle( { purchase }: { purchase: Purchase } ) {
+	if (
+		purchase.is_domain &&
+		purchase.bill_period_days === SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD &&
+		purchase.meta
+	) {
+		return <MetadataItem title={ purchase.meta } />;
+	}
+
 	const subtitle = getSubtitleForDisplay( purchase );
 	if ( ! subtitle ) {
 		return null;
@@ -1141,6 +1155,8 @@ export default function PurchaseSettings() {
 		return __( 'Expires' );
 	} )();
 
+	const isCentennial = purchase.bill_period_days === SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD;
+
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
 	const columns = isSmallViewport ? 1 : 2;
 	const spacing = isSmallViewport ? SPACING.SMALL : SPACING.DEFAULT;
@@ -1154,7 +1170,8 @@ export default function PurchaseSettings() {
 						prefix={ <Breadcrumbs length={ 3 } /> }
 						title={ getTitleForDisplay( purchase ) }
 						actions={
-							site?.options?.admin_url && (
+							site?.options?.admin_url &&
+							! isCentennial && (
 								<HStack justify="space-between">
 									{ purchase.is_upgradable && upgradeUrl && (
 										<Button __next40pxDefaultSize variant="primary" href={ upgradeUrl }>
@@ -1207,6 +1224,9 @@ export default function PurchaseSettings() {
 							return formattedExpiry;
 						} )() }
 						description={ ( () => {
+							if ( isCentennial ) {
+								return undefined;
+							}
 							if ( purchase.is_auto_renew_enabled && isInExpirationGracePeriod( purchase ) ) {
 								return __( 'Pending renewal' );
 							}
@@ -1280,10 +1300,12 @@ export default function PurchaseSettings() {
 				{ isWpcomFlexSubscription( purchase ) && (
 					<BillingFlexUsageCard purchaseId={ purchase.ID } />
 				) }
-				{ ! purchase.is_trial_plan && purchase.subscription_status === 'active' && (
-					<ManageSubscriptionCard purchase={ purchase } />
-				) }
-				<PurchaseSettingsActions purchase={ purchase } />
+				{ ! purchase.is_trial_plan &&
+					! isCentennial &&
+					purchase.subscription_status === 'active' && (
+						<ManageSubscriptionCard purchase={ purchase } />
+					) }
+				{ ! isCentennial && <PurchaseSettingsActions purchase={ purchase } /> }
 			</VStack>
 		</PageLayout>
 	);
