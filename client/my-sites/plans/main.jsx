@@ -83,6 +83,7 @@ class PlansComponent extends Component {
 		redirectTo: PropTypes.string,
 		pluginSlug: PropTypes.string,
 		selectedSite: PropTypes.object,
+		deEmphasizedExperiment: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -332,7 +333,12 @@ class PlansComponent extends Component {
 			deEmphasizedExperiment,
 		} = this.props;
 
-		if ( ! selectedSite || this.isInvalidPlanInterval() || ! currentPlan ) {
+		if (
+			! selectedSite ||
+			this.isInvalidPlanInterval() ||
+			! currentPlan ||
+			deEmphasizedExperiment?.isLoading
+		) {
 			return this.renderPlaceholder();
 		}
 
