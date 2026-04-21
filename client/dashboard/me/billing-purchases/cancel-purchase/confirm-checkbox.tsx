@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import {
 	CheckboxControl,
@@ -32,6 +33,7 @@ export default function ConfirmCheckbox( {
 	onCustomerConfirmedUnderstandingAtomicPlanRevert,
 }: ConfirmCheckboxProps ) {
 	const isDomainRegistrationPurchase = purchase && purchase.is_domain_registration;
+	const isSplitEnabled = config.isEnabled( 'purchases/update-cancel-refunds' );
 
 	const supportHeadingText =
 		displayVariant === 'remove'
@@ -57,7 +59,7 @@ export default function ConfirmCheckbox( {
 			<Divider style={ { color: 'var(--dashboard-header__divider-color)' } } />
 
 			<VStack spacing={ 1 }>
-				{ isDomainRegistrationPurchase && ! state.surveyShown && (
+				{ isDomainRegistrationPurchase && ! state.surveyShown && ! isSplitEnabled && (
 					<CheckboxControl
 						label={ __( 'I understand that canceling means that I may lose this domain forever.' ) }
 						checked={ state.domainConfirmationConfirmed }

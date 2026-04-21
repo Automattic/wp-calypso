@@ -1410,9 +1410,10 @@ export default function CancelPurchase() {
 	}
 
 	const planName = purchase.is_domain_registration ? purchase.meta : purchase.product_name;
+	const isSplitEnabled = config.isEnabled( 'purchases/update-cancel-refunds' );
 	const isDomainRemoval = flowType === CANCEL_FLOW_TYPE.REMOVE && purchase.is_domain_registration;
 
-	if ( isDomainRemoval ) {
+	if ( isDomainRemoval && ! isSplitEnabled ) {
 		return (
 			<PageLayout
 				size="small"
