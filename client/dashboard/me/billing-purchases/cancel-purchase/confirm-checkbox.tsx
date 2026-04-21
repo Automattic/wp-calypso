@@ -33,7 +33,7 @@ export default function ConfirmCheckbox( {
 	onCustomerConfirmedUnderstandingAtomicPlanRevert,
 }: ConfirmCheckboxProps ) {
 	const isDomainRegistrationPurchase = purchase && purchase.is_domain_registration;
-	const isSplitEnabled = config.isEnabled( 'purchases/update-cancel-refunds' );
+	const isSplitEnabled = config.isEnabled( 'purchases/split-cancel-remove' );
 
 	const supportHeadingText =
 		displayVariant === 'remove'

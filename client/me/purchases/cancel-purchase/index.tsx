@@ -207,7 +207,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		// canAutoRenewBeTurnedOff so the page doesn't redirect away.
 		if (
 			! isValidForCancellation &&
-			config.isEnabled( 'purchases/update-cancel-refunds' ) &&
+			config.isEnabled( 'purchases/split-cancel-remove' ) &&
 			props.intent === 'remove' &&
 			isDomainRegistration( purchase ) &&
 			! isDomainTransfer( purchase )
@@ -603,7 +603,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		const needsAtomicRevertConfirmation =
 			this.props.atomicTransfer?.created_at && ! isRefundable( purchase );
 
-		const isSplitEnabled = config.isEnabled( 'purchases/update-cancel-refunds' );
+		const isSplitEnabled = config.isEnabled( 'purchases/split-cancel-remove' );
 
 		const isDisabled =
 			( this.state.cancelBundledDomain && ! this.state.confirmCancelBundledDomain ) ||
@@ -689,7 +689,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			intent,
 			translate,
 		} = this.props;
-		const isSplitEnabled = config.isEnabled( 'purchases/update-cancel-refunds' );
+		const isSplitEnabled = config.isEnabled( 'purchases/split-cancel-remove' );
 		const plan = getPlan( purchase?.productSlug );
 		const cancellationFeatures =
 			plan && 'getCancellationFeatures' in plan ? plan.getCancellationFeatures?.() ?? [] : [];

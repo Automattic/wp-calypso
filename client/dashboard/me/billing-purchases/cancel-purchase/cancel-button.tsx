@@ -29,7 +29,7 @@ export default function CancelButton( {
 	onClick,
 }: CancelButtonProps ) {
 	const isDomainRegistrationPurchase = purchase && purchase.is_domain_registration;
-	const isSplitEnabled = config.isEnabled( 'purchases/update-cancel-refunds' );
+	const isSplitEnabled = config.isEnabled( 'purchases/split-cancel-remove' );
 
 	// Check if we need atomic revert confirmation
 	const needsAtomicRevertConfirmation = atomicTransfer?.created_at;
