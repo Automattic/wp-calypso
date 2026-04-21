@@ -14,7 +14,7 @@ import {
 import { expect, tags, test } from '../../lib/pw-base';
 import type { TracksEventProperties } from '@automattic/calypso-e2e';
 
-test.describe.fixme(
+test.describe(
 	DataHelper.createSuiteTitle( 'Editor tracking: "wpcom_block_inserted" event variations' ),
 	{ tag: [ tags.EDITOR_TRACKING ] },
 	() => {
@@ -136,6 +136,7 @@ test.describe.fixme(
 					...features,
 					variant: 'siteEditor',
 				} );
+
 				await test.step( 'Given I am authenticated', async () => {
 					testAccount = new TestAccount( siteEditorAccountName );
 					await testAccount.authenticate( page );

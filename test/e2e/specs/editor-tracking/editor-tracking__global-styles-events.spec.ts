@@ -9,7 +9,7 @@ import {
 } from '@automattic/calypso-e2e';
 import { expect, tags, test } from '../../lib/pw-base';
 
-test.describe.fixme(
+test.describe(
 	DataHelper.createSuiteTitle( 'Editor tracking: Global styles events' ),
 	{ tag: [ tags.EDITOR_TRACKING ] },
 	() => {
@@ -243,6 +243,7 @@ test.describe.fixme(
 
 			test( 'event fires with correct style properties', async ( { page } ) => {
 				const accountName = getTestAccountByFeature( { ...features, variant: 'siteEditor' } );
+
 				await test.step( 'Given I am authenticated', async () => {
 					testAccount = new TestAccount( accountName );
 					await testAccount.authenticate( page );

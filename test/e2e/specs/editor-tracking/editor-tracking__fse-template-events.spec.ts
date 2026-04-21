@@ -15,7 +15,7 @@ import { expect, tags, test } from '../../lib/pw-base';
 const createTemplatePartName = () =>
 	`TP-${ DataHelper.getTimestamp() }-${ DataHelper.getRandomInteger( 0, 100 ) }`;
 
-test.describe.fixme(
+test.describe(
 	DataHelper.createSuiteTitle( 'Editor tracking: Site editor template events' ),
 	{ tag: [ tags.EDITOR_TRACKING ] },
 	() => {
@@ -36,6 +36,7 @@ test.describe.fixme(
 
 			test( 'event fires after creating a template part', async ( { page } ) => {
 				const accountName = getTestAccountByFeature( { ...features, variant: 'siteEditor' } );
+
 				await test.step( 'Given I am authenticated', async () => {
 					testAccount = new TestAccount( accountName );
 					await testAccount.authenticate( page );
@@ -167,6 +168,7 @@ test.describe.fixme(
 
 			test( 'convert and detach events fire with correct properties', async ( { page } ) => {
 				const accountName = getTestAccountByFeature( { ...features, variant: 'siteEditor' } );
+
 				await test.step( 'Given I am authenticated', async () => {
 					testAccount = new TestAccount( accountName );
 					await testAccount.authenticate( page );
