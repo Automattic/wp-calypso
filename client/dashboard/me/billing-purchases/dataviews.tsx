@@ -1,9 +1,9 @@
 import { JETPACK_CONTACT_SUPPORT } from '@automattic/urls';
 import { Link, useNavigate } from '@tanstack/react-router';
-import { __experimentalHStack as HStack, Popover, Button } from '@wordpress/components';
+import { __experimentalHStack as HStack, Icon, Popover, Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { info } from '@wordpress/icons';
+import { brush, cloud, code, envelope, globe, info, plugins } from '@wordpress/icons';
 import { useState, useMemo } from 'react';
 import akismetIcon from 'calypso/assets/images/icons/akismet-icon.svg';
 import jetpackIcon from 'calypso/assets/images/icons/jetpack-icon.svg';
@@ -17,13 +17,16 @@ import {
 	isTransferredOwnership,
 	isAkismetHoldingSitePurchase,
 	isMarketplaceHoldingSitePurchase,
+	isMarketplacePlugin,
+	isTitanMail,
+	isGSuiteOrGoogleWorkspaceProductSlug,
 	getTitleForListDisplay,
 } from '../../utils/purchase';
 import { PurchasePaymentMethod } from './purchase-payment-method';
 import { PurchaseProduct } from './purchase-product';
 import type { StoredPaymentMethod, Purchase, Site } from '@automattic/api-core';
 import type { SortDirection, View, Fields } from '@wordpress/dataviews';
-import type { ReactNode, ComponentProps } from 'react';
+import type { ReactNode, ComponentProps, ReactElement } from 'react';
 
 import './style.scss';
 
@@ -69,20 +72,38 @@ export function BillingPurchaseInfoPopover( { children }: { children: ReactNode 
 	);
 }
 
+function ProductIcon( { icon, label }: { icon: ReactElement; label: string } ) {
+	const containerSize = 36;
+	const iconSize = 20;
+	return (
+		<span
+			aria-label={ label }
+			className="site-letter"
+			style={ {
+				display: 'inline-flex',
+				alignItems: 'center',
+				justifyContent: 'center',
+				width: containerSize,
+				height: containerSize,
+				minWidth: containerSize,
+				color: 'white',
+				fill: 'white',
+			} }
+		>
+			<Icon icon={ icon } size={ iconSize } />
+		</span>
+	);
+}
+
 function PurchaseItemSiteIcon( { site, purchase }: { site?: Site; purchase: Purchase } ) {
 	const size = 36;
 
-	if (
-		purchase.product_type === 'jetpack' ||
-		purchase.is_jetpack_ai_product ||
-		purchase.is_jetpack_stats_product ||
-		purchase.is_free_jetpack_stats_product
-	) {
+	if ( purchase.is_jetpack_plan_or_product ) {
 		return (
 			<img
 				src={ jetpackIcon }
 				alt="Jetpack icon"
-				style={ { width: size, height: size, minWidth: size } }
+				style={ { display: 'block', width: size, height: size, minWidth: size } }
 			/>
 		);
 	}
@@ -110,14 +131,42 @@ function PurchaseItemSiteIcon( { site, purchase }: { site?: Site; purchase: Purc
 		);
 	}
 
+	if ( isGSuiteOrGoogleWorkspaceProductSlug( purchase.product_slug ) || isTitanMail( purchase ) ) {
+		return <ProductIcon icon={ envelope } label="Email icon" />;
+	}
+
+	if ( isMarketplacePlugin( purchase ) ) {
+		return <ProductIcon icon={ plugins } label="Plugin icon" />;
+	}
+
+	if (
+		purchase.product_type === 'theme' ||
+		purchase.product_type === 'marketplace_theme' ||
+		purchase.product_slug === 'premium_theme' ||
+		purchase.product_slug === 'unlimited_themes'
+	) {
+		return <ProductIcon icon={ brush } label="Theme icon" />;
+	}
+
+	if ( purchase.product_slug === 'custom-design' ) {
+		return <ProductIcon icon={ code } label="CSS icon" />;
+	}
+
+	if (
+		[
+			'1gb_space_upgrade',
+			'5gb_space_upgrade',
+			'10gb_space_upgrade',
+			'50gb_space_upgrade',
+			'100gb_space_upgrade',
+			'wordpress_com_1gb_space_addon_yearly',
+		].includes( purchase.product_slug )
+	) {
+		return <ProductIcon icon={ cloud } label="Storage icon" />;
+	}
+
 	if ( ! site ) {
-		return (
-			<img
-				src={ jetpackIcon }
-				alt="No site icon"
-				style={ { width: size, height: size, minWidth: size } }
-			/>
-		);
+		return <ProductIcon icon={ globe } label="Domain icon" />;
 	}
 
 	return <SiteIcon site={ site } size={ size } />;
