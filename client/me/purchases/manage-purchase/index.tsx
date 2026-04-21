@@ -805,7 +805,11 @@ class ManagePurchase extends Component<
 			// itself when `hasAmountAvailableToRefund` is true, so we can't use it
 			// for any refundable state. A future PR replaces this hop with a
 			// dedicated refund confirmation screen.
-			if ( canRefund ) {
+			//
+			// Domains also route through the cancel URL regardless of refund
+			// state — the unified confirmation screen replaces the old
+			// RemoveDomainDialog modal.
+			if ( canRefund || isDomainRegistration( purchase ) ) {
 				const baseLink = ( this.props.getCancelPurchaseUrlFor ?? cancelPurchase )(
 					this.props.siteSlug,
 					purchase.id

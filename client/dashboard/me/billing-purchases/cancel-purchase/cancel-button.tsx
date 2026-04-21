@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { DisplayVariant } from '../../../utils/purchase';
@@ -28,6 +29,7 @@ export default function CancelButton( {
 	onClick,
 }: CancelButtonProps ) {
 	const isDomainRegistrationPurchase = purchase && purchase.is_domain_registration;
+	const isSplitEnabled = config.isEnabled( 'purchases/update-cancel-refunds' );
 
 	// Check if we need atomic revert confirmation
 	const needsAtomicRevertConfirmation = atomicTransfer?.created_at;
@@ -39,7 +41,7 @@ export default function CancelButton( {
 			needsAtomicRevertConfirmation &&
 			! state.atomicRevertConfirmed &&
 			purchase.is_plan ) ||
-		( isDomainRegistrationPurchase && ! state.domainConfirmationConfirmed ) ||
+		( ! isSplitEnabled && isDomainRegistrationPurchase && ! state.domainConfirmationConfirmed ) ||
 		( ! state.showDomainOptionsStep && ! state.customerConfirmedUnderstanding );
 
 	const cancelButtonText = includedDomainPurchase

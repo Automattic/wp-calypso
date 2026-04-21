@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	isDomainRegistration,
 	isDomainTransfer,
@@ -197,6 +198,20 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			canAutoRenewBeTurnedOff( purchase ) && isDomainTransferCancelable;
 
 		if ( ! isValidForCancellation && this.state.surveyShown ) {
+			return true;
+		}
+
+		// Under the split flag, domain registrations reached via ?intent=remove
+		// render the unified confirmation screen instead of the old
+		// RemoveDomainDialog modal. Treat them as valid regardless of
+		// canAutoRenewBeTurnedOff so the page doesn't redirect away.
+		if (
+			! isValidForCancellation &&
+			config.isEnabled( 'purchases/update-cancel-refunds' ) &&
+			props.intent === 'remove' &&
+			isDomainRegistration( purchase ) &&
+			! isDomainTransfer( purchase )
+		) {
 			return true;
 		}
 
@@ -588,12 +603,16 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		const needsAtomicRevertConfirmation =
 			this.props.atomicTransfer?.created_at && ! isRefundable( purchase );
 
+		const isSplitEnabled = config.isEnabled( 'purchases/update-cancel-refunds' );
+
 		const isDisabled =
 			( this.state.cancelBundledDomain && ! this.state.confirmCancelBundledDomain ) ||
 			( needsAtomicRevertConfirmation &&
 				! this.state.atomicRevertConfirmed &&
 				isPlan( purchase ) ) ||
-			( isDomainRegistrationPurchase && ! this.state.domainConfirmationConfirmed ) ||
+			( ! isSplitEnabled &&
+				isDomainRegistrationPurchase &&
+				! this.state.domainConfirmationConfirmed ) ||
 			( ! this.state.surveyShown && ! this.state.customerConfirmedUnderstanding );
 
 		// cancelIntentOverride drives the CancelPurchaseButton's label + mutation
@@ -670,6 +689,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			intent,
 			translate,
 		} = this.props;
+		const isSplitEnabled = config.isEnabled( 'purchases/update-cancel-refunds' );
 		const plan = getPlan( purchase?.productSlug );
 		const cancellationFeatures =
 			plan && 'getCancellationFeatures' in plan ? plan.getCancellationFeatures?.() ?? [] : [];
@@ -744,7 +764,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 
 				{ ! this.state.surveyShown && (
 					<div className="cancel-purchase__confirm-section">
-						{ isDomainRegistrationPurchase && (
+						{ isDomainRegistrationPurchase && ! isSplitEnabled && (
 							<div className="cancel-purchase__domain-confirmation">
 								<FormCheckbox
 									checked={ this.state.domainConfirmationConfirmed }
