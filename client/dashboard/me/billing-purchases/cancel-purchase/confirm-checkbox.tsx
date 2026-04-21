@@ -35,8 +35,8 @@ export default function ConfirmCheckbox( {
 
 	const supportHeadingText =
 		displayVariant === 'remove'
-			? __( 'Have a question before removing?' )
-			: __( 'Have a question before cancelling?' );
+			? __( 'Questions before you remove?' )
+			: __( 'Have a question before canceling?' );
 
 	const planConfirmationLabel = getCheckboxLabel();
 

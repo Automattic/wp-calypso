@@ -50,8 +50,13 @@ const CancelPurchaseFeatureList = ( {
 	// Full date ("April 16, 2027") — not abbreviated — in the intro so the user
 	// sees the exact expiry before the losses list. Only for Cancel variant;
 	// Remove happens immediately, no future date to surface.
+	// Use non-breaking spaces in the formatted date so it never wraps mid-date
+	// (e.g. "April\n16, 2027").
 	const fullExpiryDate = purchase.expiry_date
-		? intlFormat( purchase.expiry_date, { dateStyle: 'long' }, { locale: 'en-US' } )
+		? intlFormat( purchase.expiry_date, { dateStyle: 'long' }, { locale: 'en-US' } ).replace(
+				/ /g,
+				'\u00a0'
+		  )
 		: '';
 	const introCopy =
 		displayVariant === 'remove'

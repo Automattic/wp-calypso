@@ -35,7 +35,10 @@ const CancelPurchaseFeatureList = ( {
 		return null;
 	}
 
-	const fullExpiryDate = purchase.expiryDate ? moment( purchase.expiryDate ).format( 'LL' ) : '';
+	// Use non-breaking spaces in the formatted date so it never wraps mid-date.
+	const fullExpiryDate = purchase.expiryDate
+		? moment( purchase.expiryDate ).format( 'LL' ).replace( / /g, '\u00a0' )
+		: '';
 	const intro =
 		displayVariant === 'remove'
 			? getRemoveLossIntro( purchase )
