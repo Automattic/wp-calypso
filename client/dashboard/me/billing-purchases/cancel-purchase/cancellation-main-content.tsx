@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { sprintf, __ } from '@wordpress/i18n';
 import {
@@ -136,7 +137,7 @@ export default function CancellationMainContent( {
 
 			<BackupRetentionOptionOnCancelPurchase siteId={ purchase.blog_id } purchase={ purchase } />
 
-			{ isGSuite && (
+			{ isGSuite && ! config.isEnabled( 'purchases/update-cancel-refunds' ) && (
 				<GSuiteAccessMessage purchase={ purchase } selectedDomain={ selectedDomain } />
 			) }
 
