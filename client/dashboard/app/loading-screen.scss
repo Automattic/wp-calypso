@@ -1,11 +1,12 @@
+@import 'calypso/assets/stylesheets/shared/mixins/breakpoints';
+@import 'calypso/assets/stylesheets/shared/loading';
 @import './pulse';
 
+// Dashboard-specific override: pulse animation on top of the shared fixed/centered styles.
+// Explicit fill with fallback because --color-neutral-10 may not be defined in the dashboard CSS context.
 .wpcom-site__logo {
-	position: absolute;
-	top: 50%;
-	inset-inline-start: 50%;
-	transform: translate(-50%, -50%);
 	margin: 0;
-	fill: $gray-900;
+	fill: var(--color-neutral-10, var(--studio-gray-10, #c3c4c7));
+	color: var(--color-neutral-10, var(--studio-gray-10, #c3c4c7));
 	animation: pulse 1.5s ease-in-out infinite;
 }
