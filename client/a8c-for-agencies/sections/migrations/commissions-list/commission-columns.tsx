@@ -49,7 +49,7 @@ export const ReviewStatusColumn = ( {
 			case 'rejected':
 				return {
 					statusText: translate( 'Ineligible' ),
-					statusType: 'error',
+					statusType: 'info',
 				};
 			case 'reverification':
 				return {
