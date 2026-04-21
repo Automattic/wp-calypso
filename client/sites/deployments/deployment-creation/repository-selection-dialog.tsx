@@ -41,7 +41,7 @@ export const RepositorySelectionDialog = ( {
 					align="left"
 					headerText={ __( 'Select repository' ) }
 					subHeaderText={ createInterpolateElement(
-						__( 'Pick an existing repository or <docsLink>create a new repository</docsLink>.' ),
+						__( 'Pick an existing repository or <docsLink>create a new one</docsLink>.' ),
 						{
 							docsLink: <ExternalLink href="https://github.com/new" target="_blank" />,
 						}
