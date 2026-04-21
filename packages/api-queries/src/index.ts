@@ -58,6 +58,7 @@ export * from './me-username';
 export * from './meta-sms-country-codes';
 export * from './notification-devices';
 export * from './odie';
+export * from './omnibar';
 export * from './p2';
 export * from './payment-methods';
 export * from './plans';

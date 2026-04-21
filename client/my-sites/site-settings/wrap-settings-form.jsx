@@ -253,9 +253,6 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 			if ( path === '/settings/reading/:site' ) {
 				trackTracksEvent( 'calypso_settings_reading_saved' );
 			}
-			if ( path === '/settings/newsletter/:site' ) {
-				trackTracksEvent( 'calypso_settings_newsletter_saved' );
-			}
 			this.submitForm();
 			this.props.trackEvent( 'Clicked Save Settings Button' );
 		};
