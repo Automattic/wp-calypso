@@ -1,7 +1,9 @@
-import { readListItemsQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
+import { readListItemsInfiniteQuery } from '@automattic/api-queries';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
+import { useInView } from 'react-intersection-observer';
 import { ReaderSitesList } from 'calypso/reader/sites-list';
 import ListEmpty from '../components/empty';
 import type { ReadListItem } from '@automattic/api-core';
@@ -20,7 +22,16 @@ interface ListSitesProps {
 export default function ListSites( props: ListSitesProps ) {
 	const translate = useTranslate();
 	const { list } = props;
-	const { data, isLoading } = useQuery( readListItemsQuery( list.owner, list.slug ) );
+	const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery(
+		readListItemsInfiniteQuery( list.owner, list.slug )
+	);
+	const { ref: spinnerRef, inView } = useInView();
+
+	useEffect( () => {
+		if ( inView && hasNextPage && ! isFetchingNextPage ) {
+			fetchNextPage();
+		}
+	}, [ inView, hasNextPage, isFetchingNextPage, fetchNextPage ] );
 
 	if ( isLoading ) {
 		return (
@@ -31,7 +42,7 @@ export default function ListSites( props: ListSitesProps ) {
 		);
 	}
 
-	const items = data?.items;
+	const items = data?.pages.flatMap( ( page ) => page.items );
 	if ( ! items?.length ) {
 		return <ListEmpty list={ list } />;
 	}
@@ -51,10 +62,20 @@ export default function ListSites( props: ListSitesProps ) {
 	}
 
 	return (
-		<ReaderSitesList
-			sites={ items.map( normalizeListItem ) }
-			followSource="reader-list-sites-tab"
-			variant="card"
-		/>
+		<>
+			<ReaderSitesList
+				sites={ items.map( normalizeListItem ) }
+				followSource="reader-list-sites-tab"
+				variant="card"
+			/>
+
+			<div ref={ spinnerRef }>
+				{ isFetchingNextPage && (
+					<div className="wp-spinner-wrapper" style={ { marginTop: '0' } }>
+						<Spinner />
+					</div>
+				) }
+			</div>
+		</>
 	);
 }
