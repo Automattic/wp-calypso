@@ -1,0 +1,47 @@
+.content-research-ai-summary {
+	padding: 12px 16px;
+	border-top: 1px solid #ddd;
+
+	&--loading {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		color: #757575;
+		font-size: 13px;
+	}
+
+	&__content {
+		margin-bottom: 12px;
+	}
+
+	&__text {
+		font-size: 13px;
+		line-height: 1.5;
+		margin: 0 0 8px;
+	}
+
+	&__findings,
+	&__angles {
+		font-size: 12px;
+		margin-bottom: 8px;
+
+		strong {
+			display: block;
+			margin-bottom: 4px;
+		}
+
+		ul {
+			margin: 0;
+			padding-left: 16px;
+		}
+
+		li {
+			margin-bottom: 2px;
+		}
+	}
+
+	.components-button {
+		width: 100%;
+		justify-content: center;
+	}
+}

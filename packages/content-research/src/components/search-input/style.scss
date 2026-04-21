@@ -1,0 +1,15 @@
+.content-research-search-input {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 16px;
+
+	.components-search-control {
+		width: 100%;
+	}
+
+	.components-button {
+		width: 100%;
+		justify-content: center;
+	}
+}
