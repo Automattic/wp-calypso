@@ -138,5 +138,16 @@ declare global {
 		};
 		currentUser?: User;
 		__REDUX_DEVTOOLS_EXTENSION__?: () => void;
+		Blackbox?: {
+			configure: ( config: {
+				apiKey: string;
+				challengeContainer: string;
+				onChallengeStart?: () => void;
+				onChallengeComplete?: () => void;
+			} ) => void;
+			collect: () => Promise< string | { sessionId: string } >;
+			getSessionId: () => Promise< string >;
+			reset?: () => void;
+		};
 	}
 }
