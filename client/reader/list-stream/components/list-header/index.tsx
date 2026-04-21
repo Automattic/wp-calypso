@@ -1,5 +1,7 @@
 import './style.scss';
+import { readListItemsQuery } from '@automattic/api-queries';
 import { Button } from '@automattic/components';
+import { useQuery } from '@tanstack/react-query';
 import { Icon, lock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import FollowButton from 'calypso/blocks/follow-button/button';
@@ -33,6 +35,10 @@ const ReaderListHeader = ( props: ReaderListHeaderProps ) => {
 	const { list, following, onFollowToggle, view } = props;
 	const isPublic = list?.is_public;
 	const editUrl = list?.is_owner ? `/reader/list/${ list.owner }/${ list.slug }/edit` : '';
+	const { data: listItemsData } = useQuery(
+		readListItemsQuery( list?.owner ?? '', list?.slug ?? '' )
+	);
+	const totalItems = listItemsData?.total_items;
 	let title: string | JSX.Element | undefined = list?.title;
 	if ( list ) {
 		// Show author name in parentheses if the list is owned by someone other than the current user
@@ -71,6 +77,7 @@ const ReaderListHeader = ( props: ReaderListHeaderProps ) => {
 			label: translate( 'Sites' ),
 			path: `${ listBaseUrl }/sites`,
 			selected: view === 'sites',
+			count: totalItems,
 		},
 	];
 
@@ -111,7 +118,12 @@ const ReaderListHeader = ( props: ReaderListHeaderProps ) => {
 				<SectionNav className="list-stream__nav" enforceTabsView variation="minimal">
 					<NavTabs>
 						{ navigationItems.map( ( item ) => (
-							<NavItem key={ item.path } path={ item.path } selected={ item.selected }>
+							<NavItem
+								key={ item.path }
+								path={ item.path }
+								selected={ item.selected }
+								count={ item.count }
+							>
 								{ item.label }
 							</NavItem>
 						) ) }

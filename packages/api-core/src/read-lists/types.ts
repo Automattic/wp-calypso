@@ -41,6 +41,10 @@ export interface ReadListItemFeed {
 }
 
 export interface ReadListItemsResponse {
+	list_ID: number;
 	success: boolean;
 	items: ReadListItem[];
+	page: number;
+	number: number;
+	total_items: number;
 }

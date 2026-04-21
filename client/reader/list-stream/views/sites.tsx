@@ -23,7 +23,7 @@ export default function ListSites( props: ListSitesProps ) {
 	const translate = useTranslate();
 	const { list } = props;
 	const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery(
-		readListItemsInfiniteQuery( list.owner, list.slug )
+		readListItemsInfiniteQuery( list.owner, list.slug, 'feed,site' ) // Adding meta to include feed and site data in each list item.
 	);
 	const { ref: spinnerRef, inView } = useInView();
 
