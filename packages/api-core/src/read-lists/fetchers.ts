@@ -9,7 +9,7 @@ export const fetchReadListItems = (
 	return wpcom.req.get( {
 		path: addQueryArgs( `/read/lists/${ userLogin }/${ listName }/items`, {
 			meta: 'feed,site', // Include feed and site data in the response for each list item.
-			number: 200, // Fetch up to 200 items to minimize the number of requests needed for larger lists.
+			number: 200, // Fetch 200 items (max limit without pagination).
 		} ),
 		apiVersion: '1.2',
 		method: 'GET',

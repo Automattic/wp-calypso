@@ -49,16 +49,7 @@ export default function () {
 	);
 
 	page(
-		'/reader/list/:user/:list',
-		sidebar,
-		setBeforePrimary,
-		listListing,
-		makeLayout,
-		clientRender
-	);
-
-	page(
-		'/reader/list/:user/:list/:view',
+		[ '/reader/list/:user/:list', '/reader/list/:user/:list/:view' ],
 		sidebar,
 		setBeforePrimary,
 		listListing,
