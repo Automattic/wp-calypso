@@ -1,5 +1,9 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-import { SubscriptionBillPeriod } from '@automattic/api-core';
+import {
+	SubscriptionBillPeriod,
+	getCancelButtonCopy,
+	getRemoveButtonCopy,
+} from '@automattic/api-core';
 import config from '@automattic/calypso-config';
 import {
 	isPersonal,
@@ -173,7 +177,7 @@ import {
 	isA4ABillingDragonPurchase,
 	getCancelPurchaseSurveyCompletedPreferenceKey,
 } from '../utils';
-import { getCancelButtonCopy, getRemoveButtonCopy } from './get-cancel-remove-copy';
+import { classifyPurchaseForCopy } from './classify-purchase-for-copy';
 import PurchaseNotice from './notices';
 import PurchasePlanDetails from './plan-details';
 import PurchaseMeta from './purchase-meta';
@@ -788,7 +792,11 @@ class ManagePurchase extends Component<
 		}
 
 		if ( isSplitEnabled ) {
-			const removeCopy = getRemoveButtonCopy( purchase, canRefund, autoRenewOn, translate );
+			const removeCopy = getRemoveButtonCopy( {
+				category: classifyPurchaseForCopy( purchase ),
+				productName: purchase.productName,
+				hasRefund: canRefund,
+			} );
 
 			// Refundable (dual-button on active, or just-cancelled still in window):
 			// route through the cancel URL so the existing refund flow runs. The
@@ -1069,7 +1077,11 @@ class ManagePurchase extends Component<
 		// Under flag: use non-breaking spaces so the formatted date stays on one
 		// line in narrow viewports. Off flag we preserve trunk's exact output.
 		const cancelCopy = isSplitEnabled
-			? getCancelButtonCopy( purchase, expiryDateDisplay.replace( / /g, '\u00A0' ), translate )
+			? getCancelButtonCopy( {
+					category: classifyPurchaseForCopy( purchase ),
+					productName: purchase.productName,
+					expiryDateFormatted: expiryDateDisplay.replace( / /g, '\u00A0' ),
+			  } )
 			: null;
 
 		const onClick = ( event: { preventDefault: () => void } ) => {

@@ -4,6 +4,8 @@ import {
 	WPCOM_DIFM_LITE,
 	OFFSITE_REDIRECT,
 	DomainTransferStatus,
+	getCancelButtonCopy,
+	getRemoveButtonCopy,
 } from '@automattic/api-core';
 import {
 	domainQuery,
@@ -82,6 +84,7 @@ import {
 	isJetpackCrmProduct,
 	isTitanMail,
 	isGoogleWorkspace,
+	isDomainTransfer,
 	isDotcomPlan,
 	getRenewalUrlFromPurchase,
 	isJetpackT1SecurityPlan,
@@ -96,11 +99,7 @@ import { getSitePurchaseUpgradeUrl } from '../../../utils/site-url';
 import BillingFlexUsageCard from '../../billing-flex-usage';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
 import AkismetApiKeyCard from './akismet-api-key-card';
-import {
-	getCancelButtonCopy,
-	getRemoveButtonCopy,
-	isDomainTransfer,
-} from './get-cancel-remove-copy';
+import { classifyPurchaseForCopy } from './classify-purchase-for-copy';
 import JetpackLicenseKeyCard from './jetpack-license-key-card';
 import { PurchaseNotice } from './purchase-notice';
 import type { User, Purchase, Site } from '@automattic/api-core';
@@ -311,8 +310,17 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 			  } ).replace( / /g, '\u00A0' )
 			: '';
 
-		const cancelCopy = showCancel ? getCancelButtonCopy( purchase, expiryDateFormatted ) : null;
-		const removeCopy = showRemove ? getRemoveButtonCopy( purchase, hasRefund ) : null;
+		const category = classifyPurchaseForCopy( purchase );
+		const cancelCopy = showCancel
+			? getCancelButtonCopy( {
+					category,
+					productName: purchase.product_name,
+					expiryDateFormatted,
+			  } )
+			: null;
+		const removeCopy = showRemove
+			? getRemoveButtonCopy( { category, productName: purchase.product_name, hasRefund } )
+			: null;
 
 		return (
 			<>

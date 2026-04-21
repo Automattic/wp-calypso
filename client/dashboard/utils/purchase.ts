@@ -1,5 +1,6 @@
 import {
 	AkismetPlans,
+	DomainProductSlugs,
 	JetpackPlans,
 	GoogleWorkspaceSlugs,
 	JetpackSearchProducts,
@@ -441,6 +442,10 @@ export function isGoogleWorkspace( purchase: Purchase | ObjectWithProductSlug ):
 		purchase.product_slug === GoogleWorkspaceSlugs.GOOGLE_WORKSPACE_BUSINESS_STARTER_MONTHLY ||
 		purchase.product_slug === GoogleWorkspaceSlugs.GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY
 	);
+}
+
+export function isDomainTransfer( purchase: Purchase | ObjectWithProductSlug ): boolean {
+	return purchase.product_slug === DomainProductSlugs.TRANSFER_IN;
 }
 
 export function isSiteRedirect( purchase: Purchase ): boolean {
