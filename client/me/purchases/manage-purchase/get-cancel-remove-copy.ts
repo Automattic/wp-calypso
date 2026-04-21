@@ -150,17 +150,7 @@ function getRemoveDescription(
 					: translate( 'Email will be removed immediately.' )
 			);
 		case 'marketplace_plugin':
-			return String(
-				hasRefund
-					? translate( 'Get a refund and remove plugin immediately.' )
-					: translate( 'Plugin will be removed immediately.' )
-			);
 		case 'marketplace_theme':
-			return String(
-				hasRefund
-					? translate( 'Get a refund and remove theme immediately.' )
-					: translate( 'Theme will be removed immediately.' )
-			);
 		case 'other':
 			return String(
 				hasRefund

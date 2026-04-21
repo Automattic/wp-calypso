@@ -133,13 +133,7 @@ function getRemoveDescription(
 				? __( 'Get a refund and remove your email immediately.' )
 				: __( 'Email will be removed immediately.' );
 		case 'marketplace_plugin':
-			return hasRefund
-				? __( 'Get a refund and remove plugin immediately.' )
-				: __( 'Plugin will be removed immediately.' );
 		case 'marketplace_theme':
-			return hasRefund
-				? __( 'Get a refund and remove theme immediately.' )
-				: __( 'Theme will be removed immediately.' );
 		case 'other':
 			return hasRefund
 				? sprintf(

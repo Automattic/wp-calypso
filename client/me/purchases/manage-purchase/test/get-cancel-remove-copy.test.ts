@@ -185,7 +185,7 @@ describe( 'legacy getRemoveButtonCopy', () => {
 			translate: t,
 		} );
 		expect( copy.label ).toBe( 'Remove plugin' );
-		expect( copy.description ).toBe( 'Plugin will be removed immediately.' );
+		expect( copy.description ).toBe( 'WPBakery Page Builder will be removed immediately.' );
 	} );
 
 	test( 'marketplace_plugin with refund', () => {
@@ -196,7 +196,7 @@ describe( 'legacy getRemoveButtonCopy', () => {
 			translate: t,
 		} );
 		expect( copy.label ).toBe( 'Remove plugin' );
-		expect( copy.description ).toBe( 'Get a refund and remove plugin immediately.' );
+		expect( copy.description ).toBe( 'Get a refund and remove WPBakery Page Builder immediately.' );
 	} );
 
 	test( 'marketplace_theme, no refund', () => {
@@ -207,7 +207,7 @@ describe( 'legacy getRemoveButtonCopy', () => {
 			translate: t,
 		} );
 		expect( copy.label ).toBe( 'Remove theme' );
-		expect( copy.description ).toBe( 'Theme will be removed immediately.' );
+		expect( copy.description ).toBe( 'Divi will be removed immediately.' );
 	} );
 
 	test( 'marketplace_theme with refund', () => {
@@ -218,6 +218,6 @@ describe( 'legacy getRemoveButtonCopy', () => {
 			translate: t,
 		} );
 		expect( copy.label ).toBe( 'Remove theme' );
-		expect( copy.description ).toBe( 'Get a refund and remove theme immediately.' );
+		expect( copy.description ).toBe( 'Get a refund and remove Divi immediately.' );
 	} );
 } );
