@@ -195,6 +195,16 @@ export class ReaderSidebar extends Component {
 						link="/discover"
 					/>
 
+					{ isEnabled( 'reader/atmosphere' ) && (
+						<SidebarItem
+							label={ translate( 'ATmosphere' ) }
+							link="/reader/atmosphere"
+							className={ clsx( {
+								selected: path.startsWith( '/reader/atmosphere' ),
+							} ) }
+						/>
+					) }
+
 					<SidebarItem
 						label={ translate( 'Likes' ) }
 						onNavigate={ this.handleSidebarMenuClick( TrackingKeys.likeActivity ) }
