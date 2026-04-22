@@ -34,7 +34,6 @@ const ReaderListHeader = ( props: ReaderListHeaderProps ) => {
 		isSubscribedByOwnerAndSlug( state, list?.owner ?? '', list?.slug ?? '' )
 	);
 	const currentUser = useSelector( ( state: AppState ) => getCurrentUser( state ) );
-	const isPublic = list?.is_public;
 	const editUrl = list?.is_owner ? `/reader/list/${ list.owner }/${ list.slug }/edit` : '';
 	const { data: listItemsData } = useQuery(
 		readListItemsQuery( list?.owner ?? '', list?.slug ?? '' )
@@ -112,7 +111,7 @@ const ReaderListHeader = ( props: ReaderListHeaderProps ) => {
 		<>
 			<AutoDirection>
 				<NavigationHeader title={ formattedTitle } subtitle={ formattedDescription }>
-					{ ! isPublic && (
+					{ list?.is_public === false && (
 						<div
 							className="list-stream__header-title-privacy"
 							title={ translate( 'Private list' ) }

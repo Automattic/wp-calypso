@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -61,6 +62,7 @@ export default function ReaderList( props: ReaderListProps ) {
 			case 'sites':
 				return <ListSites list={ list } />;
 			default:
+				page.redirect( '/reader' );
 				return null;
 		}
 	};
