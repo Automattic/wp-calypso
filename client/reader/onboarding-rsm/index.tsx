@@ -144,10 +144,10 @@ const ReaderOnboardingRsm = ( {
 
 	// Auto-open the welcome modal if onboarding should render and it has never been opened before.
 	useEffect( () => {
-		if ( shouldRenderOnboarding && ! hasSeenOnboarding ) {
+		if ( shouldRenderOnboarding && preferencesLoaded && ! hasSeenOnboarding ) {
 			openWelcomeModal();
 		}
-	}, [ shouldRenderOnboarding, hasSeenOnboarding, dispatch ] );
+	}, [ shouldRenderOnboarding, preferencesLoaded, hasSeenOnboarding, dispatch ] );
 
 	// Reopen subscription onboarding page if prompted by query param.
 	useEffect( () => {
