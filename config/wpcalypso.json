@@ -135,6 +135,7 @@
 		"publicize-preview": true,
 		"purchases/new-payment-methods": true,
 		"purchases/split-cancel-remove": false,
+		"reader-chat-settings": true,
 		"reader/achievements": true,
 		"reader/social": true,
 		"reader/full-errors": true,
