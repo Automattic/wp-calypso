@@ -10,5 +10,11 @@
 			margin: initial;
 			padding-top: 150px;
 		}
+
+		&__loader {
+			display: flex;
+			justify-content: center;
+			margin-top: 50px;
+		}
 	}
 }

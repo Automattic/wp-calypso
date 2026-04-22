@@ -14,9 +14,8 @@ const UserAchievements = ( { user }: UserAchievementsProps ): JSX.Element | null
 
 	if ( isLoading ) {
 		return (
-			<div className="wp-spinner-wrapper">
-				<Spinner />
-				<p>{ translate( 'Loading achievements' ) }</p>
+			<div className="user-profile__loader">
+				<Spinner /> { translate( 'Loading achievements…' ) }
 			</div>
 		);
 	}
