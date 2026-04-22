@@ -8,8 +8,7 @@ import RecommendedBlogs from './recommended-blogs';
 
 function HovercardContent( props ) {
 	const { user, gravatarData, processedAvatarUrl, closeCard } = props;
-	const { data } = useQuery( userQuery( user.user_login, user.wpcom_id ) );
-	const readerUserData = data?.user;
+	const { data: readerUserData } = useQuery( userQuery( user.user_login, user.wpcom_id ) );
 	const { display_name: displayName, user_login: userLogin } = readerUserData || {};
 	const primaryBlogId = readerUserData?.primary_blog?.ID || user?.primary_blog || user?.site_ID;
 
