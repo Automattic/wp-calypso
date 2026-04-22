@@ -1,23 +1,17 @@
 @import '@wordpress/theme/design-tokens.css';
-@import '@wordpress/admin-ui/build-style/style.css';
 @import '@wordpress/dataviews/build-style/style.css';
 @import "calypso/components/jetpack-page-layout/admin-ui-page";
 
 body.is-section-podcasting {
 	@include admin-ui-page-layout;
-	@include admin-ui-page-layout-constrained-content;
 	@include admin-ui-page-sticky-footer;
-}
 
-body.is-section-podcasting .podcasting--wide .admin-ui-page__content > * {
-	max-width: none;
-}
-
-body.is-section-podcasting .podcasting .admin-ui-page__header {
-	align-self: stretch;
-	box-sizing: border-box;
-	width: 100%;
-	padding-inline: 24px;
+	.podcasting .admin-ui-page__header {
+		align-self: stretch;
+		box-sizing: border-box;
+		width: 100%;
+		padding-inline: 24px;
+	}
 }
 
 .podcasting__scroll-area {
@@ -223,7 +217,6 @@ body.is-section-podcasting .podcasting .admin-ui-page__header {
 	color: var( --color-neutral-40 );
 }
 
-/* Feed form layout + shared component styles scoped to this section. */
 .podcasting__publish-wrapper {
 	display: flex;
 	align-items: flex-start;
@@ -256,52 +249,55 @@ body.is-section-podcasting .podcasting .admin-ui-page__header {
 	}
 }
 
-.podcasting .form-setting-explanation {
-	margin-bottom: 6px;
-}
+// Scoped overrides for shared form/helper components used in Settings.
+.podcasting {
+	.form-setting-explanation {
+		margin-bottom: 6px;
+	}
 
-.podcasting .calypso-notice.is-compact {
-	width: 100%;
-}
-
-.podcasting .form-select {
-	margin-inline-end: 12px;
-	margin-bottom: 8px;
-
-	@include breakpoint-deprecated( '<480px' ) {
-		margin-inline-end: 0;
+	.calypso-notice.is-compact {
 		width: 100%;
 	}
-}
 
-.podcasting .podcasting-details__publish-notice {
-	position: relative;
-	background: var( --color-neutral-0 );
-	border-radius: 2px;
-	align-self: stretch;
-	padding: 6px;
-	font-size: $font-body-small;
-	text-align: left;
-	display: flex;
-	flex-grow: 1;
-	align-items: center;
-	margin-bottom: 16px;
+	.form-select {
+		margin-inline-end: 12px;
+		margin-bottom: 8px;
 
-	.gridicons-microphone {
-		flex-shrink: 0;
-		margin-inline-end: 6px;
-		color: var( --color-podcasting );
+		@include breakpoint-deprecated( '<480px' ) {
+			margin-inline-end: 0;
+			width: 100%;
+		}
 	}
 
-	a {
-		color: var( --color-neutral-70 );
-		text-decoration: underline;
-	}
-}
+	.podcasting-details__publish-notice {
+		position: relative;
+		background: var( --color-neutral-0 );
+		border-radius: 2px;
+		align-self: stretch;
+		padding: 6px;
+		font-size: $font-body-small;
+		text-align: left;
+		display: flex;
+		flex-grow: 1;
+		align-items: center;
+		margin-bottom: 16px;
 
-.podcasting .podcasting-details__private-site,
-.podcasting .podcasting-details__no-permissions {
-	p:last-child {
-		margin-bottom: 0;
+		.gridicons-microphone {
+			flex-shrink: 0;
+			margin-inline-end: 6px;
+			color: var( --color-podcasting );
+		}
+
+		a {
+			color: var( --color-neutral-70 );
+			text-decoration: underline;
+		}
+	}
+
+	.podcasting-details__private-site,
+	.podcasting-details__no-permissions {
+		p:last-child {
+			margin-bottom: 0;
+		}
 	}
 }

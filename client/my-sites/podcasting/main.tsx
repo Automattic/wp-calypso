@@ -68,10 +68,8 @@ const PodcastingMain = ( { section, path }: PodcastingMainProps ) => {
 		}
 	};
 
-	const mainClassName = 'podcasting' + ( currentSection === 'episodes' ? ' podcasting--wide' : '' );
-
 	return (
-		<Main fullWidthLayout className={ mainClassName }>
+		<Main fullWidthLayout className="podcasting">
 			{ siteId && <QuerySiteSettings siteId={ siteId } /> }
 			{ siteId && <QueryTerms siteId={ siteId } taxonomy="category" /> }
 			<DocumentHead title={ translate( 'Podcasting' ) } />
