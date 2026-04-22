@@ -1314,10 +1314,7 @@ export default function PurchaseSettings() {
 			}
 		>
 			<VStack spacing={ 6 }>
-				<PurchaseNotice
-					purchase={ purchase }
-					isDomainWithoutSite={ Boolean( site?.options?.is_domain_only && purchase.is_domain ) }
-				/>
+				<PurchaseNotice purchase={ purchase } />
 				<Grid columns={ columns } gap={ spacing }>
 					<OverviewCard
 						icon={ calendar }

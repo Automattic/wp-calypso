@@ -2,6 +2,7 @@ import { DomainProductSlugs, DotcomPlans, WooHostedPlans } from '@automattic/api
 import {
 	purchaseQuery,
 	sitePurchasesQuery,
+	siteBySlugQuery,
 	userPreferenceMutation,
 	userPreferenceQuery,
 } from '@automattic/api-queries';
@@ -41,13 +42,7 @@ import { PurchaseExpiringNotice, shouldShowExpiringNotice } from './purchase-exp
 import { RenewNoticeAction, shouldShowRenewNoticeAction } from './renew-notice-action';
 import type { Purchase } from '@automattic/api-core';
 
-export function PurchaseNotice( {
-	purchase,
-	isDomainWithoutSite,
-}: {
-	purchase: Purchase;
-	isDomainWithoutSite: boolean;
-} ) {
+export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 	const { user } = useAuth();
 	const { refunded } = purchaseSettingsRoute.useSearch();
 	const { data: purchaseAttachedTo } = useQuery( {
@@ -57,6 +52,11 @@ export function PurchaseNotice( {
 	const { data: sitePurchases } = useQuery( {
 		...sitePurchasesQuery( purchase.blog_id ?? 0 ),
 	} );
+	const { data: site } = useQuery( {
+		...siteBySlugQuery( purchase.site_slug ?? '' ),
+		enabled: Boolean( purchase.site_slug ) && ! purchase.is_attached_to_holding_site,
+	} );
+	const isDomainWithoutSite = Boolean( site?.options?.is_domain_only && purchase.is_domain );
 	const renewableSitePurchases = sitePurchases?.filter( needsToRenewSoon );
 
 	const { data: isDismissedPersisted } = useSuspenseQuery(
