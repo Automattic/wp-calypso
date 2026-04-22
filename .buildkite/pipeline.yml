@@ -13,4 +13,5 @@ steps:
       set -eu
 
       cd desktop
+      npm install -g yarn
       yarn install --immutable --inline-builds
