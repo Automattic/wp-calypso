@@ -8,6 +8,7 @@ import {
 	SubscriptionBillPeriod,
 	TitanMailSlugs,
 	WPCOM_DIFM_LITE,
+	OFFSITE_REDIRECT,
 } from '@automattic/api-core';
 import { formatNumber } from '@automattic/number-formatters';
 import { __, sprintf } from '@wordpress/i18n';
@@ -449,7 +450,7 @@ export function isDomainTransfer( purchase: Purchase | ObjectWithProductSlug ): 
 }
 
 export function isSiteRedirect( purchase: Purchase ): boolean {
-	return purchase.product_slug === 'offsite_redirect';
+	return purchase.product_slug === OFFSITE_REDIRECT;
 }
 
 export function isWpcomFlexSubscription( purchase: Purchase ): boolean {
@@ -673,7 +674,6 @@ export function hasAmountAvailableToRefund( purchase: Purchase ) {
  * The notice is shown for refundable WordPress.com plans when the experiment is enabled.
  * When shown, the notice replaces the standard refund flow with an auto-renew cancellation
  * flow, offering the refund as an explicit opt-in action instead.
- *
  * @param purchase  - the purchase to check
  * @param isEnabled - whether the user is assigned to the treatment variation of the
  *                    calypso_split_cancel_refund experiment. Use the
