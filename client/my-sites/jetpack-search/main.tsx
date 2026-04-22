@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { ProductIcon } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -19,6 +20,7 @@ import {
 } from 'calypso/state/ui/selectors';
 import JetpackSearchContent from './content';
 import JetpackSearchFooter from './footer';
+import ReaderChatCard from './reader-chat-card';
 
 import './style.scss';
 
@@ -76,6 +78,7 @@ export default function SearchMain() {
 				onClick={ onSettingsClick }
 				iconComponent={ <ProductIcon slug="jetpack_search" /> }
 			/>
+			{ config.isEnabled( 'reader-chat-settings' ) && <ReaderChatCard /> }
 			<JetpackSearchFooter />
 		</Main>
 	);
