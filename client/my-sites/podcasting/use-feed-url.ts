@@ -14,7 +14,9 @@ export const usePodcastingFeedUrl = (): string => {
 		if ( ! categoryId ) {
 			return '';
 		}
-		const category = getTerm( state, siteId, 'category', Number( categoryId ) );
+		const category = getTerm( state, siteId, 'category', Number( categoryId ) ) as {
+			feed_url?: string;
+		} | null;
 		let url: string = category?.feed_url ?? '';
 		if ( url && ! isJetpackSite( state, siteId ) ) {
 			url = url.replace( /^http:/, 'https:' );
