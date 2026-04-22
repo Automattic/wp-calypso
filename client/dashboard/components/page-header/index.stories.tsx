@@ -72,27 +72,27 @@ export const FullExample: Story = {
 				<Button variant="secondary" __next40pxDefaultSize>
 					Preview
 				</Button>
-				<PageHeader.ActionMenu>
-					<DropdownMenu
-						icon={ moreVertical }
-						label="More actions"
-						toggleProps={ { __next40pxDefaultSize: true } }
-					>
-						{ () => (
-							<>
-								<MenuGroup>
-									<MenuItem>Import</MenuItem>
-									<MenuItem>Export</MenuItem>
-									<MenuItem>Settings</MenuItem>
-								</MenuGroup>
-								<MenuGroup>
-									<MenuItem>Help</MenuItem>
-								</MenuGroup>
-							</>
-						) }
-					</DropdownMenu>
-				</PageHeader.ActionMenu>
 			</>
+		),
+		overflowMenu: (
+			<DropdownMenu
+				icon={ moreVertical }
+				label="More actions"
+				toggleProps={ { __next40pxDefaultSize: true } }
+			>
+				{ () => (
+					<>
+						<MenuGroup>
+							<MenuItem>Import</MenuItem>
+							<MenuItem>Export</MenuItem>
+							<MenuItem>Settings</MenuItem>
+						</MenuGroup>
+						<MenuGroup>
+							<MenuItem>Help</MenuItem>
+						</MenuGroup>
+					</>
+				) }
+			</DropdownMenu>
 		),
 	},
 };
