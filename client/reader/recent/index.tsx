@@ -249,7 +249,9 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 					<DataViews< ReaderPost | PaddingItem >
 						config={ { perPageSizes: [ 15, 30, 50, 100 ] } }
 						getItemId={ ( item: ReaderPost | PaddingItem, index = 0 ) =>
-							item.postId?.toString() ?? `item-${ index }`
+							! isPaddingItem( item ) && item.feedId
+								? `${ item.feedId }-${ item.postId }`
+								: item.postId?.toString() ?? `item-${ index }`
 						}
 						view={ view }
 						fields={ fields }
@@ -262,10 +264,10 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 						paginationInfo={ view.search === '' ? defaultPaginationInfo : paginationInfo }
 						defaultLayouts={ { list: {} } }
 						isLoading={ isLoading }
-						selection={ selectedItem ? [ selectedItem.postId?.toString() ] : [] }
+						selection={ selectedItem ? [ `${ selectedItem.feedId }-${ selectedItem.postId }` ] : [] }
 						onChangeSelection={ ( newSelection: string[] ) => {
 							const selectedPost = data?.items?.find(
-								( item: ReaderPost ) => item.postId?.toString() === newSelection[ 0 ]
+								( item: ReaderPost ) => `${ item.feedId }-${ item.postId }` === newSelection[ 0 ]
 							);
 							setSelectedItem( selectedPost || null );
 							// Focus the post column after a short delay to ensure DOM updates.
