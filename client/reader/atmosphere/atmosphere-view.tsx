@@ -8,6 +8,7 @@ import {
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import NavigationHeader from 'calypso/components/navigation-header';
 import { ConnectForm } from './connect-form';
 import { ConnectionsList } from './connections-list';
 import { VerifyPanel } from './verify-panel';
@@ -21,7 +22,11 @@ export function AtmosphereView() {
 
 	return (
 		<VStack spacing={ 4 } className="atmosphere-view">
-			<h1>{ translate( 'ATmosphere' ) }</h1>
+			<NavigationHeader
+				title={ translate( 'ATmosphere' ) }
+				subtitle={ translate( 'Connect your Bluesky account to bring it into the Reader.' ) }
+				className="atmosphere-view__header"
+			/>
 			<ConnectionsList
 				connections={ connections.data?.connections ?? [] }
 				isLoading={ connections.isLoading }
