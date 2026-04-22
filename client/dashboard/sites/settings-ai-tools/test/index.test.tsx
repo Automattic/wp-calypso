@@ -41,14 +41,13 @@ function mockUserSettings() {
 }
 
 describe( '<AIToolsSettings>', () => {
+	afterEach( () => {
+		jest.restoreAllMocks();
+	} );
+
 	describe( 'Reader Chat card', () => {
 		test( 'is hidden when feature flag is disabled', async () => {
-			jest.spyOn( config, 'isEnabled' ).mockImplementation( ( key: string ) => {
-				if ( key === 'reader-chat-settings' ) {
-					return false;
-				}
-				return false;
-			} );
+			jest.spyOn( config, 'isEnabled' ).mockReturnValue( false );
 
 			mockSite( site );
 			mockBigSkyPlugin( false, true );
