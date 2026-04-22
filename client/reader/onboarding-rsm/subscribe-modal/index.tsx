@@ -94,7 +94,6 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 				}
 			),
 		refetchOnMount: 'always',
-		refetchOnWindowFocus: true,
 		select: ( data: { cards: Card[] } ) => {
 			const recommendedBlogsCard = data.cards.find(
 				( card: Card ) => card.type === 'recommended_blogs'
