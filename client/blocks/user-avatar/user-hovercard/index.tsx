@@ -13,7 +13,6 @@ import UserHovercardHeader from './user-hovercard-header';
 
 interface UserHovercardProps {
 	user: UserAvatarInfo;
-	size?: number;
 }
 
 export default function UserHovercard( props: UserHovercardProps ): JSX.Element | null {
@@ -21,6 +20,9 @@ export default function UserHovercard( props: UserHovercardProps ): JSX.Element 
 	const { user: userProp } = props;
 	const wpcomIdOrLogin = userProp.wpcom_id || userProp.wpcom_login;
 	const classNames = 'user-hovercard ignore-click';
+	const displayName = translate( 'User profile: %s', {
+		args: userProp.display_name ?? '',
+	} ) as string;
 
 	const { isLoading: isGravatarLoading, data: gravatarData } = useGravatarProfileV3Query(
 		userProp,
@@ -37,7 +39,7 @@ export default function UserHovercard( props: UserHovercardProps ): JSX.Element 
 
 	if ( isWpcomLoading || isGravatarLoading ) {
 		return (
-			<div className={ classNames }>
+			<div className={ classNames } role="dialog" aria-label={ displayName }>
 				<div className="wp-spinner-wrapper" style={ { marginTop: '0' } }>
 					<Spinner />
 				</div>
@@ -48,7 +50,11 @@ export default function UserHovercard( props: UserHovercardProps ): JSX.Element 
 	const user = wpcomData?.user_login ? wpcomData : gravatarUser;
 	if ( ! user ) {
 		return (
-			<div className={ `${ classNames } user-hovercard--not-found` }>
+			<div
+				className={ `${ classNames } user-hovercard--not-found` }
+				role="dialog"
+				aria-label={ displayName }
+			>
 				<UserAvatarDefaultIcon iconSize={ 102 } />
 				<p>
 					{ translate( 'User not found.' ) }
@@ -65,7 +71,7 @@ export default function UserHovercard( props: UserHovercardProps ): JSX.Element 
 	}
 
 	return (
-		<div className={ classNames }>
+		<div className={ classNames } role="dialog" aria-label={ displayName }>
 			<UserHovercardHeader user={ user } />
 
 			{ wpcomData?.primary_blog ? <PrimaryBlogCard user={ user } /> : null }

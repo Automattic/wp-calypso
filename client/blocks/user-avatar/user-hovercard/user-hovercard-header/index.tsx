@@ -37,13 +37,7 @@ function UserHovercardHeader( { user }: UserHovercardHeaderProps ): JSX.Element 
 
 				{ name && (
 					<div className="user-hovercard__name">
-						{ profilePageUrl ? (
-							<a href={ profilePageUrl }>
-								<h4>{ name }</h4>
-							</a>
-						) : (
-							<h4>{ name }</h4>
-						) }
+						<h4>{ profilePageUrl ? <a href={ profilePageUrl }>{ name }</a> : name }</h4>
 					</div>
 				) }
 

@@ -44,19 +44,26 @@ describe( 'PreloadedImage', () => {
 		expect( getImage() ).not.toHaveClass( 'is-loaded' );
 	} );
 
-	test( 'sets empty alt text before image loads', () => {
+	test( 'sets alt text immediately', () => {
 		render( <PreloadedImage { ...defaultProps } /> );
 
-		expect( getImage() ).toHaveAttribute( 'alt', '' );
+		expect( getImage() ).toHaveAttribute( 'alt', 'Test image' );
 	} );
 
-	test( 'adds is-loaded class and sets alt text after image loads', () => {
+	test( 'adds is-loaded class after image loads', () => {
 		render( <PreloadedImage { ...defaultProps } /> );
 
 		fireEvent.load( getImage() );
 
 		expect( getImage() ).toHaveClass( 'is-loaded' );
-		expect( getImage() ).toHaveAttribute( 'alt', 'Test image' );
+	} );
+
+	test( 'adds is-loaded class after image fails to load', () => {
+		render( <PreloadedImage { ...defaultProps } /> );
+
+		fireEvent.error( getImage() );
+
+		expect( getImage() ).toHaveClass( 'is-loaded' );
 	} );
 
 	test( 'applies custom className to the img element', () => {

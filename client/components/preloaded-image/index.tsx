@@ -13,7 +13,7 @@ interface PreloadedImageProps {
 
 /**
  * PreloadedImage is a wrapper around the HTML img element which only displays the image once it has been fully loaded.
- * This is useful to prevent layout shifts and display a placeholder while the image is loading.
+ * This is useful to prevent layout shifts, displaying incomplete images, and display a placeholder while the image is loading.
  */
 export default function PreloadedImage( props: PreloadedImageProps ) {
 	const { src, alt, className, width, height, imgStyles } = props;
@@ -24,7 +24,7 @@ export default function PreloadedImage( props: PreloadedImageProps ) {
 			<img
 				className={ clsx( className, { 'is-loaded': isLoaded } ) }
 				src={ src }
-				alt={ isLoaded ? alt : '' }
+				alt={ alt }
 				width={ width }
 				height={ height }
 				style={ imgStyles }

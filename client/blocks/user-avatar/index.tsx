@@ -52,24 +52,31 @@ export default function UserAvatar( { user, size = 32, hideHovercard = false }: 
 	// Prefetching so that we can display WPCOM users Hovercards instantly, Gravatar lookups will be triggered on hover.
 	useQuery( userQuery( user?.wpcom_login, user?.wpcom_id, ! hideHovercard ) );
 
-	const handleMouseEnter = useCallback( () => {
-		hoverTimerRef.current = setTimeout( () => setIsHovered( true ), 200 );
-	}, [] );
-
-	const handleMouseLeave = useCallback( () => {
+	const clearHoverTimer = useCallback( () => {
 		if ( hoverTimerRef.current ) {
 			clearTimeout( hoverTimerRef.current );
 			hoverTimerRef.current = null;
 		}
-		setIsHovered( false );
 	}, [] );
+
+	const handleShowHovercard = useCallback( () => {
+		clearHoverTimer();
+		hoverTimerRef.current = setTimeout( () => setIsHovered( true ), 200 );
+	}, [ clearHoverTimer ] );
+
+	const handleHideHovercard = useCallback( () => {
+		clearHoverTimer();
+		hoverTimerRef.current = setTimeout( () => setIsHovered( false ), 100 );
+	}, [ clearHoverTimer ] );
 
 	return (
 		<div
 			ref={ avatarRef }
 			className="user-avatar ignore-click"
-			onMouseEnter={ handleMouseEnter }
-			onMouseLeave={ handleMouseLeave }
+			onMouseEnter={ handleShowHovercard }
+			onMouseLeave={ handleHideHovercard }
+			onFocus={ handleShowHovercard }
+			onBlur={ handleHideHovercard }
 		>
 			{ wpcomProfileUrl ? <a href={ wpcomProfileUrl }>{ avatarImg }</a> : avatarImg }
 
@@ -77,11 +84,14 @@ export default function UserAvatar( { user, size = 32, hideHovercard = false }: 
 				<Popover
 					anchor={ avatarRef.current }
 					variant="unstyled"
-					placement="bottom"
+					placement="bottom-start"
 					focusOnMount={ false }
 					noArrow
+					offset={ 5 }
+					onMouseEnter={ clearHoverTimer }
+					onMouseLeave={ handleHideHovercard }
 				>
-					<UserHovercard user={ user } size={ size } />
+					<UserHovercard user={ user } />
 				</Popover>
 			) }
 		</div>

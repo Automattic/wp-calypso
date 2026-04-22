@@ -24,7 +24,7 @@
 		flex-direction: column;
 		flex-grow: 1;
 		gap: 2px;
-		margin-right: 30px; // To provide space for the follow button.
+		margin-inline-end: 30px; // To provide space for the follow button.
 		overflow: hidden;
 
 		h5 {

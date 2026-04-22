@@ -121,6 +121,7 @@ describe( 'UserAvatar', () => {
 		expect( screen.getByTestId( 'user-hovercard' ) ).toBeInTheDocument();
 
 		await user.unhover( document.querySelector( '.user-avatar' )! );
+		act( () => jest.advanceTimersByTime( 100 ) );
 		expect( screen.queryByTestId( 'user-hovercard' ) ).not.toBeInTheDocument();
 	} );
 } );

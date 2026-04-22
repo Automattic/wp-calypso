@@ -27,7 +27,7 @@ function PrimaryBlogCard( { user }: PrimaryBlogCardProps ): JSX.Element | null {
 		( user.first_name && user.last_name ? `${ user.first_name } ${ user.last_name }` : '' ) ||
 		user.nice_name ||
 		'';
-	const siteUrl = getStreamUrl( primaryBlog.feed_ID, primaryBlog.ID )!;
+	const siteUrl = getStreamUrl( primaryBlog.feed_ID, primaryBlog.ID );
 
 	const onFollowToggle = ( following: boolean ): void => {
 		const siteName = primaryBlog.title || primaryBlog.URL;

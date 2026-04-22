@@ -18,11 +18,7 @@
 
 	.user-hovercard__name {
 		a {
-			display: inline-flex;
 			text-decoration: none;
-		}
-
-		h4 {
 			color: var( --color-text );
 			font-size: rem( 32px );
 			font-weight: 700;

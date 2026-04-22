@@ -25,7 +25,7 @@ function RecommendedBlogs( { userLogin }: RecommendedBlogsProps ): JSX.Element |
 		<div className="user-hovercard__recommended-blogs">
 			<div className="user-hovercard__recommended-blogs-header">
 				<h5 className="user-hovercard__recommended-blogs-title">
-					{ translate( 'Recommended Blogs' ) }
+					{ translate( 'Recommended blogs' ) }
 				</h5>
 				<a
 					className="user-hovercard__recommended-blogs-view-all"
