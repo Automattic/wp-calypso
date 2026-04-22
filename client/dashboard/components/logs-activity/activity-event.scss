@@ -2,14 +2,14 @@
 @import '@wordpress/base-styles/variables';
 
 .site-activity-logs__event-icon {
-	fill: var(--dashboard__text-color-secondary);
-	background-color: var(--dashboard__surface-color);
+	fill: $gray-700;
+	background-color: $gray-100;
 	border-radius: $radius-small;
 	padding: 4px;
 }
 
 .site-activity-logs__event {
-	color: var(--dashboard__text-color);
+	color: $gray-900;
 }
 
 .site-activity-logs__event-content {
@@ -17,7 +17,7 @@
 	flex-wrap: wrap;
 
 	> span {
-		color: var(--dashboard__text-color-secondary);
+		color: $gray-700;
 	}
 }
 

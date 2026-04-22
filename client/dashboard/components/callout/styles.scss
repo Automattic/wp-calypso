@@ -28,7 +28,7 @@
 .dashboard-callout__h-container {
 	padding: $grid-unit-20;
 	@include body-medium;
-	color: var(--dashboard__text-color-secondary);
+	color: $gray-700;
 
 	@include break-medium {
 		padding: $grid-unit-30;
@@ -41,7 +41,7 @@
 
 .dashboard-callout__title {
 	@include heading-large;
-	color: var(--dashboard__text-color);
+	color: $gray-900;
 	margin: 0;
 }
 

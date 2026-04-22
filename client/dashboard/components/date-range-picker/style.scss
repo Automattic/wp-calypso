@@ -14,19 +14,19 @@
 	&__field {
 		// The extra class is to make sure it overrides the default button styles
 		&.components-button {
-			background: var(--wp-components-color-background);
+			background: $white;
 			padding: $grid-unit-05 $grid-unit-05 $grid-unit-05 $grid-unit-10;
 			box-shadow: none;
 			border-radius: $radius-small;
-			border: 1px solid var(--dashboard__border-color-strong);
+			border: 1px solid $gray-600;
 		}
 		svg {
-			color: var(--dashboard__text-color);
+			color: $gray-900;
 			padding: $grid-unit-05;
 		}
 	}
 	&__text {
-		color: var(--dashboard__text-color);
+		color: $gray-900;
 		padding: 0 $grid-unit-05;
 	}
 }

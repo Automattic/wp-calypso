@@ -12,8 +12,8 @@
 		font-weight: 500;
 		border: 1px solid;
 		background-color: transparent;
-		border-color: var(--dashboard__border-color-strong);
-		color: var(--dashboard__text-color-muted);
+		border-color: $gray-200;
+		color: $gray-600;
 
 		&--completed {
 			background-color: var( --dashboard__background-color-success );
@@ -30,10 +30,10 @@
 	}
 
 	&__label {
-		color: var(--dashboard__text-color-muted);
+		color: $gray-600;
 
 		&--current {
-			color: var(--dashboard__text-color);
+			color: $gray-900;
 		}
 	}
 }

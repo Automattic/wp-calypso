@@ -5,9 +5,9 @@
 }
 
 .site-scan-threats__type-icon {
-	background-color: var(--dashboard__surface-color);
+	background-color: $gray-100;
 	border-radius: $radius-small;
-	fill: var(--dashboard__text-color-secondary);
+	fill: $gray-700;
 	flex-shrink: 0;
 	padding: 4px;
 }

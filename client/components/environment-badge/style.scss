@@ -25,20 +25,16 @@ $z-index: 999;
 	.bug-report {
 		position: relative;
 		display: inline-flex;
-		background-color: var(--dashboard__background-color, #fff);
-		border: solid 1px var(--dashboard__text-color-secondary, #3c434a);
+		background-color: #fff;
+		border: solid 1px #3c434a;
 		border-radius: 50%;
-		color: var(--dashboard__text-color-secondary, #3c434a);
+		color: #3c434a;
 		margin-left: -4px;
 		text-decoration: none;
 		text-align: center;
 		z-index: $z-index + 1;
 		transition: border-radius 0.2s ease-out;
 		vertical-align: middle;
-
-		svg {
-			fill: currentColor;
-		}
 	}
 
 	.environment {
@@ -51,8 +47,8 @@ $z-index: 999;
 		padding: 4px 7px 4px 6px;
 		vertical-align: middle;
 		transition: all 0.2s ease-out;
-		background-color: var(--dashboard__background-color, #fff);
-		box-shadow: 0 0 0 1px var(--dashboard__text-color-secondary, #3c434a);
+		background-color: #fff;
+		box-shadow: 0 0 0 1px #3c434a;
 
 		&.is-env {
 			display: inline-block;
@@ -60,7 +56,7 @@ $z-index: 999;
 		a {
 			text-decoration: none;
 			display: inline-block;
-			color: var(--dashboard__text-color-secondary, #3c434a);
+			color: #3c434a;
 
 			&:hover {
 				transform: scale(1.1);

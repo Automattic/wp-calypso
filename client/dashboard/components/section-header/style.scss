@@ -14,7 +14,6 @@
 .dashboard-section-header__heading {
 	margin-block: 0;
 	font-weight: $font-weight-medium;
-	color: var(--dashboard__text-color);
 
 	.dashboard-section-header.is-level-1 & {
 		font-family: var( --dashboard-h1__font-family );
@@ -50,7 +49,7 @@
 	}
 
 	svg {
-		fill: var(--dashboard__text-color-secondary);
+		fill: $gray-700;
 		flex-shrink: 0;
 		width: $grid-unit-30;
 		height: $grid-unit-30;
@@ -68,10 +67,4 @@
 .dashboard-section-header__actions {
 	flex-shrink: 0;
 	align-self: stretch;
-}
-
-// `<Text variant="muted">` from @wordpress/components hardcodes color: #757575 via emotion.
-// Override it explicitly so the description follows the theme token (more readable in dark mode).
-.dashboard-section-header__description {
-	color: var(--dashboard__text-color-muted) !important;
 }

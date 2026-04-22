@@ -1,6 +1,6 @@
 @import '@wordpress/base-styles/colors';
 
 .domain-icon {
-	color: var(--dashboard__text-color-secondary);
+	color: #{$gray-700};
 	fill: currentColor;
 }

@@ -6,7 +6,7 @@
 .dashboard-overview-card {
 	&--disabled {
 		background-color: transparent !important;
-		box-shadow: 0 0 0 1px var(--dashboard__border-color) !important;
+		box-shadow: 0 0 0 1px $gray-100 !important;
 		cursor: default;
 	}
 
@@ -77,14 +77,14 @@
 	}
 
 	.dashboard-overview-card--disabled & {
-		color: var(--dashboard__text-color-muted);
-		fill: var(--dashboard__text-color-muted);
+		color: $gray-600;
+		fill: $gray-600;
 	}
 }
 
 .dashboard-overview-card__link-icon {
-	color: var(--dashboard__text-color-muted);
-	fill: var(--dashboard__text-color-muted);
+	color: $gray-600;
+	fill: $gray-600;
 	height: 24px;
 	margin: 0;
 	text-align: center;

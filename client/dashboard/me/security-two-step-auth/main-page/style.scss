@@ -7,7 +7,7 @@
 
         div[role="row"]:hover {
             .dataviews-view-list__fields {
-                color: var(--dashboard__text-color-secondary);
+                color: $gray-700;
             }
         }
     }

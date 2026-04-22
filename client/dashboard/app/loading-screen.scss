@@ -6,6 +6,6 @@
 	inset-inline-start: 50%;
 	transform: translate(-50%, -50%);
 	margin: 0;
-	fill: var(--dashboard__text-color);
+	fill: $gray-900;
 	animation: pulse 1.5s ease-in-out infinite;
 }

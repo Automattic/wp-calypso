@@ -6,7 +6,7 @@
 		max-width: 100%;
 		padding: $grid-unit-20;
 		border-radius: $radius-small;
-		background-color: var(--dashboard__surface-color);
+		background-color: $gray-100;
 		overflow: auto;
 	}
 }

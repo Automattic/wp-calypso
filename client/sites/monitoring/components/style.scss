@@ -7,7 +7,7 @@
 $section-max-width: 1224px;
 
 .is-section-site-monitoring.theme-default:not(:has(.is-global-sidebar-visible)) {
-	background-color: var(--dashboard__background-color, var(--studio-white));
+	background-color: var(--studio-white);
 	.focus-content:not(.has-no-sidebar) .layout__content {
 		@media screen and (max-width: 782px) {
 			padding-top: 71px;
@@ -122,7 +122,7 @@ div.is-section-site-monitoring:not(.is-global-sidebar-visible) {
 	font-family: $brand-serif;
 	font-size: $font-title-large;
 	line-height: 40px;
-	color: var(--dashboard__text-color, var(--studio-gray-100));
+	color: var(--studio-gray-100);
 	span {
 		white-space: nowrap;
 	}
@@ -147,11 +147,11 @@ div.is-section-site-monitoring:not(.is-global-sidebar-visible) {
 	font-size: rem(20px);
 	line-height: rem(26px);
 	font-weight: 500;
-	color: var(--dashboard__text-color, var(--black-white-black));
+	color: var(--black-white-black);
 }
 
 .site-monitoring__chart-subtitle {
-	color: var(--dashboard__text-color-secondary, var(--studio-gray-60));
+	color: var(--studio-gray-60);
 	font-family: "SF Pro Text", $sans;
 	font-size: rem(14px);
 	font-weight: 400;
@@ -208,7 +208,7 @@ div.is-section-site-monitoring:not(.is-global-sidebar-visible) {
 
 .site-monitoring-line-chart {
 	.u-legend {
-		color: var(--dashboard__text-color, var(--studio-gray-100));
+		color: var(--studio-gray-100);
 
 		// Disable rendering first u-marker, which is for "Date" and is empty.
 		> tbody > .u-series:first-child {
