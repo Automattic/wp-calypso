@@ -4,14 +4,12 @@ import { HostingFeatures } from '@automattic/api-core';
 import {
 	bigSkyPluginMutation,
 	bigSkyPluginQuery,
-	readerChatSettingsMutation,
-	readerChatSettingsQuery,
 	siteBySlugQuery,
 	userSettingsMutation,
 	userSettingsQuery,
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
-import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -148,32 +146,6 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 		: { text: __( 'Disabled' ) };
 	const readBadge = hasSiteAbilityOverrides ? getReadBadge( readTools ) : defaultBadge;
 	const writeBadge = hasSiteAbilityOverrides ? getWriteBadge( writeTools ) : defaultBadge;
-	const isReaderChatFeatureEnabled = config.isEnabled( 'reader-chat-settings' );
-
-	const { data: readerChatSettings } = useQuery( {
-		...readerChatSettingsQuery( site.ID ),
-		enabled: isReaderChatFeatureEnabled && isAvailable,
-	} );
-	const isReaderChatEnabled = readerChatSettings?.enabled ?? false;
-
-	const readerChatMutation = useMutation( {
-		...readerChatSettingsMutation( site.ID ),
-		meta: {
-			snackbar: {
-				success: isReaderChatEnabled ? __( 'Reader Chat disabled.' ) : __( 'Reader Chat enabled.' ),
-				error: __( 'Failed to save Reader Chat settings.' ),
-			},
-		},
-	} );
-
-	const handleReaderChatToggle = ( enabled: boolean ) => {
-		recordTracksEvent( 'calypso_dashboard_reader_chat_toggled', {
-			enabled,
-			site_id: site.ID,
-		} );
-		readerChatMutation.mutate( { enabled } );
-	};
-
 	const mcpMutation = useMutation( {
 		...userSettingsMutation(),
 		meta: {
@@ -362,48 +334,6 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 							/>
 						) }
 					</>
-				) }
-				{ isReaderChatFeatureEnabled && isAvailable && (
-					<Card>
-						<CardBody>
-							<VStack spacing={ 4 }>
-								<SectionHeader
-									title={ __( 'Reader Chat' ) }
-									description={ __(
-										'Let readers ask your blog questions and get answers from your content.'
-									) }
-									level={ 3 }
-								/>
-								<ToggleControl
-									__nextHasNoMarginBottom
-									checked={ isReaderChatEnabled }
-									disabled={ readerChatMutation.isPending }
-									label={ __( 'Enable Reader Chat on your blog' ) }
-									onChange={ handleReaderChatToggle }
-								/>
-							</VStack>
-						</CardBody>
-						{ isReaderChatEnabled && (
-							<>
-								<CardDivider />
-								<SummaryButton
-									href={ `${
-										site.options?.admin_url ?? ''
-									}site-editor.php?canvas=edit&path=/guidelines/additional` }
-									title={ __( 'Set content guidelines' ) }
-									description={ __(
-										'Add the additional guidelines that shape how your blog answers readers.'
-									) }
-									decoration={ <Icon icon={ termDescription } /> }
-									onClick={ () => {
-										recordTracksEvent( 'calypso_dashboard_reader_chat_guidelines_click', {
-											site_id: site.ID,
-										} );
-									} }
-								/>
-							</>
-						) }
-					</Card>
 				) }
 				{ isFreeTrial && (
 					<ConfirmModal
