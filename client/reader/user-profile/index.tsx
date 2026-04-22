@@ -8,6 +8,7 @@ import { useEffect } from 'react';
 import EmptyContent from 'calypso/components/empty-content';
 import ReaderBackButton from 'calypso/reader/components/back-button';
 import UserProfileHeader from 'calypso/reader/user-profile/components/user-profile-header';
+import UserAchievements from 'calypso/reader/user-profile/views/achievements';
 import UserLists from 'calypso/reader/user-profile/views/lists';
 import UserPosts from 'calypso/reader/user-profile/views/posts';
 import UserRecommendedBlogs from 'calypso/reader/user-profile/views/recommended-blogs';
@@ -63,6 +64,8 @@ export function UserProfile( props: UserProfileProps ): JSX.Element | null {
 				return <UserLists user={ user } />;
 			case 'recommended-blogs':
 				return <UserRecommendedBlogs user={ user } />;
+			case 'achievements':
+				return <UserAchievements user={ user } />;
 			default:
 				return null;
 		}

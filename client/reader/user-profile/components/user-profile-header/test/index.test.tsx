@@ -3,6 +3,7 @@
  */
 
 import { ReaderUser, UserSitesResponse } from '@automattic/api-core';
+import { isEnabled } from '@automattic/calypso-config';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -30,6 +31,12 @@ jest.mock(
 			<div data-testid="nav-tabs">{ children }</div>
 		)
 );
+
+jest.mock( '@automattic/calypso-config', () => ( {
+	isEnabled: jest.fn(),
+} ) );
+
+const mockIsEnabled = isEnabled as jest.MockedFunction< typeof isEnabled >;
 
 describe( 'UserProfileHeader', () => {
 	const defaultUser: ReaderUser = {
@@ -132,6 +139,7 @@ describe( 'UserProfileHeader', () => {
 	} );
 
 	test( 'should render navigation tabs with Posts, Sites, Lists, and Recommended Blogs options', () => {
+		mockIsEnabled.mockReturnValue( false );
 		renderWithClient( <UserProfileHeader user={ defaultUser } view="posts" /> );
 
 		const navItems = screen.getAllByRole( 'menuitem' );
@@ -141,6 +149,17 @@ describe( 'UserProfileHeader', () => {
 		expect( screen.getByRole( 'menuitem', { name: 'Sites' } ) ).toBeVisible();
 		expect( screen.getByRole( 'menuitem', { name: 'Lists' } ) ).toBeVisible();
 		expect( screen.getByRole( 'menuitem', { name: 'Recommended Blogs' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'menuitem', { name: 'Achievements' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'should render Achievements tab when reader/achievements flag is enabled', () => {
+		mockIsEnabled.mockImplementation( ( flag ) => flag === 'reader/achievements' );
+		renderWithClient( <UserProfileHeader user={ defaultUser } view="posts" /> );
+
+		const navItems = screen.getAllByRole( 'menuitem' );
+		expect( navItems.length ).toBe( 5 );
+
+		expect( screen.getByRole( 'menuitem', { name: 'Achievements' } ) ).toBeVisible();
 	} );
 
 	test( 'should not render bio section when user has no bio', () => {
