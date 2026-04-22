@@ -581,9 +581,10 @@ function PurchaseSettingsActions( { purchase }: { purchase: Purchase } ) {
 	// 100-year plans and domains have no self-serve actions (no upgrade, no
 	// renew, no cancel/remove). Skip the card entirely so we don't render an
 	// empty shell.
-	if ( purchase.bill_period_days === SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD ) {
+	if ( isCentennialPurchase( purchase ) ) {
 		return null;
 	}
+
 	return (
 		<VStack spacing={ 4 }>
 			<ActionList>
