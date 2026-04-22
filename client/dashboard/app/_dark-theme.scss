@@ -39,10 +39,22 @@
 
 /* Form Controls */
 @mixin dashboard-dark-theme-form-controls {
+	.components-input-control__container {
+		background-color: var( --dashboard-field__background-color );
+		color: var( --dashboard__text-color );
+	}
+
 	.components-input-control__backdrop,
 	.components-textarea-control__input {
-		background-color: var( --dashboard-field__background-color );
 		border-color: var( --dashboard-field__border-color );
+	}
+
+	.components-input-control__backdrop {
+		background-color: transparent;
+	}
+
+	.components-textarea-control__input {
+		background-color: var( --dashboard-field__background-color );
 	}
 
 	.components-input-control__input,
@@ -55,9 +67,32 @@
 		color: var( --dashboard__text-color );
 	}
 
+	.components-input-control__container .components-input-control__input,
+	.components-input-control__input,
+	.components-textarea-control__input {
+		color: var( --dashboard__text-color ) !important;
+		-webkit-text-fill-color: var( --dashboard__text-color );
+		caret-color: var( --dashboard__text-color );
+	}
+
 	.components-input-control__input::placeholder,
 	.components-textarea-control__input::placeholder {
 		color: var( --dashboard-subtle__color );
+	}
+
+	.components-input-control__container .components-input-control__input::selection,
+	.components-input-control__input::selection,
+	.components-textarea-control__input::selection {
+		background-color: var( --wp-admin-theme-color ) !important;
+		color: #fff !important;
+		-webkit-text-fill-color: #fff;
+	}
+
+	.components-input-control__container .components-input-control__input::-moz-selection,
+	.components-input-control__input::-moz-selection,
+	.components-textarea-control__input::-moz-selection {
+		background-color: var( --wp-admin-theme-color ) !important;
+		color: #fff !important;
 	}
 }
 
