@@ -11,7 +11,7 @@ function HovercardContent( props ) {
 	const { data } = useQuery( userQuery( user.user_login, user.wpcom_id ) );
 	const readerUserData = data?.user;
 	const { display_name: displayName, user_login: userLogin } = readerUserData || {};
-	const primaryBlogId = readerUserData?.primary_blog || user?.primary_blog || user?.site_ID;
+	const primaryBlogId = readerUserData?.primary_blog?.ID || user?.primary_blog || user?.site_ID;
 
 	return (
 		<>

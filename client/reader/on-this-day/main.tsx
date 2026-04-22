@@ -10,7 +10,6 @@ import ReaderStream from 'calypso/reader/stream';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { selectSidebarRecentSite } from 'calypso/state/reader-ui/sidebar/actions';
-import { useSiteSubscriptions } from '../following/use-site-subscriptions';
 import { useFollowingView } from '../following/view-preference';
 import ViewToggle from '../following/view-toggle';
 import { OnThisDay } from './index';
@@ -18,7 +17,6 @@ import '../following/style.scss';
 
 function OnThisDayStream() {
 	const { currentView } = useFollowingView();
-	const { isLoading, hasNonSelfSubscriptions } = useSiteSubscriptions();
 	const dispatch = useDispatch();
 	const [ isResurrectedModalVisible, setIsResurrectedModalVisible ] = useState( false );
 	const [ shouldDelayReaderOnboarding, setShouldDelayReaderOnboarding ] = useState( false );
@@ -51,30 +49,6 @@ function OnThisDayStream() {
 	useEffect( () => {
 		dispatch( selectSidebarRecentSite( { feedId: null } ) );
 	}, [ dispatch ] );
-
-	if ( ! isLoading && ! hasNonSelfSubscriptions ) {
-		return (
-			<div className="following-stream--no-subscriptions">
-				<NavigationHeader title={ translate( 'On This Day' ) } />
-				<p>
-					{ translate(
-						'{{strong}}Welcome!{{/strong}} Follow your favorite sites and their latest posts will appear here. Read, like, and comment in a distraction-free environment. Get started by selecting your interests below:',
-						{
-							components: {
-								strong: <strong />,
-							},
-						}
-					) }
-				</p>
-				<AsyncLoad
-					require="calypso/reader/onboarding"
-					forceShow
-					onRender={ handleReaderOnboardingRender }
-					isSuppressed={ suppressReaderOnboarding }
-				/>
-			</div>
-		);
-	}
 
 	return (
 		<>
