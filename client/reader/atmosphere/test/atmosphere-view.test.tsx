@@ -7,6 +7,17 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import AtmosphereView from '../atmosphere-view';
+import type React from 'react';
+
+jest.mock(
+	'calypso/reader/components/reader-main',
+	() =>
+		function ReaderMain( { children }: { children: React.ReactNode } ) {
+			return <div>{ children }</div>;
+		}
+);
+
+jest.mock( 'calypso/components/data/document-head', () => () => null );
 
 const BASE = 'https://public-api.wordpress.com';
 

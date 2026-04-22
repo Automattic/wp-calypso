@@ -8,7 +8,9 @@ import {
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import DocumentHead from 'calypso/components/data/document-head';
 import NavigationHeader from 'calypso/components/navigation-header';
+import ReaderMain from 'calypso/reader/components/reader-main';
 import { ConnectForm } from './connect-form';
 import { ConnectionsList } from './connections-list';
 import { VerifyPanel } from './verify-panel';
@@ -20,29 +22,37 @@ export function AtmosphereView() {
 	const [ verifyId, setVerifyId ] = useState< number | null >( null );
 	const verify = useVerifyConnectionQuery( verifyId );
 
+	const title = translate( 'ATmosphere' );
+	const documentTitle = translate( '%s ‹ Reader', {
+		args: title,
+		comment: '%s is the section name. For example: "ATmosphere"',
+	} );
+
 	return (
-		<VStack spacing={ 4 } className="atmosphere-view">
+		<ReaderMain className="atmosphere-view">
+			<DocumentHead title={ documentTitle } />
 			<NavigationHeader
-				title={ translate( 'ATmosphere' ) }
+				title={ title }
 				subtitle={ translate( 'Connect your Bluesky account to bring it into the Reader.' ) }
-				className="atmosphere-view__header"
 			/>
-			<ConnectionsList
-				connections={ connections.data?.connections ?? [] }
-				isLoading={ connections.isLoading }
-				onVerify={ setVerifyId }
-			/>
-			<ConnectForm
-				isSubmitting={ create.isPending }
-				error={ create.error }
-				onSubmit={ ( values ) => create.mutate( values ) }
-			/>
-			<VerifyPanel
-				data={ verify.data ?? null }
-				error={ verify.error }
-				isLoading={ verify.isFetching && verifyId !== null }
-			/>
-		</VStack>
+			<VStack spacing={ 4 } className="atmosphere-view__body">
+				<ConnectionsList
+					connections={ connections.data?.connections ?? [] }
+					isLoading={ connections.isLoading }
+					onVerify={ setVerifyId }
+				/>
+				<ConnectForm
+					isSubmitting={ create.isPending }
+					error={ create.error }
+					onSubmit={ ( values ) => create.mutate( values ) }
+				/>
+				<VerifyPanel
+					data={ verify.data ?? null }
+					error={ verify.error }
+					isLoading={ verify.isFetching && verifyId !== null }
+				/>
+			</VStack>
+		</ReaderMain>
 	);
 }
 
