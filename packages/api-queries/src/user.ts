@@ -9,6 +9,6 @@ export const userQuery = ( userLogin?: string, userId?: string | number ) => {
 		queryKey: [ 'user', userIdOrLogin, params ],
 		queryFn: () => fetchUserProfile( userIdOrLogin!, params ),
 		enabled: !! userIdOrLogin,
-		staleTime: 30 * 60000, // 30 minutes
+		staleTime: 5 * 60000, // 5 minutes
 	} );
 };

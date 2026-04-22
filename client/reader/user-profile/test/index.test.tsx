@@ -43,18 +43,6 @@ jest.mock(
 		)
 );
 
-jest.mock(
-	'calypso/components/empty-content',
-	() =>
-		( { title, line, action }: { title: string; line: string; action: string } ) => (
-			<div data-testid="empty-content">
-				<h2>{ title }</h2>
-				<p>{ line }</p>
-				<button>{ action }</button>
-			</div>
-		)
-);
-
 describe( 'UserProfile', () => {
 	const defaultProps: UserProfileProps = {
 		userLogin: 'testuser',
@@ -112,7 +100,7 @@ describe( 'UserProfile', () => {
 
 		renderWithClient( <UserProfile { ...defaultProps } /> );
 
-		expect( await screen.findByTestId( 'empty-content' ) ).toBeVisible();
+		expect( await screen.findByRole( 'heading', { name: 'User not found.' } ) ).toBeVisible();
 	} );
 
 	test( 'should render user profile when user is available', async () => {
@@ -153,7 +141,7 @@ describe( 'UserProfile', () => {
 	test( 'should not show content when isLoading is true', () => {
 		renderWithClient( <UserProfile { ...defaultProps } /> );
 
-		expect( screen.queryByTestId( 'empty-content' ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'heading', { name: 'User not found.' } ) ).not.toBeInTheDocument();
 		expect( screen.queryByTestId( 'user-profile-header' ) ).not.toBeInTheDocument();
 	} );
 
