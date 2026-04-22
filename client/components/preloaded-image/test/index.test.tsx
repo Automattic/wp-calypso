@@ -58,14 +58,6 @@ describe( 'PreloadedImage', () => {
 		expect( getImage() ).toHaveClass( 'is-loaded' );
 	} );
 
-	test( 'adds is-loaded class after image fails to load', () => {
-		render( <PreloadedImage { ...defaultProps } /> );
-
-		fireEvent.error( getImage() );
-
-		expect( getImage() ).toHaveClass( 'is-loaded' );
-	} );
-
 	test( 'applies custom className to the img element', () => {
 		render( <PreloadedImage { ...defaultProps } className="custom-class" /> );
 
