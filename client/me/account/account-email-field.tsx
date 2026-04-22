@@ -1,11 +1,9 @@
 import { FormInputValidation, FormLabel } from '@automattic/components';
-import { createSelector } from '@automattic/state-utils';
 import { Button } from '@wordpress/components';
 import { removeQueryArgs } from '@wordpress/url';
 import emailValidator from 'email-validator';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import QueryAllDomains from 'calypso/components/data/query-all-domains';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -13,7 +11,6 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import isPendingEmailChange from 'calypso/state/selectors/is-pending-email-change';
-import { getFlatDomainsList } from 'calypso/state/sites/domains/selectors';
 import {
 	cancelPendingEmailChange,
 	removeUnsavedUserSetting,
@@ -95,6 +92,57 @@ const AccountEmailValidationNotice = ( {
 };
 
 /**
+ * Well-known free email providers whose addresses are not at risk of expiry.
+ * Anything not on this list is treated as a custom domain that could expire.
+ */
+const FREE_EMAIL_PROVIDERS = new Set( [
+	'gmail.com',
+	'googlemail.com',
+	'yahoo.com',
+	'yahoo.co.uk',
+	'yahoo.fr',
+	'yahoo.de',
+	'yahoo.es',
+	'yahoo.it',
+	'yahoo.ca',
+	'yahoo.com.au',
+	'hotmail.com',
+	'hotmail.co.uk',
+	'hotmail.fr',
+	'hotmail.de',
+	'hotmail.es',
+	'hotmail.it',
+	'outlook.com',
+	'outlook.co.uk',
+	'outlook.fr',
+	'outlook.de',
+	'live.com',
+	'live.co.uk',
+	'live.fr',
+	'live.de',
+	'msn.com',
+	'icloud.com',
+	'me.com',
+	'mac.com',
+	'aol.com',
+	'protonmail.com',
+	'proton.me',
+	'tutanota.com',
+	'tutamail.com',
+	'zoho.com',
+	'fastmail.com',
+	'fastmail.fm',
+	'yandex.com',
+	'yandex.ru',
+	'mail.ru',
+	'gmx.com',
+	'gmx.de',
+	'gmx.net',
+	'web.de',
+	'wp.pl',
+] );
+
+/**
  * Extracts the domain part of an email address (lowercased). Returns null
  * if the value does not look like an email with a domain.
  */
@@ -107,39 +155,18 @@ const getEmailDomain = ( email: string ): string | null => {
 };
 
 /**
- * Memoized selector that returns the user's custom (non-WPCOM) domain names, lowercased.
- * Only recomputes when the flat domains list changes.
+ * Returns true if the email domain is a custom domain (i.e. not a well-known
+ * free email provider), meaning it is subject to expiry risk.
  */
-const getUserCustomDomainNames = createSelector(
-	( state ) => {
-		const allDomains = getFlatDomainsList( state ) as Array< {
-			domain?: string;
-			isWPCOMDomain?: boolean;
-			isWpcomStagingDomain?: boolean;
-		} >;
-		const names = new Set< string >();
-		allDomains?.forEach( ( domain ) => {
-			if ( ! domain?.domain || domain.isWPCOMDomain || domain.isWpcomStagingDomain ) {
-				return;
-			}
-			names.add( domain.domain.toLowerCase() );
-		} );
-		return Array.from( names );
-	},
-	( state ) => [ getFlatDomainsList( state ) ]
-);
+const isCustomDomainEmail = ( email: string ): boolean => {
+	const domain = getEmailDomain( email );
+	return domain !== null && ! FREE_EMAIL_PROVIDERS.has( domain );
+};
 
-const AccountEmailOwnedDomainNotice = ( {
-	email,
-	ownedDomains,
-}: {
-	email: string;
-	ownedDomains: string[];
-} ) => {
+const AccountEmailCustomDomainNotice = ( { email }: { email: string } ) => {
 	const translate = useTranslate();
 
-	const emailDomain = getEmailDomain( email );
-	if ( ! emailDomain || ! ownedDomains.includes( emailDomain ) ) {
+	if ( ! isCustomDomainEmail( email ) ) {
 		return null;
 	}
 
@@ -148,11 +175,7 @@ const AccountEmailOwnedDomainNotice = ( {
 			isError={ false }
 			isWarning
 			text={ translate(
-				'This email uses %(domain)s, a custom domain on your account. ' +
-					'If this domain expires, you could lose access to your WordPress.com account ' +
-					'and password recovery. We recommend using an email from a free provider ' +
-					"like Gmail or Outlook that doesn't depend on your domain's status.",
-				{ args: { domain: emailDomain } }
+				"This email uses a custom domain. If your domain expires, you'd lose access to account recovery. Consider an email from a service like Gmail or Outlook instead."
 			) }
 		/>
 	);
@@ -219,7 +242,6 @@ const AccountEmailField = ( {
 	const translate = useTranslate();
 	const isEmailChangePending = useSelector( isPendingEmailChange );
 	const currentQuery = useSelector( getCurrentQueryArguments );
-	const ownedDomains = useSelector( getUserCustomDomainNames );
 	const [ emailInvalidReason, setEmailInvalidReason ] = useState< AccountEmailValidationReason >(
 		EMAIL_VALIDATION_REASON_IS_VALID
 	);
@@ -292,7 +314,6 @@ const AccountEmailField = ( {
 
 	return (
 		<>
-			<QueryAllDomains />
 			<FormFieldset>
 				<FormLabel htmlFor={ emailInputId }>{ translate( 'Email address' ) }</FormLabel>
 				<FormTextInput
@@ -313,10 +334,7 @@ const AccountEmailField = ( {
 				/>
 
 				{ emailInvalidReason === EMAIL_VALIDATION_REASON_IS_VALID && (
-					<AccountEmailOwnedDomainNotice
-						email={ String( emailAddress ) }
-						ownedDomains={ ownedDomains }
-					/>
+					<AccountEmailCustomDomainNotice email={ String( emailAddress ) } />
 				) }
 
 				<FormSettingExplanation>
