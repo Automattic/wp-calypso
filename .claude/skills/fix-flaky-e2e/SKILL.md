@@ -10,10 +10,12 @@ Automates the triage-and-fix loop for flaky E2E tests running on TeamCity (`team
 
 ## Prerequisites
 
-- `TEAMCITY_TOKEN` must be set in the environment. If missing, stop and instruct the user:
-  > Generate a token at https://teamcity.a8c.com/profile.html?item=accessTokens (scope: "View project") and export it as `TEAMCITY_TOKEN`.
-- `gh` CLI must be authenticated (`gh auth status`). Needed for opening the draft PR.
-- A local Calypso dev server and the e2e environment must be runnable. See `test/e2e/AGENTS.md` and `test/e2e/docs-new/setup.md`.
+The skill needs:
+- `TEAMCITY_TOKEN` set in the environment.
+- `gh` CLI authenticated (for the final draft PR).
+- A local Calypso dev server and e2e environment runnable per `test/e2e/AGENTS.md` and `test/e2e/docs-new/setup.md`.
+
+**If either of the first two is missing, don't just stop — run the assisted setup in Step 1.**
 
 ## Build configurations in scope
 
@@ -35,15 +37,58 @@ Pass one of:
 - A TeamCity build URL (e.g. `https://teamcity.a8c.com/viewLog.html?buildId=123456`) — scope to one build.
 - A spec path or test title — scope to one test and pull its recent TC history.
 
-## Step 1: Verify auth
+## Step 1: Preflight & assisted setup
+
+Run both checks first; only start the assisted flows if a check actually fails.
+
+### 1a. TeamCity token
 
 ```bash
-test -n "$TEAMCITY_TOKEN" || { echo "TEAMCITY_TOKEN not set"; exit 1; }
-curl -sSf -H "Authorization: Bearer $TEAMCITY_TOKEN" -H "Accept: application/json" \
-  https://teamcity.a8c.com/app/rest/server > /dev/null
+if [ -n "$TEAMCITY_TOKEN" ]; then
+  curl -sSf -H "Authorization: Bearer $TEAMCITY_TOKEN" -H "Accept: application/json" \
+    https://teamcity.a8c.com/app/rest/server > /dev/null && echo "TC_OK" || echo "TC_BAD"
+else
+  echo "TC_MISSING"
+fi
 ```
 
-If the curl fails, stop and surface the error (likely expired token).
+If `TC_MISSING` or `TC_BAD`, run the **assisted token flow**:
+
+1. Load the Chrome tools you'll need, in this order:
+   - `ToolSearch` → `select:mcp__claude-in-chrome__tabs_context_mcp,mcp__claude-in-chrome__tabs_create_mcp`
+2. Call `mcp__claude-in-chrome__tabs_context_mcp` to check the user's Chrome is connected. If it isn't, tell the user to run `/chrome` to connect the extension, then stop.
+3. Open the TeamCity token page for them:
+   - `mcp__claude-in-chrome__tabs_create_mcp` with URL `https://teamcity.a8c.com/profile.html?item=accessTokens`.
+4. Tell the user, in one message:
+   > I opened the TeamCity access-token page. Click **Create access token**, give it a name like `claude-fix-flaky-e2e`, leave scope as **Same as current user** (or restrict to "View project" on the WebApp project), copy the token, and paste it back here.
+5. Use `AskUserQuestion` to collect the token as a free-form input (label it clearly as a secret so the user knows it won't be echoed back verbatim in later messages).
+6. Offer two persistence options via `AskUserQuestion`:
+   - **Shell profile** (persists across sessions): show the exact line to append, e.g.
+     ```
+     echo 'export TEAMCITY_TOKEN=<token>' >> ~/.zshrc   # or ~/.bashrc
+     ```
+     Do **not** write to the user's rc file yourself — print the command, let the user run it in their own shell.
+   - **This session only**: tell the user to run `! export TEAMCITY_TOKEN=<token>` — note that `!`-prefixed commands don't persist across Bash tool calls in Claude Code, so this path requires them to add the export to their shell profile before re-invoking the skill. In practice, shell-profile is the right answer.
+7. After the user confirms they've exported it, re-run the check in 1a. If it still fails, surface the exact curl error and stop.
+
+Do **not** write the token to `.claude/settings.json`, `.claude/settings.local.json`, or any file in the repo — secrets don't belong in Claude Code settings files that may be shared or synced.
+
+### 1b. gh CLI auth
+
+```bash
+gh auth status 2>&1 | grep -q "Logged in" && echo "GH_OK" || echo "GH_BAD"
+```
+
+If `GH_BAD`, tell the user:
+> Your `gh` auth is broken or missing. Run this in Claude Code (the `!` prefix runs it in your shell so the OAuth flow works interactively):
+> ```
+> ! gh auth login -h github.com
+> ```
+> Pick **HTTPS** and **Login with a web browser**, follow the prompts, then tell me when you're done.
+
+Wait for user confirmation, then re-run the check. If still failing, stop and surface the error.
+
+Only proceed to Step 2 once both checks return `TC_OK` and `GH_OK`.
 
 ## Step 2: Detect flaky tests (scan mode)
 
