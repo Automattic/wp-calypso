@@ -359,7 +359,7 @@ const streamApis = {
 		pollQuery: () => getQueryStringForPoll( [], { number: 20 } ),
 	},
 	on_this_day: {
-		path: () => '/me/posts-from-this-day',
+		path: () => '/read/streams/on-this-day',
 		dateProperty: 'date',
 		apiNamespace: () => 'wpcom/v2',
 		query: ( extras ) => getQueryString( { ...extras, number: 15 } ),
