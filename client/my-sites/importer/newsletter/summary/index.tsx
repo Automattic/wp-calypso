@@ -58,7 +58,7 @@ export default function Summary( {
 	const { __ } = useI18n();
 	const prefersReducedMotion = useReducedMotion();
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite.ID ) );
-	const siteAdmminUrl = useSelector( ( state ) => getSiteAdminUrl( state, selectedSite.ID ) );
+	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, selectedSite.ID ) );
 	const [ isImportCompleted, setIsImportCompleted ] = useState( false );
 	const [ importStepsResults, setImportStepsResults ] = useState< Steps | null >();
 	const importerStatus = getImporterStatus( steps );
@@ -224,11 +224,7 @@ export default function Summary( {
 				<p>{ __( 'What would you like to do next?' ) }</p>
 				<ImporterActionButtonContainer noSpacing>
 					<ImporterActionButton
-						href={
-							isJetpack
-								? `${ siteAdmminUrl }admin.php?page=jetpack#/newsletter`
-								: `/settings/newsletter/${ selectedSite.slug }`
-						}
+						href={ `${ siteAdminUrl }admin.php?page=jetpack-newsletter` }
 						primary
 					>
 						{ __( 'Customize your newsletter' ) }

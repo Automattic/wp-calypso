@@ -3,6 +3,11 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryReaderList from 'calypso/components/data/query-reader-list';
+import ReaderMain from 'calypso/reader/components/reader-main';
+import ListEmpty from 'calypso/reader/list-stream/components/empty';
+import ReaderListHeader from 'calypso/reader/list-stream/components/list-header';
+import ListMissing from 'calypso/reader/list-stream/components/missing';
+import ListSites from 'calypso/reader/list-stream/views/sites';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import Stream from 'calypso/reader/stream';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -14,16 +19,6 @@ import {
 	hasRequestedListByOwnerAndSlug,
 	isMissingByOwnerAndSlug,
 } from 'calypso/state/reader/lists/selectors';
-import EmptyContent from './empty';
-import ListStreamHeader from './header';
-import ListMissing from './missing';
-import './style.scss';
-
-const createEmptyContent = ( list ) => {
-	const EmptyContentWithList = () => <EmptyContent list={ list } />;
-	EmptyContentWithList.displayName = 'EmptyContentWithList';
-	return EmptyContentWithList;
-};
 
 class ListStream extends Component {
 	constructor( props ) {
@@ -58,77 +53,56 @@ class ListStream extends Component {
 
 	render() {
 		const list = this.props.list;
-		const shouldShowFollow = list && ! list.is_owner;
-		const listStreamIconClasses = 'gridicon gridicon__list';
 
 		if ( ! this.props.hasRequested ) {
 			return <QueryReaderList owner={ this.props.owner } slug={ this.props.slug } />;
 		}
 
-		let formattedTitle = this.title;
-		if ( list ) {
-			// Show author name in parentheses if the list is owned by someone other than the current user
-			const isOwnedByCurrentUser =
-				this.props.currentUser && list.owner === this.props.currentUser.username;
-			this.title = isOwnedByCurrentUser ? list.title : `${ list.title } (${ list.owner })`;
-			formattedTitle = isOwnedByCurrentUser ? (
-				list.title
-			) : (
-				<>
-					{ list.title } (<a href={ `/reader/users/${ list.owner }` }>{ list.owner }</a>)
-				</>
-			);
-		}
-
 		if ( this.props.isMissing ) {
-			return <ListMissing owner={ this.props.owner } slug={ this.props.slug } />;
+			return <ListMissing />;
 		}
 
-		return (
-			<Stream
-				{ ...this.props }
-				listName={ this.title }
-				emptyContent={ createEmptyContent( list ) }
-				showFollowInHeader={ shouldShowFollow }
-			>
+		const title = list?.title || this.title;
+		const headerElement = (
+			<>
 				<DocumentHead
 					title={ this.props.translate( '%s ‹ Reader', {
-						args: this.title,
+						args: title,
 						comment: '%s is the section name. For example: "My Likes"',
 					} ) }
 				/>
-				<QueryReaderList owner={ this.props.owner } slug={ this.props.slug } />
-				<ListStreamHeader
-					isPublic={ list?.is_public }
-					icon={
-						<svg
-							className={ listStreamIconClasses }
-							height="32"
-							width="32"
-							xmlns="http://www.w3.org/2000/svg"
-							viewBox="0 0 24 24"
-						>
-							<g>
-								<path
-									d="M9 19h10v-2H9v2zm0-6h10v-2H9v2zm0-8v2h10V5H9zm-3-.5c-.828
-									0-1.5.672-1.5 1.5S5.172 7.5 6 7.5 7.5 6.828 7.5 6 6.828 4.5 6
-									4.5zm0 6c-.828 0-1.5.672-1.5 1.5s.672 1.5 1.5 1.5 1.5-.672
-									1.5-1.5-.672-1.5-1.5-1.5zm0 6c-.828 0-1.5.672-1.5 1.5s.672 1.5
-									1.5 1.5 1.5-.672 1.5-1.5-.672-1.5-1.5-1.5z"
-								/>
-							</g>
-						</svg>
-					}
-					title={ formattedTitle }
-					description={ list?.description }
-					showFollow={ shouldShowFollow }
+				<ReaderListHeader
+					list={ list }
+					currentUser={ this.props.currentUser }
 					following={ this.props.isSubscribed }
 					onFollowToggle={ this.toggleFollowing }
-					showEdit={ list && list.is_owner }
-					editUrl={ window.location.href + '/edit' }
+					view={ this.props.view }
 				/>
-			</Stream>
+			</>
 		);
+
+		switch ( this.props.view ) {
+			case 'sites':
+				return (
+					<ReaderMain>
+						<div>
+							{ headerElement }
+							{ list && <ListSites list={ list } /> }
+						</div>
+					</ReaderMain>
+				);
+			default:
+				return (
+					<Stream
+						{ ...this.props }
+						listName={ this.title }
+						emptyContent={ () => <ListEmpty list={ list } /> }
+						showFollowInHeader={ list && ! list?.is_owner }
+					>
+						{ headerElement }
+					</Stream>
+				);
+		}
 	}
 }
 

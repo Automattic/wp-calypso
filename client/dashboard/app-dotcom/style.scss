@@ -2,6 +2,10 @@
 
 /**
  * DotCom theme variables for dashboard
+ *
+ * Default values under :root target the light theme. Dark values are applied
+ * when the <html data-theme="dark"> attribute is set, or when data-theme="system"
+ * and the OS prefers a dark color scheme.
  */
 
 :root {
@@ -46,4 +50,63 @@
 
 	// Overview
 	--dashboard-overview__divider-color: #{$gray-100};
+}
+
+// :root variables overridden for dark theme
+@mixin dashboard-dark-theme {
+	// Theme
+	--wp-admin-theme-color: #5b8ef7;
+	--wp-admin-theme-color--rgb: 91, 142, 247;
+	--wp-admin-theme-color-darker-10: #7ba5f9;
+	--wp-admin-theme-color-darker-10--rgb: 123, 165, 249;
+	--wp-admin-theme-color-darker-20: #9bbcfb;
+	--wp-admin-theme-color-darker-20--rgb: 155, 188, 251;
+
+	// Layout
+	--dashboard__background-color: #1e1e1e;
+	--dashboard__text-color: #e0e0e0;
+	--dashboard-header__background-color: rgba(30, 30, 30, 0.90);
+	--dashboard-header__color: #e0e0e0;
+	--dashboard-header__border-color: #2f2f2f;
+	--dashboard-header__divider-color: #3a3a3a;
+
+	// Menu
+	--dashboard-menu-item__color: #bdbdbd;
+	--dashboard-menu-item-active__color: #fff;
+
+	// Secondary menu
+	--dashboard-secondary-menu-item__color: #e0e0e0;
+
+	// Overview
+	--dashboard-overview__divider-color: #2f2f2f;
+
+	// Jetpack grayscale, inverted so darker numbers render as lighter shades on dark.
+	// `--jp-black` / `--jp-white` stay literal — they're brand constants, and many usages
+	// (white text on colored bg, black outlines) depend on them being literal.
+	--jp-black-80: #e0e0e0;
+	--jp-white-off: #2a2a2a;
+	--jp-gray: #3a3a3a;
+	--jp-gray-0: #2a2a2a;
+	--jp-gray-5: #3a3a3a;
+	--jp-gray-10: #4a4a4a;
+	--jp-gray-20: #5a5a5a;
+	--jp-gray-30: #757575;
+	--jp-gray-40: #8a8a8a;
+	--jp-gray-50: #a0a0a0;
+	--jp-gray-60: #b0b0b0;
+	--jp-gray-70: #bdbdbd;
+	--jp-gray-80: #e0e0e0;
+	--jp-gray-90: #eaeaea;
+	--jp-gray-100: #f0f0f0;
+	--jp-gray-off: #2a2a2a;
+}
+
+:root[data-theme="dark"] {
+	@include dashboard-dark-theme;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root[data-theme="system"] {
+		@include dashboard-dark-theme;
+	}
 }

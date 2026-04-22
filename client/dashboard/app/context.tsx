@@ -52,6 +52,7 @@ export type AppConfig = {
 		domainOnlySites: boolean;
 		startStoreRoute?: boolean;
 		siteOverview: SiteOverviewSupports;
+		colorScheme: boolean;
 	};
 	posthog?: {
 		apiKey: string;
@@ -97,6 +98,7 @@ export const APP_CONTEXT_DEFAULT_CONFIG: AppConfig = {
 		siteOverview: {
 			preview: false,
 		},
+		colorScheme: false,
 	},
 	optIn: false,
 	components: {

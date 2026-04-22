@@ -1,0 +1,9 @@
+@import '@wordpress/base-styles/variables';
+
+.dashboard-sidebar-theme-switcher {
+	position: sticky;
+	bottom: 0;
+	margin-block-start: auto;
+	padding: $grid-unit-20 $grid-unit-15 $grid-unit-30;
+	background: var(--dashboard-header__background-color);
+}
