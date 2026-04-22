@@ -6,7 +6,6 @@ import { loadBlackboxSdk } from 'calypso/blocks/login/utils/blackbox-sdk';
  * Awaits the lazy SDK load, calls collect() to trigger data collection, and
  * returns the session ID. Blackbox returns BlackboxError instead of throwing,
  * so the typeof check filters those out. The try/catch is defense-in-depth.
- *
  * @returns {Promise<string|undefined>} Session ID, or undefined on any failure.
  */
 export async function getBlackboxSessionId() {

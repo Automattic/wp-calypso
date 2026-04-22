@@ -4,8 +4,12 @@
 
 jest.mock( '@automattic/calypso-config', () => {
 	const config = jest.fn( ( key ) => {
-		if ( key === 'blackbox_api_key' ) return 'test-api-key';
-		if ( key === 'blackbox_url' ) return 'https://blackbox-api.wp.com/v.js';
+		if ( key === 'blackbox_api_key' ) {
+			return 'test-api-key';
+		}
+		if ( key === 'blackbox_url' ) {
+			return 'https://blackbox-api.wp.com/v.js';
+		}
 		return undefined;
 	} );
 	config.isEnabled = jest.fn( ( flag ) => flag === 'blackbox-login' );
@@ -14,7 +18,9 @@ jest.mock( '@automattic/calypso-config', () => {
 
 jest.mock( '@automattic/load-script', () => ( {
 	loadScript: jest.fn( ( _url, callback ) => {
-		if ( typeof callback === 'function' ) callback( null );
+		if ( typeof callback === 'function' ) {
+			callback( null );
+		}
 	} ),
 } ) );
 

@@ -15,7 +15,6 @@ let loadPromise = null;
  * Inject the Blackbox SDK script once and call configure() after it loads.
  * Returns a Promise that always resolves (never rejects) so Blackbox can never block login.
  * Subsequent calls return the same Promise — the script is only injected once.
- *
  * @returns {Promise<void>}
  */
 export function loadBlackboxSdk() {
