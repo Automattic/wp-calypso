@@ -34,10 +34,17 @@ export default function ( phoneNumber ) {
 
 	// phone module validates mobile numbers
 	if ( ! phone( phoneNumber ).isValid ) {
-		return {
-			error: 'phone_number_invalid',
-			message: i18n.translate( 'That phone number does not appear to be valid' ),
-		};
+		// The phone library's NANP area code database may not include recently assigned US area
+		// codes (e.g., area code 350, assigned to California in 2022). For numbers that match
+		// valid NANP format (+1 followed by 10 digits, area code first digit 2-9), accept the
+		// number even if the phone library doesn't recognize the specific area code.
+		const isValidNANPFormat = /^\+1[2-9]\d{9}$/.test( phoneNumber );
+		if ( ! isValidNANPFormat ) {
+			return {
+				error: 'phone_number_invalid',
+				message: i18n.translate( 'That phone number does not appear to be valid' ),
+			};
+		}
 	}
 
 	return {
