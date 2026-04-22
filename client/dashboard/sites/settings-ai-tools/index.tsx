@@ -146,6 +146,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 		: { text: __( 'Disabled' ) };
 	const readBadge = hasSiteAbilityOverrides ? getReadBadge( readTools ) : defaultBadge;
 	const writeBadge = hasSiteAbilityOverrides ? getWriteBadge( writeTools ) : defaultBadge;
+	const isReaderChatFeatureEnabled = config.isEnabled( 'reader-chat-settings' );
 	const mcpMutation = useMutation( {
 		...userSettingsMutation(),
 		meta: {
@@ -334,6 +335,21 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 							/>
 						) }
 					</>
+				) }
+				{ isReaderChatFeatureEnabled && isAvailable && (
+					<Card>
+						<CardBody>
+							<VStack spacing={ 4 }>
+								<SectionHeader
+									title={ __( 'Reader Chat' ) }
+									description={ __(
+										'Let readers ask your blog questions and get answers from your content.'
+									) }
+									level={ 3 }
+								/>
+							</VStack>
+						</CardBody>
+					</Card>
 				) }
 				{ isFreeTrial && (
 					<ConfirmModal
