@@ -1,12 +1,12 @@
 .list-stream__header-title-privacy {
-	margin-left: 2px;
+	margin-inline-start: 2px;
 	margin-top: 1px;
 }
 
 .list-stream__header-follow {
 	align-items: stretch;
 	display: flex;
-	margin-left: auto;
+	margin-inline-start: auto;
 	z-index: z-index("root", ".list-stream__header-follow");
 
 	.follow-button {
@@ -43,14 +43,10 @@
 		background-color: var(--color-neutral-0);
 		animation: loading-fade 1.6s ease-in-out infinite;
 	}
-
-	.gridicon {
-		display: none;
-	}
 }
 
 .list-stream__header-edit {
-	margin-left: auto;
+	margin-inline-start: auto;
 
 	.list-stream__header-action-icon .gridicon {
 		fill: var(--color-neutral-dark);
@@ -67,6 +63,12 @@
 			&:hover {
 				text-decoration-color: initial;
 			}
+		}
+	}
+
+	.list-stream__nav {
+		.section-nav-tab__link {
+			padding-top: 0; // Removing padding from top of tabs to make the view more compact.
 		}
 	}
 }
