@@ -7,6 +7,7 @@ describe( 'Phone Validation Library', () => {
 		{ input: '+123456789a', expected: 'phone_number_contains_letters' },
 		{ input: '+(12345)6789', expected: 'phone_number_contains_special_characters' },
 		{ input: '+111111111', expected: 'phone_number_invalid' },
+		{ input: '+10002197449', expected: 'phone_number_invalid' }, // US-length but invalid area code (starts with 0)
 	] )(
 		'Invalid phone number ($input) results in error banner ($expected)',
 		function ( { input, expected } ) {
