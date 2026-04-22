@@ -5,8 +5,8 @@
 
 import { render, screen } from '@testing-library/react';
 import React from 'react';
-import { UserData } from 'calypso/lib/user/user';
 import UserPosts from '../posts';
+import type { ReaderUser } from '@automattic/api-core';
 
 jest.mock(
 	'calypso/reader/stream',
@@ -40,11 +40,16 @@ jest.mock( 'calypso/components/empty-content', () => ( { icon, line } ) => (
 ) );
 
 describe( 'UserPosts', () => {
-	const defaultUser: UserData = {
+	const defaultUser: ReaderUser = {
 		ID: 123,
-		user_login: 'testuser',
+		user_login: 'test_user',
+		nice_name: 'nice_name',
 		display_name: 'Test User',
 		avatar_URL: 'https://example.com/avatar.jpg',
+		first_name: '',
+		last_name: '',
+		description: '',
+		profile_URL: '',
 	};
 
 	test( 'should render Stream component with correct props', () => {

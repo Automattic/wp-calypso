@@ -21,15 +21,14 @@ import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/prefe
 import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
 import hasCompletedReaderProfile from 'calypso/state/reader/onboarding/selectors/has-completed-reader-profile';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
+import { useSiteSubscriptions } from '../following/use-site-subscriptions';
 import './style.scss';
 
 const ReaderOnboarding = ( {
 	onRender,
-	forceShow = false,
 	isSuppressed = false,
 }: {
 	onRender?: ( shown: boolean ) => void;
-	forceShow?: boolean;
 	isSuppressed?: boolean;
 } ) => {
 	const dispatch = useDispatch();
@@ -38,6 +37,7 @@ const ReaderOnboarding = ( {
 
 	const preferencesLoaded = useSelector( hasReceivedRemotePreferences );
 	const userRegistrationDate: string | null = useSelector( getCurrentUserDate );
+	const { isLoading, hasNonSelfSubscriptions } = useSiteSubscriptions();
 
 	const followedTags = useSelector( getReaderFollowedTags );
 	const follows = useSelector( getReaderFollows );
@@ -65,6 +65,8 @@ const ReaderOnboarding = ( {
 		! hasCompletedOnboarding &&
 		userRegistrationDate !== null &&
 		new Date( userRegistrationDate ) >= new Date( '2024-10-01T00:00:00Z' );
+
+	const forceShow = ! isLoading && ! hasNonSelfSubscriptions;
 
 	const shouldShowOnboarding =
 		forceShow || isEnabled( 'reader/force-onboarding' ) || !! meetsEligibility;
