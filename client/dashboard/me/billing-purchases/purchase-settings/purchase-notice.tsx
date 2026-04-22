@@ -139,7 +139,7 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 		return (
 			<>
 				{ cancellationOfferNotice && cancellationOfferNotice }
-				<CreditCardExpiringNotice purchase={ purchase } />;
+				<CreditCardExpiringNotice purchase={ purchase } />
 			</>
 		);
 	}
