@@ -146,13 +146,13 @@ describe( 'getCancellationHeading', () => {
 			} )
 		).toBe( 'Remove Do it for me: Website Design' );
 	} );
-	test( 'Remove generic fallback is "Remove subscription"', () => {
+	test( 'Remove generic fallback is "Remove upgrade"', () => {
 		expect(
 			getCancellationHeading( {
 				purchase: makePurchaseForCategory( 'other' ),
 				intent: 'remove',
 			} )
-		).toBe( 'Remove subscription' );
+		).toBe( 'Remove upgrade' );
 	} );
 } );
 
