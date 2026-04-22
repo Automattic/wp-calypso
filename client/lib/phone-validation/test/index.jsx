@@ -7,6 +7,7 @@ describe( 'Phone Validation Library', () => {
 		{ input: '+123456789a', expected: 'phone_number_contains_letters' },
 		{ input: '+(12345)6789', expected: 'phone_number_contains_special_characters' },
 		{ input: '+111111111', expected: 'phone_number_invalid' },
+		{ input: '+12001234567', expected: 'phone_number_invalid' }, // Unassigned NANP area code
 	] )(
 		'Invalid phone number ($input) results in error banner ($expected)',
 		function ( { input, expected } ) {
