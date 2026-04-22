@@ -8,6 +8,7 @@ steps:
       CONFIG_ENV: release
       PLAYWRIGHT_SKIP_DOWNLOAD: 'true'
       SKIP_TSC: 'true'
+      IMAGE_ID: xcode-26.4.1
     command: |
       set -eu
 
