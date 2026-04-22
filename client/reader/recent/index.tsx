@@ -152,10 +152,10 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 						);
 					}
 					return (
-						<div onFocus={ () => handleItemFocus( item.postId?.toString() ) }>
+						<div onFocus={ () => handleItemFocus( `${ item.feedId }-${ item.postId }` ) }>
 							<RecentPostField
 								ref={ ( el ) => {
-									itemRefs.current[ item.postId?.toString() ?? '' ] = el;
+									itemRefs.current[ `${ item.feedId }-${ item.postId }` ] = el;
 								} }
 								post={ getPostFromItem( item ) }
 							/>
@@ -226,7 +226,9 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 			if ( event.key === 'Enter' && focusedIndexRef.current !== null ) {
 				// Use the focused index to determine the selected item
 				const focusedItem = shownData.find(
-					( item ) => item.postId?.toString() === focusedIndexRef.current
+					( item ) =>
+						! isPaddingItem( item ) &&
+						`${ item.feedId }-${ item.postId }` === focusedIndexRef.current
 				);
 				if ( focusedItem && ! isPaddingItem( focusedItem ) ) {
 					setSelectedItem( focusedItem );
@@ -249,7 +251,9 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 					<DataViews< ReaderPost | PaddingItem >
 						config={ { perPageSizes: [ 15, 30, 50, 100 ] } }
 						getItemId={ ( item: ReaderPost | PaddingItem, index = 0 ) =>
-							item.postId?.toString() ?? `item-${ index }`
+							isPaddingItem( item )
+								? item.postId?.toString() ?? `item-${ index }`
+								: `${ item.feedId }-${ item.postId }`
 						}
 						view={ view }
 						fields={ fields }
@@ -262,10 +266,11 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 						paginationInfo={ view.search === '' ? defaultPaginationInfo : paginationInfo }
 						defaultLayouts={ { list: {} } }
 						isLoading={ isLoading }
-						selection={ selectedItem ? [ selectedItem.postId?.toString() ] : [] }
+						selection={ selectedItem ? [ `${ selectedItem.feedId }-${ selectedItem.postId }` ] : [] }
 						onChangeSelection={ ( newSelection: string[] ) => {
 							const selectedPost = data?.items?.find(
-								( item: ReaderPost ) => item.postId?.toString() === newSelection[ 0 ]
+								( item: ReaderPost ) =>
+									`${ item.feedId }-${ item.postId }` === newSelection[ 0 ]
 							);
 							setSelectedItem( selectedPost || null );
 							// Focus the post column after a short delay to ensure DOM updates.
@@ -293,7 +298,12 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 							feedId={ selectedItem.feedId }
 							postId={ selectedItem.postId }
 							onClose={ () => {
-								const focusItem = itemRefs.current[ selectedItem?.postId?.toString() ?? '' ];
+								const focusItem =
+									itemRefs.current[
+										selectedItem
+											? `${ selectedItem.feedId }-${ selectedItem.postId }`
+											: ''
+									];
 								if ( ! isWide ) {
 									setSelectedItem( null );
 								}
