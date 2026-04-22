@@ -19,6 +19,7 @@ import SidebarMenu from 'calypso/layout/sidebar/menu';
 import SidebarSeparator from 'calypso/layout/sidebar/separator';
 import AppTitle from 'calypso/reader/components/app-title';
 import ReaderA8cConversationsIcon from 'calypso/reader/components/icons/a8c-conversations-icon';
+import ReaderBlueskyIcon from 'calypso/reader/components/icons/bluesky-icon';
 import ReaderConversationsIcon from 'calypso/reader/components/icons/conversations-icon';
 import ReaderDiscoverIcon from 'calypso/reader/components/icons/discover-icon';
 import ReaderLikesIcon from 'calypso/reader/components/icons/likes-icon';
@@ -205,6 +206,7 @@ export class ReaderSidebar extends Component {
 							label={ translate( 'ATmosphere' ) }
 							link="/reader/atmosphere"
 							onNavigate={ this.handleSidebarMenuClick( TrackingKeys.atmosphere ) }
+							customIcon={ <ReaderBlueskyIcon viewBox="0 0 24 24" /> }
 							className={ ReaderSidebarHelper.itemLinkClass( '/reader/atmosphere', path, {
 								'sidebar-streams__atmosphere': true,
 							} ) }
