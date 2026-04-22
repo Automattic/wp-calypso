@@ -101,6 +101,7 @@
 		"press-this": true,
 		"publicize-preview": true,
 		"purchases/new-payment-methods": true,
+		"reader/achievements": true,
 		"reader/full-errors": false,
 		"reader/msd-enabled": true,
 		"reader/saved-posts": true,

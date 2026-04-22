@@ -132,6 +132,7 @@
 		"publicize-preview": true,
 		"purchases/new-payment-methods": true,
 		"push-notifications": true,
+		"reader/achievements": false,
 		"reader/full-errors": false,
 		"reader/msd-enabled": true,
 		"reader/saved-posts": false,

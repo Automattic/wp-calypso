@@ -7,8 +7,8 @@ interface ListPostsProps {
 	list?: ReaderList;
 	listName: string;
 	streamKey: string;
-	trackScrollPage: () => void;
-	onUpdatesShown: () => void;
+	trackScrollPage?: () => void;
+	onUpdatesShown?: () => void;
 	children?: ReactNode;
 }
 

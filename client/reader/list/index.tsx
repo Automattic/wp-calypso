@@ -20,8 +20,8 @@ interface ReaderListProps {
 	slug: string;
 	view: 'posts' | 'sites';
 	streamKey: string;
-	trackScrollPage: () => void;
-	onUpdatesShown: () => void;
+	trackScrollPage?: () => void;
+	onUpdatesShown?: () => void;
 }
 
 export default function ReaderList( props: ReaderListProps ) {
