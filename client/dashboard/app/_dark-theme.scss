@@ -44,6 +44,11 @@
 		color: var( --dashboard__text-color );
 	}
 
+	.components-input-control__container:has( .components-input-control__input:disabled ) {
+		background-color: var( --dashboard-surface__background-color );
+		opacity: 0.72;
+	}
+
 	.components-input-control__backdrop,
 	.components-textarea-control__input {
 		border-color: var( --dashboard-field__border-color );
@@ -55,6 +60,11 @@
 
 	.components-textarea-control__input {
 		background-color: var( --dashboard-field__background-color );
+	}
+
+	.components-input-control__container:has( .components-input-control__input:disabled )
+		.components-input-control__backdrop {
+		border-color: var( --dashboard-surface__border-color );
 	}
 
 	.components-input-control__input,
@@ -75,6 +85,13 @@
 		caret-color: var( --dashboard__text-color );
 	}
 
+	.components-input-control__container .components-input-control__input:disabled,
+	.components-input-control__input:disabled {
+		color: var( --dashboard-subtle__color ) !important;
+		-webkit-text-fill-color: var( --dashboard-subtle__color );
+		cursor: not-allowed;
+	}
+
 	.components-input-control__input::placeholder,
 	.components-textarea-control__input::placeholder {
 		color: var( --dashboard-subtle__color );
@@ -93,6 +110,41 @@
 	.components-textarea-control__input::-moz-selection {
 		background-color: var( --wp-admin-theme-color ) !important;
 		color: #fff !important;
+	}
+
+	.components-input-control.has-error .components-input-control__backdrop,
+	.components-input-control.has-error
+		.components-input-control__input:focus
+		+ .components-input-control__backdrop {
+		border-color: var( --dashboard-danger__color );
+	}
+
+	.components-input-control.has-error .components-base-control__help {
+		color: var( --dashboard-danger__color-hover );
+	}
+
+	.components-input-control.has-error .components-base-control__help svg {
+		fill: var( --dashboard-danger__color-hover );
+	}
+
+	.components-validated-control:has(
+			:is( input, select ):invalid[ data-validity-visible ]
+		)
+		.components-input-control__backdrop,
+	.components-validated-control__wrapper-with-error-delegate:has(
+			select:invalid[ data-validity-visible ]
+		)
+		.components-input-control__backdrop {
+		border-color: var( --dashboard-danger__color );
+	}
+
+	.components-validated-control__indicator.is-invalid {
+		color: var( --dashboard-danger__color-hover );
+	}
+
+	.components-validated-control__indicator.is-invalid
+		.components-validated-control__indicator-icon {
+		fill: var( --dashboard-danger__color-hover );
 	}
 }
 
@@ -135,6 +187,7 @@
 	--dashboard-warning__action-color-hover: #f0f0f0;
 	--dashboard-warning__action-color-active: #fff;
 	--dashboard-danger__color: #ff8080;
+
 	--dashboard-danger__color-hover: #ff9b9b;
 	--dashboard-danger__color-active: #ffb3b3;
 
