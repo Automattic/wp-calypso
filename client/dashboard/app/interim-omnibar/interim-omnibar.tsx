@@ -49,13 +49,34 @@ export function InterimOmnibar( {
 	);
 
 	// Announce the bell button element to subscribers (e.g. the Notifications
-	// component) so they can anchor a popover to it. Re-runs on every commit so
-	// it stays correct if MasterbarLoggedIn re-renders and replaces the node.
+	// component) so they can anchor a popover to it. The bell re-mounts itself
+	// when an unseen-count change flips its internal `key`, so we observe the
+	// omnibar subtree and re-emit whenever the `.masterbar-notifications` node
+	// is replaced — otherwise the Popover stays anchored to a detached node
+	// and falls back to the top-left of the viewport.
 	useEffect( () => {
 		const container = document.getElementById( 'wpcom-omnibar' );
-		const bell = container?.querySelector< HTMLElement >( '.masterbar-notifications' ) ?? null;
-		omnibarEvents.notificationsAnchor.emit( bell );
-	} );
+		if ( ! container ) {
+			return;
+		}
+
+		let currentBell: HTMLElement | null = null;
+
+		const syncBell = () => {
+			const bell = container.querySelector< HTMLElement >( '.masterbar-notifications' ) ?? null;
+			if ( bell !== currentBell ) {
+				currentBell = bell;
+				omnibarEvents.notificationsAnchor.emit( bell );
+			}
+		};
+
+		syncBell();
+
+		const observer = new MutationObserver( syncBell );
+		observer.observe( container, { childList: true, subtree: true } );
+
+		return () => observer.disconnect();
+	}, [] );
 
 	// Dispatch the user's unseen note count to the store so the unread marker appears.
 	useEffect( () => {
