@@ -6,6 +6,7 @@
 import { store as blockEditorStore } from '@wordpress/block-editor';
 import { select } from '@wordpress/data';
 import { store as imageStudioStore } from '../store';
+import { StudioMode } from '../types';
 import type { ImageStudioEntryPoint } from '../store';
 import type { BlockEditorSelectors, CoreDataSelectors, WPBlock } from '../types/wordpress.d';
 
@@ -29,6 +30,22 @@ export interface ImageStudioData {
 	blockType: string | null;
 }
 
+/**
+ * Video studio context payload — mirrors `ImageStudioData` so the same
+ * camelCase keys are used on the wire. The wpcom `Video_Studio` PHP context
+ * tree class (companion to `Image_Studio`) reads these via `get_*` reflection
+ * methods (e.g. `is_open` → `isOpen`).
+ */
+export interface VideoStudioData {
+	isOpen: boolean;
+	id: number | null;
+	style?: string;
+	aspect_ratio?: string;
+	metadata: ImageStudioMetadata;
+	entryPoint: ImageStudioEntryPoint | null;
+	blockType: string | null;
+}
+
 export interface PageContentBlock {
 	name: string;
 	type?: 'header' | 'content' | 'footer';
@@ -41,8 +58,9 @@ export interface ImageStudioClientContext extends Record< string, unknown > {
 	url: string;
 	pathname: string;
 	search: string;
-	environment: 'wp-admin' | 'image-studio';
+	environment: 'wp-admin' | 'image-studio' | 'video-studio';
 	imageStudio?: ImageStudioData;
+	videoStudio?: VideoStudioData;
 	currentPageContent?: PageContentBlock[];
 	constructorArguments?: {
 		skip_storage?: boolean;
@@ -246,18 +264,45 @@ function detectImageEntity(): ImageStudioData | null {
 	}
 }
 
+/**
+ * Read the active studio mode (image vs. video) from the store.
+ * Defaults to `StudioMode.Image` if the store is unavailable or the value
+ * has not been initialised, preserving pre-toggle behaviour.
+ */
+function getStudioModeSafely(): StudioMode {
+	try {
+		const storeSelect = select( imageStudioStore );
+		return ( storeSelect?.getStudioMode?.() as StudioMode ) ?? StudioMode.Image;
+	} catch {
+		return StudioMode.Image;
+	}
+}
+
 export function getClientContext(): ImageStudioClientContext {
-	const imageStudio = detectImageEntity();
+	const studioEntity = detectImageEntity();
+	const studioMode = getStudioModeSafely();
+	const isVideoMode = studioMode === StudioMode.Video;
+
+	let environment: ImageStudioClientContext[ 'environment' ] = 'wp-admin';
+	if ( studioEntity?.isOpen ) {
+		environment = isVideoMode ? 'video-studio' : 'image-studio';
+	}
 
 	const context: ImageStudioClientContext = {
 		url: window.location.href,
 		pathname: window.location.pathname,
 		search: window.location.search,
-		environment: imageStudio?.isOpen ? 'image-studio' : 'wp-admin',
+		environment,
 	};
 
-	if ( imageStudio ) {
-		context.imageStudio = imageStudio;
+	if ( studioEntity ) {
+		// Emit ONLY one of imageStudio / videoStudio so the wpcom side cannot
+		// accidentally satisfy both route gates from the same payload.
+		if ( isVideoMode ) {
+			context.videoStudio = studioEntity;
+		} else {
+			context.imageStudio = studioEntity;
+		}
 	}
 
 	const currentPageContent = getCurrentPageContent();

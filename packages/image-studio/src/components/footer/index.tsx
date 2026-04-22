@@ -2,14 +2,16 @@ import {
 	__unstableAnimatePresence as AnimatePresence,
 	__unstableMotion as motion,
 } from '@wordpress/components';
+import { StudioModeToggle } from '../studio-mode-toggle';
 import './style.scss';
 
 interface FooterProps {
 	message?: string;
 	chatComponent?: React.ReactNode;
+	showStudioModeToggle?: boolean;
 }
 
-export const Footer = ( { message, chatComponent }: FooterProps ) => {
+export const Footer = ( { message, chatComponent, showStudioModeToggle = false }: FooterProps ) => {
 	const content = message ? (
 		<p className="image-studio-footer__notice" aria-hidden="true">
 			{ message }
@@ -40,6 +42,7 @@ export const Footer = ( { message, chatComponent }: FooterProps ) => {
 					} }
 				>
 					{ content }
+					{ showStudioModeToggle && ! message && <StudioModeToggle /> }
 				</motion.div>
 			</AnimatePresence>
 		</div>

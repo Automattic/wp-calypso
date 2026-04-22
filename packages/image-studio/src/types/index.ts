@@ -45,6 +45,11 @@ export enum ImageStudioMode {
 	Generate = 'generate',
 }
 
+// Re-export `StudioMode` so consumers can keep importing from `../types`.
+// The enum lives in its own module to avoid a circular import between
+// `types/index.ts` and `store/index.ts`.
+export { StudioMode } from './studio-mode';
+
 export enum ToolbarOption {
 	Annotate = 'annotate',
 	AltText = 'alt-text',

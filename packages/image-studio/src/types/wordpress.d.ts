@@ -80,6 +80,8 @@ export interface CurriedImageStudioSelectors {
 	getSelectedStyle: () => string | null;
 	getSelectedAspectRatio: () => string | null;
 	getLastAgentMessageId: () => string | null;
+	getStudioMode: () => import('./studio-mode').StudioMode;
+	getBlockType: () => string | null;
 }
 
 /**

@@ -8,6 +8,7 @@
 import { recordTracksEvent as recordTracksEventBase } from '@automattic/calypso-analytics';
 import { select } from '@wordpress/data';
 import { store as imageStudioStore, type ImageStudioEntryPoint } from '../store';
+import { StudioMode } from '../types';
 import { getSessionId } from '../utils/session';
 import type { ImageStudioMode, MetadataField } from '../types';
 
@@ -42,6 +43,23 @@ function getImageStudioEntryPoint(): string | null {
 }
 
 /**
+ * Read current studio media-type mode for inclusion on every tracked event.
+ * Only surfaced when the value is non-default ('video') so we don't bloat
+ * the existing image-only events with a redundant `studio_mode=image` field.
+ */
+function getStudioModeForTracking(): StudioMode | null {
+	try {
+		const imageStudioStoreData = select( imageStudioStore ) as {
+			getStudioMode?: () => StudioMode;
+		};
+		const mode = imageStudioStoreData?.getStudioMode?.();
+		return mode && mode !== StudioMode.Image ? mode : null;
+	} catch ( error ) {
+		return null;
+	}
+}
+
+/**
  * Record a tracks event with the Big Sky prefix
  * @param eventName  - The event name to track
  * @param properties - Additional properties to include
@@ -70,6 +88,11 @@ function recordImageStudioEvent(
 
 	if ( entryPoint ) {
 		baseProps.placement = entryPoint;
+	}
+
+	const studioMode = getStudioModeForTracking();
+	if ( studioMode ) {
+		baseProps.studio_mode = studioMode;
 	}
 
 	// Add WordPress page context if available

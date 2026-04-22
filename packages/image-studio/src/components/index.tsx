@@ -516,6 +516,7 @@ const ImageStudioContent = withInstanceId(
 						) }
 
 						<Footer
+							showStudioModeToggle={ mode === ImageStudioMode.Generate }
 							chatComponent={
 								agentConfigState ? (
 									<ImageStudioAgentUI

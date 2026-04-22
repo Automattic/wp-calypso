@@ -1,0 +1,33 @@
+.image-studio-mode-toggle {
+	display: flex;
+	gap: 8px;
+	justify-content: center;
+	margin-top: 12px;
+}
+
+.image-studio-mode-toggle__button.components-button.is-tertiary {
+	border: 1px solid var( --wp-components-color-foreground, #1e1e1e );
+	border-radius: 24px;
+	padding: 4px 16px;
+	height: auto;
+	font-size: 13px;
+	line-height: 1.4;
+	background: transparent;
+	color: var( --wp-components-color-foreground, #1e1e1e );
+
+	&:hover:not( :disabled ) {
+		background: rgba( 0, 0, 0, 0.04 );
+		color: var( --wp-components-color-foreground, #1e1e1e );
+	}
+
+	&[ aria-pressed='true' ] {
+		background: var( --wp-components-color-foreground, #1e1e1e );
+		color: var( --wp-components-color-background, #fff );
+		border-color: var( --wp-components-color-foreground, #1e1e1e );
+	}
+
+	&:focus-visible {
+		box-shadow: 0 0 0 1.5px var( --wp-admin-theme-color, #3858e9 );
+		outline: 2px solid transparent;
+	}
+}

@@ -2,7 +2,8 @@
  * Image Studio Store
  */
 import { createReduxStore, register, select } from '@wordpress/data';
-import { IMAGE_STUDIO_SUPPORTED_MIME_TYPES } from '../types';
+import { IMAGE_STUDIO_SUPPORTED_MIME_TYPES } from '../types/index';
+import { StudioMode } from '../types/studio-mode';
 import type { ImageData } from '../utils/get-image-data';
 
 /**
@@ -109,6 +110,10 @@ export interface ImageStudioState {
 	// Once a rating is recorded for an image it stays for the session so the
 	// buttons remain disabled when navigating back to that image.
 	imageRatings: Record< number, 'up' | 'down' >;
+	// Active studio media-type mode (image vs. video). Defaults to 'image'.
+	// Resets to 'image' on OPEN_IMAGE_STUDIO and CLOSE_IMAGE_STUDIO so each
+	// session starts in image mode unless the user explicitly toggles.
+	studioMode: StudioMode;
 }
 
 /**
@@ -270,6 +275,11 @@ type ResetCanvasHistoryAction = {
 	type: 'RESET_CANVAS_HISTORY';
 };
 
+type SetStudioModeAction = {
+	type: 'SET_STUDIO_MODE';
+	payload: StudioMode;
+};
+
 type ImageStudioCloseCallback = ( image: ImageData | null ) => Promise< void > | void;
 
 type ImageStudioAction =
@@ -298,7 +308,8 @@ type ImageStudioAction =
 	| SetSelectedAspectRatioAction
 	| SetLastAgentMessageIdAction
 	| SetImageRatingAction
-	| ResetCanvasHistoryAction;
+	| ResetCanvasHistoryAction
+	| SetStudioModeAction;
 
 /**
  * Resolve the dismissible flag for a notice.
@@ -366,6 +377,7 @@ const initialState: ImageStudioState = {
 	selectedAspectRatio: null,
 	lastAgentMessageId: null,
 	imageRatings: {},
+	studioMode: StudioMode.Image,
 };
 
 /**
@@ -657,6 +669,12 @@ const reducer = (
 				},
 			};
 
+		case 'SET_STUDIO_MODE':
+			return {
+				...state,
+				studioMode: action.payload,
+			};
+
 		case 'RESET_CANVAS_HISTORY':
 			// Reset canvas editing history to initial values (as if modal was freshly opened)
 			// Used when reverting to original image
@@ -740,6 +758,7 @@ export interface ImageStudioActions {
 		rating: 'up' | 'down'
 	) => Promise< SetImageRatingAction >;
 	resetCanvasHistory: () => Promise< ResetCanvasHistoryAction >;
+	setStudioMode: ( mode: StudioMode ) => Promise< SetStudioModeAction >;
 }
 
 /**
@@ -968,6 +987,13 @@ const actions = {
 			type: 'RESET_CANVAS_HISTORY',
 		};
 	},
+
+	setStudioMode( mode: StudioMode ): SetStudioModeAction {
+		return {
+			type: 'SET_STUDIO_MODE',
+			payload: mode,
+		};
+	},
 };
 
 /**
@@ -1011,6 +1037,7 @@ export interface ImageStudioSelectors {
 	getImageRatings: ( state: ImageStudioState ) => Record< number, 'up' | 'down' >;
 	getImageRating: ( state: ImageStudioState, attachmentId: number | null ) => 'up' | 'down' | null;
 	getSupportedMimeTypes: () => readonly string[];
+	getStudioMode: ( state: ImageStudioState ) => StudioMode;
 }
 
 /**
@@ -1197,6 +1224,10 @@ const selectors = {
 
 	getSupportedMimeTypes(): readonly string[] {
 		return IMAGE_STUDIO_SUPPORTED_MIME_TYPES;
+	},
+
+	getStudioMode( state: ImageStudioState ): StudioMode {
+		return state.studioMode ?? StudioMode.Image;
 	},
 };
 
