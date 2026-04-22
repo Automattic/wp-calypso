@@ -20,7 +20,7 @@ export default function UserHovercard( props: UserHovercardProps ): JSX.Element 
 	const { user: userProp } = props;
 	const wpcomIdOrLogin = userProp.wpcom_id || userProp.wpcom_login;
 	const classNames = 'user-hovercard ignore-click';
-	const displayName = translate( 'User profile: %s', {
+	const displayName = translate( 'User Profile: %s', {
 		args: userProp.display_name ?? '',
 	} ) as string;
 

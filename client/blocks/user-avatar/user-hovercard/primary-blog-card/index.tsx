@@ -52,7 +52,7 @@ function PrimaryBlogCard( { user }: PrimaryBlogCardProps ): JSX.Element | null {
 
 							<div className="user-hovercard__primary-blog-site-info">
 								<h5>{ decodeEntities( primaryBlog.title ) }</h5>
-								{ name && <p> { translate( 'By %(name)s', { args: { name } } ) } </p> }
+								{ name && <p> { translate( 'by %(name)s', { args: { name } } ) } </p> }
 							</div>
 						</div>
 
