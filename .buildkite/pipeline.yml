@@ -1,0 +1,15 @@
+steps:
+  - label: ":desktop_computer: Desktop npm install"
+    agents:
+      queue: mac
+    plugins:
+      - automattic/nvm#0.6.0
+    env:
+      CONFIG_ENV: release
+      PLAYWRIGHT_SKIP_DOWNLOAD: 'true'
+      SKIP_TSC: 'true'
+    command: |
+      set -eu
+
+      cd desktop
+      npm install
