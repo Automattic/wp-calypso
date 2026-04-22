@@ -31,7 +31,9 @@ describe( 'VerifyPanel', () => {
 		);
 		expect( screen.getByRole( 'heading', { name: 'Alice' } ) ).toBeVisible();
 		expect( screen.getByText( '@alice' ) ).toBeVisible();
-		expect( screen.getByText( '42' ) ).toBeVisible();
+		expect( screen.getByText( '42 posts' ) ).toBeVisible();
+		expect( screen.getByText( '10 followers' ) ).toBeVisible();
+		expect( screen.getByText( '5 following' ) ).toBeVisible();
 	} );
 
 	it( 'renders auth_failed message', () => {

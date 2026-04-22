@@ -34,13 +34,22 @@ export function VerifyPanel( { data, error, isLoading }: VerifyPanelProps ) {
 						<p>{ data.description }</p>
 						<ul className="atmosphere-verify__counts">
 							<li>
-								<strong>{ data.counts.followers }</strong> { translate( 'followers' ) }
+								{ translate( '%(count)d follower', '%(count)d followers', {
+									count: data.counts.followers,
+									args: { count: data.counts.followers },
+								} ) }
 							</li>
 							<li>
-								<strong>{ data.counts.follows }</strong> { translate( 'following' ) }
+								{ translate( '%(count)d following', '%(count)d following', {
+									count: data.counts.follows,
+									args: { count: data.counts.follows },
+								} ) }
 							</li>
 							<li>
-								<strong>{ data.counts.posts }</strong> { translate( 'posts' ) }
+								{ translate( '%(count)d post', '%(count)d posts', {
+									count: data.counts.posts,
+									args: { count: data.counts.posts },
+								} ) }
 							</li>
 						</ul>
 						<details>
