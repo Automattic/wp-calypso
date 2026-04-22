@@ -1,8 +1,8 @@
 import { isEnabled } from '@automattic/calypso-config';
-import page from '@automattic/calypso-router';
+import page, { type Context } from '@automattic/calypso-router';
 import AsyncLoad from 'calypso/components/async-load';
 
-export function atmosphereController( context: PageJS.Context, next: () => void ) {
+export function atmosphereController( context: Context, next: () => void ) {
 	if ( ! isEnabled( 'reader/atmosphere' ) ) {
 		page.redirect( '/reader' );
 		return;

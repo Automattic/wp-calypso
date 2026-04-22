@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { isEnabled } from '@automattic/calypso-config';
-import page from '@automattic/calypso-router';
+import page, { type Context } from '@automattic/calypso-router';
 import { atmosphereController } from '../controller';
 
 jest.mock( '@automattic/calypso-config', () => ( {
@@ -23,7 +23,7 @@ describe( 'atmosphereController', () => {
 	it( 'redirects to /reader when flag is off', () => {
 		( isEnabled as jest.Mock ).mockReturnValue( false );
 		const next = jest.fn();
-		atmosphereController( { path: '/reader/atmosphere' } as unknown as PageJS.Context, next );
+		atmosphereController( { path: '/reader/atmosphere' } as unknown as Context, next );
 		expect( page.redirect ).toHaveBeenCalledWith( '/reader' );
 		expect( next ).not.toHaveBeenCalled();
 	} );
@@ -31,7 +31,7 @@ describe( 'atmosphereController', () => {
 	it( 'calls next when flag is on', () => {
 		( isEnabled as jest.Mock ).mockReturnValue( true );
 		const next = jest.fn();
-		const context = { path: '/reader/atmosphere', primary: null } as unknown as PageJS.Context;
+		const context = { path: '/reader/atmosphere', primary: null } as unknown as Context;
 		atmosphereController( context, next );
 		expect( next ).toHaveBeenCalled();
 	} );
