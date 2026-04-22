@@ -377,6 +377,11 @@ export const setBlueprint = ( blueprint: string | null ) => ( {
 	blueprint,
 } );
 
+export const setIsNewSite = ( isNewSite: boolean ) => ( {
+	type: 'SET_IS_NEW_SITE' as const,
+	isNewSite,
+} );
+
 export type OnboardAction = ReturnType<
 	| typeof addFeature
 	| typeof removeFeature
@@ -439,4 +444,5 @@ export type OnboardAction = ReturnType<
 	| typeof setGardenName
 	| typeof setGardenPartnerName
 	| typeof setBlueprint
+	| typeof setIsNewSite
 >;

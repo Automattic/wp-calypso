@@ -644,6 +644,16 @@ export const blueprint: Reducer< string | null, OnboardAction > = ( state = null
 	return state;
 };
 
+const isNewSite: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
+	if ( action.type === 'SET_IS_NEW_SITE' ) {
+		return action.isNewSite;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return false;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	domain,
 	domainCartItem,
@@ -695,6 +705,7 @@ const reducer = combineReducers( {
 	gardenName,
 	gardenPartnerName,
 	blueprint,
+	isNewSite,
 } );
 
 export type State = ReturnType< typeof reducer >;

@@ -140,7 +140,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 
 	const username = useSelector( getCurrentUserName );
 
-	const { setPendingAction } = useDispatch( ONBOARD_STORE );
+	const { setPendingAction, setIsNewSite } = useDispatch( ONBOARD_STORE );
 
 	// when it's empty, the default WordPress theme will be used.
 	let theme = '';
@@ -267,6 +267,8 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		if ( ! site ) {
 			throw new Error( 'Failed to create site' );
 		}
+
+		setIsNewSite( true );
 
 		const additionalCartItems = [
 			...( planCartItem ? [ planCartItem ] : [] ),

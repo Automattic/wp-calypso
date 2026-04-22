@@ -79,6 +79,11 @@ const PostCheckoutOnboarding: StepType< {
 
 	const isJetpackOrAtomic = isJetpack || isAtomic;
 
+	const isNewSite = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIsNewSite(),
+		[]
+	);
+
 	const {
 		isLoading: isLoadingMarketplaceThemeProducts,
 		isMarketplaceThemeSubscribed,
@@ -150,7 +155,7 @@ const PostCheckoutOnboarding: StepType< {
 					: {} ),
 			};
 
-			if ( ! isJetpackOrAtomic ) {
+			if ( ! isJetpackOrAtomic && ! isNewSite ) {
 				if ( siteTransferStatusData?.isTransferring ) {
 					await waitForAtomic();
 				} else if ( hasExternalTheme || shouldInstallPlugin ) {
@@ -180,6 +185,7 @@ const PostCheckoutOnboarding: StepType< {
 		isLoadingSiteTransferStatusData,
 		isLoadingExperiment,
 		isJetpackOrAtomic,
+		isNewSite,
 		siteTransferStatusData,
 		selectedDesign,
 		isMarketplaceThemeSubscribed,
