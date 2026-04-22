@@ -57,4 +57,8 @@ describe( 'SectionHeader', () => {
 		expect( screen.getByTestId( 'prefix' ) ).toBeVisible();
 		expect( screen.getByText( 'Prefix Content' ) ).toBeVisible();
 	} );
+	test( 'should render with heading suffix', () => {
+		render( <SectionHeader title="Test Title" headingSuffix={ <Button>More actions</Button> } /> );
+		expect( screen.getByRole( 'button', { name: 'More actions' } ) ).toBeVisible();
+	} );
 } );
