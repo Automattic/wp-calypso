@@ -13615,7 +13615,6 @@ __metadata:
     lodash: "npm:^4.17.21"
     lodash-es: "npm:^4.17.21"
     lru: "npm:^3.1.0"
-    lunr: "npm:^2.3.9"
     marked: "npm:^4.0.0"
     mock-fs: "npm:^5.5.0"
     mockdate: "npm:^2.0.5"
@@ -22772,13 +22771,6 @@ __metadata:
   peerDependencies:
     react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
   checksum: 81c4438e2cf1c86ea2ebe0a97b378201512450894283cccce766a89bc6a4e47c8df1d9115d845d98f582bb0a10be31c454aa232520fea35018dac1cd8466ea9b
-  languageName: node
-  linkType: hard
-
-"lunr@npm:^2.3.9":
-  version: 2.3.9
-  resolution: "lunr@npm:2.3.9"
-  checksum: 77d7dbb4fbd602aac161e2b50887d8eda28c0fa3b799159cee380fbb311f1e614219126ecbbd2c3a9c685f1720a8109b3c1ca85cc893c39b6c9cc6a62a1d8a8b
   languageName: node
   linkType: hard
 
@@ -33464,7 +33456,6 @@ __metadata:
     css-loader: "npm:^6.11.0"
     d3-time-format: "npm:^4.1.0"
     debug: "npm:^4.4.1"
-    doctrine: "npm:^3.0.0"
     dotenv: "npm:^9.0.2"
     dotenv-webpack: "npm:^8.1.0"
     enhanced-resolve: "npm:5.9.3"
@@ -33497,7 +33488,6 @@ __metadata:
     loader-utils: "npm:^1.4.2"
     lodash: "npm:^4.17.21"
     lottie-web: "npm:^5.9.6"
-    lunr: "npm:^2.3.9"
     mixedindentlint: "npm:^1.2.0"
     moment: "npm:^2.30.1"
     ncp: "npm:^2.0.0"

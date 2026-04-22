@@ -606,12 +606,6 @@ const sections = [
 		group: 'sites',
 	},
 	{
-		name: 'devdocs',
-		paths: [ '/devdocs' ],
-		module: 'calypso/devdocs',
-		enableLoggedOut: true,
-	},
-	{
 		name: 'home',
 		paths: [ '/home' ],
 		module: 'calypso/my-sites/customer-home',
