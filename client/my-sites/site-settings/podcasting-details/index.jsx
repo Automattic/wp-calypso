@@ -215,40 +215,48 @@ const PodcastingSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 		<form id="site-settings" onSubmit={ handleSubmitForm }>
 			<QueryTerms siteId={ siteId } taxonomy="category" />
 
-			{ /* Podcasting enable toggle */ }
-			<Card className="site-settings__card">
-				<ToggleControl
-					checked={ isPodcastingEnabled || isEnabling }
-					onChange={ onTogglePodcasting }
-					disabled={ disabled }
-					label={ translate( 'Enable podcasting on this site' ) }
-				/>
-				{ isPodcastingEnabled && (
-					<FormSettingExplanation>
-						{ translate(
-							'Disable to stop publishing your podcast feed. You can always set it up again.'
-						) }
-					</FormSettingExplanation>
-				) }
-			</Card>
-
-			{ /* Upsell nudge for audio upload */ }
-			{ ( isPodcastingEnabled || isEnabling ) && plansDataLoaded && ! isAudioUploadEnabled && (
+			{ /* Podcasting upsell for free plans, toggle for paid plans */ }
+			{ plansDataLoaded && ! isAudioUploadEnabled ? (
 				<UpsellNudge
 					plan={ PLAN_PERSONAL }
-					title={ translate( 'Upload Audio with WordPress.com %(personalPlanName)s', {
+					title={ translate( 'Start a podcast with the %(personalPlanName)s plan', {
 						args: { personalPlanName: getPlan( PLAN_PERSONAL ).getTitle() },
 					} ) }
-					description={ translate( 'Embed podcast episodes directly from your media library.' ) }
+					description={
+						isPodcastingEnabled
+							? translate(
+									'Podcasting was set up on your previous plan. Upgrade to turn it back on and publish to Apple Podcasts, Spotify, and every major app.'
+							  )
+							: translate(
+									'Publish your episodes to Apple Podcasts, Spotify, and every major app. Podcasting is included with any paid plan.'
+							  )
+					}
 					feature={ WPCOM_FEATURES_UPLOAD_AUDIO_FILES }
-					event="podcasting_details_upload_audio"
+					event="podcasting_details_plan_upgrade"
 					tracksImpressionName="calypso_upgrade_nudge_impression"
 					tracksClickName="calypso_upgrade_nudge_cta_click"
 					showIcon
+					horizontal
 				/>
+			) : (
+				<Card className="site-settings__card">
+					<ToggleControl
+						checked={ isPodcastingEnabled || isEnabling }
+						onChange={ onTogglePodcasting }
+						disabled={ disabled }
+						label={ translate( 'Enable podcasting on this site' ) }
+					/>
+					{ isPodcastingEnabled && (
+						<FormSettingExplanation>
+							{ translate(
+								'Disable to stop publishing your podcast feed. You can always set it up again.'
+							) }
+						</FormSettingExplanation>
+					) }
+				</Card>
 			) }
 
-			{ ( isPodcastingEnabled || isEnabling ) && (
+			{ isAudioUploadEnabled && ( isPodcastingEnabled || isEnabling ) && (
 				<>
 					{ /* Podcast category */ }
 					<SettingsSectionHeader
