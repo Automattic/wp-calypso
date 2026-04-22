@@ -1,5 +1,4 @@
 import { useMatches } from '@tanstack/react-router';
-import { isValidElement } from 'react';
 import { SectionHeader } from '../section-header';
 import type { PageHeaderProps } from './types';
 
@@ -15,17 +14,6 @@ const PageTitle = () => {
 };
 
 /**
- * ActionMenu is a specialized wrapper around DropdownMenu for use in PageHeader actions.
- */
-const ActionMenu = ( { children }: { children: React.ReactElement | null } ) => {
-	if ( ! isValidElement( children ) ) {
-		return null;
-	}
-
-	return <div style={ { marginInlineStart: 'auto' } }>{ children }</div>;
-};
-
-/**
  * The PageHeader component provides a structured introduction to a page or section,
  * combining a title, optional description, and contextual actions. It can include
  * visual decorations, navigational aids like breadcrumbs, and utility controls
@@ -37,15 +25,14 @@ const ActionMenu = ( { children }: { children: React.ReactElement | null } ) => 
  * Also, it automatically sets a default title by retrieving it from the meta property
  * of the last matched route.
  */
-export const PageHeader = ( props: PageHeaderProps ) => {
+export const PageHeader = ( { overflowMenu, ...props }: PageHeaderProps ) => {
 	return (
 		<SectionHeader
 			{ ...props }
 			level={ 1 }
 			title={ props.title ?? <PageTitle /> }
 			className="dashboard-page-header"
+			headingSuffix={ overflowMenu }
 		/>
 	);
 };
-
-PageHeader.ActionMenu = ActionMenu;

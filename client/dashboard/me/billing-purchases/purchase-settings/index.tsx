@@ -1312,6 +1312,7 @@ export default function PurchaseSettings() {
 								: getTitleForDisplay( purchase )
 						}
 						actions={
+							site?.options?.admin_url &&
 							purchase.is_upgradable &&
 							upgradeUrl && (
 								<Button __next40pxDefaultSize variant="primary" href={ upgradeUrl }>

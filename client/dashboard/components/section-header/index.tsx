@@ -18,7 +18,7 @@ export const SectionHeader = ( {
 	title,
 	description,
 	actions,
-	overflowMenu,
+	headingSuffix,
 	decoration,
 	headingId,
 	prefix,
@@ -61,8 +61,8 @@ export const SectionHeader = ( {
 						</ButtonStack>
 					) }
 				</HStack>
-				{ !! overflowMenu && (
-					<div className="dashboard-section-header__overflow-menu">{ overflowMenu }</div>
+				{ !! headingSuffix && (
+					<div className="dashboard-section-header__heading-suffix">{ headingSuffix }</div>
 				) }
 			</HStack>
 		</VStack>

@@ -40,8 +40,9 @@ export interface SectionHeaderProps {
 	 */
 	className?: string;
 	/**
-	 * An optional overflow menu (e.g. a three-dot DropdownMenu) that is always
-	 * anchored to the top-right of the header, outside the wrapping action area.
+	 * Optional content appended to the end of the heading row, outside the
+	 * wrapping action area. Use for elements that must stay pinned to the
+	 * top-right regardless of how actions wrap.
 	 */
-	overflowMenu?: React.ReactNode;
+	headingSuffix?: React.ReactNode;
 }
