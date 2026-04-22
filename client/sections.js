@@ -516,6 +516,13 @@ const sections = [
 		trackLoadPerformance: true,
 	},
 	{
+		name: 'reader-atmosphere',
+		paths: [ '/reader/atmosphere' ],
+		module: 'calypso/reader/atmosphere',
+		group: 'reader',
+		enableLoggedOut: false,
+	},
+	{
 		name: 'reader',
 		paths: [
 			'/reader/subscriptions',
