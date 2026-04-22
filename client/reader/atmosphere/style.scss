@@ -34,7 +34,7 @@
 	height: 72px;
 	background: linear-gradient(90deg, #eee, #f5f5f5, #eee);
 	border-radius: 8px;
-	margin-bottom: 8px;
+	margin-block-end: 8px;
 }
 
 .atmosphere-error {
@@ -46,4 +46,9 @@
 	gap: 16px;
 	list-style: none;
 	padding: 0;
+}
+
+.atmosphere-verify pre {
+	overflow-x: auto;
+	max-width: 100%;
 }

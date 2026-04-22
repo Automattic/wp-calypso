@@ -36,6 +36,7 @@ export function ConnectForm( { onSubmit, isSubmitting, error }: ConnectFormProps
 				<TextControl
 					label={ translate( 'App password' ) }
 					type="password"
+					autoComplete="new-password"
 					value={ appPassword }
 					onChange={ setAppPassword }
 					placeholder="xxxx-xxxx-xxxx-xxxx"

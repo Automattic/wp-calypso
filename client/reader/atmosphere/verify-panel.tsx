@@ -40,7 +40,7 @@ export function VerifyPanel( { data, error, isLoading }: VerifyPanelProps ) {
 								} ) }
 							</li>
 							<li>
-								{ translate( '%(count)d following', '%(count)d following', {
+								{ translate( 'Following %(count)d account', 'Following %(count)d accounts', {
 									count: data.counts.follows,
 									args: { count: data.counts.follows },
 								} ) }

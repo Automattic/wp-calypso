@@ -28,11 +28,12 @@ describe( 'atmosphereController', () => {
 		expect( next ).not.toHaveBeenCalled();
 	} );
 
-	it( 'calls next when flag is on', () => {
+	it( 'calls next and sets context.primary when flag is on', () => {
 		( isEnabled as jest.Mock ).mockReturnValue( true );
 		const next = jest.fn();
 		const context = { path: '/reader/atmosphere', primary: null } as unknown as Context;
 		atmosphereController( context, next );
 		expect( next ).toHaveBeenCalled();
+		expect( context.primary ).not.toBeNull();
 	} );
 } );

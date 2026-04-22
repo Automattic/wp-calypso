@@ -33,7 +33,7 @@ describe( 'VerifyPanel', () => {
 		expect( screen.getByText( '@alice' ) ).toBeVisible();
 		expect( screen.getByText( '42 posts' ) ).toBeVisible();
 		expect( screen.getByText( '10 followers' ) ).toBeVisible();
-		expect( screen.getByText( '5 following' ) ).toBeVisible();
+		expect( screen.getByText( 'Following 5 accounts' ) ).toBeVisible();
 	} );
 
 	it( 'renders auth_failed message', () => {

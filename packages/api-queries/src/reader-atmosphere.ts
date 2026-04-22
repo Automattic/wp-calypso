@@ -5,9 +5,16 @@ import {
 	verifyConnection,
 } from '@automattic/api-core';
 import { queryOptions, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import type {
+	AtmosphereConnectionsResponse,
+	AtmosphereCreateConnectionResponse,
+	AtmosphereError,
+	AtmosphereVerifyResult,
+	CreateConnectionParams,
+} from '@automattic/api-core';
 
 export const connectionsQueryOptions = () =>
-	queryOptions( {
+	queryOptions< AtmosphereConnectionsResponse, AtmosphereError >( {
 		queryKey: readerAtmosphereKeys.connections(),
 		queryFn: getConnections,
 		staleTime: 60_000,
@@ -19,17 +26,19 @@ export function useConnectionsQuery() {
 
 export function useCreateConnectionMutation() {
 	const client = useQueryClient();
-	return useMutation( {
-		mutationFn: createConnection,
-		onSuccess: () => {
-			client.invalidateQueries( { queryKey: readerAtmosphereKeys.connections() } );
-		},
-	} );
+	return useMutation< AtmosphereCreateConnectionResponse, AtmosphereError, CreateConnectionParams >(
+		{
+			mutationFn: createConnection,
+			onSuccess: () => {
+				client.invalidateQueries( { queryKey: readerAtmosphereKeys.connections() } );
+			},
+		}
+	);
 }
 
 export const verifyConnectionQueryOptions = ( id: number | null ) =>
-	queryOptions( {
-		queryKey: readerAtmosphereKeys.verify( id ?? 0 ),
+	queryOptions< AtmosphereVerifyResult, AtmosphereError >( {
+		queryKey: readerAtmosphereKeys.verify( id ),
 		queryFn: () => verifyConnection( id as number ),
 		enabled: id !== null && id > 0,
 		staleTime: 0,

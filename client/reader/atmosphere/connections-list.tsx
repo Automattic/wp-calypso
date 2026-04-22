@@ -48,7 +48,7 @@ export function ConnectionsList( { connections, isLoading, onVerify }: Connectio
 								<div className="atmosphere-connection__identity">
 									<div className="atmosphere-connection__handle">@{ c.handle }</div>
 									<details>
-										<summary>{ translate( 'DID' ) }</summary>
+										<summary>DID</summary>
 										<code>{ c.did }</code>
 									</details>
 								</div>

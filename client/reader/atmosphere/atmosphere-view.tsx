@@ -10,7 +10,6 @@ import { useState } from 'react';
 import { ConnectForm } from './connect-form';
 import { ConnectionsList } from './connections-list';
 import { VerifyPanel } from './verify-panel';
-import type { AtmosphereError } from '@automattic/api-core';
 
 export default function AtmosphereView() {
 	const connections = useConnectionsQuery();
@@ -27,12 +26,12 @@ export default function AtmosphereView() {
 			/>
 			<ConnectForm
 				isSubmitting={ create.isPending }
-				error={ create.error as AtmosphereError | null }
+				error={ create.error }
 				onSubmit={ ( values ) => create.mutate( values ) }
 			/>
 			<VerifyPanel
 				data={ verify.data ?? null }
-				error={ verify.error as AtmosphereError | null }
+				error={ verify.error }
 				isLoading={ verify.isFetching && verifyId !== null }
 			/>
 		</VStack>
