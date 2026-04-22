@@ -1,4 +1,13 @@
 @import '../responsive-sidebar/variables';
+
+// Backport/bridge mode — reset PageLayout's own centering/max-width so the
+// dashboard content fills the Main wideLayout container. The Main component in
+// the me/* layout already provides the card border, background, and
+// border-radius (client/me/style.scss: .is-global-sidebar-visible .main).
+.dashboard-backport-root .dashboard-page-layout {
+	margin: 0;
+	max-width: none;
+}
 // Old layout (no sidebar): sticky header
 // For pages without sub menus, the first header is the sticky header
 // For pages with sub menus, the second header is the sticky header

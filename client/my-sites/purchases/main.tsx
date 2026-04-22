@@ -11,8 +11,8 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import CancelPurchase from 'calypso/me/purchases/cancel-purchase';
 import ConfirmCancelDomain from 'calypso/me/purchases/confirm-cancel-domain';
+import { DashboardBridge } from 'calypso/me/purchases/dashboard-bridge';
 import { Downgrade } from 'calypso/me/purchases/downgrade';
-import ManagePurchase from 'calypso/me/purchases/manage-purchase';
 import ChangePaymentMethod from 'calypso/me/purchases/manage-purchase/change-payment-method';
 import { PurchaseListConciergeBanner } from 'calypso/me/purchases/purchases-list/purchase-list-concierge-banner';
 import titles from 'calypso/me/purchases/titles';
@@ -26,13 +26,10 @@ import { logStashLoadErrorEvent } from '../checkout/src/lib/analytics';
 import {
 	getPurchaseListUrlFor,
 	getCancelPurchaseUrlFor,
-	getDowngradeUrlFor,
 	getConfirmCancelDomainUrlFor,
 	getManagePurchaseUrlFor,
-	getAddNewPaymentMethodUrlFor,
 } from './paths';
 import Subscriptions from './subscriptions';
-import { getChangeOrAddPaymentMethodUrlFor } from './utils';
 
 import './styles.scss';
 
@@ -93,47 +90,18 @@ export function Purchases() {
 	);
 }
 
-export function PurchaseDetails( {
-	purchaseId,
-	siteSlug,
-}: {
-	purchaseId: number;
-	siteSlug: string;
-} ) {
-	const translate = useTranslate();
-	const logPurchasesError = useLogPurchasesError( 'site level purchase details load error' );
-	const redirectTo = getManagePurchaseUrlFor( siteSlug, purchaseId );
-
+export function PurchaseDetails( { purchaseId }: { purchaseId: number; siteSlug: string } ) {
 	return (
-		<Main wideLayout className="purchases manage-purchase">
+		<Main wideLayout>
 			<DocumentHead title={ titles.managePurchase } />
-			{ ! isJetpackCloud() && (
-				<NavigationHeader navigationItems={ [] } title={ titles.sectionTitle } />
-			) }
 			<PageViewTracker
 				path="/purchases/subscriptions/:site/:purchaseId"
 				title="Purchases > Manage Purchase"
 			/>
-
-			<CheckoutErrorBoundary
-				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
-				onError={ logPurchasesError }
-			>
-				<ManagePurchase
-					cardTitle={ titles.managePurchase }
-					purchaseId={ purchaseId }
-					isSiteLevel
-					siteSlug={ siteSlug }
-					showHeader={ false }
-					purchaseListUrl={ getPurchaseListUrlFor( siteSlug ) }
-					redirectTo={ isJetpackCloud() ? `https://cloud.jetpack.com${ redirectTo }` : redirectTo }
-					getCancelPurchaseUrlFor={ getCancelPurchaseUrlFor }
-					getDowngradeUrlFor={ getDowngradeUrlFor }
-					getAddNewPaymentMethodUrlFor={ getAddNewPaymentMethodUrlFor }
-					getChangePaymentMethodUrlFor={ getChangeOrAddPaymentMethodUrlFor }
-					getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
-				/>
-			</CheckoutErrorBoundary>
+			{ /* DashboardBridge embeds the new dashboard purchase-settings UI
+			     inside the classic Calypso shell via a TanStack Router with
+			     in-memory history. The URL stays at /purchases/subscriptions/:site/:id. */ }
+			<DashboardBridge purchaseId={ purchaseId } />
 		</Main>
 	);
 }

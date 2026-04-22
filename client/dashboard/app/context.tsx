@@ -58,6 +58,12 @@ export type AppConfig = {
 		overrides?: PostHogOverrides;
 	};
 	optIn: boolean;
+	/**
+	 * When true, the dashboard is embedded inside the classic Calypso shell
+	 * (the "backport" / bridge mode). Root skips its own header and sidebar so
+	 * the host shell can provide the chrome.
+	 */
+	isBackport?: boolean;
 	components: {
 		sites: () => Promise< { default: React.FC } >;
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any

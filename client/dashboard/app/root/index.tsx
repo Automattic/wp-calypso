@@ -36,7 +36,23 @@ const WebpackBuildMonitor = lazy(
 const SLOW_THRESHOLD_MS = 100;
 const VERY_SLOW_THRESHOLD_MS = 6000;
 
-function Root() {
+/**
+ * Minimal root used in backport/bridge mode (embedded inside classic Calypso).
+ * Renders only the routed content — the host shell provides header and sidebar.
+ */
+function BackportRoot() {
+	return (
+		<Suspense fallback={ null }>
+			<div className="dashboard-backport-root">
+				<CatchNotFound fallback={ NotFound }>
+					<Outlet />
+				</CatchNotFound>
+			</div>
+		</Suspense>
+	);
+}
+
+function FullRoot() {
 	const isOmnibarEnabled = isEnabled( 'dashboard/omnibar' );
 	const { name, supports, LoadingLogo = WordPressLogo } = useAppContext();
 	const isFetching = useIsFetching();
@@ -204,6 +220,14 @@ function Root() {
 			) }
 		</div>
 	);
+}
+
+function Root() {
+	const { isBackport } = useAppContext();
+	if ( isBackport ) {
+		return <BackportRoot />;
+	}
+	return <FullRoot />;
 }
 
 export default Root;

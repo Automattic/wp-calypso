@@ -14,6 +14,7 @@ import { createSitesRoutes } from './sites';
 import { startStoreRoute } from './start-store';
 import type { SiteTypeFeature } from '../../utils/site-type-feature-support';
 import type { AppConfig } from '../context';
+import type { RouterHistory } from '@tanstack/react-router';
 import type { ErrorInfo } from 'react';
 
 /**
@@ -76,11 +77,12 @@ const createRouteTree = ( config: AppConfig ) => {
 	return rootRoute.addChildren( children );
 };
 
-export const getRouter = ( config: AppConfig ) => {
+export const getRouter = ( config: AppConfig, history?: RouterHistory ) => {
 	const routeTree = createRouteTree( config );
 	const router = createRouter( {
 		routeTree,
 		basepath: config.basePath,
+		history,
 		context: {
 			config,
 		},

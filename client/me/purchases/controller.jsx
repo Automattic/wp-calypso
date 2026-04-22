@@ -27,8 +27,11 @@ import { getCurrentUser, getCurrentUserSiteCount } from 'calypso/state/current-u
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import CancelPurchase from './cancel-purchase';
 import ConfirmCancelDomain from './confirm-cancel-domain';
+import { DashboardBridge } from './dashboard-bridge';
 import { Downgrade } from './downgrade';
-import ManagePurchase from './manage-purchase';
+// TODO: ManagePurchase (manage-purchase/index.tsx) is still used by
+// client/my-sites/purchases/main.tsx:PurchaseDetails. Delete once that
+// surface is also migrated to the dashboard or removed.
 import { ManagePurchaseByOwnership } from './manage-purchase/manage-purchase-by-ownership';
 import PurchasesListDataView from './purchases-list-in-dataviews';
 import titles from './titles';
@@ -209,29 +212,26 @@ export function vatDetails( context, next ) {
 }
 
 export function managePurchase( context, next ) {
-	const ManagePurchasesWrapper = localize( () => {
-		const classes = 'manage-purchase';
-		const purchaseListUrl = usePreviousUrlIfPurchasesList();
+	const purchaseId = parseInt( context.params.purchaseId, 10 );
 
+	const BridgeWrapper = localize( () => {
 		return (
 			<PurchasesWrapper title={ titles.managePurchase }>
-				<Main wideLayout className={ classes }>
-					<NavigationHeader navigationItems={ [] } title={ titles.sectionTitle } />
+				<Main wideLayout>
 					<PageViewTracker
 						path="/me/purchases/:site/:purchaseId"
 						title="Purchases > Manage Purchase"
 					/>
-					<ManagePurchase
-						purchaseId={ parseInt( context.params.purchaseId, 10 ) }
-						siteSlug={ context.params.site }
-						purchaseListUrl={ purchaseListUrl }
-					/>
+					{ /* DashboardBridge embeds the new dashboard purchase-settings UI
+					     inside the classic Calypso shell via a TanStack Router with
+					     in-memory history. The URL stays at /me/purchases/:site/:id. */ }
+					<DashboardBridge purchaseId={ purchaseId } />
 				</Main>
 			</PurchasesWrapper>
 		);
 	} );
 
-	context.primary = <ManagePurchasesWrapper />;
+	context.primary = <BridgeWrapper />;
 	next();
 }
 
