@@ -66,8 +66,6 @@ export * from './plugin';
 export * from './products';
 export * from './read-feed';
 export * from './read-site';
-export * from './read-user';
-export * from './read-user-sites';
 export * from './site-activity-log';
 export * from './site-activity-log-backup';
 export * from './site-address-change';

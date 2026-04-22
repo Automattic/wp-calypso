@@ -1,5 +1,5 @@
 import './styles.scss';
-import { getReaderUserQuery } from '@automattic/api-queries';
+import { userQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { Spinner } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
@@ -29,7 +29,7 @@ export default function UserHovercard( props: UserHovercardProps ): JSX.Element 
 	const gravatarUser = gravatarData ? { ...gravatarData, primary_blog: null } : null;
 
 	const { isLoading: isWpcomLoading, data: wpcomData } = useQuery(
-		getReaderUserQuery(
+		userQuery(
 			userProp.wpcom_login || gravatarUser?.user_login, // Use WPCOM login if available, otherwise fall back to Gravatar login.
 			userProp.wpcom_id
 		)

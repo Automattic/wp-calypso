@@ -1,6 +1,6 @@
 import './style.scss';
 
-import { getReaderUserQuery } from '@automattic/api-queries';
+import { userQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { Popover } from '@wordpress/components';
 import { useCallback, useRef, useState } from 'react';
@@ -50,7 +50,7 @@ export default function UserAvatar( { user, size = 32, hideHovercard = false }: 
 	);
 
 	// Prefetching so that we can display WPCOM users Hovercards instantly, Gravatar lookups will be triggered on hover.
-	useQuery( getReaderUserQuery( user?.wpcom_login, user?.wpcom_id, ! hideHovercard ) );
+	useQuery( userQuery( user?.wpcom_login, user?.wpcom_id, ! hideHovercard ) );
 
 	const handleMouseEnter = useCallback( () => {
 		hoverTimerRef.current = setTimeout( () => setIsHovered( true ), 200 );

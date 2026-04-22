@@ -1,5 +1,5 @@
 import './styles.scss';
-import { GetReaderUserResponse } from '@automattic/api-core';
+import { UserResponse } from '@automattic/api-core';
 import { useTranslate } from 'i18n-calypso';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import AutoDirection from 'calypso/components/auto-direction';
@@ -10,7 +10,7 @@ import { useDispatch } from 'calypso/state';
 import { successNotice } from 'calypso/state/notices/actions';
 
 interface PrimaryBlogCardProps {
-	user: GetReaderUserResponse;
+	user: UserResponse;
 }
 
 function PrimaryBlogCard( { user }: PrimaryBlogCardProps ): JSX.Element | null {

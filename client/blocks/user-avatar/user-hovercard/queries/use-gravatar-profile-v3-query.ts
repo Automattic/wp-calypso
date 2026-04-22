@@ -1,4 +1,4 @@
-import { GetReaderUserResponse } from '@automattic/api-core';
+import { UserResponse } from '@automattic/api-core';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 
 interface useGravatarProfileV3Args {
@@ -16,7 +16,7 @@ interface GravatarProfileV3ApiResponse {
 export function useGravatarProfileV3Query(
 	args: useGravatarProfileV3Args,
 	enabled = true
-): UseQueryResult< GetReaderUserResponse, Error > {
+): UseQueryResult< UserResponse, Error > {
 	// Gravatar profiles can be fetched using both MD5 and SHA256 hashes. We'll prefer SHA256 if available because it's newer.
 	const urls = [ args.profile_URL, args.avatar_URL ];
 	const allHashes = urls.map( extractHashFromUrl ).filter( Boolean );
@@ -58,7 +58,7 @@ function extractHashFromUrl( url?: string ): string | null {
 	return null;
 }
 
-function mapToHovercardUser( raw: GravatarProfileV3ApiResponse ): GetReaderUserResponse {
+function mapToHovercardUser( raw: GravatarProfileV3ApiResponse ): UserResponse {
 	const lastSegment = ( () => {
 		try {
 			return new URL( raw.profile_url ).pathname.split( '/' ).filter( Boolean ).pop();

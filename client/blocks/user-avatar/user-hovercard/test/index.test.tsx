@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { GetReaderUserResponse } from '@automattic/api-core';
+import { UserResponse } from '@automattic/api-core';
 import { useQuery } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -40,7 +40,7 @@ const defaultUserProp: UserAvatarInfo = {
 	display_name: 'Test User',
 };
 
-const wpcomUserResponse: GetReaderUserResponse = {
+const wpcomUserResponse: UserResponse = {
 	ID: 123,
 	user_login: 'testuser',
 	display_name: 'Test User',
@@ -68,9 +68,9 @@ function setupMocks( {
 	wpcomData,
 }: {
 	gravatarLoading?: boolean;
-	gravatarData?: GetReaderUserResponse;
+	gravatarData?: UserResponse;
 	wpcomLoading?: boolean;
-	wpcomData?: GetReaderUserResponse;
+	wpcomData?: UserResponse;
 } ) {
 	mockUseGravatarProfileV3Query.mockReturnValue( {
 		isLoading: gravatarLoading,
@@ -131,7 +131,7 @@ describe( 'UserHovercard', () => {
 	} );
 
 	test( 'falls back to gravatar user when wpcom data has no user_login', () => {
-		const gravatarUser: GetReaderUserResponse = {
+		const gravatarUser: UserResponse = {
 			ID: 0,
 			user_login: 'gravataruser',
 			display_name: 'Gravatar User',

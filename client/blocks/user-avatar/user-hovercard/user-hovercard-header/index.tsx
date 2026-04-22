@@ -1,12 +1,12 @@
 import './styles.scss';
-import { GetReaderUserResponse } from '@automattic/api-core';
+import { UserResponse } from '@automattic/api-core';
 import AutoDirection from 'calypso/components/auto-direction';
 import PreloadedImage from 'calypso/components/preloaded-image';
 import UserAvatarDefaultIcon from 'calypso/reader/components/icons/user-avatar-default-icon';
 import { getProcessedGravatarUrl } from '../../utils';
 
 interface UserHovercardHeaderProps {
-	user: GetReaderUserResponse;
+	user: UserResponse;
 }
 
 function UserHovercardHeader( { user }: UserHovercardHeaderProps ): JSX.Element {
