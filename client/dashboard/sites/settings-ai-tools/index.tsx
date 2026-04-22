@@ -4,12 +4,14 @@ import { HostingFeatures } from '@automattic/api-core';
 import {
 	bigSkyPluginMutation,
 	bigSkyPluginQuery,
+	readerChatSettingsMutation,
+	readerChatSettingsQuery,
 	siteBySlugQuery,
 	userSettingsMutation,
 	userSettingsQuery,
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
-import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -147,6 +149,31 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 	const readBadge = hasSiteAbilityOverrides ? getReadBadge( readTools ) : defaultBadge;
 	const writeBadge = hasSiteAbilityOverrides ? getWriteBadge( writeTools ) : defaultBadge;
 	const isReaderChatFeatureEnabled = config.isEnabled( 'reader-chat-settings' );
+
+	const { data: readerChatSettings } = useQuery( {
+		...readerChatSettingsQuery( site.ID ),
+		enabled: isReaderChatFeatureEnabled && isAvailable,
+	} );
+	const isReaderChatEnabled = readerChatSettings?.enabled ?? false;
+
+	const readerChatMutation = useMutation( {
+		...readerChatSettingsMutation( site.ID ),
+		meta: {
+			snackbar: {
+				success: isReaderChatEnabled ? __( 'Reader Chat disabled.' ) : __( 'Reader Chat enabled.' ),
+				error: __( 'Failed to save Reader Chat settings.' ),
+			},
+		},
+	} );
+
+	const handleReaderChatToggle = ( enabled: boolean ) => {
+		recordTracksEvent( 'calypso_dashboard_reader_chat_toggled', {
+			enabled,
+			site_id: site.ID,
+		} );
+		readerChatMutation.mutate( { enabled } );
+	};
+
 	const mcpMutation = useMutation( {
 		...userSettingsMutation(),
 		meta: {
@@ -346,6 +373,13 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 										'Let readers ask your blog questions and get answers from your content.'
 									) }
 									level={ 3 }
+								/>
+								<ToggleControl
+									__nextHasNoMarginBottom
+									checked={ isReaderChatEnabled }
+									disabled={ readerChatMutation.isPending }
+									label={ __( 'Enable Reader Chat on your blog' ) }
+									onChange={ handleReaderChatToggle }
 								/>
 							</VStack>
 						</CardBody>

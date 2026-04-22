@@ -3,7 +3,7 @@
  */
 
 import config from '@automattic/calypso-config';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { render } from '../../../test-utils';
 import AIToolsSettings from '../index';
@@ -80,10 +80,10 @@ describe( '<AIToolsSettings>', () => {
 
 			expect( await screen.findByRole( 'heading', { name: /Reader Chat/i } ) ).toBeVisible();
 
-			const toggle = screen.getByRole( 'checkbox', {
+			const toggle = await screen.findByRole( 'checkbox', {
 				name: /Enable Reader Chat on your blog/i,
 			} );
-			expect( toggle ).toBeChecked();
+			await waitFor( () => expect( toggle ).toBeChecked() );
 		} );
 	} );
 } );
