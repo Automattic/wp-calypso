@@ -95,6 +95,7 @@
 		"reader/achievements": true,
 		"reader/full-errors": true,
 		"reader/msd-enabled": true,
+		"reader/onboarding-rsm": false,
 		"reader/saved-posts": true,
 		"readymade-templates/showcase": true,
 		"redirect-fallback-browsers": true,

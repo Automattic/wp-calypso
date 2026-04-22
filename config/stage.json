@@ -133,6 +133,7 @@
 		"reader/achievements": false,
 		"reader/full-errors": false,
 		"reader/msd-enabled": true,
+		"reader/onboarding-rsm": false,
 		"reader/saved-posts": false,
 		"readymade-templates/showcase": false,
 		"redirect-fallback-browsers": true,
