@@ -6,7 +6,7 @@ const debug = debugFactory( 'lib/load-script/dom-operations' );
 function setScriptOption( script, key, value ) {
 	// data-/aria- keys must be real attributes (script['data-*'] is not valid DOM mapping).
 	if ( key.startsWith( 'data-' ) || key.startsWith( 'aria-' ) ) {
-		script.setAttribute( key, String( value ) );
+		script.setAttribute( key, value );
 		return;
 	}
 
