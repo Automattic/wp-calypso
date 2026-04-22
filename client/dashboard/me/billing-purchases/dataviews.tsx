@@ -18,6 +18,7 @@ import {
 	isAkismetHoldingSitePurchase,
 	isMarketplaceHoldingSitePurchase,
 	isMarketplacePlugin,
+	isStorageUpgrade,
 	isTitanMail,
 	isGSuiteOrGoogleWorkspaceProductSlug,
 	getTitleForListDisplay,
@@ -152,16 +153,7 @@ function PurchaseItemSiteIcon( { site, purchase }: { site?: Site; purchase: Purc
 		return <ProductIcon icon={ code } label={ __( 'CSS icon' ) } />;
 	}
 
-	if (
-		[
-			'1gb_space_upgrade',
-			'5gb_space_upgrade',
-			'10gb_space_upgrade',
-			'50gb_space_upgrade',
-			'100gb_space_upgrade',
-			'wordpress_com_1gb_space_addon_yearly',
-		].includes( purchase.product_slug )
-	) {
+	if ( isStorageUpgrade( purchase ) ) {
 		return <ProductIcon icon={ cloud } label={ __( 'Storage icon' ) } />;
 	}
 
