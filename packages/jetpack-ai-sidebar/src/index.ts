@@ -23,6 +23,8 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
+import ReviewMediation from './components/review-mediation';
+import './components/review-mediation.scss';
 import TitlePicker from './components/title-picker';
 import './components/title-picker.scss';
 import './auto-scroll-fix.scss';
@@ -55,6 +57,16 @@ const OPTIMIZE_TITLE_SUGGESTION = {
 	id: 'optimize-title',
 	label: __( 'Optimize Title', 'jetpack' ),
 	prompt: __( 'Optimize the title of this post', 'jetpack' ),
+};
+
+/** Post-level suggestion to mediate multi-reviewer feedback on a draft. */
+const MEDIATE_REVIEW_SUGGESTION = {
+	id: 'mediate-review-notes',
+	label: __( 'Mediate review notes', 'jetpack' ),
+	prompt: __(
+		'Review the notes and comments on this post, apply the site guidelines, and surface conflicts, implications, and suggested edits.',
+		'jetpack'
+	),
 };
 
 // ---------- Block element helpers ----------
@@ -531,6 +543,9 @@ export function getChatComponent( type: string ): ComponentType | null {
 	if ( type === 'title-picker' ) {
 		return TitlePicker as ComponentType;
 	}
+	if ( type === 'review-mediation' ) {
+		return ReviewMediation as ComponentType;
+	}
 	return null;
 }
 
@@ -600,7 +615,7 @@ export function getEmptyViewSuggestions(): Array< {
 	label: string;
 	prompt?: string;
 } > {
-	return [ OPTIMIZE_TITLE_SUGGESTION ];
+	return [ OPTIMIZE_TITLE_SUGGESTION, MEDIATE_REVIEW_SUGGESTION ];
 }
 
 // ---------- useSuggestions ----------

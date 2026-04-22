@@ -1,0 +1,170 @@
+.jetpack-ai-review-mediation {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	font-size: 13px;
+	line-height: 1.5;
+
+	&__heading {
+		font-size: 13px;
+		font-weight: 600;
+		margin: 0 0 0.5rem;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		color: var(--wp-admin-theme-color, #2271b1);
+	}
+
+	section {
+		margin: 0;
+	}
+
+	&__summary p {
+		margin: 0;
+	}
+
+	&__card {
+		border: 1px solid #e0e0e0;
+		border-radius: 4px;
+		padding: 0.75rem;
+		margin-bottom: 0.5rem;
+		background: #fff;
+		transition: opacity 150ms ease-in-out;
+
+		&.is-accepted {
+			opacity: 0.6;
+			border-color: #4ab866;
+		}
+
+		&.is-dismissed {
+			opacity: 0.4;
+		}
+	}
+
+	&__card-title {
+		font-size: 13px;
+		font-weight: 600;
+		margin: 0 0 0.5rem;
+	}
+
+	&__positions {
+		list-style: none;
+		padding: 0;
+		margin: 0 0 0.5rem;
+
+		li {
+			margin-bottom: 0.25rem;
+		}
+	}
+
+	&__guideline-anchor {
+		border-left: 2px solid #c3c4c7;
+		padding: 0.25rem 0.5rem;
+		margin: 0.5rem 0;
+		font-style: italic;
+		color: #50575e;
+		white-space: pre-wrap;
+	}
+
+	&__recommendation {
+		margin: 0.5rem 0 0;
+	}
+
+	&__implications ul {
+		list-style: disc;
+		padding-left: 1.25rem;
+		margin: 0;
+
+		li {
+			margin-bottom: 0.5rem;
+		}
+	}
+
+	&__affected-blocks {
+		color: #757575;
+		font-size: 12px;
+	}
+
+	&__block-ref {
+		color: #757575;
+		font-size: 12px;
+		margin: 0 0 0.25rem;
+	}
+
+	&__current del {
+		background: #fde7e7;
+		text-decoration: line-through;
+	}
+
+	&__suggested ins {
+		background: #e7f5ea;
+		text-decoration: none;
+	}
+
+	&__rationale {
+		margin: 0.5rem 0 0;
+		font-size: 12px;
+		color: #50575e;
+	}
+
+	&__reviewers {
+		font-size: 12px;
+		color: #757575;
+		margin: 0.25rem 0 0;
+	}
+
+	&__actions {
+		display: flex;
+		gap: 0.5rem;
+		margin-top: 0.75rem;
+	}
+
+	&__action {
+		flex: 1;
+		padding: 0.375rem 0.75rem;
+		font-size: 12px;
+		cursor: pointer;
+		border-radius: 3px;
+		border: 1px solid #c3c4c7;
+		background: #fff;
+
+		&.is-accept {
+			background: var(--wp-admin-theme-color, #2271b1);
+			color: #fff;
+			border-color: var(--wp-admin-theme-color, #2271b1);
+		}
+
+		&:disabled {
+			cursor: default;
+			opacity: 0.7;
+		}
+	}
+
+	&__violations-toggle {
+		background: none;
+		border: 0;
+		padding: 0.5rem 0;
+		color: var(--wp-admin-theme-color, #2271b1);
+		cursor: pointer;
+		font-size: 12px;
+		text-align: left;
+	}
+
+	&__violations-list {
+		list-style: none;
+		padding: 0;
+		margin: 0.5rem 0 0;
+
+		li {
+			padding: 0.5rem 0;
+			border-top: 1px solid #f0f0f1;
+
+			&:first-child {
+				border-top: 0;
+			}
+		}
+	}
+
+	&__violation-issue {
+		margin: 0 0 0.25rem;
+	}
+}
