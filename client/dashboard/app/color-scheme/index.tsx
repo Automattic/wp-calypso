@@ -3,7 +3,7 @@ import { createContext, useCallback, useContext, useEffect, useState } from 'rea
 export type ColorScheme = 'light' | 'dark' | 'system';
 
 const STORAGE_KEY = 'wpcom_dashboard_color_scheme';
-const DEFAULT_SCHEME: ColorScheme = 'system';
+const DEFAULT_SCHEME: ColorScheme = 'light';
 
 function isColorScheme( value: unknown ): value is ColorScheme {
 	return value === 'light' || value === 'dark' || value === 'system';
