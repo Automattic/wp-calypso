@@ -1,14 +1,13 @@
+@import '@wordpress/base-styles/colors';
 @import './pulse';
 
-// Explicit fill with fallback chain because --color-neutral-10 may not be defined
-// in the dashboard CSS context (the dashboard doesn't load calypso-color-schemes).
 .wpcom-site__logo {
 	position: fixed;
 	top: 50%;
 	inset-inline-start: 50%;
 	transform: translate(-50%, -50%);
 	margin: 0;
-	fill: var(--color-neutral-10, var(--studio-gray-10, #c3c4c7));
-	color: var(--color-neutral-10, var(--studio-gray-10, #c3c4c7));
+	fill: $gray-400;
+	color: $gray-400;
 	animation: pulse 1.5s ease-in-out infinite;
 }
