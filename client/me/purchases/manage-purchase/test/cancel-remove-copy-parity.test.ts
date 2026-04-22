@@ -10,6 +10,7 @@
  *
  * If you change a string in one helper, change it in the other.
  */
+import { sprintf } from '@wordpress/i18n';
 import {
 	getCancelButtonCopy as dashboardGetCancelButtonCopy,
 	getRemoveButtonCopy as dashboardGetRemoveButtonCopy,
@@ -30,19 +31,13 @@ const PRODUCT_NAMES: Record< CancelRemoveCategory, string > = {
 	other: 'Jetpack Stats',
 };
 
-// A minimal i18n-calypso `translate` shim that formats %(name)s
-// placeholders. Matches the shape of `@wordpress/i18n`'s `__` + `sprintf`
-// output when no translations are loaded, so copy produced by the two
-// surfaces can be compared byte-for-byte.
-function translate( tpl: string, options?: { args?: Record< string, string | number > } ): string {
-	const args = options?.args;
-	if ( ! args ) {
-		return tpl;
-	}
-	return tpl.replace( /%\((\w+)\)[sd]/g, ( _, key ) => String( args[ key ] ?? '' ) );
-}
+// Drive the legacy `translate` parameter with @wordpress/i18n's sprintf so
+// both sides of the comparison go through the same interpolation engine.
+// What this test verifies is that both helpers use identical template strings
+// — not that the two i18n libraries render identically.
 /* eslint-disable @typescript-eslint/no-explicit-any */
-const t = translate as any;
+const t = ( ( tpl: string, options?: { args?: Record< string, string | number > } ) =>
+	options?.args ? sprintf( tpl, options.args ) : tpl ) as any;
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
 const CATEGORIES: CancelRemoveCategory[] = [
