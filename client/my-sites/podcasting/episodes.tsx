@@ -20,94 +20,6 @@ type Episode = {
 	status: string;
 	link: string;
 	featuredMediaUrl: string;
-	downloads: number;
-	dailyDownloads: number[];
-	trendPct: number;
-	durationSeconds: number;
-};
-
-const seededRandom = ( seed: number ) => {
-	const x = Math.sin( seed ) * 10000;
-	return x - Math.floor( x );
-};
-
-const buildFakeStats = ( id: number ) => {
-	const base = Math.floor( seededRandom( id * 7 + 3 ) * 40000 ) + 800;
-	const daily: number[] = [];
-	for ( let i = 0; i < 30; i++ ) {
-		const noise = seededRandom( id * 97 + i * 13 );
-		const wave = Math.sin( i / 4 + seededRandom( id ) * Math.PI * 2 ) * 0.3 + 1;
-		daily.push( Math.max( 1, Math.floor( ( base / 30 ) * wave * ( 0.6 + noise * 0.8 ) ) ) );
-	}
-	const firstHalf = daily.slice( 0, 15 ).reduce( ( a, b ) => a + b, 0 );
-	const secondHalf = daily.slice( 15 ).reduce( ( a, b ) => a + b, 0 );
-	const trend = firstHalf === 0 ? 0 : ( ( secondHalf - firstHalf ) / firstHalf ) * 100;
-	// 10 to 95 minutes, rounded to the nearest 15 seconds.
-	const durationSeconds = Math.round( ( seededRandom( id * 29 + 11 ) * 5100 + 600 ) / 15 ) * 15;
-	return {
-		downloads: base,
-		dailyDownloads: daily,
-		trendPct: Math.round( trend ),
-		durationSeconds,
-	};
-};
-
-const formatDuration = ( total: number ) => {
-	const s = Math.max( 0, Math.floor( total ) );
-	const hours = Math.floor( s / 3600 );
-	const minutes = Math.floor( ( s % 3600 ) / 60 );
-	const seconds = s % 60;
-	const pad = ( n: number ) => String( n ).padStart( 2, '0' );
-	if ( hours > 0 ) {
-		return `${ hours }:${ pad( minutes ) }:${ pad( seconds ) }`;
-	}
-	return `${ minutes }:${ pad( seconds ) }`;
-};
-
-const Sparkline = ( { data, trend }: { data: number[]; trend: number } ) => {
-	const width = 88;
-	const height = 28;
-	const padding = 2;
-	const max = Math.max( ...data );
-	const min = Math.min( ...data );
-	const range = max - min || 1;
-	const coords = data.map( ( v, i ) => {
-		const x = ( i / ( data.length - 1 ) ) * width;
-		const y = height - padding - ( ( v - min ) / range ) * ( height - padding * 2 );
-		return [ x, y ] as const;
-	} );
-	const line = coords
-		.map( ( [ x, y ], i ) => `${ i === 0 ? 'M' : 'L' }${ x.toFixed( 1 ) },${ y.toFixed( 1 ) }` )
-		.join( ' ' );
-	const area = `${ line } L${ width },${ height } L0,${ height } Z`;
-	const stroke = trend >= 0 ? 'var(--studio-green-50)' : 'var(--studio-red-50)';
-	return (
-		<svg
-			width={ width }
-			height={ height }
-			viewBox={ `0 0 ${ width } ${ height }` }
-			className="podcasting-details__sparkline"
-			aria-hidden="true"
-		>
-			<path d={ area } fill={ stroke } opacity="0.12" />
-			<path
-				d={ line }
-				fill="none"
-				stroke={ stroke }
-				strokeWidth="1.5"
-				strokeLinecap="round"
-				strokeLinejoin="round"
-			/>
-		</svg>
-	);
-};
-
-const STATUS_LABELS: Record< string, string > = {
-	publish: 'Published',
-	future: 'Scheduled',
-	draft: 'Draft',
-	pending: 'Pending review',
-	private: 'Private',
 };
 
 const defaultView: ViewTable = {
@@ -133,7 +45,7 @@ const defaultView: ViewTable = {
 	},
 };
 
-const formatDate = ( iso: string, locale?: string ) => {
+const formatDate = ( iso: string ) => {
 	if ( ! iso ) {
 		return '';
 	}
@@ -141,12 +53,14 @@ const formatDate = ( iso: string, locale?: string ) => {
 	if ( isNaN( d.getTime() ) ) {
 		return iso;
 	}
-	return d.toLocaleDateString( locale || 'en-US', {
+	return d.toLocaleDateString( undefined, {
 		year: 'numeric',
 		month: 'short',
 		day: 'numeric',
 	} );
 };
+
+const Placeholder = () => <span className="podcasting__placeholder">—</span>;
 
 const PodcastingEpisodes = () => {
 	const translate = useTranslate();
@@ -179,10 +93,20 @@ const PodcastingEpisodes = () => {
 				status: post.status,
 				link: post.link,
 				featuredMediaUrl: thumbnail,
-				...buildFakeStats( post.id ),
 			};
 		} );
 	}, [ data ] );
+
+	const statusLabels = useMemo< Record< string, string > >(
+		() => ( {
+			publish: translate( 'Published' ) as string,
+			future: translate( 'Scheduled' ) as string,
+			draft: translate( 'Draft' ) as string,
+			pending: translate( 'Pending review' ) as string,
+			private: translate( 'Private' ) as string,
+		} ),
+		[ translate ]
+	);
 
 	const fields = useMemo(
 		() => [
@@ -192,14 +116,10 @@ const PodcastingEpisodes = () => {
 				getValue: ( { item }: { item: Episode } ) => item.featuredMediaUrl,
 				render: ( { item }: { item: Episode } ) =>
 					item.featuredMediaUrl ? (
-						<img
-							src={ item.featuredMediaUrl }
-							alt=""
-							className="podcasting-details__episode-thumb"
-						/>
+						<img src={ item.featuredMediaUrl } alt="" className="podcasting__episode-thumb" />
 					) : (
 						<div
-							className="podcasting-details__episode-thumb podcasting-details__episode-thumb--placeholder"
+							className="podcasting__episode-thumb podcasting__episode-thumb--placeholder"
 							aria-hidden="true"
 						/>
 					),
@@ -222,47 +142,23 @@ const PodcastingEpisodes = () => {
 			{
 				id: 'duration',
 				label: translate( 'Duration' ) as string,
-				getValue: ( { item }: { item: Episode } ) => item.durationSeconds,
-				render: ( { item }: { item: Episode } ) => (
-					<span className="podcasting-details__duration">
-						{ formatDuration( item.durationSeconds ) }
-					</span>
-				),
-				enableSorting: true,
+				getValue: () => 0,
+				render: () => <Placeholder />,
+				enableSorting: false,
 			},
 			{
 				id: 'downloads',
 				label: translate( 'Downloads' ) as string,
-				getValue: ( { item }: { item: Episode } ) => item.downloads,
-				render: ( { item }: { item: Episode } ) => (
-					<span className="podcasting-details__downloads">{ item.downloads.toLocaleString() }</span>
-				),
-				enableSorting: true,
+				getValue: () => 0,
+				render: () => <Placeholder />,
+				enableSorting: false,
 			},
 			{
 				id: 'activity',
 				label: translate( '30-day activity' ) as string,
-				getValue: ( { item }: { item: Episode } ) => item.trendPct,
-				render: ( { item }: { item: Episode } ) => {
-					const sign = item.trendPct > 0 ? '+' : '';
-					let modifier = 'flat';
-					if ( item.trendPct > 0 ) {
-						modifier = 'up';
-					} else if ( item.trendPct < 0 ) {
-						modifier = 'down';
-					}
-					const cls = `podcasting-details__trend podcasting-details__trend--${ modifier }`;
-					return (
-						<div className="podcasting-details__activity">
-							<Sparkline data={ item.dailyDownloads } trend={ item.trendPct } />
-							<span className={ cls }>
-								{ sign }
-								{ item.trendPct }%
-							</span>
-						</div>
-					);
-				},
-				enableSorting: true,
+				getValue: () => 0,
+				render: () => <Placeholder />,
+				enableSorting: false,
 			},
 			{
 				id: 'date',
@@ -275,8 +171,8 @@ const PodcastingEpisodes = () => {
 				id: 'status',
 				label: translate( 'Status' ) as string,
 				getValue: ( { item }: { item: Episode } ) => item.status,
-				render: ( { item }: { item: Episode } ) => STATUS_LABELS[ item.status ] ?? item.status,
-				elements: Object.entries( STATUS_LABELS ).map( ( [ value, label ] ) => ( {
+				render: ( { item }: { item: Episode } ) => statusLabels[ item.status ] ?? item.status,
+				elements: Object.entries( statusLabels ).map( ( [ value, label ] ) => ( {
 					value,
 					label,
 				} ) ),
@@ -284,7 +180,7 @@ const PodcastingEpisodes = () => {
 				enableSorting: true,
 			},
 		],
-		[ siteSlug, translate ]
+		[ siteSlug, statusLabels, translate ]
 	);
 
 	const actions = useMemo< Action< Episode >[] >(
@@ -314,9 +210,9 @@ const PodcastingEpisodes = () => {
 	);
 
 	const sectionHeader = (
-		<header className="podcasting-details__section-header">
-			<h2 className="podcasting-details__section-heading">{ translate( 'Episodes' ) }</h2>
-			<p className="podcasting-details__section-description">
+		<header className="podcasting__section-header">
+			<h2 className="podcasting__section-heading">{ translate( 'Episodes' ) }</h2>
+			<p className="podcasting__section-description">
 				{ translate( 'Manage the posts that make up your podcast feed.' ) }
 			</p>
 		</header>
@@ -326,7 +222,7 @@ const PodcastingEpisodes = () => {
 		return (
 			<>
 				{ sectionHeader }
-				<div className="podcasting-details__episodes-empty">
+				<div className="podcasting__episodes-empty">
 					{ translate(
 						'Select a podcast category in Feed settings to start showing episodes here.'
 					) }
@@ -340,7 +236,7 @@ const PodcastingEpisodes = () => {
 	return (
 		<>
 			{ sectionHeader }
-			<div className="podcasting-details__episodes">
+			<div className="podcasting__episodes">
 				<DataViews< Episode >
 					data={ processed }
 					fields={ fields }

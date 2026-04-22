@@ -1,18 +1,4 @@
-import { Button, Card } from '@automattic/components';
-import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
-import spotifyLogoUrl from './logos/spotify.svg';
-
-type Podcatcher = {
-	id: string;
-	name: string;
-	submitUrl: string;
-	logo: JSX.Element;
-	/** Background color of the logo tile. Omit when the logo already includes its own background. */
-	tileBackground?: string;
-};
-
-const LogoApple = () => (
+export const LogoApple = () => (
 	<svg
 		xmlns="http://www.w3.org/2000/svg"
 		viewBox="0 0 300 300"
@@ -20,7 +6,7 @@ const LogoApple = () => (
 		focusable="false"
 	>
 		<linearGradient
-			id="podcasting-details-apple-gradient"
+			id="podcasting-apple-gradient"
 			gradientUnits="userSpaceOnUse"
 			x1="150"
 			y1="0"
@@ -33,7 +19,7 @@ const LogoApple = () => (
 		<path
 			fillRule="evenodd"
 			clipRule="evenodd"
-			fill="url(#podcasting-details-apple-gradient)"
+			fill="url(#podcasting-apple-gradient)"
 			d="M294.1,260c-2.9,7.4-9.6,17.8-19.2,25.2c-5.5,4.2-12.1,8.3-21.1,11c-9.6,2.9-21.5,3.8-36.3,3.8h-135c-14.8,0-26.6-1-36.3-3.8c-9-2.7-15.6-6.7-21.1-11c-9.5-7.3-16.3-17.8-19.2-25.2C0.1,245.1,0,228.2,0,217.5l0,0v-135l0,0C0,71.8,0.1,54.9,5.9,40c2.9-7.4,9.6-17.8,19.2-25.2c5.5-4.2,12.1-8.3,21.1-11C55.9,1,67.7,0,82.5,0l0,0h135l0,0c14.8,0,26.6,1,36.3,3.8c9,2.7,15.6,6.7,21.1,11c9.5,7.3,16.3,17.8,19.2,25.2c5.9,14.9,5.9,31.9,5.9,42.5v135C300,228.2,299.9,245.1,294.1,260z"
 		/>
 		<path
@@ -55,16 +41,25 @@ const LogoApple = () => (
 	</svg>
 );
 
-const LogoSpotify = () => (
-	<img
-		src={ spotifyLogoUrl }
-		alt=""
+export const LogoSpotify = () => (
+	<svg
+		xmlns="http://www.w3.org/2000/svg"
+		viewBox="0 0 220 220"
 		aria-hidden="true"
-		className="podcasting-details__podcatcher-raster"
-	/>
+		focusable="false"
+	>
+		<rect width="220" height="220" fill="#1ED760" />
+		<g transform="translate(26 26)">
+			<circle cx="83.996" cy="84.019" r="83.742" fill="#FFFFFF" />
+			<path
+				fill="#1ED760"
+				d="m122.4 120.78c-1.5 2.46-4.72 3.24-7.18 1.73-19.662-12.01-44.414-14.73-73.564-8.07-2.809 0.64-5.609-1.12-6.249-3.93-0.643-2.81 1.11-5.61 3.926-6.25 31.9-7.288 59.263-4.15 81.337 9.34 2.46 1.51 3.24 4.72 1.73 7.18zm10.25-22.802c-1.89 3.072-5.91 4.042-8.98 2.152-22.51-13.836-56.823-17.843-83.448-9.761-3.453 1.043-7.1-0.903-8.148-4.35-1.04-3.453 0.907-7.093 4.354-8.143 30.413-9.228 68.222-4.758 94.072 11.127 3.07 1.89 4.04 5.91 2.15 8.976v-0.001zm0.88-23.744c-26.99-16.031-71.52-17.505-97.289-9.684-4.138 1.255-8.514-1.081-9.768-5.219-1.254-4.14 1.08-8.513 5.221-9.771 29.581-8.98 78.756-7.245 109.83 11.202 3.73 2.209 4.95 7.016 2.74 10.733-2.2 3.722-7.02 4.949-10.73 2.739z"
+			/>
+		</g>
+	</svg>
 );
 
-const LogoYouTube = () => (
+export const LogoYouTube = () => (
 	<svg
 		xmlns="http://www.w3.org/2000/svg"
 		viewBox="0 0 300 300"
@@ -79,7 +74,7 @@ const LogoYouTube = () => (
 	</svg>
 );
 
-const LogoAmazon = () => (
+export const LogoAmazon = () => (
 	<svg
 		xmlns="http://www.w3.org/2000/svg"
 		viewBox="0 0 1024 1024"
@@ -137,12 +132,12 @@ const LogoAmazon = () => (
 		/>
 		<path
 			fill="#14191a"
-			d="M830.77,306.43c22.39,0,36.15,18.44,36.15,48.16v72.38c0,2.2-1.61,3.81-3.81,3.81h-23.42c-2.2,0-3.81-1.61-3.81-3.81v-70.04c0-14.2-6-22.1-16.83-22.1-11.86,0-18.3,9.22-18.3,26.2v65.94c0,2.2-1.61,3.81-3.81,3.81h-23.42c-2.2,0-3.81-1.61-3.81-3.81v-114.1c0-2.2,1.61-3.81,3.81-3.81h19.32c2.2,0,3.62,1.46,4.1,3.81l2.93,14.34h1.17c5.27-13.28,15.81-20.79,29.71-20.79Z"
+			d="M830.77,306.43c22.39,0,36.15,18.44,36.15,48.16v72.38c0,2.2-1.61,3.81-3.81,3.81h-23.42c-2.2,0-3.81-1.61-3.81-3.81v-70.04c0-14.2-6-22.1-16.83-22.1-11.86,0-18.3,9.22-18.3,26.2v65.94c0,2.2-1.61,3.81-3.81,3.81h-19.32c-2.2,0-3.62,1.46-4.1,3.81l2.93,14.34h1.17c5.27-13.28,15.81-20.79,29.71-20.79Z"
 		/>
 	</svg>
 );
 
-const LogoPocketCasts = () => (
+export const LogoPocketCasts = () => (
 	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
 		<circle cx="16" cy="15" r="15" fill="white" />
 		<path
@@ -154,97 +149,13 @@ const LogoPocketCasts = () => (
 	</svg>
 );
 
-const LogoPodcastIndex = () => (
-	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 41 42" aria-hidden="true" focusable="false">
-		<g fill="currentColor">
+export const LogoPodcastIndex = () => (
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 61" aria-hidden="true" focusable="false">
+		<rect width="60" height="61" fill="#F90000" />
+		<g transform="translate(9.5 9.5)" fill="#FFFFFF">
 			<path d="M19.7935646,16 L21.1438236,16 C21.9722507,16 22.6438236,16.6715729 22.6438236,17.5 C22.6438236,17.6058285 22.632624,17.7113599 22.6104119,17.8148311 L17.4186047,42 L13,42 L18.3269763,17.1851689 C18.4753878,16.4938186 19.0864641,16 19.7935646,16 Z" />
 			<path d="M11.1084922,22.2287199 C6.355958,17.7559478 6.7537472,10.8190095 11.1294284,6.78109016 C11.9668794,6.01492086 13.3068009,6.05633542 14.0605068,6.90533384 C14.8560852,7.73362498 14.7932763,9.03818352 13.9558254,9.8250601 C11.2969186,12.2892262 11.0456833,16.4720965 13.9767617,19.2261645 C14.8142126,20.0130411 14.8560852,21.3175997 14.0605068,22.1458908 C13.2649284,22.974182 11.9459431,23.0155965 11.1084922,22.2287199 Z M9.64194995,25.2726899 C10.6887636,25.8939082 10.8981264,27.1363449 10.0606754,28.1717089 C9.64194995,28.7929272 9.01386174,29 8.38577352,29 C7.96704805,29 7.54832257,28.7929272 7.1295971,28.5858544 C2.94234234,25.4797627 0.220626747,20.0958702 0.0112640095,14.504905 C-0.198098728,8.70686707 2.52361686,3.94419301 7.1295971,0.423955663 C7.96704805,-0.197262692 9.43258721,-0.197262692 10.0606754,0.838101233 C10.6887636,1.66639237 10.6887636,3.11590187 9.64194995,3.73712022 C6.08278341,6.42906643 4.19851877,10.1563766 4.19851877,14.504905 C4.19851877,18.6463607 6.29214615,22.9948892 9.64194995,25.2726899 Z M26.9329847,22.1458908 C26.1374063,21.3175997 26.1792789,20.0130411 26.9957935,19.2054573 C29.9268719,16.4513892 29.6965729,12.268519 27.0167298,9.80435283 C26.1792789,9.03818352 26.11647,7.7129177 26.9120485,6.88462656 C27.6866906,6.05633542 29.0266121,5.99421358 29.8640631,6.78109016 C34.2397443,10.8190095 34.6375335,17.7559478 29.8849993,22.2287199 C29.0475484,23.0155965 27.7285631,22.974182 26.9329847,22.1458908 Z M33.872416,0.423955663 C38.4783962,3.94419301 41.1791755,8.70686707 40.9907491,14.504905 C40.9907491,20.0958702 38.2690335,25.4797627 33.872416,28.5858544 C33.4536905,28.7929272 33.034965,29 32.6162396,29 C31.9881514,29 31.3600631,28.7929272 30.9413377,28.1717089 C30.1038867,27.1363449 30.3132495,25.8939082 31.3600631,25.2726899 C34.7098669,22.9948892 36.8034943,18.6463607 36.8034943,14.504905 C36.8034943,10.1563766 34.9192297,6.42906643 31.3600631,3.73712022 C30.3132495,3.11590187 30.3132495,1.66639237 30.9413377,0.838101233 C31.5694259,-0.197262692 33.034965,-0.197262692 33.872416,0.423955663 Z" />
 			<circle cx="20.5" cy="14.5" r="4.5" />
 		</g>
 	</svg>
 );
-
-const PODCATCHERS: Podcatcher[] = [
-	{
-		id: 'pocketcasts',
-		name: 'Pocket Casts',
-		submitUrl: 'https://pocketcasts.com/submit/',
-		logo: <LogoPocketCasts />,
-	},
-	{
-		id: 'apple',
-		name: 'Apple Podcasts',
-		submitUrl: 'https://podcastsconnect.apple.com/my-podcasts/new-feed',
-		logo: <LogoApple />,
-	},
-	{
-		id: 'spotify',
-		name: 'Spotify',
-		submitUrl: 'https://podcasters.spotify.com/submit',
-		logo: <LogoSpotify />,
-	},
-	{
-		id: 'youtube',
-		name: 'YouTube',
-		submitUrl: 'https://studio.youtube.com',
-		logo: <LogoYouTube />,
-	},
-	{
-		id: 'amazon',
-		name: 'Amazon Music',
-		submitUrl: 'https://podcasters.amazon.com',
-		logo: <LogoAmazon />,
-	},
-	{
-		id: 'podcastindex',
-		name: 'Podcast Index',
-		tileBackground: '#f90000',
-		submitUrl: 'https://podcastindex.org/add',
-		logo: <LogoPodcastIndex />,
-	},
-];
-
-const PodcastingSetup = () => {
-	const translate = useTranslate();
-
-	return (
-		<>
-			<header className="podcasting-details__section-header">
-				<h2 className="podcasting-details__section-heading">{ translate( 'Setup' ) }</h2>
-				<p className="podcasting-details__section-description">
-					{ translate(
-						'Submit your podcast feed to the major podcatchers so your episodes reach more listeners.'
-					) }
-				</p>
-			</header>
-			<div className="podcasting-details__podcatchers">
-				{ PODCATCHERS.map( ( p ) => (
-					<Card key={ p.id } className="podcasting-details__podcatcher-card">
-						<div
-							className={ clsx( 'podcasting-details__podcatcher-logo', {
-								'podcasting-details__podcatcher-logo--bare': ! p.tileBackground,
-							} ) }
-							style={ p.tileBackground ? { background: p.tileBackground } : undefined }
-							aria-hidden="true"
-						>
-							{ p.logo }
-						</div>
-						<div className="podcasting-details__podcatcher-info">
-							<h3 className="podcasting-details__podcatcher-name">{ p.name }</h3>
-						</div>
-						<Button
-							href={ p.submitUrl }
-							target="_blank"
-							rel="noopener noreferrer"
-							className="podcasting-details__podcatcher-submit"
-						>
-							{ translate( 'Submit' ) }
-						</Button>
-					</Card>
-				) ) }
-			</div>
-		</>
-	);
-};
-
-export default PodcastingSetup;

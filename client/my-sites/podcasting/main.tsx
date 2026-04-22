@@ -4,6 +4,7 @@ import { TabPanel } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
+import QueryTerms from 'calypso/components/data/query-terms';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import JetpackFooter from 'calypso/components/jetpack/jetpack-footer';
 import JetpackTitle from 'calypso/components/jetpack-title';
@@ -11,24 +12,24 @@ import Main from 'calypso/components/main';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import PodcastingEpisodes from './episodes';
-import PodcastingFeedSettings from './feed-settings';
+import PodcastingSettings from './settings';
 import PodcastingSetup from './setup';
 
 import './style.scss';
 
-type PodcastSection = 'episodes' | 'feed' | 'setup';
+type PodcastSection = 'episodes' | 'settings' | 'setup';
 
-type PodcastingDetailsProps = {
+type PodcastingMainProps = {
 	section?: string;
 	path?: string;
 };
 
-const VALID_SECTIONS: readonly PodcastSection[] = [ 'feed', 'setup' ] as const;
+const VALID_SECTIONS: readonly PodcastSection[] = [ 'settings', 'setup' ] as const;
 
-const isValidSection = ( s: string | undefined ): s is 'feed' | 'setup' =>
+const isValidSection = ( s: string | undefined ): s is 'settings' | 'setup' =>
 	!! s && ( VALID_SECTIONS as readonly string[] ).includes( s );
 
-const PodcastingDetails = ( { section, path }: PodcastingDetailsProps ) => {
+const PodcastingMain = ( { section, path }: PodcastingMainProps ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
@@ -40,17 +41,17 @@ const PodcastingDetails = ( { section, path }: PodcastingDetailsProps ) => {
 		{
 			name: 'episodes',
 			title: translate( 'Episodes' ) as string,
-			path: '/settings/podcasting' + pathSuffix,
+			path: '/podcasting' + pathSuffix,
 		},
 		{
-			name: 'feed',
-			title: translate( 'Feed settings' ) as string,
-			path: '/settings/podcasting/feed' + pathSuffix,
+			name: 'settings',
+			title: translate( 'Settings' ) as string,
+			path: '/podcasting/settings' + pathSuffix,
 		},
 		{
 			name: 'setup',
 			title: translate( 'Setup' ) as string,
-			path: '/settings/podcasting/setup' + pathSuffix,
+			path: '/podcasting/setup' + pathSuffix,
 		},
 	];
 
@@ -58,8 +59,8 @@ const PodcastingDetails = ( { section, path }: PodcastingDetailsProps ) => {
 
 	const renderContent = () => {
 		switch ( currentSection ) {
-			case 'feed':
-				return <PodcastingFeedSettings />;
+			case 'settings':
+				return <PodcastingSettings />;
 			case 'setup':
 				return <PodcastingSetup />;
 			default:
@@ -67,13 +68,12 @@ const PodcastingDetails = ( { section, path }: PodcastingDetailsProps ) => {
 		}
 	};
 
-	const mainClassName =
-		'site-settings podcasting-details' +
-		( currentSection === 'episodes' ? ' podcasting-details--wide' : '' );
+	const mainClassName = 'podcasting' + ( currentSection === 'episodes' ? ' podcasting--wide' : '' );
 
 	return (
 		<Main fullWidthLayout className={ mainClassName }>
 			{ siteId && <QuerySiteSettings siteId={ siteId } /> }
+			{ siteId && <QueryTerms siteId={ siteId } taxonomy="category" /> }
 			<DocumentHead title={ translate( 'Podcasting' ) } />
 			<Page
 				hasPadding={ false }
@@ -88,28 +88,30 @@ const PodcastingDetails = ( { section, path }: PodcastingDetailsProps ) => {
 				) }
 				title={ <JetpackTitle title={ translate( 'Podcasting' ) } /> }
 			>
-				<div className="podcasting-details__tabs-bar">
-					<TabPanel
-						key={ currentSection }
-						className="podcasting-details__tabs"
-						activeClass="is-active"
-						tabs={ tabs }
-						initialTabName={ currentSection }
-						onSelect={ ( tabName ) => {
-							const target = tabs.find( ( t ) => t.name === tabName );
-							if ( target && currentPath !== target.path ) {
-								page.show( target.path );
-							}
-						} }
-					>
-						{ () => null }
-					</TabPanel>
+				<div className="podcasting__scroll-area">
+					<div className="podcasting__tabs-bar">
+						<TabPanel
+							key={ currentSection }
+							className="podcasting__tabs"
+							activeClass="is-active"
+							tabs={ tabs }
+							initialTabName={ currentSection }
+							onSelect={ ( tabName ) => {
+								const target = tabs.find( ( t ) => t.name === tabName );
+								if ( target && currentPath !== target.path ) {
+									page.show( target.path );
+								}
+							} }
+						>
+							{ () => null }
+						</TabPanel>
+					</div>
+					<div className="podcasting__tab-content">{ renderContent() }</div>
 				</div>
-				<div className="podcasting-details__tab-content">{ renderContent() }</div>
 			</Page>
 			<JetpackFooter />
 		</Main>
 	);
 };
 
-export default PodcastingDetails;
+export default PodcastingMain;

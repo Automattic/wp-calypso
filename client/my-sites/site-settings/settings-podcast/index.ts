@@ -6,21 +6,9 @@ import { createPodcastSettings } from './controller';
 
 export default function () {
 	page( '/settings/podcasting', siteSelection, sites, makeLayout, clientRender );
-	page( '/settings/podcasting/feed', siteSelection, sites, makeLayout, clientRender );
-	page( '/settings/podcasting/setup', siteSelection, sites, makeLayout, clientRender );
 
 	page(
 		'/settings/podcasting/:site_id',
-		siteSelection,
-		navigation,
-		siteSettings,
-		createPodcastSettings,
-		makeLayout,
-		clientRender
-	);
-
-	page(
-		'/settings/podcasting/:section(feed|setup)/:site_id',
 		siteSelection,
 		navigation,
 		siteSettings,

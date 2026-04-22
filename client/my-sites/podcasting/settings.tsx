@@ -19,6 +19,12 @@ import FormTextarea from 'calypso/components/forms/form-textarea';
 import Notice from 'calypso/components/notice';
 import { decodeEntities } from 'calypso/lib/formatting';
 import PodcastCoverImageSetting from 'calypso/my-sites/site-settings/podcast-cover-image-setting';
+import PodcastFeedUrlRaw from 'calypso/my-sites/site-settings/podcasting-details/feed-url';
+import PodcastingNoPermissionsMessage from 'calypso/my-sites/site-settings/podcasting-details/no-permissions';
+import PodcastingNotSupportedMessage from 'calypso/my-sites/site-settings/podcasting-details/not-supported';
+import PodcastingPrivateSiteMessage from 'calypso/my-sites/site-settings/podcasting-details/private-site';
+import PodcastingPublishNoticeRaw from 'calypso/my-sites/site-settings/podcasting-details/publish-notice';
+import TopicsSelectorRaw from 'calypso/my-sites/site-settings/podcasting-details/topics-selector';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import wrapSettingsForm from 'calypso/my-sites/site-settings/wrap-settings-form';
 import { useSelector } from 'calypso/state';
@@ -33,12 +39,6 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import PodcastFeedUrlRaw from './feed-url';
-import PodcastingNoPermissionsMessage from './no-permissions';
-import PodcastingNotSupportedMessage from './not-supported';
-import PodcastingPrivateSiteMessage from './private-site';
-import PodcastingPublishNoticeRaw from './publish-notice';
-import TopicsSelectorRaw from './topics-selector';
 
 const PodcastingPublishNotice = PodcastingPublishNoticeRaw as ComponentType< {
 	podcastingCategoryId: number;
@@ -107,7 +107,7 @@ const getFormSettings = ( settings?: PodcastingSettings ): PodcastingFields => {
 	] );
 };
 
-const PodcastingFeedSettings = wrapSettingsForm( getFormSettings )( ( {
+const PodcastingSettings = wrapSettingsForm( getFormSettings )( ( {
 	fields,
 	handleSubmitForm,
 	handleSelect,
@@ -256,9 +256,9 @@ const PodcastingFeedSettings = wrapSettingsForm( getFormSettings )( ( {
 
 	return (
 		<form id="site-settings" onSubmit={ handleSubmitForm }>
-			<header className="podcasting-details__section-header">
-				<h2 className="podcasting-details__section-heading">{ translate( 'Feed settings' ) }</h2>
-				<p className="podcasting-details__section-description">
+			<header className="podcasting__section-header">
+				<h2 className="podcasting__section-heading">{ translate( 'Settings' ) }</h2>
+				<p className="podcasting__section-description">
 					{ translate( 'Configure your podcast feed and directory listing.' ) }
 				</p>
 			</header>
@@ -288,7 +288,7 @@ const PodcastingFeedSettings = wrapSettingsForm( getFormSettings )( ( {
 					} ) }
 					description={ translate( 'Embed podcast episodes directly from your media library.' ) }
 					feature={ WPCOM_FEATURES_UPLOAD_AUDIO_FILES }
-					event="podcasting_details_upload_audio"
+					event="podcasting_upload_audio"
 					tracksImpressionName="calypso_upgrade_nudge_impression"
 					tracksClickName="calypso_upgrade_nudge_cta_click"
 					showIcon
@@ -317,7 +317,7 @@ const PodcastingFeedSettings = wrapSettingsForm( getFormSettings )( ( {
 							/>
 						) }
 						{ isPodcastingEnabled && (
-							<div className="podcasting-details__publish-wrapper">
+							<div className="podcasting__publish-wrapper">
 								<PodcastingPublishNotice podcastingCategoryId={ podcastingCategoryId } />
 							</div>
 						) }
@@ -348,7 +348,7 @@ const PodcastingFeedSettings = wrapSettingsForm( getFormSettings )( ( {
 						</FormFieldset>
 						<PodcastFeedUrl categoryId={ podcastingCategoryId } />
 						{ isPodcastingEnabled && (
-							<Button className="podcasting-details__publish-button" href={ newPostUrl }>
+							<Button className="podcasting__publish-button" href={ newPostUrl }>
 								{ translate( 'Create Episode' ) }
 							</Button>
 						) }
@@ -368,7 +368,7 @@ const PodcastingFeedSettings = wrapSettingsForm( getFormSettings )( ( {
 								'This information appears in podcast apps like Apple Podcasts and Spotify.'
 							) }
 						</FormSettingExplanation>
-						<div className="podcasting-details__cover-and-info">
+						<div className="podcasting__cover-and-info">
 							<PodcastCoverImageSetting
 								coverImageId={ parseInt( String( fields.podcasting_image_id ?? '0' ), 10 ) || 0 }
 								coverImageUrl={ fields.podcasting_image }
@@ -377,7 +377,7 @@ const PodcastingFeedSettings = wrapSettingsForm( getFormSettings )( ( {
 								onUploadStateChange={ setIsCoverImageUploading }
 								isDisabled={ disabled }
 							/>
-							<div className="podcasting-details__title-subtitle-wrapper">
+							<div className="podcasting__title-subtitle-wrapper">
 								{ renderTextField( {
 									key: 'podcasting_title',
 									label: translate( 'Title' ) as string,
@@ -472,4 +472,4 @@ const PodcastingFeedSettings = wrapSettingsForm( getFormSettings )( ( {
 	);
 } );
 
-export default PodcastingFeedSettings;
+export default PodcastingSettings;
