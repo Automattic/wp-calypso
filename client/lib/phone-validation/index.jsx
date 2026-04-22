@@ -39,7 +39,7 @@ export default function ( phoneNumber ) {
 		// (e.g., area code 350, assigned to California in 2022).
 		// NANP format: +1 followed by 10 digits (3 area code + 7 local),
 		// where the area code's first digit is 2-9.
-		const nanpRegex = /^\+1[2-9]\d{9}$/;
+		const nanpRegex = /^\+1[2-9]\d{2}\d{7}$/;
 		if ( ! nanpRegex.test( phoneNumber ) ) {
 			return {
 				error: 'phone_number_invalid',
