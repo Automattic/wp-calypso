@@ -64,7 +64,7 @@ describe( 'PrimaryBlogCard', () => {
 
 		expect( screen.getByRole( 'heading', { level: 5 } ) ).toHaveTextContent( 'Test Blog' );
 		expect( screen.getByText( 'A blog about testing' ) ).toBeVisible();
-		expect( screen.getByText( /By Test User/ ) ).toBeVisible();
+		expect( screen.getByText( /by Test User/ ) ).toBeVisible();
 	} );
 
 	test( 'falls back to first_name + last_name when display_name is empty', () => {
@@ -72,7 +72,7 @@ describe( 'PrimaryBlogCard', () => {
 
 		renderWithProvider( <PrimaryBlogCard user={ user } /> );
 
-		expect( screen.getByText( /By Test User/ ) ).toBeVisible();
+		expect( screen.getByText( /by Test User/ ) ).toBeVisible();
 	} );
 
 	test( 'falls back to nice_name when display_name and names are empty', () => {
@@ -80,7 +80,7 @@ describe( 'PrimaryBlogCard', () => {
 
 		renderWithProvider( <PrimaryBlogCard user={ user } /> );
 
-		expect( screen.getByText( /By testuser/ ) ).toBeVisible();
+		expect( screen.getByText( /by testuser/ ) ).toBeVisible();
 	} );
 
 	test( 'hides description when primary blog has no description', () => {
