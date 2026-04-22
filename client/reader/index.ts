@@ -38,6 +38,7 @@ import {
 	exportList,
 	listListing,
 } from './list/controller';
+import { onThisDay } from './on-this-day/controller';
 import { userProfile } from './user-profile/controller';
 
 function forceTeamA8C( context: Context, next: () => void ): void {
@@ -66,6 +67,17 @@ export default async function (): Promise< void > {
 		setBeforePrimary,
 		setSelectedSiteIdByOrigin,
 		following,
+		makeLayout,
+		clientRender
+	);
+
+	// On This Day
+	page(
+		'/reader/on-this-day',
+		redirectLoggedOut,
+		sidebar,
+		setBeforePrimary,
+		onThisDay,
 		makeLayout,
 		clientRender
 	);

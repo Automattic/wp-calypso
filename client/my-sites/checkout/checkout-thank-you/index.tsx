@@ -636,7 +636,11 @@ export class CheckoutThankYou extends Component<
 						/>
 					</>
 				);
-			} else if ( this.props.receipt.data && isOnlyDomainPurchases( purchases ) ) {
+			} else if (
+				this.props.receipt.data &&
+				isOnlyDomainPurchases( purchases ) &&
+				this.props.domainOnlySiteFlow
+			) {
 				if ( domainPurchases.length > 1 ) {
 					const domainsUrl = this.props.hasDashboardOptIn
 						? dashboardLink( '/domains' )

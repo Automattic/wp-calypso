@@ -44,7 +44,6 @@ const ReaderListHeader = ( props: ReaderListHeaderProps ) => {
 	if ( list ) {
 		// Show author name in parentheses if the list is owned by someone other than the current user
 		const isOwnedByCurrentUser = currentUser && list.owner === currentUser.username;
-		// Show author name in parentheses if the list is owned by someone other than the current user
 		title = isOwnedByCurrentUser ? (
 			title
 		) : (
@@ -122,7 +121,7 @@ const ReaderListHeader = ( props: ReaderListHeaderProps ) => {
 						</div>
 					) }
 
-					{ ! list?.is_owner && (
+					{ list && ! list?.is_owner && (
 						<div className="list-stream__header-follow">
 							<FollowButton
 								iconSize={ 24 }

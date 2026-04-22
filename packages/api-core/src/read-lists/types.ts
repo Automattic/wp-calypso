@@ -10,8 +10,8 @@ export interface ReadListItem {
 			feed: string;
 		};
 		data: {
-			feed: ReadListItemFeed;
-			site: Site;
+			feed: ReadListItemFeed | null;
+			site: Site | null;
 		};
 	};
 }

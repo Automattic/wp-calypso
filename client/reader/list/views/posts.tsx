@@ -20,7 +20,7 @@ export default function ListPosts( props: ListPostsProps ) {
 			className="no-padding"
 			streamKey={ props.streamKey }
 			listName={ props.listName }
-			showFollowInHeader={ ! list?.is_owner }
+			showFollowInHeader={ list && ! list?.is_owner }
 			emptyContent={ () => <ListEmpty list={ list } /> }
 			trackScrollPage={ props.trackScrollPage }
 			onUpdatesShown={ props.onUpdatesShown }

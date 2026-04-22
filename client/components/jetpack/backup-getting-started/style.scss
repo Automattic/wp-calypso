@@ -5,13 +5,16 @@ $card-height-desktop: 250px;
 $preview-max-width: 360px;
 $content-max-width: 210px;
 
-.backup-getting-started {
+.card.backup-getting-started {
 	display: grid;
 	grid-template-columns: 1fr;
 	background-color: #f9f9f6;
 
 	@include break-medium {
 		background-image: url(calypso/assets/images/jetpack/getting-started-backup-bg.svg);
+		background-repeat: no-repeat;
+		background-position: center;
+		background-size: cover;
 		grid-template-columns: minmax(0, $preview-max-width) minmax($content-max-width, 1fr);
 		grid-column-gap: 1.5rem;
 	}
