@@ -1,5 +1,6 @@
 import './style.scss';
 
+import { UserResponse } from '@automattic/api-core';
 import { userQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { Popover } from '@wordpress/components';
@@ -48,9 +49,47 @@ export default function UserAvatar( { user, size = 32, hideHovercard = false }: 
 	) : (
 		<UserAvatarDefaultIcon iconSize={ size } />
 	);
+	const [ placement, setPlacement ] = useState< 'bottom-start' | 'top-start' | 'right' | 'left' >(
+		'bottom-start'
+	);
 
 	// Prefetching so that we can display WPCOM users Hovercards instantly, Gravatar lookups will be triggered on hover.
 	useQuery( userQuery( user?.wpcom_login, user?.wpcom_id, ! hideHovercard ) );
+
+	// Compute the placement of the hovercard based on available space in the viewport.
+	// This is done after we load the user data, so that we can take into account the height
+	// of the hovercard which can vary based on the user data.
+	const computePlacement = useCallback( ( user: UserResponse | null ) => {
+		if ( ! avatarRef.current ) {
+			return;
+		}
+
+		const hasPrimaryBlog = !! user?.primary_blog;
+		const hasRecommendedBlogs = !! user?.recommended_blogs_count;
+
+		let hovercardHeight = 330;
+		if ( hasPrimaryBlog ) {
+			hovercardHeight = 450;
+		}
+		if ( hasPrimaryBlog && hasRecommendedBlogs ) {
+			hovercardHeight = 700;
+		}
+
+		const OFFSET = 5;
+		const rect = avatarRef.current.getBoundingClientRect();
+		const spaceBelow = window.innerHeight - rect.bottom - OFFSET;
+		const spaceAbove = rect.top - OFFSET;
+
+		if ( spaceBelow >= hovercardHeight ) {
+			setPlacement( 'bottom-start' );
+		} else if ( spaceAbove >= hovercardHeight ) {
+			setPlacement( 'top-start' );
+		} else {
+			const spaceRight = window.innerWidth - rect.right - OFFSET;
+			const spaceLeft = rect.left - OFFSET;
+			setPlacement( spaceRight >= spaceLeft ? 'right' : 'left' );
+		}
+	}, [] );
 
 	const clearHoverTimer = useCallback( () => {
 		if ( hoverTimerRef.current ) {
@@ -84,14 +123,15 @@ export default function UserAvatar( { user, size = 32, hideHovercard = false }: 
 				<Popover
 					anchor={ avatarRef.current }
 					variant="unstyled"
-					placement="bottom-start"
+					offset={ 5 }
+					placement={ placement }
+					flip={ false } // We compute our own placement and don't want Popover to change it.
 					focusOnMount={ false }
 					noArrow
-					offset={ 5 }
 					onMouseEnter={ clearHoverTimer }
 					onMouseLeave={ handleHideHovercard }
 				>
-					<UserHovercard user={ user } />
+					<UserHovercard user={ user } onUserLoaded={ computePlacement } />
 				</Popover>
 			) }
 		</div>

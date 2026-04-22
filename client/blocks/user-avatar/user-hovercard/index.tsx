@@ -1,9 +1,11 @@
 import './styles.scss';
+import { UserResponse } from '@automattic/api-core';
 import { userQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { Spinner } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import UserAvatarDefaultIcon from 'calypso/reader/components/icons/user-avatar-default-icon';
 import { UserAvatarInfo } from '..';
 import PrimaryBlogCard from './primary-blog-card';
@@ -13,11 +15,12 @@ import UserHovercardHeader from './user-hovercard-header';
 
 interface UserHovercardProps {
 	user: UserAvatarInfo;
+	onUserLoaded?: ( user: UserResponse | null ) => void;
 }
 
 export default function UserHovercard( props: UserHovercardProps ): JSX.Element | null {
 	const translate = useTranslate();
-	const { user: userProp } = props;
+	const { user: userProp, onUserLoaded } = props;
 	const wpcomIdOrLogin = userProp.wpcom_id || userProp.wpcom_login;
 	const classNames = 'user-hovercard ignore-click';
 	const displayName = translate( 'User Profile: %s', {
@@ -37,6 +40,15 @@ export default function UserHovercard( props: UserHovercardProps ): JSX.Element 
 		)
 	);
 
+	const user = wpcomData?.user_login ? wpcomData : gravatarUser;
+	useEffect( () => {
+		if ( isWpcomLoading || isGravatarLoading ) {
+			return;
+		}
+
+		onUserLoaded( user ?? null );
+	}, [ isWpcomLoading, isGravatarLoading, onUserLoaded, user ] );
+
 	if ( isWpcomLoading || isGravatarLoading ) {
 		return (
 			<div className={ classNames } role="dialog" aria-label={ displayName }>
@@ -47,7 +59,6 @@ export default function UserHovercard( props: UserHovercardProps ): JSX.Element 
 		);
 	}
 
-	const user = wpcomData?.user_login ? wpcomData : gravatarUser;
 	if ( ! user ) {
 		return (
 			<div
