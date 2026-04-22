@@ -63,7 +63,6 @@ class ListStream extends Component {
 		}
 
 		const title = list?.title || this.title;
-
 		const headerElement = (
 			<>
 				<DocumentHead
@@ -98,7 +97,7 @@ class ListStream extends Component {
 						{ ...this.props }
 						listName={ this.title }
 						emptyContent={ () => <ListEmpty list={ list } /> }
-						showFollowInHeader={ ! list?.is_owner }
+						showFollowInHeader={ list && ! list?.is_owner }
 					>
 						{ headerElement }
 					</Stream>

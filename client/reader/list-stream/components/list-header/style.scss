@@ -6,7 +6,7 @@
 .list-stream__header-follow {
 	align-items: stretch;
 	display: flex;
-	margin-left: auto;
+	margin-inline-start: auto;
 	z-index: z-index("root", ".list-stream__header-follow");
 
 	.follow-button {

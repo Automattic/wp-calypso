@@ -26,7 +26,7 @@ interface ReaderListHeaderProps {
 		username: string;
 	};
 	following: boolean;
-	onFollowToggle: () => void;
+	onFollowToggle: ( isFollowing: boolean ) => void;
 	view: 'posts' | 'sites';
 }
 
@@ -43,7 +43,6 @@ const ReaderListHeader = ( props: ReaderListHeaderProps ) => {
 	if ( list ) {
 		// Show author name in parentheses if the list is owned by someone other than the current user
 		const isOwnedByCurrentUser = props.currentUser && list.owner === props.currentUser.username;
-		// Show author name in parentheses if the list is owned by someone other than the current user
 		title = isOwnedByCurrentUser ? (
 			title
 		) : (
@@ -94,7 +93,7 @@ const ReaderListHeader = ( props: ReaderListHeaderProps ) => {
 						</div>
 					) }
 
-					{ ! list?.is_owner && (
+					{ list && ! list?.is_owner && (
 						<div className="list-stream__header-follow">
 							<FollowButton
 								iconSize={ 24 }
