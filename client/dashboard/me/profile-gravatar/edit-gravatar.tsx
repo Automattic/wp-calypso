@@ -163,11 +163,11 @@ const EditGravatar = ( { isEmailVerified = true, avatarUrl, userEmail }: EditGra
 						<div className="overlay-hover" style={ overlayStyle }>
 							<div style={ { color: '#fff' } }>
 								{ ! isEmailVerified && (
-									<Icon icon={ caution } size={ 24 } style={ { fill: '#fff' } } />
+									<Icon icon={ caution } size={ 24 } style={ { fill: 'currentColor' } } />
 								) }
 
 								{ isEmailVerified && (
-									<Icon icon={ upload } size={ 24 } style={ { fill: '#fff' } } />
+									<Icon icon={ upload } size={ 24 } style={ { fill: 'currentColor' } } />
 								) }
 							</div>
 						</div>
@@ -181,16 +181,29 @@ const EditGravatar = ( { isEmailVerified = true, avatarUrl, userEmail }: EditGra
 			{ showEmailVerificationNotice && (
 				<div
 					style={ {
-						backgroundColor: '#fff8e5',
+						backgroundColor: 'var(--dashboard-warning__background-color, #fff8e5)',
 						padding: 12,
 						margin: '8px 0',
-						borderLeft: '3px solid #f0b849',
+						borderLeft: '3px solid var(--dashboard-warning__border-color, #f0b849)',
 					} }
 				>
 					<p style={ { marginBottom: 8 } }>
 						{ __( 'Please verify your email address to change your profile photo.' ) }
 					</p>
-					<Button onClick={ closeVerifyEmailDialog } variant="secondary">
+					<Button
+						onClick={ closeVerifyEmailDialog }
+						variant="secondary"
+						style={
+							{
+								'--wp-components-color-accent':
+									'var(--dashboard-warning__action-color, var(--wp-admin-theme-color))',
+								'--wp-components-color-accent-darker-10':
+									'var(--dashboard-warning__action-color-hover, var(--wp-admin-theme-color-darker-10))',
+								'--wp-components-color-accent-darker-20':
+									'var(--dashboard-warning__action-color-active, var(--wp-admin-theme-color-darker-20))',
+							} as CSSProperties
+						}
+					>
 						{ __( 'Close' ) }
 					</Button>
 				</div>
