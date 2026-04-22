@@ -11,6 +11,7 @@ import { useCallback, useEffect, useMemo, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { comment, backup, page, video, rss } from '@wordpress/icons';
 import { registerPlugin } from '@wordpress/plugins';
+import { useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { useCanvasMode } from './hooks/use-canvas-mode';
 import { useMenuPanelExperiment } from './hooks/use-menu-panel-experiment';
@@ -102,6 +103,65 @@ function HelpCenterContent() {
 	);
 
 	const sidebarActionsContainer = document.querySelector( '.edit-site-site-hub__actions' );
+
+	const hasInitialized = useRef( false );
+	// On mobile the SlotFill button is hidden by Gutenberg's own CSS, so wire up the
+	// admin bar icon that our PHP adds for the gutenberg variant instead.
+	const adminBarButton = document.getElementById( 'wp-admin-bar-help-center' );
+	useEffect( () => {
+		if ( isDesktop || ! adminBarButton ) {
+			return;
+		}
+		adminBarButton.onclick = handleToggleHelpCenter;
+
+		// make sure it's closed from the beginning
+		if ( ! hasInitialized.current ) {
+			hasInitialized.current = true;
+			setShowHelpCenter( false );
+		}
+
+		// The help center panel uses --masterbar-height to position itself below the
+		// top bars. In Gutenberg this variable is unset, so the panel defaults to
+		// top:0 and the header is hidden behind the admin bar + editor toolbar.
+		const adminBar = document.getElementById( 'wpadminbar' );
+		const editorBar = document.querySelector( '.editor-header' );
+		const combinedHeight = ( adminBar?.offsetHeight ?? 0 ) + ( editorBar?.offsetHeight ?? 0 );
+		if ( combinedHeight > 0 ) {
+			document.documentElement.style.setProperty( '--masterbar-height', combinedHeight + 'px' );
+		}
+
+		return () => {
+			adminBarButton.onclick = null;
+			document.documentElement.style.removeProperty( '--masterbar-height' );
+		};
+	}, [ isDesktop, adminBarButton, handleToggleHelpCenter, setShowHelpCenter ] );
+
+	// On mobile, close the Help Center as soon as the user taps a button in
+	// the editor header or the admin bar. The panel has a very high z-index
+	// and sits below both; without this, Gutenberg popovers (block inserter,
+	// document settings, publish, etc.) and admin-bar menus open behind the
+	// panel and the tap looks silent. The admin bar's Help Center toggle is
+	// excluded so its own open/close handler runs unimpeded.
+	useEffect( () => {
+		if ( isDesktop || ! isShown ) {
+			return;
+		}
+		const editorBar = document.querySelector( '.editor-header' );
+		const adminBar = document.getElementById( 'wpadminbar' );
+		const closeOnDismissableTap = () => setShowHelpCenter( false );
+		const closeOnAdminBarTap = ( event ) => {
+			if ( event.target.closest( '#wp-admin-bar-help-center' ) ) {
+				return;
+			}
+			setShowHelpCenter( false );
+		};
+		editorBar?.addEventListener( 'pointerdown', closeOnDismissableTap );
+		adminBar?.addEventListener( 'pointerdown', closeOnAdminBarTap );
+		return () => {
+			editorBar?.removeEventListener( 'pointerdown', closeOnDismissableTap );
+			adminBar?.removeEventListener( 'pointerdown', closeOnAdminBarTap );
+		};
+	}, [ isDesktop, isShown, setShowHelpCenter ] );
 
 	// Menu items for the dropdown
 	const menuControls = useMemo(
