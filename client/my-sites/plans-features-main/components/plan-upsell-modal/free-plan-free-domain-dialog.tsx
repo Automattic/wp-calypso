@@ -10,7 +10,8 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { DialogContainer, Heading } from './components';
 import PlanUpsellButton from './components/plan-upsell-button';
 import { usePlanUpsellInfo } from './hooks/use-plan-upsell-info';
-import { DomainPlanDialogProps, MODAL_VIEW_EVENT_NAME } from '.';
+import { DomainPlanDialogProps, MODAL_CTA_CLICK_EVENT_NAME, MODAL_VIEW_EVENT_NAME } from '.';
+import type { PlanSlug } from '@automattic/calypso-products';
 import type { TranslateResult } from 'i18n-calypso';
 
 const List = styled.ul`
@@ -99,6 +100,21 @@ export function FreePlanFreeDomainDialog( {
 	const basicPlanUpsellInfo = usePlanUpsellInfo( { planSlug: PLAN_PERSONAL } );
 	const advancePlanUpsellInfo = usePlanUpsellInfo( { planSlug: PLAN_PREMIUM } );
 	const buttonDisabled = generatedWPComSubdomain.isLoading || ! generatedWPComSubdomain.result;
+	function handlePlanSelected( planSlug: PlanSlug ) {
+		recordTracksEvent( MODAL_CTA_CLICK_EVENT_NAME, {
+			dialog_type: 'free_plan_free_domain',
+			plan_slug: planSlug,
+		} );
+		onPlanSelected( planSlug );
+	}
+
+	function handleFreePlanClick() {
+		recordTracksEvent( MODAL_CTA_CLICK_EVENT_NAME, {
+			dialog_type: 'free_plan_free_domain',
+			plan_slug: 'free',
+		} );
+		onFreePlanSelected();
+	}
 
 	useEffect( () => {
 		recordTracksEvent( MODAL_VIEW_EVENT_NAME, {
@@ -190,21 +206,16 @@ export function FreePlanFreeDomainDialog( {
 				<PlanUpsellButton
 					planSlug={ PLAN_PERSONAL }
 					disabled={ buttonDisabled }
-					onPlanSelected={ onPlanSelected }
+					onPlanSelected={ handlePlanSelected }
 				/>
+
 				<PlanUpsellButton
 					planSlug={ PLAN_PREMIUM }
 					disabled={ buttonDisabled }
-					onPlanSelected={ onPlanSelected }
+					onPlanSelected={ handlePlanSelected }
 				/>
 			</ButtonRow>
-			<PlanButton
-				disabled={ buttonDisabled }
-				onClick={ () => {
-					onFreePlanSelected();
-				} }
-				borderless
-			>
+			<PlanButton disabled={ buttonDisabled } onClick={ handleFreePlanClick } borderless>
 				{ translate( 'Continue with Free' ) }
 			</PlanButton>
 			<TextBox fontSize={ 12 } color="gray">
