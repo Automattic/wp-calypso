@@ -29,6 +29,7 @@ import {
 	setBeforePrimary,
 	loadNewSubscriptionPage,
 } from './controller';
+import { onThisDay } from './on-this-day/controller';
 import { userProfile } from './user-profile/controller';
 
 import './style.scss';
@@ -59,6 +60,17 @@ export default async function (): Promise< void > {
 		setBeforePrimary,
 		setSelectedSiteIdByOrigin,
 		following,
+		makeLayout,
+		clientRender
+	);
+
+	// On This Day
+	page(
+		'/reader/on-this-day',
+		redirectLoggedOut,
+		sidebar,
+		setBeforePrimary,
+		onThisDay,
 		makeLayout,
 		clientRender
 	);

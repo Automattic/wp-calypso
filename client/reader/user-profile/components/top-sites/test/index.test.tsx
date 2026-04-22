@@ -1,11 +1,11 @@
 /**
  * @jest-environment jsdom
  */
+import { UserSitesResponse } from '@automattic/api-core';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import UserTopSites from '..';
-import type { UserSitesResponse } from '@automattic/api-core';
 
 jest.mock( 'calypso/blocks/site-icon', () => ( {
 	SiteIcon: ( { siteId }: { siteId: number } ) => <span data-testid={ `site-icon-${ siteId }` } />,
