@@ -5,8 +5,15 @@ import {
 	isPlan,
 	isTitanMail,
 } from '@automattic/calypso-products';
-import type { CancelRemoveCategory } from '@automattic/api-core';
 import type { Purchase } from 'calypso/lib/purchases/types';
+
+export type CancelRemoveCategory =
+	| 'plan'
+	| 'domain'
+	| 'email'
+	| 'marketplace_plugin'
+	| 'marketplace_theme'
+	| 'other';
 
 export function classifyPurchaseForCopy( purchase: Purchase ): CancelRemoveCategory {
 	if ( isPlan( purchase ) ) {

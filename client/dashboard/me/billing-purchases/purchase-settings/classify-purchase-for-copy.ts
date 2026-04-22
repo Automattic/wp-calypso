@@ -1,5 +1,13 @@
 import { isDomainTransfer, isGoogleWorkspace, isTitanMail } from '../../../utils/purchase';
-import type { CancelRemoveCategory, Purchase } from '@automattic/api-core';
+import type { Purchase } from '@automattic/api-core';
+
+export type CancelRemoveCategory =
+	| 'plan'
+	| 'domain'
+	| 'email'
+	| 'marketplace_plugin'
+	| 'marketplace_theme'
+	| 'other';
 
 export function classifyPurchaseForCopy( purchase: Purchase ): CancelRemoveCategory {
 	if ( purchase.is_plan ) {

@@ -18,7 +18,7 @@ import {
 	getCancelButtonCopy as legacyGetCancelButtonCopy,
 	getRemoveButtonCopy as legacyGetRemoveButtonCopy,
 } from '../get-cancel-remove-copy';
-import type { CancelRemoveCategory } from '@automattic/api-core';
+import type { CancelRemoveCategory } from '../classify-purchase-for-copy';
 
 const DATE = 'January 1, 2027';
 const PRODUCT_NAMES: Record< CancelRemoveCategory, string > = {

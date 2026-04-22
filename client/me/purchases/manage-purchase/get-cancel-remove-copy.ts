@@ -1,4 +1,4 @@
-import type { CancelRemoveCategory } from '@automattic/api-core';
+import type { CancelRemoveCategory } from './classify-purchase-for-copy';
 import type { LocalizeProps } from 'i18n-calypso';
 
 type Translate = LocalizeProps[ 'translate' ];

@@ -1,5 +1,5 @@
 import { __, sprintf } from '@wordpress/i18n';
-import type { CancelRemoveCategory } from '@automattic/api-core';
+import type { CancelRemoveCategory } from './classify-purchase-for-copy';
 
 /**
  * Copy for the Cancel and Remove buttons on the dashboard Purchase
