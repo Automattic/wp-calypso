@@ -88,6 +88,11 @@ const TrackingKeys = {
 		gaEvent: 'Clicked Reader Sidebar Saved',
 		tracksEvent: 'calypso_reader_sidebar_saved_clicked',
 	},
+	atmosphere: {
+		action: 'clicked_reader_sidebar_atmosphere',
+		gaEvent: 'Clicked Reader Sidebar ATmosphere',
+		tracksEvent: 'calypso_reader_sidebar_atmosphere_clicked',
+	},
 };
 
 export class ReaderSidebar extends Component {
@@ -199,8 +204,9 @@ export class ReaderSidebar extends Component {
 						<SidebarItem
 							label={ translate( 'ATmosphere' ) }
 							link="/reader/atmosphere"
-							className={ clsx( {
-								selected: path.startsWith( '/reader/atmosphere' ),
+							onNavigate={ this.handleSidebarMenuClick( TrackingKeys.atmosphere ) }
+							className={ ReaderSidebarHelper.itemLinkClass( '/reader/atmosphere', path, {
+								'sidebar-streams__atmosphere': true,
 							} ) }
 						/>
 					) }

@@ -13,7 +13,11 @@ export function ConnectionsList( { connections, isLoading, onVerify }: Connectio
 
 	if ( isLoading ) {
 		return (
-			<ul className="atmosphere-connections" aria-busy="true">
+			<ul
+				className="atmosphere-connections"
+				aria-busy="true"
+				aria-label={ translate( 'Loading Bluesky connections' ) }
+			>
 				{ [ 0, 1, 2 ].map( ( i ) => (
 					<li key={ i } className="atmosphere-skeleton" />
 				) ) }
@@ -33,26 +37,33 @@ export function ConnectionsList( { connections, isLoading, onVerify }: Connectio
 
 	return (
 		<ul className="atmosphere-connections">
-			{ connections.map( ( c ) => (
-				<li key={ c.id }>
+			{ connections.map( ( connection ) => (
+				<li key={ connection.id }>
 					<Card>
 						<CardBody>
 							<div className="atmosphere-connection">
-								{ c.avatar ? (
-									<img src={ c.avatar } alt="" className="atmosphere-avatar" />
+								{ connection.avatar ? (
+									<img
+										src={ connection.avatar }
+										alt=""
+										className="atmosphere-avatar"
+										onError={ ( event ) => {
+											event.currentTarget.style.display = 'none';
+										} }
+									/>
 								) : (
 									<div className="atmosphere-avatar atmosphere-avatar--placeholder">
-										{ c.handle.charAt( 0 ).toUpperCase() }
+										{ ( Array.from( connection.handle )[ 0 ] ?? '' ).toUpperCase() }
 									</div>
 								) }
 								<div className="atmosphere-connection__identity">
-									<div className="atmosphere-connection__handle">@{ c.handle }</div>
+									<div className="atmosphere-connection__handle">@{ connection.handle }</div>
 									<details>
 										<summary>DID</summary>
-										<code>{ c.did }</code>
+										<code>{ connection.did }</code>
 									</details>
 								</div>
-								<Button variant="secondary" onClick={ () => onVerify( c.id ) }>
+								<Button variant="secondary" onClick={ () => onVerify( connection.id ) }>
 									{ translate( 'Verify' ) }
 								</Button>
 							</div>

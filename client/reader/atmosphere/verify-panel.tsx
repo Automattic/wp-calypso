@@ -18,7 +18,7 @@ export function VerifyPanel( { data, error, isLoading }: VerifyPanelProps ) {
 	return (
 		<Card>
 			<CardBody>
-				{ isLoading ? <p>{ translate( 'Verifying…' ) }</p> : null }
+				{ isLoading && ! data ? <p>{ translate( 'Verifying…' ) }</p> : null }
 				{ error ? (
 					<p className="atmosphere-error" role="alert">
 						{ errorMessage( error, translate ) }
@@ -27,7 +27,14 @@ export function VerifyPanel( { data, error, isLoading }: VerifyPanelProps ) {
 				{ data ? (
 					<div className="atmosphere-verify">
 						{ data.avatar ? (
-							<img src={ data.avatar } alt="" className="atmosphere-avatar" />
+							<img
+								src={ data.avatar }
+								alt=""
+								className="atmosphere-avatar"
+								onError={ ( event ) => {
+									event.currentTarget.style.display = 'none';
+								} }
+							/>
 						) : null }
 						<h2>{ data.display_name || data.handle }</h2>
 						<div className="atmosphere-verify__handle">@{ data.handle }</div>

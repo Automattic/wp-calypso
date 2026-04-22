@@ -6,12 +6,14 @@ import {
 	useVerifyConnectionQuery,
 } from '@automattic/api-queries';
 import { __experimentalVStack as VStack } from '@wordpress/components';
+import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { ConnectForm } from './connect-form';
 import { ConnectionsList } from './connections-list';
 import { VerifyPanel } from './verify-panel';
 
-export default function AtmosphereView() {
+export function AtmosphereView() {
+	const translate = useTranslate();
 	const connections = useConnectionsQuery();
 	const create = useCreateConnectionMutation();
 	const [ verifyId, setVerifyId ] = useState< number | null >( null );
@@ -19,6 +21,7 @@ export default function AtmosphereView() {
 
 	return (
 		<VStack spacing={ 4 } className="atmosphere-view">
+			<h1>{ translate( 'ATmosphere' ) }</h1>
 			<ConnectionsList
 				connections={ connections.data?.connections ?? [] }
 				isLoading={ connections.isLoading }
@@ -37,3 +40,5 @@ export default function AtmosphereView() {
 		</VStack>
 	);
 }
+
+export default AtmosphereView;

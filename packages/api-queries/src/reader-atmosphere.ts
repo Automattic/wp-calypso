@@ -39,7 +39,12 @@ export function useCreateConnectionMutation() {
 export const verifyConnectionQueryOptions = ( id: number | null ) =>
 	queryOptions< AtmosphereVerifyResult, AtmosphereError >( {
 		queryKey: readerAtmosphereKeys.verify( id ),
-		queryFn: () => verifyConnection( id as number ),
+		queryFn: () => {
+			if ( id === null ) {
+				throw new Error( 'verifyConnection called with null id' );
+			}
+			return verifyConnection( id );
+		},
 		enabled: id !== null && id > 0,
 		staleTime: 0,
 	} );
