@@ -1,4 +1,4 @@
-export default function ReaderBlueskyIcon( { viewBox = '0 0 24 24' } ) {
+export default function ReaderBlueskyIcon( { viewBox = '-3 -3 30 30' } ) {
 	return (
 		<svg
 			className="sidebar__menu-icon sidebar_svg-atmosphere"

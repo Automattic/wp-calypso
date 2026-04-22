@@ -206,7 +206,7 @@ export class ReaderSidebar extends Component {
 							label={ translate( 'ATmosphere' ) }
 							link="/reader/atmosphere"
 							onNavigate={ this.handleSidebarMenuClick( TrackingKeys.atmosphere ) }
-							customIcon={ <ReaderBlueskyIcon viewBox="0 0 24 24" /> }
+							customIcon={ <ReaderBlueskyIcon /> }
 							className={ ReaderSidebarHelper.itemLinkClass( '/reader/atmosphere', path, {
 								'sidebar-streams__atmosphere': true,
 							} ) }
