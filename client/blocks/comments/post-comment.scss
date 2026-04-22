@@ -69,9 +69,8 @@
 	font-weight: 600;
 
 	.gravatar {
-		border-radius: 48px; /* stylelint-disable-line scales/radii */
 		position: absolute;
-		top: 8px;
+		top: 4px;
 		left: -41px;
 	}
 }
@@ -92,6 +91,16 @@ a.comments__comment-username {
 
 	&:hover {
 		color: var(--color-primary-light);
+	}
+}
+
+.comments__external-link {
+	margin-left: 2px;
+	position: relative;
+	top: 3px;
+
+	svg {
+		fill: var(--color-link);
 	}
 }
 

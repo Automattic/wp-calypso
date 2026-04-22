@@ -9,6 +9,7 @@ import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt';
 import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackScan from 'calypso/components/data/query-jetpack-scan';
+import JetpackFooter from 'calypso/components/jetpack/jetpack-footer';
 import ScanPlaceholder from 'calypso/components/jetpack/scan-placeholder';
 import ScanThreats from 'calypso/components/jetpack/scan-threats';
 import SecurityIcon from 'calypso/components/jetpack/security-icon';
@@ -341,8 +342,8 @@ class ScanPage extends Component< Props > {
 
 	render() {
 		const { siteId, siteSettingsUrl } = this.props;
-		const isJetpackPlatform = isJetpackCloud();
-		const isWpcom = ! ( isJetpackPlatform || isA8CForAgencies() );
+		const isJetpackPlatform = isJetpackCloud() || isA8CForAgencies();
+		const showHeader = ! isJetpackPlatform;
 		let mainClass = 'scan';
 
 		if ( ! siteId ) {
@@ -353,39 +354,33 @@ class ScanPage extends Component< Props > {
 			mainClass = 'scan-new';
 		}
 
-		const content = (
-			<>
-				<TimeMismatchWarning siteId={ siteId } settingsUrl={ siteSettingsUrl } />
-				<QueryJetpackScan siteId={ siteId } />
-				<ScanNavigation section="scanner" />
-				<div className="scan__content">{ this.renderScanState() }</div>
-				{ this.renderJetpackReviewPrompt() }
-			</>
-		);
-
 		return (
 			<Main
-				fullWidthLayout={ isWpcom }
-				wideLayout={ ! isWpcom }
+				fullWidthLayout
 				className={ clsx( mainClass, {
-					is_jetpackcom: isJetpackPlatform,
+					is_jetpackcom: isJetpackCloud(),
 				} ) }
 			>
 				<DocumentHead title="Scan" />
-				{ isJetpackPlatform && <SidebarNavigation /> }
+				{ isJetpackCloud() && <SidebarNavigation /> }
 				<PageViewTracker path="/scan/:site" title="Scanner" />
-				{ isWpcom ? (
-					<Page
-						hasPadding
-						showSidebarToggle={ false }
-						title={ <JetpackTitle title={ translate( 'Scan' ) } /> }
-						subTitle={ translate( 'Automated malware scanning and firewall protection.' ) }
-					>
-						{ content }
-					</Page>
-				) : (
-					content
-				) }
+				<Page
+					hasPadding
+					showSidebarToggle={ false }
+					title={ showHeader ? <JetpackTitle title={ translate( 'Scan' ) } /> : undefined }
+					subTitle={
+						showHeader
+							? translate( 'Automated malware scanning and firewall protection.' )
+							: undefined
+					}
+				>
+					<TimeMismatchWarning siteId={ siteId } settingsUrl={ siteSettingsUrl } />
+					<QueryJetpackScan siteId={ siteId } />
+					<ScanNavigation section="scanner" />
+					<div className="scan__content">{ this.renderScanState() }</div>
+					{ this.renderJetpackReviewPrompt() }
+				</Page>
+				{ showHeader && <JetpackFooter /> }
 			</Main>
 		);
 	}

@@ -50,10 +50,10 @@ import {
 	hasAmountAvailableToRefund,
 	hasMarketplaceProduct,
 	isAgencyPartnerType,
-	isAkismetTemporarySitePurchase,
+	isAkismetHoldingSitePurchase,
 	isExpired,
 	isGSuiteOrGoogleWorkspaceProductSlug,
-	isJetpackTemporarySitePurchase,
+	isJetpackHoldingSitePurchase,
 	isAkismetProduct,
 	isPartnerPurchase,
 	isOneTimePurchase,
@@ -156,7 +156,7 @@ function availableJetpackSurveySteps( purchase: Purchase, flowType: CancelFlowTy
 	// If the plan is already expired or is a temporary Jetpack purchase (license),
 	// we only need one "confirm" step for the survey is the removal confirmation
 	// A product that is not in use does not need to collect the survey or show benefits
-	if ( isExpired( purchase ) || isJetpackTemporarySitePurchase( purchase ) ) {
+	if ( isExpired( purchase ) || isJetpackHoldingSitePurchase( purchase ) ) {
 		return [ CANCEL_CONFIRM_STEP ];
 	}
 
@@ -1005,8 +1005,8 @@ export default function CancelPurchase() {
 					siteName: purchase.domain,
 				} );
 				if (
-					isAkismetTemporarySitePurchase( purchase ) ||
-					isJetpackTemporarySitePurchase( purchase )
+					isAkismetHoldingSitePurchase( purchase ) ||
+					isJetpackHoldingSitePurchase( purchase )
 				) {
 					/* translators: %(productName)s is the name of a product (e.g., "WordPress.com Premium") */
 					successMessage = sprintf( __( '%(productName)s was removed from your account.' ), {

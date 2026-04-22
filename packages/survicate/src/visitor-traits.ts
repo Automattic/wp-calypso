@@ -7,6 +7,7 @@ declare global {
 			addEventListener?: ( event: string, handler: () => void ) => void;
 			removeEventListener?: ( event: string, handler: () => void ) => void;
 			invokeEvent?: ( event: string ) => void;
+			closeSurvey?: () => void;
 			destroyVisitor?: () => void;
 		};
 	}

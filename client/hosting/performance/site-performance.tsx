@@ -10,8 +10,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { useSiteSettings } from 'calypso/blocks/plugins-scheduled-updates/hooks/use-site-settings';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
-import { AnalyticsProvider } from 'calypso/dashboard/app/analytics';
-import SiteLaunchCelebrationModal from 'calypso/dashboard/sites/site-launch-celebration-modal';
 import {
 	DeviceTabProvider,
 	useDeviceTab,
@@ -42,11 +40,6 @@ import { useSitePerformancePageReports } from './hooks/useSitePerformancePageRep
 import { getSupportLinkProps } from './utils';
 
 import './style.scss';
-
-const analyticsClient = {
-	recordTracksEvent,
-	recordPageView: () => {}, // Required by AnalyticsClient interface; unused by SiteLaunchCelebrationModal
-};
 
 const statType = 'statsTopPosts';
 const statsQuery = {
@@ -390,11 +383,6 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 						</>
 					) }
 				</>
-			) }
-			{ site && (
-				<AnalyticsProvider client={ analyticsClient }>
-					<SiteLaunchCelebrationModal site={ site } />
-				</AnalyticsProvider>
 			) }
 		</div>
 	);

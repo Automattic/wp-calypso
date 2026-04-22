@@ -125,4 +125,6 @@ export * from './site-themes';
 export * from './site-update-schedules';
 export * from './site-users';
 export * from './upgrades';
+export * from './users';
+export * from './user-sites';
 export * from './wp-org';

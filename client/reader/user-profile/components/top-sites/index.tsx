@@ -1,8 +1,9 @@
 import './style.scss';
+import { userSitesQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { getStreamUrl } from 'calypso/reader/route';
-import useUserSitesQuery from 'calypso/reader/user-profile/queries/use-user-sites-query';
 
 interface UserTopSitesProps {
 	userId: number;
@@ -13,7 +14,7 @@ export default function UserTopSites( {
 	userId,
 	userLogin,
 }: UserTopSitesProps ): JSX.Element | null {
-	const { isFetching, data, error } = useUserSitesQuery( userId );
+	const { isFetching, data, error } = useQuery( userSitesQuery( userId ) );
 
 	if ( isFetching ) {
 		return (

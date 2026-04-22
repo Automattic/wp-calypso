@@ -1,14 +1,15 @@
+import { queryClient } from '@automattic/api-queries';
+import { QueryClientProvider } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { AnalyticsProvider } from 'calypso/dashboard/app/analytics';
 import SiteLaunchCelebrationModal from 'calypso/dashboard/sites/site-launch-celebration-modal';
-import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { useDispatch, useSelector } from 'calypso/state';
+import { useDispatch } from 'calypso/state';
 import { setSiteLaunchCelebrationModalOpen } from 'calypso/state/sites/launch/actions';
-import { getSite } from 'calypso/state/sites/selectors';
+import { useReduxSiteWithQueryClientLaunchStatusSync } from './use-redux-site-with-query-client-launch-status-sync';
 
-const CelebrateSiteLaunchModal = ( { siteId }: { siteId: number } ) => {
-	const site = useSelector( ( state ) => getSite( state, siteId ) );
+function CelebrateSiteLaunchModalContent( { siteId }: { siteId: number } ) {
+	const site = useReduxSiteWithQueryClientLaunchStatusSync( siteId );
 
 	const dispatch = useDispatch();
 	const analyticsClient = useMemo( () => {
@@ -17,8 +18,6 @@ const CelebrateSiteLaunchModal = ( { siteId }: { siteId: number } ) => {
 			recordPageView() {}, // Unused by this component
 		};
 	}, [] );
-
-	const layout = useHomeLayoutQuery( siteId );
 
 	return (
 		<AnalyticsProvider client={ analyticsClient }>
@@ -30,12 +29,17 @@ const CelebrateSiteLaunchModal = ( { siteId }: { siteId: number } ) => {
 					} }
 					onClose={ () => {
 						dispatch( setSiteLaunchCelebrationModalOpen( false ) );
-						layout?.refetch();
 					} }
 				/>
 			) }
 		</AnalyticsProvider>
 	);
-};
+}
 
-export default CelebrateSiteLaunchModal;
+export default function CelebrateSiteLaunchModal( { siteId }: { siteId: number } ) {
+	return (
+		<QueryClientProvider client={ queryClient }>
+			<CelebrateSiteLaunchModalContent siteId={ siteId } />
+		</QueryClientProvider>
+	);
+}

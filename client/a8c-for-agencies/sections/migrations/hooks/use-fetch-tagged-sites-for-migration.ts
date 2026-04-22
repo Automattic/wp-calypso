@@ -27,7 +27,13 @@ export default function useFetchTaggedSitesForMigration() {
 		const sites = Array.isArray( query.data ) ? query.data : query.data.sites || [];
 		return sites.filter( ( site: TaggedSite ) => {
 			const status = site.incentive_status || '';
-			return status === 'pending' || status === 'verified' || status === 'paid';
+			return (
+				status === 'pending' ||
+				status === 'verified' ||
+				status === 'paid' ||
+				status === 'rejected' ||
+				status === 'reverification'
+			);
 		} );
 	}, [ query.data ] );
 

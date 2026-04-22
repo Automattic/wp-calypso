@@ -31,5 +31,6 @@ export {
 	recordTrainTracksInteract,
 	getNewRailcarId,
 } from './train-tracks';
+export { getConnectionSpeedData } from './utils/connection-speed-data';
 
 export type { Railcar } from './train-tracks';
