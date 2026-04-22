@@ -15,7 +15,7 @@ function HovercardContent( props ) {
 	// find the read one with this selector.
 	const readerUserData = useSelector( ( state ) => getReaderUser( state, user.wpcom_id, true ) );
 	const { display_name: displayName, user_login: userLogin } = readerUserData || {};
-	const primaryBlogId = readerUserData?.primary_blog || user?.primary_blog || user?.site_ID;
+	const primaryBlogId = readerUserData?.primary_blog?.ID || user?.primary_blog || user?.site_ID;
 
 	useEffect( () => {
 		if ( ! readerUserData && user?.wpcom_id ) {
