@@ -1,8 +1,17 @@
 import { fetchTrophies } from '@automattic/api-core';
-import { queryOptions } from '@tanstack/react-query';
+import { infiniteQueryOptions } from '@tanstack/react-query';
 
 export const trophiesQuery = () =>
-	queryOptions( {
+	infiniteQueryOptions( {
 		queryKey: [ 'me', 'trophies' ],
-		queryFn: fetchTrophies,
+		queryFn: ( { pageParam }: { pageParam: number } ) => fetchTrophies( pageParam ),
+		initialPageParam: 1,
+		getNextPageParam: ( lastPage, allPages ) => {
+			const totalFetched = allPages.flatMap( ( p ) => p.trophies ?? [] ).length;
+			if ( totalFetched >= lastPage.found ) {
+				return;
+			}
+			return allPages.length + 1;
+		},
+		meta: { persist: false },
 	} );
