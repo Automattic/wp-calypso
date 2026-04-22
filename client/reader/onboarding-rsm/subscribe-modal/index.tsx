@@ -14,7 +14,7 @@ import { trackScrollPage } from 'calypso/reader/controller-helper';
 import { READER_ONBOARDING_TRACKS_EVENT_PREFIX } from 'calypso/reader/onboarding-rsm/constants';
 import { curatedBlogs } from 'calypso/reader/onboarding-rsm/curated-blogs';
 import Stream from 'calypso/reader/stream';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useStore } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { requestFollows } from 'calypso/state/reader/follows/actions';
 import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
@@ -74,6 +74,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 	const [ currentPage, setCurrentPage ] = useState( 0 );
 	const [ selectedSite, setSelectedSite ] = useState< CardData | null >( null );
 	const dispatch = useDispatch();
+	const store = useStore();
 	const currentLocale = getLocaleSlug();
 	const SITES_PER_PAGE = 6;
 	const queryClient = useQueryClient();
@@ -227,17 +228,20 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 		[ selectedSite ]
 	);
 
-	const follows = useSelector( getReaderFollows );
-
 	const handleFollowToggle = useCallback(
 		async ( site: CardData, following: boolean ) => {
-			const isFollowingSite = ( site: CardData ) =>
-				follows.some(
+			// Read fresh follow state from the store on each call to avoid stale closure issues
+			// inside the retry loop where the captured `follows` array won't reflect updates
+			// dispatched mid-loop.
+			const isFollowingSite = () => {
+				const currentFollows = getReaderFollows( store.getState() );
+				return currentFollows.some(
 					( follow ) => follow.feed_ID === site.feed_ID || follow.blog_ID === site.site_ID
 				);
+			};
 
 			// Exit early if the follow state already matches what we want.
-			if ( following === isFollowingSite( site ) ) {
+			if ( following === isFollowingSite() ) {
 				return;
 			}
 
@@ -251,12 +255,12 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 				// Delay the next attempt.
 				await new Promise( ( resolve ) => setTimeout( resolve, 300 ) );
 
-				if ( following === isFollowingSite( site ) ) {
+				if ( following === isFollowingSite() ) {
 					return;
 				}
 			}
 		},
-		[ follows, dispatch ]
+		[ store, dispatch ]
 	);
 
 	const formatUrl = ( url: string ): string => {
