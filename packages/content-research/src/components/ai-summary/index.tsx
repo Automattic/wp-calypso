@@ -1,6 +1,7 @@
 import { Button, Spinner } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
+import { arrowLeft } from '@wordpress/icons';
 import { trackContentResearchInsert, trackContentResearchSummarize } from '../../utils/tracking';
 import type { ResearchSummary } from '../../types';
 
@@ -9,7 +10,10 @@ interface AiSummaryProps {
 	summary?: ResearchSummary;
 	isLoading: boolean;
 	onSummarize: () => void;
+	onClose: () => void;
 	resultCount: number;
+	selectedCount: number;
+	isExpanded: boolean;
 }
 
 export default function AiSummary( {
@@ -17,7 +21,10 @@ export default function AiSummary( {
 	summary,
 	isLoading,
 	onSummarize,
+	onClose,
 	resultCount,
+	selectedCount,
+	isExpanded,
 }: AiSummaryProps ) {
 	const { insertBlocks } = useDispatch( 'core/block-editor' ) as {
 		insertBlocks: ( blocks: unknown[] ) => void;
@@ -48,21 +55,47 @@ export default function AiSummary( {
 		}
 	};
 
-	if ( ! summary && ! isLoading ) {
+	if ( ( ! summary && ! isLoading ) || ! isExpanded ) {
+		const label =
+			selectedCount > 0
+				? sprintf(
+						/* translators: %d: number of selected articles */
+						__( 'Summarize selected (%d)', 'content-research' ),
+						selectedCount
+				  )
+				: __( 'Summarize', 'content-research' );
 		return (
 			<div className="content-research-ai-summary">
-				<Button variant="secondary" onClick={ handleSummarize } disabled={ resultCount === 0 }>
-					{ __( 'AI Summary', 'content-research' ) }
+				<Button variant="secondary" onClick={ handleSummarize } disabled={ selectedCount === 0 }>
+					{ label }
 				</Button>
 			</div>
 		);
 	}
 
+	const containerClass = `content-research-ai-summary${
+		isExpanded ? ' content-research-ai-summary--expanded' : ''
+	}`;
+
+	const backButton = (
+		<Button
+			className="content-research-ai-summary__back"
+			variant="tertiary"
+			icon={ arrowLeft }
+			onClick={ onClose }
+		>
+			{ __( 'Back to results', 'content-research' ) }
+		</Button>
+	);
+
 	if ( isLoading ) {
 		return (
-			<div className="content-research-ai-summary content-research-ai-summary--loading">
-				<Spinner />
-				<span>{ __( 'Generating summary…', 'content-research' ) }</span>
+			<div className={ `${ containerClass } content-research-ai-summary--loading` }>
+				{ backButton }
+				<div className="content-research-ai-summary__loading-indicator">
+					<Spinner />
+					<span>{ __( 'Generating summary…', 'content-research' ) }</span>
+				</div>
 			</div>
 		);
 	}
@@ -72,7 +105,8 @@ export default function AiSummary( {
 	}
 
 	return (
-		<div className="content-research-ai-summary">
+		<div className={ containerClass }>
+			{ backButton }
 			<div className="content-research-ai-summary__content">
 				<p className="content-research-ai-summary__text">{ summary.summary }</p>
 				{ summary.key_findings.length > 0 && (

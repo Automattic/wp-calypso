@@ -9,10 +9,9 @@ interface SourceFilterProps {
 
 const FILTERS: { value: SourceFilter; label: string }[] = [
 	{ value: 'all', label: __( 'All', 'content-research' ) },
+	{ value: 'reader', label: __( 'WPCOM', 'content-research' ) },
 	{ value: 'hn', label: __( 'HN', 'content-research' ) },
-	{ value: 'polymarket', label: __( 'Polymarket', 'content-research' ) },
 	{ value: 'googlenews', label: __( 'News', 'content-research' ) },
-	{ value: 'reader', label: __( 'WPcom', 'content-research' ) },
 ];
 
 export default function SourceFilterTabs( { activeFilter, onFilterChange }: SourceFilterProps ) {

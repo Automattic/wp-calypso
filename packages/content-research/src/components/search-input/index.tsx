@@ -35,12 +35,11 @@ export default function SearchInput( { onSearch, isLoading }: SearchInputProps )
 			<Button
 				variant="primary"
 				icon={ search }
+				label={ __( 'Search', 'content-research' ) }
 				onClick={ handleSubmit }
 				isBusy={ isLoading }
 				disabled={ ! value.trim() || isLoading }
-			>
-				{ __( 'Search', 'content-research' ) }
-			</Button>
+			/>
 		</form>
 	);
 }

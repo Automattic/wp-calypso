@@ -14,18 +14,47 @@ export { isContentResearchEnabled } from './utils/feature-flag';
 export default function ContentResearchSidebar() {
 	const [ topic, setTopic ] = useState( '' );
 	const [ activeFilter, setActiveFilter ] = useState< SourceFilter >( 'all' );
+	const [ selectedUrls, setSelectedUrls ] = useState< Set< string > >( () => new Set() );
+	const [ isSummaryDismissed, setIsSummaryDismissed ] = useState( false );
 
 	const { data, isLoading, isError } = useContentResearch( topic );
+
+	const resultsToSummarize =
+		selectedUrls.size > 0
+			? data?.results.filter( ( result ) => selectedUrls.has( result.url ) ) || []
+			: data?.results || [];
+
 	const {
 		data: summary,
 		isLoading: isSummaryLoading,
 		refetch: fetchSummary,
-	} = useResearchSummary( topic, data?.results || [] );
+	} = useResearchSummary( topic, resultsToSummarize );
+
+	const isSummaryVisible = ! isSummaryDismissed && ( isSummaryLoading || !! summary );
 
 	const handleSearch = ( newTopic: string ) => {
 		setTopic( newTopic );
 		setActiveFilter( 'all' );
+		setSelectedUrls( new Set() );
+		setIsSummaryDismissed( true );
 		trackContentResearchSearch( newTopic );
+	};
+
+	const handleSummarize = () => {
+		setIsSummaryDismissed( false );
+		fetchSummary();
+	};
+
+	const toggleSelection = ( url: string ) => {
+		setSelectedUrls( ( prev ) => {
+			const next = new Set( prev );
+			if ( next.has( url ) ) {
+				next.delete( url );
+			} else {
+				next.add( url );
+			}
+			return next;
+		} );
 	};
 
 	const filteredResults =
@@ -39,18 +68,30 @@ export default function ContentResearchSidebar() {
 
 			{ data && data.results.length > 0 && (
 				<>
-					<SourceFilterTabs activeFilter={ activeFilter } onFilterChange={ setActiveFilter } />
-					<div className="content-research-sidebar__results">
-						{ filteredResults.map( ( result, index ) => (
-							<ResultCard key={ `${ result.source }-${ index }` } result={ result } />
-						) ) }
-					</div>
+					{ ! isSummaryVisible && (
+						<>
+							<SourceFilterTabs activeFilter={ activeFilter } onFilterChange={ setActiveFilter } />
+							<div className="content-research-sidebar__results">
+								{ filteredResults.map( ( result, index ) => (
+									<ResultCard
+										key={ `${ result.source }-${ index }` }
+										result={ result }
+										isSelected={ selectedUrls.has( result.url ) }
+										onToggleSelect={ () => toggleSelection( result.url ) }
+									/>
+								) ) }
+							</div>
+						</>
+					) }
 					<AiSummary
 						topic={ topic }
 						summary={ summary }
 						isLoading={ isSummaryLoading }
-						onSummarize={ () => fetchSummary() }
-						resultCount={ data.results.length }
+						onSummarize={ handleSummarize }
+						onClose={ () => setIsSummaryDismissed( true ) }
+						resultCount={ resultsToSummarize.length }
+						selectedCount={ selectedUrls.size }
+						isExpanded={ isSummaryVisible }
 					/>
 				</>
 			) }
