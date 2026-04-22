@@ -705,10 +705,9 @@ export function siteSelection( context, next ) {
 				} else if ( shouldRedirectToJetpackAuthorize( context, site ) ) {
 					navigate( getJetpackAuthorizeURL( context, site ) );
 				} else {
-					// If the site has loaded but siteId is still invalid then redirect to allSitesPath.
-					const siteFragmentOffset = context.path.indexOf( `/${ siteFragment }` );
-					const allSitesPath = context.path.substring( 0, siteFragmentOffset );
-					page.redirect( allSitesPath );
+					// The site could not be found or loaded (e.g. user lacks permission).
+					// Show a user-friendly error instead of redirecting to an unrelated path.
+					renderSelectedSiteNotFound( context );
 				}
 			} );
 	}
