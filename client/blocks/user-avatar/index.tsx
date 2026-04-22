@@ -30,8 +30,11 @@ export interface UserAvatarInfo {
 }
 
 export default function UserAvatar( { user, size = 32, hideHovercard = false }: UserAvatarProps ) {
-	const [ isHovered, setIsHovered ] = useState( false );
 	const avatarRef = useRef< HTMLDivElement >( null );
+	const [ isHovered, setIsHovered ] = useState( false );
+	const [ placement, setPlacement ] = useState< 'bottom-start' | 'top-start' | 'right' | 'left' >(
+		'bottom-start'
+	);
 	// Using this to add a delay before showing the hovercard, to avoid it flashing when the user is just moving their mouse across the avatar.
 	const hoverTimerRef = useRef< ReturnType< typeof setTimeout > | null >( null );
 	const wpcomProfileUrl = user?.wpcom_login ? getUserProfileUrl( user?.wpcom_login ) : null; // Only navigate to profile page. Avoid navigating to any external links to keep UX consistent.
@@ -49,9 +52,8 @@ export default function UserAvatar( { user, size = 32, hideHovercard = false }: 
 	) : (
 		<UserAvatarDefaultIcon iconSize={ size } />
 	);
-	const [ placement, setPlacement ] = useState< 'bottom-start' | 'top-start' | 'right' | 'left' >(
-		'bottom-start'
-	);
+	// Make the container focusable when there's no <a> child to receive focus, so keyboard users can trigger the hovercard.
+	const needsTabIndex = ! wpcomProfileUrl && ! hideHovercard;
 
 	// Prefetching so that we can display WPCOM users Hovercards instantly, Gravatar lookups will be triggered on hover.
 	useQuery( userQuery( user?.wpcom_login, user?.wpcom_id, ! hideHovercard ) );
@@ -116,6 +118,8 @@ export default function UserAvatar( { user, size = 32, hideHovercard = false }: 
 			onMouseLeave={ handleHideHovercard }
 			onFocus={ handleShowHovercard }
 			onBlur={ handleHideHovercard }
+			tabIndex={ needsTabIndex ? 0 : undefined }
+			role={ needsTabIndex ? 'button' : undefined }
 		>
 			{ wpcomProfileUrl ? <a href={ wpcomProfileUrl }>{ avatarImg }</a> : avatarImg }
 
