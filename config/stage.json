@@ -37,6 +37,7 @@
 		"cookie-banner": false,
 		"current-site/domain-warning": false,
 		"current-site/notice": true,
+		"dark-mode": false,
 		"dashboard/omnibar": false,
 		"dashboard/opt-in-banners": false,
 		"dashboard/v2": true,
