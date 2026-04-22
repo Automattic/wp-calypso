@@ -6,11 +6,7 @@ import {
 } from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import {
-	__experimentalVStack as VStack,
-	__experimentalHStack as HStack,
-	Button,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
@@ -297,39 +293,37 @@ export default function DomainDns() {
 					<PageHeader
 						prefix={ <Breadcrumbs length={ 2 } /> }
 						actions={
-							<HStack>
-								<Button
-									variant="primary"
-									onClick={ () => {
-										router.navigate( {
-											to: domainDnsAddRoute.fullPath,
-											params: { domainName },
-										} );
-									} }
-									__next40pxDefaultSize
-								>
-									{ __( 'Add record' ) }
-								</Button>
-								<PageHeader.ActionMenu>
-									<DnsActionsMenu
-										domainName={ domainName }
-										hasDefaultARecords={ hasDefaultARecordsValue }
-										hasDefaultCnameRecord={ hasDefaultCnameRecordValue }
-										hasDefaultEmailRecords={ hasDefaultEmailRecordsValue }
-										onRecordsImported={ ( data ) => {
-											setImportedRecords( data );
-											setIsImportDialogOpen( true );
-										} }
-										onRestoreDefaultARecords={ () => setIsRestoreDefaultARecordsDialogOpen( true ) }
-										onRestoreDefaultCnameRecord={ () =>
-											setIsRestoreDefaultCnameRecordDialogOpen( true )
-										}
-										onRestoreDefaultEmailRecords={ () =>
-											setIsRestoreDefaultEmailRecordsDialogOpen( true )
-										}
-									/>
-								</PageHeader.ActionMenu>
-							</HStack>
+							<Button
+								variant="primary"
+								onClick={ () => {
+									router.navigate( {
+										to: domainDnsAddRoute.fullPath,
+										params: { domainName },
+									} );
+								} }
+								__next40pxDefaultSize
+							>
+								{ __( 'Add record' ) }
+							</Button>
+						}
+						overflowMenu={
+							<DnsActionsMenu
+								domainName={ domainName }
+								hasDefaultARecords={ hasDefaultARecordsValue }
+								hasDefaultCnameRecord={ hasDefaultCnameRecordValue }
+								hasDefaultEmailRecords={ hasDefaultEmailRecordsValue }
+								onRecordsImported={ ( data ) => {
+									setImportedRecords( data );
+									setIsImportDialogOpen( true );
+								} }
+								onRestoreDefaultARecords={ () => setIsRestoreDefaultARecordsDialogOpen( true ) }
+								onRestoreDefaultCnameRecord={ () =>
+									setIsRestoreDefaultCnameRecordDialogOpen( true )
+								}
+								onRestoreDefaultEmailRecords={ () =>
+									setIsRestoreDefaultEmailRecordsDialogOpen( true )
+								}
+							/>
 						}
 						description={ <DnsDescription /> }
 					/>

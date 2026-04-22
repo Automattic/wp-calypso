@@ -23,7 +23,6 @@ import { Link, useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalGrid as Grid,
 	__experimentalText as Text,
-	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	DropdownMenu,
 	MenuGroup,
@@ -1313,19 +1312,15 @@ export default function PurchaseSettings() {
 								: getTitleForDisplay( purchase )
 						}
 						actions={
-							site?.options?.admin_url &&
-							! isCentennial && (
-								<HStack justify="space-between">
-									{ purchase.is_upgradable && upgradeUrl && (
-										<Button __next40pxDefaultSize variant="primary" href={ upgradeUrl }>
-											{ _x( 'Upgrade', 'Change to a plan with more features.' ) }
-										</Button>
-									) }
-									<PageHeader.ActionMenu>
-										<PurchaseActionMenu purchase={ purchase } />
-									</PageHeader.ActionMenu>
-								</HStack>
+							purchase.is_upgradable &&
+							upgradeUrl && (
+								<Button __next40pxDefaultSize variant="primary" href={ upgradeUrl }>
+									{ _x( 'Upgrade', 'Change to a plan with more features.' ) }
+								</Button>
 							)
+						}
+						overflowMenu={
+							site?.options?.admin_url ? <PurchaseActionMenu purchase={ purchase } /> : undefined
 						}
 						description={
 							<MetadataList>

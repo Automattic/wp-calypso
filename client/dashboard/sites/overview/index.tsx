@@ -238,9 +238,6 @@ function SiteOverview( {
 				>
 					{ __( 'WP Admin' ) }
 				</Button>
-				<PageHeader.ActionMenu>
-					<SiteActionMenu site={ site } />
-				</PageHeader.ActionMenu>
 			</>
 		);
 	};
@@ -253,6 +250,11 @@ function SiteOverview( {
 					title={ getSiteDisplayName( site ) }
 					description={ <SiteOverviewFields site={ site } /> }
 					actions={ renderActions() }
+					overflowMenu={
+						site.options?.admin_url && ! isCommerceGardenSite ? (
+							<SiteActionMenu site={ site } />
+						) : undefined
+					}
 				/>
 			}
 			notices={ renderNotices() }

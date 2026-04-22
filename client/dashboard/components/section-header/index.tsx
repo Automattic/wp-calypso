@@ -18,6 +18,7 @@ export const SectionHeader = ( {
 	title,
 	description,
 	actions,
+	overflowMenu,
 	decoration,
 	headingId,
 	prefix,
@@ -36,8 +37,8 @@ export const SectionHeader = ( {
 				{ decoration && (
 					<span className="dashboard-section-header__decoration">{ decoration }</span>
 				) }
-				<HStack justify="space-between" alignment="center" spacing={ 6 } wrap>
-					<VStack style={ { flex: '1000 1 auto' } }>
+				<HStack justify="space-between" alignment="center" spacing={ 6 } wrap style={ { flex: 1 } }>
+					<VStack className="dashboard-section-header__title">
 						<HeadingTag className="dashboard-section-header__heading" id={ headingId }>
 							{ title }
 						</HeadingTag>
@@ -60,6 +61,9 @@ export const SectionHeader = ( {
 						</ButtonStack>
 					) }
 				</HStack>
+				{ !! overflowMenu && (
+					<div className="dashboard-section-header__overflow-menu">{ overflowMenu }</div>
+				) }
 			</HStack>
 		</VStack>
 	);

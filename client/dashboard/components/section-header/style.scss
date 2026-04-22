@@ -64,7 +64,16 @@
 	}
 }
 
+.dashboard-section-header__title {
+	flex: 1000 1 auto;
+}
+
 .dashboard-section-header__actions {
 	flex-shrink: 0;
 	align-self: stretch;
+}
+
+.dashboard-section-header__overflow-menu {
+	flex-shrink: 0;
+	align-self: flex-start;
 }

@@ -39,4 +39,9 @@ export interface SectionHeaderProps {
 	 * Optional class name to be applied to the component.
 	 */
 	className?: string;
+	/**
+	 * An optional overflow menu (e.g. a three-dot DropdownMenu) that is always
+	 * anchored to the top-right of the header, outside the wrapping action area.
+	 */
+	overflowMenu?: React.ReactNode;
 }
