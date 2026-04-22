@@ -13602,7 +13602,6 @@ __metadata:
     he: "npm:^1.2.0"
     hls.js: "npm:^1.6.16"
     html-loader: "npm:^0.5.5"
-    html-to-react: "npm:^1.5.1"
     i18n-calypso: "workspace:^"
     ignore-loader: "npm:^0.1.2"
     immutability-helper: "npm:^3.0.1"
@@ -13615,7 +13614,6 @@ __metadata:
     lodash: "npm:^4.17.21"
     lodash-es: "npm:^4.17.21"
     lru: "npm:^3.1.0"
-    marked: "npm:^4.0.0"
     mock-fs: "npm:^5.5.0"
     mockdate: "npm:^2.0.5"
     moment: "npm:^2.30.1"
@@ -16226,17 +16224,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dom-serializer@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "dom-serializer@npm:2.0.0"
-  dependencies:
-    domelementtype: "npm:^2.3.0"
-    domhandler: "npm:^5.0.2"
-    entities: "npm:^4.2.0"
-  checksum: d5ae2b7110ca3746b3643d3ef60ef823f5f078667baf530cec096433f1627ec4b6fa8c072f09d079d7cda915fd2c7bc1b7b935681e9b09e591e1e15f4040b8e2
-  languageName: node
-  linkType: hard
-
 "dom-serializer@npm:~0.1.0":
   version: 0.1.1
   resolution: "dom-serializer@npm:0.1.1"
@@ -16254,7 +16241,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"domelementtype@npm:^2.0.1, domelementtype@npm:^2.2.0, domelementtype@npm:^2.3.0":
+"domelementtype@npm:^2.0.1, domelementtype@npm:^2.2.0":
   version: 2.3.0
   resolution: "domelementtype@npm:2.3.0"
   checksum: 686f5a9ef0fff078c1412c05db73a0dce096190036f33e400a07e2a4518e9f56b1e324f5c576a0a747ef0e75b5d985c040b0d51945ce780c0dd3c625a18cd8c9
@@ -16294,15 +16281,6 @@ __metadata:
   dependencies:
     domelementtype: "npm:^2.2.0"
   checksum: fd4e6f1c986402e7a703b671c4f7bdb1dcf278d613ca02a38374eae9d1bba9b3b4d5983519ad902e43c5bd1281456d11f226694e7bb4cfc00dde6f1d5f3aa13e
-  languageName: node
-  linkType: hard
-
-"domhandler@npm:^5.0, domhandler@npm:^5.0.2, domhandler@npm:^5.0.3":
-  version: 5.0.3
-  resolution: "domhandler@npm:5.0.3"
-  dependencies:
-    domelementtype: "npm:^2.3.0"
-  checksum: bba1e5932b3e196ad6862286d76adc89a0dbf0c773e5ced1eb01f9af930c50093a084eff14b8de5ea60b895c56a04d5de8bbc4930c5543d029091916770b2d2a
   languageName: node
   linkType: hard
 
@@ -16346,17 +16324,6 @@ __metadata:
     domelementtype: "npm:^2.2.0"
     domhandler: "npm:^4.2.0"
   checksum: d58e2ae01922f0dd55894e61d18119924d88091837887bf1438f2327f32c65eb76426bd9384f81e7d6dcfb048e0f83c19b222ad7101176ad68cdc9c695b563db
-  languageName: node
-  linkType: hard
-
-"domutils@npm:^3.0.1":
-  version: 3.1.0
-  resolution: "domutils@npm:3.1.0"
-  dependencies:
-    dom-serializer: "npm:^2.0.0"
-    domelementtype: "npm:^2.3.0"
-    domhandler: "npm:^5.0.3"
-  checksum: 342d64cf4d07b8a0573fb51e0a6312a88fb520c7fefd751870bf72fa5fc0f2e0cb9a3958a573610b1d608c6e2a69b8e9b4b40f0bfb8f87a71bce4f180cca1887
   languageName: node
   linkType: hard
 
@@ -16800,7 +16767,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"entities@npm:^4.2.0, entities@npm:^4.4.0":
+"entities@npm:^4.4.0":
   version: 4.5.0
   resolution: "entities@npm:4.5.0"
   checksum: 5b039739f7621f5d1ad996715e53d964035f75ad3b9a4d38c6b3804bb226e282ffeae2443624d8fdd9c47d8e926ae9ac009c54671243f0c3294c26af7cc85250
@@ -19735,18 +19702,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"html-to-react@npm:^1.5.1":
-  version: 1.5.1
-  resolution: "html-to-react@npm:1.5.1"
-  dependencies:
-    domhandler: "npm:^5.0"
-    htmlparser2: "npm:^8.0"
-    lodash.camelcase: "npm:^4.3.0"
-    react: "npm:^18.0"
-  checksum: ba68a160952b0c7ce3b7f3a52af7f505a2cdd80c71af48da0e14fe1f8841d13804a5412146e578b132140b80135803b622c2a890608d6f6737ba2b78c2770c82
-  languageName: node
-  linkType: hard
-
 "html-url-attributes@npm:^3.0.0":
   version: 3.0.0
   resolution: "html-url-attributes@npm:3.0.0"
@@ -19798,18 +19753,6 @@ __metadata:
     domutils: "npm:^2.5.2"
     entities: "npm:^2.0.0"
   checksum: 3058499c95634f04dc66be8c2e0927cd86799413b2d6989d8ae542ca4dbf5fa948695d02c27d573acf44843af977aec6d9a7bdd0f6faa6b2d99e2a729b2a31b6
-  languageName: node
-  linkType: hard
-
-"htmlparser2@npm:^8.0":
-  version: 8.0.2
-  resolution: "htmlparser2@npm:8.0.2"
-  dependencies:
-    domelementtype: "npm:^2.3.0"
-    domhandler: "npm:^5.0.3"
-    domutils: "npm:^3.0.1"
-    entities: "npm:^4.4.0"
-  checksum: 609cca85886d0bf2c9a5db8c6926a89f3764596877492e2caa7a25a789af4065bc6ee2cdc81807fe6b1d03a87bf8a373b5a754528a4cc05146b713c20575aab4
   languageName: node
   linkType: hard
 
@@ -22940,12 +22883,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"marked@npm:4.0.10":
-  version: 4.0.10
-  resolution: "marked@npm:4.0.10"
+"marked@npm:^16.2.1":
+  version: 16.4.2
+  resolution: "marked@npm:16.4.2"
   bin:
     marked: bin/marked.js
-  checksum: 137660cd1eca54cfcdcec9d9c7dea786fc57ba3663da9043b721aff4c1419fc869d21bc38f6d5907062b82d4ef354f4fcac6605cac5f4f9dc1595a743b856d91
+  checksum: fc6051142172454f2023f3d6b31cca92879ec8e1b96457086a54c70354c74b00e1b6543a76a1fad6d399366f52b90a848f6ffb8e1d65a5baff87f3ba9b8f1847
   languageName: node
   linkType: hard
 
@@ -27494,7 +27437,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:18.3.1, react@npm:^18.0, react@npm:^18.0.0, react@npm:^18.3.0, react@npm:^18.3.1":
+"react@npm:18.3.1, react@npm:^18.0.0, react@npm:^18.3.0, react@npm:^18.3.1":
   version: 18.3.1
   resolution: "react@npm:18.3.1"
   dependencies:
