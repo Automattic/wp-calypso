@@ -40,6 +40,13 @@ function mockUserSettings() {
 		.reply( 200, {} );
 }
 
+function mockReaderChatSettings( enabled: boolean ) {
+	nock( 'https://public-api.wordpress.com' )
+		.get( `/wpcom/v2/sites/${ site.ID }/reader-chat-settings` )
+		.query( true )
+		.reply( 200, { enabled } );
+}
+
 describe( '<AIToolsSettings>', () => {
 	afterEach( () => {
 		jest.restoreAllMocks();
@@ -57,6 +64,26 @@ describe( '<AIToolsSettings>', () => {
 
 			expect( await screen.findByRole( 'heading', { name: /AI tools/i } ) ).toBeVisible();
 			expect( screen.queryByRole( 'heading', { name: /Reader Chat/i } ) ).toBeNull();
+		} );
+
+		test( 'renders toggle reflecting the current stored value', async () => {
+			jest
+				.spyOn( config, 'isEnabled' )
+				.mockImplementation( ( key: string ) => key === 'reader-chat-settings' );
+
+			mockSite( site );
+			mockBigSkyPlugin( false, true );
+			mockUserSettings();
+			mockReaderChatSettings( true );
+
+			render( <AIToolsSettings siteSlug={ site.slug } /> );
+
+			expect( await screen.findByRole( 'heading', { name: /Reader Chat/i } ) ).toBeVisible();
+
+			const toggle = screen.getByRole( 'checkbox', {
+				name: /Enable Reader Chat on your blog/i,
+			} );
+			expect( toggle ).toBeChecked();
 		} );
 	} );
 } );
