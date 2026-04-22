@@ -1,5 +1,5 @@
 steps:
-  - label: ":desktop_computer: Desktop npm install"
+  - label: ":desktop_computer: Desktop yarn install"
     agents:
       queue: mac
     plugins:
@@ -13,4 +13,4 @@ steps:
       set -eu
 
       cd desktop
-      npm install
+      yarn install --immutable --inline-builds
