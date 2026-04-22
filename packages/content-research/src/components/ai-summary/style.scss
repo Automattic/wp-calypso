@@ -2,12 +2,29 @@
 	padding: 12px 16px;
 	border-top: 1px solid #ddd;
 
+	&--expanded {
+		display: flex;
+		flex-direction: column;
+		max-height: 80vh;
+		overflow-y: auto;
+		border-top: none;
+	}
+
 	&--loading {
+		color: #757575;
+		font-size: 13px;
+	}
+
+	&__loading-indicator {
 		display: flex;
 		align-items: center;
 		gap: 8px;
-		color: #757575;
-		font-size: 13px;
+		padding: 16px 0;
+	}
+
+	&__back {
+		align-self: flex-start;
+		margin-bottom: 8px;
 	}
 
 	&__content {

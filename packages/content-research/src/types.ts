@@ -4,7 +4,7 @@ export interface EngagementData {
 }
 
 export interface ResearchResult {
-	source: 'reddit' | 'hn' | 'polymarket' | 'reader' | 'googlenews';
+	source: 'reddit' | 'hn' | 'reader' | 'googlenews';
 	title: string;
 	url: string;
 	excerpt?: string;
@@ -12,8 +12,6 @@ export interface ResearchResult {
 	author?: string;
 	timestamp?: string;
 	subreddit?: string;
-	odds?: string;
-	volume?: string;
 }
 
 export interface ResearchMeta {
@@ -33,4 +31,4 @@ export interface ResearchSummary {
 	suggested_angles: string[];
 }
 
-export type SourceFilter = 'all' | 'reddit' | 'hn' | 'polymarket' | 'reader' | 'googlenews';
+export type SourceFilter = 'all' | 'reddit' | 'hn' | 'reader' | 'googlenews';

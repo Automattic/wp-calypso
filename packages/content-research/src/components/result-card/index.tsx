@@ -1,10 +1,12 @@
-import { ExternalLink } from '@wordpress/components';
+import { CheckboxControl, ExternalLink } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { trackContentResearchResultClick } from '../../utils/tracking';
 import type { ResearchResult } from '../../types';
 
 interface ResultCardProps {
 	result: ResearchResult;
+	isSelected: boolean;
+	onToggleSelect: () => void;
 }
 
 function getSourceLabel( source: string ): string {
@@ -13,8 +15,6 @@ function getSourceLabel( source: string ): string {
 			return 'Reddit';
 		case 'hn':
 			return 'Hacker News';
-		case 'polymarket':
-			return 'Polymarket';
 		case 'reader':
 			return 'WPcom Reader';
 		case 'googlenews':
@@ -33,14 +33,6 @@ function formatEngagement( result: ResearchResult ): string {
 
 	if ( result.engagement?.comments !== undefined ) {
 		parts.push( `${ result.engagement.comments.toLocaleString() } comments` );
-	}
-
-	if ( result.odds ) {
-		parts.push( result.odds );
-	}
-
-	if ( result.volume ) {
-		parts.push( result.volume );
 	}
 
 	return parts.join( ' · ' );
@@ -66,38 +58,63 @@ function formatTimestamp( timestamp?: string ): string {
 	return `${ diffDays }d ago`;
 }
 
-export default function ResultCard( { result }: ResultCardProps ) {
+export default function ResultCard( { result, isSelected, onToggleSelect }: ResultCardProps ) {
 	const engagement = formatEngagement( result );
 	const timeAgo = formatTimestamp( result.timestamp );
 
 	return (
-		<div className="content-research-result-card">
-			<div className="content-research-result-card__header">
-				<span className="content-research-result-card__source">
-					{ getSourceLabel( result.source ) }
-				</span>
-				{ result.subreddit && (
-					<span className="content-research-result-card__subreddit">{ result.subreddit }</span>
+		<div
+			className={ `content-research-result-card${ isSelected ? ' is-selected' : '' }` }
+			onClick={ ( e ) => {
+				// Don't toggle if clicking a link or the checkbox itself.
+				if ( ( e.target as HTMLElement ).closest( 'a, input, .components-checkbox-control' ) ) {
+					return;
+				}
+				onToggleSelect();
+			} }
+			role="button"
+			tabIndex={ 0 }
+			onKeyDown={ ( e ) => {
+				if ( e.key === ' ' || e.key === 'Enter' ) {
+					e.preventDefault();
+					onToggleSelect();
+				}
+			} }
+		>
+			<CheckboxControl
+				className="content-research-result-card__checkbox"
+				checked={ isSelected }
+				onChange={ onToggleSelect }
+				aria-label={ __( 'Select result for summary', 'content-research' ) }
+			/>
+			<div className="content-research-result-card__body">
+				<div className="content-research-result-card__header">
+					<span className="content-research-result-card__source">
+						{ getSourceLabel( result.source ) }
+					</span>
+					{ result.subreddit && (
+						<span className="content-research-result-card__subreddit">{ result.subreddit }</span>
+					) }
+				</div>
+				<ExternalLink
+					className="content-research-result-card__title"
+					href={ result.url }
+					onClick={ () => trackContentResearchResultClick( result.source, result.url ) }
+				>
+					{ result.title }
+				</ExternalLink>
+				{ result.excerpt && (
+					<p className="content-research-result-card__excerpt">{ result.excerpt }</p>
 				) }
-			</div>
-			<ExternalLink
-				className="content-research-result-card__title"
-				href={ result.url }
-				onClick={ () => trackContentResearchResultClick( result.source, result.url ) }
-			>
-				{ result.title }
-			</ExternalLink>
-			{ result.excerpt && (
-				<p className="content-research-result-card__excerpt">{ result.excerpt }</p>
-			) }
-			<div className="content-research-result-card__meta">
-				{ engagement && (
-					<span className="content-research-result-card__engagement">{ engagement }</span>
-				) }
-				{ timeAgo && <span className="content-research-result-card__time">{ timeAgo }</span> }
-				{ result.author && (
-					<span className="content-research-result-card__author">{ result.author }</span>
-				) }
+				<div className="content-research-result-card__meta">
+					{ engagement && (
+						<span className="content-research-result-card__engagement">{ engagement }</span>
+					) }
+					{ timeAgo && <span className="content-research-result-card__time">{ timeAgo }</span> }
+					{ result.author && (
+						<span className="content-research-result-card__author">{ result.author }</span>
+					) }
+				</div>
 			</div>
 		</div>
 	);

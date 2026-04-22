@@ -1,8 +1,26 @@
 .content-research-result-card {
+	display: flex;
+	align-items: flex-start;
+	gap: 8px;
 	border: 1px solid #ddd;
 	border-radius: 4px;
 	padding: 12px;
 	margin: 0 16px 8px;
+
+	&.is-selected {
+		border-color: var(--wp-admin-theme-color, #3858e9);
+		background: rgba(56, 88, 233, 0.04);
+	}
+
+	&__checkbox {
+		margin-top: 2px;
+		flex-shrink: 0;
+	}
+
+	&__body {
+		flex: 1;
+		min-width: 0;
+	}
 
 	&__header {
 		display: flex;
