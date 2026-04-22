@@ -383,6 +383,26 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 								/>
 							</VStack>
 						</CardBody>
+						{ isReaderChatEnabled && (
+							<>
+								<CardDivider />
+								<SummaryButton
+									href={ `${
+										site.options?.admin_url ?? ''
+									}site-editor.php?canvas=edit&path=/guidelines/additional` }
+									title={ __( 'Set content guidelines' ) }
+									description={ __(
+										'Add the additional guidelines that shape how your blog answers readers.'
+									) }
+									decoration={ <Icon icon={ termDescription } /> }
+									onClick={ () => {
+										recordTracksEvent( 'calypso_dashboard_reader_chat_guidelines_click', {
+											site_id: site.ID,
+										} );
+									} }
+								/>
+							</>
+						) }
 					</Card>
 				) }
 				{ isFreeTrial && (
