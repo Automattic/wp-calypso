@@ -516,7 +516,7 @@ const sections = [
 		trackLoadPerformance: true,
 	},
 	{
-		name: 'reader-atmosphere',
+		name: 'reader',
 		paths: [ '/reader/atmosphere' ],
 		module: 'calypso/reader/atmosphere',
 		group: 'reader',
