@@ -4,6 +4,7 @@
 
 import config from '@automattic/calypso-config';
 import { screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
 import AIToolsSettings from '../index';
@@ -84,6 +85,33 @@ describe( '<AIToolsSettings>', () => {
 				name: /Enable Reader Chat on your blog/i,
 			} );
 			await waitFor( () => expect( toggle ).toBeChecked() );
+		} );
+
+		test( 'posts the new value when the toggle is flipped', async () => {
+			jest
+				.spyOn( config, 'isEnabled' )
+				.mockImplementation( ( key: string ) => key === 'reader-chat-settings' );
+
+			mockSite( site );
+			mockBigSkyPlugin( false, true );
+			mockUserSettings();
+			mockReaderChatSettings( false );
+
+			const saved = nock( 'https://public-api.wordpress.com' )
+				.post( `/wpcom/v2/sites/${ site.ID }/reader-chat-settings`, ( body ) => {
+					expect( body ).toEqual( { enabled: true } );
+					return true;
+				} )
+				.reply( 200, { enabled: true } );
+
+			render( <AIToolsSettings siteSlug={ site.slug } /> );
+
+			const toggle = await screen.findByRole( 'checkbox', {
+				name: /Enable Reader Chat on your blog/i,
+			} );
+			await userEvent.click( toggle );
+
+			await waitFor( () => expect( saved.isDone() ).toBe( true ) );
 		} );
 	} );
 } );
