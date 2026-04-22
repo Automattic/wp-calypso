@@ -520,6 +520,7 @@ export default function CancelPurchase() {
 			atomicRevertConfirmed: false,
 			cancelBundledDomain: false,
 			confirmCancelBundledDomain: false,
+			confirmationPassed: false,
 			customerConfirmedUnderstanding: false,
 			domainConfirmationConfirmed: false,
 			initialized: true,
@@ -755,6 +756,7 @@ export default function CancelPurchase() {
 		} );
 		setState( ( state ) => ( {
 			...state,
+			confirmationPassed: true,
 			surveyShown: true,
 			isLoading: false,
 		} ) );
@@ -793,6 +795,7 @@ export default function CancelPurchase() {
 			setState( ( state ) => ( {
 				...state,
 				cancelIntent,
+				confirmationPassed: true,
 				customerConfirmedUnderstanding,
 				siteId: purchase.blog_id,
 				surveyShown: true,
@@ -1501,7 +1504,7 @@ export default function CancelPurchase() {
 					isNextAdventureValid={ state.isNextAdventureValid }
 					isShowing={ state.isShowingMarketplaceSubscriptionsDialog }
 					isSubmitting={ state.isSubmitting }
-					isVisible={ state.surveyShown }
+					isVisible={ isSplitEnabled ? state.confirmationPassed : state.surveyShown }
 					offerDiscountBasedFromPurchasePrice={ offerDiscountBasedFromPurchasePrice }
 					onClickAcceptForCancellationOffer={ onClickAcceptForCancellationOffer }
 					onGetCancellationOffer={ onGetCancellationOffer }
@@ -1558,7 +1561,7 @@ export default function CancelPurchase() {
 								isNextAdventureValid={ state.isNextAdventureValid }
 								isShowing={ state.isShowingMarketplaceSubscriptionsDialog }
 								isSubmitting={ state.isSubmitting }
-								isVisible={ state.surveyShown }
+								isVisible={ isSplitEnabled ? state.confirmationPassed : state.surveyShown }
 								offerDiscountBasedFromPurchasePrice={ offerDiscountBasedFromPurchasePrice }
 								onClickAcceptForCancellationOffer={ onClickAcceptForCancellationOffer }
 								onGetCancellationOffer={ onGetCancellationOffer }
@@ -1586,7 +1589,7 @@ export default function CancelPurchase() {
 								allSteps={ allSteps }
 								upsell={ state.upsell }
 							/>
-							{ ! state.surveyShown && (
+							{ ( isSplitEnabled ? ! state.confirmationPassed : ! state.surveyShown ) && (
 								<CancellationPreSurveyContent
 									purchase={ purchase }
 									displayVariant={ displayVariant }
