@@ -10,12 +10,9 @@ Automates the triage-and-fix loop for flaky E2E tests running on TeamCity (`team
 
 ## Prerequisites
 
-The skill needs:
-- `TEAMCITY_TOKEN` set in the environment.
-- `gh` CLI authenticated (for the final draft PR).
+- A **TeamCity access token** (required for every run — see Step 1).
+- `gh` CLI authenticated — only needed for opening the draft PR at the end; checked at Step 8, not preflight.
 - A local Calypso dev server and e2e environment runnable per `test/e2e/AGENTS.md` and `test/e2e/docs-new/setup.md`.
-
-**If either of the first two is missing, don't just stop — run the assisted setup in Step 1.**
 
 ## Build configurations in scope
 
@@ -37,72 +34,114 @@ Pass one of:
 - A TeamCity build URL (e.g. `https://teamcity.a8c.com/viewLog.html?buildId=123456`) — scope to one build.
 - A spec path or test title — scope to one test and pull its recent TC history.
 
-## Step 1: Preflight & assisted setup
+## Step 1: TeamCity setup
 
-Run both checks first; only start the assisted flows if a check actually fails.
+This is the only preflight blocker. `gh` auth is checked later, in Step 8 (just before opening the PR).
 
-### 1a. TeamCity token
+Step 1 has three sub-steps. On the **first run ever**, all three execute. On **every subsequent run**, 1.1 and 1.2 run quickly and 1.3 is skipped because the token is already persisted.
+
+### Step 1.1: Configure the network path
+
+The skill auto-configures curl — **no manual proxy setup**. Preflight probes direct connectivity, falls back to the common Automattic SOCKS5 tunnel on `localhost:8080`, and writes a `/tmp/tc-curl` wrapper that every subsequent TeamCity request uses in place of `curl`.
+
+Run as one Bash call:
 
 ```bash
+set -e
+probe() { curl -sS --max-time 5 -o /dev/null -w "%{http_code}" "$@" https://teamcity.a8c.com/ 2>/dev/null; }
+
+PROXY_ARGS=""
+CODE=$(probe)
+if ! [[ "$CODE" =~ ^(200|302|401|403)$ ]]; then
+  CODE=$(probe --socks5 localhost:8080)
+  if [[ "$CODE" =~ ^(200|302|401|403)$ ]]; then
+    PROXY_ARGS="--socks5 localhost:8080"
+  else
+    echo "NET_UNREACHABLE"; exit 1
+  fi
+fi
+
+cat > /tmp/tc-curl <<EOF
+#!/bin/bash
+exec curl $PROXY_ARGS "\$@"
+EOF
+chmod +x /tmp/tc-curl
+echo "TC_CURL_READY proxy_args=[$PROXY_ARGS]"
+```
+
+- `TC_CURL_READY` → proceed to 1.2.
+- `NET_UNREACHABLE` → Ask the user (via `AskUserQuestion`): is the VPN/tunnel running? does their proxy use a non-default port? Retry with whatever they supply. If still failing, stop — no token helps with a network failure.
+
+**From here on, every TeamCity API call in this skill MUST use `/tmp/tc-curl` instead of `curl`.**
+
+### Step 1.2: Load and validate the persisted token
+
+The token is persisted at `~/.claude/fix-flaky-e2e.env` (0600, per-user, outside any repo). On every run the skill sources that file and validates the token. If both work, skip straight to Step 2 — no user interaction needed.
+
+```bash
+if [ -z "$TEAMCITY_TOKEN" ] && [ -f "$HOME/.claude/fix-flaky-e2e.env" ]; then
+  set -a; . "$HOME/.claude/fix-flaky-e2e.env"; set +a
+fi
+
 if [ -n "$TEAMCITY_TOKEN" ]; then
-  curl -sSf -H "Authorization: Bearer $TEAMCITY_TOKEN" -H "Accept: application/json" \
+  /tmp/tc-curl -sSf -H "Authorization: Bearer $TEAMCITY_TOKEN" -H "Accept: application/json" \
     https://teamcity.a8c.com/app/rest/server > /dev/null && echo "TC_OK" || echo "TC_BAD"
 else
   echo "TC_MISSING"
 fi
 ```
 
-If `TC_MISSING` or `TC_BAD`, run the **assisted token flow**:
+- `TC_OK` → token valid, **skip Step 1.3** and proceed to Step 2.
+- `TC_MISSING` → first run (or persisted file was deleted). Run Step 1.3.
+- `TC_BAD` → token is expired/revoked. Run Step 1.3 (after telling the user the old token failed validation and will be replaced).
 
-1. Load the Chrome tools you'll need, in this order:
-   - `ToolSearch` → `select:mcp__claude-in-chrome__tabs_context_mcp,mcp__claude-in-chrome__tabs_create_mcp`
-2. Call `mcp__claude-in-chrome__tabs_context_mcp` to check the user's Chrome is connected. If it isn't, tell the user to run `/chrome` to connect the extension, then stop.
-3. Open the TeamCity token page for them:
-   - `mcp__claude-in-chrome__tabs_create_mcp` with URL `https://teamcity.a8c.com/profile.html?item=accessTokens`.
-4. Tell the user, in one message:
-   > I opened the TeamCity access-token page. Click **Create access token**, give it a name like `claude-fix-flaky-e2e`, leave scope as **Same as current user** (or restrict to "View project" on the WebApp project), copy the token, and paste it back here.
-5. Use `AskUserQuestion` to collect the token as a free-form input (label it clearly as a secret so the user knows it won't be echoed back verbatim in later messages).
-6. Offer two persistence options via `AskUserQuestion`:
-   - **Shell profile** (persists across sessions): show the exact line to append, e.g.
-     ```
-     echo 'export TEAMCITY_TOKEN=<token>' >> ~/.zshrc   # or ~/.bashrc
-     ```
-     Do **not** write to the user's rc file yourself — print the command, let the user run it in their own shell.
-   - **This session only**: tell the user to run `! export TEAMCITY_TOKEN=<token>` — note that `!`-prefixed commands don't persist across Bash tool calls in Claude Code, so this path requires them to add the export to their shell profile before re-invoking the skill. In practice, shell-profile is the right answer.
-7. After the user confirms they've exported it, re-run the check in 1a. If it still fails, surface the exact curl error and stop.
+### Step 1.3: First-time token setup
 
-Do **not** write the token to `.claude/settings.json`, `.claude/settings.local.json`, or any file in the repo — secrets don't belong in Claude Code settings files that may be shared or synced.
+Skip this section entirely if 1.2 printed `TC_OK`.
 
-### 1b. gh CLI auth
+**Critical UX constraint.** Claude Code's `!` prefix captures and renders all user input sent to the subprocess — so `read -s` inside an `!`-invoked script **does not actually hide the token** in the chat. Collecting the token via `!` leaks it into the transcript every time. Same problem with `AskUserQuestion` (multiple-choice picker, answers also go into transcript) and with any plain chat paste.
 
-```bash
-gh auth status 2>&1 | grep -q "Logged in" && echo "GH_OK" || echo "GH_BAD"
-```
+The only safe intake is the **user's own terminal, outside Claude Code**. The skill ships `.claude/skills/fix-flaky-e2e/setup-token.sh`, which refuses to run under a non-TTY stdin specifically to prevent the `!`-prefix footgun.
 
-If `GH_BAD`, tell the user:
-> Your `gh` auth is broken or missing. Run this in Claude Code (the `!` prefix runs it in your shell so the OAuth flow works interactively):
-> ```
-> ! gh auth login -h github.com
-> ```
-> Pick **HTTPS** and **Login with a web browser**, follow the prompts, then tell me when you're done.
+Sequence:
 
-Wait for user confirmation, then re-run the check. If still failing, stop and surface the error.
+1. **Load the Chrome tools.** `ToolSearch` with `select:mcp__claude-in-chrome__tabs_context_mcp,mcp__claude-in-chrome__tabs_create_mcp`.
+2. **Verify Chrome is connected.** Call `mcp__claude-in-chrome__tabs_context_mcp`. If not, tell the user to run `/chrome`, then stop.
+3. **Open the token page.** Call `mcp__claude-in-chrome__tabs_create_mcp` with URL `https://teamcity.a8c.com/profile.html?item=accessTokens`.
+4. **Give the user these instructions in a single chat message, and nothing else:**
 
-Only proceed to Step 2 once both checks return `TC_OK` and `GH_OK`.
+   > I opened the TeamCity token page in your Chrome. Do the following — **do not paste the token anywhere in Claude Code, not in the chat and not with a `!` prefix. Both leak it.**
+   >
+   > 1. On the TeamCity page, click **Create access token**. Name it something like `claude-fix-flaky-e2e`. Leave scope as **Same as current user** (or restrict to "View project" on the WebApp project). Click Create.
+   > 2. Copy the token to your clipboard (it's only shown once).
+   > 3. Open your regular terminal (a new terminal window, not Claude Code).
+   > 4. `cd` into the wp-calypso repo, then run:
+   >    ```
+   >    bash .claude/skills/fix-flaky-e2e/setup-token.sh
+   >    ```
+   > 5. At the hidden prompt, paste the token and press Enter. You should see `Saved to ~/.claude/fix-flaky-e2e.env`.
+   > 6. Come back to this Claude Code session and type **done**.
+
+5. **Wait for the user's "done"** (or equivalent). If they paste the token into the Claude Code chat or run the script with `!`, **stop immediately** and tell them:
+   > That token is now in the conversation transcript and should be considered leaked. Go back to the TeamCity token page, delete the leaked token, generate a new one, and run the script in a **separate terminal window** (not via `!`) as described above.
+
+6. **Re-run Step 1.2** to validate. On `TC_OK`, confirm setup is done and note that future sessions skip straight to Step 2. On `TC_BAD`, the token is wrong or expired — ask the user to regenerate and retry from sub-step 4.
+
+**Never** write the token to: any file inside the repo, `.claude/settings.json` / `.claude/settings.local.json`, or a shell profile. `~/.claude/fix-flaky-e2e.env` is the only correct location.
 
 ## Step 2: Detect flaky tests (scan mode)
 
 For each build config in the table above, fetch the last 20 finished builds on `trunk`:
 
 ```bash
-curl -sS -H "Authorization: Bearer $TEAMCITY_TOKEN" -H "Accept: application/json" \
+/tmp/tc-curl -sS -H "Authorization: Bearer $TEAMCITY_TOKEN" -H "Accept: application/json" \
   "https://teamcity.a8c.com/app/rest/builds?locator=buildType:(id:<BUILD_ID>),branch:trunk,state:finished,count:20&fields=build(id,number,status,finishDate,revisions(revision(version)))"
 ```
 
 For each build, fetch failing test occurrences:
 
 ```bash
-curl -sS -H "Authorization: Bearer $TEAMCITY_TOKEN" -H "Accept: application/json" \
+/tmp/tc-curl -sS -H "Authorization: Bearer $TEAMCITY_TOKEN" -H "Accept: application/json" \
   "https://teamcity.a8c.com/app/rest/testOccurrences?locator=build:(id:<BUILD>),status:FAILURE,muted:false,count:5000&fields=testOccurrence(name,status,duration,test(id,name))"
 ```
 
@@ -120,7 +159,7 @@ Rank flakes by frequency (failures / total runs across the window). Present the 
 For the selected test, pull:
 - The most recent failing `testOccurrence` details (error message + stacktrace):
   ```bash
-  curl -sS -H "Authorization: Bearer $TEAMCITY_TOKEN" -H "Accept: application/json" \
+  /tmp/tc-curl -sS -H "Authorization: Bearer $TEAMCITY_TOKEN" -H "Accept: application/json" \
     "https://teamcity.a8c.com/app/rest/testOccurrences/id:<OCCURRENCE_ID>?fields=name,status,details,build(id,number,webUrl)"
   ```
 - Artifacts from the failing build (trace.zip, video, screenshots):
@@ -130,7 +169,7 @@ For the selected test, pull:
   ```
   Download the trace for the failing spec:
   ```bash
-  curl -sSL -H "Authorization: Bearer $TEAMCITY_TOKEN" \
+  /tmp/tc-curl -sSL -H "Authorization: Bearer $TEAMCITY_TOKEN" \
     "https://teamcity.a8c.com/app/rest/builds/id:<BUILD>/artifacts/content/<path-to-trace.zip>" \
     -o /tmp/flake-trace.zip
   ```
@@ -186,6 +225,25 @@ yarn playwright test <spec-path> --reporter=list --repeat-each=10
 All 10 must pass. If any fail, re-enter Step 6 with the new failure details. Cap at 3 heal cycles — if still flaky, stop and ask the user whether to quarantine (add the `quarantined` group to the spec) or escalate.
 
 ## Step 8: Open a draft PR
+
+### Step 8.0: Verify `gh` auth (deferred from preflight)
+
+Before building the PR command, check that `gh` is authenticated:
+
+```bash
+gh auth status 2>&1 | grep -q "Logged in" && echo "GH_OK" || echo "GH_BAD"
+```
+
+If `GH_BAD`, tell the user:
+> I'm about to open the PR but your `gh` auth isn't working. Run this in Claude Code (the `!` prefix runs it in your shell so the OAuth flow is interactive):
+> ```
+> ! gh auth login -h github.com
+> ```
+> Pick **HTTPS** and **Login with a web browser**, follow the prompts, then tell me when you're done.
+
+Wait for the user's confirmation and re-run the check. Only proceed once it reports `GH_OK`.
+
+### Step 8.1: Create the PR
 
 Follow `AGENTS.md` PR conventions:
 - Draft PR, template from `.github/PULL_REQUEST_TEMPLATE.md`.
