@@ -113,5 +113,40 @@ describe( '<AIToolsSettings>', () => {
 
 			await waitFor( () => expect( saved.isDone() ).toBe( true ) );
 		} );
+
+		test( 'shows the content guidelines link when enabled', async () => {
+			jest
+				.spyOn( config, 'isEnabled' )
+				.mockImplementation( ( key: string ) => key === 'reader-chat-settings' );
+
+			mockSite( site );
+			mockBigSkyPlugin( false, true );
+			mockUserSettings();
+			mockReaderChatSettings( true );
+
+			render( <AIToolsSettings siteSlug={ site.slug } /> );
+
+			expect(
+				await screen.findByRole( 'link', { name: /Set content guidelines/i } )
+			).toBeVisible();
+		} );
+
+		test( 'hides the content guidelines link when disabled', async () => {
+			jest
+				.spyOn( config, 'isEnabled' )
+				.mockImplementation( ( key: string ) => key === 'reader-chat-settings' );
+
+			mockSite( site );
+			mockBigSkyPlugin( false, true );
+			mockUserSettings();
+			mockReaderChatSettings( false );
+
+			render( <AIToolsSettings siteSlug={ site.slug } /> );
+
+			// Wait for the card to render before asserting absence
+			await screen.findByRole( 'heading', { name: /Reader Chat/i } );
+
+			expect( screen.queryByRole( 'link', { name: /Set content guidelines/i } ) ).toBeNull();
+		} );
 	} );
 } );
