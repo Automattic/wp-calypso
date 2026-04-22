@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { UserResponse } from '@automattic/api-core';
 import { render, screen, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import UserAvatar, { UserAvatarInfo } from '../index';
@@ -10,9 +11,23 @@ jest.mock( '@tanstack/react-query', () => ( {
 	useQuery: jest.fn(),
 } ) );
 
+let capturedOnUserLoaded: ( ( user: UserResponse | null ) => void ) | undefined;
+
 jest.mock( 'calypso/blocks/user-avatar/user-hovercard', () => ( {
 	__esModule: true,
-	default: () => <div data-testid="user-hovercard" />,
+	default: ( { onUserLoaded }: { onUserLoaded?: ( user: UserResponse | null ) => void } ) => {
+		capturedOnUserLoaded = onUserLoaded;
+		return <div data-testid="user-hovercard" />;
+	},
+} ) );
+
+jest.mock( '@wordpress/components', () => ( {
+	...jest.requireActual( '@wordpress/components' ),
+	Popover: ( props: Record< string, unknown > ) => (
+		<div data-testid="popover" data-placement={ props.placement }>
+			{ props.children as React.ReactNode }
+		</div>
+	),
 } ) );
 
 describe( 'UserAvatar', () => {
@@ -123,5 +138,98 @@ describe( 'UserAvatar', () => {
 		await user.unhover( document.querySelector( '.user-avatar' )! );
 		act( () => jest.advanceTimersByTime( 100 ) );
 		expect( screen.queryByTestId( 'user-hovercard' ) ).not.toBeInTheDocument();
+	} );
+
+	describe( 'dynamic hovercard placement', () => {
+		const userWithBlog: UserResponse = {
+			ID: 123,
+			user_login: 'testuser',
+			display_name: 'Test User',
+			first_name: '',
+			last_name: '',
+			nice_name: 'testuser',
+			description: '',
+			avatar_URL: 'https://gravatar.com/avatar/abc123',
+			profile_URL: '',
+			primary_blog: {
+				ID: 100,
+				feed_ID: 200,
+				URL: 'https://testblog.com',
+				title: 'Test Blog',
+				description: 'A test blog',
+				avatar_URL: null,
+			},
+		};
+
+		function mockAvatarPosition( top: number, bottom: number, left: number, right: number ) {
+			jest.spyOn( HTMLElement.prototype, 'getBoundingClientRect' ).mockReturnValue( {
+				top,
+				bottom,
+				left,
+				right,
+				width: right - left,
+				height: bottom - top,
+				x: left,
+				y: top,
+				toJSON: jest.fn(),
+			} );
+		}
+
+		async function showHovercardAndTriggerPlacement( userData: UserResponse | null ) {
+			const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
+			render( <UserAvatar user={ defaultUser } /> );
+
+			await user.hover( document.querySelector( '.user-avatar' )! );
+			act( () => jest.advanceTimersByTime( 200 ) );
+
+			// Trigger the onUserLoaded callback from the hovercard mock.
+			act( () => capturedOnUserLoaded?.( userData ) );
+		}
+
+		afterEach( () => {
+			jest.restoreAllMocks();
+		} );
+
+		test( 'places hovercard at bottom-start when there is enough space below', async () => {
+			// Avatar near the top of a tall viewport.
+			Object.defineProperty( window, 'innerHeight', { value: 1000, configurable: true } );
+			mockAvatarPosition( 50, 82, 100, 132 );
+
+			await showHovercardAndTriggerPlacement( userWithBlog );
+
+			expect( screen.getByTestId( 'popover' ) ).toHaveAttribute( 'data-placement', 'bottom-start' );
+		} );
+
+		test( 'places hovercard at top-start when not enough space below but enough above', async () => {
+			// Avatar near the bottom of the viewport.
+			Object.defineProperty( window, 'innerHeight', { value: 500, configurable: true } );
+			mockAvatarPosition( 460, 492, 100, 132 );
+
+			await showHovercardAndTriggerPlacement( userWithBlog );
+
+			expect( screen.getByTestId( 'popover' ) ).toHaveAttribute( 'data-placement', 'top-start' );
+		} );
+
+		test( 'places hovercard to the right when not enough space above or below', async () => {
+			// Avatar centered vertically in a short viewport, more space to the right.
+			Object.defineProperty( window, 'innerHeight', { value: 400, configurable: true } );
+			Object.defineProperty( window, 'innerWidth', { value: 1000, configurable: true } );
+			mockAvatarPosition( 200, 232, 100, 132 );
+
+			await showHovercardAndTriggerPlacement( userWithBlog );
+
+			expect( screen.getByTestId( 'popover' ) ).toHaveAttribute( 'data-placement', 'right' );
+		} );
+
+		test( 'places hovercard to the left when more space on the left side', async () => {
+			// Avatar centered vertically in a short viewport, more space to the left.
+			Object.defineProperty( window, 'innerHeight', { value: 400, configurable: true } );
+			Object.defineProperty( window, 'innerWidth', { value: 1000, configurable: true } );
+			mockAvatarPosition( 200, 232, 800, 832 );
+
+			await showHovercardAndTriggerPlacement( userWithBlog );
+
+			expect( screen.getByTestId( 'popover' ) ).toHaveAttribute( 'data-placement', 'left' );
+		} );
 	} );
 } );

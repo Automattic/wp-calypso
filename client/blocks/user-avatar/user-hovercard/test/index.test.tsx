@@ -3,7 +3,7 @@
  */
 import { UserResponse } from '@automattic/api-core';
 import { useQuery } from '@tanstack/react-query';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { UserAvatarInfo } from '../../index';
 import UserHovercard from '../index';
@@ -83,6 +83,14 @@ function setupMocks( {
 	} as ReturnType< typeof useQuery > );
 }
 
+function renderUserHovercard(
+	props?: Partial< { user: UserAvatarInfo; onUserLoaded: ( user: UserResponse | null ) => void } >
+) {
+	renderWithProvider(
+		<UserHovercard user={ defaultUserProp } onUserLoaded={ jest.fn() } { ...props } />
+	);
+}
+
 describe( 'UserHovercard', () => {
 	beforeAll( () => {
 		window.IntersectionObserver = jest.fn().mockReturnValue( {
@@ -99,7 +107,7 @@ describe( 'UserHovercard', () => {
 	test( 'renders spinner when wpcom data is loading', () => {
 		setupMocks( { wpcomLoading: true } );
 
-		render( <UserHovercard user={ defaultUserProp } /> );
+		renderUserHovercard();
 
 		expect( document.querySelector( '.wp-spinner-wrapper' ) ).toBeVisible();
 	} );
@@ -107,7 +115,7 @@ describe( 'UserHovercard', () => {
 	test( 'renders spinner when gravatar data is loading', () => {
 		setupMocks( { gravatarLoading: true } );
 
-		render( <UserHovercard user={ defaultUserProp } /> );
+		renderUserHovercard();
 
 		expect( document.querySelector( '.wp-spinner-wrapper' ) ).toBeVisible();
 	} );
@@ -115,7 +123,7 @@ describe( 'UserHovercard', () => {
 	test( 'renders user not found when no user data is available', () => {
 		setupMocks( {} );
 
-		render( <UserHovercard user={ defaultUserProp } /> );
+		renderUserHovercard();
 
 		const notFound = document.querySelector( '.user-hovercard--not-found' );
 		expect( notFound ).toBeVisible();
@@ -125,7 +133,7 @@ describe( 'UserHovercard', () => {
 	test( 'renders user hovercard header when wpcom data is available', () => {
 		setupMocks( { wpcomData: wpcomUserResponse } );
 
-		renderWithProvider( <UserHovercard user={ defaultUserProp } /> );
+		renderUserHovercard();
 
 		expect( document.querySelector( '.user-hovercard__header' ) ).toBeVisible();
 	} );
@@ -149,7 +157,7 @@ describe( 'UserHovercard', () => {
 			wpcomData: { ...wpcomUserResponse, user_login: '' },
 		} );
 
-		renderWithProvider( <UserHovercard user={ defaultUserProp } /> );
+		renderUserHovercard();
 
 		expect( document.querySelector( '.user-hovercard__header' ) ).toHaveTextContent(
 			'Gravatar User'
@@ -159,7 +167,7 @@ describe( 'UserHovercard', () => {
 	test( 'renders primary blog card when wpcom user has primary_blog', () => {
 		setupMocks( { wpcomData: wpcomUserResponse } );
 
-		renderWithProvider( <UserHovercard user={ defaultUserProp } /> );
+		renderUserHovercard();
 
 		expect( document.querySelector( '.user-hovercard__primary-blog' ) ).toBeVisible();
 	} );
@@ -167,7 +175,7 @@ describe( 'UserHovercard', () => {
 	test( 'does not render primary blog card when wpcom user has no primary_blog', () => {
 		setupMocks( { wpcomData: { ...wpcomUserResponse, primary_blog: null } } );
 
-		renderWithProvider( <UserHovercard user={ defaultUserProp } /> );
+		renderUserHovercard();
 
 		expect( document.querySelector( '.user-hovercard__primary-blog' ) ).not.toBeInTheDocument();
 	} );
@@ -175,7 +183,7 @@ describe( 'UserHovercard', () => {
 	test( 'renders recommended blogs when wpcom user has recommended_blogs_count', () => {
 		setupMocks( { wpcomData: wpcomUserResponse } );
 
-		renderWithProvider( <UserHovercard user={ defaultUserProp } /> );
+		renderUserHovercard();
 
 		const recommendedBlogs = screen.getByTestId( 'recommended-blogs' );
 		expect( recommendedBlogs ).toBeVisible();
@@ -185,8 +193,35 @@ describe( 'UserHovercard', () => {
 	test( 'does not render recommended blogs when recommended_blogs_count is 0', () => {
 		setupMocks( { wpcomData: { ...wpcomUserResponse, recommended_blogs_count: 0 } } );
 
-		renderWithProvider( <UserHovercard user={ defaultUserProp } /> );
+		renderUserHovercard();
 
 		expect( screen.queryByTestId( 'recommended-blogs' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'does not call onUserLoaded while still loading', () => {
+		const onUserLoaded = jest.fn();
+		setupMocks( { wpcomLoading: true } );
+
+		renderUserHovercard( { onUserLoaded } );
+
+		expect( onUserLoaded ).not.toHaveBeenCalled();
+	} );
+
+	test( 'calls onUserLoaded with null when no user data is found', () => {
+		const onUserLoaded = jest.fn();
+		setupMocks( {} );
+
+		renderUserHovercard( { onUserLoaded } );
+
+		expect( onUserLoaded ).toHaveBeenCalledWith( null );
+	} );
+
+	test( 'calls onUserLoaded with user data when loading completes', () => {
+		const onUserLoaded = jest.fn();
+		setupMocks( { wpcomData: wpcomUserResponse } );
+
+		renderUserHovercard( { onUserLoaded } );
+
+		expect( onUserLoaded ).toHaveBeenCalledWith( wpcomUserResponse );
 	} );
 } );

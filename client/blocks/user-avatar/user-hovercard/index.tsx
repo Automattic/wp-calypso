@@ -15,7 +15,7 @@ import UserHovercardHeader from './user-hovercard-header';
 
 interface UserHovercardProps {
 	user: UserAvatarInfo;
-	onUserLoaded?: ( user: UserResponse | null ) => void;
+	onUserLoaded: ( user: UserResponse | null ) => void;
 }
 
 export default function UserHovercard( props: UserHovercardProps ): JSX.Element | null {
