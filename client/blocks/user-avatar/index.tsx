@@ -74,7 +74,7 @@ export default function UserAvatar( { user, size = 32, hideHovercard = false }: 
 			hovercardHeight = 450;
 		}
 		if ( hasPrimaryBlog && hasRecommendedBlogs ) {
-			hovercardHeight = 700;
+			hovercardHeight = 650;
 		}
 
 		const OFFSET = 5;
