@@ -1,5 +1,6 @@
+import { TimeSince } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { formatDate, getTrophyFirstSite } from '../utils';
+import { getOldestTrophy } from '../utils';
 import AchievementCard from './achievement-card';
 import type { Trophy } from '@automattic/api-core';
 
@@ -11,7 +12,7 @@ export default function SiteBasedAchievement( {
 	trophies: Trophy[];
 } ) {
 	const translate = useTranslate();
-	const firstSite = getTrophyFirstSite( trophy.type, trophies );
+	const oldest = getOldestTrophy( trophy.type, trophies );
 
 	return (
 		<AchievementCard
@@ -23,15 +24,18 @@ export default function SiteBasedAchievement( {
 					: undefined
 			}
 			caption={
-				firstSite
-					? translate( 'First unlocked on {{a}}%(site)s{{/a}} on %(date)s', {
-							args: { site: firstSite.name, date: formatDate( trophy.date ) },
+				oldest?.url
+					? translate( 'First unlocked: {{timeSince/}} on {{a}}%(site)s{{/a}}', {
+							args: { site: oldest.message },
 							components: {
-								a: <a href={ firstSite.url } target="_blank" rel="noopener noreferrer" />,
+								timeSince: <TimeSince date={ oldest.date } />,
+								a: <a href={ oldest.url } target="_blank" rel="noopener noreferrer" />,
 							},
 					  } )
-					: translate( 'Unlocked on %(date)s', {
-							args: { date: formatDate( trophy.date ) },
+					: translate( 'Unlocked {{timeSince/}}', {
+							components: {
+								timeSince: <TimeSince date={ trophy.date } />,
+							},
 					  } )
 			}
 		/>

@@ -1,5 +1,5 @@
+import { TimeSince } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { formatDate } from '../utils';
 import AchievementCard from './achievement-card';
 import type { Trophy } from '@automattic/api-core';
 
@@ -13,8 +13,9 @@ export default function AnniversaryAchievement( {
 	const translate = useTranslate();
 	const anniversaries = trophies.filter( ( t ) => t.type === 'anniversary' );
 	const years = anniversaries.length;
-	// Trophies arrive newest-first, so the first match is the most recent.
-	const mostRecent = anniversaries[ 0 ] ?? trophy;
+	const mostRecent = anniversaries.reduce( ( a, b ) =>
+		new Date( a.date ) > new Date( b.date ) ? a : b
+	);
 
 	return (
 		<AchievementCard
@@ -25,8 +26,10 @@ export default function AnniversaryAchievement( {
 				args: { years },
 			} ) }
 			description={ trophy.message || undefined }
-			caption={ translate( 'Last unlocked on %(date)s', {
-				args: { date: formatDate( mostRecent.date ) },
+			caption={ translate( 'Last unlocked: {{timeSince/}}', {
+				components: {
+					timeSince: <TimeSince date={ mostRecent.date } />,
+				},
 			} ) }
 		/>
 	);

@@ -1,9 +1,24 @@
 import type { Trophy } from '@automattic/api-core';
 
 /**
+ * Find the oldest trophy of a given type by comparing dates.
+ */
+export function getOldestTrophy( type: string, trophies: Trophy[] ): Trophy | null {
+	let oldest: Trophy | null = null;
+	for ( const trophy of trophies ) {
+		if ( trophy.type === type ) {
+			if ( ! oldest || new Date( trophy.date ) < new Date( oldest.date ) ) {
+				oldest = trophy;
+			}
+		}
+	}
+	return oldest;
+}
+
+/**
  * Deduplicate trophies by type:
  * - For leveled achievements, keep the highest level.
- * - For site-based achievements, keep the first (oldest) unlock.
+ * - Otherwise, keep the oldest (first unlocked).
  */
 export function deduplicateTrophies( trophies: Trophy[] ): Trophy[] {
 	const map = new Map< string, Trophy >();
@@ -17,41 +32,17 @@ export function deduplicateTrophies( trophies: Trophy[] ): Trophy[] {
 
 		// Keep the highest level.
 		if ( trophy.level > existing.level ) {
-			map.set( trophy.type, { ...trophy, message: existing.message, url: existing.url } );
-			continue;
-		}
-
-		// For same level, keep the oldest (first unlocked). Trophies arrive newest-first.
-		if ( trophy.level === existing.level ) {
 			map.set( trophy.type, trophy );
 		}
 	}
 
-	return Array.from( map.values() );
-}
-
-/**
- * Find the oldest site-based trophy of a given type.
- * A trophy is site-based when `url` is set; `message` is the site name.
- * Trophies arrive newest-first, so the last match is the oldest.
- */
-export function getTrophyFirstSite(
-	type: string,
-	trophies: Trophy[]
-): { name: string; url: string } | null {
-	let oldest: Trophy | null = null;
-	for ( const trophy of trophies ) {
-		if ( trophy.type === type && trophy.url ) {
-			oldest = trophy;
+	// For each type, replace with the oldest trophy but preserve the highest level.
+	for ( const [ type, trophy ] of map ) {
+		const oldest = getOldestTrophy( type, trophies );
+		if ( oldest && oldest !== trophy ) {
+			map.set( type, { ...oldest, level: trophy.level, image: trophy.image } );
 		}
 	}
-	return oldest ? { name: oldest.message, url: oldest.url } : null;
-}
 
-export function formatDate( dateString: string ): string {
-	return new Date( dateString ).toLocaleDateString( undefined, {
-		year: 'numeric',
-		month: 'long',
-		day: 'numeric',
-	} );
+	return Array.from( map.values() );
 }
