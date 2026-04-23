@@ -29,12 +29,14 @@ export const getSiteData = (
 
 	// If next and current payout dates are not equal, add previous quarter estimate
 	const now = new Date();
-	const estimatedPayout = areNextAndCurrentPayoutDatesEqual( now )
+	const isCurrentQuarterOnly = areNextAndCurrentPayoutDatesEqual( now );
+
+	const estimatedPayout = isCurrentQuarterOnly
 		? currentQuarterEstimate
 		: currentQuarterEstimate + previousQuarterEstimate;
 
 	// Include estimated transactions from both quarters
-	const estimatedTransactions = areNextAndCurrentPayoutDatesEqual( now )
+	const estimatedTransactions = isCurrentQuarterOnly
 		? currentQuarterTransactions
 		: currentQuarterTransactions + previousQuarterTransactions;
 
