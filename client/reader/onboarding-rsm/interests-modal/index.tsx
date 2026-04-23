@@ -11,6 +11,7 @@ import { fixMe } from 'i18n-calypso';
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch, useStore } from 'react-redux';
 import { READER_ONBOARDING_TRACKS_EVENT_PREFIX } from 'calypso/reader/onboarding-rsm/constants';
+import { StepIndicator } from 'calypso/reader/onboarding-rsm/step-indicator';
 import { requestFollowTag, requestUnfollowTag } from 'calypso/state/reader/tags/items/actions';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 
@@ -228,19 +229,26 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 						</div>
 					) ) }
 					<div className="reader-onboarding-modal__footer">
-						<HStack justify="right" className="reader-onboarding-modal__footer-actions">
-							<Button __next40pxDefaultSize variant="tertiary" onClick={ onClose }>
-								{ __( 'Cancel' ) }
-							</Button>
-							<Button
-								__next40pxDefaultSize
-								onClick={ handleContinue }
-								variant="primary"
-								disabled={ isContinueDisabled }
-								accessibleWhenDisabled
+						<HStack justify="space-between" className="reader-onboarding-modal__footer-actions">
+							<StepIndicator totalSteps={ 3 } currentStep={ 2 } />
+							<HStack
+								spacing={ 2 }
+								justify="right"
+								className="reader-onboarding-modal__footer-buttons"
 							>
-								{ __( 'Continue' ) }
-							</Button>
+								<Button __next40pxDefaultSize variant="tertiary" onClick={ onClose }>
+									{ __( 'Cancel' ) }
+								</Button>
+								<Button
+									__next40pxDefaultSize
+									onClick={ handleContinue }
+									variant="primary"
+									disabled={ isContinueDisabled }
+									accessibleWhenDisabled
+								>
+									{ __( 'Continue' ) }
+								</Button>
+							</HStack>
 						</HStack>
 					</div>
 				</VStack>
