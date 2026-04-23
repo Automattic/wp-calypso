@@ -21,19 +21,24 @@ const TIMELINE_PATH = `${ BASE_PATH }/${ TIMELINE_TAB }`;
 export function ReaderSidebarAtmosphere( { path }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const { data } = useConnectionsQuery();
+
+	const isOnAtmosphere = path.startsWith( BASE_PATH );
+	const [ isOpen, setIsOpen ] = useState( () => isOnAtmosphere );
+
+	// Only fetch connections on atmosphere routes. On other Reader pages we
+	// render a flat link (no sub-items) regardless, so there's no need to hit
+	// the endpoint.
+	const { data } = useConnectionsQuery( { enabled: isOnAtmosphere } );
 	const connections = data?.connections ?? [];
 	const hasConnections = connections.length > 0;
-
-	const [ isOpen, setIsOpen ] = useState( () => path.startsWith( BASE_PATH ) );
 
 	// Auto-open when navigating into an atmosphere sub-route. We only ever open
 	// here — collapsing on navigate-away would fight the user's explicit toggle.
 	useEffect( () => {
-		if ( path.startsWith( BASE_PATH ) ) {
+		if ( isOnAtmosphere ) {
 			setIsOpen( true );
 		}
-	}, [ path ] );
+	}, [ isOnAtmosphere ] );
 
 	const recordClick = () => {
 		dispatch( recordReaderTracksEvent( 'calypso_reader_sidebar_atmosphere_clicked' ) );

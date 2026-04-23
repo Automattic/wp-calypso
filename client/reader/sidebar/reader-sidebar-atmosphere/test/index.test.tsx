@@ -83,18 +83,14 @@ describe( 'ReaderSidebarAtmosphere', () => {
 		expect( submenu ).not.toHaveAttribute( 'hidden' );
 	} );
 
-	it( 'starts collapsed when the path does not match /reader/atmosphere', async () => {
-		mockConnections( [ { id: 101, handle: 'alice.bsky.social', did: 'did:plc:a', avatar: null } ] );
-
-		const { container } = renderWithProvider( <ReaderSidebarAtmosphere path="/reader" />, {
+	it( 'does not fetch connections on non-atmosphere paths and renders a flat link', async () => {
+		// No nock mock — if the query fired, nock would throw on the unmatched request.
+		renderWithProvider( <ReaderSidebarAtmosphere path="/reader" />, {
 			queryClient: makeClient(),
 		} );
 
-		await waitFor( () =>
-			expect( container.querySelector( '.sidebar__expandable-content' ) ).not.toBeNull()
-		);
-
-		const submenu = container.querySelector( '.sidebar__expandable-content' );
-		expect( submenu ).toHaveAttribute( 'hidden' );
+		const link = await screen.findByRole( 'link', { name: /atmosphere/i } );
+		expect( link ).toHaveAttribute( 'href', '/reader/atmosphere' );
+		expect( screen.queryByRole( 'link', { name: 'Timeline' } ) ).not.toBeInTheDocument();
 	} );
 } );
