@@ -1,9 +1,35 @@
+// Quick-fix contrast: match the block-note light-gray card look so text is
+// always dark-on-light regardless of editor theme. A fuller theme-aware
+// redesign is tracked as enhancement #6 in the RSM-508 notes.
+$review-card-bg: #f0f0f1;
+$review-card-text: #1e1e1e;
+$review-card-muted: #50575e;
+$review-card-border: #dcdcde;
+
 .jetpack-ai-review-mediation {
 	display: flex;
 	flex-direction: column;
 	gap: 1rem;
 	font-size: 13px;
 	line-height: 1.5;
+	color: $review-card-text;
+
+	// Force dark text on every text-bearing descendant. Needed because the host
+	// chat bubble rules (e.g. `.chat-bubble p { color: #fff }`) have higher
+	// specificity than `.jetpack-ai-review-mediation { color: ... }`, which
+	// would leave our light-grey cards with unreadable white text.
+	p,
+	li,
+	span,
+	strong,
+	em,
+	h3,
+	h4,
+	blockquote,
+	ins,
+	del {
+		color: $review-card-text;
+	}
 
 	&__heading {
 		font-size: 13px;
@@ -18,17 +44,42 @@
 		margin: 0;
 	}
 
-	&__summary p {
-		margin: 0;
+	&__summary {
+		background: $review-card-bg;
+		color: $review-card-text;
+		border-radius: 4px;
+		padding: 0.75rem;
+
+		p {
+			margin: 0;
+		}
+	}
+
+	&__implications,
+	&__violations {
+		background: $review-card-bg;
+		color: $review-card-text;
+		border-radius: 4px;
+		padding: 0.75rem;
 	}
 
 	&__card {
-		border: 1px solid #e0e0e0;
+		border: 1px solid $review-card-border;
 		border-radius: 4px;
 		padding: 0.75rem;
 		margin-bottom: 0.5rem;
-		background: #fff;
-		transition: opacity 150ms ease-in-out;
+		background: $review-card-bg;
+		color: $review-card-text;
+		transition: opacity 150ms ease-in-out, border-color 150ms ease-in-out;
+
+		&.is-clickable {
+			cursor: pointer;
+		}
+
+		&.is-applying {
+			border-color: var(--wp-admin-theme-color, #2271b1);
+			opacity: 0.85;
+		}
 
 		&.is-accepted {
 			opacity: 0.6;
@@ -37,6 +88,10 @@
 
 		&.is-dismissed {
 			opacity: 0.4;
+		}
+
+		&.is-failed {
+			border-color: #d63638;
 		}
 	}
 
@@ -61,7 +116,10 @@
 		padding: 0.25rem 0.5rem;
 		margin: 0.5rem 0;
 		font-style: italic;
-		color: #50575e;
+		// !important: the generic descendant color rule above ("force dark
+		// text") has matching tag-level specificity; muted treatment needs to
+		// win over it here and in the other muted selectors below.
+		color: $review-card-muted !important;
 		white-space: pre-wrap;
 	}
 
@@ -80,35 +138,37 @@
 	}
 
 	&__affected-blocks {
-		color: #757575;
+		color: $review-card-muted !important;
 		font-size: 12px;
 	}
 
 	&__block-ref {
-		color: #757575;
+		color: $review-card-muted !important;
 		font-size: 12px;
 		margin: 0 0 0.25rem;
 	}
 
 	&__current del {
 		background: #fde7e7;
+		color: #1e1e1e;
 		text-decoration: line-through;
 	}
 
 	&__suggested ins {
 		background: #e7f5ea;
+		color: #1e1e1e;
 		text-decoration: none;
 	}
 
 	&__rationale {
 		margin: 0.5rem 0 0;
 		font-size: 12px;
-		color: #50575e;
+		color: $review-card-muted !important;
 	}
 
 	&__reviewers {
 		font-size: 12px;
-		color: #757575;
+		color: $review-card-muted !important;
 		margin: 0.25rem 0 0;
 	}
 
@@ -126,6 +186,9 @@
 		border-radius: 3px;
 		border: 1px solid #c3c4c7;
 		background: #fff;
+		// Host chat-bubble styles can force `color: #fff` on buttons, making
+		// the default Dismiss button invisible against its white background.
+		color: $review-card-text;
 
 		&.is-accept {
 			background: var(--wp-admin-theme-color, #2271b1);

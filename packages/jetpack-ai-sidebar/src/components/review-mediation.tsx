@@ -5,16 +5,31 @@
  * 'big_sky__show_component' with data.type set to 'review-mediation'.
  *
  * Shows the summary, reviewer conflicts with recommended resolutions, cascade
- * implications, atomic suggested edits (accept/dismiss controls are local-only
- * in this iteration; applying to blocks is a follow-up), and a collapsible
- * list of guideline violations grounded in the site's content guidelines.
+ * implications, atomic suggested edits, and a collapsible list of guideline
+ * violations grounded in the site's content guidelines.
+ *
+ * ## Interaction model for suggested edits
+ * - Clicking the card body (outside Accept/Dismiss) selects the target block in
+ *   the editor, scrolls it into view, and dims every other block via the
+ *   `.is-focus-mode` class on the block-list root — mirrors block-notes'
+ *   click-to-focus UX. The dim class is cleared on component unmount.
+ * - Clicking Accept applies `suggested_text` to the target block via
+ *   `applyReviewEdit` (shimmer + checkpoint for Undo).
+ * - Clicking Dismiss hides the suggestion locally; no backend call.
  */
 
 /**
  * External dependencies
  */
-import { useState, useCallback } from '@wordpress/element';
+import { useDispatch, useSelect } from '@wordpress/data';
+import { useState, useCallback, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+/**
+ * Internal dependencies
+ */
+import { applyReviewEdit, findBlockElement, findBlockListLayout } from '../index';
+
+const FOCUS_MODE_CLASS = 'is-focus-mode';
 
 /**
  * Types mirroring the wpcom `Review_Mediator_Ability` structured output.
@@ -60,10 +75,13 @@ interface ReviewMediationProps {
 	implications: Implication[];
 	suggested_edits: SuggestedEdit[];
 	guideline_violations: GuidelineViolation[];
-	onComplete?: () => void;
 }
 
-type EditStatus = 'pending' | 'accepted' | 'dismissed';
+type EditStatus = 'pending' | 'applying' | 'accepted' | 'dismissed' | 'failed';
+
+interface BlockSnapshot {
+	clientId: string;
+}
 
 /**
  * Main component.
@@ -80,9 +98,102 @@ export default function ReviewMediation( {
 	const [ editStatuses, setEditStatuses ] = useState< Record< number, EditStatus > >( {} );
 	const [ violationsOpen, setViolationsOpen ] = useState( false );
 
+	// Flat list of top-level blocks in document order. `block_index` from the
+	// server-side ability (a `parse_blocks()` offset) maps directly to this
+	// array's index.
+	const blocks = useSelect(
+		( select ) =>
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			( ( select as any )( 'core/block-editor' ).getBlocks?.() ?? [] ) as BlockSnapshot[],
+		[]
+	);
+
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const { selectBlock } = useDispatch( 'core/block-editor' ) as any;
+
 	const setStatus = useCallback( ( index: number, status: EditStatus ) => {
 		setEditStatuses( ( prev ) => ( { ...prev, [ index ]: status } ) );
 	}, [] );
+
+	const getClientId = useCallback(
+		( blockIndex: number | null ): string | null => {
+			if ( blockIndex === null || blockIndex < 0 || blockIndex >= blocks.length ) {
+				return null;
+			}
+			return blocks[ blockIndex ]?.clientId ?? null;
+		},
+		[ blocks ]
+	);
+
+	const focusBlock = useCallback(
+		( blockIndex: number | null ) => {
+			const clientId = getClientId( blockIndex );
+			if ( ! clientId ) {
+				return;
+			}
+			// Optional-chaining call is a no-op when dispatch hasn't wired
+			// `selectBlock` (e.g. in unit-test environments).
+			selectBlock?.( clientId );
+			const el = findBlockElement( clientId );
+			el?.scrollIntoView?.( { behavior: 'smooth', block: 'center' } );
+
+			// Mirror block-notes' dim-others UX: Gutenberg's built-in
+			// `.is-focus-mode` CSS (from block-list/content.scss) drops every
+			// non-selected block to opacity 0.2. The class is normally driven
+			// by the private `toggleBlockSpotlight` action, which we can't
+			// reach without unlocking `@wordpress/private-apis`. Toggling the
+			// class directly on the block-list root produces the identical
+			// visual effect. Cleanup runs on unmount (below).
+			findBlockListLayout()?.classList.add( FOCUS_MODE_CLASS );
+		},
+		[ getClientId, selectBlock ]
+	);
+
+	// Ensure the dim-others effect does not leak past the mediation session.
+	useEffect( () => {
+		return () => {
+			findBlockListLayout()?.classList.remove( FOCUS_MODE_CLASS );
+		};
+	}, [] );
+
+	const handleAccept = useCallback(
+		async ( edit: SuggestedEdit, editIndex: number ) => {
+			const clientId = getClientId( edit.block_index );
+			if ( ! clientId ) {
+				// eslint-disable-next-line no-console
+				console.warn(
+					'[ReviewMediation] No target block for edit',
+					editIndex,
+					'block_index=',
+					edit.block_index
+				);
+				setStatus( editIndex, 'failed' );
+				return;
+			}
+			setStatus( editIndex, 'applying' );
+			try {
+				// Intentionally pass no `summary`: adding an assistant chat message
+				// would demote the mediation from `isLastMessage`, which flips AM's
+				// `isStale` flag and disables the whole component
+				// (see convert-tool-messages-to-components.ts). The rationale is
+				// already visible on the card itself.
+				const result = await applyReviewEdit( clientId, edit.suggested_text );
+				setStatus( editIndex, result?.success ? 'accepted' : 'failed' );
+			} catch ( err ) {
+				// eslint-disable-next-line no-console
+				console.warn( '[ReviewMediation] applyReviewEdit threw', err );
+				setStatus( editIndex, 'failed' );
+			}
+		},
+		[ getClientId, setStatus ]
+	);
+
+	const handleDismiss = useCallback(
+		( editIndex: number ) => {
+			setStatus( editIndex, 'dismissed' );
+		},
+		[ setStatus ]
+	);
 
 	const hasNoReviewerInput =
 		conflicts.length === 0 &&
@@ -159,15 +270,47 @@ export default function ReviewMediation( {
 							</h3>
 							{ suggested_edits.map( ( edit, i ) => {
 								const status = editStatuses[ i ] ?? 'pending';
+								const isPostWide = edit.block_index === null;
+								const clickable = ! isPostWide;
+								// Accept is disabled in states where there's no useful action:
+								// post-wide edits (no block target), in-flight edits, or
+								// already-resolved edits.
+								const acceptDisabled =
+									isPostWide ||
+									status === 'applying' ||
+									status === 'accepted' ||
+									status === 'dismissed';
+								const dismissDisabled =
+									status === 'applying' || status === 'accepted' || status === 'dismissed';
+								const onCardClick = ( e: React.MouseEvent< HTMLElement > ) => {
+									// Ignore clicks that originated on any button inside the card
+									// (e.g. Accept/Dismiss handle their own actions).
+									if ( ( e.target as HTMLElement ).closest( 'button' ) ) {
+										return;
+									}
+									if ( clickable ) {
+										focusBlock( edit.block_index );
+									}
+								};
 								return (
+									// The card cannot take `role="button"` because it already
+									// contains the Accept/Dismiss buttons, and nested interactive
+									// elements are invalid. Pointer users get the click-to-focus
+									// enhancement; keyboard users operate the inner buttons
+									// directly, so they are not blocked by the missing keyboard
+									// handler on the card wrapper.
+									// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
 									<article
-										className={ `jetpack-ai-review-mediation__card is-${ status }` }
+										className={ `jetpack-ai-review-mediation__card is-${ status }${
+											clickable ? ' is-clickable' : ''
+										}` }
 										key={ `edit-${ i }` }
+										onClick={ onCardClick }
 									>
 										<p className="jetpack-ai-review-mediation__block-ref">
-											{ edit.block_index !== null
-												? `${ __( 'Block', 'jetpack' ) } ${ edit.block_index }`
-												: __( 'Post-wide', 'jetpack' ) }
+											{ isPostWide
+												? __( 'Post-wide', 'jetpack' )
+												: `${ __( 'Block', 'jetpack' ) } ${ edit.block_index }` }
 										</p>
 										{ edit.current_text && (
 											<p className="jetpack-ai-review-mediation__current">
@@ -188,18 +331,25 @@ export default function ReviewMediation( {
 											<button
 												type="button"
 												className="jetpack-ai-review-mediation__action is-accept"
-												disabled={ status !== 'pending' }
-												onClick={ () => setStatus( i, 'accepted' ) }
+												disabled={ acceptDisabled }
+												title={
+													isPostWide
+														? __( 'Needs manual edit — no single block target', 'jetpack' )
+														: undefined
+												}
+												onClick={ () => handleAccept( edit, i ) }
 											>
-												{ status === 'accepted'
-													? __( 'Accepted', 'jetpack' )
-													: __( 'Accept', 'jetpack' ) }
+												{ status === 'applying' && __( 'Applying…', 'jetpack' ) }
+												{ status === 'accepted' && __( 'Accepted', 'jetpack' ) }
+												{ status === 'failed' && __( 'Retry', 'jetpack' ) }
+												{ ( status === 'pending' || status === 'dismissed' ) &&
+													__( 'Accept', 'jetpack' ) }
 											</button>
 											<button
 												type="button"
 												className="jetpack-ai-review-mediation__action is-dismiss"
-												disabled={ status !== 'pending' }
-												onClick={ () => setStatus( i, 'dismissed' ) }
+												disabled={ dismissDisabled }
+												onClick={ () => handleDismiss( i ) }
 											>
 												{ status === 'dismissed'
 													? __( 'Dismissed', 'jetpack' )

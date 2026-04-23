@@ -8,7 +8,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import TitlePicker from './components/title-picker';
-import { getChatComponent, toolProvider, useCheckpoint } from './index';
+import {
+	applyReviewEdit,
+	findBlockElement,
+	findBlockListLayout,
+	getChatComponent,
+	toolProvider,
+	useAbilitiesSetup,
+	useCheckpoint,
+} from './index';
 
 // Stub @wordpress/data on window so useCheckpoint / handleShowComponent
 // can read/write the post title via the core/editor store.
@@ -192,5 +200,193 @@ describe( 'useCheckpoint', () => {
 	it( 'hasCheckpoint returns false for unknown ids', () => {
 		const api = useCheckpoint();
 		expect( api.hasCheckpoint( 'never-set' ) ).toBe( false );
+	} );
+} );
+
+// Minimal wp.data mock covering both core/editor (for checkpoint) and
+// core/block-editor (for updateBlockAttributes). Tracks calls on both so
+// tests can assert exact dispatches.
+function installWpDataMockWithBlockEditor() {
+	const editorState: { title: string } = { title: 'original' };
+	const blockUpdates: Array< { clientId: string; attrs: Record< string, unknown > } > = [];
+	( window as any ).wp = {
+		data: {
+			select: ( store: string ) => {
+				if ( store === 'core/editor' ) {
+					return {
+						getEditedPostAttribute: ( attr: string ) =>
+							attr === 'title' ? editorState.title : undefined,
+					};
+				}
+				return undefined;
+			},
+			dispatch: ( store: string ) => {
+				if ( store === 'core/editor' ) {
+					return {
+						editPost: ( attrs: { title?: string } ) => {
+							if ( typeof attrs.title === 'string' ) {
+								editorState.title = attrs.title;
+							}
+						},
+					};
+				}
+				if ( store === 'core/block-editor' ) {
+					return {
+						updateBlockAttributes: ( clientId: string, attrs: Record< string, unknown > ) => {
+							blockUpdates.push( { clientId, attrs } );
+						},
+					};
+				}
+				return undefined;
+			},
+		},
+	};
+	return { editorState, blockUpdates };
+}
+
+describe( 'applyReviewEdit', () => {
+	beforeEach( () => {
+		jest.useFakeTimers();
+	} );
+
+	afterEach( () => {
+		jest.useRealTimers();
+	} );
+
+	it( 'dispatches updateBlockAttributes with the suggested content', async () => {
+		const { blockUpdates } = installWpDataMockWithBlockEditor();
+		const addMessage = jest.fn();
+		useAbilitiesSetup( {
+			addMessage,
+			clearSuggestions: () => undefined,
+		} as any );
+
+		const promise = applyReviewEdit( '550e8400-e29b-41d4-a716-446655440000', 'new text' );
+		// handleUpdateBlockContent uses an 800ms setTimeout before committing.
+		jest.advanceTimersByTime( 1000 );
+		const result = await promise;
+
+		expect( result ).toMatchObject( { success: true } );
+		expect( blockUpdates ).toEqual( [
+			{
+				clientId: '550e8400-e29b-41d4-a716-446655440000',
+				attrs: { content: 'new text' },
+			},
+		] );
+	} );
+
+	it( 'posts the rationale as an assistant message to the chat when a summary is provided', async () => {
+		installWpDataMockWithBlockEditor();
+		const addMessage = jest.fn();
+		useAbilitiesSetup( {
+			addMessage,
+			clearSuggestions: () => undefined,
+		} as any );
+
+		const promise = applyReviewEdit(
+			'550e8400-e29b-41d4-a716-446655440000',
+			'new text',
+			'Follows Copy guideline on specific dates.'
+		);
+		jest.advanceTimersByTime( 1000 );
+		await promise;
+
+		expect( addMessage ).toHaveBeenCalledTimes( 1 );
+		const message = addMessage.mock.calls[ 0 ][ 0 ];
+		expect( message.role ).toBe( 'assistant' );
+		expect( message.content[ 0 ] ).toEqual( {
+			type: 'text',
+			text: 'Follows Copy guideline on specific dates.',
+		} );
+	} );
+
+	it( 'does not emit a chat message when summary is omitted', async () => {
+		installWpDataMockWithBlockEditor();
+		const addMessage = jest.fn();
+		useAbilitiesSetup( {
+			addMessage,
+			clearSuggestions: () => undefined,
+		} as any );
+
+		const promise = applyReviewEdit( '550e8400-e29b-41d4-a716-446655440000', 'only-content' );
+		jest.advanceTimersByTime( 1000 );
+		await promise;
+
+		expect( addMessage ).not.toHaveBeenCalled();
+	} );
+
+	// Intentionally no direct unit test for the `setCheckpoint` call inside
+	// applyReviewEdit: `useCheckpoint()` spreads its api into a fresh object
+	// (`{ ...api }`), so `jest.spyOn(useCheckpoint(), 'setCheckpoint')` would
+	// wrap the returned copy rather than the module-level singleton that
+	// applyReviewEdit actually invokes. The checkpoint API's own behaviour is
+	// covered by the `useCheckpoint` describe block below.
+
+	it( 'returns an error result when clientId is missing', async () => {
+		installWpDataMockWithBlockEditor();
+		useAbilitiesSetup( {
+			addMessage: () => undefined,
+			clearSuggestions: () => undefined,
+		} as any );
+
+		const promise = applyReviewEdit( '', 'new text' );
+		jest.advanceTimersByTime( 1000 );
+		const result = await promise;
+
+		expect( result ).toMatchObject( { success: false } );
+	} );
+} );
+
+describe( 'findBlockElement', () => {
+	afterEach( () => {
+		document.body.innerHTML = '';
+	} );
+
+	it( 'returns the element with matching data-block attribute in the main document', () => {
+		const el = document.createElement( 'div' );
+		el.setAttribute( 'data-block', '550e8400-e29b-41d4-a716-446655440000' );
+		document.body.appendChild( el );
+		expect( findBlockElement( '550e8400-e29b-41d4-a716-446655440000' ) ).toBe( el );
+	} );
+
+	it( 'returns a falsy value when the clientId is not in the DOM', () => {
+		// Returns null from the regex guard or querySelector miss; may return
+		// undefined when the optional editor-canvas iframe lookup chain misses.
+		expect( findBlockElement( '550e8400-e29b-41d4-a716-446655440001' ) ).toBeFalsy();
+	} );
+
+	it( 'rejects malformed clientIds to prevent selector injection', () => {
+		expect( findBlockElement( '"][onerror="alert(1)"]' ) ).toBeNull();
+		expect( findBlockElement( 'contains space' ) ).toBeNull();
+		// Non-hex characters fail the regex guard.
+		expect( findBlockElement( 'not-a-real-clientid-g' ) ).toBeNull();
+	} );
+} );
+
+describe( 'findBlockListLayout', () => {
+	afterEach( () => {
+		document.body.innerHTML = '';
+	} );
+
+	it( 'finds the root block-list layout element in the main document', () => {
+		const el = document.createElement( 'div' );
+		el.className = 'block-editor-block-list__layout is-root-container';
+		document.body.appendChild( el );
+		expect( findBlockListLayout() ).toBe( el );
+	} );
+
+	it( 'returns a falsy value when the root layout is not in the DOM', () => {
+		// Returns null from the main-doc querySelector miss or undefined from
+		// the optional editor-canvas iframe lookup chain.
+		expect( findBlockListLayout() ).toBeFalsy();
+	} );
+
+	it( 'ignores layout elements that are not the root container', () => {
+		// Nested (non-root) block lists appear inside group blocks and must
+		// not be matched — we only toggle focus mode on the editor's root.
+		const nested = document.createElement( 'div' );
+		nested.className = 'block-editor-block-list__layout';
+		document.body.appendChild( nested );
+		expect( findBlockListLayout() ).toBeFalsy();
 	} );
 } );

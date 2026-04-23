@@ -73,10 +73,12 @@ const MEDIATE_REVIEW_SUGGESTION = {
 
 /**
  * Find a block element by clientId in the main document or editor iframe.
+ * Exported so peer components (e.g. ReviewMediation) can scroll a block into
+ * view on interaction.
  * @param {string} clientId - The block's clientId.
  * @returns The block element, or null.
  */
-function findBlockElement( clientId: string ): HTMLElement | null {
+export function findBlockElement( clientId: string ): HTMLElement | null {
 	// Validate clientId format to prevent selector injection.
 	if ( ! /^[0-9a-f-]+$/i.test( clientId ) ) {
 		return null;
@@ -93,6 +95,31 @@ function findBlockElement( clientId: string ): HTMLElement | null {
 		return iframe?.contentDocument?.querySelector(
 			`[data-block="${ clientId }"]`
 		) as HTMLElement | null;
+	} catch {
+		return null;
+	}
+}
+
+/**
+ * Find the block-list root layout element, iframe-aware.
+ *
+ * Gutenberg's built-in focus/spotlight CSS (`.is-focus-mode .block-editor-block-list__block:not(...)`)
+ * keys off a class toggled on this element. Exposed so peer components can
+ * mirror the block-notes "dim other blocks" UX without needing to unlock the
+ * private `toggleBlockSpotlight` action.
+ * @returns The root block-list layout element, or null.
+ */
+export function findBlockListLayout(): HTMLElement | null {
+	const selector = '.block-editor-block-list__layout.is-root-container';
+	try {
+		const el = document.querySelector( selector ) as HTMLElement | null;
+		if ( el ) {
+			return el;
+		}
+		const iframe = document.querySelector(
+			'iframe[name="editor-canvas"]'
+		) as HTMLIFrameElement | null;
+		return iframe?.contentDocument?.querySelector( selector ) as HTMLElement | null;
 	} catch {
 		return null;
 	}
@@ -233,6 +260,32 @@ function handleUpdateBlockContent( input: any ): any {
 			resolve( { success: true, returnToAgent: false } );
 		}, 800 );
 	} );
+}
+
+/**
+ * Apply a mediation-suggested edit to a Gutenberg block.
+ *
+ * Captures a checkpoint first so AM's native Undo action can restore the
+ * pre-edit state, then delegates to `handleUpdateBlockContent` for the actual
+ * update and shimmer animation. Passing `summary` also posts it to chat — note
+ * that the ReviewMediation caller intentionally omits it, because a new
+ * assistant message demotes the mediation from `isLastMessage` and disables
+ * the rest of the card stack (see convert-tool-messages-to-components.ts).
+ *
+ * Intended for consumption by the ReviewMediation component's Accept button.
+ * @param {string}             clientId - Target block's clientId.
+ * @param {string}             content  - The new content to apply.
+ * @param {string | undefined} summary  - Optional rationale; when provided, posted to chat.
+ * @returns {Promise<{success: boolean, error?: string}>} The `handleUpdateBlockContent` result.
+ */
+export async function applyReviewEdit(
+	clientId: string,
+	content: string,
+	summary?: string
+): Promise< { success: boolean; error?: string; returnToAgent?: boolean } > {
+	const checkpointId = `review-edit-${ Date.now() }`;
+	moduleCheckpointApi?.setCheckpoint( checkpointId );
+	return handleUpdateBlockContent( { clientId, content, summary } );
 }
 
 // ---------- Show-component ability ----------
