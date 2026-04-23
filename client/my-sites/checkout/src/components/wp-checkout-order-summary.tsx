@@ -23,7 +23,7 @@ import {
 } from '@automattic/calypso-products';
 import colorStudio from '@automattic/color-studio';
 import { Gridicon } from '@automattic/components';
-import { Button, FormStatus, useFormStatus } from '@automattic/composite-checkout';
+import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useShoppingCart } from '@automattic/shopping-cart';
@@ -50,8 +50,8 @@ import { useCheckoutUiRedesignExperiment } from '../hooks/use-checkout-ui-redesi
 import getAkismetProductFeatures from '../lib/get-akismet-product-features';
 import getJetpackProductFeatures from '../lib/get-jetpack-product-features';
 import getPlanFeatures from '../lib/get-plan-features';
+import { useSubmitButtonSlot } from '../lib/submit-button-slot';
 import { CheckIcon } from './check-icon';
-import { CheckoutSubmitButtonContent } from './checkout-submit-button-content';
 import { ProductsAndCostOverridesList } from './cost-overrides-list';
 import { getRefundPolicies, getRefundWindows, RefundPolicy } from './refund-policies';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
@@ -63,36 +63,6 @@ import type { TranslateResult } from 'i18n-calypso';
 const PALETTE = colorStudio.colors;
 const COLOR_GRAY_40 = PALETTE[ 'Gray 40' ];
 const COLOR_GREEN_60 = PALETTE[ 'Green 60' ];
-
-// Mirrors the disabled state of the real submit button rendered inside the active payment
-// method step. composite-checkout disables that button until all prior steps are complete,
-// so we watch its `disabled` attribute to keep the sidebar Pay button in sync.
-function useRealSubmitButtonDisabled(): boolean {
-	const [ isDisabled, setIsDisabled ] = React.useState( true );
-
-	React.useEffect( () => {
-		const readDisabledState = () => {
-			const activeButton = document.querySelector< HTMLButtonElement >(
-				'.checkout-submit-button--active button'
-			);
-			setIsDisabled( ! activeButton || activeButton.disabled );
-		};
-
-		readDisabledState();
-
-		const observer = new MutationObserver( readDisabledState );
-		observer.observe( document.body, {
-			attributes: true,
-			attributeFilter: [ 'disabled', 'class' ],
-			subtree: true,
-			childList: true,
-		} );
-
-		return () => observer.disconnect();
-	}, [] );
-
-	return isDisabled;
-}
 
 const StyledIcon = styled( Icon )`
 	fill: '#1E1E1E';
@@ -199,17 +169,7 @@ function CheckoutSummaryPriceList() {
 	const translate = useTranslate();
 	const monthlyPrices = useEquivalentMonthlyTotals( responseCart.products );
 	const [ , isCheckoutUiRedesignV1 ] = useCheckoutUiRedesignExperiment();
-	const { formStatus } = useFormStatus();
-	const isRealSubmitDisabled = useRealSubmitButtonDisabled();
-
-	// Forward clicks to the real submit button rendered inside the active payment method's
-	// step so PayPal/Apple Pay/Google Pay continue to own their own submit flows.
-	const handleSidebarPayClick = () => {
-		const realSubmitButton = document.querySelector< HTMLButtonElement >(
-			'.checkout-submit-button--active button:not([disabled])'
-		);
-		realSubmitButton?.click();
-	};
+	const { setSlotEl } = useSubmitButtonSlot();
 
 	const subtotalBeforeDiscounts = responseCart.products.reduce( ( subtotal, product ) => {
 		const originalAmountInteger = getSimulatedCostBeforeDiscounts( product, monthlyPrices );
@@ -293,15 +253,10 @@ function CheckoutSummaryPriceList() {
 						{ totalLineItem.formattedAmount }
 					</span>
 				</CheckoutSummaryTotal>
-				<CheckoutSummaryPayButton
-					buttonType="primary"
-					fullWidth
-					disabled={ formStatus !== FormStatus.READY || isRealSubmitDisabled }
-					onClick={ handleSidebarPayClick }
-					className="wp-checkout-order-summary__pay-button"
-				>
-					<CheckoutSubmitButtonContent />
-				</CheckoutSummaryPayButton>
+				<CheckoutSummaryPayButtonSlot
+					ref={ setSlotEl }
+					className="wp-checkout-order-summary__pay-button-slot"
+				/>
 			</CheckoutSummaryAmountWrapper>
 		</>
 	);
@@ -852,8 +807,21 @@ const CheckoutSummaryCard = styled.div`
 	}
 `;
 
-const CheckoutSummaryPayButton = styled( Button )`
+const CheckoutSummaryPayButtonSlot = styled.div`
 	margin-top: 16px;
+
+	/*
+	 * The real submit button renders here via a React portal (see submit-button-slot.ts).
+	 * Each payment method provides its own button element, so we style the slot to give
+	 * them a consistent full-width look in the sidebar.
+	 */
+	.checkout-submit-button {
+		width: 100%;
+	}
+
+	.checkout-submit-button button {
+		width: 100%;
+	}
 `;
 const CheckoutSummaryFeatures = styled.div`
 	padding: 24px 0;
