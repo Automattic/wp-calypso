@@ -84,6 +84,10 @@ import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purch
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
+import {
+	getCancelButtonCopy,
+	getRemoveButtonCopy,
+} from 'calypso/dashboard/me/billing-purchases/purchase-settings/get-cancel-remove-copy';
 import reinstallPlugins from 'calypso/data/marketplace/reinstall-plugins-api';
 import HundredYearPlanLogo from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/hundred-year-plan-step-wrapper/hundred-year-plan-logo';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -174,7 +178,6 @@ import {
 	getCancelPurchaseSurveyCompletedPreferenceKey,
 } from '../utils';
 import { classifyPurchaseForCopy } from './classify-purchase-for-copy';
-import { getCancelButtonCopy, getRemoveButtonCopy } from './get-cancel-remove-copy';
 import PurchaseNotice from './notices';
 import PurchasePlanDetails from './plan-details';
 import PurchaseMeta from './purchase-meta';
@@ -796,7 +799,6 @@ class ManagePurchase extends Component<
 				category: classifyPurchaseForCopy( purchase ),
 				productName: purchase.productName,
 				hasRefund: canRefund,
-				translate,
 			} );
 
 			// All removes route through the unified confirmation screen via
@@ -1060,7 +1062,6 @@ class ManagePurchase extends Component<
 					category: classifyPurchaseForCopy( purchase ),
 					productName: purchase.productName,
 					expiryDateFormatted: expiryDateDisplay.replace( / /g, '\u00A0' ),
-					translate,
 			  } )
 			: null;
 
