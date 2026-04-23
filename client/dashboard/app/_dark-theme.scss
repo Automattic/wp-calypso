@@ -1,3 +1,5 @@
+@import '@wordpress/base-styles/variables';
+
 /* Card */
 @mixin dashboard-dark-theme-card {
 	.components-surface.components-card {
@@ -207,15 +209,211 @@
 			.summary-button-decoration svg {
 				fill: var( --dashboard-menu-item-active__color );
 			}
+/* Section Header */
+@mixin dashboard-dark-theme-section-header {
+	.dashboard-section-header__description {
+		color: var( --dashboard-subtle__color );
+	}
+
+	.dashboard-section-header__decoration svg {
+		fill: var( --dashboard-subtle__color );
+	}
+}
+
+/* Action List */
+@mixin dashboard-dark-theme-action-list {
+	.action-list .action-item {
+		border-bottom-color: var( --dashboard-surface__border-color );
+	}
+
+	.icon-list-item__decoration svg {
+		fill: var( --dashboard-subtle__color );
+	}
+
+	.action-item .components-v-stack > .components-text:first-child {
+		color: var( --dashboard__text-color );
+	}
+
+	.action-item .components-v-stack > .components-text:last-child {
+		color: var( --dashboard-subtle__color );
+	}
+}
+
+/* Item Group */
+@mixin dashboard-dark-theme-item-group {
+	.components-item-group {
+		// `CONFIG.surfaceBorderColor` is rgba(0, 0, 0, 0.1) — invisible on dark.
+		// Applies to the bordered wrapper and the separator between items.
+		border-color: var( --dashboard-surface__border-color );
+
+		> * > * {
+			border-bottom-color: var( --dashboard-surface__border-color );
+		}
+
+		> *:last-of-type > * {
+			border-bottom-color: transparent;
+		}
+
+		// Clickable Items render as `<button>` and pick up `svg { fill: currentColor }`
+		// from `unstyledButton` mixin. Non-clickable Items render as `<div>`
+		// and miss that rule, so their icons in dark-mode keep the SVG's default
+		// dark fill.
+		[ role="listitem" ] svg {
+			fill: currentColor;
+		}
+	}
+}
+
+/* Popover */
+@mixin dashboard-dark-theme-popover {
+	.components-popover__content {
+		background: var( --dashboard-surface__background-color );
+		color: var( --dashboard__text-color );
+		box-shadow:
+			0 0 0 1px var( --dashboard-surface__border-color ),
+			0 4px 16px rgba( 0, 0, 0, 0.4 );
+	}
+
+	.components-popover__header {
+		background: var( --dashboard-surface__background-color );
+	}
+
+	.components-popover__arrow::before {
+		background-color: var( --dashboard-surface__background-color );
+	}
+
+	.components-popover__triangle-bg {
+		fill: var( --dashboard-surface__background-color );
+	}
+
+	.components-popover__triangle-border {
+		stroke: var( --dashboard-surface__border-color );
+	}
+}
+
+/* Data Views */
+@mixin dashboard-dark-theme-dataviews {
+	--wp-dataviews-color-background: var( --dashboard-surface__background-color );
+
+	// Inset the wrapper by 1px on the sides/bottom so the card's 1px inset
+	// box-shadow border stays visible all around. Gutenberg's default sets
+	// `padding: 10px 0 0` on this element, which lets the wrapper paint over
+	// the card border on the left, right, and bottom.
+	.components-card__body:has( > .dataviews-wrapper ) {
+		padding: $grid-unit-10 1px 1px;
+	}
+
+	// Table
+	.dataviews-view-table {
+		color: var( --dashboard__text-color );
+
+		th {
+			color: var( --dashboard__text-color );
+		}
+
+		tr {
+			border-top-color: var( --dashboard-surface__border-color );
+		}
+
+		td.dataviews-view-table__actions-column--stuck::after,
+		thead.dataviews-view-table__thead--stuck::after {
+			background-color: var( --dashboard-surface__background-color );
+		}
+
+		.dataviews-view-table-header-button:not( :hover ) {
+			color: var( --dashboard__text-color );
+		}
+
+		.dataviews-view-table__group-header-cell {
+			color: var( --dashboard__text-color );
+		}
+	}
+
+	// Title field (used as the row's primary link/label)
+	.dataviews-title-field,
+	.dataviews-title-field a,
+	.dataviews-title-field button.components-button.is-link,
+	.dataviews-title-field--clickable {
+		color: var( --dashboard__text-color );
+
+		&:hover {
+			color: var( --wp-admin-theme-color );
+		}
+	}
+
+	// Grid
+	.dataviews-view-grid__media {
+		background-color: var( --dashboard-surface__background-color );
+
+		.dataviews-view-grid__media-placeholder {
+			background: var( --dashboard-surface__background-color );
+		}
+	}
+
+	.dataviews-view-grid__card .dataviews-view-grid__media-actions .dataviews-all-actions-button {
+		background-color: var( --dashboard-surface__background-color );
+	}
+
+	// List
+	.dataviews-view-list div[ role="row" ],
+	.dataviews-view-list div[ role="article" ] {
+		border-top-color: var( --dashboard-surface__border-color );
+	}
+
+	.dataviews-view-list .dataviews-view-list__field {
+		color: var( --dashboard-subtle__color );
+	}
+
+	// Filter summary chips (upstream hardcodes `$gray-100`/`$gray-200` and
+	// `$gray-800`/`$gray-900` which don't respond to the dark theme).
+	.dataviews-filters__summary-chip-container .dataviews-filters__summary-chip {
+		// This is hardcoded to #e0e0e0 in light-mode.
+		background: var( --wp-components-color-gray-200 );
+		color: var( --wp-components-color-gray-800 );
+
+		&:hover:not( &.is-not-clickable ),
+		&:focus-visible,
+		&[ aria-expanded="true" ] {
+			background: var( --wp-components-color-gray-300 );
+			color: var( --wp-components-color-gray-800 );
+		}
+	}
+
+	// Footer
+	.dataviews-footer {
+		border-top-color: var( --dashboard-surface__border-color );
+	}
+
+	// URL field override from our local styles.scss
+	a.dataviews-url-field {
+		color: var( --dashboard-subtle__color );
+
+		&:hover {
+			color: var( --wp-admin-theme-color );
 		}
 	}
 }
 
 // :root variables overridden for dark theme
 @mixin dashboard-dark-theme {
-	// Overrides the default `--wp-components-color-foreground` to ensure all components that rely on it adapt to the dark theme's text color.
+	// Overrides the default `--wp-components-*` to ensure all components that
+	// rely on it adapt to the dark theme's text color.
 	--wp-components-color-foreground: var( --dashboard__text-color );
+	--wp-components-color-foreground-inverted: #1e1e1e;
 	--wp-components-color-background: var( --dashboard-surface__background-color );
+	--wp-components-color-accent: var( --wp-admin-theme-color );
+	--wp-components-color-accent-darker-10: var( --wp-admin-theme-color-darker-10 );
+	--wp-components-color-accent-darker-20: var( --wp-admin-theme-color-darker-20 );
+	--wp-components-color-accent-inverted: #fff;
+	--wp-components-color-gray-800: #e0e0e0;
+	--wp-components-color-gray-700: #bdbdbd;
+	--wp-components-color-gray-600: #8a8a8a;
+	--wp-components-color-gray-500: #757575;
+	--wp-components-color-gray-400: #5a5a5a;
+	--wp-components-color-gray-300: #4a4a4a;
+	--wp-components-color-gray-200: #3a3a3a;
+	--wp-components-color-gray-100: #2a2a2a;
+
 	// Theme
 	--wp-admin-theme-color: #5b8ef7;
 	--wp-admin-theme-color--rgb: 91, 142, 247;
@@ -281,10 +479,15 @@
 	--jp-gray-100: #f0f0f0;
 	--jp-gray-off: #2a2a2a;
 
-	@include dashboard-dark-theme-card;
-	@include dashboard-dark-theme-form-controls;
-	@include dashboard-dark-theme-muted-text;
-	@include dashboard-dark-theme-destructive-secondary-button;
+	@include dashboard-dark-theme-action-list;
 	@include dashboard-dark-theme-breadcrumbs;
+	@include dashboard-dark-theme-card;
+	@include dashboard-dark-theme-dataviews;
+	@include dashboard-dark-theme-destructive-secondary-button;
+	@include dashboard-dark-theme-form-controls;
+	@include dashboard-dark-theme-item-group;
+	@include dashboard-dark-theme-popover;
+	@include dashboard-dark-theme-muted-text;
+	@include dashboard-dark-theme-section-header;
 	@include dashboard-dark-theme-summary-button;
 }
