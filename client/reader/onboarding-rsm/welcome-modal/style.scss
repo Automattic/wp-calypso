@@ -109,6 +109,27 @@ $actions-height: 64px;
 		object-position: center;
 	}
 
+	&__seth-frame {
+		width: 64px;
+		height: 64px;
+		border-radius: 50%;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		overflow: hidden;
+		background-color: var( --studio-white );
+		box-shadow:
+			0 0 0 1px color-mix( in srgb, var( --color-neutral-20 ) 30%, transparent ),
+			0 1px 3px color-mix( in srgb, var( --color-neutral-60 ) 10%, transparent );
+		position: relative;
+	}
+
+	&__seth-image {
+		position: absolute;
+		top: -3px;
+		transform: scale( 1.1 );
+	}
+
 	&__tile-label {
 		font-size: 0.75rem;
 		line-height: 1.3;

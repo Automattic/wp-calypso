@@ -15,7 +15,13 @@ interface WelcomeModalProps {
 	onContinue: () => void;
 }
 
-const publications = [
+type WelcomeTileItem = {
+	name: string;
+	imageUrl: string;
+	imageClass?: string;
+};
+
+const publications: WelcomeTileItem[] = [
 	{
 		name: 'Longreads',
 		imageUrl: 'https://www.google.com/s2/favicons?domain=longreads.com&sz=128',
@@ -44,7 +50,7 @@ const publications = [
 	},
 ];
 
-const bloggers = [
+const bloggers: WelcomeTileItem[] = [
 	{
 		name: 'Matt Mullenweg',
 		imageUrl:
@@ -53,7 +59,6 @@ const bloggers = [
 	{
 		name: 'Seth Godin',
 		imageUrl: 'https://seths.blog/wp-content/themes/godin/img/seth.webp',
-		imageClass: 'is-filled-avatar--seth',
 	},
 	{
 		name: 'Tim Ferriss',
@@ -117,12 +122,23 @@ const WelcomeModal: React.FC< WelcomeModalProps > = ( { isOpen, onClose, onConti
 						<div className="welcome-modal__tile-row">
 							{ bloggers.map( ( blogger ) => (
 								<div key={ blogger.name } className="welcome-modal__tile">
-									<img
-										src={ blogger.imageUrl }
-										alt=""
-										aria-hidden
-										className={ `welcome-modal__tile-image ${ blogger.imageClass || '' }` }
-									/>
+									{ blogger.name === 'Seth Godin' ? (
+										<span className="welcome-modal__seth-frame">
+											<img
+												src={ blogger.imageUrl }
+												alt=""
+												aria-hidden
+												className="welcome-modal__seth-image"
+											/>
+										</span>
+									) : (
+										<img
+											src={ blogger.imageUrl }
+											alt=""
+											aria-hidden
+											className={ `welcome-modal__tile-image ${ blogger.imageClass || '' }` }
+										/>
+									) }
 									<span className="welcome-modal__tile-label">{ blogger.name }</span>
 								</div>
 							) ) }
