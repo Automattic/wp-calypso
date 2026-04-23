@@ -53,7 +53,7 @@ describe( 'isReaderChatHost', () => {
 		globalThis.window = {
 			...originalWindow,
 			agentsManagerData: { agentId: 'reader-chat' },
-		} as Window & typeof globalThis;
+		} as unknown as Window & typeof globalThis;
 		expect( isReaderChatHost() ).toBe( true );
 	} );
 
@@ -61,7 +61,7 @@ describe( 'isReaderChatHost', () => {
 		globalThis.window = {
 			...originalWindow,
 			agentsManagerData: { agentId: 'p2-reader-chat' },
-		} as Window & typeof globalThis;
+		} as unknown as Window & typeof globalThis;
 		expect( isReaderChatHost() ).toBe( true );
 	} );
 
@@ -69,7 +69,7 @@ describe( 'isReaderChatHost', () => {
 		globalThis.window = {
 			...originalWindow,
 			agentsManagerData: { agentId: 'orchestrator' },
-		} as Window & typeof globalThis;
+		} as unknown as Window & typeof globalThis;
 		expect( isReaderChatHost() ).toBe( false );
 	} );
 
@@ -77,7 +77,7 @@ describe( 'isReaderChatHost', () => {
 		globalThis.window = {
 			...originalWindow,
 			agentsManagerData: undefined,
-		} as Window & typeof globalThis;
+		} as unknown as Window & typeof globalThis;
 		expect( isReaderChatHost() ).toBe( false );
 	} );
 } );
