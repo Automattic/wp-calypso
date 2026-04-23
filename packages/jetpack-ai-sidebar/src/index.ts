@@ -707,11 +707,14 @@ export function useSuggestions(): {
 	}
 
 	if ( ! selectedBlock ) {
-		return { suggestions: [ OPTIMIZE_TITLE_SUGGESTION ] };
+		return { suggestions: [ OPTIMIZE_TITLE_SUGGESTION, MEDIATE_REVIEW_SUGGESTION ] };
 	}
 
 	const applicable = BLOCK_SUGGESTIONS.filter( ( s ) => s.condition( selectedBlock ) );
 	return {
-		suggestions: applicable.map( ( { id, label, prompt } ) => ( { id, label, prompt } ) ),
+		suggestions: [
+			...applicable.map( ( { id, label, prompt } ) => ( { id, label, prompt } ) ),
+			MEDIATE_REVIEW_SUGGESTION,
+		],
 	};
 }
