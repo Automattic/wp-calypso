@@ -179,30 +179,14 @@ const EditGravatar = ( { isEmailVerified = true, avatarUrl, userEmail }: EditGra
 			</ButtonStack>
 
 			{ showEmailVerificationNotice && (
-				<div
-					style={ {
-						backgroundColor: 'var(--dashboard-warning__background-color, #fff8e5)',
-						padding: 12,
-						margin: '8px 0',
-						borderInlineStart: '3px solid var(--dashboard-warning__border-color, #f0b849)',
-					} }
-				>
-					<p style={ { marginBottom: 8 } }>
+				<div className="profile-gravatar__verification-notice">
+					<p className="profile-gravatar__verification-notice-text">
 						{ __( 'Please verify your email address to change your profile photo.' ) }
 					</p>
 					<Button
+						className="profile-gravatar__verification-notice-button"
 						onClick={ closeVerifyEmailDialog }
 						variant="secondary"
-						style={
-							{
-								'--wp-components-color-accent':
-									'var(--dashboard-warning__action-color, var(--wp-admin-theme-color))',
-								'--wp-components-color-accent-darker-10':
-									'var(--dashboard-warning__action-color-hover, var(--wp-admin-theme-color-darker-10))',
-								'--wp-components-color-accent-darker-20':
-									'var(--dashboard-warning__action-color-active, var(--wp-admin-theme-color-darker-20))',
-							} as CSSProperties
-						}
 					>
 						{ __( 'Close' ) }
 					</Button>
