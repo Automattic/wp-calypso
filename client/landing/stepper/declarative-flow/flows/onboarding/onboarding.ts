@@ -231,7 +231,13 @@ const onboarding: FlowV2< typeof initialize > = {
 							);
 							return;
 						case 'blank-site':
-							window.location.assign( `/sites/${ siteSlug }` );
+							if ( refParameter === WOO_HOSTING_SOLUTIONS_REF ) {
+								const site = await resolveSelect( SITE_STORE ).getSite( siteSlug );
+								const adminUrl = site?.options?.admin_url ?? `https://${ siteSlug }/wp-admin/`;
+								window.location.assign( `${ adminUrl }admin.php?page=wc-admin` );
+							} else {
+								window.location.assign( `/sites/${ siteSlug }` );
+							}
 							return;
 						default:
 							return;
@@ -297,6 +303,8 @@ const onboarding: FlowV2< typeof initialize > = {
 									coupon,
 								} )
 							);
+						} else if ( refParameter === WOO_HOSTING_SOLUTIONS_REF ) {
+							return navigate( 'setup-your-site-ai' );
 						} else if ( providedDependencies?.postCheckoutBigSkyVariation === 'big_sky' ) {
 							return navigate( 'setup-your-site-ai' );
 						} else {
