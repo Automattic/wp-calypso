@@ -136,7 +136,7 @@ export const siteRoute = createRoute( {
 		if (
 			site.__inaccessible_jetpack_error &&
 			hasJetpackCriticalError( site ) &&
-			location.pathname.endsWith( overviewUrl )
+			isOnOverviewRoute( matches.at( -1 )?.routeId )
 		) {
 			throw dashboardRedirect( { to: criticalErrorUrl } );
 		}
@@ -1704,6 +1704,10 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 // Defined as a `function` so that routes defined earlier can reference routes defined later.
 function getDifmLiteAllowedRoutes() {
 	return [ siteDifmLiteInProgressRoute.id, siteDomainsRoute.id ];
+}
+
+function isOnOverviewRoute( routeId: string | undefined ) {
+	return routeId === siteOverviewRoute.id;
 }
 
 function redirectAsNotAllowed( options: {

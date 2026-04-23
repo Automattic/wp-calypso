@@ -1,12 +1,10 @@
 import { JETPACK_SUPPORT_CONNECTION_ISSUES } from '@automattic/urls';
 import { ExternalLink } from '@wordpress/components';
-import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useEffect } from 'react';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { Notice } from '../../components/notice';
 import type { Site } from '@automattic/api-core';
-import type { ReactNode } from 'react';
 
 export function InaccessibleJetpackNotice( { error }: { error: Error } ) {
 	useEffect( () => {
@@ -70,7 +68,7 @@ export function hasJetpackCriticalError( site: Site ): boolean {
 	return getJetpackCriticalErrorState( site ) !== null;
 }
 
-export function getJetpackCriticalErrorMessage( site: Site ): ReactNode | null {
+export function getJetpackCriticalErrorMessage( site: Site ): string | null {
 	const state = getJetpackCriticalErrorState( site );
 	if ( ! state ) {
 		return null;
@@ -79,29 +77,14 @@ export function getJetpackCriticalErrorMessage( site: Site ): ReactNode | null {
 	const isAdmin = !! site.capabilities?.manage_options;
 
 	if ( state === 'in-recovery' ) {
-		if ( ! isAdmin ) {
-			return __( 'Your site is in recovery mode. A site administrator has been notified.' );
-		}
-		const adminUrl = site.options?.admin_url;
-		return createInterpolateElement(
-			__(
-				'Your site is in recovery mode. Resume the session in <wpAdminLink/>, or check your site admin email inbox for the recovery link.'
-			),
-			{
-				wpAdminLink: adminUrl ? (
-					<a href={ adminUrl }>{ __( 'WP Admin' ) }</a>
-				) : (
-					<span>{ __( 'WP Admin' ) }</span>
-				),
-			}
-		);
+		return isAdmin
+			? __( 'Your site is in recovery mode. Here’s what you can try next:' )
+			: __( 'Your site is in recovery mode. A site administrator has been notified.' );
 	}
 
-	if ( ! isAdmin ) {
-		return __(
-			'There has been a critical error on this website. A site administrator has been notified.'
-		);
-	}
-
-	return __( 'There has been a critical error on this website. Here’s what you can try next:' );
+	return isAdmin
+		? __( 'There has been a critical error on this website. Here’s what you can try next:' )
+		: __(
+				'There has been a critical error on this website. A site administrator has been notified.'
+		  );
 }
