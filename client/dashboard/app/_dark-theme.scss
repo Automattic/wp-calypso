@@ -14,6 +14,16 @@
 		color: var( --dashboard__text-color );
 	}
 
+	.components-radio-control__input[type="radio"] {
+		border-color: var( --dashboard-field__border-color );
+		background-color: transparent;
+	}
+
+	.components-radio-control__input[type="radio"]:checked {
+		border: 1px solid var( --dashboard-field__border-color );
+		background-color: var( --wp-admin-theme-color );
+	}
+
 	.components-input-control__container:has( .components-input-control__input:disabled ) {
 		background-color: var( --dashboard-surface__background-color );
 		opacity: 0.72;
