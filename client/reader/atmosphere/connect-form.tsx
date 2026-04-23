@@ -33,7 +33,6 @@ export function ConnectForm( { onSubmit, isSubmitting, error }: ConnectFormProps
 		<Card>
 			<CardBody>
 				<form onSubmit={ handleSubmit }>
-					<h2>{ translate( 'Connect a Bluesky account' ) }</h2>
 					<TextControl
 						label={ translate( 'Handle' ) }
 						value={ handle }

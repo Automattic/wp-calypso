@@ -1,5 +1,6 @@
 import { useConnectionsQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -7,14 +8,10 @@ import ReaderMain from 'calypso/reader/components/reader-main';
 
 export function AtmosphereLandingView() {
 	const translate = useTranslate();
-	const { data, isPending, isError } = useConnectionsQuery( { enabled: true } );
+	const { data, isPending, isError, refetch } = useConnectionsQuery( { enabled: true } );
 
 	useEffect( () => {
-		if ( isError ) {
-			page.replace( '/reader/atmosphere/connect' );
-			return;
-		}
-		if ( isPending || ! data ) {
+		if ( isPending || isError || ! data ) {
 			return;
 		}
 		const first = data.connections[ 0 ];
@@ -28,9 +25,18 @@ export function AtmosphereLandingView() {
 	return (
 		<ReaderMain className="atmosphere-view">
 			<DocumentHead title={ translate( 'ATmosphere ‹ Reader' ) } />
-			<div role="status" aria-live="polite">
-				{ translate( 'Loading…' ) }
-			</div>
+			{ isError ? (
+				<div role="alert" className="atmosphere-error">
+					<p>{ translate( "We couldn't load your Bluesky connections." ) }</p>
+					<Button variant="secondary" onClick={ () => refetch() }>
+						{ translate( 'Try again' ) }
+					</Button>
+				</div>
+			) : (
+				<div role="status" aria-live="polite">
+					{ translate( 'Loading…' ) }
+				</div>
+			) }
 		</ReaderMain>
 	);
 }

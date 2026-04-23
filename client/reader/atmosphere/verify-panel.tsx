@@ -36,8 +36,6 @@ export function VerifyPanel( { data, error, isLoading }: VerifyPanelProps ) {
 								} }
 							/>
 						) : null }
-						<h2>{ data.display_name || data.handle }</h2>
-						<div className="atmosphere-verify__handle">@{ data.handle }</div>
 						<p>{ data.description }</p>
 						<ul className="atmosphere-verify__counts">
 							<li>
@@ -59,10 +57,6 @@ export function VerifyPanel( { data, error, isLoading }: VerifyPanelProps ) {
 								} ) }
 							</li>
 						</ul>
-						<details>
-							<summary>{ translate( 'Raw getProfile response' ) }</summary>
-							<pre>{ JSON.stringify( data.raw, null, 2 ) }</pre>
-						</details>
 					</div>
 				) : null }
 			</CardBody>

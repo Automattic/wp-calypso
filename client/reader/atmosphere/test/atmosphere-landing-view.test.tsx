@@ -61,13 +61,13 @@ describe( 'AtmosphereLandingView', () => {
 		);
 	} );
 
-	it( 'redirects to /connect when the connections query errors', async () => {
+	it( 'shows an error with a retry button when the connections query errors', async () => {
 		nock( 'https://public-api.wordpress.com' ).get( connectionsUrl ).reply( 500 );
 		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 		renderWithProvider( <AtmosphereLandingView />, { queryClient } );
-		await screen.findByRole( 'status' );
-		await waitFor( () =>
-			expect( page.replace ).toHaveBeenCalledWith( '/reader/atmosphere/connect' )
-		);
+
+		await screen.findByRole( 'alert' );
+		expect( screen.getByRole( 'button', { name: /try again/i } ) ).toBeVisible();
+		expect( page.replace ).not.toHaveBeenCalled();
 	} );
 } );

@@ -34,7 +34,7 @@ describe( 'ProfilePanel', () => {
 				did: 'did:plc:a',
 				handle: 'alice.bsky.social',
 				display_name: 'Alice',
-				description: 'hello',
+				description: 'hello there',
 				avatar: null,
 				banner: null,
 				counts: { followers: 10, follows: 5, posts: 42 },
@@ -45,7 +45,8 @@ describe( 'ProfilePanel', () => {
 			queryClient: makeClient(),
 		} );
 
-		await waitFor( () => expect( screen.getByRole( 'heading', { name: 'Alice' } ) ).toBeVisible() );
-		expect( screen.getByText( '@alice.bsky.social' ) ).toBeVisible();
+		await waitFor( () => expect( screen.getByText( 'hello there' ) ).toBeVisible() );
+		expect( screen.getByText( '42 posts' ) ).toBeVisible();
+		expect( screen.getByText( '10 followers' ) ).toBeVisible();
 	} );
 } );

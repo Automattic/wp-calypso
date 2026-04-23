@@ -1,13 +1,14 @@
-import { useCreateConnectionMutation } from '@automattic/api-queries';
-import { ConnectForm } from './connect-form';
+import { Card, CardBody } from '@wordpress/components';
+import { useTranslate } from 'i18n-calypso';
 
 export function SettingsPanel() {
-	const create = useCreateConnectionMutation();
+	const translate = useTranslate();
 	return (
-		<ConnectForm
-			isSubmitting={ create.isPending }
-			error={ create.error ?? null }
-			onSubmit={ ( values ) => create.mutate( values ) }
-		/>
+		<Card>
+			<CardBody>
+				<h2>{ translate( 'Settings' ) }</h2>
+				<p>{ translate( "Account settings will appear here. We're still building this part." ) }</p>
+			</CardBody>
+		</Card>
 	);
 }
