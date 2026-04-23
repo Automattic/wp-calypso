@@ -68,7 +68,7 @@
 	.components-input-control__input::selection,
 	.components-textarea-control__input::selection {
 		background-color: var( --wp-admin-theme-color );
-		color: #fff !important;
+		color: #fff;
 		-webkit-text-fill-color: #fff;
 	}
 
