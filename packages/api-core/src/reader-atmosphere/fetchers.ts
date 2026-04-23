@@ -1,9 +1,9 @@
 import { wpcom } from '../wpcom-fetcher';
 import { classifyAtmosphereError } from './errors';
 import type {
+	AtmosphereConnectionDetails,
 	AtmosphereConnectionsResponse,
 	AtmosphereCreateConnectionResponse,
-	AtmosphereVerifyResult,
 } from './types';
 
 const NAMESPACE = 'wpcom/v2';
@@ -38,12 +38,12 @@ export async function createConnection(
 	}
 }
 
-export async function verifyConnection( id: number ): Promise< AtmosphereVerifyResult > {
+export async function getConnection( id: number ): Promise< AtmosphereConnectionDetails > {
 	try {
 		return ( await wpcom.req.get( {
-			path: `/reader/atmosphere/connections/${ id }/verify`,
+			path: `/reader/atmosphere/connections/${ id }`,
 			apiNamespace: NAMESPACE,
-		} ) ) as AtmosphereVerifyResult;
+		} ) ) as AtmosphereConnectionDetails;
 	} catch ( raw ) {
 		throw classifyAtmosphereError( raw );
 	}

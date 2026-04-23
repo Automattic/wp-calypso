@@ -1,7 +1,10 @@
 export interface AtmosphereConnection {
 	id: number;
-	handle: string;
 	did: string;
+	handle: string;
+	display_name: string;
+	// The list endpoint always returns null. Real avatars come from
+	// getConnection(id).
 	avatar: string | null;
 }
 
@@ -19,7 +22,7 @@ export interface AtmosphereProfileCounts {
 	posts: number;
 }
 
-export interface AtmosphereVerifyResult {
+export interface AtmosphereConnectionDetails {
 	did: string;
 	handle: string;
 	display_name: string;
@@ -27,5 +30,5 @@ export interface AtmosphereVerifyResult {
 	avatar: string | null;
 	banner: string | null;
 	counts: AtmosphereProfileCounts;
-	raw: unknown;
+	raw: Record< string, unknown >;
 }
