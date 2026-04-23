@@ -1,4 +1,3 @@
-import { fetchCancellationFeatures } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
 import {
 	isDomainRegistration,
@@ -79,7 +78,7 @@ import CancelPurchaseFeatureList from './feature-list';
 import RefundEligibilityNotice from './refund-eligibility-notice';
 import TimeRemainingNotice from './time-remaining-notice';
 import { toPurchaseForCopy } from './to-purchase-for-copy';
-import type { CancellationFeature } from '@automattic/api-core';
+import type { UpgradesCancelFeaturesResponse } from '@automattic/api-core';
 import type { Purchases, SiteDetails } from '@automattic/data-stores';
 import type { GetManagePurchaseUrlFor } from 'calypso/lib/purchases/types';
 import type { ReactNode } from 'react';
@@ -101,7 +100,6 @@ export interface CancelPurchaseState {
 	showDomainOptionsStep: boolean;
 	showDialog: boolean;
 	cancelIntent: 'refund' | 'autorenew' | null;
-	serverCancellationFeatures: CancellationFeature[] | null;
 }
 
 export interface CancelPurchaseActions {
@@ -145,6 +143,7 @@ export interface CancelPurchaseProps {
 	purchaseListUrl?: string;
 	siteSlug: string;
 	intent?: 'cancel' | 'remove' | null;
+	purchaseCancelFeatures?: UpgradesCancelFeaturesResponse;
 }
 
 export type CancelPurchaseAllProps = CancelPurchaseProps &
@@ -166,7 +165,6 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		// Cancellation state moved from button component
 		showDialog: false,
 		cancelIntent: null,
-		serverCancellationFeatures: null,
 	};
 
 	onCustomerConfirmedUnderstandingChange = ( checked: boolean ) => {
@@ -178,11 +176,6 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			this.redirect();
 			return;
 		}
-		if ( this.props.purchase ) {
-			fetchCancellationFeatures( this.props.purchase.id )
-				.then( ( data ) => this.setState( { serverCancellationFeatures: data.features ?? [] } ) )
-				.catch( () => this.setState( { serverCancellationFeatures: [] } ) );
-		}
 	}
 
 	componentDidUpdate( prevProps: CancelPurchaseAllProps ) {
@@ -193,17 +186,6 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		if ( this.isDataValid( prevProps ) && ! this.isDataValid() ) {
 			this.redirect();
 			return;
-		}
-
-		// Purchase arrives async from Redux — kick off the features fetch once it lands.
-		if (
-			! prevProps.purchase &&
-			this.props.purchase &&
-			this.state.serverCancellationFeatures === null
-		) {
-			fetchCancellationFeatures( this.props.purchase.id )
-				.then( ( data ) => this.setState( { serverCancellationFeatures: data.features ?? [] } ) )
-				.catch( () => this.setState( { serverCancellationFeatures: [] } ) );
 		}
 	}
 
@@ -710,10 +692,11 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			atomicTransfer,
 			isDomainRegistrationPurchase,
 			intent,
+			purchaseCancelFeatures,
 			translate,
 		} = this.props;
 		const isSplitEnabled = config.isEnabled( 'purchases/split-cancel-remove' );
-		const cancellationFeatures = this.state.serverCancellationFeatures ?? [];
+		const cancellationFeatures = purchaseCancelFeatures?.features ?? [];
 
 		const displayVariant: 'cancel' | 'remove' = intent === 'remove' ? 'remove' : 'cancel';
 		const checkboxLabel = getCheckboxLabel();
