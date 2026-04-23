@@ -2315,7 +2315,7 @@ const WPCheckoutCompletedMainContent = styled.div`
 `;
 
 const WPCheckoutSidebarContent = styled.div`
-	background: ${ ( props ) => props.theme.colors.background };
+	background: ${ colorStudio.colors[ 'White' ] };
 	grid-area: sidebar-content;
 	margin-top: var( --masterbar-checkout-height );
 
