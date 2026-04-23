@@ -1,15 +1,29 @@
 .content-research-result-card {
 	display: flex;
 	align-items: flex-start;
-	gap: 8px;
-	border: 1px solid #ddd;
-	border-radius: 4px;
+	gap: 10px;
+	border: 1px solid #e0e0e0;
+	border-radius: 8px;
 	padding: 12px;
 	margin: 0 16px 8px;
+	cursor: pointer;
+	transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+
+	&:hover {
+		border-color: #c0c0c0;
+		background: #fafafa;
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+	}
 
 	&.is-selected {
 		border-color: var(--wp-admin-theme-color, #3858e9);
 		background: rgba(56, 88, 233, 0.04);
+		box-shadow: 0 0 0 1px var(--wp-admin-theme-color, #3858e9);
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--wp-admin-theme-color, #3858e9);
+		outline-offset: -2px;
 	}
 
 	&__checkbox {
@@ -26,37 +40,65 @@
 		display: flex;
 		align-items: center;
 		gap: 8px;
-		margin-bottom: 4px;
+		margin-bottom: 6px;
 	}
 
 	&__source {
-		font-size: 11px;
+		font-size: 10px;
 		font-weight: 600;
 		text-transform: uppercase;
-		color: #1e1e1e;
+		letter-spacing: 0.03em;
+		padding: 2px 7px;
+		border-radius: 3px;
+		color: #50575e;
 		background: #f0f0f0;
-		padding: 2px 6px;
-		border-radius: 2px;
+
+		&--reddit {
+			color: #fff;
+			background: #ff4500;
+		}
+
+		&--hn {
+			color: #fff;
+			background: #f0652f;
+		}
+
+		&--reader {
+			color: #fff;
+			background: #0675c4;
+		}
+
+		&--googlenews {
+			color: #fff;
+			background: #1a73e8;
+		}
 	}
 
 	&__subreddit {
 		font-size: 12px;
 		color: #757575;
+		font-style: italic;
 	}
 
 	&__title {
 		display: block;
 		font-size: 13px;
 		font-weight: 500;
-		line-height: 1.4;
+		line-height: 1.45;
 		margin-bottom: 4px;
+		color: #1e1e1e;
+		text-decoration: none;
+
+		&:hover {
+			color: var(--wp-admin-theme-color, #3858e9);
+		}
 	}
 
 	&__excerpt {
 		font-size: 12px;
-		color: #757575;
-		line-height: 1.4;
-		margin: 0 0 4px;
+		color: #646970;
+		line-height: 1.5;
+		margin: 0 0 6px;
 		display: -webkit-box;
 		-webkit-line-clamp: 2;
 		-webkit-box-orient: vertical;
@@ -66,12 +108,14 @@
 	&__meta {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 8px;
+		align-items: center;
+		gap: 4px 8px;
 		font-size: 11px;
-		color: #757575;
+		color: #949494;
 	}
 
 	&__engagement {
-		font-weight: 500;
+		font-weight: 600;
+		color: #757575;
 	}
 }

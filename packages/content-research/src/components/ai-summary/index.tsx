@@ -1,9 +1,67 @@
-import { Button, Spinner } from '@wordpress/components';
+import { Button, Icon, Spinner } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
+import { useEffect, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { arrowLeft } from '@wordpress/icons';
+import { arrowLeft, chevronDown, chevronUp } from '@wordpress/icons';
 import { trackContentResearchInsert, trackContentResearchSummarize } from '../../utils/tracking';
 import type { ResearchSummary } from '../../types';
+
+const PROGRESS_STEPS = [
+	__( 'Fetching articles…', 'content-research' ),
+	__( 'Reading content…', 'content-research' ),
+	__( 'Analyzing sources…', 'content-research' ),
+	__( 'Generating summary…', 'content-research' ),
+];
+
+function useProgressMessage( isLoading: boolean ): string {
+	const [ stepIndex, setStepIndex ] = useState( 0 );
+
+	useEffect( () => {
+		if ( ! isLoading ) {
+			setStepIndex( 0 );
+			return;
+		}
+
+		const interval = setInterval( () => {
+			setStepIndex( ( prev ) => ( prev < PROGRESS_STEPS.length - 1 ? prev + 1 : prev ) );
+		}, 4000 );
+
+		return () => clearInterval( interval );
+	}, [ isLoading ] );
+
+	return PROGRESS_STEPS[ stepIndex ];
+}
+
+interface CollapsibleSectionProps {
+	title: string;
+	defaultOpen?: boolean;
+	className?: string;
+	children: React.ReactNode;
+}
+
+function CollapsibleSection( {
+	title,
+	defaultOpen = false,
+	className,
+	children,
+}: CollapsibleSectionProps ) {
+	const [ isOpen, setIsOpen ] = useState( defaultOpen );
+
+	return (
+		<div className={ `content-research-ai-summary__section ${ className ?? '' }`.trim() }>
+			<button
+				type="button"
+				className="content-research-ai-summary__section-toggle"
+				onClick={ () => setIsOpen( ! isOpen ) }
+				aria-expanded={ isOpen }
+			>
+				<span className="content-research-ai-summary__section-title">{ title }</span>
+				<Icon icon={ isOpen ? chevronUp : chevronDown } size={ 20 } />
+			</button>
+			{ isOpen && <div className="content-research-ai-summary__section-content">{ children }</div> }
+		</div>
+	);
+}
 
 interface AiSummaryProps {
 	topic: string;
@@ -29,6 +87,8 @@ export default function AiSummary( {
 	const { insertBlocks } = useDispatch( 'core/block-editor' ) as {
 		insertBlocks: ( blocks: unknown[] ) => void;
 	};
+
+	const progressMessage = useProgressMessage( isLoading );
 
 	const handleSummarize = () => {
 		trackContentResearchSummarize( topic, resultCount );
@@ -77,24 +137,22 @@ export default function AiSummary( {
 		isExpanded ? ' content-research-ai-summary--expanded' : ''
 	}`;
 
-	const backButton = (
-		<Button
-			className="content-research-ai-summary__back"
-			variant="tertiary"
-			icon={ arrowLeft }
-			onClick={ onClose }
-		>
-			{ __( 'Back to results', 'content-research' ) }
-		</Button>
-	);
-
 	if ( isLoading ) {
 		return (
 			<div className={ `${ containerClass } content-research-ai-summary--loading` }>
-				{ backButton }
 				<div className="content-research-ai-summary__loading-indicator">
 					<Spinner />
-					<span>{ __( 'Generating summary…', 'content-research' ) }</span>
+					<span>{ progressMessage }</span>
+				</div>
+				<div className="content-research-ai-summary__footer">
+					<Button
+						className="content-research-ai-summary__back"
+						variant="tertiary"
+						icon={ arrowLeft }
+						onClick={ onClose }
+					>
+						{ __( 'Back to results', 'content-research' ) }
+					</Button>
 				</div>
 			</div>
 		);
@@ -106,33 +164,51 @@ export default function AiSummary( {
 
 	return (
 		<div className={ containerClass }>
-			{ backButton }
-			<div className="content-research-ai-summary__content">
-				<p className="content-research-ai-summary__text">{ summary.summary }</p>
-				{ summary.key_findings.length > 0 && (
-					<div className="content-research-ai-summary__findings">
-						<strong>{ __( 'Key findings:', 'content-research' ) }</strong>
-						<ul>
-							{ summary.key_findings.map( ( finding, i ) => (
-								<li key={ i }>{ finding }</li>
-							) ) }
-						</ul>
+			<div className="content-research-ai-summary__scrollable">
+				<div className="content-research-ai-summary__content">
+					<div className="content-research-ai-summary__section">
+						<p className="content-research-ai-summary__text">{ summary.summary }</p>
 					</div>
-				) }
-				{ summary.suggested_angles.length > 0 && (
-					<div className="content-research-ai-summary__angles">
-						<strong>{ __( 'Suggested angles:', 'content-research' ) }</strong>
-						<ul>
-							{ summary.suggested_angles.map( ( angle, i ) => (
-								<li key={ i }>{ angle }</li>
-							) ) }
-						</ul>
-					</div>
-				) }
+					{ summary.key_findings.length > 0 && (
+						<CollapsibleSection
+							title={ __( 'Key findings', 'content-research' ) }
+							defaultOpen
+							className="content-research-ai-summary__findings"
+						>
+							<ul>
+								{ summary.key_findings.map( ( finding, i ) => (
+									<li key={ i }>{ finding }</li>
+								) ) }
+							</ul>
+						</CollapsibleSection>
+					) }
+					{ summary.suggested_angles.length > 0 && (
+						<CollapsibleSection
+							title={ __( 'Suggested angles', 'content-research' ) }
+							className="content-research-ai-summary__angles"
+						>
+							<ul>
+								{ summary.suggested_angles.map( ( angle, i ) => (
+									<li key={ i }>{ angle }</li>
+								) ) }
+							</ul>
+						</CollapsibleSection>
+					) }
+				</div>
 			</div>
-			<Button variant="primary" onClick={ handleInsert }>
-				{ __( 'Insert into post', 'content-research' ) }
-			</Button>
+			<div className="content-research-ai-summary__footer">
+				<Button
+					className="content-research-ai-summary__back"
+					variant="tertiary"
+					icon={ arrowLeft }
+					onClick={ onClose }
+				>
+					{ __( 'Back to results', 'content-research' ) }
+				</Button>
+				<Button variant="primary" onClick={ handleInsert }>
+					{ __( 'Insert into post', 'content-research' ) }
+				</Button>
+			</div>
 		</div>
 	);
 }

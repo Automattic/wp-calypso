@@ -7,7 +7,7 @@ import SourceFilterTabs from './components/source-filter';
 import { useContentResearch } from './data/use-content-research';
 import { useResearchSummary } from './data/use-research-summary';
 import { trackContentResearchSearch } from './utils/tracking';
-import type { SourceFilter } from './types';
+import type { ResearchResult, SourceFilter } from './types';
 
 export { isContentResearchEnabled } from './utils/feature-flag';
 
@@ -17,18 +17,18 @@ export default function ContentResearchSidebar() {
 	const [ selectedUrls, setSelectedUrls ] = useState< Set< string > >( () => new Set() );
 	const [ isSummaryDismissed, setIsSummaryDismissed ] = useState( false );
 
+	// Frozen snapshot of the results to summarize — set when the user clicks Summarize.
+	const [ summaryResults, setSummaryResults ] = useState< ResearchResult[] >( [] );
+	// Incrementing trigger that, combined with the query key, forces a new fetch each time.
+	const [ summaryTrigger, setSummaryTrigger ] = useState( 0 );
+
 	const { data, isLoading, isError } = useContentResearch( topic );
 
-	const resultsToSummarize =
-		selectedUrls.size > 0
-			? data?.results.filter( ( result ) => selectedUrls.has( result.url ) ) || []
-			: data?.results || [];
-
-	const {
-		data: summary,
-		isLoading: isSummaryLoading,
-		refetch: fetchSummary,
-	} = useResearchSummary( topic, resultsToSummarize );
+	const { data: summary, isLoading: isSummaryLoading } = useResearchSummary(
+		topic,
+		summaryResults,
+		summaryTrigger
+	);
 
 	const isSummaryVisible = ! isSummaryDismissed && ( isSummaryLoading || !! summary );
 
@@ -37,12 +37,21 @@ export default function ContentResearchSidebar() {
 		setActiveFilter( 'all' );
 		setSelectedUrls( new Set() );
 		setIsSummaryDismissed( true );
+		setSummaryResults( [] );
 		trackContentResearchSearch( newTopic );
 	};
 
 	const handleSummarize = () => {
+		// Snapshot the current selection for the query.
+		const results = data?.results || [];
+		const selected =
+			selectedUrls.size > 0
+				? results.filter( ( result ) => selectedUrls.has( result.url ) )
+				: results;
+
+		setSummaryResults( selected );
+		setSummaryTrigger( ( prev ) => prev + 1 );
 		setIsSummaryDismissed( false );
-		fetchSummary();
 	};
 
 	const toggleSelection = ( url: string ) => {
@@ -89,7 +98,7 @@ export default function ContentResearchSidebar() {
 						isLoading={ isSummaryLoading }
 						onSummarize={ handleSummarize }
 						onClose={ () => setIsSummaryDismissed( true ) }
-						resultCount={ resultsToSummarize.length }
+						resultCount={ summaryResults.length }
 						selectedCount={ selectedUrls.size }
 						isExpanded={ isSummaryVisible }
 					/>

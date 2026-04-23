@@ -1,64 +1,117 @@
 .content-research-ai-summary {
 	padding: 12px 16px;
-	border-top: 1px solid #ddd;
+	border-top: 1px solid #e0e0e0;
 
 	&--expanded {
-		display: flex;
-		flex-direction: column;
-		max-height: 80vh;
-		overflow-y: auto;
 		border-top: none;
+		padding: 0;
 	}
 
 	&--loading {
-		color: #757575;
+		color: #646970;
 		font-size: 13px;
+	}
+
+	&__scrollable {
+		padding: 16px;
 	}
 
 	&__loading-indicator {
 		display: flex;
 		align-items: center;
+		gap: 10px;
+		padding: 20px 16px;
+		font-size: 13px;
+		color: #646970;
+	}
+
+	&__footer {
+		position: sticky;
+		bottom: 0;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
 		gap: 8px;
-		padding: 16px 0;
+		padding: 12px 16px;
+		border-top: 1px solid #e0e0e0;
+		background: #fff;
 	}
 
 	&__back {
-		align-self: flex-start;
-		margin-bottom: 8px;
+		font-size: 12px;
 	}
 
 	&__content {
-		margin-bottom: 12px;
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+	}
+
+	&__section {
+		border: 1px solid #e0e0e0;
+		border-radius: 4px;
+		padding: 12px;
+	}
+
+	&__section-toggle {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		width: 100%;
+		padding: 0;
+		border: none;
+		background: none;
+		cursor: pointer;
+		font-size: 12px;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.03em;
+		color: #50575e;
+
+		svg {
+			fill: #50575e;
+			flex-shrink: 0;
+		}
+	}
+
+	&__section-content {
+		margin-top: 8px;
 	}
 
 	&__text {
 		font-size: 13px;
-		line-height: 1.5;
-		margin: 0 0 8px;
+		line-height: 1.6;
+		margin: 0;
+		color: #1e1e1e;
 	}
 
 	&__findings,
 	&__angles {
-		font-size: 12px;
-		margin-bottom: 8px;
-
-		strong {
-			display: block;
-			margin-bottom: 4px;
-		}
+		font-size: 13px;
 
 		ul {
 			margin: 0;
-			padding-left: 16px;
+			padding-left: 18px;
+			list-style-type: disc;
 		}
 
 		li {
-			margin-bottom: 2px;
+			margin-bottom: 4px;
+			line-height: 1.5;
+			color: #2c3338;
+			display: list-item;
 		}
 	}
 
 	.components-button {
-		width: 100%;
-		justify-content: center;
+		&.is-secondary {
+			width: 100%;
+			justify-content: center;
+			border-color: #ddd;
+		}
+
+		&.is-primary {
+			justify-content: center;
+		}
 	}
 }

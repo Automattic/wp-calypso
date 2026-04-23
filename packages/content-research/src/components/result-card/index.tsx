@@ -1,4 +1,5 @@
 import { CheckboxControl, ExternalLink } from '@wordpress/components';
+import { decodeEntities } from '@wordpress/html-entities';
 import { __ } from '@wordpress/i18n';
 import { trackContentResearchResultClick } from '../../utils/tracking';
 import type { ResearchResult } from '../../types';
@@ -89,7 +90,9 @@ export default function ResultCard( { result, isSelected, onToggleSelect }: Resu
 			/>
 			<div className="content-research-result-card__body">
 				<div className="content-research-result-card__header">
-					<span className="content-research-result-card__source">
+					<span
+						className={ `content-research-result-card__source content-research-result-card__source--${ result.source }` }
+					>
 						{ getSourceLabel( result.source ) }
 					</span>
 					{ result.subreddit && (
@@ -101,10 +104,12 @@ export default function ResultCard( { result, isSelected, onToggleSelect }: Resu
 					href={ result.url }
 					onClick={ () => trackContentResearchResultClick( result.source, result.url ) }
 				>
-					{ result.title }
+					{ decodeEntities( result.title ) }
 				</ExternalLink>
 				{ result.excerpt && (
-					<p className="content-research-result-card__excerpt">{ result.excerpt }</p>
+					<p className="content-research-result-card__excerpt">
+						{ decodeEntities( result.excerpt ) }
+					</p>
 				) }
 				<div className="content-research-result-card__meta">
 					{ engagement && (

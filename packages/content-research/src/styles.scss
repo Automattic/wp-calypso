@@ -7,14 +7,16 @@
 	&__results {
 		max-height: 60vh;
 		overflow-y: auto;
+		padding-top: 4px;
 	}
 
 	&__empty,
 	&__error {
-		padding: 16px;
+		padding: 24px 16px;
 		font-size: 13px;
 		color: #757575;
 		text-align: center;
+		line-height: 1.5;
 	}
 
 	&__error {
