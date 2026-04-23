@@ -7,7 +7,6 @@ import * as React from 'react';
 import { useAnalytics } from '../../../../../app/analytics';
 import { useHelpCenter } from '../../../../../app/help-center';
 import { ButtonStack } from '../../../../../components/button-stack';
-import { Card, CardBody } from '../../../../../components/card';
 import { SectionHeader } from '../../../../../components/section-header';
 import { redirectToDashboardLink, wpcomLink } from '../../../../../utils/link';
 import type { PlanProduct, Purchase } from '@automattic/api-core';
@@ -27,27 +26,23 @@ function Upsell( { ...props }: UpsellProps ) {
 	const declineButtonText = props.declineButtonText ?? __( 'Cancel my current plan' );
 
 	return (
-		<Card>
-			<CardBody>
-				<VStack spacing={ 6 }>
-					<SectionHeader level={ 3 } title={ props.title } />
-					<div className="cancel-purchase-form__upsell-text">{ props.children }</div>
-					<ButtonStack justify="flex-start">
-						<Button
-							variant="primary"
-							href={ props.acceptButtonUrl }
-							onClick={ props.onAccept }
-							isBusy={ props.isBusy }
-						>
-							{ props.acceptButtonText }
-						</Button>
-						<Button variant="secondary" onClick={ props.onDecline } disabled={ props.isBusy }>
-							{ declineButtonText }
-						</Button>
-					</ButtonStack>
-				</VStack>
-			</CardBody>
-		</Card>
+		<VStack spacing={ 6 }>
+			<SectionHeader level={ 3 } title={ props.title } />
+			<div className="cancel-purchase-form__upsell-text">{ props.children }</div>
+			<ButtonStack justify="flex-start">
+				<Button
+					variant="primary"
+					href={ props.acceptButtonUrl }
+					onClick={ props.onAccept }
+					isBusy={ props.isBusy }
+				>
+					{ props.acceptButtonText }
+				</Button>
+				<Button variant="secondary" onClick={ props.onDecline } disabled={ props.isBusy }>
+					{ declineButtonText }
+				</Button>
+			</ButtonStack>
+		</VStack>
 	);
 }
 
