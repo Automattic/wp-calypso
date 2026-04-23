@@ -209,6 +209,10 @@
 			.summary-button-decoration svg {
 				fill: var( --dashboard-menu-item-active__color );
 			}
+		}
+	}
+}
+
 /* Section Header */
 @mixin dashboard-dark-theme-section-header {
 	.dashboard-section-header__description {
@@ -258,7 +262,7 @@
 		// from `unstyledButton` mixin. Non-clickable Items render as `<div>`
 		// and miss that rule, so their icons in dark-mode keep the SVG's default
 		// dark fill.
-		[ role="listitem" ] svg {
+		[role='listitem'] svg {
 			fill: currentColor;
 		}
 	}
@@ -355,8 +359,8 @@
 	}
 
 	// List
-	.dataviews-view-list div[ role="row" ],
-	.dataviews-view-list div[ role="article" ] {
+	.dataviews-view-list div[role='row'],
+	.dataviews-view-list div[role='article'] {
 		border-top-color: var( --dashboard-surface__border-color );
 	}
 
@@ -373,7 +377,7 @@
 
 		&:hover:not( &.is-not-clickable ),
 		&:focus-visible,
-		&[ aria-expanded="true" ] {
+		&[aria-expanded='true'] {
 			background: var( --wp-components-color-gray-300 );
 			color: var( --wp-components-color-gray-800 );
 		}
