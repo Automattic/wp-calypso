@@ -8,7 +8,7 @@ allowed-tools: Bash, AskUserQuestion
 
 Given a PR number on `Automattic/wp-calypso`, locate the flaky E2E test(s) that are failing (or being retried) in that PR's CI run.
 
-This skill is built incrementally. Right now it only covers the preflight check. Subsequent steps will be added as earlier ones land in a satisfying state.
+This skill is built incrementally. Right now it covers the preflight check and PR resolution. Subsequent steps will be added as earlier ones land in a satisfying state.
 
 ## Step 1: Verify GitHub CLI access
 
@@ -30,7 +30,7 @@ fi
 
 Interpret the result:
 
-- `GH_OK` → proceed (there is no next step yet — tell the user the preflight passed and stop).
+- `GH_OK` → proceed to Step 2.
 - `GH_MISSING` → `gh` is not installed. Tell the user to install it from <https://cli.github.com/> (on Linux typically via their package manager), then re-run the skill. Stop.
 - `GH_BAD` → `gh` is installed but not authenticated, or the stored token is invalid/expired. Guide them through re-auth:
 
@@ -45,3 +45,30 @@ Interpret the result:
   Wait for the user's confirmation, then re-run the check. Loop until it reports `GH_OK`. If the user wants to stop, stop.
 
 Do not proceed past Step 1 until the check reports `GH_OK`.
+
+## Step 2: Resolve the PR
+
+The skill operates on one PR at a time. The user may have passed the PR identifier as an argument when invoking the skill — accept either form:
+
+- A bare PR number (e.g., `110080`).
+- A full GitHub PR URL on `Automattic/wp-calypso` (e.g., `https://github.com/Automattic/wp-calypso/pull/110080`). Extract the trailing number.
+
+If the argument is a URL for a different repository, or is not a number / recognizable PR URL, treat it as missing and ask the user.
+
+**If no PR identifier was provided**, ask the user in a short chat message (do not use `AskUserQuestion` — this is free-form text, not a pick list):
+
+> Which PR on `Automattic/wp-calypso` should I investigate? Paste the PR number (e.g., `110080`) or URL.
+
+Wait for the reply and parse it the same way.
+
+Once you have a number, validate the PR exists and capture its metadata in one Bash call. Keep the output for later steps — branch name and HEAD SHA will be needed to look up checks.
+
+```bash
+gh pr view <PR_NUMBER> --repo Automattic/wp-calypso \
+  --json number,title,state,isDraft,headRefName,headRefOid,url 2>&1
+```
+
+- Exit 0 with JSON → the PR exists. Show the user a one-line confirmation (PR number, title, state, branch) and proceed.
+- Non-zero / "not found" → tell the user the PR wasn't found on `Automattic/wp-calypso` and ask for another one. Loop until you get a valid PR or the user stops.
+
+Do not proceed past Step 2 until a PR has been successfully resolved.
