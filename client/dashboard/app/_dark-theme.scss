@@ -41,10 +41,13 @@
 	.components-textarea-control__input,
 	.components-base-control__label,
 	.components-input-control__label,
-	.components-base-control__help,
-	.components-checkbox-control__label,
-	.components-checkbox-control__help {
+	.components-checkbox-control__label {
 		color: var( --dashboard__text-color );
+	}
+
+	.components-base-control__help,
+	.components-checkbox-control__help {
+		color: var( --dashboard__text-muted-color );
 	}
 
 	.components-input-control__container .components-input-control__input,
