@@ -10,7 +10,6 @@
 /* Form Controls */
 @mixin dashboard-dark-theme-form-controls {
 	.components-input-control__container {
-		background-color: var( --dashboard-field__background-color );
 		color: var( --dashboard__text-color );
 	}
 
@@ -26,10 +25,6 @@
 
 	.components-input-control__backdrop {
 		background-color: transparent;
-	}
-
-	.components-textarea-control__input {
-		background-color: var( --dashboard-field__background-color );
 	}
 
 	.components-input-control__container:has( .components-input-control__input:disabled )
@@ -136,6 +131,7 @@
 @mixin dashboard-dark-theme {
 	// Overrides the default `--wp-components-color-foreground` to ensure all components that rely on it adapt to the dark theme's text color.
 	--wp-components-color-foreground: var( --dashboard__text-color );
+	--wp-components-color-background: var( --dashboard-surface__background-color );
 	// Theme
 	--wp-admin-theme-color: #5b8ef7;
 	--wp-admin-theme-color--rgb: 91, 142, 247;
@@ -155,7 +151,6 @@
 	// Shared surfaces and controls
 	--dashboard-surface__background-color: #2a2a2a;
 	--dashboard-surface__border-color: #4a4a4a;
-	--dashboard-field__background-color: #3d3d3d;
 	--dashboard-field__border-color: #949494;
 	--dashboard__text-muted-color: #bdbdbd;
 	--dashboard-subtle__color: #bdbdbd;
