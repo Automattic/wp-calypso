@@ -34,7 +34,6 @@ import PurchasesSite from '../purchases-site';
 import { CalypsoAuthProvider } from './calypso-auth-provider';
 import { PurchasesDataViews, MembershipsDataViews } from './purchases-data-view';
 import type { Purchase, Site, StoredPaymentMethod } from '@automattic/api-core';
-import type { SiteDetails } from '@automattic/data-stores';
 import './style.scss';
 
 export interface PurchasesListProps {
@@ -48,7 +47,11 @@ const PurchasesListDataView: React.FC< PurchasesListProps > = ( { getManagePurch
 	const isUserBlocked = useSelector( getConciergeUserBlocked );
 	const availableSessions = useSelector( getAvailableConciergeSessions );
 
-	const { data: purchases = [], isLoading: isLoadingPurchases } = useQuery( userPurchasesQuery() );
+	const {
+		data: purchases = [],
+		isLoading: isLoadingPurchases,
+		isError,
+	} = useQuery( userPurchasesQuery() );
 	const { data: transferredPurchases = [], isLoading: isLoadingTransferred } = useQuery(
 		userTransferredPurchasesQuery()
 	);
@@ -86,6 +89,7 @@ const PurchasesListDataView: React.FC< PurchasesListProps > = ( { getManagePurch
 				<PurchasesNavigation section="activeUpgrades" />
 				<PurchasesContent
 					isDataLoading={ isDataLoading }
+					isError={ isError }
 					allPurchases={ allPurchases }
 					transferredPurchases={ transferredPurchases }
 					paymentMethods={ paymentMethods }
@@ -105,6 +109,7 @@ const PurchasesListDataView: React.FC< PurchasesListProps > = ( { getManagePurch
 
 function PurchasesContent( {
 	isDataLoading,
+	isError,
 	allPurchases,
 	transferredPurchases,
 	paymentMethods,
@@ -115,6 +120,7 @@ function PurchasesContent( {
 	availableSessions,
 }: {
 	isDataLoading: boolean;
+	isError: boolean;
 	allPurchases: Purchase[];
 	transferredPurchases: Purchase[];
 	paymentMethods: StoredPaymentMethod[];
@@ -129,6 +135,16 @@ function PurchasesContent( {
 	// If the data is loading, render the loading indicator.
 	if ( isDataLoading ) {
 		return <PurchasesSite isPlaceholder />;
+	}
+
+	// If there was an error fetching purchases, show an error message.
+	if ( isError ) {
+		return (
+			<EmptyContent
+				title={ translate( 'Something went wrong' ) }
+				line={ translate( 'We were unable to load your purchases. Please try again.' ) }
+			/>
+		);
 	}
 
 	// If the user has regular subscriptions, render them. Note that
@@ -168,7 +184,7 @@ function PurchasesContent( {
 						eventName="calypso_no_purchases_upgrade_nudge_impression"
 						eventProperties={ commonEventProps }
 					/>
-					<PurchasesByOtherAdminsNotice sites={ sites as unknown as SiteDetails[] } />
+					<PurchasesByOtherAdminsNotice sites={ sites } />
 					<EmptyContent
 						title={ translate( 'Looking to upgrade?' ) }
 						line={ translate(

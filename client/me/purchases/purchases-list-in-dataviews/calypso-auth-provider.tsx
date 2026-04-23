@@ -8,7 +8,10 @@ export function CalypsoAuthProvider( { children }: { children: React.ReactNode }
 	const currentUser = useSelector( getCurrentUser );
 	const value = useMemo(
 		() => ( {
+			// Calypso's user object has the same shape for the fields consumed by MSD components
+			// (useLocale reads localeVariant/localeSlug/locale_variant/language; OwnerInfo reads ID).
 			user: currentUser as unknown as User,
+			// Calypso handles its own logout; this provider exists only to satisfy MSD component hooks.
 			logout: async () => {},
 		} ),
 		[ currentUser ]

@@ -1,8 +1,14 @@
 import { useTranslate } from 'i18n-calypso';
 import Notice from 'calypso/components/notice';
-import type { SiteDetails } from '@automattic/data-stores';
 
-export function PurchasesByOtherAdminsNotice( { sites }: { sites: SiteDetails[] } ) {
+interface SiteWithAdminInfo {
+	slug: string;
+	plan?: { is_free: boolean };
+	capabilities?: { manage_options: boolean };
+	products?: { length: number };
+}
+
+export function PurchasesByOtherAdminsNotice( { sites }: { sites: SiteWithAdminInfo[] } ) {
 	const translate = useTranslate();
 	/*
 	 * Because this is only rendered when the user has no purchases,

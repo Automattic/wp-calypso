@@ -1,6 +1,5 @@
 import { Fields } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
 import { fixMe, LocalizeProps } from 'i18n-calypso';
 import akismetIcon from 'calypso/assets/images/icons/akismet-icon.svg';
 import jetpackIcon from 'calypso/assets/images/icons/jetpack-icon.svg';
@@ -88,9 +87,11 @@ function PurchaseItemSiteIcon( { site, purchase }: { site?: Site; purchase: Purc
 	return <SiteIcon site={ site } size={ size } />;
 }
 
-function BackupPaymentMethodNotice() {
+function BackupPaymentMethodNotice( { translate }: { translate: LocalizeProps[ 'translate' ] } ) {
 	const noticeText = createInterpolateElement(
-		__( 'If the renewal fails, a <link>backup payment method</link> may be used.' ),
+		String(
+			translate( 'If the renewal fails, a <link>backup payment method</link> may be used.' )
+		),
 		{
 			link: <a href="/me/purchases/payment-methods" />,
 		}
@@ -101,9 +102,11 @@ function BackupPaymentMethodNotice() {
 function OwnerInfo( {
 	purchase,
 	isTransferredOwnership: isTransferred = false,
+	translate,
 }: {
 	purchase: Purchase;
 	isTransferredOwnership?: boolean;
+	translate: LocalizeProps[ 'translate' ];
 } ) {
 	const currentUserId = useSelector( getCurrentUserId );
 	if ( String( currentUserId ) === String( purchase.user_id ) ) {
@@ -115,18 +118,22 @@ function OwnerInfo( {
 	const tooltipContent = isTransferred ? (
 		<span>
 			{ createInterpolateElement(
-				__(
-					"This license was activated on <domain /> by another user. If you haven't given the license to them on purpose, <link>contact our support team</link> for more assistance."
+				String(
+					translate(
+						"This license was activated on <domain /> by another user. If you haven't given the license to them on purpose, <link>contact our support team</link> for more assistance."
+					)
 				),
 				{
-					domain: <strong>{ purchase.domain || purchase.site_slug || __( 'a site' ) }</strong>,
+					domain: (
+						<strong>{ purchase.domain || purchase.site_slug || translate( 'a site' ) }</strong>
+					),
 					link: <a href={ JETPACK_CONTACT_SUPPORT } target="_blank" rel="noopener noreferrer" />,
 				}
 			) }
 		</span>
 	) : (
 		<span>
-			{ __(
+			{ translate(
 				'To manage this subscription, log in to the WordPress.com account that purchased it or contact the owner.'
 			) }
 		</span>
@@ -195,12 +202,14 @@ function PurchaseItemRowProduct( {
 	if ( ! site && productType ) {
 		return (
 			<div>
-				{ sprintf(
+				{ translate(
 					// translators: purchaseType is the product name and siteDomain is the site domain
-					__( '%(purchaseType)s for %(siteDomain)s' ),
+					'%(purchaseType)s for %(siteDomain)s',
 					{
-						purchaseType: productType,
-						siteDomain: purchase.domain,
+						args: {
+							purchaseType: productType,
+							siteDomain: purchase.domain,
+						},
 					}
 				) }
 			</div>
@@ -210,18 +219,26 @@ function PurchaseItemRowProduct( {
 	return productType ? <div>{ productType }</div> : null;
 }
 
-function PurchaseItemPaymentMethod( { purchase, sites }: { purchase: Purchase; sites: Site[] } ) {
+function PurchaseItemPaymentMethod( {
+	purchase,
+	sites,
+	translate,
+}: {
+	purchase: Purchase;
+	sites: Site[];
+	translate: LocalizeProps[ 'translate' ];
+} ) {
 	const site = sites.find( ( s ) => s.ID === purchase.blog_id );
 	const isSiteMissing = ! site;
 
 	if ( purchase.expiry_status === 'included' ) {
-		return <>{ __( 'Included with Plan' ) }</>;
+		return <>{ translate( 'Included with Plan' ) }</>;
 	}
 
 	if ( purchase.is_iap_purchase ) {
 		return (
 			<div>
-				<span>{ __( 'In-App Purchase' ) }</span>
+				<span>{ translate( 'In-App Purchase' ) }</span>
 			</div>
 		);
 	}
@@ -240,7 +257,7 @@ function PurchaseItemPaymentMethod( { purchase, sites }: { purchase: Purchase; s
 		return (
 			<div>
 				<a href={ `/me/purchases/${ purchase.site_slug }/${ purchase.ID }/payment-method/add` }>
-					{ __( 'Add payment method' ) }
+					{ translate( 'Add payment method' ) }
 				</a>
 			</div>
 		);
@@ -255,10 +272,10 @@ function PurchaseItemPaymentMethod( { purchase, sites }: { purchase: Purchase; s
 			? purchase.payment_card_display_brand
 			: purchase.payment_card_type || purchase.payment_card_processor || '';
 
-		const maskedCardNumber = sprintf(
+		const maskedCardNumber = translate(
 			/** Translators: %s is last four digits of card number */
-			__( '**** **** **** %s' ),
-			purchase.payment_details
+			'**** **** **** %(last4)s',
+			{ args: { last4: purchase.payment_details ?? '' } }
 		);
 
 		return (
@@ -290,14 +307,12 @@ export function getPurchasesFieldDefinitions( {
 	paymentMethods,
 	sites,
 	getManagePurchaseUrlFor,
-	fieldIds,
 	transferredOwnershipPurchases = [],
 }: {
 	translate: LocalizeProps[ 'translate' ];
 	paymentMethods: StoredPaymentMethod[];
 	sites: Site[];
 	getManagePurchaseUrlFor: GetManagePurchaseUrlFor;
-	fieldIds?: string[];
 	transferredOwnershipPurchases?: Purchase[];
 } ): Fields< Purchase > {
 	const backupPaymentMethods = paymentMethods.filter(
@@ -386,7 +401,11 @@ export function getPurchasesFieldDefinitions( {
 								<div>
 									{ getTitleForListDisplay( item ) }
 									&nbsp;
-									<OwnerInfo purchase={ item } isTransferredOwnership={ hasTransferred } />
+									<OwnerInfo
+										purchase={ item }
+										isTransferredOwnership={ hasTransferred }
+										translate={ translate }
+									/>
 								</div>
 							) : (
 								<>
@@ -397,7 +416,7 @@ export function getPurchasesFieldDefinitions( {
 									>
 										{ getTitleForListDisplay( item ) }
 									</a>
-									<OwnerInfo purchase={ item } />
+									<OwnerInfo purchase={ item } translate={ translate } />
 								</>
 							) }
 						</div>
@@ -583,14 +602,16 @@ export function getPurchasesFieldDefinitions( {
 
 				return (
 					<div className="purchase-item__payment-method">
-						<PurchaseItemPaymentMethod purchase={ item } sites={ sites } />
-						{ isBackupMethodAvailable && isRenewing( item ) && <BackupPaymentMethodNotice /> }
+						<PurchaseItemPaymentMethod purchase={ item } sites={ sites } translate={ translate } />
+						{ isBackupMethodAvailable && isRenewing( item ) && (
+							<BackupPaymentMethodNotice translate={ translate } />
+						) }
 					</div>
 				);
 			},
 		},
 	];
-	return fields.filter( ( field ) => fieldIds?.includes( field.id ) ?? true );
+	return fields;
 }
 
 export function getMembershipsFieldDefinitions( {

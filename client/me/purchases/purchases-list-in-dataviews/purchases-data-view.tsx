@@ -133,10 +133,10 @@ function usePreservePurchasesViewInUrl( {
 		const typeFilter = currentView.filters?.find( ( filter ) => filter.field === 'type' );
 		alterUrlForViewProp( url, urlTypeFilterKey, typeFilter?.value );
 
-		const expringSoonFilter = currentView.filters?.find(
+		const expiringSoonFilter = currentView.filters?.find(
 			( filter ) => filter.field === 'expiring-soon'
 		);
-		alterUrlForViewProp( url, urlExpiringSoonFilter, expringSoonFilter?.value );
+		alterUrlForViewProp( url, urlExpiringSoonFilter, expiringSoonFilter?.value );
 
 		const pageNumber = currentView.page;
 		alterUrlForViewProp( url, urlPaginationPage, pageNumber, 1 );
@@ -331,11 +331,11 @@ export function MembershipsDataViews( { memberships }: { memberships: MonetizeSu
 
 	// Hide fields at mobile width
 	useEffect( () => {
-		if ( isDesktop && currentView.fields === membershipsMobileFields ) {
+		if ( isDesktop && currentView.fields?.length !== membershipsDesktopFields.length ) {
 			setView( { ...currentView, fields: membershipsDesktopFields } );
 			return;
 		}
-		if ( ! isDesktop && currentView.fields === membershipsDesktopFields ) {
+		if ( ! isDesktop && currentView.fields?.length !== membershipsMobileFields.length ) {
 			setView( { ...currentView, fields: membershipsMobileFields } );
 			return;
 		}
