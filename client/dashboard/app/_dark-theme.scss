@@ -229,7 +229,7 @@
 
 		td.dataviews-view-table__actions-column--stuck::after,
 		thead.dataviews-view-table__thead--stuck::after {
-			background-color: var( --dashboard-surface__border-color );
+			background-color: var( --dashboard-surface__background-color );
 		}
 
 		.dataviews-view-table-header-button:not( :hover ) {
@@ -255,7 +255,7 @@
 
 	// Grid
 	.dataviews-view-grid__media {
-		background-color: var( --dashboard-field__background-color );
+		background-color: var( --dashboard-surface__background-color );
 
 		.dataviews-view-grid__media-placeholder {
 			background: var( --dashboard-surface__background-color );
@@ -263,7 +263,7 @@
 	}
 
 	.dataviews-view-grid__card .dataviews-view-grid__media-actions .dataviews-all-actions-button {
-		background-color: var( --dashboard-field__background-color );
+		background-color: var( --dashboard-surface__background-color );
 	}
 
 	// List
