@@ -203,9 +203,7 @@ function SiteOverview( {
 
 	const renderNotices = () => {
 		if ( site.__inaccessible_jetpack_error ) {
-			// Prefer the critical-error notice over the generic inaccessible-Jetpack
-			// notice when recovery mode explains the failure — the critical-error
-			// copy is more actionable than the raw transport error.
+			// The critical-error notice is more actionable than the raw transport error.
 			const recoveryMessage = getJetpackCriticalErrorMessage( site );
 			if ( recoveryMessage ) {
 				return <JetpackCriticalErrorNotice message={ recoveryMessage } />;

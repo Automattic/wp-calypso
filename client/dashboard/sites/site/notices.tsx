@@ -36,9 +36,7 @@ export function InaccessibleJetpackNotice( { error }: { error: Error } ) {
 	);
 }
 
-// Derivation per RSM-210. Timestamps are Unix seconds.
 const FIFTEEN_MINUTES = 15 * 60;
-const SEVEN_DAYS = 7 * 24 * 60 * 60;
 
 function getJetpackCriticalErrorState(
 	site: Site,
@@ -62,7 +60,7 @@ function getJetpackCriticalErrorState(
 		return null;
 	}
 
-	if ( lastSent > 0 && enteredAt < lastSent && now - lastSent < SEVEN_DAYS ) {
+	if ( lastSent > 0 && enteredAt < lastSent ) {
 		return 'critical-error';
 	}
 
@@ -110,7 +108,7 @@ export function JetpackCriticalErrorNotice( { message }: { message: ReactNode } 
 						'https://wordpress.com/support/jetpack/resolve-jetpack-errors/#identify-plugin-or-theme-conflicts'
 					) }
 				>
-					{ __( 'Troubleshoot your Jetpack connection' ) }
+					{ __( 'Troubleshoot your Jetpack site' ) }
 				</ExternalLink>
 			}
 		>

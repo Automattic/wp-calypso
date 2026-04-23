@@ -272,11 +272,6 @@ export interface SiteDetailsOptions {
 	is_wpforteams_site?: boolean;
 	jetpack_connection_active_plugins?: string[];
 	jetpack_frame_nonce?: string;
-	jetpack_recovery_mode_status?: {
-		recovery_mode_email_last_sent?: number;
-		recovery_session_entered_at?: number;
-		recovery_session_exited_at?: number;
-	} | null;
 	jetpack_version?: string | undefined;
 	login_url?: string;
 	p2_hub_blog_id?: number | null;
