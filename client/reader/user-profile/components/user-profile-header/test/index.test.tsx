@@ -36,6 +36,10 @@ jest.mock( '@automattic/calypso-config', () => ( {
 	isEnabled: jest.fn(),
 } ) );
 
+jest.mock( 'calypso/reader/user-profile/views/achievements/use-achievements-visibility', () => ( {
+	useAchievementsVisibility: () => ( { isOwnProfile: true, isVisible: true } ),
+} ) );
+
 const mockIsEnabled = isEnabled as jest.MockedFunction< typeof isEnabled >;
 
 describe( 'UserProfileHeader', () => {
