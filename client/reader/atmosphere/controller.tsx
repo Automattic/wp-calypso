@@ -1,21 +1,61 @@
 import { isEnabled } from '@automattic/calypso-config';
 import page, { type Context } from '@automattic/calypso-router';
 import AsyncLoad from 'calypso/components/async-load';
-import { getCurrentTabFromURL } from 'calypso/reader/utils';
-import { ATMOSPHERE_PREFIX, DEFAULT_ATMOSPHERE_TAB } from './helper';
+import { TIMELINE_TAB } from './helper';
 
-export function atmosphereController( context: Context, next: () => void ) {
+function ensureAtmosphereEnabled(): boolean {
 	if ( ! isEnabled( 'reader/atmosphere' ) ) {
 		page.redirect( '/reader' );
+		return false;
+	}
+	return true;
+}
+
+export const atmosphereLanding = ( context: Context, next: () => void ) => {
+	if ( ! ensureAtmosphereEnabled() ) {
 		return;
 	}
-	const selectedTab = getCurrentTabFromURL(
-		context.path,
-		ATMOSPHERE_PREFIX,
-		DEFAULT_ATMOSPHERE_TAB
-	);
 	context.primary = (
-		<AsyncLoad require="calypso/reader/atmosphere/atmosphere-view" selectedTab={ selectedTab } />
+		<AsyncLoad require="calypso/reader/atmosphere/atmosphere-landing-view" placeholder={ null } />
 	);
 	next();
-}
+};
+
+export const atmosphereConnect = ( context: Context, next: () => void ) => {
+	if ( ! ensureAtmosphereEnabled() ) {
+		return;
+	}
+	context.primary = (
+		<AsyncLoad require="calypso/reader/atmosphere/atmosphere-connect-view" placeholder={ null } />
+	);
+	next();
+};
+
+export const atmosphereIdRedirect = ( context: Context ) => {
+	if ( ! ensureAtmosphereEnabled() ) {
+		return;
+	}
+	const id = Number( context.params.id );
+	if ( Number.isFinite( id ) && id > 0 ) {
+		page.redirect( `/reader/atmosphere/${ id }/${ TIMELINE_TAB }` );
+		return;
+	}
+	page.redirect( '/reader/atmosphere' );
+};
+
+export const atmosphereAccount = ( context: Context, next: () => void ) => {
+	if ( ! ensureAtmosphereEnabled() ) {
+		return;
+	}
+	const id = Number( context.params.id );
+	const tab = String( context.params.tab ?? '' );
+	context.primary = (
+		<AsyncLoad
+			require="calypso/reader/atmosphere/atmosphere-account-view"
+			placeholder={ null }
+			connectionId={ id }
+			tab={ tab }
+		/>
+	);
+	next();
+};

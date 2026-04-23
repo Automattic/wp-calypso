@@ -1,38 +1,36 @@
 import page from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { sidebar, setBeforePrimary } from 'calypso/reader/controller';
-import { atmosphereController } from './controller';
+import {
+	atmosphereLanding,
+	atmosphereConnect,
+	atmosphereIdRedirect,
+	atmosphereAccount,
+} from './controller';
 
 export default function () {
 	page(
 		'/reader/atmosphere',
 		sidebar,
 		setBeforePrimary,
-		atmosphereController,
+		atmosphereLanding,
 		makeLayout,
 		clientRender
 	);
 	page(
-		'/reader/atmosphere/timeline',
+		'/reader/atmosphere/connect',
 		sidebar,
 		setBeforePrimary,
-		atmosphereController,
+		atmosphereConnect,
 		makeLayout,
 		clientRender
 	);
+	page( '/reader/atmosphere/:id(\\d+)', atmosphereIdRedirect );
 	page(
-		'/reader/atmosphere/profile',
+		'/reader/atmosphere/:id(\\d+)/:tab',
 		sidebar,
 		setBeforePrimary,
-		atmosphereController,
-		makeLayout,
-		clientRender
-	);
-	page(
-		'/reader/atmosphere/settings',
-		sidebar,
-		setBeforePrimary,
-		atmosphereController,
+		atmosphereAccount,
 		makeLayout,
 		clientRender
 	);
