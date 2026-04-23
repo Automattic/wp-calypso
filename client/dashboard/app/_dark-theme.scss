@@ -5,6 +5,11 @@
 		color: var( --dashboard__text-color );
 		box-shadow: inset 0 0 0 1px var( --dashboard-surface__border-color );
 	}
+
+	.components-card__divider {
+		color: var( --dashboard-surface__border-color );
+		border-color: var( --dashboard-surface__border-color );
+	}
 }
 
 /* Form Controls */
@@ -137,6 +142,31 @@
 	}
 }
 
+/* Breadcrumbs */
+@mixin dashboard-dark-theme-breadcrumbs {
+	.a8c-components-breadcrumbs {
+		.a8c-components-breadcrumbs__item {
+			color: var( --dashboard__text-muted-color );
+
+			&:hover {
+				color: var( --dashboard__text-color );
+			}
+		}
+
+		.a8c-components-breadcrumbs__item-wrapper.is-current .a8c-components-breadcrumbs__item {
+			color: var( --dashboard__text-color );
+		}
+
+		.a8c-components-breadcrumbs__item-wrapper:not( .is-current )::after {
+			color: color-mix(
+				in srgb,
+				var( --dashboard__text-muted-color ) 45%,
+				var( --dashboard__background-color )
+			);
+		}
+	}
+}
+
 /* Summary Buttons */
 @mixin dashboard-dark-theme-summary-button {
 	.summary-button.components-button {
@@ -229,6 +259,9 @@
 	// Overview
 	--dashboard-overview__divider-color: #2f2f2f;
 
+	// Shared border tokens
+	--color-border-subtle: var( --dashboard-surface__border-color );
+
 	// Jetpack grayscale, inverted so darker numbers render as lighter shades on dark.
 	// `--jp-black` / `--jp-white` stay literal — they're brand constants, and many usages
 	// (white text on colored bg, black outlines) depend on them being literal.
@@ -253,5 +286,6 @@
 	@include dashboard-dark-theme-form-controls;
 	@include dashboard-dark-theme-muted-text;
 	@include dashboard-dark-theme-destructive-secondary-button;
+	@include dashboard-dark-theme-breadcrumbs;
 	@include dashboard-dark-theme-summary-button;
 }
