@@ -72,7 +72,7 @@ const PodcastMain = ( { section, path }: PodcastMainProps ) => {
 		<Main fullWidthLayout className="podcast">
 			{ siteId && <QuerySiteSettings siteId={ siteId } /> }
 			{ siteId && <QueryTerms siteId={ siteId } taxonomy="category" /> }
-			<DocumentHead title={ translate( 'Podcasting' ) } />
+			<DocumentHead title={ translate( 'Podcast' ) } />
 			<Page
 				hasPadding={ false }
 				showSidebarToggle={ false }
@@ -84,7 +84,7 @@ const PodcastMain = ( { section, path }: PodcastMainProps ) => {
 						},
 					}
 				) }
-				title={ <JetpackTitle title={ translate( 'Podcasting' ) } /> }
+				title={ <JetpackTitle title={ translate( 'Podcast' ) } /> }
 			>
 				<div className="podcast__scroll-area">
 					<div className="podcast__tabs-bar">
