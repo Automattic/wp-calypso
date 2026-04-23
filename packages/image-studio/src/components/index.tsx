@@ -25,7 +25,7 @@ import { useRevertToOriginal } from '../hooks/use-revert-to-original';
 import { useSaveShortcut } from '../hooks/use-save-shortcut';
 import { useUnsavedChangesConfirmation } from '../hooks/use-unsaved-changes-confirmation';
 import { type ImageStudioActions, store as imageStudioStore } from '../store';
-import { ImageStudioMode, type ImageStudioProps, ToolbarOption } from '../types';
+import { ImageStudioMode, type ImageStudioProps, StudioMode, ToolbarOption } from '../types';
 import { defaultAgentConfigFactory } from '../utils/agent-config';
 import { trackImageStudioError, trackImageStudioPromptSent } from '../utils/tracking';
 import AnnotationCanvas from './annotation-canvas';
@@ -39,6 +39,7 @@ import { Header } from './header';
 import LoadingSpinner from './loading-spinner';
 import { ImageStudioNotice } from './notice';
 import { ImageStudioAltTextSidebar } from './sidebar';
+import { StudioModeToggle } from './studio-mode-toggle';
 import { StylePicker } from './style-picker';
 import './style.scss';
 
@@ -60,6 +61,13 @@ function ImageStudioAgentChat( {
 
 	const isAnnotationSaving = useSelect( ( select ) => {
 		return select( imageStudioStore ).getIsAnnotationSaving();
+	}, [] );
+
+	const studioMode = useSelect( ( select ) => {
+		const selectors = select( imageStudioStore ) as unknown as {
+			getStudioMode?: () => StudioMode;
+		};
+		return selectors.getStudioMode?.() ?? StudioMode.Image;
 	}, [] );
 
 	useEffect( () => {
@@ -178,7 +186,10 @@ function ImageStudioAgentChat( {
 					<AgentUI.Notice />
 					<AgentUI.Input disabled={ isStopDisabled ? true : undefined } />
 					<div className="image-studio-modal__input-toolbar">
-						{ mode === ImageStudioMode.Generate && <AspectRatioPicker disabled={ isProcessing } /> }
+						{ mode === ImageStudioMode.Generate && <StudioModeToggle /> }
+						{ mode === ImageStudioMode.Generate && studioMode === StudioMode.Image && (
+							<AspectRatioPicker disabled={ isProcessing } />
+						) }
 						<StylePicker disabled={ isProcessing } mode={ mode } />
 					</div>
 				</AgentUI.Footer>
@@ -516,7 +527,6 @@ const ImageStudioContent = withInstanceId(
 						) }
 
 						<Footer
-							showStudioModeToggle={ mode === ImageStudioMode.Generate }
 							chatComponent={
 								agentConfigState ? (
 									<ImageStudioAgentUI

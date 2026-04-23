@@ -1,29 +1,30 @@
 .image-studio-mode-toggle {
-	display: flex;
-	gap: 8px;
-	justify-content: center;
-	margin-top: 12px;
+	display: inline-flex;
+	gap: 2px;
+	padding: 2px;
+	border-radius: 24px;
+	background-color: #484848;
 }
 
 .image-studio-mode-toggle__button.components-button.is-tertiary {
-	border: 1px solid var( --wp-components-color-foreground, #1e1e1e );
+	border: 0;
 	border-radius: 24px;
-	padding: 4px 16px;
+	padding: 4px 12px;
 	height: auto;
+	min-width: 0;
 	font-size: 13px;
 	line-height: 1.4;
 	background: transparent;
-	color: var( --wp-components-color-foreground, #1e1e1e );
+	color: #f0f0f0;
 
 	&:hover:not( :disabled ) {
-		background: rgba( 0, 0, 0, 0.04 );
-		color: var( --wp-components-color-foreground, #1e1e1e );
+		background: #555;
+		color: #fff;
 	}
 
 	&[ aria-pressed='true' ] {
-		background: var( --wp-components-color-foreground, #1e1e1e );
-		color: var( --wp-components-color-background, #fff );
-		border-color: var( --wp-components-color-foreground, #1e1e1e );
+		background: #fff;
+		color: #1e1e1e;
 	}
 
 	&:focus-visible {

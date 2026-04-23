@@ -20,7 +20,7 @@ import pixelArtPreview from '../../assets/pixel-art.webp';
 import texturePreview from '../../assets/texture.webp';
 import vividPreview from '../../assets/vivid.webp';
 import { store as imageStudioStore } from '../../store';
-import { ImageStudioMode } from '../../types';
+import { ImageStudioMode, StudioMode } from '../../types';
 import { trackImageStudioStyleSelected } from '../../utils/tracking';
 import { BrushIcon } from '../icons/BrushIcon';
 
@@ -28,6 +28,19 @@ interface StylePickerProps {
 	disabled?: boolean;
 	mode: ImageStudioMode;
 }
+
+export const VIDEO_STYLE_OPTIONS = [
+	{
+		label: __( 'Informative', __i18n_text_domain__ ),
+		value: 'informative',
+		preview: nonePreview,
+	},
+	{
+		label: __( 'Promotional', __i18n_text_domain__ ),
+		value: 'promotional',
+		preview: nonePreview,
+	},
+];
 
 export const STYLE_OPTIONS = [
 	{ label: __( 'None', __i18n_text_domain__ ), value: 'none', preview: nonePreview },
@@ -121,6 +134,15 @@ export function StylePicker( { disabled = false, mode }: StylePickerProps ) {
 		return select( imageStudioStore ).getSelectedStyle();
 	}, [] );
 
+	const studioMode = useSelect( ( select ) => {
+		const selectors = select( imageStudioStore ) as unknown as {
+			getStudioMode?: () => StudioMode;
+		};
+		return selectors.getStudioMode?.() ?? StudioMode.Image;
+	}, [] );
+
+	const options = studioMode === StudioMode.Video ? VIDEO_STYLE_OPTIONS : STYLE_OPTIONS;
+
 	const handleStyleSelect = ( value: string ) => {
 		setSelectedStyle( value );
 		// Track style selection
@@ -139,7 +161,7 @@ export function StylePicker( { disabled = false, mode }: StylePickerProps ) {
 	};
 
 	const selectedLabel =
-		STYLE_OPTIONS.find( ( opt ) => opt.value === selectedStyle )?.label ??
+		options.find( ( opt ) => opt.value === selectedStyle )?.label ??
 		__( 'Style', __i18n_text_domain__ );
 
 	return (
@@ -150,7 +172,7 @@ export function StylePicker( { disabled = false, mode }: StylePickerProps ) {
 			disabled={ disabled }
 		>
 			<div className="image-studio-input-toolbar-dialog-grid">
-				{ STYLE_OPTIONS.map( ( option ) => (
+				{ options.map( ( option ) => (
 					<button
 						key={ option.value }
 						type="button"
