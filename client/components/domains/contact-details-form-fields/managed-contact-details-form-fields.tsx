@@ -290,6 +290,7 @@ export class ManagedContactDetailsFormFields extends Component<
 						isError={ !! this.props.contactDetailsErrors.phone }
 						onChange={ this.handlePhoneChange }
 						countriesList={ this.props.countriesList }
+						enableStickyCountry={ false }
 						additionalClasses="contact-details-form-fields__field"
 					/>
 				</div>
