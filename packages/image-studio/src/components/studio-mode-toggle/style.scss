@@ -16,6 +16,9 @@
 	line-height: 1.4;
 	background: transparent;
 	color: #f0f0f0;
+	transition:
+		background-color 150ms ease-out,
+		color 150ms ease-out;
 
 	&:hover:not( :disabled ) {
 		background: #555;

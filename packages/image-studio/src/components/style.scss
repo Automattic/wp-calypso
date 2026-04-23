@@ -198,6 +198,13 @@ body.js.is-image-studio-open {
 .image-studio-modal__input-toolbar {
 	display: flex;
 	gap: 8px;
+	align-items: center;
+}
+
+.image-studio-modal__input-toolbar-collapse {
+	display: flex;
+	align-items: center;
+	overflow: hidden;
 }
 
 /* ==========================================================================

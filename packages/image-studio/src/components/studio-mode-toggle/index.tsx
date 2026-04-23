@@ -3,10 +3,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { type ImageStudioActions, store as imageStudioStore } from '../../store';
 import { StudioMode } from '../../types';
-import { VIDEO_STYLE_OPTIONS } from '../style-picker';
 import './style.scss';
-
-const DEFAULT_VIDEO_STYLE = 'informative';
 
 export const StudioModeToggle = () => {
 	const studioMode = useSelect(
@@ -17,22 +14,7 @@ export const StudioModeToggle = () => {
 		[]
 	);
 
-	const selectedStyle = useSelect(
-		( select ) => select( imageStudioStore ).getSelectedStyle() as string | null,
-		[]
-	);
-
-	const { setStudioMode, setSelectedStyle } = useDispatch( imageStudioStore ) as ImageStudioActions;
-
-	const handleSelect = ( nextMode: StudioMode ) => {
-		if ( nextMode === StudioMode.Video ) {
-			const isValidVideoStyle = VIDEO_STYLE_OPTIONS.some( ( opt ) => opt.value === selectedStyle );
-			if ( ! isValidVideoStyle ) {
-				setSelectedStyle( DEFAULT_VIDEO_STYLE );
-			}
-		}
-		setStudioMode( nextMode );
-	};
+	const { setStudioMode } = useDispatch( imageStudioStore ) as ImageStudioActions;
 
 	return (
 		<div
@@ -45,7 +27,7 @@ export const StudioModeToggle = () => {
 				className="image-studio-mode-toggle__button"
 				isPressed={ studioMode === StudioMode.Image }
 				aria-pressed={ studioMode === StudioMode.Image }
-				onClick={ () => handleSelect( StudioMode.Image ) }
+				onClick={ () => setStudioMode( StudioMode.Image ) }
 			>
 				{ __( 'Image', __i18n_text_domain__ ) }
 			</Button>
@@ -54,7 +36,7 @@ export const StudioModeToggle = () => {
 				className="image-studio-mode-toggle__button"
 				isPressed={ studioMode === StudioMode.Video }
 				aria-pressed={ studioMode === StudioMode.Video }
-				onClick={ () => handleSelect( StudioMode.Video ) }
+				onClick={ () => setStudioMode( StudioMode.Video ) }
 			>
 				{ __( 'Video', __i18n_text_domain__ ) }
 			</Button>

@@ -187,9 +187,20 @@ function ImageStudioAgentChat( {
 					<AgentUI.Input disabled={ isStopDisabled ? true : undefined } />
 					<div className="image-studio-modal__input-toolbar">
 						{ mode === ImageStudioMode.Generate && <StudioModeToggle /> }
-						{ mode === ImageStudioMode.Generate && studioMode === StudioMode.Image && (
-							<AspectRatioPicker disabled={ isProcessing } />
-						) }
+						<AnimatePresence initial={ false }>
+							{ mode === ImageStudioMode.Generate && studioMode === StudioMode.Image && (
+								<motion.div
+									key="aspect-ratio"
+									className="image-studio-modal__input-toolbar-collapse"
+									initial={ { opacity: 0, width: 0 } }
+									animate={ { opacity: 1, width: 'auto' } }
+									exit={ { opacity: 0, width: 0 } }
+									transition={ { duration: 0.2, ease: 'easeOut' } }
+								>
+									<AspectRatioPicker disabled={ isProcessing } />
+								</motion.div>
+							) }
+						</AnimatePresence>
 						<StylePicker disabled={ isProcessing } mode={ mode } />
 					</div>
 				</AgentUI.Footer>

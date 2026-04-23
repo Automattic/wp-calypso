@@ -1,4 +1,8 @@
 import { AgentUI, cn } from '@automattic/agenttic-ui';
+import {
+	__unstableAnimatePresence as AnimatePresence,
+	__unstableMotion as motion,
+} from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import threeDModelPreview from '../../assets/3d-model.webp';
@@ -29,16 +33,17 @@ interface StylePickerProps {
 	mode: ImageStudioMode;
 }
 
+// Preview thumbnails are temporary placeholders pending designer-provided artwork.
 export const VIDEO_STYLE_OPTIONS = [
 	{
 		label: __( 'Informative', __i18n_text_domain__ ),
 		value: 'informative',
-		preview: nonePreview,
+		preview: cinematicPreview,
 	},
 	{
 		label: __( 'Promotional', __i18n_text_domain__ ),
 		value: 'promotional',
-		preview: nonePreview,
+		preview: vividPreview,
 	},
 ];
 
@@ -160,14 +165,9 @@ export function StylePicker( { disabled = false, mode }: StylePickerProps ) {
 		} );
 	};
 
-	// In Video mode, always show the generic "Style" label on the toolbar
-	// button, matching Image mode's placeholder behavior. The selected option
-	// is still indicated inside the dropdown via the is-selected state.
 	const selectedLabel =
-		studioMode === StudioMode.Video
-			? __( 'Style', __i18n_text_domain__ )
-			: options.find( ( opt ) => opt.value === selectedStyle )?.label ??
-			  __( 'Style', __i18n_text_domain__ );
+		options.find( ( opt ) => opt.value === selectedStyle )?.label ??
+		__( 'Style', __i18n_text_domain__ );
 
 	return (
 		<AgentUI.InputToolbar
@@ -176,27 +176,36 @@ export function StylePicker( { disabled = false, mode }: StylePickerProps ) {
 			className="image-studio-input-toolbar-item"
 			disabled={ disabled }
 		>
-			<div className="image-studio-input-toolbar-dialog-grid">
-				{ options.map( ( option ) => (
-					<button
-						key={ option.value }
-						type="button"
-						className={ cn( 'image-studio-input-toolbar-card', {
-							'is-selected': selectedStyle === option.value,
-						} ) }
-						onClick={ () => handleStyleSelect( option.value ) }
-					>
-						<span className="image-studio-input-toolbar-card__image-wrapper">
-							<img
-								src={ option.preview ?? '' }
-								alt=""
-								className="image-studio-input-toolbar-card__image"
-							/>
-						</span>
-						<span className="image-studio-input-toolbar-card__label">{ option.label }</span>
-					</button>
-				) ) }
-			</div>
+			<AnimatePresence mode="wait" initial={ false }>
+				<motion.div
+					key={ studioMode }
+					className="image-studio-input-toolbar-dialog-grid"
+					initial={ { opacity: 0 } }
+					animate={ { opacity: 1 } }
+					exit={ { opacity: 0 } }
+					transition={ { duration: 0.15, ease: 'easeOut' } }
+				>
+					{ options.map( ( option ) => (
+						<button
+							key={ option.value }
+							type="button"
+							className={ cn( 'image-studio-input-toolbar-card', {
+								'is-selected': selectedStyle === option.value,
+							} ) }
+							onClick={ () => handleStyleSelect( option.value ) }
+						>
+							<span className="image-studio-input-toolbar-card__image-wrapper">
+								<img
+									src={ option.preview ?? '' }
+									alt=""
+									className="image-studio-input-toolbar-card__image"
+								/>
+							</span>
+							<span className="image-studio-input-toolbar-card__label">{ option.label }</span>
+						</button>
+					) ) }
+				</motion.div>
+			</AnimatePresence>
 		</AgentUI.InputToolbar>
 	);
 }
