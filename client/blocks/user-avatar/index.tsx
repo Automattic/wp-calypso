@@ -122,9 +122,7 @@ export default function UserAvatar( { user, size = 32, hideHovercard = false }: 
 			onBlur={ handleHideHovercard }
 			tabIndex={ needsTabIndex ? 0 : undefined }
 			role={ needsTabIndex ? 'button' : undefined }
-			aria-label={ translate( 'User Profile: %s', {
-				args: name,
-			} ) }
+			aria-label={ translate( 'User Profile: %s', { args: name } ) as string }
 		>
 			{ wpcomProfileUrl ? <a href={ wpcomProfileUrl }>{ avatarImg }</a> : avatarImg }
 
