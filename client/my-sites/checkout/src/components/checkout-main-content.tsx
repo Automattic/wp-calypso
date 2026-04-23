@@ -80,6 +80,7 @@ import { updateCartContactDetailsForCheckout } from '../lib/update-cart-contact-
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import AcceptTermsOfServiceCheckbox from './accept-terms-of-service-checkbox';
 import CheckoutNextSteps from './checkout-next-steps';
+import CheckoutProcessorNotice from './checkout-processor-notice';
 import { CheckoutSidebarPlanUpsell } from './checkout-sidebar-plan-upsell';
 import CheckoutTrustCards from './checkout-trust-cards';
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
@@ -680,20 +681,21 @@ export default function CheckoutMainContent( {
 								) }
 							</CheckoutSummaryBody>
 						</CheckoutErrorBoundary>
+						{
+							// Rendered inside CheckoutSummaryArea so it sits within the sticky
+							// container and stays 24px below the order card as the page scrolls.
+							// At desktop width the upsell is always visible; at mobile it's only
+							// shown when the checkout summary is toggled open.
+							isCheckoutUiRedesignV1 && ( isSummaryVisible || isLargeViewport ) && (
+								<CheckoutSummaryNudgeArea>
+									<CheckoutSidebarNudge
+										addItemToCart={ addItemToCart }
+										areThereDomainProductsInCart={ areThereDomainProductsInCart }
+									/>
+								</CheckoutSummaryNudgeArea>
+							)
+						}
 					</CheckoutSummaryArea>
-					{
-						// This upsell should always be displayed in the
-						// sidebar at desktop width but only shown at mobile
-						// width if the checkout summary is toggled open.
-						isCheckoutUiRedesignV1 && ( isSummaryVisible || isLargeViewport ) && (
-							<CheckoutSummaryNudgeArea>
-								<CheckoutSidebarNudge
-									addItemToCart={ addItemToCart }
-									areThereDomainProductsInCart={ areThereDomainProductsInCart }
-								/>
-							</CheckoutSummaryNudgeArea>
-						)
-					}
 				</>
 			) }
 		</WPCheckoutSidebarContent>
@@ -927,6 +929,7 @@ export default function CheckoutMainContent( {
 					) }
 					{ checkoutSummary }
 					{ checkoutMainContent }
+					<CheckoutProcessorNotice />
 					<CheckoutTrustCards cart={ responseCart } />
 				</WPCheckoutWrapper>
 			</SubmitButtonSlotContext.Provider>
@@ -987,6 +990,7 @@ export default function CheckoutMainContent( {
 				</Step.TwoColumnLayout>
 				<LeaveCheckoutModal { ...leaveModalProps } />
 			</StepContainerV2CheckoutFixer>
+			<CheckoutProcessorNotice />
 			<CheckoutTrustCards cart={ responseCart } />
 		</SubmitButtonSlotContext.Provider>
 	);
@@ -1435,6 +1439,15 @@ const CheckoutSummary = styled.div`
 	display: flex;
 	flex-direction: column;
 
+	/*
+	 * Lock intrinsic child sizing so the 24px gap between the sticky order card
+	 * and the two-year upsell isn't collapsed when the sticky area reaches the
+	 * bottom of its grid cell and some browsers compress flex children to fit.
+	 */
+	& > * {
+		flex-shrink: 0;
+	}
+
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		padding-left: 24px;
 		padding-right: 24px;
@@ -1695,9 +1708,13 @@ const WPCheckoutWrapper = styled.div< {
 } >`
 	background: ${ colorStudio.colors[ 'White' ] };
 	display: grid;
-	grid-template-rows: auto auto;
+	grid-template-rows: auto auto auto;
 	grid-template-columns: 1fr;
-	grid-template-areas: 'sidebar-content' 'main-content' 'trust-cards';
+	grid-template-areas:
+		'sidebar-content'
+		'main-content'
+		'processor-notice'
+		'trust-cards';
 	align-content: start;
 	justify-content: center;
 	justify-items: center;
@@ -1707,6 +1724,7 @@ const WPCheckoutWrapper = styled.div< {
 		grid-template-columns: 1fr minmax( 500px, 688px ) 475px 1fr;
 		grid-template-areas:
 			'main-content main-content sidebar-content sidebar-content'
+			'processor-notice processor-notice processor-notice processor-notice'
 			'trust-cards trust-cards trust-cards trust-cards';
 		justify-items: end;
 	}
@@ -1714,6 +1732,11 @@ const WPCheckoutWrapper = styled.div< {
 	& > * {
 		box-sizing: border-box;
 		width: 100%;
+	}
+
+	& > .checkout-processor-notice {
+		grid-area: processor-notice;
+		justify-self: center;
 	}
 
 	& > .checkout-trust-cards {
@@ -2151,10 +2174,10 @@ const WPCheckoutSidebarContent = styled.div`
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		margin-top: 0;
-		padding: 144px 24px 144px 64px;
+		padding: 144px 24px 24px 64px;
 
 		.rtl & {
-			padding: 144px 64px 0 24px;
+			padding: 144px 64px 24px 24px;
 		}
 	}
 `;
@@ -2253,6 +2276,7 @@ const CheckoutSummaryBagIconWrapper = styled.span`
 
 const CheckoutSummaryNudgeArea = styled.div`
 	margin: 8px 16px 12px;
+	flex-shrink: 0;
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		margin-inline: 0;

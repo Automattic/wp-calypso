@@ -676,13 +676,6 @@ const CheckoutSummaryCard = styled.div`
 		0 3px 1px rgb( 0 0 0 / 4% ),
 		0 3px 8px rgb( 0 0 0 / 12% );
 	margin-bottom: 20px;
-
-	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
-		position: sticky;
-		top: 32px;
-		max-height: calc( 100vh - 64px );
-		overflow-y: auto;
-	}
 `;
 
 const CheckoutSummaryPayButtonSlot = styled.div`
