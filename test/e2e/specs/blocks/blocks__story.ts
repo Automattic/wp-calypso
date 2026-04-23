@@ -7,6 +7,7 @@ import {
 	DataHelper,
 	MediaHelper,
 	EditorPage,
+	ElementHelper,
 	TestAccount,
 	StoryBlock,
 	envVariables,
@@ -72,7 +73,11 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Jetpack Story' ), function () {
 		// `getByRole('main')` resolves, which will fail with the Story
 		// block due to https://github.com/Automattic/jetpack/issues/32976.
 		const postURL = await editorPage.publish();
-		await page.goto( postURL.href );
+		await page.goto( postURL.href, { waitUntil: 'domcontentloaded' } );
+
+		await ElementHelper.reloadAndRetry( page, async function ( page: Page ): Promise< void > {
+			await page.locator( '.wp-story' ).waitFor();
+		} );
 	} );
 
 	it( 'Validate the published post', async function () {

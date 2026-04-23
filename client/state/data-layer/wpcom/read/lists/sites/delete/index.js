@@ -1,5 +1,6 @@
 import { translate } from 'i18n-calypso';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { invalidateUserListItemsQuery } from 'calypso/state/data-layer/wpcom/read/lists/utils';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -20,6 +21,8 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/sites/delete/index.js', {
 					action
 				),
 			onSuccess: ( action ) => {
+				invalidateUserListItemsQuery( action.listOwner, action.listSlug );
+
 				// Support custom success messages
 				const successMessage =
 					action.successMessage || translate( 'Site removed from list successfully.' );

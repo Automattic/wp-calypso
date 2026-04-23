@@ -1,0 +1,201 @@
+/* Card */
+@mixin dashboard-dark-theme-card {
+	.components-surface.components-card {
+		background-color: var( --dashboard-surface__background-color );
+		color: var( --dashboard__text-color );
+		box-shadow: inset 0 0 0 1px var( --dashboard-surface__border-color );
+	}
+}
+
+/* Form Controls */
+@mixin dashboard-dark-theme-form-controls {
+	.components-input-control__container {
+		color: var( --dashboard__text-color );
+	}
+
+	.components-input-control__container:has( .components-input-control__input:disabled ) {
+		background-color: var( --dashboard-surface__background-color );
+		opacity: 0.72;
+	}
+
+	.components-input-control__backdrop,
+	.components-textarea-control__input {
+		border-color: var( --dashboard-field__border-color );
+	}
+
+	.components-input-control__backdrop {
+		background-color: transparent;
+	}
+
+	.components-input-control__container:has( .components-input-control__input:disabled )
+		.components-input-control__backdrop {
+		border-color: var( --dashboard-surface__border-color );
+	}
+
+	.components-input-control__input,
+	.components-textarea-control__input,
+	.components-base-control__label,
+	.components-input-control__label,
+	.components-checkbox-control__label {
+		color: var( --dashboard__text-color );
+	}
+
+	.components-base-control__help,
+	.components-checkbox-control__help {
+		color: var( --dashboard__text-muted-color );
+	}
+
+	.components-input-control__container .components-input-control__input,
+	.components-input-control__input,
+	.components-textarea-control__input {
+		color: var( --dashboard__text-color );
+		caret-color: var( --dashboard__text-color );
+	}
+
+	.components-input-control__container .components-input-control__input:disabled,
+	.components-input-control__input:disabled {
+		color: var( --dashboard__text-muted-color );
+	}
+
+	.components-input-control__input::placeholder,
+	.components-textarea-control__input::placeholder {
+		color: var( --dashboard__text-muted-color );
+	}
+
+	.components-input-control__container .components-input-control__input::selection,
+	.components-input-control__input::selection,
+	.components-textarea-control__input::selection {
+		background-color: var( --wp-admin-theme-color );
+		color: #fff;
+		-webkit-text-fill-color: #fff;
+	}
+
+	.components-input-control__container .components-input-control__input::-moz-selection,
+	.components-input-control__input::-moz-selection,
+	.components-textarea-control__input::-moz-selection {
+		background-color: var( --wp-admin-theme-color );
+		color: #fff;
+	}
+
+	.components-input-control.has-error .components-input-control__backdrop,
+	.components-input-control.has-error
+		.components-input-control__input:focus
+		+ .components-input-control__backdrop {
+		border-color: var( --dashboard-danger__color );
+	}
+
+	.components-input-control.has-error .components-base-control__help {
+		color: var( --dashboard-danger__color-hover );
+	}
+
+	.components-input-control.has-error .components-base-control__help svg {
+		fill: var( --dashboard-danger__color-hover );
+	}
+
+	.components-validated-control:has( :is( input, select ):invalid[data-validity-visible] )
+		.components-input-control__backdrop,
+	.components-validated-control__wrapper-with-error-delegate:has(
+			select:invalid[data-validity-visible]
+		)
+		.components-input-control__backdrop {
+		border-color: var( --dashboard-danger__color );
+	}
+
+	.components-validated-control__indicator.is-invalid {
+		color: var( --dashboard-danger__color-hover );
+	}
+
+	.components-validated-control__indicator.is-invalid
+		.components-validated-control__indicator-icon {
+		fill: var( --dashboard-danger__color-hover );
+	}
+}
+
+/* Muted Text */
+@mixin dashboard-dark-theme-muted-text {
+	.components-text[class*='-muted'] {
+		color: var( --dashboard__text-muted-color, #bdbdbd );
+	}
+}
+
+/* Destructive Secondary Button */
+@mixin dashboard-dark-theme-destructive-secondary-button {
+	.components-button.is-secondary.is-destructive:not( :disabled ) {
+		--wp-components-color-accent: var( --dashboard-danger__color );
+		--wp-components-color-accent-darker-10: var( --dashboard-danger__color-hover );
+		--wp-components-color-accent-darker-20: var( --dashboard-danger__color-active );
+	}
+}
+
+// :root variables overridden for dark theme
+@mixin dashboard-dark-theme {
+	// Overrides the default `--wp-components-color-foreground` to ensure all components that rely on it adapt to the dark theme's text color.
+	--wp-components-color-foreground: var( --dashboard__text-color );
+	--wp-components-color-background: var( --dashboard-surface__background-color );
+	// Theme
+	--wp-admin-theme-color: #5b8ef7;
+	--wp-admin-theme-color--rgb: 91, 142, 247;
+	--wp-admin-theme-color-darker-10: #7ba5f9;
+	--wp-admin-theme-color-darker-10--rgb: 123, 165, 249;
+	--wp-admin-theme-color-darker-20: #9bbcfb;
+	--wp-admin-theme-color-darker-20--rgb: 155, 188, 251;
+
+	// Layout
+	--dashboard__background-color: #1e1e1e;
+	--dashboard__text-color: #e0e0e0;
+	--dashboard-header__background-color: rgba( 30, 30, 30, 0.9 );
+	--dashboard-header__color: #e0e0e0;
+	--dashboard-header__border-color: #2f2f2f;
+	--dashboard-header__divider-color: #3a3a3a;
+
+	// Shared surfaces and controls
+	--dashboard-surface__background-color: #2a2a2a;
+	--dashboard-surface__border-color: #4a4a4a;
+	--dashboard-field__border-color: #949494;
+	--dashboard__text-muted-color: #bdbdbd;
+	--dashboard-subtle__color: #bdbdbd;
+	--dashboard-warning__background-color: rgba( 212, 118, 8, 0.18 );
+	--dashboard-warning__border-color: var( --dashboard__background-color-warning );
+	--dashboard-warning__action-color: var( --dashboard__text-color );
+	--dashboard-warning__action-color-hover: #f0f0f0;
+	--dashboard-warning__action-color-active: #fff;
+	--dashboard-danger__color: #ff8080;
+
+	--dashboard-danger__color-hover: #ff9b9b;
+	--dashboard-danger__color-active: #ffb3b3;
+
+	// Menu
+	--dashboard-menu-item__color: #bdbdbd;
+	--dashboard-menu-item-active__color: #fff;
+
+	// Secondary menu
+	--dashboard-secondary-menu-item__color: #e0e0e0;
+
+	// Overview
+	--dashboard-overview__divider-color: #2f2f2f;
+
+	// Jetpack grayscale, inverted so darker numbers render as lighter shades on dark.
+	// `--jp-black` / `--jp-white` stay literal — they're brand constants, and many usages
+	// (white text on colored bg, black outlines) depend on them being literal.
+	--jp-black-80: #e0e0e0;
+	--jp-white-off: #2a2a2a;
+	--jp-gray: #3a3a3a;
+	--jp-gray-0: #2a2a2a;
+	--jp-gray-5: #3a3a3a;
+	--jp-gray-10: #4a4a4a;
+	--jp-gray-20: #5a5a5a;
+	--jp-gray-30: #757575;
+	--jp-gray-40: #8a8a8a;
+	--jp-gray-50: #a0a0a0;
+	--jp-gray-60: #b0b0b0;
+	--jp-gray-70: #bdbdbd;
+	--jp-gray-80: #e0e0e0;
+	--jp-gray-90: #eaeaea;
+	--jp-gray-100: #f0f0f0;
+	--jp-gray-off: #2a2a2a;
+
+	@include dashboard-dark-theme-card;
+	@include dashboard-dark-theme-form-controls;
+	@include dashboard-dark-theme-muted-text;
+	@include dashboard-dark-theme-destructive-secondary-button;
+}
