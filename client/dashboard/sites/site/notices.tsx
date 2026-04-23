@@ -87,7 +87,7 @@ export function getJetpackCriticalErrorMessage( site: Site ): ReactNode | null {
 				'Your site is in recovery mode. Resume the session in <wpAdminLink/>, or check your site admin email inbox for the recovery link.'
 			),
 			{
-				wpAdminLink: adminUrl ? <a href={ adminUrl }>WP Admin</a> : <span>WP Admin</span>,
+				wpAdminLink: adminUrl ? <a href={ adminUrl }>{ __( 'WP Admin' ) }</a> : <span>{ __( 'WP Admin' ) }</span>,
 			}
 		);
 	}
