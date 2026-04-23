@@ -1,0 +1,23 @@
+import { Icon, plus } from '@wordpress/icons';
+import { MenuItem, MenuItemLink } from 'calypso/reader/sidebar/menu';
+
+interface SocialAddAccountMenuItemProps {
+	label: string;
+	href: string;
+	icon?: React.ComponentProps< typeof Icon >[ 'icon' ];
+}
+
+export function SocialAddAccountMenuItem( {
+	label,
+	href,
+	icon = plus,
+}: SocialAddAccountMenuItemProps ) {
+	return (
+		<MenuItem className="sidebar-social__add-account-item">
+			<MenuItemLink className="sidebar__menu-link" href={ href }>
+				<Icon icon={ icon } size={ 22 } />
+				<div className="sidebar__menu-item-title">{ label }</div>
+			</MenuItemLink>
+		</MenuItem>
+	);
+}
