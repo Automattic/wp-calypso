@@ -7,22 +7,21 @@
 		display: grid;
 		grid-template-columns: 1fr;
 		gap: 16px;
-		margin-top: 16px;
 
 		@include break-small() {
 			grid-template-columns: 1fr 1fr;
-			margin-top: 26px;
 		}
 	}
 
 	.achievement-card {
-		border: 1px solid var( --color-border-subtle );
-		border-radius: 8px;
+		border-bottom: 1px solid var( --color-border-subtle );
 		display: flex;
 		gap: 16px;
-		padding: 16px;
+		padding: 14px 0;
 
 		@include break-small() {
+			border: 1px solid var( --color-border-subtle );
+			border-radius: 8px;
 			padding: 24px;
 		}
 	}
