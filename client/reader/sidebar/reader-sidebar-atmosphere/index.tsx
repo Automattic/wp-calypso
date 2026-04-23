@@ -21,16 +21,13 @@ const CONNECT_PATH = `${ BASE_PATH }/connect`;
 
 /**
  * Extract the numeric connection id from a path shaped like
- * `/reader/atmosphere/:id(/:tab)?`. Returns null for paths that do not match
- * (e.g. `/reader/atmosphere`, `/reader/atmosphere/connect`, or any non-atmosphere path).
+ * `/reader/atmosphere/:id(/:tab)?`. The id segment must be all digits —
+ * fuzzy prefixes like `/reader/atmosphere/1bogus` do not match. Returns null
+ * for any path that does not match (e.g. `/reader/atmosphere/connect`).
  */
 function getActiveConnectionId( path: string ): number | null {
-	if ( ! path.startsWith( `${ BASE_PATH }/` ) ) {
-		return null;
-	}
-	const rest = path.slice( BASE_PATH.length + 1 ).split( '/' )[ 0 ];
-	const n = Number.parseInt( rest, 10 );
-	return Number.isFinite( n ) && n > 0 ? n : null;
+	const match = path.match( /^\/reader\/atmosphere\/(\d+)(?:\/|$)/ );
+	return match ? Number( match[ 1 ] ) : null;
 }
 
 /**
@@ -137,7 +134,7 @@ export function ReaderSidebarAtmosphere( { path }: Props ) {
 				onClick={ handleMainClick }
 				expandableIconClick={ () => setIsOpen( ! isOpen ) }
 				disableFlyout
-				className={ isOnAtmosphere ? 'sidebar__menu--selected' : undefined }
+				className={ ! isOpen ? 'sidebar__menu--selected' : undefined }
 			>
 				{ connections.map( ( connection ) => (
 					<AtmosphereSidebarRow

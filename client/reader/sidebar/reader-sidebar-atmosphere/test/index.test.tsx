@@ -132,8 +132,8 @@ describe( 'ReaderSidebarAtmosphere', () => {
 
 		// Avatars are presentational (alt=""), so query the <img> directly by src.
 		await waitFor( () => {
-			expect( container.querySelector( 'img[src="https://cdn/1.png"]' ) ).not.toBeNull();
-			expect( container.querySelector( 'img[src="https://cdn/2.png"]' ) ).not.toBeNull();
+			expect( container.querySelector( 'img[src="https://cdn/1.png"]' ) ).toBeVisible();
+			expect( container.querySelector( 'img[src="https://cdn/2.png"]' ) ).toBeVisible();
 		} );
 
 		// Add account link present.
