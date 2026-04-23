@@ -103,7 +103,7 @@ export function JetpackCriticalErrorNotice( { message }: { message: ReactNode } 
 	return (
 		<Notice
 			variant="error"
-			title={ __( 'Your Jetpack site can not be reached at this time.' ) }
+		 __( 'Your Jetpack site can not be reached at this time' ) }
 			actions={
 				<ExternalLink
 					href={ localizeUrl(
