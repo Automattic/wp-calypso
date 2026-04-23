@@ -471,6 +471,20 @@ export function isTieredVolumeSpaceAddon( product: ObjectWithProductSlug ): bool
 	return product.product_slug === PRODUCT_1GB_SPACE;
 }
 
+const SPACE_UPGRADE_SLUGS = [
+	'1gb_space_upgrade',
+	'5gb_space_upgrade',
+	'10gb_space_upgrade',
+	'50gb_space_upgrade',
+	'100gb_space_upgrade',
+];
+
+export function isStorageUpgrade( purchase: Purchase ): boolean {
+	return (
+		SPACE_UPGRADE_SLUGS.includes( purchase.product_slug ) || isTieredVolumeSpaceAddon( purchase )
+	);
+}
+
 /**
  * Checks if a product is a Jetpack Search product.
  */
