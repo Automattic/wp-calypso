@@ -1,7 +1,8 @@
 import moment from 'moment';
 import Notice from 'calypso/components/notice';
+import { getTopNoticeCopy } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/get-confirmation-copy';
 import { isPartnerPurchase } from 'calypso/lib/purchases';
-import { getTopNoticeCopy } from './get-confirmation-copy';
+import { toPurchaseForCopy } from './to-purchase-for-copy';
 import type { Purchases } from '@automattic/data-stores';
 import type { CancelIntent, DisplayVariant } from 'calypso/lib/purchases/utils';
 
@@ -26,7 +27,10 @@ export default function TimeRemainingNotice( {
 		return null;
 	}
 
-	const copy = getTopNoticeCopy( { purchase, intent: intent ?? 'cancel' } );
+	const copy = getTopNoticeCopy( {
+		purchase: toPurchaseForCopy( purchase ),
+		intent: intent ?? 'cancel',
+	} );
 	if ( ! copy ) {
 		return null;
 	}

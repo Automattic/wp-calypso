@@ -1,14 +1,30 @@
+import { AkismetPlans, TitanMailSlugs } from '@automattic/api-core';
 import { _n, __, sprintf } from '@wordpress/i18n';
 import { intervalToDuration } from 'date-fns';
-import {
-	isAkismetProduct,
-	isGSuiteOrGoogleWorkspaceProductSlug,
-	isMarketplacePlugin,
-	isOneTimePurchase,
-	isTitanMail,
-	CancelIntent,
-} from '../../../utils/purchase';
-import type { Purchase } from '@automattic/api-core';
+import { isGSuiteOrGoogleWorkspaceProductSlug, CancelIntent } from '../../../utils/purchase';
+
+/**
+ * Minimal purchase shape the confirmation copy depends on. Both surfaces
+ * (dashboard `Purchase` from `@automattic/api-core`; legacy `Purchases.Purchase`
+ * from `@automattic/data-stores`) adapt to this shape so the copy helper
+ * itself is surface-agnostic. The dashboard Purchase is structurally
+ * assignable; the legacy side uses the adapter in
+ * `client/me/purchases/cancel-purchase/to-purchase-for-copy.ts`.
+ */
+export type PurchaseForCopy = {
+	is_plan: boolean;
+	is_domain_registration: boolean;
+	is_jetpack_plan_or_product: boolean;
+	product_slug: string;
+	product_name: string;
+	product_type: string;
+	expiry_date: string;
+	// Only the 'one-time-purchase' sentinel is inspected; anything else falls
+	// through to the non-one-time branches.
+	expiry_status: string;
+	meta?: string;
+	domain: string;
+};
 
 /**
  * Product-type buckets for confirmation-screen copy. Each bucket maps to a
@@ -24,8 +40,23 @@ export type ProductCategory =
 	| 'one-time'
 	| 'other';
 
-export function getProductCategory( purchase: Purchase ): ProductCategory {
-	if ( isOneTimePurchase( purchase ) ) {
+function isTitanMailSlug( productSlug: string ): boolean {
+	return (
+		productSlug === TitanMailSlugs.TITAN_MAIL_MONTHLY_SLUG ||
+		productSlug === TitanMailSlugs.TITAN_MAIL_YEARLY_SLUG
+	);
+}
+
+function isAkismetProductSlug( productSlug: string ): boolean {
+	return ( Object.values( AkismetPlans ) as readonly string[] ).includes( productSlug );
+}
+
+function isMarketplacePluginProductType( productType: string ): boolean {
+	return productType.startsWith( 'marketplace' ) || productType === 'saas_plugin';
+}
+
+export function getProductCategory( purchase: PurchaseForCopy ): ProductCategory {
+	if ( purchase.expiry_status === 'one-time-purchase' ) {
 		return 'one-time';
 	}
 	if ( purchase.is_plan ) {
@@ -34,16 +65,19 @@ export function getProductCategory( purchase: Purchase ): ProductCategory {
 	if ( purchase.is_domain_registration ) {
 		return 'domain';
 	}
-	if ( isGSuiteOrGoogleWorkspaceProductSlug( purchase.product_slug ) || isTitanMail( purchase ) ) {
+	if (
+		isGSuiteOrGoogleWorkspaceProductSlug( purchase.product_slug ) ||
+		isTitanMailSlug( purchase.product_slug )
+	) {
 		return 'email';
 	}
-	if ( isAkismetProduct( purchase ) ) {
+	if ( isAkismetProductSlug( purchase.product_slug ) ) {
 		return 'akismet';
 	}
 	if ( purchase.is_jetpack_plan_or_product ) {
 		return 'jetpack';
 	}
-	if ( isMarketplacePlugin( purchase ) ) {
+	if ( isMarketplacePluginProductType( purchase.product_type ) ) {
 		return 'marketplace';
 	}
 	return 'other';
@@ -122,7 +156,7 @@ export function formatTimeRemaining( expiryDate: string | Date, from: Date = new
 }
 
 type ConfirmationCopyArgs = {
-	purchase: Purchase;
+	purchase: PurchaseForCopy;
 	intent: CancelIntent;
 };
 
@@ -215,7 +249,7 @@ export function getTopNoticeCopy( { purchase, intent }: ConfirmationCopyArgs ): 
  * Form: "Your {category} will expire on {date} and you’ll lose access to:"
  * Falls back to a date-less form when no expiry is available.
  */
-export function getCancelLossIntro( purchase: Purchase, fullExpiryDate: string ): string {
+export function getCancelLossIntro( purchase: PurchaseForCopy, fullExpiryDate: string ): string {
 	const category = getProductCategory( purchase );
 	if ( ! fullExpiryDate ) {
 		return __( 'You’ll lose access to:' );
@@ -255,7 +289,7 @@ export function getCancelLossIntro( purchase: Purchase, fullExpiryDate: string )
  * of things being removed right now (vs. the Cancel variant, which frames it
  * as a future loss).
  */
-export function getRemoveLossIntro( purchase: Purchase ): string {
+export function getRemoveLossIntro( purchase: PurchaseForCopy ): string {
 	const category = getProductCategory( purchase );
 	const productName = purchase.product_name;
 	switch ( category ) {
@@ -286,7 +320,10 @@ export function getRemoveLossIntro( purchase: Purchase ): string {
  * the heading. Uses the expiry date when available; falls back to a date-less
  * form for partner-managed or already-expired purchases.
  */
-export function getSingleItemCancelCopy( purchase: Purchase, fullExpiryDate: string ): string {
+export function getSingleItemCancelCopy(
+	purchase: PurchaseForCopy,
+	fullExpiryDate: string
+): string {
 	const category = getProductCategory( purchase );
 	if ( ! fullExpiryDate ) {
 		switch ( category ) {
@@ -353,7 +390,7 @@ export function getSingleItemCancelCopy( purchase: Purchase, fullExpiryDate: str
  * item. Domain removals use the domain name; everything else uses the product
  * name.
  */
-export function getSingleItemRemoveCopy( purchase: Purchase ): string {
+export function getSingleItemRemoveCopy( purchase: PurchaseForCopy ): string {
 	if ( purchase.is_domain_registration ) {
 		return sprintf(
 			/* translators: %(domainName)s is the domain name being removed, e.g. "example.com" */
@@ -380,7 +417,7 @@ export function getRefundNoticeCopy( {
 	purchase,
 	refundAmount,
 }: {
-	purchase: Purchase;
+	purchase: PurchaseForCopy;
 	refundAmount: string;
 } ): string {
 	const category = getProductCategory( purchase );
@@ -470,7 +507,7 @@ export function getButtonLabels( { purchase, intent }: ConfirmationCopyArgs ): {
  * One-item fallback losses list for products without a server-provided
  * cancellation features list.
  */
-export function getFallbackLossItems( purchase: Purchase ): string[] {
+export function getFallbackLossItems( purchase: PurchaseForCopy ): string[] {
 	const category = getProductCategory( purchase );
 	const productName = purchase.product_name;
 	switch ( category ) {

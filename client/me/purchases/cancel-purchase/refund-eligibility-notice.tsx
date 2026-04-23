@@ -1,7 +1,8 @@
 import { useTranslate } from 'i18n-calypso';
 import Notice from 'calypso/components/notice';
+import { getRefundNoticeCopy } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/get-confirmation-copy';
 import CancelPurchaseButton from './button';
-import { getRefundNoticeCopy } from './get-confirmation-copy';
+import { toPurchaseForCopy } from './to-purchase-for-copy';
 import type { CancelPurchaseButtonProps } from './button';
 import type { Purchases } from '@automattic/data-stores';
 import type moment from 'moment';
@@ -31,7 +32,7 @@ const RefundEligibilityNotice = ( props: RefundEligibilityNoticeProps ) => {
 			<Notice className="cancel-purchase__refund-eligibility-notice" showDismiss={ false }>
 				<p className="cancel-purchase__refund-eligibility-text">
 					{ getRefundNoticeCopy( {
-						purchase: props.purchase,
+						purchase: toPurchaseForCopy( props.purchase ),
 						refundAmount: props.refundAmount,
 					} ) }
 				</p>

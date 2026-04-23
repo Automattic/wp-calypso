@@ -6,7 +6,8 @@ import {
 	getRemoveLossIntro,
 	getSingleItemCancelCopy,
 	getSingleItemRemoveCopy,
-} from './get-confirmation-copy';
+} from 'calypso/dashboard/me/billing-purchases/cancel-purchase/get-confirmation-copy';
+import { toPurchaseForCopy } from './to-purchase-for-copy';
 import type { CancellationFeature } from '@automattic/api-core';
 import type { Purchases } from '@automattic/data-stores';
 import type { DisplayVariant } from 'calypso/lib/purchases/utils';
@@ -20,13 +21,14 @@ const CancelPurchaseFeatureList = ( {
 	displayVariant: DisplayVariant;
 	cancellationFeatures: CancellationFeature[];
 } ) => {
+	const adapted = toPurchaseForCopy( purchase );
 	// When the server returns no features, fall back to a per-product-type item.
 	const items: Array< { key: string; title: string } > = cancellationFeatures.length
 		? cancellationFeatures.map( ( feature ) => ( {
 				key: feature.feature_id,
 				title: feature.title,
 		  } ) )
-		: getFallbackLossItems( purchase ).map( ( title, idx ) => ( {
+		: getFallbackLossItems( adapted ).map( ( title, idx ) => ( {
 				key: `fallback-${ idx }`,
 				title,
 		  } ) );
@@ -43,8 +45,8 @@ const CancelPurchaseFeatureList = ( {
 	if ( items.length === 1 ) {
 		const singleItemCopy =
 			displayVariant === 'remove'
-				? getSingleItemRemoveCopy( purchase )
-				: getSingleItemCancelCopy( purchase, fullExpiryDate );
+				? getSingleItemRemoveCopy( adapted )
+				: getSingleItemCancelCopy( adapted, fullExpiryDate );
 		return (
 			<div className="cancel-purchase__features">
 				<p>{ singleItemCopy }</p>
@@ -54,8 +56,8 @@ const CancelPurchaseFeatureList = ( {
 
 	const intro =
 		displayVariant === 'remove'
-			? getRemoveLossIntro( purchase )
-			: getCancelLossIntro( purchase, fullExpiryDate );
+			? getRemoveLossIntro( adapted )
+			: getCancelLossIntro( adapted, fullExpiryDate );
 
 	return (
 		<div className="cancel-purchase__features">

@@ -31,6 +31,11 @@ import HeaderCakeBack from 'calypso/components/header-cake/back';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purchase-form';
 import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-purchase-form/constants';
+import {
+	getCancellationHeading,
+	getCheckboxLabel,
+	getButtonLabels,
+} from 'calypso/dashboard/me/billing-purchases/cancel-purchase/get-confirmation-copy';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { useExperiment } from 'calypso/lib/explat';
 import {
@@ -71,9 +76,9 @@ import AtomicRevertChanges from './atomic-revert-changes';
 import CancelPurchaseButton from './button';
 import CancelPurchaseDomainOptions, { willShowDomainOptionsRadioButtons } from './domain-options';
 import CancelPurchaseFeatureList from './feature-list';
-import { getCancellationHeading, getCheckboxLabel, getButtonLabels } from './get-confirmation-copy';
 import RefundEligibilityNotice from './refund-eligibility-notice';
 import TimeRemainingNotice from './time-remaining-notice';
+import { toPurchaseForCopy } from './to-purchase-for-copy';
 import type { CancellationFeature } from '@automattic/api-core';
 import type { Purchases, SiteDetails } from '@automattic/data-stores';
 import type { GetManagePurchaseUrlFor } from 'calypso/lib/purchases/types';
@@ -680,7 +685,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 	renderKeepSubscriptionButton = () => {
 		const { purchase, siteSlug } = this.props;
 		const label = getButtonLabels( {
-			purchase,
+			purchase: toPurchaseForCopy( purchase ),
 			intent: this.props.intent === 'remove' ? 'remove' : 'cancel',
 		} ).secondary;
 
@@ -905,7 +910,10 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		const { siteName, siteId } = purchase;
 
 		const displayVariant: 'cancel' | 'remove' = intent === 'remove' ? 'remove' : 'cancel';
-		const heading = getCancellationHeading( { purchase, intent: displayVariant } );
+		const heading = getCancellationHeading( {
+			purchase: toPurchaseForCopy( purchase ),
+			intent: displayVariant,
+		} );
 
 		// When a plan has an included domain that can be cancelled together,
 		// show the higher (full) refund amount in the notice since the user

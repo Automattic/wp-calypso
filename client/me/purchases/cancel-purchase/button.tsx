@@ -14,6 +14,7 @@ import CancelJetpackForm from 'calypso/components/marketing-survey/cancel-jetpac
 import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purchase-form';
 import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-purchase-form/constants';
 import DomainCancellationSurvey from 'calypso/components/marketing-survey/cancel-purchase-form/domain-cancellation-survey';
+import { getButtonLabels } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/get-confirmation-copy';
 import { getName } from 'calypso/lib/purchases';
 import { getPurchaseCancellationFlowType } from 'calypso/lib/purchases/utils';
 import { purchasesRoot } from 'calypso/me/purchases/paths';
@@ -22,7 +23,7 @@ import { clearPurchases } from 'calypso/state/purchases/actions';
 import { refreshSitePlans } from 'calypso/state/sites/plans/actions';
 import { MarketPlaceSubscriptionsDialog } from '../marketplace-subscriptions-dialog';
 import { willShowDomainOptionsRadioButtons } from './domain-options';
-import { getButtonLabels } from './get-confirmation-copy';
+import { toPurchaseForCopy } from './to-purchase-for-copy';
 import type { Purchases } from '@automattic/data-stores';
 import type { LocalizeProps } from 'i18n-calypso';
 
@@ -161,7 +162,7 @@ class CancelPurchaseButton extends Component<
 			}
 
 			return getButtonLabels( {
-				purchase,
+				purchase: toPurchaseForCopy( purchase ),
 				intent: this.props.displayVariant === 'remove' ? 'remove' : 'cancel',
 			} ).primary;
 		} )();
