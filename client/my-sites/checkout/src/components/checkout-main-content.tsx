@@ -927,8 +927,8 @@ export default function CheckoutMainContent( {
 					) }
 					{ checkoutSummary }
 					{ checkoutMainContent }
+					<CheckoutTrustCards cart={ responseCart } />
 				</WPCheckoutWrapper>
-				<CheckoutTrustCards cart={ responseCart } />
 			</SubmitButtonSlotContext.Provider>
 		);
 	}
@@ -1695,26 +1695,30 @@ const WPCheckoutWrapper = styled.div< {
 } >`
 	background: ${ colorStudio.colors[ 'White' ] };
 	display: grid;
-	grid-template-rows: auto;
+	grid-template-rows: auto auto;
 	grid-template-columns: 1fr;
-	grid-template-areas: 'sidebar-content' 'main-content';
+	grid-template-areas: 'sidebar-content' 'main-content' 'trust-cards';
+	align-content: start;
 	justify-content: center;
 	justify-items: center;
 	min-height: 100vh;
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		grid-template-columns: 1fr minmax( 500px, 688px ) 475px 1fr;
-		grid-template-areas: 'main-content main-content sidebar-content sidebar-content';
+		grid-template-areas:
+			'main-content main-content sidebar-content sidebar-content'
+			'trust-cards trust-cards trust-cards trust-cards';
 		justify-items: end;
 	}
 
 	& > * {
 		box-sizing: border-box;
 		width: 100%;
+	}
 
-		@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
-			min-height: 100vh;
-		}
+	& > .checkout-trust-cards {
+		grid-area: trust-cards;
+		justify-self: center;
 	}
 
 	& *:focus {
@@ -2089,7 +2093,6 @@ const WPCheckoutCompletedWrapper = styled.div`
 const WPCheckoutMainContent = styled.div`
 	grid-area: main-content;
 	margin-top: 50px;
-	min-height: 100vh;
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		padding: 0 24px;

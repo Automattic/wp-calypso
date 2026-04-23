@@ -35,7 +35,6 @@ import {
 } from '@automattic/wpcom-checkout';
 import { css, keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Icon, reusableBlock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import { hasFreeCouponTransfersOnly } from 'calypso/lib/cart-values/cart-items';
@@ -52,10 +51,10 @@ import getJetpackProductFeatures from '../lib/get-jetpack-product-features';
 import getPlanFeatures from '../lib/get-plan-features';
 import { useSubmitButtonSlot } from '../lib/submit-button-slot';
 import { CheckIcon } from './check-icon';
+import CheckoutPayButtonFooter from './checkout-pay-button-footer';
+import { CheckoutSummaryRefundWindows } from './checkout-summary-refund-windows';
 import { ProductsAndCostOverridesList } from './cost-overrides-list';
-import { getRefundPolicies, getRefundWindows, RefundPolicy } from './refund-policies';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
-import type { TranslateResult } from 'i18n-calypso';
 
 // This will make converting to TS less noisy. The order of components can be reorganized later
 /* eslint-disable @typescript-eslint/no-use-before-define */
@@ -63,16 +62,6 @@ import type { TranslateResult } from 'i18n-calypso';
 const PALETTE = colorStudio.colors;
 const COLOR_GRAY_40 = PALETTE[ 'Gray 40' ];
 const COLOR_GREEN_60 = PALETTE[ 'Green 60' ];
-
-const StyledIcon = styled( Icon )`
-	fill: '#1E1E1E';
-	margin-right: 0.3em;
-
-	.rtl & {
-		margin-right: 0;
-		margin-left: 0.3em;
-	}
-`;
 
 export function WPCheckoutOrderSummary( {
 	onChangeSelection,
@@ -257,6 +246,7 @@ function CheckoutSummaryPriceList() {
 					ref={ setSlotEl }
 					className="wp-checkout-order-summary__pay-button-slot"
 				/>
+				<CheckoutPayButtonFooter cart={ responseCart } />
 			</CheckoutSummaryAmountWrapper>
 		</>
 	);
@@ -298,119 +288,7 @@ function SwitchToAnnualPlan( {
 	return <SwitchToAnnualPlanButton onClick={ handleClick }>{ text }</SwitchToAnnualPlanButton>;
 }
 
-const CheckoutSummaryRefundWindowsContainer = styled.p`
-	margin: 0;
-	padding: 0;
-`;
-
-export function CheckoutSummaryRefundWindows( {
-	cart,
-	highlight = false,
-	includeRefundIcon,
-}: {
-	cart: ResponseCart;
-	highlight?: boolean;
-	includeRefundIcon?: boolean;
-} ) {
-	const translate = useTranslate();
-
-	const refundPolicies = getRefundPolicies( cart );
-	const refundWindows = getRefundWindows( refundPolicies );
-
-	if ( ! refundWindows.length || refundPolicies.includes( RefundPolicy.NonRefundable ) ) {
-		return null;
-	}
-
-	const allCartItemsAreDomains = refundPolicies.every(
-		( refundPolicy ) =>
-			refundPolicy === RefundPolicy.DomainNameRegistration ||
-			refundPolicy === RefundPolicy.DomainNameRegistrationBundled ||
-			refundPolicy === RefundPolicy.DomainNameRenewal
-	);
-
-	if ( allCartItemsAreDomains ) {
-		return null;
-	}
-
-	const allCartItemsAreMonthlyPlanBundle = refundPolicies.every(
-		( refundPolicy ) =>
-			refundPolicy === RefundPolicy.DomainNameRegistration ||
-			refundPolicy === RefundPolicy.PlanMonthlyBundle
-	);
-
-	const allCartItemsArePlanOrDomainRenewals = refundPolicies.every(
-		( refundPolicy ) =>
-			refundPolicy === RefundPolicy.DomainNameRenewal ||
-			refundPolicy === RefundPolicy.PlanMonthlyRenewal ||
-			refundPolicy === RefundPolicy.PlanYearlyRenewal ||
-			refundPolicy === RefundPolicy.PlanBiennialRenewal
-	);
-
-	let text: TranslateResult;
-
-	if ( refundWindows.length === 1 ) {
-		const refundWindow = refundWindows[ 0 ];
-		const planBundleRefundPolicy = refundPolicies.find(
-			( refundPolicy ) =>
-				refundPolicy === RefundPolicy.PlanBiennialBundle ||
-				refundPolicy === RefundPolicy.PlanYearlyBundle
-		);
-		const planProduct = cart.products.find( isPlan );
-
-		if ( planBundleRefundPolicy ) {
-			// Using plural translation because some languages have multiple plural forms and no plural-agnostic.
-			text = translate(
-				'%(days)d-day money back guarantee for %(product)s',
-				'%(days)d-day money back guarantee for %(product)s',
-				{
-					count: refundWindow,
-					args: {
-						days: refundWindow,
-						product: planProduct?.product_name ?? '',
-					},
-				}
-			);
-		} else {
-			text = translate( '%(days)d-day money back guarantee', '%(days)d-day money back guarantee', {
-				count: refundWindow,
-				args: { days: refundWindow },
-			} );
-		}
-	} else if ( allCartItemsAreMonthlyPlanBundle || allCartItemsArePlanOrDomainRenewals ) {
-		const refundWindow = Math.max( ...refundWindows );
-		const planProduct = cart.products.find( isPlan );
-
-		text = translate(
-			'%(days)d-day money back guarantee for %(product)s',
-			'%(days)d-day money back guarantee for %(product)s',
-			{
-				count: refundWindow,
-				args: {
-					days: refundWindow,
-					product: planProduct?.product_name ?? '',
-				},
-			}
-		);
-	} else {
-		const shortestRefundWindow = Math.min( ...refundWindows );
-
-		text = translate( '%(days)d-day money back guarantee', '%(days)d-day money back guarantee', {
-			count: shortestRefundWindow,
-			args: { days: shortestRefundWindow },
-			comment: 'The number of days until the shortest refund window in the cart expires.',
-		} );
-	}
-
-	return (
-		<>
-			{ includeRefundIcon && <StyledIcon icon={ reusableBlock } size={ 24 } /> }
-			<CheckoutSummaryRefundWindowsContainer>
-				{ ! includeRefundIcon && <WPCheckoutCheckIcon /> }
-				{ highlight ? <strong>{ text }</strong> : text }
-			</CheckoutSummaryRefundWindowsContainer>
-		</>
-	);
-}
+export { CheckoutSummaryRefundWindows };
 
 export function CheckoutSummaryFeaturesList( props: {
 	siteId: number | undefined;
