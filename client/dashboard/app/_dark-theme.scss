@@ -7,12 +7,27 @@
 		color: var( --dashboard__text-color );
 		box-shadow: inset 0 0 0 1px var( --dashboard-surface__border-color );
 	}
+
+	.components-card__divider {
+		color: var( --dashboard-surface__border-color );
+		border-color: var( --dashboard-surface__border-color );
+	}
 }
 
 /* Form Controls */
 @mixin dashboard-dark-theme-form-controls {
 	.components-input-control__container {
 		color: var( --dashboard__text-color );
+	}
+
+	.components-radio-control__input[type='radio'] {
+		border-color: var( --dashboard-field__border-color );
+		background-color: transparent;
+	}
+
+	.components-radio-control__input[type='radio']:checked {
+		border: 1px solid var( --dashboard-field__border-color );
+		background-color: var( --wp-admin-theme-color );
 	}
 
 	.components-input-control__container:has( .components-input-control__input:disabled ) {
@@ -129,6 +144,75 @@
 	}
 }
 
+/* Breadcrumbs */
+@mixin dashboard-dark-theme-breadcrumbs {
+	.a8c-components-breadcrumbs {
+		.a8c-components-breadcrumbs__item {
+			color: var( --dashboard__text-muted-color );
+
+			&:hover {
+				color: var( --dashboard__text-color );
+			}
+		}
+
+		.a8c-components-breadcrumbs__item-wrapper.is-current .a8c-components-breadcrumbs__item {
+			color: var( --dashboard__text-color );
+		}
+
+		.a8c-components-breadcrumbs__item-wrapper:not( .is-current )::after {
+			color: color-mix(
+				in srgb,
+				var( --dashboard__text-muted-color ) 45%,
+				var( --dashboard__background-color )
+			);
+		}
+	}
+}
+
+/* Summary Buttons */
+@mixin dashboard-dark-theme-summary-button {
+	.summary-button.components-button {
+		color: var( --dashboard__text-color );
+
+		.summary-button-title {
+			color: var( --dashboard__text-color );
+		}
+
+		.summary-button-navigation-icon,
+		.summary-button-decoration svg {
+			fill: var( --dashboard__text-muted-color );
+		}
+
+		&.has-density-low {
+			background-color: var( --dashboard-surface__background-color );
+			border-color: var( --dashboard-surface__border-color );
+		}
+
+		&.has-density-medium,
+		&.has-density-medium-low {
+			border-bottom-color: var( --dashboard-surface__border-color );
+		}
+
+		&:hover:not( :disabled, [aria-disabled='true'] ) {
+			background: color-mix(
+				in srgb,
+				var( --dashboard-surface__background-color ) 82%,
+				var( --wp-admin-theme-color )
+			);
+			color: var( --dashboard__text-color );
+
+			.summary-button-title {
+				color: var( --dashboard-menu-item-active__color );
+			}
+
+			.summary-button-navigation-icon,
+			.summary-button-decoration svg {
+				fill: var( --dashboard-menu-item-active__color );
+			}
+		}
+	}
+}
+
 /* Section Header */
 @mixin dashboard-dark-theme-section-header {
 	.dashboard-section-header__description {
@@ -178,7 +262,7 @@
 		// from `unstyledButton` mixin. Non-clickable Items render as `<div>`
 		// and miss that rule, so their icons in dark-mode keep the SVG's default
 		// dark fill.
-		[ role="listitem" ] svg {
+		[role='listitem'] svg {
 			fill: currentColor;
 		}
 	}
@@ -275,8 +359,8 @@
 	}
 
 	// List
-	.dataviews-view-list div[ role="row" ],
-	.dataviews-view-list div[ role="article" ] {
+	.dataviews-view-list div[role='row'],
+	.dataviews-view-list div[role='article'] {
 		border-top-color: var( --dashboard-surface__border-color );
 	}
 
@@ -293,7 +377,7 @@
 
 		&:hover:not( &.is-not-clickable ),
 		&:focus-visible,
-		&[ aria-expanded="true" ] {
+		&[aria-expanded='true'] {
 			background: var( --wp-components-color-gray-300 );
 			color: var( --wp-components-color-gray-800 );
 		}
@@ -376,6 +460,9 @@
 	// Overview
 	--dashboard-overview__divider-color: #2f2f2f;
 
+	// Shared border tokens
+	--color-border-subtle: var( --dashboard-surface__border-color );
+
 	// Jetpack grayscale, inverted so darker numbers render as lighter shades on dark.
 	// `--jp-black` / `--jp-white` stay literal — they're brand constants, and many usages
 	// (white text on colored bg, black outlines) depend on them being literal.
@@ -397,12 +484,14 @@
 	--jp-gray-off: #2a2a2a;
 
 	@include dashboard-dark-theme-action-list;
+	@include dashboard-dark-theme-breadcrumbs;
 	@include dashboard-dark-theme-card;
 	@include dashboard-dark-theme-dataviews;
 	@include dashboard-dark-theme-destructive-secondary-button;
 	@include dashboard-dark-theme-form-controls;
 	@include dashboard-dark-theme-item-group;
-	@include dashboard-dark-theme-muted-text;
 	@include dashboard-dark-theme-popover;
+	@include dashboard-dark-theme-muted-text;
 	@include dashboard-dark-theme-section-header;
+	@include dashboard-dark-theme-summary-button;
 }
