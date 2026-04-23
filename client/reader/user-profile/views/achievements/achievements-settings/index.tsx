@@ -62,14 +62,14 @@ export default function AchievementsSettings() {
 				if ( data ) {
 					dispatchSuccessNotice( translate( 'The achievements page is now public.' ) );
 					recordAction( 'set_achievements_page_public' );
-					recordReaderTracksEvent( 'calypso_reader_achievements_settings', {
+					recordReaderTracksEvent( 'calypso_reader_achievements_settings_saved', {
 						setting: 'achievements-page-visibility',
 						value: 'public',
 					} );
 				} else {
 					dispatchSuccessNotice( translate( 'The achievements page is now private.' ) );
 					recordAction( 'set_achievements_page_private' );
-					recordReaderTracksEvent( 'calypso_reader_achievements_settings', {
+					recordReaderTracksEvent( 'calypso_reader_achievements_settings_saved', {
 						setting: 'achievements-page-visibility',
 						value: 'private',
 					} );
@@ -88,14 +88,14 @@ export default function AchievementsSettings() {
 				if ( data ) {
 					dispatchSuccessNotice( translate( 'Achievements notifications are now enabled.' ) );
 					recordAction( 'set_achievements_notifications_enabled' );
-					recordReaderTracksEvent( 'calypso_reader_achievements_settings', {
+					recordReaderTracksEvent( 'calypso_reader_achievements_settings_saved', {
 						setting: 'achievements-notifications',
 						value: 'enabled',
 					} );
 				} else {
 					dispatchSuccessNotice( translate( 'Achievements notifications are now disabled.' ) );
 					recordAction( 'set_achievements_notifications_disabled' );
-					recordReaderTracksEvent( 'calypso_reader_achievements_settings', {
+					recordReaderTracksEvent( 'calypso_reader_achievements_settings_saved', {
 						setting: 'achievements-notifications',
 						value: 'disabled',
 					} );
@@ -120,7 +120,13 @@ export default function AchievementsSettings() {
 			renderToggle={ ( { isOpen, onToggle } ) => (
 				<Button
 					className="achievements-settings__button"
-					onClick={ onToggle }
+					onClick={ () => {
+						if ( ! isOpen ) {
+							recordAction( 'open_achievements_settings_popover' );
+							recordReaderTracksEvent( 'calypso_reader_achievements_settings_popover_opened' );
+						}
+						onToggle();
+					} }
 					aria-expanded={ isOpen }
 					icon={ settings }
 					label={ translate( 'Achievement settings' ) }
