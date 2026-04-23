@@ -186,6 +186,13 @@ function SurveyContent( {
 			);
 		}
 
+		const isSplitEnabled = config.isEnabled( 'purchases/split-cancel-remove' );
+		const getUpsellDeclineText = () => {
+			if ( ! isSplitEnabled ) {
+				return intent === 'remove' ? __( 'Remove my current plan' ) : undefined;
+			}
+			return intent === 'remove' ? __( 'Continue removal' ) : __( 'Continue cancellation' );
+		};
 		return (
 			<UpsellStep
 				cancelBundledDomain={ cancelBundledDomain }
@@ -193,7 +200,8 @@ function SurveyContent( {
 				cancellationReason={ questionOneText }
 				closeDialog={ closeDialog }
 				currencyCode={ purchase.currency_code }
-				declineButtonText={ intent === 'remove' ? __( 'Remove my current plan' ) : undefined }
+				declineButtonText={ getUpsellDeclineText() }
+				declineButtonIsDestructive={ isSplitEnabled }
 				downgradePlan={ downgradePlan }
 				includedDomainPurchase={ includedDomainPurchase }
 				onClickDowngrade={ downgradeClick }
@@ -295,6 +303,7 @@ function StepButtons( {
 	clickNext,
 	closeDialog,
 	disableButtons,
+	intent,
 	isSubmitting,
 	onSubmit,
 	solution,
@@ -315,6 +324,32 @@ function StepButtons( {
 	const hasWarningStep =
 		allSteps?.includes( ATOMIC_REVERT_STEP ) || allSteps?.includes( REMOVE_PLAN_STEP );
 
+	const isSplitEnabled = config.isEnabled( 'purchases/split-cancel-remove' );
+	const isRemoveIntent = intent === 'remove';
+	const getContinueLabel = () => {
+		if ( ! isSplitEnabled ) {
+			return __( 'Continue' );
+		}
+		return isRemoveIntent ? __( 'Continue removal' ) : __( 'Continue cancellation' );
+	};
+	const getCompleteLabel = () => {
+		if ( ! isSplitEnabled ) {
+			return __( 'Submit' );
+		}
+		return isRemoveIntent ? __( 'Complete removal' ) : __( 'Complete cancellation' );
+	};
+	const getCompletingLabel = () =>
+		isRemoveIntent ? __( 'Completing removal' ) : __( 'Completing cancellation' );
+	const continueLabel = getContinueLabel();
+	const completeLabel = getCompleteLabel();
+	const completingLabel = getCompletingLabel();
+	const getPrimaryLabel = ( whenReady: string ) => {
+		if ( isSplitEnabled && isCancelling ) {
+			return completingLabel;
+		}
+		return whenReady;
+	};
+
 	if ( surveyStep === UPSELL_STEP ) {
 		return null;
 	}
@@ -322,17 +357,24 @@ function StepButtons( {
 	if ( ! isLastStep ) {
 		return (
 			<ButtonStack justify="flex-start">
-				<Button variant="primary" disabled={ ! canGoNext || isCancelling } onClick={ clickNext }>
-					{ __( 'Continue' ) }
+				<Button
+					variant="primary"
+					isDestructive={ isSplitEnabled }
+					isBusy={ isSplitEnabled && isCancelling }
+					disabled={ ! canGoNext || isCancelling }
+					onClick={ clickNext }
+				>
+					{ getPrimaryLabel( continueLabel ) }
 				</Button>
-				{ ! hasWarningStep && (
+				{ ( isSplitEnabled || ! hasWarningStep ) && (
 					<Button
 						variant="tertiary"
+						isDestructive={ isSplitEnabled }
 						isBusy={ isCancelling }
 						disabled={ isCancelling }
 						onClick={ onSubmit }
 					>
-						{ __( 'Skip' ) }
+						{ isSplitEnabled ? __( 'Skip to complete' ) : __( 'Skip' ) }
 					</Button>
 				) }
 			</ButtonStack>
@@ -346,16 +388,17 @@ function StepButtons( {
 					className="cancel-purchase-form__remove-plan-button"
 					disabled={ ! canGoNext }
 					isBusy={ isCancelling }
+					isDestructive={ isSplitEnabled }
 					onClick={ onSubmit }
 					variant="primary"
 				>
-					{ __( 'Continue' ) }
+					{ getPrimaryLabel( isSplitEnabled ? __( 'Continue removal' ) : __( 'Continue' ) ) }
 				</Button>
 				<Button
 					disabled={ ! canGoNext }
 					isBusy={ isCancelling }
 					onClick={ closeDialog }
-					variant="secondary"
+					variant="tertiary"
 				>
 					{ __( 'Keep plan' ) }
 				</Button>
@@ -381,7 +424,7 @@ function StepButtons( {
 					disabled={ ! canGoNext || disableButtons }
 					isBusy={ isCancelling }
 					onClick={ onSubmit }
-					variant="secondary"
+					variant="tertiary"
 				>
 					{ __( 'No, thanks' ) }
 				</Button>
@@ -396,19 +439,21 @@ function StepButtons( {
 			<Button
 				disabled={ ! canGoNext }
 				isBusy={ isCancelling }
+				isDestructive={ isSplitEnabled && variant === 'primary' }
 				onClick={ onSubmit }
 				variant={ variant }
 			>
-				{ __( 'Submit' ) }
+				{ getPrimaryLabel( completeLabel ) }
 			</Button>
-			{ ! canGoNext && ! hasWarningStep && (
+			{ ! canGoNext && ( isSplitEnabled || ! hasWarningStep ) && (
 				<Button
 					variant="tertiary"
+					isDestructive={ isSplitEnabled }
 					isBusy={ isCancelling }
 					disabled={ isCancelling }
 					onClick={ onSubmit }
 				>
-					{ __( 'Skip' ) }
+					{ isSplitEnabled ? __( 'Skip to complete' ) : __( 'Skip' ) }
 				</Button>
 			) }
 		</ButtonStack>

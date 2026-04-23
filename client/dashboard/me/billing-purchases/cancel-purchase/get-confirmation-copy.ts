@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { _n, __, sprintf } from '@wordpress/i18n';
 import { intervalToDuration } from 'date-fns';
 import {
@@ -438,22 +439,38 @@ export function getButtonLabels( { purchase, intent }: ConfirmationCopyArgs ): {
 	secondary: string;
 } {
 	const category = getProductCategory( purchase );
+	const isSplitEnabled = config.isEnabled( 'purchases/split-cancel-remove' );
 	if ( intent === 'remove' ) {
 		switch ( category ) {
 			case 'plan':
-				return { primary: __( 'Remove plan' ), secondary: __( 'Keep plan' ) };
+				return {
+					primary: isSplitEnabled ? __( 'Continue removal' ) : __( 'Remove plan' ),
+					secondary: __( 'Keep plan' ),
+				};
 			case 'domain':
-				return { primary: __( 'Remove domain' ), secondary: __( 'Keep domain' ) };
+				return {
+					primary: isSplitEnabled ? __( 'Continue removal' ) : __( 'Remove domain' ),
+					secondary: __( 'Keep domain' ),
+				};
 			case 'email':
-				return { primary: __( 'Remove email' ), secondary: __( 'Keep email' ) };
+				return {
+					primary: isSplitEnabled ? __( 'Continue removal' ) : __( 'Remove email' ),
+					secondary: __( 'Keep email' ),
+				};
 			case 'marketplace':
 				if ( purchase.product_type === 'marketplace_theme' ) {
-					return { primary: __( 'Remove theme' ), secondary: __( 'Keep theme' ) };
+					return {
+						primary: isSplitEnabled ? __( 'Continue removal' ) : __( 'Remove theme' ),
+						secondary: __( 'Keep theme' ),
+					};
 				}
-				return { primary: __( 'Remove plugin' ), secondary: __( 'Keep plugin' ) };
+				return {
+					primary: isSplitEnabled ? __( 'Continue removal' ) : __( 'Remove plugin' ),
+					secondary: __( 'Keep plugin' ),
+				};
 			default:
 				return {
-					primary: __( 'Remove subscription' ),
+					primary: isSplitEnabled ? __( 'Continue removal' ) : __( 'Remove subscription' ),
 					secondary: __( 'Keep subscription' ),
 				};
 		}
@@ -461,7 +478,7 @@ export function getButtonLabels( { purchase, intent }: ConfirmationCopyArgs ): {
 	// Cancel intent: always "Cancel subscription" / "Keep subscription" to match
 	// the heading and Purchase Settings button.
 	return {
-		primary: __( 'Cancel subscription' ),
+		primary: isSplitEnabled ? __( 'Continue cancellation' ) : __( 'Cancel subscription' ),
 		secondary: __( 'Keep subscription' ),
 	};
 }

@@ -155,19 +155,23 @@ describe( 'getCheckboxLabel (legacy)', () => {
 } );
 
 describe( 'getButtonLabels (legacy)', () => {
-	test( 'Cancel intent always uses "Cancel subscription"', () => {
+	// Test env has `purchases/split-cancel-remove` on, so the primary label is
+	// the generic "Continue cancellation" / "Continue removal" override; the
+	// secondary stays per-category. When the flag goes to 100% this block can
+	// collapse into assertions without the override.
+	test( 'Cancel intent uses "Continue cancellation" under flag', () => {
 		expect( getButtonLabels( { purchase: makePurchase(), intent: 'cancel' } ) ).toEqual( {
-			primary: 'Cancel subscription',
+			primary: 'Continue cancellation',
 			secondary: 'Keep subscription',
 		} );
 	} );
-	test( 'Remove uses category labels', () => {
+	test( 'Remove intent uses "Continue removal" with category-specific secondary', () => {
 		expect(
 			getButtonLabels( {
 				purchase: makePurchase( { productSlug: 'wp_titan_mail_monthly' } ),
 				intent: 'remove',
 			} )
-		).toEqual( { primary: 'Remove email', secondary: 'Keep email' } );
+		).toEqual( { primary: 'Continue removal', secondary: 'Keep email' } );
 	} );
 } );
 

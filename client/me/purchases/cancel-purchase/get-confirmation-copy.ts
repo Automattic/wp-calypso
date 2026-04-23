@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	isPlan,
 	isDomainRegistration,
@@ -365,28 +366,48 @@ export function getButtonLabels( { purchase, intent }: ConfirmationCopyArgs ): {
 	secondary: string;
 } {
 	const category = getProductCategory( purchase );
+	const isSplitEnabled = config.isEnabled( 'purchases/split-cancel-remove' );
 	if ( intent === 'remove' ) {
 		switch ( category ) {
 			case 'plan':
-				return { primary: translate( 'Remove plan' ), secondary: translate( 'Keep plan' ) };
+				return {
+					primary: isSplitEnabled ? translate( 'Continue removal' ) : translate( 'Remove plan' ),
+					secondary: translate( 'Keep plan' ),
+				};
 			case 'domain':
-				return { primary: translate( 'Remove domain' ), secondary: translate( 'Keep domain' ) };
+				return {
+					primary: isSplitEnabled ? translate( 'Continue removal' ) : translate( 'Remove domain' ),
+					secondary: translate( 'Keep domain' ),
+				};
 			case 'email':
-				return { primary: translate( 'Remove email' ), secondary: translate( 'Keep email' ) };
+				return {
+					primary: isSplitEnabled ? translate( 'Continue removal' ) : translate( 'Remove email' ),
+					secondary: translate( 'Keep email' ),
+				};
 			case 'marketplace':
 				if ( purchase.productType === 'marketplace_theme' ) {
-					return { primary: translate( 'Remove theme' ), secondary: translate( 'Keep theme' ) };
+					return {
+						primary: isSplitEnabled ? translate( 'Continue removal' ) : translate( 'Remove theme' ),
+						secondary: translate( 'Keep theme' ),
+					};
 				}
-				return { primary: translate( 'Remove plugin' ), secondary: translate( 'Keep plugin' ) };
+				return {
+					primary: isSplitEnabled ? translate( 'Continue removal' ) : translate( 'Remove plugin' ),
+					secondary: translate( 'Keep plugin' ),
+				};
 			default:
 				return {
-					primary: translate( 'Remove subscription' ),
+					primary: isSplitEnabled
+						? translate( 'Continue removal' )
+						: translate( 'Remove subscription' ),
 					secondary: translate( 'Keep subscription' ),
 				};
 		}
 	}
 	return {
-		primary: translate( 'Cancel subscription' ),
+		primary: isSplitEnabled
+			? translate( 'Continue cancellation' )
+			: translate( 'Cancel subscription' ),
 		secondary: translate( 'Keep subscription' ),
 	};
 }

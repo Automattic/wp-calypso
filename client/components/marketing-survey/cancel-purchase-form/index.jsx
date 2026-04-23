@@ -437,6 +437,15 @@ class CancelPurchaseForm extends Component {
 				);
 			}
 
+			const isSplitEnabled = config.isEnabled( 'purchases/split-cancel-remove' );
+			const getUpsellDeclineText = () => {
+				if ( ! isSplitEnabled ) {
+					return intent === 'remove' ? translate( 'Remove my current plan' ) : undefined;
+				}
+				return intent === 'remove'
+					? translate( 'Continue removal' )
+					: translate( 'Continue cancellation' );
+			};
 			return (
 				<UpsellStep
 					upsell={ this.state.upsell }
@@ -445,9 +454,8 @@ class CancelPurchaseForm extends Component {
 					site={ site }
 					disabled={ this.state.isSubmitting }
 					refundAmount={ this.getRefundAmount() }
-					declineButtonText={
-						intent === 'remove' ? translate( 'Remove my current plan' ) : undefined
-					}
+					declineButtonText={ getUpsellDeclineText() }
+					declineButtonIsDestructive={ isSplitEnabled }
 					downgradePlanPrice={
 						'downgrade-personal' === this.state.upsell
 							? this.props.downgradePlanToPersonalPrice
@@ -602,12 +610,55 @@ class CancelPurchaseForm extends Component {
 	}
 
 	renderStepButtons = () => {
-		const { translate, disableButtons, purchase } = this.props;
+		const { translate, disableButtons, intent, purchase } = this.props;
 		const { isSubmitting, surveyStep, solution } = this.state;
 		const isCancelling = ( disableButtons || isSubmitting ) && ! solution;
 
 		const allSteps = this.getAllSurveySteps();
 		const isLastStep = surveyStep === allSteps[ allSteps.length - 1 ];
+
+		const isSplitEnabled = config.isEnabled( 'purchases/split-cancel-remove' );
+		const isRemoveIntent = intent === 'remove';
+		const getContinueLabel = () => {
+			if ( ! isSplitEnabled ) {
+				return translate( 'Continue' );
+			}
+			return isRemoveIntent
+				? translate( 'Continue removal' )
+				: translate( 'Continue cancellation' );
+		};
+		const getCompleteLabel = () => {
+			if ( ! isSplitEnabled ) {
+				return translate( 'Submit' );
+			}
+			return isRemoveIntent
+				? translate( 'Complete removal' )
+				: translate( 'Complete cancellation' );
+		};
+		const getCompletingLabel = () =>
+			isRemoveIntent ? translate( 'Completing removal' ) : translate( 'Completing cancellation' );
+		const continueLabel = getContinueLabel();
+		const completeLabel = getCompleteLabel();
+		const completingLabel = getCompletingLabel();
+		const getPrimaryLabel = ( whenReady ) => {
+			if ( isSplitEnabled && isCancelling ) {
+				return completingLabel;
+			}
+			return whenReady;
+		};
+		const renderSkipButton = ( { alwaysVisible = false } = {} ) =>
+			isSplitEnabled &&
+			( alwaysVisible || ! this.canGoNext() ) && (
+				<GutenbergButton
+					isTertiary
+					isDestructive
+					isBusy={ isCancelling }
+					disabled={ isCancelling }
+					onClick={ this.onSubmit }
+				>
+					{ translate( 'Skip to complete' ) }
+				</GutenbergButton>
+			);
 
 		if ( surveyStep === UPSELL_STEP ) {
 			return null;
@@ -615,14 +666,19 @@ class CancelPurchaseForm extends Component {
 
 		if ( ! isLastStep ) {
 			return (
-				<GutenbergButton
-					isPrimary
-					isDefault
-					disabled={ ! this.canGoNext() }
-					onClick={ this.clickNext }
-				>
-					{ translate( 'Continue' ) }
-				</GutenbergButton>
+				<>
+					<GutenbergButton
+						isPrimary
+						isDefault
+						isDestructive={ isSplitEnabled }
+						isBusy={ isSplitEnabled && isCancelling }
+						disabled={ ! this.canGoNext() || isCancelling }
+						onClick={ this.clickNext }
+					>
+						{ getPrimaryLabel( continueLabel ) }
+					</GutenbergButton>
+					{ renderSkipButton( { alwaysVisible: true } ) }
+				</>
 			);
 		}
 
@@ -641,7 +697,7 @@ class CancelPurchaseForm extends Component {
 						} ) }
 					</GutenbergButton>
 					<GutenbergButton
-						isSecondary
+						isTertiary
 						isBusy={ isCancelling }
 						disabled={ ! this.canGoNext() }
 						onClick={ this.closeDialog }
@@ -653,16 +709,20 @@ class CancelPurchaseForm extends Component {
 		}
 
 		return (
-			<GutenbergButton
-				isPrimary={ surveyStep !== UPSELL_STEP }
-				isSecondary={ surveyStep === UPSELL_STEP }
-				isDefault={ surveyStep !== UPSELL_STEP }
-				isBusy={ isCancelling }
-				disabled={ ! this.canGoNext() }
-				onClick={ this.onSubmit }
-			>
-				{ translate( 'Submit' ) }
-			</GutenbergButton>
+			<>
+				<GutenbergButton
+					isPrimary={ surveyStep !== UPSELL_STEP }
+					isSecondary={ surveyStep === UPSELL_STEP }
+					isDefault={ surveyStep !== UPSELL_STEP }
+					isDestructive={ isSplitEnabled && surveyStep !== UPSELL_STEP }
+					isBusy={ isCancelling }
+					disabled={ ! this.canGoNext() }
+					onClick={ this.onSubmit }
+				>
+					{ getPrimaryLabel( completeLabel ) }
+				</GutenbergButton>
+				{ renderSkipButton() }
+			</>
 		);
 	};
 

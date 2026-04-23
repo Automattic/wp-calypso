@@ -217,25 +217,29 @@ describe( 'getCheckboxLabel', () => {
 } );
 
 describe( 'getButtonLabels', () => {
-	test( 'Cancel intent always uses "Cancel subscription" / "Keep subscription"', () => {
+	// Test env has `purchases/split-cancel-remove` on, so the primary label is
+	// the generic "Continue cancellation" / "Continue removal" override; the
+	// secondary stays per-category. When the flag goes to 100% this block can
+	// collapse into assertions without the override.
+	test( 'Cancel intent always uses "Continue cancellation" under flag', () => {
 		for ( const category of [ 'plan', 'domain', 'email', 'jetpack', 'one-time', 'other' ] ) {
 			const purchase = makePurchaseForCategory( category );
 			expect( getButtonLabels( { purchase, intent: 'cancel' } ) ).toEqual( {
-				primary: 'Cancel subscription',
+				primary: 'Continue cancellation',
 				secondary: 'Keep subscription',
 			} );
 		}
 	} );
-	test( 'Remove uses category labels', () => {
+	test( 'Remove intent uses "Continue removal" primary with category-specific secondary', () => {
 		expect(
 			getButtonLabels( { purchase: makePurchaseForCategory( 'plan' ), intent: 'remove' } )
-		).toEqual( { primary: 'Remove plan', secondary: 'Keep plan' } );
+		).toEqual( { primary: 'Continue removal', secondary: 'Keep plan' } );
 		expect(
 			getButtonLabels( { purchase: makePurchaseForCategory( 'domain' ), intent: 'remove' } )
-		).toEqual( { primary: 'Remove domain', secondary: 'Keep domain' } );
+		).toEqual( { primary: 'Continue removal', secondary: 'Keep domain' } );
 		expect(
 			getButtonLabels( { purchase: makePurchaseForCategory( 'email' ), intent: 'remove' } )
-		).toEqual( { primary: 'Remove email', secondary: 'Keep email' } );
+		).toEqual( { primary: 'Continue removal', secondary: 'Keep email' } );
 	} );
 } );
 

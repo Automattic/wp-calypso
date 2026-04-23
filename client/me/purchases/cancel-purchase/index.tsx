@@ -17,6 +17,7 @@ import { Card } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import { invokeSurvicateEvent } from '@automattic/survicate';
+import { Button as GutenbergButton } from '@wordpress/components';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import moment from 'moment';
 import { Component } from 'react';
@@ -25,7 +26,6 @@ import BackupRetentionOptionOnCancelPurchase from 'calypso/components/backup-ret
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import FormattedHeader from 'calypso/components/formatted-header';
-import FormButton from 'calypso/components/forms/form-button';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import HeaderCakeBack from 'calypso/components/header-cake/back';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
@@ -685,8 +685,8 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		} ).secondary;
 
 		return (
-			<FormButton
-				isPrimary={ false }
+			<GutenbergButton
+				isTertiary
 				href={ ( this.props.getManagePurchaseUrlFor ?? managePurchase )(
 					siteSlug,
 					this.props.purchaseId
@@ -694,7 +694,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 				onClick={ this.onKeepSubscriptionClick }
 			>
 				{ label }
-			</FormButton>
+			</GutenbergButton>
 		);
 	};
 

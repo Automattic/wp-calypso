@@ -237,6 +237,7 @@ class CancelPurchaseButton extends Component<
 						purchase={ purchase }
 						purchaseListUrl={ purchaseListUrl ?? purchasesRoot }
 						isVisible={ showDialog }
+						intent={ this.props.displayVariant === 'remove' ? 'remove' : 'cancel' }
 						onClose={ this.closeDialog }
 						onSurveyComplete={ this.props.onSurveyComplete }
 						cancellationInProgress={ isLoading }
