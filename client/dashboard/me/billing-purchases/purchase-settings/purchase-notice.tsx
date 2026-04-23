@@ -2,6 +2,7 @@ import { DomainProductSlugs, DotcomPlans, WooHostedPlans } from '@automattic/api
 import {
 	purchaseQuery,
 	sitePurchasesQuery,
+	siteBySlugQuery,
 	userPreferenceMutation,
 	userPreferenceQuery,
 } from '@automattic/api-queries';
@@ -51,6 +52,11 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 	const { data: sitePurchases } = useQuery( {
 		...sitePurchasesQuery( purchase.blog_id ?? 0 ),
 	} );
+	const { data: site } = useQuery( {
+		...siteBySlugQuery( purchase.site_slug ?? '' ),
+		enabled: Boolean( purchase.site_slug ) && ! purchase.is_attached_to_holding_site,
+	} );
+	const isDomainWithoutSite = Boolean( site?.options?.is_domain_only && purchase.is_domain );
 	const renewableSitePurchases = sitePurchases?.filter( needsToRenewSoon );
 
 	const { data: isDismissedPersisted } = useSuspenseQuery(
@@ -130,7 +136,11 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 		return (
 			<>
 				{ cancellationOfferNotice && cancellationOfferNotice }
-				<PurchaseExpiringNotice purchase={ purchase } purchaseAttachedTo={ purchaseAttachedTo } />
+				<PurchaseExpiringNotice
+					purchase={ purchase }
+					purchaseAttachedTo={ purchaseAttachedTo }
+					isDomainWithoutSite={ isDomainWithoutSite }
+				/>
 			</>
 		);
 	}

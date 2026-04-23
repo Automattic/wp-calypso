@@ -1,9 +1,9 @@
 import { JETPACK_CONTACT_SUPPORT } from '@automattic/urls';
 import { Link, useNavigate } from '@tanstack/react-router';
-import { __experimentalHStack as HStack, Popover, Button } from '@wordpress/components';
+import { __experimentalHStack as HStack, Icon, Popover, Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { info } from '@wordpress/icons';
+import { brush, cloud, code, envelope, globe, info, plugins } from '@wordpress/icons';
 import { useState, useMemo } from 'react';
 import akismetIcon from 'calypso/assets/images/icons/akismet-icon.svg';
 import jetpackIcon from 'calypso/assets/images/icons/jetpack-icon.svg';
@@ -17,13 +17,17 @@ import {
 	isTransferredOwnership,
 	isAkismetHoldingSitePurchase,
 	isMarketplaceHoldingSitePurchase,
+	isMarketplacePlugin,
+	isStorageUpgrade,
+	isTitanMail,
+	isGSuiteOrGoogleWorkspaceProductSlug,
 	getTitleForListDisplay,
 } from '../../utils/purchase';
 import { PurchasePaymentMethod } from './purchase-payment-method';
 import { PurchaseProduct } from './purchase-product';
 import type { StoredPaymentMethod, Purchase, Site } from '@automattic/api-core';
 import type { SortDirection, View, Fields } from '@wordpress/dataviews';
-import type { ReactNode, ComponentProps } from 'react';
+import type { ReactNode, ComponentProps, ReactElement } from 'react';
 
 import './style.scss';
 
@@ -69,20 +73,38 @@ export function BillingPurchaseInfoPopover( { children }: { children: ReactNode 
 	);
 }
 
+function ProductIcon( { icon, label }: { icon: ReactElement; label: string } ) {
+	const containerSize = 36;
+	const iconSize = 20;
+	return (
+		<span
+			aria-label={ label }
+			className="site-letter"
+			style={ {
+				display: 'inline-flex',
+				alignItems: 'center',
+				justifyContent: 'center',
+				width: containerSize,
+				height: containerSize,
+				minWidth: containerSize,
+				color: 'white',
+				fill: 'white',
+			} }
+		>
+			<Icon icon={ icon } size={ iconSize } />
+		</span>
+	);
+}
+
 function PurchaseItemSiteIcon( { site, purchase }: { site?: Site; purchase: Purchase } ) {
 	const size = 36;
 
-	if (
-		purchase.product_type === 'jetpack' ||
-		purchase.is_jetpack_ai_product ||
-		purchase.is_jetpack_stats_product ||
-		purchase.is_free_jetpack_stats_product
-	) {
+	if ( purchase.is_jetpack_plan_or_product ) {
 		return (
 			<img
 				src={ jetpackIcon }
-				alt="Jetpack icon"
-				style={ { width: size, height: size, minWidth: size } }
+				alt={ __( 'Jetpack icon' ) }
+				style={ { display: 'block', width: size, height: size, minWidth: size } }
 			/>
 		);
 	}
@@ -94,7 +116,7 @@ function PurchaseItemSiteIcon( { site, purchase }: { site?: Site; purchase: Purc
 		return (
 			<img
 				src={ passportIcon }
-				alt="Passport icon"
+				alt={ __( 'Passport icon' ) }
 				style={ { width: size, height: size, minWidth: size } }
 			/>
 		);
@@ -104,20 +126,39 @@ function PurchaseItemSiteIcon( { site, purchase }: { site?: Site; purchase: Purc
 		return (
 			<img
 				src={ akismetIcon }
-				alt="Akismet icon"
+				alt={ __( 'Akismet icon' ) }
 				style={ { width: size, height: size, minWidth: size } }
 			/>
 		);
 	}
 
+	if ( isGSuiteOrGoogleWorkspaceProductSlug( purchase.product_slug ) || isTitanMail( purchase ) ) {
+		return <ProductIcon icon={ envelope } label={ __( 'Email icon' ) } />;
+	}
+
+	if ( isMarketplacePlugin( purchase ) ) {
+		return <ProductIcon icon={ plugins } label={ __( 'Plugin icon' ) } />;
+	}
+
+	if (
+		purchase.product_type === 'theme' ||
+		purchase.product_type === 'marketplace_theme' ||
+		purchase.product_slug === 'premium_theme' ||
+		purchase.product_slug === 'unlimited_themes'
+	) {
+		return <ProductIcon icon={ brush } label={ __( 'Theme icon' ) } />;
+	}
+
+	if ( purchase.product_slug === 'custom-design' ) {
+		return <ProductIcon icon={ code } label={ __( 'CSS icon' ) } />;
+	}
+
+	if ( isStorageUpgrade( purchase ) ) {
+		return <ProductIcon icon={ cloud } label={ __( 'Storage icon' ) } />;
+	}
+
 	if ( ! site ) {
-		return (
-			<img
-				src={ jetpackIcon }
-				alt="No site icon"
-				style={ { width: size, height: size, minWidth: size } }
-			/>
-		);
+		return <ProductIcon icon={ globe } label={ __( 'Domain icon' ) } />;
 	}
 
 	return <SiteIcon site={ site } size={ size } />;
