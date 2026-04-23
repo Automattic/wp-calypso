@@ -119,8 +119,8 @@ export function useProductDescription( productSlug: string ): {
 	const translate = useTranslate();
 
 	return useMemo( () => {
-		let description = '';
-		const features = [];
+		let description: TranslateResult | null = null;
+		const features: TranslateResult[] = [];
 
 		if ( productSlug.startsWith( 'pressable-addon-storage-' ) ) {
 			description = translate( 'Add additional storage capacity to your Pressable plan limit.' );
