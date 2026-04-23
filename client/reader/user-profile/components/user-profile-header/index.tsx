@@ -10,6 +10,7 @@ import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
+import { useAchievementsVisibility } from 'calypso/reader/user-profile/views/achievements/use-achievements-visibility';
 import UserTopSites from '../top-sites';
 import type { ReaderUser } from '@automattic/api-core';
 
@@ -20,6 +21,7 @@ interface UserProfileHeaderProps {
 
 const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Element => {
 	const translate = useTranslate();
+	const { isVisible: showAchievements } = useAchievementsVisibility( user.user_login );
 	const [ isExpanded, setIsExpanded ] = useState( false );
 	const [ showMoreToggle, setShowMoreToggle ] = useState( false );
 	const bioRef = useRef< HTMLParagraphElement >( null );
@@ -58,7 +60,7 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 			path: `${ userProfileUrl }/recommended-blogs`,
 			selected: view === 'recommended-blogs',
 		},
-		...( isEnabled( 'reader/achievements' )
+		...( isEnabled( 'reader/achievements' ) && showAchievements
 			? [
 					{
 						label: translate( 'Achievements' ),

@@ -65,7 +65,7 @@ export function UserProfile( props: UserProfileProps ): JSX.Element | null {
 			case 'recommended-blogs':
 				return <UserRecommendedBlogs user={ user } />;
 			case 'achievements':
-				return <UserAchievements />;
+				return <UserAchievements user={ user } />;
 			default:
 				return null;
 		}
