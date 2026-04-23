@@ -94,10 +94,10 @@ export function getJetpackCriticalErrorMessage( site: Site ): ReactNode | null {
 			const adminUrl = site.options?.admin_url;
 			return createInterpolateElement(
 				__(
-					'Your site is in recovery mode. Resume the session in <a>WP Admin</a>, or check your site admin email inbox for the recovery link.'
+					'Your site is in recovery mode. Resume the session in <wpAdminLink/>, or check your site admin email inbox for the recovery link.'
 				),
 				{
-					a: adminUrl ? <a href={ adminUrl }>WP Admin</a> : <span>WP Admin</span>,
+					wpAdminLink: adminUrl ? <a href={ adminUrl }>WP Admin</a> : <span>WP Admin</span>,
 				}
 			);
 		}
