@@ -3,6 +3,7 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { Button, Dropdown, ToggleControl } from '@wordpress/components';
 import { settings } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { useState, useEffect } from 'react';
 import { recordAction } from 'calypso/reader/stats';
 import { useDispatch } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -15,9 +16,21 @@ export default function AchievementsSettings() {
 	const translate = useTranslate();
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
 
-	const { data: isPublic } = useQuery( userPreferenceQuery( 'achievements-page-public' ) );
-	const { data: notificationsEnabled } = useQuery(
+	const { data: savedIsPublic } = useQuery( userPreferenceQuery( 'achievements-page-public' ) );
+	const { data: savedNotifications } = useQuery(
 		userPreferenceQuery( 'achievements-notifications-enabled' )
+	);
+
+	const [ isPublic, setIsPublic ] = useState( !! savedIsPublic );
+	const [ notificationsEnabled, setNotificationsEnabled ] = useState(
+		savedNotifications !== false
+	);
+
+	// Sync local state when server data changes (e.g. on initial load).
+	useEffect( () => setIsPublic( !! savedIsPublic ), [ savedIsPublic ] );
+	useEffect(
+		() => setNotificationsEnabled( savedNotifications !== false ),
+		[ savedNotifications ]
 	);
 
 	const { mutate: setPublic, isPending: isSetPublicPending } = useMutation(
@@ -45,6 +58,7 @@ export default function AchievementsSettings() {
 	const handleSetPublic = ( value: boolean ) => {
 		setPublic( value, {
 			onSuccess( _, data ) {
+				setIsPublic( data );
 				if ( data ) {
 					dispatchSuccessNotice( translate( 'The achievements page is now public.' ) );
 					recordAction( 'set_achievements_page_public' );
@@ -70,6 +84,7 @@ export default function AchievementsSettings() {
 	const handleSetNotifications = ( value: boolean ) => {
 		setNotifications( value, {
 			onSuccess( _, data ) {
+				setNotificationsEnabled( data );
 				if ( data ) {
 					dispatchSuccessNotice( translate( 'Achievements notifications are now enabled.' ) );
 					recordAction( 'set_achievements_notifications_enabled' );
@@ -114,14 +129,14 @@ export default function AchievementsSettings() {
 			renderContent={ () => (
 				<div className="achievements-settings__content">
 					<ToggleControl
-						checked={ !! isPublic }
+						checked={ isPublic }
 						disabled={ isSetPublicPending }
 						onChange={ handleSetPublic }
 						label={ translate( 'Public achievements' ) }
 						help={ translate( 'When enabled, your achievements page is visible to other users.' ) }
 					/>
 					<ToggleControl
-						checked={ notificationsEnabled !== false }
+						checked={ notificationsEnabled }
 						disabled={ isSetNotificationsPending }
 						onChange={ handleSetNotifications }
 						label={ translate( 'Achievement notifications' ) }
