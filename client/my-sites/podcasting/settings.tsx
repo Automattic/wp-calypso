@@ -281,7 +281,7 @@ const PodcastingSettings = wrapSettingsForm( getFormSettings )( ( {
 			{ ( isPodcastingEnabled || isEnabling ) && plansDataLoaded && ! isAudioUploadEnabled && (
 				<UpsellNudge
 					plan={ PLAN_PERSONAL }
-					title={ translate( 'Upload Audio with WordPress.com %(personalPlanName)s', {
+					title={ translate( 'Upload audio with WordPress.com %(personalPlanName)s', {
 						args: { personalPlanName: getPlan( PLAN_PERSONAL )?.getTitle() ?? '' },
 					} ) }
 					description={ translate( 'Embed podcast episodes directly from your media library.' ) }
@@ -347,7 +347,7 @@ const PodcastingSettings = wrapSettingsForm( getFormSettings )( ( {
 						<PodcastFeedUrl categoryId={ podcastingCategoryId } />
 						{ isPodcastingEnabled && (
 							<Button className="podcasting__publish-button" href={ newPostUrl }>
-								{ translate( 'Create Episode' ) }
+								{ translate( 'Create episode' ) }
 							</Button>
 						) }
 					</Card>
@@ -453,14 +453,19 @@ const PodcastingSettings = wrapSettingsForm( getFormSettings )( ( {
 							>
 								<option value="no">{ translate( 'No' ) }</option>
 								<option value="yes">{ translate( 'Yes' ) }</option>
-								<option value="clean">{ translate( 'Clean' ) }</option>
+								<option value="clean">
+									{ translate( 'Clean', {
+										comment:
+											'Apple Podcasts explicit content setting: episode has been edited to remove explicit language',
+									} ) }
+								</option>
 							</FormSelect>
 						</FormFieldset>
 						{ renderTextField( {
 							key: 'podcasting_email',
 							label: translate( 'Email address' ) as string,
 							explanation: translate(
-								'This email address will be displayed in the feed and is required for some services such as Google Play.'
+								'This email address will be displayed in the feed and is required by some podcast directories.'
 							) as string,
 						} ) }
 					</Card>

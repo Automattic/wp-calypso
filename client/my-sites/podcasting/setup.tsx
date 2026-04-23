@@ -67,7 +67,7 @@ const PodcastingSetup = () => {
 				<h2 className="podcasting__section-heading">{ translate( 'Setup' ) }</h2>
 				<p className="podcasting__section-description">
 					{ translate(
-						'Submit your podcast feed to the major podcatchers so your episodes reach more listeners.'
+						'Submit your podcast feed to the major podcast apps so your episodes reach more listeners.'
 					) }
 				</p>
 			</header>

@@ -54,7 +54,7 @@ const SubmitModal = ( { podcatcher, onClose }: Props ) => {
 									serviceArgs
 							  )
 							: translate(
-									'Set a podcast category in the Settings tab to generate your RSS feed URL.'
+									'Select a podcast category in the Settings tab to generate your RSS feed URL.'
 							  ) }
 					</p>
 					{ feedUrl && <ClipboardButtonInput value={ feedUrl } /> }
