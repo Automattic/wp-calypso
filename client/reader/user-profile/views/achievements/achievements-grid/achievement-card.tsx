@@ -17,7 +17,7 @@ export default function AchievementCard( {
 }: AchievementCardProps ) {
 	return (
 		<div className="achievement-card">
-			<img className="achievement-card__icon" src={ image } alt={ title } />
+			<img className="achievement-card__icon" src={ image } alt="" />
 			<div className="achievement-card__details">
 				<h3 className="achievement-card__title">
 					{ title }
