@@ -12,7 +12,7 @@ import { decodeEntities } from 'calypso/lib/formatting';
 import { useSelector } from 'calypso/state';
 import getPodcastingCategoryId from 'calypso/state/selectors/get-podcasting-category-id';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import useEpisodesQuery from './use-episodes-query';
+import useEpisodesQuery from '../hooks/use-episodes-query';
 
 type Episode = {
 	id: number;

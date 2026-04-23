@@ -11,9 +11,9 @@ import JetpackTitle from 'calypso/components/jetpack-title';
 import Main from 'calypso/components/main';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import PodcastingEpisodes from './episodes';
-import PodcastingSettings from './settings';
-import PodcastingSetup from './setup';
+import PodcastingEpisodes from './components/episodes';
+import PodcastingSettings from './components/settings';
+import PodcastingSetup from './components/setup';
 
 import './style.scss';
 

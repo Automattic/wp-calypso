@@ -5,8 +5,8 @@ import { useState, type FormEvent } from 'react';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { usePodcastingFeedUrl } from './use-feed-url';
-import { usePodcatcherUrl } from './use-podcatcher-url';
+import { usePodcastingFeedUrl } from '../hooks/use-feed-url';
+import { usePodcatcherUrl } from '../hooks/use-podcatcher-url';
 
 export type Podcatcher = {
 	id: string;
