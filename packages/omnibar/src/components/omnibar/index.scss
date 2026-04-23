@@ -1,0 +1,70 @@
+$omnibar-height: 32px;
+$omnibar-font-size: 13px;
+
+// Modern color scheme variables
+$omnibar-base-color: #1e1e1e;
+$omnibar-submenu-background: #0c0c0c;
+$omnibar-text-color: #fff;
+$omnibar-submenu-text-color: #bcbcbc;
+$omnibar-highlight-color: #7b90ff;
+
+.omnibar {
+	background-color: $omnibar-base-color;
+	min-height: $omnibar-height;
+	height: $omnibar-height;
+	display: flex;
+	padding: 0;
+	margin: 0;
+	font-size: $omnibar-font-size;
+	line-height: $omnibar-height;
+
+	.omnibar__secondary {
+		display: flex;
+		align-items: center;
+		margin-inline-start: auto;
+	}
+
+	.omnibar__dropdown {
+		position: relative;
+
+		.components-button.omnibar__item,
+		.components-dropdown-menu__toggle {
+			height: $omnibar-height;
+			padding: 0 8px;
+			color: $omnibar-text-color;
+
+			&:hover,
+			&:focus,
+			&:active,
+			&[aria-expanded='true'] {
+				background-color: $omnibar-submenu-background;
+				color: $omnibar-highlight-color;
+				box-shadow: none;
+				outline: none;
+			}
+		}
+	}
+}
+
+.components-popover.components-dropdown-menu__popover {
+	.components-dropdown-menu__menu {
+		background-color: $omnibar-submenu-background;
+
+		.components-button.components-menu-item__button {
+			color: $omnibar-submenu-text-color;
+
+			&:hover,
+			&:focus,
+			&:active {
+				background-color: transparent;
+				color: $omnibar-highlight-color;
+				box-shadow: none;
+				outline: none;
+			}
+
+			svg {
+				fill: currentColor;
+			}
+		}
+	}
+}

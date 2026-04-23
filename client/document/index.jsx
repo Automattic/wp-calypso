@@ -2,6 +2,7 @@ import { parse } from 'path';
 import config from '@automattic/calypso-config';
 import { WordPressLogo } from '@automattic/components';
 import { isLocaleRtl } from '@automattic/i18n-utils';
+import { Omnibar } from '@automattic/omnibar';
 import { Step } from '@automattic/onboarding';
 import clsx from 'clsx';
 import { useMemo, Component } from 'react';
@@ -164,15 +165,22 @@ class Document extends Component {
 					} ) }
 				>
 					{ /* eslint-disable wpcalypso/jsx-classname-namespace, react/no-danger */ }
-					{ dashboard && config.isEnabled( 'dashboard/omnibar' ) && (
+					{ dashboard && config.isEnabled( 'dashboard/omnibar-radical' ) && (
 						<div id="wpcom-omnibar">
-							<InterimOmnibar
-								user={ user || null }
-								site={ null }
-								currentRoute={ this.props.path ?? '/' }
-							/>
+							<Omnibar nodes={ {} } />
 						</div>
 					) }
+					{ dashboard &&
+						config.isEnabled( 'dashboard/omnibar' ) &&
+						! config.isEnabled( 'dashboard/omnibar-radical' ) && (
+							<div id="wpcom-omnibar">
+								<InterimOmnibar
+									user={ user || null }
+									site={ null }
+									currentRoute={ this.props.path ?? '/' }
+								/>
+							</div>
+						) }
 					{ renderedLayout ? (
 						<div
 							id="wpcom"

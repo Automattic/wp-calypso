@@ -60,6 +60,7 @@
 		"@automattic/mini-cart": "workspace:^",
 		"@automattic/notifications": "workspace:^",
 		"@automattic/oauth-token": "workspace:^",
+		"@automattic/omnibar": "workspace:^",
 		"@automattic/onboarding": "workspace:^",
 		"@automattic/plans-grid-next": "workspace:^",
 		"@automattic/posthog": "workspace:^",
