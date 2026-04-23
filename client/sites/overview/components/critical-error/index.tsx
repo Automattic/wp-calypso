@@ -4,14 +4,11 @@ import { useQuery } from '@tanstack/react-query';
 import { Button, Card, CardBody } from '@wordpress/components';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
-import { Icon, envelope, help, wordpress } from '@wordpress/icons';
+import { Icon, envelope, help } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { HostingHero } from 'calypso/components/hosting-hero';
-import {
-	getJetpackCriticalErrorMessage,
-	getJetpackCriticalErrorState,
-} from 'calypso/dashboard/sites/site/notices';
+import { getJetpackCriticalErrorMessage } from 'calypso/dashboard/sites/site/notices';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { ReactElement, ReactNode } from 'react';
 
@@ -34,19 +31,13 @@ export const CriticalErrorOverview = ( { siteSlug }: { siteSlug: string } ) => {
 	const { setShowHelpCenter } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	const isAdmin = !! site?.capabilities?.manage_options;
-	const isInRecovery = !! site && getJetpackCriticalErrorState( site ) === 'in-recovery';
-	const adminUrl = site?.options?.admin_url;
-	const showWpAdmin = isAdmin && isInRecovery && !! adminUrl;
 
 	useEffect( () => {
 		if ( ! site ) {
 			return;
 		}
 		recordTracksEvent( 'calypso_critical_error_impression' );
-		if ( showWpAdmin ) {
-			recordTracksEvent( 'calypso_critical_error_wp_admin_impression' );
-		}
-	}, [ site, showWpAdmin ] );
+	}, [ site ] );
 
 	if ( ! site ) {
 		return null;
@@ -65,25 +56,6 @@ export const CriticalErrorOverview = ( { siteSlug }: { siteSlug: string } ) => {
 			<Card className="critical-error-overview__card">
 				<CardBody>
 					<div className="critical-error-overview__items">
-						{ showWpAdmin && (
-							<Item icon={ wordpress }>
-								{ createInterpolateElement(
-									translate(
-										'<a>Visit WP Admin</a> to resume the recovery mode session.'
-									) as string,
-									{
-										a: (
-											<a
-												href={ adminUrl }
-												onClick={ () =>
-													recordTracksEvent( 'calypso_critical_error_wp_admin_click' )
-												}
-											/>
-										),
-									}
-								) }
-							</Item>
-						) }
 						{ isAdmin && (
 							<Item icon={ envelope }>
 								{ translate(
