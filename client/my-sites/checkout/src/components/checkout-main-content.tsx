@@ -1677,9 +1677,17 @@ function CheckoutTermsAndCheckboxes( {
 
 	const translate = useTranslate();
 
+	const needsConsentCheckbox = hasMarketplaceProduct || has100YearPlan;
+
 	return (
 		<CheckoutTermsAndCheckboxesWrapper className="checkout-terms-and-checkboxes">
-			<BeforeSubmitCheckoutHeader />
+			{
+				// Keep the inline legal block above the consent checkbox so
+				// "I have read and agree to all of the above" still refers to
+				// something visible. For carts without a consent checkbox the
+				// same text is reachable via the sidebar's Read more modal.
+				needsConsentCheckbox && <BeforeSubmitCheckoutHeader />
+			}
 
 			{ hasMarketplaceProduct && (
 				<AcceptTermsOfServiceCheckbox
