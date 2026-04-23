@@ -35,7 +35,7 @@ export function InaccessibleJetpackNotice( { error }: { error: Error } ) {
 
 const FIFTEEN_MINUTES = 15 * 60;
 
-function getJetpackCriticalErrorState(
+export function getJetpackCriticalErrorState(
 	site: Site,
 	now: number = Math.floor( Date.now() / 1000 )
 ): 'in-recovery' | 'critical-error' | null {

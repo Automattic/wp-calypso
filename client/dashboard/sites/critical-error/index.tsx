@@ -3,14 +3,14 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { Icon, envelope, help } from '@wordpress/icons';
+import { Icon, envelope, help, wordpress } from '@wordpress/icons';
 import { Fragment, useEffect } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useHelpCenter } from '../../app/help-center';
 import { Card, CardBody, CardDivider } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { getJetpackCriticalErrorMessage } from '../site/notices';
+import { getJetpackCriticalErrorMessage, getJetpackCriticalErrorState } from '../site/notices';
 import type { ReactElement, ReactNode } from 'react';
 
 import './style.scss';
@@ -26,14 +26,38 @@ const SiteCriticalError = ( { siteSlug }: { siteSlug: string } ) => {
 	const { recordTracksEvent } = useAnalytics();
 
 	const isAdmin = !! site.capabilities?.manage_options;
+	const isInRecovery = getJetpackCriticalErrorState( site ) === 'in-recovery';
+	const adminUrl = site.options?.admin_url;
+	const showWpAdmin = isAdmin && isInRecovery && !! adminUrl;
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_dashboard_critical_error_impression' );
-	}, [ recordTracksEvent ] );
+		if ( showWpAdmin ) {
+			recordTracksEvent( 'calypso_dashboard_critical_error_wp_admin_impression' );
+		}
+	}, [ showWpAdmin, recordTracksEvent ] );
 
 	const message = getJetpackCriticalErrorMessage( site );
 
 	const items: Item[] = [];
+	if ( showWpAdmin ) {
+		items.push( {
+			icon: wordpress,
+			text: createInterpolateElement(
+				__( '<a>Visit WP Admin</a> to resume the recovery mode session.' ),
+				{
+					a: (
+						<a
+							href={ adminUrl }
+							onClick={ () =>
+								recordTracksEvent( 'calypso_dashboard_critical_error_wp_admin_click' )
+							}
+						/>
+					),
+				}
+			),
+		} );
+	}
 	if ( isAdmin ) {
 		items.push( {
 			icon: envelope,
