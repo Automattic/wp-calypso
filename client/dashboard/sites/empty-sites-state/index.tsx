@@ -8,6 +8,7 @@ import { useAnalytics } from '../../app/analytics';
 import EmptyState from '../../components/empty-state';
 import OfferCard from '../../components/offer-card';
 import { wpcomLink } from '../../utils/link';
+import { useAiSiteBuilderPath } from '../use-ai-site-builder-path';
 
 const CONTEXT = 'dashboard-sites';
 const EMPTY_STATE_REF = 'dashboard-sites-empty-state';
@@ -15,6 +16,7 @@ const EMPTY_STATE_CTA_ID = 'dashboard-sites-empty-state';
 
 function CreateAndBuildActions() {
 	const { recordTracksEvent } = useAnalytics();
+	const aiSiteBuilderPath = useAiSiteBuilderPath();
 
 	const handleCreateSiteClick = () => {
 		recordTracksEvent( 'calypso_sites_dashboard_empty_state_action_click', {
@@ -56,7 +58,7 @@ function CreateAndBuildActions() {
 				actions={
 					<Button
 						variant="secondary"
-						href={ addQueryArgs( wpcomLink( '/setup/ai-site-builder' ), {
+						href={ addQueryArgs( wpcomLink( aiSiteBuilderPath ), {
 							source: CONTEXT,
 							ref: EMPTY_STATE_REF,
 						} ) }

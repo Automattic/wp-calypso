@@ -16,6 +16,7 @@ import { useHelpCenter } from '../../app/help-center';
 import OfferCard from '../../components/offer-card';
 import { wpcomLink } from '../../utils/link';
 import { userHasFlag } from '../../utils/user';
+import { useAiSiteBuilderPath } from '../use-ai-site-builder-path';
 import Column from './column';
 import MenuItem from './menu-item';
 import type { AddNewSiteProps } from './types';
@@ -54,6 +55,7 @@ function AddNewSite( { context = 'unknown' }: AddNewSiteProps ) {
 	const Wrapper = isDesktop ? HStack : VStack;
 
 	const { setShowHelpCenter } = useHelpCenter();
+	const aiSiteBuilderPath = useAiSiteBuilderPath();
 
 	return (
 		<Wrapper alignment="flex-start" spacing={ 6 }>
@@ -93,7 +95,7 @@ function AddNewSite( { context = 'unknown' }: AddNewSiteProps ) {
 							action: 'big-sky',
 						} );
 					} }
-					href={ addQueryArgs( wpcomLink( '/setup/ai-site-builder' ), {
+					href={ addQueryArgs( wpcomLink( aiSiteBuilderPath ), {
 						source: context,
 						ref: 'new-site-popover',
 					} ) }

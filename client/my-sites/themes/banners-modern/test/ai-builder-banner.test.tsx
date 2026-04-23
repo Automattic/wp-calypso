@@ -10,9 +10,15 @@ jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 	recordTracksEvent: ( ...args: unknown[] ) => mockRecordTracksEvent( ...args ),
 } ) );
 
+const mockUseExperiment = jest.fn( () => [ false, null ] );
+jest.mock( 'calypso/lib/explat', () => ( {
+	useExperiment: ( ...args: unknown[] ) => mockUseExperiment( ...args ),
+} ) );
+
 describe( 'AIBuilderBanner', () => {
 	beforeEach( () => {
 		mockRecordTracksEvent.mockClear();
+		mockUseExperiment.mockReset().mockReturnValue( [ false, null ] );
 	} );
 
 	test( 'renders title', () => {
@@ -27,11 +33,26 @@ describe( 'AIBuilderBanner', () => {
 		).toBeVisible();
 	} );
 
-	test( 'renders CTA button linking to AI builder flow', () => {
+	test( 'renders CTA button linking to the default AI Builder flow by default', () => {
 		render( <AIBuilderBanner /> );
 		const button = screen.getByRole( 'link', { name: 'Start with AI' } );
 		expect( button ).toBeVisible();
 		expect( button ).toHaveAttribute( 'href', '/setup/ai-site-builder' );
+	} );
+
+	test( 'routes treatment users to the Calypso site-spec flow', () => {
+		mockUseExperiment.mockReturnValue( [
+			false,
+			{
+				experimentName: 'wpcom_ai_website_builder_vega_site_spec_202604',
+				variationName: 'treatment',
+			},
+		] );
+		render( <AIBuilderBanner /> );
+		expect( screen.getByRole( 'link', { name: 'Start with AI' } ) ).toHaveAttribute(
+			'href',
+			'/setup/ai-site-builder-spec'
+		);
 	} );
 
 	test( 'tracks click event when CTA is clicked', async () => {
