@@ -4,6 +4,8 @@ import {
 	getCancelLossIntro,
 	getFallbackLossItems,
 	getRemoveLossIntro,
+	getSingleItemCancelCopy,
+	getSingleItemRemoveCopy,
 } from './get-confirmation-copy';
 import type { CancellationFeature } from '@automattic/api-core';
 import type { Purchases } from '@automattic/data-stores';
@@ -37,6 +39,19 @@ const CancelPurchaseFeatureList = ( {
 	const fullExpiryDate = purchase.expiryDate
 		? moment( purchase.expiryDate ).format( 'LL' ).replace( / /g, '\u00a0' )
 		: '';
+
+	if ( items.length === 1 ) {
+		const singleItemCopy =
+			displayVariant === 'remove'
+				? getSingleItemRemoveCopy( purchase )
+				: getSingleItemCancelCopy( purchase, fullExpiryDate );
+		return (
+			<div className="cancel-purchase__features">
+				<p>{ singleItemCopy }</p>
+			</div>
+		);
+	}
+
 	const intro =
 		displayVariant === 'remove'
 			? getRemoveLossIntro( purchase )

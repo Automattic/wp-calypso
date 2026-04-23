@@ -253,6 +253,72 @@ export function getRemoveLossIntro( purchase: Purchases.Purchase ): string {
 	}
 }
 
+export function getSingleItemCancelCopy(
+	purchase: Purchases.Purchase,
+	fullExpiryDate: string
+): string {
+	const category = getProductCategory( purchase );
+	if ( ! fullExpiryDate ) {
+		switch ( category ) {
+			case 'plan':
+				return translate(
+					"Your plan subscription will expire. After that, it will be deactivated and you'll no longer be able to use it."
+				) as string;
+			case 'domain':
+				return translate(
+					"Your domain subscription will expire. After that, it will be deactivated and you'll no longer be able to use it."
+				) as string;
+			case 'email':
+				return translate(
+					"Your email subscription will expire. After that, it will be deactivated and you'll no longer be able to use it."
+				) as string;
+			default:
+				return translate(
+					"Your %(productName)s subscription will expire. After that, it will be deactivated and you'll no longer be able to use it.",
+					{ args: { productName: getName( purchase ) } }
+				) as string;
+		}
+	}
+	switch ( category ) {
+		case 'plan':
+			return translate(
+				"Your plan subscription expires on %(date)s. After that, it will be deactivated and you'll no longer be able to use it.",
+				{
+					args: { date: fullExpiryDate },
+					comment: '%(date)s is a localized date like "April 16, 2027"',
+				}
+			) as string;
+		case 'domain':
+			return translate(
+				"Your domain subscription expires on %(date)s. After that, it will be deactivated and you'll no longer be able to use it.",
+				{ args: { date: fullExpiryDate } }
+			) as string;
+		case 'email':
+			return translate(
+				"Your email subscription expires on %(date)s. After that, it will be deactivated and you'll no longer be able to use it.",
+				{ args: { date: fullExpiryDate } }
+			) as string;
+		default:
+			return translate(
+				"Your %(productName)s subscription expires on %(date)s. After that, it will be deactivated and you'll no longer be able to use it.",
+				{ args: { productName: getName( purchase ), date: fullExpiryDate } }
+			) as string;
+	}
+}
+
+export function getSingleItemRemoveCopy( purchase: Purchases.Purchase ): string {
+	if ( isDomainRegistration( purchase ) ) {
+		return translate(
+			"%(domainName)s will be removed immediately. It will be deactivated and you'll no longer be able to use it.",
+			{ args: { domainName: purchase.meta ?? purchase.domain ?? getName( purchase ) } }
+		) as string;
+	}
+	return translate(
+		"%(productName)s will be removed immediately. It will be deactivated and you'll no longer be able to use it.",
+		{ args: { productName: getName( purchase ) } }
+	) as string;
+}
+
 export function getRefundNoticeCopy( {
 	purchase,
 	refundAmount,
