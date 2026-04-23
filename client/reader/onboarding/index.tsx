@@ -124,10 +124,10 @@ const ReaderOnboarding = ( {
 
 	// Auto-open the interests modal if onboarding should render and it has never been opened before
 	useEffect( () => {
-		if ( shouldRenderOnboarding && ! hasSeenOnboarding ) {
+		if ( shouldRenderOnboarding && preferencesLoaded && ! hasSeenOnboarding ) {
 			openInterestsModal();
 		}
-	}, [ shouldRenderOnboarding, hasSeenOnboarding, dispatch ] );
+	}, [ shouldRenderOnboarding, preferencesLoaded, hasSeenOnboarding, dispatch ] );
 
 	// Reopen subscription onboarding page if prompted by query param.
 	useEffect( () => {

@@ -10,11 +10,12 @@ import SiteSidebar from '../../sites/site-sidebar';
 import { wpcomLink } from '../../utils/link';
 import { useAnalytics } from '../analytics';
 import { useAppContext } from '../context';
+import ThemeSwitcher from './theme-switcher';
 
 import './sidebar.scss';
 
 export default function Sidebar() {
-	const { Logo, name } = useAppContext();
+	const { Logo, name, supports } = useAppContext();
 	const { recordTracksEvent } = useAnalytics();
 
 	return (
@@ -46,6 +47,7 @@ export default function Sidebar() {
 					<MeSidebar />
 				</SidebarNavigator.Screen>
 			</SidebarNavigator>
+			{ supports.colorScheme && <ThemeSwitcher /> }
 		</div>
 	);
 }

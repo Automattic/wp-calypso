@@ -1,5 +1,6 @@
 import {
 	AkismetPlans,
+	DomainProductSlugs,
 	JetpackPlans,
 	GoogleWorkspaceSlugs,
 	JetpackSearchProducts,
@@ -7,6 +8,7 @@ import {
 	SubscriptionBillPeriod,
 	TitanMailSlugs,
 	WPCOM_DIFM_LITE,
+	OFFSITE_REDIRECT,
 } from '@automattic/api-core';
 import { formatNumber } from '@automattic/number-formatters';
 import { __, sprintf } from '@wordpress/i18n';
@@ -443,8 +445,12 @@ export function isGoogleWorkspace( purchase: Purchase | ObjectWithProductSlug ):
 	);
 }
 
+export function isDomainTransfer( purchase: Purchase | ObjectWithProductSlug ): boolean {
+	return purchase.product_slug === DomainProductSlugs.TRANSFER_IN;
+}
+
 export function isSiteRedirect( purchase: Purchase ): boolean {
-	return purchase.product_slug === 'offsite_redirect';
+	return purchase.product_slug === OFFSITE_REDIRECT;
 }
 
 export function isWpcomFlexSubscription( purchase: Purchase ): boolean {
@@ -463,6 +469,20 @@ export function isDIFMProduct( product: ObjectWithProductSlug ): boolean {
  */
 export function isTieredVolumeSpaceAddon( product: ObjectWithProductSlug ): boolean {
 	return product.product_slug === PRODUCT_1GB_SPACE;
+}
+
+const SPACE_UPGRADE_SLUGS = [
+	'1gb_space_upgrade',
+	'5gb_space_upgrade',
+	'10gb_space_upgrade',
+	'50gb_space_upgrade',
+	'100gb_space_upgrade',
+];
+
+export function isStorageUpgrade( purchase: Purchase ): boolean {
+	return (
+		SPACE_UPGRADE_SLUGS.includes( purchase.product_slug ) || isTieredVolumeSpaceAddon( purchase )
+	);
 }
 
 /**
@@ -668,7 +688,6 @@ export function hasAmountAvailableToRefund( purchase: Purchase ) {
  * The notice is shown for refundable WordPress.com plans when the experiment is enabled.
  * When shown, the notice replaces the standard refund flow with an auto-renew cancellation
  * flow, offering the refund as an explicit opt-in action instead.
- *
  * @param purchase  - the purchase to check
  * @param isEnabled - whether the user is assigned to the treatment variation of the
  *                    calypso_split_cancel_refund experiment. Use the
@@ -708,6 +727,13 @@ export function getPurchaseCancellationFlowType( purchase: Purchase ): CancelFlo
 /**
  * Returns true if a list of products includes a product with a matching product or store product slug.
  */
+export function isCentennialPurchase( purchase: Purchase ): boolean {
+	return (
+		purchase.bill_period_days === SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD ||
+		purchase.is_hundred_year_domain
+	);
+}
+
 export const hasMarketplaceProduct = ( productsList: Product[], searchSlug: string ): boolean =>
 	// storeProductSlug is from the legacy store_products system, billing_product_slug is from
 	// the non-legacy billing system and for marketplace plugins will match the slug of the plugin

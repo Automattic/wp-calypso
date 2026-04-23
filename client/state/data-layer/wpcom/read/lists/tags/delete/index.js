@@ -1,5 +1,6 @@
 import { translate } from 'i18n-calypso';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { invalidateUserListItemsQuery } from 'calypso/state/data-layer/wpcom/read/lists/utils';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -19,10 +20,13 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/tags/delete/index.js', {
 					},
 					action
 				),
-			onSuccess: () =>
-				successNotice( translate( 'Tag removed from list successfully.' ), {
+			onSuccess: ( action ) => {
+				invalidateUserListItemsQuery( action.listOwner, action.listSlug );
+
+				return successNotice( translate( 'Tag removed from list successfully.' ), {
 					duration: DEFAULT_NOTICE_DURATION,
-				} ),
+				} );
+			},
 			onError: () => errorNotice( translate( 'Unable to remove tag from list.' ) ),
 		} ),
 	],
