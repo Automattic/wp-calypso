@@ -160,9 +160,14 @@ export function StylePicker( { disabled = false, mode }: StylePickerProps ) {
 		} );
 	};
 
+	// In Video mode, always show the generic "Style" label on the toolbar
+	// button, matching Image mode's placeholder behavior. The selected option
+	// is still indicated inside the dropdown via the is-selected state.
 	const selectedLabel =
-		options.find( ( opt ) => opt.value === selectedStyle )?.label ??
-		__( 'Style', __i18n_text_domain__ );
+		studioMode === StudioMode.Video
+			? __( 'Style', __i18n_text_domain__ )
+			: options.find( ( opt ) => opt.value === selectedStyle )?.label ??
+			  __( 'Style', __i18n_text_domain__ );
 
 	return (
 		<AgentUI.InputToolbar
