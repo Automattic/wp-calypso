@@ -20,8 +20,8 @@ export const connectionsQueryOptions = () =>
 		staleTime: 60_000,
 	} );
 
-export function useConnectionsQuery() {
-	return useQuery( connectionsQueryOptions() );
+export function useConnectionsQuery( { enabled }: { enabled?: boolean } = {} ) {
+	return useQuery( { ...connectionsQueryOptions(), enabled } );
 }
 
 export function useCreateConnectionMutation() {
@@ -40,8 +40,14 @@ export const verifyConnectionQueryOptions = ( id: number | null ) =>
 	queryOptions< AtmosphereVerifyResult, AtmosphereError >( {
 		queryKey: readerAtmosphereKeys.verify( id ),
 		queryFn: () => {
-			if ( id === null ) {
-				throw new Error( 'verifyConnection called with null id' );
+			if ( id === null || id <= 0 ) {
+				// Defensive guard — `enabled` below should prevent this from
+				// ever running. Throw the error type the query is typed for.
+				const err: AtmosphereError = {
+					kind: 'unknown',
+					cause: new Error( `verifyConnection called with invalid id: ${ id }` ),
+				};
+				throw err;
 			}
 			return verifyConnection( id );
 		},
