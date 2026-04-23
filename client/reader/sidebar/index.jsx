@@ -19,7 +19,6 @@ import SidebarMenu from 'calypso/layout/sidebar/menu';
 import SidebarSeparator from 'calypso/layout/sidebar/separator';
 import AppTitle from 'calypso/reader/components/app-title';
 import ReaderA8cConversationsIcon from 'calypso/reader/components/icons/a8c-conversations-icon';
-import ReaderBlueskyIcon from 'calypso/reader/components/icons/bluesky-icon';
 import ReaderConversationsIcon from 'calypso/reader/components/icons/conversations-icon';
 import ReaderDiscoverIcon from 'calypso/reader/components/icons/discover-icon';
 import ReaderLikesIcon from 'calypso/reader/components/icons/likes-icon';
@@ -47,6 +46,7 @@ import {
 import { getReaderTeams } from 'calypso/state/teams/selectors';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import ReaderSidebarHelper from './helper';
+import ReaderSidebarAtmosphere from './reader-sidebar-atmosphere';
 import ReaderSidebarLists from './reader-sidebar-lists';
 import ReaderSidebarNudges from './reader-sidebar-nudges';
 import ReaderSidebarOrganizations from './reader-sidebar-organizations';
@@ -88,11 +88,6 @@ const TrackingKeys = {
 		action: 'clicked_reader_sidebar_saved',
 		gaEvent: 'Clicked Reader Sidebar Saved',
 		tracksEvent: 'calypso_reader_sidebar_saved_clicked',
-	},
-	atmosphere: {
-		action: 'clicked_reader_sidebar_atmosphere',
-		gaEvent: 'Clicked Reader Sidebar ATmosphere',
-		tracksEvent: 'calypso_reader_sidebar_atmosphere_clicked',
 	},
 };
 
@@ -201,17 +196,7 @@ export class ReaderSidebar extends Component {
 						link="/discover"
 					/>
 
-					{ isEnabled( 'reader/atmosphere' ) && (
-						<SidebarItem
-							label={ translate( 'ATmosphere' ) }
-							link="/reader/atmosphere"
-							onNavigate={ this.handleSidebarMenuClick( TrackingKeys.atmosphere ) }
-							customIcon={ <ReaderBlueskyIcon /> }
-							className={ ReaderSidebarHelper.itemLinkClass( '/reader/atmosphere', path, {
-								'sidebar-streams__atmosphere': true,
-							} ) }
-						/>
-					) }
+					{ isEnabled( 'reader/atmosphere' ) && <ReaderSidebarAtmosphere path={ path } /> }
 
 					<SidebarItem
 						label={ translate( 'Likes' ) }
