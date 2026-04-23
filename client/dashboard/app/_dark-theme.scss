@@ -1,11 +1,11 @@
 /* Section Header */
 @mixin dashboard-dark-theme-section-header {
 	.dashboard-section-header__description {
-		color: var( --dashboard-subtle__color );
+		color: var( --dashboard__text-muted-color );
 	}
 
 	.dashboard-section-header__decoration svg {
-		fill: var( --dashboard-subtle__color );
+		fill: var( --dashboard__text-muted-color );
 	}
 }
 
@@ -25,7 +25,7 @@
 	}
 
 	.icon-list-item__decoration svg {
-		fill: var( --dashboard-subtle__color );
+		fill: var( --dashboard__text-muted-color );
 	}
 
 	.action-item .components-v-stack > .components-text:first-child {
@@ -33,7 +33,7 @@
 	}
 
 	.action-item .components-v-stack > .components-text:last-child {
-		color: var( --dashboard-subtle__color );
+		color: var( --dashboard__text-muted-color );
 	}
 }
 
@@ -87,14 +87,14 @@
 
 	.components-input-control__container .components-input-control__input:disabled,
 	.components-input-control__input:disabled {
-		color: var( --dashboard-subtle__color ) !important;
-		-webkit-text-fill-color: var( --dashboard-subtle__color );
+		color: var( --dashboard__text-muted-color ) !important;
+		-webkit-text-fill-color: var( --dashboard__text-muted-color );
 		cursor: not-allowed;
 	}
 
 	.components-input-control__input::placeholder,
 	.components-textarea-control__input::placeholder {
-		color: var( --dashboard-subtle__color );
+		color: var( --dashboard__text-muted-color );
 	}
 
 	.components-input-control__container .components-input-control__input::selection,
@@ -127,12 +127,10 @@
 		fill: var( --dashboard-danger__color-hover );
 	}
 
-	.components-validated-control:has(
-			:is( input, select ):invalid[ data-validity-visible ]
-		)
+	.components-validated-control:has( :is( input, select ):invalid[data-validity-visible] )
 		.components-input-control__backdrop,
 	.components-validated-control__wrapper-with-error-delegate:has(
-			select:invalid[ data-validity-visible ]
+			select:invalid[data-validity-visible]
 		)
 		.components-input-control__backdrop {
 		border-color: var( --dashboard-danger__color );
@@ -148,6 +146,13 @@
 	}
 }
 
+/* Muted Text */
+@mixin dashboard-dark-theme-muted-text {
+	.components-text[class*='-muted'] {
+		color: var( --dashboard__text-muted-color, #bdbdbd );
+	}
+}
+
 /* Destructive Secondary Button */
 @mixin dashboard-dark-theme-destructive-secondary-button {
 	.components-button.is-secondary.is-destructive:not( :disabled ) {
@@ -159,6 +164,8 @@
 
 // :root variables overridden for dark theme
 @mixin dashboard-dark-theme {
+	// Overrides the default `--wp-components-color-foreground` to ensure all components that rely on it adapt to the dark theme's text color.
+	--wp-components-color-foreground: var( --dashboard__text-color );
 	// Theme
 	--wp-admin-theme-color: #5b8ef7;
 	--wp-admin-theme-color--rgb: 91, 142, 247;
@@ -180,6 +187,7 @@
 	--dashboard-surface__border-color: #4a4a4a;
 	--dashboard-field__background-color: #3d3d3d;
 	--dashboard-field__border-color: #949494;
+	--dashboard__text-muted-color: #bdbdbd;
 	--dashboard-subtle__color: #bdbdbd;
 	--dashboard-warning__background-color: rgba( 212, 118, 8, 0.18 );
 	--dashboard-warning__border-color: var( --dashboard__background-color-warning );
@@ -225,5 +233,6 @@
 	@include dashboard-dark-theme-card;
 	@include dashboard-dark-theme-action-list;
 	@include dashboard-dark-theme-form-controls;
+	@include dashboard-dark-theme-muted-text;
 	@include dashboard-dark-theme-destructive-secondary-button;
 }
