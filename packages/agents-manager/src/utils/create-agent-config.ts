@@ -124,18 +124,32 @@ async function createDefaultContextProvider(
 ): Promise< UseAgentChatConfig[ 'contextProvider' ] > {
 	const canAccessZendesk = await canConnectToZendesk();
 	return {
-		getClientContext: () => ( {
-			url: window.location.href,
-			pathname: currentRoute || window.location.pathname,
-			search: window.location.search,
-			can_access_zendesk: canAccessZendesk,
-			environment,
-			// Match Odie's context shape so the server can read current_screen.url
-			currentScreen: { url: window.location.href },
-			...( siteId && { selectedSiteId: siteId } ),
-			// TODO: Remove once agenttic-client supports top-level constructorArguments
-			...( version && { constructorArguments: { version } } ),
-		} ),
+		getClientContext: () => {
+			// Hosts that don't have a plugin context (e.g. reader-chat on a
+			// blog frontend) can still surface page metadata by assigning it
+			// to `window.agentsManagerData`. Pick up `currentPost`, `siteName`,
+			// and `siteUrl` here so the orchestrator knows which post the
+			// reader is viewing without every host wiring its own provider.
+			const hostData =
+				( window as unknown as { agentsManagerData?: Record< string, unknown > } )
+					.agentsManagerData ?? {};
+
+			return {
+				url: window.location.href,
+				pathname: currentRoute || window.location.pathname,
+				search: window.location.search,
+				can_access_zendesk: canAccessZendesk,
+				environment,
+				// Match Odie's context shape so the server can read current_screen.url
+				currentScreen: { url: window.location.href },
+				...( siteId && { selectedSiteId: siteId } ),
+				...( hostData.currentPost ? { currentPost: hostData.currentPost } : {} ),
+				...( hostData.siteName ? { siteName: hostData.siteName } : {} ),
+				...( hostData.siteUrl ? { siteUrl: hostData.siteUrl } : {} ),
+				// TODO: Remove once agenttic-client supports top-level constructorArguments
+				...( version && { constructorArguments: { version } } ),
+			};
+		},
 	};
 }
 
