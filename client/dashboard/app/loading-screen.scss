@@ -1,5 +1,6 @@
 @import './pulse';
 @import './responsive-sidebar/variables';
+@import '@wordpress/base-styles/mixins';
 
 .wpcom-site__logo {
 	position: fixed;
@@ -12,7 +13,9 @@
 	animation: pulse 1.5s ease-in-out infinite;
 }
 
-// When the sidebar is visible on desktop, center the logo within the content area.
-.dashboard-root__layout:has(.dashboard-responsive-sidebar__sidebar) .wpcom-site__logo {
-	inset-inline-start: calc(50% + #{$sidebar-width * 0.5});
+// On desktop, account for the sidebar width when centering the logo.
+@include break-medium() {
+	.dashboard-root__layout:has(.dashboard-responsive-sidebar__sidebar) .wpcom-site__logo {
+		inset-inline-start: calc(50% + #{$sidebar-width * 0.5});
+	}
 }
