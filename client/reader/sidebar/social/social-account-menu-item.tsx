@@ -1,4 +1,3 @@
-import clsx from 'clsx';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import { MenuItem, MenuItemLink } from 'calypso/reader/sidebar/menu';
 
@@ -20,18 +19,20 @@ export function SocialAccountMenuItem( {
 	onClick,
 }: SocialAccountMenuItemProps ) {
 	return (
-		<MenuItem
-			selected={ isSelected }
-			className={ clsx( 'sidebar-social__account-item', { 'is-selected': isSelected } ) }
-		>
+		<MenuItem selected={ isSelected } className="sidebar-social__account-item">
 			<MenuItemLink className="sidebar__menu-link" href={ href } onClick={ onClick }>
 				{ avatarUrl ? (
+					// Render a raw <img> instead of <SiteIcon>: ATProto/Bluesky avatars are
+					// already CDN-hosted at appropriate sizes, and SiteIcon routes the URL
+					// through Photon, which doesn't work for non-WordPress.com hosts.
 					<img
 						className="sidebar-social__account-avatar"
 						src={ avatarUrl }
-						alt={ displayName }
+						alt=""
 						width={ 22 }
 						height={ 22 }
+						loading="lazy"
+						decoding="async"
 					/>
 				) : (
 					<SiteIcon iconUrl={ null } size={ 22 } />

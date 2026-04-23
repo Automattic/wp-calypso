@@ -29,9 +29,11 @@ describe( 'SocialAccountMenuItem', () => {
 		);
 	} );
 
-	it( 'applies selected class when isSelected is true', () => {
+	it( 'marks the item as selected when isSelected is true', () => {
 		const { container } = render( <SocialAccountMenuItem { ...baseProps } isSelected /> );
-		expect( container.querySelector( '.is-selected' ) ).not.toBeNull();
+		// MenuItem emits `selected` on the rendered <li>; no aria-current today,
+		// so the class contract is the stable hook for sidebar styles.
+		expect( container.querySelector( 'li.selected' ) ).not.toBeNull();
 	} );
 
 	it( 'fires onClick when link is clicked', async () => {
@@ -43,8 +45,12 @@ describe( 'SocialAccountMenuItem', () => {
 	} );
 
 	it( 'renders avatar image when avatarUrl is provided', () => {
-		render( <SocialAccountMenuItem { ...baseProps } avatarUrl="https://cdn/avatar.png" /> );
-		const img = screen.getByRole( 'img' );
+		const { container } = render(
+			<SocialAccountMenuItem { ...baseProps } avatarUrl="https://cdn/avatar.png" />
+		);
+		// Avatar is decorative (alt=""), so it has role="presentation" and
+		// isn't discoverable via getByRole('img'). Query the element directly.
+		const img = container.querySelector( 'img.sidebar-social__account-avatar' );
 		expect( img ).toHaveAttribute( 'src', 'https://cdn/avatar.png' );
 	} );
 } );
