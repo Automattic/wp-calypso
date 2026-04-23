@@ -3,16 +3,13 @@ import type { Trophy } from '@automattic/api-core';
 /**
  * Find the oldest trophy of a given type by comparing dates.
  */
-export function getOldestTrophy( type: string, trophies: Trophy[] ): Trophy | null {
-	let oldest: Trophy | null = null;
-	for ( const trophy of trophies ) {
-		if ( trophy.type === type ) {
-			if ( ! oldest || new Date( trophy.date ) < new Date( oldest.date ) ) {
-				oldest = trophy;
-			}
-		}
-	}
-	return oldest;
+export function getOldestTrophy( type: string, trophies: Trophy[] ): Trophy | undefined {
+	return trophies
+		.filter( ( t ) => t.type === type )
+		.reduce< Trophy | undefined >(
+			( oldest, t ) => ( ! oldest || new Date( t.date ) < new Date( oldest.date ) ? t : oldest ),
+			undefined
+		);
 }
 
 /**
@@ -21,28 +18,21 @@ export function getOldestTrophy( type: string, trophies: Trophy[] ): Trophy | nu
  * - Otherwise, keep the oldest (first unlocked).
  */
 export function deduplicateTrophies( trophies: Trophy[] ): Trophy[] {
-	const map = new Map< string, Trophy >();
-
-	for ( const trophy of trophies ) {
+	// Build a map of type → highest level for that type.
+	const highestByType = trophies.reduce( ( map, trophy ) => {
 		const existing = map.get( trophy.type );
-		if ( ! existing ) {
-			map.set( trophy.type, trophy );
-			continue;
-		}
-
-		// Keep the highest level.
-		if ( trophy.level > existing.level ) {
+		if ( ! existing || trophy.level > existing.level ) {
 			map.set( trophy.type, trophy );
 		}
-	}
+		return map;
+	}, new Map< string, Trophy >() );
 
-	// For each type, replace with the oldest trophy but preserve the highest level.
-	for ( const [ type, trophy ] of map ) {
+	// For each type, merge the oldest trophy with the highest level and image.
+	return Array.from( highestByType.entries() ).map( ( [ type, highest ] ) => {
 		const oldest = getOldestTrophy( type, trophies );
-		if ( oldest && oldest !== trophy ) {
-			map.set( type, { ...oldest, level: trophy.level, image: trophy.image } );
+		if ( oldest && oldest !== highest ) {
+			return { ...oldest, level: highest.level, image: highest.image };
 		}
-	}
-
-	return Array.from( map.values() );
+		return highest;
+	} );
 }
