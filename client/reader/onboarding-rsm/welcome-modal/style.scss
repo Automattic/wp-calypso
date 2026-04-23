@@ -9,8 +9,10 @@ $actions-height: 64px;
 		max-width: min( 920px, calc( 100vw - 64px ) );
 
 		@media ( max-width: $break-medium ) {
-			width: calc( 100vw - 32px );
-			max-width: calc( 100vw - 32px );
+			width: 100vw;
+			max-width: 100vw;
+			margin-left: 0;
+			margin-right: 0;
 		}
 	}
 
