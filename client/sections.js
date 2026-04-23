@@ -517,7 +517,12 @@ const sections = [
 	},
 	{
 		name: 'reader',
-		paths: [ '/reader/atmosphere' ],
+		paths: [
+			'/reader/atmosphere',
+			'/reader/atmosphere/timeline',
+			'/reader/atmosphere/profile',
+			'/reader/atmosphere/settings',
+		],
 		module: 'calypso/reader/atmosphere',
 		group: 'reader',
 		enableLoggedOut: false,

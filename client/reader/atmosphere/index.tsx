@@ -12,4 +12,28 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
+	page(
+		'/reader/atmosphere/timeline',
+		sidebar,
+		setBeforePrimary,
+		atmosphereController,
+		makeLayout,
+		clientRender
+	);
+	page(
+		'/reader/atmosphere/profile',
+		sidebar,
+		setBeforePrimary,
+		atmosphereController,
+		makeLayout,
+		clientRender
+	);
+	page(
+		'/reader/atmosphere/settings',
+		sidebar,
+		setBeforePrimary,
+		atmosphereController,
+		makeLayout,
+		clientRender
+	);
 }

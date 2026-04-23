@@ -15,7 +15,8 @@ import { ConnectForm } from './connect-form';
 import { ConnectionsList } from './connections-list';
 import { VerifyPanel } from './verify-panel';
 
-export function AtmosphereView() {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function AtmosphereView( { selectedTab }: { selectedTab?: string } = {} ) {
 	const translate = useTranslate();
 	const connections = useConnectionsQuery();
 	const create = useCreateConnectionMutation();
