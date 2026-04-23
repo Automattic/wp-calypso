@@ -1,0 +1,80 @@
+@import '@automattic/components/src/styles/typography';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.is-reader-page {
+	.achievements-grid {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 16px;
+		margin-top: 16px;
+
+		@include break-small() {
+			grid-template-columns: 1fr 1fr;
+			margin-top: 26px;
+		}
+	}
+
+	.achievement-card {
+		border: 1px solid var( --color-border-subtle );
+		border-radius: 8px;
+		display: flex;
+		gap: 16px;
+		padding: 16px;
+
+		@include break-small() {
+			padding: 24px;
+		}
+	}
+
+	.achievement-card__icon {
+		flex-shrink: 0;
+		height: 48px;
+		width: 48px;
+	}
+
+	.achievement-card__details {
+		display: flex;
+		flex-direction: column;
+		min-width: 0;
+	}
+
+	.achievement-card__title {
+		font-size: 1rem;
+		font-weight: 500;
+		line-height: 20px;
+		margin: 0;
+	}
+
+	.achievement-card__badge {
+		color: var( --studio-gray-40 );
+		font-size: $font-body-small;
+		font-weight: 400;
+		margin-inline-start: 8px;
+	}
+
+	.achievement-card__description {
+		color: var( --studio-gray-40 );
+		font-size: $font-body-small;
+		line-height: 20px;
+		margin: 4px 0 0;
+	}
+
+	.achievement-card__caption {
+		color: var( --studio-gray-40 );
+		font-size: $font-body-extra-small;
+		line-height: 20px;
+		margin: 4px 0 0;
+
+		a {
+			color: var( --studio-gray-40 );
+			text-decoration: underline;
+		}
+	}
+
+	.achievement-card__empty {
+		color: var( --studio-gray-40 );
+		margin-top: 26px;
+		text-align: center;
+	}
+}
