@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import {
 	DataViews,
 	filterSortAndPaginate,
@@ -6,7 +7,7 @@ import {
 	type ViewTable,
 } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type MouseEvent } from 'react';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { useSelector } from 'calypso/state';
 import getPodcastingCategoryId from 'calypso/state/selectors/get-podcasting-category-id';
@@ -130,11 +131,28 @@ const PodcastingEpisodes = () => {
 				id: 'title',
 				label: translate( 'Title' ) as string,
 				getValue: ( { item }: { item: Episode } ) => item.title,
-				render: ( { item }: { item: Episode } ) => (
-					<a href={ `/post/${ siteSlug }/${ item.id }` }>
-						{ item.title || ( translate( '(Untitled)' ) as string ) }
-					</a>
-				),
+				render: ( { item }: { item: Episode } ) => {
+					const editUrl = `/post/${ siteSlug }/${ item.id }`;
+					const onClick = ( event: MouseEvent< HTMLAnchorElement > ) => {
+						if (
+							event.defaultPrevented ||
+							event.button !== 0 ||
+							event.metaKey ||
+							event.ctrlKey ||
+							event.shiftKey ||
+							event.altKey
+						) {
+							return;
+						}
+						event.preventDefault();
+						page( editUrl );
+					};
+					return (
+						<a href={ editUrl } onClick={ onClick }>
+							{ item.title || ( translate( '(Untitled)' ) as string ) }
+						</a>
+					);
+				},
 				enableHiding: false,
 				enableSorting: true,
 				enableGlobalSearch: true,
@@ -191,7 +209,7 @@ const PodcastingEpisodes = () => {
 				callback: ( items: Episode[] ) => {
 					const item = items[ 0 ];
 					if ( item ) {
-						window.location.href = `/post/${ siteSlug }/${ item.id }`;
+						page( `/post/${ siteSlug }/${ item.id }` );
 					}
 				},
 			},
@@ -224,7 +242,7 @@ const PodcastingEpisodes = () => {
 				{ sectionHeader }
 				<div className="podcasting__episodes-empty">
 					{ translate(
-						'Select a podcast category in Feed settings to start showing episodes here.'
+						'Select a podcast category in the Settings tab to start showing episodes here.'
 					) }
 				</div>
 			</>

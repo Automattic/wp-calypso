@@ -1,4 +1,4 @@
-import { Button, ExternalLink, Modal } from '@wordpress/components';
+import { Button, ExternalLink, Modal, TextControl } from '@wordpress/components';
 import { external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState, type FormEvent } from 'react';
@@ -54,7 +54,7 @@ const SubmitModal = ( { podcatcher, onClose }: Props ) => {
 									serviceArgs
 							  )
 							: translate(
-									'Set a podcast category in Feed settings to generate your RSS feed URL.'
+									'Set a podcast category in the Settings tab to generate your RSS feed URL.'
 							  ) }
 					</p>
 					{ feedUrl && <ClipboardButtonInput value={ feedUrl } /> }
@@ -86,6 +86,9 @@ const SubmitModal = ( { podcatcher, onClose }: Props ) => {
 						href={ podcatcher.submitUrl }
 						target="_blank"
 						rel="noopener noreferrer"
+						aria-label={
+							translate( 'Visit %(service)s (opens in a new tab)', serviceArgs ) as string
+						}
 					>
 						{ translate( 'Visit %(service)s', serviceArgs ) }
 					</Button>
@@ -102,14 +105,18 @@ const SubmitModal = ( { podcatcher, onClose }: Props ) => {
 						) }
 					</p>
 					<form className="podcasting__submit-step-form" onSubmit={ handleSave }>
-						<input
-							type="url"
-							className="podcasting__submit-step-input"
-							value={ draftUrl }
-							onChange={ ( event ) => setDraftUrl( event.target.value ) }
-							placeholder="https://"
-							aria-label={ translate( '%(service)s URL', serviceArgs ) as string }
-						/>
+						<div className="podcasting__submit-step-field">
+							<TextControl
+								label={ translate( '%(service)s URL', serviceArgs ) as string }
+								hideLabelFromVision
+								value={ draftUrl }
+								onChange={ setDraftUrl }
+								placeholder="https://"
+								type="url"
+								__next40pxDefaultSize
+								__nextHasNoMarginBottom
+							/>
+						</div>
 						<Button variant="primary" __next40pxDefaultSize type="submit">
 							{ translate( 'Save' ) }
 						</Button>

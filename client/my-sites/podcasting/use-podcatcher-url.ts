@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
 
-const storageKey = ( siteId: number | null | undefined, podcatcherId: string ) =>
-	`podcasting:${ siteId ?? 'anon' }:${ podcatcherId }:url`;
+const storageKey = ( siteId: number, podcatcherId: string ) =>
+	`podcasting:${ siteId }:${ podcatcherId }:url`;
 
 const readUrl = ( siteId: number | null | undefined, podcatcherId: string ): string => {
-	if ( typeof window === 'undefined' ) {
+	if ( typeof window === 'undefined' || ! siteId ) {
 		return '';
 	}
 	try {
@@ -27,7 +27,7 @@ export const usePodcatcherUrl = (
 	const save = useCallback(
 		( next: string ) => {
 			setUrl( next );
-			if ( typeof window === 'undefined' ) {
+			if ( typeof window === 'undefined' || ! siteId ) {
 				return;
 			}
 			try {

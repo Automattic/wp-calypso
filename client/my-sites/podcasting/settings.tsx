@@ -10,7 +10,6 @@ import { pick } from 'lodash';
 import { useState, useCallback, type ComponentType, type FormEvent } from 'react';
 import TermTreeSelector from 'calypso/blocks/term-tree-selector';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import QueryTerms from 'calypso/components/data/query-terms';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
@@ -67,7 +66,7 @@ type PodcastingFields = {
 	podcasting_image_id?: string;
 };
 
-type PodcastingSettings = PodcastingFields & {
+type PodcastingSettingsShape = PodcastingFields & {
 	blogname?: string;
 };
 
@@ -78,7 +77,7 @@ type PodcastingSettingsFormProps = {
 	isRequestingSettings: boolean;
 	isSavingSettings: boolean;
 	onChangeField: ( field: string ) => ( event: React.ChangeEvent< HTMLInputElement > ) => void;
-	settings?: PodcastingSettings;
+	settings?: PodcastingSettingsShape;
 	updateFields: ( fields: Partial< PodcastingFields >, callback?: () => void ) => void;
 	submitForm: () => void;
 };
@@ -90,7 +89,7 @@ type TextFieldArgs = {
 	explanation?: string;
 };
 
-const getFormSettings = ( settings?: PodcastingSettings ): PodcastingFields => {
+const getFormSettings = ( settings?: PodcastingSettingsShape ): PodcastingFields => {
 	return pick( settings ?? {}, [
 		'podcasting_category_id',
 		'podcasting_title',
@@ -262,7 +261,6 @@ const PodcastingSettings = wrapSettingsForm( getFormSettings )( ( {
 					{ translate( 'Configure your podcast feed and directory listing.' ) }
 				</p>
 			</header>
-			<QueryTerms siteId={ siteId } taxonomy="category" />
 
 			<Card className="site-settings__card">
 				<ToggleControl
