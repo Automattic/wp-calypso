@@ -58,7 +58,7 @@ export default function AchievementsSettings() {
 	const handleSetPublic = ( value: boolean ) => {
 		setPublic( value, {
 			onSuccess( _, data ) {
-				setIsPublic( data );
+				setIsPublic( !! data );
 				if ( data ) {
 					dispatchSuccessNotice( translate( 'The achievements page is now public.' ) );
 					recordAction( 'set_achievements_page_public' );
@@ -84,7 +84,7 @@ export default function AchievementsSettings() {
 	const handleSetNotifications = ( value: boolean ) => {
 		setNotifications( value, {
 			onSuccess( _, data ) {
-				setNotificationsEnabled( data );
+				setNotificationsEnabled( !! data );
 				if ( data ) {
 					dispatchSuccessNotice( translate( 'Achievements notifications are now enabled.' ) );
 					recordAction( 'set_achievements_notifications_enabled' );
