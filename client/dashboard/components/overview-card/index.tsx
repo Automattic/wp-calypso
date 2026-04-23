@@ -85,10 +85,7 @@ export default function OverviewCard( {
 		if ( isLoading ) {
 			return <TextSkeleton length={ 20 } />;
 		}
-		if ( description ) {
-			return description;
-		}
-		return <>&nbsp;</>;
+		return description ?? null;
 	};
 
 	// Stepper/onboarding flows are not considered relative links because they can't be loaded by TanStack Router.

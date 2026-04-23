@@ -48,7 +48,7 @@ import {
 } from '@wordpress/element';
 import { hasQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
-import { localize, useTranslate } from 'i18n-calypso';
+import { localize, useTranslate, type TranslateResult } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import { useSelector } from 'react-redux';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
@@ -106,6 +106,7 @@ const PlanComparisonHeader = styled.h1`
 	}
 `;
 export interface PlansFeaturesMainProps {
+	highlightLabelOverrides?: { [ K in PlanSlug ]?: TranslateResult };
 	siteId?: number | null;
 	intent?: PlansIntent | null;
 	isInSiteDashboard?: boolean;
@@ -211,6 +212,7 @@ const PlansFeaturesMain = ( {
 	selectedFeature,
 	plansWithScroll,
 	discountEndDate,
+	highlightLabelOverrides,
 	hideFreePlan,
 	hidePersonalPlan,
 	hidePremiumPlan,
@@ -467,6 +469,7 @@ const PlansFeaturesMain = ( {
 		eligibleForFreeHostingTrial,
 		hasRedeemedDomainCredit: currentPlan?.hasRedeemedDomainCredit,
 		hiddenPlans,
+		highlightLabelOverrides,
 		intent: shouldForceDefaultPlansBasedOnIntent( intent ) ? defaultWpcomPlansIntent : intent,
 		isDisplayingPlansNeededForFeature,
 		isSubdomainNotGenerated: ! resolvedSubdomainName.result,
@@ -494,6 +497,7 @@ const PlansFeaturesMain = ( {
 		coupon,
 		eligibleForFreeHostingTrial,
 		hasRedeemedDomainCredit: currentPlan?.hasRedeemedDomainCredit,
+		highlightLabelOverrides,
 		hiddenPlans,
 		hideCurrentPlan: isInSiteDashboard,
 		intent,

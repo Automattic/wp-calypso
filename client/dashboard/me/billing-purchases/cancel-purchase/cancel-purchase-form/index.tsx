@@ -395,7 +395,7 @@ function StepButtons( {
 				onClick={ onSubmit }
 				variant={ variant }
 			>
-				{ __( 'Submit' ) }
+				{ __( 'Continue' ) }
 			</Button>
 			{ ! canGoNext && ! hasWarningStep && (
 				<Button

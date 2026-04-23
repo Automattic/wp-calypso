@@ -24,6 +24,7 @@ import {
 	creditCardHasAlreadyExpired,
 	creditCardExpiresBeforeSubscription,
 	isInExpirationGracePeriod,
+	isCentennialPurchase,
 } from '../../utils/purchase';
 import type { Purchase } from '@automattic/api-core';
 
@@ -133,6 +134,21 @@ export function PurchaseExpiryStatus( {
 			),
 			{
 				managePurchase: <a href={ purchase.iap_purchase_management_link } />,
+			}
+		);
+	}
+
+	const isCentennial = isCentennialPurchase( purchase );
+
+	if ( isCentennial ) {
+		if ( isIncludedWithPlan( purchase ) ) {
+			return __( 'Included with plan' );
+		}
+		return createInterpolateElement(
+			// translators: date is a formatted expiry date
+			__( 'Paid until <date />' ),
+			{
+				date: <FormattedExpiryDate locale={ locale } purchase={ purchase } />,
 			}
 		);
 	}

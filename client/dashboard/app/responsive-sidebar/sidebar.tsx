@@ -1,7 +1,6 @@
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { brush, envelope, globe, layout, plugins } from '@wordpress/icons';
-import { menuDot } from '../../components/icons';
 import RouterLinkButton from '../../components/router-link-button';
 import { SidebarExpandableMenuItem, SidebarMenu, SidebarMenuItem } from '../../components/sidebar';
 import SidebarNavigator from '../../components/sidebar-navigator';
@@ -11,11 +10,12 @@ import SiteSidebar from '../../sites/site-sidebar';
 import { wpcomLink } from '../../utils/link';
 import { useAnalytics } from '../analytics';
 import { useAppContext } from '../context';
+import ThemeSwitcher from './theme-switcher';
 
 import './sidebar.scss';
 
 export default function Sidebar() {
-	const { Logo, name } = useAppContext();
+	const { Logo, name, supports } = useAppContext();
 	const { recordTracksEvent } = useAnalytics();
 
 	return (
@@ -47,6 +47,7 @@ export default function Sidebar() {
 					<MeSidebar />
 				</SidebarNavigator.Screen>
 			</SidebarNavigator>
+			{ supports.colorScheme && <ThemeSwitcher /> }
 		</div>
 	);
 }
@@ -73,14 +74,11 @@ function PrimaryMenuSidebar() {
 			) }
 			{ supports.plugins && (
 				<SidebarExpandableMenuItem label={ __( 'Plugins' ) } icon={ plugins } to="/plugins">
-					<SidebarMenuItem icon={ menuDot } to="/plugins/manage">
-						{ __( 'Manage plugins' ) }
-					</SidebarMenuItem>
-					<SidebarMenuItem icon={ menuDot } to="/plugins/scheduled-updates">
+					<SidebarMenuItem to="/plugins/manage">{ __( 'Manage plugins' ) }</SidebarMenuItem>
+					<SidebarMenuItem to="/plugins/scheduled-updates">
 						{ __( 'Scheduled updates' ) }
 					</SidebarMenuItem>
 					<SidebarMenuItem
-						icon={ menuDot }
 						href={ wpcomLink( '/plugins' ) }
 						target="_blank"
 						rel="noopener noreferrer"

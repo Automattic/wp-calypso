@@ -1,27 +1,16 @@
 import './styles.scss';
-import { useEffect } from 'react';
+import { userQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
 import ReactDOM from 'react-dom';
-import { useSelector, useDispatch } from 'calypso/state';
-import { requestUser } from 'calypso/state/reader/users/actions';
-import getReaderUser from 'calypso/state/selectors/get-reader-user';
 import GravatarHeader from './gravatar-header';
 import PrimaryBlog from './primary-blog-card';
 import RecommendedBlogs from './recommended-blogs';
 
 function HovercardContent( props ) {
-	const dispatch = useDispatch();
 	const { user, gravatarData, processedAvatarUrl, closeCard } = props;
-	// For some reason there are places where the user object passes in primary blog of -1. Lets
-	// find the read one with this selector.
-	const readerUserData = useSelector( ( state ) => getReaderUser( state, user.wpcom_id, true ) );
+	const { data: readerUserData } = useQuery( userQuery( user.user_login, user.wpcom_id ) );
 	const { display_name: displayName, user_login: userLogin } = readerUserData || {};
-	const primaryBlogId = readerUserData?.primary_blog || user?.primary_blog || user?.site_ID;
-
-	useEffect( () => {
-		if ( ! readerUserData && user?.wpcom_id ) {
-			dispatch( requestUser( user.wpcom_id, true ) );
-		}
-	}, [ user?.wpcom_id, dispatch, readerUserData ] );
+	const primaryBlogId = readerUserData?.primary_blog?.ID || user?.primary_blog || user?.site_ID;
 
 	return (
 		<>

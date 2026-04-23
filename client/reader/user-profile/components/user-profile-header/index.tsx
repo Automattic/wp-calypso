@@ -1,4 +1,5 @@
 import './style.scss';
+import { isEnabled } from '@automattic/calypso-config';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useLayoutEffect, useRef, useState } from 'react';
@@ -8,12 +9,12 @@ import AutoDirection from 'calypso/components/auto-direction';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
-import { UserProfileData } from 'calypso/lib/user/user';
 import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
 import UserTopSites from '../top-sites';
+import type { ReaderUser } from '@automattic/api-core';
 
 interface UserProfileHeaderProps {
-	user: UserProfileData;
+	user: ReaderUser;
 	view: string;
 }
 
@@ -57,6 +58,15 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 			path: `${ userProfileUrl }/recommended-blogs`,
 			selected: view === 'recommended-blogs',
 		},
+		...( isEnabled( 'reader/achievements' )
+			? [
+					{
+						label: translate( 'Achievements' ),
+						path: `${ userProfileUrl }/achievements`,
+						selected: view === 'achievements',
+					},
+			  ]
+			: [] ),
 	];
 
 	return (
