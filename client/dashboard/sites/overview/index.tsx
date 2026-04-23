@@ -39,8 +39,8 @@ import VisibilityCard from '../overview-visibility-card';
 import VisibilityCardCiab from '../overview-visibility-card-ciab';
 import {
 	InaccessibleJetpackNotice,
-	JetpackRecoveryModeNotice,
-	getJetpackRecoveryNoticeMessage,
+	JetpackCriticalErrorNotice,
+	getJetpackCriticalErrorMessage,
 } from '../site/notices';
 import StagingSiteSyncDropdown from '../staging-site-sync-dropdown';
 import { StorageWarningBanner } from './storage-warning-banner';
@@ -203,12 +203,12 @@ function SiteOverview( {
 
 	const renderNotices = () => {
 		if ( site.__inaccessible_jetpack_error ) {
-			// Prefer the recovery-mode notice over the generic inaccessible-Jetpack
-			// notice when recovery mode explains the failure — plugin/theme conflict
-			// is more actionable than the raw transport error.
-			const recoveryMessage = getJetpackRecoveryNoticeMessage( site );
+			// Prefer the critical-error notice over the generic inaccessible-Jetpack
+			// notice when recovery mode explains the failure — the critical-error
+			// copy is more actionable than the raw transport error.
+			const recoveryMessage = getJetpackCriticalErrorMessage( site );
 			if ( recoveryMessage ) {
-				return <JetpackRecoveryModeNotice message={ recoveryMessage } />;
+				return <JetpackCriticalErrorNotice message={ recoveryMessage } />;
 			}
 			return <InaccessibleJetpackNotice error={ site.__inaccessible_jetpack_error } />;
 		}

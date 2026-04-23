@@ -82,7 +82,7 @@ export function getJetpackRecoveryState(
 	return 'healthy';
 }
 
-export function getJetpackRecoveryNoticeMessage( site: Site ): ReactNode | null {
+export function getJetpackCriticalErrorMessage( site: Site ): ReactNode | null {
 	const state = getJetpackRecoveryState( site );
 	const isAdmin = !! site.capabilities?.manage_options;
 
@@ -115,7 +115,7 @@ export function getJetpackRecoveryNoticeMessage( site: Site ): ReactNode | null 
 	}
 }
 
-export function JetpackRecoveryModeNotice( { message }: { message: ReactNode } ) {
+export function JetpackCriticalErrorNotice( { message }: { message: ReactNode } ) {
 	return (
 		<Notice
 			variant="error"
