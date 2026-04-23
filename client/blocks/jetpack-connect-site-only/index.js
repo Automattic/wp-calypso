@@ -25,7 +25,7 @@ class JetpackConnectSiteOnly extends Component {
 		const redirectParams = new URLSearchParams( urlParams.get( 'redirect_to' ) );
 		const purchaseNonce = redirectParams.get( 'purchase_nonce' );
 
-		const port = config( 'port' ) ?? 3000;
+		const port = config( 'port' ) ?? 3001;
 		const url =
 			'development' === calypsoEnv
 				? `http://jetpack.cloud.localhost:${ port }/pricing/${ slug }`
