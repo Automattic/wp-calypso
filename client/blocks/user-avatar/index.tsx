@@ -4,6 +4,7 @@ import { UserResponse } from '@automattic/api-core';
 import { userQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { Popover } from '@wordpress/components';
+import { useTranslate } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
 import UserHovercard from 'calypso/blocks/user-avatar/user-hovercard';
 import PreloadedImage from 'calypso/components/preloaded-image';
@@ -30,6 +31,7 @@ export interface UserAvatarInfo {
 }
 
 export default function UserAvatar( { user, size = 32, hideHovercard = false }: UserAvatarProps ) {
+	const translate = useTranslate();
 	const avatarRef = useRef< HTMLDivElement >( null );
 	const [ isHovered, setIsHovered ] = useState( false );
 	const [ placement, setPlacement ] = useState< 'bottom-start' | 'top-start' | 'right' | 'left' >(
@@ -120,6 +122,9 @@ export default function UserAvatar( { user, size = 32, hideHovercard = false }: 
 			onBlur={ handleHideHovercard }
 			tabIndex={ needsTabIndex ? 0 : undefined }
 			role={ needsTabIndex ? 'button' : undefined }
+			aria-label={ translate( 'User Profile: %s', {
+				args: name,
+			} ) }
 		>
 			{ wpcomProfileUrl ? <a href={ wpcomProfileUrl }>{ avatarImg }</a> : avatarImg }
 
