@@ -129,6 +129,50 @@
 	}
 }
 
+/* Summary Buttons */
+@mixin dashboard-dark-theme-summary-button {
+	.summary-button.components-button {
+		color: var( --dashboard__text-color );
+
+		.summary-button-title {
+			color: var( --dashboard__text-color );
+		}
+
+		.summary-button-navigation-icon,
+		.summary-button-decoration svg {
+			fill: var( --dashboard__text-muted-color );
+		}
+
+		&.has-density-low {
+			background-color: var( --dashboard-surface__background-color );
+			border-color: var( --dashboard-surface__border-color );
+		}
+
+		&.has-density-medium,
+		&.has-density-medium-low {
+			border-bottom-color: var( --dashboard-surface__border-color );
+		}
+
+		&:hover:not( :disabled, [aria-disabled='true'] ) {
+			background: color-mix(
+				in srgb,
+				var( --dashboard-surface__background-color ) 82%,
+				var( --wp-admin-theme-color )
+			);
+			color: var( --dashboard__text-color );
+
+			.summary-button-title {
+				color: var( --dashboard-menu-item-active__color );
+			}
+
+			.summary-button-navigation-icon,
+			.summary-button-decoration svg {
+				fill: var( --dashboard-menu-item-active__color );
+			}
+		}
+	}
+}
+
 // :root variables overridden for dark theme
 @mixin dashboard-dark-theme {
 	// Overrides the default `--wp-components-color-foreground` to ensure all components that rely on it adapt to the dark theme's text color.
@@ -200,4 +244,5 @@
 	@include dashboard-dark-theme-form-controls;
 	@include dashboard-dark-theme-muted-text;
 	@include dashboard-dark-theme-destructive-secondary-button;
+	@include dashboard-dark-theme-summary-button;
 }
