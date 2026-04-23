@@ -1,45 +1,35 @@
-import { SiteDetails, Purchases } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { GetManagePurchaseUrlFor } from 'calypso/lib/purchases/types';
-import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
 import {
 	getPurchasesFieldDefinitions,
 	getMembershipsFieldDefinitions,
 } from '../purchases-data-field';
+import type { Purchase, Site, StoredPaymentMethod } from '@automattic/api-core';
 
 export function usePurchasesFieldDefinitions( {
 	sites,
 	transferredOwnershipPurchases = [],
 	getManagePurchaseUrlFor,
+	paymentMethods,
 }: {
-	sites: SiteDetails[];
-	transferredOwnershipPurchases?: Purchases.Purchase[];
+	sites: Site[];
+	transferredOwnershipPurchases?: Purchase[];
 	getManagePurchaseUrlFor: GetManagePurchaseUrlFor;
+	paymentMethods: StoredPaymentMethod[];
 } ) {
 	const translate = useTranslate();
-	const moment = useLocalizedMoment();
-	const paymentMethods = useStoredPaymentMethods().paymentMethods;
 
 	return useMemo( () => {
 		const fieldDefinitions = getPurchasesFieldDefinitions( {
 			translate,
-			moment,
 			paymentMethods,
 			getManagePurchaseUrlFor,
 			sites,
 			transferredOwnershipPurchases,
 		} );
 		return fieldDefinitions;
-	}, [
-		translate,
-		moment,
-		paymentMethods,
-		sites,
-		transferredOwnershipPurchases,
-		getManagePurchaseUrlFor,
-	] );
+	}, [ translate, paymentMethods, sites, transferredOwnershipPurchases, getManagePurchaseUrlFor ] );
 }
 
 export function useMembershipsFieldDefinitions() {

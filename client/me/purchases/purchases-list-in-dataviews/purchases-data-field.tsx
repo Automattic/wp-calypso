@@ -1,66 +1,292 @@
-import { Purchases, SiteDetails } from '@automattic/data-stores';
-import { StoredPaymentMethod } from '@automattic/wpcom-checkout';
 import { Fields } from '@wordpress/dataviews';
+import { createInterpolateElement } from '@wordpress/element';
+import { __, sprintf } from '@wordpress/i18n';
 import { fixMe, LocalizeProps } from 'i18n-calypso';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { logToLogstash } from 'calypso/lib/logstash';
-import { getDisplayName, isExpired, isRenewing, purchaseType } from 'calypso/lib/purchases';
-import { GetManagePurchaseUrlFor, MembershipSubscription } from 'calypso/lib/purchases/types';
-import { useSelector } from 'calypso/state';
-import { getSite } from 'calypso/state/sites/selectors';
-import { isTransferredOwnership } from '../hooks/use-is-transferred-ownership';
-import { Icon, MembershipType, MembershipTerms } from '../membership-item';
+import akismetIcon from 'calypso/assets/images/icons/akismet-icon.svg';
+import jetpackIcon from 'calypso/assets/images/icons/jetpack-icon.svg';
+import passportIcon from 'calypso/assets/images/icons/passport-icon.svg';
+import { PurchaseExpiryStatus } from 'calypso/dashboard/components/purchase-expiry-status';
+import SiteIcon from 'calypso/dashboard/components/site-icon';
 import {
-	PurchaseItemSiteIcon,
-	PurchaseItemProduct,
-	PurchaseItemStatus,
-	PurchaseItemPaymentMethod,
-	BackupPaymentMethodNotice,
-} from '../purchase-item';
-import OwnerInfo from '../purchase-item/owner-info';
+	MonetizeSubscriptionIcon,
+	MonetizeSubscriptionType,
+	MonetizeSubscriptionTerms,
+} from 'calypso/dashboard/me/billing-monetize-subscriptions/monetize-item';
+import { BillingPurchaseInfoPopover } from 'calypso/dashboard/me/billing-purchases/dataviews';
+import { PaymentMethodImage } from 'calypso/dashboard/me/billing-purchases/payment-method-image';
+import {
+	isExpired,
+	isRenewing,
+	isTransferredOwnership,
+	getTitleForListDisplay,
+	getSubtitleForDisplay,
+	isAkismetHoldingSitePurchase,
+	isMarketplaceHoldingSitePurchase,
+} from 'calypso/dashboard/utils/purchase';
+import { logToLogstash } from 'calypso/lib/logstash';
+import { GetManagePurchaseUrlFor } from 'calypso/lib/purchases/types';
+import { useSelector } from 'calypso/state';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import type {
+	Purchase,
+	MonetizeSubscription,
+	Site,
+	StoredPaymentMethod,
+} from '@automattic/api-core';
 
-function PurchaseItemRowProduct( props: {
-	purchase: Purchases.Purchase;
-	translate: LocalizeProps[ 'translate' ];
-} ) {
-	const { purchase, translate } = props;
-	const site = useSelector( ( state ) => getSite( state, purchase.siteId ?? 0 ) );
-	const slug = site?.domain ?? undefined;
-	return (
-		<PurchaseItemProduct
-			purchase={ purchase }
-			site={ site }
-			translate={ translate }
-			slug={ slug }
-			showSite
-			isDisconnectedSite={ ! site }
-		/>
-	);
+function PurchaseItemSiteIcon( { site, purchase }: { site?: Site; purchase: Purchase } ) {
+	const size = 36;
+
+	if (
+		purchase.product_type === 'jetpack' ||
+		purchase.is_jetpack_ai_product ||
+		purchase.is_jetpack_stats_product ||
+		purchase.is_free_jetpack_stats_product
+	) {
+		return (
+			<img
+				src={ jetpackIcon }
+				alt="Jetpack icon"
+				style={ { width: size, height: size, minWidth: size } }
+			/>
+		);
+	}
+
+	if (
+		isMarketplaceHoldingSitePurchase( purchase ) &&
+		purchase.product_slug.startsWith( 'passport' )
+	) {
+		return (
+			<img
+				src={ passportIcon }
+				alt="Passport icon"
+				style={ { width: size, height: size, minWidth: size } }
+			/>
+		);
+	}
+
+	if ( isAkismetHoldingSitePurchase( purchase ) ) {
+		return (
+			<img
+				src={ akismetIcon }
+				alt="Akismet icon"
+				style={ { width: size, height: size, minWidth: size } }
+			/>
+		);
+	}
+
+	if ( ! site ) {
+		return (
+			<img
+				src={ jetpackIcon }
+				alt="No site icon"
+				style={ { width: size, height: size, minWidth: size } }
+			/>
+		);
+	}
+
+	return <SiteIcon site={ site } size={ size } />;
 }
 
-function PurchaseItemRowStatus( props: {
-	purchase: Purchases.Purchase;
-	translate: LocalizeProps[ 'translate' ];
-	moment: ReturnType< typeof useLocalizedMoment >;
-	isDisconnectedSite?: boolean;
-} ) {
-	const { purchase, translate, moment, isDisconnectedSite } = props;
-
-	return (
-		<div className="purchase-item__status purchases-layout__status">
-			<PurchaseItemStatus
-				purchase={ purchase }
-				translate={ translate }
-				moment={ moment }
-				isDisconnectedSite={ isDisconnectedSite }
-			/>
-		</div>
+function BackupPaymentMethodNotice() {
+	const noticeText = createInterpolateElement(
+		__( 'If the renewal fails, a <link>backup payment method</link> may be used.' ),
+		{
+			link: <a href="/me/purchases/payment-methods" />,
+		}
 	);
+	return <BillingPurchaseInfoPopover>{ noticeText }</BillingPurchaseInfoPopover>;
+}
+
+function OwnerInfo( {
+	purchase,
+	isTransferredOwnership: isTransferred = false,
+}: {
+	purchase: Purchase;
+	isTransferredOwnership?: boolean;
+} ) {
+	const currentUserId = useSelector( getCurrentUserId );
+	if ( String( currentUserId ) === String( purchase.user_id ) ) {
+		return null;
+	}
+
+	const JETPACK_CONTACT_SUPPORT = 'https://jetpack.com/contact-support/';
+
+	const tooltipContent = isTransferred ? (
+		<span>
+			{ createInterpolateElement(
+				__(
+					"This license was activated on <domain /> by another user. If you haven't given the license to them on purpose, <link>contact our support team</link> for more assistance."
+				),
+				{
+					domain: <strong>{ purchase.domain || purchase.site_slug || __( 'a site' ) }</strong>,
+					link: <a href={ JETPACK_CONTACT_SUPPORT } target="_blank" rel="noopener noreferrer" />,
+				}
+			) }
+		</span>
+	) : (
+		<span>
+			{ __(
+				'To manage this subscription, log in to the WordPress.com account that purchased it or contact the owner.'
+			) }
+		</span>
+	);
+
+	return <BillingPurchaseInfoPopover>{ tooltipContent }</BillingPurchaseInfoPopover>;
+}
+
+function PurchaseItemRowProduct( {
+	purchase,
+	sites,
+	translate,
+}: {
+	purchase: Purchase;
+	sites: Site[];
+	translate: LocalizeProps[ 'translate' ];
+} ) {
+	if ( purchase.is_attached_to_holding_site ) {
+		return null;
+	}
+
+	const site = sites.find( ( s ) => s.ID === purchase.blog_id );
+	const productType = purchase.is_domain_registration ? null : getSubtitleForDisplay( purchase );
+
+	if ( site ) {
+		if ( productType && site.name && site.slug ) {
+			return (
+				<div>
+					{ translate( '%(purchaseType)s for {{siteName/}} ({{siteDomain/}})', {
+						args: { purchaseType: productType },
+						components: {
+							siteName: (
+								<a href={ 'https://' + site.slug } rel="noreferrer">
+									{ site.name }
+								</a>
+							),
+							siteDomain: (
+								<a href={ 'https://' + site.slug } rel="noreferrer">
+									{ site.slug }
+								</a>
+							),
+						},
+					} ) }
+				</div>
+			);
+		}
+
+		if ( productType && site.slug ) {
+			return (
+				<div>
+					{ translate( '%(purchaseType)s for {{siteDomain/}}', {
+						args: { purchaseType: productType },
+						components: {
+							siteDomain: (
+								<a href={ 'https://' + site.slug } rel="noreferrer">
+									{ site.slug }
+								</a>
+							),
+						},
+					} ) }
+				</div>
+			);
+		}
+	}
+
+	if ( ! site && productType ) {
+		return (
+			<div>
+				{ sprintf(
+					// translators: purchaseType is the product name and siteDomain is the site domain
+					__( '%(purchaseType)s for %(siteDomain)s' ),
+					{
+						purchaseType: productType,
+						siteDomain: purchase.domain,
+					}
+				) }
+			</div>
+		);
+	}
+
+	return productType ? <div>{ productType }</div> : null;
+}
+
+function PurchaseItemPaymentMethod( { purchase, sites }: { purchase: Purchase; sites: Site[] } ) {
+	const site = sites.find( ( s ) => s.ID === purchase.blog_id );
+	const isSiteMissing = ! site;
+
+	if ( purchase.expiry_status === 'included' ) {
+		return <>{ __( 'Included with Plan' ) }</>;
+	}
+
+	if ( purchase.is_iap_purchase ) {
+		return (
+			<div>
+				<span>{ __( 'In-App Purchase' ) }</span>
+			</div>
+		);
+	}
+
+	if (
+		isExpired( purchase ) ||
+		( purchase.partner_name && purchase.meta !== 'is-a4a' ) ||
+		purchase.product_slug === 'ak_free_yearly' ||
+		( purchase.product_slug === 'ak_ent_yearly' && purchase.amount === 0 ) ||
+		( isSiteMissing && ! purchase.is_domain && purchase.meta !== 'is-a4a' )
+	) {
+		return null;
+	}
+
+	if ( ! purchase.is_rechargeable ) {
+		return (
+			<div>
+				<a href={ `/me/purchases/${ purchase.site_slug }/${ purchase.ID }/payment-method/add` }>
+					{ __( 'Add payment method' ) }
+				</a>
+			</div>
+		);
+	}
+
+	if ( ! isRenewing( purchase ) ) {
+		return null;
+	}
+
+	if ( purchase.payment_type === 'credit_card' && purchase.payment_card_id ) {
+		const paymentMethodType = purchase.payment_card_display_brand
+			? purchase.payment_card_display_brand
+			: purchase.payment_card_type || purchase.payment_card_processor || '';
+
+		const maskedCardNumber = sprintf(
+			/** Translators: %s is last four digits of card number */
+			__( '**** **** **** %s' ),
+			purchase.payment_details
+		);
+
+		return (
+			<div className="purchase-item__payment-method-wrapper">
+				<PaymentMethodImage paymentMethodType={ paymentMethodType } />
+				<span>{ maskedCardNumber }</span>
+			</div>
+		);
+	}
+
+	if ( purchase.payment_type === 'paypal' ) {
+		return (
+			<div className="purchase-item__payment-method-wrapper">
+				<PaymentMethodImage paymentMethodType={ purchase.payment_type } />
+				<span>PayPal { purchase.payment_name }</span>
+			</div>
+		);
+	}
+
+	if ( purchase.payment_type === 'upi' ) {
+		return <PaymentMethodImage paymentMethodType={ purchase.payment_type } />;
+	}
+
+	return null;
 }
 
 export function getPurchasesFieldDefinitions( {
 	translate,
-	moment,
 	paymentMethods,
 	sites,
 	getManagePurchaseUrlFor,
@@ -68,36 +294,19 @@ export function getPurchasesFieldDefinitions( {
 	transferredOwnershipPurchases = [],
 }: {
 	translate: LocalizeProps[ 'translate' ];
-	moment: ReturnType< typeof useLocalizedMoment >;
-	paymentMethods: Array< StoredPaymentMethod >;
-	sites: SiteDetails[];
+	paymentMethods: StoredPaymentMethod[];
+	sites: Site[];
 	getManagePurchaseUrlFor: GetManagePurchaseUrlFor;
 	fieldIds?: string[];
-	transferredOwnershipPurchases?: Purchases.Purchase[];
-} ): Fields< Purchases.Purchase > {
-	const getListTitle = ( item: Purchases.Purchase ) => {
-		if ( item.isDomainRegistration && item.meta ) {
-			if ( item.isHundredYearDomain ) {
-				// translators: %(domain)s is the domain name, e.g. "100-Year Domain Registration: example.com"
-				return translate( '100-Year Domain Registration: %(domain)s', {
-					args: { domain: item.meta },
-				} );
-			}
-			// translators: %(domain)s is the domain name, e.g. "Domain Registration: example.com"
-			return translate( 'Domain Registration: %(domain)s', {
-				args: { domain: item.meta },
-			} );
-		}
-		return getDisplayName( item );
-	};
-
+	transferredOwnershipPurchases?: Purchase[];
+} ): Fields< Purchase > {
 	const backupPaymentMethods = paymentMethods.filter(
 		( paymentMethod ) => paymentMethod.is_backup === true
 	);
 
-	const getPurchaseUrl = ( item: Purchases.Purchase ) => {
-		const siteUrl = item.siteSlug || item.domain;
-		const subscriptionId = item.id;
+	const getPurchaseUrl = ( item: Purchase ) => {
+		const siteUrl = item.site_slug || item.domain;
+		const subscriptionId = item.ID;
 		if ( ! siteUrl ) {
 			// eslint-disable-next-line no-console
 			console.error( 'Cannot display manage purchase page for subscription without site' );
@@ -113,7 +322,7 @@ export function getPurchasesFieldDefinitions( {
 
 	// No point in having a filter if there's only one site.
 	const shouldAllowSiteFiltering = sites.length > 1;
-	const fields: Fields< Purchases.Purchase > = [
+	const fields: Fields< Purchase > = [
 		{
 			id: 'site',
 			label: translate( 'Site' ),
@@ -124,20 +333,20 @@ export function getPurchasesFieldDefinitions( {
 			elements: shouldAllowSiteFiltering
 				? sites.map( ( site ) => ( {
 						value: String( site.ID ),
-						label: `${ site.name } (${ site.domain })`,
+						label: `${ site.name } (${ site.slug })`,
 				  } ) )
 				: undefined,
 			filterBy: shouldAllowSiteFiltering ? { operators: [ 'isAny' ] } : false,
-			getValue: ( { item }: { item: Purchases.Purchase } ) => {
+			getValue: ( { item }: { item: Purchase } ) => {
 				// getValue must return a string because the DataViews search feature calls `trim()` on it.
-				return String( item.siteId );
+				return String( item.blog_id );
 			},
 			// Render the site icon
-			render: ( { item }: { item: Purchases.Purchase } ) => {
-				const site = { ID: item.siteId };
+			render: ( { item }: { item: Purchase } ) => {
+				const site = sites.find( ( s ) => s.ID === item.blog_id );
 				return (
 					<a
-						title={ translate( 'Manage purchase', { textOnly: true } ) }
+						title={ String( translate( 'Manage purchase', { textOnly: true } ) ) }
 						href={ getPurchaseUrl( item ) }
 					>
 						<PurchaseItemSiteIcon site={ site } purchase={ item } />
@@ -153,43 +362,40 @@ export function getPurchasesFieldDefinitions( {
 			enableSorting: true,
 			enableHiding: false,
 			filterBy: false,
-			getValue: ( { item }: { item: Purchases.Purchase } ) => {
+			getValue: ( { item }: { item: Purchase } ) => {
+				const site = sites.find( ( s ) => s.ID === item.blog_id );
 				// Render a bunch of things to make this easily searchable.
-				const site = sites.find( ( site ) => site.ID === item.siteId );
 				return (
-					getListTitle( item ) +
+					getTitleForListDisplay( item ) +
 					' ' +
-					( purchaseType( item ) || '' ) +
+					( getSubtitleForDisplay( item ) || '' ) +
 					' ' +
-					item.siteName +
+					item.blogname +
 					' ' +
-					( item.siteSlug || item.domain ) +
+					( item.site_slug || item.domain ) +
 					' ' +
 					( site?.URL ?? '' )
 				);
 			},
-			render: ( { item }: { item: Purchases.Purchase } ) => {
-				const hasTransferredOwnership = isTransferredOwnership(
-					item.id,
-					transferredOwnershipPurchases
-				);
+			render: ( { item }: { item: Purchase } ) => {
+				const hasTransferred = isTransferredOwnership( item.ID, transferredOwnershipPurchases );
 				return (
 					<div className="purchase-item__information">
 						<div className="purchase-item__title">
-							{ hasTransferredOwnership ? (
+							{ hasTransferred ? (
 								<div>
-									{ getListTitle( item ) }
+									{ getTitleForListDisplay( item ) }
 									&nbsp;
-									<OwnerInfo purchase={ item } isTransferredOwnership={ hasTransferredOwnership } />
+									<OwnerInfo purchase={ item } isTransferredOwnership={ hasTransferred } />
 								</div>
 							) : (
 								<>
 									<a
 										className="purchase-item__title-link"
-										title={ translate( 'Manage purchase', { textOnly: true } ) }
+										title={ String( translate( 'Manage purchase', { textOnly: true } ) ) }
 										href={ getPurchaseUrl( item ) }
 									>
-										{ getListTitle( item ) }
+										{ getTitleForListDisplay( item ) }
 									</a>
 									<OwnerInfo purchase={ item } />
 								</>
@@ -207,16 +413,15 @@ export function getPurchasesFieldDefinitions( {
 			enableSorting: true,
 			enableHiding: false,
 			filterBy: false,
-			getValue: ( { item }: { item: Purchases.Purchase } ) => {
-				// Render a bunch of things to make this easily searchable.
-				const site = sites.find( ( site ) => site.ID === item.siteId );
-				return item.siteName + ' ' + ( item.siteSlug || item.domain ) + ' ' + ( site?.URL ?? '' );
+			getValue: ( { item }: { item: Purchase } ) => {
+				const site = sites.find( ( s ) => s.ID === item.blog_id );
+				return item.blogname + ' ' + ( item.site_slug || item.domain ) + ' ' + ( site?.URL ?? '' );
 			},
-			render: ( { item }: { item: Purchases.Purchase } ) => {
+			render: ( { item }: { item: Purchase } ) => {
 				return (
 					<div className="purchase-item__information">
 						<div className="purchase-item__purchase-type">
-							<PurchaseItemRowProduct purchase={ item } translate={ translate } />
+							<PurchaseItemRowProduct purchase={ item } sites={ sites } translate={ translate } />
 						</div>
 					</div>
 				);
@@ -235,10 +440,10 @@ export function getPurchasesFieldDefinitions( {
 			],
 			filterBy: { operators: [ 'is' ] },
 			getValue: ( { item } ) => {
-				if ( item.isDomain || item.isDomainRegistration ) {
+				if ( item.is_domain || item.is_domain_registration ) {
 					return 'domain';
 				}
-				if ( item.productType === 'bundle' ) {
+				if ( item.product_type === 'bundle' ) {
 					return 'plan';
 				}
 				return 'other';
@@ -253,30 +458,40 @@ export function getPurchasesFieldDefinitions( {
 			elements: [
 				{
 					value: '7',
-					label: translate( 'Expires in %(days)d days', { textOnly: true, args: { days: 7 } } ),
+					label: String(
+						translate( 'Expires in %(days)d days', { textOnly: true, args: { days: 7 } } )
+					),
 				},
 				{
 					value: '14',
-					label: translate( 'Expires in %(days)d days', { textOnly: true, args: { days: 14 } } ),
+					label: String(
+						translate( 'Expires in %(days)d days', { textOnly: true, args: { days: 14 } } )
+					),
 				},
 				{
 					value: '30',
-					label: translate( 'Expires in %(days)d days', { textOnly: true, args: { days: 30 } } ),
+					label: String(
+						translate( 'Expires in %(days)d days', { textOnly: true, args: { days: 30 } } )
+					),
 				},
 				{
 					value: '60',
-					label: translate( 'Expires in %(days)d days', { textOnly: true, args: { days: 60 } } ),
+					label: String(
+						translate( 'Expires in %(days)d days', { textOnly: true, args: { days: 60 } } )
+					),
 				},
 				{
 					value: '365',
-					label: translate( 'Expires in %(days)d days', { textOnly: true, args: { days: 365 } } ),
+					label: String(
+						translate( 'Expires in %(days)d days', { textOnly: true, args: { days: 365 } } )
+					),
 				},
 			],
 			filterBy: { operators: [ 'is' ] },
 			getValue: ( { item } ) => {
 				const now = Date.now();
-				const expiryDate = Date.parse( item.expiryDate );
-				if ( ! item.isRenewable || ! expiryDate || expiryDate < now ) {
+				const expiryDate = Date.parse( item.expiry_date );
+				if ( ! item.is_renewable || ! expiryDate || expiryDate < now ) {
 					return 'not-expiring-soon';
 				}
 				const msPerDay = 86_400_000;
@@ -307,23 +522,20 @@ export function getPurchasesFieldDefinitions( {
 			enableSorting: true,
 			enableHiding: false,
 			filterBy: false,
-			getValue: ( { item }: { item: Purchases.Purchase } ) => {
+			getValue: ( { item }: { item: Purchase } ) => {
 				if ( isExpired( item ) ) {
 					// Prefix expired items with a z so they sort to the end of the list.
-					return 'zzz ' + item.expiryStatus + ' ' + item.expiryDate;
+					return 'zzz ' + item.expiry_status + ' ' + item.expiry_date;
 				}
 				// Include date in value to sort similar expiries together.
-				return item.expiryDate + ' ' + item.expiryStatus;
+				return item.expiry_date + ' ' + item.expiry_status;
 			},
-			render: ( { item }: { item: Purchases.Purchase } ) => {
-				const site = sites.find( ( site ) => site.ID === item.siteId );
+			render: ( { item }: { item: Purchase } ) => {
+				const site = sites.find( ( s ) => s.ID === item.blog_id );
 				return (
-					<PurchaseItemRowStatus
-						purchase={ item }
-						translate={ translate }
-						moment={ moment }
-						isDisconnectedSite={ ! site }
-					/>
+					<div className="purchase-item__status purchases-layout__status">
+						<PurchaseExpiryStatus purchase={ item } isSiteMissing={ ! site } />
+					</div>
 				);
 			},
 		},
@@ -335,10 +547,10 @@ export function getPurchasesFieldDefinitions( {
 			enableSorting: true,
 			enableHiding: false,
 			filterBy: false,
-			getValue: ( { item }: { item: Purchases.Purchase } ) => {
+			getValue: ( { item }: { item: Purchase } ) => {
 				// This should not be possible. Investigating a bug:
 				// https://linear.app/a8c/issue/SHILL-901/
-				if ( ! item?.payment ) {
+				if ( ! item?.payment_type && ! item?.payment_details ) {
 					logToLogstash( {
 						feature: 'calypso_client',
 						message: 'Purchase payment method data field getValue got unexpected data',
@@ -352,18 +564,18 @@ export function getPurchasesFieldDefinitions( {
 				// Allows sorting by card number or payment partner (eg: `type === 'paypal'`).
 				return isExpired( item )
 					? // Do not return card number for expired purchases because it
-					  // will not be displayed so it will look wierd if we sort
+					  // will not be displayed so it will look weird if we sort
 					  // expired purchases with active ones that have the same card.
 					  'expired'
-					: item.payment.creditCard?.number ?? item.payment.type ?? 'no-payment-method';
+					: item.payment_details ?? item.payment_card_type ?? 'no-payment-method';
 			},
-			render: ( { item }: { item: Purchases.Purchase } ) => {
+			render: ( { item }: { item: Purchase } ) => {
 				let isBackupMethodAvailable = false;
 
 				if ( backupPaymentMethods ) {
 					const backupPaymentMethodsWithoutCurrentPurchase = backupPaymentMethods.filter(
 						// A payment method is only a back up if it isn't already assigned to the current purchase
-						( paymentMethod ) => item.payment.storedDetailsId !== paymentMethod.stored_details_id
+						( paymentMethod ) => item.stored_details_id !== paymentMethod.stored_details_id
 					);
 
 					isBackupMethodAvailable = backupPaymentMethodsWithoutCurrentPurchase.length >= 1;
@@ -371,7 +583,7 @@ export function getPurchasesFieldDefinitions( {
 
 				return (
 					<div className="purchase-item__payment-method">
-						<PurchaseItemPaymentMethod purchase={ item } translate={ translate } />
+						<PurchaseItemPaymentMethod purchase={ item } sites={ sites } />
 						{ isBackupMethodAvailable && isRenewing( item ) && <BackupPaymentMethodNotice /> }
 					</div>
 				);
@@ -385,8 +597,8 @@ export function getMembershipsFieldDefinitions( {
 	translate,
 }: {
 	translate: LocalizeProps[ 'translate' ];
-} ): Fields< MembershipSubscription > {
-	const getPurchaseUrl = ( item: MembershipSubscription ) => {
+} ): Fields< MonetizeSubscription > {
+	const getPurchaseUrl = ( item: MonetizeSubscription ) => {
 		const subscriptionId = item.ID;
 		if ( ! subscriptionId ) {
 			// eslint-disable-next-line no-console
@@ -405,17 +617,17 @@ export function getMembershipsFieldDefinitions( {
 			enableSorting: false,
 			enableHiding: false,
 			filterBy: false,
-			getValue: ( { item }: { item: MembershipSubscription } ) => {
+			getValue: ( { item }: { item: MonetizeSubscription } ) => {
 				return item.site_id + ' ' + item.site_title + ' ' + item.site_url;
 			},
 			// Render the site icon
-			render: ( { item }: { item: MembershipSubscription } ) => {
+			render: ( { item }: { item: MonetizeSubscription } ) => {
 				return (
 					<a
-						title={ translate( 'Manage purchase', { textOnly: true } ) }
+						title={ String( translate( 'Manage purchase', { textOnly: true } ) ) }
 						href={ getPurchaseUrl( item ) }
 					>
-						<Icon subscription={ item } />
+						<MonetizeSubscriptionIcon subscription={ item } />
 					</a>
 				);
 			},
@@ -428,15 +640,15 @@ export function getMembershipsFieldDefinitions( {
 			enableSorting: true,
 			enableHiding: false,
 			filterBy: false,
-			getValue: ( { item }: { item: MembershipSubscription } ) => {
+			getValue: ( { item }: { item: MonetizeSubscription } ) => {
 				return item.title + ' ' + item.site_title + ' ' + item.site_url;
 			},
-			render: ( { item }: { item: MembershipSubscription } ) => {
+			render: ( { item }: { item: MonetizeSubscription } ) => {
 				return (
 					<div className="membership-item__information purchase-item__information">
 						<div className="membership-item__title purchase-item__title">
 							<a
-								title={ translate( 'Manage purchase', { textOnly: true } ) }
+								title={ String( translate( 'Manage purchase', { textOnly: true } ) ) }
 								href={ getPurchaseUrl( item ) }
 							>
 								{ item.title }
@@ -460,14 +672,14 @@ export function getMembershipsFieldDefinitions( {
 			enableSorting: true,
 			enableHiding: false,
 			filterBy: false,
-			getValue: ( { item }: { item: MembershipSubscription } ) => {
+			getValue: ( { item }: { item: MonetizeSubscription } ) => {
 				return item.title + ' ' + item.site_title + ' ' + item.site_url;
 			},
-			render: ( { item }: { item: MembershipSubscription } ) => {
+			render: ( { item }: { item: MonetizeSubscription } ) => {
 				return (
 					<div className="membership-item__information purchase-item__information">
 						<div className="membership-item__purchase-type purchase-item__purchase-type">
-							<MembershipType subscription={ item } />
+							<MonetizeSubscriptionType subscription={ item } />
 						</div>
 					</div>
 				);
@@ -481,13 +693,13 @@ export function getMembershipsFieldDefinitions( {
 			enableSorting: false,
 			enableHiding: false,
 			filterBy: false,
-			getValue: ( { item }: { item: MembershipSubscription } ) => {
+			getValue: ( { item }: { item: MonetizeSubscription } ) => {
 				return item.end_date ?? '';
 			},
-			render: ( { item }: { item: MembershipSubscription } ) => {
+			render: ( { item }: { item: MonetizeSubscription } ) => {
 				return (
 					<div className="membership-item__status purchase-item__status">
-						<MembershipTerms subscription={ item } />
+						<MonetizeSubscriptionTerms subscription={ item } />
 					</div>
 				);
 			},
