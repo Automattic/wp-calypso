@@ -1,12 +1,18 @@
 @import './pulse';
+@import './responsive-sidebar/variables';
 
 .wpcom-site__logo {
 	position: fixed;
-	top: 50%;
+	top: calc(50% + var(--masterbar-height, 0px) / 2);
 	inset-inline-start: 50%;
 	transform: translate(-50%, -50%);
 	margin: 0;
 	fill: $gray-400;
 	color: $gray-400;
 	animation: pulse 1.5s ease-in-out infinite;
+}
+
+// When the sidebar is visible on desktop, center the logo within the content area.
+.dashboard-root__layout:has(.dashboard-responsive-sidebar__sidebar) .wpcom-site__logo {
+	inset-inline-start: calc(50% + #{$sidebar-width * 0.5});
 }
