@@ -519,9 +519,9 @@ const sections = [
 		name: 'reader',
 		paths: [
 			'/reader/atmosphere',
-			'/reader/atmosphere/timeline',
-			'/reader/atmosphere/profile',
-			'/reader/atmosphere/settings',
+			'/reader/atmosphere/connect',
+			'/reader/atmosphere/:id',
+			'/reader/atmosphere/:id/:tab',
 		],
 		module: 'calypso/reader/atmosphere',
 		group: 'reader',
