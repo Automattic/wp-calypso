@@ -13,32 +13,38 @@ interface Tab {
 }
 
 interface Props {
+	connectionId: number;
 	selectedTab: string;
 }
 
-export function AtmosphereNavigation( { selectedTab }: Props ) {
+export function AtmosphereNavigation( { connectionId, selectedTab }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
 	const recordTabClick = ( tab: string ) => {
-		dispatch( recordReaderTracksEvent( 'calypso_reader_atmosphere_tab_clicked', { tab } ) );
+		dispatch(
+			recordReaderTracksEvent( 'calypso_reader_atmosphere_tab_clicked', {
+				connection_id: connectionId,
+				tab,
+			} )
+		);
 	};
 
 	const tabs: Tab[] = [
 		{
 			slug: TIMELINE_TAB,
 			title: translate( 'Timeline' ),
-			path: '/reader/atmosphere/timeline',
+			path: `/reader/atmosphere/${ connectionId }/${ TIMELINE_TAB }`,
 		},
 		{
 			slug: PROFILE_TAB,
 			title: translate( 'Profile' ),
-			path: '/reader/atmosphere/profile',
+			path: `/reader/atmosphere/${ connectionId }/${ PROFILE_TAB }`,
 		},
 		{
 			slug: SETTINGS_TAB,
 			title: translate( 'Settings' ),
-			path: '/reader/atmosphere/settings',
+			path: `/reader/atmosphere/${ connectionId }/${ SETTINGS_TAB }`,
 		},
 	];
 

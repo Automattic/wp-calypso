@@ -32,7 +32,7 @@ describe( 'AtmosphereNavigation', () => {
 	} );
 
 	it( 'renders three tabs and marks the selected one active', () => {
-		renderWithProvider( <AtmosphereNavigation selectedTab="profile" /> );
+		renderWithProvider( <AtmosphereNavigation connectionId={ 42 } selectedTab="profile" /> );
 
 		expect( screen.getByRole( 'menuitem', { name: /timeline/i } ) ).toBeVisible();
 		expect( screen.getByRole( 'menuitem', { name: /profile/i } ) ).toBeVisible();
@@ -49,31 +49,31 @@ describe( 'AtmosphereNavigation', () => {
 	} );
 
 	it( 'links each tab to its route', () => {
-		renderWithProvider( <AtmosphereNavigation selectedTab="timeline" /> );
+		renderWithProvider( <AtmosphereNavigation connectionId={ 42 } selectedTab="timeline" /> );
 
 		expect( screen.getByRole( 'menuitem', { name: /timeline/i } ) ).toHaveAttribute(
 			'href',
-			'/reader/atmosphere/timeline'
+			'/reader/atmosphere/42/timeline'
 		);
 		expect( screen.getByRole( 'menuitem', { name: /profile/i } ) ).toHaveAttribute(
 			'href',
-			'/reader/atmosphere/profile'
+			'/reader/atmosphere/42/profile'
 		);
 		expect( screen.getByRole( 'menuitem', { name: /settings/i } ) ).toHaveAttribute(
 			'href',
-			'/reader/atmosphere/settings'
+			'/reader/atmosphere/42/settings'
 		);
 	} );
 
 	it( 'records a tracks event when a tab is clicked', async () => {
 		const user = userEvent.setup();
-		renderWithProvider( <AtmosphereNavigation selectedTab="timeline" /> );
+		renderWithProvider( <AtmosphereNavigation connectionId={ 42 } selectedTab="timeline" /> );
 
 		await user.click( screen.getByRole( 'menuitem', { name: /profile/i } ) );
 
 		expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
 			'calypso_reader_atmosphere_tab_clicked',
-			{ tab: 'profile' }
+			{ connection_id: 42, tab: 'profile' }
 		);
 	} );
 } );
