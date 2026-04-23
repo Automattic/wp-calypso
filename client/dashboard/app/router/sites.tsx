@@ -127,17 +127,16 @@ export const siteRoute = createRoute( {
 			throw redirectAsNotAllowed( { to: overviewUrl } );
 		}
 
-		const allowsDuringCriticalError = matches.some(
-			( match ) => match.staticData?.availableDuringCriticalError
-		);
 		const allowsInaccessibleJetpack = matches.some(
 			( match ) => match.staticData?.availableToInaccessibleJetpackSites
 		);
 
+		// Only intercept the overview entry point — other inaccessible-Jetpack-allowed
+		// routes (domains, etc.) should remain reachable.
 		if (
 			site.__inaccessible_jetpack_error &&
 			hasJetpackCriticalError( site ) &&
-			! allowsDuringCriticalError
+			location.pathname.endsWith( overviewUrl )
 		) {
 			throw dashboardRedirect( { to: criticalErrorUrl } );
 		}
@@ -1424,10 +1423,7 @@ export const siteTrialEndedRoute = createRoute( {
 );
 
 export const siteCriticalErrorRoute = createRoute( {
-	staticData: {
-		availableToInaccessibleJetpackSites: true,
-		availableDuringCriticalError: true,
-	},
+	staticData: { availableToInaccessibleJetpackSites: true },
 	head: () => ( {
 		meta: [
 			{
@@ -1443,7 +1439,7 @@ export const siteCriticalErrorRoute = createRoute( {
 		}
 
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( ! hasJetpackCriticalError( site ) ) {
+		if ( ! site.__inaccessible_jetpack_error || ! hasJetpackCriticalError( site ) ) {
 			throw dashboardRedirect( { to: siteOverviewRoute.fullPath, params: { siteSlug } } );
 		}
 	},

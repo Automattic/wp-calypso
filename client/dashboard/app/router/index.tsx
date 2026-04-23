@@ -27,7 +27,6 @@ declare module '@tanstack/react-router' {
 		 */
 		requiresSiteTypeSupport?: SiteTypeFeature;
 		availableToInaccessibleJetpackSites?: boolean;
-		availableDuringCriticalError?: boolean;
 	}
 }
 
