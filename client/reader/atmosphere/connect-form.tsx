@@ -1,6 +1,6 @@
 import { Button, Card, CardBody, ExternalLink, TextControl } from '@wordpress/components';
 import { useTranslate, type TranslateResult } from 'i18n-calypso';
-import { useState } from 'react';
+import { useState, type FormEvent } from 'react';
 import type { AtmosphereError } from '@automattic/api-core';
 
 interface ConnectFormProps {
@@ -21,42 +21,47 @@ export function ConnectForm( { onSubmit, isSubmitting, error }: ConnectFormProps
 		</ExternalLink>
 	);
 
+	const handleSubmit = ( event: FormEvent< HTMLFormElement > ) => {
+		event.preventDefault();
+		if ( ! canSubmit ) {
+			return;
+		}
+		onSubmit( { handle: handle.trim(), app_password: appPassword } );
+	};
+
 	return (
 		<Card>
 			<CardBody>
-				<h2>{ translate( 'Connect a Bluesky account' ) }</h2>
-				<TextControl
-					label={ translate( 'Handle' ) }
-					value={ handle }
-					onChange={ setHandle }
-					placeholder="alice.bsky.social"
-					disabled={ isSubmitting }
-					__nextHasNoMarginBottom
-				/>
-				<TextControl
-					label={ translate( 'App password' ) }
-					type="password"
-					autoComplete="new-password"
-					value={ appPassword }
-					onChange={ setAppPassword }
-					placeholder="xxxx-xxxx-xxxx-xxxx"
-					help={ helpLink }
-					disabled={ isSubmitting }
-					__nextHasNoMarginBottom
-				/>
-				{ error ? (
-					<p className="atmosphere-error" role="alert">
-						{ errorMessage( error, translate ) }
-					</p>
-				) : null }
-				<Button
-					variant="primary"
-					disabled={ ! canSubmit }
-					isBusy={ isSubmitting }
-					onClick={ () => onSubmit( { handle: handle.trim(), app_password: appPassword } ) }
-				>
-					{ translate( 'Connect' ) }
-				</Button>
+				<form onSubmit={ handleSubmit }>
+					<h2>{ translate( 'Connect a Bluesky account' ) }</h2>
+					<TextControl
+						label={ translate( 'Handle' ) }
+						value={ handle }
+						onChange={ setHandle }
+						placeholder="alice.bsky.social"
+						disabled={ isSubmitting }
+						__nextHasNoMarginBottom
+					/>
+					<TextControl
+						label={ translate( 'App password' ) }
+						type="password"
+						autoComplete="new-password"
+						value={ appPassword }
+						onChange={ setAppPassword }
+						placeholder="xxxx-xxxx-xxxx-xxxx"
+						help={ helpLink }
+						disabled={ isSubmitting }
+						__nextHasNoMarginBottom
+					/>
+					{ error ? (
+						<p className="atmosphere-error" role="alert">
+							{ errorMessage( error, translate ) }
+						</p>
+					) : null }
+					<Button variant="primary" type="submit" disabled={ ! canSubmit } isBusy={ isSubmitting }>
+						{ translate( 'Connect' ) }
+					</Button>
+				</form>
 			</CardBody>
 		</Card>
 	);
