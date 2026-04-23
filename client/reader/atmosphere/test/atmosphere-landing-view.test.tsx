@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import page from '@automattic/calypso-router';
+import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -57,6 +58,16 @@ describe( 'AtmosphereLandingView', () => {
 		await screen.findByRole( 'status' );
 		await waitFor( () =>
 			expect( page.replace ).toHaveBeenCalledWith( '/reader/atmosphere/7/timeline' )
+		);
+	} );
+
+	it( 'redirects to /connect when the connections query errors', async () => {
+		nock( 'https://public-api.wordpress.com' ).get( connectionsUrl ).reply( 500 );
+		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+		renderWithProvider( <AtmosphereLandingView />, { queryClient } );
+		await screen.findByRole( 'status' );
+		await waitFor( () =>
+			expect( page.replace ).toHaveBeenCalledWith( '/reader/atmosphere/connect' )
 		);
 	} );
 } );

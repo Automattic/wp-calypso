@@ -7,9 +7,13 @@ import ReaderMain from 'calypso/reader/components/reader-main';
 
 export function AtmosphereLandingView() {
 	const translate = useTranslate();
-	const { data, isPending } = useConnectionsQuery( { enabled: true } );
+	const { data, isPending, isError } = useConnectionsQuery( { enabled: true } );
 
 	useEffect( () => {
+		if ( isError ) {
+			page.replace( '/reader/atmosphere/connect' );
+			return;
+		}
 		if ( isPending || ! data ) {
 			return;
 		}
@@ -19,7 +23,7 @@ export function AtmosphereLandingView() {
 		} else {
 			page.replace( '/reader/atmosphere/connect' );
 		}
-	}, [ isPending, data ] );
+	}, [ isPending, data, isError ] );
 
 	return (
 		<ReaderMain className="atmosphere-view">
