@@ -184,7 +184,7 @@ const EditGravatar = ( { isEmailVerified = true, avatarUrl, userEmail }: EditGra
 						backgroundColor: 'var(--dashboard-warning__background-color, #fff8e5)',
 						padding: 12,
 						margin: '8px 0',
-						borderLeft: '3px solid var(--dashboard-warning__border-color, #f0b849)',
+						borderInlineStart: '3px solid var(--dashboard-warning__border-color, #f0b849)',
 					} }
 				>
 					<p style={ { marginBottom: 8 } }>
