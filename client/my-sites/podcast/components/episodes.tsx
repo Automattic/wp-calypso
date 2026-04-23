@@ -61,7 +61,7 @@ const formatDate = ( iso: string ) => {
 	} );
 };
 
-const Placeholder = () => <span className="podcasting__placeholder">—</span>;
+const Placeholder = () => <span className="podcast__placeholder">—</span>;
 
 const PodcastingEpisodes = () => {
 	const translate = useTranslate();
@@ -117,10 +117,10 @@ const PodcastingEpisodes = () => {
 				getValue: ( { item }: { item: Episode } ) => item.featuredMediaUrl,
 				render: ( { item }: { item: Episode } ) =>
 					item.featuredMediaUrl ? (
-						<img src={ item.featuredMediaUrl } alt="" className="podcasting__episode-thumb" />
+						<img src={ item.featuredMediaUrl } alt="" className="podcast__episode-thumb" />
 					) : (
 						<div
-							className="podcasting__episode-thumb podcasting__episode-thumb--placeholder"
+							className="podcast__episode-thumb podcast__episode-thumb--placeholder"
 							aria-hidden="true"
 						/>
 					),
@@ -228,9 +228,9 @@ const PodcastingEpisodes = () => {
 	);
 
 	const sectionHeader = (
-		<header className="podcasting__section-header">
-			<h2 className="podcasting__section-heading">{ translate( 'Episodes' ) }</h2>
-			<p className="podcasting__section-description">
+		<header className="podcast__section-header">
+			<h2 className="podcast__section-heading">{ translate( 'Episodes' ) }</h2>
+			<p className="podcast__section-description">
 				{ translate( 'Manage the posts that make up your podcast feed.' ) }
 			</p>
 		</header>
@@ -240,7 +240,7 @@ const PodcastingEpisodes = () => {
 		return (
 			<>
 				{ sectionHeader }
-				<div className="podcasting__episodes-empty">
+				<div className="podcast__episodes-empty">
 					{ translate(
 						'Select a podcast category in the Settings tab to start showing episodes here.'
 					) }
@@ -254,7 +254,7 @@ const PodcastingEpisodes = () => {
 	return (
 		<>
 			{ sectionHeader }
-			<div className="podcasting__episodes">
+			<div className="podcast__episodes">
 				<DataViews< Episode >
 					data={ processed }
 					fields={ fields }

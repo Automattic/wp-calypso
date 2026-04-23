@@ -255,9 +255,9 @@ const PodcastingSettings = wrapSettingsForm( getFormSettings )( ( {
 
 	return (
 		<form id="site-settings" onSubmit={ handleSubmitForm }>
-			<header className="podcasting__section-header">
-				<h2 className="podcasting__section-heading">{ translate( 'Settings' ) }</h2>
-				<p className="podcasting__section-description">
+			<header className="podcast__section-header">
+				<h2 className="podcast__section-heading">{ translate( 'Settings' ) }</h2>
+				<p className="podcast__section-description">
 					{ translate( 'Configure your podcast feed and directory listing.' ) }
 				</p>
 			</header>
@@ -315,7 +315,7 @@ const PodcastingSettings = wrapSettingsForm( getFormSettings )( ( {
 							/>
 						) }
 						{ isPodcastingEnabled && (
-							<div className="podcasting__publish-wrapper">
+							<div className="podcast__publish-wrapper">
 								<PodcastingPublishNotice podcastingCategoryId={ podcastingCategoryId } />
 							</div>
 						) }
@@ -346,7 +346,7 @@ const PodcastingSettings = wrapSettingsForm( getFormSettings )( ( {
 						</FormFieldset>
 						<PodcastFeedUrl categoryId={ podcastingCategoryId } />
 						{ isPodcastingEnabled && (
-							<Button className="podcasting__publish-button" href={ newPostUrl }>
+							<Button className="podcast__publish-button" href={ newPostUrl }>
 								{ translate( 'Create episode' ) }
 							</Button>
 						) }
@@ -366,7 +366,7 @@ const PodcastingSettings = wrapSettingsForm( getFormSettings )( ( {
 								'This information appears in podcast apps like Apple Podcasts and Spotify.'
 							) }
 						</FormSettingExplanation>
-						<div className="podcasting__cover-and-info">
+						<div className="podcast__cover-and-info">
 							<PodcastCoverImageSetting
 								coverImageId={ parseInt( String( fields.podcasting_image_id ?? '0' ), 10 ) || 0 }
 								coverImageUrl={ fields.podcasting_image }
@@ -375,7 +375,7 @@ const PodcastingSettings = wrapSettingsForm( getFormSettings )( ( {
 								onUploadStateChange={ setIsCoverImageUploading }
 								isDisabled={ disabled }
 							/>
-							<div className="podcasting__title-subtitle-wrapper">
+							<div className="podcast__title-subtitle-wrapper">
 								{ renderTextField( {
 									key: 'podcasting_title',
 									label: translate( 'Title' ) as string,

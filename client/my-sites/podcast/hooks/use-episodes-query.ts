@@ -25,7 +25,7 @@ type Params = {
 
 const useEpisodesQuery = ( { siteId, categoryId }: Params ) => {
 	return useQuery< EpisodePost[] >( {
-		queryKey: [ 'podcasting-episodes', siteId, categoryId ],
+		queryKey: [ 'podcast-episodes', siteId, categoryId ],
 		queryFn: () => {
 			const params = new URLSearchParams( {
 				categories: String( categoryId ),

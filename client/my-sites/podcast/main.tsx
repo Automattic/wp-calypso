@@ -11,15 +11,15 @@ import JetpackTitle from 'calypso/components/jetpack-title';
 import Main from 'calypso/components/main';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import PodcastingEpisodes from './components/episodes';
-import PodcastingSettings from './components/settings';
-import PodcastingSetup from './components/setup';
+import PodcastEpisodes from './components/episodes';
+import PodcastSettings from './components/settings';
+import PodcastSetup from './components/setup';
 
 import './style.scss';
 
 type PodcastSection = 'episodes' | 'settings' | 'setup';
 
-type PodcastingMainProps = {
+type PodcastMainProps = {
 	section?: string;
 	path?: string;
 };
@@ -29,7 +29,7 @@ const VALID_SECTIONS: readonly PodcastSection[] = [ 'settings', 'setup' ] as con
 const isValidSection = ( s: string | undefined ): s is 'settings' | 'setup' =>
 	!! s && ( VALID_SECTIONS as readonly string[] ).includes( s );
 
-const PodcastingMain = ( { section, path }: PodcastingMainProps ) => {
+const PodcastMain = ( { section, path }: PodcastMainProps ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
@@ -41,17 +41,17 @@ const PodcastingMain = ( { section, path }: PodcastingMainProps ) => {
 		{
 			name: 'episodes',
 			title: translate( 'Episodes' ) as string,
-			path: '/podcasting' + pathSuffix,
+			path: '/podcast' + pathSuffix,
 		},
 		{
 			name: 'settings',
 			title: translate( 'Settings' ) as string,
-			path: '/podcasting/settings' + pathSuffix,
+			path: '/podcast/settings' + pathSuffix,
 		},
 		{
 			name: 'setup',
 			title: translate( 'Setup' ) as string,
-			path: '/podcasting/setup' + pathSuffix,
+			path: '/podcast/setup' + pathSuffix,
 		},
 	];
 
@@ -60,16 +60,16 @@ const PodcastingMain = ( { section, path }: PodcastingMainProps ) => {
 	const renderContent = () => {
 		switch ( currentSection ) {
 			case 'settings':
-				return <PodcastingSettings />;
+				return <PodcastSettings />;
 			case 'setup':
-				return <PodcastingSetup />;
+				return <PodcastSetup />;
 			default:
-				return <PodcastingEpisodes />;
+				return <PodcastEpisodes />;
 		}
 	};
 
 	return (
-		<Main fullWidthLayout className="podcasting">
+		<Main fullWidthLayout className="podcast">
 			{ siteId && <QuerySiteSettings siteId={ siteId } /> }
 			{ siteId && <QueryTerms siteId={ siteId } taxonomy="category" /> }
 			<DocumentHead title={ translate( 'Podcasting' ) } />
@@ -86,11 +86,11 @@ const PodcastingMain = ( { section, path }: PodcastingMainProps ) => {
 				) }
 				title={ <JetpackTitle title={ translate( 'Podcasting' ) } /> }
 			>
-				<div className="podcasting__scroll-area">
-					<div className="podcasting__tabs-bar">
+				<div className="podcast__scroll-area">
+					<div className="podcast__tabs-bar">
 						<TabPanel
 							key={ currentSection }
-							className="podcasting__tabs"
+							className="podcast__tabs"
 							activeClass="is-active"
 							tabs={ tabs }
 							initialTabName={ currentSection }
@@ -104,7 +104,7 @@ const PodcastingMain = ( { section, path }: PodcastingMainProps ) => {
 							{ () => null }
 						</TabPanel>
 					</div>
-					<div className="podcasting__tab-content">{ renderContent() }</div>
+					<div className="podcast__tab-content">{ renderContent() }</div>
 				</div>
 			</Page>
 			<JetpackFooter />
@@ -112,4 +112,4 @@ const PodcastingMain = ( { section, path }: PodcastingMainProps ) => {
 	);
 };
 
-export default PodcastingMain;
+export default PodcastMain;

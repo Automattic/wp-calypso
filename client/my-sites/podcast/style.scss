@@ -2,11 +2,11 @@
 @import '@wordpress/dataviews/build-style/style.css';
 @import "calypso/components/jetpack-page-layout/admin-ui-page";
 
-body.is-section-podcasting {
+body.is-section-podcast {
 	@include admin-ui-page-layout;
 	@include admin-ui-page-sticky-footer;
 
-	.podcasting .admin-ui-page__header {
+	.podcast .admin-ui-page__header {
 		align-self: stretch;
 		box-sizing: border-box;
 		width: 100%;
@@ -14,7 +14,7 @@ body.is-section-podcasting {
 	}
 }
 
-.podcasting__scroll-area {
+.podcast__scroll-area {
 	display: flex;
 	flex-direction: column;
 	flex-grow: 1;
@@ -23,7 +23,7 @@ body.is-section-podcasting {
 	scrollbar-gutter: stable;
 }
 
-.podcasting__tabs-bar {
+.podcast__tabs-bar {
 	position: sticky;
 	top: 0;
 	z-index: 10;
@@ -33,7 +33,7 @@ body.is-section-podcasting {
 	padding-inline: 24px;
 }
 
-.podcasting__tabs {
+.podcast__tabs {
 	.components-tab-panel__tabs {
 		gap: 4px;
 	}
@@ -50,7 +50,7 @@ body.is-section-podcasting {
 	}
 }
 
-.podcasting__tab-content {
+.podcast__tab-content {
 	align-self: center;
 	box-sizing: border-box;
 	padding: 24px;
@@ -58,11 +58,11 @@ body.is-section-podcasting {
 	max-width: 1120px;
 }
 
-.podcasting__section-header {
+.podcast__section-header {
 	margin-block-end: 24px;
 }
 
-.podcasting__section-heading {
+.podcast__section-heading {
 	margin: 0 0 4px;
 	font-size: 24px;
 	font-weight: 400;
@@ -70,32 +70,32 @@ body.is-section-podcasting {
 	color: var( --color-neutral-80 );
 }
 
-.podcasting__section-description {
+.podcast__section-description {
 	margin: 0;
 	color: var( --color-neutral-60 );
 	font-size: 14px;
 	line-height: 1.5;
 }
 
-.podcasting__podcatchers {
+.podcast__podcatchers {
 	display: grid;
 	grid-template-columns: repeat( auto-fill, minmax( 280px, 1fr ) );
 	gap: 16px;
 }
 
-.podcasting__podcatcher-card {
+.podcast__podcatcher-card {
 	padding: 12px 16px;
 	width: 100%;
 	box-sizing: border-box;
 }
 
-.podcasting__podcatcher-card-content {
+.podcast__podcatcher-card-content {
 	display: flex;
 	align-items: center;
 	gap: 16px;
 }
 
-.podcasting__podcatcher-logo {
+.podcast__podcatcher-logo {
 	flex-shrink: 0;
 	width: 48px;
 	height: 48px;
@@ -109,12 +109,12 @@ body.is-section-podcasting {
 	}
 }
 
-.podcasting__podcatcher-info {
+.podcast__podcatcher-info {
 	flex: 1;
 	min-width: 0;
 }
 
-.podcasting__podcatcher-name {
+.podcast__podcatcher-name {
 	margin: 0;
 	font-size: 15px;
 	font-weight: 500;
@@ -122,15 +122,15 @@ body.is-section-podcasting {
 	line-height: 1.3;
 }
 
-.podcasting__podcatcher-submit {
+.podcast__podcatcher-submit {
 	flex-shrink: 0;
 }
 
-.podcasting__submit-modal .components-modal__content {
+.podcast__submit-modal .components-modal__content {
 	max-width: 520px;
 }
 
-.podcasting__submit-steps {
+.podcast__submit-steps {
 	list-style: none;
 	margin: 0;
 	padding: 0;
@@ -139,38 +139,38 @@ body.is-section-podcasting {
 	gap: 20px;
 }
 
-.podcasting__submit-step {
+.podcast__submit-step {
 	padding: 16px;
 	background: var( --color-neutral-0 );
 	border-radius: 8px;
 }
 
-.podcasting__submit-step-title {
+.podcast__submit-step-title {
 	margin: 0 0 4px;
 	font-size: 14px;
 	font-weight: 600;
 	color: var( --color-neutral-80 );
 }
 
-.podcasting__submit-step-description {
+.podcast__submit-step-description {
 	margin: 0 0 12px;
 	font-size: 13px;
 	color: var( --color-neutral-60 );
 	line-height: 1.5;
 }
 
-.podcasting__submit-step-form {
+.podcast__submit-step-form {
 	display: flex;
 	gap: 8px;
 	align-items: stretch;
 }
 
-.podcasting__submit-step-field {
+.podcast__submit-step-field {
 	flex: 1;
 	min-width: 0;
 }
 
-.podcasting__episodes {
+.podcast__episodes {
 	max-width: none;
 	background: var( --color-surface );
 	border-radius: 8px;
@@ -181,12 +181,12 @@ body.is-section-podcasting {
 	}
 }
 
-.podcasting__episodes-empty {
+.podcast__episodes-empty {
 	padding: 16px;
 	color: var( --color-neutral-60 );
 }
 
-.podcasting__episode-thumb {
+.podcast__episode-thumb {
 	display: block;
 	width: 56px;
 	height: 56px;
@@ -195,28 +195,28 @@ body.is-section-podcasting {
 	background: var( --color-neutral-5 );
 }
 
-.podcasting__episode-thumb--placeholder {
+.podcast__episode-thumb--placeholder {
 	background: var( --color-neutral-0 );
 	border: 1px dashed var( --color-neutral-10 );
 }
 
-.podcasting__placeholder {
+.podcast__placeholder {
 	color: var( --color-neutral-40 );
 }
 
-.podcasting__publish-wrapper {
+.podcast__publish-wrapper {
 	display: flex;
 	align-items: flex-start;
 	margin-bottom: 16px;
 }
 
-.podcasting__publish-button {
+.podcast__publish-button {
 	color: var( --color-neutral-50 );
 	font-weight: 600;
 	flex-shrink: 0;
 }
 
-.podcasting__cover-and-info {
+.podcast__cover-and-info {
 	display: flex;
 	gap: 24px;
 	margin-bottom: 16px;
@@ -230,14 +230,14 @@ body.is-section-podcasting {
 		flex-shrink: 0;
 	}
 
-	.podcasting__title-subtitle-wrapper {
+	.podcast__title-subtitle-wrapper {
 		flex: 1;
 		min-width: 0;
 	}
 }
 
 // Scoped overrides for shared form/helper components used in Settings.
-.podcasting {
+.podcast {
 	.form-setting-explanation {
 		margin-bottom: 6px;
 	}

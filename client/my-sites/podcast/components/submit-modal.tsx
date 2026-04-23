@@ -40,14 +40,14 @@ const SubmitModal = ( { podcatcher, onClose }: Props ) => {
 		<Modal
 			title={ translate( 'Submit to %(service)s', serviceArgs ) as string }
 			onRequestClose={ onClose }
-			className="podcasting__submit-modal"
+			className="podcast__submit-modal"
 		>
-			<ol className="podcasting__submit-steps">
-				<li className="podcasting__submit-step">
-					<h3 className="podcasting__submit-step-title">
+			<ol className="podcast__submit-steps">
+				<li className="podcast__submit-step">
+					<h3 className="podcast__submit-step-title">
 						{ translate( 'Step 1: Copy your RSS feed URL' ) }
 					</h3>
-					<p className="podcasting__submit-step-description">
+					<p className="podcast__submit-step-description">
 						{ feedUrl
 							? translate(
 									'Click the button below to copy your RSS feed URL. %(service)s will require this URL to list your podcast.',
@@ -60,11 +60,11 @@ const SubmitModal = ( { podcatcher, onClose }: Props ) => {
 					{ feedUrl && <ClipboardButtonInput value={ feedUrl } /> }
 				</li>
 
-				<li className="podcasting__submit-step">
-					<h3 className="podcasting__submit-step-title">
+				<li className="podcast__submit-step">
+					<h3 className="podcast__submit-step-title">
 						{ translate( 'Step 2: Submit your podcast to %(service)s', serviceArgs ) }
 					</h3>
-					<p className="podcasting__submit-step-description">
+					<p className="podcast__submit-step-description">
 						{ translate(
 							'Click the button below to visit %(service)s and complete their sign up flow.',
 							serviceArgs
@@ -94,18 +94,18 @@ const SubmitModal = ( { podcatcher, onClose }: Props ) => {
 					</Button>
 				</li>
 
-				<li className="podcasting__submit-step">
-					<h3 className="podcasting__submit-step-title">
+				<li className="podcast__submit-step">
+					<h3 className="podcast__submit-step-title">
 						{ translate( 'Step 3: Enter your %(service)s URL', serviceArgs ) }
 					</h3>
-					<p className="podcasting__submit-step-description">
+					<p className="podcast__submit-step-description">
 						{ translate(
 							'Paste your new %(service)s URL into the field below and we’ll use it for your sharing buttons.',
 							serviceArgs
 						) }
 					</p>
-					<form className="podcasting__submit-step-form" onSubmit={ handleSave }>
-						<div className="podcasting__submit-step-field">
+					<form className="podcast__submit-step-form" onSubmit={ handleSave }>
+						<div className="podcast__submit-step-field">
 							<TextControl
 								label={ translate( '%(service)s URL', serviceArgs ) as string }
 								hideLabelFromVision

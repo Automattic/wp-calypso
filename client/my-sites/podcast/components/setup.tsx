@@ -63,28 +63,28 @@ const PodcastingSetup = () => {
 
 	return (
 		<>
-			<header className="podcasting__section-header">
-				<h2 className="podcasting__section-heading">{ translate( 'Setup' ) }</h2>
-				<p className="podcasting__section-description">
+			<header className="podcast__section-header">
+				<h2 className="podcast__section-heading">{ translate( 'Setup' ) }</h2>
+				<p className="podcast__section-description">
 					{ translate(
 						'Submit your podcast feed to the major podcast apps so your episodes reach more listeners.'
 					) }
 				</p>
 			</header>
-			<div className="podcasting__podcatchers">
+			<div className="podcast__podcatchers">
 				{ PODCATCHERS.map( ( p ) => (
-					<Card key={ p.id } className="podcasting__podcatcher-card">
-						<div className="podcasting__podcatcher-card-content">
-							<div className="podcasting__podcatcher-logo" aria-hidden="true">
+					<Card key={ p.id } className="podcast__podcatcher-card">
+						<div className="podcast__podcatcher-card-content">
+							<div className="podcast__podcatcher-logo" aria-hidden="true">
 								{ p.logo }
 							</div>
-							<div className="podcasting__podcatcher-info">
-								<h3 className="podcasting__podcatcher-name">{ p.name }</h3>
+							<div className="podcast__podcatcher-info">
+								<h3 className="podcast__podcatcher-name">{ p.name }</h3>
 							</div>
 							<Button
 								variant="secondary"
 								__next40pxDefaultSize
-								className="podcasting__podcatcher-submit"
+								className="podcast__podcatcher-submit"
 								onClick={ () => setActiveId( p.id ) }
 							>
 								{ translate( 'Submit' ) }
