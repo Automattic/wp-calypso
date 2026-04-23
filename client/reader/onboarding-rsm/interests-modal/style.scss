@@ -1,0 +1,49 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+$actions-height: 64px;
+
+.interests-modal {
+	&__content {
+		// Since the actions container is positioned absolutely,
+		// this padding bottom ensures that the content wrapper will properly
+		// detect overflowing content and start showing scrollbars at the right
+		// moment. Without this padding, the content would render under the actions
+		// bar without causing the wrapper to show a scrollbar.
+		padding-bottom: $actions-height;
+	}
+
+	&__title {
+		font-family: Recoleta, sans-serif;
+		font-size: 2.75rem;
+		font-weight: 400;
+		text-align: center;
+
+		@media ( max-width: $break-medium ) {
+			font-size: 1.5rem;
+		}
+	}
+
+	&__subtitle {
+		text-align: center;
+		margin: 0;
+	}
+
+	&__section-header {
+		margin-bottom: 16px;
+	}
+
+	&__topics-list {
+		display: grid;
+		gap: 16px;
+		grid-template-columns: 1fr;
+
+		@include break-small {
+			grid-template-columns: repeat( 2, 1fr );
+		}
+
+		@include break-large {
+			grid-template-columns: repeat( 3, 1fr );
+		}
+	}
+}

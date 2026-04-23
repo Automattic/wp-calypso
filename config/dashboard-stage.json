@@ -40,6 +40,7 @@
 		"plans/updated-storage-labels": true,
 		"plans/upgradeable-storage": true,
 		"posthog-tracking": true,
+		"purchases/split-cancel-remove": false,
 		"rum-tracking/logstash": true,
 		"site-spec": true,
 		"two-factor/enhanced-security": true,

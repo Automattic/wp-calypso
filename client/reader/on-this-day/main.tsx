@@ -5,6 +5,7 @@ import AsyncLoad from 'calypso/components/async-load';
 import NavigationHeader from 'calypso/components/navigation-header';
 import ResurrectedWelcomeModalGate from 'calypso/components/resurrected-welcome-modal';
 import { QuickPostSkeleton } from 'calypso/reader/components/quick-post/skeleton';
+import ReaderOnboardingGate from 'calypso/reader/onboarding/gate';
 import SuggestionProvider from 'calypso/reader/search-stream/suggestion-provider';
 import ReaderStream from 'calypso/reader/stream';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -73,8 +74,7 @@ function OnThisDayStream() {
 							</CardBody>
 						</Card>
 					) }
-					<AsyncLoad
-						require="calypso/reader/onboarding"
+					<ReaderOnboardingGate
 						onRender={ handleReaderOnboardingRender }
 						isSuppressed={ suppressReaderOnboarding }
 					/>
