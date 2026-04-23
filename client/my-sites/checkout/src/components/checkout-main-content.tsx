@@ -1,10 +1,4 @@
-import {
-	isYearly,
-	isJetpackPurchasableItem,
-	isMonthlyProduct,
-	isBiennially,
-	isTriennially,
-} from '@automattic/calypso-products';
+import { isJetpackPurchasableItem, isMonthlyProduct } from '@automattic/calypso-products';
 import colorStudio from '@automattic/color-studio';
 import { Gridicon, MaterialIcon } from '@automattic/components';
 import {
@@ -40,7 +34,8 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { pencil } from '@wordpress/icons';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useCallback } from 'react';
+import { useCallback, useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 import Loading from 'calypso/components/loading';
 import { useInitialIsInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
@@ -64,6 +59,10 @@ import { CheckoutOrderBanner } from 'calypso/my-sites/checkout/src/components/ch
 import { useCheckoutUiRedesignExperiment } from 'calypso/my-sites/checkout/src/hooks/use-checkout-ui-redesign-experiment';
 import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/src/hooks/use-valid-checkout-back-url';
 import { leaveCheckout } from 'calypso/my-sites/checkout/src/lib/leave-checkout';
+import {
+	SubmitButtonSlotContext,
+	useSubmitButtonSlot,
+} from 'calypso/my-sites/checkout/src/lib/submit-button-slot';
 import { prepareDomainContactValidationRequest } from 'calypso/my-sites/checkout/src/types/wpcom-store-state';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import SitePreview from 'calypso/my-sites/customer-home/cards/features/site-preview';
@@ -82,12 +81,7 @@ import useCouponFieldState from '../hooks/use-coupon-field-state';
 import { validateContactDetails } from '../lib/contact-validation';
 import { updateCartContactDetailsForCheckout } from '../lib/update-cart-contact-details-for-checkout';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
-import { CheckoutMoneyBackGuarantee } from './CheckoutMoneyBackGuarantee';
 import AcceptTermsOfServiceCheckbox from './accept-terms-of-service-checkbox';
-import badge14Src from './assets/icons/badge-14.svg';
-import badge7Src from './assets/icons/badge-7.svg';
-import badgeGenericSrc from './assets/icons/badge-generic.svg';
-import badgeSecurity from './assets/icons/security.svg';
 import CheckoutNextSteps from './checkout-next-steps';
 import { CheckoutSidebarPlanUpsell } from './checkout-sidebar-plan-upsell';
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
@@ -334,6 +328,22 @@ function CheckoutSidebarNudge( {
 	);
 }
 
+// Renders CheckoutFormSubmit inside CheckoutStepGroup (so it keeps full step-state
+// awareness) while portaling its output into the sidebar slot registered via
+// SubmitButtonSlotContext. The sidebar button IS the active payment-method submit
+// button — no hidden main-column button, no querySelector click proxy.
+function PortaledCheckoutFormSubmit( {
+	validateForm,
+}: {
+	validateForm?: () => Promise< boolean >;
+} ) {
+	const { slotEl } = useSubmitButtonSlot();
+	if ( ! slotEl ) {
+		return null;
+	}
+	return createPortal( <CheckoutFormSubmit validateForm={ validateForm } />, slotEl );
+}
+
 export default function CheckoutMainContent( {
 	addItemToCart,
 	changeSelection,
@@ -394,6 +404,17 @@ export default function CheckoutMainContent( {
 
 	const leaveModalProps = useCheckoutLeaveModal( { siteUrl: siteUrl ?? '' } );
 
+	// Shared sidebar slot for the active payment-method submit button. We render
+	// <CheckoutFormSubmit> inside <CheckoutStepGroup> so it keeps full step-state
+	// awareness, but createPortal its output into this slot in the sidebar — the
+	// sidebar Pay button IS the real submit button (including native Apple Pay /
+	// Google Pay buttons that require a genuine user click).
+	const [ submitButtonSlotEl, setSubmitButtonSlotEl ] = useState< HTMLElement | null >( null );
+	const submitButtonSlotValue = useMemo(
+		() => ( { slotEl: submitButtonSlotEl, setSlotEl: setSubmitButtonSlotEl } ),
+		[ submitButtonSlotEl ]
+	);
+
 	const searchParams = new URLSearchParams( window.location.search );
 	const isDIFMInCart = hasDIFMProduct( responseCart );
 	const isSignupCheckout = searchParams.get( 'signup' ) === '1';
@@ -416,9 +437,6 @@ export default function CheckoutMainContent( {
 		presalesChatKey !== 'wpcom';
 	usePresalesChat( presalesChatKey, isPresalesChatEnabled );
 
-	const hasCartJetpackProductsOnly = responseCart?.products?.every( ( product ) =>
-		isJetpackPurchasableItem( product.product_slug )
-	);
 	const areThereDomainProductsInCart =
 		hasDomainRegistration( responseCart ) || hasTransferProduct( responseCart );
 	const isGSuiteInCart = hasGoogleApps( responseCart );
@@ -907,17 +925,7 @@ export default function CheckoutMainContent( {
 						setIs100YearPlanTermsAccepted={ setIs100YearPlanTermsAccepted }
 						isSubmitted={ isSubmitted }
 					/>
-					<CheckoutFormSubmit
-						validateForm={ validateForm }
-						submitButtonHeader={ <SubmitButtonHeader /> }
-						submitButtonFooter={
-							hasCartJetpackProductsOnly ? (
-								<JetpackCheckoutSeals />
-							) : (
-								<CheckoutMoneyBackGuarantee cart={ responseCart } />
-							)
-						}
-					/>
+					<PortaledCheckoutFormSubmit validateForm={ validateForm } />
 				</CheckoutStepGroup>
 			</WPCheckoutMainContent>
 		</RestorableProductsProvider>
@@ -925,75 +933,79 @@ export default function CheckoutMainContent( {
 
 	if ( ! isStepContainerV2 ) {
 		return (
-			<WPCheckoutWrapper
-				className="checkout-wrapper"
-				isLargeViewport={ isLargeViewport }
-				isCheckoutUiRedesignV1={ isCheckoutUiRedesignV1 }
-			>
-				{ isCheckoutUiRedesignV1 && ! isLargeViewport && (
-					<WPCheckoutTitle className="checkout__main-title checkout__redesign-header">
-						{ translate( 'Checkout' ) }
-					</WPCheckoutTitle>
-				) }
-				{ checkoutSummary }
-				{ checkoutMainContent }
-			</WPCheckoutWrapper>
+			<SubmitButtonSlotContext.Provider value={ submitButtonSlotValue }>
+				<WPCheckoutWrapper
+					className="checkout-wrapper"
+					isLargeViewport={ isLargeViewport }
+					isCheckoutUiRedesignV1={ isCheckoutUiRedesignV1 }
+				>
+					{ isCheckoutUiRedesignV1 && ! isLargeViewport && (
+						<WPCheckoutTitle className="checkout__main-title checkout__redesign-header">
+							{ translate( 'Checkout' ) }
+						</WPCheckoutTitle>
+					) }
+					{ checkoutSummary }
+					{ checkoutMainContent }
+				</WPCheckoutWrapper>
+			</SubmitButtonSlotContext.Provider>
 		);
 	}
 
 	return (
-		<StepContainerV2CheckoutFixer
-			isLargeViewport={ isLargeViewport }
-			isCheckoutUiRedesignV1={ isCheckoutUiRedesignV1 }
-		>
-			<Step.TwoColumnLayout
-				firstColumnWidth={ 8 }
-				secondColumnWidth={ 4 }
-				topBar={ ( { isLargeViewport } ) => {
-					const topBar = (
-						<Step.TopBar
-							leftElement={ <Step.BackButton onClick={ leaveModalProps.clickClose } /> }
-							rightElement={
-								<span className="checkout-skip-button">
-									{ helpCenterButtonCopy && <label>{ helpCenterButtonCopy }</label> }
-									<Step.LinkButton onClick={ toggleHelpCenter }>
-										{ helpCenterButtonLink }
-									</Step.LinkButton>
-								</span>
-							}
-						/>
-					);
-
-					if ( isLargeViewport ) {
-						return <div className="checkout-top-bar-wrapper">{ topBar }</div>;
-					}
-
-					return (
-						<>
-							{ topBar }
-							{ isCheckoutUiRedesignV1 && (
-								<Step.Heading text={ translate( 'Checkout' ) } align="left" size="small" />
-							) }
-							{ checkoutSummary }
-						</>
-					);
-				} }
+		<SubmitButtonSlotContext.Provider value={ submitButtonSlotValue }>
+			<StepContainerV2CheckoutFixer
+				isLargeViewport={ isLargeViewport }
+				isCheckoutUiRedesignV1={ isCheckoutUiRedesignV1 }
 			>
-				{ ( { isLargeViewport } ) => {
-					if ( isLargeViewport ) {
+				<Step.TwoColumnLayout
+					firstColumnWidth={ 8 }
+					secondColumnWidth={ 4 }
+					topBar={ ( { isLargeViewport } ) => {
+						const topBar = (
+							<Step.TopBar
+								leftElement={ <Step.BackButton onClick={ leaveModalProps.clickClose } /> }
+								rightElement={
+									<span className="checkout-skip-button">
+										{ helpCenterButtonCopy && <label>{ helpCenterButtonCopy }</label> }
+										<Step.LinkButton onClick={ toggleHelpCenter }>
+											{ helpCenterButtonLink }
+										</Step.LinkButton>
+									</span>
+								}
+							/>
+						);
+
+						if ( isLargeViewport ) {
+							return <div className="checkout-top-bar-wrapper">{ topBar }</div>;
+						}
+
 						return (
 							<>
-								{ checkoutMainContent }
+								{ topBar }
+								{ isCheckoutUiRedesignV1 && (
+									<Step.Heading text={ translate( 'Checkout' ) } align="left" size="small" />
+								) }
 								{ checkoutSummary }
 							</>
 						);
-					}
+					} }
+				>
+					{ ( { isLargeViewport } ) => {
+						if ( isLargeViewport ) {
+							return (
+								<>
+									{ checkoutMainContent }
+									{ checkoutSummary }
+								</>
+							);
+						}
 
-					return checkoutMainContent;
-				} }
-			</Step.TwoColumnLayout>
-			<LeaveCheckoutModal { ...leaveModalProps } />
-		</StepContainerV2CheckoutFixer>
+						return checkoutMainContent;
+					} }
+				</Step.TwoColumnLayout>
+				<LeaveCheckoutModal { ...leaveModalProps } />
+			</StepContainerV2CheckoutFixer>
+		</SubmitButtonSlotContext.Provider>
 	);
 }
 
@@ -1653,22 +1665,6 @@ function CheckoutTermsAndCheckboxes( {
 	);
 }
 
-function SubmitButtonHeader() {
-	const translate = useTranslate();
-
-	const scrollToTOS = () => document?.getElementById( 'checkout-terms' )?.scrollIntoView();
-
-	return (
-		<SubmitButtonHeaderWrapper>
-			{ translate( 'By continuing, you agree to our {{button}}Terms of Service{{/button}}.', {
-				components: {
-					button: <button onClick={ scrollToTOS } />,
-				},
-			} ) }
-		</SubmitButtonHeaderWrapper>
-	);
-}
-
 function useDoesCartHaveMarketplaceProductRequiringConfirmation(
 	responseCart: ResponseCart
 ): boolean {
@@ -1682,114 +1678,6 @@ function useDoesCartHaveMarketplaceProductRequiringConfirmation(
 		)
 		.some( ( product ) => product.extra.is_marketplace_product );
 }
-
-const JetpackCheckoutSeals = () => {
-	const cartKey = useCartKey();
-	const { responseCart } = useShoppingCart( cartKey );
-	const translate = useTranslate();
-	const show7DayGuarantee = responseCart?.products?.every( isMonthlyProduct );
-	const show14DayGuarantee = responseCart?.products?.every(
-		( product ) => isYearly( product ) || isBiennially( product ) || isTriennially( product )
-	);
-	const moneybackGuaranteeHeader =
-		show7DayGuarantee || show14DayGuarantee ? (
-			translate( '%(dayCount)s-day money back guarantee', {
-				args: {
-					dayCount: show7DayGuarantee ? 7 : 14,
-				},
-			} )
-		) : (
-			<>
-				{ translate( '14-day money back guarantee on yearly subscriptions' ) }
-				<br />
-				{ translate( '7-day money back guarantee on monthly subscriptions' ) }
-			</>
-		);
-	let moneybackGuaranteeIcon = badgeGenericSrc;
-
-	if ( show7DayGuarantee ) {
-		moneybackGuaranteeIcon = badge7Src;
-	} else if ( show14DayGuarantee ) {
-		moneybackGuaranteeIcon = badge14Src;
-	}
-
-	return (
-		<JetpackCheckoutSealsWrapper>
-			<JetpackCheckoutSealsSection>
-				<img src={ moneybackGuaranteeIcon } alt="" />
-
-				<JetpackSealText>{ moneybackGuaranteeHeader }</JetpackSealText>
-			</JetpackCheckoutSealsSection>
-
-			<JetpackCheckoutSealsSection>
-				<img src={ badgeSecurity } alt="" />
-
-				<JetpackSealText>{ translate( 'SSL Secure checkout' ) }</JetpackSealText>
-			</JetpackCheckoutSealsSection>
-		</JetpackCheckoutSealsWrapper>
-	);
-};
-
-const JetpackCheckoutSealsWrapper = styled.div< React.HTMLAttributes< HTMLDivElement > >`
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: 0.5rem;
-	padding: 1.5rem 4rem 0 1.5rem;
-
-	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
-		padding: 1.5rem 1.5rem 0;
-	}
-
-	img {
-		margin-right: 0.75rem;
-	}
-
-	span {
-		font-weight: 700;
-
-		line-height: 1.12;
-	}
-`;
-
-const JetpackCheckoutSealsSection = styled.div< React.HTMLAttributes< HTMLDivElement > >`
-	display: flex;
-	align-items: center;
-
-	color: ${ ( props ) => props.theme.colors.textColor };
-`;
-
-const JetpackSealText = styled.span`
-	padding: 0.1875rem 0 0 0;
-`;
-
-const SubmitButtonHeaderWrapper = styled.div`
-	display: none;
-	font-size: 13px;
-	margin-top: -5px;
-	margin-bottom: 10px;
-	text-align: center;
-
-	.checkout__step-wrapper--last-step & {
-		display: block;
-
-		@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
-			display: none;
-		}
-	}
-
-	button {
-		color: ${ ( props ) => props.theme.colors.highlight };
-		display: inline;
-		font-size: 13px;
-		text-decoration: underline;
-		width: auto;
-
-		&:hover {
-			color: ${ ( props ) => props.theme.colors.highlightOver };
-		}
-	}
-`;
 
 const WPCheckoutWrapper = styled.div< {
 	isLargeViewport?: boolean;
