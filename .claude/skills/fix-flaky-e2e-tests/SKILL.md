@@ -8,7 +8,7 @@ allowed-tools: Bash, AskUserQuestion
 
 Given a PR number on `Automattic/wp-calypso`, locate the flaky E2E test(s) that are failing (or being retried) in that PR's CI run.
 
-This skill is built incrementally. Right now it covers preflight (GitHub + TeamCity) and PR resolution. Subsequent steps (identify failing tests, reproduce locally, fix) will be added as earlier ones land in a satisfying state.
+This skill is built incrementally. Right now it covers preflight (GitHub + TeamCity), PR resolution, and identifying the failing E2E test(s). Subsequent steps (reproduce locally and fix) will be added as earlier ones land in a satisfying state.
 
 Before each step, tell the user in one short sentence what you're about to do and why, so they aren't surprised by a Bash call or a follow-up setup request.
 
@@ -21,8 +21,8 @@ Announce what you're checking (e.g., "Checking that the `gh` CLI is installed an
 ```bash
 if ! command -v gh >/dev/null 2>&1; then
   echo "GH_MISSING"
-elif gh api user --jq .login >/dev/null 2>&1; then
-  echo "GH_OK"
+elif login=$(gh api user --jq .login 2>/dev/null) && [ -n "$login" ]; then
+  echo "GH_OK $login"
 else
   echo "GH_BAD"
 fi
@@ -30,7 +30,7 @@ fi
 
 Interpret the result:
 
-- `GH_OK` → proceed to Step 2.
+- `GH_OK` → tell the user GitHub access is confirmed in one short sentence (e.g., "GitHub access confirmed — authenticated as `<login>`."), then proceed to Step 2.
 - `GH_MISSING` → `gh` is not installed. Tell the user to install it from <https://cli.github.com/> (on Linux typically via their package manager), then re-run the skill. Stop.
 - `GH_BAD` → `gh` is installed but not authenticated, or the stored token is invalid/expired. Guide them through re-auth:
 
@@ -101,11 +101,11 @@ Guide the user as follows:
 > 2. Click **Create access token**.
 > 3. **Token name**: `claude-teamcity-access-token`.
 > 4. **Expire in**: leave blank.
-> 5. **Permissions scope**: *same as current user*.
+> 5. **Permissions scope**: _same as current user_.
 > 6. Click **Create**.
 > 7. Copy the token to your clipboard — TeamCity only shows it once, so if you dismiss the dialog before copying you'll have to regenerate.
 >
-> **Do not paste the token into this chat.** Anything you type here ends up in the conversation transcript. The next step is run in a *separate* terminal so the hidden-password prompt stays hidden.
+> **Do not paste the token into this chat.** Anything you type here ends up in the conversation transcript. The next step is run in a _separate_ terminal so the hidden-password prompt stays hidden.
 >
 > 8. In a **separate terminal window (not Claude Code)**, `cd` to the wp-calypso repo and run:
 >
@@ -147,4 +147,3 @@ gh pr view <PR_NUMBER> --repo Automattic/wp-calypso \
 - Non-zero / "not found" → tell the user the PR wasn't found on `Automattic/wp-calypso` and ask for another one. Loop until you get a valid PR or the user stops.
 
 Do not proceed past Step 3 until a PR has been successfully resolved.
-
