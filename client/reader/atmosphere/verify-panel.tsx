@@ -1,9 +1,9 @@
 import { Card, CardBody } from '@wordpress/components';
 import { useTranslate, type TranslateResult } from 'i18n-calypso';
-import type { AtmosphereError, AtmosphereVerifyResult } from '@automattic/api-core';
+import type { AtmosphereConnectionDetails, AtmosphereError } from '@automattic/api-core';
 
 interface VerifyPanelProps {
-	data: AtmosphereVerifyResult | null;
+	data: AtmosphereConnectionDetails | null;
 	error: AtmosphereError | null;
 	isLoading: boolean;
 }

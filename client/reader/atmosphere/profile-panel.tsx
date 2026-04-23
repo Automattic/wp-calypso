@@ -1,4 +1,4 @@
-import { useVerifyConnectionQuery } from '@automattic/api-queries';
+import { useConnectionQuery } from '@automattic/api-queries';
 import { VerifyPanel } from './verify-panel';
 import type { AtmosphereConnection } from '@automattic/api-core';
 
@@ -7,7 +7,7 @@ interface ProfilePanelProps {
 }
 
 export function ProfilePanel( { connection }: ProfilePanelProps ) {
-	const verify = useVerifyConnectionQuery( connection.id );
+	const verify = useConnectionQuery( connection.id );
 	return (
 		<VerifyPanel
 			data={ verify.data ?? null }

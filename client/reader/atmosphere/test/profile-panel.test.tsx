@@ -19,6 +19,7 @@ function makeClient() {
 const connection: AtmosphereConnection = {
 	id: 101,
 	handle: 'alice.bsky.social',
+	display_name: 'Alice',
 	did: 'did:plc:a',
 	avatar: null,
 };
@@ -28,7 +29,7 @@ describe( 'ProfilePanel', () => {
 
 	it( 'renders the verified profile for the passed connection', async () => {
 		nock( BASE )
-			.get( '/wpcom/v2/reader/atmosphere/connections/101/verify' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/101' )
 			.reply( 200, {
 				did: 'did:plc:a',
 				handle: 'alice.bsky.social',

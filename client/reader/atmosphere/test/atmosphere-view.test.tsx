@@ -57,7 +57,15 @@ describe( 'AtmosphereView', () => {
 		nock( BASE )
 			.get( '/wpcom/v2/reader/atmosphere/connections' )
 			.reply( 200, {
-				connections: [ { id: 101, handle: 'alice.bsky.social', did: 'did:plc:a', avatar: null } ],
+				connections: [
+					{
+						id: 101,
+						handle: 'alice.bsky.social',
+						display_name: 'Alice',
+						did: 'did:plc:a',
+						avatar: null,
+					},
+				],
 			} );
 
 		renderWithProvider( <AtmosphereView selectedTab="timeline" />, { queryClient: makeClient() } );
@@ -72,10 +80,18 @@ describe( 'AtmosphereView', () => {
 		nock( BASE )
 			.get( '/wpcom/v2/reader/atmosphere/connections' )
 			.reply( 200, {
-				connections: [ { id: 101, handle: 'alice.bsky.social', did: 'did:plc:a', avatar: null } ],
+				connections: [
+					{
+						id: 101,
+						handle: 'alice.bsky.social',
+						display_name: 'Alice',
+						did: 'did:plc:a',
+						avatar: null,
+					},
+				],
 			} );
 		nock( BASE )
-			.get( '/wpcom/v2/reader/atmosphere/connections/101/verify' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/101' )
 			.reply( 200, {
 				did: 'did:plc:a',
 				handle: 'alice.bsky.social',
@@ -96,7 +112,15 @@ describe( 'AtmosphereView', () => {
 		nock( BASE )
 			.get( '/wpcom/v2/reader/atmosphere/connections' )
 			.reply( 200, {
-				connections: [ { id: 101, handle: 'alice.bsky.social', did: 'did:plc:a', avatar: null } ],
+				connections: [
+					{
+						id: 101,
+						handle: 'alice.bsky.social',
+						display_name: 'Alice',
+						did: 'did:plc:a',
+						avatar: null,
+					},
+				],
 			} );
 
 		renderWithProvider( <AtmosphereView selectedTab="settings" />, { queryClient: makeClient() } );
