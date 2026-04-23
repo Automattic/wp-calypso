@@ -104,6 +104,13 @@ const Routes: RoutesMapping[] = [
 	{ route: exactMatch( '/reader/conversations' ), tracking: 'conversations' },
 	{ route: exactMatch( '/reader/conversations/a8c' ), tracking: 'conversations_a8c' },
 
+	// ATmosphere (Bluesky / ATProto)
+	{ route: exactMatch( '/reader/atmosphere/connect' ), tracking: 'atmosphere_connect' },
+	{ route: matches( /^\/reader\/atmosphere\/\d+\/timeline$/ ), tracking: 'atmosphere_timeline' },
+	{ route: matches( /^\/reader\/atmosphere\/\d+\/profile$/ ), tracking: 'atmosphere_profile' },
+	{ route: matches( /^\/reader\/atmosphere\/\d+\/settings$/ ), tracking: 'atmosphere_settings' },
+	{ route: exactMatch( '/reader/atmosphere' ), tracking: 'atmosphere_landing' },
+
 	{ route: SinglePostRoute, tracking: 'single_post' },
 	{ route: BlogPageRoute, tracking: 'blog_page' },
 	{ route: SearchRoute, tracking: 'search' },

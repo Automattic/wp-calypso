@@ -678,6 +678,31 @@ describe( 'reader stats', () => {
 					expected: 'user_profile_sites',
 					description: 'user profile sites tab',
 				},
+				{
+					url: '/reader/atmosphere',
+					expected: 'atmosphere_landing',
+					description: 'atmosphere landing page',
+				},
+				{
+					url: '/reader/atmosphere/connect',
+					expected: 'atmosphere_connect',
+					description: 'atmosphere connect page',
+				},
+				{
+					url: '/reader/atmosphere/7/timeline',
+					expected: 'atmosphere_timeline',
+					description: 'atmosphere timeline for a specific connection',
+				},
+				{
+					url: '/reader/atmosphere/7/profile',
+					expected: 'atmosphere_profile',
+					description: 'atmosphere profile for a specific connection',
+				},
+				{
+					url: '/reader/atmosphere/7/settings',
+					expected: 'atmosphere_settings',
+					description: 'atmosphere settings for a specific connection',
+				},
 			] as const;
 
 			scenarios.map( ( scenario ) => {
