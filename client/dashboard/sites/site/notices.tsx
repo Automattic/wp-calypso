@@ -69,19 +69,11 @@ export function hasJetpackCriticalError( site: Site ): boolean {
 }
 
 export function getJetpackCriticalErrorMessage( site: Site ): string | null {
-	const state = getJetpackCriticalErrorState( site );
-	if ( ! state ) {
+	if ( ! hasJetpackCriticalError( site ) ) {
 		return null;
 	}
 
 	const isAdmin = !! site.capabilities?.manage_options;
-
-	if ( state === 'in-recovery' ) {
-		return isAdmin
-			? __( 'Your site is in recovery mode. Here’s what you can try next:' )
-			: __( 'Your site is in recovery mode. A site administrator has been notified.' );
-	}
-
 	return isAdmin
 		? __( 'There has been a critical error on this website. Here’s what you can try next:' )
 		: __(
