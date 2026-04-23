@@ -173,6 +173,14 @@
 		> *:last-of-type > * {
 			border-bottom-color: transparent;
 		}
+
+		// Clickable Items render as `<button>` and pick up `svg { fill: currentColor }`
+		// from `unstyledButton` mixin. Non-clickable Items render as `<div>`
+		// and miss that rule, so their icons in dark-mode keep the SVG's default
+		// dark fill.
+		[ role="listitem" ] svg {
+			fill: currentColor;
+		}
 	}
 }
 
@@ -274,6 +282,21 @@
 
 	.dataviews-view-list .dataviews-view-list__field {
 		color: var( --dashboard-subtle__color );
+	}
+
+	// Filter summary chips (upstream hardcodes `$gray-100`/`$gray-200` and
+	// `$gray-800`/`$gray-900` which don't respond to the dark theme).
+	.dataviews-filters__summary-chip-container .dataviews-filters__summary-chip {
+		// This is hardcoded to #e0e0e0 in light-mode.
+		background: var( --wp-components-color-gray-200 );
+		color: var( --wp-components-color-gray-800 );
+
+		&:hover:not( &.is-not-clickable ),
+		&:focus-visible,
+		&[ aria-expanded="true" ] {
+			background: var( --wp-components-color-gray-300 );
+			color: var( --wp-components-color-gray-800 );
+		}
 	}
 
 	// Footer
