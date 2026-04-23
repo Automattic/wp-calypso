@@ -6,7 +6,9 @@ import userEvent from '@testing-library/user-event';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { AtmosphereNavigation } from '../atmosphere-navigation';
 
-const mockRecordReaderTracksEvent = jest.fn( () => ( { type: 'TEST_TRACKS_EVENT' } ) );
+const mockRecordReaderTracksEvent: jest.Mock = jest.fn( () => ( {
+	type: 'TEST_TRACKS_EVENT',
+} ) );
 
 jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
 	recordReaderTracksEvent: ( ...args: unknown[] ) => mockRecordReaderTracksEvent( ...args ),

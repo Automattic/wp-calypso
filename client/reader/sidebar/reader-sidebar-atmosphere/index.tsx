@@ -135,6 +135,10 @@ export function ReaderSidebarAtmosphere( { path }: Props ) {
 				expandableIconClick={ () => setIsOpen( ! isOpen ) }
 				disableFlyout
 				className={ ! isOpen ? 'sidebar__menu--selected' : undefined }
+				count={ undefined }
+				icon={ null }
+				materialIcon={ null }
+				materialIconStyle={ null }
 			>
 				{ connections.map( ( connection ) => (
 					<AtmosphereSidebarRow

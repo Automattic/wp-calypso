@@ -15,7 +15,7 @@ export function SocialAddAccountMenuItem( {
 	onClick,
 }: SocialAddAccountMenuItemProps ) {
 	return (
-		<MenuItem className="sidebar-social__add-account-item">
+		<MenuItem selected={ false } className="sidebar-social__add-account-item">
 			<MenuItemLink className="sidebar__menu-link" href={ href } onClick={ onClick }>
 				<Icon icon={ icon } size={ 22 } />
 				<div className="sidebar__menu-item-title">{ label }</div>
