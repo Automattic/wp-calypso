@@ -941,6 +941,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 						cancellationInProgress={ this.state.isLoading }
 						downgradeClick={ this.downgradeClick }
 						freeMonthOfferClick={ this.freeMonthOfferClick }
+						intent={ this.props.intent }
 					/>
 				) }
 				<Card className="cancel-purchase__wrapper-card">

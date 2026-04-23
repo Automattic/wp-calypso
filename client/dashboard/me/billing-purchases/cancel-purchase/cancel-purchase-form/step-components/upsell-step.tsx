@@ -17,13 +17,14 @@ type UpsellProps = {
 	title: string;
 	acceptButtonText: string;
 	acceptButtonUrl?: string;
+	declineButtonText?: string;
 	onAccept?: () => void;
 	onDecline?: () => void;
 	isBusy?: boolean;
 };
 
 function Upsell( { ...props }: UpsellProps ) {
-	const declineButtonText = __( 'Cancel my current plan' );
+	const declineButtonText = props.declineButtonText ?? __( 'Cancel my current plan' );
 
 	return (
 		<Card>
@@ -71,6 +72,7 @@ type StepProps = {
 	cancellationInProgress?: boolean;
 	closeDialog?: () => void;
 	currencyCode: string;
+	declineButtonText?: string;
 	downgradePlan?: PlanProduct | null;
 	includedDomainPurchase?: object;
 	onClickDowngrade?: ( upsell: string ) => void;
@@ -136,6 +138,7 @@ export default function UpsellStep( {
 
 						props.closeDialog && props.closeDialog();
 					} }
+					declineButtonText={ props.declineButtonText }
 					onDecline={ props.onDeclineUpsell }
 					isBusy={ cancellationInProgress }
 				>
@@ -172,6 +175,7 @@ export default function UpsellStep( {
 						recordTracksEvent( 'calypso_cancellation_upsell_step_buily_by_click' );
 						window.location.replace( builtByURL );
 					} }
+					declineButtonText={ props.declineButtonText }
 					onDecline={ props.onDeclineUpsell }
 					isBusy={ cancellationInProgress }
 				>
@@ -204,6 +208,7 @@ export default function UpsellStep( {
 					onAccept={ () => {
 						recordTracksEvent( 'calypso_cancellation_upgrade_at_step_upgrade_click' );
 					} }
+					declineButtonText={ props.declineButtonText }
 					onDecline={ props.onDeclineUpsell }
 					isBusy={ cancellationInProgress }
 				>
@@ -232,6 +237,7 @@ export default function UpsellStep( {
 					title={ __( 'Switch to flexible monthly payments' ) }
 					acceptButtonText={ __( 'Switch to monthly payments' ) }
 					onAccept={ () => props.onClickDowngrade?.( upsell ) }
+					declineButtonText={ props.declineButtonText }
 					onDecline={ props.onDeclineUpsell }
 					isBusy={ cancellationInProgress }
 				>
@@ -280,6 +286,7 @@ export default function UpsellStep( {
 						plan: personalPlanName,
 					} ) }
 					onAccept={ () => props.onClickDowngrade?.( upsell ) }
+					declineButtonText={ props.declineButtonText }
 					onDecline={ props.onDeclineUpsell }
 					isBusy={ cancellationInProgress }
 				>
@@ -312,6 +319,7 @@ export default function UpsellStep( {
 					title={ __( 'How about a free month?' ) }
 					acceptButtonText={ __( 'Get a free month' ) }
 					onAccept={ () => props.onClickFreeMonthOffer?.() }
+					declineButtonText={ props.declineButtonText }
 					onDecline={ props.onDeclineUpsell }
 					isBusy={ cancellationInProgress }
 				>

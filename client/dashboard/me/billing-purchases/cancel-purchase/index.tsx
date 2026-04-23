@@ -1460,6 +1460,7 @@ function CancelPurchaseInner() {
 			cancelBundledDomain={ state.cancelBundledDomain }
 			cancellationInProgress={ state.isLoading }
 			cancellationOffer={ cancellationOffer }
+			intent={ intent }
 			clickNext={ clickNext }
 			closeDialog={ closeDialog }
 			disableButtons={ state.isLoading }
