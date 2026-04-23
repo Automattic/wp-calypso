@@ -3,38 +3,11 @@
 	padding: 16px;
 }
 
-.atmosphere-connections {
-	list-style: none;
-	padding: 0;
-	margin: 0;
-}
-
-.atmosphere-connection {
-	display: flex;
-	align-items: center;
-	gap: 12px;
-}
-
 .atmosphere-avatar {
 	width: 48px;
 	height: 48px;
 	border-radius: 50%;
 	object-fit: cover;
-
-	&.atmosphere-avatar--placeholder {
-		background: #ddd;
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		font-weight: 600;
-	}
-}
-
-.atmosphere-skeleton {
-	height: 72px;
-	background: linear-gradient(90deg, #eee, #f5f5f5, #eee);
-	border-radius: 8px;
-	margin-block-end: 8px;
 }
 
 .atmosphere-error {

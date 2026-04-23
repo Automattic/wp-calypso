@@ -3,7 +3,6 @@
  */
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import AtmosphereView from '../atmosphere-view';
@@ -28,34 +27,53 @@ function makeClient() {
 }
 
 describe( 'AtmosphereView', () => {
+	// NavTabs (used by AtmosphereNavigation) relies on IntersectionObserver,
+	// which jsdom does not provide.
+	beforeAll( () => {
+		global.IntersectionObserver = class IntersectionObserver {
+			observe() {}
+			unobserve() {}
+			disconnect() {}
+		} as unknown as typeof global.IntersectionObserver;
+	} );
+
+	afterAll( () => {
+		// @ts-expect-error -- cleaning up the stub
+		delete global.IntersectionObserver;
+	} );
+
 	afterEach( () => nock.cleanAll() );
 
-	it( 'renders empty state, connects, and verifies', async () => {
+	it( 'renders the empty state ConnectForm with no tab bar when there are no connections', async () => {
 		nock( BASE ).get( '/wpcom/v2/reader/atmosphere/connections' ).reply( 200, { connections: [] } );
 
 		renderWithProvider( <AtmosphereView />, { queryClient: makeClient() } );
-		await waitFor( () =>
-			expect( screen.getByText( /no bluesky accounts connected yet/i ) ).toBeVisible()
-		);
 
-		nock( BASE )
-			.post( '/wpcom/v2/reader/atmosphere/connections' )
-			.reply( 200, {
-				connection: { id: 101, handle: 'alice.bsky.social', did: 'did:plc:a', avatar: null },
-			} );
+		await waitFor( () => expect( screen.getByLabelText( /handle/i ) ).toBeVisible() );
+		expect( screen.queryByRole( 'menuitem', { name: /timeline/i } ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'renders the TimelinePanel when selectedTab is timeline', async () => {
 		nock( BASE )
 			.get( '/wpcom/v2/reader/atmosphere/connections' )
 			.reply( 200, {
 				connections: [ { id: 101, handle: 'alice.bsky.social', did: 'did:plc:a', avatar: null } ],
 			} );
 
-		const user = userEvent.setup();
-		await user.type( screen.getByLabelText( /handle/i ), 'alice.bsky.social' );
-		await user.type( screen.getByLabelText( /app password/i ), 'xxxx-xxxx-xxxx-xxxx' );
-		await user.click( screen.getByRole( 'button', { name: /connect/i } ) );
+		renderWithProvider( <AtmosphereView selectedTab="timeline" />, { queryClient: makeClient() } );
 
-		await waitFor( () => expect( screen.getByText( '@alice.bsky.social' ) ).toBeVisible() );
+		await waitFor( () =>
+			expect( screen.getByRole( 'menuitem', { name: /timeline/i } ) ).toBeVisible()
+		);
+		expect( screen.getByText( /still building this part/i ) ).toBeVisible();
+	} );
 
+	it( 'renders the ProfilePanel with the verified profile when selectedTab is profile', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/atmosphere/connections' )
+			.reply( 200, {
+				connections: [ { id: 101, handle: 'alice.bsky.social', did: 'did:plc:a', avatar: null } ],
+			} );
 		nock( BASE )
 			.get( '/wpcom/v2/reader/atmosphere/connections/101/verify' )
 			.reply( 200, {
@@ -69,7 +87,24 @@ describe( 'AtmosphereView', () => {
 				raw: {},
 			} );
 
-		await user.click( screen.getByRole( 'button', { name: /verify/i } ) );
+		renderWithProvider( <AtmosphereView selectedTab="profile" />, { queryClient: makeClient() } );
+
 		await waitFor( () => expect( screen.getByRole( 'heading', { name: 'Alice' } ) ).toBeVisible() );
+	} );
+
+	it( 'renders the SettingsPanel ConnectForm when selectedTab is settings', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/atmosphere/connections' )
+			.reply( 200, {
+				connections: [ { id: 101, handle: 'alice.bsky.social', did: 'did:plc:a', avatar: null } ],
+			} );
+
+		renderWithProvider( <AtmosphereView selectedTab="settings" />, { queryClient: makeClient() } );
+
+		await waitFor( () =>
+			expect( screen.getByRole( 'menuitem', { name: /settings/i } ) ).toBeVisible()
+		);
+		expect( screen.getByLabelText( /handle/i ) ).toBeVisible();
+		expect( screen.getByLabelText( /app password/i ) ).toBeVisible();
 	} );
 } );
