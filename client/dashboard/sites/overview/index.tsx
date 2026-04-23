@@ -37,7 +37,11 @@ import SitePreviewCard from '../overview-site-preview-card';
 import SubscribersCard from '../overview-subscribers-card';
 import VisibilityCard from '../overview-visibility-card';
 import VisibilityCardCiab from '../overview-visibility-card-ciab';
-import { InaccessibleJetpackNotice } from '../site/notices';
+import {
+	InaccessibleJetpackNotice,
+	JetpackRecoveryModeNotice,
+	getJetpackRecoveryNoticeMessage,
+} from '../site/notices';
 import StagingSiteSyncDropdown from '../staging-site-sync-dropdown';
 import { StorageWarningBanner } from './storage-warning-banner';
 import { WpVersionNotice, useShouldShowWpVersionNotice } from './wp-version-notice';
@@ -199,6 +203,13 @@ function SiteOverview( {
 
 	const renderNotices = () => {
 		if ( site.__inaccessible_jetpack_error ) {
+			// Prefer the recovery-mode notice over the generic inaccessible-Jetpack
+			// notice when recovery mode explains the failure — plugin/theme conflict
+			// is more actionable than the raw transport error.
+			const recoveryMessage = getJetpackRecoveryNoticeMessage( site );
+			if ( recoveryMessage ) {
+				return <JetpackRecoveryModeNotice message={ recoveryMessage } />;
+			}
 			return <InaccessibleJetpackNotice error={ site.__inaccessible_jetpack_error } />;
 		}
 

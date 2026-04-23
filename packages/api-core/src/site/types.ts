@@ -26,6 +26,11 @@ export interface SiteOptions {
 	is_difm_lite_in_progress?: boolean;
 	is_gating_business_q1?: boolean;
 	is_wpforteams_site?: boolean;
+	jetpack_recovery_mode_status?: {
+		recovery_mode_email_last_sent?: number;
+		recovery_session_entered_at?: number;
+		recovery_session_exited_at?: number;
+	} | null;
 	migration_source_site_domain?: string;
 	p2_hub_blog_id?: number;
 	site_creation_flow?: string;
