@@ -53,6 +53,7 @@ export * from './me-stripe-configuration';
 export * from './me-stripe-setup-intent';
 export * from './me-tax-contact-information';
 export * from './me-tax-details';
+export * from './me-trophies';
 export * from './me-two-step';
 export * from './me-username';
 export * from './meta-sms-country-codes';
