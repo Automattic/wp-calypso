@@ -1,0 +1,25 @@
+.site-critical-error__item {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+}
+
+.site-critical-error__item-icon {
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--studio-gray-60);
+}
+
+.site-critical-error__item-text {
+	flex: 1;
+	font-size: 0.875rem;
+	line-height: 1.5;
+	color: var(--studio-gray-80);
+
+	.components-button {
+		font-size: inherit;
+		line-height: inherit;
+	}
+}

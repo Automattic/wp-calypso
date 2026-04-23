@@ -1,4 +1,3 @@
-import { localizeUrl } from '@automattic/i18n-utils';
 import { JETPACK_SUPPORT_CONNECTION_ISSUES } from '@automattic/urls';
 import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
@@ -24,7 +23,7 @@ export function InaccessibleJetpackNotice( { error }: { error: Error } ) {
 	return (
 		<Notice
 			variant="error"
-			title={ __( 'Your Jetpack site can not be reached at this time.' ) }
+			title={ __( 'Your Jetpack site cannot be reached at this time.' ) }
 			actions={
 				<ExternalLink href={ JETPACK_SUPPORT_CONNECTION_ISSUES }>
 					{ __( 'Troubleshoot your Jetpack connection' ) }
@@ -67,6 +66,10 @@ function getJetpackCriticalErrorState(
 	return null;
 }
 
+export function hasJetpackCriticalError( site: Site ): boolean {
+	return getJetpackCriticalErrorState( site ) !== null;
+}
+
 export function getJetpackCriticalErrorMessage( site: Site ): ReactNode | null {
 	const state = getJetpackCriticalErrorState( site );
 	if ( ! state ) {
@@ -94,29 +97,11 @@ export function getJetpackCriticalErrorMessage( site: Site ): ReactNode | null {
 		);
 	}
 
-	return isAdmin
-		? __(
-				'A critical error has occurred on your site. Please check your site admin email inbox for instructions to troubleshoot.'
-		  )
-		: __( 'A critical error has occurred on your site. A site administrator has been notified.' );
-}
+	if ( ! isAdmin ) {
+		return __(
+			'There has been a critical error on this website. A site administrator has been notified.'
+		);
+	}
 
-export function JetpackCriticalErrorNotice( { message }: { message: ReactNode } ) {
-	return (
-		<Notice
-			variant="error"
-			title={ __( 'Your Jetpack site can not be reached at this time' ) }
-			actions={
-				<ExternalLink
-					href={ localizeUrl(
-						'https://wordpress.com/support/jetpack/resolve-jetpack-errors/#identify-plugin-or-theme-conflicts'
-					) }
-				>
-					{ __( 'Troubleshoot your Jetpack site' ) }
-				</ExternalLink>
-			}
-		>
-			{ message }
-		</Notice>
-	);
+	return __( 'There has been a critical error on this website. Here’s what you can try next:' );
 }

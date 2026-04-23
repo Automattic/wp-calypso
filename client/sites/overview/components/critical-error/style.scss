@@ -1,0 +1,49 @@
+.dashboard-backport-site-overview:has(.critical-error-overview) {
+	max-width: none !important;
+}
+
+.critical-error-overview {
+	.critical-error-overview__card {
+		max-width: 480px;
+		margin: 0 auto;
+	}
+
+	.critical-error-overview__items {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+		text-wrap: pretty;
+	}
+
+	.critical-error-overview__item {
+		display: flex;
+		align-items: flex-start;
+		gap: 0.75rem;
+		padding: 0.5rem;
+	}
+
+	.critical-error-overview__item-icon {
+		flex-shrink: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 40px;
+		height: 40px;
+		border: 1px solid var(--studio-gray-5);
+		border-radius: 4px;
+		color: var(--studio-gray-60);
+	}
+
+	.critical-error-overview__item-text {
+		flex: 1;
+		font-size: 0.875rem;
+		line-height: 1.5;
+		color: var(--studio-gray-80);
+		align-self: center;
+
+		.components-button {
+			font-size: inherit;
+			line-height: inherit;
+		}
+	}
+}

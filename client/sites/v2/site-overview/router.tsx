@@ -1,10 +1,14 @@
+import { siteBySlugQuery } from '@automattic/api-queries';
 import calypsoConfig from '@automattic/calypso-config';
 import { WIDE_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
+import { useQuery } from '@tanstack/react-query';
 import { createLazyRoute, createRoute, createRouter } from '@tanstack/react-router';
 import { APP_CONTEXT_DEFAULT_CONFIG } from 'calypso/dashboard/app/context';
 import { handleOnCatch } from 'calypso/dashboard/app/logger';
 import * as appRouterSites from 'calypso/dashboard/app/router/sites';
+import { hasJetpackCriticalError } from 'calypso/dashboard/sites/site/notices';
+import CriticalErrorOverview from 'calypso/sites/overview/components/critical-error';
 import { rootRoute, dashboardSitesCompatibilityRoute, siteRoute } from '../router';
 import siteSettingsRouter from '../site-settings/router';
 import { getRouterOptions, createBrowserHistoryAndMemoryRouterSync } from '../utils/router';
@@ -19,13 +23,18 @@ const siteOverviewRoute = createRoute( {
 	import( 'calypso/dashboard/sites/overview' ).then( ( d ) =>
 		createLazyRoute( 'overview' )( {
 			component: function SiteOverview() {
+				const siteSlug = siteRoute.useParams().siteSlug;
+				const { data: site } = useQuery( siteBySlugQuery( siteSlug ) );
 				const isWide = useBreakpoint( WIDE_BREAKPOINT );
+
+				if ( site?.__inaccessible_jetpack_error && hasJetpackCriticalError( site ) ) {
+					return <CriticalErrorOverview siteSlug={ siteSlug } />;
+				}
+
 				const breakpoints = isWide
 					? { large: 'wide' as WPBreakpoint, small: 'wide' as WPBreakpoint }
 					: { large: 'medium' as WPBreakpoint, small: 'medium' as WPBreakpoint };
-				return (
-					<d.default siteSlug={ siteRoute.useParams().siteSlug } breakpoints={ breakpoints } />
-				);
+				return <d.default siteSlug={ siteSlug } breakpoints={ breakpoints } />;
 			},
 		} )
 	)
