@@ -136,7 +136,7 @@ If the argument is a URL for a different repository, or is not a number / recogn
 
 Wait for the reply and parse it the same way.
 
-Once you have a number, validate the PR exists and capture its metadata in one Bash call. Keep the output for later steps — branch name and HEAD SHA will be needed to look up checks.
+Once you have a number, announce in one short sentence what you're about to do (e.g., "Fetching PR #<NUMBER> from GitHub to confirm it exists and load its check statuses."), then validate the PR and capture its metadata in one Bash call. Keep the output for later steps — branch name and HEAD SHA will be needed to look up checks.
 
 ```bash
 gh pr view <PR_NUMBER> --repo Automattic/wp-calypso \
@@ -147,3 +147,57 @@ gh pr view <PR_NUMBER> --repo Automattic/wp-calypso \
 - Non-zero / "not found" → tell the user the PR wasn't found on `Automattic/wp-calypso` and ask for another one. Loop until you get a valid PR or the user stops.
 
 Do not proceed past Step 3 until a PR has been successfully resolved.
+
+## Step 4: Identify the failing E2E test(s)
+
+Using the `statusCheckRollup` captured in Step 3, find the failing E2E checks and ask TeamCity which individual tests failed.
+
+### 4.1: Find the failing E2E check(s)
+
+From `statusCheckRollup`, pick entries where the context (`StatusContext.context`) or name (`CheckRun.name`) contains `E2E` and state/conclusion is `FAILURE`. Each points at TeamCity via a URL of the form:
+
+```
+https://teamcity.a8c.com/buildConfiguration/<config-id>/<build-id>
+```
+
+Extract the trailing numeric `<build-id>` from each. Collect them all — a PR may have more than one failing E2E check.
+
+If zero failing E2E checks exist, tell the user "no failing E2E tests on this PR" and stop.
+
+### 4.2: Fetch failing test occurrences
+
+For each failing build ID from 4.1, query TeamCity using the `TC_PROXY` and token already validated in Step 2:
+
+```bash
+curl -sS $TC_PROXY -H "Authorization: Bearer $TEAMCITY_TOKEN" -H "Accept: application/json" \
+  "https://teamcity.a8c.com/app/rest/testOccurrences?locator=build:(id:<BUILD_ID>,defaultFilter:false),status:FAILURE,count:100&fields=count,testOccurrence(id,name,muted,currentlyMuted,currentlyInvestigated,build(id,buildType(name)),details)"
+```
+
+`defaultFilter:false` is required: the top-level build is a matrix with snapshot dependencies (`[Desktop]`, `[Mobile]`, etc.), and the actual test failures live in those children. Without it, the response is empty.
+
+### 4.3: Filter and present candidates
+
+Drop any occurrence with `muted: true` or `currentlyMuted: true` — those are explicitly silenced.
+
+Do **not** filter on `currentlyInvestigated`. The flag exists in TeamCity but is not a reliable signal of active work on Automattic's instance (investigations are often stale, project-scoped, and not surfaced in the build's failed-tests list), and filtering on it causes the skill's candidate list to silently diverge from what the user sees on the TC build Overview.
+
+For each remaining occurrence, extract:
+
+- **Spec path** — the part of `name` before the first `:` (e.g., `infrastructure/infrastructure__flaky-fixture.spec.ts`). Prepend `test/e2e/specs/` to get the repo-relative path.
+- **Test title** — everything after the last `›` in `name`.
+- **Build** — `build.buildType.name` (e.g., `[Desktop]`, `[Mobile]`).
+- **Reason** — the first non-empty line of `details` that starts with an error class (`TimeoutError`, `Error`, `expect(...)`, etc.). Truncate to ~120 chars.
+
+Present a compact table to the user:
+
+| #   | Spec                                                                  | Test                    | Build    | Reason                                                      |
+| --- | --------------------------------------------------------------------- | ----------------------- | -------- | ----------------------------------------------------------- |
+| 1   | `test/e2e/specs/infrastructure/infrastructure__flaky-fixture.spec.ts` | Flaky by race condition | [Mobile] | TimeoutError: page locator '#late' not visible within 150ms |
+
+Then:
+
+- **Zero candidates** → tell the user all failing tests are muted, and stop.
+- **One candidate** → state it as the test to fix, then stop (subsequent steps of the skill will reproduce and fix it).
+- **Multiple candidates** → ask in plain chat which to pursue, referencing the `#` column of the table you just printed (do not use `AskUserQuestion` — its picker header renders as dark-on-dark in some Claude Code themes, and since the candidates are already listed above, a free-form reply is clearer). Example: "Reply with the number of the test you want to pursue." Wait for the reply, then stop on the chosen one.
+
+Do not proceed past Step 4 until a single test has been identified (or the user chooses to stop).
