@@ -3,9 +3,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import {
+	useConnectionQuery,
 	useConnectionsQuery,
 	useCreateConnectionMutation,
-	useVerifyConnectionQuery,
 } from '../reader-atmosphere';
 
 const BASE = 'https://public-api.wordpress.com';
@@ -42,31 +42,32 @@ describe( 'reader-atmosphere hooks', () => {
 		await waitFor( () => expect( spy ).toHaveBeenCalled() );
 	} );
 
-	it( 'useVerifyConnectionQuery is disabled when id is null', () => {
+	it( 'useConnectionQuery is disabled when id is null', () => {
 		const client = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
-		const { result } = renderHook( () => useVerifyConnectionQuery( null ), {
+		const { result } = renderHook( () => useConnectionQuery( null ), {
 			wrapper: makeWrapper( client ),
 		} );
 		expect( result.current.fetchStatus ).toBe( 'idle' );
 	} );
 
-	it( 'useVerifyConnectionQuery fetches when id is set', async () => {
+	it( 'useConnectionQuery fetches /connections/:id', async () => {
 		nock( BASE )
-			.get( '/wpcom/v2/reader/atmosphere/connections/101/verify' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42' )
 			.reply( 200, {
-				did: 'did:plc:a',
-				handle: 'a',
-				display_name: '',
+				did: 'did:plc:x',
+				handle: 'a.bsky.social',
+				display_name: 'Alice',
 				description: '',
-				avatar: null,
+				avatar: 'https://cdn/avatar.png',
 				banner: null,
 				counts: { followers: 0, follows: 0, posts: 0 },
 				raw: {},
 			} );
 		const client = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
-		const { result } = renderHook( () => useVerifyConnectionQuery( 101 ), {
+		const { result } = renderHook( () => useConnectionQuery( 42 ), {
 			wrapper: makeWrapper( client ),
 		} );
 		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+		expect( result.current.data?.avatar ).toBe( 'https://cdn/avatar.png' );
 	} );
 } );

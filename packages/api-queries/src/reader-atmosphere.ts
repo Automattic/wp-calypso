@@ -1,15 +1,15 @@
 import {
 	createConnection,
+	getConnection,
 	getConnections,
 	readerAtmosphereKeys,
-	verifyConnection,
 } from '@automattic/api-core';
 import { queryOptions, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type {
+	AtmosphereConnectionDetails,
 	AtmosphereConnectionsResponse,
 	AtmosphereCreateConnectionResponse,
 	AtmosphereError,
-	AtmosphereVerifyResult,
 	CreateConnectionParams,
 } from '@automattic/api-core';
 
@@ -36,25 +36,25 @@ export function useCreateConnectionMutation() {
 	);
 }
 
-export const verifyConnectionQueryOptions = ( id: number | null ) =>
-	queryOptions< AtmosphereVerifyResult, AtmosphereError >( {
-		queryKey: readerAtmosphereKeys.verify( id ),
+export const connectionQueryOptions = ( id: number | null ) =>
+	queryOptions< AtmosphereConnectionDetails, AtmosphereError >( {
+		queryKey: readerAtmosphereKeys.connection( id ),
 		queryFn: () => {
 			if ( id === null || id <= 0 ) {
 				// Defensive guard — `enabled` below should prevent this from
 				// ever running. Throw the error type the query is typed for.
 				const err: AtmosphereError = {
 					kind: 'unknown',
-					cause: new Error( `verifyConnection called with invalid id: ${ id }` ),
+					cause: new Error( `getConnection called with invalid id: ${ id }` ),
 				};
 				throw err;
 			}
-			return verifyConnection( id );
+			return getConnection( id );
 		},
 		enabled: id !== null && id > 0,
-		staleTime: 0,
+		staleTime: 60_000,
 	} );
 
-export function useVerifyConnectionQuery( id: number | null ) {
-	return useQuery( verifyConnectionQueryOptions( id ) );
+export function useConnectionQuery( id: number | null ) {
+	return useQuery( connectionQueryOptions( id ) );
 }
