@@ -28,7 +28,11 @@ export default function UserHovercard( props: UserHovercardProps ): JSX.Element 
 	} ) as string;
 
 	const { isLoading: isGravatarLoading, data: gravatarData } = useGravatarProfileV3Query(
-		userProp,
+		{
+			profile_URL: userProp.profile_URL,
+			avatar_URL: userProp.avatar_URL,
+			cache404: true,
+		},
 		! wpcomIdOrLogin // Only fetch Gravatar profile if we don't have a WPCOM ID or login.
 	);
 	const gravatarUser = gravatarData ? { ...gravatarData, primary_blog: null } : null;
@@ -51,7 +55,14 @@ export default function UserHovercard( props: UserHovercardProps ): JSX.Element 
 
 	if ( isWpcomLoading || isGravatarLoading ) {
 		return (
-			<div className={ classNames } role="dialog" aria-label={ displayName }>
+			<div
+				className={ classNames }
+				role="dialog"
+				aria-label={ displayName }
+				aria-busy="true"
+				// Using tabIndex to trap focus inside the hovercard while it's loading. Else users focus jump to start of the page.
+				tabIndex={ 0 } // eslint-disable-line jsx-a11y/no-noninteractive-tabindex
+			>
 				<div className="wp-spinner-wrapper" style={ { marginTop: '0' } }>
 					<Spinner />
 				</div>

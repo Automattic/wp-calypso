@@ -18,7 +18,6 @@
 
 	.user-hovercard__name {
 		a {
-			text-decoration: none;
 			color: var( --color-text );
 			font-size: rem( 32px );
 			font-weight: 700;
@@ -29,6 +28,10 @@
 			-webkit-line-clamp: 1;
 			line-clamp: 1;
 			-webkit-box-orient: vertical;
+
+			&:not( :hover ) {
+				text-decoration: none;
+			}
 		}
 	}
 

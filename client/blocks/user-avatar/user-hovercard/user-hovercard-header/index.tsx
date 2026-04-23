@@ -12,8 +12,7 @@ interface UserHovercardHeaderProps {
 function UserHovercardHeader( { user }: UserHovercardHeaderProps ): JSX.Element {
 	const name: string =
 		user.display_name ||
-		( user.first_name && user.last_name ? `${ user.first_name } ${ user.last_name }` : '' ) ||
-		'';
+		( user.first_name && user.last_name ? `${ user.first_name } ${ user.last_name }` : '' );
 	const profilePageUrl = user.user_login ? `/reader/users/${ user.user_login }` : undefined; // Only navigate to profile page. Avoid navigating to any external links to keep UX consistent.
 	const avatarUrl = getProcessedGravatarUrl( user.avatar_URL );
 	const avatarImg = avatarUrl ? (

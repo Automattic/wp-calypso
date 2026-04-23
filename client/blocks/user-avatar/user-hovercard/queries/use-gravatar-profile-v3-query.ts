@@ -4,6 +4,7 @@ import { useQuery, UseQueryResult } from '@tanstack/react-query';
 interface useGravatarProfileV3Args {
 	profile_URL?: string;
 	avatar_URL?: string;
+	cache404?: boolean; // Cache 404 responses to avoid repeated failed requests for the same user.
 }
 
 interface GravatarProfileV3ApiResponse {
@@ -16,7 +17,7 @@ interface GravatarProfileV3ApiResponse {
 export function useGravatarProfileV3Query(
 	args: useGravatarProfileV3Args,
 	enabled = true
-): UseQueryResult< UserResponse, Error > {
+): UseQueryResult< UserResponse | null, Error > {
 	// Gravatar profiles can be fetched using both MD5 and SHA256 hashes. We'll prefer SHA256 if available because it's newer.
 	const urls = [ args.profile_URL, args.avatar_URL ];
 	const allHashes = urls.map( extractHashFromUrl ).filter( Boolean );
@@ -29,6 +30,9 @@ export function useGravatarProfileV3Query(
 				`https://api.gravatar.com/v3/profiles/${ hash }?source=hovercard`
 			);
 			if ( ! response.ok ) {
+				if ( args.cache404 && response.status === 404 ) {
+					return null;
+				}
 				throw new Error( `Gravatar API error: ${ response.status }` );
 			}
 			return response.json() as Promise< GravatarProfileV3ApiResponse >;
@@ -58,7 +62,11 @@ function extractHashFromUrl( url?: string ): string | null {
 	return null;
 }
 
-function mapToHovercardUser( raw: GravatarProfileV3ApiResponse ): UserResponse {
+function mapToHovercardUser( raw: GravatarProfileV3ApiResponse | null ): UserResponse | null {
+	if ( ! raw ) {
+		return null;
+	}
+
 	const lastSegment = ( () => {
 		try {
 			return new URL( raw.profile_url ).pathname.split( '/' ).filter( Boolean ).pop();

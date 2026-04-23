@@ -130,10 +130,15 @@ export default function UserAvatar( { user, size = 32, hideHovercard = false }: 
 					offset={ 5 }
 					placement={ placement }
 					flip={ false } // We compute our own placement and don't want Popover to change it.
-					focusOnMount={ false }
+					focusOnMount
 					noArrow
 					onMouseEnter={ clearHoverTimer }
 					onMouseLeave={ handleHideHovercard }
+					onKeyDown={ ( e ) => {
+						if ( e.key === 'Escape' ) {
+							setIsHovered( false );
+						}
+					} }
 				>
 					<UserHovercard user={ user } onUserLoaded={ computePlacement } />
 				</Popover>

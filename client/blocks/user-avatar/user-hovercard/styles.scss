@@ -13,15 +13,6 @@
 		box-sizing: border-box;
 	}
 
-	.user-hovercard__name {
-		overflow: hidden;
-		text-overflow: ellipsis;
-		display: -webkit-box;
-		-webkit-line-clamp: 1;
-		line-clamp: 1;
-		-webkit-box-orient: vertical;
-	}
-
 	.user-hovercard--not-found {
 		display: flex;
 		flex-direction: column;
