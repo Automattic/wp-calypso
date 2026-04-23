@@ -281,6 +281,98 @@ export function getRemoveLossIntro( purchase: Purchase ): string {
 }
 
 /**
+ * Single-sentence copy for the Cancel variant when there is exactly one loss
+ * item. Replaces the intro + bullet list so the screen doesn't just restate
+ * the heading. Uses the expiry date when available; falls back to a date-less
+ * form for partner-managed or already-expired purchases.
+ */
+export function getSingleItemCancelCopy( purchase: Purchase, fullExpiryDate: string ): string {
+	const category = getProductCategory( purchase );
+	if ( ! fullExpiryDate ) {
+		switch ( category ) {
+			case 'plan':
+				return __(
+					"Your plan subscription will expire. After that, it will be deactivated and you'll no longer be able to use it."
+				);
+			case 'domain':
+				return __(
+					"Your domain subscription will expire. After that, it will be deactivated and you'll no longer be able to use it."
+				);
+			case 'email':
+				return __(
+					"Your email subscription will expire. After that, it will be deactivated and you'll no longer be able to use it."
+				);
+			default:
+				return sprintf(
+					/* translators: %(productName)s is the product name */
+					__(
+						"Your %(productName)s subscription will expire. After that, it will be deactivated and you'll no longer be able to use it."
+					),
+					{ productName: purchase.product_name }
+				);
+		}
+	}
+	switch ( category ) {
+		case 'plan':
+			return sprintf(
+				/* translators: %(date)s is the full subscription expiry date, e.g. "April 16, 2027" */
+				__(
+					"Your plan subscription expires on %(date)s. After that, it will be deactivated and you'll no longer be able to use it."
+				),
+				{ date: fullExpiryDate }
+			);
+		case 'domain':
+			return sprintf(
+				/* translators: %(date)s is the full subscription expiry date, e.g. "January 8, 2027" */
+				__(
+					"Your domain subscription expires on %(date)s. After that, it will be deactivated and you'll no longer be able to use it."
+				),
+				{ date: fullExpiryDate }
+			);
+		case 'email':
+			return sprintf(
+				/* translators: %(date)s is the full subscription expiry date */
+				__(
+					"Your email subscription expires on %(date)s. After that, it will be deactivated and you'll no longer be able to use it."
+				),
+				{ date: fullExpiryDate }
+			);
+		default:
+			return sprintf(
+				/* translators: %(productName)s is the product name; %(date)s is the full expiry date */
+				__(
+					"Your %(productName)s subscription expires on %(date)s. After that, it will be deactivated and you'll no longer be able to use it."
+				),
+				{ productName: purchase.product_name, date: fullExpiryDate }
+			);
+	}
+}
+
+/**
+ * Single-sentence copy for the Remove variant when there is exactly one loss
+ * item. Domain removals use the domain name; everything else uses the product
+ * name.
+ */
+export function getSingleItemRemoveCopy( purchase: Purchase ): string {
+	if ( purchase.is_domain_registration ) {
+		return sprintf(
+			/* translators: %(domainName)s is the domain name being removed, e.g. "example.com" */
+			__(
+				"%(domainName)s will be removed immediately. It will be deactivated and you'll no longer be able to use it."
+			),
+			{ domainName: purchase.meta ?? purchase.domain }
+		);
+	}
+	return sprintf(
+		/* translators: %(productName)s is the product name */
+		__(
+			"%(productName)s will be removed immediately. It will be deactivated and you'll no longer be able to use it."
+		),
+		{ productName: purchase.product_name }
+	);
+}
+
+/**
  * Single-sentence refund notice on the Remove screen. The losses list intro
  * carries the "removed immediately" timing, so we don't repeat it here.
  */

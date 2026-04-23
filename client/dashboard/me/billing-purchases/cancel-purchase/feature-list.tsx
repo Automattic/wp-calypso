@@ -12,6 +12,8 @@ import {
 	getCancelLossIntro,
 	getFallbackLossItems,
 	getRemoveLossIntro,
+	getSingleItemCancelCopy,
+	getSingleItemRemoveCopy,
 } from './get-confirmation-copy';
 import type { Purchase, CancellationFeature } from '@automattic/api-core';
 
@@ -65,24 +67,35 @@ const CancelPurchaseFeatureList = ( {
 
 	return (
 		<VStack spacing={ 6 }>
-			{ lossItems.length > 0 && (
-				<VStack spacing={ 2 }>
-					<Text as="p">{ introCopy }</Text>
-					<VStack as="ul" spacing={ 1 } style={ { listStyle: 'none', padding: 0, margin: 0 } }>
-						{ lossItems.map( ( item ) => (
-							<li key={ item.key }>
-								<HStack alignment="topLeft">
-									<Icon
-										size={ 20 }
-										icon={ close }
-										style={ { flexShrink: 0, fill: 'var( --dashboard__foreground-color-error )' } }
-									/>
-									<span>{ item.title }</span>
-								</HStack>
-							</li>
-						) ) }
+			{ lossItems.length === 1 ? (
+				<Text as="p">
+					{ displayVariant === 'remove'
+						? getSingleItemRemoveCopy( purchase )
+						: getSingleItemCancelCopy( purchase, fullExpiryDate ) }
+				</Text>
+			) : (
+				lossItems.length > 0 && (
+					<VStack spacing={ 2 }>
+						<Text as="p">{ introCopy }</Text>
+						<VStack as="ul" spacing={ 1 } style={ { listStyle: 'none', padding: 0, margin: 0 } }>
+							{ lossItems.map( ( item ) => (
+								<li key={ item.key }>
+									<HStack alignment="topLeft">
+										<Icon
+											size={ 20 }
+											icon={ close }
+											style={ {
+												flexShrink: 0,
+												fill: 'var( --dashboard__foreground-color-error )',
+											} }
+										/>
+										<span>{ item.title }</span>
+									</HStack>
+								</li>
+							) ) }
+						</VStack>
 					</VStack>
-				</VStack>
+				)
 			) }
 			{ cancellationChanges.length > 0 && (
 				<VStack spacing={ 2 }>
