@@ -1071,7 +1071,7 @@ class ManagePurchase extends Component<
 				link_text: cancelCopy ? cancelCopy.label : getCancelPurchaseNavText( purchase, translate ),
 			} );
 
-			if ( this.shouldShowWordAdsEligibilityWarning() ) {
+			if ( ! isSplitEnabled && this.shouldShowWordAdsEligibilityWarning() ) {
 				event.preventDefault();
 				this.showWordAdsEligibilityWarningDialog( link );
 			}
