@@ -52,20 +52,6 @@ jest.mock( '@wordpress/data', () => ( {
 	useSelect: jest.fn(),
 } ) );
 
-// Stub the framer-motion-backed exports from @wordpress/components so we don't
-// pull in its full dependency graph (which requires @wordpress/data internals
-// that are mocked above).
-jest.mock( '@wordpress/components', () => {
-	const React = require( 'react' );
-	return {
-		__unstableAnimatePresence: ( { children }: any ) =>
-			React.createElement( React.Fragment, null, children ),
-		__unstableMotion: {
-			div: ( { children, ...rest }: any ) => React.createElement( 'div', rest, children ),
-		},
-	};
-} );
-
 jest.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
 } ) );

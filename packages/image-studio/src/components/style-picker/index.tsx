@@ -1,8 +1,4 @@
 import { AgentUI, cn } from '@automattic/agenttic-ui';
-import {
-	__unstableAnimatePresence as AnimatePresence,
-	__unstableMotion as motion,
-} from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import threeDModelPreview from '../../assets/3d-model.webp';
@@ -176,36 +172,27 @@ export function StylePicker( { disabled = false, mode }: StylePickerProps ) {
 			className="image-studio-input-toolbar-item"
 			disabled={ disabled }
 		>
-			<AnimatePresence mode="wait" initial={ false }>
-				<motion.div
-					key={ studioMode }
-					className="image-studio-input-toolbar-dialog-grid"
-					initial={ { opacity: 0 } }
-					animate={ { opacity: 1 } }
-					exit={ { opacity: 0 } }
-					transition={ { duration: 0.15, ease: 'easeOut' } }
-				>
-					{ options.map( ( option ) => (
-						<button
-							key={ option.value }
-							type="button"
-							className={ cn( 'image-studio-input-toolbar-card', {
-								'is-selected': selectedStyle === option.value,
-							} ) }
-							onClick={ () => handleStyleSelect( option.value ) }
-						>
-							<span className="image-studio-input-toolbar-card__image-wrapper">
-								<img
-									src={ option.preview ?? '' }
-									alt=""
-									className="image-studio-input-toolbar-card__image"
-								/>
-							</span>
-							<span className="image-studio-input-toolbar-card__label">{ option.label }</span>
-						</button>
-					) ) }
-				</motion.div>
-			</AnimatePresence>
+			<div className="image-studio-input-toolbar-dialog-grid">
+				{ options.map( ( option ) => (
+					<button
+						key={ option.value }
+						type="button"
+						className={ cn( 'image-studio-input-toolbar-card', {
+							'is-selected': selectedStyle === option.value,
+						} ) }
+						onClick={ () => handleStyleSelect( option.value ) }
+					>
+						<span className="image-studio-input-toolbar-card__image-wrapper">
+							<img
+								src={ option.preview ?? '' }
+								alt=""
+								className="image-studio-input-toolbar-card__image"
+							/>
+						</span>
+						<span className="image-studio-input-toolbar-card__label">{ option.label }</span>
+					</button>
+				) ) }
+			</div>
 		</AgentUI.InputToolbar>
 	);
 }
