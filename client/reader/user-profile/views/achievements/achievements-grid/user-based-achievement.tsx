@@ -15,7 +15,7 @@ export default function UserBasedAchievement( { trophy }: { trophy: Trophy } ) {
 					? translate( 'Level %(level)d', { args: { level: trophy.level } } )
 					: undefined
 			}
-			description={ trophy.message || undefined }
+			description={ trophy.message }
 			caption={ translate( 'Unlocked: {{timeSince/}}', {
 				components: {
 					timeSince: <TimeSince date={ trophy.date } />,

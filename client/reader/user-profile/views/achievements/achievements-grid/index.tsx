@@ -39,7 +39,7 @@ export default function AchievementsGrid() {
 					);
 				}
 
-				if ( trophy.url ) {
+				if ( trophy.site_ID !== 0 ) {
 					return (
 						<SiteBasedAchievement
 							key={ trophy.achievement_id }

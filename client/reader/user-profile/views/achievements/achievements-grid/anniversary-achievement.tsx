@@ -12,7 +12,6 @@ export default function AnniversaryAchievement( {
 } ) {
 	const translate = useTranslate();
 	const anniversaries = trophies.filter( ( t ) => t.type === 'anniversary' );
-	const years = anniversaries.length;
 	const mostRecent = anniversaries.reduce( ( a, b ) =>
 		new Date( a.date ) > new Date( b.date ) ? a : b
 	);
@@ -21,11 +20,7 @@ export default function AnniversaryAchievement( {
 		<AchievementCard
 			image={ `https:${ trophy.image }` }
 			title={ trophy.title }
-			badge={ translate( '%(years)d year', '%(years)d years', {
-				count: years,
-				args: { years },
-			} ) }
-			description={ trophy.message || undefined }
+			description={ trophy.message }
 			caption={ translate( 'Last unlocked: {{timeSince/}}', {
 				components: {
 					timeSince: <TimeSince date={ mostRecent.date } />,
