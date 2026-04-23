@@ -137,6 +137,39 @@
 			display: none;
 		}
 	}
+	/* Caturday Card ------------------------ */
+	&--caturday-row {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+
+		.blogging-prompt__card,
+		.caturday-prompt__card {
+			margin-bottom: 0;
+		}
+	}
+
+	.caturday-prompt__card {
+		.caturday-prompt__body {
+			display: flex;
+			align-items: flex-end;
+			gap: 12px;
+		}
+
+		.caturday-prompt__content {
+			flex: 1;
+		}
+
+		.caturday-prompt__cat-image {
+			flex-shrink: 0;
+			height: 120px;
+			margin-block-end: -24px;
+			margin-inline-end: -24px;
+			object-fit: contain;
+			width: auto;
+		}
+	}
+
 	/* Blogging Prompt Menu ------------------------ */
 	.blogging-prompt__menu {
 		.button {

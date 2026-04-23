@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import isBloganuary from 'calypso/data/blogging-prompt/is-bloganuary';
+import isCaturday from 'calypso/data/blogging-prompt/is-caturday';
 import {
 	useAIBloggingPrompts,
 	mergePromptStreams,
@@ -18,6 +19,7 @@ import {
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getSiteSlug from 'calypso/state/sites/selectors/get-site-slug';
 import BellOffIcon from './bell-off-icon';
+import CaturdayCard from './caturday-card';
 import PromptsNavigation from './prompts-navigation';
 
 import './style.scss';
@@ -99,8 +101,10 @@ const BloggingPromptCard = ( { siteId, viewContext, showMenu, index } ) => {
 		);
 	};
 
+	const showCaturday = isCaturday();
+
 	return (
-		<div className="blogging-prompt">
+		<div className={ clsx( 'blogging-prompt', { 'blogging-prompt--caturday-row': showCaturday } ) }>
 			<Card
 				className={ clsx( 'blogging-prompt__card', {
 					'customer-home__card is-small-hero': viewContext === 'home',
@@ -114,6 +118,7 @@ const BloggingPromptCard = ( { siteId, viewContext, showMenu, index } ) => {
 					menu={ renderMenu() }
 				/>
 			</Card>
+			{ showCaturday && <CaturdayCard siteId={ siteId } /> }
 		</div>
 	);
 };
