@@ -4,6 +4,7 @@ import { Button } from '@wordpress/components';
 import { useTranslate, type TranslateResult } from 'i18n-calypso';
 import { useEffect, useMemo, useRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
+import NavigationHeader from 'calypso/components/navigation-header';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { useDispatch } from 'calypso/state';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
@@ -132,6 +133,10 @@ export function MastodonOauthCallbackView( { query }: Props ) {
 	return (
 		<ReaderMain className="mastodon-view">
 			<DocumentHead title={ translate( 'Connecting account ‹ Mastodon ‹ Reader' ) } />
+			<NavigationHeader
+				title={ translate( 'Connecting your Mastodon account' ) }
+				subtitle={ translate( 'Hang tight — we’re finishing the handshake with your server.' ) }
+			/>
 			{ topLevelError ? (
 				<div role="alert" className="mastodon-error">
 					<p>{ topLevelError }</p>

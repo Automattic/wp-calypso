@@ -43,7 +43,22 @@ export function useCompleteMastodonConnectionMutation() {
 		CompleteMastodonConnectionParams
 	>( {
 		mutationFn: completeMastodonConnection,
-		onSuccess: () => {
+		onSuccess: ( { connection } ) => {
+			// Seed the list cache synchronously so the route we `page.replace`
+			// to next can resolve the new connection without waiting for a
+			// refetch. Without this, MastodonAccountView reads the stale
+			// cached list, can't find the new id, and redirects to the
+			// landing view — which picks connections[0] instead.
+			client.setQueryData< MastodonConnectionsResponse >(
+				readerMastodonKeys.connections(),
+				( prev ) => {
+					const existing = prev?.connections ?? [];
+					if ( existing.some( ( c ) => c.id === connection.id ) ) {
+						return prev;
+					}
+					return { connections: [ ...existing, connection ] };
+				}
+			);
 			client.invalidateQueries( { queryKey: readerMastodonKeys.connections() } );
 		},
 	} );
