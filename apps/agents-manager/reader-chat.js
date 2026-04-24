@@ -11,11 +11,33 @@
 
 import './config';
 import AgentsManager, { AGENTS_MANAGER_STORE } from '@automattic/agents-manager';
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { dispatch, select, subscribe } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
 import { createRoot } from 'react-dom/client';
+
+/**
+ * Push a Tracks event onto the global _tkq queue.
+ *
+ * Equivalent to @automattic/calypso-analytics' recordTracksEvent but
+ * without the 23MB of transitive deps (getCurrentUser, super-props,
+ * tracking prefs, event-name validation, etc.) that would bloat this
+ * public-facing blog bundle. The queue is drained by stats.js / the
+ * Tracks library if/when it loads on the page — and on blogs where
+ * it doesn't load, events simply stay queued with no ill effect.
+ *
+ * @param {string} eventName Must start with an allowed source prefix
+ *                           (e.g. 'jetpack_...') to be accepted by Tracks.
+ * @param {Object} [props]   Flat property bag. Nested objects are not
+ *                           supported by Tracks — keep values scalar.
+ */
+function recordTracksEvent( eventName, props ) {
+	if ( typeof window === 'undefined' ) {
+		return;
+	}
+	window._tkq = window._tkq || [];
+	window._tkq.push( [ 'recordEvent', eventName, props || {} ] );
+}
 
 const queryClient = new QueryClient();
 
