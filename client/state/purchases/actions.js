@@ -36,8 +36,8 @@ export const clearPurchases = () => ( dispatch, getState ) => {
  * keeping hasLoadedUserPurchasesFromServer / hasLoadedSitePurchasesFromServer
  * at true so no refetch cascade is triggered.
  */
-export const removePurchaseFromCache = ( purchaseId ) => ( dispatch, getState ) => {
-	const currentData = getState().purchases.data;
+export const removePurchaseFromState = ( purchaseId ) => ( dispatch, getState ) => {
+	const currentData = getState().purchases.data ?? [];
 	dispatch( {
 		type: PURCHASE_REMOVE_COMPLETED,
 		purchases: currentData.filter( ( p ) => String( p.ID ) !== String( purchaseId ) ),
