@@ -19,6 +19,7 @@ type WelcomeTileItem = {
 	name: string;
 	imageUrl: string;
 	imageClass?: string;
+	porthole?: boolean;
 };
 
 const publications: WelcomeTileItem[] = [
@@ -38,6 +39,8 @@ const publications: WelcomeTileItem[] = [
 	{
 		name: 'Variety',
 		imageUrl: 'https://www.google.com/s2/favicons?domain=variety.com&sz=128',
+		porthole: true,
+		imageClass: 'reader-welcome-modal__variety-image',
 	},
 	{
 		name: 'Rolling Stone',
@@ -59,11 +62,15 @@ const bloggers: WelcomeTileItem[] = [
 	{
 		name: 'Seth Godin',
 		imageUrl: 'https://seths.blog/wp-content/themes/godin/img/seth.webp',
+		porthole: true,
+		imageClass: 'reader-welcome-modal__seth-image',
 	},
 	{
 		name: 'Tim Ferriss',
 		imageUrl:
-			'https://i0.wp.com/tim.blog/wp-content/uploads/2025/05/timabout.jpg?resize=1080%2C1525&ssl=1',
+			'https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Tim_Ferriss.jpg/500px-Tim_Ferriss.jpg',
+		porthole: true,
+		imageClass: 'reader-welcome-modal__tim-image',
 	},
 	{
 		name: 'Om Malik',
@@ -73,17 +80,37 @@ const bloggers: WelcomeTileItem[] = [
 		name: 'Hugh Howey',
 		imageUrl:
 			'https://hughhowey.com/wp-content/themes/hughhowey2023new/assets/images/HH-circle.png',
+		porthole: true,
+		imageClass: 'reader-welcome-modal__hugh-image',
 	},
 ];
+
+const renderTileImage = ( item: WelcomeTileItem ) => {
+	if ( item.porthole ) {
+		return (
+			<span className="reader-welcome-modal__image-porthole">
+				<img src={ item.imageUrl } alt="" aria-hidden className={ item.imageClass } />
+			</span>
+		);
+	}
+	return (
+		<img
+			src={ item.imageUrl }
+			alt=""
+			aria-hidden
+			className={ `reader-welcome-modal__tile-image ${ item.imageClass || '' }` }
+		/>
+	);
+};
 
 const WelcomeModal: React.FC< WelcomeModalProps > = ( { isOpen, onClose, onContinue } ) => {
 	return (
 		isOpen && (
-			<Modal onRequestClose={ onClose } size="medium" className="welcome-modal">
-				<VStack spacing={ 8 } className="welcome-modal__content">
-					<VStack spacing={ 1 } className="welcome-modal__intro">
-						<h2 className="welcome-modal__title">{ __( 'Your reading home base' ) }</h2>
-						<p className="welcome-modal__subtitle">
+			<Modal onRequestClose={ onClose } size="medium" className="reader-welcome-modal">
+				<VStack spacing={ 8 } className="reader-welcome-modal__content">
+					<VStack spacing={ 1 } className="reader-welcome-modal__intro">
+						<h2 className="reader-welcome-modal__title">{ __( 'Your reading home base' ) }</h2>
+						<p className="reader-welcome-modal__subtitle">
 							<span>{ __( 'All your favorite blogs and newsletters in one focused feed.' ) }</span>
 							<br />
 							<span>
@@ -94,52 +121,20 @@ const WelcomeModal: React.FC< WelcomeModalProps > = ( { isOpen, onClose, onConti
 						</p>
 					</VStack>
 
-					<div className="welcome-modal__people-grid">
-						<div className="welcome-modal__tile-row">
+					<div className="reader-welcome-modal__people-grid">
+						<div className="reader-welcome-modal__tile-row">
 							{ publications.map( ( publication ) => (
-								<div key={ publication.name } className="welcome-modal__tile">
-									{ publication.name === 'Variety' ? (
-										<span className="welcome-modal__variety-frame">
-											<img
-												src={ publication.imageUrl }
-												alt=""
-												aria-hidden
-												className="welcome-modal__variety-image"
-											/>
-										</span>
-									) : (
-										<img
-											src={ publication.imageUrl }
-											alt=""
-											aria-hidden
-											className={ `welcome-modal__tile-image ${ publication.imageClass || '' }` }
-										/>
-									) }
-									<span className="welcome-modal__tile-label">{ publication.name }</span>
+								<div key={ publication.name } className="reader-welcome-modal__tile">
+									{ renderTileImage( publication ) }
+									<span className="reader-welcome-modal__tile-label">{ publication.name }</span>
 								</div>
 							) ) }
 						</div>
-						<div className="welcome-modal__tile-row">
+						<div className="reader-welcome-modal__tile-row">
 							{ bloggers.map( ( blogger ) => (
-								<div key={ blogger.name } className="welcome-modal__tile">
-									{ blogger.name === 'Seth Godin' ? (
-										<span className="welcome-modal__seth-frame">
-											<img
-												src={ blogger.imageUrl }
-												alt=""
-												aria-hidden
-												className="welcome-modal__seth-image"
-											/>
-										</span>
-									) : (
-										<img
-											src={ blogger.imageUrl }
-											alt=""
-											aria-hidden
-											className={ `welcome-modal__tile-image ${ blogger.imageClass || '' }` }
-										/>
-									) }
-									<span className="welcome-modal__tile-label">{ blogger.name }</span>
+								<div key={ blogger.name } className="reader-welcome-modal__tile">
+									{ renderTileImage( blogger ) }
+									<span className="reader-welcome-modal__tile-label">{ blogger.name }</span>
 								</div>
 							) ) }
 						</div>
@@ -151,7 +146,7 @@ const WelcomeModal: React.FC< WelcomeModalProps > = ( { isOpen, onClose, onConti
 							<HStack
 								spacing={ 2 }
 								justify="right"
-								className="reader-onboarding-modal__footer-buttons welcome-modal__footer-buttons"
+								className="reader-onboarding-modal__footer-buttons reader-welcome-modal__footer-buttons"
 							>
 								<Button __next40pxDefaultSize variant="tertiary" onClick={ onClose }>
 									{ __( 'Do it later' ) }

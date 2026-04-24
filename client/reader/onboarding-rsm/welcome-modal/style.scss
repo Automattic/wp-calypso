@@ -2,7 +2,7 @@
 
 $actions-height: 64px;
 
-.welcome-modal {
+.reader-welcome-modal {
 	&.components-modal__frame,
 	.components-modal__frame {
 		width: min( 920px, calc( 100vw - 64px ) );
@@ -91,7 +91,7 @@ $actions-height: 64px;
 		padding: 3px;
 	}
 
-	&__variety-frame {
+	&__image-porthole {
 		width: 64px;
 		height: 64px;
 		border-radius: 50%;
@@ -99,6 +99,7 @@ $actions-height: 64px;
 		align-items: center;
 		justify-content: center;
 		overflow: hidden;
+		position: relative;
 		background-color: var( --studio-white );
 		box-shadow:
 			0 0 0 1px color-mix( in srgb, var( --color-neutral-20 ) 30%, transparent ),
@@ -112,25 +113,23 @@ $actions-height: 64px;
 		object-position: center;
 	}
 
-	&__seth-frame {
-		width: 64px;
-		height: 64px;
-		border-radius: 50%;
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		overflow: hidden;
-		background-color: var( --studio-white );
-		box-shadow:
-			0 0 0 1px color-mix( in srgb, var( --color-neutral-20 ) 30%, transparent ),
-			0 1px 3px color-mix( in srgb, var( --color-neutral-60 ) 10%, transparent );
-		position: relative;
-	}
-
 	&__seth-image {
 		position: absolute;
 		top: -3px;
 		transform: scale( 1.1 );
+	}
+
+	&__tim-image {
+		position: absolute;
+		top: 15px;
+		transform: scale( 1.7 );
+	}
+
+	&__hugh-image {
+		position: absolute;
+		top: 12px;
+		right: 2px;
+		transform: scale( 1.5 );
 	}
 
 	&__tile-label {
