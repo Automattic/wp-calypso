@@ -1895,6 +1895,20 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/omnibar@workspace:^, @automattic/omnibar@workspace:packages/omnibar":
+  version: 0.0.0-use.local
+  resolution: "@automattic/omnibar@workspace:packages/omnibar"
+  dependencies:
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@wordpress/components": "npm:^29.0.0"
+    typescript: "npm:^5.8.3"
+  peerDependencies:
+    "@wordpress/data": ^10.23.0
+    react: ^18.3.1
+    react-dom: ^18.3.1
+  languageName: unknown
+  linkType: soft
+
 "@automattic/onboarding@workspace:^, @automattic/onboarding@workspace:packages/onboarding":
   version: 0.0.0-use.local
   resolution: "@automattic/onboarding@workspace:packages/onboarding"
@@ -13482,6 +13496,7 @@ __metadata:
     "@automattic/mini-cart": "workspace:^"
     "@automattic/notifications": "workspace:^"
     "@automattic/oauth-token": "workspace:^"
+    "@automattic/omnibar": "workspace:^"
     "@automattic/onboarding": "workspace:^"
     "@automattic/plans-grid-next": "workspace:^"
     "@automattic/posthog": "workspace:^"
@@ -33441,6 +33456,7 @@ __metadata:
     "@automattic/languages": "workspace:^"
     "@automattic/launchpad": "workspace:^"
     "@automattic/number-formatters": "npm:^1.1.0"
+    "@automattic/omnibar": "workspace:^"
     "@automattic/plans-grid-next": "workspace:^"
     "@automattic/privacy-toolset": "workspace:^"
     "@automattic/typography": "workspace:^"
