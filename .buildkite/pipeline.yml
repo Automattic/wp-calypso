@@ -9,9 +9,11 @@ steps:
       PLAYWRIGHT_SKIP_DOWNLOAD: 'true'
       SKIP_TSC: 'true'
       IMAGE_ID: xcode-26.4.1
+      # Skip Corepack's Yarn download prompt.
+      COREPACK_ENABLE_DOWNLOAD_PROMPT: 0
     command: |
       set -euo pipefail
 
       cd desktop
-      npm install -g yarn
+      corepack enable
       yarn install --immutable --inline-builds
