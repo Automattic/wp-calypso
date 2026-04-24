@@ -1,10 +1,9 @@
 import config from '@automattic/calypso-config';
 import { getSessionId as getPostHogSessionId } from '@automattic/posthog';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useExperiment } from 'calypso/lib/explat';
 import { useSiteSpec } from 'calypso/lib/site-spec';
 import { getCiabSiteSpecConfig, type SiteSpecConfig } from 'calypso/lib/site-spec/utils';
@@ -13,14 +12,6 @@ import wpcom from 'calypso/lib/wp';
 import type { Step as StepType } from '../../types';
 
 type EffectiveVariation = 'control' | 'treatment';
-
-function hasStatus( error: unknown, status: number ): boolean {
-	if ( ! error || typeof error !== 'object' ) {
-		return false;
-	}
-	const record = error as Record< string, unknown >;
-	return record.status === status || record.statusCode === status;
-}
 
 const SiteSpec: StepType = function SiteSpec() {
 	const translate = useTranslate();
@@ -36,15 +27,8 @@ const SiteSpec: StepType = function SiteSpec() {
 	const assignedVariation: EffectiveVariation =
 		experimentAssignment?.variationName === 'treatment' ? 'treatment' : 'control';
 
-	// Session-sticky fallback to control, flipped when the server rejects the
-	// first treatment request (e.g. the user was not enrolled as treatment).
-	const [ forceControl, setForceControl ] = useState( false );
-	const effectiveVariation: EffectiveVariation =
-		forceControl || isCiab ? 'control' : assignedVariation;
-
 	const siteCreationPromiseRef = useRef< Promise< number | null > | null >( null );
 	const messageCountRef = useRef( 0 );
-	const firstRequestRef = useRef( true );
 	const isSubmittingRef = useRef( false );
 
 	const handleCiabMessage = useCallback( () => {
@@ -112,107 +96,47 @@ const SiteSpec: StepType = function SiteSpec() {
 		window.location.href = url;
 	}, [] );
 
-	// Track experiment-aware widget events (chip / free-text / spec-confirm
-	// accept & reject). The widget additionally carries the variation via the
-	// `tracking.getOverrides` hook below.
-	const handleVegaMessage = useCallback(
-		( message: unknown ) => {
-			if ( ! message || typeof message !== 'object' ) {
-				return;
-			}
-			const { type, ...rest } = message as { type?: string } & Record< string, unknown >;
-			switch ( type ) {
-				case 'prompt_chip_selected':
-					recordTracksEvent( 'calypso_vega_site_spec_chip_selected', {
-						experiment_variation: effectiveVariation,
-						chip_label: typeof rest.label === 'string' ? rest.label : undefined,
-					} );
-					break;
-				case 'prompt_submitted':
-					recordTracksEvent( 'calypso_vega_site_spec_prompt_submitted', {
-						experiment_variation: effectiveVariation,
-						from_chip: rest.from_chip === true,
-					} );
-					break;
-				case 'spec_confirm_accepted':
-					recordTracksEvent( 'calypso_vega_site_spec_spec_confirm_accepted', {
-						experiment_variation: effectiveVariation,
-					} );
-					break;
-				case 'spec_confirm_rejected':
-					recordTracksEvent( 'calypso_vega_site_spec_spec_confirm_rejected', {
-						experiment_variation: effectiveVariation,
-					} );
-					break;
-			}
-		},
-		[ effectiveVariation ]
-	);
-
-	const handleTreatmentError = useCallback( ( error: unknown ) => {
-		// A 403 on the first treatment request means the server did not accept
-		// the assignment (e.g. the user was not enrolled as treatment). Per
-		// the spec we fall back to control for the session and never retry
-		// `vega-site-spec`.
-		if ( firstRequestRef.current && hasStatus( error, 403 ) ) {
-			firstRequestRef.current = false;
-			recordTracksEvent( 'calypso_vega_site_spec_fallback_to_control', {
-				reason: '403',
-			} );
-			setForceControl( true );
-			return;
-		}
-		firstRequestRef.current = false;
-	}, [] );
-
 	const siteSpecConfig = useMemo< SiteSpecConfig | undefined >( () => {
 		if ( isCiab ) {
 			return getCiabSiteSpecConfig();
 		}
-		if ( effectiveVariation !== 'treatment' ) {
+		if ( assignedVariation !== 'treatment' ) {
 			// Control keeps the pre-experiment behaviour byte-identical: let
 			// `useSiteSpec` fall back to `getDefaultSiteSpecConfig()` so the
 			// widget sees the same payload it did before the split.
 			return undefined;
 		}
+		const vegaConfig = getVegaSiteSpecConfig();
+		// Layer `experiment_variation` onto the baseline `getOverrides()` the
+		// default config already provides, so widget-emitted Tracks events
+		// carry the variation without rebuilding the tracking block here.
 		return {
-			...getVegaSiteSpecConfig(),
-			tracking: {
-				enabled: true,
-				prefix: 'jetpack_calypso',
+			...vegaConfig,
+			tracking: vegaConfig.tracking && {
+				...vegaConfig.tracking,
 				getOverrides: () => ( {
-					client: 'calypso',
+					...vegaConfig.tracking?.getOverrides?.(),
 					experiment_variation: 'treatment',
-					assigned_variation: assignedVariation,
 				} ),
 			},
 		};
-	}, [ isCiab, effectiveVariation, assignedVariation ] );
-
-	// eslint-disable-next-line no-nested-ternary
-	const onMessage = isCiab
-		? handleCiabMessage
-		: effectiveVariation === 'treatment'
-		? handleVegaMessage
-		: undefined;
+	}, [ isCiab, assignedVariation ] );
 
 	useSiteSpec( {
 		siteSpecConfig,
-		onMessage,
+		onMessage: isCiab ? handleCiabMessage : undefined,
 		onSpecConfirm: isCiab ? handleCiabSpecConfirm : undefined,
-		onError: effectiveVariation === 'treatment' ? handleTreatmentError : undefined,
 	} );
 
 	// The widget container is rendered unconditionally (matching pre-experiment
 	// behaviour). While the ExPlat assignment is still loading, the widget
 	// boots on the control agent (`site-spec`). If the user resolves to
-	// treatment, `key={ effectiveVariation }` forces a remount so the widget
-	// re-initialises against `vega-site-spec`. The same key flip handles the
-	// 403 fallback from treatment back to control mid-session.
+	// treatment, `key={ assignedVariation }` forces a remount so the widget
+	// re-initialises against `vega-site-spec`.
 	return (
 		<>
 			<DocumentHead title={ translate( 'Build Your Site with AI' ) } />
-			<div key={ effectiveVariation } id="site-spec-container" style={ { height: '100vh' } } />
+			<div key={ assignedVariation } id="site-spec-container" style={ { height: '100vh' } } />
 		</>
 	);
 };

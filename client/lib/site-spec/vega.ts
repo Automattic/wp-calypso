@@ -1,4 +1,5 @@
 import { __ } from '@wordpress/i18n';
+import { getDefaultSiteSpecConfig } from './utils';
 import type { SiteSpecConfig } from './utils';
 
 /**
@@ -101,16 +102,15 @@ const VEGA_BUILD_SITE_URL = '/setup/ai-site-builder/?spec_id=';
 /**
  * Returns the Calypso-side configuration for the Vega treatment variation.
  *
- * The headline is intentionally left to the widget default so it stays
- * byte-identical with control. Only placeholder, chips, and agent routing
- * differ.
- *
- * Spec-confirm card additions (Goals / So visitors can / Mood) are rendered
- * by the widget itself based on the `vega-site-spec` agent response; the
- * labels live in the widget bundle alongside the rest of the card layout.
+ * Inherits everything from `getDefaultSiteSpecConfig()` (agent URL, tracking
+ * prefix, etc.) and only overrides the pieces that differ for treatment:
+ * agent id, the non-garden `buildSiteUrl`, placeholder copy, and the chip
+ * set. Spec-confirm card additions are rendered by the widget itself based
+ * on the `vega-site-spec` agent response.
  */
 export function getVegaSiteSpecConfig(): SiteSpecConfig {
 	return {
+		...getDefaultSiteSpecConfig(),
 		agentId: VEGA_TREATMENT_AGENT_ID,
 		buildSiteUrl: VEGA_BUILD_SITE_URL,
 		placeholder: __( 'I want to…', 'site-spec' ),

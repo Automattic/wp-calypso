@@ -16,13 +16,12 @@ import { useHelpCenter } from '../../app/help-center';
 import OfferCard from '../../components/offer-card';
 import { wpcomLink } from '../../utils/link';
 import { userHasFlag } from '../../utils/user';
-import { useAiSiteBuilderPath } from '../use-ai-site-builder-path';
 import Column from './column';
 import MenuItem from './menu-item';
 import type { AddNewSiteProps } from './types';
 import './style.scss';
 
-function AddNewSite( { context = 'unknown' }: AddNewSiteProps ) {
+function AddNewSite( { context = 'unknown', aiSiteBuilderPath }: AddNewSiteProps ) {
 	const { recordTracksEvent } = useAnalytics();
 	const auth = useContext( AuthContext );
 	const user = auth?.user;
@@ -55,7 +54,6 @@ function AddNewSite( { context = 'unknown' }: AddNewSiteProps ) {
 	const Wrapper = isDesktop ? HStack : VStack;
 
 	const { setShowHelpCenter } = useHelpCenter();
-	const aiSiteBuilderPath = useAiSiteBuilderPath();
 
 	return (
 		<Wrapper alignment="flex-start" spacing={ 6 }>
