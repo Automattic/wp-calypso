@@ -52,6 +52,7 @@ import { getTrialCheckoutUrl } from 'calypso/lib/trials/get-trial-checkout-url';
 import { managePurchase } from 'calypso/me/purchases/paths';
 import UpcomingRenewalsDialog from 'calypso/me/purchases/upcoming-renewals/upcoming-renewals-dialog';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getAddNewPaymentMethodPath } from '../utils';
 import type { SiteDetails } from '@automattic/data-stores';
 import type {
@@ -82,6 +83,7 @@ export interface PurchaseNoticeProps {
 
 export interface PurchaseNoticeConnectedProps {
 	recordTracksEvent: typeof recordTracksEvent;
+	isAtomicSite?: boolean;
 }
 
 interface MomentProps {
@@ -98,7 +100,120 @@ class PurchaseNotice extends Component<
 
 	state = {
 		showUpcomingRenewalsDialog: false,
+		// Seeded from `?cancelled=true` on first render. The URL param is cleared
+		// in componentDidMount so refresh / back-navigation doesn't re-show this
+		// transient notice.
+		showCancelledRedirectNotice:
+			typeof window !== 'undefined' &&
+			new URLSearchParams( window.location.search ).get( 'cancelled' ) === 'true',
 	};
+
+	componentDidMount() {
+		if ( typeof window === 'undefined' ) {
+			return;
+		}
+		const params = new URLSearchParams( window.location.search );
+		if ( params.get( 'cancelled' ) === 'true' ) {
+			params.delete( 'cancelled' );
+			const newSearch = params.toString();
+			const newUrl =
+				window.location.pathname + ( newSearch ? '?' + newSearch : '' ) + window.location.hash;
+			window.history.replaceState( window.history.state, '', newUrl );
+		}
+	}
+
+	dismissCancelledRedirectNotice = () => {
+		this.setState( { showCancelledRedirectNotice: false } );
+	};
+
+	/**
+	 * Plain-English noun for the cancelled-redirect notice ("plan" / "domain" /
+	 * "email" / "theme" / "plugin" / "subscription").
+	 */
+	getCancelledNoticeProductNoun( purchase: Purchase ) {
+		const { translate } = this.props;
+		if ( isPlan( purchase ) ) {
+			return translate( 'plan' );
+		}
+		if ( isDomainRegistration( purchase ) ) {
+			return translate( 'domain' );
+		}
+		const slug = purchase.productSlug ?? '';
+		if (
+			slug.startsWith( 'wp_titan_mail' ) ||
+			slug === 'gapps' ||
+			slug.startsWith( 'gapps_' ) ||
+			slug.startsWith( 'wp_google_workspace_' )
+		) {
+			return translate( 'email' );
+		}
+		if ( purchase.productType === 'marketplace_theme' ) {
+			return translate( 'theme' );
+		}
+		if (
+			purchase.productType?.startsWith( 'marketplace' ) ||
+			purchase.productType === 'saas_plugin'
+		) {
+			return translate( 'plugin' );
+		}
+		return translate( 'subscription' );
+	}
+
+	/**
+	 * Transient success notice shown after a cancel-flow redirect. Suppresses
+	 * every other notice until dismissed; the URL param is cleared on mount so
+	 * refresh / back-navigation falls through to the regular notices.
+	 */
+	renderCancelledRedirectNotice() {
+		const { purchase, translate, moment, isAtomicSite } = this.props;
+		if (
+			! config.isEnabled( 'purchases/split-cancel-remove' ) ||
+			! this.state.showCancelledRedirectNotice ||
+			! purchase
+		) {
+			return null;
+		}
+		const expiryDate = moment( purchase.expiryDate ).format( 'LL' );
+		if ( isAtomicSite ) {
+			const exportUrl = `https://${ purchase.domain }/wp-admin/export.php`;
+			return (
+				<Notice
+					className="manage-purchase__purchase-expiring-notice"
+					showDismiss
+					onDismissClick={ this.dismissCancelledRedirectNotice }
+					status="is-success"
+				>
+					{ translate(
+						'Your subscription is cancelled and you won\u2019t be billed again. Your site stays live until %(expiryDate)s. {{a}}Download a backup{{/a}} to save your content, themes, and plugins.',
+						{
+							args: { expiryDate },
+							components: {
+								a: <a href={ exportUrl } target="_blank" rel="noreferrer" />,
+							},
+						}
+					) }
+				</Notice>
+			);
+		}
+		const noticeText = translate(
+			'Your subscription is cancelled and you won’t be billed again. You’ll continue to have access to the %(productNoun)s until %(expiryDate)s.',
+			{
+				args: {
+					productNoun: this.getCancelledNoticeProductNoun( purchase ),
+					expiryDate,
+				},
+			}
+		);
+		return (
+			<Notice
+				className="manage-purchase__purchase-expiring-notice"
+				showDismiss
+				onDismissClick={ this.dismissCancelledRedirectNotice }
+				status="is-success"
+				text={ noticeText }
+			/>
+		);
+	}
 
 	getExpiringText( purchase: Purchase ) {
 		const { translate, moment, selectedSite } = this.props;
@@ -362,6 +477,7 @@ class PurchaseNotice extends Component<
 		if ( is100Year( purchase ) && ! isCloseToExpiration( purchase ) ) {
 			return null;
 		}
+
 		let noticeStatus: NoticeStatus = 'is-info';
 
 		if ( isCloseToExpiration( currentPurchase ) && ! isRecentMonthlyPurchase( currentPurchase ) ) {
@@ -1268,6 +1384,13 @@ class PurchaseNotice extends Component<
 			return null;
 		}
 
+		// Transient cancelled success notice — suppresses every other notice
+		// until dismissed, refreshed, or navigated-away-and-back.
+		const cancelledRedirectNotice = this.renderCancelledRedirectNotice();
+		if ( cancelledRedirectNotice ) {
+			return cancelledRedirectNotice;
+		}
+
 		if ( purchase.asyncPendingPaymentBlockIsSet ) {
 			return this.renderAsyncPendingPaymentNotice();
 		}
@@ -1325,6 +1448,10 @@ class PurchaseNotice extends Component<
 	}
 }
 
-export default connect( null, { recordTracksEvent } )(
+const mapStateToProps = ( state: object, ownProps: PurchaseNoticeProps ) => ( {
+	isAtomicSite: isSiteAutomatedTransfer( state, ownProps.purchase?.siteId ?? null ),
+} );
+
+export default connect( mapStateToProps, { recordTracksEvent } )(
 	localize( withLocalizedMoment( PurchaseNotice ) )
 );

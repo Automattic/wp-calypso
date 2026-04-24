@@ -44,6 +44,7 @@ import {
 	currencyDollar,
 	commentAuthorAvatar,
 	layout,
+	info,
 } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import { useAnalytics } from '../../../app/analytics';
@@ -275,10 +276,11 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 	// FIXME: render renderNonPrimaryDomainWarningDialog for refund/cancel
 	// FIXME: render "Domain transfers can take anywhere from five to seven days to complete." next to cancel button (see domainTransferDuration)
 
-	const goToCancel = () =>
+	const goToCancel = ( intent?: 'cancel' | 'remove' ) =>
 		navigate( {
 			to: cancelPurchaseRoute.fullPath,
 			params: { purchaseId: purchase.ID },
+			...( intent ? { search: { intent } } : {} ),
 		} );
 
 	if ( isSplitEnabled ) {
@@ -336,7 +338,7 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 								// the lone destructive action, make it red.
 								isDestructive={ ! showRemove }
 								size="compact"
-								onClick={ goToCancel }
+								onClick={ () => goToCancel( 'cancel' ) }
 							>
 								{ _x( 'Cancel', 'Stop the subscription from automatically charging and renewing' ) }
 							</Button>
@@ -348,7 +350,12 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 						title={ removeCopy.label }
 						description={ removeCopy.description }
 						actions={
-							<Button variant="secondary" isDestructive size="compact" onClick={ goToCancel }>
+							<Button
+								variant="secondary"
+								isDestructive
+								size="compact"
+								onClick={ () => goToCancel( 'remove' ) }
+							>
 								{ _x(
 									'Remove',
 									'Remove the cancelled or expired subscription from the list of active purchases.'
@@ -584,6 +591,9 @@ function PurchaseSettingsActions( { purchase }: { purchase: Purchase } ) {
 	if ( isCentennialPurchase( purchase ) ) {
 		return null;
 	}
+	if ( isExpired( purchase ) ) {
+		return null;
+	}
 
 	return (
 		<VStack spacing={ 4 }>
@@ -769,6 +779,17 @@ function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 function PurchasePriceCard( { purchase }: { purchase: Purchase } ) {
 	const isCentennial = isCentennialPurchase( purchase );
 	if ( isCentennial ) {
+		return (
+			<OverviewCard
+				icon={ currencyDollar }
+				title={ __( 'Price' ) }
+				heading={ formatCurrency( purchase.price_integer, purchase.currency_code, {
+					isSmallestUnit: true,
+				} ) }
+			/>
+		);
+	}
+	if ( isExpired( purchase ) ) {
 		return (
 			<OverviewCard
 				icon={ currencyDollar }
@@ -1316,53 +1337,57 @@ export default function PurchaseSettings() {
 			<VStack spacing={ 6 }>
 				<PurchaseNotice purchase={ purchase } />
 				<Grid columns={ columns } gap={ spacing }>
-					<OverviewCard
-						icon={ calendar }
-						title={ expiryDateTitle }
-						heading={ ( () => {
-							if ( isOneTimePurchase( purchase ) || isAkismetFreeProduct( purchase ) ) {
-								return __( 'Never expires' );
-							}
-							if ( isInExpirationGracePeriod( purchase ) ) {
+					{ isExpired( purchase ) ? (
+						<OverviewCard icon={ info } title={ __( 'Status' ) } heading={ __( 'Removed' ) } />
+					) : (
+						<OverviewCard
+							icon={ calendar }
+							title={ expiryDateTitle }
+							heading={ ( () => {
+								if ( isOneTimePurchase( purchase ) || isAkismetFreeProduct( purchase ) ) {
+									return __( 'Never expires' );
+								}
+								if ( isInExpirationGracePeriod( purchase ) ) {
+									return formattedExpiry;
+								}
+								if ( willRenew ) {
+									return formattedRenewal;
+								}
+								if ( purchase.subscription_status !== 'active' ) {
+									return __( 'Inactive' );
+								}
 								return formattedExpiry;
-							}
-							if ( willRenew ) {
-								return formattedRenewal;
-							}
-							if ( purchase.subscription_status !== 'active' ) {
-								return __( 'Inactive' );
-							}
-							return formattedExpiry;
-						} )() }
-						description={ ( () => {
-							if ( isCentennial ) {
-								return undefined;
-							}
-							if ( purchase.is_auto_renew_enabled && isInExpirationGracePeriod( purchase ) ) {
-								return __( 'Pending renewal' );
-							}
-							if ( purchase.is_auto_renew_enabled && isRenewing( purchase ) ) {
-								return __( 'Auto-renew is enabled' );
-							}
-							if ( isIncludedWithPlan( purchase ) && purchase.attached_to_purchase_id ) {
-								return (
-									<Link
-										to={ purchaseSettingsRoute.fullPath }
-										params={ { purchaseId: purchase.attached_to_purchase_id } }
-									>
-										{ __( 'Renews with plan' ) }
-									</Link>
-								);
-							}
-							if ( purchase.is_trial_plan || isAkismetFreeProduct( purchase ) ) {
-								return undefined;
-							}
-							if ( purchase.is_auto_renew_enabled ) {
-								return __( 'Will not auto-renew because there is no payment method' );
-							}
-							return __( 'Auto-renew is disabled' );
-						} )() }
-					/>
+							} )() }
+							description={ ( () => {
+								if ( isCentennial ) {
+									return undefined;
+								}
+								if ( purchase.is_auto_renew_enabled && isInExpirationGracePeriod( purchase ) ) {
+									return __( 'Pending renewal' );
+								}
+								if ( purchase.is_auto_renew_enabled && isRenewing( purchase ) ) {
+									return __( 'Auto-renew is enabled' );
+								}
+								if ( isIncludedWithPlan( purchase ) && purchase.attached_to_purchase_id ) {
+									return (
+										<Link
+											to={ purchaseSettingsRoute.fullPath }
+											params={ { purchaseId: purchase.attached_to_purchase_id } }
+										>
+											{ __( 'Renews with plan' ) }
+										</Link>
+									);
+								}
+								if ( purchase.is_trial_plan || isAkismetFreeProduct( purchase ) ) {
+									return undefined;
+								}
+								if ( purchase.is_auto_renew_enabled ) {
+									return __( 'Will not auto-renew because there is no payment method' );
+								}
+								return __( 'Auto-renew is disabled' );
+							} )() }
+						/>
+					) }
 					<PurchasePriceCard purchase={ purchase } />
 					{ site &&
 						( site.options?.is_domain_only &&
