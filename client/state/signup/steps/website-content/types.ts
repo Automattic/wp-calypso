@@ -3,6 +3,14 @@ import type { PageId } from 'calypso/signup/difm/constants';
 
 export type MediaUploadType = 'IMAGE' | 'VIDEO' | 'IMAGE-AND-VIDEO';
 
+export type Media = {
+	caption?: string;
+	url: string;
+	mediaType: MediaUploadType;
+	thumbnailUrl?: string;
+	uploadID?: string;
+};
+
 /** One selected page instance (id may be type or type_n for multi-add). */
 export type SelectedPageInstance = { id: string; type: PageId };
 
