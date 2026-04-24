@@ -9,6 +9,10 @@ jest.mock( '@tanstack/react-query', () => ( {
 	useQuery: ( ...args: unknown[] ) => mockUseQuery( ...args ),
 } ) );
 
+jest.mock( '@automattic/calypso-config', () => ( {
+	isEnabled: () => true,
+} ) );
+
 jest.mock( '@automattic/api-queries', () => ( {
 	readAchievementsSettingsQuery: ( userIdOrLogin: string ) => ( {
 		queryKey: [ 'read', 'achievements', userIdOrLogin, 'settings' ],
