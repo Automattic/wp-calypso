@@ -178,29 +178,51 @@ For each failing build ID from 4.1, query TeamCity in **one curl statement per b
 
 Avoid compound scripts with `{ ... }` group commands and quoted `"$VAR"` expansions in the same statement — Claude Code's Bash permission heuristic flags the combination as potential "expansion obfuscation" and will prompt for every run. A single `curl` invocation with a `$(cut ...)` command substitution doesn't trigger the heuristic.
 
+**Slim the response with `jq` at the Bash layer** so the assistant doesn't receive a wall of JSON that overflows its context. If the response is too big to hold in-head, the model will be tempted to grep the raw JSON out of the tool-results cache on disk — and that cache lives under `/home/<user>/.claude/projects/...`, which triggers the same `.claude/` path heuristic that has prompted us repeatedly before. Don't let it get there: produce a compact, ready-to-read list from the curl call itself.
+
 ```bash
 curl -sS --socks5 localhost:8080 \
   -H "Authorization: Bearer $(cut -d= -f2 ~/.config/teamcity-access-token)" \
   -H "Accept: application/json" \
-  "https://teamcity.a8c.com/app/rest/testOccurrences?locator=build:(id:<BUILD_ID>,defaultFilter:false),status:FAILURE,count:100&fields=count,testOccurrence(id,name,muted,currentlyMuted,currentlyInvestigated,build(id,buildType(name)),details)"
+  "https://teamcity.a8c.com/app/rest/testOccurrences?locator=build:(id:<BUILD_ID>,defaultFilter:false),status:FAILURE,count:100&fields=count,testOccurrence(id,name,muted,currentlyMuted,build(buildType(name)),details)" \
+  | jq '.testOccurrence
+        | map(select(.muted == false and .currentlyMuted == false))
+        | map({
+            build: .build.buildType.name,
+            name,
+            reason: (.details
+              | split("\n")
+              | map(select(test("^(TimeoutError|Error|expect\\(|AssertionError)")))
+              | first // (.details | split("\n") | first)
+              | .[0:160])
+          })'
 ```
 
+What this does and why each piece:
+
+- Drops `currentlyInvestigated` and `id` from the `fields=` projection — we no longer filter on investigated (per the project memory), and the occurrence ID isn't used downstream.
+- Filters muted/currentlyMuted occurrences **at the jq layer**. Applying `muted:false` in the TeamCity locator alongside `defaultFilter:false` has given inconsistent results in practice; doing it in jq is reliable and easy to verify from the output.
+- Picks the first line of `details` that starts with a recognizable error class (`TimeoutError`, `Error`, `expect(...)`, etc.) and truncates to 160 chars. Falls back to the first line if no match. That's the "Reason" column; the full stack trace is reconstructible from the raw API if the Healer needs it.
+- Leaves the object with just four fields per candidate (`build`, `name`, `reason`). Typical output for a 9-occurrence build is maybe 2–5 objects totaling a few hundred tokens — small enough to process in-head.
+
 If Step 2 recorded no proxy (`TC_PROXY=""`, direct connection works), drop the `--socks5 localhost:8080` flag. If Step 2 fell back to the legacy `~/.claude/fix-flaky-e2e.env`, use that path in the `cut` instead. The paths and proxy flag are known at this point in the skill run — inline them, don't dereference shell variables.
+
+**Do not re-parse the raw JSON by grepping tool-results files on disk.** If the output above isn't enough — e.g., you need the full `details` for the Healer's prompt — re-issue the curl with a build+test-specific locator to fetch only that one occurrence's details. Never reach into `/home/*/.claude/projects/...` for any reason.
 
 `defaultFilter:false` is required: the top-level build is a matrix with snapshot dependencies (`[Desktop]`, `[Mobile]`, etc.), and the actual test failures live in those children. Without it, the response is empty.
 
 ### 4.3: Filter and present candidates
 
-Drop any occurrence with `muted: true` or `currentlyMuted: true` — those are explicitly silenced.
+The `jq` pipeline in 4.2 already dropped muted/currentlyMuted occurrences and distilled each remaining one to `{build, name, reason}`. This sub-step is about **presenting** those candidates, not re-filtering them.
 
-Do **not** filter on `currentlyInvestigated`. The flag exists in TeamCity but is not a reliable signal of active work on Automattic's instance (investigations are often stale, project-scoped, and not surfaced in the build's failed-tests list), and filtering on it causes the skill's candidate list to silently diverge from what the user sees on the TC build Overview.
+(Do **not** filter on `currentlyInvestigated`: on Automattic's TeamCity instance the flag is unreliable — investigations are often stale, project-scoped, and not surfaced in the build's failed-tests list. Filtering on it causes the skill's candidate list to silently diverge from what the user sees on the TC build Overview. The jq pipeline above reflects that by omitting the field entirely.)
 
-For each remaining occurrence, extract:
+For each candidate in the slimmed list, derive the display fields:
 
 - **Spec path** — the part of `name` before the first `:` (e.g., `infrastructure/infrastructure__flaky-fixture.spec.ts`). Prepend `test/e2e/specs/` to get the repo-relative path.
 - **Test title** — everything after the last `›` in `name`.
-- **Build** — `build.buildType.name` (e.g., `[Desktop]`, `[Mobile]`).
-- **Reason** — the first non-empty line of `details` that starts with an error class (`TimeoutError`, `Error`, `expect(...)`, etc.). Truncate to ~120 chars.
+- **Build** — already projected as `build` (e.g., `[Desktop]`, `[Mobile]`).
+- **Reason** — already projected as `reason`, already truncated.
 
 Always render the full table to the user, **even if the list looks identical to a prior run in the same conversation**. This is the user's decision surface — don't collapse it into a one-line reference to "the same candidates as before", because the user needs the spec paths, test titles, and failure reasons in front of them to make a choice.
 
