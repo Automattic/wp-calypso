@@ -8,7 +8,7 @@ import { getRefundPolicies, getRefundWindows, RefundPolicy } from './refund-poli
 import type { TranslateResult } from 'i18n-calypso';
 
 const StyledIcon = styled( Icon )`
-	fill: '#1E1E1E';
+	fill: #1e1e1e;
 	margin-right: 0.3em;
 
 	.rtl & {
