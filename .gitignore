@@ -138,4 +138,5 @@ output/
 **/.claude.md
 **/.claude/settings.local.json
 .claude/test-pr/
+.claude/worktrees/
 CLAUDE.local.md

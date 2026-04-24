@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ENV_FILE="$HOME/.claude/teamcity-access-token.env"
+ENV_FILE="$HOME/.config/teamcity-access-token"
 
 # Refuse to run under Claude Code's `!` prefix (or any non-TTY stdin).
 # In that environment, Claude Code echoes user input into the chat no matter
@@ -25,7 +25,7 @@ EOF
 	exit 2
 fi
 
-mkdir -p "$HOME/.claude"
+mkdir -p "$HOME/.config"
 
 printf 'Paste your TeamCity access token (input hidden): '
 IFS= read -rs token
