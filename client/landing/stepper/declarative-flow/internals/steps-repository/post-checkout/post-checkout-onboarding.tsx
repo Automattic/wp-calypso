@@ -9,13 +9,13 @@ import {
 } from '@automattic/calypso-products';
 import { SiteIntent } from '@automattic/data-stores/src/onboard';
 import { Step } from '@automattic/onboarding';
-import { useQuery as useTanstackQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
 import Loading from 'calypso/components/loading';
 import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
-import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { useQuery as useUrlParams } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { waitForPluginsActive } from 'calypso/landing/stepper/utils/wait-for-plugins-active';
 import { useExperiment } from 'calypso/lib/explat';
@@ -56,7 +56,7 @@ const PostCheckoutOnboarding: StepType< {
 		data: site,
 		isLoading: isLoadingSite,
 		isError: isErrorSite,
-	} = useTanstackQuery( {
+	} = useQuery( {
 		...siteBySlugQuery( siteSlug ),
 		enabled: !! siteSlug,
 	} );
@@ -122,7 +122,7 @@ const PostCheckoutOnboarding: StepType< {
 	const goalPlugin = usePluginByGoal();
 	const hasPluginByGoal = !! goalPlugin;
 
-	const refParameter = useQuery().get( 'ref' );
+	const refParameter = useUrlParams().get( 'ref' );
 	const isWooHostingSolutions = refParameter === WOO_HOSTING_SOLUTIONS_REF;
 
 	// Prefer the cart item (what the user just bought — freshest signal during
