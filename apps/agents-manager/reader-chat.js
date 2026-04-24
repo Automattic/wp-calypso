@@ -605,9 +605,11 @@ function setupInitialSuggestions() {
 /**
  * Wire up Reader-Chat-specific Tracks events.
  *
- * Scoped to the reader-chat mount node so we don't emit for the shared
- * AgentsManager in wp-admin or for other consumers. All events use the
- * jetpack_reader_chat_* namespace to match the Jetpack-side feature.
+ * Reader Chat renders through an AgentsManager portal attached to `body`, so
+ * UI events do not bubble through the #jetpack-reader-chat mount node. Attach
+ * document-level listeners from this public reader-chat entry instead. All
+ * events use the jetpack_reader_chat_* namespace to match the Jetpack-side
+ * feature.
  *
  * Three events:
  * - jetpack_reader_chat_opened: chat UI goes from closed -> open
@@ -618,9 +620,8 @@ function setupInitialSuggestions() {
  * All three work for anonymous readers — calypso-analytics pings the
  * public pixel endpoint with _ut=anon when no user is known.
  *
- * @param {Object} container The #jetpack-reader-chat mount node.
  */
-function setupTracksEvents( container ) {
+function setupTracksEvents() {
 	const config = window.JetpackReaderChatConfig || {};
 	const baseProps = config.siteId ? { blog_id: config.siteId } : {};
 
@@ -637,8 +638,7 @@ function setupTracksEvents( container ) {
 	} );
 
 	// Suggestion click + send-button click via event delegation so we
-	// don't have to patch agenttic-ui or agents-manager. Scoped to the
-	// reader-chat container — other AgentsManager mounts aren't affected.
+	// don't have to patch agenttic-ui or agents-manager.
 	const handleClick = ( event ) => {
 		const target = event.target;
 		if ( ! target || typeof target.closest !== 'function' ) {
@@ -660,8 +660,6 @@ function setupTracksEvents( container ) {
 			} );
 		}
 	};
-	container.addEventListener( 'click', handleClick );
-
 	// Enter-to-send on the composer textarea. Shift+Enter inserts a
 	// newline, plain Enter submits — match that convention.
 	const handleKeydown = ( event ) => {
@@ -683,14 +681,52 @@ function setupTracksEvents( container ) {
 			trigger: 'enter',
 		} );
 	};
-	container.addEventListener( 'keydown', handleKeydown );
+	document.addEventListener( 'click', handleClick );
+	document.addEventListener( 'keydown', handleKeydown );
 
 	window.addEventListener(
 		'pagehide',
 		() => {
 			unsubscribe?.();
-			container.removeEventListener( 'click', handleClick );
-			container.removeEventListener( 'keydown', handleKeydown );
+			document.removeEventListener( 'click', handleClick );
+			document.removeEventListener( 'keydown', handleKeydown );
+		},
+		{ once: true }
+	);
+}
+
+function isCollapsedLauncherTarget( target, root = document ) {
+	if ( ! target || typeof target.closest !== 'function' ) {
+		return false;
+	}
+
+	const collapsedView = target.closest( '[data-slot="collapsed-view"]' );
+	return !! collapsedView && ( ! root || root.contains( collapsedView ) );
+}
+
+function setupCollapsedLauncherPointerFallback() {
+	const handleLauncherStart = ( event ) => {
+		if ( ! isCollapsedLauncherTarget( event.target ) ) {
+			return;
+		}
+
+		// Agenttic's draggable wrapper can prevent the later click in some
+		// browsers. Open on the initial pointer/mouse/touch event so the public
+		// reader launcher remains usable without changing shared AgentsManager
+		// behavior.
+		dispatch( AGENTS_MANAGER_STORE ).setIsOpen( true, false );
+	};
+
+	document.addEventListener( 'pointerdown', handleLauncherStart, true );
+	document.addEventListener( 'mousedown', handleLauncherStart, true );
+	document.addEventListener( 'touchstart', handleLauncherStart, true );
+
+	window.addEventListener(
+		'pagehide',
+		() => {
+			document.removeEventListener( 'pointerdown', handleLauncherStart, true );
+			document.removeEventListener( 'mousedown', handleLauncherStart, true );
+			document.removeEventListener( 'touchstart', handleLauncherStart, true );
 		},
 		{ once: true }
 	);
@@ -723,7 +759,8 @@ const container = document.getElementById( 'jetpack-reader-chat' );
 if ( container ) {
 	injectScopedReset();
 	setupFollowupChips();
-	setupTracksEvents( container );
+	setupTracksEvents();
+	setupCollapsedLauncherPointerFallback();
 
 	// Reader-chat defaults the floating panel to the left side of the
 	// viewport. The shared AgentsManager reducer default is 'right' (set
@@ -748,4 +785,4 @@ if ( container ) {
 }
 
 // Exported for unit tests only — these are pure helpers with no side effects.
-export { parseAgentSseResponse, slugify, getFallbackSuggestions };
+export { parseAgentSseResponse, slugify, getFallbackSuggestions, isCollapsedLauncherTarget };

@@ -47,7 +47,12 @@ beforeAll( () => {
 } );
 
 // Import after mocks are registered.
-const { parseAgentSseResponse, slugify, getFallbackSuggestions } = require( '../reader-chat' );
+const {
+	parseAgentSseResponse,
+	slugify,
+	getFallbackSuggestions,
+	isCollapsedLauncherTarget,
+} = require( '../reader-chat' );
 
 // ---------------------------------------------------------------------------
 // parseAgentSseResponse
@@ -150,6 +155,42 @@ describe( 'slugify', () => {
 	it( 'handles null / undefined gracefully', () => {
 		expect( slugify( null ) ).toBe( '' );
 		expect( slugify( undefined ) ).toBe( '' );
+	} );
+} );
+
+// ---------------------------------------------------------------------------
+// isCollapsedLauncherTarget
+// ---------------------------------------------------------------------------
+
+describe( 'isCollapsedLauncherTarget', () => {
+	it( 'matches clicks inside the collapsed launcher', () => {
+		const container = document.createElement( 'div' );
+		const collapsedView = document.createElement( 'div' );
+		const button = document.createElement( 'button' );
+
+		collapsedView.dataset.slot = 'collapsed-view';
+		collapsedView.appendChild( button );
+		container.appendChild( collapsedView );
+
+		expect( isCollapsedLauncherTarget( button, container ) ).toBe( true );
+	} );
+
+	it( 'does not match targets outside the reader-chat container', () => {
+		const container = document.createElement( 'div' );
+		const collapsedView = document.createElement( 'div' );
+		const button = document.createElement( 'button' );
+
+		collapsedView.dataset.slot = 'collapsed-view';
+		collapsedView.appendChild( button );
+
+		expect( isCollapsedLauncherTarget( button, container ) ).toBe( false );
+	} );
+
+	it( 'does not match non-element targets', () => {
+		const container = document.createElement( 'div' );
+		const textNode = document.createTextNode( 'Open chat' );
+
+		expect( isCollapsedLauncherTarget( textNode, container ) ).toBe( false );
 	} );
 } );
 

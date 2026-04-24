@@ -98,14 +98,23 @@ export default function AgentDock( {
 
 	// `agentConfig` is guaranteed non-null here because AgentSetup guards rendering
 	const agentId = agentConfig!.agentId;
+	// Reader-chat runs on public blog frontends where there's no wp-admin
+	// sidebar to dock into. Detect that context so we can hide options that
+	// don't apply and avoid persisting open/close state through the logged-in
+	// Agents Manager REST state endpoint.
+	const isReaderChat = isReaderChatAgent( agentId );
+	const setOpenState = useCallback(
+		( isOpen: boolean ) => setIsOpen( isOpen, ! isReaderChat ),
+		[ isReaderChat, setIsOpen ]
+	);
 
 	const { isDocked, canDock, dock, undock, openSidebar, closeSidebar, createAgentPortal } =
 		useAgentLayoutManager( {
-			defaultDocked: isPersistedDocked,
+			defaultDocked: isReaderChat ? false : isPersistedDocked,
 			defaultOpen: isPersistedOpen,
 			desktopMediaQuery,
-			onOpenSidebar: () => setIsOpen( true ),
-			onCloseSidebar: () => setIsOpen( false ),
+			onOpenSidebar: () => setOpenState( true ),
+			onCloseSidebar: () => setOpenState( false ),
 		} );
 
 	// Handle WordPress admin bar integration
@@ -114,7 +123,7 @@ export default function AgentDock( {
 		sectionName,
 		maybeOpenChat: () => {
 			if ( ! isPersistedOpen ) {
-				isDocked ? openSidebar() : setIsOpen( true );
+				isDocked ? openSidebar() : setOpenState( true );
 			}
 		},
 		navigate,
@@ -139,10 +148,6 @@ export default function AgentDock( {
 		}
 	}, [ agentId ] );
 
-	// Reader-chat runs on public blog frontends where there's no wp-admin
-	// sidebar to dock into. Detect that context so we can hide options that
-	// don't apply (Move to sidebar / Pop out sidebar).
-	const isReaderChat = isReaderChatAgent( agentId );
 	const shouldShowUnifiedSupport = shouldUseUnifiedAgent && ! isReaderChat;
 
 	const handleChatHasMessagesChange = useCallback(
@@ -154,10 +159,10 @@ export default function AgentDock( {
 		[]
 	);
 
-	const handleClose = isDocked ? closeSidebar : () => setIsOpen( false );
+	const handleClose = isDocked ? closeSidebar : () => setOpenState( false );
 
 	const handleExpand = () => {
-		setIsOpen( true );
+		setOpenState( true );
 		if ( pathname === '/history' ) {
 			navigate( '/' );
 		}
@@ -189,7 +194,7 @@ export default function AgentDock( {
 		}
 		try {
 			if ( localStorage.getItem( OPEN_STORAGE_KEY ) === '1' && ! isPersistedOpen ) {
-				setIsOpen( true );
+				setOpenState( true );
 			}
 		} catch {
 			// ignore
