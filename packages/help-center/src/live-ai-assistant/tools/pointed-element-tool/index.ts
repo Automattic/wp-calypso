@@ -27,7 +27,7 @@ export function executePointedElementTool( _rawArgs: unknown, context: PointedEl
 		};
 	}
 
-	const target = document.elementFromPoint( pointer.x, pointer.y ) as HTMLElement | null;
+	const target = getPointedElementFromDocument( document, pointer.x, pointer.y );
 	if ( ! target ) {
 		return {
 			ok: false,
@@ -41,4 +41,41 @@ export function executePointedElementTool( _rawArgs: unknown, context: PointedEl
 		pointer,
 		target: describeElementTarget( target ),
 	};
+}
+
+function getPointedElementFromDocument(
+	currentDocument: Document,
+	clientX: number,
+	clientY: number
+): HTMLElement | null {
+	const target = currentDocument.elementFromPoint( clientX, clientY ) as HTMLElement | null;
+	if ( ! target ) {
+		return null;
+	}
+
+	if ( ! ( target instanceof HTMLIFrameElement ) ) {
+		return target;
+	}
+
+	const iframeDocument = getIframeDocument( target );
+	if ( ! iframeDocument ) {
+		return target;
+	}
+
+	const iframeRect = target.getBoundingClientRect();
+	return (
+		getPointedElementFromDocument(
+			iframeDocument,
+			Math.round( clientX - iframeRect.left ),
+			Math.round( clientY - iframeRect.top )
+		) ?? target
+	);
+}
+
+function getIframeDocument( iframe: HTMLIFrameElement ) {
+	try {
+		return iframe.contentDocument ?? iframe.contentWindow?.document ?? null;
+	} catch {
+		return null;
+	}
 }
