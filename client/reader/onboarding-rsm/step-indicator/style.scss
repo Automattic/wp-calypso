@@ -1,0 +1,17 @@
+.reader-onboarding-step-indicator {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.reader-onboarding-step-indicator__dot {
+	display: inline-block;
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background-color: var( --color-neutral-5 );
+}
+
+.reader-onboarding-step-indicator__dot.is-active {
+	background-color: var( --color-accent );
+}

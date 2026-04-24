@@ -3,6 +3,7 @@ export * from './query-client';
 export * from './akismet-api-key';
 export * from './big-sky-plugin';
 export * from './cancellation-offers';
+export * from './dashboard-admin-bar';
 export * from './dashboard-site-list';
 export * from './domain-availability';
 export * from './domain-can-redirect';

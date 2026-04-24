@@ -64,6 +64,7 @@
 		"current-site/notice": true,
 		"dark-mode": false,
 		"dashboard/omnibar": true,
+		"dashboard/omnibar-radical": true,
 		"dashboard/opt-in-banners": false,
 		"dashboard/plans": true,
 		"dashboard/v2": true,
