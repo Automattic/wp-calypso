@@ -1,19 +1,20 @@
-export function ReaderMastodonIcon() {
+interface Props {
+	viewBox?: string;
+}
+
+export function ReaderMastodonIcon( { viewBox = '-3 -3 30 30' }: Props ) {
 	return (
-		<span
-			aria-hidden="true"
+		<svg
 			className="sidebar__menu-icon sidebar_svg-mastodon"
-			style={ {
-				display: 'inline-flex',
-				alignItems: 'center',
-				justifyContent: 'center',
-				width: 24,
-				height: 24,
-				fontSize: 20,
-				lineHeight: 1,
-			} }
+			height="24"
+			viewBox={ viewBox }
+			width="24"
+			xmlns="http://www.w3.org/2000/svg"
 		>
-			⁂
-		</span>
+			<path
+				d="M21.58 6.186c-.327-2.425-2.457-4.337-4.982-4.71C16.172 1.407 14.558 1.25 12 1.25s-4.172.157-4.598.226c-2.525.373-4.655 2.285-4.982 4.71C2.093 8.627 2 11.186 2 13.74c0 2.555.093 5.114.42 7.554.327 2.425 2.457 4.336 4.982 4.71.426.068 2.04.226 4.598.226s4.172-.158 4.598-.226c2.525-.374 4.655-2.285 4.982-4.71.327-2.44.42-5 .42-7.554 0-2.553-.093-5.112-.42-7.553zM18.1 16.8h-2.125v-5.16c0-1.089-.456-1.641-1.373-1.641-1.012 0-1.52.655-1.52 1.95v2.823h-2.112v-2.823c0-1.295-.508-1.95-1.52-1.95-.917 0-1.374.552-1.374 1.64v5.16H5.95v-5.317c0-1.086.277-1.95.832-2.59.572-.64 1.323-.969 2.252-.969 1.076 0 1.89.414 2.425 1.242L12 9.4l.54-.894c.537-.828 1.35-1.242 2.426-1.242.93 0 1.68.328 2.252.969.555.64.832 1.504.832 2.59V16.8z"
+				fill="currentColor"
+			/>
+		</svg>
 	);
 }
