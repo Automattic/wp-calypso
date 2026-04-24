@@ -1,3 +1,4 @@
+import { siteBySlugQuery } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import {
 	FEATURE_BIG_SKY,
@@ -8,6 +9,7 @@ import {
 } from '@automattic/calypso-products';
 import { SiteIntent } from '@automattic/data-stores/src/onboard';
 import { Step } from '@automattic/onboarding';
+import { useQuery as useTanstackQuery } from '@tanstack/react-query';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
@@ -18,12 +20,12 @@ import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { waitForPluginsActive } from 'calypso/landing/stepper/utils/wait-for-plugins-active';
 import { useExperiment } from 'calypso/lib/explat';
 import { useMarketplaceThemeProducts } from '../../../../hooks/use-marketplace-theme-products';
-import { useSiteData } from '../../../../hooks/use-site-data';
+import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { useSiteTransferStatusQuery } from '../../../../hooks/use-site-transfer/query';
 import { useWaitForAtomic } from '../../../../hooks/use-wait-for-atomic';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import type { Step as StepType } from '../../types';
-import type { OnboardSelect, SiteSelect } from '@automattic/data-stores';
+import type { OnboardSelect } from '@automattic/data-stores';
 
 const usePluginByGoal = () => {
 	const intent = useSelect(
@@ -48,7 +50,16 @@ const PostCheckoutOnboarding: StepType< {
 	const { __ } = useI18n();
 	const { submit } = navigation;
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
-	const { site, siteSlug } = useSiteData();
+
+	const siteSlug = useSiteSlugParam() ?? '';
+	const {
+		data: site,
+		isLoading: isLoadingSite,
+		isError: isErrorSite,
+	} = useTanstackQuery( {
+		...siteBySlugQuery( siteSlug ),
+		enabled: !! siteSlug,
+	} );
 
 	const eligibleForExperiment =
 		isEnabled( 'onboarding/post-checkout-ai-step' ) &&
@@ -80,7 +91,7 @@ const PostCheckoutOnboarding: StepType< {
 		[]
 	);
 
-	const isJetpackOrAtomic = !! site?.jetpack || !! site?.options?.is_wpcom_atomic;
+	const isJetpackOrAtomic = !! site?.jetpack || !! site?.is_wpcom_atomic;
 
 	const {
 		isLoading: isLoadingMarketplaceThemeProducts,
@@ -94,11 +105,6 @@ const PostCheckoutOnboarding: StepType< {
 		isLoading: isLoadingSiteTransferStatusData,
 		isError: isErrorSiteTransferStatus,
 	} = useSiteTransferStatusQuery( site?.ID );
-
-	const fetchingSiteError = useSelect(
-		( select ) => ( select( SITE_STORE ) as SiteSelect ).getFetchingSiteError(),
-		[]
-	);
 
 	const { waitForInitiateTransfer, waitForTransfer, waitForFeature, waitForLatestSiteData } =
 		useWaitForAtomic( {} );
@@ -141,7 +147,7 @@ const PostCheckoutOnboarding: StepType< {
 	 * - Verify that the site is atomic, as the theme should be installed on the user's site.
 	 *
 	 * The atomic transfer will be initiated immediately after the user purchases an externally managed theme.
-	 * If it’s not initiated, we need to trigger the atomic transfer manually.
+	 * If it's not initiated, we need to trigger the atomic transfer manually.
 	 *
 	 * Note that an externally managed theme is only available when both of the following conditions are met:
 	 * - The site must be subscribed to the theme.
@@ -152,14 +158,14 @@ const PostCheckoutOnboarding: StepType< {
 		isMarketplaceThemeSubscribed &&
 		isExternallyManagedThemeAvailable;
 
-	const hasError =
-		!! fetchingSiteError?.error || isErrorMarketplaceThemeProducts || isErrorSiteTransferStatus;
+	const hasError = isErrorSite || isErrorMarketplaceThemeProducts || isErrorSiteTransferStatus;
 
 	useEffect( () => {
 		if (
 			hasError ||
 			! site ||
 			! siteSlug ||
+			isLoadingSite ||
 			isLoadingMarketplaceThemeProducts ||
 			isLoadingSiteTransferStatusData ||
 			isLoadingExperiment
@@ -209,6 +215,7 @@ const PostCheckoutOnboarding: StepType< {
 		hasError,
 		site,
 		siteSlug,
+		isLoadingSite,
 		isLoadingMarketplaceThemeProducts,
 		isLoadingSiteTransferStatusData,
 		isLoadingExperiment,
