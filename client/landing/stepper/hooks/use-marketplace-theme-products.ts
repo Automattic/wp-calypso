@@ -32,15 +32,25 @@ export const useMarketplaceThemeProducts = () => {
 		? `wp-mp-theme-${ selectedDesignThemeId }`
 		: null;
 
-	const { isLoading: isLoadingProducts, data: productsData } = useProductsList();
+	const {
+		isLoading: isLoadingProducts,
+		isError: isErrorProducts,
+		data: productsData,
+	} = useProductsList();
 
-	const { isLoading: isLoadingSiteFeatures, data: siteFeatures } = Site.useSiteFeatures( {
+	const {
+		isLoading: isLoadingSiteFeatures,
+		isError: isErrorSiteFeatures,
+		data: siteFeatures,
+	} = Site.useSiteFeatures( {
 		siteIdOrSlug: site?.ID,
 	} );
 
-	const { isLoading: isLoadingSitePurchases, data: sitePurchasesData } = Purchases.useSitePurchases(
-		{ siteId: site?.ID }
-	);
+	const {
+		isLoading: isLoadingSitePurchases,
+		isError: isErrorSitePurchases,
+		data: sitePurchasesData,
+	} = Purchases.useSitePurchases( { siteId: site?.ID } );
 
 	const allProductsList = productsData ? Object.values( productsData ) : [];
 	const sitePurchasesList = sitePurchasesData ? Object.values( sitePurchasesData ) : [];
@@ -81,6 +91,7 @@ export const useMarketplaceThemeProducts = () => {
 
 	return {
 		isLoading: isLoadingProducts || isLoadingSiteFeatures || isLoadingSitePurchases,
+		isError: isErrorProducts || isErrorSiteFeatures || isErrorSitePurchases,
 		selectedMarketplaceProduct,
 		selectedMarketplaceProductCartItems,
 		isMarketplaceThemeSubscriptionNeeded,
