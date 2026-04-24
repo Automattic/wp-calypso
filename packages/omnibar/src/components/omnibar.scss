@@ -26,27 +26,30 @@ $omnibar-highlight-color: #7b90ff;
 
 	.omnibar__dropdown {
 		position: relative;
+	}
 
-		.components-button.omnibar__item,
-		.components-dropdown-menu__toggle {
-			height: $omnibar-height;
-			padding: 0 8px;
-			color: $omnibar-text-color;
+	.components-button.omnibar__item {
+		height: $omnibar-height;
+		padding: 0 8px;
+		color: $omnibar-text-color;
+		background-color: transparent;
+		font-size: $omnibar-font-size;
+		line-height: $omnibar-height;
+		border-radius: 0;
 
-			&:hover,
-			&:focus,
-			&:active,
-			&[aria-expanded='true'] {
-				background-color: $omnibar-submenu-background;
-				color: $omnibar-highlight-color;
-				box-shadow: none;
-				outline: none;
-			}
+		&:hover,
+		&:focus,
+		&:active,
+		&[aria-expanded='true'] {
+			background-color: $omnibar-submenu-background;
+			color: $omnibar-highlight-color;
+			box-shadow: none;
+			outline: none;
 		}
 	}
 }
 
-.components-popover.components-dropdown-menu__popover {
+.components-popover.omnibar__popover {
 	.components-dropdown-menu__menu {
 		background-color: $omnibar-submenu-background;
 
