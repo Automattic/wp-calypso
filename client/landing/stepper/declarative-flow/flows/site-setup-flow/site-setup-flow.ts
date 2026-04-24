@@ -439,6 +439,7 @@ const siteSetupFlow: Flow = {
 
 				case 'importerWix':
 				case 'importerBlogger':
+				case 'importerInstagram':
 				case 'importerSubstack':
 				case 'importerMedium':
 				case 'importerSquarespace': {
@@ -542,6 +543,7 @@ const siteSetupFlow: Flow = {
 				}
 
 				case 'importerBlogger':
+				case 'importerInstagram':
 				case 'importerMedium':
 				case 'importerSubstack':
 				case 'importerSquarespace':
