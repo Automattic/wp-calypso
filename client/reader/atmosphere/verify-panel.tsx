@@ -75,7 +75,16 @@ function errorMessage(
 			return translate( 'Bluesky is unreachable right now.' );
 		case 'connection_not_found':
 			return translate( 'That connection is no longer available.' );
-		default:
+		case 'invalid_handle':
+		case 'invalid_credentials':
+		case 'bad_request':
+		case 'unknown':
 			return translate( 'Something went wrong.' );
+		default:
+			return assertNever( error );
 	}
+}
+
+function assertNever( value: never ): never {
+	throw new Error( `Unhandled AtmosphereError kind: ${ JSON.stringify( value ) }` );
 }

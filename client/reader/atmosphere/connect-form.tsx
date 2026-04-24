@@ -79,8 +79,16 @@ function errorMessage(
 			return translate( "Bluesky's asking us to slow down. Try again in a minute." );
 		case 'upstream_unavailable':
 			return translate( 'Bluesky is unreachable right now.' );
+		case 'auth_failed':
+		case 'connection_not_found':
 		case 'bad_request':
-		default:
+		case 'unknown':
 			return translate( 'Something went wrong.' );
+		default:
+			return assertNever( error );
 	}
+}
+
+function assertNever( value: never ): never {
+	throw new Error( `Unhandled AtmosphereError kind: ${ JSON.stringify( value ) }` );
 }
