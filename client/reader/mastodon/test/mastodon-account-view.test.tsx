@@ -53,13 +53,13 @@ function mockConnectionDetails( id: number ) {
 	nock( 'https://public-api.wordpress.com' )
 		.get( `${ listUrl }/${ id }` )
 		.reply( 200, {
-			handle: 'alice',
+			handle: '@alice@mastodon.social',
 			instance: 'mastodon.social',
 			display_name: 'Alice',
 			description: '',
 			avatar: null,
 			header: null,
-			counts: { followers: 0, following: 0, toots: 0 },
+			counts: { followers: 0, following: 0, posts: 0 },
 			raw: {},
 		} );
 }

@@ -31,6 +31,21 @@ export const mastodonConnect = ( context: Context, next: () => void ) => {
 	next();
 };
 
+export const mastodonOauthCallback = ( context: Context, next: () => void ) => {
+	if ( ! ensureMastodonEnabled() ) {
+		return;
+	}
+	const query = context.query as { state?: string; code?: string; error?: string };
+	context.primary = (
+		<AsyncLoad
+			require="calypso/reader/mastodon/mastodon-oauth-callback-view"
+			placeholder={ null }
+			query={ query }
+		/>
+	);
+	next();
+};
+
 export const mastodonIdRedirect = ( context: Context ) => {
 	if ( ! ensureMastodonEnabled() ) {
 		return;

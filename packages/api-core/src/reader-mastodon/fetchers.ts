@@ -1,6 +1,7 @@
 import { wpcom } from '../wpcom-fetcher';
 import { classifyMastodonError } from './errors';
 import type {
+	MastodonAuthorizeResponse,
 	MastodonConnectionDetails,
 	MastodonConnectionsResponse,
 	MastodonCreateConnectionResponse,
@@ -19,20 +20,37 @@ export async function getMastodonConnections(): Promise< MastodonConnectionsResp
 	}
 }
 
-export interface CreateMastodonConnectionParams {
+export interface AuthorizeMastodonConnectionParams {
 	instance: string;
-	handle: string;
-	access_token: string;
 }
 
-export async function createMastodonConnection(
-	params: CreateMastodonConnectionParams
+export async function authorizeMastodonConnection(
+	params: AuthorizeMastodonConnectionParams
+): Promise< MastodonAuthorizeResponse > {
+	try {
+		return ( await wpcom.req.post( {
+			path: '/reader/mastodon/connections',
+			apiNamespace: NAMESPACE,
+			body: { step: 'authorize', ...params },
+		} ) ) as MastodonAuthorizeResponse;
+	} catch ( raw ) {
+		throw classifyMastodonError( raw );
+	}
+}
+
+export interface CompleteMastodonConnectionParams {
+	state: string;
+	code: string;
+}
+
+export async function completeMastodonConnection(
+	params: CompleteMastodonConnectionParams
 ): Promise< MastodonCreateConnectionResponse > {
 	try {
 		return ( await wpcom.req.post( {
 			path: '/reader/mastodon/connections',
 			apiNamespace: NAMESPACE,
-			body: params,
+			body: { step: 'complete', ...params },
 		} ) ) as MastodonCreateConnectionResponse;
 	} catch ( raw ) {
 		throw classifyMastodonError( raw );

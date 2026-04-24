@@ -22,7 +22,7 @@ export interface MastodonCreateConnectionResponse {
 export interface MastodonProfileCounts {
 	followers: number;
 	following: number;
-	toots: number;
+	posts: number;
 }
 
 export interface MastodonConnectionDetails {
@@ -34,4 +34,9 @@ export interface MastodonConnectionDetails {
 	header: string | null;
 	counts: MastodonProfileCounts;
 	raw: Record< string, unknown >;
+}
+
+export interface MastodonAuthorizeResponse {
+	authorize_url: string;
+	state: string;
 }

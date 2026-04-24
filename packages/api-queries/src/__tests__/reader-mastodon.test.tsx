@@ -3,7 +3,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import {
-	useCreateMastodonConnectionMutation,
+	useAuthorizeMastodonConnectionMutation,
+	useCompleteMastodonConnectionMutation,
 	useMastodonConnectionQuery,
 	useMastodonConnectionsQuery,
 } from '../reader-mastodon';
@@ -28,13 +29,35 @@ describe( 'reader-mastodon hooks', () => {
 		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
 	} );
 
-	it( 'useCreateMastodonConnectionMutation invalidates the connections query', async () => {
+	it( 'useAuthorizeMastodonConnectionMutation returns authorize_url + state', async () => {
 		nock( BASE )
-			.post( '/wpcom/v2/reader/mastodon/connections' )
+			.post( '/wpcom/v2/reader/mastodon/connections', {
+				step: 'authorize',
+				instance: 'mastodon.social',
+			} )
+			.reply( 200, {
+				authorize_url: 'https://mastodon.social/oauth/authorize?client_id=x&state=abc',
+				state: 'abc',
+			} );
+		const client = new QueryClient();
+		const { result } = renderHook( () => useAuthorizeMastodonConnectionMutation(), {
+			wrapper: makeWrapper( client ),
+		} );
+		const response = await result.current.mutateAsync( { instance: 'mastodon.social' } );
+		expect( response.state ).toBe( 'abc' );
+	} );
+
+	it( 'useCompleteMastodonConnectionMutation invalidates the connections query', async () => {
+		nock( BASE )
+			.post( '/wpcom/v2/reader/mastodon/connections', {
+				step: 'complete',
+				state: 'abc',
+				code: 'xyz',
+			} )
 			.reply( 200, {
 				connection: {
 					id: 101,
-					handle: 'alice',
+					handle: '@alice@mastodon.social',
 					instance: 'mastodon.social',
 					avatar: null,
 				},
@@ -42,14 +65,10 @@ describe( 'reader-mastodon hooks', () => {
 		const client = new QueryClient();
 		client.setQueryData( readerMastodonKeys.connections(), 'old' );
 		const spy = jest.spyOn( client, 'invalidateQueries' );
-		const { result } = renderHook( () => useCreateMastodonConnectionMutation(), {
+		const { result } = renderHook( () => useCompleteMastodonConnectionMutation(), {
 			wrapper: makeWrapper( client ),
 		} );
-		await result.current.mutateAsync( {
-			instance: 'mastodon.social',
-			handle: 'alice',
-			access_token: 'xxxx',
-		} );
+		await result.current.mutateAsync( { state: 'abc', code: 'xyz' } );
 		await waitFor( () => expect( spy ).toHaveBeenCalled() );
 	} );
 
@@ -65,13 +84,13 @@ describe( 'reader-mastodon hooks', () => {
 		nock( BASE )
 			.get( '/wpcom/v2/reader/mastodon/connections/42' )
 			.reply( 200, {
-				handle: 'alice',
+				handle: '@alice@mastodon.social',
 				instance: 'mastodon.social',
 				display_name: 'Alice',
 				description: '',
 				avatar: 'https://cdn/avatar.png',
 				header: null,
-				counts: { followers: 0, following: 0, toots: 0 },
+				counts: { followers: 0, following: 0, posts: 0 },
 				raw: {},
 			} );
 		const client = new QueryClient( { defaultOptions: { queries: { retry: false } } } );

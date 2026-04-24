@@ -8,6 +8,7 @@ import {
 	mastodonConnect,
 	mastodonIdRedirect,
 	mastodonAccount,
+	mastodonOauthCallback,
 } from './controller';
 
 export default function () {
@@ -17,6 +18,14 @@ export default function () {
 		sidebar,
 		setBeforePrimary,
 		mastodonConnect,
+		makeLayout,
+		clientRender
+	);
+	page(
+		'/reader/mastodon/oauth-callback',
+		sidebar,
+		setBeforePrimary,
+		mastodonOauthCallback,
 		makeLayout,
 		clientRender
 	);

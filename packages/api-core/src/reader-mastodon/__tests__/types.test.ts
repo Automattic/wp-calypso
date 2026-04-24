@@ -29,7 +29,7 @@ describe( 'reader-mastodon types compile', () => {
 				avatar: null,
 			},
 		};
-		const counts: MastodonProfileCounts = { followers: 0, following: 0, toots: 0 };
+		const counts: MastodonProfileCounts = { followers: 0, following: 0, posts: 0 };
 		const details: MastodonConnectionDetails = {
 			handle: 'alice',
 			instance: 'mastodon.social',

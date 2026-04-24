@@ -18,7 +18,7 @@ function makeClient() {
 
 const connection: MastodonConnection = {
 	id: 101,
-	handle: 'alice',
+	handle: '@alice@mastodon.social',
 	instance: 'mastodon.social',
 	display_name: 'Alice',
 	avatar: null,
@@ -31,13 +31,13 @@ describe( 'ProfilePanel', () => {
 		nock( BASE )
 			.get( '/wpcom/v2/reader/mastodon/connections/101' )
 			.reply( 200, {
-				handle: 'alice',
+				handle: '@alice@mastodon.social',
 				instance: 'mastodon.social',
 				display_name: 'Alice',
 				description: 'hello there',
 				avatar: null,
 				header: null,
-				counts: { followers: 10, following: 5, toots: 42 },
+				counts: { followers: 10, following: 5, posts: 42 },
 				raw: {},
 			} );
 
@@ -47,7 +47,7 @@ describe( 'ProfilePanel', () => {
 
 		await waitFor( () => expect( screen.getByText( 'hello there' ) ).toBeVisible() );
 		const stats = screen.getByRole( 'list', { name: /profile stats/i } );
-		expect( stats ).toHaveTextContent( '42 toots' );
+		expect( stats ).toHaveTextContent( '42 posts' );
 		expect( stats ).toHaveTextContent( '10 followers' );
 	} );
 } );

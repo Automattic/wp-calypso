@@ -31,9 +31,9 @@ export function VerifyPanel( { data, error, isLoading }: VerifyPanelProps ) {
 					} ),
 				},
 				{
-					key: 'toots',
-					count: data.counts.toots,
-					label: translate( 'toot', 'toots', { count: data.counts.toots } ),
+					key: 'posts',
+					count: data.counts.posts,
+					label: translate( 'post', 'posts', { count: data.counts.posts } ),
 				},
 		  ]
 		: [];
@@ -50,7 +50,7 @@ export function VerifyPanel( { data, error, isLoading }: VerifyPanelProps ) {
 				{ data ? (
 					<SocialProfileCard
 						avatar={ data.avatar }
-						bio={ data.description }
+						bioHtml={ data.description }
 						stats={ stats }
 						statsLabel={ String( translate( 'Profile stats' ) ) }
 					/>

@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-import page from '@automattic/calypso-router';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
@@ -19,37 +18,54 @@ jest.mock(
 
 jest.mock( 'calypso/components/data/document-head', () => () => null );
 
-jest.mock( '@automattic/calypso-router', () => {
-	const replace = jest.fn();
-	const fn = jest.fn() as jest.Mock & { replace: jest.Mock };
-	fn.replace = replace;
-	return { __esModule: true, default: fn };
-} );
-
 describe( 'MastodonConnectView', () => {
-	beforeEach( () => ( page as unknown as jest.Mock ).mockClear() );
-	afterEach( () => nock.cleanAll() );
+	let assignMock: jest.Mock;
+	let originalLocation: Location;
 
-	it( 'submits the connect form and navigates to the new account timeline', async () => {
+	beforeEach( () => {
+		originalLocation = window.location;
+		assignMock = jest.fn();
+		Object.defineProperty( window, 'location', {
+			configurable: true,
+			writable: true,
+			value: { ...originalLocation, assign: assignMock },
+		} );
+		window.sessionStorage.clear();
+	} );
+
+	afterEach( () => {
+		nock.cleanAll();
+		Object.defineProperty( window, 'location', {
+			configurable: true,
+			writable: true,
+			value: originalLocation,
+		} );
+	} );
+
+	it( 'submits the instance, saves state, and redirects to the authorize URL', async () => {
 		const user = userEvent.setup();
 		nock( 'https://public-api.wordpress.com' )
-			.post( '/wpcom/v2/reader/mastodon/connections' )
+			.post( '/wpcom/v2/reader/mastodon/connections', {
+				step: 'authorize',
+				instance: 'mastodon.social',
+			} )
 			.reply( 200, {
-				connection: {
-					id: 99,
-					handle: 'alice',
-					instance: 'mastodon.social',
-					display_name: 'Alice',
-					avatar: null,
-				},
+				authorize_url: 'https://mastodon.social/oauth/authorize?client_id=x&state=abc',
+				state: 'abc',
 			} );
 
 		renderWithProvider( <MastodonConnectView /> );
 		await user.type( screen.getByLabelText( /Instance/ ), 'mastodon.social' );
-		await user.type( screen.getByLabelText( /Handle/ ), 'alice' );
-		await user.type( screen.getByLabelText( /Access token/ ), 'abc123' );
-		await user.click( screen.getByRole( 'button', { name: /Connect/ } ) );
+		await user.click( screen.getByRole( 'button', { name: /Continue/ } ) );
 
-		await waitFor( () => expect( page ).toHaveBeenCalledWith( '/reader/mastodon/99/timeline' ) );
+		await waitFor( () =>
+			expect( assignMock ).toHaveBeenCalledWith(
+				'https://mastodon.social/oauth/authorize?client_id=x&state=abc'
+			)
+		);
+		const stored = JSON.parse(
+			window.sessionStorage.getItem( 'reader.mastodon.oauthState' ) ?? ''
+		);
+		expect( stored ).toEqual( { state: 'abc', instance: 'mastodon.social' } );
 	} );
 } );

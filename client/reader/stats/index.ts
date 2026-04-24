@@ -113,6 +113,10 @@ const Routes: RoutesMapping[] = [
 
 	// Mastodon (ActivityPub)
 	{ route: exactMatch( '/reader/mastodon/connect' ), tracking: 'mastodon_connect' },
+	{
+		route: exactMatch( '/reader/mastodon/oauth-callback' ),
+		tracking: 'mastodon_oauth_callback',
+	},
 	{ route: matches( /^\/reader\/mastodon\/\d+\/timeline$/ ), tracking: 'mastodon_timeline' },
 	{ route: matches( /^\/reader\/mastodon\/\d+\/profile$/ ), tracking: 'mastodon_profile' },
 	{ route: matches( /^\/reader\/mastodon\/\d+\/settings$/ ), tracking: 'mastodon_settings' },

@@ -66,7 +66,7 @@ function mockConnection( {
 			description: '',
 			avatar,
 			header: null,
-			counts: { followers: 0, following: 0, toots: 0 },
+			counts: { followers: 0, following: 0, posts: 0 },
 			raw: {},
 		} );
 }
@@ -80,7 +80,7 @@ describe( 'ReaderSidebarMastodon', () => {
 			queryClient: makeClient(),
 		} );
 
-		const link = await screen.findByRole( 'link', { name: /fediverse/i } );
+		const link = await screen.findByRole( 'link', { name: /mastodon/i } );
 		expect( link ).toHaveAttribute( 'href', '/reader/mastodon' );
 
 		// No expanded list of per-connection items or Add account link.

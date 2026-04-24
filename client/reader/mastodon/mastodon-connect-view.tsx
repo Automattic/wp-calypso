@@ -1,22 +1,26 @@
-import { useCreateMastodonConnectionMutation } from '@automattic/api-queries';
-import page from '@automattic/calypso-router';
+import { useAuthorizeMastodonConnectionMutation } from '@automattic/api-queries';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import NavigationHeader from 'calypso/components/navigation-header';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { ConnectForm } from './connect-form';
+import { saveOauthState } from './oauth-state';
 
 export function MastodonConnectView() {
 	const translate = useTranslate();
-	const create = useCreateMastodonConnectionMutation();
+	const authorize = useAuthorizeMastodonConnectionMutation();
 
-	const handleSubmit = ( values: { instance: string; handle: string; access_token: string } ) => {
-		create.mutate( values, {
-			onSuccess: ( response ) => {
-				page( `/reader/mastodon/${ response.connection.id }/timeline` );
-			},
-		} );
+	const handleSubmit = ( { instance }: { instance: string } ) => {
+		authorize.mutate(
+			{ instance },
+			{
+				onSuccess: ( { authorize_url, state } ) => {
+					saveOauthState( { state, instance } );
+					window.location.assign( authorize_url );
+				},
+			}
+		);
 	};
 
 	return (
@@ -24,12 +28,14 @@ export function MastodonConnectView() {
 			<DocumentHead title={ translate( 'Connect account ‹ Mastodon ‹ Reader' ) } />
 			<NavigationHeader
 				title={ translate( 'Connect a Mastodon account' ) }
-				subtitle={ translate( 'Bring your Mastodon account into the Reader.' ) }
+				subtitle={ translate(
+					'Enter your server’s address — we’ll hand you off to sign in there.'
+				) }
 			/>
 			<VStack spacing={ 4 } className="mastodon-view__body">
 				<ConnectForm
-					isSubmitting={ create.isPending }
-					error={ create.error ?? null }
+					isSubmitting={ authorize.isPending }
+					error={ authorize.error ?? null }
 					onSubmit={ handleSubmit }
 				/>
 			</VStack>

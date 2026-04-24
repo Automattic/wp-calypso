@@ -1,12 +1,15 @@
 import {
-	createMastodonConnection,
+	authorizeMastodonConnection,
+	completeMastodonConnection,
 	getMastodonConnection,
 	getMastodonConnections,
 	readerMastodonKeys,
 } from '@automattic/api-core';
 import { queryOptions, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type {
-	CreateMastodonConnectionParams,
+	AuthorizeMastodonConnectionParams,
+	CompleteMastodonConnectionParams,
+	MastodonAuthorizeResponse,
 	MastodonConnectionDetails,
 	MastodonConnectionsResponse,
 	MastodonCreateConnectionResponse,
@@ -24,14 +27,22 @@ export function useMastodonConnectionsQuery( { enabled }: { enabled?: boolean } 
 	return useQuery( { ...mastodonConnectionsQueryOptions(), enabled } );
 }
 
-export function useCreateMastodonConnectionMutation() {
+export function useAuthorizeMastodonConnectionMutation() {
+	return useMutation< MastodonAuthorizeResponse, MastodonError, AuthorizeMastodonConnectionParams >(
+		{
+			mutationFn: authorizeMastodonConnection,
+		}
+	);
+}
+
+export function useCompleteMastodonConnectionMutation() {
 	const client = useQueryClient();
 	return useMutation<
 		MastodonCreateConnectionResponse,
 		MastodonError,
-		CreateMastodonConnectionParams
+		CompleteMastodonConnectionParams
 	>( {
-		mutationFn: createMastodonConnection,
+		mutationFn: completeMastodonConnection,
 		onSuccess: () => {
 			client.invalidateQueries( { queryKey: readerMastodonKeys.connections() } );
 		},

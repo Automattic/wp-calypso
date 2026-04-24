@@ -532,6 +532,7 @@ const sections = [
 		paths: [
 			'/reader/mastodon',
 			'/reader/mastodon/connect',
+			'/reader/mastodon/oauth-callback',
 			'/reader/mastodon/:id',
 			'/reader/mastodon/:id/:tab',
 		],
