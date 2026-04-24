@@ -14,6 +14,7 @@ import { useEmptyViewSuggestions } from '../hooks/use-empty-view-suggestions';
 import { AGENTS_MANAGER_STORE } from '../stores';
 import { clearSessionId, getOrCreateSessionId } from '../utils/agent-session';
 import { createAgentConfig } from '../utils/create-agent-config';
+import { isReaderChatAgent } from '../utils/is-reader-chat-agent';
 import {
 	loadExternalProviders,
 	type ImageUploadHook,
@@ -103,7 +104,8 @@ function AgentSetup( {
 	// write — that fires after the server returns a sessionId, which can be
 	// skipped if the response shape doesn't match what the client parses.
 	const sessionId =
-		( ! isNewChat && state?.sessionId ) || getOrCreateSessionId( isNewChat, agentId );
+		( ! isNewChat && state?.sessionId ) ||
+		( isReaderChatAgent( agentId ) ? getOrCreateSessionId( isNewChat, agentId ) : '' );
 
 	useEffect( () => {
 		// Wait for the agent config to stabilize before initializing.

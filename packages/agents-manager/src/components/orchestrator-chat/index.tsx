@@ -17,6 +17,7 @@ import useFeedbackAction from '../../hooks/use-feedback-action';
 import useSaveNewChatRoute from '../../hooks/use-save-new-chat-route';
 import useSourcesAction from '../../hooks/use-sources-action';
 import useZoomAction from '../../hooks/use-zoom-action';
+import { markSessionUsed } from '../../utils/agent-session';
 import convertToolMessagesToComponents from '../../utils/convert-tool-messages-to-components';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
 import { persistLastActivity } from '../../utils/persist-last-activity';
@@ -215,8 +216,9 @@ export default function OrchestratorChat( {
 				// No images, just send normally
 				onSubmit( message );
 			}
+			markSessionUsed( agentConfig?.agentId );
 		},
-		[ onSubmit, pendingImages.length, siteKey, uploadImagesToWordPress ]
+		[ agentConfig?.agentId, onSubmit, pendingImages.length, siteKey, uploadImagesToWordPress ]
 	);
 
 	// Handle navigation continuation if hook is provided

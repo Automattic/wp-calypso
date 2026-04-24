@@ -11,8 +11,9 @@
 
 import './config';
 import AgentsManager, { AGENTS_MANAGER_STORE } from '@automattic/agents-manager';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { dispatch } from '@wordpress/data';
+import { dispatch, select, subscribe } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
 import { createRoot } from 'react-dom/client';
 
@@ -203,6 +204,13 @@ function getFallbackSuggestions() {
 
 const SUGGESTIONS_ENDPOINT =
 	'https://public-api.wordpress.com/wpcom/v2/ai/agent/reader-chat-suggestions';
+const SUGGESTIONS_TIMEOUT_MS = 15000;
+const FOLLOWUP_DEBOUNCE_MS = 2500;
+const MIN_FOLLOWUP_AGENT_TEXT_LENGTH = 40;
+
+function createAbortController() {
+	return typeof window.AbortController === 'function' ? new window.AbortController() : null;
+}
 
 function slugify( label ) {
 	return String( label || '' )
@@ -255,9 +263,10 @@ function parseAgentSseResponse( raw ) {
  * @param   {string} params.messageText     Prose message to send to the agent.
  * @param   {string} params.requestIdPrefix JSON-RPC request id prefix (debugging aid).
  * @param   {string} params.resultIdPrefix  Prefix used when synthesizing missing ids on returned items.
+ * @param   {AbortSignal} [params.signal]   Optional signal for cancelling stale requests.
  * @returns {Promise<Array|null>}           Normalized suggestions, or null on failure.
  */
-async function fetchSuggestions( { messageText, requestIdPrefix, resultIdPrefix } ) {
+async function fetchSuggestions( { messageText, requestIdPrefix, resultIdPrefix, signal } ) {
 	const body = {
 		jsonrpc: '2.0',
 		id: `${ requestIdPrefix }-${ Date.now() }`,
@@ -284,13 +293,28 @@ async function fetchSuggestions( { messageText, requestIdPrefix, resultIdPrefix 
 		tokenStreaming: false,
 	};
 
+	if ( signal?.aborted ) {
+		return null;
+	}
+
+	const controller = createAbortController();
+	const timeoutId = controller
+		? setTimeout( () => controller.abort(), SUGGESTIONS_TIMEOUT_MS )
+		: null;
+	const abortRequest = () => controller?.abort();
+	signal?.addEventListener( 'abort', abortRequest, { once: true } );
+
 	try {
-		const response = await fetch( SUGGESTIONS_ENDPOINT, {
+		const fetchOptions = {
 			method: 'POST',
 			credentials: 'omit',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify( body ),
-		} );
+		};
+		if ( controller ) {
+			fetchOptions.signal = controller.signal;
+		}
+		const response = await fetch( SUGGESTIONS_ENDPOINT, fetchOptions );
 		if ( ! response.ok ) {
 			return null;
 		}
@@ -317,6 +341,11 @@ async function fetchSuggestions( { messageText, requestIdPrefix, resultIdPrefix 
 		} ) );
 	} catch {
 		return null;
+	} finally {
+		if ( timeoutId ) {
+			clearTimeout( timeoutId );
+		}
+		signal?.removeEventListener( 'abort', abortRequest );
 	}
 }
 
@@ -327,7 +356,7 @@ async function fetchSuggestions( { messageText, requestIdPrefix, resultIdPrefix 
  * Called fire-and-forget after mount — the empty view shows fallback
  * chips immediately and re-renders with AI suggestions when they arrive.
  */
-function fetchAiSuggestions() {
+function fetchAiSuggestions( signal ) {
 	const post = readerConfig.currentPost;
 	const siteName = readerConfig.siteName || '';
 	const siteUrl = readerConfig.siteUrl || '';
@@ -347,6 +376,7 @@ function fetchAiSuggestions() {
 		messageText,
 		requestIdPrefix: 'reader-suggestions',
 		resultIdPrefix: 'ai-suggestion',
+		signal,
 	} );
 }
 
@@ -355,7 +385,7 @@ function fetchAiSuggestions() {
  * Reuses the reader-chat-suggestions agent with a message shape that
  * describes the exchange and asks for follow-ups.
  */
-function fetchFollowupSuggestions( userText, agentText ) {
+function fetchFollowupSuggestions( userText, agentText, signal ) {
 	if ( ! userText || ! agentText ) {
 		return Promise.resolve( null );
 	}
@@ -372,6 +402,7 @@ Generate 2-3 follow-up questions the reader might want to ask next, based on wha
 		messageText,
 		requestIdPrefix: 'reader-followup',
 		resultIdPrefix: 'followup',
+		signal,
 	} );
 }
 
@@ -412,13 +443,52 @@ function setupFollowupChips() {
 		window.dispatchEvent( new Event( 'reader-chat-followups-updated' ) );
 	}
 
+	function getLatestExchange( chat ) {
+		const agentMessages = chat.querySelectorAll(
+			'[data-slot="message"][data-role="agent"], [data-slot="message"][data-role="assistant"]'
+		);
+		const userMessages = chat.querySelectorAll( '[data-slot="message"][data-role="user"]' );
+		if ( agentMessages.length === 0 || userMessages.length === 0 ) {
+			return null;
+		}
+		const agentText = ( agentMessages[ agentMessages.length - 1 ].textContent || '' ).trim();
+		const userText = ( userMessages[ userMessages.length - 1 ].textContent || '' ).trim();
+		if ( agentText.length < MIN_FOLLOWUP_AGENT_TEXT_LENGTH || ! userText ) {
+			return null;
+		}
+		return {
+			agentText,
+			userText,
+			key: `${ userMessages.length }:${ userText }`,
+		};
+	}
+
 	// Observe the chat DOM for new complete assistant messages.
 	let attempts = 0;
+	let retryTimer = null;
+	let debounceTimer = null;
+	let pendingExchangeKey = '';
+	let lastPublishedExchangeKey = '';
+	let followupController = null;
+	let requestSeq = 0;
+
+	function cleanup() {
+		if ( retryTimer ) {
+			clearTimeout( retryTimer );
+		}
+		if ( debounceTimer ) {
+			clearTimeout( debounceTimer );
+		}
+		followupController?.abort();
+	}
+
+	window.addEventListener( 'pagehide', cleanup, { once: true } );
+
 	const tryObserve = () => {
 		const chat = document.querySelector( '[data-slot=conversation-view]' );
 		if ( ! chat ) {
 			if ( attempts++ < 60 ) {
-				setTimeout( tryObserve, 500 );
+				retryTimer = setTimeout( tryObserve, 500 );
 			}
 			return;
 		}
@@ -427,38 +497,183 @@ function setupFollowupChips() {
 		}
 		chat.__followupObserving = true;
 
-		let lastAgentText = '';
-		let pending = false;
+		const observer = new window.MutationObserver( () => {
+			const exchange = getLatestExchange( chat );
+			if (
+				! exchange ||
+				exchange.key === pendingExchangeKey ||
+				exchange.key === lastPublishedExchangeKey
+			) {
+				return;
+			}
 
-		const observer = new window.MutationObserver( async () => {
-			if ( pending ) {
-				return;
+			if ( debounceTimer ) {
+				clearTimeout( debounceTimer );
 			}
-			const agentMessages = chat.querySelectorAll(
-				'[data-slot="message"][data-role="agent"], [data-slot="message"][data-role="assistant"]'
-			);
-			const userMessages = chat.querySelectorAll( '[data-slot="message"][data-role="user"]' );
-			if ( agentMessages.length === 0 || userMessages.length === 0 ) {
-				return;
-			}
-			const agentBubble = agentMessages[ agentMessages.length - 1 ];
-			const userBubble = userMessages[ userMessages.length - 1 ];
-			const agentText = agentBubble.textContent || '';
-			const userText = userBubble.textContent || '';
-			if ( agentText === lastAgentText || agentText.length < 40 ) {
-				return;
-			}
-			lastAgentText = agentText;
-			pending = true;
-			publish( [] ); // clear while fetching
-			const chips = await fetchFollowupSuggestions( userText.trim(), agentText.trim() );
-			pending = false;
-			publish( chips || [] );
+
+			debounceTimer = setTimeout( async () => {
+				const stableExchange = getLatestExchange( chat );
+				if (
+					! stableExchange ||
+					stableExchange.key !== exchange.key ||
+					stableExchange.agentText !== exchange.agentText ||
+					stableExchange.key === pendingExchangeKey ||
+					stableExchange.key === lastPublishedExchangeKey
+				) {
+					return;
+				}
+
+				followupController?.abort();
+				const requestController = createAbortController();
+				followupController = requestController;
+				const requestId = ++requestSeq;
+				pendingExchangeKey = stableExchange.key;
+				publish( [] ); // clear while fetching
+
+				const chips = await fetchFollowupSuggestions(
+					stableExchange.userText,
+					stableExchange.agentText,
+					requestController?.signal
+				);
+
+				if ( requestId !== requestSeq || requestController?.signal.aborted ) {
+					return;
+				}
+
+				lastPublishedExchangeKey = stableExchange.key;
+				pendingExchangeKey = '';
+				followupController = null;
+				publish( chips || [] );
+			}, FOLLOWUP_DEBOUNCE_MS );
 		} );
+
+		window.addEventListener(
+			'pagehide',
+			() => {
+				observer.disconnect();
+			},
+			{ once: true }
+		);
 
 		observer.observe( chat, { childList: true, subtree: true, characterData: true } );
 	};
 	tryObserve();
+}
+
+function setupInitialSuggestions() {
+	const controller = createAbortController();
+	window.addEventListener(
+		'pagehide',
+		() => {
+			controller?.abort();
+		},
+		{ once: true }
+	);
+
+	fetchAiSuggestions( controller?.signal ).then( ( aiSuggestions ) => {
+		if ( controller?.signal.aborted ) {
+			return;
+		}
+		window.agentsManagerData.readerSuggestions = aiSuggestions || getFallbackSuggestions();
+		// Signal to useEmptyViewSuggestions (inside AgentsManager) that
+		// the global override changed — the hook re-reads on this event
+		// and triggers a state update.
+		window.dispatchEvent( new Event( 'reader-chat-suggestions-updated' ) );
+	} );
+}
+
+/**
+ * Wire up Reader-Chat-specific Tracks events.
+ *
+ * Scoped to the reader-chat mount node so we don't emit for the shared
+ * AgentsManager in wp-admin or for other consumers. All events use the
+ * jetpack_reader_chat_* namespace to match the Jetpack-side feature.
+ *
+ * Three events:
+ * - jetpack_reader_chat_opened: chat UI goes from closed -> open
+ * - jetpack_reader_chat_suggestion_click: a prompt suggestion chip was clicked
+ * - jetpack_reader_chat_message_sent: the user submitted a message
+ *   (button click or Enter keypress on the composer textarea)
+ *
+ * All three work for anonymous readers — calypso-analytics pings the
+ * public pixel endpoint with _ut=anon when no user is known.
+ *
+ * @param {Object} container The #jetpack-reader-chat mount node.
+ */
+function setupTracksEvents( container ) {
+	const config = window.JetpackReaderChatConfig || {};
+	const baseProps = config.siteId ? { blog_id: config.siteId } : {};
+
+	// Chat open: watch the shared store for isOpen transitioning from
+	// false -> true. Fires once per open; closing + reopening re-fires.
+	let wasOpen = false;
+	const unsubscribe = subscribe( () => {
+		const state = select( AGENTS_MANAGER_STORE ).getAgentsManagerState?.();
+		const isOpen = !! state?.isOpen;
+		if ( isOpen && ! wasOpen ) {
+			recordTracksEvent( 'jetpack_reader_chat_opened', baseProps );
+		}
+		wasOpen = isOpen;
+	} );
+
+	// Suggestion click + send-button click via event delegation so we
+	// don't have to patch agenttic-ui or agents-manager. Scoped to the
+	// reader-chat container — other AgentsManager mounts aren't affected.
+	const handleClick = ( event ) => {
+		const target = event.target;
+		if ( ! target || typeof target.closest !== 'function' ) {
+			return;
+		}
+		const suggestionBtn = target.closest( '.Suggestions-module_button' );
+		if ( suggestionBtn ) {
+			recordTracksEvent( 'jetpack_reader_chat_suggestion_click', {
+				...baseProps,
+				suggestion: ( suggestionBtn.textContent || '' ).trim().slice( 0, 200 ),
+			} );
+			return;
+		}
+		const sendBtn = target.closest( '[aria-label="Send message"]' );
+		if ( sendBtn && ! sendBtn.disabled ) {
+			recordTracksEvent( 'jetpack_reader_chat_message_sent', {
+				...baseProps,
+				trigger: 'button',
+			} );
+		}
+	};
+	container.addEventListener( 'click', handleClick );
+
+	// Enter-to-send on the composer textarea. Shift+Enter inserts a
+	// newline, plain Enter submits — match that convention.
+	const handleKeydown = ( event ) => {
+		if ( event.key !== 'Enter' || event.shiftKey || event.isComposing ) {
+			return;
+		}
+		const target = event.target;
+		if ( ! target || target.tagName !== 'TEXTAREA' ) {
+			return;
+		}
+		if ( ! target.closest( '[data-slot="chat-input"]' ) ) {
+			return;
+		}
+		if ( target.value.trim() === '' ) {
+			return;
+		}
+		recordTracksEvent( 'jetpack_reader_chat_message_sent', {
+			...baseProps,
+			trigger: 'enter',
+		} );
+	};
+	container.addEventListener( 'keydown', handleKeydown );
+
+	window.addEventListener(
+		'pagehide',
+		() => {
+			unsubscribe?.();
+			container.removeEventListener( 'click', handleClick );
+			container.removeEventListener( 'keydown', handleKeydown );
+		},
+		{ once: true }
+	);
 }
 
 function ReaderChatApp() {
@@ -487,6 +702,7 @@ const container = document.getElementById( 'jetpack-reader-chat' );
 if ( container ) {
 	injectScopedReset();
 	setupFollowupChips();
+	setupTracksEvents( container );
 
 	// Reader-chat defaults the floating panel to the left side of the
 	// viewport. The shared AgentsManager reducer default is 'right' (set
@@ -507,13 +723,7 @@ if ( container ) {
 	const root = createRoot( container );
 	root.render( <ReaderChatApp /> );
 
-	fetchAiSuggestions().then( ( aiSuggestions ) => {
-		window.agentsManagerData.readerSuggestions = aiSuggestions || getFallbackSuggestions();
-		// Signal to useEmptyViewSuggestions (inside AgentsManager) that
-		// the global override changed — the hook re-reads on this event
-		// and triggers a state update.
-		window.dispatchEvent( new Event( 'reader-chat-suggestions-updated' ) );
-	} );
+	setupInitialSuggestions();
 }
 
 // Exported for unit tests only — these are pure helpers with no side effects.
