@@ -3,9 +3,12 @@ import { loadBlackboxSdk } from 'calypso/blocks/login/utils/blackbox-sdk';
 /**
  * Retrieve a Blackbox bot-detection session ID.
  *
- * Awaits the lazy SDK load, calls collect() to trigger data collection, and
- * returns the session ID. Blackbox returns BlackboxError instead of throwing,
- * so the typeof check filters those out. The try/catch is defense-in-depth.
+ * Awaits the lazy SDK load, then calls getSessionId() which returns the
+ * cached session ID immediately (non-blocking) and ships accumulated
+ * behavioral data in the background.
+ *
+ * Blackbox returns BlackboxError instead of throwing, so the typeof check
+ * filters those out. The try/catch is defense-in-depth.
  * @returns {Promise<string|undefined>} Session ID, or undefined on any failure.
  */
 export async function getBlackboxSessionId() {
@@ -19,22 +22,18 @@ export async function getBlackboxSessionId() {
 		return undefined;
 	}
 
-	if ( ! window.Blackbox?.collect ) {
+	if ( typeof window.Blackbox?.getSessionId !== 'function' ) {
 		return undefined;
 	}
 
 	try {
-		const result = await Promise.race( [
-			window.Blackbox.collect(),
+		const sessionId = await Promise.race( [
+			window.Blackbox.getSessionId(),
 			new Promise( ( resolve ) => setTimeout( resolve, 2000 ) ),
 		] );
 
-		if ( typeof result === 'string' ) {
-			return result;
-		}
-
-		if ( result && typeof result.sessionId === 'string' ) {
-			return result.sessionId;
+		if ( typeof sessionId === 'string' ) {
+			return sessionId;
 		}
 	} catch {
 		// Intentionally ignored — Blackbox must never block login.

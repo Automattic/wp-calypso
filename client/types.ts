@@ -141,7 +141,7 @@ declare global {
 		Blackbox?: {
 			configure: ( config: {
 				apiKey: string;
-				challengeContainer: string;
+				challengeContainer: string | HTMLElement;
 				onChallengeStart?: () => void;
 				onChallengeComplete?: () => void;
 			} ) => void;

@@ -15,8 +15,8 @@ import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import { FormDivider } from 'calypso/blocks/authentication';
 import JetpackConnectSiteOnly from 'calypso/blocks/jetpack-connect-site-only';
+import BlackboxChallenge from 'calypso/blocks/login/blackbox-challenge';
 import LoginSubmitButton from 'calypso/blocks/login/login-submit-button';
-import { loadBlackboxSdk, challengeCallbacks } from 'calypso/blocks/login/utils/blackbox-sdk';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { LastUsedSocialButton } from 'calypso/components/social-buttons';
@@ -118,12 +118,8 @@ export class LoginForm extends Component {
 		isBlackboxChallengeActive: false,
 	};
 
-	handleBlackboxChallengeStart = () => {
-		this.setState( { isBlackboxChallengeActive: true } );
-	};
-
-	handleBlackboxChallengeComplete = () => {
-		this.setState( { isBlackboxChallengeActive: false } );
+	handleBlackboxChallengeActiveChange = ( isActive ) => {
+		this.setState( { isBlackboxChallengeActive: isActive } );
 	};
 
 	componentDidMount() {
@@ -138,25 +134,6 @@ export class LoginForm extends Component {
 		if ( this.props.currentQuery?.username_only ) {
 			url.searchParams.delete( 'username_only' );
 			window.history.replaceState( {}, document.title, url );
-		}
-
-		if ( config.isEnabled( 'blackbox-login' ) && config( 'blackbox_api_key' ) ) {
-			// Write callbacks into the slots before triggering load. The slots are
-			// read by wrapper closures inside configure(), so they're live even if
-			// configure() was already called (script cached from a prior mount).
-			challengeCallbacks.onChallengeStart = this.handleBlackboxChallengeStart;
-			challengeCallbacks.onChallengeComplete = this.handleBlackboxChallengeComplete;
-
-			// #blackbox-challenge-root is now in the DOM (render() completed before
-			// componentDidMount). Safe to inject the script.
-			loadBlackboxSdk();
-		}
-	}
-
-	componentWillUnmount() {
-		if ( config.isEnabled( 'blackbox-login' ) && config( 'blackbox_api_key' ) ) {
-			challengeCallbacks.onChallengeStart = null;
-			challengeCallbacks.onChallengeComplete = null;
 		}
 	}
 
@@ -880,9 +857,9 @@ export class LoginForm extends Component {
 
 						{ shouldRenderForgotPasswordLink && this.renderLostPasswordLink() }
 
-						{ config.isEnabled( 'blackbox-login' ) && config( 'blackbox_api_key' ) && (
-							<div id="blackbox-challenge-root" className="login__form-blackbox-challenge" />
-						) }
+						<BlackboxChallenge
+							onChallengeActiveChange={ this.handleBlackboxChallengeActiveChange }
+						/>
 
 						<div className="login__form-action">
 							<LoginSubmitButton

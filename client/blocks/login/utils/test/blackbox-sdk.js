@@ -54,51 +54,21 @@ describe( 'blackbox-sdk', () => {
 		expect( loadScript ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	test( 'configure() is called once after load with the full config including wrapper callbacks', async () => {
-		window.Blackbox = { configure: jest.fn(), collect: jest.fn(), getSessionId: jest.fn() };
+	test( 'loadBlackboxSdk does not call configure after load', async () => {
+		window.Blackbox = { configure: jest.fn(), getSessionId: jest.fn() };
 		const { loadBlackboxSdk } = require( '../blackbox-sdk' );
 
 		await loadBlackboxSdk();
 
-		expect( window.Blackbox.configure ).toHaveBeenCalledTimes( 1 );
-		expect( window.Blackbox.configure ).toHaveBeenCalledWith(
-			expect.objectContaining( {
-				apiKey: 'test-api-key',
-				challengeContainer: '#blackbox-challenge-root',
-				onChallengeStart: expect.any( Function ),
-				onChallengeComplete: expect.any( Function ),
-			} )
-		);
-	} );
-
-	test( 'wrapper callbacks delegate to challengeCallbacks slots', async () => {
-		const onStart = jest.fn();
-		const onComplete = jest.fn();
-		window.Blackbox = { configure: jest.fn(), collect: jest.fn(), getSessionId: jest.fn() };
-
-		const { loadBlackboxSdk, challengeCallbacks } = require( '../blackbox-sdk' );
-		challengeCallbacks.onChallengeStart = onStart;
-		challengeCallbacks.onChallengeComplete = onComplete;
-
-		await loadBlackboxSdk();
-
-		// Extract the wrappers passed to configure() and invoke them
-		const [ configArg ] = window.Blackbox.configure.mock.calls[ 0 ];
-		configArg.onChallengeStart();
-		configArg.onChallengeComplete();
-
-		expect( onStart ).toHaveBeenCalledTimes( 1 );
-		expect( onComplete ).toHaveBeenCalledTimes( 1 );
+		expect( window.Blackbox.configure ).not.toHaveBeenCalled();
 	} );
 
 	test( 'loadBlackboxSdk resolves even when the script fails to load', async () => {
 		const { loadScript } = require( '@automattic/load-script' );
 		loadScript.mockImplementationOnce( ( _url, callback ) => callback( new Error( 'fail' ) ) );
-		window.Blackbox = { configure: jest.fn() };
 		const { loadBlackboxSdk } = require( '../blackbox-sdk' );
 
 		await expect( loadBlackboxSdk() ).resolves.toBeUndefined();
-		expect( window.Blackbox.configure ).not.toHaveBeenCalled();
 	} );
 
 	test( 'loadBlackboxSdk resolves immediately without calling loadScript when feature flag is off', async () => {
