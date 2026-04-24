@@ -42,9 +42,6 @@ const SiteCriticalError = ( { siteSlug }: { siteSlug: string } ) => {
 
 	useEffect( () => {
 		if ( hasRecovered ) {
-			// Replace history so Back doesn't return to this now-obsolete screen,
-			// and skip the view transition since this is an automatic redirect,
-			// matching the convention in dashboardRedirect().
 			navigate( {
 				to: '/sites/$siteSlug',
 				params: { siteSlug },
