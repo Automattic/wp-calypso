@@ -1,5 +1,5 @@
+import { siteFeaturesQuery, sitePurchasesQuery } from '@automattic/api-queries';
 import { FEATURE_WOOP, WPCOM_FEATURES_ATOMIC } from '@automattic/calypso-products';
-import { Purchases, Site } from '@automattic/data-stores';
 import { getThemeIdFromDesign } from '@automattic/design-picker';
 import { useQuery } from '@tanstack/react-query';
 import { useSelect } from '@wordpress/data';
@@ -42,18 +42,22 @@ export const useMarketplaceThemeProducts = () => {
 		isLoading: isLoadingSiteFeatures,
 		isError: isErrorSiteFeatures,
 		data: siteFeatures,
-	} = Site.useSiteFeatures( {
-		siteIdOrSlug: site?.ID,
+	} = useQuery( {
+		...siteFeaturesQuery( site?.ID as number ),
+		enabled: !! site?.ID,
 	} );
 
 	const {
 		isLoading: isLoadingSitePurchases,
 		isError: isErrorSitePurchases,
 		data: sitePurchasesData,
-	} = Purchases.useSitePurchases( { siteId: site?.ID } );
+	} = useQuery( {
+		...sitePurchasesQuery( site?.ID as number ),
+		enabled: !! site?.ID,
+	} );
 
 	const allProductsList = productsData ? Object.values( productsData ) : [];
-	const sitePurchasesList = sitePurchasesData ? Object.values( sitePurchasesData ) : [];
+	const sitePurchasesList = sitePurchasesData ?? [];
 
 	const isExternallyManagedThemeAvailable = !! (
 		siteFeatures?.active?.includes( FEATURE_WOOP ) &&
@@ -76,7 +80,7 @@ export const useMarketplaceThemeProducts = () => {
 	const isMarketplaceThemeSubscribed = !! (
 		marketplaceThemeProducts.length > 0 &&
 		sitePurchasesList.some( ( purchase ) =>
-			marketplaceThemeProducts.some( ( p ) => purchase.productSlug === p.product_slug )
+			marketplaceThemeProducts.some( ( p ) => purchase.product_slug === p.product_slug )
 		)
 	);
 
