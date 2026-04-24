@@ -129,8 +129,15 @@ $actions-height: 64px;
 
 	&__tim-image {
 		position: absolute;
-		top: 15px;
-		transform: scale( 1.7 );
+		top: 19px;
+		transform: scale( 1.8 );
+	}
+
+	&__om-image {
+		position: absolute;
+		top: 4px;
+		right: 3px;
+		transform: scale( 1.2 );
 	}
 
 	&__hugh-image {

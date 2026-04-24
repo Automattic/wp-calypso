@@ -77,6 +77,8 @@ const bloggers: WelcomeTileItem[] = [
 	{
 		name: 'Om Malik',
 		imageUrl: 'https://om.co/wp-content/uploads/2024/05/Om-headshot.png',
+		porthole: true,
+		imageClass: 'reader-welcome-modal__om-image',
 	},
 	{
 		name: 'Hugh Howey',
