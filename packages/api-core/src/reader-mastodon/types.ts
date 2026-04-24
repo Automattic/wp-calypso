@@ -1,5 +1,8 @@
 export interface MastodonConnection {
 	id: number;
+	// Webfinger-style display handle from the list endpoint, shaped as
+	// `@user@instance`. Render as-is — do not re-prefix with `@` or
+	// append `@instance`.
 	handle: string;
 	instance: string;
 	display_name: string | null;

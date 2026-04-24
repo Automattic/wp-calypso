@@ -47,14 +47,13 @@ function MastodonSidebarRow( {
 	const { data } = useMastodonConnectionQuery( connection.id );
 	const displayName = data?.display_name || connection.display_name || connection.handle;
 	const avatarUrl = data?.avatar ?? connection.avatar ?? null;
-	const fullHandle = `${ connection.handle }@${ connection.instance }`;
 	const href = `${ BASE_PATH }/${ connection.id }/${ DEFAULT_MASTODON_TAB }`;
 
 	return (
 		<SocialAccountMenuItem
 			avatarUrl={ avatarUrl }
 			displayName={ displayName }
-			handle={ fullHandle }
+			handle={ connection.handle }
 			href={ href }
 			isSelected={ isSelected }
 			onClick={ onClick }

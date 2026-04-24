@@ -17,7 +17,7 @@ describe( 'mastodon fetchers', () => {
 				connections: [
 					{
 						id: 101,
-						handle: 'alice',
+						handle: '@alice@mastodon.social',
 						instance: 'mastodon.social',
 						display_name: 'Alice',
 						avatar: null,
@@ -26,6 +26,7 @@ describe( 'mastodon fetchers', () => {
 			} );
 		const res = await getMastodonConnections();
 		expect( res.connections ).toHaveLength( 1 );
+		expect( res.connections[ 0 ].handle ).toBe( '@alice@mastodon.social' );
 		expect( res.connections[ 0 ].instance ).toBe( 'mastodon.social' );
 	} );
 

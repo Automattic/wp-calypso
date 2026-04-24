@@ -53,7 +53,7 @@ export function MastodonAccountView( { connectionId, tab }: Props ) {
 	}
 
 	const title = connection.display_name || connection.handle;
-	const subtitle = `@${ connection.handle }@${ connection.instance }`;
+	const subtitle = connection.handle;
 
 	return (
 		<ReaderMain className="mastodon-view">

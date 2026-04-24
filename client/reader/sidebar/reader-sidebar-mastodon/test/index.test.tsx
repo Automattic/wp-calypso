@@ -103,20 +103,30 @@ describe( 'ReaderSidebarMastodon', () => {
 
 	it( 'renders a row per connection plus Add account when on /reader/mastodon/:id/:tab', async () => {
 		mockConnections( [
-			{ id: 1, handle: 'alice1', instance: 'mastodon.social', display_name: 'Alice 1' },
-			{ id: 2, handle: 'alice2', instance: 'hachyderm.io', display_name: 'Alice 2' },
+			{
+				id: 1,
+				handle: '@alice1@mastodon.social',
+				instance: 'mastodon.social',
+				display_name: 'Alice 1',
+			},
+			{
+				id: 2,
+				handle: '@alice2@hachyderm.io',
+				instance: 'hachyderm.io',
+				display_name: 'Alice 2',
+			},
 		] );
 		mockConnection( {
 			id: 1,
 			displayName: 'Alice 1',
-			handle: 'alice1',
+			handle: '@alice1@mastodon.social',
 			instance: 'mastodon.social',
 			avatar: 'https://cdn/1.png',
 		} );
 		mockConnection( {
 			id: 2,
 			displayName: 'Alice 2',
-			handle: 'alice2',
+			handle: '@alice2@hachyderm.io',
 			instance: 'hachyderm.io',
 			avatar: 'https://cdn/2.png',
 		} );
@@ -132,9 +142,9 @@ describe( 'ReaderSidebarMastodon', () => {
 		expect( row1 ).toHaveAttribute( 'href', '/reader/mastodon/1/timeline' );
 		expect( row2 ).toHaveAttribute( 'href', '/reader/mastodon/2/timeline' );
 
-		// Full handles (user@instance) appear as the byline.
-		expect( screen.getByText( 'alice1@mastodon.social' ) ).toBeVisible();
-		expect( screen.getByText( 'alice2@hachyderm.io' ) ).toBeVisible();
+		// Webfinger handles (@user@instance) from the list endpoint appear as the byline.
+		expect( screen.getByText( '@alice1@mastodon.social' ) ).toBeVisible();
+		expect( screen.getByText( '@alice2@hachyderm.io' ) ).toBeVisible();
 
 		// Avatars are presentational (alt=""), so query the <img> directly by src.
 		await waitFor( () => {
@@ -148,19 +158,29 @@ describe( 'ReaderSidebarMastodon', () => {
 
 	it( 'marks the active row (matching :id in the path) as selected', async () => {
 		mockConnections( [
-			{ id: 1, handle: 'alice1', instance: 'mastodon.social', display_name: 'Alice 1' },
-			{ id: 2, handle: 'alice2', instance: 'hachyderm.io', display_name: 'Alice 2' },
+			{
+				id: 1,
+				handle: '@alice1@mastodon.social',
+				instance: 'mastodon.social',
+				display_name: 'Alice 1',
+			},
+			{
+				id: 2,
+				handle: '@alice2@hachyderm.io',
+				instance: 'hachyderm.io',
+				display_name: 'Alice 2',
+			},
 		] );
 		mockConnection( {
 			id: 1,
 			displayName: 'Alice 1',
-			handle: 'alice1',
+			handle: '@alice1@mastodon.social',
 			instance: 'mastodon.social',
 		} );
 		mockConnection( {
 			id: 2,
 			displayName: 'Alice 2',
-			handle: 'alice2',
+			handle: '@alice2@hachyderm.io',
 			instance: 'hachyderm.io',
 		} );
 

@@ -40,7 +40,7 @@ function mockConnections() {
 			connections: [
 				{
 					id: 7,
-					handle: 'alice',
+					handle: '@alice@mastodon.social',
 					instance: 'mastodon.social',
 					display_name: 'Alice',
 					avatar: null,
