@@ -10,7 +10,7 @@ steps:
       SKIP_TSC: 'true'
       IMAGE_ID: xcode-26.4.1
     command: |
-      set -eu
+      set -euo pipefail
 
       cd desktop
       npm install -g yarn
