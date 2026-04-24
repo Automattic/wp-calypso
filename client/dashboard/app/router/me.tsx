@@ -11,6 +11,7 @@ import {
 	monetizeSubscriptionsQuery,
 	plansQuery,
 	productsQuery,
+	purchaseCancelFeaturesQuery,
 	purchaseQuery,
 	queryClient,
 	rawUserPreferencesQuery,
@@ -263,9 +264,13 @@ export const purchaseSettingsRoute = createRoute( {
 		};
 	},
 	path: '$purchaseId',
-	validateSearch: ( search ): { refunded?: true } => {
+	validateSearch: ( search ): { refunded?: true; cancelled?: true } => {
 		const isRefunded = search.refunded === true || search.refunded === 'true';
-		return isRefunded ? { refunded: true } : {};
+		const isCancelled = search.cancelled === true || search.cancelled === 'true';
+		return {
+			...( isRefunded ? { refunded: true as const } : {} ),
+			...( isCancelled ? { cancelled: true as const } : {} ),
+		};
 	},
 } );
 
@@ -376,12 +381,29 @@ export const addPaymentMethodRoute = createRoute( {
 );
 
 export const cancelPurchaseRoute = createRoute( {
-	head: ( { loaderData }: { loaderData?: { purchase?: Purchase } } ) => {
-		const purchase = loaderData?.purchase;
-		const title =
-			purchase && getPurchaseCancellationFlowType( purchase ) === CANCEL_FLOW_TYPE.REMOVE
-				? __( 'Remove' )
-				: __( 'Cancel' );
+	head: ( {
+		loaderData,
+	}: {
+		loaderData?: { purchase?: Purchase; intent?: 'cancel' | 'remove' };
+	} ) => {
+		// URL intent is authoritative — if the user clicked Remove on Purchase
+		// Settings the tab title should say "Remove" regardless of the
+		// underlying flow type. Fall back to today's heuristic when intent is
+		// absent (flag-off or old deep link).
+		const { purchase, intent } = loaderData ?? {};
+		let title: string;
+		if ( intent === 'remove' ) {
+			title = __( 'Remove' );
+		} else if ( intent === 'cancel' ) {
+			title = __( 'Cancel' );
+		} else if (
+			purchase &&
+			getPurchaseCancellationFlowType( purchase ) === CANCEL_FLOW_TYPE.REMOVE
+		) {
+			title = __( 'Remove' );
+		} else {
+			title = __( 'Cancel' );
+		}
 		return {
 			meta: [
 				{
@@ -392,19 +414,26 @@ export const cancelPurchaseRoute = createRoute( {
 	},
 	getParentRoute: () => purchaseSettingsRoute,
 	path: 'cancel',
-	loader: async ( { parentMatchPromise } ) => {
+	validateSearch: ( search ): { intent?: 'cancel' | 'remove' } => {
+		return search.intent === 'cancel' || search.intent === 'remove'
+			? { intent: search.intent }
+			: {};
+	},
+	loaderDeps: ( { search } ) => ( { intent: search.intent } ),
+	loader: async ( { parentMatchPromise, deps: { intent } } ) => {
 		const parentMatch = await parentMatchPromise;
 		const purchase = parentMatch.loaderData?.purchase;
 		if ( ! purchase ) {
-			return { purchase: undefined };
+			return { purchase: undefined, intent };
 		}
 		await Promise.all( [
 			queryClient.ensureQueryData( sitePurchasesQuery( purchase.blog_id ) ),
 			queryClient.ensureQueryData( productsQuery() ),
 			queryClient.ensureQueryData( siteFeaturesQuery( purchase.blog_id ) ),
 			queryClient.ensureQueryData( plansQuery() ),
+			queryClient.ensureQueryData( purchaseCancelFeaturesQuery( purchase.ID ) ),
 		] );
-		return { purchase };
+		return { purchase, intent };
 	},
 } ).lazy( () =>
 	import( '../../me/billing-purchases/cancel-purchase' ).then( ( d ) =>

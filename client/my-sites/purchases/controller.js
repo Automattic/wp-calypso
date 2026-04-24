@@ -40,10 +40,14 @@ export const purchaseDetails = ( context, next ) => {
 };
 
 export const purchaseCancel = ( context, next ) => {
+	const rawIntent = context.query?.intent;
+	const intent = rawIntent === 'cancel' || rawIntent === 'remove' ? rawIntent : null;
+
 	context.primary = (
 		<PurchaseCancel
 			siteSlug={ context.params.site }
 			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
+			intent={ intent }
 		/>
 	);
 	next();

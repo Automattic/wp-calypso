@@ -28,6 +28,22 @@ export const clearPurchases = () => ( dispatch, getState ) => {
 	}
 };
 
+/**
+ * Strips a single purchase from the Redux store without resetting the
+ * hasLoaded flags. Unlike clearPurchases (which dispatches PURCHASES_REMOVE
+ * and wipes the store, forcing QueryUserPurchases to refetch), this dispatches
+ * PURCHASE_REMOVE_COMPLETED with the current list minus the target purchase —
+ * keeping hasLoadedUserPurchasesFromServer / hasLoadedSitePurchasesFromServer
+ * at true so no refetch cascade is triggered.
+ */
+export const removePurchaseFromCache = ( purchaseId ) => ( dispatch, getState ) => {
+	const currentData = getState().purchases.data;
+	dispatch( {
+		type: PURCHASE_REMOVE_COMPLETED,
+		purchases: currentData.filter( ( p ) => String( p.ID ) !== String( purchaseId ) ),
+	} );
+};
+
 export const fetchSitePurchases = ( siteId ) => ( dispatch ) => {
 	dispatch( {
 		type: PURCHASES_SITE_FETCH,
