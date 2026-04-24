@@ -53,7 +53,7 @@ function AtmosphereSidebarRow( {
 		<SocialAccountMenuItem
 			avatarUrl={ avatarUrl }
 			displayName={ displayName }
-			handle={ connection.handle }
+			handle={ `@${ connection.handle }` }
 			href={ href }
 			isSelected={ isSelected }
 			onClick={ onClick }

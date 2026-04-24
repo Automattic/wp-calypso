@@ -126,9 +126,9 @@ describe( 'ReaderSidebarAtmosphere', () => {
 		expect( row1 ).toHaveAttribute( 'href', '/reader/atmosphere/1/timeline' );
 		expect( row2 ).toHaveAttribute( 'href', '/reader/atmosphere/2/timeline' );
 
-		// Handles appear as the byline.
-		expect( screen.getByText( 'alice1.bsky.social' ) ).toBeVisible();
-		expect( screen.getByText( 'alice2.bsky.social' ) ).toBeVisible();
+		// Handles appear as the byline, prefixed with @ (Bluesky display convention).
+		expect( screen.getByText( '@alice1.bsky.social' ) ).toBeVisible();
+		expect( screen.getByText( '@alice2.bsky.social' ) ).toBeVisible();
 
 		// Avatars are presentational (alt=""), so query the <img> directly by src.
 		await waitFor( () => {
