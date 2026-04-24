@@ -333,24 +333,21 @@
 			color: var( --dashboard__text-color );
 		}
 
-		tr.is-selected {
+		// Selected rows (upstream mixes the admin color with hardcoded `#fff`,
+		// which produces a light tint against the dark surface).
+		tr.is-selected,
+		tr.is-selected .dataviews-view-table__actions-column--sticky,
+		&.has-bulk-actions tr.is-selected .dataviews-view-table__actions-column--sticky,
+		&.has-bulk-actions tr.is-selected:hover .dataviews-view-table__actions-column--sticky {
 			background-color: var( --dashboard-item-selected__background-color );
+		}
+
+		tr.is-selected {
 			color: var( --dashboard__text-color );
 
 			&,
 			& + tr {
 				border-top-color: var( --dashboard-item-selected__border-color );
-			}
-
-			.dataviews-view-table__actions-column--sticky {
-				background-color: var( --dashboard-item-selected__background-color );
-			}
-		}
-
-		&.has-bulk-actions tr.is-selected,
-		&.has-bulk-actions tr.is-selected:hover {
-			.dataviews-view-table__actions-column--sticky {
-				background-color: var( --dashboard-item-selected__background-color );
 			}
 		}
 	}
@@ -430,8 +427,9 @@
 		border-top-color: var( --dashboard-surface__border-color );
 	}
 
+	// "N items" count in the footer (hardcoded to #1e1e1e upstream).
 	.dataviews-bulk-actions-footer__item-count {
-		color: var( --dashboard__text-muted-color );
+		color: var( --dashboard__text-color );
 	}
 
 	// URL field override from our local styles.scss
@@ -496,6 +494,16 @@
 			var( --dashboard__text-muted-color )
 		);
 		box-shadow: inset 0 0 0 1px var( --dashboard-surface__border-color );
+	}
+}
+
+/* Site Icon */
+@mixin dashboard-dark-theme-site-icon {
+	// `.site-icon` hardcodes `background: $white` so user-uploaded favicons
+	// (often dark glyphs on transparent) stay legible. A pure-white chip pops
+	// harshly against the dark surface; use a light neutral instead.
+	.site-icon {
+		background: var( --wp-components-color-gray-600 );
 	}
 }
 
@@ -606,5 +614,6 @@
 	@include dashboard-dark-theme-plugins;
 	@include dashboard-dark-theme-muted-text;
 	@include dashboard-dark-theme-section-header;
+	@include dashboard-dark-theme-site-icon;
 	@include dashboard-dark-theme-summary-button;
 }
