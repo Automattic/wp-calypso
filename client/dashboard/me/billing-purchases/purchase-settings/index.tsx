@@ -137,6 +137,9 @@ function getWpcomPlanGridUrl( siteSlug: string | undefined ): string {
 		...( siteSlug && { siteSlug } ),
 		cancel_to: backUrl,
 		dashboard: getCurrentDashboard(),
+		...( siteSlug && {
+			redirect_to: `/checkout/upgrade-redirect/${ siteSlug }/:receiptId`,
+		} ),
 	} );
 }
 

@@ -1,0 +1,19 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+// Match the checkout pending page layout exactly so there is
+// no visual shift when transitioning from it to this resolver.
+.checkout__pending-content {
+	&.wpcom__loading {
+		margin: calc(32vh + 60px) auto 0;
+	}
+
+	.wpcom__loading-title {
+		@extend .wp-brand-font;
+		line-height: 40px;
+		text-align: center;
+		vertical-align: middle;
+		margin: 0;
+		font-size: $font-title-medium;
+	}
+}

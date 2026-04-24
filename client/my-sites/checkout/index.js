@@ -35,6 +35,7 @@ import {
 	transferDomainToAnyUser,
 	checkoutFailedPurchases,
 	refreshUserSession,
+	upgradeRedirect,
 } from './controller';
 
 export default function () {
@@ -249,6 +250,24 @@ export default function () {
 		redirectLoggedOut,
 		noSite,
 		checkoutThankYou,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/checkout/upgrade-redirect/:siteSlug/:receiptId',
+		redirectLoggedOut,
+		noSite,
+		upgradeRedirect,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/checkout/upgrade-redirect/:siteSlug',
+		redirectLoggedOut,
+		noSite,
+		upgradeRedirect,
 		makeLayout,
 		clientRender
 	);

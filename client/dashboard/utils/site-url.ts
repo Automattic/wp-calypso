@@ -152,5 +152,6 @@ function buildSitePlanUpgradeUrl( {
 		siteSlug: siteSlug,
 		cancel_to: backUrl,
 		dashboard: getCurrentDashboard(),
+		redirect_to: `/checkout/upgrade-redirect/${ siteSlug }/:receiptId`,
 	} );
 }

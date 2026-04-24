@@ -7,11 +7,12 @@ import {
 	userPreferenceQuery,
 } from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
+import { Link, useNavigate } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { differenceInCalendarDays } from 'date-fns';
+import { useEffect, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
 import { changePaymentMethodRoute, purchaseSettingsRoute } from '../../../app/router/me';
@@ -44,7 +45,7 @@ import type { Purchase } from '@automattic/api-core';
 
 export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 	const { user } = useAuth();
-	const { refunded } = purchaseSettingsRoute.useSearch();
+	const { refunded, upgraded } = purchaseSettingsRoute.useSearch();
 	const { data: purchaseAttachedTo } = useQuery( {
 		...purchaseQuery( purchase.attached_to_purchase_id ?? 0 ),
 		enabled: Boolean( purchase.attached_to_purchase_id ),
@@ -75,6 +76,30 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 			} }
 		/>
 	) : null;
+
+	const navigate = useNavigate();
+	const [ showUpgradedNotice, setShowUpgradedNotice ] = useState( () => Boolean( upgraded ) );
+
+	useEffect( () => {
+		if ( upgraded ) {
+			// Strip ?upgraded from the URL so the notice doesn't survive refresh.
+			navigate( {
+				search: ( prev: Record< string, unknown > ) => {
+					const { upgraded: _, ...rest } = prev;
+					return rest;
+				},
+				replace: true,
+			} );
+		}
+	}, [ upgraded, navigate ] );
+
+	if ( showUpgradedNotice ) {
+		return (
+			<Notice variant="success" onClose={ () => setShowUpgradedNotice( false ) }>
+				{ __( 'Thank you for your purchase. Your site has been upgraded.' ) }
+			</Notice>
+		);
+	}
 
 	if ( purchase.async_pending_payment_block_is_set ) {
 		return <AsyncPendingNotice />;

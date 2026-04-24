@@ -41,6 +41,7 @@ import GiftThankYou from './checkout-thank-you/gift/gift-thank-you';
 import HundredYearThankYou from './checkout-thank-you/hundred-year-thank-you';
 import JetpackCheckoutThankYou from './checkout-thank-you/jetpack-checkout-thank-you';
 import CheckoutPending from './checkout-thank-you/pending';
+import UpgradeRedirect from './upgrade-redirect';
 import UpsellNudge, {
 	CONCIERGE_SUPPORT_SESSION,
 	CONCIERGE_QUICKSTART_SESSION,
@@ -409,6 +410,19 @@ export function checkoutPending( context, next ) {
 			fromSiteSlug={ fromSiteSlug }
 		/>
 	);
+
+	next();
+}
+
+export function upgradeRedirect( context, next ) {
+	const siteSlug = context.params.siteSlug;
+	const receiptId = Number.isInteger( Number( context.params.receiptId ) )
+		? Number( context.params.receiptId )
+		: undefined;
+
+	setSectionMiddleware( { name: 'checkout-upgrade-redirect' } )( context );
+
+	context.primary = <UpgradeRedirect siteSlug={ siteSlug } receiptId={ receiptId } />;
 
 	next();
 }
