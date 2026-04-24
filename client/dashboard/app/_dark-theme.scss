@@ -507,6 +507,13 @@
 	}
 }
 
+@mixin dashboard-calypso-theme-properties {
+	// This is a list of Calypso theme properties overridden for dark mode.
+	--color-text: var( --dashboard__text-color );
+	--color-surface: var( --dashboard-surface__background-color );
+	--color-border-subtle: var( --dashboard-surface__border-color );
+}
+
 // :root variables overridden for dark theme
 @mixin dashboard-dark-theme {
 	// Overrides the default `--wp-components-*` to ensure all components that
@@ -580,9 +587,6 @@
 	// Overview
 	--dashboard-overview__divider-color: #2f2f2f;
 
-	// Shared border tokens
-	--color-border-subtle: var( --dashboard-surface__border-color );
-
 	// Jetpack grayscale, inverted so darker numbers render as lighter shades on dark.
 	// `--jp-black` / `--jp-white` stay literal — they're brand constants, and many usages
 	// (white text on colored bg, black outlines) depend on them being literal.
@@ -616,4 +620,5 @@
 	@include dashboard-dark-theme-section-header;
 	@include dashboard-dark-theme-site-icon;
 	@include dashboard-dark-theme-summary-button;
+	@include dashboard-calypso-theme-properties;
 }
