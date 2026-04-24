@@ -127,6 +127,101 @@
 		.components-validated-control__indicator-icon {
 		fill: var( --dashboard-danger__color-hover );
 	}
+
+	.components-form-token-field {
+		&__label {
+			color: var( --dashboard__text-color );
+		}
+
+		&__input-container {
+			background: transparent;
+			border-color: var( --dashboard-field__border-color );
+			color: var( --dashboard__text-color );
+
+			&:focus,
+			&.is-active {
+				border-color: var( --wp-admin-theme-color );
+				box-shadow: 0 0 0 0.5px var( --wp-admin-theme-color );
+			}
+
+			&.is-disabled {
+				background: var( --dashboard-surface__background-color );
+				border-color: var( --dashboard-surface__border-color );
+				opacity: 0.72;
+			}
+
+			input[type='text'].components-form-token-field__input {
+				color: var( --dashboard__text-color );
+				caret-color: var( --dashboard__text-color );
+
+				&::placeholder {
+					color: var( --dashboard__text-muted-color );
+				}
+			}
+		}
+
+		&__help {
+			color: var( --dashboard__text-muted-color );
+		}
+
+		&__token {
+			color: var( --dashboard__text-color );
+
+			&.is-validating .components-form-token-field__token-text,
+			&.is-validating .components-form-token-field__remove-token {
+				color: var( --dashboard__text-muted-color );
+			}
+
+			&.is-success .components-form-token-field__token-text,
+			&.is-success .components-form-token-field__remove-token {
+				background: var( --dashboard__foreground-color-success );
+				color: var( --wp-components-color-foreground-inverted );
+			}
+
+			&.is-error .components-form-token-field__token-text,
+			&.is-error .components-form-token-field__remove-token {
+				background: var( --dashboard__foreground-color-error );
+				color: var( --wp-components-color-foreground-inverted );
+			}
+		}
+
+		&__token-text,
+		&__remove-token.components-button {
+			background: var( --wp-components-color-gray-200 );
+			color: var( --dashboard__text-color );
+		}
+
+		&__remove-token.components-button:hover:not( :disabled ) {
+			background: var( --wp-components-color-gray-300 );
+			color: var( --dashboard__text-color );
+		}
+
+		&__suggestions-list {
+			background: var( --dashboard-surface__background-color );
+			box-shadow: inset 0 1px 0 0 var( --dashboard-field__border-color );
+		}
+
+		&__suggestion {
+			color: var( --dashboard__text-color );
+
+			&.is-selected {
+				background: var( --dashboard-item-selected__background-color );
+				color: var( --dashboard__text-color );
+			}
+
+			&[aria-disabled='true'] {
+				color: var( --dashboard__text-muted-color );
+			}
+
+			&[aria-disabled='true'].is-selected {
+				background: color-mix(
+					in srgb,
+					var( --dashboard-surface__background-color ) 92%,
+					var( --wp-admin-theme-color )
+				);
+			}
+		}
+	}
 }
 
 /* Muted Text */
@@ -364,6 +459,10 @@
 		}
 	}
 
+	.dashboard-dataviews-empty-state__heading {
+		color: var( --dashboard__text-color );
+	}
+
 	// Grid
 	.dataviews-view-grid__media {
 		background-color: var( --dashboard-surface__background-color );
@@ -438,6 +537,65 @@
 
 		&:hover {
 			color: var( --wp-admin-theme-color );
+		}
+	}
+}
+
+/* Emails */
+@mixin dashboard-dark-theme-emails {
+	.email-provider-powered-by {
+		filter: brightness( 0 ) invert( 1 );
+	}
+
+	.dashboard-page-layout:has( .components-form-token-field ),
+	.dashboard-page-layout:has( .email-providers ),
+	.dashboard-page-layout:has( .mailbox-input ),
+	.dashboard-page-layout:has( .mailboxes-ready__item-group ) {
+		.components-notice {
+			background-color: var( --dashboard-surface__background-color );
+			color: var( --dashboard__text-color );
+		}
+
+		.components-notice.is-success {
+			background-color: color-mix(
+				in srgb,
+				var( --dashboard-surface__background-color ) 86%,
+				var( --dashboard__foreground-color-success )
+			);
+			border-inline-start-color: var( --dashboard__foreground-color-success );
+		}
+
+		.components-notice.is-warning {
+			background-color: color-mix(
+				in srgb,
+				var( --dashboard-surface__background-color ) 84%,
+				var( --dashboard__foreground-color-warning )
+			);
+			border-inline-start-color: var( --dashboard__foreground-color-warning );
+		}
+
+		.components-notice.is-error {
+			background-color: color-mix(
+				in srgb,
+				var( --dashboard-surface__background-color ) 84%,
+				var( --dashboard__foreground-color-error )
+			);
+			border-inline-start-color: var( --dashboard__foreground-color-error );
+		}
+
+		.components-notice__dismiss {
+			color: var( --dashboard__text-muted-color );
+		}
+
+		.components-notice__dismiss:not( :disabled ):not( [aria-disabled='true'] ):not(
+				.is-secondary
+			) {
+			&:hover,
+			&:active,
+			&:focus {
+				background-color: transparent;
+				color: var( --dashboard__text-color );
+			}
 		}
 	}
 }
@@ -565,6 +723,9 @@
 	--dashboard-warning__action-color: var( --dashboard__text-color );
 	--dashboard-warning__action-color-hover: #f0f0f0;
 	--dashboard-warning__action-color-active: #fff;
+	--dashboard__foreground-color-success: #75d488;
+	--dashboard__foreground-color-warning: #f5c15c;
+	--dashboard__foreground-color-error: #ff8080;
 	--dashboard-danger__color: #ff8080;
 
 	--dashboard-danger__color-hover: #ff9b9b;
@@ -581,6 +742,7 @@
 	--dashboard-overview__divider-color: #2f2f2f;
 
 	// Shared border tokens
+	--color-border: var( --dashboard-surface__border-color );
 	--color-border-subtle: var( --dashboard-surface__border-color );
 
 	// Jetpack grayscale, inverted so darker numbers render as lighter shades on dark.
@@ -608,6 +770,7 @@
 	@include dashboard-dark-theme-card;
 	@include dashboard-dark-theme-dataviews;
 	@include dashboard-dark-theme-destructive-secondary-button;
+	@include dashboard-dark-theme-emails;
 	@include dashboard-dark-theme-form-controls;
 	@include dashboard-dark-theme-item-group;
 	@include dashboard-dark-theme-popover;
