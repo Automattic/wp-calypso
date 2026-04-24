@@ -2,7 +2,7 @@ interface Props {
 	viewBox?: string;
 }
 
-export function ReaderMastodonIcon( { viewBox = '0 0 74 79' }: Props ) {
+export function ReaderMastodonIcon( { viewBox = '-11 -12 96 103' }: Props ) {
 	return (
 		<svg
 			className="sidebar__menu-icon sidebar_svg-mastodon"
