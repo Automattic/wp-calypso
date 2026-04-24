@@ -2,7 +2,17 @@
 
 $actions-height: 64px;
 
-.welcome-modal {
+@mixin tile-circle-frame {
+	width: 64px;
+	height: 64px;
+	border-radius: 50%;
+	background-color: var( --studio-white );
+	box-shadow:
+		0 0 0 1px color-mix( in srgb, var( --color-neutral-20 ) 30%, transparent ),
+		0 1px 3px color-mix( in srgb, var( --color-neutral-60 ) 10%, transparent );
+}
+
+.reader-welcome-modal {
 	&.components-modal__frame,
 	.components-modal__frame {
 		width: min( 920px, calc( 100vw - 64px ) );
@@ -42,6 +52,7 @@ $actions-height: 64px;
 	&__subtitle {
 		margin: 0;
 		line-height: 1.5;
+		color: var( --color-text-subtle );
 	}
 
 	&__people-grid {
@@ -72,14 +83,8 @@ $actions-height: 64px;
 	}
 
 	&__tile-image {
-		width: 64px;
-		height: 64px;
-		border-radius: 50%;
+		@include tile-circle-frame;
 		object-fit: cover;
-		background-color: var( --studio-white );
-		box-shadow:
-			0 0 0 1px color-mix( in srgb, var( --color-neutral-20 ) 30%, transparent ),
-			0 1px 3px color-mix( in srgb, var( --color-neutral-60 ) 10%, transparent );
 	}
 
 	&__tile-image.is-contained-logo {
@@ -90,51 +95,67 @@ $actions-height: 64px;
 		padding: 3px;
 	}
 
-	&__variety-frame {
-		width: 64px;
-		height: 64px;
-		border-radius: 50%;
+	&__image-porthole {
+		@include tile-circle-frame;
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
 		overflow: hidden;
-		background-color: var( --studio-white );
-		box-shadow:
-			0 0 0 1px color-mix( in srgb, var( --color-neutral-20 ) 30%, transparent ),
-			0 1px 3px color-mix( in srgb, var( --color-neutral-60 ) 10%, transparent );
+		position: relative;
+	}
+
+	&__porthole-image {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
 	}
 
 	&__variety-image {
+		// Variety logo is square — fit it inside the circle without cropping
+		position: static;
 		width: 71%; // Scale factor to fit square inside circle of same size -> 1/root(2) ~= 71%
 		height: 71%;
 		object-fit: contain;
 		object-position: center;
 	}
 
-	&__seth-frame {
-		width: 64px;
-		height: 64px;
-		border-radius: 50%;
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		overflow: hidden;
-		background-color: var( --studio-white );
-		box-shadow:
-			0 0 0 1px color-mix( in srgb, var( --color-neutral-20 ) 30%, transparent ),
-			0 1px 3px color-mix( in srgb, var( --color-neutral-60 ) 10%, transparent );
-		position: relative;
+	&__matt-image {
+		top: 13px;
+		left: 7px;
+		transform: scale( 1.4 );
 	}
 
 	&__seth-image {
-		position: absolute;
 		top: -3px;
+		right: 3px;
 		transform: scale( 1.1 );
+	}
+
+	&__tim-image {
+		top: 19px;
+		transform: scale( 1.8 );
+	}
+
+	&__om-image {
+		top: 4px;
+		right: 3px;
+		transform: scale( 1.2 );
+	}
+
+	&__hugh-image {
+		top: 12px;
+		right: 2px;
+		transform: scale( 1.5 );
 	}
 
 	&__tile-label {
 		font-size: 0.75rem;
 		line-height: 1.3;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		color: var( --color-text-subtle );
 	}
 
 	&__footer-buttons {

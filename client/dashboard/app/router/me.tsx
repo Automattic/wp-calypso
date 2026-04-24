@@ -904,7 +904,7 @@ export const wordpressDefaultsRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'WordPress.com defaults' ),
+				title: __( 'Account defaults' ),
 			},
 		],
 	} ),

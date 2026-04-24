@@ -66,6 +66,7 @@ export * from './payment-methods';
 export * from './plans';
 export * from './plugin';
 export * from './products';
+export * from './read-achievements-settings';
 export * from './read-feed';
 export * from './read-list';
 export * from './read-site';

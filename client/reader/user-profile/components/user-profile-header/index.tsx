@@ -10,7 +10,7 @@ import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
-import { useAchievementsVisibility } from 'calypso/reader/user-profile/views/achievements/use-achievements-visibility';
+import useAchievementsVisibility from 'calypso/reader/user-profile/views/achievements/use-achievements-visibility';
 import UserTopSites from '../top-sites';
 import type { ReaderUser } from '@automattic/api-core';
 

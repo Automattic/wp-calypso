@@ -1,14 +1,23 @@
+import { readAchievementsSettingsQuery } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
+import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
-export function useAchievementsVisibility( profileUserLogin?: string ) {
+export default function useAchievementsVisibility( profileUserLogin?: string ) {
 	const currentUser = useSelector( getCurrentUser );
 	const isOwnProfile = currentUser?.username === profileUserLogin;
 
-	// The achievements page is only visible to the profile owner for now.
-	// Public visibility will require a server-side check once a public API exists.
+	const { data, isLoading } = useQuery( {
+		...readAchievementsSettingsQuery( profileUserLogin ),
+		enabled: isEnabled( 'reader/achievements' ) && ! isOwnProfile && profileUserLogin != null,
+	} );
+
+	const isPublic = data?.settings[ 'achievements-visibility' ] === 'public';
+
 	return {
 		isOwnProfile,
-		isVisible: isOwnProfile,
+		isVisible: isOwnProfile || isPublic,
+		isLoading: ! isOwnProfile && isLoading,
 	};
 }

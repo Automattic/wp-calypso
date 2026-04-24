@@ -1,12 +1,5 @@
-import {
-	__experimentalHStack as HStack,
-	DropdownMenu,
-	MenuGroup,
-	MenuItem,
-} from '@wordpress/components';
-import type { OmnibarNode, OmnibarProps } from '../../types';
-
-import './index.scss';
+import { Button, DropdownMenu, MenuGroup, MenuItem } from '@wordpress/components';
+import type { OmnibarNode } from '../types';
 
 function OmnibarDropdownContent( { children }: { children: OmnibarNode[] } ) {
 	const handleClick = ( href?: string ) => () => {
@@ -50,9 +43,13 @@ function OmnibarDropdownContent( { children }: { children: OmnibarNode[] } ) {
 	);
 }
 
-function OmnibarItem( { node, content }: { node: OmnibarNode; content: React.ReactNode } ) {
+export function OmnibarItem( { node, content }: { node: OmnibarNode; content: React.ReactNode } ) {
 	if ( ! node.children ) {
-		return null;
+		return (
+			<Button className="omnibar__item" href={ node.href } label={ node.title }>
+				{ content }
+			</Button>
+		);
 	}
 
 	return (
@@ -60,6 +57,7 @@ function OmnibarItem( { node, content }: { node: OmnibarNode; content: React.Rea
 			className="omnibar__dropdown"
 			icon={ null }
 			label={ node.title }
+			popoverProps={ { className: 'omnibar__popover' } }
 			toggleProps={ {
 				className: 'omnibar__item',
 				children: content,
@@ -67,42 +65,5 @@ function OmnibarItem( { node, content }: { node: OmnibarNode; content: React.Rea
 		>
 			{ () => <OmnibarDropdownContent children={ node.children || [] } /> }
 		</DropdownMenu>
-	);
-}
-
-export function Omnibar( { nodes }: OmnibarProps ) {
-	const renderHomeNode = () => {
-		const node = nodes.home;
-		return node && <OmnibarItem node={ node } content={ node.icon } />;
-	};
-
-	const renderSiteNode = () => {
-		const node = nodes.site;
-		return (
-			node && (
-				<OmnibarItem
-					node={ node }
-					content={
-						<HStack>
-							{ node.icon }
-							<span>{ node.title }</span>
-						</HStack>
-					}
-				/>
-			)
-		);
-	};
-
-	const renderUserNode = () => {
-		const node = nodes.user;
-		return node && <OmnibarItem node={ node } content={ node.title } />;
-	};
-
-	return (
-		<div className="omnibar" role="navigation" aria-label="Toolbar">
-			{ renderHomeNode() }
-			{ renderSiteNode() }
-			<div className="omnibar__secondary">{ renderUserNode() }</div>
-		</div>
 	);
 }

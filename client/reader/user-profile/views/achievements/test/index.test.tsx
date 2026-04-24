@@ -25,9 +25,7 @@ jest.mock( '../achievements-settings', () => ( {
 const mockIsEnabled = isEnabled as jest.MockedFunction< typeof isEnabled >;
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { useAchievementsVisibility } = require( '../use-achievements-visibility' ) as {
-	useAchievementsVisibility: jest.Mock;
-};
+const useAchievementsVisibility = require( '../use-achievements-visibility' ).default as jest.Mock;
 
 describe( 'UserAchievements', () => {
 	const defaultUser: ReaderUser = {
@@ -49,7 +47,11 @@ describe( 'UserAchievements', () => {
 
 	test( 'should render nothing when feature flag is disabled', () => {
 		mockIsEnabled.mockReturnValue( false );
-		useAchievementsVisibility.mockReturnValue( { isOwnProfile: true, isVisible: true } );
+		useAchievementsVisibility.mockReturnValue( {
+			isOwnProfile: true,
+			isVisible: true,
+			isLoading: false,
+		} );
 
 		const { container } = render( <UserAchievements user={ defaultUser } /> );
 
@@ -57,7 +59,11 @@ describe( 'UserAchievements', () => {
 	} );
 
 	test( 'should render nothing when achievements are not visible', () => {
-		useAchievementsVisibility.mockReturnValue( { isOwnProfile: false, isVisible: false } );
+		useAchievementsVisibility.mockReturnValue( {
+			isOwnProfile: false,
+			isVisible: false,
+			isLoading: false,
+		} );
 
 		const { container } = render( <UserAchievements user={ defaultUser } /> );
 
@@ -65,7 +71,11 @@ describe( 'UserAchievements', () => {
 	} );
 
 	test( 'should render achievements grid when visible', () => {
-		useAchievementsVisibility.mockReturnValue( { isOwnProfile: true, isVisible: true } );
+		useAchievementsVisibility.mockReturnValue( {
+			isOwnProfile: true,
+			isVisible: true,
+			isLoading: false,
+		} );
 
 		render( <UserAchievements user={ defaultUser } /> );
 
@@ -73,15 +83,36 @@ describe( 'UserAchievements', () => {
 	} );
 
 	test( 'should show settings button on own profile', () => {
-		useAchievementsVisibility.mockReturnValue( { isOwnProfile: true, isVisible: true } );
+		useAchievementsVisibility.mockReturnValue( {
+			isOwnProfile: true,
+			isVisible: true,
+			isLoading: false,
+		} );
 
 		render( <UserAchievements user={ defaultUser } /> );
 
 		expect( screen.getByTestId( 'achievements-settings' ) ).toBeVisible();
 	} );
 
+	test( 'should show spinner while loading visibility', () => {
+		useAchievementsVisibility.mockReturnValue( {
+			isOwnProfile: false,
+			isVisible: false,
+			isLoading: true,
+		} );
+
+		render( <UserAchievements user={ defaultUser } /> );
+
+		expect( screen.getByText( 'Loading…' ) ).toBeVisible();
+		expect( screen.queryByTestId( 'achievements-grid' ) ).not.toBeInTheDocument();
+	} );
+
 	test( 'should not show settings button on other user profile', () => {
-		useAchievementsVisibility.mockReturnValue( { isOwnProfile: false, isVisible: true } );
+		useAchievementsVisibility.mockReturnValue( {
+			isOwnProfile: false,
+			isVisible: true,
+			isLoading: false,
+		} );
 
 		render( <UserAchievements user={ defaultUser } /> );
 
