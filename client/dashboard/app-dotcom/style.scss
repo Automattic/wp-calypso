@@ -1,12 +1,9 @@
 @import '@wordpress/base-styles/colors';
-@import '../app/dark-theme';
 
 /**
  * DotCom theme variables for dashboard
  *
- * Default values under :root target the light theme. Dark values are applied
- * when the <html data-theme="dark"> attribute is set, or when data-theme="system"
- * and the OS prefers a dark color scheme.
+ * Default values under :root target the light theme.
  */
 
 :root {
@@ -52,14 +49,4 @@
 
 	// Overview
 	--dashboard-overview__divider-color: #{$gray-100};
-}
-
-:root[data-theme="dark"] {
-	@include dashboard-dark-theme;
-}
-
-@media (prefers-color-scheme: dark) {
-	:root[data-theme="system"] {
-		@include dashboard-dark-theme;
-	}
 }
