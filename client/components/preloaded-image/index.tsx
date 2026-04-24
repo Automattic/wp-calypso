@@ -9,7 +9,7 @@ interface PreloadedImageProps {
 	width: number;
 	height: number;
 	imgStyles?: React.CSSProperties;
-	fallbackIcon?: JSX.Element | string; // Can be a URL string or a JSX element to render when the image fails to load.
+	fallbackIcon?: React.ReactNode | string; // Can be a URL string or a JSX element to render when the image fails to load.
 }
 
 /**
@@ -29,7 +29,7 @@ export default function PreloadedImage( props: PreloadedImageProps ) {
 
 	return (
 		<div className="preloaded-image-wrapper" style={ { borderRadius: imgStyles?.borderRadius } }>
-			{ hasError === false || ! fallbackIcon ? (
+			{ ! hasError || ! fallbackIcon ? (
 				<img
 					className={ clsx( className, { 'is-loaded': isLoaded } ) }
 					src={ src }
