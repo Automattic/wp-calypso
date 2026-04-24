@@ -37,8 +37,16 @@ export function useBlackbox( { containerRef } ) {
 				window.Blackbox.configure( {
 					apiKey: config( 'blackbox_api_key' ),
 					challengeContainer: containerRef.current,
-					onChallengeStart: () => setIsChallengeActive( true ),
-					onChallengeComplete: () => setIsChallengeActive( false ),
+					onChallengeStart: () => {
+						if ( ! cancelled ) {
+							setIsChallengeActive( true );
+						}
+					},
+					onChallengeComplete: () => {
+						if ( ! cancelled ) {
+							setIsChallengeActive( false );
+						}
+					},
 				} );
 
 				if ( hasConfiguredOnce && typeof window.Blackbox.reset === 'function' ) {

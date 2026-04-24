@@ -71,6 +71,19 @@ describe( 'blackbox-sdk', () => {
 		await expect( loadBlackboxSdk() ).resolves.toBeUndefined();
 	} );
 
+	test( 'loadBlackboxSdk retries on the next call after the script fails to load', async () => {
+		const { loadScript } = require( '@automattic/load-script' );
+		loadScript
+			.mockImplementationOnce( ( _url, callback ) => callback( new Error( 'fail' ) ) )
+			.mockImplementationOnce( ( _url, callback ) => callback( null ) );
+		const { loadBlackboxSdk } = require( '../blackbox-sdk' );
+
+		await loadBlackboxSdk();
+		await loadBlackboxSdk();
+
+		expect( loadScript ).toHaveBeenCalledTimes( 2 );
+	} );
+
 	test( 'loadBlackboxSdk resolves immediately without calling loadScript when feature flag is off', async () => {
 		const config = require( '@automattic/calypso-config' );
 		config.isEnabled.mockReturnValueOnce( false );

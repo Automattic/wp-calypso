@@ -29,9 +29,22 @@ export function loadBlackboxSdk() {
 		return Promise.resolve();
 	}
 
-	loadPromise = new Promise( ( resolve ) => {
-		loadScript( blackboxUrl, () => resolve(), { 'data-apikey': config( 'blackbox_api_key' ) } );
+	let didFailSynchronously = false;
+	const scriptLoadPromise = new Promise( ( resolve ) => {
+		loadScript(
+			blackboxUrl,
+			( error ) => {
+				if ( error ) {
+					didFailSynchronously = true;
+					loadPromise = null;
+				}
+				resolve();
+			},
+			{ 'data-apikey': config( 'blackbox_api_key' ) }
+		);
 	} );
 
-	return loadPromise;
+	loadPromise = didFailSynchronously ? null : scriptLoadPromise;
+
+	return scriptLoadPromise;
 }
