@@ -14,12 +14,7 @@ import CancelJetpackForm from 'calypso/components/marketing-survey/cancel-jetpac
 import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purchase-form';
 import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-purchase-form/constants';
 import DomainCancellationSurvey from 'calypso/components/marketing-survey/cancel-purchase-form/domain-cancellation-survey';
-import {
-	getName,
-	hasAmountAvailableToRefund,
-	isOneTimePurchase,
-	isSubscription,
-} from 'calypso/lib/purchases';
+import { getName } from 'calypso/lib/purchases';
 import { getPurchaseCancellationFlowType } from 'calypso/lib/purchases/utils';
 import { purchasesRoot } from 'calypso/me/purchases/paths';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -27,6 +22,7 @@ import { clearPurchases } from 'calypso/state/purchases/actions';
 import { refreshSitePlans } from 'calypso/state/sites/plans/actions';
 import { MarketPlaceSubscriptionsDialog } from '../marketplace-subscriptions-dialog';
 import { willShowDomainOptionsRadioButtons } from './domain-options';
+import { getButtonLabels } from './get-confirmation-copy';
 import type { Purchases } from '@automattic/data-stores';
 import type { LocalizeProps } from 'i18n-calypso';
 
@@ -47,6 +43,7 @@ export interface CancelPurchaseButtonProps {
 	includedDomainPurchase: Purchases.Purchase;
 	disabled?: boolean;
 	textVariant?: string;
+	displayVariant?: 'cancel' | 'remove';
 	isLinkStyle?: boolean;
 	isInline?: boolean;
 	cancelIntentOverride?: 'refund' | 'autorenew';
@@ -64,6 +61,10 @@ export interface CancelPurchaseButtonProps {
 	freeMonthOfferClick: () => void;
 	// Control marketplace dialog visibility
 	showMarketplaceDialog?: boolean;
+	// True when the user has already completed the cancellation survey for this
+	// purchase, so the confirmation button is the direct action (e.g. "Remove
+	// plan") rather than "Continue removal".
+	skipSurvey?: boolean;
 }
 
 export type CancelPurchaseButtonAllProps = CancelPurchaseButtonProps &
@@ -163,25 +164,11 @@ class CancelPurchaseButton extends Component<
 				return translate( 'Continue with cancellation' );
 			}
 
-			if ( hasAmountAvailableToRefund( purchase ) ) {
-				if ( isDomainRegistration( purchase ) ) {
-					return translate( 'Cancel domain and refund' );
-				}
-				if ( isSubscription( purchase ) ) {
-					return translate( 'Cancel subscription' );
-				}
-				if ( isOneTimePurchase( purchase ) ) {
-					return translate( 'Cancel and refund' );
-				}
-			}
-
-			if ( isDomainRegistration( purchase ) ) {
-				return translate( 'Cancel domain' );
-			}
-
-			if ( isSubscription( purchase ) ) {
-				return translate( 'Cancel subscription' );
-			}
+			return getButtonLabels( {
+				purchase,
+				intent: this.props.displayVariant === 'remove' ? 'remove' : 'cancel',
+				skipSurvey: this.props.skipSurvey,
+			} ).primary;
 		} )();
 
 		const disableButtons = this.state.disabled || this.props.disabled;
@@ -255,6 +242,7 @@ class CancelPurchaseButton extends Component<
 						purchase={ purchase }
 						purchaseListUrl={ purchaseListUrl ?? purchasesRoot }
 						isVisible={ showDialog }
+						intent={ this.props.displayVariant === 'remove' ? 'remove' : 'cancel' }
 						onClose={ this.closeDialog }
 						onSurveyComplete={ this.props.onSurveyComplete }
 						cancellationInProgress={ isLoading }

@@ -1,29 +1,37 @@
 import { useNavigate } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
 import { purchaseSettingsRoute } from '../../../app/router/me';
+import { CancelIntent } from '../../../utils/purchase';
+import { getButtonLabels } from './get-confirmation-copy';
 import type { Purchase } from '@automattic/api-core';
 
 interface KeepSubscriptionButtonProps {
 	purchase: Purchase;
+	intent: CancelIntent;
+	disabled?: boolean;
 	onKeepSubscriptionClick: () => void;
 }
 
 export default function KeepSubscriptionButton( {
 	purchase,
+	intent,
+	disabled,
 	onKeepSubscriptionClick,
 }: KeepSubscriptionButtonProps ) {
 	const navigate = useNavigate();
 
+	const label = getButtonLabels( { purchase, intent } ).secondary;
+
 	return (
 		<Button
-			variant="secondary"
+			variant="tertiary"
+			disabled={ disabled }
 			onClick={ () => {
 				navigate( { to: purchaseSettingsRoute.fullPath, params: { purchaseId: purchase.ID } } );
 				onKeepSubscriptionClick();
 			} }
 		>
-			{ purchase.is_plan ? __( 'Keep plan' ) : __( 'Keep product' ) }
+			{ label }
 		</Button>
 	);
 }

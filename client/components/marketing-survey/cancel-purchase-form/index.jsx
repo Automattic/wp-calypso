@@ -82,6 +82,8 @@ class CancelPurchaseForm extends Component {
 		linkedPurchases: PropTypes.array,
 		skipRemovePlanSurvey: PropTypes.bool,
 		cancellationInProgress: PropTypes.bool,
+		intent: PropTypes.string,
+		onSkipSurvey: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -377,6 +379,7 @@ class CancelPurchaseForm extends Component {
 			site,
 			hasBackupsFeature,
 			flowType,
+			intent,
 		} = this.props;
 		const { atomicRevertCheckOne, atomicRevertCheckTwo, surveyStep, upsell } = this.state;
 		const { productName } = purchase;
@@ -390,6 +393,7 @@ class CancelPurchaseForm extends Component {
 					onChangeCancellationReason={ this.onRadioOneChange }
 					onChangeCancellationReasonDetails={ this.onTextOneChange }
 					onChangeImportFeedback={ this.onImportRadioChange }
+					intent={ intent }
 				/>
 			);
 		}
@@ -434,6 +438,13 @@ class CancelPurchaseForm extends Component {
 				);
 			}
 
+			const isSplitEnabled = config.isEnabled( 'purchases/split-cancel-remove' );
+			const getUpsellDeclineText = () => {
+				if ( ! isSplitEnabled ) {
+					return intent === 'remove' ? translate( 'Remove my current plan' ) : undefined;
+				}
+				return intent === 'remove' ? translate( 'Continue removal' ) : translate( 'No, thanks' );
+			};
 			return (
 				<UpsellStep
 					upsell={ this.state.upsell }
@@ -442,6 +453,8 @@ class CancelPurchaseForm extends Component {
 					site={ site }
 					disabled={ this.state.isSubmitting }
 					refundAmount={ this.getRefundAmount() }
+					declineButtonText={ getUpsellDeclineText() }
+					declineButtonIsDestructive={ isSplitEnabled && intent === 'remove' }
 					downgradePlanPrice={
 						'downgrade-personal' === this.state.upsell
 							? this.props.downgradePlanToPersonalPrice
@@ -459,10 +472,13 @@ class CancelPurchaseForm extends Component {
 		}
 
 		if ( surveyStep === NEXT_ADVENTURE_STEP ) {
+			const allSteps = this.getAllSurveySteps();
 			return (
 				<NextAdventureStep
 					isPlan={ isPlan( purchase ) }
+					isOnlyStep={ allSteps.length === 1 }
 					adventureOptions={ this.state.questionTwoOrder }
+					intent={ intent }
 					onSelectNextAdventure={ this.onRadioTwoChange }
 					onChangeNextAdventureDetails={ this.onTextTwoChange }
 					onChangeText={ this.onTextThreeChange }
@@ -596,12 +612,68 @@ class CancelPurchaseForm extends Component {
 	}
 
 	renderStepButtons = () => {
-		const { translate, disableButtons, purchase } = this.props;
+		const { translate, disableButtons, intent, purchase } = this.props;
 		const { isSubmitting, surveyStep, solution } = this.state;
 		const isCancelling = ( disableButtons || isSubmitting ) && ! solution;
 
 		const allSteps = this.getAllSurveySteps();
 		const isLastStep = surveyStep === allSteps[ allSteps.length - 1 ];
+
+		const isSplitEnabled = config.isEnabled( 'purchases/split-cancel-remove' );
+		const isRemoveIntent = intent === 'remove';
+		const isCancelPostMutation = isSplitEnabled && ! isRemoveIntent;
+		const getContinueLabel = () => {
+			if ( ! isSplitEnabled ) {
+				return translate( 'Continue' );
+			}
+			return isRemoveIntent ? translate( 'Continue removal' ) : translate( 'Continue' );
+		};
+		const getCompleteLabel = () => {
+			if ( ! isSplitEnabled ) {
+				return translate( 'Submit' );
+			}
+			return isRemoveIntent ? translate( 'Complete removal' ) : translate( 'Complete' );
+		};
+		const getCompletingLabel = () => {
+			if ( isCancelPostMutation ) {
+				return translate( 'Completing…' );
+			}
+			return isRemoveIntent
+				? translate( 'Completing removal' )
+				: translate( 'Completing cancellation' );
+		};
+		const continueLabel = getContinueLabel();
+		const completeLabel = getCompleteLabel();
+		const completingLabel = getCompletingLabel();
+		const getPrimaryLabel = ( whenReady ) => {
+			if ( isSplitEnabled && isCancelling ) {
+				return completingLabel;
+			}
+			return whenReady;
+		};
+		const renderSkipButton = ( { alwaysVisible = false } = {} ) =>
+			isSplitEnabled &&
+			isRemoveIntent &&
+			( alwaysVisible || ! this.canGoNext() ) && (
+				<GutenbergButton
+					isTertiary
+					isDestructive
+					isBusy={ isCancelling }
+					disabled={ isCancelling }
+					onClick={ this.onSubmit }
+				>
+					{ translate( 'Skip and remove' ) }
+				</GutenbergButton>
+			);
+
+		const renderNoThanksButton = () =>
+			isSplitEnabled &&
+			! isRemoveIntent &&
+			this.props.onSkipSurvey && (
+				<GutenbergButton isTertiary onClick={ this.props.onSkipSurvey }>
+					{ translate( 'No, thanks' ) }
+				</GutenbergButton>
+			);
 
 		if ( surveyStep === UPSELL_STEP ) {
 			return null;
@@ -609,14 +681,20 @@ class CancelPurchaseForm extends Component {
 
 		if ( ! isLastStep ) {
 			return (
-				<GutenbergButton
-					isPrimary
-					isDefault
-					disabled={ ! this.canGoNext() }
-					onClick={ this.clickNext }
-				>
-					{ translate( 'Continue' ) }
-				</GutenbergButton>
+				<>
+					<GutenbergButton
+						isPrimary
+						isDefault
+						isDestructive={ isSplitEnabled && isRemoveIntent }
+						isBusy={ isSplitEnabled && isCancelling }
+						disabled={ ! this.canGoNext() || isCancelling }
+						onClick={ this.clickNext }
+					>
+						{ getPrimaryLabel( continueLabel ) }
+					</GutenbergButton>
+					{ renderSkipButton( { alwaysVisible: true } ) }
+					{ renderNoThanksButton() }
+				</>
 			);
 		}
 
@@ -635,7 +713,7 @@ class CancelPurchaseForm extends Component {
 						} ) }
 					</GutenbergButton>
 					<GutenbergButton
-						isSecondary
+						isTertiary
 						isBusy={ isCancelling }
 						disabled={ ! this.canGoNext() }
 						onClick={ this.closeDialog }
@@ -647,16 +725,21 @@ class CancelPurchaseForm extends Component {
 		}
 
 		return (
-			<GutenbergButton
-				isPrimary={ surveyStep !== UPSELL_STEP }
-				isSecondary={ surveyStep === UPSELL_STEP }
-				isDefault={ surveyStep !== UPSELL_STEP }
-				isBusy={ isCancelling }
-				disabled={ ! this.canGoNext() }
-				onClick={ this.onSubmit }
-			>
-				{ translate( 'Submit' ) }
-			</GutenbergButton>
+			<>
+				<GutenbergButton
+					isPrimary={ surveyStep !== UPSELL_STEP }
+					isSecondary={ surveyStep === UPSELL_STEP }
+					isDefault={ surveyStep !== UPSELL_STEP }
+					isDestructive={ isSplitEnabled && isRemoveIntent && surveyStep !== UPSELL_STEP }
+					isBusy={ isCancelling }
+					disabled={ ! this.canGoNext() }
+					onClick={ this.onSubmit }
+				>
+					{ getPrimaryLabel( completeLabel ) }
+				</GutenbergButton>
+				{ renderSkipButton() }
+				{ renderNoThanksButton() }
+			</>
 		);
 	};
 
@@ -708,9 +791,9 @@ class CancelPurchaseForm extends Component {
 	}
 
 	getHeaderTitle() {
-		const { flowType, purchase, translate } = this.props;
+		const { flowType, intent, purchase, translate } = this.props;
 
-		if ( flowType === CANCEL_FLOW_TYPE.REMOVE ) {
+		if ( intent === 'remove' || flowType === CANCEL_FLOW_TYPE.REMOVE ) {
 			if ( isPlan( purchase ) ) {
 				return translate( 'Remove plan' );
 			}

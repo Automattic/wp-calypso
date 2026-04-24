@@ -5,6 +5,8 @@ export interface CancelPurchaseState {
 	cancelBundledDomain?: boolean;
 	cancelIntent?: 'refund' | null;
 	confirmCancelBundledDomain?: boolean;
+	confirmationPassed?: boolean;
+	mutationFired?: boolean;
 	customerConfirmedUnderstanding?: boolean;
 	domainConfirmationConfirmed?: boolean;
 	importQuestionRadio?: string;
@@ -17,7 +19,6 @@ export interface CancelPurchaseState {
 	questionOneRadio?: string;
 	questionOneText?: string;
 	questionOneDetails?: string;
-	questionThreeRadio?: string;
 	questionThreeText?: string;
 	questionTwoOrder?: string[];
 	questionTwoRadio?: string;
@@ -29,5 +30,4 @@ export interface CancelPurchaseState {
 	surveyShown?: boolean;
 	surveyStep?: string;
 	upsell?: string;
-	willAtomicSiteRevert?: boolean;
 }

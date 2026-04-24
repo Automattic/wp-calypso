@@ -37,6 +37,7 @@ interface CancelPurchaseFormProps {
 	atomicTransfer?: Pick< AtomicTransfer, 'created_at' >;
 	cancelBundledDomain?: boolean;
 	cancellationInProgress?: boolean;
+	intent?: 'cancel' | 'remove' | null;
 	cancellationOffer?: Pick<
 		CancellationOffer,
 		'discounted_periods' | 'raw_price' | 'currency_code' | 'original_price'
@@ -46,8 +47,6 @@ interface CancelPurchaseFormProps {
 	disableButtons?: boolean;
 	downgradeClick?: ( upsell: string ) => void;
 	downgradePlan?: PlanProduct;
-	downgradePlanToMonthlyPrice?: number;
-	downgradePlanToPersonalPrice?: number;
 	flowType?: CancelFlowType;
 	freeMonthOfferClick?: () => void;
 	allSteps: string[];
@@ -70,7 +69,6 @@ interface CancelPurchaseFormProps {
 	onRadioOneChange: ( eventOrValue: React.ChangeEvent< HTMLInputElement > | string ) => void;
 	onRadioTwoChange?: ( eventOrValue: React.ChangeEvent< HTMLInputElement > | string ) => void;
 	onSubmit?: () => void;
-	onSurveyComplete?: () => void;
 	onTextOneChange: (
 		eventOrValue: React.ChangeEvent< HTMLInputElement > | string,
 		detailsValue?: string
@@ -90,7 +88,7 @@ interface CancelPurchaseFormProps {
 	solution?: string;
 	surveyStep?: string;
 	upsell?: string;
-	willAtomicSiteRevert?: boolean;
+	onSkipSurvey?: () => void;
 }
 
 function SurveyContent( {
@@ -132,6 +130,7 @@ function SurveyContent( {
 	cancellationInProgress,
 	includedDomainPurchase,
 	isAkismet,
+	intent,
 }: CancelPurchaseFormProps ) {
 	const { product_name: productName } = purchase;
 	if ( surveyStep === FEEDBACK_STEP ) {
@@ -139,6 +138,7 @@ function SurveyContent( {
 			<FeedbackStep
 				cancellationReasonCodes={ questionOneOrder }
 				isImport={ isImport ?? false }
+				intent={ intent ?? undefined }
 				onChangeCancellationReason={ onRadioOneChange }
 				onChangeCancellationReasonDetails={ onTextOneChange }
 				onChangeImportFeedback={ onImportRadioChange }
@@ -183,6 +183,17 @@ function SurveyContent( {
 			);
 		}
 
+		const isSplitEnabled = config.isEnabled( 'purchases/split-cancel-remove' );
+		const getUpsellDeclineText = () => {
+			if ( ! isSplitEnabled ) {
+				return intent === 'remove' ? __( 'Remove my current plan' ) : undefined;
+			}
+			if ( intent === 'remove' ) {
+				return __( 'Continue removal' );
+			}
+			// Cancel: mutation already fired — plain decline label with no action language
+			return __( 'No, thanks' );
+		};
 		return (
 			<UpsellStep
 				cancelBundledDomain={ cancelBundledDomain }
@@ -190,6 +201,8 @@ function SurveyContent( {
 				cancellationReason={ questionOneText }
 				closeDialog={ closeDialog }
 				currencyCode={ purchase.currency_code }
+				declineButtonText={ getUpsellDeclineText() }
+				declineButtonIsDestructive={ isSplitEnabled && intent === 'remove' }
 				downgradePlan={ downgradePlan }
 				includedDomainPurchase={ includedDomainPurchase }
 				onClickDowngrade={ downgradeClick }
@@ -291,7 +304,9 @@ function StepButtons( {
 	clickNext,
 	closeDialog,
 	disableButtons,
+	intent,
 	isSubmitting,
+	onSkipSurvey,
 	onSubmit,
 	solution,
 	surveyStep,
@@ -311,6 +326,29 @@ function StepButtons( {
 	const hasWarningStep =
 		allSteps?.includes( ATOMIC_REVERT_STEP ) || allSteps?.includes( REMOVE_PLAN_STEP );
 
+	const isSplitEnabled = config.isEnabled( 'purchases/split-cancel-remove' );
+	const isRemoveIntent = intent === 'remove';
+	const getContinueLabel = () => {
+		if ( ! isSplitEnabled ) {
+			return __( 'Continue' );
+		}
+		if ( isRemoveIntent ) {
+			return __( 'Continue removal' );
+		}
+		return __( 'Continue' );
+	};
+	const getCompleteLabel = () => {
+		if ( ! isSplitEnabled ) {
+			return __( 'Submit' );
+		}
+		if ( isRemoveIntent ) {
+			return __( 'Complete removal' );
+		}
+		return __( 'Complete' );
+	};
+	const continueLabel = getContinueLabel();
+	const completeLabel = getCompleteLabel();
+
 	if ( surveyStep === UPSELL_STEP ) {
 		return null;
 	}
@@ -318,17 +356,29 @@ function StepButtons( {
 	if ( ! isLastStep ) {
 		return (
 			<ButtonStack justify="flex-start">
-				<Button variant="primary" disabled={ ! canGoNext || isCancelling } onClick={ clickNext }>
-					{ __( 'Continue' ) }
+				<Button
+					variant="primary"
+					isDestructive={ isSplitEnabled && isRemoveIntent }
+					isBusy={ isSplitEnabled && isCancelling }
+					disabled={ ! canGoNext || isCancelling }
+					onClick={ clickNext }
+				>
+					{ continueLabel }
 				</Button>
-				{ ! hasWarningStep && (
+				{ ( isSplitEnabled ? isRemoveIntent : ! hasWarningStep ) && (
 					<Button
 						variant="tertiary"
+						isDestructive
 						isBusy={ isCancelling }
 						disabled={ isCancelling }
 						onClick={ onSubmit }
 					>
-						{ __( 'Skip' ) }
+						{ __( 'Skip and remove' ) }
+					</Button>
+				) }
+				{ isSplitEnabled && ! isRemoveIntent && onSkipSurvey && (
+					<Button variant="tertiary" onClick={ onSkipSurvey }>
+						{ __( 'No, thanks' ) }
 					</Button>
 				) }
 			</ButtonStack>
@@ -342,16 +392,17 @@ function StepButtons( {
 					className="cancel-purchase-form__remove-plan-button"
 					disabled={ ! canGoNext }
 					isBusy={ isCancelling }
+					isDestructive={ isSplitEnabled }
 					onClick={ onSubmit }
 					variant="primary"
 				>
-					{ __( 'Continue' ) }
+					{ isSplitEnabled ? __( 'Continue removal' ) : __( 'Continue' ) }
 				</Button>
 				<Button
 					disabled={ ! canGoNext }
 					isBusy={ isCancelling }
 					onClick={ closeDialog }
-					variant="secondary"
+					variant="tertiary"
 				>
 					{ __( 'Keep plan' ) }
 				</Button>
@@ -377,7 +428,7 @@ function StepButtons( {
 					disabled={ ! canGoNext || disableButtons }
 					isBusy={ isCancelling }
 					onClick={ onSubmit }
-					variant="secondary"
+					variant="tertiary"
 				>
 					{ __( 'No, thanks' ) }
 				</Button>
@@ -392,19 +443,26 @@ function StepButtons( {
 			<Button
 				disabled={ ! canGoNext }
 				isBusy={ isCancelling }
+				isDestructive={ isSplitEnabled && isRemoveIntent && variant === 'primary' }
 				onClick={ onSubmit }
 				variant={ variant }
 			>
-				{ __( 'Continue' ) }
+				{ completeLabel }
 			</Button>
-			{ ! canGoNext && ! hasWarningStep && (
+			{ ! canGoNext && ( isSplitEnabled ? isRemoveIntent : ! hasWarningStep ) && (
 				<Button
 					variant="tertiary"
+					isDestructive
 					isBusy={ isCancelling }
 					disabled={ isCancelling }
 					onClick={ onSubmit }
 				>
-					{ __( 'Skip' ) }
+					{ __( 'Skip and remove' ) }
+				</Button>
+			) }
+			{ isSplitEnabled && ! isRemoveIntent && onSkipSurvey && (
+				<Button variant="tertiary" onClick={ onSkipSurvey }>
+					{ __( 'No, thanks' ) }
 				</Button>
 			) }
 		</ButtonStack>

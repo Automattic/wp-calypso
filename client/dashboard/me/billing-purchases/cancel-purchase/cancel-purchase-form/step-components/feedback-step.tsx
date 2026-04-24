@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	RadioControl,
 	TextareaControl,
@@ -19,6 +20,7 @@ type CancellationReasonProps = {
 	onChange: ChangeCallback;
 	plans: PlanProduct[];
 	onDetailsChange: DetailsChangeCallback;
+	intent?: 'cancel' | 'remove';
 };
 
 function CancellationReason( {
@@ -26,11 +28,14 @@ function CancellationReason( {
 	reasonCodes,
 	onChange,
 	plans,
+	intent,
 	...props
 }: CancellationReasonProps ) {
 	const [ value, setValue ] = useState( '' );
 	const [ details, setDetails ] = useState( '' );
 	const [ feedbackValue, setFeedbackValue ] = useState( '' );
+	const isCancelPostMutation =
+		config.isEnabled( 'purchases/split-cancel-remove' ) && intent !== 'remove';
 	const reasons = getCancellationReasons( reasonCodes );
 	const selectedReason = reasons.find( ( reason ) => reason.value === value );
 	const selectedSubOption = selectedReason?.selectOptions?.find(
@@ -62,10 +67,20 @@ function CancellationReason( {
 		);
 	};
 
+	const getReasonLabel = () => {
+		if ( intent === 'remove' ) {
+			return __( 'Why would you like to remove?' );
+		}
+		if ( isCancelPostMutation ) {
+			return __( 'Why did you decide to cancel?' );
+		}
+		return __( 'Why would you like to cancel?' );
+	};
+
 	return (
 		<VStack spacing={ 6 }>
 			<RadioControl
-				label={ __( 'Why would you like to cancel?' ) }
+				label={ getReasonLabel() }
 				selected={ value }
 				options={ reasons.map( toSelectOption ) }
 				onChange={ ( val ) => {
@@ -152,12 +167,14 @@ type FeedbackStepProps = {
 	onChangeCancellationReason: ChangeCallback;
 	onChangeCancellationReasonDetails: ChangeCallback;
 	onChangeImportFeedback: ChangeCallback;
+	intent?: 'cancel' | 'remove';
 };
 
 export default function FeedbackStep( {
 	purchase,
 	plans,
 	isImport,
+	intent,
 	cancellationReasonCodes,
 	onChangeCancellationReason,
 	onChangeCancellationReasonDetails,
@@ -177,6 +194,7 @@ export default function FeedbackStep( {
 					reasonCodes={ cancellationReasonCodes ?? [] }
 					onChange={ onChangeCancellationReason }
 					onDetailsChange={ onChangeCancellationReasonDetails }
+					intent={ intent }
 				/>
 			) }
 			{ showCancellationReason && isImport && (

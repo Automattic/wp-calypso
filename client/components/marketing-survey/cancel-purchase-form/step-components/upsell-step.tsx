@@ -31,6 +31,7 @@ type UpsellProps = {
 	acceptButtonText: TranslateResult;
 	acceptButtonUrl?: string;
 	declineButtonText?: TranslateResult;
+	declineButtonIsDestructive?: boolean;
 	onAccept?: () => void;
 	onDecline?: () => void;
 };
@@ -63,7 +64,8 @@ function Upsell( { image, ...props }: UpsellProps ) {
 						{ props.acceptButtonText }
 					</Button>
 					<Button
-						variant="secondary"
+						variant="tertiary"
+						isDestructive={ props.declineButtonIsDestructive }
 						onClick={ () => {
 							setBusyButton( 'decline' );
 							props.onDecline?.();
@@ -110,6 +112,8 @@ type StepProps = {
 	onClickFreeMonthOffer?: () => void;
 	onClickDowngrade?: ( upsell: string ) => void;
 	cancellationReason?: string;
+	declineButtonText?: TranslateResult;
+	declineButtonIsDestructive?: boolean;
 };
 
 export default function UpsellStep( { upsell, site, purchase, ...props }: StepProps ) {
@@ -158,6 +162,8 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 
 						props.closeDialog?.();
 					} }
+					declineButtonText={ props.declineButtonText }
+					declineButtonIsDestructive={ props.declineButtonIsDestructive }
 					onDecline={ props.onDeclineUpsell }
 					image={ imgLiveChat }
 				>
@@ -190,6 +196,8 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 						recordTracksEvent( 'calypso_cancellation_upsell_step_buily_by_click' );
 						window.location.replace( builtByURL );
 					} }
+					declineButtonText={ props.declineButtonText }
+					declineButtonIsDestructive={ props.declineButtonIsDestructive }
 					onDecline={ props.onDeclineUpsell }
 					image={ imgBuiltBy }
 				>
@@ -213,6 +221,8 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 					onAccept={ () => {
 						recordTracksEvent( 'calypso_cancellation_upgrade_at_step_upgrade_click' );
 					} }
+					declineButtonText={ props.declineButtonText }
+					declineButtonIsDestructive={ props.declineButtonIsDestructive }
 					onDecline={ props.onDeclineUpsell }
 					image={ imgBusinessPlan }
 				>
@@ -241,6 +251,8 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 					title={ translate( 'Switch to flexible monthly payments' ) }
 					acceptButtonText={ translate( 'Switch to monthly payments' ) }
 					onAccept={ () => props.onClickDowngrade?.( upsell ) }
+					declineButtonText={ props.declineButtonText }
+					declineButtonIsDestructive={ props.declineButtonIsDestructive }
 					onDecline={ props.onDeclineUpsell }
 					image={ imgMonthlyPayments }
 				>
@@ -286,6 +298,8 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 						args: { plan: getPlan( PLAN_PERSONAL )?.getTitle() ?? '' },
 					} ) }
 					onAccept={ () => props.onClickDowngrade?.( upsell ) }
+					declineButtonText={ props.declineButtonText }
+					declineButtonIsDestructive={ props.declineButtonIsDestructive }
 					onDecline={ props.onDeclineUpsell }
 					image={ imgSwitchPlan }
 				>
@@ -325,6 +339,8 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 					title={ translate( 'How about a free month?' ) }
 					acceptButtonText={ translate( 'Get a free month' ) }
 					onAccept={ () => props.onClickFreeMonthOffer?.() }
+					declineButtonText={ props.declineButtonText }
+					declineButtonIsDestructive={ props.declineButtonIsDestructive }
 					onDecline={ props.onDeclineUpsell }
 					image={ imgFreeMonth }
 				>

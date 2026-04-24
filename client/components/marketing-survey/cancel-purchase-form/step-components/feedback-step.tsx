@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { isPlan } from '@automattic/calypso-products';
 import { SelectControl, TextareaControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -15,13 +16,21 @@ type CancellationReasonProps = {
 	reasonCodes: string[];
 	onChange: ChangeCallback;
 	onDetailsChange: DetailsChangeCallback;
+	intent?: 'cancel' | 'remove';
 };
 
-function CancellationReason( { purchase, reasonCodes, ...props }: CancellationReasonProps ) {
+function CancellationReason( {
+	purchase,
+	reasonCodes,
+	intent,
+	...props
+}: CancellationReasonProps ) {
 	const translate = useTranslate();
 	const [ value, setValue ] = useState( '' );
 	const [ details, setDetails ] = useState( '' );
 	const [ feedbackValue, setFeedbackValue ] = useState( '' );
+	const isCancelPostMutation =
+		config.isEnabled( 'purchases/split-cancel-remove' ) && intent !== 'remove';
 	const reasons = getCancellationReasons( reasonCodes, { productSlug: purchase.productSlug } );
 	const selectedReason = reasons.find( ( reason ) => reason.value === value );
 	const selectedSubOption = selectedReason?.selectOptions?.find(
@@ -39,11 +48,21 @@ function CancellationReason( { purchase, reasonCodes, ...props }: CancellationRe
 		props.onDetailsChange( val, details );
 	};
 
+	const getReasonLabel = () => {
+		if ( intent === 'remove' ) {
+			return translate( 'Why would you like to remove?' );
+		}
+		if ( isCancelPostMutation ) {
+			return translate( 'Why did you decide to cancel?' );
+		}
+		return translate( 'Why would you like to cancel?' );
+	};
+
 	return (
 		<>
 			<div className="cancel-purchase-form__feedback-question">
 				<SelectControl
-					label={ translate( 'Why would you like to cancel?' ) }
+					label={ getReasonLabel() }
 					value={ value }
 					options={ reasons.map( toSelectOption ) }
 					onChange={ ( val ) => {
@@ -140,18 +159,31 @@ type FeedbackStepProps = {
 	onChangeCancellationReason: ChangeCallback;
 	onChangeCancellationReasonDetails: ChangeCallback;
 	onChangeImportFeedback?: ChangeCallback;
+	intent?: 'cancel' | 'remove';
 };
 
-export default function FeedbackStep( { purchase, isImport, ...props }: FeedbackStepProps ) {
+export default function FeedbackStep( {
+	purchase,
+	isImport,
+	intent,
+	...props
+}: FeedbackStepProps ) {
 	const translate = useTranslate();
 	const productName = translate( 'WordPress.com' );
 	const isPlanPurchase = isPlan( purchase );
+
+	const isCancelPostMutation =
+		config.isEnabled( 'purchases/split-cancel-remove' ) && intent !== 'remove';
 
 	return (
 		<div className="cancel-purchase-form__feedback">
 			<FormattedHeader
 				brandFont
-				headerText={ translate( 'Share your feedback' ) }
+				headerText={
+					isCancelPostMutation
+						? translate( 'Cancelation confirmed' )
+						: translate( 'Share your feedback' )
+				}
 				subHeaderText={ translate(
 					'Before you go, please answer a few quick questions to help us improve %(productName)s.',
 					{
@@ -166,6 +198,7 @@ export default function FeedbackStep( { purchase, isImport, ...props }: Feedback
 						reasonCodes={ props.cancellationReasonCodes }
 						onChange={ props.onChangeCancellationReason }
 						onDetailsChange={ props.onChangeCancellationReasonDetails }
+						intent={ intent }
 					/>
 				) }
 				{ isPlanPurchase && isImport && (

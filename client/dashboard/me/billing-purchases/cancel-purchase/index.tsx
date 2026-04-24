@@ -23,11 +23,12 @@ import {
 	siteFeaturesQuery,
 	removePurchaseMutation,
 	userPreferenceQuery,
+	userPurchasesQuery,
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { invokeSurvicateEvent } from '@automattic/survicate';
-import { useSuspenseQuery, useQuery, useMutation } from '@tanstack/react-query';
-import { useNavigate } from '@tanstack/react-router';
+import { useSuspenseQuery, useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useNavigate, useSearch } from '@tanstack/react-router';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { _n, sprintf, __ } from '@wordpress/i18n';
@@ -45,7 +46,10 @@ import { shuffleArray } from '../../../utils/collection';
 import {
 	CANCEL_FLOW_TYPE,
 	CancelFlowType,
+	getCancelIntentFromSearch,
+	getDisplayVariant,
 	getIncludedDomainPurchase,
+	getMutationFlowType,
 	getPurchaseCancellationFlowType,
 	hasAmountAvailableToRefund,
 	hasMarketplaceProduct,
@@ -58,6 +62,7 @@ import {
 	isPartnerPurchase,
 	isOneTimePurchase,
 } from '../../../utils/purchase';
+import { getProductNoun } from '../purchase-settings/purchase-cancelled-notice';
 import CancelHeaderTitle from './cancel-header-title';
 import CancelPurchaseForm from './cancel-purchase-form';
 import {
@@ -94,6 +99,53 @@ import type {
 import type { ChangeEvent } from 'react';
 
 import './style.scss';
+
+type TopNoticeArgs = {
+	surveyShown?: boolean;
+	showDomainOptionsStep?: boolean;
+	displayVariant: 'cancel' | 'remove';
+	purchase: Purchase;
+	intent: 'cancel' | 'remove' | null;
+	showRefundEligibilityNotice: boolean;
+	onClaimRefund: () => void;
+};
+
+function renderTopNotice( args: TopNoticeArgs ) {
+	const {
+		surveyShown,
+		showDomainOptionsStep,
+		displayVariant,
+		purchase,
+		intent,
+		showRefundEligibilityNotice,
+		onClaimRefund,
+	} = args;
+
+	if ( surveyShown || showDomainOptionsStep ) {
+		return null;
+	}
+
+	// 1. Intent-remove with a refund → confirmed refund-amount notice (no CTA,
+	//    replaces the promo banner for split-button users).
+	if ( displayVariant === 'remove' && hasAmountAvailableToRefund( purchase ) ) {
+		return <RefundEligibilityNotice purchase={ purchase } mode="confirmed" />;
+	}
+
+	// 2. No URL intent + experiment treatment + refund → today's promo banner.
+	if ( ! intent && showRefundEligibilityNotice ) {
+		return <RefundEligibilityNotice purchase={ purchase } onClaimRefund={ onClaimRefund } />;
+	}
+
+	// 3. Everything else → time-remaining notice (itself suppressed on
+	//    the Remove variant via its own displayVariant check).
+	return (
+		<TimeRemainingNotice
+			purchase={ purchase }
+			displayVariant={ displayVariant }
+			intent={ intent }
+		/>
+	);
+}
 
 const willShowDomainOptionsRadioButtons = (
 	includedDomainPurchase: Purchase,
@@ -264,7 +316,11 @@ function getAllSurveySteps( {
 	const skipRemovePlanSurvey = purchase.is_plan && userHasCompletedCancelSurveyForPurchase;
 	const flowType = getPurchaseCancellationFlowType( purchase );
 
-	if ( purchase.will_atomic_revert_after_removal && flowType === CANCEL_FLOW_TYPE.REMOVE ) {
+	if (
+		purchase.will_atomic_revert_after_removal &&
+		flowType === CANCEL_FLOW_TYPE.REMOVE &&
+		! config.isEnabled( 'purchases/split-cancel-remove' )
+	) {
 		steps.push( ATOMIC_REVERT_STEP );
 	}
 
@@ -283,9 +339,20 @@ function getAllSurveySteps( {
 }
 
 export default function CancelPurchase() {
+	// TanStack Router keeps the component mounted across search-param changes,
+	// so stale state from a prior cancel-flow run can persist when the user
+	// swaps intent (e.g. navigating from Cancel to Remove on Purchase Settings).
+	// Keying the inner component on intent lets React remount it, resetting all
+	// local state to its initial values.
+	const intent = getCancelIntentFromSearch( useSearch( { from: cancelPurchaseRoute.fullPath } ) );
+	return <CancelPurchaseInner key={ intent ?? 'fallback' } />;
+}
+
+function CancelPurchaseInner() {
 	const { createSuccessNotice, removeNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { recordTracksEvent } = useAnalytics();
 	const locale = useLocale();
+	const queryClient = useQueryClient();
 	const [ state, setState ] = useState< CancelPurchaseState >( {
 		questionOneOrder: [],
 		initialized: false,
@@ -306,7 +373,9 @@ export default function CancelPurchase() {
 		siteFeaturesQuery( purchase.blog_id )
 	);
 	const { data: plans } = useSuspenseQuery( plansQuery() );
-	const { data: purchaseCancelFeatures } = useQuery( purchaseCancelFeaturesQuery( purchaseId ) );
+	const { data: purchaseCancelFeatures } = useQuery(
+		purchaseCancelFeaturesQuery( parseInt( purchaseId ) )
+	);
 
 	const lastSiteQueryIsError = useRef< boolean >( false );
 	const { data: hasBeenExtended } = useQuery( hasPurchaseBeenExtendedQuery( purchase.blog_id ) );
@@ -335,9 +404,12 @@ export default function CancelPurchase() {
 	const { data: userPreferenceForSurveyComplete, isPending: userPreferencesQueryIsPending } =
 		useQuery( userPreferenceQuery( getCancelPurchaseSurveyCompletedPreferenceKey( purchase.ID ) ) );
 	const userHasCompletedCancelSurveyForPurchase = Boolean( userPreferenceForSurveyComplete );
+	// When the survey was previously completed for this purchase, the confirmation
+	// click becomes the action: fire the mutation and navigate, with no survey.
+	const skipSurvey =
+		config.isEnabled( 'purchases/split-cancel-remove' ) && userHasCompletedCancelSurveyForPurchase;
 
 	// Mutations
-	const cancelAndRefundPurchaseMutate = useMutation( cancelAndRefundPurchaseMutation() );
 	const setPurchaseAutoRenewMutation = useMutation( userPurchaseSetAutoRenewQuery() );
 	const cancelAndRefundMutation = useMutation( cancelAndRefundPurchaseMutation() );
 	const removePurchaseMutator = useMutation( removePurchaseMutation() );
@@ -387,6 +459,13 @@ export default function CancelPurchase() {
 		surveyCompletedMutator.mutate( 'true' );
 	};
 	const flowType = getPurchaseCancellationFlowType( purchase );
+	// Intent is set when the user clicks either Cancel or Remove on Purchase
+	// Settings (behind the purchases/split-cancel-remove flag). When present,
+	// it drives both the screen variant (copy) and the backend mutation.
+	// When absent (flag-off, old deep link), fall back to today's flowType heuristic.
+	const intent = getCancelIntentFromSearch( useSearch( { from: cancelPurchaseRoute.fullPath } ) );
+	const displayVariant = getDisplayVariant( intent, flowType );
+	const mutationFlowType = getMutationFlowType( intent, purchase );
 
 	const cancellationOffer = cancellationOffers?.length ? cancellationOffers[ 0 ] : undefined;
 
@@ -411,7 +490,7 @@ export default function CancelPurchase() {
 		purchase,
 		upsell: state.upsell,
 		cancellationOffer,
-		hasQuestionTwo: Boolean( questionTwoOrder.length ),
+		hasQuestionTwo: Boolean( state.questionTwoOrder?.length ),
 		plans,
 		userHasCompletedCancelSurveyForPurchase,
 	} );
@@ -432,6 +511,14 @@ export default function CancelPurchase() {
 		const [ firstStep ] = allSteps;
 
 		const hasExpired = purchase.expiry_status === 'expired';
+		// When intent is URL-sourced (user clicked Cancel or Remove on Purchase
+		// Settings), the pre-survey confirmation MUST render first — regardless
+		// of prior survey completion cache or expired state. The existing
+		// short-circuit (surveyShown: true when REMOVE_PLAN_STEP is first, or
+		// when expired) bypasses our confirmation screen. Gate it on intent
+		// absence so flag-on users always see the matching confirmation.
+		const shortCircuitToSurvey = REMOVE_PLAN_STEP === firstStep || hasExpired;
+		const surveyShownInitial = intent ? false : shortCircuitToSurvey;
 
 		const newState: CancelPurchaseState = {
 			...initialSurveyState(),
@@ -440,16 +527,16 @@ export default function CancelPurchase() {
 			atomicRevertConfirmed: false,
 			cancelBundledDomain: false,
 			confirmCancelBundledDomain: false,
+			confirmationPassed: false,
 			customerConfirmedUnderstanding: false,
 			domainConfirmationConfirmed: false,
 			initialized: true,
-			isLoading: REMOVE_PLAN_STEP !== firstStep && ! hasExpired,
+			isLoading: ! surveyShownInitial,
 			isNextAdventureValid: false,
 			isSubmitting: false,
 			questionOneOrder,
 			questionOneRadio: '',
 			questionOneText: '',
-			questionThreeRadio: '',
 			questionThreeText: '',
 			questionTwoOrder,
 			questionTwoRadio: '',
@@ -457,7 +544,7 @@ export default function CancelPurchase() {
 			showDomainOptionsStep: false,
 			siteId: undefined,
 			solution: '',
-			surveyShown: REMOVE_PLAN_STEP === firstStep || hasExpired,
+			surveyShown: surveyShownInitial,
 			surveyStep: firstStep,
 			upsell: '',
 		};
@@ -610,7 +697,7 @@ export default function CancelPurchase() {
 
 			setState( ( state ) => ( { ...state, isLoading: true } ) );
 
-			cancelAndRefundPurchaseMutate.mutate(
+			cancelAndRefundMutation.mutate(
 				{
 					purchaseId: purchase.ID,
 					options: {
@@ -675,6 +762,7 @@ export default function CancelPurchase() {
 		} );
 		setState( ( state ) => ( {
 			...state,
+			confirmationPassed: true,
 			surveyShown: true,
 			isLoading: false,
 		} ) );
@@ -684,6 +772,65 @@ export default function CancelPurchase() {
 		cancelIntent: CancelPurchaseState[ 'cancelIntent' ] = null,
 		customerConfirmedUnderstanding = false
 	) => {
+		const isSplitEnabled = config.isEnabled( 'purchases/split-cancel-remove' );
+
+		// Under the split flag, cancel intent fires the auto-renew mutation immediately
+		// on the confirmation click so the subscription is cancelled before the user
+		// ever sees the survey. The survey becomes optional and post-facto.
+		// Remove intent (CANCEL_WITH_REFUND / REMOVE) is unaffected — mutation still
+		// fires at the end of the survey.
+		if ( isSplitEnabled && mutationFlowType === CANCEL_FLOW_TYPE.CANCEL_AUTORENEW ) {
+			setState( ( state ) => ( { ...state, isLoading: true } ) );
+			setPurchaseAutoRenewMutation.mutate(
+				{ purchaseId: purchase.ID, autoRenew: false },
+				{
+					onSuccess: () => {
+						recordTracksEvent( 'calypso_purchases_cancel_form_start', {
+							cancellation_flow: flowType,
+							product_slug: purchase.product_slug,
+							is_atomic: site?.is_wpcom_atomic ?? false,
+							user_lang: locale,
+						} );
+						invokeSurvicateEvent( 'purchaseCancelled' );
+						// Survey already completed for this purchase — skip it, go straight to purchase settings.
+						if ( userHasCompletedCancelSurveyForPurchase ) {
+							navigate( {
+								to: purchaseSettingsRoute.fullPath,
+								params: { purchaseId: purchase.ID },
+								search: { cancelled: true },
+							} );
+							return;
+						}
+						setState( ( state ) => ( {
+							...state,
+							cancelIntent,
+							confirmationPassed: true,
+							customerConfirmedUnderstanding,
+							mutationFired: true,
+							siteId: purchase.blog_id,
+							surveyShown: true,
+							isLoading: false,
+						} ) );
+					},
+					onError: () => {
+						const purchaseName = purchase.is_domain ? purchase.meta : purchase.product_name;
+						createErrorNotice(
+							sprintf(
+								/* translators: %(purchaseName)s is the name of the product that was purchased. */
+								__(
+									'There was a problem canceling %(purchaseName)s. Please try again later or contact support.'
+								),
+								{ purchaseName }
+							),
+							{ type: 'snackbar' }
+						);
+						setState( ( state ) => ( { ...state, isLoading: false } ) );
+					},
+				}
+			);
+			return;
+		}
+
 		// When the eligibility notice is active and the user clicks the default cancel button
 		// (not the refund link), they're opting for an auto-renew cancellation — no refund, so
 		// no need to ask about the domain. Skip straight to the survey.
@@ -703,21 +850,44 @@ export default function CancelPurchase() {
 				siteId: purchase.blog_id,
 				showDomainOptionsStep: true,
 			} ) );
-		} else {
+			return;
+		}
+
+		// Under the split flag, a user who has already taken the cancellation survey
+		// for this purchase should never be asked to take it again. Fire the remove
+		// mutation immediately and navigate to the active upgrades list.
+		if (
+			isSplitEnabled &&
+			userHasCompletedCancelSurveyForPurchase &&
+			( mutationFlowType === CANCEL_FLOW_TYPE.REMOVE ||
+				mutationFlowType === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND )
+		) {
+			setState( ( state ) => ( { ...state, isLoading: true } ) );
 			recordTracksEvent( 'calypso_purchases_cancel_form_start', {
 				cancellation_flow: flowType,
 				product_slug: purchase.product_slug,
 				is_atomic: site?.is_wpcom_atomic ?? false,
 				user_lang: locale,
 			} );
-			setState( ( state ) => ( {
-				...state,
-				cancelIntent,
-				customerConfirmedUnderstanding,
-				siteId: purchase.blog_id,
-				surveyShown: true,
-			} ) );
+			// eslint-disable-next-line @typescript-eslint/no-use-before-define -- Defined later in the same component; closure is invoked after render.
+			fireRemoveMutationAndLeave( mutationFlowType, state.cancelBundledDomain );
+			return;
 		}
+
+		recordTracksEvent( 'calypso_purchases_cancel_form_start', {
+			cancellation_flow: flowType,
+			product_slug: purchase.product_slug,
+			is_atomic: site?.is_wpcom_atomic ?? false,
+			user_lang: locale,
+		} );
+		setState( ( state ) => ( {
+			...state,
+			cancelIntent,
+			confirmationPassed: true,
+			customerConfirmedUnderstanding,
+			siteId: purchase.blog_id,
+			surveyShown: true,
+		} ) );
 	};
 
 	const onCancellationStartForRefund = () => {
@@ -734,6 +904,16 @@ export default function CancelPurchase() {
 		initSurveyState();
 		recordEvent( 'calypso_purchases_cancel_form_close' );
 	};
+
+	const onSkipSurvey =
+		config.isEnabled( 'purchases/split-cancel-remove' ) && intent !== 'remove'
+			? () =>
+					navigate( {
+						to: purchaseSettingsRoute.fullPath,
+						params: { purchaseId: purchase.ID },
+						search: { cancelled: true },
+					} )
+			: undefined;
 
 	const onDomainConfirmationChange = ( checked: boolean ) => {
 		setState( ( state ) => ( {
@@ -908,6 +1088,162 @@ export default function CancelPurchase() {
 		} );
 	};
 
+	// Navigate to the Active Upgrades list and fire a remove/cancel-and-refund
+	// mutation in the background. The component unmounts before the mutation's
+	// built-in onSuccess can trigger a prefix-matched invalidation of
+	// purchaseQuery(id), which would 404 for the just-deleted purchase and
+	// trap the component in an error state.
+	const fireRemoveMutationAndLeave = (
+		effectiveFlowType: CancelFlowType,
+		cancelBundledDomain?: boolean
+	) => {
+		const productNoun = getProductNoun( purchase );
+		const purchaseName = purchase.is_domain ? purchase.meta : purchase.product_name;
+
+		const stripPurchaseFromList = () => {
+			queryClient.setQueryData( userPurchasesQuery().queryKey, ( old: Purchase[] | undefined ) =>
+				( old ?? [] ).filter( ( p ) => p.ID !== purchase.ID )
+			);
+		};
+
+		const showSuccessSnack = () => {
+			invokeSurvicateEvent( 'purchaseRemoved' );
+			if (
+				purchase.will_atomic_revert_after_removal &&
+				config.isEnabled( 'purchases/split-cancel-remove' )
+			) {
+				createSuccessNotice(
+					__(
+						'Your plan has been removed. Download a backup to save your content, themes, and plugins.'
+					),
+					{
+						type: 'snackbar',
+						actions: [
+							{
+								label: __( 'Download a backup' ),
+								url: `https://${ purchase.domain }/wp-admin/export.php`,
+							},
+						],
+					}
+				);
+			} else {
+				createSuccessNotice(
+					sprintf(
+						/* translators: %(productNoun)s is plan/domain/email/theme/plugin/subscription. */
+						__( 'Your %(productNoun)s has been removed.' ),
+						{ productNoun }
+					),
+					{ type: 'snackbar' }
+				);
+			}
+		};
+
+		const handleError = async ( error: Error ) => {
+			// The proxy can 504 while the backend finishes the delete. Verify
+			// whether the purchase actually still exists before surfacing an
+			// error the user can't act on.
+			let stillExists = true;
+			try {
+				const fresh = await queryClient.fetchQuery( userPurchasesQuery() );
+				stillExists = Boolean( fresh?.some( ( p: Purchase ) => p.ID === purchase.ID ) );
+			} catch {
+				// Verification fetch failed; fall through to error path.
+			}
+			if ( ! stillExists ) {
+				return;
+			}
+			// Mutation genuinely failed — restore the optimistic removal and
+			// show an error. The already-shown success snack is transient and
+			// will fade; the error snack replaces it in user attention.
+			queryClient.invalidateQueries( userPurchasesQuery() );
+			createErrorNotice(
+				error?.message ??
+					sprintf(
+						/* translators: %(purchaseName)s is the name of the product. */
+						__(
+							'There was a problem removing %(purchaseName)s. Please try again later or contact support.'
+						),
+						{ purchaseName }
+					),
+				{ type: 'snackbar' }
+			);
+		};
+
+		// Guard: re-strip the purchase from cache whenever any background
+		// refetch (route loader prefetchQuery, useQuery refetchOnMount,
+		// window focus, mutation onSuccess) returns stale server data that
+		// still includes the just-deleted purchase. Server eventual
+		// consistency means the purchase stays in API responses for a few
+		// seconds after deletion.
+		const targetHash = JSON.stringify( userPurchasesQuery().queryKey );
+		const unsubscribeGuard = queryClient.getQueryCache().subscribe( ( event ) => {
+			if ( event.query.queryHash === targetHash ) {
+				const data = event.query.state.data as Purchase[] | undefined;
+				if ( data?.some( ( p ) => p.ID === purchase.ID ) ) {
+					stripPurchaseFromList();
+				}
+			}
+		} );
+
+		// Clean up after 15 seconds — server should have settled.
+		setTimeout( () => {
+			unsubscribeGuard();
+			// Final refetch to get the authoritative server state.
+			queryClient.invalidateQueries( userPurchasesQuery() );
+		}, 15000 );
+
+		// Keep the busy state visible briefly so the click-to-leave transition
+		// feels like a real action rather than an instant page swap. 500ms is
+		// enough to register the loading feedback without feeling laggy.
+		setTimeout( () => {
+			// Optimistically strip the purchase from the cached list so the
+			// destination page renders without it immediately.
+			stripPurchaseFromList();
+
+			// Show the success snackbar before navigating. @wordpress/notices is a
+			// global store so the snack persists across navigation; the per-call
+			// mutation callbacks (.mutate's onSuccess) stop firing after the
+			// component unmounts, so we fire the snack optimistically here.
+			showSuccessSnack();
+
+			// Navigate BEFORE firing the mutation. This unmounts the cancel page
+			// and its useSuspenseQuery(purchaseQuery(id)) observer, so the
+			// invalidation cascade triggered by the mutation's built-in onSuccess
+			// can't cause a 404-throw on the now-deleted purchase.
+			navigate( { to: purchasesRoute.to } );
+
+			// Use mutateAsync so the resolution is tied to the promise
+			// (independent of the observer) rather than the per-call callbacks
+			// that stop firing after unmount.
+			const mutationPromise =
+				effectiveFlowType === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND
+					? cancelAndRefundMutation
+							.mutateAsync( {
+								purchaseId: purchase.ID,
+								options: {
+									product_id: purchase.product_id,
+									cancel_bundled_domain: cancelBundledDomain ?? false,
+								},
+							} )
+							.then( () => {
+								if ( purchase.is_plan ) {
+									cancelAllMarketplaceSubscriptions();
+								}
+							} )
+					: removePurchaseMutator.mutateAsync( purchase.ID ).then( () => undefined );
+
+			mutationPromise
+				.then( () => {
+					// Evict the individual purchase query so a stray
+					// prefix-matched invalidation can't 404-throw.
+					queryClient.removeQueries( {
+						queryKey: purchaseQuery( purchase.ID ).queryKey,
+					} );
+				} )
+				.catch( handleError );
+		}, 500 );
+	};
+
 	const submitCancelAndRefundPurchase = ( purchase: Purchase ) => {
 		const refundable = hasAmountAvailableToRefund( purchase );
 		if ( refundable ) {
@@ -924,21 +1260,53 @@ export default function CancelPurchase() {
 						if ( purchase.is_plan ) {
 							cancelAllMarketplaceSubscriptions();
 						}
-						createSuccessNotice(
-							__( 'Your refund has been processed and your purchase removed.' ),
-							{
-								type: 'snackbar',
+						if ( displayVariant === 'remove' ) {
+							if (
+								purchase.will_atomic_revert_after_removal &&
+								config.isEnabled( 'purchases/split-cancel-remove' )
+							) {
+								createSuccessNotice(
+									__(
+										'Your plan has been removed. Download a backup to save your content, themes, and plugins.'
+									),
+									{
+										type: 'snackbar',
+										actions: [
+											{
+												label: __( 'Download a backup' ),
+												url: `https://${ purchase.domain }/wp-admin/export.php`,
+											},
+										],
+									}
+								);
+							} else {
+								createSuccessNotice(
+									sprintf(
+										/* translators: %(productNoun)s is plan/domain/email/theme/plugin/subscription. */
+										__( 'Your %(productNoun)s has been removed.' ),
+										{ productNoun: getProductNoun( purchase ) }
+									),
+									{ type: 'snackbar' }
+								);
 							}
-						);
-						invokeSurvicateEvent( 'purchaseRefunded' );
-						navigate( {
-							to: purchaseSettingsRoute.fullPath,
-							params: { purchaseId: purchase.ID },
-							search: { refunded: true },
-						} );
+							invokeSurvicateEvent( 'purchaseRemoved' );
+							navigate( { to: purchasesRoute.to } );
+						} else {
+							createSuccessNotice(
+								__( 'Your refund has been processed and your purchase removed.' ),
+								{ type: 'snackbar' }
+							);
+							invokeSurvicateEvent( 'purchaseRefunded' );
+							navigate( {
+								to: purchaseSettingsRoute.fullPath,
+								params: { purchaseId: purchase.ID },
+								search: { refunded: true },
+							} );
+						}
 					},
 					onError: ( error: Error ) => {
 						createErrorNotice( ( error as Error ).message, { type: 'snackbar' } );
+						navigate( { to: purchasesRoute.to } );
 					},
 				}
 			);
@@ -992,10 +1360,6 @@ export default function CancelPurchase() {
 	};
 
 	const submitRemovePurchase = ( purchase: Purchase ) => {
-		if ( CANCEL_FLOW_TYPE.REMOVE !== flowType ) {
-			return;
-		}
-
 		removePurchaseMutator.mutate( purchase.ID, {
 			onSuccess: () => {
 				const purchaseName = purchase.is_domain ? purchase.meta : purchase.product_name;
@@ -1022,12 +1386,29 @@ export default function CancelPurchase() {
 						}
 					);
 				}
-				createSuccessNotice( successMessage, { type: 'snackbar' } );
+				if (
+					purchase.will_atomic_revert_after_removal &&
+					config.isEnabled( 'purchases/split-cancel-remove' )
+				) {
+					createSuccessNotice(
+						__(
+							'Your plan has been removed. Download a backup to save your content, themes, and plugins.'
+						),
+						{
+							type: 'snackbar',
+							actions: [
+								{
+									label: __( 'Download a backup' ),
+									url: `https://${ purchase.domain }/wp-admin/export.php`,
+								},
+							],
+						}
+					);
+				} else {
+					createSuccessNotice( successMessage, { type: 'snackbar' } );
+				}
 				invokeSurvicateEvent( 'purchaseRemoved' );
-				navigate( {
-					to: purchaseSettingsRoute.fullPath,
-					params: { purchaseId: purchase.ID },
-				} );
+				navigate( { to: purchasesRoute.to } );
 			},
 			onError: () => {
 				const purchaseName = purchase.is_domain ? purchase.meta : purchase.product_name;
@@ -1094,20 +1475,47 @@ export default function CancelPurchase() {
 		);
 	};
 
-	const onSurveyComplete = () => {
+	const onSurveyComplete = async () => {
+		// When the split flag is on and the cancel mutation was already fired on the
+		// confirmation screen click, skip the mutation here. Survey data was (or will
+		// be) submitted by onSubmit; we just need to navigate back to purchase settings
+		// where the transient success notice replaces the expiring notice. Keep the
+		// survey button busy during the route transition + loader refetch so the
+		// handoff feels like a single action rather than two.
+		if ( state.mutationFired ) {
+			setState( ( state ) => ( { ...state, isLoading: true } ) );
+			navigate( {
+				to: purchaseSettingsRoute.fullPath,
+				params: { purchaseId: purchase.ID },
+				search: { cancelled: true },
+			} );
+			return;
+		}
+
 		// Set loading state to show busy button
 		setState( ( state ) => ( { ...state, isLoading: true } ) );
 
-		// Determine effective flow type based on cancel intent
-		let effectiveFlowType = flowType;
-
-		// If user clicked refund button, use refund flow
-		if ( state.cancelIntent === 'refund' ) {
-			effectiveFlowType = CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND;
+		// When intent is URL-sourced (user arrived via the Purchase Settings
+		// Cancel/Remove buttons), mutationFlowType is already the correct choice.
+		// When intent is absent, fall back to today's banner-driven override:
+		// refund intent set by the eligibility banner forces the refund flow;
+		// the default Cancel on a refundable plan + treatment banner falls back to
+		// auto-renew off.
+		let effectiveFlowType: CancelFlowType = mutationFlowType;
+		if ( ! intent ) {
+			if ( state.cancelIntent === 'refund' ) {
+				effectiveFlowType = CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND;
+			} else if (
+				flowType === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND &&
+				showRefundEligibilityNotice
+			) {
+				effectiveFlowType = CANCEL_FLOW_TYPE.CANCEL_AUTORENEW;
+			}
 		}
-		// If default Cancel button on refundable wpcom plan, use auto-renew flow
-		else if ( flowType === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND && showRefundEligibilityNotice ) {
-			effectiveFlowType = CANCEL_FLOW_TYPE.CANCEL_AUTORENEW;
+
+		if ( displayVariant === 'remove' ) {
+			fireRemoveMutationAndLeave( effectiveFlowType, state.cancelBundledDomain );
+			return;
 		}
 
 		switch ( effectiveFlowType ) {
@@ -1157,9 +1565,7 @@ export default function CancelPurchase() {
 			cancelPurchaseSurveyCompleted();
 		}
 
-		if ( onSurveyComplete ) {
-			onSurveyComplete();
-		}
+		onSurveyComplete();
 
 		recordEvent( 'calypso_purchases_cancel_form_submit' );
 	};
@@ -1277,7 +1683,14 @@ export default function CancelPurchase() {
 			redirectBack();
 			return;
 		}
-		if ( state.isLoading && ! isDataLoading ) {
+		if (
+			state.isLoading &&
+			! isDataLoading &&
+			! setPurchaseAutoRenewMutation.isPending &&
+			! cancelAndRefundMutation.isPending &&
+			! removePurchaseMutator.isPending &&
+			! extendWithFreeMonthMutation.isPending
+		) {
 			setState( ( state ) => ( {
 				...state,
 				isLoading: isDataLoading,
@@ -1290,6 +1703,10 @@ export default function CancelPurchase() {
 		redirectBack,
 		state.isLoading,
 		createErrorNotice,
+		setPurchaseAutoRenewMutation.isPending,
+		cancelAndRefundMutation.isPending,
+		removePurchaseMutator.isPending,
+		extendWithFreeMonthMutation.isPending,
 	] );
 
 	if ( ! isDataValid() ) {
@@ -1324,15 +1741,16 @@ export default function CancelPurchase() {
 	}
 
 	const planName = purchase.is_domain_registration ? purchase.meta : purchase.product_name;
+	const isSplitEnabled = config.isEnabled( 'purchases/split-cancel-remove' );
 	const isDomainRemoval = flowType === CANCEL_FLOW_TYPE.REMOVE && purchase.is_domain_registration;
 
-	if ( isDomainRemoval ) {
+	if ( isDomainRemoval && ! isSplitEnabled ) {
 		return (
 			<PageLayout
 				size="small"
 				header={
 					<PageHeader
-						title={ <CancelHeaderTitle flowType={ flowType } purchase={ purchase } /> }
+						title={ <CancelHeaderTitle displayVariant={ displayVariant } purchase={ purchase } /> }
 						prefix={ <Breadcrumbs length={ 4 } /> }
 						description={ __( 'Please confirm that you want to remove this domain.' ) }
 					/>
@@ -1362,6 +1780,66 @@ export default function CancelPurchase() {
 		state.surveyStep === UPSELL_STEP &&
 		config.isEnabled( 'cancel-flow/solutions-cards-upsell' ) &&
 		( getSolutionsForReason( state.questionOneText ?? '' )?.length ?? 0 ) > 0;
+	// Under the split-cancel-remove flag the pre-survey confirmation screen
+	// gates the survey on `confirmationPassed`. Flag-off keeps the legacy
+	// `surveyShown` gate.
+	const atSurvey = Boolean( isSplitEnabled ? state.confirmationPassed : state.surveyShown );
+	const form = (
+		<CancelPurchaseForm
+			atomicRevertCheckOne={ state.atomicRevertCheckOne }
+			atomicRevertCheckTwo={ state.atomicRevertCheckTwo }
+			atomicRevertOnClickCheckOne={ atomicRevertOnClickCheckOne }
+			atomicRevertOnClickCheckTwo={ atomicRevertOnClickCheckTwo }
+			atomicTransfer={ atomicTransfer }
+			cancelBundledDomain={ state.cancelBundledDomain }
+			cancellationInProgress={ state.isLoading }
+			cancellationOffer={ cancellationOffer }
+			intent={ intent }
+			clickNext={ clickNext }
+			closeDialog={ closeDialog }
+			onSkipSurvey={ onSkipSurvey }
+			disableButtons={ state.isLoading }
+			downgradeClick={ downgradeClick }
+			downgradePlan={ downgradePlan }
+			flowType={ flowType }
+			freeMonthOfferClick={ freeMonthOfferClick }
+			hasBackupsFeature={ hasBackupsFeature }
+			importQuestionRadio={ state.importQuestionRadio }
+			includedDomainPurchase={ includedDomainPurchase }
+			isAkismet={ isAkismet }
+			isApplyingOffer={ isApplyingOffer }
+			isImport={ isImport }
+			isNextAdventureValid={ state.isNextAdventureValid }
+			isShowing={ state.isShowingMarketplaceSubscriptionsDialog }
+			isSubmitting={ state.isSubmitting }
+			isVisible={ atSurvey }
+			offerDiscountBasedFromPurchasePrice={ offerDiscountBasedFromPurchasePrice }
+			onClickAcceptForCancellationOffer={ onClickAcceptForCancellationOffer }
+			onGetCancellationOffer={ onGetCancellationOffer }
+			onImportRadioChange={ onImportRadioChange }
+			onNextAdventureValidationChange={ onNextAdventureValidationChange }
+			onRadioOneChange={ onRadioOneChange }
+			onRadioTwoChange={ onRadioTwoChange }
+			onSubmit={ onSubmit }
+			onTextOneChange={ onTextOneChange }
+			onTextThreeChange={ onTextThreeChange }
+			onTextTwoChange={ onTextTwoChange }
+			plans={ plans }
+			purchase={ purchase }
+			questionOneOrder={ state.questionOneOrder }
+			questionOneRadio={ state.questionOneRadio }
+			questionOneText={ state.questionOneText }
+			questionTwoOrder={ state.questionTwoOrder }
+			questionTwoRadio={ state.questionTwoRadio }
+			questionTwoText={ state.questionTwoText }
+			refundAmount={ purchase.total_refund_amount }
+			siteSlug={ siteSlug }
+			solution={ state.solution }
+			surveyStep={ state.surveyStep }
+			allSteps={ allSteps }
+			upsell={ state.upsell }
+		/>
+	);
 	return (
 		<PageLayout
 			size="small"
@@ -1369,146 +1847,42 @@ export default function CancelPurchase() {
 				<PageHeader
 					title={
 						<CancelHeaderTitle
-							flowType={ flowType }
+							displayVariant={ displayVariant }
 							purchase={ purchase }
 							surveyStep={ state.surveyStep }
+							mutationFired={ state.mutationFired }
 						/>
 					}
 					prefix={ <Breadcrumbs length={ 4 } /> }
 					description={ description }
 				/>
 			}
-			notices={
-				! state.surveyShown &&
-				! state.showDomainOptionsStep &&
-				( showRefundEligibilityNotice ? (
-					<RefundEligibilityNotice
-						purchase={ purchase }
-						onClaimRefund={ onCancellationStartForRefund }
-					/>
-				) : (
-					<TimeRemainingNotice purchase={ purchase } />
-				) )
-			}
+			notices={ renderTopNotice( {
+				surveyShown: state.surveyShown,
+				showDomainOptionsStep: state.showDomainOptionsStep,
+				displayVariant,
+				purchase,
+				intent,
+				showRefundEligibilityNotice,
+				onClaimRefund: onCancellationStartForRefund,
+			} ) }
 		>
 			{ isSolutionsStep ? (
-				<CancelPurchaseForm
-					atomicRevertCheckOne={ state.atomicRevertCheckOne }
-					atomicRevertCheckTwo={ state.atomicRevertCheckTwo }
-					atomicRevertOnClickCheckOne={ atomicRevertOnClickCheckOne }
-					atomicRevertOnClickCheckTwo={ atomicRevertOnClickCheckTwo }
-					atomicTransfer={ atomicTransfer }
-					cancelBundledDomain={ state.cancelBundledDomain }
-					cancellationInProgress={ state.isLoading }
-					cancellationOffer={ cancellationOffer }
-					clickNext={ clickNext }
-					closeDialog={ closeDialog }
-					disableButtons={ state.isLoading }
-					downgradeClick={ downgradeClick }
-					downgradePlan={ downgradePlan }
-					flowType={ flowType }
-					freeMonthOfferClick={ freeMonthOfferClick }
-					hasBackupsFeature={ hasBackupsFeature }
-					importQuestionRadio={ state.importQuestionRadio }
-					includedDomainPurchase={ includedDomainPurchase }
-					isAkismet={ isAkismet }
-					isApplyingOffer={ isApplyingOffer }
-					isImport={ isImport }
-					isNextAdventureValid={ state.isNextAdventureValid }
-					isShowing={ state.isShowingMarketplaceSubscriptionsDialog }
-					isSubmitting={ state.isSubmitting }
-					isVisible={ state.surveyShown }
-					offerDiscountBasedFromPurchasePrice={ offerDiscountBasedFromPurchasePrice }
-					onClickAcceptForCancellationOffer={ onClickAcceptForCancellationOffer }
-					onGetCancellationOffer={ onGetCancellationOffer }
-					onImportRadioChange={ onImportRadioChange }
-					onNextAdventureValidationChange={ onNextAdventureValidationChange }
-					onRadioOneChange={ onRadioOneChange }
-					onRadioTwoChange={ onRadioTwoChange }
-					onSubmit={ onSubmit }
-					onSurveyComplete={ onSurveyComplete }
-					onTextOneChange={ onTextOneChange }
-					onTextThreeChange={ onTextThreeChange }
-					onTextTwoChange={ onTextTwoChange }
-					plans={ plans }
-					purchase={ purchase }
-					questionOneOrder={ state.questionOneOrder }
-					questionOneRadio={ state.questionOneRadio }
-					questionOneText={ state.questionOneText }
-					questionTwoOrder={ state.questionTwoOrder }
-					questionTwoRadio={ state.questionTwoRadio }
-					questionTwoText={ state.questionTwoText }
-					refundAmount={ purchase.total_refund_amount }
-					siteSlug={ siteSlug }
-					solution={ state.solution }
-					surveyStep={ state.surveyStep }
-					allSteps={ allSteps }
-					upsell={ state.upsell }
-				/>
+				form
 			) : (
 				<Card>
 					<CardBody>
 						<VStack spacing={ 6 }>
-							<CancelPurchaseForm
-								atomicRevertCheckOne={ state.atomicRevertCheckOne }
-								atomicRevertCheckTwo={ state.atomicRevertCheckTwo }
-								atomicRevertOnClickCheckOne={ atomicRevertOnClickCheckOne }
-								atomicRevertOnClickCheckTwo={ atomicRevertOnClickCheckTwo }
-								atomicTransfer={ atomicTransfer }
-								cancelBundledDomain={ state.cancelBundledDomain }
-								cancellationInProgress={ state.isLoading }
-								cancellationOffer={ cancellationOffer }
-								clickNext={ clickNext }
-								closeDialog={ closeDialog }
-								disableButtons={ state.isLoading }
-								downgradeClick={ downgradeClick }
-								downgradePlan={ downgradePlan }
-								flowType={ flowType }
-								freeMonthOfferClick={ freeMonthOfferClick }
-								hasBackupsFeature={ hasBackupsFeature }
-								importQuestionRadio={ state.importQuestionRadio }
-								includedDomainPurchase={ includedDomainPurchase }
-								isAkismet={ isAkismet }
-								isApplyingOffer={ isApplyingOffer }
-								isImport={ isImport }
-								isNextAdventureValid={ state.isNextAdventureValid }
-								isShowing={ state.isShowingMarketplaceSubscriptionsDialog }
-								isSubmitting={ state.isSubmitting }
-								isVisible={ state.surveyShown }
-								offerDiscountBasedFromPurchasePrice={ offerDiscountBasedFromPurchasePrice }
-								onClickAcceptForCancellationOffer={ onClickAcceptForCancellationOffer }
-								onGetCancellationOffer={ onGetCancellationOffer }
-								onImportRadioChange={ onImportRadioChange }
-								onNextAdventureValidationChange={ onNextAdventureValidationChange }
-								onRadioOneChange={ onRadioOneChange }
-								onRadioTwoChange={ onRadioTwoChange }
-								onSubmit={ onSubmit }
-								onSurveyComplete={ onSurveyComplete }
-								onTextOneChange={ onTextOneChange }
-								onTextThreeChange={ onTextThreeChange }
-								onTextTwoChange={ onTextTwoChange }
-								plans={ plans }
-								purchase={ purchase }
-								questionOneOrder={ state.questionOneOrder }
-								questionOneRadio={ state.questionOneRadio }
-								questionOneText={ state.questionOneText }
-								questionTwoOrder={ state.questionTwoOrder }
-								questionTwoRadio={ state.questionTwoRadio }
-								questionTwoText={ state.questionTwoText }
-								refundAmount={ purchase.total_refund_amount }
-								siteSlug={ siteSlug }
-								solution={ state.solution }
-								surveyStep={ state.surveyStep }
-								allSteps={ allSteps }
-								upsell={ state.upsell }
-							/>
-							{ ! state.surveyShown && (
+							{ form }
+							{ ! atSurvey && (
 								<CancellationPreSurveyContent
 									purchase={ purchase }
+									displayVariant={ displayVariant }
 									includedDomainPurchase={ includedDomainPurchase }
 									atomicTransfer={ atomicTransfer }
 									selectedDomain={ selectedDomain }
 									state={ state }
+									skipSurvey={ skipSurvey }
 									purchaseCancelFeatures={ purchaseCancelFeatures }
 									onCancelConfirmationStateChange={ onCancelConfirmationStateChange }
 									onDomainConfirmationChange={ onDomainConfirmationChange }
