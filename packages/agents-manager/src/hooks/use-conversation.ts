@@ -9,6 +9,7 @@ import { useEffect, useRef } from '@wordpress/element';
 import { API_BASE_URL } from '../constants';
 import { useAgentsManagerContext } from '../contexts';
 import { isFreshSession } from '../utils/agent-session';
+import { isReaderChatAgent } from '../utils/is-reader-chat-agent';
 
 interface Config {
 	maxPages?: number;
@@ -54,7 +55,7 @@ export default function useConversation( { maxPages = 10, onSuccess = () => {} }
 		// Skip server fetch for brand-new client-created sessions — they
 		// have no history to load and the extra round-trip blocks the
 		// skeleton unnecessarily.
-		enabled: !! sessionId && ! isFreshSession( agentId ),
+		enabled: !! sessionId && ! ( isReaderChatAgent( agentId ) && isFreshSession( agentId ) ),
 		refetchOnWindowFocus: false,
 	} );
 

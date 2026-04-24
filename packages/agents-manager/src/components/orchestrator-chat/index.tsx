@@ -216,9 +216,18 @@ export default function OrchestratorChat( {
 				// No images, just send normally
 				onSubmit( message );
 			}
-			markSessionUsed( agentConfig?.agentId );
+			if ( isReaderChat ) {
+				markSessionUsed( agentConfig?.agentId );
+			}
 		},
-		[ agentConfig?.agentId, onSubmit, pendingImages.length, siteKey, uploadImagesToWordPress ]
+		[
+			agentConfig?.agentId,
+			isReaderChat,
+			onSubmit,
+			pendingImages.length,
+			siteKey,
+			uploadImagesToWordPress,
+		]
 	);
 
 	// Handle navigation continuation if hook is provided
