@@ -120,7 +120,7 @@ export default function ThemeTierBadge( {
 		<div
 			className={ clsx(
 				'theme-tier-badge',
-				`theme-tier-badge--${ themeTierSlug }-whatever`,
+				`theme-tier-badge--${ themeTierSlug }-whatever-foo`,
 				className
 			) }
 		>
