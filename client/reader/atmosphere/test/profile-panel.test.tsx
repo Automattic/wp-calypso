@@ -46,7 +46,8 @@ describe( 'ProfilePanel', () => {
 		} );
 
 		await waitFor( () => expect( screen.getByText( 'hello there' ) ).toBeVisible() );
-		expect( screen.getByText( '42 posts' ) ).toBeVisible();
-		expect( screen.getByText( '10 followers' ) ).toBeVisible();
+		const stats = screen.getByRole( 'list', { name: /profile stats/i } );
+		expect( stats ).toHaveTextContent( '42 posts' );
+		expect( stats ).toHaveTextContent( '10 followers' );
 	} );
 } );

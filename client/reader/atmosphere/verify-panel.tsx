@@ -30,33 +30,37 @@ export function VerifyPanel( { data, error, isLoading }: VerifyPanelProps ) {
 							<img
 								src={ data.avatar }
 								alt=""
-								className="atmosphere-avatar"
+								className="atmosphere-verify__avatar"
 								onError={ ( event ) => {
 									event.currentTarget.style.display = 'none';
 								} }
 							/>
 						) : null }
-						<p>{ data.description }</p>
-						<ul className="atmosphere-verify__counts">
-							<li>
-								{ translate( '%(count)d follower', '%(count)d followers', {
-									count: data.counts.followers,
-									args: { count: data.counts.followers },
-								} ) }
+						<ul className="atmosphere-verify__stats" aria-label={ translate( 'Profile stats' ) }>
+							<li className="atmosphere-verify__stat">
+								<span className="atmosphere-verify__stat-count">{ data.counts.followers }</span>{ ' ' }
+								<span className="atmosphere-verify__stat-label">
+									{ translate( 'follower', 'followers', { count: data.counts.followers } ) }
+								</span>
 							</li>
-							<li>
-								{ translate( 'Following %(count)d account', 'Following %(count)d accounts', {
-									count: data.counts.follows,
-									args: { count: data.counts.follows },
-								} ) }
+							<li className="atmosphere-verify__stat">
+								<span className="atmosphere-verify__stat-count">{ data.counts.follows }</span>{ ' ' }
+								<span className="atmosphere-verify__stat-label">
+									{ translate( 'following', {
+										context: 'profile stats: count of accounts followed',
+									} ) }
+								</span>
 							</li>
-							<li>
-								{ translate( '%(count)d post', '%(count)d posts', {
-									count: data.counts.posts,
-									args: { count: data.counts.posts },
-								} ) }
+							<li className="atmosphere-verify__stat">
+								<span className="atmosphere-verify__stat-count">{ data.counts.posts }</span>{ ' ' }
+								<span className="atmosphere-verify__stat-label">
+									{ translate( 'post', 'posts', { count: data.counts.posts } ) }
+								</span>
 							</li>
 						</ul>
+						{ data.description ? (
+							<p className="atmosphere-verify__bio">{ data.description }</p>
+						) : null }
 					</div>
 				) : null }
 			</CardBody>

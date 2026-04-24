@@ -30,9 +30,10 @@ describe( 'VerifyPanel', () => {
 			/>
 		);
 		expect( screen.getByText( 'hello there' ) ).toBeVisible();
-		expect( screen.getByText( '42 posts' ) ).toBeVisible();
-		expect( screen.getByText( '10 followers' ) ).toBeVisible();
-		expect( screen.getByText( 'Following 5 accounts' ) ).toBeVisible();
+		const stats = screen.getByRole( 'list', { name: /profile stats/i } );
+		expect( stats ).toHaveTextContent( '10 followers' );
+		expect( stats ).toHaveTextContent( '5 following' );
+		expect( stats ).toHaveTextContent( '42 posts' );
 	} );
 
 	it( 'renders auth_failed message', () => {

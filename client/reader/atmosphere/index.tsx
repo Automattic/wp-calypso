@@ -1,3 +1,5 @@
+import './style.scss';
+
 import page from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { sidebar, setBeforePrimary } from 'calypso/reader/controller';
