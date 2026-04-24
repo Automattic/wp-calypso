@@ -141,9 +141,11 @@ export function PurchaseDetails( {
 export function PurchaseCancel( {
 	purchaseId,
 	siteSlug,
+	intent,
 }: {
 	purchaseId: number;
 	siteSlug: string;
+	intent?: 'cancel' | 'remove' | null;
 } ) {
 	const translate = useTranslate();
 	const logPurchasesError = useLogPurchasesError( 'site level purchase cancel load error' );
@@ -162,6 +164,7 @@ export function PurchaseCancel( {
 				<CancelPurchase
 					purchaseId={ purchaseId }
 					siteSlug={ siteSlug }
+					intent={ intent }
 					getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 					getConfirmCancelDomainUrlFor={ getConfirmCancelDomainUrlFor }
 					purchaseListUrl={ getPurchaseListUrlFor( siteSlug ) }
