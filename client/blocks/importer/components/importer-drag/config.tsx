@@ -36,6 +36,17 @@ export function getImportDragConfig( importer: Importer, supportLinkModal?: bool
 				options
 			),
 		},
+		instagram: {
+			description: translate(
+				'Import posts and images from your %(importerName)s data export archive',
+				options
+			),
+			uploadDescription: translate(
+				'An %(importerName)s export file is a ZIP archive you can download from Instagram that contains your posts and their media. ' +
+					'{{supportLink/}}',
+				options
+			),
+		},
 		medium: {
 			description: translate(
 				'Import your posts, tags, images, and videos from your %(importerName)s export file',

@@ -1,6 +1,7 @@
 // List of supported importer platforms (most important)
 export type ImporterMainPlatform =
 	| 'blogger'
+	| 'instagram'
 	| 'medium'
 	| 'squarespace'
 	| 'wordpress'

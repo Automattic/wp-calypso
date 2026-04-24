@@ -17,7 +17,14 @@ interface DetailsProps {
 	onClose: () => void;
 }
 
-export const coveredPlatforms = [ 'wix', 'squarespace', 'blogger', 'wordpress', 'medium' ];
+export const coveredPlatforms = [
+	'wix',
+	'squarespace',
+	'blogger',
+	'wordpress',
+	'medium',
+	'instagram',
+];
 
 const platformFeatureList: { [ key: string ]: { [ key: string ]: FeatureName[] } } = {
 	wix: {
@@ -39,6 +46,10 @@ const platformFeatureList: { [ key: string ]: { [ key: string ]: FeatureName[] }
 	medium: {
 		supported: [ 'posts', 'tags' ],
 		unsupported: [ 'styles', 'themes', 'colors', 'fonts' ],
+	},
+	instagram: {
+		supported: [ 'posts', 'photos', 'videos', 'tags' ],
+		unsupported: [ 'styles', 'themes', 'colors', 'fonts', 'pages' ],
 	},
 };
 
@@ -78,6 +89,8 @@ const ImportPlatformDetails: React.FunctionComponent< DetailsProps > = ( data ) 
 				return __( 'Importing content from self-hosted WordPress to WordPress.com' );
 			case 'medium':
 				return __( 'Importing content from Medium' );
+			case 'instagram':
+				return __( 'Importing content from Instagram' );
 			default:
 				return '';
 		}
@@ -109,6 +122,10 @@ const ImportPlatformDetails: React.FunctionComponent< DetailsProps > = ( data ) 
 			case 'medium':
 				return __(
 					"Our Medium content importer is the quickest way to move your content. Simply export the contents from Medium as a .ZIP file, then click 'Import your content' and upload it to our importer."
+				);
+			case 'instagram':
+				return __(
+					"Our Instagram importer converts the ZIP you download from Instagram's 'Download Your Information' feature into WordPress posts. Request the JSON export from Instagram, then click 'Import your content' and upload the archive below."
 				);
 			default:
 				return '';

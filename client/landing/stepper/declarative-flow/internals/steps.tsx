@@ -132,6 +132,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/importer-blogger' ),
 	},
 
+	IMPORTER_INSTAGRAM: {
+		slug: 'importerInstagram',
+		asyncComponent: () => import( './steps-repository/importer-instagram' ),
+	},
+
 	IMPORTER_MEDIUM: {
 		slug: 'importerMedium',
 		asyncComponent: () => import( './steps-repository/importer-medium' ),

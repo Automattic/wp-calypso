@@ -136,6 +136,47 @@ function getConfig( {
 	// 	weight: 0,
 	// };
 
+	importerConfig.instagram = {
+		engine: 'instagram',
+		key: 'importer-type-instagram',
+		type: 'file',
+		priority: 'primary',
+		title: 'Instagram',
+		icon: 'instagram',
+		description: (
+			<p>
+				{ translate(
+					'Import posts and images from an Instagram data export archive to {{b}}%(siteTitle)s{{/b}}.',
+					{
+						args: { siteTitle },
+						components: {
+							b: <strong />,
+						},
+					}
+				) }
+			</p>
+		),
+		uploadDescription: translate(
+			'An %(importerName)s export file is a ZIP archive from Instagram ' +
+				'containing your posts and their media. ' +
+				'{{supportLink/}}',
+			{
+				args: {
+					importerName: 'Instagram',
+				},
+				components: {
+					supportLink: (
+						<InlineSupportLink supportContext="importers-instagram" showIcon={ false }>
+							{ translate( 'Need help exporting your content?' ) }
+						</InlineSupportLink>
+					),
+				},
+			}
+		),
+		acceptedFileTypes: [ '.zip' ],
+		weight: 0,
+	};
+
 	importerConfig.medium = {
 		engine: 'medium',
 		key: 'importer-type-medium',
@@ -405,6 +446,10 @@ export function getImporters( args: ImporterConfigArgs = { siteSlug: '', siteTit
 
 	if ( ! config.isEnabled( 'importers/substack' ) ) {
 		delete importerConfig.substack;
+	}
+
+	if ( ! config.isEnabled( 'importers/instagram' ) ) {
+		delete importerConfig.instagram;
 	}
 
 	const importers = orderBy( values( importerConfig ), [ 'weight', 'title' ], [ 'desc', 'asc' ] );

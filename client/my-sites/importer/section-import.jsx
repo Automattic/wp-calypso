@@ -18,6 +18,7 @@ import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
 import memoizeLast from 'calypso/lib/memoize-last';
 import version_compare from 'calypso/lib/version-compare';
 import BloggerImporter from 'calypso/my-sites/importer/importer-blogger';
+import InstagramImporter from 'calypso/my-sites/importer/importer-instagram';
 import MediumImporter from 'calypso/my-sites/importer/importer-medium';
 import SquarespaceImporter from 'calypso/my-sites/importer/importer-squarespace';
 import SubstackImporter from 'calypso/my-sites/importer/importer-substack';
@@ -49,6 +50,7 @@ import './section-import.scss';
  */
 const importerComponents = {
 	blogger: BloggerImporter,
+	instagram: InstagramImporter,
 	medium: MediumImporter,
 	substack: SubstackImporter,
 	squarespace: SquarespaceImporter,

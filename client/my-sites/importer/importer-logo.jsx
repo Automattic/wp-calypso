@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import SocialLogo from 'calypso/components/social-logo';
+import InstagramLogo from './logos/instagram';
 import MediumLogo from './logos/medium';
 import SubstackLogo from './logos/substack';
 import WixLogo from './logos/wix';
@@ -17,6 +18,10 @@ const ImporterLogo = ( { icon } ) => {
 
 	if ( 'medium' === icon ) {
 		return <MediumLogo />;
+	}
+
+	if ( 'instagram' === icon ) {
+		return <InstagramLogo />;
 	}
 
 	if ( 'substack' === icon ) {
