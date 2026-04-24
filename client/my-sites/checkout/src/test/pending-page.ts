@@ -167,13 +167,9 @@ describe( 'redirectThroughPending', () => {
 		);
 	} );
 
-	it( 'navigates to an absolute URL when in absolute mode', () => {
-		Object.defineProperty( window, 'location', {
-			value: {
-				origin: currentWindowOrigin,
-				href: currentWindowOrigin,
-			},
-		} );
+	it( 'navigates using client-side routing even when destination is absolute', () => {
+		const redirectSpy = jest.fn();
+		jest.mocked( page ).mockImplementation( redirectSpy );
 		const finalUrl = 'https://wordpress.com/foo/bar/baz';
 		const siteSlug = 'example2.com';
 		const orderId = '12345';
@@ -181,12 +177,11 @@ describe( 'redirectThroughPending', () => {
 			siteSlug,
 			orderId,
 		} );
-		expect( global.window.location.href ).toEqual(
-			`${ currentWindowOrigin }/checkout/thank-you/${ siteSlug }/pending/${ orderId }?redirect_to=${ encodeURIComponent(
+		expect( redirectSpy ).toHaveBeenCalledWith(
+			`/checkout/thank-you/${ siteSlug }/pending/${ orderId }?redirect_to=${ encodeURIComponent(
 				finalUrl
 			) }&receiptId=${ encodedReceiptPlaceholder }`
 		);
-		delete global.window.location;
 	} );
 } );
 

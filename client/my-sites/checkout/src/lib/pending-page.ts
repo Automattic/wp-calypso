@@ -79,9 +79,9 @@ export function redirectThroughPending(
 	url: string,
 	options: Omit< PendingPageRedirectOptions, 'urlType' >
 ): void {
-	if ( ! isRelativeUrl( url ) ) {
-		return absoluteRedirectThroughPending( url, options );
-	}
+	// Always navigate to the pending page using client-side routing.
+	// The pending page is a Calypso route regardless of the final
+	// destination URL, which is stored in the redirect_to query param.
 	try {
 		relativeRedirectThroughPending( url, options );
 	} catch ( err ) {
@@ -92,10 +92,6 @@ export function redirectThroughPending(
 		);
 		absoluteRedirectThroughPending( url, options );
 	}
-}
-
-function isRelativeUrl( url: string ): boolean {
-	return url.startsWith( '/' ) && ! url.startsWith( '//' );
 }
 
 /**
