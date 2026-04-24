@@ -21,10 +21,14 @@ jest.mock(
 );
 jest.mock(
 	'@wordpress/element',
-	() => ( {
-		useState: jest.requireActual( 'react' ).useState,
-		useEffect: jest.requireActual( 'react' ).useEffect,
-	} ),
+	() => {
+		const element = jest.requireActual( '@wordpress/element' );
+		return {
+			...element,
+			useState: jest.requireActual( 'react' ).useState,
+			useEffect: jest.requireActual( 'react' ).useEffect,
+		};
+	},
 	{ virtual: true }
 );
 jest.mock(
