@@ -22,7 +22,13 @@ declare const window: undefined | ( Window & { BUILD_TIMESTAMP?: number } );
  * See internal Nosara repo?
  */
 const TRACKS_SPECIAL_PROPS_NAMES = [ 'geo', 'message', 'request', 'geocity', 'ip' ];
-const ALLOWED_EVENT_SOURCES = [ 'calypso', 'jetpack', 'remotedatablocks', 'wpcom_dsp_widget' ];
+const ALLOWED_EVENT_SOURCES = [
+	'calypso',
+	'jetpack',
+	'remotedatablocks',
+	'wpcom_dsp_widget',
+	'studio',
+];
 const EVENT_NAME_EXCEPTIONS = [
 	'a8c_cookie_banner_ok',
 	'a8c_cookie_banner_view',
