@@ -12,6 +12,94 @@
 // on the dark surface and would simply vanish on a light one without
 // breaking anything — the content beneath still uses `color: inherit`.
 
+// ---------- BlockRef (clickable block-label chip) ----------
+// Rendered as a button when clickable, a span otherwise. Ghost styling so
+// it reads as an inline reference rather than a CTA. Hover only when clickable.
+.jetpack-ai-block-ref {
+	display: inline;
+	font-size: inherit;
+	font-family: inherit;
+	color: inherit;
+	background: transparent;
+	border: 0;
+	padding: 0;
+	opacity: 0.85;
+
+	&.is-clickable {
+		cursor: pointer;
+		text-decoration: underline;
+		text-decoration-style: dotted;
+		text-decoration-color: rgba(255, 255, 255, 0.3);
+		text-underline-offset: 2px;
+
+		&:hover,
+		&:focus-visible {
+			opacity: 1;
+			text-decoration-color: var(--wp-admin-theme-color, #3858e9);
+			outline: none;
+		}
+	}
+
+	&.is-post-wide,
+	&.is-stale {
+		opacity: 0.6;
+		font-style: italic;
+	}
+}
+
+// ---------- ReviewerChip (avatar + name OR coloured pill) ----------
+.jetpack-ai-reviewer-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 12px;
+	line-height: 1.3;
+	color: inherit;
+	vertical-align: middle;
+
+	&.is-avatar {
+		gap: 6px;
+	}
+
+	&__avatar {
+		width: 20px;
+		height: 20px;
+		border-radius: 50%;
+		display: block;
+		object-fit: cover;
+		flex-shrink: 0;
+	}
+
+	&__name {
+		font-weight: 500;
+		// Long single-word display names (usernames with no whitespace) would
+		// otherwise force the chip to claim the full row width, starving the
+		// adjacent content. Allow character-level wrap and drop the default
+		// min-content sizing so a flex ancestor can shrink us to fit.
+		min-width: 0;
+		overflow-wrap: anywhere;
+	}
+
+	// Pill variant (no avatar URL). Background colour set inline — we only
+	// paint the geometry here so inline `style.background` wins.
+	&.is-pill {
+		padding: 2px 8px;
+		border-radius: 8px;
+		border: 1px solid transparent;
+		font-weight: 500;
+		white-space: nowrap;
+	}
+
+	&.is-compact {
+		font-size: 11px;
+
+		.jetpack-ai-reviewer-chip__avatar {
+			width: 16px;
+			height: 16px;
+		}
+	}
+}
+
 .jetpack-ai-review-mediation {
 	display: flex;
 	flex-direction: column;
@@ -128,14 +216,20 @@
 	&__card {
 		border: 1px solid rgba(255, 255, 255, 0.12);
 		border-radius: 8px;
-		padding: 0.75rem;
-		margin-bottom: 0.5rem;
+		padding: 1rem;
+		margin-bottom: 0.75rem;
 		background: transparent;
 		color: inherit;
 		transition:
 			border-color 0.15s ease,
 			opacity 0.15s ease,
 			background 0.15s ease;
+
+		// Give the stacked children (block ref, del/ins, rationale, reviewers,
+		// actions) consistent vertical rhythm so content never reads packed.
+		> * + * {
+			margin-top: 0.625rem;
+		}
 
 		&.is-clickable {
 			cursor: pointer;
@@ -171,15 +265,8 @@
 		margin: 0 0 0.5rem;
 	}
 
-	&__positions {
-		list-style: none;
-		padding: 0;
-		margin: 0 0 0.5rem;
-
-		li {
-			margin-bottom: 0.25rem;
-		}
-	}
+	// Note: the `&__positions` list (now driven by `&__position` rows with
+	// avatars) is defined further down alongside the conflict-card block.
 
 	// Quoted guideline clauses need to read as a distinct aside, not blend
 	// into the chat surface. A translucent fill + accent-colour bar on the
@@ -187,8 +274,8 @@
 	&__guideline-anchor {
 		border-left: 3px solid var(--wp-admin-theme-color, #3858e9);
 		background: rgba(255, 255, 255, 0.05);
-		padding: 0.5rem 0.75rem;
-		margin: 0.5rem 0;
+		padding: 0.75rem 1rem;
+		margin: 0.75rem 0;
 		font-style: italic;
 		border-radius: 0 4px 4px 0;
 		white-space: pre-wrap;
@@ -229,19 +316,23 @@
 	// ---------- Action buttons ----------
 	&__actions {
 		display: flex;
-		gap: 0.5rem;
-		margin-top: 0.75rem;
+		gap: 0.625rem;
+		margin-top: 1rem;
 	}
 
 	&__action {
-		flex: 1;
-		padding: 0.375rem 0.75rem;
+		flex: 1 1 0;
+		min-width: 0;
+		min-height: 34px;
+		padding: 0.5rem 0.875rem;
 		font-size: 12px;
+		line-height: 1.35;
 		cursor: pointer;
 		border-radius: 4px;
 		border: 1px solid rgba(255, 255, 255, 0.25);
 		background: transparent;
 		color: inherit;
+		text-align: center;
 		transition:
 			border-color 0.15s ease,
 			background 0.15s ease;
@@ -286,5 +377,265 @@
 
 	&__violation-issue {
 		margin: 0 0 0.25rem;
+	}
+
+	// ---------- Cached-run hint ----------
+	// Small muted line rendered inside the Review Summary panel when the
+	// server short-circuited the LLM call via the state-hash cache. Keep it
+	// unobtrusive — signals provenance without stealing focus.
+	&__cached-hint {
+		margin-top: 0.75rem;
+		padding: 0.5rem 0.75rem;
+		font-size: 11px;
+		font-style: italic;
+		opacity: 0.7;
+		background: rgba(255, 255, 255, 0.04);
+		border-radius: 4px;
+		border-left: 2px solid rgba(255, 255, 255, 0.25);
+	}
+
+	// ---------- Stats strip ----------
+	// Each stat renders as a bordered chip (non-clickable) so the row reads
+	// as a status-at-a-glance bar rather than running text. Wraps to multiple
+	// rows on narrow sidebars (350px docked) and collapses to one row at 50vw.
+	&__stats {
+		list-style: none;
+		padding: 0;
+		margin: 0 0 0.875rem;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px;
+		font-size: 12px;
+	}
+
+	&__stat {
+		display: inline-flex;
+		align-items: baseline;
+		gap: 5px;
+		padding: 4px 10px;
+		border: 1px solid rgba(255, 255, 255, 0.2);
+		border-radius: 4px;
+		background: rgba(255, 255, 255, 0.03);
+		font-weight: 500;
+		white-space: nowrap;
+
+		&.is-conflicts {
+			color: #e8a520;
+			border-color: rgba(232, 165, 32, 0.45);
+			background: rgba(232, 165, 32, 0.08);
+		}
+
+		&.is-accepted {
+			color: #4ab866;
+			border-color: rgba(74, 184, 102, 0.45);
+			background: rgba(74, 184, 102, 0.08);
+		}
+
+		&.is-dismissed {
+			opacity: 0.7;
+			border-style: dashed;
+		}
+	}
+
+	&__stat-count {
+		font-weight: 700;
+		font-size: 13px;
+	}
+
+	// ---------- Conflict card (mockup-inspired layout) ----------
+	&__conflict-card {
+		border: 1px solid rgba(232, 165, 32, 0.35);
+		border-radius: 8px;
+		padding: 1rem;
+		margin-bottom: 0.75rem;
+		background: rgba(232, 165, 32, 0.04);
+		transition:
+			border-color 0.15s ease,
+			opacity 0.15s ease;
+
+		&.is-applying {
+			border-color: var(--wp-admin-theme-color, #3858e9);
+			opacity: 0.85;
+		}
+
+		&.is-accepted {
+			opacity: 0.6;
+			border-color: rgba(74, 184, 102, 0.7);
+		}
+
+		&.is-dismissed {
+			opacity: 0.4;
+		}
+
+		&.is-failed {
+			border-color: rgba(214, 54, 56, 0.7);
+		}
+	}
+
+	&__conflict-header {
+		display: flex;
+		align-items: baseline;
+		gap: 8px;
+		margin: 0 0 0.75rem;
+		flex-wrap: wrap;
+	}
+
+	&__conflict-icon {
+		color: #e8a520;
+		font-size: 14px;
+		line-height: 1;
+		flex-shrink: 0;
+	}
+
+	&__conflict-title {
+		font-size: 13px;
+		font-weight: 600;
+		margin: 0;
+		flex: 1 1 auto;
+		min-width: 0;
+	}
+
+	&__conflict-block-ref {
+		font-size: 11px;
+		flex-shrink: 0;
+		opacity: 0.7;
+	}
+
+	// Positions list — each row gets healthy internal spacing so reviewer
+	// name + quoted position read as a paired unit rather than packed text.
+	&__positions {
+		list-style: none;
+		padding: 0;
+		margin: 0 0 0.5rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.875rem;
+	}
+
+	// Stack vertically (chip on top, position text underneath). Long single-
+	// word usernames like `marcushollowaydevoncouncil` would otherwise force
+	// the chip to claim most of a 350px row's width, leaving the position
+	// text so narrow it falls back to character-per-line wrapping. Stacked,
+	// both the name and the quoted position keep the full row to themselves.
+	&__position {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 6px;
+		margin: 0;
+	}
+
+	&__position-text {
+		font-size: 12px;
+		line-height: 1.55;
+		margin: 0;
+		// `min-width: 0` lets the paragraph shrink inside any flex ancestor
+		// so the text wraps on word boundaries instead of overflowing.
+		min-width: 0;
+		// Long unbroken tokens inside a reviewer quote (URLs, usernames) wrap
+		// on character boundaries rather than overflowing the card.
+		overflow-wrap: anywhere;
+	}
+
+	// ---------- AI resolution inset ----------
+	&__ai-inset {
+		background: rgba(255, 255, 255, 0.06);
+		border-radius: 8px;
+		padding: 0.875rem 1rem;
+		margin: 1rem 0 0;
+	}
+
+	&__ai-label {
+		font-size: 11px;
+		font-weight: 600;
+		margin: 0 0 0.5rem;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		opacity: 0.85;
+	}
+
+	&__ai-badge {
+		background: var(--wp-admin-theme-color, #3858e9);
+		color: #fff;
+		font-size: 10px;
+		padding: 2px 6px;
+		border-radius: 3px;
+		letter-spacing: 0.06em;
+	}
+
+	&__ai-text {
+		font-size: 12px;
+		line-height: 1.6;
+		margin: 0 0 0.5rem;
+	}
+
+	// Within the AI inset, bump the blockquote to match the darker inset
+	// surface — default styling (a rgba(255,255,255,0.05) fill) would be
+	// nearly invisible against its parent here.
+	&__ai-inset &__guideline-anchor {
+		background: rgba(255, 255, 255, 0.09);
+		font-size: 11px;
+		padding: 0.625rem 0.875rem;
+		margin: 0.75rem 0 0;
+	}
+
+	// ---------- Conflict action buttons ----------
+	// Three classes land on buttons in a conflict row: is-reviewer (ghost),
+	// is-accept (primary AI), is-dismiss (ghost, dangerless). Layout is
+	// `flex-wrap: wrap` so three or more buttons on a 350px sidebar stack
+	// onto multiple lines. Give each button more vertical padding so
+	// multi-line labels ("Accept Priya's version (keep as-is)") don't read
+	// cramped against neighbours.
+	&__conflict-card &__actions {
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+
+	&__conflict-card &__action {
+		flex: 1 1 45%;
+		min-height: 42px;
+		padding: 0.625rem 0.875rem;
+	}
+
+	&__action.is-reviewer {
+		background: transparent;
+		color: inherit;
+		border-color: rgba(255, 255, 255, 0.35);
+
+		&:hover:not(:disabled) {
+			border-color: rgba(255, 255, 255, 0.55);
+			background: rgba(255, 255, 255, 0.06);
+		}
+	}
+
+	// ---------- Footer bar ----------
+	&__footer {
+		margin-top: 0.75rem;
+		display: flex;
+	}
+
+	&__footer-action {
+		flex: 1;
+		padding: 0.5rem 0.75rem;
+		border-radius: 4px;
+		font-size: 13px;
+		font-weight: 600;
+		cursor: pointer;
+		border: 1px solid var(--wp-admin-theme-color, #3858e9);
+		background: var(--wp-admin-theme-color, #3858e9);
+		color: #fff;
+		transition: filter 0.15s ease, opacity 0.15s ease;
+
+		&:hover:not(:disabled) {
+			filter: brightness(1.1);
+		}
+
+		&:disabled {
+			cursor: default;
+			opacity: 0.5;
+		}
 	}
 }
