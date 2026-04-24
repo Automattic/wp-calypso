@@ -94,6 +94,16 @@ export function MastodonOauthCallbackView( { query }: Props ) {
 		}
 	}, [ missingParams, stateMismatch, dispatch ] );
 
+	// Terminal error branches (provider said no, state mismatch, missing
+	// params) never fire the complete mutation, so they never hit the
+	// onError clearOauthState path. Drop the stored value here so a stale
+	// `{state, instance}` doesn't linger in sessionStorage across retries.
+	useEffect( () => {
+		if ( providerError || missingParams || stateMismatch ) {
+			clearOauthState();
+		}
+	}, [ providerError, missingParams, stateMismatch ] );
+
 	// Suppress the transient "state mismatch" render that happens after
 	// onSuccess clears storage but before page.replace unmounts us.
 	const isNavigatingAway = complete.isSuccess;

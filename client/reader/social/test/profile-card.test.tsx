@@ -96,9 +96,13 @@ describe( 'SocialProfileCard', () => {
 		);
 		const bio = container.querySelector( '.social-profile-card__bio' );
 		const anchors = Array.from( bio?.querySelectorAll( 'a' ) ?? [] );
-		const hrefs = anchors.map( ( a ) => a.getAttribute( 'href' ) );
-		expect( hrefs ).not.toContain( expect.stringMatching( /^javascript:/i ) );
-		expect( hrefs ).not.toContain( expect.stringMatching( /^data:/i ) );
+		const hrefs = anchors.map( ( a ) => a.getAttribute( 'href' ) ?? '' );
+		// `not.toContain( expect.stringMatching( ... ) )` is a no-op — the
+		// asymmetric matcher is compared by identity inside `toContain`.
+		// Assert membership via `some` so a slipped-through `javascript:` URL
+		// actually fails the test.
+		expect( hrefs.some( ( h ) => /^javascript:/i.test( h ) ) ).toBe( false );
+		expect( hrefs.some( ( h ) => /^data:/i.test( h ) ) ).toBe( false );
 		expect( hrefs ).toContain( 'https://safe.example/' );
 	} );
 

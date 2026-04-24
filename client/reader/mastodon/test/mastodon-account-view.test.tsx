@@ -120,9 +120,9 @@ describe( 'MastodonAccountView', () => {
 		renderWithProvider( <MastodonAccountView connectionId={ 7 } tab={ PROFILE_TAB } />, {
 			queryClient: makeClient(),
 		} );
-		// Exact handle, not substring — the previous `/@alice@mastodon\.social/`
-		// would also have matched the `@alice@mastodon.social@mastodon.social`
-		// regression (bug fixed in d6dc4a3806b).
+		// Exact handle, not substring. A permissive `/@alice@mastodon\.social/`
+		// would also match `@alice@mastodon.social@mastodon.social`, so an
+		// accidental instance-doubling regression would go undetected.
 		expect( await screen.findByText( '@alice@mastodon.social' ) ).toBeVisible();
 		expect( screen.queryByText( /@mastodon\.social@mastodon\.social/ ) ).not.toBeInTheDocument();
 	} );

@@ -77,7 +77,14 @@ function errorMessage(
 			return translate( 'The Mastodon instance is unreachable right now.' );
 		case 'connection_not_found':
 			return translate( 'That connection is no longer available.' );
-		default:
+		case 'bad_request':
+		case 'unknown':
 			return translate( 'Something went wrong.' );
+		default:
+			return assertNever( error );
 	}
+}
+
+function assertNever( value: never ): never {
+	throw new Error( `Unhandled MastodonError kind: ${ JSON.stringify( value ) }` );
 }

@@ -144,8 +144,7 @@ describe( 'ReaderSidebarMastodon', () => {
 
 		// Webfinger handles (@user@instance) from the list endpoint appear as
 		// the byline. Use exact strings + negative assertion to catch the
-		// `@user@instance@instance` double-handle regression (fixed in
-		// d6dc4a3806b).
+		// `@user@instance@instance` instance-doubling regression.
 		expect( screen.getByText( '@alice1@mastodon.social' ) ).toBeVisible();
 		expect( screen.getByText( '@alice2@hachyderm.io' ) ).toBeVisible();
 		expect( screen.queryByText( /@mastodon\.social@mastodon\.social/ ) ).not.toBeInTheDocument();
