@@ -62,16 +62,16 @@ export default function AchievementsSettings() {
 				setIsPublic( data === 'public' );
 				if ( data === 'public' ) {
 					dispatchSuccessNotice( translate( 'The achievements page is now public.' ) );
-					recordAction( 'set_achievements_page_public' );
+					recordAction( 'set_achievements_visibility_public' );
 					recordReaderTracksEvent( 'calypso_reader_achievements_settings_saved', {
-						setting: 'achievements-page-visibility',
+						setting: 'achievements-visibility',
 						value: 'public',
 					} );
 				} else {
 					dispatchSuccessNotice( translate( 'The achievements page is now private.' ) );
-					recordAction( 'set_achievements_page_private' );
+					recordAction( 'set_achievements_visibility_private' );
 					recordReaderTracksEvent( 'calypso_reader_achievements_settings_saved', {
-						setting: 'achievements-page-visibility',
+						setting: 'achievements-visibility',
 						value: 'private',
 					} );
 				}
