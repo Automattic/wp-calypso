@@ -47,4 +47,59 @@ describe( 'ConnectForm', () => {
 		);
 		expect( screen.getByText( /slow down/i ) ).toBeVisible();
 	} );
+
+	it( 'renders auth_failed message', () => {
+		render(
+			<ConnectForm
+				onSubmit={ jest.fn() }
+				isSubmitting={ false }
+				error={ { kind: 'auth_failed' } }
+			/>
+		);
+		expect( screen.getByText( /couldn’t start the authorization/i ) ).toBeVisible();
+	} );
+
+	it( 'renders upstream_unavailable message', () => {
+		render(
+			<ConnectForm
+				onSubmit={ jest.fn() }
+				isSubmitting={ false }
+				error={ { kind: 'upstream_unavailable' } }
+			/>
+		);
+		expect( screen.getByText( /unreachable right now/i ) ).toBeVisible();
+	} );
+
+	it( 'renders bad_request message', () => {
+		render(
+			<ConnectForm
+				onSubmit={ jest.fn() }
+				isSubmitting={ false }
+				error={ { kind: 'bad_request', message: 'nope' } }
+			/>
+		);
+		expect( screen.getByText( /doesn't look like a valid instance/i ) ).toBeVisible();
+	} );
+
+	it( 'renders connection_not_found message', () => {
+		render(
+			<ConnectForm
+				onSubmit={ jest.fn() }
+				isSubmitting={ false }
+				error={ { kind: 'connection_not_found' } }
+			/>
+		);
+		expect( screen.getByText( /no longer available/i ) ).toBeVisible();
+	} );
+
+	it( 'renders unknown error message', () => {
+		render(
+			<ConnectForm
+				onSubmit={ jest.fn() }
+				isSubmitting={ false }
+				error={ { kind: 'unknown', cause: null } }
+			/>
+		);
+		expect( screen.getByText( /something went wrong/i ) ).toBeVisible();
+	} );
 } );

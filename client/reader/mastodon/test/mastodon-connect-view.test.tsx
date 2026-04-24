@@ -18,6 +18,14 @@ jest.mock(
 
 jest.mock( 'calypso/components/data/document-head', () => () => null );
 
+const mockRecordReaderTracksEvent: jest.Mock = jest.fn( () => ( {
+	type: 'TEST_TRACKS_EVENT',
+} ) );
+
+jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
+	recordReaderTracksEvent: ( ...args: unknown[] ) => mockRecordReaderTracksEvent( ...args ),
+} ) );
+
 describe( 'MastodonConnectView', () => {
 	let assignMock: jest.Mock;
 	let originalLocation: Location;
@@ -67,5 +75,51 @@ describe( 'MastodonConnectView', () => {
 			window.sessionStorage.getItem( 'reader.mastodon.oauthState' ) ?? ''
 		);
 		expect( stored ).toEqual( { state: 'abc', instance: 'mastodon.social' } );
+	} );
+
+	it( 'refuses to follow a non-https authorize_url and does not save state', async () => {
+		const user = userEvent.setup();
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/wpcom/v2/reader/mastodon/connections', {
+				step: 'authorize',
+				instance: 'mastodon.social',
+			} )
+			.reply( 200, {
+				authorize_url: 'javascript:alert(1)',
+				state: 'abc',
+			} );
+
+		renderWithProvider( <MastodonConnectView /> );
+		await user.type( screen.getByLabelText( /Instance/ ), 'mastodon.social' );
+		await user.click( screen.getByRole( 'button', { name: /Continue/ } ) );
+
+		await waitFor( () =>
+			expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
+				'calypso_reader_mastodon_authorize_error',
+				expect.objectContaining( { reason: 'unsafe_url' } )
+			)
+		);
+		expect( assignMock ).not.toHaveBeenCalled();
+		expect( window.sessionStorage.getItem( 'reader.mastodon.oauthState' ) ).toBeNull();
+	} );
+
+	it( 'does not redirect when the authorize mutation errors', async () => {
+		const user = userEvent.setup();
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/wpcom/v2/reader/mastodon/connections', {
+				step: 'authorize',
+				instance: 'nope.example',
+			} )
+			.reply( 400, { error: 'invalid_instance', message: 'bad host' } );
+
+		renderWithProvider( <MastodonConnectView /> );
+		await user.type( screen.getByLabelText( /Instance/ ), 'nope.example' );
+		await user.click( screen.getByRole( 'button', { name: /Continue/ } ) );
+
+		await waitFor( () =>
+			expect( screen.getByText( /couldn't reach that mastodon instance/i ) ).toBeVisible()
+		);
+		expect( assignMock ).not.toHaveBeenCalled();
+		expect( window.sessionStorage.getItem( 'reader.mastodon.oauthState' ) ).toBeNull();
 	} );
 } );

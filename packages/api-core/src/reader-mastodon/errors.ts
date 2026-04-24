@@ -15,7 +15,11 @@ interface WpErrorLike {
 }
 
 function isWpErrorLike( e: unknown ): e is WpErrorLike {
-	return typeof e === 'object' && e !== null && 'error' in ( e as object );
+	if ( typeof e !== 'object' || e === null ) {
+		return false;
+	}
+	const obj = e as object;
+	return 'error' in obj || 'statusCode' in obj || 'status' in obj;
 }
 
 export function classifyMastodonError( raw: unknown ): MastodonError {
@@ -35,7 +39,13 @@ export function classifyMastodonError( raw: unknown ): MastodonError {
 			return { kind: 'upstream_unavailable' };
 		case 'bad_request':
 			return { kind: 'bad_request', message: raw.message ?? '' };
-		default:
-			return { kind: 'unknown', cause: raw };
 	}
+	// Fall-through: no body-level error code matched. HTTP 429 without a
+	// body-coded error still means rate limiting — surface the right copy
+	// instead of collapsing to a generic "unknown".
+	const statusCode = raw.statusCode ?? raw.status;
+	if ( statusCode === 429 ) {
+		return { kind: 'rate_limited' };
+	}
+	return { kind: 'unknown', cause: raw };
 }

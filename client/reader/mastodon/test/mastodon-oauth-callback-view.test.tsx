@@ -27,6 +27,17 @@ jest.mock( '@automattic/calypso-router', () => {
 	return { __esModule: true, default: fn };
 } );
 
+const mockRecordReaderTracksEvent: jest.Mock = jest.fn( () => ( {
+	type: 'TEST_TRACKS_EVENT',
+} ) );
+
+jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
+	recordReaderTracksEvent: ( ...args: unknown[] ) => mockRecordReaderTracksEvent( ...args ),
+} ) );
+
+const BASE = 'https://public-api.wordpress.com';
+const COMPLETE_PATH = '/wpcom/v2/reader/mastodon/connections';
+
 function makeClient() {
 	return new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 }
@@ -36,6 +47,20 @@ function storeState( state: string, instance: string ) {
 		'reader.mastodon.oauthState',
 		JSON.stringify( { state, instance } )
 	);
+}
+
+function mockCompleteSuccess() {
+	return nock( BASE )
+		.post( COMPLETE_PATH, { step: 'complete', state: 'abc', code: 'xyz' } )
+		.reply( 200, {
+			connection: {
+				id: 99,
+				handle: '@alice@mastodon.social',
+				instance: 'mastodon.social',
+				display_name: 'Alice',
+				avatar: null,
+			},
+		} );
 }
 
 describe( 'MastodonOauthCallbackView', () => {
@@ -48,21 +73,7 @@ describe( 'MastodonOauthCallbackView', () => {
 
 	it( 'calls step=complete and redirects to the new connection timeline on success', async () => {
 		storeState( 'abc', 'mastodon.social' );
-		nock( 'https://public-api.wordpress.com' )
-			.post( '/wpcom/v2/reader/mastodon/connections', {
-				step: 'complete',
-				state: 'abc',
-				code: 'xyz',
-			} )
-			.reply( 200, {
-				connection: {
-					id: 99,
-					handle: '@alice@mastodon.social',
-					instance: 'mastodon.social',
-					display_name: 'Alice',
-					avatar: null,
-				},
-			} );
+		mockCompleteSuccess();
 
 		renderWithProvider( <MastodonOauthCallbackView query={ { state: 'abc', code: 'xyz' } } />, {
 			queryClient: makeClient(),
@@ -71,6 +82,56 @@ describe( 'MastodonOauthCallbackView', () => {
 		await waitFor( () =>
 			expect( page.replace ).toHaveBeenCalledWith( '/reader/mastodon/99/timeline' )
 		);
+		expect( window.sessionStorage.getItem( 'reader.mastodon.oauthState' ) ).toBeNull();
+	} );
+
+	it( 'does not flash a state-mismatch error after onSuccess clears storage', async () => {
+		storeState( 'abc', 'mastodon.social' );
+		mockCompleteSuccess();
+
+		renderWithProvider( <MastodonOauthCallbackView query={ { state: 'abc', code: 'xyz' } } />, {
+			queryClient: makeClient(),
+		} );
+
+		await waitFor( () => expect( page.replace ).toHaveBeenCalled() );
+		// After complete.isSuccess the view should not render the alert: the
+		// stored state was just cleared, but the view should suppress the
+		// transient mismatch while navigating away.
+		expect( screen.queryByRole( 'alert' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'fires step=complete only once — a second interceptor stays pending', async () => {
+		storeState( 'abc', 'mastodon.social' );
+		// Two interceptors with distinct responses. If the effect re-ran
+		// for any reason (dependency-change re-run, StrictMode double-invoke
+		// in dev, etc.) and the ref guard failed, the second request would
+		// match the 500 interceptor. The guard working means only the first
+		// interceptor fires and the second stays pending.
+		mockCompleteSuccess();
+		const secondInterceptor = nock( BASE )
+			.post( COMPLETE_PATH, { step: 'complete', state: 'abc', code: 'xyz' } )
+			.reply( 500, { error: 'should_not_have_been_called' } );
+
+		renderWithProvider( <MastodonOauthCallbackView query={ { state: 'abc', code: 'xyz' } } />, {
+			queryClient: makeClient(),
+		} );
+
+		await waitFor( () => expect( page.replace ).toHaveBeenCalled() );
+		expect( secondInterceptor.isDone() ).toBe( false );
+	} );
+
+	it( 'clears stored state and shows a server-side error when complete fails', async () => {
+		storeState( 'abc', 'mastodon.social' );
+		nock( BASE )
+			.post( COMPLETE_PATH, { step: 'complete', state: 'abc', code: 'xyz' } )
+			.reply( 429, { error: 'rate_limited', message: 'slow down' } );
+
+		renderWithProvider( <MastodonOauthCallbackView query={ { state: 'abc', code: 'xyz' } } />, {
+			queryClient: makeClient(),
+		} );
+
+		await waitFor( () => expect( screen.getByRole( 'alert' ) ).toHaveTextContent( /slow down/i ) );
+		expect( page.replace ).not.toHaveBeenCalled();
 		expect( window.sessionStorage.getItem( 'reader.mastodon.oauthState' ) ).toBeNull();
 	} );
 

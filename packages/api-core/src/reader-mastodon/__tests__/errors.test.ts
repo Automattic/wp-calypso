@@ -35,8 +35,37 @@ describe( 'classifyMastodonError', () => {
 		const err = classifyMastodonError( wpErr( 'bad_request', 400, 'nope' ) );
 		expect( err ).toEqual( { kind: 'bad_request', message: 'nope' } );
 	} );
-	it( 'falls back to unknown', () => {
+	it( 'maps bad_request with no message to an empty-message bad_request', () => {
+		expect( classifyMastodonError( wpErr( 'bad_request', 400 ) ) ).toEqual( {
+			kind: 'bad_request',
+			message: '',
+		} );
+	} );
+
+	it( 'maps HTTP 429 without a body-level error code to rate_limited', () => {
+		const raw = { statusCode: 429 } as unknown;
+		expect( classifyMastodonError( raw ) ).toEqual( { kind: 'rate_limited' } );
+	} );
+
+	it( 'maps HTTP 429 using `status` instead of `statusCode`', () => {
+		const raw = { status: 429 } as unknown;
+		expect( classifyMastodonError( raw ) ).toEqual( { kind: 'rate_limited' } );
+	} );
+
+	it( 'falls back to unknown for an unrecognized body-level error code', () => {
+		const raw = classifyMastodonError( wpErr( 'brand_new_code', 500 ) );
+		expect( raw.kind ).toBe( 'unknown' );
+	} );
+
+	it( 'falls back to unknown for plain Errors', () => {
 		const e = classifyMastodonError( new Error( 'boom' ) );
 		expect( e.kind ).toBe( 'unknown' );
+	} );
+
+	it( 'falls back to unknown for null, undefined, strings and numbers', () => {
+		expect( classifyMastodonError( null ).kind ).toBe( 'unknown' );
+		expect( classifyMastodonError( undefined ).kind ).toBe( 'unknown' );
+		expect( classifyMastodonError( 'boom' ).kind ).toBe( 'unknown' );
+		expect( classifyMastodonError( 42 ).kind ).toBe( 'unknown' );
 	} );
 } );

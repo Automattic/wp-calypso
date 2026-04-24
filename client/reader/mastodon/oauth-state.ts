@@ -25,9 +25,9 @@ export function saveOauthState( value: StoredOauthState ): void {
 		storage.setItem( STORAGE_KEY, JSON.stringify( value ) );
 	} catch {
 		// sessionStorage can throw in private-mode or when the quota is
-		// exceeded. The OAuth flow still works without the CSRF check —
-		// the server validates `state` on `step=complete` — so we just
-		// skip the local save and continue.
+		// exceeded. Save is best-effort; if it fails, the callback view
+		// will detect the missing stored state and surface a retry
+		// prompt rather than silently continuing.
 	}
 }
 

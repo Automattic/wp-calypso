@@ -40,11 +40,15 @@ describe( 'reader-mastodon hooks', () => {
 				state: 'abc',
 			} );
 		const client = new QueryClient();
+		const spy = jest.spyOn( client, 'invalidateQueries' );
 		const { result } = renderHook( () => useAuthorizeMastodonConnectionMutation(), {
 			wrapper: makeWrapper( client ),
 		} );
 		const response = await result.current.mutateAsync( { instance: 'mastodon.social' } );
 		expect( response.state ).toBe( 'abc' );
+		// authorize is a pure redirect-fetcher — there's nothing to invalidate
+		// yet, so the mutation must not touch the cache.
+		expect( spy ).not.toHaveBeenCalled();
 	} );
 
 	it( 'useCompleteMastodonConnectionMutation invalidates the connections query', async () => {
@@ -69,7 +73,9 @@ describe( 'reader-mastodon hooks', () => {
 			wrapper: makeWrapper( client ),
 		} );
 		await result.current.mutateAsync( { state: 'abc', code: 'xyz' } );
-		await waitFor( () => expect( spy ).toHaveBeenCalled() );
+		await waitFor( () =>
+			expect( spy ).toHaveBeenCalledWith( { queryKey: readerMastodonKeys.connections() } )
+		);
 	} );
 
 	it( 'useMastodonConnectionQuery is disabled when id is null', () => {

@@ -68,7 +68,13 @@ function errorMessage(
 			return translate( "That doesn't look like a valid instance. Check the URL and try again." );
 		case 'connection_not_found':
 			return translate( 'That connection is no longer available.' );
-		default:
+		case 'unknown':
 			return translate( 'Something went wrong.' );
+		default:
+			return assertNever( error );
 	}
+}
+
+function assertNever( value: never ): never {
+	throw new Error( `Unhandled MastodonError kind: ${ JSON.stringify( value ) }` );
 }

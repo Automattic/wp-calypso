@@ -2,9 +2,11 @@ import { useCompleteMastodonConnectionMutation } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { Button } from '@wordpress/components';
 import { useTranslate, type TranslateResult } from 'i18n-calypso';
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import ReaderMain from 'calypso/reader/components/reader-main';
+import { useDispatch } from 'calypso/state';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { clearOauthState, readOauthState } from './oauth-state';
 import type { MastodonError } from '@automattic/api-core';
 
@@ -14,6 +16,7 @@ interface Props {
 
 export function MastodonOauthCallbackView( { query }: Props ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const complete = useCompleteMastodonConnectionMutation();
 	// Run exactly once per mount. StrictMode double-invoke in dev would
 	// otherwise fire two complete requests and the server would reject the
@@ -24,6 +27,22 @@ export function MastodonOauthCallbackView( { query }: Props ) {
 	const code = query.code;
 	const state = query.state;
 
+	// Read storage once per mount. Re-reading on every render would flip
+	// `stateMismatch` to true after clearOauthState() in onSuccess, flashing
+	// an "expired link" error before the page.replace navigation tears down.
+	const stored = useMemo( readOauthState, [] );
+
+	useEffect( () => {
+		if ( providerError ) {
+			dispatch(
+				recordReaderTracksEvent( 'calypso_reader_mastodon_oauth_callback_error', {
+					reason: 'provider_error',
+					provider_error: providerError,
+				} )
+			);
+		}
+	}, [ providerError, dispatch ] );
+
 	useEffect( () => {
 		if ( startedRef.current ) {
 			return;
@@ -31,7 +50,6 @@ export function MastodonOauthCallbackView( { query }: Props ) {
 		if ( providerError || ! code || ! state ) {
 			return;
 		}
-		const stored = readOauthState();
 		if ( ! stored || stored.state !== state ) {
 			return;
 		}
@@ -43,16 +61,47 @@ export function MastodonOauthCallbackView( { query }: Props ) {
 					clearOauthState();
 					page.replace( `/reader/mastodon/${ connection.id }/timeline` );
 				},
+				onError: ( error ) => {
+					clearOauthState();
+					dispatch(
+						recordReaderTracksEvent( 'calypso_reader_mastodon_oauth_callback_error', {
+							reason: 'complete_failed',
+							error_kind: error.kind,
+						} )
+					);
+				},
 			}
 		);
-	}, [ providerError, code, state, complete ] );
+	}, [ providerError, code, state, stored, complete, dispatch ] );
 
-	const stored = readOauthState();
+	const missingParams = ! providerError && ( ! code || ! state );
 	const stateMismatch =
 		! providerError && !! code && !! state && ( ! stored || stored.state !== state );
-	const missingParams = ! providerError && ( ! code || ! state );
+
+	useEffect( () => {
+		if ( missingParams ) {
+			dispatch(
+				recordReaderTracksEvent( 'calypso_reader_mastodon_oauth_callback_error', {
+					reason: 'missing_params',
+				} )
+			);
+		} else if ( stateMismatch ) {
+			dispatch(
+				recordReaderTracksEvent( 'calypso_reader_mastodon_oauth_callback_error', {
+					reason: 'state_mismatch',
+				} )
+			);
+		}
+	}, [ missingParams, stateMismatch, dispatch ] );
+
+	// Suppress the transient "state mismatch" render that happens after
+	// onSuccess clears storage but before page.replace unmounts us.
+	const isNavigatingAway = complete.isSuccess;
 
 	const topLevelError: TranslateResult | null = ( () => {
+		if ( isNavigatingAway ) {
+			return null;
+		}
 		if ( providerError ) {
 			return translate( 'The authorization was cancelled or denied.' );
 		}
@@ -102,9 +151,17 @@ function completeErrorMessage(
 			return translate( 'The Mastodon instance is unreachable right now.' );
 		case 'bad_request':
 			return translate( "We couldn't finish the connection. Please try again." );
-		default:
+		case 'invalid_instance':
+		case 'connection_not_found':
+		case 'unknown':
 			return translate( 'Something went wrong finishing the connection. Please try again.' );
+		default:
+			return assertNever( error );
 	}
+}
+
+function assertNever( value: never ): never {
+	throw new Error( `Unhandled MastodonError kind: ${ JSON.stringify( value ) }` );
 }
 
 export default MastodonOauthCallbackView;

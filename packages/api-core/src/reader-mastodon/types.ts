@@ -6,8 +6,8 @@ export interface MastodonConnection {
 	handle: string;
 	instance: string;
 	display_name: string | null;
-	// The list endpoint always returns null. Real avatars come from
-	// getConnection(id).
+	// The list endpoint currently omits the avatar URL; fetch
+	// getConnection(id) for the real value.
 	avatar: string | null;
 }
 

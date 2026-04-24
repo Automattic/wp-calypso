@@ -82,6 +82,62 @@ describe( 'SocialProfileCard', () => {
 		expect( paragraph?.getAttribute( 'onclick' ) ).toBeNull();
 	} );
 
+	it( 'strips javascript: and data: hrefs from anchors', () => {
+		const { container } = render(
+			<SocialProfileCard
+				bioHtml={
+					'<p><a href="javascript:alert(1)">js</a>' +
+					'<a href="data:text/html,<script>alert(1)</script>">data</a>' +
+					'<a href="https://safe.example/">safe</a></p>'
+				}
+				statsLabel="Profile stats"
+				stats={ [ { key: 'followers', count: 0, label: 'followers' } ] }
+			/>
+		);
+		const bio = container.querySelector( '.social-profile-card__bio' );
+		const anchors = Array.from( bio?.querySelectorAll( 'a' ) ?? [] );
+		const hrefs = anchors.map( ( a ) => a.getAttribute( 'href' ) );
+		expect( hrefs ).not.toContain( expect.stringMatching( /^javascript:/i ) );
+		expect( hrefs ).not.toContain( expect.stringMatching( /^data:/i ) );
+		expect( hrefs ).toContain( 'https://safe.example/' );
+	} );
+
+	it( 'preserves rel="me" verification links and anchor target/rel pairs', () => {
+		const { container } = render(
+			<SocialProfileCard
+				bioHtml='<p><a href="https://verify.example/" rel="me" target="_blank">verify</a></p>'
+				statsLabel="Profile stats"
+				stats={ [ { key: 'followers', count: 0, label: 'followers' } ] }
+			/>
+		);
+		const link = container.querySelector( '.social-profile-card__bio a' );
+		expect( link ).not.toBeNull();
+		expect( link ).toHaveAttribute( 'href', 'https://verify.example/' );
+		expect( link?.getAttribute( 'rel' ) ).toMatch( /\bme\b/ );
+		expect( link ).toHaveAttribute( 'target', '_blank' );
+	} );
+
+	it( 'preserves <span class="mention"> and <a class="mention"> used by Mastodon', () => {
+		const { container } = render(
+			<SocialProfileCard
+				bioHtml={
+					'<p><span class="h-card">' +
+					'<a href="https://mastodon.social/@alice" class="u-url mention">' +
+					'@<span>alice</span></a></span></p>'
+				}
+				statsLabel="Profile stats"
+				stats={ [ { key: 'followers', count: 0, label: 'followers' } ] }
+			/>
+		);
+		const bio = container.querySelector( '.social-profile-card__bio' );
+		const mentionAnchor = bio?.querySelector( 'a.u-url.mention' );
+		expect( mentionAnchor ).not.toBeNull();
+		expect( mentionAnchor ).toHaveAttribute( 'href', 'https://mastodon.social/@alice' );
+		// Inner <span>alice</span> survives (class="h-card" / class="u-url" are
+		// on outer elements — inner span carries no class but must survive).
+		expect( mentionAnchor?.querySelector( 'span' )?.textContent ).toBe( 'alice' );
+	} );
+
 	it( 'prefers bioHtml when both bio and bioHtml are provided', () => {
 		const { container } = render(
 			<SocialProfileCard

@@ -142,9 +142,14 @@ describe( 'ReaderSidebarMastodon', () => {
 		expect( row1 ).toHaveAttribute( 'href', '/reader/mastodon/1/timeline' );
 		expect( row2 ).toHaveAttribute( 'href', '/reader/mastodon/2/timeline' );
 
-		// Webfinger handles (@user@instance) from the list endpoint appear as the byline.
+		// Webfinger handles (@user@instance) from the list endpoint appear as
+		// the byline. Use exact strings + negative assertion to catch the
+		// `@user@instance@instance` double-handle regression (fixed in
+		// d6dc4a3806b).
 		expect( screen.getByText( '@alice1@mastodon.social' ) ).toBeVisible();
 		expect( screen.getByText( '@alice2@hachyderm.io' ) ).toBeVisible();
+		expect( screen.queryByText( /@mastodon\.social@mastodon\.social/ ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( /@hachyderm\.io@hachyderm\.io/ ) ).not.toBeInTheDocument();
 
 		// Avatars are presentational (alt=""), so query the <img> directly by src.
 		await waitFor( () => {

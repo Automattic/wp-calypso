@@ -32,8 +32,8 @@ function getActiveConnectionId( path: string ): number | null {
 
 /**
  * Renders a single connection row. Fetches per-connection details (display
- * name + avatar) lazily; while loading, falls back to values from the
- * connections list (which carries handle and display_name but avatar=null).
+ * name + avatar) lazily; while loading, falls back to handle and display_name
+ * from the connections list (the list endpoint currently omits avatar).
  */
 function MastodonSidebarRow( {
 	connection,
