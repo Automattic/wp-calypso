@@ -6,6 +6,7 @@ import {
 	userPreferenceMutation,
 	userPreferenceQuery,
 } from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
@@ -39,13 +40,30 @@ import {
 	OtherRenewablePurchasesNotice,
 	shouldShowOtherRenewablePurchasesNotice,
 } from './other-renewable-purchases-notice';
+import { PurchaseCancelledNotice } from './purchase-cancelled-notice';
 import { PurchaseExpiringNotice, shouldShowExpiringNotice } from './purchase-expiring-notice';
 import { RenewNoticeAction, shouldShowRenewNoticeAction } from './renew-notice-action';
 import type { Purchase } from '@automattic/api-core';
 
 export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 	const { user } = useAuth();
-	const { refunded, upgraded } = purchaseSettingsRoute.useSearch();
+	const { refunded, upgraded, cancelled } = purchaseSettingsRoute.useSearch();
+	const navigate = purchaseSettingsRoute.useNavigate();
+	// Show the transient cancelled success notice once after a cancel redirects
+	// here. The URL search param is cleared immediately so that a refresh / back
+	// navigation falls through to the regular expiring notice.
+	const [ showCancelledNotice, setShowCancelledNotice ] = useState( Boolean( cancelled ) );
+	useEffect( () => {
+		if ( cancelled ) {
+			navigate( {
+				search: ( prev: Record< string, unknown > ) => {
+					const { cancelled: _cancelled, ...rest } = prev;
+					return rest;
+				},
+				replace: true,
+			} );
+		}
+	}, [ cancelled, navigate ] );
 	const { data: purchaseAttachedTo } = useQuery( {
 		...purchaseQuery( purchase.attached_to_purchase_id ?? 0 ),
 		enabled: Boolean( purchase.attached_to_purchase_id ),
@@ -77,7 +95,6 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 		/>
 	) : null;
 
-	const navigate = purchaseSettingsRoute.useNavigate();
 	const [ showUpgradedNotice, setShowUpgradedNotice ] = useState( () => Boolean( upgraded ) );
 
 	useEffect( () => {
@@ -89,6 +106,18 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 			} );
 		}
 	}, [ upgraded, refunded, navigate ] );
+
+	// Transient cancelled success notice — suppresses every other notice until
+	// dismissed, refreshed, or navigated-away-and-back. Gated on the
+	// `?cancelled=true` search param set by the cancel redirect.
+	if ( config.isEnabled( 'purchases/split-cancel-remove' ) && showCancelledNotice ) {
+		return (
+			<PurchaseCancelledNotice
+				purchase={ purchase }
+				onClose={ () => setShowCancelledNotice( false ) }
+			/>
+		);
+	}
 
 	if ( showUpgradedNotice ) {
 		return (
