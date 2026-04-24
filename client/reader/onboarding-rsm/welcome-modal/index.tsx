@@ -58,6 +58,8 @@ const bloggers: WelcomeTileItem[] = [
 		name: 'Matt Mullenweg',
 		imageUrl:
 			'https://0.gravatar.com/avatar/33252cd1f33526af53580fcb1736172f06e6716f32afdd1be19ec3096d15dea5?s=256',
+		porthole: true,
+		imageClass: 'reader-welcome-modal__matt-image',
 	},
 	{
 		name: 'Seth Godin',
