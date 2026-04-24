@@ -31,6 +31,7 @@ export function buildOmnibarNodesFromAdminBarNodes( adminBarNodes: AdminBarNode[
 	}
 
 	omnibarNodes.home = nodeMap.get( 'wpcom-logo' );
+	omnibarNodes.site = nodeMap.get( 'site-name' );
 	omnibarNodes.user = nodeMap.get( 'my-account' );
 
 	return omnibarNodes;

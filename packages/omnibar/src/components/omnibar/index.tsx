@@ -1,4 +1,9 @@
-import { DropdownMenu, MenuGroup, MenuItem } from '@wordpress/components';
+import {
+	__experimentalHStack as HStack,
+	DropdownMenu,
+	MenuGroup,
+	MenuItem,
+} from '@wordpress/components';
 import type { OmnibarNode, OmnibarProps } from '../../types';
 
 import './index.scss';
@@ -45,9 +50,7 @@ function OmnibarDropdownContent( { children }: { children: OmnibarNode[] } ) {
 	);
 }
 
-function OmnibarItem( { node }: { node: OmnibarNode } ) {
-	const content = node.render ? node.render( { node } ) : node.title;
-
+function OmnibarItem( { node, content }: { node: OmnibarNode; content: React.ReactNode } ) {
 	if ( ! node.children ) {
 		return null;
 	}
@@ -68,12 +71,38 @@ function OmnibarItem( { node }: { node: OmnibarNode } ) {
 }
 
 export function Omnibar( { nodes }: OmnibarProps ) {
+	const renderHomeNode = () => {
+		const node = nodes.home;
+		return node && <OmnibarItem node={ node } content={ node.icon } />;
+	};
+
+	const renderSiteNode = () => {
+		const node = nodes.site;
+		return (
+			node && (
+				<OmnibarItem
+					node={ node }
+					content={
+						<HStack>
+							{ node.icon }
+							<span>{ node.title }</span>
+						</HStack>
+					}
+				/>
+			)
+		);
+	};
+
+	const renderUserNode = () => {
+		const node = nodes.user;
+		return node && <OmnibarItem node={ node } content={ node.title } />;
+	};
+
 	return (
 		<div className="omnibar" role="navigation" aria-label="Toolbar">
-			{ nodes.home && <OmnibarItem node={ nodes.home } /> }
-			<div className="omnibar__secondary">
-				{ nodes.user && <OmnibarItem node={ nodes.user } /> }
-			</div>
+			{ renderHomeNode() }
+			{ renderSiteNode() }
+			<div className="omnibar__secondary">{ renderUserNode() }</div>
 		</div>
 	);
 }

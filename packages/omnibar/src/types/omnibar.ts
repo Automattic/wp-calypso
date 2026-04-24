@@ -1,10 +1,10 @@
 export interface OmnibarNode {
 	id: string;
 	title: string;
+	icon?: React.ReactElement;
 	group?: boolean;
 	href?: string;
 	children?: OmnibarNode[];
-	render?: ( props: OmnibarNodeRenderProps ) => React.ReactElement;
 }
 
 export interface OmnibarNodeRenderProps {
@@ -13,6 +13,7 @@ export interface OmnibarNodeRenderProps {
 
 export interface OmnibarNodes {
 	home?: OmnibarNode;
+	site?: OmnibarNode;
 	user?: OmnibarNode;
 }
 
