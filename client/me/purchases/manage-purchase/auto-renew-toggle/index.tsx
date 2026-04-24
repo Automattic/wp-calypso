@@ -29,6 +29,7 @@ export interface AutoRenewToggleProps {
 	getChangePaymentMethodUrlFor?: GetChangePaymentMethodUrlFor;
 	paymentMethodUrl?: string;
 	showLink?: boolean;
+	label?: string;
 	productSlug?: string;
 	siteSlug?: string | null;
 	children?: React.ReactNode;
@@ -254,7 +255,7 @@ class AutoRenewToggle extends Component<
 					checked={ this.getToggleUiStatus() }
 					disabled={ this.isUpdatingAutoRenew() || shouldDisable }
 					onChange={ this.onToggleAutoRenew }
-					label={ withTextStatus && this.renderTextStatus() }
+					label={ this.props.label ?? ( withTextStatus ? this.renderTextStatus() : undefined ) }
 				/>
 			);
 		}
