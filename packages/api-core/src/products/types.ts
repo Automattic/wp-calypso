@@ -38,6 +38,7 @@ export interface Product {
 	// Tiered pricing (for products with usage-based pricing)
 	price_tier_list: PriceTierEntry[];
 	price_tier_usage_quantity: number | null;
+	price_tier_slug: string;
 
 	// Domain-specific fields (conditional - only for domain products)
 	is_domain_registration: boolean;
@@ -61,7 +62,7 @@ export interface Product {
 }
 
 interface IntroductoryOffer {
-	interval_unit: string;
+	interval_unit: IntroductoryOfferTimeUnit;
 	interval_count: number;
 	usage_limit: number | null;
 	cost_per_interval: number;

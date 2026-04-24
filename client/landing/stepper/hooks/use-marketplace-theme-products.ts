@@ -1,23 +1,12 @@
-import { siteFeaturesQuery, sitePurchasesQuery } from '@automattic/api-queries';
+import { productsQuery, siteFeaturesQuery, sitePurchasesQuery } from '@automattic/api-queries';
 import { FEATURE_WOOP, WPCOM_FEATURES_ATOMIC } from '@automattic/calypso-products';
 import { getThemeIdFromDesign } from '@automattic/design-picker';
 import { useQuery } from '@tanstack/react-query';
 import { useSelect } from '@wordpress/data';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
-import wpcom from 'calypso/lib/wp';
 import { getPreferredBillingCycleProductSlug } from 'calypso/state/themes/theme-utils';
 import { useSiteData } from './use-site-data';
 import type { OnboardSelect } from '@automattic/data-stores';
-import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
-
-type ProductsListResponse = Record< string, ProductListItem >;
-
-const useProductsList = () =>
-	useQuery< ProductsListResponse >( {
-		queryKey: [ 'marketplace-products-list' ],
-		queryFn: () => wpcom.req.get( '/products', { type: 'all' } ),
-		staleTime: 5 * 60 * 1000,
-	} );
 
 export const useMarketplaceThemeProducts = () => {
 	const { site } = useSiteData();
@@ -36,7 +25,7 @@ export const useMarketplaceThemeProducts = () => {
 		isLoading: isLoadingProducts,
 		isError: isErrorProducts,
 		data: productsData,
-	} = useProductsList();
+	} = useQuery( productsQuery( 'all' ) );
 
 	const {
 		isLoading: isLoadingSiteFeatures,
