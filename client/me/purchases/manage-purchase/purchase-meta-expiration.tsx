@@ -194,7 +194,7 @@ function PurchaseMetaExpiration( {
 				<em className="manage-purchase__detail-label">{ detailLabel }</em>
 				{ ! hideAutoRenew && ! isJetpackPurchaseUsingPrimaryCancellationFlow && (
 					<div className="manage-purchase__auto-renew">
-						{ isSplitEnabled ? (
+						{ isSplitEnabled && shouldRenderToggle ? (
 							<AutoRenewToggle
 								planName={
 									site && ! isCancellableSitelessPurchase ? site.plan?.product_name_short : ''
@@ -203,7 +203,7 @@ function PurchaseMetaExpiration( {
 								siteSlug={ site && ! isCancellableSitelessPurchase ? site.slug : '' }
 								purchase={ purchase }
 								toggleSource="manage-purchase"
-								label={ translate( 'Enable auto-renew' ) as string }
+								label={ translate( 'Enable auto-renew' ) }
 								getChangePaymentMethodUrlFor={ getChangePaymentMethodUrlFor }
 							/>
 						) : (

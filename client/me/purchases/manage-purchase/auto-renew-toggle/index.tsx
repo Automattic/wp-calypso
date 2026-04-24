@@ -1,7 +1,7 @@
 import page from '@automattic/calypso-router';
 import { Button, ToggleControl } from '@wordpress/components';
 import { localize, LocalizeProps } from 'i18n-calypso';
-import { Component } from 'react';
+import { Component, type ReactNode } from 'react';
 import { connect } from 'react-redux';
 import { disableAutoRenew, enableAutoRenew } from 'calypso/lib/purchases/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -29,7 +29,7 @@ export interface AutoRenewToggleProps {
 	getChangePaymentMethodUrlFor?: GetChangePaymentMethodUrlFor;
 	paymentMethodUrl?: string;
 	showLink?: boolean;
-	label?: string;
+	label?: ReactNode;
 	productSlug?: string;
 	siteSlug?: string | null;
 	children?: React.ReactNode;
