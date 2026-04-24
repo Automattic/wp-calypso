@@ -10,8 +10,9 @@
  */
 
 import './config';
-import AgentsManager from '@automattic/agents-manager';
+import AgentsManager, { AGENTS_MANAGER_STORE } from '@automattic/agents-manager';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { dispatch } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
 import { createRoot } from 'react-dom/client';
 
@@ -38,6 +39,35 @@ function injectScopedReset() {
 		.components-popover,
 		.components-popover * {
 			font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif !important;
+		}
+		/*
+		 * Form controls don't inherit font-family by default — browsers
+		 * apply UA styles. The * selector above is unreliable across
+		 * browsers for input/textarea/button, so target them explicitly
+		 * to match the display text.
+		 */
+		#jetpack-reader-chat input,
+		#jetpack-reader-chat textarea,
+		#jetpack-reader-chat button,
+		.agents-manager-chat input,
+		.agents-manager-chat textarea,
+		.agents-manager-chat button {
+			font-family: inherit !important;
+			font-size: inherit !important;
+		}
+		/*
+		 * Themes often give inputs/textareas thick borders that leak
+		 * into the chat composer. Reset them to let the AgentsManager's
+		 * own focus ring show through.
+		 */
+		#jetpack-reader-chat input,
+		#jetpack-reader-chat textarea,
+		.agents-manager-chat input,
+		.agents-manager-chat textarea {
+			border: 0 !important;
+			outline: 0 !important;
+			box-shadow: none !important;
+			background: transparent !important;
 		}
 		#jetpack-reader-chat,
 		.agents-manager-chat {
@@ -87,6 +117,20 @@ function injectScopedReset() {
 			opacity: 0.5 !important;
 			cursor: default !important;
 		}
+		/*
+		 * Move reader-chat launcher and panel to the bottom-left.
+		 * Default agents-manager positioning is bottom-right (see
+		 * packages/agents-manager/src/components/agent-dock/style.scss).
+		 * Reader-chat is opt-in per-blog so the FAB sits in the reader's
+		 * lower-left to avoid clashing with the host theme's floating
+		 * widgets (share buttons, cookie banners) that almost always
+		 * anchor to the bottom-right.
+		 */
+		.agents-manager-sidebar-fab {
+			left: 16px !important;
+			right: auto !important;
+		}
+
 	`;
 	document.head.appendChild( style );
 }
@@ -443,6 +487,15 @@ const container = document.getElementById( 'jetpack-reader-chat' );
 if ( container ) {
 	injectScopedReset();
 	setupFollowupChips();
+
+	// Reader-chat defaults the floating panel to the left side of the
+	// viewport. The shared AgentsManager reducer default is 'right' (set
+	// for the wp-admin sidebar use-case); logged-out readers can't
+	// persist preferences to the server, so we pass shouldSave=false to
+	// avoid a doomed API call. Dragging within a session still works —
+	// it just won't survive a reload, which is fine for anonymous
+	// visitors.
+	dispatch( AGENTS_MANAGER_STORE ).setFloatingPosition( 'left', false );
 
 	// Start with an empty override so the empty view shows no chips
 	// while we fetch AI suggestions. This avoids the flash where
