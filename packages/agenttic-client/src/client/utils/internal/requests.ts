@@ -158,6 +158,7 @@ function createFetchOptions(
 		headers,
 		body,
 		signal,
+		credentials: 'include',
 	};
 }
 
