@@ -1,4 +1,8 @@
-export default function ReaderBlueskyIcon( { viewBox = '-3 -3 30 30' } ) {
+interface Props {
+	viewBox?: string;
+}
+
+export function ReaderBlueskyIcon( { viewBox = '-3 -3 30 30' }: Props ) {
 	return (
 		<svg
 			className="sidebar__menu-icon sidebar_svg-atmosphere"

@@ -7,7 +7,7 @@ export function SettingsPanel() {
 		<Card>
 			<CardBody>
 				<h2>{ translate( 'Settings' ) }</h2>
-				<p>{ translate( "Account settings will appear here. We're still building this part." ) }</p>
+				<p>{ translate( 'Account settings will appear here. We’re still building this part.' ) }</p>
 			</CardBody>
 		</Card>
 	);

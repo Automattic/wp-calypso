@@ -1,5 +1,6 @@
 import { Card, CardBody } from '@wordpress/components';
 import { useTranslate, type TranslateResult } from 'i18n-calypso';
+import { SocialProfileCard, type SocialProfileStat } from 'calypso/reader/social';
 import type { AtmosphereConnectionDetails, AtmosphereError } from '@automattic/api-core';
 
 interface VerifyPanelProps {
@@ -15,6 +16,28 @@ export function VerifyPanel( { data, error, isLoading }: VerifyPanelProps ) {
 		return null;
 	}
 
+	const stats: SocialProfileStat[] = data
+		? [
+				{
+					key: 'followers',
+					count: data.counts.followers,
+					label: translate( 'follower', 'followers', { count: data.counts.followers } ),
+				},
+				{
+					key: 'following',
+					count: data.counts.follows,
+					label: translate( 'following', {
+						context: 'profile stats: count of accounts followed',
+					} ),
+				},
+				{
+					key: 'posts',
+					count: data.counts.posts,
+					label: translate( 'post', 'posts', { count: data.counts.posts } ),
+				},
+		  ]
+		: [];
+
 	return (
 		<Card>
 			<CardBody>
@@ -25,43 +48,12 @@ export function VerifyPanel( { data, error, isLoading }: VerifyPanelProps ) {
 					</p>
 				) : null }
 				{ data ? (
-					<div className="atmosphere-verify">
-						{ data.avatar ? (
-							<img
-								src={ data.avatar }
-								alt=""
-								className="atmosphere-verify__avatar"
-								onError={ ( event ) => {
-									event.currentTarget.style.display = 'none';
-								} }
-							/>
-						) : null }
-						<ul className="atmosphere-verify__stats" aria-label={ translate( 'Profile stats' ) }>
-							<li className="atmosphere-verify__stat">
-								<span className="atmosphere-verify__stat-count">{ data.counts.followers }</span>{ ' ' }
-								<span className="atmosphere-verify__stat-label">
-									{ translate( 'follower', 'followers', { count: data.counts.followers } ) }
-								</span>
-							</li>
-							<li className="atmosphere-verify__stat">
-								<span className="atmosphere-verify__stat-count">{ data.counts.follows }</span>{ ' ' }
-								<span className="atmosphere-verify__stat-label">
-									{ translate( 'following', {
-										context: 'profile stats: count of accounts followed',
-									} ) }
-								</span>
-							</li>
-							<li className="atmosphere-verify__stat">
-								<span className="atmosphere-verify__stat-count">{ data.counts.posts }</span>{ ' ' }
-								<span className="atmosphere-verify__stat-label">
-									{ translate( 'post', 'posts', { count: data.counts.posts } ) }
-								</span>
-							</li>
-						</ul>
-						{ data.description ? (
-							<p className="atmosphere-verify__bio">{ data.description }</p>
-						) : null }
-					</div>
+					<SocialProfileCard
+						avatar={ data.avatar }
+						bio={ data.description }
+						stats={ stats }
+						statsLabel={ String( translate( 'Profile stats' ) ) }
+					/>
 				) : null }
 			</CardBody>
 		</Card>

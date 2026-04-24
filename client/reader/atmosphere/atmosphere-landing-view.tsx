@@ -8,7 +8,7 @@ import ReaderMain from 'calypso/reader/components/reader-main';
 
 export function AtmosphereLandingView() {
 	const translate = useTranslate();
-	const { data, isPending, isError, refetch } = useConnectionsQuery( { enabled: true } );
+	const { data, isPending, isError, refetch } = useConnectionsQuery();
 
 	useEffect( () => {
 		if ( isPending || isError || ! data ) {

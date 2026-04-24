@@ -22,7 +22,7 @@ interface Props {
 
 export function AtmosphereAccountView( { connectionId, tab }: Props ) {
 	const translate = useTranslate();
-	const { data, isPending } = useConnectionsQuery( { enabled: true } );
+	const { data, isPending } = useConnectionsQuery();
 
 	const connections = data?.connections ?? [];
 	const connection = connections.find( ( c ) => c.id === connectionId ) ?? null;

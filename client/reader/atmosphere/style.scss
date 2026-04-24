@@ -14,51 +14,6 @@
 	color: #b32d2e;
 }
 
-.atmosphere-verify {
-	display: flex;
-	flex-direction: column;
-	gap: 16px;
-}
-
-.atmosphere-verify__avatar {
-	width: 96px;
-	height: 96px;
-	border-radius: 50%;
-	object-fit: cover;
-}
-
-.atmosphere-verify__stats {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 20px;
-	list-style: none;
-	margin: 0;
-	padding: 0;
-}
-
-.atmosphere-verify__stat {
-	font-size: 0.875rem;
-}
-
-.atmosphere-verify__stat-count {
-	font-weight: 600;
-}
-
-.atmosphere-verify__stat-label {
-	color: var( --color-neutral-60 );
-}
-
-.atmosphere-verify__bio {
-	margin: 0;
-	white-space: pre-wrap;
-	line-height: 1.5;
-}
-
-.atmosphere-verify pre {
-	overflow-x: auto;
-	max-width: 100%;
-}
-
 .atmosphere-view .atmosphere-navigation {
 	.section-nav-tabs__list {
 		overflow-x: auto;

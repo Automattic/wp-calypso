@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import { DEFAULT_ATMOSPHERE_TAB } from 'calypso/reader/atmosphere/helper';
-import ReaderBlueskyIcon from 'calypso/reader/components/icons/bluesky-icon';
+import { ReaderBlueskyIcon } from 'calypso/reader/components/icons/bluesky-icon';
 import { SocialAccountMenuItem, SocialAddAccountMenuItem } from 'calypso/reader/sidebar/social';
 import { useDispatch } from 'calypso/state';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
@@ -61,7 +61,7 @@ function AtmosphereSidebarRow( {
 	);
 }
 
-export function ReaderSidebarAtmosphere( { path }: Props ) {
+function ReaderSidebarAtmosphere( { path }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -118,9 +118,10 @@ export function ReaderSidebarAtmosphere( { path }: Props ) {
 		if ( ! isOpen ) {
 			setIsOpen( true );
 		}
-		// Main label navigates back to the atmosphere root — the controller
-		// redirects to the default tab for the active connection.
-		if ( path !== BASE_PATH ) {
+		// From a specific connection page, stay put — otherwise the landing
+		// controller would redirect us to the *first* connection's timeline,
+		// which may not be the one the user is currently viewing.
+		if ( activeId === null && path !== BASE_PATH ) {
 			page( BASE_PATH );
 		}
 	};
@@ -158,4 +159,5 @@ export function ReaderSidebarAtmosphere( { path }: Props ) {
 	);
 }
 
+export { ReaderSidebarAtmosphere };
 export default ReaderSidebarAtmosphere;

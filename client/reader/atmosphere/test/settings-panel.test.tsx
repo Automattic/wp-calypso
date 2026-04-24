@@ -10,6 +10,6 @@ describe( 'SettingsPanel', () => {
 		renderWithProvider( <SettingsPanel /> );
 
 		expect( screen.getByRole( 'heading', { name: /settings/i } ) ).toBeVisible();
-		expect( screen.getByText( /we're still building this part/i ) ).toBeVisible();
+		expect( screen.getByText( /still building this part/i ) ).toBeVisible();
 	} );
 } );

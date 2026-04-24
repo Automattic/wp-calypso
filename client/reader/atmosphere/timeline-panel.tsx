@@ -8,7 +8,7 @@ export function TimelinePanel() {
 			<CardBody>
 				<h2>{ translate( 'Timeline' ) }</h2>
 				<p>
-					{ translate( "Your Bluesky timeline will appear here. We're still building this part." ) }
+					{ translate( 'Your Bluesky timeline will appear here. We’re still building this part.' ) }
 				</p>
 			</CardBody>
 		</Card>
