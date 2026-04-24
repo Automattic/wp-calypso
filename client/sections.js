@@ -530,6 +530,18 @@ const sections = [
 	{
 		name: 'reader',
 		paths: [
+			'/reader/mastodon',
+			'/reader/mastodon/connect',
+			'/reader/mastodon/:id',
+			'/reader/mastodon/:id/:tab',
+		],
+		module: 'calypso/reader/mastodon',
+		group: 'reader',
+		enableLoggedOut: false,
+	},
+	{
+		name: 'reader',
+		paths: [
 			'/reader/subscriptions',
 			'/reader/subscriptions/comments',
 			'/reader/subscriptions/pending',

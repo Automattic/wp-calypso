@@ -132,6 +132,7 @@
 		"push-notifications": true,
 		"reader/achievements": false,
 		"reader/atmosphere": true,
+		"reader/mastodon": true,
 		"reader/full-errors": false,
 		"reader/msd-enabled": true,
 		"reader/saved-posts": false,

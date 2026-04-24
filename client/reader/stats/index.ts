@@ -111,6 +111,13 @@ const Routes: RoutesMapping[] = [
 	{ route: matches( /^\/reader\/atmosphere\/\d+\/settings$/ ), tracking: 'atmosphere_settings' },
 	{ route: exactMatch( '/reader/atmosphere' ), tracking: 'atmosphere_landing' },
 
+	// Mastodon (ActivityPub)
+	{ route: exactMatch( '/reader/mastodon/connect' ), tracking: 'mastodon_connect' },
+	{ route: matches( /^\/reader\/mastodon\/\d+\/timeline$/ ), tracking: 'mastodon_timeline' },
+	{ route: matches( /^\/reader\/mastodon\/\d+\/profile$/ ), tracking: 'mastodon_profile' },
+	{ route: matches( /^\/reader\/mastodon\/\d+\/settings$/ ), tracking: 'mastodon_settings' },
+	{ route: exactMatch( '/reader/mastodon' ), tracking: 'mastodon_landing' },
+
 	{ route: SinglePostRoute, tracking: 'single_post' },
 	{ route: BlogPageRoute, tracking: 'blog_page' },
 	{ route: SearchRoute, tracking: 'search' },

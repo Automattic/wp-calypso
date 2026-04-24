@@ -136,6 +136,7 @@
 		"purchases/new-payment-methods": true,
 		"reader/achievements": true,
 		"reader/atmosphere": true,
+		"reader/mastodon": true,
 		"reader/full-errors": true,
 		"reader/msd-enabled": true,
 		"reader/saved-posts": true,
