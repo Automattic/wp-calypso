@@ -248,13 +248,24 @@ Substitute the literal values from Step 3 directly into each command. Pick a uni
    git worktree add -b fix/flaky-e2e-<slug> .claude/worktrees/fix-flaky-<slug>-<timestamp> <PR_SHA>
    ```
 
-3. Link `node_modules` from the main checkout into the worktree so the commit-time husky pre-commit hook can find its dependencies:
+3. Link two auto-generated directories from the main checkout into the worktree so the pre-commit hook can run. Both are gitignored — they exist after `yarn install` on the main checkout but aren't in the tracked tree the worktree sees.
 
    ```bash
    ln -s /var/www/wp-calypso/node_modules .claude/worktrees/fix-flaky-<slug>-<timestamp>/node_modules
    ```
 
-   **Why this is needed.** The worktree shares `.git` with the main checkout but has its own working tree, so `node_modules/` isn't there. wp-calypso's pre-commit hook runs `yarn run install-if-no-packages && node bin/pre-commit-hook.js`; without `node_modules`, yarn fails with `Couldn't find the node_modules state file`. wp-calypso uses Yarn Berry with `nodeLinker: node-modules` (not PnP), so a plain symlink of the root `node_modules/` is sufficient and avoids a slow `yarn install` in the worktree. We never skip the hook (`--no-verify`) — fix the environment instead.
+   ```bash
+   ln -s /var/www/wp-calypso/.husky/_ .claude/worktrees/fix-flaky-<slug>-<timestamp>/.husky/_
+   ```
+
+   **Why both are needed.** The worktree shares `.git` with the main checkout but has its own working tree, so anything `yarn install` or `husky install` generated locally isn't there. wp-calypso's pre-commit hook reads:
+
+   ```sh
+   . "$(dirname "$0")/_/husky.sh"       # needs .husky/_/husky.sh (husky-generated)
+   yarn run install-if-no-packages && node bin/pre-commit-hook.js   # needs node_modules
+   ```
+
+   Missing either causes the commit to fail (`cannot open .husky/_/husky.sh` or `Couldn't find the node_modules state file`). Symlinks are sufficient because the main checkout uses Yarn Berry with `nodeLinker: node-modules` (not PnP) and husky's generated shim is a plain shell include — neither tool has absolute-path state that breaks when shared. We never skip the hook (`--no-verify`) — fix the environment instead.
 
 Don't add extra sanity-check calls (e.g., `ls` on the spec path) — the harness hooks `ls` as a filesystem read and its path heuristic can trigger a permission prompt for paths under `test/e2e/specs/…`. If the spec isn't actually in the worktree, the Healer's Read call in 5.2 will fail with a clear error; that's soon enough.
 
