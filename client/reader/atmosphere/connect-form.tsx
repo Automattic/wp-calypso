@@ -1,6 +1,7 @@
 import { Button, Card, CardBody, ExternalLink, TextControl } from '@wordpress/components';
-import { useTranslate, type TranslateResult } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useState, type FormEvent } from 'react';
+import { atmosphereErrorMessage } from './error-messages';
 import type { AtmosphereError } from '@automattic/api-core';
 
 interface ConnectFormProps {
@@ -54,7 +55,7 @@ export function ConnectForm( { onSubmit, isSubmitting, error }: ConnectFormProps
 					/>
 					{ error ? (
 						<p className="atmosphere-error" role="alert">
-							{ errorMessage( error, translate ) }
+							{ atmosphereErrorMessage( error, translate ) }
 						</p>
 					) : null }
 					<Button variant="primary" type="submit" disabled={ ! canSubmit } isBusy={ isSubmitting }>
@@ -64,31 +65,4 @@ export function ConnectForm( { onSubmit, isSubmitting, error }: ConnectFormProps
 			</CardBody>
 		</Card>
 	);
-}
-
-function errorMessage(
-	error: AtmosphereError,
-	translate: ReturnType< typeof useTranslate >
-): TranslateResult {
-	switch ( error.kind ) {
-		case 'invalid_handle':
-			return translate( "That doesn't look like a valid Bluesky handle." );
-		case 'invalid_credentials':
-			return translate( 'Wrong handle or app password. Double-check and try again.' );
-		case 'rate_limited':
-			return translate( "Bluesky's asking us to slow down. Try again in a minute." );
-		case 'upstream_unavailable':
-			return translate( 'Bluesky is unreachable right now.' );
-		case 'auth_failed':
-		case 'connection_not_found':
-		case 'bad_request':
-		case 'unknown':
-			return translate( 'Something went wrong.' );
-		default:
-			return assertNever( error );
-	}
-}
-
-function assertNever( value: never ): never {
-	throw new Error( `Unhandled AtmosphereError kind: ${ JSON.stringify( value ) }` );
 }

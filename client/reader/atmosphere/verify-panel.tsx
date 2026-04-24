@@ -1,6 +1,7 @@
 import { Card, CardBody } from '@wordpress/components';
-import { useTranslate, type TranslateResult } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { SocialProfileCard, type SocialProfileStat } from 'calypso/reader/social';
+import { atmosphereErrorMessage } from './error-messages';
 import type { AtmosphereConnectionDetails, AtmosphereError } from '@automattic/api-core';
 
 interface VerifyPanelProps {
@@ -44,7 +45,7 @@ export function VerifyPanel( { data, error, isLoading }: VerifyPanelProps ) {
 				{ isLoading && ! data ? <p>{ translate( 'Verifying…' ) }</p> : null }
 				{ error ? (
 					<p className="atmosphere-error" role="alert">
-						{ errorMessage( error, translate ) }
+						{ atmosphereErrorMessage( error, translate ) }
 					</p>
 				) : null }
 				{ data ? (
@@ -58,33 +59,4 @@ export function VerifyPanel( { data, error, isLoading }: VerifyPanelProps ) {
 			</CardBody>
 		</Card>
 	);
-}
-
-function errorMessage(
-	error: AtmosphereError,
-	translate: ReturnType< typeof useTranslate >
-): TranslateResult {
-	switch ( error.kind ) {
-		case 'auth_failed':
-			return translate(
-				'Your Bluesky connection needs to be re-authorized. Disconnect and reconnect.'
-			);
-		case 'rate_limited':
-			return translate( "Bluesky's asking us to slow down. Try again in a minute." );
-		case 'upstream_unavailable':
-			return translate( 'Bluesky is unreachable right now.' );
-		case 'connection_not_found':
-			return translate( 'That connection is no longer available.' );
-		case 'invalid_handle':
-		case 'invalid_credentials':
-		case 'bad_request':
-		case 'unknown':
-			return translate( 'Something went wrong.' );
-		default:
-			return assertNever( error );
-	}
-}
-
-function assertNever( value: never ): never {
-	throw new Error( `Unhandled AtmosphereError kind: ${ JSON.stringify( value ) }` );
 }
