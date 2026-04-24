@@ -618,7 +618,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			( ! isSplitEnabled &&
 				isDomainRegistrationPurchase &&
 				! this.state.domainConfirmationConfirmed ) ||
-			( ! this.state.surveyShown && ! this.state.customerConfirmedUnderstanding );
+			( isSplitEnabled && ! this.state.surveyShown && ! this.state.customerConfirmedUnderstanding );
 
 		// cancelIntentOverride drives the CancelPurchaseButton's label + mutation
 		// choice. URL intent is authoritative when present:
@@ -787,15 +787,17 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 								</span>
 							</div>
 						) }
-						<label className="cancel-purchase__confirm-checkbox">
-							<FormCheckbox
-								checked={ this.state.customerConfirmedUnderstanding ?? false }
-								onChange={ ( event: { target: { checked: boolean } } ) =>
-									this.onCustomerConfirmedUnderstandingChange( event.target.checked )
-								}
-							/>
-							<span>{ checkboxLabel }</span>
-						</label>
+						{ isSplitEnabled && (
+							<label className="cancel-purchase__confirm-checkbox">
+								<FormCheckbox
+									checked={ this.state.customerConfirmedUnderstanding ?? false }
+									onChange={ ( event: { target: { checked: boolean } } ) =>
+										this.onCustomerConfirmedUnderstandingChange( event.target.checked )
+									}
+								/>
+								<span>{ checkboxLabel }</span>
+							</label>
+						) }
 					</div>
 				) }
 
