@@ -59,7 +59,7 @@ export default function CheckoutTermsModal( {
 
 	return (
 		<Modal
-			title={ String( translate( 'Terms and conditions' ) ) }
+			title={ translate( 'Terms and conditions', { textOnly: true } ) }
 			onRequestClose={ onClose }
 			size="medium"
 			className="checkout-terms-modal"
