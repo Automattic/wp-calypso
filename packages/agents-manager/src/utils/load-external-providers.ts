@@ -12,6 +12,7 @@
  */
 
 import { getAgentManager, UIMessage } from '@automattic/agenttic-client';
+import { isReaderChatAgent } from './is-reader-chat-agent';
 import { useReaderFollowupSuggestions } from './reader-followup-hook';
 import type { ImageUploadHook } from '../hooks/use-image-upload';
 import type { ToolProvider, ContextProvider, Suggestion, BigSkyMessage } from '../types';
@@ -150,12 +151,14 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 
 	// Only the public reader-chat entry registers the follow-up chip globals
 	// (`window.__jetpackReaderFollowupChips` / `reader-chat-followups-updated`).
-	// Keep the host check narrow so we don't wire the hook on variants that
-	// don't populate them.
+	// Register the bridge for every reader-chat agent variant that uses the
+	// public reader-chat entry.
 	const registerReaderFollowups =
 		typeof window !== 'undefined' &&
-		( window as unknown as { agentsManagerData?: { agentId?: string } } ).agentsManagerData
-			?.agentId === 'reader-chat';
+		isReaderChatAgent(
+			( window as unknown as { agentsManagerData?: { agentId?: string } } ).agentsManagerData
+				?.agentId
+		);
 
 	if ( agentProviders.length === 0 ) {
 		// Even with no external agentProviders, register the reader-chat

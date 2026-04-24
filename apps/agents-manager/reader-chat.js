@@ -160,17 +160,15 @@ function injectScopedReset() {
 
 // Read config injected by PHP.
 const readerConfig = window.JetpackReaderChatConfig || {};
+const readerAgentId = readerConfig.agentId || 'reader-chat';
 
 // Set agentId for useAgentConfig() to pick up via agentsManagerData global.
-if ( readerConfig.agentId ) {
-	window.agentsManagerData = window.agentsManagerData || {};
-	window.agentsManagerData.agentId = readerConfig.agentId;
-}
+window.agentsManagerData = window.agentsManagerData || {};
+window.agentsManagerData.agentId = readerAgentId;
 
 // Expose page context on the global so the default context provider
 // and agent hooks can read it. The AgentsManager default context
 // provider sends window.location info; we augment with post-level data.
-window.agentsManagerData = window.agentsManagerData || {};
 window.agentsManagerData.currentPost = readerConfig.currentPost || null;
 window.agentsManagerData.siteName = readerConfig.siteName || '';
 window.agentsManagerData.siteUrl = readerConfig.siteUrl || '';
@@ -715,6 +713,7 @@ function ReaderChatApp() {
 				sectionName="reader-chat"
 				site={ site }
 				currentSiteId={ config.siteId || undefined }
+				agentId={ readerAgentId }
 			/>
 		</QueryClientProvider>
 	);

@@ -1,14 +1,10 @@
-import {
-	loadAllMessagesFromServer,
-	createOdieBotId,
-	isOdieBotId,
-	type Message,
-} from '@automattic/agenttic-client';
+import { loadAllMessagesFromServer, type Message } from '@automattic/agenttic-client';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef } from '@wordpress/element';
 import { API_BASE_URL } from '../constants';
 import { useAgentsManagerContext } from '../contexts';
 import { isFreshSession } from '../utils/agent-session';
+import { getConversationBotId } from '../utils/conversation-bot-id';
 import { isReaderChatAgent } from '../utils/is-reader-chat-agent';
 
 interface Config {
@@ -39,7 +35,7 @@ export default function useConversation( { maxPages = 10, onSuccess = () => {} }
 		queryFn: async () => {
 			const urlSearchParams = new URLSearchParams( window.location.search );
 			const hasAgentParam = urlSearchParams.has( 'agent' );
-			const botId = hasAgentParam || isOdieBotId( agentId ) ? agentId : createOdieBotId( agentId );
+			const botId = getConversationBotId( agentId, hasAgentParam );
 
 			return await loadAllMessagesFromServer(
 				sessionId,

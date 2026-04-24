@@ -139,6 +139,12 @@ export default function AgentDock( {
 		}
 	}, [ agentId ] );
 
+	// Reader-chat runs on public blog frontends where there's no wp-admin
+	// sidebar to dock into. Detect that context so we can hide options that
+	// don't apply (Move to sidebar / Pop out sidebar).
+	const isReaderChat = isReaderChatAgent( agentId );
+	const shouldShowUnifiedSupport = shouldUseUnifiedAgent && ! isReaderChat;
+
 	const handleChatHasMessagesChange = useCallback(
 		( hasMessages: boolean ) => setIsOrchestratorChatEmpty( ! hasMessages ),
 		[]
@@ -159,6 +165,9 @@ export default function AgentDock( {
 
 	const handleSelectConversation = ( conversation: LocalConversationListItem ) => {
 		if ( conversation.is_zendesk ) {
+			if ( isReaderChat ) {
+				return;
+			}
 			navigate( '/zendesk', { state: { conversationId: conversation.conversation_id } } );
 		} else {
 			const sessionId = conversation.session_id || '';
@@ -168,11 +177,6 @@ export default function AgentDock( {
 			navigate( '/chat', { state: { sessionId } } );
 		}
 	};
-
-	// Reader-chat runs on public blog frontends where there's no wp-admin
-	// sidebar to dock into. Detect that context so we can hide options that
-	// don't apply (Move to sidebar / Pop out sidebar).
-	const isReaderChat = isReaderChatAgent( agentId );
 
 	// Persist reader-chat open/closed state across page navigations via
 	// localStorage — the AGENTS_MANAGER_STORE is in-memory only, so a fresh
@@ -216,7 +220,7 @@ export default function AgentDock( {
 				isDisabled: pathname === '/chat' && isOrchestratorChatEmpty,
 				onClick: () => navigate( '/' ),
 			},
-			shouldUseUnifiedAgent && {
+			shouldShowUnifiedSupport && {
 				icon: lifesaver,
 				title: __( 'New Zendesk chat', '__i18n_text_domain__' ),
 				isDisabled: pathname === '/zendesk' && isZendeskChatEmpty,
@@ -332,10 +336,10 @@ export default function AgentDock( {
 			// NOTE: Use route state to pass data that needs to be accessed throughout the app.
 			<Routes>
 				<Route path="/chat" element={ OrchestratorChatRoute } />
-				<Route path="/post" element={ SupportGuideRoute } />
-				<Route path="/zendesk" element={ ZendeskChatRoute } />
-				<Route path="/support-guides" element={ SupportGuidesRoute } />
-				<Route path="/history" element={ HistoryRoute } />
+				{ ! isReaderChat && <Route path="/post" element={ SupportGuideRoute } /> }
+				{ shouldShowUnifiedSupport && <Route path="/zendesk" element={ ZendeskChatRoute } /> }
+				{ ! isReaderChat && <Route path="/support-guides" element={ SupportGuidesRoute } /> }
+				{ ! isReaderChat && <Route path="/history" element={ HistoryRoute } /> }
 				<Route path="*" element={ <Navigate to="/chat" state={ { isNewChat: true } } replace /> } />
 			</Routes>
 		)

@@ -172,7 +172,7 @@ export default function OrchestratorChat( {
 	useZoomAction( registerMessageActions );
 
 	// Register a "Sources" action on agent messages with sources data.
-	useSourcesAction( registerMessageActions );
+	useSourcesAction( registerMessageActions, ! isReaderChat );
 
 	const imageUpload = useImageUpload?.();
 	const pendingImages = imageUpload?.pendingImages || [];
@@ -214,7 +214,7 @@ export default function OrchestratorChat( {
 				}
 			} else {
 				// No images, just send normally
-				onSubmit( message );
+				await onSubmit( message );
 			}
 			if ( isReaderChat ) {
 				markSessionUsed( agentConfig?.agentId );

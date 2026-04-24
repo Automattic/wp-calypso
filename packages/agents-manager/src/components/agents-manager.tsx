@@ -34,6 +34,8 @@ export interface AgentsManagerProps {
 	currentRoute?: string;
 	/** The ID of the currently selected site, or undefined for non-site contexts. */
 	currentSiteId?: number;
+	/** Explicit agent ID for hosts that must not fall back to Unified Chat. */
+	agentId?: string;
 	/** Called when the agent is closed. */
 	handleClose?: () => void;
 	/** The hook for handling image uploads. */
@@ -48,6 +50,7 @@ export default function AgentsManager( {
 	site,
 	currentRoute,
 	currentSiteId,
+	agentId,
 	useImageUpload,
 }: AgentsManagerProps ): JSX.Element | null {
 	// Wait for the store to load before rendering PersistentRouter
@@ -69,7 +72,7 @@ export default function AgentsManager( {
 		>
 			<QueryClientProvider client={ queryClient }>
 				<PersistentRouter siteKey={ siteKey }>
-					<AgentSetup useImageUpload={ useImageUpload } />
+					<AgentSetup agentId={ agentId } useImageUpload={ useImageUpload } />
 				</PersistentRouter>
 			</QueryClientProvider>
 		</AgentsManagerContextProvider>
@@ -78,8 +81,10 @@ export default function AgentsManager( {
 
 // Separate component that uses hooks within `PersistentRouter` context
 function AgentSetup( {
+	agentId: hostAgentId,
 	useImageUpload: fallbackUseImageUpload,
 }: {
+	agentId?: string;
 	useImageUpload?: ImageUploadHook;
 } ): JSX.Element | null {
 	const { site, currentRoute, agentConfig, setAgentConfig } = useAgentsManagerContext();
@@ -92,7 +97,7 @@ function AgentSetup( {
 
 	// Read agent/version overrides from browser URL (?agent=, ?version=).
 	// PersistentRouter (memory router) does not track window.location.search.
-	const { agentId, version, isLoading: isAgentConfigLoading } = useAgentConfig();
+	const { agentId, version, isLoading: isAgentConfigLoading } = useAgentConfig( hostAgentId );
 
 	// Restore the session ID. Priority:
 	//   1. Router state (calypso navigation carries sessionId on resume).
@@ -164,6 +169,7 @@ function AgentSetup( {
 		sessionId,
 		setAgentConfig,
 		site?.ID,
+		hostAgentId,
 		version,
 	] );
 
