@@ -14,6 +14,38 @@
 	}
 }
 
+/* Panel */
+@mixin dashboard-dark-theme-panel {
+	// `@wordpress/components` hardcodes `#fff` background, `#e0e0e0` / `#ddd`
+	// borders, and near-black text on the PanelBody title button.
+	.components-panel {
+		background: var( --dashboard-surface__background-color );
+		border-color: var( --dashboard-surface__border-color );
+	}
+
+	.components-panel__body {
+		border-top-color: var( --dashboard-surface__border-color );
+		border-bottom-color: var( --dashboard-surface__border-color );
+	}
+
+	.components-panel__header {
+		border-bottom-color: var( --dashboard-surface__border-color );
+	}
+
+	.components-panel__body-toggle.components-button,
+	.components-panel__body-toggle.components-button .components-panel__arrow {
+		color: var( --dashboard__text-color );
+	}
+
+	.components-panel__body > .components-panel__body-title:hover {
+		background: color-mix(
+			in srgb,
+			var( --dashboard-surface__background-color ) 82%,
+			var( --wp-admin-theme-color )
+		);
+	}
+}
+
 /* Form Controls */
 @mixin dashboard-dark-theme-form-controls {
 	.components-input-control__container {
@@ -614,6 +646,7 @@
 	@include dashboard-dark-theme-destructive-secondary-button;
 	@include dashboard-dark-theme-form-controls;
 	@include dashboard-dark-theme-item-group;
+	@include dashboard-dark-theme-panel;
 	@include dashboard-dark-theme-popover;
 	@include dashboard-dark-theme-plugins;
 	@include dashboard-dark-theme-muted-text;
