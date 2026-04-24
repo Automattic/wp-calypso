@@ -331,6 +331,19 @@
 		.dataviews-view-table__group-header-cell {
 			color: var( --dashboard__text-color );
 		}
+
+		// Selected row background (upstream mixes the admin color with hardcoded
+		// `#fff`, which produces a light tint against the dark surface).
+		tr.is-selected,
+		tr.is-selected .dataviews-view-table__actions-column--sticky,
+		&.has-bulk-actions tr.is-selected .dataviews-view-table__actions-column--sticky,
+		&.has-bulk-actions tr.is-selected:hover .dataviews-view-table__actions-column--sticky {
+			background-color: color-mix(
+				in srgb,
+				rgb( var( --wp-admin-theme-color--rgb ) ) 12%,
+				var( --dashboard-surface__background-color )
+			);
+		}
 	}
 
 	// Title field (used as the row's primary link/label)
@@ -388,6 +401,11 @@
 		border-top-color: var( --dashboard-surface__border-color );
 	}
 
+	// "N items" count in the footer (hardcoded to #1e1e1e upstream).
+	.dataviews-bulk-actions-footer__item-count {
+		color: var( --dashboard__text-color );
+	}
+
 	// URL field override from our local styles.scss
 	a.dataviews-url-field {
 		color: var( --dashboard-subtle__color );
@@ -398,7 +416,16 @@
 	}
 }
 
-// :root variables overridden for dark theme
+/* Site Icon */
+@mixin dashboard-dark-theme-site-icon {
+	// `.site-icon` hardcodes `background: $white` so user-uploaded favicons
+	// (often dark glyphs on transparent) stay legible. A pure-white chip pops
+	// harshly against the dark surface; use a light neutral instead.
+	.site-icon {
+		background: var( --wp-components-color-gray-600 );
+	}
+}
+
 @mixin dashboard-dark-theme {
 	// Overrides the default `--wp-components-*` to ensure all components that
 	// rely on it adapt to the dark theme's text color.
@@ -494,5 +521,6 @@
 	@include dashboard-dark-theme-popover;
 	@include dashboard-dark-theme-muted-text;
 	@include dashboard-dark-theme-section-header;
+	@include dashboard-dark-theme-site-icon;
 	@include dashboard-dark-theme-summary-button;
 }
