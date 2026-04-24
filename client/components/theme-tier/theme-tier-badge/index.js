@@ -118,7 +118,11 @@ export default function ThemeTierBadge( {
 
 	return (
 		<div
-			className={ clsx( 'theme-tier-badge', `theme-tier-badge--${ themeTierSlug }`, className ) }
+			className={ clsx(
+				'theme-tier-badge',
+				`theme-tier-badge--${ themeTierSlug }-whatever`,
+				className
+			) }
 		>
 			<ThemeTierBadgeContextProvider
 				canGoToCheckout={ canGoToCheckout }
