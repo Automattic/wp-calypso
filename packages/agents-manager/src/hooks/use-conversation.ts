@@ -9,6 +9,7 @@ import { isReaderChatAgent } from '../utils/is-reader-chat-agent';
 
 interface Config {
 	maxPages?: number;
+	enabled?: boolean;
 	onSuccess?: ( messages: Message[], sessionId: string ) => void;
 }
 
@@ -21,7 +22,11 @@ interface Result {
 /**
  * Fetches a conversation from the server when a `sessionId` is available.
  */
-export default function useConversation( { maxPages = 10, onSuccess = () => {} }: Config ): Result {
+export default function useConversation( {
+	maxPages = 10,
+	enabled = true,
+	onSuccess = () => {},
+}: Config ): Result {
 	const { agentConfig } = useAgentsManagerContext();
 	const { agentId, sessionId, authProvider } = agentConfig!;
 
@@ -51,7 +56,8 @@ export default function useConversation( { maxPages = 10, onSuccess = () => {} }
 		// Skip server fetch for brand-new client-created sessions — they
 		// have no history to load and the extra round-trip blocks the
 		// skeleton unnecessarily.
-		enabled: !! sessionId && ! ( isReaderChatAgent( agentId ) && isFreshSession( agentId ) ),
+		enabled:
+			enabled && !! sessionId && ! ( isReaderChatAgent( agentId ) && isFreshSession( agentId ) ),
 		refetchOnWindowFocus: false,
 	} );
 
