@@ -1,5 +1,6 @@
 import {
 	createConnection,
+	disconnectConnection,
 	getConnection,
 	getConnections,
 	readerAtmosphereKeys,
@@ -57,4 +58,15 @@ export const connectionQueryOptions = ( id: number | null ) =>
 
 export function useConnectionQuery( id: number | null ) {
 	return useQuery( connectionQueryOptions( id ) );
+}
+
+export function useDisconnectConnectionMutation() {
+	const client = useQueryClient();
+	return useMutation< void, AtmosphereError, number >( {
+		mutationFn: disconnectConnection,
+		onSuccess: ( _data, id ) => {
+			client.invalidateQueries( { queryKey: readerAtmosphereKeys.connections() } );
+			client.removeQueries( { queryKey: readerAtmosphereKeys.connection( id ) } );
+		},
+	} );
 }

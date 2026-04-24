@@ -6,6 +6,7 @@ import {
 	useConnectionQuery,
 	useConnectionsQuery,
 	useCreateConnectionMutation,
+	useDisconnectConnectionMutation,
 } from '../reader-atmosphere';
 
 const BASE = 'https://public-api.wordpress.com';
@@ -40,6 +41,21 @@ describe( 'reader-atmosphere hooks', () => {
 		} );
 		await result.current.mutateAsync( { handle: 'a', app_password: 'xxxx' } );
 		await waitFor( () => expect( spy ).toHaveBeenCalled() );
+	} );
+
+	it( 'useDisconnectConnectionMutation invalidates connections + removes the connection cache', async () => {
+		nock( BASE ).delete( '/wpcom/v2/reader/atmosphere/connections/101' ).reply( 200, {} );
+		const client = new QueryClient();
+		const invalidateSpy = jest.spyOn( client, 'invalidateQueries' );
+		const removeSpy = jest.spyOn( client, 'removeQueries' );
+		const { result } = renderHook( () => useDisconnectConnectionMutation(), {
+			wrapper: makeWrapper( client ),
+		} );
+		await result.current.mutateAsync( 101 );
+		await waitFor( () => expect( invalidateSpy ).toHaveBeenCalled() );
+		expect( removeSpy ).toHaveBeenCalledWith( {
+			queryKey: readerAtmosphereKeys.connection( 101 ),
+		} );
 	} );
 
 	it( 'useConnectionQuery is disabled when id is null', () => {
