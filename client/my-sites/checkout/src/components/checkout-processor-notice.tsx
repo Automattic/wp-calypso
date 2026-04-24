@@ -11,13 +11,19 @@ const Notice = styled.p`
 	box-sizing: border-box;
 `;
 
+// Legal disclosure; must not be translated. The en-dashes (U+2013) are intentional.
+const PROCESSOR_ADDRESS =
+	'Automattic Inc. 60 29th Street #343 – San Francisco, CA 94110 – United States of America';
+
 export default function CheckoutProcessorNotice() {
 	const translate = useTranslate();
 	return (
 		<Notice className="checkout-processor-notice">
-			{ translate(
-				'Your payment will be processed by Automattic Inc. 60 29th Street #343 – San Francisco, CA 94110 – United States of America'
-			) }
+			{ translate( 'Your payment will be processed by %(address)s', {
+				args: { address: PROCESSOR_ADDRESS },
+				comment:
+					'Legal disclosure shown below the checkout form. The %(address)s placeholder is a company name and street address; do not translate it.',
+			} ) }
 		</Notice>
 	);
 }
