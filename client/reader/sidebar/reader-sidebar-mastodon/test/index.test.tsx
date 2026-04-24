@@ -80,7 +80,7 @@ describe( 'ReaderSidebarMastodon', () => {
 			queryClient: makeClient(),
 		} );
 
-		const link = await screen.findByRole( 'link', { name: /mastodon/i } );
+		const link = await screen.findByRole( 'link', { name: /fediverse/i } );
 		expect( link ).toHaveAttribute( 'href', '/reader/mastodon' );
 
 		// No expanded list of per-connection items or Add account link.

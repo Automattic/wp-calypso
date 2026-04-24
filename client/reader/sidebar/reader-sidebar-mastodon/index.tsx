@@ -103,7 +103,7 @@ function ReaderSidebarMastodon( { path }: Props ) {
 	if ( ! isOnMastodon ) {
 		return (
 			<SidebarItem
-				label={ translate( 'Mastodon' ) }
+				label={ translate( 'Fediverse' ) }
 				link={ BASE_PATH }
 				onNavigate={ recordClick }
 				customIcon={ <ReaderMastodonIcon /> }
@@ -131,7 +131,7 @@ function ReaderSidebarMastodon( { path }: Props ) {
 		<li>
 			<ExpandableSidebarMenu
 				expanded={ isOpen }
-				title={ translate( 'Mastodon' ) }
+				title={ translate( 'Fediverse' ) }
 				customIcon={ <ReaderMastodonIcon /> }
 				onClick={ handleMainClick }
 				expandableIconClick={ () => setIsOpen( ! isOpen ) }
