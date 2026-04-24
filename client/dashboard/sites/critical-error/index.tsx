@@ -1,6 +1,6 @@
 import { siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { Button } from '@wordpress/components';
+import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Icon, envelope, help } from '@wordpress/icons';
@@ -10,10 +10,9 @@ import { useHelpCenter } from '../../app/help-center';
 import { Card, CardBody, CardDivider } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { Text } from '../../components/text';
 import { getJetpackCriticalErrorMessage } from '../site/notices';
 import type { ReactElement, ReactNode } from 'react';
-
-import './style.scss';
 
 type Item = {
 	icon: ReactElement;
@@ -68,16 +67,14 @@ const SiteCriticalError = ( { siteSlug }: { siteSlug: string } ) => {
 			}
 			size="small"
 		>
-			<Card className="site-critical-error__card">
+			<Card>
 				{ items.map( ( item, index ) => (
 					<Fragment key={ index }>
 						<CardBody>
-							<div className="site-critical-error__item">
-								<div className="site-critical-error__item-icon">
-									<Icon icon={ item.icon } size={ 20 } />
-								</div>
-								<div className="site-critical-error__item-text">{ item.text }</div>
-							</div>
+							<HStack spacing={ 3 } alignment="center" justify="flex-start">
+								<Icon icon={ item.icon } size={ 20 } />
+								<Text>{ item.text }</Text>
+							</HStack>
 						</CardBody>
 						{ index < items.length - 1 && <CardDivider /> }
 					</Fragment>
