@@ -1,4 +1,4 @@
-import { Button, Card, Dialog } from '@automattic/components';
+import { Button, Card, Modal } from '@wordpress/components';
 import { Icon, audio, category, check, globe, layout, megaphone } from '@wordpress/icons';
 import { useState } from 'react';
 
@@ -205,10 +205,10 @@ function PodcastingWelcome( { onEnable, planTier, onChangePlanTier }: WelcomePro
 						every major app — without leaving your site.
 					</p>
 					<div className="podcasting-v2__welcome-actions">
-						<Button primary onClick={ onEnable }>
+						<Button variant="primary" onClick={ onEnable }>
 							Enable podcasting
 						</Button>
-						<Button borderless onClick={ () => setExampleOpen( true ) }>
+						<Button variant="link" onClick={ () => setExampleOpen( true ) }>
 							See an example feed
 						</Button>
 					</div>
@@ -271,7 +271,10 @@ function PodcastingWelcome( { onEnable, planTier, onChangePlanTier }: WelcomePro
 									<span className="podcasting-v2__plan-amount">{ plan.price }</span>
 									<span className="podcasting-v2__plan-period">/mo, billed yearly</span>
 								</div>
-								<Button primary={ isRecommended || isYourPlan } onClick={ onEnable }>
+								<Button
+									variant={ isRecommended || isYourPlan ? 'primary' : undefined }
+									onClick={ onEnable }
+								>
 									{ isYourPlan ? 'Enable podcasting' : `Upgrade to ${ plan.name }` }
 								</Button>
 								<ul className="podcasting-v2__plan-features">
@@ -344,55 +347,49 @@ function PodcastingWelcome( { onEnable, planTier, onChangePlanTier }: WelcomePro
 			</div>
 
 			{ /* Example feed modal */ }
-			<Dialog
-				isVisible={ exampleOpen }
-				onClose={ () => setExampleOpen( false ) }
-				additionalClassNames="podcasting-v2__example-dialog"
-				buttons={ [
-					{
-						action: 'close',
-						label: 'Close',
-						onClick: () => setExampleOpen( false ),
-					},
-				] }
-			>
-				<h3 className="podcasting-v2__example-title">What your feed looks like to listeners</h3>
-				<div className="podcasting-v2__example-card">
-					<div className="podcasting-v2__example-cover">
-						<Icon icon={ audio } />
-					</div>
-					<div className="podcasting-v2__example-meta">
-						<div className="podcasting-v2__example-show">{ SAMPLE_SHOW.title }</div>
-						<div className="podcasting-v2__example-host">
-							by { SAMPLE_SHOW.host } • { SAMPLE_SHOW.category }
+			{ exampleOpen && (
+				<Modal
+					title="What your feed looks like to listeners"
+					onRequestClose={ () => setExampleOpen( false ) }
+					className="podcasting-v2__example-dialog"
+				>
+					<div className="podcasting-v2__example-card">
+						<div className="podcasting-v2__example-cover">
+							<Icon icon={ audio } />
 						</div>
-						<div className="podcasting-v2__example-summary">{ SAMPLE_SHOW.summary }</div>
-					</div>
-				</div>
-				<div className="podcasting-v2__example-feed-url">
-					<Icon icon={ category } />
-					<span>
-						https://{ SAMPLE_SHOW.host.toLowerCase().replace( /\s/g, '' ) }
-						.com/category/podcast/feed/
-					</span>
-				</div>
-				<ul className="podcasting-v2__example-episodes">
-					{ SAMPLE_EPISODES.map( ( ep ) => (
-						<li key={ ep.number }>
-							<span className="podcasting-v2__example-play">▶</span>
-							<div className="podcasting-v2__example-ep-body">
-								<div className="podcasting-v2__example-ep-title">
-									{ ep.number }. { ep.title }
-								</div>
-								<div className="podcasting-v2__example-ep-meta">
-									{ ep.date } · { ep.duration }
-								</div>
+						<div className="podcasting-v2__example-meta">
+							<div className="podcasting-v2__example-show">{ SAMPLE_SHOW.title }</div>
+							<div className="podcasting-v2__example-host">
+								by { SAMPLE_SHOW.host } • { SAMPLE_SHOW.category }
 							</div>
-						</li>
-					) ) }
-				</ul>
-				<Icon icon={ globe } style={ { display: 'none' } } />
-			</Dialog>
+							<div className="podcasting-v2__example-summary">{ SAMPLE_SHOW.summary }</div>
+						</div>
+					</div>
+					<div className="podcasting-v2__example-feed-url">
+						<Icon icon={ category } />
+						<span>
+							https://{ SAMPLE_SHOW.host.toLowerCase().replace( /\s/g, '' ) }
+							.com/category/podcast/feed/
+						</span>
+					</div>
+					<ul className="podcasting-v2__example-episodes">
+						{ SAMPLE_EPISODES.map( ( ep ) => (
+							<li key={ ep.number }>
+								<span className="podcasting-v2__example-play">▶</span>
+								<div className="podcasting-v2__example-ep-body">
+									<div className="podcasting-v2__example-ep-title">
+										{ ep.number }. { ep.title }
+									</div>
+									<div className="podcasting-v2__example-ep-meta">
+										{ ep.date } · { ep.duration }
+									</div>
+								</div>
+							</li>
+						) ) }
+					</ul>
+					<Icon icon={ globe } style={ { display: 'none' } } />
+				</Modal>
+			) }
 		</div>
 	);
 }
