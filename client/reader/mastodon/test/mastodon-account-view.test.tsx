@@ -33,7 +33,7 @@ function makeClient() {
 	return new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 }
 
-function mockConnections() {
+function mockConnections( displayName: string | null = 'Alice' ) {
 	return nock( 'https://public-api.wordpress.com' )
 		.get( listUrl )
 		.reply( 200, {
@@ -42,20 +42,20 @@ function mockConnections() {
 					id: 7,
 					handle: '@alice@mastodon.social',
 					instance: 'mastodon.social',
-					display_name: 'Alice',
+					display_name: displayName,
 					avatar: null,
 				},
 			],
 		} );
 }
 
-function mockConnectionDetails( id: number ) {
+function mockConnectionDetails( id: number, displayName: string = 'Alice' ) {
 	nock( 'https://public-api.wordpress.com' )
 		.get( `${ listUrl }/${ id }` )
 		.reply( 200, {
 			handle: '@alice@mastodon.social',
 			instance: 'mastodon.social',
-			display_name: 'Alice',
+			display_name: displayName,
 			description: '',
 			avatar: null,
 			header: null,
@@ -111,6 +111,29 @@ describe( 'MastodonAccountView', () => {
 		} );
 		await waitFor( () =>
 			expect( page.replace ).toHaveBeenCalledWith( '/reader/mastodon/7/timeline' )
+		);
+	} );
+
+	it( 'uses the display name from the details endpoint when the list omits it', async () => {
+		// Regression: the list endpoint returns display_name as null for
+		// Mastodon, so reading it directly made the header show the raw
+		// webfinger handle as the title AND subtitle. The details endpoint is
+		// authoritative for display name; the sidebar already lazy-fetches it,
+		// the header has to as well.
+		mockConnections( null );
+		mockConnectionDetails( 7, 'Rocinante the Bold' );
+		renderWithProvider( <MastodonAccountView connectionId={ 7 } tab={ TIMELINE_TAB } />, {
+			queryClient: makeClient(),
+		} );
+		// The heading flashes to the handle before the details query resolves;
+		// assert on the final state rather than the first findByRole match.
+		await waitFor( () =>
+			expect( screen.getByRole( 'heading', { level: 1 } ) ).toHaveTextContent(
+				'Rocinante the Bold'
+			)
+		);
+		expect( screen.getByRole( 'heading', { level: 1 } ) ).not.toHaveTextContent(
+			'@alice@mastodon.social'
 		);
 	} );
 

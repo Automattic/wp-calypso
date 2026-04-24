@@ -1,4 +1,4 @@
-import { useMastodonConnectionsQuery } from '@automattic/api-queries';
+import { useMastodonConnectionQuery, useMastodonConnectionsQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -28,6 +28,13 @@ export function MastodonAccountView( { connectionId, tab }: Props ) {
 	const connection = connections.find( ( c ) => c.id === connectionId ) ?? null;
 	const tabValid = VALID_TABS.has( tab );
 
+	// The list endpoint omits display_name for Mastodon connections (it comes
+	// back null), so the header would otherwise fall back to the raw handle
+	// for the title and duplicate it as the subtitle. The details endpoint has
+	// the display name; React Query dedupes by key, so ProfilePanel and the
+	// sidebar row share this fetch — no extra request.
+	const details = useMastodonConnectionQuery( connection?.id ?? null );
+
 	useEffect( () => {
 		if ( isPending ) {
 			return;
@@ -52,7 +59,7 @@ export function MastodonAccountView( { connectionId, tab }: Props ) {
 		);
 	}
 
-	const title = connection.display_name || connection.handle;
+	const title = details.data?.display_name || connection.display_name || connection.handle;
 	const subtitle = connection.handle;
 
 	return (
