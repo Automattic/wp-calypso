@@ -32,10 +32,10 @@ describe( DataHelper.createSuiteTitle( 'Reader: View' ), function () {
 		await readerPage.visit();
 	} );
 
-	it( 'Reader stream is present', async function () {
+	it( 'Reader stream is present XXXXXX', async function () {
 		await Promise.any( [
 			page.getByRole( 'link', { name: 'Find a sandwich' } ),
-			page.getByRole( 'main' ).getByRole( 'not-an-article-or-html-tag' ),
+			page.getByRole( 'main' ).getByRole( 'treeitem' ).getByRole( 'link' ).getByRole( 'heading' ),
 		] );
 	} );
 } );
