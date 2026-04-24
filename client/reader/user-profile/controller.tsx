@@ -19,7 +19,9 @@ export function userProfile( ctx: Context, next: () => void ): void {
 	const view = context.params.view || 'posts';
 	const userLogin = context.params.user_login;
 	const userId = context.params.user_id;
-	const basePath = '/reader/users/:user_login';
+	const basePath = context.params.view
+		? `/reader/users/:user_login/${ view }`
+		: '/reader/users/:user_login';
 	const fullAnalyticsPageTitle =
 		analyticsPageTitle +
 		' > User > ' +

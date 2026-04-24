@@ -72,6 +72,7 @@ export * from './read-site';
 export * from './site-activity-log';
 export * from './site-activity-log-backup';
 export * from './site-address-change';
+export * from './site-admin-bar';
 export * from './site-agency';
 export * from './site-atomic-transfers';
 export * from './site-automated-transfers-eligibility';

@@ -1,8 +1,8 @@
 import { queryOptions } from '@tanstack/react-query';
 
-export const omnibarCurrentSiteIdQuery = () =>
+export const omnibarSiteIdQuery = () =>
 	queryOptions( {
-		queryKey: [ 'omnibar', 'current-site-id' ],
+		queryKey: [ 'omnibar', 'site-id' ],
 		queryFn: () => Promise.resolve< number | null >( null ),
 		staleTime: Infinity,
 		meta: { persist: false },

@@ -1,7 +1,5 @@
-import { DropdownMenu, MenuGroup, MenuItem } from '@wordpress/components';
-import type { OmnibarNode, OmnibarProps } from '../../types';
-
-import './index.scss';
+import { Button, DropdownMenu, MenuGroup, MenuItem } from '@wordpress/components';
+import type { OmnibarNode } from '../types';
 
 function OmnibarDropdownContent( { children }: { children: OmnibarNode[] } ) {
 	const handleClick = ( href?: string ) => () => {
@@ -45,11 +43,13 @@ function OmnibarDropdownContent( { children }: { children: OmnibarNode[] } ) {
 	);
 }
 
-function OmnibarItem( { node }: { node: OmnibarNode } ) {
-	const content = node.render ? node.render( { node } ) : node.title;
-
+export function OmnibarItem( { node, content }: { node: OmnibarNode; content: React.ReactNode } ) {
 	if ( ! node.children ) {
-		return null;
+		return (
+			<Button className="omnibar__item" href={ node.href } label={ node.title }>
+				{ content }
+			</Button>
+		);
 	}
 
 	return (
@@ -57,6 +57,7 @@ function OmnibarItem( { node }: { node: OmnibarNode } ) {
 			className="omnibar__dropdown"
 			icon={ null }
 			label={ node.title }
+			popoverProps={ { className: 'omnibar__popover' } }
 			toggleProps={ {
 				className: 'omnibar__item',
 				children: content,
@@ -64,16 +65,5 @@ function OmnibarItem( { node }: { node: OmnibarNode } ) {
 		>
 			{ () => <OmnibarDropdownContent children={ node.children || [] } /> }
 		</DropdownMenu>
-	);
-}
-
-export function Omnibar( { nodes }: OmnibarProps ) {
-	return (
-		<div className="omnibar" role="navigation" aria-label="Toolbar">
-			{ nodes.home && <OmnibarItem node={ nodes.home } /> }
-			<div className="omnibar__secondary">
-				{ nodes.user && <OmnibarItem node={ nodes.user } /> }
-			</div>
-		</div>
 	);
 }

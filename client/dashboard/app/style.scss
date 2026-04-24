@@ -1,6 +1,7 @@
 @import '@wordpress/base-styles/variables';
 @import '@wordpress/theme/design-tokens.css';
 @import '@wordpress/dataviews/build-style/style.css';
+@import './dark-theme';
 
 // Should be implemented differently once the Multi-site Dashboard is not loaded by the Node server using the Calypso loading screen.
 // I'm tempted to even just replace all this with a display:none on the logo
@@ -42,4 +43,14 @@ a {
 // This causes the visx tooltip to render a malformed box-shadow value, given that it interpolates the color. e.g: `${theme?.color}55`.
 .visx-tooltip:has(div[role="tooltip"]) {
 	box-shadow: 0 1px 2px $gray-300 !important;
+}
+
+:root[data-theme='dark'] {
+	@include dashboard-dark-theme;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root[data-theme='system'] {
+		@include dashboard-dark-theme;
+	}
 }

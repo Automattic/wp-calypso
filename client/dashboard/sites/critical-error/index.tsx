@@ -1,5 +1,6 @@
 import { siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
 import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -11,7 +12,7 @@ import { Card, CardBody, CardDivider } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { Text } from '../../components/text';
-import { getJetpackCriticalErrorMessage } from '../site/notices';
+import { getJetpackCriticalErrorMessage, hasJetpackCriticalError } from '../site/notices';
 import type { ReactElement, ReactNode } from 'react';
 
 type Item = {
@@ -19,16 +20,36 @@ type Item = {
 	text: ReactNode;
 };
 
+// Poll while the user is on the critical-error screen so we can send them back
+// to the overview as soon as the site comes back online.
+const RECOVERY_POLL_INTERVAL_MS = 30_000;
+
 const SiteCriticalError = ( { siteSlug }: { siteSlug: string } ) => {
-	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const { data: site } = useSuspenseQuery( {
+		...siteBySlugQuery( siteSlug ),
+		refetchInterval: RECOVERY_POLL_INTERVAL_MS,
+	} );
 	const { setShowHelpCenter } = useHelpCenter();
 	const { recordTracksEvent } = useAnalytics();
+	const navigate = useNavigate();
 
 	const isAdmin = !! site.capabilities?.manage_options;
+	const hasRecovered = ! site.__inaccessible_jetpack_error || ! hasJetpackCriticalError( site );
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_dashboard_critical_error_impression' );
 	}, [ recordTracksEvent ] );
+
+	useEffect( () => {
+		if ( hasRecovered ) {
+			navigate( {
+				to: '/sites/$siteSlug',
+				params: { siteSlug },
+				replace: true,
+				viewTransition: false,
+			} );
+		}
+	}, [ hasRecovered, navigate, siteSlug ] );
 
 	const message = getJetpackCriticalErrorMessage( site );
 

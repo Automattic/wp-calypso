@@ -1,5 +1,5 @@
 import {
-	omnibarCurrentSiteIdQuery,
+	omnibarSiteIdQuery,
 	queryClient,
 	userPreferenceQuery,
 	userPreferenceOptimisticMutation,
@@ -16,7 +16,7 @@ import type { Site, User } from '@automattic/api-core';
  * Initializes the current site for the omnibar, which is extracted from the URL,
  * or the most recent sites, or the user's primary blog, in that priority.
  */
-export function useInitializeOmnibarCurrentSite() {
+export function useInitializeOmnibarSite() {
 	const user = queryClient.getQueryData< User >( AUTH_QUERY_KEY );
 
 	const { data: recentSiteIds } = useQuery( userPreferenceQuery( 'recentSites' ), queryClient );
@@ -55,7 +55,7 @@ export function useInitializeOmnibarCurrentSite() {
 		}
 
 		queryClient.setQueryData(
-			omnibarCurrentSiteIdQuery().queryKey,
+			omnibarSiteIdQuery().queryKey,
 			( currentSiteId ) => selectedSiteId || currentSiteId || fallbackSiteId
 		);
 
