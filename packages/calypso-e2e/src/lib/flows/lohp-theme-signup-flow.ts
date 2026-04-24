@@ -55,10 +55,20 @@ export class LOHPThemeSignupFlow {
 	 */
 	async visitCalypsoGetStartedLinkForTheme(): Promise< string > {
 		const pageThemeDetails = new ThemesDetailPage( this.page );
+		// Ensure the theme details view has rendered the "Get started" link
+		// before reading its href; on mobile the transition from the themes
+		// showcase to the details view can race the href read.
+		await this.page
+			.getByRole( 'link', { name: 'Get started' } )
+			.first()
+			.waitFor( { state: 'attached', timeout: 30_000 } );
 		const calypsoGetStartedLink = await pageThemeDetails.calypsoGetStartedLink();
 		const themeSlug =
 			pageThemeDetails.getThemeSlugFromCalypsoGetStartedLink( calypsoGetStartedLink );
 		await this.page.goto( calypsoGetStartedLink );
+		// Wait for the signup flow URL to settle before returning so the
+		// subsequent assertions don't race the in-flight navigation.
+		await this.page.waitForURL( /\/start\//, { timeout: 30_000 } );
 		return themeSlug;
 	}
 
