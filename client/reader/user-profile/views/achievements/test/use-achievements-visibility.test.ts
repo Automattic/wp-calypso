@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
-import { useAchievementsVisibility } from '../use-achievements-visibility';
+import useAchievementsVisibility from '../use-achievements-visibility';
 
 const mockUseQuery = jest.fn();
 jest.mock( '@tanstack/react-query', () => ( {
