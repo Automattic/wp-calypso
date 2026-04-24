@@ -135,6 +135,7 @@ $actions-height: 64px;
 	&__tile-label {
 		font-size: 0.75rem;
 		line-height: 1.3;
+		white-space: nowrap;
 	}
 
 	&__footer-buttons {
