@@ -1,5 +1,5 @@
 import nock from 'nock';
-import { createConnection, getConnection, getConnections } from '../fetchers';
+import { createConnection, disconnectConnection, getConnection, getConnections } from '../fetchers';
 
 const BASE = 'https://public-api.wordpress.com';
 
@@ -61,6 +61,26 @@ describe( 'atmosphere fetchers', () => {
 			} );
 		const result = await getConnection( 42 );
 		expect( result.handle ).toBe( 'a.bsky.social' );
+	} );
+
+	it( 'disconnectConnection DELETEs /connections/:id and resolves on success', async () => {
+		const scope = nock( BASE )
+			.delete( '/wpcom/v2/reader/atmosphere/connections/101' )
+			.reply( 200, {} );
+		await expect( disconnectConnection( 101 ) ).resolves.toBeUndefined();
+		expect( scope.isDone() ).toBe( true );
+	} );
+
+	it( 'disconnectConnection classifies connection_not_found', async () => {
+		nock( BASE ).delete( '/wpcom/v2/reader/atmosphere/connections/999' ).reply( 404, {
+			error: 'connection_not_found',
+			message: '',
+			statusCode: 404,
+			status: 404,
+		} );
+		await expect( disconnectConnection( 999 ) ).rejects.toMatchObject( {
+			kind: 'connection_not_found',
+		} );
 	} );
 
 	it( 'getConnections classifies unknown errors', async () => {

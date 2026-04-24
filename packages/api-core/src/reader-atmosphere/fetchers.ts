@@ -48,3 +48,17 @@ export async function getConnection( id: number ): Promise< AtmosphereConnection
 		throw classifyAtmosphereError( raw );
 	}
 }
+
+export async function disconnectConnection( id: number ): Promise< void > {
+	try {
+		// wpcom.req.del routes through the v1 POST-with-method shim, so call
+		// req.post with method: 'DELETE' to hit the real DELETE on wpcom/v2.
+		await wpcom.req.post( {
+			path: `/reader/atmosphere/connections/${ id }`,
+			apiNamespace: NAMESPACE,
+			method: 'DELETE',
+		} );
+	} catch ( raw ) {
+		throw classifyAtmosphereError( raw );
+	}
+}
