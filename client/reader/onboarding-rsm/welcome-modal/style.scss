@@ -104,7 +104,16 @@ $actions-height: 64px;
 		position: relative;
 	}
 
+	&__porthole-image {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+
 	&__variety-image {
+		// Variety logo is square — fit it inside the circle without cropping
+		position: static;
 		width: 71%; // Scale factor to fit square inside circle of same size -> 1/root(2) ~= 71%
 		height: 71%;
 		object-fit: contain;
@@ -112,34 +121,29 @@ $actions-height: 64px;
 	}
 
 	&__matt-image {
-		position: absolute;
 		top: 13px;
 		left: 7px;
 		transform: scale( 1.4 );
 	}
 
 	&__seth-image {
-		position: absolute;
 		top: -3px;
 		right: 3px;
 		transform: scale( 1.1 );
 	}
 
 	&__tim-image {
-		position: absolute;
 		top: 19px;
 		transform: scale( 1.8 );
 	}
 
 	&__om-image {
-		position: absolute;
 		top: 4px;
 		right: 3px;
 		transform: scale( 1.2 );
 	}
 
 	&__hugh-image {
-		position: absolute;
 		top: 12px;
 		right: 2px;
 		transform: scale( 1.5 );
@@ -149,6 +153,8 @@ $actions-height: 64px;
 		font-size: 0.75rem;
 		line-height: 1.3;
 		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 		color: var( --color-text-subtle );
 	}
 

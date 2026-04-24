@@ -94,7 +94,12 @@ const renderTileImage = ( item: WelcomeTileItem ) => {
 	if ( item.porthole ) {
 		return (
 			<span className="reader-welcome-modal__image-porthole">
-				<img src={ item.imageUrl } alt="" aria-hidden className={ item.imageClass } />
+				<img
+					src={ item.imageUrl }
+					alt=""
+					aria-hidden
+					className={ clsx( 'reader-welcome-modal__porthole-image', item.imageClass ) }
+				/>
 			</span>
 		);
 	}
