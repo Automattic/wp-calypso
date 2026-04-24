@@ -1,6 +1,6 @@
 @import '@wordpress/theme/design-tokens.css';
 @import '@wordpress/dataviews/build-style/style.css';
-@import "calypso/components/jetpack-page-layout/admin-ui-page";
+@import 'calypso/components/jetpack-page-layout/admin-ui-page';
 
 body.is-section-podcast {
 	@include admin-ui-page-layout;
@@ -33,17 +33,12 @@ body.is-section-podcast {
 }
 
 .podcast__tabs {
-	.components-tab-panel__tabs {
-		gap: 4px;
-	}
-
-	.components-tab-panel__tabs-item {
-		padding: 12px 16px;
-		height: auto;
+	[role='tab'] {
+		padding-inline: 16px;
 		font-size: 14px;
 		font-weight: 400;
 
-		&.is-active {
+		&[aria-selected='true'] {
 			font-weight: 500;
 		}
 	}

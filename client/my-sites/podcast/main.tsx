@@ -1,7 +1,6 @@
 import page from '@automattic/calypso-router';
 import { Page } from '@wordpress/admin-ui';
-import { privateApis } from '@wordpress/components';
-import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
+import { Tabs } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -22,12 +21,6 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import PodcastEpisodes from './components/episodes';
 
 import './style.scss';
-
-const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
-	'I acknowledge private features are not for use in themes or plugins and doing so will break in the next version of WordPress.',
-	'@wordpress/components'
-);
-const { Tabs } = unlock( privateApis );
 
 type PodcastSection = 'episodes' | 'settings' | 'distribution';
 
@@ -81,7 +74,7 @@ const PodcastMain = ( { section, path }: PodcastMainProps ) => {
 
 	const currentPath = ( path || '' ).split( '?' )[ 0 ];
 
-	const handleSelect = ( tabId: string | null | undefined ) => {
+	const handleSelect = ( tabId: string ) => {
 		const target = tabs.find( ( t ) => t.name === tabId );
 		if ( target && currentPath !== target.path ) {
 			page.show( target.path );
@@ -108,27 +101,30 @@ const PodcastMain = ( { section, path }: PodcastMainProps ) => {
 			>
 				<div className="podcast__scroll-area">
 					{ podcastingOn ? (
-						<Tabs selectedTabId={ currentSection } onSelect={ handleSelect }>
+						<Tabs.Root
+							value={ currentSection }
+							onValueChange={ ( value ) => handleSelect( value as string ) }
+						>
 							<div className="podcast__tabs-bar">
-								<Tabs.TabList className="podcast__tabs">
+								<Tabs.List className="podcast__tabs">
 									{ tabs.map( ( tab ) => (
-										<Tabs.Tab key={ tab.name } tabId={ tab.name }>
+										<Tabs.Tab key={ tab.name } value={ tab.name }>
 											{ tab.title }
 										</Tabs.Tab>
 									) ) }
-								</Tabs.TabList>
+								</Tabs.List>
 							</div>
-							<Tabs.TabPanel tabId="episodes" focusable={ false }>
+							<Tabs.Panel value="episodes">
 								<div className="podcast__tab-content">
 									<PodcastEpisodes />
 								</div>
-							</Tabs.TabPanel>
-							<Tabs.TabPanel tabId="distribution" focusable={ false }>
+							</Tabs.Panel>
+							<Tabs.Panel value="distribution">
 								<div className="podcast__tab-content">
 									<PodcastingDistribution />
 								</div>
-							</Tabs.TabPanel>
-							<Tabs.TabPanel tabId="settings" focusable={ false }>
+							</Tabs.Panel>
+							<Tabs.Panel value="settings">
 								<div className="podcast__tab-content">
 									<PodcastingV2Body
 										embedded
@@ -136,8 +132,8 @@ const PodcastMain = ( { section, path }: PodcastMainProps ) => {
 										onChangePodcasting={ setPodcastingOn }
 									/>
 								</div>
-							</Tabs.TabPanel>
-						</Tabs>
+							</Tabs.Panel>
+						</Tabs.Root>
 					) : (
 						<div className="podcast__tab-content podcasting-v2">
 							<PodcastingWelcome
