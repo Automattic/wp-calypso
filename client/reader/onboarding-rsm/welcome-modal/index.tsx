@@ -5,6 +5,7 @@ import {
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import clsx from 'clsx';
 import { StepIndicator } from 'calypso/reader/onboarding-rsm/step-indicator';
 
 import './style.scss';
@@ -102,7 +103,7 @@ const renderTileImage = ( item: WelcomeTileItem ) => {
 			src={ item.imageUrl }
 			alt=""
 			aria-hidden
-			className={ `reader-welcome-modal__tile-image ${ item.imageClass || '' }` }
+			className={ clsx( 'reader-welcome-modal__tile-image', item.imageClass ) }
 		/>
 	);
 };

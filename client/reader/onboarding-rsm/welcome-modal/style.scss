@@ -2,6 +2,16 @@
 
 $actions-height: 64px;
 
+@mixin tile-circle-frame {
+	width: 64px;
+	height: 64px;
+	border-radius: 50%;
+	background-color: var( --studio-white );
+	box-shadow:
+		0 0 0 1px color-mix( in srgb, var( --color-neutral-20 ) 30%, transparent ),
+		0 1px 3px color-mix( in srgb, var( --color-neutral-60 ) 10%, transparent );
+}
+
 .reader-welcome-modal {
 	&.components-modal__frame,
 	.components-modal__frame {
@@ -73,14 +83,8 @@ $actions-height: 64px;
 	}
 
 	&__tile-image {
-		width: 64px;
-		height: 64px;
-		border-radius: 50%;
+		@include tile-circle-frame;
 		object-fit: cover;
-		background-color: var( --studio-white );
-		box-shadow:
-			0 0 0 1px color-mix( in srgb, var( --color-neutral-20 ) 30%, transparent ),
-			0 1px 3px color-mix( in srgb, var( --color-neutral-60 ) 10%, transparent );
 	}
 
 	&__tile-image.is-contained-logo {
@@ -92,18 +96,12 @@ $actions-height: 64px;
 	}
 
 	&__image-porthole {
-		width: 64px;
-		height: 64px;
-		border-radius: 50%;
+		@include tile-circle-frame;
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
 		overflow: hidden;
 		position: relative;
-		background-color: var( --studio-white );
-		box-shadow:
-			0 0 0 1px color-mix( in srgb, var( --color-neutral-20 ) 30%, transparent ),
-			0 1px 3px color-mix( in srgb, var( --color-neutral-60 ) 10%, transparent );
 	}
 
 	&__variety-image {
