@@ -67,18 +67,7 @@ export function useCompleteMastodonConnectionMutation() {
 export const mastodonConnectionQueryOptions = ( id: number | null ) =>
 	queryOptions< MastodonConnectionDetails, MastodonError >( {
 		queryKey: readerMastodonKeys.connection( id ),
-		queryFn: () => {
-			if ( id === null || id <= 0 ) {
-				// Defensive guard — `enabled` below should prevent this from
-				// ever running. Throw the error type the query is typed for.
-				const err: MastodonError = {
-					kind: 'unknown',
-					cause: new Error( `getMastodonConnection called with invalid id: ${ id }` ),
-				};
-				throw err;
-			}
-			return getMastodonConnection( id );
-		},
+		queryFn: () => getMastodonConnection( id as number ),
 		enabled: id !== null && id > 0,
 		staleTime: 60_000,
 	} );

@@ -118,7 +118,39 @@ describe( 'SocialProfileCard', () => {
 		expect( link ).not.toBeNull();
 		expect( link ).toHaveAttribute( 'href', 'https://verify.example/' );
 		expect( link?.getAttribute( 'rel' ) ).toMatch( /\bme\b/ );
+		// The rel hook merges noopener+noreferrer into existing rel tokens; the
+		// `me` verification token must still survive alongside them.
+		expect( link?.getAttribute( 'rel' ) ).toMatch( /\bnoopener\b/ );
+		expect( link?.getAttribute( 'rel' ) ).toMatch( /\bnoreferrer\b/ );
 		expect( link ).toHaveAttribute( 'target', '_blank' );
+	} );
+
+	it( 'forces rel="noopener noreferrer" onto a bare target="_blank" anchor', () => {
+		// Hypothetical defense: Mastodon itself always ships rel on bio
+		// anchors, but the allowlist accepts target/rel as free-form. A bare
+		// `<a target="_blank">` must not leak a window.opener reference.
+		const { container } = render(
+			<SocialProfileCard
+				bioHtml='<p><a href="https://example.test/" target="_blank">bare</a></p>'
+				statsLabel="Profile stats"
+				stats={ [ { key: 'followers', count: 0, label: 'followers' } ] }
+			/>
+		);
+		const link = container.querySelector( '.social-profile-card__bio a' );
+		expect( link?.getAttribute( 'rel' ) ).toMatch( /\bnoopener\b/ );
+		expect( link?.getAttribute( 'rel' ) ).toMatch( /\bnoreferrer\b/ );
+	} );
+
+	it( 'leaves rel alone when there is no target="_blank"', () => {
+		const { container } = render(
+			<SocialProfileCard
+				bioHtml='<p><a href="https://example.test/" rel="nofollow">inline</a></p>'
+				statsLabel="Profile stats"
+				stats={ [ { key: 'followers', count: 0, label: 'followers' } ] }
+			/>
+		);
+		const link = container.querySelector( '.social-profile-card__bio a' );
+		expect( link?.getAttribute( 'rel' ) ).toBe( 'nofollow' );
 	} );
 
 	it( 'preserves <span class="mention"> and <a class="mention"> used by Mastodon', () => {

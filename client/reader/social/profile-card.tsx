@@ -32,6 +32,28 @@ const BIO_SANITIZE_CONFIG = {
 	ALLOWED_ATTR: [ 'href', 'rel', 'target', 'class' ],
 };
 
+// Belt-and-suspenders: Mastodon itself ships rel="nofollow noopener noreferrer"
+// on bio anchors, but we accept target and rel as free-form attributes. Merge
+// `noopener noreferrer` into the rel set on any target="_blank" anchor so a
+// bare `<a target="_blank">` in a bio can't hand a window.opener reference
+// back to us. Preserves existing rel tokens (e.g. rel="me" verification).
+let bioRelHookRegistered = false;
+function ensureBioRelHookRegistered() {
+	if ( bioRelHookRegistered ) {
+		return;
+	}
+	DOMPurify.addHook( 'afterSanitizeAttributes', ( node ) => {
+		if ( node.tagName !== 'A' || node.getAttribute( 'target' ) !== '_blank' ) {
+			return;
+		}
+		const tokens = new Set( ( node.getAttribute( 'rel' ) ?? '' ).split( /\s+/ ).filter( Boolean ) );
+		tokens.add( 'noopener' );
+		tokens.add( 'noreferrer' );
+		node.setAttribute( 'rel', Array.from( tokens ).join( ' ' ) );
+	} );
+	bioRelHookRegistered = true;
+}
+
 /**
  * Presentational card for a connected social account's profile. Renders a
  * circular avatar, an inline stats row (bold count + muted label), and the
@@ -45,10 +67,13 @@ export function SocialProfileCard( {
 	stats,
 	statsLabel,
 }: SocialProfileCardProps ) {
-	const sanitizedBio = useMemo(
-		() => ( bioHtml ? DOMPurify.sanitize( bioHtml, BIO_SANITIZE_CONFIG ) : null ),
-		[ bioHtml ]
-	);
+	const sanitizedBio = useMemo( () => {
+		if ( ! bioHtml ) {
+			return null;
+		}
+		ensureBioRelHookRegistered();
+		return DOMPurify.sanitize( bioHtml, BIO_SANITIZE_CONFIG );
+	}, [ bioHtml ] );
 
 	let bioNode = null;
 	if ( sanitizedBio ) {

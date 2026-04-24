@@ -12,7 +12,7 @@ export function ProfilePanel( { connection }: ProfilePanelProps ) {
 		<VerifyPanel
 			data={ verify.data ?? null }
 			error={ verify.error ?? null }
-			isLoading={ verify.isFetching }
+			isLoading={ verify.isLoading }
 		/>
 	);
 }
