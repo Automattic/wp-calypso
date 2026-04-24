@@ -433,13 +433,17 @@ const DomainSearchStep: StepType< {
 		};
 
 		const getTopBarRightElement = () => {
-			if ( ! query ) {
+			const showStepCount = isOnboardingFlow( flow );
+			const showUseMyDomain = !! query && config.allowsUsingOwnDomain;
+
+			if ( ! showStepCount && ! showUseMyDomain ) {
 				return;
 			}
 
 			return (
 				<>
-					{ config.allowsUsingOwnDomain && (
+					{ showStepCount && <Step.StepCount current={ 1 } total={ 3 } /> }
+					{ showUseMyDomain && (
 						<Step.LinkButton onClick={ () => events.onExternalDomainClick( query ) }>
 							{ __( 'Use a domain I own' ) }
 						</Step.LinkButton>

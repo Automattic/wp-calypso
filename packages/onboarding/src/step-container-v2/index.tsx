@@ -12,6 +12,7 @@ export { SecondaryButton } from './components/buttons/SecondaryButton/SecondaryB
 export { SkipButton } from './components/buttons/SkipButton/SkipButton';
 export { LinkButton } from './components/buttons/LinkButton/LinkButton';
 export { Heading } from './components/Heading/Heading';
+export { StepCount } from './components/StepCount/StepCount';
 export { TopBar } from './components/TopBar/TopBar';
 export { StickyBottomBar } from './components/StickyBottomBar/StickyBottomBar';
 

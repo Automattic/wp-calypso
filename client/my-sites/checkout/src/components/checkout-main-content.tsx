@@ -397,6 +397,8 @@ export default function CheckoutMainContent( {
 	const searchParams = new URLSearchParams( window.location.search );
 	const isDIFMInCart = hasDIFMProduct( responseCart );
 	const isSignupCheckout = searchParams.get( 'signup' ) === '1';
+	const isInOnboardingCheckout =
+		searchParams.get( 'redirect_to' )?.startsWith( '/setup/onboarding/' ) ?? false;
 	const selectedSiteData = useSelector( getSelectedSite );
 	const wpcomDomain = useSelector( ( state ) =>
 		getWpComDomainBySiteId( state, selectedSiteData?.ID )
@@ -955,6 +957,7 @@ export default function CheckoutMainContent( {
 							leftElement={ <Step.BackButton onClick={ leaveModalProps.clickClose } /> }
 							rightElement={
 								<span className="checkout-skip-button">
+									{ isInOnboardingCheckout && <Step.StepCount current={ 3 } total={ 3 } /> }
 									{ helpCenterButtonCopy && <label>{ helpCenterButtonCopy }</label> }
 									<Step.LinkButton onClick={ toggleHelpCenter }>
 										{ helpCenterButtonLink }
@@ -1010,6 +1013,10 @@ const StepContainerV2CheckoutFixer = styled.div< {
 	}
 
 	.checkout-skip-button {
+		display: inline-flex;
+		align-items: center;
+		gap: 1rem;
+
 		label {
 			display: none;
 

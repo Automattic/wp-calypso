@@ -1,0 +1,12 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.step-container-v2__step-count {
+	color: var( --color-text-subtle );
+	font-size: 0.875rem;
+	line-height: 1;
+
+	@include break-small {
+		display: none;
+	}
+}
