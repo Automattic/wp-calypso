@@ -31,4 +31,6 @@ export interface UserPreferences {
 	'sites-landing-page'?: SitesLandingPage;
 	[ key: `cancel-purchase-survey-completed-${ string | number }` ]: string | undefined;
 	[ key: `cancellation-offer-accepted-notice-dismissed-${ string | number }` ]: string | undefined;
+	'achievements-page-public'?: boolean;
+	'achievements-notifications-enabled'?: boolean;
 }

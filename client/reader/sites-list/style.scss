@@ -74,6 +74,13 @@
 		.reader-site-info h3 {
 			font-size: rem( 14px );
 			font-weight: normal;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+
+		.reader-site-subscribe-button {
+			padding-top: 5px;
 		}
 	}
 

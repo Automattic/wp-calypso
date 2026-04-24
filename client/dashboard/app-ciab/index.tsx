@@ -48,6 +48,7 @@ boot( {
 		siteOverview: {
 			preview: true,
 		},
+		colorScheme: false,
 	},
 	optIn: false,
 	components: {

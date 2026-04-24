@@ -114,7 +114,7 @@ describe( 'RecommendedFeedItem', () => {
 		} );
 
 		test( 'passes custom icon size to SiteIcon', () => {
-			renderComponent( { ...defaultProps, iconSize: 64 } );
+			renderComponent( { ...defaultProps, siteIconSize: 64 } );
 
 			const icon = document.querySelector( '.site-icon' );
 			expect( icon ).toHaveStyle( { height: '64px', width: '64px' } );

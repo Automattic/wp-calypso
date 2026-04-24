@@ -59,7 +59,7 @@ describe( 'UserLists', () => {
 			<UserLists user={ defaultUser } requestUserLists={ mockRequestUserLists } isLoading />
 		);
 
-		expect( container.querySelector( '.user-profile__lists-loader' ) ).toBeInTheDocument();
+		expect( container.querySelector( '.user-profile__loader' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Loading lists...' ) ).toBeInTheDocument();
 	} );
 

@@ -1,0 +1,34 @@
+.is-reader-page {
+	.user-hovercard {
+		background: var( --studio-white );
+		border: 1px solid var( --color-border-subtle );
+		border-radius: 8px;
+		box-shadow:
+			0 6px 10px 0 rgba( 42, 57, 75, 0.07 ),
+			0 1.809px 24.118px 0 rgba( 42, 57, 75, 0.05 ),
+			0 0.751px 10.017px 0 rgba( 42, 57, 75, 0.04 ),
+			0 0.272px 3.623px 0 rgba( 42, 57, 75, 0.02 );
+		padding: 24px;
+		width: 338px;
+		box-sizing: border-box;
+	}
+
+	.user-hovercard--not-found {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		text-align: center;
+		padding: 58px 0;
+
+		p {
+			margin: 24px 0 0;
+			color: var( --color-text-subtle );
+			font-size: 14px;
+			line-height: 22px;
+		}
+
+		a {
+			color: var( --color-text-subtle );
+		}
+	}
+}
