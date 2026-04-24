@@ -46,7 +46,7 @@ function initialize() {
 		STEPS.SETUP_YOUR_SITE_AI,
 	];
 
-	return [ ...stepsWithRequiredLogin( steps ), STEPS.PLAYGROUND, STEPS.BLUEPRINT ];
+	return [ ...stepsWithRequiredLogin( steps ), STEPS.PLAYGROUND, STEPS.BLUEPRINT, STEPS.ERROR ];
 }
 
 const onboarding: FlowV2< typeof initialize > = {
@@ -304,8 +304,7 @@ const onboarding: FlowV2< typeof initialize > = {
 							window.location.replace( destination );
 						}
 					} else {
-						// TODO: Handle errors
-						// navigate( 'error' );
+						return navigate( 'error' as typeof currentStepSlug );
 					}
 					return;
 				}
