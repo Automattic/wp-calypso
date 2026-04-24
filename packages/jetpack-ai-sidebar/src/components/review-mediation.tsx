@@ -21,6 +21,7 @@
 /**
  * External dependencies
  */
+import { Panel, PanelBody } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useState, useCallback, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -96,7 +97,6 @@ export default function ReviewMediation( {
 	guideline_violations,
 }: ReviewMediationProps ) {
 	const [ editStatuses, setEditStatuses ] = useState< Record< number, EditStatus > >( {} );
-	const [ violationsOpen, setViolationsOpen ] = useState( false );
 
 	// Flat list of top-level blocks in document order. `block_index` from the
 	// server-side ability (a `parse_blocks()` offset) maps directly to this
@@ -203,179 +203,180 @@ export default function ReviewMediation( {
 
 	return (
 		<div className="jetpack-ai-review-mediation">
-			<section className="jetpack-ai-review-mediation__summary">
-				<h3 className="jetpack-ai-review-mediation__heading">
-					{ __( 'Review summary', 'jetpack' ) }
-				</h3>
-				<p>{ summary }</p>
-			</section>
+			<Panel className="jetpack-ai-review-mediation__panel">
+				<PanelBody
+					title={ __( 'Review summary', 'jetpack' ) }
+					className="jetpack-ai-review-mediation__summary"
+					initialOpen
+				>
+					<p>{ summary }</p>
+				</PanelBody>
 
-			{ hasNoReviewerInput ? null : (
-				<>
-					{ conflicts.length > 0 && (
-						<section className="jetpack-ai-review-mediation__conflicts">
-							<h3 className="jetpack-ai-review-mediation__heading">
-								{ __( 'Conflicts', 'jetpack' ) }
-							</h3>
-							{ conflicts.map( ( conflict, i ) => (
-								<article className="jetpack-ai-review-mediation__card" key={ `conflict-${ i }` }>
-									<h4 className="jetpack-ai-review-mediation__card-title">{ conflict.subject }</h4>
-									<ul className="jetpack-ai-review-mediation__positions">
-										{ conflict.positions.map( ( pos, j ) => (
-											<li key={ `pos-${ i }-${ j }` }>
-												<strong>{ pos.reviewer }:</strong> { pos.position }
-											</li>
-										) ) }
-									</ul>
-									{ conflict.guideline_anchor && (
-										<blockquote className="jetpack-ai-review-mediation__guideline-anchor">
-											{ conflict.guideline_anchor }
-										</blockquote>
-									) }
-									<p className="jetpack-ai-review-mediation__recommendation">
-										<strong>{ __( 'Recommended:', 'jetpack' ) }</strong>{ ' ' }
-										{ conflict.recommended_resolution }
-									</p>
-								</article>
-							) ) }
-						</section>
-					) }
-
-					{ implications.length > 0 && (
-						<section className="jetpack-ai-review-mediation__implications">
-							<h3 className="jetpack-ai-review-mediation__heading">
-								{ __( 'Implications', 'jetpack' ) }
-							</h3>
-							<ul>
-								{ implications.map( ( imp, i ) => (
-									<li key={ `imp-${ i }` }>
-										<strong>{ imp.change }</strong> — { imp.implies }
-										{ imp.affected_blocks.length > 0 && (
-											<span className="jetpack-ai-review-mediation__affected-blocks">
-												{ ' ' }
-												({ __( 'Affects blocks:', 'jetpack' ) } { imp.affected_blocks.join( ', ' ) }
-												)
-											</span>
-										) }
-									</li>
-								) ) }
-							</ul>
-						</section>
-					) }
-
-					{ suggested_edits.length > 0 && (
-						<section className="jetpack-ai-review-mediation__edits">
-							<h3 className="jetpack-ai-review-mediation__heading">
-								{ __( 'Suggested edits', 'jetpack' ) }
-							</h3>
-							{ suggested_edits.map( ( edit, i ) => {
-								const status = editStatuses[ i ] ?? 'pending';
-								const isPostWide = edit.block_index === null;
-								const clickable = ! isPostWide;
-								// Accept is disabled in states where there's no useful action:
-								// post-wide edits (no block target), in-flight edits, or
-								// already-resolved edits.
-								const acceptDisabled =
-									isPostWide ||
-									status === 'applying' ||
-									status === 'accepted' ||
-									status === 'dismissed';
-								const dismissDisabled =
-									status === 'applying' || status === 'accepted' || status === 'dismissed';
-								const onCardClick = ( e: React.MouseEvent< HTMLElement > ) => {
-									// Ignore clicks that originated on any button inside the card
-									// (e.g. Accept/Dismiss handle their own actions).
-									if ( ( e.target as HTMLElement ).closest( 'button' ) ) {
-										return;
-									}
-									if ( clickable ) {
-										focusBlock( edit.block_index );
-									}
-								};
-								return (
-									// The card cannot take `role="button"` because it already
-									// contains the Accept/Dismiss buttons, and nested interactive
-									// elements are invalid. Pointer users get the click-to-focus
-									// enhancement; keyboard users operate the inner buttons
-									// directly, so they are not blocked by the missing keyboard
-									// handler on the card wrapper.
-									// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
-									<article
-										className={ `jetpack-ai-review-mediation__card is-${ status }${
-											clickable ? ' is-clickable' : ''
-										}` }
-										key={ `edit-${ i }` }
-										onClick={ onCardClick }
-									>
-										<p className="jetpack-ai-review-mediation__block-ref">
-											{ isPostWide
-												? __( 'Post-wide', 'jetpack' )
-												: `${ __( 'Block', 'jetpack' ) } ${ edit.block_index }` }
-										</p>
-										{ edit.current_text && (
-											<p className="jetpack-ai-review-mediation__current">
-												<del>{ edit.current_text }</del>
-											</p>
-										) }
-										<p className="jetpack-ai-review-mediation__suggested">
-											<ins>{ edit.suggested_text }</ins>
-										</p>
-										<p className="jetpack-ai-review-mediation__rationale">{ edit.rationale }</p>
-										{ edit.supported_by_reviewers.length > 0 && (
-											<p className="jetpack-ai-review-mediation__reviewers">
-												{ __( 'Requested by:', 'jetpack' ) }{ ' ' }
-												{ edit.supported_by_reviewers.join( ', ' ) }
-											</p>
-										) }
-										<div className="jetpack-ai-review-mediation__actions">
-											<button
-												type="button"
-												className="jetpack-ai-review-mediation__action is-accept"
-												disabled={ acceptDisabled }
-												title={
-													isPostWide
-														? __( 'Needs manual edit — no single block target', 'jetpack' )
-														: undefined
-												}
-												onClick={ () => handleAccept( edit, i ) }
-											>
-												{ status === 'applying' && __( 'Applying…', 'jetpack' ) }
-												{ status === 'accepted' && __( 'Accepted', 'jetpack' ) }
-												{ status === 'failed' && __( 'Retry', 'jetpack' ) }
-												{ ( status === 'pending' || status === 'dismissed' ) &&
-													__( 'Accept', 'jetpack' ) }
-											</button>
-											<button
-												type="button"
-												className="jetpack-ai-review-mediation__action is-dismiss"
-												disabled={ dismissDisabled }
-												onClick={ () => handleDismiss( i ) }
-											>
-												{ status === 'dismissed'
-													? __( 'Dismissed', 'jetpack' )
-													: __( 'Dismiss', 'jetpack' ) }
-											</button>
-										</div>
-									</article>
-								);
-							} ) }
-						</section>
-					) }
-
-					{ guideline_violations.length > 0 && (
-						<section className="jetpack-ai-review-mediation__violations">
-							<button
-								type="button"
-								className="jetpack-ai-review-mediation__violations-toggle"
-								onClick={ () => setViolationsOpen( ( v ) => ! v ) }
-								aria-expanded={ violationsOpen }
+				{ hasNoReviewerInput ? null : (
+					<>
+						{ conflicts.length > 0 && (
+							<PanelBody
+								title={ __( 'Conflicts', 'jetpack' ) }
+								className="jetpack-ai-review-mediation__conflicts"
+								initialOpen
 							>
-								{ violationsOpen
-									? __( 'Hide guideline violations', 'jetpack' )
-									: __( 'Show guideline violations', 'jetpack' ) }{ ' ' }
-								({ guideline_violations.length })
-							</button>
-							{ violationsOpen && (
+								{ conflicts.map( ( conflict, i ) => (
+									<article className="jetpack-ai-review-mediation__card" key={ `conflict-${ i }` }>
+										<h4 className="jetpack-ai-review-mediation__card-title">
+											{ conflict.subject }
+										</h4>
+										<ul className="jetpack-ai-review-mediation__positions">
+											{ conflict.positions.map( ( pos, j ) => (
+												<li key={ `pos-${ i }-${ j }` }>
+													<strong>{ pos.reviewer }:</strong> { pos.position }
+												</li>
+											) ) }
+										</ul>
+										{ conflict.guideline_anchor && (
+											<blockquote className="jetpack-ai-review-mediation__guideline-anchor">
+												{ conflict.guideline_anchor }
+											</blockquote>
+										) }
+										<p className="jetpack-ai-review-mediation__recommendation">
+											<strong>{ __( 'Recommended:', 'jetpack' ) }</strong>{ ' ' }
+											{ conflict.recommended_resolution }
+										</p>
+									</article>
+								) ) }
+							</PanelBody>
+						) }
+
+						{ implications.length > 0 && (
+							<PanelBody
+								title={ __( 'Implications', 'jetpack' ) }
+								className="jetpack-ai-review-mediation__implications"
+								initialOpen
+							>
+								<ul>
+									{ implications.map( ( imp, i ) => (
+										<li key={ `imp-${ i }` }>
+											<strong>{ imp.change }</strong> — { imp.implies }
+											{ imp.affected_blocks.length > 0 && (
+												<span className="jetpack-ai-review-mediation__affected-blocks">
+													{ ' ' }
+													({ __( 'Affects blocks:', 'jetpack' ) }{ ' ' }
+													{ imp.affected_blocks.join( ', ' ) })
+												</span>
+											) }
+										</li>
+									) ) }
+								</ul>
+							</PanelBody>
+						) }
+
+						{ suggested_edits.length > 0 && (
+							<PanelBody
+								title={ __( 'Suggested edits', 'jetpack' ) }
+								className="jetpack-ai-review-mediation__edits"
+								initialOpen
+							>
+								{ suggested_edits.map( ( edit, i ) => {
+									const status = editStatuses[ i ] ?? 'pending';
+									const isPostWide = edit.block_index === null;
+									const clickable = ! isPostWide;
+									// Accept is disabled in states where there's no useful action:
+									// post-wide edits (no block target), in-flight edits, or
+									// already-resolved edits.
+									const acceptDisabled =
+										isPostWide ||
+										status === 'applying' ||
+										status === 'accepted' ||
+										status === 'dismissed';
+									const dismissDisabled =
+										status === 'applying' || status === 'accepted' || status === 'dismissed';
+									const onCardClick = ( e: React.MouseEvent< HTMLElement > ) => {
+										// Ignore clicks that originated on any button inside the card
+										// (e.g. Accept/Dismiss handle their own actions).
+										if ( ( e.target as HTMLElement ).closest( 'button' ) ) {
+											return;
+										}
+										if ( clickable ) {
+											focusBlock( edit.block_index );
+										}
+									};
+									return (
+										// The card cannot take `role="button"` because it already
+										// contains the Accept/Dismiss buttons, and nested interactive
+										// elements are invalid. Pointer users get the click-to-focus
+										// enhancement; keyboard users operate the inner buttons
+										// directly, so they are not blocked by the missing keyboard
+										// handler on the card wrapper.
+										// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
+										<article
+											className={ `jetpack-ai-review-mediation__card is-${ status }${
+												clickable ? ' is-clickable' : ''
+											}` }
+											key={ `edit-${ i }` }
+											onClick={ onCardClick }
+										>
+											<p className="jetpack-ai-review-mediation__block-ref">
+												{ isPostWide
+													? __( 'Post-wide', 'jetpack' )
+													: `${ __( 'Block', 'jetpack' ) } ${ edit.block_index }` }
+											</p>
+											{ edit.current_text && (
+												<p className="jetpack-ai-review-mediation__current">
+													<del>{ edit.current_text }</del>
+												</p>
+											) }
+											<p className="jetpack-ai-review-mediation__suggested">
+												<ins>{ edit.suggested_text }</ins>
+											</p>
+											<p className="jetpack-ai-review-mediation__rationale">{ edit.rationale }</p>
+											{ edit.supported_by_reviewers.length > 0 && (
+												<p className="jetpack-ai-review-mediation__reviewers">
+													{ __( 'Requested by:', 'jetpack' ) }{ ' ' }
+													{ edit.supported_by_reviewers.join( ', ' ) }
+												</p>
+											) }
+											<div className="jetpack-ai-review-mediation__actions">
+												<button
+													type="button"
+													className="jetpack-ai-review-mediation__action is-accept"
+													disabled={ acceptDisabled }
+													title={
+														isPostWide
+															? __( 'Needs manual edit — no single block target', 'jetpack' )
+															: undefined
+													}
+													onClick={ () => handleAccept( edit, i ) }
+												>
+													{ status === 'applying' && __( 'Applying…', 'jetpack' ) }
+													{ status === 'accepted' && __( 'Accepted', 'jetpack' ) }
+													{ status === 'failed' && __( 'Retry', 'jetpack' ) }
+													{ ( status === 'pending' || status === 'dismissed' ) &&
+														__( 'Accept', 'jetpack' ) }
+												</button>
+												<button
+													type="button"
+													className="jetpack-ai-review-mediation__action is-dismiss"
+													disabled={ dismissDisabled }
+													onClick={ () => handleDismiss( i ) }
+												>
+													{ status === 'dismissed'
+														? __( 'Dismissed', 'jetpack' )
+														: __( 'Dismiss', 'jetpack' ) }
+												</button>
+											</div>
+										</article>
+									);
+								} ) }
+							</PanelBody>
+						) }
+
+						{ guideline_violations.length > 0 && (
+							<PanelBody
+								title={ `${ __( 'Guideline violations', 'jetpack' ) } (${
+									guideline_violations.length
+								})` }
+								className="jetpack-ai-review-mediation__violations"
+								initialOpen
+							>
 								<ul className="jetpack-ai-review-mediation__violations-list">
 									{ guideline_violations.map( ( v, i ) => (
 										<li key={ `violation-${ i }` }>
@@ -403,11 +404,11 @@ export default function ReviewMediation( {
 										</li>
 									) ) }
 								</ul>
-							) }
-						</section>
-					) }
-				</>
-			) }
+							</PanelBody>
+						) }
+					</>
+				) }
+			</Panel>
 		</div>
 	);
 }

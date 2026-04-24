@@ -17,7 +17,7 @@
 /**
  * WordPress dependencies
  */
-import { useSelect } from '@wordpress/data';
+import { dispatch, useSelect } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 /**
@@ -733,10 +733,27 @@ export function useSuggestions(): {
 	const [ hidden, setHidden ] = useState( false );
 
 	useEffect( () => {
-		const handleSuggestionClick = () => {
+		const handleSuggestionClick = ( event: Event ) => {
 			setHidden( true );
 			clearSuggestionsFn?.();
 			startBlockShimmer();
+
+			// Auto-trigger the split-screen sidebar when the user clicks
+			// "Mediate review notes". Mediation output is dense (summary +
+			// conflicts + implications + suggested edits + violations) and
+			// crammed into 350px it scrolls forever; expanding to 50vw before
+			// the LLM call starts gives the user room to read the result.
+			// Scoped to the mediation suggestion specifically (by prompt
+			// match) so other suggestions keep the default narrow width.
+			const value = ( event as CustomEvent ).detail?.value;
+			if ( typeof value === 'string' && value === MEDIATE_REVIEW_SUGGESTION.prompt ) {
+				try {
+					( dispatch as any )( 'automattic/agents-manager' ).setIsSplitScreen( true );
+				} catch {
+					// Store not registered yet (e.g. tests); split-screen is a
+					// polish feature, so a silent no-op is the right fallback.
+				}
+			}
 		};
 		window.addEventListener( 'big-sky-inline-suggestion-click', handleSuggestionClick );
 		return () => {
@@ -771,3 +788,20 @@ export function useSuggestions(): {
 		],
 	};
 }
+
+// ---------- Provider capabilities ----------
+
+/**
+ * Declare the capability flags this provider opts into. AM's
+ * `loadExternalProviders` OR-merges these across providers; flags this
+ * provider doesn't set stay off globally.
+ *
+ * `supportsSplitScreen` enables AM's "Split screen sidebar" chat-header
+ * option when the jetpack-ai-sidebar provider is loaded. Other AM
+ * consumers (block-notes, image-studio, Big Sky) don't opt in, so the
+ * menu stays hidden there — containing the blast radius of the 50vw
+ * width override to the post editor.
+ */
+export const capabilities = {
+	supportsSplitScreen: true,
+};

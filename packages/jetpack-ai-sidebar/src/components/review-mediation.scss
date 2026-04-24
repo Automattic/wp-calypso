@@ -1,89 +1,159 @@
-// Quick-fix contrast: match the block-note light-gray card look so text is
-// always dark-on-light regardless of editor theme. A fuller theme-aware
-// redesign is tracked as enhancement #6 in the RSM-508 notes.
-$review-card-bg: #f0f0f1;
-$review-card-text: #1e1e1e;
-$review-card-muted: #50575e;
-$review-card-border: #dcdcde;
+// Mirrors the styling convention used by the sibling title-picker (see
+// `title-picker.scss`): transparent backgrounds, inherited text colour, and
+// a hair-line translucent-white border for affordance. This keeps the card
+// stack legible on whatever surface the chat bubble is painted on — dark
+// today, light tomorrow — without any `!important` or hard-coded contrast
+// hacks.
+//
+// `rgba(255, 255, 255, …)` values assume a dark chat surface (the current
+// design). If a light-themed sidebar ships later, switch to
+// `currentColor`-derived borders or CSS colour-mix for genuine theme
+// ambidexterity. For now the translucent white reads as a subtle divider
+// on the dark surface and would simply vanish on a light one without
+// breaking anything — the content beneath still uses `color: inherit`.
 
 .jetpack-ai-review-mediation {
 	display: flex;
 	flex-direction: column;
-	gap: 1rem;
 	font-size: 13px;
 	line-height: 1.5;
-	color: $review-card-text;
+	color: inherit;
 
-	// Force dark text on every text-bearing descendant. Needed because the host
-	// chat bubble rules (e.g. `.chat-bubble p { color: #fff }`) have higher
-	// specificity than `.jetpack-ai-review-mediation { color: ... }`, which
-	// would leave our light-grey cards with unreadable white text.
+	// ---------- Panel / PanelBody overrides ----------
+	// `@wordpress/components` paints PanelBody with a white background and a
+	// 1px bottom divider (Gutenberg admin default). Strip both so the stack
+	// inherits the chat bubble surface; replace with a translucent-white
+	// top divider so each section still reads as its own pane.
+
+	.components-panel {
+		background: transparent;
+		border: 0;
+	}
+
+	.components-panel__body {
+		background: transparent;
+		border: 0;
+		border-top: 1px solid rgba(255, 255, 255, 0.08);
+
+		&:first-child {
+			border-top: 0;
+		}
+	}
+
+	// Header: inherit the text colour so it reads on any surface; keep the
+	// uppercase + letter-spacing treatment for hierarchy. Gutenberg's
+	// PanelBody paints a bright light-grey hover fill by default — override
+	// with a subtle translucent fill so the header stays readable in both
+	// collapsed and hover states on the dark chat surface.
+	.components-panel__body-title {
+		background: transparent !important;
+		margin: 0;
+
+		.components-panel__body-toggle {
+			padding: 0.625rem 0;
+			font-size: 12px;
+			font-weight: 600;
+			text-transform: uppercase;
+			letter-spacing: 0.04em;
+			color: inherit;
+			background: transparent !important;
+			box-shadow: none;
+			transition:
+				color 0.15s ease,
+				background 0.15s ease;
+
+			// Keep the label fully legible at rest — 0.85 opacity read as
+			// "disabled" on the dark chat bubble.
+			&:hover,
+			&:focus,
+			&:focus-visible {
+				color: inherit;
+				background: rgba(255, 255, 255, 0.04) !important;
+				box-shadow: none;
+			}
+		}
+	}
+
+	// Chevron tracks the header's colour so it stays visible on every theme.
+	.components-panel__arrow {
+		fill: currentColor;
+	}
+
+	// Content region indent — flush left looks naked in a chat bubble.
+	.components-panel__body.is-opened > :not(.components-panel__body-title) {
+		padding: 0 0 0.75rem;
+	}
+
+	// ---------- Typography fallback ----------
+	// Every text-bearing descendant inherits the bubble's colour. Needed
+	// because the host chat rules can set `color` on `p/li` with higher
+	// specificity than this block — explicit `inherit` is a no-op on
+	// conforming browsers but wins the cascade back.
 	p,
 	li,
 	span,
 	strong,
 	em,
-	h3,
 	h4,
 	blockquote,
 	ins,
 	del {
-		color: $review-card-text;
+		color: inherit;
 	}
 
-	&__heading {
-		font-size: 13px;
-		font-weight: 600;
+	p {
 		margin: 0 0 0.5rem;
-		text-transform: uppercase;
-		letter-spacing: 0.04em;
-		color: var(--wp-admin-theme-color, #2271b1);
 	}
 
-	section {
-		margin: 0;
+	// Muted treatment for supporting text: soft fade off the inherited
+	// colour, no hard-coded hex so the effect holds on dark and light.
+	&__affected-blocks,
+	&__block-ref,
+	&__rationale,
+	&__reviewers {
+		opacity: 0.7;
+		font-size: 12px;
 	}
 
-	&__summary {
-		background: $review-card-bg;
-		color: $review-card-text;
-		border-radius: 4px;
-		padding: 0.75rem;
-
-		p {
-			margin: 0;
-		}
+	&__block-ref {
+		margin: 0 0 0.25rem;
 	}
 
-	&__implications,
-	&__violations {
-		background: $review-card-bg;
-		color: $review-card-text;
-		border-radius: 4px;
-		padding: 0.75rem;
+	&__rationale,
+	&__reviewers {
+		margin: 0.5rem 0 0;
 	}
 
+	// ---------- Suggested edit cards ----------
 	&__card {
-		border: 1px solid $review-card-border;
-		border-radius: 4px;
+		border: 1px solid rgba(255, 255, 255, 0.12);
+		border-radius: 8px;
 		padding: 0.75rem;
 		margin-bottom: 0.5rem;
-		background: $review-card-bg;
-		color: $review-card-text;
-		transition: opacity 150ms ease-in-out, border-color 150ms ease-in-out;
+		background: transparent;
+		color: inherit;
+		transition:
+			border-color 0.15s ease,
+			opacity 0.15s ease,
+			background 0.15s ease;
 
 		&.is-clickable {
 			cursor: pointer;
+
+			&:hover {
+				border-color: rgba(255, 255, 255, 0.3);
+				background: rgba(255, 255, 255, 0.04);
+			}
 		}
 
 		&.is-applying {
-			border-color: var(--wp-admin-theme-color, #2271b1);
+			border-color: var(--wp-admin-theme-color, #3858e9);
 			opacity: 0.85;
 		}
 
 		&.is-accepted {
-			opacity: 0.6;
-			border-color: #4ab866;
+			opacity: 0.55;
+			border-color: rgba(74, 184, 102, 0.7);
 		}
 
 		&.is-dismissed {
@@ -91,7 +161,7 @@ $review-card-border: #dcdcde;
 		}
 
 		&.is-failed {
-			border-color: #d63638;
+			border-color: rgba(214, 54, 56, 0.7);
 		}
 	}
 
@@ -111,15 +181,16 @@ $review-card-border: #dcdcde;
 		}
 	}
 
+	// Quoted guideline clauses need to read as a distinct aside, not blend
+	// into the chat surface. A translucent fill + accent-colour bar on the
+	// left gives the quote a soft card treatment that works on any surface.
 	&__guideline-anchor {
-		border-left: 2px solid #c3c4c7;
-		padding: 0.25rem 0.5rem;
+		border-left: 3px solid var(--wp-admin-theme-color, #3858e9);
+		background: rgba(255, 255, 255, 0.05);
+		padding: 0.5rem 0.75rem;
 		margin: 0.5rem 0;
 		font-style: italic;
-		// !important: the generic descendant color rule above ("force dark
-		// text") has matching tag-level specificity; muted treatment needs to
-		// win over it here and in the other muted selectors below.
-		color: $review-card-muted !important;
+		border-radius: 0 4px 4px 0;
 		white-space: pre-wrap;
 	}
 
@@ -137,41 +208,25 @@ $review-card-border: #dcdcde;
 		}
 	}
 
-	&__affected-blocks {
-		color: $review-card-muted !important;
-		font-size: 12px;
-	}
-
-	&__block-ref {
-		color: $review-card-muted !important;
-		font-size: 12px;
-		margin: 0 0 0.25rem;
-	}
-
+	// Inline diff markers. Translucent tints so they work on either surface
+	// without looking like a light-theme leak.
 	&__current del {
-		background: #fde7e7;
-		color: #1e1e1e;
+		background: rgba(214, 54, 56, 0.18);
+		color: inherit;
 		text-decoration: line-through;
+		padding: 0 0.15rem;
+		border-radius: 2px;
 	}
 
 	&__suggested ins {
-		background: #e7f5ea;
-		color: #1e1e1e;
+		background: rgba(74, 184, 102, 0.18);
+		color: inherit;
 		text-decoration: none;
+		padding: 0 0.15rem;
+		border-radius: 2px;
 	}
 
-	&__rationale {
-		margin: 0.5rem 0 0;
-		font-size: 12px;
-		color: $review-card-muted !important;
-	}
-
-	&__reviewers {
-		font-size: 12px;
-		color: $review-card-muted !important;
-		margin: 0.25rem 0 0;
-	}
-
+	// ---------- Action buttons ----------
 	&__actions {
 		display: flex;
 		gap: 0.5rem;
@@ -183,46 +238,48 @@ $review-card-border: #dcdcde;
 		padding: 0.375rem 0.75rem;
 		font-size: 12px;
 		cursor: pointer;
-		border-radius: 3px;
-		border: 1px solid #c3c4c7;
-		background: #fff;
-		// Host chat-bubble styles can force `color: #fff` on buttons, making
-		// the default Dismiss button invisible against its white background.
-		color: $review-card-text;
+		border-radius: 4px;
+		border: 1px solid rgba(255, 255, 255, 0.25);
+		background: transparent;
+		color: inherit;
+		transition:
+			border-color 0.15s ease,
+			background 0.15s ease;
+
+		&:hover:not(:disabled) {
+			border-color: rgba(255, 255, 255, 0.45);
+			background: rgba(255, 255, 255, 0.06);
+		}
 
 		&.is-accept {
-			background: var(--wp-admin-theme-color, #2271b1);
+			background: var(--wp-admin-theme-color, #3858e9);
 			color: #fff;
-			border-color: var(--wp-admin-theme-color, #2271b1);
+			border-color: var(--wp-admin-theme-color, #3858e9);
+
+			&:hover:not(:disabled) {
+				filter: brightness(1.1);
+			}
 		}
 
 		&:disabled {
 			cursor: default;
-			opacity: 0.7;
+			opacity: 0.5;
 		}
 	}
 
-	&__violations-toggle {
-		background: none;
-		border: 0;
-		padding: 0.5rem 0;
-		color: var(--wp-admin-theme-color, #2271b1);
-		cursor: pointer;
-		font-size: 12px;
-		text-align: left;
-	}
-
+	// ---------- Violations list ----------
 	&__violations-list {
 		list-style: none;
 		padding: 0;
-		margin: 0.5rem 0 0;
+		margin: 0;
 
 		li {
 			padding: 0.5rem 0;
-			border-top: 1px solid #f0f0f1;
+			border-top: 1px solid rgba(255, 255, 255, 0.08);
 
 			&:first-child {
 				border-top: 0;
+				padding-top: 0;
 			}
 		}
 	}
