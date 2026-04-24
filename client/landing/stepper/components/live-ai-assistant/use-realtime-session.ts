@@ -1,4 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { CLICK_TOOL_NAME, clickToolDefinition, executeClickTool } from './tools/click-tool';
+import {
+	HIGHLIGHT_TOOL_NAME,
+	highlightToolDefinition,
+	executeHighlightTool,
+} from './tools/highlight-tool';
+import type { ScreenFrameMetadata } from './tools/shared';
 
 export type RealtimeStatus =
 	| 'idle'
@@ -55,13 +62,9 @@ const DEFAULT_MODEL = 'gpt-realtime';
 const DEFAULT_VOICE = 'alloy';
 const DEFAULT_TOKEN_ENDPOINT = '/openai/realtime-token';
 const OPENAI_REALTIME_URL = 'https://api.openai.com/v1/realtime/calls';
-
-// Interval between screen-capture frames sent to the model, in ms.
-const SCREEN_FRAME_INTERVAL_MS = 3000;
-// Max dimension (width or height) for screen frames before sending, to keep payloads small.
-const SCREEN_FRAME_MAX_DIMENSION = 1024;
-// JPEG quality for screen frames (0–1).
-const SCREEN_FRAME_JPEG_QUALITY = 0.7;
+const POINTER_HINT_DURATION_MS = 4000;
+const SCREEN_CAPTURE_DEBOUNCE_MS = 100;
+const SCREEN_FRAME_WEBP_QUALITY = 0.8;
 
 interface FetchEphemeralKeyArgs {
 	tokenEndpoint: string;
@@ -132,15 +135,38 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 	const audioElementRef = useRef< HTMLAudioElement | null >( null );
 	const screenStreamRef = useRef< MediaStream | null >( null );
 	const screenVideoRef = useRef< HTMLVideoElement | null >( null );
-	const screenIntervalRef = useRef< number | null >( null );
+	const screenCaptureTimeoutRef = useRef< number | null >( null );
+	const screenInteractionCleanupRef = useRef< ( () => void ) | null >( null );
+	const lastScreenFrameRef = useRef< ScreenFrameMetadata | null >( null );
+	const isSharingScreenRef = useRef( false );
+	const highlightOverlayRef = useRef< HTMLDivElement | null >( null );
+	const highlightOverlayTimeoutRef = useRef< number | null >( null );
+
+	const clearHighlightOverlay = useCallback( () => {
+		if ( highlightOverlayTimeoutRef.current !== null ) {
+			window.clearTimeout( highlightOverlayTimeoutRef.current );
+			highlightOverlayTimeoutRef.current = null;
+		}
+		if ( highlightOverlayRef.current ) {
+			highlightOverlayRef.current.remove();
+			highlightOverlayRef.current = null;
+		}
+	}, [] );
 
 	const stopScreenShare = useCallback( () => {
-		if ( screenIntervalRef.current !== null ) {
-			window.clearInterval( screenIntervalRef.current );
-			screenIntervalRef.current = null;
+		clearHighlightOverlay();
+		if ( screenCaptureTimeoutRef.current !== null ) {
+			window.clearTimeout( screenCaptureTimeoutRef.current );
+			screenCaptureTimeoutRef.current = null;
+		}
+		if ( screenInteractionCleanupRef.current ) {
+			screenInteractionCleanupRef.current();
+			screenInteractionCleanupRef.current = null;
 		}
 		screenStreamRef.current?.getTracks().forEach( ( track ) => track.stop() );
 		screenStreamRef.current = null;
+		lastScreenFrameRef.current = null;
+		isSharingScreenRef.current = false;
 		if ( screenVideoRef.current ) {
 			try {
 				screenVideoRef.current.pause();
@@ -149,7 +175,7 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 			screenVideoRef.current = null;
 		}
 		setIsSharingScreen( false );
-	}, [] );
+	}, [ clearHighlightOverlay ] );
 
 	const cleanup = useCallback( () => {
 		stopScreenShare();
@@ -186,43 +212,144 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 		return () => cleanup();
 	}, [ cleanup ] );
 
-	const handleServerEvent = useCallback( ( event: unknown ) => {
-		if ( ! event || typeof event !== 'object' ) {
-			return;
-		}
-		const evt = event as { type?: string; [ key: string ]: unknown };
+	useEffect( () => {
+		isSharingScreenRef.current = isSharingScreen;
+	}, [ isSharingScreen ] );
 
-		switch ( evt.type ) {
-			case 'conversation.item.input_audio_transcription.delta':
-			case 'conversation.item.input_audio_transcription.completed': {
-				const itemId = ( evt.item_id as string ) || 'user-latest';
-				const delta = ( evt.delta as string ) || ( evt.transcript as string ) || '';
-				const isFinal = evt.type.endsWith( 'completed' );
-				setTranscript( ( prev ) => upsertEntry( prev, itemId, 'user', delta, isFinal ) );
-				break;
+	const getToolRuntimeContext = useCallback(
+		() => ( {
+			isSharingScreen: isSharingScreenRef.current,
+			lastScreenFrame: lastScreenFrameRef.current,
+		} ),
+		[]
+	);
+
+	const showHighlightOverlay = useCallback(
+		( target: HTMLElement ) => {
+			clearHighlightOverlay();
+
+			const rect = target.getBoundingClientRect();
+			const padding = 6;
+			const overlay = document.createElement( 'div' );
+			overlay.setAttribute( 'aria-hidden', 'true' );
+			overlay.style.position = 'fixed';
+			overlay.style.left = `${ Math.max( 0, rect.left - padding ) }px`;
+			overlay.style.top = `${ Math.max( 0, rect.top - padding ) }px`;
+			overlay.style.width = `${ Math.max( 12, rect.width + padding * 2 ) }px`;
+			overlay.style.height = `${ Math.max( 12, rect.height + padding * 2 ) }px`;
+			overlay.style.border = '4px solid #d63638';
+			overlay.style.borderRadius = '10px';
+			overlay.style.background = 'rgba(214, 54, 56, 0.08)';
+			overlay.style.boxShadow = '0 0 0 10px rgba(214, 54, 56, 0.12)';
+			overlay.style.pointerEvents = 'none';
+			overlay.style.zIndex = '2147483647';
+			overlay.style.transition = 'opacity 0.2s ease';
+			document.body.appendChild( overlay );
+			highlightOverlayRef.current = overlay;
+			highlightOverlayTimeoutRef.current = window.setTimeout( () => {
+				clearHighlightOverlay();
+			}, POINTER_HINT_DURATION_MS );
+		},
+		[ clearHighlightOverlay ]
+	);
+
+	const handleToolCalls = useCallback(
+		( event: { response?: { output?: unknown[] } } ) => {
+			const dc = dataChannelRef.current;
+			if ( ! dc || dc.readyState !== 'open' ) {
+				return;
 			}
-			case 'response.audio_transcript.delta':
-			case 'response.output_audio_transcript.delta':
-			case 'response.audio_transcript.done':
-			case 'response.output_audio_transcript.done': {
-				const itemId =
-					( evt.item_id as string ) || ( evt.response_id as string ) || 'assistant-latest';
-				const delta = ( evt.delta as string ) || ( evt.transcript as string ) || '';
-				const isFinal = evt.type.endsWith( 'done' );
-				setTranscript( ( prev ) => upsertEntry( prev, itemId, 'assistant', delta, isFinal ) );
-				break;
+
+			const outputs = Array.isArray( event.response?.output ) ? event.response?.output : [];
+			const functionCalls = outputs.filter(
+				( item ): item is { type: string; name?: string; call_id?: string; arguments?: unknown } =>
+					!! item &&
+					typeof item === 'object' &&
+					( item as { type?: string } ).type === 'function_call'
+			);
+
+			if ( ! functionCalls.length ) {
+				return;
 			}
-			case 'error': {
-				const message =
-					( evt.error as { message?: string } | undefined )?.message || 'Realtime session error';
-				setError( message );
-				setStatus( 'error' );
-				break;
+
+			for ( const call of functionCalls ) {
+				if ( ! call.call_id ) {
+					continue;
+				}
+
+				let result: unknown;
+				if ( call.name === CLICK_TOOL_NAME ) {
+					result = executeClickTool( call.arguments, getToolRuntimeContext() );
+				} else if ( call.name === HIGHLIGHT_TOOL_NAME ) {
+					result = executeHighlightTool( call.arguments, {
+						...getToolRuntimeContext(),
+						showHighlight: showHighlightOverlay,
+					} );
+				} else {
+					continue;
+				}
+
+				dc.send(
+					JSON.stringify( {
+						type: 'conversation.item.create',
+						item: {
+							type: 'function_call_output',
+							call_id: call.call_id,
+							output: JSON.stringify( result ),
+						},
+					} )
+				);
 			}
-			default:
-				break;
-		}
-	}, [] );
+
+			dc.send( JSON.stringify( { type: 'response.create' } ) );
+		},
+		[ getToolRuntimeContext, showHighlightOverlay ]
+	);
+
+	const handleServerEvent = useCallback(
+		( event: unknown ) => {
+			if ( ! event || typeof event !== 'object' ) {
+				return;
+			}
+			const evt = event as { type?: string; [ key: string ]: unknown };
+
+			switch ( evt.type ) {
+				case 'conversation.item.input_audio_transcription.delta':
+				case 'conversation.item.input_audio_transcription.completed': {
+					const itemId = ( evt.item_id as string ) || 'user-latest';
+					const delta = ( evt.delta as string ) || ( evt.transcript as string ) || '';
+					const isFinal = evt.type.endsWith( 'completed' );
+					setTranscript( ( prev ) => upsertEntry( prev, itemId, 'user', delta, isFinal ) );
+					break;
+				}
+				case 'response.audio_transcript.delta':
+				case 'response.output_audio_transcript.delta':
+				case 'response.audio_transcript.done':
+				case 'response.output_audio_transcript.done': {
+					const itemId =
+						( evt.item_id as string ) || ( evt.response_id as string ) || 'assistant-latest';
+					const delta = ( evt.delta as string ) || ( evt.transcript as string ) || '';
+					const isFinal = evt.type.endsWith( 'done' );
+					setTranscript( ( prev ) => upsertEntry( prev, itemId, 'assistant', delta, isFinal ) );
+					break;
+				}
+				case 'response.done': {
+					handleToolCalls( evt as { response?: { output?: unknown[] } } );
+					break;
+				}
+				case 'error': {
+					const message =
+						( evt.error as { message?: string } | undefined )?.message || 'Realtime session error';
+					setError( message );
+					setStatus( 'error' );
+					break;
+				}
+				default:
+					break;
+			}
+		},
+		[ handleToolCalls ]
+	);
 
 	const start = useCallback( async () => {
 		if ( status === 'active' || status === 'connecting' || status === 'requesting-token' ) {
@@ -271,6 +398,8 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 						session: {
 							type: 'realtime',
 							instructions,
+							tools: [ clickToolDefinition, highlightToolDefinition ],
+							tool_choice: 'auto',
 							audio: {
 								input: {
 									transcription: { model: 'whisper-1' },
@@ -380,16 +509,25 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 			return;
 		}
 
-		const scale = Math.min( 1, SCREEN_FRAME_MAX_DIMENSION / Math.max( videoWidth, videoHeight ) );
 		const canvas = document.createElement( 'canvas' );
-		canvas.width = Math.max( 1, Math.round( videoWidth * scale ) );
-		canvas.height = Math.max( 1, Math.round( videoHeight * scale ) );
+		canvas.width = videoWidth;
+		canvas.height = videoHeight;
 		const ctx = canvas.getContext( '2d' );
 		if ( ! ctx ) {
 			return;
 		}
 		ctx.drawImage( video, 0, 0, canvas.width, canvas.height );
-		const dataUrl = canvas.toDataURL( 'image/jpeg', SCREEN_FRAME_JPEG_QUALITY );
+		const webpDataUrl = canvas.toDataURL( 'image/webp', SCREEN_FRAME_WEBP_QUALITY );
+		const dataUrl = webpDataUrl.startsWith( 'data:image/webp' )
+			? webpDataUrl
+			: canvas.toDataURL( 'image/png' );
+		const imageFormat = dataUrl.startsWith( 'data:image/webp' ) ? 'webp' : 'png';
+		lastScreenFrameRef.current = {
+			imageWidth: canvas.width,
+			imageHeight: canvas.height,
+			viewportWidth: window.innerWidth,
+			viewportHeight: window.innerHeight,
+		};
 
 		try {
 			dc.send(
@@ -399,6 +537,10 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 						type: 'message',
 						role: 'user',
 						content: [
+							{
+								type: 'input_text',
+								text: `Shared-tab frame: ${ canvas.width }x${ canvas.height } pixels in ${ imageFormat }. If you use ${ CLICK_TOOL_NAME } or ${ HIGHLIGHT_TOOL_NAME }, pass x/y in this image coordinate space.`,
+							},
 							{
 								type: 'input_image',
 								image_url: dataUrl,
@@ -411,6 +553,16 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 			// Data channel may have closed between the readyState check and send.
 		}
 	}, [] );
+
+	const scheduleFrameCapture = useCallback( () => {
+		if ( screenCaptureTimeoutRef.current !== null ) {
+			window.clearTimeout( screenCaptureTimeoutRef.current );
+		}
+		screenCaptureTimeoutRef.current = window.setTimeout( () => {
+			screenCaptureTimeoutRef.current = null;
+			captureAndSendFrame();
+		}, SCREEN_CAPTURE_DEBOUNCE_MS );
+	}, [ captureAndSendFrame ] );
 
 	const startScreenShare = useCallback( async () => {
 		if ( screenStreamRef.current ) {
@@ -456,17 +608,25 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 						type: 'realtime',
 						instructions:
 							( instructions || '' ) +
-							' The user is now sharing their screen. They will periodically send you screenshots of what they see. Use them to give specific guidance about the current page, and acknowledge changes when you notice them.',
+							' The user is now sharing their screen. They will send you fresh screenshots shortly after keyboard and mouse interactions. Use them to give specific guidance about the current page, and acknowledge changes when you notice them. If the user explicitly asks you to click something, you may use click_tool with coordinates from the latest shared screenshot. If the user needs help locating something visually, you may use highlight_tool to draw a box around the right page element.',
 					},
 				} )
 			);
 		} catch {}
 
 		setIsSharingScreen( true );
-		// Capture one frame almost immediately, then settle into the interval.
-		window.setTimeout( captureAndSendFrame, 100 );
-		screenIntervalRef.current = window.setInterval( captureAndSendFrame, SCREEN_FRAME_INTERVAL_MS );
-	}, [ captureAndSendFrame, instructions, stopScreenShare ] );
+		isSharingScreenRef.current = true;
+		const handleScreenInteraction = () => {
+			scheduleFrameCapture();
+		};
+		window.addEventListener( 'keydown', handleScreenInteraction, true );
+		window.addEventListener( 'click', handleScreenInteraction, true );
+		screenInteractionCleanupRef.current = () => {
+			window.removeEventListener( 'keydown', handleScreenInteraction, true );
+			window.removeEventListener( 'click', handleScreenInteraction, true );
+		};
+		scheduleFrameCapture();
+	}, [ instructions, scheduleFrameCapture, stopScreenShare ] );
 
 	const toggleScreenShare = useCallback( async () => {
 		if ( isSharingScreen ) {
