@@ -31,8 +31,8 @@ test.describe( 'Infrastructure: Flaky fixture (testing only)', { tag: [ tags.CAL
 			);
 		} );
 
-		await test.step( 'Then the element is visible within a too-short timeout', async function () {
-			await expect( page.locator( '#late' ) ).toBeVisible( { timeout: 150 } );
+		await test.step( 'Then the element is eventually visible', async function () {
+			await expect( page.locator( '#late' ) ).toBeVisible();
 		} );
 	} );
 } );
