@@ -39,6 +39,7 @@ import { reauthRequiredLink } from '../../utils/link';
 import {
 	getTitleForDisplay,
 	getPurchaseCancellationFlowType,
+	getDisplayVariant,
 	isDotcomPlan,
 	CANCEL_FLOW_TYPE,
 } from '../../utils/purchase';
@@ -381,30 +382,17 @@ export const cancelPurchaseRoute = createRoute( {
 	}: {
 		loaderData?: { purchase?: Purchase; intent?: 'cancel' | 'remove' };
 	} ) => {
-		// URL intent is authoritative — if the user clicked Remove on Purchase
-		// Settings the tab title should say "Remove" regardless of the
-		// underlying flow type. Fall back to today's heuristic when intent is
-		// absent (flag-off or old deep link).
-		const { purchase, intent } = loaderData ?? {};
-		let title: string;
-		if ( intent === 'remove' ) {
-			title = __( 'Remove' );
-		} else if ( intent === 'cancel' ) {
-			title = __( 'Cancel' );
-		} else if (
-			purchase &&
-			getPurchaseCancellationFlowType( purchase ) === CANCEL_FLOW_TYPE.REMOVE
-		) {
-			title = __( 'Remove' );
-		} else {
-			title = __( 'Cancel' );
-		}
+		// URL intent is authoritative; when absent, fall back to the flow-type
+		// heuristic on the loaded purchase. Delegates to `getDisplayVariant` so
+		// the tab title tracks the same cancel/remove decision the screen uses.
+		const { purchase, intent = null } = loaderData ?? {};
+		const flowType = purchase
+			? getPurchaseCancellationFlowType( purchase )
+			: CANCEL_FLOW_TYPE.CANCEL_AUTORENEW;
+		const title =
+			getDisplayVariant( intent, flowType ) === 'remove' ? __( 'Remove' ) : __( 'Cancel' );
 		return {
-			meta: [
-				{
-					title,
-				},
-			],
+			meta: [ { title } ],
 		};
 	},
 	getParentRoute: () => purchaseSettingsRoute,
