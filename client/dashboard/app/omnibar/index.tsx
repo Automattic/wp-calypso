@@ -49,6 +49,7 @@ function OmnibarContainer() {
 
 		return result;
 	}, [ dashboardNodes, siteNodes, site ] );
+
 	return <Omnibar nodes={ omnibarNodes } />;
 }
 
