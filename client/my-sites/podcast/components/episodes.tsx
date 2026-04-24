@@ -46,23 +46,6 @@ const defaultView: ViewTable = {
 	},
 };
 
-const formatDate = ( iso: string ) => {
-	if ( ! iso ) {
-		return '';
-	}
-	const d = new Date( iso );
-	if ( isNaN( d.getTime() ) ) {
-		return iso;
-	}
-	return d.toLocaleDateString( undefined, {
-		year: 'numeric',
-		month: 'short',
-		day: 'numeric',
-	} );
-};
-
-const Placeholder = () => <span className="podcast__placeholder">—</span>;
-
 const PodcastingEpisodes = () => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
@@ -159,30 +142,31 @@ const PodcastingEpisodes = () => {
 			},
 			{
 				id: 'duration',
+				type: 'integer' as const,
 				label: translate( 'Duration' ) as string,
 				getValue: () => 0,
-				render: () => <Placeholder />,
 				enableSorting: false,
 			},
 			{
 				id: 'downloads',
+				type: 'integer' as const,
 				label: translate( 'Downloads' ) as string,
 				getValue: () => 0,
-				render: () => <Placeholder />,
 				enableSorting: false,
 			},
 			{
 				id: 'activity',
+				type: 'integer' as const,
 				label: translate( '30-day activity' ) as string,
 				getValue: () => 0,
-				render: () => <Placeholder />,
 				enableSorting: false,
 			},
 			{
 				id: 'date',
+				type: 'datetime' as const,
 				label: translate( 'Date' ) as string,
 				getValue: ( { item }: { item: Episode } ) => item.date,
-				render: ( { item }: { item: Episode } ) => formatDate( item.date ),
+				format: { datetime: 'M j, Y' },
 				enableSorting: true,
 			},
 			{
