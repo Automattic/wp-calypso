@@ -50,6 +50,7 @@ export default function UserAvatar( { user, size = 32, hideHovercard = false }: 
 			width={ size }
 			height={ size }
 			imgStyles={ { maxWidth: size, height: size, borderRadius: '50%' } } // Override global styles. Always render avatar at the specified size.
+			fallbackIcon={ <UserAvatarDefaultIcon iconSize={ size } /> }
 		/>
 	) : (
 		<UserAvatarDefaultIcon iconSize={ size } />
