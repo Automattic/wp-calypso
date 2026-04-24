@@ -199,7 +199,7 @@ function buildStructuredTree(
 
 function serializeNodeTree(
 	element: HTMLElement,
-	relevantElements: Map< HTMLElement, PageElementSummary >,
+	relevantElements: Map< HTMLElement, PageElementSummary[ 'kind' ] >,
 	includedElements: Set< HTMLElement >
 ): PageSummaryNode[] {
 	if ( ! includedElements.has( element ) || ! isVisibleForSummary( element ) ) {
@@ -212,10 +212,7 @@ function serializeNodeTree(
 	const relevantKind = relevantElements.get( element );
 
 	if ( relevantKind ) {
-		const summary = summarizeElement(
-			element,
-			relevantKind as unknown as PageElementSummary[ 'kind' ]
-		);
+		const summary = summarizeElement( element, relevantKind );
 		if ( ! summary ) {
 			return children;
 		}
