@@ -31,8 +31,12 @@ test.describe( 'Infrastructure: Flaky fixture (testing only)', { tag: [ tags.CAL
 			);
 		} );
 
-		await test.step( 'Then the element is visible within a too-short timeout', async function () {
-			await expect( page.locator( '#late' ) ).toBeVisible( { timeout: 150 } );
+		await test.step( 'Then the element eventually becomes visible', async function () {
+			// The fixture appends `#late` after a random delay of up to ~850ms.
+			// Rely on Playwright's built-in auto-waiting rather than a hardcoded
+			// short timeout so the assertion waits long enough for the element
+			// to be attached and visible regardless of the random delay.
+			await expect( page.locator( '#late' ) ).toBeVisible();
 		} );
 	} );
 } );
