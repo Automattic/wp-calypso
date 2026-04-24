@@ -1,6 +1,5 @@
 export type MastodonError =
 	| { kind: 'invalid_instance' }
-	| { kind: 'invalid_credentials' }
 	| { kind: 'auth_failed' }
 	| { kind: 'connection_not_found' }
 	| { kind: 'rate_limited' }
@@ -26,8 +25,6 @@ export function classifyMastodonError( raw: unknown ): MastodonError {
 	switch ( raw.error ) {
 		case 'invalid_instance':
 			return { kind: 'invalid_instance' };
-		case 'invalid_credentials':
-			return { kind: 'invalid_credentials' };
 		case 'auth_failed':
 			return { kind: 'auth_failed' };
 		case 'connection_not_found':

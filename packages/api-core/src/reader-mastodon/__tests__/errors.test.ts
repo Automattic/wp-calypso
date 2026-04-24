@@ -15,11 +15,6 @@ describe( 'classifyMastodonError', () => {
 			'invalid_instance'
 		);
 	} );
-	it( 'maps invalid_credentials', () => {
-		expect( classifyMastodonError( wpErr( 'invalid_credentials', 401 ) ).kind ).toBe(
-			'invalid_credentials'
-		);
-	} );
 	it( 'maps rate_limited', () => {
 		expect( classifyMastodonError( wpErr( 'rate_limited', 429 ) ).kind ).toBe( 'rate_limited' );
 	} );
