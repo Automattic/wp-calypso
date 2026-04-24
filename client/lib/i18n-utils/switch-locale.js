@@ -7,6 +7,7 @@ import { defaultI18n } from '@wordpress/i18n';
 import debugFactory from 'debug';
 import i18n from 'i18n-calypso';
 import { forEach, throttle } from 'lodash';
+import { getLoadedSections, onSectionLoaded, offSectionLoaded } from 'calypso/sections-middleware';
 const debug = debugFactory( 'calypso:i18n' );
 
 const getPromises = {};
@@ -247,7 +248,7 @@ export function getTranslationChunkFile( chunkId, localeSlug ) {
  */
 function getInstalledChunks() {
 	const installedChunksFromContext = window.installedChunks ?? [];
-	const installedChunksAsync = window?.__requireChunkCallback__?.getInstalledChunks?.() ?? [];
+	const installedChunksAsync = getLoadedSections();
 	const installedChunksSet = new Set(
 		[].concat( installedChunksFromContext, installedChunksAsync )
 	);
@@ -287,14 +288,12 @@ function addRequireChunkTranslationsHandler( localeSlug = i18n.getLocaleSlug(), 
 	const { translatedChunks = [], userTranslations = {} } = options;
 	const loadedTranslationChunks = {};
 
-	const handler = ( { scriptSrc, publicPath }, promises ) => {
-		const chunkId = scriptSrc.replace( publicPath, '' ).replace( /\.js$/, '' );
-
+	const handler = ( chunkId ) => {
 		if ( ! translatedChunks.includes( chunkId ) || loadedTranslationChunks[ chunkId ] ) {
 			return;
 		}
 
-		const translationChunkPromise = getTranslationChunkFile( chunkId, localeSlug )
+		getTranslationChunkFile( chunkId, localeSlug )
 			.then( ( translations ) => {
 				addTranslations( translations, userTranslations );
 				loadedTranslationChunks[ chunkId ] = true;
@@ -308,11 +307,9 @@ function addRequireChunkTranslationsHandler( localeSlug = i18n.getLocaleSlug(), 
 				// captureGetTranslationChunkFileException( error, chunkId, localeSlug );
 				debug( error );
 			} );
-
-		promises.push( translationChunkPromise );
 	};
 
-	window?.__requireChunkCallback__?.add?.( handler );
+	onSectionLoaded( handler );
 	lastRequireChunkTranslationsHandler = handler;
 }
 
@@ -320,7 +317,7 @@ function addRequireChunkTranslationsHandler( localeSlug = i18n.getLocaleSlug(), 
  * Removes require chunk translations handler.
  */
 function removeRequireChunkTranslationsHandler() {
-	window?.__requireChunkCallback__?.remove?.( lastRequireChunkTranslationsHandler );
+	offSectionLoaded( lastRequireChunkTranslationsHandler );
 }
 
 let lastRequestedLocale = null;

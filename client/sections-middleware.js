@@ -50,6 +50,27 @@ async function loadSection( context, sectionDefinition ) {
  */
 const _loadedSections = {};
 
+// module path → section name, for all sections that have finished loading.
+const _loadedSectionNames = {};
+
+// Subscribers notified when a section finishes loading.
+const _sectionLoadedListeners = [];
+
+export function getLoadedSections() {
+	return Object.values( _loadedSectionNames );
+}
+
+export function onSectionLoaded( callback ) {
+	_sectionLoadedListeners.push( callback );
+}
+
+export function offSectionLoaded( callback ) {
+	const idx = _sectionLoadedListeners.indexOf( callback );
+	if ( idx !== -1 ) {
+		_sectionLoadedListeners.splice( idx, 1 );
+	}
+}
+
 function loadSectionHandler( sectionDefinition ) {
 	return async ( context, next ) => {
 		try {
@@ -67,6 +88,10 @@ function loadSectionHandler( sectionDefinition ) {
 				// wait until the section module is loaded and the set the map record to `true`
 				await loadingSection;
 				_loadedSections[ sectionDefinition.module ] = true;
+				_loadedSectionNames[ sectionDefinition.module ] = sectionDefinition.name;
+				for ( const listener of _sectionLoadedListeners ) {
+					listener( sectionDefinition.name );
+				}
 			}
 
 			// activate the section after ensuring it's fully loaded
@@ -121,10 +146,19 @@ export const setupRoutes = () => {
 	}
 };
 
-if ( module.hot ) {
+// webpack HMR
+if ( typeof module !== 'undefined' && module.hot ) {
 	module.hot.accept( './sections', () => {
 		const updatedSections = require( './sections' ).default;
 		receiveSections( updatedSections );
+		setupRoutes();
+	} );
+}
+
+// Vite HMR
+if ( import.meta.hot ) {
+	import.meta.hot.accept( './sections', ( newModule ) => {
+		receiveSections( newModule?.default );
 		setupRoutes();
 	} );
 }

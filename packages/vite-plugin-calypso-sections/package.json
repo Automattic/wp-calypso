@@ -1,0 +1,20 @@
+{
+	"name": "@automattic/vite-plugin-calypso-sections",
+	"version": "1.0.0",
+	"license": "GPL-2.0-or-later",
+	"author": "Automattic Inc.",
+	"description": "Vite plugin that adds dynamic import load functions to Calypso section definitions and names section chunks after their section name.",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/vite-plugin-calypso-sections"
+	},
+	"main": "index.ts",
+	"type": "module",
+	"private": true,
+	"files": [
+		"index.ts"
+	]
+}

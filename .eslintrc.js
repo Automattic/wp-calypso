@@ -74,7 +74,13 @@ module.exports = {
 			},
 		},
 		{
-			files: [ '**/bin/**/*', '**/test/**/*', 'webpack.config.js' ],
+			files: [
+				'**/bin/**/*',
+				'**/test/**/*',
+				'webpack.config.js',
+				'vite.config*.ts',
+				'packages/vite-plugin-*/**/*',
+			],
 			...nodeConfig,
 		},
 		{

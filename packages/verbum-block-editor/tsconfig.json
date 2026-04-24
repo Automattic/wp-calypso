@@ -9,6 +9,5 @@
 		"jsx": "react"
 	},
 	"include": [ "src", "src/*.json", "types" ],
-	"exclude": [ "**/__tests__/*", "**/__mocks__/*" ],
-	"references": [ {} ]
+	"exclude": [ "**/__tests__/*", "**/__mocks__/*" ]
 }
