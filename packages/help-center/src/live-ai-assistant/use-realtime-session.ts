@@ -1,11 +1,20 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { CLICK_TOOL_NAME, clickToolDefinition, executeClickTool } from './tools/click-tool';
 import {
 	HIGHLIGHT_TOOL_NAME,
 	highlightToolDefinition,
 	executeHighlightTool,
 } from './tools/highlight-tool';
-import type { ScreenFrameMetadata } from './tools/shared';
+import {
+	PAGE_SUMMARY_TOOL_NAME,
+	pageSummaryToolDefinition,
+	executePageSummaryTool,
+} from './tools/page-summary-tool';
+import {
+	POINTED_ELEMENT_TOOL_NAME,
+	pointedElementToolDefinition,
+	executePointedElementTool,
+} from './tools/pointed-element-tool';
+import type { PageSummaryMetadata, PointerPosition } from './tools/shared';
 
 export type RealtimeStatus =
 	| 'idle'
@@ -49,13 +58,13 @@ interface UseRealtimeSessionResult {
 	status: RealtimeStatus;
 	error: string | null;
 	isMuted: boolean;
-	isSharingScreen: boolean;
 	transcript: RealtimeTranscriptEntry[];
 	start: () => Promise< void >;
 	stop: () => void;
 	toggleMute: () => void;
-	toggleScreenShare: () => Promise< void >;
 	sendText: ( text: string ) => void;
+	sendEvent: ( eventName: string, details?: string ) => void;
+	updatePointerPosition: ( x: number, y: number ) => void;
 }
 
 const DEFAULT_MODEL = 'gpt-realtime';
@@ -63,8 +72,6 @@ const DEFAULT_VOICE = 'alloy';
 const DEFAULT_TOKEN_ENDPOINT = '/openai/realtime-token';
 const OPENAI_REALTIME_URL = 'https://api.openai.com/v1/realtime/calls';
 const POINTER_HINT_DURATION_MS = 4000;
-const SCREEN_CAPTURE_DEBOUNCE_MS = 100;
-const SCREEN_FRAME_WEBP_QUALITY = 0.8;
 
 interface FetchEphemeralKeyArgs {
 	tokenEndpoint: string;
@@ -126,19 +133,15 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 	const [ status, setStatus ] = useState< RealtimeStatus >( 'idle' );
 	const [ error, setError ] = useState< string | null >( null );
 	const [ isMuted, setIsMuted ] = useState( false );
-	const [ isSharingScreen, setIsSharingScreen ] = useState( false );
 	const [ transcript, setTranscript ] = useState< RealtimeTranscriptEntry[] >( [] );
 
 	const peerConnectionRef = useRef< RTCPeerConnection | null >( null );
 	const dataChannelRef = useRef< RTCDataChannel | null >( null );
 	const localStreamRef = useRef< MediaStream | null >( null );
 	const audioElementRef = useRef< HTMLAudioElement | null >( null );
-	const screenStreamRef = useRef< MediaStream | null >( null );
-	const screenVideoRef = useRef< HTMLVideoElement | null >( null );
-	const screenCaptureTimeoutRef = useRef< number | null >( null );
-	const screenInteractionCleanupRef = useRef< ( () => void ) | null >( null );
-	const lastScreenFrameRef = useRef< ScreenFrameMetadata | null >( null );
-	const isSharingScreenRef = useRef( false );
+	const lastPageSummaryRef = useRef< PageSummaryMetadata | null >( null );
+	const pointerPositionRef = useRef< PointerPosition | null >( null );
+	const hasPageSummaryRef = useRef( false );
 	const highlightOverlayRef = useRef< HTMLDivElement | null >( null );
 	const highlightOverlayTimeoutRef = useRef< number | null >( null );
 
@@ -155,26 +158,9 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 
 	const stopScreenShare = useCallback( () => {
 		clearHighlightOverlay();
-		if ( screenCaptureTimeoutRef.current !== null ) {
-			window.clearTimeout( screenCaptureTimeoutRef.current );
-			screenCaptureTimeoutRef.current = null;
-		}
-		if ( screenInteractionCleanupRef.current ) {
-			screenInteractionCleanupRef.current();
-			screenInteractionCleanupRef.current = null;
-		}
-		screenStreamRef.current?.getTracks().forEach( ( track ) => track.stop() );
-		screenStreamRef.current = null;
-		lastScreenFrameRef.current = null;
-		isSharingScreenRef.current = false;
-		if ( screenVideoRef.current ) {
-			try {
-				screenVideoRef.current.pause();
-				screenVideoRef.current.srcObject = null;
-			} catch {}
-			screenVideoRef.current = null;
-		}
-		setIsSharingScreen( false );
+		lastPageSummaryRef.current = null;
+		pointerPositionRef.current = null;
+		hasPageSummaryRef.current = false;
 	}, [ clearHighlightOverlay ] );
 
 	const cleanup = useCallback( () => {
@@ -212,17 +198,19 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 		return () => cleanup();
 	}, [ cleanup ] );
 
-	useEffect( () => {
-		isSharingScreenRef.current = isSharingScreen;
-	}, [ isSharingScreen ] );
-
 	const getToolRuntimeContext = useCallback(
 		() => ( {
-			isSharingScreen: isSharingScreenRef.current,
-			lastScreenFrame: lastScreenFrameRef.current,
+			isPageContextEnabled: hasPageSummaryRef.current,
+			lastPageSummary: lastPageSummaryRef.current,
+			pointerPosition: pointerPositionRef.current,
 		} ),
 		[]
 	);
+
+	const setPageSummaryMetadata = useCallback( ( metadata: PageSummaryMetadata ) => {
+		lastPageSummaryRef.current = metadata;
+		hasPageSummaryRef.current = true;
+	}, [] );
 
 	const showHighlightOverlay = useCallback(
 		( target: HTMLElement ) => {
@@ -278,8 +266,14 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 				}
 
 				let result: unknown;
-				if ( call.name === CLICK_TOOL_NAME ) {
-					result = executeClickTool( call.arguments, getToolRuntimeContext() );
+				if ( call.name === PAGE_SUMMARY_TOOL_NAME ) {
+					result = executePageSummaryTool( call.arguments, {
+						setPageSummaryMetadata,
+					} );
+				} else if ( call.name === POINTED_ELEMENT_TOOL_NAME ) {
+					result = executePointedElementTool( call.arguments, {
+						pointerPosition: pointerPositionRef.current,
+					} );
 				} else if ( call.name === HIGHLIGHT_TOOL_NAME ) {
 					result = executeHighlightTool( call.arguments, {
 						...getToolRuntimeContext(),
@@ -303,7 +297,7 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 
 			dc.send( JSON.stringify( { type: 'response.create' } ) );
 		},
-		[ getToolRuntimeContext, showHighlightOverlay ]
+		[ getToolRuntimeContext, setPageSummaryMetadata, showHighlightOverlay ]
 	);
 
 	const handleServerEvent = useCallback(
@@ -398,7 +392,11 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 						session: {
 							type: 'realtime',
 							instructions,
-							tools: [ clickToolDefinition, highlightToolDefinition ],
+							tools: [
+								pageSummaryToolDefinition,
+								pointedElementToolDefinition,
+								highlightToolDefinition,
+							],
 							tool_choice: 'auto',
 							audio: {
 								input: {
@@ -407,16 +405,6 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 								},
 								output: { voice },
 							},
-						},
-					} )
-				);
-				// Kick things off with a friendly greeting.
-				dataChannel.send(
-					JSON.stringify( {
-						type: 'response.create',
-						response: {
-							instructions:
-								'Greet the user warmly, introduce yourself as the WordPress.com sign-up assistant, and ask how you can help them get started.',
 						},
 					} )
 				);
@@ -498,154 +486,6 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 		setIsMuted( nextMuted );
 	}, [ isMuted ] );
 
-	const captureAndSendFrame = useCallback( () => {
-		const dc = dataChannelRef.current;
-		const video = screenVideoRef.current;
-		if ( ! dc || dc.readyState !== 'open' || ! video ) {
-			return;
-		}
-		const { videoWidth, videoHeight } = video;
-		if ( ! videoWidth || ! videoHeight ) {
-			return;
-		}
-
-		const canvas = document.createElement( 'canvas' );
-		canvas.width = videoWidth;
-		canvas.height = videoHeight;
-		const ctx = canvas.getContext( '2d' );
-		if ( ! ctx ) {
-			return;
-		}
-		ctx.drawImage( video, 0, 0, canvas.width, canvas.height );
-		const webpDataUrl = canvas.toDataURL( 'image/webp', SCREEN_FRAME_WEBP_QUALITY );
-		const dataUrl = webpDataUrl.startsWith( 'data:image/webp' )
-			? webpDataUrl
-			: canvas.toDataURL( 'image/png' );
-		const imageFormat = dataUrl.startsWith( 'data:image/webp' ) ? 'webp' : 'png';
-		lastScreenFrameRef.current = {
-			imageWidth: canvas.width,
-			imageHeight: canvas.height,
-			viewportWidth: window.innerWidth,
-			viewportHeight: window.innerHeight,
-		};
-
-		try {
-			dc.send(
-				JSON.stringify( {
-					type: 'conversation.item.create',
-					item: {
-						type: 'message',
-						role: 'user',
-						content: [
-							{
-								type: 'input_text',
-								text: `Shared-tab frame: ${ canvas.width }x${ canvas.height } pixels in ${ imageFormat }. If you use ${ CLICK_TOOL_NAME } or ${ HIGHLIGHT_TOOL_NAME }, pass x/y in this image coordinate space.`,
-							},
-							{
-								type: 'input_image',
-								image_url: dataUrl,
-							},
-						],
-					},
-				} )
-			);
-		} catch {
-			// Data channel may have closed between the readyState check and send.
-		}
-	}, [] );
-
-	const scheduleFrameCapture = useCallback( () => {
-		if ( screenCaptureTimeoutRef.current !== null ) {
-			window.clearTimeout( screenCaptureTimeoutRef.current );
-		}
-		screenCaptureTimeoutRef.current = window.setTimeout( () => {
-			screenCaptureTimeoutRef.current = null;
-			captureAndSendFrame();
-		}, SCREEN_CAPTURE_DEBOUNCE_MS );
-	}, [ captureAndSendFrame ] );
-
-	const startScreenShare = useCallback( async () => {
-		if ( screenStreamRef.current ) {
-			return;
-		}
-		const dc = dataChannelRef.current;
-		if ( ! dc || dc.readyState !== 'open' ) {
-			throw new Error( 'Start the call before sharing your screen.' );
-		}
-
-		const stream = await navigator.mediaDevices.getDisplayMedia( {
-			video: {
-				frameRate: 1,
-				displaySurface: 'browser',
-			},
-			audio: false,
-			// @ts-ignore - selfBrowserSurface is not a valid option for getDisplayMedia
-			selfBrowserSurface: 'include',
-			monitorTypeSurfaces: 'exclude',
-			surfaceSwitching: 'exclude',
-		} );
-		screenStreamRef.current = stream;
-
-		const [ videoTrack ] = stream.getVideoTracks();
-		videoTrack?.addEventListener( 'ended', () => stopScreenShare() );
-
-		const video = document.createElement( 'video' );
-		video.muted = true;
-		video.playsInline = true;
-		video.srcObject = stream;
-		screenVideoRef.current = video;
-		try {
-			await video.play();
-		} catch {
-			// Some browsers resolve play() late; the first interval tick will still capture once metadata is ready.
-		}
-
-		try {
-			dc.send(
-				JSON.stringify( {
-					type: 'session.update',
-					session: {
-						type: 'realtime',
-						instructions:
-							( instructions || '' ) +
-							' The user is now sharing their screen. They will send you fresh screenshots shortly after keyboard and mouse interactions. Use them to give specific guidance about the current page, and acknowledge changes when you notice them. If the user explicitly asks you to click something, you may use click_tool with coordinates from the latest shared screenshot. If the user needs help locating something visually, you may use highlight_tool to draw a box around the right page element.',
-					},
-				} )
-			);
-		} catch {}
-
-		setIsSharingScreen( true );
-		isSharingScreenRef.current = true;
-		const handleScreenInteraction = () => {
-			scheduleFrameCapture();
-		};
-		window.addEventListener( 'keydown', handleScreenInteraction, true );
-		window.addEventListener( 'click', handleScreenInteraction, true );
-		screenInteractionCleanupRef.current = () => {
-			window.removeEventListener( 'keydown', handleScreenInteraction, true );
-			window.removeEventListener( 'click', handleScreenInteraction, true );
-		};
-		scheduleFrameCapture();
-	}, [ instructions, scheduleFrameCapture, stopScreenShare ] );
-
-	const toggleScreenShare = useCallback( async () => {
-		if ( isSharingScreen ) {
-			stopScreenShare();
-			return;
-		}
-		try {
-			await startScreenShare();
-		} catch ( err ) {
-			// Ignore user-cancelled permission dialogs; surface real errors.
-			const name = ( err as { name?: string } )?.name;
-			if ( name !== 'NotAllowedError' && name !== 'AbortError' ) {
-				const message = err instanceof Error ? err.message : 'Could not start screen sharing';
-				setError( message );
-			}
-			stopScreenShare();
-		}
-	}, [ isSharingScreen, startScreenShare, stopScreenShare ] );
-
 	const sendText = useCallback( ( text: string ) => {
 		const dc = dataChannelRef.current;
 		if ( ! dc || dc.readyState !== 'open' || ! text.trim() ) {
@@ -664,17 +504,54 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 		dc.send( JSON.stringify( { type: 'response.create' } ) );
 	}, [] );
 
+	const sendEvent = useCallback( ( eventName: string, details?: string ) => {
+		const dc = dataChannelRef.current;
+		if ( ! dc || dc.readyState !== 'open' || ! eventName.trim() ) {
+			return;
+		}
+
+		const text = [
+			`Context event: ${ eventName.trim() }.`,
+			details?.trim(),
+			'Do not respond unless the user explicitly asks for help or asks you to act.',
+		]
+			.filter( Boolean )
+			.join( ' ' );
+
+		dc.send(
+			JSON.stringify( {
+				type: 'conversation.item.create',
+				item: {
+					type: 'message',
+					role: 'user',
+					content: [ { type: 'input_text', text } ],
+				},
+			} )
+		);
+	}, [] );
+
+	const updatePointerPosition = useCallback( ( x: number, y: number ) => {
+		if ( ! Number.isFinite( x ) || ! Number.isFinite( y ) ) {
+			return;
+		}
+
+		pointerPositionRef.current = {
+			x: Math.max( 0, Math.round( x ) ),
+			y: Math.max( 0, Math.round( y ) ),
+		};
+	}, [] );
+
 	return {
 		status,
 		error,
 		isMuted,
-		isSharingScreen,
 		transcript,
 		start,
 		stop,
 		toggleMute,
-		toggleScreenShare,
 		sendText,
+		sendEvent,
+		updatePointerPosition,
 	};
 }
 

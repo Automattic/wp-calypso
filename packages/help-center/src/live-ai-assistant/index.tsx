@@ -1,7 +1,7 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { Icon, close } from '@wordpress/icons';
+import { close, Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -43,40 +43,6 @@ const PhoneHangupIcon = () => (
 	</svg>
 );
 
-const ScreenShareIcon = ( { sharing }: { sharing: boolean } ) => (
-	<svg
-		width="18"
-		height="18"
-		viewBox="0 0 24 24"
-		fill="none"
-		xmlns="http://www.w3.org/2000/svg"
-		aria-hidden="true"
-	>
-		<rect
-			x="3"
-			y="4"
-			width="18"
-			height="13"
-			rx="2"
-			stroke="currentColor"
-			strokeWidth="2"
-			strokeLinejoin="round"
-		/>
-		<path d="M8 21h8M12 17v4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-		{ sharing ? (
-			<circle cx="12" cy="10.5" r="2.5" fill="currentColor" />
-		) : (
-			<path
-				d="M12 8v5M9.5 10.5L12 8l2.5 2.5"
-				stroke="currentColor"
-				strokeWidth="2"
-				strokeLinecap="round"
-				strokeLinejoin="round"
-			/>
-		) }
-	</svg>
-);
-
 const MicIcon = ( { muted }: { muted: boolean } ) => (
 	<svg
 		width="18"
@@ -105,13 +71,11 @@ const MicIcon = ( { muted }: { muted: boolean } ) => (
 );
 
 interface LiveAIAssistantProps {
-	/**
-	 * Additional instructions to append to the base system prompt. Useful for
-	 * passing flow/step-specific guidance so the agent understands where the
-	 * user currently is.
-	 */
 	contextualInstructions?: string;
 }
+
+const PAGE_EVENT_DEBOUNCE_MS = 100;
+const PUBLIC_API_WPCOM_ORIGIN = 'https://public-api.wordpress.com';
 
 function buildInstructions(
 	flowName: string,
@@ -120,13 +84,20 @@ function buildInstructions(
 	extra?: string
 ): string {
 	const base = [
-		'You are the WordPress.com sign-up assistant — a warm, concise, voice-first guide.',
+		'You are the WordPress.com sign-up assistant.',
 		'Your job is to help the user complete the sign-up and onboarding flow they are currently in.',
-		'Speak naturally and briefly. Keep responses under two sentences unless the user asks for more detail.',
-		`Always speak and write in the user's locale: "${ locale }". Do not switch languages unless the user explicitly asks you to.`,
+		'Be as concise as humanly possible.',
+		'Do not speak unless the user directly asks a question, asks for help, or asks you to do something.',
+		'Never greet proactively, narrate what you are doing, or volunteer extra details.',
+		'When you do answer, prefer the shortest possible response, ideally a few words or one short sentence.',
+		`The current UI locale is "${ locale }", but you must always speak and write in English unless the user explicitly asks you to switch languages.`,
 		'If the user seems stuck, offer to walk through the current step. If they ask questions about plans, domains, or features, answer clearly and honestly.',
 		'Never ask for or repeat passwords, credit card numbers, or two-factor codes out loud.',
 		'If you do not know something specific, say so and suggest checking the on-screen options.',
+		'Use page_summary_tool whenever you need page context, and use it before highlight_tool.',
+		'Use pointed_element_tool when the user refers to something they are pointing at, such as “this” or “that”.',
+		'When referring to anything on the page, prefer using highlight_tool instead of verbally describing where it is.',
+		'If the user asks where something is, highlight it rather than explaining its location in words.',
 		`Current flow: "${ flowName || 'unknown' }". Current step: "${ stepName || 'unknown' }".`,
 	];
 	if ( extra ) {
@@ -159,9 +130,9 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 	const [ isOpen, setIsOpen ] = useState( false );
 	const location = useLocation();
 	const locale = useLocale();
+	const eventTimeoutRef = useRef< number | null >( null );
 
 	const { flowName, stepName } = useMemo( () => {
-		// Stepper paths look like "/:flow/:step/:lang?"
 		const parts = location.pathname.split( '/' ).filter( Boolean );
 		return {
 			flowName: parts[ 0 ] ?? '',
@@ -178,12 +149,12 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 		status,
 		error,
 		isMuted,
-		isSharingScreen,
 		transcript,
 		start,
 		stop,
 		toggleMute,
-		toggleScreenShare,
+		sendEvent,
+		updatePointerPosition,
 	} = useRealtimeSession( { instructions } );
 
 	const transcriptRef = useRef< HTMLDivElement | null >( null );
@@ -200,6 +171,76 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 		status === 'requesting-mic' ||
 		status === 'connecting' ||
 		status === 'ending';
+
+	useEffect( () => {
+		if ( status !== 'active' ) {
+			return;
+		}
+
+		const scheduleEvent = ( eventName: string, details?: string ) => {
+			if ( eventTimeoutRef.current !== null ) {
+				window.clearTimeout( eventTimeoutRef.current );
+			}
+
+			eventTimeoutRef.current = window.setTimeout( () => {
+				eventTimeoutRef.current = null;
+				sendEvent( eventName, details );
+			}, PAGE_EVENT_DEBOUNCE_MS );
+		};
+
+		const handleKeydown = ( event: KeyboardEvent ) => {
+			const target = event.target as HTMLElement | null;
+			const tagName = target?.tagName?.toLowerCase() ?? 'unknown';
+			scheduleEvent( 'user-typed', `target=${ tagName }` );
+		};
+
+		const handleClick = ( event: MouseEvent ) => {
+			const target = event.target as HTMLElement | null;
+			const tagName = target?.tagName?.toLowerCase() ?? 'unknown';
+			scheduleEvent( 'user-clicked', `target=${ tagName }` );
+		};
+
+		const handlePointerMove = ( event: PointerEvent ) => {
+			updatePointerPosition( event.clientX, event.clientY );
+		};
+
+		const handleScroll = () => {
+			scheduleEvent( 'user-scrolled' );
+		};
+
+		const handleWpcomMessage = ( event: MessageEvent ) => {
+			if ( event.origin !== PUBLIC_API_WPCOM_ORIGIN ) {
+				return;
+			}
+			scheduleEvent( 'network-request-done', `origin=${ event.origin }` );
+		};
+
+		window.addEventListener( 'keydown', handleKeydown, true );
+		window.addEventListener( 'click', handleClick, true );
+		window.addEventListener( 'pointermove', handlePointerMove, true );
+		window.addEventListener( 'scroll', handleScroll, true );
+		window.addEventListener( 'message', handleWpcomMessage );
+
+		return () => {
+			if ( eventTimeoutRef.current !== null ) {
+				window.clearTimeout( eventTimeoutRef.current );
+				eventTimeoutRef.current = null;
+			}
+			window.removeEventListener( 'keydown', handleKeydown, true );
+			window.removeEventListener( 'click', handleClick, true );
+			window.removeEventListener( 'pointermove', handlePointerMove, true );
+			window.removeEventListener( 'scroll', handleScroll, true );
+			window.removeEventListener( 'message', handleWpcomMessage );
+		};
+	}, [ sendEvent, status, updatePointerPosition ] );
+
+	useEffect( () => {
+		if ( status !== 'active' ) {
+			return;
+		}
+
+		sendEvent( 'page-changed', `path=${ location.pathname }` );
+	}, [ location.key, location.pathname, sendEvent, status ] );
 
 	const handleTogglePanel = () => {
 		setIsOpen( ( prev ) => {
@@ -301,25 +342,6 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 						>
 							<MicIcon muted={ isMuted } />
 							<span>{ isMuted ? __( 'Unmute' ) : __( 'Mute' ) }</span>
-						</Button>
-						<Button
-							variant="secondary"
-							className={ clsx( 'live-ai-assistant__share', {
-								'is-sharing': isSharingScreen,
-							} ) }
-							onClick={ () => {
-								void toggleScreenShare();
-							} }
-							disabled={ ! isCallActive }
-							aria-pressed={ isSharingScreen }
-							label={
-								isSharingScreen
-									? __( 'Stop sharing your screen' )
-									: __( 'Share your screen with the assistant' )
-							}
-						>
-							<ScreenShareIcon sharing={ isSharingScreen } />
-							<span>{ isSharingScreen ? __( 'Stop sharing' ) : __( 'Share screen' ) }</span>
 						</Button>
 						<Button
 							variant="primary"

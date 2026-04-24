@@ -8,6 +8,7 @@ import {
 	User as UserStore,
 	HelpCenter,
 } from '@automattic/data-stores';
+import { LiveAIAssistant } from '@automattic/help-center';
 import {
 	AI_SITE_BUILDER_FLOW,
 	AI_SITE_BUILDER_SPEC_FLOW,
@@ -41,7 +42,6 @@ import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
 import { setCurrentFlowName } from 'calypso/state/signup/flow/actions';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
-import { LiveAIAssistant } from './components/live-ai-assistant';
 import { FlowRenderer } from './declarative-flow/internals';
 import { tryPreload } from './declarative-flow/internals/hooks/use-preload-steps';
 import 'calypso/assets/stylesheets/style.scss';
