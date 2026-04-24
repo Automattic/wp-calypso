@@ -22,6 +22,7 @@ const connection: AtmosphereConnection = {
 	display_name: 'Alice',
 	did: 'did:plc:a',
 	avatar: null,
+	publicize_site_count: 0,
 };
 
 describe( 'ProfilePanel', () => {
