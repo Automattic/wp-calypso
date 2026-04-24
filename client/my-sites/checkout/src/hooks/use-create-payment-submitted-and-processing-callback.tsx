@@ -1,4 +1,5 @@
 import { useShoppingCart } from '@automattic/shopping-cart';
+import { isURL } from '@wordpress/url';
 import debugFactory from 'debug';
 import { useCallback } from 'react';
 import { recordPurchase } from 'calypso/lib/analytics/record-purchase';
@@ -243,9 +244,14 @@ export default function useCreatePaymentSubmittedAndProcessingCallback( {
 				return;
 			}
 
-			// Stepper flows need a hard redirect because they don't load properly
-			// via client-side navigation (they're self-contained apps).
-			if ( url.includes( '/setup/' ) || url.includes( '/start/site-content-collection' ) ) {
+			// We need to do a hard redirect if we're redirecting to the stepper.
+			// Since stepper is self-contained, it doesn't load properly if we do a normal history state change
+			// The same is true if we are redirecting to the signup flow, we are restricting it to only 1 specific flow here.
+			if (
+				isURL( url ) ||
+				url.includes( '/setup/' ) ||
+				url.includes( '/start/site-content-collection' )
+			) {
 				absoluteRedirectThroughPending( url, {
 					siteSlug,
 					orderId: 'order_id' in transactionResult ? transactionResult.order_id : undefined,
@@ -263,7 +269,6 @@ export default function useCreatePaymentSubmittedAndProcessingCallback( {
 				siteSlug,
 				orderId: 'order_id' in transactionResult ? transactionResult.order_id : undefined,
 				receiptId: 'receipt_id' in transactionResult ? transactionResult.receipt_id : undefined,
-				fromSiteSlug,
 				fromExternalCheckout: sitelessCheckoutType === 'a4a',
 				isGravatarDomain,
 			} );
