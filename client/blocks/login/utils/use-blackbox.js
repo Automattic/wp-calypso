@@ -2,6 +2,11 @@ import config from '@automattic/calypso-config';
 import { useEffect, useState } from 'react';
 import { loadBlackboxSdk } from 'calypso/blocks/login/utils/blackbox-sdk';
 
+// Tracks whether configure() has been called at least once across mounts.
+// On remount (e.g. back from 2FA), we call reset() to start a fresh session
+// so the new challenge container can surface a challenge.
+let hasConfiguredOnce = false;
+
 /**
  * Hook that loads the Blackbox SDK, calls configure() with the given container
  * ref and challenge callbacks, and tracks whether a challenge is active.
@@ -35,6 +40,15 @@ export function useBlackbox( { containerRef } ) {
 					onChallengeStart: () => setIsChallengeActive( true ),
 					onChallengeComplete: () => setIsChallengeActive( false ),
 				} );
+
+				if ( hasConfiguredOnce && typeof window.Blackbox.reset === 'function' ) {
+					// Remount (e.g. user navigated back from 2FA): clear the
+					// stale session and kick off a fresh collect so the SDK can
+					// surface a challenge in the new container.
+					window.Blackbox.reset();
+				}
+
+				hasConfiguredOnce = true;
 			} catch {
 				// Intentionally ignored — Blackbox must never block login.
 			}
