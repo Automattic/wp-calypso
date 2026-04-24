@@ -22,7 +22,7 @@ import { useSiteTransferStatusQuery } from '../../../../hooks/use-site-transfer/
 import { useWaitForAtomic } from '../../../../hooks/use-wait-for-atomic';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import type { Step as StepType } from '../../types';
-import type { OnboardSelect, SiteSelect } from '@automattic/data-stores';
+import type { OnboardSelect } from '@automattic/data-stores';
 
 const usePluginByGoal = () => {
 	const intent = useSelect(
@@ -78,17 +78,7 @@ const PostCheckoutOnboarding: StepType< {
 		[]
 	);
 
-	const isJetpack = useSelect(
-		( select ) => site && ( select( SITE_STORE ) as SiteSelect ).isJetpackSite( site.ID ),
-		[ site ]
-	);
-
-	const isAtomic = useSelect(
-		( select ) => site && ( select( SITE_STORE ) as SiteSelect ).isSiteAtomic( site.ID ),
-		[ site ]
-	);
-
-	const isJetpackOrAtomic = isJetpack || isAtomic;
+	const isJetpackOrAtomic = !! site?.jetpack || !! site?.options?.is_wpcom_atomic;
 
 	const {
 		isLoading: isLoadingMarketplaceThemeProducts,
