@@ -51,6 +51,88 @@ describe( 'reader-mastodon hooks', () => {
 		expect( spy ).not.toHaveBeenCalled();
 	} );
 
+	it( 'useCompleteMastodonConnectionMutation seeds the connections list cache synchronously', async () => {
+		// Regression: without the synchronous `setQueryData` seed, the
+		// `page.replace('/reader/mastodon/:id/timeline')` in the callback view
+		// fires before `invalidateQueries` has refetched the list, so the
+		// account view mounts against the stale list, fails to find the new id,
+		// and the landing controller bounces the user back to connections[0].
+		nock( BASE )
+			.post( '/wpcom/v2/reader/mastodon/connections', {
+				step: 'complete',
+				state: 'abc',
+				code: 'xyz',
+			} )
+			.reply( 200, {
+				connection: {
+					id: 202,
+					handle: '@new@mastodon.social',
+					instance: 'mastodon.social',
+					avatar: null,
+				},
+			} );
+		const client = new QueryClient();
+		client.setQueryData( readerMastodonKeys.connections(), {
+			connections: [
+				{
+					id: 1,
+					handle: '@old@mastodon.social',
+					instance: 'mastodon.social',
+					avatar: null,
+				},
+			],
+		} );
+		const { result } = renderHook( () => useCompleteMastodonConnectionMutation(), {
+			wrapper: makeWrapper( client ),
+		} );
+		await result.current.mutateAsync( { state: 'abc', code: 'xyz' } );
+
+		const cached = client.getQueryData< { connections: Array< { id: number } > } >(
+			readerMastodonKeys.connections()
+		);
+		expect( cached?.connections.map( ( c ) => c.id ) ).toEqual( [ 1, 202 ] );
+	} );
+
+	it( 'useCompleteMastodonConnectionMutation does not duplicate an already-cached connection', async () => {
+		// A refetch landing between complete and onSuccess could leave the new
+		// connection already in the cache. Re-seeding it must not produce a
+		// duplicate — the sidebar renders one row per id.
+		nock( BASE )
+			.post( '/wpcom/v2/reader/mastodon/connections', {
+				step: 'complete',
+				state: 'abc',
+				code: 'xyz',
+			} )
+			.reply( 200, {
+				connection: {
+					id: 303,
+					handle: '@dup@mastodon.social',
+					instance: 'mastodon.social',
+					avatar: null,
+				},
+			} );
+		const client = new QueryClient();
+		client.setQueryData( readerMastodonKeys.connections(), {
+			connections: [
+				{
+					id: 303,
+					handle: '@dup@mastodon.social',
+					instance: 'mastodon.social',
+					avatar: null,
+				},
+			],
+		} );
+		const { result } = renderHook( () => useCompleteMastodonConnectionMutation(), {
+			wrapper: makeWrapper( client ),
+		} );
+		await result.current.mutateAsync( { state: 'abc', code: 'xyz' } );
+
+		const cached = client.getQueryData< { connections: Array< { id: number } > } >(
+			readerMastodonKeys.connections()
+		);
+		expect( cached?.connections.map( ( c ) => c.id ) ).toEqual( [ 303 ] );
+	} );
+
 	it( 'useCompleteMastodonConnectionMutation invalidates the connections query', async () => {
 		nock( BASE )
 			.post( '/wpcom/v2/reader/mastodon/connections', {

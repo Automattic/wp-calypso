@@ -43,7 +43,13 @@ function ensureBioRelHookRegistered() {
 		return;
 	}
 	DOMPurify.addHook( 'afterSanitizeAttributes', ( node ) => {
-		if ( node.tagName !== 'A' || node.getAttribute( 'target' ) !== '_blank' ) {
+		if ( node.tagName !== 'A' ) {
+			return;
+		}
+		// Case-insensitive: HTML target values are case-insensitive, so
+		// `target="_BLANK"` (or mixed case) opens in a new window just like
+		// `_blank` and needs the same tab-napping defense.
+		if ( ( node.getAttribute( 'target' ) ?? '' ).toLowerCase() !== '_blank' ) {
 			return;
 		}
 		const tokens = new Set( ( node.getAttribute( 'rel' ) ?? '' ).split( /\s+/ ).filter( Boolean ) );

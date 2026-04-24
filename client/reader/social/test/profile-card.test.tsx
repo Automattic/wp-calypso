@@ -125,6 +125,23 @@ describe( 'SocialProfileCard', () => {
 		expect( link ).toHaveAttribute( 'target', '_blank' );
 	} );
 
+	it( 'treats target="_BLANK" (uppercase) the same as target="_blank"', () => {
+		// HTML target values are case-insensitive: `_BLANK` opens a new window
+		// the same way `_blank` does, so the tab-napping defense must apply.
+		// Any anchor with a `_blank`-equivalent target reaches the `afterSanitize`
+		// hook and must receive rel="noopener noreferrer".
+		const { container } = render(
+			<SocialProfileCard
+				bioHtml='<p><a href="https://example.test/" target="_BLANK">loud</a></p>'
+				statsLabel="Profile stats"
+				stats={ [ { key: 'followers', count: 0, label: 'followers' } ] }
+			/>
+		);
+		const link = container.querySelector( '.social-profile-card__bio a' );
+		expect( link?.getAttribute( 'rel' ) ).toMatch( /\bnoopener\b/ );
+		expect( link?.getAttribute( 'rel' ) ).toMatch( /\bnoreferrer\b/ );
+	} );
+
 	it( 'forces rel="noopener noreferrer" onto a bare target="_blank" anchor', () => {
 		// Hypothetical defense: Mastodon itself always ships rel on bio
 		// anchors, but the allowlist accepts target/rel as free-form. A bare
