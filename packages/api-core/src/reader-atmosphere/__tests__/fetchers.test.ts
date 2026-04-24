@@ -17,11 +17,13 @@ describe( 'atmosphere fetchers', () => {
 						display_name: 'Alice',
 						did: 'did:plc:a',
 						avatar: null,
+						publicize_site_count: 0,
 					},
 				],
 			} );
 		const res = await getConnections();
 		expect( res.connections ).toHaveLength( 1 );
+		expect( res.connections[ 0 ].publicize_site_count ).toBe( 0 );
 	} );
 
 	it( 'createConnection posts body and returns connection', async () => {
@@ -37,6 +39,7 @@ describe( 'atmosphere fetchers', () => {
 					display_name: 'Alice',
 					did: 'did:plc:a',
 					avatar: null,
+					publicize_site_count: 0,
 				},
 			} );
 		const res = await createConnection( { handle: 'alice.bsky.social', app_password: 'xxxx' } );

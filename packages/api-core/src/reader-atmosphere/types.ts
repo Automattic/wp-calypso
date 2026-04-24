@@ -6,6 +6,9 @@ export interface AtmosphereConnection {
 	// The list endpoint always returns null. Real avatars come from
 	// getConnection(id).
 	avatar: string | null;
+	// Number of Jetpack Social sites that share to this Bluesky handle.
+	// Surfaced so the disconnect UI can warn when the value is > 0.
+	publicize_site_count: number;
 }
 
 export interface AtmosphereConnectionsResponse {

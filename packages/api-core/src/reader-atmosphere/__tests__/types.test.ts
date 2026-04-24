@@ -14,8 +14,10 @@ describe( 'reader-atmosphere types compile', () => {
 			display_name: 'Alice',
 			did: 'did:plc:x',
 			avatar: null,
+			publicize_site_count: 0,
 		};
 		expect( listItem.display_name ).toBe( 'Alice' );
+		expect( listItem.publicize_site_count ).toBe( 0 );
 	} );
 
 	it( 'response + details shapes', () => {
@@ -27,6 +29,7 @@ describe( 'reader-atmosphere types compile', () => {
 				display_name: 'A',
 				did: 'did:plc:a',
 				avatar: null,
+				publicize_site_count: 0,
 			},
 		};
 		const counts: AtmosphereProfileCounts = { followers: 0, follows: 0, posts: 0 };
