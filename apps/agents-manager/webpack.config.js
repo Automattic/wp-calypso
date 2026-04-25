@@ -124,6 +124,16 @@ function getReaderConfig( options = {} ) {
 			...webpackConfig.module,
 			rules: [ ...( webpackConfig.module?.rules || [] ) ],
 		},
+		resolve: {
+			...webpackConfig.resolve,
+			alias: {
+				...( webpackConfig.resolve?.alias || {} ),
+				'../agent-history': path.join( __dirname, 'reader-chat-route-stub.js' ),
+				'../support-guide': path.join( __dirname, 'reader-chat-route-stub.js' ),
+				'../support-guides': path.join( __dirname, 'reader-chat-route-stub.js' ),
+				'../zendesk-chat': path.join( __dirname, 'reader-chat-route-stub.js' ),
+			},
+		},
 		optimization: {
 			...webpackConfig.optimization,
 			// Disable module concatenation so __() calls are not renamed.

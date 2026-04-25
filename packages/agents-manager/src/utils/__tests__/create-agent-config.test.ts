@@ -11,6 +11,9 @@ jest.mock( '../can-connect-to-zendesk', () => ( {
 } ) );
 
 import { createAgentConfig } from '../create-agent-config';
+import { canConnectToZendesk } from '../can-connect-to-zendesk';
+
+const mockCanConnectToZendesk = canConnectToZendesk as jest.Mock;
 
 function setAgentsManagerData( data: Record< string, unknown > ) {
 	( window as unknown as { agentsManagerData?: Record< string, unknown > } ).agentsManagerData =
@@ -18,6 +21,10 @@ function setAgentsManagerData( data: Record< string, unknown > ) {
 }
 
 describe( 'createAgentConfig', () => {
+	beforeEach( () => {
+		mockCanConnectToZendesk.mockClear();
+	} );
+
 	afterEach( () => {
 		delete ( window as unknown as { agentsManagerData?: Record< string, unknown > } )
 			.agentsManagerData;
@@ -36,6 +43,7 @@ describe( 'createAgentConfig', () => {
 		} );
 		const context = config.contextProvider?.getClientContext();
 
+		expect( mockCanConnectToZendesk ).toHaveBeenCalledTimes( 1 );
 		expect( context ).not.toHaveProperty( 'currentPost' );
 		expect( context ).not.toHaveProperty( 'siteName' );
 		expect( context ).not.toHaveProperty( 'siteUrl' );
@@ -55,6 +63,8 @@ describe( 'createAgentConfig', () => {
 		} );
 		const context = config.contextProvider?.getClientContext();
 
+		expect( mockCanConnectToZendesk ).not.toHaveBeenCalled();
+		expect( context ).toEqual( expect.objectContaining( { can_access_zendesk: false } ) );
 		expect( context ).toEqual(
 			expect.objectContaining( {
 				currentPost,

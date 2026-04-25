@@ -78,15 +78,24 @@ function wrapToolProvider( toolProvider: ToolProvider ): UseAgentChatConfig[ 'to
 	};
 }
 
+async function canAccessZendeskForAgent( agentId?: string ): Promise< boolean > {
+	if ( isReaderChatAgent( agentId ) ) {
+		return false;
+	}
+
+	return canConnectToZendesk();
+}
+
 /**
  * Create a context provider that resolves context entries.
  */
 async function createWrappedContextProvider(
 	contextProvider: ContextProvider,
 	siteId?: number,
+	agentId?: string,
 	version?: string
 ): Promise< UseAgentChatConfig[ 'contextProvider' ] > {
-	const canAccessZendesk = await canConnectToZendesk();
+	const canAccessZendesk = await canAccessZendeskForAgent( agentId );
 	return {
 		getClientContext: () => {
 			const pluginContext = contextProvider.getClientContext();
@@ -124,7 +133,7 @@ async function createDefaultContextProvider(
 	agentId?: string,
 	version?: string
 ): Promise< UseAgentChatConfig[ 'contextProvider' ] > {
-	const canAccessZendesk = await canConnectToZendesk();
+	const canAccessZendesk = await canAccessZendeskForAgent( agentId );
 	return {
 		getClientContext: () => {
 			// Hosts that don't have a plugin context (e.g. reader-chat on a
@@ -190,7 +199,12 @@ export async function createAgentConfig(
 	}
 
 	if ( contextProvider ) {
-		config.contextProvider = await createWrappedContextProvider( contextProvider, siteId, version );
+		config.contextProvider = await createWrappedContextProvider(
+			contextProvider,
+			siteId,
+			agentId,
+			version
+		);
 	} else {
 		config.contextProvider = await createDefaultContextProvider(
 			currentRoute,

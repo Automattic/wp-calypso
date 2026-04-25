@@ -484,99 +484,134 @@ function setupFollowupChips() {
 	}
 
 	// Observe the chat DOM for new complete assistant messages.
-	let attempts = 0;
-	let retryTimer = null;
 	let debounceTimer = null;
 	let pendingExchangeKey = '';
 	let lastPublishedExchangeKey = '';
 	let followupController = null;
 	let requestSeq = 0;
+	let observedChat = null;
+	let chatObserver = null;
+	let pageObserver = null;
+	let unsubscribeOpen = null;
+	let observeScheduled = false;
 
 	function cleanup() {
-		if ( retryTimer ) {
-			clearTimeout( retryTimer );
-		}
 		if ( debounceTimer ) {
 			clearTimeout( debounceTimer );
 		}
 		followupController?.abort();
+		chatObserver?.disconnect();
+		pageObserver?.disconnect();
+		unsubscribeOpen?.();
 	}
 
 	window.addEventListener( 'pagehide', cleanup, { once: true } );
 
-	const tryObserve = () => {
-		const chat = document.querySelector( '[data-slot=conversation-view]' );
-		if ( ! chat ) {
-			if ( attempts++ < 60 ) {
-				retryTimer = setTimeout( tryObserve, 500 );
-			}
+	const handleChatMutation = () => {
+		const exchange = getLatestExchange( observedChat );
+		if (
+			! exchange ||
+			exchange.key === pendingExchangeKey ||
+			exchange.key === lastPublishedExchangeKey
+		) {
 			return;
 		}
-		if ( chat.__followupObserving ) {
-			return;
-		}
-		chat.__followupObserving = true;
 
-		const observer = new window.MutationObserver( () => {
-			const exchange = getLatestExchange( chat );
+		if ( debounceTimer ) {
+			clearTimeout( debounceTimer );
+		}
+
+		debounceTimer = setTimeout( async () => {
+			const stableExchange = getLatestExchange( observedChat );
 			if (
-				! exchange ||
-				exchange.key === pendingExchangeKey ||
-				exchange.key === lastPublishedExchangeKey
+				! stableExchange ||
+				stableExchange.key !== exchange.key ||
+				stableExchange.agentText !== exchange.agentText ||
+				stableExchange.key === pendingExchangeKey ||
+				stableExchange.key === lastPublishedExchangeKey
 			) {
 				return;
 			}
 
-			if ( debounceTimer ) {
-				clearTimeout( debounceTimer );
-			}
+			followupController?.abort();
+			const requestController = createAbortController();
+			followupController = requestController;
+			const requestId = ++requestSeq;
+			pendingExchangeKey = stableExchange.key;
+			publish( [] ); // clear while fetching
 
-			debounceTimer = setTimeout( async () => {
-				const stableExchange = getLatestExchange( chat );
-				if (
-					! stableExchange ||
-					stableExchange.key !== exchange.key ||
-					stableExchange.agentText !== exchange.agentText ||
-					stableExchange.key === pendingExchangeKey ||
-					stableExchange.key === lastPublishedExchangeKey
-				) {
-					return;
-				}
+			const chips = await fetchFollowupSuggestions(
+				stableExchange.userText,
+				stableExchange.agentText,
+				requestController?.signal
+			);
 
-				followupController?.abort();
-				const requestController = createAbortController();
-				followupController = requestController;
-				const requestId = ++requestSeq;
-				pendingExchangeKey = stableExchange.key;
-				publish( [] ); // clear while fetching
-
-				const chips = await fetchFollowupSuggestions(
-					stableExchange.userText,
-					stableExchange.agentText,
-					requestController?.signal
-				);
-
-				if ( requestId !== requestSeq || requestController?.signal.aborted ) {
-					return;
-				}
-
-				lastPublishedExchangeKey = stableExchange.key;
+			if ( requestId !== requestSeq || requestController?.signal.aborted ) {
 				pendingExchangeKey = '';
 				followupController = null;
-				publish( chips || [] );
-			}, FOLLOWUP_DEBOUNCE_MS );
-		} );
+				return;
+			}
 
-		window.addEventListener(
-			'pagehide',
-			() => {
-				observer.disconnect();
-			},
-			{ once: true }
-		);
-
-		observer.observe( chat, { childList: true, subtree: true, characterData: true } );
+			lastPublishedExchangeKey = stableExchange.key;
+			pendingExchangeKey = '';
+			followupController = null;
+			publish( chips || [] );
+		}, FOLLOWUP_DEBOUNCE_MS );
 	};
+
+	function attachToChat( chat ) {
+		if ( ! chat || chat === observedChat ) {
+			return;
+		}
+
+		chatObserver?.disconnect();
+		observedChat = chat;
+		chatObserver = new window.MutationObserver( handleChatMutation );
+		chatObserver.observe( chat, { childList: true, subtree: true, characterData: true } );
+	}
+
+	function tryObserve() {
+		const chat = document.querySelector( '[data-slot=conversation-view]' );
+		if ( chat ) {
+			attachToChat( chat );
+			return;
+		}
+
+		if ( observedChat && document.body && ! document.body.contains( observedChat ) ) {
+			chatObserver?.disconnect();
+			chatObserver = null;
+			observedChat = null;
+		}
+	}
+
+	function scheduleObserve() {
+		if ( observeScheduled ) {
+			return;
+		}
+		observeScheduled = true;
+		const run = () => {
+			observeScheduled = false;
+			tryObserve();
+		};
+		if ( typeof window.requestAnimationFrame === 'function' ) {
+			window.requestAnimationFrame( run );
+		} else {
+			setTimeout( run, 0 );
+		}
+	}
+
+	if ( document.body ) {
+		pageObserver = new window.MutationObserver( scheduleObserve );
+		pageObserver.observe( document.body, { childList: true, subtree: true } );
+	}
+
+	unsubscribeOpen = subscribe( () => {
+		const state = select( AGENTS_MANAGER_STORE ).getAgentsManagerState?.();
+		if ( state?.isOpen ) {
+			scheduleObserve();
+		}
+	} );
+
 	tryObserve();
 }
 
