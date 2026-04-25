@@ -35,13 +35,23 @@ export const clearPurchases = () => ( dispatch, getState ) => {
  * PURCHASE_REMOVE_COMPLETED with the current list minus the target purchase —
  * keeping hasLoadedUserPurchasesFromServer / hasLoadedSitePurchasesFromServer
  * at true so no refetch cascade is triggered.
+ *
+ * Also refreshes the admin menu to match the sibling thunks (clearPurchases,
+ * removePurchase): removing a purchase can change which items appear in the
+ * site's wp-admin sidebar (e.g. a removed plugin's menu section), so the menu
+ * needs to be re-fetched to avoid stale entries until the next navigation.
  */
 export const removePurchaseFromState = ( purchaseId ) => ( dispatch, getState ) => {
-	const currentData = getState().purchases.data ?? [];
+	const state = getState();
+	const currentData = state.purchases.data ?? [];
+	const siteId = getSelectedSiteId( state );
 	dispatch( {
 		type: PURCHASE_REMOVE_COMPLETED,
 		purchases: currentData.filter( ( p ) => String( p.ID ) !== String( purchaseId ) ),
 	} );
+	if ( siteId ) {
+		dispatch( requestAdminMenu( siteId ) );
+	}
 };
 
 export const fetchSitePurchases = ( siteId ) => ( dispatch ) => {

@@ -134,6 +134,10 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#removePurchaseFromState', () => {
+		beforeEach( () => {
+			dispatch.mockClear();
+		} );
+
 		test( 'dispatches PURCHASE_REMOVE_COMPLETED with the target purchase stripped', () => {
 			const data = [ { ID: 1 }, { ID: 2 }, { ID: 3 } ];
 			getState.mockReturnValueOnce( { purchases: { data } } );
@@ -167,6 +171,28 @@ describe( 'actions', () => {
 				type: PURCHASE_REMOVE_COMPLETED,
 				purchases: [],
 			} );
+		} );
+
+		test( 'refreshes the admin menu when a site is selected', () => {
+			getState.mockReturnValueOnce( {
+				purchases: { data: [ { ID: 1 } ] },
+				ui: { selectedSiteId: siteId },
+			} );
+
+			removePurchaseFromState( 1 )( dispatch, getState );
+
+			expect( dispatch ).toHaveBeenCalledWith( requestAdminMenu( siteId ) );
+		} );
+
+		test( 'skips the admin menu refresh when no site is selected', () => {
+			getState.mockReturnValueOnce( { purchases: { data: [ { ID: 1 } ] } } );
+
+			removePurchaseFromState( 1 )( dispatch, getState );
+
+			const adminMenuCall = dispatch.mock.calls.find(
+				( [ action ] ) => action?.type === requestAdminMenu( siteId ).type
+			);
+			expect( adminMenuCall ).toBeUndefined();
 		} );
 	} );
 } );
