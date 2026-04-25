@@ -238,7 +238,17 @@ class MasterbarLoggedOut extends Component {
 			return (
 				<AsyncLoad
 					require="calypso/layout/masterbar/checkout.tsx"
-					placeholder={ null }
+					placeholder={
+						<Masterbar className="masterbar--is-checkout masterbar--is-wpcom">
+							<div className="masterbar__secure-checkout">
+								<WordPressWordmark
+									size={ { width: 122, height: 'auto' } }
+									className="masterbar__wpcom-wordmark"
+									color="#2c3338"
+								/>
+							</div>
+						</Masterbar>
+					}
 					title={ title }
 					isLeavingAllowed={ ! isCheckoutPending }
 					shouldClearCartWhenLeaving={ ! isCheckoutFailed }

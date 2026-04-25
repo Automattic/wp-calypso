@@ -85,7 +85,7 @@ function CheckoutPending( {
 }: CheckoutPendingProps ) {
 	const orderId = isValidOrderId( orderIdOrPlaceholder ) ? orderIdOrPlaceholder : undefined;
 
-	const { headingText } = useRedirectOnTransactionSuccess( {
+	useRedirectOnTransactionSuccess( {
 		orderId,
 		receiptId,
 		siteSlug,
@@ -96,10 +96,10 @@ function CheckoutPending( {
 	const isInStepContainerV2 = useInitialIsInStepContainerV2FlowContext();
 
 	const content = isInStepContainerV2 ? (
-		<Step.Loading title={ headingText } delay={ 2000 } />
+		<Step.Loading />
 	) : (
 		<Main className="checkout-thank-you__pending">
-			<Loading className="checkout__pending-content" title={ headingText } />
+			<Loading className="checkout__pending-content" />
 		</Main>
 	);
 
@@ -167,7 +167,7 @@ function useRedirectOnTransactionSuccess( {
 	 * logged in).
 	 */
 	fromSiteSlug?: string;
-} ): { headingText: React.ReactNode } {
+} ): void {
 	const translate = useTranslate();
 
 	const { isLoading: isLoadingOrder, order: transaction } = usePurchaseOrder( orderId, 5000 );
@@ -202,10 +202,6 @@ function useRedirectOnTransactionSuccess( {
 	);
 
 	const { searchParams } = getUrlParts( redirectTo || '/' );
-	const isConnectAfterCheckoutFlow =
-		searchParams.size &&
-		searchParams.get( 'from' ) === 'connect-after-checkout' &&
-		searchParams.get( 'connect_url_redirect' ) === 'true';
 	// Prefer checkout_type from the receipt (more reliable) and fall back to
 	// the query string for receipts fetched before the field was available.
 	const isUnifiedCheckout =
@@ -229,13 +225,6 @@ function useRedirectOnTransactionSuccess( {
 			.catch( () => {} )
 			.finally( () => setIsUserRefreshedForUnified( true ) );
 	}, [ isUnifiedCheckout, blogId, reduxDispatch ] );
-
-	const defaultPendingText = translate( 'Almost there—we’re currently finalizing your order.' );
-	const connectingJetpackText = translate(
-		"Transaction finalized – we're now connecting Jetpack."
-	);
-
-	const [ headingText, setHeadingText ] = useState( defaultPendingText );
 
 	// Redirect and display notices.
 	const didRedirect = useRef( false );
@@ -308,9 +297,6 @@ function useRedirectOnTransactionSuccess( {
 		if ( ! redirectInstructions.isError && ! redirectInstructions.isUnknown ) {
 			invokeSurvicateEvent( 'purchaseCompleted' );
 		}
-		if ( isConnectAfterCheckoutFlow ) {
-			setHeadingText( connectingJetpackText );
-		}
 		triggerPostRedirectNotices( {
 			redirectInstructions,
 			isRenewal,
@@ -329,10 +315,8 @@ function useRedirectOnTransactionSuccess( {
 	}, [
 		isLoadingOrder,
 		saasRedirectUrl,
-		isConnectAfterCheckoutFlow,
 		isUnifiedCheckout,
 		isUserRefreshedForUnified,
-		connectingJetpackText,
 		error,
 		finalReceiptId,
 		isReceiptLoaded,
@@ -349,8 +333,6 @@ function useRedirectOnTransactionSuccess( {
 		translate,
 		fromSiteSlug,
 	] );
-
-	return { headingText };
 }
 
 function isTransactionSuccessful(

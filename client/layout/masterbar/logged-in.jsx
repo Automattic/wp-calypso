@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { isEcommercePlan } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { Gridicon } from '@automattic/components';
+import { Gridicon, WordPressWordmark } from '@automattic/components';
 import { Badge } from '@automattic/ui';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _x, sprintf } from '@wordpress/i18n';
@@ -312,7 +312,17 @@ class MasterbarLoggedIn extends Component {
 		return (
 			<AsyncLoad
 				require="calypso/layout/masterbar/checkout"
-				placeholder={ null }
+				placeholder={
+					<Masterbar className="masterbar--is-checkout masterbar--is-wpcom">
+						<div className="masterbar__secure-checkout">
+							<WordPressWordmark
+								size={ { width: 122, height: 'auto' } }
+								className="masterbar__wpcom-wordmark"
+								color="#2c3338"
+							/>
+						</div>
+					</Masterbar>
+				}
 				title={ title }
 				isJetpackNotAtomic={ isJetpackNotAtomic }
 				previousPath={ previousPath }

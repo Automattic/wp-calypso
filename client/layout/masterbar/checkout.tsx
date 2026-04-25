@@ -139,9 +139,11 @@ const CheckoutMasterbar = ( {
 						) }
 						{ checkoutType === 'gravatar' && <GravatarTextLogo /> }
 						{ checkoutType === 'a4a' && <A4ALogo full size={ 14 } /> }
-						<span className="masterbar__secure-checkout-text">
-							{ translate( 'Secure checkout' ) }
-						</span>
+						{ isLeavingAllowed && (
+							<span className="masterbar__secure-checkout-text">
+								{ translate( 'Secure checkout' ) }
+							</span>
+						) }
 					</div>
 					{ title && <Item className="masterbar__item-title">{ title }</Item> }
 					{ loadHelpCenterIcon && <DefaultMasterbarContact /> }

@@ -542,13 +542,11 @@ export default function CheckoutMainContent( {
 			);
 		}
 
-		const headingText = translate( 'Almost there—we’re currently finalizing your order.' );
-
 		return (
 			<WPCheckoutCompletedWrapper>
 				<WPCheckoutCompletedMainContent>
 					<PerformanceTrackerStop />
-					<Loading className="checkout__pending-content" title={ headingText } />
+					<Loading className="checkout__pending-content" />
 				</WPCheckoutCompletedMainContent>
 			</WPCheckoutCompletedWrapper>
 		);
