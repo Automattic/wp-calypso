@@ -3,7 +3,9 @@ import {
 	ExternalLink,
 	Modal,
 	TextControl,
+	__experimentalHStack as HStack,
 	__experimentalText as Text,
+	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -48,7 +50,7 @@ const SubmitModal = ( { podcatcher, onClose }: Props ) => {
 			onRequestClose={ onClose }
 			className="podcast__submit-modal"
 		>
-			<ol className="podcast__submit-steps">
+			<VStack as="ol" spacing={ 5 } className="podcast__submit-steps">
 				<li className="podcast__submit-step">
 					<Text as="h3" weight={ 600 } size="body" className="podcast__submit-step-title">
 						{ translate( 'Step 1: Copy your RSS feed URL' ) }
@@ -110,7 +112,7 @@ const SubmitModal = ( { podcatcher, onClose }: Props ) => {
 							serviceArgs
 						) }
 					</Text>
-					<form className="podcast__submit-step-form" onSubmit={ handleSave }>
+					<HStack as="form" alignment="stretch" spacing={ 2 } onSubmit={ handleSave }>
 						<div className="podcast__submit-step-field">
 							<TextControl
 								label={ translate( '%(service)s URL', serviceArgs ) as string }
@@ -126,9 +128,9 @@ const SubmitModal = ( { podcatcher, onClose }: Props ) => {
 						<Button variant="primary" __next40pxDefaultSize type="submit">
 							{ translate( 'Save' ) }
 						</Button>
-					</form>
+					</HStack>
 				</li>
-			</ol>
+			</VStack>
 		</Modal>
 	);
 };
