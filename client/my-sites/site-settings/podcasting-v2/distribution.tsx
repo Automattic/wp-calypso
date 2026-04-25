@@ -162,6 +162,7 @@ function PodcastingDistribution() {
 									<div className="podcasting-v2__directory-actions">
 										{ d.status === 'live' && d.listingUrl && (
 											<Button
+												variant="secondary"
 												size="compact"
 												href={ d.listingUrl }
 												target="_blank"
@@ -172,6 +173,7 @@ function PodcastingDistribution() {
 										) }
 										{ d.status === 'pending' && (
 											<Button
+												variant="secondary"
 												size="compact"
 												href={ d.submitUrl }
 												target="_blank"

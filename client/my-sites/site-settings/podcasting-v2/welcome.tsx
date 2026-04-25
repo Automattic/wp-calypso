@@ -272,7 +272,7 @@ function PodcastingWelcome( { onEnable, planTier, onChangePlanTier }: WelcomePro
 									<span className="podcasting-v2__plan-period">/mo, billed yearly</span>
 								</div>
 								<Button
-									variant={ isRecommended || isYourPlan ? 'primary' : undefined }
+									variant={ isRecommended || isYourPlan ? 'primary' : 'secondary' }
 									onClick={ onEnable }
 								>
 									{ isYourPlan ? 'Enable podcasting' : `Upgrade to ${ plan.name }` }
