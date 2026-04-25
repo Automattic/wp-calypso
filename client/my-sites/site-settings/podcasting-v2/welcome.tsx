@@ -1,6 +1,9 @@
+import page from '@automattic/calypso-router';
 import { Button, Card, Modal } from '@wordpress/components';
 import { Icon, audio, category, check, layout, megaphone } from '@wordpress/icons';
 import { useState } from 'react';
+import { useSelector } from 'calypso/state';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 export type PlanTier = 'free' | 'personal' | 'premium' | 'business';
 
@@ -137,18 +140,6 @@ const STEPS: { number: string; title: string; body: string }[] = [
 	},
 ];
 
-const STATS: { figure: string; label: string }[] = [
-	{
-		figure: '546M',
-		label: 'people listen to podcasts worldwide — an audience that grows every year.',
-	},
-	{
-		figure: '80%',
-		label:
-			'of listeners finish most or all of an episode — deeper attention than any other format on the web.',
-	},
-];
-
 // Mock episodes for the hero preview and example-feed modal
 const SAMPLE_SHOW = {
 	title: 'Creators Weekly',
@@ -187,12 +178,23 @@ const SAMPLE_EPISODES = [
 
 function PodcastingWelcome( { onEnable, planTier, onChangePlanTier }: WelcomeProps ) {
 	const [ exampleOpen, setExampleOpen ] = useState( false );
+	const siteSlug = useSelector( getSelectedSiteSlug );
 
 	const cards = getPlanCards( planTier );
 	const isFree = planTier === 'free';
 	const pricingTitle = isFree
 		? 'Unlock podcasting with a plan built for creators'
 		: 'Podcasting is included in your plan';
+
+	// Redirect through Calypso checkout, then back to /podcast so the user can
+	// click Enable on their now-eligible plan.
+	const goToCheckout = ( planSlug: 'personal' | 'premium' | 'business' ) => {
+		const returnTo = siteSlug ? `/podcast/${ siteSlug }` : '/podcast';
+		const path = siteSlug
+			? `/checkout/${ siteSlug }/${ planSlug }?redirect_to=${ encodeURIComponent( returnTo ) }`
+			: `/checkout/${ planSlug }`;
+		page.show( path );
+	};
 
 	return (
 		<div className="podcasting-v2__welcome">
@@ -205,10 +207,15 @@ function PodcastingWelcome( { onEnable, planTier, onChangePlanTier }: WelcomePro
 						every major app — without leaving your site.
 					</p>
 					<div className="podcasting-v2__welcome-actions">
-						<Button variant="primary" onClick={ onEnable }>
-							Enable podcasting
-						</Button>
-						<Button variant="link" onClick={ () => setExampleOpen( true ) }>
+						{ ! isFree && (
+							<Button variant="primary" onClick={ onEnable }>
+								Enable podcasting
+							</Button>
+						) }
+						<Button
+							variant={ isFree ? 'secondary' : 'link' }
+							onClick={ () => setExampleOpen( true ) }
+						>
 							See an example feed
 						</Button>
 					</div>
@@ -273,7 +280,7 @@ function PodcastingWelcome( { onEnable, planTier, onChangePlanTier }: WelcomePro
 								</div>
 								<Button
 									variant={ isRecommended || isYourPlan ? 'primary' : 'secondary' }
-									onClick={ onEnable }
+									onClick={ () => ( isYourPlan ? onEnable() : goToCheckout( plan.slug ) ) }
 								>
 									{ isYourPlan ? 'Enable podcasting' : `Upgrade to ${ plan.name }` }
 								</Button>
@@ -294,11 +301,13 @@ function PodcastingWelcome( { onEnable, planTier, onChangePlanTier }: WelcomePro
 			{ /* Benefits */ }
 			<div className="podcasting-v2__welcome-benefits">
 				{ BENEFITS.map( ( b ) => (
-					<Card key={ b.title } className="podcasting-v2__welcome-benefit">
-						<div className="podcasting-v2__welcome-benefit-icon">{ b.icon }</div>
+					<article key={ b.title } className="podcasting-v2__welcome-benefit">
+						<span className="podcasting-v2__welcome-benefit-icon" aria-hidden="true">
+							{ b.icon }
+						</span>
 						<h3 className="podcasting-v2__welcome-benefit-title">{ b.title }</h3>
 						<p className="podcasting-v2__welcome-benefit-body">{ b.body }</p>
-					</Card>
+					</article>
 				) ) }
 			</div>
 
@@ -316,19 +325,6 @@ function PodcastingWelcome( { onEnable, planTier, onChangePlanTier }: WelcomePro
 						</li>
 					) ) }
 				</ol>
-			</Card>
-
-			{ /* Did you know */ }
-			<Card className="podcasting-v2__welcome-stats">
-				<h3 className="podcasting-v2__welcome-stats-title">Did you know?</h3>
-				<div className="podcasting-v2__welcome-stats-grid">
-					{ STATS.map( ( s ) => (
-						<div key={ s.figure } className="podcasting-v2__welcome-stat">
-							<div className="podcasting-v2__welcome-stat-figure">{ s.figure }</div>
-							<div className="podcasting-v2__welcome-stat-label">{ s.label }</div>
-						</div>
-					) ) }
-				</div>
 			</Card>
 
 			{ /* Prototype plan toggle */ }

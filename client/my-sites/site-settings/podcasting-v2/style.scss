@@ -43,16 +43,12 @@
 	}
 }
 
-/* In-card section title (replaces SettingsSectionHeader to avoid empty gray bars) */
+/* In-card section title — VStack wrapping handles spacing to neighbors. */
 .podcasting-v2__card-title {
-	margin: 0 0 8px;
+	margin: 0;
 	font-size: 15px;
 	font-weight: 600;
 	line-height: 1.4;
-}
-
-.podcasting-v2__card-title + .form-setting-explanation {
-	margin-block-end: 20px;
 }
 
 /* Explanation inside a FormFieldset needs breathing room from label and field */
@@ -65,24 +61,6 @@
 	display: flex;
 	gap: 8px;
 	margin-block-start: 8px;
-}
-
-/* Top-of-page bar that either invites Create Episode or guides setup */
-.podcasting-v2__create-bar.card {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 16px;
-	padding: 16px 20px;
-}
-
-.podcasting-v2__create-bar-body {
-	min-width: 0;
-	flex: 1;
-
-	.form-setting-explanation {
-		margin: 2px 0 0;
-	}
 }
 
 /* Picker action row — Add category + Cancel */
@@ -293,7 +271,7 @@
 	align-items: center;
 	justify-content: space-between;
 	gap: 16px;
-	padding: 14px 0;
+	padding: 16px 0;
 	border-block-end: 1px solid var( --color-neutral-5 );
 
 	&:last-child {
@@ -422,7 +400,7 @@
 .podcasting-v2__welcome {
 	display: flex;
 	flex-direction: column;
-	gap: 16px;
+	gap: 32px;
 }
 
 .podcasting-v2__welcome-hero {
@@ -575,27 +553,29 @@
 }
 
 .podcasting-v2__welcome-benefit {
-	padding: 24px;
+	padding: 32px;
+	background: var( --studio-white );
+	border: 1px solid var( --color-neutral-5 );
+	border-radius: 8px;
 	display: flex;
 	flex-direction: column;
-	gap: 12px;
+	align-items: flex-start;
+	text-align: start;
 }
 
 .podcasting-v2__welcome-benefit-icon {
-	inline-size: 40px;
-	block-size: 40px;
-	border-radius: 8px;
-	background: var( --studio-blue-0 );
-	display: grid;
-	place-items: center;
+	display: inline-flex;
+	margin-block-end: 24px;
 
 	svg {
-		fill: var( --studio-blue-60 );
+		inline-size: 24px;
+		block-size: 24px;
+		fill: var( --color-text );
 	}
 }
 
 .podcasting-v2__welcome-benefit-title {
-	margin: 0;
+	margin: 0 0 8px;
 	font-size: 16px;
 	font-weight: 600;
 	line-height: 1.3;
@@ -661,7 +641,7 @@
 	inline-size: 32px;
 	block-size: 32px;
 	border-radius: 50%;
-	background: var( --color-text );
+	background: var( --studio-gray-90 );
 	color: var( --studio-white );
 	display: grid;
 	place-items: center;
@@ -773,7 +753,7 @@
 }
 
 .podcasting-v2__plan-blurb {
-	margin: -8px 0 0;
+	margin: 0;
 	font-size: 13px;
 	line-height: 1.5;
 	color: var( --color-text-subtle );
@@ -786,13 +766,13 @@
 }
 
 .podcasting-v2__plan-currency {
-	font-size: 24px;
+	font-size: 20px;
 	font-weight: 400;
 	color: var( --color-text );
 }
 
 .podcasting-v2__plan-amount {
-	font-size: 56px;
+	font-size: 44px;
 	font-weight: 400;
 	line-height: 1;
 	letter-spacing: -0.02em;
@@ -826,48 +806,6 @@
 			fill: var( --studio-green-50 );
 		}
 	}
-}
-
-/* Stats */
-.podcasting-v2__welcome-stats {
-	padding: 32px;
-}
-
-.podcasting-v2__welcome-stats-title {
-	margin: 0 0 20px;
-	font-size: 18px;
-	font-weight: 600;
-}
-
-.podcasting-v2__welcome-stats-grid {
-	display: grid;
-	grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
-	gap: 40px;
-
-	@media ( max-width: 720px ) {
-		grid-template-columns: 1fr;
-		gap: 24px;
-	}
-}
-
-.podcasting-v2__welcome-stat {
-	display: grid;
-	grid-template-columns: auto 1fr;
-	gap: 24px;
-	align-items: center;
-}
-
-.podcasting-v2__welcome-stat-figure {
-	font-size: 44px;
-	font-weight: 400;
-	line-height: 1;
-	letter-spacing: -0.02em;
-}
-
-.podcasting-v2__welcome-stat-label {
-	font-size: 14px;
-	line-height: 1.5;
-	color: var( --color-text-subtle );
 }
 
 /* Prototype plan-tier toggle */

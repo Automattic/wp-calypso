@@ -18,6 +18,7 @@ import PodcastingWelcome, {
 } from 'calypso/my-sites/site-settings/podcasting-v2/welcome';
 import { useSelector } from 'calypso/state';
 import getPodcastingCategoryId from 'calypso/state/selectors/get-podcasting-category-id';
+import { getTerms } from 'calypso/state/terms/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import PodcastEpisodes from './components/episodes';
 
@@ -43,10 +44,21 @@ const PodcastMain = ( { section, path }: PodcastMainProps ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
-	const categoryId = useSelector( ( state ) =>
-		siteId ? getPodcastingCategoryId( state, siteId ) : null
-	);
-	const isSetUp = !! categoryId;
+	// Match the Episodes-tab resolution: prefer the legacy setting, then fall
+	// back to a category named "Podcast" so sites with episodes already
+	// flowing through that term land on Episodes by default.
+	const isSetUp = useSelector( ( state ) => {
+		if ( ! siteId ) {
+			return false;
+		}
+		if ( getPodcastingCategoryId( state, siteId ) ) {
+			return true;
+		}
+		const terms = getTerms( state, siteId, 'category' );
+		return Array.isArray( terms )
+			? terms.some( ( term ) => term?.name?.toLowerCase?.() === 'podcast' )
+			: false;
+	} );
 	const pathSuffix = siteSlug ? '/' + siteSlug : '';
 
 	// Prototype: feature is off by default so the welcome is the first thing

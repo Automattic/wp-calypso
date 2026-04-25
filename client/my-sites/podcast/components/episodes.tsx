@@ -13,6 +13,7 @@ import { DataViewsEmptyStateLayout } from 'calypso/dashboard/components/dataview
 import { decodeEntities } from 'calypso/lib/formatting';
 import { useSelector } from 'calypso/state';
 import getPodcastingCategoryId from 'calypso/state/selectors/get-podcasting-category-id';
+import { getTerms } from 'calypso/state/terms/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import useEpisodesQuery from '../hooks/use-episodes-query';
 
@@ -52,15 +53,28 @@ const PodcastingEpisodes = () => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
-	const categoryId = useSelector( ( state ) =>
-		siteId ? getPodcastingCategoryId( state, siteId ) : null
-	);
-	const numericCategoryId = categoryId ? Number( categoryId ) : 0;
+	// Prefer the podcasting_category_id site setting; fall back to a category
+	// named "Podcast" so existing sites with episodes (but no legacy setting)
+	// still populate the list.
+	const resolvedCategoryId = useSelector( ( state ) => {
+		if ( ! siteId ) {
+			return 0;
+		}
+		const settingId = getPodcastingCategoryId( state, siteId );
+		if ( settingId ) {
+			return Number( settingId );
+		}
+		const terms = getTerms( state, siteId, 'category' );
+		const match = Array.isArray( terms )
+			? terms.find( ( term ) => term?.name?.toLowerCase?.() === 'podcast' )
+			: null;
+		return match ? Number( match.ID ) : 0;
+	} );
 
 	const [ view, setView ] = useState< View >( defaultView );
 	const { data, isLoading } = useEpisodesQuery( {
 		siteId,
-		categoryId: numericCategoryId,
+		categoryId: resolvedCategoryId,
 	} );
 
 	const episodes = useMemo< Episode[] >( () => {
@@ -224,7 +238,7 @@ const PodcastingEpisodes = () => {
 		</header>
 	);
 
-	if ( ! numericCategoryId ) {
+	if ( ! resolvedCategoryId ) {
 		return (
 			<>
 				{ sectionHeader }

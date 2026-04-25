@@ -7,6 +7,7 @@ import {
 	Notice,
 	RadioControl,
 	ToggleControl,
+	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
@@ -270,84 +271,88 @@ export function PodcastingV2Body( {
 			) }
 
 			{ missingFields.length === 0 ? (
-				<Card className="site-settings__card podcasting-v2__card podcasting-v2__create-bar">
+				<Card className="site-settings__card podcasting-v2__card">
 					<CardBody>
-						<div className="podcasting-v2__create-bar-body">
-							<strong>{ translate( 'Ready to record?' ) }</strong>
-							<Text as="p" variant="muted">
-								{ translate(
-									'To create an episode, add an audio block to a post and assign it to your podcast category.'
-								) }
-							</Text>
-						</div>
-						<Button variant="primary">{ translate( 'Create episode' ) }</Button>
+						<HStack alignment="center" justify="space-between" spacing={ 4 }>
+							<VStack spacing={ 1 }>
+								<Text weight={ 600 }>{ translate( 'Ready to record?' ) }</Text>
+								<Text variant="muted">
+									{ translate(
+										'To create an episode, add an audio block to a post and assign it to your podcast category.'
+									) }
+								</Text>
+							</VStack>
+							<Button variant="primary">{ translate( 'Create episode' ) }</Button>
+						</HStack>
 					</CardBody>
 				</Card>
 			) : (
-				<Card className="site-settings__card podcasting-v2__card podcasting-v2__create-bar">
+				<Card className="site-settings__card podcasting-v2__card">
 					<CardBody>
-						<div className="podcasting-v2__create-bar-body">
-							<strong>{ translate( 'Finish setting up your podcast' ) }</strong>
-							<Text as="p" variant="muted">
+						<VStack spacing={ 1 }>
+							<Text weight={ 600 }>{ translate( 'Finish setting up your podcast' ) }</Text>
+							<Text variant="muted">
 								{ translate(
 									'Add %(fields)s below. Once your show is ready, you can create your first episode from here.',
 									{ args: { fields: missingFields.join( ', ' ) } }
 								) }
 							</Text>
-						</div>
+						</VStack>
 					</CardBody>
 				</Card>
 			) }
 
 			<Card className="site-settings__card podcasting-v2__card">
 				<CardBody>
-					<Text as="h3" className="podcasting-v2__card-title">
-						{ translate( 'Podcast category' ) }
-					</Text>
-					{ hasPickedCategory && ! categoryPickerOpen ? (
-						<Text as="p" variant="muted">
-							{ translate(
-								'Posts published in the %(category)s category are included in your feed.',
-								{ args: { category } }
-							) }{ ' ' }
-							<button
-								type="button"
-								className="podcasting-v2__inline-link"
-								onClick={ () => setCategoryPickerOpen( true ) }
-							>
-								{ translate( 'Change category' ) }
-							</button>
-							.
+					<VStack spacing={ 3 }>
+						<Text as="h3" className="podcasting-v2__card-title">
+							{ translate( 'Podcast category' ) }
 						</Text>
-					) : (
-						<Text as="p" variant="muted">
-							{ translate(
-								'Choose the category that contains your podcast episodes. New posts in this category will appear in your feed.'
-							) }
-						</Text>
-					) }
-
-					{ ( ! hasPickedCategory || categoryPickerOpen ) && (
-						<div className="podcasting-v2__category-picker">
-							<RadioControl
-								selected={ category }
-								options={ SITE_CATEGORIES.map( ( value ) => ( { label: value, value } ) ) }
-								onChange={ ( value ) => {
-									setCategory( value );
-									setHasPickedCategory( true );
-									setCategoryPickerOpen( false );
-								} }
-							/>
-							<div className="podcasting-v2__category-picker-actions">
-								<Button variant="secondary">{ translate( 'Add category' ) }</Button>
-								{ hasPickedCategory && (
-									<Button variant="tertiary" onClick={ () => setCategoryPickerOpen( false ) }>
-										{ translate( 'Cancel' ) }
-									</Button>
+						{ hasPickedCategory && ! categoryPickerOpen ? (
+							<Text variant="muted">
+								{ translate(
+									'Posts published in the %(category)s category are included in your feed.',
+									{ args: { category } }
+								) }{ ' ' }
+								<button
+									type="button"
+									className="podcasting-v2__inline-link"
+									onClick={ () => setCategoryPickerOpen( true ) }
+								>
+									{ translate( 'Change category' ) }
+								</button>
+								.
+							</Text>
+						) : (
+							<Text variant="muted">
+								{ translate(
+									'Choose the category that contains your podcast episodes. New posts in this category will appear in your feed.'
 								) }
+							</Text>
+						) }
+
+						{ ( ! hasPickedCategory || categoryPickerOpen ) && (
+							<div className="podcasting-v2__category-picker">
+								<RadioControl
+									selected={ category }
+									options={ SITE_CATEGORIES.map( ( value ) => ( { label: value, value } ) ) }
+									onChange={ ( value ) => {
+										setCategory( value );
+										setHasPickedCategory( true );
+										setCategoryPickerOpen( false );
+									} }
+								/>
+								<div className="podcasting-v2__category-picker-actions">
+									<Button variant="secondary">{ translate( 'Add category' ) }</Button>
+									{ hasPickedCategory && (
+										<Button variant="tertiary" onClick={ () => setCategoryPickerOpen( false ) }>
+											{ translate( 'Cancel' ) }
+										</Button>
+									) }
+								</div>
 							</div>
-						</div>
-					) }
+						) }
+					</VStack>
 				</CardBody>
 			</Card>
 
