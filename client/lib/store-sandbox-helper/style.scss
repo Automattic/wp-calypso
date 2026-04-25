@@ -1,5 +1,4 @@
 .store-sandbox-helper__menu-item.is-enabled {
-	color: var(--studio-green);
 	color: var(--dashboard__foreground-color-success);
 }
 
@@ -12,7 +11,7 @@
 	position: absolute;
 	bottom: 100%;
 	padding: 12px;
-	background: #fff;
-	box-shadow: 0 0 0 1px #dcdcde;
+	background: var(--color-surface);
+	box-shadow: 0 0 0 1px var(--color-border-subtle);
 	width: 230px;
 }

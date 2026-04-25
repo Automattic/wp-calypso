@@ -35,7 +35,10 @@ import {
 } from '../../payment-methods/netbanking';
 import { createPayPalMethod, createPayPalStore } from '../../payment-methods/paypal';
 import { createPayPal } from '../../payment-methods/paypal-js';
-import { createPixPaymentMethod } from '../../payment-methods/pix';
+import {
+	createPixPaymentMethod,
+	createPixAutomaticoPaymentMethod,
+} from '../../payment-methods/pix';
 import { createWeChatMethod, createWeChatPaymentMethodStore } from '../../payment-methods/wechat';
 import useCreateExistingCards from './use-create-existing-cards';
 import useCreateExistingPayPalPPCP from './use-create-existing-paypal-ppcp';
@@ -136,15 +139,22 @@ export function useCreateCreditCard( {
 }
 
 function useCreatePix(): PaymentMethod | null {
-	const isPixEnabled = isEnabled( 'checkout/ebanx-pix' );
 	return useMemo(
 		() =>
-			isPixEnabled
-				? createPixPaymentMethod( {
-						submitButtonContent: <CheckoutSubmitButtonContent />,
-				  } )
-				: null,
-		[ isPixEnabled ]
+			createPixPaymentMethod( {
+				submitButtonContent: <CheckoutSubmitButtonContent />,
+			} ),
+		[]
+	);
+}
+
+function useCreatePixAutomatico(): PaymentMethod | null {
+	return useMemo(
+		() =>
+			createPixAutomaticoPaymentMethod( {
+				submitButtonContent: <CheckoutSubmitButtonContent />,
+			} ),
+		[]
 	);
 }
 
@@ -456,7 +466,7 @@ export default function useCreatePaymentMethods( {
 	} );
 
 	const pixMethod = useCreatePix();
-
+	const pixAutomaticoMethod = useCreatePixAutomatico();
 	const alipayMethod = useCreateAlipay( {
 		isStripeLoading,
 		stripeLoadingError,
@@ -575,6 +585,7 @@ export default function useCreatePaymentMethods( {
 		sofortMethod,
 		netbankingMethod,
 		pixMethod,
+		pixAutomaticoMethod,
 		alipayMethod,
 		p24Method,
 		epsMethod,
@@ -600,6 +611,7 @@ export default function useCreatePaymentMethods( {
 			sofortMethod,
 			netbankingMethod,
 			pixMethod,
+			pixAutomaticoMethod,
 			alipayMethod,
 			p24Method,
 			epsMethod,

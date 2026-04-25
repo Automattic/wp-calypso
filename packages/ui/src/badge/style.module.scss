@@ -1,6 +1,7 @@
 @use '@wordpress/base-styles/colors';
 @use '@wordpress/base-styles/mixins';
 @use '@wordpress/base-styles/variables';
+@use '../utils/mixins' as ui-mixins;
 @use '../utils/_theme-variables' as theme;
 
 $badge-colors: (
@@ -15,6 +16,12 @@ $badge-colors: (
 
 	background-color: color-mix(in srgb, colors.$white 90%, var(--base-color));
 	color: color-mix(in srgb, colors.$black 50%, var(--base-color));
+
+	@include ui-mixins.when-dark-theme {
+		background-color: color-mix(in srgb, theme.$components-color-background 90%, var(--base-color));
+		color: color-mix(in srgb, theme.$components-color-foreground 50%, var(--base-color));
+	}
+
 	padding: 0 variables.$grid-unit-10;
 	min-height: variables.$grid-unit-30;
 	max-width: 100%;
@@ -29,6 +36,13 @@ $badge-colors: (
 	&:where(.is-default) {
 		background-color: theme.$components-color-gray-100;
 		color: theme.$components-color-gray-800;
+
+		// The default bg resolves to the dark card surface color, so add an
+		// inset outline to keep the badge visible. `box-shadow` is used
+		// instead of `border` to avoid changing the badge's outer dimensions.
+		@include ui-mixins.when-dark-theme {
+			box-shadow: inset 0 0 0 1px theme.$components-color-gray-300;
+		}
 	}
 
 	&.has-icon {

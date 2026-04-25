@@ -55,7 +55,7 @@
 		.freshly-pressed__button-label {
 			display: none;
 
-			@include break-medium {
+			@include break-large {
 				display: inline;
 			}
 		}
@@ -69,6 +69,15 @@
 				fill: var(--color-link);
 				opacity: 1;
 			}
+		}
+	}
+
+	// When like/comment buttons have no visible label text, collapse the gap
+	.like-button .like-button__label,
+	.comment-button .comment-button__label {
+		&:has(.like-button__label-count:empty),
+		&:has(.comment-button__label-count:empty) {
+			display: none;
 		}
 	}
 

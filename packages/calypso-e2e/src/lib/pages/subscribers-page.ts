@@ -29,11 +29,27 @@ export class SubscribersPage {
 
 	/**
 	 * Validate that supplied `text` matches at least one subscriber.
+	 * Retries with page reloads because subscription confirmation
+	 * can take longer than the initial page load.
 	 *
 	 * @param {string} identifier Identifier to locate the subscriber by.
 	 */
 	async validateSubscriber( identifier: string ) {
-		await this.anchor.getByRole( 'cell' ).filter( { hasText: identifier } ).waitFor();
+		const locator = this.anchor.getByRole( 'cell' ).filter( { hasText: identifier } );
+		const maxRetries = 3;
+
+		for ( let i = 0; i < maxRetries; i++ ) {
+			try {
+				await locator.waitFor( { timeout: 10 * 1000 } );
+				return;
+			} catch {
+				if ( i === maxRetries - 1 ) {
+					throw new Error( `Subscriber ${ identifier } not found after ${ maxRetries } attempts.` );
+				}
+				// We need to reload to refresh API query.
+				await this.page.reload();
+			}
+		}
 	}
 
 	/**

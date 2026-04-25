@@ -22,6 +22,7 @@ import { useOmnibarEvent } from '../interim-omnibar/omnibar-events';
 import OmnibarHelpCenter from '../interim-omnibar/omnibar-help-center';
 import { NavigationBlockerRegistry } from '../navigation-blocker';
 import Notifications from '../notifications';
+import { useInitializeOmnibarSite } from '../omnibar/site';
 import ResponsiveSidebar from '../responsive-sidebar';
 import Snackbars from '../snackbars';
 import './style.scss';
@@ -45,6 +46,8 @@ function Root() {
 	const queryCache = queryClient.getQueryCache();
 	const [ isSidebarOpen, setIsSidebarOpen ] = useState( false );
 	const closeSidebar = useCallback( () => setIsSidebarOpen( false ), [ setIsSidebarOpen ] );
+
+	useInitializeOmnibarSite();
 	useOmnibarEvent( 'mobileMenu', () => setIsSidebarOpen( ( v ) => ! v ) );
 	useOmnibarEvent( 'linkClick', ( { href, event } ) => {
 		const url = new URL( href, window.location.origin );

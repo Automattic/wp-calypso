@@ -17,11 +17,17 @@ export default function useZoomAction( registerMessageActions: RegisterMessageAc
 					return [];
 				}
 
-				// Only show zoom on `show_component` tool messages.
+				// Only show zoom on `show_component` tool messages, and let
+				// individual component types opt out via `data.hideZoomAction`
+				// (e.g. title-picker doesn't need canvas zoom — it edits the
+				// post title, not block content).
 				const firstPartText = message.content?.[ 0 ]?.text ?? '';
 				try {
 					const parsed = JSON.parse( firstPartText );
 					if ( parsed.tool_id !== 'big_sky__show_component' ) {
+						return [];
+					}
+					if ( parsed.data?.hideZoomAction ) {
 						return [];
 					}
 				} catch {

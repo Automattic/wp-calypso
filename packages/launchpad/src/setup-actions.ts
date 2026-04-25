@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { isMobile } from '@automattic/viewport';
@@ -100,9 +99,7 @@ export const setUpActionsForTasks = ( {
 
 				case 'customize_welcome_message':
 					logMissingCalypsoPath = true;
-					task.calypso_path = config.isEnabled( 'settings/newsletter-settings-page' )
-						? `/settings/newsletter/${ siteSlug }#messages`
-						: `/settings/reading/${ siteSlug }#newsletter-settings`;
+					task.calypso_path = `https://${ siteSlug }/wp-admin/admin.php?page=jetpack-newsletter`;
 					break;
 
 				case 'manage_subscribers':

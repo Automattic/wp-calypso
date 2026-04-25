@@ -16,6 +16,8 @@ const defaultValues: Required< UserPreferences > = {
 		useSitesAsLandingPage: false,
 		updatedAt: 0,
 	},
+	'achievements-visibility': 'private',
+	'achievements-global-notifications': 'enabled',
 };
 
 // Returns all user preferences, without applying any defaults.

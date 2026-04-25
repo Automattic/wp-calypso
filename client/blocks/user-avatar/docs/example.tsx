@@ -10,8 +10,6 @@ const UserAvatarExample = (): JSX.Element => {
 	return (
 		<div className="design-assets__group">
 			<UserAvatar user={ user } />
-			<h4>Compact</h4>
-			<UserAvatar user={ user } isCompact />
 		</div>
 	);
 };

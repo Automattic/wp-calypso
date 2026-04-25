@@ -25,6 +25,7 @@ export const createList = ( context, next ) => {
 
 export const listListing = ( context, next ) => {
 	const basePath = '/reader/list/:owner/:slug';
+	const view = context.params.view || 'posts';
 	const fullAnalyticsPageTitle =
 		analyticsPageTitle + ' > List > ' + context.params.user + ' - ' + context.params.list;
 	const mcKey = 'list';
@@ -44,11 +45,12 @@ export const listListing = ( context, next ) => {
 
 	context.primary = (
 		<AsyncLoad
-			require="calypso/reader/list-stream"
+			require="calypso/reader/list"
 			key={ 'tag-' + context.params.user + '-' + context.params.list }
 			streamKey={ streamKey }
 			owner={ encodeURIComponent( context.params.user ) }
 			slug={ encodeURIComponent( context.params.list ) }
+			view={ view }
 			trackScrollPage={ trackScrollPage.bind(
 				null,
 				basePath,

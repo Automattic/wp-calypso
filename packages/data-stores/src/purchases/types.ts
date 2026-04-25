@@ -194,6 +194,7 @@ export interface Purchase {
 	autoRenewCouponDiscountPercentage: number | null;
 
 	isJetpackPlanOrProduct: boolean;
+	isAttachedToHoldingSite: boolean;
 }
 
 export interface PurchasePriceTier {
