@@ -4,13 +4,6 @@
 
 body.is-section-podcast {
 	@include admin-ui-page-layout;
-
-	.podcast .admin-ui-page__header {
-		align-self: stretch;
-		box-sizing: border-box;
-		width: 100%;
-		padding-inline: 24px;
-	}
 }
 
 .podcast__scroll-area {
