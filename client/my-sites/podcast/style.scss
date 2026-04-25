@@ -26,10 +26,16 @@ body.is-section-podcast {
 }
 
 .podcast__tabs {
+	display: flex;
+	gap: 16px;
+
 	[role='tab'] {
-		padding-inline: 16px;
+		padding: 12px 16px;
 		font-size: 14px;
 		font-weight: 400;
+		background: transparent;
+		border: 0;
+		cursor: pointer;
 
 		&[aria-selected='true'] {
 			font-weight: 500;
