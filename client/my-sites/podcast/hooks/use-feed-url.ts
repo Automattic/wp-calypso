@@ -1,7 +1,7 @@
 import { useSelector } from 'calypso/state';
 import getPodcastingCategoryId from 'calypso/state/selectors/get-podcasting-category-id';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { getTerm } from 'calypso/state/terms/selectors';
+import { getTerm, getTerms } from 'calypso/state/terms/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 export const usePodcastingFeedUrl = (): string => {
@@ -11,10 +11,15 @@ export const usePodcastingFeedUrl = (): string => {
 			return '';
 		}
 		const categoryId = getPodcastingCategoryId( state, siteId );
-		if ( ! categoryId ) {
+		const terms = getTerms( state, siteId, 'category' );
+		const fallbackCategoryId = Array.isArray( terms )
+			? terms.find( ( term ) => term?.name?.toLowerCase?.() === 'podcast' )?.ID
+			: null;
+		const resolvedCategoryId = Number( categoryId || fallbackCategoryId || 0 );
+		if ( ! resolvedCategoryId ) {
 			return '';
 		}
-		const category = getTerm( state, siteId, 'category', Number( categoryId ) ) as {
+		const category = getTerm( state, siteId, 'category', resolvedCategoryId ) as {
 			feed_url?: string;
 		} | null;
 		let url: string = category?.feed_url ?? '';

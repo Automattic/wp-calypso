@@ -11,6 +11,8 @@ import {
 import { useTranslate } from 'i18n-calypso';
 import { type ComponentType, useMemo, useState } from 'react';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
+import QuerySiteSettings from 'calypso/components/data/query-site-settings';
+import QueryTerms from 'calypso/components/data/query-terms';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import Main from 'calypso/components/main';
@@ -22,6 +24,10 @@ import {
 	LogoSpotify,
 	LogoYouTube,
 } from 'calypso/my-sites/podcast/components/logos';
+import { usePodcastingFeedUrl } from 'calypso/my-sites/podcast/hooks/use-feed-url';
+import { useSelector } from 'calypso/state';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import usePodcastingAccessGate from './use-podcasting-access-gate';
 
 type DirectoryStatus = 'live' | 'pending' | 'not-submitted';
 
@@ -83,6 +89,9 @@ const DIRECTORIES: Directory[] = [
 
 function PodcastingDistribution() {
 	const translate = useTranslate();
+	const siteId = useSelector( getSelectedSiteId );
+	const accessGate = usePodcastingAccessGate();
+	const feedUrl = usePodcastingFeedUrl();
 	const [ feedHealthy, setFeedHealthy ] = useState( true );
 
 	const summary = useMemo( () => {
@@ -104,6 +113,8 @@ function PodcastingDistribution() {
 
 	return (
 		<Main className="podcasting-v2">
+			{ siteId && <QuerySiteSettings siteId={ siteId } /> }
+			{ siteId && <QueryTerms siteId={ siteId } taxonomy="category" /> }
 			<div className="podcasting-v2__page-head">
 				<div>
 					<h2 className="podcasting-v2__page-title">{ translate( 'Distribution' ) }</h2>
@@ -115,121 +126,137 @@ function PodcastingDistribution() {
 				</div>
 			</div>
 
-			{ ! feedHealthy && (
-				<Notice status="warning" isDismissible={ false }>
-					{ translate(
-						'Directories will reject your feed until you add cover art and a contact email. Update those in Settings before submitting.'
+			{ accessGate ? (
+				accessGate
+			) : (
+				<>
+					{ ! feedHealthy && (
+						<Notice status="warning" isDismissible={ false }>
+							{ translate(
+								'Directories will reject your feed until you add cover art and a contact email. Update those in Settings before submitting.'
+							) }
+						</Notice>
 					) }
-				</Notice>
-			) }
 
-			<Card className="site-settings__card podcasting-v2__card">
-				<CardBody>
-					<VStack spacing={ 5 }>
-						<VStack spacing={ 1 }>
-							<h3 className="podcasting-v2__card-title">{ translate( 'Podcast directories' ) }</h3>
-							<FormSettingExplanation>
-								{ translate( '%(live)d live, %(pending)d pending, %(missing)d not submitted.', {
-									args: {
-										live: summary.live,
-										pending: summary.pending,
-										missing: summary.missing,
-									},
-								} ) }
-							</FormSettingExplanation>
-						</VStack>
-						<FormFieldset>
-							<FormLabel>{ translate( 'RSS feed' ) }</FormLabel>
-							<ClipboardButtonInput value="https://lookmaitsapodcast.wordpress.com/category/podcast/feed/" />
-							<FormSettingExplanation>
-								{ translate(
-									'Most directories ask for this URL. Copy it, then open a directory below to submit.'
-								) }
-							</FormSettingExplanation>
-						</FormFieldset>
-					</VStack>
-					<ul className="podcasting-v2__directory-list">
-						{ DIRECTORIES.map( ( d ) => {
-							const { Logo } = d;
-							const logoClass = `podcasting-v2__directory-logo is-${ d.status }${
-								d.id === 'pocketcasts' ? ' is-circle' : ''
-							}`;
-							return (
-								<li key={ d.id } className="podcasting-v2__directory-row">
-									<div className="podcasting-v2__directory-main">
-										<span className={ logoClass } aria-hidden="true">
-											<Logo />
-										</span>
-										<div className="podcasting-v2__directory-text">
-											<span className="podcasting-v2__directory-name">{ d.name }</span>
-											<span className="podcasting-v2__directory-meta">
-												<span className={ `podcasting-v2__directory-status is-${ d.status }` }>
-													{ statusLabel( d.status ) }
+					<Card className="site-settings__card podcasting-v2__card">
+						<CardBody>
+							<VStack spacing={ 5 }>
+								<VStack spacing={ 1 }>
+									<h3 className="podcasting-v2__card-title">
+										{ translate( 'Podcast directories' ) }
+									</h3>
+									<FormSettingExplanation>
+										{ translate( '%(live)d live, %(pending)d pending, %(missing)d not submitted.', {
+											args: {
+												live: summary.live,
+												pending: summary.pending,
+												missing: summary.missing,
+											},
+										} ) }
+									</FormSettingExplanation>
+								</VStack>
+								<FormFieldset>
+									<FormLabel>{ translate( 'RSS feed' ) }</FormLabel>
+									{ feedUrl ? (
+										<ClipboardButtonInput value={ feedUrl } />
+									) : (
+										<FormSettingExplanation>
+											{ translate(
+												'Set your podcast category in Settings to generate the feed URL you can submit to directories.'
+											) }
+										</FormSettingExplanation>
+									) }
+									<FormSettingExplanation>
+										{ translate(
+											'Most directories ask for this URL. Copy it, then open a directory below to submit.'
+										) }
+									</FormSettingExplanation>
+								</FormFieldset>
+							</VStack>
+							<ul className="podcasting-v2__directory-list">
+								{ DIRECTORIES.map( ( d ) => {
+									const { Logo } = d;
+									const logoClass = `podcasting-v2__directory-logo is-${ d.status }${
+										d.id === 'pocketcasts' ? ' is-circle' : ''
+									}`;
+									return (
+										<li key={ d.id } className="podcasting-v2__directory-row">
+											<div className="podcasting-v2__directory-main">
+												<span className={ logoClass } aria-hidden="true">
+													<Logo />
 												</span>
-											</span>
-										</div>
-									</div>
-									<div className="podcasting-v2__directory-actions">
-										{ d.status === 'live' && d.listingUrl && (
-											<Button
-												variant="secondary"
-												size="compact"
-												href={ d.listingUrl }
-												target="_blank"
-												rel="noopener noreferrer"
-											>
-												{ translate( 'View listing' ) }
-											</Button>
-										) }
-										{ d.status === 'pending' && (
-											<Button
-												variant="secondary"
-												size="compact"
-												href={ d.submitUrl }
-												target="_blank"
-												rel="noopener noreferrer"
-											>
-												{ translate( 'Check status' ) }
-											</Button>
-										) }
-										{ d.status === 'not-submitted' && (
-											<Button
-												variant="primary"
-												size="compact"
-												href={ d.submitUrl }
-												target="_blank"
-												rel="noopener noreferrer"
-											>
-												{ translate( 'Submit' ) }
-											</Button>
-										) }
-									</div>
-								</li>
-							);
-						} ) }
-					</ul>
-				</CardBody>
-			</Card>
+												<div className="podcasting-v2__directory-text">
+													<span className="podcasting-v2__directory-name">{ d.name }</span>
+													<span className="podcasting-v2__directory-meta">
+														<span className={ `podcasting-v2__directory-status is-${ d.status }` }>
+															{ statusLabel( d.status ) }
+														</span>
+													</span>
+												</div>
+											</div>
+											<div className="podcasting-v2__directory-actions">
+												{ d.status === 'live' && d.listingUrl && (
+													<Button
+														variant="secondary"
+														size="compact"
+														href={ d.listingUrl }
+														target="_blank"
+														rel="noopener noreferrer"
+													>
+														{ translate( 'View listing' ) }
+													</Button>
+												) }
+												{ d.status === 'pending' && (
+													<Button
+														variant="secondary"
+														size="compact"
+														href={ d.submitUrl }
+														target="_blank"
+														rel="noopener noreferrer"
+													>
+														{ translate( 'Check status' ) }
+													</Button>
+												) }
+												{ d.status === 'not-submitted' && (
+													<Button
+														variant="primary"
+														size="compact"
+														href={ d.submitUrl }
+														target="_blank"
+														rel="noopener noreferrer"
+													>
+														{ translate( 'Submit' ) }
+													</Button>
+												) }
+											</div>
+										</li>
+									);
+								} ) }
+							</ul>
+						</CardBody>
+					</Card>
 
-			<FormSettingExplanation>
-				{ translate( 'Most directories take a few days to appear after you submit.' ) }
-			</FormSettingExplanation>
+					<FormSettingExplanation>
+						{ translate( 'Most directories take a few days to appear after you submit.' ) }
+					</FormSettingExplanation>
 
-			<Notice status="info" isDismissible={ false }>
-				{ translate( 'Prototype only. Statuses are illustrative.' ) }
-			</Notice>
+					<Notice status="info" isDismissible={ false }>
+						{ translate( 'Prototype only. Statuses are illustrative.' ) }
+					</Notice>
 
-			<p className="podcasting-v2__prototype-toggle">
-				<button
-					type="button"
-					className="podcasting-v2__inline-link"
-					onClick={ () => setFeedHealthy( ( v ) => ! v ) }
-				>
-					{ feedHealthy
-						? translate( 'Prototype: simulate unhealthy feed' )
-						: translate( 'Prototype: simulate healthy feed' ) }
-				</button>
-			</p>
+					<p className="podcasting-v2__prototype-toggle">
+						<button
+							type="button"
+							className="podcasting-v2__inline-link"
+							onClick={ () => setFeedHealthy( ( v ) => ! v ) }
+						>
+							{ feedHealthy
+								? translate( 'Prototype: simulate unhealthy feed' )
+								: translate( 'Prototype: simulate healthy feed' ) }
+						</button>
+					</p>
+				</>
+			) }
 		</Main>
 	);
 }

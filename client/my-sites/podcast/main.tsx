@@ -13,6 +13,7 @@ import JetpackTitle from 'calypso/components/jetpack-title';
 import Main from 'calypso/components/main';
 import { PodcastingV2Body } from 'calypso/my-sites/site-settings/podcasting-v2';
 import PodcastingDistribution from 'calypso/my-sites/site-settings/podcasting-v2/distribution';
+import usePodcastingAccessGate from 'calypso/my-sites/site-settings/podcasting-v2/use-podcasting-access-gate';
 import PodcastingWelcome, {
 	type PlanTier,
 } from 'calypso/my-sites/site-settings/podcasting-v2/welcome';
@@ -44,6 +45,7 @@ const PodcastMain = ( { section, path }: PodcastMainProps ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
+	const accessGate = usePodcastingAccessGate();
 	// Match the Episodes-tab resolution: prefer the legacy setting, then fall
 	// back to a category named "Podcast" so sites with episodes already
 	// flowing through that term land on Episodes by default.
@@ -65,6 +67,8 @@ const PodcastMain = ( { section, path }: PodcastMainProps ) => {
 	// people see. Flipping this on reveals the tabbed experience.
 	const [ podcastingOn, setPodcastingOn ] = useState( false );
 	const [ planTier, setPlanTier ] = useState< PlanTier >( 'free' );
+	const hasSectionInRoute = isValidSection( section );
+	const showTabs = podcastingOn || hasSectionInRoute;
 
 	// If the URL doesn't pin a tab, first-time users (no podcast category set)
 	// land on Settings so they can finish setup before seeing the empty Episodes list.
@@ -98,6 +102,78 @@ const PodcastMain = ( { section, path }: PodcastMainProps ) => {
 		}
 	};
 
+	let pageContent;
+	if ( accessGate ) {
+		pageContent = accessGate;
+	} else if ( showTabs ) {
+		pageContent = (
+			<Tabs.Root
+				value={ currentSection }
+				onValueChange={ ( value ) => {
+					if ( typeof value === 'string' ) {
+						handleSelect( value );
+					}
+				} }
+			>
+				<div className="podcast__tabs-bar">
+					<Tabs.List className="podcast__tabs">
+						{ tabs.map( ( tab ) => (
+							<Tabs.Tab key={ tab.name } value={ tab.name }>
+								{ tab.title }
+							</Tabs.Tab>
+						) ) }
+					</Tabs.List>
+				</div>
+				<Tabs.Panel value="episodes">
+					<div className="podcast__tab-content">
+						<PodcastEpisodes />
+					</div>
+				</Tabs.Panel>
+				<Tabs.Panel value="distribution">
+					<div className="podcast__tab-content">
+						<PodcastingDistribution />
+					</div>
+				</Tabs.Panel>
+				<Tabs.Panel value="settings">
+					<div className="podcast__tab-content podcasting-v2">
+						<PodcastingV2Body
+							embedded
+							podcastingOn={ showTabs }
+							onChangePodcasting={ setPodcastingOn }
+						/>
+						<HStack justify="flex-start">
+							<Button
+								variant="secondary"
+								isDestructive
+								onClick={ () => {
+									setPodcastingOn( false );
+									if ( hasSectionInRoute ) {
+										page.show( '/podcast' + pathSuffix );
+									}
+								} }
+							>
+								{ translate( 'Disable podcasting' ) }
+							</Button>
+						</HStack>
+					</div>
+				</Tabs.Panel>
+			</Tabs.Root>
+		);
+	} else {
+		pageContent = (
+			<div className="podcast__tab-content podcasting-v2">
+				<PodcastingWelcome
+					onEnable={ () => {
+						setPodcastingOn( true );
+						page.show( '/podcast/settings' + pathSuffix );
+					} }
+					planTier={ planTier }
+					onChangePlanTier={ setPlanTier }
+				/>
+			</div>
+		);
+	}
+
 	return (
 		<Main fullWidthLayout className="podcast">
 			{ siteId && <QuerySiteSettings siteId={ siteId } /> }
@@ -116,67 +192,7 @@ const PodcastMain = ( { section, path }: PodcastMainProps ) => {
 				) }
 				title={ <JetpackTitle title={ translate( 'Podcast' ) } /> }
 			>
-				<div className="podcast__scroll-area">
-					{ podcastingOn ? (
-						<Tabs.Root
-							value={ currentSection }
-							onValueChange={ ( value ) => {
-								if ( typeof value === 'string' ) {
-									handleSelect( value );
-								}
-							} }
-						>
-							<div className="podcast__tabs-bar">
-								<Tabs.List className="podcast__tabs">
-									{ tabs.map( ( tab ) => (
-										<Tabs.Tab key={ tab.name } value={ tab.name }>
-											{ tab.title }
-										</Tabs.Tab>
-									) ) }
-								</Tabs.List>
-							</div>
-							<Tabs.Panel value="episodes">
-								<div className="podcast__tab-content">
-									<PodcastEpisodes />
-								</div>
-							</Tabs.Panel>
-							<Tabs.Panel value="distribution">
-								<div className="podcast__tab-content">
-									<PodcastingDistribution />
-								</div>
-							</Tabs.Panel>
-							<Tabs.Panel value="settings">
-								<div className="podcast__tab-content podcasting-v2">
-									<PodcastingV2Body
-										embedded
-										podcastingOn={ podcastingOn }
-										onChangePodcasting={ setPodcastingOn }
-									/>
-									<HStack justify="flex-start">
-										<Button
-											variant="secondary"
-											isDestructive
-											onClick={ () => setPodcastingOn( false ) }
-										>
-											{ translate( 'Disable podcasting' ) }
-										</Button>
-									</HStack>
-								</div>
-							</Tabs.Panel>
-						</Tabs.Root>
-					) : (
-						<div className="podcast__tab-content podcasting-v2">
-							<PodcastingWelcome
-								onEnable={ () => {
-									setPodcastingOn( true );
-									page.show( '/podcast/settings' + pathSuffix );
-								} }
-								planTier={ planTier }
-								onChangePlanTier={ setPlanTier }
-							/>
-						</div>
-					) }
-				</div>
+				<div className="podcast__scroll-area">{ pageContent }</div>
 			</Page>
 			<JetpackFooter />
 		</Main>

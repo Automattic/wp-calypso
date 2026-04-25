@@ -1,6 +1,7 @@
 import page from '@automattic/calypso-router';
 import { Button, Card, Modal } from '@wordpress/components';
 import { Icon, audio, category, check, layout, megaphone } from '@wordpress/icons';
+import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -21,170 +22,201 @@ interface PlanDef {
 	features: string[];
 }
 
-const PLANS: Record< 'personal' | 'premium' | 'business', PlanDef > = {
+type Translate = ReturnType< typeof useTranslate >;
+
+const getPlans = (
+	translate: Translate
+): Record< 'personal' | 'premium' | 'business', PlanDef > => ( {
 	personal: {
 		slug: 'personal',
-		name: 'Personal',
-		blurb: 'Create your home on the web with a custom domain name.',
+		name: translate( 'Personal' ) as string,
+		blurb: translate( 'Create your home on the web with a custom domain name.' ) as string,
 		price: 4,
 		features: [
-			'Publishing tools: Podcast and Newsletter',
-			'6 GB storage',
-			'Free domain for one year',
-			'Ad-free browsing experience for your visitors',
-			'Dozens of premium themes',
-			'Support from our expert team',
-			'Install plugins',
+			translate( 'Publishing tools: Podcast and Newsletter' ) as string,
+			translate( '6 GB storage' ) as string,
+			translate( 'Free domain for one year' ) as string,
+			translate( 'Ad-free browsing experience for your visitors' ) as string,
+			translate( 'Dozens of premium themes' ) as string,
+			translate( 'Support from our expert team' ) as string,
+			translate( 'Install plugins' ) as string,
 		],
 	},
 	premium: {
 		slug: 'premium',
-		name: 'Premium',
-		blurb: 'Build a unique website with powerful design tools.',
+		name: translate( 'Premium' ) as string,
+		blurb: translate( 'Build a unique website with powerful design tools.' ) as string,
 		price: 8,
 		features: [
-			'Publishing tools: Podcast and Newsletter',
-			'13 GB storage',
-			'Free domain for one year',
-			'Ad-free browsing experience for your visitors',
-			'All premium themes',
-			'Fast support from our expert team',
-			'Premium stats',
-			'Install plugins',
-			'Connect Google Analytics',
-			'Upload videos',
+			translate( 'Publishing tools: Podcast and Newsletter' ) as string,
+			translate( '13 GB storage' ) as string,
+			translate( 'Free domain for one year' ) as string,
+			translate( 'Ad-free browsing experience for your visitors' ) as string,
+			translate( 'All premium themes' ) as string,
+			translate( 'Fast support from our expert team' ) as string,
+			translate( 'Premium stats' ) as string,
+			translate( 'Install plugins' ) as string,
+			translate( 'Connect Google Analytics' ) as string,
+			translate( 'Upload videos' ) as string,
 		],
 	},
 	business: {
 		slug: 'business',
-		name: 'Business',
-		blurb:
-			'Unlock the power of WordPress with the managed hosting platform built by WordPress experts.',
+		name: translate( 'Business' ) as string,
+		blurb: translate(
+			'Unlock the power of WordPress with the managed hosting platform built by WordPress experts.'
+		) as string,
 		price: 25,
 		features: [
-			'Publishing tools: Podcast and Newsletter',
-			'50 GB storage',
-			'Free domain for one year',
-			'Ad-free browsing experience for your visitors',
-			'All premium themes',
-			'Priority 24/7 support from our expert team',
-			'Premium stats',
-			'Install plugins',
-			'Connect Google Analytics',
-			'Upload videos',
-			'SFTP/SSH, WP-CLI, Git commands, and GitHub Deployments',
+			translate( 'Publishing tools: Podcast and Newsletter' ) as string,
+			translate( '50 GB storage' ) as string,
+			translate( 'Free domain for one year' ) as string,
+			translate( 'Ad-free browsing experience for your visitors' ) as string,
+			translate( 'All premium themes' ) as string,
+			translate( 'Priority 24/7 support from our expert team' ) as string,
+			translate( 'Premium stats' ) as string,
+			translate( 'Install plugins' ) as string,
+			translate( 'Connect Google Analytics' ) as string,
+			translate( 'Upload videos' ) as string,
+			translate( 'SFTP/SSH, WP-CLI, Git commands, and GitHub Deployments' ) as string,
 		],
 	},
-};
+} );
 
 // Show the user's plan + the next one up. Free sees Personal + Premium (Recommended).
 // On paid plans the upgrade target is shown without a "Recommended" push.
 // Business sees only Business.
 function getPlanCards(
-	tier: PlanTier
+	tier: PlanTier,
+	plans: Record< 'personal' | 'premium' | 'business', PlanDef >
 ): { plan: PlanDef; label: 'your-plan' | 'recommended' | null }[] {
 	if ( tier === 'free' ) {
 		return [
-			{ plan: PLANS.personal, label: null },
-			{ plan: PLANS.premium, label: 'recommended' },
+			{ plan: plans.personal, label: null },
+			{ plan: plans.premium, label: 'recommended' },
 		];
 	}
 	if ( tier === 'personal' ) {
 		return [
-			{ plan: PLANS.personal, label: 'your-plan' },
-			{ plan: PLANS.premium, label: null },
+			{ plan: plans.personal, label: 'your-plan' },
+			{ plan: plans.premium, label: null },
 		];
 	}
 	if ( tier === 'premium' ) {
 		return [
-			{ plan: PLANS.premium, label: 'your-plan' },
-			{ plan: PLANS.business, label: null },
+			{ plan: plans.premium, label: 'your-plan' },
+			{ plan: plans.business, label: null },
 		];
 	}
-	return [ { plan: PLANS.business, label: 'your-plan' } ];
+	return [ { plan: plans.business, label: 'your-plan' } ];
 }
 
-const BENEFITS: { icon: React.ReactNode; title: string; body: string }[] = [
+const getBenefits = (
+	translate: Translate
+): { icon: React.ReactNode; title: string; body: string }[] => [
 	{
 		icon: <Icon icon={ megaphone } />,
-		title: 'Reach listeners in every app',
-		body: 'One feed distributes to Apple Podcasts, Spotify, Overcast, Pocket Casts, and every directory that accepts RSS.',
+		title: translate( 'Reach listeners in every app' ) as string,
+		body: translate(
+			'One feed distributes to Apple Podcasts, Spotify, Overcast, Pocket Casts, and every directory that accepts RSS.'
+		) as string,
 	},
 	{
 		icon: <Icon icon={ audio } />,
-		title: 'Works with the editor you already use',
-		body: 'Drop an audio block into a post, assign the podcast category, hit publish. That is the whole workflow.',
+		title: translate( 'Works with the editor you already use' ) as string,
+		body: translate(
+			'Drop an audio block into a post, assign the podcast category, hit publish. That is the whole workflow.'
+		) as string,
 	},
 	{
 		icon: <Icon icon={ layout } />,
-		title: 'One home for writing, email, and audio',
-		body: 'One site, one audience, one subscriber list. Your posts, newsletters, and episodes all live in the same place.',
+		title: translate( 'One home for writing, email, and audio' ) as string,
+		body: translate(
+			'One site, one audience, one subscriber list. Your posts, newsletters, and episodes all live in the same place.'
+		) as string,
 	},
 ];
 
-const STEPS: { number: string; title: string; body: string }[] = [
+const getSteps = ( translate: Translate ): { number: string; title: string; body: string }[] => [
 	{
 		number: '1',
-		title: 'Pick a category',
-		body: 'Choose or create the category that holds your episodes.',
+		title: translate( 'Pick a category' ) as string,
+		body: translate( 'Choose or create the category that holds your episodes.' ) as string,
 	},
 	{
 		number: '2',
-		title: 'Publish a post with audio',
-		body: 'Add an audio block to any post and assign it to your podcast category.',
+		title: translate( 'Publish a post with audio' ) as string,
+		body: translate(
+			'Add an audio block to any post and assign it to your podcast category.'
+		) as string,
 	},
 	{
 		number: '3',
-		title: 'Submit your feed once',
-		body: 'Copy the feed URL, submit it to Apple Podcasts and Spotify, and you are live.',
+		title: translate( 'Submit your feed once' ) as string,
+		body: translate(
+			'Copy the feed URL, submit it to Apple Podcasts and Spotify, and you are live.'
+		) as string,
 	},
 ];
 
 // Mock episodes for the hero preview and example-feed modal
-const SAMPLE_SHOW = {
-	title: 'Far From Home',
+const getSampleShow = ( translate: Translate ) => ( {
+	title: translate( 'Far From Home' ) as string,
 	host: 'Maya Chen',
-	category: 'Places & Travel',
-	summary:
-		'A weekly travel show about long bus rides, market food, and the strangers who make a place feel like home.',
-};
+	category: translate( 'Places & Travel' ) as string,
+	summary: translate(
+		'A weekly travel show about long bus rides, market food, and the strangers who make a place feel like home.'
+	) as string,
+} );
 
-const SAMPLE_EPISODES = [
+const getSampleEpisodes = ( translate: Translate ) => [
 	{
 		number: 4,
-		title: 'Lost in Lisbon: how getting turned around saved my trip',
+		title: translate( 'Lost in Lisbon: how getting turned around saved my trip' ) as string,
 		date: 'Apr 22, 2026',
-		duration: '38 min',
+		duration: translate( '38 min' ) as string,
 	},
 	{
 		number: 3,
-		title: 'Eating my way through Oaxaca',
+		title: translate( 'Eating my way through Oaxaca' ) as string,
 		date: 'Apr 15, 2026',
-		duration: '45 min',
+		duration: translate( '45 min' ) as string,
 	},
 	{
 		number: 2,
-		title: 'Pilot: One backpack, six months',
+		title: translate( 'Pilot: One backpack, six months' ) as string,
 		date: 'Apr 8, 2026',
-		duration: '32 min',
+		duration: translate( '32 min' ) as string,
 	},
 	{
 		number: 1,
-		title: 'Trailer',
+		title: translate( 'Trailer' ) as string,
 		date: 'Apr 1, 2026',
-		duration: '2 min',
+		duration: translate( '2 min' ) as string,
 	},
 ];
 
 function PodcastingWelcome( { onEnable, planTier, onChangePlanTier }: WelcomeProps ) {
+	const translate = useTranslate();
 	const [ exampleOpen, setExampleOpen ] = useState( false );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 
-	const cards = getPlanCards( planTier );
+	const plans = getPlans( translate );
+	const cards = getPlanCards( planTier, plans );
+	const benefits = getBenefits( translate );
+	const steps = getSteps( translate );
+	const sampleShow = getSampleShow( translate );
+	const sampleEpisodes = getSampleEpisodes( translate );
 	const isFree = planTier === 'free';
+	const tierLabels: Record< PlanTier, string > = {
+		free: translate( 'Free' ) as string,
+		personal: translate( 'Personal' ) as string,
+		premium: translate( 'Premium' ) as string,
+		business: translate( 'Business' ) as string,
+	};
 	const pricingTitle = isFree
-		? 'Unlock podcasting with a plan built for creators'
-		: 'Podcasting is included in your plan';
+		? ( translate( 'Unlock podcasting with a plan built for creators' ) as string )
+		: ( translate( 'Podcasting is included in your plan' ) as string );
 
 	// Redirect through Calypso checkout, then back to /podcast so the user can
 	// click Enable on their now-eligible plan.
@@ -201,19 +233,22 @@ function PodcastingWelcome( { onEnable, planTier, onChangePlanTier }: WelcomePro
 			{ /* Hero */ }
 			<section className="podcasting-v2__welcome-hero">
 				<div className="podcasting-v2__welcome-hero-copy">
-					<h2 className="podcasting-v2__welcome-title">Turn your posts into a podcast</h2>
+					<h2 className="podcasting-v2__welcome-title">
+						{ translate( 'Turn your posts into a podcast' ) }
+					</h2>
 					<p className="podcasting-v2__welcome-lede">
-						Publish audio alongside your writing and get distributed to Apple Podcasts, Spotify, and
-						every major app — without leaving your site.
+						{ translate(
+							'Publish audio alongside your writing and get distributed to Apple Podcasts, Spotify, and every major app, without leaving your site.'
+						) }
 					</p>
 					<div className="podcasting-v2__welcome-actions">
 						{ ! isFree && (
 							<>
 								<Button variant="primary" onClick={ onEnable }>
-									Enable podcasting
+									{ translate( 'Enable podcasting' ) }
 								</Button>
 								<Button variant="link" onClick={ () => setExampleOpen( true ) }>
-									See an example feed
+									{ translate( 'See an example feed' ) }
 								</Button>
 							</>
 						) }
@@ -227,8 +262,10 @@ function PodcastingWelcome( { onEnable, planTier, onChangePlanTier }: WelcomePro
 							<Icon icon={ audio } />
 						</div>
 						<div className="podcasting-v2__preview-meta">
-							<div className="podcasting-v2__preview-show">{ SAMPLE_SHOW.title }</div>
-							<div className="podcasting-v2__preview-host">by { SAMPLE_SHOW.host }</div>
+							<div className="podcasting-v2__preview-show">{ sampleShow.title }</div>
+							<div className="podcasting-v2__preview-host">
+								{ translate( 'by %(host)s', { args: { host: sampleShow.host } } ) }
+							</div>
 							<div className="podcasting-v2__preview-badges">
 								<span>Apple Podcasts</span>
 								<span>Spotify</span>
@@ -237,7 +274,7 @@ function PodcastingWelcome( { onEnable, planTier, onChangePlanTier }: WelcomePro
 						</div>
 					</div>
 					<ul className="podcasting-v2__preview-episodes">
-						{ SAMPLE_EPISODES.slice( 0, 2 ).map( ( ep ) => (
+						{ sampleEpisodes.slice( 0, 2 ).map( ( ep ) => (
 							<li key={ ep.number }>
 								<span className="podcasting-v2__preview-play">▶</span>
 								<span className="podcasting-v2__preview-ep-title">{ ep.title }</span>
@@ -275,7 +312,7 @@ function PodcastingWelcome( { onEnable, planTier, onChangePlanTier }: WelcomePro
 							<div key={ plan.slug } className={ classes.join( ' ' ) }>
 								{ label && (
 									<span className="podcasting-v2__plan-ribbon">
-										{ isYourPlan ? 'Your plan' : 'Recommended' }
+										{ isYourPlan ? translate( 'Your plan' ) : translate( 'Recommended' ) }
 									</span>
 								) }
 								<div className="podcasting-v2__plan-name">{ plan.name }</div>
@@ -283,13 +320,19 @@ function PodcastingWelcome( { onEnable, planTier, onChangePlanTier }: WelcomePro
 								<div className="podcasting-v2__plan-price">
 									<span className="podcasting-v2__plan-currency">$</span>
 									<span className="podcasting-v2__plan-amount">{ plan.price }</span>
-									<span className="podcasting-v2__plan-period">/mo, billed yearly</span>
+									<span className="podcasting-v2__plan-period">
+										{ translate( '/mo, billed yearly' ) }
+									</span>
 								</div>
 								<Button
 									variant={ isRecommended || isYourPlan ? 'primary' : 'secondary' }
 									onClick={ () => ( isYourPlan ? onEnable() : goToCheckout( plan.slug ) ) }
 								>
-									{ isYourPlan ? 'Enable podcasting' : `Upgrade to ${ plan.name }` }
+									{ isYourPlan
+										? translate( 'Enable podcasting' )
+										: translate( 'Upgrade to %(planName)s', {
+												args: { planName: plan.name },
+										  } ) }
 								</Button>
 								<ul className="podcasting-v2__plan-features">
 									{ features.map( ( f ) => (
@@ -307,7 +350,7 @@ function PodcastingWelcome( { onEnable, planTier, onChangePlanTier }: WelcomePro
 
 			{ /* Benefits */ }
 			<div className="podcasting-v2__welcome-benefits">
-				{ BENEFITS.map( ( b ) => (
+				{ benefits.map( ( b ) => (
 					<article key={ b.title } className="podcasting-v2__welcome-benefit">
 						<span className="podcasting-v2__welcome-benefit-icon" aria-hidden="true">
 							{ b.icon }
@@ -320,9 +363,9 @@ function PodcastingWelcome( { onEnable, planTier, onChangePlanTier }: WelcomePro
 
 			{ /* How it works — stacked layout, connector runs between circles only */ }
 			<Card className="podcasting-v2__welcome-steps">
-				<h3 className="podcasting-v2__welcome-steps-title">How it works</h3>
+				<h3 className="podcasting-v2__welcome-steps-title">{ translate( 'How it works' ) }</h3>
 				<ol className="podcasting-v2__welcome-steps-grid">
-					{ STEPS.map( ( step ) => (
+					{ steps.map( ( step ) => (
 						<li key={ step.number } className="podcasting-v2__welcome-step">
 							<div className="podcasting-v2__welcome-step-circle">
 								<span className="podcasting-v2__welcome-step-number">{ step.number }</span>
@@ -336,7 +379,7 @@ function PodcastingWelcome( { onEnable, planTier, onChangePlanTier }: WelcomePro
 
 			{ /* Prototype plan toggle */ }
 			<div className="podcasting-v2__welcome-demo-toggle">
-				<span>Prototype: demo plan —</span>
+				<span>{ translate( 'Prototype: demo plan -' ) }</span>
 				{ ( [ 'free', 'personal', 'premium', 'business' ] as PlanTier[] ).map( ( tier ) => (
 					<button
 						key={ tier }
@@ -345,7 +388,7 @@ function PodcastingWelcome( { onEnable, planTier, onChangePlanTier }: WelcomePro
 						aria-pressed={ planTier === tier }
 						onClick={ () => onChangePlanTier( tier ) }
 					>
-						{ tier.charAt( 0 ).toUpperCase() + tier.slice( 1 ) }
+						{ tierLabels[ tier ] }
 					</button>
 				) ) }
 			</div>
@@ -353,7 +396,7 @@ function PodcastingWelcome( { onEnable, planTier, onChangePlanTier }: WelcomePro
 			{ /* Example feed modal */ }
 			{ exampleOpen && (
 				<Modal
-					title="What your feed looks like to listeners"
+					title={ translate( 'What your feed looks like to listeners' ) as string }
 					onRequestClose={ () => setExampleOpen( false ) }
 					className="podcasting-v2__example-dialog"
 				>
@@ -362,22 +405,23 @@ function PodcastingWelcome( { onEnable, planTier, onChangePlanTier }: WelcomePro
 							<Icon icon={ audio } />
 						</div>
 						<div className="podcasting-v2__example-meta">
-							<div className="podcasting-v2__example-show">{ SAMPLE_SHOW.title }</div>
+							<div className="podcasting-v2__example-show">{ sampleShow.title }</div>
 							<div className="podcasting-v2__example-host">
-								by { SAMPLE_SHOW.host } • { SAMPLE_SHOW.category }
+								{ translate( 'by %(host)s', { args: { host: sampleShow.host } } ) } •{ ' ' }
+								{ sampleShow.category }
 							</div>
-							<div className="podcasting-v2__example-summary">{ SAMPLE_SHOW.summary }</div>
+							<div className="podcasting-v2__example-summary">{ sampleShow.summary }</div>
 						</div>
 					</div>
 					<div className="podcasting-v2__example-feed-url">
 						<Icon icon={ category } />
 						<span>
-							https://{ SAMPLE_SHOW.host.toLowerCase().replace( /\s/g, '' ) }
+							https://{ sampleShow.host.toLowerCase().replace( /\s/g, '' ) }
 							.com/category/podcast/feed/
 						</span>
 					</div>
 					<ul className="podcasting-v2__example-episodes">
-						{ SAMPLE_EPISODES.map( ( ep ) => (
+						{ sampleEpisodes.map( ( ep ) => (
 							<li key={ ep.number }>
 								<span className="podcasting-v2__example-play">▶</span>
 								<div className="podcasting-v2__example-ep-body">

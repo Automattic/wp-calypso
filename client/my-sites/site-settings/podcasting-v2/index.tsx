@@ -15,6 +15,7 @@ import { DataForm } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Main from 'calypso/components/main';
+import usePodcastingAccessGate from './use-podcasting-access-gate';
 import PodcastingWelcome, { type PlanTier } from './welcome';
 import type { Field } from '@wordpress/dataviews';
 
@@ -454,6 +455,7 @@ export function PodcastingV2Body( {
 
 function PodcastingV2() {
 	const translate = useTranslate();
+	const accessGate = usePodcastingAccessGate();
 	const [ podcastingOn, setPodcastingOn ] = useState( false );
 	const [ planTier, setPlanTier ] = useState< PlanTier >( 'free' );
 
@@ -474,15 +476,19 @@ function PodcastingV2() {
 				</div>
 			</div>
 
-			{ ! podcastingOn && (
-				<PodcastingWelcome
-					onEnable={ () => setPodcastingOn( true ) }
-					planTier={ planTier }
-					onChangePlanTier={ setPlanTier }
-				/>
-			) }
+			{ accessGate
+				? accessGate
+				: ! podcastingOn && (
+						<PodcastingWelcome
+							onEnable={ () => setPodcastingOn( true ) }
+							planTier={ planTier }
+							onChangePlanTier={ setPlanTier }
+						/>
+				  ) }
 
-			<PodcastingV2Body podcastingOn={ podcastingOn } onChangePodcasting={ setPodcastingOn } />
+			{ ! accessGate && (
+				<PodcastingV2Body podcastingOn={ podcastingOn } onChangePodcasting={ setPodcastingOn } />
+			) }
 		</Main>
 	);
 }
