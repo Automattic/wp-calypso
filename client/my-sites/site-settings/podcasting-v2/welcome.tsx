@@ -1,5 +1,5 @@
 import { Button, Card, Modal } from '@wordpress/components';
-import { Icon, audio, category, check, globe, layout, megaphone } from '@wordpress/icons';
+import { Icon, audio, category, check, layout, megaphone } from '@wordpress/icons';
 import { useState } from 'react';
 
 export type PlanTier = 'free' | 'personal' | 'premium' | 'business';
@@ -339,6 +339,7 @@ function PodcastingWelcome( { onEnable, planTier, onChangePlanTier }: WelcomePro
 						key={ tier }
 						type="button"
 						className={ planTier === tier ? 'is-active' : '' }
+						aria-pressed={ planTier === tier }
 						onClick={ () => onChangePlanTier( tier ) }
 					>
 						{ tier.charAt( 0 ).toUpperCase() + tier.slice( 1 ) }
@@ -387,7 +388,6 @@ function PodcastingWelcome( { onEnable, planTier, onChangePlanTier }: WelcomePro
 							</li>
 						) ) }
 					</ul>
-					<Icon icon={ globe } style={ { display: 'none' } } />
 				</Modal>
 			) }
 		</div>

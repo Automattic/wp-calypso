@@ -103,7 +103,11 @@ const PodcastMain = ( { section, path }: PodcastMainProps ) => {
 					{ podcastingOn ? (
 						<Tabs.Root
 							value={ currentSection }
-							onValueChange={ ( value ) => handleSelect( value as string ) }
+							onValueChange={ ( value ) => {
+								if ( typeof value === 'string' ) {
+									handleSelect( value );
+								}
+							} }
 						>
 							<div className="podcast__tabs-bar">
 								<Tabs.List className="podcast__tabs">
