@@ -257,6 +257,7 @@ function UnifiedPlansStep( {
 	isStepperUpgradeFlow = false,
 	selectedFeature,
 }: UnifiedPlansStepProps ) {
+	const [ isContentReady, setIsContentReady ] = useState( ! useStepContainerV2 );
 	const [ isDesktop, setIsDesktop ] = useState< boolean | undefined >( isDesktopViewport() );
 	const dispatch = reduxUseDispatch();
 	const translate = useTranslate();
@@ -666,6 +667,7 @@ function UnifiedPlansStep( {
 				onPlanIntervalUpdate={ onPlanIntervalUpdate }
 				selectedThemeType={ selectedThemeType }
 				selectedFeature={ selectedFeature }
+				onReady={ useStepContainerV2 ? () => setIsContentReady( true ) : undefined }
 				renderSiblingWhenLoaded={ () => {
 					if ( ! isNewHostedSiteCreationFlow( flowName ) ) {
 						return null;
@@ -682,10 +684,13 @@ function UnifiedPlansStep( {
 
 		return (
 			<>
+				{ ! isContentReady && <Step.Loading /> }
 				<MarketingMessage path="signup/plans" />
 				<Step.WideLayout
 					headingColumnWidth={ 6 }
-					className="step-container-v2--plans"
+					className={ clsx( 'step-container-v2--plans', {
+						'is-plans-loading': ! isContentReady,
+					} ) }
 					topBar={
 						<Step.TopBar
 							leftElement={
