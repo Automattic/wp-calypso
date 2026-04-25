@@ -225,7 +225,10 @@ function PurchaseActionMenu( { purchase }: { purchase: Purchase } ) {
 	const { user } = useAuth();
 	const canBeRenewed =
 		purchase.can_explicit_renew && String( user.ID ) === String( purchase.user_id );
-	const upgradeUrl = getSitePurchaseUpgradeUrl( purchase );
+	const upgradeUrl = getSitePurchaseUpgradeUrl(
+		purchase,
+		`/checkout/upgrade-redirect/${ purchase.site_slug }/:receiptId`
+	);
 	const { recordTracksEvent } = useAnalytics();
 	const menuItems = [
 		purchase.is_upgradable && upgradeUrl && (
@@ -427,7 +430,10 @@ function UpgradeActionButton( { purchase }: { purchase: Purchase } ) {
 	if ( ! purchase.is_upgradable ) {
 		return null;
 	}
-	const upgradeUrl = getSitePurchaseUpgradeUrl( purchase );
+	const upgradeUrl = getSitePurchaseUpgradeUrl(
+		purchase,
+		`/checkout/upgrade-redirect/${ purchase.site_slug }/:receiptId`
+	);
 	if ( ! upgradeUrl ) {
 		return null;
 	}
@@ -1251,7 +1257,10 @@ export default function PurchaseSettings() {
 	} );
 	const formattedExpiry = useFormattedTime( purchase.expiry_date ?? '' );
 	const formattedRenewal = useFormattedTime( purchase.renew_date ?? '' );
-	const upgradeUrl = getSitePurchaseUpgradeUrl( purchase );
+	const upgradeUrl = getSitePurchaseUpgradeUrl(
+		purchase,
+		`/checkout/upgrade-redirect/${ purchase.site_slug }/:receiptId`
+	);
 	const willRenew = Boolean(
 		! isExpired( purchase ) && purchase.renew_date && ! isExpiring( purchase )
 	);

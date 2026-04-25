@@ -86,10 +86,11 @@ export function getSitePlanUpgradeUrl( site: Site ) {
 		siteSlug: site.slug,
 		isTrial: isSitePlanTrial( site ),
 		isWooHosted: isSitePlanWooHosted( site ),
+		redirectTo: redirectToDashboardLink(),
 	} );
 }
 
-export function getSitePurchaseUpgradeUrl( purchase: Purchase ) {
+export function getSitePurchaseUpgradeUrl( purchase: Purchase, redirectTo?: string ) {
 	if ( isAkismetProduct( purchase ) ) {
 		// For the first Iteration of Calypso Akismet checkout we are only suggesting
 		// for immediate upgrades to the next plan. We will change this in the future
@@ -127,6 +128,7 @@ export function getSitePurchaseUpgradeUrl( purchase: Purchase ) {
 		siteSlug: purchase.site_slug,
 		isTrial: purchase.is_trial_plan,
 		isWooHosted: purchase.is_woo_hosted_product,
+		redirectTo: redirectTo ?? redirectToDashboardLink(),
 	} );
 }
 
@@ -134,10 +136,12 @@ function buildSitePlanUpgradeUrl( {
 	siteSlug,
 	isTrial,
 	isWooHosted,
+	redirectTo,
 }: {
 	siteSlug: string;
 	isTrial: boolean;
 	isWooHosted: boolean;
+	redirectTo: string;
 } ) {
 	if ( isTrial && ! isWooHosted ) {
 		return wpcomLink( `/plans/${ siteSlug }` );
@@ -152,6 +156,6 @@ function buildSitePlanUpgradeUrl( {
 		siteSlug: siteSlug,
 		cancel_to: backUrl,
 		dashboard: getCurrentDashboard(),
-		redirect_to: `/checkout/upgrade-redirect/${ siteSlug }/:receiptId`,
+		redirect_to: redirectTo,
 	} );
 }

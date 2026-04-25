@@ -364,7 +364,11 @@ function TrialNotice( { purchase }: { purchase: Purchase } ) {
 				to_checkout: false,
 			} );
 
-			window.location.href = getSitePurchaseUpgradeUrl( purchase ) ?? '';
+			window.location.href =
+				getSitePurchaseUpgradeUrl(
+					purchase,
+					`/checkout/upgrade-redirect/${ purchase.site_slug }/:receiptId`
+				) ?? '';
 			return;
 		}
 
