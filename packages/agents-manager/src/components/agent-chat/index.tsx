@@ -102,7 +102,7 @@ const DEFAULT_ACCEPTED_IMAGE_TYPES = [
 function readAgentsManagerDataString(
 	key: 'emptyViewHeading' | 'emptyViewHelp'
 ): string | undefined {
-	if ( typeof window === 'undefined' ) {
+	if ( typeof window === 'undefined' || ! isReaderChatHost() ) {
 		return undefined;
 	}
 	const data = ( window as unknown as { agentsManagerData?: Record< string, unknown > } )

@@ -2,6 +2,7 @@ import { type Suggestion } from '@automattic/agenttic-ui';
 import { useSelect } from '@wordpress/data';
 import { useEffect, useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { isReaderChatHost } from '../utils/is-reader-chat-agent';
 import type { LoadedProviders } from '../utils/load-external-providers';
 
 interface UseEmptyViewSuggestionsOptions {
@@ -27,7 +28,7 @@ interface UseEmptyViewSuggestionsOptions {
  * the empty view to update with fresh suggestions.
  */
 function readOverrideSuggestions(): Suggestion[] | null {
-	if ( typeof window === 'undefined' ) {
+	if ( typeof window === 'undefined' || ! isReaderChatHost() ) {
 		return null;
 	}
 	const data = ( window as unknown as { agentsManagerData?: { readerSuggestions?: unknown } } )
@@ -53,6 +54,8 @@ function readOverrideSuggestions(): Suggestion[] | null {
 export function useEmptyViewSuggestions( {
 	loadedProviders,
 }: UseEmptyViewSuggestionsOptions ): Suggestion[] | null {
+	const isReaderChat = isReaderChatHost();
+
 	// Default suggestions - used when Big Sky doesn't provide custom ones
 	const defaultSuggestions = useMemo(
 		() => [
@@ -107,7 +110,7 @@ export function useEmptyViewSuggestions( {
 	// the component tree having to re-mount.
 	const [ overrideVersion, setOverrideVersion ] = useState( 0 );
 	useEffect( () => {
-		if ( typeof window === 'undefined' ) {
+		if ( typeof window === 'undefined' || ! isReaderChat ) {
 			return;
 		}
 		const handler = () => setOverrideVersion( ( v ) => v + 1 );
@@ -115,7 +118,7 @@ export function useEmptyViewSuggestions( {
 		return () => {
 			window.removeEventListener( 'reader-chat-suggestions-updated', handler );
 		};
-	}, [] );
+	}, [ isReaderChat ] );
 
 	useEffect( () => {
 		if ( ! loadedProviders || ! isCoreStoreReady ) {

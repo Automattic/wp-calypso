@@ -10,6 +10,7 @@ import { createCalypsoAuthProvider } from '../auth/calypso-auth-provider';
 import { ORCHESTRATOR_AGENT_ID, ORCHESTRATOR_AGENT_URL } from '../constants';
 import { getSessionStorageKey } from './agent-session';
 import { canConnectToZendesk } from './can-connect-to-zendesk';
+import { isReaderChatAgent } from './is-reader-chat-agent';
 import type { ContextEntry, ToolProvider, ContextProvider } from '../extension-types';
 import type { UseAgentChatConfig, Ability as AgenticAbility } from '@automattic/agenttic-client';
 
@@ -120,6 +121,7 @@ async function createDefaultContextProvider(
 	currentRoute: string | undefined,
 	environment: string,
 	siteId?: number,
+	agentId?: string,
 	version?: string
 ): Promise< UseAgentChatConfig[ 'contextProvider' ] > {
 	const canAccessZendesk = await canConnectToZendesk();
@@ -130,9 +132,10 @@ async function createDefaultContextProvider(
 			// to `window.agentsManagerData`. Pick up `currentPost`, `siteName`,
 			// and `siteUrl` here so the orchestrator knows which post the
 			// reader is viewing without every host wiring its own provider.
-			const hostData =
-				( window as unknown as { agentsManagerData?: Record< string, unknown > } )
-					.agentsManagerData ?? {};
+			const hostData = isReaderChatAgent( agentId )
+				? ( window as unknown as { agentsManagerData?: Record< string, unknown > } )
+						.agentsManagerData ?? {}
+				: {};
 
 			return {
 				url: window.location.href,
@@ -193,6 +196,7 @@ export async function createAgentConfig(
 			currentRoute,
 			environment,
 			siteId,
+			agentId,
 			version
 		);
 	}
