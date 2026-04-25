@@ -16,6 +16,7 @@ import type {
 	Purchase,
 	Domain,
 	AtomicTransfer,
+	Site,
 	UpgradesCancelFeaturesResponse,
 } from '@automattic/api-core';
 
@@ -25,6 +26,8 @@ interface CancellationMainContentProps {
 	includedDomainPurchase?: Purchase;
 	atomicTransfer?: AtomicTransfer;
 	selectedDomain?: Domain;
+	site?: Site;
+	activeMarketplaceSubscriptions?: Purchase[];
 	state: CancelPurchaseState;
 	purchaseCancelFeatures?: UpgradesCancelFeaturesResponse;
 	isBusy?: boolean;
@@ -55,6 +58,8 @@ export default function CancellationMainContent( {
 	includedDomainPurchase,
 	atomicTransfer,
 	selectedDomain,
+	site,
+	activeMarketplaceSubscriptions,
 	state,
 	purchaseCancelFeatures,
 	isBusy,
@@ -105,11 +110,111 @@ export default function CancellationMainContent( {
 		defaultChanges.push( ...atomicRevertChanges );
 	}
 
+	if ( config.isEnabled( 'purchases/split-cancel-remove' ) ) {
+		// Non-primary domain forwarding: plan cancellation on a site with a custom primary domain.
+		if (
+			purchase.is_plan &&
+			! purchase.is_wpcom_atomic &&
+			site?.URL &&
+			site?.options?.unmapped_url
+		) {
+			const primaryDomain = new URL( site.URL ).hostname;
+			const wpcomDomain = new URL( site.options.unmapped_url ).hostname;
+			if ( primaryDomain !== wpcomDomain ) {
+				defaultChanges.push(
+					{
+						getSlug: () => 'domainForwarding',
+						getTitle: () =>
+							sprintf(
+								/* translators: %(primaryDomain)s is the custom domain, %(wpcomDomain)s is the WordPress.com subdomain */
+								__( '%(primaryDomain)s will start forwarding to %(wpcomDomain)s.' ),
+								{ primaryDomain, wpcomDomain }
+							),
+					},
+					{
+						getSlug: () => 'domainVisible',
+						getTitle: () =>
+							sprintf(
+								/* translators: %(wpcomDomain)s is the WordPress.com subdomain */
+								__(
+									'%(wpcomDomain)s will become the address people see when they visit your site.'
+								),
+								{ wpcomDomain }
+							),
+					}
+				);
+			}
+		}
+
+		// WordAds ineligibility: plan cancellation on a site enrolled in WordAds.
+		if ( purchase.is_plan && site?.options?.wordads ) {
+			defaultChanges.push( {
+				getSlug: () => 'wordAdsIneligible',
+				getTitle: () => __( 'You will become ineligible for the WordAds program.' ),
+			} );
+		}
+
+		// Marketplace subscription cascade: plan cancellation with active marketplace subscriptions.
+		if ( activeMarketplaceSubscriptions && activeMarketplaceSubscriptions.length > 0 ) {
+			for ( const sub of activeMarketplaceSubscriptions ) {
+				defaultChanges.push( {
+					getSlug: () => `marketplace-${ sub.ID }`,
+					getTitle: () =>
+						sprintf(
+							/* translators: %(productName)s is the name of a marketplace subscription */
+							__( '%(productName)s will also be removed.' ),
+							{ productName: sub.product_name }
+						),
+				} );
+			}
+		}
+
+		// Domain deletion consequences: removing a domain registration.
+		if ( isDomainRegistrationPurchase ) {
+			defaultChanges.push(
+				{
+					getSlug: () => 'domainServicesUnreachable',
+					getTitle: () =>
+						sprintf(
+							/* translators: %(domain)s is the domain name being deleted */
+							__(
+								'All services connected to %(domain)s will become unreachable, including email and website.'
+							),
+							{ domain: purchase.meta }
+						),
+				},
+				{
+					getSlug: () => 'domainAvailable',
+					getTitle: () =>
+						sprintf(
+							/* translators: %(domain)s is the domain name being deleted */
+							__( '%(domain)s will become available for someone else to register.' ),
+							{ domain: purchase.meta }
+						),
+				}
+			);
+
+			if ( selectedDomain?.is_gravatar_domain ) {
+				defaultChanges.push( {
+					getSlug: () => 'gravatarDomain',
+					getTitle: () =>
+						__(
+							'This domain is provided at no cost for your Gravatar profile. If you delete it, you will have to pay full price for another.'
+						),
+				} );
+			}
+		}
+	}
+
 	// Get features from the API endpoint for this product
 	const cancellationFeatures = purchaseCancelFeatures?.features ?? [];
 
 	let showDefaultChanges = false;
 	if ( ! isJetpack && ! isAkismet && ! isGSuite && ! isDomainRegistrationPurchase ) {
+		showDefaultChanges = true;
+	}
+	// Under the flag, domain registrations also have warning bullets in defaultChanges.
+	if ( config.isEnabled( 'purchases/split-cancel-remove' ) && isDomainRegistrationPurchase ) {
 		showDefaultChanges = true;
 	}
 

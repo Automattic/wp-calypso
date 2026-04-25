@@ -1627,6 +1627,8 @@ function CancelPurchaseInner() {
 									includedDomainPurchase={ includedDomainPurchase }
 									atomicTransfer={ atomicTransfer }
 									selectedDomain={ selectedDomain }
+									site={ site }
+									activeMarketplaceSubscriptions={ activeSubscriptions }
 									state={ state }
 									purchaseCancelFeatures={ purchaseCancelFeatures }
 									isBusy={ isMutationPending }
