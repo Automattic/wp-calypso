@@ -1,14 +1,13 @@
 import './style.scss';
 
 import { FormLabel } from '@automattic/components';
-import { Button, Card, CardBody } from '@wordpress/components';
+import { Button, Card, CardBody, Notice } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { type ComponentType, useMemo, useState } from 'react';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import Main from 'calypso/components/main';
-import Notice from 'calypso/components/notice';
 import {
 	LogoAmazon,
 	LogoApple,
@@ -111,16 +110,11 @@ function PodcastingDistribution() {
 			</div>
 
 			{ ! feedHealthy && (
-				<Notice
-					status="is-warning"
-					showDismiss={ false }
-					className="podcasting-v2__soft-notice"
-					text={
-						translate(
-							'Directories will reject your feed until you add cover art and a contact email. Finish those in Settings first.'
-						) as string
-					}
-				/>
+				<Notice status="warning" isDismissible={ false }>
+					{ translate(
+						'Directories will reject your feed until you add cover art and a contact email. Finish those in Settings first.'
+					) }
+				</Notice>
 			) }
 
 			<Card className="site-settings__card podcasting-v2__card">
@@ -208,12 +202,9 @@ function PodcastingDistribution() {
 				</CardBody>
 			</Card>
 
-			<Notice
-				status="is-info"
-				showDismiss={ false }
-				className="podcasting-v2__soft-notice"
-				text={ translate( 'Prototype only. Statuses are illustrative.' ) as string }
-			/>
+			<Notice status="info" isDismissible={ false }>
+				{ translate( 'Prototype only. Statuses are illustrative.' ) }
+			</Notice>
 
 			<p className="podcasting-v2__prototype-toggle">
 				<button
