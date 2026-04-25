@@ -75,14 +75,9 @@ body.is-section-podcast {
 }
 
 .podcast__episodes {
-	max-width: none;
 	background: var( --color-surface );
 	border-radius: 8px;
 	overflow: hidden;
-
-	table.dataviews-view-table tbody td {
-		padding-block: 20px;
-	}
 }
 
 .podcast__episode-thumb {
