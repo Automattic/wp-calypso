@@ -14,6 +14,7 @@ import {
 	addUrlToPendingPageRedirect,
 	redirectThroughPending,
 	getRedirectFromPendingPage,
+	findPurchaseFromReceipt,
 } from '../lib/pending-page';
 
 jest.mock( '@automattic/calypso-router' );
@@ -564,5 +565,81 @@ describe( 'getRedirectFromPendingPage', () => {
 		expect( actual ).toEqual( {
 			url: '/checkout/thank-you/12345/67890?checkout_type=unified&source=paid-media',
 		} );
+	} );
+} );
+
+describe( 'findPurchaseFromReceipt', () => {
+	const makePurchase = ( overrides ) => ( {
+		ID: 1,
+		site_slug: 'example.com',
+		product_slug: 'personal-bundle',
+		subscription_status: 'active',
+		...overrides,
+	} );
+
+	it( 'returns the matching purchase ID when site_slug, product_slug, and active all match', () => {
+		const purchases = [ makePurchase( { ID: 42 } ) ];
+		expect( findPurchaseFromReceipt( purchases, 'example.com', [ 'personal-bundle' ] ) ).toBe( 42 );
+	} );
+
+	it( 'returns undefined when no purchase matches the receipt product slugs', () => {
+		const purchases = [ makePurchase( { product_slug: 'business-bundle' } ) ];
+		expect(
+			findPurchaseFromReceipt( purchases, 'example.com', [ 'personal-bundle' ] )
+		).toBeUndefined();
+	} );
+
+	it( 'returns undefined when purchases is undefined', () => {
+		expect(
+			findPurchaseFromReceipt( undefined, 'example.com', [ 'personal-bundle' ] )
+		).toBeUndefined();
+	} );
+
+	it( 'returns undefined when purchases is empty', () => {
+		expect( findPurchaseFromReceipt( [], 'example.com', [ 'personal-bundle' ] ) ).toBeUndefined();
+	} );
+
+	it( 'returns undefined when siteSlug is undefined', () => {
+		const purchases = [ makePurchase() ];
+		expect(
+			findPurchaseFromReceipt( purchases, undefined, [ 'personal-bundle' ] )
+		).toBeUndefined();
+	} );
+
+	it( 'returns undefined when receiptItemProductSlugs is empty', () => {
+		const purchases = [ makePurchase() ];
+		expect( findPurchaseFromReceipt( purchases, 'example.com', [] ) ).toBeUndefined();
+	} );
+
+	it( 'ignores purchases on other sites', () => {
+		const purchases = [
+			makePurchase( { ID: 10, site_slug: 'other.com' } ),
+			makePurchase( { ID: 20, site_slug: 'example.com' } ),
+		];
+		expect( findPurchaseFromReceipt( purchases, 'example.com', [ 'personal-bundle' ] ) ).toBe( 20 );
+	} );
+
+	it( 'ignores inactive subscriptions', () => {
+		const purchases = [ makePurchase( { ID: 10, subscription_status: 'inactive' } ) ];
+		expect(
+			findPurchaseFromReceipt( purchases, 'example.com', [ 'personal-bundle' ] )
+		).toBeUndefined();
+	} );
+
+	it( 'finds a plan in a multi-item receipt (plan + domain) by matching the plan slug', () => {
+		const purchases = [ makePurchase( { ID: 99, product_slug: 'personal-bundle' } ) ];
+		expect(
+			findPurchaseFromReceipt( purchases, 'example.com', [ 'personal-bundle', 'domain_reg' ] )
+		).toBe( 99 );
+	} );
+
+	it( 'does not pick an unrelated active plan when receipt product slugs do not match', () => {
+		const purchases = [
+			makePurchase( { ID: 5, product_slug: 'business-bundle' } ),
+			makePurchase( { ID: 6, product_slug: 'ecommerce-bundle' } ),
+		];
+		expect(
+			findPurchaseFromReceipt( purchases, 'example.com', [ 'personal-bundle' ] )
+		).toBeUndefined();
 	} );
 } );

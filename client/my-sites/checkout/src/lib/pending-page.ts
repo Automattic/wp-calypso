@@ -7,6 +7,7 @@ import {
 	PROCESSING,
 	ASYNC_PENDING,
 } from 'calypso/state/order-transactions/constants';
+import type { Purchase } from '@automattic/api-core';
 import type { OrderTransaction } from 'calypso/state/selectors/get-order-transaction';
 
 export interface PendingPageRedirectOptions {
@@ -269,6 +270,32 @@ function interpolateReceiptId( url: string, receiptId: number ): string {
  */
 export function interpolatePurchaseId( url: string, purchaseId: number ): string {
 	return url.replaceAll( ':purchaseId', `${ purchaseId }` );
+}
+
+/**
+ * Given the user's current purchases, a site slug, and the product slugs from
+ * the receipt items, returns the ID of the newly-provisioned active subscription
+ * that matches one of the receipt's products on the given site.
+ *
+ * Replaces the previous "highest active plan ID" heuristic with an exact
+ * product-slug match so that bundled receipts (e.g. plan + domain) and
+ * non-plan upgrades resolve correctly without relying on monotonic IDs.
+ */
+export function findPurchaseFromReceipt(
+	purchases: Purchase[] | undefined,
+	siteSlug: string | undefined,
+	receiptItemProductSlugs: readonly string[]
+): number | undefined {
+	if ( ! purchases || ! siteSlug || receiptItemProductSlugs.length === 0 ) {
+		return undefined;
+	}
+	const match = purchases.find(
+		( p ) =>
+			p.site_slug === siteSlug &&
+			p.subscription_status === 'active' &&
+			receiptItemProductSlugs.includes( p.product_slug )
+	);
+	return match?.ID;
 }
 
 /**
