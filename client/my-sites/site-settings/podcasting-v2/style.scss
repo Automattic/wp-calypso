@@ -67,6 +67,11 @@
 	margin: 6px 0 10px;
 }
 
+/* Constrain DataForm fields to a Jetpack-settings-like width — parent only. */
+.podcasting-v2__form-pane {
+	max-inline-size: 480px;
+}
+
 /* Card-level action buttons (e.g. Create episode) */
 .podcasting-v2__card-actions {
 	display: flex;

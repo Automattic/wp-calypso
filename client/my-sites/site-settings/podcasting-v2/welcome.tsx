@@ -28,7 +28,7 @@ const PLANS: Record< 'personal' | 'premium' | 'business', PlanDef > = {
 		blurb: 'Create your home on the web with a custom domain name.',
 		price: 4,
 		features: [
-			'Publishing tools: podcasting and newsletter',
+			'Publishing tools: Podcast and Newsletter',
 			'6 GB storage',
 			'Free domain for one year',
 			'Ad-free browsing experience for your visitors',
@@ -43,7 +43,7 @@ const PLANS: Record< 'personal' | 'premium' | 'business', PlanDef > = {
 		blurb: 'Build a unique website with powerful design tools.',
 		price: 8,
 		features: [
-			'Publishing tools: podcasting and newsletter',
+			'Publishing tools: Podcast and Newsletter',
 			'13 GB storage',
 			'Free domain for one year',
 			'Ad-free browsing experience for your visitors',
@@ -62,7 +62,7 @@ const PLANS: Record< 'personal' | 'premium' | 'business', PlanDef > = {
 			'Unlock the power of WordPress with the managed hosting platform built by WordPress experts.',
 		price: 25,
 		features: [
-			'Publishing tools: podcasting and newsletter',
+			'Publishing tools: Podcast and Newsletter',
 			'50 GB storage',
 			'Free domain for one year',
 			'Ad-free browsing experience for your visitors',
@@ -253,7 +253,7 @@ function PodcastingWelcome( { onEnable, planTier, onChangePlanTier }: WelcomePro
 				<h3 className="podcasting-v2__welcome-pricing-title">{ pricingTitle }</h3>
 
 				<div className={ `podcasting-v2__plans podcasting-v2__plans--cols-${ cards.length }` }>
-					{ cards.map( ( { plan, label } ) => {
+					{ cards.map( ( { plan, label }, index ) => {
 						const isRecommended = label === 'recommended';
 						const isYourPlan = label === 'your-plan';
 						const classes = [ 'podcasting-v2__plan' ];
@@ -263,6 +263,14 @@ function PodcastingWelcome( { onEnable, planTier, onChangePlanTier }: WelcomePro
 						if ( isYourPlan ) {
 							classes.push( 'podcasting-v2__plan--your-plan' );
 						}
+						// Right column shows the first two features (Publishing tools + storage)
+						// always, then only features that aren't already on the left card —
+						// so the upgrade is easy to scan at a glance.
+						const leftFeatures = index === 1 ? cards[ 0 ].plan.features : [];
+						const features =
+							index === 1
+								? plan.features.filter( ( f, i ) => i < 2 || ! leftFeatures.includes( f ) )
+								: plan.features;
 						return (
 							<div key={ plan.slug } className={ classes.join( ' ' ) }>
 								{ label && (
@@ -284,7 +292,7 @@ function PodcastingWelcome( { onEnable, planTier, onChangePlanTier }: WelcomePro
 									{ isYourPlan ? 'Enable podcasting' : `Upgrade to ${ plan.name }` }
 								</Button>
 								<ul className="podcasting-v2__plan-features">
-									{ plan.features.map( ( f ) => (
+									{ features.map( ( f ) => (
 										<li key={ f }>
 											<Icon icon={ check } />
 											<span>{ f }</span>

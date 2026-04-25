@@ -118,7 +118,7 @@ function PodcastingDistribution() {
 			{ ! feedHealthy && (
 				<Notice status="warning" isDismissible={ false }>
 					{ translate(
-						'Directories will reject your feed until you add cover art and a contact email. Finish those in Settings first.'
+						'Directories will reject your feed until you add cover art and a contact email. Update those in Settings before submitting.'
 					) }
 				</Notice>
 			) }

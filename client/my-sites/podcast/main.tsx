@@ -167,7 +167,10 @@ const PodcastMain = ( { section, path }: PodcastMainProps ) => {
 					) : (
 						<div className="podcast__tab-content podcasting-v2">
 							<PodcastingWelcome
-								onEnable={ () => setPodcastingOn( true ) }
+								onEnable={ () => {
+									setPodcastingOn( true );
+									page.show( '/podcast/settings' + pathSuffix );
+								} }
 								planTier={ planTier }
 								onChangePlanTier={ setPlanTier }
 							/>

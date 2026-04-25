@@ -287,19 +287,12 @@ export function PodcastingV2Body( {
 					</CardBody>
 				</Card>
 			) : (
-				<Card className="site-settings__card podcasting-v2__card">
-					<CardBody>
-						<VStack spacing={ 1 }>
-							<Text weight={ 600 }>{ translate( 'Finish setting up your podcast' ) }</Text>
-							<Text variant="muted">
-								{ translate(
-									'Add %(fields)s below. Once your show is ready, you can create your first episode from here.',
-									{ args: { fields: missingFields.join( ', ' ) } }
-								) }
-							</Text>
-						</VStack>
-					</CardBody>
-				</Card>
+				<Notice status="warning" isDismissible={ false }>
+					{ translate(
+						'Add %(fields)s below to finish setting up your podcast. Directories will reject your feed until these are filled in.',
+						{ args: { fields: missingFields.join( ', ' ) } }
+					) }
+				</Notice>
 			) }
 
 			<Card className="site-settings__card podcasting-v2__card">
@@ -400,12 +393,14 @@ export function PodcastingV2Body( {
 								) }
 							</div>
 						</div>
-						<DataForm< PodcastFormData >
-							data={ formData }
-							fields={ fields }
-							form={ detailsForm }
-							onChange={ handleChange }
-						/>
+						<div className="podcasting-v2__form-pane">
+							<DataForm< PodcastFormData >
+								data={ formData }
+								fields={ fields }
+								form={ detailsForm }
+								onChange={ handleChange }
+							/>
+						</div>
 					</VStack>
 				</CardBody>
 			</Card>
@@ -419,12 +414,14 @@ export function PodcastingV2Body( {
 						<Text as="p" variant="muted">
 							{ translate( 'Configure how your podcast appears in directories and apps.' ) }
 						</Text>
-						<DataForm< PodcastFormData >
-							data={ formData }
-							fields={ fields }
-							form={ feedSettingsForm }
-							onChange={ handleChange }
-						/>
+						<div className="podcasting-v2__form-pane">
+							<DataForm< PodcastFormData >
+								data={ formData }
+								fields={ fields }
+								form={ feedSettingsForm }
+								onChange={ handleChange }
+							/>
+						</div>
 					</VStack>
 				</CardBody>
 			</Card>
