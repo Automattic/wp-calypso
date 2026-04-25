@@ -48,7 +48,7 @@ const SubmitModal = ( { podcatcher, onClose }: Props ) => {
 		<Modal
 			title={ translate( 'Submit to %(service)s', serviceArgs ) as string }
 			onRequestClose={ onClose }
-			className="podcast__submit-modal"
+			size="medium"
 		>
 			<VStack as="ol" spacing={ 5 } className="podcast__submit-steps">
 				<li className="podcast__submit-step">
