@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { __experimentalText as Text } from '@wordpress/components';
 import {
 	DataViews,
 	filterSortAndPaginate,
@@ -214,10 +215,12 @@ const PodcastingEpisodes = () => {
 
 	const sectionHeader = (
 		<header className="podcast__section-header">
-			<h2 className="podcast__section-heading">{ translate( 'Episodes' ) }</h2>
-			<p className="podcast__section-description">
+			<Text as="h2" size="title" className="podcast__section-heading">
+				{ translate( 'Episodes' ) }
+			</Text>
+			<Text as="p" variant="muted" className="podcast__section-description">
 				{ translate( 'Manage the posts that make up your podcast feed.' ) }
-			</p>
+			</Text>
 		</header>
 	);
 

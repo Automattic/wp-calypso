@@ -1,4 +1,10 @@
-import { Button, ExternalLink, Modal, TextControl } from '@wordpress/components';
+import {
+	Button,
+	ExternalLink,
+	Modal,
+	TextControl,
+	__experimentalText as Text,
+} from '@wordpress/components';
 import { external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState, type FormEvent } from 'react';
@@ -44,10 +50,10 @@ const SubmitModal = ( { podcatcher, onClose }: Props ) => {
 		>
 			<ol className="podcast__submit-steps">
 				<li className="podcast__submit-step">
-					<h3 className="podcast__submit-step-title">
+					<Text as="h3" weight={ 600 } size="body" className="podcast__submit-step-title">
 						{ translate( 'Step 1: Copy your RSS feed URL' ) }
-					</h3>
-					<p className="podcast__submit-step-description">
+					</Text>
+					<Text as="p" variant="muted" className="podcast__submit-step-description">
 						{ feedUrl
 							? translate(
 									'Click the button below to copy your RSS feed URL. %(service)s will require this URL to list your podcast.',
@@ -56,15 +62,15 @@ const SubmitModal = ( { podcatcher, onClose }: Props ) => {
 							: translate(
 									'Select a podcast category in the Settings tab to generate your RSS feed URL.'
 							  ) }
-					</p>
+					</Text>
 					{ feedUrl && <ClipboardButtonInput value={ feedUrl } /> }
 				</li>
 
 				<li className="podcast__submit-step">
-					<h3 className="podcast__submit-step-title">
+					<Text as="h3" weight={ 600 } size="body" className="podcast__submit-step-title">
 						{ translate( 'Step 2: Submit your podcast to %(service)s', serviceArgs ) }
-					</h3>
-					<p className="podcast__submit-step-description">
+					</Text>
+					<Text as="p" variant="muted" className="podcast__submit-step-description">
 						{ translate(
 							'Click the button below to visit %(service)s and complete their sign up flow.',
 							serviceArgs
@@ -77,7 +83,7 @@ const SubmitModal = ( { podcatcher, onClose }: Props ) => {
 								</ExternalLink>
 							</>
 						) }
-					</p>
+					</Text>
 					<Button
 						variant="secondary"
 						__next40pxDefaultSize
@@ -95,15 +101,15 @@ const SubmitModal = ( { podcatcher, onClose }: Props ) => {
 				</li>
 
 				<li className="podcast__submit-step">
-					<h3 className="podcast__submit-step-title">
+					<Text as="h3" weight={ 600 } size="body" className="podcast__submit-step-title">
 						{ translate( 'Step 3: Enter your %(service)s URL', serviceArgs ) }
-					</h3>
-					<p className="podcast__submit-step-description">
+					</Text>
+					<Text as="p" variant="muted" className="podcast__submit-step-description">
 						{ translate(
 							'Paste your new %(service)s URL into the field below and we’ll use it for your sharing buttons.',
 							serviceArgs
 						) }
-					</p>
+					</Text>
 					<form className="podcast__submit-step-form" onSubmit={ handleSave }>
 						<div className="podcast__submit-step-field">
 							<TextControl
