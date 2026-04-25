@@ -12,7 +12,10 @@ import { Card, CardBody, CardDivider } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { Text } from '../../components/text';
-import { getJetpackCriticalErrorMessage, hasJetpackCriticalError } from '../site/notices';
+import {
+	getJetpackCriticalErrorMessage,
+	isInJetpackCriticalErrorState,
+} from '../../utils/site-jetpack-critical-error';
 import type { ReactElement, ReactNode } from 'react';
 
 type Item = {
@@ -34,7 +37,7 @@ const SiteCriticalError = ( { siteSlug }: { siteSlug: string } ) => {
 	const navigate = useNavigate();
 
 	const isAdmin = !! site.capabilities?.manage_options;
-	const hasRecovered = ! site.__inaccessible_jetpack_error || ! hasJetpackCriticalError( site );
+	const hasRecovered = ! isInJetpackCriticalErrorState( site );
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_dashboard_critical_error_impression' );
