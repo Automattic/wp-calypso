@@ -6,6 +6,7 @@ import { createPodcast } from './controller';
 
 export default function () {
 	page( '/podcast', siteSelection, sites, makeLayout, clientRender );
+	page( '/podcast/episodes', siteSelection, sites, makeLayout, clientRender );
 	page( '/podcast/settings', siteSelection, sites, makeLayout, clientRender );
 	page( '/podcast/distribution', siteSelection, sites, makeLayout, clientRender );
 
@@ -20,7 +21,7 @@ export default function () {
 	);
 
 	page(
-		'/podcast/:section(settings|distribution)/:site_id',
+		'/podcast/:section(episodes|settings|distribution)/:site_id',
 		siteSelection,
 		navigation,
 		siteSettings,

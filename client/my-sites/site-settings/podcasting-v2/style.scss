@@ -327,9 +327,10 @@
 		display: block;
 	}
 
-	&.is-not-submitted {
-		opacity: 0.55;
-		filter: saturate( 0.3 );
+	&.is-circle {
+		border-radius: 50%;
+		background: transparent;
+		box-shadow: none;
 	}
 }
 

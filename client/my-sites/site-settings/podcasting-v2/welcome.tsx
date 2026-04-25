@@ -197,7 +197,7 @@ function PodcastingWelcome( { onEnable, planTier, onChangePlanTier }: WelcomePro
 	return (
 		<div className="podcasting-v2__welcome">
 			{ /* Hero */ }
-			<Card className="podcasting-v2__welcome-hero">
+			<section className="podcasting-v2__welcome-hero">
 				<div className="podcasting-v2__welcome-hero-copy">
 					<h2 className="podcasting-v2__welcome-title">Turn your posts into a podcast</h2>
 					<p className="podcasting-v2__welcome-lede">
@@ -240,7 +240,7 @@ function PodcastingWelcome( { onEnable, planTier, onChangePlanTier }: WelcomePro
 						) ) }
 					</ul>
 				</div>
-			</Card>
+			</section>
 
 			{ /* Pricing grid */ }
 			<section className="podcasting-v2__welcome-pricing">

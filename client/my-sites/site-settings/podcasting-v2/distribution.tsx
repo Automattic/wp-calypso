@@ -30,20 +30,19 @@ type Directory = {
 
 const DIRECTORIES: Directory[] = [
 	{
+		id: 'pocketcasts',
+		name: 'Pocket Casts',
+		submitUrl: 'https://pocketcasts.com/submit',
+		status: 'not-submitted',
+		Logo: LogoPocketCasts,
+	},
+	{
 		id: 'apple',
 		name: 'Apple Podcasts',
 		submitUrl: 'https://podcastsconnect.apple.com/',
 		listingUrl: 'https://podcasts.apple.com/',
 		status: 'live',
 		Logo: LogoApple,
-	},
-	{
-		id: 'podcastindex',
-		name: 'Podcast Index',
-		submitUrl: 'https://podcastindex.org/add',
-		listingUrl: 'https://podcastindex.org/',
-		status: 'live',
-		Logo: LogoPodcastIndex,
 	},
 	{
 		id: 'spotify',
@@ -53,11 +52,11 @@ const DIRECTORIES: Directory[] = [
 		Logo: LogoSpotify,
 	},
 	{
-		id: 'pocketcasts',
-		name: 'Pocket Casts',
-		submitUrl: 'https://pocketcasts.com/submit',
+		id: 'youtube',
+		name: 'YouTube',
+		submitUrl: 'https://studio.youtube.com',
 		status: 'not-submitted',
-		Logo: LogoPocketCasts,
+		Logo: LogoYouTube,
 	},
 	{
 		id: 'amazon',
@@ -67,11 +66,12 @@ const DIRECTORIES: Directory[] = [
 		Logo: LogoAmazon,
 	},
 	{
-		id: 'youtube',
-		name: 'YouTube',
-		submitUrl: 'https://studio.youtube.com',
-		status: 'not-submitted',
-		Logo: LogoYouTube,
+		id: 'podcastindex',
+		name: 'Podcast Index',
+		submitUrl: 'https://podcastindex.org/add',
+		listingUrl: 'https://podcastindex.org/',
+		status: 'live',
+		Logo: LogoPodcastIndex,
 	},
 ];
 
@@ -141,13 +141,13 @@ function PodcastingDistribution() {
 					<ul className="podcasting-v2__directory-list">
 						{ DIRECTORIES.map( ( d ) => {
 							const { Logo } = d;
+							const logoClass = `podcasting-v2__directory-logo is-${ d.status }${
+								d.id === 'pocketcasts' ? ' is-circle' : ''
+							}`;
 							return (
 								<li key={ d.id } className="podcasting-v2__directory-row">
 									<div className="podcasting-v2__directory-main">
-										<span
-											className={ `podcasting-v2__directory-logo is-${ d.status }` }
-											aria-hidden="true"
-										>
+										<span className={ logoClass } aria-hidden="true">
 											<Logo />
 										</span>
 										<div className="podcasting-v2__directory-text">
@@ -198,11 +198,12 @@ function PodcastingDistribution() {
 							);
 						} ) }
 					</ul>
-					<FormSettingExplanation>
-						{ translate( 'Most directories take a few days to appear after you submit.' ) }
-					</FormSettingExplanation>
 				</CardBody>
 			</Card>
+
+			<FormSettingExplanation>
+				{ translate( 'Most directories take a few days to appear after you submit.' ) }
+			</FormSettingExplanation>
 
 			<Notice status="info" isDismissible={ false }>
 				{ translate( 'Prototype only. Statuses are illustrative.' ) }

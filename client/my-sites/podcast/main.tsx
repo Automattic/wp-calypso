@@ -1,5 +1,6 @@
 import page from '@automattic/calypso-router';
 import { Page } from '@wordpress/admin-ui';
+import { Button } from '@wordpress/components';
 import { Tabs } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -29,9 +30,13 @@ type PodcastMainProps = {
 	path?: string;
 };
 
-const VALID_SECTIONS: readonly PodcastSection[] = [ 'settings', 'distribution' ] as const;
+const VALID_SECTIONS: readonly PodcastSection[] = [
+	'episodes',
+	'settings',
+	'distribution',
+] as const;
 
-const isValidSection = ( s: string | undefined ): s is 'settings' | 'distribution' =>
+const isValidSection = ( s: string | undefined ): s is PodcastSection =>
 	!! s && ( VALID_SECTIONS as readonly string[] ).includes( s );
 
 const PodcastMain = ( { section, path }: PodcastMainProps ) => {
@@ -58,7 +63,7 @@ const PodcastMain = ( { section, path }: PodcastMainProps ) => {
 		{
 			name: 'episodes',
 			title: translate( 'Episodes' ) as string,
-			path: '/podcast' + pathSuffix,
+			path: '/podcast/episodes' + pathSuffix,
 		},
 		{
 			name: 'distribution',
@@ -145,6 +150,13 @@ const PodcastMain = ( { section, path }: PodcastMainProps ) => {
 								planTier={ planTier }
 								onChangePlanTier={ setPlanTier }
 							/>
+						</div>
+					) }
+					{ podcastingOn && (
+						<div className="podcast__page-foot">
+							<Button variant="secondary" isDestructive onClick={ () => setPodcastingOn( false ) }>
+								{ translate( 'Disable podcasting' ) }
+							</Button>
 						</div>
 					) }
 				</div>
