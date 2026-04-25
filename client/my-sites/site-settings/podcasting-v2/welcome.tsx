@@ -142,31 +142,31 @@ const STEPS: { number: string; title: string; body: string }[] = [
 
 // Mock episodes for the hero preview and example-feed modal
 const SAMPLE_SHOW = {
-	title: 'Creators Weekly',
-	host: 'Jordan Lee',
-	category: 'Technology',
+	title: 'Far From Home',
+	host: 'Maya Chen',
+	category: 'Places & Travel',
 	summary:
-		'A weekly show about shipping, scaling, and selling independent creative work on the open web.',
+		'A weekly travel show about long bus rides, market food, and the strangers who make a place feel like home.',
 };
 
 const SAMPLE_EPISODES = [
 	{
 		number: 4,
-		title: 'Shipping fast with a team of two',
+		title: 'Lost in Lisbon: how getting turned around saved my trip',
 		date: 'Apr 22, 2026',
-		duration: '42 min',
+		duration: '38 min',
 	},
 	{
 		number: 3,
-		title: 'How we chose a podcast host in 48 hours',
+		title: 'Eating my way through Oaxaca',
 		date: 'Apr 15, 2026',
-		duration: '37 min',
+		duration: '45 min',
 	},
 	{
 		number: 2,
-		title: 'Pilot episode: what makes a weekly show work',
+		title: 'Pilot: One backpack, six months',
 		date: 'Apr 8, 2026',
-		duration: '29 min',
+		duration: '32 min',
 	},
 	{
 		number: 1,
@@ -208,16 +208,15 @@ function PodcastingWelcome( { onEnable, planTier, onChangePlanTier }: WelcomePro
 					</p>
 					<div className="podcasting-v2__welcome-actions">
 						{ ! isFree && (
-							<Button variant="primary" onClick={ onEnable }>
-								Enable podcasting
-							</Button>
+							<>
+								<Button variant="primary" onClick={ onEnable }>
+									Enable podcasting
+								</Button>
+								<Button variant="link" onClick={ () => setExampleOpen( true ) }>
+									See an example feed
+								</Button>
+							</>
 						) }
-						<Button
-							variant={ isFree ? 'secondary' : 'link' }
-							onClick={ () => setExampleOpen( true ) }
-						>
-							See an example feed
-						</Button>
 					</div>
 				</div>
 

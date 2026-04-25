@@ -1,6 +1,6 @@
 import page from '@automattic/calypso-router';
 import { Page } from '@wordpress/admin-ui';
-import { Button } from '@wordpress/components';
+import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { Tabs } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -152,6 +152,15 @@ const PodcastMain = ( { section, path }: PodcastMainProps ) => {
 										podcastingOn={ podcastingOn }
 										onChangePodcasting={ setPodcastingOn }
 									/>
+									<HStack justify="flex-start">
+										<Button
+											variant="secondary"
+											isDestructive
+											onClick={ () => setPodcastingOn( false ) }
+										>
+											{ translate( 'Disable podcasting' ) }
+										</Button>
+									</HStack>
 								</div>
 							</Tabs.Panel>
 						</Tabs.Root>
@@ -162,13 +171,6 @@ const PodcastMain = ( { section, path }: PodcastMainProps ) => {
 								planTier={ planTier }
 								onChangePlanTier={ setPlanTier }
 							/>
-						</div>
-					) }
-					{ podcastingOn && (
-						<div className="podcast__page-foot">
-							<Button variant="secondary" isDestructive onClick={ () => setPodcastingOn( false ) }>
-								{ translate( 'Disable podcasting' ) }
-							</Button>
 						</div>
 					) }
 				</div>

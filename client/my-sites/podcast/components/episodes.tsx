@@ -9,7 +9,7 @@ import {
 } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState, type MouseEvent } from 'react';
-import { DataViewsEmptyStateLayout } from 'calypso/dashboard/components/dataviews';
+import { DataViewsCard, DataViewsEmptyStateLayout } from 'calypso/dashboard/components/dataviews';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { useSelector } from 'calypso/state';
 import getPodcastingCategoryId from 'calypso/state/selectors/get-podcasting-category-id';
@@ -260,7 +260,7 @@ const PodcastingEpisodes = () => {
 	return (
 		<>
 			{ sectionHeader }
-			<div className="podcast__episodes">
+			<DataViewsCard>
 				<DataViews< Episode >
 					data={ processed }
 					fields={ fields }
@@ -273,7 +273,7 @@ const PodcastingEpisodes = () => {
 					defaultLayouts={ { table: {} } }
 					search
 				/>
-			</div>
+			</DataViewsCard>
 		</>
 	);
 };

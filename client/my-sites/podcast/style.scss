@@ -51,16 +51,6 @@ body.is-section-podcast {
 	max-width: 1120px;
 }
 
-.podcast__page-foot {
-	align-self: center;
-	box-sizing: border-box;
-	padding: 12px 24px 32px;
-	width: 100%;
-	max-width: 1120px;
-	display: flex;
-	justify-content: flex-start;
-}
-
 .podcast__section-header {
 	margin-block-end: 24px;
 }
@@ -88,12 +78,6 @@ body.is-section-podcast {
 .podcast__submit-step-field {
 	flex: 1;
 	min-width: 0;
-}
-
-.podcast__episodes {
-	background: var( --color-surface );
-	border-radius: 8px;
-	overflow: hidden;
 }
 
 .podcast__episode-thumb {

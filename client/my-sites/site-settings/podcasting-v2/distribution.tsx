@@ -1,7 +1,13 @@
 import './style.scss';
 
 import { FormLabel } from '@automattic/components';
-import { Button, Card, CardBody, Notice } from '@wordpress/components';
+import {
+	Button,
+	Card,
+	CardBody,
+	Notice,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { type ComponentType, useMemo, useState } from 'react';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
@@ -119,25 +125,29 @@ function PodcastingDistribution() {
 
 			<Card className="site-settings__card podcasting-v2__card">
 				<CardBody>
-					<h3 className="podcasting-v2__card-title">{ translate( 'Podcast directories' ) }</h3>
-					<FormSettingExplanation>
-						{ translate( '%(live)d live, %(pending)d pending, %(missing)d not submitted.', {
-							args: {
-								live: summary.live,
-								pending: summary.pending,
-								missing: summary.missing,
-							},
-						} ) }
-					</FormSettingExplanation>
-					<FormFieldset>
-						<FormLabel>{ translate( 'RSS feed' ) }</FormLabel>
-						<ClipboardButtonInput value="https://lookmaitsapodcast.wordpress.com/category/podcast/feed/" />
-						<FormSettingExplanation>
-							{ translate(
-								'Most directories ask for this URL. Copy it, then open a directory below to submit.'
-							) }
-						</FormSettingExplanation>
-					</FormFieldset>
+					<VStack spacing={ 5 }>
+						<VStack spacing={ 1 }>
+							<h3 className="podcasting-v2__card-title">{ translate( 'Podcast directories' ) }</h3>
+							<FormSettingExplanation>
+								{ translate( '%(live)d live, %(pending)d pending, %(missing)d not submitted.', {
+									args: {
+										live: summary.live,
+										pending: summary.pending,
+										missing: summary.missing,
+									},
+								} ) }
+							</FormSettingExplanation>
+						</VStack>
+						<FormFieldset>
+							<FormLabel>{ translate( 'RSS feed' ) }</FormLabel>
+							<ClipboardButtonInput value="https://lookmaitsapodcast.wordpress.com/category/podcast/feed/" />
+							<FormSettingExplanation>
+								{ translate(
+									'Most directories ask for this URL. Copy it, then open a directory below to submit.'
+								) }
+							</FormSettingExplanation>
+						</FormFieldset>
+					</VStack>
 					<ul className="podcasting-v2__directory-list">
 						{ DIRECTORIES.map( ( d ) => {
 							const { Logo } = d;

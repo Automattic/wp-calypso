@@ -576,6 +576,7 @@
 
 .podcasting-v2__welcome-benefit-icon {
 	display: inline-flex;
+	margin-inline-start: -2px;
 	margin-block-end: 24px;
 
 	svg {
@@ -765,6 +766,7 @@
 
 .podcasting-v2__plan-blurb {
 	margin: 0;
+	min-height: 3em;
 	font-size: 13px;
 	line-height: 1.5;
 	color: var( --color-text-subtle );
