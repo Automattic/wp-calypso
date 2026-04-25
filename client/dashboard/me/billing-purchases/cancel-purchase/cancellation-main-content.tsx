@@ -112,12 +112,7 @@ export default function CancellationMainContent( {
 
 	if ( config.isEnabled( 'purchases/split-cancel-remove' ) ) {
 		// Non-primary domain forwarding: plan cancellation on a site with a custom primary domain.
-		if (
-			purchase.is_plan &&
-			! purchase.is_wpcom_atomic &&
-			site?.URL &&
-			site?.options?.unmapped_url
-		) {
+		if ( purchase.is_plan && site?.URL && site?.options?.unmapped_url ) {
 			const primaryDomain = new URL( site.URL ).hostname;
 			const wpcomDomain = new URL( site.options.unmapped_url ).hostname;
 			if ( primaryDomain !== wpcomDomain ) {

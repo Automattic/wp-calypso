@@ -86,7 +86,7 @@ describe( '<CancellationMainContent />', () => {
 		render(
 			<CancellationMainContent
 				{ ...defaultProps }
-				purchase={ makePurchase( { is_plan: true, is_wpcom_atomic: false } ) }
+				purchase={ makePurchase( { is_plan: true } ) }
 				site={ makeSite( {
 					URL: 'https://mycustomdomain.com',
 					options: {
