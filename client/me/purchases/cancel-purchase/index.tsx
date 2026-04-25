@@ -55,6 +55,7 @@ import {
 	extendPurchaseWithFreeMonth,
 } from 'calypso/lib/purchases/actions';
 import { getMutationFlowType, getPurchaseCancellationFlowType } from 'calypso/lib/purchases/utils';
+import { hasCustomDomain } from 'calypso/lib/site/utils';
 import CancelPurchaseLoadingPlaceholder from 'calypso/me/purchases/cancel-purchase/loading-placeholder';
 import { classifyPurchaseForCopy } from 'calypso/me/purchases/manage-purchase/classify-purchase-for-copy';
 import { managePurchase, purchasesRoot } from 'calypso/me/purchases/paths';
@@ -80,6 +81,7 @@ import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { refreshSitePlans } from 'calypso/state/sites/plans/actions';
 import { isRequestingSites, getSite } from 'calypso/state/sites/selectors';
+import { isRequestingWordAdsApprovalForSite } from 'calypso/state/wordads/approve/selectors';
 import AtomicRevertChanges from './atomic-revert-changes';
 import CancelPurchaseButton from './button';
 import CancelPurchaseDomainOptions, { willShowDomainOptionsRadioButtons } from './domain-options';
@@ -196,6 +198,9 @@ export interface CancelPurchaseConnectedProps {
 	purchase: Purchases.Purchase;
 	purchases: Purchases.Purchase[];
 	site: SiteDetails;
+	hasSetupAds: boolean;
+	hasCustomPrimaryDomain: boolean | null;
+	selectedDomainIsGravatar: boolean;
 }
 
 export interface CancelPurchaseProps {
@@ -931,9 +936,90 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			intent,
 			purchaseCancelFeatures,
 			translate,
+			site,
+			hasSetupAds,
+			hasCustomPrimaryDomain,
+			selectedDomainIsGravatar,
 		} = this.props;
 		const { isSplitCancelRemoveEnabled } = this.props;
 		const cancellationFeatures = purchaseCancelFeatures?.features ?? [];
+
+		// Build site-dependency warnings shown inline under the flag.
+		const siteWarnings: Array< { slug: string; text: string } > = [];
+		if ( isSplitEnabled ) {
+			// Non-primary domain forwarding.
+			if ( isPlan( purchase ) && hasCustomPrimaryDomain && site ) {
+				const primaryDomain = site.domain;
+				const wpcomDomain = site.wpcom_url;
+				if ( primaryDomain && wpcomDomain ) {
+					siteWarnings.push(
+						{
+							slug: 'domainForwarding',
+							text: translate( '%(primaryDomain)s will start forwarding to %(wpcomDomain)s.', {
+								args: { primaryDomain, wpcomDomain },
+							} ),
+						},
+						{
+							slug: 'domainVisible',
+							text: translate(
+								'%(wpcomDomain)s will become the address people see when they visit your site.',
+								{ args: { wpcomDomain } }
+							),
+						}
+					);
+				}
+			}
+
+			// WordAds ineligibility.
+			if ( isPlan( purchase ) && hasSetupAds ) {
+				siteWarnings.push( {
+					slug: 'wordAdsIneligible',
+					text: translate( 'You will become ineligible for the WordAds program.' ),
+				} );
+			}
+
+			// Marketplace subscription cascade.
+			const activeMarketplaceSubs = this.getActiveMarketplaceSubscriptions();
+			if ( activeMarketplaceSubs.length > 0 ) {
+				for ( const sub of activeMarketplaceSubs ) {
+					siteWarnings.push( {
+						slug: `marketplace-${ sub.id }`,
+						text: translate( '%(productName)s will also be removed.', {
+							args: { productName: sub.productName },
+						} ),
+					} );
+				}
+			}
+
+			// Domain deletion consequences.
+			if ( isDomainRegistrationPurchase ) {
+				const domainName = getName( purchase );
+				siteWarnings.push(
+					{
+						slug: 'domainServicesUnreachable',
+						text: translate(
+							'All services connected to %(domain)s will become unreachable, including email and website.',
+							{ args: { domain: domainName } }
+						),
+					},
+					{
+						slug: 'domainAvailable',
+						text: translate( '%(domain)s will become available for someone else to register.', {
+							args: { domain: domainName },
+						} ),
+					}
+				);
+
+				if ( selectedDomainIsGravatar ) {
+					siteWarnings.push( {
+						slug: 'gravatarDomain',
+						text: translate(
+							'This domain is provided at no cost for your Gravatar profile. If you delete it, you will have to pay full price for another.'
+						),
+					} );
+				}
+			}
+		}
 
 		const displayVariant: 'cancel' | 'remove' = intent === 'remove' ? 'remove' : 'cancel';
 		const checkboxLabel = getCheckboxLabel();
@@ -980,6 +1066,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 							! isRefundable( purchase )
 					) }
 					isLoading={ this.state.isLoading }
+					additionalChanges={ siteWarnings }
 				/>
 
 				<div className="cancel-purchase__support">
@@ -1253,6 +1340,8 @@ const ConnectedCancelPurchase = connect(
 		const selectedDomain =
 			domains && selectedDomainName && getSelectedDomain( { domains, selectedDomainName } );
 
+		const site = getSite( state, purchase ? purchase.siteId : null );
+
 		return {
 			hasLoadedSites: ! isRequestingSites( state ),
 			hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
@@ -1264,9 +1353,14 @@ const ConnectedCancelPurchase = connect(
 			purchases,
 			productsList,
 			includedDomainPurchase: getIncludedDomainPurchase( state, purchase ),
-			site: getSite( state, purchase ? purchase.siteId : null ),
+			site,
 			isHundredYearDomain: selectedDomain?.isHundredYearDomain,
 			atomicTransfer: getAtomicTransfer( state, purchase?.siteId ),
+			hasSetupAds: Boolean(
+				site?.options?.wordads || isRequestingWordAdsApprovalForSite( state, site )
+			),
+			hasCustomPrimaryDomain: hasCustomDomain( site ),
+			selectedDomainIsGravatar: Boolean( selectedDomain?.isGravatarRestrictedDomain ),
 		};
 	},
 	{
