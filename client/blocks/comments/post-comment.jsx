@@ -319,15 +319,13 @@ class PostComment extends PureComponent {
 		} else if ( commentAuthor.site_ID ) {
 			commentAuthorUrl = getStreamUrl( null, commentAuthor.site_ID );
 		} else {
-			const urlToCheck = commentAuthor?.URL;
-			if ( urlToCheck && isURL( urlToCheck ) ) {
-				const protocol = getProtocol( urlToCheck );
-				const domain = getAuthority( urlToCheck );
-				// isURL uses URL() which allows '%20' in Chromium but not Firefox, so we check ourselves.
-				if ( protocol === 'https:' && ! domain.includes( '%' ) ) {
-					commentAuthorUrl = urlToCheck;
-				}
-			}
+			const isSafeHttpsUrl = ( url ) =>
+				url &&
+				isURL( url ) &&
+				getProtocol( url ) === 'https:' &&
+				! getAuthority( url ).includes( '%' );
+
+			commentAuthorUrl = [ commentAuthor?.URL, commentAuthor?.profile_URL ].find( isSafeHttpsUrl );
 		}
 
 		return { comment, commentAuthor, commentAuthorUrl, commentAuthorName };
