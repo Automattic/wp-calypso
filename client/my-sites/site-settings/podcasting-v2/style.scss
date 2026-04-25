@@ -4,6 +4,17 @@
 	*::after {
 		box-sizing: border-box;
 	}
+
+	// client/dashboard/app/dataforms-overrides.scss applies uppercase + small-caps to
+	// every regular DataForm label. That rule is scoped to the Dashboard, but the
+	// stylesheet is imported by sites/v2 pages and leaks globally once that chunk
+	// loads. Restore BaseControl's defaults inside the podcasting form so labels
+	// render in title case to match the prototype.
+	.dataforms-layouts-regular__field .components-base-control__label {
+		font-size: inherit;
+		font-weight: inherit;
+		text-transform: none;
+	}
 }
 
 .podcasting-v2__page-head {

@@ -146,7 +146,7 @@ const PodcastMain = ( { section, path }: PodcastMainProps ) => {
 								</div>
 							</Tabs.Panel>
 							<Tabs.Panel value="settings">
-								<div className="podcast__tab-content">
+								<div className="podcast__tab-content podcasting-v2">
 									<PodcastingV2Body
 										embedded
 										podcastingOn={ podcastingOn }
