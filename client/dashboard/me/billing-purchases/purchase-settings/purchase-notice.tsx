@@ -33,7 +33,7 @@ import {
 	isInExpirationGracePeriod,
 	isAkismetFreeProduct,
 } from '../../../utils/purchase';
-import { getSitePurchaseUpgradeUrl } from '../../../utils/site-url';
+import { getSitePurchaseUpgradeUrl, getUpgradedPurchaseRedirectUrl } from '../../../utils/site-url';
 import { CancellationOfferNotice } from './cancellation-offer-notice';
 import {
 	OtherRenewablePurchasesNotice,
@@ -365,10 +365,7 @@ function TrialNotice( { purchase }: { purchase: Purchase } ) {
 			} );
 
 			window.location.href =
-				getSitePurchaseUpgradeUrl(
-					purchase,
-					`/checkout/upgrade-redirect/${ purchase.site_slug }/:receiptId`
-				) ?? '';
+				getSitePurchaseUpgradeUrl( purchase, getUpgradedPurchaseRedirectUrl() ) ?? '';
 			return;
 		}
 

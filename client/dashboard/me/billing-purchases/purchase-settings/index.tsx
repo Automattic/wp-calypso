@@ -93,7 +93,7 @@ import {
 	isCentennialPurchase,
 	hasAmountAvailableToRefund,
 } from '../../../utils/purchase';
-import { getSitePurchaseUpgradeUrl } from '../../../utils/site-url';
+import { getSitePurchaseUpgradeUrl, getUpgradedPurchaseRedirectUrl } from '../../../utils/site-url';
 import BillingFlexUsageCard from '../../billing-flex-usage';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
 import AkismetApiKeyCard from './akismet-api-key-card';
@@ -137,9 +137,7 @@ function getWpcomPlanGridUrl( siteSlug: string | undefined ): string {
 		...( siteSlug && { siteSlug } ),
 		cancel_to: backUrl,
 		dashboard: getCurrentDashboard(),
-		...( siteSlug && {
-			redirect_to: `/checkout/upgrade-redirect/${ siteSlug }/:receiptId`,
-		} ),
+		redirect_to: getUpgradedPurchaseRedirectUrl(),
 	} );
 }
 
@@ -225,10 +223,7 @@ function PurchaseActionMenu( { purchase }: { purchase: Purchase } ) {
 	const { user } = useAuth();
 	const canBeRenewed =
 		purchase.can_explicit_renew && String( user.ID ) === String( purchase.user_id );
-	const upgradeUrl = getSitePurchaseUpgradeUrl(
-		purchase,
-		`/checkout/upgrade-redirect/${ purchase.site_slug }/:receiptId`
-	);
+	const upgradeUrl = getSitePurchaseUpgradeUrl( purchase, getUpgradedPurchaseRedirectUrl() );
 	const { recordTracksEvent } = useAnalytics();
 	const menuItems = [
 		purchase.is_upgradable && upgradeUrl && (
@@ -430,10 +425,7 @@ function UpgradeActionButton( { purchase }: { purchase: Purchase } ) {
 	if ( ! purchase.is_upgradable ) {
 		return null;
 	}
-	const upgradeUrl = getSitePurchaseUpgradeUrl(
-		purchase,
-		`/checkout/upgrade-redirect/${ purchase.site_slug }/:receiptId`
-	);
+	const upgradeUrl = getSitePurchaseUpgradeUrl( purchase, getUpgradedPurchaseRedirectUrl() );
 	if ( ! upgradeUrl ) {
 		return null;
 	}
@@ -1257,10 +1249,7 @@ export default function PurchaseSettings() {
 	} );
 	const formattedExpiry = useFormattedTime( purchase.expiry_date ?? '' );
 	const formattedRenewal = useFormattedTime( purchase.renew_date ?? '' );
-	const upgradeUrl = getSitePurchaseUpgradeUrl(
-		purchase,
-		`/checkout/upgrade-redirect/${ purchase.site_slug }/:receiptId`
-	);
+	const upgradeUrl = getSitePurchaseUpgradeUrl( purchase, getUpgradedPurchaseRedirectUrl() );
 	const willRenew = Boolean(
 		! isExpired( purchase ) && purchase.renew_date && ! isExpiring( purchase )
 	);

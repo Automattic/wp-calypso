@@ -10,8 +10,10 @@ import { useTranslate } from 'i18n-calypso';
 import React, { useState, useEffect, useRef } from 'react';
 import Loading from 'calypso/components/loading';
 import Main from 'calypso/components/main';
+import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { useInitialIsInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import wpcom from 'calypso/lib/wp';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { getRedirectFromPendingPage } from 'calypso/my-sites/checkout/src/lib/pending-page';
 import { sendMessageToOpener } from 'calypso/my-sites/checkout/src/lib/popup';
@@ -32,6 +34,28 @@ import type {
 import type { CalypsoDispatch } from 'calypso/state/types';
 
 import './style.scss';
+
+const PURCHASE_RESOLUTION_TIMEOUT_MS = 30_000;
+
+interface PurchaseRecord {
+	ID: number;
+	site_slug: string;
+	is_plan: boolean;
+	subscription_status: string;
+}
+
+function findActivePlanIdForSite(
+	purchases: PurchaseRecord[],
+	siteSlug: string | undefined
+): number | undefined {
+	if ( ! siteSlug ) {
+		return undefined;
+	}
+	const activePlan = purchases
+		.filter( ( p ) => p.site_slug === siteSlug && p.is_plan && p.subscription_status === 'active' )
+		.sort( ( a, b ) => Number( b.ID ) - Number( a.ID ) )[ 0 ];
+	return activePlan ? Number( activePlan.ID ) : undefined;
+}
 
 interface CheckoutPendingProps {
 	orderId: number | ':orderId';
@@ -185,6 +209,41 @@ function useRedirectOnTransactionSuccess( {
 		enabled: !! finalReceiptId,
 	} );
 	const isReceiptLoaded = isReceiptSuccess || isReceiptError;
+
+	// Resolve `:purchaseId` placeholders in `redirectTo` by polling the user's
+	// purchases for the newly-provisioned plan. If the new plan does not appear
+	// within `PURCHASE_RESOLUTION_TIMEOUT_MS`, fall back to the site overview
+	// (which surfaces the active plan) so the user is never stuck on the loader.
+	const needsPurchaseId = Boolean( redirectTo?.includes( ':purchaseId' ) );
+	const { data: resolvedPurchaseId } = useQuery< number | null >( {
+		queryKey: [ 'pending-purchase-id', siteSlug ],
+		queryFn: async () => {
+			const purchases: PurchaseRecord[] = await wpcom.req.get( '/me/purchases', {
+				apiVersion: '1.1',
+			} );
+			return findActivePlanIdForSite( purchases, siteSlug ) ?? null;
+		},
+		enabled: needsPurchaseId && Boolean( siteSlug ) && isReceiptLoaded,
+		refetchInterval: ( query ) => ( query.state.data ? false : 1000 ),
+	} );
+
+	const [ hasPurchaseIdResolutionTimedOut, setHasPurchaseIdResolutionTimedOut ] = useState( false );
+	useEffect( () => {
+		if (
+			! needsPurchaseId ||
+			! isReceiptLoaded ||
+			resolvedPurchaseId ||
+			hasPurchaseIdResolutionTimedOut
+		) {
+			return;
+		}
+		const timer = setTimeout(
+			() => setHasPurchaseIdResolutionTimedOut( true ),
+			PURCHASE_RESOLUTION_TIMEOUT_MS
+		);
+		return () => clearTimeout( timer );
+	}, [ needsPurchaseId, isReceiptLoaded, resolvedPurchaseId, hasPurchaseIdResolutionTimedOut ] );
+
 	const error: Error | null = useSelector( ( state ) =>
 		orderId ? getOrderTransactionError( state, orderId ) : null
 	);
@@ -280,16 +339,24 @@ function useRedirectOnTransactionSuccess( {
 			return redirectTo;
 		} )();
 
+		// If the `:purchaseId` resolver hit its timeout without finding the new
+		// plan, fall back to the site overview (which surfaces the active plan).
+		const redirectAfterPurchaseIdFallback =
+			needsPurchaseId && hasPurchaseIdResolutionTimedOut && ! resolvedPurchaseId && siteSlug
+				? dashboardLink( `/sites/${ siteSlug }` )
+				: effectiveRedirectTo;
+
 		const redirectInstructions = getRedirectFromPendingPage( {
 			isLoadingOrder,
 			error,
 			transaction,
 			orderId,
 			receiptId,
-			redirectTo: effectiveRedirectTo,
+			redirectTo: redirectAfterPurchaseIdFallback,
 			siteSlug,
 			saasRedirectUrl,
 			fromSiteSlug,
+			purchaseId: resolvedPurchaseId ?? undefined,
 		} );
 
 		if ( ! redirectInstructions ) {
@@ -348,6 +415,9 @@ function useRedirectOnTransactionSuccess( {
 		transaction,
 		translate,
 		fromSiteSlug,
+		needsPurchaseId,
+		resolvedPurchaseId,
+		hasPurchaseIdResolutionTimedOut,
 	] );
 
 	return { headingText };

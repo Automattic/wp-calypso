@@ -3,7 +3,7 @@ import { addQueryArgs } from '@wordpress/url';
 import { getCurrentDashboard } from '../app/routing';
 import { isSitePlanTrial, isSitePlanWooHosted } from '../sites/plans';
 import { isDashboardBackport } from './is-dashboard-backport';
-import { redirectToDashboardLink, wpcomLink } from './link';
+import { dashboardLink, redirectToDashboardLink, wpcomLink } from './link';
 import { isAkismetProduct, isJetpackT1SecurityPlan } from './purchase';
 import { isSelfHostedJetpackConnected } from './site-types';
 import type { Purchase, Site } from '@automattic/api-core';
@@ -88,6 +88,17 @@ export function getSitePlanUpgradeUrl( site: Site ) {
 		isWooHosted: isSitePlanWooHosted( site ),
 		redirectTo: redirectToDashboardLink(),
 	} );
+}
+
+/**
+ * `redirect_to` URL for plan upgrades that should land on the Dashboard
+ * purchase-settings page for the newly-provisioned plan. The `:purchaseId`
+ * placeholder is substituted by the checkout pending page once the new
+ * subscription appears in the user's purchases (or it falls back to the site
+ * overview after a timeout — see `pending-page.ts`).
+ */
+export function getUpgradedPurchaseRedirectUrl(): string {
+	return dashboardLink( '/me/billing/purchases/:purchaseId?upgraded=true' );
 }
 
 export function getSitePurchaseUpgradeUrl( purchase: Purchase, redirectTo?: string ) {
