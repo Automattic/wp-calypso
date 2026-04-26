@@ -51,7 +51,14 @@ jobs:
           else
             echo "prompt_path=.github/prompts/general-pr-review.md" >> "$GITHUB_OUTPUT"
           fi
-          echo "pr_ref=refs/pull/$PR_NUMBER/merge" >> "$GITHUB_OUTPUT"
+          # The merge ref does not exist for PRs with merge conflicts. Probe
+          # before emitting; fall back to the head ref so checkout doesn't fail
+          # cryptically downstream.
+          if git ls-remote "https://github.com/${{ github.repository }}" "refs/pull/$PR_NUMBER/merge" | grep -q .; then
+            echo "pr_ref=refs/pull/$PR_NUMBER/merge" >> "$GITHUB_OUTPUT"
+          else
+            echo "pr_ref=refs/pull/$PR_NUMBER/head" >> "$GITHUB_OUTPUT"
+          fi
 
   review:
     needs: detect
