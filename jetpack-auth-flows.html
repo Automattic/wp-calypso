@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Jetpack Connector Flow — Test URLs</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; max-width: 720px; margin: 40px auto; padding: 0 20px; color: #1e1e1e; }
+  h1 { font-size: 1.5rem; }
+  h2 { font-size: 1.15rem; margin-top: 2rem; color: #3858e9; }
+  a { color: #3858e9; }
+  code { background: #f0f0f0; padding: 2px 6px; border-radius: 3px; font-size: 0.9em; }
+  .note { background: #fff8e1; border-left: 4px solid #ffc107; padding: 12px 16px; margin: 16px 0; font-size: 0.95em; }
+  table { border-collapse: collapse; width: 100%; margin: 8px 0; }
+  td, th { padding: 6px 10px; border: 1px solid #ddd; text-align: left; font-size: 0.9em; }
+  th { background: #f5f5f5; }
+</style>
+</head>
+<body>
+<h1>Jetpack Auth Flow Test URLs</h1>
+
+<div class="note">
+  <strong>Prerequisites:</strong> Calypso must be running at <code>http://calypso.localhost:3000</code>.
+  You must be logged in to WordPress.com in the same browser. The URLs below use <strong>fake</strong>
+  nonce/secret values — the authorize form will render, but actual authorization will fail (which is fine
+  for UI testing). To test a real end-to-end flow, initiate from your Jetpack-connected test site.
+</div>
+
+<h2>1. Jetpack Connector — single plugin (Jetpack Boost)</h2>
+<p><a href="http://calypso.localhost:3000/jetpack/connect/authorize?_wp_nonce=test123&blogname=My+Test+Site&client_id=12345&home_url=https%3A%2F%2Ftest.jurassic.tube&redirect_uri=https%3A%2F%2Ftest.jurassic.tube%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack%26action%3Dauthorize%26_wpnonce%3Dtest123&scope=administrator%3Aabcdef123456&secret=secretvalue123456&site=https%3A%2F%2Ftest.jurassic.tube&site_url=https%3A%2F%2Ftest.jurassic.tube&state=1&from=jetpack-connector&plugins=jetpack-boost">
+  Open jetpack-connector flow with <code>plugins=jetpack-boost</code>
+</a></p>
+
+<h2>2. Jetpack Connector — multiple plugins</h2>
+<p><a href="http://calypso.localhost:3000/jetpack/connect/authorize?_wp_nonce=test123&blogname=My+Test+Site&client_id=12345&home_url=https%3A%2F%2Ftest.jurassic.tube&redirect_uri=https%3A%2F%2Ftest.jurassic.tube%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack%26action%3Dauthorize%26_wpnonce%3Dtest123&scope=administrator%3Aabcdef123456&secret=secretvalue123456&site=https%3A%2F%2Ftest.jurassic.tube&site_url=https%3A%2F%2Ftest.jurassic.tube&state=1&from=jetpack-connector&plugins=jetpack,jetpack-boost">
+  Open jetpack-connector flow with <code>plugins=jetpack,jetpack-boost</code>
+</a></p>
+
+<h2>3. Jetpack Connector — Jetpack Social</h2>
+<p><a href="http://calypso.localhost:3000/jetpack/connect/authorize?_wp_nonce=test123&blogname=My+Test+Site&client_id=12345&home_url=https%3A%2F%2Ftest.jurassic.tube&redirect_uri=https%3A%2F%2Ftest.jurassic.tube%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack%26action%3Dauthorize%26_wpnonce%3Dtest123&scope=administrator%3Aabcdef123456&secret=secretvalue123456&site=https%3A%2F%2Ftest.jurassic.tube&site_url=https%3A%2F%2Ftest.jurassic.tube&state=1&from=jetpack-connector&plugins=jetpack-social">
+  Open jetpack-connector flow with <code>plugins=jetpack-social</code>
+</a></p>
+
+<h2>4. Jetpack Connector — unknown plugin (fallback branding)</h2>
+<p><a href="http://calypso.localhost:3000/jetpack/connect/authorize?_wp_nonce=test123&blogname=My+Test+Site&client_id=12345&home_url=https%3A%2F%2Ftest.jurassic.tube&redirect_uri=https%3A%2F%2Ftest.jurassic.tube%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack%26action%3Dauthorize%26_wpnonce%3Dtest123&scope=administrator%3Aabcdef123456&secret=secretvalue123456&site=https%3A%2F%2Ftest.jurassic.tube&site_url=https%3A%2F%2Ftest.jurassic.tube&state=1&from=jetpack-connector&plugins=some-unknown-plugin">
+  Open jetpack-connector flow with <code>plugins=some-unknown-plugin</code> (should fall back to Jetpack branding)
+</a></p>
+
+<h2>5. Original jetpack-onboarding flow (comparison)</h2>
+<p><a href="http://calypso.localhost:3000/jetpack/connect/authorize?_wp_nonce=test123&blogname=My+Test+Site&client_id=12345&home_url=https%3A%2F%2Ftest.jurassic.tube&redirect_uri=https%3A%2F%2Ftest.jurassic.tube%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack%26action%3Dauthorize%26_wpnonce%3Dtest123&scope=administrator%3Aabcdef123456&secret=secretvalue123456&site=https%3A%2F%2Ftest.jurassic.tube&site_url=https%3A%2F%2Ftest.jurassic.tube&state=1&from=jetpack-onboarding">
+  Open original <code>from=jetpack-onboarding</code> flow (should look the same as before)
+</a></p>
+
+<h2>Query parameter reference</h2>
+<table>
+  <tr><th>Param</th><th>Value</th><th>Notes</th></tr>
+  <tr><td><code>from</code></td><td><code>jetpack-connector</code></td><td>New flow identifier (vs <code>jetpack-onboarding</code>)</td></tr>
+  <tr><td><code>plugins</code></td><td><code>jetpack-boost</code></td><td>Comma-separated plugin slugs; drives branding</td></tr>
+  <tr><td><code>_wp_nonce</code></td><td><code>test123</code></td><td>Fake — real flow needs valid nonce</td></tr>
+  <tr><td><code>client_id</code></td><td><code>12345</code></td><td>Fake site ID</td></tr>
+  <tr><td><code>secret</code></td><td><code>secretvalue123456</code></td><td>Fake — real flow needs valid secret</td></tr>
+</table>
+</body>
+</html>

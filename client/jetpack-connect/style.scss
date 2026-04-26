@@ -279,6 +279,20 @@ body:not( .is-jetpack-sso-partner-branded--woo ) {
 	}
 }
 
+.jetpack-connect__authorize-form-wrapper--connector {
+	max-width: 520px;
+	margin: 5vh auto 0;
+
+	.connect-screen-brand-header {
+		text-align: center;
+		margin-bottom: 24px;
+	}
+
+	@media screen and ( max-width: $break-mobile ) {
+		padding: 0 16px;
+	}
+}
+
 .jetpack-connect__logged-in-user-card {
 	display: flex;
 	border-radius: 4px;

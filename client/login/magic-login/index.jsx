@@ -394,9 +394,9 @@ const mapState = ( state ) => {
 		twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
 		redirectToSanitized: getRedirectToSanitized( state ),
 		redirectToOriginal,
-		isFromJetpackOnboarding:
-			new URLSearchParams( redirectToOriginal?.split( '?' )[ 1 ] ).get( 'from' ) ===
-			'jetpack-onboarding',
+		isFromJetpackOnboarding: [ 'jetpack-onboarding', 'jetpack-connector' ].includes(
+			new URLSearchParams( redirectToOriginal?.split( '?' )[ 1 ] ).get( 'from' )
+		),
 		isWooJPC: isWooJPCFlow( state ),
 		publicToken: getMagicLoginPublicToken( state ),
 		partnerConfig: detectPartnerConfig( getCurrentOAuth2Client( state ) ),
