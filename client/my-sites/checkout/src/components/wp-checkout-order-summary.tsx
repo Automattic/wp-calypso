@@ -35,6 +35,7 @@ import {
 } from '@automattic/wpcom-checkout';
 import { css, keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useViewportMatch } from '@wordpress/compose';
 import { Icon, reusableBlock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
@@ -170,6 +171,7 @@ function CheckoutSummaryPriceList() {
 	const monthlyPrices = useEquivalentMonthlyTotals( responseCart.products );
 	const [ , isCheckoutUiRedesignV1 ] = useCheckoutUiRedesignExperiment();
 	const { setSlotEl } = useSubmitButtonSlot();
+	const isLargeViewport = useViewportMatch( 'large', '>=' );
 
 	const subtotalBeforeDiscounts = responseCart.products.reduce( ( subtotal, product ) => {
 		const originalAmountInteger = getSimulatedCostBeforeDiscounts( product, monthlyPrices );
@@ -253,10 +255,12 @@ function CheckoutSummaryPriceList() {
 						{ totalLineItem.formattedAmount }
 					</span>
 				</CheckoutSummaryTotal>
-				<CheckoutSummaryPayButtonSlot
-					ref={ setSlotEl }
-					className="wp-checkout-order-summary__pay-button-slot"
-				/>
+				{ isLargeViewport && (
+					<CheckoutSummaryPayButtonSlot
+						ref={ setSlotEl }
+						className="wp-checkout-order-summary__pay-button-slot"
+					/>
+				) }
 			</CheckoutSummaryAmountWrapper>
 		</>
 	);

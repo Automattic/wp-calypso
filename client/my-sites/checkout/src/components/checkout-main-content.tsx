@@ -1,4 +1,10 @@
-import { isJetpackPurchasableItem, isMonthlyProduct } from '@automattic/calypso-products';
+import {
+	isYearly,
+	isJetpackPurchasableItem,
+	isMonthlyProduct,
+	isBiennially,
+	isTriennially,
+} from '@automattic/calypso-products';
 import colorStudio from '@automattic/color-studio';
 import { Gridicon, MaterialIcon } from '@automattic/components';
 import {
@@ -81,7 +87,12 @@ import useCouponFieldState from '../hooks/use-coupon-field-state';
 import { validateContactDetails } from '../lib/contact-validation';
 import { updateCartContactDetailsForCheckout } from '../lib/update-cart-contact-details-for-checkout';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
+import { CheckoutMoneyBackGuarantee } from './CheckoutMoneyBackGuarantee';
 import AcceptTermsOfServiceCheckbox from './accept-terms-of-service-checkbox';
+import badge14Src from './assets/icons/badge-14.svg';
+import badge7Src from './assets/icons/badge-7.svg';
+import badgeGenericSrc from './assets/icons/badge-generic.svg';
+import badgeSecurity from './assets/icons/security.svg';
 import CheckoutNextSteps from './checkout-next-steps';
 import { CheckoutSidebarPlanUpsell } from './checkout-sidebar-plan-upsell';
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
@@ -437,6 +448,9 @@ export default function CheckoutMainContent( {
 		presalesChatKey !== 'wpcom';
 	usePresalesChat( presalesChatKey, isPresalesChatEnabled );
 
+	const hasCartJetpackProductsOnly = responseCart?.products?.every( ( product ) =>
+		isJetpackPurchasableItem( product.product_slug )
+	);
 	const areThereDomainProductsInCart =
 		hasDomainRegistration( responseCart ) || hasTransferProduct( responseCart );
 	const isGSuiteInCart = hasGoogleApps( responseCart );
@@ -925,7 +939,21 @@ export default function CheckoutMainContent( {
 						setIs100YearPlanTermsAccepted={ setIs100YearPlanTermsAccepted }
 						isSubmitted={ isSubmitted }
 					/>
-					<PortaledCheckoutFormSubmit validateForm={ validateForm } />
+					{ isLargeViewport ? (
+						<PortaledCheckoutFormSubmit validateForm={ validateForm } />
+					) : (
+						<CheckoutFormSubmit
+							validateForm={ validateForm }
+							submitButtonHeader={ <SubmitButtonHeader /> }
+							submitButtonFooter={
+								hasCartJetpackProductsOnly ? (
+									<JetpackCheckoutSeals />
+								) : (
+									<CheckoutMoneyBackGuarantee cart={ responseCart } />
+								)
+							}
+						/>
+					) }
 				</CheckoutStepGroup>
 			</WPCheckoutMainContent>
 		</RestorableProductsProvider>
@@ -1665,6 +1693,22 @@ function CheckoutTermsAndCheckboxes( {
 	);
 }
 
+function SubmitButtonHeader() {
+	const translate = useTranslate();
+
+	const scrollToTOS = () => document?.getElementById( 'checkout-terms' )?.scrollIntoView();
+
+	return (
+		<SubmitButtonHeaderWrapper>
+			{ translate( 'By continuing, you agree to our {{button}}Terms of Service{{/button}}.', {
+				components: {
+					button: <button onClick={ scrollToTOS } />,
+				},
+			} ) }
+		</SubmitButtonHeaderWrapper>
+	);
+}
+
 function useDoesCartHaveMarketplaceProductRequiringConfirmation(
 	responseCart: ResponseCart
 ): boolean {
@@ -1678,6 +1722,114 @@ function useDoesCartHaveMarketplaceProductRequiringConfirmation(
 		)
 		.some( ( product ) => product.extra.is_marketplace_product );
 }
+
+const JetpackCheckoutSeals = () => {
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
+	const translate = useTranslate();
+	const show7DayGuarantee = responseCart?.products?.every( isMonthlyProduct );
+	const show14DayGuarantee = responseCart?.products?.every(
+		( product ) => isYearly( product ) || isBiennially( product ) || isTriennially( product )
+	);
+	const moneybackGuaranteeHeader =
+		show7DayGuarantee || show14DayGuarantee ? (
+			translate( '%(dayCount)s-day money back guarantee', {
+				args: {
+					dayCount: show7DayGuarantee ? 7 : 14,
+				},
+			} )
+		) : (
+			<>
+				{ translate( '14-day money back guarantee on yearly subscriptions' ) }
+				<br />
+				{ translate( '7-day money back guarantee on monthly subscriptions' ) }
+			</>
+		);
+	let moneybackGuaranteeIcon = badgeGenericSrc;
+
+	if ( show7DayGuarantee ) {
+		moneybackGuaranteeIcon = badge7Src;
+	} else if ( show14DayGuarantee ) {
+		moneybackGuaranteeIcon = badge14Src;
+	}
+
+	return (
+		<JetpackCheckoutSealsWrapper>
+			<JetpackCheckoutSealsSection>
+				<img src={ moneybackGuaranteeIcon } alt="" />
+
+				<JetpackSealText>{ moneybackGuaranteeHeader }</JetpackSealText>
+			</JetpackCheckoutSealsSection>
+
+			<JetpackCheckoutSealsSection>
+				<img src={ badgeSecurity } alt="" />
+
+				<JetpackSealText>{ translate( 'SSL Secure checkout' ) }</JetpackSealText>
+			</JetpackCheckoutSealsSection>
+		</JetpackCheckoutSealsWrapper>
+	);
+};
+
+const JetpackCheckoutSealsWrapper = styled.div< React.HTMLAttributes< HTMLDivElement > >`
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 1.5rem 4rem 0 1.5rem;
+
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		padding: 1.5rem 1.5rem 0;
+	}
+
+	img {
+		margin-right: 0.75rem;
+	}
+
+	span {
+		font-weight: 700;
+
+		line-height: 1.12;
+	}
+`;
+
+const JetpackCheckoutSealsSection = styled.div< React.HTMLAttributes< HTMLDivElement > >`
+	display: flex;
+	align-items: center;
+
+	color: ${ ( props ) => props.theme.colors.textColor };
+`;
+
+const JetpackSealText = styled.span`
+	padding: 0.1875rem 0 0 0;
+`;
+
+const SubmitButtonHeaderWrapper = styled.div`
+	display: none;
+	font-size: 13px;
+	margin-top: -5px;
+	margin-bottom: 10px;
+	text-align: center;
+
+	.checkout__step-wrapper--last-step & {
+		display: block;
+
+		@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+			display: none;
+		}
+	}
+
+	button {
+		color: ${ ( props ) => props.theme.colors.highlight };
+		display: inline;
+		font-size: 13px;
+		text-decoration: underline;
+		width: auto;
+
+		&:hover {
+			color: ${ ( props ) => props.theme.colors.highlightOver };
+		}
+	}
+`;
 
 const WPCheckoutWrapper = styled.div< {
 	isLargeViewport?: boolean;
