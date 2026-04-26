@@ -17,7 +17,22 @@ on:
         required: true
 
 jobs:
+  guard:
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: Reject callers outside Automattic org
+        run: |
+          case "$CALLER_OWNER" in
+            Automattic) ;;
+            *) echo "Caller $CALLER_REPO is not allowed." >&2; exit 1 ;;
+          esac
+        env:
+          CALLER_OWNER: ${{ github.repository_owner }}
+          CALLER_REPO: ${{ github.repository }}
+
   review:
+    needs: guard
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
