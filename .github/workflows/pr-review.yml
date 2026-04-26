@@ -1,0 +1,33 @@
+name: PR Review (reusable)
+
+on:
+  workflow_call:
+    inputs:
+      prompt_path:
+        description: 'Path to the per-area review prompt, relative to repo root'
+        required: true
+        type: string
+    secrets:
+      anthropic_api_key:
+        required: true
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run review
+        uses: anthropics/claude-code-action@df37d2f0760a4b5683a6e617c9325bc1a36443f6 # v1
+        with:
+          anthropic_api_key: ${{ secrets.anthropic_api_key }}
+          prompt: |
+            Read and follow the instructions in ${{ inputs.prompt_path }}
+
+            Use `mcp__github_inline_comment__create_inline_comment` for review.
+          claude_args: |
+            --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh api:*),Bash(git show:*),Bash(git diff:*),Bash(git ls-files:*),Bash(git grep:*),Bash(rg *)"
