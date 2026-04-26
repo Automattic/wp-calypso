@@ -8,11 +8,9 @@ import { invokeSurvicateEvent } from '@automattic/survicate';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState, useEffect, useRef } from 'react';
-import Loading from 'calypso/components/loading';
-import Main from 'calypso/components/main';
-import { useInitialIsInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import { useCheckoutHelpCenter } from 'calypso/my-sites/checkout/src/hooks/use-checkout-help-center';
 import { getRedirectFromPendingPage } from 'calypso/my-sites/checkout/src/lib/pending-page';
 import { sendMessageToOpener } from 'calypso/my-sites/checkout/src/lib/popup';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
@@ -49,6 +47,11 @@ interface CheckoutPendingProps {
 }
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
+
+function PendingPageHelpLink() {
+	const { helpCenterButtonLink, toggleHelpCenter } = useCheckoutHelpCenter();
+	return <Step.LinkButton onClick={ toggleHelpCenter }>{ helpCenterButtonLink }</Step.LinkButton>;
+}
 
 /**
  * A page that polls the orders endpoint for a processing transaction and
@@ -93,15 +96,7 @@ function CheckoutPending( {
 		fromSiteSlug,
 	} );
 
-	const isInStepContainerV2 = useInitialIsInStepContainerV2FlowContext();
-
-	const content = isInStepContainerV2 ? (
-		<Step.Loading />
-	) : (
-		<Main className="checkout-thank-you__pending">
-			<Loading className="checkout__pending-content" />
-		</Main>
-	);
+	const content = <Step.Loading topBarRightElement={ <PendingPageHelpLink /> } />;
 
 	return (
 		<>

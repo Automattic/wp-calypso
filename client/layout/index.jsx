@@ -452,7 +452,8 @@ export default withCurrentRoute(
 			isWcMobileApp() ||
 			isJetpackCloud() ||
 			isA8CForAgencies() ||
-			isInStepContainerV2FlowContext( currentRoute, currentQuery );
+			isInStepContainerV2FlowContext( currentRoute, currentQuery ) ||
+			sectionName === 'checkout-pending';
 		const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !! retrieveMobileRedirect();
 		const oauth2Client = getCurrentOAuth2Client( state );
 		const wccomFrom = currentQuery?.[ 'wccom-from' ];
