@@ -1,5 +1,9 @@
 import { __ } from '@wordpress/i18n';
 import { Icon, chartBar, next, share, search, video, shield } from '@wordpress/icons';
+import jetpackConnectA8cLogo from './images/jetpack-connect-a8c.svg';
+import jetpackConnectAllLogo from './images/jetpack-connect-all.svg';
+import jetpackConnectWooLogo from './images/jetpack-connect-woo.svg';
+import jetpackConnectLogo from './images/jetpack-connect.svg';
 
 const PLUGIN_BRANDING = {
 	jetpack: {
@@ -95,20 +99,55 @@ const PLUGIN_BRANDING = {
 const DEFAULT_BRANDING = PLUGIN_BRANDING.jetpack;
 
 /**
+ * Determine the composite connector logo based on which plugin families are
+ * present in the slugs list. Mirrors the PHP `get_connector_logo_url()` logic
+ * in class-jetpack-connector.php.
+ * @param {string[]} pluginSlugs - Array of plugin slugs from the query parameter.
+ * @returns {string} Imported SVG URL for the matching connector logo.
+ */
+export function getConnectorLogoUrl( pluginSlugs = [] ) {
+	let hasWoo = false;
+	let hasA4a = false;
+
+	for ( const slug of pluginSlugs ) {
+		if ( slug.startsWith( 'woocommerce' ) ) {
+			hasWoo = true;
+		}
+		if ( slug.startsWith( 'automattic' ) ) {
+			hasA4a = true;
+		}
+	}
+
+	if ( hasWoo && hasA4a ) {
+		return jetpackConnectAllLogo;
+	}
+	if ( hasWoo ) {
+		return jetpackConnectWooLogo;
+	}
+	if ( hasA4a ) {
+		return jetpackConnectA8cLogo;
+	}
+	return jetpackConnectLogo;
+}
+
+/**
  * Resolve branding (logo, title, subtitle, permissions) for the connector flow
  * based on the plugin slugs passed via the `plugins` query parameter.
  *
- * When multiple slugs are provided, the first recognized slug drives the branding.
+ * When multiple slugs are provided, the first recognized slug drives the
+ * title/subtitle/permissions. The logo is always resolved via family-based
+ * prefix matching across all slugs.
  * Falls back to generic Jetpack branding for unknown slugs.
- *
  * @param {string[]} pluginSlugs - Array of plugin slugs from the query parameter.
- * @returns {{ title: string, subtitle: string, permissions: Array }} Branding object.
+ * @returns {{ logo: string, title: string, subtitle: string, permissions: Array }} Branding object.
  */
 export function getConnectorBranding( pluginSlugs = [] ) {
+	const logo = getConnectorLogoUrl( pluginSlugs );
+
 	for ( const slug of pluginSlugs ) {
 		if ( PLUGIN_BRANDING[ slug ] ) {
-			return PLUGIN_BRANDING[ slug ];
+			return { ...PLUGIN_BRANDING[ slug ], logo };
 		}
 	}
-	return DEFAULT_BRANDING;
+	return { ...DEFAULT_BRANDING, logo };
 }

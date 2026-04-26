@@ -1,5 +1,6 @@
 import { TranslateResult, fixMe } from 'i18n-calypso';
 import { capitalize } from 'lodash';
+import { getConnectorBranding } from 'calypso/jetpack-connect/connector-branding-config';
 import {
 	isJetpackCloudOAuth2Client,
 	isA4AOAuth2Client,
@@ -29,6 +30,8 @@ interface Props {
 	isFromAkismet?: boolean;
 	isFromPassport?: boolean;
 	isFromAutomatticForAgenciesPlugin?: boolean;
+	isFromJetpackConnector?: boolean;
+	connectorPlugins?: string[];
 	partnerConfig?: PartnerConfig | null;
 	isGravPoweredClient?: boolean;
 	isUserLoggedIn?: boolean;
@@ -72,6 +75,8 @@ export function getHeaderText( {
 	isFromAkismet,
 	isFromPassport,
 	isFromAutomatticForAgenciesPlugin,
+	isFromJetpackConnector,
+	connectorPlugins,
 	partnerConfig,
 	isGravPoweredClient,
 	currentQuery,
@@ -95,8 +100,13 @@ export function getHeaderText( {
 	let headerText = translate( 'Log in to your account' );
 
 	if ( isSocialFirst ) {
-		// CIAB partners have custom headers without "with WordPress.com"
-		if ( partnerConfig ) {
+		if ( isFromJetpackConnector ) {
+			const branding = getConnectorBranding( connectorPlugins );
+			const pluginName = branding.title.replace( /^Connect\s+/, '' );
+			headerText = translate( 'Log in to %(pluginName)s with WordPress.com', {
+				args: { pluginName },
+			} );
+		} else if ( partnerConfig ) {
 			headerText = translate( 'Log in to %(partner)s', {
 				args: { partner: partnerConfig.displayName },
 			} );

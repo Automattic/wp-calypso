@@ -1326,6 +1326,7 @@ export class JetpackAuthorize extends Component {
 					'jetpack-connect__authorize-form-wrapper--connector': isFromJetpackConnector,
 				} ) }
 				isWooJPC={ this.isWooJPC() }
+				isJetpackConnector={ isFromJetpackConnector }
 				isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
 				useCompactLogo={ ( isUnifiedOnboarding || isFromMyJetpack ) && ! isFromJetpackConnector }
 				pageTitle={
@@ -1346,6 +1347,8 @@ export class JetpackAuthorize extends Component {
 						/>
 						{ isFromJetpackConnector && connectorBranding && (
 							<BrandHeader
+								logo={ connectorBranding.logo }
+								logoAlt={ connectorBranding.title }
 								title={ connectorBranding.title }
 								description={ connectorBranding.subtitle }
 							/>

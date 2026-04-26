@@ -28,6 +28,8 @@ export const ensureHeadingProvided = (
 
 interface OneLoginLayoutProps {
 	isJetpack: boolean;
+	isFromJetpackConnector?: boolean;
+	connectorPlugins?: string[];
 	children: React.ReactNode;
 	/**
 	 * `signupUrl` prop should merge with `getSignupLinkComponent` logic in `/client/block/login/index.js`, so we have a single source for this logic.
@@ -49,6 +51,8 @@ interface OneLoginLayoutProps {
 
 const OneLoginLayout = ( {
 	isJetpack,
+	isFromJetpackConnector,
+	connectorPlugins,
 	children,
 	signupUrl: signupUrlProp,
 	isSectionSignup,
@@ -151,7 +155,13 @@ const OneLoginLayout = ( {
 		>
 			<div className="wp-login__one-login-layout-content-wrapper">
 				<div className="wp-login__one-login-layout-heading">
-					{ showLogo && <HeadingLogo isJetpack={ isJetpack } /> }
+					{ showLogo && (
+						<HeadingLogo
+							isJetpack={ isJetpack }
+							isFromJetpackConnector={ isFromJetpackConnector }
+							connectorPlugins={ connectorPlugins }
+						/>
+					) }
 					<Step.Heading
 						text={
 							<div className="wp-login__one-login-layout-heading-text">

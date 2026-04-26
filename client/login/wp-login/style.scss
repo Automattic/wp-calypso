@@ -80,8 +80,26 @@ body.is-section-login {
 	}
 }
 
-.layout.is-jetpack-login:not( .is-wccom-oauth-flow ):not( .is-woocommerce-core-profiler-flow ) {
+.layout.is-jetpack-login:not( .is-wccom-oauth-flow ):not( .is-woocommerce-core-profiler-flow ):not( .is-jetpack-connector-login ) {
 	@include jetpack-connect-colors();
+}
+
+.layout.is-jetpack-connector-login {
+	.button.is-primary,
+	.components-button.is-primary {
+		background-color: var( --studio-wordpress-blue );
+		border-color: var( --studio-wordpress-blue );
+
+		&:hover {
+			background-color: var( --studio-wordpress-blue-60 );
+			border-color: var( --studio-wordpress-blue-60 );
+		}
+	}
+
+	.wp-login__connector-logo {
+		max-height: 40px;
+		width: auto;
+	}
 }
 
 .layout.is-wccom-oauth-flow,
@@ -89,7 +107,7 @@ body.is-section-login {
 	@include woocommerce-colors();
 }
 
-.layout.is-jetpack-login:not( .is-woocommerce-core-profiler-flow ) {
+.layout.is-jetpack-login:not( .is-woocommerce-core-profiler-flow ):not( .is-jetpack-connector-login ) {
 	.login__form input,
 	.logged-out-form input {
 		&:not( .form-text-input-core-styles ) {

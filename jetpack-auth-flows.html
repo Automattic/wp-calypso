@@ -2,17 +2,25 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Jetpack Connector Flow — Test URLs</title>
+<title>Jetpack Auth Flows — Test URLs</title>
 <style>
-  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; max-width: 720px; margin: 40px auto; padding: 0 20px; color: #1e1e1e; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; color: #1e1e1e; }
   h1 { font-size: 1.5rem; }
-  h2 { font-size: 1.15rem; margin-top: 2rem; color: #3858e9; }
+  h2 { font-size: 1.15rem; margin-top: 2.5rem; color: #3858e9; border-bottom: 1px solid #e0e0e0; padding-bottom: 4px; }
+  h3 { font-size: 1rem; margin-top: 1.5rem; color: #1e1e1e; }
   a { color: #3858e9; }
   code { background: #f0f0f0; padding: 2px 6px; border-radius: 3px; font-size: 0.9em; }
   .note { background: #fff8e1; border-left: 4px solid #ffc107; padding: 12px 16px; margin: 16px 0; font-size: 0.95em; }
+  .section-note { background: #e8f0fe; border-left: 4px solid #3858e9; padding: 8px 14px; margin: 8px 0; font-size: 0.9em; }
   table { border-collapse: collapse; width: 100%; margin: 8px 0; }
   td, th { padding: 6px 10px; border: 1px solid #ddd; text-align: left; font-size: 0.9em; }
   th { background: #f5f5f5; }
+  .link-row { margin: 6px 0; }
+  .link-row a { display: inline-block; }
+  .tag { display: inline-block; font-size: 0.75em; padding: 2px 8px; border-radius: 10px; margin-left: 8px; vertical-align: middle; }
+  .tag-new { background: #e6f4ea; color: #1e8e3e; }
+  .tag-logo { background: #fce8e6; color: #c5221f; }
+  .tag-legacy { background: #f0f0f0; color: #5f6368; }
 </style>
 </head>
 <body>
@@ -21,43 +29,308 @@
 <div class="note">
   <strong>Prerequisites:</strong> Calypso must be running at <code>http://calypso.localhost:3000</code>.
   You must be logged in to WordPress.com in the same browser. The URLs below use <strong>fake</strong>
-  nonce/secret values — the authorize form will render, but actual authorization will fail (which is fine
+  nonce/secret values &mdash; the authorize form will render, but actual authorization will fail (which is fine
   for UI testing). To test a real end-to-end flow, initiate from your Jetpack-connected test site.
 </div>
 
-<h2>1. Jetpack Connector — single plugin (Jetpack Boost)</h2>
-<p><a href="http://calypso.localhost:3000/jetpack/connect/authorize?_wp_nonce=test123&blogname=My+Test+Site&client_id=12345&home_url=https%3A%2F%2Ftest.jurassic.tube&redirect_uri=https%3A%2F%2Ftest.jurassic.tube%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack%26action%3Dauthorize%26_wpnonce%3Dtest123&scope=administrator%3Aabcdef123456&secret=secretvalue123456&site=https%3A%2F%2Ftest.jurassic.tube&site_url=https%3A%2F%2Ftest.jurassic.tube&state=1&from=jetpack-connector&plugins=jetpack-boost">
-  Open jetpack-connector flow with <code>plugins=jetpack-boost</code>
-</a></p>
+<!-- ============================================================ -->
+<h2>Jetpack Connector Flow <span class="tag tag-new">NEW</span></h2>
+<div class="section-note">
+  Uses <code>from=jetpack-connector</code>. WP.com styling (blue buttons, system font, neutral text).
+  Logo resolved by plugin family prefix: <code>jetpack*</code>, <code>woocommerce*</code>, <code>automattic*</code>.
+</div>
 
-<h2>2. Jetpack Connector — multiple plugins</h2>
-<p><a href="http://calypso.localhost:3000/jetpack/connect/authorize?_wp_nonce=test123&blogname=My+Test+Site&client_id=12345&home_url=https%3A%2F%2Ftest.jurassic.tube&redirect_uri=https%3A%2F%2Ftest.jurassic.tube%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack%26action%3Dauthorize%26_wpnonce%3Dtest123&scope=administrator%3Aabcdef123456&secret=secretvalue123456&site=https%3A%2F%2Ftest.jurassic.tube&site_url=https%3A%2F%2Ftest.jurassic.tube&state=1&from=jetpack-connector&plugins=jetpack,jetpack-boost">
-  Open jetpack-connector flow with <code>plugins=jetpack,jetpack-boost</code>
-</a></p>
+<h3>Single plugin &mdash; Jetpack (default logo)</h3>
+<div class="link-row"><a href="http://calypso.localhost:3000/jetpack/connect/authorize?_wp_nonce=test123&blogname=My+Test+Site&client_id=12345&home_url=https%3A%2F%2Ftest.jurassic.tube&redirect_uri=https%3A%2F%2Ftest.jurassic.tube%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack%26action%3Dauthorize%26_wpnonce%3Dtest123&scope=administrator%3Aabcdef123456&secret=secretvalue123456&site=https%3A%2F%2Ftest.jurassic.tube&site_url=https%3A%2F%2Ftest.jurassic.tube&state=1&from=jetpack-connector&plugins=jetpack">
+  <code>plugins=jetpack</code> &rarr; jetpack-connect.svg
+</a></div>
 
-<h2>3. Jetpack Connector — Jetpack Social</h2>
-<p><a href="http://calypso.localhost:3000/jetpack/connect/authorize?_wp_nonce=test123&blogname=My+Test+Site&client_id=12345&home_url=https%3A%2F%2Ftest.jurassic.tube&redirect_uri=https%3A%2F%2Ftest.jurassic.tube%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack%26action%3Dauthorize%26_wpnonce%3Dtest123&scope=administrator%3Aabcdef123456&secret=secretvalue123456&site=https%3A%2F%2Ftest.jurassic.tube&site_url=https%3A%2F%2Ftest.jurassic.tube&state=1&from=jetpack-connector&plugins=jetpack-social">
-  Open jetpack-connector flow with <code>plugins=jetpack-social</code>
-</a></p>
+<h3>Single plugin &mdash; Jetpack Boost</h3>
+<div class="link-row"><a href="http://calypso.localhost:3000/jetpack/connect/authorize?_wp_nonce=test123&blogname=My+Test+Site&client_id=12345&home_url=https%3A%2F%2Ftest.jurassic.tube&redirect_uri=https%3A%2F%2Ftest.jurassic.tube%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack%26action%3Dauthorize%26_wpnonce%3Dtest123&scope=administrator%3Aabcdef123456&secret=secretvalue123456&site=https%3A%2F%2Ftest.jurassic.tube&site_url=https%3A%2F%2Ftest.jurassic.tube&state=1&from=jetpack-connector&plugins=jetpack-boost">
+  <code>plugins=jetpack-boost</code> &rarr; jetpack-connect.svg, Boost branding
+</a></div>
 
-<h2>4. Jetpack Connector — unknown plugin (fallback branding)</h2>
-<p><a href="http://calypso.localhost:3000/jetpack/connect/authorize?_wp_nonce=test123&blogname=My+Test+Site&client_id=12345&home_url=https%3A%2F%2Ftest.jurassic.tube&redirect_uri=https%3A%2F%2Ftest.jurassic.tube%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack%26action%3Dauthorize%26_wpnonce%3Dtest123&scope=administrator%3Aabcdef123456&secret=secretvalue123456&site=https%3A%2F%2Ftest.jurassic.tube&site_url=https%3A%2F%2Ftest.jurassic.tube&state=1&from=jetpack-connector&plugins=some-unknown-plugin">
-  Open jetpack-connector flow with <code>plugins=some-unknown-plugin</code> (should fall back to Jetpack branding)
-</a></p>
+<h3>Single plugin &mdash; Jetpack Social</h3>
+<div class="link-row"><a href="http://calypso.localhost:3000/jetpack/connect/authorize?_wp_nonce=test123&blogname=My+Test+Site&client_id=12345&home_url=https%3A%2F%2Ftest.jurassic.tube&redirect_uri=https%3A%2F%2Ftest.jurassic.tube%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack%26action%3Dauthorize%26_wpnonce%3Dtest123&scope=administrator%3Aabcdef123456&secret=secretvalue123456&site=https%3A%2F%2Ftest.jurassic.tube&site_url=https%3A%2F%2Ftest.jurassic.tube&state=1&from=jetpack-connector&plugins=jetpack-social">
+  <code>plugins=jetpack-social</code> &rarr; jetpack-connect.svg, Social branding
+</a></div>
 
-<h2>5. Original jetpack-onboarding flow (comparison)</h2>
-<p><a href="http://calypso.localhost:3000/jetpack/connect/authorize?_wp_nonce=test123&blogname=My+Test+Site&client_id=12345&home_url=https%3A%2F%2Ftest.jurassic.tube&redirect_uri=https%3A%2F%2Ftest.jurassic.tube%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack%26action%3Dauthorize%26_wpnonce%3Dtest123&scope=administrator%3Aabcdef123456&secret=secretvalue123456&site=https%3A%2F%2Ftest.jurassic.tube&site_url=https%3A%2F%2Ftest.jurassic.tube&state=1&from=jetpack-onboarding">
-  Open original <code>from=jetpack-onboarding</code> flow (should look the same as before)
-</a></p>
+<h3>Single plugin &mdash; Jetpack Search</h3>
+<div class="link-row"><a href="http://calypso.localhost:3000/jetpack/connect/authorize?_wp_nonce=test123&blogname=My+Test+Site&client_id=12345&home_url=https%3A%2F%2Ftest.jurassic.tube&redirect_uri=https%3A%2F%2Ftest.jurassic.tube%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack%26action%3Dauthorize%26_wpnonce%3Dtest123&scope=administrator%3Aabcdef123456&secret=secretvalue123456&site=https%3A%2F%2Ftest.jurassic.tube&site_url=https%3A%2F%2Ftest.jurassic.tube&state=1&from=jetpack-connector&plugins=jetpack-search">
+  <code>plugins=jetpack-search</code> &rarr; jetpack-connect.svg, Search branding
+</a></div>
 
+<h3>Single plugin &mdash; Jetpack VideoPress</h3>
+<div class="link-row"><a href="http://calypso.localhost:3000/jetpack/connect/authorize?_wp_nonce=test123&blogname=My+Test+Site&client_id=12345&home_url=https%3A%2F%2Ftest.jurassic.tube&redirect_uri=https%3A%2F%2Ftest.jurassic.tube%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack%26action%3Dauthorize%26_wpnonce%3Dtest123&scope=administrator%3Aabcdef123456&secret=secretvalue123456&site=https%3A%2F%2Ftest.jurassic.tube&site_url=https%3A%2F%2Ftest.jurassic.tube&state=1&from=jetpack-connector&plugins=jetpack-videopress">
+  <code>plugins=jetpack-videopress</code> &rarr; jetpack-connect.svg, VideoPress branding
+</a></div>
+
+<h3>Single plugin &mdash; Jetpack Backup</h3>
+<div class="link-row"><a href="http://calypso.localhost:3000/jetpack/connect/authorize?_wp_nonce=test123&blogname=My+Test+Site&client_id=12345&home_url=https%3A%2F%2Ftest.jurassic.tube&redirect_uri=https%3A%2F%2Ftest.jurassic.tube%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack%26action%3Dauthorize%26_wpnonce%3Dtest123&scope=administrator%3Aabcdef123456&secret=secretvalue123456&site=https%3A%2F%2Ftest.jurassic.tube&site_url=https%3A%2F%2Ftest.jurassic.tube&state=1&from=jetpack-connector&plugins=jetpack-backup">
+  <code>plugins=jetpack-backup</code> &rarr; jetpack-connect.svg, Backup branding
+</a></div>
+
+<h3>WooCommerce plugin <span class="tag tag-logo">WOO LOGO</span></h3>
+<div class="link-row"><a href="http://calypso.localhost:3000/jetpack/connect/authorize?_wp_nonce=test123&blogname=My+Test+Site&client_id=12345&home_url=https%3A%2F%2Ftest.jurassic.tube&redirect_uri=https%3A%2F%2Ftest.jurassic.tube%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack%26action%3Dauthorize%26_wpnonce%3Dtest123&scope=administrator%3Aabcdef123456&secret=secretvalue123456&site=https%3A%2F%2Ftest.jurassic.tube&site_url=https%3A%2F%2Ftest.jurassic.tube&state=1&from=jetpack-connector&plugins=woocommerce">
+  <code>plugins=woocommerce</code> &rarr; jetpack-connect-woo.svg
+</a></div>
+
+<h3>WooCommerce Payments <span class="tag tag-logo">WOO LOGO</span></h3>
+<div class="link-row"><a href="http://calypso.localhost:3000/jetpack/connect/authorize?_wp_nonce=test123&blogname=My+Test+Site&client_id=12345&home_url=https%3A%2F%2Ftest.jurassic.tube&redirect_uri=https%3A%2F%2Ftest.jurassic.tube%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack%26action%3Dauthorize%26_wpnonce%3Dtest123&scope=administrator%3Aabcdef123456&secret=secretvalue123456&site=https%3A%2F%2Ftest.jurassic.tube&site_url=https%3A%2F%2Ftest.jurassic.tube&state=1&from=jetpack-connector&plugins=woocommerce-payments">
+  <code>plugins=woocommerce-payments</code> &rarr; jetpack-connect-woo.svg (prefix match)
+</a></div>
+
+<h3>Automattic for Agencies <span class="tag tag-logo">A8C LOGO</span></h3>
+<div class="link-row"><a href="http://calypso.localhost:3000/jetpack/connect/authorize?_wp_nonce=test123&blogname=My+Test+Site&client_id=12345&home_url=https%3A%2F%2Ftest.jurassic.tube&redirect_uri=https%3A%2F%2Ftest.jurassic.tube%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack%26action%3Dauthorize%26_wpnonce%3Dtest123&scope=administrator%3Aabcdef123456&secret=secretvalue123456&site=https%3A%2F%2Ftest.jurassic.tube&site_url=https%3A%2F%2Ftest.jurassic.tube&state=1&from=jetpack-connector&plugins=automattic-for-agencies">
+  <code>plugins=automattic-for-agencies</code> &rarr; jetpack-connect-a8c.svg
+</a></div>
+
+<h3>Multi-family: Jetpack + WooCommerce <span class="tag tag-logo">WOO LOGO</span></h3>
+<div class="link-row"><a href="http://calypso.localhost:3000/jetpack/connect/authorize?_wp_nonce=test123&blogname=My+Test+Site&client_id=12345&home_url=https%3A%2F%2Ftest.jurassic.tube&redirect_uri=https%3A%2F%2Ftest.jurassic.tube%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack%26action%3Dauthorize%26_wpnonce%3Dtest123&scope=administrator%3Aabcdef123456&secret=secretvalue123456&site=https%3A%2F%2Ftest.jurassic.tube&site_url=https%3A%2F%2Ftest.jurassic.tube&state=1&from=jetpack-connector&plugins=jetpack,woocommerce">
+  <code>plugins=jetpack,woocommerce</code> &rarr; jetpack-connect-woo.svg
+</a></div>
+
+<h3>Multi-family: Jetpack + A4A <span class="tag tag-logo">A8C LOGO</span></h3>
+<div class="link-row"><a href="http://calypso.localhost:3000/jetpack/connect/authorize?_wp_nonce=test123&blogname=My+Test+Site&client_id=12345&home_url=https%3A%2F%2Ftest.jurassic.tube&redirect_uri=https%3A%2F%2Ftest.jurassic.tube%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack%26action%3Dauthorize%26_wpnonce%3Dtest123&scope=administrator%3Aabcdef123456&secret=secretvalue123456&site=https%3A%2F%2Ftest.jurassic.tube&site_url=https%3A%2F%2Ftest.jurassic.tube&state=1&from=jetpack-connector&plugins=jetpack,automattic-for-agencies">
+  <code>plugins=jetpack,automattic-for-agencies</code> &rarr; jetpack-connect-a8c.svg
+</a></div>
+
+<h3>Multi-family: All three <span class="tag tag-logo">ALL LOGO</span></h3>
+<div class="link-row"><a href="http://calypso.localhost:3000/jetpack/connect/authorize?_wp_nonce=test123&blogname=My+Test+Site&client_id=12345&home_url=https%3A%2F%2Ftest.jurassic.tube&redirect_uri=https%3A%2F%2Ftest.jurassic.tube%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack%26action%3Dauthorize%26_wpnonce%3Dtest123&scope=administrator%3Aabcdef123456&secret=secretvalue123456&site=https%3A%2F%2Ftest.jurassic.tube&site_url=https%3A%2F%2Ftest.jurassic.tube&state=1&from=jetpack-connector&plugins=jetpack,woocommerce,automattic-for-agencies">
+  <code>plugins=jetpack,woocommerce,automattic-for-agencies</code> &rarr; jetpack-connect-all.svg
+</a></div>
+
+<h3>Multiple Jetpack plugins (no family change)</h3>
+<div class="link-row"><a href="http://calypso.localhost:3000/jetpack/connect/authorize?_wp_nonce=test123&blogname=My+Test+Site&client_id=12345&home_url=https%3A%2F%2Ftest.jurassic.tube&redirect_uri=https%3A%2F%2Ftest.jurassic.tube%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack%26action%3Dauthorize%26_wpnonce%3Dtest123&scope=administrator%3Aabcdef123456&secret=secretvalue123456&site=https%3A%2F%2Ftest.jurassic.tube&site_url=https%3A%2F%2Ftest.jurassic.tube&state=1&from=jetpack-connector&plugins=jetpack,jetpack-boost,jetpack-social">
+  <code>plugins=jetpack,jetpack-boost,jetpack-social</code> &rarr; jetpack-connect.svg (first recognized: Jetpack)
+</a></div>
+
+<h3>Unknown plugin (fallback branding)</h3>
+<div class="link-row"><a href="http://calypso.localhost:3000/jetpack/connect/authorize?_wp_nonce=test123&blogname=My+Test+Site&client_id=12345&home_url=https%3A%2F%2Ftest.jurassic.tube&redirect_uri=https%3A%2F%2Ftest.jurassic.tube%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack%26action%3Dauthorize%26_wpnonce%3Dtest123&scope=administrator%3Aabcdef123456&secret=secretvalue123456&site=https%3A%2F%2Ftest.jurassic.tube&site_url=https%3A%2F%2Ftest.jurassic.tube&state=1&from=jetpack-connector&plugins=some-unknown-plugin">
+  <code>plugins=some-unknown-plugin</code> &rarr; jetpack-connect.svg, default Jetpack branding
+</a></div>
+
+<h3>No plugins param (fallback)</h3>
+<div class="link-row"><a href="http://calypso.localhost:3000/jetpack/connect/authorize?_wp_nonce=test123&blogname=My+Test+Site&client_id=12345&home_url=https%3A%2F%2Ftest.jurassic.tube&redirect_uri=https%3A%2F%2Ftest.jurassic.tube%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack%26action%3Dauthorize%26_wpnonce%3Dtest123&scope=administrator%3Aabcdef123456&secret=secretvalue123456&site=https%3A%2F%2Ftest.jurassic.tube&site_url=https%3A%2F%2Ftest.jurassic.tube&state=1&from=jetpack-connector">
+  <code>from=jetpack-connector</code> (no plugins param) &rarr; default Jetpack branding
+</a></div>
+
+<!-- ============================================================ -->
+<h2>Jetpack Connector — Login Page (Logged Out) <span class="tag tag-new">NEW</span></h2>
+<div class="section-note">
+  These simulate the logged-out redirect: <code>/log-in/jetpack?redirect_to=&lt;authorize URL&gt;</code>.
+  The login page should show the <strong>composite connector logo</strong>, <strong>dynamic header text</strong>,
+  and <strong>WP.com blue styling</strong> instead of the default Jetpack green.
+  <br><strong>Tip:</strong> Open these in a private/incognito window or log out first.
+</div>
+
+<h3>Login — Jetpack (default logo)</h3>
+<div class="link-row"><a href="http://calypso.localhost:3000/log-in/jetpack?redirect_to=http%3A%2F%2Fcalypso.localhost%3A3000%2Fjetpack%2Fconnect%2Fauthorize%3F_wp_nonce%3Dtest123%26blogname%3DMy%2BTest%2BSite%26client_id%3D12345%26home_url%3Dhttps%253A%252F%252Ftest.jurassic.tube%26redirect_uri%3Dhttps%253A%252F%252Ftest.jurassic.tube%252Fwp-admin%252Fadmin.php%253Fpage%253Djetpack%2526action%253Dauthorize%2526_wpnonce%253Dtest123%26scope%3Dadministrator%253Aabcdef123456%26secret%3Dsecretvalue123456%26site%3Dhttps%253A%252F%252Ftest.jurassic.tube%26site_url%3Dhttps%253A%252F%252Ftest.jurassic.tube%26state%3D1%26from%3Djetpack-connector%26plugins%3Djetpack">
+  <code>plugins=jetpack</code> &rarr; jetpack-connect.svg, "Log in to Jetpack with WordPress.com"
+</a></div>
+
+<h3>Login — Jetpack Boost</h3>
+<div class="link-row"><a href="http://calypso.localhost:3000/log-in/jetpack?redirect_to=http%3A%2F%2Fcalypso.localhost%3A3000%2Fjetpack%2Fconnect%2Fauthorize%3F_wp_nonce%3Dtest123%26blogname%3DMy%2BTest%2BSite%26client_id%3D12345%26home_url%3Dhttps%253A%252F%252Ftest.jurassic.tube%26redirect_uri%3Dhttps%253A%252F%252Ftest.jurassic.tube%252Fwp-admin%252Fadmin.php%253Fpage%253Djetpack%2526action%253Dauthorize%2526_wpnonce%253Dtest123%26scope%3Dadministrator%253Aabcdef123456%26secret%3Dsecretvalue123456%26site%3Dhttps%253A%252F%252Ftest.jurassic.tube%26site_url%3Dhttps%253A%252F%252Ftest.jurassic.tube%26state%3D1%26from%3Djetpack-connector%26plugins%3Djetpack-boost">
+  <code>plugins=jetpack-boost</code> &rarr; jetpack-connect.svg, "Log in to Jetpack Boost with WordPress.com"
+</a></div>
+
+<h3>Login — WooCommerce <span class="tag tag-logo">WOO LOGO</span></h3>
+<div class="link-row"><a href="http://calypso.localhost:3000/log-in/jetpack?redirect_to=http%3A%2F%2Fcalypso.localhost%3A3000%2Fjetpack%2Fconnect%2Fauthorize%3F_wp_nonce%3Dtest123%26blogname%3DMy%2BTest%2BSite%26client_id%3D12345%26home_url%3Dhttps%253A%252F%252Ftest.jurassic.tube%26redirect_uri%3Dhttps%253A%252F%252Ftest.jurassic.tube%252Fwp-admin%252Fadmin.php%253Fpage%253Djetpack%2526action%253Dauthorize%2526_wpnonce%253Dtest123%26scope%3Dadministrator%253Aabcdef123456%26secret%3Dsecretvalue123456%26site%3Dhttps%253A%252F%252Ftest.jurassic.tube%26site_url%3Dhttps%253A%252F%252Ftest.jurassic.tube%26state%3D1%26from%3Djetpack-connector%26plugins%3Dwoocommerce">
+  <code>plugins=woocommerce</code> &rarr; jetpack-connect-woo.svg
+</a></div>
+
+<h3>Login — Automattic for Agencies <span class="tag tag-logo">A8C LOGO</span></h3>
+<div class="link-row"><a href="http://calypso.localhost:3000/log-in/jetpack?redirect_to=http%3A%2F%2Fcalypso.localhost%3A3000%2Fjetpack%2Fconnect%2Fauthorize%3F_wp_nonce%3Dtest123%26blogname%3DMy%2BTest%2BSite%26client_id%3D12345%26home_url%3Dhttps%253A%252F%252Ftest.jurassic.tube%26redirect_uri%3Dhttps%253A%252F%252Ftest.jurassic.tube%252Fwp-admin%252Fadmin.php%253Fpage%253Djetpack%2526action%253Dauthorize%2526_wpnonce%253Dtest123%26scope%3Dadministrator%253Aabcdef123456%26secret%3Dsecretvalue123456%26site%3Dhttps%253A%252F%252Ftest.jurassic.tube%26site_url%3Dhttps%253A%252F%252Ftest.jurassic.tube%26state%3D1%26from%3Djetpack-connector%26plugins%3Dautomattic-for-agencies">
+  <code>plugins=automattic-for-agencies</code> &rarr; jetpack-connect-a8c.svg
+</a></div>
+
+<h3>Login — All three families <span class="tag tag-logo">ALL LOGO</span></h3>
+<div class="link-row"><a href="http://calypso.localhost:3000/log-in/jetpack?redirect_to=http%3A%2F%2Fcalypso.localhost%3A3000%2Fjetpack%2Fconnect%2Fauthorize%3F_wp_nonce%3Dtest123%26blogname%3DMy%2BTest%2BSite%26client_id%3D12345%26home_url%3Dhttps%253A%252F%252Ftest.jurassic.tube%26redirect_uri%3Dhttps%253A%252F%252Ftest.jurassic.tube%252Fwp-admin%252Fadmin.php%253Fpage%253Djetpack%2526action%253Dauthorize%2526_wpnonce%253Dtest123%26scope%3Dadministrator%253Aabcdef123456%26secret%3Dsecretvalue123456%26site%3Dhttps%253A%252F%252Ftest.jurassic.tube%26site_url%3Dhttps%253A%252F%252Ftest.jurassic.tube%26state%3D1%26from%3Djetpack-connector%26plugins%3Djetpack%2Cwoocommerce%2Cautomattic-for-agencies">
+  <code>plugins=jetpack,woocommerce,automattic-for-agencies</code> &rarr; jetpack-connect-all.svg
+</a></div>
+
+<h3>Login — No plugins param (fallback)</h3>
+<div class="link-row"><a href="http://calypso.localhost:3000/log-in/jetpack?redirect_to=http%3A%2F%2Fcalypso.localhost%3A3000%2Fjetpack%2Fconnect%2Fauthorize%3F_wp_nonce%3Dtest123%26blogname%3DMy%2BTest%2BSite%26client_id%3D12345%26home_url%3Dhttps%253A%252F%252Ftest.jurassic.tube%26redirect_uri%3Dhttps%253A%252F%252Ftest.jurassic.tube%252Fwp-admin%252Fadmin.php%253Fpage%253Djetpack%2526action%253Dauthorize%2526_wpnonce%253Dtest123%26scope%3Dadministrator%253Aabcdef123456%26secret%3Dsecretvalue123456%26site%3Dhttps%253A%252F%252Ftest.jurassic.tube%26site_url%3Dhttps%253A%252F%252Ftest.jurassic.tube%26state%3D1%26from%3Djetpack-connector">
+  <code>from=jetpack-connector</code> (no plugins) &rarr; default Jetpack branding
+</a></div>
+
+<h3>Login — Jetpack Onboarding (comparison: should still be green)</h3>
+<div class="link-row"><a href="http://calypso.localhost:3000/log-in/jetpack?redirect_to=http%3A%2F%2Fcalypso.localhost%3A3000%2Fjetpack%2Fconnect%2Fauthorize%3F_wp_nonce%3Dtest123%26blogname%3DMy%2BTest%2BSite%26client_id%3D12345%26home_url%3Dhttps%253A%252F%252Ftest.jurassic.tube%26redirect_uri%3Dhttps%253A%252F%252Ftest.jurassic.tube%252Fwp-admin%252Fadmin.php%253Fpage%253Djetpack%2526action%253Dauthorize%2526_wpnonce%253Dtest123%26scope%3Dadministrator%253Aabcdef123456%26secret%3Dsecretvalue123456%26site%3Dhttps%253A%252F%252Ftest.jurassic.tube%26site_url%3Dhttps%253A%252F%252Ftest.jurassic.tube%26state%3D1%26from%3Djetpack-onboarding">
+  <code>from=jetpack-onboarding</code> &rarr; Jetpack green styling, JetpackLogo, "Log in to Jetpack"
+</a></div>
+
+<!-- ============================================================ -->
+<h2>Jetpack Onboarding Flow (original)</h2>
+<div class="section-note">
+  Uses <code>from=jetpack-onboarding</code>. Jetpack green styling.
+  Left-aligned header with "Now let's connect your account". No logo in <code>BrandHeader</code>.
+</div>
+
+<div class="link-row"><a href="http://calypso.localhost:3000/jetpack/connect/authorize?_wp_nonce=test123&blogname=My+Test+Site&client_id=12345&home_url=https%3A%2F%2Ftest.jurassic.tube&redirect_uri=https%3A%2F%2Ftest.jurassic.tube%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack%26action%3Dauthorize%26_wpnonce%3Dtest123&scope=administrator%3Aabcdef123456&secret=secretvalue123456&site=https%3A%2F%2Ftest.jurassic.tube&site_url=https%3A%2F%2Ftest.jurassic.tube&state=1&from=jetpack-onboarding">
+  <code>from=jetpack-onboarding</code>
+</a></div>
+
+<!-- ============================================================ -->
+<h2>My Jetpack Flow</h2>
+<div class="section-note">
+  Uses <code>from=my-jetpack</code>. Same UI as onboarding (unified flow), Jetpack green,
+  left-aligned header, compact logo.
+</div>
+
+<div class="link-row"><a href="http://calypso.localhost:3000/jetpack/connect/authorize?_wp_nonce=test123&blogname=My+Test+Site&client_id=12345&home_url=https%3A%2F%2Ftest.jurassic.tube&redirect_uri=https%3A%2F%2Ftest.jurassic.tube%2Fwp-admin%2Fadmin.php%3Fpage%3Dmy-jetpack%26action%3Dauthorize%26_wpnonce%3Dtest123&scope=administrator%3Aabcdef123456&secret=secretvalue123456&site=https%3A%2F%2Ftest.jurassic.tube&site_url=https%3A%2F%2Ftest.jurassic.tube&state=1&from=my-jetpack">
+  <code>from=my-jetpack</code>
+</a></div>
+
+<!-- ============================================================ -->
+<h2>WooCommerce Core Profiler Flow</h2>
+<div class="section-note">
+  Uses <code>from=woocommerce-core-profiler</code>. Purple Woo styling, TopBar with Woo logo.
+</div>
+
+<div class="link-row"><a href="http://calypso.localhost:3000/jetpack/connect/authorize?_wp_nonce=test123&blogname=My+Test+Site&client_id=12345&home_url=https%3A%2F%2Ftest.jurassic.tube&redirect_uri=https%3A%2F%2Ftest.jurassic.tube%2Fwp-admin%2Fadmin.php%3Fpage%3Dwc-admin%26action%3Dauthorize%26_wpnonce%3Dtest123&scope=administrator%3Aabcdef123456&secret=secretvalue123456&site=https%3A%2F%2Ftest.jurassic.tube&site_url=https%3A%2F%2Ftest.jurassic.tube&state=1&from=woocommerce-core-profiler">
+  <code>from=woocommerce-core-profiler</code>
+</a></div>
+
+<!-- ============================================================ -->
+<h2>WooCommerce Services Flow</h2>
+<div class="section-note">
+  Uses <code>from=woocommerce-services-auto-authorize</code>. Auto-authorizes.
+</div>
+
+<div class="link-row"><a href="http://calypso.localhost:3000/jetpack/connect/authorize?_wp_nonce=test123&blogname=My+Test+Site&client_id=12345&home_url=https%3A%2F%2Ftest.jurassic.tube&redirect_uri=https%3A%2F%2Ftest.jurassic.tube%2Fwp-admin%2Fadmin.php%3Fpage%3Dwc-settings%26action%3Dauthorize%26_wpnonce%3Dtest123&scope=administrator%3Aabcdef123456&secret=secretvalue123456&site=https%3A%2F%2Ftest.jurassic.tube&site_url=https%3A%2F%2Ftest.jurassic.tube&state=1&from=woocommerce-services-auto-authorize">
+  <code>from=woocommerce-services-auto-authorize</code>
+</a></div>
+
+<!-- ============================================================ -->
+<h2>Automattic for Agencies Flow</h2>
+<div class="section-note">
+  Uses <code>from=automattic-for-agencies-client</code>. Custom A4A branding and colors.
+</div>
+
+<div class="link-row"><a href="http://calypso.localhost:3000/jetpack/connect/authorize?_wp_nonce=test123&blogname=My+Test+Site&client_id=12345&home_url=https%3A%2F%2Ftest.jurassic.tube&redirect_uri=https%3A%2F%2Ftest.jurassic.tube%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack%26action%3Dauthorize%26_wpnonce%3Dtest123&scope=administrator%3Aabcdef123456&secret=secretvalue123456&site=https%3A%2F%2Ftest.jurassic.tube&site_url=https%3A%2F%2Ftest.jurassic.tube&state=1&from=automattic-for-agencies-client">
+  <code>from=automattic-for-agencies-client</code>
+</a></div>
+
+<!-- ============================================================ -->
+<h2>Blaze Ads Flow</h2>
+<div class="section-note">
+  Uses <code>from=blaze-ads</code>.
+</div>
+
+<div class="link-row"><a href="http://calypso.localhost:3000/jetpack/connect/authorize?_wp_nonce=test123&blogname=My+Test+Site&client_id=12345&home_url=https%3A%2F%2Ftest.jurassic.tube&redirect_uri=https%3A%2F%2Ftest.jurassic.tube%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack%26action%3Dauthorize%26_wpnonce%3Dtest123&scope=administrator%3Aabcdef123456&secret=secretvalue123456&site=https%3A%2F%2Ftest.jurassic.tube&site_url=https%3A%2F%2Ftest.jurassic.tube&state=1&from=blaze-ads">
+  <code>from=blaze-ads</code>
+</a></div>
+
+<!-- ============================================================ -->
+<h2>Individual Plugin Flows (standalone <code>from</code> variants)</h2>
+<div class="section-note">
+  Each plugin has its own <code>from</code> value. These use the default authorize UI with
+  Jetpack green styling and centered Jetpack logo header.
+</div>
+
+<h3>Jetpack Boost</h3>
+<div class="link-row"><a href="http://calypso.localhost:3000/jetpack/connect/authorize?_wp_nonce=test123&blogname=My+Test+Site&client_id=12345&home_url=https%3A%2F%2Ftest.jurassic.tube&redirect_uri=https%3A%2F%2Ftest.jurassic.tube%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack-boost%26action%3Dauthorize%26_wpnonce%3Dtest123&scope=administrator%3Aabcdef123456&secret=secretvalue123456&site=https%3A%2F%2Ftest.jurassic.tube&site_url=https%3A%2F%2Ftest.jurassic.tube&state=1&from=jetpack-boost">
+  <code>from=jetpack-boost</code>
+</a></div>
+
+<h3>Jetpack Backup</h3>
+<div class="link-row"><a href="http://calypso.localhost:3000/jetpack/connect/authorize?_wp_nonce=test123&blogname=My+Test+Site&client_id=12345&home_url=https%3A%2F%2Ftest.jurassic.tube&redirect_uri=https%3A%2F%2Ftest.jurassic.tube%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack%26action%3Dauthorize%26_wpnonce%3Dtest123&scope=administrator%3Aabcdef123456&secret=secretvalue123456&site=https%3A%2F%2Ftest.jurassic.tube&site_url=https%3A%2F%2Ftest.jurassic.tube&state=1&from=jetpack-backup">
+  <code>from=jetpack-backup</code>
+</a></div>
+
+<h3>Jetpack Search</h3>
+<div class="link-row"><a href="http://calypso.localhost:3000/jetpack/connect/authorize?_wp_nonce=test123&blogname=My+Test+Site&client_id=12345&home_url=https%3A%2F%2Ftest.jurassic.tube&redirect_uri=https%3A%2F%2Ftest.jurassic.tube%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack%26action%3Dauthorize%26_wpnonce%3Dtest123&scope=administrator%3Aabcdef123456&secret=secretvalue123456&site=https%3A%2F%2Ftest.jurassic.tube&site_url=https%3A%2F%2Ftest.jurassic.tube&state=1&from=jetpack-search">
+  <code>from=jetpack-search</code>
+</a></div>
+
+<h3>Jetpack Social</h3>
+<div class="link-row"><a href="http://calypso.localhost:3000/jetpack/connect/authorize?_wp_nonce=test123&blogname=My+Test+Site&client_id=12345&home_url=https%3A%2F%2Ftest.jurassic.tube&redirect_uri=https%3A%2F%2Ftest.jurassic.tube%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack%26action%3Dauthorize%26_wpnonce%3Dtest123&scope=administrator%3Aabcdef123456&secret=secretvalue123456&site=https%3A%2F%2Ftest.jurassic.tube&site_url=https%3A%2F%2Ftest.jurassic.tube&state=1&from=jetpack-social">
+  <code>from=jetpack-social</code>
+</a></div>
+
+<h3>Jetpack VideoPress</h3>
+<div class="link-row"><a href="http://calypso.localhost:3000/jetpack/connect/authorize?_wp_nonce=test123&blogname=My+Test+Site&client_id=12345&home_url=https%3A%2F%2Ftest.jurassic.tube&redirect_uri=https%3A%2F%2Ftest.jurassic.tube%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack%26action%3Dauthorize%26_wpnonce%3Dtest123&scope=administrator%3Aabcdef123456&secret=secretvalue123456&site=https%3A%2F%2Ftest.jurassic.tube&site_url=https%3A%2F%2Ftest.jurassic.tube&state=1&from=jetpack-videopress">
+  <code>from=jetpack-videopress</code>
+</a></div>
+
+<!-- ============================================================ -->
+<h2>Other Flows</h2>
+
+<h3>Connection Manager (<code>from=connection-ui</code>)</h3>
+<div class="link-row"><a href="http://calypso.localhost:3000/jetpack/connect/authorize?_wp_nonce=test123&blogname=My+Test+Site&client_id=12345&home_url=https%3A%2F%2Ftest.jurassic.tube&redirect_uri=https%3A%2F%2Ftest.jurassic.tube%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack%26action%3Dauthorize%26_wpnonce%3Dtest123&scope=administrator%3Aabcdef123456&secret=secretvalue123456&site=https%3A%2F%2Ftest.jurassic.tube&site_url=https%3A%2F%2Ftest.jurassic.tube&state=1&from=connection-ui">
+  <code>from=connection-ui</code>
+</a></div>
+
+<h3>Block Editor (<code>from=jetpack-block-editor</code>)</h3>
+<div class="link-row"><a href="http://calypso.localhost:3000/jetpack/connect/authorize?_wp_nonce=test123&blogname=My+Test+Site&client_id=12345&home_url=https%3A%2F%2Ftest.jurassic.tube&redirect_uri=https%3A%2F%2Ftest.jurassic.tube%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack%26action%3Dauthorize%26_wpnonce%3Dtest123&scope=administrator%3Aabcdef123456&secret=secretvalue123456&site=https%3A%2F%2Ftest.jurassic.tube&site_url=https%3A%2F%2Ftest.jurassic.tube&state=1&from=jetpack-block-editor">
+  <code>from=jetpack-block-editor</code>
+</a></div>
+
+<h3>JPO (<code>from=jpo</code>)</h3>
+<div class="link-row"><a href="http://calypso.localhost:3000/jetpack/connect/authorize?_wp_nonce=test123&blogname=My+Test+Site&client_id=12345&home_url=https%3A%2F%2Ftest.jurassic.tube&redirect_uri=https%3A%2F%2Ftest.jurassic.tube%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack%26action%3Dauthorize%26_wpnonce%3Dtest123&scope=administrator%3Aabcdef123456&secret=secretvalue123456&site=https%3A%2F%2Ftest.jurassic.tube&site_url=https%3A%2F%2Ftest.jurassic.tube&state=1&from=jpo">
+  <code>from=jpo</code>
+</a></div>
+
+<h3>Migration Plugin (<code>from=wpcom-migration</code>)</h3>
+<div class="link-row"><a href="http://calypso.localhost:3000/jetpack/connect/authorize?_wp_nonce=test123&blogname=My+Test+Site&client_id=12345&home_url=https%3A%2F%2Ftest.jurassic.tube&redirect_uri=https%3A%2F%2Ftest.jurassic.tube%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack%26action%3Dauthorize%26_wpnonce%3Dtest123&scope=administrator%3Aabcdef123456&secret=secretvalue123456&site=https%3A%2F%2Ftest.jurassic.tube&site_url=https%3A%2F%2Ftest.jurassic.tube&state=1&from=wpcom-migration">
+  <code>from=wpcom-migration</code>
+</a></div>
+
+<h3>Connect After Checkout (<code>from=connect-after-checkout</code>)</h3>
+<div class="link-row"><a href="http://calypso.localhost:3000/jetpack/connect/authorize?_wp_nonce=test123&blogname=My+Test+Site&client_id=12345&home_url=https%3A%2F%2Ftest.jurassic.tube&redirect_uri=https%3A%2F%2Ftest.jurassic.tube%2Fwp-admin%2Fadmin.php%3Fpage%3Dmy-jetpack%26action%3Dauthorize%26_wpnonce%3Dtest123&scope=administrator%3Aabcdef123456&secret=secretvalue123456&site=https%3A%2F%2Ftest.jurassic.tube&site_url=https%3A%2F%2Ftest.jurassic.tube&state=1&from=connect-after-checkout">
+  <code>from=connect-after-checkout</code>
+</a></div>
+
+<h3>Partner Coupon (<code>from=jetpack-partner-coupon</code>)</h3>
+<div class="link-row"><a href="http://calypso.localhost:3000/jetpack/connect/authorize?_wp_nonce=test123&blogname=My+Test+Site&client_id=12345&home_url=https%3A%2F%2Ftest.jurassic.tube&redirect_uri=https%3A%2F%2Ftest.jurassic.tube%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack%26action%3Dauthorize%26_wpnonce%3Dtest123&scope=administrator%3Aabcdef123456&secret=secretvalue123456&site=https%3A%2F%2Ftest.jurassic.tube&site_url=https%3A%2F%2Ftest.jurassic.tube&state=1&from=jetpack-partner-coupon">
+  <code>from=jetpack-partner-coupon</code>
+</a></div>
+
+<h3>Default (no <code>from</code> param)</h3>
+<div class="link-row"><a href="http://calypso.localhost:3000/jetpack/connect/authorize?_wp_nonce=test123&blogname=My+Test+Site&client_id=12345&home_url=https%3A%2F%2Ftest.jurassic.tube&redirect_uri=https%3A%2F%2Ftest.jurassic.tube%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack%26action%3Dauthorize%26_wpnonce%3Dtest123&scope=administrator%3Aabcdef123456&secret=secretvalue123456&site=https%3A%2F%2Ftest.jurassic.tube&site_url=https%3A%2F%2Ftest.jurassic.tube&state=1">
+  No <code>from</code> param &mdash; default authorize page
+</a></div>
+
+<!-- ============================================================ -->
 <h2>Query parameter reference</h2>
 <table>
-  <tr><th>Param</th><th>Value</th><th>Notes</th></tr>
-  <tr><td><code>from</code></td><td><code>jetpack-connector</code></td><td>New flow identifier (vs <code>jetpack-onboarding</code>)</td></tr>
-  <tr><td><code>plugins</code></td><td><code>jetpack-boost</code></td><td>Comma-separated plugin slugs; drives branding</td></tr>
-  <tr><td><code>_wp_nonce</code></td><td><code>test123</code></td><td>Fake — real flow needs valid nonce</td></tr>
-  <tr><td><code>client_id</code></td><td><code>12345</code></td><td>Fake site ID</td></tr>
-  <tr><td><code>secret</code></td><td><code>secretvalue123456</code></td><td>Fake — real flow needs valid secret</td></tr>
+  <tr><th>Param</th><th>Example</th><th>Notes</th></tr>
+  <tr><td><code>from</code></td><td><code>jetpack-connector</code></td><td>Flow identifier. Determines styling, logo behavior, redirect targets.</td></tr>
+  <tr><td><code>plugins</code></td><td><code>jetpack,woocommerce</code></td><td>Comma-separated plugin slugs. Only used when <code>from=jetpack-connector</code>. Drives branding title/subtitle and logo family.</td></tr>
+  <tr><td><code>_wp_nonce</code></td><td><code>test123</code></td><td>Fake &mdash; real flow needs valid nonce from the site.</td></tr>
+  <tr><td><code>client_id</code></td><td><code>12345</code></td><td>Fake site ID.</td></tr>
+  <tr><td><code>secret</code></td><td><code>secretvalue123456</code></td><td>Fake &mdash; real flow needs valid secret.</td></tr>
+  <tr><td><code>blogname</code></td><td><code>My Test Site</code></td><td>Site name shown in the authorize form.</td></tr>
+  <tr><td><code>home_url</code> / <code>site_url</code></td><td><code>https://test.jurassic.tube</code></td><td>Site URLs for display and validation.</td></tr>
+  <tr><td><code>redirect_uri</code></td><td>(varies)</td><td>Where to redirect after authorization. Used in <code>redirectAfterAuth</code>.</td></tr>
+  <tr><td><code>scope</code></td><td><code>administrator:abcdef</code></td><td>Role and hash for the connection scope.</td></tr>
+</table>
+
+<h2><code>from</code> parameter reference</h2>
+<table>
+  <tr><th><code>from</code> value</th><th>Flow detection method</th><th>UI variant</th></tr>
+  <tr><td><code>jetpack-connector</code></td><td><code>isFromJetpackConnector()</code></td><td>WP.com styled, composite logo, dynamic branding via <code>plugins</code></td></tr>
+  <tr><td><code>jetpack-onboarding</code></td><td><code>isFromJetpackOnboarding()</code></td><td>Jetpack green, left-aligned header, compact logo</td></tr>
+  <tr><td><code>my-jetpack</code></td><td><code>isFromMyJetpack()</code></td><td>Same as onboarding (unified flow)</td></tr>
+  <tr><td><code>woocommerce-core-profiler</code></td><td><code>isWooJPC()</code></td><td>Woo purple, TopBar with Woo logo</td></tr>
+  <tr><td><code>woocommerce-services-auto-authorize</code></td><td><code>isWooRedirect()</code></td><td>Auto-authorize, no UI interaction</td></tr>
+  <tr><td><code>woocommerce-setup-wizard</code></td><td><code>isWooRedirect()</code></td><td>Auto-authorize (legacy)</td></tr>
+  <tr><td><code>woocommerce-onboarding</code></td><td><code>isWooRedirect()</code></td><td>Auto-authorize (legacy)</td></tr>
+  <tr><td><code>automattic-for-agencies-client</code></td><td><code>isFromAutomatticForAgenciesPlugin()</code></td><td>A4A branding and colors</td></tr>
+  <tr><td><code>blaze-ads</code></td><td><code>isFromBlazeAdsPlugin()</code></td><td>Auto-authorize redirect</td></tr>
+  <tr><td><code>jetpack-boost</code></td><td><code>isFromJetpackBoost()</code></td><td>Auto-authorize redirect</td></tr>
+  <tr><td><code>jetpack-backup</code></td><td><code>isFromJetpackBackupPlugin()</code></td><td>Redirect; checkout if no backup plan</td></tr>
+  <tr><td><code>jetpack-search</code></td><td><code>isFromJetpackSearchPlugin()</code></td><td>Auto-authorize redirect</td></tr>
+  <tr><td><code>jetpack-social</code></td><td><code>isFromJetpackSocialPlugin()</code></td><td>Auto-authorize redirect</td></tr>
+  <tr><td><code>jetpack-videopress</code></td><td><code>isFromJetpackVideoPressPlugin()</code></td><td>Auto-authorize redirect</td></tr>
+  <tr><td><code>connection-ui</code></td><td><code>isFromJetpackConnectionManager()</code></td><td>Auto-authorize redirect</td></tr>
+  <tr><td><code>jetpack-block-editor</code></td><td><code>isFromBlockEditor()</code></td><td>Auto-authorize redirect</td></tr>
+  <tr><td><code>jpo</code></td><td><code>isFromJpo()</code></td><td>Auto-authorize redirect</td></tr>
+  <tr><td><code>wpcom-migration</code></td><td><code>isFromMigrationPlugin()</code></td><td>Redirect to migration flow</td></tr>
+  <tr><td><code>connect-after-checkout</code></td><td><code>isFromMyJetpackConnectAfterCheckout()</code></td><td>Post-checkout connect</td></tr>
+  <tr><td><code>jetpack-partner-coupon</code></td><td><code>isJetpackPartnerCoupon()</code></td><td>Redirect to checkout with coupon</td></tr>
+  <tr><td><code>sso</code></td><td><code>isSso()</code></td><td>SSO auto-authorize (needs valid cookie)</td></tr>
+  <tr><td>(none / unknown)</td><td>(default)</td><td>Standard Jetpack authorize page, centered logo</td></tr>
 </table>
 </body>
 </html>

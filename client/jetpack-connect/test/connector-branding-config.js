@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { getConnectorBranding } from '../connector-branding-config';
+import { getConnectorBranding, getConnectorLogoUrl } from '../connector-branding-config';
 
 describe( 'getConnectorBranding', () => {
 	test( 'should return Jetpack branding as the default fallback', () => {
@@ -31,7 +31,8 @@ describe( 'getConnectorBranding', () => {
 	test( 'should fall back to default for unrecognized slugs', () => {
 		const defaultBranding = getConnectorBranding( [] );
 		const branding = getConnectorBranding( [ 'some-unknown-plugin' ] );
-		expect( branding ).toEqual( defaultBranding );
+		expect( branding.title ).toEqual( defaultBranding.title );
+		expect( branding.subtitle ).toEqual( defaultBranding.subtitle );
 	} );
 
 	test( 'should fall back to default when called with no arguments', () => {
@@ -58,5 +59,73 @@ describe( 'getConnectorBranding', () => {
 				expect( perm ).toHaveProperty( 'label' );
 			} );
 		}
+	} );
+
+	test( 'should include a logo property in every branding result', () => {
+		const slugs = [
+			[],
+			[ 'jetpack' ],
+			[ 'jetpack-boost' ],
+			[ 'unknown-plugin' ],
+			[ 'woocommerce' ],
+		];
+
+		for ( const pluginSlugs of slugs ) {
+			const branding = getConnectorBranding( pluginSlugs );
+			expect( branding ).toHaveProperty( 'logo' );
+			expect( typeof branding.logo ).toBe( 'string' );
+		}
+	} );
+
+	test( 'should resolve the correct composite logo based on plugin families', () => {
+		expect( getConnectorBranding( [ 'jetpack' ] ).logo ).toBe( 'jetpack-connect.svg' );
+		expect( getConnectorBranding( [ 'woocommerce' ] ).logo ).toBe( 'jetpack-connect-woo.svg' );
+		expect( getConnectorBranding( [ 'automattic-for-agencies' ] ).logo ).toBe(
+			'jetpack-connect-a8c.svg'
+		);
+		expect( getConnectorBranding( [ 'woocommerce', 'automattic-for-agencies' ] ).logo ).toBe(
+			'jetpack-connect-all.svg'
+		);
+	} );
+} );
+
+describe( 'getConnectorLogoUrl', () => {
+	test( 'should return default Jetpack logo for empty slugs', () => {
+		expect( getConnectorLogoUrl( [] ) ).toBe( 'jetpack-connect.svg' );
+	} );
+
+	test( 'should return default Jetpack logo when no arguments provided', () => {
+		expect( getConnectorLogoUrl() ).toBe( 'jetpack-connect.svg' );
+	} );
+
+	test( 'should return default Jetpack logo for jetpack-only plugins', () => {
+		expect( getConnectorLogoUrl( [ 'jetpack' ] ) ).toBe( 'jetpack-connect.svg' );
+		expect( getConnectorLogoUrl( [ 'jetpack-boost', 'jetpack-social' ] ) ).toBe(
+			'jetpack-connect.svg'
+		);
+	} );
+
+	test( 'should return Woo logo when woocommerce-prefixed slug is present', () => {
+		expect( getConnectorLogoUrl( [ 'woocommerce' ] ) ).toBe( 'jetpack-connect-woo.svg' );
+		expect( getConnectorLogoUrl( [ 'woocommerce-payments' ] ) ).toBe( 'jetpack-connect-woo.svg' );
+	} );
+
+	test( 'should return A8C logo when automattic-prefixed slug is present', () => {
+		expect( getConnectorLogoUrl( [ 'automattic-for-agencies' ] ) ).toBe(
+			'jetpack-connect-a8c.svg'
+		);
+	} );
+
+	test( 'should return combined logo when both Woo and A4A families are present', () => {
+		expect( getConnectorLogoUrl( [ 'woocommerce', 'automattic-for-agencies' ] ) ).toBe(
+			'jetpack-connect-all.svg'
+		);
+		expect(
+			getConnectorLogoUrl( [ 'jetpack', 'woocommerce-payments', 'automattic-client' ] )
+		).toBe( 'jetpack-connect-all.svg' );
+	} );
+
+	test( 'should return default for unknown slug prefixes', () => {
+		expect( getConnectorLogoUrl( [ 'my-custom-plugin' ] ) ).toBe( 'jetpack-connect.svg' );
 	} );
 } );

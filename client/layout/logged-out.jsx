@@ -36,7 +36,7 @@ import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getOnboardingUrl as getPatternLibraryOnboardingUrl } from 'calypso/my-sites/patterns/paths';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { isTwoFactorEnabled } from 'calypso/state/login/selectors';
+import { getRedirectToOriginal, isTwoFactorEnabled } from 'calypso/state/login/selectors';
 import {
 	getCurrentOAuth2Client,
 	showOAuth2Layout,
@@ -88,6 +88,7 @@ const LayoutLoggedOut = ( {
 	userAllowedToHelpCenter,
 	colorScheme,
 	isJetpackCloud,
+	isJetpackConnectorLogin,
 } ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const currentRoute = useSelector( getCurrentRoute );
@@ -175,6 +176,7 @@ const LayoutLoggedOut = ( {
 		woo: isWoo,
 		'feature-flag-woocommerce-core-profiler-passwordless-auth': true,
 		'jetpack-cloud': isJetpackCloud,
+		'is-jetpack-connector-login': isJetpackConnectorLogin,
 		'is-theme-showcase-modern': isThemeShowcaseModern,
 	};
 
@@ -405,6 +407,15 @@ export default withCurrentRoute(
 			 */
 			const colorScheme = isWooJPC ? getColorSchemeFromCurrentQuery( currentQuery ) : null;
 
+			const redirectToOriginal = getRedirectToOriginal( state );
+			const redirectFromParam = new URLSearchParams( redirectToOriginal?.split( '?' )[ 1 ] ).get(
+				'from'
+			);
+			const isJetpackConnectorLogin =
+				isJetpackLogin &&
+				( redirectFromParam?.startsWith( 'jetpack-connector' ) ||
+					currentQuery?.from?.startsWith( 'jetpack-connector' ) );
+
 			return {
 				isAkismet,
 				isPassport,
@@ -428,6 +439,7 @@ export default withCurrentRoute(
 				twoFactorEnabled,
 				colorScheme,
 				isJetpackCloud: isJetpackCloudOAuth2Client( oauth2Client ),
+				isJetpackConnectorLogin,
 			};
 		},
 		{ clearLastActionRequiresLogin }

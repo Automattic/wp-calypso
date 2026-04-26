@@ -9,10 +9,12 @@
 $colophon-height: 50px;
 
 body:not( .is-jetpack-sso-partner-branded--woo ) {
-	.jetpack-connect__main:not( .is-woocommerce ):not( .is-automattic-for-agencies-flow ),
+	.jetpack-connect__main:not( .is-woocommerce ):not( .is-automattic-for-agencies-flow ):not(
+			.is-jetpack-connector-flow
+		),
 	.layout.is-section-jetpack-connect:not( .is-jetpack-mobile-flow ):not(
 			.is-woocommerce-core-profiler-flow
-		):not( .is-automattic-for-agencies-flow ) {
+		):not( .is-automattic-for-agencies-flow ):not( .is-jetpack-connector-flow ) {
 		@include jetpack-connect-colors();
 	}
 }
@@ -286,6 +288,36 @@ body:not( .is-jetpack-sso-partner-branded--woo ) {
 	.connect-screen-brand-header {
 		text-align: center;
 		margin-bottom: 24px;
+	}
+
+	.connect-screen-brand-header__title {
+		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+			Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+		color: var( --color-neutral-100 );
+	}
+
+	.connect-screen-brand-header__description {
+		color: var( --studio-gray-50, #646970 );
+	}
+
+	.button.is-primary,
+	.components-button.is-primary {
+		background-color: var( --studio-wordpress-blue );
+		border-color: var( --studio-wordpress-blue );
+
+		&:hover {
+			background-color: var( --studio-wordpress-blue-60 );
+			border-color: var( --studio-wordpress-blue-60 );
+		}
+	}
+
+	input:focus {
+		border-color: var( --studio-wordpress-blue );
+		box-shadow: 0 0 0 2px var( --studio-wordpress-blue-10, rgba( 56, 88, 233, 0.15 ) );
+	}
+
+	.connect-screen-consent-text {
+		color: var( --studio-gray-50, #646970 );
 	}
 
 	@media screen and ( max-width: $break-mobile ) {
