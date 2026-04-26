@@ -2,51 +2,69 @@
 
 ## Primary Objective
 
-Review the PR against Calypso's authoritative guidelines:
+Review the PR by reading the relevant `AGENTS.md` files AND applying the review-focus axes below. The repo has 19 `AGENTS.md` files. Always read at minimum:
 
-- @AGENTS.md (top-level: architecture, deprecations, PR hygiene)
-- @client/AGENTS.md (client conventions: i18n, components, TypeScript, CSS, testing)
-- Any AGENTS.md or README in the paths the diff touches
+- `AGENTS.md` (top-level: architecture, deprecations, PR hygiene, shared infra)
+- `client/AGENTS.md` (i18n, components, TypeScript, CSS, testing conventions)
+- The nearest `AGENTS.md` for each non-trivial path the diff touches (e.g., `client/reader/AGENTS.md`, `packages/help-center/AGENTS.md`).
 
-If the diff touches shared infrastructure (`client/state`, `client/components`, `client/lib`, `client/layout`, or `packages/**`), call out cross-client blast radius. Calypso, Jetpack Cloud, and A4A all consume these.
+If other shared packages or docs are referenced in the PR description, treat them as additional guidance but prioritize the AGENTS.md files above.
 
-## Review focus (when applicable to the diff)
+If the diff touches paths AGENTS.md identifies as shared infrastructure, call out cross-client blast radius (Calypso, Jetpack Cloud, A4A consume them).
 
-1. **Backwards compatibility.** Exported function/component prop signatures, public hook contracts (`use*`), Redux action/selector shapes, REST endpoint shapes, persisted state schema. Breaking changes must be intentional and called out.
+## Non-goals
 
-2. **Auth and authz.** Capability checks before admin UI, route guards, `canCurrentUser` selectors, CSRF/nonce headers on mutating fetches, IDOR via author-controlled IDs.
+- Do NOT run tests, lint, or typecheck.
+- Do NOT validate PR-description hygiene.
+- Do NOT try to list recent PRs when reviewing - you do not have permission to do so.
+- Do NOT comment on a line if a Copilot or earlier review already covers the same issue within 5 lines.
 
-3. **Web-app security.** `dangerouslySetInnerHTML`, `href={userUrl}` with untrusted protocols (`javascript:`, `data:`), event-handler interpolation, `target="_blank"` without `rel="noopener"`.
+## Review focus
 
-4. **Injection / XSS.** Untrusted input in templates, log lines, shell calls, fetch URLs. Validate after decode/canonicalize, not before.
+For each axis, only flag when the trigger pattern matches the diff. Provide a fix suggestion in each comment.
 
-5. **Type safety.** Unjustified `any` or `as`, loose `==` on user data, `Object.assign` or spread of attacker-controlled JSON (prototype pollution via `__proto__`).
+**1. Backwards compatibility.** Flag when the diff changes an exported function/component prop signature, public hook contract (`use*`), Redux action/selector shape, REST endpoint shape, or persisted state schema.
+Message: `Breaking change to public API at <symbol>. <Specifics>. Confirm intentional and called out in PR description.`
 
-6. **Resource and DoS.** Unanchored regexes on user input (ReDoS), unbounded arrays/strings from API responses, missing `useMemo`/`useCallback`, network waterfalls, missing `select` memoization in `@wordpress/data`.
+**2. Auth and authz.** Flag missing capability checks, route guards, or CSRF/nonce headers; IDOR on new path-param routes; mass assignment via spread of form/state into mutating fetches.
+Message: `Missing <capability check | guard | CSRF header | authz check> at <location>. <Specific fix>.`
 
-7. **Information disclosure.** Tokens or PII in `console.log`, stack traces in client-visible error responses, analytics payloads.
+**3. Web-app security.** Flag `dangerouslySetInnerHTML` without sanitizer; `href={userUrl}` with attacker-controlled URL or `javascript:`/`data:` protocols; event-handler interpolation; open redirect via `router.push(req.query.next)` or similar; `postMessage` with `'*'` or no origin gate on receiver; `target="_blank"` without `rel="noopener"`.
+Message: `<Specific risk> at <location>. <Specific fix>.`
 
-8. **Supply chain.** Only when the diff touches `.github/workflows/`: `pull_request_target` + PR-branch checkout, `${{ ... }}` interpolation in `run:` with attacker-controllable values, unpinned third-party actions.
+**4. Injection / XSS.** Flag untrusted input flowing into HTML, template, `eval`, `Function`, shell calls (in scripts), or fetch URLs concatenated from input.
+Message: `Untrusted input from <source> flows into <sink>. Validate after decode/canonicalize.`
 
-9. **Regression prevention.** If the diff touches a path that has prior security fixes (per `git log --oneline` on those files), flag for extra scrutiny.
+**5. Type safety / prototype pollution.** Flag prototype pollution via `Object.assign`, recursive merge, or lodash `_.merge` on attacker-controlled JSON; `as` casts on `JSON.parse` or fetched JSON; loose `==` on user data; unjustified `any` (see `client/AGENTS.md`).
+Message: `<Specific risk> at <location>. <Specific fix>.`
 
-10. **Architecture awareness.** Calypso has two architectures: classic (Redux + page.js, mostly under `client/my-sites/`, deprecated) and Dashboard (TanStack Query + TanStack Router, under `client/dashboard/`). Flag patterns from one bleeding into the other; question new feature work in the deprecated half.
+**6. Resource and DoS.** Flag ReDoS via unanchored regex on user input; unbounded loops over API responses; client-side state growth from streams/polling without bounds; missing `useMemo`/`useCallback` causing re-renders or network waterfalls.
+Message: `<Specific risk> at <location>. <Specific fix>.`
 
-## Method
+**7. Information disclosure.** Flag tokens or PII in `console.log`, Sentry, or analytics payloads; stack traces in client-visible error responses. Calypso-internal IDs (`blog_id`, `studio_site_id`) are not PII.
+Message: `<Field> in <log | Sentry | analytics> may leak <category>.`
 
-- Read prior Copilot/human/bot comments before posting your own. Validate concerns by tracing code, not just the diff.
-- Use `mcp__github_inline_comment__create_inline_comment` for line-specific feedback.
-- DO NOT post a comment if Copilot or an earlier review already covers the same line within 5 lines (dedupe).
-- For diffs over ~2000 lines: focus on security-sensitive code, public APIs, and shared infra. Skip cosmetic or generated files.
-- Skip entirely: `node_modules/**`, `build/**`, `dist/**`, `**/*.min.*`, `**/*.map`, snapshot files, generated types, `*.po`/`*.mo`.
-- Don't nitpick minor style unless it violates a documented guideline.
-- Before suggesting alternative implementations, check if the PR description already explains the choice.
-- If the diff is straightforward, review it directly. Don't over-explore.
+**8. Supply chain.** Only when the diff touches `.github/workflows/`. Flag `pull_request_target` + PR-branch checkout, `${{ ... }}` interpolation in `run:` with attacker-controllable values, unpinned third-party actions.
+Message: `<Specific risk> at <location>. <Specific fix>.`
 
-## Output
+**9. Architecture awareness.** Flag when the diff imports `page.js` inside `client/dashboard/`, uses `useDispatch` from `react-redux` inside `client/dashboard/`, or adds new feature work to `client/my-sites/` (deprecated per AGENTS.md).
+Message: `<Pattern> bleeds <classic | dashboard> into <other>. <Suggested approach>.`
 
-- Be concise. Only post if there are real issues.
+**10. Route deletion → redirect.** Flag when the diff removes a `<Route>` declaration or a route handler with a previously-shipped path.
+Message: `Route <path> deleted. Add a redirect for users with bookmarks if the route had been live.`
+
+**11. Shared-package consumer audit.** Flag when the diff changes a public export in `packages/**`. Grep `apps/**` and `client/**` for imports.
+Message: `<package> is consumed by <list apps>. Verify the change is compatible.`
+
+## Output Format
+
+- Be concise. Only comment if a trigger matched.
+- Each comment shape: `**Issue:** <one-line problem>` then `**Suggestion:** <fix>`.
+- DO NOT comment on lines that are not related to the guidelines listed above.
+- Don't nitpick minor style issues unless they violate the documented guidelines.
+- Cite the source documentation as a clickable link when AGENTS.md or a project README covers the issue (`https://github.com/Automattic/wp-calypso/blob/trunk/<path>`); blockquote the relevant sentence. For security categories not in repo docs, name the axis from this prompt and add a one-line rationale; do not fabricate doc URLs.
 - DO NOT use checkboxes, todo lists, or progress indicators.
-- Each comment shape: `**Issue:** <one-line problem>` then `**Suggestion:** <fix>`. Cite the source documentation as a clickable link `https://github.com/Automattic/wp-calypso/blob/trunk/<path>` and blockquote the specific sentence(s) that justify the comment.
-- If you reviewed prior concerns, classify them: RESOLVED / STILL OUTSTANDING / NEW. Post inline only for NEW; mention RESOLVED/OUTSTANDING in a single summary comment.
-- If everything looks good, post a brief summary saying so. Don't silently skip.
+- If you read prior bot/human comments, post a single summary comment classifying them: `RESOLVED:` / `STILL OUTSTANDING:` / `NEW:`. Post inline only for NEW.
+- If no triggers matched, post: `AI Code Review: no issues found.`
+
+Remember: Calypso is large and shared. Prioritize correctness, security, and cross-client blast radius over style. Flag intent, not taste.
