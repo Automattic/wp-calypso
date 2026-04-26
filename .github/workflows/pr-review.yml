@@ -7,6 +7,11 @@ on:
         description: 'Path to the per-area review prompt, relative to repo root'
         required: true
         type: string
+      pr_ref:
+        description: 'Optional PR ref to checkout (e.g., refs/pull/123/merge). If empty, falls back to github.ref. Required when invoked from a comment-triggered caller, since github.ref defaults to the default branch for those events.'
+        required: false
+        type: string
+        default: ''
     secrets:
       anthropic_api_key:
         required: true
@@ -15,10 +20,14 @@ jobs:
   review:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
+          ref: ${{ inputs.pr_ref || github.ref }}
           fetch-depth: 0
 
       - name: Run review

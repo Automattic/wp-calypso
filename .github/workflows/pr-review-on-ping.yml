@@ -1,4 +1,4 @@
-name: PR Review (on @claude ping)
+name: PR Review (on @claude /review)
 
 on:
   issue_comment:
@@ -14,7 +14,7 @@ permissions:
   id-token: write
 
 jobs:
-  review:
+  detect:
     if: |
       (
         github.event.comment.author_association == 'MEMBER' ||
@@ -22,12 +22,38 @@ jobs:
         github.event.review.author_association == 'MEMBER' ||
         github.event.review.author_association == 'OWNER'
       ) && github.event.sender.login != 'matticbot' && (
-        (github.event_name == 'issue_comment' && github.event.issue.pull_request != null && contains(github.event.comment.body, '@claude')) ||
-        (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
-        (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@claude'))
+        (github.event_name == 'issue_comment' && github.event.issue.pull_request != null && contains(github.event.comment.body, '@claude /review')) ||
+        (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude /review')) ||
+        (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@claude /review'))
       )
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    outputs:
+      prompt_path: ${{ steps.path.outputs.prompt_path }}
+      pr_ref: ${{ steps.path.outputs.pr_ref }}
+    steps:
+      - name: Detect prompt path and PR ref
+        id: path
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER="${{ github.event.issue.number || github.event.pull_request.number }}"
+          FILES=$(gh pr view "$PR_NUMBER" --repo "${{ github.repository }}" --json files --jq '.files[].path')
+          if echo "$FILES" | grep -q '^client/dashboard/'; then
+            echo "prompt_path=.github/prompts/dashboard-pr-review.md" >> "$GITHUB_OUTPUT"
+          elif echo "$FILES" | grep -q '^client/a8c-for-agencies/'; then
+            echo "prompt_path=.github/prompts/a4a-pr-review.md" >> "$GITHUB_OUTPUT"
+          else
+            echo "prompt_path=.github/prompts/general-pr-review.md" >> "$GITHUB_OUTPUT"
+          fi
+          echo "pr_ref=refs/pull/$PR_NUMBER/merge" >> "$GITHUB_OUTPUT"
+
+  review:
+    needs: detect
     uses: ./.github/workflows/pr-review.yml
     with:
-      prompt_path: .github/prompts/general-pr-review.md
+      prompt_path: ${{ needs.detect.outputs.prompt_path }}
+      pr_ref: ${{ needs.detect.outputs.pr_ref }}
     secrets:
       anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
