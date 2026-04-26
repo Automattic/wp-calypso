@@ -77,7 +77,11 @@ const AtomicRevertChanges = ( {
 
 	return (
 		<div className="cancel-purchase__atomic-revert-changes">
-			<p>{ translate( 'We will also make these changes to your site:' ) }</p>
+			<p>
+				{ isPlan( purchase )
+					? translate( 'We will also make these changes to your site:' )
+					: translate( "Here's what will happen:" ) }
+			</p>
 			<ul className="cancel-purchase__atomic-revert-changes-list">
 				{ changes.map( ( change, index ) => (
 					<li key={ index }>
