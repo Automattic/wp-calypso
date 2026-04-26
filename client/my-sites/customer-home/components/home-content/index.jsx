@@ -1,9 +1,13 @@
-import { Button } from '@automattic/components';
+import { Button, Card, Gridicon } from '@automattic/components';
+import { eye } from '@automattic/components/src/icons';
+import { Icon, people, starEmpty, commentContent } from '@wordpress/icons';
+import CountCard from 'calypso/my-sites/stats/components/highlight-cards/count-card';
 import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { SET_UP_EMAIL_AUTHENTICATION_FOR_YOUR_DOMAIN } from '@automattic/urls';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
+import moment from 'moment';
 import { useEffect, useState } from 'react';
 import { connect, useSelector } from 'react-redux';
 import SiteIcon from 'calypso/blocks/site-icon';
@@ -13,8 +17,10 @@ import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connec
 import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
+import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import ResurrectedWelcomeModalGate from 'calypso/components/resurrected-welcome-modal';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
+import useActivityLogQuery from 'calypso/data/activity-log/use-activity-log-query';
 import useDomainDiagnosticsQuery from 'calypso/data/domains/diagnostics/use-domain-diagnostics-query';
 import useHomeLayoutQuery, { getCacheKey } from 'calypso/data/home/use-home-layout-query';
 import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
@@ -30,6 +36,7 @@ import Tertiary from 'calypso/my-sites/customer-home/locations/tertiary';
 import WooCommerceHomePlaceholder from 'calypso/my-sites/customer-home/wc-home-placeholder';
 import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUserDisplayName } from 'calypso/state/current-user/selectors';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { verifyIcannEmail } from 'calypso/state/domains/management/actions';
 import { withJetpackConnectionProblem } from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem';
@@ -51,12 +58,38 @@ import {
 	getSitePlan,
 	getSiteOption,
 } from 'calypso/state/sites/selectors';
+import {
+	getSiteStatsNormalizedData,
+	isRequestingSiteStatsForQuery,
+} from 'calypso/state/stats/lists/selectors';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { FullScreenLaunchpad } from '../full-screen-launchpad';
 import openSyncUrlInStudio from './studio-deeplink';
 
 import './style.scss';
+
+function getTimeOfDayGreeting( translate ) {
+	const hour = new Date().getHours();
+	if ( hour >= 5 && hour < 12 ) {
+		return translate( 'Good morning' );
+	}
+	if ( hour >= 12 && hour < 18 ) {
+		return translate( 'Good afternoon' );
+	}
+	if ( hour >= 18 && hour < 22 ) {
+		return translate( 'Good evening' );
+	}
+	return translate( 'Good night' );
+}
+
+function getFirstName( displayName ) {
+	if ( ! displayName ) {
+		return '';
+	}
+	return displayName.split( ' ' )[ 0 ];
+}
+
 
 const HomeContent = ( {
 	canUserUseCustomerHome,
@@ -75,6 +108,13 @@ const HomeContent = ( {
 	handleVerifyIcannEmail,
 	isAdmin,
 	dashboardOptIn,
+	displayName,
+	todayViews,
+	todayVisitors,
+	todayLikes,
+	todayComments,
+	recentComments,
+	isStatsLoading,
 } ) => {
 	const celebrateLaunchModalIsOpen = useSelector( ( state ) =>
 		getIsSiteLaunchCelebrationModalOpen( state, siteId )
@@ -86,6 +126,113 @@ const HomeContent = ( {
 
 	const { data: layout, isLoading, error: homeLayoutError } = useHomeLayoutQuery( siteId );
 	const { skipCurrentView } = useSkipCurrentViewMutation( siteId );
+
+	// Fetch the latest 10 activity log entries for the Activity column
+	const { data: activityLogs, isLoading: isActivityLoading } = useActivityLogQuery(
+		siteId,
+		{ number: 10, aggregate: false },
+		{ enabled: !! siteId }
+	);
+	// Recursively find a node with type === 'post' in the activityDescription tree
+	const findPostNode = ( blocks ) => {
+		if ( ! Array.isArray( blocks ) ) {
+			return null;
+		}
+		for ( const block of blocks ) {
+			if ( ! block || typeof block !== 'object' ) {
+				continue;
+			}
+			if ( block.type === 'post' ) {
+				return block;
+			}
+			// Check nested children
+			if ( Array.isArray( block.children ) ) {
+				const found = findPostNode( block.children );
+				if ( found ) {
+					return found;
+				}
+			}
+		}
+		return null;
+	};
+
+	// Extract the full description text from activityDescription blocks
+	const getDescriptionText = ( blocks ) => {
+		if ( ! Array.isArray( blocks ) ) {
+			return '';
+		}
+		return blocks
+			.map( ( block ) => {
+				if ( typeof block === 'string' ) {
+					return block;
+				}
+				if ( block && typeof block === 'object' && block.text ) {
+					return block.text;
+				}
+				return '';
+			} )
+			.join( '' )
+			.trim();
+	};
+
+	// Debug: log first activity entry to see available fields
+	if ( activityLogs?.length ) {
+		// eslint-disable-next-line no-console
+		console.log( '[Dashboard Debug] First activity entry:', activityLogs[ 0 ] );
+	}
+
+	const recentActivity = ( activityLogs || [] ).slice( 0, 6 ).map( ( entry ) => {
+		let postLink = null;
+		let postTitle = null;
+		const isPostActivity = entry.activityName && (
+			entry.activityName.startsWith( 'post__' ) ||
+			entry.activityName.startsWith( 'page__' )
+		);
+
+		if ( isPostActivity ) {
+			const obj = entry.activityObject || {};
+
+			// Try common field names for post title from the raw API object
+			postTitle = obj.name || obj.post_title || obj.title || null;
+
+			// Try common field names for post ID
+			const postId = obj.object_id || obj.post_id || obj.id || null;
+			if ( postId && site?.slug ) {
+				postLink = `/post/${ site.slug }/${ postId }`;
+			}
+
+			// Fallback: try to find a post node in the parsed description tree
+			if ( ! postTitle && Array.isArray( entry.activityDescription ) ) {
+				const postBlock = findPostNode( entry.activityDescription );
+				if ( postBlock ) {
+					postTitle = postBlock.text || null;
+					if ( ! postLink && postBlock.postId && site?.slug ) {
+						postLink = `/post/${ site.slug }/${ postBlock.postId }`;
+					}
+				}
+			}
+
+			// Fallback: get the text from description blocks
+			if ( ! postTitle && Array.isArray( entry.activityDescription ) ) {
+				const descText = getDescriptionText( entry.activityDescription );
+				if ( descText && descText !== entry.activityTitle ) {
+					postTitle = descText;
+				}
+			}
+
+			// eslint-disable-next-line no-console
+			console.log( '[Dashboard Debug] Post activity:', entry.activityName, { obj, postTitle, postLink, desc: entry.activityDescription } );
+		}
+
+		return {
+			icon: entry.activityIcon || 'info-outline',
+			title: entry.activityTitle || '',
+			actor: entry.actorName || '',
+			time: moment( entry.activityTs ).fromNow(),
+			postTitle,
+			postLink,
+		};
+	} );
 
 	const [ focusedLaunchpadDismissed, setFocusedLaunchpadDismissed ] = useState( false );
 
@@ -180,19 +327,9 @@ const HomeContent = ( {
 
 	const headerActions = (
 		<>
-			<Button href={ site.URL } onClick={ trackViewSiteAction }>
+			<Button href={ site.URL } onClick={ trackViewSiteAction } style={ { color: '#fff', backgroundColor: '#000', borderColor: '#000' } }>
 				{ translate( 'View site' ) }
 			</Button>
-			{ isAdmin && ! isP2 && (
-				<Button
-					primary
-					href={
-						dashboardOptIn ? dashboardLink( `/sites/${ site.slug }` ) : `/overview/${ site.slug }`
-					}
-				>
-					{ dashboardOptIn ? translate( 'Hosting Dashboard' ) : translate( 'Hosting Overview' ) }
-				</Button>
-			) }
 		</>
 	);
 	const header = (
@@ -201,7 +338,7 @@ const HomeContent = ( {
 				compactBreadcrumb={ false }
 				navigationItems={ [] }
 				mobileItem={ null }
-				title={ translate( 'My Home' ) }
+				title={ translate( 'Your Home' ) }
 				subtitle={ translate( 'Your hub for next steps, support center, and quick links.' ) }
 			>
 				{ headerActions }
@@ -314,12 +451,126 @@ const HomeContent = ( {
 		);
 	};
 
+	const greeting = `${ getTimeOfDayGreeting( translate ) }, ${ getFirstName( displayName ) }.`;
+
+	const weeklyStatsQuery = {
+		unit: 'day',
+		quantity: 7,
+		stat_fields: 'views,visitors',
+	};
+
+	const dashboardOverview = (
+		<div className="customer-home__dashboard-overview">
+			<QuerySiteStats siteId={ siteId } statType="statsVisits" query={ weeklyStatsQuery } />
+			<div className="customer-home__greeting">
+				<h1 className="customer-home__greeting-title">{ greeting }</h1>
+				<p className="customer-home__greeting-subtitle">
+					{ translate( 'Here is a quick overview about what happened since your last visit:' ) }
+				</p>
+			</div>
+			<div className="customer-home__overview-grid">
+				<CountCard
+					heading={ translate( 'Views' ) }
+					icon={ <Icon icon={ eye } /> }
+					value={ todayViews || 0 }
+					showValueTooltip
+				/>
+				<CountCard
+					heading={ translate( 'Visitors' ) }
+					icon={ <Icon icon={ people } /> }
+					value={ todayVisitors || 0 }
+					showValueTooltip
+				/>
+				<CountCard
+					heading={ translate( 'Likes' ) }
+					icon={ <Icon icon={ starEmpty } /> }
+					value={ todayLikes || 0 }
+					showValueTooltip
+				/>
+				<CountCard
+					heading={ translate( 'Comments' ) }
+					icon={ <Icon icon={ commentContent } /> }
+					value={ todayComments || 0 }
+					showValueTooltip
+				/>
+
+				{ /* Middle Column: Activity (Jetpack Activity Log) */ }
+				<Card className="customer-home__overview-card">
+					<h3 className="customer-home__overview-card-title">{ translate( 'Activity' ) }</h3>
+					{ isActivityLoading ? (
+						<div className="customer-home__overview-placeholder" />
+					) : recentActivity.length > 0 ? (
+						<ul className="customer-home__activity-list">
+							{ recentActivity.map( ( item, index ) => (
+								<li key={ index } className="customer-home__activity-item">
+									<span className="customer-home__activity-icon">
+										<Gridicon icon={ item.icon } size={ 18 } />
+									</span>
+									<div className="customer-home__activity-content">
+										<span className="customer-home__activity-text">
+											{ item.title }
+										</span>
+										{ item.postTitle && (
+											item.postLink ? (
+												<a href={ item.postLink } className="customer-home__activity-post-title customer-home__activity-post-title--link">
+													{ item.postTitle }
+												</a>
+											) : (
+												<span className="customer-home__activity-post-title">
+													{ item.postTitle }
+												</span>
+											)
+										) }
+										<span className="customer-home__activity-meta">
+											{ item.actor && <span>{ item.actor }</span> }
+											{ item.actor && <span className="customer-home__activity-meta-sep">&middot;</span> }
+											<span>{ item.time }</span>
+										</span>
+									</div>
+								</li>
+							) ) }
+						</ul>
+					) : (
+						<p className="customer-home__overview-empty">{ translate( 'No recent activity.' ) }</p>
+					) }
+				</Card>
+
+				{ /* Right Column: Inbox */ }
+				<Card className="customer-home__overview-card">
+					<h3 className="customer-home__overview-card-title">{ translate( 'Inbox' ) }</h3>
+					{ recentComments && recentComments.length > 0 ? (
+						<ul className="customer-home__inbox-list">
+							{ recentComments.map( ( comment, index ) => (
+								<li key={ index } className="customer-home__inbox-item">
+									<div className="customer-home__inbox-avatar">
+										{ comment.authorName?.charAt( 0 )?.toUpperCase() || '?' }
+									</div>
+									<div className="customer-home__inbox-content">
+										<span className="customer-home__inbox-excerpt">{ comment.excerpt }</span>
+										<span className="customer-home__inbox-meta">
+											<span>{ comment.authorName }</span>
+											<span className="customer-home__inbox-meta-sep">&middot;</span>
+											<span>{ comment.time }</span>
+										</span>
+									</div>
+								</li>
+							) ) }
+						</ul>
+					) : (
+						<p className="customer-home__overview-empty">{ translate( 'No new messages.' ) }</p>
+					) }
+				</Card>
+			</div>
+		</div>
+	);
+
 	return (
 		<div className="customer-home__main">
 			{ siteId && isJetpack && isPossibleJetpackConnectionProblem && (
 				<JetpackConnectionHealthBanner siteId={ siteId } />
 			) }
 			{ header }
+			{ dashboardOverview }
 			{ ! isLoading && ! layout && homeLayoutError ? (
 				<TrackComponentView
 					eventName="calypso_customer_home_my_site_view_layout_error"
@@ -362,6 +613,41 @@ const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const installedWooCommercePlugin = getPluginOnSite( state, siteId, 'woocommerce' );
 
+	// Stats for the last 7 days (used for sparklines and today's totals)
+	const weeklyStatsQuery = { unit: 'day', quantity: 7, stat_fields: 'views,visitors' };
+	const isStatsLoading = isRequestingSiteStatsForQuery( state, siteId, 'statsVisits', weeklyStatsQuery );
+	const statsData = getSiteStatsNormalizedData( state, siteId, 'statsVisits', weeklyStatsQuery );
+
+	// Extract today's totals
+	let todayViews = 0;
+	let todayVisitors = 0;
+	let todayLikes = 0;
+	let todayComments = 0;
+	if ( statsData && Array.isArray( statsData.data ) ) {
+		const lastEntry = statsData.data[ statsData.data.length - 1 ];
+		if ( lastEntry ) {
+			todayViews = lastEntry[ 1 ] || 0;
+			todayVisitors = lastEntry[ 2 ] || 0;
+			todayLikes = lastEntry[ 3 ] || 0;
+			todayComments = lastEntry[ 4 ] || 0;
+		}
+	}
+
+	// Recent comments from state
+	const siteComments = state.comments?.items?.[ siteId ];
+	let recentComments = [];
+	if ( siteComments ) {
+		const allComments = Object.values( siteComments ).flat();
+		recentComments = allComments
+			.sort( ( a, b ) => new Date( b.date ) - new Date( a.date ) )
+			.slice( 0, 5 )
+			.map( ( c ) => ( {
+				authorName: c.author?.name || c.author?.login || 'Anonymous',
+				excerpt: c.content ? c.content.replace( /<[^>]*>/g, '' ).substring( 0, 80 ) + '...' : '',
+				time: moment( c.date ).fromNow(),
+			} ) );
+	}
+
 	return {
 		site: getSelectedSite( state ),
 		sitePlan: getSitePlan( state, siteId ),
@@ -378,6 +664,13 @@ const mapStateToProps = ( state ) => {
 		isSiteLaunching: getRequest( state, launchSite( siteId ) )?.isLoading ?? false,
 		isAdmin: canCurrentUser( state, siteId, 'manage_options' ),
 		dashboardOptIn: hasDashboardOptIn( state ),
+		displayName: getCurrentUserDisplayName( state ),
+		todayViews,
+		todayVisitors,
+		todayLikes,
+		todayComments,
+		recentComments,
+		isStatsLoading,
 	};
 };
 
