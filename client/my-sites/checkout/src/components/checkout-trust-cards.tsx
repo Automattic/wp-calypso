@@ -72,21 +72,55 @@ const CardLogos = styled.div`
 	}
 `;
 
-function getShortestRefundWindow( cart: ResponseCart ): number | null {
+// Mirrors the day-count selection in `CheckoutSummaryRefundWindows`
+// (wp-checkout-order-summary.tsx) so the trust card and sidebar always
+// agree on the headline number — for example, a yearly plan with a
+// separately-purchased domain shows 4 days in both, while an all-renewals
+// cart shows the longer plan window in both.
+function getRefundWindowDays( cart: ResponseCart ): number | null {
 	const refundPolicies = getRefundPolicies( cart );
-	if ( refundPolicies.includes( RefundPolicy.NonRefundable ) ) {
+	const refundWindows = getRefundWindows( refundPolicies );
+
+	if ( ! refundWindows.length || refundPolicies.includes( RefundPolicy.NonRefundable ) ) {
 		return null;
 	}
-	const windows = getRefundWindows( refundPolicies );
-	if ( ! windows.length ) {
+
+	const allCartItemsAreDomains = refundPolicies.every(
+		( refundPolicy ) =>
+			refundPolicy === RefundPolicy.DomainNameRegistration ||
+			refundPolicy === RefundPolicy.DomainNameRegistrationBundled ||
+			refundPolicy === RefundPolicy.DomainNameRenewal
+	);
+	if ( allCartItemsAreDomains ) {
 		return null;
 	}
-	return Math.min( ...windows );
+
+	if ( refundWindows.length === 1 ) {
+		return refundWindows[ 0 ];
+	}
+
+	const allCartItemsAreMonthlyPlanBundle = refundPolicies.every(
+		( refundPolicy ) =>
+			refundPolicy === RefundPolicy.DomainNameRegistration ||
+			refundPolicy === RefundPolicy.PlanMonthlyBundle
+	);
+	const allCartItemsArePlanOrDomainRenewals = refundPolicies.every(
+		( refundPolicy ) =>
+			refundPolicy === RefundPolicy.DomainNameRenewal ||
+			refundPolicy === RefundPolicy.PlanMonthlyRenewal ||
+			refundPolicy === RefundPolicy.PlanYearlyRenewal ||
+			refundPolicy === RefundPolicy.PlanBiennialRenewal
+	);
+	if ( allCartItemsAreMonthlyPlanBundle || allCartItemsArePlanOrDomainRenewals ) {
+		return Math.max( ...refundWindows );
+	}
+
+	return Math.min( ...refundWindows );
 }
 
 export default function CheckoutTrustCards( { cart }: { cart: ResponseCart } ) {
 	const translate = useTranslate();
-	const refundDays = getShortestRefundWindow( cart );
+	const refundDays = getRefundWindowDays( cart );
 
 	return (
 		<TrustCardsRow className="checkout-trust-cards">
