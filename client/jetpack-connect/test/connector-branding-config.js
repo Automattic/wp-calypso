@@ -13,24 +13,23 @@ describe( 'getConnectorBranding', () => {
 		expect( branding.permissions.length ).toBeGreaterThan( 0 );
 	} );
 
-	test( 'should return specific branding for jetpack-boost', () => {
-		const branding = getConnectorBranding( [ 'jetpack-boost' ] );
-		expect( branding.title ).toContain( 'Boost' );
-	} );
-
-	test( 'should return specific branding for jetpack-social', () => {
-		const branding = getConnectorBranding( [ 'jetpack-social' ] );
-		expect( branding.title ).toContain( 'Social' );
-	} );
-
-	test( 'should use the first recognized slug when multiple are provided', () => {
-		const branding = getConnectorBranding( [ 'unknown-plugin', 'jetpack-search' ] );
-		expect( branding.title ).toContain( 'Search' );
-	} );
-
-	test( 'should fall back to default for unrecognized slugs', () => {
+	test( 'should return default branding for unrecognized plugin slugs', () => {
 		const defaultBranding = getConnectorBranding( [] );
-		const branding = getConnectorBranding( [ 'some-unknown-plugin' ] );
+		for ( const slugs of [
+			[ 'jetpack-boost' ],
+			[ 'jetpack-social' ],
+			[ 'unknown-plugin', 'jetpack-search' ],
+			[ 'some-unknown-plugin' ],
+		] ) {
+			const branding = getConnectorBranding( slugs );
+			expect( branding.title ).toEqual( defaultBranding.title );
+			expect( branding.subtitle ).toEqual( defaultBranding.subtitle );
+		}
+	} );
+
+	test( 'should match the explicit jetpack entry when its slug is present', () => {
+		const defaultBranding = getConnectorBranding( [] );
+		const branding = getConnectorBranding( [ 'unknown-plugin', 'jetpack' ] );
 		expect( branding.title ).toEqual( defaultBranding.title );
 		expect( branding.subtitle ).toEqual( defaultBranding.subtitle );
 	} );
@@ -42,18 +41,9 @@ describe( 'getConnectorBranding', () => {
 		expect( branding ).toHaveProperty( 'permissions' );
 	} );
 
-	test( 'each branding entry should have icon and label in permissions', () => {
-		const slugs = [
-			'jetpack',
-			'jetpack-boost',
-			'jetpack-social',
-			'jetpack-search',
-			'jetpack-videopress',
-			'jetpack-backup',
-		];
-
-		for ( const slug of slugs ) {
-			const branding = getConnectorBranding( [ slug ] );
+	test( 'every permission entry should have an icon and a label', () => {
+		for ( const slugs of [ [], [ 'jetpack' ], [ 'unknown-plugin' ] ] ) {
+			const branding = getConnectorBranding( slugs );
 			branding.permissions.forEach( ( perm ) => {
 				expect( perm ).toHaveProperty( 'icon' );
 				expect( perm ).toHaveProperty( 'label' );
@@ -86,6 +76,28 @@ describe( 'getConnectorBranding', () => {
 		expect( getConnectorBranding( [ 'woocommerce', 'automattic-for-agencies' ] ).logo ).toBe(
 			'jetpack-connect-all.svg'
 		);
+	} );
+
+	describe( 'permissionsTitle', () => {
+		test( 'is a function on every branding result', () => {
+			for ( const slugs of [ [], [ 'jetpack' ], [ 'unknown-plugin' ] ] ) {
+				const branding = getConnectorBranding( slugs );
+				expect( typeof branding.permissionsTitle ).toBe( 'function' );
+			}
+		} );
+
+		test( 'returns the short variant when called without a siteURL', () => {
+			const branding = getConnectorBranding( [] );
+			expect( branding.permissionsTitle() ).toBe( 'This connection allows Jetpack to:' );
+			expect( branding.permissionsTitle( {} ) ).toBe( 'This connection allows Jetpack to:' );
+		} );
+
+		test( 'interpolates the siteURL into the long variant when provided', () => {
+			const branding = getConnectorBranding( [] );
+			expect( branding.permissionsTitle( { siteURL: 'example.com' } ) ).toBe(
+				'This connection on example.com allows Jetpack to:'
+			);
+		} );
 	} );
 } );
 

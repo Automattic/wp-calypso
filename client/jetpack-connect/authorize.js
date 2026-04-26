@@ -6,7 +6,6 @@ import {
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button, Card, FormLabel, Gridicon } from '@automattic/components';
 import { Spinner as WPSpinner, Modal } from '@wordpress/components';
-import { Icon, chartBar, next, share } from '@wordpress/icons';
 import { getQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
 import debugModule from 'debug';
@@ -1015,7 +1014,7 @@ export class JetpackAuthorize extends Component {
 	}
 
 	renderContent() {
-		const { translate, user, authQuery } = this.props;
+		const { user, authQuery } = this.props;
 		if ( this.isWooJPC() ) {
 			const loginURL = login( {
 				isJetpack: true,
@@ -1052,36 +1051,11 @@ export class JetpackAuthorize extends Component {
 		}
 
 		if ( this.isUnifiedOnboardingFlow() || this.isFromMyJetpack() ) {
-			const connectorBranding = this.isFromJetpackConnector()
-				? getConnectorBranding( authQuery.plugins )
-				: null;
-
-			const permissionsTitle = connectorBranding
-				? translate( 'This connection allows:' )
-				: translate( 'This connection on %(siteURL)s allows Jetpack to:', {
-						args: {
-							siteURL: decodeEntities( authQuery.siteUrl.replace( /^https?:\/\//, '' ) ),
-						},
-				  } );
-
-			const defaultPermissions = [
-				{
-					icon: <Icon icon={ chartBar } />,
-					label: translate(
-						'Process detailed visitor stats in the cloud, so your site stays fast.'
-					),
-				},
-				{
-					icon: <Icon icon={ next } />,
-					label: translate( 'Improve your site’s performance and SEO automatically.' ),
-				},
-				{
-					icon: <Icon icon={ share } />,
-					label: translate( 'Automatically share your site’s posts on social media.' ),
-				},
-			];
-
-			const permissions = connectorBranding ? connectorBranding.permissions : defaultPermissions;
+			const branding = getConnectorBranding( authQuery.plugins );
+			const siteURL = this.isFromJetpackConnector()
+				? undefined
+				: decodeEntities( authQuery.siteUrl.replace( /^https?:\/\//, '' ) );
+			const permissionsTitle = branding.permissionsTitle( { siteURL } );
 
 			return (
 				<>
@@ -1094,7 +1068,7 @@ export class JetpackAuthorize extends Component {
 						size="small"
 					/>
 
-					<PermissionsList title={ permissionsTitle } permissions={ permissions } />
+					<PermissionsList title={ permissionsTitle } permissions={ branding.permissions } />
 					{ this.renderNotices() }
 					{ this.renderStateAction() }
 				</>
