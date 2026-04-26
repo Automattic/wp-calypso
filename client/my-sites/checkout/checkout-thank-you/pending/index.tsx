@@ -6,6 +6,7 @@ import { Step } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { invokeSurvicateEvent } from '@automattic/survicate';
 import { useQuery } from '@tanstack/react-query';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState, useEffect, useRef } from 'react';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -88,7 +89,7 @@ function CheckoutPending( {
 }: CheckoutPendingProps ) {
 	const orderId = isValidOrderId( orderIdOrPlaceholder ) ? orderIdOrPlaceholder : undefined;
 
-	useRedirectOnTransactionSuccess( {
+	const { isExiting } = useRedirectOnTransactionSuccess( {
 		orderId,
 		receiptId,
 		siteSlug,
@@ -96,7 +97,11 @@ function CheckoutPending( {
 		fromSiteSlug,
 	} );
 
-	const content = <Step.Loading topBarRightElement={ <PendingPageHelpLink /> } />;
+	const content = (
+		<div className={ clsx( 'checkout-pending__loading', { 'is-exiting': isExiting } ) }>
+			<Step.Loading topBarRightElement={ <PendingPageHelpLink /> } />
+		</div>
+	);
 
 	return (
 		<>
@@ -162,7 +167,7 @@ function useRedirectOnTransactionSuccess( {
 	 * logged in).
 	 */
 	fromSiteSlug?: string;
-} ): void {
+} ): { isExiting: boolean } {
 	const translate = useTranslate();
 
 	const { isLoading: isLoadingOrder, order: transaction } = usePurchaseOrder( orderId, 5000 );
@@ -222,6 +227,7 @@ function useRedirectOnTransactionSuccess( {
 	}, [ isUnifiedCheckout, blogId, reduxDispatch ] );
 
 	// Redirect and display notices.
+	const [ isExiting, setIsExiting ] = useState( false );
 	const didRedirect = useRef( false );
 	useEffect( () => {
 		if ( didRedirect.current ) {
@@ -306,7 +312,10 @@ function useRedirectOnTransactionSuccess( {
 			reduxDispatch( requestSite( blogId ) );
 		}
 
-		notifyAndPerformRedirect( siteSlug, redirectInstructions );
+		setIsExiting( true );
+		window.setTimeout( () => {
+			notifyAndPerformRedirect( siteSlug, redirectInstructions );
+		}, 200 );
 	}, [
 		isLoadingOrder,
 		saasRedirectUrl,
@@ -328,6 +337,8 @@ function useRedirectOnTransactionSuccess( {
 		translate,
 		fromSiteSlug,
 	] );
+
+	return { isExiting };
 }
 
 function isTransactionSuccessful(

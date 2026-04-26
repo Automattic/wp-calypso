@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { isURL } from '@wordpress/url';
 import debugFactory from 'debug';
@@ -27,7 +28,11 @@ import {
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { recordCompositeCheckoutErrorDuringAnalytics } from '../lib/analytics';
 import normalizeTransactionResponse from '../lib/normalize-transaction-response';
-import { absoluteRedirectThroughPending, redirectThroughPending } from '../lib/pending-page';
+import {
+	absoluteRedirectThroughPending,
+	addUrlToPendingPageRedirect,
+	redirectThroughPending,
+} from '../lib/pending-page';
 import type {
 	PaymentEventCallback,
 	PaymentEventCallbackArguments,
@@ -252,13 +257,28 @@ export default function useCreatePaymentSubmittedAndProcessingCallback( {
 				url.includes( '/setup/' ) ||
 				url.includes( '/start/site-content-collection' )
 			) {
-				absoluteRedirectThroughPending( url, {
+				const options = {
 					siteSlug,
 					orderId: 'order_id' in transactionResult ? transactionResult.order_id : undefined,
 					receiptId: 'receipt_id' in transactionResult ? transactionResult.receipt_id : undefined,
 					fromSiteSlug,
 					fromExternalCheckout: sitelessCheckoutType === 'a4a',
-				} );
+				};
+
+				// External checkout (A4A) builds the pending URL on wordpress.com — different
+				// origin, so a hard redirect is required.
+				if ( options.fromExternalCheckout ) {
+					absoluteRedirectThroughPending( url, options );
+					return;
+				}
+
+				// For same-origin cases, navigate to the pending page via client-side
+				// routing. This avoids a full page reload (and the blank-screen flash
+				// that comes with it). The redirect_to query param still carries the
+				// absolute final destination, so the pending page will hard-redirect
+				// from there when the transaction completes.
+				window.scrollTo( 0, 0 );
+				page( addUrlToPendingPageRedirect( url, { ...options, urlType: 'relative' } ) );
 				return;
 			}
 
