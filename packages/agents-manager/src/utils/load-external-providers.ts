@@ -12,6 +12,8 @@
  */
 
 import { getAgentManager, UIMessage } from '@automattic/agenttic-client';
+import { isReaderChatAgent } from './is-reader-chat-agent';
+import { useReaderFollowupSuggestions } from './reader-followup-hook';
 import type { ImageUploadHook } from '../hooks/use-image-upload';
 import type { ToolProvider, ContextProvider, Suggestion, BigSkyMessage } from '../types';
 import type { UseAgentChatReturn } from '@automattic/agenttic-client';
@@ -147,8 +149,22 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	const agentProviders =
 		typeof agentsManagerData !== 'undefined' ? agentsManagerData?.agentProviders || [] : [];
 
+	// Only the public reader-chat entry registers the follow-up chip globals
+	// (`window.__jetpackReaderFollowupChips` / `reader-chat-followups-updated`).
+	// Register the bridge for every reader-chat agent variant that uses the
+	// public reader-chat entry.
+	const registerReaderFollowups =
+		typeof window !== 'undefined' &&
+		isReaderChatAgent(
+			( window as unknown as { agentsManagerData?: { agentId?: string } } ).agentsManagerData
+				?.agentId
+		);
+
 	if ( agentProviders.length === 0 ) {
-		return {};
+		// Even with no external agentProviders, register the reader-chat
+		// follow-up hook if this host is reader-chat. Previously this path
+		// early-returned an empty object, so the hook never registered.
+		return registerReaderFollowups ? { useSuggestions: useReaderFollowupSuggestions } : {};
 	}
 
 	let mergedToolProvider: ToolProvider | undefined;
@@ -170,6 +186,12 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	const allAbilitiesSetups: AbilitiesSetupHook[] = [];
 	const allUseSuggestions: UseSuggestionsHook[] = [];
 	const allGetEmptyViewSuggestions: ( () => Suggestion[] )[] = [];
+
+	// Also add reader-chat hook to the merge path when there ARE other
+	// providers.
+	if ( registerReaderFollowups ) {
+		allUseSuggestions.push( useReaderFollowupSuggestions );
+	}
 
 	// Load all providers in parallel to avoid serializing network/module fetches.
 	// Results are processed in registration order to preserve first-write-wins semantics.
