@@ -103,6 +103,8 @@ export interface ImageStudioState {
 	isSidebarOpen: boolean;
 	// Selected style preset for image generation (only used in Generate mode)
 	selectedStyle: string | null;
+	// Selected tone preset for video generation (only used when entryPoint is PostEditorFeatureClip)
+	selectedTone: string | null;
 	// Selected aspect ratio preset for image generation (only used in Generate mode)
 	selectedAspectRatio: string | null;
 	// Last agent message ID for feedback tracking
@@ -250,6 +252,11 @@ type SetSelectedStyleAction = {
 	payload: string | null;
 };
 
+type SetSelectedToneAction = {
+	type: 'SET_SELECTED_TONE';
+	payload: string | null;
+};
+
 type SetSelectedAspectRatioAction = {
 	type: 'SET_SELECTED_ASPECT_RATIO';
 	payload: string | null;
@@ -297,6 +304,7 @@ type ImageStudioAction =
 	| SetNavigationPaginationAction
 	| SetIsSidebarOpenAction
 	| SetSelectedStyleAction
+	| SetSelectedToneAction
 	| SetSelectedAspectRatioAction
 	| SetLastAgentMessageIdAction
 	| SetImageRatingAction
@@ -365,6 +373,7 @@ const initialState: ImageStudioState = {
 	navigationHasMorePages: true,
 	isSidebarOpen: getSidebarIsOpenStateFromLocalStorage(),
 	selectedStyle: null,
+	selectedTone: null,
 	selectedAspectRatio: null,
 	lastAgentMessageId: null,
 	imageRatings: {},
@@ -638,6 +647,12 @@ const reducer = (
 				selectedStyle: action.payload,
 			};
 
+		case 'SET_SELECTED_TONE':
+			return {
+				...state,
+				selectedTone: action.payload,
+			};
+
 		case 'SET_SELECTED_ASPECT_RATIO':
 			return {
 				...state,
@@ -735,6 +750,7 @@ export interface ImageStudioActions {
 	) => Promise< SetNavigationPaginationAction >;
 	setIsSidebarOpen: ( isOpen: boolean ) => Promise< SetIsSidebarOpenAction >;
 	setSelectedStyle: ( style: string | null ) => Promise< SetSelectedStyleAction >;
+	setSelectedTone: ( tone: string | null ) => Promise< SetSelectedToneAction >;
 	setSelectedAspectRatio: ( aspectRatio: string | null ) => Promise< SetSelectedAspectRatioAction >;
 	setLastAgentMessageId: ( messageId: string | null ) => Promise< SetLastAgentMessageIdAction >;
 	setImageRating: (
@@ -944,6 +960,13 @@ const actions = {
 		};
 	},
 
+	setSelectedTone( tone: string | null ): SetSelectedToneAction {
+		return {
+			type: 'SET_SELECTED_TONE',
+			payload: tone,
+		};
+	},
+
 	setSelectedAspectRatio( aspectRatio: string | null ): SetSelectedAspectRatioAction {
 		return {
 			type: 'SET_SELECTED_ASPECT_RATIO',
@@ -1008,6 +1031,7 @@ export interface ImageStudioSelectors {
 	getNavigationCurrentPage: ( state: ImageStudioState ) => number;
 	getNavigationHasMorePages: ( state: ImageStudioState ) => boolean;
 	getSelectedStyle: ( state: ImageStudioState ) => string | null;
+	getSelectedTone: ( state: ImageStudioState ) => string | null;
 	getSelectedAspectRatio: ( state: ImageStudioState ) => string | null;
 	getLastAgentMessageId: ( state: ImageStudioState ) => string | null;
 	getImageRatings: ( state: ImageStudioState ) => Record< number, 'up' | 'down' >;
@@ -1176,6 +1200,10 @@ const selectors = {
 
 	getSelectedStyle( state: ImageStudioState ): string | null {
 		return state.selectedStyle;
+	},
+
+	getSelectedTone( state: ImageStudioState ): string | null {
+		return state.selectedTone;
 	},
 
 	getSelectedAspectRatio( state: ImageStudioState ): string | null {

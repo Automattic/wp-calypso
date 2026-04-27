@@ -72,7 +72,7 @@ jest.mock( '../icons/BrushIcon', () => ( {
 import { useDispatch, useSelect } from '@wordpress/data';
 import { ImageStudioMode } from '../../types';
 import { trackImageStudioStyleSelected } from '../../utils/tracking';
-import { STYLE_OPTIONS, StylePicker } from './index';
+import { STYLE_OPTIONS, StylePicker, VIDEO_STYLE_OPTIONS } from './index';
 
 const mockUseDispatch = useDispatch as jest.MockedFunction< typeof useDispatch >;
 const mockUseSelect = useSelect as jest.MockedFunction< typeof useSelect >;
@@ -428,6 +428,40 @@ describe( 'StylePicker', () => {
 			expectedStyles.forEach( ( style ) => {
 				expect( dropdown ).toHaveTextContent( style );
 			} );
+		} );
+
+		it( 'exports the six expected video style options', () => {
+			const expected = [
+				{ label: 'Cinematic', value: 'cinematic' },
+				{ label: 'Documentary', value: 'documentary' },
+				{ label: 'Aerial', value: 'aerial' },
+				{ label: 'Macro', value: 'macro' },
+				{ label: 'Energetic', value: 'energetic' },
+				{ label: 'Dreamy', value: 'dreamy' },
+			];
+
+			expect( VIDEO_STYLE_OPTIONS ).toHaveLength( expected.length );
+			expected.forEach( ( { label, value }, index ) => {
+				expect( VIDEO_STYLE_OPTIONS[ index ] ).toMatchObject( { label, value } );
+				expect( VIDEO_STYLE_OPTIONS[ index ].preview ).toBeTruthy();
+			} );
+		} );
+
+		it( 'renders video options when variant="video"', async () => {
+			const user = userEvent.setup();
+			render( <StylePicker mode={ ImageStudioMode.Generate } variant="video" /> );
+
+			await user.click( screen.getByTestId( 'toolbar-button' ) );
+
+			const dropdown = screen.getByTestId( 'dropdown-content' );
+			[ 'Cinematic', 'Documentary', 'Aerial', 'Macro', 'Energetic', 'Dreamy' ].forEach(
+				( label ) => {
+					expect( dropdown ).toHaveTextContent( label );
+				}
+			);
+			// Image-only options should not appear in the video dropdown.
+			expect( dropdown ).not.toHaveTextContent( 'Anime' );
+			expect( dropdown ).not.toHaveTextContent( 'Pixel Art' );
 		} );
 
 		it( 'maps style values correctly', async () => {

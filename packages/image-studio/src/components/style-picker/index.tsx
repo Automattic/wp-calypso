@@ -18,15 +18,24 @@ import origamiPreview from '../../assets/origami.webp';
 import photographicPreview from '../../assets/photographic.webp';
 import pixelArtPreview from '../../assets/pixel-art.webp';
 import texturePreview from '../../assets/texture.webp';
+import aerialVideoPreview from '../../assets/video/styles/aerial.webp';
+import cinematicVideoPreview from '../../assets/video/styles/cinematic.webp';
+import documentaryVideoPreview from '../../assets/video/styles/documentary.webp';
+import dreamyVideoPreview from '../../assets/video/styles/dreamy.webp';
+import energeticVideoPreview from '../../assets/video/styles/energetic.webp';
+import macroVideoPreview from '../../assets/video/styles/macro.webp';
 import vividPreview from '../../assets/vivid.webp';
 import { store as imageStudioStore } from '../../store';
 import { ImageStudioMode } from '../../types';
 import { trackImageStudioStyleSelected } from '../../utils/tracking';
 import { BrushIcon } from '../icons/BrushIcon';
 
+export type StylePickerVariant = 'image' | 'video';
+
 interface StylePickerProps {
 	disabled?: boolean;
 	mode: ImageStudioMode;
+	variant?: StylePickerVariant;
 }
 
 export const STYLE_OPTIONS = [
@@ -114,12 +123,47 @@ export const STYLE_OPTIONS = [
 	},
 ];
 
-export function StylePicker( { disabled = false, mode }: StylePickerProps ) {
+export const VIDEO_STYLE_OPTIONS = [
+	{
+		label: __( 'Cinematic', __i18n_text_domain__ ),
+		value: 'cinematic',
+		preview: cinematicVideoPreview,
+	},
+	{
+		label: __( 'Documentary', __i18n_text_domain__ ),
+		value: 'documentary',
+		preview: documentaryVideoPreview,
+	},
+	{
+		label: __( 'Aerial', __i18n_text_domain__ ),
+		value: 'aerial',
+		preview: aerialVideoPreview,
+	},
+	{
+		label: __( 'Macro', __i18n_text_domain__ ),
+		value: 'macro',
+		preview: macroVideoPreview,
+	},
+	{
+		label: __( 'Energetic', __i18n_text_domain__ ),
+		value: 'energetic',
+		preview: energeticVideoPreview,
+	},
+	{
+		label: __( 'Dreamy', __i18n_text_domain__ ),
+		value: 'dreamy',
+		preview: dreamyVideoPreview,
+	},
+];
+
+export function StylePicker( { disabled = false, mode, variant = 'image' }: StylePickerProps ) {
 	const { setSelectedStyle } = useDispatch( imageStudioStore );
 
 	const selectedStyle = useSelect( ( select ) => {
 		return select( imageStudioStore ).getSelectedStyle();
 	}, [] );
+
+	const options = variant === 'video' ? VIDEO_STYLE_OPTIONS : STYLE_OPTIONS;
 
 	const handleStyleSelect = ( value: string ) => {
 		setSelectedStyle( value );
@@ -139,7 +183,7 @@ export function StylePicker( { disabled = false, mode }: StylePickerProps ) {
 	};
 
 	const selectedLabel =
-		STYLE_OPTIONS.find( ( opt ) => opt.value === selectedStyle )?.label ??
+		options.find( ( opt ) => opt.value === selectedStyle )?.label ??
 		__( 'Style', __i18n_text_domain__ );
 
 	return (
@@ -150,7 +194,7 @@ export function StylePicker( { disabled = false, mode }: StylePickerProps ) {
 			disabled={ disabled }
 		>
 			<div className="image-studio-input-toolbar-dialog-grid">
-				{ STYLE_OPTIONS.map( ( option ) => (
+				{ options.map( ( option ) => (
 					<button
 						key={ option.value }
 						type="button"
