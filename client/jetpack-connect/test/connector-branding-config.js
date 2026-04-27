@@ -5,38 +5,35 @@
 import { getConnectorBranding, getConnectorLogoUrl } from '../connector-branding-config';
 
 describe( 'getConnectorBranding', () => {
-	test( 'should return Jetpack branding as the default fallback', () => {
+	test( 'should return "Connect your site" title by default', () => {
 		const branding = getConnectorBranding( [] );
-		expect( branding ).toHaveProperty( 'title' );
+		expect( branding.title ).toBe( 'Connect your site' );
 		expect( branding ).toHaveProperty( 'subtitle' );
 		expect( branding ).toHaveProperty( 'permissions' );
 		expect( branding.permissions.length ).toBeGreaterThan( 0 );
 	} );
 
-	test( 'should return default branding for unrecognized plugin slugs', () => {
-		const defaultBranding = getConnectorBranding( [] );
-		for ( const slugs of [
-			[ 'jetpack-boost' ],
-			[ 'jetpack-social' ],
-			[ 'unknown-plugin', 'jetpack-search' ],
-			[ 'some-unknown-plugin' ],
-		] ) {
-			const branding = getConnectorBranding( slugs );
-			expect( branding.title ).toEqual( defaultBranding.title );
-			expect( branding.subtitle ).toEqual( defaultBranding.subtitle );
-		}
+	test( 'should return "Connect your store" title when woocommerce is present', () => {
+		expect( getConnectorBranding( [ 'woocommerce' ] ).title ).toBe( 'Connect your store' );
+		expect( getConnectorBranding( [ 'jetpack', 'woocommerce-payments' ] ).title ).toBe(
+			'Connect your store'
+		);
 	} );
 
-	test( 'should match the explicit jetpack entry when its slug is present', () => {
-		const defaultBranding = getConnectorBranding( [] );
-		const branding = getConnectorBranding( [ 'unknown-plugin', 'jetpack' ] );
-		expect( branding.title ).toEqual( defaultBranding.title );
-		expect( branding.subtitle ).toEqual( defaultBranding.subtitle );
+	test( 'should return "Connect your site" for non-woo plugin slugs', () => {
+		for ( const slugs of [
+			[ 'jetpack' ],
+			[ 'jetpack-boost' ],
+			[ 'unknown-plugin', 'jetpack-search' ],
+			[ 'automattic-for-agencies' ],
+		] ) {
+			expect( getConnectorBranding( slugs ).title ).toBe( 'Connect your site' );
+		}
 	} );
 
 	test( 'should fall back to default when called with no arguments', () => {
 		const branding = getConnectorBranding();
-		expect( branding ).toHaveProperty( 'title' );
+		expect( branding.title ).toBe( 'Connect your site' );
 		expect( branding ).toHaveProperty( 'subtitle' );
 		expect( branding ).toHaveProperty( 'permissions' );
 	} );

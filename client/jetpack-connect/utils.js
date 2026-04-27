@@ -53,7 +53,12 @@ export function authQueryTransformer( queryObject ) {
 		// Related WooCommerce PR: https://github.com/woocommerce/woocommerce/pull/39799
 		// this param will be removed after the expierment is over
 		plugin_name: queryObject.plugin_name || null,
-		plugins: queryObject.plugins ? queryObject.plugins.split( ',' ) : [],
+		plugins: queryObject.plugins
+			? queryObject.plugins
+					.split( ',' )
+					.map( ( s ) => s.trim() )
+					.filter( Boolean )
+			: [],
 	};
 }
 

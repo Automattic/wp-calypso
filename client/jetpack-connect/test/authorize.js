@@ -339,14 +339,14 @@ describe( 'JetpackAuthorize', () => {
 			expect( isFromJetpackConnector( props ) ).toBe( true );
 		} );
 
-		test( 'matches jetpack-connector prefix', () => {
+		test( 'does not match jetpack-connector prefix variants', () => {
 			const props = {
 				authQuery: {
 					from: 'jetpack-connector-v2',
 				},
 			};
 
-			expect( isFromJetpackConnector( props ) ).toBe( true );
+			expect( isFromJetpackConnector( props ) ).toBe( false );
 		} );
 
 		test( 'is not from jetpack connector', () => {

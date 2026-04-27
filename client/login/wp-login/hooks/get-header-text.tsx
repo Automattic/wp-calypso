@@ -1,6 +1,5 @@
 import { TranslateResult, fixMe } from 'i18n-calypso';
 import { capitalize } from 'lodash';
-import { getConnectorBranding } from 'calypso/jetpack-connect/connector-branding-config';
 import {
 	isJetpackCloudOAuth2Client,
 	isA4AOAuth2Client,
@@ -101,11 +100,10 @@ export function getHeaderText( {
 
 	if ( isSocialFirst ) {
 		if ( isFromJetpackConnector ) {
-			const branding = getConnectorBranding( connectorPlugins );
-			const pluginName = branding.title.replace( /^Connect\s+/, '' );
-			headerText = translate( 'Log in to %(pluginName)s with WordPress.com', {
-				args: { pluginName },
-			} );
+			const hasWoo = connectorPlugins?.some( ( slug: string ) => slug.startsWith( 'woocommerce' ) );
+			headerText = hasWoo
+				? translate( 'Log in to WordPress.com to connect your store' )
+				: translate( 'Log in to WordPress.com to connect your site' );
 		} else if ( partnerConfig ) {
 			headerText = translate( 'Log in to %(partner)s', {
 				args: { partner: partnerConfig.displayName },

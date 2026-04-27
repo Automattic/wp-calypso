@@ -472,6 +472,8 @@ const LoginWithContext = ( props ) => {
 	);
 };
 
+const trimString = ( s ) => s.trim();
+
 export default connect(
 	( state, props ) => {
 		const currentQuery = getCurrentQueryArguments( state );
@@ -480,12 +482,13 @@ export default connect(
 
 		const redirectParams = new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] );
 		const connectorFromParam = redirectParams.get( 'from' ) || get( currentQuery, 'from' );
-		const isFromJetpackConnector = connectorFromParam?.startsWith( 'jetpack-connector' ) ?? false;
+		const isFromJetpackConnector = connectorFromParam === 'jetpack-connector';
 		const isUnifiedConnectionFlow =
 			isFromJetpackConnector || connectorFromParam === 'jetpack-onboarding';
 		const connectorPlugins = isFromJetpackConnector
 			? ( redirectParams.get( 'plugins' ) || get( currentQuery, 'plugins' ) || '' )
 					.split( ',' )
+					.map( trimString )
 					.filter( Boolean )
 			: [];
 

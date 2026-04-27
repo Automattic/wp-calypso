@@ -413,8 +413,7 @@ export default withCurrentRoute(
 			);
 			const isJetpackConnectorLogin =
 				isJetpackLogin &&
-				( redirectFromParam?.startsWith( 'jetpack-connector' ) ||
-					currentQuery?.from?.startsWith( 'jetpack-connector' ) );
+				( redirectFromParam === 'jetpack-connector' || currentQuery?.from === 'jetpack-connector' );
 
 			return {
 				isAkismet,

@@ -518,7 +518,7 @@ export class JetpackAuthorize extends Component {
 
 	isFromJetpackConnector( props = this.props ) {
 		const { from } = props.authQuery;
-		return startsWith( from, 'jetpack-connector' );
+		return from === 'jetpack-connector';
 	}
 
 	isUnifiedConnectionFlow( props = this.props ) {

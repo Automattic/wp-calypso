@@ -76,7 +76,11 @@ const HeadingLogo = ( { isJetpack, isFromJetpackConnector, connectorPlugins }: P
 	} else if ( isFromJetpackConnector ) {
 		const connectorLogo = getConnectorLogoUrl( connectorPlugins );
 		logo = (
-			<img src={ connectorLogo } alt="Jetpack Connector" className="wp-login__connector-logo" />
+			<img
+				src={ connectorLogo }
+				alt="Jetpack Connection logo"
+				className="wp-login__connector-logo"
+			/>
 		);
 	} else if ( isJetpack ) {
 		logo = <JetpackLogo size={ 64 } />;
