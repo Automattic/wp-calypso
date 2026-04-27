@@ -131,10 +131,10 @@ function SiteMenuSidebar( { site }: { site: Site } ) {
 						icon={ chartBar }
 						to={ `/sites/${ siteSlug }/performance` }
 					>
-						<SidebarMenuItem icon={ menuDot } to={ `/sites/${ siteSlug }/performance/frontend` }>
+						<SidebarMenuItem to={ `/sites/${ siteSlug }/performance/frontend` }>
 							{ __( 'Frontend' ) }
 						</SidebarMenuItem>
-						<SidebarMenuItem icon={ menuDot } to={ `/sites/${ siteSlug }/performance/backend` }>
+						<SidebarMenuItem to={ `/sites/${ siteSlug }/performance/backend` }>
 							{ __( 'Backend' ) }
 						</SidebarMenuItem>
 					</SidebarExpandableMenuItem>
