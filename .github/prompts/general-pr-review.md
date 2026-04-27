@@ -2,7 +2,7 @@
 
 ## Primary Objective
 
-Review the PR by reading the relevant `AGENTS.md` files AND applying the review-focus axes below. The repo has 19 `AGENTS.md` files. Always read at minimum:
+Review the PR by reading the relevant `AGENTS.md` files AND applying the review-focus axes below. Always read at minimum:
 
 - `AGENTS.md` (top-level: architecture, deprecations, PR hygiene, shared infra)
 - `client/AGENTS.md` (i18n, components, TypeScript, CSS, testing conventions)
