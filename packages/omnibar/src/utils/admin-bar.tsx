@@ -59,6 +59,11 @@ export function buildOmnibarNodesFromAdminBarNodes( adminBarNodes: AdminBarNode[
 			case 'user-info': {
 				const doc = new DOMParser().parseFromString( node.title || '', 'text/html' );
 				omnibarNode.title = doc.querySelector( '.edit-profile' )?.textContent?.trim() || '';
+				omnibarNode.icon = omnibarNodes.user?.icon;
+				omnibarNode.meta = {
+					displayName: doc.querySelector( '.display-name' )?.textContent?.trim(),
+					username: doc.querySelector( '.username' )?.textContent?.trim(),
+				};
 				break;
 			}
 		}

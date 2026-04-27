@@ -1,3 +1,5 @@
+@use '../../../../packages/ui/src/utils/mixins' as ui-mixins;
+
 @import '@wordpress/base-styles/colors';
 @import '@wordpress/base-styles/variables';
 
@@ -6,6 +8,12 @@
 	background-color: var(--wp-components-color-gray-100, $gray-100);
 	border-radius: $radius-small;
 	padding: 4px;
+
+	@include ui-mixins.when-dark-theme {
+		background-color: var(--wp-components-color-gray-200);
+		box-shadow: inset 0 0 0 1px var(--wp-components-color-gray-300);
+		fill: var(--wp-components-color-gray-700);
+	}
 }
 
 .site-activity-logs__event {

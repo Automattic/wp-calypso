@@ -9,7 +9,10 @@ on:
     types: [submitted]
 
 concurrency:
-  group: pr-review-on-ping-${{ github.event.issue.number || github.event.pull_request.number }}
+  # Bot senders get a unique bucket per run so their inline-comment posts
+  # don't cancel an in-progress review. Human pings on the same PR share
+  # a bucket so a newer ping cancels an older one.
+  group: ${{ github.event.sender.type == 'Bot' && format('pr-review-on-ping-bot-{0}-{1}', github.event.sender.login, github.run_id) || format('pr-review-on-ping-{0}', github.event.issue.number || github.event.pull_request.number) }}
   cancel-in-progress: true
 
 permissions:
@@ -34,10 +37,10 @@ jobs:
     permissions:
       pull-requests: read
     outputs:
-      prompt_path: ${{ steps.path.outputs.prompt_path }}
+      area: ${{ steps.area.outputs.area }}
     steps:
-      - name: Detect prompt path
-        id: path
+      - name: Detect review area
+        id: area
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.issue.number || github.event.pull_request.number }}
@@ -45,17 +48,17 @@ jobs:
         run: |
           FILES=$(gh pr view "$PR_NUMBER" --repo "$REPO" --json files --jq '.files[].path')
           if echo "$FILES" | grep -q '^client/dashboard/'; then
-            echo "prompt_path=.github/prompts/dashboard-pr-review.md" >> "$GITHUB_OUTPUT"
+            echo "area=dashboard" >> "$GITHUB_OUTPUT"
           elif echo "$FILES" | grep -q '^client/a8c-for-agencies/'; then
-            echo "prompt_path=.github/prompts/a4a-pr-review.md" >> "$GITHUB_OUTPUT"
+            echo "area=a4a" >> "$GITHUB_OUTPUT"
           else
-            echo "prompt_path=.github/prompts/general-pr-review.md" >> "$GITHUB_OUTPUT"
+            echo "area=general" >> "$GITHUB_OUTPUT"
           fi
 
   review:
     needs: detect
-    uses: ./.github/workflows/pr-review.yml
+    uses: Automattic/wp-calypso/.github/workflows/pr-review.yml@trunk
     with:
-      prompt_path: ${{ needs.detect.outputs.prompt_path }}
+      area: ${{ needs.detect.outputs.area }}
     secrets:
       anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}

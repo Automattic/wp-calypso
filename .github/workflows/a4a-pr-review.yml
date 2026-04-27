@@ -7,7 +7,7 @@ on:
         description: 'PR number to review'
         required: true
 
-  pull_request_target:
+  pull_request:
     types: [opened, ready_for_review]
     paths:
       - 'client/a8c-for-agencies/**'
@@ -23,12 +23,9 @@ permissions:
 
 jobs:
   review:
-    if: |
-      github.event.pull_request.draft == false &&
-      github.event.pull_request.head.repo != null &&
-      github.event.pull_request.head.repo.full_name == github.repository
-    uses: ./.github/workflows/pr-review.yml
+    if: github.event.pull_request.draft == false
+    uses: Automattic/wp-calypso/.github/workflows/pr-review.yml@trunk
     with:
-      prompt_path: .github/prompts/a4a-pr-review.md
+      area: a4a
     secrets:
       anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
