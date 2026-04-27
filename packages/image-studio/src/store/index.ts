@@ -107,6 +107,10 @@ export interface ImageStudioState {
 	selectedTone: string | null;
 	// Selected aspect ratio preset for image generation (only used in Generate mode)
 	selectedAspectRatio: string | null;
+	// URL of the most recently generated video clip — populated when the
+	// wpcom/generate-video-for-studio tool returns a successful upload. Only
+	// used when entryPoint is PostEditorFeatureClip; null otherwise.
+	imageStudioCurrentVideoUrl: string | null;
 	// Last agent message ID for feedback tracking
 	lastAgentMessageId: string | null;
 	// Ratings the user has submitted in this session, keyed by attachment ID.
@@ -262,6 +266,11 @@ type SetSelectedAspectRatioAction = {
 	payload: string | null;
 };
 
+type SetImageStudioCurrentVideoUrlAction = {
+	type: 'SET_IMAGE_STUDIO_CURRENT_VIDEO_URL';
+	payload: string | null;
+};
+
 type SetLastAgentMessageIdAction = {
 	type: 'SET_LAST_AGENT_MESSAGE_ID';
 	payload: string | null;
@@ -306,6 +315,7 @@ type ImageStudioAction =
 	| SetSelectedStyleAction
 	| SetSelectedToneAction
 	| SetSelectedAspectRatioAction
+	| SetImageStudioCurrentVideoUrlAction
 	| SetLastAgentMessageIdAction
 	| SetImageRatingAction
 	| ResetCanvasHistoryAction;
@@ -375,6 +385,7 @@ const initialState: ImageStudioState = {
 	selectedStyle: null,
 	selectedTone: null,
 	selectedAspectRatio: null,
+	imageStudioCurrentVideoUrl: null,
 	lastAgentMessageId: null,
 	imageRatings: {},
 };
@@ -659,6 +670,12 @@ const reducer = (
 				selectedAspectRatio: action.payload,
 			};
 
+		case 'SET_IMAGE_STUDIO_CURRENT_VIDEO_URL':
+			return {
+				...state,
+				imageStudioCurrentVideoUrl: action.payload,
+			};
+
 		case 'SET_LAST_AGENT_MESSAGE_ID':
 			return {
 				...state,
@@ -752,6 +769,9 @@ export interface ImageStudioActions {
 	setSelectedStyle: ( style: string | null ) => Promise< SetSelectedStyleAction >;
 	setSelectedTone: ( tone: string | null ) => Promise< SetSelectedToneAction >;
 	setSelectedAspectRatio: ( aspectRatio: string | null ) => Promise< SetSelectedAspectRatioAction >;
+	setImageStudioCurrentVideoUrl: (
+		url: string | null
+	) => Promise< SetImageStudioCurrentVideoUrlAction >;
 	setLastAgentMessageId: ( messageId: string | null ) => Promise< SetLastAgentMessageIdAction >;
 	setImageRating: (
 		attachmentId: number,
@@ -974,6 +994,13 @@ const actions = {
 		};
 	},
 
+	setImageStudioCurrentVideoUrl( url: string | null ): SetImageStudioCurrentVideoUrlAction {
+		return {
+			type: 'SET_IMAGE_STUDIO_CURRENT_VIDEO_URL',
+			payload: url,
+		};
+	},
+
 	setLastAgentMessageId( messageId: string | null ): SetLastAgentMessageIdAction {
 		return {
 			type: 'SET_LAST_AGENT_MESSAGE_ID',
@@ -1033,6 +1060,7 @@ export interface ImageStudioSelectors {
 	getSelectedStyle: ( state: ImageStudioState ) => string | null;
 	getSelectedTone: ( state: ImageStudioState ) => string | null;
 	getSelectedAspectRatio: ( state: ImageStudioState ) => string | null;
+	getImageStudioCurrentVideoUrl: ( state: ImageStudioState ) => string | null;
 	getLastAgentMessageId: ( state: ImageStudioState ) => string | null;
 	getImageRatings: ( state: ImageStudioState ) => Record< number, 'up' | 'down' >;
 	getImageRating: ( state: ImageStudioState, attachmentId: number | null ) => 'up' | 'down' | null;
@@ -1208,6 +1236,10 @@ const selectors = {
 
 	getSelectedAspectRatio( state: ImageStudioState ): string | null {
 		return state.selectedAspectRatio;
+	},
+
+	getImageStudioCurrentVideoUrl( state: ImageStudioState ): string | null {
+		return state.imageStudioCurrentVideoUrl;
 	},
 
 	getLastAgentMessageId( state: ImageStudioState ): string | null {

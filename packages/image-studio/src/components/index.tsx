@@ -24,6 +24,7 @@ import { useImageUrl } from '../hooks/use-image-url';
 import { useRevertToOriginal } from '../hooks/use-revert-to-original';
 import { useSaveShortcut } from '../hooks/use-save-shortcut';
 import { useUnsavedChangesConfirmation } from '../hooks/use-unsaved-changes-confirmation';
+import { useVideoResultSync } from '../hooks/use-video-result-sync';
 import {
 	ImageStudioEntryPoint,
 	type ImageStudioActions,
@@ -95,6 +96,7 @@ function ImageStudioAgentChat( {
 	}, [] );
 
 	useImageStudioAgentSync( agentChatProps );
+	useVideoResultSync( agentChatProps?.messages );
 
 	const displayMessages = useImageStudioMessageDisplay( agentChatProps?.messages );
 
@@ -275,10 +277,19 @@ const ImageStudioContent = withInstanceId(
 			hasUnsavedChanges,
 			originalAttachmentId,
 			isSidebarOpen,
+			currentVideoUrl,
 		} = useSelect( ( select ) => {
 			const selectors = select( imageStudioStore );
 			const currentAttachmentId = selectors.getImageStudioAttachmentId();
 			const annotatedAttachmentIds = selectors.getAnnotatedAttachmentIds();
+			// Optional-chain in case an older bundle wins the multi-bundle
+			// registration race and doesn't expose the new selector.
+			const videoUrl =
+				(
+					selectors as unknown as {
+						getImageStudioCurrentVideoUrl?: () => string | null;
+					}
+				 ).getImageStudioCurrentVideoUrl?.() ?? null;
 			return {
 				isAiProcessing: selectors.getImageStudioAiProcessing(),
 				displayImageUrl: selectors.getImageStudioCurrentImageUrl(),
@@ -291,6 +302,7 @@ const ImageStudioContent = withInstanceId(
 				hasUnsavedChanges: selectors.getHasUnsavedChanges(),
 				originalAttachmentId: selectors.getOriginalAttachmentId(),
 				isSidebarOpen: selectors.getIsSidebarOpen(),
+				currentVideoUrl: videoUrl,
 			};
 		}, [] );
 
@@ -545,7 +557,11 @@ const ImageStudioContent = withInstanceId(
 								originalAttachmentId={ originalAttachmentId }
 							/>
 						) : (
-							<GenerateLayout isAiProcessing={ isAiProcessing } isPromptSent={ isPromptSent } />
+							<GenerateLayout
+								isAiProcessing={ isAiProcessing }
+								isPromptSent={ isPromptSent }
+								videoUrl={ currentVideoUrl }
+							/>
 						) }
 
 						<Footer
