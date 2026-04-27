@@ -71,6 +71,7 @@ export * from './read-feed';
 export * from './read-list';
 export * from './read-site';
 export * from './reader-atmosphere';
+export * from './reader-chat-settings';
 export * from './reader-mastodon';
 export * from './site-activity-log';
 export * from './site-activity-log-backup';
