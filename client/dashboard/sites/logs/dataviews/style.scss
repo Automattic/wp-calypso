@@ -15,22 +15,23 @@
 /* Badges */
 .site-logs-card,
 .site-logs-details-modal {
+	// Data tables always use the default intent, and override the colors.
 	.badge--POST,
 	.badge--deprecated {
-		background-color: #bbe0fa;
-		color: #02395c;
+		background-color: var(--color-deprecated-blue-5);
+		color: var(--color-deprecated-blue-80);
 	}
 
 	.badge--GET {
-		background-color: #b8e6bf;
-		color: #00450c;
+		background-color: var(--studio-green-5);
+		color: var(--studio-green-80);
 	}
 
 	.badge--DELETE,
 	.badge--error,
 	.badge--fatal {
-		background-color: #facfd2;
-		color: #691c1c;
+		background-color: var(--studio-red-5);
+		color: var(--studio-red-80);
 	}
 
 	.badge--fatal {
@@ -38,13 +39,13 @@
 	}
 
 	.badge--warning {
-		background-color: #fff2d7;
-		color: #4f3500;
+		background-color: var(--studio-yellow-5);
+		color: var(--studio-yellow-80);
 	}
 
 	.badge--user {
-		background-color: #dcdcee;
-		color: #2c3338;
+		background-color: var(--studio-gray-5);
+		color: var(--studio-gray-80);
 	}
 }
 
