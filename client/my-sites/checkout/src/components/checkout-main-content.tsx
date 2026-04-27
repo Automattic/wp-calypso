@@ -87,7 +87,6 @@ import useCouponFieldState from '../hooks/use-coupon-field-state';
 import { validateContactDetails } from '../lib/contact-validation';
 import { updateCartContactDetailsForCheckout } from '../lib/update-cart-contact-details-for-checkout';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
-import { CheckoutMoneyBackGuarantee } from './CheckoutMoneyBackGuarantee';
 import AcceptTermsOfServiceCheckbox from './accept-terms-of-service-checkbox';
 import badge14Src from './assets/icons/badge-14.svg';
 import badge7Src from './assets/icons/badge-7.svg';
@@ -95,6 +94,7 @@ import badgeGenericSrc from './assets/icons/badge-generic.svg';
 import badgeSecurity from './assets/icons/security.svg';
 import CheckoutNextSteps from './checkout-next-steps';
 import { CheckoutSidebarPlanUpsell } from './checkout-sidebar-plan-upsell';
+import CheckoutTrustCards from './checkout-trust-cards';
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
 import JetpackAkismetCheckoutSidebarPlanUpsell from './jetpack-akismet-checkout-sidebar-plan-upsell';
 import { LeaveCheckoutModal, useCheckoutLeaveModal } from './leave-checkout-modal';
@@ -946,13 +946,7 @@ export default function CheckoutMainContent( {
 						<CheckoutFormSubmit
 							validateForm={ validateForm }
 							submitButtonHeader={ <SubmitButtonHeader /> }
-							submitButtonFooter={
-								hasCartJetpackProductsOnly ? (
-									<JetpackCheckoutSeals />
-								) : (
-									<CheckoutMoneyBackGuarantee cart={ responseCart } />
-								)
-							}
+							submitButtonFooter={ hasCartJetpackProductsOnly ? <JetpackCheckoutSeals /> : null }
 						/>
 					) }
 				</CheckoutStepGroup>
@@ -975,6 +969,7 @@ export default function CheckoutMainContent( {
 					) }
 					{ checkoutSummary }
 					{ checkoutMainContent }
+					<CheckoutTrustCards cart={ responseCart } />
 				</WPCheckoutWrapper>
 			</SubmitButtonSlotContext.Provider>
 		);
@@ -1033,6 +1028,7 @@ export default function CheckoutMainContent( {
 					} }
 				</Step.TwoColumnLayout>
 				<LeaveCheckoutModal { ...leaveModalProps } />
+				<CheckoutTrustCards cart={ responseCart } />
 			</StepContainerV2CheckoutFixer>
 		</SubmitButtonSlotContext.Provider>
 	);
@@ -1855,26 +1851,32 @@ const WPCheckoutWrapper = styled.div< {
 } >`
 	background: ${ colorStudio.colors[ 'White' ] };
 	display: grid;
-	grid-template-rows: auto;
 	grid-template-columns: 1fr;
-	grid-template-areas: 'sidebar-content' 'main-content';
+	grid-template-areas:
+		'sidebar-content'
+		'main-content'
+		'trust-cards';
+	align-content: start;
 	justify-content: center;
 	justify-items: center;
 	min-height: 100vh;
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		grid-template-columns: 1fr minmax( 500px, 688px ) 475px 1fr;
-		grid-template-areas: 'main-content main-content sidebar-content sidebar-content';
+		grid-template-areas:
+			'main-content main-content sidebar-content sidebar-content'
+			'trust-cards trust-cards trust-cards trust-cards';
 		justify-items: end;
 	}
 
 	& > * {
 		box-sizing: border-box;
 		width: 100%;
+	}
 
-		@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
-			min-height: 100vh;
-		}
+	& > .checkout-trust-cards {
+		grid-area: trust-cards;
+		justify-self: center;
 	}
 
 	& *:focus {
@@ -1898,7 +1900,11 @@ const WPCheckoutWrapper = styled.div< {
 		props.isCheckoutUiRedesignV1 &&
 		! props.isLargeViewport &&
 		css`
-			grid-template-areas: 'checkout-title-area' 'sidebar-content' 'main-content';
+			grid-template-areas:
+				'checkout-title-area'
+				'sidebar-content'
+				'main-content'
+				'trust-cards';
 			.checkout-sidebar-content {
 				background: ${ colorStudio.colors[ 'White' ] };
 			}
@@ -2308,10 +2314,10 @@ const WPCheckoutSidebarContent = styled.div`
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		margin-top: 0;
-		padding: 144px 24px 144px 64px;
+		padding: 144px 24px 24px 64px;
 
 		.rtl & {
-			padding: 144px 64px 0 24px;
+			padding: 144px 64px 24px 24px;
 		}
 	}
 `;
