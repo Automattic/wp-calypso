@@ -1,11 +1,12 @@
 import { Button, Card, Gridicon } from '@automattic/components';
 import { eye } from '@automattic/components/src/icons';
-import { Icon, people, starEmpty, commentContent } from '@wordpress/icons';
+import { Icon, people, starEmpty, commentContent, rss } from '@wordpress/icons';
 import CountCard from 'calypso/my-sites/stats/components/highlight-cards/count-card';
 import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { SET_UP_EMAIL_AUTHENTICATION_FOR_YOUR_DOMAIN } from '@automattic/urls';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import wpcom from 'calypso/lib/wp';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
@@ -113,7 +114,6 @@ const HomeContent = ( {
 	todayVisitors,
 	todayLikes,
 	todayComments,
-	recentComments,
 	isStatsLoading,
 } ) => {
 	const celebrateLaunchModalIsOpen = useSelector( ( state ) =>
@@ -126,6 +126,79 @@ const HomeContent = ( {
 
 	const { data: layout, isLoading, error: homeLayoutError } = useHomeLayoutQuery( siteId );
 	const { skipCurrentView } = useSkipCurrentViewMutation( siteId );
+
+	// Fetch total subscriber count
+	const { data: subscriberCount } = useQuery( {
+		queryKey: [ 'subscribers-count', siteId ],
+		queryFn: () =>
+			wpcom.req.get( {
+				apiNamespace: 'wpcom/v2',
+				path: `/sites/${ siteId }/subscribers/counts`,
+			} ),
+		select: ( data ) => data?.counts?.total_subscribers ?? 0,
+		enabled: !! siteId,
+		staleTime: 5 * 60 * 1000,
+	} );
+
+	// Fetch recent comments for the Inbox
+	const { data: commentsData } = useQuery( {
+		queryKey: [ 'site-comments', siteId ],
+		queryFn: () =>
+			wpcom.req.get(
+				{ path: `/sites/${ siteId }/comments`, apiVersion: '1.1' },
+				{ status: 'approved', number: 10, type: 'comment' }
+			),
+		enabled: !! siteId,
+		staleTime: 5 * 60 * 1000,
+	} );
+
+	// Fetch recent Jetpack Forms submissions for the Inbox
+	const { data: formResponsesData } = useQuery( {
+		queryKey: [ 'jetpack-forms-feedback', siteId ],
+		queryFn: () =>
+			wpcom.req.get( {
+				path: `/sites/${ siteId }/feedback`,
+				apiNamespace: 'wp/v2',
+			} ),
+		enabled: !! siteId,
+		staleTime: 5 * 60 * 1000,
+	} );
+
+	// Merge comments and form submissions into a unified inbox
+	const inboxItems = [];
+	if ( commentsData?.comments ) {
+		commentsData.comments.forEach( ( c ) => {
+			inboxItems.push( {
+				type: 'comment',
+				authorName: c.author?.name || 'Anonymous',
+				excerpt: c.raw_content
+					? c.raw_content.substring( 0, 80 ) + ( c.raw_content.length > 80 ? '...' : '' )
+					: c.content
+						? c.content.replace( /<[^>]*>/g, '' ).substring( 0, 80 ) + '...'
+						: '',
+				time: moment( c.date ).fromNow(),
+				date: new Date( c.date ),
+			} );
+		} );
+	}
+	if ( Array.isArray( formResponsesData ) ) {
+		formResponsesData.slice( 0, 10 ).forEach( ( entry ) => {
+			const fields = entry.title?.rendered || entry.excerpt?.rendered || '';
+			const cleanFields = fields.replace( /<[^>]*>/g, '' ).trim();
+			inboxItems.push( {
+				type: 'form',
+				authorName: entry.author_name || translate( 'Form submission' ),
+				excerpt: cleanFields
+					? cleanFields.substring( 0, 80 ) + ( cleanFields.length > 80 ? '...' : '' )
+					: translate( 'New form response' ),
+				time: moment( entry.date ).fromNow(),
+				date: new Date( entry.date ),
+			} );
+		} );
+	}
+	// Sort by date descending and take latest 8
+	inboxItems.sort( ( a, b ) => b.date - a.date );
+	const recentInbox = inboxItems.slice( 0, 8 );
 
 	// Fetch the latest 10 activity log entries for the Activity column
 	const { data: activityLogs, isLoading: isActivityLoading } = useActivityLogQuery(
@@ -493,6 +566,12 @@ const HomeContent = ( {
 					value={ todayComments || 0 }
 					showValueTooltip
 				/>
+				<CountCard
+					heading={ translate( 'Subscribers' ) }
+					icon={ <Icon icon={ rss } /> }
+					value={ subscriberCount || 0 }
+					showValueTooltip
+				/>
 
 				{ /* Middle Column: Activity (Jetpack Activity Log) */ }
 				<Card className="customer-home__overview-card">
@@ -538,19 +617,22 @@ const HomeContent = ( {
 				{ /* Right Column: Inbox */ }
 				<Card className="customer-home__overview-card">
 					<h3 className="customer-home__overview-card-title">{ translate( 'Inbox' ) }</h3>
-					{ recentComments && recentComments.length > 0 ? (
+					{ recentInbox.length > 0 ? (
 						<ul className="customer-home__inbox-list">
-							{ recentComments.map( ( comment, index ) => (
+							{ recentInbox.map( ( item, index ) => (
 								<li key={ index } className="customer-home__inbox-item">
-									<div className="customer-home__inbox-avatar">
-										{ comment.authorName?.charAt( 0 )?.toUpperCase() || '?' }
+									<div className={ `customer-home__inbox-avatar ${ item.type === 'form' ? 'is-form' : '' }` }>
+										{ item.type === 'form'
+											? <Gridicon icon="mail" size={ 18 } />
+											: item.authorName?.charAt( 0 )?.toUpperCase() || '?'
+										}
 									</div>
 									<div className="customer-home__inbox-content">
-										<span className="customer-home__inbox-excerpt">{ comment.excerpt }</span>
+										<span className="customer-home__inbox-excerpt">{ item.excerpt }</span>
 										<span className="customer-home__inbox-meta">
-											<span>{ comment.authorName }</span>
+											<span>{ item.authorName }</span>
 											<span className="customer-home__inbox-meta-sep">&middot;</span>
-											<span>{ comment.time }</span>
+											<span>{ item.time }</span>
 										</span>
 									</div>
 								</li>
@@ -633,21 +715,6 @@ const mapStateToProps = ( state ) => {
 		}
 	}
 
-	// Recent comments from state
-	const siteComments = state.comments?.items?.[ siteId ];
-	let recentComments = [];
-	if ( siteComments ) {
-		const allComments = Object.values( siteComments ).flat();
-		recentComments = allComments
-			.sort( ( a, b ) => new Date( b.date ) - new Date( a.date ) )
-			.slice( 0, 5 )
-			.map( ( c ) => ( {
-				authorName: c.author?.name || c.author?.login || 'Anonymous',
-				excerpt: c.content ? c.content.replace( /<[^>]*>/g, '' ).substring( 0, 80 ) + '...' : '',
-				time: moment( c.date ).fromNow(),
-			} ) );
-	}
-
 	return {
 		site: getSelectedSite( state ),
 		sitePlan: getSitePlan( state, siteId ),
@@ -669,7 +736,6 @@ const mapStateToProps = ( state ) => {
 		todayVisitors,
 		todayLikes,
 		todayComments,
-		recentComments,
 		isStatsLoading,
 	};
 };

@@ -34,7 +34,7 @@ body.is-section-home.theme-default.color-scheme {
 	margin: 0;
 }
 
-// Unified 4-column grid: stat cards span 1 col each, Activity/Inbox span 2 cols each
+// Unified grid: 5 stat cards on top, 2 big cards below
 .customer-home__overview-grid {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
@@ -46,7 +46,7 @@ body.is-section-home.theme-default.color-scheme {
 	}
 
 	@include break-medium {
-		grid-template-columns: 1fr 1fr 1fr 1fr;
+		grid-template-columns: repeat(10, 1fr);
 		gap: 24px;
 	}
 
@@ -56,6 +56,10 @@ body.is-section-home.theme-default.color-scheme {
 		min-width: 0;
 		border-color: var(--studio-gray-5);
 		padding: 16px 24px;
+
+		@include break-medium {
+			grid-column: span 2;
+		}
 	}
 
 	.highlight-card-icon {
@@ -100,7 +104,7 @@ body.is-section-home.theme-default.color-scheme {
 	}
 
 	@include break-medium {
-		grid-column: span 2;
+		grid-column: span 5;
 	}
 }
 
@@ -231,6 +235,14 @@ body.is-section-home.theme-default.color-scheme {
 	font-size: $font-body-small;
 	font-weight: 600;
 	flex-shrink: 0;
+
+	&.is-form {
+		background: var(--studio-purple-50);
+
+		.gridicon {
+			fill: var(--studio-white);
+		}
+	}
 }
 
 .customer-home__inbox-content {
