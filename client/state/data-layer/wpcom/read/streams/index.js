@@ -362,7 +362,20 @@ const streamApis = {
 		path: () => '/read/streams/on-this-day',
 		dateProperty: 'date',
 		apiNamespace: () => 'wpcom/v2',
-		query: ( extras ) => getQueryString( { ...extras, number: 15 } ),
+		query: ( extras, { streamKey } ) => {
+			const base = { ...extras, number: 15 };
+			if ( streamKey?.startsWith( 'on_this_day:' ) ) {
+				const parts = streamKey.split( ':' );
+				if ( parts.length >= 3 ) {
+					const month = parseInt( parts[ 1 ], 10 );
+					const day = parseInt( parts[ 2 ], 10 );
+					if ( Number.isFinite( month ) && Number.isFinite( day ) ) {
+						return getQueryString( { ...base, month, day } );
+					}
+				}
+			}
+			return getQueryString( base );
+		},
 	},
 };
 

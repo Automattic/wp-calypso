@@ -199,8 +199,12 @@ export class FeedbackInboxPage {
 		// Use .last() to get the button in the side panel, not in the table row
 		await this.page.getByRole( 'button', { name: 'Not spam' } ).last().click();
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-			// On mobile, the modal closes after the action
-			await this.page.waitForTimeout( 1000 );
+			// On mobile, the modal closes after the action. Wait for it to actually
+			// close rather than using a fixed timeout, so slow CI agents don't leave
+			// the modal covering the folder tabs when the next action runs.
+			await this.page
+				.getByRole( 'dialog', { name: 'Response' } )
+				.waitFor( { state: 'hidden', timeout: 5000 } );
 		} else {
 			// Wait for the success notification (use .first() to avoid a11y-speak duplicate)
 			await this.page
@@ -217,8 +221,11 @@ export class FeedbackInboxPage {
 		// Use .last() to get the button in the side panel, not in the table row
 		await this.page.getByRole( 'button', { name: 'Spam' } ).last().click();
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-			// On mobile, the modal closes after the action
-			await this.page.waitForTimeout( 1000 );
+			// On mobile, the modal closes after the action. Wait for it to actually
+			// close rather than using a fixed timeout.
+			await this.page
+				.getByRole( 'dialog', { name: 'Response' } )
+				.waitFor( { state: 'hidden', timeout: 5000 } );
 		} else {
 			// Wait for the success notification (use .first() to avoid a11y-speak duplicate)
 			await this.page.getByText( 'Response marked as spam.' ).first().waitFor( { timeout: 5000 } );

@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import {
 	CheckboxControl,
@@ -7,12 +8,14 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Text } from '../../../components/text';
-import { getPurchaseCancellationFlowType, CANCEL_FLOW_TYPE } from '../../../utils/purchase';
+import { DisplayVariant } from '../../../utils/purchase';
+import { getCheckboxLabel } from './get-confirmation-copy';
 import type { CancelPurchaseState } from './types';
 import type { Purchase, AtomicTransfer } from '@automattic/api-core';
 
 interface ConfirmCheckboxProps {
 	purchase: Purchase;
+	displayVariant: DisplayVariant;
 	atomicTransfer?: AtomicTransfer;
 	state: CancelPurchaseState;
 	onDomainConfirmationChange: ( checked: boolean ) => void;
@@ -22,6 +25,7 @@ interface ConfirmCheckboxProps {
 
 export default function ConfirmCheckbox( {
 	purchase,
+	displayVariant,
 	atomicTransfer,
 	state,
 	onDomainConfirmationChange,
@@ -29,23 +33,14 @@ export default function ConfirmCheckbox( {
 	onCustomerConfirmedUnderstandingAtomicPlanRevert,
 }: ConfirmCheckboxProps ) {
 	const isDomainRegistrationPurchase = purchase && purchase.is_domain_registration;
+	const isSplitEnabled = config.isEnabled( 'purchases/split-cancel-remove' );
 
-	const supportHeadingText = ( () => {
-		if ( getPurchaseCancellationFlowType( purchase ) === CANCEL_FLOW_TYPE.REMOVE ) {
-			return __( 'Have a question before removing?' );
-		}
-		return __( 'Have a question before cancelling?' );
-	} )();
+	const supportHeadingText =
+		displayVariant === 'remove'
+			? __( 'Questions before you remove?' )
+			: __( 'Have a question before canceling?' );
 
-	const planConfirmationLabel = ( () => {
-		if ( getPurchaseCancellationFlowType( purchase ) === CANCEL_FLOW_TYPE.REMOVE ) {
-			if ( purchase.is_plan ) {
-				return __( 'I understand my site will change when I remove my plan.' );
-			}
-			return __( 'I understand my site will change when I remove this product.' );
-		}
-		return __( 'I understand my site will change when my plan expires.' );
-	} )();
+	const planConfirmationLabel = getCheckboxLabel();
 
 	return (
 		<VStack spacing={ 4 }>
@@ -64,7 +59,7 @@ export default function ConfirmCheckbox( {
 			<Divider style={ { color: 'var(--dashboard-header__divider-color)' } } />
 
 			<VStack spacing={ 1 }>
-				{ isDomainRegistrationPurchase && ! state.surveyShown && (
+				{ isDomainRegistrationPurchase && ! state.surveyShown && ! isSplitEnabled && (
 					<CheckboxControl
 						label={ __( 'I understand that canceling means that I may lose this domain forever.' ) }
 						checked={ state.domainConfirmationConfirmed }

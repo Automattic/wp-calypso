@@ -17,7 +17,9 @@ import { getReaderFollowForFeed } from 'calypso/state/reader/follows/selectors';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { requestPaginatedStream } from 'calypso/state/reader/streams/actions';
 import { viewStream } from 'calypso/state/reader-ui/actions';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import Skeleton from '../components/skeleton';
+import { getOnThisDayHeaderDateLabel } from './get-stream-key';
 import { OnThisDayPostField } from './on-this-day-post-field';
 import { OnThisDayPostSkeleton } from './on-this-day-post-skeleton';
 import type { AppState } from 'calypso/types';
@@ -65,13 +67,13 @@ function itemKeyString( item: ReaderPost ) {
 	return `${ item.blogId }-${ item.postId }`;
 }
 
-const STREAM_KEY = 'on_this_day';
-
 interface OnThisDayProps {
 	viewToggle?: React.ReactNode;
+	streamKey: string;
 }
 
-export const OnThisDay = ( { viewToggle }: OnThisDayProps ) => {
+export const OnThisDay = ( { viewToggle, streamKey }: OnThisDayProps ) => {
+	const query = useSelector( getCurrentQueryArguments );
 	const dispatch = useDispatch< ThunkDispatch< AppState, void, UnknownAction > >();
 	const [ selectedItem, setSelectedItem ] = useState< ReaderPost | null >( null );
 	const isWide = useBreakpoint( WIDE_BREAKPOINT );
@@ -95,7 +97,7 @@ export const OnThisDay = ( { viewToggle }: OnThisDayProps ) => {
 		showMedia: true,
 	} );
 
-	const data = useSelector( ( state: AppState ) => state.reader?.streams?.[ STREAM_KEY ] );
+	const data = useSelector( ( state: AppState ) => state.reader?.streams?.[ streamKey ] );
 	const posts = useSelector( ( state: AppState ) => {
 		const items = data?.items;
 		if ( ! items ) {
@@ -182,15 +184,17 @@ export const OnThisDay = ( { viewToggle }: OnThisDayProps ) => {
 	);
 
 	const fetchData = useCallback( () => {
-		dispatch( viewStream( STREAM_KEY, window.location.pathname ) as UnknownAction );
+		const pathForView =
+			typeof window !== 'undefined' ? window.location.pathname + window.location.search : '';
+		dispatch( viewStream( streamKey, pathForView ) as UnknownAction );
 		dispatch(
 			requestPaginatedStream( {
-				streamKey: STREAM_KEY,
+				streamKey,
 				page: view.page,
 				perPage: view.perPage,
 			} ) as UnknownAction
 		);
-	}, [ dispatch, view ] );
+	}, [ dispatch, view, streamKey ] );
 
 	const defaultPaginationInfo = useMemo( () => {
 		return {
@@ -237,17 +241,14 @@ export const OnThisDay = ( { viewToggle }: OnThisDayProps ) => {
 		[ shownData ]
 	);
 
-	const todayFormatted = new Date().toLocaleDateString( undefined, {
-		month: 'long',
-		day: 'numeric',
-	} );
+	const headerDateLabel = getOnThisDayHeaderDateLabel( query );
 
 	return (
 		/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */
 		<div className="on-this-day" onKeyDown={ handleKeyDown }>
 			<div className={ `on-this-day__list-column ${ selectedItem ? 'has-overlay' : '' }` }>
 				<div className="on-this-day__list-column-header">
-					<NavigationHeader title={ translate( 'On This Day' ) } subtitle={ todayFormatted }>
+					<NavigationHeader title={ translate( 'On This Day' ) } subtitle={ headerDateLabel }>
 						{ viewToggle }
 					</NavigationHeader>
 				</div>

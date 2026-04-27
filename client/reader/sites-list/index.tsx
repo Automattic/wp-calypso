@@ -4,12 +4,15 @@ import { ComponentProps } from 'react';
 import { ReaderSite, ReaderSiteItem } from './site-item';
 
 interface ReaderSitesListProps
-	extends Pick< ComponentProps< typeof ReaderSiteItem >, 'variant' | 'iconSize' | 'followSource' > {
+	extends Pick<
+		ComponentProps< typeof ReaderSiteItem >,
+		'variant' | 'siteIconSize' | 'followSource'
+	> {
 	sites: ReaderSite[];
 }
 
 export function ReaderSitesList( props: ReaderSitesListProps ): JSX.Element {
-	const { sites, variant = 'default', iconSize, followSource } = props;
+	const { sites, variant = 'default', siteIconSize, followSource } = props;
 
 	return (
 		<ul className={ clsx( 'reader-sites-list', `is-${ variant }-view` ) }>
@@ -22,7 +25,7 @@ export function ReaderSitesList( props: ReaderSitesListProps ): JSX.Element {
 							site={ site }
 							followSource={ followSource }
 							variant={ variant }
-							iconSize={ iconSize }
+							siteIconSize={ siteIconSize }
 						/>
 					)
 				) }

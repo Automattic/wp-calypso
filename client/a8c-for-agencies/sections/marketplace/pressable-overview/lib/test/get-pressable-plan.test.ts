@@ -35,6 +35,12 @@ describe( 'getPressablePlan add-on mappings', () => {
 			storage: 1,
 			visits: 0,
 		} );
+		expect( getPressablePlan( 'pressable-addon-php-memory-512mb' ) ).toMatchObject( {
+			install: 0,
+			storage: 0,
+			visits: 0,
+			phpMemory: 512,
+		} );
 	} );
 
 	it( 'returns titan add-on with zero usage-impact capacities', () => {

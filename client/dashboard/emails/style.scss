@@ -5,7 +5,7 @@
 }
 
 .email-icon-wrapper {
-	border: 1px solid var(--color-border, #ddd);
+	border: 1px solid var( --color-border, #ddd );
 	border-radius: 4px;
 	width: 36px;
 	height: 36px;
@@ -22,7 +22,7 @@
 
 .email-forwarder-icon {
 	stroke: none;
-	fill: #959595;
+	fill: var( --dashboard-subtle__color );
 }
 
 .mailbox--icon {

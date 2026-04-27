@@ -12,7 +12,7 @@ import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import { preventWidows } from 'calypso/lib/formatting';
 import ReaderMain from 'calypso/reader/components/reader-main';
-import ListMissing from 'calypso/reader/list-stream/components/missing';
+import ListMissing from 'calypso/reader/list/components/missing';
 import { createReaderList, updateReaderList } from 'calypso/state/reader/lists/actions';
 import {
 	getListByOwnerAndSlug,

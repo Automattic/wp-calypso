@@ -43,7 +43,11 @@ export function canViewHundredYearPlanSettings( site: Site ) {
 
 export function canSwitchWordPressVersion( site: Site ) {
 	if ( isEnabled( 'dashboard/wp-beta-program' ) ) {
-		return hasHostingFeature( site, HostingFeatures.BACKUPS_SELF_SERVE );
+		// Atomic-only API.
+		return (
+			( site.is_wpcom_atomic || site.is_wpcom_flex ) &&
+			hasHostingFeature( site, HostingFeatures.BACKUPS_SELF_SERVE )
+		);
 	}
 	return site.is_wpcom_staging_site;
 }

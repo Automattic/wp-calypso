@@ -1,4 +1,4 @@
-import { HostingFeatures, LogType } from '@automattic/api-core';
+import { HostingFeatures, LogType, type Site, type SiteSettings } from '@automattic/api-core';
 import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import { useSuspenseQuery } from '@tanstack/react-query';
@@ -26,11 +26,61 @@ import { getLogsCalloutProps } from './logs-callout';
 import { LOG_TABS } from './utils';
 import './style.scss';
 
+const selectTimeZone = ( s: SiteSettings | undefined ) => ( {
+	gmtOffset: Number( s?.gmt_offset ) || 0,
+	timezoneString: s?.timezone_string || undefined,
+} );
+
 function SiteLogs( { logType }: { logType: LogType } ) {
-	const locale = useLocale();
 	const { siteSlug } = siteRoute.useParams();
-	const router = useRouter();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+
+	// Sites with a Jetpack connection error can't reach the settings endpoint;
+	// fall back to UTC defaults so the Logs page remains accessible.
+	if ( site.__inaccessible_jetpack_error ) {
+		return (
+			<SiteLogsContent
+				site={ site }
+				logType={ logType }
+				gmtOffset={ 0 }
+				timezoneString={ undefined }
+			/>
+		);
+	}
+
+	return <SiteLogsForReachableSite site={ site } logType={ logType } />;
+}
+
+function SiteLogsForReachableSite( { site, logType }: { site: Site; logType: LogType } ) {
+	const { data } = useSuspenseQuery( {
+		...siteSettingsQuery( site.ID ),
+		select: selectTimeZone,
+	} );
+
+	return (
+		<SiteLogsContent
+			site={ site }
+			logType={ logType }
+			gmtOffset={ data.gmtOffset }
+			timezoneString={ data.timezoneString }
+		/>
+	);
+}
+
+function SiteLogsContent( {
+	site,
+	logType,
+	gmtOffset,
+	timezoneString,
+}: {
+	site: Site;
+	logType: LogType;
+	gmtOffset: number;
+	timezoneString: string | undefined;
+} ) {
+	const locale = useLocale();
+	const router = useRouter();
+	const siteSlug = site.slug;
 
 	const settingsUrl = site.options?.admin_url
 		? `${ site.options.admin_url }options-general.php`
@@ -73,16 +123,6 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 			// noop: if URL is not parseable, skip normalization
 		}
 	}, [] );
-
-	const { data } = useSuspenseQuery( {
-		...siteSettingsQuery( siteId ),
-		select: ( s ) => ( {
-			gmtOffset: Number( s?.gmt_offset ) || 0,
-			timezoneString: s?.timezone_string || undefined,
-		} ),
-	} );
-
-	const { gmtOffset, timezoneString } = data!;
 
 	const { dateRange, handleDateRangeChange } = useDateRange( {
 		timezoneString,
@@ -165,11 +205,19 @@ function SiteLogs( { logType }: { logType: LogType } ) {
 					{ autoRefreshDisabledReason && (
 						<Notice variant="warning">{ autoRefreshDisabledReason }</Notice>
 					) }
-					<TimeMismatchNotice
-						settingsUrl={ settingsUrl }
-						siteTime={ gmtOffset }
-						siteId={ siteId }
-					/>
+					{ site.__inaccessible_jetpack_error ? (
+						<Notice variant="warning">
+							{ __(
+								'Your site’s time zone setting is currently unavailable. Dates and times on this page are displayed in UTC instead.'
+							) }
+						</Notice>
+					) : (
+						<TimeMismatchNotice
+							settingsUrl={ settingsUrl }
+							siteTime={ gmtOffset }
+							siteId={ siteId }
+						/>
+					) }
 				</>
 			}
 		>

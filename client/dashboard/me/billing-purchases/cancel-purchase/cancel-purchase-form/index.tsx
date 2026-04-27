@@ -37,6 +37,7 @@ interface CancelPurchaseFormProps {
 	atomicTransfer?: Pick< AtomicTransfer, 'created_at' >;
 	cancelBundledDomain?: boolean;
 	cancellationInProgress?: boolean;
+	intent?: 'cancel' | 'remove' | null;
 	cancellationOffer?: Pick<
 		CancellationOffer,
 		'discounted_periods' | 'raw_price' | 'currency_code' | 'original_price'
@@ -132,6 +133,7 @@ function SurveyContent( {
 	cancellationInProgress,
 	includedDomainPurchase,
 	isAkismet,
+	intent,
 }: CancelPurchaseFormProps ) {
 	const { product_name: productName } = purchase;
 	if ( surveyStep === FEEDBACK_STEP ) {
@@ -139,6 +141,7 @@ function SurveyContent( {
 			<FeedbackStep
 				cancellationReasonCodes={ questionOneOrder }
 				isImport={ isImport ?? false }
+				intent={ intent ?? undefined }
 				onChangeCancellationReason={ onRadioOneChange }
 				onChangeCancellationReasonDetails={ onTextOneChange }
 				onChangeImportFeedback={ onImportRadioChange }
@@ -190,6 +193,7 @@ function SurveyContent( {
 				cancellationReason={ questionOneText }
 				closeDialog={ closeDialog }
 				currencyCode={ purchase.currency_code }
+				declineButtonText={ intent === 'remove' ? __( 'Remove my current plan' ) : undefined }
 				downgradePlan={ downgradePlan }
 				includedDomainPurchase={ includedDomainPurchase }
 				onClickDowngrade={ downgradeClick }
