@@ -24,20 +24,30 @@ export default function GenericAchievement( {
 	} );
 
 	const caption = () => {
-		const label = hasMultiple ? 'First unlocked' : 'Unlocked';
 		if ( site ) {
-			return translate( '%(label)s: {{timeSince/}} on {{a}}%(site)s{{/a}}', {
-				args: { label, site: site.name },
-				components: {
-					timeSince: <TimeSince date={ unlockDate } />,
-					a: <a href={ site.URL } target="_blank" rel="noopener noreferrer" />,
-				},
-			} );
+			return hasMultiple
+				? translate( 'First unlocked: {{timeSince/}} on {{a}}%(site)s{{/a}}', {
+						args: { site: site.name },
+						components: {
+							timeSince: <TimeSince date={ unlockDate } />,
+							a: <a href={ site.URL } target="_blank" rel="noopener noreferrer" />,
+						},
+				  } )
+				: translate( 'Unlocked: {{timeSince/}} on {{a}}%(site)s{{/a}}', {
+						args: { site: site.name },
+						components: {
+							timeSince: <TimeSince date={ unlockDate } />,
+							a: <a href={ site.URL } target="_blank" rel="noopener noreferrer" />,
+						},
+				  } );
 		}
-		return translate( '%(label)s: {{timeSince/}}', {
-			args: { label },
-			components: { timeSince: <TimeSince date={ unlockDate } /> },
-		} );
+		return hasMultiple
+			? translate( 'First unlocked: {{timeSince/}}', {
+					components: { timeSince: <TimeSince date={ unlockDate } /> },
+			  } )
+			: translate( 'Unlocked: {{timeSince/}}', {
+					components: { timeSince: <TimeSince date={ unlockDate } /> },
+			  } );
 	};
 
 	return (
