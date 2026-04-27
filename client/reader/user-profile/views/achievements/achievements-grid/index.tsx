@@ -39,7 +39,7 @@ export default function AchievementsGrid( { userLogin }: { userLogin: string } )
 					);
 				}
 
-				if ( achievement.site_ID !== 0 ) {
+				if ( achievement.site_ID ) {
 					return (
 						<SiteBasedAchievement
 							key={ achievement.achievement_id }
@@ -50,7 +50,11 @@ export default function AchievementsGrid( { userLogin }: { userLogin: string } )
 				}
 
 				return (
-					<UserBasedAchievement key={ achievement.achievement_id } achievement={ achievement } />
+					<UserBasedAchievement
+						key={ achievement.achievement_id }
+						achievement={ achievement }
+						achievements={ achievements }
+					/>
 				);
 			} ) }
 		</div>

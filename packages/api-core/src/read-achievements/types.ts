@@ -5,10 +5,13 @@ export interface Achievement {
 	description: string;
 	badge_prefix: string;
 	level: number;
-	site_ID: number;
 	date: string;
 	image: string;
-	url: string;
+	retired: boolean;
+	/** Only present when viewing your own achievements. */
+	site_ID?: number;
+	/** Only present when viewing your own achievements. */
+	url?: string;
 }
 
 export interface AchievementsResponse {

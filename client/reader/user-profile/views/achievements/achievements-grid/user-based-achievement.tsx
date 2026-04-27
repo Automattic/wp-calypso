@@ -1,10 +1,20 @@
 import { TimeSince } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import { getOldestAchievement } from '../utils';
 import AchievementCard from './achievement-card';
 import type { Achievement } from '@automattic/api-core';
 
-export default function UserBasedAchievement( { achievement }: { achievement: Achievement } ) {
+export default function UserBasedAchievement( {
+	achievement,
+	achievements,
+}: {
+	achievement: Achievement;
+	achievements: Achievement[];
+} ) {
 	const translate = useTranslate();
+	const hasMultiple = achievements.filter( ( a ) => a.slug === achievement.slug ).length > 1;
+	const oldest = hasMultiple ? getOldestAchievement( achievement.slug, achievements ) : undefined;
+	const unlockDate = oldest?.date ?? achievement.date;
 
 	return (
 		<AchievementCard
@@ -16,11 +26,15 @@ export default function UserBasedAchievement( { achievement }: { achievement: Ac
 					: undefined
 			}
 			description={ achievement.description }
-			caption={ translate( 'Unlocked: {{timeSince/}}', {
-				components: {
-					timeSince: <TimeSince date={ achievement.date } />,
-				},
-			} ) }
+			caption={
+				hasMultiple
+					? translate( 'First unlocked: {{timeSince/}}', {
+							components: { timeSince: <TimeSince date={ unlockDate } /> },
+					  } )
+					: translate( 'Unlocked: {{timeSince/}}', {
+							components: { timeSince: <TimeSince date={ unlockDate } /> },
+					  } )
+			}
 		/>
 	);
 }

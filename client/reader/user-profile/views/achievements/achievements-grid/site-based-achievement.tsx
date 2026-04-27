@@ -14,14 +14,15 @@ export default function SiteBasedAchievement( {
 	achievements: Achievement[];
 } ) {
 	const translate = useTranslate();
-	const oldest = getOldestAchievement( achievement.slug, achievements );
-	const siteId = oldest?.site_ID ?? achievement.site_ID;
-	const { data: site } = useQuery( {
-		...siteByIdQuery( siteId ),
-		enabled: siteId !== 0,
-	} );
-	// For site-based achievements with the URL defined, the description is the site name, so we don't want to show it twice.
-	const description = achievement.url ? undefined : achievement.description;
+	const hasMultiple = achievements.filter( ( a ) => a.slug === achievement.slug ).length > 1;
+	const oldest = hasMultiple ? getOldestAchievement( achievement.slug, achievements ) : undefined;
+	const unlockDate = oldest?.date ?? achievement.date;
+	const siteId = oldest?.site_ID ?? achievement.site_ID ?? 0;
+	const { data: site } = useQuery( siteByIdQuery( siteId ) );
+
+	if ( ! site ) {
+		return null;
+	}
 
 	return (
 		<AchievementCard
@@ -32,19 +33,21 @@ export default function SiteBasedAchievement( {
 					? translate( 'Level %(level)d', { args: { level: achievement.level } } )
 					: undefined
 			}
-			description={ description }
+			description={ achievement.description }
 			caption={
-				site
+				hasMultiple
 					? translate( 'First unlocked: {{timeSince/}} on {{a}}%(site)s{{/a}}', {
 							args: { site: site.name },
 							components: {
-								timeSince: <TimeSince date={ oldest?.date ?? achievement.date } />,
+								timeSince: <TimeSince date={ unlockDate } />,
 								a: <a href={ site.URL } target="_blank" rel="noopener noreferrer" />,
 							},
 					  } )
-					: translate( 'Unlocked: {{timeSince/}}', {
+					: translate( 'Unlocked: {{timeSince/}} on {{a}}%(site)s{{/a}}', {
+							args: { site: site.name },
 							components: {
-								timeSince: <TimeSince date={ oldest?.date ?? achievement.date } />,
+								timeSince: <TimeSince date={ unlockDate } />,
+								a: <a href={ site.URL } target="_blank" rel="noopener noreferrer" />,
 							},
 					  } )
 			}
