@@ -21,20 +21,24 @@ export function PostCardCounts( { counts }: PostCardCountsProps ) {
 			justify="flex-start"
 			className="social-post-card-counts"
 		>
-			<span aria-label={ translate( 'Replies' ) }>
+			<span>
 				<ReaderCommentIcon iconSize={ ICON_SIZE } />
+				<span className="screen-reader-text">{ translate( 'Replies:' ) } </span>
 				{ counts.replies }
 			</span>
-			<span aria-label={ translate( 'Reposts' ) }>
+			<span>
 				<ReaderRepostIcon iconSize={ ICON_SIZE } />
+				<span className="screen-reader-text">{ translate( 'Reposts:' ) } </span>
 				{ counts.reposts }
 			</span>
-			<span aria-label={ translate( 'Likes' ) }>
+			<span>
 				<ReaderLikeIcon iconSize={ ICON_SIZE } liked={ false } />
+				<span className="screen-reader-text">{ translate( 'Likes:' ) } </span>
 				{ counts.likes }
 			</span>
-			<span aria-label={ translate( 'Quotes' ) }>
+			<span>
 				<Icon icon={ quote } size={ ICON_SIZE } />
+				<span className="screen-reader-text">{ translate( 'Quotes:' ) } </span>
 				{ counts.quotes }
 			</span>
 		</HStack>

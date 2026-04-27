@@ -10,7 +10,9 @@ interface PostCardEmbedQuoteProps {
 
 export function PostCardEmbedQuote( { embed, parentPostUri }: PostCardEmbedQuoteProps ) {
 	const analytics = useSocialAnalytics();
-	if ( embed.post.type === 'not_found' || embed.post.type === 'blocked' ) {
+	// AtmosphereFeedItem has no `type` field; the discriminator only exists on
+	// the tombstone shape, so narrow via `in` rather than property access.
+	if ( 'type' in embed.post ) {
 		return <PostCardEmbedQuoteTombstone tombstone={ embed.post } />;
 	}
 	const inner = embed.post;

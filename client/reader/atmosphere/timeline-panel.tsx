@@ -2,10 +2,13 @@ import { useTimelineInfiniteQuery } from '@automattic/api-queries';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
+import { UnknownAction } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
 import { SocialFeedList, SocialPostCard } from 'calypso/reader/social';
 import { SocialAnalyticsProvider } from 'calypso/reader/social/components/post-card/analytics-context';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import type { AtmosphereConnection, AtmosphereFeedItem } from '@automattic/api-core';
+import type { AppState } from 'calypso/types';
 
 interface TimelinePanelProps {
 	connection: AtmosphereConnection;
@@ -13,7 +16,7 @@ interface TimelinePanelProps {
 
 export function TimelinePanel( { connection }: TimelinePanelProps ) {
 	const translate = useTranslate();
-	const dispatch = useDispatch();
+	const dispatch = useDispatch< ThunkDispatch< AppState, void, UnknownAction > >();
 	const lastErrorKind = useRef< string | null >( null );
 
 	const {

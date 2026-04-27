@@ -27,7 +27,7 @@ describe( 'SocialPostCard', () => {
 		render( <SocialPostCard post={ post } variant="default" /> );
 		expect( screen.getByText( 'Alice' ) ).toBeVisible();
 		expect( screen.getByText( 'hello' ) ).toBeVisible();
-		expect( screen.getByLabelText( /likes/i ) ).toHaveTextContent( '3' );
+		expect( screen.getByText( /likes:/i ).parentElement ).toHaveTextContent( /likes:\s*3/i );
 		// The ↗ cue is aria-hidden, so the timestamp link's accessible name is
 		// the time-ago label. Find it by href instead of matching the cue.
 		const timestampLink = screen
@@ -50,7 +50,7 @@ describe( 'SocialPostCard', () => {
 			/>
 		);
 		expect( screen.queryByRole( 'img', { name: 'a' } ) ).toBeNull();
-		expect( screen.queryByLabelText( /likes/i ) ).toBeNull();
+		expect( screen.queryByText( /likes:/i ) ).toBeNull();
 	} );
 
 	it( 'compact variant renders no anchors so consumers can wrap it in their own', () => {

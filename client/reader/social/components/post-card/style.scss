@@ -350,7 +350,10 @@ a.social-post-card-header__timestamp::after {
 	font-style: italic;
 }
 
-.social-post-card-embed-quote-with-media {
+// Override @wordpress/components VStack's higher-specificity `gap` so the
+// inner quote and media stack tightly. Selector specificity must beat the
+// component's own internal rule.
+.components-flex.social-post-card-embed-quote-with-media {
 	margin-top: 8px;
-	gap: 4px !important;
+	gap: 4px;
 }

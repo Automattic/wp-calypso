@@ -3,8 +3,9 @@
  */
 import { render } from '@testing-library/react';
 import { PostCardBody } from '../post-card-body';
+import type { AtmosphereFeedItem } from '@automattic/api-core';
 
-function baseHtml( html: string ) {
+function baseHtml( html: string ): AtmosphereFeedItem {
 	return {
 		uri: 'at://x',
 		cid: 'c',
@@ -20,7 +21,7 @@ function baseHtml( html: string ) {
 		embed: null,
 		counts: { replies: 0, reposts: 0, likes: 0, quotes: 0 },
 		bluesky_url: '',
-	} as const;
+	};
 }
 
 describe( 'PostCardBody', () => {

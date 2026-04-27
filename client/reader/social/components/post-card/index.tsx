@@ -1,3 +1,5 @@
+import './style.scss';
+
 import { Card, CardBody } from '@wordpress/components';
 import clsx from 'clsx';
 import { PostCardBody } from './post-card-body';
