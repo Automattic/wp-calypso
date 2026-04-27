@@ -12,6 +12,9 @@ steps:
       # Skip Corepack's Yarn download prompt.
       COREPACK_ENABLE_DOWNLOAD_PROMPT: 0
       ELECTRON_BUILDER_ARGS: '-c.mac.target=dir'
+      # Force electron-builder to copy files instead of hard-linking; avoids
+      # EEXIST cleanup errors when packaging the .app on the BK mac agent.
+      USE_HARD_LINKS: 'false'
     command: |
       set -euo pipefail
 
