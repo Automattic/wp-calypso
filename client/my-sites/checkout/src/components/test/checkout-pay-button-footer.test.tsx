@@ -3,24 +3,16 @@
  */
 
 import { PLAN_PREMIUM } from '@automattic/calypso-products';
+import { checkoutTheme } from '@automattic/composite-checkout';
 import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
 import { ThemeProvider } from '@emotion/react';
 import { render, screen } from '@testing-library/react';
 import CheckoutPayButtonFooter from '../checkout-pay-button-footer';
 import type { ResponseCart } from '@automattic/shopping-cart';
 
-const theme = {
-	colors: {
-		textColorLight: '#666',
-		borderColorLight: '#ddd',
-		highlight: '#0675c4',
-		highlightOver: '#055d9c',
-	},
-};
-
 function renderFooter( cart: ResponseCart ) {
 	return render(
-		<ThemeProvider theme={ theme }>
+		<ThemeProvider theme={ checkoutTheme }>
 			<CheckoutPayButtonFooter cart={ cart } />
 		</ThemeProvider>
 	);
