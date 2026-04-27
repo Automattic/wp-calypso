@@ -1,6 +1,6 @@
 import { Onboard } from '@automattic/data-stores';
 import { getAssemblerDesign } from '@automattic/design-picker';
-import { Step } from '@automattic/onboarding';
+import { Step, WOO_HOSTED_PLANS_FLOW } from '@automattic/onboarding';
 import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
@@ -65,37 +65,41 @@ const LaunchBigSky: StepType = function ( props ) {
 				resolveSelect( SITE_STORE ).getSite( selectedSiteId ), // To get the URL.
 			];
 
-			// Set the Assembler theme on the site.
-			if ( ! assemblerThemeActive ) {
-				setDesignOnSite( selectedSiteSlug, getAssemblerDesign(), { enableThemeSetup: true } );
-			}
+			// Skip theme and page mutations for woo-hosted-plans — the site already has a
+			// configured store and these actions would be destructive.
+			if ( flow !== WOO_HOSTED_PLANS_FLOW ) {
+				// Set the Assembler theme on the site.
+				if ( ! assemblerThemeActive ) {
+					setDesignOnSite( selectedSiteSlug, getAssemblerDesign(), { enableThemeSetup: true } );
+				}
 
-			// Create a new home page if one is not set yet.
-			if ( ! hasStaticHomepage ) {
-				pendingActions.push(
-					wpcom.req.post(
-						{
-							path: '/sites/' + selectedSiteId + '/pages',
-							apiNamespace: 'wp/v2',
-						},
-						{},
-						{
-							title: 'Home',
-							status: 'publish',
-							content: '<!-- wp:paragraph -->\n<p>Hello world!</p>\n<!-- /wp:paragraph -->',
-						}
-					)
-				);
-			}
+				// Create a new home page if one is not set yet.
+				if ( ! hasStaticHomepage ) {
+					pendingActions.push(
+						wpcom.req.post(
+							{
+								path: '/sites/' + selectedSiteId + '/pages',
+								apiNamespace: 'wp/v2',
+							},
+							{},
+							{
+								title: 'Home',
+								status: 'publish',
+								content: '<!-- wp:paragraph -->\n<p>Hello world!</p>\n<!-- /wp:paragraph -->',
+							}
+						)
+					);
+				}
 
-			// Delete the existing boilerplate about page, always has a page ID of 1
-			pendingActions.push( deletePage( selectedSiteId, 1 ) );
+				// Delete the existing boilerplate about page, always has a page ID of 1
+				pendingActions.push( deletePage( selectedSiteId, 1 ) );
+			}
 
 			try {
 				const results = await Promise.all( pendingActions );
 				const siteURL = results[ 0 ].URL;
 
-				if ( ! hasStaticHomepage ) {
+				if ( flow !== WOO_HOSTED_PLANS_FLOW && ! hasStaticHomepage ) {
 					const homePagePostId = results[ 1 ].id;
 					await setStaticHomepageOnSite( selectedSiteId, homePagePostId );
 				}
