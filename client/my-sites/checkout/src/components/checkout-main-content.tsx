@@ -40,7 +40,8 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { pencil } from '@wordpress/icons';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useCallback } from 'react';
+import { useCallback, useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 import Loading from 'calypso/components/loading';
 import { useInitialIsInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
@@ -64,6 +65,10 @@ import { CheckoutOrderBanner } from 'calypso/my-sites/checkout/src/components/ch
 import { useCheckoutUiRedesignExperiment } from 'calypso/my-sites/checkout/src/hooks/use-checkout-ui-redesign-experiment';
 import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/src/hooks/use-valid-checkout-back-url';
 import { leaveCheckout } from 'calypso/my-sites/checkout/src/lib/leave-checkout';
+import {
+	SubmitButtonSlotContext,
+	useSubmitButtonSlot,
+} from 'calypso/my-sites/checkout/src/lib/submit-button-slot';
 import { prepareDomainContactValidationRequest } from 'calypso/my-sites/checkout/src/types/wpcom-store-state';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import SitePreview from 'calypso/my-sites/customer-home/cards/features/site-preview';
@@ -334,6 +339,22 @@ function CheckoutSidebarNudge( {
 	);
 }
 
+// Renders CheckoutFormSubmit inside CheckoutStepGroup (so it keeps full step-state
+// awareness) while portaling its output into the sidebar slot registered via
+// SubmitButtonSlotContext. The sidebar button IS the active payment-method submit
+// button — no hidden main-column button, no querySelector click proxy.
+function PortaledCheckoutFormSubmit( {
+	validateForm,
+}: {
+	validateForm?: () => Promise< boolean >;
+} ) {
+	const { slotEl } = useSubmitButtonSlot();
+	if ( ! slotEl ) {
+		return null;
+	}
+	return createPortal( <CheckoutFormSubmit validateForm={ validateForm } />, slotEl );
+}
+
 export default function CheckoutMainContent( {
 	addItemToCart,
 	changeSelection,
@@ -393,6 +414,17 @@ export default function CheckoutMainContent( {
 	} = useShoppingCart( cartKey );
 
 	const leaveModalProps = useCheckoutLeaveModal( { siteUrl: siteUrl ?? '' } );
+
+	// Shared sidebar slot for the active payment-method submit button. We render
+	// <CheckoutFormSubmit> inside <CheckoutStepGroup> so it keeps full step-state
+	// awareness, but createPortal its output into this slot in the sidebar — the
+	// sidebar Pay button IS the real submit button (including native Apple Pay /
+	// Google Pay buttons that require a genuine user click).
+	const [ submitButtonSlotEl, setSubmitButtonSlotEl ] = useState< HTMLElement | null >( null );
+	const submitButtonSlotValue = useMemo(
+		() => ( { slotEl: submitButtonSlotEl, setSlotEl: setSubmitButtonSlotEl } ),
+		[ submitButtonSlotEl ]
+	);
 
 	const searchParams = new URLSearchParams( window.location.search );
 	const isDIFMInCart = hasDIFMProduct( responseCart );
@@ -907,17 +939,21 @@ export default function CheckoutMainContent( {
 						setIs100YearPlanTermsAccepted={ setIs100YearPlanTermsAccepted }
 						isSubmitted={ isSubmitted }
 					/>
-					<CheckoutFormSubmit
-						validateForm={ validateForm }
-						submitButtonHeader={ <SubmitButtonHeader /> }
-						submitButtonFooter={
-							hasCartJetpackProductsOnly ? (
-								<JetpackCheckoutSeals />
-							) : (
-								<CheckoutMoneyBackGuarantee cart={ responseCart } />
-							)
-						}
-					/>
+					{ isLargeViewport ? (
+						<PortaledCheckoutFormSubmit validateForm={ validateForm } />
+					) : (
+						<CheckoutFormSubmit
+							validateForm={ validateForm }
+							submitButtonHeader={ <SubmitButtonHeader /> }
+							submitButtonFooter={
+								hasCartJetpackProductsOnly ? (
+									<JetpackCheckoutSeals />
+								) : (
+									<CheckoutMoneyBackGuarantee cart={ responseCart } />
+								)
+							}
+						/>
+					) }
 				</CheckoutStepGroup>
 			</WPCheckoutMainContent>
 		</RestorableProductsProvider>
@@ -925,75 +961,79 @@ export default function CheckoutMainContent( {
 
 	if ( ! isStepContainerV2 ) {
 		return (
-			<WPCheckoutWrapper
-				className="checkout-wrapper"
-				isLargeViewport={ isLargeViewport }
-				isCheckoutUiRedesignV1={ isCheckoutUiRedesignV1 }
-			>
-				{ isCheckoutUiRedesignV1 && ! isLargeViewport && (
-					<WPCheckoutTitle className="checkout__main-title checkout__redesign-header">
-						{ translate( 'Checkout' ) }
-					</WPCheckoutTitle>
-				) }
-				{ checkoutSummary }
-				{ checkoutMainContent }
-			</WPCheckoutWrapper>
+			<SubmitButtonSlotContext.Provider value={ submitButtonSlotValue }>
+				<WPCheckoutWrapper
+					className="checkout-wrapper"
+					isLargeViewport={ isLargeViewport }
+					isCheckoutUiRedesignV1={ isCheckoutUiRedesignV1 }
+				>
+					{ isCheckoutUiRedesignV1 && ! isLargeViewport && (
+						<WPCheckoutTitle className="checkout__main-title checkout__redesign-header">
+							{ translate( 'Checkout' ) }
+						</WPCheckoutTitle>
+					) }
+					{ checkoutSummary }
+					{ checkoutMainContent }
+				</WPCheckoutWrapper>
+			</SubmitButtonSlotContext.Provider>
 		);
 	}
 
 	return (
-		<StepContainerV2CheckoutFixer
-			isLargeViewport={ isLargeViewport }
-			isCheckoutUiRedesignV1={ isCheckoutUiRedesignV1 }
-		>
-			<Step.TwoColumnLayout
-				firstColumnWidth={ 8 }
-				secondColumnWidth={ 4 }
-				topBar={ ( { isLargeViewport } ) => {
-					const topBar = (
-						<Step.TopBar
-							leftElement={ <Step.BackButton onClick={ leaveModalProps.clickClose } /> }
-							rightElement={
-								<span className="checkout-skip-button">
-									{ helpCenterButtonCopy && <label>{ helpCenterButtonCopy }</label> }
-									<Step.LinkButton onClick={ toggleHelpCenter }>
-										{ helpCenterButtonLink }
-									</Step.LinkButton>
-								</span>
-							}
-						/>
-					);
-
-					if ( isLargeViewport ) {
-						return <div className="checkout-top-bar-wrapper">{ topBar }</div>;
-					}
-
-					return (
-						<>
-							{ topBar }
-							{ isCheckoutUiRedesignV1 && (
-								<Step.Heading text={ translate( 'Checkout' ) } align="left" size="small" />
-							) }
-							{ checkoutSummary }
-						</>
-					);
-				} }
+		<SubmitButtonSlotContext.Provider value={ submitButtonSlotValue }>
+			<StepContainerV2CheckoutFixer
+				isLargeViewport={ isLargeViewport }
+				isCheckoutUiRedesignV1={ isCheckoutUiRedesignV1 }
 			>
-				{ ( { isLargeViewport } ) => {
-					if ( isLargeViewport ) {
+				<Step.TwoColumnLayout
+					firstColumnWidth={ 8 }
+					secondColumnWidth={ 4 }
+					topBar={ ( { isLargeViewport } ) => {
+						const topBar = (
+							<Step.TopBar
+								leftElement={ <Step.BackButton onClick={ leaveModalProps.clickClose } /> }
+								rightElement={
+									<span className="checkout-skip-button">
+										{ helpCenterButtonCopy && <label>{ helpCenterButtonCopy }</label> }
+										<Step.LinkButton onClick={ toggleHelpCenter }>
+											{ helpCenterButtonLink }
+										</Step.LinkButton>
+									</span>
+								}
+							/>
+						);
+
+						if ( isLargeViewport ) {
+							return <div className="checkout-top-bar-wrapper">{ topBar }</div>;
+						}
+
 						return (
 							<>
-								{ checkoutMainContent }
+								{ topBar }
+								{ isCheckoutUiRedesignV1 && (
+									<Step.Heading text={ translate( 'Checkout' ) } align="left" size="small" />
+								) }
 								{ checkoutSummary }
 							</>
 						);
-					}
+					} }
+				>
+					{ ( { isLargeViewport } ) => {
+						if ( isLargeViewport ) {
+							return (
+								<>
+									{ checkoutMainContent }
+									{ checkoutSummary }
+								</>
+							);
+						}
 
-					return checkoutMainContent;
-				} }
-			</Step.TwoColumnLayout>
-			<LeaveCheckoutModal { ...leaveModalProps } />
-		</StepContainerV2CheckoutFixer>
+						return checkoutMainContent;
+					} }
+				</Step.TwoColumnLayout>
+				<LeaveCheckoutModal { ...leaveModalProps } />
+			</StepContainerV2CheckoutFixer>
+		</SubmitButtonSlotContext.Provider>
 	);
 }
 
