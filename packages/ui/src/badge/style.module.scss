@@ -17,11 +17,6 @@ $badge-colors: (
 	background-color: color-mix(in srgb, colors.$white 90%, var(--base-color));
 	color: color-mix(in srgb, colors.$black 50%, var(--base-color));
 
-	@include ui-mixins.when-dark-theme {
-		background-color: color-mix(in srgb, theme.$components-color-background 90%, var(--base-color));
-		color: color-mix(in srgb, theme.$components-color-foreground 50%, var(--base-color));
-	}
-
 	padding: 0 variables.$grid-unit-10;
 	min-height: variables.$grid-unit-30;
 	max-width: 100%;
@@ -53,6 +48,11 @@ $badge-colors: (
 	@each $type, $color in $badge-colors {
 		&.is-#{$type} {
 			--base-color: #{$color};
+
+			@include ui-mixins.when-dark-theme {
+				background-color: color-mix(in srgb, theme.$components-color-background 90%, var(--base-color));
+				color: color-mix(in srgb, theme.$components-color-foreground 50%, var(--base-color));
+			}
 		}
 	}
 }

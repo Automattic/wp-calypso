@@ -1,7 +1,8 @@
-import { Context } from '@automattic/calypso-router';
+import page, { Context } from '@automattic/calypso-router';
 import { ReactElement } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import { trackPageLoad, trackScrollPage } from 'calypso/reader/controller-helper';
+import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 
 interface UserProfileContext extends Context {
 	params: {
@@ -13,6 +14,17 @@ interface UserProfileContext extends Context {
 }
 
 const analyticsPageTitle = 'Reader';
+
+export function redirectMeToCurrentUser( context: Context, next: () => void ): void {
+	const currentUserName = getCurrentUserName( context.store.getState() );
+	if ( currentUserName ) {
+		page.redirect(
+			context.path.replace( '/reader/users/me', `/reader/users/${ currentUserName }` )
+		);
+		return;
+	}
+	next();
+}
 
 export function userProfile( ctx: Context, next: () => void ): void {
 	const context = ctx as UserProfileContext;

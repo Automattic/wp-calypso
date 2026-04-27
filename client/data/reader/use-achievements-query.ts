@@ -1,10 +1,10 @@
-import { trophiesQuery } from '@automattic/api-queries';
+import { readAchievementsQuery } from '@automattic/api-queries';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 
-export function useTrophiesQuery() {
+export function useAchievementsQuery( userIdOrLogin: number | string ) {
 	const query = useInfiniteQuery( {
-		...trophiesQuery(),
+		...readAchievementsQuery( userIdOrLogin ),
 		staleTime: 10 * 60 * 1000, // 10 minutes
 	} );
 
@@ -17,7 +17,7 @@ export function useTrophiesQuery() {
 	}, [ hasNextPage, isFetchingNextPage, isError, fetchNextPage ] );
 
 	return {
-		trophies: query.data?.pages.flatMap( ( p ) => p.trophies ?? [] ) ?? [],
+		achievements: query.data?.pages.flatMap( ( p ) => p.achievements ?? [] ) ?? [],
 		found: query.data?.pages[ 0 ]?.found ?? 0,
 		isLoading: ( query.isLoading || hasNextPage ) && ! isError,
 		isError,

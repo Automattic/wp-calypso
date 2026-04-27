@@ -39,7 +39,7 @@ import {
 	listListing,
 } from './list/controller';
 import { onThisDay } from './on-this-day/controller';
-import { userProfile } from './user-profile/controller';
+import { redirectMeToCurrentUser, userProfile } from './user-profile/controller';
 
 function forceTeamA8C( context: Context, next: () => void ): void {
 	context.params.team = 'a8c';
@@ -134,6 +134,12 @@ export default async function (): Promise< void > {
 		userProfile,
 		makeLayout,
 		clientRender
+	);
+
+	page(
+		[ '/reader/users/me', '/reader/users/me/:view' ],
+		redirectLoggedOutToSignup,
+		redirectMeToCurrentUser
 	);
 
 	page(

@@ -24,7 +24,7 @@ permissions:
 jobs:
   review:
     if: github.event.pull_request.draft == false
-    uses: ./.github/workflows/pr-review.yml
+    uses: Automattic/wp-calypso/.github/workflows/pr-review.yml@trunk
     with:
       area: a4a
     secrets:

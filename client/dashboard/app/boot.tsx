@@ -25,6 +25,7 @@ import './style.scss';
 import 'calypso/layout/masterbar/style.scss';
 import './interim-omnibar/style.scss';
 import './omnibar/style.scss';
+import '@automattic/omnibar/style.scss';
 
 function boot( config: AppConfig ) {
 	if ( handleOAuthCallback() ) {

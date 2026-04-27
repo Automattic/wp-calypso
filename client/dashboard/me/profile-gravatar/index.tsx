@@ -21,7 +21,6 @@ import { Card, CardBody } from '../../components/card';
 import { SectionHeader } from '../../components/section-header';
 import EditGravatar from './edit-gravatar';
 import GravatarLogo from './gravatar-logo';
-import './style.scss';
 import type { UserSettings } from '@automattic/api-core';
 import type { Field, Form } from '@wordpress/dataviews';
 
