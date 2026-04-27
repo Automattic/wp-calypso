@@ -11,10 +11,8 @@ import { createReduxStore, register, select } from '@wordpress/data';
  * State interface
  */
 export interface VideoStudioState {
-	// Selected style preset for video generation (e.g. cinematic, documentary, aerial).
+	// Selected style preset for video generation (e.g. informative, promotional).
 	selectedStyle: string | null;
-	// Selected tone preset for video generation (e.g. informative, promotional).
-	selectedTone: string | null;
 	// URL of the most recently generated video clip — populated when the
 	// wpcom/generate-video-for-studio tool returns a successful upload.
 	currentVideoUrl: string | null;
@@ -28,24 +26,18 @@ type SetSelectedStyleAction = {
 	payload: string | null;
 };
 
-type SetSelectedToneAction = {
-	type: 'SET_SELECTED_TONE';
-	payload: string | null;
-};
-
 type SetCurrentVideoUrlAction = {
 	type: 'SET_CURRENT_VIDEO_URL';
 	payload: string | null;
 };
 
-type VideoStudioAction = SetSelectedStyleAction | SetSelectedToneAction | SetCurrentVideoUrlAction;
+type VideoStudioAction = SetSelectedStyleAction | SetCurrentVideoUrlAction;
 
 /**
  * Initial state for the video studio store
  */
 const initialState: VideoStudioState = {
 	selectedStyle: null,
-	selectedTone: null,
 	currentVideoUrl: null,
 };
 
@@ -66,12 +58,6 @@ const reducer = (
 				selectedStyle: action.payload,
 			};
 
-		case 'SET_SELECTED_TONE':
-			return {
-				...state,
-				selectedTone: action.payload,
-			};
-
 		case 'SET_CURRENT_VIDEO_URL':
 			return {
 				...state,
@@ -89,7 +75,6 @@ const reducer = (
  */
 export interface VideoStudioActions {
 	setSelectedStyle: ( style: string | null ) => Promise< SetSelectedStyleAction >;
-	setSelectedTone: ( tone: string | null ) => Promise< SetSelectedToneAction >;
 	setCurrentVideoUrl: ( url: string | null ) => Promise< SetCurrentVideoUrlAction >;
 }
 
@@ -101,13 +86,6 @@ const actions = {
 		return {
 			type: 'SET_SELECTED_STYLE',
 			payload: style,
-		};
-	},
-
-	setSelectedTone( tone: string | null ): SetSelectedToneAction {
-		return {
-			type: 'SET_SELECTED_TONE',
-			payload: tone,
 		};
 	},
 
@@ -124,7 +102,6 @@ const actions = {
  */
 export interface VideoStudioSelectors {
 	getSelectedStyle: ( state: VideoStudioState ) => string | null;
-	getSelectedTone: ( state: VideoStudioState ) => string | null;
 	getCurrentVideoUrl: ( state: VideoStudioState ) => string | null;
 }
 
@@ -134,10 +111,6 @@ export interface VideoStudioSelectors {
 const selectors = {
 	getSelectedStyle( state: VideoStudioState ): string | null {
 		return state.selectedStyle;
-	},
-
-	getSelectedTone( state: VideoStudioState ): string | null {
-		return state.selectedTone;
 	},
 
 	getCurrentVideoUrl( state: VideoStudioState ): string | null {

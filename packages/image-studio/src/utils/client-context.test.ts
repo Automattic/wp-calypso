@@ -45,7 +45,6 @@ interface ImageStoreSelectors {
 
 interface VideoStoreSelectors {
 	getSelectedStyle?: () => string | null;
-	getSelectedTone?: () => string | null;
 	getCurrentVideoUrl?: () => string | null;
 }
 
@@ -94,7 +93,6 @@ describe( 'getClientContext', () => {
 			},
 			videoStudio: {
 				getSelectedStyle: () => null,
-				getSelectedTone: () => null,
 			},
 		} );
 
@@ -123,8 +121,7 @@ describe( 'getClientContext', () => {
 				getBlockType: () => null,
 			},
 			videoStudio: {
-				getSelectedStyle: () => 'aerial',
-				getSelectedTone: () => 'promotional',
+				getSelectedStyle: () => 'promotional',
 			},
 		} );
 
@@ -135,12 +132,13 @@ describe( 'getClientContext', () => {
 		expect( ctx.videoStudio ).toMatchObject( {
 			isOpen: true,
 			id: null,
-			tone: 'promotional',
-			style: 'aerial',
+			style: 'promotional',
 			entryPoint: 'post_editor_feature_clip',
 		} );
 		// The server pins 9:16; aspect_ratio is not part of the videoStudio payload shape.
 		expect( ctx.videoStudio ).not.toHaveProperty( 'aspect_ratio' );
+		// Tone has been collapsed into style; the videoStudio payload no longer carries it.
+		expect( ctx.videoStudio ).not.toHaveProperty( 'tone' );
 	} );
 
 	it( 'falls back to wp-admin environment when studio is closed', () => {
@@ -155,7 +153,6 @@ describe( 'getClientContext', () => {
 			},
 			videoStudio: {
 				getSelectedStyle: () => null,
-				getSelectedTone: () => null,
 			},
 		} );
 

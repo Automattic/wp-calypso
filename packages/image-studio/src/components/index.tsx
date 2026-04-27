@@ -46,7 +46,6 @@ import LoadingSpinner from './loading-spinner';
 import { ImageStudioNotice } from './notice';
 import { ImageStudioAltTextSidebar } from './sidebar';
 import { StylePicker } from './style-picker';
-import { TonePicker } from './tone-picker';
 import './style.scss';
 
 function ImageStudioAgentChat( {
@@ -204,10 +203,7 @@ function ImageStudioAgentChat( {
 					<AgentUI.Input disabled={ isStopDisabled ? true : undefined } />
 					<div className="image-studio-modal__input-toolbar">
 						{ mode === ImageStudioMode.Generate && isVideoMode && (
-							<>
-								<TonePicker disabled={ isProcessing } mode={ mode } />
-								<StylePicker disabled={ isProcessing } mode={ mode } variant="video" />
-							</>
+							<StylePicker disabled={ isProcessing } mode={ mode } variant="video" />
 						) }
 						{ mode === ImageStudioMode.Generate && ! isVideoMode && (
 							<>

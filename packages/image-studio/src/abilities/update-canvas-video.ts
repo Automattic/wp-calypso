@@ -38,7 +38,6 @@ interface UpdateCanvasVideoAbilityInput {
 	url?: string | null;
 	attachmentId?: string | number | null;
 	durationSeconds?: number | null;
-	tone?: string | null;
 	style?: string | null;
 }
 
@@ -85,10 +84,6 @@ export async function registerUpdateCanvasVideoAbility(): Promise< void > {
 					durationSeconds: {
 						type: 'number',
 						description: 'Optional duration of the generated clip in seconds.',
-					},
-					tone: {
-						type: 'string',
-						description: 'Optional tone preset used for generation.',
 					},
 					style: {
 						type: 'string',

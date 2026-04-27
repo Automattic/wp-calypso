@@ -18,12 +18,8 @@ import origamiPreview from '../../assets/origami.webp';
 import photographicPreview from '../../assets/photographic.webp';
 import pixelArtPreview from '../../assets/pixel-art.webp';
 import texturePreview from '../../assets/texture.webp';
-import aerialVideoPreview from '../../assets/video/styles/aerial.webp';
-import cinematicVideoPreview from '../../assets/video/styles/cinematic.webp';
-import documentaryVideoPreview from '../../assets/video/styles/documentary.webp';
-import dreamyVideoPreview from '../../assets/video/styles/dreamy.webp';
-import energeticVideoPreview from '../../assets/video/styles/energetic.webp';
-import macroVideoPreview from '../../assets/video/styles/macro.webp';
+import informativePreview from '../../assets/video/styles/informative.webp';
+import promotionalPreview from '../../assets/video/styles/promotional.webp';
 import vividPreview from '../../assets/vivid.webp';
 import { store as imageStudioStore } from '../../store';
 import { store as videoStudioStore } from '../../stores/video-studio';
@@ -126,34 +122,14 @@ export const STYLE_OPTIONS = [
 
 export const VIDEO_STYLE_OPTIONS = [
 	{
-		label: __( 'Cinematic', __i18n_text_domain__ ),
-		value: 'cinematic',
-		preview: cinematicVideoPreview,
+		label: __( 'Informative', __i18n_text_domain__ ),
+		value: 'informative',
+		preview: informativePreview,
 	},
 	{
-		label: __( 'Documentary', __i18n_text_domain__ ),
-		value: 'documentary',
-		preview: documentaryVideoPreview,
-	},
-	{
-		label: __( 'Aerial', __i18n_text_domain__ ),
-		value: 'aerial',
-		preview: aerialVideoPreview,
-	},
-	{
-		label: __( 'Macro', __i18n_text_domain__ ),
-		value: 'macro',
-		preview: macroVideoPreview,
-	},
-	{
-		label: __( 'Energetic', __i18n_text_domain__ ),
-		value: 'energetic',
-		preview: energeticVideoPreview,
-	},
-	{
-		label: __( 'Dreamy', __i18n_text_domain__ ),
-		value: 'dreamy',
-		preview: dreamyVideoPreview,
+		label: __( 'Promotional', __i18n_text_domain__ ),
+		value: 'promotional',
+		preview: promotionalPreview,
 	},
 ];
 

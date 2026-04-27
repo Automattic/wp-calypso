@@ -32,7 +32,6 @@ export interface ImageStudioData {
 export interface VideoStudioData {
 	isOpen: boolean;
 	id: number | null;
-	tone?: string;
 	style?: string;
 	metadata: ImageStudioMetadata;
 	entryPoint: ImageStudioEntryPoint | null;
@@ -202,7 +201,7 @@ interface DetectedEntity {
  * Detect and extract studio entity context when Image Studio is open.
  *
  * When the entry point is the post-editor "Generate Feature Clip" panel, we emit a
- * `videoStudio` payload (with `tone` + `style`); otherwise we emit `imageStudio`
+ * `videoStudio` payload (with `style`); otherwise we emit `imageStudio`
  * (with `style` + `aspect_ratio`). The two are mutually exclusive.
  *
  * Note: We intentionally do NOT send the URL in context to prevent agent retry loops.
@@ -228,10 +227,9 @@ function detectImageEntity(): DetectedEntity | null {
 
 		const isVideo = entryPoint === ImageStudioEntryPoint.PostEditorFeatureClip;
 
-		// Tone + video-mode style live in the dedicated video-studio store.
+		// Video-mode style lives in the dedicated video-studio store.
 		const videoStudioSelect = select( videoStudioStore );
 		const videoSelectedStyle = videoStudioSelect?.getSelectedStyle?.() ?? null;
-		const selectedTone = videoStudioSelect?.getSelectedTone?.() ?? null;
 
 		// Try to get attachment metadata from core store
 		// TODO: remove cast when @wordpress/core-data exports store types
@@ -260,10 +258,6 @@ function detectImageEntity(): DetectedEntity | null {
 				blockType,
 				metadata,
 			};
-
-			if ( selectedTone ) {
-				videoStudio.tone = selectedTone;
-			}
 
 			if ( videoSelectedStyle && videoSelectedStyle !== 'none' ) {
 				videoStudio.style = videoSelectedStyle;

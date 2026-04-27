@@ -76,8 +76,7 @@ Output ONLY valid JSON matching this exact structure (no markdown, no explanatio
 Guidelines for each suggestion:
 - label: 3-5 word button text describing the video subject
 - prompt: 1-3 sentences. Concrete visual subject + one sensory detail + a hint of motion. Read like an excellently crafted user request.
-- NEVER include cinematography terms (cinematic, documentary, aerial, macro, drone, slow-motion, time-lapse) — those are controlled separately by the user's style picker.
-- NEVER include tone words (informative, promotional, educational, salesy) — controlled separately by the tone picker.
+- NEVER include cinematography terms (cinematic, documentary, aerial, macro, drone, slow-motion, time-lapse) or tone words (informative, promotional, educational, salesy) — those are controlled separately by the user's style picker.
 - NEVER include camera/lens jargon, on-screen text instructions, captions, or quoted post content.
 - NEVER include people, faces, or hands.
 - Vary the suggestions: different angles into the same content (different subjects, different sensory hooks, different actions).

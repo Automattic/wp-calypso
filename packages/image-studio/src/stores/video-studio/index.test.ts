@@ -34,7 +34,6 @@ describe( 'Video Studio Store', () => {
 
 			expect( state ).toEqual( {
 				selectedStyle: null,
-				selectedTone: null,
 				currentVideoUrl: null,
 			} );
 		} );
@@ -42,19 +41,10 @@ describe( 'Video Studio Store', () => {
 
 	describe( 'Actions', () => {
 		it( 'setSelectedStyle creates action with payload', () => {
-			const action = actions.setSelectedStyle( 'cinematic' );
+			const action = actions.setSelectedStyle( 'informative' );
 
 			expect( action ).toEqual( {
 				type: 'SET_SELECTED_STYLE',
-				payload: 'cinematic',
-			} );
-		} );
-
-		it( 'setSelectedTone creates action with payload', () => {
-			const action = actions.setSelectedTone( 'informative' );
-
-			expect( action ).toEqual( {
-				type: 'SET_SELECTED_TONE',
 				payload: 'informative',
 			} );
 		} );
@@ -70,26 +60,16 @@ describe( 'Video Studio Store', () => {
 
 		it( 'allows null payloads to clear values', () => {
 			expect( actions.setSelectedStyle( null ).payload ).toBeNull();
-			expect( actions.setSelectedTone( null ).payload ).toBeNull();
 			expect( actions.setCurrentVideoUrl( null ).payload ).toBeNull();
 		} );
 	} );
 
 	describe( 'Reducer', () => {
 		it( 'SET_SELECTED_STYLE updates selectedStyle', () => {
-			const state = reducer( getInitialState(), actions.setSelectedStyle( 'documentary' ) );
+			const state = reducer( getInitialState(), actions.setSelectedStyle( 'promotional' ) );
 
-			expect( state.selectedStyle ).toBe( 'documentary' );
+			expect( state.selectedStyle ).toBe( 'promotional' );
 			// Other slices untouched
-			expect( state.selectedTone ).toBeNull();
-			expect( state.currentVideoUrl ).toBeNull();
-		} );
-
-		it( 'SET_SELECTED_TONE updates selectedTone', () => {
-			const state = reducer( getInitialState(), actions.setSelectedTone( 'promotional' ) );
-
-			expect( state.selectedTone ).toBe( 'promotional' );
-			expect( state.selectedStyle ).toBeNull();
 			expect( state.currentVideoUrl ).toBeNull();
 		} );
 
@@ -101,7 +81,6 @@ describe( 'Video Studio Store', () => {
 
 			expect( state.currentVideoUrl ).toBe( 'https://example.com/clip.mp4' );
 			expect( state.selectedStyle ).toBeNull();
-			expect( state.selectedTone ).toBeNull();
 		} );
 
 		it( 'returns the same reference for unknown action types', () => {
@@ -112,19 +91,17 @@ describe( 'Video Studio Store', () => {
 		} );
 
 		it( 'preserves existing slices when updating one slice', () => {
-			let state = reducer( getInitialState(), actions.setSelectedStyle( 'aerial' ) );
-			state = reducer( state, actions.setSelectedTone( 'informative' ) );
+			let state = reducer( getInitialState(), actions.setSelectedStyle( 'informative' ) );
 			state = reducer( state, actions.setCurrentVideoUrl( 'https://example.com/clip.mp4' ) );
 
 			expect( state ).toEqual( {
-				selectedStyle: 'aerial',
-				selectedTone: 'informative',
+				selectedStyle: 'informative',
 				currentVideoUrl: 'https://example.com/clip.mp4',
 			} );
 		} );
 
 		it( 'allows clearing values back to null', () => {
-			let state = reducer( getInitialState(), actions.setSelectedStyle( 'aerial' ) );
+			let state = reducer( getInitialState(), actions.setSelectedStyle( 'informative' ) );
 			state = reducer( state, actions.setSelectedStyle( null ) );
 
 			expect( state.selectedStyle ).toBeNull();
@@ -133,13 +110,8 @@ describe( 'Video Studio Store', () => {
 
 	describe( 'Selectors', () => {
 		it( 'getSelectedStyle returns the selected style', () => {
-			const state: VideoStudioState = { ...getInitialState(), selectedStyle: 'cinematic' };
-			expect( selectors.getSelectedStyle( state ) ).toBe( 'cinematic' );
-		} );
-
-		it( 'getSelectedTone returns the selected tone', () => {
-			const state: VideoStudioState = { ...getInitialState(), selectedTone: 'informative' };
-			expect( selectors.getSelectedTone( state ) ).toBe( 'informative' );
+			const state: VideoStudioState = { ...getInitialState(), selectedStyle: 'informative' };
+			expect( selectors.getSelectedStyle( state ) ).toBe( 'informative' );
 		} );
 
 		it( 'getCurrentVideoUrl returns the current video URL', () => {
@@ -153,7 +125,6 @@ describe( 'Video Studio Store', () => {
 		it( 'all selectors return null on the initial state', () => {
 			const state = getInitialState();
 			expect( selectors.getSelectedStyle( state ) ).toBeNull();
-			expect( selectors.getSelectedTone( state ) ).toBeNull();
 			expect( selectors.getCurrentVideoUrl( state ) ).toBeNull();
 		} );
 	} );
