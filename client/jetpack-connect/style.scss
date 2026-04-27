@@ -42,6 +42,11 @@ body:not( .is-jetpack-sso-partner-branded--woo ) {
 	max-width: 426px;
 }
 
+.is-jetpack-connector-flow,
+.layout.is-section-jetpack-connect.is-jetpack-connector-flow {
+	@include jetpack-connector-wpcom-colors();
+}
+
 .is-section-jetpack-connect,
 .is-section-purchase-product {
 	.layout__content {
@@ -294,6 +299,11 @@ body:not( .is-jetpack-sso-partner-branded--woo ) {
 		margin-bottom: 24px;
 	}
 
+	.connect-screen-brand-header__logo-image {
+		width: 58px;
+		height: auto;
+	}
+
 	// WP.com brand serif for the main title
 	.connect-screen-brand-header__title {
 		font-family: $brand-serif;
@@ -315,35 +325,24 @@ body:not( .is-jetpack-sso-partner-branded--woo ) {
 		color: var( --studio-gray-50, #646970 );
 	}
 
-	// WP.com blue primary buttons
 	.button.is-primary,
 	.components-button.is-primary {
-		background-color: var( --studio-wordpress-blue );
-		border-color: var( --studio-wordpress-blue );
 		font-weight: 500;
 		letter-spacing: 0.32px;
-
-		&:hover,
-		&:focus {
-			background-color: var( --studio-wordpress-blue-60 );
-			border-color: var( --studio-wordpress-blue-60 );
-		}
 	}
 
 	// WP.com blue input focus
 	input:focus {
-		border-color: var( --studio-wordpress-blue );
-		box-shadow: 0 0 0 2px var( --studio-wordpress-blue-10, rgba( 56, 88, 233, 0.15 ) );
+		border-color: var( --color-accent );
+		box-shadow: 0 0 0 2px var( --color-accent-light );
 	}
 
-	// Override Jetpack green switch-account link
 	.jetpack-connect__switch-account-link {
-		color: var( --studio-wordpress-blue );
+		color: var( --color-accent );
 	}
 
-	// Links should use WP.com blue
 	.connect-screen-action-buttons__tertiary.components-button.is-link {
-		color: var( --studio-wordpress-blue );
+		color: var( --color-accent );
 	}
 
 	@media screen and ( max-width: $break-mobile ) {

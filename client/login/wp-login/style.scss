@@ -85,7 +85,8 @@ body.is-section-login {
 }
 
 .layout.is-jetpack-connector-login {
-	// WP.com body font (override Jetpack typography)
+	@include jetpack-connector-wpcom-colors();
+
 	.wp-login__main,
 	.wp-login__container,
 	.login__form,
@@ -93,45 +94,29 @@ body.is-section-login {
 		font-family: $sans;
 	}
 
-	// WP.com brand serif for the heading
 	.wp-login__one-login-layout-heading-text {
 		font-family: $brand-serif;
 		color: var( --color-neutral-100 );
 	}
 
-	// WP.com blue primary buttons
-	.button.is-primary,
-	.components-button.is-primary {
-		background-color: var( --studio-wordpress-blue );
-		border-color: var( --studio-wordpress-blue );
-
-		&:hover,
-		&:focus {
-			background-color: var( --studio-wordpress-blue-60 );
-			border-color: var( --studio-wordpress-blue-60 );
-		}
-	}
-
-	// WP.com blue input focus
 	.login__form input,
 	.logged-out-form input {
 		&:not( .form-text-input-core-styles ) {
 			&:focus {
-				border-color: var( --studio-wordpress-blue );
-				box-shadow: 0 0 0 2px var( --studio-wordpress-blue-10, rgba( 56, 88, 233, 0.15 ) );
+				border-color: var( --color-accent );
+				box-shadow: 0 0 0 2px var( --color-accent-light );
 			}
 		}
 	}
 
-	// WP.com blue links
 	.login__form-terms a,
 	.logged-out-form__link-item {
-		color: var( --studio-wordpress-blue );
+		color: var( --color-accent );
 	}
 
 	.wp-login__connector-logo {
-		max-height: 40px;
-		width: auto;
+		width: 58px;
+		height: auto;
 	}
 }
 
