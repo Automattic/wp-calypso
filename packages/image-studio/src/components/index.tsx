@@ -67,9 +67,18 @@ function ImageStudioAgentChat( {
 		return select( imageStudioStore ).getIsAnnotationSaving();
 	}, [] );
 
-	const entryPoint = useSelect( ( select ) => {
-		return select( imageStudioStore ).getEntryPoint();
-	}, [] );
+	// Tolerate an older registered image-studio store (multi-bundle case): if
+	// getEntryPoint isn't on the winning registration, fall back to null and
+	// route through the pre-existing image branch.
+	const entryPoint = useSelect(
+		( select ) =>
+			(
+				select( imageStudioStore ) as unknown as {
+					getEntryPoint?: () => ImageStudioEntryPoint | null;
+				}
+			 ).getEntryPoint?.() ?? null,
+		[]
+	);
 
 	const isVideoMode = entryPoint === ImageStudioEntryPoint.PostEditorFeatureClip;
 
