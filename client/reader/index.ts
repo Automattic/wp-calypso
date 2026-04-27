@@ -1,3 +1,4 @@
+import './style.scss';
 import config from '@automattic/calypso-config';
 import page, { Context } from '@automattic/calypso-router';
 import { getAnyLanguageRouteParam, getLanguageRouteParam } from '@automattic/i18n-utils';
@@ -29,10 +30,16 @@ import {
 	setBeforePrimary,
 	loadNewSubscriptionPage,
 } from './controller';
+import {
+	createList,
+	deleteList,
+	editList,
+	editListItems,
+	exportList,
+	listListing,
+} from './list/controller';
 import { onThisDay } from './on-this-day/controller';
 import { userProfile } from './user-profile/controller';
-
-import './style.scss';
 
 function forceTeamA8C( context: Context, next: () => void ): void {
 	context.params.team = 'a8c';
@@ -141,6 +148,53 @@ export default async function (): Promise< void > {
 	);
 
 	page( '/reader/feeds/lookup/*', redirectLoggedOutToSignup, feedLookup );
+
+	// Lists
+	page(
+		'/reader/list/:user/:list/edit/items',
+		sidebar,
+		setBeforePrimary,
+		editListItems,
+		makeLayout,
+		clientRender
+	);
+	page(
+		'/reader/list/:user/:list/edit',
+		sidebar,
+		setBeforePrimary,
+		editList,
+		makeLayout,
+		clientRender
+	);
+
+	page( '/reader/list/new', sidebar, setBeforePrimary, createList, makeLayout, clientRender );
+
+	page(
+		'/reader/list/:user/:list/export',
+		sidebar,
+		setBeforePrimary,
+		exportList,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/reader/list/:user/:list/delete',
+		sidebar,
+		setBeforePrimary,
+		deleteList,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		[ '/reader/list/:user/:list', '/reader/list/:user/:list/:view' ],
+		sidebar,
+		setBeforePrimary,
+		listListing,
+		makeLayout,
+		clientRender
+	);
 
 	// Automattic Employee Posts
 	page(

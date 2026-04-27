@@ -45,7 +45,7 @@ export const UserLists = ( {
 
 	if ( isLoading || ! hasRequested ) {
 		return (
-			<div className="user-profile__lists-loader">
+			<div className="user-profile__loader">
 				<Spinner /> { translate( 'Loading lists' ) }...
 			</div>
 		);

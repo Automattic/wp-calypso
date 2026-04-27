@@ -75,7 +75,7 @@ const renderReaderSiteSubscription = (
 describe( 'ReaderSiteSubscription', () => {
 	// Tests that the component renders with default props and no errors
 	it( 'should render with default props and no errors', () => {
-		const date = Intl.DateTimeFormat( undefined, { dateStyle: 'medium' } ).format(
+		const date = Intl.DateTimeFormat( 'en', { dateStyle: 'medium' } ).format(
 			new Date( '2023-01-01' )
 		);
 

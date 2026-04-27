@@ -254,6 +254,11 @@ export class FullPostView extends Component {
 			return;
 		}
 
+		// Don't handle keyboard shortcuts when focus is inside the popover.
+		if ( event.target.closest?.( '.components-popover' ) ) {
+			return;
+		}
+
 		if ( event?.metaKey || event?.ctrlKey ) {
 			// avoid conflicting with the command palette shortcut cmd+k
 			return;

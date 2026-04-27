@@ -497,12 +497,6 @@ const sections = [
 	},
 	{
 		name: 'reader',
-		paths: [ '/reader/list' ],
-		module: 'calypso/reader/list',
-		group: 'reader',
-	},
-	{
-		name: 'reader',
 		paths: [ '/reader/conversations' ],
 		module: 'calypso/reader/conversations',
 		group: 'reader',
