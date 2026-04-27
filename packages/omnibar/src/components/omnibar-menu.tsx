@@ -1,7 +1,8 @@
 import { Button, DropdownMenu, MenuGroup, MenuItem } from '@wordpress/components';
+import { OmnibarNodeContent } from './omnibar-node';
 import type { OmnibarNode } from '../types';
 
-function OmnibarDropdownContent( { children }: { children: OmnibarNode[] } ) {
+function OmnibarDropdownContent( { nodes }: { nodes: OmnibarNode[] } ) {
 	const handleClick = ( href?: string ) => () => {
 		if ( href ) {
 			window.location.href = href;
@@ -11,11 +12,11 @@ function OmnibarDropdownContent( { children }: { children: OmnibarNode[] } ) {
 	const ungroupedItems: OmnibarNode[] = [];
 	const groups: OmnibarNode[] = [];
 
-	for ( const child of children ) {
-		if ( child.group ) {
-			groups.push( child );
+	for ( const node of nodes ) {
+		if ( node.group ) {
+			groups.push( node );
 		} else {
-			ungroupedItems.push( child );
+			ungroupedItems.push( node );
 		}
 	}
 
@@ -25,7 +26,7 @@ function OmnibarDropdownContent( { children }: { children: OmnibarNode[] } ) {
 				<MenuGroup>
 					{ ungroupedItems.map( ( item ) => (
 						<MenuItem key={ item.id } onClick={ handleClick( item.href ) }>
-							{ item.title }
+							<OmnibarNodeContent node={ item } />
 						</MenuItem>
 					) ) }
 				</MenuGroup>
@@ -34,7 +35,7 @@ function OmnibarDropdownContent( { children }: { children: OmnibarNode[] } ) {
 				<MenuGroup key={ group.id } label={ group.title }>
 					{ ( group.children || [] ).map( ( item ) => (
 						<MenuItem key={ item.id } onClick={ handleClick( item.href ) }>
-							{ item.title }
+							<OmnibarNodeContent node={ item } />
 						</MenuItem>
 					) ) }
 				</MenuGroup>
@@ -43,11 +44,11 @@ function OmnibarDropdownContent( { children }: { children: OmnibarNode[] } ) {
 	);
 }
 
-export function OmnibarItem( { node, content }: { node: OmnibarNode; content: React.ReactNode } ) {
+export function OmnibarMenu( { node }: { node: OmnibarNode } ) {
 	if ( ! node.children ) {
 		return (
-			<Button className="omnibar__item" href={ node.href } label={ node.title }>
-				{ content }
+			<Button className="omnibar__menu" href={ node.href } label={ node.title }>
+				<OmnibarNodeContent node={ node } />
 			</Button>
 		);
 	}
@@ -59,11 +60,11 @@ export function OmnibarItem( { node, content }: { node: OmnibarNode; content: Re
 			label={ node.title }
 			popoverProps={ { className: 'omnibar__popover' } }
 			toggleProps={ {
-				className: 'omnibar__item',
-				children: content,
+				className: 'omnibar__menu',
+				children: <OmnibarNodeContent node={ node } />,
 			} }
 		>
-			{ () => <OmnibarDropdownContent children={ node.children || [] } /> }
+			{ () => <OmnibarDropdownContent nodes={ node.children ?? [] } /> }
 		</DropdownMenu>
 	);
 }

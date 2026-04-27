@@ -1,3 +1,4 @@
+import { isPlan } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
@@ -28,8 +29,9 @@ const AtomicRevertChanges = ( {
 	const translate = useTranslate();
 	const [ isConfirmed, setIsConfirmed ] = useState( false );
 
-	// Only show if there's an atomic transfer
-	if ( ! atomicTransfer?.created_at ) {
+	// Only show for plan cancellations on Atomic sites — removing a plugin or
+	// domain on an Atomic site does not trigger a site revert.
+	if ( ! atomicTransfer?.created_at || ! isPlan( purchase ) ) {
 		return null;
 	}
 

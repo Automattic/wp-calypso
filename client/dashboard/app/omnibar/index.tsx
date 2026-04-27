@@ -5,13 +5,24 @@ import {
 	siteAdminBarQuery,
 	siteByIdQuery,
 } from '@automattic/api-queries';
-import { Omnibar, buildOmnibarNodesFromAdminBarNodes } from '@automattic/omnibar';
+import { AdminBarNode, Omnibar, buildOmnibarNodesFromAdminBarNodes } from '@automattic/omnibar';
 import { QueryClientProvider, useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { hydrateRoot } from 'react-dom/client';
 import SiteIcon from '../../components/site-icon';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { OmnibarHomeIcon } from './home';
+
+const UNSUPPORTED_DOTCOM_NODE_IDS = new Set( [
+	'site-plan',
+	'site-plan-badge',
+	'site-status-badge',
+	'my-wpcom-account',
+] );
+
+function removeUnsupportedDotcomNodes( nodes: AdminBarNode[] ) {
+	return nodes.filter( ( node ) => ! UNSUPPORTED_DOTCOM_NODE_IDS.has( node.id ) );
+}
 
 function OmnibarContainer() {
 	const { data: siteId } = useQuery( omnibarSiteIdQuery() );
@@ -28,7 +39,7 @@ function OmnibarContainer() {
 
 	const omnibarNodes = useMemo( () => {
 		const nodes = siteNodes ?? dashboardNodes ?? [];
-		const result = buildOmnibarNodesFromAdminBarNodes( nodes );
+		const result = buildOmnibarNodesFromAdminBarNodes( removeUnsupportedDotcomNodes( nodes ) );
 
 		if ( result.home ) {
 			result.home.icon = <OmnibarHomeIcon />;

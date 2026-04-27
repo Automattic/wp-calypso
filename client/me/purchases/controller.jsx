@@ -1,6 +1,8 @@
+import { purchaseCancelFeaturesQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
-import { localize, useTranslate } from 'i18n-calypso';
+import { useQuery } from '@tanstack/react-query';
+import i18n, { localize, useTranslate } from 'i18n-calypso';
 import { Fragment, useCallback } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
@@ -92,13 +94,29 @@ export function addCreditCard( context, next ) {
 }
 
 export function cancelPurchase( context, next ) {
+	const rawIntent = context.query?.intent;
+	const intent = rawIntent === 'cancel' || rawIntent === 'remove' ? rawIntent : null;
+	// Match the browser-tab/page title to the button the user clicked on
+	// Purchase Settings — "Remove" for Remove, "Cancel Purchase" otherwise.
+	const pageTitle =
+		intent === 'remove' ? i18n.translate( 'Remove Purchase' ) : titles.cancelPurchase;
+
+	const purchaseId = parseInt( context.params.purchaseId, 10 );
+
 	const CancelPurchaseWrapper = localize( () => {
+		// React Query owns the cancellation-features fetch: cancel-on-unmount,
+		// cross-purchase cache invalidation, and error state come for free. The
+		// dashboard side uses the same query at
+		// client/dashboard/me/billing-purchases/cancel-purchase/index.tsx.
+		const { data: purchaseCancelFeatures } = useQuery( purchaseCancelFeaturesQuery( purchaseId ) );
 		return (
-			<PurchasesWrapper title={ titles.cancelPurchase }>
+			<PurchasesWrapper title={ pageTitle }>
 				<Main wideLayout className="purchases__cancel">
 					<CancelPurchase
-						purchaseId={ parseInt( context.params.purchaseId, 10 ) }
+						purchaseId={ purchaseId }
 						siteSlug={ context.params.site }
+						intent={ intent }
+						purchaseCancelFeatures={ purchaseCancelFeatures }
 					/>
 				</Main>
 			</PurchasesWrapper>
