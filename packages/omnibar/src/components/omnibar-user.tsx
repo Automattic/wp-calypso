@@ -1,19 +1,21 @@
 import { __experimentalHStack as HStack } from '@wordpress/components';
-import { OmnibarItem } from './omnibar-item';
+import { OmnibarMenu } from './omnibar-menu';
 import type { OmnibarNode } from '../types';
 
 import './omnibar-user.scss';
 
 export function OmnibarUserNode( { node }: { node: OmnibarNode } ) {
 	return (
-		<OmnibarItem
-			node={ node }
-			content={
-				<HStack spacing={ 2 }>
-					<span>{ node.title }</span>
-					{ node.icon && <span className="omnibar__user-avatar">{ node.icon }</span> }
-				</HStack>
-			}
+		<OmnibarMenu
+			node={ {
+				...node,
+				render: ( { title, icon } ) => (
+					<HStack spacing={ 2 }>
+						<span>{ title }</span>
+						{ icon && <span className="omnibar__user-avatar">{ icon }</span> }
+					</HStack>
+				),
+			} }
 		/>
 	);
 }

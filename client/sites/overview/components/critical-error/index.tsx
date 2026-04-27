@@ -1,14 +1,17 @@
+import { HostingFeatures } from '@automattic/api-core';
 import { siteBySlugQuery } from '@automattic/api-queries';
 import { HelpCenter } from '@automattic/data-stores';
 import { useQuery } from '@tanstack/react-query';
 import { Button, Card, CardBody } from '@wordpress/components';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
-import { Icon, envelope, help } from '@wordpress/icons';
+import { Icon, envelope, formatListBullets, help } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { HostingHero } from 'calypso/components/hosting-hero';
+import { hasHostingFeature } from 'calypso/dashboard/utils/site-features';
 import { getJetpackCriticalErrorMessage } from 'calypso/dashboard/utils/site-jetpack-critical-error';
+import { siteTypeSupportsFeature } from 'calypso/dashboard/utils/site-type-feature-support';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { ReactElement, ReactNode } from 'react';
 
@@ -43,6 +46,11 @@ export const CriticalErrorOverview = ( { siteSlug }: { siteSlug: string } ) => {
 		return null;
 	}
 
+	const canAccessPhpLogs =
+		isAdmin &&
+		siteTypeSupportsFeature( site, 'logs' ) &&
+		hasHostingFeature( site, HostingFeatures.LOGS );
+
 	const message = getJetpackCriticalErrorMessage( site );
 
 	return (
@@ -60,6 +68,21 @@ export const CriticalErrorOverview = ( { siteSlug }: { siteSlug: string } ) => {
 							<Item icon={ envelope }>
 								{ translate(
 									'Check your site admin email inbox for instructions to troubleshoot.'
+								) }
+							</Item>
+						) }
+						{ canAccessPhpLogs && (
+							<Item icon={ formatListBullets }>
+								{ createInterpolateElement(
+									// translators: <phpLogsLink/> is a link to the PHP logs page with the text "Review the PHP logs"
+									translate( '<phpLogsLink/> to locate any fatal errors on your site.' ) as string,
+									{
+										phpLogsLink: (
+											<a href={ `/site-logs/${ siteSlug }/php` }>
+												{ translate( 'Review the PHP logs' ) }
+											</a>
+										),
+									}
 								) }
 							</Item>
 						) }
