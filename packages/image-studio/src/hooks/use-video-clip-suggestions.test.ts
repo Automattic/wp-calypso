@@ -15,8 +15,12 @@ let mockCurrentPostId: string | number | null = 42;
 let mockAsyncSuggestions: Array< { id: string; label: string; prompt: string } > = [];
 const mockAbortLoading = jest.fn();
 let mockIsLoadingSuggestions = false;
-let lastAsyncLoaderArgs: { prompt: string; cacheKey?: string | null; enabled?: boolean } | null =
-	null;
+let lastAsyncLoaderArgs: {
+	prompt: string;
+	cacheKey?: string | null;
+	enabled?: boolean;
+	buildSystemPrompt?: ( suggestionPrompt: string, locale: string ) => string;
+} | null = null;
 
 jest.mock( '@wordpress/data', () => ( {
 	useSelect: jest.fn( ( callback: ( selector: ( store: unknown ) => unknown ) => unknown ) =>
@@ -50,6 +54,7 @@ jest.mock( './use-async-suggestions-loader', () => ( {
 		prompt: string;
 		cacheKey?: string | null;
 		enabled?: boolean;
+		buildSystemPrompt?: ( suggestionPrompt: string, locale: string ) => string;
 	} ) => {
 		lastAsyncLoaderArgs = args;
 		return {
@@ -156,6 +161,35 @@ describe( 'useVideoClipSuggestions', () => {
 		);
 		expect( lastAsyncLoaderArgs?.prompt ).not.toContain( '[[client.gutenberg_page' );
 		expect( lastAsyncLoaderArgs?.cacheKey ).toBe( 'feature-clip-post-42' );
+	} );
+
+	it( 'overrides the loader system prompt with video-tuned framing', () => {
+		mockEditedPostContent = '<p>Coastal cliffs at golden hour.</p>';
+
+		renderHook( () =>
+			useVideoClipSuggestions( {
+				registerSuggestions: jest.fn(),
+				clearSuggestions: jest.fn(),
+				messages: [],
+				mode: ImageStudioMode.Generate,
+				entryPoint: ENTRY_POINT_FEATURE_CLIP as never,
+			} )
+		);
+
+		expect( lastAsyncLoaderArgs?.buildSystemPrompt ).toBeDefined();
+
+		const fullSystemPrompt = lastAsyncLoaderArgs!.buildSystemPrompt!(
+			lastAsyncLoaderArgs!.prompt,
+			'en'
+		);
+
+		// Video-tuned framing is present.
+		expect( fullSystemPrompt ).toContain( 'short video-clip prompts' );
+		// The post body is inlined inside the full system prompt.
+		expect( fullSystemPrompt ).toContain( 'Coastal cliffs at golden hour.' );
+		// The default image-oriented framing is NOT present.
+		expect( fullSystemPrompt ).not.toContain( 'image generation prompts based on user input' );
+		expect( fullSystemPrompt ).not.toContain( 'literal vs abstract, photo vs illustration' );
 	} );
 
 	it( 'registers async suggestions once they load', () => {

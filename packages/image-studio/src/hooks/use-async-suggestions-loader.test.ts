@@ -429,5 +429,40 @@ describe( 'useAsyncSuggestionsLoader', () => {
 			expect( promptArg ).toContain( 'Output ONLY valid JSON' );
 			expect( promptArg ).toContain( '"suggestions"' );
 		} );
+
+		it( 'uses the caller-provided buildSystemPrompt when supplied', async () => {
+			mockExtractJsonFromModelResponse.mockReturnValue( {
+				suggestions: [],
+			} );
+
+			const buildSystemPrompt = jest.fn(
+				( suggestionPrompt: string, locale: string ) =>
+					`OVERRIDE FRAMING for locale ${ locale }\n\n${ suggestionPrompt }\n\nDONE.`
+			);
+
+			renderHook( () =>
+				useAsyncSuggestionsLoader( {
+					prompt: 'inner caller prompt body',
+					enabled: true,
+					buildSystemPrompt,
+				} )
+			);
+
+			await waitFor( () => {
+				expect( mockCreateTextMessage ).toHaveBeenCalled();
+			} );
+
+			expect( buildSystemPrompt ).toHaveBeenCalledWith(
+				'inner caller prompt body',
+				expect.any( String )
+			);
+
+			const promptArg = mockCreateTextMessage.mock.calls[ 0 ][ 0 ];
+			expect( promptArg ).toContain( 'OVERRIDE FRAMING for locale' );
+			expect( promptArg ).toContain( 'inner caller prompt body' );
+			// The default image-oriented framing must NOT leak in.
+			expect( promptArg ).not.toContain( 'image generation prompts based on user input' );
+			expect( promptArg ).not.toContain( 'literal vs abstract, photo vs illustration' );
+		} );
 	} );
 } );
