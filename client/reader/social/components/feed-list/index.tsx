@@ -80,7 +80,7 @@ export function SocialFeedList< T >( props: SocialFeedListProps< T > ) {
 	}
 
 	return (
-		<VStack spacing={ 4 } className="social-feed-list">
+		<VStack spacing={ 0 } className="social-feed-list">
 			{ items.map( ( item ) => (
 				<div key={ itemKey( item ) } className="social-feed-list__item">
 					{ renderItem( item ) }

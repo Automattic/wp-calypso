@@ -11,10 +11,14 @@
 	}
 }
 
-.social-post-card {
+// Override the @wordpress/components Card defaults (7px radius + 1px
+// shadow-border) so feed cards stack as a flat scrolling list with a single
+// hairline divider between rows, matching bsky.app's compact density.
+.social-post-card.components-card {
 	box-shadow: none;
 	border-radius: 0;
 	border-bottom: 1px solid var( --studio-gray-5 );
+	background: transparent;
 
 	&:hover {
 		background: var( --studio-gray-0 );
@@ -25,9 +29,11 @@
 	}
 }
 
-.social-post-card--compact {
-	border-bottom: 1px solid var( --studio-gray-5 );
+.social-post-card--compact.components-card {
 	border-radius: 8px;
+	border-bottom: none;
+	box-shadow: 0 0 0 1px var( --studio-gray-5 );
+	background: transparent;
 
 	.components-card__body {
 		padding: 10px 12px;
