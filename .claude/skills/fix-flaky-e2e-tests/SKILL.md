@@ -185,20 +185,15 @@ curl -sS --socks5 localhost:8080 \
   -H "Authorization: Bearer $(cut -d= -f2 ~/.config/teamcity-access-token)" \
   -H "Accept: application/json" \
   "https://teamcity.a8c.com/app/rest/testOccurrences?locator=build:(id:<BUILD_ID>,defaultFilter:false),status:FAILURE,count:100&fields=count,testOccurrence(id,name,muted,currentlyMuted,build(buildType(name)),details)" \
-  | jq '.testOccurrence
-        | map(select(.muted == false and .currentlyMuted == false))
-        | map({
-            build: .build.buildType.name,
-            name,
-            reason: (.details
-              | split("\n")
-              | map(select(test("^(TimeoutError|Error|expect\\(|AssertionError)")))
-              | first // (.details | split("\n") | first)
-              | .[0:160])
-          })'
+  | jq -f .claude/skills/fix-flaky-e2e-tests/tc-failures.jq
 ```
 
-What this does and why each piece:
+The jq logic lives in `.claude/skills/fix-flaky-e2e-tests/tc-failures.jq` rather than inline. Two reasons:
+
+- A multi-line jq script with `|` operators inside the curl pipeline confuses Claude Code's command parser — it sees the jq's internal `|` as extra shell pipeline stages, fails to form a stable allowlist match, and the resulting permission prompt doesn't even offer a "session-allow" option. Keeping the bash command on a single line with `jq -f <file>` sidesteps that.
+- The jq script is easier to read and maintain in its own file, with proper newlines and indentation, than as a heredoc inside a bash snippet.
+
+What `tc-failures.jq` does and why each piece:
 
 - Drops `currentlyInvestigated` and `id` from the `fields=` projection — we no longer filter on investigated (per the project memory), and the occurrence ID isn't used downstream.
 - Filters muted/currentlyMuted occurrences **at the jq layer**. Applying `muted:false` in the TeamCity locator alongside `defaultFilter:false` has given inconsistent results in practice; doing it in jq is reliable and easy to verify from the output.
