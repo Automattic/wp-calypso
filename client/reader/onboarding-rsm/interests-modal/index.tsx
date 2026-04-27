@@ -1,5 +1,4 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { SelectCardCheckboxV2 } from '@automattic/onboarding';
 import {
 	Modal,
 	Button,
@@ -7,11 +6,13 @@ import {
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import clsx from 'clsx';
 import { fixMe } from 'i18n-calypso';
 import React, { useState, useEffect, useMemo } from 'react';
-import { useSelector, useDispatch, useStore } from 'react-redux';
+import { useStore } from 'react-redux';
 import { READER_ONBOARDING_TRACKS_EVENT_PREFIX } from 'calypso/reader/onboarding-rsm/constants';
 import { StepIndicator } from 'calypso/reader/onboarding-rsm/step-indicator';
+import { useSelector, useDispatch } from 'calypso/state';
 import { follow } from 'calypso/state/reader/follows/actions';
 import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
 import { requestFollowTag, requestUnfollowTag } from 'calypso/state/reader/tags/items/actions';
@@ -289,7 +290,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 
 	return (
 		isOpen && (
-			<Modal onRequestClose={ onClose } size="fill" className="interests-modal">
+			<Modal onRequestClose={ onClose } size="large" className="interests-modal">
 				<VStack spacing={ 8 } className="interests-modal__content">
 					<VStack spacing={ 0 }>
 						<h2 className="interests-modal__title">{ __( 'What topics interest you?' ) }</h2>
@@ -339,24 +340,33 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 						</Button>
 					</div>
 
-					{ showAllTopics &&
-						categories.map( ( category ) => (
-							<div key={ category.name } className="interests-modal__topics-section">
-								<h3 className="interests-modal__section-header">{ category.name }</h3>
-								<div className="interests-modal__topics-list">
-									{ category.topics.map( ( topic ) => (
-										<SelectCardCheckboxV2
-											key={ topic.name }
-											onChange={ ( checked ) => handleTopicChange( checked, topic.tag ) }
-											isBusy={ processingTags.has( topic.tag ) }
-											checked={ followedTags.includes( topic.tag ) }
+					{ showAllTopics && (
+						<div
+							className="interests-modal__topics-pills"
+							role="group"
+							aria-label={ __( 'Topics' ) }
+						>
+							{ categories
+								.flatMap( ( category ) => category.topics )
+								.map( ( topic ) => {
+									const checked = followedTags.includes( topic.tag );
+									return (
+										<button
+											key={ topic.tag }
+											type="button"
+											className={ clsx( 'interests-modal__topic-pill', {
+												'is-selected': checked,
+											} ) }
+											aria-pressed={ checked }
+											disabled={ processingTags.has( topic.tag ) }
+											onClick={ () => handleTopicChange( ! checked, topic.tag ) }
 										>
 											{ topic.name }
-										</SelectCardCheckboxV2>
-									) ) }
-								</div>
-							</div>
-						) ) }
+										</button>
+									);
+								} ) }
+						</div>
+					) }
 
 					<div className="reader-onboarding-modal__footer">
 						<HStack justify="space-between" className="reader-onboarding-modal__footer-actions">
