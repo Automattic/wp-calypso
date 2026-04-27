@@ -4,7 +4,7 @@ import AsyncLoad from 'calypso/components/async-load';
 import { TIMELINE_TAB } from './helper';
 
 function ensureAtmosphereEnabled(): boolean {
-	if ( ! isEnabled( 'reader/atmosphere' ) ) {
+	if ( ! isEnabled( 'reader/social' ) ) {
 		page.redirect( '/reader' );
 		return false;
 	}

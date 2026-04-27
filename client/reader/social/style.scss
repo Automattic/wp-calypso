@@ -36,4 +36,15 @@
 	margin: 0;
 	white-space: pre-wrap;
 	line-height: 1.5;
+
+	// When the bio is rendered as sanitized HTML (e.g. Mastodon) it contains
+	// its own <p> elements with default UA margins. Normalize those to a
+	// consistent vertical rhythm matching the plain-text layout above.
+	p {
+		margin: 0;
+
+		& + p {
+			margin-block-start: 0.75em;
+		}
+	}
 }

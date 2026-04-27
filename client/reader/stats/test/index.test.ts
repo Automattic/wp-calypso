@@ -703,6 +703,31 @@ describe( 'reader stats', () => {
 					expected: 'atmosphere_settings',
 					description: 'atmosphere settings for a specific connection',
 				},
+				{
+					url: '/reader/mastodon',
+					expected: 'mastodon_landing',
+					description: 'mastodon landing page',
+				},
+				{
+					url: '/reader/mastodon/connect',
+					expected: 'mastodon_connect',
+					description: 'mastodon connect page',
+				},
+				{
+					url: '/reader/mastodon/7/timeline',
+					expected: 'mastodon_timeline',
+					description: 'mastodon timeline for a specific connection',
+				},
+				{
+					url: '/reader/mastodon/7/profile',
+					expected: 'mastodon_profile',
+					description: 'mastodon profile for a specific connection',
+				},
+				{
+					url: '/reader/mastodon/7/settings',
+					expected: 'mastodon_settings',
+					description: 'mastodon settings for a specific connection',
+				},
 			] as const;
 
 			scenarios.map( ( scenario ) => {

@@ -102,7 +102,7 @@
 		"publicize-preview": true,
 		"purchases/new-payment-methods": true,
 		"reader/achievements": true,
-		"reader/atmosphere": true,
+		"reader/social": true,
 		"reader/full-errors": false,
 		"reader/msd-enabled": true,
 		"reader/saved-posts": true,
