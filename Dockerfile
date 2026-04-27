@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.20
 
 ARG cache_mode=seed
-ARG node_version=22.9.0
+ARG node_version=22.22.2
 ARG cache_seed_image=registry.a8c.com/calypso/cache-seed:latest
 
 ###################
