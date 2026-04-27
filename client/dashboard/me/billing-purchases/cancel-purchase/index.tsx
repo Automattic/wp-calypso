@@ -117,6 +117,12 @@ type TopNoticeArgs = {
 	intent: 'cancel' | 'remove' | null;
 };
 
+/**
+ * How long the cache-subscription guard stays active after a remove mutation,
+ * re-stripping stale server data that still includes the just-deleted purchase.
+ */
+const CACHE_GUARD_DURATION_MS = 15_000;
+
 function renderTopNotice( args: TopNoticeArgs ) {
 	const { surveyShown, showDomainOptionsStep, displayVariant, purchase, intent } = args;
 
@@ -1193,7 +1199,7 @@ function CancelPurchaseInner() {
 			setTimeout( () => {
 				cleanupGuard();
 				queryClient.invalidateQueries( { queryKey: userPurchasesQuery().queryKey } );
-			}, 15_000 );
+			}, CACHE_GUARD_DURATION_MS );
 
 			// 3. Navigate with notice params
 			invokeSurvicateEvent( 'purchaseRemoved' );
