@@ -89,7 +89,7 @@ function ImageStudioAgentChat( {
 	}, [] );
 
 	useImageStudioAgentSync( agentChatProps );
-	useVideoResultSync( agentChatProps?.messages );
+	useVideoResultSync( agentChatProps?.messages, agentConfigProp.agentId );
 
 	const displayMessages = useImageStudioMessageDisplay( agentChatProps?.messages );
 
