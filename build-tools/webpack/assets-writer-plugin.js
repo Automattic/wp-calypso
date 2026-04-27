@@ -34,6 +34,7 @@ Object.assign( AssetsWriter.prototype, {
 				chunks: true,
 				chunkModules: false,
 				chunkOrigins: false,
+				chunkGroups: true,
 				entrypoints: true,
 				modules: false,
 				source: false,
@@ -63,6 +64,10 @@ Object.assign( AssetsWriter.prototype, {
 				return asset.info.hotModuleReplacement || asset.info.development;
 			}
 
+			function getAssetName( asset ) {
+				return typeof asset === 'string' ? asset : asset.name;
+			}
+
 			const statsToOutput = {};
 
 			statsToOutput.manifests = {};
@@ -71,19 +76,24 @@ Object.assign( AssetsWriter.prototype, {
 				if ( String( name ).startsWith( this.options.runtimeChunk ) ) {
 					// Runtime chunk will have two files due to ExtractManifestPlugin. Both need to be inlined.
 					statsToOutput.manifests = stats.assetsByChunkName[ name ]
+						.map( getAssetName )
 						.filter( ( asset ) => ! isDevelopmentAsset( asset ) ) // exclude hot updates and sourcemaps
 						.map( ( asset ) => compilation.assets[ asset ].source() );
 				}
 			}
 
-			statsToOutput.assets = _.mapValues( stats.namedChunkGroups, ( { assets } ) =>
-				_.reject(
-					assets,
-					( { name } ) =>
+			const chunkGroups = stats.namedChunkGroups || stats.entrypoints || {};
+			statsToOutput.assets = _.mapValues( chunkGroups, ( { assets } ) =>
+				_.reject( assets, ( asset ) => {
+					const name = getAssetName( asset );
+					return (
 						isDevelopmentAsset( name ) ||
 						name.startsWith( this.options.manifestFile ) ||
 						name.startsWith( this.options.runtimeFile )
-				).map( ( { name } ) => fixupPath( name ) )
+					);
+				} )
+					.map( getAssetName )
+					.map( ( name ) => fixupPath( name ) )
 			);
 
 			self.outputStream.end( JSON.stringify( statsToOutput, null, '\t' ), callback );

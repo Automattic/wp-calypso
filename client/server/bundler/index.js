@@ -1,10 +1,6 @@
 const { execSync } = require( 'child_process' );
 const config = require( '@automattic/calypso-config' );
 const chalk = require( 'chalk' );
-const webpack = require( 'webpack' );
-const webpackMiddleware = require( 'webpack-dev-middleware' );
-const hotMiddleware = require( 'webpack-hot-middleware' );
-const webpackConfig = require( 'calypso/webpack.config' );
 
 const protocol = config( 'protocol' );
 const host = config( 'hostname' );
@@ -14,17 +10,17 @@ const shouldBuildChunksMap =
 	process.env.BUILD_TRANSLATION_CHUNKS === 'true' ||
 	process.env.ENABLE_FEATURES === 'use-translation-chunks';
 
+function loadBundler() {
+	return process.env.CALYPSO_BUNDLER === 'rspack' ? require( './rspack' ) : require( './webpack' );
+}
+
 function middleware( app ) {
-	const compiler = webpack( webpackConfig );
+	let assetMiddleware = ( request, response, next ) => next();
+	let hotMiddleware = ( request, response, next ) => next();
 	const callbacks = [];
 	let built = false;
 	let beforeFirstCompile = true;
-
-	app.set( 'compiler', compiler );
-
-	if ( shouldProfile ) {
-		new compiler.webpack.ProgressPlugin( { profile: true } ).apply( compiler );
-	}
+	let initError = null;
 
 	// In development environment we need to wait for initial webpack compile
 	// to finish and execute the build-languages script if translation chunks
@@ -35,35 +31,53 @@ function middleware( app ) {
 		} );
 	}
 
-	compiler.hooks.done.tap( 'Calypso', function () {
-		built = true;
+	async function initBundler() {
+		const bundler = loadBundler();
+		const compiler = await bundler.createCompiler();
 
-		// Dequeue and call request handlers
-		while ( callbacks.length > 0 ) {
-			callbacks.shift()();
+		app.set( 'compiler', compiler );
+
+		if ( shouldProfile ) {
+			await bundler.applyProfilePlugin( compiler );
 		}
 
-		// In order to show our message *after* webpack's "bundle is now VALID"
-		// we need to skip two event loop ticks, because webpack's callback is
-		// also hooked on the "done" event, it calls nextTick to print the message
-		// and runs before our callback (calls app.use earlier in the code)
-		process.nextTick( function () {
+		compiler.hooks.done.tap( 'Calypso', function () {
+			built = true;
+
+			// Dequeue and call request handlers
+			while ( callbacks.length > 0 ) {
+				callbacks.shift()();
+			}
+
+			// In order to show our message *after* webpack's "bundle is now VALID"
+			// we need to skip two event loop ticks, because webpack's callback is
+			// also hooked on the "done" event, it calls nextTick to print the message
+			// and runs before our callback (calls app.use earlier in the code)
 			process.nextTick( function () {
-				if ( beforeFirstCompile ) {
-					beforeFirstCompile = false;
-					console.info(
-						chalk.cyan(
-							`\nReady! You can load ${ protocol }://${ host }:${ port }/ now. Have fun!`
-						)
-					);
-				} else {
-					console.info( chalk.cyan( '\nReady! All assets are re-compiled. Have fun!' ) );
-				}
+				process.nextTick( function () {
+					if ( beforeFirstCompile ) {
+						beforeFirstCompile = false;
+						console.info(
+							chalk.cyan(
+								`\nReady! You can load ${ protocol }://${ host }:${ port }/ now. Have fun!`
+							)
+						);
+					} else {
+						console.info( chalk.cyan( '\nReady! All assets are re-compiled. Have fun!' ) );
+					}
+				} );
 			} );
 		} );
-	} );
+
+		assetMiddleware = await bundler.assetMiddleware( compiler );
+		hotMiddleware = await bundler.hotMiddleware( compiler );
+	}
 
 	function waitForCompiler( request, response, next ) {
+		if ( initError ) {
+			return next( initError );
+		}
+
 		if ( built ) {
 			return next();
 		}
@@ -98,8 +112,15 @@ function middleware( app ) {
 	}
 
 	app.use( waitForCompiler );
-	app.use( webpackMiddleware( compiler ) );
-	app.use( hotMiddleware( compiler ) );
+	app.use( ( request, response, next ) => assetMiddleware( request, response, next ) );
+	app.use( ( request, response, next ) => hotMiddleware( request, response, next ) );
+
+	initBundler().catch( ( error ) => {
+		initError = error;
+		while ( callbacks.length > 0 ) {
+			callbacks.shift()();
+		}
+	} );
 }
 
 module.exports = middleware;

@@ -75,6 +75,9 @@ function getExternals() {
 			'calypso/webpack.config': {
 				commonjs: '../client/webpack.config.js',
 			},
+			'calypso/rspack.config': {
+				commonjs: '../client/rspack.config.js',
+			},
 		},
 	];
 }
