@@ -1,0 +1,44 @@
+@import "@automattic/components/src/styles/typography";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.site-setup-content {
+	display: flex;
+	justify-content: center;
+	padding-block-start: 32px;
+
+	.site-setup-content__card {
+		width: 100%;
+		max-width: 720px;
+		padding: 24px;
+		background: #fff;
+		box-shadow: 0 0 0 1px var(--color-border-subtle);
+		border-radius: 4px;
+	}
+
+	.site-setup-content__card-header {
+		display: flex;
+		align-items: center;
+		margin-block-end: 8px;
+	}
+
+	.site-setup-content__card-title {
+		flex: 1;
+		font-size: $font-body-large;
+		font-weight: 500;
+		font-family: $font-sf-pro-display;
+		margin: 0;
+	}
+
+	.site-setup-content__progress {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+	}
+
+	.site-setup-content__progress-label {
+		font-size: $font-body-small;
+		color: var(--color-neutral-50);
+		white-space: nowrap;
+	}
+}
