@@ -93,6 +93,7 @@ import badge7Src from './assets/icons/badge-7.svg';
 import badgeGenericSrc from './assets/icons/badge-generic.svg';
 import badgeSecurity from './assets/icons/security.svg';
 import CheckoutNextSteps from './checkout-next-steps';
+import CheckoutProcessorNotice from './checkout-processor-notice';
 import { CheckoutSidebarPlanUpsell } from './checkout-sidebar-plan-upsell';
 import CheckoutTrustCards from './checkout-trust-cards';
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
@@ -969,6 +970,7 @@ export default function CheckoutMainContent( {
 					) }
 					{ checkoutSummary }
 					{ checkoutMainContent }
+					<CheckoutProcessorNotice />
 					<CheckoutTrustCards cart={ responseCart } />
 				</WPCheckoutWrapper>
 			</SubmitButtonSlotContext.Provider>
@@ -1028,6 +1030,7 @@ export default function CheckoutMainContent( {
 					} }
 				</Step.TwoColumnLayout>
 				<LeaveCheckoutModal { ...leaveModalProps } />
+				<CheckoutProcessorNotice />
 				<CheckoutTrustCards cart={ responseCart } />
 			</StepContainerV2CheckoutFixer>
 		</SubmitButtonSlotContext.Provider>
@@ -1855,6 +1858,7 @@ const WPCheckoutWrapper = styled.div< {
 	grid-template-areas:
 		'sidebar-content'
 		'main-content'
+		'processor-notice'
 		'trust-cards';
 	align-content: start;
 	justify-content: center;
@@ -1865,6 +1869,7 @@ const WPCheckoutWrapper = styled.div< {
 		grid-template-columns: 1fr minmax( 500px, 688px ) 475px 1fr;
 		grid-template-areas:
 			'main-content main-content sidebar-content sidebar-content'
+			'processor-notice processor-notice processor-notice processor-notice'
 			'trust-cards trust-cards trust-cards trust-cards';
 		justify-items: end;
 	}
@@ -1876,6 +1881,11 @@ const WPCheckoutWrapper = styled.div< {
 
 	& > .checkout-trust-cards {
 		grid-area: trust-cards;
+		justify-self: center;
+	}
+
+	& > .checkout-processor-notice {
+		grid-area: processor-notice;
 		justify-self: center;
 	}
 
@@ -1904,6 +1914,7 @@ const WPCheckoutWrapper = styled.div< {
 				'checkout-title-area'
 				'sidebar-content'
 				'main-content'
+				'processor-notice'
 				'trust-cards';
 			.checkout-sidebar-content {
 				background: ${ colorStudio.colors[ 'White' ] };
