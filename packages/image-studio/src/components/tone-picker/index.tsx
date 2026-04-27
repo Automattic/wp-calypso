@@ -29,16 +29,9 @@ export const TONE_OPTIONS = [
 export function TonePicker( { disabled = false, mode }: TonePickerProps ) {
 	const { setSelectedTone } = useDispatch( imageStudioStore );
 
-	// Selector is defensive against an older bundle winning the registration
-	// race (it may not export getSelectedTone). Actions come from the freshly-
-	// loaded bundle that owns this picker, so no guard is needed there.
-	const selectedTone = useSelect(
-		( select ) =>
-			(
-				select( imageStudioStore ) as unknown as { getSelectedTone?: () => string | null }
-			 ).getSelectedTone?.() ?? null,
-		[]
-	);
+	const selectedTone = useSelect( ( select ) => {
+		return select( imageStudioStore ).getSelectedTone();
+	}, [] );
 
 	const handleToneSelect = ( value: string ) => {
 		setSelectedTone( value );
