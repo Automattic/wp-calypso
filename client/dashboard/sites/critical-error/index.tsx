@@ -1,10 +1,11 @@
+import { HostingFeatures } from '@automattic/api-core';
 import { siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { useNavigate } from '@tanstack/react-router';
+import { Link, useNavigate } from '@tanstack/react-router';
 import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { Icon, envelope, help } from '@wordpress/icons';
+import { Icon, envelope, formatListBullets, help } from '@wordpress/icons';
 import { Fragment, useEffect } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useHelpCenter } from '../../app/help-center';
@@ -12,10 +13,12 @@ import { Card, CardBody, CardDivider } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { Text } from '../../components/text';
+import { hasHostingFeature } from '../../utils/site-features';
 import {
 	getJetpackCriticalErrorMessage,
 	isInJetpackCriticalErrorState,
 } from '../../utils/site-jetpack-critical-error';
+import { siteTypeSupportsFeature } from '../../utils/site-type-feature-support';
 import type { ReactElement, ReactNode } from 'react';
 
 type Item = {
@@ -37,6 +40,10 @@ const SiteCriticalError = ( { siteSlug }: { siteSlug: string } ) => {
 	const navigate = useNavigate();
 
 	const isAdmin = !! site.capabilities?.manage_options;
+	const canAccessPhpLogs =
+		isAdmin &&
+		siteTypeSupportsFeature( site, 'logs' ) &&
+		hasHostingFeature( site, HostingFeatures.LOGS );
 	const hasRecovered = ! isInJetpackCriticalErrorState( site );
 
 	useEffect( () => {
@@ -61,6 +68,20 @@ const SiteCriticalError = ( { siteSlug }: { siteSlug: string } ) => {
 		items.push( {
 			icon: envelope,
 			text: __( 'Check your site admin email inbox for instructions to troubleshoot.' ),
+		} );
+	}
+	if ( canAccessPhpLogs ) {
+		items.push( {
+			icon: formatListBullets,
+			text: createInterpolateElement(
+				// translators: <phpLogsLink/> is a link to the PHP logs page with the text "Review the PHP logs"
+				__( '<phpLogsLink/> to locate any fatal errors on your site.' ),
+				{
+					phpLogsLink: (
+						<Link to={ `/sites/${ siteSlug }/logs/php` }>{ __( 'Review the PHP logs' ) }</Link>
+					),
+				}
+			),
 		} );
 	}
 	items.push( {
