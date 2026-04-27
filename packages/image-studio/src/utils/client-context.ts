@@ -5,8 +5,7 @@
  */
 import { store as blockEditorStore } from '@wordpress/block-editor';
 import { select } from '@wordpress/data';
-import { store as imageStudioStore } from '../store';
-import type { ImageStudioEntryPoint } from '../store';
+import { ImageStudioEntryPoint, store as imageStudioStore } from '../store';
 import type { BlockEditorSelectors, CoreDataSelectors, WPBlock } from '../types/wordpress.d';
 
 export interface ImageStudioMetadata {
@@ -29,6 +28,16 @@ export interface ImageStudioData {
 	blockType: string | null;
 }
 
+export interface VideoStudioData {
+	isOpen: boolean;
+	id: number | null;
+	tone?: string;
+	style?: string;
+	metadata: ImageStudioMetadata;
+	entryPoint: ImageStudioEntryPoint | null;
+	blockType: string | null;
+}
+
 export interface PageContentBlock {
 	name: string;
 	type?: 'header' | 'content' | 'footer';
@@ -41,8 +50,9 @@ export interface ImageStudioClientContext extends Record< string, unknown > {
 	url: string;
 	pathname: string;
 	search: string;
-	environment: 'wp-admin' | 'image-studio';
+	environment: 'wp-admin' | 'image-studio' | 'video-studio';
 	imageStudio?: ImageStudioData;
+	videoStudio?: VideoStudioData;
 	currentPageContent?: PageContentBlock[];
 	constructorArguments?: {
 		skip_storage?: boolean;
@@ -180,14 +190,25 @@ function getCurrentPageContent(): PageContentBlock[] | null {
 	}
 }
 
+interface DetectedEntity {
+	imageStudio?: ImageStudioData;
+	videoStudio?: VideoStudioData;
+	isOpen: boolean;
+	isVideo: boolean;
+}
+
 /**
- * Detect and extract image entity context when Image Studio is open.
+ * Detect and extract studio entity context when Image Studio is open.
+ *
+ * When the entry point is the post-editor "Generate Feature Clip" panel, we emit a
+ * `videoStudio` payload (with `tone` + `style`); otherwise we emit `imageStudio`
+ * (with `style` + `aspect_ratio`). The two are mutually exclusive.
  *
  * Note: We intentionally do NOT send the URL in context to prevent agent retry loops.
  * The backend fetches the current URL from the clientId (attachmentId) via
  * resolve_image_studio_url().
  */
-function detectImageEntity(): ImageStudioData | null {
+function detectImageEntity(): DetectedEntity | null {
 	try {
 		const storeSelect = select( imageStudioStore );
 		if ( ! storeSelect ) {
@@ -197,6 +218,7 @@ function detectImageEntity(): ImageStudioData | null {
 		const attachmentId = storeSelect.getImageStudioAttachmentId?.();
 		const isOpen = storeSelect.getIsImageStudioOpen?.() || false;
 		const selectedStyle = storeSelect.getSelectedStyle?.() || null;
+		const selectedTone = storeSelect.getSelectedTone?.() || null;
 		const selectedAspectRatio = storeSelect.getSelectedAspectRatio?.() || null;
 
 		// Entrypoint for image studio context
@@ -204,12 +226,53 @@ function detectImageEntity(): ImageStudioData | null {
 
 		const blockType = storeSelect.getBlockType?.() || null;
 
+		const isVideo = entryPoint === ImageStudioEntryPoint.PostEditorFeatureClip;
+
+		// Try to get attachment metadata from core store
+		// TODO: remove cast when @wordpress/core-data exports store types
+		const coreSelect = select( 'core' ) as unknown as CoreDataSelectors;
+		const attachment = attachmentId
+			? coreSelect.getEntityRecord?.( 'postType', 'attachment', attachmentId )
+			: null;
+
+		const metadata: ImageStudioMetadata = attachment
+			? {
+					id: attachment.id,
+					url: attachment.source_url,
+					title: getRenderedText( attachment.title ),
+					alt: attachment.alt_text,
+					width: attachment.media_details?.width,
+					height: attachment.media_details?.height,
+					description: getRenderedText( attachment.description ),
+			  }
+			: {};
+
+		if ( isVideo ) {
+			const videoStudio: VideoStudioData = {
+				isOpen,
+				id: attachmentId,
+				entryPoint,
+				blockType,
+				metadata,
+			};
+
+			if ( selectedTone ) {
+				videoStudio.tone = selectedTone;
+			}
+
+			if ( selectedStyle && selectedStyle !== 'none' ) {
+				videoStudio.style = selectedStyle;
+			}
+
+			return { videoStudio, isOpen, isVideo: true };
+		}
+
 		const imageStudio: ImageStudioData = {
 			isOpen,
 			id: attachmentId,
 			entryPoint, // 'editor_block' | 'media_library' | etc.
 			blockType, // 'core/image' | etc.
-			metadata: {},
+			metadata,
 		};
 
 		if ( selectedStyle && selectedStyle !== 'none' ) {
@@ -220,26 +283,7 @@ function detectImageEntity(): ImageStudioData | null {
 			imageStudio.aspect_ratio = selectedAspectRatio;
 		}
 
-		// Try to get attachment metadata from core store
-		// TODO: remove cast when @wordpress/core-data exports store types
-		const coreSelect = select( 'core' ) as unknown as CoreDataSelectors;
-		const attachment = attachmentId
-			? coreSelect.getEntityRecord?.( 'postType', 'attachment', attachmentId )
-			: null;
-
-		if ( attachment ) {
-			imageStudio.metadata = {
-				id: attachment.id,
-				url: attachment.source_url,
-				title: getRenderedText( attachment.title ),
-				alt: attachment.alt_text,
-				width: attachment.media_details?.width,
-				height: attachment.media_details?.height,
-				description: getRenderedText( attachment.description ),
-			};
-		}
-
-		return imageStudio;
+		return { imageStudio, isOpen, isVideo: false };
 	} catch ( error ) {
 		window.console?.warn?.( '[Image Studio] Error detecting image entity:', error );
 		return null;
@@ -247,17 +291,24 @@ function detectImageEntity(): ImageStudioData | null {
 }
 
 export function getClientContext(): ImageStudioClientContext {
-	const imageStudio = detectImageEntity();
+	const detected = detectImageEntity();
+
+	let environment: ImageStudioClientContext[ 'environment' ] = 'wp-admin';
+	if ( detected?.isOpen ) {
+		environment = detected.isVideo ? 'video-studio' : 'image-studio';
+	}
 
 	const context: ImageStudioClientContext = {
 		url: window.location.href,
 		pathname: window.location.pathname,
 		search: window.location.search,
-		environment: imageStudio?.isOpen ? 'image-studio' : 'wp-admin',
+		environment,
 	};
 
-	if ( imageStudio ) {
-		context.imageStudio = imageStudio;
+	if ( detected?.videoStudio ) {
+		context.videoStudio = detected.videoStudio;
+	} else if ( detected?.imageStudio ) {
+		context.imageStudio = detected.imageStudio;
 	}
 
 	const currentPageContent = getCurrentPageContent();

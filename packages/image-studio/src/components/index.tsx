@@ -24,7 +24,11 @@ import { useImageUrl } from '../hooks/use-image-url';
 import { useRevertToOriginal } from '../hooks/use-revert-to-original';
 import { useSaveShortcut } from '../hooks/use-save-shortcut';
 import { useUnsavedChangesConfirmation } from '../hooks/use-unsaved-changes-confirmation';
-import { type ImageStudioActions, store as imageStudioStore } from '../store';
+import {
+	ImageStudioEntryPoint,
+	type ImageStudioActions,
+	store as imageStudioStore,
+} from '../store';
 import { ImageStudioMode, type ImageStudioProps, ToolbarOption } from '../types';
 import { defaultAgentConfigFactory } from '../utils/agent-config';
 import { trackImageStudioError, trackImageStudioPromptSent } from '../utils/tracking';
@@ -40,6 +44,7 @@ import LoadingSpinner from './loading-spinner';
 import { ImageStudioNotice } from './notice';
 import { ImageStudioAltTextSidebar } from './sidebar';
 import { StylePicker } from './style-picker';
+import { TonePicker } from './tone-picker';
 import './style.scss';
 
 function ImageStudioAgentChat( {
@@ -61,6 +66,12 @@ function ImageStudioAgentChat( {
 	const isAnnotationSaving = useSelect( ( select ) => {
 		return select( imageStudioStore ).getIsAnnotationSaving();
 	}, [] );
+
+	const entryPoint = useSelect( ( select ) => {
+		return select( imageStudioStore ).getEntryPoint();
+	}, [] );
+
+	const isVideoMode = entryPoint === ImageStudioEntryPoint.PostEditorFeatureClip;
 
 	useEffect( () => {
 		return () => {
@@ -178,8 +189,21 @@ function ImageStudioAgentChat( {
 					<AgentUI.Notice />
 					<AgentUI.Input disabled={ isStopDisabled ? true : undefined } />
 					<div className="image-studio-modal__input-toolbar">
-						{ mode === ImageStudioMode.Generate && <AspectRatioPicker disabled={ isProcessing } /> }
-						<StylePicker disabled={ isProcessing } mode={ mode } />
+						{ mode === ImageStudioMode.Generate && isVideoMode && (
+							<>
+								<TonePicker disabled={ isProcessing } mode={ mode } />
+								<StylePicker disabled={ isProcessing } mode={ mode } variant="video" />
+							</>
+						) }
+						{ mode === ImageStudioMode.Generate && ! isVideoMode && (
+							<>
+								<AspectRatioPicker disabled={ isProcessing } />
+								<StylePicker disabled={ isProcessing } mode={ mode } />
+							</>
+						) }
+						{ mode !== ImageStudioMode.Generate && (
+							<StylePicker disabled={ isProcessing } mode={ mode } />
+						) }
 					</div>
 				</AgentUI.Footer>
 			</AgentUI.ConversationView>
