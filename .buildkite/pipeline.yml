@@ -17,4 +17,4 @@ steps:
       USE_HARD_LINKS: 'false'
     command: .buildkite/commands/build-desktop-mac.sh
     artifact_paths:
-      - desktop/release/**/*
+      - desktop/release/*
