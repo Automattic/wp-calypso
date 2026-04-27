@@ -9,6 +9,7 @@
 Component styles in this package live in CSS Modules (`*.module.scss`), so the leaf class is scope-hashed and `:root[data-theme='dark'] .foo` cannot reach it. Use the `when-dark-theme` mixin from `src/utils/_mixins.scss`:
 
 ```scss
+@use '@wordpress/base-styles/colors';
 @use '../utils/mixins' as ui-mixins;
 @use '../utils/_theme-variables' as theme;
 
