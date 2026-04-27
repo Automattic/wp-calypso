@@ -36,7 +36,7 @@ jobs:
               watermark,
               `Looks like one of the E2E tests has failed.`,
               ``,
-              `To try to fix it, you can use a Claude skill called \`/fix-e2e-failure\`.`,
+              `To try to fix it, you can use a Claude skill called \`/fix-e2e-tests\`.`,
             ].join('\n');
 
             for (const pr of openPrs) {
