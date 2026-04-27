@@ -53,16 +53,13 @@ The E2E pipeline runs on TeamCity (`teamcity.a8c.com`). GitHub's commit-status d
 Announce what you're checking (e.g., "Checking access to TeamCity — this is where the E2E pipeline runs, and the skill gathers the failing tests from its REST API."), then run this probe once per skill invocation. It autodetects the network path, loads the persisted token, and validates it.
 
 ```bash
-# Load token. Canonical location is ~/.config/teamcity-access-token (outside any .claude/ path so
-# Claude Code's path heuristic doesn't treat it as a project file and prompt on every read).
-# Legacy ~/.claude/* paths are tried as fallbacks for tokens set up before the move.
+# Load token. Canonical (and only) location is ~/.config/teamcity-access-token — outside any
+# .claude/ path so Claude Code's path heuristic doesn't treat it as a project file and prompt
+# on every read. setup-token.sh writes here.
 if [ -f "$HOME/.config/teamcity-access-token" ]; then
   TEAMCITY_TOKEN=$(cut -d= -f2 "$HOME/.config/teamcity-access-token" 2>/dev/null)
   [ -z "$TEAMCITY_TOKEN" ] && TEAMCITY_TOKEN=$(cat "$HOME/.config/teamcity-access-token")
 fi
-for f in "$HOME/.claude/teamcity-access-token.env" "$HOME/.claude/fix-flaky-e2e.env"; do
-  [ -f "$f" ] && [ -z "${TEAMCITY_TOKEN:-}" ] && TEAMCITY_TOKEN=$(cut -d= -f2 "$f")
-done
 
 probe() { curl -sS -o /dev/null -w "%{http_code}" --max-time 6 "$@" "https://teamcity.a8c.com/" 2>/dev/null; }
 TC_PROXY=""
@@ -202,7 +199,7 @@ What this pipeline does and why each piece:
   - `.details // ""` defaults missing `details` to an empty string, so a stray occurrence without that field doesn't crash the pipeline.
 - Leaves the object with just three fields per candidate (`build`, `name`, `reason`). Typical output for a 9-occurrence build is maybe 2–5 objects totaling a few hundred tokens — small enough to process in-head.
 
-If Step 2 recorded no proxy (`TC_PROXY=""`, direct connection works), drop the `--socks5 localhost:8080` flag. If Step 2 fell back to the legacy `~/.claude/fix-flaky-e2e.env`, use that path in the `cut` instead. The paths and proxy flag are known at this point in the skill run — inline them, don't dereference shell variables.
+If Step 2 recorded no proxy (`TC_PROXY=""`, direct connection works), drop the `--socks5 localhost:8080` flag. The proxy flag is known at this point in the skill run — inline it, don't dereference shell variables. The token path is always `~/.config/teamcity-access-token`.
 
 **Do not re-parse the raw JSON by grepping tool-results files on disk.** If the output above isn't enough — e.g., you need the full `details` for the Healer's prompt — re-issue the curl with a build+test-specific locator to fetch only that one occurrence's details. Never reach into `/home/*/.claude/projects/...` for any reason.
 
