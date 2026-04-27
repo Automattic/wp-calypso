@@ -1,0 +1,19 @@
+.a4a-ai-mcp-overview__intro {
+	max-width: 650px;
+
+	+ .page-section-columns {
+		padding-block-start: 0;
+	}
+}
+
+.a4a-ai-mcp-overview .a4a-ai-mcp-overview__card {
+	a.summary-button.components-button {
+		border-radius: 0;
+		padding: 16px 24px;
+		border-bottom: none;
+		&:hover {
+			border-bottom: none;
+			background: none;
+		}
+	}
+}

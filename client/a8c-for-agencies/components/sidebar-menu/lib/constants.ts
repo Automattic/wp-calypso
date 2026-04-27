@@ -59,6 +59,8 @@ export const A4A_EXCLUSIVE_OFFERS_LINK = '/exclusive-offers';
 export const A4A_RESOURCES_LINK = '/resources-and-tools';
 export const A4A_LEARN_LINK = `${ A4A_RESOURCES_LINK }/learn`;
 export const A4A_DEV_TOOLS_LINK = `${ A4A_RESOURCES_LINK }/dev-tools`;
+export const A4A_AI_MCP_LINK = `${ A4A_RESOURCES_LINK }/ai-mcp`;
+export const A4A_AI_MCP_AVAILABLE_TOOLS_LINK = `${ A4A_AI_MCP_LINK }/tools`;
 
 // Client
 export const A4A_CLIENT_LANDING_LINK = '/client/landing';
