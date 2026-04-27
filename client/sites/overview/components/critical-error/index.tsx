@@ -78,7 +78,7 @@ export const CriticalErrorOverview = ( { siteSlug }: { siteSlug: string } ) => {
 									translate( '<phpLogsLink/> to locate any fatal errors on your site.' ) as string,
 									{
 										phpLogsLink: (
-											<a href={ `/sites/${ siteSlug }/logs/php` }>
+											<a href={ `/site-logs/${ siteSlug }/php` }>
 												{ translate( 'Review the PHP logs' ) }
 											</a>
 										),
