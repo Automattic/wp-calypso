@@ -1,5 +1,13 @@
 import page from '@automattic/calypso-router';
-import { Button, Card } from '@wordpress/components';
+import { PlanPrice } from '@automattic/components';
+import {
+	Button,
+	Card,
+	CardBody,
+	__experimentalHStack as HStack,
+	__experimentalText as Text,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { Icon, audio, check, layout, megaphone } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
@@ -29,55 +37,37 @@ const getPlans = (
 	personal: {
 		slug: 'personal',
 		name: translate( 'Personal' ) as string,
-		blurb: translate( 'Create your home on the web with a custom domain name.' ) as string,
+		blurb: translate( 'Run a real podcast with native tools and stats.' ) as string,
 		price: 4,
 		features: [
-			translate( 'Publishing tools: Podcast and Newsletter' ) as string,
-			translate( '6 GB storage' ) as string,
-			translate( 'Free domain for one year' ) as string,
-			translate( 'Ad-free browsing experience for your visitors' ) as string,
-			translate( 'Dozens of premium themes' ) as string,
-			translate( 'Support from our expert team' ) as string,
-			translate( 'Install plugins' ) as string,
+			translate( 'Audio upload to WordPress.com' ) as string,
+			translate( 'Podcast dashboard' ) as string,
+			translate( 'Native podcast stats' ) as string,
+			translate( 'Episode block' ) as string,
+			translate( 'Episode scaffolding on publish' ) as string,
 		],
 	},
 	premium: {
 		slug: 'premium',
 		name: translate( 'Premium' ) as string,
-		blurb: translate( 'Build a unique website with powerful design tools.' ) as string,
+		blurb: translate( 'Add AI tools and self-hosted video to your show.' ) as string,
 		price: 8,
 		features: [
-			translate( 'Publishing tools: Podcast and Newsletter' ) as string,
-			translate( '13 GB storage' ) as string,
-			translate( 'Free domain for one year' ) as string,
-			translate( 'Ad-free browsing experience for your visitors' ) as string,
-			translate( 'All premium themes' ) as string,
-			translate( 'Fast support from our expert team' ) as string,
-			translate( 'Premium stats' ) as string,
-			translate( 'Install plugins' ) as string,
-			translate( 'Connect Google Analytics' ) as string,
-			translate( 'Upload videos' ) as string,
+			translate( 'AI-generated show notes' ) as string,
+			translate( 'Auto transcripts' ) as string,
+			translate( 'Chapter markers' ) as string,
+			translate( 'Self-hosted video with VideoPress' ) as string,
 		],
 	},
 	business: {
 		slug: 'business',
 		name: translate( 'Business' ) as string,
-		blurb: translate(
-			'Unlock the power of WordPress with the managed hosting platform built by WordPress experts.'
-		) as string,
+		blurb: translate( 'Scale your podcast with full hosting and developer tools.' ) as string,
 		price: 25,
 		features: [
-			translate( 'Publishing tools: Podcast and Newsletter' ) as string,
-			translate( '50 GB storage' ) as string,
-			translate( 'Free domain for one year' ) as string,
-			translate( 'Ad-free browsing experience for your visitors' ) as string,
-			translate( 'All premium themes' ) as string,
-			translate( 'Priority 24/7 support from our expert team' ) as string,
-			translate( 'Premium stats' ) as string,
-			translate( 'Install plugins' ) as string,
-			translate( 'Connect Google Analytics' ) as string,
-			translate( 'Upload videos' ) as string,
-			translate( 'SFTP/SSH, WP-CLI, Git commands, and GitHub Deployments' ) as string,
+			translate( '50 GB storage upgrade' ) as string,
+			translate( 'Priority 24/7 support' ) as string,
+			translate( 'SFTP, WP-CLI, and GitHub Deployments' ) as string,
 		],
 	},
 } );
@@ -158,40 +148,22 @@ const getSteps = ( translate: Translate ): { number: string; title: string; body
 	},
 ];
 
-// Mock episodes for the hero preview and example-feed modal
+// Mock episodes for the hero preview
 const getSampleShow = ( translate: Translate ) => ( {
 	title: translate( 'Far From Home' ) as string,
 	host: 'Maya Chen',
-	category: translate( 'Places & Travel' ) as string,
-	summary: translate(
-		'A weekly travel show about long bus rides, market food, and the strangers who make a place feel like home.'
-	) as string,
 } );
 
 const getSampleEpisodes = ( translate: Translate ) => [
 	{
 		number: 4,
 		title: translate( 'Lost in Lisbon: how getting turned around saved my trip' ) as string,
-		date: 'Apr 22, 2026',
 		duration: translate( '38 min' ) as string,
 	},
 	{
 		number: 3,
 		title: translate( 'Eating my way through Oaxaca' ) as string,
-		date: 'Apr 15, 2026',
 		duration: translate( '45 min' ) as string,
-	},
-	{
-		number: 2,
-		title: translate( 'Pilot: One backpack, six months' ) as string,
-		date: 'Apr 8, 2026',
-		duration: translate( '32 min' ) as string,
-	},
-	{
-		number: 1,
-		title: translate( 'Trailer' ) as string,
-		date: 'Apr 1, 2026',
-		duration: translate( '2 min' ) as string,
 	},
 ];
 
@@ -213,7 +185,7 @@ function Welcome( { onEnable, planTier, onChangePlanTier }: WelcomeProps ) {
 		business: translate( 'Business' ) as string,
 	};
 	const pricingTitle = isFree
-		? ( translate( 'Unlock podcasting with a plan built for creators' ) as string )
+		? ( translate( 'Get more out of podcasting with a plan upgrade' ) as string )
 		: ( translate( 'Podcasting is included in your plan' ) as string );
 
 	// Redirect through Calypso checkout, then back to /podcast so the user can
@@ -227,165 +199,187 @@ function Welcome( { onEnable, planTier, onChangePlanTier }: WelcomeProps ) {
 	};
 
 	return (
-		<div className="podcast__welcome">
+		<VStack spacing={ 8 } className="podcast__welcome">
 			{ /* Hero */ }
 			<section className="podcast__welcome-hero">
-				<div className="podcast__welcome-hero-copy">
+				<VStack spacing={ 4 } className="podcast__welcome-hero-copy">
 					<h2 className="podcast__welcome-title">
 						{ translate( 'Turn your posts into a podcast' ) }
 					</h2>
-					<p className="podcast__welcome-lede">
+					<Text variant="muted">
 						{ translate(
 							'Publish audio alongside your writing and get distributed to Apple Podcasts, Spotify, and every major app, without leaving your site.'
 						) }
-					</p>
-					<div className="podcast__welcome-actions">
-						{ ! isFree && (
-							<Button variant="primary" onClick={ onEnable }>
-								{ translate( 'Enable podcasting' ) }
-							</Button>
-						) }
-					</div>
-				</div>
+					</Text>
+					<HStack justify="flex-start" expanded={ false }>
+						<Button variant="primary" onClick={ onEnable }>
+							{ translate( 'Enable podcasting' ) }
+						</Button>
+					</HStack>
+				</VStack>
 
-				{ /* Mini preview panel on the right */ }
-				<div className="podcast__welcome-hero-preview" aria-hidden="true">
-					<div className="podcast__preview-card">
-						<div className="podcast__preview-cover">
-							<Icon icon={ audio } />
-						</div>
-						<div className="podcast__preview-meta">
-							<div className="podcast__preview-show">{ sampleShow.title }</div>
-							<div className="podcast__preview-host">
-								{ translate( 'by %(host)s', { args: { host: sampleShow.host } } ) }
-							</div>
-							<div className="podcast__preview-badges">
-								<span>Apple Podcasts</span>
-								<span>Spotify</span>
-								<span>Overcast</span>
-							</div>
-						</div>
-					</div>
-					<ul className="podcast__preview-episodes">
-						{ sampleEpisodes.slice( 0, 2 ).map( ( ep ) => (
-							<li key={ ep.number }>
-								<span className="podcast__preview-play">▶</span>
-								<span className="podcast__preview-ep-title">{ ep.title }</span>
-								<span className="podcast__preview-ep-meta">{ ep.duration }</span>
-							</li>
-						) ) }
-					</ul>
-				</div>
+				<Card className="podcast__welcome-hero-preview" aria-hidden="true">
+					<CardBody>
+						<VStack spacing={ 3 }>
+							<HStack alignment="center" spacing={ 3 } justify="flex-start">
+								<span className="podcast__welcome-hero-preview-cover">
+									<Icon icon={ audio } />
+								</span>
+								<VStack spacing={ 0 }>
+									<Text weight={ 600 }>{ sampleShow.title }</Text>
+									<Text variant="muted" size={ 12 }>
+										{ translate( 'by %(host)s', { args: { host: sampleShow.host } } ) }
+									</Text>
+									<Text variant="muted" size={ 11 }>
+										Apple Podcasts · Spotify · Overcast
+									</Text>
+								</VStack>
+							</HStack>
+							<VStack as="ul" spacing={ 1 } className="podcast__welcome-hero-preview-episodes">
+								{ sampleEpisodes.map( ( ep ) => (
+									<HStack as="li" key={ ep.number } alignment="center" spacing={ 2 }>
+										<Text size={ 11 } variant="muted">
+											▶
+										</Text>
+										<Text style={ { flex: 1 } }>{ ep.title }</Text>
+										<Text variant="muted" size={ 12 }>
+											{ ep.duration }
+										</Text>
+									</HStack>
+								) ) }
+							</VStack>
+						</VStack>
+					</CardBody>
+				</Card>
 			</section>
 
-			{ /* Pricing grid */ }
+			{ /* Pricing */ }
 			<section className="podcast__welcome-pricing">
 				<h3 className="podcast__welcome-pricing-title">{ pricingTitle }</h3>
-
-				<div className={ `podcast__plans podcast__plans--cols-${ cards.length }` }>
-					{ cards.map( ( { plan, label }, index ) => {
-						const isRecommended = label === 'recommended';
+				<HStack alignment="stretch" spacing={ 4 } wrap>
+					{ cards.map( ( { plan, label } ) => {
 						const isYourPlan = label === 'your-plan';
-						const classes = [ 'podcast__plan' ];
-						if ( isRecommended ) {
-							classes.push( 'podcast__plan--recommended' );
-						}
-						if ( isYourPlan ) {
-							classes.push( 'podcast__plan--your-plan' );
-						}
-						// Right column shows the first two features (Publishing tools + storage)
-						// always, then only features that aren't already on the left card —
-						// so the upgrade is easy to scan at a glance.
-						const leftFeatures = index === 1 ? cards[ 0 ].plan.features : [];
-						const features =
-							index === 1
-								? plan.features.filter( ( f, i ) => i < 2 || ! leftFeatures.includes( f ) )
-								: plan.features;
+						const isRecommended = label === 'recommended';
 						return (
-							<div key={ plan.slug } className={ classes.join( ' ' ) }>
+							<Card
+								key={ plan.slug }
+								className="podcast__plan-card"
+								style={ { flex: '1 1 280px' } }
+							>
 								{ label && (
-									<span className="podcast__plan-ribbon">
+									<span className={ `podcast__plan-badge-corner is-${ label }` }>
 										{ isYourPlan ? translate( 'Your plan' ) : translate( 'Recommended' ) }
 									</span>
 								) }
-								<div className="podcast__plan-name">{ plan.name }</div>
-								<p className="podcast__plan-blurb">{ plan.blurb }</p>
-								<div className="podcast__plan-price">
-									<span className="podcast__plan-currency">$</span>
-									<span className="podcast__plan-amount">{ plan.price }</span>
-									<span className="podcast__plan-period">
-										{ translate( '/mo, billed yearly' ) }
-									</span>
-								</div>
-								<Button
-									variant={ isRecommended || isYourPlan ? 'primary' : 'secondary' }
-									onClick={ () => ( isYourPlan ? onEnable() : goToCheckout( plan.slug ) ) }
-								>
-									{ isYourPlan
-										? translate( 'Enable podcasting' )
-										: translate( 'Upgrade to %(planName)s', {
-												args: { planName: plan.name },
-										  } ) }
-								</Button>
-								<ul className="podcast__plan-features">
-									{ features.map( ( f ) => (
-										<li key={ f }>
-											<Icon icon={ check } />
-											<span>{ f }</span>
-										</li>
-									) ) }
-								</ul>
-							</div>
+								<CardBody>
+									<VStack spacing={ 4 } className="podcast__plan-card-content">
+										<VStack spacing={ 2 }>
+											<Text size="title" weight={ 500 }>
+												{ plan.name }
+											</Text>
+											<Text variant="muted">{ plan.blurb }</Text>
+										</VStack>
+										<PlanPrice rawPrice={ plan.price } currencyCode="USD" displayPerMonthNotation />
+										<Button
+											className="podcast__plan-cta"
+											variant={ isRecommended || isYourPlan ? 'primary' : 'secondary' }
+											onClick={ () => ( isYourPlan ? onEnable() : goToCheckout( plan.slug ) ) }
+										>
+											{ isYourPlan
+												? translate( 'Enable podcasting' )
+												: translate( 'Upgrade to %(planName)s', {
+														args: { planName: plan.name },
+												  } ) }
+										</Button>
+										<VStack as="ul" spacing={ 2 } className="podcast__plan-features">
+											{ plan.features.map( ( feature ) => (
+												<HStack
+													as="li"
+													key={ feature }
+													alignment="flex-start"
+													justify="flex-start"
+													spacing={ 2 }
+													expanded={ false }
+												>
+													<Icon icon={ check } size={ 20 } />
+													<Text>{ feature }</Text>
+												</HStack>
+											) ) }
+										</VStack>
+									</VStack>
+								</CardBody>
+							</Card>
 						);
 					} ) }
-				</div>
+				</HStack>
 			</section>
 
 			{ /* Benefits */ }
-			<div className="podcast__welcome-benefits">
+			<HStack alignment="stretch" spacing={ 4 } wrap>
 				{ benefits.map( ( b ) => (
-					<article key={ b.title } className="podcast__welcome-benefit">
-						<span className="podcast__welcome-benefit-icon" aria-hidden="true">
-							{ b.icon }
-						</span>
-						<h3 className="podcast__welcome-benefit-title">{ b.title }</h3>
-						<p className="podcast__welcome-benefit-body">{ b.body }</p>
-					</article>
+					<Card
+						key={ b.title }
+						className="podcast__welcome-benefit"
+						style={ { flex: '1 1 280px' } }
+					>
+						<CardBody>
+							<VStack spacing={ 3 }>
+								<span className="podcast__welcome-benefit-icon" aria-hidden="true">
+									{ b.icon }
+								</span>
+								<Text size="title" weight={ 500 }>
+									{ b.title }
+								</Text>
+								<Text variant="muted">{ b.body }</Text>
+							</VStack>
+						</CardBody>
+					</Card>
 				) ) }
-			</div>
+			</HStack>
 
-			{ /* How it works — stacked layout, connector runs between circles only */ }
-			<Card className="podcast__welcome-steps">
-				<h3 className="podcast__welcome-steps-title">{ translate( 'How it works' ) }</h3>
-				<ol className="podcast__welcome-steps-grid">
-					{ steps.map( ( step ) => (
-						<li key={ step.number } className="podcast__welcome-step">
-							<div className="podcast__welcome-step-circle">
-								<span className="podcast__welcome-step-number">{ step.number }</span>
-							</div>
-							<div className="podcast__welcome-step-title">{ step.title }</div>
-							<p className="podcast__welcome-step-body">{ step.body }</p>
-						</li>
-					) ) }
-				</ol>
+			{ /* How it works */ }
+			<Card>
+				<CardBody>
+					<VStack spacing={ 5 }>
+						<Text size="title" weight={ 500 }>
+							{ translate( 'How it works' ) }
+						</Text>
+						<HStack as="ol" alignment="flex-start" spacing={ 4 } wrap>
+							{ steps.map( ( step ) => (
+								<VStack as="li" key={ step.number } spacing={ 2 } style={ { flex: '1 1 220px' } }>
+									<span className="podcast__welcome-step-circle">{ step.number }</span>
+									<Text weight={ 500 }>{ step.title }</Text>
+									<Text variant="muted">{ step.body }</Text>
+								</VStack>
+							) ) }
+						</HStack>
+					</VStack>
+				</CardBody>
 			</Card>
 
 			{ /* Prototype plan toggle */ }
-			<div className="podcast__welcome-demo-toggle">
-				<span>{ translate( 'Prototype: demo plan -' ) }</span>
+			<HStack
+				alignment="center"
+				justify="flex-start"
+				spacing={ 2 }
+				className="podcast__welcome-demo-toggle"
+			>
+				<Text variant="muted" size={ 12 }>
+					{ translate( 'Prototype: demo plan' ) }
+				</Text>
 				{ ( [ 'free', 'personal', 'premium', 'business' ] as PlanTier[] ).map( ( tier ) => (
-					<button
+					<Button
 						key={ tier }
-						type="button"
-						className={ planTier === tier ? 'is-active' : '' }
+						variant={ planTier === tier ? 'primary' : 'secondary' }
+						size="compact"
 						aria-pressed={ planTier === tier }
 						onClick={ () => onChangePlanTier( tier ) }
 					>
 						{ tierLabels[ tier ] }
-					</button>
+					</Button>
 				) ) }
-			</div>
-		</div>
+			</HStack>
+		</VStack>
 	);
 }
 

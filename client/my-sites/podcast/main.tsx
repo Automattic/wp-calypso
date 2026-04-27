@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { Page } from '@wordpress/admin-ui';
 import { Tabs } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
@@ -59,8 +60,12 @@ const PodcastMain = ( { section }: PodcastMainProps ) => {
 	const [ enabled, setEnabled ] = useState( false );
 	const podcastingOn = enabled || isSetUp;
 	const [ planTier, setPlanTier ] = useState< PlanTier >( 'free' );
+	const isFree = planTier === 'free';
 	const hasSectionInRoute = isValidSection( section );
-	const showTabs = podcastingOn || hasSectionInRoute;
+	// Free tier gets basic podcasting (RSS feed + metadata) via the v1
+	// /settings/podcasting page; the dashboard tabs (Episodes / Distribution)
+	// are paid features.
+	const showTabs = ( podcastingOn || hasSectionInRoute ) && ! isFree;
 
 	// Track the active tab in local state so clicking a tab swaps the panel
 	// without re-running the page.js controller (which would re-mount the
@@ -152,7 +157,13 @@ const PodcastMain = ( { section }: PodcastMainProps ) => {
 		pageContent = (
 			<div className="podcast__tab-content">
 				<Welcome
-					onEnable={ () => setEnabled( true ) }
+					onEnable={ () => {
+						if ( isFree ) {
+							page.show( '/settings/podcasting' + pathSuffix );
+							return;
+						}
+						setEnabled( true );
+					} }
 					planTier={ planTier }
 					onChangePlanTier={ setPlanTier }
 				/>
