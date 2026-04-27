@@ -1570,4 +1570,65 @@ describe( 'Client', () => {
 			expect( updates[ 2 ].status.state ).toBe( 'completed' );
 		} );
 	} );
+
+	describe( 'fetch credentials option', () => {
+		const mockJsonRpcResponse = () => {
+			mockFetch.mockResolvedValueOnce( {
+				ok: true,
+				status: 200,
+				headers: new Headers( { 'content-type': 'application/json' } ),
+				json: async () => ( {
+					jsonrpc: '2.0',
+					id: 'test-request-id',
+					result: {
+						id: 'test-task-id',
+						status: {
+							state: 'completed',
+							message: {
+								role: 'agent',
+								kind: 'message',
+								parts: [ { type: 'text', text: 'ok' } ],
+								messageId: 'm-1',
+							},
+						},
+					},
+				} ),
+			} );
+		};
+
+		it( 'omits the credentials key from fetch options when not configured', async () => {
+			mockJsonRpcResponse();
+
+			const client = createClient( {
+				agentId: 'test-agent',
+				agentUrl: 'https://example.com/agents',
+			} );
+
+			await client.sendMessage( {
+				message: createTextMessage( 'hello' ),
+			} );
+
+			expect( mockFetch ).toHaveBeenCalledTimes( 1 );
+			const fetchOptions = mockFetch.mock.calls[ 0 ][ 1 ];
+			expect( fetchOptions ).not.toHaveProperty( 'credentials' );
+		} );
+
+		it( "passes credentials: 'include' through to fetch options when configured", async () => {
+			mockJsonRpcResponse();
+
+			const client = createClient( {
+				agentId: 'test-agent',
+				agentUrl: 'https://example.com/agents',
+				credentials: 'include',
+			} );
+
+			await client.sendMessage( {
+				message: createTextMessage( 'hello' ),
+			} );
+
+			expect( mockFetch ).toHaveBeenCalledTimes( 1 );
+			const fetchOptions = mockFetch.mock.calls[ 0 ][ 1 ];
+			expect( fetchOptions.credentials ).toBe( 'include' );
+		} );
+	} );
 } );

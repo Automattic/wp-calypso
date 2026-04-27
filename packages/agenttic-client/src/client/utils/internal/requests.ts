@@ -26,6 +26,7 @@ export interface RequestConfig {
 	authProvider?: AuthProvider;
 	timeout: number;
 	proxy?: string;
+	credentials?: RequestCredentials;
 }
 
 /**
@@ -143,22 +144,28 @@ function combineSignals(
 /**
  * Create fetch options for browser requests
  *
- * @param headers - Request headers
- * @param body    - Request body
- * @param signal  - Abort signal
+ * @param headers     - Request headers
+ * @param body        - Request body
+ * @param signal      - Abort signal
+ * @param credentials - Optional fetch credentials mode
  * @return Basic fetch options
  */
 function createFetchOptions(
 	headers: Record< string, string >,
 	body: string,
-	signal: AbortSignal
+	signal: AbortSignal,
+	credentials?: RequestCredentials
 ): RequestInit {
-	return {
+	const options: RequestInit = {
 		method: 'POST',
 		headers,
 		body,
 		signal,
 	};
+	if ( credentials !== undefined ) {
+		options.credentials = credentials;
+	}
+	return options;
 }
 
 /**
@@ -245,7 +252,7 @@ export async function executeRequest(
 	options: RequestOptions = {}
 ): Promise< Task > {
 	const { request, headers, fullAgentUrl } = preparedRequest;
-	const { timeout } = config;
+	const { timeout, credentials } = config;
 	const { abortSignal: externalSignal } = options;
 
 	// Always create timeout protection
@@ -263,7 +270,8 @@ export async function executeRequest(
 		const fetchOptions = createFetchOptions(
 			headers,
 			JSON.stringify( request ),
-			signal
+			signal,
+			credentials
 		);
 
 		logger( 'Making request to %s with options: %O', fullAgentUrl, {
@@ -309,7 +317,7 @@ export async function* executeStreamingRequest(
 	options: RequestOptions
 ): AsyncIterable< TaskUpdate > {
 	const { request, headers, fullAgentUrl } = preparedRequest;
-	const {} = config;
+	const { credentials } = config;
 	const {
 		streamingTimeout = 60000,
 		abortSignal: externalSignal,
@@ -329,7 +337,12 @@ export async function* executeStreamingRequest(
 	try {
 		const requestBody = JSON.stringify( request );
 
-		const fetchOptions = createFetchOptions( headers, requestBody, signal );
+		const fetchOptions = createFetchOptions(
+			headers,
+			requestBody,
+			signal,
+			credentials
+		);
 
 		const response = await fetch( fullAgentUrl, fetchOptions );
 
