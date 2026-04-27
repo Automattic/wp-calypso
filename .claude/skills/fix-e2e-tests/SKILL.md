@@ -242,7 +242,7 @@ The fix has to be applied at a commit that actually contains the failing spec, a
 
 - guarantees the spec exists in the worktree (it's the tree that just failed CI);
 - unblocks the PR directly — merging the fix PR into the original PR turns that PR's next CI run green;
-- keeps scope predictable. If the flake actually lives on trunk too and the user prefers a trunk-targeted fix, they can re-target the base from the GitHub UI after review.
+- keeps scope predictable. If the failure actually lives on trunk too and the user prefers a trunk-targeted fix, they can re-target the base from the GitHub UI after review.
 
 Do **not** use the Agent tool's built-in `isolation: "worktree"` — it bases the worktree on the current `HEAD`, which is almost never the PR branch.
 
@@ -424,7 +424,7 @@ The fix PR targets the parent PR's branch, not trunk — it's a piece of the par
 Start the body at **Proposed Changes** and include only these sections:
 
 - **Proposed Changes** — 2–3 bullets describing what changed in the test.
-- **Why are these changes being made?** — the Healer's root-cause paragraph, with a link to the TeamCity build URL as evidence of the flake.
+- **Why are these changes being made?** — the Healer's root-cause paragraph, with a link to the TeamCity build URL as evidence of the failure.
 - **Testing Instructions** — `Run \`yarn playwright test <spec> --reporter=list --repeat-each=10\` locally; all runs should pass.` Don't claim you verified unless you actually did.
 
 Do not mention individuals by name. Do not link to wordpress.com URLs (AGENTS.md).
