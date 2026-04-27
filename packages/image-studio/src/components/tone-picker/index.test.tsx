@@ -62,6 +62,13 @@ jest.mock( '../../utils/tracking', () => ( {
 
 jest.mock( '../../store', () => ( {
 	store: 'image-studio',
+	ImageStudioEntryPoint: {
+		PostEditorFeatureClip: 'post_editor_feature_clip',
+	},
+} ) );
+
+jest.mock( '../../stores/video-studio', () => ( {
+	store: 'video-studio',
 } ) );
 
 jest.mock( '../icons/BrushIcon', () => ( {

@@ -31,6 +31,7 @@ import {
 	type ImageStudioActions,
 	store as imageStudioStore,
 } from '../store';
+import { store as videoStudioStore } from '../stores/video-studio';
 import { ImageStudioMode, type ImageStudioProps, ToolbarOption } from '../types';
 import { defaultAgentConfigFactory } from '../utils/agent-config';
 import { trackImageStudioError, trackImageStudioPromptSent } from '../utils/tracking';
@@ -286,14 +287,10 @@ const ImageStudioContent = withInstanceId(
 			const selectors = select( imageStudioStore );
 			const currentAttachmentId = selectors.getImageStudioAttachmentId();
 			const annotatedAttachmentIds = selectors.getAnnotatedAttachmentIds();
-			// Optional-chain in case an older bundle wins the multi-bundle
-			// registration race and doesn't expose the new selector.
-			const videoUrl =
-				(
-					selectors as unknown as {
-						getImageStudioCurrentVideoUrl?: () => string | null;
-					}
-				 ).getImageStudioCurrentVideoUrl?.() ?? null;
+			// Read the video URL from the dedicated video-studio store.
+			// Older bundles never registered this store, so the selector is
+			// always present in the bundle that wrote it.
+			const videoUrl = select( videoStudioStore ).getCurrentVideoUrl?.() ?? null;
 			return {
 				isAiProcessing: selectors.getImageStudioAiProcessing(),
 				displayImageUrl: selectors.getImageStudioCurrentImageUrl(),

@@ -26,6 +26,7 @@ import energeticVideoPreview from '../../assets/video/styles/energetic.webp';
 import macroVideoPreview from '../../assets/video/styles/macro.webp';
 import vividPreview from '../../assets/vivid.webp';
 import { store as imageStudioStore } from '../../store';
+import { store as videoStudioStore } from '../../stores/video-studio';
 import { ImageStudioMode } from '../../types';
 import { trackImageStudioStyleSelected } from '../../utils/tracking';
 import { BrushIcon } from '../icons/BrushIcon';
@@ -157,13 +158,22 @@ export const VIDEO_STYLE_OPTIONS = [
 ];
 
 export function StylePicker( { disabled = false, mode, variant = 'image' }: StylePickerProps ) {
-	const { setSelectedStyle } = useDispatch( imageStudioStore );
+	const isVideo = variant === 'video';
+	// Video and image variants live in independent stores so the two slices
+	// never collide — the video bundle's "Style" is unrelated to the image
+	// bundle's "Style".
+	const targetStore = isVideo ? videoStudioStore : imageStudioStore;
 
-	const selectedStyle = useSelect( ( select ) => {
-		return select( imageStudioStore ).getSelectedStyle();
-	}, [] );
+	const { setSelectedStyle } = useDispatch( targetStore );
 
-	const options = variant === 'video' ? VIDEO_STYLE_OPTIONS : STYLE_OPTIONS;
+	const selectedStyle = useSelect(
+		( select ) => {
+			return select( targetStore ).getSelectedStyle();
+		},
+		[ targetStore ]
+	);
+
+	const options = isVideo ? VIDEO_STYLE_OPTIONS : STYLE_OPTIONS;
 
 	const handleStyleSelect = ( value: string ) => {
 		setSelectedStyle( value );

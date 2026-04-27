@@ -1,6 +1,6 @@
 import { useDispatch } from '@wordpress/data';
 import { useEffect, useRef } from '@wordpress/element';
-import { type ImageStudioActions, store as imageStudioStore } from '../store';
+import { type VideoStudioActions, store as videoStudioStore } from '../stores/video-studio';
 
 const VIDEO_TOOL_ID = 'wpcom/generate-video-for-studio';
 
@@ -16,19 +16,19 @@ interface AgentMessageWithParts {
 /**
  * Watches the agent message stream for a successful
  * `wpcom/generate-video-for-studio` tool result and lifts the rendered MP4 URL
- * into the Image Studio store so the canvas can play it. Only the most recent
+ * into the video studio store so the canvas can play it. Only the most recent
  * successful result wins.
  */
 export function useVideoResultSync( messages?: Array< AgentMessageWithParts > ) {
 	const lastHandledMessageId = useRef< string | null >( null );
 
-	// Older registered bundles (multi-bundle case) may not expose this action;
-	// guard the read so an undefined dispatcher cannot crash the hook.
-	const dispatchActions = useDispatch( imageStudioStore ) as Partial< ImageStudioActions >;
-	const setImageStudioCurrentVideoUrl = dispatchActions.setImageStudioCurrentVideoUrl;
+	// Dispatch into the dedicated video-studio store. Older bundles never
+	// registered this store, so there's no race to worry about.
+	const dispatchActions = useDispatch( videoStudioStore ) as Partial< VideoStudioActions >;
+	const setCurrentVideoUrl = dispatchActions.setCurrentVideoUrl;
 
 	useEffect( () => {
-		if ( ! messages?.length || ! setImageStudioCurrentVideoUrl ) {
+		if ( ! messages?.length || ! setCurrentVideoUrl ) {
 			return;
 		}
 
@@ -46,11 +46,11 @@ export function useVideoResultSync( messages?: Array< AgentMessageWithParts > ) 
 				if ( message.id ) {
 					lastHandledMessageId.current = message.id;
 				}
-				setImageStudioCurrentVideoUrl( url );
+				setCurrentVideoUrl( url );
 				return;
 			}
 		}
-	}, [ messages, setImageStudioCurrentVideoUrl ] );
+	}, [ messages, setCurrentVideoUrl ] );
 }
 
 function extractVideoUrlFromParts(

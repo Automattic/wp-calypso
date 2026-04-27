@@ -64,6 +64,10 @@ jest.mock( '../../store', () => ( {
 	store: 'image-studio',
 } ) );
 
+jest.mock( '../../stores/video-studio', () => ( {
+	store: 'video-studio',
+} ) );
+
 jest.mock( '../icons/BrushIcon', () => ( {
 	BrushIcon: ( { size }: { size: number } ) => <div data-testid="brush-icon">Brush { size }</div>,
 } ) );

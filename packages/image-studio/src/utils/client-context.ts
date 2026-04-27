@@ -6,6 +6,7 @@
 import { store as blockEditorStore } from '@wordpress/block-editor';
 import { select } from '@wordpress/data';
 import { ImageStudioEntryPoint, store as imageStudioStore } from '../store';
+import { store as videoStudioStore } from '../stores/video-studio';
 import type { BlockEditorSelectors, CoreDataSelectors, WPBlock } from '../types/wordpress.d';
 
 export interface ImageStudioMetadata {
@@ -217,8 +218,7 @@ function detectImageEntity(): DetectedEntity | null {
 
 		const attachmentId = storeSelect.getImageStudioAttachmentId?.();
 		const isOpen = storeSelect.getIsImageStudioOpen?.() || false;
-		const selectedStyle = storeSelect.getSelectedStyle?.() || null;
-		const selectedTone = storeSelect.getSelectedTone?.() || null;
+		const imageSelectedStyle = storeSelect.getSelectedStyle?.() || null;
 		const selectedAspectRatio = storeSelect.getSelectedAspectRatio?.() || null;
 
 		// Entrypoint for image studio context
@@ -227,6 +227,11 @@ function detectImageEntity(): DetectedEntity | null {
 		const blockType = storeSelect.getBlockType?.() || null;
 
 		const isVideo = entryPoint === ImageStudioEntryPoint.PostEditorFeatureClip;
+
+		// Tone + video-mode style live in the dedicated video-studio store.
+		const videoStudioSelect = select( videoStudioStore );
+		const videoSelectedStyle = videoStudioSelect?.getSelectedStyle?.() ?? null;
+		const selectedTone = videoStudioSelect?.getSelectedTone?.() ?? null;
 
 		// Try to get attachment metadata from core store
 		// TODO: remove cast when @wordpress/core-data exports store types
@@ -260,8 +265,8 @@ function detectImageEntity(): DetectedEntity | null {
 				videoStudio.tone = selectedTone;
 			}
 
-			if ( selectedStyle && selectedStyle !== 'none' ) {
-				videoStudio.style = selectedStyle;
+			if ( videoSelectedStyle && videoSelectedStyle !== 'none' ) {
+				videoStudio.style = videoSelectedStyle;
 			}
 
 			return { videoStudio, isOpen, isVideo: true };
@@ -275,8 +280,8 @@ function detectImageEntity(): DetectedEntity | null {
 			metadata,
 		};
 
-		if ( selectedStyle && selectedStyle !== 'none' ) {
-			imageStudio.style = selectedStyle;
+		if ( imageSelectedStyle && imageSelectedStyle !== 'none' ) {
+			imageStudio.style = imageSelectedStyle;
 		}
 
 		if ( selectedAspectRatio ) {

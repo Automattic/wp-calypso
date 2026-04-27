@@ -841,12 +841,6 @@ describe( 'Image Studio Store', () => {
 				expect( state.selectedStyle ).toBe( 'watercolor' );
 			} );
 
-			it( 'SET_SELECTED_TONE', () => {
-				const state = reducer( getInitialState(), actions.setSelectedTone( 'promotional' ) );
-
-				expect( state.selectedTone ).toBe( 'promotional' );
-			} );
-
 			it( 'SET_SELECTED_ASPECT_RATIO', () => {
 				const state = reducer( getInitialState(), actions.setSelectedAspectRatio( '16:9' ) );
 
@@ -1080,11 +1074,6 @@ describe( 'Image Studio Store', () => {
 		it( 'getSelectedStyle', () => {
 			const state: ImageStudioState = { ...getInitialState(), selectedStyle: 'watercolor' };
 			expect( selectors.getSelectedStyle( state ) ).toBe( 'watercolor' );
-		} );
-
-		it( 'getSelectedTone', () => {
-			const state: ImageStudioState = { ...getInitialState(), selectedTone: 'informative' };
-			expect( selectors.getSelectedTone( state ) ).toBe( 'informative' );
 		} );
 
 		it( 'getSelectedAspectRatio', () => {

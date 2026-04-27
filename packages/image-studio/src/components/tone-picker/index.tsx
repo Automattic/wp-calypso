@@ -3,7 +3,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import tonesInformativePreview from '../../assets/video/tones/informative.webp';
 import tonesPromotionalPreview from '../../assets/video/tones/promotional.webp';
-import { store as imageStudioStore } from '../../store';
+import { store as videoStudioStore } from '../../stores/video-studio';
 import { ImageStudioMode } from '../../types';
 import { trackImageStudioStyleSelected } from '../../utils/tracking';
 import { BrushIcon } from '../icons/BrushIcon';
@@ -27,10 +27,10 @@ export const TONE_OPTIONS = [
 ];
 
 export function TonePicker( { disabled = false, mode }: TonePickerProps ) {
-	const { setSelectedTone } = useDispatch( imageStudioStore );
+	const { setSelectedTone } = useDispatch( videoStudioStore );
 
 	const selectedTone = useSelect( ( select ) => {
-		return select( imageStudioStore ).getSelectedTone();
+		return select( videoStudioStore ).getSelectedTone();
 	}, [] );
 
 	const handleToneSelect = ( value: string ) => {

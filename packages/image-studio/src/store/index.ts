@@ -103,14 +103,8 @@ export interface ImageStudioState {
 	isSidebarOpen: boolean;
 	// Selected style preset for image generation (only used in Generate mode)
 	selectedStyle: string | null;
-	// Selected tone preset for video generation (only used when entryPoint is PostEditorFeatureClip)
-	selectedTone: string | null;
 	// Selected aspect ratio preset for image generation (only used in Generate mode)
 	selectedAspectRatio: string | null;
-	// URL of the most recently generated video clip — populated when the
-	// wpcom/generate-video-for-studio tool returns a successful upload. Only
-	// used when entryPoint is PostEditorFeatureClip; null otherwise.
-	imageStudioCurrentVideoUrl: string | null;
 	// Last agent message ID for feedback tracking
 	lastAgentMessageId: string | null;
 	// Ratings the user has submitted in this session, keyed by attachment ID.
@@ -256,18 +250,8 @@ type SetSelectedStyleAction = {
 	payload: string | null;
 };
 
-type SetSelectedToneAction = {
-	type: 'SET_SELECTED_TONE';
-	payload: string | null;
-};
-
 type SetSelectedAspectRatioAction = {
 	type: 'SET_SELECTED_ASPECT_RATIO';
-	payload: string | null;
-};
-
-type SetImageStudioCurrentVideoUrlAction = {
-	type: 'SET_IMAGE_STUDIO_CURRENT_VIDEO_URL';
 	payload: string | null;
 };
 
@@ -313,9 +297,7 @@ type ImageStudioAction =
 	| SetNavigationPaginationAction
 	| SetIsSidebarOpenAction
 	| SetSelectedStyleAction
-	| SetSelectedToneAction
 	| SetSelectedAspectRatioAction
-	| SetImageStudioCurrentVideoUrlAction
 	| SetLastAgentMessageIdAction
 	| SetImageRatingAction
 	| ResetCanvasHistoryAction;
@@ -383,9 +365,7 @@ const initialState: ImageStudioState = {
 	navigationHasMorePages: true,
 	isSidebarOpen: getSidebarIsOpenStateFromLocalStorage(),
 	selectedStyle: null,
-	selectedTone: null,
 	selectedAspectRatio: null,
-	imageStudioCurrentVideoUrl: null,
 	lastAgentMessageId: null,
 	imageRatings: {},
 };
@@ -658,22 +638,10 @@ const reducer = (
 				selectedStyle: action.payload,
 			};
 
-		case 'SET_SELECTED_TONE':
-			return {
-				...state,
-				selectedTone: action.payload,
-			};
-
 		case 'SET_SELECTED_ASPECT_RATIO':
 			return {
 				...state,
 				selectedAspectRatio: action.payload,
-			};
-
-		case 'SET_IMAGE_STUDIO_CURRENT_VIDEO_URL':
-			return {
-				...state,
-				imageStudioCurrentVideoUrl: action.payload,
 			};
 
 		case 'SET_LAST_AGENT_MESSAGE_ID':
@@ -767,11 +735,7 @@ export interface ImageStudioActions {
 	) => Promise< SetNavigationPaginationAction >;
 	setIsSidebarOpen: ( isOpen: boolean ) => Promise< SetIsSidebarOpenAction >;
 	setSelectedStyle: ( style: string | null ) => Promise< SetSelectedStyleAction >;
-	setSelectedTone: ( tone: string | null ) => Promise< SetSelectedToneAction >;
 	setSelectedAspectRatio: ( aspectRatio: string | null ) => Promise< SetSelectedAspectRatioAction >;
-	setImageStudioCurrentVideoUrl: (
-		url: string | null
-	) => Promise< SetImageStudioCurrentVideoUrlAction >;
 	setLastAgentMessageId: ( messageId: string | null ) => Promise< SetLastAgentMessageIdAction >;
 	setImageRating: (
 		attachmentId: number,
@@ -980,24 +944,10 @@ const actions = {
 		};
 	},
 
-	setSelectedTone( tone: string | null ): SetSelectedToneAction {
-		return {
-			type: 'SET_SELECTED_TONE',
-			payload: tone,
-		};
-	},
-
 	setSelectedAspectRatio( aspectRatio: string | null ): SetSelectedAspectRatioAction {
 		return {
 			type: 'SET_SELECTED_ASPECT_RATIO',
 			payload: aspectRatio,
-		};
-	},
-
-	setImageStudioCurrentVideoUrl( url: string | null ): SetImageStudioCurrentVideoUrlAction {
-		return {
-			type: 'SET_IMAGE_STUDIO_CURRENT_VIDEO_URL',
-			payload: url,
 		};
 	},
 
@@ -1058,9 +1008,7 @@ export interface ImageStudioSelectors {
 	getNavigationCurrentPage: ( state: ImageStudioState ) => number;
 	getNavigationHasMorePages: ( state: ImageStudioState ) => boolean;
 	getSelectedStyle: ( state: ImageStudioState ) => string | null;
-	getSelectedTone: ( state: ImageStudioState ) => string | null;
 	getSelectedAspectRatio: ( state: ImageStudioState ) => string | null;
-	getImageStudioCurrentVideoUrl: ( state: ImageStudioState ) => string | null;
 	getLastAgentMessageId: ( state: ImageStudioState ) => string | null;
 	getImageRatings: ( state: ImageStudioState ) => Record< number, 'up' | 'down' >;
 	getImageRating: ( state: ImageStudioState, attachmentId: number | null ) => 'up' | 'down' | null;
@@ -1230,16 +1178,8 @@ const selectors = {
 		return state.selectedStyle;
 	},
 
-	getSelectedTone( state: ImageStudioState ): string | null {
-		return state.selectedTone;
-	},
-
 	getSelectedAspectRatio( state: ImageStudioState ): string | null {
 		return state.selectedAspectRatio;
-	},
-
-	getImageStudioCurrentVideoUrl( state: ImageStudioState ): string | null {
-		return state.imageStudioCurrentVideoUrl;
 	},
 
 	getLastAgentMessageId( state: ImageStudioState ): string | null {
