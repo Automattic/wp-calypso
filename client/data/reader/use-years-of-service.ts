@@ -2,10 +2,10 @@ import { readAchievementsQuery } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import { useInfiniteQuery } from '@tanstack/react-query';
 
-export function useYearsOfService( userLogin: string ) {
-	const enabled = isEnabled( 'reader/achievements' );
+export function useYearsOfService( userLogin?: string ) {
+	const enabled = isEnabled( 'reader/achievements' ) && userLogin != null;
 	const query = useInfiniteQuery( {
-		...readAchievementsQuery( userLogin ),
+		...readAchievementsQuery( userLogin ?? '' ),
 		enabled,
 	} );
 
