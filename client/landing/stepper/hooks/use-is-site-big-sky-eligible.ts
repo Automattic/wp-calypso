@@ -2,11 +2,16 @@ import { isEnabled } from '@automattic/calypso-config';
 import {
 	FEATURE_BIG_SKY,
 	isBusinessPlan,
+	isEcommercePlan,
 	isPremiumPlan,
 	isPersonalPlan,
 } from '@automattic/calypso-products';
 import { Onboard } from '@automattic/data-stores';
-import { AI_SITE_BUILDER_FLOW, SITE_SETUP_FLOW } from '@automattic/onboarding';
+import {
+	AI_SITE_BUILDER_FLOW,
+	SITE_SETUP_FLOW,
+	WOO_HOSTED_PLANS_FLOW,
+} from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import userAgent from 'calypso/lib/user-agent';
 import { useIsSiteOwner } from '../hooks/use-is-site-owner';
@@ -42,7 +47,8 @@ export function useIsBigSkyEligible( flowName?: string ) {
 	const isEligiblePlan =
 		isPersonalPlan( product_slug ) ||
 		isPremiumPlan( product_slug ) ||
-		isBusinessPlan( product_slug );
+		isBusinessPlan( product_slug ) ||
+		isEcommercePlan( product_slug );
 	const siteHasBigSkyFeature = site?.plan?.features?.active?.includes( FEATURE_BIG_SKY ) ?? false;
 
 	if ( flowName === AI_SITE_BUILDER_FLOW ) {
@@ -57,6 +63,12 @@ export function useIsBigSkyEligible( flowName?: string ) {
 				!! isOwner &&
 				siteHasBigSkyFeature &&
 				onSupportedDevice,
+		};
+	}
+
+	if ( flowName === WOO_HOSTED_PLANS_FLOW ) {
+		return {
+			isEligible: featureFlagEnabled && !! isOwner && siteHasBigSkyFeature && onSupportedDevice,
 		};
 	}
 
