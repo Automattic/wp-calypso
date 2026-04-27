@@ -139,4 +139,7 @@ output/
 **/.claude/settings.local.json
 .claude/test-pr/
 .claude/worktrees/
+
+# husky's auto-generated init directory (not the committed pre-commit/pre-push scripts)
+.husky/_
 CLAUDE.local.md
