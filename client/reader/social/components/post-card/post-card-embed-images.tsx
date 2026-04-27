@@ -7,6 +7,7 @@ interface PostCardEmbedImagesProps {
 
 export function PostCardEmbedImages( { embed }: PostCardEmbedImagesProps ) {
 	const count = Math.min( embed.images.length, 4 );
+	const isSingle = count === 1;
 	return (
 		<div
 			className={ clsx(
@@ -21,8 +22,12 @@ export function PostCardEmbedImages( { embed }: PostCardEmbedImagesProps ) {
 					href={ image.fullsize }
 					target="_blank"
 					rel="noopener noreferrer"
+					// Only honour the per-image aspect ratio for single-image
+					// embeds. Multi-image grids use uniform cells (set in CSS) so
+					// the layout stays even when individual images differ in
+					// shape. matching bsky.app's tile behaviour.
 					style={
-						image.aspect_ratio
+						isSingle && image.aspect_ratio
 							? {
 									aspectRatio: `${ image.aspect_ratio.width } / ${ image.aspect_ratio.height }`,
 							  }

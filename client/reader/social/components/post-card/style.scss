@@ -195,16 +195,37 @@ a.social-post-card-header__timestamp::after {
 	grid-template-columns: 1fr;
 }
 
+// 2-, 3- and 4-image grids use uniform 1:1 tiles so the grid stays even
+// when individual images differ in aspect ratio (matches bsky.app).
 .social-post-card-embed-images--count-2 {
 	grid-template-columns: 1fr 1fr;
+
+	.social-post-card-embed-images__item {
+		aspect-ratio: 1 / 1;
+	}
 }
 
+// 3-image grid: tall left tile, two stacked right tiles, all 1:1.
 .social-post-card-embed-images--count-3 {
 	grid-template-columns: 1fr 1fr;
+	grid-template-rows: 1fr 1fr;
+
+	.social-post-card-embed-images__item {
+		aspect-ratio: 1 / 1;
+	}
+
+	.social-post-card-embed-images__item:first-child {
+		grid-row: span 2;
+		aspect-ratio: 1 / 2;
+	}
 }
 
 .social-post-card-embed-images--count-4 {
 	grid-template-columns: 1fr 1fr;
+
+	.social-post-card-embed-images__item {
+		aspect-ratio: 1 / 1;
+	}
 }
 
 .social-post-card-embed-images__item {
