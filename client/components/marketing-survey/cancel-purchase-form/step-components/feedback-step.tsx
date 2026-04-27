@@ -47,7 +47,7 @@ function CancellationReason( {
 
 	const getReasonLabel = () => {
 		if ( intent === 'auto-renew' ) {
-			return translate( 'Why would you like to turn off auto-renew?' );
+			return translate( 'Why did you decide to disable auto-renew?' );
 		}
 		if ( intent === 'remove' ) {
 			return translate( 'Why would you like to remove?' );
@@ -171,7 +171,7 @@ export default function FeedbackStep( {
 
 	const getHeaderText = () => {
 		if ( intent === 'auto-renew' ) {
-			return translate( 'Auto-renew turned off' );
+			return translate( 'Auto-renew disabled' );
 		}
 		if ( intent === 'cancel' ) {
 			return translate( 'Cancellation confirmed' );

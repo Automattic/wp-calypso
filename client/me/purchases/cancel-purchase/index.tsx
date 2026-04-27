@@ -343,6 +343,22 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		page.redirect( redirectPath );
 	};
 
+	getCancelledRedirectUrl() {
+		const managePurchaseUrl = ( this.props.getManagePurchaseUrlFor ?? managePurchase )(
+			this.props.siteSlug,
+			this.props.purchaseId
+		);
+		const backupRedirect = this.props.purchaseListUrl ?? purchasesRoot;
+		if ( ! managePurchaseUrl ) {
+			return backupRedirect;
+		}
+		const params = new URLSearchParams( { cancelled: 'true' } );
+		if ( this.props.source === 'auto-renew-toggle' ) {
+			params.set( 'source', 'auto-renew-toggle' );
+		}
+		return `${ managePurchaseUrl }?${ params.toString() }`;
+	}
+
 	onCancelConfirmationStateChange = ( newState: Partial< CancelPurchaseState > ) => {
 		this.setState( ( state ) => ( {
 			...state,
@@ -588,15 +604,16 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		if ( this.shouldFireMutationOnConfirm() ) {
 			this.props.refreshSitePlans( this.props.purchase.siteId );
 			this.props.clearPurchases();
-			const managePurchaseUrl = ( this.props.getManagePurchaseUrlFor ?? managePurchase )(
-				this.props.siteSlug,
-				this.props.purchaseId
-			);
-			const backupRedirect = this.props.purchaseListUrl ?? purchasesRoot;
-			const redirectUrl = managePurchaseUrl ?? backupRedirect;
-			page.redirect(
-				this.state.fireMutationWasRefund ? redirectUrl : redirectUrl + '?cancelled=true'
-			);
+			if ( this.state.fireMutationWasRefund ) {
+				const managePurchaseUrl = ( this.props.getManagePurchaseUrlFor ?? managePurchase )(
+					this.props.siteSlug,
+					this.props.purchaseId
+				);
+				const backupRedirect = this.props.purchaseListUrl ?? purchasesRoot;
+				page.redirect( managePurchaseUrl ?? backupRedirect );
+			} else {
+				page.redirect( this.getCancelledRedirectUrl() );
+			}
 			return;
 		}
 
