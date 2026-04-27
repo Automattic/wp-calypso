@@ -44,7 +44,7 @@ export interface CancelPurchaseButtonProps {
 	includedDomainPurchase: Purchases.Purchase;
 	disabled?: boolean;
 	textVariant?: string;
-	displayVariant?: 'cancel' | 'remove';
+	displayVariant?: 'cancel' | 'remove' | 'auto-renew';
 	isLinkStyle?: boolean;
 	isInline?: boolean;
 	cancelIntentOverride?: 'refund' | 'autorenew';
@@ -163,7 +163,7 @@ class CancelPurchaseButton extends Component<
 
 			return getButtonLabels( {
 				purchase: toPurchaseForCopy( purchase ),
-				intent: this.props.displayVariant === 'remove' ? 'remove' : 'cancel',
+				intent: this.props.displayVariant ?? 'cancel',
 			} ).primary;
 		} )();
 

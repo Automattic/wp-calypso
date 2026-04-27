@@ -10,15 +10,13 @@ import {
 import { toPurchaseForCopy } from './to-purchase-for-copy';
 import type { CancellationFeature } from '@automattic/api-core';
 import type { Purchases } from '@automattic/data-stores';
-import type { DisplayVariant } from 'calypso/lib/purchases/utils';
-
 const CancelPurchaseFeatureList = ( {
 	purchase,
 	displayVariant,
 	cancellationFeatures,
 }: {
 	purchase: Purchases.Purchase;
-	displayVariant: DisplayVariant;
+	displayVariant: 'cancel' | 'remove' | 'auto-renew';
 	cancellationFeatures: CancellationFeature[];
 } ) => {
 	const adapted = toPurchaseForCopy( purchase );

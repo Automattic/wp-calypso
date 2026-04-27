@@ -15,7 +15,7 @@ type CancellationReasonProps = {
 	reasonCodes: string[];
 	onChange: ChangeCallback;
 	onDetailsChange: DetailsChangeCallback;
-	intent?: 'cancel' | 'remove';
+	intent?: 'cancel' | 'remove' | 'auto-renew';
 };
 
 function CancellationReason( {
@@ -45,15 +45,21 @@ function CancellationReason( {
 		props.onDetailsChange( val, details );
 	};
 
+	const getReasonLabel = () => {
+		if ( intent === 'auto-renew' ) {
+			return translate( 'Why would you like to turn off auto-renew?' );
+		}
+		if ( intent === 'remove' ) {
+			return translate( 'Why would you like to remove?' );
+		}
+		return translate( 'Why would you like to cancel?' );
+	};
+
 	return (
 		<>
 			<div className="cancel-purchase-form__feedback-question">
 				<SelectControl
-					label={
-						intent === 'remove'
-							? translate( 'Why would you like to remove?' )
-							: translate( 'Why would you like to cancel?' )
-					}
+					label={ getReasonLabel() }
 					value={ value }
 					options={ reasons.map( toSelectOption ) }
 					onChange={ ( val ) => {
@@ -150,7 +156,7 @@ type FeedbackStepProps = {
 	onChangeCancellationReason: ChangeCallback;
 	onChangeCancellationReasonDetails: ChangeCallback;
 	onChangeImportFeedback?: ChangeCallback;
-	intent?: 'cancel' | 'remove';
+	intent?: 'cancel' | 'remove' | 'auto-renew';
 };
 
 export default function FeedbackStep( {
@@ -163,15 +169,21 @@ export default function FeedbackStep( {
 	const productName = translate( 'WordPress.com' );
 	const isPlanPurchase = isPlan( purchase );
 
+	const getHeaderText = () => {
+		if ( intent === 'auto-renew' ) {
+			return translate( 'Auto-renew turned off' );
+		}
+		if ( intent === 'cancel' ) {
+			return translate( 'Cancellation confirmed' );
+		}
+		return translate( 'Share your feedback' );
+	};
+
 	return (
 		<div className="cancel-purchase-form__feedback">
 			<FormattedHeader
 				brandFont
-				headerText={
-					intent === 'cancel'
-						? translate( 'Cancellation confirmed' )
-						: translate( 'Share your feedback' )
-				}
+				headerText={ getHeaderText() }
 				subHeaderText={ translate(
 					'Before you go, please answer a few quick questions to help us improve %(productName)s.',
 					{

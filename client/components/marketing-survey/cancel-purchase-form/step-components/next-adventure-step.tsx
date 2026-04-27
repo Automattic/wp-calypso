@@ -9,7 +9,7 @@ interface Props {
 	isPlan: boolean;
 	isOnlyStep?: boolean;
 	adventureOptions: string[];
-	intent?: 'cancel' | 'remove';
+	intent?: 'cancel' | 'remove' | 'auto-renew';
 	onChangeText?: ( text: string ) => void;
 	onSelectNextAdventure?: ( nextAdventure: string ) => void;
 	onChangeNextAdventureDetails?: ( details: string ) => void;
@@ -93,6 +93,13 @@ export default function NextAdventureStep( props: Props ) {
 		subHeaderText = translate( 'One last thing', {
 			context: 'This is the last step before cancelling the plan.',
 		} );
+	} else if ( isCancelPostMutation && intent === 'auto-renew' ) {
+		headerText = translate( 'Auto-renew turned off' );
+		subHeaderText = isOnlyStep
+			? translate(
+					'Before you go, please answer a quick question to help us improve WordPress.com.'
+			  )
+			: undefined;
 	} else if ( isOnlyStep ) {
 		headerText = isCancelPostMutation
 			? translate( 'Cancellation confirmed' )

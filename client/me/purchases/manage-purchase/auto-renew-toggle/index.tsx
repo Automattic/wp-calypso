@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button, ToggleControl } from '@wordpress/components';
 import { localize, LocalizeProps } from 'i18n-calypso';
@@ -13,6 +14,7 @@ import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
 import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { isExpired, isOneTimePurchase, isRechargeable } from '../../../../lib/purchases';
+import { cancelPurchase as cancelPurchaseUrl } from '../../paths';
 import { getChangePaymentMethodPath } from '../../utils';
 import AutoRenewDisablingDialog from './auto-renew-disabling-dialog';
 import AutoRenewPaymentMethodDialog from './auto-renew-payment-method-dialog';
@@ -193,9 +195,15 @@ class AutoRenewToggle extends Component<
 	};
 
 	onToggleAutoRenew = () => {
-		const { isEnabled } = this.props;
+		const { isEnabled, purchase, siteSlug } = this.props;
 
 		if ( isEnabled ) {
+			if ( config.isEnabled( 'purchases/split-cancel-remove' ) ) {
+				const url = cancelPurchaseUrl( siteSlug ?? '', purchase.id );
+				page( `${ url }?intent=cancel&source=auto-renew-toggle` );
+				return;
+			}
+
 			this.setState( {
 				showAutoRenewDisablingDialog: true,
 			} );
