@@ -1,24 +1,24 @@
 import { TimeSince } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import AchievementCard from './achievement-card';
-import type { Trophy } from '@automattic/api-core';
+import type { Achievement } from '@automattic/api-core';
 
-export default function UserBasedAchievement( { trophy }: { trophy: Trophy } ) {
+export default function UserBasedAchievement( { achievement }: { achievement: Achievement } ) {
 	const translate = useTranslate();
 
 	return (
 		<AchievementCard
-			image={ `https:${ trophy.image }` }
-			title={ trophy.title }
+			image={ achievement.image }
+			title={ achievement.name }
 			badge={
-				trophy.level > 0
-					? translate( 'Level %(level)d', { args: { level: trophy.level } } )
+				achievement.level > 0
+					? translate( 'Level %(level)d', { args: { level: achievement.level } } )
 					: undefined
 			}
-			description={ trophy.message }
+			description={ achievement.description }
 			caption={ translate( 'Unlocked: {{timeSince/}}', {
 				components: {
-					timeSince: <TimeSince date={ trophy.date } />,
+					timeSince: <TimeSince date={ achievement.date } />,
 				},
 			} ) }
 		/>
