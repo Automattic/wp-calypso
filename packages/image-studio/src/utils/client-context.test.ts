@@ -48,16 +48,22 @@ interface VideoStoreSelectors {
 	getCurrentVideoUrl?: () => string | null;
 }
 
+interface EditorStoreSelectors {
+	getEditedPostAttribute?: ( name: string ) => unknown;
+}
+
 function setupSelect( {
 	imageStudio,
 	videoStudio = {},
 	core = { getEntityRecord: () => null },
 	blockEditor = { getBlocks: () => [], getBlocksByName: () => [], getBlock: () => null },
+	editor,
 }: {
 	imageStudio: ImageStoreSelectors;
 	videoStudio?: VideoStoreSelectors;
 	core?: Record< string, unknown >;
 	blockEditor?: Record< string, unknown >;
+	editor?: EditorStoreSelectors;
 } ) {
 	mockSelect.mockImplementation( ( storeName: string ) => {
 		if ( storeName === 'image-studio' ) {
@@ -71,6 +77,9 @@ function setupSelect( {
 		}
 		if ( storeName === 'block-editor' ) {
 			return blockEditor;
+		}
+		if ( storeName === 'core/editor' ) {
+			return editor ?? null;
 		}
 		return null;
 	} );
@@ -139,6 +148,76 @@ describe( 'getClientContext', () => {
 		expect( ctx.videoStudio ).not.toHaveProperty( 'aspect_ratio' );
 		// Tone has been collapsed into style; the videoStudio payload no longer carries it.
 		expect( ctx.videoStudio ).not.toHaveProperty( 'tone' );
+	} );
+
+	it( 'includes the current post title in the videoStudio payload when available', () => {
+		setupSelect( {
+			imageStudio: {
+				getImageStudioAttachmentId: () => null,
+				getIsImageStudioOpen: () => true,
+				getSelectedStyle: () => null,
+				getSelectedAspectRatio: () => null,
+				getEntryPoint: () => 'post_editor_feature_clip',
+				getBlockType: () => null,
+			},
+			videoStudio: {
+				getSelectedStyle: () => 'promotional',
+			},
+			editor: {
+				getEditedPostAttribute: ( name: string ) =>
+					name === 'title' ? 'My Spectacular Post' : undefined,
+			},
+		} );
+
+		const ctx = getClientContext();
+
+		expect( ctx.videoStudio ).toBeDefined();
+		expect( ctx.videoStudio?.title ).toBe( 'My Spectacular Post' );
+	} );
+
+	it( 'omits the title key from the videoStudio payload when the title is empty', () => {
+		setupSelect( {
+			imageStudio: {
+				getImageStudioAttachmentId: () => null,
+				getIsImageStudioOpen: () => true,
+				getSelectedStyle: () => null,
+				getSelectedAspectRatio: () => null,
+				getEntryPoint: () => 'post_editor_feature_clip',
+				getBlockType: () => null,
+			},
+			videoStudio: {
+				getSelectedStyle: () => 'promotional',
+			},
+			editor: {
+				getEditedPostAttribute: ( name: string ) => ( name === 'title' ? '   ' : undefined ),
+			},
+		} );
+
+		const ctx = getClientContext();
+
+		expect( ctx.videoStudio ).toBeDefined();
+		expect( ctx.videoStudio ).not.toHaveProperty( 'title' );
+	} );
+
+	it( 'omits the title key when the core/editor store is unavailable', () => {
+		setupSelect( {
+			imageStudio: {
+				getImageStudioAttachmentId: () => null,
+				getIsImageStudioOpen: () => true,
+				getSelectedStyle: () => null,
+				getSelectedAspectRatio: () => null,
+				getEntryPoint: () => 'post_editor_feature_clip',
+				getBlockType: () => null,
+			},
+			videoStudio: {
+				getSelectedStyle: () => 'promotional',
+			},
+		} );
+
+		const ctx = getClientContext();
+
+		expect( ctx.videoStudio ).toBeDefined();
+		expect( ctx.videoStudio ).not.toHaveProperty( 'title' );
 	} );
 
 	it( 'falls back to wp-admin environment when studio is closed', () => {

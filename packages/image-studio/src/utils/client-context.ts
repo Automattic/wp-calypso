@@ -33,6 +33,7 @@ export interface VideoStudioData {
 	isOpen: boolean;
 	id: number | null;
 	style?: string;
+	title?: string;
 	metadata: ImageStudioMetadata;
 	entryPoint: ImageStudioEntryPoint | null;
 	blockType: string | null;
@@ -261,6 +262,22 @@ function detectImageEntity(): DetectedEntity | null {
 
 			if ( videoSelectedStyle && videoSelectedStyle !== 'none' ) {
 				videoStudio.style = videoSelectedStyle;
+			}
+
+			// Pull the current post title fresh from core/editor so the wpcom side
+			// can render text-overlay frames; the store may not be registered in
+			// non-editor contexts (e.g. tests, uploads.php), so treat it as optional.
+			const editorSelect = select( 'core/editor' ) as unknown as {
+				getEditedPostAttribute?: ( name: string ) => unknown;
+			};
+			const postTitle =
+				typeof editorSelect?.getEditedPostAttribute === 'function'
+					? ( editorSelect.getEditedPostAttribute( 'title' ) as string | undefined )
+					: undefined;
+			const trimmedTitle = typeof postTitle === 'string' ? postTitle.trim() : '';
+
+			if ( trimmedTitle ) {
+				videoStudio.title = trimmedTitle;
 			}
 
 			return { videoStudio, isOpen, isVideo: true };
