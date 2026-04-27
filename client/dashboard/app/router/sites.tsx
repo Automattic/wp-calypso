@@ -576,6 +576,36 @@ export const sitePerformanceRoute = createRoute( {
 	)
 );
 
+export const sitePerformanceIndexRoute = createRoute( {
+	getParentRoute: () => sitePerformanceRoute,
+	path: '/',
+	beforeLoad: ( { params } ) => {
+		throw dashboardRedirect( { to: `/sites/${ params.siteSlug }/performance/overview` } );
+	},
+} );
+
+export const sitePerformanceOverviewRoute = createRoute( {
+	getParentRoute: () => sitePerformanceRoute,
+	path: 'overview',
+} ).lazy( () =>
+	import( '../../sites/performance/overview' ).then( ( d ) =>
+		createLazyRoute( 'site-performance-overview' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+export const sitePerformanceApmRoute = createRoute( {
+	getParentRoute: () => sitePerformanceRoute,
+	path: 'apm',
+} ).lazy( () =>
+	import( '../../sites/performance/apm' ).then( ( d ) =>
+		createLazyRoute( 'site-performance-apm' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
 export const siteSettingsRoute = createRoute( {
 	staticData: { requiresSiteTypeSupport: 'settings' },
 	head: () => ( {
@@ -1606,7 +1636,11 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteSSHMigrationCompleteRoute,
 		siteSSHMigrationFailedRoute,
 		siteDeploymentsRoute.addChildren( [ siteDeploymentsListRoute ] ),
-		sitePerformanceRoute,
+		sitePerformanceRoute.addChildren( [
+			sitePerformanceIndexRoute,
+			sitePerformanceOverviewRoute,
+			...( isEnabled( 'performance/apm' ) ? [ sitePerformanceApmRoute ] : [] ),
+		] ),
 		siteMonitoringRoute,
 		siteLogsRoute.addChildren( [
 			siteLogsIndexRoute,
