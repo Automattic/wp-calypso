@@ -12,6 +12,8 @@ jest.mock( '@automattic/calypso-config', () => ( {
 
 jest.mock( '../use-achievements-visibility' );
 
+jest.mock( 'calypso/data/reader/use-years-of-service' );
+
 jest.mock( '../achievements-grid', () => ( {
 	__esModule: true,
 	default: () => <div data-testid="achievements-grid" />,
@@ -22,10 +24,20 @@ jest.mock( '../achievements-settings', () => ( {
 	default: () => <button data-testid="achievements-settings">Settings</button>,
 } ) );
 
+jest.mock( '../years-of-service-badge', () => ( {
+	YearsOfServiceBadge: ( { yearsOfService }: { yearsOfService: number } ) => (
+		<div data-testid="years-of-service-badge">{ yearsOfService }</div>
+	),
+} ) );
+
 const mockIsEnabled = isEnabled as jest.MockedFunction< typeof isEnabled >;
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const useAchievementsVisibility = require( '../use-achievements-visibility' ).default as jest.Mock;
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const useYearsOfService = require( 'calypso/data/reader/use-years-of-service' )
+	.useYearsOfService as jest.Mock;
 
 describe( 'UserAchievements', () => {
 	const defaultUser: ReaderUser = {
@@ -43,6 +55,7 @@ describe( 'UserAchievements', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockIsEnabled.mockReturnValue( true );
+		useYearsOfService.mockReturnValue( { yearsOfService: undefined, isLoading: false } );
 	} );
 
 	test( 'should render nothing when feature flag is disabled', () => {
@@ -118,5 +131,45 @@ describe( 'UserAchievements', () => {
 
 		expect( screen.getByTestId( 'achievements-grid' ) ).toBeVisible();
 		expect( screen.queryByTestId( 'achievements-settings' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'should render YearsOfServiceBadge when years_of_service > 0', () => {
+		useAchievementsVisibility.mockReturnValue( {
+			isOwnProfile: false,
+			isVisible: true,
+			isLoading: false,
+		} );
+		useYearsOfService.mockReturnValue( { yearsOfService: 5, isLoading: false } );
+
+		render( <UserAchievements user={ defaultUser } /> );
+
+		expect( screen.getByTestId( 'years-of-service-badge' ) ).toBeVisible();
+		expect( screen.getByText( '5' ) ).toBeVisible();
+	} );
+
+	test( 'should not render YearsOfServiceBadge when years_of_service is 0', () => {
+		useAchievementsVisibility.mockReturnValue( {
+			isOwnProfile: false,
+			isVisible: true,
+			isLoading: false,
+		} );
+		useYearsOfService.mockReturnValue( { yearsOfService: 0, isLoading: false } );
+
+		render( <UserAchievements user={ defaultUser } /> );
+
+		expect( screen.queryByTestId( 'years-of-service-badge' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'should not render YearsOfServiceBadge when years_of_service is undefined', () => {
+		useAchievementsVisibility.mockReturnValue( {
+			isOwnProfile: false,
+			isVisible: true,
+			isLoading: false,
+		} );
+		useYearsOfService.mockReturnValue( { yearsOfService: undefined, isLoading: false } );
+
+		render( <UserAchievements user={ defaultUser } /> );
+
+		expect( screen.queryByTestId( 'years-of-service-badge' ) ).not.toBeInTheDocument();
 	} );
 } );

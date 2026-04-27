@@ -1,9 +1,11 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { useYearsOfService } from 'calypso/data/reader/use-years-of-service';
 import AchievementsGrid from './achievements-grid';
 import AchievementsSettings from './achievements-settings';
 import useAchievementsVisibility from './use-achievements-visibility';
+import { YearsOfServiceBadge } from './years-of-service-badge';
 import type { ReaderUser } from '@automattic/api-core';
 
 import './style.scss';
@@ -15,6 +17,7 @@ interface UserAchievementsProps {
 const UserAchievements = ( { user }: UserAchievementsProps ): JSX.Element | null => {
 	const translate = useTranslate();
 	const { isOwnProfile, isVisible, isLoading } = useAchievementsVisibility( user.user_login );
+	const { yearsOfService } = useYearsOfService( user.user_login );
 
 	if ( ! isEnabled( 'reader/achievements' ) ) {
 		return null;
@@ -34,7 +37,12 @@ const UserAchievements = ( { user }: UserAchievementsProps ): JSX.Element | null
 
 	return (
 		<div className="achievements">
-			<div className="achievements__header">{ isOwnProfile && <AchievementsSettings /> }</div>
+			<div className="achievements__header">
+				{ !! yearsOfService && (
+					<YearsOfServiceBadge size="large" yearsOfService={ yearsOfService } />
+				) }
+				{ isOwnProfile && <AchievementsSettings /> }
+			</div>
 			<AchievementsGrid userLogin={ user.user_login } />
 		</div>
 	);
