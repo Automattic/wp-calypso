@@ -66,7 +66,7 @@ export default function AiMcpAvailableToolsContent() {
 							<HStack alignment="left" spacing={ 4 }>
 								<ToggleControl
 									label=""
-									checked={ ability.effective_enabled }
+									checked={ ability.enabled }
 									onChange={ ( next: boolean ) => onToggleAbility( ability.name, next ) }
 									disabled={ mutation.isPending }
 								/>

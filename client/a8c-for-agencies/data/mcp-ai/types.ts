@@ -2,13 +2,11 @@ export interface McpAvailableAbility {
 	name: string;
 	title: string;
 	description: string;
-	default_enabled: boolean;
-	effective_enabled: boolean;
+	enabled: boolean;
 }
 
 export interface McpSettings {
 	enabled: boolean;
-	abilities: Record< string, boolean >;
 	available_abilities: McpAvailableAbility[];
 }
 

@@ -45,7 +45,7 @@ export default function AiMcpOverviewContent() {
 	}, [ dispatch ] );
 
 	const availableAbilities = settings?.available_abilities ?? [];
-	const enabledCount = availableAbilities.filter( ( a ) => a.effective_enabled ).length;
+	const enabledCount = availableAbilities.filter( ( a ) => a.enabled ).length;
 	const totalCount = availableAbilities.length;
 	const mainEnabled = !! settings?.enabled;
 
