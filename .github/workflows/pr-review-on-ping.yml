@@ -9,9 +9,10 @@ on:
     types: [submitted]
 
 concurrency:
-  # Scope by event_name and sender so the bot's own review and
-  # review-comment posts don't cancel an in-progress run.
-  group: pr-review-on-ping-${{ github.event_name }}-${{ github.event.sender.login }}-${{ github.event.issue.number || github.event.pull_request.number }}
+  # Bot senders get a unique bucket per run so their inline-comment posts
+  # don't cancel an in-progress review. Human pings on the same PR share
+  # a bucket so a newer ping cancels an older one.
+  group: ${{ github.event.sender.type == 'Bot' && format('pr-review-on-ping-bot-{0}-{1}', github.event.sender.login, github.run_id) || format('pr-review-on-ping-{0}', github.event.issue.number || github.event.pull_request.number) }}
   cancel-in-progress: true
 
 permissions:
@@ -56,7 +57,7 @@ jobs:
 
   review:
     needs: detect
-    uses: ./.github/workflows/pr-review.yml
+    uses: Automattic/wp-calypso/.github/workflows/pr-review.yml@trunk
     with:
       area: ${{ needs.detect.outputs.area }}
     secrets:

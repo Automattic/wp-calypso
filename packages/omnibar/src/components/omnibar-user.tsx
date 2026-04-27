@@ -12,12 +12,18 @@ export function OmnibarUserNode( { node }: { node: OmnibarNode } ) {
 		<OmnibarMenu
 			node={ {
 				...node,
-				render: ( { title, icon } ) => (
-					<HStack spacing={ 2 }>
-						<span>{ title }</span>
-						{ icon && <span className="omnibar__user-avatar">{ icon }</span> }
-					</HStack>
-				),
+				render: ( { title, icon } ) => {
+					const userAvatar = <span className="omnibar__user-avatar">{ icon }</span>;
+					if ( ! title ) {
+						return userAvatar;
+					}
+					return (
+						<HStack spacing={ 2 }>
+							<span>{ title }</span>
+							{ userAvatar }
+						</HStack>
+					);
+				},
 				children: node.children?.map( ( child ) => ( {
 					...child,
 					children: child.children?.map( ( grandChild ) => {
