@@ -239,7 +239,7 @@ jobs:
             **7. Information disclosure.** Flag tokens or PII in `console.log`, Sentry, or analytics payloads; stack traces in client-visible error responses. Calypso-internal IDs (`blog_id`, `studio_site_id`) are not PII.
             Message: `<Field> in <log | Sentry | analytics> may leak <category>.`
 
-            **8. Supply chain.** Only when the diff touches `.github/workflows/`. Flag `pull_request_target` + PR-branch checkout, `${{ ... }}` interpolation in `run:` with attacker-controllable values, unpinned third-party actions.
+            **8. Supply chain.** Only when the diff touches `.github/workflows/`. Flag `pull_request_target` + PR-branch checkout, GitHub Actions expression interpolation in `run:` bodies with attacker-controllable values (the dollar-double-curly syntax), unpinned third-party actions.
             Message: `<Specific risk> at <location>. <Specific fix>.`
 
             **9. Architecture awareness.** Flag when the diff imports `page.js` inside `client/dashboard/`, uses `useDispatch` from `react-redux` inside `client/dashboard/`, or adds new feature work to `client/my-sites/` (deprecated per AGENTS.md).

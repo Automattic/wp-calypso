@@ -13,9 +13,12 @@ interface Props {
 export default function AdPreview( { htmlCode, isLoading, templateFormat, width }: Props ) {
 	const adWidth = width ? `${ width }` : '300px';
 
+	// Both the classic html5_v2 template and the AI-generated html5_v3 template
+	// emit the same `wa-inline-frame` postMessage protocol to size the iframe.
+	const isResponsiveHtmlFormat = templateFormat === 'html5_v2' || templateFormat === 'html5_v3';
+
 	useEffect( () => {
-		if ( ! isLoading && templateFormat === 'html5_v2' ) {
-			// we only need this listener to resize the iframe for html5_v2 templates
+		if ( ! isLoading && isResponsiveHtmlFormat ) {
 			window.addEventListener( 'message', function ( msg ) {
 				if ( typeof msg.data !== 'object' ) {
 					return;
@@ -38,7 +41,7 @@ export default function AdPreview( { htmlCode, isLoading, templateFormat, width 
 				}
 			} );
 		}
-	}, [ isLoading, templateFormat ] );
+	}, [ isLoading, isResponsiveHtmlFormat ] );
 
 	if ( isLoading ) {
 		return (
@@ -50,6 +53,7 @@ export default function AdPreview( { htmlCode, isLoading, templateFormat, width 
 
 	const classes = clsx( 'campaign-item-details__preview-content', {
 		v02: templateFormat === 'html5_v2',
+		v03: templateFormat === 'html5_v3',
 	} );
 
 	return (
