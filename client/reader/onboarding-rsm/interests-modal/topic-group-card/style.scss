@@ -1,0 +1,113 @@
+@import '@wordpress/base-styles/breakpoints';
+
+.topic-group-card {
+	display: flex;
+	flex-direction: column;
+	width: 240px;
+	min-width: 240px;
+	max-width: 240px;
+	padding: 16px;
+	gap: 12px;
+	background-color: var( --color-surface );
+	border: 1px solid var( --color-border-subtle, #e0e0e0 );
+	border-radius: 8px;
+	box-sizing: border-box;
+	scroll-snap-align: start;
+
+	&__header {
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+	}
+
+	&__title {
+		font-size: 0.875rem;
+		font-weight: 600;
+		margin: 0;
+		line-height: 1.3;
+		color: var( --color-text );
+	}
+
+	&__meta {
+		font-size: 0.75rem;
+		color: var( --color-text-subtle );
+		margin: 0;
+	}
+
+	&__image-wrap {
+		width: 100%;
+		aspect-ratio: 4 / 3;
+		overflow: hidden;
+		border-radius: 4px;
+		background-color: var( --studio-gray-0, #f6f7f7 );
+	}
+
+	&__image {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		display: block;
+	}
+
+	&__description {
+		margin: 0;
+		font-size: 0.875rem;
+		line-height: 1.4;
+		color: var( --color-text-subtle );
+		flex-grow: 1;
+		display: -webkit-box;
+		-webkit-line-clamp: 4;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+
+	&__avatars {
+		display: flex;
+		align-items: center;
+		padding-left: 6px; // Compensate for negative-margin overlap of first item.
+	}
+
+	&__avatar {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 50%;
+		overflow: hidden;
+		margin-left: -6px;
+		background-color: var( --studio-white, #fff );
+		box-shadow: 0 0 0 2px var( --color-surface, #fff );
+
+		.site-icon {
+			width: 100% !important;
+			height: 100% !important;
+		}
+	}
+
+	&__avatar-more {
+		font-size: 0.75rem;
+		font-weight: 600;
+		color: var( --color-text-subtle );
+		background-color: var( --studio-gray-0, #f0f0f0 );
+		box-shadow: 0 0 0 2px var( --color-surface, #fff );
+	}
+
+	&__subscribe {
+		justify-content: center;
+		gap: 4px;
+
+		.topic-group-card__subscribe-icon {
+			fill: currentColor;
+		}
+	}
+
+	&.is-subscribed {
+		.topic-group-card__subscribe.components-button {
+			// Keep the button visible-but-locked while clearly indicating success.
+			color: var( --color-success, #008a20 );
+			border-color: var( --color-success, #008a20 );
+			background-color: transparent;
+			opacity: 1;
+			cursor: default;
+		}
+	}
+}

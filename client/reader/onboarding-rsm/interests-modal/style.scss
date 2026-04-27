@@ -29,6 +29,49 @@ $actions-height: 64px;
 		margin: 0;
 	}
 
+	&__packs {
+		display: flex;
+		gap: 16px;
+		overflow-x: auto;
+		padding: 4px 4px 12px;
+		// Allow card shadows to show without being clipped while we scroll.
+		margin: 0 -4px;
+		scroll-snap-type: x mandatory;
+		scroll-padding-left: 4px;
+
+		// Subtle scrollbar styling.
+		scrollbar-width: thin;
+
+		&::-webkit-scrollbar {
+			height: 8px;
+		}
+
+		&::-webkit-scrollbar-thumb {
+			background-color: var( --color-neutral-10, #dcdcde );
+			border-radius: 4px;
+		}
+	}
+
+	&__pack-item {
+		display: flex;
+		flex: 0 0 auto;
+	}
+
+	&__topics-toggle-row {
+		display: flex;
+		justify-content: center;
+	}
+
+	&__topics-toggle.components-button {
+		font-weight: 500;
+	}
+
+	&__topics-section {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+	}
+
 	&__section-header {
 		margin-bottom: 16px;
 	}

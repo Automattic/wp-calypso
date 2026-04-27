@@ -1,0 +1,139 @@
+import { Button } from '@wordpress/components';
+import { __, sprintf, _n } from '@wordpress/i18n';
+import { Icon, check } from '@wordpress/icons';
+import clsx from 'clsx';
+import React from 'react';
+import { useSelector } from 'react-redux';
+import { SiteIcon } from 'calypso/blocks/site-icon';
+import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
+import { getFeed } from 'calypso/state/reader/feeds/selectors';
+import type { CuratedBlog } from '../../curated-blogs';
+
+import './style.scss';
+
+const MAX_VISIBLE_AVATARS = 4;
+const AVATAR_SIZE = 28;
+
+type TopicGroupCardProps = {
+	title: string;
+	imageUrl: string;
+	description: string;
+	tags: string[];
+	blogs: CuratedBlog[];
+	isSubscribed: boolean;
+	isBusy?: boolean;
+	onSubscribe: () => void;
+};
+
+const BlogAvatar: React.FC< { blog: CuratedBlog } > = ( { blog } ) => {
+	const feed = useSelector( ( state ) => getFeed( state, blog.feed_ID ) );
+	const iconUrl = feed?.site_icon ?? feed?.image;
+
+	return (
+		<>
+			<QueryReaderFeed feedId={ blog.feed_ID } />
+			<span
+				className="topic-group-card__avatar"
+				title={ blog.site_name }
+				style={ { width: AVATAR_SIZE, height: AVATAR_SIZE } }
+			>
+				<SiteIcon iconUrl={ iconUrl } size={ AVATAR_SIZE } alt={ blog.site_name } />
+			</span>
+		</>
+	);
+};
+
+const TopicGroupCard: React.FC< TopicGroupCardProps > = ( {
+	title,
+	imageUrl,
+	description,
+	tags,
+	blogs,
+	isSubscribed,
+	isBusy = false,
+	onSubscribe,
+} ) => {
+	const visibleBlogs = blogs.slice( 0, MAX_VISIBLE_AVATARS );
+	const remainingCount = Math.max( 0, blogs.length - MAX_VISIBLE_AVATARS );
+
+	const tagCount = tags.length;
+	const tagSummary = tagCount
+		? sprintf(
+				/* translators: %d is a number of topics. */
+				_n( '%d topic', '%d topics', tagCount ),
+				tagCount
+		  )
+		: '';
+	const blogSummary = blogs.length
+		? sprintf(
+				/* translators: %d is a number of blogs. */
+				_n( '%d blog', '%d blogs', blogs.length ),
+				blogs.length
+		  )
+		: '';
+	const meta = [ tagSummary, blogSummary ].filter( Boolean ).join( ' · ' );
+
+	return (
+		<article
+			className={ clsx( 'topic-group-card', { 'is-subscribed': isSubscribed } ) }
+			aria-label={ title }
+		>
+			<header className="topic-group-card__header">
+				<h3 className="topic-group-card__title">{ title }</h3>
+				{ meta && <p className="topic-group-card__meta">{ meta }</p> }
+			</header>
+			{ imageUrl && (
+				<div className="topic-group-card__image-wrap">
+					<img className="topic-group-card__image" src={ imageUrl } alt="" aria-hidden />
+				</div>
+			) }
+			<p className="topic-group-card__description">{ description }</p>
+			{ blogs.length > 0 && (
+				<div className="topic-group-card__avatars" aria-hidden>
+					{ visibleBlogs.map( ( blog ) => (
+						<BlogAvatar key={ blog.feed_ID } blog={ blog } />
+					) ) }
+					{ remainingCount > 0 && (
+						<span
+							className="topic-group-card__avatar topic-group-card__avatar-more"
+							style={ { width: AVATAR_SIZE, height: AVATAR_SIZE } }
+						>
+							+{ remainingCount }
+						</span>
+					) }
+				</div>
+			) }
+			<Button
+				__next40pxDefaultSize
+				className="topic-group-card__subscribe"
+				variant="secondary"
+				onClick={ onSubscribe }
+				isBusy={ isBusy }
+				disabled={ isSubscribed }
+				accessibleWhenDisabled
+				aria-label={
+					isSubscribed
+						? sprintf(
+								/* translators: %s is the topic pack title. */
+								__( 'Subscribed to %s' ),
+								title
+						  )
+						: sprintf(
+								/* translators: %s is the topic pack title. */
+								__( 'Subscribe to %s' ),
+								title
+						  )
+				}
+			>
+				{ isSubscribed && (
+					<Icon className="topic-group-card__subscribe-icon" icon={ check } size={ 18 } />
+				) }
+				<span className="topic-group-card__subscribe-label">
+					{ isSubscribed ? __( 'Subscribed' ) : __( 'Subscribe' ) }
+				</span>
+			</Button>
+		</article>
+	);
+};
+
+export default TopicGroupCard;

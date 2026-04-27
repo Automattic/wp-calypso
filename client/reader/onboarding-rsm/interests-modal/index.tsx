@@ -8,12 +8,18 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { fixMe } from 'i18n-calypso';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch, useStore } from 'react-redux';
 import { READER_ONBOARDING_TRACKS_EVENT_PREFIX } from 'calypso/reader/onboarding-rsm/constants';
 import { StepIndicator } from 'calypso/reader/onboarding-rsm/step-indicator';
+import { follow } from 'calypso/state/reader/follows/actions';
+import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
 import { requestFollowTag, requestUnfollowTag } from 'calypso/state/reader/tags/items/actions';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
+import { getPackBlogs } from './get-pack-blogs';
+import TopicGroupCard from './topic-group-card';
+import { getTopicGroups, type TopicGroup } from './topic-groups';
+import type { CuratedBlog } from '../curated-blogs';
 
 import './style.scss';
 
@@ -37,9 +43,14 @@ interface Tag {
 	slug: string;
 }
 
+type ResolvedPack = TopicGroup & { blogs: CuratedBlog[] };
+
 const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onContinue } ) => {
 	const [ followedTags, setFollowedTags ] = useState< string[] >( [] );
+	const [ showAllTopics, setShowAllTopics ] = useState( false );
+	const [ busyPacks, setBusyPacks ] = useState< Set< string > >( new Set() );
 	const followedTagsFromState = useSelector( getReaderFollowedTags );
+	const reduxFollows = useSelector( getReaderFollows );
 	const dispatch = useDispatch();
 	const [ processingTags, setProcessingTags ] = useState< Set< string > >( new Set() );
 	const reduxStore = useStore();
@@ -51,6 +62,32 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 			setFollowedTags( initialTags );
 		}
 	}, [ followedTagsFromState, processingTags ] );
+
+	// Resolve each topic group's blog list once per modal session. The random
+	// selection is therefore stable for the lifetime of the modal, which is
+	// important because subscribed-status is checked against these specific
+	// feed IDs.
+	const packs = useMemo< ResolvedPack[] >(
+		() =>
+			getTopicGroups()
+				.map( ( group ) => ( { ...group, blogs: getPackBlogs( group.tags ) } ) )
+				// Hide the "Most Subscribed" placeholder while it has nothing to subscribe to.
+				.filter( ( pack ) => pack.tags.length > 0 || pack.blogs.length > 0 ),
+		[]
+	);
+
+	const isBlogFollowed = ( blog: CuratedBlog ): boolean =>
+		reduxFollows.some(
+			( f ) =>
+				( blog.feed_ID && f.feed_ID === blog.feed_ID ) ||
+				( blog.site_ID && f.blog_ID === blog.site_ID )
+		);
+
+	const isPackSubscribed = ( pack: ResolvedPack ): boolean => {
+		const tagsFollowed = pack.tags.every( ( tag ) => followedTags.includes( tag ) );
+		const blogsFollowed = pack.blogs.every( isBlogFollowed );
+		return tagsFollowed && blogsFollowed;
+	};
 
 	const isContinueDisabled = followedTags.length < 4;
 
@@ -112,11 +149,69 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 		}, 100 );
 	};
 
+	const handlePackSubscribe = ( pack: ResolvedPack ) => {
+		if ( busyPacks.has( pack.id ) || isPackSubscribed( pack ) ) {
+			return;
+		}
+
+		setBusyPacks( ( current ) => new Set( current ).add( pack.id ) );
+
+		// Follow any tags in the pack we're not already following. Reuse the
+		// existing per-tag handler so the busy/processing semantics, optimistic
+		// state update, and tracks events stay consistent with single-tag toggles.
+		pack.tags.forEach( ( tag ) => {
+			if ( ! followedTags.includes( tag ) ) {
+				handleTopicChange( true, tag );
+			}
+		} );
+
+		// Follow any blogs in the pack we're not already following.
+		pack.blogs.forEach( ( blog ) => {
+			if ( isBlogFollowed( blog ) ) {
+				return;
+			}
+			const followData: { feed_ID: number; blog_ID?: number } = { feed_ID: blog.feed_ID };
+			if ( blog.site_ID && blog.site_ID > 0 ) {
+				followData.blog_ID = blog.site_ID;
+			}
+			dispatch( follow( blog.site_URL, followData, null ) );
+		} );
+
+		recordTracksEvent(
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_pack_subscribed`,
+			{
+				pack_id: pack.id,
+				tag_count: pack.tags.length,
+				blog_count: pack.blogs.length,
+			}
+		);
+
+		// Release the busy state on the next tick — Redux state for follows and
+		// tags updates synchronously so isPackSubscribed will start returning
+		// true immediately, which renders the locked "Subscribed" state.
+		setTimeout( () => {
+			setBusyPacks( ( current ) => {
+				const updated = new Set( current );
+				updated.delete( pack.id );
+				return updated;
+			} );
+		}, 0 );
+	};
+
 	const handleContinue = () => {
 		if ( ! isContinueDisabled ) {
 			onClose();
 			onContinue();
 		}
+	};
+
+	const handleToggleTopics = () => {
+		const next = ! showAllTopics;
+		setShowAllTopics( next );
+		recordTracksEvent(
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_individual_topics_toggled`,
+			{ expanded: next }
+		);
 	};
 
 	const categories: Category[] = [
@@ -205,29 +300,64 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 						</p>
 						<p className="interests-modal__subtitle">
 							{ fixMe( {
-								text: 'Follow at least 3 topics to personalize your feed.',
-								newCopy: __( 'Follow at least 3 topics to personalize your feed.' ),
+								text: 'Pick a pack that describes your interest, or switch to individual topics.',
+								newCopy: __(
+									'Pick a pack that describes your interest, or switch to individual topics.'
+								),
 								oldCopy: __( 'Follow at least 3 topics to personalize your Reader feed.' ),
 							} ) }
 						</p>
 					</VStack>
-					{ categories.map( ( category ) => (
-						<div key={ category.name }>
-							<h3 className="interests-modal__section-header">{ category.name }</h3>
-							<div className="interests-modal__topics-list">
-								{ category.topics.map( ( topic ) => (
-									<SelectCardCheckboxV2
-										key={ topic.name }
-										onChange={ ( checked ) => handleTopicChange( checked, topic.tag ) }
-										isBusy={ processingTags.has( topic.tag ) }
-										checked={ followedTags.includes( topic.tag ) }
-									>
-										{ topic.name }
-									</SelectCardCheckboxV2>
-								) ) }
-							</div>
+
+					{ packs.length > 0 && (
+						<div className="interests-modal__packs" role="list">
+							{ packs.map( ( pack ) => (
+								<div className="interests-modal__pack-item" role="listitem" key={ pack.id }>
+									<TopicGroupCard
+										title={ pack.title }
+										imageUrl={ pack.imageUrl }
+										description={ pack.description }
+										tags={ pack.tags }
+										blogs={ pack.blogs }
+										isSubscribed={ isPackSubscribed( pack ) }
+										isBusy={ busyPacks.has( pack.id ) }
+										onSubscribe={ () => handlePackSubscribe( pack ) }
+									/>
+								</div>
+							) ) }
 						</div>
-					) ) }
+					) }
+
+					<div className="interests-modal__topics-toggle-row">
+						<Button
+							variant="link"
+							onClick={ handleToggleTopics }
+							className="interests-modal__topics-toggle"
+							aria-expanded={ showAllTopics }
+						>
+							{ showAllTopics ? __( 'See less topics' ) : __( 'See more topics' ) }
+						</Button>
+					</div>
+
+					{ showAllTopics &&
+						categories.map( ( category ) => (
+							<div key={ category.name } className="interests-modal__topics-section">
+								<h3 className="interests-modal__section-header">{ category.name }</h3>
+								<div className="interests-modal__topics-list">
+									{ category.topics.map( ( topic ) => (
+										<SelectCardCheckboxV2
+											key={ topic.name }
+											onChange={ ( checked ) => handleTopicChange( checked, topic.tag ) }
+											isBusy={ processingTags.has( topic.tag ) }
+											checked={ followedTags.includes( topic.tag ) }
+										>
+											{ topic.name }
+										</SelectCardCheckboxV2>
+									) ) }
+								</div>
+							</div>
+						) ) }
+
 					<div className="reader-onboarding-modal__footer">
 						<HStack justify="space-between" className="reader-onboarding-modal__footer-actions">
 							<StepIndicator totalSteps={ 3 } currentStep={ 2 } />
