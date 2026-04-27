@@ -8,7 +8,7 @@ import { Icon, envelope, help } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { HostingHero } from 'calypso/components/hosting-hero';
-import { getJetpackCriticalErrorMessage } from 'calypso/dashboard/sites/site/notices';
+import { getJetpackCriticalErrorMessage } from 'calypso/dashboard/utils/site-jetpack-critical-error';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { ReactElement, ReactNode } from 'react';
 
