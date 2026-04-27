@@ -131,7 +131,8 @@ const LaunchBigSky: StepType = function ( props ) {
 	const onSubmit = useCallback(
 		async ( event: FormEvent ) => {
 			event.preventDefault();
-			setIntentOnSite( siteSlug, SiteIntent.AIAssembler );
+			// Awaiting ensures big_sky_enable() runs on the backend before we redirect to site-editor.php.
+			await setIntentOnSite( siteSlug, SiteIntent.AIAssembler );
 			setGoalsOnSite( siteSlug, goals );
 			exitFlow( siteId.toString(), siteSlug );
 		},
