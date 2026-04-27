@@ -5,10 +5,10 @@ steps:
     plugins:
       - automattic/nvm#0.6.0
     env:
+      IMAGE_ID: xcode-26.4.1
       CONFIG_ENV: release
       PLAYWRIGHT_SKIP_DOWNLOAD: 'true'
       SKIP_TSC: 'true'
-      IMAGE_ID: xcode-26.4.1
       # Skip Corepack's Yarn download prompt.
       COREPACK_ENABLE_DOWNLOAD_PROMPT: 0
       ELECTRON_BUILDER_ARGS: '-c.mac.target=dir'
