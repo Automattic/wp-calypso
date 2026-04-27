@@ -15,17 +15,6 @@ steps:
       # Force electron-builder to copy files instead of hard-linking; avoids
       # EEXIST cleanup errors when packaging the .app on the BK mac agent.
       USE_HARD_LINKS: 'false'
-    command: |
-      set -euo pipefail
-
-      # Diagnostic: confirm pipeline-level `env:` vars actually reach the shell.
-      # Remove once the EEXIST hard-link issue is resolved.
-      echo "--- env propagation check ---"
-      env | sort | grep -E '^(CI|CONFIG_ENV|USE_HARD_LINKS|ELECTRON_BUILDER_ARGS|IMAGE_ID|COREPACK|PLAYWRIGHT_SKIP_DOWNLOAD|SKIP_TSC)=' || echo "(none of the expected vars are exported)"
-
-      cd desktop
-      corepack enable
-      yarn install --immutable --inline-builds
-      yarn run ci:build-mac
+    command: .buildkite/commands/build-desktop-mac.sh
     artifact_paths:
       - desktop/release/**/*
