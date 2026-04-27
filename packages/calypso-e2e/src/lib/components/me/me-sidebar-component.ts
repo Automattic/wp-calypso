@@ -40,6 +40,16 @@ export class MeSidebarComponent {
 	 * @param {string} menu Menu item label or href to navigate to.
 	 */
 	async navigate( menu: string ): Promise< void > {
-		await this.page.click( selectors.menuItem( menu ) );
+		// The /me sidebar can re-render shortly after page load while
+		// account/site state hydrates. Clicking before the sidebar has
+		// settled causes the link to be detached mid-click, so wait for
+		// the sidebar to be present and the page to be idle first, then
+		// click via a Locator (which re-resolves on retry, unlike
+		// page.click which can keep timing out against a detached node).
+		await this.page.waitForLoadState( 'networkidle' );
+		await this.page.locator( '.sidebar' ).first().waitFor();
+		const menuItem = this.page.locator( selectors.menuItem( menu ) ).first();
+		await menuItem.waitFor();
+		await menuItem.click();
 	}
 }
