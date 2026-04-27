@@ -17,6 +17,7 @@ export default function ClipboardInputControl( {
 
 	const handleCopy = () => {
 		if ( props.value ) {
+			console.log( 'clipboard copy', props.value );
 			navigator.clipboard.writeText( props.value );
 			setCopied( true );
 			onCopy?.( props.label );

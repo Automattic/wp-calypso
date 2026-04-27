@@ -26,6 +26,8 @@ export default function A4AModal( {
 	const translate = useTranslate();
 	useMinimizeHelpCenterOnMount();
 
+	console.log( 'A4A modal opened', title );
+
 	return (
 		<Modal
 			onRequestClose={ onClose }
@@ -36,7 +38,7 @@ export default function A4AModal( {
 				<Button
 					className="a4a-modal__close-button"
 					onClick={ onClose }
-					aria-label={ translate( 'Close' ) }
+					aria-label="Close"
 				>
 					<Icon size={ 24 } icon={ close } />
 				</Button>
