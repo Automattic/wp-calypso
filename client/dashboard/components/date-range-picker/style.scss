@@ -14,19 +14,19 @@
 	&__field {
 		// The extra class is to make sure it overrides the default button styles
 		&.components-button {
-			background: $white;
+			background: var( --dashboard-surface__background-color );
 			padding: $grid-unit-05 $grid-unit-05 $grid-unit-05 $grid-unit-10;
 			box-shadow: none;
 			border-radius: $radius-small;
-			border: 1px solid $gray-600;
+			border: 1px solid var(--dashboard-field__border-color, $gray-600);
 		}
 		svg {
-			color: $gray-900;
+			color: var(--dashboard__text-color);
 			padding: $grid-unit-05;
 		}
 	}
 	&__text {
-		color: $gray-900;
+		color: var(--dashboard__text-color);
 		padding: 0 $grid-unit-05;
 	}
 }

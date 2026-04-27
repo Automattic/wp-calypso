@@ -5,6 +5,7 @@ import { Icon, upload, caution } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import { useState, useEffect, useRef, CSSProperties, KeyboardEvent } from 'react';
 import { ButtonStack } from '../../components/button-stack';
+import Notice from '../../components/notice';
 
 interface EditGravatarProps {
 	/** URL to the user's avatar image */
@@ -179,18 +180,9 @@ const EditGravatar = ( { isEmailVerified = true, avatarUrl, userEmail }: EditGra
 			</ButtonStack>
 
 			{ showEmailVerificationNotice && (
-				<div className="profile-gravatar__verification-notice">
-					<p className="profile-gravatar__verification-notice-text">
-						{ __( 'Please verify your email address to change your profile photo.' ) }
-					</p>
-					<Button
-						className="profile-gravatar__verification-notice-button"
-						onClick={ closeVerifyEmailDialog }
-						variant="secondary"
-					>
-						{ __( 'Close' ) }
-					</Button>
-				</div>
+				<Notice variant="warning" onClose={ closeVerifyEmailDialog }>
+					{ __( 'Please verify your email address to change your profile photo.' ) }
+				</Notice>
 			) }
 		</VStack>
 	);
