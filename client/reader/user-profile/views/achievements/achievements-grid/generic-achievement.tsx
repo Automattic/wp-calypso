@@ -1,10 +1,12 @@
+import { siteByIdQuery } from '@automattic/api-queries';
 import { TimeSince } from '@automattic/components';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { getOldestAchievement } from '../utils';
 import AchievementCard from './achievement-card';
 import type { Achievement } from '@automattic/api-core';
 
-export default function UserBasedAchievement( {
+export default function GenericAchievement( {
 	achievement,
 	achievements,
 }: {
@@ -15,6 +17,28 @@ export default function UserBasedAchievement( {
 	const hasMultiple = achievements.filter( ( a ) => a.slug === achievement.slug ).length > 1;
 	const oldest = hasMultiple ? getOldestAchievement( achievement.slug, achievements ) : undefined;
 	const unlockDate = oldest?.date ?? achievement.date;
+	const siteId = oldest?.site_ID ?? achievement.site_ID ?? 0;
+	const { data: site } = useQuery( {
+		...siteByIdQuery( siteId ),
+		enabled: siteId !== 0,
+	} );
+
+	const caption = () => {
+		const label = hasMultiple ? 'First unlocked' : 'Unlocked';
+		if ( site ) {
+			return translate( '%(label)s: {{timeSince/}} on {{a}}%(site)s{{/a}}', {
+				args: { label, site: site.name },
+				components: {
+					timeSince: <TimeSince date={ unlockDate } />,
+					a: <a href={ site.URL } target="_blank" rel="noopener noreferrer" />,
+				},
+			} );
+		}
+		return translate( '%(label)s: {{timeSince/}}', {
+			args: { label },
+			components: { timeSince: <TimeSince date={ unlockDate } /> },
+		} );
+	};
 
 	return (
 		<AchievementCard
@@ -26,15 +50,7 @@ export default function UserBasedAchievement( {
 					: undefined
 			}
 			description={ achievement.description }
-			caption={
-				hasMultiple
-					? translate( 'First unlocked: {{timeSince/}}', {
-							components: { timeSince: <TimeSince date={ unlockDate } /> },
-					  } )
-					: translate( 'Unlocked: {{timeSince/}}', {
-							components: { timeSince: <TimeSince date={ unlockDate } /> },
-					  } )
-			}
+			caption={ caption() }
 		/>
 	);
 }

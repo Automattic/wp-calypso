@@ -3,8 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useAchievementsQuery } from 'calypso/data/reader/use-achievements-query';
 import { deduplicateAchievements } from '../utils';
 import AnniversaryAchievement from './anniversary-achievement';
-import SiteBasedAchievement from './site-based-achievement';
-import UserBasedAchievement from './user-based-achievement';
+import GenericAchievement from './generic-achievement';
 
 import './style.scss';
 
@@ -39,18 +38,8 @@ export default function AchievementsGrid( { userLogin }: { userLogin: string } )
 					);
 				}
 
-				if ( achievement.site_ID ) {
-					return (
-						<SiteBasedAchievement
-							key={ achievement.achievement_id }
-							achievement={ achievement }
-							achievements={ achievements }
-						/>
-					);
-				}
-
 				return (
-					<UserBasedAchievement
+					<GenericAchievement
 						key={ achievement.achievement_id }
 						achievement={ achievement }
 						achievements={ achievements }
