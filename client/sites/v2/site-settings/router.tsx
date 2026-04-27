@@ -37,9 +37,8 @@ const siteVisibilityRoute = createRoute( {
 );
 
 const aiToolsLayoutRoute = createRoute( {
-	path: 'ai-tools',
+	...appRouterSites.siteSettingsAIToolsRoute.options,
 	getParentRoute: () => settingsRoute,
-	head: () => ( { meta: [ { title: __( 'AI tools' ) } ] } ),
 } );
 
 const aiToolsIndexRoute = createRoute( {

@@ -24,6 +24,7 @@ import './style.scss';
 // eslint-disable-next-line no-restricted-imports
 import 'calypso/layout/masterbar/style.scss';
 import './interim-omnibar/style.scss';
+import './omnibar/style.scss';
 
 function boot( config: AppConfig ) {
 	if ( handleOAuthCallback() ) {
@@ -46,7 +47,9 @@ function boot( config: AppConfig ) {
 	}
 	const root = createRoot( rootElement );
 
-	if ( isEnabled( 'dashboard/omnibar' ) ) {
+	if ( isEnabled( 'dashboard/omnibar-radical' ) ) {
+		import( './omnibar' ).then( ( m ) => m.default() ).catch( captureException );
+	} else if ( isEnabled( 'dashboard/omnibar' ) ) {
 		import( './interim-omnibar' )
 			.then( ( m ) => m.default( omnibarEvents ) )
 			.catch( captureException );

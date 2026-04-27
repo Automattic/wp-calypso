@@ -1,6 +1,7 @@
 import { translate } from 'i18n-calypso';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { bypassDataLayer } from 'calypso/state/data-layer/utils';
+import { invalidateUserListItemsQuery } from 'calypso/state/data-layer/wpcom/read/lists/utils';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -29,6 +30,8 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/feeds/new/index.js', {
 					action
 				),
 			onSuccess: ( action, apiResponse ) => {
+				invalidateUserListItemsQuery( action.listOwner, action.listSlug );
+
 				const defaultSuccessMessage =
 					action.listSlug === 'recommended-blogs'
 						? translate( 'Recommendation successfully added.' )

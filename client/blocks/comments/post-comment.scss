@@ -8,7 +8,7 @@
 	&.depth-2 {
 		padding-left: 42px;
 
-		> .comments__comment-author .gravatar {
+		> .comments__comment-author .user-avatar {
 			left: 0;
 		}
 	}
@@ -68,7 +68,7 @@
 	font-size: $font-body-small;
 	font-weight: 600;
 
-	.gravatar {
+	.user-avatar {
 		position: absolute;
 		top: 4px;
 		left: -41px;

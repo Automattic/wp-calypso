@@ -7,20 +7,19 @@ import BloganuaryHeader from 'calypso/components/bloganuary-header';
 import NavigationHeader from 'calypso/components/navigation-header';
 import ResurrectedWelcomeModalGate from 'calypso/components/resurrected-welcome-modal';
 import { QuickPostSkeleton } from 'calypso/reader/components/quick-post/skeleton';
+import ReaderOnboardingGate from 'calypso/reader/onboarding/gate';
 import SuggestionProvider from 'calypso/reader/search-stream/suggestion-provider';
 import ReaderStream from 'calypso/reader/stream';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { selectSidebarRecentSite } from 'calypso/state/reader-ui/sidebar/actions';
 import Recent from '../recent';
-import { useSiteSubscriptions } from './use-site-subscriptions';
 import { useFollowingView } from './view-preference';
 import ViewToggle from './view-toggle';
 import './style.scss';
 
 function FollowingStream( { ...props } ) {
 	const { currentView } = useFollowingView();
-	const { isLoading, hasNonSelfSubscriptions } = useSiteSubscriptions();
 	const dispatch = useDispatch();
 	const [ isResurrectedModalVisible, setIsResurrectedModalVisible ] = useState( false );
 	const [ shouldDelayReaderOnboarding, setShouldDelayReaderOnboarding ] = useState( false );
@@ -56,30 +55,6 @@ function FollowingStream( { ...props } ) {
 		dispatch( selectSidebarRecentSite( { feedId: Number( props.feedId ) || null } ) );
 	}, [ props.feedId, dispatch ] );
 
-	if ( ! isLoading && ! hasNonSelfSubscriptions ) {
-		return (
-			<div className="following-stream--no-subscriptions">
-				<NavigationHeader title={ translate( 'Recent' ) } />
-				<p>
-					{ translate(
-						'{{strong}}Welcome!{{/strong}} Follow your favorite sites and their latest posts will appear here. Read, like, and comment in a distraction-free environment. Get started by selecting your interests below:',
-						{
-							components: {
-								strong: <strong />,
-							},
-						}
-					) }
-				</p>
-				<AsyncLoad
-					require="calypso/reader/onboarding"
-					forceShow
-					onRender={ handleReaderOnboardingRender }
-					isSuppressed={ suppressReaderOnboarding }
-				/>
-			</div>
-		);
-	}
-
 	return (
 		<>
 			{ currentView === 'recent' ? (
@@ -108,8 +83,7 @@ function FollowingStream( { ...props } ) {
 							</CardBody>
 						</Card>
 					) }
-					<AsyncLoad
-						require="calypso/reader/onboarding"
+					<ReaderOnboardingGate
 						onRender={ handleReaderOnboardingRender }
 						isSuppressed={ suppressReaderOnboarding }
 					/>

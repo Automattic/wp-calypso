@@ -12,6 +12,7 @@ import { useMemo, useEffect } from 'react';
 import { AnalyticsProvider, type AnalyticsClient } from './analytics';
 import { getNormalizedPath, getSuperProps } from './analytics/super-props';
 import { AuthProvider, useAuth } from './auth';
+import { ColorSchemeProvider } from './color-scheme';
 import { AppProvider, useAppContext } from './context';
 import { I18nProvider } from './i18n';
 import { getRouter } from './router';
@@ -72,17 +73,21 @@ function AnalyticsProviderWithClient( {
 function Layout( { config }: { config: AppConfig } ) {
 	const router = useMemo( () => getRouter( config ), [ config ] );
 
+	const tree = (
+		<QueryClientProvider client={ queryClient }>
+			<AuthProvider>
+				<I18nProvider>
+					<AnalyticsProviderWithClient router={ router }>
+						<RouterProvider router={ router } context={ { config } } />
+					</AnalyticsProviderWithClient>
+				</I18nProvider>
+			</AuthProvider>
+		</QueryClientProvider>
+	);
+
 	return (
 		<AppProvider config={ config }>
-			<QueryClientProvider client={ queryClient }>
-				<AuthProvider>
-					<I18nProvider>
-						<AnalyticsProviderWithClient router={ router }>
-							<RouterProvider router={ router } context={ { config } } />
-						</AnalyticsProviderWithClient>
-					</I18nProvider>
-				</AuthProvider>
-			</QueryClientProvider>
+			{ config.supports.colorScheme ? <ColorSchemeProvider>{ tree }</ColorSchemeProvider> : tree }
 		</AppProvider>
 	);
 }

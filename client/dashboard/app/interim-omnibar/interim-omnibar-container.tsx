@@ -1,4 +1,4 @@
-import { omnibarCurrentSiteIdQuery, queryClient, siteByIdQuery } from '@automattic/api-queries';
+import { omnibarSiteIdQuery, queryClient, siteByIdQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useState } from 'react';
 import { AUTH_QUERY_KEY, initializeCurrentUser } from '../auth';
@@ -46,7 +46,7 @@ function useInterimOmnibarData( {
 
 	const { data: currentSiteId } = useQuery(
 		{
-			...omnibarCurrentSiteIdQuery(),
+			...omnibarSiteIdQuery(),
 			enabled: hydrated,
 		},
 		queryClient

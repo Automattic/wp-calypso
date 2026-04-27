@@ -20,8 +20,8 @@ const contextLinks = {
 		post_id: 213203,
 	},
 	'ai-tools': {
-		link: 'https://wordpress.com/support/ai-website-builder/',
-		post_id: 404989,
+		link: 'https://wordpress.com/support/ai/',
+		post_id: 437308,
 	},
 	autorenewal: {
 		link: 'https://wordpress.com/support/manage-purchases/automatic-renewal/',

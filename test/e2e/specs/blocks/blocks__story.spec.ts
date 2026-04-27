@@ -1,5 +1,6 @@
 import {
 	DataHelper,
+	ElementHelper,
 	MediaHelper,
 	StoryBlock,
 	TestAccount,
@@ -8,6 +9,7 @@ import {
 	envToFeatureKey,
 	getTestAccountByFeature,
 } from '@automattic/calypso-e2e';
+import { Page } from 'playwright';
 import { tags, test } from '../../lib/pw-base';
 import { ALT_TEST_IMAGE_PATH, TEST_IMAGE_PATH } from '../constants';
 
@@ -66,7 +68,11 @@ test.describe(
 				// `getByRole('main')` resolves, which will fail with the Story
 				// block due to https://github.com/Automattic/jetpack/issues/32976.
 				const postURL = await pageEditor.publish();
-				await page.goto( postURL.href );
+				await page.goto( postURL.href, { waitUntil: 'domcontentloaded' } );
+
+				await ElementHelper.reloadAndRetry( page, async function ( page: Page ): Promise< void > {
+					await page.locator( '.wp-story' ).waitFor();
+				} );
 			} );
 
 			await test.step( 'Then the published post has the Story block', async () => {

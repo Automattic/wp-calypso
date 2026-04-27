@@ -21,11 +21,7 @@ const ReaderFullPostHeaderMeta = ( { post, author, siteName, feedId, siteId } ) 
 
 	return (
 		<div className="reader-full-post__header-meta-wrapper">
-			<UserAvatar
-				className="reader-full-post__header-meta-avatars"
-				user={ { ...author, avatar_URL: avatarUrl } }
-				size={ 40 }
-			/>
+			<UserAvatar user={ { ...author, avatar_URL: avatarUrl } } size={ 40 } />
 			<div className="reader-full-post__header-meta-info">
 				<div className="reader-full-post__header-meta-line-1">
 					{ showAuthorLink && (

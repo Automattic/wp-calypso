@@ -147,7 +147,7 @@ describe( 'Purchase Management Buttons', () => {
 		expect( screen.queryByText( /Remove/ ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'renders a cancel button with remove language when auto-renew is OFF', async () => {
+	it( 'renders a Remove button with remove language when auto-renew is OFF', async () => {
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.2/me/payment-methods?expired=include' )
 			.reply( 200 );
@@ -165,11 +165,12 @@ describe( 'Purchase Management Buttons', () => {
 				</ReduxProvider>
 			</QueryClientProvider>
 		);
-		expect( await screen.findByText( /and be removed/ ) ).toBeInTheDocument();
-		expect( await screen.findByText( /Cancel/ ) ).toBeInTheDocument();
+		expect( await screen.findByText( /will be removed immediately/ ) ).toBeVisible();
+		expect( await screen.findByText( /Remove plan/ ) ).toBeVisible();
+		expect( screen.queryByText( /Cancel subscription/ ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'renders a cancel button with remove language when auto-renew is OFF and the purchase is an Akismet purchase attached to an akismet siteless holding site', async () => {
+	it( 'renders a Remove button with product-name language for an Akismet purchase attached to an akismet siteless holding site when auto-renew is OFF', async () => {
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.1/me/payment-methods?expired=include' )
 			.reply( 200 );
@@ -179,6 +180,7 @@ describe( 'Purchase Management Buttons', () => {
 			domain: 'siteless.akismet.com',
 			product_id: 2311, // Akismet Plus Plan
 			product_slug: 'ak_plus_yearly_1',
+			product_name: 'Akismet Plus',
 			is_auto_renew_enabled: false,
 		} );
 
@@ -196,7 +198,8 @@ describe( 'Purchase Management Buttons', () => {
 
 		// Multiple elements may contain "remove" text (button + notice), so use findAllByText
 		expect( ( await screen.findAllByText( /remove/i ) ).length ).toBeGreaterThan( 0 );
-		expect( await screen.findByText( /Cancel/ ) ).toBeInTheDocument();
+		expect( await screen.findByText( /Akismet Plus will be removed immediately/ ) ).toBeVisible();
+		expect( await screen.findByText( /Remove Akismet Plus/ ) ).toBeVisible();
 	} );
 
 	it( "does't render renew buttons for domain with pending registration at registry", async () => {

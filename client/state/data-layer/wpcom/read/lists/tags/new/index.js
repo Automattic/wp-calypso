@@ -1,5 +1,6 @@
 import { translate } from 'i18n-calypso';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { invalidateUserListItemsQuery } from 'calypso/state/data-layer/wpcom/read/lists/utils';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -23,6 +24,8 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/tags/new/index.js', {
 					action
 				),
 			onSuccess: ( action, apiResponse ) => {
+				invalidateUserListItemsQuery( action.listOwner, action.listSlug );
+
 				return [
 					receiveAddReaderListTag(
 						action.listOwner,

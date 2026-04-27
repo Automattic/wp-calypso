@@ -14,12 +14,8 @@ import CancelJetpackForm from 'calypso/components/marketing-survey/cancel-jetpac
 import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purchase-form';
 import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-purchase-form/constants';
 import DomainCancellationSurvey from 'calypso/components/marketing-survey/cancel-purchase-form/domain-cancellation-survey';
-import {
-	getName,
-	hasAmountAvailableToRefund,
-	isOneTimePurchase,
-	isSubscription,
-} from 'calypso/lib/purchases';
+import { getButtonLabels } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/get-confirmation-copy';
+import { getName } from 'calypso/lib/purchases';
 import { getPurchaseCancellationFlowType } from 'calypso/lib/purchases/utils';
 import { purchasesRoot } from 'calypso/me/purchases/paths';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -27,6 +23,7 @@ import { clearPurchases } from 'calypso/state/purchases/actions';
 import { refreshSitePlans } from 'calypso/state/sites/plans/actions';
 import { MarketPlaceSubscriptionsDialog } from '../marketplace-subscriptions-dialog';
 import { willShowDomainOptionsRadioButtons } from './domain-options';
+import { toPurchaseForCopy } from './to-purchase-for-copy';
 import type { Purchases } from '@automattic/data-stores';
 import type { LocalizeProps } from 'i18n-calypso';
 
@@ -47,6 +44,7 @@ export interface CancelPurchaseButtonProps {
 	includedDomainPurchase: Purchases.Purchase;
 	disabled?: boolean;
 	textVariant?: string;
+	displayVariant?: 'cancel' | 'remove';
 	isLinkStyle?: boolean;
 	isInline?: boolean;
 	cancelIntentOverride?: 'refund' | 'autorenew';
@@ -163,25 +161,10 @@ class CancelPurchaseButton extends Component<
 				return translate( 'Continue with cancellation' );
 			}
 
-			if ( hasAmountAvailableToRefund( purchase ) ) {
-				if ( isDomainRegistration( purchase ) ) {
-					return translate( 'Cancel domain and refund' );
-				}
-				if ( isSubscription( purchase ) ) {
-					return translate( 'Cancel subscription' );
-				}
-				if ( isOneTimePurchase( purchase ) ) {
-					return translate( 'Cancel and refund' );
-				}
-			}
-
-			if ( isDomainRegistration( purchase ) ) {
-				return translate( 'Cancel domain' );
-			}
-
-			if ( isSubscription( purchase ) ) {
-				return translate( 'Cancel subscription' );
-			}
+			return getButtonLabels( {
+				purchase: toPurchaseForCopy( purchase ),
+				intent: this.props.displayVariant === 'remove' ? 'remove' : 'cancel',
+			} ).primary;
 		} )();
 
 		const disableButtons = this.state.disabled || this.props.disabled;

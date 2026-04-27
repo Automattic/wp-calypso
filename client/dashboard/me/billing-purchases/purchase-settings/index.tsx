@@ -1,5 +1,4 @@
 import {
-	SubscriptionBillPeriod,
 	DomainProductSlugs,
 	useMyDomainInputMode,
 	WPCOM_DIFM_LITE,
@@ -15,6 +14,7 @@ import {
 	reinstallMarketplacePluginsQuery,
 	siteBySlugQuery,
 } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { domainManagementEdit, domainUseMyDomain } from '@automattic/domains-table/src/utils/paths';
 import { formatCurrency } from '@automattic/number-formatters';
 import { INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS } from '@automattic/urls';
@@ -82,6 +82,7 @@ import {
 	isJetpackCrmProduct,
 	isTitanMail,
 	isGoogleWorkspace,
+	isDomainTransfer,
 	isDotcomPlan,
 	getRenewalUrlFromPurchase,
 	isJetpackT1SecurityPlan,
@@ -89,11 +90,15 @@ import {
 	isAkismetFreeProduct,
 	isInExpirationGracePeriod,
 	isA4ABillingDragonPurchase,
+	isCentennialPurchase,
+	hasAmountAvailableToRefund,
 } from '../../../utils/purchase';
 import { getSitePurchaseUpgradeUrl } from '../../../utils/site-url';
 import BillingFlexUsageCard from '../../billing-flex-usage';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
 import AkismetApiKeyCard from './akismet-api-key-card';
+import { classifyPurchaseForCopy } from './classify-purchase-for-copy';
+import { getCancelButtonCopy, getRemoveButtonCopy } from './get-cancel-remove-copy';
 import JetpackLicenseKeyCard from './jetpack-license-key-card';
 import { PurchaseNotice } from './purchase-notice';
 import type { User, Purchase, Site } from '@automattic/api-core';
@@ -143,11 +148,20 @@ function isAutoRenewToggleDisabled( purchase: Purchase, user: User ): boolean {
 		// Special case!
 		return false;
 	}
-	if ( purchase.is_auto_renew_enabled && ! purchase.can_disable_auto_renew ) {
-		return true;
-	}
-	if ( ! purchase.is_auto_renew_enabled && ! purchase.can_reenable_auto_renewal ) {
-		return true;
+	// Under the split-cancel-remove flag, keep the toggle active in both
+	// directions — matches legacy Calypso. The server's `can_disable_auto_renew`
+	// and `can_reenable_auto_renewal` go false during pending-renewal retries,
+	// but the actual disable/re-enable endpoints accept the call (verified in
+	// wpcom-billing backend trace). Off-flag we preserve trunk's behavior of
+	// trusting the server flags.
+	const splitCancelRemoveEnabled = isEnabled( 'purchases/split-cancel-remove' );
+	if ( ! splitCancelRemoveEnabled ) {
+		if ( purchase.is_auto_renew_enabled && ! purchase.can_disable_auto_renew ) {
+			return true;
+		}
+		if ( ! purchase.is_auto_renew_enabled && ! purchase.can_reenable_auto_renewal ) {
+			return true;
+		}
 	}
 	return false;
 }
@@ -254,9 +268,105 @@ function PurchaseActionMenu( { purchase }: { purchase: Purchase } ) {
 
 function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 	const navigate = useNavigate();
+	const locale = useLocale();
+	const isSplitEnabled = isEnabled( 'purchases/split-cancel-remove' );
+
 	// FIXME: render renderWordAdsEligibilityWarningDialog for refund/cancel
 	// FIXME: render renderNonPrimaryDomainWarningDialog for refund/cancel
 	// FIXME: render "Domain transfers can take anywhere from five to seven days to complete." next to cancel button (see domainTransferDuration)
+
+	const goToCancel = ( intent?: 'cancel' | 'remove' ) =>
+		navigate( {
+			to: cancelPurchaseRoute.fullPath,
+			params: { purchaseId: purchase.ID },
+			...( intent ? { search: { intent } } : {} ),
+		} );
+
+	if ( isSplitEnabled ) {
+		const hasRefund = hasAmountAvailableToRefund( purchase );
+		const autoRenewOn = purchase.is_auto_renew_enabled;
+		// Domain transfer gate: non-refundable transfers can't be cancelled without
+		// support intervention (preserves legacy behavior on classic; adds it to
+		// dashboard). Remove button is unaffected — a completed transfer with
+		// auto-renew off can still be removed below.
+		const isTransferNonRefundable = isDomainTransfer( purchase ) && ! hasRefund;
+		// Visibility is driven purely by what the user controls:
+		// - Cancel: auto-renew is on (stopping it halts any upcoming retry too).
+		// - Remove: auto-renew is off, or a refund is available (dual-button).
+		// Verified against wpcom-billing backend — cancel / disable-auto-renew /
+		// delete endpoints all accept the call in pending-renewal state, so we
+		// don't need to special-case it.
+		const showCancel = autoRenewOn && ! isTransferNonRefundable;
+		const showRemove = ! autoRenewOn || hasRefund;
+
+		if ( ! showCancel && ! showRemove ) {
+			return null;
+		}
+
+		// Use non-breaking spaces in the date so it doesn't wrap mid-date
+		// (e.g. "April\n16, 2027") in narrow viewports.
+		const expiryDateFormatted = purchase.expiry_date
+			? formatDate( new Date( purchase.expiry_date ), locale, {
+					dateStyle: 'long',
+			  } ).replace( / /g, '\u00A0' )
+			: '';
+
+		const category = classifyPurchaseForCopy( purchase );
+		const cancelCopy = showCancel
+			? getCancelButtonCopy( {
+					category,
+					productName: purchase.product_name,
+					expiryDateFormatted,
+			  } )
+			: null;
+		const removeCopy = showRemove
+			? getRemoveButtonCopy( { category, productName: purchase.product_name, hasRefund } )
+			: null;
+
+		return (
+			<>
+				{ cancelCopy && (
+					<ActionList.ActionItem
+						title={ cancelCopy.label }
+						description={ cancelCopy.description }
+						actions={
+							<Button
+								variant="secondary"
+								// When Remove is shown alongside Cancel, keep Cancel neutral so
+								// the destructive emphasis goes to Remove only. When Cancel is
+								// the lone destructive action, make it red.
+								isDestructive={ ! showRemove }
+								size="compact"
+								onClick={ () => goToCancel( 'cancel' ) }
+							>
+								{ _x( 'Cancel', 'Stop the subscription from automatically charging and renewing' ) }
+							</Button>
+						}
+					/>
+				) }
+				{ removeCopy && (
+					<ActionList.ActionItem
+						title={ removeCopy.label }
+						description={ removeCopy.description }
+						actions={
+							<Button
+								variant="secondary"
+								isDestructive
+								size="compact"
+								onClick={ () => goToCancel( 'remove' ) }
+							>
+								{ _x(
+									'Remove',
+									'Remove the cancelled or expired subscription from the list of active purchases.'
+								) }
+							</Button>
+						}
+					/>
+				) }
+			</>
+		);
+	}
+
 	if ( purchase.is_cancelable ) {
 		return (
 			<ActionList.ActionItem
@@ -474,6 +584,13 @@ function ReinstallButton( { purchase }: { purchase: Purchase } ) {
 }
 
 function PurchaseSettingsActions( { purchase }: { purchase: Purchase } ) {
+	// 100-year plans and domains have no self-serve actions (no upgrade, no
+	// renew, no cancel/remove). Skip the card entirely so we don't render an
+	// empty shell.
+	if ( isCentennialPurchase( purchase ) ) {
+		return null;
+	}
+
 	return (
 		<VStack spacing={ 4 }>
 			<ActionList>
@@ -656,6 +773,18 @@ function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 }
 
 function PurchasePriceCard( { purchase }: { purchase: Purchase } ) {
+	const isCentennial = isCentennialPurchase( purchase );
+	if ( isCentennial ) {
+		return (
+			<OverviewCard
+				icon={ currencyDollar }
+				title={ __( 'Price' ) }
+				heading={ formatCurrency( purchase.price_integer, purchase.currency_code, {
+					isSmallestUnit: true,
+				} ) }
+			/>
+		);
+	}
 	if ( purchase.partner_name && ! isA4ABillingDragonPurchase( purchase ) ) {
 		return (
 			<OverviewCard
@@ -1011,14 +1140,8 @@ function PurchaseSecondSubtitle( { purchase, site }: { purchase: Purchase; site?
 			return null;
 		}
 
-		if ( purchase.bill_period_days === SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD ) {
-			return (
-				<Text variant="muted">
-					{ __(
-						'Your stories, achievements, and memories preserved for generations to come. One payment. One hundred years of legacy.'
-					) }
-				</Text>
-			);
+		if ( isCentennialPurchase( purchase ) ) {
+			return null;
 		}
 
 		return (
@@ -1085,6 +1208,10 @@ function PurchaseSecondSubtitle( { purchase, site }: { purchase: Purchase; site?
 }
 
 function PurchaseSubtitle( { purchase }: { purchase: Purchase } ) {
+	if ( purchase.is_domain && isCentennialPurchase( purchase ) && purchase.meta ) {
+		return <MetadataItem title={ getTitleForDisplay( purchase ) } />;
+	}
+
 	const subtitle = getSubtitleForDisplay( purchase );
 	if ( ! subtitle ) {
 		return null;
@@ -1132,7 +1259,7 @@ export default function PurchaseSettings() {
 		if ( isInExpirationGracePeriod( purchase ) ) {
 			return __( 'Expired' );
 		}
-		if ( purchase.bill_period_days === SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD ) {
+		if ( isCentennialPurchase( purchase ) ) {
 			return __( 'Paid until' );
 		}
 		if ( willRenew ) {
@@ -1140,6 +1267,8 @@ export default function PurchaseSettings() {
 		}
 		return __( 'Expires' );
 	} )();
+
+	const isCentennial = isCentennialPurchase( purchase );
 
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
 	const columns = isSmallViewport ? 1 : 2;
@@ -1152,9 +1281,14 @@ export default function PurchaseSettings() {
 				<VStack>
 					<PageHeader
 						prefix={ <Breadcrumbs length={ 3 } /> }
-						title={ getTitleForDisplay( purchase ) }
+						title={
+							purchase.is_domain && isCentennial && purchase.meta
+								? purchase.meta
+								: getTitleForDisplay( purchase )
+						}
 						actions={
-							site?.options?.admin_url && (
+							site?.options?.admin_url &&
+							! isCentennial && (
 								<HStack justify="space-between">
 									{ purchase.is_upgradable && upgradeUrl && (
 										<Button __next40pxDefaultSize variant="primary" href={ upgradeUrl }>
@@ -1207,6 +1341,9 @@ export default function PurchaseSettings() {
 							return formattedExpiry;
 						} )() }
 						description={ ( () => {
+							if ( isCentennial ) {
+								return undefined;
+							}
 							if ( purchase.is_auto_renew_enabled && isInExpirationGracePeriod( purchase ) ) {
 								return __( 'Pending renewal' );
 							}
@@ -1280,10 +1417,12 @@ export default function PurchaseSettings() {
 				{ isWpcomFlexSubscription( purchase ) && (
 					<BillingFlexUsageCard purchaseId={ purchase.ID } />
 				) }
-				{ ! purchase.is_trial_plan && purchase.subscription_status === 'active' && (
-					<ManageSubscriptionCard purchase={ purchase } />
-				) }
-				<PurchaseSettingsActions purchase={ purchase } />
+				{ ! purchase.is_trial_plan &&
+					! isCentennial &&
+					purchase.subscription_status === 'active' && (
+						<ManageSubscriptionCard purchase={ purchase } />
+					) }
+				{ ! isCentennial && <PurchaseSettingsActions purchase={ purchase } /> }
 			</VStack>
 		</PageLayout>
 	);
