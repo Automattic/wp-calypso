@@ -5,7 +5,7 @@
 import { screen } from '@testing-library/react';
 import nock from 'nock';
 import { render } from '../../../../test-utils';
-import SitePerformanceApm from '../index';
+import SitePerformanceBackend from '../index';
 import type { Site } from '@automattic/api-core';
 
 const siteSlug = 'test-site.wordpress.com';
@@ -45,7 +45,7 @@ function mockSite( mockedSite: Site ) {
 		.reply( 200, mockedSite );
 }
 
-describe( '<SitePerformanceApm>', () => {
+describe( '<SitePerformanceBackend>', () => {
 	afterEach( () => {
 		nock.cleanAll();
 	} );
@@ -53,7 +53,7 @@ describe( '<SitePerformanceApm>', () => {
 	test( 'renders placeholder for a site on the Business plan', async () => {
 		mockSite( businessSite );
 
-		render( <SitePerformanceApm siteSlug={ siteSlug } /> );
+		render( <SitePerformanceBackend siteSlug={ siteSlug } /> );
 
 		expect(
 			await screen.findByText( 'Application Performance Monitoring — coming soon.' )
@@ -64,7 +64,7 @@ describe( '<SitePerformanceApm>', () => {
 	test( 'renders upsell when the site is on a plan below Business', async () => {
 		mockSite( personalSite );
 
-		render( <SitePerformanceApm siteSlug={ siteSlug } /> );
+		render( <SitePerformanceBackend siteSlug={ siteSlug } /> );
 
 		expect( await screen.findByRole( 'button', { name: 'Upgrade plan' } ) ).toBeVisible();
 		expect(

@@ -3,10 +3,10 @@ import { __ } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
 import illustrationUrl from './performance-callout-illustration.svg';
 
-export function getApmCalloutProps() {
+export function getBackendCalloutProps() {
 	return {
 		feature: HostingFeatures.APM,
-		upsellId: 'site-performance-apm',
+		upsellId: 'site-performance-backend',
 		upsellIcon: chartBar,
 		upsellTitle: __( 'Dive deep into your site performance' ),
 		upsellImage: illustrationUrl,

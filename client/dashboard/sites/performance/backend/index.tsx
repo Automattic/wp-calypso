@@ -5,10 +5,9 @@ import { __ } from '@wordpress/i18n';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import UpsellCallout from '../../hosting-feature-gated-with-callout/upsell';
-import { getApmCalloutProps } from '../apm-callout';
-import { PerformanceTabs } from '../tabs';
+import { getBackendCalloutProps } from '../backend-callout';
 
-function hasApmAccess( productSlug: string | undefined ) {
+function hasBackendAccess( productSlug: string | undefined ) {
 	if ( ! productSlug ) {
 		return false;
 	}
@@ -18,16 +17,15 @@ function hasApmAccess( productSlug: string | undefined ) {
 	);
 }
 
-export default function SitePerformanceApm( { siteSlug }: { siteSlug: string } ) {
+export default function SitePerformanceBackend( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 
 	return (
 		<PageLayout header={ <PageHeader title={ __( 'Performance' ) } /> }>
-			<PerformanceTabs siteSlug={ siteSlug } activeTab="apm" />
-			{ hasApmAccess( site.plan?.product_slug ) ? (
+			{ hasBackendAccess( site.plan?.product_slug ) ? (
 				<p>{ __( 'Application Performance Monitoring — coming soon.' ) }</p>
 			) : (
-				<UpsellCallout site={ site } { ...getApmCalloutProps() } />
+				<UpsellCallout site={ site } { ...getBackendCalloutProps() } />
 			) }
 		</PageLayout>
 	);

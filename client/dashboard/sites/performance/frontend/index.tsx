@@ -1,8 +1,8 @@
 import { siteBySlugQuery, sitePerformancePagesQuery } from '@automattic/api-queries';
-import config, { isEnabled } from '@automattic/calypso-config';
+import config from '@automattic/calypso-config';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate, useSearch } from '@tanstack/react-router';
-import { __experimentalHStack as HStack, __experimentalText as Text } from '@wordpress/components';
+import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useEffect, useState, useMemo } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { PageHeader } from '../../../components/page-header';
@@ -14,7 +14,6 @@ import ReportErrorNotice from '../report-error-notice';
 import ReportLoading from '../report-loading';
 import ReportNoPagesNotice from '../report-no-pages-notice';
 import Subtitle from '../subtitle';
-import { PerformanceTabs } from '../tabs';
 import { useSitePerformanceData } from '../use-site-performance-data';
 import type { DeviceToggleType } from '../types';
 import type { SitePerformancePage } from '@automattic/api-core';
@@ -23,7 +22,7 @@ const getPageFromID = ( pages: SitePerformancePage[] | undefined, pageId: string
 	return pages?.find( ( page: SitePerformancePage ) => Number( page.id ) === Number( pageId ) );
 };
 
-export default function SitePerformanceOverview( { siteSlug }: { siteSlug: string } ) {
+export default function SitePerformanceFrontend( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const [ deviceToggle, setDeviceToggle ] = useState< DeviceToggleType >( 'mobile' );
 	const [ runNewReport, setRunNewReport ] = useState( false );
@@ -80,7 +79,6 @@ export default function SitePerformanceOverview( { siteSlug }: { siteSlug: strin
 	}, [ hasCompleted ] );
 
 	const currentReport = getReport( deviceToggle );
-	const isApmEnabled = isEnabled( 'performance/apm' );
 
 	const renderContent = () => {
 		if ( hasError( deviceToggle ) ) {
@@ -117,9 +115,7 @@ export default function SitePerformanceOverview( { siteSlug }: { siteSlug: strin
 			header={
 				<PageHeader
 					description={
-						isApmEnabled ? undefined : (
-							<Subtitle timestamp={ currentReport?.timestamp } onClick={ handleReportRefetch } />
-						)
+						<Subtitle timestamp={ currentReport?.timestamp } onClick={ handleReportRefetch } />
 					}
 					actions={
 						<HStack>
@@ -137,7 +133,7 @@ export default function SitePerformanceOverview( { siteSlug }: { siteSlug: strin
 									);
 
 									navigate( {
-										to: `/sites/${ siteSlug }/performance/overview`,
+										to: `/sites/${ siteSlug }/performance/frontend`,
 										search: ( prev: Record< string, string > ) => ( {
 											...prev,
 											page_id: Number( pageId ),
@@ -151,12 +147,6 @@ export default function SitePerformanceOverview( { siteSlug }: { siteSlug: strin
 				/>
 			}
 		>
-			<PerformanceTabs siteSlug={ siteSlug } activeTab="overview" />
-			{ isApmEnabled && (
-				<Text variant="muted">
-					<Subtitle timestamp={ currentReport?.timestamp } onClick={ handleReportRefetch } />
-				</Text>
-			) }
 			{ renderContent() }
 		</PageLayout>
 	);

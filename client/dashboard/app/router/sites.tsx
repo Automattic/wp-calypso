@@ -580,27 +580,27 @@ export const sitePerformanceIndexRoute = createRoute( {
 	getParentRoute: () => sitePerformanceRoute,
 	path: '/',
 	beforeLoad: ( { params } ) => {
-		throw dashboardRedirect( { to: `/sites/${ params.siteSlug }/performance/overview` } );
+		throw dashboardRedirect( { to: `/sites/${ params.siteSlug }/performance/frontend` } );
 	},
 } );
 
-export const sitePerformanceOverviewRoute = createRoute( {
+export const sitePerformanceFrontendRoute = createRoute( {
 	getParentRoute: () => sitePerformanceRoute,
-	path: 'overview',
+	path: 'frontend',
 } ).lazy( () =>
-	import( '../../sites/performance/overview' ).then( ( d ) =>
-		createLazyRoute( 'site-performance-overview' )( {
+	import( '../../sites/performance/frontend' ).then( ( d ) =>
+		createLazyRoute( 'site-performance-frontend' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
 	)
 );
 
-export const sitePerformanceApmRoute = createRoute( {
+export const sitePerformanceBackendRoute = createRoute( {
 	getParentRoute: () => sitePerformanceRoute,
-	path: 'apm',
+	path: 'backend',
 } ).lazy( () =>
-	import( '../../sites/performance/apm' ).then( ( d ) =>
-		createLazyRoute( 'site-performance-apm' )( {
+	import( '../../sites/performance/backend' ).then( ( d ) =>
+		createLazyRoute( 'site-performance-backend' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
 	)
@@ -1638,8 +1638,8 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteDeploymentsRoute.addChildren( [ siteDeploymentsListRoute ] ),
 		sitePerformanceRoute.addChildren( [
 			sitePerformanceIndexRoute,
-			sitePerformanceOverviewRoute,
-			...( isEnabled( 'performance/apm' ) ? [ sitePerformanceApmRoute ] : [] ),
+			sitePerformanceFrontendRoute,
+			...( isEnabled( 'performance/apm' ) ? [ sitePerformanceBackendRoute ] : [] ),
 		] ),
 		siteMonitoringRoute,
 		siteLogsRoute.addChildren( [
