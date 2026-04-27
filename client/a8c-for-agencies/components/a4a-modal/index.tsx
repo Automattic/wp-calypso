@@ -42,14 +42,18 @@ export default function A4AModal( {
 				>
 					<Icon size={ 24 } icon={ close } />
 				</Button>
-				<div className="a4a-modal__title">{ title }</div>
+				<div
+					className="a4a-modal__title"
+					dangerouslySetInnerHTML={ { __html: title } }
+				/>
 				<div className="a4a-modal__subtitle">{ subtile }</div>
+				<div className="a4a-modal__welcome">Welcome to Automattic for Agencies</div>
 				{ children }
 			</div>
 			<div className="a4a-modal__footer">
 				{ showCloseButton && (
 					<Button variant="secondary" onClick={ onClose }>
-						{ translate( 'Cancel' ) }
+						Cancel
 					</Button>
 				) }
 				{ extraActions }

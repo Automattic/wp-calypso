@@ -5,7 +5,9 @@ import {
 } from '@wordpress/components';
 import { sprintf, __ } from '@wordpress/i18n';
 import { copySmall } from '@wordpress/icons';
+import page from 'page';
 import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 
 export default function ClipboardInputControl( {
 	onCopy,
@@ -14,6 +16,7 @@ export default function ClipboardInputControl( {
 	onCopy?: ( label?: React.ReactNode ) => void;
 } ) {
 	const [ isCopied, setCopied ] = useState( false );
+	const dispatch = useDispatch();
 
 	const handleCopy = () => {
 		if ( props.value ) {
@@ -21,6 +24,8 @@ export default function ClipboardInputControl( {
 			navigator.clipboard.writeText( props.value );
 			setCopied( true );
 			onCopy?.( props.label );
+			page( '/copied' );
+			dispatch( { type: 'COPY' } );
 		}
 	};
 
@@ -41,19 +46,27 @@ export default function ClipboardInputControl( {
 		: __( 'Copy' );
 
 	return (
-		<InputControl
-			{ ...props }
-			__next40pxDefaultSize
-			suffix={
-				<InputControlSuffixWrapper variant="control">
-					<Button
-						size="small"
-						icon={ copySmall }
-						label={ isCopied ? __( 'Copied' ) : label }
-						onClick={ handleCopy }
-					/>
-				</InputControlSuffixWrapper>
-			}
-		/>
+		<>
+			<div
+				dangerouslySetInnerHTML={ {
+					__html: props.value as string,
+				} }
+			/>
+			<span>Click to copy this value to your clipboard</span>
+			<InputControl
+				{ ...props }
+				__next40pxDefaultSize
+				suffix={
+					<InputControlSuffixWrapper variant="control">
+						<Button
+							size="small"
+							icon={ copySmall }
+							label={ isCopied ? __( 'Copied' ) : label }
+							onClick={ handleCopy }
+						/>
+					</InputControlSuffixWrapper>
+				}
+			/>
+		</>
 	);
 }
