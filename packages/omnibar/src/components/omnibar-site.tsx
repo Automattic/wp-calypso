@@ -1,32 +1,36 @@
 import { __experimentalHStack as HStack } from '@wordpress/components';
-import { OmnibarItem } from './omnibar-item';
+import { OmnibarMenu } from './omnibar-menu';
 import type { OmnibarNode } from '../types';
 
 export function OmnibarSiteNode( { node }: { node: OmnibarNode } ) {
 	return (
-		<OmnibarItem
-			node={ node }
-			content={
-				<HStack>
-					{ node.icon }
-					<span>{ node.title }</span>
-				</HStack>
-			}
+		<OmnibarMenu
+			node={ {
+				...node,
+				render: ( { icon, title } ) => (
+					<HStack>
+						{ icon }
+						<span>{ title }</span>
+					</HStack>
+				),
+			} }
 		/>
 	);
 }
 
 export function OmnibarSiteActionsNode( { nodes }: { nodes: OmnibarNode[] } ) {
 	return nodes.map( ( node ) => (
-		<OmnibarItem
+		<OmnibarMenu
 			key={ node.id }
-			node={ node }
-			content={
-				<HStack spacing={ 1 }>
-					<span>{ node.title }</span>
-					{ node.subtitle && <span>{ node.subtitle }</span> }
-				</HStack>
-			}
+			node={ {
+				...node,
+				render: ( { title, meta } ) => (
+					<HStack spacing={ 1 }>
+						<span>{ title }</span>
+						{ meta?.subtitle && <span>{ meta.subtitle }</span> }
+					</HStack>
+				),
+			} }
 		/>
 	) );
 }
