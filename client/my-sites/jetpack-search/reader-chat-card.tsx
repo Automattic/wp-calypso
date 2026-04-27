@@ -1,4 +1,8 @@
-import { readerChatSettingsMutation, readerChatSettingsQuery } from '@automattic/api-queries';
+import {
+	isAutomatticianQuery,
+	readerChatSettingsMutation,
+	readerChatSettingsQuery,
+} from '@automattic/api-queries';
 import { Card } from '@automattic/components';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { ExternalLink, ToggleControl } from '@wordpress/components';
@@ -11,10 +15,11 @@ export default function ReaderChatCard() {
 	const dispatch = useDispatch();
 	const siteId = useSelector( getSelectedSiteId );
 	const site = useSelector( getSelectedSite );
+	const { data: isAutomattician } = useQuery( isAutomatticianQuery() );
 
 	const { data: settings } = useQuery( {
 		...readerChatSettingsQuery( siteId ?? 0 ),
-		enabled: Boolean( siteId ),
+		enabled: Boolean( siteId && isAutomattician ),
 	} );
 	const isEnabled = settings?.enabled ?? false;
 
@@ -22,7 +27,7 @@ export default function ReaderChatCard() {
 		...readerChatSettingsMutation( siteId ?? 0 ),
 	} );
 
-	if ( ! siteId ) {
+	if ( ! siteId || ! isAutomattician ) {
 		return null;
 	}
 
