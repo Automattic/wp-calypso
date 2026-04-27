@@ -1,10 +1,10 @@
 ---
 name: fix-e2e-tests
 description: Given a wp-calypso PR number, identify the flaky E2E test(s) in that PR's CI run so they can be fixed. Use when asked to investigate or fix a flaky E2E test on a specific PR.
-allowed-tools: Bash, AskUserQuestion, Agent
+allowed-tools: Bash, Agent
 ---
 
-# Fix Flaky E2E Tests
+# Fix E2E Tests
 
 Given a wp-calypso PR number, this skill identifies the flaky E2E test(s) that failed in that PR's CI run, asks the Playwright Test Healer agent to generate a fix, and opens a fix PR back against the original PR's branch so CI validates the repair.
 
@@ -190,10 +190,10 @@ The regex deliberately matches `expect` rather than `expect\(` for the same pars
 
 What this pipeline does and why each piece:
 
-- Drops `currentlyInvestigated` and `id` from the `fields=` projection — we no longer filter on investigated (per the project memory), and the occurrence ID isn't used downstream.
+- The `fields=` projection deliberately omits `currentlyInvestigated` and `id`: the flag isn't a reliable filter on this TeamCity instance (see the project memory), and the occurrence ID isn't used downstream.
 - Filters muted/currentlyMuted occurrences **at the jq layer**. Applying `muted:false` in the TeamCity locator alongside `defaultFilter:false` has given inconsistent results in practice; doing it in jq is reliable and easy to verify from the output.
 - Picks the first line of `details` that contains a recognizable error class (`TimeoutError`, `Error`, `expect`, `AssertionError`) and truncates to 160 chars. Falls back to the first line if no match.
-- Three jq subtleties baked in (each one cost a debugging cycle the first time around — keep them):
+- Three jq subtleties (don't try to simplify them away — each is load-bearing):
   - `(.details // "") as $d` binds the original details to `$d` before the pipeline starts. Without this, the `// (.details | …)` fallback runs in the inner context (where `.` is the matched line, not the occurrence object) and errors with `Cannot index array with string "details"`.
   - The regex anchor allows leading whitespace: `^[[:space:]]*(…)`. Playwright's `details` blob indents the actual error class line (e.g., `    TimeoutError: …`); a strict `^(…)` anchor misses it and you get only the unhelpful `FAILURE:` summary line. POSIX bracket class `[[:space:]]` is used instead of `\s` because the backslash risks tripping Claude Code's expansion-obfuscation heuristic.
   - `.details // ""` defaults missing `details` to an empty string, so a stray occurrence without that field doesn't crash the pipeline.
@@ -289,7 +289,7 @@ Substitute the literal values from Step 3 directly into each command. Pick a uni
    - `mkdir -p` (or any write) under `.husky/` triggers Claude Code's hardcoded "sensitive path" heuristic and prompts on every run, regardless of allowlist.
    - Symlinking the whole `.husky/_` path sidesteps that — no `mkdir`, just a single `ln -s`.
 
-   The "git add -A picks up the symlink" problem this previously caused is solved by an explicit `.husky/_` entry in the repo's tracked `.gitignore`. In the main checkout the path is auto-generated and untracked anyway, so the `.gitignore` rule is benign there; in the worktree it makes the symlink invisible to `git add -A`.
+   The symlink would otherwise be staged by Step 5.4's `git add -A`, since `.husky/_` is a path git can see (no parent gitignore covers it). The repo's tracked `.gitignore` therefore has an explicit `.husky/_` entry: in the main checkout the path is auto-generated and untracked anyway so the rule is benign, and in the worktree it makes the symlink invisible to `git add -A`.
 
    For the same reason, `node_modules` is symlinked at the worktree root because the repo's main `.gitignore` already excludes `node_modules/`.
 
