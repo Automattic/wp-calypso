@@ -70,6 +70,7 @@ export default function SiteSidebar() {
 function SiteMenuSidebar( { site }: { site: Site } ) {
 	const siteSlug = site.slug;
 	const siteTypeSupports = getSiteTypeFeatureSupports( site );
+	const isApmEnabled = isEnabled( 'performance/apm' );
 
 	if ( isSiteMigrationInProgress( site ) ) {
 		return null;
@@ -125,7 +126,7 @@ function SiteMenuSidebar( { site }: { site: Site } ) {
 			) }
 			{ isAvailable( sitePerformanceRoute ) &&
 				siteTypeSupports.performance &&
-				( isEnabled( 'performance/apm' ) ? (
+				( isApmEnabled ? (
 					<SidebarExpandableMenuItem
 						label={ __( 'Performance' ) }
 						icon={ chartBar }
