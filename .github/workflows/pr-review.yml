@@ -77,9 +77,14 @@ jobs:
             *) echo "::error::Denying review: $PR_USER permission=$PERM"; exit 1 ;;
           esac
 
+      # Always check out the default branch, never PR code. Prompts in
+      # .github/prompts/ live in the working tree and the action loads them
+      # from there, so the working tree must be trusted regardless of which
+      # event triggered the caller workflow.
       - name: Checkout repository (default branch only, never PR code)
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
+          ref: ${{ github.event.repository.default_branch }}
           fetch-depth: 0
           persist-credentials: false
 

@@ -9,7 +9,9 @@ on:
     types: [submitted]
 
 concurrency:
-  group: pr-review-on-ping-${{ github.event.issue.number || github.event.pull_request.number }}
+  # Scope by event_name and sender so the bot's own review and
+  # review-comment posts don't cancel an in-progress run.
+  group: pr-review-on-ping-${{ github.event_name }}-${{ github.event.sender.login }}-${{ github.event.issue.number || github.event.pull_request.number }}
   cancel-in-progress: true
 
 permissions:
