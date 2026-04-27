@@ -147,9 +147,7 @@ function combineSignals(
  * @param headers     - Request headers
  * @param body        - Request body
  * @param signal      - Abort signal
- * @param credentials - Optional fetch `credentials` mode. Only included in the
- *                    returned `RequestInit` when defined, so callers that
- *                    don't opt in keep the browser default.
+ * @param credentials - Optional fetch credentials mode
  * @return Basic fetch options
  */
 function createFetchOptions(

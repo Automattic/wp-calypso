@@ -296,13 +296,7 @@ export interface ClientConfig {
 	conversationStorageKey?: string;
 	enableStreaming?: boolean; // Enable token-by-token streaming (requires server support)
 	odieBotId?: string; // Odie bot ID for server-based conversation storage (e.g., 'wpcom-agent-wp_orchestrator'). When set, enables server storage via WordPress.com public API.
-	/**
-	 * Fetch credentials mode for cross-origin requests. Optional; when omitted,
-	 * the browser default applies. Set to 'include' for cross-subdomain cookie
-	 * auth (the server must return Access-Control-Allow-Credentials: true with
-	 * a non-wildcard Access-Control-Allow-Origin).
-	 */
-	credentials?: RequestCredentials;
+	credentials?: RequestCredentials; // Set 'include' to send cookies with cross-origin requests.
 }
 
 // Image data with optional metadata (e.g., WordPress attachment ID)
