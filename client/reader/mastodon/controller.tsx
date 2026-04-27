@@ -4,7 +4,7 @@ import AsyncLoad from 'calypso/components/async-load';
 import { TIMELINE_TAB } from './helper';
 
 function ensureMastodonEnabled(): boolean {
-	if ( ! isEnabled( 'reader/mastodon' ) ) {
+	if ( ! isEnabled( 'reader/social' ) ) {
 		page.redirect( '/reader' );
 		return false;
 	}
