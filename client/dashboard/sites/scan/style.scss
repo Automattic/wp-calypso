@@ -10,18 +10,4 @@
 	fill: $gray-700;
 	flex-shrink: 0;
 	padding: 4px;
-
-	:root[data-theme='dark'] & {
-		background-color: var(--wp-components-color-gray-200);
-		box-shadow: inset 0 0 0 1px var(--wp-components-color-gray-300);
-		fill: var(--wp-components-color-gray-700);
-	}
-
-	@media (prefers-color-scheme: dark) {
-		:root[data-theme='system'] & {
-			background-color: var(--wp-components-color-gray-200);
-			box-shadow: inset 0 0 0 1px var(--wp-components-color-gray-300);
-			fill: var(--wp-components-color-gray-700);
-		}
-	}
 }
