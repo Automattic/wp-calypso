@@ -79,7 +79,7 @@ describe( 'atmosphere fetchers', () => {
 
 		it( 'fetches the first page without a cursor', async () => {
 			const body = {
-				feed: [
+				items: [
 					{
 						uri: 'at://did:plc:abc/app.bsky.feed.post/x',
 						cid: 'cid1',
@@ -113,9 +113,9 @@ describe( 'atmosphere fetchers', () => {
 			nock( BASE )
 				.get( PATH )
 				.query( { cursor: 'abc', limit: '25' } )
-				.reply( 200, { feed: [], cursor: null } );
+				.reply( 200, { items: [], cursor: null } );
 			const result = await getTimeline( { connectionId: 42, cursor: 'abc', limit: 25 } );
-			expect( result ).toEqual( { feed: [], cursor: null } );
+			expect( result ).toEqual( { items: [], cursor: null } );
 		} );
 
 		it( 'classifies a 401 as auth_required', async () => {

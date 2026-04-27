@@ -28,7 +28,10 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 	} = useTimelineInfiniteQuery( connection.id );
 
 	const items: AtmosphereFeedItem[] = useMemo(
-		() => data?.pages.flatMap( ( page ) => page.feed ) ?? [],
+		() =>
+			data?.pages
+				.flatMap( ( page ) => page.items ?? [] )
+				.filter( ( post ): post is AtmosphereFeedItem => Boolean( post?.uri ) ) ?? [],
 		[ data ]
 	);
 

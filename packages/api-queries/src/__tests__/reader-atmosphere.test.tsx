@@ -113,18 +113,18 @@ describe( 'reader-atmosphere hooks', () => {
 		} );
 
 		it( 'fetches the first page on mount', async () => {
-			nock( BASE ).get( PATH ).query( {} ).reply( 200, { feed: [], cursor: null } );
+			nock( BASE ).get( PATH ).query( {} ).reply( 200, { items: [], cursor: null } );
 			const { result } = renderTimelineHook( 42 );
 			await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
-			expect( result.current.data?.pages[ 0 ].feed ).toEqual( [] );
+			expect( result.current.data?.pages[ 0 ].items ).toEqual( [] );
 		} );
 
 		it( 'paginates via cursor returned by the previous page', async () => {
-			nock( BASE ).get( PATH ).query( {} ).reply( 200, { feed: [], cursor: 'page-2' } );
+			nock( BASE ).get( PATH ).query( {} ).reply( 200, { items: [], cursor: 'page-2' } );
 			nock( BASE )
 				.get( PATH )
 				.query( { cursor: 'page-2' } )
-				.reply( 200, { feed: [], cursor: null } );
+				.reply( 200, { items: [], cursor: null } );
 
 			const { result } = renderTimelineHook( 42 );
 			await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
@@ -146,7 +146,7 @@ describe( 'reader-atmosphere hooks', () => {
 			await waitFor( () => expect( result.current.isError ).toBe( true ) );
 			expect( result.current.error ).toMatchObject( { kind: 'upstream_unavailable' } );
 
-			nock( BASE ).get( PATH ).query( {} ).reply( 200, { feed: [], cursor: null } );
+			nock( BASE ).get( PATH ).query( {} ).reply( 200, { items: [], cursor: null } );
 			await act( async () => {
 				await result.current.refetch();
 			} );

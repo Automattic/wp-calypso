@@ -69,7 +69,7 @@ describe( 'TimelinePanel', () => {
 		nock( BASE )
 			.get( PATH )
 			.query( {} )
-			.reply( 200, { feed: [ makePost( 'at://x', 'first post' ) ], cursor: null } );
+			.reply( 200, { items: [ makePost( 'at://x', 'first post' ) ], cursor: null } );
 
 		const { container } = renderWithProvider( <TimelinePanel connection={ connection } />, {
 			queryClient: makeQueryClient(),
@@ -82,7 +82,7 @@ describe( 'TimelinePanel', () => {
 
 	it( 'fires the timeline_viewed Tracks event on mount', async () => {
 		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
-		nock( BASE ).get( PATH ).query( {} ).reply( 200, { feed: [], cursor: null } );
+		nock( BASE ).get( PATH ).query( {} ).reply( 200, { items: [], cursor: null } );
 
 		renderWithProvider( <TimelinePanel connection={ connection } />, {
 			queryClient: makeQueryClient(),
@@ -96,7 +96,7 @@ describe( 'TimelinePanel', () => {
 	} );
 
 	it( 'renders the empty state when feed is []', async () => {
-		nock( BASE ).get( PATH ).query( {} ).reply( 200, { feed: [], cursor: null } );
+		nock( BASE ).get( PATH ).query( {} ).reply( 200, { items: [], cursor: null } );
 
 		renderWithProvider( <TimelinePanel connection={ connection } />, {
 			queryClient: makeQueryClient(),
@@ -110,11 +110,11 @@ describe( 'TimelinePanel', () => {
 		nock( BASE )
 			.get( PATH )
 			.query( {} )
-			.reply( 200, { feed: [ makePost( 'at://1', 'first' ) ], cursor: 'next' } );
+			.reply( 200, { items: [ makePost( 'at://1', 'first' ) ], cursor: 'next' } );
 		nock( BASE )
 			.get( PATH )
 			.query( { cursor: 'next' } )
-			.reply( 200, { feed: [ makePost( 'at://2', 'second' ) ], cursor: null } );
+			.reply( 200, { items: [ makePost( 'at://2', 'second' ) ], cursor: null } );
 
 		renderWithProvider( <TimelinePanel connection={ connection } />, {
 			queryClient: makeQueryClient(),
@@ -146,7 +146,7 @@ describe( 'TimelinePanel', () => {
 		nock( BASE )
 			.get( PATH )
 			.query( {} )
-			.reply( 200, { feed: [ makePost( 'at://x', 'recovered' ) ], cursor: null } );
+			.reply( 200, { items: [ makePost( 'at://x', 'recovered' ) ], cursor: null } );
 		await user.click( screen.getByRole( 'button', { name: /retry/i } ) );
 		await waitFor( () => expect( screen.getByText( 'recovered' ) ).toBeVisible() );
 		expect( spy ).toHaveBeenCalledWith(
@@ -160,7 +160,7 @@ describe( 'TimelinePanel', () => {
 		nock( BASE )
 			.get( PATH )
 			.query( {} )
-			.reply( 200, { feed: [ makePost( 'at://abc', 'hello' ) ], cursor: null } );
+			.reply( 200, { items: [ makePost( 'at://abc', 'hello' ) ], cursor: null } );
 		const user = userEvent.setup();
 		renderWithProvider( <TimelinePanel connection={ connection } />, {
 			queryClient: makeQueryClient(),
@@ -184,7 +184,7 @@ describe( 'TimelinePanel', () => {
 		nock( BASE )
 			.get( PATH )
 			.query( {} )
-			.reply( 200, { feed: [ makePost( 'at://abc', 'hi' ) ], cursor: null } );
+			.reply( 200, { items: [ makePost( 'at://abc', 'hi' ) ], cursor: null } );
 		const user = userEvent.setup();
 		renderWithProvider( <TimelinePanel connection={ connection } />, {
 			queryClient: makeQueryClient(),
@@ -210,7 +210,7 @@ describe( 'TimelinePanel', () => {
 		nock( BASE )
 			.get( PATH )
 			.query( {} )
-			.reply( 200, { feed: [ post ], cursor: null } );
+			.reply( 200, { items: [ post ], cursor: null } );
 		const user = userEvent.setup();
 		renderWithProvider( <TimelinePanel connection={ connection } />, {
 			queryClient: makeQueryClient(),
@@ -235,7 +235,7 @@ describe( 'TimelinePanel', () => {
 		nock( BASE )
 			.get( PATH )
 			.query( {} )
-			.reply( 200, { feed: [ outer ], cursor: null } );
+			.reply( 200, { items: [ outer ], cursor: null } );
 		const user = userEvent.setup();
 		renderWithProvider( <TimelinePanel connection={ connection } />, {
 			queryClient: makeQueryClient(),

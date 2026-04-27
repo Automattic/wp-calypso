@@ -128,6 +128,6 @@ export interface AtmosphereFeedItem {
 }
 
 export interface AtmosphereTimelinePage {
-	feed: AtmosphereFeedItem[];
+	items: AtmosphereFeedItem[];
 	cursor: string | null;
 }
