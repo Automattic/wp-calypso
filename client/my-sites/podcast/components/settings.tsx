@@ -1,12 +1,9 @@
-import './style.scss';
-
 import {
 	Button,
 	Card,
 	CardBody,
 	Notice,
 	RadioControl,
-	ToggleControl,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
@@ -14,9 +11,6 @@ import {
 import { DataForm } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import Main from 'calypso/components/main';
-import usePodcastingAccessGate from './use-podcasting-access-gate';
-import PodcastingWelcome, { type PlanTier } from './welcome';
 import type { Field } from '@wordpress/dataviews';
 
 type Status = 'idle' | 'saving' | 'saved';
@@ -59,17 +53,7 @@ const SITE_CATEGORIES = [
 	'Uncategorized',
 ] as const;
 
-type PodcastingV2BodyProps = {
-	podcastingOn: boolean;
-	onChangePodcasting: ( on: boolean ) => void;
-	embedded?: boolean;
-};
-
-export function PodcastingV2Body( {
-	podcastingOn,
-	onChangePodcasting,
-	embedded = false,
-}: PodcastingV2BodyProps ) {
+function Settings() {
 	const translate = useTranslate();
 	const [ formData, setFormData ] = useState< PodcastFormData >( INITIAL_FORM_DATA );
 	const [ hasCover, setHasCover ] = useState( false );
@@ -100,7 +84,7 @@ export function PodcastingV2Body( {
 				clearTimeout( saveTimer.current );
 			}
 		};
-	}, [ podcastingOn, formData, hasCover, category ] );
+	}, [ formData, hasCover, category ] );
 
 	const fields = useMemo< Field< PodcastFormData >[] >(
 		() => [
@@ -247,32 +231,10 @@ export function PodcastingV2Body( {
 		return missing;
 	}, [ formData.title, formData.summary, formData.email, hasCover, translate ] );
 
-	if ( ! podcastingOn ) {
-		return null;
-	}
-
 	return (
 		<>
-			{ ! embedded && (
-				<Card className="site-settings__card podcasting-v2__card">
-					<CardBody>
-						<ToggleControl
-							checked={ podcastingOn }
-							onChange={ onChangePodcasting }
-							label={ translate( 'Enable podcasting on this site' ) as string }
-							__nextHasNoMarginBottom
-						/>
-						<Text as="p" variant="muted">
-							{ translate(
-								'Disable to stop publishing your podcast feed. You can always set it up again.'
-							) }
-						</Text>
-					</CardBody>
-				</Card>
-			) }
-
 			{ missingFields.length === 0 ? (
-				<Card className="site-settings__card podcasting-v2__card">
+				<Card className="site-settings__card podcast__card">
 					<CardBody>
 						<HStack alignment="center" justify="space-between" spacing={ 4 }>
 							<VStack spacing={ 1 }>
@@ -296,10 +258,10 @@ export function PodcastingV2Body( {
 				</Notice>
 			) }
 
-			<Card className="site-settings__card podcasting-v2__card">
+			<Card className="site-settings__card podcast__card">
 				<CardBody>
 					<VStack spacing={ 3 }>
-						<Text as="h3" className="podcasting-v2__card-title">
+						<Text as="h3" className="podcast__card-title">
 							{ translate( 'Podcast category' ) }
 						</Text>
 						{ hasPickedCategory && ! categoryPickerOpen ? (
@@ -310,7 +272,7 @@ export function PodcastingV2Body( {
 								) }{ ' ' }
 								<button
 									type="button"
-									className="podcasting-v2__inline-link"
+									className="podcast__inline-link"
 									onClick={ () => setCategoryPickerOpen( true ) }
 								>
 									{ translate( 'Change category' ) }
@@ -326,7 +288,7 @@ export function PodcastingV2Body( {
 						) }
 
 						{ ( ! hasPickedCategory || categoryPickerOpen ) && (
-							<div className="podcasting-v2__category-picker">
+							<div className="podcast__category-picker">
 								<RadioControl
 									selected={ category }
 									options={ SITE_CATEGORIES.map( ( value ) => ( { label: value, value } ) ) }
@@ -336,7 +298,7 @@ export function PodcastingV2Body( {
 										setCategoryPickerOpen( false );
 									} }
 								/>
-								<div className="podcasting-v2__category-picker-actions">
+								<div className="podcast__category-picker-actions">
 									<Button variant="secondary">{ translate( 'Add category' ) }</Button>
 									{ hasPickedCategory && (
 										<Button variant="tertiary" onClick={ () => setCategoryPickerOpen( false ) }>
@@ -350,10 +312,10 @@ export function PodcastingV2Body( {
 				</CardBody>
 			</Card>
 
-			<Card className="site-settings__card podcasting-v2__card">
+			<Card className="site-settings__card podcast__card">
 				<CardBody>
 					<VStack spacing={ 4 }>
-						<Text as="h3" className="podcasting-v2__card-title">
+						<Text as="h3" className="podcast__card-title">
 							{ translate( 'Podcast details' ) }
 						</Text>
 						<Text as="p" variant="muted">
@@ -361,11 +323,11 @@ export function PodcastingV2Body( {
 								'This information appears in podcast apps like Apple Podcasts and Spotify.'
 							) }
 						</Text>
-						<div className="podcasting-v2__cover-fieldset">
+						<div className="podcast__cover-fieldset">
 							<Text as="label">{ translate( 'Cover image' ) }</Text>
 							<button
 								type="button"
-								className={ `podcasting-v2__cover-preview${
+								className={ `podcast__cover-preview${
 									hasCover ? ' has-image' : ' is-blank'
 								}` }
 								aria-label={
@@ -376,14 +338,14 @@ export function PodcastingV2Body( {
 								onClick={ () => setHasCover( ( value ) => ! value ) }
 							>
 								{ hasCover ? (
-									<span className="podcasting-v2__cover-thumb" aria-hidden="true" />
+									<span className="podcast__cover-thumb" aria-hidden="true" />
 								) : (
-									<span className="podcasting-v2__cover-placeholder">
+									<span className="podcast__cover-placeholder">
 										{ translate( 'No image set' ) }
 									</span>
 								) }
 							</button>
-							<div className="podcasting-v2__cover-actions">
+							<div className="podcast__cover-actions">
 								<Button variant="secondary" onClick={ () => setHasCover( ( value ) => ! value ) }>
 									{ hasCover ? translate( 'Change' ) : translate( 'Add' ) }
 								</Button>
@@ -394,7 +356,7 @@ export function PodcastingV2Body( {
 								) }
 							</div>
 						</div>
-						<div className="podcasting-v2__form-pane">
+						<div className="podcast__form-pane">
 							<DataForm< PodcastFormData >
 								data={ formData }
 								fields={ fields }
@@ -406,16 +368,16 @@ export function PodcastingV2Body( {
 				</CardBody>
 			</Card>
 
-			<Card className="site-settings__card podcasting-v2__card">
+			<Card className="site-settings__card podcast__card">
 				<CardBody>
 					<VStack spacing={ 4 }>
-						<Text as="h3" className="podcasting-v2__card-title">
+						<Text as="h3" className="podcast__card-title">
 							{ translate( 'Feed settings' ) }
 						</Text>
 						<Text as="p" variant="muted">
 							{ translate( 'Configure how your podcast appears in directories and apps.' ) }
 						</Text>
-						<div className="podcasting-v2__form-pane">
+						<div className="podcast__form-pane">
 							<DataForm< PodcastFormData >
 								data={ formData }
 								fields={ fields }
@@ -426,71 +388,8 @@ export function PodcastingV2Body( {
 					</VStack>
 				</CardBody>
 			</Card>
-
-			{ ! embedded && (
-				<>
-					<Notice status="info" isDismissible={ false }>
-						{ translate(
-							'Prototype only. No changes are saved. Submission and listing status live on the Distribution tab.'
-						) }
-					</Notice>
-					<p className="podcasting-v2__prototype-toggle">
-						<Button
-							variant="link"
-							onClick={ () => {
-								setHasPickedCategory( ( value ) => ! value );
-								setCategoryPickerOpen( false );
-							} }
-						>
-							{ hasPickedCategory
-								? translate( 'Prototype: simulate first-time category picker' )
-								: translate( 'Prototype: restore picked category' ) }
-						</Button>
-					</p>
-				</>
-			) }
 		</>
 	);
 }
 
-function PodcastingV2() {
-	const translate = useTranslate();
-	const accessGate = usePodcastingAccessGate();
-	const [ podcastingOn, setPodcastingOn ] = useState( false );
-	const [ planTier, setPlanTier ] = useState< PlanTier >( 'free' );
-
-	return (
-		<Main className="podcasting-v2" wideLayout>
-			<div className="podcasting-v2__page-head">
-				<div>
-					<Text as="h2" className="podcasting-v2__page-title">
-						{ translate( 'Podcasting' ) }
-					</Text>
-					<Text as="p" className="podcasting-v2__page-lede">
-						{ podcastingOn
-							? translate(
-									'Publish a podcast feed to Apple Podcasts and other podcasting services. Learn more.'
-							  )
-							: translate( 'Publish audio alongside your writing. One feed, every podcast app.' ) }
-					</Text>
-				</div>
-			</div>
-
-			{ accessGate
-				? accessGate
-				: ! podcastingOn && (
-						<PodcastingWelcome
-							onEnable={ () => setPodcastingOn( true ) }
-							planTier={ planTier }
-							onChangePlanTier={ setPlanTier }
-						/>
-				  ) }
-
-			{ ! accessGate && (
-				<PodcastingV2Body podcastingOn={ podcastingOn } onChangePodcasting={ setPodcastingOn } />
-			) }
-		</Main>
-	);
-}
-
-export default PodcastingV2;
+export default Settings;

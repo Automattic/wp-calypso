@@ -10,9 +10,9 @@ import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-const DEFAULT_CLASSNAME = 'site-settings__card podcasting-v2__card';
+const DEFAULT_CLASSNAME = 'site-settings__card podcast__card';
 
-const usePodcastingAccessGate = ( className: string = DEFAULT_CLASSNAME ) => {
+const useAccessGate = ( className: string = DEFAULT_CLASSNAME ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const site = useSelector( getSelectedSite );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
@@ -28,8 +28,8 @@ const usePodcastingAccessGate = ( className: string = DEFAULT_CLASSNAME ) => {
 		return null;
 	}
 
-	// Mirror the current podcast settings gating so the new routes do not
-	// expose flows that are already unsupported elsewhere in product.
+	// Mirror the legacy /settings/podcasting gating so /podcast does not
+	// expose flows that are unsupported elsewhere in product.
 	if ( isPrivate ) {
 		return (
 			<Card className={ className }>
@@ -57,4 +57,4 @@ const usePodcastingAccessGate = ( className: string = DEFAULT_CLASSNAME ) => {
 	return null;
 };
 
-export default usePodcastingAccessGate;
+export default useAccessGate;

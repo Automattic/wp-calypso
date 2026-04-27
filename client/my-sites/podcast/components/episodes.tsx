@@ -49,7 +49,7 @@ const defaultView: ViewTable = {
 	},
 };
 
-const PodcastingEpisodes = () => {
+const Episodes = () => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
@@ -278,4 +278,4 @@ const PodcastingEpisodes = () => {
 	);
 };
 
-export default PodcastingEpisodes;
+export default Episodes;

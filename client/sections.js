@@ -206,12 +206,6 @@ const sections = [
 		group: 'sites',
 	},
 	{
-		name: 'settings-podcast-v2',
-		paths: [ '/settings/podcasting-v2' ],
-		module: 'calypso/my-sites/site-settings/settings-podcast-v2',
-		group: 'sites',
-	},
-	{
 		name: 'podcast',
 		paths: [ '/podcast' ],
 		module: 'calypso/my-sites/podcast',

@@ -11,17 +11,15 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import JetpackFooter from 'calypso/components/jetpack/jetpack-footer';
 import JetpackTitle from 'calypso/components/jetpack-title';
 import Main from 'calypso/components/main';
-import { PodcastingV2Body } from 'calypso/my-sites/site-settings/podcasting-v2';
-import PodcastingDistribution from 'calypso/my-sites/site-settings/podcasting-v2/distribution';
-import usePodcastingAccessGate from 'calypso/my-sites/site-settings/podcasting-v2/use-podcasting-access-gate';
-import PodcastingWelcome, {
-	type PlanTier,
-} from 'calypso/my-sites/site-settings/podcasting-v2/welcome';
 import { useSelector } from 'calypso/state';
 import getPodcastingCategoryId from 'calypso/state/selectors/get-podcasting-category-id';
 import { getTerms } from 'calypso/state/terms/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import PodcastEpisodes from './components/episodes';
+import Distribution from './components/distribution';
+import Episodes from './components/episodes';
+import Settings from './components/settings';
+import Welcome, { type PlanTier } from './components/welcome';
+import useAccessGate from './hooks/use-access-gate';
 
 import './style.scss';
 
@@ -45,7 +43,7 @@ const PodcastMain = ( { section, path }: PodcastMainProps ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
-	const accessGate = usePodcastingAccessGate();
+	const accessGate = useAccessGate();
 	// Match the Episodes-tab resolution: prefer the legacy setting, then fall
 	// back to a category named "Podcast" so sites with episodes already
 	// flowing through that term land on Episodes by default.
@@ -126,21 +124,17 @@ const PodcastMain = ( { section, path }: PodcastMainProps ) => {
 				</div>
 				<Tabs.Panel value="episodes">
 					<div className="podcast__tab-content">
-						<PodcastEpisodes />
+						<Episodes />
 					</div>
 				</Tabs.Panel>
 				<Tabs.Panel value="distribution">
 					<div className="podcast__tab-content">
-						<PodcastingDistribution />
+						<Distribution />
 					</div>
 				</Tabs.Panel>
 				<Tabs.Panel value="settings">
-					<div className="podcast__tab-content podcasting-v2">
-						<PodcastingV2Body
-							embedded
-							podcastingOn={ showTabs }
-							onChangePodcasting={ setPodcastingOn }
-						/>
+					<div className="podcast__tab-content">
+						<Settings />
 						<HStack justify="flex-start">
 							<Button
 								variant="secondary"
@@ -161,8 +155,8 @@ const PodcastMain = ( { section, path }: PodcastMainProps ) => {
 		);
 	} else {
 		pageContent = (
-			<div className="podcast__tab-content podcasting-v2">
-				<PodcastingWelcome
+			<div className="podcast__tab-content">
+				<Welcome
 					onEnable={ () => {
 						setPodcastingOn( true );
 						page.show( '/podcast/settings' + pathSuffix );

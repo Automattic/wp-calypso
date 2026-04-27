@@ -100,6 +100,12 @@ body.is-section-podcast {
 
 // Scoped overrides for shared form/helper components used in Settings.
 .podcast {
+	*,
+	*::before,
+	*::after {
+		box-sizing: border-box;
+	}
+
 	.form-setting-explanation {
 		margin-bottom: 6px;
 	}
@@ -113,4 +119,976 @@ body.is-section-podcast {
 			width: 100%;
 		}
 	}
+
+	// client/dashboard/app/dataforms-overrides.scss applies uppercase + small-caps to
+	// every regular DataForm label. That rule is scoped to the Dashboard, but the
+	// stylesheet is imported by sites/v2 pages and leaks globally once that chunk
+	// loads. Restore BaseControl's defaults so labels render in title case.
+	.dataforms-layouts-regular__field .components-base-control__label {
+		font-size: inherit;
+		font-weight: inherit;
+		text-transform: none;
+	}
+}
+
+.podcast__page-head {
+	display: flex;
+	align-items: flex-end;
+	justify-content: space-between;
+	gap: 16px;
+	margin-block-end: 16px;
+}
+
+.podcast__page-title {
+	margin: 0;
+	font-size: 22px;
+	font-weight: 400;
+	line-height: 1.2;
+}
+
+.podcast__page-lede {
+	margin: 4px 0 0;
+	max-width: 640px;
+	color: var( --color-text-subtle );
+	font-size: 13px;
+}
+
+.podcast__autosave {
+	white-space: nowrap;
+	font-size: 12px;
+	color: var( --color-text-subtle );
+}
+
+/* Every section shares this spacing */
+.podcast__card {
+	margin-block-end: 16px;
+
+	.components-toggle-control .components-base-control__field {
+		margin-block-end: 0;
+	}
+}
+
+/* In-card section title — VStack wrapping handles spacing to neighbors. */
+.podcast__card-title {
+	margin: 0;
+	font-size: 15px;
+	font-weight: 600;
+	line-height: 1.4;
+}
+
+/* Explanation inside a FormFieldset needs breathing room from label and field */
+.podcast__card .form-fieldset .form-setting-explanation {
+	margin: 6px 0 10px;
+}
+
+/* Constrain DataForm fields to a Jetpack-settings-like width — parent only. */
+.podcast__form-pane {
+	max-inline-size: 480px;
+}
+
+/* Card-level action buttons (e.g. Create episode) */
+.podcast__card-actions {
+	display: flex;
+	gap: 8px;
+	margin-block-start: 8px;
+}
+
+/* Picker action row — Add category + Cancel */
+.podcast__category-picker-actions {
+	display: flex;
+	gap: 8px;
+	margin-block-start: 8px;
+}
+
+/* Inline button that looks like a link (for "Change category") */
+.podcast__inline-link {
+	background: none;
+	border: none;
+	padding: 0;
+	color: var( --color-link );
+	cursor: pointer;
+	font: inherit;
+	text-decoration: underline;
+
+	&:hover {
+		color: var( --color-link-dark );
+	}
+}
+
+/* Category picker — shown when "Change category" is clicked */
+.podcast__category-picker {
+	padding: 12px 16px;
+	background: var( --studio-gray-0 );
+	border-radius: 4px;
+	margin-block-end: 16px;
+
+	.form-label {
+		margin-block-end: 8px;
+	}
+}
+
+.podcast__category-list {
+	list-style: none;
+	margin: 0 0 12px;
+	padding: 0;
+
+	li {
+		padding: 4px 0;
+	}
+
+	.form-label {
+		margin: 0;
+		font-weight: 400;
+	}
+}
+
+/* Soften the classic Notice — keep the component, lose the dark-navy half.
+   Applies to health, warning, info ("prototype") variants in this scope. */
+.podcast__soft-notice.notice {
+	margin-block-end: 16px;
+	background: var( --studio-gray-0 );
+	border-inline-start: 4px solid var( --studio-gray-30 );
+	border-radius: 4px;
+	color: var( --color-text );
+	min-height: 0;
+	box-shadow: none;
+
+	.notice__icon-wrapper {
+		background: transparent;
+		color: var( --studio-gray-50 );
+		padding-inline: 12px;
+	}
+
+	.notice__content {
+		background: transparent;
+		color: var( --color-text );
+		padding-block: 10px;
+	}
+
+	.notice__text {
+		color: var( --color-text );
+	}
+
+	&.is-success {
+		background: var( --studio-green-0 );
+		border-inline-start-color: var( --studio-green-40 );
+
+		.notice__icon-wrapper {
+			color: var( --studio-green-50 );
+		}
+	}
+
+	&.is-warning {
+		background: var( --studio-yellow-0 );
+		border-inline-start-color: var( --studio-yellow-30 );
+
+		.notice__icon-wrapper {
+			color: var( --studio-yellow-50 );
+		}
+	}
+
+	&.is-info {
+		background: var( --studio-blue-0 );
+		border-inline-start-color: var( --studio-blue-40 );
+
+		.notice__icon-wrapper {
+			color: var( --studio-blue-50 );
+		}
+	}
+}
+
+/* Cover next to title/summary, mirrors podcast-cover-image-setting layout */
+.podcast__cover-and-info {
+	display: flex;
+	gap: 20px;
+	align-items: flex-start;
+	margin-block-end: 24px;
+
+	@media ( max-width: 600px ) {
+		flex-direction: column;
+	}
+}
+
+.podcast__cover-fieldset {
+	margin-block-end: 0;
+	flex-shrink: 0;
+
+	.form-label {
+		margin-block-end: 8px;
+	}
+}
+
+.podcast__cover-preview {
+	inline-size: 96px;
+	block-size: 96px;
+	padding: 0;
+	border: 1px solid var( --color-neutral-10 );
+	border-radius: 4px;
+	background: var( --studio-white );
+	cursor: pointer;
+	overflow: hidden;
+	display: block;
+
+	&.is-blank {
+		border-style: dashed;
+		background: var( --studio-gray-0 );
+		display: grid;
+		place-items: center;
+	}
+
+	&:hover {
+		border-color: var( --studio-gray-30 );
+	}
+}
+
+.podcast__cover-thumb {
+	display: block;
+	inline-size: 100%;
+	block-size: 100%;
+	background: var( --studio-gray-10 );
+}
+
+.podcast__cover-placeholder {
+	font-size: 12px;
+	color: var( --color-text-subtle );
+	font-style: italic;
+	padding: 8px;
+	text-align: center;
+}
+
+.podcast__cover-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	align-items: center;
+	margin-block-start: 8px;
+}
+
+.podcast__title-subtitle-wrapper {
+	flex: 1;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+
+	.form-fieldset {
+		margin-block-end: 0;
+	}
+}
+
+/* Topic selects stacked with equal gap */
+.podcast__topic-stack {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+/* Advanced foldable */
+.podcast__foldable {
+	margin-block-end: 16px;
+}
+
+/* ---- Distribution tab ---- */
+
+.podcast__directory-list {
+	list-style: none;
+	margin: 0 0 12px;
+	padding: 0;
+}
+
+.podcast__directory-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	padding: 16px 0;
+	border-block-end: 1px solid var( --color-neutral-5 );
+
+	&:last-child {
+		border-block-end: none;
+	}
+}
+
+.podcast__directory-main {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	min-width: 0;
+	flex: 1 1 auto;
+}
+
+.podcast__directory-logo {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	inline-size: 40px;
+	block-size: 40px;
+	border-radius: 8px;
+	overflow: hidden;
+	flex-shrink: 0;
+	background: var( --studio-white );
+	box-shadow: 0 0 0 1px var( --color-neutral-5 );
+
+	svg {
+		inline-size: 100%;
+		block-size: 100%;
+		display: block;
+	}
+
+	&.is-circle {
+		border-radius: 50%;
+		background: transparent;
+		box-shadow: none;
+	}
+}
+
+.podcast__directory-text {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
+
+.podcast__directory-name {
+	font-weight: 500;
+	color: var( --color-text );
+}
+
+.podcast__directory-meta {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 13px;
+	color: var( --color-text-subtle );
+}
+
+.podcast__directory-status {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+
+	&::before {
+		content: '';
+		display: inline-block;
+		inline-size: 8px;
+		block-size: 8px;
+		border-radius: 50%;
+		background: var( --studio-gray-20 );
+	}
+
+	&.is-live::before {
+		background: var( --studio-green-50 );
+	}
+
+	&.is-pending::before {
+		background: var( --studio-yellow-50 );
+	}
+}
+
+.podcast__directory-actions {
+	flex-shrink: 0;
+}
+
+.podcast__submit-grid {
+	display: grid;
+	grid-template-columns: repeat( auto-fill, minmax( 220px, 1fr ) );
+	gap: 12px;
+	margin-block-start: 16px;
+}
+
+.podcast__submit-card {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 12px 16px;
+}
+
+.podcast__submit-card-body {
+	min-width: 0;
+}
+
+.podcast__submit-card-name {
+	font-weight: 500;
+	color: var( --color-text );
+}
+
+.podcast__submit-card-meta {
+	font-size: 12px;
+	color: var( --color-text-subtle );
+	margin-block-start: 2px;
+}
+
+.podcast__prototype-toggle {
+	margin: 8px 0 0;
+	font-size: 12px;
+	color: var( --color-text-subtle );
+}
+
+/* ---- First-time welcome ---- */
+
+.podcast__welcome {
+	display: flex;
+	flex-direction: column;
+	gap: 32px;
+}
+
+.podcast__welcome-hero {
+	padding: 48px 40px;
+	background: radial-gradient( circle at 0% 0%, var( --studio-blue-0 ) 0%, transparent 45% ),
+		radial-gradient( circle at 100% 100%, var( --studio-purple-0 ) 0%, transparent 45% ),
+		var( --studio-white );
+	border-radius: 8px;
+	display: grid;
+	grid-template-columns: minmax( 0, 1.1fr ) minmax( 0, 1fr );
+	gap: 40px;
+	align-items: center;
+
+	@media ( max-width: 900px ) {
+		grid-template-columns: 1fr;
+		padding: 32px 24px;
+	}
+}
+
+.podcast__welcome-hero-copy {
+	max-width: 560px;
+}
+
+/* Mini preview on the hero */
+.podcast__welcome-hero-preview {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	padding: 16px;
+	background: var( --studio-white );
+	border: 1px solid var( --color-neutral-5 );
+	border-radius: 8px;
+	box-shadow: 0 6px 20px -12px rgba( 0, 0, 0, 0.18 );
+}
+
+.podcast__preview-card {
+	display: grid;
+	grid-template-columns: 56px 1fr;
+	gap: 12px;
+	align-items: center;
+}
+
+.podcast__preview-cover {
+	inline-size: 56px;
+	block-size: 56px;
+	border-radius: 8px;
+	background: linear-gradient( 135deg, var( --studio-blue-40 ), var( --studio-purple-40 ) );
+	display: grid;
+	place-items: center;
+
+	svg {
+		fill: var( --studio-white );
+	}
+}
+
+.podcast__preview-show {
+	font-weight: 600;
+	font-size: 14px;
+	line-height: 1.2;
+}
+
+.podcast__preview-host {
+	font-size: 12px;
+	color: var( --color-text-subtle );
+	margin-block: 2px 6px;
+}
+
+.podcast__preview-badges {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+
+	span {
+		font-size: 10px;
+		padding: 2px 6px;
+		background: var( --studio-gray-0 );
+		border-radius: 2px;
+		color: var( --color-text-subtle );
+	}
+}
+
+.podcast__preview-episodes {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+
+	li {
+		display: grid;
+		grid-template-columns: auto 1fr auto;
+		gap: 10px;
+		align-items: center;
+		padding: 8px 10px;
+		background: var( --studio-gray-0 );
+		border-radius: 4px;
+		font-size: 12px;
+	}
+}
+
+.podcast__preview-play {
+	font-size: 10px;
+	color: var( --studio-gray-50 );
+}
+
+.podcast__preview-ep-title {
+	font-weight: 500;
+	color: var( --color-text );
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.podcast__preview-ep-meta {
+	color: var( --color-text-subtle );
+}
+
+.podcast__welcome-title {
+	margin: 0 0 12px;
+	font-size: 36px;
+	font-weight: 400;
+	line-height: 1.15;
+	letter-spacing: -0.01em;
+}
+
+.podcast__welcome-lede {
+	margin: 0 0 24px;
+	font-size: 16px;
+	line-height: 1.5;
+	color: var( --color-text-subtle );
+}
+
+.podcast__welcome-actions {
+	display: flex;
+	gap: 12px;
+	flex-wrap: wrap;
+	align-items: center;
+}
+
+/* Benefits row */
+.podcast__welcome-benefits {
+	display: grid;
+	grid-template-columns: repeat( 3, minmax( 0, 1fr ) );
+	gap: 16px;
+
+	@media ( max-width: 900px ) {
+		grid-template-columns: 1fr;
+	}
+}
+
+.podcast__welcome-benefit {
+	padding: 32px;
+	background: var( --studio-white );
+	border: 1px solid var( --color-neutral-5 );
+	border-radius: 8px;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	text-align: start;
+}
+
+.podcast__welcome-benefit-icon {
+	display: inline-flex;
+	margin-inline-start: -2px;
+	margin-block-end: 24px;
+
+	svg {
+		inline-size: 24px;
+		block-size: 24px;
+		fill: var( --color-text );
+	}
+}
+
+.podcast__welcome-benefit-title {
+	margin: 0 0 8px;
+	font-size: 16px;
+	font-weight: 600;
+	line-height: 1.3;
+}
+
+.podcast__welcome-benefit-body {
+	margin: 0;
+	font-size: 14px;
+	line-height: 1.5;
+	color: var( --color-text-subtle );
+}
+
+/* How it works */
+.podcast__welcome-steps {
+	padding: 32px;
+}
+
+.podcast__welcome-steps-title {
+	margin: 0 0 20px;
+	font-size: 18px;
+	font-weight: 600;
+}
+
+.podcast__welcome-steps-grid {
+	display: grid;
+	grid-template-columns: repeat( 3, minmax( 0, 1fr ) );
+	gap: 24px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	counter-reset: podcasting-step;
+
+	@media ( max-width: 720px ) {
+		grid-template-columns: 1fr;
+	}
+}
+
+.podcast__welcome-step {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 12px;
+	position: relative;
+}
+
+/* Connector line runs between circle centers only, behind the circles */
+.podcast__welcome-step:not( :last-child )::after {
+	content: '';
+	position: absolute;
+	inset-inline-start: 32px;
+	inset-block-start: 15px;
+	inline-size: calc( 100% - 32px + 24px );
+	block-size: 1px;
+	background: var( --color-neutral-5 );
+	z-index: 0;
+
+	@media ( max-width: 720px ) {
+		display: none;
+	}
+}
+
+.podcast__welcome-step-circle {
+	inline-size: 32px;
+	block-size: 32px;
+	border-radius: 50%;
+	background: var( --studio-gray-90 );
+	color: var( --studio-white );
+	display: grid;
+	place-items: center;
+	position: relative;
+	z-index: 1;
+	flex-shrink: 0;
+}
+
+.podcast__welcome-step-number {
+	font-weight: 600;
+	font-size: 14px;
+	line-height: 1;
+}
+
+.podcast__welcome-step-title {
+	font-size: 14px;
+	font-weight: 600;
+	color: var( --color-text );
+	margin: 0;
+}
+
+.podcast__welcome-step-body {
+	margin: 0;
+	font-size: 13px;
+	line-height: 1.5;
+	color: var( --color-text-subtle );
+}
+
+/* Pricing section — flat, aligns to same width as benefits/steps/stats siblings */
+.podcast__welcome-pricing {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.podcast__welcome-pricing-title {
+	margin: 0;
+	font-size: 22px;
+	font-weight: 500;
+	line-height: 1.3;
+}
+
+.podcast__plans {
+	display: grid;
+	gap: 16px;
+}
+
+.podcast__plans--cols-1 {
+	grid-template-columns: minmax( 0, 520px );
+	justify-content: center;
+}
+
+.podcast__plans--cols-2 {
+	grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
+
+	@media ( max-width: 720px ) {
+		grid-template-columns: 1fr;
+	}
+}
+
+.podcast__plan {
+	position: relative;
+	padding: 24px;
+	border: 1px solid var( --color-neutral-5 );
+	border-radius: 8px;
+	background: var( --studio-white );
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+
+	.button {
+		align-self: flex-start;
+	}
+}
+
+.podcast__plan--recommended {
+	border-color: var( --studio-green-40 );
+	box-shadow: 0 0 0 1px var( --studio-green-40 );
+}
+
+.podcast__plan--your-plan {
+	border-color: var( --color-neutral-20 );
+	box-shadow: 0 0 0 1px var( --color-neutral-20 );
+}
+
+.podcast__plan-ribbon {
+	position: absolute;
+	inset-inline-end: 16px;
+	inset-block-start: -10px;
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	padding: 3px 8px;
+	border-radius: 2px;
+	background: var( --studio-green-50 );
+	color: var( --studio-white );
+}
+
+.podcast__plan--your-plan .podcast__plan-ribbon {
+	background: var( --studio-gray-60 );
+	color: var( --studio-white );
+}
+
+.podcast__plan-name {
+	font-size: 20px;
+	font-weight: 500;
+	color: var( --color-text );
+}
+
+.podcast__plan-blurb {
+	margin: 0;
+	min-height: 3em;
+	font-size: 13px;
+	line-height: 1.5;
+	color: var( --color-text-subtle );
+}
+
+.podcast__plan-price {
+	display: flex;
+	align-items: baseline;
+	gap: 2px;
+}
+
+.podcast__plan-currency {
+	font-size: 20px;
+	font-weight: 400;
+	color: var( --color-text );
+}
+
+.podcast__plan-amount {
+	font-size: 44px;
+	font-weight: 400;
+	line-height: 1;
+	letter-spacing: -0.02em;
+}
+
+.podcast__plan-period {
+	margin-inline-start: 6px;
+	font-size: 13px;
+	color: var( --color-text-subtle );
+}
+
+.podcast__plan-features {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+
+	li {
+		display: flex;
+		align-items: flex-start;
+		gap: 10px;
+		font-size: 14px;
+		line-height: 1.4;
+		color: var( --color-text );
+
+		svg {
+			flex-shrink: 0;
+			margin-block-start: 1px;
+			fill: var( --studio-green-50 );
+		}
+	}
+}
+
+/* Prototype plan-tier toggle */
+.podcast__welcome-demo-toggle {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+	padding: 10px 14px;
+	background: var( --studio-gray-0 );
+	border-radius: 4px;
+	font-size: 12px;
+	color: var( --color-text-subtle );
+
+	button {
+		background: transparent;
+		border: 1px solid var( --color-neutral-10 );
+		border-radius: 3px;
+		padding: 3px 10px;
+		font-size: 12px;
+		cursor: pointer;
+
+		&.is-active {
+			background: var( --color-text );
+			color: var( --studio-white );
+			border-color: var( --color-text );
+		}
+	}
+}
+
+/* ---- Example feed modal ---- */
+
+.podcast__example-dialog {
+	.dialog__content {
+		max-width: 520px;
+		padding: 24px;
+	}
+}
+
+.podcast__example-title {
+	margin: 0 0 16px;
+	font-size: 18px;
+	font-weight: 600;
+}
+
+.podcast__example-card {
+	display: grid;
+	grid-template-columns: 80px 1fr;
+	gap: 16px;
+	align-items: center;
+	padding: 16px;
+	background: var( --studio-gray-0 );
+	border-radius: 8px;
+	margin-block-end: 16px;
+}
+
+.podcast__example-cover {
+	inline-size: 80px;
+	block-size: 80px;
+	border-radius: 8px;
+	background: linear-gradient( 135deg, var( --studio-blue-40 ), var( --studio-purple-40 ) );
+	display: grid;
+	place-items: center;
+
+	svg {
+		fill: var( --studio-white );
+	}
+}
+
+.podcast__example-show {
+	font-size: 16px;
+	font-weight: 600;
+}
+
+.podcast__example-host {
+	font-size: 12px;
+	color: var( --color-text-subtle );
+	margin-block: 2px 8px;
+}
+
+.podcast__example-summary {
+	font-size: 13px;
+	color: var( --color-text-subtle );
+	line-height: 1.4;
+}
+
+.podcast__example-feed-url {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 8px 12px;
+	background: var( --studio-white );
+	border: 1px solid var( --color-neutral-5 );
+	border-radius: 4px;
+	font-family: monospace;
+	font-size: 12px;
+	color: var( --color-text-subtle );
+	margin-block-end: 16px;
+
+	svg {
+		fill: var( --studio-gray-40 );
+		flex-shrink: 0;
+	}
+
+	span {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+}
+
+.podcast__example-episodes {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+
+	li {
+		display: grid;
+		grid-template-columns: 32px 1fr;
+		gap: 12px;
+		align-items: center;
+		padding: 10px 4px;
+		border-block-end: 1px solid var( --color-neutral-5 );
+
+		&:last-child {
+			border-block-end: none;
+		}
+	}
+}
+
+.podcast__example-play {
+	inline-size: 32px;
+	block-size: 32px;
+	border-radius: 50%;
+	background: var( --studio-gray-0 );
+	display: grid;
+	place-items: center;
+	font-size: 11px;
+	color: var( --color-text );
+}
+
+.podcast__example-ep-title {
+	font-size: 14px;
+	font-weight: 500;
+	color: var( --color-text );
+}
+
+.podcast__example-ep-meta {
+	font-size: 12px;
+	color: var( --color-text-subtle );
+	margin-block-start: 2px;
 }

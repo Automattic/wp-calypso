@@ -4,7 +4,7 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getTerm, getTerms } from 'calypso/state/terms/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-export const usePodcastingFeedUrl = (): string => {
+export const useFeedUrl = (): string => {
 	return useSelector( ( state ) => {
 		const siteId = getSelectedSiteId( state );
 		if ( ! siteId ) {

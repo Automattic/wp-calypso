@@ -196,7 +196,7 @@ const getSampleEpisodes = ( translate: Translate ) => [
 	},
 ];
 
-function PodcastingWelcome( { onEnable, planTier, onChangePlanTier }: WelcomeProps ) {
+function Welcome( { onEnable, planTier, onChangePlanTier }: WelcomeProps ) {
 	const translate = useTranslate();
 	const [ exampleOpen, setExampleOpen ] = useState( false );
 	const siteSlug = useSelector( getSelectedSiteSlug );
@@ -229,19 +229,19 @@ function PodcastingWelcome( { onEnable, planTier, onChangePlanTier }: WelcomePro
 	};
 
 	return (
-		<div className="podcasting-v2__welcome">
+		<div className="podcast__welcome">
 			{ /* Hero */ }
-			<section className="podcasting-v2__welcome-hero">
-				<div className="podcasting-v2__welcome-hero-copy">
-					<h2 className="podcasting-v2__welcome-title">
+			<section className="podcast__welcome-hero">
+				<div className="podcast__welcome-hero-copy">
+					<h2 className="podcast__welcome-title">
 						{ translate( 'Turn your posts into a podcast' ) }
 					</h2>
-					<p className="podcasting-v2__welcome-lede">
+					<p className="podcast__welcome-lede">
 						{ translate(
 							'Publish audio alongside your writing and get distributed to Apple Podcasts, Spotify, and every major app, without leaving your site.'
 						) }
 					</p>
-					<div className="podcasting-v2__welcome-actions">
+					<div className="podcast__welcome-actions">
 						{ ! isFree && (
 							<>
 								<Button variant="primary" onClick={ onEnable }>
@@ -256,29 +256,29 @@ function PodcastingWelcome( { onEnable, planTier, onChangePlanTier }: WelcomePro
 				</div>
 
 				{ /* Mini preview panel on the right */ }
-				<div className="podcasting-v2__welcome-hero-preview" aria-hidden="true">
-					<div className="podcasting-v2__preview-card">
-						<div className="podcasting-v2__preview-cover">
+				<div className="podcast__welcome-hero-preview" aria-hidden="true">
+					<div className="podcast__preview-card">
+						<div className="podcast__preview-cover">
 							<Icon icon={ audio } />
 						</div>
-						<div className="podcasting-v2__preview-meta">
-							<div className="podcasting-v2__preview-show">{ sampleShow.title }</div>
-							<div className="podcasting-v2__preview-host">
+						<div className="podcast__preview-meta">
+							<div className="podcast__preview-show">{ sampleShow.title }</div>
+							<div className="podcast__preview-host">
 								{ translate( 'by %(host)s', { args: { host: sampleShow.host } } ) }
 							</div>
-							<div className="podcasting-v2__preview-badges">
+							<div className="podcast__preview-badges">
 								<span>Apple Podcasts</span>
 								<span>Spotify</span>
 								<span>Overcast</span>
 							</div>
 						</div>
 					</div>
-					<ul className="podcasting-v2__preview-episodes">
+					<ul className="podcast__preview-episodes">
 						{ sampleEpisodes.slice( 0, 2 ).map( ( ep ) => (
 							<li key={ ep.number }>
-								<span className="podcasting-v2__preview-play">▶</span>
-								<span className="podcasting-v2__preview-ep-title">{ ep.title }</span>
-								<span className="podcasting-v2__preview-ep-meta">{ ep.duration }</span>
+								<span className="podcast__preview-play">▶</span>
+								<span className="podcast__preview-ep-title">{ ep.title }</span>
+								<span className="podcast__preview-ep-meta">{ ep.duration }</span>
 							</li>
 						) ) }
 					</ul>
@@ -286,19 +286,19 @@ function PodcastingWelcome( { onEnable, planTier, onChangePlanTier }: WelcomePro
 			</section>
 
 			{ /* Pricing grid */ }
-			<section className="podcasting-v2__welcome-pricing">
-				<h3 className="podcasting-v2__welcome-pricing-title">{ pricingTitle }</h3>
+			<section className="podcast__welcome-pricing">
+				<h3 className="podcast__welcome-pricing-title">{ pricingTitle }</h3>
 
-				<div className={ `podcasting-v2__plans podcasting-v2__plans--cols-${ cards.length }` }>
+				<div className={ `podcast__plans podcast__plans--cols-${ cards.length }` }>
 					{ cards.map( ( { plan, label }, index ) => {
 						const isRecommended = label === 'recommended';
 						const isYourPlan = label === 'your-plan';
-						const classes = [ 'podcasting-v2__plan' ];
+						const classes = [ 'podcast__plan' ];
 						if ( isRecommended ) {
-							classes.push( 'podcasting-v2__plan--recommended' );
+							classes.push( 'podcast__plan--recommended' );
 						}
 						if ( isYourPlan ) {
-							classes.push( 'podcasting-v2__plan--your-plan' );
+							classes.push( 'podcast__plan--your-plan' );
 						}
 						// Right column shows the first two features (Publishing tools + storage)
 						// always, then only features that aren't already on the left card —
@@ -311,16 +311,16 @@ function PodcastingWelcome( { onEnable, planTier, onChangePlanTier }: WelcomePro
 						return (
 							<div key={ plan.slug } className={ classes.join( ' ' ) }>
 								{ label && (
-									<span className="podcasting-v2__plan-ribbon">
+									<span className="podcast__plan-ribbon">
 										{ isYourPlan ? translate( 'Your plan' ) : translate( 'Recommended' ) }
 									</span>
 								) }
-								<div className="podcasting-v2__plan-name">{ plan.name }</div>
-								<p className="podcasting-v2__plan-blurb">{ plan.blurb }</p>
-								<div className="podcasting-v2__plan-price">
-									<span className="podcasting-v2__plan-currency">$</span>
-									<span className="podcasting-v2__plan-amount">{ plan.price }</span>
-									<span className="podcasting-v2__plan-period">
+								<div className="podcast__plan-name">{ plan.name }</div>
+								<p className="podcast__plan-blurb">{ plan.blurb }</p>
+								<div className="podcast__plan-price">
+									<span className="podcast__plan-currency">$</span>
+									<span className="podcast__plan-amount">{ plan.price }</span>
+									<span className="podcast__plan-period">
 										{ translate( '/mo, billed yearly' ) }
 									</span>
 								</div>
@@ -334,7 +334,7 @@ function PodcastingWelcome( { onEnable, planTier, onChangePlanTier }: WelcomePro
 												args: { planName: plan.name },
 										  } ) }
 								</Button>
-								<ul className="podcasting-v2__plan-features">
+								<ul className="podcast__plan-features">
 									{ features.map( ( f ) => (
 										<li key={ f }>
 											<Icon icon={ check } />
@@ -349,36 +349,36 @@ function PodcastingWelcome( { onEnable, planTier, onChangePlanTier }: WelcomePro
 			</section>
 
 			{ /* Benefits */ }
-			<div className="podcasting-v2__welcome-benefits">
+			<div className="podcast__welcome-benefits">
 				{ benefits.map( ( b ) => (
-					<article key={ b.title } className="podcasting-v2__welcome-benefit">
-						<span className="podcasting-v2__welcome-benefit-icon" aria-hidden="true">
+					<article key={ b.title } className="podcast__welcome-benefit">
+						<span className="podcast__welcome-benefit-icon" aria-hidden="true">
 							{ b.icon }
 						</span>
-						<h3 className="podcasting-v2__welcome-benefit-title">{ b.title }</h3>
-						<p className="podcasting-v2__welcome-benefit-body">{ b.body }</p>
+						<h3 className="podcast__welcome-benefit-title">{ b.title }</h3>
+						<p className="podcast__welcome-benefit-body">{ b.body }</p>
 					</article>
 				) ) }
 			</div>
 
 			{ /* How it works — stacked layout, connector runs between circles only */ }
-			<Card className="podcasting-v2__welcome-steps">
-				<h3 className="podcasting-v2__welcome-steps-title">{ translate( 'How it works' ) }</h3>
-				<ol className="podcasting-v2__welcome-steps-grid">
+			<Card className="podcast__welcome-steps">
+				<h3 className="podcast__welcome-steps-title">{ translate( 'How it works' ) }</h3>
+				<ol className="podcast__welcome-steps-grid">
 					{ steps.map( ( step ) => (
-						<li key={ step.number } className="podcasting-v2__welcome-step">
-							<div className="podcasting-v2__welcome-step-circle">
-								<span className="podcasting-v2__welcome-step-number">{ step.number }</span>
+						<li key={ step.number } className="podcast__welcome-step">
+							<div className="podcast__welcome-step-circle">
+								<span className="podcast__welcome-step-number">{ step.number }</span>
 							</div>
-							<div className="podcasting-v2__welcome-step-title">{ step.title }</div>
-							<p className="podcasting-v2__welcome-step-body">{ step.body }</p>
+							<div className="podcast__welcome-step-title">{ step.title }</div>
+							<p className="podcast__welcome-step-body">{ step.body }</p>
 						</li>
 					) ) }
 				</ol>
 			</Card>
 
 			{ /* Prototype plan toggle */ }
-			<div className="podcasting-v2__welcome-demo-toggle">
+			<div className="podcast__welcome-demo-toggle">
 				<span>{ translate( 'Prototype: demo plan -' ) }</span>
 				{ ( [ 'free', 'personal', 'premium', 'business' ] as PlanTier[] ).map( ( tier ) => (
 					<button
@@ -398,37 +398,37 @@ function PodcastingWelcome( { onEnable, planTier, onChangePlanTier }: WelcomePro
 				<Modal
 					title={ translate( 'What your feed looks like to listeners' ) as string }
 					onRequestClose={ () => setExampleOpen( false ) }
-					className="podcasting-v2__example-dialog"
+					className="podcast__example-dialog"
 				>
-					<div className="podcasting-v2__example-card">
-						<div className="podcasting-v2__example-cover">
+					<div className="podcast__example-card">
+						<div className="podcast__example-cover">
 							<Icon icon={ audio } />
 						</div>
-						<div className="podcasting-v2__example-meta">
-							<div className="podcasting-v2__example-show">{ sampleShow.title }</div>
-							<div className="podcasting-v2__example-host">
+						<div className="podcast__example-meta">
+							<div className="podcast__example-show">{ sampleShow.title }</div>
+							<div className="podcast__example-host">
 								{ translate( 'by %(host)s', { args: { host: sampleShow.host } } ) } •{ ' ' }
 								{ sampleShow.category }
 							</div>
-							<div className="podcasting-v2__example-summary">{ sampleShow.summary }</div>
+							<div className="podcast__example-summary">{ sampleShow.summary }</div>
 						</div>
 					</div>
-					<div className="podcasting-v2__example-feed-url">
+					<div className="podcast__example-feed-url">
 						<Icon icon={ category } />
 						<span>
 							https://{ sampleShow.host.toLowerCase().replace( /\s/g, '' ) }
 							.com/category/podcast/feed/
 						</span>
 					</div>
-					<ul className="podcasting-v2__example-episodes">
+					<ul className="podcast__example-episodes">
 						{ sampleEpisodes.map( ( ep ) => (
 							<li key={ ep.number }>
-								<span className="podcasting-v2__example-play">▶</span>
-								<div className="podcasting-v2__example-ep-body">
-									<div className="podcasting-v2__example-ep-title">
+								<span className="podcast__example-play">▶</span>
+								<div className="podcast__example-ep-body">
+									<div className="podcast__example-ep-title">
 										{ ep.number }. { ep.title }
 									</div>
-									<div className="podcasting-v2__example-ep-meta">
+									<div className="podcast__example-ep-meta">
 										{ ep.date } · { ep.duration }
 									</div>
 								</div>
@@ -441,4 +441,4 @@ function PodcastingWelcome( { onEnable, planTier, onChangePlanTier }: WelcomePro
 	);
 }
 
-export default PodcastingWelcome;
+export default Welcome;
