@@ -18,6 +18,7 @@ import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
 import { useQuery as useUrlParams } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { waitForPluginsActive } from 'calypso/landing/stepper/utils/wait-for-plugins-active';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useExperiment } from 'calypso/lib/explat';
 import { useMarketplaceThemeProducts } from '../../../../hooks/use-marketplace-theme-products';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
@@ -159,6 +160,18 @@ const PostCheckoutOnboarding: StepType< {
 		isExternallyManagedThemeAvailable;
 
 	const hasError = isErrorSite || isErrorMarketplaceThemeProducts || isErrorSiteTransferStatus;
+
+	useEffect( () => {
+		if ( ! hasError ) {
+			return;
+		}
+		recordTracksEvent( 'calypso_onboarding_post_checkout_setup_error', {
+			flow,
+			error_site: isErrorSite,
+			error_marketplace_theme_products: isErrorMarketplaceThemeProducts,
+			error_site_transfer_status: isErrorSiteTransferStatus,
+		} );
+	}, [ hasError, flow, isErrorSite, isErrorMarketplaceThemeProducts, isErrorSiteTransferStatus ] );
 
 	useEffect( () => {
 		if (
