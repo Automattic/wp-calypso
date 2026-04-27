@@ -265,18 +265,29 @@ export default function useCreatePaymentSubmittedAndProcessingCallback( {
 					fromExternalCheckout: sitelessCheckoutType === 'a4a',
 				};
 
-				// External checkout (A4A) builds the pending URL on wordpress.com — different
-				// origin, so a hard redirect is required.
-				if ( options.fromExternalCheckout ) {
+				// Stepper, signup, and external-checkout flows must use a hard redirect:
+				// - /setup/ and /start/site-content-collection: stepper / signup are
+				//   self-contained and require a fresh calypso bundle to load. Without
+				//   the hard reload, the pending page's downstream page() call would
+				//   land in a stale calypso instance and the flow would break (see
+				//   PR #68538, PR #85417).
+				// - A4A external checkout: the pending URL lives on wordpress.com,
+				//   a different origin.
+				if (
+					url.includes( '/setup/' ) ||
+					url.includes( '/start/site-content-collection' ) ||
+					options.fromExternalCheckout
+				) {
 					absoluteRedirectThroughPending( url, options );
 					return;
 				}
 
-				// For same-origin cases, navigate to the pending page via client-side
-				// routing. This avoids a full page reload (and the blank-screen flash
-				// that comes with it). The redirect_to query param still carries the
-				// absolute final destination, so the pending page will hard-redirect
-				// from there when the transaction completes.
+				// Cross-origin same-app cases (e.g. dashboard upgrade where the final
+				// URL is on my.localhost:3000 from calypso.localhost:3000). Navigate
+				// to the pending page via client-side routing to avoid the blank-screen
+				// flash; the pending page will then hard-redirect to the absolute URL
+				// because performRedirect falls through to window.location.href when
+				// the URL doesn't start with `/`.
 				window.scrollTo( 0, 0 );
 				page( addUrlToPendingPageRedirect( url, { ...options, urlType: 'relative' } ) );
 				return;

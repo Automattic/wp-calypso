@@ -314,12 +314,7 @@ function useRedirectOnTransactionSuccess( {
 
 		setIsExiting( true );
 		window.setTimeout( () => {
-			try {
-				notifyAndPerformRedirect( siteSlug, redirectInstructions );
-			} catch {
-				// Client-side routing failed — fall back to a hard navigation.
-				window.location.href = redirectInstructions.url;
-			}
+			notifyAndPerformRedirect( siteSlug, redirectInstructions );
 		}, 200 );
 	}, [
 		isLoadingOrder,

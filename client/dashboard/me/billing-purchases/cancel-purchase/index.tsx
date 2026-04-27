@@ -536,7 +536,9 @@ function CancelPurchaseInner() {
 			surveyStep: firstStep,
 			upsell: '',
 		};
-		setState( newState );
+		if ( JSON.stringify( state ) !== JSON.stringify( newState ) ) {
+			setState( newState );
+		}
 	};
 
 	// Handlers
@@ -1067,6 +1069,10 @@ function CancelPurchaseInner() {
 	};
 
 	const submitRemovePurchase = ( purchase: Purchase ) => {
+		if ( CANCEL_FLOW_TYPE.REMOVE !== flowType ) {
+			return;
+		}
+
 		removePurchaseMutator.mutate( purchase.ID, {
 			onSuccess: () => {
 				const purchaseName = purchase.is_domain ? purchase.meta : purchase.product_name;
