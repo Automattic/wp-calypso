@@ -1,0 +1,121 @@
+import { localizeUrl } from '@automattic/i18n-utils';
+import { ResponseCart } from '@automattic/shopping-cart';
+import styled from '@emotion/styled';
+import { Icon } from '@wordpress/components';
+import { lock } from '@wordpress/icons';
+import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
+import { CheckoutSummaryRefundWindows } from './checkout-summary-refund-windows';
+import CheckoutTermsModal from './checkout-terms-modal';
+
+const Wrapper = styled.div`
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin-top: 12px;
+	font-size: 13px;
+	color: ${ ( props ) => props.theme.colors.textColorLight };
+`;
+
+const TrustLine = styled.div`
+	display: flex;
+	align-items: center;
+	gap: 8px;
+
+	svg {
+		flex-shrink: 0;
+		fill: currentColor;
+	}
+`;
+
+const RefundLine = styled( TrustLine )`
+	/*
+	 * CheckoutSummaryRefundWindows renders a sibling icon + container pair when
+	 * includeRefundIcon is passed. Make both children align as if they were one row.
+	 */
+	& > * {
+		margin: 0;
+	}
+`;
+
+const Divider = styled.hr`
+	border: 0;
+	border-block-start: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+	margin: 8px 0;
+`;
+
+const AutoRenewNotice = styled.p`
+	margin: 0;
+	font-size: 12px;
+	line-height: 1.5;
+	color: ${ ( props ) => props.theme.colors.textColorLight };
+
+	a,
+	button {
+		color: ${ ( props ) => props.theme.colors.highlight };
+		text-decoration: underline;
+
+		&:hover {
+			color: ${ ( props ) => props.theme.colors.highlightOver };
+		}
+	}
+
+	button {
+		background: none;
+		border: 0;
+		padding: 0;
+		font: inherit;
+		cursor: pointer;
+	}
+`;
+
+export default function CheckoutPayButtonFooter( { cart }: { cart: ResponseCart } ) {
+	const translate = useTranslate();
+	const [ isTermsModalOpen, setIsTermsModalOpen ] = useState( false );
+
+	return (
+		<Wrapper className="checkout-pay-button-footer">
+			<TrustLine>
+				<Icon icon={ lock } size={ 18 } />
+				<span>{ translate( 'SSL secure payment · 256-bit encryption' ) }</span>
+			</TrustLine>
+
+			<RefundLine>
+				<CheckoutSummaryRefundWindows cart={ cart } includeRefundIcon />
+			</RefundLine>
+
+			<Divider />
+
+			<AutoRenewNotice>
+				{ translate(
+					'By purchasing, you accept the {{tos}}Terms of Service{{/tos}} and {{pp}}Privacy Policy{{/pp}}. Your subscription auto-renews. {{readmore}}Read more{{/readmore}}',
+					{
+						components: {
+							tos: (
+								<a
+									href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							),
+							pp: (
+								<a
+									href={ localizeUrl( 'https://automattic.com/privacy/' ) }
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							),
+							readmore: <button type="button" onClick={ () => setIsTermsModalOpen( true ) } />,
+						},
+					}
+				) }
+			</AutoRenewNotice>
+
+			<CheckoutTermsModal
+				cart={ cart }
+				isOpen={ isTermsModalOpen }
+				onClose={ () => setIsTermsModalOpen( false ) }
+			/>
+		</Wrapper>
+	);
+}
