@@ -1,8 +1,7 @@
-import page from '@automattic/calypso-router';
 import { Page } from '@wordpress/admin-ui';
 import { Tabs } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import QueryTerms from 'calypso/components/data/query-terms';
@@ -25,7 +24,6 @@ type PodcastSection = 'episodes' | 'distribution';
 
 type PodcastMainProps = {
 	section?: string;
-	path?: string;
 };
 
 const VALID_SECTIONS: readonly PodcastSection[] = [ 'episodes', 'distribution' ] as const;
@@ -33,7 +31,7 @@ const VALID_SECTIONS: readonly PodcastSection[] = [ 'episodes', 'distribution' ]
 const isValidSection = ( s: string | undefined ): s is PodcastSection =>
 	!! s && ( VALID_SECTIONS as readonly string[] ).includes( s );
 
-const PodcastMain = ( { section, path }: PodcastMainProps ) => {
+const PodcastMain = ( { section }: PodcastMainProps ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
@@ -64,27 +62,55 @@ const PodcastMain = ( { section, path }: PodcastMainProps ) => {
 	const hasSectionInRoute = isValidSection( section );
 	const showTabs = podcastingOn || hasSectionInRoute;
 
-	const currentSection: PodcastSection = isValidSection( section ) ? section : 'episodes';
+	// Track the active tab in local state so clicking a tab swaps the panel
+	// without re-running the page.js controller (which would re-mount the
+	// entire page chrome). The URL is kept in sync via history.pushState; the
+	// browser back/forward still works because page.js owns popstate.
+	const [ tabSection, setTabSection ] = useState< PodcastSection >(
+		isValidSection( section ) ? section : 'episodes'
+	);
+	useEffect( () => {
+		if ( isValidSection( section ) ) {
+			setTabSection( section );
+		}
+	}, [ section ] );
+
+	// Normalize the bare `/podcast/[site]` URL to the default tab once the
+	// tabbed view is showing. Welcome stays on the bare URL.
+	useEffect( () => {
+		if ( ! showTabs || hasSectionInRoute ) {
+			return;
+		}
+		const target = '/podcast/episodes' + pathSuffix;
+		if ( window.location.pathname !== target ) {
+			window.history.replaceState( null, '', target );
+		}
+	}, [ showTabs, hasSectionInRoute, pathSuffix ] );
 
 	const tabs = [
 		{
-			name: 'episodes',
+			name: 'episodes' as const,
 			title: translate( 'Episodes' ) as string,
 			path: '/podcast/episodes' + pathSuffix,
 		},
 		{
-			name: 'distribution',
+			name: 'distribution' as const,
 			title: translate( 'Distribution' ) as string,
 			path: '/podcast/distribution' + pathSuffix,
 		},
 	];
 
-	const currentPath = ( path || '' ).split( '?' )[ 0 ];
-
 	const handleSelect = ( tabId: string ) => {
+		if ( ! isValidSection( tabId ) ) {
+			return;
+		}
 		const target = tabs.find( ( t ) => t.name === tabId );
-		if ( target && currentPath !== target.path ) {
-			page.show( target.path );
+		if ( ! target ) {
+			return;
+		}
+		setTabSection( tabId );
+		if ( window.location.pathname !== target.path ) {
+			window.history.pushState( null, '', target.path );
 		}
 	};
 
@@ -94,7 +120,7 @@ const PodcastMain = ( { section, path }: PodcastMainProps ) => {
 	} else if ( showTabs ) {
 		pageContent = (
 			<Tabs.Root
-				value={ currentSection }
+				value={ tabSection }
 				onValueChange={ ( value ) => {
 					if ( typeof value === 'string' ) {
 						handleSelect( value );
@@ -140,8 +166,9 @@ const PodcastMain = ( { section, path }: PodcastMainProps ) => {
 			{ siteId && <QueryTerms siteId={ siteId } taxonomy="category" /> }
 			<DocumentHead title={ translate( 'Podcast' ) } />
 			<Page
-				hasPadding={ false }
+				hasPadding
 				showSidebarToggle={ false }
+				title={ <JetpackTitle title={ translate( 'Podcast' ) } /> }
 				subTitle={ translate(
 					'Publish a podcast feed to Apple Podcasts and other podcasting services. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 					{
@@ -150,9 +177,8 @@ const PodcastMain = ( { section, path }: PodcastMainProps ) => {
 						},
 					}
 				) }
-				title={ <JetpackTitle title={ translate( 'Podcast' ) } /> }
 			>
-				<div className="podcast__scroll-area">{ pageContent }</div>
+				{ pageContent }
 			</Page>
 			<JetpackFooter />
 		</Main>

@@ -6,7 +6,6 @@ export const createPodcast: Callback = ( context, next ) => {
 	context.section.name = 'podcast';
 	context.primary = createElement( PodcastMain, {
 		section: context.params.section,
-		path: context.path,
 	} );
 	next();
 };
