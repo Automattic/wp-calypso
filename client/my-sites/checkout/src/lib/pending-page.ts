@@ -7,7 +7,6 @@ import {
 	PROCESSING,
 	ASYNC_PENDING,
 } from 'calypso/state/order-transactions/constants';
-import type { Purchase } from '@automattic/api-core';
 import type { OrderTransaction } from 'calypso/state/selectors/get-order-transaction';
 
 export interface PendingPageRedirectOptions {
@@ -261,44 +260,6 @@ function interpolateReceiptId( url: string, receiptId: number ): string {
 }
 
 /**
- * Replaces `:purchaseId` placeholders in a URL with the purchase
- * (subscription) ID.
- *
- * Used by post-checkout flows that need to land on a per-purchase URL after
- * the new subscription has been provisioned. The pending page resolves the
- * ID by querying the user's purchases, then substitutes the placeholder.
- */
-export function interpolatePurchaseId( url: string, purchaseId: number ): string {
-	return url.replaceAll( ':purchaseId', `${ purchaseId }` );
-}
-
-/**
- * Given the user's current purchases, a site slug, and the product slugs from
- * the receipt items, returns the ID of the newly-provisioned active subscription
- * that matches one of the receipt's products on the given site.
- *
- * Replaces the previous "highest active plan ID" heuristic with an exact
- * product-slug match so that bundled receipts (e.g. plan + domain) and
- * non-plan upgrades resolve correctly without relying on monotonic IDs.
- */
-export function findPurchaseFromReceipt(
-	purchases: Purchase[] | undefined,
-	siteSlug: string | undefined,
-	receiptItemProductSlugs: readonly string[]
-): number | undefined {
-	if ( ! purchases || ! siteSlug || receiptItemProductSlugs.length === 0 ) {
-		return undefined;
-	}
-	const match = purchases.find(
-		( p ) =>
-			p.site_slug === siteSlug &&
-			p.subscription_status === 'active' &&
-			receiptItemProductSlugs.includes( p.product_slug )
-	);
-	return match?.ID;
-}
-
-/**
  * Return false for absolute URLs which are on unknown hosts.
  *
  * Because the `redirect_to` query param on the pending page is the target of
@@ -384,6 +345,30 @@ function getDefaultSuccessUrl(
 	return `/checkout/thank-you/${ siteSlug ?? 'no-site' }/${ receiptId ?? 'unknown-receipt' }`;
 }
 
+function buildSuccessRedirect( {
+	effectiveReceiptId,
+	redirectTo,
+	siteSlug,
+	fromSiteSlug,
+	purchaseId,
+}: {
+	effectiveReceiptId: number;
+	redirectTo: string | undefined;
+	siteSlug: string | undefined;
+	fromSiteSlug: string | undefined;
+	purchaseId: number | undefined;
+} ): RedirectInstructions {
+	const fallbackUrl = getDefaultSuccessUrl( siteSlug, effectiveReceiptId );
+	let interpolated = interpolateReceiptId( redirectTo ?? fallbackUrl, effectiveReceiptId );
+	if ( interpolated.includes( ':purchaseId' ) ) {
+		if ( purchaseId === undefined ) {
+			return { url: fallbackUrl };
+		}
+		interpolated = interpolated.replaceAll( ':purchaseId', String( purchaseId ) );
+	}
+	return { url: filterAllowedRedirect( interpolated, siteSlug || fromSiteSlug, fallbackUrl ) };
+}
+
 /**
  * Calculate a URL to visit after the post-checkout pending page.
  *
@@ -436,32 +421,17 @@ export function getRedirectFromPendingPage( {
 		return undefined;
 	}
 
-	const buildSuccessRedirect = ( effectiveReceiptId: number ): RedirectInstructions | undefined => {
-		const fallbackUrl = getDefaultSuccessUrl( siteSlug, effectiveReceiptId );
-		const interpolated = interpolateReceiptId( redirectTo ?? fallbackUrl, effectiveReceiptId );
-		// Hold the redirect until the caller resolves `:purchaseId`.
-		if ( interpolated.includes( ':purchaseId' ) ) {
-			if ( purchaseId === undefined ) {
-				return undefined;
-			}
-			return {
-				url: filterAllowedRedirect(
-					interpolatePurchaseId( interpolated, purchaseId ),
-					siteSlug || fromSiteSlug,
-					fallbackUrl
-				),
-			};
-		}
-		return {
-			url: filterAllowedRedirect( interpolated, siteSlug || fromSiteSlug, fallbackUrl ),
-		};
-	};
-
 	// If there is a receipt ID and the order is not loading and does not exist
 	// (eg: for free purchases which do not use Orders), then the order must
 	// already be complete. In that case, we can redirect immediately.
 	if ( receiptId && ! isLoadingOrder && ! transaction ) {
-		return buildSuccessRedirect( receiptId );
+		return buildSuccessRedirect( {
+			effectiveReceiptId: receiptId,
+			redirectTo,
+			siteSlug,
+			fromSiteSlug,
+			purchaseId,
+		} );
 	}
 
 	// If the order ID is missing and there is no receiptId, we don't know
@@ -477,7 +447,13 @@ export function getRedirectFromPendingPage( {
 	}
 
 	if ( transaction?.processingStatus === SUCCESS ) {
-		return buildSuccessRedirect( transaction.receiptId );
+		return buildSuccessRedirect( {
+			effectiveReceiptId: transaction.receiptId,
+			redirectTo,
+			siteSlug,
+			fromSiteSlug,
+			purchaseId,
+		} );
 	}
 
 	// If the processing status indicates that there was something wrong,

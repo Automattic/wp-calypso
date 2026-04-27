@@ -1,4 +1,4 @@
-import { receiptQuery, userPurchasesQuery } from '@automattic/api-queries';
+import { receiptQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
@@ -7,17 +7,13 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { invokeSurvicateEvent } from '@automattic/survicate';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Loading from 'calypso/components/loading';
 import Main from 'calypso/components/main';
-import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { useInitialIsInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
-import {
-	findPurchaseFromReceipt,
-	getRedirectFromPendingPage,
-} from 'calypso/my-sites/checkout/src/lib/pending-page';
+import { getRedirectFromPendingPage } from 'calypso/my-sites/checkout/src/lib/pending-page';
 import { sendMessageToOpener } from 'calypso/my-sites/checkout/src/lib/popup';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useSelector, useDispatch } from 'calypso/state';
@@ -36,8 +32,6 @@ import type {
 import type { CalypsoDispatch } from 'calypso/state/types';
 
 import './style.scss';
-
-const PURCHASE_RESOLUTION_TIMEOUT_MS = 30_000;
 
 interface CheckoutPendingProps {
 	orderId: number | ':orderId';
@@ -192,45 +186,6 @@ function useRedirectOnTransactionSuccess( {
 	} );
 	const isReceiptLoaded = isReceiptSuccess || isReceiptError;
 
-	// Resolve `:purchaseId` placeholders in `redirectTo` by polling the user's
-	// purchases for the newly-provisioned plan. If the new plan does not appear
-	// within `PURCHASE_RESOLUTION_TIMEOUT_MS`, fall back to the site overview
-	// (which surfaces the active plan) so the user is never stuck on the loader.
-	const needsPurchaseId = Boolean( redirectTo?.includes( ':purchaseId' ) );
-	const receiptItemProductSlugs = useMemo(
-		() => receipt?.items.map( ( i ) => i.wpcom_product_slug ) ?? [],
-		[ receipt ]
-	);
-	const { data: resolvedPurchaseId } = useQuery( {
-		...userPurchasesQuery(),
-		enabled:
-			needsPurchaseId &&
-			Boolean( siteSlug ) &&
-			isReceiptLoaded &&
-			receiptItemProductSlugs.length > 0,
-		refetchInterval: ( query ) =>
-			findPurchaseFromReceipt( query.state.data, siteSlug, receiptItemProductSlugs ) ? false : 1000,
-		select: ( purchases ) =>
-			findPurchaseFromReceipt( purchases, siteSlug, receiptItemProductSlugs ),
-	} );
-
-	const [ hasPurchaseIdResolutionTimedOut, setHasPurchaseIdResolutionTimedOut ] = useState( false );
-	useEffect( () => {
-		if (
-			! needsPurchaseId ||
-			! isReceiptLoaded ||
-			resolvedPurchaseId ||
-			hasPurchaseIdResolutionTimedOut
-		) {
-			return;
-		}
-		const timer = setTimeout(
-			() => setHasPurchaseIdResolutionTimedOut( true ),
-			PURCHASE_RESOLUTION_TIMEOUT_MS
-		);
-		return () => clearTimeout( timer );
-	}, [ needsPurchaseId, isReceiptLoaded, resolvedPurchaseId, hasPurchaseIdResolutionTimedOut ] );
-
 	const error: Error | null = useSelector( ( state ) =>
 		orderId ? getOrderTransactionError( state, orderId ) : null
 	);
@@ -246,6 +201,9 @@ function useRedirectOnTransactionSuccess( {
 		( url, item ) => url ?? ( item.saas_redirect_url || undefined ),
 		undefined
 	);
+	const resolvedPurchaseId =
+		receipt?.items.find( ( item ) => item.store_subscription_id )?.store_subscription_id ??
+		undefined;
 
 	const { searchParams } = getUrlParts( redirectTo || '/' );
 	const isConnectAfterCheckoutFlow =
@@ -326,25 +284,17 @@ function useRedirectOnTransactionSuccess( {
 			return redirectTo;
 		} )();
 
-		// If the `:purchaseId` resolver hit its timeout without finding the new
-		// plan, fall back to the site overview (which surfaces the active plan)
-		// so the user is never stuck on the loader.
-		const redirectAfterPurchaseIdFallback =
-			needsPurchaseId && hasPurchaseIdResolutionTimedOut && ! resolvedPurchaseId && siteSlug
-				? dashboardLink( `/sites/${ siteSlug }` )
-				: effectiveRedirectTo;
-
 		const redirectInstructions = getRedirectFromPendingPage( {
 			isLoadingOrder,
 			error,
 			transaction,
 			orderId,
 			receiptId,
-			redirectTo: redirectAfterPurchaseIdFallback,
+			redirectTo: effectiveRedirectTo,
 			siteSlug,
 			saasRedirectUrl,
 			fromSiteSlug,
-			purchaseId: resolvedPurchaseId ?? undefined,
+			purchaseId: resolvedPurchaseId,
 		} );
 
 		if ( ! redirectInstructions ) {
@@ -403,9 +353,7 @@ function useRedirectOnTransactionSuccess( {
 		transaction,
 		translate,
 		fromSiteSlug,
-		needsPurchaseId,
 		resolvedPurchaseId,
-		hasPurchaseIdResolutionTimedOut,
 	] );
 
 	return { headingText };
