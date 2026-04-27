@@ -713,20 +713,21 @@ export default function CheckoutMainContent( {
 								) }
 							</CheckoutSummaryBody>
 						</CheckoutErrorBoundary>
+						{
+							// Rendered inside CheckoutSummaryArea so it sits within the sticky
+							// container and stays 24px below the order card as the page scrolls.
+							// At desktop width the upsell is always visible; at mobile it's only
+							// shown when the checkout summary is toggled open.
+							isCheckoutUiRedesignV1 && ( isSummaryVisible || isLargeViewport ) && (
+								<CheckoutSummaryNudgeArea>
+									<CheckoutSidebarNudge
+										addItemToCart={ addItemToCart }
+										areThereDomainProductsInCart={ areThereDomainProductsInCart }
+									/>
+								</CheckoutSummaryNudgeArea>
+							)
+						}
 					</CheckoutSummaryArea>
-					{
-						// This upsell should always be displayed in the
-						// sidebar at desktop width but only shown at mobile
-						// width if the checkout summary is toggled open.
-						isCheckoutUiRedesignV1 && ( isSummaryVisible || isLargeViewport ) && (
-							<CheckoutSummaryNudgeArea>
-								<CheckoutSidebarNudge
-									addItemToCart={ addItemToCart }
-									areThereDomainProductsInCart={ areThereDomainProductsInCart }
-								/>
-							</CheckoutSummaryNudgeArea>
-						)
-					}
 				</>
 			) }
 		</WPCheckoutSidebarContent>
@@ -1479,6 +1480,15 @@ const CheckoutSummary = styled.div`
 	width: 100%;
 	display: flex;
 	flex-direction: column;
+
+	/*
+	 * Lock intrinsic child sizing so the 24px gap between the sticky order card
+	 * and the two-year upsell isn't collapsed when the sticky area reaches the
+	 * bottom of its grid cell and some browsers compress flex children to fit.
+	 */
+	& > * {
+		flex-shrink: 0;
+	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		padding-left: 24px;
@@ -2392,6 +2402,7 @@ const CheckoutSummaryBagIconWrapper = styled.span`
 
 const CheckoutSummaryNudgeArea = styled.div`
 	margin: 8px 16px 12px;
+	flex-shrink: 0;
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		margin-inline: 0;
