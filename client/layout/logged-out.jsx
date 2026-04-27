@@ -407,7 +407,7 @@ export default withCurrentRoute(
 			 */
 			const colorScheme = isWooJPC ? getColorSchemeFromCurrentQuery( currentQuery ) : null;
 
-			const redirectToOriginal = getRedirectToOriginal( state );
+			const redirectToOriginal = getRedirectToOriginal( state ) || currentQuery?.redirect_to;
 			const redirectFromParam = new URLSearchParams( redirectToOriginal?.split( '?' )[ 1 ] ).get(
 				'from'
 			);

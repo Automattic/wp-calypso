@@ -1,5 +1,6 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@automattic/components/src/styles/typography';
+@import '@automattic/typography/styles/fonts';
 @import '@wordpress/base-styles/variables';
 @import '@wordpress/base-styles/colors';
 @import '@wordpress/base-styles/mixins';
@@ -285,14 +286,17 @@ body:not( .is-jetpack-sso-partner-branded--woo ) {
 	max-width: 520px;
 	margin: 5vh auto 0;
 
+	// WP.com body font
+	font-family: $sans;
+
 	.connect-screen-brand-header {
 		text-align: center;
 		margin-bottom: 24px;
 	}
 
+	// WP.com brand serif for the main title
 	.connect-screen-brand-header__title {
-		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-			Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+		font-family: $brand-serif;
 		color: var( --color-neutral-100 );
 	}
 
@@ -300,24 +304,46 @@ body:not( .is-jetpack-sso-partner-branded--woo ) {
 		color: var( --studio-gray-50, #646970 );
 	}
 
+	.connect-screen-permissions-list__title,
+	.connect-screen-permissions-list__item,
+	.connect-screen-user-card__name,
+	.connect-screen-user-card__details {
+		font-family: $sans;
+	}
+
+	.connect-screen-consent-text {
+		color: var( --studio-gray-50, #646970 );
+	}
+
+	// WP.com blue primary buttons
 	.button.is-primary,
 	.components-button.is-primary {
 		background-color: var( --studio-wordpress-blue );
 		border-color: var( --studio-wordpress-blue );
+		font-weight: 500;
+		letter-spacing: 0.32px;
 
-		&:hover {
+		&:hover,
+		&:focus {
 			background-color: var( --studio-wordpress-blue-60 );
 			border-color: var( --studio-wordpress-blue-60 );
 		}
 	}
 
+	// WP.com blue input focus
 	input:focus {
 		border-color: var( --studio-wordpress-blue );
 		box-shadow: 0 0 0 2px var( --studio-wordpress-blue-10, rgba( 56, 88, 233, 0.15 ) );
 	}
 
-	.connect-screen-consent-text {
-		color: var( --studio-gray-50, #646970 );
+	// Override Jetpack green switch-account link
+	.jetpack-connect__switch-account-link {
+		color: var( --studio-wordpress-blue );
+	}
+
+	// Links should use WP.com blue
+	.connect-screen-action-buttons__tertiary.components-button.is-link {
+		color: var( --studio-wordpress-blue );
 	}
 
 	@media screen and ( max-width: $break-mobile ) {
