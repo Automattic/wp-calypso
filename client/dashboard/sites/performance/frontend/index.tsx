@@ -5,6 +5,7 @@ import { useNavigate, useSearch } from '@tanstack/react-router';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useEffect, useState, useMemo } from 'react';
 import { useAnalytics } from '../../../app/analytics';
+import { sitePerformanceFrontendRoute } from '../../../app/router/sites';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import DeviceToggle from '../device-toggle';
@@ -34,7 +35,7 @@ export default function SitePerformanceFrontend( { siteSlug }: { siteSlug: strin
 	} = useQuery( {
 		...sitePerformancePagesQuery( site.ID ),
 	} );
-	const { page_id, url } = useSearch( { strict: false } ) as {
+	const { page_id, url } = useSearch( { from: sitePerformanceFrontendRoute.fullPath } ) as {
 		page_id?: string;
 		url?: string;
 	};

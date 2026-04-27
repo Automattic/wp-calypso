@@ -46,10 +46,6 @@ function mockSite( mockedSite: Site ) {
 }
 
 describe( '<SitePerformanceBackend>', () => {
-	afterEach( () => {
-		nock.cleanAll();
-	} );
-
 	test( 'renders placeholder for a site on the Business plan', async () => {
 		mockSite( businessSite );
 
