@@ -3,8 +3,8 @@ name: PR Review (reusable)
 on:
   workflow_call:
     inputs:
-      prompt_path:
-        description: 'Path to the per-area review prompt, relative to repo root'
+      area:
+        description: 'Review area: dashboard | a4a | general'
         required: true
         type: string
     secrets:
@@ -35,11 +35,12 @@ jobs:
       pull-requests: write
       id-token: write
     steps:
-      # Reject fork PRs. pull_request_target fires with secrets in scope, so
-      # this guard is the runtime defence against a fork PR slipping past the
-      # caller's author_association gate. Works for both pull_request_target
-      # callers (head.repo is in the payload) and issue_comment callers
-      # (head.repo fetched via gh).
+      # Fork-reject. With pull_request, GitHub already strips secrets from
+      # fork PRs, but the issue_comment trigger on pr-review-on-ping.yml
+      # fires from the default branch with secrets in scope, so a fork PR
+      # still needs an explicit reject. Works for both pull_request callers
+      # (head.repo is in the payload) and issue_comment callers (head.repo
+      # fetched via gh).
       - name: Reject fork PRs
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -77,20 +78,191 @@ jobs:
             *) echo "::error::Denying review: $PR_USER permission=$PERM"; exit 1 ;;
           esac
 
+      # Always check out the default branch, never PR code. claude-code-action
+      # does its own `git checkout <PR_head>` later, so this is mostly a
+      # warm-up; the real defense for trusted prompts is keeping prompt
+      # content inline below (where it can't be modified by a PR).
       - name: Checkout repository (default branch only, never PR code)
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
+          ref: ${{ github.event.repository.default_branch }}
           fetch-depth: 0
           persist-credentials: false
 
-      - name: Run review
+      - name: Run review (dashboard)
+        if: inputs.area == 'dashboard'
         uses: anthropics/claude-code-action@567fe954a4527e81f132d87d1bdbcc94f7737434 # v1.0.107
         with:
           anthropic_api_key: ${{ secrets.anthropic_api_key }}
           prompt: |
-            Read and follow the instructions in ${{ inputs.prompt_path }}
+            # Code Review Instructions
 
-            Use `mcp__github_inline_comment__create_inline_comment` for review.
+            ## Primary Objective
+
+            Review the PR based on the following documentation files as the guidelines:
+
+            - @AGENTS.md
+            - @client/AGENTS.md
+            - @client/dashboard/AGENTS.md
+            - @client/dashboard/docs/data-library.md
+            - @client/dashboard/docs/i18n.md
+            - @client/dashboard/docs/links.md
+            - @client/dashboard/docs/package-imports.md
+            - @client/dashboard/docs/router.md
+            - @client/dashboard/docs/testing.md
+            - @client/dashboard/docs/typography-and-copy.md
+            - @client/dashboard/docs/ui-components.md
+            - @packages/api-core/README.md
+            - @packages/api-queries/README.md
+
+            ## Method
+
+            - Do NOT try to list recent PRs when reviewing - you do not have permission to do so.
+            - Use `mcp__github_inline_comment__create_inline_comment` to post feedback directly on specific lines.
+            - Provide fix suggestions in each comment.
+            - Do NOT nitpick minor style issues unless they violate project guidelines.
+            - Do NOT suggest to add new tests other than for top-level React components in a TanStack Router route.
+            - Before suggesting alternative implementations, check if the PR description already addresses why that approach wasn't used.
+
+            ## Output Format
+
+            - Be concise.
+            - Do NOT use checkboxes, todo lists, or progress indicators.
+            - Only comment if there are issues worth addressing.
+            - DO NOT comment on lines that are not related to the guidelines.
+            - For each comment, cite the source documentation file as a clickable link in the format of `https://github.com/Automattic/wp-calypso/blob/trunk/<path to the file relative to the project>`.
+            - For each comment, quote the specific sentence(s) from the cited source that justifies the comment, in a blockquote.
+
+            Remember: This dashboard represents modern React patterns. Prioritize performance, accessibility, and maintainability while leveraging the WordPress ecosystem.
+          claude_args: |
+            --model claude-opus-4-6
+            --max-turns 100
+            --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr diff:*),Bash(gh pr view:*),Bash(git show:*),Bash(git diff:*),Bash(git log:*),Bash(git ls-files:*),Bash(git grep:*),Bash(rg *),Read,Glob,Grep"
+
+      - name: Run review (a4a)
+        if: inputs.area == 'a4a'
+        uses: anthropics/claude-code-action@567fe954a4527e81f132d87d1bdbcc94f7737434 # v1.0.107
+        with:
+          anthropic_api_key: ${{ secrets.anthropic_api_key }}
+          prompt: |
+            # Code Review Instructions (A4A)
+
+            ## Primary Objective
+
+            Review the PR against the Automattic for Agencies (A4A) guidelines in the following documentation files:
+
+            - @AGENTS.md
+            - @client/AGENTS.md
+            - @client/a8c-for-agencies/AGENTS.md
+
+            If other shared packages or docs are directly referenced in the PR description, treat them as additional guidance, but prioritize the files above.
+
+            If the PR changes shared code (e.g. `client/state`, `client/components`), consider impact on both A4A and other clients and call it out.
+
+            ## Review focus (when applicable)
+
+            - **Feature flags:** Only when the feature is already behind a feature flag in A4A, flag if new behaviour bypasses or is not correctly wired into the existing flag where the rest of the codebase does so.
+            - **Translations:** New user-visible strings should use the project's i18n approach; call out potentially missing translations or hardcoded copy.
+
+            ## Method
+
+            - Do NOT try to list recent PRs when reviewing - you do not have permission to do so.
+            - Use `mcp__github_inline_comment__create_inline_comment` to post feedback directly on specific lines.
+            - Provide fix suggestions in each comment.
+            - Don't nitpick minor style issues unless they violate the documented guidelines.
+            - Before suggesting alternative implementations, check if the PR description already addresses why that approach wasn't used.
+
+            ## Output Format
+
+            - Be concise.
+            - Do NOT use checkboxes, todo lists, or progress indicators.
+            - Only comment if there are issues worth addressing.
+            - DO NOT comment on lines that are not related to the guidelines listed above.
+            - For each comment, cite the source documentation file as a clickable link in the format of `https://github.com/Automattic/wp-calypso/blob/trunk/<path to the file relative to the project>`.
+            - For each comment, quote the specific sentence(s) from the cited source that justifies the comment, in a blockquote.
+
+            Remember: A4A builds on Calypso client patterns. Prioritize performance, accessibility, and maintainability while following the A4A code style, layout, and typography guidance described in the referenced docs. We also use modern React patterns.
+          claude_args: |
+            --model claude-opus-4-6
+            --max-turns 100
+            --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr diff:*),Bash(gh pr view:*),Bash(git show:*),Bash(git diff:*),Bash(git log:*),Bash(git ls-files:*),Bash(git grep:*),Bash(rg *),Read,Glob,Grep"
+
+      - name: Run review (general)
+        if: inputs.area == 'general'
+        uses: anthropics/claude-code-action@567fe954a4527e81f132d87d1bdbcc94f7737434 # v1.0.107
+        with:
+          anthropic_api_key: ${{ secrets.anthropic_api_key }}
+          prompt: |
+            # Code Review Instructions (General)
+
+            ## Primary Objective
+
+            Review the PR by reading the relevant `AGENTS.md` files AND applying the review-focus axes below. Always read at minimum:
+
+            - `AGENTS.md` (top-level: architecture, deprecations, PR hygiene, shared infra)
+            - `client/AGENTS.md` (i18n, components, TypeScript, CSS, testing conventions)
+            - The nearest `AGENTS.md` for each non-trivial path the diff touches (e.g., `client/reader/AGENTS.md`, `packages/help-center/AGENTS.md`).
+
+            If other shared packages or docs are referenced in the PR description, treat them as additional guidance but prioritize the AGENTS.md files above.
+
+            If the diff touches paths AGENTS.md identifies as shared infrastructure, call out cross-client blast radius (Calypso, Jetpack Cloud, A4A consume them).
+
+            ## Non-goals
+
+            - Do NOT run tests, lint, or typecheck.
+            - Do NOT validate PR-description hygiene.
+            - Do NOT try to list recent PRs when reviewing - you do not have permission to do so.
+            - Do NOT comment on a line if a Copilot or earlier review already covers the same issue within 5 lines.
+
+            ## Review focus
+
+            For each axis, only flag when the trigger pattern matches the diff. Provide a fix suggestion in each comment.
+
+            **1. Backwards compatibility.** Flag when the diff changes an exported function/component prop signature, public hook contract (`use*`), Redux action/selector shape, REST endpoint shape, or persisted state schema.
+            Message: `Breaking change to public API at <symbol>. <Specifics>. Confirm intentional and called out in PR description.`
+
+            **2. Auth and authz.** Flag missing capability checks, route guards, or CSRF/nonce headers; IDOR on new path-param routes; mass assignment via spread of form/state into mutating fetches.
+            Message: `Missing <capability check | guard | CSRF header | authz check> at <location>. <Specific fix>.`
+
+            **3. Web-app security.** Flag `dangerouslySetInnerHTML` without sanitizer; `href={userUrl}` with attacker-controlled URL or `javascript:`/`data:` protocols; event-handler interpolation; open redirect via `router.push(req.query.next)` or similar; `postMessage` with `'*'` or no origin gate on receiver; `target="_blank"` without `rel="noopener"`.
+            Message: `<Specific risk> at <location>. <Specific fix>.`
+
+            **4. Injection / XSS.** Flag untrusted input flowing into HTML, template, `eval`, `Function`, shell calls (in scripts), or fetch URLs concatenated from input.
+            Message: `Untrusted input from <source> flows into <sink>. Validate after decode/canonicalize.`
+
+            **5. Type safety / prototype pollution.** Flag prototype pollution via `Object.assign`, recursive merge, or lodash `_.merge` on attacker-controlled JSON; `as` casts on `JSON.parse` or fetched JSON; loose `==` on user data; unjustified `any` (see `client/AGENTS.md`).
+            Message: `<Specific risk> at <location>. <Specific fix>.`
+
+            **6. Resource and DoS.** Flag ReDoS via unanchored regex on user input; unbounded loops over API responses; client-side state growth from streams/polling without bounds; missing `useMemo`/`useCallback` causing re-renders or network waterfalls.
+            Message: `<Specific risk> at <location>. <Specific fix>.`
+
+            **7. Information disclosure.** Flag tokens or PII in `console.log`, Sentry, or analytics payloads; stack traces in client-visible error responses. Calypso-internal IDs (`blog_id`, `studio_site_id`) are not PII.
+            Message: `<Field> in <log | Sentry | analytics> may leak <category>.`
+
+            **8. Supply chain.** Only when the diff touches `.github/workflows/`. Flag `pull_request_target` + PR-branch checkout, `${{ ... }}` interpolation in `run:` with attacker-controllable values, unpinned third-party actions.
+            Message: `<Specific risk> at <location>. <Specific fix>.`
+
+            **9. Architecture awareness.** Flag when the diff imports `page.js` inside `client/dashboard/`, uses `useDispatch` from `react-redux` inside `client/dashboard/`, or adds new feature work to `client/my-sites/` (deprecated per AGENTS.md).
+            Message: `<Pattern> bleeds <classic | dashboard> into <other>. <Suggested approach>.`
+
+            **10. Route deletion to redirect.** Flag when the diff removes a `<Route>` declaration or a route handler with a previously-shipped path.
+            Message: `Route <path> deleted. Add a redirect for users with bookmarks if the route had been live.`
+
+            **11. Shared-package consumer audit.** Flag when the diff changes a public export in `packages/**`. Grep `apps/**` and `client/**` for imports.
+            Message: `<package> is consumed by <list apps>. Verify the change is compatible.`
+
+            ## Output Format
+
+            - Be concise. Only comment if a trigger matched.
+            - Each comment shape: `**Issue:** <one-line problem>` then `**Suggestion:** <fix>`.
+            - DO NOT comment on lines that are not related to the guidelines listed above.
+            - Don't nitpick minor style issues unless they violate the documented guidelines.
+            - Cite the source documentation as a clickable link when AGENTS.md or a project README covers the issue (`https://github.com/Automattic/wp-calypso/blob/trunk/<path>`); blockquote the relevant sentence. For security categories not in repo docs, name the axis from this prompt and add a one-line rationale; do not fabricate doc URLs.
+            - DO NOT use checkboxes, todo lists, or progress indicators.
+            - If you read prior bot/human comments, post a single summary comment classifying them: `RESOLVED:` / `STILL OUTSTANDING:` / `NEW:`. Post inline only for NEW.
+            - If no triggers matched, post: `AI Code Review: no issues found.`
+
+            Remember: Calypso is large and shared. Prioritize correctness, security, and cross-client blast radius over style. Flag intent, not taste.
           claude_args: |
             --model claude-opus-4-6
             --max-turns 100
