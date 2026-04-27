@@ -3,7 +3,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import tonesInformativePreview from '../../assets/video/tones/informative.webp';
 import tonesPromotionalPreview from '../../assets/video/tones/promotional.webp';
-import { type ImageStudioActions, store as imageStudioStore } from '../../store';
+import { store as imageStudioStore } from '../../store';
 import { ImageStudioMode } from '../../types';
 import { trackImageStudioStyleSelected } from '../../utils/tracking';
 import { BrushIcon } from '../icons/BrushIcon';
@@ -27,10 +27,11 @@ export const TONE_OPTIONS = [
 ];
 
 export function TonePicker( { disabled = false, mode }: TonePickerProps ) {
-	// Tolerate an older registered image-studio store that pre-dates the
-	// selectedTone slice (multi-bundle case): no-op instead of crashing.
-	const { setSelectedTone } = useDispatch( imageStudioStore ) as Partial< ImageStudioActions >;
+	const { setSelectedTone } = useDispatch( imageStudioStore );
 
+	// Selector is defensive against an older bundle winning the registration
+	// race (it may not export getSelectedTone). Actions come from the freshly-
+	// loaded bundle that owns this picker, so no guard is needed there.
 	const selectedTone = useSelect(
 		( select ) =>
 			(
@@ -40,9 +41,6 @@ export function TonePicker( { disabled = false, mode }: TonePickerProps ) {
 	);
 
 	const handleToneSelect = ( value: string ) => {
-		if ( typeof setSelectedTone !== 'function' ) {
-			return;
-		}
 		setSelectedTone( value );
 		// Re-use the style-selection tracker so tone events land in the same Tracks bucket.
 		trackImageStudioStyleSelected( { style: `tone:${ value }`, mode } );
