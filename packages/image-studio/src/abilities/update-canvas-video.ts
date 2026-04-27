@@ -7,7 +7,7 @@
  * raw conversation history client-side.
  */
 
-import { registerAbility, registerAbilityCategory } from '@wordpress/abilities';
+import { registerAbility } from '@wordpress/abilities';
 import { dispatch } from '@wordpress/data';
 import { store as videoStudioStore, type VideoStudioActions } from '../stores/video-studio';
 
@@ -51,19 +51,10 @@ export async function registerUpdateCanvasVideoAbility(): Promise< void > {
 	}
 
 	try {
-		try {
-			await registerAbilityCategory( 'image-studio', {
-				label: 'Image Studio',
-				description: 'Capabilities exposed by the Image Studio experience.',
-			} );
-		} catch ( categoryError ) {
-			// Ignore "already registered" errors so we can safely re-use the category.
-			const message = ( categoryError as Error )?.message || '';
-			if ( ! message.includes( 'already exists' ) ) {
-				throw categoryError;
-			}
-		}
-
+		// The 'image-studio' category is registered by registerUpdateCanvasImageAbility,
+		// which initializeAbilities() always runs first. Re-registering here would fail —
+		// and historically that failure was swallowed by the outer catch below, which
+		// silently skipped the registerAbility() call and hid this ability entirely.
 		await registerAbility( {
 			name: ABILITY_NAME,
 			label: 'Update Canvas Video',
@@ -120,9 +111,11 @@ export async function registerUpdateCanvasVideoAbility(): Promise< void > {
 		// Mark as registered
 		isRegistered = true;
 	} catch ( error ) {
-		// If ability is already registered, silently ignore
-		// This can happen in development with hot module reloading or React Strict Mode
-		if ( error instanceof Error && error.message.includes( 'already registered' ) ) {
+		const message = error instanceof Error ? error.message : '';
+		// Only swallow when this exact ability was already registered (e.g. HMR / Strict Mode).
+		// A bare "already registered" check used to also catch category-registration failures,
+		// which silently skipped registerAbility() and hid the ability at runtime.
+		if ( message.includes( ABILITY_NAME ) && message.includes( 'already registered' ) ) {
 			isRegistered = true;
 			return;
 		}

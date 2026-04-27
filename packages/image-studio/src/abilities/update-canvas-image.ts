@@ -335,9 +335,11 @@ export async function registerUpdateCanvasImageAbility(): Promise< void > {
 		// Mark as registered
 		isRegistered = true;
 	} catch ( error ) {
-		// If ability is already registered, silently ignore
-		// This can happen in development with hot module reloading or React Strict Mode
-		if ( error instanceof Error && error.message.includes( 'already registered' ) ) {
+		const message = error instanceof Error ? error.message : '';
+		// Only swallow when this exact ability was already registered (e.g. HMR / Strict Mode).
+		// A bare "already registered" check would also catch category-registration failures,
+		// which would silently skip registerAbility() and hide the ability at runtime.
+		if ( message.includes( ABILITY_NAME ) && message.includes( 'already registered' ) ) {
 			isRegistered = true;
 			return;
 		}

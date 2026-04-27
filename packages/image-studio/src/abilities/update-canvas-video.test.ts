@@ -54,10 +54,10 @@ describe( 'registerUpdateCanvasVideoAbility', () => {
 		const { registerUpdateCanvasVideoAbility } = await import( './update-canvas-video' );
 		await registerUpdateCanvasVideoAbility();
 
-		expect( mockRegisterAbilityCategory ).toHaveBeenCalledWith(
-			'image-studio',
-			expect.objectContaining( { label: 'Image Studio' } )
-		);
+		// The 'image-studio' category is owned by registerUpdateCanvasImageAbility.
+		// This ability must NOT re-register the category — doing so previously triggered
+		// an "already registered" error that silently hid the ability at runtime.
+		expect( mockRegisterAbilityCategory ).not.toHaveBeenCalled();
 		expect( mockRegisterAbility ).toHaveBeenCalledTimes( 1 );
 
 		const config = mockRegisterAbility.mock.calls[ 0 ][ 0 ] as {
@@ -70,6 +70,20 @@ describe( 'registerUpdateCanvasVideoAbility', () => {
 		expect( config.input_schema.required ).toEqual( [ 'url', 'attachmentId' ] );
 	} );
 
+	it( 'does not silently swallow non-ability errors thrown during registration', async () => {
+		// Regression: a bare "already registered" substring check used to swallow
+		// category-registration failures, which skipped registerAbility() entirely.
+		// Any error that is NOT specifically about this ability must surface.
+		mockRegisterAbility.mockRejectedValueOnce(
+			new Error( 'Category "image-studio" already registered' )
+		);
+
+		const { registerUpdateCanvasVideoAbility } = await import( './update-canvas-video' );
+		await expect( registerUpdateCanvasVideoAbility() ).rejects.toThrow(
+			/Category "image-studio" already registered/
+		);
+	} );
+
 	it( 'is idempotent across repeated calls', async () => {
 		const { registerUpdateCanvasVideoAbility } = await import( './update-canvas-video' );
 		await registerUpdateCanvasVideoAbility();
@@ -79,8 +93,10 @@ describe( 'registerUpdateCanvasVideoAbility', () => {
 		expect( mockRegisterAbility ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	it( 'treats an "already registered" error as a successful registration', async () => {
-		mockRegisterAbility.mockRejectedValueOnce( new Error( 'Ability already registered' ) );
+	it( 'treats an "already registered" error for this ability as a successful registration', async () => {
+		mockRegisterAbility.mockRejectedValueOnce(
+			new Error( 'Ability `image-studio/update-canvas-video` is already registered' )
+		);
 
 		const { registerUpdateCanvasVideoAbility } = await import( './update-canvas-video' );
 		await expect( registerUpdateCanvasVideoAbility() ).resolves.toBeUndefined();
