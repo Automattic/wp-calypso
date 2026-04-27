@@ -59,8 +59,7 @@ jobs:
 
       # Runtime author gate. Replaces a job-level
       # github.event.pull_request.author_association check that was unreliable
-      # in pull_request_target event payloads. Mirrors the pattern used in
-      # woocommerce/.github's reusable.
+      # in pull_request_target event payloads.
       - name: Gate on author repo write permission
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
