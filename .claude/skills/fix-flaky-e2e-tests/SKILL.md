@@ -267,14 +267,14 @@ Substitute the literal values from Step 3 directly into each command. Pick a uni
    git worktree add -b fix/flaky-e2e-<slug> .claude/worktrees/fix-flaky-<slug>-<timestamp> <PR_SHA>
    ```
 
-3. Link two auto-generated directories from the main checkout into the worktree so the pre-commit hook can run. Both are gitignored — they exist after `yarn install` on the main checkout but aren't in the tracked tree the worktree sees.
+3. Link two auto-generated bits from the main checkout into the worktree so the pre-commit hook can run. Both are gitignored on the main side — they exist after `yarn install` and `husky install` but aren't in the tracked tree the worktree sees.
 
    ```bash
    ln -s /var/www/wp-calypso/node_modules .claude/worktrees/fix-flaky-<slug>-<timestamp>/node_modules
    ```
 
    ```bash
-   ln -s /var/www/wp-calypso/.husky/_ .claude/worktrees/fix-flaky-<slug>-<timestamp>/.husky/_
+   ln -s /var/www/wp-calypso/.husky/_/husky.sh .claude/worktrees/fix-flaky-<slug>-<timestamp>/.husky/_/husky.sh
    ```
 
    **Why both are needed.** The worktree shares `.git` with the main checkout but has its own working tree, so anything `yarn install` or `husky install` generated locally isn't there. wp-calypso's pre-commit hook reads:
@@ -285,6 +285,10 @@ Substitute the literal values from Step 3 directly into each command. Pick a uni
    ```
 
    Missing either causes the commit to fail (`cannot open .husky/_/husky.sh` or `Couldn't find the node_modules state file`). Symlinks are sufficient because the main checkout uses Yarn Berry with `nodeLinker: node-modules` (not PnP) and husky's generated shim is a plain shell include — neither tool has absolute-path state that breaks when shared. We never skip the hook (`--no-verify`) — fix the environment instead.
+
+   **Why the husky symlink targets `husky.sh` directly, not the whole `.husky/_` directory.** The worktree already has a `.husky/_/` directory because the tracked file `.husky/_/.gitignore` (whose contents are just `*`) gets checked out into it, and that wildcard gitignore makes anything dropped *inside* `.husky/_/` invisible to git. Symlinking `husky.sh` *into* the existing directory is therefore picked up cleanly by the hook **and** ignored by `git add -A` in Step 5.4. An earlier version symlinked the whole `.husky/_` path itself, which replaced the directory with a symlink and put the symlink at a path git tracks — `git add -A` then committed the symlink and we had to soft-reset and unstage. Don't do that.
+
+   For the same reason, `node_modules` is symlinked at the worktree root because the repo's main `.gitignore` already excludes `node_modules/` — so the symlink is invisible to `git add -A`.
 
 Don't add extra sanity-check calls (e.g., `ls` on the spec path) — the harness hooks `ls` as a filesystem read and its path heuristic can trigger a permission prompt for paths under `test/e2e/specs/…`. If the spec isn't actually in the worktree, the Healer's Read call in 5.2 will fail with a clear error; that's soon enough.
 
