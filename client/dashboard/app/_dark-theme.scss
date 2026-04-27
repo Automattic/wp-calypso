@@ -1,5 +1,17 @@
 @import '@wordpress/base-styles/variables';
 
+/* Callout */
+@mixin dashboard-dark-theme-callout {
+	.dashboard-callout__content > :first-child {
+		color: var( --dashboard__text-color );
+		fill: currentColor;
+
+		svg {
+			fill: currentColor;
+		}
+	}
+}
+
 /* Card */
 @mixin dashboard-dark-theme-card {
 	.components-surface.components-card {
@@ -690,6 +702,7 @@
 	@include dashboard-dark-theme-action-list;
 	@include dashboard-dark-theme-breadcrumbs;
 	@include dashboard-dark-theme-card;
+	@include dashboard-dark-theme-callout;
 	@include dashboard-dark-theme-dataviews;
 	@include dashboard-dark-theme-destructive-secondary-button;
 	@include dashboard-dark-theme-form-controls;
