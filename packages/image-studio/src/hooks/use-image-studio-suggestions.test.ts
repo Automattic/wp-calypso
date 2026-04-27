@@ -67,6 +67,16 @@ jest.mock( '@wordpress/i18n', () => ( {
 
 jest.mock( '../store', () => ( {
 	store: 'image-studio',
+	ImageStudioEntryPoint: {
+		MediaLibrary: 'media_library',
+		EditorBlock: 'editor_block',
+		EditorSidebar: 'editor_sidebar',
+		PostEditorFeatureClip: 'post_editor_feature_clip',
+		JetpackExternalMediaBlock: 'jetpack_external_media_block',
+		JetpackExternalMediaFeaturedImage: 'jetpack_external_media_featured_image',
+		JetpackAIFeaturedImage: 'jetpack_ai_featured_image',
+		JetpackAISocialMedia: 'jetpack_ai_social_media',
+	},
 } ) );
 
 jest.mock( './use-current-screen', () => ( {
