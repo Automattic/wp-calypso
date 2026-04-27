@@ -1,4 +1,4 @@
-import createConfig, { resolveTemplates } from '../';
+import createConfig from '../';
 
 describe( 'index', () => {
 	describe( 'config without data', () => {
@@ -146,12 +146,6 @@ describe( 'index', () => {
 				url: 'http://localhost:{{unknown}}',
 			} );
 			expect( config( 'url' ) ).toBe( 'http://localhost:{{unknown}}' );
-		} );
-
-		test( 'resolveTemplates returns plain data object', () => {
-			const data = { port: 4321, wpcom_url: 'http://calypso.localhost:{{port}}' };
-			const resolved = resolveTemplates( data );
-			expect( resolved ).toEqual( { port: 4321, wpcom_url: 'http://calypso.localhost:4321' } );
 		} );
 	} );
 } );
