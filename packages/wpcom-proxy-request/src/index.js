@@ -559,12 +559,6 @@ const wpcomAllowedOrigins = [
 	'http://send.linguine.localhost:3000',
 ];
 
-/**
- * Shelved from rest-proxy/provider-v2.0.js.
- * This returns true for all WPCOM origins except Atomic sites.
- * @param urlOrigin
- * @returns
- */
 // Local development origins allowed on any port. Listed without a port so we
 // can compare after stripping the port from the input.
 const localDevOrigins = [
@@ -590,6 +584,12 @@ function isLocalDevOrigin( urlOrigin ) {
 	}
 }
 
+/**
+ * Shelved from rest-proxy/provider-v2.0.js.
+ * This returns true for all WPCOM origins except Atomic sites.
+ * @param urlOrigin
+ * @returns
+ */
 function isAllowedOrigin( urlOrigin ) {
 	// sites in the allow-list and some subdomains of "calypso.live" and "wordpress.com"
 	// are allowed without further check
