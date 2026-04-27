@@ -796,6 +796,43 @@
 	--color-border-subtle: var( --dashboard-surface__border-color );
 }
 
+/* Site Logs Badges */
+@mixin dashboard-dark-theme-site-logs-badges {
+	// Data table badges in the logs views don't declare a Badge intent, and
+	// override the colors locally, so we have to target them directly here.
+	:is( .site-logs-card, .site-logs-details-modal ) :is(
+			.badge--POST,
+			.badge--deprecated,
+			.badge--GET,
+			.badge--DELETE,
+			.badge--error,
+			.badge--fatal,
+			.badge--warning,
+			.badge--user
+		) {
+		background-color: color-mix(
+			in srgb,
+			var( --wp-components-color-background ) 90%,
+			var( --base-color )
+		);
+		color: color-mix(
+			in srgb,
+			var( --wp-components-color-foreground ) 50%,
+			var( --base-color )
+		);
+
+		// `<Badge intent="default">` adds `.is-default`, which the Badge
+		// component pairs with an inset box-shadow in dark mode to stay
+		// visible against the card surface. The colored variants above
+		// already make the chip visible, so clear the shadow — except for
+		// `.badge--user`, whose gray-tinted bg is too close to the surface
+		// to stand on its own.
+		&:not( .badge--user ) {
+			box-shadow: none;
+		}
+	}
+}
+
 // :root variables overridden for dark theme
 @mixin dashboard-dark-theme {
 	// Overrides the default `--wp-components-*` to ensure all components that
@@ -896,22 +933,23 @@
 	--jp-gray-100: #f0f0f0;
 	--jp-gray-off: #2a2a2a;
 
+	@include dashboard-calypso-theme-properties;
 	@include dashboard-dark-theme-action-list;
 	@include dashboard-dark-theme-breadcrumbs;
-	@include dashboard-dark-theme-card;
 	@include dashboard-dark-theme-callout;
+	@include dashboard-dark-theme-card;
 	@include dashboard-dark-theme-dataviews;
 	@include dashboard-dark-theme-destructive-secondary-button;
 	@include dashboard-dark-theme-emails;
 	@include dashboard-dark-theme-form-controls;
 	@include dashboard-dark-theme-item-group;
-	@include dashboard-dark-theme-panel;
-	@include dashboard-dark-theme-popover;
-	@include dashboard-dark-theme-plugins;
 	@include dashboard-dark-theme-muted-text;
+	@include dashboard-dark-theme-panel;
+	@include dashboard-dark-theme-plugins;
+	@include dashboard-dark-theme-popover;
 	@include dashboard-dark-theme-scan;
 	@include dashboard-dark-theme-section-header;
 	@include dashboard-dark-theme-site-icon;
+	@include dashboard-dark-theme-site-logs-badges;
 	@include dashboard-dark-theme-summary-button;
-	@include dashboard-calypso-theme-properties;
 }
