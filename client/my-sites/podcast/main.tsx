@@ -1,6 +1,5 @@
 import page from '@automattic/calypso-router';
 import { Page } from '@wordpress/admin-ui';
-import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { Tabs } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -17,24 +16,19 @@ import { getTerms } from 'calypso/state/terms/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import Distribution from './components/distribution';
 import Episodes from './components/episodes';
-import Settings from './components/settings';
 import Welcome, { type PlanTier } from './components/welcome';
 import useAccessGate from './hooks/use-access-gate';
 
 import './style.scss';
 
-type PodcastSection = 'episodes' | 'settings' | 'distribution';
+type PodcastSection = 'episodes' | 'distribution';
 
 type PodcastMainProps = {
 	section?: string;
 	path?: string;
 };
 
-const VALID_SECTIONS: readonly PodcastSection[] = [
-	'episodes',
-	'settings',
-	'distribution',
-] as const;
+const VALID_SECTIONS: readonly PodcastSection[] = [ 'episodes', 'distribution' ] as const;
 
 const isValidSection = ( s: string | undefined ): s is PodcastSection =>
 	!! s && ( VALID_SECTIONS as readonly string[] ).includes( s );
@@ -61,19 +55,16 @@ const PodcastMain = ( { section, path }: PodcastMainProps ) => {
 	} );
 	const pathSuffix = siteSlug ? '/' + siteSlug : '';
 
-	// Welcome shows when podcasting is not set up on this site. The override
-	// lets the prototype Enable/Disable buttons flip the view without touching
-	// the real podcasting_category_id setting; null = follow real setup state.
-	const [ override, setOverride ] = useState< boolean | null >( null );
-	const podcastingOn = override ?? isSetUp;
+	// Welcome shows when podcasting is not set up on this site. The local
+	// enable flag lets the prototype Enable button flip the view without
+	// touching the real podcasting_category_id setting.
+	const [ enabled, setEnabled ] = useState( false );
+	const podcastingOn = enabled || isSetUp;
 	const [ planTier, setPlanTier ] = useState< PlanTier >( 'free' );
 	const hasSectionInRoute = isValidSection( section );
 	const showTabs = podcastingOn || hasSectionInRoute;
 
-	// If the URL doesn't pin a tab, first-time users (no podcast category set)
-	// land on Settings so they can finish setup before seeing the empty Episodes list.
-	const defaultSection: PodcastSection = isSetUp ? 'episodes' : 'settings';
-	const currentSection: PodcastSection = isValidSection( section ) ? section : defaultSection;
+	const currentSection: PodcastSection = isValidSection( section ) ? section : 'episodes';
 
 	const tabs = [
 		{
@@ -85,11 +76,6 @@ const PodcastMain = ( { section, path }: PodcastMainProps ) => {
 			name: 'distribution',
 			title: translate( 'Distribution' ) as string,
 			path: '/podcast/distribution' + pathSuffix,
-		},
-		{
-			name: 'settings',
-			title: translate( 'Settings' ) as string,
-			path: '/podcast/settings' + pathSuffix,
 		},
 	];
 
@@ -134,35 +120,13 @@ const PodcastMain = ( { section, path }: PodcastMainProps ) => {
 						<Distribution />
 					</div>
 				</Tabs.Panel>
-				<Tabs.Panel value="settings">
-					<div className="podcast__tab-content">
-						<Settings />
-						<HStack justify="flex-start">
-							<Button
-								variant="secondary"
-								isDestructive
-								onClick={ () => {
-									setOverride( false );
-									if ( hasSectionInRoute ) {
-										page.show( '/podcast' + pathSuffix );
-									}
-								} }
-							>
-								{ translate( 'Disable podcasting' ) }
-							</Button>
-						</HStack>
-					</div>
-				</Tabs.Panel>
 			</Tabs.Root>
 		);
 	} else {
 		pageContent = (
 			<div className="podcast__tab-content">
 				<Welcome
-					onEnable={ () => {
-						setOverride( true );
-						page.show( '/podcast/settings' + pathSuffix );
-					} }
+					onEnable={ () => setEnabled( true ) }
 					planTier={ planTier }
 					onChangePlanTier={ setPlanTier }
 				/>

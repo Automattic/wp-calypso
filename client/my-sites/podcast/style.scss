@@ -55,31 +55,6 @@ body.is-section-podcast {
 	margin-block-end: 24px;
 }
 
-.podcast__submit-steps {
-	list-style: none;
-	margin: 0;
-	padding: 0;
-}
-
-.podcast__submit-step {
-	padding: 16px;
-	background: var( --color-neutral-0 );
-	border-radius: 8px;
-}
-
-.podcast__submit-step-title {
-	margin: 0 0 4px;
-}
-
-.podcast__submit-step-description {
-	margin: 0 0 12px;
-}
-
-.podcast__submit-step-field {
-	flex: 1;
-	min-width: 0;
-}
-
 .podcast__episode-thumb {
 	display: block;
 	width: 56px;
@@ -94,10 +69,6 @@ body.is-section-podcast {
 	border: 1px dashed var( --color-neutral-10 );
 }
 
-.podcast__placeholder {
-	color: var( --color-neutral-40 );
-}
-
 // Scoped overrides for shared form/helper components used in Settings.
 .podcast {
 	*,
@@ -108,26 +79,6 @@ body.is-section-podcast {
 
 	.form-setting-explanation {
 		margin-bottom: 6px;
-	}
-
-	.form-select {
-		margin-inline-end: 12px;
-		margin-bottom: 8px;
-
-		@include breakpoint-deprecated( '<480px' ) {
-			margin-inline-end: 0;
-			width: 100%;
-		}
-	}
-
-	// client/dashboard/app/dataforms-overrides.scss applies uppercase + small-caps to
-	// every regular DataForm label. That rule is scoped to the Dashboard, but the
-	// stylesheet is imported by sites/v2 pages and leaks globally once that chunk
-	// loads. Restore BaseControl's defaults so labels render in title case.
-	.dataforms-layouts-regular__field .components-base-control__label {
-		font-size: inherit;
-		font-weight: inherit;
-		text-transform: none;
 	}
 }
 
@@ -153,12 +104,6 @@ body.is-section-podcast {
 	font-size: 13px;
 }
 
-.podcast__autosave {
-	white-space: nowrap;
-	font-size: 12px;
-	color: var( --color-text-subtle );
-}
-
 /* Every section shares this spacing */
 .podcast__card {
 	margin-block-end: 16px;
@@ -181,26 +126,7 @@ body.is-section-podcast {
 	margin: 6px 0 10px;
 }
 
-/* Constrain DataForm fields to a Jetpack-settings-like width — parent only. */
-.podcast__form-pane {
-	max-inline-size: 480px;
-}
-
-/* Card-level action buttons (e.g. Create episode) */
-.podcast__card-actions {
-	display: flex;
-	gap: 8px;
-	margin-block-start: 8px;
-}
-
-/* Picker action row — Add category + Cancel */
-.podcast__category-picker-actions {
-	display: flex;
-	gap: 8px;
-	margin-block-start: 8px;
-}
-
-/* Inline button that looks like a link (for "Change category") */
+/* Inline link-style button (used by Distribution prototype toggle) */
 .podcast__inline-link {
 	background: none;
 	border: none;
@@ -213,179 +139,6 @@ body.is-section-podcast {
 	&:hover {
 		color: var( --color-link-dark );
 	}
-}
-
-/* Category picker — shown when "Change category" is clicked */
-.podcast__category-picker {
-	padding: 12px 16px;
-	background: var( --studio-gray-0 );
-	border-radius: 4px;
-	margin-block-end: 16px;
-
-	.form-label {
-		margin-block-end: 8px;
-	}
-}
-
-.podcast__category-list {
-	list-style: none;
-	margin: 0 0 12px;
-	padding: 0;
-
-	li {
-		padding: 4px 0;
-	}
-
-	.form-label {
-		margin: 0;
-		font-weight: 400;
-	}
-}
-
-/* Soften the classic Notice — keep the component, lose the dark-navy half.
-   Applies to health, warning, info ("prototype") variants in this scope. */
-.podcast__soft-notice.notice {
-	margin-block-end: 16px;
-	background: var( --studio-gray-0 );
-	border-inline-start: 4px solid var( --studio-gray-30 );
-	border-radius: 4px;
-	color: var( --color-text );
-	min-height: 0;
-	box-shadow: none;
-
-	.notice__icon-wrapper {
-		background: transparent;
-		color: var( --studio-gray-50 );
-		padding-inline: 12px;
-	}
-
-	.notice__content {
-		background: transparent;
-		color: var( --color-text );
-		padding-block: 10px;
-	}
-
-	.notice__text {
-		color: var( --color-text );
-	}
-
-	&.is-success {
-		background: var( --studio-green-0 );
-		border-inline-start-color: var( --studio-green-40 );
-
-		.notice__icon-wrapper {
-			color: var( --studio-green-50 );
-		}
-	}
-
-	&.is-warning {
-		background: var( --studio-yellow-0 );
-		border-inline-start-color: var( --studio-yellow-30 );
-
-		.notice__icon-wrapper {
-			color: var( --studio-yellow-50 );
-		}
-	}
-
-	&.is-info {
-		background: var( --studio-blue-0 );
-		border-inline-start-color: var( --studio-blue-40 );
-
-		.notice__icon-wrapper {
-			color: var( --studio-blue-50 );
-		}
-	}
-}
-
-/* Cover next to title/summary, mirrors podcast-cover-image-setting layout */
-.podcast__cover-and-info {
-	display: flex;
-	gap: 20px;
-	align-items: flex-start;
-	margin-block-end: 24px;
-
-	@media ( max-width: 600px ) {
-		flex-direction: column;
-	}
-}
-
-.podcast__cover-fieldset {
-	margin-block-end: 0;
-	flex-shrink: 0;
-
-	.form-label {
-		margin-block-end: 8px;
-	}
-}
-
-.podcast__cover-preview {
-	inline-size: 96px;
-	block-size: 96px;
-	padding: 0;
-	border: 1px solid var( --color-neutral-10 );
-	border-radius: 4px;
-	background: var( --studio-white );
-	cursor: pointer;
-	overflow: hidden;
-	display: block;
-
-	&.is-blank {
-		border-style: dashed;
-		background: var( --studio-gray-0 );
-		display: grid;
-		place-items: center;
-	}
-
-	&:hover {
-		border-color: var( --studio-gray-30 );
-	}
-}
-
-.podcast__cover-thumb {
-	display: block;
-	inline-size: 100%;
-	block-size: 100%;
-	background: var( --studio-gray-10 );
-}
-
-.podcast__cover-placeholder {
-	font-size: 12px;
-	color: var( --color-text-subtle );
-	font-style: italic;
-	padding: 8px;
-	text-align: center;
-}
-
-.podcast__cover-actions {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 6px;
-	align-items: center;
-	margin-block-start: 8px;
-}
-
-.podcast__title-subtitle-wrapper {
-	flex: 1;
-	min-width: 0;
-	display: flex;
-	flex-direction: column;
-	gap: 16px;
-
-	.form-fieldset {
-		margin-block-end: 0;
-	}
-}
-
-/* Topic selects stacked with equal gap */
-.podcast__topic-stack {
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
-}
-
-/* Advanced foldable */
-.podcast__foldable {
-	margin-block-end: 16px;
 }
 
 /* ---- Distribution tab ---- */
@@ -487,36 +240,6 @@ body.is-section-podcast {
 
 .podcast__directory-actions {
 	flex-shrink: 0;
-}
-
-.podcast__submit-grid {
-	display: grid;
-	grid-template-columns: repeat( auto-fill, minmax( 220px, 1fr ) );
-	gap: 12px;
-	margin-block-start: 16px;
-}
-
-.podcast__submit-card {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 12px;
-	padding: 12px 16px;
-}
-
-.podcast__submit-card-body {
-	min-width: 0;
-}
-
-.podcast__submit-card-name {
-	font-weight: 500;
-	color: var( --color-text );
-}
-
-.podcast__submit-card-meta {
-	font-size: 12px;
-	color: var( --color-text-subtle );
-	margin-block-start: 2px;
 }
 
 .podcast__prototype-toggle {
@@ -842,10 +565,6 @@ body.is-section-podcast {
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
-
-	.button {
-		align-self: flex-start;
-	}
 }
 
 .podcast__plan--recommended {
@@ -965,130 +684,4 @@ body.is-section-podcast {
 			border-color: var( --color-text );
 		}
 	}
-}
-
-/* ---- Example feed modal ---- */
-
-.podcast__example-dialog {
-	.dialog__content {
-		max-width: 520px;
-		padding: 24px;
-	}
-}
-
-.podcast__example-title {
-	margin: 0 0 16px;
-	font-size: 18px;
-	font-weight: 600;
-}
-
-.podcast__example-card {
-	display: grid;
-	grid-template-columns: 80px 1fr;
-	gap: 16px;
-	align-items: center;
-	padding: 16px;
-	background: var( --studio-gray-0 );
-	border-radius: 8px;
-	margin-block-end: 16px;
-}
-
-.podcast__example-cover {
-	inline-size: 80px;
-	block-size: 80px;
-	border-radius: 8px;
-	background: linear-gradient( 135deg, var( --studio-blue-40 ), var( --studio-purple-40 ) );
-	display: grid;
-	place-items: center;
-
-	svg {
-		fill: var( --studio-white );
-	}
-}
-
-.podcast__example-show {
-	font-size: 16px;
-	font-weight: 600;
-}
-
-.podcast__example-host {
-	font-size: 12px;
-	color: var( --color-text-subtle );
-	margin-block: 2px 8px;
-}
-
-.podcast__example-summary {
-	font-size: 13px;
-	color: var( --color-text-subtle );
-	line-height: 1.4;
-}
-
-.podcast__example-feed-url {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	padding: 8px 12px;
-	background: var( --studio-white );
-	border: 1px solid var( --color-neutral-5 );
-	border-radius: 4px;
-	font-family: monospace;
-	font-size: 12px;
-	color: var( --color-text-subtle );
-	margin-block-end: 16px;
-
-	svg {
-		fill: var( --studio-gray-40 );
-		flex-shrink: 0;
-	}
-
-	span {
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-	}
-}
-
-.podcast__example-episodes {
-	list-style: none;
-	margin: 0;
-	padding: 0;
-	display: flex;
-	flex-direction: column;
-	gap: 2px;
-
-	li {
-		display: grid;
-		grid-template-columns: 32px 1fr;
-		gap: 12px;
-		align-items: center;
-		padding: 10px 4px;
-		border-block-end: 1px solid var( --color-neutral-5 );
-
-		&:last-child {
-			border-block-end: none;
-		}
-	}
-}
-
-.podcast__example-play {
-	inline-size: 32px;
-	block-size: 32px;
-	border-radius: 50%;
-	background: var( --studio-gray-0 );
-	display: grid;
-	place-items: center;
-	font-size: 11px;
-	color: var( --color-text );
-}
-
-.podcast__example-ep-title {
-	font-size: 14px;
-	font-weight: 500;
-	color: var( --color-text );
-}
-
-.podcast__example-ep-meta {
-	font-size: 12px;
-	color: var( --color-text-subtle );
-	margin-block-start: 2px;
 }

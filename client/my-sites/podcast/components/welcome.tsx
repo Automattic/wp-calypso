@@ -1,8 +1,7 @@
 import page from '@automattic/calypso-router';
-import { Button, Card, Modal } from '@wordpress/components';
-import { Icon, audio, category, check, layout, megaphone } from '@wordpress/icons';
+import { Button, Card } from '@wordpress/components';
+import { Icon, audio, check, layout, megaphone } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
@@ -198,7 +197,6 @@ const getSampleEpisodes = ( translate: Translate ) => [
 
 function Welcome( { onEnable, planTier, onChangePlanTier }: WelcomeProps ) {
 	const translate = useTranslate();
-	const [ exampleOpen, setExampleOpen ] = useState( false );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 
 	const plans = getPlans( translate );
@@ -243,14 +241,9 @@ function Welcome( { onEnable, planTier, onChangePlanTier }: WelcomeProps ) {
 					</p>
 					<div className="podcast__welcome-actions">
 						{ ! isFree && (
-							<>
-								<Button variant="primary" onClick={ onEnable }>
-									{ translate( 'Enable podcasting' ) }
-								</Button>
-								<Button variant="link" onClick={ () => setExampleOpen( true ) }>
-									{ translate( 'See an example feed' ) }
-								</Button>
-							</>
+							<Button variant="primary" onClick={ onEnable }>
+								{ translate( 'Enable podcasting' ) }
+							</Button>
 						) }
 					</div>
 				</div>
@@ -392,51 +385,6 @@ function Welcome( { onEnable, planTier, onChangePlanTier }: WelcomeProps ) {
 					</button>
 				) ) }
 			</div>
-
-			{ /* Example feed modal */ }
-			{ exampleOpen && (
-				<Modal
-					title={ translate( 'What your feed looks like to listeners' ) as string }
-					onRequestClose={ () => setExampleOpen( false ) }
-					className="podcast__example-dialog"
-				>
-					<div className="podcast__example-card">
-						<div className="podcast__example-cover">
-							<Icon icon={ audio } />
-						</div>
-						<div className="podcast__example-meta">
-							<div className="podcast__example-show">{ sampleShow.title }</div>
-							<div className="podcast__example-host">
-								{ translate( 'by %(host)s', { args: { host: sampleShow.host } } ) } •{ ' ' }
-								{ sampleShow.category }
-							</div>
-							<div className="podcast__example-summary">{ sampleShow.summary }</div>
-						</div>
-					</div>
-					<div className="podcast__example-feed-url">
-						<Icon icon={ category } />
-						<span>
-							https://{ sampleShow.host.toLowerCase().replace( /\s/g, '' ) }
-							.com/category/podcast/feed/
-						</span>
-					</div>
-					<ul className="podcast__example-episodes">
-						{ sampleEpisodes.map( ( ep ) => (
-							<li key={ ep.number }>
-								<span className="podcast__example-play">▶</span>
-								<div className="podcast__example-ep-body">
-									<div className="podcast__example-ep-title">
-										{ ep.number }. { ep.title }
-									</div>
-									<div className="podcast__example-ep-meta">
-										{ ep.date } · { ep.duration }
-									</div>
-								</div>
-							</li>
-						) ) }
-					</ul>
-				</Modal>
-			) }
 		</div>
 	);
 }
