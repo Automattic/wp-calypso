@@ -29,7 +29,8 @@ If the PR changes shared code (e.g. `client/state`, `client/components`), consid
 
 - Be concise.
 - Do NOT use checkboxes, todo lists, or progress indicators.
-- Only comment if there are issues worth addressing.
+- Only post inline comments for issues worth addressing.
+- Always post a single summary issue-comment on the PR. If no issues were found, post: `AI Code Review: no issues found.`
 - DO NOT comment on lines that are not related to the guidelines listed above.
 - For each comment, cite the source documentation file as a clickable link in the format of `https://github.com/Automattic/wp-calypso/blob/trunk/<path to the file relative to the project>`.
 - For each comment, quote the specific sentence(s) from the cited source that justifies the comment, in a blockquote.
