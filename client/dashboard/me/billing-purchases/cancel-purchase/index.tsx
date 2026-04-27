@@ -491,6 +491,10 @@ function CancelPurchaseInner() {
 	const cancelSearch = useSearch( { from: cancelPurchaseRoute.fullPath } );
 	const intent = getCancelIntentFromSearch( cancelSearch );
 	const displayVariant = getDisplayVariant( intent, flowType );
+	const getCancelledSearch = () => ( {
+		cancelled: true as const,
+		...( intent === 'auto-renew' ? { intent: 'auto-renew' as const } : {} ),
+	} );
 	const mutationFlowType = getMutationFlowType( intent, purchase );
 
 	const cancellationOffer = cancellationOffers?.length ? cancellationOffers[ 0 ] : undefined;
@@ -1124,7 +1128,7 @@ function CancelPurchaseInner() {
 					navigate( {
 						to: purchaseSettingsRoute.fullPath,
 						params: { purchaseId: purchase.ID },
-						search: { cancelled: true },
+						search: getCancelledSearch(),
 					} );
 				},
 				onError: () => {
@@ -1248,7 +1252,7 @@ function CancelPurchaseInner() {
 					navigate( {
 						to: purchaseSettingsRoute.fullPath,
 						params: { purchaseId: purchase.ID },
-						search: { cancelled: true },
+						search: getCancelledSearch(),
 					} );
 				},
 				onError: () => {
@@ -1285,7 +1289,7 @@ function CancelPurchaseInner() {
 				search:
 					effectiveFlowType === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND
 						? { refunded: true }
-						: { cancelled: true },
+						: getCancelledSearch(),
 			} );
 			return;
 		}

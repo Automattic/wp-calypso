@@ -37,7 +37,7 @@ export function PurchaseCancelledNotice( {
 				{ sprintf(
 					/* translators: %(productNoun)s is plan/domain/email/theme/plugin/subscription, %(expiryDate)s is a date like "April 21, 2027" */
 					__(
-						'Auto-renew has been disabled. You won\u2019t be billed again, and you\u2019ll continue to have access to the %(productNoun)s until %(expiryDate)s.'
+						'Auto-renew has been disabled. You won’t be billed again, and you’ll continue to have access to the %(productNoun)s until %(expiryDate)s.'
 					),
 					{ productNoun, expiryDate }
 				) }
@@ -60,7 +60,7 @@ export function PurchaseCancelledNotice( {
 				{ sprintf(
 					/* translators: %(expiryDate)s is a date like "April 21, 2027". */
 					__(
-						'Your subscription is cancelled and you won\u2019t be billed again. Your site stays live until %(expiryDate)s. Download a backup to save your content, themes, and plugins.'
+						'Your subscription is cancelled and you won’t be billed again. Your site stays live until %(expiryDate)s. Download a backup to save your content, themes, and plugins.'
 					),
 					{ expiryDate }
 				) }
@@ -74,7 +74,7 @@ export function PurchaseCancelledNotice( {
 			{ sprintf(
 				/* translators: %(productNoun)s is plan/domain/email/theme/plugin/subscription, %(expiryDate)s is a date like "April 21, 2027" */
 				__(
-					'Your subscription is cancelled and you won\u2019t be billed again. You\u2019ll continue to have access to the %(productNoun)s until %(expiryDate)s.'
+					'Your subscription is cancelled and you won’t be billed again. You’ll continue to have access to the %(productNoun)s until %(expiryDate)s.'
 				),
 				{ productNoun, expiryDate }
 			) }
