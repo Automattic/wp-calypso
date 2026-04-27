@@ -1,3 +1,4 @@
+import { TimeSince } from '@automattic/components';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSocialAnalytics } from './analytics-context';
@@ -7,16 +8,16 @@ import type { ReactNode } from 'react';
 interface PostCardHeaderProps {
 	post: AtmosphereFeedItem;
 	variant: 'default' | 'compact';
-	timestampLabel?: string;
 }
 
-export function PostCardHeader( { post, variant, timestampLabel }: PostCardHeaderProps ) {
+export function PostCardHeader( { post, variant }: PostCardHeaderProps ) {
 	const translate = useTranslate();
 	const analytics = useSocialAnalytics();
 	const isCompact = variant === 'compact';
 	const displayName = post.author.display_name || post.author.handle;
 	const profileUrl = `https://bsky.app/profile/${ post.author.handle }`;
 	const avatarSize = isCompact ? 24 : 36;
+	const timestampIso = post.created_at || post.indexed_at;
 
 	const fireAuthorClicked = () => {
 		if ( ! analytics ) {
@@ -104,13 +105,13 @@ export function PostCardHeader( { post, variant, timestampLabel }: PostCardHeade
 						{ authorBody }
 					</a>
 				) }
-				{ timestampLabel && (
+				{ timestampIso && (
 					<>
 						<span className="social-post-card-header__dot" aria-hidden="true">
 							·
 						</span>
 						{ isCompact ? (
-							<span className="social-post-card-header__timestamp">{ timestampLabel }</span>
+							<TimeSince className="social-post-card-header__timestamp" date={ timestampIso } />
 						) : (
 							<a
 								className="social-post-card-header__timestamp"
@@ -119,7 +120,7 @@ export function PostCardHeader( { post, variant, timestampLabel }: PostCardHeade
 								rel="noopener noreferrer"
 								onClick={ firePostClicked }
 							>
-								{ timestampLabel }
+								<TimeSince date={ timestampIso } />
 							</a>
 						) }
 					</>
