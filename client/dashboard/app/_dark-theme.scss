@@ -8,6 +8,52 @@
 		box-shadow: inset 0 0 0 1px var( --dashboard-surface__border-color );
 	}
 
+	.components-surface.components-card.dashboard-notice {
+		&.is-info {
+			background-color: color-mix(
+				in srgb,
+				var( --wp-admin-theme-color ) 8%,
+				var( --dashboard-surface__background-color )
+			);
+		}
+
+		&.is-warning {
+			background-color: color-mix(
+				in srgb,
+				var( --dashboard__background-color-warning ) 8%,
+				var( --dashboard-surface__background-color )
+			);
+
+			.dashboard-notice__icon {
+				fill: var( --dashboard__background-color-warning );
+			}
+		}
+
+		&.is-success {
+			background-color: color-mix(
+				in srgb,
+				var( --dashboard__background-color-success ) 8%,
+				var( --dashboard-surface__background-color )
+			);
+
+			.dashboard-notice__icon {
+				fill: var( --dashboard__background-color-success );
+			}
+		}
+
+		&.is-error {
+			background-color: color-mix(
+				in srgb,
+				var( --dashboard__background-color-error ) 8%,
+				var( --dashboard-surface__background-color )
+			);
+
+			.dashboard-notice__icon {
+				fill: var( --dashboard__background-color-error );
+			}
+		}
+	}
+
 	.components-card__divider {
 		color: var( --dashboard-surface__border-color );
 		border-color: var( --dashboard-surface__border-color );
@@ -407,6 +453,31 @@
 		color: var( --dashboard-subtle__color );
 	}
 
+	.dataviews-view-list__media-wrapper:has( .dashboard-backups__list-icon ) {
+		background-color: var( --wp-components-color-gray-200 );
+
+		.dashboard-backups__list-icon {
+			fill: var( --wp-components-color-gray-700 );
+		}
+
+		&::after {
+			box-shadow: inset 0 0 0 1px var( --wp-components-color-gray-300 );
+		}
+	}
+
+	.dashboard-overview-latest-activity-card
+		.dataviews-view-list__media-wrapper:has( .dashboard-overview-latest-activity-card__icon ) {
+		background-color: var( --wp-components-color-gray-200 );
+
+		.dashboard-overview-latest-activity-card__icon {
+			fill: var( --wp-components-color-gray-700 );
+		}
+
+		&::after {
+			box-shadow: inset 0 0 0 1px var( --wp-components-color-gray-300 );
+		}
+	}
+
 	// Filter summary chips (upstream hardcodes `$gray-100`/`$gray-200` and
 	// `$gray-800`/`$gray-900` which don't respond to the dark theme).
 	.dataviews-filters__summary-chip-container .dataviews-filters__summary-chip {
@@ -439,6 +510,18 @@
 		&:hover {
 			color: var( --wp-admin-theme-color );
 		}
+	}
+
+	.site-scan-threats__type-icon {
+		background-color: var( --wp-components-color-gray-200 );
+		box-shadow: inset 0 0 0 1px var( --wp-components-color-gray-300 );
+		fill: var( --wp-components-color-gray-700 );
+	}
+
+	.site-activity-logs__event-icon {
+		background-color: var( --wp-components-color-gray-200 );
+		box-shadow: inset 0 0 0 1px var( --wp-components-color-gray-300 );
+		fill: var( --wp-components-color-gray-700 );
 	}
 }
 
