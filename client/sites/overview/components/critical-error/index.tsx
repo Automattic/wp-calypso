@@ -74,10 +74,8 @@ export const CriticalErrorOverview = ( { siteSlug }: { siteSlug: string } ) => {
 						{ canAccessPhpLogs && (
 							<Item icon={ formatListBullets }>
 								{ createInterpolateElement(
-									translate(
-										// translators: <phpLogsLink/> is a link to the PHP logs page with the text "Review the PHP logs"
-										'<phpLogsLink/> to locate any fatal errors on your site.'
-									) as string,
+									// translators: <phpLogsLink/> is a link to the PHP logs page with the text "Review the PHP logs"
+									translate( '<phpLogsLink/> to locate any fatal errors on your site.' ) as string,
 									{
 										phpLogsLink: (
 											<a href={ `/sites/${ siteSlug }/logs/php` }>
