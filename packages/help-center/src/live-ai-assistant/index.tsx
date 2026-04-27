@@ -4,7 +4,6 @@ import { __ } from '@wordpress/i18n';
 import { close, Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useLocation } from 'react-router-dom';
 import { useRealtimeSession } from './use-realtime-session';
 import './style.scss';
 
@@ -77,15 +76,10 @@ interface LiveAIAssistantProps {
 const PAGE_EVENT_DEBOUNCE_MS = 100;
 const PUBLIC_API_WPCOM_ORIGIN = 'https://public-api.wordpress.com';
 
-function buildInstructions(
-	flowName: string,
-	stepName: string,
-	locale: string,
-	extra?: string
-): string {
+function buildInstructions( locale: string, extra?: string ): string {
 	const base = [
-		'You are the WordPress.com sign-up assistant.',
-		'Your job is to help the user complete the sign-up and onboarding flow they are currently in.',
+		'You are the WordPress.com Gutenberg Editor Assistant.',
+		'Your job is to help the user with their Gutenberg Editor questions and issues.',
 		'Be as concise as humanly possible.',
 		'Do not speak unless the user directly asks a question, asks for help, or asks you to do something.',
 		'Never greet proactively, narrate what you are doing, or volunteer extra details.',
@@ -94,11 +88,13 @@ function buildInstructions(
 		'If the user seems stuck, offer to walk through the current step. If they ask questions about plans, domains, or features, answer clearly and honestly.',
 		'Never ask for or repeat passwords, credit card numbers, or two-factor codes out loud.',
 		'If you do not know something specific, say so and suggest checking the on-screen options.',
-		'Use page_summary_tool whenever you need page context, and use it before highlight_tool.',
+		'Use page_summary_tool whenever you need page context, and use it before highlight_tool. However, do not use it when asked about blocks. Blocks are available via get_editor_blocks_tool.',
 		'Use pointed_element_tool when the user refers to something they are pointing at, such as “this” or “that”.',
-		'When referring to anything on the page, prefer using highlight_tool instead of verbally describing where it is.',
+		'When referring to anything on the page, prefer using highlight_tool instead of verbally describing where it is. Use the highlight_tool very very generously. Do not ask before using it.',
 		'If the user asks where something is, highlight it rather than explaining its location in words.',
-		`Current flow: "${ flowName || 'unknown' }". Current step: "${ stepName || 'unknown' }".`,
+		'For Gutenberg content, use get_editor_blocks_tool to read the post’s blocks (optionally pass root_client_id for inner blocks), get_selected_block_tool to see the current selection, has_selected_block_tool to check if anything is selected, get_inserter_items_tool to list blocks available to insert in context, and select_block to focus a block by client_id (wp.data selectBlock on the block editor store).',
+		'Do not ask follow up questions. like ever.',
+		'The goal is to encourage the user to publish a post. Help them do that.',
 	];
 	if ( extra ) {
 		base.push( extra );
@@ -128,21 +124,12 @@ function getStatusLabel( status: ReturnType< typeof useRealtimeSession >[ 'statu
 
 export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProps ) {
 	const [ isOpen, setIsOpen ] = useState( false );
-	const location = useLocation();
 	const locale = useLocale();
 	const eventTimeoutRef = useRef< number | null >( null );
 
-	const { flowName, stepName } = useMemo( () => {
-		const parts = location.pathname.split( '/' ).filter( Boolean );
-		return {
-			flowName: parts[ 0 ] ?? '',
-			stepName: parts[ 1 ] ?? '',
-		};
-	}, [ location.pathname ] );
-
 	const instructions = useMemo(
-		() => buildInstructions( flowName, stepName, locale, contextualInstructions ),
-		[ flowName, stepName, locale, contextualInstructions ]
+		() => buildInstructions( locale, contextualInstructions ),
+		[ locale, contextualInstructions ]
 	);
 
 	const {
@@ -233,14 +220,6 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 			window.removeEventListener( 'message', handleWpcomMessage );
 		};
 	}, [ sendEvent, status, updatePointerPosition ] );
-
-	useEffect( () => {
-		if ( status !== 'active' ) {
-			return;
-		}
-
-		sendEvent( 'page-changed', `path=${ location.pathname }` );
-	}, [ location.key, location.pathname, sendEvent, status ] );
 
 	const handleTogglePanel = () => {
 		setIsOpen( ( prev ) => {

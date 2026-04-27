@@ -18,6 +18,23 @@ interface PointedElementToolContext {
 	pointerPosition: PointerPosition | null;
 }
 
+const INTERACTIVE_SELECTOR = [
+	'button',
+	'input',
+	'select',
+	'textarea',
+	'a[href]',
+	'summary',
+	'label',
+	'[role="button"]',
+	'[role="link"]',
+	'[role="checkbox"]',
+	'[role="radio"]',
+	'[role="switch"]',
+	'[role="tab"]',
+	'[contenteditable="true"]',
+].join( ', ' );
+
 export function executePointedElementTool( _rawArgs: unknown, context: PointedElementToolContext ) {
 	const pointer = context.pointerPosition;
 	if ( ! pointer ) {
@@ -48,13 +65,13 @@ function getPointedElementFromDocument(
 	clientX: number,
 	clientY: number
 ): HTMLElement | null {
-	const target = currentDocument.elementFromPoint( clientX, clientY ) as HTMLElement | null;
+	const target = currentDocument.elementFromPoint( clientX, clientY );
 	if ( ! target ) {
 		return null;
 	}
 
 	if ( ! ( target instanceof HTMLIFrameElement ) ) {
-		return target;
+		return getNearestInteractiveElement( target ) ?? getHTMLElementTarget( target );
 	}
 
 	const iframeDocument = getIframeDocument( target );
@@ -78,4 +95,25 @@ function getIframeDocument( iframe: HTMLIFrameElement ) {
 	} catch {
 		return null;
 	}
+}
+
+function getNearestInteractiveElement( target: Element ) {
+	let current: Element | null = target;
+
+	while ( current ) {
+		if ( current instanceof HTMLElement && current.matches( INTERACTIVE_SELECTOR ) ) {
+			return current;
+		}
+		current = current.parentElement;
+	}
+
+	return null;
+}
+
+function getHTMLElementTarget( target: Element ) {
+	if ( target instanceof HTMLElement ) {
+		return target;
+	}
+
+	return target.parentElement instanceof HTMLElement ? target.parentElement : null;
 }

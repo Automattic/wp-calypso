@@ -1,5 +1,22 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
+	GET_EDITOR_BLOCKS_TOOL_NAME,
+	GET_INSERTER_ITEMS_TOOL_NAME,
+	GET_SELECTED_BLOCK_TOOL_NAME,
+	HAS_SELECTED_BLOCK_TOOL_NAME,
+	SELECT_BLOCK_TOOL_NAME,
+	executeGetEditorBlocksTool,
+	executeGetInserterItemsTool,
+	executeGetSelectedBlockTool,
+	executeHasSelectedBlockTool,
+	executeSelectBlockTool,
+	getEditorBlocksToolDefinition,
+	getInserterItemsToolDefinition,
+	getSelectedBlockToolDefinition,
+	hasSelectedBlockToolDefinition,
+	selectBlockToolDefinition,
+} from './tools/editor-blocks-tool';
+import {
 	HIGHLIGHT_TOOL_NAME,
 	highlightToolDefinition,
 	executeHighlightTool,
@@ -242,7 +259,7 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 	);
 
 	const handleToolCalls = useCallback(
-		( event: { response?: { output?: unknown[] } } ) => {
+		async ( event: { response?: { output?: unknown[] } } ) => {
 			const dc = dataChannelRef.current;
 			if ( ! dc || dc.readyState !== 'open' ) {
 				return;
@@ -279,6 +296,16 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 						...getToolRuntimeContext(),
 						showHighlight: showHighlightOverlay,
 					} );
+				} else if ( call.name === GET_EDITOR_BLOCKS_TOOL_NAME ) {
+					result = executeGetEditorBlocksTool( call.arguments );
+				} else if ( call.name === GET_SELECTED_BLOCK_TOOL_NAME ) {
+					result = executeGetSelectedBlockTool();
+				} else if ( call.name === GET_INSERTER_ITEMS_TOOL_NAME ) {
+					result = executeGetInserterItemsTool( call.arguments );
+				} else if ( call.name === HAS_SELECTED_BLOCK_TOOL_NAME ) {
+					result = executeHasSelectedBlockTool();
+				} else if ( call.name === SELECT_BLOCK_TOOL_NAME ) {
+					result = await executeSelectBlockTool( call.arguments );
 				} else {
 					continue;
 				}
@@ -328,7 +355,7 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 					break;
 				}
 				case 'response.done': {
-					handleToolCalls( evt as { response?: { output?: unknown[] } } );
+					void handleToolCalls( evt as { response?: { output?: unknown[] } } );
 					break;
 				}
 				case 'error': {
@@ -396,6 +423,11 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 								pageSummaryToolDefinition,
 								pointedElementToolDefinition,
 								highlightToolDefinition,
+								getEditorBlocksToolDefinition,
+								getSelectedBlockToolDefinition,
+								getInserterItemsToolDefinition,
+								hasSelectedBlockToolDefinition,
+								selectBlockToolDefinition,
 							],
 							tool_choice: 'auto',
 							audio: {
