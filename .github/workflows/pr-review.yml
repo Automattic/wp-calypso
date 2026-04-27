@@ -97,6 +97,14 @@ jobs:
           prompt: |
             # Code Review Instructions
 
+            You are reviewing pull request #${{ github.event.issue.number || github.event.pull_request.number }} in ${{ github.repository }}.
+
+            When fetching the diff or PR metadata, ALWAYS pass the PR number explicitly:
+            - `gh pr diff ${{ github.event.issue.number || github.event.pull_request.number }} --repo ${{ github.repository }}`
+            - `gh pr view ${{ github.event.issue.number || github.event.pull_request.number }} --repo ${{ github.repository }} --json …`
+
+            Do NOT run `gh pr diff` or `gh pr view` without an explicit PR number argument. Do NOT infer the PR number from `git log`, `git branch`, or any other source.
+
             ## Primary Objective
 
             Review the PR based on the following documentation files as the guidelines:
@@ -147,6 +155,14 @@ jobs:
           prompt: |
             # Code Review Instructions (A4A)
 
+            You are reviewing pull request #${{ github.event.issue.number || github.event.pull_request.number }} in ${{ github.repository }}.
+
+            When fetching the diff or PR metadata, ALWAYS pass the PR number explicitly:
+            - `gh pr diff ${{ github.event.issue.number || github.event.pull_request.number }} --repo ${{ github.repository }}`
+            - `gh pr view ${{ github.event.issue.number || github.event.pull_request.number }} --repo ${{ github.repository }} --json …`
+
+            Do NOT run `gh pr diff` or `gh pr view` without an explicit PR number argument. Do NOT infer the PR number from `git log`, `git branch`, or any other source.
+
             ## Primary Objective
 
             Review the PR against the Automattic for Agencies (A4A) guidelines in the following documentation files:
@@ -194,6 +210,14 @@ jobs:
           anthropic_api_key: ${{ secrets.anthropic_api_key }}
           prompt: |
             # Code Review Instructions (General)
+
+            You are reviewing pull request #${{ github.event.issue.number || github.event.pull_request.number }} in ${{ github.repository }}.
+
+            When fetching the diff or PR metadata, ALWAYS pass the PR number explicitly:
+            - `gh pr diff ${{ github.event.issue.number || github.event.pull_request.number }} --repo ${{ github.repository }}`
+            - `gh pr view ${{ github.event.issue.number || github.event.pull_request.number }} --repo ${{ github.repository }} --json …`
+
+            Do NOT run `gh pr diff` or `gh pr view` without an explicit PR number argument. Do NOT infer the PR number from `git log`, `git branch`, or any other source.
 
             ## Primary Objective
 
