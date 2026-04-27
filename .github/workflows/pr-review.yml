@@ -78,7 +78,7 @@ jobs:
             *) echo "::error::Denying review: $PR_USER permission=$PERM"; exit 1 ;;
           esac
 
-      - name: Checkout repository (default branch only — never PR code)
+      - name: Checkout repository (default branch only, never PR code)
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           fetch-depth: 0
