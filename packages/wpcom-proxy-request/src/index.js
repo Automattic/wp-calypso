@@ -559,26 +559,18 @@ const wpcomAllowedOrigins = [
 	'http://send.linguine.localhost:3000',
 ];
 
-// Local development origins allowed on any port. Listed without a port so we
-// can compare after stripping the port from the input.
-const localDevOrigins = [
-	'http://calypso.localhost/',
-	'https://calypso.localhost/',
-	'http://jetpack.cloud.localhost/',
-	'https://jetpack.cloud.localhost/',
-	'http://agencies.localhost/',
-	'https://agencies.localhost/',
-	'http://my.localhost/',
-	'https://my.localhost/',
-	'http://my.woo.localhost/',
-	'https://my.woo.localhost/',
+// Local development hostnames allowed on any port and scheme.
+const localDevHosts = [
+	'calypso.localhost',
+	'jetpack.cloud.localhost',
+	'agencies.localhost',
+	'my.localhost',
+	'my.woo.localhost',
 ];
 
 function isLocalDevOrigin( urlOrigin ) {
 	try {
-		const url = new URL( urlOrigin );
-		url.port = '';
-		return localDevOrigins.includes( url.href );
+		return localDevHosts.includes( new URL( urlOrigin ).hostname );
 	} catch {
 		return false;
 	}
