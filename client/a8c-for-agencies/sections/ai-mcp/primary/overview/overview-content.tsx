@@ -4,9 +4,8 @@ import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
-import { Icon, shield } from '@wordpress/icons';
-import { useTranslate } from 'i18n-calypso';
+import { __, sprintf } from '@wordpress/i18n';
+import { Icon, tool } from '@wordpress/icons';
 import { useCallback } from 'react';
 import { A4A_AI_MCP_AVAILABLE_TOOLS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useFetchMcpSettings from 'calypso/a8c-for-agencies/data/mcp-ai/use-fetch-mcp-settings';
@@ -21,14 +20,13 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import '../style.scss';
 
 export default function AiMcpOverviewContent() {
-	const translate = useTranslate();
 	const dispatch = useDispatch();
 
 	const { data: settings, isLoading } = useFetchMcpSettings();
 
 	const mutation = useUpdateMcpSettingsMutation( {
 		onError: () => {
-			dispatch( errorNotice( translate( 'Could not save. Please try again.' ) ) );
+			dispatch( errorNotice( __( 'Could not save. Please try again.' ) ) );
 		},
 	} );
 
@@ -53,12 +51,13 @@ export default function AiMcpOverviewContent() {
 		totalCount > 0
 			? {
 					/* translators: %1$d enabled, %2$d total */
-					text: translate( '%1$d of %2$d enabled', {
-						args: [ enabledCount, totalCount ],
+					text: sprintf( __( '%(enabledCount)d of %(totalCount)d enabled' ), {
+						enabledCount,
+						totalCount,
 					} ) as string,
 					intent: ( enabledCount > 0 ? 'info' : undefined ) as 'info' | undefined,
 			  }
-			: { text: translate( 'No tools available' ) as string };
+			: { text: __( 'No tools available' ) as string };
 
 	return (
 		<>
@@ -75,27 +74,26 @@ export default function AiMcpOverviewContent() {
 					<CardBody>
 						<VStack spacing={ 3 }>
 							<Text weight={ 600 } size={ 15 }>
-								{ translate( 'External AI agent access' ) }
+								{ __( 'External AI agent access' ) }
 							</Text>
 							<Text variant="muted">
-								{ translate(
+								{ __(
 									'Allow external AI agents to access your Automattic for Agencies account via MCP.'
 								) }
 							</Text>
 							<ToggleControl
-								label={ translate( 'Enable MCP access' ) }
+								label={ __( 'Enable MCP access' ) }
 								checked={ mainEnabled }
 								onChange={ onMainToggle }
 								disabled={ isLoading || mutation.isPending }
-								__nextHasNoMarginBottom
 							/>
 						</VStack>
 					</CardBody>
 					<CardDivider style={ { borderColor: '#f0f0f0' } } />
 					<DashboardSummaryButton
 						density="medium"
-						title={ translate( 'Available tools' ) }
-						decoration={ <Icon icon={ shield } size={ 24 } /> }
+						title={ __( 'Available tools' ) }
+						decoration={ <Icon icon={ tool } size={ 24 } /> }
 						badges={ [ availableToolsBadge ] }
 						href={ A4A_AI_MCP_AVAILABLE_TOOLS_LINK }
 						onClick={ onAvailableToolsClick }

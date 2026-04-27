@@ -1,4 +1,4 @@
-import { useTranslate } from 'i18n-calypso';
+import { __ } from '@wordpress/i18n';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
@@ -10,8 +10,7 @@ import LayoutHeader, {
 import AiMcpOverviewContent from './overview-content';
 
 export default function AiMcpOverview() {
-	const translate = useTranslate();
-	const title = translate( 'AI and MCP' );
+	const title = __( 'AI and MCP' );
 
 	return (
 		<Layout title={ title } wide className="a4a-ai-mcp-overview">
