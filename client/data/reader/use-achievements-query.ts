@@ -3,10 +3,7 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 
 export function useAchievementsQuery( userIdOrLogin: number | string ) {
-	const query = useInfiniteQuery( {
-		...readAchievementsQuery( userIdOrLogin ),
-		staleTime: 10 * 60 * 1000, // 10 minutes
-	} );
+	const query = useInfiniteQuery( readAchievementsQuery( userIdOrLogin ) );
 
 	const { hasNextPage, isFetchingNextPage, isError, fetchNextPage } = query;
 
