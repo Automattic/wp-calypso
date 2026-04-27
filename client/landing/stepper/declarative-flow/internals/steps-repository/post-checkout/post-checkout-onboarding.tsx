@@ -98,7 +98,7 @@ const PostCheckoutOnboarding: StepType< {
 		isError: isErrorMarketplaceThemeProducts,
 		isMarketplaceThemeSubscribed,
 		isExternallyManagedThemeAvailable,
-	} = useMarketplaceThemeProducts();
+	} = useMarketplaceThemeProducts( { siteId: site?.ID } );
 
 	const {
 		data: siteTransferStatusData,
@@ -107,7 +107,7 @@ const PostCheckoutOnboarding: StepType< {
 	} = useSiteTransferStatusQuery( site?.ID );
 
 	const { waitForInitiateTransfer, waitForTransfer, waitForFeature, waitForLatestSiteData } =
-		useWaitForAtomic( {} );
+		useWaitForAtomic( { siteId: site?.ID } );
 
 	const { setIntentOnSite, setGoalsOnSite } = useDispatch( SITE_STORE );
 

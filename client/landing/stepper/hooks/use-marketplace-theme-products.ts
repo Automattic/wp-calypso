@@ -8,8 +8,15 @@ import { getPreferredBillingCycleProductSlug } from 'calypso/state/themes/theme-
 import { useSiteData } from './use-site-data';
 import type { OnboardSelect } from '@automattic/data-stores';
 
-export const useMarketplaceThemeProducts = () => {
+interface UseMarketplaceThemeProductsProps {
+	siteId?: number;
+}
+
+export const useMarketplaceThemeProducts = ( {
+	siteId: providedSiteId,
+}: UseMarketplaceThemeProductsProps = {} ) => {
 	const { site } = useSiteData();
+	const siteId = providedSiteId ?? site?.ID;
 
 	const selectedDesign = useSelect( ( select ) => {
 		const { getSelectedDesign } = select( ONBOARD_STORE ) as OnboardSelect;
@@ -32,8 +39,8 @@ export const useMarketplaceThemeProducts = () => {
 		isError: isErrorSiteFeatures,
 		data: siteFeatures,
 	} = useQuery( {
-		...siteFeaturesQuery( site?.ID as number ),
-		enabled: !! site?.ID,
+		...siteFeaturesQuery( siteId as number ),
+		enabled: !! siteId,
 	} );
 
 	const {
@@ -41,8 +48,8 @@ export const useMarketplaceThemeProducts = () => {
 		isError: isErrorSitePurchases,
 		data: sitePurchasesData,
 	} = useQuery( {
-		...sitePurchasesQuery( site?.ID as number ),
-		enabled: !! site?.ID,
+		...sitePurchasesQuery( siteId as number ),
+		enabled: !! siteId,
 	} );
 
 	const allProductsList = productsData ? Object.values( productsData ) : [];
