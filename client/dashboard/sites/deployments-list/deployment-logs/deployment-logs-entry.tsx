@@ -13,9 +13,6 @@ import { useLocale } from '../../../app/locale';
 import { formatDate } from '../../../utils/datetime';
 import type { DeploymentRunWithDeploymentInfo, LogEntry } from '@automattic/api-core';
 
-const logTextColor = 'var(--wp-components-color-accent-inverted)';
-const logTimestampColor = 'var(--wp-components-color-gray-700)';
-
 export const DeploymentLogsEntry = ( {
 	entry,
 	deployment,
@@ -89,8 +86,14 @@ export const DeploymentLogsEntry = ( {
 	return (
 		<HStack spacing={ 3 }>
 			<VStack spacing={ 2 }>
-				<Text style={ { color: logTextColor, whiteSpace: 'pre-wrap' } } as="code">
-					<Text style={ { color: logTimestampColor } }>
+				<Text
+					style={ {
+						color: 'var(--wp-components-color-accent-inverted, #fff)',
+						whiteSpace: 'pre-wrap',
+					} }
+					as="code"
+				>
+					<Text style={ { color: 'var(--wp-components-color-gray-700, #757575)' } }>
 						{ formatDate( new Date( entry.timestamp ), locale, { timeStyle: 'medium' } ) }
 					</Text>{ ' ' }
 					{ entry.level.toUpperCase() } { entry.message }
@@ -98,7 +101,7 @@ export const DeploymentLogsEntry = ( {
 						<Button
 							variant="link"
 							style={ {
-								color: logTextColor,
+								color: 'var(--wp-components-color-accent-inverted, #fff)',
 								marginInlineStart: '4px',
 							} }
 							onClick={ toggleExpandDetail }
@@ -109,7 +112,13 @@ export const DeploymentLogsEntry = ( {
 					) }
 				</Text>
 				{ detailExpanded && (
-					<Text style={ { color: logTextColor, whiteSpace: 'pre-wrap' } } as="code">
+					<Text
+						style={ {
+							color: 'var(--wp-components-color-accent-inverted, #fff)',
+							whiteSpace: 'pre-wrap',
+						} }
+						as="code"
+					>
 						{ getDetail() }
 					</Text>
 				) }
