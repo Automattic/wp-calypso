@@ -1,3 +1,4 @@
+import { isEcommercePlan } from '@automattic/calypso-products';
 import { WOO_HOSTED_PLANS_FLOW } from '@automattic/onboarding';
 import { resolveSelect, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
@@ -14,7 +15,7 @@ import { isExternal } from 'calypso/lib/url';
 import type { SiteSelect } from '@automattic/data-stores';
 import './style.scss';
 
-const BASE_STEPS = [ STEPS.UNIFIED_PLANS ];
+const BASE_STEPS = [ STEPS.UNIFIED_PLANS, STEPS.LAUNCH_BIG_SKY ];
 
 /**
  * Checks if the user has access to upgrade plans for the given site
@@ -123,11 +124,18 @@ const wooHostedPlansFlow: FlowV2< typeof initialize > = {
 							const checkoutUrl = `/checkout/${ encodeURIComponent( siteSlug ) }/${ selectedPlan }`;
 							const currentPath = window.location.href.replace( window.location.origin, '' );
 
+							const postCheckoutRedirect = isEcommercePlan( selectedPlan )
+								? addQueryArgs(
+										`/setup/${ WOO_HOSTED_PLANS_FLOW }/${ STEPS.LAUNCH_BIG_SKY.slug }`,
+										{ siteSlug }
+								  )
+								: redirectTo || dashboardLink( '/sites' );
+
 							// Build checkout URL with query params
 							// Note: Not using goToCheckout utility because it hardcodes signup=1
 							// Checkout validates redirect_to to prevent open redirects
 							const finalUrl = addQueryArgs( checkoutUrl, {
-								redirect_to: redirectTo || dashboardLink( '/sites' ),
+								redirect_to: postCheckoutRedirect,
 								cancel_to: currentPath,
 							} );
 
