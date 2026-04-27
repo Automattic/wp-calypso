@@ -7,7 +7,7 @@ on:
         description: 'PR number to review'
         required: true
 
-  pull_request:
+  pull_request_target:
     types: [opened, ready_for_review]
     paths:
       - 'client/a8c-for-agencies/**'
@@ -23,22 +23,14 @@ permissions:
 
 jobs:
   review:
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    if: github.event.pull_request.draft == false
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Run A4A PR Review
-        uses: anthropics/claude-code-action@v1
-        with:
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          prompt: |
-            Read and follow the instructions in .github/prompts/a4a-pr-review.md
-
-            Use `mcp__github_inline_comment__create_inline_comment` for review.
-          claude_args: |
-            --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh api:*),Bash(git show:*),Bash(git diff:*),Bash(git ls-files:*),Bash(git grep:*),Bash(rg *)"
+    if: |
+      github.event.pull_request.draft == false &&
+      (
+        github.event.pull_request.author_association == 'MEMBER' ||
+        github.event.pull_request.author_association == 'OWNER'
+      )
+    uses: ./.github/workflows/pr-review.yml
+    with:
+      prompt_path: .github/prompts/a4a-pr-review.md
+    secrets:
+      anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}

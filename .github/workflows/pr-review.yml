@@ -1,0 +1,76 @@
+name: PR Review (reusable)
+
+on:
+  workflow_call:
+    inputs:
+      prompt_path:
+        description: 'Path to the per-area review prompt, relative to repo root'
+        required: true
+        type: string
+    secrets:
+      anthropic_api_key:
+        required: true
+
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: Reject callers outside Automattic org
+        run: |
+          case "$CALLER_OWNER" in
+            Automattic) ;;
+            *) echo "Caller $CALLER_REPO is not allowed." >&2; exit 1 ;;
+          esac
+        env:
+          CALLER_OWNER: ${{ github.repository_owner }}
+          CALLER_REPO: ${{ github.repository }}
+
+  review:
+    needs: guard
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pull-requests: write
+      id-token: write
+    steps:
+      # Reject fork PRs. pull_request_target fires with secrets in scope, so
+      # this guard is the runtime defence against a fork PR slipping past the
+      # caller's author_association gate. Works for both pull_request_target
+      # callers (head.repo is in the payload) and issue_comment callers
+      # (head.repo fetched via gh).
+      - name: Reject fork PRs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          PR_NUMBER: ${{ github.event.issue.number || github.event.pull_request.number }}
+          BASE_REPO: ${{ github.repository }}
+        run: |
+          if [ -n "$PR_HEAD_REPO" ]; then
+            HEAD_REPO="$PR_HEAD_REPO"
+          else
+            HEAD_REPO=$(gh pr view "$PR_NUMBER" --repo "$BASE_REPO" --json headRepositoryOwner,headRepository --jq '"\(.headRepositoryOwner.login)/\(.headRepository.name)"')
+          fi
+          if [ "$HEAD_REPO" != "$BASE_REPO" ]; then
+            echo "::error::Fork PR rejected. Head repo: $HEAD_REPO, base: $BASE_REPO."
+            exit 1
+          fi
+
+      - name: Checkout repository (default branch only — never PR code)
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Run review
+        uses: anthropics/claude-code-action@567fe954a4527e81f132d87d1bdbcc94f7737434 # v1.0.107
+        with:
+          anthropic_api_key: ${{ secrets.anthropic_api_key }}
+          prompt: |
+            Read and follow the instructions in ${{ inputs.prompt_path }}
+
+            Use `mcp__github_inline_comment__create_inline_comment` for review.
+          claude_args: |
+            --max-turns 30
+            --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr diff:*),Bash(gh pr view:*),Bash(git show:*),Bash(git diff:*),Bash(git log:*),Bash(git ls-files:*),Bash(git grep:*),Bash(rg *),Read,Glob,Grep"
