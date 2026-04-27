@@ -521,7 +521,7 @@ export class JetpackAuthorize extends Component {
 		return startsWith( from, 'jetpack-connector' );
 	}
 
-	isUnifiedOnboardingFlow( props = this.props ) {
+	isUnifiedConnectionFlow( props = this.props ) {
 		return this.isFromJetpackOnboarding( props ) || this.isFromJetpackConnector( props );
 	}
 
@@ -823,7 +823,7 @@ export class JetpackAuthorize extends Component {
 			return translate( 'Connect' );
 		}
 
-		if ( this.isUnifiedOnboardingFlow() || this.isFromMyJetpack() ) {
+		if ( this.isUnifiedConnectionFlow() || this.isFromMyJetpack() ) {
 			return translate( 'Connect account' );
 		}
 
@@ -878,7 +878,7 @@ export class JetpackAuthorize extends Component {
 			);
 		}
 
-		if ( this.isUnifiedOnboardingFlow() || this.isFromMyJetpack() ) {
+		if ( this.isUnifiedConnectionFlow() || this.isFromMyJetpack() ) {
 			return (
 				<>
 					<div className="jetpack-connect__logged-in-user-text-name">
@@ -1050,7 +1050,7 @@ export class JetpackAuthorize extends Component {
 			);
 		}
 
-		if ( this.isUnifiedOnboardingFlow() || this.isFromMyJetpack() ) {
+		if ( this.isUnifiedConnectionFlow() || this.isFromMyJetpack() ) {
 			const branding = getConnectorBranding( authQuery.plugins );
 			const siteURL = this.isFromJetpackConnector()
 				? undefined
@@ -1217,16 +1217,16 @@ export class JetpackAuthorize extends Component {
 				siteName={ decodeEntities( blogname ) }
 				companyName={ this.getCompanyName() }
 				from={ from }
-				as={ this.isUnifiedOnboardingFlow() || this.isFromMyJetpack() ? 'span' : 'p' }
+				as={ this.isUnifiedConnectionFlow() || this.isFromMyJetpack() ? 'span' : 'p' }
 				buttonText={
-					this.isUnifiedOnboardingFlow() || this.isFromMyJetpack()
+					this.isUnifiedConnectionFlow() || this.isFromMyJetpack()
 						? this.getButtonText()
 						: undefined
 				}
 			/>
 		);
 
-		if ( this.isUnifiedOnboardingFlow() || this.isFromMyJetpack() ) {
+		if ( this.isUnifiedConnectionFlow() || this.isFromMyJetpack() ) {
 			const loginURL = login( { isJetpack: true, redirectTo: window.location.href, from } );
 			return (
 				<>
@@ -1268,7 +1268,7 @@ export class JetpackAuthorize extends Component {
 				.replace( /\/$/, '' )
 		);
 		const { authorizeSuccess, isAuthorizing } = this.props.authorizationData;
-		const isUnifiedOnboarding = this.isUnifiedOnboardingFlow();
+		const isUnifiedConnection = this.isUnifiedConnectionFlow();
 		const isFromJetpackConnector = this.isFromJetpackConnector();
 		const isFromMyJetpack = this.isFromMyJetpack(); // in case users reconnect.
 		const connectorBranding = isFromJetpackConnector
@@ -1296,13 +1296,13 @@ export class JetpackAuthorize extends Component {
 			<MainWrapper
 				className={ clsx( {
 					'jetpack-connect__authorize-form-wrapper--onboarding':
-						isUnifiedOnboarding || isFromMyJetpack,
+						isUnifiedConnection || isFromMyJetpack,
 					'jetpack-connect__authorize-form-wrapper--connector': isFromJetpackConnector,
 				} ) }
 				isWooJPC={ this.isWooJPC() }
 				isJetpackConnector={ isFromJetpackConnector }
 				isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
-				useCompactLogo={ ( isUnifiedOnboarding || isFromMyJetpack ) && ! isFromJetpackConnector }
+				useCompactLogo={ ( isUnifiedConnection || isFromMyJetpack ) && ! isFromJetpackConnector }
 				pageTitle={
 					wooDna.isWooDnaFlow() ? wooDna.getServiceName() + ' — ' + translate( 'Connect' ) : ''
 				}
@@ -1327,7 +1327,7 @@ export class JetpackAuthorize extends Component {
 								description={ connectorBranding.subtitle }
 							/>
 						) }
-						{ ( isUnifiedOnboarding || isFromMyJetpack ) && ! isFromJetpackConnector && (
+						{ ( isUnifiedConnection || isFromMyJetpack ) && ! isFromJetpackConnector && (
 							<div className="jetpack-connect__authorize-form-header--left-aligned">
 								<h1>{ translate( 'Now let’s connect your account' ) }</h1>
 								<p>
@@ -1337,7 +1337,7 @@ export class JetpackAuthorize extends Component {
 								</p>
 							</div>
 						) }
-						{ ! ( isUnifiedOnboarding || isFromMyJetpack ) && this.isWooJPC() && (
+						{ ! ( isUnifiedConnection || isFromMyJetpack ) && this.isWooJPC() && (
 							<BrandHeader
 								title={ translate( 'Connect your account' ) }
 								description={ translate(
@@ -1363,7 +1363,7 @@ export class JetpackAuthorize extends Component {
 								) }
 							/>
 						) }
-						{ ! ( isUnifiedOnboarding || isFromMyJetpack ) && ! this.isWooJPC() && (
+						{ ! ( isUnifiedConnection || isFromMyJetpack ) && ! this.isWooJPC() && (
 							<AuthFormHeader
 								authQuery={ this.props.authQuery }
 								isWooJPC={ this.isWooJPC() }
@@ -1372,7 +1372,7 @@ export class JetpackAuthorize extends Component {
 							/>
 						) }
 						{ this.renderContent() }
-						{ ! isUnifiedOnboarding && ! isFromMyJetpack && this.renderFooterLinks() }
+						{ ! isUnifiedConnection && ! isFromMyJetpack && this.renderFooterLinks() }
 					</div>
 				</div>
 				<AuthorizationScreenReaderIndicator message={ this.getScreenReaderAuthMessage() } />

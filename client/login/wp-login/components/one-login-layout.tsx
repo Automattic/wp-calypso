@@ -29,6 +29,7 @@ export const ensureHeadingProvided = (
 interface OneLoginLayoutProps {
 	isJetpack: boolean;
 	isFromJetpackConnector?: boolean;
+	isUnifiedConnectionFlow?: boolean;
 	connectorPlugins?: string[];
 	children: React.ReactNode;
 	/**

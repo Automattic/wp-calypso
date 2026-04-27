@@ -360,7 +360,7 @@ describe( 'JetpackAuthorize', () => {
 		} );
 	} );
 
-	describe( 'isUnifiedOnboardingFlow', () => {
+	describe( 'isUnifiedConnectionFlow', () => {
 		const instance = new JetpackAuthorize();
 
 		test( 'returns true for jetpack-onboarding', () => {
@@ -370,7 +370,7 @@ describe( 'JetpackAuthorize', () => {
 				},
 			};
 
-			expect( instance.isUnifiedOnboardingFlow( props ) ).toBe( true );
+			expect( instance.isUnifiedConnectionFlow( props ) ).toBe( true );
 		} );
 
 		test( 'returns true for jetpack-connector', () => {
@@ -380,7 +380,7 @@ describe( 'JetpackAuthorize', () => {
 				},
 			};
 
-			expect( instance.isUnifiedOnboardingFlow( props ) ).toBe( true );
+			expect( instance.isUnifiedConnectionFlow( props ) ).toBe( true );
 		} );
 
 		test( 'returns false for other flows', () => {
@@ -390,7 +390,7 @@ describe( 'JetpackAuthorize', () => {
 				},
 			};
 
-			expect( instance.isUnifiedOnboardingFlow( props ) ).toBe( false );
+			expect( instance.isUnifiedConnectionFlow( props ) ).toBe( false );
 		} );
 	} );
 

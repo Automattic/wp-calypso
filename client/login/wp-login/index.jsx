@@ -115,6 +115,7 @@ export class Login extends Component {
 			'isFromPassport',
 			'isFromAutomatticForAgenciesPlugin',
 			'isFromJetpackConnector',
+			'isUnifiedConnectionFlow',
 			'connectorPlugins',
 			'partnerConfig',
 			'isGravPoweredClient',
@@ -373,6 +374,7 @@ export class Login extends Component {
 					<OneLoginLayout
 						isJetpack={ isJetpack }
 						isFromJetpackConnector={ this.props.isFromJetpackConnector }
+						isUnifiedConnectionFlow={ this.props.isUnifiedConnectionFlow }
 						connectorPlugins={ this.props.connectorPlugins }
 						signupUrl={ this.props.signupUrl }
 						isLostPasswordView={ isLostPasswordView }
@@ -479,6 +481,8 @@ export default connect(
 		const redirectParams = new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] );
 		const connectorFromParam = redirectParams.get( 'from' ) || get( currentQuery, 'from' );
 		const isFromJetpackConnector = connectorFromParam?.startsWith( 'jetpack-connector' ) ?? false;
+		const isUnifiedConnectionFlow =
+			isFromJetpackConnector || connectorFromParam === 'jetpack-onboarding';
 		const connectorPlugins = isFromJetpackConnector
 			? ( redirectParams.get( 'plugins' ) || get( currentQuery, 'plugins' ) || '' )
 					.split( ',' )
@@ -524,6 +528,7 @@ export default connect(
 				'automattic-for-agencies-client' ===
 					new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'from' ),
 			isFromJetpackConnector,
+			isUnifiedConnectionFlow,
 			connectorPlugins,
 			partnerConfig: detectPartnerConfig( oauth2Client ),
 			isManualRenewalImmediateLoginAttempt: wasManualRenewalImmediateLoginAttempted( state ),
