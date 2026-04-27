@@ -181,6 +181,11 @@ a.social-post-card-header__timestamp::after {
 		align-items: center;
 		gap: 4px;
 	}
+
+	svg {
+		flex-shrink: 0;
+		fill: currentColor;
+	}
 }
 
 .social-post-card-embed-images {
