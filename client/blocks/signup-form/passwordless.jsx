@@ -384,6 +384,7 @@ class PasswordlessSignupForm extends Component {
 						</>
 					) }
 				</LoggedOutForm>
+				{ this.props.footerLink }
 			</div>
 		);
 	}
