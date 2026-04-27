@@ -1,0 +1,29 @@
+diff --git a/src/text/styles.ts b/src/text/styles.ts
+index c0c7dfbb1e14232348d031c7f295ba52b0228309..c89c56d163a0cce9236a9f7ced219ba2b3bd5718 100644
+--- a/src/text/styles.ts
++++ b/src/text/styles.ts
+@@ -28,7 +28,7 @@ export const destructive = css`
+ `;
+
+ export const muted = css`
+-	color: ${ COLORS.gray[ 700 ] };
++	color: ${ COLORS.theme.gray[ 700 ] };
+ `;
+
+ export const highlighterText = css`
+diff --git a/build-module/text/styles.mjs b/build-module/text/styles.mjs
+index 46363457c16618e14048f63f32b89206b58c71b8..e3cab5202d3d609c6d1aa84e41f27c2f78011845 100644
+--- a/build-module/text/styles.mjs
++++ b/build-module/text/styles.mjs
+@@ -20,1 +20,3 @@
++// Override compiled Text muted color so production builds use the theme CSS variable.
++muted = /* @__PURE__ */ css("color:", COLORS.theme.gray[700], ";");
+ var upperCase = process.env.NODE_ENV === "production" ? {
+diff --git a/build/text/styles.cjs b/build/text/styles.cjs
+index f584ff8dca1c06ce28dbd59de5e3c2b6212dd88f..b24176547840f8df113c6b3ee4937ef0587ebf8d 100644
+--- a/build/text/styles.cjs
++++ b/build/text/styles.cjs
+@@ -50,1 +50,3 @@
++// Override compiled Text muted color so production builds use the theme CSS variable.
++muted = /* @__PURE__ */ (0, import_react.css)("color:", import_utils.COLORS.theme.gray[700], ";");
+ var upperCase = process.env.NODE_ENV === "production" ? {
