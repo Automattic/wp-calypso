@@ -6,7 +6,10 @@ interface BranchDisplayProps {
 	color?: string;
 }
 
-export function BranchDisplay( { branchName, color = '#3b3b3b' }: BranchDisplayProps ) {
+export function BranchDisplay( {
+	branchName,
+	color = 'var(--dashboard__text-muted-color)',
+}: BranchDisplayProps ) {
 	return (
 		<HStack spacing={ 1 } alignment="left" expanded={ false } style={ { color } }>
 			<BranchIcon width={ 16 } height={ 16 } style={ { flexShrink: 0 } } />

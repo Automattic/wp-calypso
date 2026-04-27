@@ -833,6 +833,78 @@
 	}
 }
 
+/* Modal */
+@mixin dashboard-dark-theme-modal {
+	.components-modal__frame {
+		background: var( --dashboard-surface__background-color );
+		color: var( --dashboard__text-color );
+
+		h1,
+		h2,
+		h3,
+		.components-modal__header-heading {
+			color: var( --dashboard__text-color );
+		}
+
+		.components-modal__header .components-button {
+			color: var( --dashboard__text-color );
+		}
+
+		.components-modal__content.has-scrolled-content:not( .hide-header ) {
+			.components-modal__header {
+				border-bottom-color: var( --dashboard-surface__border-color );
+			}
+		}
+
+		.dataforms-layouts-panel__field-label {
+			color: var( --dashboard__text-muted-color );
+		}
+
+		.dataforms-layouts-panel__field-trigger.is-disabled
+			.dataforms-layouts-panel__field-control {
+			color: var( --dashboard__text-muted-color );
+		}
+	}
+}
+
+/* Add New Site Modal */
+@mixin dashboard-dark-theme-add-new-site-modal {
+	.components-modal__frame {
+		.components-surface.components-card.offer-card--stacked {
+			background-color: var( --wp-components-color-gray-200 );
+		}
+
+		.dashboard-add-new-site__menu-item:hover {
+			background: color-mix(
+				in srgb,
+				var( --dashboard-surface__background-color ) 82%,
+				var( --wp-admin-theme-color )
+			);
+		}
+	}
+}
+
+/* Site Launch Celebration Modal */
+@mixin dashboard-dark-theme-site-launch-celebration-modal {
+	.components-modal__frame {
+		.celebration-modal--content {
+			background-color: var( --wp-components-color-gray-200 );
+			color: var( --dashboard__text-color );
+		}
+	}
+}
+
+/* Deployment Logs Modal */
+@mixin dashboard-dark-theme-deployment-logs-modal {
+	.deployment-logs-modal__log-output {
+		background-color: color-mix(
+			in srgb,
+			var( --dashboard__background-color ) 86%,
+			var( --wp-admin-theme-color )
+		);
+	}
+}
+
 // :root variables overridden for dark theme
 @mixin dashboard-dark-theme {
 	// Overrides the default `--wp-components-*` to ensure all components that
@@ -934,11 +1006,13 @@
 	--jp-gray-off: #2a2a2a;
 
 	@include dashboard-calypso-theme-properties;
+	@include dashboard-dark-theme-add-new-site-modal;
 	@include dashboard-dark-theme-action-list;
 	@include dashboard-dark-theme-breadcrumbs;
 	@include dashboard-dark-theme-callout;
 	@include dashboard-dark-theme-card;
 	@include dashboard-dark-theme-dataviews;
+	@include dashboard-dark-theme-deployment-logs-modal;
 	@include dashboard-dark-theme-destructive-secondary-button;
 	@include dashboard-dark-theme-emails;
 	@include dashboard-dark-theme-form-controls;
@@ -951,5 +1025,7 @@
 	@include dashboard-dark-theme-section-header;
 	@include dashboard-dark-theme-site-icon;
 	@include dashboard-dark-theme-site-logs-badges;
+	@include dashboard-dark-theme-site-launch-celebration-modal;
+	@include dashboard-dark-theme-modal;
 	@include dashboard-dark-theme-summary-button;
 }
