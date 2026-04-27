@@ -1,7 +1,4 @@
-import {
-	__experimentalHStack as HStack,
-	__experimentalVStack as VStack,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSocialAnalytics } from './analytics-context';
 import type { AtmosphereFeedItem } from '@automattic/api-core';
@@ -10,17 +7,18 @@ import type { ReactNode } from 'react';
 interface PostCardHeaderProps {
 	post: AtmosphereFeedItem;
 	variant: 'default' | 'compact';
+	timestampLabel?: string;
 }
 
-export function PostCardHeader( { post, variant }: PostCardHeaderProps ) {
+export function PostCardHeader( { post, variant, timestampLabel }: PostCardHeaderProps ) {
 	const translate = useTranslate();
 	const analytics = useSocialAnalytics();
 	const isCompact = variant === 'compact';
 	const displayName = post.author.display_name || post.author.handle;
 	const profileUrl = `https://bsky.app/profile/${ post.author.handle }`;
-	const avatarSize = isCompact ? 24 : 40;
+	const avatarSize = isCompact ? 24 : 36;
 
-	const handleAuthorClick = () => {
+	const fireAuthorClicked = () => {
 		if ( ! analytics ) {
 			return;
 		}
@@ -31,28 +29,44 @@ export function PostCardHeader( { post, variant }: PostCardHeaderProps ) {
 		} );
 	};
 
+	const firePostClicked = () => {
+		if ( ! analytics ) {
+			return;
+		}
+		analytics.onClick( `calypso_reader_${ analytics.source }_timeline_post_clicked`, {
+			connection_id: analytics.connectionId,
+			post_uri: post.uri,
+			has_embed: post.embed !== null,
+			embed_type: post.embed?.type ?? null,
+			is_repost: post.reason !== null,
+			is_reply: post.reply_parent !== null,
+		} );
+	};
+
+	const avatarEl: ReactNode = post.author.avatar ? (
+		<img
+			src={ post.author.avatar }
+			alt=""
+			width={ avatarSize }
+			height={ avatarSize }
+			loading="lazy"
+			className="social-post-card-header__avatar"
+		/>
+	) : (
+		<div
+			className="social-post-card-header__avatar social-post-card-header__avatar--placeholder"
+			style={ { width: avatarSize, height: avatarSize } }
+			aria-hidden="true"
+		/>
+	);
+
 	const authorBody: ReactNode = (
 		<>
-			{ post.author.avatar ? (
-				<img
-					src={ post.author.avatar }
-					alt={ post.author.handle }
-					width={ avatarSize }
-					height={ avatarSize }
-					loading="lazy"
-					className="social-post-card-header__avatar"
-				/>
-			) : (
-				<div
-					className="social-post-card-header__avatar social-post-card-header__avatar--placeholder"
-					style={ { width: avatarSize, height: avatarSize } }
-					aria-hidden="true"
-				/>
-			) }
-			<VStack spacing={ 0 }>
+			{ avatarEl }
+			<span className="social-post-card-header__author-text">
 				<span className="social-post-card-header__display-name">{ displayName }</span>
 				<span className="social-post-card-header__handle">@{ post.author.handle }</span>
-			</VStack>
+			</span>
 		</>
 	);
 
@@ -74,7 +88,7 @@ export function PostCardHeader( { post, variant }: PostCardHeaderProps ) {
 					} ) }
 				</div>
 			) }
-			<HStack alignment="center" spacing={ 2 } justify="flex-start">
+			<div className="social-post-card-header__row">
 				{ isCompact ? (
 					<div className="social-post-card-header__author social-post-card-header__author--inert">
 						{ authorBody }
@@ -85,12 +99,32 @@ export function PostCardHeader( { post, variant }: PostCardHeaderProps ) {
 						href={ profileUrl }
 						target="_blank"
 						rel="noopener noreferrer"
-						onClick={ handleAuthorClick }
+						onClick={ fireAuthorClicked }
 					>
 						{ authorBody }
 					</a>
 				) }
-			</HStack>
+				{ timestampLabel && (
+					<>
+						<span className="social-post-card-header__dot" aria-hidden="true">
+							·
+						</span>
+						{ isCompact ? (
+							<span className="social-post-card-header__timestamp">{ timestampLabel }</span>
+						) : (
+							<a
+								className="social-post-card-header__timestamp"
+								href={ post.bluesky_url }
+								target="_blank"
+								rel="noopener noreferrer"
+								onClick={ firePostClicked }
+							>
+								{ timestampLabel }
+							</a>
+						) }
+					</>
+				) }
+			</div>
 		</VStack>
 	);
 }

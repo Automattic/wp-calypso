@@ -68,17 +68,12 @@ export function SocialPostCard( { post, variant = 'default' }: SocialPostCardPro
 	const card = (
 		<Card className={ clsx( 'social-post-card', `social-post-card--${ variant }` ) }>
 			<CardBody>
-				<PostCardHeader post={ post } variant={ variant } />
+				<PostCardHeader post={ post } variant={ variant } timestampLabel={ timestampLabel } />
 				<PostCardBody post={ post } />
 				{ ! isCompact && post.embed && (
 					<PostCardEmbed embed={ post.embed } parentPostUri={ post.uri } />
 				) }
 				{ ! isCompact && <PostCardCounts counts={ post.counts } /> }
-				{ isCompact && timestampLabel && (
-					<span className="social-post-card-link__timestamp social-post-card-link__timestamp--inert">
-						{ timestampLabel }
-					</span>
-				) }
 			</CardBody>
 		</Card>
 	);
@@ -90,9 +85,5 @@ export function SocialPostCard( { post, variant = 'default' }: SocialPostCardPro
 		return card;
 	}
 
-	return (
-		<PostCardLink post={ post } variant={ variant } timestampLabel={ timestampLabel }>
-			{ card }
-		</PostCardLink>
-	);
+	return <PostCardLink variant={ variant }>{ card }</PostCardLink>;
 }
