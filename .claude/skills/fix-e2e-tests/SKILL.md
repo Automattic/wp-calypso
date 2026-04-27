@@ -1,5 +1,5 @@
 ---
-name: fix-flaky-e2e-tests
+name: fix-e2e-tests
 description: Given a wp-calypso PR number, identify the flaky E2E test(s) in that PR's CI run so they can be fixed. Use when asked to investigate or fix a flaky E2E test on a specific PR.
 allowed-tools: Bash, AskUserQuestion, Agent
 ---
@@ -116,7 +116,7 @@ Guide the user as follows:
 > 8. In a **separate terminal window (not Claude Code)**, `cd` to the wp-calypso repo and run:
 >
 >    ```bash
->    bash .claude/skills/fix-flaky-e2e-tests/setup-token.sh
+>    bash .claude/skills/fix-e2e-tests/setup-token.sh
 >    ```
 >
 >    At the hidden prompt, paste the token and press Enter. The script refuses to run under a non-TTY stdin precisely to defeat the `!`-prefix footgun, so if you run it via `!` it will abort and remind you to use a separate terminal.
@@ -251,7 +251,7 @@ Do **not** use the Agent tool's built-in `isolation: "worktree"` — it bases th
 
 Fetch the PR's tip and create the worktree. Run each command as a **separate Bash call** with the values inlined, not as one compound script — Claude Code's permission allowlist matches the entire command string against prefix patterns, so multi-statement scripts starting with a variable assignment don't match `Bash(git fetch:*)` etc. and trigger a permission prompt on every run.
 
-Substitute the literal values from Step 3 directly into each command. Pick a unique worktree path like `.claude/worktrees/fix-flaky-<slug>-<timestamp>` (the timestamp keeps parallel runs from colliding; `date +%s` is fine).
+Substitute the literal values from Step 3 directly into each command. Pick a unique worktree path like `.claude/worktrees/fix-e2e-<slug>-<timestamp>` (the timestamp keeps parallel runs from colliding; `date +%s` is fine).
 
 1. Fetch the PR's branch so its HEAD is locally resolvable:
 
@@ -259,22 +259,22 @@ Substitute the literal values from Step 3 directly into each command. Pick a uni
    git fetch origin <TARGET_BRANCH>
    ```
 
-2. Create the worktree on a new `fix/flaky-e2e-<slug>` branch pointing at the PR's HEAD. Before running this, announce to the user what you're about to do **and** that the worktree will be cleaned up automatically at the end of the skill (Step 5.5), so they're not surprised when it disappears:
+2. Create the worktree on a new `fix/e2e-<slug>` branch pointing at the PR's HEAD. Before running this, announce to the user what you're about to do **and** that the worktree will be cleaned up automatically at the end of the skill (Step 5.5), so they're not surprised when it disappears:
 
-   > Creating a worktree at `.claude/worktrees/fix-flaky-<slug>-<timestamp>` on a new `fix/flaky-e2e-<slug>` branch pointing at the PR's HEAD. It's local, ignored by git, and will be removed automatically when the skill finishes (after the PR is opened or if the skill exits earlier).
+   > Creating a worktree at `.claude/worktrees/fix-e2e-<slug>-<timestamp>` on a new `fix/e2e-<slug>` branch pointing at the PR's HEAD. It's local, ignored by git, and will be removed automatically when the skill finishes (after the PR is opened or if the skill exits earlier).
 
    ```bash
-   git worktree add -b fix/flaky-e2e-<slug> .claude/worktrees/fix-flaky-<slug>-<timestamp> <PR_SHA>
+   git worktree add -b fix/e2e-<slug> .claude/worktrees/fix-e2e-<slug>-<timestamp> <PR_SHA>
    ```
 
 3. Link two auto-generated bits from the main checkout into the worktree so the pre-commit hook can run. Both are gitignored on the main side — they exist after `yarn install` and `husky install` but aren't in the tracked tree the worktree sees.
 
    ```bash
-   ln -s /var/www/wp-calypso/node_modules .claude/worktrees/fix-flaky-<slug>-<timestamp>/node_modules
+   ln -s /var/www/wp-calypso/node_modules .claude/worktrees/fix-e2e-<slug>-<timestamp>/node_modules
    ```
 
    ```bash
-   ln -s /var/www/wp-calypso/.husky/_ .claude/worktrees/fix-flaky-<slug>-<timestamp>/.husky/_
+   ln -s /var/www/wp-calypso/.husky/_ .claude/worktrees/fix-e2e-<slug>-<timestamp>/.husky/_
    ```
 
    **Why both are needed.** The worktree shares `.git` with the main checkout but has its own working tree, so anything `yarn install` or `husky install` generated locally isn't there. wp-calypso's pre-commit hook reads:
@@ -300,8 +300,8 @@ Don't add extra sanity-check calls (e.g., `ls` on the spec path) — the harness
 
 Record these values for later sub-steps (keep them in your working memory; later Bash calls must inline them rather than reference shell variables):
 
-- **WORKTREE_DIR** — `.claude/worktrees/fix-flaky-<slug>-<timestamp>`
-- **BRANCH** — `fix/flaky-e2e-<slug>`
+- **WORKTREE_DIR** — `.claude/worktrees/fix-e2e-<slug>-<timestamp>`
+- **BRANCH** — `fix/e2e-<slug>`
 - **PR_SHA** — from Step 3
 - **TARGET_BRANCH** — from Step 3
 
@@ -340,11 +340,11 @@ Show the user the root-cause + fix summary from the Healer and the diff. Two thi
 Run each `git` call separately with literal values inlined (not shell variables), so each matches the allowlist prefix without prompting:
 
 ```bash
-git -C .claude/worktrees/fix-flaky-<slug>-<timestamp> --no-pager diff --stat <PR_SHA>
+git -C .claude/worktrees/fix-e2e-<slug>-<timestamp> --no-pager diff --stat <PR_SHA>
 ```
 
 ```bash
-git -C .claude/worktrees/fix-flaky-<slug>-<timestamp> --no-pager diff <PR_SHA>
+git -C .claude/worktrees/fix-e2e-<slug>-<timestamp> --no-pager diff <PR_SHA>
 ```
 
 Then in the **next assistant message**, present the root cause + fix summary from the Healer and inline the diff inside a fenced code block (not a reference to "the diff above"). Shape:
@@ -376,13 +376,13 @@ Commit the Healer's edits (they arrive uncommitted), push the branch, and open t
 **Stage** (announce: "Staging the Healer's edits."):
 
 ```bash
-git -C .claude/worktrees/fix-flaky-<slug>-<timestamp> add -A
+git -C .claude/worktrees/fix-e2e-<slug>-<timestamp> add -A
 ```
 
 **Commit** (announce: "Committing — the message carries the root cause and fix summary so the PR body can be derived from it."):
 
 ```bash
-git -C .claude/worktrees/fix-flaky-<slug>-<timestamp> commit -m "$(cat <<'EOF'
+git -C .claude/worktrees/fix-e2e-<slug>-<timestamp> commit -m "$(cat <<'EOF'
 E2E: fix flaky <short test title>
 
 <one-paragraph root cause>
@@ -395,12 +395,12 @@ EOF
 **Push** (announce: "Pushing the branch to origin."):
 
 ```bash
-git -C .claude/worktrees/fix-flaky-<slug>-<timestamp> push -u origin fix/flaky-e2e-<slug>
+git -C .claude/worktrees/fix-e2e-<slug>-<timestamp> push -u origin fix/e2e-<slug>
 ```
 
 **Open the PR** (announce: "Opening the PR against `<TARGET_BRANCH>` and assigning it to you.").
 
-Do **not** `cd` into the worktree. Use `gh pr create --repo Automattic/wp-calypso --head fix/flaky-e2e-<slug> --base <TARGET_BRANCH> ...` — the `--head` flag tells gh which branch to PR from, so no cd is needed. This matters because:
+Do **not** `cd` into the worktree. Use `gh pr create --repo Automattic/wp-calypso --head fix/e2e-<slug> --base <TARGET_BRANCH> ...` — the `--head` flag tells gh which branch to PR from, so no cd is needed. This matters because:
 
 - The Bash tool's cwd persists across calls; cd-ing into the worktree and then removing it in 5.5 leaves the shell with an invalid cwd (`pwd` fails with `getcwd: cannot access parent directories`).
 - The harness flags `cd <path> && git <cmd>` as "potentially running hooks from untrusted directory" and prompts every time. `gh pr create --head` sidesteps that entirely.
@@ -409,7 +409,7 @@ Do **not** `cd` into the worktree. Use `gh pr create --repo Automattic/wp-calyps
 
 ```bash
 gh pr create --repo Automattic/wp-calypso --assignee @me \
-  --head fix/flaky-e2e-<slug> --base <TARGET_BRANCH> \
+  --head fix/e2e-<slug> --base <TARGET_BRANCH> \
   --title "E2E: fix flaky <short test title>" \
   --body "$(cat <<'EOF'
 ...body...
@@ -441,20 +441,20 @@ Announce: "PR opened. Cleaning up the worktree."
 Run the cleanup as a single Bash call with the worktree path inlined, using `git -C /var/www/wp-calypso` to avoid any reliance on the shell's cwd (which can be broken if a prior step left it pointing inside a removed directory):
 
 ```bash
-git -C /var/www/wp-calypso worktree remove .claude/worktrees/fix-flaky-<slug>-<timestamp> --force
+git -C /var/www/wp-calypso worktree remove .claude/worktrees/fix-e2e-<slug>-<timestamp> --force
 ```
 
 `--force` is used deliberately: the worktree contains a symlinked `node_modules` (from Step 5.1.3) and uncommitted husky-generated state from the pre-commit hook, neither of which should block removal. Nothing of value lives only in the worktree — everything worth keeping is in the branch on origin.
 
 Do **not** `cd` into or near the worktree before this call. The heuristic "command changes directory before running git" will prompt, and the call is allowlisted only as `Bash(git worktree:*)` / `Bash(git -C:*)`, not as `cd && git worktree`.
 
-Do **not** also delete the `fix/flaky-e2e-<slug>` local branch: that branch points at the commit you just pushed, and leaving it in place is helpful if the user wants to pull new changes into it or amend later. Remove it only if the PR is abandoned.
+Do **not** also delete the `fix/e2e-<slug>` local branch: that branch points at the commit you just pushed, and leaving it in place is helpful if the user wants to pull new changes into it or amend later. Remove it only if the PR is abandoned.
 
 If the PR was **not** opened (e.g., the Healer reported a product bug in 5.2 and the skill stopped, or the user declined to push in 5.3), also remove the worktree — but _do_ delete the local branch too, since nothing was pushed:
 
 ```bash
-git worktree remove .claude/worktrees/fix-flaky-<slug>-<timestamp> --force
-git branch -D fix/flaky-e2e-<slug>
+git worktree remove .claude/worktrees/fix-e2e-<slug>-<timestamp> --force
+git branch -D fix/e2e-<slug>
 ```
 
 Then tell the user the outcome. The message must make it clear that **the Healer's fix is heuristic and the developer is responsible for validating it before requesting review or merging**. The fix was generated from the CI failure trace, not a local rerun — CI will exercise it again now that the PR is open (not draft), but that's one signal, not a guarantee.

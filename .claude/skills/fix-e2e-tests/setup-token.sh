@@ -18,7 +18,7 @@ To continue:
 
   1. Open a separate terminal window (your normal terminal, not Claude Code).
   2. cd to the wp-calypso repo.
-  3. Run:  bash .claude/skills/fix-flaky-e2e-tests/setup-token.sh
+  3. Run:  bash .claude/skills/fix-e2e-tests/setup-token.sh
   4. Paste your token at the hidden prompt.
   5. Return to Claude Code and say "done".
 EOF
