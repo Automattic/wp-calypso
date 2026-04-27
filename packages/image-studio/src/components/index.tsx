@@ -25,7 +25,6 @@ import { useRevertToOriginal } from '../hooks/use-revert-to-original';
 import { useSaveShortcut } from '../hooks/use-save-shortcut';
 import { useUnsavedChangesConfirmation } from '../hooks/use-unsaved-changes-confirmation';
 import { useVideoClipSuggestions } from '../hooks/use-video-clip-suggestions';
-import { useVideoResultSync } from '../hooks/use-video-result-sync';
 import {
 	ImageStudioEntryPoint,
 	type ImageStudioActions,
@@ -89,7 +88,6 @@ function ImageStudioAgentChat( {
 	}, [] );
 
 	useImageStudioAgentSync( agentChatProps );
-	useVideoResultSync( agentChatProps?.messages, agentConfigProp.agentId );
 
 	const displayMessages = useImageStudioMessageDisplay( agentChatProps?.messages );
 
