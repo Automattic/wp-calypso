@@ -35,15 +35,15 @@ jobs:
       pull-requests: read
     outputs:
       prompt_path: ${{ steps.path.outputs.prompt_path }}
-      pr_ref: ${{ steps.path.outputs.pr_ref }}
     steps:
-      - name: Detect prompt path and PR ref
+      - name: Detect prompt path
         id: path
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.issue.number || github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
         run: |
-          PR_NUMBER="${{ github.event.issue.number || github.event.pull_request.number }}"
-          FILES=$(gh pr view "$PR_NUMBER" --repo "${{ github.repository }}" --json files --jq '.files[].path')
+          FILES=$(gh pr view "$PR_NUMBER" --repo "$REPO" --json files --jq '.files[].path')
           if echo "$FILES" | grep -q '^client/dashboard/'; then
             echo "prompt_path=.github/prompts/dashboard-pr-review.md" >> "$GITHUB_OUTPUT"
           elif echo "$FILES" | grep -q '^client/a8c-for-agencies/'; then
@@ -51,20 +51,11 @@ jobs:
           else
             echo "prompt_path=.github/prompts/general-pr-review.md" >> "$GITHUB_OUTPUT"
           fi
-          # The merge ref does not exist for PRs with merge conflicts. Probe
-          # before emitting; fall back to the head ref so checkout doesn't fail
-          # cryptically downstream.
-          if git ls-remote "https://github.com/${{ github.repository }}" "refs/pull/$PR_NUMBER/merge" | grep -q .; then
-            echo "pr_ref=refs/pull/$PR_NUMBER/merge" >> "$GITHUB_OUTPUT"
-          else
-            echo "pr_ref=refs/pull/$PR_NUMBER/head" >> "$GITHUB_OUTPUT"
-          fi
 
   review:
     needs: detect
     uses: ./.github/workflows/pr-review.yml
     with:
       prompt_path: ${{ needs.detect.outputs.prompt_path }}
-      pr_ref: ${{ needs.detect.outputs.pr_ref }}
     secrets:
       anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}

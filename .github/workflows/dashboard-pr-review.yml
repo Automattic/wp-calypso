@@ -7,7 +7,7 @@ on:
         description: 'PR number to review'
         required: true
 
-  pull_request:
+  pull_request_target:
     types: [opened, ready_for_review]
     paths:
       - 'client/dashboard/**'

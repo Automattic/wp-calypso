@@ -7,11 +7,6 @@ on:
         description: 'Path to the per-area review prompt, relative to repo root'
         required: true
         type: string
-      pr_ref:
-        description: 'Optional PR ref to checkout (e.g., refs/pull/123/merge). If empty, falls back to github.ref. Required when invoked from a comment-triggered caller, since github.ref defaults to the default branch for those events.'
-        required: false
-        type: string
-        default: ''
     secrets:
       anthropic_api_key:
         required: true
@@ -40,10 +35,31 @@ jobs:
       pull-requests: write
       id-token: write
     steps:
-      - name: Checkout repository
+      # Reject fork PRs. pull_request_target fires with secrets in scope, so
+      # this guard is the runtime defence against a fork PR slipping past the
+      # caller's author_association gate. Works for both pull_request_target
+      # callers (head.repo is in the payload) and issue_comment callers
+      # (head.repo fetched via gh).
+      - name: Reject fork PRs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          PR_NUMBER: ${{ github.event.issue.number || github.event.pull_request.number }}
+          BASE_REPO: ${{ github.repository }}
+        run: |
+          if [ -n "$PR_HEAD_REPO" ]; then
+            HEAD_REPO="$PR_HEAD_REPO"
+          else
+            HEAD_REPO=$(gh pr view "$PR_NUMBER" --repo "$BASE_REPO" --json headRepositoryOwner,headRepository --jq '"\(.headRepositoryOwner.login)/\(.headRepository.name)"')
+          fi
+          if [ "$HEAD_REPO" != "$BASE_REPO" ]; then
+            echo "::error::Fork PR rejected. Head repo: $HEAD_REPO, base: $BASE_REPO."
+            exit 1
+          fi
+
+      - name: Checkout repository (default branch only — never PR code)
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
-          ref: ${{ inputs.pr_ref || github.ref }}
           fetch-depth: 0
 
       - name: Run review
