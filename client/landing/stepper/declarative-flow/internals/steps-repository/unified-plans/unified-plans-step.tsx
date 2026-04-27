@@ -424,7 +424,7 @@ function UnifiedPlansStep( {
 		}
 
 		if ( intent === 'plans-woo-hosting-solutions' ) {
-			return translate( 'Pick a plan for your store.' );
+			return translate( 'Pick a plan for your store' );
 		}
 
 		return translate( 'There’s a plan for you' );
