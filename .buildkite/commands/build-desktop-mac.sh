@@ -2,11 +2,15 @@
 
 set -euo pipefail
 
-# Diagnostic: confirm pipeline-level `env:` vars reach the script. The
-# previous attempt set them inline in `command:` and they didn't arrive
-# in the VM shell. Remove once the EEXIST hard-link issue is resolved.
-echo "--- env propagation check ---"
-env | sort | grep -E '^(CI|CONFIG_ENV|USE_HARD_LINKS|ELECTRON_BUILDER_ARGS|IMAGE_ID|COREPACK|PLAYWRIGHT_SKIP_DOWNLOAD|SKIP_TSC)=' || echo "(none of the expected vars are exported)"
+# Pipeline-level `env:` vars don't currently propagate to the shell on
+# the a8c BK mac agents (only CI=true arrives). Export the runtime vars
+# here so the build can read them.
+export CONFIG_ENV=release
+export USE_HARD_LINKS=false
+export ELECTRON_BUILDER_ARGS='-c.mac.target=dir'
+export SKIP_TSC=true
+export PLAYWRIGHT_SKIP_DOWNLOAD=true
+export COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 
 cd desktop
 corepack enable
