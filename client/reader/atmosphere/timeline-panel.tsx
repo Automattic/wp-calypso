@@ -1,8 +1,9 @@
 import { useTimelineInfiniteQuery } from '@automattic/api-queries';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { SocialFeedList, SocialPostCard } from 'calypso/reader/social';
+import { SocialAnalyticsProvider } from 'calypso/reader/social/components/post-card/analytics-context';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import type { AtmosphereConnection, AtmosphereFeedItem } from '@automattic/api-core';
 
@@ -64,23 +65,38 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 		refetch();
 	};
 
+	const onClickAnalytics = useCallback(
+		( event: string, props: Record< string, unknown > ) => {
+			dispatch( recordReaderTracksEvent( event, props ) );
+		},
+		[ dispatch ]
+	);
+
 	return (
-		<SocialFeedList< AtmosphereFeedItem >
-			items={ items }
-			isPending={ isPending }
-			isError={ isError }
-			error={ error ?? null }
-			hasNextPage={ Boolean( hasNextPage ) }
-			isFetchingNextPage={ isFetchingNextPage }
-			fetchNextPage={ fetchNextPage }
-			refetch={ handleRetry }
-			renderItem={ ( post ) => <SocialPostCard post={ post } variant="default" /> }
-			itemKey={ ( post ) => post.uri }
-			emptyTitle={ translate( "You're all caught up." ) }
-			emptyLine={ translate( 'Follow some accounts on Bluesky to see posts here.' ) }
-			emptyActionLabel={ translate( 'Browse Bluesky' ) }
-			emptyActionURL="https://bsky.app"
-		/>
+		<SocialAnalyticsProvider
+			value={ {
+				source: 'atmosphere',
+				connectionId: connection.id,
+				onClick: onClickAnalytics,
+			} }
+		>
+			<SocialFeedList< AtmosphereFeedItem >
+				items={ items }
+				isPending={ isPending }
+				isError={ isError }
+				error={ error ?? null }
+				hasNextPage={ Boolean( hasNextPage ) }
+				isFetchingNextPage={ isFetchingNextPage }
+				fetchNextPage={ fetchNextPage }
+				refetch={ handleRetry }
+				renderItem={ ( post ) => <SocialPostCard post={ post } variant="default" /> }
+				itemKey={ ( post ) => post.uri }
+				emptyTitle={ translate( "You're all caught up." ) }
+				emptyLine={ translate( 'Follow some accounts on Bluesky to see posts here.' ) }
+				emptyActionLabel={ translate( 'Browse Bluesky' ) }
+				emptyActionURL="https://bsky.app"
+			/>
+		</SocialAnalyticsProvider>
 	);
 }
 

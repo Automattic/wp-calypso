@@ -154,4 +154,101 @@ describe( 'TimelinePanel', () => {
 			expect.objectContaining( { connection_id: 42, error_kind: 'upstream_unavailable' } )
 		);
 	} );
+
+	it( 'fires post_clicked when the timestamp anchor is clicked', async () => {
+		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		nock( BASE )
+			.get( PATH )
+			.query( {} )
+			.reply( 200, { feed: [ makePost( 'at://abc', 'hello' ) ], cursor: null } );
+		const user = userEvent.setup();
+		renderWithProvider( <TimelinePanel connection={ connection } />, {
+			queryClient: makeQueryClient(),
+		} );
+		await waitFor( () => expect( screen.getByText( 'hello' ) ).toBeVisible() );
+		const link = screen
+			.getAllByRole( 'link' )
+			.find(
+				( a ) => a.getAttribute( 'href' ) === 'https://bsky.app/profile/alice.bsky.social/post/x'
+			);
+		expect( link ).toBeDefined();
+		await user.click( link as HTMLElement );
+		expect( spy ).toHaveBeenCalledWith(
+			'calypso_reader_atmosphere_timeline_post_clicked',
+			expect.objectContaining( { connection_id: 42, post_uri: 'at://abc' } )
+		);
+	} );
+
+	it( 'fires author_clicked when the author anchor is clicked', async () => {
+		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		nock( BASE )
+			.get( PATH )
+			.query( {} )
+			.reply( 200, { feed: [ makePost( 'at://abc', 'hi' ) ], cursor: null } );
+		const user = userEvent.setup();
+		renderWithProvider( <TimelinePanel connection={ connection } />, {
+			queryClient: makeQueryClient(),
+		} );
+		await waitFor( () => expect( screen.getByText( 'hi' ) ).toBeVisible() );
+		await user.click( screen.getByRole( 'link', { name: /alice/i } ) );
+		expect( spy ).toHaveBeenCalledWith(
+			'calypso_reader_atmosphere_timeline_author_clicked',
+			expect.objectContaining( { connection_id: 42, author_handle: 'alice.bsky.social' } )
+		);
+	} );
+
+	it( 'fires external_clicked when an external embed is clicked', async () => {
+		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		const post = makePost( 'at://abc', 'with link' );
+		( post as unknown as { embed: unknown } ).embed = {
+			type: 'external',
+			uri: 'https://example.com/article',
+			title: 'T',
+			description: 'D',
+			thumb: null,
+		};
+		nock( BASE )
+			.get( PATH )
+			.query( {} )
+			.reply( 200, { feed: [ post ], cursor: null } );
+		const user = userEvent.setup();
+		renderWithProvider( <TimelinePanel connection={ connection } />, {
+			queryClient: makeQueryClient(),
+		} );
+		await waitFor( () => expect( screen.getByText( 'T' ) ).toBeVisible() );
+		await user.click( screen.getByText( 'T' ) );
+		expect( spy ).toHaveBeenCalledWith(
+			'calypso_reader_atmosphere_timeline_external_clicked',
+			expect.objectContaining( {
+				connection_id: 42,
+				post_uri: 'at://abc',
+				external_uri: 'https://example.com/article',
+			} )
+		);
+	} );
+
+	it( 'fires quote_clicked when a live quote embed is clicked', async () => {
+		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		const inner = makePost( 'at://quoted', 'inner text' );
+		const outer = makePost( 'at://abc', 'outer' );
+		( outer as unknown as { embed: unknown } ).embed = { type: 'quote', post: inner };
+		nock( BASE )
+			.get( PATH )
+			.query( {} )
+			.reply( 200, { feed: [ outer ], cursor: null } );
+		const user = userEvent.setup();
+		renderWithProvider( <TimelinePanel connection={ connection } />, {
+			queryClient: makeQueryClient(),
+		} );
+		await waitFor( () => expect( screen.getByText( 'inner text' ) ).toBeVisible() );
+		await user.click( screen.getByText( 'inner text' ) );
+		expect( spy ).toHaveBeenCalledWith(
+			'calypso_reader_atmosphere_timeline_quote_clicked',
+			expect.objectContaining( {
+				connection_id: 42,
+				parent_uri: 'at://abc',
+				quoted_uri: 'at://quoted',
+			} )
+		);
+	} );
 } );

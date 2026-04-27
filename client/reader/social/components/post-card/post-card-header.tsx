@@ -3,6 +3,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { useSocialAnalytics } from './analytics-context';
 import type { AtmosphereFeedItem } from '@automattic/api-core';
 
 interface PostCardHeaderProps {
@@ -12,9 +13,21 @@ interface PostCardHeaderProps {
 
 export function PostCardHeader( { post, variant }: PostCardHeaderProps ) {
 	const translate = useTranslate();
+	const analytics = useSocialAnalytics();
 	const displayName = post.author.display_name || post.author.handle;
 	const profileUrl = `https://bsky.app/profile/${ post.author.handle }`;
 	const avatarSize = variant === 'compact' ? 24 : 40;
+
+	const handleAuthorClick = () => {
+		if ( ! analytics ) {
+			return;
+		}
+		analytics.onClick( `calypso_reader_${ analytics.source }_timeline_author_clicked`, {
+			connection_id: analytics.connectionId,
+			author_did: post.author.did,
+			author_handle: post.author.handle,
+		} );
+	};
 
 	return (
 		<VStack spacing={ 1 } className="social-post-card-header">
@@ -38,6 +51,7 @@ export function PostCardHeader( { post, variant }: PostCardHeaderProps ) {
 					href={ profileUrl }
 					target="_blank"
 					rel="noopener noreferrer"
+					onClick={ handleAuthorClick }
 				>
 					{ post.author.avatar ? (
 						<img
