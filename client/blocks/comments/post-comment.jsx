@@ -26,6 +26,7 @@ import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selec
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 import CommentActions from './comment-actions';
+import { CommentYearsOfServiceBadge } from './comment-years-of-service-badge';
 import PostCommentForm from './form';
 import PostCommentContent from './post-comment-content';
 import PostCommentWithError from './post-comment-with-error';
@@ -466,6 +467,9 @@ class PostComment extends PureComponent {
 						commentId,
 						className: 'comments__comment-username',
 					} ) }
+					{ comment.author?.wpcom_login && (
+						<CommentYearsOfServiceBadge authorLogin={ comment.author.wpcom_login } />
+					) }
 					{ this.props.showNestingReplyArrow && parentAuthorName && (
 						<span className="comments__comment-respondee">
 							<Gridicon icon="chevron-right" size={ 16 } />
