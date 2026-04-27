@@ -35,6 +35,15 @@ jobs:
       pull-requests: write
       id-token: write
     steps:
+      - name: Validate area input
+        env:
+          AREA: ${{ inputs.area }}
+        run: |
+          case "$AREA" in
+            dashboard|a4a|general) ;;
+            *) echo "::error::Unknown area: '$AREA'. Must be one of: dashboard, a4a, general."; exit 1 ;;
+          esac
+
       # Fork-reject. With pull_request, GitHub already strips secrets from
       # fork PRs, but the issue_comment trigger on pr-review-on-ping.yml
       # fires from the default branch with secrets in scope, so a fork PR
