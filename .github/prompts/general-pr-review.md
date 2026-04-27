@@ -58,13 +58,13 @@ Message: `<package> is consumed by <list apps>. Verify the change is compatible.
 
 ## Output Format
 
-- Be concise. Only comment if a trigger matched.
+- Be concise. Only post inline comments for issues where a trigger matched.
 - Each comment shape: `**Issue:** <one-line problem>` then `**Suggestion:** <fix>`.
 - DO NOT comment on lines that are not related to the guidelines listed above.
 - Don't nitpick minor style issues unless they violate the documented guidelines.
 - Cite the source documentation as a clickable link when AGENTS.md or a project README covers the issue (`https://github.com/Automattic/wp-calypso/blob/trunk/<path>`); blockquote the relevant sentence. For security categories not in repo docs, name the axis from this prompt and add a one-line rationale; do not fabricate doc URLs.
 - DO NOT use checkboxes, todo lists, or progress indicators.
 - If you read prior bot/human comments, post a single summary comment classifying them: `RESOLVED:` / `STILL OUTSTANDING:` / `NEW:`. Post inline only for NEW.
-- If no triggers matched, post: `AI Code Review: no issues found.`
+- Always post a single summary issue-comment on the PR. If no issues were found, post: `AI Code Review: no issues found.`
 
 Remember: Calypso is large and shared. Prioritize correctness, security, and cross-client blast radius over style. Flag intent, not taste.
