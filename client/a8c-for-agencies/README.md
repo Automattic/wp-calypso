@@ -9,3 +9,6 @@ You can try out the front-end of A4A on [https://agencies.automattic.com/](https
 3. Add `127.0.0.1 agencies.localhost` to your local `hosts` file.
 4. Execute `yarn` and then `yarn start-a8c-for-agencies` from the root directory of the repository.
 5. Open [`agencies.localhost:3000`](http://agencies.localhost:3000/) in your browser.
+
+<!-- ai-review-smoke-test: a4a-pr-review.yml path trigger -->
+

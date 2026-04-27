@@ -50,3 +50,6 @@ The new Hosting Dashboard has stricter guidelines (see above) and ESlint rules, 
 Shared components:
 
 - `client/dashboard/sites/add-new-site/` - Add new site dropdown/modal content.
+
+<!-- ai-review-smoke-test: dashboard-pr-review.yml path trigger -->
+
