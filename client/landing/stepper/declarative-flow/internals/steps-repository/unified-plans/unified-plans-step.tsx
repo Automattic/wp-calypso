@@ -423,6 +423,10 @@ function UnifiedPlansStep( {
 			return translate( 'Select a plan to launch your store' );
 		}
 
+		if ( intent === 'plans-woo-hosting-solutions' ) {
+			return translate( 'Pick a plan for your store.' );
+		}
+
 		return translate( 'There’s a plan for you' );
 	};
 
@@ -495,6 +499,12 @@ function UnifiedPlansStep( {
 				return translate( 'Your free trial ends soon — select a plan to keep your online store.' );
 			}
 			return translate( 'Choose the plan that fits your business.' );
+		}
+
+		if ( intent === 'plans-woo-hosting-solutions' ) {
+			return translate(
+				'All plans come with WooCommerce. Pick the level of support and features you want.'
+			);
 		}
 
 		if ( useEmailOnboardingSubheader ) {
