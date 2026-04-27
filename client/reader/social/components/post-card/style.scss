@@ -1,0 +1,19 @@
+.social-post-card-link {
+	position: relative;
+
+	.social-post-card-link__timestamp {
+		display: inline-flex;
+		align-items: center;
+		gap: 4px;
+		text-decoration: none;
+		font-size: 0.85em;
+		color: var(--studio-gray-50);
+
+		&::after {
+			content: '';
+			position: absolute;
+			inset: 0;
+			z-index: 0;
+		}
+	}
+}
