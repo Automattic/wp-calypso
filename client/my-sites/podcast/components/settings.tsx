@@ -327,9 +327,7 @@ function Settings() {
 							<Text as="label">{ translate( 'Cover image' ) }</Text>
 							<button
 								type="button"
-								className={ `podcast__cover-preview${
-									hasCover ? ' has-image' : ' is-blank'
-								}` }
+								className={ `podcast__cover-preview${ hasCover ? ' has-image' : ' is-blank' }` }
 								aria-label={
 									hasCover
 										? ( translate( 'Change cover image' ) as string )

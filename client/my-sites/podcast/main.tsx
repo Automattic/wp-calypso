@@ -61,9 +61,11 @@ const PodcastMain = ( { section, path }: PodcastMainProps ) => {
 	} );
 	const pathSuffix = siteSlug ? '/' + siteSlug : '';
 
-	// Prototype: feature is off by default so the welcome is the first thing
-	// people see. Flipping this on reveals the tabbed experience.
-	const [ podcastingOn, setPodcastingOn ] = useState( false );
+	// Welcome shows when podcasting is not set up on this site. The override
+	// lets the prototype Enable/Disable buttons flip the view without touching
+	// the real podcasting_category_id setting; null = follow real setup state.
+	const [ override, setOverride ] = useState< boolean | null >( null );
+	const podcastingOn = override ?? isSetUp;
 	const [ planTier, setPlanTier ] = useState< PlanTier >( 'free' );
 	const hasSectionInRoute = isValidSection( section );
 	const showTabs = podcastingOn || hasSectionInRoute;
@@ -140,7 +142,7 @@ const PodcastMain = ( { section, path }: PodcastMainProps ) => {
 								variant="secondary"
 								isDestructive
 								onClick={ () => {
-									setPodcastingOn( false );
+									setOverride( false );
 									if ( hasSectionInRoute ) {
 										page.show( '/podcast' + pathSuffix );
 									}
@@ -158,7 +160,7 @@ const PodcastMain = ( { section, path }: PodcastMainProps ) => {
 			<div className="podcast__tab-content">
 				<Welcome
 					onEnable={ () => {
-						setPodcastingOn( true );
+						setOverride( true );
 						page.show( '/podcast/settings' + pathSuffix );
 					} }
 					planTier={ planTier }
