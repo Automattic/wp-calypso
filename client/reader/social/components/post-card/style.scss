@@ -16,4 +16,24 @@
 			z-index: 0;
 		}
 	}
+
+	.social-post-card-link__timestamp--inert {
+		// Compact-mode timestamp inside a quoted card: plain text, no overlay.
+		&::after {
+			content: none;
+		}
+	}
+
+	// Inner anchors must stay clickable above the ::after card-link overlay.
+	// Without this, the absolutely-positioned overlay (z-index: 0, covering
+	// the entire wrapper) would hit-test above sibling inline anchors and
+	// swallow author_clicked / external_clicked / quote_clicked / per-image
+	// clicks, sending every click to post_clicked.
+	.social-post-card-header__author,
+	.social-post-card-embed-external,
+	.social-post-card-embed-quote-link,
+	.social-post-card-embed-images__item {
+		position: relative;
+		z-index: 1;
+	}
 }

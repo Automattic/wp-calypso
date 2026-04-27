@@ -72,6 +72,12 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 		[ dispatch ]
 	);
 
+	const renderItem = useCallback(
+		( post: AtmosphereFeedItem ) => <SocialPostCard post={ post } variant="default" />,
+		[]
+	);
+	const itemKey = useCallback( ( post: AtmosphereFeedItem ) => post.uri, [] );
+
 	return (
 		<SocialAnalyticsProvider
 			value={ {
@@ -89,8 +95,8 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 				isFetchingNextPage={ isFetchingNextPage }
 				fetchNextPage={ fetchNextPage }
 				refetch={ handleRetry }
-				renderItem={ ( post ) => <SocialPostCard post={ post } variant="default" /> }
-				itemKey={ ( post ) => post.uri }
+				renderItem={ renderItem }
+				itemKey={ itemKey }
 				emptyTitle={ translate( "You're all caught up." ) }
 				emptyLine={ translate( 'Follow some accounts on Bluesky to see posts here.' ) }
 				emptyActionLabel={ translate( 'Browse Bluesky' ) }

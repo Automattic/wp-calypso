@@ -53,6 +53,11 @@ describe( 'SocialPostCard', () => {
 		expect( screen.queryByLabelText( /likes/i ) ).toBeNull();
 	} );
 
+	it( 'compact variant renders no anchors so consumers can wrap it in their own', () => {
+		const { container } = render( <SocialPostCard post={ post } variant="compact" /> );
+		expect( container.querySelectorAll( 'a' ) ).toHaveLength( 0 );
+	} );
+
 	it( 'renders embed when present in default variant', () => {
 		render(
 			<SocialPostCard

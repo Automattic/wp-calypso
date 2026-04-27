@@ -5,6 +5,7 @@ import {
 import { useTranslate } from 'i18n-calypso';
 import { useSocialAnalytics } from './analytics-context';
 import type { AtmosphereFeedItem } from '@automattic/api-core';
+import type { ReactNode } from 'react';
 
 interface PostCardHeaderProps {
 	post: AtmosphereFeedItem;
@@ -14,9 +15,10 @@ interface PostCardHeaderProps {
 export function PostCardHeader( { post, variant }: PostCardHeaderProps ) {
 	const translate = useTranslate();
 	const analytics = useSocialAnalytics();
+	const isCompact = variant === 'compact';
 	const displayName = post.author.display_name || post.author.handle;
 	const profileUrl = `https://bsky.app/profile/${ post.author.handle }`;
-	const avatarSize = variant === 'compact' ? 24 : 40;
+	const avatarSize = isCompact ? 24 : 40;
 
 	const handleAuthorClick = () => {
 		if ( ! analytics ) {
@@ -29,51 +31,65 @@ export function PostCardHeader( { post, variant }: PostCardHeaderProps ) {
 		} );
 	};
 
+	const authorBody: ReactNode = (
+		<>
+			{ post.author.avatar ? (
+				<img
+					src={ post.author.avatar }
+					alt={ post.author.handle }
+					width={ avatarSize }
+					height={ avatarSize }
+					loading="lazy"
+					className="social-post-card-header__avatar"
+				/>
+			) : (
+				<div
+					className="social-post-card-header__avatar social-post-card-header__avatar--placeholder"
+					style={ { width: avatarSize, height: avatarSize } }
+					aria-hidden="true"
+				/>
+			) }
+			<VStack spacing={ 0 }>
+				<span className="social-post-card-header__display-name">{ displayName }</span>
+				<span className="social-post-card-header__handle">@{ post.author.handle }</span>
+			</VStack>
+		</>
+	);
+
 	return (
 		<VStack spacing={ 1 } className="social-post-card-header">
 			{ post.reason && post.reason.type === 'repost' && (
 				<div className="social-post-card-header__reason">
-					{ translate( '🔁 Reposted by %(name)s', {
+					<span aria-hidden="true">🔁 </span>
+					{ translate( 'Reposted by %(name)s', {
 						args: { name: post.reason.by.display_name || post.reason.by.handle },
 					} ) }
 				</div>
 			) }
 			{ post.reply_parent && (
 				<div className="social-post-card-header__reply-context">
-					{ translate( '↩ Replying to @%(handle)s', {
+					<span aria-hidden="true">↩ </span>
+					{ translate( 'Replying to @%(handle)s', {
 						args: { handle: post.reply_parent.author.handle },
 					} ) }
 				</div>
 			) }
 			<HStack alignment="center" spacing={ 2 } justify="flex-start">
-				<a
-					className="social-post-card-header__author"
-					href={ profileUrl }
-					target="_blank"
-					rel="noopener noreferrer"
-					onClick={ handleAuthorClick }
-				>
-					{ post.author.avatar ? (
-						<img
-							src={ post.author.avatar }
-							alt={ post.author.handle }
-							width={ avatarSize }
-							height={ avatarSize }
-							loading="lazy"
-							className="social-post-card-header__avatar"
-						/>
-					) : (
-						<div
-							className="social-post-card-header__avatar social-post-card-header__avatar--placeholder"
-							style={ { width: avatarSize, height: avatarSize } }
-							aria-hidden="true"
-						/>
-					) }
-					<VStack spacing={ 0 }>
-						<span className="social-post-card-header__display-name">{ displayName }</span>
-						<span className="social-post-card-header__handle">@{ post.author.handle }</span>
-					</VStack>
-				</a>
+				{ isCompact ? (
+					<div className="social-post-card-header__author social-post-card-header__author--inert">
+						{ authorBody }
+					</div>
+				) : (
+					<a
+						className="social-post-card-header__author"
+						href={ profileUrl }
+						target="_blank"
+						rel="noopener noreferrer"
+						onClick={ handleAuthorClick }
+					>
+						{ authorBody }
+					</a>
+				) }
 			</HStack>
 		</VStack>
 	);
