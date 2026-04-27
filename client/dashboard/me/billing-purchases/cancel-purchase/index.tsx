@@ -341,7 +341,8 @@ export default function CancelPurchase() {
 	// swaps intent (e.g. navigating from Cancel to Remove on Purchase Settings).
 	// Keying the inner component on intent lets React remount it, resetting all
 	// local state to its initial values.
-	const intent = getCancelIntentFromSearch( useSearch( { from: cancelPurchaseRoute.fullPath } ) );
+	const search = useSearch( { from: cancelPurchaseRoute.fullPath } );
+	const intent = getCancelIntentFromSearch( search );
 	return <CancelPurchaseInner key={ intent ?? 'fallback' } />;
 }
 
@@ -487,7 +488,8 @@ function CancelPurchaseInner() {
 	// Settings (behind the split cancel/remove experiment). When present,
 	// it drives both the screen variant (copy) and the backend mutation.
 	// When absent (flag-off, old deep link), fall back to today's flowType heuristic.
-	const intent = getCancelIntentFromSearch( useSearch( { from: cancelPurchaseRoute.fullPath } ) );
+	const cancelSearch = useSearch( { from: cancelPurchaseRoute.fullPath } );
+	const intent = getCancelIntentFromSearch( cancelSearch );
 	const displayVariant = getDisplayVariant( intent, flowType );
 	const mutationFlowType = getMutationFlowType( intent, purchase );
 
@@ -870,13 +872,13 @@ function CancelPurchaseInner() {
 		}
 	};
 
-	// Fire-on-confirm applies to the URL-intent Cancel path only — the user
-	// clicked "Cancel" on Purchase Settings and we want their cancellation to
-	// settle before the survey appears (so the heading can read "Cancellation
-	// confirmed"). Remove (and the no-intent legacy deep link) defer the
-	// mutation to onSurveyComplete, matching trunk's submit-handlers.
+	// Fire-on-confirm applies to the URL-intent Cancel and Auto-renew paths —
+	// the user clicked "Cancel" on Purchase Settings or toggled off auto-renew,
+	// and we want the mutation to settle before the survey appears (so the
+	// heading can read "Cancellation confirmed" / "Auto-renew disabled"). Remove
+	// (and the no-intent legacy deep link) defer the mutation to onSurveyComplete.
 	const shouldFireMutationOnConfirm = (): boolean =>
-		isSplitCancelRemoveEnabled && intent === 'cancel';
+		isSplitCancelRemoveEnabled && ( intent === 'cancel' || intent === 'auto-renew' );
 
 	const onCancellationComplete = () => {
 		recordTracksEvent( 'calypso_purchases_cancel_form_start', {
@@ -1368,13 +1370,15 @@ function CancelPurchaseInner() {
 			return false;
 		}
 
-		// Under the split flag, if intent=cancel but auto-renew is already off
-		// (e.g. page refresh after cancel-autorenew mutation), redirect to
+		// Under the split flag, if intent=cancel/auto-renew but auto-renew is
+		// already off (e.g. page refresh after the mutation), redirect to
 		// Purchase Settings instead of re-showing the confirmation screen.
 		// Bypass when surveyShown is true — the post-mutation survey should
 		// still render within the same session.
 		const isAlreadyCancelledForSplitFlag =
-			isSplitCancelRemoveEnabled && intent === 'cancel' && ! purchase.is_auto_renew_enabled;
+			isSplitCancelRemoveEnabled &&
+			( intent === 'cancel' || intent === 'auto-renew' ) &&
+			! purchase.is_auto_renew_enabled;
 
 		if ( isAlreadyCancelledForSplitFlag && ! state.surveyShown ) {
 			return false;
@@ -1575,7 +1579,7 @@ function CancelPurchaseInner() {
 			cancelBundledDomain={ state.cancelBundledDomain }
 			cancellationInProgress={ state.isLoading || isMutationPending }
 			cancellationOffer={ cancellationOffer }
-			intent={ intent }
+			intent={ displayVariant === 'auto-renew' ? 'auto-renew' : intent }
 			clickNext={ clickNext }
 			closeDialog={ closeDialog }
 			disableButtons={ state.isLoading || isMutationPending }

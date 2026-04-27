@@ -65,14 +65,20 @@ function CancellationReason( {
 		);
 	};
 
+	const getReasonLabel = () => {
+		if ( intent === 'remove' ) {
+			return __( 'Why would you like to remove?' );
+		}
+		if ( intent === 'auto-renew' ) {
+			return __( 'Why would you like to turn off auto-renew?' );
+		}
+		return __( 'Why would you like to cancel?' );
+	};
+
 	return (
 		<VStack spacing={ 6 }>
 			<RadioControl
-				label={
-					intent === 'remove'
-						? __( 'Why would you like to remove?' )
-						: __( 'Why would you like to cancel?' )
-				}
+				label={ getReasonLabel() }
 				selected={ value }
 				options={ reasons.map( toSelectOption ) }
 				onChange={ ( val ) => {

@@ -341,7 +341,7 @@ function StepButtons( {
 				<Button variant="primary" disabled={ ! canGoNext || isCancelling } onClick={ clickNext }>
 					{ __( 'Continue' ) }
 				</Button>
-				{ intent === 'cancel' && (
+				{ ( intent === 'cancel' || intent === 'auto-renew' ) && (
 					<Button
 						variant="tertiary"
 						isBusy={ isCancelling }
@@ -440,9 +440,9 @@ function StepButtons( {
 				onClick={ onSubmit }
 				variant={ variant }
 			>
-				{ intent === 'cancel' ? __( 'Complete' ) : __( 'Continue' ) }
+				{ intent === 'cancel' || intent === 'auto-renew' ? __( 'Complete' ) : __( 'Continue' ) }
 			</Button>
-			{ intent === 'cancel' && (
+			{ ( intent === 'cancel' || intent === 'auto-renew' ) && (
 				<Button
 					variant="tertiary"
 					isBusy={ isCancelling }

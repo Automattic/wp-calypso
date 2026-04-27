@@ -48,7 +48,7 @@ import type { Purchase } from '@automattic/api-core';
 export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 	const { user } = useAuth();
 	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
-	const { refunded, upgraded, cancelled } = purchaseSettingsRoute.useSearch();
+	const { refunded, upgraded, cancelled, intent } = purchaseSettingsRoute.useSearch();
 	const navigate = purchaseSettingsRoute.useNavigate();
 	// Show the transient cancelled success notice once after a cancel redirects
 	// here. The URL search param is cleared immediately so that a refresh / back
@@ -58,7 +58,7 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 		if ( cancelled ) {
 			navigate( {
 				search: ( prev: Record< string, unknown > ) => {
-					const { cancelled: _cancelled, ...rest } = prev;
+					const { cancelled: _cancelled, intent: _intent, ...rest } = prev;
 					return rest;
 				},
 				replace: true,
@@ -115,6 +115,7 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 		return (
 			<PurchaseCancelledNotice
 				purchase={ purchase }
+				intent={ intent }
 				onClose={ () => setShowCancelledNotice( false ) }
 			/>
 		);
