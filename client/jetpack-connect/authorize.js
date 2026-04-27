@@ -1322,7 +1322,7 @@ export class JetpackAuthorize extends Component {
 						{ isFromJetpackConnector && connectorBranding && (
 							<BrandHeader
 								logo={ connectorBranding.logo }
-								logoAlt={ connectorBranding.title }
+								logoAlt=""
 								title={ connectorBranding.title }
 								description={ connectorBranding.subtitle }
 							/>

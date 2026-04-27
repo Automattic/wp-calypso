@@ -1,4 +1,4 @@
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { Icon, chartBar, next, share } from '@wordpress/icons';
 import jetpackConnectA8cLogo from './images/jetpack-connect-a8c.svg';
 import jetpackConnectAllLogo from './images/jetpack-connect-all.svg';
@@ -22,8 +22,11 @@ const DEFAULT_PERMISSIONS = [
 
 const DEFAULT_PERMISSIONS_TITLE = ( { siteURL } = {} ) =>
 	siteURL
-		? /* translators: %(siteURL)s is the site's hostname (no protocol). */
-		  __( 'This connection on %(siteURL)s allows Jetpack to:' ).replace( '%(siteURL)s', siteURL )
+		? sprintf(
+				/* translators: %(siteURL)s is the site's hostname (no protocol). */
+				__( 'This connection on %(siteURL)s allows Jetpack to:' ),
+				{ siteURL }
+		  )
 		: __( 'This connection allows Jetpack to:' );
 
 /**
