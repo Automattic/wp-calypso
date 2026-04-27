@@ -24,6 +24,7 @@ import { useImageUrl } from '../hooks/use-image-url';
 import { useRevertToOriginal } from '../hooks/use-revert-to-original';
 import { useSaveShortcut } from '../hooks/use-save-shortcut';
 import { useUnsavedChangesConfirmation } from '../hooks/use-unsaved-changes-confirmation';
+import { useVideoClipSuggestions } from '../hooks/use-video-clip-suggestions';
 import { useVideoResultSync } from '../hooks/use-video-result-sync';
 import {
 	ImageStudioEntryPoint,
@@ -96,14 +97,26 @@ function ImageStudioAgentChat( {
 			? __( 'Describe what you want to add, remove, or replace…', __i18n_text_domain__ )
 			: __( 'Describe your image', __i18n_text_domain__ );
 
-	const { handleSuggestionClick, isLoadingSuggestions, abortSuggestionsLoading } =
-		useImageStudioSuggestions( {
-			registerSuggestions: agentChatProps.registerSuggestions,
-			clearSuggestions: agentChatProps.clearSuggestions,
-			messages: displayMessages,
-			mode,
-			inputValue,
-		} );
+	const imageSuggestions = useImageStudioSuggestions( {
+		registerSuggestions: agentChatProps.registerSuggestions,
+		clearSuggestions: agentChatProps.clearSuggestions,
+		messages: displayMessages,
+		mode,
+		inputValue,
+		disabled: isVideoMode,
+	} );
+
+	const videoClipSuggestions = useVideoClipSuggestions( {
+		registerSuggestions: agentChatProps.registerSuggestions,
+		clearSuggestions: agentChatProps.clearSuggestions,
+		messages: displayMessages,
+		mode,
+		entryPoint,
+	} );
+
+	const { handleSuggestionClick, isLoadingSuggestions, abortSuggestionsLoading } = isVideoMode
+		? videoClipSuggestions
+		: imageSuggestions;
 
 	const handleSubmit = useCallback(
 		async ( message: string ) => {

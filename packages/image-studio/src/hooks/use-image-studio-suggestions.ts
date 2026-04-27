@@ -2,7 +2,7 @@ import { type Suggestion } from '@automattic/agenttic-client';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { store as editorStore } from '@wordpress/editor';
 import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
-import { ImageStudioEntryPoint, store as imageStudioStore } from '../store';
+import { store as imageStudioStore } from '../store';
 import { ImageStudioMode } from '../types';
 import { formatSuggestionIds } from '../utils/agenttic-tracking';
 import {
@@ -26,26 +26,16 @@ interface AsyncSuggestionsConfig {
 /**
  * Get async suggestions config based on editor context.
  * Returns null if no async loading is needed for this context.
+ *
+ * Note: the feature-clip (video) flow is handled by the dedicated
+ * `useVideoClipSuggestions` hook, not by this one.
  * @param isBlockEditor - Whether we're in a block editor context.
  * @param postId        - The current post ID (if available).
- * @param entryPoint    - How the Image Studio modal was opened.
  */
 function getAsyncSuggestionsConfig(
 	isBlockEditor: boolean,
-	postId: string | number | null,
-	entryPoint: ImageStudioEntryPoint | null
+	postId: string | number | null
 ): AsyncSuggestionsConfig | null {
-	// Feature-clip flow: tone & style live in the dropdowns, so chips must be
-	// pure CONTENT distilled from the post body — no cinematography or tone
-	// language baked in.
-	if ( entryPoint === ImageStudioEntryPoint.PostEditorFeatureClip ) {
-		return {
-			prompt:
-				'You will receive a WordPress post via the page context [[client.gutenberg_page.simple_structure]]. Distill that post content into 3 short, evocative video-clip prompts a user could click to start a generation. Each prompt MUST: be a single sentence, be 120 characters or fewer, name a concrete visual subject from the post, add one sensory detail, and hint at motion. Each prompt MUST NOT: include cinematography terms (cinematic, documentary, aerial, macro, drone, slow-motion, time-lapse, etc.), tone words (informative, promotional, educational, salesy, etc.), camera/lens jargon, or on-screen text. Style and tone are already chosen elsewhere — chips are content only.',
-			cacheKey: postId ? `feature-clip-post-${ postId }` : null,
-		};
-	}
-
 	if ( isBlockEditor ) {
 		return {
 			prompt:
@@ -85,6 +75,10 @@ interface UseImageStudioSuggestionsParams {
 	mode?: ImageStudioMode;
 	// Current input value (for detecting when input is cleared to refresh suggestions).
 	inputValue?: string;
+	// When true, the hook becomes a no-op so a sibling hook (e.g. the
+	// video-clip suggestions hook) can own the suggestions surface without
+	// fighting over registerSuggestions calls.
+	disabled?: boolean;
 }
 
 interface UseImageStudioSuggestionsReturn {
@@ -111,6 +105,7 @@ interface UseImageStudioSuggestionsReturn {
  * @param params.messages            - Array of chat messages.
  * @param params.mode                - Current image studio mode (edit or generate).
  * @param params.inputValue          - Current input value (triggers refresh when cleared).
+ * @param params.disabled            - When true, the hook short-circuits so a sibling hook can own the suggestions surface.
  * @returns Object containing handlers and loading state.
  */
 export function useImageStudioSuggestions( {
@@ -119,6 +114,7 @@ export function useImageStudioSuggestions( {
 	messages,
 	mode,
 	inputValue,
+	disabled = false,
 }: UseImageStudioSuggestionsParams ): UseImageStudioSuggestionsReturn {
 	// Track previous input value for detecting when input is cleared
 	const prevInputValueRef = useRef< string | undefined >( undefined );
@@ -142,7 +138,7 @@ export function useImageStudioSuggestions( {
 	}, [ inputValue ] );
 
 	// Get current state from the image studio store and editor store
-	const { suggestionState, postId, entryPoint } = useSelect( ( storeSelect ) => {
+	const { suggestionState, postId } = useSelect( ( storeSelect ) => {
 		let currentPostId: string | number | null = null;
 		try {
 			currentPostId = storeSelect( editorStore )?.getCurrentPostId?.() ?? null;
@@ -150,15 +146,9 @@ export function useImageStudioSuggestions( {
 			// eslint-disable-next-line no-console
 			console.debug( '[Image Studio] Failed to get current post ID from editor store.' );
 		}
-		// Multi-bundle defense: an older store registration may not export
-		// getEntryPoint. Fall back to null and the existing image branch.
-		const imageStudioSelectors = storeSelect( imageStudioStore ) as unknown as {
-			getEntryPoint?: () => ImageStudioEntryPoint | null;
-		};
 		return {
 			suggestionState: getSuggestionState( storeSelect( imageStudioStore ) ),
 			postId: currentPostId,
-			entryPoint: imageStudioSelectors.getEntryPoint?.() ?? null,
 		};
 	}, [] );
 
@@ -169,7 +159,7 @@ export function useImageStudioSuggestions( {
 	const isBlockEditor = isPostEditor || isSiteEditor;
 
 	// Get async suggestions config for current context
-	const asyncConfig = getAsyncSuggestionsConfig( isBlockEditor, postId, entryPoint );
+	const asyncConfig = getAsyncSuggestionsConfig( isBlockEditor, postId );
 	const supportsAsyncSuggestions = asyncConfig !== null;
 
 	// Async suggestions loader - loads when in generate mode within block editor
@@ -180,7 +170,7 @@ export function useImageStudioSuggestions( {
 	} = useAsyncSuggestionsLoader( {
 		prompt: asyncConfig?.prompt ?? '',
 		cacheKey: asyncConfig?.cacheKey,
-		enabled: supportsAsyncSuggestions && mode === ImageStudioMode.Generate,
+		enabled: ! disabled && supportsAsyncSuggestions && mode === ImageStudioMode.Generate,
 	} );
 
 	/**
@@ -209,6 +199,10 @@ export function useImageStudioSuggestions( {
 	 * Effect: Register appropriate suggestions based on current context.
 	 */
 	useEffect( () => {
+		if ( disabled ) {
+			return;
+		}
+
 		const result = getSuggestions( {
 			...suggestionState,
 			mode,
@@ -243,6 +237,7 @@ export function useImageStudioSuggestions( {
 			result.type === 'annotation' ? 'annotation' : 'default'
 		);
 	}, [
+		disabled,
 		suggestionState,
 		mode,
 		messages?.length,
