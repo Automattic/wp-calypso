@@ -1,12 +1,12 @@
 ---
 name: fix-e2e-tests
-description: Given a wp-calypso PR number, identify the flaky E2E test(s) in that PR's CI run so they can be fixed. Use when asked to investigate or fix a flaky E2E test on a specific PR.
+description: Given a wp-calypso PR number, identify the failing E2E test(s) in that PR's CI run so they can be fixed. Use when asked to investigate or fix a failing E2E test on a specific PR.
 allowed-tools: Bash, Agent
 ---
 
 # Fix E2E Tests
 
-Given a wp-calypso PR number, this skill identifies the flaky E2E test(s) that failed in that PR's CI run, asks the Playwright Test Healer agent to generate a fix, and opens a fix PR back against the original PR's branch so CI validates the repair.
+Given a wp-calypso PR number, this skill identifies the failing E2E test(s) in that PR's CI run, asks the Playwright Test Healer agent to generate a fix, and opens a fix PR back against the original PR's branch so CI validates the repair.
 
 Before touching anything else, the skill verifies that the two required tools are working: the GitHub CLI (used to read PR metadata and checks) and a TeamCity access token (used to fetch which individual tests failed, since GitHub's commit-status description only says "build failed"). If either isn't set up, the skill walks the user through configuring it.
 
@@ -319,7 +319,7 @@ The prompt **must be self-contained** — the agent has no access to this conver
   - Do not delete, `.skip(...)`, quarantine, or mute the test.
   - Follow `test/e2e/docs-new/creating_reliable_tests.md` and `test/e2e/docs-new/new_style_guide.md`.
   - **Use only `LS`, `Glob`, `Read`, `Grep`, `Edit`, `MultiEdit`, and `Write`** for analysis and edits. Do **not** call `browser_evaluate`, `test_run`, `test_debug`, or any other `mcp__playwright-test__*` tool — those trigger permission prompts and are unnecessary: the failure details above are the authoritative signal. Rely on code-level analysis, not on running the test.
-- **Expected return**: a short summary of (a) why the test was flaky (root cause, one paragraph) and (b) what the fix does (one paragraph), plus the edits applied under `$WORKTREE_DIR`. Capture both paragraphs — they become the commit body and PR body.
+- **Expected return**: a short summary of (a) why the test was failing (root cause, one paragraph) and (b) what the fix does (one paragraph), plus the edits applied under `$WORKTREE_DIR`. Capture both paragraphs — they become the commit body and PR body.
 
 Exit conditions:
 
@@ -380,7 +380,7 @@ git -C .claude/worktrees/fix-e2e-<slug>-<timestamp> add -A
 
 ```bash
 git -C .claude/worktrees/fix-e2e-<slug>-<timestamp> commit -m "$(cat <<'EOF'
-E2E: fix flaky <short test title>
+E2E: fix <short test title>
 
 <one-paragraph root cause>
 
@@ -407,7 +407,7 @@ Do **not** `cd` into the worktree. Use `gh pr create --repo Automattic/wp-calyps
 ```bash
 gh pr create --repo Automattic/wp-calypso --assignee @me \
   --head fix/e2e-<slug> --base <TARGET_BRANCH> \
-  --title "E2E: fix flaky <short test title>" \
+  --title "E2E: fix <short test title>" \
   --body "$(cat <<'EOF'
 ...body...
 EOF
