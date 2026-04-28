@@ -8,6 +8,11 @@ import type { AtmosphereEmbedExternal } from '@automattic/api-core';
 interface PostCardEmbedExternalProps {
 	embed: AtmosphereEmbedExternal;
 	parentPostUri: string;
+	// When true, the link card renders as an inert <div> instead of an <a>.
+	// Used inside compact (quote-embed) cards so the outer quote anchor
+	// doesn't end up with nested-anchor markup; the quoted post card remains
+	// clickable as a single unit via the outer anchor.
+	compact?: boolean;
 }
 
 function safeHost( uri: string ): string {
@@ -18,7 +23,11 @@ function safeHost( uri: string ): string {
 	}
 }
 
-export function PostCardEmbedExternal( { embed, parentPostUri }: PostCardEmbedExternalProps ) {
+export function PostCardEmbedExternal( {
+	embed,
+	parentPostUri,
+	compact,
+}: PostCardEmbedExternalProps ) {
 	const analytics = useSocialAnalytics();
 	const handleClick = () => {
 		if ( ! analytics ) {
@@ -30,6 +39,29 @@ export function PostCardEmbedExternal( { embed, parentPostUri }: PostCardEmbedEx
 			external_uri: embed.uri,
 		} );
 	};
+
+	const body = (
+		<HStack alignment="flex-start" spacing={ 3 } justify="flex-start">
+			{ embed.thumb && (
+				<img
+					className="social-post-card-embed-external__thumb"
+					src={ embed.thumb }
+					alt=""
+					loading="lazy"
+				/>
+			) }
+			<VStack spacing={ 1 }>
+				<span className="social-post-card-embed-external__title">{ embed.title }</span>
+				<span className="social-post-card-embed-external__description">{ embed.description }</span>
+				<span className="social-post-card-embed-external__host">{ safeHost( embed.uri ) }</span>
+			</VStack>
+		</HStack>
+	);
+
+	if ( compact ) {
+		return <div className="social-post-card-embed-external">{ body }</div>;
+	}
+
 	return (
 		<a
 			className="social-post-card-embed-external"
@@ -38,23 +70,7 @@ export function PostCardEmbedExternal( { embed, parentPostUri }: PostCardEmbedEx
 			rel="noopener noreferrer"
 			onClick={ handleClick }
 		>
-			<HStack alignment="flex-start" spacing={ 3 } justify="flex-start">
-				{ embed.thumb && (
-					<img
-						className="social-post-card-embed-external__thumb"
-						src={ embed.thumb }
-						alt=""
-						loading="lazy"
-					/>
-				) }
-				<VStack spacing={ 1 }>
-					<span className="social-post-card-embed-external__title">{ embed.title }</span>
-					<span className="social-post-card-embed-external__description">
-						{ embed.description }
-					</span>
-					<span className="social-post-card-embed-external__host">{ safeHost( embed.uri ) }</span>
-				</VStack>
-			</HStack>
+			{ body }
 		</a>
 	);
 }

@@ -61,7 +61,7 @@ describe( 'SocialPostCard', () => {
 		expect( timestampLink ).toBeDefined();
 	} );
 
-	it( 'omits embed and counts in compact variant', () => {
+	it( 'renders an image embed in compact variant (matches bsky.app quote layout)', () => {
 		render(
 			<SocialPostCard
 				post={ {
@@ -74,13 +74,45 @@ describe( 'SocialPostCard', () => {
 				variant="compact"
 			/>
 		);
-		expect( screen.queryByRole( 'img', { name: 'a' } ) ).toBeNull();
+		expect( screen.getByRole( 'img', { name: 'a' } ) ).toBeVisible();
 		expect( screen.queryByText( /likes:/i ) ).toBeNull();
 	} );
 
+	it( 'drops nested-quote embeds in compact variant to prevent quote-of-quote chains', () => {
+		render(
+			<SocialPostCard
+				post={ {
+					...post,
+					embed: {
+						type: 'quote',
+						post: {
+							type: 'not_found',
+							uri: 'at://x',
+							reason: 'notfound',
+						},
+					},
+				} }
+				variant="compact"
+			/>
+		);
+		expect( screen.queryByRole( 'note' ) ).toBeNull();
+		expect( screen.queryByText( /unavailable/i ) ).toBeNull();
+	} );
+
 	it( 'compact variant renders no anchors so consumers can wrap it in their own', () => {
-		const { container } = render( <SocialPostCard post={ post } variant="compact" /> );
-		expect( container.querySelectorAll( 'a' ) ).toHaveLength( 0 );
+		render(
+			<SocialPostCard
+				post={ {
+					...post,
+					embed: {
+						type: 'images',
+						images: [ { thumb: 't', fullsize: 'f', alt: 'a', aspect_ratio: null } ],
+					},
+				} }
+				variant="compact"
+			/>
+		);
+		expect( document.querySelectorAll( 'a' ) ).toHaveLength( 0 );
 	} );
 
 	it( 'renders embed when present in default variant', () => {

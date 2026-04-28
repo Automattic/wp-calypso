@@ -31,6 +31,15 @@ export function SocialPostCard( {
 	const isCompact = variant === 'compact';
 	const showProminentTimestamp = ! isCompact && Boolean( prominentTimestamp );
 
+	// Compact-variant cards render inside a quote embed, so the *quoted*
+	// post's quote is dropped to avoid quote-of-quote chains. The backend
+	// already does this via embed_non_quote(), but we double-guard here so
+	// any future schema drift can't slip a nested quote through. Images,
+	// video, and external embeds in quoted posts render fine and match
+	// bsky.app's single-post layout.
+	const isQuoteEmbed = post.embed?.type === 'quote' || post.embed?.type === 'quote_with_media';
+	const showEmbed = post.embed && ( ! isCompact || ! isQuoteEmbed );
+
 	const card = (
 		<Card className={ clsx( 'social-post-card', `social-post-card--${ variant }` ) }>
 			<CardBody>
@@ -40,12 +49,13 @@ export function SocialPostCard( {
 					prominentTimestamp={ showProminentTimestamp }
 				/>
 				<PostCardBody post={ post } />
-				{ ! isCompact && post.embed && (
+				{ showEmbed && post.embed && (
 					<PostCardEmbed
 						embed={ post.embed }
 						parentPostUri={ post.uri }
 						expandedVideo={ expandedVideo }
 						parentUrl={ post.bluesky_url }
+						compact={ isCompact }
 					/>
 				) }
 				{ showProminentTimestamp && <PostCardTimestamp post={ post } /> }
