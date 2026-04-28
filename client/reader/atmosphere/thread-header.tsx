@@ -6,9 +6,10 @@ import type { AtmosphereConnection, AtmosphereFeedItem } from '@automattic/api-c
 interface ThreadHeaderProps {
 	connection: AtmosphereConnection;
 	targetPost: AtmosphereFeedItem | null;
+	onBackToTimeline?: () => void;
 }
 
-export function ThreadHeader( { connection, targetPost }: ThreadHeaderProps ) {
+export function ThreadHeader( { connection, targetPost, onBackToTimeline }: ThreadHeaderProps ) {
 	const translate = useTranslate();
 	const timelineUrl = getTimelineUrl( connection.id );
 
@@ -19,7 +20,9 @@ export function ThreadHeader( { connection, targetPost }: ThreadHeaderProps ) {
 
 	return (
 		<>
-			<a href={ timelineUrl }>{ translate( 'Back to timeline' ) }</a>
+			<a href={ timelineUrl } onClick={ onBackToTimeline }>
+				{ translate( 'Back to timeline' ) }
+			</a>
 			<NavigationHeader title={ title } subtitle={ subtitle } />
 		</>
 	);

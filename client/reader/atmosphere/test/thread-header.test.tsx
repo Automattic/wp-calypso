@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { ThreadHeader } from '../thread-header';
 import type { AtmosphereConnection, AtmosphereFeedItem } from '@automattic/api-core';
 
@@ -66,5 +67,20 @@ describe( 'ThreadHeader', () => {
 	it( 'falls back to a generic Thread title when target post is null', () => {
 		render( <ThreadHeader connection={ connection } targetPost={ null } /> );
 		expect( screen.getByText( /Thread/i ) ).toBeVisible();
+	} );
+
+	it( 'invokes onBackToTimeline callback when the back link is clicked', async () => {
+		const onBackToTimeline = jest.fn();
+		const user = userEvent.setup();
+		render(
+			<ThreadHeader
+				connection={ connection }
+				targetPost={ null }
+				onBackToTimeline={ onBackToTimeline }
+			/>
+		);
+		const back = screen.getByRole( 'link', { name: /back to timeline/i } );
+		await user.click( back );
+		expect( onBackToTimeline ).toHaveBeenCalledTimes( 1 );
 	} );
 } );
