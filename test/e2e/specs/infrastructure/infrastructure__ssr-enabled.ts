@@ -19,9 +19,7 @@ describe( 'Server-side Rendering', function () {
 
 			it( `Check SSR: ${ endpoint }`, async function () {
 				await page.goto( DataHelper.getCalypsoURL( endpoint ), { timeout: 20 * 1000 } );
-				await page
-					.locator( '#wpcom[data-this-does-not-exist="true"]' )
-					.waitFor( { timeout: 15 * 1000 } );
+				await page.locator( '#wpcom[data-calypso-ssr="true"]' ).waitFor( { timeout: 15 * 1000 } );
 			} );
 		}
 	);
