@@ -3,6 +3,7 @@
  */
 import { render, screen } from '@testing-library/react';
 import { PostCardEmbed } from '../post-card-embed';
+import type { SocialEmbed } from '../../../types';
 
 describe( 'PostCardEmbed dispatcher', () => {
 	it( 'images → grid', () => {
@@ -57,5 +58,28 @@ describe( 'PostCardEmbed dispatcher', () => {
 			/>
 		);
 		expect( screen.getByText( /unavailable/i ) ).toBeVisible();
+	} );
+
+	it( 'dispatches gifv embeds to PostCardEmbedGifv', () => {
+		const embed: SocialEmbed = {
+			type: 'gifv',
+			src: 'https://cdn/g.mp4',
+			thumbnail: 'https://cdn/g.jpg',
+			alt: 'gif',
+			aspect_ratio: null,
+		};
+		render( <PostCardEmbed embed={ embed } parentPostUri="x" /> );
+		expect( document.querySelector( 'video.social-post-card-embed-gifv' ) ).not.toBeNull();
+	} );
+
+	it( 'dispatches audio embeds to PostCardEmbedAudio', () => {
+		const embed: SocialEmbed = {
+			type: 'audio',
+			src: 'https://cdn/a.mp3',
+			alt: 'audio',
+			duration_seconds: null,
+		};
+		render( <PostCardEmbed embed={ embed } parentPostUri="x" /> );
+		expect( document.querySelector( 'audio.social-post-card-embed-audio' ) ).not.toBeNull();
 	} );
 } );

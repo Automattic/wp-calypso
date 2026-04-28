@@ -1,4 +1,6 @@
+import { PostCardEmbedAudio } from './post-card-embed-audio';
 import { PostCardEmbedExternal } from './post-card-embed-external';
+import { PostCardEmbedGifv } from './post-card-embed-gifv';
 import { PostCardEmbedImages } from './post-card-embed-images';
 import { PostCardEmbedQuote } from './post-card-embed-quote';
 import { PostCardEmbedQuoteWithMedia } from './post-card-embed-quote-with-media';
@@ -23,7 +25,8 @@ export function PostCardEmbed( { embed, parentPostUri }: PostCardEmbedProps ) {
 		case 'quote_with_media':
 			return <PostCardEmbedQuoteWithMedia embed={ embed } parentPostUri={ parentPostUri } />;
 		case 'gifv':
+			return <PostCardEmbedGifv embed={ embed } />;
 		case 'audio':
-			throw new Error( `Embed type "${ embed.type }" not yet wired — Task 15 of CM-626 plan.` );
+			return <PostCardEmbedAudio embed={ embed } />;
 	}
 }
