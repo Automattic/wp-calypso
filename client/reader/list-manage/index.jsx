@@ -7,7 +7,6 @@ import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ReaderExportButton from 'calypso/blocks/reader-export-button';
 import { READER_EXPORT_TYPE_LIST } from 'calypso/blocks/reader-export-button/constants';
@@ -22,12 +21,7 @@ import ReaderMain from 'calypso/reader/components/reader-main';
 import ListMissing from 'calypso/reader/list/components/missing';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { DEFAULT_NOTICE_DURATION } from 'calypso/state/notices/constants';
-import {
-	receiveCreateReaderList,
-	receiveReaderList,
-	receiveUpdatedListDetails,
-} from 'calypso/state/reader/lists/actions';
-import { getListByOwnerAndSlug, getListItems } from 'calypso/state/reader/lists/selectors';
+import { getListItems } from 'calypso/state/reader/lists/selectors';
 import ItemAdder from './item-adder';
 import ListDelete from './list-delete';
 import ListForm from './list-form';
@@ -43,8 +37,7 @@ function Details( { list } ) {
 
 	const handleSubmit = ( newList ) => {
 		updateList( newList, {
-			onSuccess: ( data ) => {
-				dispatch( receiveUpdatedListDetails( data ) );
+			onSuccess: () => {
 				dispatch(
 					successNotice( translate( 'List updated successfully.' ), {
 						duration: DEFAULT_NOTICE_DURATION,
@@ -116,7 +109,6 @@ function ReaderListCreate() {
 		createList( list, {
 			onSuccess: ( data ) => {
 				if ( data.list?.owner && data.list?.slug ) {
-					dispatch( receiveCreateReaderList( { list: data.list } ) );
 					page( `/reader/list/${ data.list.owner }/${ data.list.slug }/edit/items` );
 					dispatch(
 						successNotice( translate( 'List created successfully.' ), {
@@ -144,16 +136,9 @@ function ReaderListCreate() {
 function ReaderListEdit( props ) {
 	const { selectedSection } = props;
 	const translate = useTranslate();
-	const dispatch = useDispatch();
-	const list = useSelector( ( state ) => getListByOwnerAndSlug( state, props.owner, props.slug ) );
 	const { data, isFetched } = useQuery( readListQuery( props.owner, props.slug ) );
+	const list = data?.list;
 	const isMissing = isFetched && ! list;
-
-	useEffect( () => {
-		if ( data?.list ) {
-			dispatch( receiveReaderList( { list: data.list } ) );
-		}
-	}, [ data, dispatch ] );
 	const listItems = useSelector( ( state ) =>
 		list ? getListItems( state, list.ID ) : undefined
 	);

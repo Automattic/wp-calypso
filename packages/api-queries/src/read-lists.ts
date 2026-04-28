@@ -59,7 +59,8 @@ export const readListItemsInfiniteQuery = (
 export const createReadListMutation = () =>
 	mutationOptions( {
 		mutationFn: createReadList,
-		onSuccess: () => {
+		onSuccess: ( data ) => {
+			queryClient.setQueryData( readListQuery( data.list.owner, data.list.slug ).queryKey, data );
 			queryClient.invalidateQueries( {
 				queryKey: readSubscribedListsQuery().queryKey,
 			} );
@@ -70,9 +71,7 @@ export const updateReadListMutation = () =>
 	mutationOptions( {
 		mutationFn: updateReadList,
 		onSuccess: ( data ) => {
-			queryClient.invalidateQueries( {
-				queryKey: readListQuery( data.list.owner, data.list.slug ).queryKey,
-			} );
+			queryClient.setQueryData( readListQuery( data.list.owner, data.list.slug ).queryKey, data );
 			queryClient.invalidateQueries( {
 				queryKey: readSubscribedListsQuery().queryKey,
 			} );
