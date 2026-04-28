@@ -1,5 +1,5 @@
 import { Button, SearchControl } from '@wordpress/components';
-import { useState } from '@wordpress/element';
+import { useEffect, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { search } from '@wordpress/icons';
 
@@ -10,6 +10,11 @@ interface SearchInputProps {
 
 export default function SearchInput( { onSearch, isLoading }: SearchInputProps ) {
 	const [ value, setValue ] = useState( '' );
+	const inputRef = useRef< HTMLInputElement >( null );
+
+	useEffect( () => {
+		inputRef.current?.focus();
+	}, [] );
 
 	const handleSubmit = ( event?: React.FormEvent ) => {
 		event?.preventDefault();
@@ -22,6 +27,7 @@ export default function SearchInput( { onSearch, isLoading }: SearchInputProps )
 	return (
 		<form className="content-research-search-input" onSubmit={ handleSubmit }>
 			<SearchControl
+				ref={ inputRef }
 				__nextHasNoMarginBottom
 				value={ value }
 				onChange={ setValue }

@@ -1030,9 +1030,11 @@ __metadata:
     "@testing-library/react": "npm:^15.0.0"
     "@types/react": "npm:^18.3.1"
     "@types/react-dom": "npm:^18.3.1"
+    "@wordpress/api-fetch": "npm:^7.23.0"
     "@wordpress/components": "npm:^32.1.0"
     "@wordpress/i18n": "npm:^5.23.0"
     "@wordpress/icons": "npm:^10.23.0"
+    "@wordpress/url": "npm:^4.23.0"
     clsx: "npm:^2.1.1"
     typescript: "npm:^5.8.3"
   peerDependencies:

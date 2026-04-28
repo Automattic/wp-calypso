@@ -43,9 +43,11 @@
 		"@automattic/calypso-analytics": "workspace:^",
 		"@tanstack/react-query": "^5.83.0",
 		"@wordpress/api-fetch": "^7.23.0",
+		"wpcom-proxy-request": "workspace:^",
 		"@wordpress/components": "^32.1.0",
 		"@wordpress/i18n": "^5.23.0",
 		"@wordpress/icons": "^10.23.0",
+		"@wordpress/url": "^4.23.0",
 		"clsx": "^2.1.1"
 	},
 	"devDependencies": {
