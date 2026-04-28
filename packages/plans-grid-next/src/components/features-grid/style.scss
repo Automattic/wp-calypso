@@ -137,7 +137,7 @@
 		border: 1px solid #e0e0e0;
 		/* stylelint-disable-next-line */
 		border-radius: 5px;
-		padding: 38px 0 20px 0;
+		padding: 20px 0 20px 0;
 
 		/*
 		 * TODO: Remove/refactor this once we have a better way to handle.
@@ -163,6 +163,10 @@
 
 	.plan-features-2023-grid__highlighted-feature .plan-features-2023-grid__item {
 		padding-bottom: 24px;
+	}
+
+	.plan-features-2023-grid__header-title {
+		line-height: normal;
 	}
 }
 
