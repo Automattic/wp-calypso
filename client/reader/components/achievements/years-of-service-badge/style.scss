@@ -1,0 +1,46 @@
+@import '@automattic/components/src/styles/typography';
+
+.years-of-service-badge {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.years-of-service-badge__circle {
+	border-radius: 50%;
+	background: var( --studio-blue-50 );
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var( --studio-white );
+	font-weight: 600;
+}
+
+.years-of-service-badge.is-large {
+	gap: 8px;
+
+	.years-of-service-badge__circle {
+		width: 120px;
+		height: 120px;
+		font-size: rem( 48px );
+		box-shadow: 0 4px 16px rgba( 56, 88, 233, 0.4 );
+		background: url( calypso/assets/images/achievements/years-of-service-badge.svg ) no-repeat center / cover;
+	}
+}
+
+.years-of-service-badge.is-medium .years-of-service-badge__circle {
+	width: 22px;
+	height: 22px;
+	font-size: rem( 11px );
+}
+
+.years-of-service-badge.is-small .years-of-service-badge__circle {
+	width: 18px;
+	height: 18px;
+	font-size: rem( 10px );
+}
+
+.years-of-service-badge__label {
+	font-size: rem( 13px );
+	color: var( --studio-gray-40 );
+}

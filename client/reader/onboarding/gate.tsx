@@ -7,9 +7,18 @@ type ReaderOnboardingGateProps = {
 };
 
 export default function ReaderOnboardingGate( props: ReaderOnboardingGateProps ) {
-	if ( isEnabled( 'reader/onboarding-rsm' ) ) {
-		return <AsyncLoad require="calypso/reader/onboarding-rsm" { ...props } />;
-	}
-
-	return <AsyncLoad require="calypso/reader/onboarding" { ...props } />;
+	return (
+		<AsyncLoad
+			require={ () =>
+				isEnabled( 'reader/onboarding-rsm' )
+					? import(
+							/* webpackChunkName: "async-load-calypso-reader-onboarding-rsm" */ 'calypso/reader/onboarding-rsm'
+					  )
+					: import(
+							/* webpackChunkName: "async-load-calypso-reader-onboarding" */ 'calypso/reader/onboarding'
+					  )
+			}
+			{ ...props }
+		/>
+	);
 }

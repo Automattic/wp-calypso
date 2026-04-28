@@ -48,7 +48,11 @@ export const MySitesSidebarUnified = ( { path, isUnifiedSiteSidebarVisible } ) =
 				{ isUnifiedSiteSidebarVisible && selectedSite && ! isAllDomainsView && (
 					<SidebarRegion>
 						<AsyncLoad
-							require="calypso/my-sites/current-site/notice"
+							require={ () =>
+								import(
+									/* webpackChunkName: "async-load-calypso-my-sites-current-site-notice" */ 'calypso/my-sites/current-site/notice'
+								)
+							}
 							placeholder={ null }
 							site={ selectedSite }
 						/>

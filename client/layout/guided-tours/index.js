@@ -21,7 +21,15 @@ function GuidedTours() {
 		return null;
 	}
 
-	return <AsyncLoad require="calypso/layout/guided-tours/component" />;
+	return (
+		<AsyncLoad
+			require={ () =>
+				import(
+					/* webpackChunkName: "async-load-calypso-layout-guided-tours-component" */ './component'
+				)
+			}
+		/>
+	);
 }
 
 export default GuidedTours;

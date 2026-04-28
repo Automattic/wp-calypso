@@ -290,7 +290,11 @@ export const OnThisDay = ( { viewToggle, streamKey }: OnThisDayProps ) => {
 				{ ! isLoading && data?.items.length === 0 && <FollowingEmptyContent view="on-this-day" /> }
 				{ data?.items.length > 0 && selectedItem && getPostFromItem( selectedItem ) && (
 					<AsyncLoad
-						require="calypso/blocks/reader-full-post"
+						require={ () =>
+							import(
+								/* webpackChunkName: "async-load-calypso-blocks-reader-full-post" */ 'calypso/blocks/reader-full-post'
+							)
+						}
 						feedId={ selectedItem.feedId }
 						blogId={ selectedItem.blogId }
 						postId={ selectedItem.postId }
