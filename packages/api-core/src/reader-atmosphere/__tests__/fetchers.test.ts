@@ -338,11 +338,9 @@ describe( 'atmosphere fetchers', () => {
 				handle: 'alice.bsky.social',
 				display_name: 'Alice',
 				description: 'plain bio',
-				description_html: '<p>plain bio</p>',
 				avatar: 'https://cdn.bsky.app/avatar.jpg',
 				banner: 'https://cdn.bsky.app/banner.jpg',
 				counts: { followers: 10, follows: 5, posts: 3 },
-				bluesky_url: 'https://bsky.app/profile/alice.bsky.social',
 			};
 			nock( BASE )
 				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social' )

@@ -173,20 +173,18 @@ export interface AtmosphereThreadResponse {
 
 /**
  * Author profile response from /wpcom/v2/reader/atmosphere/profile/{actor}.
- * Connection-agnostic. Description arrives as both plain text and sanitised
- * HTML — bsky.app emits links/handles inside bios that we want to render
- * as anchors.
+ * Connection-agnostic. Description is plain text (the backend mirrors what
+ * the connection-details endpoint returns); the bsky.app URL is derived
+ * client-side from the handle when needed.
  */
 export interface AtmosphereAuthorProfile {
 	did: string;
 	handle: string;
 	display_name: string | null;
 	description: string;
-	description_html: string;
 	avatar: string | null;
 	banner: string | null;
 	counts: AtmosphereProfileCounts;
-	bluesky_url: string;
 }
 
 /**

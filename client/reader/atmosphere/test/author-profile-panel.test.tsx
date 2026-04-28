@@ -30,11 +30,9 @@ const profilePayload: AtmosphereAuthorProfile = {
 	handle: 'alice.bsky.social',
 	display_name: 'Alice',
 	description: '',
-	description_html: '',
 	avatar: null,
 	banner: null,
 	counts: { followers: 10, follows: 5, posts: 3 },
-	bluesky_url: 'https://bsky.app/profile/alice.bsky.social',
 };
 
 const feedItem = {

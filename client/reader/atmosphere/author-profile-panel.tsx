@@ -170,7 +170,7 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 			recordReaderTracksEvent( 'calypso_reader_atmosphere_profile_external_clicked', {
 				connection_id: connection.id,
 				actor,
-				external_uri: profile.data.bluesky_url,
+				external_uri: `https://bsky.app/profile/${ profile.data.handle }`,
 				surface: 'header_action',
 			} )
 		);
@@ -239,10 +239,11 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 	};
 
 	const renderHeaderBody = ( profileData: AtmosphereAuthorProfile ) => {
+		const blueskyUrl = `https://bsky.app/profile/${ profileData.handle }`;
 		const headerActions = (
 			<a
 				className="atmosphere-profile__view-on-bsky"
-				href={ profileData.bluesky_url }
+				href={ blueskyUrl }
 				target="_blank"
 				rel="noopener noreferrer"
 				onClick={ handleViewOnBskyClick }
@@ -256,7 +257,6 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 				banner={ profileData.banner }
 				displayName={ profileData.display_name ?? undefined }
 				handle={ profileData.handle }
-				bioHtml={ profileData.description_html }
 				bio={ profileData.description }
 				stats={ stats }
 				statsLabel={ String( translate( 'Profile stats' ) ) }
@@ -303,7 +303,7 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 					) }
 					emptyLine={ String( translate( 'Their feed is empty.' ) ) }
 					emptyActionLabel={ String( translate( 'View on Bluesky' ) ) }
-					emptyActionURL={ profile.data?.bluesky_url ?? `https://bsky.app/profile/${ actor }` }
+					emptyActionURL={ `https://bsky.app/profile/${ profile.data?.handle ?? actor }` }
 				/>
 			</VStack>
 		</SocialAnalyticsProvider>

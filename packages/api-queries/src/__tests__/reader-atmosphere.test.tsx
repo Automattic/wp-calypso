@@ -2,6 +2,8 @@ import {
 	readerAtmosphereKeys,
 	type AtmosphereFeedItem,
 	type AtmosphereThreadResponse,
+	AtmosphereAuthorFeedPage,
+	AtmosphereAuthorProfile,
 } from '@automattic/api-core';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
@@ -15,7 +17,6 @@ import {
 	useThreadQuery,
 	useTimelineInfiniteQuery,
 } from '../reader-atmosphere';
-import type { AtmosphereAuthorFeedPage, AtmosphereAuthorProfile } from '@automattic/api-core';
 
 const BASE = 'https://public-api.wordpress.com';
 function makeWrapper( c: QueryClient ) {
@@ -351,11 +352,9 @@ describe( 'reader-atmosphere hooks', () => {
 				handle: 'alice.bsky.social',
 				display_name: 'Alice',
 				description: '',
-				description_html: '',
 				avatar: null,
 				banner: null,
 				counts: { followers: 0, follows: 0, posts: 0 },
-				bluesky_url: 'https://bsky.app/profile/alice.bsky.social',
 			};
 			nock( BASE )
 				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social' )

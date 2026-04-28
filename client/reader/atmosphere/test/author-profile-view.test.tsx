@@ -82,11 +82,9 @@ describe( 'AuthorProfileView', () => {
 				handle: 'alice.bsky.social',
 				display_name: 'Alice',
 				description: '',
-				description_html: '',
 				avatar: null,
 				banner: null,
 				counts: { followers: 0, follows: 0, posts: 0 },
-				bluesky_url: 'https://bsky.app/profile/alice.bsky.social',
 			} );
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
