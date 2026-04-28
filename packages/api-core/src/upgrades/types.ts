@@ -453,7 +453,7 @@ export interface PurchaseCancelOptions {
 	 * The experiment variation name for the refund email A/B test.
 	 * When 'treatment', the backend sends the wpcom-2022 themed email.
 	 */
-	email_variant?: string;
+	email_variant?: 'treatment' | 'control';
 }
 
 /**
