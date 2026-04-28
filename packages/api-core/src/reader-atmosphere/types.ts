@@ -131,3 +131,30 @@ export interface AtmosphereTimelinePage {
 	items: AtmosphereFeedItem[];
 	cursor: string | null;
 }
+
+export interface AtmosphereThreadPostNode {
+	type: 'post';
+	post: AtmosphereFeedItem;
+	parent: AtmosphereThreadNode | null;
+	replies: AtmosphereThreadNode[];
+}
+
+export interface AtmosphereThreadNotFoundNode {
+	type: 'not_found';
+	uri: string;
+}
+
+export interface AtmosphereThreadBlockedNode {
+	type: 'blocked';
+	uri: string;
+	author: { did: string };
+}
+
+export type AtmosphereThreadNode =
+	| AtmosphereThreadPostNode
+	| AtmosphereThreadNotFoundNode
+	| AtmosphereThreadBlockedNode;
+
+export interface AtmosphereThreadResponse {
+	thread: AtmosphereThreadNode;
+}
