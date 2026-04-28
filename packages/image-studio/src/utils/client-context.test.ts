@@ -16,11 +16,11 @@ jest.mock( '../store', () => {
 		MediaLibrary: 'media_library',
 		EditorBlock: 'editor_block',
 		EditorSidebar: 'editor_sidebar',
-		PostEditorFeatureClip: 'post_editor_feature_clip',
 		JetpackExternalMediaBlock: 'jetpack_external_media_block',
 		JetpackExternalMediaFeaturedImage: 'jetpack_external_media_featured_image',
 		JetpackAIFeaturedImage: 'jetpack_ai_featured_image',
 		JetpackAISocialMedia: 'jetpack_ai_social_media',
+		JetpackAIFeatureClip: 'jetpack_ai_feature_clip',
 	};
 	return {
 		ImageStudioEntryPoint,
@@ -119,7 +119,7 @@ describe( 'getClientContext', () => {
 		expect( ctx.videoStudio ).toBeUndefined();
 	} );
 
-	it( 'emits a videoStudio payload (and no imageStudio) when entryPoint is PostEditorFeatureClip', () => {
+	it( 'emits a videoStudio payload (and no imageStudio) when entryPoint is JetpackAIFeatureClip', () => {
 		setupSelect( {
 			imageStudio: {
 				getImageStudioAttachmentId: () => null,
@@ -127,7 +127,7 @@ describe( 'getClientContext', () => {
 				// Image-mode style stays in image-studio; video flow ignores it.
 				getSelectedStyle: () => null,
 				getSelectedAspectRatio: () => '9:16',
-				getEntryPoint: () => 'post_editor_feature_clip',
+				getEntryPoint: () => 'jetpack_ai_feature_clip',
 				getBlockType: () => null,
 			},
 			videoStudio: {
@@ -143,7 +143,7 @@ describe( 'getClientContext', () => {
 			isOpen: true,
 			id: null,
 			style: 'promotional',
-			entryPoint: 'post_editor_feature_clip',
+			entryPoint: 'jetpack_ai_feature_clip',
 		} );
 		// The server pins 9:16; aspect_ratio is not part of the videoStudio payload shape.
 		expect( ctx.videoStudio ).not.toHaveProperty( 'aspect_ratio' );
@@ -158,7 +158,7 @@ describe( 'getClientContext', () => {
 				getIsImageStudioOpen: () => true,
 				getSelectedStyle: () => null,
 				getSelectedAspectRatio: () => null,
-				getEntryPoint: () => 'post_editor_feature_clip',
+				getEntryPoint: () => 'jetpack_ai_feature_clip',
 				getBlockType: () => null,
 			},
 			videoStudio: {
@@ -183,7 +183,7 @@ describe( 'getClientContext', () => {
 				getIsImageStudioOpen: () => true,
 				getSelectedStyle: () => null,
 				getSelectedAspectRatio: () => null,
-				getEntryPoint: () => 'post_editor_feature_clip',
+				getEntryPoint: () => 'jetpack_ai_feature_clip',
 				getBlockType: () => null,
 			},
 			videoStudio: {
@@ -207,7 +207,7 @@ describe( 'getClientContext', () => {
 				getIsImageStudioOpen: () => true,
 				getSelectedStyle: () => null,
 				getSelectedAspectRatio: () => null,
-				getEntryPoint: () => 'post_editor_feature_clip',
+				getEntryPoint: () => 'jetpack_ai_feature_clip',
 				getBlockType: () => null,
 			},
 			videoStudio: {

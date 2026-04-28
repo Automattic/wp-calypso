@@ -14,7 +14,6 @@ const mockWithImageStudioGenerateButton = jest.fn();
 const mockWithImageStudioToolbarButton = jest.fn();
 const mockAddImageStudioHandler = jest.fn();
 const mockAddVideoStudioHandler = jest.fn();
-const mockRegisterFeatureClipSidebar = jest.fn();
 
 jest.mock( './external-media-source-extension', () => ( {
 	addImageStudioMediaSource: mockAddImageStudioMediaSource,
@@ -36,17 +35,12 @@ jest.mock( './video-generation-handler-extension', () => ( {
 	addVideoStudioHandler: mockAddVideoStudioHandler,
 } ) );
 
-jest.mock( './feature-clip-sidebar-extension', () => ( {
-	registerFeatureClipSidebar: mockRegisterFeatureClipSidebar,
-} ) );
-
 describe( 'Extension Registration', () => {
 	beforeEach( () => {
 		mockAddFilter.mockClear();
 		mockAddImageStudioMediaSource.mockClear();
 		mockWithImageStudioGenerateButton.mockClear();
 		mockWithImageStudioToolbarButton.mockClear();
-		mockRegisterFeatureClipSidebar.mockClear();
 		// Reset module to clear filtersRegistered flag
 		jest.resetModules();
 	} );
@@ -93,9 +87,6 @@ describe( 'Extension Registration', () => {
 				'big-sky/image-studio',
 				mockAddVideoStudioHandler
 			);
-
-			// Verify the feature-clip sidebar plugin was registered
-			expect( mockRegisterFeatureClipSidebar ).toHaveBeenCalledTimes( 1 );
 		} );
 
 		it( 'should only register filters once (idempotency)', () => {
@@ -107,8 +98,6 @@ describe( 'Extension Registration', () => {
 
 			// Should only call addFilter 5 times total (not 15)
 			expect( mockAddFilter ).toHaveBeenCalledTimes( 5 );
-			// Sidebar plugin registration should also be idempotent
-			expect( mockRegisterFeatureClipSidebar ).toHaveBeenCalledTimes( 1 );
 		} );
 
 		it( 'should use correct namespace for filters', () => {

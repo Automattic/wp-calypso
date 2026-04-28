@@ -71,7 +71,7 @@ function ImageStudioAgentChat( {
 		return select( imageStudioStore ).getEntryPoint();
 	}, [] );
 
-	const isVideoMode = entryPoint === ImageStudioEntryPoint.PostEditorFeatureClip;
+	const isVideoMode = entryPoint === ImageStudioEntryPoint.JetpackAIFeatureClip;
 
 	useEffect( () => {
 		return () => {

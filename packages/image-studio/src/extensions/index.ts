@@ -1,6 +1,5 @@
 import { addFilter } from '@wordpress/hooks';
 import { addImageStudioMediaSource } from './external-media-source-extension';
-import { registerFeatureClipSidebar } from './feature-clip-sidebar-extension';
 import { withImageStudioGenerateButton } from './generate-button-extension';
 import { addImageStudioHandler } from './image-generation-handler-extension';
 import { withImageStudioToolbarButton } from './image-toolbar-extension';
@@ -29,7 +28,4 @@ export function registerBlockEditorFilters() {
 
 	// Unified handler for AI video generation surfaces (feature clip, future surfaces)
 	addFilter( 'jetpack.ai.videoGenerationHandler', 'big-sky/image-studio', addVideoStudioHandler );
-
-	// Post-editor sidebar entry point for video clip generation.
-	registerFeatureClipSidebar();
 }

@@ -234,7 +234,7 @@ function detectImageEntity(): DetectedEntity | null {
 
 		const blockType = storeSelect.getBlockType?.() || null;
 
-		const isVideo = entryPoint === ImageStudioEntryPoint.PostEditorFeatureClip;
+		const isVideo = entryPoint === ImageStudioEntryPoint.JetpackAIFeatureClip;
 
 		// Video-mode style lives in the dedicated video-studio store.
 		const videoStudioSelect = select( videoStudioStore );
