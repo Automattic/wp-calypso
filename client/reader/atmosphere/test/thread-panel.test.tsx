@@ -10,6 +10,14 @@ import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ThreadPanel } from '../thread-panel';
 import type { AtmosphereConnection, AtmosphereThreadResponse } from '@automattic/api-core';
 
+// `page()` from @automattic/calypso-router pokes at window.history in a way
+// jsdom doesn't fully implement. Mock it so the Back-button click handler
+// in ThreadHeader can run without exploding inside the dispatched event.
+jest.mock( '@automattic/calypso-router', () => ( {
+	__esModule: true,
+	default: jest.fn(),
+} ) );
+
 const connection: AtmosphereConnection = {
 	id: 7,
 	did: 'did:plc:viewer',
@@ -170,17 +178,7 @@ describe( 'ThreadPanel', () => {
 		);
 	} );
 
-	it( 'back-to-timeline link has the correct href', async () => {
-		nock( BASE ).get( PATH ).query( { uri: TARGET_URI } ).reply( 200, fixture() );
-
-		renderWithProvider( <ThreadPanel connection={ connection } did={ DID } rkey={ RKEY } />, {
-			queryClient: makeQueryClient(),
-		} );
-		const back = await screen.findByRole( 'link', { name: /back to timeline/i } );
-		expect( back ).toHaveAttribute( 'href', '/reader/atmosphere/7/timeline' );
-	} );
-
-	it( 'fires thread_viewed on mount and back_to_timeline_clicked on back-link click', async () => {
+	it( 'fires thread_viewed on mount and back_to_timeline_clicked on Back button click', async () => {
 		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
 		nock( BASE ).get( PATH ).query( { uri: TARGET_URI } ).reply( 200, fixture() );
 
@@ -195,7 +193,7 @@ describe( 'ThreadPanel', () => {
 			)
 		);
 
-		const back = await screen.findByRole( 'link', { name: /back to timeline/i } );
+		const back = await screen.findByRole( 'button', { name: /back/i } );
 		await user.click( back );
 		expect( spy ).toHaveBeenCalledWith(
 			'calypso_reader_atmosphere_thread_back_to_timeline_clicked',

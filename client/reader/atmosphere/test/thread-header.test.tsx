@@ -1,10 +1,16 @@
 /**
  * @jest-environment jsdom
  */
+import page from '@automattic/calypso-router';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ThreadHeader } from '../thread-header';
 import type { AtmosphereConnection } from '@automattic/api-core';
+
+jest.mock( '@automattic/calypso-router', () => ( {
+	__esModule: true,
+	default: jest.fn(),
+} ) );
 
 const connection: AtmosphereConnection = {
 	id: 7,
@@ -14,24 +20,29 @@ const connection: AtmosphereConnection = {
 	avatar: null,
 };
 
+beforeEach( () => {
+	( page as unknown as jest.Mock ).mockReset();
+} );
+
 describe( 'ThreadHeader', () => {
-	it( 'renders a generic Post title (author info lives in the post card below)', () => {
+	it( 'renders a Back button', () => {
 		render( <ThreadHeader connection={ connection } /> );
-		expect( screen.getByRole( 'heading', { level: 1, name: /post/i } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: /back/i } ) ).toBeVisible();
 	} );
 
-	it( 'renders the back-to-timeline link with the correct href and accessible name', () => {
+	it( 'navigates to the connection timeline on click', async () => {
+		const user = userEvent.setup();
 		render( <ThreadHeader connection={ connection } /> );
-		const back = screen.getByRole( 'link', { name: /back to timeline/i } );
-		expect( back ).toHaveAttribute( 'href', '/reader/atmosphere/7/timeline' );
+		await user.click( screen.getByRole( 'button', { name: /back/i } ) );
+		expect( page ).toHaveBeenCalledWith( '/reader/atmosphere/7/timeline' );
 	} );
 
-	it( 'invokes onBackToTimeline callback when the back link is clicked', async () => {
+	it( 'invokes onBackToTimeline callback before navigating', async () => {
 		const onBackToTimeline = jest.fn();
 		const user = userEvent.setup();
 		render( <ThreadHeader connection={ connection } onBackToTimeline={ onBackToTimeline } /> );
-		const back = screen.getByRole( 'link', { name: /back to timeline/i } );
-		await user.click( back );
+		await user.click( screen.getByRole( 'button', { name: /back/i } ) );
 		expect( onBackToTimeline ).toHaveBeenCalledTimes( 1 );
+		expect( page ).toHaveBeenCalledWith( '/reader/atmosphere/7/timeline' );
 	} );
 } );
