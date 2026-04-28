@@ -170,3 +170,31 @@ export type AtmosphereThreadNode =
 export interface AtmosphereThreadResponse {
 	thread: AtmosphereThreadNode;
 }
+
+/**
+ * Author profile response from /wpcom/v2/reader/atmosphere/profile/{actor}.
+ * Connection-agnostic. Description arrives as both plain text and sanitised
+ * HTML — bsky.app emits links/handles inside bios that we want to render
+ * as anchors.
+ */
+export interface AtmosphereAuthorProfile {
+	did: string;
+	handle: string;
+	display_name: string | null;
+	description: string;
+	description_html: string;
+	avatar: string | null;
+	banner: string | null;
+	counts: AtmosphereProfileCounts;
+	bluesky_url: string;
+}
+
+/**
+ * Author feed page response. Same shape as AtmosphereTimelinePage —
+ * factored as a separate type so we can diverge in slice 8+ if the
+ * filter-tabs follow-up (CM-628) introduces a filter-aware shape.
+ */
+export interface AtmosphereAuthorFeedPage {
+	items: AtmosphereFeedItem[];
+	cursor: string | null;
+}
