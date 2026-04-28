@@ -88,7 +88,7 @@ export const DeploymentLogsEntry = ( {
 			<VStack spacing={ 2 }>
 				<Text
 					style={ {
-						color: 'var(--wp-components-color-accent-inverted, #fff)',
+						color: 'var(--wp-components-color-accent-inverted, #FBFBFB)',
 						whiteSpace: 'pre-wrap',
 					} }
 					as="code"
@@ -101,7 +101,7 @@ export const DeploymentLogsEntry = ( {
 						<Button
 							variant="link"
 							style={ {
-								color: 'var(--wp-components-color-accent-inverted, #fff)',
+								color: 'var(--wp-components-color-accent-inverted, #FBFBFB)',
 								marginInlineStart: '4px',
 							} }
 							onClick={ toggleExpandDetail }
@@ -114,7 +114,7 @@ export const DeploymentLogsEntry = ( {
 				{ detailExpanded && (
 					<Text
 						style={ {
-							color: 'var(--wp-components-color-accent-inverted, #fff)',
+							color: 'var(--wp-components-color-accent-inverted, #FBFBFB)',
 							whiteSpace: 'pre-wrap',
 						} }
 						as="code"
