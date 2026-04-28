@@ -55,6 +55,14 @@ client/reader/social/
       sanitize-post-html.ts     # DOMPurify allow-list helper
       style.scss
       test/
+
+    thread-tree/
+      index.tsx                 # ThreadTree — root + flattened parent chain + recursive replies
+      thread-node.tsx           # Recursive node renderer (post / not_found / blocked)
+      thread-tombstone.tsx      # Inert "Post unavailable" / "Post is from a blocked author" surface
+      thread-tree-skeleton.tsx  # Loading-state skeleton (1 large + 2 small rows)
+      style.scss
+      test/
 ```
 
 ## Architectural decisions
@@ -77,12 +85,14 @@ Don't speculate ahead of that signal. Adding a generic shape now will make the a
 - `PostCardLink` — the card-link accessibility pattern (one real `<a>` + `::after` overlay + nested `position: relative; z-index: 1` anchors).
 - `sanitizePostHtml` — DOMPurify wrapper with allow-list (`<p> <br> <a>` / `href, rel, target`) and the `target="_blank"` rel-hardening hook. Conservative enough for Mastodon content too, possibly with a small extension to that allow-list once we see what Mastodon emits.
 - `SocialAnalyticsProvider` / `useSocialAnalytics` — the per-protocol shell wraps its tree with a `source` ('atmosphere' | 'mastodon' | …) + `connectionId` + `onClick(event, props)` callback. The post-card subcomponents call into this context instead of dispatching `recordReaderTracksEvent` directly. Adding a protocol just means adding a `source` value and wiring up the protocol's per-event Tracks call in the shell.
+- `<ThreadTombstone>` — `kind: 'not_found' | 'blocked'`. Mastodon has no `blockedPost` analogue but a "deleted" tombstone slots in via a new kind, not a refactor.
 
 ### What's Bluesky-specific today (likely needs forking or refactoring)
 
 - `SocialPostCard` and every `post-card-*` subcomponent take `AtmosphereFeedItem`.
 - `PostCardEmbed`'s discriminated union (`'images' | 'video' | 'external' | 'quote' | 'quote_with_media'`) matches the backend `ReaderATmosphere_Normalizer` shape. Mastodon attachments are different.
 - `SocialPostCard`'s `variant: 'default' | 'compact'` covers top-level and quote-embed renderings — Mastodon has no native quote concept and may not need `compact` at all.
+- `<ThreadTree>` and `<ThreadNode>` take `AtmosphereThreadNode` directly. Mastodon's `context` API returns flat `ancestors[]` + `descendants[]` (not recursive); the layout (parents above target, target highlighted, descendants nested) ports cleanly but the data shape doesn't.
 
 ### Data layer
 
@@ -102,6 +112,28 @@ Use the `SocialAnalyticsProvider` context, not direct `recordReaderTracksEvent` 
 - Connection identity (`connection_id`) is added by the provider, not threaded through prop drilling.
 
 All Reader Tracks events use the `calypso_reader_*` prefix per `client/reader/AGENTS.md`. Emit them via the `recordReaderTracksEvent` Redux action — `recordTrack()` from `client/reader/stats` is deprecated.
+
+Tracks events emitted from click-destination surfaces (timestamp anchor, quote embed, replies count, reply-context preface) gain a `destination` property (`'in_app_thread' | 'bsky_app'`) so dashboards can split by routing behaviour without renaming the events.
+
+### URL resolution (slice 5+)
+
+Post-card subcomponents that re-target click destinations (timestamp anchor in
+`<PostCardHeader>`, `<PostCardEmbedQuote>`, `<PostCardCounts>`'s replies count,
+`<PostCardHeader>`'s reply-context preface) read an optional `getThreadUrl`
+resolver from the analytics context:
+
+```ts
+interface SocialAnalyticsContextValue {
+	// ...
+	getThreadUrl?: ( postUri: string ) => string | null;
+}
+```
+
+When `getThreadUrl(uri)` returns a string, the click target is in-app (same
+tab, no `rel`). When it returns `null` (or the resolver isn't set), the
+slice-4 bsky.app fallback is used. Per-protocol shells (`TimelinePanel`,
+`ThreadPanel`) bind the connection ID and the protocol-specific URL builder
+(e.g. `getThreadUrl` from `client/reader/atmosphere/route.ts`).
 
 ### HTML sanitisation (defence-in-depth)
 
@@ -125,9 +157,21 @@ Allow-list shape:
 
 Don't replace this with a `<a>`-wrapping-the-whole-card structure (illegal nested anchors) or `onClick` on a `<div>` (kills keyboard navigation and screen-reader semantics).
 
+### Inline video — thumbnail vs. expanded
+
+`<PostCardEmbedVideo>` defaults to thumbnail-only (slice-4 behaviour, used by
+the timeline). When `expanded={true}` and a `parentUrl` is provided
+(`post.bluesky_url`), the component renders bsky.app's static-embed iframe
+(sandboxed, lazy-loaded, aspect-ratio preserved). Falls back to the thumbnail
+when `parentUrl` is missing or non-bsky. `<SocialPostCard>` forwards
+`expandedVideo` only for the highlighted root node inside `<ThreadTree>` —
+replies and parents stay thumbnail-only.
+
 ### Click destinations
 
-Today every click destination opens `bsky.app` in a new tab (`target="_blank" rel="noopener noreferrer"`). Slice 5 will rewrite three of those (parent post → in-app thread route, quote → in-app thread route, author → in-app profile route) without touching the card-link plumbing itself. When wiring a new card surface, route through `PostCardLink` rather than spreading `target="_blank"` anchors directly across subcomponents.
+As of slice 5, the card-link / quote / replies-count / reply-context surfaces all route in-app via `getThreadUrl` when the resolver is set by the per-protocol shell. The bsky.app `target="_blank"` fallback is retained for contexts where no resolver is bound (e.g. the timeline before a thread is opened). Author chip still opens bsky.app in a new tab — in-app author profile routing is slice-6 territory.
+
+When wiring a new card surface, route through `PostCardLink` rather than spreading `target="_blank"` anchors directly across subcomponents. Consult `getThreadUrl` from the analytics context before constructing any post-destination URL.
 
 ## Boundaries (for new code)
 
@@ -180,6 +224,8 @@ Future-extraction candidates flagged for later PRs (currently in `client/reader/
 
 - Reader-wide guidance: [`client/reader/AGENTS.md`](../AGENTS.md).
 - Calypso-wide guidance: [`client/AGENTS.md`](../../AGENTS.md).
+- Slice 5 design (in-app thread view): `~/notes/1-Projects/code/a8c/calypso/2026-04-28-reader-atmosphere-slice5-design.md`.
+- Slice 5 plan: `~/notes/1-Projects/code/a8c/calypso/2026-04-28-reader-atmosphere-slice5-plan.md`.
 - Slice 4 design (Bluesky timeline frontend): `~/notes/1-Projects/code/a8c/calypso/2026-04-27-reader-atmosphere-slice4-frontend-design.md`.
 - Slice 4 plan (task-by-task): `~/notes/1-Projects/code/a8c/calypso/2026-04-27-reader-atmosphere-slice4-frontend-plan.md`.
 - Slice 1 (connections + profile): `~/notes/1-Projects/code/a8c/calypso/2026-04-22-reader-atmosphere-slice1-design.md` and `…-plan.md`.
