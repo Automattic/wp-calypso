@@ -6,10 +6,12 @@ import { useDispatch } from 'react-redux';
 import { UnknownAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import EmptyContent from 'calypso/components/empty-content';
-import { ThreadTree } from 'calypso/reader/social';
-import { SocialAnalyticsProvider } from 'calypso/reader/social/components/post-card/analytics-context';
-import { ThreadTombstone } from 'calypso/reader/social/components/thread-tree/thread-tombstone';
-import { ThreadTreeSkeleton } from 'calypso/reader/social/components/thread-tree/thread-tree-skeleton';
+import {
+	SocialAnalyticsProvider,
+	ThreadTombstone,
+	ThreadTree,
+	ThreadTreeSkeleton,
+} from 'calypso/reader/social';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { getThreadUrl as buildThreadUrl } from './route';
 import { ThreadHeader } from './thread-header';
@@ -33,13 +35,15 @@ export function ThreadPanel( { connection, did, rkey }: ThreadPanelProps ) {
 
 	const targetUri = useMemo( () => `at://${ did }/app.bsky.feed.post/${ rkey }`, [ did, rkey ] );
 
-	const { data, isPending, isError, error, refetch } = useThreadQuery( { uri: targetUri } );
+	const { data, isPending, isFetching, isError, error, refetch } = useThreadQuery( {
+		uri: targetUri,
+	} );
 
 	useEffect( () => {
 		dispatch(
 			recordReaderTracksEvent( 'calypso_reader_atmosphere_thread_viewed', {
 				connection_id: connection.id,
-				target_uri: targetUri,
+				thread_target_uri: targetUri,
 			} )
 		);
 	}, [ connection.id, targetUri, dispatch ] );
@@ -50,7 +54,7 @@ export function ThreadPanel( { connection, did, rkey }: ThreadPanelProps ) {
 			dispatch(
 				recordReaderTracksEvent( 'calypso_reader_atmosphere_thread_error_shown', {
 					connection_id: connection.id,
-					target_uri: targetUri,
+					thread_target_uri: targetUri,
 					error_kind: error.kind,
 				} )
 			);
@@ -64,7 +68,7 @@ export function ThreadPanel( { connection, did, rkey }: ThreadPanelProps ) {
 		dispatch(
 			recordReaderTracksEvent( 'calypso_reader_atmosphere_thread_retry_clicked', {
 				connection_id: connection.id,
-				target_uri: targetUri,
+				thread_target_uri: targetUri,
 				error_kind: error?.kind ?? 'unknown',
 			} )
 		);
@@ -75,20 +79,22 @@ export function ThreadPanel( { connection, did, rkey }: ThreadPanelProps ) {
 		dispatch(
 			recordReaderTracksEvent( 'calypso_reader_atmosphere_thread_back_to_timeline_clicked', {
 				connection_id: connection.id,
-				target_uri: targetUri,
+				thread_target_uri: targetUri,
 			} )
 		);
 	}, [ connection.id, targetUri, dispatch ] );
 
 	const onClickAnalytics = useCallback(
 		( event: string, props: Record< string, unknown > ) => {
-			// Re-prefix events emitted from inside the thread (post-card subcomponents
-			// emit `_timeline_*` strings; ThreadPanel translates them to `_thread_*`).
-			const reprefixed = event.replace( '_timeline_', '_thread_' );
+			// Rewrite *_timeline_* events emitted by shared post-card subcomponents
+			// to *_thread_* so dashboards can split by surface.
+			const reprefixed = event.includes( '_timeline_' )
+				? event.replace( '_timeline_', '_thread_' )
+				: event;
 			dispatch(
 				recordReaderTracksEvent( reprefixed, {
 					...props,
-					target_uri: targetUri,
+					thread_target_uri: targetUri,
 				} )
 			);
 		},
@@ -100,21 +106,25 @@ export function ThreadPanel( { connection, did, rkey }: ThreadPanelProps ) {
 		[ connection.id ]
 	);
 
+	const analyticsValue = useMemo(
+		() => ( {
+			source: 'atmosphere' as const,
+			connectionId: connection.id,
+			onClick: onClickAnalytics,
+			getThreadUrl,
+		} ),
+		[ connection.id, onClickAnalytics, getThreadUrl ]
+	);
+
 	return (
 		<>
 			<ThreadHeader connection={ connection } onBackToTimeline={ handleBackToTimeline } />
-			<SocialAnalyticsProvider
-				value={ {
-					source: 'atmosphere',
-					connectionId: connection.id,
-					onClick: onClickAnalytics,
-					getThreadUrl,
-				} }
-			>
+			<SocialAnalyticsProvider value={ analyticsValue }>
 				{ renderBody( {
 					translate,
 					data,
 					isPending,
+					isFetching,
 					isError,
 					error: error ?? null,
 					handleRetry,
@@ -129,6 +139,7 @@ function renderBody( {
 	translate,
 	data,
 	isPending,
+	isFetching,
 	isError,
 	error,
 	handleRetry,
@@ -137,6 +148,7 @@ function renderBody( {
 	translate: ReturnType< typeof useTranslate >;
 	data: { thread: AtmosphereThreadNode } | undefined;
 	isPending: boolean;
+	isFetching: boolean;
 	isError: boolean;
 	error: AtmosphereError | null;
 	handleRetry: () => void;
@@ -149,7 +161,7 @@ function renderBody( {
 		return renderError( { translate, error, handleRetry } );
 	}
 	if ( ! data ) {
-		return null;
+		return isFetching ? <ThreadTreeSkeleton /> : null;
 	}
 	if ( data.thread.type === 'not_found' ) {
 		return <ThreadTombstone kind="not_found" />;
@@ -171,10 +183,20 @@ function renderError( {
 } ) {
 	switch ( error.kind ) {
 		case 'auth_required':
+		case 'auth_failed':
+		case 'invalid_handle':
+		case 'invalid_credentials':
 			return (
 				<EmptyContent
 					title={ translate( 'Reconnect needed' ) }
 					line={ translate( 'Your Bluesky connection needs to be reconnected. Coming soon.' ) }
+				/>
+			);
+		case 'connection_not_found':
+			return (
+				<EmptyContent
+					title={ translate( 'Connection no longer exists' ) }
+					line={ translate( 'Reconnect your Bluesky account to view this thread.' ) }
 				/>
 			);
 		case 'not_found':
@@ -218,7 +240,7 @@ function renderError( {
 			return (
 				<EmptyContent
 					title={ translate( "Couldn't load this post" ) }
-					line={ translate( 'The post URL appears to be invalid.' ) }
+					line={ error.message ?? translate( 'The post URL appears to be invalid.' ) }
 				/>
 			);
 		default:

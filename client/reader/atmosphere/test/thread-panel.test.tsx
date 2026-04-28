@@ -65,7 +65,9 @@ function fixture(): AtmosphereThreadResponse {
 }
 
 function makeQueryClient() {
-	return new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+	return new QueryClient( {
+		defaultOptions: { queries: { retry: false, retryDelay: 0 } },
+	} );
 }
 
 describe( 'ThreadPanel', () => {
@@ -142,11 +144,125 @@ describe( 'ThreadPanel', () => {
 		expect( screen.queryByRole( 'button', { name: /retry/i } ) ).toBeNull();
 	} );
 
-	it( 'renders upstream_unavailable with Retry, fires error_shown + retry_clicked, recovers', async () => {
-		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+	it( 'renders the Reconnect-needed empty state for invalid_handle / invalid_credentials / auth_failed', async () => {
 		nock( BASE )
 			.get( PATH )
 			.query( { uri: TARGET_URI } )
+			.reply( 401, { error: 'auth_failed', message: 'auth failed' } );
+
+		renderWithProvider( <ThreadPanel connection={ connection } did={ DID } rkey={ RKEY } />, {
+			queryClient: makeQueryClient(),
+		} );
+		await waitFor( () =>
+			expect( screen.getAllByText( /Reconnect needed/i ).length ).toBeGreaterThan( 0 )
+		);
+		expect( screen.queryByRole( 'button', { name: /retry/i } ) ).toBeNull();
+	} );
+
+	it( 'renders the Connection-no-longer-exists empty state for connection_not_found', async () => {
+		nock( BASE )
+			.get( PATH )
+			.query( { uri: TARGET_URI } )
+			.reply( 404, { error: 'connection_not_found', message: 'gone' } );
+
+		renderWithProvider( <ThreadPanel connection={ connection } did={ DID } rkey={ RKEY } />, {
+			queryClient: makeQueryClient(),
+		} );
+		await waitFor( () =>
+			expect( screen.getAllByText( /Connection no longer exists/i ).length ).toBeGreaterThan( 0 )
+		);
+		expect( screen.queryByRole( 'button', { name: /retry/i } ) ).toBeNull();
+	} );
+
+	it( 'renders the rate-limited empty state with the retry-after seconds', async () => {
+		nock( BASE )
+			.get( PATH )
+			.query( { uri: TARGET_URI } )
+			.reply( 429, {
+				error: 'atmosphere_rate_limited',
+				data: { retry_after: 30 },
+			} );
+
+		renderWithProvider( <ThreadPanel connection={ connection } did={ DID } rkey={ RKEY } />, {
+			queryClient: makeQueryClient(),
+		} );
+		expect( await screen.findByRole( 'heading', { level: 2, name: 'Slow down' } ) ).toBeVisible();
+		expect( screen.getByText( /30s/ ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: /retry/i } ) ).toBeVisible();
+	} );
+
+	it( 'renders the rate-limited empty state without retry-after when none was provided', async () => {
+		nock( BASE )
+			.get( PATH )
+			.query( { uri: TARGET_URI } )
+			.reply( 429, { error: 'atmosphere_rate_limited' } );
+
+		renderWithProvider( <ThreadPanel connection={ connection } did={ DID } rkey={ RKEY } />, {
+			queryClient: makeQueryClient(),
+		} );
+		expect( await screen.findByRole( 'heading', { level: 2, name: 'Slow down' } ) ).toBeVisible();
+		expect( screen.getByText( /Try again in a moment/i ) ).toBeVisible();
+	} );
+
+	it( 'renders bad_request with backend message when present and no Retry button', async () => {
+		nock( BASE ).get( PATH ).query( { uri: TARGET_URI } ).reply( 400, {
+			error: 'atmosphere_bad_request',
+			message: 'AT-URI parser rejected the input.',
+		} );
+
+		renderWithProvider( <ThreadPanel connection={ connection } did={ DID } rkey={ RKEY } />, {
+			queryClient: makeQueryClient(),
+		} );
+		await waitFor( () =>
+			expect( screen.getByText( /AT-URI parser rejected the input/i ) ).toBeVisible()
+		);
+		expect( screen.queryByRole( 'button', { name: /retry/i } ) ).toBeNull();
+	} );
+
+	it( 'renders the blocked tombstone when root.type === "blocked"', async () => {
+		nock( BASE )
+			.get( PATH )
+			.query( { uri: TARGET_URI } )
+			.reply( 200, {
+				thread: {
+					type: 'blocked',
+					uri: TARGET_URI,
+					author: { did: 'did:plc:blocked' },
+				},
+			} );
+
+		renderWithProvider( <ThreadPanel connection={ connection } did={ DID } rkey={ RKEY } />, {
+			queryClient: makeQueryClient(),
+		} );
+		await waitFor( () =>
+			expect( screen.getAllByText( /blocked author/i ).length ).toBeGreaterThan( 0 )
+		);
+	} );
+
+	it( 'renders the generic Retry empty state for unrecognized error kinds', async () => {
+		// Send an `unknown` error (classifier maps unrecognized payloads to
+		// kind: 'unknown', which falls through the renderError switch's default).
+		nock( BASE )
+			.get( PATH )
+			.query( { uri: TARGET_URI } )
+			.times( 3 )
+			.reply( 500, { error: 'something_unrecognized', message: 'oops' } );
+
+		renderWithProvider( <ThreadPanel connection={ connection } did={ DID } rkey={ RKEY } />, {
+			queryClient: makeQueryClient(),
+		} );
+		await waitFor( () => expect( screen.getByText( /Couldn't load thread/i ) ).toBeVisible() );
+		expect( screen.getByRole( 'button', { name: /retry/i } ) ).toBeVisible();
+	} );
+
+	it( 'renders upstream_unavailable with Retry, fires error_shown + retry_clicked, recovers', async () => {
+		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		// Retry predicate retries upstream_unavailable up to 2 more times
+		// (3 total) before surrendering to the error UI.
+		nock( BASE )
+			.get( PATH )
+			.query( { uri: TARGET_URI } )
+			.times( 3 )
 			.reply( 502, { error: 'atmosphere_upstream_unavailable', message: 'down' } );
 
 		const user = userEvent.setup();
@@ -160,7 +276,7 @@ describe( 'ThreadPanel', () => {
 			'calypso_reader_atmosphere_thread_error_shown',
 			expect.objectContaining( {
 				connection_id: 7,
-				target_uri: TARGET_URI,
+				thread_target_uri: TARGET_URI,
 				error_kind: 'upstream_unavailable',
 			} )
 		);
@@ -172,7 +288,7 @@ describe( 'ThreadPanel', () => {
 			'calypso_reader_atmosphere_thread_retry_clicked',
 			expect.objectContaining( {
 				connection_id: 7,
-				target_uri: TARGET_URI,
+				thread_target_uri: TARGET_URI,
 				error_kind: 'upstream_unavailable',
 			} )
 		);
@@ -189,7 +305,7 @@ describe( 'ThreadPanel', () => {
 		await waitFor( () =>
 			expect( spy ).toHaveBeenCalledWith(
 				'calypso_reader_atmosphere_thread_viewed',
-				expect.objectContaining( { connection_id: 7, target_uri: TARGET_URI } )
+				expect.objectContaining( { connection_id: 7, thread_target_uri: TARGET_URI } )
 			)
 		);
 
@@ -197,7 +313,7 @@ describe( 'ThreadPanel', () => {
 		await user.click( back );
 		expect( spy ).toHaveBeenCalledWith(
 			'calypso_reader_atmosphere_thread_back_to_timeline_clicked',
-			expect.objectContaining( { connection_id: 7, target_uri: TARGET_URI } )
+			expect.objectContaining( { connection_id: 7, thread_target_uri: TARGET_URI } )
 		);
 	} );
 } );

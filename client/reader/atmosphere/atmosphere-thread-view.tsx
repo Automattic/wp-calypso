@@ -1,5 +1,6 @@
 import { useConnectionsQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -14,19 +15,33 @@ interface Props {
 
 export function AtmosphereThreadView( { connectionId, did, rkey }: Props ) {
 	const translate = useTranslate();
-	const { data, isPending } = useConnectionsQuery();
+	const { data, isPending, isError, refetch } = useConnectionsQuery();
 
 	const connections = data?.connections ?? [];
 	const connection = connections.find( ( c ) => c.id === connectionId ) ?? null;
 
 	useEffect( () => {
-		if ( isPending ) {
+		if ( isPending || isError ) {
 			return;
 		}
 		if ( ! connection ) {
 			page.replace( '/reader/atmosphere' );
 		}
-	}, [ isPending, connection ] );
+	}, [ isPending, isError, connection ] );
+
+	if ( isError ) {
+		return (
+			<ReaderMain className="atmosphere-view">
+				<DocumentHead title={ translate( 'Thread ‹ ATmosphere ‹ Reader' ) } />
+				<div role="alert" className="atmosphere-error">
+					<p>{ translate( "We couldn't load your Bluesky connections." ) }</p>
+					<Button variant="secondary" onClick={ () => refetch() }>
+						{ translate( 'Try again' ) }
+					</Button>
+				</div>
+			</ReaderMain>
+		);
+	}
 
 	if ( ! connection ) {
 		return (

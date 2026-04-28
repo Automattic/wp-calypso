@@ -253,10 +253,6 @@ describe( 'TimelinePanel', () => {
 	} );
 } );
 
-// ---------------------------------------------------------------------------
-// Helpers for slice-5 tests
-// ---------------------------------------------------------------------------
-
 const connection7: AtmosphereConnection = {
 	id: 7,
 	did: 'did:plc:abc234567defghi234567jklab',
@@ -272,7 +268,7 @@ function makeFeedItem( overrides: Partial< ReturnType< typeof makePost > > = {} 
 	};
 }
 
-describe( 'TimelinePanel slice-5 click destinations', () => {
+describe( 'TimelinePanel in-app click destinations', () => {
 	beforeEach( () => {
 		jest
 			.spyOn( analytics, 'recordReaderTracksEvent' )

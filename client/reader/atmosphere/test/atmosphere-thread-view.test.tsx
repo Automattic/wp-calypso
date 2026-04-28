@@ -37,7 +37,9 @@ const DID = 'did:plc:abc234567defghi234567jkl';
 const RKEY = '3kabcdefghijk';
 
 function makeClient() {
-	return new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+	return new QueryClient( {
+		defaultOptions: { queries: { retry: false, retryDelay: 0 } },
+	} );
 }
 
 describe( 'AtmosphereThreadView', () => {
@@ -68,6 +70,36 @@ describe( 'AtmosphereThreadView', () => {
 		} );
 
 		await waitFor( () => expect( page.replace ).toHaveBeenCalledWith( '/reader/atmosphere' ) );
+	} );
+
+	it( 'shows an error and retry when the connections query fails', async () => {
+		// Retry predicate retries unknown errors up to 2 more times before
+		// surrendering to the error UI (3 total attempts).
+		nock( 'https://public-api.wordpress.com' )
+			.get( listUrl )
+			.times( 3 )
+			.reply( 500, { error: 'unknown' } );
+
+		renderWithProvider( <AtmosphereThreadView connectionId={ 7 } did={ DID } rkey={ RKEY } />, {
+			queryClient: makeClient(),
+		} );
+
+		await waitFor( () => expect( screen.getByRole( 'alert' ) ).toBeInTheDocument() );
+		expect( screen.getByRole( 'button', { name: /try again/i } ) ).toBeInTheDocument();
+		expect( page.replace ).not.toHaveBeenCalled();
+	} );
+
+	it( 'does not retry connection_not_found and renders the error UI', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( listUrl )
+			.reply( 404, { error: 'connection_not_found' } );
+
+		renderWithProvider( <AtmosphereThreadView connectionId={ 7 } did={ DID } rkey={ RKEY } />, {
+			queryClient: makeClient(),
+		} );
+
+		await waitFor( () => expect( screen.getByRole( 'alert' ) ).toBeInTheDocument() );
+		expect( nock.isDone() ).toBe( true );
 	} );
 
 	it( 'renders the thread panel when the connection resolves', async () => {
