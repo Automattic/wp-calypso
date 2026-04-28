@@ -30,7 +30,10 @@ export const useFeedRecommendationsMutation = (
 	const currentUserName = useSelector( getCurrentUserName );
 
 	// Get the recommended blogs list for the current user from the subscribed lists query.
-	const { data: subscribedListsData } = useQuery( readSubscribedListsQuery() );
+	const { data: subscribedListsData } = useQuery( {
+		...readSubscribedListsQuery(),
+		enabled: !! currentUserName,
+	} );
 	const recommendedBlogsList = currentUserName
 		? subscribedListsData?.lists.find(
 				( list ) => list.owner === currentUserName && list.slug === 'recommended-blogs'

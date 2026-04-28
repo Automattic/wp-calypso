@@ -9,7 +9,7 @@ import { Button } from '@automattic/components';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Icon, lock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import FollowButton from 'calypso/blocks/follow-button/button';
 import AutoDirection from 'calypso/components/auto-direction';
 import NavigationHeader from 'calypso/components/navigation-header';
@@ -20,6 +20,7 @@ import { isExternal } from 'calypso/lib/url';
 import { ReaderList } from 'calypso/reader/list-manage/types';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 import type { AppState } from 'calypso/types';
 
@@ -30,19 +31,24 @@ interface ReaderListHeaderProps {
 
 const ReaderListHeader = ( props: ReaderListHeaderProps ) => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
 	const queryClient = useQueryClient();
 	const { list, view } = props;
-	const { data: subscribedListsData } = useQuery( readSubscribedListsQuery() );
+	const currentUser = useSelector( ( state: AppState ) => getCurrentUser( state ) );
+	const { data: subscribedListsData, isSuccess: hasSubscribedListsData } = useQuery( {
+		...readSubscribedListsQuery(),
+		enabled: !! currentUser,
+	} );
 	const following = Boolean(
-		list &&
+		hasSubscribedListsData &&
+			list &&
 			subscribedListsData?.lists.some(
 				( subscribed ) => subscribed.owner === list.owner && subscribed.slug === list.slug
 			)
 	);
 	const { mutate: followList } = useMutation( followReadListMutation( queryClient ) );
 	const { mutate: unfollowList } = useMutation( unfollowReadListMutation( queryClient ) );
-	const currentUser = useSelector( ( state: AppState ) => getCurrentUser( state ) );
 	const editUrl = list?.is_owner ? `/reader/list/${ list.owner }/${ list.slug }/edit` : '';
 	const { data: listItemsData } = useQuery(
 		readListItemsQuery( list?.owner ?? '', list?.slug ?? '' )
@@ -95,9 +101,23 @@ const ReaderListHeader = ( props: ReaderListHeaderProps ) => {
 		}
 
 		if ( isFollowRequested ) {
-			followList( { owner: list.owner, slug: list.slug } );
+			followList(
+				{ owner: list.owner, slug: list.slug },
+				{
+					onError: () => {
+						dispatch( errorNotice( translate( 'Unable to follow list.' ) ) );
+					},
+				}
+			);
 		} else {
-			unfollowList( { owner: list.owner, slug: list.slug } );
+			unfollowList(
+				{ owner: list.owner, slug: list.slug },
+				{
+					onError: () => {
+						dispatch( errorNotice( translate( 'Unable to unfollow list.' ) ) );
+					},
+				}
+			);
 		}
 
 		recordAction( isFollowRequested ? 'followed_list' : 'unfollowed_list' );

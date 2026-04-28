@@ -64,11 +64,13 @@ describe( 'UserLists', () => {
 	} );
 
 	test( 'should render spinner when in loading state', () => {
-		// No nock setup — request hangs, query stays in initial loading state.
-		const queryClient = createQueryClient();
-		const { container } = renderWithQueryClient( <UserLists user={ defaultUser } />, {
-			queryClient,
-		} );
+		// Delay the response so the query stays pending while we assert.
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1/read/lists/test_user' )
+			.delay( 30000 )
+			.reply( 200, { lists: [] } );
+
+		const { container } = renderWithQueryClient( <UserLists user={ defaultUser } /> );
 
 		expect( container.querySelector( '.user-profile__loader' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Loading lists...' ) ).toBeInTheDocument();
