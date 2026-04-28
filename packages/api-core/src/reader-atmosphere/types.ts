@@ -85,11 +85,15 @@ export interface AtmosphereEmbedExternal {
 	thumb: string | null;
 }
 
+export interface AtmosphereActorRef {
+	did: string;
+}
+
 export interface AtmosphereQuoteTombstone {
 	type: 'not_found' | 'blocked';
 	uri: string;
 	reason: 'notfound' | 'blocked';
-	author?: { did: string };
+	author?: AtmosphereActorRef;
 }
 
 export interface AtmosphereEmbedQuote {
@@ -147,7 +151,7 @@ export interface AtmosphereThreadNotFoundNode {
 export interface AtmosphereThreadBlockedNode {
 	type: 'blocked';
 	uri: string;
-	author: { did: string };
+	author: AtmosphereActorRef;
 }
 
 export type AtmosphereThreadNode =
