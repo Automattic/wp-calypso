@@ -15,21 +15,12 @@ import { registerPlugin } from '@wordpress/plugins';
 import { ImageStudioEntryPoint, store as imageStudioStore } from '../store';
 import { ImageStudioMode } from '../types';
 import { trackImageStudioOpened } from '../utils/tracking';
-import { useIsAutomattician } from '../utils/use-is-automattician';
 import './feature-clip-sidebar.scss';
 
 const PLUGIN_NAME = 'big-sky-feature-clip';
 const PANEL_NAME = 'big-sky-feature-clip-panel';
 
-function FeatureClipPanel(): JSX.Element | null {
-	// Internal-release stop-gap: hide the entry point from non-Automatticians.
-	// Long-term this surface should ship via Jetpack the same way Image Studio
-	// does, with the gate handled there.
-	const isAutomattician = useIsAutomattician();
-	if ( ! isAutomattician ) {
-		return null;
-	}
-
+function FeatureClipPanel(): JSX.Element {
 	const handleClick = () => {
 		const { openImageStudio } = dispatch( imageStudioStore );
 
