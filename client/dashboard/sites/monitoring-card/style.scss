@@ -95,8 +95,9 @@
 			margin-top: 20px;
 			margin-inline-start: 20px;
 			border-radius: 4px;
-			border: 1px solid #DDD;
-			background: #FFF;
+			border: 1px solid var( --dashboard-surface__border-color );
+			background: var( --dashboard-surface__background-color );
+			color: var( --dashboard__text-color );
 			padding: 16px;
 			text-wrap: nowrap;
 			z-index: 1;
