@@ -60,6 +60,11 @@ Post cards live in `client/blocks/reader-post-card/` with variants: `standard` (
 | `/tags`                              | `client/reader/tags/`                                                     |
 | `/activities/likes`                  | `client/reader/liked-stream/`                                             |
 | `/reader/users/*`                    | `client/reader/user-profile/`                                             |
+| `/reader/atmosphere`                 | `client/reader/atmosphere/atmosphere-landing-view.tsx`                    |
+| `/reader/atmosphere/connect`         | `client/reader/atmosphere/atmosphere-connect-view.tsx`                    |
+| `/reader/atmosphere/:id`             | `client/reader/atmosphere/controller.tsx` (redirect handler)              |
+| `/reader/atmosphere/:id/:tab`        | `client/reader/atmosphere/atmosphere-account-view.tsx`                    |
+| `/reader/atmosphere/:id/thread/:did/:rkey` | `client/reader/atmosphere/atmosphere-thread-view.tsx`               |
 
 ### SSR file variants
 
