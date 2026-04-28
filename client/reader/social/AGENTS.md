@@ -194,6 +194,7 @@ playback surface.
 
 CSP hosts required for the ATmosphere thread view
 (`client/server/pages/index.js`):
+
 - `img-src` += `https://cdn.bsky.app` (avatars + post images),
   `https://video.bsky.app` (video poster thumbnails),
   `https://video.cdn.bsky.app` (the thumbnail URL 302-redirects here, same
