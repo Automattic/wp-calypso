@@ -1,51 +1,12 @@
 import deepFreeze from 'deep-freeze';
 import {
-	READER_LIST_RECEIVE,
 	READER_RECOMMENDED_BLOGS_ITEMS_RECEIVE,
 	READER_RECOMMENDED_BLOGS_ITEMS_REQUEST,
 	READER_RECOMMENDED_BLOGS_ITEMS_REQUEST_FAILURE,
 } from 'calypso/state/reader/action-types';
-import {
-	items,
-	listItems,
-	userRecommendedBlogs,
-	isRequestingUserRecommendedBlogs,
-} from '../reducer';
+import { listItems, userRecommendedBlogs, isRequestingUserRecommendedBlogs } from '../reducer';
 
 describe( 'reducer', () => {
-	describe( '#items()', () => {
-		test( 'should default to an empty object', () => {
-			const state = items( undefined, {} );
-			expect( state ).toEqual( {} );
-		} );
-
-		test( 'should index a single list by ID', () => {
-			const state = items( null, {
-				type: READER_LIST_RECEIVE,
-				data: { list: { ID: 841, title: 'Hello World' } },
-			} );
-
-			expect( state ).toEqual( {
-				841: { ID: 841, title: 'Hello World' },
-			} );
-		} );
-
-		test( 'should accumulate lists', () => {
-			const original = deepFreeze( {
-				841: { ID: 841, title: 'Hello World' },
-			} );
-			const state = items( original, {
-				type: READER_LIST_RECEIVE,
-				data: { list: { ID: 413, title: 'Mangos and feijoas' } },
-			} );
-
-			expect( state ).toEqual( {
-				841: { ID: 841, title: 'Hello World' },
-				413: { ID: 413, title: 'Mangos and feijoas' },
-			} );
-		} );
-	} );
-
 	describe( '#listItems()', () => {
 		test( 'should default to an empty object', () => {
 			const state = listItems( undefined, {} );

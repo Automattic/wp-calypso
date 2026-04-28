@@ -1,8 +1,5 @@
-import { some, keyBy, reject } from 'lodash';
+import { some, reject } from 'lodash';
 import {
-	READER_LIST_RECEIVE,
-	READER_LIST_CREATE_SUCCESS,
-	READER_LIST_UPDATE_SUCCESS,
 	READER_LIST_ITEMS_RECEIVE,
 	READER_LIST_ITEM_ADD_FEED,
 	READER_LIST_ITEM_DELETE_FEED,
@@ -15,24 +12,7 @@ import {
 	READER_RECOMMENDED_BLOGS_ITEMS_REQUEST,
 	READER_RECOMMENDED_BLOGS_ITEMS_REQUEST_FAILURE,
 } from 'calypso/state/reader/action-types';
-import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
-import { itemsSchema } from './schema';
-
-/**
- * Tracks all known list objects, indexed by list ID.
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @returns {Object}        Updated state
- */
-export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
-	switch ( action.type ) {
-		case READER_LIST_RECEIVE:
-		case READER_LIST_CREATE_SUCCESS:
-		case READER_LIST_UPDATE_SUCCESS:
-			return Object.assign( {}, state, keyBy( [ action.data.list ], 'ID' ) );
-	}
-	return state;
-} );
+import { combineReducers } from 'calypso/state/utils';
 
 function removeItemBy( state, action, predicate ) {
 	if ( ! ( action.listId in state ) ) {
@@ -146,7 +126,6 @@ export const isRequestingUserRecommendedBlogs = ( state = {}, action ) => {
 };
 
 export default combineReducers( {
-	items,
 	listItems,
 	userLists,
 	isRequestingUserLists,

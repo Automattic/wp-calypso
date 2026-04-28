@@ -4,9 +4,6 @@ import {
 	READER_LIST_ITEM_DELETE_FEED,
 	READER_LIST_ITEM_DELETE_SITE,
 	READER_LIST_ITEM_DELETE_TAG,
-	READER_LIST_RECEIVE,
-	READER_LIST_CREATE_SUCCESS,
-	READER_LIST_UPDATE_SUCCESS,
 	READER_LIST_ITEM_ADD_FEED,
 	READER_LIST_ITEM_ADD_FEED_RECEIVE,
 	READER_LIST_ITEM_ADD_TAG,
@@ -24,7 +21,7 @@ import 'calypso/state/data-layer/wpcom/read/lists/tags/delete';
 import 'calypso/state/data-layer/wpcom/read/lists/tags/new';
 import 'calypso/state/data-layer/wpcom/read/lists/feeds/new';
 import 'calypso/state/reader/init';
-import type { ReaderList, Item as ListItem } from 'calypso/reader/list-manage/types';
+import type { Item as ListItem } from 'calypso/reader/list-manage/types';
 import type { CalypsoDispatch } from 'calypso/state/types';
 import type { AppState } from 'calypso/types';
 
@@ -32,36 +29,6 @@ import type { AppState } from 'calypso/types';
 interface ReaderListAction {
 	type: string;
 	[ key: string ]: unknown;
-}
-
-/**
- * Receive a single Reader list.
- * @param data - List data
- * @param data.list - Reader list object
- * @returns Action object
- */
-export function receiveReaderList( data: { list: ReaderList } ): ReaderListAction {
-	return { type: READER_LIST_RECEIVE, data };
-}
-
-export function receiveCreateReaderList( data: { list: ReaderList } ): ReaderListAction {
-	return {
-		type: READER_LIST_CREATE_SUCCESS,
-		data,
-	};
-}
-
-/**
- * Handle updated list object from the API.
- * @param data - List data
- * @param data.list - List to save
- * @returns Action object
- */
-export function receiveUpdatedListDetails( data: { list: ReaderList } ): ReaderListAction {
-	return {
-		type: READER_LIST_UPDATE_SUCCESS,
-		data,
-	};
 }
 
 export const requestReaderListItems = (
@@ -145,19 +112,6 @@ export const addReaderListFeed = (
 	listOwner,
 	listSlug,
 	feedId,
-} );
-
-export const addReaderListFeedByUrl = (
-	listId: number,
-	listOwner: string,
-	listSlug: string,
-	feedUrl: string
-): ReaderListAction => ( {
-	type: READER_LIST_ITEM_ADD_FEED,
-	listId,
-	listOwner,
-	listSlug,
-	feedUrl,
 } );
 
 export const addReaderListSite = (

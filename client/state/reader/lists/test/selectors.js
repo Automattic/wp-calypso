@@ -1,53 +1,6 @@
-import { getListByOwnerAndSlug, getMatchingItem } from '../selectors';
+import { getMatchingItem } from '../selectors';
 
 describe( 'selectors', () => {
-	describe( '#getListByOwnerAndSlug()', () => {
-		test( 'should return undefined if the list does not exist', () => {
-			const list = getListByOwnerAndSlug(
-				{
-					reader: {
-						lists: {},
-					},
-				},
-				'lister',
-				'bananas'
-			);
-
-			expect( list ).toEqual( undefined );
-		} );
-
-		test( 'should return a list if the owner and slug match', () => {
-			const list = getListByOwnerAndSlug(
-				{
-					reader: {
-						lists: {
-							items: {
-								123: {
-									ID: 123,
-									owner: 'lister',
-									slug: 'bananas',
-								},
-								456: {
-									ID: 456,
-									owner: 'lister',
-									slug: 'ants',
-								},
-							},
-						},
-					},
-				},
-				'lister',
-				'bananas'
-			);
-
-			expect( list ).toEqual( {
-				ID: 123,
-				owner: 'lister',
-				slug: 'bananas',
-			} );
-		} );
-	} );
-
 	describe( '#getMatchingItem()', () => {
 		const feed = {
 			feed_ID: 1,

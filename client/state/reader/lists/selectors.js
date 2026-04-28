@@ -1,26 +1,5 @@
-import { find } from 'lodash';
 import { withoutHttp } from 'calypso/lib/url';
 import 'calypso/state/reader/init';
-
-/**
- * Returns information about a single Reader list.
- * @param  {Object}  state  Global state tree
- * @param  {string}  owner  List owner
- * @param  {string}  slug  List slug
- * @returns {Object | undefined} Reader list
- */
-export function getListByOwnerAndSlug( state, owner, slug ) {
-	if ( ! owner || ! slug ) {
-		return;
-	}
-
-	const preparedOwner = owner.toLowerCase();
-	const preparedSlug = slug.toLowerCase();
-
-	return find( state.reader.lists.items, ( list ) => {
-		return list.owner === preparedOwner && list.slug === preparedSlug;
-	} );
-}
 
 export function getListItems( state, listId ) {
 	return state.reader.lists.listItems[ listId ];
