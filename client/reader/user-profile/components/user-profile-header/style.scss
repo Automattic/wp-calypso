@@ -32,6 +32,7 @@
 
 	.user-profile-header__gravatar-badge {
 		display: flex;
+		flex-shrink: 0;
 	}
 
 	p.user-profile-header__bio-desc {
