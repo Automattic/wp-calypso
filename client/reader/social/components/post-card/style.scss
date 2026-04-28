@@ -280,6 +280,23 @@ a.social-post-card-header__timestamp::after {
 		object-fit: cover;
 		display: block;
 	}
+
+	// Reset <button> defaults — the cell may render as a button (default
+	// variant, opens the ImageCarousel modal on click) or as a div / anchor.
+	&:where( button ) {
+		appearance: none;
+		border: 0;
+		padding: 0;
+		font: inherit;
+		color: inherit;
+		cursor: pointer;
+		text-align: inherit;
+
+		&:focus-visible {
+			outline: 2px solid var( --studio-blue-50 );
+			outline-offset: 2px;
+		}
+	}
 }
 
 .social-post-card-embed-video {
