@@ -53,8 +53,8 @@ describe( 'SocialPostCard', () => {
 		expect( screen.getByText( 'Alice' ) ).toBeVisible();
 		expect( screen.getByText( 'hello' ) ).toBeVisible();
 		expect( screen.getByText( /likes:/i ).parentElement ).toHaveTextContent( /likes:\s*3/i );
-		// The ↗ cue is aria-hidden, so the timestamp link's accessible name is
-		// the time-ago label. Find it by href instead of matching the cue.
+		// The timestamp link's accessible name is the relative time-ago label;
+		// look it up by href rather than text to stay stable across locales.
 		const timestampLink = screen
 			.getAllByRole( 'link' )
 			.find( ( a ) => a.getAttribute( 'href' ) === post.bluesky_url );
@@ -88,7 +88,6 @@ describe( 'SocialPostCard', () => {
 						post: {
 							type: 'not_found',
 							uri: 'at://x',
-							reason: 'notfound',
 						},
 					},
 				} }
@@ -148,14 +147,14 @@ describe( 'SocialPostCard expandedVideo forwarding', () => {
 		},
 	} );
 
-	it( 'renders the iframe when expandedVideo is true on a video post', () => {
+	it( 'renders a video element when expandedVideo is true on a video post', () => {
 		render( <SocialPostCard post={ videoPost } expandedVideo /> );
-		expect( screen.getByTitle( 'A video' ).tagName ).toBe( 'IFRAME' );
+		expect( screen.getByLabelText( 'A video' ).tagName ).toBe( 'VIDEO' );
 	} );
 
 	it( 'renders only the thumbnail when expandedVideo is unset', () => {
 		render( <SocialPostCard post={ videoPost } /> );
-		expect( screen.queryByTitle( 'A video' ) ).not.toBeInTheDocument();
+		expect( screen.queryByLabelText( 'A video' ) ).not.toBeInTheDocument();
 		expect( screen.getByRole( 'img', { name: 'A video' } ) ).toBeVisible();
 	} );
 
@@ -167,6 +166,6 @@ describe( 'SocialPostCard expandedVideo forwarding', () => {
 			},
 		} );
 		render( <SocialPostCard post={ imagePost } expandedVideo /> );
-		expect( screen.queryByTitle( /bluesky video/i ) ).not.toBeInTheDocument();
+		expect( screen.queryByLabelText( /bluesky video/i ) ).not.toBeInTheDocument();
 	} );
 } );

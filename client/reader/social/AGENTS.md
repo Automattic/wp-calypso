@@ -160,12 +160,37 @@ Don't replace this with a `<a>`-wrapping-the-whole-card structure (illegal neste
 ### Inline video — thumbnail vs. expanded
 
 `<PostCardEmbedVideo>` defaults to thumbnail-only (slice-4 behaviour, used by
-the timeline). When `expanded={true}` and a `parentUrl` is provided
-(`post.bluesky_url`), the component renders bsky.app's static-embed iframe
-(sandboxed, lazy-loaded, aspect-ratio preserved). Falls back to the thumbnail
-when `parentUrl` is missing or non-bsky. `<SocialPostCard>` forwards
-`expandedVideo` only for the highlighted root node inside `<ThreadTree>` —
-replies and parents stay thumbnail-only.
+the timeline). When `expanded={true}`, the component renders a native
+`<video>` element pointed at the HLS playlist exposed in
+`AtmosphereEmbedVideo.playlist` (served by `video.bsky.app`):
+
+- Safari / iOS WebKit play HLS natively — the playlist is set as `video.src`.
+- Other browsers lazy-load `hls.js` via dynamic `import()`, so timeline pages
+  and thread pages without expanded video pay zero bytes for it. The Reader
+  webpack chunk only pulls `hls.js` in when a thread root carries video AND
+  the browser lacks native HLS support.
+
+The thumbnail is used as the `<video poster>` so users see a frame before
+hitting play. `<SocialPostCard>` forwards `expandedVideo` only for the
+highlighted root node inside `<ThreadTree>` — replies and parents stay
+thumbnail-only.
+
+This mirrors what bsky.app's own web app and other modern Bluesky clients do.
+The static `embed.bsky.app` widget was an earlier attempt but doesn't include
+an inline player for video posts — it's a "view on bluesky" surface, not a
+playback surface.
+
+CSP hosts required for the ATmosphere thread view
+(`client/server/pages/index.js`):
+- `img-src` += `https://cdn.bsky.app` (avatars + post images),
+  `https://video.bsky.app` (video poster thumbnails),
+  `https://video.cdn.bsky.app` (the thumbnail URL 302-redirects here, same
+  redirect pattern as HLS segments).
+- `media-src` += `https://video.bsky.app`, `https://video.cdn.bsky.app`
+  (Safari native HLS path; segment URLs 302-redirect from
+  `video.bsky.app` to the CDN).
+- `connect-src` += same two `video.*` hosts (`hls.js` follows the same
+  redirect via XHR/fetch).
 
 ### Click destinations
 

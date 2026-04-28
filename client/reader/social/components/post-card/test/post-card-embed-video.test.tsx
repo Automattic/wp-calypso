@@ -18,47 +18,43 @@ describe( 'PostCardEmbedVideo', () => {
 		render( <PostCardEmbedVideo embed={ embed } /> );
 		const img = screen.getByRole( 'img', { name: 'Cute cat' } );
 		expect( img ).toHaveAttribute( 'src', embed.thumbnail );
-		expect( screen.queryByTitle( /bluesky video/i ) ).not.toBeInTheDocument();
+		expect( screen.queryByLabelText( /cute cat|bluesky video/i )?.tagName ).not.toBe( 'VIDEO' );
 	} );
 
-	it( 'renders the bsky.app iframe when expanded with a parentUrl', () => {
-		render(
-			<PostCardEmbedVideo
-				embed={ embed }
-				expanded
-				parentUrl="https://bsky.app/profile/jane.bsky.social/post/3kabc"
-			/>
-		);
-		const iframe = screen.getByTitle( 'Cute cat' );
-		expect( iframe.tagName ).toBe( 'IFRAME' );
-		expect( iframe ).toHaveAttribute(
-			'src',
-			expect.stringContaining( 'embed.bsky.app/static/embed.html' )
-		);
-		expect( iframe ).toHaveAttribute( 'sandbox', 'allow-scripts allow-same-origin allow-popups' );
-		expect( iframe ).toHaveAttribute( 'allow', 'autoplay; fullscreen; picture-in-picture' );
-		expect( iframe ).toHaveAttribute( 'loading', 'lazy' );
-	} );
-
-	it( 'falls back to the thumbnail when expanded but parentUrl is missing', () => {
+	it( 'renders a video element when expanded', () => {
 		render( <PostCardEmbedVideo embed={ embed } expanded /> );
-		expect( screen.getByRole( 'img', { name: 'Cute cat' } ) ).toBeVisible();
+		const video = screen.getByLabelText( 'Cute cat' );
+		expect( video.tagName ).toBe( 'VIDEO' );
+		expect( video ).toHaveAttribute( 'poster', embed.thumbnail );
+		expect( video ).toHaveAttribute( 'controls' );
+		expect( video ).toHaveAttribute( 'playsinline' );
+		expect( video ).toHaveAttribute( 'preload', 'metadata' );
 	} );
 
-	it( 'falls back to the thumbnail when expanded with a non-bsky parentUrl', () => {
-		render( <PostCardEmbedVideo embed={ embed } expanded parentUrl="https://example.com/x" /> );
-		expect( screen.getByRole( 'img', { name: 'Cute cat' } ) ).toBeVisible();
-	} );
-
-	it( 'falls back to a generic title when alt is empty', () => {
+	it( 'falls back to a generic accessible label when alt is empty', () => {
 		const noAlt: AtmosphereEmbedVideo = { ...embed, alt: '' };
-		render(
-			<PostCardEmbedVideo
-				embed={ noAlt }
-				expanded
-				parentUrl="https://bsky.app/profile/jane.bsky.social/post/3kabc"
-			/>
-		);
-		expect( screen.getByTitle( /bluesky video/i ).tagName ).toBe( 'IFRAME' );
+		render( <PostCardEmbedVideo embed={ noAlt } expanded /> );
+		expect( screen.getByLabelText( /bluesky video/i ).tagName ).toBe( 'VIDEO' );
+	} );
+
+	it( 'sets the playlist as src on browsers with native HLS support', () => {
+		const original = window.HTMLMediaElement.prototype.canPlayType;
+		// Simulate Safari-class browser (native HLS).
+		window.HTMLMediaElement.prototype.canPlayType = function ( type: string ) {
+			return type === 'application/vnd.apple.mpegurl' ? 'maybe' : '';
+		};
+		try {
+			render( <PostCardEmbedVideo embed={ embed } expanded /> );
+			const video = screen.getByLabelText( 'Cute cat' ) as HTMLVideoElement;
+			expect( video.src ).toBe( embed.playlist );
+		} finally {
+			window.HTMLMediaElement.prototype.canPlayType = original;
+		}
+	} );
+
+	it( 'applies the aspect ratio to the container', () => {
+		const { container } = render( <PostCardEmbedVideo embed={ embed } expanded /> );
+		const wrapper = container.querySelector< HTMLDivElement >( '.social-post-card-embed-video' );
+		expect( wrapper?.style.aspectRatio ).toBe( '16 / 9' );
 	} );
 } );

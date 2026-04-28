@@ -1,33 +1,68 @@
 import { useTranslate } from 'i18n-calypso';
-import { buildBskyEmbedSrc } from './build-bsky-embed-src';
+import { useEffect, useRef } from 'react';
 import type { AtmosphereEmbedVideo } from '@automattic/api-core';
 
 interface PostCardEmbedVideoProps {
 	embed: AtmosphereEmbedVideo;
 	expanded?: boolean;
-	parentUrl?: string;
 }
 
-export function PostCardEmbedVideo( { embed, expanded, parentUrl }: PostCardEmbedVideoProps ) {
+const HLS_MIME = 'application/vnd.apple.mpegurl';
+
+export function PostCardEmbedVideo( { embed, expanded }: PostCardEmbedVideoProps ) {
 	const translate = useTranslate();
+	const videoRef = useRef< HTMLVideoElement >( null );
 	const aspectRatioCss = embed.aspect_ratio
 		? `${ embed.aspect_ratio.width } / ${ embed.aspect_ratio.height }`
 		: undefined;
 	const containerStyle = aspectRatioCss ? { aspectRatio: aspectRatioCss } : undefined;
 
-	const embedSrc = expanded && parentUrl ? buildBskyEmbedSrc( parentUrl ) : null;
+	useEffect( () => {
+		if ( ! expanded ) {
+			return;
+		}
+		const video = videoRef.current;
+		if ( ! video ) {
+			return;
+		}
+		// Safari + iOS WebKit play HLS natively; setting src is enough.
+		if ( video.canPlayType( HLS_MIME ) ) {
+			video.src = embed.playlist;
+			return;
+		}
+		// Other browsers: lazy-load hls.js (kept out of the timeline chunk).
+		let cancelled = false;
+		let hls: { destroy: () => void } | null = null;
+		( async () => {
+			const { default: Hls } = await import( 'hls.js' );
+			if ( cancelled || ! Hls.isSupported() ) {
+				return;
+			}
+			const instance = new Hls();
+			hls = instance;
+			instance.loadSource( embed.playlist );
+			instance.attachMedia( video );
+		} )();
+		return () => {
+			cancelled = true;
+			hls?.destroy();
+		};
+	}, [ expanded, embed.playlist ] );
 
-	if ( embedSrc ) {
+	const accessibleLabel = embed.alt || String( translate( 'Bluesky video' ) );
+
+	if ( expanded ) {
 		return (
 			<div className="social-post-card-embed-video" style={ containerStyle }>
-				<iframe
-					className="social-post-card-embed-video__iframe"
-					src={ embedSrc }
-					title={ embed.alt || String( translate( 'Bluesky video' ) ) }
-					sandbox="allow-scripts allow-same-origin allow-popups"
-					allow="autoplay; fullscreen; picture-in-picture"
-					loading="lazy"
-					referrerPolicy="strict-origin-when-cross-origin"
+				{ /* eslint-disable-next-line jsx-a11y/media-has-caption -- Bluesky's video upload flow does not produce captions. */ }
+				<video
+					ref={ videoRef }
+					className="social-post-card-embed-video__player"
+					poster={ embed.thumbnail }
+					controls
+					playsInline
+					preload="metadata"
+					aria-label={ accessibleLabel }
 				/>
 			</div>
 		);

@@ -172,11 +172,7 @@ a.social-post-card-header__timestamp::after {
 	}
 }
 
-// On the thread-view target post the timestamp sits between two separators
-// that span the full card width (matches bsky.app's single-post layout).
-// The negative inline margin escapes CardBody's 16px horizontal padding so
-// the borders run edge-to-edge while the text + counts content stays inside
-// the card's content padding.
+// Negative inline margin escapes CardBody's 16px horizontal padding so the borders run edge-to-edge.
 .social-post-card-timestamp {
 	display: block;
 	margin-block-start: 12px;
@@ -188,9 +184,7 @@ a.social-post-card-header__timestamp::after {
 	border-block: 1px solid var( --studio-gray-5 );
 
 	+ .social-post-card-counts {
-		// The timestamp's bottom border doubles as the counts row's top
-		// separator, so reset the slice-4 8px gap to keep the counts visually
-		// glued to that line.
+		// Reuse the timestamp's bottom border as the counts row's top separator (no extra gap).
 		margin-block-start: 8px;
 	}
 }
@@ -314,11 +308,11 @@ a.social-post-card-header__timestamp::after {
 	object-fit: cover;
 }
 
-.social-post-card-embed-video__iframe {
+.social-post-card-embed-video__player {
 	display: block;
 	inline-size: 100%;
 	block-size: 100%;
-	border: 0;
+	background: var( --studio-gray-90 );
 }
 
 .social-post-card-embed-video__play {
