@@ -18,6 +18,24 @@ import './styles.scss';
 
 const SiteIntent = Onboard.SiteIntent;
 
+async function waitForRemoteOptionReady( siteId: number ): Promise< void > {
+	const TIMEOUT_MS = 30_000;
+	const POLL_INTERVAL_MS = 2_500;
+	const start = Date.now();
+
+	while ( Date.now() - start < TIMEOUT_MS ) {
+		try {
+			const status = await wpcom.req.get( `/sites/${ siteId }/big-sky-plugin` );
+			if ( status?.remote_option_ready !== false ) {
+				return;
+			}
+		} catch {
+			// Network error — keep polling
+		}
+		await new Promise< void >( ( resolve ) => setTimeout( resolve, POLL_INTERVAL_MS ) );
+	}
+}
+
 const LaunchBigSky: StepType = function ( props ) {
 	const { flow } = props;
 	const { __ } = useI18n();
@@ -127,12 +145,15 @@ const LaunchBigSky: StepType = function ( props ) {
 	const onSubmit = useCallback(
 		async ( event: FormEvent ) => {
 			event.preventDefault();
-			// Fire both in parallel; await both so the Atomic plugin and big_sky_enable option
-			// are set before we redirect to site-editor.php.
 			await Promise.all( [
 				setIntentOnSite( siteSlug, SiteIntent.AIAssembler ),
-				wpcom.req.post( `/sites/${ siteId }/big-sky-plugin`, { enable: true, sync: true } ),
+				wpcom.req.post( `/sites/${ siteId }/big-sky-plugin`, { enable: true } ),
 			] );
+			// Poll until the async job that sets big_sky_enable on the remote site has
+			// completed. Plugin activation triggers a PHP-FPM restart, so the option isn't
+			// readable via SSH until PHP-FPM recovers — at which point remote_option_ready
+			// flips to true and it's safe to redirect to site-editor.php.
+			await waitForRemoteOptionReady( siteId );
 			setGoalsOnSite( siteSlug, goals );
 			exitFlow( siteId.toString(), siteSlug );
 		},
