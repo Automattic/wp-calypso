@@ -97,6 +97,7 @@ Post cards live in `client/blocks/reader-post-card/` with variants: `standard` (
 | `/reader/atmosphere/:id`                   | `client/reader/atmosphere/controller.tsx` (redirect handler)              |
 | `/reader/atmosphere/:id/:tab`              | `client/reader/atmosphere/atmosphere-account-view.tsx`                    |
 | `/reader/atmosphere/:id/thread/:did/:rkey` | `client/reader/atmosphere/atmosphere-thread-view.tsx`                     |
+| `/reader/atmosphere/:id/profile/:actor`    | `client/reader/atmosphere/author-profile-view.tsx`                        |
 
 ### SSR file variants
 
