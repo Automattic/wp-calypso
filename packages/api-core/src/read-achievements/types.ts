@@ -17,4 +17,5 @@ export interface Achievement {
 export interface AchievementsResponse {
 	found: number;
 	achievements: Achievement[];
+	years_of_service?: number;
 }

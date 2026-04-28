@@ -5,6 +5,7 @@ import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
 import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link';
 import UserAvatar from 'calypso/blocks/user-avatar';
 import { areEqualIgnoringWhitespaceAndCase } from 'calypso/lib/string';
+import { AuthorAchievementBadges } from 'calypso/reader/components/achievements/author-achievement-badges';
 import { getStreamUrl } from 'calypso/reader/route';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
 
@@ -18,7 +19,6 @@ const ReaderFullPostHeaderMeta = ( { post, author, siteName, feedId, siteId } ) 
 	const showAuthorLink = hasAuthorName && ! hasMatchingAuthorAndSiteNames;
 	const avatarUrl =
 		! author?.avatar_URL && post.is_external ? feed?.site_icon || feed?.image : author?.avatar_URL;
-
 	return (
 		<div className="reader-full-post__header-meta-wrapper">
 			<UserAvatar user={ { ...author, avatar_URL: avatarUrl } } size={ 40 } />
@@ -33,6 +33,9 @@ const ReaderFullPostHeaderMeta = ( { post, author, siteName, feedId, siteId } ) 
 						>
 							{ author.name }
 						</ReaderAuthorLink>
+					) }
+					{ showAuthorLink && (
+						<AuthorAchievementBadges authorLogin={ author?.wpcom_login } size="small" />
 					) }
 					{ showAuthorLink && post.date && (
 						<span className="reader-full-post__header-meta-separator"> • </span>
