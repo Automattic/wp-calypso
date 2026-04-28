@@ -1,6 +1,6 @@
 import { useAuthorFeedInfiniteQuery, useAuthorProfileQuery } from '@automattic/api-queries';
 import { __experimentalVStack as VStack } from '@wordpress/components';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, type TranslateResult } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
@@ -14,7 +14,7 @@ import {
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { AuthorProfileHeader } from './author-profile-header';
 import { errorMessage } from './profile-errors';
-import { getProfileUrl, getThreadUrl } from './route';
+import { getBlueskyProfileUrl, getProfileUrl, getThreadUrl } from './route';
 import type {
 	AtmosphereAuthorProfile,
 	AtmosphereConnection,
@@ -41,17 +41,33 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 	const profile = useAuthorProfileQuery( { actor } );
 	const feed = useAuthorFeedInfiniteQuery( { actor } );
 
+	// Reset the error_shown dedup ref when navigating between profiles so the
+	// next author's first error fires its analytics even when the kind matches.
 	useEffect( () => {
+		lastErrorKind.current = { header: null, feed: null };
+	}, [ actor, connection.id ] );
+
+	// Fire profile_viewed exactly once per (actor, connection) — but wait until
+	// the profile data resolves so the Tracks payload carries the resolved DID
+	// and handle. Without the gate, the event ships with both fields undefined
+	// and dashboards can't tell DID-URL views from handle-URL views. Resets to
+	// false when actor/connection change so navigation between profiles re-fires.
+	const viewedFor = useRef< string | null >( null );
+	useEffect( () => {
+		const key = `${ connection.id }:${ actor }`;
+		if ( viewedFor.current === key || ! profile.data ) {
+			return;
+		}
+		viewedFor.current = key;
 		dispatch(
 			recordReaderTracksEvent( 'calypso_reader_atmosphere_profile_viewed', {
 				connection_id: connection.id,
 				actor,
-				actor_did: profile.data?.did,
-				actor_handle: profile.data?.handle,
+				actor_did: profile.data.did,
+				actor_handle: profile.data.handle,
 			} )
 		);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ actor, connection.id ] );
+	}, [ actor, connection.id, profile.data, dispatch ] );
 
 	useEffect( () => {
 		if ( profile.isError && profile.error && profile.error.kind !== lastErrorKind.current.header ) {
@@ -179,7 +195,7 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 			recordReaderTracksEvent( 'calypso_reader_atmosphere_profile_external_clicked', {
 				connection_id: connection.id,
 				actor,
-				external_uri: `https://bsky.app/profile/${ profile.data.handle }`,
+				external_uri: getBlueskyProfileUrl( profile.data.handle ),
 				surface: 'header_action',
 			} )
 		);
@@ -231,24 +247,24 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 			'invalid_credentials',
 		] );
 		const showRetry = ! noRetry.has( error.kind );
-		const titleByKind: Partial< Record< AtmosphereError[ 'kind' ], string > > = {
-			not_found: String( translate( 'Profile not found' ) ),
-			auth_required: String( translate( 'Reconnect needed' ) ),
-			rate_limited: String( translate( 'Slow down' ) ),
-			upstream_unavailable: String( translate( 'Bluesky unreachable' ) ),
+		const titleByKind: Partial< Record< AtmosphereError[ 'kind' ], TranslateResult > > = {
+			not_found: translate( 'Profile not found' ),
+			auth_required: translate( 'Reconnect needed' ),
+			rate_limited: translate( 'Slow down' ),
+			upstream_unavailable: translate( 'Bluesky unreachable' ),
 		};
 		return (
 			<EmptyContent
-				title={ titleByKind[ error.kind ] ?? String( translate( 'Couldn’t load profile' ) ) }
-				line={ String( errorMessage( error, translate ) ) }
-				action={ showRetry ? String( translate( 'Retry' ) ) : undefined }
+				title={ titleByKind[ error.kind ] ?? translate( 'Couldn’t load profile' ) }
+				line={ errorMessage( error, translate ) }
+				action={ showRetry ? translate( 'Retry' ) : undefined }
 				actionCallback={ showRetry ? handleHeaderRetry : undefined }
 			/>
 		);
 	};
 
 	const renderHeaderBody = ( profileData: AtmosphereAuthorProfile ) => {
-		const blueskyUrl = `https://bsky.app/profile/${ profileData.handle }`;
+		const blueskyUrl = getBlueskyProfileUrl( profileData.handle );
 		const headerActions = (
 			<a
 				className="atmosphere-profile__view-on-bsky"
@@ -312,7 +328,7 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 					) }
 					emptyLine={ String( translate( 'Their feed is empty.' ) ) }
 					emptyActionLabel={ String( translate( 'View on Bluesky' ) ) }
-					emptyActionURL={ `https://bsky.app/profile/${ profile.data?.handle ?? actor }` }
+					emptyActionURL={ getBlueskyProfileUrl( profile.data?.handle ?? actor ) }
 				/>
 			</VStack>
 		</SocialAnalyticsProvider>
