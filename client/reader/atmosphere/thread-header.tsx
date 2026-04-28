@@ -1,29 +1,32 @@
+import { Icon, chevronLeft } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import NavigationHeader from 'calypso/components/navigation-header';
 import { getTimelineUrl } from './route';
-import type { AtmosphereConnection, AtmosphereFeedItem } from '@automattic/api-core';
+import type { AtmosphereConnection } from '@automattic/api-core';
 
 interface ThreadHeaderProps {
 	connection: AtmosphereConnection;
-	targetPost: AtmosphereFeedItem | null;
 	onBackToTimeline?: () => void;
 }
 
-export function ThreadHeader( { connection, targetPost, onBackToTimeline }: ThreadHeaderProps ) {
+// The author + handle of the target post is already shown inside the
+// highlighted post card below this header (matches bsky.app's layout).
+// Keep this header lean: just back navigation + a generic "Post" label
+// for orientation.
+export function ThreadHeader( { connection, onBackToTimeline }: ThreadHeaderProps ) {
 	const translate = useTranslate();
 	const timelineUrl = getTimelineUrl( connection.id );
 
-	const title = targetPost
-		? targetPost.author.display_name || targetPost.author.handle
-		: translate( 'Thread' );
-	const subtitle = targetPost ? `@${ targetPost.author.handle }` : undefined;
-
 	return (
-		<>
-			<a href={ timelineUrl } onClick={ onBackToTimeline }>
-				{ translate( 'Back to timeline' ) }
+		<div className="thread-header">
+			<a
+				className="thread-header__back-link"
+				href={ timelineUrl }
+				onClick={ onBackToTimeline }
+				aria-label={ translate( 'Back to timeline' ) }
+			>
+				<Icon icon={ chevronLeft } size={ 20 } />
 			</a>
-			<NavigationHeader title={ title } subtitle={ subtitle } />
-		</>
+			<h1 className="thread-header__title">{ translate( 'Post' ) }</h1>
+		</div>
 	);
 }

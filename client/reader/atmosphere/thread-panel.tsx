@@ -16,7 +16,6 @@ import { ThreadHeader } from './thread-header';
 import type {
 	AtmosphereConnection,
 	AtmosphereError,
-	AtmosphereFeedItem,
 	AtmosphereThreadNode,
 } from '@automattic/api-core';
 import type { AppState } from 'calypso/types';
@@ -96,8 +95,6 @@ export function ThreadPanel( { connection, did, rkey }: ThreadPanelProps ) {
 		[ dispatch, targetUri ]
 	);
 
-	const targetPost = findTargetPost( data?.thread ?? null, targetUri );
-
 	const getThreadUrl = useCallback(
 		( uri: string ) => buildThreadUrl( connection.id, uri ),
 		[ connection.id ]
@@ -105,11 +102,7 @@ export function ThreadPanel( { connection, did, rkey }: ThreadPanelProps ) {
 
 	return (
 		<>
-			<ThreadHeader
-				connection={ connection }
-				targetPost={ targetPost }
-				onBackToTimeline={ handleBackToTimeline }
-			/>
+			<ThreadHeader connection={ connection } onBackToTimeline={ handleBackToTimeline } />
 			<SocialAnalyticsProvider
 				value={ {
 					source: 'atmosphere',
@@ -241,17 +234,4 @@ function renderError( {
 				/>
 			);
 	}
-}
-
-function findTargetPost(
-	node: AtmosphereThreadNode | null,
-	targetUri: string
-): AtmosphereFeedItem | null {
-	if ( ! node || node.type !== 'post' ) {
-		return null;
-	}
-	if ( node.post.uri === targetUri ) {
-		return node.post;
-	}
-	return node.post;
 }

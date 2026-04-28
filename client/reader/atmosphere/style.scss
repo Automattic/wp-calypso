@@ -23,3 +23,39 @@
 		padding-top: 5px;
 	}
 }
+
+.thread-header {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 8px 0 16px;
+}
+
+.thread-header__back-link {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	inline-size: 32px;
+	block-size: 32px;
+	border-radius: 50%;
+	color: var( --studio-gray-80 );
+	text-decoration: none;
+
+	&:hover,
+	&:focus-visible {
+		background: var( --studio-gray-5 );
+		color: var( --studio-gray-100 );
+	}
+
+	svg {
+		fill: currentColor;
+	}
+}
+
+.thread-header__title {
+	margin: 0;
+	font-size: 1rem;
+	font-weight: 600;
+	color: var( --studio-gray-100 );
+	line-height: 1.2;
+}
