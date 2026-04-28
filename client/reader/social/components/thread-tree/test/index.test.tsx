@@ -1,0 +1,150 @@
+/**
+ * @jest-environment jsdom
+ */
+import { render, screen } from '@testing-library/react';
+import { ThreadTree } from '../index';
+import type { AtmosphereThreadNode, AtmosphereFeedItem } from '@automattic/api-core';
+
+function makeFeedItem( overrides: Partial< AtmosphereFeedItem > = {} ): AtmosphereFeedItem {
+	return {
+		uri: 'at://did:plc:default/app.bsky.feed.post/3kdef',
+		cid: 'cid-default',
+		author: {
+			did: 'did:plc:default',
+			handle: 'default.bsky.social',
+			display_name: '',
+			avatar: null,
+		},
+		created_at: '2026-04-28T10:00:00Z',
+		indexed_at: '2026-04-28T10:00:00Z',
+		text: '',
+		html: '',
+		lang: [],
+		reply_parent: null,
+		reply_root: null,
+		reason: null,
+		embed: null,
+		counts: { replies: 0, reposts: 0, likes: 0, quotes: 0 },
+		bluesky_url: 'https://bsky.app/profile/default.bsky.social/post/3kdef',
+		...overrides,
+	};
+}
+
+const scrollIntoView = jest.fn();
+beforeEach( () => {
+	scrollIntoView.mockReset();
+	Element.prototype.scrollIntoView =
+		scrollIntoView as unknown as typeof Element.prototype.scrollIntoView;
+} );
+
+describe( 'ThreadTree', () => {
+	it( 'renders only the root when there is no parent and no replies', () => {
+		const root: AtmosphereThreadNode = {
+			type: 'post',
+			post: makeFeedItem( { uri: 'at://root', text: 'hello' } ),
+			parent: null,
+			replies: [],
+		};
+		render( <ThreadTree root={ root } targetUri="at://root" /> );
+		expect( screen.getAllByRole( 'article' ) ).toHaveLength( 1 );
+		expect( scrollIntoView ).not.toHaveBeenCalled();
+	} );
+
+	it( 'flattens a 3-deep parent chain oldest-first', () => {
+		const greatgrand = makeFeedItem( { uri: 'at://greatgrand', text: 'gg' } );
+		const grand = makeFeedItem( { uri: 'at://grand', text: 'g' } );
+		const parent = makeFeedItem( { uri: 'at://parent', text: 'p' } );
+		const target = makeFeedItem( { uri: 'at://target', text: 't' } );
+		const root: AtmosphereThreadNode = {
+			type: 'post',
+			post: target,
+			parent: {
+				type: 'post',
+				post: parent,
+				parent: {
+					type: 'post',
+					post: grand,
+					parent: {
+						type: 'post',
+						post: greatgrand,
+						parent: null,
+						replies: [],
+					},
+					replies: [],
+				},
+				replies: [],
+			},
+			replies: [],
+		};
+		render( <ThreadTree root={ root } targetUri="at://target" /> );
+		const articles = screen.getAllByRole( 'article' );
+		expect( articles ).toHaveLength( 4 );
+		expect( articles[ 0 ] ).toHaveTextContent( 'gg' );
+		expect( articles[ 1 ] ).toHaveTextContent( 'g' );
+		expect( articles[ 2 ] ).toHaveTextContent( 'p' );
+		expect( articles[ 3 ] ).toHaveTextContent( 't' );
+		expect( articles[ 3 ] ).toHaveAttribute( 'aria-current', 'true' );
+	} );
+
+	it( 'scrollIntoView fires on mount when there is at least one parent', () => {
+		const target = makeFeedItem( { uri: 'at://target' } );
+		const parent = makeFeedItem( { uri: 'at://parent' } );
+		const root: AtmosphereThreadNode = {
+			type: 'post',
+			post: target,
+			parent: { type: 'post', post: parent, parent: null, replies: [] },
+			replies: [],
+		};
+		render( <ThreadTree root={ root } targetUri="at://target" /> );
+		expect( scrollIntoView ).toHaveBeenCalledTimes( 1 );
+		expect( scrollIntoView ).toHaveBeenCalledWith( {
+			block: 'start',
+			behavior: 'instant',
+		} );
+	} );
+
+	it( 'mixes live posts and tombstones at any layer', () => {
+		const root: AtmosphereThreadNode = {
+			type: 'post',
+			post: makeFeedItem( { uri: 'at://root' } ),
+			parent: { type: 'not_found', uri: 'at://gone' },
+			replies: [
+				{
+					type: 'post',
+					post: makeFeedItem( { uri: 'at://reply1' } ),
+					parent: null,
+					replies: [],
+				},
+				{
+					type: 'blocked',
+					uri: 'at://blocked',
+					author: { did: 'did:plc:blk' },
+				},
+			],
+		};
+		render( <ThreadTree root={ root } targetUri="at://root" /> );
+		expect( screen.getAllByRole( 'note' ) ).toHaveLength( 2 ); // not_found + blocked
+		expect( screen.getAllByRole( 'article' ) ).toHaveLength( 2 ); // root + reply1
+	} );
+
+	it( 'caps the parent walk at 80 nodes to defend against cycles', () => {
+		let chain: AtmosphereThreadNode | null = null;
+		for ( let i = 0; i < 100; i++ ) {
+			const node: AtmosphereThreadNode = {
+				type: 'post',
+				post: makeFeedItem( { uri: `at://p${ i }`, text: `p${ i }` } ),
+				parent: chain,
+				replies: [],
+			};
+			chain = node;
+		}
+		const root: AtmosphereThreadNode = {
+			type: 'post',
+			post: makeFeedItem( { uri: 'at://target', text: 'target' } ),
+			parent: chain,
+			replies: [],
+		};
+		render( <ThreadTree root={ root } targetUri="at://target" /> );
+		expect( screen.getAllByRole( 'article' ) ).toHaveLength( 81 );
+	} );
+} );
