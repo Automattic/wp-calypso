@@ -16,7 +16,16 @@ export function PostCardHeader( { post, variant, prominentTimestamp }: PostCardH
 	const analytics = useSocialAnalytics();
 	const isCompact = variant === 'compact';
 	const displayName = post.author.display_name || post.author.handle;
-	const profileUrl = post.author.profile_url;
+	const externalProfileUrl = post.author.profile_url;
+	const inAppProfileUrl =
+		analytics?.getProfileUrl?.( {
+			did: post.author.id,
+			handle: post.author.handle,
+		} ) ?? null;
+	const profileUrl = inAppProfileUrl ?? externalProfileUrl;
+	const profileTarget = inAppProfileUrl ? undefined : '_blank';
+	const profileRel = inAppProfileUrl ? undefined : 'noopener noreferrer';
+	const profileDestination = inAppProfileUrl ? 'in_app' : 'bsky_app';
 	const avatarSize = isCompact ? 24 : 36;
 	const timestampIso = post.created_at || post.indexed_at;
 
@@ -33,7 +42,7 @@ export function PostCardHeader( { post, variant, prominentTimestamp }: PostCardH
 			connection_id: analytics.connectionId,
 			author_id: post.author.id,
 			author_handle: post.author.handle,
-			destination: 'bsky_app',
+			destination: profileDestination,
 		} );
 	};
 
@@ -163,8 +172,8 @@ export function PostCardHeader( { post, variant, prominentTimestamp }: PostCardH
 					<a
 						className="social-post-card-header__author"
 						href={ profileUrl }
-						target="_blank"
-						rel="noopener noreferrer"
+						target={ profileTarget }
+						rel={ profileRel }
 						onClick={ fireAuthorClicked }
 					>
 						{ authorBody }

@@ -189,3 +189,86 @@ describe( 'PostCardHeader getThreadUrl rewiring', () => {
 		);
 	} );
 } );
+
+describe( 'PostCardHeader — author chip with getProfileUrl resolver', () => {
+	function renderWithAnalytics(
+		post: AtmosphereFeedItem,
+		getProfileUrl: ( ref: { did?: string | null; handle?: string | null } ) => string | null
+	) {
+		const onClick = jest.fn();
+		render(
+			<SocialAnalyticsProvider
+				value={ {
+					source: 'atmosphere',
+					connectionId: 42,
+					onClick,
+					getProfileUrl,
+				} }
+			>
+				<PostCardHeader post={ post } variant="default" />
+			</SocialAnalyticsProvider>
+		);
+		return { onClick };
+	}
+
+	const basePost: AtmosphereFeedItem = {
+		uri: 'at://did:plc:abc/app.bsky.feed.post/xyz',
+		cid: 'cid',
+		author: {
+			did: 'did:plc:abc',
+			handle: 'alice.bsky.social',
+			display_name: 'Alice',
+			avatar: null,
+		},
+		created_at: '2024-01-01T00:00:00.000Z',
+		indexed_at: '2024-01-01T00:00:00.000Z',
+		text: '',
+		html: '',
+		lang: [],
+		reply_parent: null,
+		reply_root: null,
+		reason: null,
+		embed: null,
+		counts: { replies: 0, reposts: 0, likes: 0, quotes: 0 },
+		bluesky_url: 'https://bsky.app/profile/alice.bsky.social/post/xyz',
+	};
+
+	it( 'uses the in-app URL when the resolver returns a string', () => {
+		renderWithAnalytics( basePost, () => '/reader/atmosphere/42/profile/alice.bsky.social' );
+		const link = screen.getByRole( 'link', { name: /Alice/ } );
+		expect( link ).toHaveAttribute( 'href', '/reader/atmosphere/42/profile/alice.bsky.social' );
+		expect( link ).not.toHaveAttribute( 'target' );
+		expect( link ).not.toHaveAttribute( 'rel' );
+	} );
+
+	it( 'fires _author_clicked with destination=in_app when in-app', async () => {
+		const user = userEvent.setup();
+		const { onClick } = renderWithAnalytics(
+			basePost,
+			() => '/reader/atmosphere/42/profile/alice.bsky.social'
+		);
+		await user.click( screen.getByRole( 'link', { name: /Alice/ } ) );
+		expect( onClick ).toHaveBeenCalledWith(
+			'calypso_reader_atmosphere_timeline_author_clicked',
+			expect.objectContaining( { destination: 'in_app' } )
+		);
+	} );
+
+	it( 'falls back to bsky.app + new tab when the resolver returns null', () => {
+		renderWithAnalytics( basePost, () => null );
+		const link = screen.getByRole( 'link', { name: /Alice/ } );
+		expect( link ).toHaveAttribute( 'href', 'https://bsky.app/profile/alice.bsky.social' );
+		expect( link ).toHaveAttribute( 'target', '_blank' );
+		expect( link ).toHaveAttribute( 'rel', 'noopener noreferrer' );
+	} );
+
+	it( 'fires _author_clicked with destination=bsky_app when falling back', async () => {
+		const user = userEvent.setup();
+		const { onClick } = renderWithAnalytics( basePost, () => null );
+		await user.click( screen.getByRole( 'link', { name: /Alice/ } ) );
+		expect( onClick ).toHaveBeenCalledWith(
+			'calypso_reader_atmosphere_timeline_author_clicked',
+			expect.objectContaining( { destination: 'bsky_app' } )
+		);
+	} );
+} );
