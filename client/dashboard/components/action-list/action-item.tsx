@@ -41,3 +41,5 @@ function UnforwardedActionItem(
 export const ActionItem = forwardRef( UnforwardedActionItem );
 
 export default ActionItem;
+
+// smoke-test marker (post-#110238): trivial trailing comment to verify normal review path; will revert
