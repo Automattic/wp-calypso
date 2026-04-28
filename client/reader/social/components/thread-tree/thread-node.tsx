@@ -41,7 +41,10 @@ export const ThreadNode = forwardRef< HTMLDivElement, ThreadNodeProps >( functio
 			<div
 				ref={ highlighted ? ref : undefined }
 				role="article"
-				aria-current={ highlighted ? 'true' : undefined }
+				// `location` reads more idiomatically than `true` for "this is
+				// the post the URL points at" — the same value bsky.app's
+				// thread-view aria uses for the focused post.
+				aria-current={ highlighted ? 'location' : undefined }
 				className={ clsx(
 					'thread-node',
 					`thread-node--depth-${ depth }`,

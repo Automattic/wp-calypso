@@ -83,7 +83,7 @@ describe( 'ThreadTree', () => {
 		expect( articles[ 1 ] ).toHaveTextContent( 'g' );
 		expect( articles[ 2 ] ).toHaveTextContent( 'p' );
 		expect( articles[ 3 ] ).toHaveTextContent( 't' );
-		expect( articles[ 3 ] ).toHaveAttribute( 'aria-current', 'true' );
+		expect( articles[ 3 ] ).toHaveAttribute( 'aria-current', 'location' );
 	} );
 
 	it( 'scrollIntoView fires on mount when there is at least one parent', () => {

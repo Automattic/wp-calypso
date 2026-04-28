@@ -31,7 +31,7 @@ function makeFeedItem( overrides: Partial< AtmosphereFeedItem > = {} ): Atmosphe
 }
 
 describe( 'ThreadNode', () => {
-	it( 'marks the highlighted node with aria-current="true"', () => {
+	it( 'marks the highlighted node with aria-current="location"', () => {
 		const node: AtmosphereThreadNode = {
 			type: 'post',
 			post: makeFeedItem(),
@@ -40,7 +40,7 @@ describe( 'ThreadNode', () => {
 		};
 		render( <ThreadNode node={ node } depth={ 0 } highlighted /> );
 		const article = screen.getByRole( 'article' );
-		expect( article ).toHaveAttribute( 'aria-current', 'true' );
+		expect( article ).toHaveAttribute( 'aria-current', 'location' );
 		expect( article.classList.contains( 'is-target' ) ).toBe( true );
 	} );
 
