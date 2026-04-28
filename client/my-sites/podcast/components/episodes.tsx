@@ -1,11 +1,5 @@
 import page from '@automattic/calypso-router';
-import {
-	DataViews,
-	filterSortAndPaginate,
-	type Action,
-	type View,
-	type ViewTable,
-} from '@wordpress/dataviews';
+import { DataViews, type Action, type View, type ViewTable } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState, type MouseEvent } from 'react';
 import { DataViewsCard, DataViewsEmptyStateLayout } from 'calypso/dashboard/components/dataviews';
@@ -15,7 +9,10 @@ import getPodcastingCategoryId from 'calypso/state/selectors/get-podcasting-cate
 import { getTerms } from 'calypso/state/terms/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import useEpisodeStatsQuery from '../hooks/use-episode-stats-query';
-import useEpisodesQuery from '../hooks/use-episodes-query';
+import useEpisodesQuery, {
+	type EpisodesOrder,
+	type EpisodesOrderBy,
+} from '../hooks/use-episodes-query';
 
 type Episode = {
 	id: number;
@@ -84,19 +81,43 @@ const Episodes = () => {
 	} );
 
 	const [ view, setView ] = useState< View >( defaultView );
+
+	// Translate the DataViews view state into wp/v2/posts query params so the
+	// server does pagination, sorting (date/title only), search, and the
+	// status filter. Duration and downloads come from a separate stats
+	// endpoint and aren't server-orderable, so their columns are unsortable.
+	const queryParams = useMemo( () => {
+		const sortField = view.sort?.field;
+		const orderBy: EpisodesOrderBy =
+			sortField === 'title' || sortField === 'date' ? sortField : 'date';
+		const order: EpisodesOrder = view.sort?.direction === 'asc' ? 'asc' : 'desc';
+		const statusFilter = view.filters?.find( ( filter ) => filter.field === 'status' );
+		const status =
+			typeof statusFilter?.value === 'string' && statusFilter.value ? statusFilter.value : 'any';
+		return {
+			page: view.page ?? 1,
+			perPage: view.perPage ?? 10,
+			orderBy,
+			order,
+			search: view.search ?? '',
+			status,
+		};
+	}, [ view.page, view.perPage, view.sort, view.search, view.filters ] );
+
 	const { data, isLoading } = useEpisodesQuery( {
 		siteId,
 		categoryId: resolvedCategoryId,
+		...queryParams,
 	} );
 
-	const postIds = useMemo< number[] >(
-		() => ( Array.isArray( data ) ? data.map( ( post ) => post.id ) : [] ),
-		[ data ]
-	);
+	const posts = useMemo( () => data?.posts ?? [], [ data ] );
+	const totalItems = data?.totalItems ?? 0;
+	const totalPages = data?.totalPages ?? 0;
+
+	const postIds = useMemo< number[] >( () => posts.map( ( post ) => post.id ), [ posts ] );
 	const { data: statsByPostId } = useEpisodeStatsQuery( siteId, postIds );
 
 	const episodes = useMemo< Episode[] >( () => {
-		const posts = Array.isArray( data ) ? data : [];
 		return posts.map( ( post ) => {
 			const media = post._embedded?.[ 'wp:featuredmedia' ]?.[ 0 ];
 			const thumbnail =
@@ -116,7 +137,7 @@ const Episodes = () => {
 				durationSeconds: stats?.duration_seconds ?? null,
 			};
 		} );
-	}, [ data, statsByPostId ] );
+	}, [ posts, statsByPostId ] );
 
 	const statusLabels = useMemo< Record< string, string > >(
 		() => ( {
@@ -183,14 +204,17 @@ const Episodes = () => {
 				label: translate( 'Duration' ) as string,
 				getValue: ( { item }: { item: Episode } ) => item.durationSeconds ?? 0,
 				render: ( { item }: { item: Episode } ) => formatDuration( item.durationSeconds ),
-				enableSorting: true,
+				// Duration comes from podcast-stats/episode-totals, not wp/v2/posts,
+				// so the server can't order by it.
+				enableSorting: false,
 			},
 			{
 				id: 'downloads',
 				type: 'integer' as const,
 				label: translate( 'Downloads' ) as string,
 				getValue: ( { item }: { item: Episode } ) => item.playsAll,
-				enableSorting: true,
+				// Same as duration: live in the stats endpoint, not orderable server-side.
+				enableSorting: false,
 			},
 			{
 				id: 'date',
@@ -242,9 +266,9 @@ const Episodes = () => {
 		[ siteSlug, translate ]
 	);
 
-	const { data: processed, paginationInfo } = useMemo(
-		() => filterSortAndPaginate( episodes, view, fields ),
-		[ episodes, view, fields ]
+	const paginationInfo = useMemo(
+		() => ( { totalItems, totalPages } ),
+		[ totalItems, totalPages ]
 	);
 
 	const sectionHeader = (
@@ -278,7 +302,7 @@ const Episodes = () => {
 			{ sectionHeader }
 			<DataViewsCard>
 				<DataViews< Episode >
-					data={ processed }
+					data={ episodes }
 					fields={ fields }
 					view={ view }
 					onChangeView={ setView }

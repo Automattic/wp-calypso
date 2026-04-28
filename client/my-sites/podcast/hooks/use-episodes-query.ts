@@ -18,67 +18,97 @@ export type EpisodePost = {
 	};
 };
 
+export type EpisodesPage = {
+	posts: EpisodePost[];
+	totalItems: number;
+	totalPages: number;
+};
+
+export type EpisodesOrderBy = 'date' | 'title';
+export type EpisodesOrder = 'asc' | 'desc';
+
 type Params = {
 	siteId: number | null | undefined;
 	categoryId: number;
+	page: number;
+	perPage: number;
+	orderBy: EpisodesOrderBy;
+	order: EpisodesOrder;
+	search: string;
+	status: string;
 };
 
 type EpisodeHeaders = {
+	'X-WP-Total'?: number | string;
 	'X-WP-TotalPages'?: number | string;
 };
 
-const fetchEpisodePage = async (
+const fetchEpisodesPage = (
 	siteId: number,
 	categoryId: number,
-	pageNumber: number
-): Promise< { data: EpisodePost[]; headers: EpisodeHeaders } > => {
+	{ page, perPage, orderBy, order, search, status }: Omit< Params, 'siteId' | 'categoryId' >
+): Promise< EpisodesPage > => {
+	const query: Record< string, string | number > = {
+		categories: String( categoryId ),
+		page,
+		per_page: perPage,
+		orderby: orderBy,
+		order,
+		status,
+		_embed: 'wp:featuredmedia',
+	};
+	if ( search ) {
+		query.search = search;
+	}
+
 	return new Promise( ( resolve, reject ) => {
 		wpcom.req.get(
 			{
 				path: `/sites/${ siteId }/posts`,
 				apiNamespace: 'wp/v2',
 			},
-			{
-				categories: String( categoryId ),
-				per_page: 100,
-				page: pageNumber,
-				orderby: 'date',
-				order: 'desc',
-				_embed: 'wp:featuredmedia',
-			},
+			query,
 			( error: Error | null, data: EpisodePost[] = [], headers: EpisodeHeaders = {} ) => {
 				if ( error ) {
 					return reject( error );
 				}
-
-				resolve( { data, headers } );
+				resolve( {
+					posts: Array.isArray( data ) ? data : [],
+					totalItems: Number( headers[ 'X-WP-Total' ] || 0 ),
+					totalPages: Number( headers[ 'X-WP-TotalPages' ] || 0 ),
+				} );
 			}
 		);
 	} );
 };
 
-const useEpisodesQuery = ( { siteId, categoryId }: Params ) => {
-	return useQuery< EpisodePost[] >( {
-		queryKey: [ 'podcast-episodes', siteId, categoryId ],
-		queryFn: async () => {
-			if ( ! siteId || ! categoryId ) {
-				return [];
-			}
-
-			const pages: EpisodePost[] = [];
-			let pageNumber = 1;
-			let totalPages = 1;
-
-			do {
-				const { data, headers } = await fetchEpisodePage( siteId, categoryId, pageNumber );
-				pages.push( ...data );
-				totalPages = Number( headers[ 'X-WP-TotalPages' ] || 1 );
-				pageNumber += 1;
-			} while ( pageNumber <= totalPages );
-
-			return pages;
-		},
+const useEpisodesQuery = ( params: Params ) => {
+	const { siteId, categoryId, page, perPage, orderBy, order, search, status } = params;
+	return useQuery< EpisodesPage >( {
+		queryKey: [
+			'podcast-episodes',
+			siteId,
+			categoryId,
+			page,
+			perPage,
+			orderBy,
+			order,
+			search,
+			status,
+		],
+		queryFn: () =>
+			fetchEpisodesPage( siteId as number, categoryId, {
+				page,
+				perPage,
+				orderBy,
+				order,
+				search,
+				status,
+			} ),
 		enabled: !! siteId && !! categoryId,
+		// Keep the previous page visible while the next one loads so the table
+		// doesn't flash empty between paginations / sort changes.
+		placeholderData: ( previous ) => previous,
 	} );
 };
 
