@@ -382,12 +382,51 @@ describe( 'TimelinePanel in-app click destinations', () => {
 			expect.stringContaining( '/reader/atmosphere/7/thread/did:plc:def' )
 		);
 	} );
+} );
 
-	it( 'author chip still points at bsky.app (slice-6 territory)', async () => {
+describe( 'TimelinePanel — slice 6 author chip + repost preface rewrites', () => {
+	const REPOST_URI = 'at://did:plc:abc234567defghi234567jkl/app.bsky.feed.post/3kabcdefghijk';
+	const reposterDid = 'did:plc:rep234567defghi234567jklab';
+	const reposterHandle = 'joe.bsky.social';
+
+	function pageWithRepost() {
+		return {
+			items: [
+				makeFeedItem( {
+					uri: REPOST_URI,
+					reason: {
+						type: 'repost',
+						by: {
+							did: reposterDid,
+							handle: reposterHandle,
+							display_name: 'Joe',
+							avatar: null,
+						},
+						indexed_at: '2026-04-27T11:00:00Z',
+					},
+					bluesky_url: 'https://bsky.app/profile/alice.bsky.social/post/3kabcdefghijk',
+				} ),
+			],
+			cursor: null,
+		};
+	}
+
+	beforeEach( () => {
+		jest
+			.spyOn( analytics, 'recordReaderTracksEvent' )
+			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+	} );
+
+	afterEach( () => {
+		nock.cleanAll();
+		jest.restoreAllMocks();
+	} );
+
+	it( 'author chip <a> href is the in-app profile URL (same-tab, no target/rel)', async () => {
 		nock( 'https://public-api.wordpress.com' )
 			.get( /\/connections\/7\/timeline/ )
 			.query( true )
-			.reply( 200, pageWithReplyAndQuote() );
+			.reply( 200, pageWithRepost() );
 
 		renderWithProvider( <TimelinePanel connection={ connection7 } />, {
 			queryClient: makeQueryClient(),
@@ -396,7 +435,85 @@ describe( 'TimelinePanel in-app click destinations', () => {
 		await screen.findAllByRole( 'link' );
 		const authorLink = screen
 			.getAllByRole( 'link' )
-			.find( ( a ) => a.getAttribute( 'href' )?.startsWith( 'https://bsky.app/profile/' ) );
+			.find(
+				( a ) => a.getAttribute( 'href' ) === '/reader/atmosphere/7/profile/alice.bsky.social'
+			);
 		expect( authorLink ).toBeDefined();
+		expect( authorLink ).not.toHaveAttribute( 'target' );
+		expect( authorLink ).not.toHaveAttribute( 'rel' );
+	} );
+
+	it( 'repost preface name is a real <a> to the reposter in-app profile URL', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( /\/connections\/7\/timeline/ )
+			.query( true )
+			.reply( 200, pageWithRepost() );
+
+		renderWithProvider( <TimelinePanel connection={ connection7 } />, {
+			queryClient: makeQueryClient(),
+		} );
+
+		const repostLink = await screen.findByRole( 'link', { name: /Joe/i } );
+		expect( repostLink ).toHaveAttribute(
+			'href',
+			`/reader/atmosphere/7/profile/${ reposterHandle }`
+		);
+		expect( repostLink ).not.toHaveAttribute( 'target' );
+		expect( repostLink ).not.toHaveAttribute( 'rel' );
+	} );
+
+	it( 'fires author_clicked with destination=in_app after the rewrite', async () => {
+		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		nock( 'https://public-api.wordpress.com' )
+			.get( /\/connections\/7\/timeline/ )
+			.query( true )
+			.reply( 200, pageWithRepost() );
+
+		const user = userEvent.setup();
+		renderWithProvider( <TimelinePanel connection={ connection7 } />, {
+			queryClient: makeQueryClient(),
+		} );
+
+		await screen.findAllByRole( 'link' );
+		const authorLink = screen
+			.getAllByRole( 'link' )
+			.find(
+				( a ) => a.getAttribute( 'href' ) === '/reader/atmosphere/7/profile/alice.bsky.social'
+			);
+		await user.click( authorLink as HTMLElement );
+		expect( spy ).toHaveBeenCalledWith(
+			'calypso_reader_atmosphere_timeline_author_clicked',
+			expect.objectContaining( {
+				connection_id: 7,
+				author_handle: 'alice.bsky.social',
+				destination: 'in_app',
+			} )
+		);
+	} );
+
+	it( 'fires repost_author_clicked with destination=in_app when the reposter link is clicked', async () => {
+		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		nock( 'https://public-api.wordpress.com' )
+			.get( /\/connections\/7\/timeline/ )
+			.query( true )
+			.reply( 200, pageWithRepost() );
+
+		const user = userEvent.setup();
+		renderWithProvider( <TimelinePanel connection={ connection7 } />, {
+			queryClient: makeQueryClient(),
+		} );
+
+		const repostLink = await screen.findByRole( 'link', { name: /Joe/i } );
+		await user.click( repostLink );
+		expect( spy ).toHaveBeenCalledWith(
+			'calypso_reader_atmosphere_timeline_repost_author_clicked',
+			expect.objectContaining( {
+				connection_id: 7,
+				post_uri: REPOST_URI,
+				reposter_did: reposterDid,
+				reposter_handle: reposterHandle,
+				destination: 'in_app',
+			} )
+		);
 	} );
 } );

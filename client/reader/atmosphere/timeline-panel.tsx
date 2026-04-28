@@ -11,7 +11,11 @@ import {
 	mapAtmosphereFeedItemToSocialPost,
 } from 'calypso/reader/social';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { getThreadUrl as buildThreadUrl } from './route';
+import {
+	getProfileUrl as buildProfileUrl,
+	getThreadUrl as buildThreadUrl,
+	type ProfileRefInput,
+} from './route';
 import type {
 	AtmosphereConnection,
 	AtmosphereError,
@@ -128,6 +132,11 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 		[ connection.id ]
 	);
 
+	const getProfileUrl = useCallback(
+		( ref: ProfileRefInput ) => buildProfileUrl( connection.id, ref ),
+		[ connection.id ]
+	);
+
 	const renderItem = useCallback(
 		( post: SocialPost ) => <SocialPostCard post={ post } variant="default" />,
 		[]
@@ -140,8 +149,9 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 			connectionId: connection.id,
 			onClick: onClickAnalytics,
 			getThreadUrl,
+			getProfileUrl,
 		} ),
-		[ connection.id, onClickAnalytics, getThreadUrl ]
+		[ connection.id, onClickAnalytics, getThreadUrl, getProfileUrl ]
 	);
 
 	return (
