@@ -7,7 +7,7 @@ import {
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { comment, drawerRight, help, login, lifesaver } from '@wordpress/icons';
+import { columns, comment, drawerRight, help, login, lifesaver } from '@wordpress/icons';
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useAgentsManagerContext } from '../../contexts';
 import useAdminBarIntegration from '../../hooks/use-admin-bar-integration';
@@ -31,6 +31,7 @@ import type {
 	SiteBuildUtils,
 	ImageUploadHook,
 	UseCheckpointHook,
+	ProviderCapabilities,
 } from '../../utils/load-external-providers';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 import './style.scss';
@@ -56,6 +57,8 @@ interface Props {
 	useImageUpload?: ImageUploadHook;
 	/** Hook for saving and restoring editor state so that AI actions can be undone. */
 	useCheckpoint?: UseCheckpointHook;
+	/** Optional capability flags declared by one or more loaded providers. */
+	capabilities?: ProviderCapabilities;
 }
 
 export default function AgentDock( {
@@ -69,6 +72,7 @@ export default function AgentDock( {
 	siteBuildUtils,
 	useImageUpload,
 	useCheckpoint,
+	capabilities,
 }: Props ) {
 	const { siteKey, sectionName, agentConfig } = useAgentsManagerContext();
 
@@ -83,14 +87,15 @@ export default function AgentDock( {
 	);
 	const [ isOrchestratorChatEmpty, setIsOrchestratorChatEmpty ] = useState( true );
 	const [ isZendeskChatEmpty, setIsZendeskChatEmpty ] = useState( true );
-	const { setIsOpen, setIsDocked } = useDispatch( AGENTS_MANAGER_STORE );
-	const { isOpen: isPersistedOpen = false, isDocked: isPersistedDocked = false } = useSelect(
-		( select ) => {
-			const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
-			return store.getAgentsManagerState();
-		},
-		[]
-	);
+	const { setIsOpen, setIsDocked, setIsSplitScreen } = useDispatch( AGENTS_MANAGER_STORE );
+	const {
+		isOpen: isPersistedOpen = false,
+		isDocked: isPersistedDocked = false,
+		isSplitScreen = false,
+	} = useSelect( ( select ) => {
+		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
+		return store.getAgentsManagerState();
+	}, [] );
 	const { pathname } = useLocation();
 	const navigate = useNavigate();
 	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
@@ -105,6 +110,7 @@ export default function AgentDock( {
 			desktopMediaQuery,
 			onOpenSidebar: () => setIsOpen( true ),
 			onCloseSidebar: () => setIsOpen( false ),
+			isSplitScreen,
 		} );
 
 	// Handle WordPress admin bar integration
@@ -198,6 +204,9 @@ export default function AgentDock( {
 				onClick: () => {
 					undock();
 					setIsDocked( false );
+					// Split screen only makes sense while docked; clear the flag
+					// so the option returns cleanly next time the user docks.
+					setIsSplitScreen( false );
 				},
 			},
 			! isDocked &&
@@ -208,6 +217,17 @@ export default function AgentDock( {
 						dock();
 						setIsDocked( true );
 					},
+				},
+			// Split-screen toggle — gated to providers that opt in via
+			// `capabilities.supportsSplitScreen`. Only visible while the
+			// sidebar is docked (at 50vw the floating modal would be redundant).
+			isDocked &&
+				capabilities?.supportsSplitScreen && {
+					icon: columns,
+					title: isSplitScreen
+						? __( 'Exit split screen', '__i18n_text_domain__' )
+						: __( 'Split screen sidebar', '__i18n_text_domain__' ),
+					onClick: () => setIsSplitScreen( ! isSplitScreen ),
 				},
 		].filter( Boolean ) as ChatHeaderOptions;
 	};

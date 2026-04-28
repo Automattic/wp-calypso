@@ -386,7 +386,7 @@ body.post-new-php.agents-manager-sidebar-container {
 		.editor-post-publish-panel {
 			top: $layout-spacing;
 			bottom: $layout-spacing;
-			right: $sidebar-width + $layout-spacing;
+			right: calc( $sidebar-width + $layout-spacing );
 			animation: none;
 			transform: translateX( 0 );
 		}
@@ -685,5 +685,19 @@ body.post-new-php.agents-manager-sidebar-container {
 			outline: 1px solid #0000004d;
 			overflow: hidden;
 		}
+	}
+}
+
+// Docked split-screen: flip --am-sidebar-width to 50vw. `$sidebar-width`
+// resolves through this variable so every consumer picks it up.
+body.agents-manager-sidebar-container.is-split-screen {
+	--am-sidebar-width: 50vw;
+
+	// Drop agenttic-ui's hard-capped EmptyView widths so the empty state
+	// stretches with the sidebar. Attribute-prefix survives class hashing.
+	[class*="EmptyView-module_heading"],
+	[class*="EmptyView-module_help"],
+	[class*="EmptyView-module_suggestionsWrapper"] {
+		max-width: none;
 	}
 }

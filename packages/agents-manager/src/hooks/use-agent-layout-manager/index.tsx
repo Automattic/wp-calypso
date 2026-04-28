@@ -24,6 +24,8 @@ interface Options {
 	onCloseSidebar?: () => void;
 	onDock?: () => void;
 	onUndock?: () => void;
+	/** Toggle the `is-split-screen` modifier on the sidebar container. */
+	isSplitScreen?: boolean;
 }
 
 interface ReturnValue {
@@ -46,6 +48,7 @@ export default function useAgentLayoutManager( {
 	onCloseSidebar = () => {},
 	onDock = () => {},
 	onUndock = () => {},
+	isSplitScreen = false,
 }: Options = {} ): ReturnValue {
 	const portalRef = useRef< HTMLDivElement >();
 	const wasOpenRef = useRef( defaultOpen );
@@ -153,6 +156,14 @@ export default function useAgentLayoutManager( {
 		}
 	}, [ container, isDocked, isReady, shouldRenderSidebar ] );
 
+	// Reflect split-screen state on the container as `is-split-screen`.
+	useLayoutEffect( () => {
+		if ( ! container ) {
+			return;
+		}
+		container.classList.toggle( 'is-split-screen', !! isSplitScreen );
+	}, [ container, isSplitScreen ] );
+
 	// Cleanup on unmount
 	// Use `useLayoutEffect` to prevent flickering
 	useLayoutEffect(
@@ -166,7 +177,8 @@ export default function useAgentLayoutManager( {
 				container.classList.remove(
 					'agents-manager-sidebar-container',
 					'agents-manager-sidebar-container--sidebar-open',
-					'agents-manager-sidebar-container--closing'
+					'agents-manager-sidebar-container--closing',
+					'is-split-screen'
 				);
 
 				if ( portalRef.current ) {
