@@ -66,15 +66,10 @@ const PodcastMain = ( { section }: PodcastMainProps ) => {
 	} );
 	const pathSuffix = siteSlug ? '/' + siteSlug : '';
 
-	// Welcome shows when podcasting is not set up on this site. The local
-	// enable flag lets the Enable button flip the view without touching
-	// the real podcasting_category_id setting.
-	const [ enabled, setEnabled ] = useState( false );
-	const podcastingOn = enabled || isSetUp;
-	// Tabs only show when podcasting is actually on. A deep link to
+	// Tabs only show when podcasting is actually set up. A deep link to
 	// /podcast/episodes/[site] on a non-set-up site bounces back to the
 	// welcome via the URL-sync effect below.
-	const showTabs = podcastingOn;
+	const showTabs = isSetUp;
 
 	// Track the active tab in local state so clicking a tab swaps the panel
 	// without re-running the page.js controller (which would re-mount the
@@ -93,7 +88,7 @@ const PodcastMain = ( { section }: PodcastMainProps ) => {
 	// /podcast/<section>/[site], welcome at the bare /podcast/[site]. A
 	// disabled podcast on a section URL gets bounced back to welcome.
 	useEffect( () => {
-		if ( ! isSetupResolved && ! enabled ) {
+		if ( ! isSetupResolved ) {
 			return;
 		}
 		const path = window.location.pathname;
@@ -103,7 +98,7 @@ const PodcastMain = ( { section }: PodcastMainProps ) => {
 		} else if ( ! showTabs && isSectionUrl ) {
 			window.history.replaceState( null, '', '/podcast' + pathSuffix );
 		}
-	}, [ showTabs, isSetupResolved, enabled, pathSuffix ] );
+	}, [ showTabs, isSetupResolved, pathSuffix ] );
 
 	const tabs = [
 		{
@@ -134,7 +129,7 @@ const PodcastMain = ( { section }: PodcastMainProps ) => {
 
 	// Render nothing until we know whether podcasting is set up — prevents a
 	// Welcome flash before terms/site-settings resolve and we switch to tabs.
-	const isWaitingForSetup = ! isSetupResolved && ! enabled;
+	const isWaitingForSetup = ! isSetupResolved;
 
 	let pageContent;
 	if ( accessGate ) {
@@ -175,7 +170,7 @@ const PodcastMain = ( { section }: PodcastMainProps ) => {
 	} else {
 		pageContent = (
 			<div className="podcast__tab-content">
-				<Welcome onEnable={ () => setEnabled( true ) } planTier="free" />
+				<Welcome planTier="free" />
 			</div>
 		);
 	}

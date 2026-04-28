@@ -16,7 +16,6 @@ import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 export type PlanTier = 'free' | 'personal' | 'premium' | 'business';
 
 interface WelcomeProps {
-	onEnable: () => void;
 	planTier: PlanTier;
 }
 
@@ -166,7 +165,7 @@ const getSampleEpisodes = ( translate: Translate ) => [
 	},
 ];
 
-function Welcome( { onEnable, planTier }: WelcomeProps ) {
+function Welcome( { planTier }: WelcomeProps ) {
 	const translate = useTranslate();
 	const siteSlug = useSelector( getSelectedSiteSlug );
 
@@ -180,6 +179,14 @@ function Welcome( { onEnable, planTier }: WelcomeProps ) {
 	const pricingTitle = isFree
 		? ( translate( 'Get more out of podcasting with a plan upgrade' ) as string )
 		: ( translate( 'Podcasting is included in your plan' ) as string );
+
+	// Enable podcasting by sending the user to the existing Settings → Podcasting
+	// flow, where picking a category writes podcasting_category_id. Returning to
+	// /podcast/[site] after that lands the user on the Episodes tab.
+	const goToSettings = () => {
+		const path = siteSlug ? `/settings/podcasting/${ siteSlug }` : '/settings/podcasting';
+		page.show( path );
+	};
 
 	// Redirect through Calypso checkout, then back to /podcast so the user can
 	// click Enable on their now-eligible plan.
@@ -205,7 +212,7 @@ function Welcome( { onEnable, planTier }: WelcomeProps ) {
 						) }
 					</Text>
 					<HStack justify="flex-start" expanded={ false }>
-						<Button variant="primary" onClick={ onEnable }>
+						<Button variant="primary" onClick={ goToSettings }>
 							{ translate( 'Enable podcasting' ) }
 						</Button>
 					</HStack>
@@ -286,7 +293,7 @@ function Welcome( { onEnable, planTier }: WelcomeProps ) {
 										<Button
 											className="podcast__plan-cta"
 											variant={ isRecommended || isYourPlan ? 'primary' : 'secondary' }
-											onClick={ () => ( isYourPlan ? onEnable() : goToCheckout( plan.slug ) ) }
+											onClick={ () => ( isYourPlan ? goToSettings() : goToCheckout( plan.slug ) ) }
 										>
 											{ isYourPlan
 												? translate( 'Enable podcasting' )

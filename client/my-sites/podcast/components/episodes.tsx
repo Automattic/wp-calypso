@@ -249,7 +249,7 @@ const Episodes = () => {
 
 	const sectionHeader = (
 		<header className="podcast__section-header">
-			<h1 className="podcast__section-heading">{ translate( 'Episodes' ) }</h1>
+			<h2 className="podcast__section-heading">{ translate( 'Episodes' ) }</h2>
 			<p className="podcast__section-description">
 				{ translate( 'Manage the posts that make up your podcast feed.' ) }
 			</p>

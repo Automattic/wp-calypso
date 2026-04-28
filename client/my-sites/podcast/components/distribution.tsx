@@ -73,7 +73,7 @@ function Distribution() {
 	return (
 		<>
 			<header className="podcast__section-header">
-				<h1 className="podcast__section-heading">{ translate( 'Distribution' ) }</h1>
+				<h2 className="podcast__section-heading">{ translate( 'Distribution' ) }</h2>
 				<p className="podcast__section-description">
 					{ translate(
 						'Submit your feed to podcast directories and track where your show is listed.'
