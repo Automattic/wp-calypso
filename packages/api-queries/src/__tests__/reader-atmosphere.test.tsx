@@ -1,4 +1,8 @@
-import { readerAtmosphereKeys } from '@automattic/api-core';
+import {
+	readerAtmosphereKeys,
+	type AtmosphereFeedItem,
+	type AtmosphereThreadResponse,
+} from '@automattic/api-core';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
@@ -6,6 +10,7 @@ import {
 	useConnectionQuery,
 	useConnectionsQuery,
 	useCreateConnectionMutation,
+	useThreadQuery,
 	useTimelineInfiniteQuery,
 } from '../reader-atmosphere';
 
@@ -15,6 +20,31 @@ function makeWrapper( c: QueryClient ) {
 		return <QueryClientProvider client={ c }>{ children }</QueryClientProvider>;
 	}
 	return Wrapper;
+}
+
+function makeFeedItem( overrides: Partial< AtmosphereFeedItem > = {} ): AtmosphereFeedItem {
+	return {
+		uri: 'at://did:plc:default/app.bsky.feed.post/3kdef',
+		cid: 'cid-default',
+		author: {
+			did: 'did:plc:default',
+			handle: 'default.bsky.social',
+			display_name: '',
+			avatar: null,
+		},
+		created_at: '2026-04-28T10:00:00Z',
+		indexed_at: '2026-04-28T10:00:00Z',
+		text: '',
+		html: '<p></p>',
+		lang: [],
+		reply_parent: null,
+		reply_root: null,
+		reason: null,
+		embed: null,
+		counts: { replies: 0, reposts: 0, likes: 0, quotes: 0 },
+		bluesky_url: 'https://bsky.app/profile/default.bsky.social/post/3kdef',
+		...overrides,
+	};
 }
 
 describe( 'reader-atmosphere hooks', () => {
@@ -151,6 +181,67 @@ describe( 'reader-atmosphere hooks', () => {
 				await result.current.refetch();
 			} );
 			expect( result.current.isSuccess ).toBe( true );
+		} );
+	} );
+
+	describe( 'useThreadQuery', () => {
+		const FIXTURE_URI = 'at://did:plc:abc/app.bsky.feed.post/3kabc';
+		const fixture: AtmosphereThreadResponse = {
+			thread: {
+				type: 'post',
+				post: makeFeedItem( { uri: FIXTURE_URI } ),
+				parent: null,
+				replies: [],
+			},
+		};
+
+		it( 'is disabled when uri is empty', () => {
+			const client = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+			const { result } = renderHook( () => useThreadQuery( { uri: '' } ), {
+				wrapper: makeWrapper( client ),
+			} );
+			expect( result.current.isPending ).toBe( true );
+			expect( result.current.fetchStatus ).toBe( 'idle' );
+		} );
+
+		it( 'fetches the thread once the uri is non-empty', async () => {
+			nock( BASE )
+				.get( '/wpcom/v2/reader/atmosphere/thread' )
+				.query( { uri: FIXTURE_URI } )
+				.reply( 200, fixture );
+
+			const client = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+			const { result } = renderHook( () => useThreadQuery( { uri: FIXTURE_URI } ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+			expect( result.current.data ).toEqual( fixture );
+		} );
+
+		it( 'surfaces a typed error and recovers via refetch', async () => {
+			nock( BASE )
+				.get( '/wpcom/v2/reader/atmosphere/thread' )
+				.query( { uri: FIXTURE_URI } )
+				.reply( 502, { error: 'atmosphere_upstream_unavailable' } );
+
+			const client = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+			const { result } = renderHook( () => useThreadQuery( { uri: FIXTURE_URI } ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			await waitFor( () => expect( result.current.isError ).toBe( true ) );
+			expect( result.current.error ).toMatchObject( { kind: 'upstream_unavailable' } );
+
+			nock( BASE )
+				.get( '/wpcom/v2/reader/atmosphere/thread' )
+				.query( { uri: FIXTURE_URI } )
+				.reply( 200, fixture );
+
+			await act( async () => {
+				await result.current.refetch();
+			} );
+			await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
 		} );
 	} );
 } );

@@ -2,6 +2,7 @@ import {
 	createConnection,
 	getConnection,
 	getConnections,
+	getThread,
 	getTimeline,
 	readerAtmosphereKeys,
 } from '@automattic/api-core';
@@ -20,6 +21,7 @@ import type {
 	AtmosphereConnectionsResponse,
 	AtmosphereCreateConnectionResponse,
 	AtmosphereError,
+	AtmosphereThreadResponse,
 	AtmosphereTimelinePage,
 	CreateConnectionParams,
 } from '@automattic/api-core';
@@ -89,4 +91,21 @@ export const timelineInfiniteQuery = ( connectionId: number ) =>
 
 export function useTimelineInfiniteQuery( connectionId: number ) {
 	return useInfiniteQuery( timelineInfiniteQuery( connectionId ) );
+}
+
+export const threadQueryOptions = ( uri: string ) =>
+	queryOptions< AtmosphereThreadResponse, AtmosphereError >( {
+		queryKey: readerAtmosphereKeys.thread( uri ),
+		queryFn: () => getThread( { uri } ),
+		enabled: uri.length > 0,
+		staleTime: 30_000,
+		gcTime: 5 * 60_000,
+	} );
+
+export interface UseThreadQueryParams {
+	uri: string;
+}
+
+export function useThreadQuery( { uri }: UseThreadQueryParams ) {
+	return useQuery( threadQueryOptions( uri ) );
 }
