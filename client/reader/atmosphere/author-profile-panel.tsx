@@ -1,0 +1,323 @@
+import { useAuthorFeedInfiniteQuery, useAuthorProfileQuery } from '@automattic/api-queries';
+import { __experimentalVStack as VStack } from '@wordpress/components';
+import { useTranslate } from 'i18n-calypso';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useDispatch } from 'react-redux';
+import EmptyContent from 'calypso/components/empty-content';
+import {
+	SocialAnalyticsProvider,
+	SocialFeedList,
+	SocialPostCard,
+	SocialProfileCard,
+	type SocialProfileStat,
+} from 'calypso/reader/social';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import { AuthorProfileHeader } from './author-profile-header';
+import { errorMessage } from './profile-errors';
+import { getProfileUrl, getThreadUrl } from './route';
+import type {
+	AtmosphereAuthorProfile,
+	AtmosphereConnection,
+	AtmosphereError,
+	AtmosphereFeedItem,
+} from '@automattic/api-core';
+import type { AppState } from 'calypso/types';
+import type { UnknownAction } from 'redux';
+import type { ThunkDispatch } from 'redux-thunk';
+
+interface AuthorProfilePanelProps {
+	connection: AtmosphereConnection;
+	actor: string;
+}
+
+export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelProps ) {
+	const translate = useTranslate();
+	const dispatch = useDispatch< ThunkDispatch< AppState, void, UnknownAction > >();
+	const lastErrorKind = useRef< { header: string | null; feed: string | null } >( {
+		header: null,
+		feed: null,
+	} );
+
+	const profile = useAuthorProfileQuery( { actor } );
+	const feed = useAuthorFeedInfiniteQuery( { actor } );
+
+	useEffect( () => {
+		dispatch(
+			recordReaderTracksEvent( 'calypso_reader_atmosphere_profile_viewed', {
+				connection_id: connection.id,
+				actor,
+				actor_did: profile.data?.did,
+				actor_handle: profile.data?.handle,
+			} )
+		);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ actor, connection.id ] );
+
+	useEffect( () => {
+		if ( profile.isError && profile.error && profile.error.kind !== lastErrorKind.current.header ) {
+			lastErrorKind.current.header = profile.error.kind;
+			dispatch(
+				recordReaderTracksEvent( 'calypso_reader_atmosphere_profile_error_shown', {
+					connection_id: connection.id,
+					actor,
+					error_kind: profile.error.kind,
+					surface: 'header',
+				} )
+			);
+		}
+		if ( ! profile.isError ) {
+			lastErrorKind.current.header = null;
+		}
+	}, [ profile.isError, profile.error, connection.id, actor, dispatch ] );
+
+	useEffect( () => {
+		if ( feed.isError && feed.error && feed.error.kind !== lastErrorKind.current.feed ) {
+			lastErrorKind.current.feed = feed.error.kind;
+			dispatch(
+				recordReaderTracksEvent( 'calypso_reader_atmosphere_profile_error_shown', {
+					connection_id: connection.id,
+					actor,
+					error_kind: feed.error.kind,
+					surface: 'feed',
+				} )
+			);
+		}
+		if ( ! feed.isError ) {
+			lastErrorKind.current.feed = null;
+		}
+	}, [ feed.isError, feed.error, connection.id, actor, dispatch ] );
+
+	const items: AtmosphereFeedItem[] = useMemo(
+		() =>
+			feed.data?.pages
+				.flatMap( ( page ) => page.items ?? [] )
+				.filter( ( post ): post is AtmosphereFeedItem => Boolean( post?.uri ) ) ?? [],
+		[ feed.data ]
+	);
+
+	const handleHeaderRetry = useCallback( () => {
+		dispatch(
+			recordReaderTracksEvent( 'calypso_reader_atmosphere_profile_retry_clicked', {
+				connection_id: connection.id,
+				actor,
+				error_kind: profile.error?.kind ?? 'unknown',
+				surface: 'header',
+			} )
+		);
+		profile.refetch();
+	}, [ connection.id, actor, profile, dispatch ] );
+
+	const handleFeedRetry = useCallback( () => {
+		dispatch(
+			recordReaderTracksEvent( 'calypso_reader_atmosphere_profile_retry_clicked', {
+				connection_id: connection.id,
+				actor,
+				error_kind: feed.error?.kind ?? 'unknown',
+				surface: 'feed',
+			} )
+		);
+		feed.refetch();
+	}, [ connection.id, actor, feed, dispatch ] );
+
+	const handleBackToTimeline = useCallback( () => {
+		dispatch(
+			recordReaderTracksEvent( 'calypso_reader_atmosphere_profile_back_to_timeline_clicked', {
+				connection_id: connection.id,
+				actor,
+			} )
+		);
+	}, [ connection.id, actor, dispatch ] );
+
+	const onClickAnalytics = useCallback(
+		( event: string, props: Record< string, unknown > ) => {
+			// Shared post-card subcomponents emit
+			// `calypso_reader_atmosphere_timeline_*` events. The profile
+			// surface rewrites that prefix to `_profile_` so dashboards can
+			// split by surface. Anchor on the full prefix so an event whose
+			// payload happens to contain `_timeline_` elsewhere isn't
+			// rewritten by accident.
+			const TIMELINE_PREFIX = 'calypso_reader_atmosphere_timeline_';
+			const PROFILE_PREFIX = 'calypso_reader_atmosphere_profile_';
+			const reprefixed = event.startsWith( TIMELINE_PREFIX )
+				? PROFILE_PREFIX + event.slice( TIMELINE_PREFIX.length )
+				: event;
+			dispatch( recordReaderTracksEvent( reprefixed, { ...props, actor } ) );
+		},
+		[ dispatch, actor ]
+	);
+
+	const buildThreadUrl = useCallback(
+		( uri: string ) => getThreadUrl( connection.id, uri ),
+		[ connection.id ]
+	);
+
+	const buildProfileUrl = useCallback(
+		( ref: { did?: string | null; handle?: string | null } ) => getProfileUrl( connection.id, ref ),
+		[ connection.id ]
+	);
+
+	const renderItem = useCallback(
+		( post: AtmosphereFeedItem ) => <SocialPostCard post={ post } variant="default" />,
+		[]
+	);
+	const itemKey = useCallback( ( post: AtmosphereFeedItem ) => post.uri, [] );
+
+	const handleViewOnBskyClick = useCallback( () => {
+		if ( ! profile.data ) {
+			return;
+		}
+		dispatch(
+			recordReaderTracksEvent( 'calypso_reader_atmosphere_profile_external_clicked', {
+				connection_id: connection.id,
+				actor,
+				external_uri: profile.data.bluesky_url,
+				surface: 'header_action',
+			} )
+		);
+	}, [ connection.id, actor, profile.data, dispatch ] );
+
+	const stats: SocialProfileStat[] = profile.data
+		? [
+				{
+					key: 'followers',
+					count: profile.data.counts.followers,
+					label: translate( 'follower', 'followers', {
+						count: profile.data.counts.followers,
+					} ),
+				},
+				{
+					key: 'follows',
+					count: profile.data.counts.follows,
+					label: translate( 'following', {
+						context: 'profile stats: count of accounts followed',
+					} ),
+				},
+				{
+					key: 'posts',
+					count: profile.data.counts.posts,
+					label: translate( 'post', 'posts', { count: profile.data.counts.posts } ),
+				},
+		  ]
+		: [];
+
+	const analyticsValue = useMemo(
+		() => ( {
+			source: 'atmosphere' as const,
+			connectionId: connection.id,
+			onClick: onClickAnalytics,
+			getThreadUrl: buildThreadUrl,
+			getProfileUrl: buildProfileUrl,
+		} ),
+		[ connection.id, onClickAnalytics, buildThreadUrl, buildProfileUrl ]
+	);
+
+	const renderHeaderError = ( error: AtmosphereError ) => {
+		const noRetry = new Set< AtmosphereError[ 'kind' ] >( [
+			'auth_required',
+			'auth_failed',
+			'not_found',
+			'connection_not_found',
+			'bad_request',
+			'invalid_handle',
+			'invalid_credentials',
+		] );
+		const showRetry = ! noRetry.has( error.kind );
+		const titleByKind: Partial< Record< AtmosphereError[ 'kind' ], string > > = {
+			not_found: String( translate( 'Profile not found' ) ),
+			auth_required: String( translate( 'Reconnect needed' ) ),
+			rate_limited: String( translate( 'Slow down' ) ),
+			upstream_unavailable: String( translate( 'Bluesky unreachable' ) ),
+		};
+		return (
+			<EmptyContent
+				title={ titleByKind[ error.kind ] ?? String( translate( 'Couldn’t load profile' ) ) }
+				line={ String( errorMessage( error, translate ) ) }
+				action={ showRetry ? String( translate( 'Retry' ) ) : undefined }
+				actionCallback={ showRetry ? handleHeaderRetry : undefined }
+			/>
+		);
+	};
+
+	const renderHeaderBody = ( profileData: AtmosphereAuthorProfile ) => {
+		const headerActions = (
+			<a
+				className="atmosphere-profile__view-on-bsky"
+				href={ profileData.bluesky_url }
+				target="_blank"
+				rel="noopener noreferrer"
+				onClick={ handleViewOnBskyClick }
+			>
+				{ translate( 'View on Bluesky' ) }
+			</a>
+		);
+		return (
+			<SocialProfileCard
+				avatar={ profileData.avatar }
+				banner={ profileData.banner }
+				displayName={ profileData.display_name ?? undefined }
+				handle={ profileData.handle }
+				bioHtml={ profileData.description_html }
+				bio={ profileData.description }
+				stats={ stats }
+				statsLabel={ String( translate( 'Profile stats' ) ) }
+				headerActions={ headerActions }
+			/>
+		);
+	};
+
+	const renderHeader = () => {
+		if ( profile.isPending ) {
+			return <ProfileHeaderSkeleton />;
+		}
+		if ( profile.isError && profile.error ) {
+			return renderHeaderError( profile.error );
+		}
+		if ( profile.data ) {
+			return renderHeaderBody( profile.data );
+		}
+		return null;
+	};
+
+	const emptyHandle = profile.data?.handle ?? actor;
+
+	return (
+		<SocialAnalyticsProvider value={ analyticsValue }>
+			<VStack spacing={ 4 } className="atmosphere-author-profile">
+				<AuthorProfileHeader connection={ connection } onBackToTimeline={ handleBackToTimeline } />
+				{ renderHeader() }
+				<SocialFeedList< AtmosphereFeedItem >
+					items={ items }
+					isPending={ feed.isPending }
+					isError={ feed.isError }
+					error={ feed.error ?? null }
+					hasNextPage={ Boolean( feed.hasNextPage ) }
+					isFetchingNextPage={ feed.isFetchingNextPage }
+					fetchNextPage={ feed.fetchNextPage }
+					refetch={ handleFeedRetry }
+					renderItem={ renderItem }
+					itemKey={ itemKey }
+					emptyTitle={ String(
+						translate( '@%(handle)s hasn’t posted yet.', {
+							args: { handle: emptyHandle },
+						} )
+					) }
+					emptyLine={ String( translate( 'Their feed is empty.' ) ) }
+					emptyActionLabel={ String( translate( 'View on Bluesky' ) ) }
+					emptyActionURL={ profile.data?.bluesky_url ?? `https://bsky.app/profile/${ actor }` }
+				/>
+			</VStack>
+		</SocialAnalyticsProvider>
+	);
+}
+
+function ProfileHeaderSkeleton() {
+	return (
+		<div className="atmosphere-profile__header-skeleton" aria-hidden="true">
+			<div className="atmosphere-profile__header-skeleton-banner" />
+			<div className="atmosphere-profile__header-skeleton-avatar" />
+			<div className="atmosphere-profile__header-skeleton-name" />
+			<div className="atmosphere-profile__header-skeleton-handle" />
+			<div className="atmosphere-profile__header-skeleton-stats" />
+		</div>
+	);
+}
