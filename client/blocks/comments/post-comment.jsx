@@ -17,7 +17,6 @@ import { navigate } from 'calypso/lib/navigate';
 import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import withDimensions from 'calypso/lib/with-dimensions';
-import { AuthorAchievementBadges } from 'calypso/reader/components/achievements/author-achievement-badges';
 import { getStreamUrl } from 'calypso/reader/route';
 import { recordAction, recordGaEvent, recordPermalinkClick } from 'calypso/reader/stats';
 import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
@@ -467,9 +466,6 @@ class PostComment extends PureComponent {
 						commentId,
 						className: 'comments__comment-username',
 					} ) }
-					{ comment.author?.wpcom_login && (
-						<AuthorAchievementBadges authorLogin={ comment.author.wpcom_login } size="small" />
-					) }
 					{ this.props.showNestingReplyArrow && parentAuthorName && (
 						<span className="comments__comment-respondee">
 							<Gridicon icon="chevron-right" size={ 16 } />

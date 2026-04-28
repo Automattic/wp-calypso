@@ -13,8 +13,9 @@ export const YearsOfServiceBadge = ( {
 	yearsOfService,
 }: YearsOfServiceBadgeProps ): JSX.Element => {
 	const translate = useTranslate();
-	const titleText = String(
-		translate( '%(years)d years on WordPress.com', {
+	const description = String(
+		translate( '%(years)d year on WordPress.com', '%(years)d years on WordPress.com', {
+			count: yearsOfService,
 			args: { years: yearsOfService },
 		} )
 	);
@@ -23,13 +24,16 @@ export const YearsOfServiceBadge = ( {
 		<div className={ clsx( 'years-of-service-badge', `is-${ size }` ) }>
 			<div
 				className="years-of-service-badge__circle"
-				title={ size !== 'large' ? titleText : undefined }
+				title={ size !== 'large' ? description : undefined }
+				aria-label={ size !== 'large' ? description : undefined }
 			>
 				{ yearsOfService }
 			</div>
 			{ size === 'large' && (
 				<span className="years-of-service-badge__label">
-					{ translate( 'Years on WordPress.com' ) }
+					{ translate( 'Year on WordPress.com', 'Years on WordPress.com', {
+						count: yearsOfService,
+					} ) }
 				</span>
 			) }
 		</div>

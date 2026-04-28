@@ -11,34 +11,42 @@ describe( 'YearsOfServiceBadge', () => {
 		expect( screen.getByText( '5' ) ).toBeVisible();
 	} );
 
-	test( 'should render label text for large size', () => {
+	test( 'should render plural label text for large size when years > 1', () => {
 		render( <YearsOfServiceBadge size="large" yearsOfService={ 5 } /> );
 
-		expect( screen.getByText( /Years on WordPress\.com/i ) ).toBeVisible();
+		expect( screen.getByText( 'Years on WordPress.com' ) ).toBeVisible();
+	} );
+
+	test( 'should render singular label text for large size when years === 1', () => {
+		render( <YearsOfServiceBadge size="large" yearsOfService={ 1 } /> );
+
+		expect( screen.getByText( 'Year on WordPress.com' ) ).toBeVisible();
 	} );
 
 	test( 'should not render label text for medium size', () => {
 		render( <YearsOfServiceBadge size="medium" yearsOfService={ 5 } /> );
 
-		expect( screen.queryByText( /Years on WordPress\.com/i ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( /Years? on WordPress\.com/i ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'should not render label text for small size', () => {
 		render( <YearsOfServiceBadge size="small" yearsOfService={ 3 } /> );
 
-		expect( screen.queryByText( /Years on WordPress\.com/i ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( /Years? on WordPress\.com/i ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'should have title attribute for medium size', () => {
+	test( 'should have plural title and aria-label for medium size when years > 1', () => {
 		render( <YearsOfServiceBadge size="medium" yearsOfService={ 5 } /> );
 
-		expect( screen.getByTitle( /5 years on WordPress\.com/i ) ).toBeVisible();
+		expect( screen.getByTitle( '5 years on WordPress.com' ) ).toBeVisible();
+		expect( screen.getByLabelText( '5 years on WordPress.com' ) ).toBeVisible();
 	} );
 
-	test( 'should have title attribute for small size', () => {
-		render( <YearsOfServiceBadge size="small" yearsOfService={ 3 } /> );
+	test( 'should have singular title and aria-label for small size when years === 1', () => {
+		render( <YearsOfServiceBadge size="small" yearsOfService={ 1 } /> );
 
-		expect( screen.getByTitle( /3 years on WordPress\.com/i ) ).toBeVisible();
+		expect( screen.getByTitle( '1 year on WordPress.com' ) ).toBeVisible();
+		expect( screen.getByLabelText( '1 year on WordPress.com' ) ).toBeVisible();
 	} );
 
 	test( 'should apply size-specific CSS class', () => {
