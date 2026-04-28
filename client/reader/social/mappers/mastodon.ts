@@ -64,7 +64,7 @@ function mapEmbed( embed: MastodonEmbed ): SocialEmbed {
 function mapQuoted(
 	post: MastodonFeedItem | MastodonQuoteTombstone
 ): SocialPost | SocialQuoteTombstone {
-	if ( post.type === 'not_found' || post.type === 'blocked' ) {
+	if ( 'type' in post ) {
 		return { type: post.type, uri: post.uri, reason: post.reason };
 	}
 	return mapMastodonFeedItemToSocialPost( post );
