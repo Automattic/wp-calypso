@@ -21,11 +21,13 @@ export interface SocialProfileCardProps {
 	bio?: string | null;
 	/**
 	 * Rich-text bio as an HTML string. Sanitized internally with DOMPurify
-	 * before rendering.
+	 * before rendering. Mastodon emits bios as HTML with paragraphs, line
+	 * breaks, and mention/link anchors, so plain-text rendering loses the
+	 * structure entirely.
 	 */
 	bioHtml?: string | null;
 	stats: SocialProfileStat[];
-	/** Accessible name for the stats list. */
+	/** Accessible name for the stats list. Plain string — aria-label cannot be a ReactElement. */
 	statsLabel: string;
 	/** Slot for buttons / links in the header band (rich layout only). */
 	headerActions?: ReactNode;
