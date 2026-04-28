@@ -119,4 +119,54 @@ describe( 'getSiteData', () => {
 		expect( result.estimatedPayout ).toBe( 0 );
 		expect( result.payout ).toBe( 500 );
 	} );
+
+	it( 'returns estimated transactions even when completed transactions are zero (regression test)', () => {
+		jest.spyOn( payoutDateModule, 'areNextAndCurrentPayoutDatesEqual' ).mockReturnValue( false );
+
+		const newMerchantData: WooPaymentsData = {
+			...mockWooPaymentsData,
+			data: {
+				...mockWooPaymentsData.data,
+				total: {
+					...mockWooPaymentsData.data.total,
+					sites: {
+						456: {
+							payout: 0,
+							tpv: 32000,
+							transactions: 0,
+						},
+					},
+				},
+				estimated: {
+					...mockWooPaymentsData.data.estimated!,
+					current_quarter: {
+						...mockWooPaymentsData.data.estimated!.current_quarter,
+						sites: {
+							456: {
+								payout: 16,
+								tpv: 20000,
+								transactions: 25,
+							},
+						},
+					},
+					previous_quarter: {
+						...mockWooPaymentsData.data.estimated!.previous_quarter,
+						sites: {
+							456: {
+								payout: 6,
+								tpv: 12000,
+								transactions: 15,
+							},
+						},
+					},
+				},
+			},
+		};
+
+		const result = getSiteData( newMerchantData, 456 );
+
+		expect( result.transactions ).toBe( 40 ); // 0 (total) + 25 (current) + 15 (previous)
+		expect( result.estimatedPayout ).toBe( 22 ); // 16 (current) + 6 (previous)
+		expect( result.payout ).toBe( 0 );
+	} );
 } );
