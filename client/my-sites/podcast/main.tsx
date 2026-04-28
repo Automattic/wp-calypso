@@ -1,4 +1,3 @@
-import page from '@automattic/calypso-router';
 import { Page } from '@wordpress/admin-ui';
 import { Tabs } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
@@ -52,6 +51,19 @@ const PodcastMain = ( { section }: PodcastMainProps ) => {
 			? terms.some( ( term ) => term?.name?.toLowerCase?.() === 'podcast' )
 			: false;
 	} );
+	// True once we have a definitive answer for `isSetUp` — either the
+	// setting is set, or the terms list has loaded. Used to suppress a
+	// welcome → tabs flash on the bare /podcast/[site] URL while data
+	// is still in flight.
+	const isSetupResolved = useSelector( ( state ) => {
+		if ( ! siteId ) {
+			return true;
+		}
+		if ( getPodcastingCategoryId( state, siteId ) ) {
+			return true;
+		}
+		return Array.isArray( getTerms( state, siteId, 'category' ) );
+	} );
 	const pathSuffix = siteSlug ? '/' + siteSlug : '';
 
 	// Welcome shows when podcasting is not set up on this site. The local
@@ -60,12 +72,8 @@ const PodcastMain = ( { section }: PodcastMainProps ) => {
 	const [ enabled, setEnabled ] = useState( false );
 	const podcastingOn = enabled || isSetUp;
 	const [ planTier, setPlanTier ] = useState< PlanTier >( 'free' );
-	const isFree = planTier === 'free';
 	const hasSectionInRoute = isValidSection( section );
-	// Free tier gets basic podcasting (RSS feed + metadata) via the v1
-	// /settings/podcasting page; the dashboard tabs (Episodes / Distribution)
-	// are paid features.
-	const showTabs = ( podcastingOn || hasSectionInRoute ) && ! isFree;
+	const showTabs = podcastingOn || hasSectionInRoute;
 
 	// Track the active tab in local state so clicking a tab swaps the panel
 	// without re-running the page.js controller (which would re-mount the
@@ -119,9 +127,15 @@ const PodcastMain = ( { section }: PodcastMainProps ) => {
 		}
 	};
 
+	// Render nothing until we know whether podcasting is set up — prevents a
+	// Welcome flash before terms/site-settings resolve and we switch to tabs.
+	const isWaitingForSetup = ! isSetupResolved && ! hasSectionInRoute && ! enabled;
+
 	let pageContent;
 	if ( accessGate ) {
 		pageContent = accessGate;
+	} else if ( isWaitingForSetup ) {
+		pageContent = null;
 	} else if ( showTabs ) {
 		pageContent = (
 			<Tabs.Root
@@ -157,13 +171,7 @@ const PodcastMain = ( { section }: PodcastMainProps ) => {
 		pageContent = (
 			<div className="podcast__tab-content">
 				<Welcome
-					onEnable={ () => {
-						if ( isFree ) {
-							page.show( '/settings/podcasting' + pathSuffix );
-							return;
-						}
-						setEnabled( true );
-					} }
+					onEnable={ () => setEnabled( true ) }
 					planTier={ planTier }
 					onChangePlanTier={ setPlanTier }
 				/>
