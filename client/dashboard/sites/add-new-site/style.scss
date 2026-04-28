@@ -1,3 +1,5 @@
+@use '../../../../packages/ui/src/utils/mixins' as ui-mixins;
+
 @import '@wordpress/base-styles/variables';
 @import '@wordpress/base-styles/colors';
 
@@ -11,6 +13,14 @@
 	&:hover {
 		background: $gray-100;
 		border-radius: $radius-medium;
+
+		@include ui-mixins.when-dark-theme {
+			background: color-mix(
+				in srgb,
+				var( --dashboard-surface__background-color ) 82%,
+				var( --wp-admin-theme-color )
+			);
+		}
 	}
 }
 

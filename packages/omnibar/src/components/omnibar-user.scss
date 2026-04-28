@@ -1,5 +1,9 @@
 .omnibar,
 .omnibar__popover {
+	.omnibar__user {
+		padding-top: 8px;
+	}
+
 	.omnibar__user-avatar {
 		display: inline-flex;
 		width: 20px;
@@ -18,6 +22,11 @@
 			display: block;
 			object-fit: cover;
 		}
+	}
+
+	.omnibar__user-info {
+		opacity: 0.8;
+		font-size: 11px;
 	}
 }
 

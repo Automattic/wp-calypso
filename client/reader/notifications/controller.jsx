@@ -49,6 +49,7 @@ export function notifications( context, next ) {
 			<NotificationTitle />
 			<div className="reader-notifications__panel">
 				<AsyncLoad
+					key="reader-notifications"
 					require={ () =>
 						import(
 							/* webpackChunkName: "async-load-calypso-notifications" */ 'calypso/notifications'

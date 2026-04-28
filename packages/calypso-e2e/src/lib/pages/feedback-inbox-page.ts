@@ -46,7 +46,12 @@ export class FeedbackInboxPage {
 		if ( await responsesTab.isVisible( { timeout: 2000 } ).catch( () => false ) ) {
 			this.isCFM = true;
 			await responsesTab.click();
-			await this.page.waitForTimeout( 1000 );
+			// Wait for the Folder filter chip to render — that's the signal that the
+			// Responses tab content has actually loaded.
+			await this.page
+				.locator( '.dataviews-filters__summary-chip' )
+				.filter( { hasText: /Folder is:/i } )
+				.waitFor( { state: 'visible', timeout: 5000 } );
 		}
 	}
 
@@ -171,7 +176,9 @@ export class FeedbackInboxPage {
 			} );
 			if ( await closeButton.isVisible( { timeout: 500 } ).catch( () => false ) ) {
 				await closeButton.click();
-				await this.page.waitForTimeout( 300 );
+				await this.page
+					.locator( '.jp-forms-response-header' )
+					.waitFor( { state: 'hidden', timeout: 5000 } );
 			}
 
 			// CFM: folder is a DataViews filter chip ("Folder is: Inbox (0)").
@@ -180,7 +187,11 @@ export class FeedbackInboxPage {
 			} );
 			await folderChip.click();
 			await this.page.getByRole( 'option', { name: new RegExp( folderName, 'i' ) } ).click();
-			await this.page.waitForTimeout( 500 );
+			// Wait for the chip text to reflect the selected folder.
+			await this.page
+				.locator( '.dataviews-filters__summary-chip' )
+				.filter( { hasText: new RegExp( `Folder is:\\s*${ folderName }`, 'i' ) } )
+				.waitFor( { timeout: 5000 } );
 			return;
 		}
 
@@ -189,7 +200,16 @@ export class FeedbackInboxPage {
 			.getByRole( 'tab', { name: folderName } )
 			.or( this.page.getByRole( 'radio', { name: new RegExp( folderName, 'i' ) } ) );
 		await tab.click();
-		await this.page.waitForTimeout( 500 );
+		// Wait for the tab/radio to actually be selected before returning.
+		await this.page
+			.getByRole( 'tab', { name: folderName, selected: true } )
+			.or(
+				this.page.getByRole( 'radio', {
+					name: new RegExp( folderName, 'i' ),
+					checked: true,
+				} )
+			)
+			.waitFor( { timeout: 5000 } );
 	}
 
 	/**
@@ -282,8 +302,11 @@ export class FeedbackInboxPage {
 		// Use .last() to get the button in the side panel, not in the table row
 		await this.page.getByRole( 'button', { name: 'Trash' } ).last().click();
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-			// On mobile, the modal closes after the action
-			await this.page.waitForTimeout( 1000 );
+			// On mobile, the modal closes after the action. Wait for it to actually
+			// close rather than using a fixed timeout.
+			await this.page
+				.getByRole( 'dialog', { name: 'Response' } )
+				.waitFor( { state: 'hidden', timeout: 5000 } );
 		} else {
 			// Wait for the success notification (use .first() to avoid a11y-speak duplicate)
 			await this.page.getByText( 'Response moved to trash.' ).first().waitFor( { timeout: 5000 } );
@@ -297,8 +320,11 @@ export class FeedbackInboxPage {
 		// Use .last() to get the button in the side panel, not in the table row
 		await this.page.getByRole( 'button', { name: 'Restore' } ).last().click();
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-			// On mobile, the modal closes after the action
-			await this.page.waitForTimeout( 1000 );
+			// On mobile, the modal closes after the action. Wait for it to actually
+			// close rather than using a fixed timeout.
+			await this.page
+				.getByRole( 'dialog', { name: 'Response' } )
+				.waitFor( { state: 'hidden', timeout: 5000 } );
 		} else {
 			// Wait for the success notification (use .first() to avoid a11y-speak duplicate)
 			await this.page.getByText( 'Response restored.' ).first().waitFor( { timeout: 5000 } );
@@ -309,18 +335,28 @@ export class FeedbackInboxPage {
 	 * Clicks the "Next" navigation button in the response view.
 	 */
 	async clickNextResponse(): Promise< void > {
+		// The selected response is encoded in the URL's responseIds query param,
+		// so we wait for the URL to change rather than guessing how long it takes.
+		const before = this.page.url();
 		// Use .last() to get the button in the side panel, not pagination buttons
 		await this.page.getByRole( 'button', { name: 'Next', exact: true } ).last().click();
-		await this.page.waitForTimeout( 1000 ); // Wait for the navigation to complete
+		await this.page.waitForFunction( ( prev ) => window.location.href !== prev, before, {
+			timeout: 5000,
+		} );
 	}
 
 	/**
 	 * Clicks the "Previous" navigation button in the response view.
 	 */
 	async clickPreviousResponse(): Promise< void > {
+		// The selected response is encoded in the URL's responseIds query param,
+		// so we wait for the URL to change rather than guessing how long it takes.
+		const before = this.page.url();
 		// Use .last() to get the button in the side panel, not pagination buttons
 		await this.page.getByRole( 'button', { name: 'Previous', exact: true } ).last().click();
-		await this.page.waitForTimeout( 1000 ); // Wait for the navigation to complete
+		await this.page.waitForFunction( ( prev ) => window.location.href !== prev, before, {
+			timeout: 5000,
+		} );
 	}
 
 	/**
@@ -328,7 +364,13 @@ export class FeedbackInboxPage {
 	 */
 	async clickCloseResponse(): Promise< void > {
 		await this.page.getByRole( 'button', { name: 'Close' } ).last().click();
-		await this.page.waitForTimeout( 300 ); // Wait for the panel to close
+		// Wait for whichever panel was open (CFM inspector, legacy desktop side
+		// panel, or mobile dialog) to actually close.
+		await this.page
+			.locator( '.jp-forms-response-header' )
+			.or( this.page.locator( '.jp-forms__inbox-response' ) )
+			.or( this.page.getByRole( 'dialog', { name: 'Response' } ) )
+			.waitFor( { state: 'hidden', timeout: 5000 } );
 	}
 
 	/**

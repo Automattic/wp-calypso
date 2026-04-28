@@ -10,6 +10,7 @@ setTimeout(
 function insights( context: Context, next: () => void ) {
 	context.primary = (
 		<AsyncLoad
+			key="stats-pagesinsights"
 			require={ () =>
 				import( /* webpackChunkName: "async-load-calypso-my-sites-stats-pages-insights" */ '.' )
 			}

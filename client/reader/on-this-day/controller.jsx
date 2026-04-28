@@ -25,6 +25,7 @@ export function onThisDay( context, next ) {
 
 	context.primary = (
 		<AsyncLoad
+			key="reader-on-this-day"
 			require={ () =>
 				import(
 					/* webpackChunkName: "async-load-calypso-reader-on-this-day-main" */ 'calypso/reader/on-this-day/main'

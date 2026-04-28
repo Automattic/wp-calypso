@@ -23,6 +23,7 @@ function renderTemplate( template, props ) {
 			return (
 				<AsyncLoad
 					{ ...props }
+					key="notice"
 					require={ () =>
 						import(
 							/* webpackChunkName: "async-load-calypso-blocks-jitm-templates-notice" */ './templates/notice'
@@ -35,6 +36,7 @@ function renderTemplate( template, props ) {
 			return (
 				<AsyncLoad
 					{ ...props }
+					key="sidebar-banner"
 					require={ () =>
 						import(
 							/* webpackChunkName: "async-load-calypso-blocks-jitm-templates-sidebar-banner" */ './templates/sidebar-banner'
@@ -47,6 +49,7 @@ function renderTemplate( template, props ) {
 			return (
 				<AsyncLoad
 					{ ...props }
+					key="home-task"
 					require={ () =>
 						import(
 							/* webpackChunkName: "async-load-calypso-blocks-jitm-templates-home-task" */ './templates/home-task'
@@ -59,6 +62,7 @@ function renderTemplate( template, props ) {
 			return (
 				<AsyncLoad
 					{ ...props }
+					key="spotlight"
 					require={ () =>
 						import(
 							/* webpackChunkName: "async-load-calypso-blocks-jitm-templates-spotlight" */ './templates/spotlight'
@@ -73,6 +77,7 @@ function renderTemplate( template, props ) {
 			return (
 				<AsyncLoad
 					{ ...props }
+					key="modal"
 					require={ () =>
 						import(
 							/* webpackChunkName: "async-load-calypso-blocks-jitm-templates-modal" */ './templates/modal'
@@ -85,6 +90,7 @@ function renderTemplate( template, props ) {
 			return (
 				<AsyncLoad
 					{ ...props }
+					key="default"
 					require={ () =>
 						import(
 							/* webpackChunkName: "async-load-calypso-blocks-jitm-templates-default" */ './templates/default'

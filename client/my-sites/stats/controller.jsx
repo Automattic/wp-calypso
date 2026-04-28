@@ -148,6 +148,7 @@ export function overview( context, next ) {
 		siteId !== null ? (
 			<StatsPageLoader>
 				<AsyncLoad
+					key="stats-overview"
 					require={ () =>
 						import(
 							/* webpackChunkName: "async-load-calypso-my-sites-stats-overview" */ './overview'
@@ -160,6 +161,7 @@ export function overview( context, next ) {
 			</StatsPageLoader>
 		) : (
 			<AsyncLoad
+				key="stats-overview"
 				require={ () =>
 					import(
 						/* webpackChunkName: "async-load-calypso-my-sites-stats-overview" */ './overview'
@@ -315,6 +317,7 @@ export function summary( context, next ) {
 	context.primary = (
 		<StatsPageLoader>
 			<AsyncLoad
+				key="stats-summary"
 				require={ () =>
 					import( /* webpackChunkName: "async-load-calypso-my-sites-stats-summary" */ './summary' )
 				}
@@ -347,6 +350,7 @@ export function post( context, next ) {
 	context.primary = (
 		<StatsPageLoader>
 			<AsyncLoad
+				key="stats-post-detail"
 				require={ () =>
 					import(
 						/* webpackChunkName: "async-load-calypso-my-sites-stats-stats-post-detail" */ './stats-post-detail'
@@ -389,6 +393,7 @@ export function follows( context, next ) {
 	context.primary = (
 		<StatsPageLoader>
 			<AsyncLoad
+				key="stats-comment-follows"
 				require={ () =>
 					import(
 						/* webpackChunkName: "async-load-calypso-my-sites-stats-comment-follows" */ './comment-follows'
@@ -439,6 +444,7 @@ export function wordAds( context, next ) {
 
 	context.primary = (
 		<AsyncLoad
+			key="stats-wordads"
 			require={ () =>
 				import( /* webpackChunkName: "async-load-calypso-my-sites-stats-wordads" */ './wordads' )
 			}
