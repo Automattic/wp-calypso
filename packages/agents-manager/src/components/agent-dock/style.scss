@@ -707,4 +707,12 @@ body.agents-manager-sidebar-container.is-split-screen {
 	.MessageActions-module_container:has(.agents-manager-sources-display) {
 		width: 100%;
 	}
+
+	// In narrow mode the Sources card uses `margin-top: -32px` to pull its header
+	// onto the action-icons row. At 50vw the card forces a wrap, the negative
+	// margin then drags it into the message text and covers the icons. Stack
+	// them instead — there's plenty of vertical room.
+	.agents-manager-sources-display.card {
+		margin-top: 0;
+	}
 }
