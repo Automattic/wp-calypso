@@ -2,6 +2,8 @@ import { useYearsOfService } from 'calypso/data/reader/use-years-of-service';
 import useAchievementsVisibility from '../use-achievements-visibility';
 import { YearsOfServiceBadge } from '../years-of-service-badge';
 
+import './style.scss';
+
 interface AuthorAchievementBadgesProps {
 	authorLogin?: string;
 	size: 'medium' | 'small';
