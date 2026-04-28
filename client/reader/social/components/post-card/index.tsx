@@ -7,6 +7,7 @@ import { PostCardCounts } from './post-card-counts';
 import { PostCardEmbed } from './post-card-embed';
 import { PostCardHeader } from './post-card-header';
 import { PostCardLink } from './post-card-link';
+import { PostCardTimestamp } from './post-card-timestamp';
 import type { AtmosphereFeedItem } from '@automattic/api-core';
 
 type SocialPostCardVariant = 'default' | 'compact';
@@ -15,19 +16,29 @@ interface SocialPostCardProps {
 	post: AtmosphereFeedItem;
 	variant?: SocialPostCardVariant;
 	expandedVideo?: boolean;
+	// When true, the inline timestamp moves out of the header and renders as
+	// a standalone block between the embed and the counts row (matches
+	// bsky.app's single-post layout). Used by ThreadTree for the target post.
+	prominentTimestamp?: boolean;
 }
 
 export function SocialPostCard( {
 	post,
 	variant = 'default',
 	expandedVideo,
+	prominentTimestamp,
 }: SocialPostCardProps ) {
 	const isCompact = variant === 'compact';
+	const showProminentTimestamp = ! isCompact && Boolean( prominentTimestamp );
 
 	const card = (
 		<Card className={ clsx( 'social-post-card', `social-post-card--${ variant }` ) }>
 			<CardBody>
-				<PostCardHeader post={ post } variant={ variant } />
+				<PostCardHeader
+					post={ post }
+					variant={ variant }
+					prominentTimestamp={ showProminentTimestamp }
+				/>
 				<PostCardBody post={ post } />
 				{ ! isCompact && post.embed && (
 					<PostCardEmbed
@@ -37,6 +48,7 @@ export function SocialPostCard( {
 						parentUrl={ post.bluesky_url }
 					/>
 				) }
+				{ showProminentTimestamp && <PostCardTimestamp post={ post } /> }
 				{ ! isCompact && <PostCardCounts counts={ post.counts } postUri={ post.uri } /> }
 			</CardBody>
 		</Card>

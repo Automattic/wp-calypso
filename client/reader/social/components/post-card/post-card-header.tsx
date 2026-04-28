@@ -8,9 +8,13 @@ import type { ReactNode } from 'react';
 interface PostCardHeaderProps {
 	post: AtmosphereFeedItem;
 	variant: 'default' | 'compact';
+	// When true, the inline timestamp + dot separator are suppressed in this
+	// row. The thread-view target post uses this to mirror bsky.app's layout
+	// (the timestamp moves under the post body via PostCardTimestamp).
+	prominentTimestamp?: boolean;
 }
 
-export function PostCardHeader( { post, variant }: PostCardHeaderProps ) {
+export function PostCardHeader( { post, variant, prominentTimestamp }: PostCardHeaderProps ) {
 	const translate = useTranslate();
 	const analytics = useSocialAnalytics();
 	const isCompact = variant === 'compact';
@@ -169,7 +173,7 @@ export function PostCardHeader( { post, variant }: PostCardHeaderProps ) {
 						{ authorBody }
 					</a>
 				) }
-				{ timestampIso && (
+				{ timestampIso && ! prominentTimestamp && (
 					<>
 						<span className="social-post-card-header__dot" aria-hidden="true">
 							·

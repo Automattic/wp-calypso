@@ -9,10 +9,11 @@ interface ThreadNodeProps {
 	depth: number;
 	highlighted: boolean;
 	expandedVideo?: boolean;
+	prominentTimestamp?: boolean;
 }
 
 export const ThreadNode = forwardRef< HTMLDivElement, ThreadNodeProps >( function ThreadNode(
-	{ node, depth, highlighted, expandedVideo },
+	{ node, depth, highlighted, expandedVideo, prominentTimestamp },
 	ref
 ) {
 	if ( node.type === 'not_found' ) {
@@ -48,7 +49,12 @@ export const ThreadNode = forwardRef< HTMLDivElement, ThreadNodeProps >( functio
 				) }
 				style={ { '--thread-depth': depth } as React.CSSProperties }
 			>
-				<SocialPostCard post={ node.post } variant="default" expandedVideo={ expandedVideo } />
+				<SocialPostCard
+					post={ node.post }
+					variant="default"
+					expandedVideo={ expandedVideo }
+					prominentTimestamp={ prominentTimestamp }
+				/>
 			</div>
 			{ node.replies.map( ( reply, idx ) => (
 				<ThreadNode

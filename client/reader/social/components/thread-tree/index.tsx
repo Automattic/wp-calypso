@@ -45,6 +45,7 @@ export function ThreadTree( { root, targetUri }: ThreadTreeProps ) {
 				depth={ 0 }
 				highlighted={ root.type === 'post' && root.post.uri === targetUri }
 				expandedVideo
+				prominentTimestamp
 			/>
 		</VStack>
 	);

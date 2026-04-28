@@ -172,6 +172,14 @@ a.social-post-card-header__timestamp::after {
 	}
 }
 
+.social-post-card-timestamp {
+	margin-top: 8px;
+	padding-bottom: 8px;
+	font-size: 0.875rem;
+	color: var( --studio-gray-50 );
+	border-bottom: 1px solid var( --studio-gray-5 );
+}
+
 .social-post-card-counts {
 	margin-top: 8px;
 	font-size: 0.875rem;
