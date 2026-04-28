@@ -30,8 +30,8 @@ export function ProfilePanel( { connection }: ProfilePanelProps ) {
 	if ( error ) {
 		return (
 			<EmptyContent
-				title={ String( translate( 'Couldn’t load your profile' ) ) }
-				line={ String( errorMessage( error, translate ) ) }
+				title={ translate( 'Couldn’t load your profile' ) }
+				line={ errorMessage( error, translate ) }
 			/>
 		);
 	}
