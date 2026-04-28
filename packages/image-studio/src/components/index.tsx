@@ -167,54 +167,56 @@ function ImageStudioAgentChat( {
 	);
 
 	return (
-		<AgentUI.Container
-			{ ...agentUiProps }
-			messages={ displayMessages as any }
-			variant="embedded"
-			placeholder={ placeholder }
-			className="image-studio-agent agenttic dark"
-			onSubmit={ handleSubmit }
-			onStop={ agentChatProps.abortCurrentRequest }
-			isProcessing={ isProcessing }
-			thinkingMessage={ agentChatProps.progressMessage ?? undefined }
-			inputValue={ inputValue }
-			onInputChange={ setInputValue }
-			onSuggestionClick={ handleSuggestionClick }
-			maxInputLength={ 1000 }
-		>
-			<AgentUI.ConversationView showHeader={ false }>
-				<AgentUI.Messages />
-				<AgentUI.Footer>
-					{ suggestionsComponent }
-					<AgentUI.Notice />
-					<AgentUI.Input disabled={ isStopDisabled ? true : undefined } />
-					<div className="image-studio-modal__input-toolbar">
-						{ mode === ImageStudioMode.Generate && isVideoMode && (
-							<StylePicker disabled={ isProcessing } mode={ mode } variant="video" />
-						) }
-						{ mode === ImageStudioMode.Generate && ! isVideoMode && (
-							<>
-								<AspectRatioPicker disabled={ isProcessing } />
+		<>
+			<AgentUI.Container
+				{ ...agentUiProps }
+				messages={ displayMessages as any }
+				variant="embedded"
+				placeholder={ placeholder }
+				className="image-studio-agent agenttic dark"
+				onSubmit={ handleSubmit }
+				onStop={ agentChatProps.abortCurrentRequest }
+				isProcessing={ isProcessing }
+				thinkingMessage={ agentChatProps.progressMessage ?? undefined }
+				inputValue={ inputValue }
+				onInputChange={ setInputValue }
+				onSuggestionClick={ handleSuggestionClick }
+				maxInputLength={ 1000 }
+			>
+				<AgentUI.ConversationView showHeader={ false }>
+					<AgentUI.Messages />
+					<AgentUI.Footer>
+						{ suggestionsComponent }
+						<AgentUI.Notice />
+						<AgentUI.Input disabled={ isStopDisabled ? true : undefined } />
+						<div className="image-studio-modal__input-toolbar">
+							{ mode === ImageStudioMode.Generate && isVideoMode && (
+								<StylePicker disabled={ isProcessing } mode={ mode } variant="video" />
+							) }
+							{ mode === ImageStudioMode.Generate && ! isVideoMode && (
+								<>
+									<AspectRatioPicker disabled={ isProcessing } />
+									<StylePicker disabled={ isProcessing } mode={ mode } />
+								</>
+							) }
+							{ mode !== ImageStudioMode.Generate && (
 								<StylePicker disabled={ isProcessing } mode={ mode } />
-							</>
+							) }
+						</div>
+					</AgentUI.Footer>
+				</AgentUI.ConversationView>
+			</AgentUI.Container>
+			{ isVideoMode && (
+				<p className="image-studio-modal__media-library-disclaimer">
+					<em>
+						{ __(
+							'All generated videos will be automatically saved to your media library.',
+							__i18n_text_domain__
 						) }
-						{ mode !== ImageStudioMode.Generate && (
-							<StylePicker disabled={ isProcessing } mode={ mode } />
-						) }
-					</div>
-					{ isVideoMode && (
-						<p className="image-studio-modal__media-library-disclaimer">
-							<em>
-								{ __(
-									'All generated videos will be automatically saved to your media library.',
-									__i18n_text_domain__
-								) }
-							</em>
-						</p>
-					) }
-				</AgentUI.Footer>
-			</AgentUI.ConversationView>
-		</AgentUI.Container>
+					</em>
+				</p>
+			) }
+		</>
 	);
 }
 
