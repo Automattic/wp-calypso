@@ -26,11 +26,33 @@ import type {
 	CreateConnectionParams,
 } from '@automattic/api-core';
 
+const TERMINAL_ERROR_KINDS: ReadonlySet< AtmosphereError[ 'kind' ] > = new Set( [
+	'auth_required',
+	'auth_failed',
+	'invalid_handle',
+	'invalid_credentials',
+	'connection_not_found',
+	'not_found',
+	'bad_request',
+	// rate_limited surfaces a wait-then-Retry UI; auto-retrying immediately
+	// would contradict the user-facing message.
+	'rate_limited',
+] );
+
+const isTerminalError = ( error: AtmosphereError ): boolean =>
+	TERMINAL_ERROR_KINDS.has( error.kind );
+
 export const connectionsQueryOptions = () =>
 	queryOptions< AtmosphereConnectionsResponse, AtmosphereError >( {
 		queryKey: readerAtmosphereKeys.connections(),
 		queryFn: getConnections,
 		staleTime: 60_000,
+		retry: ( failureCount, error ) => {
+			if ( isTerminalError( error ) ) {
+				return false;
+			}
+			return failureCount < 2;
+		},
 	} );
 
 export function useConnectionsQuery( { enabled }: { enabled?: boolean } = {} ) {
@@ -100,6 +122,12 @@ export const threadQueryOptions = ( uri: string ) =>
 		enabled: uri.length > 0,
 		staleTime: 30_000,
 		gcTime: 5 * 60_000,
+		retry: ( failureCount, error ) => {
+			if ( isTerminalError( error ) ) {
+				return false;
+			}
+			return failureCount < 2;
+		},
 	} );
 
 export interface UseThreadQueryParams {

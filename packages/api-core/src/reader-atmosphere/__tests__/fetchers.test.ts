@@ -253,14 +253,15 @@ describe( 'atmosphere fetchers', () => {
 			expect( got ).toEqual( fixture );
 		} );
 
-		it( 'classifies a 400 atmosphere_bad_request response as unknown', async () => {
+		it( 'classifies a 400 atmosphere_bad_request response', async () => {
 			nock( BASE )
 				.get( '/wpcom/v2/reader/atmosphere/thread' )
 				.query( true )
 				.reply( 400, { error: 'atmosphere_bad_request', message: 'Invalid AT-URI.' } );
 
 			await expect( getThread( { uri: 'at://garbage' } ) ).rejects.toMatchObject( {
-				kind: 'unknown',
+				kind: 'bad_request',
+				message: 'Invalid AT-URI.',
 			} );
 		} );
 

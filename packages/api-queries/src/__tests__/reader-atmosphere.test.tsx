@@ -220,12 +220,17 @@ describe( 'reader-atmosphere hooks', () => {
 		} );
 
 		it( 'surfaces a typed error and recovers via refetch', async () => {
+			// useThreadQuery retries upstream_unavailable up to 2 more times
+			// (3 total) before settling into the error state.
 			nock( BASE )
 				.get( '/wpcom/v2/reader/atmosphere/thread' )
 				.query( { uri: FIXTURE_URI } )
+				.times( 3 )
 				.reply( 502, { error: 'atmosphere_upstream_unavailable' } );
 
-			const client = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+			const client = new QueryClient( {
+				defaultOptions: { queries: { retry: false, retryDelay: 0 } },
+			} );
 			const { result } = renderHook( () => useThreadQuery( { uri: FIXTURE_URI } ), {
 				wrapper: makeWrapper( client ),
 			} );
@@ -242,6 +247,88 @@ describe( 'reader-atmosphere hooks', () => {
 				await result.current.refetch();
 			} );
 			await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+		} );
+
+		it( 'does not retry non-retriable errors (auth_required, not_found, bad_request)', async () => {
+			nock( BASE )
+				.get( '/wpcom/v2/reader/atmosphere/thread' )
+				.query( { uri: FIXTURE_URI } )
+				.reply( 401, { error: 'atmosphere_auth_required' } );
+
+			const client = new QueryClient( {
+				defaultOptions: { queries: { retry: false, retryDelay: 0 } },
+			} );
+			const { result } = renderHook( () => useThreadQuery( { uri: FIXTURE_URI } ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			await waitFor( () => expect( result.current.isError ).toBe( true ) );
+			expect( result.current.error ).toMatchObject( { kind: 'auth_required' } );
+			// If retries had fired, the second .get(...) without a matching
+			// interceptor would have thrown a nock unmatched-request error.
+			expect( nock.pendingMocks() ).toHaveLength( 0 );
+		} );
+
+		it.each( [
+			[ 'not_found', 404, 'atmosphere_not_found' ],
+			[ 'bad_request', 400, 'atmosphere_bad_request' ],
+			[ 'connection_not_found', 404, 'connection_not_found' ],
+			[ 'rate_limited', 429, 'atmosphere_rate_limited' ],
+		] as const )(
+			'does not retry %s — single fetch is enough',
+			async ( expectedKind, status, errorCode ) => {
+				nock( BASE )
+					.get( '/wpcom/v2/reader/atmosphere/thread' )
+					.query( { uri: FIXTURE_URI } )
+					.reply( status, { error: errorCode, message: 'nope' } );
+
+				const client = new QueryClient( {
+					defaultOptions: { queries: { retry: false, retryDelay: 0 } },
+				} );
+				const { result } = renderHook( () => useThreadQuery( { uri: FIXTURE_URI } ), {
+					wrapper: makeWrapper( client ),
+				} );
+
+				await waitFor( () => expect( result.current.isError ).toBe( true ) );
+				expect( result.current.error ).toMatchObject( { kind: expectedKind } );
+				expect( nock.pendingMocks() ).toHaveLength( 0 );
+			}
+		);
+	} );
+
+	describe( 'useConnectionsQuery retry predicate', () => {
+		it( 'does not retry connection_not_found', async () => {
+			nock( BASE )
+				.get( '/wpcom/v2/reader/atmosphere/connections' )
+				.reply( 404, { error: 'connection_not_found' } );
+
+			const client = new QueryClient( {
+				defaultOptions: { queries: { retry: false, retryDelay: 0 } },
+			} );
+			const { result } = renderHook( () => useConnectionsQuery(), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			await waitFor( () => expect( result.current.isError ).toBe( true ) );
+			expect( result.current.error ).toMatchObject( { kind: 'connection_not_found' } );
+			expect( nock.pendingMocks() ).toHaveLength( 0 );
+		} );
+
+		it( 'retries unknown errors twice (3 total attempts)', async () => {
+			nock( BASE )
+				.get( '/wpcom/v2/reader/atmosphere/connections' )
+				.times( 3 )
+				.reply( 500, { error: 'unknown' } );
+
+			const client = new QueryClient( {
+				defaultOptions: { queries: { retry: false, retryDelay: 0 } },
+			} );
+			const { result } = renderHook( () => useConnectionsQuery(), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			await waitFor( () => expect( result.current.isError ).toBe( true ) );
+			expect( nock.pendingMocks() ).toHaveLength( 0 );
 		} );
 	} );
 } );
