@@ -142,9 +142,46 @@ export function PostCardHeader( { post, variant, prominentTimestamp }: PostCardH
 			{ post.reason && post.reason.type === 'repost' && (
 				<div className="social-post-card-header__reason">
 					<span aria-hidden="true">🔁 </span>
-					{ translate( 'Reposted by %(name)s', {
-						args: { name: post.reason.by.display_name || post.reason.by.handle },
-					} ) }
+					{ ( () => {
+						const by = post.reason.by;
+						const reposterName = by.display_name || by.handle;
+						const inAppUrl =
+							analytics?.getProfileUrl?.( { did: by.did, handle: by.handle } ) ?? null;
+						const href = inAppUrl ?? `https://bsky.app/profile/${ by.handle }`;
+						const isInApp = inAppUrl !== null;
+						const target = isInApp ? undefined : '_blank';
+						const rel = isInApp ? undefined : 'noopener noreferrer';
+						const destination = isInApp ? 'in_app' : 'bsky_app';
+						const fireRepostAuthorClicked = () => {
+							if ( ! analytics ) {
+								return;
+							}
+							analytics.onClick(
+								`calypso_reader_${ analytics.source }_timeline_repost_author_clicked`,
+								{
+									connection_id: analytics.connectionId,
+									post_uri: post.uri,
+									reposter_did: by.did,
+									reposter_handle: by.handle,
+									destination,
+								}
+							);
+						};
+						return translate( 'Reposted by {{a}}%(name)s{{/a}}', {
+							args: { name: reposterName },
+							components: {
+								a: (
+									<a
+										className="social-post-card-header__reason-author"
+										href={ href }
+										target={ target }
+										rel={ rel }
+										onClick={ fireRepostAuthorClicked }
+									/>
+								),
+							},
+						} );
+					} )() }
 				</div>
 			) }
 			{ post.reply_parent && replyContextLabel && (
