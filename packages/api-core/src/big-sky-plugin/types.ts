@@ -14,5 +14,6 @@ export interface BigSkyPluginResponse {
 	enabled: boolean;
 	available: boolean;
 	on_free_trial: boolean;
+	remote_option_ready?: boolean;
 	metadata?: BigSkyPluginMetadata;
 }

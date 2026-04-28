@@ -1,11 +1,12 @@
+import { fetchBigSkyPlugin, updateBigSkyPlugin } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
 import { getAssemblerDesign } from '@automattic/design-picker';
 import { Step } from '@automattic/onboarding';
 import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
-import { useCallback } from '@wordpress/element';
+import { useCallback, useEffect } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
-import { useEffect, FormEvent } from 'react';
+import { FormEvent } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { SITE_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
@@ -28,7 +29,7 @@ async function waitForRemoteOptionReady( siteId: number ): Promise< void > {
 
 	while ( Date.now() - start < TIMEOUT_MS ) {
 		try {
-			const status = await wpcom.req.get( `/sites/${ siteId }/big-sky-plugin` );
+			const status = await fetchBigSkyPlugin( siteId );
 			if ( status?.remote_option_ready !== false ) {
 				logToLogstash( {
 					feature: 'calypso_client',
@@ -180,7 +181,7 @@ const LaunchBigSky: StepType = function ( props ) {
 			event.preventDefault();
 			await Promise.all( [
 				setIntentOnSite( siteSlug, SiteIntent.AIAssembler ),
-				wpcom.req.post( `/sites/${ siteId }/big-sky-plugin`, { enable: true } ),
+				updateBigSkyPlugin( siteId, { enable: true } ),
 			] );
 			// Poll until the async job that sets big_sky_enable on the remote site has
 			// completed. Plugin activation triggers a PHP-FPM restart, so the option isn't
