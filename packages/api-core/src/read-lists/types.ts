@@ -67,3 +67,17 @@ export interface ReadSubscribedListsResponse {
 export interface ReadListResponse {
 	list: ReaderListItem;
 }
+
+export interface CreateReadListParams {
+	title: string;
+	description?: string;
+	is_public?: boolean;
+}
+
+export interface UpdateReadListParams {
+	title: string;
+	slug: string;
+	owner: string;
+	description?: string;
+	is_public?: boolean;
+}

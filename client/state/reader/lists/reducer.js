@@ -2,16 +2,12 @@
 
 import { filter, some, includes, keyBy, map, omit, reject } from 'lodash';
 import {
-	READER_LIST_CREATE,
 	READER_LIST_DELETE,
 	READER_LIST_FOLLOW_RECEIVE,
 	READER_LIST_RECEIVE,
 	READER_LIST_CREATE_SUCCESS,
-	READER_LIST_CREATE_FAILURE,
 	READER_LIST_UNFOLLOW_RECEIVE,
-	READER_LIST_UPDATE,
 	READER_LIST_UPDATE_SUCCESS,
-	READER_LIST_UPDATE_FAILURE,
 	READER_LISTS_RECEIVE,
 	READER_LIST_ITEMS_RECEIVE,
 	READER_LIST_ITEM_ADD_FEED,
@@ -149,40 +145,6 @@ export const subscribedLists = withSchemaValidation(
 	}
 );
 
-/**
- * Records if there is a pending list creation request.
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @returns {Object}        Updated state
- */
-export function isCreatingList( state = false, action ) {
-	switch ( action.type ) {
-		case READER_LIST_CREATE:
-		case READER_LIST_CREATE_SUCCESS:
-		case READER_LIST_CREATE_FAILURE:
-			return READER_LIST_CREATE === action.type;
-	}
-
-	return state;
-}
-
-/**
- * Records if there is a pending list update request.
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @returns {Object}        Updated state
- */
-export function isUpdatingList( state = false, action ) {
-	switch ( action.type ) {
-		case READER_LIST_UPDATE:
-		case READER_LIST_UPDATE_SUCCESS:
-		case READER_LIST_UPDATE_FAILURE:
-			return READER_LIST_UPDATE === action.type;
-	}
-
-	return state;
-}
-
 export const userLists = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case READER_USER_LISTS_RECEIVE:
@@ -246,8 +208,6 @@ export default combineReducers( {
 	items,
 	listItems,
 	subscribedLists,
-	isCreatingList,
-	isUpdatingList,
 	userLists,
 	isRequestingUserLists,
 	userRecommendedBlogs,

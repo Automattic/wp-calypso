@@ -1,5 +1,4 @@
 import {
-	READER_LIST_CREATE,
 	READER_LIST_DELETE,
 	READER_LIST_FOLLOW,
 	READER_LIST_FOLLOW_RECEIVE,
@@ -10,12 +9,9 @@ import {
 	READER_LIST_ITEM_DELETE_TAG,
 	READER_LIST_RECEIVE,
 	READER_LIST_CREATE_SUCCESS,
-	READER_LIST_CREATE_FAILURE,
 	READER_LIST_UNFOLLOW,
 	READER_LIST_UNFOLLOW_RECEIVE,
-	READER_LIST_UPDATE,
 	READER_LIST_UPDATE_SUCCESS,
-	READER_LIST_UPDATE_FAILURE,
 	READER_LIST_ITEM_ADD_FEED,
 	READER_LIST_ITEM_ADD_FEED_RECEIVE,
 	READER_LIST_ITEM_ADD_TAG,
@@ -40,12 +36,6 @@ import type { CalypsoDispatch } from 'calypso/state/types';
 import type { AppState } from 'calypso/types';
 
 // Local type definitions
-interface ErrorInfo {
-	error: unknown;
-	owner?: string;
-	slug?: string;
-}
-
 interface ReaderListAction {
 	type: string;
 	[ key: string ]: unknown;
@@ -63,10 +53,6 @@ export function receiveLists( lists: ReaderList[] ): ReaderListAction {
 	};
 }
 
-export function createReaderList( list: ReaderList ): ReaderListAction {
-	return { type: READER_LIST_CREATE, list };
-}
-
 /**
  * Receive a single Reader list.
  * @param data - List data
@@ -81,15 +67,6 @@ export function receiveCreateReaderList( data: { list: ReaderList } ): ReaderLis
 	return {
 		type: READER_LIST_CREATE_SUCCESS,
 		data,
-	};
-}
-
-export function handleCreateReaderListFailure( errorInfo: ErrorInfo ): ReaderListAction {
-	return {
-		type: READER_LIST_CREATE_FAILURE,
-		error: errorInfo.error,
-		owner: errorInfo.owner,
-		slug: errorInfo.slug,
 	};
 }
 
@@ -146,23 +123,6 @@ export function receiveUnfollowList( list: ReaderList ): ReaderListAction {
 }
 
 /**
- * Triggers a network request to update a list's details.
- * @param list - List details to save
- * @returns Action object
- */
-export function updateReaderList( list: ReaderList ): ReaderListAction {
-	// Validate required properties to prevent runtime errors in JavaScript components
-	if ( ! list || ! list.title || ! list.slug || ! list.owner ) {
-		throw new Error( 'updateReaderList: list must have title, slug, and owner properties' );
-	}
-
-	return {
-		type: READER_LIST_UPDATE,
-		list,
-	};
-}
-
-/**
  * Handle updated list object from the API.
  * @param data - List data
  * @param data.list - List to save
@@ -172,20 +132,6 @@ export function receiveUpdatedListDetails( data: { list: ReaderList } ): ReaderL
 	return {
 		type: READER_LIST_UPDATE_SUCCESS,
 		data,
-	};
-}
-
-/**
- * Handle an error from the list update API.
- * @param error - Error during the list update process
- * @param list - List details to save
- * @returns Action object
- */
-export function handleUpdateListDetailsError( error: unknown, list: ReaderList ): ReaderListAction {
-	return {
-		type: READER_LIST_UPDATE_FAILURE,
-		error,
-		list,
 	};
 }
 

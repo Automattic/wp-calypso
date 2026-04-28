@@ -5,24 +5,6 @@ import getCurrentIntlCollator from 'calypso/state/selectors/get-current-intl-col
 import 'calypso/state/reader/init';
 
 /**
- * Returns true if currently creating a Reader list.
- * @param  {Object}  state  Global state tree
- * @returns {boolean}        Whether lists are being requested
- */
-export function isCreatingList( state ) {
-	return !! state.reader.lists.isCreatingList;
-}
-
-/**
- * Returns true if currently updating a Reader list.
- * @param  {Object}  state  Global state tree
- * @returns {boolean}        Whether lists are being requested
- */
-export function isUpdatingList( state ) {
-	return !! state.reader.lists.isUpdatingList;
-}
-
-/**
  * Returns the user's subscribed Reader lists.
  * @param  {Object}  state  Global state tree
  * @returns {Array}         Reader lists
