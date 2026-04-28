@@ -8,10 +8,6 @@ import type { AtmosphereEmbedExternal } from '@automattic/api-core';
 interface PostCardEmbedExternalProps {
 	embed: AtmosphereEmbedExternal;
 	parentPostUri: string;
-	// When true, the link card renders as an inert <div> instead of an <a>.
-	// Used inside compact (quote-embed) cards so the outer quote anchor
-	// doesn't end up with nested-anchor markup; the quoted post card remains
-	// clickable as a single unit via the outer anchor.
 	compact?: boolean;
 }
 

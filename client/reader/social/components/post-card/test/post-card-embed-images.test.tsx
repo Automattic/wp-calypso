@@ -61,4 +61,20 @@ describe( 'PostCardEmbedImages', () => {
 		expect( screen.queryAllByRole( 'link' ) ).toHaveLength( 0 );
 		expect( screen.getAllByRole( 'img' ) ).toHaveLength( 2 );
 	} );
+
+	it( 'uses the per-image alt text in the button accessible name when available', () => {
+		render( <PostCardEmbedImages embed={ embed } /> );
+		expect( screen.getByRole( 'button', { name: /first/i } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: /second/i } ) ).toBeVisible();
+	} );
+
+	it( 'falls back to a positional label when alt text is missing', () => {
+		const noAlt = {
+			...embed,
+			images: embed.images.map( ( img ) => ( { ...img, alt: '' } ) ),
+		};
+		render( <PostCardEmbedImages embed={ noAlt } /> );
+		expect( screen.getByRole( 'button', { name: /view image 1 of 2/i } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: /view image 2 of 2/i } ) ).toBeVisible();
+	} );
 } );

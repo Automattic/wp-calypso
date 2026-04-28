@@ -8,10 +8,6 @@ import type { ReactNode } from 'react';
 
 interface PostCardEmbedImagesProps {
 	embed: AtmosphereEmbedImages;
-	// When true, image cells render as inert <div>s instead of clickable
-	// buttons. Used inside a compact (quote-embed) card so the outer quote
-	// anchor doesn't get nested-interactive markup. The whole quoted post
-	// remains clickable as a single unit via the outer anchor.
 	compact?: boolean;
 }
 
@@ -59,17 +55,24 @@ export function PostCardEmbedImages( { embed, compact }: PostCardEmbedImagesProp
 						);
 					}
 
+					const ariaLabel = image.alt
+						? translate( 'View image: %(alt)s', {
+								args: { alt: image.alt },
+								comment:
+									'Accessible label for opening a Bluesky post image in the full-size carousel; uses the per-image alt text.',
+						  } )
+						: translate( 'View image %(index)d of %(count)d', {
+								args: { index: index + 1, count: embed.images.length },
+								comment:
+									'Accessible label fallback for opening a Bluesky post image in the full-size carousel when no alt text is available.',
+						  } );
 					return (
 						<button
 							key={ image.thumb }
 							type="button"
 							className={ cellClassName }
 							style={ cellStyle }
-							aria-label={ translate( 'View image %(index)d of %(count)d', {
-								args: { index: index + 1, count: embed.images.length },
-								comment:
-									'Accessible label for opening a Bluesky post image in the full-size carousel.',
-							} ) }
+							aria-label={ ariaLabel }
 							onClick={ () => setOpenIndex( index ) }
 						>
 							{ cellContent }
@@ -78,11 +81,7 @@ export function PostCardEmbedImages( { embed, compact }: PostCardEmbedImagesProp
 				} ) }
 			</div>
 			{ openIndex !== null &&
-				// Portal to <body> so the carousel's position: fixed overlay
-				// escapes any ancestor that establishes a containing block (the
-				// atmosphere-view layout sets transform / contain on the
-				// outer column). Mirrors what addImageCarousel does for the
-				// reader-full-post embed-container path.
+				// Portal to <body>: position: fixed is broken by transformed/contain ancestors elsewhere on the page.
 				createPortal(
 					<ImageCarousel
 						images={ carouselImages }
