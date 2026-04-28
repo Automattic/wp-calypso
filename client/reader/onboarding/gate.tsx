@@ -16,7 +16,9 @@ type ReaderOnboardingGateProps = {
 };
 
 export default function ReaderOnboardingGate( props: ReaderOnboardingGateProps ) {
-	const loadComponent = isEnabled( 'reader/onboarding-rsm' ) ? loadOnboardingRsm : loadOnboarding;
-
-	return <AsyncLoad require={ loadComponent } { ...props } />;
+	return isEnabled( 'reader/onboarding-rsm' ) ? (
+		<AsyncLoad require={ loadOnboardingRsm } { ...props } />
+	) : (
+		<AsyncLoad require={ loadOnboarding } { ...props } />
+	);
 }
