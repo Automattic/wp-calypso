@@ -1,12 +1,10 @@
 import {
-	READER_TAGS_REQUEST,
 	READER_TAGS_RECEIVE,
 	READER_UNFOLLOW_TAG_REQUEST,
 	READER_UNFOLLOW_TAG_RECEIVE,
 	READER_FOLLOW_TAG_REQUEST,
 } from 'calypso/state/reader/action-types';
 
-import 'calypso/state/data-layer/wpcom/read/tags';
 import 'calypso/state/data-layer/wpcom/read/tags/mine/delete';
 import 'calypso/state/data-layer/wpcom/read/tags/mine/new';
 
@@ -21,16 +19,6 @@ export const slugify = ( tag ) =>
 	typeof tag === 'string'
 		? encodeURIComponent( tag.trim().toLowerCase().replace( /\s+/g, '-' ).replace( /-{2,}/g, '-' ) )
 		: '';
-
-export const requestTags = ( tag, locale = null ) => {
-	const slug = tag ? slugify( tag ) : null;
-	const payload = { locale, slug, tag };
-
-	return {
-		type: READER_TAGS_REQUEST,
-		payload,
-	};
-};
 
 export const receiveTags = ( { payload, resetFollowingData = false } ) => ( {
 	type: READER_TAGS_RECEIVE,
