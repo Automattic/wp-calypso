@@ -166,6 +166,12 @@ function completeErrorMessage(
 			return translate( 'The Mastodon instance is unreachable right now.' );
 		case 'bad_request':
 			return translate( "We couldn't finish the connection. Please try again." );
+		case 'auth_required':
+			return translate(
+				'Your Mastodon connection needs to be re-authorized. Disconnect and reconnect.'
+			);
+		case 'not_found':
+			return translate( 'That Mastodon resource is no longer available.' );
 		case 'invalid_instance':
 		case 'connection_not_found':
 		case 'unknown':
