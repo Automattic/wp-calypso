@@ -56,14 +56,6 @@ function FeatureClipPanel(): JSX.Element {
 			>
 				{ __( 'Generate clip', __i18n_text_domain__ ) }
 			</Button>
-			<p className="big-sky-feature-clip-panel__media-library-disclaimer">
-				<em>
-					{ __(
-						'All generated videos will be automatically saved to your media library.',
-						__i18n_text_domain__
-					) }
-				</em>
-			</p>
 		</PluginDocumentSettingPanel>
 	);
 }
