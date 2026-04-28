@@ -7,7 +7,7 @@ import {
 	userPreferenceQuery,
 } from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { Link, useNavigate } from '@tanstack/react-router';
+import { Link } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
@@ -77,7 +77,7 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 		/>
 	) : null;
 
-	const navigate = useNavigate();
+	const navigate = purchaseSettingsRoute.useNavigate();
 	const [ showUpgradedNotice, setShowUpgradedNotice ] = useState( () => Boolean( upgraded ) );
 
 	useEffect( () => {
