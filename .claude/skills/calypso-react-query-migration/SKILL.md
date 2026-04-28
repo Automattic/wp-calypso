@@ -394,6 +394,57 @@ export const deleteXxxMutation = () =>
 
 Skipping invalidation is the most common bug — UI keeps stale data until manual refresh. Always identify which queries depend on the mutated resource.
 
+### Prefer optimistic updates
+
+The Redux + data-layer flow felt instant because Redux dispatched `RECEIVE` actions on success — the UI updated immediately without waiting for a refetch. **React Query mutations do NOT do this by default**: with `invalidateQueries` alone, the user sees a delay (the mutation request, then a separate refetch) before the UI reflects the change. This is a UX regression compared to the legacy Redux flow.
+
+**Default to optimistic updates for any mutation that updates UI state the user will see.**
+
+Use `onMutate` to update the cache immediately, and roll back in `onError`:
+
+```typescript
+export const updateXxxOptimisticMutation = () =>
+  mutationOptions( {
+    mutationFn: updateXxx,
+    onMutate: async ( newValue ) => {
+      // Cancel in-flight refetches so they don't overwrite our optimistic write
+      await queryClient.cancelQueries( { queryKey: readXxxQuery( newValue.id ).queryKey } );
+
+      // Snapshot the previous value for rollback
+      const previous = queryClient.getQueryData( readXxxQuery( newValue.id ).queryKey );
+
+      // Optimistically write the new value
+      queryClient.setQueryData( readXxxQuery( newValue.id ).queryKey, newValue );
+
+      // Return context for onError
+      return { previous };
+    },
+    onError: ( _err, variables, context ) => {
+      if ( context?.previous ) {
+        queryClient.setQueryData( readXxxQuery( variables.id ).queryKey, context.previous );
+      }
+    },
+    onSettled: ( _data, _err, variables ) => {
+      // Refetch to reconcile with server state, regardless of success/error
+      queryClient.invalidateQueries( { queryKey: readXxxQuery( variables.id ).queryKey } );
+    },
+  } );
+```
+
+**Reference implementation:** `userPreferenceOptimisticMutation` in `packages/api-queries/src/me-preferences.ts` is the canonical example in this codebase.
+
+**Optimistic patterns by mutation type:**
+- **Create**: optimistically push the new item into the list cache; replace temp ID with real one in `onSuccess`
+- **Update**: snapshot the item, write the new value, rollback on error
+- **Delete**: optimistically remove the item from the list cache; restore on error
+- **Follow/Unfollow**: optimistically flip the boolean in the cache; rollback on error
+
+**When NOT to use optimistic updates:**
+- Mutation result depends on server-computed data the client cannot predict (e.g., a generated slug, a server-assigned ID, a derived count). Either use a placeholder and reconcile in `onSuccess`, or skip optimistic and accept the delay.
+- The mutation is rare/non-interactive (background sync, admin actions), where the extra complexity isn't justified.
+
+**Always pair with `onSettled` invalidation** so the cache eventually reflects server truth, even if the optimistic value differs slightly.
+
 ### 3. Update the consumer component
 
 ```typescript
@@ -599,6 +650,9 @@ Decision tree:
 | Creating a new fetcher when the endpoint already exists in `api-core` | Grep `packages/api-core/src/` for the path/function/module before creating — reuse or extend the existing one |
 | Calling hooks inside a class component | Hooks can't run in classes — wrap the class with a small functional HOC that calls `useQuery()` and forwards props |
 | Rewriting class to function component during a data migration | Out of scope — keep the class, bridge React Query via a wrapper, leave the conversion as a separate task |
+| Migrating a user-facing mutation without optimistic updates | Redux's RECEIVE-on-success flow felt instant; pure `invalidateQueries` introduces a refetch delay — use `onMutate` + rollback to match the prior UX |
+| Forgetting `cancelQueries` before optimistic write | An in-flight refetch can land after your optimistic write and overwrite it — always `await queryClient.cancelQueries` first |
+| Skipping `onSettled` invalidation in an optimistic mutation | Without final reconciliation, optimistic value can drift from server truth — always invalidate after success or error |
 
 ## Quick Reference: Where Things Go
 
