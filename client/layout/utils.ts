@@ -1,6 +1,5 @@
 import { ONBOARDING_FLOW, isOnboardingFlow } from '@automattic/onboarding';
 import { useRef } from 'react';
-import { matchPath } from 'react-router';
 import { shouldUseStepContainerV2 } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
 import { DEFAULT_FLOW, getFlowFromURL } from 'calypso/landing/stepper/utils/get-flow-from-url';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
@@ -194,7 +193,7 @@ export const isInStepContainerV2FlowContext = ( pathname: string, query: string 
 	}
 
 	if ( pathname === '/start' || pathname.startsWith( '/start/' ) ) {
-		const flow = matchPath( { path: '/start/:flow/*' }, pathname )?.params?.flow ?? ONBOARDING_FLOW;
+		const flow = pathname.split( '/' )[ 2 ] || ONBOARDING_FLOW;
 		return isOnboardingFlow( flow );
 	}
 

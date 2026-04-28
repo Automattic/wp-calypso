@@ -24,6 +24,46 @@ describe( 'layout/utils', () => {
 			} );
 		} );
 
+		describe( 'checkout path', () => {
+			it( 'should return true when path starts with /checkout and redirect_to is to a StepContainerV2 flow', () => {
+				const pathname = '/checkout/site.com';
+				const query = 'redirect_to=%2Fsetup%2Fsite-setup';
+
+				const result = isInStepContainerV2FlowContext( pathname, query );
+
+				expect( result ).toBe( true );
+			} );
+
+			it( 'should return true when path starts with /checkout and cancel_to is to a StepContainerV2 flow', () => {
+				const pathname = '/checkout/site.com';
+				const query = 'cancel_to=%2Fsetup%2Fsite-setup';
+
+				const result = isInStepContainerV2FlowContext( pathname, query );
+
+				expect( result ).toBe( true );
+			} );
+
+			it( 'should return false when path starts with /checkout but neither redirect_to nor cancel_to is to a StepContainerV2 flow', () => {
+				const pathname = '/checkout/site.com';
+				const query = 'redirect_to=%2Fsome-path&cancel_to=%2Fother-path';
+
+				const result = isInStepContainerV2FlowContext( pathname, query );
+
+				expect( result ).toBe( false );
+			} );
+		} );
+
+		describe( 'other paths', () => {
+			it( 'should return false for paths that do not start with /setup or /checkout', () => {
+				const pathname = '/some-other-path';
+				const query = '';
+
+				const result = isInStepContainerV2FlowContext( pathname, query );
+
+				expect( result ).toBe( false );
+			} );
+		} );
+
 		describe( 'start path', () => {
 			it( 'should return true when path is /start (default flow is onboarding)', () => {
 				const pathname = '/start';
@@ -60,46 +100,6 @@ describe( 'layout/utils', () => {
 			it( 'should return false when path is /startup (substring guard)', () => {
 				const pathname = '/startup';
 				const query = '';
-				const result = isInStepContainerV2FlowContext( pathname, query );
-
-				expect( result ).toBe( false );
-			} );
-		} );
-
-		describe( 'checkout path', () => {
-			it( 'should return true when path starts with /checkout and redirect_to is to a StepContainerV2 flow', () => {
-				const pathname = '/checkout/site.com';
-				const query = 'redirect_to=%2Fsetup%2Fsite-setup';
-
-				const result = isInStepContainerV2FlowContext( pathname, query );
-
-				expect( result ).toBe( true );
-			} );
-
-			it( 'should return true when path starts with /checkout and cancel_to is to a StepContainerV2 flow', () => {
-				const pathname = '/checkout/site.com';
-				const query = 'cancel_to=%2Fsetup%2Fsite-setup';
-
-				const result = isInStepContainerV2FlowContext( pathname, query );
-
-				expect( result ).toBe( true );
-			} );
-
-			it( 'should return false when path starts with /checkout but neither redirect_to nor cancel_to is to a StepContainerV2 flow', () => {
-				const pathname = '/checkout/site.com';
-				const query = 'redirect_to=%2Fsome-path&cancel_to=%2Fother-path';
-
-				const result = isInStepContainerV2FlowContext( pathname, query );
-
-				expect( result ).toBe( false );
-			} );
-		} );
-
-		describe( 'other paths', () => {
-			it( 'should return false for paths that do not start with /setup or /checkout', () => {
-				const pathname = '/some-other-path';
-				const query = '';
-
 				const result = isInStepContainerV2FlowContext( pathname, query );
 
 				expect( result ).toBe( false );
