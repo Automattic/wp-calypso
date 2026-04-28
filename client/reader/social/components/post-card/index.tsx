@@ -37,7 +37,7 @@ export function SocialPostCard( {
 						parentUrl={ post.bluesky_url }
 					/>
 				) }
-				{ ! isCompact && <PostCardCounts counts={ post.counts } /> }
+				{ ! isCompact && <PostCardCounts counts={ post.counts } postUri={ post.uri } /> }
 			</CardBody>
 		</Card>
 	);
