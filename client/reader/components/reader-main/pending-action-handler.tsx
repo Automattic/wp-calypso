@@ -2,13 +2,13 @@ import { followReadTagMutation } from '@automattic/api-queries';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
+import { slugify } from 'calypso/reader/lib/tag-utils';
 import { useDispatch, useSelector } from 'calypso/state';
 import { likeComment } from 'calypso/state/comments/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { like } from 'calypso/state/posts/likes/actions';
 import { follow } from 'calypso/state/reader/follows/actions';
-import { slugify } from 'calypso/state/reader/tags/items/actions';
 import { clearLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 import { getPersistedLastActionPriorToLogin } from 'calypso/state/reader-ui/selectors';
 

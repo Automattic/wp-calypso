@@ -8,24 +8,27 @@ import { useDispatch, useSelector } from 'react-redux';
 import FollowButton from 'calypso/blocks/follow-button/button';
 import BloganuaryIcon from 'calypso/components/blogging-prompt-card/bloganuary-icon';
 import isBloganuary from 'calypso/data/blogging-prompt/is-bloganuary';
-import { Tag } from 'calypso/reader/list-manage/types';
+import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
+import { slugify } from 'calypso/reader/lib/tag-utils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
-import { slugify } from 'calypso/state/reader/tags/items/actions';
-import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 import { toggleReaderSidebarTags } from 'calypso/state/reader-ui/sidebar/actions';
 import { isTagsOpen } from 'calypso/state/reader-ui/sidebar/selectors';
+import type { NormalizedReaderTag } from 'calypso/reader/lib/tag-utils';
 import './style.scss';
 
-const containsBloganuary = ( followedTags: Tag[] | undefined ): boolean | undefined => {
-	return followedTags?.some( ( tag: Tag ) => tag.slug === 'bloganuary' );
+const containsBloganuary = ( followedTags: NormalizedReaderTag[] | null ): boolean | undefined => {
+	if ( followedTags === null ) {
+		return undefined;
+	}
+	return followedTags.some( ( tag ) => tag.slug === 'bloganuary' );
 };
 
 const BloganuaryHeader = () => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const queryClient = useQueryClient();
-	const followedTags = useSelector( getReaderFollowedTags ) as Tag[];
+	const followedTags = useFollowedReaderTags();
 	const isFollowingBloganuary = containsBloganuary( followedTags );
 	const isTagsSidebarOpen = useSelector( isTagsOpen );
 	const isLoggedIn = useSelector( isUserLoggedIn );

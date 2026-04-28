@@ -6,19 +6,16 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import titleCase from 'to-title-case';
-import QueryReaderFollowedTags from 'calypso/components/data/query-reader-followed-tags';
-import QueryReaderTag from 'calypso/components/data/query-reader-tag';
+import { useFollowedReaderTags, useReaderTagBySlug } from 'calypso/data/reader/use-reader-tags';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import ReaderMain from 'calypso/reader/components/reader-main';
+import { slugify } from 'calypso/reader/lib/tag-utils';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import Stream from 'calypso/reader/stream';
 import ReaderTagSidebar from 'calypso/reader/stream/reader-tag-sidebar';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { slugify } from 'calypso/state/reader/tags/items/actions';
-import { getReaderTags, getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
-import getReaderTagBySlug from 'calypso/state/reader/tags/selectors/get-reader-tag-by-slug';
 import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 import EmptyContent from './empty';
 import TagStreamHeader from './header';
@@ -119,8 +116,6 @@ class TagStream extends Component {
 		if ( tag && tag.error ) {
 			return (
 				<ReaderMain className="tag-stream__main">
-					<QueryReaderFollowedTags />
-					<QueryReaderTag tag={ this.props.decodedTagSlug } />
 					<TagStreamHeader
 						title={ titleText }
 						encodedTagSlug={ encodedTagSlug }
@@ -173,12 +168,37 @@ class TagStream extends Component {
 				useCompactCards
 				wideLayout
 				{ ...sidebarProps }
-			>
-				<QueryReaderFollowedTags />
-				<QueryReaderTag tag={ this.props.decodedTagSlug } />
-			</Stream>
+			/>
 		);
 	}
+}
+
+function withReaderTags( Inner ) {
+	return function WithReaderTags( props ) {
+		const followedTags = useFollowedReaderTags();
+		const currentTag = useReaderTagBySlug( props.decodedTagSlug );
+
+		// Annotate the active tag with isFollowing so the existing isSubscribed()
+		// check on the class works against the same shape as the followed list.
+		const annotatedCurrent =
+			currentTag && ! currentTag.error
+				? {
+						...currentTag,
+						isFollowing: followedTags?.some( ( t ) => t.slug === currentTag.slug ) ?? false,
+				  }
+				: currentTag;
+
+		const tags = [ annotatedCurrent, ...( followedTags ?? [] ) ].filter( Boolean );
+
+		return (
+			<Inner
+				{ ...props }
+				tags={ tags }
+				followedTags={ followedTags }
+				description={ currentTag?.description }
+			/>
+		);
+	};
 }
 
 function withTagFollowMutations( Inner ) {
@@ -208,18 +228,12 @@ function withTagFollowMutations( Inner ) {
 }
 
 export default connect(
-	( state, { decodedTagSlug, sort } ) => {
-		const tag = getReaderTagBySlug( state, decodedTagSlug );
-		return {
-			description: tag?.description,
-			followedTags: getReaderFollowedTags( state ),
-			tags: getReaderTags( state ),
-			isLoggedIn: isUserLoggedIn( state ),
-			sort,
-		};
-	},
+	( state, { sort } ) => ( {
+		isLoggedIn: isUserLoggedIn( state ),
+		sort,
+	} ),
 	{
 		recordReaderTracksEvent,
 		registerLastActionRequiresLogin,
 	}
-)( withTagFollowMutations( localize( TagStream ) ) );
+)( withReaderTags( withTagFollowMutations( localize( TagStream ) ) ) );

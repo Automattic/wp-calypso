@@ -6,14 +6,13 @@ import { startsWith } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect, useDispatch } from 'react-redux';
-import QueryReaderFollowedTags from 'calypso/components/data/query-reader-followed-tags';
+import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import ReaderTagIcon from 'calypso/reader/components/icons/tag-icon';
+import { slugify } from 'calypso/reader/lib/tag-utils';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { slugify } from 'calypso/state/reader/tags/items/actions';
-import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 import { AddTagForm } from './add-tags-form';
 import ReaderSidebarTagsList from './list';
 
@@ -59,11 +58,10 @@ export class ReaderSidebarTags extends Component {
 	};
 
 	render() {
-		const { tags, isOpen, translate, onClick, path } = this.props;
+		const { isOpen, translate, onClick, path } = this.props;
 
 		return (
 			<li className="sidebar-streams__tags">
-				{ ! tags && <QueryReaderFollowedTags /> }
 				<ExpandableSidebarMenu
 					expanded={ isOpen }
 					title={ translate( 'Tags' ) }
@@ -81,6 +79,13 @@ export class ReaderSidebarTags extends Component {
 			</li>
 		);
 	}
+}
+
+function withFollowedReaderTags( Inner ) {
+	return function WithFollowedReaderTags( props ) {
+		const tags = useFollowedReaderTags();
+		return <Inner { ...props } tags={ tags } />;
+	};
 }
 
 function withFollowTagMutation( Inner ) {
@@ -101,11 +106,6 @@ function withFollowTagMutation( Inner ) {
 	};
 }
 
-export default connect(
-	( state ) => ( {
-		tags: getReaderFollowedTags( state ),
-	} ),
-	{
-		recordReaderTracksEvent,
-	}
-)( withFollowTagMutation( localize( ReaderSidebarTags ) ) );
+export default connect( null, {
+	recordReaderTracksEvent,
+} )( withFollowedReaderTags( withFollowTagMutation( localize( ReaderSidebarTags ) ) ) );
