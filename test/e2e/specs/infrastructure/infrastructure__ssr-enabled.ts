@@ -25,4 +25,12 @@ describe( 'Server-side Rendering', function () {
 			} );
 		}
 	);
+
+	it( 'Login page exposes a sign-up link', async function () {
+		page = await browser.newPage();
+		await page.goto( DataHelper.getCalypsoURL( 'log-in' ), { timeout: 20 * 1000 } );
+		await page
+			.locator( 'a[href*="/start/sign-up-this-link-does-not-exist"]' )
+			.waitFor( { timeout: 5 * 1000 } );
+	} );
 } );
