@@ -40,6 +40,31 @@ before_all do
   # locally, it has no effect so it's safe to run it before all lanes.
   setup_ci
 
+  # On CI, `setup_ci` creates a temporary keychain and *replaces* the
+  # user keychain search list with only that keychain. That breaks
+  # code-signing trust evaluation on macOS 26+: the chain walks up from
+  # our Developer ID cert to the Apple Worldwide Developer Relations
+  # intermediate and Apple Root, both of which live in
+  # `/Library/Keychains/System.keychain` — and with System keychain no
+  # longer searchable, the Security framework reports
+  # `CSSMERR_TP_NOT_TRUSTED` and `electron-builder` silently skips
+  # signing (the build "passes" but later notarization rejects the
+  # unsigned binaries). Restore `System.keychain` to the search list so
+  # the chain can resolve.
+  #
+  # Gated to CI to mirror `setup_ci`'s own no-op-locally behaviour —
+  # we don't want to touch a developer's keychain config when running
+  # lanes from their machine.
+  if FastlaneCore::Helper.is_ci?
+    sh(
+      'security', 'list-keychains',
+      '-d', 'user',
+      '-s',
+      File.join(Dir.home, 'Library/Keychains/fastlane_tmp_keychain-db'),
+      '/Library/Keychains/System.keychain'
+    )
+  end
+
   EnvManager.set_up(env_file_name: ENV_FILE_NAME)
 end
 
