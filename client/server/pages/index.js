@@ -657,6 +657,12 @@ function setUpCSP( req, res, next ) {
 		],
 		'media-src': [
 			"'self'",
+			// hls.js attaches a MediaSource to the <video> element via a
+			// runtime-generated blob: URL (the MediaSource object URL).
+			// Without `blob:` here, browsers report — and would, once we
+			// stop running CSP in Report-Only mode, block — Reader
+			// ATmosphere video playback in non-Safari browsers.
+			'blob:',
 			'https://video.bsky.app', // Bluesky video manifests (Reader ATmosphere thread view, Safari native HLS path)
 			'https://video.cdn.bsky.app', // Bluesky video CDN (segment URLs 302-redirect here)
 		],

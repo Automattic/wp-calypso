@@ -35,6 +35,7 @@ export function ThreadTree( { root, targetUri }: ThreadTreeProps ) {
 					node={ parent }
 					depth={ 0 }
 					highlighted={ false }
+					renderReplies={ false }
 				/>
 			) ) }
 			<ThreadNode

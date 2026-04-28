@@ -186,11 +186,19 @@ CSP hosts required for the ATmosphere thread view
   `https://video.bsky.app` (video poster thumbnails),
   `https://video.cdn.bsky.app` (the thumbnail URL 302-redirects here, same
   redirect pattern as HLS segments).
-- `media-src` += `https://video.bsky.app`, `https://video.cdn.bsky.app`
-  (Safari native HLS path; segment URLs 302-redirect from
-  `video.bsky.app` to the CDN).
+- `media-src` += `blob:` (MediaSource object URLs created by hls.js when it
+  attaches to the `<video>` element on non-Safari browsers),
+  `https://video.bsky.app`, `https://video.cdn.bsky.app` (Safari native HLS
+  path; segment URLs 302-redirect from `video.bsky.app` to the CDN).
 - `connect-src` += same two `video.*` hosts (`hls.js` follows the same
   redirect via XHR/fetch).
+
+hls.js is constructed with `enableWorker: false` so transmuxing runs on
+the main thread. That keeps a `worker-src blob:` allowance off the CSP —
+hls.js's default worker is loaded from a runtime-generated `blob:` URL,
+which would otherwise need to be permitted. Bluesky videos are short
+enough that main-thread transmuxing is fine; revisit if we ever ship
+longer-form video.
 
 ### Click destinations
 

@@ -65,6 +65,7 @@ describe( 'PostCardCounts', () => {
 				connection_id: 7,
 				post_uri: 'at://did:plc:abc/app.bsky.feed.post/3kabc',
 				replies_count: 5,
+				destination: 'in_app_thread',
 			} )
 		);
 	} );

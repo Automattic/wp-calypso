@@ -76,6 +76,58 @@ describe( 'ThreadNode', () => {
 		).toBe( true );
 	} );
 
+	it( 'caps the indentation class for any depth greater than 4', () => {
+		const node: AtmosphereThreadNode = {
+			type: 'post',
+			post: makeFeedItem( { uri: 'at://deep', text: 'deep' } ),
+			parent: null,
+			replies: [],
+		};
+		// Depths 0–4 stay uncapped.
+		for ( const depth of [ 0, 4 ] ) {
+			const { container, unmount } = render(
+				<ThreadNode node={ node } depth={ depth } highlighted={ false } />
+			);
+			const article = container.querySelector( '[role="article"]' )!;
+			expect( article.classList.contains( 'thread-node--capped' ) ).toBe( false );
+			expect( ( article as HTMLElement ).style.getPropertyValue( '--thread-depth' ) ).toBe(
+				String( depth )
+			);
+			unmount();
+		}
+		// Depths 5, 6, 7, 12 all share the same capped indentation.
+		for ( const depth of [ 5, 6, 7, 12 ] ) {
+			const { container, unmount } = render(
+				<ThreadNode node={ node } depth={ depth } highlighted={ false } />
+			);
+			const article = container.querySelector( '[role="article"]' )!;
+			expect( article.classList.contains( 'thread-node--capped' ) ).toBe( true );
+			expect( ( article as HTMLElement ).style.getPropertyValue( '--thread-depth' ) ).toBe( '4' );
+			unmount();
+		}
+	} );
+
+	it( 'omits replies when renderReplies is false', () => {
+		const node: AtmosphereThreadNode = {
+			type: 'post',
+			post: makeFeedItem( { uri: 'at://parent', text: 'parent' } ),
+			parent: null,
+			replies: [
+				{
+					type: 'post',
+					post: makeFeedItem( { uri: 'at://child', text: 'child reply' } ),
+					parent: null,
+					replies: [],
+				},
+			],
+		};
+		render(
+			<ThreadNode node={ node } depth={ 0 } highlighted={ false } renderReplies={ false } />
+		);
+		expect( screen.getAllByRole( 'article' ) ).toHaveLength( 1 );
+		expect( screen.queryByText( 'child reply' ) ).toBeNull();
+	} );
+
 	it( 'renders a not_found tombstone for not_found nodes', () => {
 		const node: AtmosphereThreadNode = { type: 'not_found', uri: 'at://gone' };
 		render( <ThreadNode node={ node } depth={ 1 } highlighted={ false } /> );

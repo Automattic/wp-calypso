@@ -27,6 +27,7 @@ export function PostCardCounts( { counts, postUri }: PostCardCountsProps ) {
 			connection_id: analytics.connectionId,
 			post_uri: postUri,
 			replies_count: counts.replies,
+			destination: inAppUrl ? 'in_app_thread' : 'bsky_app',
 		} );
 	};
 

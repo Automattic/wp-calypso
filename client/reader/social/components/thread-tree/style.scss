@@ -37,17 +37,14 @@
 
 .thread-node {
 	padding-block: 0;
+	// `--thread-depth` is set by ThreadNode and is already capped at the
+	// max visual depth, so this works for any `depth` value.
 	padding-inline-start: calc( var( --thread-depth, 0 ) * 24px );
 
-	&.thread-node--depth-5,
-	&.thread-node--depth-6 {
-		padding-inline-start: calc( 4 * 24px );
-
-		&::before {
-			content: '↳';
-			margin-inline-end: 4px;
-			color: var( --studio-gray-30, #a7aaad );
-		}
+	&.thread-node--capped::before {
+		content: '↳';
+		margin-inline-end: 4px;
+		color: var( --studio-gray-30, #a7aaad );
 	}
 
 	&.is-target {

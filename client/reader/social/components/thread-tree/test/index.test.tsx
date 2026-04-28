@@ -145,6 +145,40 @@ describe( 'ThreadTree', () => {
 		expect( screen.getAllByRole( 'article' ) ).toHaveLength( 2 ); // root + reply1
 	} );
 
+	it( 'does not render a parent’s sibling replies above the target', () => {
+		const parent = makeFeedItem( { uri: 'at://parent', text: 'parent' } );
+		const target = makeFeedItem( { uri: 'at://target', text: 'target' } );
+		const sibling = makeFeedItem( { uri: 'at://sibling', text: 'sibling reply' } );
+		const root: AtmosphereThreadNode = {
+			type: 'post',
+			post: target,
+			parent: {
+				type: 'post',
+				post: parent,
+				parent: null,
+				// Parent has a non-target reply. Rendering the parent row above the
+				// target must NOT pull this sibling in, otherwise it appears above
+				// the focused post and duplicates parts of the descendant tree.
+				replies: [
+					{
+						type: 'post',
+						post: sibling,
+						parent: null,
+						replies: [],
+					},
+				],
+			},
+			replies: [],
+		};
+		render( <ThreadTree root={ root } targetUri="at://target" /> );
+		expect( screen.queryByText( 'sibling reply' ) ).toBeNull();
+		// Only parent + target should be in the article list.
+		const articles = screen.getAllByRole( 'article' );
+		expect( articles ).toHaveLength( 2 );
+		expect( articles[ 0 ] ).toHaveTextContent( 'parent' );
+		expect( articles[ 1 ] ).toHaveTextContent( 'target' );
+	} );
+
 	it( 'caps the parent walk at 80 nodes to defend against deep chains', () => {
 		let chain: AtmosphereThreadNode | null = null;
 		for ( let i = 0; i < 100; i++ ) {

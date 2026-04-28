@@ -38,7 +38,12 @@ export function PostCardEmbedVideo( { embed, expanded }: PostCardEmbedVideoProps
 			if ( cancelled || ! Hls.isSupported() ) {
 				return;
 			}
-			const instance = new Hls();
+			// `enableWorker: false` keeps transmuxing on the main thread so
+			// we don't have to widen the page CSP with `worker-src blob:` —
+			// hls.js's worker is loaded from a `blob:` URL it builds at
+			// runtime, which would otherwise be blocked. The main-thread
+			// path is fine for Bluesky's short-form videos.
+			const instance = new Hls( { enableWorker: false } );
 			hls = instance;
 			instance.loadSource( embed.playlist );
 			instance.attachMedia( video );
