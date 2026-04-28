@@ -2,7 +2,7 @@ import { HostingFeatures } from '@automattic/api-core';
 import { siteActivityLogQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __, sprintf } from '@wordpress/i18n';
-import { backup } from '@wordpress/icons';
+import { calendar } from '@wordpress/icons';
 import { useFormattedTime } from '../../components/formatted-time';
 import OverviewCard from '../../components/overview-card';
 import { useTimeSince } from '../../components/time-since';
@@ -12,7 +12,7 @@ import JetpackConnectionWarningCard from '../overview-jetpack-connection-warning
 import type { Site, SiteActivityLog } from '@automattic/api-core';
 
 const CARD_PROPS = {
-	icon: backup,
+	icon: calendar,
 	title: __( 'Last backup' ),
 	tracksId: 'site-overview-backups',
 };
