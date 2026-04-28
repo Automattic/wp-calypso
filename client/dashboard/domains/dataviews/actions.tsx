@@ -35,20 +35,15 @@ const SiteChangeAddressContent = lazy(
 
 const noop = () => {};
 
+const ATOMIC_DOMAIN_IN_USE_PATTERN = /Domain.*already used|TXT record verification is required/i;
+
 export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) => {
 	const router = useRouter();
 	const { recordTracksEvent } = useAnalytics();
-	const { createSuccessNotice } = useDispatch( noticesStore );
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: purchases } = useQuery( userPurchasesQuery() );
 
-	const setPrimaryDomainMutation = useMutation( {
-		...siteSetPrimaryDomainMutation(),
-		meta: {
-			snackbar: {
-				error: { source: 'server' },
-			},
-		},
-	} );
+	const setPrimaryDomainMutation = useMutation( siteSetPrimaryDomainMutation() );
 
 	const sitesByBlogId: Record< number, Site > = useMemo( () => {
 		if ( ! sites ) {
@@ -197,6 +192,16 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 									origin: 'dataviews_actions',
 									error_message: error.message,
 								} );
+
+								const isAtomicDomainInUse = ATOMIC_DOMAIN_IN_USE_PATTERN.test( error.message );
+								const message = isAtomicDomainInUse
+									? __(
+											'This domain is already in use on another WordPress.com or WP Cloud site. Remove it from the originating site, or contact support to set up TXT record verification.'
+									  )
+									: error.message ||
+									  __( "Something went wrong and we couldn't change your primary domain." );
+
+								createErrorNotice( message, { type: 'snackbar' } );
 							},
 						}
 					);
@@ -333,6 +338,7 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 			purchases,
 			setPrimaryDomainMutation,
 			createSuccessNotice,
+			createErrorNotice,
 			sitesByBlogId,
 			recordTracksEvent,
 		]

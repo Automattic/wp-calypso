@@ -5,6 +5,7 @@ import {
 	domainsRequestSuccessAction,
 	domainsRequestFailureAction,
 	fetchSiteDomains,
+	setPrimaryDomain,
 } from '../actions';
 import {
 	SITE_ID_FIRST as siteId,
@@ -89,6 +90,29 @@ describe( 'actions', () => {
 
 			return promise.then( () => {
 				expect( spy ).toHaveBeenCalledWith( failureAction );
+			} );
+		} );
+	} );
+
+	describe( '#setPrimaryDomain()', () => {
+		const ATOMIC_ERROR_MESSAGE =
+			'Setting domain-as-primary failed: Domain name already used [example.com]. TXT record verification is required to bypass this check.';
+
+		describe( 'body-level error response', () => {
+			useNock( ( nock ) => {
+				nock( 'https://public-api.wordpress.com:443' )
+					.persist()
+					.post( `/rest/v1.1/sites/${ siteId }/domains/primary` )
+					.reply( 200, {
+						error: true,
+						message: ATOMIC_ERROR_MESSAGE,
+					} );
+			} );
+
+			test( 'throws an Error with the API message when the response body has error: true', () => {
+				return expect( setPrimaryDomain( siteId, 'example.com' )( spy ) ).rejects.toThrow(
+					ATOMIC_ERROR_MESSAGE
+				);
 			} );
 		} );
 	} );

@@ -123,8 +123,28 @@ export const showUpdatePrimaryDomainSuccessNotice = ( domainName: string ) => {
 	};
 };
 
+const ATOMIC_DOMAIN_IN_USE_PATTERN = /Domain.*already used|TXT record verification is required/i;
+
 export const showUpdatePrimaryDomainErrorNotice = ( errorMessage: string ) => {
 	return ( dispatch: CalypsoDispatch ) => {
+		if ( errorMessage && ATOMIC_DOMAIN_IN_USE_PATTERN.test( errorMessage ) ) {
+			dispatch(
+				errorNotice(
+					translate(
+						'This domain is already in use on another WordPress.com or WP Cloud site. Remove it from the originating site, or contact support to set up TXT record verification.'
+					),
+					{
+						duration: 10000,
+						isPersistent: true,
+						href: 'https://wordpress.com/help/contact',
+						button: translate( 'Get help' ),
+						showDismiss: true,
+					}
+				)
+			);
+			return;
+		}
+
 		dispatch(
 			errorNotice(
 				errorMessage ||
