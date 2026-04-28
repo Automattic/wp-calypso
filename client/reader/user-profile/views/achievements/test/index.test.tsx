@@ -12,7 +12,7 @@ jest.mock( '@automattic/calypso-config', () => ( {
 
 jest.mock( 'calypso/reader/components/achievements/use-achievements-visibility' );
 
-jest.mock( 'calypso/data/reader/use-years-of-service' );
+jest.mock( 'calypso/data/reader/use-achievements-query' );
 
 jest.mock( '../achievements-grid', () => ( {
 	__esModule: true,
@@ -38,8 +38,8 @@ const useAchievementsVisibility =
 		.default as jest.Mock;
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const useYearsOfService = require( 'calypso/data/reader/use-years-of-service' )
-	.useYearsOfService as jest.Mock;
+const useAchievementsQuery = require( 'calypso/data/reader/use-achievements-query' )
+	.useAchievementsQuery as jest.Mock;
 
 describe( 'UserAchievements', () => {
 	const defaultUser: ReaderUser = {
@@ -57,7 +57,7 @@ describe( 'UserAchievements', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockIsEnabled.mockReturnValue( true );
-		useYearsOfService.mockReturnValue( { yearsOfService: undefined, isLoading: false } );
+		useAchievementsQuery.mockReturnValue( { yearsOfService: undefined, isLoading: false } );
 	} );
 
 	test( 'should render nothing when feature flag is disabled', () => {
@@ -141,7 +141,7 @@ describe( 'UserAchievements', () => {
 			isVisible: true,
 			isLoading: false,
 		} );
-		useYearsOfService.mockReturnValue( { yearsOfService: 5, isLoading: false } );
+		useAchievementsQuery.mockReturnValue( { yearsOfService: 5, isLoading: false } );
 
 		render( <UserAchievements user={ defaultUser } /> );
 
@@ -155,7 +155,7 @@ describe( 'UserAchievements', () => {
 			isVisible: true,
 			isLoading: false,
 		} );
-		useYearsOfService.mockReturnValue( { yearsOfService: 0, isLoading: false } );
+		useAchievementsQuery.mockReturnValue( { yearsOfService: 0, isLoading: false } );
 
 		render( <UserAchievements user={ defaultUser } /> );
 
@@ -168,7 +168,7 @@ describe( 'UserAchievements', () => {
 			isVisible: true,
 			isLoading: false,
 		} );
-		useYearsOfService.mockReturnValue( { yearsOfService: undefined, isLoading: false } );
+		useAchievementsQuery.mockReturnValue( { yearsOfService: undefined, isLoading: false } );
 
 		render( <UserAchievements user={ defaultUser } /> );
 

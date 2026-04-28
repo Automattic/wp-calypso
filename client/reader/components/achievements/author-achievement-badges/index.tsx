@@ -1,4 +1,4 @@
-import { useYearsOfService } from 'calypso/data/reader/use-years-of-service';
+import { useAchievementsQuery } from 'calypso/data/reader/use-achievements-query';
 import useAchievementsVisibility from '../use-achievements-visibility';
 import { YearsOfServiceBadge } from '../years-of-service-badge';
 
@@ -14,7 +14,7 @@ export const AuthorAchievementBadges = ( {
 	size,
 }: AuthorAchievementBadgesProps ): JSX.Element | null => {
 	const { isVisible } = useAchievementsVisibility( authorLogin );
-	const { yearsOfService } = useYearsOfService( authorLogin );
+	const { yearsOfService } = useAchievementsQuery( isVisible ? authorLogin : undefined );
 
 	if ( ! isVisible ) {
 		return null;

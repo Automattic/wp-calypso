@@ -1,22 +1,22 @@
 import { readAchievementsQuery } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { useEffect } from 'react';
 
-export function useAchievementsQuery( userIdOrLogin: number | string ) {
-	const query = useInfiniteQuery( readAchievementsQuery( userIdOrLogin ) );
-
-	const { hasNextPage, isFetchingNextPage, isError, fetchNextPage } = query;
-
-	useEffect( () => {
-		if ( hasNextPage && ! isFetchingNextPage && ! isError ) {
-			fetchNextPage();
-		}
-	}, [ hasNextPage, isFetchingNextPage, isError, fetchNextPage ] );
+export function useAchievementsQuery( userIdOrLogin?: number | string ) {
+	const enabled = isEnabled( 'reader/achievements' ) && userIdOrLogin != null;
+	const query = useInfiniteQuery( {
+		...readAchievementsQuery( userIdOrLogin ?? '' ),
+		enabled,
+	} );
 
 	return {
 		achievements: query.data?.pages.flatMap( ( p ) => p.achievements ?? [] ) ?? [],
+		yearsOfService: query.data?.pages[ 0 ]?.years_of_service,
 		found: query.data?.pages[ 0 ]?.found ?? 0,
-		isLoading: ( query.isLoading || hasNextPage ) && ! isError,
-		isError,
+		isLoading: query.isLoading,
+		isError: query.isError,
+		hasNextPage: query.hasNextPage,
+		isFetchingNextPage: query.isFetchingNextPage,
+		fetchNextPage: query.fetchNextPage,
 	};
 }
