@@ -242,7 +242,7 @@ function detectImageEntity(): DetectedEntity | null {
 
 		// In video mode, the generated clip's attachment id is written to the
 		// video-studio store by `update-canvas-video`; the image-studio store's
-		// id stays null for the PostEditorFeatureClip entry point.
+		// id stays null for the JetpackAIFeatureClip entry point.
 		const videoAttachmentId = videoStudioSelect?.getCurrentAttachmentId?.() ?? null;
 		const attachmentId = isVideo ? videoAttachmentId : imageAttachmentId;
 

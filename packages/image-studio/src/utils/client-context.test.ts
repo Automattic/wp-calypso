@@ -229,7 +229,7 @@ describe( 'getClientContext', () => {
 				getIsImageStudioOpen: () => true,
 				getSelectedStyle: () => null,
 				getSelectedAspectRatio: () => null,
-				getEntryPoint: () => 'post_editor_feature_clip',
+				getEntryPoint: () => 'jetpack_ai_feature_clip',
 				getBlockType: () => null,
 			},
 			videoStudio: {

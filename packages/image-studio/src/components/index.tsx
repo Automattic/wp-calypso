@@ -316,7 +316,7 @@ const ImageStudioContent = withInstanceId(
 				originalAttachmentId: selectors.getOriginalAttachmentId(),
 				isSidebarOpen: selectors.getIsSidebarOpen(),
 				currentVideoUrl: videoUrl,
-				isVideoMode: entryPoint === ImageStudioEntryPoint.PostEditorFeatureClip,
+				isVideoMode: entryPoint === ImageStudioEntryPoint.JetpackAIFeatureClip,
 			};
 		}, [] );
 
