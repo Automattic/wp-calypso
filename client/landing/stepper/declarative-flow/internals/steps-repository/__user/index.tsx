@@ -1,9 +1,8 @@
 import config from '@automattic/calypso-config';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { Step, StepContainer } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import { createInterpolateElement, useEffect, useState } from '@wordpress/element';
+import { useEffect, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
 import { AnyAction } from 'redux';
@@ -12,6 +11,7 @@ import OneTapAuthLoaderOverlay from 'calypso/blocks/login/one-tap-auth-loader-ov
 import SignupFormSocialFirst from 'calypso/blocks/signup-form/signup-form-social-first';
 import FormattedHeader from 'calypso/components/formatted-header';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
+import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
 import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -28,7 +28,6 @@ import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-conta
 import { Step as StepType } from '../../types';
 import { useHandleSocialResponse } from './handle-social-response';
 import { SignupSlider } from './signup-slider';
-import useAccountCreationExperiment from './use-account-creation-experiment';
 import { useSocialService } from './use-social-service';
 
 import './style.scss';
@@ -49,13 +48,9 @@ const UserStepComponent: StepType = function UserStep( {
 	const { socialServiceResponse } = useSocialService();
 	const { topBarLogo, partnerConfig, signupTosElement } = usePartnerBranding();
 
-	const {
-		isExperimentVariant,
-		isEmailVariation,
-		isMessagingVariation,
-		isSliderVariation,
-		isSimpleSliderVariation,
-	} = useAccountCreationExperiment();
+	// Users arriving from woocommerce.com's hosting-solutions CTA see the "open email + slider"
+	// account-step variant. Everyone else sees the default single-column signup.
+	const isEmailFirstVariant = queryArgs.get( 'ref' ) === WOO_HOSTING_SOLUTIONS_REF;
 
 	useEffect( () => {
 		if ( wpAccountCreateResponse && 'bearer_token' in wpAccountCreateResponse ) {
@@ -122,10 +117,7 @@ const UserStepComponent: StepType = function UserStep( {
 				onCreateAccountSuccess={ handleCreateAccountSuccess }
 				backButtonInFooter={ ! isStepContainerV2 }
 				emailLabelText={ isStepContainerV2 ? translate( 'Enter your email' ) : undefined }
-				isExperimentVariant={ isExperimentVariant }
-				isEmailVariation={ isEmailVariation }
-				isMessagingVariation={ isMessagingVariation }
-				isSliderVariation={ isSliderVariation }
+				isEmailFirstVariant={ isEmailFirstVariant }
 				allowedSocialServices={ partnerConfig?.ssoProviders }
 				customTosElement={ signupTosElement }
 			/>
@@ -141,9 +133,7 @@ const UserStepComponent: StepType = function UserStep( {
 
 	if ( isStepContainerV2 ) {
 		let headingText = translate( 'Create your account' );
-		if ( isMessagingVariation ) {
-			headingText = translate( 'Welcome to WordPress.com' );
-		} else if ( partnerConfig ) {
+		if ( partnerConfig ) {
 			headingText = translate( 'Create an account for %(partner)s', {
 				args: { partner: partnerConfig.displayName },
 				textOnly: true,
@@ -153,11 +143,7 @@ const UserStepComponent: StepType = function UserStep( {
 			// The locale suggestions are going to be reworked. Don't worry about it now.
 			<>
 				{ localeSuggestions }
-				<Step.Heading
-					text={ headingText }
-					align={ isExperimentVariant ? 'left' : undefined }
-					size={ isMessagingVariation ? 'small' : undefined }
-				/>
+				<Step.Heading text={ headingText } align={ isEmailFirstVariant ? 'left' : undefined } />
 			</>
 		);
 
@@ -168,51 +154,14 @@ const UserStepComponent: StepType = function UserStep( {
 					navigation.goBack ? <Step.BackButton onClick={ navigation.goBack } /> : undefined
 				}
 				rightElement={
-					isSliderVariation ? null : (
+					isEmailFirstVariant ? null : (
 						<Step.LinkButton href={ loginLink }>{ translate( 'Log in' ) }</Step.LinkButton>
 					)
 				}
 			/>
 		);
 
-		let stickyBottomBar = null;
-		if ( isMessagingVariation ) {
-			const tosText = createInterpolateElement(
-				translate(
-					'By signing up you agree to our <tosLink>Terms of Service</tosLink> and <privacyLink>Privacy Policy</privacyLink>.'
-				),
-				{
-					tosLink: (
-						<a
-							href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-							onClick={ () => recordTracksEvent( 'calypso_signup_tos_link_click' ) }
-							target="_blank"
-							rel="noopener noreferrer"
-						/>
-					),
-					privacyLink: (
-						<a
-							href={ localizeUrl( 'https://automattic.com/privacy/' ) }
-							onClick={ () => recordTracksEvent( 'calypso_signup_privacy_link_click' ) }
-							target="_blank"
-							rel="noopener noreferrer"
-						/>
-					),
-				}
-			);
-			const tosParagraph = <p className="signup-form-social-first__tos-link-bottom">{ tosText }</p>;
-			stickyBottomBar = () => (
-				<Step.StickyBottomBar
-					centerElement={ tosParagraph }
-					noBoxShadow
-					hasTransparentBackground
-					centerText
-					fullWidth
-				/>
-			);
-		}
-
-		if ( isLargeViewport && isSliderVariation ) {
+		if ( isLargeViewport && isEmailFirstVariant ) {
 			return (
 				<Step.TwoColumnLayout
 					className="step-container-v2--user"
@@ -224,16 +173,15 @@ const UserStepComponent: StepType = function UserStep( {
 				>
 					<Step.CenteredColumnLayout
 						verticalAlign="center"
-						headingColumnWidth={ isExperimentVariant ? 4 : undefined }
+						headingColumnWidth={ 4 }
 						columnWidth={ 4 }
 						heading={ heading }
 						topBar={ topBar }
-						stickyBottomBar={ stickyBottomBar }
-						noGap={ isExperimentVariant }
+						noGap
 					>
 						{ stepContent }
 					</Step.CenteredColumnLayout>
-					<SignupSlider hideDescription={ isSimpleSliderVariation } />
+					<SignupSlider />
 				</Step.TwoColumnLayout>
 			);
 		}
@@ -242,12 +190,9 @@ const UserStepComponent: StepType = function UserStep( {
 			<Step.CenteredColumnLayout
 				className="step-container-v2--user"
 				verticalAlign="center"
-				headingColumnWidth={ isExperimentVariant ? 4 : undefined }
 				columnWidth={ 4 }
 				heading={ heading }
 				topBar={ topBar }
-				stickyBottomBar={ stickyBottomBar }
-				noGap={ isExperimentVariant }
 			>
 				{ stepContent }
 			</Step.CenteredColumnLayout>
