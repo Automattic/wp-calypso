@@ -65,6 +65,7 @@ export const atmosphereAccount = ( context: Context, next: () => void ) => {
 	const tab = String( context.params.tab ?? '' );
 	context.primary = (
 		<AsyncLoad
+			key="atmosphere-account"
 			require={ () =>
 				import(
 					/* webpackChunkName: "async-load-calypso-reader-atmosphere-account-view" */ 'calypso/reader/atmosphere/atmosphere-account-view'
@@ -100,6 +101,7 @@ export const atmosphereThread = ( context: Context, next: () => void ) => {
 
 	context.primary = (
 		<AsyncLoad
+			key="atmosphere-thread"
 			require={ () =>
 				import(
 					/* webpackChunkName: "async-load-calypso-reader-atmosphere-thread-view" */
