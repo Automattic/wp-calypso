@@ -81,4 +81,10 @@ describe( DataHelper.createSuiteTitle( 'Plugins search' ), function () {
 		// Check if its redirecting to the default plugins page
 		await page.waitForURL( new RegExp( `/plugins/${ siteUrl }\\?s=woocommerce`, 'g' ) );
 	} );
+
+	it( 'Plugins page exposes a "Recommended for you" section', async function () {
+		await page
+			.locator( 'h2:has-text("Recommended for you - this header does not exist")' )
+			.waitFor( { timeout: 5 * 1000 } );
+	} );
 } );
