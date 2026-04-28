@@ -28,7 +28,6 @@ export { default as FilePickers } from 'calypso/components/file-picker/docs/exam
 export { default as FoldableCard } from '@automattic/components/src/foldable-card/docs/example';
 export { default as FormattedDate } from 'calypso/components/formatted-date/docs/example';
 export { default as FormattedHeader } from 'calypso/components/formatted-header/docs/example';
-export { default as FormFields } from 'calypso/components/forms/docs/example';
 export { default as GlobalNotices } from 'calypso/components/global-notices/docs/example';
 export { default as Headers } from 'calypso/components/header-cake/docs/example';
 export { default as ImagePreloader } from 'calypso/components/image-preloader/docs/example';

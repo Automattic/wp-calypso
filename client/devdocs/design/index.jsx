@@ -53,7 +53,6 @@ import FormattedDate from 'calypso/components/formatted-date/docs/example';
 import FormattedHeader from 'calypso/components/formatted-header/docs/example';
 import ClipboardButtons from 'calypso/components/forms/clipboard-button/docs/example';
 import CountedTextareas from 'calypso/components/forms/counted-textarea/docs/example';
-import FormFields from 'calypso/components/forms/docs/example';
 import Ranges from 'calypso/components/forms/range/docs/example';
 import GlobalNotices from 'calypso/components/global-notices/docs/example';
 import GravatarCaterpillar from 'calypso/components/gravatar-caterpillar/docs/example';
@@ -197,7 +196,6 @@ export default class DesignAssets extends Component {
 					<FoldableFAQ readmeFilePath="foldable-faq" />
 					<FormattedDate readmeFilePath="formatted-date" />
 					<FormattedHeader readmeFilePath="formatted-header" />
-					<FormFields searchKeywords="input textbox textarea radio" readmeFilePath="forms" />
 					<GlobalNotices readmeFilePath="global-notices" />
 					<Gravatar readmeFilePath="gravatar" />
 					<GravatarCaterpillar readmeFilePath="gravatar-caterpillar" />

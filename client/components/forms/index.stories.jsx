@@ -4,8 +4,6 @@ import { Card, FormInputValidation, FormLabel } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
-import { connect } from 'react-redux';
-import QuerySmsCountries from 'calypso/components/data/query-countries/sms';
 import FormButton from 'calypso/components/forms/form-button';
 import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
@@ -28,9 +26,8 @@ import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-w
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import FormStateSelector from 'calypso/components/forms/us-state-selector';
 import PhoneInput from 'calypso/components/phone-input';
-import getCountries from 'calypso/state/selectors/get-countries';
 
-export const CURRENCIES = {
+const CURRENCIES = {
 	ALL: {
 		symbol: 'Lek',
 		grouping: '.',
@@ -122,6 +119,15 @@ const visualCurrencyList = Object.entries( CURRENCIES ).map( ( [ code, { symbol 
 	code,
 	label: `${ code } ${ symbol }`,
 } ) );
+
+const countriesList = [
+	{ code: 'US', name: 'United States' },
+	{ code: 'GB', name: 'United Kingdom' },
+	{ code: 'CA', name: 'Canada' },
+	{ code: 'AU', name: 'Australia' },
+	{ code: 'DE', name: 'Germany' },
+	{ code: 'FR', name: 'France' },
+];
 
 class FormFields extends PureComponent {
 	static propTypes = {
@@ -302,7 +308,6 @@ class FormFields extends PureComponent {
 
 					<FormFieldset>
 						<FormLabel htmlFor="country_code">Form country select</FormLabel>
-						<QuerySmsCountries />
 						<FormCountrySelect
 							name="country_code"
 							id="country_code"
@@ -515,10 +520,14 @@ class FormFields extends PureComponent {
 	}
 }
 
-const ConnectedFormFields = connect( ( state ) => ( {
-	countriesList: getCountries( state, 'sms' ),
-} ) )( FormFields );
+FormFields.displayName = 'FormFields';
 
-ConnectedFormFields.displayName = 'FormFields';
+export default {
+	title: 'client/components/Forms/Form Fields',
+	component: FormFields,
+	args: {
+		countriesList,
+	},
+};
 
-export default ConnectedFormFields;
+export const Default = {};
