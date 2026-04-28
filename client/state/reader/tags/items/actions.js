@@ -1,12 +1,4 @@
-import {
-	READER_TAGS_RECEIVE,
-	READER_UNFOLLOW_TAG_REQUEST,
-	READER_UNFOLLOW_TAG_RECEIVE,
-	READER_FOLLOW_TAG_REQUEST,
-} from 'calypso/state/reader/action-types';
-
-import 'calypso/state/data-layer/wpcom/read/tags/mine/delete';
-import 'calypso/state/data-layer/wpcom/read/tags/mine/new';
+import { READER_TAGS_RECEIVE } from 'calypso/state/reader/action-types';
 
 import 'calypso/state/reader/init';
 
@@ -24,19 +16,4 @@ export const receiveTags = ( { payload, resetFollowingData = false } ) => ( {
 	type: READER_TAGS_RECEIVE,
 	payload,
 	meta: { resetFollowingData },
-} );
-
-export const requestUnfollowTag = ( tag ) => ( {
-	type: READER_UNFOLLOW_TAG_REQUEST,
-	payload: { tag, slug: slugify( tag ) },
-} );
-
-export const receiveUnfollowTag = ( { payload } ) => ( {
-	type: READER_UNFOLLOW_TAG_RECEIVE,
-	payload,
-} );
-
-export const requestFollowTag = ( tag ) => ( {
-	type: READER_FOLLOW_TAG_REQUEST,
-	payload: { tag, slug: slugify( tag ) },
 } );

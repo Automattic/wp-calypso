@@ -1,5 +1,7 @@
+import { followReadTagMutation, unfollowReadTagMutation } from '@automattic/api-queries';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { SelectCardCheckboxV2 } from '@automattic/onboarding';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
 	Modal,
 	Button,
@@ -7,11 +9,12 @@ import {
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { fixMe } from 'i18n-calypso';
+import { fixMe, translate } from 'i18n-calypso';
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch, useStore } from 'react-redux';
 import { READER_ONBOARDING_TRACKS_EVENT_PREFIX } from 'calypso/reader/onboarding/constants';
-import { requestFollowTag, requestUnfollowTag } from 'calypso/state/reader/tags/items/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { slugify } from 'calypso/state/reader/tags/items/actions';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 
 import './style.scss';
@@ -40,8 +43,11 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 	const [ followedTags, setFollowedTags ] = useState< string[] >( [] );
 	const followedTagsFromState = useSelector( getReaderFollowedTags );
 	const dispatch = useDispatch();
+	const queryClient = useQueryClient();
 	const [ processingTags, setProcessingTags ] = useState< Set< string > >( new Set() );
 	const reduxStore = useStore();
+	const { mutate: followTag } = useMutation( followReadTagMutation( queryClient ) );
+	const { mutate: unfollowTag } = useMutation( unfollowReadTagMutation( queryClient ) );
 
 	useEffect( () => {
 		// If there are followed tags in the state and no tags are being processed, update the followed tags state for the UI.
@@ -64,14 +70,26 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 
 		// Follow or unfollow the tag and update the followed tags state for the UI.
 		if ( checked ) {
-			dispatch( requestFollowTag( tag ) );
+			followTag( slugify( tag ), {
+				onError: () => {
+					dispatch(
+						errorNotice( translate( 'Could not follow tag: %(tag)s', { args: { tag } } ) )
+					);
+				},
+			} );
 			setFollowedTags( ( currentTags ) => [ ...currentTags, tag ] );
 			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_tag_followed`, {
 				tag,
 				total_followed: followedTags.length + 1,
 			} );
 		} else {
-			dispatch( requestUnfollowTag( tag ) );
+			unfollowTag( slugify( tag ), {
+				onError: () => {
+					dispatch(
+						errorNotice( translate( 'Could not unfollow tag: %(tag)s', { args: { tag } } ) )
+					);
+				},
+			} );
 			setFollowedTags( ( currentTags ) => currentTags.filter( ( t ) => t !== tag ) );
 			recordTracksEvent(
 				`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_tag_unfollowed`,

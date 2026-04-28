@@ -1,5 +1,5 @@
 import { keyBy } from 'lodash';
-import { receiveUnfollowTag, receiveTags } from '../actions';
+import { receiveTags } from '../actions';
 import items from '../reducer';
 
 // helpers
@@ -54,14 +54,6 @@ describe( 'reducer', () => {
 
 			const state = items( prevState, action );
 			expect( state ).toEqual( keyById( [ { ...TAG1, title: 'NotChickens' }, TAG2 ] ) );
-		} );
-
-		test( 'should unfollow a tag if requested to do so', () => {
-			const prevState = keyById( [ TAG1, TAG2 ] );
-			const action = receiveUnfollowTag( { payload: TAG1.id } );
-			const state = items( prevState, action );
-
-			expect( state ).toEqual( keyById( [ unfollow( TAG1 ), TAG2 ] ) );
 		} );
 
 		test( 'should mark everything as unfollowed if requested to do so', () => {

@@ -1,8 +1,5 @@
 import { keyBy, merge, mapValues } from 'lodash';
-import {
-	READER_TAGS_RECEIVE,
-	READER_UNFOLLOW_TAG_RECEIVE,
-} from 'calypso/state/reader/action-types';
+import { READER_TAGS_RECEIVE } from 'calypso/state/reader/action-types';
 
 /*
  * since the api always returns the whole list of followed tags unpaginated, both read/tags*,
@@ -23,10 +20,6 @@ export default ( state = null, action ) => {
 			const allTagsUnfollowed = mapValues( state, ( tag ) => ( { ...tag, isFollowing: false } ) );
 
 			return merge( {}, allTagsUnfollowed, keyBy( tags, 'id' ) );
-		}
-		case READER_UNFOLLOW_TAG_RECEIVE: {
-			const removedTag = action.payload;
-			return merge( {}, state, { [ removedTag ]: { isFollowing: false } } );
 		}
 	}
 

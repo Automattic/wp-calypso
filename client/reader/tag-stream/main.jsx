@@ -1,8 +1,10 @@
-import { localize } from 'i18n-calypso';
+import { followReadTagMutation, unfollowReadTagMutation } from '@automattic/api-queries';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { localize, translate as i18nTranslate } from 'i18n-calypso';
 import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import titleCase from 'to-title-case';
 import QueryReaderFollowedTags from 'calypso/components/data/query-reader-followed-tags';
 import QueryReaderTag from 'calypso/components/data/query-reader-tag';
@@ -12,8 +14,9 @@ import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import Stream from 'calypso/reader/stream';
 import ReaderTagSidebar from 'calypso/reader/stream/reader-tag-sidebar';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { requestFollowTag, requestUnfollowTag } from 'calypso/state/reader/tags/items/actions';
+import { slugify } from 'calypso/state/reader/tags/items/actions';
 import { getReaderTags, getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 import getReaderTagBySlug from 'calypso/state/reader/tags/selectors/get-reader-tag-by-slug';
 import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
@@ -178,6 +181,32 @@ class TagStream extends Component {
 	}
 }
 
+function withTagFollowMutations( Inner ) {
+	return function WithTagFollowMutations( props ) {
+		const queryClient = useQueryClient();
+		const dispatch = useDispatch();
+		const { mutate: follow } = useMutation( followReadTagMutation( queryClient ) );
+		const { mutate: unfollow } = useMutation( unfollowReadTagMutation( queryClient ) );
+
+		const followTag = ( tag ) =>
+			follow( slugify( tag ), {
+				onError: () =>
+					dispatch(
+						errorNotice( i18nTranslate( 'Could not follow tag: %(tag)s', { args: { tag } } ) )
+					),
+			} );
+		const unfollowTag = ( tag ) =>
+			unfollow( slugify( tag ), {
+				onError: () =>
+					dispatch(
+						errorNotice( i18nTranslate( 'Could not unfollow tag: %(tag)s', { args: { tag } } ) )
+					),
+			} );
+
+		return <Inner { ...props } followTag={ followTag } unfollowTag={ unfollowTag } />;
+	};
+}
+
 export default connect(
 	( state, { decodedTagSlug, sort } ) => {
 		const tag = getReaderTagBySlug( state, decodedTagSlug );
@@ -190,9 +219,7 @@ export default connect(
 		};
 	},
 	{
-		followTag: requestFollowTag,
 		recordReaderTracksEvent,
-		unfollowTag: requestUnfollowTag,
 		registerLastActionRequiresLogin,
 	}
-)( localize( TagStream ) );
+)( withTagFollowMutations( localize( TagStream ) ) );

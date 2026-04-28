@@ -1,5 +1,7 @@
+import { followReadTagMutation, unfollowReadTagMutation } from '@automattic/api-queries';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -8,7 +10,8 @@ import BloganuaryIcon from 'calypso/components/blogging-prompt-card/bloganuary-i
 import isBloganuary from 'calypso/data/blogging-prompt/is-bloganuary';
 import { Tag } from 'calypso/reader/list-manage/types';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { requestFollowTag, requestUnfollowTag } from 'calypso/state/reader/tags/items/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { slugify } from 'calypso/state/reader/tags/items/actions';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 import { toggleReaderSidebarTags } from 'calypso/state/reader-ui/sidebar/actions';
 import { isTagsOpen } from 'calypso/state/reader-ui/sidebar/selectors';
@@ -21,10 +24,14 @@ const containsBloganuary = ( followedTags: Tag[] | undefined ): boolean | undefi
 const BloganuaryHeader = () => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+	const queryClient = useQueryClient();
 	const followedTags = useSelector( getReaderFollowedTags ) as Tag[];
 	const isFollowingBloganuary = containsBloganuary( followedTags );
 	const isTagsSidebarOpen = useSelector( isTagsOpen );
 	const isLoggedIn = useSelector( isUserLoggedIn );
+	const { mutate: followTag } = useMutation( followReadTagMutation( queryClient ) );
+	const { mutate: unfollowTag } = useMutation( unfollowReadTagMutation( queryClient ) );
+
 	useEffect( () => {
 		recordTracksEvent( 'calypso_bloganuary_banner_view' );
 	}, [] );
@@ -34,7 +41,15 @@ const BloganuaryHeader = () => {
 	};
 
 	const followBloganuaryTag = () => {
-		dispatch( requestFollowTag( 'bloganuary' ) );
+		followTag( slugify( 'bloganuary' ), {
+			onError: () => {
+				dispatch(
+					errorNotice(
+						translate( 'Could not follow tag: %(tag)s', { args: { tag: 'bloganuary' } } )
+					)
+				);
+			},
+		} );
 		if ( ! isTagsSidebarOpen ) {
 			dispatch( toggleReaderSidebarTags() );
 		}
@@ -42,7 +57,15 @@ const BloganuaryHeader = () => {
 	};
 
 	const unfollowBloganuaryTag = () => {
-		dispatch( requestUnfollowTag( 'bloganuary' ) );
+		unfollowTag( slugify( 'bloganuary' ), {
+			onError: () => {
+				dispatch(
+					errorNotice(
+						translate( 'Could not unfollow tag: %(tag)s', { args: { tag: 'bloganuary' } } )
+					)
+				);
+			},
+		} );
 		if ( ! isTagsSidebarOpen ) {
 			dispatch( toggleReaderSidebarTags() );
 		}
