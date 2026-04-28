@@ -261,6 +261,13 @@ a.social-post-card-header__timestamp::after {
 	object-fit: cover;
 }
 
+.social-post-card-embed-video__iframe {
+	display: block;
+	inline-size: 100%;
+	block-size: 100%;
+	border: 0;
+}
+
 .social-post-card-embed-video__play {
 	position: absolute;
 	inset: 0;
