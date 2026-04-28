@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
 import { getAssemblerDesign } from '@automattic/design-picker';
 import { Step } from '@automattic/onboarding';
@@ -8,6 +9,7 @@ import { useEffect, FormEvent } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { SITE_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { logToLogstash } from 'calypso/lib/logstash';
 import wpcom from 'calypso/lib/wp';
 import { useIsBigSkyEligible } from '../../../../hooks/use-is-site-big-sky-eligible';
 import { useSiteData } from '../../../../hooks/use-site-data';
@@ -21,19 +23,50 @@ const SiteIntent = Onboard.SiteIntent;
 async function waitForRemoteOptionReady( siteId: number ): Promise< void > {
 	const TIMEOUT_MS = 30_000;
 	const POLL_INTERVAL_MS = 2_500;
+	const severity = config( 'env_id' ) === 'production' ? 'error' : 'debug';
 	const start = Date.now();
 
 	while ( Date.now() - start < TIMEOUT_MS ) {
 		try {
 			const status = await wpcom.req.get( `/sites/${ siteId }/big-sky-plugin` );
 			if ( status?.remote_option_ready !== false ) {
+				logToLogstash( {
+					feature: 'calypso_client',
+					message: 'Big Sky remote option ready',
+					severity: 'debug',
+					blog_id: siteId,
+					properties: {
+						type: 'big_sky_remote_option_ready',
+						duration_ms: Date.now() - start,
+					},
+				} );
 				return;
 			}
-		} catch {
-			// Network error — keep polling
+		} catch ( error ) {
+			logToLogstash( {
+				feature: 'calypso_client',
+				message: 'Error polling for Big Sky remote option readiness',
+				severity,
+				blog_id: siteId,
+				properties: {
+					type: 'big_sky_remote_option_poll_error',
+					error: error instanceof Error ? error.message : String( error ),
+				},
+			} );
 		}
 		await new Promise< void >( ( resolve ) => setTimeout( resolve, POLL_INTERVAL_MS ) );
 	}
+
+	logToLogstash( {
+		feature: 'calypso_client',
+		message: 'Timed out waiting for Big Sky remote option readiness',
+		severity,
+		blog_id: siteId,
+		properties: {
+			type: 'big_sky_remote_option_ready_timeout',
+			timeout_ms: TIMEOUT_MS,
+		},
+	} );
 }
 
 const LaunchBigSky: StepType = function ( props ) {
