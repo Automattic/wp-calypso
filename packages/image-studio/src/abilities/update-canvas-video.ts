@@ -36,7 +36,7 @@ function preloadVideo( url: string ): Promise< void > {
 
 interface UpdateCanvasVideoAbilityInput {
 	url?: string | null;
-	attachmentId?: string | number | null;
+	attachmentId?: number | null;
 	durationSeconds?: number | null;
 	style?: string | null;
 }

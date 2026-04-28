@@ -121,14 +121,14 @@ describe( 'registerUpdateCanvasVideoAbility', () => {
 		expect( result ).toEqual( { ok: true } );
 	} );
 
-	it( 'accepts a stringified attachmentId', async () => {
+	it( 'accepts a numeric attachmentId', async () => {
 		const { registerUpdateCanvasVideoAbility } = await import( './update-canvas-video' );
 		await registerUpdateCanvasVideoAbility();
 
 		const callback = getRegisteredCallback();
 		await callback( {
 			url: 'https://files.wordpress.com/clip.mp4',
-			attachmentId: '99',
+			attachmentId: 99,
 		} );
 
 		expect( mockSetCurrentVideoUrl ).toHaveBeenCalledWith( 'https://files.wordpress.com/clip.mp4' );

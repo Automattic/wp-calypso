@@ -13,6 +13,7 @@ import { PluginDocumentSettingPanel } from '@wordpress/editor';
 import { __ } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
 import { ImageStudioEntryPoint, store as imageStudioStore } from '../store';
+import { store as videoStudioStore, type VideoStudioActions } from '../stores/video-studio';
 import { ImageStudioMode } from '../types';
 import { trackImageStudioOpened } from '../utils/tracking';
 import './feature-clip-sidebar.scss';
@@ -23,6 +24,10 @@ const PANEL_NAME = 'big-sky-feature-clip-panel';
 function FeatureClipPanel(): JSX.Element {
 	const handleClick = () => {
 		const { openImageStudio } = dispatch( imageStudioStore );
+		// Reset any previously generated clip so a fresh session starts with
+		// an empty canvas instead of replaying the prior video.
+		const { setCurrentVideoUrl } = dispatch( videoStudioStore ) as VideoStudioActions;
+		setCurrentVideoUrl( null );
 
 		trackImageStudioOpened( {
 			mode: ImageStudioMode.Generate,

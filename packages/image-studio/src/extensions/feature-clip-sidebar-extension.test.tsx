@@ -11,6 +11,7 @@ import React from 'react';
 const mockOpenImageStudio = jest.fn();
 const mockRegisterPlugin = jest.fn();
 const mockTrackOpened = jest.fn();
+const mockSetCurrentVideoUrl = jest.fn();
 
 jest.mock( '@wordpress/components', () => ( {
 	Button: ( {
@@ -29,7 +30,12 @@ jest.mock( '@wordpress/components', () => ( {
 } ) );
 
 jest.mock( '@wordpress/data', () => ( {
-	dispatch: jest.fn( () => ( { openImageStudio: mockOpenImageStudio } ) ),
+	dispatch: jest.fn( ( store: string ) => {
+		if ( store === 'video-studio' ) {
+			return { setCurrentVideoUrl: mockSetCurrentVideoUrl };
+		}
+		return { openImageStudio: mockOpenImageStudio };
+	} ),
 } ) );
 
 jest.mock( '@wordpress/editor', () => ( {
@@ -55,6 +61,10 @@ jest.mock( '../store', () => ( {
 	ImageStudioEntryPoint: { PostEditorFeatureClip: 'post_editor_feature_clip' },
 } ) );
 
+jest.mock( '../stores/video-studio', () => ( {
+	store: 'video-studio',
+} ) );
+
 jest.mock( '../utils/tracking', () => ( {
 	trackImageStudioOpened: ( ...args: unknown[] ) => mockTrackOpened( ...args ),
 } ) );
@@ -66,6 +76,7 @@ describe( 'feature-clip-sidebar-extension', () => {
 		mockOpenImageStudio.mockClear();
 		mockRegisterPlugin.mockClear();
 		mockTrackOpened.mockClear();
+		mockSetCurrentVideoUrl.mockClear();
 		jest.resetModules();
 	} );
 
