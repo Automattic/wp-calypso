@@ -9,3 +9,11 @@ steps:
     command: .buildkite/commands/build-desktop-mac.sh
     artifact_paths:
       - desktop/release/*
+
+  - label: ":mag: Diagnose signing chain"
+    agents:
+      queue: mac
+    env:
+      IMAGE_ID: xcode-26.4.1
+    command: .buildkite/commands/diagnose-signing-chain.sh
+    soft_fail: true

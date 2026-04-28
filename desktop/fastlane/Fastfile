@@ -35,40 +35,56 @@ ASC_API_KEY_ENV_VARS = %w[
   APP_STORE_CONNECT_API_KEY_KEY
 ].freeze
 
+# Selects which mitigation `before_all` applies for the macOS 26 BK
+# image's broken signing-chain trust. Defaults to `cert-import` to
+# preserve current production behaviour. The diagnostic lane overrides
+# it to compare variants.
+#
+#   none         — no mitigation (control; expected to fail signing)
+#   search-list  — append /Library/Keychains/System.keychain to the
+#                  user search list after setup_ci (prior approach,
+#                  see commit 522d4f37f78)
+#   cert-import  — fetch the Developer ID G2 intermediate from Apple
+#                  and import it into the temp keychain (current
+#                  trunk approach, see commit 6d46be9c135)
+KEYCHAIN_FIX_VARIANTS = %w[none search-list cert-import].freeze
+
 before_all do
   # This is necessary for 'match' to work correctly in CI. When running
   # locally, it has no effect so it's safe to run it before all lanes.
   setup_ci
 
-  # The macOS 26 Buildkite VM image doesn't ship the "Developer ID
-  # Certification Authority" intermediate that issues our Developer ID
-  # Application cert. Without that intermediate available in any keychain
-  # in the search list, `security` can't build the chain
-  # `Developer ID App → Developer ID CA G2 → Apple Root` and reports
-  # the identity as `CSSMERR_TP_NOT_TRUSTED`. `electron-builder` then
-  # silently skips signing and the build "passes" with unsigned
-  # binaries that Apple's notary service later rejects.
-  #
-  # `fastlane match` only installs the leaf cert; it relies on the OS
-  # to provide the CA chain. Fetch and install the missing intermediate
-  # into the temp keychain `setup_ci` just created.
-  #
-  # Gated to CI to mirror `setup_ci`'s own no-op-locally behaviour —
-  # we don't want to touch a developer's keychain config when running
-  # lanes from their machine.
   if FastlaneCore::Helper.is_ci?
-    cert_path = File.join(Dir.tmpdir, 'DeveloperIDG2CA.cer')
-    sh(
-      'curl',
-      '-fsSL',
-      'https://www.apple.com/certificateauthority/DeveloperIDG2CA.cer',
-      '-o',
-      cert_path
-    )
-    import_certificate(
-      certificate_path: cert_path,
-      keychain_name: 'fastlane_tmp_keychain'
-    )
+    variant = ENV.fetch('KEYCHAIN_FIX', 'cert-import')
+    UI.user_error!("Unknown KEYCHAIN_FIX=#{variant}; expected one of #{KEYCHAIN_FIX_VARIANTS.join(', ')}") unless KEYCHAIN_FIX_VARIANTS.include?(variant)
+
+    UI.message("KEYCHAIN_FIX=#{variant}")
+
+    case variant
+    when 'none'
+      # Intentionally do nothing — control variant for the diagnostic.
+    when 'search-list'
+      sh(
+        'security', 'list-keychains',
+        '-d', 'user',
+        '-s',
+        File.join(Dir.home, 'Library/Keychains/fastlane_tmp_keychain-db'),
+        '/Library/Keychains/System.keychain'
+      )
+    when 'cert-import'
+      cert_path = File.join(Dir.tmpdir, 'DeveloperIDG2CA.cer')
+      sh(
+        'curl',
+        '-fsSL',
+        'https://www.apple.com/certificateauthority/DeveloperIDG2CA.cer',
+        '-o',
+        cert_path
+      )
+      import_certificate(
+        certificate_path: cert_path,
+        keychain_name: 'fastlane_tmp_keychain'
+      )
+    end
   end
 
   EnvManager.set_up(env_file_name: ENV_FILE_NAME)
@@ -119,5 +135,92 @@ platform :mac do
         print_log: true
       )
     end
+  end
+
+  desc <<~DESC
+    Diagnose macOS code-signing chain trust on the CI VM.
+
+    Dumps keychain search lists and Developer ID / Apple Root cert
+    presence at each stage, runs `match` readonly to install the leaf
+    cert, then attempts to codesign a tiny throwaway binary with the
+    real Developer ID Application identity. The codesign call exercises
+    the same trust-evaluation path that fails silently inside
+    electron-builder.
+
+    Drive the variants by setting KEYCHAIN_FIX before invocation:
+
+        KEYCHAIN_FIX=none         bundle exec fastlane diagnose_signing_chain
+        KEYCHAIN_FIX=search-list  bundle exec fastlane diagnose_signing_chain
+        KEYCHAIN_FIX=cert-import  bundle exec fastlane diagnose_signing_chain
+  DESC
+  lane :diagnose_signing_chain do
+    EnvManager.require_env_vars!(*CODE_SIGNING_ENV_VARS)
+
+    banner = ->(label) { UI.message("\n========== #{label} ==========") }
+
+    dump_state = lambda { |label|
+      banner.call(label)
+      sh('security', 'list-keychains', '-d', 'user', error_callback: ->(_e) {})
+      sh('security', 'list-keychains', '-d', 'system', error_callback: ->(_e) {})
+      sh('security', 'default-keychain', error_callback: ->(_e) {})
+
+      keychains = [
+        '/Library/Keychains/System.keychain',
+        '/System/Library/Keychains/SystemRootCertificates.keychain',
+        File.join(Dir.home, 'Library/Keychains/fastlane_tmp_keychain-db')
+      ]
+      keychains.each do |kc|
+        UI.message("--- Developer ID / Apple Root certs in #{kc} ---")
+        sh(
+          'bash', '-c',
+          "if [ -e '#{kc}' ]; then " \
+            "security find-certificate -a -p '#{kc}' 2>/dev/null | " \
+            "openssl crl2pkcs7 -nocrl -certfile /dev/stdin 2>/dev/null | " \
+            "openssl pkcs7 -print_certs -noout 2>/dev/null | " \
+            "grep -E 'Developer ID|Apple Root|Apple Worldwide' || echo '(no matching certs)'; " \
+          "else echo '(keychain file does not exist)'; fi",
+          error_callback: ->(_e) {}
+        )
+      end
+
+      UI.message('--- security find-identity -v -p codesigning ---')
+      sh('security', 'find-identity', '-v', '-p', 'codesigning', error_callback: ->(_e) {})
+    }
+
+    dump_state.call('1. POST-before_all (setup_ci + selected mitigation)')
+
+    sync_code_signing(
+      type: 'developer_id',
+      platform: 'macos',
+      team_id: TEAM_ID,
+      app_identifier: [],
+      readonly: true,
+      **CODE_SIGNING_STORAGE_OPTIONS
+    )
+
+    dump_state.call('2. POST-match (leaf cert installed in temp keychain)')
+
+    test_dir = Dir.mktmpdir('signing-chain-diagnose')
+    test_bin = File.join(test_dir, 'hello')
+    sh('bash', '-c', "printf 'int main(){return 0;}' | clang -o '#{test_bin}' -x c -")
+
+    banner.call('3. codesign attempt with verbose chain output')
+    codesign_result = nil
+    sh(
+      'codesign',
+      '--sign', "Developer ID Application: Automattic, Inc. (#{TEAM_ID})",
+      '--options', 'runtime',
+      '--timestamp=none',
+      '--verbose=4',
+      test_bin,
+      error_callback: ->(err) { codesign_result = "FAIL: #{err}" }
+    )
+    codesign_result ||= 'OK'
+
+    banner.call('4. codesign --verify on the result')
+    sh('codesign', '--verify', '--deep', '--strict', '--verbose=4', test_bin,
+       error_callback: ->(_e) {})
+
+    banner.call("RESULT for KEYCHAIN_FIX=#{ENV.fetch('KEYCHAIN_FIX', 'cert-import')}: codesign #{codesign_result}")
   end
 end
