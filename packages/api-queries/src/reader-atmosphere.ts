@@ -1,5 +1,6 @@
 import {
 	createConnection,
+	getAuthorFeed,
 	getAuthorProfile,
 	getConnection,
 	getConnections,
@@ -18,6 +19,7 @@ import {
 	type QueryKey,
 } from '@tanstack/react-query';
 import type {
+	AtmosphereAuthorFeedPage,
 	AtmosphereAuthorProfile,
 	AtmosphereConnectionDetails,
 	AtmosphereConnectionsResponse,
@@ -155,4 +157,29 @@ export interface UseAuthorProfileQueryParams {
 
 export function useAuthorProfileQuery( { actor }: UseAuthorProfileQueryParams ) {
 	return useQuery( profileQueryOptions( actor ) );
+}
+
+export const authorFeedInfiniteQuery = ( actor: string ) =>
+	infiniteQueryOptions<
+		AtmosphereAuthorFeedPage,
+		AtmosphereError,
+		InfiniteData< AtmosphereAuthorFeedPage >,
+		QueryKey,
+		string | undefined
+	>( {
+		queryKey: readerAtmosphereKeys.authorFeed( actor ),
+		queryFn: ( { pageParam } ) => getAuthorFeed( { actor, cursor: pageParam } ),
+		initialPageParam: undefined,
+		getNextPageParam: ( lastPage ) => lastPage.cursor ?? undefined,
+		enabled: actor.length > 0,
+		staleTime: 30_000,
+		gcTime: 5 * 60_000,
+	} );
+
+export interface UseAuthorFeedInfiniteQueryParams {
+	actor: string;
+}
+
+export function useAuthorFeedInfiniteQuery( { actor }: UseAuthorFeedInfiniteQueryParams ) {
+	return useInfiniteQuery( authorFeedInfiniteQuery( actor ) );
 }

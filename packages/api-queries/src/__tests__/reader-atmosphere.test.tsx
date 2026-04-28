@@ -7,6 +7,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import {
+	useAuthorFeedInfiniteQuery,
 	useAuthorProfileQuery,
 	useConnectionQuery,
 	useConnectionsQuery,
@@ -14,7 +15,7 @@ import {
 	useThreadQuery,
 	useTimelineInfiniteQuery,
 } from '../reader-atmosphere';
-import type { AtmosphereAuthorProfile } from '@automattic/api-core';
+import type { AtmosphereAuthorFeedPage, AtmosphereAuthorProfile } from '@automattic/api-core';
 
 const BASE = 'https://public-api.wordpress.com';
 function makeWrapper( c: QueryClient ) {
@@ -401,6 +402,72 @@ describe( 'reader-atmosphere hooks', () => {
 				.reply( 200, { did: 'did:plc:abc', handle: 'alice.bsky.social' } );
 			await result.current.refetch();
 			await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+		} );
+	} );
+
+	describe( 'useAuthorFeedInfiniteQuery', () => {
+		it( 'is disabled when actor is empty', () => {
+			const queryClient = new QueryClient();
+			const wrapper = makeWrapper( queryClient );
+
+			renderHook( () => useAuthorFeedInfiniteQuery( { actor: '' } ), { wrapper } );
+
+			expect( queryClient.isFetching() ).toBe( 0 );
+		} );
+
+		it( 'resolves the first page', async () => {
+			const page: AtmosphereAuthorFeedPage = { items: [], cursor: 'next' };
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.reply( 200, page );
+
+			const queryClient = new QueryClient();
+			const wrapper = makeWrapper( queryClient );
+			const { result } = renderHook(
+				() => {
+					const q = useAuthorFeedInfiniteQuery( { actor: 'alice.bsky.social' } );
+					void q.data;
+					void q.isError;
+					void q.error;
+					void q.isSuccess;
+					return q;
+				},
+				{ wrapper }
+			);
+
+			await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+			expect( result.current.data?.pages[ 0 ] ).toEqual( page );
+		} );
+
+		it( 'advances the cursor on fetchNextPage', async () => {
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.reply( 200, { items: [], cursor: 'page-2' } );
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.query( { cursor: 'page-2' } )
+				.reply( 200, { items: [], cursor: null } );
+
+			const queryClient = new QueryClient();
+			const wrapper = makeWrapper( queryClient );
+			const { result } = renderHook(
+				() => {
+					const q = useAuthorFeedInfiniteQuery( { actor: 'alice.bsky.social' } );
+					void q.data;
+					void q.hasNextPage;
+					void q.isFetchingNextPage;
+					void q.isError;
+					void q.error;
+					void q.isSuccess;
+					return q;
+				},
+				{ wrapper }
+			);
+
+			await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+			await result.current.fetchNextPage();
+			await waitFor( () => expect( result.current.data?.pages.length ).toBe( 2 ) );
+			expect( result.current.hasNextPage ).toBe( false );
 		} );
 	} );
 } );
