@@ -177,10 +177,22 @@ body.is-section-podcast {
 	}
 }
 
-// Welcome — How it works
+// Welcome — How it works.
+// CSS Grid with `auto-fit` + `min(240px, 100%)` lets columns shrink with the
+// container — no overflow at narrow widths, no flex-wrap breakpoint cliff.
+.podcast__welcome-steps {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: grid;
+	grid-template-columns: repeat( auto-fit, minmax( min( 240px, 100% ), 1fr ) );
+	gap: 24px;
+}
+
 .podcast__welcome-step {
-	flex: 1 1 220px;
-	min-inline-size: 0; // allow shrinking below the 220px basis on narrow screens
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
 }
 
 .podcast__welcome-step-circle {

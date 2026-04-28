@@ -340,15 +340,15 @@ function Welcome( { onEnable, planTier }: WelcomeProps ) {
 						<Text size="title" weight={ 500 }>
 							{ translate( 'How it works' ) }
 						</Text>
-						<HStack as="ol" alignment="flex-start" spacing={ 4 } wrap>
+						<ol className="podcast__welcome-steps">
 							{ steps.map( ( step ) => (
-								<VStack as="li" key={ step.number } spacing={ 2 } className="podcast__welcome-step">
+								<li key={ step.number } className="podcast__welcome-step">
 									<span className="podcast__welcome-step-circle">{ step.number }</span>
 									<Text weight={ 500 }>{ step.title }</Text>
 									<Text variant="muted">{ step.body }</Text>
-								</VStack>
+								</li>
 							) ) }
-						</HStack>
+						</ol>
 					</VStack>
 				</CardBody>
 			</Card>
