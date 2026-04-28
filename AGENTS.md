@@ -80,3 +80,6 @@ yarn reformat-files # Fix formatting with Prettier
   - Avoid mentioning people's names.
   - Do not link to wordpress.com URLs.
   - Include all checklist items from .github/PULL_REQUEST_TEMPLATE.md. Only mark items as completed (`[x]`) if they actually apply; leave inapplicable items unchecked (`[ ]`).
+
+## Smoke test marker (post-#110238)
+Verifying the AGENTS.md/CLAUDE.md skip guard fires for both auto-review and `@claude /review` on-ping flows. This section is intentionally added for testing and will be reverted.
