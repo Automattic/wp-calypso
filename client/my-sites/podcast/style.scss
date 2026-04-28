@@ -178,6 +178,11 @@ body.is-section-podcast {
 }
 
 // Welcome — How it works
+.podcast__welcome-step {
+	flex: 1 1 220px;
+	min-inline-size: 0; // allow shrinking below the 220px basis on narrow screens
+}
+
 .podcast__welcome-step-circle {
 	display: grid;
 	place-items: center;

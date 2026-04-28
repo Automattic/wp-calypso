@@ -342,7 +342,7 @@ function Welcome( { onEnable, planTier }: WelcomeProps ) {
 						</Text>
 						<HStack as="ol" alignment="flex-start" spacing={ 4 } wrap>
 							{ steps.map( ( step ) => (
-								<VStack as="li" key={ step.number } spacing={ 2 } style={ { flex: '1 1 220px' } }>
+								<VStack as="li" key={ step.number } spacing={ 2 } className="podcast__welcome-step">
 									<span className="podcast__welcome-step-circle">{ step.number }</span>
 									<Text weight={ 500 }>{ step.title }</Text>
 									<Text variant="muted">{ step.body }</Text>
