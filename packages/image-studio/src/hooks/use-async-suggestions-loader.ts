@@ -36,36 +36,29 @@ function isValidSuggestionsResponse(
  * Persists across component remounts but resets on page refresh.
  */
 const suggestionsCache = new Map< string, Suggestion[] >();
-
-/**
- * Builds the full system prompt sent to the model, given the caller's
- * `suggestionPrompt` and the current locale code. Callers that want to
- * override the loader's default image-oriented framing can pass one of
- * these.
- */
-export type SystemPromptBuilder = ( suggestionPrompt: string, locale: string ) => string;
-
 interface UseAsyncSuggestionsLoaderOptions {
 	prompt: string;
 	cacheKey?: string | null;
 	enabled?: boolean;
-	/**
-	 * Optional builder for the full system prompt. When omitted, the loader
-	 * uses its default image-generation-oriented template (preserving the
-	 * historical behavior for the Image Studio generate flow). Callers that
-	 * need a different framing — e.g. the video-clip flow — should provide
-	 * their own builder.
-	 */
-	buildSystemPrompt?: SystemPromptBuilder;
 }
 
-/**
- * Default system prompt used when no `buildSystemPrompt` is supplied.
- * Image-generation oriented; do not change without auditing the Image
- * Studio generate flow.
- */
-function buildDefaultImageSystemPrompt( suggestionPrompt: string, locale: string ): string {
-	return `You are a creative assistant that generates image generation prompts based on user input.
+interface UseAsyncSuggestionsLoaderReturn {
+	suggestions: Suggestion[];
+	isLoading: boolean;
+	abortLoading: () => void;
+}
+
+export function useAsyncSuggestionsLoader(
+	options: UseAsyncSuggestionsLoaderOptions
+): UseAsyncSuggestionsLoaderReturn {
+	const locale = ( getLocaleData()?.[ '' ] as { lang?: string } | undefined )?.lang ?? 'en';
+	const { prompt: suggestionPrompt, cacheKey, enabled = true } = options;
+
+	const [ suggestions, setSuggestions ] = useState< Suggestion[] >( [] );
+	const [ isLoading, setIsLoading ] = useState( false );
+	const abortControllerRef = useRef< AbortController | null >( null );
+
+	const prompt = `You are a creative assistant that generates image generation prompts based on user input.
 
 ${ suggestionPrompt }
 
@@ -80,25 +73,6 @@ Guidelines for each suggestion:
 - Generate all text in the language corresponding to locale code "${ locale }" (e.g. en = English, fr = French, es = Spanish).
 
 Output valid JSON only, nothing else.`;
-}
-
-interface UseAsyncSuggestionsLoaderReturn {
-	suggestions: Suggestion[];
-	isLoading: boolean;
-	abortLoading: () => void;
-}
-
-export function useAsyncSuggestionsLoader(
-	options: UseAsyncSuggestionsLoaderOptions
-): UseAsyncSuggestionsLoaderReturn {
-	const locale = ( getLocaleData()?.[ '' ] as { lang?: string } | undefined )?.lang ?? 'en';
-	const { prompt: suggestionPrompt, cacheKey, enabled = true, buildSystemPrompt } = options;
-
-	const [ suggestions, setSuggestions ] = useState< Suggestion[] >( [] );
-	const [ isLoading, setIsLoading ] = useState( false );
-	const abortControllerRef = useRef< AbortController | null >( null );
-
-	const prompt = ( buildSystemPrompt ?? buildDefaultImageSystemPrompt )( suggestionPrompt, locale );
 
 	/**
 	 * Abort suggestion loading request.

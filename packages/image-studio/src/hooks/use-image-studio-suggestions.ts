@@ -26,9 +26,6 @@ interface AsyncSuggestionsConfig {
 /**
  * Get async suggestions config based on editor context.
  * Returns null if no async loading is needed for this context.
- *
- * Note: the feature-clip (video) flow is handled by the dedicated
- * `useVideoClipSuggestions` hook, not by this one.
  * @param isBlockEditor - Whether we're in a block editor context.
  * @param postId        - The current post ID (if available).
  */
@@ -75,10 +72,6 @@ interface UseImageStudioSuggestionsParams {
 	mode?: ImageStudioMode;
 	// Current input value (for detecting when input is cleared to refresh suggestions).
 	inputValue?: string;
-	// When true, the hook becomes a no-op so a sibling hook (e.g. the
-	// video-clip suggestions hook) can own the suggestions surface without
-	// fighting over registerSuggestions calls.
-	disabled?: boolean;
 }
 
 interface UseImageStudioSuggestionsReturn {
@@ -105,7 +98,6 @@ interface UseImageStudioSuggestionsReturn {
  * @param params.messages            - Array of chat messages.
  * @param params.mode                - Current image studio mode (edit or generate).
  * @param params.inputValue          - Current input value (triggers refresh when cleared).
- * @param params.disabled            - When true, the hook short-circuits so a sibling hook can own the suggestions surface.
  * @returns Object containing handlers and loading state.
  */
 export function useImageStudioSuggestions( {
@@ -114,7 +106,6 @@ export function useImageStudioSuggestions( {
 	messages,
 	mode,
 	inputValue,
-	disabled = false,
 }: UseImageStudioSuggestionsParams ): UseImageStudioSuggestionsReturn {
 	// Track previous input value for detecting when input is cleared
 	const prevInputValueRef = useRef< string | undefined >( undefined );
@@ -170,7 +161,7 @@ export function useImageStudioSuggestions( {
 	} = useAsyncSuggestionsLoader( {
 		prompt: asyncConfig?.prompt ?? '',
 		cacheKey: asyncConfig?.cacheKey,
-		enabled: ! disabled && supportsAsyncSuggestions && mode === ImageStudioMode.Generate,
+		enabled: supportsAsyncSuggestions && mode === ImageStudioMode.Generate,
 	} );
 
 	/**
@@ -199,10 +190,6 @@ export function useImageStudioSuggestions( {
 	 * Effect: Register appropriate suggestions based on current context.
 	 */
 	useEffect( () => {
-		if ( disabled ) {
-			return;
-		}
-
 		const result = getSuggestions( {
 			...suggestionState,
 			mode,
@@ -237,7 +224,6 @@ export function useImageStudioSuggestions( {
 			result.type === 'annotation' ? 'annotation' : 'default'
 		);
 	}, [
-		disabled,
 		suggestionState,
 		mode,
 		messages?.length,
