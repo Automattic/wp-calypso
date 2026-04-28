@@ -8,7 +8,7 @@ interface BranchDisplayProps {
 
 export function BranchDisplay( {
 	branchName,
-	color = 'var(--dashboard__text-muted-color)',
+	color = 'var( --dashboard-subtle__color, #3b3b3b )',
 }: BranchDisplayProps ) {
 	return (
 		<HStack spacing={ 1 } alignment="left" expanded={ false } style={ { color } }>
@@ -19,7 +19,7 @@ export function BranchDisplay( {
 				truncate
 				numberOfLines={ 1 }
 				style={ {
-					color,
+					color: 'currentColor',
 				} }
 			>
 				{ branchName }

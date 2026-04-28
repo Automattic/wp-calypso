@@ -23,7 +23,11 @@ function renderTemplate( template, props ) {
 			return (
 				<AsyncLoad
 					{ ...props }
-					require="calypso/blocks/jitm/templates/notice"
+					require={ () =>
+						import(
+							/* webpackChunkName: "async-load-calypso-blocks-jitm-templates-notice" */ './templates/notice'
+						)
+					}
 					placeholder={ null }
 				/>
 			);
@@ -31,7 +35,11 @@ function renderTemplate( template, props ) {
 			return (
 				<AsyncLoad
 					{ ...props }
-					require="calypso/blocks/jitm/templates/sidebar-banner"
+					require={ () =>
+						import(
+							/* webpackChunkName: "async-load-calypso-blocks-jitm-templates-sidebar-banner" */ './templates/sidebar-banner'
+						)
+					}
 					placeholder={ null }
 				/>
 			);
@@ -39,7 +47,11 @@ function renderTemplate( template, props ) {
 			return (
 				<AsyncLoad
 					{ ...props }
-					require="calypso/blocks/jitm/templates/home-task"
+					require={ () =>
+						import(
+							/* webpackChunkName: "async-load-calypso-blocks-jitm-templates-home-task" */ './templates/home-task'
+						)
+					}
 					placeholder={ null }
 				/>
 			);
@@ -47,7 +59,11 @@ function renderTemplate( template, props ) {
 			return (
 				<AsyncLoad
 					{ ...props }
-					require="calypso/blocks/jitm/templates/spotlight"
+					require={ () =>
+						import(
+							/* webpackChunkName: "async-load-calypso-blocks-jitm-templates-spotlight" */ './templates/spotlight'
+						)
+					}
 					placeholder={ null }
 				/>
 			);
@@ -57,7 +73,11 @@ function renderTemplate( template, props ) {
 			return (
 				<AsyncLoad
 					{ ...props }
-					require="calypso/blocks/jitm/templates/modal"
+					require={ () =>
+						import(
+							/* webpackChunkName: "async-load-calypso-blocks-jitm-templates-modal" */ './templates/modal'
+						)
+					}
 					placeholder={ null }
 				/>
 			);
@@ -65,7 +85,11 @@ function renderTemplate( template, props ) {
 			return (
 				<AsyncLoad
 					{ ...props }
-					require="calypso/blocks/jitm/templates/default"
+					require={ () =>
+						import(
+							/* webpackChunkName: "async-load-calypso-blocks-jitm-templates-default" */ './templates/default'
+						)
+					}
 					placeholder={ null }
 				/>
 			);

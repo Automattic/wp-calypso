@@ -188,7 +188,11 @@ class CurrentPlan extends Component {
 					<h1 className="current-plan__header-heading">{ planFeaturesHeader }</h1>
 				</div>
 				<AsyncLoad
-					require="calypso/blocks/product-purchase-features-list"
+					require={ () =>
+						import(
+							/* webpackChunkName: "async-load-calypso-blocks-product-purchase-features-list" */ 'calypso/blocks/product-purchase-features-list'
+						)
+					}
 					placeholder={ null }
 					plan={ currentPlanSlug }
 					isPlaceholder={ isLoading }

@@ -74,7 +74,7 @@ function renderTab( slug: string, connection: AtmosphereConnection ) {
 			return <SettingsPanel />;
 		case TIMELINE_TAB:
 		default:
-			return <TimelinePanel />;
+			return <TimelinePanel connection={ connection } />;
 	}
 }
 

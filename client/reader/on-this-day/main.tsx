@@ -72,7 +72,11 @@ function OnThisDayStream() {
 						<Card className="following-stream__quick-post-card">
 							<CardBody>
 								<AsyncLoad
-									require="calypso/reader/components/quick-post"
+									require={ () =>
+										import(
+											/* webpackChunkName: "async-load-calypso-reader-components-quick-post" */ 'calypso/reader/components/quick-post'
+										)
+									}
 									placeholder={ <QuickPostSkeleton /> }
 								/>
 							</CardBody>
@@ -85,7 +89,14 @@ function OnThisDayStream() {
 				</ReaderStream>
 			) }
 			<ResurrectedWelcomeModalGate onVisibilityChange={ setIsResurrectedModalVisible } />
-			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
+			<AsyncLoad
+				require={ () =>
+					import(
+						/* webpackChunkName: "async-load-calypso-lib-analytics-track-resurrections" */ 'calypso/lib/analytics/track-resurrections'
+					)
+				}
+				placeholder={ null }
+			/>
 		</>
 	);
 }

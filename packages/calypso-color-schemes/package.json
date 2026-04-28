@@ -29,7 +29,7 @@
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@automattic/color-studio": "^4.1.0",
-		"@types/node": "^22.10.10",
+		"@types/node": "^24.12.2",
 		"postcss": "^8.5.3",
 		"postcss-custom-properties": "^12.1.11",
 		"sass": "1.54.0"

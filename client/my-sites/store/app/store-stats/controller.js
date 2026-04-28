@@ -74,7 +74,11 @@ export default function StatsController( context, next ) {
 			asyncComponent = (
 				<AsyncLoad
 					placeholder={ placeholder }
-					require="../../../store/app/store-stats"
+					require={ () =>
+						import(
+							/* webpackChunkName: "async-load-calypso-my-sites-store-app-store-stats" */ '.'
+						)
+					}
 					{ ...props }
 				/>
 			);
@@ -83,7 +87,11 @@ export default function StatsController( context, next ) {
 			asyncComponent = (
 				<AsyncLoad
 					placeholder={ placeholder }
-					require="../../../store/app/store-stats/listview"
+					require={ () =>
+						import(
+							/* webpackChunkName: "async-load-calypso-my-sites-store-app-store-stats-listview" */ './listview'
+						)
+					}
 					{ ...props }
 				/>
 			);

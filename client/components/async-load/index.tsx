@@ -4,24 +4,20 @@ import './style.scss';
 
 const DEFAULT_PLACEHOLDER = <div className="async-load__placeholder" />;
 
+type RequireCallback = () => Promise< { default: ComponentType< any > } >;
+
 type AsyncLoadProps = {
 	placeholder?: ReactNode;
-	require: string;
+	require: RequireCallback;
 	[ key: string ]: unknown;
 };
-
-type RequireCallback = () => Promise< { default: ComponentType } >;
 
 export default function AsyncLoad( {
 	placeholder = DEFAULT_PLACEHOLDER,
 	require,
 	...props
 }: AsyncLoadProps ) {
-	const Component = useMemo( () => {
-		// The string is transformed to a function by the `wpcalypso-async` Babel transform
-		const requireCb = require as unknown as RequireCallback;
-		return lazy( requireCb );
-	}, [ require ] );
+	const Component = useMemo( () => lazy( require ), [] );
 
 	return (
 		<Suspense fallback={ placeholder }>

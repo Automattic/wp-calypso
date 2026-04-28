@@ -1,16 +1,15 @@
 import { Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useTrophiesQuery } from 'calypso/data/reader/use-trophies-query';
-import { deduplicateTrophies } from '../utils';
+import { useAchievementsQuery } from 'calypso/data/reader/use-achievements-query';
+import { deduplicateAchievements } from '../utils';
 import AnniversaryAchievement from './anniversary-achievement';
-import SiteBasedAchievement from './site-based-achievement';
-import UserBasedAchievement from './user-based-achievement';
+import GenericAchievement from './generic-achievement';
 
 import './style.scss';
 
-export default function AchievementsGrid() {
+export default function AchievementsGrid( { userLogin }: { userLogin: string } ) {
 	const translate = useTranslate();
-	const { trophies, isLoading } = useTrophiesQuery();
+	const { achievements, isLoading } = useAchievementsQuery( userLogin );
 
 	if ( isLoading ) {
 		return (
@@ -20,36 +19,32 @@ export default function AchievementsGrid() {
 		);
 	}
 
-	if ( ! trophies.length ) {
+	if ( ! achievements.length ) {
 		return <p className="achievements-grid__empty">{ translate( 'No achievements yet.' ) }</p>;
 	}
 
-	const deduplicated = deduplicateTrophies( trophies );
+	const deduplicated = deduplicateAchievements( achievements );
 
 	return (
 		<div className="achievements-grid">
-			{ deduplicated.map( ( trophy ) => {
-				if ( trophy.type === 'anniversary' ) {
+			{ deduplicated.map( ( achievement ) => {
+				if ( achievement.slug === 'user_anniversary' ) {
 					return (
 						<AnniversaryAchievement
-							key={ trophy.achievement_id }
-							trophy={ trophy }
-							trophies={ trophies }
+							key={ achievement.achievement_id }
+							achievement={ achievement }
+							achievements={ achievements }
 						/>
 					);
 				}
 
-				if ( trophy.site_ID !== 0 ) {
-					return (
-						<SiteBasedAchievement
-							key={ trophy.achievement_id }
-							trophy={ trophy }
-							trophies={ trophies }
-						/>
-					);
-				}
-
-				return <UserBasedAchievement key={ trophy.achievement_id } trophy={ trophy } />;
+				return (
+					<GenericAchievement
+						key={ achievement.achievement_id }
+						achievement={ achievement }
+						achievements={ achievements }
+					/>
+				);
 			} ) }
 		</div>
 	);

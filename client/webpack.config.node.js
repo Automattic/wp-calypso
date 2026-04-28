@@ -79,6 +79,18 @@ function getExternals() {
 	];
 }
 
+class IgnoreDynamicImportsPlugin {
+	apply( compiler ) {
+		compiler.hooks.normalModuleFactory.tap( 'IgnoreDynamicImportsPlugin', ( nmf ) => {
+			nmf.hooks.beforeResolve.tap( 'IgnoreDynamicImportsPlugin', ( resolveData ) => {
+				if ( resolveData.dependencies.every( ( dep ) => dep.type === 'import()' ) ) {
+					return false;
+				}
+			} );
+		} );
+	}
+}
+
 const buildDir = path.resolve( 'build' );
 
 const webpackConfig = {
@@ -170,6 +182,7 @@ const webpackConfig = {
 			__i18n_text_domain__: JSON.stringify( 'default' ),
 		} ),
 		new webpack.IgnorePlugin( { resourceRegExp: /^\.\/locale$/, contextRegExp: /moment$/ } ),
+		new IgnoreDynamicImportsPlugin(),
 		! isDevelopment && new ExternalModulesWriter(),
 	].filter( Boolean ),
 };

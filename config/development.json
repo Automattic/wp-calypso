@@ -160,6 +160,7 @@
 		"onboarding/user-on-stepper-hosting": true,
 		"p2/p2-plus": true,
 		"page/export": true,
+		"performance/apm": true,
 		"plans/hosting-trial": true,
 		"plans/migration-trial": true,
 		"plans/personal-plan": true,
