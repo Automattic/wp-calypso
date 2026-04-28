@@ -700,4 +700,11 @@ body.agents-manager-sidebar-container.is-split-screen {
 	[class*="EmptyView-module_suggestionsWrapper"] {
 		max-width: none;
 	}
+
+	// MessageActions has no explicit width; it sizes to its content. In narrow
+	// docked view that happens to fill the bubble, but at 50vw it leaves the
+	// Sources header stranded mid-row. Force full width so the header right-aligns.
+	.MessageActions-module_container:has(.agents-manager-sources-display) {
+		width: 100%;
+	}
 }
