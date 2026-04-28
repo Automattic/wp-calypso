@@ -1,0 +1,11 @@
+.thread-tombstone {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 16px;
+	border: 1px solid var( --studio-gray-5, #dcdcde );
+	border-radius: 4px;
+	background: var( --studio-gray-0, #f6f7f7 );
+	color: var( --studio-gray-50, #646970 );
+	font-size: 0.875rem;
+}
