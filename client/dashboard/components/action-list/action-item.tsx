@@ -30,7 +30,7 @@ function UnforwardedActionItem(
 					expanded={ buttonConfig.expanded }
 					as="span"
 				>
-					{ actions }
+					{ actions ?? <span style={ { color: '#999', fontSize: 12 } }>No actions available</span> }
 				</ButtonStack>
 			}
 			ref={ ref }
