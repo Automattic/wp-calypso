@@ -99,9 +99,7 @@ export function useFields( {
 										height={ 16 }
 										style={ { borderRadius: '50%' } }
 									/>
-									<Text size="small" style={ { color: 'var(--dashboard__text-muted-color)' } }>
-										{ author.name }
-									</Text>
+									<Text size="small">{ author.name }</Text>
 								</HStack>
 								{ item.is_active_deployment && <Badge>{ __( 'Latest Deployment' ) }</Badge> }
 							</HStack>
@@ -167,9 +165,7 @@ export function useFields( {
 								item.status
 							) }
 						>
-							<Text variant="muted" as="span">
-								<TimeSince timestamp={ item.created_on } hideTitle />
-							</Text>
+							<TimeSince timestamp={ item.created_on } hideTitle />
 						</Tooltip>
 					</div>
 				),
@@ -188,11 +184,7 @@ export function useFields( {
 				getValue: ( { item } ) => {
 					return item.is_active_deployment || false;
 				},
-				render: ( { item } ) => (
-					<Text variant="muted">
-						{ item.is_active_deployment ? __( 'Active' ) : __( 'Not active' ) }
-					</Text>
-				),
+				render: ( { item } ) => ( item.is_active_deployment ? __( 'Active' ) : __( 'Not active' ) ),
 			},
 		],
 		[ repositoryOptions, userNameOptions, locale, siteSlug, repositoryFilter ]

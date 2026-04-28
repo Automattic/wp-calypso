@@ -495,7 +495,9 @@
 
 	// Table
 	.dataviews-view-table {
-		color: var( --dashboard__text-color );
+		// Match the upstream light-mode table default, where non-primary fields
+		// use `$gray-700` (`--dashboard__text-muted-color` in app-dotcom).
+		color: var( --dashboard__text-muted-color );
 
 		th {
 			color: var( --dashboard__text-color );
