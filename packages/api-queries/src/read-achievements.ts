@@ -16,5 +16,4 @@ export const readAchievementsQuery = ( userIdOrLogin?: number | string | null ) 
 			return allPages.length + 1;
 		},
 		staleTime: 10 * 60 * 1000, // 10 minutes
-		meta: { persist: false },
 	} );
