@@ -42,7 +42,6 @@ $omnibar-highlight-color: #7b90ff;
 		&:active,
 		&[aria-expanded='true'] {
 			background-color: $omnibar-submenu-background;
-			color: $omnibar-highlight-color;
 			box-shadow: none;
 			outline: none;
 		}
@@ -50,11 +49,27 @@ $omnibar-highlight-color: #7b90ff;
 }
 
 .components-popover.omnibar__popover {
+	will-change: auto;
+
+	.components-popover__content {
+		border-radius: 0;
+		box-shadow: none;
+	}
+
 	.components-dropdown-menu__menu {
 		background-color: $omnibar-submenu-background;
+		border-color: $omnibar-submenu-background;
+
+		.components-menu-group {
+			padding: 4px;
+		}
+
+		.components-menu-group + .components-menu-group {
+			border-color: $omnibar-base-color;
+		}
 
 		.components-button.components-menu-item__button {
-			color: $omnibar-submenu-text-color;
+			color: $omnibar-text-color;
 
 			&:hover,
 			&:focus,
