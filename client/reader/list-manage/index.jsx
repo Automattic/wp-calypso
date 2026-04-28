@@ -5,7 +5,7 @@ import {
 } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'react-redux';
 import ReaderExportButton from 'calypso/blocks/reader-export-button';
@@ -33,7 +33,10 @@ import './style.scss';
 function Details( { list } ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const { mutate: updateList, isPending: isUpdatingList } = useMutation( updateReadListMutation() );
+	const queryClient = useQueryClient();
+	const { mutate: updateList, isPending: isUpdatingList } = useMutation(
+		updateReadListMutation( queryClient )
+	);
 
 	const handleSubmit = ( newList ) => {
 		updateList( newList, {
@@ -103,7 +106,10 @@ function Export( { list, listItems } ) {
 function ReaderListCreate() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const { mutate: createList, isPending: isCreatingList } = useMutation( createReadListMutation() );
+	const queryClient = useQueryClient();
+	const { mutate: createList, isPending: isCreatingList } = useMutation(
+		createReadListMutation( queryClient )
+	);
 
 	const handleSubmit = ( formList ) => {
 		const params = {

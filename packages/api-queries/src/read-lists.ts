@@ -10,8 +10,12 @@ import {
 	updateReadList,
 	type ReadListItemsResponse,
 } from '@automattic/api-core';
-import { infiniteQueryOptions, mutationOptions, queryOptions } from '@tanstack/react-query';
-import { queryClient } from './query-client';
+import {
+	infiniteQueryOptions,
+	mutationOptions,
+	queryOptions,
+	type QueryClient,
+} from '@tanstack/react-query';
 
 const ITEMS_PER_PAGE = 20;
 
@@ -66,52 +70,52 @@ export const readListItemsInfiniteQuery = (
 		},
 	} );
 
-function invalidateSubscribedLists(): void {
-	queryClient.invalidateQueries( { queryKey: readSubscribedListsQuery().queryKey } );
+function invalidateSubscribedLists( queryClient: QueryClient ): Promise< void > {
+	return queryClient.invalidateQueries( {
+		queryKey: readSubscribedListsQuery().queryKey,
+	} );
 }
 
-export const createReadListMutation = () =>
+// Calypso boots its own QueryClient (see `client/state/query-client.ts`) instead
+// of the singleton from this package, so each mutation factory accepts the
+// caller's QueryClient and uses it for cache invalidation. Pass
+// `useQueryClient()` from the consuming component.
+
+export const createReadListMutation = ( queryClient: QueryClient ) =>
 	mutationOptions( {
 		mutationFn: createReadList,
-		onSuccess: ( data ) => {
-			queryClient.setQueryData( readListQuery( data.list.owner, data.list.slug ).queryKey, data );
-			invalidateSubscribedLists();
-		},
+		onSuccess: () => invalidateSubscribedLists( queryClient ),
 	} );
 
-export const updateReadListMutation = () =>
+export const updateReadListMutation = ( queryClient: QueryClient ) =>
 	mutationOptions( {
 		mutationFn: updateReadList,
 		onSuccess: ( data ) => {
 			queryClient.setQueryData( readListQuery( data.list.owner, data.list.slug ).queryKey, data );
-			invalidateSubscribedLists();
+			return invalidateSubscribedLists( queryClient );
 		},
 	} );
 
-export const followReadListMutation = () =>
+export const followReadListMutation = ( queryClient: QueryClient ) =>
 	mutationOptions( {
 		mutationFn: ( { owner, slug }: { owner: string; slug: string } ) =>
 			followReadList( owner, slug ),
-		onSuccess: () => {
-			invalidateSubscribedLists();
-		},
+		onSuccess: () => invalidateSubscribedLists( queryClient ),
 	} );
 
-export const unfollowReadListMutation = () =>
+export const unfollowReadListMutation = ( queryClient: QueryClient ) =>
 	mutationOptions( {
 		mutationFn: ( { owner, slug }: { owner: string; slug: string } ) =>
 			unfollowReadList( owner, slug ),
-		onSuccess: () => {
-			invalidateSubscribedLists();
-		},
+		onSuccess: () => invalidateSubscribedLists( queryClient ),
 	} );
 
-export const deleteReadListMutation = () =>
+export const deleteReadListMutation = ( queryClient: QueryClient ) =>
 	mutationOptions( {
 		mutationFn: ( { owner, slug }: { owner: string; slug: string } ) =>
 			deleteReadList( owner, slug ),
 		onSuccess: ( _data, { owner, slug } ) => {
 			queryClient.removeQueries( { queryKey: readListQuery( owner, slug ).queryKey } );
-			invalidateSubscribedLists();
+			return invalidateSubscribedLists( queryClient );
 		},
 	} );

@@ -334,25 +334,27 @@ function withSubscribedLists( WrappedComponent ) {
 	};
 }
 
-export default withCurrentRoute(
-	connect(
-		( state ) => {
-			return {
-				isListsOpen: isListsOpen( state ),
-				isFollowingOpen: isFollowingOpen( state ),
-				isTagsOpen: isTagsOpen( state ),
-				teams: getReaderTeams( state ),
-				organizations: getReaderOrganizations( state ),
-				isMSDEnabled: isReaderMSDEnabled( state ),
-			};
-		},
-		{
-			recordReaderTracksEvent,
-			recordTracksEvent,
-			setNextLayoutFocus,
-			toggleListsVisibility: toggleReaderSidebarLists,
-			toggleFollowingVisibility: toggleReaderSidebarFollowing,
-			toggleTagsVisibility: toggleReaderSidebarTags,
-		}
-	)( withSubscribedLists( localize( ReaderSidebar ) ) )
+export default withSubscribedLists(
+	withCurrentRoute(
+		connect(
+			( state ) => {
+				return {
+					isListsOpen: isListsOpen( state ),
+					isFollowingOpen: isFollowingOpen( state ),
+					isTagsOpen: isTagsOpen( state ),
+					teams: getReaderTeams( state ),
+					organizations: getReaderOrganizations( state ),
+					isMSDEnabled: isReaderMSDEnabled( state ),
+				};
+			},
+			{
+				recordReaderTracksEvent,
+				recordTracksEvent,
+				setNextLayoutFocus,
+				toggleListsVisibility: toggleReaderSidebarLists,
+				toggleFollowingVisibility: toggleReaderSidebarFollowing,
+				toggleTagsVisibility: toggleReaderSidebarTags,
+			}
+		)( localize( ReaderSidebar ) )
+	)
 );

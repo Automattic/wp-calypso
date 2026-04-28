@@ -1,7 +1,7 @@
 import { deleteReadListMutation } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { Button, Card, Dialog } from '@automattic/components';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -11,8 +11,9 @@ import { DEFAULT_NOTICE_DURATION } from 'calypso/state/notices/constants';
 function ListDelete( { list } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const queryClient = useQueryClient();
 	const [ showDeleteConfirmation, setShowDeleteConfirmation ] = useState( false );
-	const { mutate: deleteList } = useMutation( deleteReadListMutation() );
+	const { mutate: deleteList } = useMutation( deleteReadListMutation( queryClient ) );
 
 	const handleDelete = () => {
 		deleteList(

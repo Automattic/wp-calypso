@@ -6,7 +6,7 @@ import {
 	unfollowReadListMutation,
 } from '@automattic/api-queries';
 import { Button } from '@automattic/components';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Icon, lock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
@@ -31,6 +31,7 @@ interface ReaderListHeaderProps {
 const ReaderListHeader = ( props: ReaderListHeaderProps ) => {
 	const translate = useTranslate();
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
+	const queryClient = useQueryClient();
 	const { list, view } = props;
 	const { data: subscribedListsData } = useQuery( readSubscribedListsQuery() );
 	const following = Boolean(
@@ -39,8 +40,8 @@ const ReaderListHeader = ( props: ReaderListHeaderProps ) => {
 				( subscribed ) => subscribed.owner === list.owner && subscribed.slug === list.slug
 			)
 	);
-	const { mutate: followList } = useMutation( followReadListMutation() );
-	const { mutate: unfollowList } = useMutation( unfollowReadListMutation() );
+	const { mutate: followList } = useMutation( followReadListMutation( queryClient ) );
+	const { mutate: unfollowList } = useMutation( unfollowReadListMutation( queryClient ) );
 	const currentUser = useSelector( ( state: AppState ) => getCurrentUser( state ) );
 	const editUrl = list?.is_owner ? `/reader/list/${ list.owner }/${ list.slug }/edit` : '';
 	const { data: listItemsData } = useQuery(
