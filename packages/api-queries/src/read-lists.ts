@@ -1,13 +1,17 @@
 import {
 	createReadList,
 	fetchReadList,
+	fetchReadListItems,
 	fetchReadSubscribedLists,
 	followReadList,
 	unfollowReadList,
 	updateReadList,
+	type ReadListItemsResponse,
 } from '@automattic/api-core';
-import { mutationOptions, queryOptions } from '@tanstack/react-query';
+import { infiniteQueryOptions, mutationOptions, queryOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
+
+const ITEMS_PER_PAGE = 20;
 
 export const readSubscribedListsQuery = () =>
 	queryOptions( {
@@ -21,6 +25,35 @@ export const readListQuery = ( owner: string, slug: string ) =>
 		queryKey: [ 'read', 'lists', owner, slug ],
 		staleTime: 1000 * 60 * 5,
 		queryFn: () => fetchReadList( owner, slug ),
+	} );
+
+export const readListItemsQuery = ( userLogin: string, listName: string, meta: string = '' ) =>
+	queryOptions( {
+		queryKey: [ 'read', 'lists', userLogin, listName, 'items', meta ],
+		queryFn: () => fetchReadListItems( userLogin, listName, meta ),
+		enabled: !! userLogin && !! listName,
+		staleTime: 1000 * 60 * 5,
+	} );
+
+export const readListItemsInfiniteQuery = (
+	userLogin: string,
+	listName: string,
+	meta: string = ''
+) =>
+	infiniteQueryOptions( {
+		queryKey: [ 'read', 'lists', userLogin, listName, 'items', meta, 'infinite' ],
+		queryFn: ( { pageParam }: { pageParam: number } ) =>
+			fetchReadListItems( userLogin, listName, meta, pageParam, ITEMS_PER_PAGE ),
+		enabled: !! userLogin && !! listName,
+		staleTime: 1000 * 60 * 5,
+		initialPageParam: 1,
+		getNextPageParam: ( lastPage: ReadListItemsResponse, allPages: ReadListItemsResponse[] ) => {
+			if ( ! lastPage?.items || lastPage.items.length < ITEMS_PER_PAGE ) {
+				return undefined;
+			}
+
+			return allPages.length + 1;
+		},
 	} );
 
 export const createReadListMutation = () =>
