@@ -8,12 +8,34 @@ import { SocialFeedList, SocialPostCard } from 'calypso/reader/social';
 import { SocialAnalyticsProvider } from 'calypso/reader/social/components/post-card/analytics-context';
 import { mapAtmosphereFeedItemToSocialPost } from 'calypso/reader/social/mappers/atmosphere';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import type { AtmosphereConnection, AtmosphereFeedItem } from '@automattic/api-core';
-import type { SocialPost } from 'calypso/reader/social/types';
+import type {
+	AtmosphereConnection,
+	AtmosphereError,
+	AtmosphereFeedItem,
+} from '@automattic/api-core';
+import type { SocialError, SocialPost } from 'calypso/reader/social/types';
 import type { AppState } from 'calypso/types';
 
 interface TimelinePanelProps {
 	connection: AtmosphereConnection;
+}
+
+function projectAtmosphereError( err: AtmosphereError | null | undefined ): SocialError | null {
+	if ( ! err ) {
+		return null;
+	}
+	switch ( err.kind ) {
+		case 'auth_required':
+		case 'not_found':
+		case 'upstream_unavailable':
+			return { kind: err.kind };
+		case 'rate_limited':
+			return err.retry_after !== undefined
+				? { kind: 'rate_limited', retry_after: err.retry_after }
+				: { kind: 'rate_limited' };
+		default:
+			return { kind: 'unknown', cause: err };
+	}
 }
 
 export function TimelinePanel( { connection }: TimelinePanelProps ) {
@@ -100,7 +122,7 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 				items={ items }
 				isPending={ isPending }
 				isError={ isError }
-				error={ error ?? null }
+				error={ projectAtmosphereError( error ) }
 				hasNextPage={ Boolean( hasNextPage ) }
 				isFetchingNextPage={ isFetchingNextPage }
 				fetchNextPage={ fetchNextPage }
@@ -111,6 +133,9 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 				emptyLine={ translate( 'Follow some accounts on Bluesky to see posts here.' ) }
 				emptyActionLabel={ translate( 'Browse Bluesky' ) }
 				emptyActionURL="https://bsky.app"
+				protocolLabel="Bluesky"
+				protocolHomeURL="/reader/atmosphere"
+				protocolHomeLabel={ translate( 'Back to ATmosphere' ) }
 			/>
 		</SocialAnalyticsProvider>
 	);

@@ -8,26 +8,15 @@ import { SocialFeedList, SocialPostCard } from 'calypso/reader/social';
 import { SocialAnalyticsProvider } from 'calypso/reader/social/components/post-card/analytics-context';
 import { mapMastodonFeedItemToSocialPost } from 'calypso/reader/social/mappers/mastodon';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import type {
-	AtmosphereError,
-	MastodonConnection,
-	MastodonError,
-	MastodonFeedItem,
-} from '@automattic/api-core';
-import type { SocialPost } from 'calypso/reader/social/types';
+import type { MastodonConnection, MastodonError, MastodonFeedItem } from '@automattic/api-core';
+import type { SocialError, SocialPost } from 'calypso/reader/social/types';
 import type { AppState } from 'calypso/types';
 
 interface TimelinePanelProps {
 	connection: MastodonConnection;
 }
 
-// Project MastodonError onto the AtmosphereError shape that SocialFeedList /
-// FeedListEmpty currently consume. Both unions share the four kinds the empty
-// component switches on (auth_required, rate_limited, upstream_unavailable,
-// not_found) plus a few extra kinds that fall through to the default branch.
-// This adapter goes away when SocialFeedList is widened to take SocialError
-// directly (Task 12 of the CM-626 plan).
-function projectError( err: MastodonError | null | undefined ): AtmosphereError | null {
+function projectMastodonError( err: MastodonError | null | undefined ): SocialError | null {
 	if ( ! err ) {
 		return null;
 	}
@@ -35,17 +24,12 @@ function projectError( err: MastodonError | null | undefined ): AtmosphereError 
 		case 'auth_required':
 		case 'not_found':
 		case 'upstream_unavailable':
-		case 'auth_failed':
-		case 'connection_not_found':
 			return { kind: err.kind };
 		case 'rate_limited':
 			return err.retry_after !== undefined
 				? { kind: 'rate_limited', retry_after: err.retry_after }
 				: { kind: 'rate_limited' };
-		case 'bad_request':
-			return { kind: 'bad_request', message: err.message };
-		case 'invalid_instance':
-		case 'unknown':
+		default:
 			return { kind: 'unknown', cause: err };
 	}
 }
@@ -134,7 +118,7 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 				items={ items }
 				isPending={ isPending }
 				isError={ isError }
-				error={ projectError( error ) }
+				error={ projectMastodonError( error ) }
 				hasNextPage={ Boolean( hasNextPage ) }
 				isFetchingNextPage={ isFetchingNextPage }
 				fetchNextPage={ fetchNextPage }
@@ -145,6 +129,9 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 				emptyLine={ translate( 'Follow some accounts on Mastodon to see posts here.' ) }
 				emptyActionLabel={ translate( 'Open your Mastodon instance' ) }
 				emptyActionURL={ `https://${ connection.instance }` }
+				protocolLabel="Mastodon"
+				protocolHomeURL="/reader/mastodon"
+				protocolHomeLabel={ translate( 'Back to Mastodon' ) }
 			/>
 		</SocialAnalyticsProvider>
 	);
