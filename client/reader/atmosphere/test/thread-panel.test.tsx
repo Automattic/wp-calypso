@@ -187,8 +187,24 @@ describe( 'ThreadPanel', () => {
 			queryClient: makeQueryClient(),
 		} );
 		expect( await screen.findByRole( 'heading', { level: 2, name: 'Slow down' } ) ).toBeVisible();
-		expect( screen.getByText( /30s/ ) ).toBeVisible();
+		expect( screen.getByText( /30 seconds/i ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: /retry/i } ) ).toBeVisible();
+	} );
+
+	it( 'renders the rate-limited empty state with a singular second when retry_after is 1', async () => {
+		nock( BASE )
+			.get( PATH )
+			.query( { uri: TARGET_URI } )
+			.reply( 429, {
+				error: 'atmosphere_rate_limited',
+				data: { retry_after: 1 },
+			} );
+
+		renderWithProvider( <ThreadPanel connection={ connection } did={ DID } rkey={ RKEY } />, {
+			queryClient: makeQueryClient(),
+		} );
+		expect( await screen.findByRole( 'heading', { level: 2, name: 'Slow down' } ) ).toBeVisible();
+		expect( screen.getByText( /1 second\./i ) ).toBeVisible();
 	} );
 
 	it( 'renders the rate-limited empty state without retry-after when none was provided', async () => {

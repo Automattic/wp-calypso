@@ -78,7 +78,11 @@ export function PostCardEmbedVideo( { embed, expanded }: PostCardEmbedVideoProps
 			<img
 				className="social-post-card-embed-video__thumbnail"
 				src={ embed.thumbnail }
-				alt={ embed.alt || '' }
+				// Fall back to the generic "Bluesky video" label when the post
+				// has no alt text — Bluesky doesn't always carry one, and an
+				// empty alt would mark the image decorative, leaving
+				// screen-reader users with no signal that the card has video.
+				alt={ accessibleLabel }
 				loading="lazy"
 			/>
 			<span className="social-post-card-embed-video__play" aria-hidden="true">

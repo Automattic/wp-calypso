@@ -37,6 +37,16 @@ describe( 'PostCardEmbedVideo', () => {
 		expect( screen.getByLabelText( /bluesky video/i ).tagName ).toBe( 'VIDEO' );
 	} );
 
+	it( 'falls back to a generic alt on the thumbnail so screen readers know it is a video', () => {
+		const noAlt: AtmosphereEmbedVideo = { ...embed, alt: '' };
+		render( <PostCardEmbedVideo embed={ noAlt } /> );
+		// Without this, an alt="" thumbnail would be marked decorative and
+		// screen-reader users would have no signal that the card carries a
+		// video at all.
+		const img = screen.getByRole( 'img', { name: /bluesky video/i } );
+		expect( img ).toHaveAttribute( 'src', embed.thumbnail );
+	} );
+
 	it( 'sets the playlist as src on browsers with native HLS support', () => {
 		const original = window.HTMLMediaElement.prototype.canPlayType;
 		// Simulate Safari-class browser (native HLS).

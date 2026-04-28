@@ -86,10 +86,16 @@ export function ThreadPanel( { connection, did, rkey }: ThreadPanelProps ) {
 
 	const onClickAnalytics = useCallback(
 		( event: string, props: Record< string, unknown > ) => {
-			// Rewrite *_timeline_* events emitted by shared post-card subcomponents
-			// to *_thread_* so dashboards can split by surface.
-			const reprefixed = event.includes( '_timeline_' )
-				? event.replace( '_timeline_', '_thread_' )
+			// Shared post-card subcomponents emit
+			// `calypso_reader_atmosphere_timeline_*` events. The thread
+			// surface rewrites that prefix to `_thread_` so dashboards can
+			// split by surface. Anchor on the full prefix so an event whose
+			// payload happens to contain `_timeline_` elsewhere isn't
+			// rewritten by accident.
+			const TIMELINE_PREFIX = 'calypso_reader_atmosphere_timeline_';
+			const THREAD_PREFIX = 'calypso_reader_atmosphere_thread_';
+			const reprefixed = event.startsWith( TIMELINE_PREFIX )
+				? THREAD_PREFIX + event.slice( TIMELINE_PREFIX.length )
 				: event;
 			dispatch(
 				recordReaderTracksEvent( reprefixed, {
@@ -212,9 +218,14 @@ function renderError( {
 					title={ translate( 'Slow down' ) }
 					line={
 						error.retry_after
-							? translate( 'Bluesky is asking us to slow down. Try again in %(s)ds.', {
-									args: { s: error.retry_after },
-							  } )
+							? translate(
+									'Bluesky is asking us to slow down. Try again in %(s)d second.',
+									'Bluesky is asking us to slow down. Try again in %(s)d seconds.',
+									{
+										count: error.retry_after,
+										args: { s: error.retry_after },
+									}
+							  )
 							: translate( 'Bluesky is asking us to slow down. Try again in a moment.' )
 					}
 					action={

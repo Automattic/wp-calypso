@@ -27,7 +27,7 @@ export function AtmosphereThreadView( { connectionId, did, rkey }: Props ) {
 		if ( ! connection ) {
 			page.replace( '/reader/atmosphere' );
 		}
-	}, [ isPending, isError, connection ] );
+	}, [ isPending, isError, connection, connectionId ] );
 
 	if ( isError ) {
 		return (
