@@ -3,17 +3,29 @@ import {
 	completeMastodonConnection,
 	getMastodonConnection,
 	getMastodonConnections,
+	getMastodonTimeline,
 	readerMastodonKeys,
 } from '@automattic/api-core';
-import { queryOptions, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+	infiniteQueryOptions,
+	queryOptions,
+	useInfiniteQuery,
+	useMutation,
+	useQuery,
+	useQueryClient,
+	type InfiniteData,
+	type QueryKey,
+} from '@tanstack/react-query';
 import type {
 	AuthorizeMastodonConnectionParams,
 	CompleteMastodonConnectionParams,
+	GetMastodonTimelineParams,
 	MastodonAuthorizeResponse,
 	MastodonConnectionDetails,
 	MastodonConnectionsResponse,
 	MastodonCreateConnectionResponse,
 	MastodonError,
+	MastodonTimelinePage,
 } from '@automattic/api-core';
 
 export const mastodonConnectionsQueryOptions = () =>
@@ -74,4 +86,26 @@ export const mastodonConnectionQueryOptions = ( id: number | null ) =>
 
 export function useMastodonConnectionQuery( id: number | null ) {
 	return useQuery( mastodonConnectionQueryOptions( id ) );
+}
+
+export const mastodonTimelineInfiniteQuery = ( connectionId: number ) =>
+	infiniteQueryOptions<
+		MastodonTimelinePage,
+		MastodonError,
+		InfiniteData< MastodonTimelinePage >,
+		QueryKey,
+		string | undefined
+	>( {
+		queryKey: readerMastodonKeys.timeline( connectionId ),
+		queryFn: ( { pageParam } ) =>
+			getMastodonTimeline( { connectionId, cursor: pageParam } as GetMastodonTimelineParams ),
+		initialPageParam: undefined,
+		getNextPageParam: ( lastPage ) => lastPage.cursor ?? undefined,
+		enabled: connectionId > 0,
+		staleTime: 30_000,
+		gcTime: 5 * 60_000,
+	} );
+
+export function useMastodonTimelineInfiniteQuery( connectionId: number ) {
+	return useInfiniteQuery( mastodonTimelineInfiniteQuery( connectionId ) );
 }
