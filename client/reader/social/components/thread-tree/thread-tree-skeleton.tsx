@@ -4,7 +4,14 @@ import Skeleton from 'calypso/reader/components/skeleton';
 export function ThreadTreeSkeleton() {
 	const translate = useTranslate();
 	return (
-		<div role="status" aria-live="polite" className="thread-tree-skeleton">
+		<div
+			role="status"
+			// `aria-busy` lets assistive tech know the region is in flight
+			// without re-announcing the SR-only "Loading thread" copy on
+			// every refetch — `aria-live` would speak each remount.
+			aria-busy="true"
+			className="thread-tree-skeleton"
+		>
 			<span className="screen-reader-text">{ translate( 'Loading thread' ) }</span>
 			<div className="thread-tree-skeleton__row thread-tree-skeleton__row--large">
 				<Skeleton width="64px" height="64px" shape="circle" />

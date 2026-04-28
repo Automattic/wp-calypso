@@ -28,7 +28,13 @@ export function PostCardEmbedVideo( { embed, expanded }: PostCardEmbedVideoProps
 		// Safari + iOS WebKit play HLS natively; setting src is enough.
 		if ( video.canPlayType( HLS_MIME ) ) {
 			video.src = embed.playlist;
-			return;
+			return () => {
+				// Switching threads while audio plays would otherwise leave
+				// the previous track buffered for a frame.
+				video.pause();
+				video.removeAttribute( 'src' );
+				video.load();
+			};
 		}
 		// Other browsers: lazy-load hls.js (kept out of the timeline chunk).
 		let cancelled = false;
@@ -51,6 +57,7 @@ export function PostCardEmbedVideo( { embed, expanded }: PostCardEmbedVideoProps
 		return () => {
 			cancelled = true;
 			hls?.destroy();
+			video.pause();
 		};
 	}, [ expanded, embed.playlist ] );
 

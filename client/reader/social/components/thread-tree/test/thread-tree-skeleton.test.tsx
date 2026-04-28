@@ -5,9 +5,11 @@ import { render, screen } from '@testing-library/react';
 import { ThreadTreeSkeleton } from '../thread-tree-skeleton';
 
 describe( 'ThreadTreeSkeleton', () => {
-	it( 'renders an aria-live status region with loading copy', () => {
+	it( 'renders an aria-busy status region with loading copy', () => {
 		render( <ThreadTreeSkeleton /> );
-		expect( screen.getByRole( 'status' ) ).toHaveTextContent( /loading/i );
+		const status = screen.getByRole( 'status' );
+		expect( status ).toHaveTextContent( /loading/i );
+		expect( status ).toHaveAttribute( 'aria-busy', 'true' );
 	} );
 
 	it( 'renders three skeleton rows (one large + two small)', () => {

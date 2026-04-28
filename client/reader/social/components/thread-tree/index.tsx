@@ -1,7 +1,7 @@
 import './style.scss';
 
 import { __experimentalVStack as VStack } from '@wordpress/components';
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { ThreadNode } from './thread-node';
 import type { AtmosphereThreadNode } from '@automattic/api-core';
 
@@ -14,7 +14,7 @@ interface ThreadTreeProps {
 
 export function ThreadTree( { root, targetUri }: ThreadTreeProps ) {
 	const targetRef = useRef< HTMLDivElement >( null );
-	const parents = flattenParents( root );
+	const parents = useMemo( () => flattenParents( root ), [ root ] );
 
 	useEffect( () => {
 		if ( parents.length > 0 && targetRef.current ) {
