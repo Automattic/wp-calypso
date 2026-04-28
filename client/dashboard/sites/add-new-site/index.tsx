@@ -21,7 +21,10 @@ import MenuItem from './menu-item';
 import type { AddNewSiteProps } from './types';
 import './style.scss';
 
-function AddNewSite( { context = 'unknown', aiSiteBuilderPath }: AddNewSiteProps ) {
+function AddNewSite( {
+	context = 'unknown',
+	aiSiteBuilderPath = '/setup/ai-site-builder',
+}: AddNewSiteProps ) {
 	const { recordTracksEvent } = useAnalytics();
 	const auth = useContext( AuthContext );
 	const user = auth?.user;
