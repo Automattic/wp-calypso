@@ -1,17 +1,16 @@
+import config from '@automattic/calypso-config';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { sprintf, __ } from '@wordpress/i18n';
 import {
 	isAkismetProduct,
 	isGSuiteOrGoogleWorkspaceProductSlug,
-	getPurchaseCancellationFlowType,
-	CANCEL_FLOW_TYPE,
+	DisplayVariant,
 } from '../../../utils/purchase';
 import BackupRetentionOptionOnCancelPurchase from './backup-retention-management/retention-option-on-cancel-purchase';
 import CancelPurchaseDomainOptions from './domain-options';
 import CancelPurchaseFeatureList from './feature-list';
 import GSuiteAccessMessage from './gsuite-access-message';
 import PlanProductRevertContent from './plan-product-revert-content';
-import CancelPurchaseRefundInformation from './refund-information';
 import type { CancelPurchaseState } from './types';
 import type {
 	Purchase,
@@ -22,6 +21,7 @@ import type {
 
 interface CancellationMainContentProps {
 	purchase: Purchase;
+	displayVariant: DisplayVariant;
 	includedDomainPurchase?: Purchase;
 	atomicTransfer?: AtomicTransfer;
 	selectedDomain?: Domain;
@@ -50,6 +50,7 @@ const willShowDomainOptionsRadioButtons = (
 
 export default function CancellationMainContent( {
 	purchase,
+	displayVariant,
 	includedDomainPurchase,
 	atomicTransfer,
 	selectedDomain,
@@ -136,26 +137,20 @@ export default function CancellationMainContent( {
 
 			<BackupRetentionOptionOnCancelPurchase siteId={ purchase.blog_id } purchase={ purchase } />
 
-			{ isGSuite && (
+			{ isGSuite && ! config.isEnabled( 'purchases/split-cancel-remove' ) && (
 				<GSuiteAccessMessage purchase={ purchase } selectedDomain={ selectedDomain } />
 			) }
 
 			<CancelPurchaseFeatureList
 				purchase={ purchase }
+				displayVariant={ displayVariant }
 				cancellationFeatures={ cancellationFeatures }
 				cancellationChanges={ cancellationChanges }
 			/>
 
-			{ getPurchaseCancellationFlowType( purchase ) !== CANCEL_FLOW_TYPE.REMOVE && (
-				<CancelPurchaseRefundInformation
-					purchase={ purchase }
-					isJetpackPurchase={ isJetpack }
-					selectedDomain={ selectedDomain }
-				/>
-			) }
-
 			<PlanProductRevertContent
 				purchase={ purchase }
+				displayVariant={ displayVariant }
 				includedDomainPurchase={ includedDomainPurchase }
 				atomicTransfer={ atomicTransfer }
 				state={ state }

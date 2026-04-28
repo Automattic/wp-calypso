@@ -311,7 +311,11 @@ class MasterbarLoggedIn extends Component {
 
 		return (
 			<AsyncLoad
-				require="calypso/layout/masterbar/checkout"
+				require={ () =>
+					import(
+						/* webpackChunkName: "async-load-calypso-layout-masterbar-checkout" */ './checkout.tsx'
+					)
+				}
 				placeholder={ null }
 				title={ title }
 				isJetpackNotAtomic={ isJetpackNotAtomic }
@@ -728,7 +732,16 @@ class MasterbarLoggedIn extends Component {
 
 	renderLanguageSwitcher() {
 		if ( this.props.isSupportSession || config.isEnabled( 'quick-language-switcher' ) ) {
-			return <AsyncLoad require="./quick-language-switcher" placeholder={ null } />;
+			return (
+				<AsyncLoad
+					require={ () =>
+						import(
+							/* webpackChunkName: "async-load-calypso-layout-masterbar-quick-language-switcher" */ './quick-language-switcher'
+						)
+					}
+					placeholder={ null }
+				/>
+			);
 		}
 		return null;
 	}
@@ -741,7 +754,11 @@ class MasterbarLoggedIn extends Component {
 		}
 		return (
 			<AsyncLoad
-				require="./masterbar-cart/masterbar-cart-wrapper"
+				require={ () =>
+					import(
+						/* webpackChunkName: "async-load-calypso-layout-masterbar-masterbar-cart-masterbar-cart-wrapper" */ './masterbar-cart/masterbar-cart-wrapper'
+					)
+				}
 				placeholder={ null }
 				goToCheckout={ this.goToCheckout }
 				onRemoveProduct={ this.onRemoveCartProduct }
@@ -788,7 +805,11 @@ class MasterbarLoggedIn extends Component {
 
 			return (
 				<AsyncLoad
-					require="./masterbar-agents-manager"
+					require={ () =>
+						import(
+							/* webpackChunkName: "async-load-calypso-layout-masterbar-masterbar-agents-manager" */ './masterbar-agents-manager'
+						)
+					}
 					siteId={ siteId }
 					tooltip={ __( 'Help' ) }
 					placeholder={ placeholder }
@@ -810,7 +831,11 @@ class MasterbarLoggedIn extends Component {
 
 		return (
 			<AsyncLoad
-				require="./masterbar-help-center"
+				require={ () =>
+					import(
+						/* webpackChunkName: "async-load-calypso-layout-masterbar-masterbar-help-center" */ './masterbar-help-center'
+					)
+				}
 				siteId={ siteId }
 				tooltip={ __( 'Help' ) }
 				placeholder={ placeholder }

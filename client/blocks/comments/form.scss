@@ -4,7 +4,7 @@
 	padding: 0 0 0 42px;
 	margin-top: 24px;
 
-	.gravatar {
+	.user-avatar {
 		position: absolute;
 		top: 0;
 		left: 0;
@@ -16,7 +16,7 @@
 		padding: 5px 10px;
 	}
 
-	button:not(.components-button) {
+	button:not(.components-button):not(.follow-button) {
 		opacity: 0;
 		position: absolute;
 		margin: 16px 0 0;

@@ -7,7 +7,9 @@ function purchase( context: Context, next: () => void ) {
 		// DO NOT WRAP WITH <StatsPageLoader />
 		// Or the site-less purchase flow will not work because there is no permission to access Stats.
 		<AsyncLoad
-			require="calypso/my-sites/stats/pages/purchase"
+			require={ () =>
+				import( /* webpackChunkName: "async-load-calypso-my-sites-stats-pages-purchase" */ '.' )
+			}
 			placeholder={ PageLoading }
 			query={ context.query }
 		/>

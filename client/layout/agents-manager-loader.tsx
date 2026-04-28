@@ -26,7 +26,11 @@ export default function AgentsManagerLoader( {
 
 	return (
 		<AsyncLoad
-			require="@automattic/agents-manager"
+			require={ () =>
+				import(
+					/* webpackChunkName: "async-load-automattic-agents-manager" */ '@automattic/agents-manager'
+				)
+			}
 			placeholder={ null }
 			currentUser={ user }
 			sectionName={ sectionName }

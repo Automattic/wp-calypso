@@ -69,7 +69,11 @@ const exported = {
 				<div>
 					<div>
 						<AsyncLoad
-							require="calypso/reader/search-stream"
+							require={ () =>
+								import(
+									/* webpackChunkName: "async-load-calypso-reader-search-stream" */ 'calypso/reader/search-stream'
+								)
+							}
 							key="search"
 							streamKey={ streamKey }
 							isSuggestion={ isQuerySuggestion }

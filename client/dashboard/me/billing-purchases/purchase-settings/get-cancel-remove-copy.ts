@@ -2,13 +2,13 @@ import { __, sprintf } from '@wordpress/i18n';
 import type { CancelRemoveCategory } from './classify-purchase-for-copy';
 
 /**
- * Copy for the Cancel and Remove buttons on the dashboard Purchase
- * Settings screen. A parallel helper lives on legacy at
- * `client/me/purchases/manage-purchase/get-cancel-remove-copy.ts` —
- * both surfaces use the same English strings via their native i18n
- * library. Parity is enforced by
- * `client/me/purchases/manage-purchase/test/cancel-remove-copy-parity.test.ts`:
- * if you change a string here, change it there too, or CI will fail.
+ * Copy for the Cancel and Remove buttons on the Purchase Settings screen.
+ * Shared between the dashboard (which classifies its api-core `Purchase`
+ * via `./classify-purchase-for-copy`) and legacy (which classifies its
+ * `Purchases.Purchase` via
+ * `client/me/purchases/manage-purchase/classify-purchase-for-copy.ts`).
+ * Both surfaces hand this helper the resulting `CancelRemoveCategory` +
+ * pre-computed strings, so the helper itself stays surface-agnostic.
  */
 
 export interface CancelCopy {
