@@ -18,7 +18,7 @@ export function OmnibarUserNode( { node }: { node: OmnibarNode } ) {
 						return userAvatar;
 					}
 					return (
-						<HStack spacing={ 2 }>
+						<HStack spacing={ 1 }>
 							<span>{ title }</span>
 							{ userAvatar }
 						</HStack>
@@ -31,12 +31,14 @@ export function OmnibarUserNode( { node }: { node: OmnibarNode } ) {
 							return {
 								...grandChild,
 								render: ( { title, icon, meta } ) => (
-									<HStack spacing={ 3 } expanded={ false }>
+									<HStack spacing={ 3 } expanded={ false } className="omnibar__user">
 										{ icon && <span className="omnibar__user-avatar">{ icon }</span> }
 										<VStack>
-											<span>{ meta?.displayName }</span>
-											<span>@{ meta?.username }</span>
-											<span>{ title }</span>
+											<VStack spacing={ 1 }>
+												<span>{ meta?.displayName }</span>
+												<span className="omnibar__user-info">@{ meta?.username }</span>
+											</VStack>
+											<span className="omnibar__user-info">{ title }</span>
 										</VStack>
 									</HStack>
 								),
