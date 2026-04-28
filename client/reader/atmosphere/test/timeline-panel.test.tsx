@@ -261,7 +261,7 @@ const connection7: AtmosphereConnection = {
 	avatar: null,
 };
 
-function makeFeedItem( overrides: Partial< ReturnType< typeof makePost > > = {} ) {
+function makeFeedItem( overrides: Record< string, unknown > = {} ) {
 	return {
 		...makePost( 'at://did:plc:abc234567defghi234567jklab/app.bsky.feed.post/3kabcdefghijk' ),
 		...overrides,

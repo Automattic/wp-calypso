@@ -56,16 +56,16 @@ export function PostCardEmbedImages( { embed, compact }: PostCardEmbedImagesProp
 					}
 
 					const ariaLabel = image.alt
-						? translate( 'View image: %(alt)s', {
+						? ( translate( 'View image: %(alt)s', {
 								args: { alt: image.alt },
 								comment:
 									'Accessible label for opening a Bluesky post image in the full-size carousel; uses the per-image alt text.',
-						  } )
-						: translate( 'View image %(index)d of %(count)d', {
+						  } ) as string )
+						: ( translate( 'View image %(index)d of %(count)d', {
 								args: { index: index + 1, count: embed.images.length },
 								comment:
 									'Accessible label fallback for opening a Bluesky post image in the full-size carousel when no alt text is available.',
-						  } );
+						  } ) as string );
 					return (
 						<button
 							key={ image.thumb }
