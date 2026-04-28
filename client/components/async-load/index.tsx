@@ -17,7 +17,7 @@ export default function AsyncLoad( {
 	require,
 	...props
 }: AsyncLoadProps ) {
-	const Component = useMemo( () => lazy( require ), [] );
+	const Component = useMemo( () => lazy( require ), [ require ] );
 
 	return (
 		<Suspense fallback={ placeholder }>
