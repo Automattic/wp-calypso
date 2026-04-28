@@ -11,6 +11,7 @@ import React from 'react';
 const mockOpenImageStudio = jest.fn();
 const mockRegisterPlugin = jest.fn();
 const mockTrackOpened = jest.fn();
+const mockUseIsAutomattician = jest.fn();
 
 jest.mock( '@wordpress/components', () => ( {
 	Button: ( {
@@ -59,6 +60,10 @@ jest.mock( '../utils/tracking', () => ( {
 	trackImageStudioOpened: ( ...args: unknown[] ) => mockTrackOpened( ...args ),
 } ) );
 
+jest.mock( '../utils/use-is-automattician', () => ( {
+	useIsAutomattician: () => mockUseIsAutomattician(),
+} ) );
+
 jest.mock( './feature-clip-sidebar.scss', () => ( {} ), { virtual: true } );
 
 describe( 'feature-clip-sidebar-extension', () => {
@@ -66,6 +71,8 @@ describe( 'feature-clip-sidebar-extension', () => {
 		mockOpenImageStudio.mockClear();
 		mockRegisterPlugin.mockClear();
 		mockTrackOpened.mockClear();
+		mockUseIsAutomattician.mockReset();
+		mockUseIsAutomattician.mockReturnValue( true );
 		jest.resetModules();
 	} );
 
@@ -93,5 +100,21 @@ describe( 'feature-clip-sidebar-extension', () => {
 			undefined,
 			'post_editor_feature_clip'
 		);
+	} );
+
+	it( 'renders nothing while the Automattician check is in flight', () => {
+		mockUseIsAutomattician.mockReturnValue( null );
+		const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+		const { container } = render( <FeatureClipPanel /> );
+
+		expect( container.firstChild ).toBeNull();
+	} );
+
+	it( 'renders nothing for non-Automatticians', () => {
+		mockUseIsAutomattician.mockReturnValue( false );
+		const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+		const { container } = render( <FeatureClipPanel /> );
+
+		expect( container.firstChild ).toBeNull();
 	} );
 } );

@@ -1449,6 +1449,7 @@ __metadata:
     "@automattic/agents-manager": "workspace:^"
     "@automattic/agenttic-client": "npm:^0.1.58"
     "@automattic/agenttic-ui": "npm:^0.1.58"
+    "@automattic/api-core": "workspace:^"
     "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/oauth-token": "workspace:^"
