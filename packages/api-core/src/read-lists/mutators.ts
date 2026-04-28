@@ -32,3 +32,11 @@ export const unfollowReadList = ( owner: string, slug: string ): Promise< ReadLi
 		body: {},
 	} );
 };
+
+export const deleteReadList = ( owner: string, slug: string ): Promise< void > => {
+	return wpcom.req.post( {
+		path: `/read/lists/${ owner }/${ slug }/delete`,
+		apiVersion: '1.2',
+		body: {},
+	} );
+};

@@ -1,5 +1,6 @@
 import {
 	createReadList,
+	deleteReadList,
 	fetchReadList,
 	fetchReadListItems,
 	fetchReadSubscribedLists,
@@ -94,6 +95,18 @@ export const unfollowReadListMutation = () =>
 		mutationFn: ( { owner, slug }: { owner: string; slug: string } ) =>
 			unfollowReadList( owner, slug ),
 		onSuccess: () => {
+			queryClient.invalidateQueries( {
+				queryKey: readSubscribedListsQuery().queryKey,
+			} );
+		},
+	} );
+
+export const deleteReadListMutation = () =>
+	mutationOptions( {
+		mutationFn: ( { owner, slug }: { owner: string; slug: string } ) =>
+			deleteReadList( owner, slug ),
+		onSuccess: ( _data, { owner, slug } ) => {
+			queryClient.removeQueries( { queryKey: readListQuery( owner, slug ).queryKey } );
 			queryClient.invalidateQueries( {
 				queryKey: readSubscribedListsQuery().queryKey,
 			} );

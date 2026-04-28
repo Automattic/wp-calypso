@@ -1,6 +1,5 @@
-import { some, keyBy, omit, reject } from 'lodash';
+import { some, keyBy, reject } from 'lodash';
 import {
-	READER_LIST_DELETE,
 	READER_LIST_RECEIVE,
 	READER_LIST_CREATE_SUCCESS,
 	READER_LIST_UPDATE_SUCCESS,
@@ -31,11 +30,6 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 		case READER_LIST_CREATE_SUCCESS:
 		case READER_LIST_UPDATE_SUCCESS:
 			return Object.assign( {}, state, keyBy( [ action.data.list ], 'ID' ) );
-		case READER_LIST_DELETE:
-			if ( ! ( action.listId in state ) ) {
-				return state;
-			}
-			return omit( state, action.listId );
 	}
 	return state;
 } );
@@ -88,11 +82,6 @@ export const listItems = ( state = {}, action ) => {
 			return removeItemBy( state, action, ( item ) => item.tag_ID === action.tagId );
 		case READER_LIST_ITEM_DELETE_SITE:
 			return removeItemBy( state, action, ( item ) => item.site_ID === action.siteId );
-		case READER_LIST_DELETE:
-			if ( ! ( action.listId in state ) ) {
-				return state;
-			}
-			return omit( state, action.listId );
 	}
 	return state;
 };

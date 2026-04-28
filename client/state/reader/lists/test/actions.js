@@ -1,12 +1,10 @@
 import {
-	READER_LIST_DELETE,
 	READER_LIST_ITEM_ADD_FEED,
 	READER_RECOMMENDED_BLOGS_ITEMS_REQUEST,
 	READER_LIST_ITEMS_REQUEST,
 	READER_LIST_ITEM_DELETE_FEED,
 } from 'calypso/state/reader/action-types';
 import {
-	deleteReaderList,
 	requestUserRecommendedBlogs,
 	requestRecommendedBlogsListItems,
 	addRecommendedBlogsSite,
@@ -14,18 +12,6 @@ import {
 } from '../actions';
 
 describe( 'actions', () => {
-	describe( '#deleteReaderList', () => {
-		test( 'should return the correct action', () => {
-			const action = deleteReaderList( 123, 'restapitests', 'testlist' );
-			expect( action ).toEqual( {
-				type: READER_LIST_DELETE,
-				listId: 123,
-				listOwner: 'restapitests',
-				listSlug: 'testlist',
-			} );
-		} );
-	} );
-
 	describe( '#requestUserRecommendedBlogs', () => {
 		test( 'should dispatch request action when no request is in progress', () => {
 			const dispatch = jest.fn();

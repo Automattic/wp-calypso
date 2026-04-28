@@ -1,6 +1,5 @@
 import deepFreeze from 'deep-freeze';
 import {
-	READER_LIST_DELETE,
 	READER_LIST_RECEIVE,
 	READER_RECOMMENDED_BLOGS_ITEMS_RECEIVE,
 	READER_RECOMMENDED_BLOGS_ITEMS_REQUEST,
@@ -45,47 +44,12 @@ describe( 'reducer', () => {
 				413: { ID: 413, title: 'Mangos and feijoas' },
 			} );
 		} );
-
-		test( 'should remove a list on delete', () => {
-			const initial = deepFreeze( {
-				841: { ID: 841, title: 'Hello World' },
-				413: { ID: 413, title: 'Mangos and feijoas' },
-			} );
-			expect(
-				items( initial, {
-					type: READER_LIST_DELETE,
-					listId: 841,
-				} )
-			).toEqual( { 413: { ID: 413, title: 'Mangos and feijoas' } } );
-		} );
 	} );
 
 	describe( '#listItems()', () => {
 		test( 'should default to an empty object', () => {
 			const state = listItems( undefined, {} );
 			expect( state ).toEqual( {} );
-		} );
-
-		test( 'should remove list items when list is deleted', () => {
-			const initial = deepFreeze( {
-				123: [
-					{ ID: 12345, site_ID: 555 },
-					{ ID: 12346, feed_ID: 333 },
-				],
-				124: [ { ID: 12347, tag_ID: 444 } ],
-			} );
-			const state = listItems( initial, {
-				type: READER_LIST_DELETE,
-				listId: 124,
-			} );
-
-			// Should have removed 124 key entirely
-			expect( state ).toEqual( {
-				123: [
-					{ ID: 12345, site_ID: 555 },
-					{ ID: 12346, feed_ID: 333 },
-				],
-			} );
 		} );
 	} );
 
