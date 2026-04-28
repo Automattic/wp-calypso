@@ -27,4 +27,5 @@ export interface OmnibarNodes {
 
 export interface OmnibarProps {
 	nodes: OmnibarNodes;
+	onClickResponsiveMenu?: () => void;
 }

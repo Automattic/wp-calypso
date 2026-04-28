@@ -9,8 +9,11 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
 import SiteIcon from '../../components/site-icon';
 import { getSiteDisplayName } from '../../utils/site-name';
+import { omnibarEvents } from './events';
 import { OmnibarHomeIcon } from './home';
 import type { User } from '@automattic/api-core';
+
+const onClickResponsiveMenu = () => omnibarEvents.mobileMenu.emit();
 
 const UNSUPPORTED_DOTCOM_NODE_IDS = new Set( [
 	'site-plan',
@@ -68,7 +71,7 @@ export default function OmnibarContainer( { user }: { user?: User } ) {
 	if ( ! hydrated ) {
 		return <InitialOmnibar user={ user } />;
 	}
-	return <Omnibar nodes={ omnibarNodes } />;
+	return <Omnibar nodes={ omnibarNodes } onClickResponsiveMenu={ onClickResponsiveMenu } />;
 }
 
 export function InitialOmnibar( { user }: { user?: User } ) {
@@ -86,6 +89,7 @@ export function InitialOmnibar( { user }: { user?: User } ) {
 					icon: user ? <img src={ user.avatar_URL } alt="" /> : undefined,
 				},
 			} }
+			onClickResponsiveMenu={ onClickResponsiveMenu }
 		/>
 	);
 }
