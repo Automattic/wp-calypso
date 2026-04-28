@@ -231,7 +231,10 @@ function Welcome( { onEnable, planTier, onChangePlanTier }: WelcomeProps ) {
 										{ translate( 'by %(host)s', { args: { host: sampleShow.host } } ) }
 									</Text>
 									<Text variant="muted" size={ 11 }>
-										Apple Podcasts · Spotify · Overcast
+										{ translate( 'Apple Podcasts · Spotify · Overcast', {
+											comment:
+												'Hero preview directory list — names stay as proper nouns; the · separators may be re-localized.',
+										} ) }
 									</Text>
 								</VStack>
 							</HStack>

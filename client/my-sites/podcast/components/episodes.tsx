@@ -242,6 +242,11 @@ const Episodes = () => {
 		[ siteSlug, translate ]
 	);
 
+	const { data: processed, paginationInfo } = useMemo(
+		() => filterSortAndPaginate( episodes, view, fields ),
+		[ episodes, view, fields ]
+	);
+
 	const sectionHeader = (
 		<header className="podcast__section-header">
 			<h1 className="podcast__section-heading">{ translate( 'Episodes' ) }</h1>
@@ -260,15 +265,13 @@ const Episodes = () => {
 					title={ translate( 'No podcast episodes yet.' ) as string }
 					description={
 						translate(
-							'Select a podcast category in the Settings tab to start showing episodes here.'
+							'Set a podcast category in your podcasting settings to start showing episodes here.'
 						) as string
 					}
 				/>
 			</>
 		);
 	}
-
-	const { data: processed, paginationInfo } = filterSortAndPaginate( episodes, view, fields );
 
 	return (
 		<>
