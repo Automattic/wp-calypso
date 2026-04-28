@@ -215,6 +215,16 @@ function ImageStudioAgentChat( {
 							<StylePicker disabled={ isProcessing } mode={ mode } />
 						) }
 					</div>
+					{ isVideoMode && (
+						<p className="image-studio-modal__media-library-disclaimer">
+							<em>
+								{ __(
+									'All generated videos will be automatically saved to your media library.',
+									__i18n_text_domain__
+								) }
+							</em>
+						</p>
+					) }
 				</AgentUI.Footer>
 			</AgentUI.ConversationView>
 		</AgentUI.Container>
