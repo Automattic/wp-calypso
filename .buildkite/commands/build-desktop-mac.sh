@@ -17,6 +17,15 @@ export COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 # may not have 3.3.4, so we can't bump `.ruby-version` until then).
 export RBENV_VERSION=3.3.4
 
+# Force `electron-builder` to sign even on PR builds, so reviewers can
+# install and exercise the produced app.
+#
+# SECURITY TODO: this lets any PR have its code signed with the org's
+# Developer ID cert. It's set only while we validate the new Buildkite
+# pipeline; remove it as soon as the full end-to-end tag-driven release
+# build is available and PRs can stay unsigned again.
+export CSC_FOR_PULL_REQUEST=true
+
 cd desktop
 corepack enable
 yarn install --immutable --inline-builds
