@@ -14,6 +14,7 @@ import { useSelector } from 'calypso/state';
 import getPodcastingCategoryId from 'calypso/state/selectors/get-podcasting-category-id';
 import { getTerms } from 'calypso/state/terms/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import useEpisodeStatsQuery from '../hooks/use-episode-stats-query';
 import useEpisodesQuery from '../hooks/use-episodes-query';
 
 type Episode = {
@@ -23,6 +24,19 @@ type Episode = {
 	status: string;
 	link: string;
 	featuredMediaUrl: string;
+	playsAll: number;
+	durationSeconds: number | null;
+};
+
+const formatDuration = ( seconds: number | null ): string => {
+	if ( seconds == null || seconds <= 0 ) {
+		return '—';
+	}
+	const h = Math.floor( seconds / 3600 );
+	const m = Math.floor( ( seconds % 3600 ) / 60 );
+	const s = seconds % 60;
+	const pad = ( n: number ) => String( n ).padStart( 2, '0' );
+	return h > 0 ? `${ h }:${ pad( m ) }:${ pad( s ) }` : `${ m }:${ pad( s ) }`;
 };
 
 const defaultView: ViewTable = {
@@ -31,7 +45,7 @@ const defaultView: ViewTable = {
 	mediaField: 'media',
 	showTitle: true,
 	showMedia: true,
-	fields: [ 'duration', 'downloads', 'activity', 'date', 'status' ],
+	fields: [ 'duration', 'downloads', 'date', 'status' ],
 	page: 1,
 	perPage: 10,
 	sort: { field: 'date', direction: 'desc' },
@@ -41,7 +55,6 @@ const defaultView: ViewTable = {
 			title: { width: 'auto', minWidth: '260px' },
 			duration: { width: '110px' },
 			downloads: { width: '120px' },
-			activity: { width: '180px' },
 			date: { width: '150px' },
 			status: { width: '140px' },
 		},
@@ -76,6 +89,12 @@ const Episodes = () => {
 		categoryId: resolvedCategoryId,
 	} );
 
+	const postIds = useMemo< number[] >(
+		() => ( Array.isArray( data ) ? data.map( ( post ) => post.id ) : [] ),
+		[ data ]
+	);
+	const { data: statsByPostId } = useEpisodeStatsQuery( siteId, postIds );
+
 	const episodes = useMemo< Episode[] >( () => {
 		const posts = Array.isArray( data ) ? data : [];
 		return posts.map( ( post ) => {
@@ -85,6 +104,7 @@ const Episodes = () => {
 				media?.media_details?.sizes?.medium?.source_url ??
 				media?.source_url ??
 				'';
+			const stats = statsByPostId?.get( post.id );
 			return {
 				id: post.id,
 				title: decodeEntities( post.title?.rendered ?? '' ),
@@ -92,9 +112,11 @@ const Episodes = () => {
 				status: post.status,
 				link: post.link,
 				featuredMediaUrl: thumbnail,
+				playsAll: stats?.plays_all ?? 0,
+				durationSeconds: stats?.duration_seconds ?? null,
 			};
 		} );
-	}, [ data ] );
+	}, [ data, statsByPostId ] );
 
 	const statusLabels = useMemo< Record< string, string > >(
 		() => ( {
@@ -159,22 +181,16 @@ const Episodes = () => {
 				id: 'duration',
 				type: 'integer' as const,
 				label: translate( 'Duration' ) as string,
-				getValue: () => 0,
-				enableSorting: false,
+				getValue: ( { item }: { item: Episode } ) => item.durationSeconds ?? 0,
+				render: ( { item }: { item: Episode } ) => formatDuration( item.durationSeconds ),
+				enableSorting: true,
 			},
 			{
 				id: 'downloads',
 				type: 'integer' as const,
 				label: translate( 'Downloads' ) as string,
-				getValue: () => 0,
-				enableSorting: false,
-			},
-			{
-				id: 'activity',
-				type: 'integer' as const,
-				label: translate( '30-day activity' ) as string,
-				getValue: () => 0,
-				enableSorting: false,
+				getValue: ( { item }: { item: Episode } ) => item.playsAll,
+				enableSorting: true,
 			},
 			{
 				id: 'date',
