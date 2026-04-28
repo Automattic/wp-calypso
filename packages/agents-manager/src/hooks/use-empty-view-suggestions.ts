@@ -121,16 +121,12 @@ export function useEmptyViewSuggestions( {
 	}, [ isReaderChat ] );
 
 	useEffect( () => {
-		if ( ! loadedProviders || ! isCoreStoreReady ) {
-			return;
-		}
-
 		// Re-read override on every effect run. We compare by JSON-identity
 		// against the current state so we only call setState when the
 		// override content actually changes — otherwise a fresh array
 		// reference every render would loop infinitely.
 		const currentOverride = readOverrideSuggestions();
-		if ( currentOverride ) {
+		if ( currentOverride !== null ) {
 			const currentKey = JSON.stringify(
 				currentOverride.map( ( s ) => [ s.id, s.label, s.prompt ] )
 			);
@@ -140,6 +136,10 @@ export function useEmptyViewSuggestions( {
 			if ( currentKey !== stateKey ) {
 				setEmptyViewSuggestions( currentOverride );
 			}
+			return;
+		}
+
+		if ( ! loadedProviders || ! isCoreStoreReady ) {
 			return;
 		}
 
