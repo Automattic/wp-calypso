@@ -18,6 +18,19 @@ jest.mock( 'calypso/state/reader/feeds/selectors', () => ( {
 	getFeed: jest.fn(),
 } ) );
 
+jest.mock(
+	'calypso/reader/user-profile/views/achievements/use-achievements-visibility',
+	() => () => ( {
+		isOwnProfile: false,
+		isVisible: false,
+		isLoading: false,
+	} )
+);
+
+jest.mock( 'calypso/data/reader/use-years-of-service', () => ( {
+	useYearsOfService: () => ( { yearsOfService: undefined, isLoading: false } ),
+} ) );
+
 const createMockStore = () => {
 	const reducer = ( state = {} ) => state;
 	return createStore( reducer );
