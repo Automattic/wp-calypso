@@ -3,13 +3,18 @@
  */
 import { render } from '@testing-library/react';
 import { PostCardBody } from '../post-card-body';
-import type { AtmosphereFeedItem } from '@automattic/api-core';
+import type { SocialPost } from '../../../types';
 
-function baseHtml( html: string ): AtmosphereFeedItem {
+function baseHtml( html: string ): SocialPost {
 	return {
 		uri: 'at://x',
-		cid: 'c',
-		author: { did: 'd', handle: 'h.bsky.social', display_name: '', avatar: null },
+		author: {
+			id: 'd',
+			handle: 'h.bsky.social',
+			display_name: '',
+			avatar: null,
+			profile_url: 'https://bsky.app/profile/h.bsky.social',
+		},
 		created_at: '',
 		indexed_at: '',
 		text: 'hello',
@@ -20,7 +25,7 @@ function baseHtml( html: string ): AtmosphereFeedItem {
 		reason: null,
 		embed: null,
 		counts: { replies: 0, reposts: 0, likes: 0, quotes: 0 },
-		bluesky_url: '',
+		permalink: '',
 	};
 }
 

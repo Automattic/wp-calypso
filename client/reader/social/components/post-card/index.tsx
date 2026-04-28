@@ -7,12 +7,12 @@ import { PostCardCounts } from './post-card-counts';
 import { PostCardEmbed } from './post-card-embed';
 import { PostCardHeader } from './post-card-header';
 import { PostCardLink } from './post-card-link';
-import type { AtmosphereFeedItem } from '@automattic/api-core';
+import type { SocialPost } from '../../types';
 
 type SocialPostCardVariant = 'default' | 'compact';
 
 interface SocialPostCardProps {
-	post: AtmosphereFeedItem;
+	post: SocialPost;
 	variant?: SocialPostCardVariant;
 }
 

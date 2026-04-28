@@ -3,10 +3,10 @@ import { PostCardEmbedImages } from './post-card-embed-images';
 import { PostCardEmbedQuote } from './post-card-embed-quote';
 import { PostCardEmbedQuoteWithMedia } from './post-card-embed-quote-with-media';
 import { PostCardEmbedVideo } from './post-card-embed-video';
-import type { AtmosphereEmbed } from '@automattic/api-core';
+import type { SocialEmbed } from '../../types';
 
 interface PostCardEmbedProps {
-	embed: AtmosphereEmbed;
+	embed: SocialEmbed;
 	parentPostUri: string;
 }
 
@@ -22,5 +22,8 @@ export function PostCardEmbed( { embed, parentPostUri }: PostCardEmbedProps ) {
 			return <PostCardEmbedQuote embed={ embed } parentPostUri={ parentPostUri } />;
 		case 'quote_with_media':
 			return <PostCardEmbedQuoteWithMedia embed={ embed } parentPostUri={ parentPostUri } />;
+		case 'gifv':
+		case 'audio':
+			throw new Error( `Embed type "${ embed.type }" not yet wired — Task 15 of CM-626 plan.` );
 	}
 }

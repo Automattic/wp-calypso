@@ -6,8 +6,10 @@ import { UnknownAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { SocialFeedList, SocialPostCard } from 'calypso/reader/social';
 import { SocialAnalyticsProvider } from 'calypso/reader/social/components/post-card/analytics-context';
+import { mapAtmosphereFeedItemToSocialPost } from 'calypso/reader/social/mappers/atmosphere';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import type { AtmosphereConnection, AtmosphereFeedItem } from '@automattic/api-core';
+import type { SocialPost } from 'calypso/reader/social/types';
 import type { AppState } from 'calypso/types';
 
 interface TimelinePanelProps {
@@ -30,11 +32,13 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 		refetch,
 	} = useTimelineInfiniteQuery( connection.id );
 
-	const items: AtmosphereFeedItem[] = useMemo(
+	const items: SocialPost[] = useMemo(
 		() =>
-			data?.pages
-				.flatMap( ( page ) => page.items ?? [] )
-				.filter( ( post ): post is AtmosphereFeedItem => Boolean( post?.uri ) ) ?? [],
+			(
+				data?.pages
+					.flatMap( ( page ) => page.items ?? [] )
+					.filter( ( post ): post is AtmosphereFeedItem => Boolean( post?.uri ) ) ?? []
+			).map( mapAtmosphereFeedItemToSocialPost ),
 		[ data ]
 	);
 
@@ -79,10 +83,10 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 	);
 
 	const renderItem = useCallback(
-		( post: AtmosphereFeedItem ) => <SocialPostCard post={ post } variant="default" />,
+		( post: SocialPost ) => <SocialPostCard post={ post } variant="default" />,
 		[]
 	);
-	const itemKey = useCallback( ( post: AtmosphereFeedItem ) => post.uri, [] );
+	const itemKey = useCallback( ( post: SocialPost ) => post.uri, [] );
 
 	return (
 		<SocialAnalyticsProvider
@@ -92,7 +96,7 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 				onClick: onClickAnalytics,
 			} }
 		>
-			<SocialFeedList< AtmosphereFeedItem >
+			<SocialFeedList< SocialPost >
 				items={ items }
 				isPending={ isPending }
 				isError={ isError }

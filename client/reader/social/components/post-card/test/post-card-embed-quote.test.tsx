@@ -3,12 +3,17 @@
  */
 import { render, screen } from '@testing-library/react';
 import { PostCardEmbedQuote } from '../post-card-embed-quote';
-import type { AtmosphereFeedItem } from '@automattic/api-core';
+import type { SocialPost } from '../../../types';
 
-const innerPost: AtmosphereFeedItem = {
+const innerPost: SocialPost = {
 	uri: 'at://did:plc:abc/app.bsky.feed.post/inner',
-	cid: 'c',
-	author: { did: 'did:plc:abc', handle: 'inner.bsky.social', display_name: 'Inner', avatar: null },
+	author: {
+		id: 'did:plc:abc',
+		handle: 'inner.bsky.social',
+		display_name: 'Inner',
+		avatar: null,
+		profile_url: 'https://bsky.app/profile/inner.bsky.social',
+	},
 	created_at: '2026-04-27T09:00:00Z',
 	indexed_at: '2026-04-27T09:00:00Z',
 	text: 'inner text',
@@ -19,7 +24,7 @@ const innerPost: AtmosphereFeedItem = {
 	reason: null,
 	embed: null,
 	counts: { replies: 0, reposts: 0, likes: 0, quotes: 0 },
-	bluesky_url: 'https://bsky.app/profile/inner.bsky.social/post/inner',
+	permalink: 'https://bsky.app/profile/inner.bsky.social/post/inner',
 };
 
 describe( 'PostCardEmbedQuote', () => {

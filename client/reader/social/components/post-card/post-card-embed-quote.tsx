@@ -1,16 +1,16 @@
 import { useSocialAnalytics } from './analytics-context';
 import { PostCardEmbedQuoteTombstone } from './post-card-embed-quote-tombstone';
 import { SocialPostCard } from './index';
-import type { AtmosphereEmbedQuote } from '@automattic/api-core';
+import type { SocialEmbedQuote } from '../../types';
 
 interface PostCardEmbedQuoteProps {
-	embed: AtmosphereEmbedQuote;
+	embed: SocialEmbedQuote;
 	parentPostUri: string;
 }
 
 export function PostCardEmbedQuote( { embed, parentPostUri }: PostCardEmbedQuoteProps ) {
 	const analytics = useSocialAnalytics();
-	// AtmosphereFeedItem has no `type` field; the discriminator only exists on
+	// SocialPost has no `type` field; the discriminator only exists on
 	// the tombstone shape, so narrow via `in` rather than property access.
 	if ( 'type' in embed.post ) {
 		return <PostCardEmbedQuoteTombstone tombstone={ embed.post } />;
@@ -29,7 +29,7 @@ export function PostCardEmbedQuote( { embed, parentPostUri }: PostCardEmbedQuote
 	return (
 		<a
 			className="social-post-card-embed-quote-link"
-			href={ inner.bluesky_url }
+			href={ inner.permalink }
 			target="_blank"
 			rel="noopener noreferrer"
 			onClick={ handleClick }

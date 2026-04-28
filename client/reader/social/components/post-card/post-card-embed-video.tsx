@@ -1,7 +1,7 @@
-import type { AtmosphereEmbedVideo } from '@automattic/api-core';
+import type { SocialEmbedVideo } from '../../types';
 
 interface PostCardEmbedVideoProps {
-	embed: AtmosphereEmbedVideo;
+	embed: SocialEmbedVideo;
 }
 
 export function PostCardEmbedVideo( { embed }: PostCardEmbedVideoProps ) {

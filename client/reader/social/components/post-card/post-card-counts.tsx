@@ -4,12 +4,12 @@ import { useTranslate } from 'i18n-calypso';
 import ReaderCommentIcon from 'calypso/reader/components/icons/comment-icon';
 import ReaderLikeIcon from 'calypso/reader/components/icons/like-icon';
 import ReaderRepostIcon from 'calypso/reader/components/icons/repost';
-import type { AtmosphereCounts } from '@automattic/api-core';
+import type { SocialCounts } from '../../types';
 
 const ICON_SIZE = 16;
 
 interface PostCardCountsProps {
-	counts: AtmosphereCounts;
+	counts: SocialCounts;
 }
 
 export function PostCardCounts( { counts }: PostCardCountsProps ) {

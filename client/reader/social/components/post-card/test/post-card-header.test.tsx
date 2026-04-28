@@ -3,12 +3,17 @@
  */
 import { render, screen } from '@testing-library/react';
 import { PostCardHeader } from '../post-card-header';
-import type { AtmosphereFeedItem } from '@automattic/api-core';
+import type { SocialPost } from '../../../types';
 
-const base: AtmosphereFeedItem = {
+const base: SocialPost = {
 	uri: 'at://did:plc:abc/app.bsky.feed.post/x',
-	cid: 'c',
-	author: { did: 'did:plc:abc', handle: 'alice.bsky.social', display_name: 'Alice', avatar: null },
+	author: {
+		id: 'did:plc:abc',
+		handle: 'alice.bsky.social',
+		display_name: 'Alice',
+		avatar: null,
+		profile_url: 'https://bsky.app/profile/alice.bsky.social',
+	},
 	created_at: '2026-04-27T10:00:00Z',
 	indexed_at: '2026-04-27T10:00:00Z',
 	text: '',
@@ -19,7 +24,7 @@ const base: AtmosphereFeedItem = {
 	reason: null,
 	embed: null,
 	counts: { replies: 0, reposts: 0, likes: 0, quotes: 0 },
-	bluesky_url: 'https://bsky.app/profile/alice.bsky.social/post/x',
+	permalink: 'https://bsky.app/profile/alice.bsky.social/post/x',
 };
 
 describe( 'PostCardHeader', () => {
@@ -49,7 +54,7 @@ describe( 'PostCardHeader', () => {
 					...base,
 					reason: {
 						type: 'repost',
-						by: { did: 'did:plc:bob', handle: 'bob.bsky.social', display_name: 'Bob' },
+						by: { id: 'did:plc:bob', handle: 'bob.bsky.social', display_name: 'Bob' },
 					},
 				} }
 				variant="default"
@@ -65,7 +70,7 @@ describe( 'PostCardHeader', () => {
 					...base,
 					reply_parent: {
 						uri: 'at://x',
-						author: { did: 'did:plc:c', handle: 'carol.bsky.social' },
+						author: { id: 'did:plc:c', handle: 'carol.bsky.social' },
 					},
 				} }
 				variant="default"

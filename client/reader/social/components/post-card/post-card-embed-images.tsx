@@ -1,8 +1,8 @@
 import clsx from 'clsx';
-import type { AtmosphereEmbedImages } from '@automattic/api-core';
+import type { SocialEmbedImages } from '../../types';
 
 interface PostCardEmbedImagesProps {
-	embed: AtmosphereEmbedImages;
+	embed: SocialEmbedImages;
 }
 
 export function PostCardEmbedImages( { embed }: PostCardEmbedImagesProps ) {
