@@ -131,12 +131,16 @@ const LaunchBigSky: StepType = function ( props ) {
 	const onSubmit = useCallback(
 		async ( event: FormEvent ) => {
 			event.preventDefault();
-			// Awaiting ensures big_sky_enable() runs on the backend before we redirect to site-editor.php.
-			await setIntentOnSite( siteSlug, SiteIntent.AIAssembler );
+			// Fire both in parallel; await both so the Atomic plugin and big_sky_enable option
+			// are set before we redirect to site-editor.php.
+			await Promise.all( [
+				setIntentOnSite( siteSlug, SiteIntent.AIAssembler ),
+				wpcom.req.post( `/sites/${ siteId }/big-sky-plugin`, { enable: true, sync: true } ),
+			] );
 			setGoalsOnSite( siteSlug, goals );
 			exitFlow( siteId.toString(), siteSlug );
 		},
-		[ setIntentOnSite, siteSlug, setGoalsOnSite, goals, exitFlow, siteId ]
+		[ setIntentOnSite, siteSlug, siteId, setGoalsOnSite, goals, exitFlow ]
 	);
 
 	useEffect( () => {
