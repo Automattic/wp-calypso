@@ -276,6 +276,7 @@ const ImageStudioContent = withInstanceId(
 			originalAttachmentId,
 			isSidebarOpen,
 			currentVideoUrl,
+			isVideoMode,
 		} = useSelect( ( select ) => {
 			const selectors = select( imageStudioStore );
 			const currentAttachmentId = selectors.getImageStudioAttachmentId();
@@ -284,6 +285,7 @@ const ImageStudioContent = withInstanceId(
 			// Older bundles never registered this store, so the selector is
 			// always present in the bundle that wrote it.
 			const videoUrl = select( videoStudioStore ).getCurrentVideoUrl?.() ?? null;
+			const entryPoint = selectors.getEntryPoint();
 			return {
 				isAiProcessing: selectors.getImageStudioAiProcessing(),
 				displayImageUrl: selectors.getImageStudioCurrentImageUrl(),
@@ -297,6 +299,7 @@ const ImageStudioContent = withInstanceId(
 				originalAttachmentId: selectors.getOriginalAttachmentId(),
 				isSidebarOpen: selectors.getIsSidebarOpen(),
 				currentVideoUrl: videoUrl,
+				isVideoMode: entryPoint === ImageStudioEntryPoint.PostEditorFeatureClip,
 			};
 		}, [] );
 
