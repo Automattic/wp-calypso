@@ -224,7 +224,7 @@ describe( 'atmosphere fetchers', () => {
 		};
 
 		it( 'fetches the thread for a given at-uri with default depth/parentHeight omitted from the request', async () => {
-			nock( 'https://public-api.wordpress.com' )
+			nock( BASE )
 				.get( '/wpcom/v2/reader/atmosphere/thread' )
 				.query( { uri: 'at://did:plc:abc/app.bsky.feed.post/3kabc' } )
 				.reply( 200, fixture );
@@ -236,7 +236,7 @@ describe( 'atmosphere fetchers', () => {
 		} );
 
 		it( 'forwards depth and parentHeight as query params when supplied', async () => {
-			nock( 'https://public-api.wordpress.com' )
+			nock( BASE )
 				.get( '/wpcom/v2/reader/atmosphere/thread' )
 				.query( {
 					uri: 'at://did:plc:abc/app.bsky.feed.post/3kabc',
@@ -254,7 +254,7 @@ describe( 'atmosphere fetchers', () => {
 		} );
 
 		it( 'classifies a 400 atmosphere_bad_request response as unknown', async () => {
-			nock( 'https://public-api.wordpress.com' )
+			nock( BASE )
 				.get( '/wpcom/v2/reader/atmosphere/thread' )
 				.query( true )
 				.reply( 400, { error: 'atmosphere_bad_request', message: 'Invalid AT-URI.' } );
@@ -265,7 +265,7 @@ describe( 'atmosphere fetchers', () => {
 		} );
 
 		it( 'classifies a 404 atmosphere_not_found response', async () => {
-			nock( 'https://public-api.wordpress.com' )
+			nock( BASE )
 				.get( '/wpcom/v2/reader/atmosphere/thread' )
 				.query( true )
 				.reply( 404, { error: 'atmosphere_not_found', message: 'Thread not found.' } );
@@ -276,7 +276,7 @@ describe( 'atmosphere fetchers', () => {
 		} );
 
 		it( 'classifies a 401 atmosphere_auth_required response', async () => {
-			nock( 'https://public-api.wordpress.com' )
+			nock( BASE )
 				.get( '/wpcom/v2/reader/atmosphere/thread' )
 				.query( true )
 				.reply( 401, { error: 'atmosphere_auth_required' } );
@@ -287,7 +287,7 @@ describe( 'atmosphere fetchers', () => {
 		} );
 
 		it( 'classifies a 429 atmosphere_rate_limited response with retry_after', async () => {
-			nock( 'https://public-api.wordpress.com' )
+			nock( BASE )
 				.get( '/wpcom/v2/reader/atmosphere/thread' )
 				.query( true )
 				.reply( 429, {
@@ -301,7 +301,7 @@ describe( 'atmosphere fetchers', () => {
 		} );
 
 		it( 'classifies a 502 atmosphere_upstream_unavailable response', async () => {
-			nock( 'https://public-api.wordpress.com' )
+			nock( BASE )
 				.get( '/wpcom/v2/reader/atmosphere/thread' )
 				.query( true )
 				.reply( 502, { error: 'atmosphere_upstream_unavailable' } );
@@ -312,7 +312,7 @@ describe( 'atmosphere fetchers', () => {
 		} );
 
 		it( 'classifies a network error as unknown', async () => {
-			nock( 'https://public-api.wordpress.com' )
+			nock( BASE )
 				.get( '/wpcom/v2/reader/atmosphere/thread' )
 				.query( true )
 				.replyWithError( 'boom' );

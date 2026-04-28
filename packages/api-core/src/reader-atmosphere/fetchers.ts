@@ -88,6 +88,7 @@ export interface GetThreadParams {
 export async function getThread( params: GetThreadParams ): Promise< AtmosphereThreadResponse > {
 	const { uri, depth, parentHeight } = params;
 	const query: Record< string, string > = { uri };
+	// typeof guard preserves depth=0 (root only) and parentHeight=0 — valid backend values.
 	if ( typeof depth === 'number' ) {
 		query.depth = String( depth );
 	}
