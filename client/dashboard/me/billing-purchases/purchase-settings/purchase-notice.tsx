@@ -84,14 +84,11 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 		if ( upgraded ) {
 			// Strip ?upgraded from the URL so the notice doesn't survive refresh.
 			navigate( {
-				search: ( prev: Record< string, unknown > ) => {
-					const { upgraded: _, ...rest } = prev;
-					return rest;
-				},
+				search: { refunded },
 				replace: true,
 			} );
 		}
-	}, [ upgraded, navigate ] );
+	}, [ upgraded, refunded, navigate ] );
 
 	if ( showUpgradedNotice ) {
 		return (
