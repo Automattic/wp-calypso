@@ -4,33 +4,33 @@
 import { QueryClient } from '@tanstack/react-query';
 import { waitFor } from '@testing-library/react';
 import nock from 'nock';
-import { createStore } from 'redux';
-import { READER_LISTS_RECEIVE } from 'calypso/state/reader/action-types';
+import { applyMiddleware, combineReducers, createStore } from 'redux';
+import { thunk as thunkMiddleware } from 'redux-thunk';
+import readerReducer from 'calypso/state/reader/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import QueryReaderLists from '../index';
 
 function createTestStore() {
-	const actions: Array< { type: string; [ key: string ]: unknown } > = [];
-	const store = createStore( ( state = {} ) => state );
-	const originalDispatch = store.dispatch;
-	store.dispatch = ( action: any ) => {
-		actions.push( action );
-		return originalDispatch( action );
-	};
-	return { store, actions };
+	return createStore(
+		combineReducers( { reader: readerReducer } ),
+		applyMiddleware( thunkMiddleware )
+	);
+}
+
+function createQueryClient() {
+	return new QueryClient( {
+		defaultOptions: { queries: { retry: false } },
+	} );
 }
 
 describe( 'QueryReaderLists', () => {
-	beforeEach( () => {
-		nock.disableNetConnect();
-	} );
-
+	beforeEach( () => nock.disableNetConnect() );
 	afterEach( () => {
 		nock.cleanAll();
 		nock.enableNetConnect();
 	} );
 
-	it( 'dispatches receiveLists when the query resolves', async () => {
+	it( 'syncs subscribed lists to Redux when the query resolves', async () => {
 		const lists = [
 			{
 				ID: 1,
@@ -48,17 +48,11 @@ describe( 'QueryReaderLists', () => {
 			.query( { create_recommended_blogs_list: 'true' } )
 			.reply( 200, { lists } );
 
-		const { store, actions } = createTestStore();
-		const queryClient = new QueryClient( {
-			defaultOptions: { queries: { retry: false } },
-		} );
-
-		renderWithProvider( <QueryReaderLists />, { store, queryClient } );
+		const store = createTestStore();
+		renderWithProvider( <QueryReaderLists />, { store, queryClient: createQueryClient() } );
 
 		await waitFor( () => {
-			const receiveAction = actions.find( ( a ) => a.type === READER_LISTS_RECEIVE );
-			expect( receiveAction ).toBeDefined();
-			expect( receiveAction?.lists ).toEqual( lists );
+			expect( store.getState().reader.lists.items[ 1 ] ).toEqual( lists[ 0 ] );
 		} );
 	} );
 
@@ -68,12 +62,11 @@ describe( 'QueryReaderLists', () => {
 			.query( { create_recommended_blogs_list: 'true' } )
 			.reply( 200, { lists: [] } );
 
-		const { store } = createTestStore();
-		const queryClient = new QueryClient( {
-			defaultOptions: { queries: { retry: false } },
+		const { container } = renderWithProvider( <QueryReaderLists />, {
+			store: createTestStore(),
+			queryClient: createQueryClient(),
 		} );
 
-		const { container } = renderWithProvider( <QueryReaderLists />, { store, queryClient } );
 		expect( container.innerHTML ).toBe( '' );
 	} );
 } );
