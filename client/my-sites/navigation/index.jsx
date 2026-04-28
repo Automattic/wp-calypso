@@ -35,14 +35,27 @@ class MySitesNavigation extends Component {
 		if ( config.isEnabled( 'jetpack-cloud' ) ) {
 			asyncSidebar = (
 				<AsyncLoad
-					require="calypso/jetpack-cloud/sections/sidebar-navigation/manage-selected-site"
+					require={ () =>
+						import(
+							/* webpackChunkName: "async-load-calypso-jetpack-cloud-sections-sidebar-navigation-manage-selected-site" */ 'calypso/jetpack-cloud/sections/sidebar-navigation/manage-selected-site'
+						)
+					}
 					{ ...asyncProps }
 				/>
 			);
 		} else if ( this.props.isGlobalSidebarVisible ) {
 			return this.renderGlobalSidebar();
 		} else {
-			asyncSidebar = <AsyncLoad require="calypso/my-sites/sidebar" { ...asyncProps } />;
+			asyncSidebar = (
+				<AsyncLoad
+					require={ () =>
+						import(
+							/* webpackChunkName: "async-load-calypso-my-sites-sidebar" */ 'calypso/my-sites/sidebar'
+						)
+					}
+					{ ...asyncProps }
+				/>
+			);
 		}
 
 		return <div className="my-sites__navigation">{ asyncSidebar }</div>;

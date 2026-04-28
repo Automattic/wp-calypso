@@ -4,6 +4,7 @@ import type {
 	AtmosphereConnectionDetails,
 	AtmosphereConnectionsResponse,
 	AtmosphereCreateConnectionResponse,
+	AtmosphereTimelinePage,
 } from './types';
 
 const NAMESPACE = 'wpcom/v2';
@@ -44,6 +45,34 @@ export async function getConnection( id: number ): Promise< AtmosphereConnection
 			path: `/reader/atmosphere/connections/${ id }`,
 			apiNamespace: NAMESPACE,
 		} ) ) as AtmosphereConnectionDetails;
+	} catch ( raw ) {
+		throw classifyAtmosphereError( raw );
+	}
+}
+
+export interface GetTimelineParams {
+	connectionId: number;
+	cursor?: string;
+	limit?: number;
+}
+
+export async function getTimeline( params: GetTimelineParams ): Promise< AtmosphereTimelinePage > {
+	const { connectionId, cursor, limit } = params;
+	const query: Record< string, string > = {};
+	if ( cursor ) {
+		query.cursor = cursor;
+	}
+	if ( limit ) {
+		query.limit = String( limit );
+	}
+	try {
+		return ( await wpcom.req.get(
+			{
+				path: `/reader/atmosphere/connections/${ connectionId }/timeline`,
+				apiNamespace: NAMESPACE,
+			},
+			query
+		) ) as AtmosphereTimelinePage;
 	} catch ( raw ) {
 		throw classifyAtmosphereError( raw );
 	}

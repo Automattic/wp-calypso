@@ -17,11 +17,22 @@ function SiteNotices() {
 	return (
 		<>
 			{ isEnabled( 'current-site/domain-warning' ) && (
-				<AsyncLoad require="calypso/my-sites/current-site/domain-warnings" placeholder={ null } />
+				<AsyncLoad
+					require={ () =>
+						import(
+							/* webpackChunkName: "async-load-calypso-my-sites-current-site-domain-warnings" */ './domain-warnings'
+						)
+					}
+					placeholder={ null }
+				/>
 			) }
 			{ isEnabled( 'current-site/notice' ) && (
 				<AsyncLoad
-					require="calypso/my-sites/current-site/notice"
+					require={ () =>
+						import(
+							/* webpackChunkName: "async-load-calypso-my-sites-current-site-notice" */ './notice'
+						)
+					}
 					placeholder={ null }
 					site={ selectedSite }
 				/>

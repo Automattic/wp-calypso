@@ -9,7 +9,7 @@ export default class DevdocsAsyncLoad extends PureComponent {
 	};
 	static propTypes = {
 		placeholderCount: PropTypes.number,
-		require: PropTypes.oneOfType( [ PropTypes.func, PropTypes.string ] ).isRequired,
+		require: PropTypes.func.isRequired,
 	};
 
 	render() {

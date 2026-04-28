@@ -148,7 +148,11 @@ export function overview( context, next ) {
 		siteId !== null ? (
 			<StatsPageLoader>
 				<AsyncLoad
-					require="calypso/my-sites/stats/overview"
+					require={ () =>
+						import(
+							/* webpackChunkName: "async-load-calypso-my-sites-stats-overview" */ './overview'
+						)
+					}
 					placeholder={ PageLoading }
 					period={ activeFilter.period }
 					path={ context.pathname }
@@ -156,7 +160,11 @@ export function overview( context, next ) {
 			</StatsPageLoader>
 		) : (
 			<AsyncLoad
-				require="calypso/my-sites/stats/overview"
+				require={ () =>
+					import(
+						/* webpackChunkName: "async-load-calypso-my-sites-stats-overview" */ './overview'
+					)
+				}
 				placeholder={ PageLoading }
 				period={ activeFilter.period }
 				path={ context.pathname }
@@ -307,7 +315,9 @@ export function summary( context, next ) {
 	context.primary = (
 		<StatsPageLoader>
 			<AsyncLoad
-				require="calypso/my-sites/stats/summary"
+				require={ () =>
+					import( /* webpackChunkName: "async-load-calypso-my-sites-stats-summary" */ './summary' )
+				}
 				placeholder={ PageLoading }
 				path={ context.pathname }
 				statsQueryOptions={ statsQueryOptions }
@@ -337,7 +347,11 @@ export function post( context, next ) {
 	context.primary = (
 		<StatsPageLoader>
 			<AsyncLoad
-				require="calypso/my-sites/stats/stats-post-detail"
+				require={ () =>
+					import(
+						/* webpackChunkName: "async-load-calypso-my-sites-stats-stats-post-detail" */ './stats-post-detail'
+					)
+				}
 				placeholder={ PageLoading }
 				path={ context.path }
 				postId={ postId }
@@ -375,7 +389,11 @@ export function follows( context, next ) {
 	context.primary = (
 		<StatsPageLoader>
 			<AsyncLoad
-				require="calypso/my-sites/stats/comment-follows"
+				require={ () =>
+					import(
+						/* webpackChunkName: "async-load-calypso-my-sites-stats-comment-follows" */ './comment-follows'
+					)
+				}
 				placeholder={ PageLoading }
 				path={ context.path }
 				page={ pageNum }
@@ -421,7 +439,9 @@ export function wordAds( context, next ) {
 
 	context.primary = (
 		<AsyncLoad
-			require="calypso/my-sites/stats/wordads"
+			require={ () =>
+				import( /* webpackChunkName: "async-load-calypso-my-sites-stats-wordads" */ './wordads' )
+			}
 			placeholder={ PageLoading }
 			path={ context.pathname }
 			date={ date }

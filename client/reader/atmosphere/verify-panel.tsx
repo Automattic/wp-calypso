@@ -66,6 +66,7 @@ function errorMessage(
 ): TranslateResult {
 	switch ( error.kind ) {
 		case 'auth_failed':
+		case 'auth_required':
 			return translate(
 				'Your Bluesky connection needs to be re-authorized. Disconnect and reconnect.'
 			);
@@ -74,6 +75,7 @@ function errorMessage(
 		case 'upstream_unavailable':
 			return translate( 'Bluesky is unreachable right now.' );
 		case 'connection_not_found':
+		case 'not_found':
 			return translate( 'That connection is no longer available.' );
 		case 'invalid_handle':
 		case 'invalid_credentials':

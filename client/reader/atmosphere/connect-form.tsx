@@ -80,7 +80,9 @@ function errorMessage(
 		case 'upstream_unavailable':
 			return translate( 'Bluesky is unreachable right now.' );
 		case 'auth_failed':
+		case 'auth_required':
 		case 'connection_not_found':
+		case 'not_found':
 		case 'bad_request':
 		case 'unknown':
 			return translate( 'Something went wrong.' );

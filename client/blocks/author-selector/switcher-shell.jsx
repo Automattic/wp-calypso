@@ -64,7 +64,11 @@ class AuthorSwitcherShell extends Component {
 				>
 					{ ( this.props.search || users.length > 10 ) && (
 						<AsyncLoad
-							require="@automattic/search"
+							require={ () =>
+								import(
+									/* webpackChunkName: "async-load-automattic-search" */ '@automattic/search'
+								)
+							}
 							compact
 							onSearch={ this.props.updateSearch }
 							placeholder={ this.props.translate( 'Find Author…', { context: 'search label' } ) }

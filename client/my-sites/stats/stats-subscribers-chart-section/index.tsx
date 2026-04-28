@@ -277,7 +277,11 @@ export default function SubscribersChartSection( {
 					<div className="subscribers-section-legend" ref={ legendRef }></div>
 					{ isChartLibraryEnabled ? (
 						<AsyncLoad
-							require="calypso/my-sites/stats/components/line-chart"
+							require={ () =>
+								import(
+									/* webpackChunkName: "async-load-calypso-my-sites-stats-components-line-chart" */ 'calypso/my-sites/stats/components/line-chart'
+								)
+							}
 							chartData={ lineChartData }
 							height={ 300 }
 							curveType="monotone" // can use smooth, linear, monotone
