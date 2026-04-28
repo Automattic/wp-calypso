@@ -15,7 +15,7 @@ import { getTerms } from 'calypso/state/terms/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import Distribution from './components/distribution';
 import Episodes from './components/episodes';
-import Welcome, { type PlanTier } from './components/welcome';
+import Welcome from './components/welcome';
 import useAccessGate from './hooks/use-access-gate';
 
 import './style.scss';
@@ -67,13 +67,14 @@ const PodcastMain = ( { section }: PodcastMainProps ) => {
 	const pathSuffix = siteSlug ? '/' + siteSlug : '';
 
 	// Welcome shows when podcasting is not set up on this site. The local
-	// enable flag lets the prototype Enable button flip the view without
-	// touching the real podcasting_category_id setting.
+	// enable flag lets the Enable button flip the view without touching
+	// the real podcasting_category_id setting.
 	const [ enabled, setEnabled ] = useState( false );
 	const podcastingOn = enabled || isSetUp;
-	const [ planTier, setPlanTier ] = useState< PlanTier >( 'free' );
-	const hasSectionInRoute = isValidSection( section );
-	const showTabs = podcastingOn || hasSectionInRoute;
+	// Tabs only show when podcasting is actually on. A deep link to
+	// /podcast/episodes/[site] on a non-set-up site bounces back to the
+	// welcome via the URL-sync effect below.
+	const showTabs = podcastingOn;
 
 	// Track the active tab in local state so clicking a tab swaps the panel
 	// without re-running the page.js controller (which would re-mount the
@@ -88,17 +89,21 @@ const PodcastMain = ( { section }: PodcastMainProps ) => {
 		}
 	}, [ section ] );
 
-	// Normalize the bare `/podcast/[site]` URL to the default tab once the
-	// tabbed view is showing. Welcome stays on the bare URL.
+	// Keep the URL in sync with the current view: tabs live at
+	// /podcast/<section>/[site], welcome at the bare /podcast/[site]. A
+	// disabled podcast on a section URL gets bounced back to welcome.
 	useEffect( () => {
-		if ( ! showTabs || hasSectionInRoute ) {
+		if ( ! isSetupResolved && ! enabled ) {
 			return;
 		}
-		const target = '/podcast/episodes' + pathSuffix;
-		if ( window.location.pathname !== target ) {
-			window.history.replaceState( null, '', target );
+		const path = window.location.pathname;
+		const isSectionUrl = /^\/podcast\/(episodes|distribution)(\/|$)/.test( path );
+		if ( showTabs && ! isSectionUrl ) {
+			window.history.replaceState( null, '', '/podcast/episodes' + pathSuffix );
+		} else if ( ! showTabs && isSectionUrl ) {
+			window.history.replaceState( null, '', '/podcast' + pathSuffix );
 		}
-	}, [ showTabs, hasSectionInRoute, pathSuffix ] );
+	}, [ showTabs, isSetupResolved, enabled, pathSuffix ] );
 
 	const tabs = [
 		{
@@ -129,7 +134,7 @@ const PodcastMain = ( { section }: PodcastMainProps ) => {
 
 	// Render nothing until we know whether podcasting is set up — prevents a
 	// Welcome flash before terms/site-settings resolve and we switch to tabs.
-	const isWaitingForSetup = ! isSetupResolved && ! hasSectionInRoute && ! enabled;
+	const isWaitingForSetup = ! isSetupResolved && ! enabled;
 
 	let pageContent;
 	if ( accessGate ) {
@@ -170,11 +175,7 @@ const PodcastMain = ( { section }: PodcastMainProps ) => {
 	} else {
 		pageContent = (
 			<div className="podcast__tab-content">
-				<Welcome
-					onEnable={ () => setEnabled( true ) }
-					planTier={ planTier }
-					onChangePlanTier={ setPlanTier }
-				/>
+				<Welcome onEnable={ () => setEnabled( true ) } planTier="free" />
 			</div>
 		);
 	}
@@ -189,7 +190,7 @@ const PodcastMain = ( { section }: PodcastMainProps ) => {
 				showSidebarToggle={ false }
 				title={ <JetpackTitle title={ translate( 'Podcast' ) } /> }
 				subTitle={ translate(
-					'Publish a podcast feed to Apple Podcasts and other podcasting services. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+					'Publish a podcast and reach your fans, anywhere they listen. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 					{
 						components: {
 							learnMoreLink: <InlineSupportLink supportContext="podcasting" showIcon={ false } />,

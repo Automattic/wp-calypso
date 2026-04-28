@@ -18,7 +18,6 @@ export type PlanTier = 'free' | 'personal' | 'premium' | 'business';
 interface WelcomeProps {
 	onEnable: () => void;
 	planTier: PlanTier;
-	onChangePlanTier: ( tier: PlanTier ) => void;
 }
 
 interface PlanDef {
@@ -167,7 +166,7 @@ const getSampleEpisodes = ( translate: Translate ) => [
 	},
 ];
 
-function Welcome( { onEnable, planTier, onChangePlanTier }: WelcomeProps ) {
+function Welcome( { onEnable, planTier }: WelcomeProps ) {
 	const translate = useTranslate();
 	const siteSlug = useSelector( getSelectedSiteSlug );
 
@@ -178,12 +177,6 @@ function Welcome( { onEnable, planTier, onChangePlanTier }: WelcomeProps ) {
 	const sampleShow = getSampleShow( translate );
 	const sampleEpisodes = getSampleEpisodes( translate );
 	const isFree = planTier === 'free';
-	const tierLabels: Record< PlanTier, string > = {
-		free: translate( 'Free' ) as string,
-		personal: translate( 'Personal' ) as string,
-		premium: translate( 'Premium' ) as string,
-		business: translate( 'Business' ) as string,
-	};
 	const pricingTitle = isFree
 		? ( translate( 'Get more out of podcasting with a plan upgrade' ) as string )
 		: ( translate( 'Podcasting is included in your plan' ) as string );
@@ -359,29 +352,6 @@ function Welcome( { onEnable, planTier, onChangePlanTier }: WelcomeProps ) {
 					</VStack>
 				</CardBody>
 			</Card>
-
-			{ /* Prototype plan toggle */ }
-			<HStack
-				alignment="center"
-				justify="flex-start"
-				spacing={ 2 }
-				className="podcast__welcome-demo-toggle"
-			>
-				<Text variant="muted" size={ 12 }>
-					{ translate( 'Prototype: demo plan' ) }
-				</Text>
-				{ ( [ 'free', 'personal', 'premium', 'business' ] as PlanTier[] ).map( ( tier ) => (
-					<Button
-						key={ tier }
-						variant={ planTier === tier ? 'primary' : 'secondary' }
-						size="compact"
-						aria-pressed={ planTier === tier }
-						onClick={ () => onChangePlanTier( tier ) }
-					>
-						{ tierLabels[ tier ] }
-					</Button>
-				) ) }
-			</HStack>
 		</VStack>
 	);
 }
