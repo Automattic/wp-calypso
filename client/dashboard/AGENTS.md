@@ -20,3 +20,6 @@ This is the new hosting dashboard for WordPress.com.
 - Dark-mode overrides for the dashboard app live in `client/dashboard/app/_dark-theme.scss`. Add to the existing `dashboard-dark-theme-*` mixins (or add a new one and `@include` it from `dashboard-dark-theme`) instead of writing ad-hoc `:root[data-theme='dark']` blocks elsewhere.
 - Prefer overriding the CSS custom properties already defined there (`--dashboard-*`, `--wp-components-*`, `--jp-*`) over hardcoding hex values in component styles.
 - For styles authored inside a CSS Module (`*.module.scss`), `:root`-based overrides cannot reach the scope-hashed class. Use the `when-dark-theme` mixin from `@automattic/ui` — see `packages/ui/AGENTS.md`.
+
+## Smoke test marker (post-#110238)
+Verifying the AGENTS.md skip guard fires for the dashboard auto-review flow and the @claude /review on-ping flow. Intentional test edit; will be reverted.
