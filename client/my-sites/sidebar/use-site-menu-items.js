@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { translate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { useCurrentRoute } from 'calypso/components/route';
 import domainOnlyFallbackMenu from 'calypso/my-sites/sidebar/static-data/domain-only-fallback-menu';
@@ -115,7 +116,21 @@ const useSiteMenuItems = () => {
 		showSiteMonitoring: isAtomic,
 	};
 
-	return menuItems ?? buildFallbackResponse( fallbackDataOverrides );
+	const isMyHomeItem = ( item ) =>
+		item.slug === 'home' ||
+		item.icon === 'dashicons-admin-home' ||
+		( typeof item.url === 'string' && /\/home\/[^/]+\/?$/.test( item.url ) );
+
+	const transformDashboardItem = ( items ) =>
+		items
+			?.filter( ( item ) => item.slug !== 'index-php' )
+			.map( ( item ) =>
+				isMyHomeItem( item )
+					? { ...item, icon: 'dashicons-dashboard', title: translate( 'Dashboard' ) }
+					: item
+			);
+
+	return transformDashboardItem( menuItems ) ?? buildFallbackResponse( fallbackDataOverrides );
 };
 
 export default useSiteMenuItems;

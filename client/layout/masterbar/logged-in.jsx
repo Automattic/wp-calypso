@@ -482,7 +482,7 @@ class MasterbarLoggedIn extends Component {
 		if ( isClassicView ) {
 			menuItems.push( { label: __( 'Dashboard' ), url: siteAdminUrl } );
 		} else {
-			menuItems.push( { label: __( 'My Home' ), url: siteHomeUrl } );
+			menuItems.push( { label: __( 'Dashboard' ), url: siteHomeUrl } );
 		}
 
 		if ( ! site?.is_wpcom_staging_site ) {
@@ -518,7 +518,7 @@ class MasterbarLoggedIn extends Component {
 			<Item
 				className="masterbar__item-my-site"
 				url={ siteUrl }
-				icon={ <span className="dashicons-before dashicons-admin-home" /> }
+				icon={ <span className="dashicons-before dashicons-dashboard" /> }
 				tipTarget="visit-site"
 				subItems={ [ menuItems ] }
 			>

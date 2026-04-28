@@ -57,9 +57,9 @@ export default function buildFallbackResponse( {
 
 	const fallbackResponse = [
 		{
-			icon: 'dashicons-admin-home',
+			icon: 'dashicons-dashboard',
 			slug: 'home',
-			title: translate( 'My Home' ),
+			title: translate( 'Dashboard' ),
 			type: 'menu-item',
 			url: `/home/${ siteDomain }`,
 		},
