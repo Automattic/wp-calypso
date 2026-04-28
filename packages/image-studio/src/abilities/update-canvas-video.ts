@@ -86,6 +86,11 @@ export async function registerUpdateCanvasVideoAbility(): Promise< void > {
 			callback: async ( input: UpdateCanvasVideoAbilityInput ) => {
 				const url = typeof input?.url === 'string' ? input.url.trim() : '';
 				const attachmentId = input?.attachmentId ? Number( input.attachmentId ) : null;
+				const rawDuration = input?.durationSeconds;
+				const durationSeconds =
+					typeof rawDuration === 'number' && Number.isFinite( rawDuration ) && rawDuration > 0
+						? rawDuration
+						: null;
 
 				if ( ! url ) {
 					throw new Error( 'url is required to update the canvas video.' );
@@ -94,7 +99,9 @@ export async function registerUpdateCanvasVideoAbility(): Promise< void > {
 					throw new Error( 'A positive attachmentId is required to update the canvas video.' );
 				}
 
-				const { setCurrentVideoUrl } = dispatch( videoStudioStore ) as VideoStudioActions;
+				const { setCurrentVideoUrl, setCurrentAttachmentId, setCurrentDurationSeconds } = dispatch(
+					videoStudioStore
+				) as VideoStudioActions;
 
 				try {
 					await preloadVideo( url );
@@ -103,6 +110,8 @@ export async function registerUpdateCanvasVideoAbility(): Promise< void > {
 				}
 
 				await setCurrentVideoUrl( url );
+				await setCurrentAttachmentId( attachmentId );
+				await setCurrentDurationSeconds( durationSeconds );
 
 				return { ok: true };
 			},

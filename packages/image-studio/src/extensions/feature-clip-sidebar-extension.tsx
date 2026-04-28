@@ -1,11 +1,10 @@
 /**
  * "Generate Feature Clip" post-editor sidebar panel.
  *
- * Registers a PluginDocumentSettingPanel in the Gutenberg post editor with a
- * single button that opens Image Studio in video-generation mode. Mirrors the
- * shape of Jetpack's "Generate featured image" sidebar panel.
- *
- * The wpcom-editor package provides PluginDocumentSettingPanel.
+ * Registers a PluginDocumentSettingPanel (from `@wordpress/editor`) in the
+ * Gutenberg post editor with a single button that opens the studio in
+ * video-generation mode. Mirrors the shape of Jetpack's "Generate featured
+ * image" sidebar panel.
  */
 import { Button } from '@wordpress/components';
 import { dispatch } from '@wordpress/data';
@@ -86,10 +85,10 @@ export function registerFeatureClipSidebar(): void {
 		return;
 	}
 
-	pluginRegistered = true;
 	registerPlugin( PLUGIN_NAME, {
 		render: FeatureClipPanel,
 	} );
+	pluginRegistered = true;
 }
 
 export { FeatureClipPanel, PLUGIN_NAME, PANEL_NAME };

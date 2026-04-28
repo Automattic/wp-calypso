@@ -554,7 +554,7 @@ const ImageStudioContent = withInstanceId(
 							<GenerateLayout
 								isAiProcessing={ isAiProcessing }
 								isPromptSent={ isPromptSent }
-								videoUrl={ currentVideoUrl }
+								videoUrl={ isVideoMode ? currentVideoUrl : null }
 							/>
 						) }
 

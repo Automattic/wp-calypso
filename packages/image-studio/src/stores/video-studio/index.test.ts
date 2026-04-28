@@ -35,6 +35,8 @@ describe( 'Video Studio Store', () => {
 			expect( state ).toEqual( {
 				selectedStyle: null,
 				currentVideoUrl: null,
+				currentAttachmentId: null,
+				currentDurationSeconds: null,
 			} );
 		} );
 	} );
@@ -58,9 +60,29 @@ describe( 'Video Studio Store', () => {
 			} );
 		} );
 
+		it( 'setCurrentAttachmentId creates action with payload', () => {
+			const action = actions.setCurrentAttachmentId( 42 );
+
+			expect( action ).toEqual( {
+				type: 'SET_CURRENT_ATTACHMENT_ID',
+				payload: 42,
+			} );
+		} );
+
+		it( 'setCurrentDurationSeconds creates action with payload', () => {
+			const action = actions.setCurrentDurationSeconds( 8 );
+
+			expect( action ).toEqual( {
+				type: 'SET_CURRENT_DURATION_SECONDS',
+				payload: 8,
+			} );
+		} );
+
 		it( 'allows null payloads to clear values', () => {
 			expect( actions.setSelectedStyle( null ).payload ).toBeNull();
 			expect( actions.setCurrentVideoUrl( null ).payload ).toBeNull();
+			expect( actions.setCurrentAttachmentId( null ).payload ).toBeNull();
+			expect( actions.setCurrentDurationSeconds( null ).payload ).toBeNull();
 		} );
 	} );
 
@@ -81,6 +103,24 @@ describe( 'Video Studio Store', () => {
 
 			expect( state.currentVideoUrl ).toBe( 'https://example.com/clip.mp4' );
 			expect( state.selectedStyle ).toBeNull();
+			expect( state.currentAttachmentId ).toBeNull();
+			expect( state.currentDurationSeconds ).toBeNull();
+		} );
+
+		it( 'SET_CURRENT_ATTACHMENT_ID updates currentAttachmentId', () => {
+			const state = reducer( getInitialState(), actions.setCurrentAttachmentId( 123 ) );
+
+			expect( state.currentAttachmentId ).toBe( 123 );
+			expect( state.currentVideoUrl ).toBeNull();
+			expect( state.currentDurationSeconds ).toBeNull();
+		} );
+
+		it( 'SET_CURRENT_DURATION_SECONDS updates currentDurationSeconds', () => {
+			const state = reducer( getInitialState(), actions.setCurrentDurationSeconds( 12 ) );
+
+			expect( state.currentDurationSeconds ).toBe( 12 );
+			expect( state.currentVideoUrl ).toBeNull();
+			expect( state.currentAttachmentId ).toBeNull();
 		} );
 
 		it( 'returns the same reference for unknown action types', () => {
@@ -93,10 +133,14 @@ describe( 'Video Studio Store', () => {
 		it( 'preserves existing slices when updating one slice', () => {
 			let state = reducer( getInitialState(), actions.setSelectedStyle( 'informative' ) );
 			state = reducer( state, actions.setCurrentVideoUrl( 'https://example.com/clip.mp4' ) );
+			state = reducer( state, actions.setCurrentAttachmentId( 7 ) );
+			state = reducer( state, actions.setCurrentDurationSeconds( 5 ) );
 
 			expect( state ).toEqual( {
 				selectedStyle: 'informative',
 				currentVideoUrl: 'https://example.com/clip.mp4',
+				currentAttachmentId: 7,
+				currentDurationSeconds: 5,
 			} );
 		} );
 
@@ -122,10 +166,22 @@ describe( 'Video Studio Store', () => {
 			expect( selectors.getCurrentVideoUrl( state ) ).toBe( 'https://example.com/clip.mp4' );
 		} );
 
+		it( 'getCurrentAttachmentId returns the current attachment ID', () => {
+			const state: VideoStudioState = { ...getInitialState(), currentAttachmentId: 314 };
+			expect( selectors.getCurrentAttachmentId( state ) ).toBe( 314 );
+		} );
+
+		it( 'getCurrentDurationSeconds returns the current duration in seconds', () => {
+			const state: VideoStudioState = { ...getInitialState(), currentDurationSeconds: 9 };
+			expect( selectors.getCurrentDurationSeconds( state ) ).toBe( 9 );
+		} );
+
 		it( 'all selectors return null on the initial state', () => {
 			const state = getInitialState();
 			expect( selectors.getSelectedStyle( state ) ).toBeNull();
 			expect( selectors.getCurrentVideoUrl( state ) ).toBeNull();
+			expect( selectors.getCurrentAttachmentId( state ) ).toBeNull();
+			expect( selectors.getCurrentDurationSeconds( state ) ).toBeNull();
 		} );
 	} );
 

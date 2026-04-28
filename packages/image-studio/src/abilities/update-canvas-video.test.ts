@@ -10,7 +10,13 @@
 const mockRegisterAbility = jest.fn();
 const mockRegisterAbilityCategory = jest.fn();
 const mockSetCurrentVideoUrl = jest.fn().mockResolvedValue( undefined );
-const mockDispatch = jest.fn( () => ( { setCurrentVideoUrl: mockSetCurrentVideoUrl } ) );
+const mockSetCurrentAttachmentId = jest.fn().mockResolvedValue( undefined );
+const mockSetCurrentDurationSeconds = jest.fn().mockResolvedValue( undefined );
+const mockDispatch = jest.fn( () => ( {
+	setCurrentVideoUrl: mockSetCurrentVideoUrl,
+	setCurrentAttachmentId: mockSetCurrentAttachmentId,
+	setCurrentDurationSeconds: mockSetCurrentDurationSeconds,
+} ) );
 
 jest.mock(
 	'@wordpress/abilities',
@@ -119,6 +125,44 @@ describe( 'registerUpdateCanvasVideoAbility', () => {
 		expect( mockSetCurrentVideoUrl ).toHaveBeenCalledTimes( 1 );
 		expect( mockSetCurrentVideoUrl ).toHaveBeenCalledWith( 'https://files.wordpress.com/clip.mp4' );
 		expect( result ).toEqual( { ok: true } );
+	} );
+
+	it( 'persists attachmentId and durationSeconds alongside the URL', async () => {
+		const { registerUpdateCanvasVideoAbility } = await import( './update-canvas-video' );
+		await registerUpdateCanvasVideoAbility();
+
+		const callback = getRegisteredCallback();
+		await callback( {
+			url: 'https://files.wordpress.com/clip.mp4',
+			attachmentId: 42,
+			durationSeconds: 8,
+		} );
+
+		expect( mockSetCurrentAttachmentId ).toHaveBeenCalledTimes( 1 );
+		expect( mockSetCurrentAttachmentId ).toHaveBeenCalledWith( 42 );
+		expect( mockSetCurrentDurationSeconds ).toHaveBeenCalledTimes( 1 );
+		expect( mockSetCurrentDurationSeconds ).toHaveBeenCalledWith( 8 );
+	} );
+
+	it( 'normalizes a missing or non-positive durationSeconds to null', async () => {
+		const { registerUpdateCanvasVideoAbility } = await import( './update-canvas-video' );
+		await registerUpdateCanvasVideoAbility();
+
+		const callback = getRegisteredCallback();
+		await callback( {
+			url: 'https://files.wordpress.com/clip.mp4',
+			attachmentId: 42,
+		} );
+
+		expect( mockSetCurrentDurationSeconds ).toHaveBeenLastCalledWith( null );
+
+		await callback( {
+			url: 'https://files.wordpress.com/clip.mp4',
+			attachmentId: 42,
+			durationSeconds: 0,
+		} );
+
+		expect( mockSetCurrentDurationSeconds ).toHaveBeenLastCalledWith( null );
 	} );
 
 	it( 'accepts a numeric attachmentId', async () => {
