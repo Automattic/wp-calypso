@@ -1,17 +1,15 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { waitFor } from 'calypso/my-sites/marketplace/util';
 import { useSelector, useDispatch } from 'calypso/state';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
-import {
-	getAutomatedTransferStatus,
-	isFetchingAutomatedTransferStatus,
-} from 'calypso/state/automated-transfer/selectors';
+import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { requestSite } from 'calypso/state/sites/actions';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+
+const POLL_INTERVAL_MS = 2000;
 
 export function useAtomicTransfer(
 	isAtomicNeeded: boolean
@@ -24,9 +22,6 @@ export function useAtomicTransfer(
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
 	const isJetpackSelfHosted = isJetpack && ! isAtomic;
-	const isFetchingTransferStatus = useSelector( ( state ) =>
-		isFetchingAutomatedTransferStatus( state, siteId )
-	);
 	const transferStatus = useSelector( ( state ) => getAutomatedTransferStatus( state, siteId ) );
 
 	const [ isAtomicTransferCheckComplete, setIsAtomicTransferCheckComplete ] = useState(
@@ -41,37 +36,48 @@ export function useAtomicTransfer(
 		setIsAtomicTransferCheckComplete( ! isAtomicNeeded );
 	}, [ isAtomicNeeded ] );
 
-	// Site is transferring to Atomic.
-	// Poll the transfer status.
 	useEffect( () => {
-		// Check the transfer status through the isSiteAtomic selector.
-		// This uses the `is_wpcom_atomic` flag returned by the sites endpoint.
 		if ( siteId && isSiteAtomic ) {
 			setIsAtomicTransferCheckComplete( true );
 		}
+	}, [ siteId, isSiteAtomic ] );
 
-		if ( ! siteId || isSiteAtomic || isJetpackSelfHosted || ! isAtomicNeeded ) {
+	// Phase 1: poll the automated-transfer status until COMPLETE.
+	useEffect( () => {
+		if (
+			! siteId ||
+			isSiteAtomic ||
+			isJetpackSelfHosted ||
+			! isAtomicNeeded ||
+			transferStatus === transferStates.COMPLETE
+		) {
 			return;
 		}
+		dispatch( fetchAutomatedTransferStatus( siteId ) );
+		const intervalId = window.setInterval( () => {
+			dispatch( fetchAutomatedTransferStatus( siteId ) );
+		}, POLL_INTERVAL_MS );
+		return () => window.clearInterval( intervalId );
+	}, [ siteId, dispatch, transferStatus, isJetpackSelfHosted, isAtomicNeeded, isSiteAtomic ] );
 
-		if ( ! isFetchingTransferStatus && transferStatus !== transferStates.COMPLETE ) {
-			waitFor( 2 ).then( () => dispatch( fetchAutomatedTransferStatus( siteId ) ) );
+	// Phase 2: once status is COMPLETE, poll the site endpoint until
+	// `is_wpcom_atomic` flips. This is the loop that was previously a one-shot.
+	useEffect( () => {
+		if (
+			! siteId ||
+			isSiteAtomic ||
+			isJetpackSelfHosted ||
+			! isAtomicNeeded ||
+			transferStatus !== transferStates.COMPLETE
+		) {
+			return;
 		}
-
-		// Once the transferStatus is reported complete, query the sites endpoint
-		// until the `is_wpcom_atomic` = true is returned
-		if ( transferStatus === transferStates.COMPLETE && ! isSiteAtomic ) {
-			waitFor( 2 ).then( () => dispatch( requestSite( siteId ) ) );
-		}
-	}, [
-		siteId,
-		dispatch,
-		transferStatus,
-		isFetchingTransferStatus,
-		isJetpackSelfHosted,
-		isAtomicNeeded,
-		isSiteAtomic,
-	] );
+		dispatch( requestSite( siteId ) );
+		const intervalId = window.setInterval( () => {
+			dispatch( requestSite( siteId ) );
+		}, POLL_INTERVAL_MS );
+		return () => window.clearInterval( intervalId );
+	}, [ siteId, dispatch, transferStatus, isJetpackSelfHosted, isAtomicNeeded, isSiteAtomic ] );
 
 	// Set progressbar (currentStep) depending on transfer/plugin status.
 	useEffect( () => {

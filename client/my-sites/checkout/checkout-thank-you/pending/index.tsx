@@ -6,9 +6,8 @@ import { Step } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { invokeSurvicateEvent } from '@automattic/survicate';
 import { useQuery } from '@tanstack/react-query';
-import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { useCheckoutHelpCenter } from 'calypso/my-sites/checkout/src/hooks/use-checkout-help-center';
@@ -16,13 +15,18 @@ import { getRedirectFromPendingPage } from 'calypso/my-sites/checkout/src/lib/pe
 import { sendMessageToOpener } from 'calypso/my-sites/checkout/src/lib/popup';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useSelector, useDispatch } from 'calypso/state';
+import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
+import { transferStates } from 'calypso/state/automated-transfer/constants';
+import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { SUCCESS } from 'calypso/state/order-transactions/constants';
 import getOrderTransactionError from 'calypso/state/selectors/get-order-transaction-error';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { requestSite } from 'calypso/state/sites/actions';
 import usePurchaseOrder from '../../src/hooks/use-purchase-order';
 import { logStashLoadErrorEvent } from '../../src/lib/analytics';
+import type { ResponseCart } from '@automattic/shopping-cart';
 import type { RedirectInstructions } from 'calypso/my-sites/checkout/src/lib/pending-page';
 import type {
 	OrderTransaction,
@@ -48,6 +52,10 @@ interface CheckoutPendingProps {
 }
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
+
+const MIN_PENDING_HOLD_MS = 3000;
+const MAX_ATOMIC_TRANSFER_WAIT_MS = 90_000;
+const ATOMIC_TRANSFER_POLL_INTERVAL_MS = 2000;
 
 function PendingPageHelpLink() {
 	const { helpCenterButtonLink, toggleHelpCenter } = useCheckoutHelpCenter();
@@ -89,18 +97,17 @@ function CheckoutPending( {
 }: CheckoutPendingProps ) {
 	const orderId = isValidOrderId( orderIdOrPlaceholder ) ? orderIdOrPlaceholder : undefined;
 
-	const { isExiting } = useRedirectOnTransactionSuccess( {
+	const { isAtomicTransferExpected } = useRedirectOnTransactionSuccess( {
 		orderId,
 		receiptId,
 		siteSlug,
 		redirectTo,
 		fromSiteSlug,
 	} );
+	const loadingPhrase = useAtomicTransferLoadingPhrase( isAtomicTransferExpected );
 
 	const content = (
-		<div className={ clsx( 'checkout-pending__loading', { 'is-exiting': isExiting } ) }>
-			<Step.Loading topBarRightElement={ <PendingPageHelpLink /> } />
-		</div>
+		<Step.Loading topBarRightElement={ <PendingPageHelpLink /> } title={ loadingPhrase } />
 	);
 
 	return (
@@ -123,8 +130,59 @@ function isValidOrderId( orderId: number | ':orderId' ): orderId is number {
 	return Number.isInteger( orderId );
 }
 
+function cartProductsContainAtomicTriggeringProduct(
+	products: ResponseCart[ 'products' ]
+): boolean {
+	return products.some( ( product ) => {
+		if ( product.extra?.is_marketplace_product === true ) {
+			return true;
+		}
+		const productType = product.extra?.product_type;
+		return (
+			productType === 'marketplace_plugin' ||
+			productType === 'marketplace_theme' ||
+			productType === 'saas_plugin'
+		);
+	} );
+}
+
+function useAtomicTransferLoadingPhrase( enabled: boolean ): string | undefined {
+	const translate = useTranslate();
+	const [ phraseIndex, setPhraseIndex ] = useState( -1 );
+
+	useEffect( () => {
+		if ( ! enabled ) {
+			return;
+		}
+		const timeouts = [
+			window.setTimeout( () => setPhraseIndex( 0 ), 1_000 ),
+			window.setTimeout( () => setPhraseIndex( 1 ), 10_000 ),
+			window.setTimeout( () => setPhraseIndex( 2 ), 25_000 ),
+			window.setTimeout( () => setPhraseIndex( 3 ), 45_000 ),
+		];
+		return () => timeouts.forEach( window.clearTimeout );
+	}, [ enabled ] );
+
+	if ( phraseIndex < 0 ) {
+		return undefined;
+	}
+
+	const phrases = [
+		translate( 'Preparing your site' ),
+		translate( 'Adding new capabilities' ),
+		translate( 'Activating features' ),
+		translate( 'Almost ready' ),
+	];
+
+	return phrases[ phraseIndex ];
+}
+
 function performRedirect( url: string ): void {
-	if ( url.startsWith( '/' ) ) {
+	if (
+		url.startsWith( '/' ) &&
+		! url.startsWith( '/setup/' ) &&
+		! url.includes( '/start/site-content-collection' )
+	) {
 		page( url );
 		return;
 	}
@@ -167,7 +225,7 @@ function useRedirectOnTransactionSuccess( {
 	 * logged in).
 	 */
 	fromSiteSlug?: string;
-} ): { isExiting: boolean } {
+} ): { isAtomicTransferExpected: boolean } {
 	const translate = useTranslate();
 
 	const { isLoading: isLoadingOrder, order: transaction } = usePurchaseOrder( orderId, 5000 );
@@ -190,7 +248,12 @@ function useRedirectOnTransactionSuccess( {
 	);
 	const reduxDispatch = useDispatch();
 	const cartKey = useCartKey();
-	const { reloadFromServer: reloadCart } = useShoppingCart( cartKey );
+	const { reloadFromServer: reloadCart, responseCart } = useShoppingCart( cartKey );
+	const [ cartProductsAtMount ] = useState( () => responseCart.products );
+	const isAtomicTransferExpected = useMemo(
+		() => cartProductsContainAtomicTriggeringProduct( cartProductsAtMount ),
+		[ cartProductsAtMount ]
+	);
 
 	const firstItem = receipt?.items[ 0 ];
 	const isRenewal = receipt?.items.some( ( item ) => item.type === 'recurring' ) ?? false;
@@ -226,8 +289,66 @@ function useRedirectOnTransactionSuccess( {
 			.finally( () => setIsUserRefreshedForUnified( true ) );
 	}, [ isUnifiedCheckout, blogId, reduxDispatch ] );
 
+	const [ atomicWaitTimedOut, setAtomicWaitTimedOut ] = useState( false );
+	const transferStatus = useSelector( ( state ) =>
+		blogId ? getAutomatedTransferStatus( state, blogId ) : null
+	);
+	const isFinalSiteAtomic = useSelector( ( state ) =>
+		blogId ? isSiteWpcomAtomic( state, blogId ) : false
+	);
+	const isAtomicTransferComplete =
+		! isAtomicTransferExpected || isFinalSiteAtomic || atomicWaitTimedOut;
+
+	// Poll the automated transfer status while we're waiting on it. Stops polling
+	// the moment we have a definitive answer (COMPLETE) or the watchdog timeout fires.
+	useEffect( () => {
+		if ( ! blogId || ! isAtomicTransferExpected || isAtomicTransferComplete ) {
+			return;
+		}
+		// Fire one immediately and then on an interval. The first call kicks off
+		// the request even if the polling interval is long.
+		reduxDispatch( fetchAutomatedTransferStatus( blogId ) );
+		const intervalId = window.setInterval( () => {
+			reduxDispatch( fetchAutomatedTransferStatus( blogId ) );
+		}, ATOMIC_TRANSFER_POLL_INTERVAL_MS );
+		return () => window.clearInterval( intervalId );
+	}, [ blogId, isAtomicTransferExpected, isAtomicTransferComplete, reduxDispatch ] );
+
+	// Once the transfer reports COMPLETE, re-fetch the site so `is_wpcom_atomic`
+	// flips. `useAtomicTransfer` does the same dance — site endpoint lags transfer
+	// status. Stop once either signal confirms atomic.
+	useEffect( () => {
+		if (
+			! blogId ||
+			! isAtomicTransferExpected ||
+			isFinalSiteAtomic ||
+			transferStatus !== transferStates.COMPLETE
+		) {
+			return;
+		}
+		const intervalId = window.setInterval( () => {
+			reduxDispatch( requestSite( blogId ) );
+		}, ATOMIC_TRANSFER_POLL_INTERVAL_MS );
+		// Fire once immediately too.
+		reduxDispatch( requestSite( blogId ) );
+		return () => window.clearInterval( intervalId );
+	}, [ blogId, isAtomicTransferExpected, isFinalSiteAtomic, transferStatus, reduxDispatch ] );
+
+	// Watchdog. If we haven't seen completion within MAX_ATOMIC_TRANSFER_WAIT_MS,
+	// give up and let the redirect proceed — better to drop the user at a
+	// possibly-not-yet-ready page than to keep them stuck on the loader forever.
+	useEffect( () => {
+		if ( ! isAtomicTransferExpected || isAtomicTransferComplete ) {
+			return;
+		}
+		const timeoutId = window.setTimeout( () => {
+			setAtomicWaitTimedOut( true );
+		}, MAX_ATOMIC_TRANSFER_WAIT_MS );
+		return () => window.clearTimeout( timeoutId );
+	}, [ isAtomicTransferExpected, isAtomicTransferComplete ] );
+
 	// Redirect and display notices.
-	const [ isExiting, setIsExiting ] = useState( false );
+	const [ mountTime ] = useState( () => Date.now() );
 	const didRedirect = useRef( false );
 	useEffect( () => {
 		if ( didRedirect.current ) {
@@ -245,6 +366,14 @@ function useRedirectOnTransactionSuccess( {
 		// Wait for the receipt to load before redirecting so we can display the
 		// correct notification and possibly run analytics.
 		if ( finalReceiptId && ! isReceiptLoaded ) {
+			return;
+		}
+
+		// For purchases that trigger an Atomic transfer (e.g. plugin/theme on a
+		// simple site), hold the redirect until the site is actually atomic — or
+		// until the watchdog times out. Without this, users land at destination
+		// pages that can't function on a non-atomic site.
+		if ( ! isAtomicTransferComplete ) {
 			return;
 		}
 
@@ -312,18 +441,22 @@ function useRedirectOnTransactionSuccess( {
 			reduxDispatch( requestSite( blogId ) );
 		}
 
-		setIsExiting( true );
+		const elapsed = Date.now() - mountTime;
+		const holdRemaining = Math.max( 0, MIN_PENDING_HOLD_MS - elapsed );
+
 		window.setTimeout( () => {
 			notifyAndPerformRedirect( siteSlug, redirectInstructions );
-		}, 200 );
+		}, holdRemaining );
 	}, [
 		isLoadingOrder,
+		mountTime,
 		saasRedirectUrl,
 		isUnifiedCheckout,
 		isUserRefreshedForUnified,
 		error,
 		finalReceiptId,
 		isReceiptLoaded,
+		isAtomicTransferComplete,
 		isRenewal,
 		blogId,
 		orderId,
@@ -338,7 +471,7 @@ function useRedirectOnTransactionSuccess( {
 		fromSiteSlug,
 	] );
 
-	return { isExiting };
+	return { isAtomicTransferExpected };
 }
 
 function isTransactionSuccessful(

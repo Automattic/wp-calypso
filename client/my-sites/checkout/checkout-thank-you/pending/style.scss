@@ -53,11 +53,3 @@
 		}
 	}
 }
-
-.checkout-pending__loading {
-	transition: opacity 200ms ease-out;
-
-	&.is-exiting {
-		opacity: 0;
-	}
-}
