@@ -172,12 +172,27 @@ a.social-post-card-header__timestamp::after {
 	}
 }
 
+// On the thread-view target post the timestamp sits between two separators
+// that span the full card width (matches bsky.app's single-post layout).
+// The negative inline margin escapes CardBody's 16px horizontal padding so
+// the borders run edge-to-edge while the text + counts content stays inside
+// the card's content padding.
 .social-post-card-timestamp {
-	margin-top: 8px;
-	padding-bottom: 8px;
+	display: block;
+	margin-block-start: 12px;
+	margin-inline: -16px;
+	padding-block: 8px;
+	padding-inline: 16px;
 	font-size: 0.875rem;
 	color: var( --studio-gray-50 );
-	border-bottom: 1px solid var( --studio-gray-5 );
+	border-block: 1px solid var( --studio-gray-5 );
+
+	+ .social-post-card-counts {
+		// The timestamp's bottom border doubles as the counts row's top
+		// separator, so reset the slice-4 8px gap to keep the counts visually
+		// glued to that line.
+		margin-block-start: 8px;
+	}
 }
 
 .social-post-card-counts {
