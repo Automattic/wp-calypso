@@ -14,9 +14,14 @@ type SocialPostCardVariant = 'default' | 'compact';
 interface SocialPostCardProps {
 	post: AtmosphereFeedItem;
 	variant?: SocialPostCardVariant;
+	expandedVideo?: boolean;
 }
 
-export function SocialPostCard( { post, variant = 'default' }: SocialPostCardProps ) {
+export function SocialPostCard( {
+	post,
+	variant = 'default',
+	expandedVideo,
+}: SocialPostCardProps ) {
 	const isCompact = variant === 'compact';
 
 	const card = (
@@ -25,7 +30,12 @@ export function SocialPostCard( { post, variant = 'default' }: SocialPostCardPro
 				<PostCardHeader post={ post } variant={ variant } />
 				<PostCardBody post={ post } />
 				{ ! isCompact && post.embed && (
-					<PostCardEmbed embed={ post.embed } parentPostUri={ post.uri } />
+					<PostCardEmbed
+						embed={ post.embed }
+						parentPostUri={ post.uri }
+						expandedVideo={ expandedVideo }
+						parentUrl={ post.bluesky_url }
+					/>
 				) }
 				{ ! isCompact && <PostCardCounts counts={ post.counts } /> }
 			</CardBody>

@@ -5,6 +5,31 @@ import { render, screen } from '@testing-library/react';
 import { SocialPostCard } from '../index';
 import type { AtmosphereFeedItem } from '@automattic/api-core';
 
+function makeFeedItem( overrides: Partial< AtmosphereFeedItem > = {} ): AtmosphereFeedItem {
+	return {
+		uri: 'at://did:plc:default/app.bsky.feed.post/3kdef',
+		cid: 'cid-default',
+		author: {
+			did: 'did:plc:default',
+			handle: 'default.bsky.social',
+			display_name: '',
+			avatar: null,
+		},
+		created_at: '2026-04-28T10:00:00Z',
+		indexed_at: '2026-04-28T10:00:00Z',
+		text: '',
+		html: '<p></p>',
+		lang: [],
+		reply_parent: null,
+		reply_root: null,
+		reason: null,
+		embed: null,
+		counts: { replies: 0, reposts: 0, likes: 0, quotes: 0 },
+		bluesky_url: 'https://bsky.app/profile/default.bsky.social/post/3kdef',
+		...overrides,
+	};
+}
+
 const post: AtmosphereFeedItem = {
 	uri: 'at://did:plc:abc/app.bsky.feed.post/x',
 	cid: 'c',
@@ -75,5 +100,41 @@ describe( 'SocialPostCard', () => {
 			/>
 		);
 		expect( screen.getByText( 'T' ) ).toBeVisible();
+	} );
+} );
+
+describe( 'SocialPostCard expandedVideo forwarding', () => {
+	const videoPost: AtmosphereFeedItem = makeFeedItem( {
+		uri: 'at://did:plc:abc/app.bsky.feed.post/3kabc',
+		bluesky_url: 'https://bsky.app/profile/jane.bsky.social/post/3kabc',
+		embed: {
+			type: 'video',
+			playlist: 'https://video.bsky.app/playlist.m3u8',
+			thumbnail: 'https://video.bsky.app/thumb.jpg',
+			alt: 'A video',
+			aspect_ratio: { width: 16, height: 9 },
+		},
+	} );
+
+	it( 'renders the iframe when expandedVideo is true on a video post', () => {
+		render( <SocialPostCard post={ videoPost } expandedVideo /> );
+		expect( screen.getByTitle( 'A video' ).tagName ).toBe( 'IFRAME' );
+	} );
+
+	it( 'renders only the thumbnail when expandedVideo is unset', () => {
+		render( <SocialPostCard post={ videoPost } /> );
+		expect( screen.queryByTitle( 'A video' ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'img', { name: 'A video' } ) ).toBeVisible();
+	} );
+
+	it( 'ignores expandedVideo on a non-video embed', () => {
+		const imagePost: AtmosphereFeedItem = makeFeedItem( {
+			embed: {
+				type: 'images',
+				images: [ { thumb: 't', fullsize: 'f', alt: 'a', aspect_ratio: null } ],
+			},
+		} );
+		render( <SocialPostCard post={ imagePost } expandedVideo /> );
+		expect( screen.queryByTitle( /bluesky video/i ) ).not.toBeInTheDocument();
 	} );
 } );

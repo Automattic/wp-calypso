@@ -8,14 +8,23 @@ import type { AtmosphereEmbed } from '@automattic/api-core';
 interface PostCardEmbedProps {
 	embed: AtmosphereEmbed;
 	parentPostUri: string;
+	expandedVideo?: boolean;
+	parentUrl?: string;
 }
 
-export function PostCardEmbed( { embed, parentPostUri }: PostCardEmbedProps ) {
+export function PostCardEmbed( {
+	embed,
+	parentPostUri,
+	expandedVideo,
+	parentUrl,
+}: PostCardEmbedProps ) {
 	switch ( embed.type ) {
 		case 'images':
 			return <PostCardEmbedImages embed={ embed } />;
 		case 'video':
-			return <PostCardEmbedVideo embed={ embed } />;
+			return (
+				<PostCardEmbedVideo embed={ embed } expanded={ expandedVideo } parentUrl={ parentUrl } />
+			);
 		case 'external':
 			return <PostCardEmbedExternal embed={ embed } parentPostUri={ parentPostUri } />;
 		case 'quote':
