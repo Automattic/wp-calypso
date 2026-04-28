@@ -5,9 +5,12 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { Icon, tool } from '@wordpress/icons';
+import { Icon, plugins, tool } from '@wordpress/icons';
 import { useCallback } from 'react';
-import { A4A_AI_MCP_AVAILABLE_TOOLS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import {
+	A4A_AI_MCP_AVAILABLE_TOOLS_LINK,
+	A4A_AI_MCP_CONNECT_LINK,
+} from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useFetchMcpSettings from 'calypso/a8c-for-agencies/data/mcp-ai/use-fetch-mcp-settings';
 import useUpdateMcpSettingsMutation from 'calypso/a8c-for-agencies/data/mcp-ai/use-update-mcp-settings-mutation';
 import { Card, CardBody, CardDivider } from 'calypso/dashboard/components/card';
@@ -40,6 +43,10 @@ export default function AiMcpOverviewContent() {
 
 	const onAvailableToolsClick = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_ai_mcp_available_tools_click' ) );
+	}, [ dispatch ] );
+
+	const onConnectClick = useCallback( () => {
+		dispatch( recordTracksEvent( 'calypso_a4a_ai_mcp_connect_click' ) );
 	}, [ dispatch ] );
 
 	const availableAbilities = settings?.available_abilities ?? [];
@@ -100,6 +107,14 @@ export default function AiMcpOverviewContent() {
 						disabled={ ! mainEnabled }
 					/>
 				</Card>
+
+				<DashboardSummaryButton
+					title={ __( 'Connect external AI assistant' ) }
+					description={ __( 'Get instructions for connecting your external AI assistant.' ) }
+					decoration={ <Icon icon={ plugins } size={ 24 } /> }
+					href={ A4A_AI_MCP_CONNECT_LINK }
+					onClick={ onConnectClick }
+				/>
 			</VStack>
 		</>
 	);

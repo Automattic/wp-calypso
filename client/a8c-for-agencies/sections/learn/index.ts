@@ -2,6 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import {
 	A4A_AI_MCP_AVAILABLE_TOOLS_LINK,
+	A4A_AI_MCP_CONNECT_LINK,
 	A4A_AI_MCP_LINK,
 	A4A_DEV_TOOLS_LINK,
 	A4A_LEARN_LINK,
@@ -9,7 +10,11 @@ import {
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { requireAccessContext } from 'calypso/a8c-for-agencies/controller';
 import { makeLayout, render as clientRender } from 'calypso/controller';
-import { aiMcpAvailableToolsContext, aiMcpOverviewContext } from '../ai-mcp/controller';
+import {
+	aiMcpAvailableToolsContext,
+	aiMcpConnectContext,
+	aiMcpOverviewContext,
+} from '../ai-mcp/controller';
 import { devToolsContext } from '../dev-tools/controller';
 import * as controller from './controller';
 
@@ -29,6 +34,13 @@ export default function () {
 			A4A_AI_MCP_AVAILABLE_TOOLS_LINK,
 			requireAccessContext,
 			aiMcpAvailableToolsContext,
+			makeLayout,
+			clientRender
+		);
+		page(
+			A4A_AI_MCP_CONNECT_LINK,
+			requireAccessContext,
+			aiMcpConnectContext,
 			makeLayout,
 			clientRender
 		);

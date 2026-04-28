@@ -1,3 +1,10 @@
+
+.a4a-ai-mcp-code-block .components-textarea-control__input {
+	field-sizing: content;
+	min-height: 80px;
+	max-height: 400px;
+}
+
 .a4a-ai-mcp-overview__intro {
 	max-width: 650px;
 
@@ -16,4 +23,12 @@
 			background: none;
 		}
 	}
+}
+
+.a4a-ai-mcp-connect-agent ol code {
+	padding: 2px 6px;
+	border-radius: 3px;
+	background: var( --color-neutral-0 );
+	font-family: monospace;
+	font-size: inherit;
 }
