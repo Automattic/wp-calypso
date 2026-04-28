@@ -205,3 +205,68 @@ describe( 'SocialProfileCard', () => {
 		expect( bio?.textContent ).not.toContain( 'plain' );
 	} );
 } );
+
+describe( 'SocialProfileCard — rich variant', () => {
+	it( 'renders banner, display name, handle, bio and stats together', () => {
+		render(
+			<SocialProfileCard
+				avatar="https://cdn.example/a.jpg"
+				banner="https://cdn.example/b.jpg"
+				displayName="Alice"
+				handle="alice.bsky.social"
+				bioHtml="<p>Hi.</p>"
+				stats={ [
+					{ key: 'followers', count: 10, label: 'followers' },
+					{ key: 'follows', count: 5, label: 'following' },
+					{ key: 'posts', count: 3, label: 'posts' },
+				] }
+				statsLabel="Profile stats"
+				headerActions={ <button type="button">View on Bluesky</button> }
+			/>
+		);
+
+		expect( screen.getByRole( 'heading', { level: 2, name: 'Alice' } ) ).toBeVisible();
+		expect( screen.getByText( '@alice.bsky.social' ) ).toBeVisible();
+		expect( screen.getByText( 'Hi.' ) ).toBeVisible();
+		expect( screen.getByRole( 'list', { name: 'Profile stats' } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'View on Bluesky' } ) ).toBeVisible();
+	} );
+
+	it( 'falls back to the handle when displayName is missing', () => {
+		render(
+			<SocialProfileCard handle="alice.bsky.social" stats={ [] } statsLabel="Profile stats" />
+		);
+		expect( screen.getByRole( 'heading', { level: 2, name: 'alice.bsky.social' } ) ).toBeVisible();
+	} );
+
+	it( 'omits the heading and handle when both are absent (slim layout)', () => {
+		render(
+			<SocialProfileCard
+				avatar="https://cdn.example/a.jpg"
+				bio="Plain bio."
+				stats={ [] }
+				statsLabel="Profile stats"
+			/>
+		);
+		expect( screen.queryByRole( 'heading' ) ).toBeNull();
+		expect( screen.queryByText( /@/ ) ).toBeNull();
+		expect( screen.getByText( 'Plain bio.' ) ).toBeVisible();
+	} );
+
+	it( 'hides the banner image on load failure', () => {
+		const { container } = render(
+			<SocialProfileCard
+				banner="https://cdn.example/broken.jpg"
+				displayName="Alice"
+				stats={ [] }
+				statsLabel="Profile stats"
+			/>
+		);
+		const banner = container.querySelector(
+			'.social-profile-card__banner'
+		) as HTMLImageElement | null;
+		expect( banner ).not.toBeNull();
+		banner!.dispatchEvent( new Event( 'error', { bubbles: true } ) );
+		expect( banner!.style.display ).toBe( 'none' );
+	} );
+} );
