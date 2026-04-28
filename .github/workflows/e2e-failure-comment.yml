@@ -32,11 +32,24 @@ jobs:
             const openPrs = prs.filter((pr) => pr.state === 'open');
             if (openPrs.length === 0) return;
 
-            const body = [
+            const buildBody = (prNumber) => [
               watermark,
               `Looks like one of the E2E tests has failed.`,
               ``,
-              `To try to fix it, you can use a Claude skill called \`/fix-e2e-tests\`.`,
+              `To investigate with Claude Code, follow these steps:`,
+              ``,
+              `1. Check out this branch locally:`,
+              `   \`\`\`bash`,
+              `   gh pr checkout ${prNumber}`,
+              `   \`\`\``,
+              `2. Start Claude Code in the repo:`,
+              `   \`\`\`bash`,
+              `   claude`,
+              `   \`\`\``,
+              `3. Run the \`/fix-e2e-tests\` skill, passing this PR number:`,
+              `   \`\`\``,
+              `   /fix-e2e-tests ${prNumber}`,
+              `   \`\`\``,
             ].join('\n');
 
             for (const pr of openPrs) {
@@ -53,6 +66,6 @@ jobs:
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: pr.number,
-                body,
+                body: buildBody(pr.number),
               });
             }
