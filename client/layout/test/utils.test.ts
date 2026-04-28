@@ -24,6 +24,48 @@ describe( 'layout/utils', () => {
 			} );
 		} );
 
+		describe( 'start path', () => {
+			it( 'should return true when path is /start (default flow is onboarding)', () => {
+				const pathname = '/start';
+				const query = 'source=sites-dashboard&ref=new-site-popover';
+				const result = isInStepContainerV2FlowContext( pathname, query );
+
+				expect( result ).toBe( true );
+			} );
+
+			it( 'should return true when path is /start/onboarding', () => {
+				const pathname = '/start/onboarding';
+				const query = '';
+				const result = isInStepContainerV2FlowContext( pathname, query );
+
+				expect( result ).toBe( true );
+			} );
+
+			it( 'should return true when path is /start/onboarding/<step>', () => {
+				const pathname = '/start/onboarding/user';
+				const query = '';
+				const result = isInStepContainerV2FlowContext( pathname, query );
+
+				expect( result ).toBe( true );
+			} );
+
+			it( 'should return false when path is /start/<non-onboarding-flow>', () => {
+				const pathname = '/start/account';
+				const query = '';
+				const result = isInStepContainerV2FlowContext( pathname, query );
+
+				expect( result ).toBe( false );
+			} );
+
+			it( 'should return false when path is /startup (substring guard)', () => {
+				const pathname = '/startup';
+				const query = '';
+				const result = isInStepContainerV2FlowContext( pathname, query );
+
+				expect( result ).toBe( false );
+			} );
+		} );
+
 		describe( 'checkout path', () => {
 			it( 'should return true when path starts with /checkout and redirect_to is to a StepContainerV2 flow', () => {
 				const pathname = '/checkout/site.com';
