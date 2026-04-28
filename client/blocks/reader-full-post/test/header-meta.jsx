@@ -18,7 +18,7 @@ jest.mock( 'calypso/state/reader/feeds/selectors', () => ( {
 	getFeed: jest.fn(),
 } ) );
 
-jest.mock( 'calypso/reader/user-profile/views/achievements/author-achievement-badges', () => ( {
+jest.mock( 'calypso/reader/components/achievements/author-achievement-badges', () => ( {
 	AuthorAchievementBadges: () => null,
 } ) );
 

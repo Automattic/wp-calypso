@@ -2,10 +2,10 @@ import { isEnabled } from '@automattic/calypso-config';
 import { Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useYearsOfService } from 'calypso/data/reader/use-years-of-service';
+import useAchievementsVisibility from 'calypso/reader/components/achievements/use-achievements-visibility';
+import { YearsOfServiceBadge } from 'calypso/reader/components/achievements/years-of-service-badge';
 import AchievementsGrid from './achievements-grid';
 import AchievementsSettings from './achievements-settings';
-import useAchievementsVisibility from './use-achievements-visibility';
-import { YearsOfServiceBadge } from './years-of-service-badge';
 import type { ReaderUser } from '@automattic/api-core';
 
 import './style.scss';

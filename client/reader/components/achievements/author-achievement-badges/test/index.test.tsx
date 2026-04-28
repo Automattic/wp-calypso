@@ -4,10 +4,10 @@
 import { render, screen } from '@testing-library/react';
 import { AuthorAchievementBadges } from '../index';
 
-jest.mock( 'calypso/reader/user-profile/views/achievements/use-achievements-visibility' );
+jest.mock( 'calypso/reader/components/achievements/use-achievements-visibility' );
 jest.mock( 'calypso/data/reader/use-years-of-service' );
 
-jest.mock( 'calypso/reader/user-profile/views/achievements/years-of-service-badge', () => ( {
+jest.mock( 'calypso/reader/components/achievements/years-of-service-badge', () => ( {
 	YearsOfServiceBadge: ( { yearsOfService }: { yearsOfService: number } ) => (
 		<div data-testid="years-of-service-badge">{ yearsOfService }</div>
 	),
@@ -15,7 +15,7 @@ jest.mock( 'calypso/reader/user-profile/views/achievements/years-of-service-badg
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const useAchievementsVisibility =
-	require( 'calypso/reader/user-profile/views/achievements/use-achievements-visibility' )
+	require( 'calypso/reader/components/achievements/use-achievements-visibility' )
 		.default as jest.Mock;
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { useYearsOfService } = require( 'calypso/data/reader/use-years-of-service' ) as {

@@ -5,8 +5,8 @@ import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
 import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link';
 import UserAvatar from 'calypso/blocks/user-avatar';
 import { areEqualIgnoringWhitespaceAndCase } from 'calypso/lib/string';
+import { AuthorAchievementBadges } from 'calypso/reader/components/achievements/author-achievement-badges';
 import { getStreamUrl } from 'calypso/reader/route';
-import { AuthorAchievementBadges } from 'calypso/reader/user-profile/views/achievements/author-achievement-badges';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
 
 const ReaderFullPostHeaderMeta = ( { post, author, siteName, feedId, siteId } ) => {

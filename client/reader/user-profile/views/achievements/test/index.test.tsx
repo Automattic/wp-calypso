@@ -10,7 +10,7 @@ jest.mock( '@automattic/calypso-config', () => ( {
 	isEnabled: jest.fn(),
 } ) );
 
-jest.mock( '../use-achievements-visibility' );
+jest.mock( 'calypso/reader/components/achievements/use-achievements-visibility' );
 
 jest.mock( 'calypso/data/reader/use-years-of-service' );
 
@@ -24,7 +24,7 @@ jest.mock( '../achievements-settings', () => ( {
 	default: () => <button data-testid="achievements-settings">Settings</button>,
 } ) );
 
-jest.mock( '../years-of-service-badge', () => ( {
+jest.mock( 'calypso/reader/components/achievements/years-of-service-badge', () => ( {
 	YearsOfServiceBadge: ( { yearsOfService }: { yearsOfService: number } ) => (
 		<div data-testid="years-of-service-badge">{ yearsOfService }</div>
 	),
@@ -33,7 +33,9 @@ jest.mock( '../years-of-service-badge', () => ( {
 const mockIsEnabled = isEnabled as jest.MockedFunction< typeof isEnabled >;
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const useAchievementsVisibility = require( '../use-achievements-visibility' ).default as jest.Mock;
+const useAchievementsVisibility =
+	require( 'calypso/reader/components/achievements/use-achievements-visibility' )
+		.default as jest.Mock;
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const useYearsOfService = require( 'calypso/data/reader/use-years-of-service' )
