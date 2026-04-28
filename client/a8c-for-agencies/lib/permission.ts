@@ -58,6 +58,7 @@ import {
 	A4A_RESOURCES_LINK,
 	A4A_DEV_TOOLS_LINK,
 	A4A_EXCLUSIVE_OFFERS_LINK,
+	A4A_AMPLIFY_LINK,
 } from '../components/sidebar-menu/lib/constants';
 import type { Agency } from 'calypso/state/a8c-for-agencies/types';
 
@@ -146,7 +147,11 @@ export const isPathAllowed = ( pathname: string, agency: Agency | null ) => {
 	}
 
 	// Everyone can access the landing page and the overview page
-	if ( [ A4A_LANDING_LINK, A4A_OVERVIEW_LINK, A4A_FEEDBACK_LINK ].includes( pathname ) ) {
+	if (
+		[ A4A_LANDING_LINK, A4A_OVERVIEW_LINK, A4A_FEEDBACK_LINK, A4A_AMPLIFY_LINK ].includes(
+			pathname
+		)
+	) {
 		return true;
 	}
 
