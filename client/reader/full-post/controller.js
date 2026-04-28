@@ -27,6 +27,7 @@ export function blogPost( context, next ) {
 
 	context.primary = (
 		<AsyncLoad
+			key="reader-blog-post"
 			require={ () =>
 				import(
 					/* webpackChunkName: "async-load-calypso-blocks-reader-full-post" */ 'calypso/blocks/reader-full-post'
@@ -41,6 +42,7 @@ export function blogPost( context, next ) {
 	if ( isUserLoggedIn( state ) ) {
 		context.secondary = (
 			<AsyncLoad
+				key="reader-sidebar"
 				require={ () =>
 					import(
 						/* webpackChunkName: "async-load-calypso-reader-sidebar" */ 'calypso/reader/sidebar'
@@ -66,6 +68,7 @@ export function feedPost( context, next ) {
 
 	context.primary = (
 		<AsyncLoad
+			key="reader-feed-post"
 			require={ () =>
 				import(
 					/* webpackChunkName: "async-load-calypso-blocks-reader-full-post" */ 'calypso/blocks/reader-full-post'
@@ -79,6 +82,7 @@ export function feedPost( context, next ) {
 	if ( isUserLoggedIn( state ) ) {
 		context.secondary = (
 			<AsyncLoad
+				key="reader-sidebar"
 				require={ () =>
 					import(
 						/* webpackChunkName: "async-load-calypso-reader-sidebar" */ 'calypso/reader/sidebar'

@@ -17,6 +17,7 @@ export const mastodonLanding = ( context: Context, next: () => void ) => {
 	}
 	context.primary = (
 		<AsyncLoad
+			key="reader-mastodon-landing"
 			require={ () =>
 				import(
 					/* webpackChunkName: "async-load-calypso-reader-mastodon-landing-view" */ 'calypso/reader/mastodon/mastodon-landing-view'
@@ -34,6 +35,7 @@ export const mastodonConnect = ( context: Context, next: () => void ) => {
 	}
 	context.primary = (
 		<AsyncLoad
+			key="reader-mastodon-connect"
 			require={ () => import( 'calypso/reader/mastodon/mastodon-connect-view' ) }
 			placeholder={ null }
 		/>
@@ -48,6 +50,7 @@ export const mastodonOauthCallback = ( context: Context, next: () => void ) => {
 	const query = context.query as { state?: string; code?: string; error?: string };
 	context.primary = (
 		<AsyncLoad
+			key="reader-mastodon-oauth-callback"
 			require={ () => import( 'calypso/reader/mastodon/mastodon-oauth-callback-view' ) }
 			placeholder={ null }
 			query={ query }
@@ -76,6 +79,7 @@ export const mastodonAccount = ( context: Context, next: () => void ) => {
 	const tab = String( context.params.tab ?? '' );
 	context.primary = (
 		<AsyncLoad
+			key="reader-mastodon-account"
 			require={ () =>
 				import(
 					/* webpackChunkName: "async-load-calypso-reader-mastodon-account-view" */ 'calypso/reader/mastodon/mastodon-account-view'

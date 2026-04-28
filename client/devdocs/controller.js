@@ -80,6 +80,7 @@ const devdocs = {
 	design: function ( context, next ) {
 		context.primary = (
 			<AsyncLoad
+				key="devdocs-design"
 				component={ context.params.component }
 				require={ () =>
 					import( /* webpackChunkName: "async-load-calypso-devdocs-design" */ './design' )
@@ -98,6 +99,7 @@ const devdocs = {
 	blocks: function ( context, next ) {
 		context.primary = (
 			<AsyncLoad
+				key="devdocs-blocks"
 				component={ context.params.component }
 				require={ () =>
 					import(
@@ -112,6 +114,7 @@ const devdocs = {
 	playground: function ( context, next ) {
 		context.primary = (
 			<AsyncLoad
+				key="devdocs-playground"
 				component={ context.params.component }
 				require={ () =>
 					import(
@@ -126,6 +129,7 @@ const devdocs = {
 	wpComponentsGallery( context, next ) {
 		context.primary = (
 			<AsyncLoad
+				key="devdocs-wp-components-gallery"
 				require={ () =>
 					import(
 						/* webpackChunkName: "async-load-calypso-devdocs-design-wordpress-components-gallery" */ './design/wordpress-components-gallery'
@@ -139,6 +143,7 @@ const devdocs = {
 	selectors: function ( context, next ) {
 		context.primary = (
 			<AsyncLoad
+				key="devdocs-selectors"
 				require={ () =>
 					import(
 						/* webpackChunkName: "async-load-calypso-devdocs-docs-selectors" */ './docs-selectors'
@@ -154,6 +159,7 @@ const devdocs = {
 	typography: function ( context, next ) {
 		context.primary = (
 			<AsyncLoad
+				key="devdocs-typography"
 				component={ context.params.component }
 				require={ () =>
 					import(
@@ -168,6 +174,7 @@ const devdocs = {
 	illustrations: function ( context, next ) {
 		context.primary = (
 			<AsyncLoad
+				key="devdocs-illustrations"
 				component={ context.params.component }
 				require={ () =>
 					import(
