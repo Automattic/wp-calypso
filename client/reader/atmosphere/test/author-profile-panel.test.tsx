@@ -270,4 +270,42 @@ describe( 'AuthorProfilePanel', () => {
 		mockAllIsIntersecting( true );
 		expect( await screen.findByText( 'second' ) ).toBeVisible();
 	} );
+
+	it( 'dedupes feed items by uri across pages (Bluesky returns repeats)', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social' )
+			.reply( 200, profilePayload );
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+			.query( ( q ) => ! q.cursor )
+			.reply( 200, { items: [ feedItem ], cursor: 'page-2' } );
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+			.query( ( q ) => q.cursor === 'page-2' )
+			.reply( 200, {
+				items: [
+					// Same URI as page 1 — would normally duplicate the rendered card
+					// and trip React's keyed-list invariant.
+					{ ...feedItem, text: 'hello (duplicate)', html: '<p>hello (duplicate)</p>' },
+					{
+						...feedItem,
+						uri: 'at://did:plc:abc/app.bsky.feed.post/cccccccccccc',
+						text: 'unique',
+						html: '<p>unique</p>',
+					},
+				],
+				cursor: null,
+			} );
+
+		renderWithProvider(
+			<AuthorProfilePanel connection={ connection } actor="alice.bsky.social" />,
+			{ queryClient: makeQueryClient() }
+		);
+
+		expect( await screen.findByText( 'hello' ) ).toBeVisible();
+		mockAllIsIntersecting( true );
+		expect( await screen.findByText( 'unique' ) ).toBeVisible();
+		// Duplicate URI from page 2 was dropped — only the page-1 occurrence renders.
+		expect( screen.queryByText( 'hello (duplicate)' ) ).toBeNull();
+	} );
 } );
