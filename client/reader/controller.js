@@ -38,6 +38,7 @@ export function sidebar( context, next ) {
 	if ( isUserLoggedIn( state ) ) {
 		context.secondary = (
 			<AsyncLoad
+				key="reader-sidebar"
 				require={ () =>
 					import(
 						/* webpackChunkName: "async-load-calypso-reader-sidebar" */ 'calypso/reader/sidebar'
@@ -109,6 +110,7 @@ export function loadNewSubscriptionPage( context, next ) {
 	const selectedTab = getCurrentTabFromURL( context.path, 'reader/new', 'add-new' );
 	context.primary = (
 		<AsyncLoad
+			key="reader-new-subscription"
 			require={ () =>
 				import(
 					/* webpackChunkName: "async-load-calypso-reader-new-subscription" */ 'calypso/reader/new-subscription'
@@ -174,6 +176,7 @@ export const setBeforePrimary = ( context, next ) => {
 	const isMSDEnabledForReader = isReaderMSDEnabled( state );
 	context.beforePrimary = isMSDEnabledForReader ? (
 		<AsyncLoad
+			key="reader-mobile-header"
 			require={ () =>
 				import(
 					/* webpackChunkName: "async-load-calypso-reader-components-mobile-header" */ 'calypso/reader/components/mobile-header'
@@ -279,7 +282,7 @@ export function readA8C( context, next ) {
 					/* webpackChunkName: "async-load-calypso-reader-a8c-main" */ 'calypso/reader/a8c/main'
 				)
 			}
-			key="read-a8c"
+			key="reader-a8c"
 			className="is-a8c"
 			listName="Automattic"
 			streamKey={ streamKey }
@@ -318,7 +321,7 @@ export function readFollowingP2( context, next ) {
 					/* webpackChunkName: "async-load-calypso-reader-p2-main" */ 'calypso/reader/p2/main'
 				)
 			}
-			key="read-p2"
+			key="reader-p2"
 			listName="P2"
 			streamKey={ streamKey }
 			startDate={ startDate }
@@ -371,6 +374,7 @@ export async function siteSubscriptionsManager( context, next ) {
 
 	context.primary = (
 		<AsyncLoad
+			key="reader-site-subscriptions-manager"
 			require={ () =>
 				import(
 					/* webpackChunkName: "async-load-calypso-reader-site-subscriptions-manager" */ 'calypso/reader/site-subscriptions-manager'
@@ -400,6 +404,7 @@ export async function siteSubscription( context, next ) {
 
 	context.primary = (
 		<AsyncLoad
+			key="reader-site-subscription"
 			require={ () =>
 				import(
 					/* webpackChunkName: "async-load-calypso-reader-site-subscription" */ 'calypso/reader/site-subscription'
@@ -421,6 +426,7 @@ export async function commentSubscriptionsManager( context, next ) {
 
 	context.primary = (
 		<AsyncLoad
+			key="reader-comment-subscriptions-manager"
 			require={ () =>
 				import(
 					/* webpackChunkName: "async-load-calypso-reader-site-subscriptions-manager-comment-subscriptions-manager" */ 'calypso/reader/site-subscriptions-manager/comment-subscriptions-manager'
@@ -439,6 +445,7 @@ export async function pendingSubscriptionsManager( context, next ) {
 
 	context.primary = (
 		<AsyncLoad
+			key="reader-pending-subscriptions-manager"
 			require={ () =>
 				import(
 					/* webpackChunkName: "async-load-calypso-reader-site-subscriptions-manager-pending-subscriptions-manager" */ 'calypso/reader/site-subscriptions-manager/pending-subscriptions-manager'

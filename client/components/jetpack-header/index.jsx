@@ -61,6 +61,7 @@ export class JetpackHeader extends PureComponent {
 						partnerName="DreamHost"
 					>
 						<AsyncLoad
+							key="dreamhost"
 							require={ () =>
 								import(
 									/* webpackChunkName: "async-load-calypso-components-jetpack-header-dreamhost" */ './dreamhost'
@@ -80,6 +81,7 @@ export class JetpackHeader extends PureComponent {
 						partnerName="Pressable"
 					>
 						<AsyncLoad
+							key="pressable"
 							require={ () =>
 								import(
 									/* webpackChunkName: "async-load-calypso-components-jetpack-header-pressable" */ './pressable'
@@ -99,6 +101,7 @@ export class JetpackHeader extends PureComponent {
 						partnerName="Bluehost"
 					>
 						<AsyncLoad
+							key="bluehost"
 							require={ () =>
 								import(
 									/* webpackChunkName: "async-load-calypso-components-jetpack-header-bluehost" */ './bluehost'
@@ -118,6 +121,7 @@ export class JetpackHeader extends PureComponent {
 						partnerName="InMotion"
 					>
 						<AsyncLoad
+							key="inmotion"
 							require={ () =>
 								import(
 									/* webpackChunkName: "async-load-calypso-components-jetpack-header-inmotion" */ './inmotion'
@@ -133,6 +137,7 @@ export class JetpackHeader extends PureComponent {
 				// This is a raster logo that contains the Jetpack logo already.
 				return (
 					<AsyncLoad
+						key="milesweb"
 						require={ () =>
 							import(
 								/* webpackChunkName: "async-load-calypso-components-jetpack-header-milesweb" */ './milesweb'
@@ -151,6 +156,7 @@ export class JetpackHeader extends PureComponent {
 						partnerName="Liquid Web"
 					>
 						<AsyncLoad
+							key="liquidweb"
 							require={ () =>
 								import(
 									/* webpackChunkName: "async-load-calypso-components-jetpack-header-liquidweb" */ './liquidweb'
@@ -169,6 +175,7 @@ export class JetpackHeader extends PureComponent {
 						partnerName="EuroDNS"
 					>
 						<AsyncLoad
+							key="eurodns"
 							require={ () =>
 								import(
 									/* webpackChunkName: "async-load-calypso-components-jetpack-header-eurodns" */ './eurodns'

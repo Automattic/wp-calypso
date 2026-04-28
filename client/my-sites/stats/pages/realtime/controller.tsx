@@ -10,6 +10,7 @@ setTimeout(
 function realtime( context: Context, next: () => void ) {
 	context.primary = (
 		<AsyncLoad
+			key="stats-pages-realtime"
 			require={ () =>
 				import( /* webpackChunkName: "async-load-calypso-my-sites-stats-pages-realtime" */ '.' )
 			}
