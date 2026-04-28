@@ -55,9 +55,11 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 			(
 				data?.pages
 					.flatMap( ( page ) => page.items ?? [] )
-					.filter( ( post ): post is MastodonFeedItem => Boolean( post?.uri ) ) ?? []
-			).map( mapMastodonFeedItemToSocialPost ),
-		[ data ]
+					.filter( ( post ): post is MastodonFeedItem => Boolean( post?.url ) ) ?? []
+			).map( ( item ) =>
+				mapMastodonFeedItemToSocialPost( item, { instance: connection.instance } )
+			),
+		[ data, connection.instance ]
 	);
 
 	useEffect( () => {

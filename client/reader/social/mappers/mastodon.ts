@@ -1,71 +1,137 @@
-import type { SocialEmbed, SocialPost, SocialQuoteTombstone } from '../types';
-import type { MastodonEmbed, MastodonFeedItem, MastodonQuoteTombstone } from '@automattic/api-core';
+import type {
+	SocialEmbed,
+	SocialEmbedAudio,
+	SocialEmbedGifv,
+	SocialEmbedImages,
+	SocialEmbedVideo,
+	SocialPost,
+} from '../types';
+import type {
+	MastodonFeedItem,
+	MastodonMediaAttachment,
+	MastodonTimelineAccount,
+} from '@automattic/api-core';
 
-export function mapMastodonFeedItemToSocialPost( item: MastodonFeedItem ): SocialPost {
+export interface MapMastodonOptions {
+	/**
+	 * Home instance host for the connection (e.g. `mastodon.social`).
+	 * Used to (a) build a profile URL when the upstream Account block
+	 * doesn't include one, and (b) qualify local-account `acct` values
+	 * (which Mastodon emits without an `@instance` suffix) so the
+	 * post-card header always shows a webfinger-style handle.
+	 */
+	instance: string;
+}
+
+export function mapMastodonFeedItemToSocialPost(
+	item: MastodonFeedItem,
+	options: MapMastodonOptions
+): SocialPost {
 	return {
-		uri: item.uri,
-		permalink: item.uri,
-		text: item.text,
-		html: item.html,
+		uri: item.url,
+		permalink: item.url,
+		text: '',
+		html: item.content,
 		created_at: item.created_at,
-		indexed_at: item.edited_at,
-		lang: item.lang ? [ item.lang ] : [],
-		author: {
-			id: item.author.id,
-			handle: item.author.acct,
-			display_name: item.author.display_name,
-			avatar: item.author.avatar,
-			profile_url: item.author.url,
-		},
-		reply_parent: item.reply_parent
-			? { uri: item.reply_parent.uri, author: { handle: item.reply_parent.author.acct } }
-			: null,
-		reply_root: item.reply_root
-			? { uri: item.reply_root.uri, author: { handle: item.reply_root.author.acct } }
-			: null,
-		reason: item.reason
+		indexed_at: null,
+		lang: item.language ? [ item.language ] : [],
+		author: mapAccount( item.account, options.instance ),
+		reply_parent: null,
+		reply_root: null,
+		reason: item.boost
 			? {
 					type: 'repost',
 					by: {
-						handle: item.reason.by.acct,
-						display_name: item.reason.by.display_name,
+						id: item.boost.by.id,
+						handle: qualifyAcct( item.boost.by.acct, options.instance ),
+						display_name: item.boost.by.display_name,
 					},
 			  }
 			: null,
 		counts: {
 			replies: item.counts.replies,
-			reposts: item.counts.reblogs,
+			reposts: item.counts.boosts,
 			likes: item.counts.favourites,
-			quotes: item.counts.quotes ?? 0,
+			quotes: 0,
 		},
-		embed: item.embed ? mapEmbed( item.embed ) : null,
+		embed: mapMedia( item.media ),
 	};
 }
 
-function mapEmbed( embed: MastodonEmbed ): SocialEmbed {
-	switch ( embed.type ) {
-		case 'images':
-		case 'video':
-		case 'gifv':
-		case 'audio':
-		case 'external':
-			return embed;
-		case 'quote':
-			return { type: 'quote', post: mapQuoted( embed.post ) };
-		case 'quote_with_media':
-			return {
-				type: 'quote_with_media',
-				post: mapQuoted( embed.post ),
-				media: embed.media,
-			};
-	}
+function mapAccount( account: MastodonTimelineAccount, instance: string ): SocialPost[ 'author' ] {
+	const handle = qualifyAcct( account.acct, instance );
+	return {
+		id: account.id,
+		handle,
+		display_name: account.display_name,
+		avatar: account.avatar,
+		profile_url: `https://${ instance }/@${ account.acct }`,
+	};
 }
 
-function mapQuoted(
-	post: MastodonFeedItem | MastodonQuoteTombstone
-): SocialPost | SocialQuoteTombstone {
-	if ( 'type' in post ) {
-		return { type: post.type, uri: post.uri, reason: post.reason };
+// Local accounts return `acct: 'alice'`; remote accounts return
+// `acct: 'carol@infosec.exchange'`. Always render fully-qualified.
+function qualifyAcct( acct: string, instance: string ): string {
+	return acct.includes( '@' ) ? acct : `${ acct }@${ instance }`;
+}
+
+// Mastodon allows mixed-type attachments per status. Pick the dominant
+// type via the priority rule (images > video > gifv > audio), grouping
+// images so a four-photo status renders as one image grid. Returns null
+// when no attachment matches a renderable type.
+function mapMedia( media: MastodonMediaAttachment[] ): SocialEmbed | null {
+	if ( ! media || media.length === 0 ) {
+		return null;
 	}
-	return mapMastodonFeedItemToSocialPost( post );
+
+	const images = media.filter( ( m ) => m.type === 'image' );
+	if ( images.length > 0 ) {
+		const result: SocialEmbedImages = {
+			type: 'images',
+			images: images.map( ( m ) => ( {
+				thumb: m.preview_url ?? m.url,
+				fullsize: m.url,
+				alt: m.alt,
+				aspect_ratio: m.aspect_ratio,
+			} ) ),
+		};
+		return result;
+	}
+
+	const video = media.find( ( m ) => m.type === 'video' );
+	if ( video ) {
+		const result: SocialEmbedVideo = {
+			type: 'video',
+			playlist: video.url,
+			thumbnail: video.preview_url ?? video.url,
+			alt: video.alt,
+			aspect_ratio: video.aspect_ratio,
+		};
+		return result;
+	}
+
+	const gifv = media.find( ( m ) => m.type === 'gifv' );
+	if ( gifv ) {
+		const result: SocialEmbedGifv = {
+			type: 'gifv',
+			src: gifv.url,
+			thumbnail: gifv.preview_url ?? gifv.url,
+			alt: gifv.alt,
+			aspect_ratio: gifv.aspect_ratio,
+		};
+		return result;
+	}
+
+	const audio = media.find( ( m ) => m.type === 'audio' );
+	if ( audio ) {
+		const result: SocialEmbedAudio = {
+			type: 'audio',
+			src: audio.url,
+			alt: audio.alt,
+			duration_seconds: null,
+		};
+		return result;
+	}
+
+	return null;
 }

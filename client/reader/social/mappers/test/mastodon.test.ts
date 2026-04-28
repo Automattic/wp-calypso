@@ -2,78 +2,194 @@ import { mapMastodonFeedItemToSocialPost } from '../mastodon';
 import type { MastodonFeedItem } from '@automattic/api-core';
 
 const FIXTURE: MastodonFeedItem = {
-	uri: 'https://mastodon.social/@alice/12345',
-	id: '12345',
-	author: {
+	id: '111111111111111111',
+	url: 'https://mastodon.social/@alice/111111111111111111',
+	created_at: '2026-04-28T10:00:00Z',
+	account: {
 		id: '7',
-		acct: 'alice@mastodon.social',
+		username: 'alice',
+		acct: 'alice',
 		display_name: 'Alice',
 		avatar: 'https://cdn/a.jpg',
-		url: 'https://mastodon.social/@alice',
 	},
-	created_at: '2026-04-28T10:00:00Z',
-	edited_at: null,
-	text: 'Hello',
-	html: '<p>Hello</p>',
-	lang: 'en',
-	reply_parent: null,
-	reply_root: null,
-	reason: null,
-	counts: { replies: 1, reblogs: 2, favourites: 3, quotes: 4 },
-	embed: null,
+	content: '<p>Hello</p>',
+	spoiler_text: '',
+	sensitive: false,
+	language: 'en',
+	in_reply_to_id: null,
+	in_reply_to_account_id: null,
+	boost: null,
+	media: [],
+	counts: { replies: 1, boosts: 2, favourites: 3 },
 };
 
+const OPTS = { instance: 'mastodon.social' };
+
 describe( 'mapMastodonFeedItemToSocialPost', () => {
-	it( 'sets permalink from uri', () => {
-		const post = mapMastodonFeedItemToSocialPost( FIXTURE );
-		expect( post.permalink ).toBe( 'https://mastodon.social/@alice/12345' );
+	it( 'sets permalink and uri from url', () => {
+		const post = mapMastodonFeedItemToSocialPost( FIXTURE, OPTS );
+		expect( post.permalink ).toBe( 'https://mastodon.social/@alice/111111111111111111' );
+		expect( post.uri ).toBe( 'https://mastodon.social/@alice/111111111111111111' );
 	} );
 
-	it( 'maps author identity', () => {
-		const post = mapMastodonFeedItemToSocialPost( FIXTURE );
-		expect( post.author ).toEqual( {
-			id: '7',
-			handle: 'alice@mastodon.social',
-			display_name: 'Alice',
-			avatar: 'https://cdn/a.jpg',
-			profile_url: 'https://mastodon.social/@alice',
-		} );
+	it( 'qualifies a local acct with the connection instance', () => {
+		const post = mapMastodonFeedItemToSocialPost( FIXTURE, OPTS );
+		expect( post.author.handle ).toBe( 'alice@mastodon.social' );
+		expect( post.author.profile_url ).toBe( 'https://mastodon.social/@alice' );
 	} );
 
-	it( 'renames reblogs → reposts and favourites → likes', () => {
-		const post = mapMastodonFeedItemToSocialPost( FIXTURE );
-		expect( post.counts ).toEqual( { replies: 1, reposts: 2, likes: 3, quotes: 4 } );
-	} );
-
-	it( 'defaults quotes to 0 when omitted', () => {
-		const post = mapMastodonFeedItemToSocialPost( {
-			...FIXTURE,
-			counts: { replies: 0, reblogs: 0, favourites: 0 },
-		} );
-		expect( post.counts.quotes ).toBe( 0 );
-	} );
-
-	it( 'widens lang single-string to array', () => {
-		const post = mapMastodonFeedItemToSocialPost( FIXTURE );
-		expect( post.lang ).toEqual( [ 'en' ] );
-	} );
-
-	it( 'normalises lang null to empty array', () => {
-		const post = mapMastodonFeedItemToSocialPost( { ...FIXTURE, lang: null } );
-		expect( post.lang ).toEqual( [] );
-	} );
-
-	it( 'maps boost reason → repost', () => {
-		const post = mapMastodonFeedItemToSocialPost( {
-			...FIXTURE,
-			reason: {
-				type: 'boost',
-				by: { acct: 'bob@x.tld', display_name: 'Bob', avatar: null },
+	it( 'preserves a remote (already-qualified) acct as-is', () => {
+		const post = mapMastodonFeedItemToSocialPost(
+			{
+				...FIXTURE,
+				account: { ...FIXTURE.account, acct: 'carol@infosec.exchange' },
 			},
-		} );
+			OPTS
+		);
+		expect( post.author.handle ).toBe( 'carol@infosec.exchange' );
+		// profile_url uses the bare acct on the connection's instance
+		// host — Mastodon resolves remote @acct paths transparently.
+		expect( post.author.profile_url ).toBe( 'https://mastodon.social/@carol@infosec.exchange' );
+	} );
+
+	it( 'renames boosts → reposts and favourites → likes; defaults quotes to 0', () => {
+		const post = mapMastodonFeedItemToSocialPost( FIXTURE, OPTS );
+		expect( post.counts ).toEqual( { replies: 1, reposts: 2, likes: 3, quotes: 0 } );
+	} );
+
+	it( 'maps content to html (not text)', () => {
+		const post = mapMastodonFeedItemToSocialPost( FIXTURE, OPTS );
+		expect( post.html ).toBe( '<p>Hello</p>' );
+		expect( post.text ).toBe( '' );
+	} );
+
+	it( 'wraps language single-string into array; null becomes empty array', () => {
+		expect( mapMastodonFeedItemToSocialPost( FIXTURE, OPTS ).lang ).toEqual( [ 'en' ] );
+		expect( mapMastodonFeedItemToSocialPost( { ...FIXTURE, language: null }, OPTS ).lang ).toEqual(
+			[]
+		);
+	} );
+
+	it( 'maps boost → repost reason with qualified acct', () => {
+		const post = mapMastodonFeedItemToSocialPost(
+			{
+				...FIXTURE,
+				boost: {
+					type: 'boost',
+					by: {
+						id: '8',
+						username: 'bob',
+						acct: 'bob',
+						display_name: 'Bob',
+						avatar: null,
+					},
+				},
+			},
+			OPTS
+		);
 		expect( post.reason ).toEqual( {
 			type: 'repost',
-			by: { handle: 'bob@x.tld', display_name: 'Bob' },
+			by: { id: '8', handle: 'bob@mastodon.social', display_name: 'Bob' },
 		} );
+	} );
+
+	it( 'returns null embed when media[] is empty', () => {
+		const post = mapMastodonFeedItemToSocialPost( FIXTURE, OPTS );
+		expect( post.embed ).toBeNull();
+	} );
+
+	it( 'maps a single image attachment to an images embed', () => {
+		const post = mapMastodonFeedItemToSocialPost(
+			{
+				...FIXTURE,
+				media: [
+					{
+						type: 'image',
+						url: 'https://cdn/big.jpg',
+						preview_url: 'https://cdn/small.jpg',
+						alt: 'a cat',
+						aspect_ratio: { width: 1920, height: 1080 },
+					},
+				],
+			},
+			OPTS
+		);
+		expect( post.embed ).toEqual( {
+			type: 'images',
+			images: [
+				{
+					thumb: 'https://cdn/small.jpg',
+					fullsize: 'https://cdn/big.jpg',
+					alt: 'a cat',
+					aspect_ratio: { width: 1920, height: 1080 },
+				},
+			],
+		} );
+	} );
+
+	it( 'groups multiple image attachments into one embed', () => {
+		const post = mapMastodonFeedItemToSocialPost(
+			{
+				...FIXTURE,
+				media: [
+					{
+						type: 'image',
+						url: 'a',
+						preview_url: 'a-small',
+						alt: '',
+						aspect_ratio: null,
+					},
+					{
+						type: 'image',
+						url: 'b',
+						preview_url: null,
+						alt: '',
+						aspect_ratio: null,
+					},
+				],
+			},
+			OPTS
+		);
+		expect( post.embed?.type ).toBe( 'images' );
+		expect( ( post.embed as { type: 'images'; images: unknown[] } ).images ).toHaveLength( 2 );
+	} );
+
+	it( 'maps a video attachment to a video embed', () => {
+		const post = mapMastodonFeedItemToSocialPost(
+			{
+				...FIXTURE,
+				media: [
+					{
+						type: 'video',
+						url: 'https://cdn/v.mp4',
+						preview_url: 'https://cdn/v.jpg',
+						alt: '',
+						aspect_ratio: { width: 16, height: 9 },
+					},
+				],
+			},
+			OPTS
+		);
+		expect( post.embed ).toEqual( {
+			type: 'video',
+			playlist: 'https://cdn/v.mp4',
+			thumbnail: 'https://cdn/v.jpg',
+			alt: '',
+			aspect_ratio: { width: 16, height: 9 },
+		} );
+	} );
+
+	it( 'images take priority over video when both are present', () => {
+		const post = mapMastodonFeedItemToSocialPost(
+			{
+				...FIXTURE,
+				media: [
+					{ type: 'video', url: 'v', preview_url: null, alt: '', aspect_ratio: null },
+					{ type: 'image', url: 'i', preview_url: null, alt: '', aspect_ratio: null },
+				],
+			},
+			OPTS
+		);
+		expect( post.embed?.type ).toBe( 'images' );
 	} );
 } );

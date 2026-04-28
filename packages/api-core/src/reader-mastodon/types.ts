@@ -41,114 +41,55 @@ export interface MastodonAuthorizeResponse {
 	state: string;
 }
 
-export interface MastodonTimelineAuthor {
+// Mastodon Account block as projected by ReaderMastodon_Normalizer.
+// Matches wpcom PR Automattic/wpcom#213513 normalizer output.
+// `acct` is `username` for local accounts, `username@instance` for
+// remote — the connection's instance is needed to render local
+// accounts with a fully-qualified webfinger handle.
+export interface MastodonTimelineAccount {
 	id: string;
+	username: string;
 	acct: string;
 	display_name: string;
 	avatar: string | null;
-	url: string;
 }
 
-export interface MastodonReplyRef {
-	uri: string;
-	author: { acct: string };
-}
-
-export interface MastodonBoostReason {
+export interface MastodonBoost {
 	type: 'boost';
-	by: { acct: string; display_name: string; avatar: string | null };
+	by: MastodonTimelineAccount;
 }
 
 export interface MastodonCounts {
 	replies: number;
-	reblogs: number;
+	boosts: number;
 	favourites: number;
-	quotes?: number;
 }
 
-export interface MastodonImage {
-	thumb: string;
-	fullsize: string;
+// Single attachment in the flat `media` array. The `type` discriminator
+// preserves the upstream Mastodon kinds; `unknown` is a forward-compat
+// fallback for future Mastodon attachment types.
+export interface MastodonMediaAttachment {
+	type: 'image' | 'video' | 'gifv' | 'audio' | 'unknown';
+	url: string;
+	preview_url: string | null;
 	alt: string;
 	aspect_ratio: { width: number; height: number } | null;
 }
-
-export interface MastodonEmbedImages {
-	type: 'images';
-	images: MastodonImage[];
-}
-
-export interface MastodonEmbedVideo {
-	type: 'video';
-	playlist: string;
-	thumbnail: string;
-	alt: string;
-	aspect_ratio: { width: number; height: number } | null;
-}
-
-export interface MastodonEmbedGifv {
-	type: 'gifv';
-	src: string;
-	thumbnail: string;
-	alt: string;
-	aspect_ratio: { width: number; height: number } | null;
-}
-
-export interface MastodonEmbedAudio {
-	type: 'audio';
-	src: string;
-	alt: string;
-	duration_seconds: number | null;
-}
-
-export interface MastodonEmbedExternal {
-	type: 'external';
-	uri: string;
-	title: string;
-	description: string;
-	thumb: string | null;
-}
-
-export interface MastodonQuoteTombstone {
-	type: 'not_found' | 'blocked';
-	uri: string;
-	reason: 'notfound' | 'blocked';
-}
-
-export interface MastodonEmbedQuote {
-	type: 'quote';
-	post: MastodonFeedItem | MastodonQuoteTombstone;
-}
-
-export interface MastodonEmbedQuoteWithMedia {
-	type: 'quote_with_media';
-	post: MastodonFeedItem | MastodonQuoteTombstone;
-	media: MastodonEmbedImages | MastodonEmbedVideo | null;
-}
-
-export type MastodonEmbed =
-	| MastodonEmbedImages
-	| MastodonEmbedVideo
-	| MastodonEmbedGifv
-	| MastodonEmbedAudio
-	| MastodonEmbedExternal
-	| MastodonEmbedQuote
-	| MastodonEmbedQuoteWithMedia;
 
 export interface MastodonFeedItem {
-	uri: string;
 	id: string;
-	author: MastodonTimelineAuthor;
+	url: string;
 	created_at: string;
-	edited_at: string | null;
-	text: string;
-	html: string;
-	lang: string | null;
-	reply_parent: MastodonReplyRef | null;
-	reply_root: MastodonReplyRef | null;
-	reason: MastodonBoostReason | null;
+	account: MastodonTimelineAccount;
+	content: string;
+	spoiler_text: string;
+	sensitive: boolean;
+	language: string | null;
+	in_reply_to_id: string | null;
+	in_reply_to_account_id: string | null;
+	boost: MastodonBoost | null;
+	media: MastodonMediaAttachment[];
 	counts: MastodonCounts;
-	embed: MastodonEmbed | null;
 }
 
 export interface MastodonTimelinePage {
