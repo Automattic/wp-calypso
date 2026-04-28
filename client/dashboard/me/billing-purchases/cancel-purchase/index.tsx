@@ -994,6 +994,9 @@ function CancelPurchaseInner() {
 					options: {
 						product_id: purchase.product_id,
 						cancel_bundled_domain: state.cancelBundledDomain ?? false,
+						email_variant: config.isEnabled( 'purchases/split-cancel-remove' )
+							? 'treatment'
+							: undefined,
 					},
 				},
 				{

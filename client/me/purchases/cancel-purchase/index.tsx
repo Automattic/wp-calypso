@@ -331,6 +331,9 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			await cancelAndRefundPurchaseAsync( purchase.id, {
 				product_id: purchase.productId,
 				cancel_bundled_domain: cancelBundledDomain ? 1 : 0,
+				email_variant: config.isEnabled( 'purchases/split-cancel-remove' )
+					? 'treatment'
+					: undefined,
 			} );
 			return {
 				success: true,
