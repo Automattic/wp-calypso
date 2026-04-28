@@ -77,3 +77,40 @@ export const atmosphereAccount = ( context: Context, next: () => void ) => {
 	);
 	next();
 };
+
+const DID_RE = /^did:(plc:[a-z2-7]{24}|web:[a-z0-9.-]+)$/;
+const RKEY_RE = /^[a-z0-9]{13}$/;
+
+export const atmosphereThread = ( context: Context, next: () => void ) => {
+	if ( ! ensureAtmosphereEnabled() ) {
+		return;
+	}
+
+	const id = Number( context.params.id );
+	const did = String( context.params.did ?? '' );
+	const rkey = String( context.params.rkey ?? '' );
+
+	const idValid = Number.isFinite( id ) && id > 0;
+	const inputsValid = idValid && DID_RE.test( did ) && RKEY_RE.test( rkey );
+
+	if ( ! inputsValid ) {
+		page.redirect( idValid ? `/reader/atmosphere/${ id }` : '/reader/atmosphere' );
+		return;
+	}
+
+	context.primary = (
+		<AsyncLoad
+			require={ () =>
+				import(
+					/* webpackChunkName: "async-load-calypso-reader-atmosphere-thread-view" */
+					'calypso/reader/atmosphere/atmosphere-thread-view'
+				)
+			}
+			placeholder={ null }
+			connectionId={ id }
+			did={ did }
+			rkey={ rkey }
+		/>
+	);
+	next();
+};
