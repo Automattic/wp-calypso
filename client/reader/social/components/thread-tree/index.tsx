@@ -23,11 +23,9 @@ export function ThreadTree( { root, targetUri }: ThreadTreeProps ) {
 				behavior: 'instant',
 			} );
 		}
-		// Scroll once on mount only; targetRef and parents.length settle on
-		// first render and don't change for a given thread URL (next URL
-		// produces a fresh ThreadTree instance via React Query cache key).
+		// Intentional: only re-run on targetUri change. parents.length is recomputed from root each render.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [] );
+	}, [ targetUri ] );
 
 	return (
 		<VStack spacing={ 0 } className="thread-tree">
@@ -53,9 +51,15 @@ export function ThreadTree( { root, targetUri }: ThreadTreeProps ) {
 
 function flattenParents( root: AtmosphereThreadNode ): AtmosphereThreadNode[] {
 	const out: AtmosphereThreadNode[] = [];
+	const seen = new Set< string >();
 	let cur: AtmosphereThreadNode | null = root.type === 'post' ? root.parent : null;
 	let guard = PARENT_WALK_LIMIT;
 	while ( cur && guard-- > 0 ) {
+		const uri = cur.type === 'post' ? cur.post.uri : cur.uri;
+		if ( seen.has( uri ) ) {
+			break;
+		}
+		seen.add( uri );
 		out.push( cur );
 		cur = cur.type === 'post' ? cur.parent : null;
 	}
@@ -63,8 +67,11 @@ function flattenParents( root: AtmosphereThreadNode ): AtmosphereThreadNode[] {
 }
 
 function keyOf( node: AtmosphereThreadNode, fallback: string ): string {
-	if ( node.type === 'post' ) {
-		return node.post.uri;
+	switch ( node.type ) {
+		case 'post':
+			return node.post.uri;
+		case 'not_found':
+		case 'blocked':
+			return `${ node.type }:${ node.uri }:${ fallback }`;
 	}
-	return `${ node.type }:${ 'uri' in node ? node.uri : '' }:${ fallback }`;
 }

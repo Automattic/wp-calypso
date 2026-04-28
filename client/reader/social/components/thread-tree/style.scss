@@ -39,7 +39,6 @@
 	padding-block: 0;
 	padding-inline-start: calc( var( --thread-depth, 0 ) * 24px );
 
-	// Cap visual indentation at depth 4.
 	&.thread-node--depth-5,
 	&.thread-node--depth-6 {
 		padding-inline-start: calc( 4 * 24px );

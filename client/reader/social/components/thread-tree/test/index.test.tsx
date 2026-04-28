@@ -30,11 +30,29 @@ function makeFeedItem( overrides: Partial< AtmosphereFeedItem > = {} ): Atmosphe
 	};
 }
 
-const scrollIntoView = jest.fn();
+// jsdom doesn't implement Element.prototype.scrollIntoView. Stub it for the
+// duration of each test and restore afterwards so the prototype patch doesn't
+// leak across files.
+let scrollIntoView: jest.Mock;
+const originalScrollIntoView = Object.getOwnPropertyDescriptor(
+	Element.prototype,
+	'scrollIntoView'
+);
 beforeEach( () => {
-	scrollIntoView.mockReset();
-	Element.prototype.scrollIntoView =
-		scrollIntoView as unknown as typeof Element.prototype.scrollIntoView;
+	scrollIntoView = jest.fn();
+	Object.defineProperty( Element.prototype, 'scrollIntoView', {
+		configurable: true,
+		writable: true,
+		value: scrollIntoView,
+	} );
+} );
+afterEach( () => {
+	if ( originalScrollIntoView ) {
+		Object.defineProperty( Element.prototype, 'scrollIntoView', originalScrollIntoView );
+	} else {
+		// @ts-expect-error -- restore "not defined" baseline jsdom shipped with.
+		delete Element.prototype.scrollIntoView;
+	}
 } );
 
 describe( 'ThreadTree', () => {
@@ -127,7 +145,7 @@ describe( 'ThreadTree', () => {
 		expect( screen.getAllByRole( 'article' ) ).toHaveLength( 2 ); // root + reply1
 	} );
 
-	it( 'caps the parent walk at 80 nodes to defend against cycles', () => {
+	it( 'caps the parent walk at 80 nodes to defend against deep chains', () => {
 		let chain: AtmosphereThreadNode | null = null;
 		for ( let i = 0; i < 100; i++ ) {
 			const node: AtmosphereThreadNode = {
@@ -146,5 +164,40 @@ describe( 'ThreadTree', () => {
 		};
 		render( <ThreadTree root={ root } targetUri="at://target" /> );
 		expect( screen.getAllByRole( 'article' ) ).toHaveLength( 81 );
+	} );
+
+	it( 'breaks out of an actual parent cycle without duplicating nodes', () => {
+		// Build A.parent → B, then point B.parent → A to form a cycle.
+		const a = makeFeedItem( { uri: 'at://a', text: 'cycle-a', html: '<p>cycle-a</p>' } );
+		const b = makeFeedItem( { uri: 'at://b', text: 'cycle-b', html: '<p>cycle-b</p>' } );
+		const nodeA: AtmosphereThreadNode = {
+			type: 'post',
+			post: a,
+			parent: null,
+			replies: [],
+		};
+		const nodeB: AtmosphereThreadNode = {
+			type: 'post',
+			post: b,
+			parent: nodeA,
+			replies: [],
+		};
+		( nodeA as { parent: AtmosphereThreadNode | null } ).parent = nodeB;
+		const root: AtmosphereThreadNode = {
+			type: 'post',
+			post: makeFeedItem( {
+				uri: 'at://target',
+				text: 'cycle-target',
+				html: '<p>cycle-target</p>',
+			} ),
+			parent: nodeA,
+			replies: [],
+		};
+		render( <ThreadTree root={ root } targetUri="at://target" /> );
+		// Target + nodeA + nodeB — cycle detection breaks before re-rendering nodeA.
+		expect( screen.getAllByRole( 'article' ) ).toHaveLength( 3 );
+		expect( screen.getAllByText( 'cycle-a' ) ).toHaveLength( 1 );
+		expect( screen.getAllByText( 'cycle-b' ) ).toHaveLength( 1 );
+		expect( screen.getAllByText( 'cycle-target' ) ).toHaveLength( 1 );
 	} );
 } );
