@@ -49,7 +49,7 @@ export interface ReadListItemsResponse {
 	total_items: number;
 }
 
-export interface ReaderListItem {
+export interface ReadList {
 	ID: number;
 	title: string;
 	slug: string;
@@ -61,11 +61,11 @@ export interface ReaderListItem {
 }
 
 export interface ReadSubscribedListsResponse {
-	lists: ReaderListItem[];
+	lists: ReadList[];
 }
 
 export interface ReadListResponse {
-	list: ReaderListItem;
+	list: ReadList;
 }
 
 export interface CreateReadListParams {
