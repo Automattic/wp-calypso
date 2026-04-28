@@ -87,13 +87,22 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 		}
 	}, [ feed.isError, feed.error, connection.id, actor, dispatch ] );
 
-	const items: AtmosphereFeedItem[] = useMemo(
-		() =>
-			feed.data?.pages
-				.flatMap( ( page ) => page.items ?? [] )
-				.filter( ( post ): post is AtmosphereFeedItem => Boolean( post?.uri ) ) ?? [],
-		[ feed.data ]
-	);
+	const items: AtmosphereFeedItem[] = useMemo( () => {
+		// Bluesky's getAuthorFeed can return the same post URI more than once
+		// across pages (e.g., the author reposted their own post, or a
+		// pagination boundary races); dedupe so React's keyed list stays
+		// stable.
+		const seen = new Set< string >();
+		const deduped: AtmosphereFeedItem[] = [];
+		for ( const post of feed.data?.pages.flatMap( ( page ) => page.items ?? [] ) ?? [] ) {
+			if ( ! post?.uri || seen.has( post.uri ) ) {
+				continue;
+			}
+			seen.add( post.uri );
+			deduped.push( post );
+		}
+		return deduped;
+	}, [ feed.data ] );
 
 	const handleHeaderRetry = useCallback( () => {
 		dispatch(
