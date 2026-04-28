@@ -6,6 +6,7 @@ module.exports = function storybookDefaultConfig( {
 	stories,
 	plugins = [],
 	webpackAliases = {},
+	sassAdditionalData,
 	babelCacheDirectory = path.join( __dirname, '../../../.cache/babel-storybook' ),
 } = {} ) {
 	return {
@@ -81,9 +82,15 @@ module.exports = function storybookDefaultConfig( {
 				{
 					test: /\.scss$/,
 					use: [
-						'style-loader', // Injects styles into the DOM
-						'css-loader', // Translates CSS into CommonJS
-						'sass-loader', // Compiles Sass to CSS
+						'style-loader',
+						'css-loader',
+						{
+							loader: 'sass-loader',
+							options: {
+								...( sassAdditionalData && { additionalData: sassAdditionalData } ),
+								sassOptions: { quietDeps: true },
+							},
+						},
 					],
 				},
 			];
