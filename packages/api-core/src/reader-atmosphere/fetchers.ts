@@ -1,6 +1,7 @@
 import { wpcom } from '../wpcom-fetcher';
 import { classifyAtmosphereError } from './errors';
 import type {
+	AtmosphereAuthorFeedPage,
 	AtmosphereAuthorProfile,
 	AtmosphereConnectionDetails,
 	AtmosphereConnectionsResponse,
@@ -122,6 +123,36 @@ export async function getAuthorProfile(
 			path: `/reader/atmosphere/profile/${ encodeURIComponent( actor ) }`,
 			apiNamespace: NAMESPACE,
 		} ) ) as AtmosphereAuthorProfile;
+	} catch ( raw ) {
+		throw classifyAtmosphereError( raw );
+	}
+}
+
+export interface GetAuthorFeedParams {
+	actor: string;
+	cursor?: string;
+	limit?: number;
+}
+
+export async function getAuthorFeed(
+	params: GetAuthorFeedParams
+): Promise< AtmosphereAuthorFeedPage > {
+	const { actor, cursor, limit } = params;
+	const query: Record< string, string > = {};
+	if ( cursor ) {
+		query.cursor = cursor;
+	}
+	if ( limit ) {
+		query.limit = String( limit );
+	}
+	try {
+		return ( await wpcom.req.get(
+			{
+				path: `/reader/atmosphere/profile/${ encodeURIComponent( actor ) }/feed`,
+				apiNamespace: NAMESPACE,
+			},
+			query
+		) ) as AtmosphereAuthorFeedPage;
 	} catch ( raw ) {
 		throw classifyAtmosphereError( raw );
 	}

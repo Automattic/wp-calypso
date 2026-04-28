@@ -1,6 +1,7 @@
 import nock from 'nock';
 import {
 	createConnection,
+	getAuthorFeed,
 	getAuthorProfile,
 	getConnection,
 	getConnections,
@@ -8,6 +9,7 @@ import {
 	getTimeline,
 } from '../fetchers';
 import type {
+	AtmosphereAuthorFeedPage,
 	AtmosphereAuthorProfile,
 	AtmosphereFeedItem,
 	AtmosphereThreadResponse,
@@ -415,6 +417,60 @@ describe( 'atmosphere fetchers', () => {
 				.replyWithError( 'boom' );
 
 			await expect( getAuthorProfile( { actor: 'alice.bsky.social' } ) ).rejects.toMatchObject( {
+				kind: 'unknown',
+			} );
+		} );
+	} );
+
+	describe( 'getAuthorFeed', () => {
+		it( 'fetches the first page with no cursor', async () => {
+			const payload: AtmosphereAuthorFeedPage = {
+				items: [],
+				cursor: 'next-cursor',
+			};
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.reply( 200, payload );
+
+			const result = await getAuthorFeed( { actor: 'alice.bsky.social' } );
+			expect( result ).toEqual( payload );
+		} );
+
+		it( 'forwards cursor and limit as query params', async () => {
+			const scope = nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.query( { cursor: 'abc', limit: '50' } )
+				.reply( 200, { items: [], cursor: null } );
+
+			await getAuthorFeed( { actor: 'alice.bsky.social', cursor: 'abc', limit: 50 } );
+			expect( scope.isDone() ).toBe( true );
+		} );
+
+		it( 'percent-encodes the actor in the path', async () => {
+			const scope = nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/reader/atmosphere/profile/did%3Aplc%3Aabc123/feed' )
+				.reply( 200, { items: [], cursor: null } );
+
+			await getAuthorFeed( { actor: 'did:plc:abc123' } );
+			expect( scope.isDone() ).toBe( true );
+		} );
+
+		it( 'classifies error responses through classifyAtmosphereError', async () => {
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.reply( 429, { error: 'atmosphere_rate_limited' } );
+
+			await expect( getAuthorFeed( { actor: 'alice.bsky.social' } ) ).rejects.toMatchObject( {
+				kind: 'rate_limited',
+			} );
+		} );
+
+		it( 'classifies a network error as unknown', async () => {
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.replyWithError( 'boom' );
+
+			await expect( getAuthorFeed( { actor: 'alice.bsky.social' } ) ).rejects.toMatchObject( {
 				kind: 'unknown',
 			} );
 		} );
