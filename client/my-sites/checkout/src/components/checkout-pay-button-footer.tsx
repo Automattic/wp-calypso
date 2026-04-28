@@ -44,7 +44,7 @@ const Divider = styled.hr`
 	margin: 8px 0;
 `;
 
-const AutoRenewNotice = styled.p`
+const LegalNotice = styled.p`
 	margin: 0;
 	font-size: 12px;
 	line-height: 1.5;
@@ -86,9 +86,9 @@ export default function CheckoutPayButtonFooter( { cart }: { cart: ResponseCart 
 
 			<Divider />
 
-			<AutoRenewNotice>
+			<LegalNotice>
 				{ translate(
-					'By purchasing, you accept the {{tos}}Terms of Service{{/tos}} and {{pp}}Privacy Policy{{/pp}}. Your subscription auto-renews. {{readmore}}Read more{{/readmore}}',
+					'By purchasing, you accept the {{tos}}Terms of Service{{/tos}} and {{pp}}Privacy Policy{{/pp}}. {{readmore}}Read more{{/readmore}}',
 					{
 						components: {
 							tos: (
@@ -109,7 +109,7 @@ export default function CheckoutPayButtonFooter( { cart }: { cart: ResponseCart 
 						},
 					}
 				) }
-			</AutoRenewNotice>
+			</LegalNotice>
 
 			<CheckoutTermsModal
 				cart={ cart }
