@@ -128,7 +128,9 @@ describe( 'getSiteData', () => {
 			data: {
 				...mockWooPaymentsData.data,
 				total: {
-					...mockWooPaymentsData.data.total,
+					payout: 1000,
+					tpv: 50000,
+					transactions: 200,
 					sites: {
 						456: {
 							payout: 0,
@@ -138,9 +140,13 @@ describe( 'getSiteData', () => {
 					},
 				},
 				estimated: {
-					...mockWooPaymentsData.data.estimated!,
+					payout: 300,
+					tpv: 15000,
+					transactions: 60,
 					current_quarter: {
-						...mockWooPaymentsData.data.estimated!.current_quarter,
+						payout: 200,
+						tpv: 10000,
+						transactions: 40,
 						sites: {
 							456: {
 								payout: 16,
@@ -150,7 +156,9 @@ describe( 'getSiteData', () => {
 						},
 					},
 					previous_quarter: {
-						...mockWooPaymentsData.data.estimated!.previous_quarter,
+						payout: 100,
+						tpv: 5000,
+						transactions: 20,
 						sites: {
 							456: {
 								payout: 6,
