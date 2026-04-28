@@ -1,3 +1,5 @@
+import { readSubscribedListsQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
 import { translate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -6,8 +8,7 @@ import {
 	addRecommendedBlogsSite as addFeedRecommendation,
 	removeRecommendedBlogsSite as removeFeedRecommendation,
 } from 'calypso/state/reader/lists/actions';
-import { getListByOwnerAndSlug, getMatchingItem } from 'calypso/state/reader/lists/selectors';
-import type { ReaderList } from 'calypso/reader/list-manage/types';
+import { getMatchingItem } from 'calypso/state/reader/lists/selectors';
 import type { AppState } from 'calypso/types';
 
 interface useFeedRecommendationsMutationResult {
@@ -28,13 +29,16 @@ export const useFeedRecommendationsMutation = (
 	const dispatch = useDispatch();
 	const currentUserName = useSelector( getCurrentUserName );
 
-	// Get the recommended blogs list for the current user
-	const recommendedBlogsList = useSelector( ( state: AppState ) => {
-		if ( ! currentUserName ) {
-			return null;
-		}
-		return getListByOwnerAndSlug( state, currentUserName, 'recommended-blogs' ) as ReaderList;
+	// Get the recommended blogs list for the current user from the subscribed lists query.
+	const { data: subscribedListsData } = useQuery( {
+		...readSubscribedListsQuery(),
+		enabled: !! currentUserName,
 	} );
+	const recommendedBlogsList = currentUserName
+		? subscribedListsData?.lists.find(
+				( list ) => list.owner === currentUserName && list.slug === 'recommended-blogs'
+		  )
+		: undefined;
 
 	// Memoized selector to check if item is in recommended list
 	const selectIsInRecommendedList = useCallback(

@@ -19,6 +19,7 @@ type CancellationReasonProps = {
 	onChange: ChangeCallback;
 	plans: PlanProduct[];
 	onDetailsChange: DetailsChangeCallback;
+	intent?: 'cancel' | 'remove';
 };
 
 function CancellationReason( {
@@ -26,6 +27,7 @@ function CancellationReason( {
 	reasonCodes,
 	onChange,
 	plans,
+	intent,
 	...props
 }: CancellationReasonProps ) {
 	const [ value, setValue ] = useState( '' );
@@ -65,7 +67,11 @@ function CancellationReason( {
 	return (
 		<VStack spacing={ 6 }>
 			<RadioControl
-				label={ __( 'Why would you like to cancel?' ) }
+				label={
+					intent === 'remove'
+						? __( 'Why would you like to remove?' )
+						: __( 'Why would you like to cancel?' )
+				}
 				selected={ value }
 				options={ reasons.map( toSelectOption ) }
 				onChange={ ( val ) => {
@@ -152,12 +158,14 @@ type FeedbackStepProps = {
 	onChangeCancellationReason: ChangeCallback;
 	onChangeCancellationReasonDetails: ChangeCallback;
 	onChangeImportFeedback: ChangeCallback;
+	intent?: 'cancel' | 'remove';
 };
 
 export default function FeedbackStep( {
 	purchase,
 	plans,
 	isImport,
+	intent,
 	cancellationReasonCodes,
 	onChangeCancellationReason,
 	onChangeCancellationReasonDetails,
@@ -177,6 +185,7 @@ export default function FeedbackStep( {
 					reasonCodes={ cancellationReasonCodes ?? [] }
 					onChange={ onChangeCancellationReason }
 					onDetailsChange={ onChangeCancellationReasonDetails }
+					intent={ intent }
 				/>
 			) }
 			{ showCancellationReason && isImport && (

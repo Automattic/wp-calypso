@@ -1,26 +1,22 @@
+import { productsQuery, siteFeaturesQuery, sitePurchasesQuery } from '@automattic/api-queries';
+import { FEATURE_WOOP, WPCOM_FEATURES_ATOMIC } from '@automattic/calypso-products';
 import { getThemeIdFromDesign } from '@automattic/design-picker';
+import { useQuery } from '@tanstack/react-query';
 import { useSelect } from '@wordpress/data';
-import { useQueryProductsList } from 'calypso/components/data/query-products-list';
-import { useQuerySiteFeatures } from 'calypso/components/data/query-site-features';
-import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
-import { useSelector } from 'calypso/state';
-import {
-	getProductBillingSlugByThemeId,
-	getProductsByBillingSlug,
-	isProductsListFetching,
-} from 'calypso/state/products-list/selectors';
-import { isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
-import {
-	isMarketplaceThemeSubscribed as getIsMarketplaceThemeSubscribed,
-	isSiteEligibleForManagedExternalThemes,
-} from 'calypso/state/themes/selectors';
 import { getPreferredBillingCycleProductSlug } from 'calypso/state/themes/theme-utils';
 import { useSiteData } from './use-site-data';
 import type { OnboardSelect } from '@automattic/data-stores';
 
-export const useMarketplaceThemeProducts = () => {
+interface UseMarketplaceThemeProductsProps {
+	siteId?: number;
+}
+
+export const useMarketplaceThemeProducts = ( {
+	siteId: providedSiteId,
+}: UseMarketplaceThemeProductsProps = {} ) => {
 	const { site } = useSiteData();
+	const siteId = providedSiteId ?? site?.ID;
 
 	const selectedDesign = useSelect( ( select ) => {
 		const { getSelectedDesign } = select( ONBOARD_STORE ) as OnboardSelect;
@@ -28,21 +24,45 @@ export const useMarketplaceThemeProducts = () => {
 	}, [] );
 
 	const selectedDesignThemeId = selectedDesign ? getThemeIdFromDesign( selectedDesign ) : null;
+	const billingProductSlug = selectedDesignThemeId
+		? `wp-mp-theme-${ selectedDesignThemeId }`
+		: null;
 
-	const isExternallyManagedThemeAvailable = useSelector(
-		( state ) => site?.ID && isSiteEligibleForManagedExternalThemes( state, site.ID )
+	const {
+		isLoading: isLoadingProducts,
+		isError: isErrorProducts,
+		data: productsData,
+	} = useQuery( productsQuery( 'all' ) );
+
+	const {
+		isLoading: isLoadingSiteFeatures,
+		isError: isErrorSiteFeatures,
+		data: siteFeatures,
+	} = useQuery( {
+		...siteFeaturesQuery( siteId as number ),
+		enabled: !! siteId,
+	} );
+
+	const {
+		isLoading: isLoadingSitePurchases,
+		isError: isErrorSitePurchases,
+		data: sitePurchasesData,
+	} = useQuery( {
+		...sitePurchasesQuery( siteId as number ),
+		enabled: !! siteId,
+	} );
+
+	const allProductsList = productsData ? Object.values( productsData ) : [];
+	const sitePurchasesList = sitePurchasesData ?? [];
+
+	const isExternallyManagedThemeAvailable = !! (
+		siteFeatures?.active?.includes( FEATURE_WOOP ) &&
+		siteFeatures?.active?.includes( WPCOM_FEATURES_ATOMIC )
 	);
 
-	const isLoadingProductList = useSelector( ( state ) => isProductsListFetching( state ) );
-	const isLoadingSitePurchases = useSelector( ( state ) => isFetchingSitePurchases( state ) );
-
-	const marketplaceThemeProducts =
-		useSelector( ( state ) =>
-			getProductsByBillingSlug(
-				state,
-				getProductBillingSlugByThemeId( state, selectedDesignThemeId ?? '' )
-			)
-		) || [];
+	const marketplaceThemeProducts = billingProductSlug
+		? allProductsList.filter( ( p ) => p.billing_product_slug === billingProductSlug )
+		: [];
 
 	const marketplaceProductSlug =
 		marketplaceThemeProducts.length !== 0
@@ -50,15 +70,14 @@ export const useMarketplaceThemeProducts = () => {
 			: null;
 
 	const selectedMarketplaceProduct =
-		marketplaceThemeProducts.find(
-			( product ) => product.product_slug === marketplaceProductSlug
-		) || marketplaceThemeProducts[ 0 ];
+		marketplaceThemeProducts.find( ( p ) => p.product_slug === marketplaceProductSlug ) ??
+		marketplaceThemeProducts[ 0 ];
 
-	const isMarketplaceThemeSubscribed = useSelector(
-		( state ) =>
-			site &&
-			selectedDesignThemeId &&
-			getIsMarketplaceThemeSubscribed( state, selectedDesignThemeId, site.ID )
+	const isMarketplaceThemeSubscribed = !! (
+		marketplaceThemeProducts.length > 0 &&
+		sitePurchasesList.some( ( purchase ) =>
+			marketplaceThemeProducts.some( ( p ) => purchase.product_slug === p.product_slug )
+		)
 	);
 
 	const isMarketplaceThemeSubscriptionNeeded = !! (
@@ -70,12 +89,9 @@ export const useMarketplaceThemeProducts = () => {
 			? [ marketplaceProductSlug ]
 			: [];
 
-	useQueryProductsList();
-	useQuerySiteFeatures( [ site?.ID ] );
-	useQuerySitePurchases( site?.ID ?? -1 );
-
 	return {
-		isLoading: isLoadingProductList || isLoadingSitePurchases,
+		isLoading: isLoadingProducts || isLoadingSiteFeatures || isLoadingSitePurchases,
+		isError: isErrorProducts || isErrorSiteFeatures || isErrorSitePurchases,
 		selectedMarketplaceProduct,
 		selectedMarketplaceProductCartItems,
 		isMarketplaceThemeSubscriptionNeeded,

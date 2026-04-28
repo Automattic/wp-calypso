@@ -1,12 +1,13 @@
 @import '@wordpress/base-styles/variables';
 @import '@wordpress/base-styles/mixins';
+@import '@automattic/color-studio/dist/color-variables';
 
 .email-providers {
-	border: 1px solid $gray-200;
+	border: 1px solid var( --dashboard-surface__border-color, #{$gray-200} );
 	border-radius: 8px;
 	display: flex;
 	flex-direction: column;
-	background-color: #fff;
+	background-color: var( --dashboard-surface__background-color, #fff );
 
 	@include break-small {
 		flex-direction: row;
@@ -18,11 +19,11 @@
 	justify-content: flex-start;
 
 	&:not(:first-child) {
-		border-top: 1px solid $gray-200;
+		border-top: 1px solid var( --dashboard-surface__border-color, #{$gray-200} );
 
 		@include break-small {
 			border-top: none;
-			border-inline-start: 1px solid $gray-200;
+			border-inline-start: 1px solid var( --dashboard-surface__border-color, #{$gray-200} );
 		}
 	}
 }
@@ -38,8 +39,8 @@
 .email-provider-trial {
 	padding: 0 10px;
 	border-radius: 3px;
-	background-color: #68de86;
-	color: #003008;
+	background-color: $studio-green-10;
+	color: $studio-green-90;
 	font-size: 12px;
 	line-height: 20px;
 	font-weight: 500;

@@ -1,0 +1,359 @@
+.social-post-card-link {
+	position: relative;
+
+	// Inner anchors stay clickable above the timestamp ::after card-link overlay.
+	.social-post-card-header__author,
+	.social-post-card-embed-external,
+	.social-post-card-embed-quote-link,
+	.social-post-card-embed-images__item {
+		position: relative;
+		z-index: 1;
+	}
+}
+
+// Override the @wordpress/components Card defaults (7px radius + 1px
+// shadow-border) so feed cards stack as a flat scrolling list with a single
+// hairline divider between rows, matching bsky.app's compact density.
+.social-post-card.components-card {
+	box-shadow: none;
+	border-radius: 0;
+	border-bottom: 1px solid var( --studio-gray-5 );
+	background: transparent;
+
+	&:hover {
+		background: var( --studio-gray-0 );
+	}
+
+	.components-card__body {
+		padding: 12px 16px;
+	}
+}
+
+.social-post-card--compact.components-card {
+	border-radius: 8px;
+	border-bottom: none;
+	box-shadow: 0 0 0 1px var( --studio-gray-5 );
+	background: transparent;
+
+	.components-card__body {
+		padding: 10px 12px;
+	}
+
+	&:hover {
+		background: transparent;
+	}
+}
+
+.social-post-card-header {
+	gap: 4px;
+}
+
+.social-post-card-header__reason,
+.social-post-card-header__reply-context {
+	font-size: 0.875rem;
+	color: var( --studio-gray-50 );
+	line-height: 1.4;
+}
+
+.social-post-card-header__row {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	min-width: 0;
+}
+
+.social-post-card-header__author {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	min-width: 0;
+	flex-shrink: 1;
+	text-decoration: none;
+	color: inherit;
+	max-width: 100%;
+	overflow: hidden;
+}
+
+a.social-post-card-header__author:hover .social-post-card-header__display-name {
+	text-decoration: underline;
+}
+
+.social-post-card-header__avatar {
+	flex-shrink: 0;
+	border-radius: 50%;
+	object-fit: cover;
+	background: var( --studio-gray-5 );
+}
+
+.social-post-card-header__avatar--placeholder {
+	background: var( --studio-gray-10 );
+}
+
+.social-post-card-header__author-text {
+	display: flex;
+	align-items: baseline;
+	gap: 6px;
+	min-width: 0;
+	flex-wrap: nowrap;
+	overflow: hidden;
+}
+
+.social-post-card-header__display-name {
+	font-weight: 600;
+	color: var( --studio-gray-100 );
+	font-size: 0.875rem;
+	line-height: 1.3;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 100%;
+}
+
+.social-post-card-header__handle {
+	color: var( --studio-gray-50 );
+	font-size: 0.875rem;
+	line-height: 1.3;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	min-width: 0;
+}
+
+.social-post-card-header__dot {
+	color: var( --studio-gray-50 );
+	font-size: 0.875rem;
+	flex-shrink: 0;
+}
+
+.social-post-card-header__timestamp {
+	color: var( --studio-gray-50 );
+	font-size: 0.875rem;
+	text-decoration: none;
+	white-space: nowrap;
+	flex-shrink: 0;
+
+	&:hover {
+		text-decoration: underline;
+	}
+}
+
+a.social-post-card-header__timestamp::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	z-index: 0;
+}
+
+.social-post-card-body {
+	font-size: 1rem;
+	line-height: 1.5;
+	color: var( --studio-gray-100 );
+	margin: 8px 0;
+	white-space: pre-wrap;
+	word-wrap: break-word;
+
+	p {
+		margin: 0 0 0.5em;
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+
+	a {
+		color: var( --studio-blue-50 );
+		text-decoration: none;
+
+		&:hover {
+			text-decoration: underline;
+		}
+	}
+}
+
+.social-post-card-counts {
+	margin-top: 8px;
+	font-size: 0.875rem;
+	color: var( --studio-gray-50 );
+	gap: 16px;
+
+	span {
+		display: inline-flex;
+		align-items: center;
+		gap: 4px;
+	}
+
+	svg {
+		flex-shrink: 0;
+		fill: currentColor;
+	}
+}
+
+.social-post-card-embed-images {
+	display: grid;
+	gap: 4px;
+	margin-top: 8px;
+	border-radius: 8px;
+	overflow: hidden;
+}
+
+.social-post-card-embed-images--count-1 {
+	grid-template-columns: 1fr;
+}
+
+// 2-, 3- and 4-image grids use uniform 1:1 tiles so the grid stays even
+// when individual images differ in aspect ratio (matches bsky.app).
+.social-post-card-embed-images--count-2 {
+	grid-template-columns: 1fr 1fr;
+
+	.social-post-card-embed-images__item {
+		aspect-ratio: 1 / 1;
+	}
+}
+
+// 3-image grid: tall left tile, two stacked right tiles, all 1:1.
+.social-post-card-embed-images--count-3 {
+	grid-template-columns: 1fr 1fr;
+	grid-template-rows: 1fr 1fr;
+
+	.social-post-card-embed-images__item {
+		aspect-ratio: 1 / 1;
+	}
+
+	.social-post-card-embed-images__item:first-child {
+		grid-row: span 2;
+		aspect-ratio: 1 / 2;
+	}
+}
+
+.social-post-card-embed-images--count-4 {
+	grid-template-columns: 1fr 1fr;
+
+	.social-post-card-embed-images__item {
+		aspect-ratio: 1 / 1;
+	}
+}
+
+.social-post-card-embed-images__item {
+	display: block;
+	overflow: hidden;
+	background: var( --studio-gray-5 );
+
+	img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		display: block;
+	}
+}
+
+.social-post-card-embed-video {
+	position: relative;
+	overflow: hidden;
+	border-radius: 8px;
+	margin-top: 8px;
+	background: var( --studio-gray-90 );
+}
+
+.social-post-card-embed-video__thumbnail {
+	width: 100%;
+	height: auto;
+	display: block;
+	object-fit: cover;
+}
+
+.social-post-card-embed-video__play {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 3rem;
+	color: rgba( 255, 255, 255, 0.95 );
+	text-shadow: 0 2px 8px rgba( 0, 0, 0, 0.5 );
+	pointer-events: none;
+}
+
+.social-post-card-embed-external {
+	display: block;
+	margin-top: 8px;
+	border: 1px solid var( --studio-gray-5 );
+	border-radius: 8px;
+	overflow: hidden;
+	text-decoration: none;
+	color: inherit;
+	background: var( --studio-white );
+
+	&:hover {
+		background: var( --studio-gray-0 );
+	}
+
+	.components-h-stack {
+		padding: 12px;
+	}
+}
+
+.social-post-card-embed-external__thumb {
+	width: 64px;
+	height: 64px;
+	border-radius: 8px;
+	object-fit: cover;
+	flex-shrink: 0;
+}
+
+.social-post-card-embed-external__title {
+	font-weight: 600;
+	font-size: 0.875rem;
+	color: var( --studio-gray-100 );
+	line-height: 1.3;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+
+.social-post-card-embed-external__description {
+	font-size: 0.75rem;
+	color: var( --studio-gray-50 );
+	line-height: 1.4;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+
+.social-post-card-embed-external__host {
+	font-size: 0.75rem;
+	color: var( --studio-gray-50 );
+}
+
+.social-post-card-embed-quote-link {
+	display: block;
+	margin-top: 8px;
+	border: 1px solid var( --studio-gray-5 );
+	border-radius: 8px;
+	overflow: hidden;
+	text-decoration: none;
+	color: inherit;
+
+	&:hover {
+		background: var( --studio-gray-0 );
+	}
+}
+
+.social-post-card-embed-quote-tombstone {
+	margin-top: 8px;
+	padding: 12px;
+	border: 1px solid var( --studio-gray-5 );
+	border-radius: 8px;
+	color: var( --studio-gray-50 );
+	font-size: 0.875rem;
+	font-style: italic;
+}
+
+// Override @wordpress/components VStack's higher-specificity `gap` so the
+// inner quote and media stack tightly. Selector specificity must beat the
+// component's own internal rule.
+.components-flex.social-post-card-embed-quote-with-media {
+	margin-top: 8px;
+	gap: 4px;
+}

@@ -52,7 +52,11 @@ export default function PurchasesSite(
 			<QuerySites siteId={ siteId } />
 
 			<AsyncLoad
-				require="calypso/blocks/product-plan-overlap-notices"
+				require={ () =>
+					import(
+						/* webpackChunkName: "async-load-calypso-blocks-product-plan-overlap-notices" */ 'calypso/blocks/product-plan-overlap-notices'
+					)
+				}
 				placeholder={ null }
 				plans={ JETPACK_PLANS }
 				products={ JETPACK_PRODUCTS_LIST }

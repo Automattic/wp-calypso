@@ -22,6 +22,38 @@ The Reader is migrating from **Redux + data-layer** to **React Query** using the
 - **Legacy (Redux + data-layer)**: still present in most streams and core features.
 - **Current (React Query)**: used in newer features like `discover/`, `new-subscription/`, and subscription management. New features should use `@automattic/api-core` for API definitions and `@automattic/api-queries` for React Query hooks.
 
+### Mutation factories must accept the consumer's `QueryClient`
+
+Calypso boots its own `QueryClient` (see `client/state/query-client.ts`, with a per-user persistence key) and injects it via `<QueryClientProvider>` in `client/controller/index.web.js`. The Dashboard, in contrast, uses the singleton exported by `@automattic/api-queries` (`packages/api-queries/src/query-client.ts`).
+
+Because of that, **mutation factories defined in `@automattic/api-queries` must not reference the singleton `queryClient`** when used from the Reader. If they do, `onSuccess` handlers invalidate cache on the Dashboard's client instead of Calypso's, the active sidebar/page never sees the invalidation, and the underlying endpoint is never refetched after a mutation.
+
+Pattern for any mutation factory whose `onSuccess` (or `onError`/`onMutate`) needs to call `invalidateQueries`, `setQueryData`, `removeQueries`, etc.:
+
+```ts
+// packages/api-queries/src/<resource>.ts
+import { mutationOptions, type QueryClient } from '@tanstack/react-query';
+
+export const fooMutation = ( queryClient: QueryClient ) =>
+    mutationOptions( {
+        mutationFn: foo,
+        onSuccess: () => {
+            queryClient.invalidateQueries( { queryKey: barQuery().queryKey } );
+        },
+    } );
+```
+
+Consumers in the Reader (and any other Calypso classic surface) pass `useQueryClient()` in:
+
+```tsx
+const queryClient = useQueryClient();
+const { mutate } = useMutation( fooMutation( queryClient ) );
+```
+
+Query factories (`queryOptions(...)`) do **not** need this — they don't interact with the cache imperatively, and `useQuery` reads the active client from React context.
+
+Example: every list mutation in `packages/api-queries/src/read-lists.ts` follows this pattern.
+
 ### Stream keys
 
 Stream types are identified by unique keys. Examples of stream keys include `following`, `feed:{feedId}`, `site:{siteId}`, `tag:{tagSlug}`, `search:{json}`, `discover:*`, `conversations`, `conversations-a8c`, `p2`, `a8c`, `likes`, `recommendations_posts`, `recent`, `recent:{feedId}`, `list:{...}`, `user:{id}`, `tag_popular:{tag}`, and `custom_recs_*`. These keys index state in `state.reader.streams`.

@@ -36,6 +36,11 @@ jest.mock( '@automattic/calypso-config', () => ( {
 	isEnabled: jest.fn(),
 } ) );
 
+jest.mock( 'calypso/reader/components/achievements/use-achievements-visibility', () => ( {
+	__esModule: true,
+	default: () => ( { isOwnProfile: true, isVisible: true, isLoading: false } ),
+} ) );
+
 const mockIsEnabled = isEnabled as jest.MockedFunction< typeof isEnabled >;
 
 describe( 'UserProfileHeader', () => {
@@ -83,7 +88,7 @@ describe( 'UserProfileHeader', () => {
 
 		const avatar = screen.getByTestId( 'user-avatar' );
 		expect( avatar ).toBeVisible();
-		expect( avatar ).toHaveAttribute( 'data-user-id', defaultUser.ID.toString() );
+		expect( avatar ).toHaveAttribute( 'data-user-id', defaultUser.ID?.toString() );
 	} );
 
 	test( 'should render the user display name', () => {
@@ -179,7 +184,7 @@ describe( 'UserProfileHeader', () => {
 		renderWithClient( <UserProfileHeader user={ userWithBio } view="posts" /> );
 
 		// Bio section should be present
-		const bioText = screen.getByText( userWithBio.description );
+		const bioText = screen.getByText( userWithBio.description! );
 		expect( bioText ).toBeVisible();
 	} );
 

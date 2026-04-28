@@ -94,6 +94,7 @@
 		"purchases/new-payment-methods": true,
 		"purchases/split-cancel-remove": true,
 		"reader/achievements": true,
+		"reader/social": true,
 		"reader/full-errors": true,
 		"reader/msd-enabled": true,
 		"reader/onboarding-rsm": false,

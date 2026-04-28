@@ -1,0 +1,23 @@
+@import '@automattic/typography/styles/variables';
+
+// Reader's togglable sidebar applies `font-weight: 600` and the
+// selected-text color to `.selected .sidebar__menu-link` (see
+// client/reader/sidebar/style.scss), which makes social account rows
+// look louder than the neighbouring Recent rows. Keep the selected
+// background, but reset the weight and color so the rows read like the
+// rest of the sidebar. Selector specificity has to match the reader
+// override (7 classes) to win the cascade.
+.theme-default .global-sidebar .sidebar .sidebar__menu.is-togglable .sidebar-social__account-item.selected .sidebar__menu-link {
+	font-weight: normal;
+
+	&,
+	&:visited {
+		color: var( --color-sidebar-text );
+	}
+}
+
+.sidebar-social__account-handle {
+	display: block;
+	font-size: 0.67rem; /* stylelint-disable-line scales/font-sizes */
+	color: var( --color-sidebar-text-alternative );
+}

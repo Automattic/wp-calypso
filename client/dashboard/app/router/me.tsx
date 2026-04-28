@@ -39,6 +39,7 @@ import { reauthRequiredLink } from '../../utils/link';
 import {
 	getTitleForDisplay,
 	getPurchaseCancellationFlowType,
+	getDisplayVariant,
 	isDotcomPlan,
 	CANCEL_FLOW_TYPE,
 } from '../../utils/purchase';
@@ -263,9 +264,13 @@ export const purchaseSettingsRoute = createRoute( {
 		};
 	},
 	path: '$purchaseId',
-	validateSearch: ( search ): { refunded?: true } => {
+	validateSearch: ( search ): { refunded?: true; upgraded?: true } => {
 		const isRefunded = search.refunded === true || search.refunded === 'true';
-		return isRefunded ? { refunded: true } : {};
+		const isUpgraded = search.upgraded === true || search.upgraded === 'true';
+		return {
+			...( isRefunded ? { refunded: true } : {} ),
+			...( isUpgraded ? { upgraded: true } : {} ),
+		};
 	},
 } );
 
@@ -376,27 +381,37 @@ export const addPaymentMethodRoute = createRoute( {
 );
 
 export const cancelPurchaseRoute = createRoute( {
-	head: ( { loaderData }: { loaderData?: { purchase?: Purchase } } ) => {
-		const purchase = loaderData?.purchase;
+	head: ( {
+		loaderData,
+	}: {
+		loaderData?: { purchase?: Purchase; intent?: 'cancel' | 'remove' };
+	} ) => {
+		// URL intent is authoritative; when absent, fall back to the flow-type
+		// heuristic on the loaded purchase. Delegates to `getDisplayVariant` so
+		// the tab title tracks the same cancel/remove decision the screen uses.
+		const { purchase, intent = null } = loaderData ?? {};
+		const flowType = purchase
+			? getPurchaseCancellationFlowType( purchase )
+			: CANCEL_FLOW_TYPE.CANCEL_AUTORENEW;
 		const title =
-			purchase && getPurchaseCancellationFlowType( purchase ) === CANCEL_FLOW_TYPE.REMOVE
-				? __( 'Remove' )
-				: __( 'Cancel' );
+			getDisplayVariant( intent, flowType ) === 'remove' ? __( 'Remove' ) : __( 'Cancel' );
 		return {
-			meta: [
-				{
-					title,
-				},
-			],
+			meta: [ { title } ],
 		};
 	},
 	getParentRoute: () => purchaseSettingsRoute,
 	path: 'cancel',
-	loader: async ( { parentMatchPromise } ) => {
+	validateSearch: ( search ): { intent?: 'cancel' | 'remove' } => {
+		return search.intent === 'cancel' || search.intent === 'remove'
+			? { intent: search.intent }
+			: {};
+	},
+	loaderDeps: ( { search } ) => ( { intent: search.intent } ),
+	loader: async ( { parentMatchPromise, deps: { intent } } ) => {
 		const parentMatch = await parentMatchPromise;
 		const purchase = parentMatch.loaderData?.purchase;
 		if ( ! purchase ) {
-			return { purchase: undefined };
+			return { purchase: undefined, intent };
 		}
 		await Promise.all( [
 			queryClient.ensureQueryData( sitePurchasesQuery( purchase.blog_id ) ),
@@ -404,7 +419,7 @@ export const cancelPurchaseRoute = createRoute( {
 			queryClient.ensureQueryData( siteFeaturesQuery( purchase.blog_id ) ),
 			queryClient.ensureQueryData( plansQuery() ),
 		] );
-		return { purchase };
+		return { purchase, intent };
 	},
 } ).lazy( () =>
 	import( '../../me/billing-purchases/cancel-purchase' ).then( ( d ) =>
@@ -904,7 +919,7 @@ export const wordpressDefaultsRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'WordPress.com defaults' ),
+				title: __( 'Account defaults' ),
 			},
 		],
 	} ),

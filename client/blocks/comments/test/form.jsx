@@ -5,9 +5,6 @@ import { screen } from '@testing-library/react';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import PostCommentForm from '../form';
 
-jest.mock( 'calypso/components/gravatar-with-hovercards', () => () => (
-	<div data-testid="gravatar" />
-) );
 jest.mock( 'calypso/blocks/user-mentions', () => ( {
 	__esModule: true,
 	default: ( Component ) => Component,
