@@ -25,6 +25,11 @@ import { DiscoverDocumentHead } from './discover-document-head';
 import { FRESHLY_PRESSED_TAB } from './helper';
 import { getPrivateRoutes, getDiscoverRoutes, DISCOVER_PREFIX } from './routes';
 
+const loadDiscoverStream = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-reader-discover-discover-stream" */ 'calypso/reader/discover/discover-stream'
+	);
+
 const ANALYTICS_PAGE_TITLE = 'Reader';
 
 const discover = ( context, next ) => {
@@ -52,11 +57,7 @@ const discover = ( context, next ) => {
 		<>
 			<DiscoverDocumentHead />
 			<AsyncLoad
-				require={ () =>
-					import(
-						/* webpackChunkName: "async-load-calypso-reader-discover-discover-stream" */ 'calypso/reader/discover/discover-stream'
-					)
-				}
+				require={ loadDiscoverStream }
 				key="discover-page"
 				streamKey={ streamKey }
 				title="Discover"

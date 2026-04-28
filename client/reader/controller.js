@@ -26,6 +26,45 @@ import {
 	getStartDate,
 } from './controller-helper';
 
+const loadSidebar = () =>
+	import( /* webpackChunkName: "async-load-calypso-reader-sidebar" */ 'calypso/reader/sidebar' );
+const loadNewSubscription = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-reader-new-subscription" */ 'calypso/reader/new-subscription'
+	);
+const loadMobileHeader = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-reader-components-mobile-header" */ 'calypso/reader/components/mobile-header'
+	);
+const loadFeedStream = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-reader-feed-stream" */ 'calypso/reader/feed-stream'
+	);
+const loadSiteStream = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-reader-site-stream" */ 'calypso/reader/site-stream'
+	);
+const loadMain = () =>
+	import( /* webpackChunkName: "async-load-calypso-reader-a8c-main" */ 'calypso/reader/a8c/main' );
+const loadP2Main = () =>
+	import( /* webpackChunkName: "async-load-calypso-reader-p2-main" */ 'calypso/reader/p2/main' );
+const loadSiteSubscriptionsManager = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-reader-site-subscriptions-manager" */ 'calypso/reader/site-subscriptions-manager'
+	);
+const loadSiteSubscription = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-reader-site-subscription" */ 'calypso/reader/site-subscription'
+	);
+const loadCommentSubscriptionsManager = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-reader-site-subscriptions-manager-comment-subscriptions-manager" */ 'calypso/reader/site-subscriptions-manager/comment-subscriptions-manager'
+	);
+const loadPendingSubscriptionsManager = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-reader-site-subscriptions-manager-pending-subscriptions-manager" */ 'calypso/reader/site-subscriptions-manager/pending-subscriptions-manager'
+	);
+
 const analyticsPageTitle = 'Reader';
 
 function renderFeedError( context, next ) {
@@ -37,16 +76,7 @@ export function sidebar( context, next ) {
 	const state = context.store.getState();
 	if ( isUserLoggedIn( state ) ) {
 		context.secondary = (
-			<AsyncLoad
-				key="reader-sidebar"
-				require={ () =>
-					import(
-						/* webpackChunkName: "async-load-calypso-reader-sidebar" */ 'calypso/reader/sidebar'
-					)
-				}
-				path={ context.path }
-				placeholder={ null }
-			/>
+			<AsyncLoad require={ loadSidebar } path={ context.path } placeholder={ null } />
 		);
 	}
 
@@ -108,17 +138,7 @@ export function following( context, next ) {
 
 export function loadNewSubscriptionPage( context, next ) {
 	const selectedTab = getCurrentTabFromURL( context.path, 'reader/new', 'add-new' );
-	context.primary = (
-		<AsyncLoad
-			key="reader-new-subscription"
-			require={ () =>
-				import(
-					/* webpackChunkName: "async-load-calypso-reader-new-subscription" */ 'calypso/reader/new-subscription'
-				)
-			}
-			selectedTab={ selectedTab }
-		/>
-	);
+	context.primary = <AsyncLoad require={ loadNewSubscription } selectedTab={ selectedTab } />;
 
 	trackPageLoad( '/reader/new', 'Reader > New Subscription', 'reader-new-subscription' );
 	next();
@@ -174,16 +194,7 @@ export function feedLookup( context ) {
 export const setBeforePrimary = ( context, next ) => {
 	const state = context.store.getState();
 	const isMSDEnabledForReader = isReaderMSDEnabled( state );
-	context.beforePrimary = isMSDEnabledForReader ? (
-		<AsyncLoad
-			key="reader-mobile-header"
-			require={ () =>
-				import(
-					/* webpackChunkName: "async-load-calypso-reader-components-mobile-header" */ 'calypso/reader/components/mobile-header'
-				)
-			}
-		/>
-	) : null;
+	context.beforePrimary = isMSDEnabledForReader ? <AsyncLoad require={ loadMobileHeader } /> : null;
 	next();
 };
 
@@ -203,11 +214,7 @@ export function feedListing( context, next ) {
 
 	context.primary = (
 		<AsyncLoad
-			require={ () =>
-				import(
-					/* webpackChunkName: "async-load-calypso-reader-feed-stream" */ 'calypso/reader/feed-stream'
-				)
-			}
+			require={ loadFeedStream }
 			key={ 'feed-' + feedId }
 			streamKey={ 'feed:' + feedId }
 			feedId={ +feedId }
@@ -240,11 +247,7 @@ export function blogListing( context, next ) {
 
 	context.primary = (
 		<AsyncLoad
-			require={ () =>
-				import(
-					/* webpackChunkName: "async-load-calypso-reader-site-stream" */ 'calypso/reader/site-stream'
-				)
-			}
+			require={ loadSiteStream }
 			key={ 'site-' + blogId }
 			streamKey={ streamKey }
 			siteId={ +blogId }
@@ -277,12 +280,8 @@ export function readA8C( context, next ) {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	context.primary = (
 		<AsyncLoad
-			require={ () =>
-				import(
-					/* webpackChunkName: "async-load-calypso-reader-a8c-main" */ 'calypso/reader/a8c/main'
-				)
-			}
-			key="reader-a8c"
+			require={ loadMain }
+			key="read-a8c"
 			className="is-a8c"
 			listName="Automattic"
 			streamKey={ streamKey }
@@ -316,12 +315,8 @@ export function readFollowingP2( context, next ) {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	context.primary = (
 		<AsyncLoad
-			require={ () =>
-				import(
-					/* webpackChunkName: "async-load-calypso-reader-p2-main" */ 'calypso/reader/p2/main'
-				)
-			}
-			key="reader-p2"
+			require={ loadP2Main }
+			key="read-p2"
 			listName="P2"
 			streamKey={ streamKey }
 			startDate={ startDate }
@@ -372,16 +367,7 @@ export async function siteSubscriptionsManager( context, next ) {
 	const mcKey = 'subscription-sites';
 	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
-	context.primary = (
-		<AsyncLoad
-			key="reader-site-subscriptions-manager"
-			require={ () =>
-				import(
-					/* webpackChunkName: "async-load-calypso-reader-site-subscriptions-manager" */ 'calypso/reader/site-subscriptions-manager'
-				)
-			}
-		/>
-	);
+	context.primary = <AsyncLoad require={ loadSiteSubscriptionsManager } />;
 	next();
 }
 
@@ -404,12 +390,7 @@ export async function siteSubscription( context, next ) {
 
 	context.primary = (
 		<AsyncLoad
-			key="reader-site-subscription"
-			require={ () =>
-				import(
-					/* webpackChunkName: "async-load-calypso-reader-site-subscription" */ 'calypso/reader/site-subscription'
-				)
-			}
+			require={ loadSiteSubscription }
 			subscriptionId={ context.params.subscription_id }
 			blogId={ context.params.blog_id }
 			transition={ context.query.transition === 'true' }
@@ -424,16 +405,7 @@ export async function commentSubscriptionsManager( context, next ) {
 	const mcKey = 'subscription-comments';
 	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
-	context.primary = (
-		<AsyncLoad
-			key="reader-comment-subscriptions-manager"
-			require={ () =>
-				import(
-					/* webpackChunkName: "async-load-calypso-reader-site-subscriptions-manager-comment-subscriptions-manager" */ 'calypso/reader/site-subscriptions-manager/comment-subscriptions-manager'
-				)
-			}
-		/>
-	);
+	context.primary = <AsyncLoad require={ loadCommentSubscriptionsManager } />;
 	next();
 }
 
@@ -443,16 +415,7 @@ export async function pendingSubscriptionsManager( context, next ) {
 	const mcKey = 'subscription-pending';
 	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
-	context.primary = (
-		<AsyncLoad
-			key="reader-pending-subscriptions-manager"
-			require={ () =>
-				import(
-					/* webpackChunkName: "async-load-calypso-reader-site-subscriptions-manager-pending-subscriptions-manager" */ 'calypso/reader/site-subscriptions-manager/pending-subscriptions-manager'
-				)
-			}
-		/>
-	);
+	context.primary = <AsyncLoad require={ loadPendingSubscriptionsManager } />;
 	next();
 }
 

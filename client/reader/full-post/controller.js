@@ -3,6 +3,13 @@ import AsyncLoad from 'calypso/components/async-load';
 import { trackPageLoad } from 'calypso/reader/controller-helper';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
+const loadReaderFullPost = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-blocks-reader-full-post" */ 'calypso/blocks/reader-full-post'
+	);
+const loadSidebar = () =>
+	import( /* webpackChunkName: "async-load-calypso-reader-sidebar" */ 'calypso/reader/sidebar' );
+
 const analyticsPageTitle = 'Reader';
 
 const scrollTopIfNoHash = () =>
@@ -27,12 +34,7 @@ export function blogPost( context, next ) {
 
 	context.primary = (
 		<AsyncLoad
-			key="reader-blog-post"
-			require={ () =>
-				import(
-					/* webpackChunkName: "async-load-calypso-blocks-reader-full-post" */ 'calypso/blocks/reader-full-post'
-				)
-			}
+			require={ loadReaderFullPost }
 			blogId={ blogId }
 			postId={ postId }
 			referral={ referral }
@@ -41,16 +43,7 @@ export function blogPost( context, next ) {
 
 	if ( isUserLoggedIn( state ) ) {
 		context.secondary = (
-			<AsyncLoad
-				key="reader-sidebar"
-				require={ () =>
-					import(
-						/* webpackChunkName: "async-load-calypso-reader-sidebar" */ 'calypso/reader/sidebar'
-					)
-				}
-				path={ context.path }
-				placeholder={ null }
-			/>
+			<AsyncLoad require={ loadSidebar } path={ context.path } placeholder={ null } />
 		);
 	}
 	scrollTopIfNoHash();
@@ -67,30 +60,12 @@ export function feedPost( context, next ) {
 	trackPageLoad( basePath, fullPageTitle, 'full_post' );
 
 	context.primary = (
-		<AsyncLoad
-			key="reader-feed-post"
-			require={ () =>
-				import(
-					/* webpackChunkName: "async-load-calypso-blocks-reader-full-post" */ 'calypso/blocks/reader-full-post'
-				)
-			}
-			feedId={ feedId }
-			postId={ postId }
-		/>
+		<AsyncLoad require={ loadReaderFullPost } feedId={ feedId } postId={ postId } />
 	);
 
 	if ( isUserLoggedIn( state ) ) {
 		context.secondary = (
-			<AsyncLoad
-				key="reader-sidebar"
-				require={ () =>
-					import(
-						/* webpackChunkName: "async-load-calypso-reader-sidebar" */ 'calypso/reader/sidebar'
-					)
-				}
-				path={ context.path }
-				placeholder={ null }
-			/>
+			<AsyncLoad require={ loadSidebar } path={ context.path } placeholder={ null } />
 		);
 	}
 

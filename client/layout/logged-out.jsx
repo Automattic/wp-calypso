@@ -58,6 +58,27 @@ import HelpCenterLoader from './help-center-loader';
 
 import './style.scss';
 
+const loadWooCoreProfiler = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-layout-masterbar-woo-core-profiler" */ 'calypso/layout/masterbar/woo-core-profiler'
+	);
+const loadJetpackCloudStyle = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-jetpack-cloud-style" */ 'calypso/jetpack-cloud/style'
+	);
+const loadA8cForAgenciesStyle = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-a8c-for-agencies-style" */ 'calypso/a8c-for-agencies/style'
+	);
+const loadGlobalNotices = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-components-global-notices" */ 'calypso/components/global-notices'
+	);
+const loadSupportArticleDialog = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-blocks-support-article-dialog" */ 'calypso/blocks/support-article-dialog'
+	);
+
 const LayoutLoggedOut = ( {
 	isAkismet,
 	isPassport,
@@ -251,16 +272,7 @@ const LayoutLoggedOut = ( {
 	} else if ( isWooJPC ) {
 		classes.woo = true;
 		classes[ 'has-no-masterbar' ] = false;
-		masterbar = (
-			<AsyncLoad
-				require={ () =>
-					import(
-						/* webpackChunkName: "async-load-calypso-layout-masterbar-woo-core-profiler" */ 'calypso/layout/masterbar/woo-core-profiler'
-					)
-				}
-				placeholder={ null }
-			/>
-		);
+		masterbar = <AsyncLoad require={ loadWooCoreProfiler } placeholder={ null } />;
 	} else {
 		masterbar = ! masterbarIsHidden && (
 			<MasterbarLoggedOut
@@ -299,35 +311,13 @@ const LayoutLoggedOut = ( {
 					) }
 				</div>
 				{ isJetpackCloudEnvironment() && (
-					<AsyncLoad
-						require={ () =>
-							import(
-								/* webpackChunkName: "async-load-calypso-jetpack-cloud-style" */ 'calypso/jetpack-cloud/style'
-							)
-						}
-						placeholder={ null }
-					/>
+					<AsyncLoad require={ loadJetpackCloudStyle } placeholder={ null } />
 				) }
 				{ isA8CForAgencies() && (
-					<AsyncLoad
-						require={ () =>
-							import(
-								/* webpackChunkName: "async-load-calypso-a8c-for-agencies-style" */ 'calypso/a8c-for-agencies/style'
-							)
-						}
-						placeholder={ null }
-					/>
+					<AsyncLoad require={ loadA8cForAgenciesStyle } placeholder={ null } />
 				) }
 				<div id="content" className="layout__content">
-					<AsyncLoad
-						require={ () =>
-							import(
-								/* webpackChunkName: "async-load-calypso-components-global-notices" */ 'calypso/components/global-notices'
-							)
-						}
-						placeholder={ null }
-						id="notices"
-					/>
+					<AsyncLoad require={ loadGlobalNotices } placeholder={ null } id="notices" />
 					<div id="primary" className="layout__primary">
 						{ primary }
 					</div>
@@ -344,14 +334,7 @@ const LayoutLoggedOut = ( {
 						<UniversalNavbarFooter currentRoute={ currentRoute } isLoggedIn={ isLoggedIn } />
 
 						{ config.isEnabled( 'layout/support-article-dialog' ) && (
-							<AsyncLoad
-								require={ () =>
-									import(
-										/* webpackChunkName: "async-load-calypso-blocks-support-article-dialog" */ 'calypso/blocks/support-article-dialog'
-									)
-								}
-								placeholder={ null }
-							/>
+							<AsyncLoad require={ loadSupportArticleDialog } placeholder={ null } />
 						) }
 					</>
 				) }

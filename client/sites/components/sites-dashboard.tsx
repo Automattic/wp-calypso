@@ -67,6 +67,9 @@ import './dotcom-style.scss';
 
 import './guided-tours.scss';
 
+const loadSitesList = () =>
+	import( /* webpackChunkName: "async-load-calypso-sites-v2-sites-list" */ '../v2/sites-list' );
+
 interface SitesDashboardProps {
 	queryParams: SitesDashboardQueryParams;
 	initialSiteFeature?: string;
@@ -451,16 +454,7 @@ const SitesDashboard = ( {
 			);
 		}
 
-		return (
-			<AsyncLoad
-				require={ () =>
-					import(
-						/* webpackChunkName: "async-load-calypso-sites-v2-sites-list" */ '../v2/sites-list'
-					)
-				}
-				placeholder={ null }
-			/>
-		);
+		return <AsyncLoad require={ loadSitesList } placeholder={ null } />;
 	};
 
 	return (
