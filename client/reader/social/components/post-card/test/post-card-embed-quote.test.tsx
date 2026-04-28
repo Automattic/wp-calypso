@@ -30,7 +30,7 @@ describe( 'PostCardEmbedQuote', () => {
 			<PostCardEmbedQuote
 				embed={ {
 					type: 'quote',
-					post: { type: 'not_found', uri: 'at://x', reason: 'notfound' },
+					post: { type: 'not_found', uri: 'at://x' },
 				} }
 				parentPostUri="at://parent"
 			/>
@@ -41,7 +41,10 @@ describe( 'PostCardEmbedQuote', () => {
 	it( 'renders a tombstone for a blocked quote', () => {
 		render(
 			<PostCardEmbedQuote
-				embed={ { type: 'quote', post: { type: 'blocked', uri: 'at://y', reason: 'blocked' } } }
+				embed={ {
+					type: 'quote',
+					post: { type: 'blocked', uri: 'at://y', author: { did: 'did:plc:blk' } },
+				} }
 				parentPostUri="at://parent"
 			/>
 		);

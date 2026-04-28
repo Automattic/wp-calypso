@@ -89,12 +89,20 @@ export interface AtmosphereActorRef {
 	did: string;
 }
 
-export interface AtmosphereQuoteTombstone {
-	type: 'not_found' | 'blocked';
+export interface AtmosphereQuoteNotFoundTombstone {
+	type: 'not_found';
 	uri: string;
-	reason: 'notfound' | 'blocked';
-	author?: AtmosphereActorRef;
 }
+
+export interface AtmosphereQuoteBlockedTombstone {
+	type: 'blocked';
+	uri: string;
+	author: AtmosphereActorRef;
+}
+
+export type AtmosphereQuoteTombstone =
+	| AtmosphereQuoteNotFoundTombstone
+	| AtmosphereQuoteBlockedTombstone;
 
 export interface AtmosphereEmbedQuote {
 	type: 'quote';
