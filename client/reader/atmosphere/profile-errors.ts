@@ -33,10 +33,12 @@ export function errorMessage(
 		case 'unknown':
 			return translate( 'Something went wrong.' );
 		default:
-			return assertNever( error );
+			// Soft fallback: a future AtmosphereError variant landing in production
+			// before this switch is updated would otherwise crash both panels mid-
+			// render (no error boundary on this surface). Surface the gap to
+			// devtools and ship the generic copy.
+			// eslint-disable-next-line no-console
+			console.warn( '[reader-atmosphere] unhandled AtmosphereError kind in errorMessage()', error );
+			return translate( 'Something went wrong.' );
 	}
-}
-
-function assertNever( value: never ): never {
-	throw new Error( `Unhandled AtmosphereError kind: ${ JSON.stringify( value ) }` );
 }
