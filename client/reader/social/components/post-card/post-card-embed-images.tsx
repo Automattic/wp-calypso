@@ -2,6 +2,7 @@ import { ImageCarousel } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 import type { AtmosphereEmbedImages } from '@automattic/api-core';
 import type { ReactNode } from 'react';
 
@@ -76,13 +77,20 @@ export function PostCardEmbedImages( { embed, compact }: PostCardEmbedImagesProp
 					);
 				} ) }
 			</div>
-			{ openIndex !== null && (
-				<ImageCarousel
-					images={ carouselImages }
-					initialIndex={ openIndex }
-					onClose={ () => setOpenIndex( null ) }
-				/>
-			) }
+			{ openIndex !== null &&
+				// Portal to <body> so the carousel's position: fixed overlay
+				// escapes any ancestor that establishes a containing block (the
+				// atmosphere-view layout sets transform / contain on the
+				// outer column). Mirrors what addImageCarousel does for the
+				// reader-full-post embed-container path.
+				createPortal(
+					<ImageCarousel
+						images={ carouselImages }
+						initialIndex={ openIndex }
+						onClose={ () => setOpenIndex( null ) }
+					/>,
+					document.body
+				) }
 		</>
 	);
 }
