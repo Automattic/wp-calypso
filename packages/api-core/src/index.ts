@@ -79,6 +79,7 @@ export * from './read-achievements-settings';
 export * from './read-feeds';
 export * from './read-lists';
 export * from './read-sites';
+export * from './read-tags';
 export * from './read-teams';
 export * from './reader-atmosphere';
 export * from './reader-mastodon';

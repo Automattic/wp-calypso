@@ -19,6 +19,81 @@ Both converge on the same target architecture: fetchers in `api-core`, query opt
 - Creating a new Reader data-fetching hook
 - Removing old Redux data-layer handlers after migration
 
+## Always Plan First (Required)
+
+**Before touching any code, write an implementation plan and execute it via the plan workflow.** This is non-negotiable for every migration handled by this skill — even small ones — because:
+
+- Migrations always touch multiple packages (`api-core`, `api-queries`, `client/components/data`, `client/state/...`) — easy to forget a step without a written plan.
+- The CRUD audit (see next section) must happen before any code is written, so partial migrations don't ship.
+- Reviewers expect a clear before/after; a plan keeps commits scoped (migrate vs. cleanup).
+
+### Workflow
+
+1. **Invoke `superpowers:writing-plans`** to draft the plan. The plan must include:
+   - The full CRUD audit for the resource (see "Audit CRUD Coverage First" below) — every action listed with its source pattern and target.
+   - Whether existing fetchers in `api-core` can be reused (grep results, not assumptions).
+   - The commit split (typically: migrate commit, then cleanup commit per action group).
+   - Per-mutation: which queries get invalidated, whether optimistic updates apply, where side effects live.
+   - Consumer updates — list every component/file that imports the old API.
+   - Test plan — which tests get added, which get removed.
+2. **Save the plan** to `.context/` (e.g., `.context/plan-migrate-reader-{name}.md`) so other agents and reviewers can see it.
+3. **Invoke `superpowers:executing-plans`** to work through it with checkpoints. Do not skip ahead — each phase has verification (tests pass, types pass) before moving on.
+
+If the user gave you a one-line instruction like "migrate QueryReaderTag", that is the spec — turn it into a plan first, then execute. Don't start editing files directly.
+
+### Evaluate removing the data-component (`QueryReader*`)
+
+The bridge `QueryReader*` component exists to keep the rest of Calypso reading from Redux while the fetch moves to React Query. **It is not the long-term target** — once consumers call `useQuery()` directly, the bridge can be deleted. As part of the plan, **always evaluate whether the data-component can be removed in this migration** instead of being left behind.
+
+**Audit before deciding:**
+
+```bash
+# Find every place the data-component is rendered
+grep -rn "QueryReader{Name}" client/ --include="*.{ts,tsx,js,jsx}"
+
+# Find every consumer of the Redux selectors this component feeds
+grep -rn "get{Name}\|isRequesting{Name}" client/ --include="*.{ts,tsx,js,jsx}"
+```
+
+**Complexity heuristics — recommend removing the data-component when:**
+- Few render sites (e.g., 1–3) and all are function components.
+- Consumers can switch from `useSelector(getXxx)` to `useQuery(readXxxQuery())` with a small diff.
+- The Redux `RECEIVE` action and reducer have no other readers (only this slice's selectors use them) — deleting the bridge lets you also delete the reducer + selectors.
+- No class components depend on the Redux slice.
+
+**Recommend keeping the bridge (and migrating later) when:**
+- Many render sites or many indirect Redux consumers (selectors used across the codebase).
+- The Redux state is read by code outside the Reader (cross-cutting selectors).
+- Removing it would balloon the diff and make review harder.
+
+**Class components are not a blocker — consider a small HOC instead.** Hooks can't run inside a class, but you don't need to keep the entire Redux pipeline alive just to feed a class component. A functional HOC that calls `useQuery()` and forwards data/loading state as props lets you delete the `QueryReader*` bridge, the `RECEIVE` action, the reducer slice, and the Redux selectors — while leaving the class component itself untouched. Evaluate this option before defaulting to "keep the bridge":
+
+```typescript
+// HOC: bridges React Query into a class component's props without touching the class
+function withReaderXxx< P >( Inner: React.ComponentType< P & { items: Xxx[]; isLoading: boolean } > ) {
+  return function WithReaderXxx( props: P ) {
+    const { data, isLoading } = useQuery( readXxxQuery() );
+    return <Inner { ...props } items={ data?.items ?? [] } isLoading={ isLoading } />;
+  };
+}
+
+export default withReaderXxx( MyClassComponent );
+```
+
+Prefer the HOC when:
+- The class component is the only (or main) consumer of the Redux slice — replacing `connect()` with this HOC removes the slice entirely.
+- The data shape the class needs maps cleanly to what the query returns (no complex derived selectors).
+
+Stick with the bridge when:
+- The class component reads many derived selectors that aggregate data from multiple slices — extracting all that into the HOC would itself be a large refactor.
+- Multiple class components in different files read the slice — an HOC per consumer creates churn that's not worth it in one PR.
+
+**The plan must record the decision explicitly**, with one of:
+- "Remove `QueryReader{Name}` and adapt N consumers to call `useQuery` directly" — list each consumer and the prop/selector replacement.
+- "Keep `QueryReader{Name}` as a bridge for now" — state the reason (e.g., "5 class-component consumers"), and note it as a follow-up task so the bridge isn't forgotten.
+
+When removing the bridge: also remove the corresponding `RECEIVE` action, reducer slice, and selectors if nothing else reads them — grep first to confirm.
+
 ## Audit CRUD Coverage First
 
 Before migrating, **list every action that exists for the resource** — not just the read query. A resource (e.g., Lists) typically has multiple operations:
