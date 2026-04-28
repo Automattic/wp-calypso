@@ -31,6 +31,16 @@ describe( 'getThreadUrl', () => {
 		expect( getThreadUrl( 7, '' ) ).toBeNull();
 	} );
 
+	it( 'rejects did:web identifiers without a hostname-shaped tail', () => {
+		expect( getThreadUrl( 7, 'at://did:web:./app.bsky.feed.post/3kabcdefghijk' ) ).toBeNull();
+		expect( getThreadUrl( 7, 'at://did:web:foo/app.bsky.feed.post/3kabcdefghijk' ) ).toBeNull();
+		expect( getThreadUrl( 7, 'at://did:web:.foo/app.bsky.feed.post/3kabcdefghijk' ) ).toBeNull();
+		expect( getThreadUrl( 7, 'at://did:web:foo./app.bsky.feed.post/3kabcdefghijk' ) ).toBeNull();
+		expect(
+			getThreadUrl( 7, 'at://did:web:-foo.bar/app.bsky.feed.post/3kabcdefghijk' )
+		).toBeNull();
+	} );
+
 	it( 'returns null for invalid connection ids', () => {
 		expect(
 			getThreadUrl( 0, 'at://did:plc:abc234567defghi234567jkl/app.bsky.feed.post/3kabcdefghijk' )

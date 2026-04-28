@@ -49,6 +49,19 @@ describe( 'atmosphereThread controller', () => {
 		expect( page.redirect ).toHaveBeenCalledWith( '/reader/atmosphere/7' );
 	} );
 
+	it( 'redirects on did:web inputs that aren’t hostname-shaped', () => {
+		const ctx = makeContext( { id: '7', did: 'did:web:.', rkey: validRkey } );
+		atmosphereThread( ctx, mockNext );
+		expect( page.redirect ).toHaveBeenCalledWith( '/reader/atmosphere/7' );
+	} );
+
+	it( 'accepts a valid did:web', () => {
+		const ctx = makeContext( { id: '7', did: 'did:web:example.com', rkey: validRkey } );
+		atmosphereThread( ctx, mockNext );
+		expect( ctx.primary ).not.toBeNull();
+		expect( mockNext ).toHaveBeenCalled();
+	} );
+
 	it( 'redirects to /reader/atmosphere/:id on invalid rkey', () => {
 		const ctx = makeContext( { id: '7', did: validDid, rkey: 'BAD' } );
 		atmosphereThread( ctx, mockNext );

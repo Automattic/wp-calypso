@@ -2,6 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import page, { type Context } from '@automattic/calypso-router';
 import AsyncLoad from 'calypso/components/async-load';
 import { TIMELINE_TAB } from './helper';
+import { DID_RE, RKEY_RE } from './route';
 
 function ensureAtmosphereEnabled(): boolean {
 	if ( ! isEnabled( 'reader/social' ) ) {
@@ -78,9 +79,6 @@ export const atmosphereAccount = ( context: Context, next: () => void ) => {
 	);
 	next();
 };
-
-const DID_RE = /^did:(plc:[a-z2-7]{24}|web:[a-z0-9.-]+)$/;
-const RKEY_RE = /^[a-z0-9]{13}$/;
 
 export const atmosphereThread = ( context: Context, next: () => void ) => {
 	if ( ! ensureAtmosphereEnabled() ) {
