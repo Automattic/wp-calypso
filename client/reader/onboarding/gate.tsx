@@ -12,10 +12,10 @@ export default function ReaderOnboardingGate( props: ReaderOnboardingGateProps )
 			require={ () =>
 				isEnabled( 'reader/onboarding-rsm' )
 					? import(
-							/** webpackChunkName: "async-load-calypso-reader-onboarding-rsm" */ 'calypso/reader/onboarding-rsm'
+							/* webpackChunkName: "async-load-calypso-reader-onboarding-rsm" */ 'calypso/reader/onboarding-rsm'
 					  )
 					: import(
-							/** webpackChunkName: "async-load-calypso-reader-onboarding" */ 'calypso/reader/onboarding'
+							/* webpackChunkName: "async-load-calypso-reader-onboarding" */ 'calypso/reader/onboarding'
 					  )
 			}
 			{ ...props }

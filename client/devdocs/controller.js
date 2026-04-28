@@ -112,6 +112,7 @@ const devdocs = {
 	playground: function ( context, next ) {
 		context.primary = (
 			<AsyncLoad
+				component={ context.params.component }
 				require={ () =>
 					import(
 						/* webpackChunkName: "async-load-calypso-devdocs-design-playground" */ './design/playground'
