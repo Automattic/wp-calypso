@@ -7,6 +7,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { SocialFeedList, SocialPostCard } from 'calypso/reader/social';
 import { SocialAnalyticsProvider } from 'calypso/reader/social/components/post-card/analytics-context';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import { getThreadUrl as buildThreadUrl } from './route';
 import type { AtmosphereConnection, AtmosphereFeedItem } from '@automattic/api-core';
 import type { AppState } from 'calypso/types';
 
@@ -78,6 +79,11 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 		[ dispatch ]
 	);
 
+	const getThreadUrl = useCallback(
+		( uri: string ) => buildThreadUrl( connection.id, uri ),
+		[ connection.id ]
+	);
+
 	const renderItem = useCallback(
 		( post: AtmosphereFeedItem ) => <SocialPostCard post={ post } variant="default" />,
 		[]
@@ -90,6 +96,7 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 				source: 'atmosphere',
 				connectionId: connection.id,
 				onClick: onClickAnalytics,
+				getThreadUrl,
 			} }
 		>
 			<SocialFeedList< AtmosphereFeedItem >
