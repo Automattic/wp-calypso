@@ -4,11 +4,9 @@ import { useSelector } from 'react-redux';
 import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
 import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link';
 import UserAvatar from 'calypso/blocks/user-avatar';
-import { useYearsOfService } from 'calypso/data/reader/use-years-of-service';
 import { areEqualIgnoringWhitespaceAndCase } from 'calypso/lib/string';
 import { getStreamUrl } from 'calypso/reader/route';
-import useAchievementsVisibility from 'calypso/reader/user-profile/views/achievements/use-achievements-visibility';
-import { YearsOfServiceBadge } from 'calypso/reader/user-profile/views/achievements/years-of-service-badge';
+import { AuthorAchievementBadges } from 'calypso/reader/user-profile/views/achievements/author-achievement-badges';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
 
 const ReaderFullPostHeaderMeta = ( { post, author, siteName, feedId, siteId } ) => {
@@ -21,10 +19,6 @@ const ReaderFullPostHeaderMeta = ( { post, author, siteName, feedId, siteId } ) 
 	const showAuthorLink = hasAuthorName && ! hasMatchingAuthorAndSiteNames;
 	const avatarUrl =
 		! author?.avatar_URL && post.is_external ? feed?.site_icon || feed?.image : author?.avatar_URL;
-	const authorLogin = author?.wpcom_login;
-	const { isVisible: showAchievementsBadge } = useAchievementsVisibility( authorLogin );
-	const { yearsOfService } = useYearsOfService( authorLogin );
-
 	return (
 		<div className="reader-full-post__header-meta-wrapper">
 			<UserAvatar user={ { ...author, avatar_URL: avatarUrl } } size={ 40 } />
@@ -40,8 +34,8 @@ const ReaderFullPostHeaderMeta = ( { post, author, siteName, feedId, siteId } ) 
 							{ author.name }
 						</ReaderAuthorLink>
 					) }
-					{ showAuthorLink && showAchievementsBadge && !! yearsOfService && (
-						<YearsOfServiceBadge size="small" yearsOfService={ yearsOfService } />
+					{ showAuthorLink && (
+						<AuthorAchievementBadges authorLogin={ author?.wpcom_login } size="small" />
 					) }
 					{ showAuthorLink && post.date && (
 						<span className="reader-full-post__header-meta-separator"> • </span>

@@ -9,10 +9,9 @@ import AutoDirection from 'calypso/components/auto-direction';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
-import { useYearsOfService } from 'calypso/data/reader/use-years-of-service';
 import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
+import { AuthorAchievementBadges } from 'calypso/reader/user-profile/views/achievements/author-achievement-badges';
 import useAchievementsVisibility from 'calypso/reader/user-profile/views/achievements/use-achievements-visibility';
-import { YearsOfServiceBadge } from 'calypso/reader/user-profile/views/achievements/years-of-service-badge';
 import UserTopSites from '../top-sites';
 import type { ReaderUser } from '@automattic/api-core';
 
@@ -24,7 +23,6 @@ interface UserProfileHeaderProps {
 const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Element => {
 	const translate = useTranslate();
 	const { isVisible: showAchievements } = useAchievementsVisibility( user.user_login );
-	const { yearsOfService } = useYearsOfService( user.user_login );
 	const [ isExpanded, setIsExpanded ] = useState( false );
 	const [ showMoreToggle, setShowMoreToggle ] = useState( false );
 	const bioRef = useRef< HTMLParagraphElement >( null );
@@ -98,9 +96,7 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 									/>
 								</a>
 							) }
-							{ isEnabled( 'reader/achievements' ) && showAchievements && !! yearsOfService && (
-								<YearsOfServiceBadge size="medium" yearsOfService={ yearsOfService } />
-							) }
+							<AuthorAchievementBadges authorLogin={ user.user_login } size="medium" />
 						</h1>
 						<p>
 							<span dir="ltr">@{ user.user_login }</span>

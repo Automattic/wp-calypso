@@ -20,13 +20,13 @@ import withDimensions from 'calypso/lib/with-dimensions';
 import { getStreamUrl } from 'calypso/reader/route';
 import { recordAction, recordGaEvent, recordPermalinkClick } from 'calypso/reader/stats';
 import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
+import { AuthorAchievementBadges } from 'calypso/reader/user-profile/views/achievements/author-achievement-badges';
 import { expandComments } from 'calypso/state/comments/actions';
 import { PLACEHOLDER_STATE, POST_COMMENT_DISPLAY_TYPES } from 'calypso/state/comments/constants';
 import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 import CommentActions from './comment-actions';
-import { CommentYearsOfServiceBadge } from './comment-years-of-service-badge';
 import PostCommentForm from './form';
 import PostCommentContent from './post-comment-content';
 import PostCommentWithError from './post-comment-with-error';
@@ -468,7 +468,7 @@ class PostComment extends PureComponent {
 						className: 'comments__comment-username',
 					} ) }
 					{ comment.author?.wpcom_login && (
-						<CommentYearsOfServiceBadge authorLogin={ comment.author.wpcom_login } />
+						<AuthorAchievementBadges authorLogin={ comment.author.wpcom_login } size="small" />
 					) }
 					{ this.props.showNestingReplyArrow && parentAuthorName && (
 						<span className="comments__comment-respondee">
