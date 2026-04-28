@@ -40,28 +40,34 @@ before_all do
   # locally, it has no effect so it's safe to run it before all lanes.
   setup_ci
 
-  # On CI, `setup_ci` creates a temporary keychain and *replaces* the
-  # user keychain search list with only that keychain. That breaks
-  # code-signing trust evaluation on macOS 26+: the chain walks up from
-  # our Developer ID cert to the Apple Worldwide Developer Relations
-  # intermediate and Apple Root, both of which live in
-  # `/Library/Keychains/System.keychain` — and with System keychain no
-  # longer searchable, the Security framework reports
-  # `CSSMERR_TP_NOT_TRUSTED` and `electron-builder` silently skips
-  # signing (the build "passes" but later notarization rejects the
-  # unsigned binaries). Restore `System.keychain` to the search list so
-  # the chain can resolve.
+  # The macOS 26 Buildkite VM image doesn't ship the "Developer ID
+  # Certification Authority" intermediate that issues our Developer ID
+  # Application cert. Without that intermediate available in any keychain
+  # in the search list, `security` can't build the chain
+  # `Developer ID App → Developer ID CA G2 → Apple Root` and reports
+  # the identity as `CSSMERR_TP_NOT_TRUSTED`. `electron-builder` then
+  # silently skips signing and the build "passes" with unsigned
+  # binaries that Apple's notary service later rejects.
+  #
+  # `fastlane match` only installs the leaf cert; it relies on the OS
+  # to provide the CA chain. Fetch and install the missing intermediate
+  # into the temp keychain `setup_ci` just created.
   #
   # Gated to CI to mirror `setup_ci`'s own no-op-locally behaviour —
   # we don't want to touch a developer's keychain config when running
   # lanes from their machine.
   if FastlaneCore::Helper.is_ci?
+    cert_path = File.join(Dir.tmpdir, 'DeveloperIDG2CA.cer')
     sh(
-      'security', 'list-keychains',
-      '-d', 'user',
-      '-s',
-      File.join(Dir.home, 'Library/Keychains/fastlane_tmp_keychain-db'),
-      '/Library/Keychains/System.keychain'
+      'curl',
+      '-fsSL',
+      'https://www.apple.com/certificateauthority/DeveloperIDG2CA.cer',
+      '-o',
+      cert_path
+    )
+    import_certificate(
+      certificate_path: cert_path,
+      keychain_name: 'fastlane_tmp_keychain'
     )
   end
 
