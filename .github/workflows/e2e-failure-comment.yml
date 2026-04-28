@@ -36,7 +36,7 @@ jobs:
               watermark,
               `Looks like one of the E2E tests has failed.`,
               ``,
-              `To investigate with Claude Code, follow these steps:`,
+              `You can fix them following these steps:`,
               ``,
               `1. Check out this branch locally:`,
               `   \`\`\`bash`,
