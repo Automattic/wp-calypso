@@ -47,9 +47,9 @@ describe( 'mapMastodonFeedItemToSocialPost', () => {
 			OPTS
 		);
 		expect( post.author.handle ).toBe( 'carol@infosec.exchange' );
-		// profile_url uses the bare acct on the connection's instance
-		// host — Mastodon resolves remote @acct paths transparently.
-		expect( post.author.profile_url ).toBe( 'https://mastodon.social/@carol@infosec.exchange' );
+		// profile_url points directly at the remote instance — no
+		// redirect through the connection's home instance.
+		expect( post.author.profile_url ).toBe( 'https://infosec.exchange/@carol' );
 	} );
 
 	it( 'renames boosts → reposts and favourites → likes; defaults quotes to 0', () => {

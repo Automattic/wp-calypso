@@ -59,13 +59,12 @@ export function mapMastodonFeedItemToSocialPost(
 }
 
 function mapAccount( account: MastodonTimelineAccount, instance: string ): SocialPost[ 'author' ] {
-	const handle = qualifyAcct( account.acct, instance );
 	return {
 		id: account.id,
-		handle,
+		handle: qualifyAcct( account.acct, instance ),
 		display_name: account.display_name,
 		avatar: account.avatar,
-		profile_url: `https://${ instance }/@${ account.acct }`,
+		profile_url: profileUrl( account.acct, instance ),
 	};
 }
 
@@ -73,6 +72,19 @@ function mapAccount( account: MastodonTimelineAccount, instance: string ): Socia
 // `acct: 'carol@infosec.exchange'`. Always render fully-qualified.
 function qualifyAcct( acct: string, instance: string ): string {
 	return acct.includes( '@' ) ? acct : `${ acct }@${ instance }`;
+}
+
+// Local: `https://<connection-instance>/@<username>`.
+// Remote: `https://<remote-instance>/@<username>` — direct, no redirect
+// through the connection's home instance.
+function profileUrl( acct: string, instance: string ): string {
+	const at = acct.indexOf( '@' );
+	if ( at === -1 ) {
+		return `https://${ instance }/@${ acct }`;
+	}
+	const username = acct.slice( 0, at );
+	const remoteInstance = acct.slice( at + 1 );
+	return `https://${ remoteInstance }/@${ username }`;
 }
 
 // Mastodon allows mixed-type attachments per status. Pick the dominant
