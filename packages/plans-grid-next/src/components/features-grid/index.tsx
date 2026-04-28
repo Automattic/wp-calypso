@@ -118,7 +118,7 @@ const MobileView = ( {
 	enableShowAllFeaturesButton,
 }: MobileViewProps ) => {
 	const translate = useTranslate();
-	const { featureGroupMap, intent } = usePlansGridContext();
+	const { featureGroupMap, hideFeatureGroupTitles, intent } = usePlansGridContext();
 	const featureGroups = useMemo(
 		() =>
 			Object.keys( featureGroupMap ).filter(
@@ -177,7 +177,7 @@ const MobileView = ( {
 					<MobileFreeDomain gridPlan={ gridPlan } paidDomainName={ paidDomainName } />
 					{ storageFeatureGroup && ! isEnterprisePlan && (
 						<>
-							{ 'plans-wordpress-hosting' !== intent && (
+							{ ! hideFeatureGroupTitles && 'plans-wordpress-hosting' !== intent && (
 								<PlanFeaturesItem>
 									<h2
 										className={ clsx( 'plans-grid-next-features-grid__feature-group-title', {
