@@ -64,6 +64,10 @@ export interface ReadSubscribedListsResponse {
 	lists: ReadList[];
 }
 
+export interface ReadUserListsResponse {
+	lists: ReadList[];
+}
+
 export interface ReadListResponse {
 	list: ReadList;
 }

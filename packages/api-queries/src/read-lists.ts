@@ -4,6 +4,7 @@ import {
 	fetchReadList,
 	fetchReadListItems,
 	fetchReadSubscribedLists,
+	fetchReadUserLists,
 	followReadList,
 	unfollowReadList,
 	updateReadList,
@@ -26,6 +27,14 @@ export const readListQuery = ( owner: string, slug: string ) =>
 		queryKey: [ 'read', 'lists', owner, slug ],
 		staleTime: 1000 * 60 * 5,
 		queryFn: () => fetchReadList( owner, slug ),
+	} );
+
+export const readUserListsQuery = ( userLogin: string ) =>
+	queryOptions( {
+		queryKey: [ 'read', 'lists', 'user', userLogin ],
+		queryFn: () => fetchReadUserLists( userLogin ),
+		enabled: !! userLogin,
+		staleTime: 1000 * 60 * 5,
 	} );
 
 export const readListItemsQuery = ( userLogin: string, listName: string, meta: string = '' ) =>

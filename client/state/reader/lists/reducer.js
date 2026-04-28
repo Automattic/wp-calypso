@@ -6,8 +6,6 @@ import {
 	READER_LIST_ITEM_DELETE_SITE,
 	READER_LIST_ITEM_DELETE_TAG,
 	READER_LIST_ITEM_ADD_FEED_RECEIVE,
-	READER_USER_LISTS_RECEIVE,
-	READER_USER_LISTS_REQUEST,
 	READER_RECOMMENDED_BLOGS_ITEMS_RECEIVE,
 	READER_RECOMMENDED_BLOGS_ITEMS_REQUEST,
 	READER_RECOMMENDED_BLOGS_ITEMS_REQUEST_FAILURE,
@@ -66,35 +64,6 @@ export const listItems = ( state = {}, action ) => {
 	return state;
 };
 
-export const userLists = ( state = {}, action ) => {
-	switch ( action.type ) {
-		case READER_USER_LISTS_RECEIVE:
-			return {
-				...state,
-				[ action.userLogin ]: action.lists,
-			};
-		default:
-			return state;
-	}
-};
-
-export const isRequestingUserLists = ( state = {}, action ) => {
-	switch ( action.type ) {
-		case READER_USER_LISTS_REQUEST:
-			return {
-				...state,
-				[ action.userLogin ]: true,
-			};
-		case READER_USER_LISTS_RECEIVE:
-			return {
-				...state,
-				[ action.userLogin ]: false,
-			};
-		default:
-			return state;
-	}
-};
-
 export const userRecommendedBlogs = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case READER_RECOMMENDED_BLOGS_ITEMS_RECEIVE:
@@ -127,8 +96,6 @@ export const isRequestingUserRecommendedBlogs = ( state = {}, action ) => {
 
 export default combineReducers( {
 	listItems,
-	userLists,
-	isRequestingUserLists,
 	userRecommendedBlogs,
 	isRequestingUserRecommendedBlogs,
 } );

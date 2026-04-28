@@ -8,12 +8,10 @@ import {
 	READER_LIST_ITEM_ADD_FEED_RECEIVE,
 	READER_LIST_ITEM_ADD_TAG,
 	READER_LIST_ITEM_ADD_TAG_RECEIVE,
-	READER_USER_LISTS_REQUEST,
 	READER_RECOMMENDED_BLOGS_ITEMS_RECEIVE,
 	READER_RECOMMENDED_BLOGS_ITEMS_REQUEST,
 	READER_RECOMMENDED_BLOGS_ITEMS_REQUEST_FAILURE,
 } from 'calypso/state/reader/action-types';
-import 'calypso/state/data-layer/wpcom/read/lists';
 import 'calypso/state/data-layer/wpcom/read/lists/items';
 import 'calypso/state/data-layer/wpcom/read/lists/feeds/delete';
 import 'calypso/state/data-layer/wpcom/read/lists/sites/delete';
@@ -167,13 +165,6 @@ export const receiveAddReaderListTag = (
 	tagSlug,
 	tagId,
 } );
-
-export function requestUserLists( userLogin: string ): ReaderListAction {
-	return {
-		type: READER_USER_LISTS_REQUEST,
-		userLogin,
-	};
-}
 
 export const receiveReaderRecommendedBlogsItems = ( listOwner: string, listItems: object ) => ( {
 	type: READER_RECOMMENDED_BLOGS_ITEMS_RECEIVE,

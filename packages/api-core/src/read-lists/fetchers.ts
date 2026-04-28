@@ -1,6 +1,11 @@
 import { addQueryArgs } from '@wordpress/url';
 import { wpcom } from '../wpcom-fetcher';
-import type { ReadListItemsResponse, ReadListResponse, ReadSubscribedListsResponse } from './types';
+import type {
+	ReadListItemsResponse,
+	ReadListResponse,
+	ReadSubscribedListsResponse,
+	ReadUserListsResponse,
+} from './types';
 
 export const fetchReadListItems = (
 	userLogin: string,
@@ -33,5 +38,12 @@ export const fetchReadList = ( owner: string, slug: string ): Promise< ReadListR
 	return wpcom.req.get( {
 		path: `/read/lists/${ owner }/${ slug }`,
 		apiVersion: '1.2',
+	} );
+};
+
+export const fetchReadUserLists = ( userLogin: string ): Promise< ReadUserListsResponse > => {
+	return wpcom.req.get( {
+		path: `/read/lists/${ userLogin }`,
+		apiVersion: '1',
 	} );
 };
