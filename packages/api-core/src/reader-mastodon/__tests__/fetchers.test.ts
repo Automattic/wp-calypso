@@ -4,6 +4,7 @@ import {
 	completeMastodonConnection,
 	getMastodonConnection,
 	getMastodonConnections,
+	getMastodonTimeline,
 } from '../fetchers';
 
 const BASE = 'https://public-api.wordpress.com';
@@ -93,5 +94,37 @@ describe( 'mastodon fetchers', () => {
 			status: 401,
 		} );
 		await expect( getMastodonConnections() ).rejects.toMatchObject( { kind: 'unknown' } );
+	} );
+} );
+
+describe( 'getMastodonTimeline', () => {
+	afterEach( () => nock.cleanAll() );
+
+	it( 'GETs /reader/mastodon/connections/:id/timeline with cursor + limit', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/7/timeline' )
+			.query( { cursor: 'abc', limit: '20' } )
+			.reply( 200, { items: [], cursor: null } );
+		const res = await getMastodonTimeline( { connectionId: 7, cursor: 'abc', limit: 20 } );
+		expect( res.items ).toEqual( [] );
+		expect( res.cursor ).toBeNull();
+	} );
+
+	it( 'omits cursor and limit when not provided', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/7/timeline' )
+			.reply( 200, { items: [], cursor: null } );
+		const res = await getMastodonTimeline( { connectionId: 7 } );
+		expect( res.items ).toEqual( [] );
+	} );
+
+	it( 'classifies mastodon_rate_limited with retry_after', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/7/timeline' )
+			.reply( 429, { error: 'mastodon_rate_limited', data: { retry_after: 30 } } );
+		await expect( getMastodonTimeline( { connectionId: 7 } ) ).rejects.toEqual( {
+			kind: 'rate_limited',
+			retry_after: 30,
+		} );
 	} );
 } );
