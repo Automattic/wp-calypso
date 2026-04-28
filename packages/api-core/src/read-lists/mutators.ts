@@ -11,7 +11,9 @@ export const createReadList = ( params: CreateReadListParams ): Promise< ReadLis
 
 export const updateReadList = ( list: UpdateReadListParams ): Promise< ReadListResponse > => {
 	return wpcom.req.post( {
-		path: `/read/lists/${ list.owner }/${ list.slug }/update`,
+		path: `/read/lists/${ encodeURIComponent( list.owner ) }/${ encodeURIComponent(
+			list.slug
+		) }/update`,
 		apiVersion: '1.2',
 		body: list,
 	} );
@@ -19,7 +21,7 @@ export const updateReadList = ( list: UpdateReadListParams ): Promise< ReadListR
 
 export const followReadList = ( owner: string, slug: string ): Promise< ReadListResponse > => {
 	return wpcom.req.post( {
-		path: `/read/lists/${ owner }/${ slug }/follow`,
+		path: `/read/lists/${ encodeURIComponent( owner ) }/${ encodeURIComponent( slug ) }/follow`,
 		apiVersion: '1.2',
 		body: {},
 	} );
@@ -27,7 +29,7 @@ export const followReadList = ( owner: string, slug: string ): Promise< ReadList
 
 export const unfollowReadList = ( owner: string, slug: string ): Promise< ReadListResponse > => {
 	return wpcom.req.post( {
-		path: `/read/lists/${ owner }/${ slug }/unfollow`,
+		path: `/read/lists/${ encodeURIComponent( owner ) }/${ encodeURIComponent( slug ) }/unfollow`,
 		apiVersion: '1.2',
 		body: {},
 	} );
@@ -35,7 +37,7 @@ export const unfollowReadList = ( owner: string, slug: string ): Promise< ReadLi
 
 export const deleteReadList = ( owner: string, slug: string ): Promise< void > => {
 	return wpcom.req.post( {
-		path: `/read/lists/${ owner }/${ slug }/delete`,
+		path: `/read/lists/${ encodeURIComponent( owner ) }/${ encodeURIComponent( slug ) }/delete`,
 		apiVersion: '1.2',
 		body: {},
 	} );

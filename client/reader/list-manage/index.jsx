@@ -105,8 +105,13 @@ function ReaderListCreate() {
 	const dispatch = useDispatch();
 	const { mutate: createList, isPending: isCreatingList } = useMutation( createReadListMutation() );
 
-	const handleSubmit = ( list ) => {
-		createList( list, {
+	const handleSubmit = ( formList ) => {
+		const params = {
+			title: formList.title,
+			description: formList.description,
+			is_public: formList.is_public,
+		};
+		createList( params, {
 			onSuccess: ( data ) => {
 				if ( data.list?.owner && data.list?.slug ) {
 					page( `/reader/list/${ data.list.owner }/${ data.list.slug }/edit/items` );

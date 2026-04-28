@@ -15,11 +15,14 @@ export const fetchReadListItems = (
 	number: number = 20
 ): Promise< ReadListItemsResponse > => {
 	return wpcom.req.get( {
-		path: addQueryArgs( `/read/lists/${ userLogin }/${ listName }/items`, {
-			meta,
-			page,
-			number,
-		} ),
+		path: addQueryArgs(
+			`/read/lists/${ encodeURIComponent( userLogin ) }/${ encodeURIComponent( listName ) }/items`,
+			{
+				meta,
+				page,
+				number,
+			}
+		),
 		apiVersion: '1.2',
 		method: 'GET',
 	} );
@@ -36,14 +39,14 @@ export const fetchReadSubscribedLists = (): Promise< ReadSubscribedListsResponse
 
 export const fetchReadList = ( owner: string, slug: string ): Promise< ReadListResponse > => {
 	return wpcom.req.get( {
-		path: `/read/lists/${ owner }/${ slug }`,
+		path: `/read/lists/${ encodeURIComponent( owner ) }/${ encodeURIComponent( slug ) }`,
 		apiVersion: '1.2',
 	} );
 };
 
 export const fetchReadUserLists = ( userLogin: string ): Promise< ReadUserListsResponse > => {
 	return wpcom.req.get( {
-		path: `/read/lists/${ userLogin }`,
+		path: `/read/lists/${ encodeURIComponent( userLogin ) }`,
 		apiVersion: '1',
 	} );
 };
