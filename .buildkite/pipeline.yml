@@ -1,5 +1,5 @@
 steps:
-  - label: ":desktop_computer: Build desktop (mac, unsigned)"
+  - label: ":desktop_computer: Build desktop (mac)"
     agents:
       queue: mac
     plugins:
