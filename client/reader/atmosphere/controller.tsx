@@ -101,7 +101,7 @@ export const atmosphereThread = ( context: Context, next: () => void ) => {
 
 	context.primary = (
 		<AsyncLoad
-			key="atmosphere-thread"
+			key="reader-atmosphere-thread"
 			require={ () =>
 				import(
 					/* webpackChunkName: "async-load-calypso-reader-atmosphere-thread-view" */
