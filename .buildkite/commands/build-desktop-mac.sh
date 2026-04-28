@@ -36,3 +36,9 @@ bundle install
 bundle exec fastlane configure_code_signing
 
 yarn run ci:build-mac
+
+# Submit the produced `.app` and `.dmg` to Apple's notary service so
+# Gatekeeper accepts the install without "unidentified developer"
+# friction. Reads `APP_STORE_CONNECT_API_KEY_*` from the agent
+# environment hook.
+bundle exec fastlane notarize_app
