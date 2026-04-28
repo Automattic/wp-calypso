@@ -175,6 +175,12 @@ const MobileView = ( {
 					) }
 					{ isNotFreePlan && <BillingTimeframes renderedGridPlans={ [ gridPlan ] } /> }
 					<MobileFreeDomain gridPlan={ gridPlan } paidDomainName={ paidDomainName } />
+					<TopButtons
+						renderedGridPlans={ [ gridPlan ] }
+						isInSignup={ isInSignup }
+						currentSitePlanSlug={ currentSitePlanSlug }
+						planActionOverrides={ planActionOverrides }
+					/>
 					{ storageFeatureGroup && ! isEnterprisePlan && (
 						<>
 							{ ! hideFeatureGroupTitles && 'plans-wordpress-hosting' !== intent && (
@@ -201,12 +207,6 @@ const MobileView = ( {
 							</div>
 						</>
 					) }
-					<TopButtons
-						renderedGridPlans={ [ gridPlan ] }
-						isInSignup={ isInSignup }
-						currentSitePlanSlug={ currentSitePlanSlug }
-						planActionOverrides={ planActionOverrides }
-					/>
 					{ enableShowAllFeaturesButton ? (
 						<CardContainer
 							header={ translate( 'Show all features' ) }
