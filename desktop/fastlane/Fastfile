@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
-require 'dotenv'
+require 'fastlane/plugin/wpmreleasetoolkit'
 require 'json'
+
+EnvManager = Fastlane::Wpmreleasetoolkit::EnvManager
 
 fastlane_version '2.0'
 
@@ -10,7 +12,6 @@ default_platform :mac
 PROJECT_ROOT_FOLDER = File.dirname(File.expand_path(__dir__))
 
 ENV_FILE_NAME = 'wordpress-desktop.env'
-USER_ENV_FILE_PATH = File.join(Dir.home, '.a8c-apps', ENV_FILE_NAME)
 
 TEAM_ID = 'PZYM8XX95Q'
 
@@ -34,24 +35,22 @@ ASC_API_KEY_ENV_VARS = %w[
   APP_STORE_CONNECT_API_KEY_KEY
 ].freeze
 
-import 'lib/helpers.rb'
-
 before_all do
   # This is necessary for 'match' to work correctly in CI. When running
   # locally, it has no effect so it's safe to run it before all lanes.
   setup_ci
 
-  Dotenv.load(USER_ENV_FILE_PATH)
+  EnvManager.set_up(env_file_name: ENV_FILE_NAME)
 end
 
 platform :mac do
   desc 'Download and configure code signing certificates and provisioning profiles .'
   lane :configure_code_signing do |readonly: true|
-    require_env_vars!(*CODE_SIGNING_ENV_VARS)
+    EnvManager.require_env_vars!(*CODE_SIGNING_ENV_VARS)
 
     unless readonly
       # We need the API key instantiated only when making changes on ASC (readonly = false)
-      require_env_vars!(*ASC_API_KEY_ENV_VARS)
+      EnvManager.require_env_vars!(*ASC_API_KEY_ENV_VARS)
       api_key = app_store_connect_api_key
     end
 
