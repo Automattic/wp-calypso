@@ -1,31 +1,6 @@
-import { createSelector } from '@automattic/state-utils';
-import { filter, find } from 'lodash';
+import { find } from 'lodash';
 import { withoutHttp } from 'calypso/lib/url';
-import getCurrentIntlCollator from 'calypso/state/selectors/get-current-intl-collator';
 import 'calypso/state/reader/init';
-
-/**
- * Returns the user's subscribed Reader lists.
- * @param  {Object}  state  Global state tree
- * @returns {Array}         Reader lists
- */
-export const getSubscribedLists = createSelector(
-	( state ) => {
-		const collator = getCurrentIntlCollator( state );
-
-		return filter( Object.values( state.reader.lists.items ), ( item ) => {
-			// Is the user subscribed to this list?
-			return state.reader.lists.subscribedLists.includes( item.ID );
-		} ).sort( ( a, b ) => {
-			return collator.compare( a.title, b.title );
-		} );
-	},
-	( state ) => [
-		state.reader.lists.items,
-		state.reader.lists.subscribedLists,
-		state.ui?.language?.localeSlug,
-	]
-);
 
 /**
  * Returns information about a single Reader list.
@@ -79,21 +54,6 @@ export function getMatchingItem( state, { feedUrl, feedId, listId, siteId, tagId
 		return false;
 	} );
 	return list?.length > 0 ? list[ 0 ] : false;
-}
-
-/**
- * Check if the user is subscribed to the specified list
- * @param  {Object}  state  Global state tree
- * @param  {string}  owner  List owner
- * @param  {string}  slug  List slug
- * @returns {boolean} Is the user subscribed?
- */
-export function isSubscribedByOwnerAndSlug( state, owner, slug ) {
-	const list = getListByOwnerAndSlug( state, owner, slug );
-	if ( ! list ) {
-		return false;
-	}
-	return state.reader.lists.subscribedLists.includes( list.ID );
 }
 
 /**

@@ -1,10 +1,7 @@
 import deepFreeze from 'deep-freeze';
 import {
 	READER_LIST_DELETE,
-	READER_LIST_FOLLOW_RECEIVE,
-	READER_LIST_UNFOLLOW_RECEIVE,
-	READER_LIST_CREATE_SUCCESS,
-	READER_LISTS_RECEIVE,
+	READER_LIST_RECEIVE,
 	READER_RECOMMENDED_BLOGS_ITEMS_RECEIVE,
 	READER_RECOMMENDED_BLOGS_ITEMS_REQUEST,
 	READER_RECOMMENDED_BLOGS_ITEMS_REQUEST_FAILURE,
@@ -12,7 +9,6 @@ import {
 import {
 	items,
 	listItems,
-	subscribedLists,
 	userRecommendedBlogs,
 	isRequestingUserRecommendedBlogs,
 } from '../reducer';
@@ -24,18 +20,14 @@ describe( 'reducer', () => {
 			expect( state ).toEqual( {} );
 		} );
 
-		test( 'should index lists by ID', () => {
+		test( 'should index a single list by ID', () => {
 			const state = items( null, {
-				type: READER_LISTS_RECEIVE,
-				lists: [
-					{ ID: 841, title: 'Hello World' },
-					{ ID: 413, title: 'Mangos and feijoas' },
-				],
+				type: READER_LIST_RECEIVE,
+				data: { list: { ID: 841, title: 'Hello World' } },
 			} );
 
 			expect( state ).toEqual( {
 				841: { ID: 841, title: 'Hello World' },
-				413: { ID: 413, title: 'Mangos and feijoas' },
 			} );
 		} );
 
@@ -44,8 +36,8 @@ describe( 'reducer', () => {
 				841: { ID: 841, title: 'Hello World' },
 			} );
 			const state = items( original, {
-				type: READER_LISTS_RECEIVE,
-				lists: [ { ID: 413, title: 'Mangos and feijoas' } ],
+				type: READER_LIST_RECEIVE,
+				data: { list: { ID: 413, title: 'Mangos and feijoas' } },
 			} );
 
 			expect( state ).toEqual( {
@@ -94,71 +86,6 @@ describe( 'reducer', () => {
 					{ ID: 12346, feed_ID: 333 },
 				],
 			} );
-		} );
-	} );
-
-	describe( '#subscribedLists', () => {
-		test( 'should default to empty', () => {
-			expect( subscribedLists( undefined, { type: '@@BAD' } ) ).toEqual( [] );
-		} );
-
-		test( 'should pick up the ids of the subscribed lists', () => {
-			expect(
-				subscribedLists( deepFreeze( [] ), {
-					type: READER_LISTS_RECEIVE,
-					lists: [ { ID: 1 }, { ID: 2 } ],
-				} )
-			).toEqual( expect.arrayContaining( [ 1, 2 ] ) );
-		} );
-
-		test( 'should overwrite existing subs', () => {
-			const initial = deepFreeze( [ 1, 2 ] );
-			expect(
-				subscribedLists( initial, {
-					type: READER_LISTS_RECEIVE,
-					lists: [ { ID: 3 }, { ID: 1 } ],
-				} )
-			).toEqual( expect.arrayContaining( [ 1, 3 ] ) );
-		} );
-
-		test( 'should add a list on follow', () => {
-			const initial = deepFreeze( [ 1, 2 ] );
-			expect(
-				subscribedLists( initial, {
-					type: READER_LIST_FOLLOW_RECEIVE,
-					list: { ID: 5 },
-				} )
-			).toEqual( expect.arrayContaining( [ 1, 2, 5 ] ) );
-		} );
-
-		test( 'should remove a list on unfollow', () => {
-			const initial = deepFreeze( [ 1, 2 ] );
-			expect(
-				subscribedLists( initial, {
-					type: READER_LIST_UNFOLLOW_RECEIVE,
-					list: { ID: 1 },
-				} )
-			).toEqual( [ 2 ] );
-		} );
-		test( 'should remove a list on delete', () => {
-			const initial = deepFreeze( [ 1, 2 ] );
-			expect(
-				subscribedLists( initial, {
-					type: READER_LIST_DELETE,
-					listId: 1,
-				} )
-			).toEqual( [ 2 ] );
-		} );
-		test( 'should add a list on creation', () => {
-			const initial = deepFreeze( [ 1 ] );
-			expect(
-				subscribedLists( initial, {
-					type: READER_LIST_CREATE_SUCCESS,
-					data: {
-						list: { ID: 2 },
-					},
-				} )
-			).toEqual( [ 1, 2 ] );
 		} );
 	} );
 

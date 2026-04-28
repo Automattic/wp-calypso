@@ -58,7 +58,6 @@ function readerListsState( { list = listData }: { list?: typeof listData | null 
 			lists: {
 				items: list ? { [ list.ID ]: list } : {},
 				listItems: {},
-				subscribedLists: [],
 			},
 		},
 		currentUser: {

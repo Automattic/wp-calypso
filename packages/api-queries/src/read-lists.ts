@@ -2,6 +2,8 @@ import {
 	createReadList,
 	fetchReadList,
 	fetchReadSubscribedLists,
+	followReadList,
+	unfollowReadList,
 	updateReadList,
 } from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
@@ -38,6 +40,28 @@ export const updateReadListMutation = () =>
 			queryClient.invalidateQueries( {
 				queryKey: readListQuery( data.list.owner, data.list.slug ).queryKey,
 			} );
+			queryClient.invalidateQueries( {
+				queryKey: readSubscribedListsQuery().queryKey,
+			} );
+		},
+	} );
+
+export const followReadListMutation = () =>
+	mutationOptions( {
+		mutationFn: ( { owner, slug }: { owner: string; slug: string } ) =>
+			followReadList( owner, slug ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( {
+				queryKey: readSubscribedListsQuery().queryKey,
+			} );
+		},
+	} );
+
+export const unfollowReadListMutation = () =>
+	mutationOptions( {
+		mutationFn: ( { owner, slug }: { owner: string; slug: string } ) =>
+			unfollowReadList( owner, slug ),
+		onSuccess: () => {
 			queryClient.invalidateQueries( {
 				queryKey: readSubscribedListsQuery().queryKey,
 			} );

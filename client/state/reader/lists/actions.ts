@@ -1,7 +1,5 @@
 import {
 	READER_LIST_DELETE,
-	READER_LIST_FOLLOW,
-	READER_LIST_FOLLOW_RECEIVE,
 	READER_LIST_ITEMS_REQUEST,
 	READER_LIST_ITEMS_RECEIVE,
 	READER_LIST_ITEM_DELETE_FEED,
@@ -9,14 +7,11 @@ import {
 	READER_LIST_ITEM_DELETE_TAG,
 	READER_LIST_RECEIVE,
 	READER_LIST_CREATE_SUCCESS,
-	READER_LIST_UNFOLLOW,
-	READER_LIST_UNFOLLOW_RECEIVE,
 	READER_LIST_UPDATE_SUCCESS,
 	READER_LIST_ITEM_ADD_FEED,
 	READER_LIST_ITEM_ADD_FEED_RECEIVE,
 	READER_LIST_ITEM_ADD_TAG,
 	READER_LIST_ITEM_ADD_TAG_RECEIVE,
-	READER_LISTS_RECEIVE,
 	READER_USER_LISTS_REQUEST,
 	READER_RECOMMENDED_BLOGS_ITEMS_RECEIVE,
 	READER_RECOMMENDED_BLOGS_ITEMS_REQUEST,
@@ -42,18 +37,6 @@ interface ReaderListAction {
 }
 
 /**
- * Returns an action object to signal that list objects have been received.
- * @param lists - Lists received
- * @returns Action object
- */
-export function receiveLists( lists: ReaderList[] ): ReaderListAction {
-	return {
-		type: READER_LISTS_RECEIVE,
-		lists,
-	};
-}
-
-/**
  * Receive a single Reader list.
  * @param data - List data
  * @param data.list - Reader list object
@@ -67,58 +50,6 @@ export function receiveCreateReaderList( data: { list: ReaderList } ): ReaderLis
 	return {
 		type: READER_LIST_CREATE_SUCCESS,
 		data,
-	};
-}
-
-/**
- * Follow a list.
- * @param listOwner - List owner
- * @param listSlug - List slug
- * @returns Action object
- */
-export function followList( listOwner: string, listSlug: string ): ReaderListAction {
-	return {
-		type: READER_LIST_FOLLOW,
-		listOwner,
-		listSlug,
-	};
-}
-
-/**
- * Receive a successful list follow.
- * @param list - Followed list
- * @returns Action object
- */
-export function receiveFollowList( list: ReaderList ): ReaderListAction {
-	return {
-		type: READER_LIST_FOLLOW_RECEIVE,
-		list,
-	};
-}
-
-/**
- * Unfollow a list.
- * @param listOwner - List owner
- * @param listSlug - List slug
- * @returns Action object
- */
-export function unfollowList( listOwner: string, listSlug: string ): ReaderListAction {
-	return {
-		type: READER_LIST_UNFOLLOW,
-		listOwner,
-		listSlug,
-	};
-}
-
-/**
- * Receive a successful list unfollow.
- * @param list - Unfollowed list
- * @returns Action object
- */
-export function receiveUnfollowList( list: ReaderList ): ReaderListAction {
-	return {
-		type: READER_LIST_UNFOLLOW_RECEIVE,
-		list,
 	};
 }
 

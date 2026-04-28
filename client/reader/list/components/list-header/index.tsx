@@ -1,10 +1,15 @@
 import './style.scss';
-import { readListItemsQuery } from '@automattic/api-queries';
+import {
+	followReadListMutation,
+	readListItemsQuery,
+	readSubscribedListsQuery,
+	unfollowReadListMutation,
+} from '@automattic/api-queries';
 import { Button } from '@automattic/components';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { Icon, lock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import FollowButton from 'calypso/blocks/follow-button/button';
 import AutoDirection from 'calypso/components/auto-direction';
 import NavigationHeader from 'calypso/components/navigation-header';
@@ -16,8 +21,6 @@ import { ReaderList } from 'calypso/reader/list-manage/types';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
-import { followList, unfollowList } from 'calypso/state/reader/lists/actions';
-import { isSubscribedByOwnerAndSlug } from 'calypso/state/reader/lists/selectors';
 import type { AppState } from 'calypso/types';
 
 interface ReaderListHeaderProps {
@@ -27,12 +30,17 @@ interface ReaderListHeaderProps {
 
 const ReaderListHeader = ( props: ReaderListHeaderProps ) => {
 	const translate = useTranslate();
-	const dispatch = useDispatch();
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
 	const { list, view } = props;
-	const following = useSelector( ( state: AppState ) =>
-		isSubscribedByOwnerAndSlug( state, list?.owner ?? '', list?.slug ?? '' )
+	const { data: subscribedListsData } = useQuery( readSubscribedListsQuery() );
+	const following = Boolean(
+		list &&
+			subscribedListsData?.lists.some(
+				( subscribed ) => subscribed.owner === list.owner && subscribed.slug === list.slug
+			)
 	);
+	const { mutate: followList } = useMutation( followReadListMutation() );
+	const { mutate: unfollowList } = useMutation( unfollowReadListMutation() );
 	const currentUser = useSelector( ( state: AppState ) => getCurrentUser( state ) );
 	const editUrl = list?.is_owner ? `/reader/list/${ list.owner }/${ list.slug }/edit` : '';
 	const { data: listItemsData } = useQuery(
@@ -86,9 +94,9 @@ const ReaderListHeader = ( props: ReaderListHeaderProps ) => {
 		}
 
 		if ( isFollowRequested ) {
-			dispatch( followList( list.owner, list.slug ) );
+			followList( { owner: list.owner, slug: list.slug } );
 		} else {
-			dispatch( unfollowList( list.owner, list.slug ) );
+			unfollowList( { owner: list.owner, slug: list.slug } );
 		}
 
 		recordAction( isFollowRequested ? 'followed_list' : 'unfollowed_list' );

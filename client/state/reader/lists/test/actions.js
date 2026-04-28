@@ -1,8 +1,5 @@
 import {
 	READER_LIST_DELETE,
-	READER_LISTS_RECEIVE,
-	READER_LIST_FOLLOW,
-	READER_LIST_UNFOLLOW,
 	READER_LIST_ITEM_ADD_FEED,
 	READER_RECOMMENDED_BLOGS_ITEMS_REQUEST,
 	READER_LIST_ITEMS_REQUEST,
@@ -10,9 +7,6 @@ import {
 } from 'calypso/state/reader/action-types';
 import {
 	deleteReaderList,
-	receiveLists,
-	followList,
-	unfollowList,
 	requestUserRecommendedBlogs,
 	requestRecommendedBlogsListItems,
 	addRecommendedBlogsSite,
@@ -20,42 +14,6 @@ import {
 } from '../actions';
 
 describe( 'actions', () => {
-	describe( '#receiveLists()', () => {
-		test( 'should return an action object', () => {
-			const lists = [ { ID: 841, title: 'Hello World', slug: 'hello-world' } ];
-			const action = receiveLists( lists );
-
-			expect( action ).toEqual( {
-				type: READER_LISTS_RECEIVE,
-				lists,
-			} );
-		} );
-	} );
-
-	describe( '#followList()', () => {
-		test( 'should return an action object', () => {
-			const action = followList( 'restapitests', 'testlist' );
-
-			expect( action ).toEqual( {
-				type: READER_LIST_FOLLOW,
-				listOwner: 'restapitests',
-				listSlug: 'testlist',
-			} );
-		} );
-	} );
-
-	describe( '#unfollowList()', () => {
-		test( 'should return an action object', () => {
-			const action = unfollowList( 'restapitests', 'testlist' );
-
-			expect( action ).toEqual( {
-				type: READER_LIST_UNFOLLOW,
-				listOwner: 'restapitests',
-				listSlug: 'testlist',
-			} );
-		} );
-	} );
-
 	describe( '#deleteReaderList', () => {
 		test( 'should return the correct action', () => {
 			const action = deleteReaderList( 123, 'restapitests', 'testlist' );

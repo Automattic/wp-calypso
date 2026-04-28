@@ -1,14 +1,9 @@
-/* eslint-disable no-case-declarations */
-
-import { filter, some, includes, keyBy, map, omit, reject } from 'lodash';
+import { some, keyBy, omit, reject } from 'lodash';
 import {
 	READER_LIST_DELETE,
-	READER_LIST_FOLLOW_RECEIVE,
 	READER_LIST_RECEIVE,
 	READER_LIST_CREATE_SUCCESS,
-	READER_LIST_UNFOLLOW_RECEIVE,
 	READER_LIST_UPDATE_SUCCESS,
-	READER_LISTS_RECEIVE,
 	READER_LIST_ITEMS_RECEIVE,
 	READER_LIST_ITEM_ADD_FEED,
 	READER_LIST_ITEM_DELETE_FEED,
@@ -22,7 +17,7 @@ import {
 	READER_RECOMMENDED_BLOGS_ITEMS_REQUEST_FAILURE,
 } from 'calypso/state/reader/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
-import { itemsSchema, subscriptionsSchema } from './schema';
+import { itemsSchema } from './schema';
 
 /**
  * Tracks all known list objects, indexed by list ID.
@@ -32,8 +27,6 @@ import { itemsSchema, subscriptionsSchema } from './schema';
  */
 export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
-		case READER_LISTS_RECEIVE:
-			return Object.assign( {}, state, keyBy( action.lists, 'ID' ) );
 		case READER_LIST_RECEIVE:
 		case READER_LIST_CREATE_SUCCESS:
 		case READER_LIST_UPDATE_SUCCESS:
@@ -104,47 +97,6 @@ export const listItems = ( state = {}, action ) => {
 	return state;
 };
 
-/**
- * Tracks which list IDs the current user is subscribed to.
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @returns {Object}        Updated state
- */
-export const subscribedLists = withSchemaValidation(
-	subscriptionsSchema,
-	( state = [], action ) => {
-		switch ( action.type ) {
-			case READER_LISTS_RECEIVE:
-				return map( action.lists, 'ID' );
-			case READER_LIST_FOLLOW_RECEIVE:
-				const followedListId = action.list?.ID;
-				if ( ! followedListId || includes( state, followedListId ) ) {
-					return state;
-				}
-				return [ ...state, followedListId ];
-			case READER_LIST_UNFOLLOW_RECEIVE:
-				// Remove the unfollowed list ID from subscribedLists
-				const unfollowedListId = action.list?.ID;
-				if ( ! unfollowedListId ) {
-					return state;
-				}
-				return filter( state, ( listId ) => {
-					return listId !== unfollowedListId;
-				} );
-			case READER_LIST_DELETE:
-				return filter( state, ( listId ) => {
-					return listId !== action.listId;
-				} );
-			case READER_LIST_CREATE_SUCCESS:
-				if ( ! state.includes( action.data.list.ID ) ) {
-					return [ ...state, action.data.list.ID ];
-				}
-				return state;
-		}
-		return state;
-	}
-);
-
 export const userLists = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case READER_USER_LISTS_RECEIVE:
@@ -207,7 +159,6 @@ export const isRequestingUserRecommendedBlogs = ( state = {}, action ) => {
 export default combineReducers( {
 	items,
 	listItems,
-	subscribedLists,
 	userLists,
 	isRequestingUserLists,
 	userRecommendedBlogs,

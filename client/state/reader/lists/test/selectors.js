@@ -1,58 +1,6 @@
-import {
-	getSubscribedLists,
-	getListByOwnerAndSlug,
-	getMatchingItem,
-	isSubscribedByOwnerAndSlug,
-} from '../selectors';
+import { getListByOwnerAndSlug, getMatchingItem } from '../selectors';
 
 describe( 'selectors', () => {
-	describe( '#getSubscribedLists()', () => {
-		test( 'should return an empty array if the user is not subscribed to any lists', () => {
-			const subscribedLists = getSubscribedLists( {
-				reader: {
-					lists: {
-						items: {
-							123: {
-								ID: 123,
-								slug: 'bananas',
-							},
-						},
-						subscribedLists: [],
-					},
-				},
-			} );
-
-			expect( subscribedLists ).toEqual( [] );
-		} );
-
-		test( 'should retrieve items in title order', () => {
-			const subscribedLists = getSubscribedLists( {
-				reader: {
-					lists: {
-						items: {
-							123: {
-								ID: 123,
-								slug: 'bananas',
-								title: 'def',
-							},
-							456: {
-								ID: 456,
-								slug: 'ants',
-								title: 'abc',
-							},
-						},
-						subscribedLists: [ 123, 456 ],
-					},
-				},
-			} );
-
-			expect( subscribedLists ).toEqual( [
-				{ ID: 456, slug: 'ants', title: 'abc' },
-				{ ID: 123, slug: 'bananas', title: 'def' },
-			] );
-		} );
-	} );
-
 	describe( '#getListByOwnerAndSlug()', () => {
 		test( 'should return undefined if the list does not exist', () => {
 			const list = getListByOwnerAndSlug(
@@ -160,51 +108,6 @@ describe( 'selectors', () => {
 			expect( getMatchingItem( state, { tagId: '1', listId: 1 } ) ).toEqual( tag );
 			expect( getMatchingItem( state, { tagId: 1, listId: '1' } ) ).toEqual( tag );
 			expect( getMatchingItem( state, { tagId: 2, listId: 1 } ) ).toEqual( false );
-		} );
-	} );
-
-	describe( '#isSubscribedByOwnerAndSlug()', () => {
-		test( 'should return false if the list does not exist', () => {
-			const isSubscribed = isSubscribedByOwnerAndSlug(
-				{
-					reader: {
-						lists: {},
-						subscribedLists: [],
-					},
-				},
-				'lister',
-				'bananas'
-			);
-
-			expect( isSubscribed ).toEqual( false );
-		} );
-
-		test( 'should return true if the owner and slug match a subscribed list', () => {
-			const isSubscribed = isSubscribedByOwnerAndSlug(
-				{
-					reader: {
-						lists: {
-							items: {
-								123: {
-									ID: 123,
-									owner: 'lister',
-									slug: 'bananas',
-								},
-								456: {
-									ID: 456,
-									owner: 'lister',
-									slug: 'ants',
-								},
-							},
-							subscribedLists: [ 123 ],
-						},
-					},
-				},
-				'lister',
-				'bananas'
-			);
-
-			expect( isSubscribed ).toEqual( true );
 		} );
 	} );
 } );
