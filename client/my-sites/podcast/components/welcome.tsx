@@ -251,7 +251,14 @@ function Welcome( { onEnable, planTier }: WelcomeProps ) {
 
 			{ /* Pricing */ }
 			<section className="podcast__welcome-pricing">
-				<h3 className="podcast__welcome-pricing-title">{ pricingTitle }</h3>
+				<header className="podcast__section-header">
+					<h2 className="podcast__section-heading">{ pricingTitle }</h2>
+					<p className="podcast__section-description">
+						{ isFree
+							? translate( 'Compare plans and start podcasting today.' )
+							: translate( 'Compare your plan with the next tier up.' ) }
+					</p>
+				</header>
 				<HStack alignment="stretch" spacing={ 4 } wrap>
 					{ cards.map( ( { plan, label } ) => {
 						const isYourPlan = label === 'your-plan';
