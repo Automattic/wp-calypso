@@ -52,6 +52,11 @@ const {
 	slugify,
 	getFallbackSuggestions,
 	isCollapsedLauncherTarget,
+	normalizeReaderSiteId,
+	decodeHtmlEntities,
+	getReaderEmptyViewHeading,
+	normalizeSuggestions,
+	parseSuggestionsResponse,
 } = require( '../reader-chat' );
 
 // ---------------------------------------------------------------------------
@@ -159,6 +164,131 @@ describe( 'slugify', () => {
 } );
 
 // ---------------------------------------------------------------------------
+// normalizeReaderSiteId
+// ---------------------------------------------------------------------------
+
+describe( 'normalizeReaderSiteId', () => {
+	it( 'accepts numeric site IDs', () => {
+		expect( normalizeReaderSiteId( 247750866 ) ).toBe( 247750866 );
+	} );
+
+	it( 'coerces localized string site IDs to numbers', () => {
+		expect( normalizeReaderSiteId( '247750866' ) ).toBe( 247750866 );
+	} );
+
+	it( 'rejects missing or invalid site IDs', () => {
+		expect( normalizeReaderSiteId( undefined ) ).toBeUndefined();
+		expect( normalizeReaderSiteId( 'site-id' ) ).toBeUndefined();
+		expect( normalizeReaderSiteId( 0 ) ).toBeUndefined();
+	} );
+} );
+
+// ---------------------------------------------------------------------------
+// decodeHtmlEntities
+// ---------------------------------------------------------------------------
+
+describe( 'decodeHtmlEntities', () => {
+	it( 'decodes encoded punctuation and non-breaking spaces from post titles', () => {
+		expect( decodeHtmlEntities( 'The Fisherman Who Won&#8217;t Take&nbsp;Tips' ) ).toBe(
+			'The Fisherman Who Won’t Take Tips'
+		);
+	} );
+} );
+
+// ---------------------------------------------------------------------------
+// getReaderEmptyViewHeading
+// ---------------------------------------------------------------------------
+
+describe( 'getReaderEmptyViewHeading', () => {
+	it( 'uses post-specific copy on singular posts', () => {
+		expect( getReaderEmptyViewHeading( { currentPost: { id: 1 } } ) ).toBe(
+			'Ask me anything about this post.'
+		);
+	} );
+
+	it( 'uses blog copy when no post is selected', () => {
+		expect( getReaderEmptyViewHeading( {} ) ).toBe( 'Ask me anything about this blog.' );
+	} );
+} );
+
+// ---------------------------------------------------------------------------
+// parseSuggestionsResponse
+// ---------------------------------------------------------------------------
+
+describe( 'parseSuggestionsResponse', () => {
+	it( 'parses JSON arrays from plain text', () => {
+		expect( parseSuggestionsResponse( '[{"label":"A","prompt":"B"}]' ) ).toEqual( [
+			{ label: 'A', prompt: 'B' },
+		] );
+	} );
+
+	it( 'parses JSON arrays from fenced code blocks', () => {
+		expect( parseSuggestionsResponse( '```json\n[{"label":"A","prompt":"B"}]\n```' ) ).toEqual( [
+			{ label: 'A', prompt: 'B' },
+		] );
+	} );
+} );
+
+// ---------------------------------------------------------------------------
+// normalizeSuggestions
+// ---------------------------------------------------------------------------
+
+describe( 'normalizeSuggestions', () => {
+	it( 'keeps a concise label separate from the submitted prompt', () => {
+		expect(
+			normalizeSuggestions(
+				[
+					{
+						label: 'Trip planning',
+						prompt: 'What criteria do you use to select the places you visit?',
+					},
+				],
+				'ai-suggestion'
+			)
+		).toEqual( [
+			{
+				id: 'ai-suggestion-0-what-criteria-do-you-use-to-select-the-p',
+				label: 'Trip planning',
+				prompt: 'What criteria do you use to select the places you visit?',
+			},
+		] );
+	} );
+
+	it( 'falls back to a short chip label when the returned label is empty', () => {
+		expect(
+			normalizeSuggestions( [ { label: ' ', prompt: 'Can you summarize this post?' } ], 'ai' )
+		).toEqual( [
+			{
+				id: 'ai-0-can-you-summarize-this-post',
+				label: 'Explore this blog',
+				prompt: 'Can you summarize this post?',
+			},
+		] );
+	} );
+
+	it( 'replaces long question labels with short fallback labels', () => {
+		expect(
+			normalizeSuggestions(
+				[
+					{
+						label:
+							'What led you to embrace a more spontaneous and less structured style of travel?',
+						prompt: 'What does this post say about spontaneous travel?',
+					},
+				],
+				'ai'
+			)
+		).toEqual( [
+			{
+				id: 'ai-0-what-does-this-post-say-about-spontaneou',
+				label: 'Explore this blog',
+				prompt: 'What does this post say about spontaneous travel?',
+			},
+		] );
+	} );
+} );
+
+// ---------------------------------------------------------------------------
 // isCollapsedLauncherTarget
 // ---------------------------------------------------------------------------
 
@@ -213,6 +343,7 @@ describe( 'getFallbackSuggestions', () => {
 			expect( typeof s.id ).toBe( 'string' );
 			expect( typeof s.label ).toBe( 'string' );
 			expect( typeof s.prompt ).toBe( 'string' );
+			expect( s.label.length ).toBeLessThan( s.prompt.length );
 		}
 	} );
 } );

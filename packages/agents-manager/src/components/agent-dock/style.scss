@@ -458,6 +458,12 @@ body.post-new-php.agents-manager-sidebar-container {
 		width: 100%;
 	}
 
+	.Suggestions-module_vertical .Suggestions-module_button {
+		white-space: normal;
+		text-align: left;
+		overflow-wrap: anywhere;
+	}
+
 	.big-sky__chat-actions {
 		width: 100%;
 		margin-top: auto;

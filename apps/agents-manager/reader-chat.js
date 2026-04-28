@@ -25,7 +25,6 @@ import { createRoot } from 'react-dom/client';
  * public-facing blog bundle. The queue is drained by stats.js / the
  * Tracks library if/when it loads on the page — and on blogs where
  * it doesn't load, events simply stay queued with no ill effect.
- *
  * @param {string} eventName Must start with an allowed source prefix
  *                           (e.g. 'jetpack_...') to be accepted by Tracks.
  * @param {Object} [props]   Flat property bag. Nested objects are not
@@ -161,10 +160,13 @@ function injectScopedReset() {
 // Read config injected by PHP.
 const readerConfig = window.JetpackReaderChatConfig || {};
 const readerAgentId = readerConfig.agentId || 'reader-chat';
+const readerSiteId = normalizeReaderSiteId( readerConfig.siteId );
 
 // Set agentId for useAgentConfig() to pick up via agentsManagerData global.
 window.agentsManagerData = window.agentsManagerData || {};
 window.agentsManagerData.agentId = readerAgentId;
+window.agentsManagerData.siteId = readerSiteId;
+window.agentsManagerData.emptyViewHeading = getReaderEmptyViewHeading( readerConfig );
 
 // Expose page context on the global so the default context provider
 // and agent hooks can read it. The AgentsManager default context
@@ -185,23 +187,23 @@ function getFallbackSuggestions() {
 		return [
 			{
 				id: 'popular',
-				label: 'What are the most popular posts here?',
+				label: 'Find popular posts',
 				prompt: 'What are the most popular posts on this blog?',
 			},
 			{
 				id: 'about',
-				label: 'What is this blog about?',
+				label: 'Learn about this blog',
 				prompt: 'What is this blog about? What topics does it cover?',
 			},
 			{
 				id: 'recommend',
-				label: 'Recommend something to read',
+				label: 'Recommend a post',
 				prompt: 'Can you recommend a good post to read on this blog?',
 			},
 		];
 	}
 
-	const title = post.title || 'this post';
+	const title = decodeHtmlEntities( post.title || 'this post' );
 
 	return [
 		{
@@ -211,7 +213,7 @@ function getFallbackSuggestions() {
 		},
 		{
 			id: 'explain',
-			label: 'Explain something from this post',
+			label: 'Explain this post',
 			prompt: `Can you explain the main points of "${ title }" in simple terms?`,
 		},
 		{
@@ -227,6 +229,31 @@ const SUGGESTIONS_ENDPOINT =
 const SUGGESTIONS_TIMEOUT_MS = 15000;
 const FOLLOWUP_DEBOUNCE_MS = 2500;
 const MIN_FOLLOWUP_AGENT_TEXT_LENGTH = 40;
+const MAX_SUGGESTION_LABEL_LENGTH = 48;
+const MAX_SUGGESTION_LABEL_WORDS = 7;
+const POST_FALLBACK_LABELS = [ 'Summarize this post', 'Explore this topic', 'Find related posts' ];
+const BLOG_FALLBACK_LABELS = [ 'Explore this blog', 'Find popular posts', 'Recommend a post' ];
+const FOLLOWUP_FALLBACK_LABELS = [ 'Go deeper', 'Learn more', 'Ask a follow-up' ];
+
+function normalizeReaderSiteId( siteId ) {
+	const numericSiteId = Number( siteId );
+	return Number.isFinite( numericSiteId ) && numericSiteId > 0 ? numericSiteId : undefined;
+}
+
+function decodeHtmlEntities( text ) {
+	if ( typeof document === 'undefined' ) {
+		return String( text || '' );
+	}
+	const textarea = document.createElement( 'textarea' );
+	textarea.innerHTML = String( text || '' );
+	return textarea.value.replace( /\u00a0/g, ' ' );
+}
+
+function getReaderEmptyViewHeading( config ) {
+	return config?.currentPost
+		? 'Ask me anything about this post.'
+		: 'Ask me anything about this blog.';
+}
 
 function createAbortController() {
 	return typeof window.AbortController === 'function' ? new window.AbortController() : null;
@@ -272,6 +299,71 @@ function parseAgentSseResponse( raw ) {
 	return null;
 }
 
+function parseSuggestionsResponse( text ) {
+	const unfenced = String( text || '' )
+		.trim()
+		.replace( /^```(?:json)?\s*/i, '' )
+		.replace( /\s*```$/i, '' )
+		.trim();
+
+	try {
+		return JSON.parse( unfenced );
+	} catch {
+		const start = unfenced.indexOf( '[' );
+		const end = unfenced.lastIndexOf( ']' );
+		if ( start === -1 || end <= start ) {
+			return null;
+		}
+		try {
+			return JSON.parse( unfenced.slice( start, end + 1 ) );
+		} catch {
+			return null;
+		}
+	}
+}
+
+function isConciseSuggestionLabel( label ) {
+	if ( ! label ) {
+		return false;
+	}
+	return (
+		label.length <= MAX_SUGGESTION_LABEL_LENGTH &&
+		label.split( /\s+/ ).length <= MAX_SUGGESTION_LABEL_WORDS &&
+		! /[?]/.test( label )
+	);
+}
+
+function getFallbackSuggestionLabel( index, resultIdPrefix ) {
+	if ( resultIdPrefix === 'followup' ) {
+		return FOLLOWUP_FALLBACK_LABELS[ index ] || 'Ask a follow-up';
+	}
+	const labels = readerConfig.currentPost ? POST_FALLBACK_LABELS : BLOG_FALLBACK_LABELS;
+	return (
+		labels[ index ] || ( readerConfig.currentPost ? 'Ask about this post' : 'Explore this blog' )
+	);
+}
+
+function normalizeSuggestions( items, resultIdPrefix ) {
+	const valid = ( Array.isArray( items ) ? items : [] ).filter(
+		( s ) => s && typeof s.label === 'string' && typeof s.prompt === 'string'
+	);
+	if ( valid.length === 0 ) {
+		return null;
+	}
+	return valid.slice( 0, 3 ).map( ( s, i ) => {
+		const prompt = decodeHtmlEntities( s.prompt ).trim();
+		const labelCandidate = decodeHtmlEntities( s.label ).trim();
+		const label = isConciseSuggestionLabel( labelCandidate )
+			? labelCandidate
+			: getFallbackSuggestionLabel( i, resultIdPrefix );
+		return {
+			id: s.id || `${ resultIdPrefix }-${ i }-${ slugify( prompt ) }`,
+			label,
+			prompt,
+		};
+	} );
+}
+
 /**
  * Call the reader-chat-suggestions agent with an arbitrary user message and
  * return a list of {id,label,prompt} suggestions, or null on failure.
@@ -301,7 +393,7 @@ async function fetchSuggestions( { messageText, requestIdPrefix, resultIdPrefix,
 						data: {
 							clientContext: {
 								post_url: readerConfig.currentPost?.url || '',
-								selectedSiteId: readerConfig.siteId,
+								selectedSiteId: readerSiteId,
 							},
 						},
 					},
@@ -345,20 +437,12 @@ async function fetchSuggestions( { messageText, requestIdPrefix, resultIdPrefix,
 			return null;
 		}
 
-		const parsed = JSON.parse( text );
-		const items = Array.isArray( parsed ) ? parsed : [];
-		const valid = items.filter(
-			( s ) => s && typeof s.label === 'string' && typeof s.prompt === 'string'
-		);
-		if ( valid.length === 0 ) {
+		const parsed = parseSuggestionsResponse( text );
+		const suggestions = normalizeSuggestions( parsed, resultIdPrefix );
+		if ( ! suggestions ) {
 			return null;
 		}
-		// Normalize: ensure every item has an id (stable React key).
-		return valid.slice( 0, 3 ).map( ( s, i ) => ( {
-			id: s.id || `${ resultIdPrefix }-${ i }-${ slugify( s.label ) }`,
-			label: s.label,
-			prompt: s.prompt,
-		} ) );
+		return suggestions;
 	} catch {
 		return null;
 	} finally {
@@ -380,17 +464,40 @@ function fetchAiSuggestions( signal ) {
 	const post = readerConfig.currentPost;
 	const siteName = readerConfig.siteName || '';
 	const siteUrl = readerConfig.siteUrl || '';
+	const postTitle = decodeHtmlEntities( post?.title || '' );
+	const postExcerpt = decodeHtmlEntities( post?.excerpt || '' );
 
 	// Build the message: post-specific if we're on a singular view, site-level
 	// if we're on the home/archive. The agent handles both — it just needs a
 	// prose description of what the reader is looking at.
 	const messageText = post?.url
-		? `Context: reader is on a specific blog post.\nPost title: ${
-				post.title || ''
-		  }\n\nPost excerpt:\n${
-				post.excerpt || ''
-		  }\n\nGenerate 3 questions a reader might click to learn more ABOUT THIS POST specifically.`
-		: `Context: reader is on the home/stream of a blog (no specific post selected).\nSite name: ${ siteName }\nSite URL: ${ siteUrl }\n\nGenerate 3 questions a reader might click to explore THIS BLOG overall — its topics, recent posts, or recommendations. Infer topics from the site name and URL.`;
+		? `Context: a reader is on a specific blog post.
+Post title: ${ postTitle }
+
+Post excerpt:
+${ postExcerpt }
+
+Return only a JSON array of exactly 3 objects, with no markdown or commentary.
+Each object must have:
+- "label": short chip text, 2-5 words, no question mark, max 48 characters.
+- "prompt": a full question for the blog assistant to answer.
+
+Generate questions a reader might click to learn more ABOUT THIS POST specifically.
+Do not ask the author personal interview questions.
+Do not address the author as "you" or "your".
+Phrase prompts around "this post", "the post", "the author", or the topic discussed.`
+		: `Context: a reader is on the home/stream of a blog (no specific post selected).
+Site name: ${ siteName }
+Site URL: ${ siteUrl }
+
+Return only a JSON array of exactly 3 objects, with no markdown or commentary.
+Each object must have:
+- "label": short chip text, 2-5 words, no question mark, max 48 characters.
+- "prompt": a full question for the blog assistant to answer.
+
+Generate questions a reader might click to explore THIS BLOG overall: its topics, recent posts, or recommendations.
+Do not ask the site owner personal interview questions.
+Do not address the site owner as "you" or "your".`;
 
 	return fetchSuggestions( {
 		messageText,
@@ -416,7 +523,11 @@ Reader asked: ${ userText }
 
 Blog replied: ${ agentText }
 
-Generate 2-3 follow-up questions the reader might want to ask next, based on what was discussed. Questions should feel like natural next-step curiosity — go deeper on a point, connect to a related theme, or explore an implication. Not generic.`;
+Return only a JSON array of 2-3 objects, with no markdown or commentary. Each object must have "label" and "prompt" strings.
+Labels must be short chip text, 2-5 words, no question mark, max 48 characters.
+Generate follow-up questions the reader might want to ask next, based on what was discussed.
+Do not ask the author/site owner personal interview questions or address them as "you".
+Questions should feel like natural next-step curiosity: go deeper on a point, connect to a related theme, or explore an implication. Not generic.`;
 
 	return fetchSuggestions( {
 		messageText,
@@ -770,9 +881,9 @@ function setupCollapsedLauncherPointerFallback() {
 function ReaderChatApp() {
 	const config = window.JetpackReaderChatConfig || {};
 
-	const site = config.siteId
+	const site = readerSiteId
 		? {
-				ID: config.siteId,
+				ID: readerSiteId,
 				URL: config.siteUrl || window.location.origin,
 				name: config.siteName || '',
 		  }
@@ -783,7 +894,7 @@ function ReaderChatApp() {
 			<AgentsManager
 				sectionName="reader-chat"
 				site={ site }
-				currentSiteId={ config.siteId || undefined }
+				currentSiteId={ readerSiteId }
 				agentId={ readerAgentId }
 			/>
 		</QueryClientProvider>
@@ -820,4 +931,14 @@ if ( container ) {
 }
 
 // Exported for unit tests only — these are pure helpers with no side effects.
-export { parseAgentSseResponse, slugify, getFallbackSuggestions, isCollapsedLauncherTarget };
+export {
+	parseAgentSseResponse,
+	slugify,
+	getFallbackSuggestions,
+	isCollapsedLauncherTarget,
+	normalizeReaderSiteId,
+	decodeHtmlEntities,
+	getReaderEmptyViewHeading,
+	normalizeSuggestions,
+	parseSuggestionsResponse,
+};
