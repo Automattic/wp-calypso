@@ -54,6 +54,7 @@ export const SITE_OPTIONS = [
 	'is_domain_only',
 	'is_redirect',
 	'is_wpforteams_site',
+	'jetpack_recovery_mode_status',
 	'migration_source_site_domain',
 	'p2_hub_blog_id',
 	'site_creation_flow',

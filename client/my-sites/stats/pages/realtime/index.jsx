@@ -120,7 +120,11 @@ function StatsRealtime( { context } ) {
 			<div className="stats">
 				<StatsRealtimeHeader />
 				<AsyncLoad
-					require="calypso/my-sites/stats/pages/realtime/chart"
+					require={ () =>
+						import(
+							/* webpackChunkName: "async-load-calypso-my-sites-stats-pages-realtime-chart" */ 'calypso/my-sites/stats/pages/realtime/chart'
+						)
+					}
 					siteId={ siteId }
 					placeholder={ PageLoading }
 				/>

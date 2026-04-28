@@ -7,7 +7,11 @@ const AsyncHelpCenterApp = ( props: HelpCenterAppProps ) => {
 	}
 	return (
 		<AsyncLoad
-			require="./help-center-app"
+			require={ () =>
+				import(
+					/* webpackChunkName: "async-load-calypso-components-help-center-help-center-app" */ './help-center-app'
+				)
+			}
 			placeholder={ null }
 			{ ...props }
 			locale={ props.locale ?? props.currentUser.language }

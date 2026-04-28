@@ -1,8 +1,14 @@
+@use '../../../../packages/ui/src/utils/mixins' as ui-mixins;
+
 @import '@wordpress/base-styles/variables';
 @import '@wordpress/base-styles/breakpoints';
 
 .offer-card--stacked {
 	width: 100%;
+
+	@include ui-mixins.when-dark-theme {
+		background-color: var( --wp-components-color-gray-200 );
+	}
 
 	@include break-medium {
 		width: 260px;

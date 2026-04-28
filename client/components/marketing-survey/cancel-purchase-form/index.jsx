@@ -82,6 +82,7 @@ class CancelPurchaseForm extends Component {
 		linkedPurchases: PropTypes.array,
 		skipRemovePlanSurvey: PropTypes.bool,
 		cancellationInProgress: PropTypes.bool,
+		intent: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -377,6 +378,7 @@ class CancelPurchaseForm extends Component {
 			site,
 			hasBackupsFeature,
 			flowType,
+			intent,
 		} = this.props;
 		const { atomicRevertCheckOne, atomicRevertCheckTwo, surveyStep, upsell } = this.state;
 		const { productName } = purchase;
@@ -390,6 +392,7 @@ class CancelPurchaseForm extends Component {
 					onChangeCancellationReason={ this.onRadioOneChange }
 					onChangeCancellationReasonDetails={ this.onTextOneChange }
 					onChangeImportFeedback={ this.onImportRadioChange }
+					intent={ intent }
 				/>
 			);
 		}
@@ -442,6 +445,9 @@ class CancelPurchaseForm extends Component {
 					site={ site }
 					disabled={ this.state.isSubmitting }
 					refundAmount={ this.getRefundAmount() }
+					declineButtonText={
+						intent === 'remove' ? translate( 'Remove my current plan' ) : undefined
+					}
 					downgradePlanPrice={
 						'downgrade-personal' === this.state.upsell
 							? this.props.downgradePlanToPersonalPrice
@@ -708,9 +714,9 @@ class CancelPurchaseForm extends Component {
 	}
 
 	getHeaderTitle() {
-		const { flowType, purchase, translate } = this.props;
+		const { flowType, intent, purchase, translate } = this.props;
 
-		if ( flowType === CANCEL_FLOW_TYPE.REMOVE ) {
+		if ( intent === 'remove' || flowType === CANCEL_FLOW_TYPE.REMOVE ) {
 			if ( isPlan( purchase ) ) {
 				return translate( 'Remove plan' );
 			}

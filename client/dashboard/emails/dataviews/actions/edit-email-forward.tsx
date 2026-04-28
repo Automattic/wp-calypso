@@ -1,4 +1,5 @@
 import { updateEmailForwardMutation } from '@automattic/api-queries';
+import { CALYPSO_CONTACT } from '@automattic/urls';
 import { useMutation } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
@@ -13,6 +14,7 @@ import emailValidator from 'email-validator';
 import { useEffect, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { Text } from '../../../components/text';
+import { wpcomLink } from '../../../utils/link';
 import type { Email } from '../../types';
 import type { Action } from '@wordpress/dataviews';
 
@@ -64,14 +66,33 @@ export const useEditEmailForwardAction = (): Action< Email > => {
 					);
 					onActionPerformed?.( items );
 					closeModal?.();
-				} catch ( _e ) {
+				} catch ( e ) {
+					const err = e as { message?: string | { error_message?: string } };
+					let apiMessage: string | undefined;
+					if ( err?.message ) {
+						apiMessage = typeof err.message === 'object' ? err.message.error_message : err.message;
+					}
+
 					createErrorNotice(
-						sprintf(
-							/* translators: %1$s is the email address. */
-							__( 'Failed to update forwarder %1$s. Please try again.' ),
-							email.emailAddress
-						),
-						{ type: 'snackbar' }
+						apiMessage
+							? sprintf(
+									/* translators: %(emailAddress)s is the email address, %(message)s is the error message returned by the API. */
+									__(
+										'Failed to update forwarder %(emailAddress)s with message “%(message)s”. Please try again or contact support.'
+									),
+									{ emailAddress: email.emailAddress, message: apiMessage }
+							  )
+							: sprintf(
+									/* translators: %(emailAddress)s is the email address. */
+									__(
+										'Failed to update forwarder %(emailAddress)s. Please try again or contact support.'
+									),
+									{ emailAddress: email.emailAddress }
+							  ),
+						{
+							actions: [ { label: __( 'Support' ), url: wpcomLink( CALYPSO_CONTACT ) } ],
+							type: 'snackbar',
+						}
 					);
 				}
 			};

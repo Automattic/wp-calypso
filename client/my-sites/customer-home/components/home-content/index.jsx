@@ -128,7 +128,11 @@ const HomeContent = ( {
 		if ( ! studioSiteId ) {
 			return;
 		}
-		trackStudioSyncConnectSite( false );
+		trackStudioSyncConnectSite( {
+			click: false,
+			blogId: siteId,
+			studioSiteId,
+		} );
 		openSyncUrlInStudio( studioSiteId, siteId, autoOpenPush );
 	}, [ siteId, trackStudioSyncConnectSite ] );
 
@@ -278,7 +282,11 @@ const HomeContent = ( {
 			>
 				<NoticeAction
 					onClick={ () => {
-						trackStudioSyncConnectSite( true );
+						trackStudioSyncConnectSite( {
+							click: true,
+							blogId: siteId,
+							studioSiteId,
+						} );
 						openSyncUrlInStudio( studioSiteId, siteId, autoOpenPush );
 					} }
 					external
@@ -328,7 +336,14 @@ const HomeContent = ( {
 				</>
 			) : null }
 			<ResurrectedWelcomeModalGate isSuppressed={ celebrateLaunchModalIsOpen } />
-			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
+			<AsyncLoad
+				require={ () =>
+					import(
+						/* webpackChunkName: "async-load-calypso-lib-analytics-track-resurrections" */ 'calypso/lib/analytics/track-resurrections'
+					)
+				}
+				placeholder={ null }
+			/>
 		</div>
 	);
 };
@@ -364,9 +379,11 @@ const trackViewSiteAction = ( isStaticHomePage ) =>
 		bumpStat( 'calypso_customer_home', 'my_site_view_site' )
 	);
 
-const trackStudioSyncConnectSite = ( click = false ) =>
+const trackStudioSyncConnectSite = ( { click = false, blogId, studioSiteId } ) =>
 	recordTracksEvent( 'calypso_studio_sync_connect_site', {
 		click,
+		blog_id: blogId,
+		studio_site_id: studioSiteId,
 	} );
 
 const mapDispatchToProps = {

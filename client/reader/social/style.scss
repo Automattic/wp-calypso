@@ -1,0 +1,50 @@
+.social-profile-card {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.social-profile-card__avatar {
+	width: 96px;
+	height: 96px;
+	border-radius: 50%;
+	object-fit: cover;
+}
+
+.social-profile-card__stats {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 20px;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.social-profile-card__stat {
+	font-size: 0.875rem;
+}
+
+.social-profile-card__stat-count {
+	font-weight: 600;
+}
+
+.social-profile-card__stat-label {
+	color: var( --color-neutral-60 );
+}
+
+.social-profile-card__bio {
+	margin: 0;
+	white-space: pre-wrap;
+	line-height: 1.5;
+
+	// When the bio is rendered as sanitized HTML (e.g. Mastodon) it contains
+	// its own <p> elements with default UA margins. Normalize those to a
+	// consistent vertical rhythm matching the plain-text layout above.
+	p {
+		margin: 0;
+
+		& + p {
+			margin-block-start: 0.75em;
+		}
+	}
+}

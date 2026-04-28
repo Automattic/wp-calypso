@@ -8,7 +8,11 @@ const AddNewSiteContent = ( props: AddNewSiteContentProps ) => {
 		return (
 			<AsyncLoad
 				{ ...props }
-				require="calypso/components/add-new-site/content/a4a"
+				require={ () =>
+					import(
+						/* webpackChunkName: "async-load-calypso-components-add-new-site-content-a4a" */ './a4a'
+					)
+				}
 				placeholder={ null }
 			/>
 		);

@@ -91,12 +91,6 @@
 		padding: 0;
 		font-size: $font-body-small;
 		color: var( --color-neutral-20 );
-
-		.gravatar {
-			height: 16px;
-			width: 16px;
-			top: 4px;
-		}
 	}
 
 	// Loading Placeholders
@@ -266,10 +260,6 @@
 
 		.site-icon {
 			margin: 1px;
-		}
-
-		.gravatar {
-			border: 1px solid var( --color-border-inverted );
 		}
 	}
 
@@ -557,7 +547,7 @@ body.is-section-reader div.layout.is-global-sidebar-visible .is-site-stream .bac
 	.card.reader-related-card {
 		margin: 0;
 
-		.reader-related-card__meta .gravatar {
+		.reader-related-card__meta .user-avatar__image {
 			margin: 3px 8px 0 0;
 		}
 

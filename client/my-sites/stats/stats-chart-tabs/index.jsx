@@ -240,7 +240,11 @@ class StatModuleChartTabs extends Component {
 					)
 				) : (
 					<AsyncLoad
-						require="calypso/my-sites/stats/components/line-chart"
+						require={ () =>
+							import(
+								/* webpackChunkName: "async-load-calypso-my-sites-stats-components-line-chart" */ 'calypso/my-sites/stats/components/line-chart'
+							)
+						}
 						className="stats-chart-tabs__line-chart"
 						chartData={ lineChartData }
 						curveType="monotone" // can use smooth, linear, monotone

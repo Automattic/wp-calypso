@@ -18,13 +18,22 @@ export const createList = ( context, next ) => {
 	recordTrack( 'calypso_reader_list_create_loaded' );
 
 	context.primary = (
-		<AsyncLoad require="calypso/reader/list-manage" key="list-manage" isCreateForm />
+		<AsyncLoad
+			require={ () =>
+				import(
+					/* webpackChunkName: "async-load-calypso-reader-list-manage" */ 'calypso/reader/list-manage'
+				)
+			}
+			key="reader-list-create"
+			isCreateForm
+		/>
 	);
 	next();
 };
 
 export const listListing = ( context, next ) => {
 	const basePath = '/reader/list/:owner/:slug';
+	const view = context.params.view || 'posts';
 	const fullAnalyticsPageTitle =
 		analyticsPageTitle + ' > List > ' + context.params.user + ' - ' + context.params.list;
 	const mcKey = 'list';
@@ -44,11 +53,14 @@ export const listListing = ( context, next ) => {
 
 	context.primary = (
 		<AsyncLoad
-			require="calypso/reader/list-stream"
+			require={ () =>
+				import( /* webpackChunkName: "async-load-calypso-reader-list" */ 'calypso/reader/list' )
+			}
 			key={ 'tag-' + context.params.user + '-' + context.params.list }
 			streamKey={ streamKey }
 			owner={ encodeURIComponent( context.params.user ) }
 			slug={ encodeURIComponent( context.params.list ) }
+			view={ view }
 			trackScrollPage={ trackScrollPage.bind(
 				null,
 				basePath,
@@ -75,8 +87,12 @@ export const editList = ( context, next ) => {
 
 	context.primary = (
 		<AsyncLoad
-			require="calypso/reader/list-manage"
-			key="list-manage"
+			require={ () =>
+				import(
+					/* webpackChunkName: "async-load-calypso-reader-list-manage" */ 'calypso/reader/list-manage'
+				)
+			}
+			key="reader-list-edit"
 			owner={ encodeURIComponent( context.params.user ) }
 			slug={ encodeURIComponent( context.params.list ) }
 			selectedSection="details"
@@ -98,8 +114,12 @@ export const editListItems = ( context, next ) => {
 
 	context.primary = (
 		<AsyncLoad
-			require="calypso/reader/list-manage"
-			key="list-manage"
+			require={ () =>
+				import(
+					/* webpackChunkName: "async-load-calypso-reader-list-manage" */ 'calypso/reader/list-manage'
+				)
+			}
+			key="reader-list-edit-list-items"
 			owner={ encodeURIComponent( context.params.user ) }
 			slug={ encodeURIComponent( context.params.list ) }
 			selectedSection="items"
@@ -121,8 +141,12 @@ export const exportList = ( context, next ) => {
 
 	context.primary = (
 		<AsyncLoad
-			require="calypso/reader/list-manage"
-			key="list-manage"
+			require={ () =>
+				import(
+					/* webpackChunkName: "async-load-calypso-reader-list-manage" */ 'calypso/reader/list-manage'
+				)
+			}
+			key="reader-list-export"
 			owner={ encodeURIComponent( context.params.user ) }
 			slug={ encodeURIComponent( context.params.list ) }
 			selectedSection="export"
@@ -144,8 +168,12 @@ export const deleteList = ( context, next ) => {
 
 	context.primary = (
 		<AsyncLoad
-			require="calypso/reader/list-manage"
-			key="list-manage"
+			require={ () =>
+				import(
+					/* webpackChunkName: "async-load-calypso-reader-list-manage" */ 'calypso/reader/list-manage'
+				)
+			}
+			key="reader-list-delete"
 			owner={ encodeURIComponent( context.params.user ) }
 			slug={ encodeURIComponent( context.params.list ) }
 			selectedSection="delete"

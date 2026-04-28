@@ -91,7 +91,11 @@ class CalendarButton extends Component {
 		return (
 			<AsyncLoad
 				{ ...calendarProperties }
-				require="calypso/blocks/calendar-popover"
+				require={ () =>
+					import(
+						/* webpackChunkName: "async-load-calypso-blocks-calendar-popover" */ 'calypso/blocks/calendar-popover'
+					)
+				}
 				placeholder={ null }
 				isVisible
 				context={ this.buttonRef.current }

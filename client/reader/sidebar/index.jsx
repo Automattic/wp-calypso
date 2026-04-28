@@ -46,7 +46,9 @@ import {
 import { getReaderTeams } from 'calypso/state/teams/selectors';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import ReaderSidebarHelper from './helper';
+import ReaderSidebarAtmosphere from './reader-sidebar-atmosphere';
 import ReaderSidebarLists from './reader-sidebar-lists';
+import ReaderSidebarMastodon from './reader-sidebar-mastodon';
 import ReaderSidebarNudges from './reader-sidebar-nudges';
 import ReaderSidebarOrganizations from './reader-sidebar-organizations';
 import ReaderSidebarRecent from './reader-sidebar-recent';
@@ -194,6 +196,13 @@ export class ReaderSidebar extends Component {
 						customIcon={ <ReaderDiscoverIcon viewBox="0 0 24 24" /> }
 						link="/discover"
 					/>
+
+					{ isEnabled( 'reader/social' ) && (
+						<>
+							<ReaderSidebarAtmosphere path={ path } />
+							<ReaderSidebarMastodon path={ path } />
+						</>
+					) }
 
 					<SidebarItem
 						label={ translate( 'Likes' ) }

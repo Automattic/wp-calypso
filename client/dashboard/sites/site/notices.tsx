@@ -1,3 +1,4 @@
+import { JETPACK_SUPPORT_CONNECTION_ISSUES } from '@automattic/urls';
 import { ExternalLink } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useEffect } from 'react';
@@ -19,9 +20,9 @@ export function InaccessibleJetpackNotice( { error }: { error: Error } ) {
 	return (
 		<Notice
 			variant="error"
-			title={ __( 'Your Jetpack site can not be reached at this time.' ) }
+			title={ __( 'Your Jetpack site cannot be reached at this time.' ) }
 			actions={
-				<ExternalLink href="https://jetpack.com/support/getting-started-with-jetpack/fixing-jetpack-connection-issues/">
+				<ExternalLink href={ JETPACK_SUPPORT_CONNECTION_ISSUES }>
 					{ __( 'Troubleshoot your Jetpack connection' ) }
 				</ExternalLink>
 			}

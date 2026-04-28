@@ -14,7 +14,8 @@ interface ReaderSiteItemProps {
 	site: ReaderSite;
 	variant: 'card' | 'compact' | 'default';
 	followSource: string;
-	iconSize?: number;
+	followIconSize?: number;
+	siteIconSize?: number;
 }
 
 export interface ReaderSite {
@@ -28,8 +29,9 @@ export interface ReaderSite {
 export function ReaderSiteItem( {
 	site,
 	variant,
-	iconSize = 42,
 	followSource,
+	followIconSize = 24,
+	siteIconSize = 42,
 }: ReaderSiteItemProps ): JSX.Element {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -62,8 +64,12 @@ export function ReaderSiteItem( {
 			*/ }
 			<QueryReaderSite siteId={ siteId } />
 
-			<a className="reader-site-item__link" href={ linkUrl }>
-				<SiteIcon iconUrl={ siteIcon } size={ iconSize } />
+			<a
+				className="reader-site-item__link"
+				href={ linkUrl }
+				style={ { width: `calc(100% - ${ followIconSize + 4 }px)` } }
+			>
+				<SiteIcon iconUrl={ siteIcon } size={ siteIconSize } />
 
 				<AutoDirection>
 					<div className="reader-site-info">
@@ -81,6 +87,7 @@ export function ReaderSiteItem( {
 					feedId={ feedId ? Number( feedId ) : undefined }
 					siteId={ siteId ? Number( siteId ) : undefined }
 					siteUrl={ feedUrl }
+					iconSize={ followIconSize }
 					followSource={ followSource }
 					isButtonOnly={ isCompactView }
 					onFollowToggle={ onFollowToggle }

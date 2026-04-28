@@ -1,3 +1,5 @@
+@import '@wordpress/base-styles/colors';
+
 .site-activity-logs__actor {
     > [class^="site-activity-logs__actor-icon-"] {
         border-radius: 50%;
@@ -7,14 +9,14 @@
 
     .site-activity-logs__actor-icon-server,
     .site-activity-logs__actor-icon-default {
-        background-color: $gray-300;
-        fill: $gray-700;
+        background-color: var(--wp-components-color-gray-300, $gray-300);
+        fill: var(--dashboard__text-muted-color);
     }
 
     .site-activity-logs__actor-mcp {
         display: block;
         font-size: 0.75rem;
-        color: $gray-600;
+        color: var(--dashboard__text-muted-color);
         margin-block-start: 2px;
     }
 }

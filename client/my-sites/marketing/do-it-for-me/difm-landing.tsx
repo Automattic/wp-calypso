@@ -134,7 +134,11 @@ export default function DIFMLanding( {
 				</ContentSection>
 				<ImageSection>
 					<AsyncLoad
-						require="./site-build-showcase"
+						require={ () =>
+							import(
+								/* webpackChunkName: "async-load-calypso-my-sites-marketing-do-it-for-me-site-build-showcase" */ './site-build-showcase'
+							)
+						}
 						placeholder={ <LoadingEllipsis /> }
 						isStoreFlow={ isStoreFlow }
 					/>

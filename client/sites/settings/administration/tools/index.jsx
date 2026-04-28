@@ -189,7 +189,11 @@ class SiteTools extends Component {
 						/>
 						{ modalOpen[ MODAL_NAMES.LEAVE_SITE ] && (
 							<AsyncLoad
-								require="calypso/sites/settings/administration/tools/leave-site/leave-site-modal"
+								require={ () =>
+									import(
+										/* webpackChunkName: "async-load-calypso-sites-settings-administration-tools-leave-site-leave-site-modal" */ './leave-site/leave-site-modal'
+									)
+								}
 								placeholder={ null }
 								siteId={ siteId }
 								onClose={ this.handleCloseModal( MODAL_NAMES.LEAVE_SITE ) }

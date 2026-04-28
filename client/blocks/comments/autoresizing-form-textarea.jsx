@@ -18,6 +18,7 @@ const AutoresizingFormTextarea = (
 		onBlur,
 		onChange,
 		enableAutoFocus,
+		siteId, // Destructured to exclude from DOM props passed via otherProps.
 		...otherProps
 	},
 	forwardedRef

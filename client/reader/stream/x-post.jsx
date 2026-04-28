@@ -36,15 +36,6 @@ class CrossPost extends PureComponent {
 		hasOrganization: PropTypes.bool,
 	};
 
-	handleTitleClick = ( event ) => {
-		// modified clicks should let the default action open a new tab/window
-		if ( event.button > 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey ) {
-			return;
-		}
-		event.preventDefault();
-		this.props.handleClick( this.props.xMetadata );
-	};
-
 	handleCardClick = ( event ) => {
 		const rootNode = ReactDom.findDOMNode( this );
 
@@ -187,7 +178,7 @@ class CrossPost extends PureComponent {
 
 		return (
 			<Card tagName="article" onClick={ this.handleCardClick } className={ articleClasses }>
-				<UserAvatar user={ post.author } size={ 40 } onClick={ this.handleTitleClick } />
+				<UserAvatar user={ post.author } size={ 40 } />
 
 				<div className="reader__x-post">
 					{ post.title && (
