@@ -1,0 +1,58 @@
+name: E2E Failure Comment
+
+on:
+  status:
+
+jobs:
+  comment-on-failure:
+    name: Comment on PR when an e2e test fails
+    runs-on: ubuntu-latest
+    # TeamCity (.teamcity/_self/CalypsoE2ETestsBuildTemplate.kt) posts a commit
+    # status for each e2e build. Only react to failed terminal states.
+    if: >-
+      contains(github.event.context, 'E2E') &&
+      (github.event.state == 'failure' || github.event.state == 'error')
+    permissions:
+      pull-requests: write
+      issues: write
+    timeout-minutes: 5
+    steps:
+      - name: Post comment on PR
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const watermark = '<!--e2e-failure-watermark:v1-->';
+
+            const { data: prs } = await github.rest.repos.listPullRequestsAssociatedWithCommit({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              commit_sha: context.payload.sha,
+            });
+            const openPrs = prs.filter((pr) => pr.state === 'open');
+            if (openPrs.length === 0) return;
+
+            const body = [
+              watermark,
+              `Looks like one of the E2E tests has failed.`,
+              ``,
+              `To try to fix it, you can use a Claude skill called \`/fix-e2e-tests\`.`,
+            ].join('\n');
+
+            for (const pr of openPrs) {
+              const { data: comments } = await github.rest.issues.listComments({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pr.number,
+              });
+
+              // Skip if we've already commented on this PR.
+              if (comments.some((c) => c.body && c.body.includes(watermark))) continue;
+
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pr.number,
+                body,
+              });
+            }

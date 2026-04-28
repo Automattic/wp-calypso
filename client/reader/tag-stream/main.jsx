@@ -35,12 +35,12 @@ class TagStream extends Component {
 
 	componentDidMount() {
 		this._isMounted = true;
-		asyncRequire( 'emoji-text' ).then( ( emojiText ) => {
+		import( /* webpackChunkName: "async-load-emoji-text" */ 'emoji-text' ).then( ( emojiText ) => {
 			if ( this._isMounted ) {
 				this.setState( { emojiText: emojiText.default } );
 			}
 		} );
-		asyncRequire( 'twemoji' ).then( ( twemoji ) => {
+		import( /* webpackChunkName: "async-load-twemoji" */ 'twemoji' ).then( ( twemoji ) => {
 			if ( this._isMounted ) {
 				const title = this.props.decodedTagSlug;
 				this.setState( {

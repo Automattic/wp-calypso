@@ -21,7 +21,11 @@ function QrCodeLoginPage( { locale, redirectTo, isJetpack = false } ) {
 		<Main className={ clsx( 'qr-code-login-page', { 'is-jetpack': isJetpack } ) }>
 			<div className="qr-code-login-page__form">
 				<AsyncLoad
-					require="calypso/blocks/qr-code-login"
+					require={ () =>
+						import(
+							/* webpackChunkName: "async-load-calypso-blocks-qr-code-login" */ 'calypso/blocks/qr-code-login'
+						)
+					}
 					placeholder={ <QrCodeLoginPlaceholder /> }
 					size={ 300 }
 					locale={ locale }

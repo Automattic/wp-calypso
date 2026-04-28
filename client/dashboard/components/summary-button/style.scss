@@ -6,3 +6,9 @@
         padding-inline: $grid-unit-20 !important;
     }
 }
+
+// Avoid a double border when a summary button is the last child of a card —
+// the card already has its own border-block-end.
+.components-card > .dashboard-summary-button:last-child {
+    border-block-end: none;
+}

@@ -120,7 +120,11 @@ export class SiteNotice extends Component {
 				{ siteRedirectNotice }
 				{ showJitms && (
 					<AsyncLoad
-						require="calypso/blocks/jitm"
+						require={ () =>
+							import(
+								/* webpackChunkName: "async-load-calypso-blocks-jitm" */ 'calypso/blocks/jitm'
+							)
+						}
 						placeholder={ null }
 						messagePath="calypso:sites:sidebar_notice"
 						template="sidebar-banner"

@@ -52,7 +52,11 @@ const discover = ( context, next ) => {
 		<>
 			<DiscoverDocumentHead />
 			<AsyncLoad
-				require="calypso/reader/discover/discover-stream"
+				require={ () =>
+					import(
+						/* webpackChunkName: "async-load-calypso-reader-discover-discover-stream" */ 'calypso/reader/discover/discover-stream'
+					)
+				}
 				key="discover-page"
 				streamKey={ streamKey }
 				title="Discover"

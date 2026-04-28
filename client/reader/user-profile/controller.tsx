@@ -1,7 +1,8 @@
-import { Context } from '@automattic/calypso-router';
+import page, { Context } from '@automattic/calypso-router';
 import { ReactElement } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import { trackPageLoad, trackScrollPage } from 'calypso/reader/controller-helper';
+import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 
 interface UserProfileContext extends Context {
 	params: {
@@ -14,12 +15,25 @@ interface UserProfileContext extends Context {
 
 const analyticsPageTitle = 'Reader';
 
+export function redirectMeToCurrentUser( context: Context, next: () => void ): void {
+	const currentUserName = getCurrentUserName( context.store.getState() );
+	if ( currentUserName ) {
+		page.redirect(
+			context.path.replace( '/reader/users/me', `/reader/users/${ currentUserName }` )
+		);
+		return;
+	}
+	next();
+}
+
 export function userProfile( ctx: Context, next: () => void ): void {
 	const context = ctx as UserProfileContext;
 	const view = context.params.view || 'posts';
 	const userLogin = context.params.user_login;
 	const userId = context.params.user_id;
-	const basePath = '/reader/users/:user_login';
+	const basePath = context.params.view
+		? `/reader/users/:user_login/${ view }`
+		: '/reader/users/:user_login';
 	const fullAnalyticsPageTitle =
 		analyticsPageTitle +
 		' > User > ' +
@@ -32,7 +46,11 @@ export function userProfile( ctx: Context, next: () => void ): void {
 
 	context.primary = (
 		<AsyncLoad
-			require="calypso/reader/user-profile"
+			require={ () =>
+				import(
+					/* webpackChunkName: "async-load-calypso-reader-user-profile" */ 'calypso/reader/user-profile'
+				)
+			}
 			key={ 'user-posts-' + userLogin }
 			userLogin={ userLogin }
 			userId={ userId }

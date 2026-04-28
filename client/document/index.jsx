@@ -21,6 +21,7 @@ import JetpackLogo from 'calypso/components/jetpack-logo';
 import Loading from 'calypso/components/loading';
 import WooCommerceLogo from 'calypso/components/woocommerce-logo';
 import { InterimOmnibar } from 'calypso/dashboard/app/interim-omnibar/interim-omnibar';
+import { InitialOmnibar } from 'calypso/dashboard/app/omnibar/omnibar';
 import { getDashboardStepperLogo } from 'calypso/dashboard/app/stepper-logo';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { isGravPoweredOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
@@ -164,15 +165,22 @@ class Document extends Component {
 					} ) }
 				>
 					{ /* eslint-disable wpcalypso/jsx-classname-namespace, react/no-danger */ }
-					{ dashboard && config.isEnabled( 'dashboard/omnibar' ) && (
+					{ dashboard && config.isEnabled( 'dashboard/omnibar-radical' ) && (
 						<div id="wpcom-omnibar">
-							<InterimOmnibar
-								user={ user || null }
-								site={ null }
-								currentRoute={ this.props.path ?? '/' }
-							/>
+							<InitialOmnibar user={ user } />
 						</div>
 					) }
+					{ dashboard &&
+						config.isEnabled( 'dashboard/omnibar' ) &&
+						! config.isEnabled( 'dashboard/omnibar-radical' ) && (
+							<div id="wpcom-omnibar">
+								<InterimOmnibar
+									user={ user || null }
+									site={ null }
+									currentRoute={ this.props.path ?? '/' }
+								/>
+							</div>
+						) }
 					{ renderedLayout ? (
 						<div
 							id="wpcom"

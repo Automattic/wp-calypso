@@ -1,0 +1,19 @@
+steps:
+  - label: ":desktop_computer: Desktop yarn install"
+    agents:
+      queue: mac
+    plugins:
+      - automattic/nvm#0.6.0
+    env:
+      CONFIG_ENV: release
+      PLAYWRIGHT_SKIP_DOWNLOAD: 'true'
+      SKIP_TSC: 'true'
+      IMAGE_ID: xcode-26.4.1
+      # Skip Corepack's Yarn download prompt.
+      COREPACK_ENABLE_DOWNLOAD_PROMPT: 0
+    command: |
+      set -euo pipefail
+
+      cd desktop
+      corepack enable
+      yarn install --immutable --inline-builds

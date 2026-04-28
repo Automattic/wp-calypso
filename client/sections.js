@@ -497,12 +497,6 @@ const sections = [
 	},
 	{
 		name: 'reader',
-		paths: [ '/reader/list' ],
-		module: 'calypso/reader/list',
-		group: 'reader',
-	},
-	{
-		name: 'reader',
 		paths: [ '/reader/conversations' ],
 		module: 'calypso/reader/conversations',
 		group: 'reader',
@@ -514,6 +508,31 @@ const sections = [
 		module: 'calypso/reader/notifications',
 		group: 'reader',
 		trackLoadPerformance: true,
+	},
+	{
+		name: 'reader',
+		paths: [
+			'/reader/atmosphere',
+			'/reader/atmosphere/connect',
+			'/reader/atmosphere/:id',
+			'/reader/atmosphere/:id/:tab',
+		],
+		module: 'calypso/reader/atmosphere',
+		group: 'reader',
+		enableLoggedOut: false,
+	},
+	{
+		name: 'reader',
+		paths: [
+			'/reader/mastodon',
+			'/reader/mastodon/connect',
+			'/reader/mastodon/oauth-callback',
+			'/reader/mastodon/:id',
+			'/reader/mastodon/:id/:tab',
+		],
+		module: 'calypso/reader/mastodon',
+		group: 'reader',
+		enableLoggedOut: false,
 	},
 	{
 		name: 'reader',
