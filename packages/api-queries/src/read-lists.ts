@@ -8,9 +8,7 @@ import {
 	followReadList,
 	unfollowReadList,
 	updateReadList,
-	type ReadList,
 	type ReadListItemsResponse,
-	type ReadSubscribedListsResponse,
 } from '@automattic/api-core';
 import { infiniteQueryOptions, mutationOptions, queryOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
@@ -23,18 +21,6 @@ export const readSubscribedListsQuery = () =>
 		staleTime: 1000 * 60 * 5, // 5 minutes — lists change infrequently
 		queryFn: () => fetchReadSubscribedLists(),
 	} );
-
-function updateSubscribedListsCache( updater: ( lists: ReadList[] ) => ReadList[] ): void {
-	queryClient.setQueryData< ReadSubscribedListsResponse | undefined >(
-		readSubscribedListsQuery().queryKey,
-		( old ) => {
-			if ( ! old ) {
-				return old;
-			}
-			return { ...old, lists: updater( old.lists ) };
-		}
-	);
-}
 
 export const readListQuery = ( owner: string, slug: string ) =>
 	queryOptions( {
@@ -80,14 +66,16 @@ export const readListItemsInfiniteQuery = (
 		},
 	} );
 
+function invalidateSubscribedLists(): void {
+	queryClient.invalidateQueries( { queryKey: readSubscribedListsQuery().queryKey } );
+}
+
 export const createReadListMutation = () =>
 	mutationOptions( {
 		mutationFn: createReadList,
 		onSuccess: ( data ) => {
 			queryClient.setQueryData( readListQuery( data.list.owner, data.list.slug ).queryKey, data );
-			updateSubscribedListsCache( ( lists ) =>
-				lists.some( ( list ) => list.ID === data.list.ID ) ? lists : [ ...lists, data.list ]
-			);
+			invalidateSubscribedLists();
 		},
 	} );
 
@@ -96,9 +84,7 @@ export const updateReadListMutation = () =>
 		mutationFn: updateReadList,
 		onSuccess: ( data ) => {
 			queryClient.setQueryData( readListQuery( data.list.owner, data.list.slug ).queryKey, data );
-			updateSubscribedListsCache( ( lists ) =>
-				lists.map( ( list ) => ( list.ID === data.list.ID ? data.list : list ) )
-			);
+			invalidateSubscribedLists();
 		},
 	} );
 
@@ -106,10 +92,8 @@ export const followReadListMutation = () =>
 	mutationOptions( {
 		mutationFn: ( { owner, slug }: { owner: string; slug: string } ) =>
 			followReadList( owner, slug ),
-		onSuccess: ( data ) => {
-			updateSubscribedListsCache( ( lists ) =>
-				lists.some( ( list ) => list.ID === data.list.ID ) ? lists : [ ...lists, data.list ]
-			);
+		onSuccess: () => {
+			invalidateSubscribedLists();
 		},
 	} );
 
@@ -117,10 +101,8 @@ export const unfollowReadListMutation = () =>
 	mutationOptions( {
 		mutationFn: ( { owner, slug }: { owner: string; slug: string } ) =>
 			unfollowReadList( owner, slug ),
-		onSuccess: ( _data, { owner, slug } ) => {
-			updateSubscribedListsCache( ( lists ) =>
-				lists.filter( ( list ) => ! ( list.owner === owner && list.slug === slug ) )
-			);
+		onSuccess: () => {
+			invalidateSubscribedLists();
 		},
 	} );
 
@@ -130,8 +112,6 @@ export const deleteReadListMutation = () =>
 			deleteReadList( owner, slug ),
 		onSuccess: ( _data, { owner, slug } ) => {
 			queryClient.removeQueries( { queryKey: readListQuery( owner, slug ).queryKey } );
-			updateSubscribedListsCache( ( lists ) =>
-				lists.filter( ( list ) => ! ( list.owner === owner && list.slug === slug ) )
-			);
+			invalidateSubscribedLists();
 		},
 	} );
