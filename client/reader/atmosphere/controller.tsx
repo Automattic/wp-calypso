@@ -2,7 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import page, { type Context } from '@automattic/calypso-router';
 import AsyncLoad from 'calypso/components/async-load';
 import { TIMELINE_TAB } from './helper';
-import { DID_RE, RKEY_RE } from './route';
+import { DID_RE, HANDLE_RE, RKEY_RE } from './route';
 
 const loadAtmosphereLandingView = () =>
 	import(
@@ -98,6 +98,39 @@ export const atmosphereThread = ( context: Context, next: () => void ) => {
 			connectionId={ id }
 			did={ did }
 			rkey={ rkey }
+		/>
+	);
+	next();
+};
+
+export const atmosphereProfile = ( context: Context, next: () => void ) => {
+	if ( ! ensureAtmosphereEnabled() ) {
+		return;
+	}
+
+	const id = Number( context.params.id );
+	const actor = String( context.params.actor ?? '' );
+
+	const idValid = Number.isFinite( id ) && id > 0;
+	const actorValid = HANDLE_RE.test( actor ) || DID_RE.test( actor );
+
+	if ( ! idValid || ! actorValid ) {
+		page.redirect( idValid ? `/reader/atmosphere/${ id }` : '/reader/atmosphere' );
+		return;
+	}
+
+	context.primary = (
+		<AsyncLoad
+			key="reader-atmosphere-author-profile"
+			require={ () =>
+				import(
+					/* webpackChunkName: "async-load-calypso-reader-atmosphere-author-profile-view" */
+					'calypso/reader/atmosphere/author-profile-view'
+				)
+			}
+			placeholder={ null }
+			connectionId={ id }
+			actor={ actor }
 		/>
 	);
 	next();
