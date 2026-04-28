@@ -1066,7 +1066,7 @@ function CancelPurchaseInner() {
 						cancel_bundled_domain: state.cancelBundledDomain ?? false,
 						email_variant: config.isEnabled( 'purchases/split-cancel-remove' )
 							? 'treatment'
-							: undefined,
+							: 'control',
 					},
 				},
 				{

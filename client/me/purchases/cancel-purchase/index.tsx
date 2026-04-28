@@ -442,7 +442,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 				cancel_bundled_domain: cancelBundledDomain ? 1 : 0,
 				email_variant: config.isEnabled( 'purchases/split-cancel-remove' )
 					? 'treatment'
-					: undefined,
+					: 'control',
 			} );
 			return {
 				success: true,
