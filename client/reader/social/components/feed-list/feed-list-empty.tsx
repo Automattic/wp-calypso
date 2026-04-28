@@ -56,9 +56,14 @@ export function FeedListEmpty( {
 					title={ translate( 'Slow down' ) }
 					line={
 						retryAfter
-							? translate( '%(protocol)s is asking us to slow down. Try again in %(n)ds.', {
-									args: { protocol: protocolLabel, n: retryAfter },
-							  } )
+							? translate(
+									'%(protocol)s is asking us to slow down. Try again in %(n)d second.',
+									'%(protocol)s is asking us to slow down. Try again in %(n)d seconds.',
+									{
+										count: retryAfter,
+										args: { protocol: protocolLabel, n: retryAfter },
+									}
+							  )
 							: translate( '%(protocol)s is asking us to slow down. Try again in a moment.', {
 									args: { protocol: protocolLabel },
 							  } )
