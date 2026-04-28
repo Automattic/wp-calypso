@@ -301,13 +301,7 @@ export interface UseAgentChatConfig {
 	authProvider?: AuthProvider;
 	enableStreaming?: boolean; // Enable token-by-token streaming
 	odieBotId?: string; // Odie bot ID for server-based conversation storage (e.g., 'wpcom-agent-wp_orchestrator'). When set, enables server storage.
-	/**
-	 * Fetch credentials mode for cross-origin requests. Optional; when omitted,
-	 * the browser default applies. Set to 'include' for cross-subdomain cookie
-	 * auth (the server must return Access-Control-Allow-Credentials: true with
-	 * a non-wildcard Access-Control-Allow-Origin).
-	 */
-	credentials?: RequestCredentials;
+	credentials?: RequestCredentials; // Set 'include' to send cookies with cross-origin requests.
 }
 
 // Hook return interface

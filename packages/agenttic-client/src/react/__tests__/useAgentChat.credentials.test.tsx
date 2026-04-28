@@ -13,8 +13,7 @@ import {
 import { useAgentChat } from '../useAgentChat';
 import { getAgentManager } from '../agentManager';
 
-// Required for React 18's act() to work in jsdom — without it React logs a
-// "current testing environment is not configured to support act" warning.
+// Required for React 18's act() in jsdom.
 (
 	globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }
  ).IS_REACT_ACT_ENVIRONMENT = true;
