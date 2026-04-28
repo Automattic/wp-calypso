@@ -9,6 +9,16 @@ export function getTimelineUrl( connectionId: number ): string {
 	return `/reader/atmosphere/${ connectionId }/timeline`;
 }
 
+/**
+ * Build the canonical bsky.app profile URL for a Bluesky handle. Centralised
+ * so the four call sites (post-author chip + repost preface fallback,
+ * AuthorProfilePanel + ProfilePanel "View on Bluesky" actions) agree on the
+ * encoding, and so a future change to bsky.app's URL shape is one edit.
+ */
+export function getBlueskyProfileUrl( handle: string ): string {
+	return `https://bsky.app/profile/${ encodeURIComponent( handle ) }`;
+}
+
 export function getThreadUrl( connectionId: number, postUri: string ): string | null {
 	if ( ! Number.isFinite( connectionId ) || connectionId <= 0 ) {
 		return null;

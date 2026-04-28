@@ -5,6 +5,7 @@ import EmptyContent from 'calypso/components/empty-content';
 import { SocialProfileCard, type SocialProfileStat } from 'calypso/reader/social';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { errorMessage } from './profile-errors';
+import { getBlueskyProfileUrl } from './route';
 import type { AtmosphereConnection } from '@automattic/api-core';
 import type { AppState } from 'calypso/types';
 import type { UnknownAction } from 'redux';
@@ -60,7 +61,7 @@ export function ProfilePanel( { connection }: ProfilePanelProps ) {
 		},
 	];
 
-	const blueskyUrl = `https://bsky.app/profile/${ data.handle }`;
+	const blueskyUrl = getBlueskyProfileUrl( data.handle );
 	const handleViewOnBskyClick = () => {
 		dispatch(
 			recordReaderTracksEvent( 'calypso_reader_atmosphere_account_view_on_bluesky_clicked', {
