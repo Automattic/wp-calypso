@@ -1,5 +1,6 @@
 import {
 	createConnection,
+	getAuthorProfile,
 	getConnection,
 	getConnections,
 	getThread,
@@ -17,6 +18,7 @@ import {
 	type QueryKey,
 } from '@tanstack/react-query';
 import type {
+	AtmosphereAuthorProfile,
 	AtmosphereConnectionDetails,
 	AtmosphereConnectionsResponse,
 	AtmosphereCreateConnectionResponse,
@@ -136,4 +138,21 @@ export interface UseThreadQueryParams {
 
 export function useThreadQuery( { uri }: UseThreadQueryParams ) {
 	return useQuery( threadQueryOptions( uri ) );
+}
+
+export const profileQueryOptions = ( actor: string ) =>
+	queryOptions< AtmosphereAuthorProfile, AtmosphereError >( {
+		queryKey: readerAtmosphereKeys.profile( actor ),
+		queryFn: () => getAuthorProfile( { actor } ),
+		enabled: actor.length > 0,
+		staleTime: 30_000,
+		gcTime: 5 * 60_000,
+	} );
+
+export interface UseAuthorProfileQueryParams {
+	actor: string;
+}
+
+export function useAuthorProfileQuery( { actor }: UseAuthorProfileQueryParams ) {
+	return useQuery( profileQueryOptions( actor ) );
 }

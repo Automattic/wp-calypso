@@ -7,12 +7,14 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import {
+	useAuthorProfileQuery,
 	useConnectionQuery,
 	useConnectionsQuery,
 	useCreateConnectionMutation,
 	useThreadQuery,
 	useTimelineInfiniteQuery,
 } from '../reader-atmosphere';
+import type { AtmosphereAuthorProfile } from '@automattic/api-core';
 
 const BASE = 'https://public-api.wordpress.com';
 function makeWrapper( c: QueryClient ) {
@@ -329,6 +331,76 @@ describe( 'reader-atmosphere hooks', () => {
 
 			await waitFor( () => expect( result.current.isError ).toBe( true ) );
 			expect( nock.pendingMocks() ).toHaveLength( 0 );
+		} );
+	} );
+
+	describe( 'useAuthorProfileQuery', () => {
+		it( 'is disabled when actor is empty', () => {
+			const queryClient = new QueryClient();
+			const wrapper = makeWrapper( queryClient );
+
+			renderHook( () => useAuthorProfileQuery( { actor: '' } ), { wrapper } );
+
+			expect( queryClient.isFetching() ).toBe( 0 );
+		} );
+
+		it( 'fetches the profile and resolves the typed result', async () => {
+			const payload: AtmosphereAuthorProfile = {
+				did: 'did:plc:abc',
+				handle: 'alice.bsky.social',
+				display_name: 'Alice',
+				description: '',
+				description_html: '',
+				avatar: null,
+				banner: null,
+				counts: { followers: 0, follows: 0, posts: 0 },
+				bluesky_url: 'https://bsky.app/profile/alice.bsky.social',
+			};
+			nock( BASE )
+				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social' )
+				.reply( 200, payload );
+
+			const queryClient = new QueryClient();
+			const wrapper = makeWrapper( queryClient );
+			const { result } = renderHook(
+				() => useAuthorProfileQuery( { actor: 'alice.bsky.social' } ),
+				{ wrapper }
+			);
+
+			await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+			expect( result.current.data ).toEqual( payload );
+		} );
+
+		it( 'recovers via refetch after an error', async () => {
+			nock( BASE )
+				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social' )
+				.reply( 502, { error: 'atmosphere_upstream_unavailable' } );
+
+			const queryClient = new QueryClient( {
+				defaultOptions: { queries: { retry: false } },
+			} );
+			const wrapper = makeWrapper( queryClient );
+			const { result } = renderHook(
+				() => {
+					const q = useAuthorProfileQuery( { actor: 'alice.bsky.social' } );
+					// Touch props in render so TanStack's tracked-props observer
+					// notifies on later transitions (isError -> isSuccess).
+					void q.data;
+					void q.isError;
+					void q.error;
+					void q.isSuccess;
+					return q;
+				},
+				{ wrapper }
+			);
+			await waitFor( () => expect( result.current.isError ).toBe( true ) );
+			expect( result.current.error ).toMatchObject( { kind: 'upstream_unavailable' } );
+
+			nock( BASE )
+				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social' )
+				.reply( 200, { did: 'did:plc:abc', handle: 'alice.bsky.social' } );
+			await result.current.refetch();
+			await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
 		} );
 	} );
 } );
