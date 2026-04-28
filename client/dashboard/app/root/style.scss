@@ -1,11 +1,4 @@
 @import '../responsive-sidebar/variables';
-
-.dashboard-root__layout {
-	display: flex;
-	flex-direction: column;
-	min-height: 100%;
-}
-
 // Old layout (no sidebar): sticky header
 // For pages without sub menus, the first header is the sticky header
 // For pages with sub menus, the second header is the sticky header
@@ -18,7 +11,7 @@
 
 .dashboard-root__body {
 	display: flex;
-	flex: 1;
+	min-height: calc(100vh - var(--masterbar-height) );
 
 	&:has(.dashboard-responsive-sidebar) {
 		overflow-x: hidden;
