@@ -1,5 +1,5 @@
 const POST_NSID = 'app.bsky.feed.post';
-const AT_URI_RE = /^at:\/\/(did:(?:plc:[a-z2-7]+|web:[a-z0-9.-]+))\/([^/]+)\/([a-z0-9]{13})$/;
+const AT_URI_RE = /^at:\/\/(did:(?:plc:[a-z2-7]{24}|web:[a-z0-9.-]+))\/([^/]+)\/([a-z0-9]{13})$/;
 
 export function getTimelineUrl( connectionId: number ): string {
 	return `/reader/atmosphere/${ connectionId }/timeline`;
