@@ -52,6 +52,8 @@ export enum ImageStudioEntryPoint {
 	// Entry points for jetpack.ai.imageGenerationHandler filter
 	JetpackAIFeaturedImage = 'jetpack_ai_featured_image',
 	JetpackAISocialMedia = 'jetpack_ai_social_media',
+	// Entry point for jetpack.ai.videoGenerationHandler filter
+	JetpackAIFeatureClip = 'jetpack_ai_feature_clip',
 }
 
 export interface ImageStudioState {

@@ -4,6 +4,7 @@ import { registerFeatureClipSidebar } from './feature-clip-sidebar-extension';
 import { withImageStudioGenerateButton } from './generate-button-extension';
 import { addImageStudioHandler } from './image-generation-handler-extension';
 import { withImageStudioToolbarButton } from './image-toolbar-extension';
+import { addVideoStudioHandler } from './video-generation-handler-extension';
 
 let filtersRegistered = false;
 
@@ -25,6 +26,9 @@ export function registerBlockEditorFilters() {
 
 	// Unified handler for AI image generation surfaces (featured image, social, future surfaces)
 	addFilter( 'jetpack.ai.imageGenerationHandler', 'big-sky/image-studio', addImageStudioHandler );
+
+	// Unified handler for AI video generation surfaces (feature clip, future surfaces)
+	addFilter( 'jetpack.ai.videoGenerationHandler', 'big-sky/image-studio', addVideoStudioHandler );
 
 	// Post-editor sidebar entry point for video clip generation.
 	registerFeatureClipSidebar();
