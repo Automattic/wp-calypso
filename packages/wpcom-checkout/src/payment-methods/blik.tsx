@@ -116,12 +116,13 @@ function BlikFields() {
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
 
-	const blikCodeError =
-		blikCode?.isTouched && ! BLIK_CODE_PATTERN.test( blikCode.value )
-			? blikCode.value.length === 0
+	let blikCodeError: string | undefined;
+	if ( blikCode?.isTouched && ! BLIK_CODE_PATTERN.test( blikCode.value ) ) {
+		blikCodeError =
+			blikCode.value.length === 0
 				? __( 'Please enter the 6-digit BLIK code from your banking app.' )
-				: __( 'BLIK code must be 6 digits.' )
-			: undefined;
+				: __( 'BLIK code must be 6 digits.' );
+	}
 
 	return (
 		<BlikFormWrapper>
@@ -205,23 +206,27 @@ function BlikPayButton( {
 	}
 
 	return (
-		<Button
-			disabled={ disabled }
-			onClick={ () => {
-				if ( isFormValid( store ) ) {
-					debug( 'submitting blik payment' );
-					onClick( {
-						name: customerName?.value,
-						code: blikCode?.value,
-					} );
-				}
-			} }
-			buttonType="primary"
-			isBusy={ FormStatus.SUBMITTING === formStatus }
-			fullWidth
-		>
-			{ submitButtonContent }
-		</Button>
+		<Fragment>
+			<Button
+				disabled={ disabled }
+				onClick={ () => {
+					if ( isFormValid( store ) ) {
+						debug( 'submitting blik payment' );
+						onClick( {
+							name: customerName?.value,
+							code: blikCode?.value,
+						} );
+					}
+				} }
+				buttonType="primary"
+				isBusy={ FormStatus.SUBMITTING === formStatus }
+				fullWidth
+			>
+				{ submitButtonContent }
+			</Button>
+			{ /* Mount point for the BLIK waiting modal — the processor renders into this div. */ }
+			<div className="blik-modal-target" />
+		</Fragment>
 	);
 }
 
