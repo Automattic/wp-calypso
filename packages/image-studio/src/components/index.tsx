@@ -152,11 +152,12 @@ function ImageStudioAgentChat( {
 
 	const isProcessing = agentChatProps.isProcessing || isAnnotationSaving;
 
-	const isFinalizingPhase =
-		( agentChatProps as unknown as { progressPhase?: string } ).progressPhase === 'uploading';
+	const progressPhase = ( agentChatProps as unknown as { progressPhase?: string } ).progressPhase;
+	const isFinalizingPhase = progressPhase === 'uploading';
+	const isVideoGeneratingPhase = progressPhase === 'generating-video';
 
-	// Disable input during upload phase or annotation saving to prevent orphan images
-	const isStopDisabled = isFinalizingPhase || isAnnotationSaving;
+	// Stop is meaningless once the video job is in flight server-side; only the SSE stream would abort.
+	const isStopDisabled = isFinalizingPhase || isAnnotationSaving || isVideoGeneratingPhase;
 
 	const suggestionsComponent = isLoadingSuggestions ? (
 		<div className="image-studio-suggestions-loading">
@@ -214,6 +215,17 @@ function ImageStudioAgentChat( {
 							__i18n_text_domain__
 						) }
 					</em>
+					{ isVideoGeneratingPhase && (
+						<>
+							<br />
+							<em>
+								{ __(
+									"You can close this — we'll save it when it's ready.",
+									__i18n_text_domain__
+								) }
+							</em>
+						</>
+					) }
 				</p>
 			) }
 		</>
