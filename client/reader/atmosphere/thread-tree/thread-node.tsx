@@ -1,7 +1,6 @@
 import clsx from 'clsx';
 import { forwardRef } from 'react';
-import { mapAtmosphereFeedItemToSocialPost } from '../../mappers/atmosphere';
-import { SocialPostCard } from '../post-card';
+import { SocialPostCard, mapAtmosphereFeedItemToSocialPost } from 'calypso/reader/social';
 import { ThreadTombstone } from './thread-tombstone';
 import type { AtmosphereThreadNode } from '@automattic/api-core';
 
