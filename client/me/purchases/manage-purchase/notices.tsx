@@ -52,7 +52,6 @@ import { getTrialCheckoutUrl } from 'calypso/lib/trials/get-trial-checkout-url';
 import { managePurchase } from 'calypso/me/purchases/paths';
 import UpcomingRenewalsDialog from 'calypso/me/purchases/upcoming-renewals/upcoming-renewals-dialog';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { willAtomicSiteRevertAfterPurchaseDeactivation } from 'calypso/state/purchases/selectors';
 import { getAddNewPaymentMethodPath } from '../utils';
 import type { SiteDetails } from '@automattic/data-stores';
 import type {
@@ -79,11 +78,11 @@ export interface PurchaseNoticeProps {
 	purchaseAttachedTo: Purchase | null | undefined;
 	renewableSitePurchases: Purchase[];
 	selectedSite: SiteDetails | null | undefined;
+	willAtomicSiteRevert?: boolean;
 }
 
 export interface PurchaseNoticeConnectedProps {
 	recordTracksEvent: typeof recordTracksEvent;
-	willAtomicSiteRevert?: boolean;
 }
 
 interface MomentProps {
@@ -1448,13 +1447,6 @@ class PurchaseNotice extends Component<
 	}
 }
 
-const mapStateToProps = ( state: object, ownProps: PurchaseNoticeProps ) => ( {
-	willAtomicSiteRevert: willAtomicSiteRevertAfterPurchaseDeactivation(
-		state,
-		ownProps.purchase?.id
-	),
-} );
-
-export default connect( mapStateToProps, { recordTracksEvent } )(
+export default connect( null, { recordTracksEvent } )(
 	localize( withLocalizedMoment( PurchaseNotice ) )
 );
