@@ -526,7 +526,7 @@ const PodcastingSettingsForm = ( {
 										label={ translate( 'Email address' ) as string }
 										help={
 											translate(
-												'This email address will be displayed in the feed and is required for some services such as Google Play.'
+												'Included in your feed so podcast directories can verify ownership. Most require it for submission.'
 											) as string
 										}
 										value={ decodeEntities( fields.podcasting_email ?? '' ) }
