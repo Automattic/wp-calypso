@@ -2,7 +2,7 @@ import { CardNumberElement, CardExpiryElement, CardCvcElement } from '@stripe/re
 import { __experimentalInputControl as InputControl } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import type { StripeElementStyle } from '@stripe/stripe-js';
 import type { Field, DataFormControlProps } from '@wordpress/dataviews';
 
@@ -25,78 +25,6 @@ const stripeElementStyle: StripeElementStyle = {
 	},
 };
 
-function isDarkTheme() {
-	if ( typeof window === 'undefined' ) {
-		return false;
-	}
-
-	const theme = document.documentElement.dataset.theme;
-
-	return (
-		theme === 'dark' ||
-		( theme === 'system' && window.matchMedia?.( '(prefers-color-scheme: dark)' ).matches )
-	);
-}
-
-function getDashboardColor( variable: string, fallback: string ) {
-	if ( typeof window === 'undefined' ) {
-		return fallback;
-	}
-
-	return (
-		getComputedStyle( document.documentElement ).getPropertyValue( variable ).trim() || fallback
-	);
-}
-
-function getStripeElementStyle(): StripeElementStyle {
-	if ( ! isDarkTheme() ) {
-		return stripeElementStyle;
-	}
-
-	const textColor = getDashboardColor( '--dashboard__text-color', '#e0e0e0' );
-	const mutedColor = getDashboardColor( '--dashboard__text-muted-color', '#bdbdbd' );
-
-	return {
-		...stripeElementStyle,
-		base: {
-			...stripeElementStyle.base,
-			color: textColor,
-			iconColor: mutedColor,
-			'::placeholder': {
-				color: mutedColor,
-			},
-		},
-	};
-}
-
-function useStripeElementStyle() {
-	const [ elementStyle, setElementStyle ] = useState< StripeElementStyle >( getStripeElementStyle );
-
-	useEffect( () => {
-		const updateElementStyle = () => {
-			setElementStyle( getStripeElementStyle() );
-		};
-		const mediaQuery = window.matchMedia?.( '(prefers-color-scheme: dark)' );
-		const observer =
-			typeof MutationObserver !== 'undefined'
-				? new MutationObserver( updateElementStyle )
-				: undefined;
-
-		observer?.observe( document.documentElement, {
-			attributes: true,
-			attributeFilter: [ 'data-theme' ],
-		} );
-		mediaQuery?.addEventListener( 'change', updateElementStyle );
-
-		return () => {
-			observer?.disconnect();
-			mediaQuery?.removeEventListener( 'change', updateElementStyle );
-		};
-	}, [] );
-
-	return elementStyle;
-}
-
 interface CreditCardFieldsData {
 	cardholderName: string;
 	cardNumber: string;
@@ -104,11 +32,7 @@ interface CreditCardFieldsData {
 	cardCvc: string;
 }
 
-interface StripeFieldProps extends DataFormControlProps< CreditCardFieldsData > {
-	elementStyle: StripeElementStyle;
-}
-
-function StripeCardNumberField( { field, elementStyle }: StripeFieldProps ) {
+function StripeCardNumberField( { field }: DataFormControlProps< CreditCardFieldsData > ) {
 	return (
 		<>
 			<label htmlFor="card-number" className="credit-card-field__label">
@@ -118,7 +42,7 @@ function StripeCardNumberField( { field, elementStyle }: StripeFieldProps ) {
 				<CardNumberElement
 					id="card-number"
 					options={ {
-						style: elementStyle,
+						style: stripeElementStyle,
 						showIcon: true,
 					} }
 				/>
@@ -127,7 +51,7 @@ function StripeCardNumberField( { field, elementStyle }: StripeFieldProps ) {
 	);
 }
 
-function StripeCardExpiryField( { field, elementStyle }: StripeFieldProps ) {
+function StripeCardExpiryField( { field }: DataFormControlProps< CreditCardFieldsData > ) {
 	return (
 		<>
 			<label htmlFor="card-expiry" className="credit-card-field__label">
@@ -137,7 +61,7 @@ function StripeCardExpiryField( { field, elementStyle }: StripeFieldProps ) {
 				<CardExpiryElement
 					id="card-expiry"
 					options={ {
-						style: elementStyle,
+						style: stripeElementStyle,
 					} }
 				/>
 			</div>
@@ -145,7 +69,7 @@ function StripeCardExpiryField( { field, elementStyle }: StripeFieldProps ) {
 	);
 }
 
-function StripeCardCvcField( { field, elementStyle }: StripeFieldProps ) {
+function StripeCardCvcField( { field }: DataFormControlProps< CreditCardFieldsData > ) {
 	return (
 		<>
 			<label htmlFor="card-cvc" className="credit-card-field__label">
@@ -155,7 +79,7 @@ function StripeCardCvcField( { field, elementStyle }: StripeFieldProps ) {
 				<CardCvcElement
 					id="card-cvc"
 					options={ {
-						style: elementStyle,
+						style: stripeElementStyle,
 					} }
 				/>
 			</div>
@@ -176,7 +100,6 @@ export function CreditCardFields( {
 		cardExpiry: '',
 		cardCvc: '',
 	};
-	const elementStyle = useStripeElementStyle();
 
 	const fields: Field< CreditCardFieldsData >[] = useMemo(
 		() => [
@@ -201,20 +124,20 @@ export function CreditCardFields( {
 			{
 				id: 'cardNumber',
 				label: __( 'Card number' ),
-				Edit: ( props ) => <StripeCardNumberField { ...props } elementStyle={ elementStyle } />,
+				Edit: StripeCardNumberField,
 			},
 			{
 				id: 'cardExpiry',
 				label: __( 'Expiry date' ),
-				Edit: ( props ) => <StripeCardExpiryField { ...props } elementStyle={ elementStyle } />,
+				Edit: StripeCardExpiryField,
 			},
 			{
 				id: 'cardCvc',
 				label: __( 'CVV' ),
-				Edit: ( props ) => <StripeCardCvcField { ...props } elementStyle={ elementStyle } />,
+				Edit: StripeCardCvcField,
 			},
 		],
-		[ elementStyle ]
+		[]
 	);
 
 	const form = useMemo(
