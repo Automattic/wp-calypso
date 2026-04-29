@@ -1,16 +1,16 @@
+import { readerTeamsQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
 import PropTypes from 'prop-types';
-import { useSelector } from 'react-redux';
 import BlogStickersList from 'calypso/blocks/blog-stickers/list';
-import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import InfoPopover from 'calypso/components/info-popover';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
-import { getReaderTeams } from 'calypso/state/teams/selectors';
 import { useBlogStickersQuery } from './use-blog-stickers-query';
 
 import './style.scss';
 
 const BlogStickers = ( { blogId } ) => {
-	const teams = useSelector( getReaderTeams );
+	const { data } = useQuery( readerTeamsQuery() );
+	const teams = data?.teams ?? [];
 	const isTeamMember = isAutomatticTeamMember( teams );
 
 	const { data: stickers } = useBlogStickersQuery( blogId );
@@ -26,7 +26,6 @@ const BlogStickers = ( { blogId } ) => {
 					<BlogStickersList stickers={ stickers } />
 				</InfoPopover>
 			) }
-			{ ! teams && <QueryReaderTeams /> }
 		</div>
 	);
 };

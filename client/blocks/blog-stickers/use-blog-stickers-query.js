@@ -1,12 +1,11 @@
+import { readerTeamsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { useSelector } from 'react-redux';
 import wp from 'calypso/lib/wp';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
-import { getReaderTeams } from 'calypso/state/teams/selectors';
 
 export const useBlogStickersQuery = ( blogId, queryOptions = {} ) => {
-	const teams = useSelector( getReaderTeams );
-	const isAutomattician = isAutomatticTeamMember( teams );
+	const { data } = useQuery( readerTeamsQuery() );
+	const isAutomattician = isAutomatticTeamMember( data?.teams ?? [] );
 
 	return useQuery( {
 		queryKey: [ 'blog-stickers', blogId ],

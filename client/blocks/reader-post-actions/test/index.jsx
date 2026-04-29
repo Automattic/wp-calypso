@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
@@ -18,6 +19,12 @@ jest.mock( 'calypso/blocks/reader-freshly-pressed-button', () => ( {
 const createMockStore = () => {
 	const reducer = ( state = {} ) => state;
 	return createStore( reducer );
+};
+
+const createQueryClient = () => {
+	const client = new QueryClient();
+	client.setDefaultOptions( { queries: { retry: false } } );
+	return client;
 };
 
 const defaultProps = {
@@ -38,9 +45,11 @@ describe( 'ReaderPostActions', () => {
 			const props = { ...defaultProps, commentsApiDisabled: true };
 
 			const { queryByTestId } = render(
-				<Provider store={ store }>
-					<ReaderPostActions { ...props } />
-				</Provider>
+				<QueryClientProvider client={ createQueryClient() }>
+					<Provider store={ store }>
+						<ReaderPostActions { ...props } />
+					</Provider>
+				</QueryClientProvider>
 			);
 
 			expect( queryByTestId( 'comment-button' ) ).not.toBeInTheDocument();
@@ -53,9 +62,11 @@ describe( 'ReaderPostActions', () => {
 			const props = { ...defaultProps, commentsApiDisabled: false };
 
 			const { queryByTestId } = render(
-				<Provider store={ store }>
-					<ReaderPostActions { ...props } />
-				</Provider>
+				<QueryClientProvider client={ createQueryClient() }>
+					<Provider store={ store }>
+						<ReaderPostActions { ...props } />
+					</Provider>
+				</QueryClientProvider>
 			);
 
 			expect( queryByTestId( 'comment-button' ) ).toBeInTheDocument();
@@ -66,9 +77,11 @@ describe( 'ReaderPostActions', () => {
 			const props = { ...defaultProps };
 
 			const { queryByTestId } = render(
-				<Provider store={ store }>
-					<ReaderPostActions { ...props } />
-				</Provider>
+				<QueryClientProvider client={ createQueryClient() }>
+					<Provider store={ store }>
+						<ReaderPostActions { ...props } />
+					</Provider>
+				</QueryClientProvider>
 			);
 
 			expect( queryByTestId( 'comment-button' ) ).toBeInTheDocument();
