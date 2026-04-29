@@ -1,7 +1,11 @@
 /** @jest-environment jsdom */
 import React from 'react';
 import { getPartnerSignupTosElement } from 'calypso/lib/partner-branding';
-import { getMagicLoginInitialHeaders, MagicLogin } from '../index';
+import {
+	getConnectorParamsFromRedirectTo,
+	getMagicLoginInitialHeaders,
+	MagicLogin,
+} from '../index';
 
 jest.mock( 'calypso/lib/partner-branding', () => ( {
 	detectPartnerConfig: jest.fn(),
@@ -124,5 +128,64 @@ describe( 'magic-login branding behavior', () => {
 				} ),
 			} )
 		);
+	} );
+} );
+
+describe( 'getConnectorParamsFromRedirectTo', () => {
+	it( 'flags the connector flow and parses plugins when from=jetpack-connector', () => {
+		const params = getConnectorParamsFromRedirectTo(
+			'/jetpack/connect/authorize?from=jetpack-connector&plugins=jetpack,woocommerce'
+		);
+
+		expect( params ).toEqual( {
+			isFromJetpackConnector: true,
+			isUnifiedConnectionFlow: true,
+			connectorPlugins: [ 'jetpack', 'woocommerce' ],
+		} );
+	} );
+
+	it( 'recognises jetpack-onboarding as part of the unified flow without flagging the connector', () => {
+		const params = getConnectorParamsFromRedirectTo(
+			'/jetpack/connect/authorize?from=jetpack-onboarding'
+		);
+
+		expect( params.isUnifiedConnectionFlow ).toBe( true );
+		expect( params.isFromJetpackConnector ).toBe( false );
+		expect( params.connectorPlugins ).toEqual( [] );
+	} );
+
+	it( 'does not flag the connector for unrelated from values', () => {
+		const params = getConnectorParamsFromRedirectTo(
+			'/jetpack/connect/authorize?from=my-jetpack&plugins=jetpack,woocommerce'
+		);
+
+		expect( params.isFromJetpackConnector ).toBe( false );
+		expect( params.isUnifiedConnectionFlow ).toBe( false );
+		expect( params.connectorPlugins ).toEqual( [ 'jetpack', 'woocommerce' ] );
+	} );
+
+	it( 'returns an empty plugin list when the plugins query param is absent', () => {
+		const params = getConnectorParamsFromRedirectTo(
+			'/jetpack/connect/authorize?from=jetpack-connector'
+		);
+
+		expect( params.isFromJetpackConnector ).toBe( true );
+		expect( params.connectorPlugins ).toEqual( [] );
+	} );
+
+	it( 'returns sensible defaults when redirect_to is missing', () => {
+		expect( getConnectorParamsFromRedirectTo( undefined ) ).toEqual( {
+			isFromJetpackConnector: false,
+			isUnifiedConnectionFlow: false,
+			connectorPlugins: [],
+		} );
+	} );
+
+	it( 'filters empty entries produced by trailing commas in plugins', () => {
+		const params = getConnectorParamsFromRedirectTo(
+			'/jetpack/connect/authorize?from=jetpack-connector&plugins=jetpack,,woocommerce,'
+		);
+
+		expect( params.connectorPlugins ).toEqual( [ 'jetpack', 'woocommerce' ] );
 	} );
 } );
