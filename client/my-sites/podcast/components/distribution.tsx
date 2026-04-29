@@ -51,7 +51,7 @@ const DIRECTORIES: Directory[] = [
 		name: 'Spotify',
 		submitUrl: 'https://creators.spotify.com/',
 		learnMoreUrl:
-			'https://support.spotify.com/us/creators/article/claiming-your-podcast-on-spotify-for-creators/',
+			'https://support.spotify.com/creators/article/claiming-your-podcast-on-spotify-for-creators/',
 		Logo: LogoSpotify,
 	},
 	{

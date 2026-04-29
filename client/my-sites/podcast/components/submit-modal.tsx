@@ -53,7 +53,7 @@ const SubmitModal = ( { podcatcher, onClose, onFirstSave }: Props ) => {
 	);
 
 	const handleCopy = () => {
-		if ( ! feedUrl ) {
+		if ( ! feedUrl || ! navigator.clipboard?.writeText ) {
 			return;
 		}
 		navigator.clipboard
@@ -88,8 +88,6 @@ const SubmitModal = ( { podcatcher, onClose, onFirstSave }: Props ) => {
 		comment: '%(service)s is a podcast directory name, e.g. "Spotify" or "Apple Podcasts".',
 	};
 
-	// Service-specific tip rendered alongside step 2. Substack adds a similar hint
-	// for Pocket Casts so users pick the right submission option.
 	const step2Note =
 		podcatcher.id === 'pocketcasts'
 			? translate( 'Choose the Public option, since this feed is for your listeners.' )
@@ -145,7 +143,10 @@ const SubmitModal = ( { podcatcher, onClose, onFirstSave }: Props ) => {
 								<ExternalLink
 									href={ podcatcher.learnMoreUrl }
 									aria-label={
-										translate( 'Learn more about submitting to %(service)s', serviceArgs ) as string
+										translate(
+											'Learn more about submitting to %(service)s (opens in a new tab)',
+											serviceArgs
+										) as string
 									}
 								>
 									{ translate( 'Learn more' ) }
