@@ -6,12 +6,10 @@ import { shallowEqual } from 'react-redux';
 import ReaderSiteNotificationSettings from 'calypso/blocks/reader-site-notification-settings';
 import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
 import { useFeedRecommendationsMutation } from 'calypso/data/reader/use-feed-recommendations-mutation';
-import { useFeedRecommendationsQuery } from 'calypso/data/reader/use-feed-recommendations-query';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { getSiteUrl, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import { RecommendButton } from 'calypso/reader/recommend-button';
 import { useDispatch, useSelector } from 'calypso/state';
-import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { successNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
@@ -54,9 +52,11 @@ export default function ReaderFeedHeaderFollow( props: ReaderFeedHeaderFollowPro
 	const siteId = site?.ID;
 	const siteUrl = getSiteUrl( { feed, site } );
 	const feedId = feed?.feed_ID;
-	const { isRecommended, toggleRecommended } = useFeedRecommendationsMutation( feedId as number );
-	const owner = useSelector( getCurrentUserName );
-	const { isLoading: isRequestingRecommendedBlogs } = useFeedRecommendationsQuery( owner ?? '' );
+	const {
+		isRecommended,
+		isUpdating: isRecommendationPending,
+		toggleRecommended,
+	} = useFeedRecommendationsMutation( feedId as number );
 
 	const {
 		following,
@@ -150,7 +150,7 @@ export default function ReaderFeedHeaderFollow( props: ReaderFeedHeaderFollowPro
 						</div>
 						{ ( following || isRecommended ) && (
 							<RecommendButton
-								isLoading={ isRequestingRecommendedBlogs }
+								isLoading={ isRecommendationPending }
 								isRecommended={ isRecommended }
 								onClick={ toggleRecommended }
 							/>

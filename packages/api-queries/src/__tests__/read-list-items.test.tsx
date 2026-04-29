@@ -104,6 +104,27 @@ describe( 'readListItemsAllQuery', () => {
 		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
 		expect( scope.isDone() ).toBe( true );
 	} );
+
+	it( 'does not retry when the API returns list_not_found', async () => {
+		// Single interceptor — if the query retries, the second request 404s
+		// with a different error and the test fails.
+		const scope = nock( BASE )
+			.get( '/rest/v1.2/read/lists/alice/recommended-blogs/items' )
+			.query( true )
+			.reply( 404, { error: 'list_not_found' } );
+
+		// Use a client that allows retries (default 3) so the retry logic in the
+		// query factory itself is what stops the second attempt.
+		const client = new QueryClient();
+		const { result } = renderHook(
+			() => useQuery( readListItemsAllQuery( 'alice', 'recommended-blogs' ) ),
+			{ wrapper: makeWrapper( client ) }
+		);
+
+		await waitFor( () => expect( result.current.isError ).toBe( true ) );
+		expect( scope.isDone() ).toBe( true );
+		expect( nock.pendingMocks() ).toHaveLength( 0 );
+	} );
 } );
 
 function seedItems( client: QueryClient, owner: string, slug: string, items: unknown[] ) {

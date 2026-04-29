@@ -47,12 +47,25 @@ export const readListItemsInfiniteQuery = (
 		},
 	} );
 
+// Default React Query retry count.
+const DEFAULT_RETRY = 3;
+
 export const readListItemsAllQuery = ( owner?: string | null, slug?: string | null ) =>
 	queryOptions( {
 		queryKey: [ 'read', 'lists', owner, slug, 'items', 'all' ],
 		queryFn: () => fetchReadListItemsAll( owner!, slug! ),
 		enabled: !! owner && !! slug,
 		staleTime: 1000 * 60 * 5,
+		// `list_not_found` is a permanent 404 (e.g. user has no recommended-blogs
+		// list). Retrying just delays the empty result; matches the legacy
+		// data-layer's `noRetry()` policy without disabling retries for transient
+		// network failures.
+		retry: ( failureCount, error ) => {
+			if ( ( error as { error?: string } | undefined )?.error === 'list_not_found' ) {
+				return false;
+			}
+			return failureCount < DEFAULT_RETRY;
+		},
 	} );
 
 interface ListItemMutationContext {

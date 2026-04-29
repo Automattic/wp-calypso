@@ -6,7 +6,7 @@ import {
 } from '@automattic/api-queries';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { translate } from 'i18n-calypso';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -50,10 +50,13 @@ export const useFeedRecommendationsMutation = (
 		( item ) => Number( item.feed_ID ) === Number( feedId )
 	);
 
-	const { mutate: addFeed } = useMutation( addReadListFeedMutation( queryClient ) );
-	const { mutate: deleteFeed } = useMutation( deleteReadListFeedMutation( queryClient ) );
-
-	const [ isUpdating, setIsUpdating ] = useState( false );
+	const { mutate: addFeed, isPending: isAdding } = useMutation(
+		addReadListFeedMutation( queryClient )
+	);
+	const { mutate: deleteFeed, isPending: isDeleting } = useMutation(
+		deleteReadListFeedMutation( queryClient )
+	);
+	const isUpdating = isAdding || isDeleting;
 
 	const canToggle = Boolean(
 		currentUserName && typeof currentUserName === 'string' && recommendedBlogsList?.ID
@@ -65,10 +68,6 @@ export const useFeedRecommendationsMutation = (
 		}
 
 		const newValue = ! isRecommended;
-
-		setIsUpdating( true );
-		setTimeout( () => setIsUpdating( false ), 300 );
-
 		const variables = {
 			owner: currentUserName as string,
 			slug: RECOMMENDED_BLOGS_SLUG,

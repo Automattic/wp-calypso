@@ -67,9 +67,9 @@ const normalizeFeedRecommendation = ( blog: APIFeedRecommendation ): FeedRecomme
 /**
  * Hook to fetch and manage user recommended blogs.
  *
- * Disables retries — the legacy data-layer used `noRetry()` because the API
- * returns `list_not_found` for users without a recommended-blogs list, and
- * retrying just delays the empty result.
+ * `readListItemsAllQuery` already short-circuits retries for the
+ * `list_not_found` error (matching the legacy `noRetry()` policy), so this
+ * hook only adds normalization on top.
  */
 export const useFeedRecommendationsQuery = ( userLogin?: string, options?: QueryOptions ) => {
 	const { enabled = true } = options || {};
@@ -77,7 +77,6 @@ export const useFeedRecommendationsQuery = ( userLogin?: string, options?: Query
 	const { data, isLoading, isFetched } = useQuery( {
 		...readListItemsAllQuery( userLogin, 'recommended-blogs' ),
 		enabled: !! userLogin && enabled,
-		retry: false,
 		select: ( response ): FeedRecommendation[] =>
 			( response.items as unknown as APIFeedRecommendation[] ).map( normalizeFeedRecommendation ),
 	} );
