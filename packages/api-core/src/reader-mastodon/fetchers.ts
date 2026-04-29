@@ -1,6 +1,7 @@
 import { wpcom } from '../wpcom-fetcher';
 import { classifyMastodonError } from './errors';
 import type {
+	MastodonAuthorProfile,
 	MastodonAuthorizeResponse,
 	MastodonConnectionDetails,
 	MastodonConnectionsResponse,
@@ -117,6 +118,25 @@ export async function getMastodonThread(
 			},
 			{ status_id: statusId }
 		) ) as MastodonThreadResponse;
+	} catch ( raw ) {
+		throw classifyMastodonError( raw );
+	}
+}
+
+export interface GetMastodonAuthorProfileParams {
+	connectionId: number;
+	actor: string;
+}
+
+export async function getMastodonAuthorProfile(
+	params: GetMastodonAuthorProfileParams
+): Promise< MastodonAuthorProfile > {
+	const { connectionId, actor } = params;
+	try {
+		return ( await wpcom.req.get( {
+			path: `/reader/mastodon/connections/${ connectionId }/profile/${ actor }`,
+			apiNamespace: NAMESPACE,
+		} ) ) as MastodonAuthorProfile;
 	} catch ( raw ) {
 		throw classifyMastodonError( raw );
 	}

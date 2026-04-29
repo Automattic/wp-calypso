@@ -2,6 +2,7 @@ import nock from 'nock';
 import {
 	authorizeMastodonConnection,
 	completeMastodonConnection,
+	getMastodonAuthorProfile,
 	getMastodonConnection,
 	getMastodonConnections,
 	getMastodonTimeline,
@@ -126,5 +127,60 @@ describe( 'getMastodonTimeline', () => {
 			kind: 'rate_limited',
 			retry_after: 30,
 		} );
+	} );
+} );
+
+describe( 'getMastodonAuthorProfile', () => {
+	afterEach( () => nock.cleanAll() );
+
+	it( 'GETs /reader/mastodon/connections/:id/profile/:actor with the actor in the path', async () => {
+		nock( BASE ).get( '/wpcom/v2/reader/mastodon/connections/7/profile/108020' ).reply( 200, {
+			id: '108020',
+			acct: 'alice@mastodon.social',
+			display_name: 'Alice',
+			avatar: null,
+			header: null,
+			note: '<p>hi</p>',
+			followers_count: 0,
+			following_count: 0,
+			statuses_count: 0,
+			locked: false,
+			raw: {},
+		} );
+		const profile = await getMastodonAuthorProfile( { connectionId: 7, actor: '108020' } );
+		expect( profile.id ).toBe( '108020' );
+		expect( profile.acct ).toBe( 'alice@mastodon.social' );
+	} );
+
+	it( 'passes webfinger handles through unencoded (page.js leaves them as-is)', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/7/profile/@alice@mastodon.social' )
+			.reply( 200, {
+				id: '108020',
+				acct: 'alice@mastodon.social',
+				display_name: 'Alice',
+				avatar: null,
+				header: null,
+				note: '',
+				followers_count: 0,
+				following_count: 0,
+				statuses_count: 0,
+				locked: false,
+				raw: {},
+			} );
+		const profile = await getMastodonAuthorProfile( {
+			connectionId: 7,
+			actor: '@alice@mastodon.social',
+		} );
+		expect( profile.acct ).toBe( 'alice@mastodon.social' );
+	} );
+
+	it( 'classifies a 401 as auth_required', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/7/profile/108020' )
+			.reply( 401, { error: 'not_authenticated', message: '', statusCode: 401, status: 401 } );
+		await expect(
+			getMastodonAuthorProfile( { connectionId: 7, actor: '108020' } )
+		).rejects.toMatchObject( { kind: 'auth_required' } );
 	} );
 } );
