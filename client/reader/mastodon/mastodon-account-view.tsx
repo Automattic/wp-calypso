@@ -82,7 +82,7 @@ function renderTab( slug: string, connection: MastodonConnection ) {
 			return <SettingsPanel />;
 		case TIMELINE_TAB:
 		default:
-			return <TimelinePanel />;
+			return <TimelinePanel connection={ connection } />;
 	}
 }
 

@@ -6,15 +6,13 @@ import { useDispatch } from 'react-redux';
 import { UnknownAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import EmptyContent from 'calypso/components/empty-content';
-import {
-	SocialAnalyticsProvider,
-	ThreadTombstone,
-	ThreadTree,
-	ThreadTreeSkeleton,
-} from 'calypso/reader/social';
+import { SocialAnalyticsProvider } from 'calypso/reader/social';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { getThreadUrl as buildThreadUrl } from './route';
 import { ThreadHeader } from './thread-header';
+import { ThreadTree } from './thread-tree';
+import { ThreadTombstone } from './thread-tree/thread-tombstone';
+import { ThreadTreeSkeleton } from './thread-tree/thread-tree-skeleton';
 import type {
 	AtmosphereConnection,
 	AtmosphereError,

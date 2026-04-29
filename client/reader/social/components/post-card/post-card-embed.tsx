@@ -1,12 +1,14 @@
+import { PostCardEmbedAudio } from './post-card-embed-audio';
 import { PostCardEmbedExternal } from './post-card-embed-external';
+import { PostCardEmbedGifv } from './post-card-embed-gifv';
 import { PostCardEmbedImages } from './post-card-embed-images';
 import { PostCardEmbedQuote } from './post-card-embed-quote';
 import { PostCardEmbedQuoteWithMedia } from './post-card-embed-quote-with-media';
 import { PostCardEmbedVideo } from './post-card-embed-video';
-import type { AtmosphereEmbed } from '@automattic/api-core';
+import type { SocialEmbed } from '../../types';
 
 interface PostCardEmbedProps {
-	embed: AtmosphereEmbed;
+	embed: SocialEmbed;
 	parentPostUri: string;
 	expandedVideo?: boolean;
 	compact?: boolean;
@@ -35,5 +37,9 @@ export function PostCardEmbed( {
 			return <PostCardEmbedQuote embed={ embed } parentPostUri={ parentPostUri } />;
 		case 'quote_with_media':
 			return <PostCardEmbedQuoteWithMedia embed={ embed } parentPostUri={ parentPostUri } />;
+		case 'gifv':
+			return <PostCardEmbedGifv embed={ embed } />;
+		case 'audio':
+			return <PostCardEmbedAudio embed={ embed } />;
 	}
 }

@@ -55,15 +55,13 @@ client/reader/social/
       sanitize-post-html.ts     # DOMPurify allow-list helper
       style.scss
       test/
-
-    thread-tree/
-      index.tsx                 # ThreadTree — root + flattened parent chain + recursive replies
-      thread-node.tsx           # Recursive node renderer (post / not_found / blocked)
-      thread-tombstone.tsx      # Inert "Post unavailable" / "Post is from a blocked author" surface
-      thread-tree-skeleton.tsx  # Loading-state skeleton (1 large + 2 small rows)
-      style.scss
-      test/
 ```
+
+The atmosphere thread surface (`ThreadTree`, `ThreadNode`, `ThreadTombstone`,
+`ThreadTreeSkeleton`) lives at `client/reader/atmosphere/thread-tree/` —
+the layout is bsky-shaped (AT-URI-based parent walking, `AtmosphereThreadNode`
+recursion, scroll-to-target via at:// URI). When Mastodon's slice 5 ships
+its own thread view, it adds a sibling under `client/reader/mastodon/`.
 
 ## Architectural decisions
 
@@ -85,14 +83,12 @@ Don't speculate ahead of that signal. Adding a generic shape now will make the a
 - `PostCardLink` — the card-link accessibility pattern (one real `<a>` + `::after` overlay + nested `position: relative; z-index: 1` anchors).
 - `sanitizePostHtml` — DOMPurify wrapper with allow-list (`<p> <br> <a>` / `href, rel, target`) and the `target="_blank"` rel-hardening hook. Conservative enough for Mastodon content too, possibly with a small extension to that allow-list once we see what Mastodon emits.
 - `SocialAnalyticsProvider` / `useSocialAnalytics` — the per-protocol shell wraps its tree with a `source` ('atmosphere' | 'mastodon' | …) + `connectionId` + `onClick(event, props)` callback. The post-card subcomponents call into this context instead of dispatching `recordReaderTracksEvent` directly. Adding a protocol just means adding a `source` value and wiring up the protocol's per-event Tracks call in the shell.
-- `<ThreadTombstone>` — `kind: 'not_found' | 'blocked'`. Mastodon has no `blockedPost` analogue but a "deleted" tombstone slots in via a new kind, not a refactor.
 
 ### What's Bluesky-specific today (likely needs forking or refactoring)
 
 - `SocialPostCard` and every `post-card-*` subcomponent take `AtmosphereFeedItem`.
 - `PostCardEmbed`'s discriminated union (`'images' | 'video' | 'external' | 'quote' | 'quote_with_media'`) matches the backend `ReaderATmosphere_Normalizer` shape. Mastodon attachments are different.
 - `SocialPostCard`'s `variant: 'default' | 'compact'` covers top-level and quote-embed renderings — Mastodon has no native quote concept and may not need `compact` at all.
-- `<ThreadTree>` and `<ThreadNode>` take `AtmosphereThreadNode` directly. Mastodon's `context` API returns flat `ancestors[]` + `descendants[]` (not recursive); the layout (parents above target, target highlighted, descendants nested) ports cleanly but the data shape doesn't.
 
 ### Data layer
 

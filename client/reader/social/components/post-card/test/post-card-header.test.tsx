@@ -5,12 +5,17 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { SocialAnalyticsProvider } from '../analytics-context';
 import { PostCardHeader } from '../post-card-header';
-import type { AtmosphereFeedItem } from '@automattic/api-core';
+import type { SocialPost } from '../../../types';
 
-const base: AtmosphereFeedItem = {
+const base: SocialPost = {
 	uri: 'at://did:plc:abc/app.bsky.feed.post/x',
-	cid: 'c',
-	author: { did: 'did:plc:abc', handle: 'alice.bsky.social', display_name: 'Alice', avatar: null },
+	author: {
+		id: 'did:plc:abc',
+		handle: 'alice.bsky.social',
+		display_name: 'Alice',
+		avatar: null,
+		profile_url: 'https://bsky.app/profile/alice.bsky.social',
+	},
 	created_at: '2026-04-27T10:00:00Z',
 	indexed_at: '2026-04-27T10:00:00Z',
 	text: '',
@@ -21,7 +26,7 @@ const base: AtmosphereFeedItem = {
 	reason: null,
 	embed: null,
 	counts: { replies: 0, reposts: 0, likes: 0, quotes: 0 },
-	bluesky_url: 'https://bsky.app/profile/alice.bsky.social/post/x',
+	permalink: 'https://bsky.app/profile/alice.bsky.social/post/x',
 };
 
 describe( 'PostCardHeader', () => {
@@ -51,7 +56,7 @@ describe( 'PostCardHeader', () => {
 					...base,
 					reason: {
 						type: 'repost',
-						by: { did: 'did:plc:bob', handle: 'bob.bsky.social', display_name: 'Bob' },
+						by: { id: 'did:plc:bob', handle: 'bob.bsky.social', display_name: 'Bob' },
 					},
 				} }
 				variant="default"
@@ -67,7 +72,7 @@ describe( 'PostCardHeader', () => {
 					...base,
 					reply_parent: {
 						uri: 'at://x',
-						author: { did: 'did:plc:c', handle: 'carol.bsky.social' },
+						author: { id: 'did:plc:c', handle: 'carol.bsky.social' },
 					},
 				} }
 				variant="default"
@@ -77,15 +82,16 @@ describe( 'PostCardHeader', () => {
 	} );
 } );
 
-function makeFeedItem( overrides: Partial< AtmosphereFeedItem > = {} ): AtmosphereFeedItem {
+function makeSocialPost( overrides: Partial< SocialPost > = {} ): SocialPost {
 	return {
 		uri: 'at://did:plc:default/app.bsky.feed.post/3kdef',
-		cid: 'cid-default',
+		permalink: 'https://bsky.app/profile/default.bsky.social/post/3kdef',
 		author: {
-			did: 'did:plc:default',
+			id: 'did:plc:default',
 			handle: 'default.bsky.social',
 			display_name: '',
 			avatar: null,
+			profile_url: 'https://bsky.app/profile/default.bsky.social',
 		},
 		created_at: '2026-04-28T10:00:00Z',
 		indexed_at: '2026-04-28T10:00:00Z',
@@ -97,7 +103,6 @@ function makeFeedItem( overrides: Partial< AtmosphereFeedItem > = {} ): Atmosphe
 		reason: null,
 		embed: null,
 		counts: { replies: 0, reposts: 0, likes: 0, quotes: 0 },
-		bluesky_url: 'https://bsky.app/profile/default.bsky.social/post/3kdef',
 		...overrides,
 	};
 }
@@ -122,13 +127,13 @@ function wrap(
 }
 
 describe( 'PostCardHeader getThreadUrl rewiring', () => {
-	const post: AtmosphereFeedItem = makeFeedItem( {
+	const post: SocialPost = makeSocialPost( {
 		uri: 'at://did:plc:abc/app.bsky.feed.post/3kabc',
-		bluesky_url: 'https://bsky.app/profile/jane.bsky.social/post/3kabc',
+		permalink: 'https://bsky.app/profile/jane.bsky.social/post/3kabc',
 		created_at: '2026-04-28T10:00:00Z',
 		reply_parent: {
 			uri: 'at://did:plc:def/app.bsky.feed.post/3kdef',
-			author: { did: 'did:plc:def', handle: 'bob.bsky.social' },
+			author: { id: 'did:plc:def', handle: 'bob.bsky.social' },
 		},
 	} );
 
@@ -147,7 +152,7 @@ describe( 'PostCardHeader getThreadUrl rewiring', () => {
 		render( wrap( <PostCardHeader post={ post } variant="default" />, () => null ) );
 		const bskyLinks = screen
 			.getAllByRole( 'link' )
-			.filter( ( a ) => a.getAttribute( 'href' ) === post.bluesky_url );
+			.filter( ( a ) => a.getAttribute( 'href' ) === post.permalink );
 		expect( bskyLinks.length ).toBeGreaterThanOrEqual( 1 );
 		expect( bskyLinks[ 0 ] ).toHaveAttribute( 'target', '_blank' );
 		expect( bskyLinks[ 0 ] ).toHaveAttribute( 'rel', expect.stringContaining( 'noopener' ) );

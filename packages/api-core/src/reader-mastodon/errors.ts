@@ -1,8 +1,10 @@
 export type MastodonError =
 	| { kind: 'invalid_instance' }
 	| { kind: 'auth_failed' }
+	| { kind: 'auth_required' }
 	| { kind: 'connection_not_found' }
-	| { kind: 'rate_limited' }
+	| { kind: 'not_found' }
+	| { kind: 'rate_limited'; retry_after?: number }
 	| { kind: 'upstream_unavailable' }
 	| { kind: 'bad_request'; message: string }
 	| { kind: 'unknown'; cause: unknown };
@@ -12,6 +14,7 @@ interface WpErrorLike {
 	statusCode?: number;
 	status?: number;
 	message?: string;
+	data?: { retry_after?: number } & Record< string, unknown >;
 }
 
 function isWpErrorLike( e: unknown ): e is WpErrorLike {
@@ -26,26 +29,35 @@ export function classifyMastodonError( raw: unknown ): MastodonError {
 	if ( ! isWpErrorLike( raw ) ) {
 		return { kind: 'unknown', cause: raw };
 	}
+	const rateLimited = ( source: WpErrorLike ): MastodonError => {
+		const retryAfter = source.data?.retry_after;
+		return typeof retryAfter === 'number'
+			? { kind: 'rate_limited', retry_after: retryAfter }
+			: { kind: 'rate_limited' };
+	};
 	switch ( raw.error ) {
 		case 'invalid_instance':
 			return { kind: 'invalid_instance' };
 		case 'auth_failed':
 			return { kind: 'auth_failed' };
+		case 'mastodon_auth_required':
+			return { kind: 'auth_required' };
 		case 'connection_not_found':
 			return { kind: 'connection_not_found' };
+		case 'mastodon_not_found':
+			return { kind: 'not_found' };
 		case 'rate_limited':
-			return { kind: 'rate_limited' };
+		case 'mastodon_rate_limited':
+			return rateLimited( raw );
 		case 'upstream_unavailable':
+		case 'mastodon_upstream_unavailable':
 			return { kind: 'upstream_unavailable' };
 		case 'bad_request':
 			return { kind: 'bad_request', message: raw.message ?? '' };
 	}
-	// Fall-through: no body-level error code matched. HTTP 429 without a
-	// body-coded error still means rate limiting — surface the right copy
-	// instead of collapsing to a generic "unknown".
 	const statusCode = raw.statusCode ?? raw.status;
 	if ( statusCode === 429 ) {
-		return { kind: 'rate_limited' };
+		return rateLimited( raw );
 	}
 	return { kind: 'unknown', cause: raw };
 }

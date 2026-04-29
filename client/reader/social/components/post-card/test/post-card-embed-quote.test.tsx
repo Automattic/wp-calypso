@@ -5,12 +5,17 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { SocialAnalyticsProvider } from '../analytics-context';
 import { PostCardEmbedQuote } from '../post-card-embed-quote';
-import type { AtmosphereFeedItem, AtmosphereEmbedQuote } from '@automattic/api-core';
+import type { SocialEmbedQuote, SocialPost } from '../../../types';
 
-const innerPost: AtmosphereFeedItem = {
+const innerPost: SocialPost = {
 	uri: 'at://did:plc:abc/app.bsky.feed.post/inner',
-	cid: 'c',
-	author: { did: 'did:plc:abc', handle: 'inner.bsky.social', display_name: 'Inner', avatar: null },
+	author: {
+		id: 'did:plc:abc',
+		handle: 'inner.bsky.social',
+		display_name: 'Inner',
+		avatar: null,
+		profile_url: 'https://bsky.app/profile/inner.bsky.social',
+	},
 	created_at: '2026-04-27T09:00:00Z',
 	indexed_at: '2026-04-27T09:00:00Z',
 	text: 'inner text',
@@ -21,7 +26,7 @@ const innerPost: AtmosphereFeedItem = {
 	reason: null,
 	embed: null,
 	counts: { replies: 0, reposts: 0, likes: 0, quotes: 0 },
-	bluesky_url: 'https://bsky.app/profile/inner.bsky.social/post/inner',
+	permalink: 'https://bsky.app/profile/inner.bsky.social/post/inner',
 };
 
 describe( 'PostCardEmbedQuote', () => {
@@ -30,7 +35,7 @@ describe( 'PostCardEmbedQuote', () => {
 			<PostCardEmbedQuote
 				embed={ {
 					type: 'quote',
-					post: { type: 'not_found', uri: 'at://x' },
+					post: { type: 'not_found', uri: 'at://x', reason: 'notfound' },
 				} }
 				parentPostUri="at://parent"
 			/>
@@ -43,7 +48,7 @@ describe( 'PostCardEmbedQuote', () => {
 			<PostCardEmbedQuote
 				embed={ {
 					type: 'quote',
-					post: { type: 'blocked', uri: 'at://y', author: { did: 'did:plc:blk' } },
+					post: { type: 'blocked', uri: 'at://y', reason: 'blocked' },
 				} }
 				parentPostUri="at://parent"
 			/>
@@ -63,15 +68,16 @@ describe( 'PostCardEmbedQuote', () => {
 	} );
 } );
 
-function makeFeedItem( overrides: Partial< AtmosphereFeedItem > = {} ): AtmosphereFeedItem {
+function makeSocialPost( overrides: Partial< SocialPost > = {} ): SocialPost {
 	return {
 		uri: 'at://did:plc:default/app.bsky.feed.post/3kdef',
-		cid: 'cid-default',
+		permalink: 'https://bsky.app/profile/default.bsky.social/post/3kdef',
 		author: {
-			did: 'did:plc:default',
+			id: 'did:plc:default',
 			handle: 'default.bsky.social',
 			display_name: '',
 			avatar: null,
+			profile_url: 'https://bsky.app/profile/default.bsky.social',
 		},
 		created_at: '2026-04-28T10:00:00Z',
 		indexed_at: '2026-04-28T10:00:00Z',
@@ -83,17 +89,16 @@ function makeFeedItem( overrides: Partial< AtmosphereFeedItem > = {} ): Atmosphe
 		reason: null,
 		embed: null,
 		counts: { replies: 0, reposts: 0, likes: 0, quotes: 0 },
-		bluesky_url: 'https://bsky.app/profile/default.bsky.social/post/3kdef',
 		...overrides,
 	};
 }
 
 describe( 'PostCardEmbedQuote getThreadUrl rewiring', () => {
-	const quotedPost: AtmosphereFeedItem = makeFeedItem( {
+	const quotedPost: SocialPost = makeSocialPost( {
 		uri: 'at://did:plc:def/app.bsky.feed.post/3kdef',
-		bluesky_url: 'https://bsky.app/profile/jane.bsky.social/post/3kdef',
+		permalink: 'https://bsky.app/profile/jane.bsky.social/post/3kdef',
 	} );
-	const embed: AtmosphereEmbedQuote = { type: 'quote', post: quotedPost };
+	const embed: SocialEmbedQuote = { type: 'quote', post: quotedPost };
 
 	function wrap(
 		ui: React.ReactNode,
@@ -125,12 +130,12 @@ describe( 'PostCardEmbedQuote getThreadUrl rewiring', () => {
 		expect( link ).not.toHaveAttribute( 'target' );
 	} );
 
-	it( 'falls back to the quoted bsky.app URL when resolver returns null', () => {
+	it( 'falls back to the permalink when resolver returns null', () => {
 		render(
 			wrap( <PostCardEmbedQuote embed={ embed } parentPostUri="at://parent" />, () => null )
 		);
 		const link = screen.getByRole( 'link' );
-		expect( link ).toHaveAttribute( 'href', quotedPost.bluesky_url );
+		expect( link ).toHaveAttribute( 'href', quotedPost.permalink );
 		expect( link ).toHaveAttribute( 'target', '_blank' );
 	} );
 

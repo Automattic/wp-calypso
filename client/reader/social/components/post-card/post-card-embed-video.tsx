@@ -1,9 +1,9 @@
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef } from 'react';
-import type { AtmosphereEmbedVideo } from '@automattic/api-core';
+import type { SocialEmbedVideo } from '../../types';
 
 interface PostCardEmbedVideoProps {
-	embed: AtmosphereEmbedVideo;
+	embed: SocialEmbedVideo;
 	expanded?: boolean;
 }
 

@@ -1,19 +1,21 @@
 import './style.scss';
 
-import { Card, CardBody } from '@wordpress/components';
+import { Button, Card, CardBody } from '@wordpress/components';
 import clsx from 'clsx';
+import { useTranslate } from 'i18n-calypso';
+import { useState, type ReactNode } from 'react';
 import { PostCardBody } from './post-card-body';
 import { PostCardCounts } from './post-card-counts';
 import { PostCardEmbed } from './post-card-embed';
 import { PostCardHeader } from './post-card-header';
 import { PostCardLink } from './post-card-link';
 import { PostCardTimestamp } from './post-card-timestamp';
-import type { AtmosphereFeedItem } from '@automattic/api-core';
+import type { SocialContentWarning, SocialPost } from '../../types';
 
 type SocialPostCardVariant = 'default' | 'compact';
 
 interface SocialPostCardProps {
-	post: AtmosphereFeedItem;
+	post: SocialPost;
 	variant?: SocialPostCardVariant;
 	expandedVideo?: boolean;
 	// When true, the inline timestamp moves out of the header and renders as
@@ -35,6 +37,23 @@ export function SocialPostCard( {
 	const isQuoteEmbed = post.embed?.type === 'quote' || post.embed?.type === 'quote_with_media';
 	const showEmbed = post.embed && ( ! isCompact || ! isQuoteEmbed );
 
+	const cw = post.content_warning;
+	const cwActive = Boolean( cw?.sensitive );
+
+	const bodyAndEmbed: ReactNode = (
+		<>
+			<PostCardBody post={ post } />
+			{ showEmbed && post.embed && (
+				<PostCardEmbed
+					embed={ post.embed }
+					parentPostUri={ post.uri }
+					expandedVideo={ expandedVideo }
+					compact={ isCompact }
+				/>
+			) }
+		</>
+	);
+
 	const card = (
 		<Card className={ clsx( 'social-post-card', `social-post-card--${ variant }` ) }>
 			<CardBody>
@@ -43,14 +62,10 @@ export function SocialPostCard( {
 					variant={ variant }
 					prominentTimestamp={ showProminentTimestamp }
 				/>
-				<PostCardBody post={ post } />
-				{ showEmbed && post.embed && (
-					<PostCardEmbed
-						embed={ post.embed }
-						parentPostUri={ post.uri }
-						expandedVideo={ expandedVideo }
-						compact={ isCompact }
-					/>
+				{ cwActive && cw ? (
+					<ContentWarningGate warning={ cw }>{ bodyAndEmbed }</ContentWarningGate>
+				) : (
+					bodyAndEmbed
 				) }
 				{ showProminentTimestamp && <PostCardTimestamp post={ post } /> }
 				{ ! isCompact && <PostCardCounts counts={ post.counts } postUri={ post.uri } /> }
@@ -66,4 +81,46 @@ export function SocialPostCard( {
 	}
 
 	return <PostCardLink variant={ variant }>{ card }</PostCardLink>;
+}
+
+// Gates BOTH the post body (text) and any media embed behind a "Show
+// content" button when the post is flagged sensitive. Matches native
+// Mastodon clients — gating only text would leave NSFW images / videos
+// fully visible, which is a real safety regression.
+function ContentWarningGate( {
+	warning,
+	children,
+}: {
+	warning: SocialContentWarning;
+	children: ReactNode;
+} ) {
+	const translate = useTranslate();
+	const [ revealed, setRevealed ] = useState( false );
+
+	if ( revealed ) {
+		return <>{ children }</>;
+	}
+
+	const label = warning.spoiler_text
+		? translate( 'Show content: %(reason)s', { args: { reason: warning.spoiler_text } } )
+		: translate( 'Show sensitive content' );
+
+	return (
+		<div className="social-post-card-content-warning">
+			{ warning.spoiler_text && (
+				<p className="social-post-card-content-warning__spoiler">{ warning.spoiler_text }</p>
+			) }
+			<Button
+				variant="secondary"
+				onClick={ ( e: React.MouseEvent ) => {
+					// Prevent the card-link overlay from intercepting and navigating away.
+					e.preventDefault();
+					e.stopPropagation();
+					setRevealed( true );
+				} }
+			>
+				{ label }
+			</Button>
+		</div>
+	);
 }

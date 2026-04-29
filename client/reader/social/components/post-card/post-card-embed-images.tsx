@@ -3,11 +3,11 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
-import type { AtmosphereEmbedImages } from '@automattic/api-core';
+import type { SocialEmbedImages } from '../../types';
 import type { ReactNode } from 'react';
 
 interface PostCardEmbedImagesProps {
-	embed: AtmosphereEmbedImages;
+	embed: SocialEmbedImages;
 	compact?: boolean;
 }
 

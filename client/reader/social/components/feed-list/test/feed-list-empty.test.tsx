@@ -4,7 +4,13 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { FeedListEmpty } from '../feed-list-empty';
-import type { AtmosphereError } from '@automattic/api-core';
+import type { SocialError } from '../../../types';
+
+const protocolProps = {
+	protocolLabel: 'Bluesky',
+	protocolHomeURL: '/reader/atmosphere',
+	protocolHomeLabel: 'Back to ATmosphere',
+};
 
 describe( 'FeedListEmpty', () => {
 	it( 'renders the empty title and action when there is no error', () => {
@@ -16,6 +22,7 @@ describe( 'FeedListEmpty', () => {
 				emptyLine="Follow accounts to see posts."
 				emptyActionLabel="Browse Bluesky"
 				emptyActionURL="https://bsky.app"
+				{ ...protocolProps }
 			/>
 		);
 		expect( screen.getByText( 'All caught up.' ) ).toBeVisible();
@@ -31,10 +38,11 @@ describe( 'FeedListEmpty', () => {
 		const user = userEvent.setup();
 		render(
 			<FeedListEmpty
-				error={ { kind: 'rate_limited', retry_after: 60 } as AtmosphereError }
+				error={ { kind: 'rate_limited', retry_after: 60 } as SocialError }
 				onRetry={ onRetry }
 				emptyTitle=""
 				emptyLine=""
+				{ ...protocolProps }
 			/>
 		);
 		expect( screen.getAllByText( /slow down/i ).length ).toBeGreaterThan( 0 );
@@ -45,10 +53,11 @@ describe( 'FeedListEmpty', () => {
 	it( 'renders the upstream-unavailable error with a Retry button', () => {
 		render(
 			<FeedListEmpty
-				error={ { kind: 'upstream_unavailable' } as AtmosphereError }
+				error={ { kind: 'upstream_unavailable' } as SocialError }
 				onRetry={ () => {} }
 				emptyTitle=""
 				emptyLine=""
+				{ ...protocolProps }
 			/>
 		);
 		expect( screen.getAllByText( /unreachable/i ).length ).toBeGreaterThan( 0 );
@@ -58,10 +67,11 @@ describe( 'FeedListEmpty', () => {
 	it( 'renders the auth-required error WITHOUT a Retry button', () => {
 		render(
 			<FeedListEmpty
-				error={ { kind: 'auth_required' } as AtmosphereError }
+				error={ { kind: 'auth_required' } as SocialError }
 				onRetry={ () => {} }
 				emptyTitle=""
 				emptyLine=""
+				{ ...protocolProps }
 			/>
 		);
 		expect( screen.getAllByText( /reconnect/i ).length ).toBeGreaterThan( 0 );
@@ -71,10 +81,11 @@ describe( 'FeedListEmpty', () => {
 	it( 'renders the not-found error with a back-to-ATmosphere link', () => {
 		render(
 			<FeedListEmpty
-				error={ { kind: 'not_found' } as AtmosphereError }
+				error={ { kind: 'not_found' } as SocialError }
 				onRetry={ () => {} }
 				emptyTitle=""
 				emptyLine=""
+				{ ...protocolProps }
 			/>
 		);
 		expect( screen.getByRole( 'link', { name: /back to atmosphere/i } ) ).toHaveAttribute(
@@ -86,10 +97,11 @@ describe( 'FeedListEmpty', () => {
 	it( 'renders the unknown / generic error with a Retry button', () => {
 		render(
 			<FeedListEmpty
-				error={ { kind: 'unknown', cause: null } as AtmosphereError }
+				error={ { kind: 'unknown', cause: null } as SocialError }
 				onRetry={ () => {} }
 				emptyTitle=""
 				emptyLine=""
+				{ ...protocolProps }
 			/>
 		);
 		expect( screen.getByText( /something went wrong/i ) ).toBeVisible();

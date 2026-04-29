@@ -3,17 +3,18 @@
  */
 import { render, screen } from '@testing-library/react';
 import { SocialPostCard } from '../index';
-import type { AtmosphereFeedItem } from '@automattic/api-core';
+import type { SocialPost } from '../../../types';
 
-function makeFeedItem( overrides: Partial< AtmosphereFeedItem > = {} ): AtmosphereFeedItem {
+function makeSocialPost( overrides: Partial< SocialPost > = {} ): SocialPost {
 	return {
 		uri: 'at://did:plc:default/app.bsky.feed.post/3kdef',
-		cid: 'cid-default',
+		permalink: 'https://bsky.app/profile/default.bsky.social/post/3kdef',
 		author: {
-			did: 'did:plc:default',
+			id: 'did:plc:default',
 			handle: 'default.bsky.social',
 			display_name: '',
 			avatar: null,
+			profile_url: 'https://bsky.app/profile/default.bsky.social',
 		},
 		created_at: '2026-04-28T10:00:00Z',
 		indexed_at: '2026-04-28T10:00:00Z',
@@ -25,15 +26,19 @@ function makeFeedItem( overrides: Partial< AtmosphereFeedItem > = {} ): Atmosphe
 		reason: null,
 		embed: null,
 		counts: { replies: 0, reposts: 0, likes: 0, quotes: 0 },
-		bluesky_url: 'https://bsky.app/profile/default.bsky.social/post/3kdef',
 		...overrides,
 	};
 }
 
-const post: AtmosphereFeedItem = {
+const post: SocialPost = {
 	uri: 'at://did:plc:abc/app.bsky.feed.post/x',
-	cid: 'c',
-	author: { did: 'did:plc:abc', handle: 'alice.bsky.social', display_name: 'Alice', avatar: null },
+	author: {
+		id: 'did:plc:abc',
+		handle: 'alice.bsky.social',
+		display_name: 'Alice',
+		avatar: null,
+		profile_url: 'https://bsky.app/profile/alice.bsky.social',
+	},
 	created_at: '2026-04-27T10:00:00Z',
 	indexed_at: '2026-04-27T10:00:00Z',
 	text: 'hello',
@@ -44,7 +49,7 @@ const post: AtmosphereFeedItem = {
 	reason: null,
 	embed: null,
 	counts: { replies: 1, reposts: 2, likes: 3, quotes: 4 },
-	bluesky_url: 'https://bsky.app/profile/alice.bsky.social/post/x',
+	permalink: 'https://bsky.app/profile/alice.bsky.social/post/x',
 };
 
 describe( 'SocialPostCard', () => {
@@ -57,7 +62,7 @@ describe( 'SocialPostCard', () => {
 		// look it up by href rather than text to stay stable across locales.
 		const timestampLink = screen
 			.getAllByRole( 'link' )
-			.find( ( a ) => a.getAttribute( 'href' ) === post.bluesky_url );
+			.find( ( a ) => a.getAttribute( 'href' ) === post.permalink );
 		expect( timestampLink ).toBeDefined();
 	} );
 
@@ -88,6 +93,7 @@ describe( 'SocialPostCard', () => {
 						post: {
 							type: 'not_found',
 							uri: 'at://x',
+							reason: 'notfound',
 						},
 					},
 				} }
@@ -135,9 +141,9 @@ describe( 'SocialPostCard', () => {
 } );
 
 describe( 'SocialPostCard expandedVideo forwarding', () => {
-	const videoPost: AtmosphereFeedItem = makeFeedItem( {
+	const videoPost: SocialPost = makeSocialPost( {
 		uri: 'at://did:plc:abc/app.bsky.feed.post/3kabc',
-		bluesky_url: 'https://bsky.app/profile/jane.bsky.social/post/3kabc',
+		permalink: 'https://bsky.app/profile/jane.bsky.social/post/3kabc',
 		embed: {
 			type: 'video',
 			playlist: 'https://video.bsky.app/playlist.m3u8',
@@ -159,7 +165,7 @@ describe( 'SocialPostCard expandedVideo forwarding', () => {
 	} );
 
 	it( 'ignores expandedVideo on a non-video embed', () => {
-		const imagePost: AtmosphereFeedItem = makeFeedItem( {
+		const imagePost: SocialPost = makeSocialPost( {
 			embed: {
 				type: 'images',
 				images: [ { thumb: 't', fullsize: 'f', alt: 'a', aspect_ratio: null } ],

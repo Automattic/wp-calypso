@@ -2,11 +2,11 @@ import { TimeSince } from '@automattic/components';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSocialAnalytics } from './analytics-context';
-import type { AtmosphereFeedItem } from '@automattic/api-core';
+import type { SocialPost } from '../../types';
 import type { ReactNode } from 'react';
 
 interface PostCardHeaderProps {
-	post: AtmosphereFeedItem;
+	post: SocialPost;
 	variant: 'default' | 'compact';
 	prominentTimestamp?: boolean;
 }
@@ -16,7 +16,7 @@ export function PostCardHeader( { post, variant, prominentTimestamp }: PostCardH
 	const analytics = useSocialAnalytics();
 	const isCompact = variant === 'compact';
 	const displayName = post.author.display_name || post.author.handle;
-	const profileUrl = `https://bsky.app/profile/${ post.author.handle }`;
+	const profileUrl = post.author.profile_url;
 	const avatarSize = isCompact ? 24 : 36;
 	const timestampIso = post.created_at || post.indexed_at;
 
@@ -31,7 +31,7 @@ export function PostCardHeader( { post, variant, prominentTimestamp }: PostCardH
 		}
 		analytics.onClick( `calypso_reader_${ analytics.source }_timeline_author_clicked`, {
 			connection_id: analytics.connectionId,
-			author_did: post.author.did,
+			author_id: post.author.id,
 			author_handle: post.author.handle,
 			destination: 'bsky_app',
 		} );
@@ -118,7 +118,7 @@ export function PostCardHeader( { post, variant, prominentTimestamp }: PostCardH
 		return (
 			<a
 				className="social-post-card-header__timestamp"
-				href={ post.bluesky_url }
+				href={ post.permalink }
 				target="_blank"
 				rel="noopener noreferrer"
 				onClick={ firePostClicked }

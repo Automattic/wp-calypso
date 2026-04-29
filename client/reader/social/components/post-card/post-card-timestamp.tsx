@@ -2,13 +2,13 @@ import { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 
 interface PostCardTimestampProps {
-	post: { created_at: string; indexed_at: string };
+	post: { created_at: string; indexed_at: string | null };
 }
 
 export function PostCardTimestamp( { post }: PostCardTimestampProps ) {
 	const translate = useTranslate();
 	const locale = getLocaleSlug() ?? undefined;
-	const timestampIso = post.created_at || post.indexed_at;
+	const timestampIso = post.created_at || post.indexed_at || '';
 
 	const formatted = useMemo( () => {
 		if ( ! timestampIso ) {

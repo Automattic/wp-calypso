@@ -3,10 +3,10 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useSocialAnalytics } from './analytics-context';
-import type { AtmosphereEmbedExternal } from '@automattic/api-core';
+import type { SocialEmbedExternal } from '../../types';
 
 interface PostCardEmbedExternalProps {
-	embed: AtmosphereEmbedExternal;
+	embed: SocialEmbedExternal;
 	parentPostUri: string;
 	compact?: boolean;
 }

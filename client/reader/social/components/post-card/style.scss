@@ -7,7 +7,10 @@
 	.social-post-card-counts__link,
 	.social-post-card-embed-external,
 	.social-post-card-embed-quote-link,
-	.social-post-card-embed-images__item {
+	.social-post-card-embed-images__item,
+	.social-post-card-embed-audio,
+	.social-post-card-embed-gifv,
+	.social-post-card-content-warning .components-button {
 		position: relative;
 		z-index: 1;
 	}

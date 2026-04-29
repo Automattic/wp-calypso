@@ -3,6 +3,7 @@
  */
 import { render, screen } from '@testing-library/react';
 import { PostCardEmbed } from '../post-card-embed';
+import type { SocialEmbed } from '../../../types';
 
 describe( 'PostCardEmbed dispatcher', () => {
 	it( 'images → grid', () => {
@@ -51,11 +52,34 @@ describe( 'PostCardEmbed dispatcher', () => {
 			<PostCardEmbed
 				embed={ {
 					type: 'quote',
-					post: { type: 'not_found', uri: 'at://x' },
+					post: { type: 'not_found', uri: 'at://x', reason: 'notfound' },
 				} }
 				parentPostUri="at://parent"
 			/>
 		);
 		expect( screen.getByText( /unavailable/i ) ).toBeVisible();
+	} );
+
+	it( 'dispatches gifv embeds to PostCardEmbedGifv', () => {
+		const embed: SocialEmbed = {
+			type: 'gifv',
+			src: 'https://cdn/g.mp4',
+			thumbnail: 'https://cdn/g.jpg',
+			alt: 'gif',
+			aspect_ratio: null,
+		};
+		render( <PostCardEmbed embed={ embed } parentPostUri="x" /> );
+		expect( ( screen.getByLabelText( 'gif' ) as HTMLElement ).tagName ).toBe( 'VIDEO' );
+	} );
+
+	it( 'dispatches audio embeds to PostCardEmbedAudio', () => {
+		const embed: SocialEmbed = {
+			type: 'audio',
+			src: 'https://cdn/a.mp3',
+			alt: 'audio',
+			duration_seconds: null,
+		};
+		render( <PostCardEmbed embed={ embed } parentPostUri="x" /> );
+		expect( ( screen.getByLabelText( 'audio' ) as HTMLElement ).tagName ).toBe( 'AUDIO' );
 	} );
 } );
