@@ -8,9 +8,13 @@
  * Display categories are coarser than API categories: several API categories
  * are merged into a single card with visual sub-category dividers.
  *
- *   Posts card:  posts | comments | categories-tags
- *   Sites card:  sites | media | users/plugins/site-settings | analytics
+ *   Posts card:   posts | comments | categories-tags
+ *   Sites card:   sites | media | users | plugins | site-settings | analytics
+ *   Design card:  design (themes, patterns, blocks, templates, global styles, navigation)
  *   Account card: account | notifications | billing
+ *
+ * Design-card tools all share `design` as their API category, so sub-groups within the
+ * Design card are derived from tool ID prefixes in getSubCategory().
  */
 
 import { __ } from '@wordpress/i18n';
@@ -54,6 +58,13 @@ const SUB_CATEGORIES = {
 	// Account sub-categories
 	ACCOUNT: __( 'Account', 'calypso' ),
 	NOTIFICATIONS: __( 'Notifications', 'calypso' ),
+	// Design sub-categories
+	THEMES: __( 'Themes', 'calypso' ),
+	PATTERNS: __( 'Patterns', 'calypso' ),
+	TEMPLATES: __( 'Templates', 'calypso' ),
+	GLOBAL_STYLES: __( 'Global styles', 'calypso' ),
+	NAVIGATION: __( 'Navigation', 'calypso' ),
+	BLOCKS: __( 'Blocks', 'calypso' ),
 } as const;
 
 /**
@@ -72,6 +83,14 @@ export const SUB_CATEGORY_ORDER: Record< string, readonly string[] > = {
 		SUB_CATEGORIES.ANALYTICS,
 	],
 	[ DISPLAY_CATEGORIES.ACCOUNT ]: [ SUB_CATEGORIES.ACCOUNT, SUB_CATEGORIES.NOTIFICATIONS ],
+	[ DISPLAY_CATEGORIES.DESIGN ]: [
+		SUB_CATEGORIES.THEMES,
+		SUB_CATEGORIES.PATTERNS,
+		SUB_CATEGORIES.TEMPLATES,
+		SUB_CATEGORIES.GLOBAL_STYLES,
+		SUB_CATEGORIES.NAVIGATION,
+		SUB_CATEGORIES.BLOCKS,
+	],
 };
 
 /**
@@ -85,7 +104,7 @@ const API_CATEGORY_TO_DISPLAY: Record< string, string > = {
 	'categories-tags': DISPLAY_CATEGORIES.POSTS,
 	// Pages card
 	pages: DISPLAY_CATEGORIES.PAGES,
-	// Design card
+	// Design card — all design tools share the 'design' category
 	design: DISPLAY_CATEGORIES.DESIGN,
 	// Sites card
 	sites: DISPLAY_CATEGORIES.SITES,
@@ -107,6 +126,9 @@ const API_CATEGORY_TO_DISPLAY: Record< string, string > = {
 /**
  * Maps API category values to the sub-category divider within their display card.
  * Only needed for API categories that are merged into a card with multiple sub-groups.
+ *
+ * Design-card tools all share `design` as their API category, so their sub-groups
+ * are derived from tool ID prefixes in getSubCategory() instead.
  */
 const API_CATEGORY_TO_SUB_CATEGORY: Record< string, string > = {
 	// Posts card sub-categories
@@ -127,6 +149,25 @@ const API_CATEGORY_TO_SUB_CATEGORY: Record< string, string > = {
 };
 
 /**
+ * Maps tool ID prefixes to Design-card sub-categories.
+ * All Design tools share `design` as their API category, so the tool ID is the only
+ * signal available for sub-grouping within the card.
+ */
+const TOOL_ID_PREFIX_TO_DESIGN_SUB_CATEGORY: Record< string, string > = {
+	'wpcom-mcp/theme-': SUB_CATEGORIES.THEMES,
+	'wpcom-mcp/themes-': SUB_CATEGORIES.THEMES,
+	'wpcom-mcp/patterns-': SUB_CATEGORIES.PATTERNS,
+	'wpcom-mcp/synced-patterns-': SUB_CATEGORIES.PATTERNS,
+	'wpcom-mcp/templates-': SUB_CATEGORIES.TEMPLATES,
+	'wpcom-mcp/template-parts-': SUB_CATEGORIES.TEMPLATES,
+	'wpcom-mcp/global-styles-': SUB_CATEGORIES.GLOBAL_STYLES,
+	'wpcom-mcp/navigation-': SUB_CATEGORIES.NAVIGATION,
+	'wpcom-mcp/menus-': SUB_CATEGORIES.NAVIGATION,
+	'wpcom-mcp/menu-items-': SUB_CATEGORIES.NAVIGATION,
+	'wpcom-mcp/blocks-': SUB_CATEGORIES.BLOCKS,
+};
+
+/**
  * Pass-through sort — preserved for interface compatibility.
  */
 export function sortTools< T >( tools: Array< [ string, T ] > ): Array< [ string, T ] > {
@@ -136,17 +177,31 @@ export function sortTools< T >( tools: Array< [ string, T ] > ): Array< [ string
 /**
  * Get the sub-category for a tool within its merged display card.
  * Returns undefined for tools in cards that have no sub-category dividers.
- * @param toolId - Unused; kept for interface compatibility.
- * @param ability - Ability object with category from API
- * @param ability.category - API category value from abilities-config.php
- * @returns The sub-category label, or undefined
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function getSubCategory(
 	toolId: string,
 	ability?: { category?: string }
 ): string | undefined {
 	const apiCategory = ability?.category;
+
+	// Design-card tools use tool ID prefix for sub-grouping. This covers both
+	// 'design'-category tools and 'sites'-category tools that are routed to the
+	// Design card by getDisplayCategory (e.g. navigation, menus, themes).
+	if ( apiCategory === 'design' || apiCategory === 'sites' ) {
+		for ( const [ prefix, subCategory ] of Object.entries(
+			TOOL_ID_PREFIX_TO_DESIGN_SUB_CATEGORY
+		) ) {
+			if ( toolId.startsWith( prefix ) ) {
+				return subCategory;
+			}
+		}
+		// 'sites'-category tools with no Design prefix stay in the Sites card's Sites sub-group.
+		if ( apiCategory === 'sites' ) {
+			return API_CATEGORY_TO_SUB_CATEGORY[ 'sites' ];
+		}
+		return undefined;
+	}
+
 	if ( apiCategory ) {
 		return API_CATEGORY_TO_SUB_CATEGORY[ apiCategory ];
 	}
@@ -156,10 +211,6 @@ export function getSubCategory(
 /**
  * Returns true if a tool should be treated as a write operation.
  * Uses the `readonly` field from the API: a tool is a write tool when readonly is explicitly false.
- * @param toolId - Unused; kept for interface compatibility.
- * @param ability - Optional ability object with readonly flag from API
- * @param ability.readonly - Whether the tool is read-only
- * @returns Whether the tool is a write operation
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function isWriteTool( toolId: string, ability?: { readonly?: boolean } ): boolean {
@@ -168,14 +219,25 @@ export function isWriteTool( toolId: string, ability?: { readonly?: boolean } ):
 
 /**
  * Get the display category (card) for a tool based on its API category.
- * @param toolId - Unused; kept for interface compatibility.
- * @param ability - Ability object with category from API
- * @param ability.category - API category value from abilities-config.php
- * @returns The display category label
+ *
+ * Navigation, menus, and theme tools may carry `category: 'sites'` from the
+ * backend but belong in the Design card. Tool ID prefix takes precedence over
+ * the API category for these tools.
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function getDisplayCategory( toolId: string, ability?: { category?: string } ): string {
 	const apiCategory = ability?.category;
+
+	// For 'design' and 'sites' category tools, check if the tool ID prefix
+	// indicates it belongs in the Design card.
+	if ( apiCategory === 'design' || apiCategory === 'sites' ) {
+		for ( const prefix of Object.keys( TOOL_ID_PREFIX_TO_DESIGN_SUB_CATEGORY ) ) {
+			if ( toolId.startsWith( prefix ) ) {
+				return DISPLAY_CATEGORIES.DESIGN;
+			}
+		}
+	}
+
 	if ( apiCategory && API_CATEGORY_TO_DISPLAY[ apiCategory ] ) {
 		return API_CATEGORY_TO_DISPLAY[ apiCategory ];
 	}
