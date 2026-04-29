@@ -22,8 +22,8 @@ interface PocketcastsOembedResponse {
 	thumbnail_height?: number;
 }
 
-const POCKETCAST_DEFAULT_WIDTH = 220;
-const POCKETCAST_DEFAULT_HEIGHT = 80;
+export const POCKETCAST_DEFAULT_WIDTH = 220;
+export const POCKETCAST_DEFAULT_HEIGHT = 80;
 
 function fetchYoutubeThumbnail( id: string ): string {
 	return `https://img.youtube.com/vi/${ encodeURIComponent( id ) }/mqdefault.jpg`;

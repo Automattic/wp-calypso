@@ -1,3 +1,4 @@
+import { POCKETCAST_DEFAULT_HEIGHT, POCKETCAST_DEFAULT_WIDTH } from '@automattic/api-core';
 import { readerThumbnailQuery } from '@automattic/api-queries';
 import { getUrlParts } from '@automattic/calypso-url';
 import { useQuery } from '@tanstack/react-query';
@@ -179,17 +180,16 @@ const checkEmbedSizeDimensions = ( embed ) => {
 	return _embed;
 };
 
-const POCKETCAST_FALLBACK_WIDTH = 220;
-const POCKETCAST_FALLBACK_HEIGHT = 80;
-
 function ReaderFeaturedVideoWithQuery( props ) {
 	const videoEmbed = checkEmbedSizeDimensions( props.videoEmbed );
 	const { service, id } = ( videoEmbed?.src && getEmbedMetadata( videoEmbed.src ) ) || {};
-	const { data: fetchedThumbnailUrl } = useQuery( readerThumbnailQuery( service, id ) );
+	const { data: fetchedThumbnailUrl, isSuccess } = useQuery( readerThumbnailQuery( service, id ) );
 
 	let thumbnailUrl = fetchedThumbnailUrl;
-	if ( videoEmbed.type === 'pocketcasts' && ! thumbnailUrl ) {
-		thumbnailUrl = `${ readerPocketCastImage }?w=${ POCKETCAST_FALLBACK_WIDTH }&h=${ POCKETCAST_FALLBACK_HEIGHT }`;
+	// Only apply the placeholder once the query has settled successfully, so the
+	// fallback image doesn't flash during the loading state.
+	if ( videoEmbed.type === 'pocketcasts' && isSuccess && ! thumbnailUrl ) {
+		thumbnailUrl = `${ readerPocketCastImage }?w=${ POCKETCAST_DEFAULT_WIDTH }&h=${ POCKETCAST_DEFAULT_HEIGHT }`;
 	}
 
 	let imageWidth = videoEmbed.width;
