@@ -9,10 +9,13 @@ import {
 	SocialFeedList,
 	SocialPostCard,
 	SocialProfileCard,
+	mapAtmosphereFeedItemToSocialPost,
+	type SocialPost,
 	type SocialProfileStat,
 } from 'calypso/reader/social';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { AuthorProfileHeader } from './author-profile-header';
+import { projectAtmosphereError } from './error-projection';
 import { errorMessage } from './profile-errors';
 import { getBlueskyProfileUrl, getProfileUrl, getThreadUrl } from './route';
 import type {
@@ -103,11 +106,12 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 		}
 	}, [ feed.isError, feed.error, connection.id, actor, dispatch ] );
 
-	const items: AtmosphereFeedItem[] = useMemo( () => {
+	const items: SocialPost[] = useMemo( () => {
 		// Bluesky's getAuthorFeed can return the same post URI more than once
 		// across pages (e.g., the author reposted their own post, or a
 		// pagination boundary races); dedupe so React's keyed list stays
-		// stable.
+		// stable. Dedup runs against the AtmosphereFeedItem shape (uri is
+		// preserved by the mapper) before mapping into SocialPost.
 		const seen = new Set< string >();
 		const deduped: AtmosphereFeedItem[] = [];
 		for ( const post of feed.data?.pages.flatMap( ( page ) => page.items ?? [] ) ?? [] ) {
@@ -117,7 +121,7 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 			seen.add( post.uri );
 			deduped.push( post );
 		}
-		return deduped;
+		return deduped.map( mapAtmosphereFeedItemToSocialPost );
 	}, [ feed.data ] );
 
 	const handleHeaderRetry = useCallback( () => {
@@ -182,10 +186,10 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 	);
 
 	const renderItem = useCallback(
-		( post: AtmosphereFeedItem ) => <SocialPostCard post={ post } variant="default" />,
+		( post: SocialPost ) => <SocialPostCard post={ post } variant="default" />,
 		[]
 	);
-	const itemKey = useCallback( ( post: AtmosphereFeedItem ) => post.uri, [] );
+	const itemKey = useCallback( ( post: SocialPost ) => post.uri, [] );
 
 	const stats: SocialProfileStat[] = profile.data
 		? [
@@ -283,11 +287,11 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 			<VStack spacing={ 4 } className="atmosphere-author-profile">
 				<AuthorProfileHeader connection={ connection } onBackToTimeline={ handleBackToTimeline } />
 				{ renderHeader() }
-				<SocialFeedList< AtmosphereFeedItem >
+				<SocialFeedList< SocialPost >
 					items={ items }
 					isPending={ feed.isPending }
 					isError={ feed.isError }
-					error={ feed.error ?? null }
+					error={ projectAtmosphereError( feed.error ) }
 					hasNextPage={ Boolean( feed.hasNextPage ) }
 					isFetchingNextPage={ feed.isFetchingNextPage }
 					fetchNextPage={ feed.fetchNextPage }

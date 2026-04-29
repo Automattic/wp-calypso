@@ -11,54 +11,18 @@ import {
 	mapAtmosphereFeedItemToSocialPost,
 } from 'calypso/reader/social';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import { projectAtmosphereError } from './error-projection';
 import {
 	getProfileUrl as buildProfileUrl,
 	getThreadUrl as buildThreadUrl,
 	type ProfileRefInput,
 } from './route';
-import type {
-	AtmosphereConnection,
-	AtmosphereError,
-	AtmosphereFeedItem,
-} from '@automattic/api-core';
-import type { SocialError, SocialPost } from 'calypso/reader/social';
+import type { AtmosphereConnection, AtmosphereFeedItem } from '@automattic/api-core';
+import type { SocialPost } from 'calypso/reader/social';
 import type { AppState } from 'calypso/types';
 
 interface TimelinePanelProps {
 	connection: AtmosphereConnection;
-}
-
-function projectAtmosphereError( err: AtmosphereError | null | undefined ): SocialError | null {
-	if ( ! err ) {
-		return null;
-	}
-	switch ( err.kind ) {
-		case 'auth_required':
-		case 'not_found':
-		case 'upstream_unavailable':
-			return { kind: err.kind };
-		case 'auth_failed':
-		case 'invalid_credentials':
-			// Stale credentials — same recovery as auth_required.
-			return { kind: 'auth_required' };
-		case 'connection_not_found':
-			// User-side connection deleted — semantically a not_found.
-			return { kind: 'not_found' };
-		case 'rate_limited':
-			return err.retry_after !== undefined
-				? { kind: 'rate_limited', retry_after: err.retry_after }
-				: { kind: 'rate_limited' };
-		case 'invalid_handle':
-		case 'bad_request':
-		case 'unknown':
-			return { kind: 'unknown', cause: err };
-		default:
-			return assertNever( err );
-	}
-}
-
-function assertNever( value: never ): never {
-	throw new Error( `Unhandled AtmosphereError kind: ${ JSON.stringify( value ) }` );
 }
 
 export function TimelinePanel( { connection }: TimelinePanelProps ) {
