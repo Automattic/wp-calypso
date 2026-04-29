@@ -10,7 +10,8 @@ import {
 } from '@wordpress/components';
 import { Icon, audio, check, layout, megaphone } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 export type PlanTier = 'free' | 'personal' | 'premium' | 'business';
@@ -167,6 +168,7 @@ const getSampleEpisodes = ( translate: Translate ) => [
 
 function Welcome( { planTier }: WelcomeProps ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const siteSlug = useSelector( getSelectedSiteSlug );
 
 	const plans = getPlans( translate );
@@ -190,6 +192,12 @@ function Welcome( { planTier }: WelcomeProps ) {
 	// Redirect through Calypso checkout, then back to /podcasting so the user can
 	// click Enable on their now-eligible plan.
 	const goToCheckout = ( planSlug: 'personal' | 'premium' | 'business' ) => {
+		dispatch(
+			recordTracksEvent( 'calypso_podcast_upgrade_clicked', {
+				plan_slug: planSlug,
+				current_tier: planTier,
+			} )
+		);
 		const returnTo = siteSlug ? `/podcasting/${ siteSlug }` : '/podcasting';
 		const path = siteSlug
 			? `/checkout/${ siteSlug }/${ planSlug }?redirect_to=${ encodeURIComponent( returnTo ) }`

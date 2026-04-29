@@ -10,6 +10,7 @@ import {
 	SelectControl,
 	TextControl,
 	TextareaControl,
+	__experimentalConfirmDialog as ConfirmDialog,
 	__experimentalHeading as Heading,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
@@ -22,7 +23,8 @@ import { decodeEntities } from 'calypso/lib/formatting';
 import PodcastCoverImageSetting from 'calypso/my-sites/site-settings/podcast-cover-image-setting';
 import useTopics from 'calypso/my-sites/site-settings/podcasting-details/use-topics';
 import wrapSettingsForm from 'calypso/my-sites/site-settings/wrap-settings-form';
-import { useSelector } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getMediaItem from 'calypso/state/selectors/get-media-item';
 import { getTerms } from 'calypso/state/terms/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -117,9 +119,11 @@ const PodcastingSettingsForm = ( {
 }: PodcastingFormProps ) => {
 	const translate = useTranslate();
 	const topicOptions = useTopicOptions();
+	const dispatch = useDispatch();
 
 	const [ isCoverImageUploading, setIsCoverImageUploading ] = useState( false );
 	const [ isAddCategoryOpen, setIsAddCategoryOpen ] = useState( false );
+	const [ isConfirmingDisable, setIsConfirmingDisable ] = useState( false );
 
 	const siteId = useSelector( getSelectedSiteId );
 	const site = useSelector( getSelectedSite );
@@ -227,14 +231,20 @@ const PodcastingSettingsForm = ( {
 		if ( disabled || ! isPodcastingEnabled ) {
 			return;
 		}
+		dispatch(
+			recordTracksEvent( 'calypso_podcast_disabled', { category_id: podcastingCategoryId } )
+		);
 		updateFields( { podcasting_category_id: '0' }, () => submitForm() );
-	}, [ disabled, isPodcastingEnabled, updateFields, submitForm ] );
+	}, [ disabled, isPodcastingEnabled, podcastingCategoryId, dispatch, updateFields, submitForm ] );
 
 	const onCategorySelected = useCallback(
 		( category: { ID: number } ) => {
+			if ( ! isPodcastingEnabled ) {
+				dispatch( recordTracksEvent( 'calypso_podcast_enabled', { category_id: category.ID } ) );
+			}
 			updateFields( { podcasting_category_id: String( category.ID ) }, () => submitForm() );
 		},
-		[ updateFields, submitForm ]
+		[ isPodcastingEnabled, dispatch, updateFields, submitForm ]
 	);
 
 	const onCategoryDropdownChange = useCallback(
@@ -619,14 +629,28 @@ const PodcastingSettingsForm = ( {
 							<Button
 								variant="secondary"
 								isDestructive
-								onClick={ onDisablePodcasting }
+								onClick={ () => setIsConfirmingDisable( true ) }
 								disabled={ disabled }
 							>
-								{ translate( 'Disable podcasting' ) }
+								{ translate( 'Disable' ) }
 							</Button>
 						</CardBody>
 					</Card>
 				) }
+
+				<ConfirmDialog
+					isOpen={ isConfirmingDisable }
+					onConfirm={ () => {
+						setIsConfirmingDisable( false );
+						onDisablePodcasting();
+					} }
+					onCancel={ () => setIsConfirmingDisable( false ) }
+					confirmButtonText={ translate( 'Disable' ) as string }
+				>
+					{ translate(
+						'Disable podcasting? Your feed will stop publishing. Your show details stay saved.'
+					) }
+				</ConfirmDialog>
 			</VStack>
 		</form>
 	);

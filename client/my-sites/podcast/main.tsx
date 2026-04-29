@@ -114,7 +114,7 @@ const PodcastMain = ( { section }: PodcastMainProps ) => {
 	const prevIsSetUp = useRef( isSetUp );
 	useEffect( () => {
 		if ( isSetupResolved && prevIsSetUp.current && ! isSetUp ) {
-			page.show( '/podcast' + pathSuffix );
+			page.show( '/podcasting' + pathSuffix );
 		}
 		prevIsSetUp.current = isSetUp;
 	}, [ isSetUp, isSetupResolved, pathSuffix ] );
