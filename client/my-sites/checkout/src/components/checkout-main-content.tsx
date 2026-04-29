@@ -87,6 +87,7 @@ import useCouponFieldState from '../hooks/use-coupon-field-state';
 import { validateContactDetails } from '../lib/contact-validation';
 import { updateCartContactDetailsForCheckout } from '../lib/update-cart-contact-details-for-checkout';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
+import { CheckoutMoneyBackGuarantee } from './CheckoutMoneyBackGuarantee';
 import AcceptTermsOfServiceCheckbox from './accept-terms-of-service-checkbox';
 import badge14Src from './assets/icons/badge-14.svg';
 import badge7Src from './assets/icons/badge-7.svg';
@@ -947,7 +948,13 @@ export default function CheckoutMainContent( {
 						<CheckoutFormSubmit
 							validateForm={ validateForm }
 							submitButtonHeader={ <SubmitButtonHeader /> }
-							submitButtonFooter={ hasCartJetpackProductsOnly ? <JetpackCheckoutSeals /> : null }
+							submitButtonFooter={
+								hasCartJetpackProductsOnly ? (
+									<JetpackCheckoutSeals />
+								) : (
+									<CheckoutMoneyBackGuarantee cart={ responseCart } />
+								)
+							}
 						/>
 					) }
 				</CheckoutStepGroup>
@@ -970,8 +977,12 @@ export default function CheckoutMainContent( {
 					) }
 					{ checkoutSummary }
 					{ checkoutMainContent }
-					<CheckoutProcessorNotice />
-					<CheckoutTrustCards cart={ responseCart } />
+					{ isLargeViewport && (
+						<>
+							<CheckoutProcessorNotice />
+							<CheckoutTrustCards cart={ responseCart } />
+						</>
+					) }
 				</WPCheckoutWrapper>
 			</SubmitButtonSlotContext.Provider>
 		);
@@ -1030,8 +1041,12 @@ export default function CheckoutMainContent( {
 					} }
 				</Step.TwoColumnLayout>
 				<LeaveCheckoutModal { ...leaveModalProps } />
-				<CheckoutProcessorNotice />
-				<CheckoutTrustCards cart={ responseCart } />
+				{ isLargeViewport && (
+					<>
+						<CheckoutProcessorNotice />
+						<CheckoutTrustCards cart={ responseCart } />
+					</>
+				) }
 			</StepContainerV2CheckoutFixer>
 		</SubmitButtonSlotContext.Provider>
 	);
@@ -2315,7 +2330,7 @@ const WPCheckoutCompletedMainContent = styled.div`
 `;
 
 const WPCheckoutSidebarContent = styled.div`
-	background: ${ colorStudio.colors[ 'White' ] };
+	background: ${ ( props ) => props.theme.colors.background };
 	grid-area: sidebar-content;
 	margin-top: var( --masterbar-checkout-height );
 
@@ -2324,6 +2339,7 @@ const WPCheckoutSidebarContent = styled.div`
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
+		background: ${ colorStudio.colors[ 'White' ] };
 		margin-top: 0;
 		padding: 144px 24px 24px 64px;
 
