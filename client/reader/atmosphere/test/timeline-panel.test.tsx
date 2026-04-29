@@ -252,3 +252,151 @@ describe( 'TimelinePanel', () => {
 		);
 	} );
 } );
+
+const connection7: AtmosphereConnection = {
+	id: 7,
+	did: 'did:plc:abc234567defghi234567jklab',
+	handle: 'alice.bsky.social',
+	display_name: 'Alice',
+	avatar: null,
+};
+
+function makeFeedItem( overrides: Record< string, unknown > = {} ) {
+	return {
+		...makePost( 'at://did:plc:abc234567defghi234567jklab/app.bsky.feed.post/3kabcdefghijk' ),
+		...overrides,
+	};
+}
+
+describe( 'TimelinePanel in-app click destinations', () => {
+	beforeEach( () => {
+		jest
+			.spyOn( analytics, 'recordReaderTracksEvent' )
+			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+	} );
+
+	afterEach( () => {
+		nock.cleanAll();
+		jest.restoreAllMocks();
+	} );
+
+	const TARGET_URI = 'at://did:plc:abc234567defghi234567jkl/app.bsky.feed.post/3kabcdefghijk';
+	const QUOTED_URI = 'at://did:plc:def234567defghi234567jkl/app.bsky.feed.post/3kdefghijklmn';
+	const PARENT_URI = 'at://did:plc:ghi234567defghi234567jkl/app.bsky.feed.post/3kghijklmnopq';
+
+	function pageWithReplyAndQuote() {
+		return {
+			items: [
+				makeFeedItem( {
+					uri: TARGET_URI,
+					reply_parent: {
+						uri: PARENT_URI,
+						author: {
+							did: 'did:plc:ghi234567defghi234567jkl',
+							handle: 'bob.bsky.social',
+						},
+					},
+					embed: {
+						type: 'quote',
+						post: makeFeedItem( {
+							uri: QUOTED_URI,
+							bluesky_url: 'https://bsky.app/profile/jane.bsky.social/post/3kdefghijklmn',
+						} ),
+					},
+					counts: { replies: 5, reposts: 0, likes: 0, quotes: 0 },
+					bluesky_url: 'https://bsky.app/profile/jane.bsky.social/post/3kabcdefghijk',
+				} ),
+			],
+			cursor: null,
+		};
+	}
+
+	it( 'card-link timestamp uses the in-app thread URL', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( /\/connections\/7\/timeline/ )
+			.query( true )
+			.reply( 200, pageWithReplyAndQuote() );
+
+		renderWithProvider( <TimelinePanel connection={ connection7 } />, {
+			queryClient: makeQueryClient(),
+		} );
+
+		// Wait for posts to render by waiting for at least one link to appear
+		await screen.findAllByRole( 'link' );
+		const inAppLinks = screen
+			.getAllByRole( 'link' )
+			.filter( ( a ) => a.getAttribute( 'href' )?.startsWith( '/reader/atmosphere/7/thread/' ) );
+		expect( inAppLinks.length ).toBeGreaterThanOrEqual( 1 );
+	} );
+
+	it( 'replies count is a real <a> to the in-app thread URL', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( /\/connections\/7\/timeline/ )
+			.query( true )
+			.reply( 200, pageWithReplyAndQuote() );
+
+		renderWithProvider( <TimelinePanel connection={ connection7 } />, {
+			queryClient: makeQueryClient(),
+		} );
+
+		const repliesLink = await screen.findByRole( 'link', { name: /replies/i } );
+		expect( repliesLink ).toHaveAttribute(
+			'href',
+			expect.stringContaining( '/reader/atmosphere/7/thread/' )
+		);
+	} );
+
+	it( 'reply-context preface is a real <a> to the parent thread URL', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( /\/connections\/7\/timeline/ )
+			.query( true )
+			.reply( 200, pageWithReplyAndQuote() );
+
+		renderWithProvider( <TimelinePanel connection={ connection7 } />, {
+			queryClient: makeQueryClient(),
+		} );
+
+		const link = await screen.findByRole( 'link', { name: /Replying to @bob/i } );
+		expect( link ).toHaveAttribute(
+			'href',
+			expect.stringContaining( '/reader/atmosphere/7/thread/did:plc:ghi' )
+		);
+	} );
+
+	it( 'quote embed routes in-app to the quoted post', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( /\/connections\/7\/timeline/ )
+			.query( true )
+			.reply( 200, pageWithReplyAndQuote() );
+
+		renderWithProvider( <TimelinePanel connection={ connection7 } />, {
+			queryClient: makeQueryClient(),
+		} );
+
+		await screen.findAllByRole( 'link' );
+		const quoteLink = screen
+			.getAllByRole( 'link' )
+			.find( ( a ) => a.className.includes( 'embed-quote-link' ) );
+		expect( quoteLink ).toHaveAttribute(
+			'href',
+			expect.stringContaining( '/reader/atmosphere/7/thread/did:plc:def' )
+		);
+	} );
+
+	it( 'author chip still points at bsky.app (slice-6 territory)', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( /\/connections\/7\/timeline/ )
+			.query( true )
+			.reply( 200, pageWithReplyAndQuote() );
+
+		renderWithProvider( <TimelinePanel connection={ connection7 } />, {
+			queryClient: makeQueryClient(),
+		} );
+
+		await screen.findAllByRole( 'link' );
+		const authorLink = screen
+			.getAllByRole( 'link' )
+			.find( ( a ) => a.getAttribute( 'href' )?.startsWith( 'https://bsky.app/profile/' ) );
+		expect( authorLink ).toBeDefined();
+	} );
+} );

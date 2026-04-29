@@ -21,6 +21,9 @@ import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 
+const loadJitm = () =>
+	import( /* webpackChunkName: "async-load-calypso-blocks-jitm" */ 'calypso/blocks/jitm' );
+
 export class SiteNotice extends Component {
 	static propTypes = {
 		site: PropTypes.object,
@@ -120,11 +123,7 @@ export class SiteNotice extends Component {
 				{ siteRedirectNotice }
 				{ showJitms && (
 					<AsyncLoad
-						require={ () =>
-							import(
-								/* webpackChunkName: "async-load-calypso-blocks-jitm" */ 'calypso/blocks/jitm'
-							)
-						}
+						require={ loadJitm }
 						placeholder={ null }
 						messagePath="calypso:sites:sidebar_notice"
 						template="sidebar-banner"

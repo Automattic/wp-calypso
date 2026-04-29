@@ -6,14 +6,14 @@ import { useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { FeedListEmpty } from './feed-list-empty';
 import { FeedListSkeleton } from './feed-list-skeleton';
-import type { AtmosphereError } from '@automattic/api-core';
+import type { SocialError } from '../../types';
 import type { ReactElement } from 'react';
 
 interface SocialFeedListProps< T > {
 	items: T[];
 	isPending: boolean;
 	isError: boolean;
-	error: AtmosphereError | null;
+	error: SocialError | null;
 	hasNextPage: boolean;
 	isFetchingNextPage: boolean;
 	fetchNextPage: () => void;
@@ -24,6 +24,9 @@ interface SocialFeedListProps< T > {
 	emptyLine: string;
 	emptyActionLabel?: string;
 	emptyActionURL?: string;
+	protocolLabel: string;
+	protocolHomeURL: string;
+	protocolHomeLabel: string;
 }
 
 export function SocialFeedList< T >( props: SocialFeedListProps< T > ) {
@@ -42,6 +45,9 @@ export function SocialFeedList< T >( props: SocialFeedListProps< T > ) {
 		emptyLine,
 		emptyActionLabel,
 		emptyActionURL,
+		protocolLabel,
+		protocolHomeURL,
+		protocolHomeLabel,
 	} = props;
 
 	const translate = useTranslate();
@@ -64,6 +70,9 @@ export function SocialFeedList< T >( props: SocialFeedListProps< T > ) {
 				onRetry={ refetch }
 				emptyTitle={ emptyTitle }
 				emptyLine={ emptyLine }
+				protocolLabel={ protocolLabel }
+				protocolHomeURL={ protocolHomeURL }
+				protocolHomeLabel={ protocolHomeLabel }
 			/>
 		);
 	}
@@ -77,6 +86,9 @@ export function SocialFeedList< T >( props: SocialFeedListProps< T > ) {
 				emptyLine={ emptyLine }
 				emptyActionLabel={ emptyActionLabel }
 				emptyActionURL={ emptyActionURL }
+				protocolLabel={ protocolLabel }
+				protocolHomeURL={ protocolHomeURL }
+				protocolHomeLabel={ protocolHomeLabel }
 			/>
 		);
 	}

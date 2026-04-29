@@ -582,6 +582,9 @@ function setUpCSP( req, res, next ) {
 			'*.wordpress.com',
 			'*.files.wordpress.com',
 			'*.gravatar.com',
+			'https://cdn.bsky.app', // Bluesky avatars + post images (Reader ATmosphere)
+			'https://video.bsky.app', // Bluesky video thumbnails (Reader ATmosphere video posters)
+			'https://video.cdn.bsky.app', // Bluesky video CDN (thumbnail URLs 302-redirect here)
 			'https://t.co', // Twitter image links
 			'https://www.google-analytics.com',
 			'*.doubleclick.net', // Google DoubleClick tracking pixels (ad.doubleclick.net, *.fls.doubleclick.net, etc.)
@@ -652,7 +655,17 @@ function setUpCSP( req, res, next ) {
 			'https://cdn.smooch.io', // Smooch/Sunshine Conversations fonts
 			'data:', // should remove 'data:' ASAP
 		],
-		'media-src': [ "'self'" ],
+		'media-src': [
+			"'self'",
+			// hls.js attaches a MediaSource to the <video> element via a
+			// runtime-generated blob: URL (the MediaSource object URL).
+			// Without `blob:` here, browsers report — and would, once we
+			// stop running CSP in Report-Only mode, block — Reader
+			// ATmosphere video playback in non-Safari browsers.
+			'blob:',
+			'https://video.bsky.app', // Bluesky video manifests (Reader ATmosphere thread view, Safari native HLS path)
+			'https://video.cdn.bsky.app', // Bluesky video CDN (segment URLs 302-redirect here)
+		],
 		'connect-src': [
 			"'self'",
 			'https://*.wordpress.com/',
@@ -672,6 +685,8 @@ function setUpCSP( req, res, next ) {
 			'https://survey.survicate.com', // Survicate API
 			'*.sentry.io',
 			'*.reddit.com',
+			'https://video.bsky.app', // Bluesky video manifests (hls.js fetches the HLS playlist for Reader ATmosphere thread view)
+			'https://video.cdn.bsky.app', // Bluesky video CDN (segment URLs 302-redirect here)
 			'https://analytics.tiktok.com', // TikTok tracking pixel
 			'https://a.quora.com', //Quora tracking pixel
 			// Payment provider APIs (for tokenization and payment processing)

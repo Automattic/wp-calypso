@@ -18,6 +18,15 @@ import { getOnThisDayStreamKey } from './get-stream-key';
 import { OnThisDay } from './index';
 import '../following/style.scss';
 
+const loadQuickPost = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-reader-components-quick-post" */ 'calypso/reader/components/quick-post'
+	);
+const loadTrackResurrections = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-lib-analytics-track-resurrections" */ 'calypso/lib/analytics/track-resurrections'
+	);
+
 function OnThisDayStream() {
 	const { currentView } = useFollowingView();
 	const query = useSelector( getCurrentQueryArguments );
@@ -71,14 +80,7 @@ function OnThisDayStream() {
 					{ hasSites && (
 						<Card className="following-stream__quick-post-card">
 							<CardBody>
-								<AsyncLoad
-									require={ () =>
-										import(
-											/* webpackChunkName: "async-load-calypso-reader-components-quick-post" */ 'calypso/reader/components/quick-post'
-										)
-									}
-									placeholder={ <QuickPostSkeleton /> }
-								/>
+								<AsyncLoad require={ loadQuickPost } placeholder={ <QuickPostSkeleton /> } />
 							</CardBody>
 						</Card>
 					) }
@@ -89,14 +91,7 @@ function OnThisDayStream() {
 				</ReaderStream>
 			) }
 			<ResurrectedWelcomeModalGate onVisibilityChange={ setIsResurrectedModalVisible } />
-			<AsyncLoad
-				require={ () =>
-					import(
-						/* webpackChunkName: "async-load-calypso-lib-analytics-track-resurrections" */ 'calypso/lib/analytics/track-resurrections'
-					)
-				}
-				placeholder={ null }
-			/>
+			<AsyncLoad require={ loadTrackResurrections } placeholder={ null } />
 		</>
 	);
 }

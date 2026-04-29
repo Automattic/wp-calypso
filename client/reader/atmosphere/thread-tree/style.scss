@@ -1,0 +1,54 @@
+.thread-tree-skeleton {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	padding-block: 16px;
+}
+
+.thread-tree-skeleton__row {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	padding-inline: 16px;
+}
+
+.thread-tree-skeleton__row--large {
+	padding-block: 8px;
+}
+
+.thread-tree-skeleton__lines {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.thread-tombstone {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 16px;
+	border: 1px solid var( --studio-gray-5, #dcdcde );
+	border-radius: 4px;
+	background: var( --studio-gray-0, #f6f7f7 );
+	color: var( --studio-gray-50, #646970 );
+	font-size: 0.875rem;
+}
+
+.thread-node {
+	padding-block: 0;
+	// `--thread-depth` is set by ThreadNode and is already capped at the
+	// max visual depth, so this works for any `depth` value.
+	padding-inline-start: calc( var( --thread-depth, 0 ) * 24px );
+
+	&.thread-node--capped::before {
+		content: '↳';
+		margin-inline-end: 4px;
+		color: var( --studio-gray-30, #a7aaad );
+	}
+
+	&.is-target {
+		background: var( --studio-gray-0, #f6f7f7 );
+		box-shadow: inset 3px 0 0 var( --studio-blue-50, #2271b1 );
+	}
+}

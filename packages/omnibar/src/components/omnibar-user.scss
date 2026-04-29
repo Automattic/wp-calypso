@@ -6,10 +6,15 @@
 
 	.omnibar__user-avatar {
 		display: inline-flex;
-		width: 20px;
-		height: 20px;
 		border-radius: 50%;
 		overflow: hidden;
+		width: 26px;
+		height: 26px;
+
+		@media ( min-width: 782px ) {
+			width: 20px;
+			height: 20px;
+		}
 
 		&.omnibar__user-info-avatar {
 			width: 56px;

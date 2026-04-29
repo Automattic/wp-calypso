@@ -11,6 +11,11 @@ import { recordTrack } from 'calypso/reader/stats';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import renderHeaderSection from '../lib/header-section';
 
+const loadSearchStream = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-reader-search-stream" */ 'calypso/reader/search-stream'
+	);
+
 const analyticsPageTitle = 'Reader';
 
 // TODO: delete this after launching sites in search
@@ -69,11 +74,7 @@ const exported = {
 				<div>
 					<div>
 						<AsyncLoad
-							require={ () =>
-								import(
-									/* webpackChunkName: "async-load-calypso-reader-search-stream" */ 'calypso/reader/search-stream'
-								)
-							}
+							require={ loadSearchStream }
 							key="search"
 							streamKey={ streamKey }
 							isSuggestion={ isQuerySuggestion }

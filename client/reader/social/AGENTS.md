@@ -57,6 +57,12 @@ client/reader/social/
       test/
 ```
 
+The atmosphere thread surface (`ThreadTree`, `ThreadNode`, `ThreadTombstone`,
+`ThreadTreeSkeleton`) lives at `client/reader/atmosphere/thread-tree/` —
+the layout is bsky-shaped (AT-URI-based parent walking, `AtmosphereThreadNode`
+recursion, scroll-to-target via at:// URI). When Mastodon's slice 5 ships
+its own thread view, it adds a sibling under `client/reader/mastodon/`.
+
 ## Architectural decisions
 
 ### Bluesky-shaped types today, abstract when Mastodon arrives
@@ -103,6 +109,28 @@ Use the `SocialAnalyticsProvider` context, not direct `recordReaderTracksEvent` 
 
 All Reader Tracks events use the `calypso_reader_*` prefix per `client/reader/AGENTS.md`. Emit them via the `recordReaderTracksEvent` Redux action — `recordTrack()` from `client/reader/stats` is deprecated.
 
+Tracks events emitted from click-destination surfaces (timestamp anchor, quote embed, replies count, reply-context preface) gain a `destination` property (`'in_app_thread' | 'bsky_app'`) so dashboards can split by routing behaviour without renaming the events.
+
+### URL resolution (slice 5+)
+
+Post-card subcomponents that re-target click destinations (timestamp anchor in
+`<PostCardHeader>`, `<PostCardEmbedQuote>`, `<PostCardCounts>`'s replies count,
+`<PostCardHeader>`'s reply-context preface) read an optional `getThreadUrl`
+resolver from the analytics context:
+
+```ts
+interface SocialAnalyticsContextValue {
+	// ...
+	getThreadUrl?: ( postUri: string ) => string | null;
+}
+```
+
+When `getThreadUrl(uri)` returns a string, the click target is in-app (same
+tab, no `rel`). When it returns `null` (or the resolver isn't set), the
+slice-4 bsky.app fallback is used. Per-protocol shells (`TimelinePanel`,
+`ThreadPanel`) bind the connection ID and the protocol-specific URL builder
+(e.g. `getThreadUrl` from `client/reader/atmosphere/route.ts`).
+
 ### HTML sanitisation (defence-in-depth)
 
 Every place this directory injects HTML from a third-party network — `SocialProfileCard` for bios, `PostCardBody` for post content — runs the input through DOMPurify with a tight allow-list **before** handing it to React's HTML-injection prop. The backend already runs `wp_kses` over the same content with a matching allow-list, but the client double-sanitises so a future backend change can't silently widen what reaches the DOM.
@@ -125,9 +153,54 @@ Allow-list shape:
 
 Don't replace this with a `<a>`-wrapping-the-whole-card structure (illegal nested anchors) or `onClick` on a `<div>` (kills keyboard navigation and screen-reader semantics).
 
+### Inline video — thumbnail vs. expanded
+
+`<PostCardEmbedVideo>` defaults to thumbnail-only (slice-4 behaviour, used by
+the timeline). When `expanded={true}`, the component renders a native
+`<video>` element pointed at the HLS playlist exposed in
+`AtmosphereEmbedVideo.playlist` (served by `video.bsky.app`):
+
+- Safari / iOS WebKit play HLS natively — the playlist is set as `video.src`.
+- Other browsers lazy-load `hls.js` via dynamic `import()`, so timeline pages
+  and thread pages without expanded video pay zero bytes for it. The Reader
+  webpack chunk only pulls `hls.js` in when a thread root carries video AND
+  the browser lacks native HLS support.
+
+The thumbnail is used as the `<video poster>` so users see a frame before
+hitting play. `<SocialPostCard>` forwards `expandedVideo` only for the
+highlighted root node inside `<ThreadTree>` — replies and parents stay
+thumbnail-only.
+
+This mirrors what bsky.app's own web app and other modern Bluesky clients do.
+The static `embed.bsky.app` widget was an earlier attempt but doesn't include
+an inline player for video posts — it's a "view on bluesky" surface, not a
+playback surface.
+
+CSP hosts required for the ATmosphere thread view
+(`client/server/pages/index.js`):
+- `img-src` += `https://cdn.bsky.app` (avatars + post images),
+  `https://video.bsky.app` (video poster thumbnails),
+  `https://video.cdn.bsky.app` (the thumbnail URL 302-redirects here, same
+  redirect pattern as HLS segments).
+- `media-src` += `blob:` (MediaSource object URLs created by hls.js when it
+  attaches to the `<video>` element on non-Safari browsers),
+  `https://video.bsky.app`, `https://video.cdn.bsky.app` (Safari native HLS
+  path; segment URLs 302-redirect from `video.bsky.app` to the CDN).
+- `connect-src` += same two `video.*` hosts (`hls.js` follows the same
+  redirect via XHR/fetch).
+
+hls.js is constructed with `enableWorker: false` so transmuxing runs on
+the main thread. That keeps a `worker-src blob:` allowance off the CSP —
+hls.js's default worker is loaded from a runtime-generated `blob:` URL,
+which would otherwise need to be permitted. Bluesky videos are short
+enough that main-thread transmuxing is fine; revisit if we ever ship
+longer-form video.
+
 ### Click destinations
 
-Today every click destination opens `bsky.app` in a new tab (`target="_blank" rel="noopener noreferrer"`). Slice 5 will rewrite three of those (parent post → in-app thread route, quote → in-app thread route, author → in-app profile route) without touching the card-link plumbing itself. When wiring a new card surface, route through `PostCardLink` rather than spreading `target="_blank"` anchors directly across subcomponents.
+As of slice 5, the card-link / quote / replies-count / reply-context surfaces all route in-app via `getThreadUrl` when the resolver is set by the per-protocol shell. The bsky.app `target="_blank"` fallback is retained for contexts where no resolver is bound (e.g. the timeline before a thread is opened). Author chip still opens bsky.app in a new tab — in-app author profile routing is slice-6 territory.
+
+When wiring a new card surface, route through `PostCardLink` rather than spreading `target="_blank"` anchors directly across subcomponents. Consult `getThreadUrl` from the analytics context before constructing any post-destination URL.
 
 ## Boundaries (for new code)
 
@@ -180,6 +253,8 @@ Future-extraction candidates flagged for later PRs (currently in `client/reader/
 
 - Reader-wide guidance: [`client/reader/AGENTS.md`](../AGENTS.md).
 - Calypso-wide guidance: [`client/AGENTS.md`](../../AGENTS.md).
+- Slice 5 design (in-app thread view): `~/notes/1-Projects/code/a8c/calypso/2026-04-28-reader-atmosphere-slice5-design.md`.
+- Slice 5 plan: `~/notes/1-Projects/code/a8c/calypso/2026-04-28-reader-atmosphere-slice5-plan.md`.
 - Slice 4 design (Bluesky timeline frontend): `~/notes/1-Projects/code/a8c/calypso/2026-04-27-reader-atmosphere-slice4-frontend-design.md`.
 - Slice 4 plan (task-by-task): `~/notes/1-Projects/code/a8c/calypso/2026-04-27-reader-atmosphere-slice4-frontend-plan.md`.
 - Slice 1 (connections + profile): `~/notes/1-Projects/code/a8c/calypso/2026-04-22-reader-atmosphere-slice1-design.md` and `…-plan.md`.

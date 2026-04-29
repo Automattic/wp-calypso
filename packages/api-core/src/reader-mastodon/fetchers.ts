@@ -5,6 +5,7 @@ import type {
 	MastodonConnectionDetails,
 	MastodonConnectionsResponse,
 	MastodonCreateConnectionResponse,
+	MastodonTimelinePage,
 } from './types';
 
 const NAMESPACE = 'wpcom/v2';
@@ -63,6 +64,36 @@ export async function getMastodonConnection( id: number ): Promise< MastodonConn
 			path: `/reader/mastodon/connections/${ id }`,
 			apiNamespace: NAMESPACE,
 		} ) ) as MastodonConnectionDetails;
+	} catch ( raw ) {
+		throw classifyMastodonError( raw );
+	}
+}
+
+export interface GetMastodonTimelineParams {
+	connectionId: number;
+	cursor?: string;
+	limit?: number;
+}
+
+export async function getMastodonTimeline(
+	params: GetMastodonTimelineParams
+): Promise< MastodonTimelinePage > {
+	const { connectionId, cursor, limit } = params;
+	const query: Record< string, string > = {};
+	if ( cursor ) {
+		query.cursor = cursor;
+	}
+	if ( limit ) {
+		query.limit = String( limit );
+	}
+	try {
+		return ( await wpcom.req.get(
+			{
+				path: `/reader/mastodon/connections/${ connectionId }/timeline`,
+				apiNamespace: NAMESPACE,
+			},
+			query
+		) ) as MastodonTimelinePage;
 	} catch ( raw ) {
 		throw classifyMastodonError( raw );
 	}

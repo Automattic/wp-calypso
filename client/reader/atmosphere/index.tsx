@@ -7,6 +7,7 @@ import {
 	atmosphereLanding,
 	atmosphereConnect,
 	atmosphereIdRedirect,
+	atmosphereThread,
 	atmosphereAccount,
 } from './controller';
 
@@ -28,6 +29,14 @@ export default function () {
 		clientRender
 	);
 	page( '/reader/atmosphere/:id(\\d+)', atmosphereIdRedirect );
+	page(
+		'/reader/atmosphere/:id(\\d+)/thread/:did/:rkey',
+		sidebar,
+		setBeforePrimary,
+		atmosphereThread,
+		makeLayout,
+		clientRender
+	);
 	page(
 		'/reader/atmosphere/:id(\\d+)/:tab',
 		sidebar,

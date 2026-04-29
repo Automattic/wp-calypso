@@ -15,6 +15,11 @@ import type { Purchase, GetManagePurchaseUrlFor } from 'calypso/lib/purchases/ty
 
 import './style.scss';
 
+const loadProductPlanOverlapNotices = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-blocks-product-plan-overlap-notices" */ 'calypso/blocks/product-plan-overlap-notices'
+	);
+
 export default function PurchasesSite(
 	props:
 		| {
@@ -52,11 +57,7 @@ export default function PurchasesSite(
 			<QuerySites siteId={ siteId } />
 
 			<AsyncLoad
-				require={ () =>
-					import(
-						/* webpackChunkName: "async-load-calypso-blocks-product-plan-overlap-notices" */ 'calypso/blocks/product-plan-overlap-notices'
-					)
-				}
+				require={ loadProductPlanOverlapNotices }
 				placeholder={ null }
 				plans={ JETPACK_PLANS }
 				products={ JETPACK_PRODUCTS_LIST }

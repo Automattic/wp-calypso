@@ -85,12 +85,24 @@ export interface AtmosphereEmbedExternal {
 	thumb: string | null;
 }
 
-export interface AtmosphereQuoteTombstone {
-	type: 'not_found' | 'blocked';
-	uri: string;
-	reason: 'notfound' | 'blocked';
-	author?: { did: string };
+export interface AtmosphereActorRef {
+	did: string;
 }
+
+export interface AtmosphereQuoteNotFoundTombstone {
+	type: 'not_found';
+	uri: string;
+}
+
+export interface AtmosphereQuoteBlockedTombstone {
+	type: 'blocked';
+	uri: string;
+	author: AtmosphereActorRef;
+}
+
+export type AtmosphereQuoteTombstone =
+	| AtmosphereQuoteNotFoundTombstone
+	| AtmosphereQuoteBlockedTombstone;
 
 export interface AtmosphereEmbedQuote {
 	type: 'quote';
@@ -130,4 +142,31 @@ export interface AtmosphereFeedItem {
 export interface AtmosphereTimelinePage {
 	items: AtmosphereFeedItem[];
 	cursor: string | null;
+}
+
+export interface AtmosphereThreadPostNode {
+	type: 'post';
+	post: AtmosphereFeedItem;
+	parent: AtmosphereThreadNode | null;
+	replies: AtmosphereThreadNode[];
+}
+
+export interface AtmosphereThreadNotFoundNode {
+	type: 'not_found';
+	uri: string;
+}
+
+export interface AtmosphereThreadBlockedNode {
+	type: 'blocked';
+	uri: string;
+	author: AtmosphereActorRef;
+}
+
+export type AtmosphereThreadNode =
+	| AtmosphereThreadPostNode
+	| AtmosphereThreadNotFoundNode
+	| AtmosphereThreadBlockedNode;
+
+export interface AtmosphereThreadResponse {
+	thread: AtmosphereThreadNode;
 }

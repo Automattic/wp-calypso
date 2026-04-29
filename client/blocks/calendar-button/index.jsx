@@ -5,6 +5,11 @@ import PropTypes from 'prop-types';
 import { createRef, Component, Fragment } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 
+const loadCalendarPopover = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-blocks-calendar-popover" */ 'calypso/blocks/calendar-popover'
+	);
+
 const noop = () => {};
 
 class CalendarButton extends Component {
@@ -91,11 +96,7 @@ class CalendarButton extends Component {
 		return (
 			<AsyncLoad
 				{ ...calendarProperties }
-				require={ () =>
-					import(
-						/* webpackChunkName: "async-load-calypso-blocks-calendar-popover" */ 'calypso/blocks/calendar-popover'
-					)
-				}
+				require={ loadCalendarPopover }
 				placeholder={ null }
 				isVisible
 				context={ this.buttonRef.current }
