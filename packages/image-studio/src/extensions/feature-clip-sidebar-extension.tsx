@@ -77,6 +77,14 @@ let pluginRegistered = false;
  * editor package isn't loaded on the page (e.g. wp-admin Media Library).
  */
 export function registerFeatureClipSidebar(): void {
+	// Server-side dev-mode flag — synchronous read, no network. The host
+	// platform decides which environments expose this panel and injects the
+	// flag inline before this script runs. Gate first so production sites
+	// skip the rest of the checks entirely.
+	if ( ! window.imageStudioData?.isDevMode ) {
+		return;
+	}
+
 	if ( pluginRegistered ) {
 		return;
 	}
