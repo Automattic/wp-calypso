@@ -136,6 +136,7 @@ export default function AmplifySiteSelect() {
 				/>
 			</div>
 			<Button
+				__next40pxDefaultSize
 				variant="primary"
 				disabled={ ! selectedUrl }
 				onClick={ () => {

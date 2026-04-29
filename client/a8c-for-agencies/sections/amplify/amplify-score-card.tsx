@@ -6,12 +6,12 @@ type Mode = 'human' | 'ai';
 
 type Metric = {
 	label: string;
-	value: number;
+	score: number;
+	max: number;
 };
 
 type ModeData = {
 	score: number;
-	title: string;
 	body: string;
 	metrics: Metric[];
 };
@@ -20,14 +20,26 @@ const RADIUS = 36;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 const SAMPLE_URL = 'yourgroovydomain.com';
 
-function severityFor( value: number ): 'good' | 'warn' | 'danger' {
-	if ( value >= 80 ) {
+function severityFor( score: number, max: number ): 'good' | 'warn' | 'danger' {
+	const pct = ( score / max ) * 100;
+	if ( pct >= 80 ) {
 		return 'good';
 	}
-	if ( value >= 50 ) {
+	if ( pct >= 50 ) {
 		return 'warn';
 	}
 	return 'danger';
+}
+
+function thresholdLabel( score: number ): string {
+	// 80–100 Strong · 50–79 Needs work · 0–49 At risk
+	if ( score >= 80 ) {
+		return __( 'Strong' );
+	}
+	if ( score >= 50 ) {
+		return __( 'Needs work' );
+	}
+	return __( 'At risk' );
 }
 
 export default function AmplifyScoreCard() {
@@ -35,37 +47,41 @@ export default function AmplifyScoreCard() {
 
 	const modes: Record< Mode, ModeData > = {
 		human: {
-			score: 76,
-			title: __( 'Room to amplify' ),
+			score: 86,
 			body: __(
-				'Strong foundations, but a few areas may be costing you clients before they reach out.'
+				'Your site is set up to win business. A few targeted refinements will keep you ahead.'
 			),
 			metrics: [
-				{ label: __( 'First impressions' ), value: 88 },
-				{ label: __( 'Trust signals' ), value: 82 },
-				{ label: __( 'Portfolio quality' ), value: 78 },
-				{ label: __( 'SEO' ), value: 71 },
-				{ label: __( 'Service clarity' ), value: 65 },
+				{ label: __( 'Trust signals' ), score: 16, max: 18 },
+				{ label: __( 'Contact & conversion' ), score: 13, max: 15 },
+				{ label: __( 'SEO' ), score: 10, max: 13 },
+				{ label: __( 'Mobile experience' ), score: 12, max: 13 },
+				{ label: __( 'Content quality' ), score: 10, max: 12 },
+				{ label: __( 'Design & experience' ), score: 9, max: 11 },
+				{ label: __( 'Accessibility' ), score: 8, max: 10 },
+				{ label: __( 'Audience resonance' ), score: 8, max: 8 },
 			],
 		},
 		ai: {
-			score: 52,
-			title: __( 'Needs attention' ),
+			score: 42,
 			body: __(
-				'AI agents are struggling to read and rank your site. These gaps are costing you visibility.'
+				'AI tools can’t read or rank your site reliably yet. These gaps are likely costing you visibility.'
 			),
 			metrics: [
-				{ label: __( 'Technical performance' ), value: 74 },
-				{ label: __( 'Content specificity' ), value: 66 },
-				{ label: __( 'Crawl health' ), value: 61 },
-				{ label: __( 'AEO readiness' ), value: 48 },
-				{ label: __( 'Schema data' ), value: 29 },
+				{ label: __( 'Technical health' ), score: 12, max: 20 },
+				{ label: __( 'Structured data' ), score: 6, max: 18 },
+				{ label: __( 'AEO readiness' ), score: 6, max: 16 },
+				{ label: __( 'E-E-A-T signals' ), score: 6, max: 14 },
+				{ label: __( 'Content freshness' ), score: 5, max: 12 },
+				{ label: __( 'Entity clarity' ), score: 4, max: 10 },
+				{ label: __( 'Content specificity' ), score: 3, max: 7 },
+				{ label: 'llms.txt', score: 0, max: 3 },
 			],
 		},
 	};
 
 	const data = modes[ mode ];
-	const ringSeverity = severityFor( data.score );
+	const ringSeverity = severityFor( data.score, 100 );
 	const offset = CIRCUMFERENCE - ( data.score / 100 ) * CIRCUMFERENCE;
 
 	return (
@@ -85,7 +101,7 @@ export default function AmplifyScoreCard() {
 					} ) }
 					onClick={ () => setMode( 'human' ) }
 				>
-					{ __( 'Human mode' ) }
+					{ __( 'Human-centric analysis' ) }
 				</button>
 				<button
 					type="button"
@@ -96,7 +112,7 @@ export default function AmplifyScoreCard() {
 					} ) }
 					onClick={ () => setMode( 'ai' ) }
 				>
-					{ __( 'AI mode' ) }
+					{ __( 'AI analysis' ) }
 				</button>
 			</div>
 
@@ -119,24 +135,29 @@ export default function AmplifyScoreCard() {
 					</div>
 				</div>
 				<div>
-					<div className="amplify-landing-score-title">{ data.title }</div>
+					<div className={ clsx( 'amplify-landing-score-title', ringSeverity ) }>
+						{ thresholdLabel( data.score ) }
+					</div>
 					<div className="amplify-landing-score-body">{ data.body }</div>
 				</div>
 			</div>
 
 			<div className="amplify-landing-bars">
 				{ data.metrics.map( ( metric ) => {
-					const sev = severityFor( metric.value );
+					const sev = severityFor( metric.score, metric.max );
+					const pct = ( metric.score / metric.max ) * 100;
 					return (
 						<div key={ metric.label } className="amplify-landing-bar-row">
 							<span className="amplify-landing-bar-label">{ metric.label }</span>
 							<div className="amplify-landing-bar-track">
 								<div
 									className={ clsx( 'amplify-landing-bar-fill', sev ) }
-									style={ { inlineSize: `${ metric.value }%` } }
+									style={ { inlineSize: `${ pct }%` } }
 								/>
 							</div>
-							<span className={ clsx( 'amplify-landing-bar-val', sev ) }>{ metric.value }</span>
+							<span className={ clsx( 'amplify-landing-bar-val', sev ) }>
+								{ metric.score } / { metric.max }
+							</span>
 						</div>
 					);
 				} ) }
