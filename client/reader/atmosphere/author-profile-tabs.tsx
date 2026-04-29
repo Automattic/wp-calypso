@@ -158,7 +158,7 @@ export function AuthorProfileTabs( { connectionId, actor, activeFilter }: Author
 			variation="minimal"
 			enforceTabsView
 		>
-			<NavTabs>
+			<NavTabs hasHorizontalScroll>
 				{ tabs.map( ( tab ) => (
 					<NavItem
 						key={ tab.slug }
