@@ -70,6 +70,10 @@
 		color: var( --dashboard-surface__border-color );
 		border-color: var( --dashboard-surface__border-color );
 	}
+
+	.components-card__header {
+		border-bottom-color: var( --dashboard-surface__border-color );
+	}
 }
 
 /* Panel */
@@ -365,7 +369,9 @@
 		}
 
 		.summary-button-navigation-icon,
+		.summary-button-decoration,
 		.summary-button-decoration svg {
+			color: var( --dashboard__text-muted-color );
 			fill: var( --dashboard__text-muted-color );
 		}
 
@@ -392,7 +398,9 @@
 			}
 
 			.summary-button-navigation-icon,
+			.summary-button-decoration,
 			.summary-button-decoration svg {
+				color: var( --dashboard-menu-item-active__color );
 				fill: var( --dashboard-menu-item-active__color );
 			}
 		}
@@ -507,7 +515,11 @@
 			border-top-color: var( --dashboard-surface__border-color );
 		}
 
-		td.dataviews-view-table__actions-column--stuck::after,
+		th.dataviews-view-table__actions-column--stuck::after,
+		td.dataviews-view-table__actions-column--stuck::after {
+			background-color: var( --dashboard-surface__border-color );
+		}
+
 		thead.dataviews-view-table__thead--stuck::after {
 			background-color: var( --dashboard-surface__background-color );
 		}

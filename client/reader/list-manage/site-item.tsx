@@ -1,14 +1,20 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
+import {
+	addReadListFeedMutation,
+	deleteReadListSiteMutation,
+	readListItemsAllQuery,
+} from '@automattic/api-queries';
 import { Button, Card, Gridicon } from '@automattic/components';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import FollowButton from 'calypso/blocks/follow-button/button';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
 import { SiteIcon } from 'calypso/blocks/site-icon';
-import { useDispatch, useSelector } from 'calypso/state';
-import { addReaderListSite, deleteReaderListSite } from 'calypso/state/reader/lists/actions';
-import { getMatchingItem } from 'calypso/state/reader/lists/selectors';
+import { useDispatch } from 'calypso/state';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { DEFAULT_NOTICE_DURATION } from 'calypso/state/notices/constants';
 import ItemRemoveDialog from './item-remove-dialog';
 import { Item, List, Site, SiteError } from './types';
 
@@ -71,20 +77,72 @@ export default function SiteItem( props: {
 	const site = props.item.meta?.data?.site as Site | SiteError | undefined;
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+	const queryClient = useQueryClient();
+	const { mutate: addFeed } = useMutation( addReadListFeedMutation( queryClient ) );
+	const { mutate: deleteSite } = useMutation( deleteReadListSiteMutation( queryClient ) );
 
-	const isInList = !! useSelector( ( state ) =>
-		getMatchingItem( state, { siteId: props.item.site_ID, listId: props.list.ID } )
-	);
+	const { data: isInList = false } = useQuery( {
+		...readListItemsAllQuery( owner, list.slug ),
+		select: ( itemsData ) =>
+			!! item.site_ID &&
+			!! itemsData?.items?.some(
+				( listItem ) => Number( listItem.site_ID ) === Number( item.site_ID )
+			),
+	} );
 	const isRecommendedBlogsList = list.slug === 'recommended-blogs';
 
 	const [ showDeleteConfirmation, setShowDeleteConfirmation ] = useState( false );
-	const addItem = () =>
-		item.site_ID && dispatch( addReaderListSite( list.ID, owner, list.slug, item.site_ID ) );
+	const addItem = () => {
+		if ( ! item.site_ID ) {
+			return;
+		}
+		// Legacy quirk: sites are added via the feeds endpoint with the site_ID
+		// passed as feed_id. Preserve that behavior.
+		addFeed(
+			{ owner, slug: list.slug, feedId: Number( item.site_ID ) },
+			{
+				onSuccess: () => {
+					dispatch(
+						successNotice(
+							isRecommendedBlogsList
+								? translate( 'Recommendation successfully added.' )
+								: translate( 'Feed added to list successfully.' ),
+							{ duration: DEFAULT_NOTICE_DURATION }
+						)
+					);
+				},
+				onError: () => {
+					dispatch(
+						errorNotice(
+							isRecommendedBlogsList
+								? translate( 'Unable to add recommendation.' )
+								: translate( 'Unable to add feed to list.' )
+						)
+					);
+				},
+			}
+		);
+	};
 	const deleteItem = ( shouldDelete: boolean ) => {
 		setShowDeleteConfirmation( false );
-		shouldDelete &&
-			item.site_ID &&
-			dispatch( deleteReaderListSite( list.ID, owner, list.slug, item.site_ID ) );
+		if ( ! shouldDelete || ! item.site_ID ) {
+			return;
+		}
+		deleteSite(
+			{ owner, slug: list.slug, siteId: Number( item.site_ID ) },
+			{
+				onSuccess: () => {
+					dispatch(
+						successNotice( translate( 'Site removed from list successfully.' ), {
+							duration: DEFAULT_NOTICE_DURATION,
+						} )
+					);
+				},
+				onError: () => {
+					dispatch( errorNotice( translate( 'Unable to remove site from list.' ) ) );
+				},
+			}
+		);
 	};
 
 	if ( isInList && props.hideIfInList ) {

@@ -1,7 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import { filterURLForDisplay } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { shallowEqual } from 'react-redux';
 import ReaderSiteNotificationSettings from 'calypso/blocks/reader-site-notification-settings';
 import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
@@ -10,16 +10,10 @@ import ReaderFollowButton from 'calypso/reader/follow-button';
 import { getSiteUrl, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import { RecommendButton } from 'calypso/reader/recommend-button';
 import { useDispatch, useSelector } from 'calypso/state';
-import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { successNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import { hasReaderFollowOrganization, isFollowing } from 'calypso/state/reader/follows/selectors';
-import { requestRecommendedBlogsListItems } from 'calypso/state/reader/lists/actions';
-import {
-	isRequestingUserRecommendedBlogs,
-	hasRequestedUserRecommendedBlogs,
-} from 'calypso/state/reader/lists/selectors';
 import { requestMarkAllAsSeen } from 'calypso/state/reader/seen-posts/actions';
 import { getSite } from 'calypso/state/reader/sites/selectors';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
@@ -58,20 +52,11 @@ export default function ReaderFeedHeaderFollow( props: ReaderFeedHeaderFollowPro
 	const siteId = site?.ID;
 	const siteUrl = getSiteUrl( { feed, site } );
 	const feedId = feed?.feed_ID;
-	const { isRecommended, toggleRecommended } = useFeedRecommendationsMutation( feedId as number );
-	const owner = useSelector( getCurrentUserName );
-	const isRequestingRecommendedBlogs = useSelector( ( state: AppState ) =>
-		isRequestingUserRecommendedBlogs( state, owner )
-	);
-	const hasRequestedRecommendedBlogs = useSelector( ( state: AppState ) =>
-		hasRequestedUserRecommendedBlogs( state, owner )
-	);
-
-	useEffect( () => {
-		if ( ! hasRequestedRecommendedBlogs && ! isRequestingRecommendedBlogs ) {
-			dispatch( requestRecommendedBlogsListItems( owner ) );
-		}
-	}, [ dispatch, hasRequestedRecommendedBlogs, isRequestingRecommendedBlogs, owner ] );
+	const {
+		isRecommended,
+		isUpdating: isRecommendationPending,
+		toggleRecommended,
+	} = useFeedRecommendationsMutation( feedId as number );
 
 	const {
 		following,
@@ -165,7 +150,7 @@ export default function ReaderFeedHeaderFollow( props: ReaderFeedHeaderFollowPro
 						</div>
 						{ ( following || isRecommended ) && (
 							<RecommendButton
-								isLoading={ isRequestingRecommendedBlogs }
+								isLoading={ isRecommendationPending }
 								isRecommended={ isRecommended }
 								onClick={ toggleRecommended }
 							/>

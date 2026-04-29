@@ -11,8 +11,8 @@ import i18n, { localize } from 'i18n-calypso';
 import { defer, startsWith } from 'lodash';
 import { Component, useMemo } from 'react';
 import { connect, useSelector } from 'react-redux';
-import QueryReaderOrganizations from 'calypso/components/data/query-reader-organizations';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
+import { withReaderOrganizations } from 'calypso/components/data/with-reader-organizations';
 import { withCurrentRoute } from 'calypso/components/route';
 import GlobalSidebar, { GLOBAL_SIDEBAR_EVENTS } from 'calypso/layout/global-sidebar';
 import SidebarItem from 'calypso/layout/sidebar/item';
@@ -31,7 +31,6 @@ import { getTagStreamUrl } from 'calypso/reader/route';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { getReaderOrganizations } from 'calypso/state/reader/organizations/selectors';
 import { isReaderMSDEnabled } from 'calypso/state/reader-ui/selectors';
 import {
 	toggleReaderSidebarLists,
@@ -168,7 +167,6 @@ export class ReaderSidebar extends Component {
 				<AppTitle />
 				<SidebarMenu>
 					<QueryReaderTeams />
-					<QueryReaderOrganizations />
 
 					<li className="sidebar-streams__following">
 						<ReaderSidebarRecent
@@ -336,25 +334,26 @@ function withSubscribedLists( WrappedComponent ) {
 
 export default withSubscribedLists(
 	withCurrentRoute(
-		connect(
-			( state ) => {
-				return {
-					isListsOpen: isListsOpen( state ),
-					isFollowingOpen: isFollowingOpen( state ),
-					isTagsOpen: isTagsOpen( state ),
-					teams: getReaderTeams( state ),
-					organizations: getReaderOrganizations( state ),
-					isMSDEnabled: isReaderMSDEnabled( state ),
-				};
-			},
-			{
-				recordReaderTracksEvent,
-				recordTracksEvent,
-				setNextLayoutFocus,
-				toggleListsVisibility: toggleReaderSidebarLists,
-				toggleFollowingVisibility: toggleReaderSidebarFollowing,
-				toggleTagsVisibility: toggleReaderSidebarTags,
-			}
-		)( localize( ReaderSidebar ) )
+		withReaderOrganizations(
+			connect(
+				( state ) => {
+					return {
+						isListsOpen: isListsOpen( state ),
+						isFollowingOpen: isFollowingOpen( state ),
+						isTagsOpen: isTagsOpen( state ),
+						teams: getReaderTeams( state ),
+						isMSDEnabled: isReaderMSDEnabled( state ),
+					};
+				},
+				{
+					recordReaderTracksEvent,
+					recordTracksEvent,
+					setNextLayoutFocus,
+					toggleListsVisibility: toggleReaderSidebarLists,
+					toggleFollowingVisibility: toggleReaderSidebarFollowing,
+					toggleTagsVisibility: toggleReaderSidebarTags,
+				}
+			)( localize( ReaderSidebar ) )
+		)
 	)
 );
