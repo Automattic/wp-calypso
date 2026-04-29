@@ -92,10 +92,10 @@ const useTopicOptions = (): PodcastTopicOption[] => {
 
 		topics.forEach( ( topic ) => {
 			// Apple Podcasts topic keys use HTML entities for ampersands.
-			const topicKey = topic.key.replace( '&', '&amp;' );
+			const topicKey = topic.key.replaceAll( '&', '&amp;' );
 			options.push( { value: topicKey, label: topic.label as string } );
 			topic.subtopics.forEach( ( sub ) => {
-				const subKey = topicKey + ',' + sub.key.replace( '&', '&amp;' );
+				const subKey = topicKey + ',' + sub.key.replaceAll( '&', '&amp;' );
 				options.push( {
 					value: subKey,
 					label: `${ topic.label } » ${ sub.label }`,
@@ -351,10 +351,13 @@ const PodcastingSettingsForm = ( {
 
 	const onTopicsChange = useCallback(
 		( tokens: ( string | { value: string } )[] ) => {
-			const labels = tokens
-				.map( ( t ) => ( typeof t === 'string' ? t : t.value ) )
-				.filter( ( label ) => topicValueByLabel.has( label ) )
-				.slice( 0, 3 );
+			const labels = Array.from(
+				new Set(
+					tokens
+						.map( ( t ) => ( typeof t === 'string' ? t : t.value ) )
+						.filter( ( label ) => topicValueByLabel.has( label ) )
+				)
+			).slice( 0, 3 );
 			const values = labels.map( ( label ) => topicValueByLabel.get( label ) ?? '0' );
 			while ( values.length < 3 ) {
 				values.push( '0' );
@@ -497,6 +500,7 @@ const PodcastingSettingsForm = ( {
 									onSelect={ onCoverImageSelected }
 									onUploadStateChange={ setIsCoverImageUploading }
 									isDisabled={ disabled }
+									previewSize={ 256 }
 								/>
 							</div>
 
@@ -556,8 +560,6 @@ const PodcastingSettingsForm = ( {
 						<VStack spacing={ 6 }>
 							<BaseControl
 								__nextHasNoMarginBottom
-								id="podcast-topics"
-								label={ translate( 'Podcast topics' ) as string }
 								help={
 									translate(
 										'Choose how your podcast should be categorized within Apple Podcasts and other podcasting services. Pick up to three.'
@@ -569,7 +571,7 @@ const PodcastingSettingsForm = ( {
 									__next40pxDefaultSize
 									__experimentalExpandOnFocus
 									__experimentalShowHowTo={ false }
-									label=""
+									label={ translate( 'Podcast topics' ) as string }
 									value={ selectedTopicLabels }
 									suggestions={ topicSuggestions }
 									maxLength={ 3 }
@@ -588,7 +590,7 @@ const PodcastingSettingsForm = ( {
 										{ value: 'no', label: translate( 'No' ) as string },
 										{ value: 'yes', label: translate( 'Yes' ) as string },
 										{ value: 'clean', label: translate( 'Clean' ) as string },
-									] as PodcastTopicOption[]
+									] as { value: string; label: string }[]
 								}
 								onChange={ onExplicitChange }
 								disabled={ disabled }
