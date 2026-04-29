@@ -351,7 +351,7 @@ const PodcastingSettingsForm = ( {
 											onClick={ () => setIsAddCategoryOpen( true ) }
 											disabled={ disabled }
 										>
-											{ translate( 'Add category' ) }
+											{ translate( 'Create a category' ) }
 										</Button>
 									</HStack>
 
