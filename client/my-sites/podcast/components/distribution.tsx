@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import {
 	Button,
 	Card,
@@ -9,6 +10,8 @@ import {
 import { useTranslate } from 'i18n-calypso';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import { useSelector } from 'calypso/state';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { useFeedUrl } from '../hooks/use-feed-url';
 import {
 	LogoAmazon,
@@ -69,6 +72,7 @@ const DIRECTORIES: Directory[] = [
 function Distribution() {
 	const translate = useTranslate();
 	const feedUrl = useFeedUrl();
+	const blogId = useSelector( getSelectedSiteId );
 
 	return (
 		<>
@@ -138,6 +142,12 @@ function Distribution() {
 											href={ submitUrl }
 											target="_blank"
 											rel="noopener noreferrer"
+											onClick={ () =>
+												recordTracksEvent( 'wpcom_podcast_feed_submitted', {
+													blog_id: blogId,
+													directory: id,
+												} )
+											}
 										>
 											{ translate( 'Submit' ) }
 										</Button>
