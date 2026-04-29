@@ -4,6 +4,7 @@
 
 import { useQueryClient } from '@tanstack/react-query';
 import { act, render } from '@testing-library/react';
+import { SnackbarList } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import Snackbars from '../index';
 
@@ -56,6 +57,7 @@ describe( 'Snackbars', () => {
 		type: string;
 		status?: string;
 		content?: string;
+		className?: string;
 	} >;
 	let mockSubscribe: jest.Mock;
 
@@ -118,6 +120,41 @@ describe( 'Snackbars', () => {
 			type: 'snackbar',
 		} );
 		expect( mockCreateErrorNotice ).not.toHaveBeenCalled();
+	} );
+
+	test( 'passes snackbar status as a class name for styling', () => {
+		currentNotices = [
+			{
+				id: 'success-snackbar',
+				type: 'snackbar',
+				status: 'success',
+				content: 'Existing notice',
+			},
+			{
+				id: 'error-snackbar',
+				type: 'snackbar',
+				status: 'error',
+				content: 'Failed notice',
+				className: 'custom-class',
+			},
+		];
+
+		render( <Snackbars /> );
+
+		const [ props ] = ( SnackbarList as jest.Mock ).mock.calls[ 0 ];
+
+		expect( props.notices ).toEqual(
+			expect.arrayContaining( [
+				expect.objectContaining( {
+					id: 'success-snackbar',
+					className: 'is-success',
+				} ),
+				expect.objectContaining( {
+					id: 'error-snackbar',
+					className: 'custom-class is-error',
+				} ),
+			] )
+		);
 	} );
 
 	test( 'surfaces server error messages when requested by mutation meta', () => {
