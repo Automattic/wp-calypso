@@ -15,10 +15,12 @@ import {
 } from 'calypso/reader/social';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { AuthorProfileHeader } from './author-profile-header';
+import { AuthorProfileTabs, useAuthorProfileFilter } from './author-profile-tabs';
 import { projectAtmosphereError } from './error-projection';
 import { errorMessage } from './profile-errors';
-import { getBlueskyProfileUrl, getProfileUrl, getThreadUrl } from './route';
+import { getProfileUrl, getThreadUrl } from './route';
 import type {
+	AtmosphereAuthorFeedFilter,
 	AtmosphereAuthorProfile,
 	AtmosphereConnection,
 	AtmosphereError,
@@ -28,6 +30,35 @@ import type { AppState } from 'calypso/types';
 import type { UnknownAction } from 'redux';
 import type { ThunkDispatch } from 'redux-thunk';
 
+function buildEmptyTitle(
+	filter: AtmosphereAuthorFeedFilter,
+	handle: string,
+	translate: ReturnType< typeof useTranslate >
+): string {
+	switch ( filter ) {
+		case 'posts_with_replies':
+			return String(
+				translate( '@%(handle)s hasn’t replied to anyone yet.', {
+					args: { handle },
+				} )
+			);
+		case 'posts_with_media':
+			return String(
+				translate( '@%(handle)s hasn’t posted any media yet.', {
+					args: { handle },
+				} )
+			);
+		case 'posts_no_replies':
+		case 'posts_and_author_threads':
+		default:
+			return String(
+				translate( '@%(handle)s hasn’t posted yet.', {
+					args: { handle },
+				} )
+			);
+	}
+}
+
 interface AuthorProfilePanelProps {
 	connection: AtmosphereConnection;
 	actor: string;
@@ -36,19 +67,31 @@ interface AuthorProfilePanelProps {
 export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch< ThunkDispatch< AppState, void, UnknownAction > >();
+	const filter = useAuthorProfileFilter();
 	const lastErrorKind = useRef< { header: string | null; feed: string | null } >( {
 		header: null,
 		feed: null,
 	} );
 
 	const profile = useAuthorProfileQuery( { actor } );
-	const feed = useAuthorFeedInfiniteQuery( { actor } );
+	// posts_no_replies is the API default — omit the param so the URL stays
+	// clean and matches the original no-filter behaviour when no ?tab is present.
+	const feed = useAuthorFeedInfiniteQuery( {
+		actor,
+		filter: filter === 'posts_no_replies' ? undefined : filter,
+	} );
 
 	// Reset the error_shown dedup ref when navigating between profiles so the
 	// next author's first error fires its analytics even when the kind matches.
 	useEffect( () => {
 		lastErrorKind.current = { header: null, feed: null };
 	}, [ actor, connection.id ] );
+
+	// Per-filter feed errors must each fire their own _error_shown event,
+	// even when the kinds match (e.g. rate_limited on Posts then Replies).
+	useEffect( () => {
+		lastErrorKind.current.feed = null;
+	}, [ filter ] );
 
 	// Fire profile_viewed exactly once per (actor, connection) — but wait until
 	// the profile data resolves so the Tracks payload carries the resolved DID
@@ -68,9 +111,10 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 				actor,
 				actor_did: profile.data.did,
 				actor_handle: profile.data.handle,
+				initial_filter: filter,
 			} )
 		);
-	}, [ actor, connection.id, profile.data, dispatch ] );
+	}, [ actor, connection.id, profile.data, filter, dispatch ] );
 
 	useEffect( () => {
 		if ( profile.isError && profile.error && profile.error.kind !== lastErrorKind.current.header ) {
@@ -98,13 +142,14 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 					actor,
 					error_kind: feed.error.kind,
 					surface: 'feed',
+					filter,
 				} )
 			);
 		}
 		if ( ! feed.isError ) {
 			lastErrorKind.current.feed = null;
 		}
-	}, [ feed.isError, feed.error, connection.id, actor, dispatch ] );
+	}, [ feed.isError, feed.error, connection.id, actor, filter, dispatch ] );
 
 	const items: SocialPost[] = useMemo( () => {
 		// Bluesky's getAuthorFeed can return the same post URI more than once
@@ -287,6 +332,7 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 			<VStack spacing={ 4 } className="atmosphere-author-profile">
 				<AuthorProfileHeader connection={ connection } onBackToTimeline={ handleBackToTimeline } />
 				{ renderHeader() }
+				<AuthorProfileTabs connectionId={ connection.id } actor={ actor } activeFilter={ filter } />
 				<SocialFeedList< SocialPost >
 					items={ items }
 					isPending={ feed.isPending }
@@ -298,14 +344,8 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 					refetch={ handleFeedRetry }
 					renderItem={ renderItem }
 					itemKey={ itemKey }
-					emptyTitle={ String(
-						translate( '@%(handle)s hasn’t posted yet.', {
-							args: { handle: emptyHandle },
-						} )
-					) }
-					emptyLine={ String( translate( 'Their feed is empty.' ) ) }
-					emptyActionLabel={ String( translate( 'View on Bluesky' ) ) }
-					emptyActionURL={ profile.data?.bluesky_url ?? getBlueskyProfileUrl( actor ) }
+					emptyTitle={ buildEmptyTitle( filter, emptyHandle, translate ) }
+					emptyLine=""
 					protocolLabel="Bluesky"
 					protocolHomeURL="/reader/atmosphere"
 					protocolHomeLabel={ translate( 'Back to ATmosphere' ) }

@@ -27,6 +27,21 @@ jest.mock( '@automattic/calypso-router', () => ( {
 	default: { replace: jest.fn() },
 } ) );
 
+// NavTabs (used by AuthorProfileTabs inside AuthorProfilePanel) relies on
+// IntersectionObserver, which jsdom does not provide.
+beforeAll( () => {
+	global.IntersectionObserver = class IntersectionObserver {
+		observe() {}
+		unobserve() {}
+		disconnect() {}
+	} as unknown as typeof global.IntersectionObserver;
+} );
+
+afterAll( () => {
+	// @ts-expect-error -- cleaning up the stub
+	delete global.IntersectionObserver;
+} );
+
 afterEach( () => {
 	nock.cleanAll();
 	jest.restoreAllMocks();
