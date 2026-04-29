@@ -410,7 +410,7 @@ const PodcastingSettingsForm = ( {
 							title={
 								isPodcastingEnabled
 									? ( translate( 'Almost ready to submit' ) as string )
-									: ( translate( 'Set up your podcast feed' ) as string )
+									: ( translate( 'Set up your podcast' ) as string )
 							}
 							hideCloseButton
 						>
