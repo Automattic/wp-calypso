@@ -40,6 +40,12 @@ export const clearPurchases = () => ( dispatch, getState ) => {
  * removePurchase): removing a purchase can change which items appear in the
  * site's wp-admin sidebar (e.g. a removed plugin's menu section), so the menu
  * needs to be re-fetched to avoid stale entries until the next navigation.
+ *
+ * NOTE: temporary bridge for the legacy `client/me/purchases` surface, which
+ * still reads purchases from Redux. The dashboard surface uses React Query
+ * directly (see `removePurchaseMutation` in
+ * `packages/api-queries/src/upgrades.ts`). Once `client/me/purchases/**`
+ * migrates to `useQuery`, this helper can be removed.
  */
 export const removePurchaseFromState = ( purchaseId ) => ( dispatch, getState ) => {
 	const state = getState();
