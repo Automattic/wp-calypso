@@ -166,7 +166,7 @@ const MobileView = ( {
 				<div className={ planCardClasses } key={ `${ gridPlan.planSlug }-${ index }` }>
 					<PlanLogos renderedGridPlans={ [ gridPlan ] } isInSignup={ false } />
 					<PlanHeaders renderedGridPlans={ [ gridPlan ] } />
-					{ isNotFreePlan && isInSignup && <PlanTagline renderedGridPlans={ [ gridPlan ] } /> }
+					{ isInSignup && <PlanTagline renderedGridPlans={ [ gridPlan ] } /> }
 					{ isNotFreePlan && (
 						<PlanPrices
 							renderedGridPlans={ [ gridPlan ] }
