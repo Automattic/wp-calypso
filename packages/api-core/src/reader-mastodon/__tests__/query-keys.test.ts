@@ -12,3 +12,25 @@ describe( 'readerMastodonKeys', () => {
 		] );
 	} );
 } );
+
+describe( 'readerMastodonKeys profile keys', () => {
+	it( 'authorProfile keys by connection id and actor', () => {
+		expect( readerMastodonKeys.authorProfile( 7, '108020' ) ).toEqual( [
+			'reader',
+			'mastodon',
+			'profile',
+			7,
+			'108020',
+		] );
+	} );
+
+	it( 'authorFeed keys by connection id and actor', () => {
+		expect( readerMastodonKeys.authorFeed( 7, '108020' ) ).toEqual( [
+			'reader',
+			'mastodon',
+			'profile-feed',
+			7,
+			'108020',
+		] );
+	} );
+} );
