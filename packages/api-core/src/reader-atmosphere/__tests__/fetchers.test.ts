@@ -445,6 +445,29 @@ describe( 'atmosphere fetchers', () => {
 			expect( scope.isDone() ).toBe( true );
 		} );
 
+		it( 'forwards filter as a query param when set', async () => {
+			const scope = nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.query( { filter: 'posts_with_replies' } )
+				.reply( 200, { items: [], cursor: null } );
+
+			await getAuthorFeed( {
+				actor: 'alice.bsky.social',
+				filter: 'posts_with_replies',
+			} );
+			expect( scope.isDone() ).toBe( true );
+		} );
+
+		it( 'omits filter from the query string when undefined', async () => {
+			const scope = nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.query( ( q ) => ! ( 'filter' in q ) )
+				.reply( 200, { items: [], cursor: null } );
+
+			await getAuthorFeed( { actor: 'alice.bsky.social' } );
+			expect( scope.isDone() ).toBe( true );
+		} );
+
 		it( 'percent-encodes the actor in the path', async () => {
 			const scope = nock( 'https://public-api.wordpress.com' )
 				.get( '/wpcom/v2/reader/atmosphere/profile/did%3Aplc%3Aabc123/feed' )
