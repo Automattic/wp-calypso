@@ -30,6 +30,10 @@
 
 		@include ui-mixins.when-dark-theme {
 			background-color: var( --dashboard-surface__background-color );
+
+			&:not( .StripeElement--invalid ) iframe {
+				filter: brightness( 2.8 );
+			}
 		}
 
 		&:hover {
