@@ -205,9 +205,17 @@ interface DetectedEntity {
  * `videoStudio` payload (with `style`); otherwise we emit `imageStudio`
  * (with `style` + `aspect_ratio`). The two are mutually exclusive.
  *
- * Note: We intentionally do NOT send the URL in context to prevent agent retry loops.
- * The backend fetches the current URL from the clientId (attachmentId) via
- * resolve_image_studio_url().
+ * Note on URLs in this payload:
+ *  - We do NOT add a top-level `url` field on the `imageStudio` / `videoStudio`
+ *    entity. The backend resolves the attachment's canonical URL from the
+ *    clientId (attachmentId) via `resolve_image_studio_url()` to avoid agent
+ *    retry loops on stale/transient URLs.
+ *  - `metadata.url` is populated from `attachment.source_url` strictly as
+ *    descriptive context for the agent (e.g. for prompt grounding); it is not
+ *    used by the backend to fetch the asset.
+ *  - The top-level `url` / `pathname` / `search` fields emitted by
+ *    `getClientContext()` describe the editor page location, not the
+ *    attachment, and are unrelated to the retry-loop concern above.
  */
 function detectImageEntity(): DetectedEntity | null {
 	try {

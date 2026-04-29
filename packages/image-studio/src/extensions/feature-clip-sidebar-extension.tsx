@@ -21,12 +21,20 @@ const PLUGIN_NAME = 'big-sky-feature-clip';
 const PANEL_NAME = 'big-sky-feature-clip-panel';
 
 function FeatureClipPanel(): JSX.Element {
-	const handleClick = () => {
+	const handleClick = async () => {
 		const { openImageStudio } = dispatch( imageStudioStore );
 		// Reset any previously generated clip so a fresh session starts with
-		// an empty canvas instead of replaying the prior video.
-		const { setCurrentVideoUrl } = dispatch( videoStudioStore ) as VideoStudioActions;
-		setCurrentVideoUrl( null );
+		// an empty canvas instead of replaying the prior video. wp-data action
+		// dispatches resolve asynchronously, so await them before opening the
+		// modal to prevent a stale clip flashing on first render.
+		const { setCurrentVideoUrl, setCurrentAttachmentId, setCurrentDurationSeconds } = dispatch(
+			videoStudioStore
+		) as VideoStudioActions;
+		await Promise.all( [
+			setCurrentVideoUrl( null ),
+			setCurrentAttachmentId( null ),
+			setCurrentDurationSeconds( null ),
+		] );
 
 		trackImageStudioOpened( {
 			mode: ImageStudioMode.Generate,

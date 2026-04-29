@@ -11,7 +11,9 @@ import React from 'react';
 const mockOpenImageStudio = jest.fn();
 const mockRegisterPlugin = jest.fn();
 const mockTrackOpened = jest.fn();
-const mockSetCurrentVideoUrl = jest.fn();
+const mockSetCurrentVideoUrl = jest.fn().mockResolvedValue( undefined );
+const mockSetCurrentAttachmentId = jest.fn().mockResolvedValue( undefined );
+const mockSetCurrentDurationSeconds = jest.fn().mockResolvedValue( undefined );
 
 jest.mock( '@wordpress/components', () => ( {
 	Button: ( {
@@ -32,7 +34,11 @@ jest.mock( '@wordpress/components', () => ( {
 jest.mock( '@wordpress/data', () => ( {
 	dispatch: jest.fn( ( store: string ) => {
 		if ( store === 'video-studio' ) {
-			return { setCurrentVideoUrl: mockSetCurrentVideoUrl };
+			return {
+				setCurrentVideoUrl: mockSetCurrentVideoUrl,
+				setCurrentAttachmentId: mockSetCurrentAttachmentId,
+				setCurrentDurationSeconds: mockSetCurrentDurationSeconds,
+			};
 		}
 		return { openImageStudio: mockOpenImageStudio };
 	} ),
@@ -77,6 +83,8 @@ describe( 'feature-clip-sidebar-extension', () => {
 		mockRegisterPlugin.mockClear();
 		mockTrackOpened.mockClear();
 		mockSetCurrentVideoUrl.mockClear();
+		mockSetCurrentAttachmentId.mockClear();
+		mockSetCurrentDurationSeconds.mockClear();
 		jest.resetModules();
 	} );
 
@@ -90,12 +98,20 @@ describe( 'feature-clip-sidebar-extension', () => {
 		expect( mockRegisterPlugin.mock.calls[ 0 ][ 0 ] ).toBe( 'big-sky-feature-clip' );
 	} );
 
-	it( 'opens Image Studio with the post-editor entry point on click', () => {
+	it( 'opens Image Studio with the post-editor entry point on click', async () => {
 		const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
 		render( <FeatureClipPanel /> );
 
 		fireEvent.click( screen.getByRole( 'button', { name: 'Generate clip' } ) );
 
+		// handleClick awaits the video-studio reset before opening the modal,
+		// so flush microtasks before asserting on the post-await calls.
+		await Promise.resolve();
+		await Promise.resolve();
+
+		expect( mockSetCurrentVideoUrl ).toHaveBeenCalledWith( null );
+		expect( mockSetCurrentAttachmentId ).toHaveBeenCalledWith( null );
+		expect( mockSetCurrentDurationSeconds ).toHaveBeenCalledWith( null );
 		expect( mockTrackOpened ).toHaveBeenCalledWith(
 			expect.objectContaining( { entryPoint: 'post_editor_feature_clip' } )
 		);
