@@ -592,8 +592,18 @@ function PurchaseSettingsActions( { purchase }: { purchase: Purchase } ) {
 	if ( isCentennialPurchase( purchase ) ) {
 		return null;
 	}
+
+	// Expired purchases get only the "Pick another plan/product" CTA — the
+	// other actions (reinstall, upgrade, renew, cancel/remove) don't apply
+	// once the purchase has lapsed.
 	if ( isExpired( purchase ) ) {
-		return null;
+		return (
+			<VStack spacing={ 4 }>
+				<ActionList>
+					<ReSubscribeActionButton purchase={ purchase } />
+				</ActionList>
+			</VStack>
+		);
 	}
 
 	return (
