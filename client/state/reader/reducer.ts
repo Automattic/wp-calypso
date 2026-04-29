@@ -4,7 +4,6 @@ import conversations from './conversations/reducer';
 import feedSearches from './feed-searches/reducer';
 import feeds from './feeds/reducer';
 import follows from './follows/reducer';
-import lists from './lists/reducer';
 import organizations from './organizations/reducer';
 import posts from './posts/reducer';
 import recommendedSites from './recommended-sites/reducer';
@@ -20,7 +19,6 @@ const combinedReducer = combineReducers( {
 	feeds,
 	feedSearches,
 	follows,
-	lists,
 	posts,
 	recommendedSites,
 	relatedPosts,
