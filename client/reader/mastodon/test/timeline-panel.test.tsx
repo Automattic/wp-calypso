@@ -170,10 +170,9 @@ describe( 'Mastodon TimelinePanel', () => {
 			queryClient: makeQueryClient(),
 		} );
 		await waitFor( () => expect( screen.getByText( 'hello' ) ).toBeVisible() );
-		// Mastodon mapper sets `permalink: item.url`. The clickable timestamp
-		// anchor uses permalink; the analytics post_uri prop reflects
-		// `post.uri` which is now `item.id`.
-		const expectedHref = 'https://mastodon.social/@alice/1';
+		// With getThreadUrl wired up, the timestamp anchor points at the
+		// in-app thread URL rather than the external permalink.
+		const expectedHref = '/reader/mastodon/9/thread/1';
 		const link = screen
 			.getAllByRole( 'link' )
 			.find( ( a ) => a.getAttribute( 'href' ) === expectedHref );
@@ -181,7 +180,11 @@ describe( 'Mastodon TimelinePanel', () => {
 		await user.click( link as HTMLElement );
 		expect( spy ).toHaveBeenCalledWith(
 			'calypso_reader_mastodon_timeline_post_clicked',
-			expect.objectContaining( { connection_id: 9, post_uri: '1' } )
+			expect.objectContaining( {
+				connection_id: 9,
+				post_uri: '1',
+				destination: 'in_app_thread',
+			} )
 		);
 	} );
 

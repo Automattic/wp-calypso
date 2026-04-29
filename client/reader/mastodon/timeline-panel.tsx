@@ -11,6 +11,7 @@ import {
 	mapMastodonFeedItemToSocialPost,
 } from 'calypso/reader/social';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import { getThreadUrl as buildThreadUrl } from './route';
 import type { MastodonConnection, MastodonError, MastodonFeedItem } from '@automattic/api-core';
 import type { SocialError, SocialPost } from 'calypso/reader/social';
 import type { AppState } from 'calypso/types';
@@ -119,20 +120,29 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 		[ dispatch ]
 	);
 
+	const getThreadUrl = useCallback(
+		( uri: string ) => buildThreadUrl( connection.id, uri ),
+		[ connection.id ]
+	);
+
 	const renderItem = useCallback(
 		( post: SocialPost ) => <SocialPostCard post={ post } variant="default" />,
 		[]
 	);
 	const itemKey = useCallback( ( post: SocialPost ) => post.uri, [] );
 
+	const analyticsValue = useMemo(
+		() => ( {
+			source: 'mastodon' as const,
+			connectionId: connection.id,
+			onClick: onClickAnalytics,
+			getThreadUrl,
+		} ),
+		[ connection.id, onClickAnalytics, getThreadUrl ]
+	);
+
 	return (
-		<SocialAnalyticsProvider
-			value={ {
-				source: 'mastodon',
-				connectionId: connection.id,
-				onClick: onClickAnalytics,
-			} }
-		>
+		<SocialAnalyticsProvider value={ analyticsValue }>
 			<SocialFeedList< SocialPost >
 				items={ items }
 				isPending={ isPending }
