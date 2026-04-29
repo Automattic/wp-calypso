@@ -3,7 +3,6 @@ import useDisplayCartMessages from './use-display-cart-messages';
 export * from './get-contact-details-type';
 export * from './transformations';
 export * from './types';
-export * from './payment-method-store';
 export * from './payment-method-logos';
 export * from './product-url-encoding';
 export { useDisplayCartMessages };
