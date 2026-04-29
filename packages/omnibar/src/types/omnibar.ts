@@ -4,6 +4,7 @@ export interface OmnibarNode {
 	icon?: React.ReactElement;
 	group?: boolean;
 	href?: string;
+	onClick?: () => void;
 	meta?: SiteActionNodeMeta & UserInfoNodeMeta;
 	render?: ( node: OmnibarNode ) => React.ReactNode;
 	children?: OmnibarNode[];
@@ -22,6 +23,7 @@ export interface OmnibarNodes {
 	home?: OmnibarNode;
 	site?: OmnibarNode;
 	siteActions?: OmnibarNode[];
+	plugins?: OmnibarNode[];
 	user?: OmnibarNode;
 }
 

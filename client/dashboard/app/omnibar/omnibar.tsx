@@ -6,9 +6,12 @@ import {
 } from '@automattic/api-queries';
 import { AdminBarNode, Omnibar, buildOmnibarNodesFromAdminBarNodes } from '@automattic/omnibar';
 import { useQuery } from '@tanstack/react-query';
+import { __ } from '@wordpress/i18n';
+import { Icon, helpFilled } from '@wordpress/icons';
 import { useEffect, useMemo, useState } from 'react';
 import SiteIcon from '../../components/site-icon';
 import { getSiteDisplayName } from '../../utils/site-name';
+import { useHelpCenter } from '../help-center';
 import { omnibarEvents } from './events';
 import { OmnibarHomeIcon } from './home';
 import type { User } from '@automattic/api-core';
@@ -44,6 +47,8 @@ export default function OmnibarContainer( { user }: { user?: User } ) {
 		enabled: hydrated && !! siteId,
 	} );
 
+	const { isShown: isHelpCenterShown, setShowHelpCenter } = useHelpCenter();
+
 	const omnibarNodes = useMemo( () => {
 		const nodes = siteNodes ?? dashboardNodes ?? [];
 		const result = buildOmnibarNodesFromAdminBarNodes( removeUnsupportedDotcomNodes( nodes ) );
@@ -70,8 +75,17 @@ export default function OmnibarContainer( { user }: { user?: User } ) {
 			result.site.title = getSiteDisplayName( site );
 		}
 
+		result.plugins = [
+			{
+				id: 'help-center',
+				title: __( 'Help' ),
+				icon: <Icon icon={ helpFilled } />,
+				onClick: () => setShowHelpCenter( ! isHelpCenterShown ),
+			},
+		];
+
 		return result;
-	}, [ dashboardNodes, siteNodes, site ] );
+	}, [ dashboardNodes, siteNodes, site, isHelpCenterShown, setShowHelpCenter ] );
 
 	if ( ! hydrated ) {
 		return <InitialOmnibar user={ user } />;

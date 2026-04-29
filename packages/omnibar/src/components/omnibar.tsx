@@ -1,4 +1,5 @@
 import { OmnibarHomeNode } from './omnibar-home';
+import { OmnibarPluginsNode } from './omnibar-plugins';
 import { OmnibarResponsiveMenu } from './omnibar-responsive-menu';
 import { OmnibarSiteNode } from './omnibar-site';
 import { OmnibarUserNode } from './omnibar-user';
@@ -15,6 +16,7 @@ export function Omnibar( { nodes, onClickResponsiveMenu }: OmnibarProps ) {
 			{ nodes.home && <OmnibarHomeNode node={ nodes.home } /> }
 			{ nodes.site && <OmnibarSiteNode node={ nodes.site } actionNodes={ nodes.siteActions } /> }
 			<div className="omnibar__secondary">
+				{ nodes.plugins && <OmnibarPluginsNode nodes={ nodes.plugins } /> }
 				{ nodes.user && <OmnibarUserNode node={ nodes.user } /> }
 			</div>
 		</div>
