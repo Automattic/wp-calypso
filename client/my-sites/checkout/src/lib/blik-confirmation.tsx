@@ -83,14 +83,17 @@ function useCountdown( initialSeconds: number ) {
 	const [ secondsRemaining, setSecondsRemaining ] = useState( initialSeconds );
 
 	useEffect( () => {
-		if ( secondsRemaining <= 0 ) {
-			return;
-		}
 		const tick = setInterval( () => {
-			setSecondsRemaining( ( s ) => Math.max( s - 1, 0 ) );
+			setSecondsRemaining( ( s ) => {
+				if ( s <= 0 ) {
+					clearInterval( tick );
+					return 0;
+				}
+				return s - 1;
+			} );
 		}, 1000 );
 		return () => clearInterval( tick );
-	}, [ secondsRemaining ] );
+	}, [] );
 
 	return secondsRemaining;
 }

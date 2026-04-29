@@ -68,7 +68,7 @@ export default async function blikProcessor(
 		paymentMethodId,
 		{
 			...submitData,
-			name: submitData.name,
+			name: submitData.name ?? '',
 			successUrl,
 			cancelUrl,
 			couponId: responseCart.coupon,
@@ -91,8 +91,9 @@ export default async function blikProcessor(
 		'Payment failed. Please check your account and try again.'
 	);
 
-	const formattedTotal = String(
-		formatCurrency( responseCart.total_cost_integer / 100, responseCart.currency )
+	const formattedTotal = formatCurrency(
+		responseCart.total_cost_integer / 100,
+		responseCart.currency
 	);
 
 	const root = getRenderRoot( genericErrorMessage );
