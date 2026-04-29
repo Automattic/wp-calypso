@@ -19,6 +19,7 @@ import {
 	type QueryKey,
 } from '@tanstack/react-query';
 import type {
+	AtmosphereAuthorFeedFilter,
 	AtmosphereAuthorFeedPage,
 	AtmosphereAuthorProfile,
 	AtmosphereConnectionDetails,
@@ -159,7 +160,7 @@ export function useAuthorProfileQuery( { actor }: UseAuthorProfileQueryParams ) 
 	return useQuery( profileQueryOptions( actor ) );
 }
 
-export const authorFeedInfiniteQuery = ( actor: string ) =>
+export const authorFeedInfiniteQuery = ( actor: string, filter?: AtmosphereAuthorFeedFilter ) =>
 	infiniteQueryOptions<
 		AtmosphereAuthorFeedPage,
 		AtmosphereError,
@@ -167,8 +168,8 @@ export const authorFeedInfiniteQuery = ( actor: string ) =>
 		QueryKey,
 		string | undefined
 	>( {
-		queryKey: readerAtmosphereKeys.authorFeed( actor ),
-		queryFn: ( { pageParam } ) => getAuthorFeed( { actor, cursor: pageParam } ),
+		queryKey: readerAtmosphereKeys.authorFeed( actor, filter ),
+		queryFn: ( { pageParam } ) => getAuthorFeed( { actor, cursor: pageParam, filter } ),
 		initialPageParam: undefined,
 		getNextPageParam: ( lastPage ) => lastPage.cursor || undefined,
 		enabled: actor.length > 0,
@@ -178,8 +179,9 @@ export const authorFeedInfiniteQuery = ( actor: string ) =>
 
 export interface UseAuthorFeedInfiniteQueryParams {
 	actor: string;
+	filter?: AtmosphereAuthorFeedFilter;
 }
 
-export function useAuthorFeedInfiniteQuery( { actor }: UseAuthorFeedInfiniteQueryParams ) {
-	return useInfiniteQuery( authorFeedInfiniteQuery( actor ) );
+export function useAuthorFeedInfiniteQuery( { actor, filter }: UseAuthorFeedInfiniteQueryParams ) {
+	return useInfiniteQuery( authorFeedInfiniteQuery( actor, filter ) );
 }
