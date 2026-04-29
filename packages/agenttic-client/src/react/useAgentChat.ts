@@ -301,6 +301,7 @@ export interface UseAgentChatConfig {
 	authProvider?: AuthProvider;
 	enableStreaming?: boolean; // Enable token-by-token streaming
 	odieBotId?: string; // Odie bot ID for server-based conversation storage (e.g., 'wpcom-agent-wp_orchestrator'). When set, enables server storage.
+	credentials?: RequestCredentials; // Set 'include' to send cookies with cross-origin requests.
 }
 
 // Hook return interface
@@ -430,6 +431,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 					authProvider: config.authProvider,
 					enableStreaming: config.enableStreaming,
 					odieBotId: config.odieBotId,
+					credentials: config.credentials,
 				} );
 
 				// Only load messages when creating a new agent (initial mount or after removeAgent)
@@ -487,6 +489,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		config.authProvider,
 		config.enableStreaming,
 		config.odieBotId,
+		config.credentials,
 		isValidConfig,
 	] );
 
