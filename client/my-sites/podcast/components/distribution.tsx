@@ -160,6 +160,7 @@ function Distribution() {
 
 			{ activeDirectory && (
 				<SubmitModal
+					feedUrl={ feedUrl }
 					podcatcher={ {
 						id: activeDirectory.id,
 						name: activeDirectory.name,

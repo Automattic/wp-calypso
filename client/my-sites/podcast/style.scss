@@ -230,7 +230,7 @@ body.is-section-podcasting {
 	color: var( --wpds-color-fg-content-neutral, #1e1e1e );
 }
 
-.podcast__submit-step-form {
+.podcast__submit-step-row {
 	@media (max-width: $break-small) {
 		flex-direction: column;
 		align-items: stretch;
@@ -240,4 +240,10 @@ body.is-section-podcasting {
 .podcast__submit-step-field {
 	flex: 1;
 	min-width: 0;
+}
+
+.podcast__submit-copy-button {
+	min-inline-size: 8rem;
+	align-self: flex-start;
+	justify-content: flex-start;
 }

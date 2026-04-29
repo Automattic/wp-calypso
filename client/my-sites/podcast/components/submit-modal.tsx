@@ -12,7 +12,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { useFeedUrl } from '../hooks/use-feed-url';
 import {
 	hasCelebratedFirstSave,
 	markCelebratedFirstSave,
@@ -27,6 +26,7 @@ export type Podcatcher = {
 };
 
 type Props = {
+	feedUrl: string;
 	podcatcher: Podcatcher;
 	onClose: () => void;
 	onFirstSave?: () => void;
@@ -34,10 +34,9 @@ type Props = {
 
 const COPIED_FEEDBACK_MS = 2000;
 
-const SubmitModal = ( { podcatcher, onClose, onFirstSave }: Props ) => {
+const SubmitModal = ( { feedUrl, podcatcher, onClose, onFirstSave }: Props ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
-	const feedUrl = useFeedUrl();
 	const [ storedUrl, setStoredUrl ] = usePodcatcherUrl( siteId, podcatcher.id );
 	const [ draftUrl, setDraftUrl ] = useState( storedUrl );
 	const [ hasCopied, setHasCopied ] = useState( false );
@@ -65,8 +64,9 @@ const SubmitModal = ( { podcatcher, onClose, onFirstSave }: Props ) => {
 				}
 				copyTimeoutRef.current = setTimeout( () => setHasCopied( false ), COPIED_FEEDBACK_MS );
 			} )
-			.catch( () => {
-				/* clipboard unavailable — ignore */
+			.catch( ( error ) => {
+				// eslint-disable-next-line no-console
+				console.warn( 'Podcast: failed to copy RSS feed URL to clipboard', error );
 			} );
 	};
 
@@ -116,6 +116,7 @@ const SubmitModal = ( { podcatcher, onClose, onFirstSave }: Props ) => {
 					</Text>
 					{ feedUrl && (
 						<Button
+							className="podcast__submit-copy-button"
 							variant="secondary"
 							__next40pxDefaultSize
 							icon={ link }
@@ -132,28 +133,29 @@ const SubmitModal = ( { podcatcher, onClose, onFirstSave }: Props ) => {
 						{ translate( 'Step 2: Submit your podcast to %(service)s', serviceArgs ) }
 					</h2>
 					<Text as="p" variant="muted">
-						{ translate(
-							'Click the button below to visit %(service)s and complete their sign up flow.',
-							serviceArgs
-						) }
-						{ step2Note && <> { step2Note }</> }
-						{ podcatcher.learnMoreUrl && (
-							<>
-								{ ' ' }
-								<ExternalLink
-									href={ podcatcher.learnMoreUrl }
-									aria-label={
-										translate(
-											'Learn more about submitting to %(service)s (opens in a new tab)',
-											serviceArgs
-										) as string
+						{ podcatcher.learnMoreUrl
+							? translate(
+									'Click the button below to visit %(service)s and complete their sign up flow. {{a}}Learn more{{/a}}.',
+									{
+										args: { service: podcatcher.name },
+										comment:
+											'%(service)s is a podcast directory name. {{a}}…{{/a}} wraps a link to documentation about submitting a podcast to that directory.',
+										components: {
+											// Children are replaced by i18n-calypso at render time; placeholder text only satisfies the type.
+											a: <ExternalLink href={ podcatcher.learnMoreUrl }>link</ExternalLink>,
+										},
 									}
-								>
-									{ translate( 'Learn more' ) }
-								</ExternalLink>
-							</>
-						) }
+							  )
+							: translate(
+									'Click the button below to visit %(service)s and complete their sign up flow.',
+									serviceArgs
+							  ) }
 					</Text>
+					{ step2Note && (
+						<Text as="p" variant="muted">
+							{ step2Note }
+						</Text>
+					) }
 					<Button
 						variant="secondary"
 						__next40pxDefaultSize
@@ -180,34 +182,31 @@ const SubmitModal = ( { podcatcher, onClose, onFirstSave }: Props ) => {
 							serviceArgs
 						) }
 					</Text>
-					<HStack
-						as="form"
-						spacing={ 2 }
-						className="podcast__submit-step-form"
-						onSubmit={ handleSave }
-					>
-						<div className="podcast__submit-step-field">
-							<TextControl
-								label={ translate( '%(service)s URL', serviceArgs ) as string }
-								hideLabelFromVision
-								value={ draftUrl }
-								onChange={ setDraftUrl }
-								placeholder="https://"
-								type="url"
+					<form className="podcast__submit-step-form" onSubmit={ handleSave }>
+						<HStack spacing={ 2 } alignment="center" className="podcast__submit-step-row">
+							<div className="podcast__submit-step-field">
+								<TextControl
+									label={ translate( '%(service)s URL', serviceArgs ) as string }
+									hideLabelFromVision
+									value={ draftUrl }
+									onChange={ setDraftUrl }
+									placeholder="https://"
+									type="url"
+									__next40pxDefaultSize
+									__nextHasNoMarginBottom
+								/>
+							</div>
+							<Button
+								variant="primary"
 								__next40pxDefaultSize
-								__nextHasNoMarginBottom
-							/>
-						</div>
-						<Button
-							variant="primary"
-							__next40pxDefaultSize
-							type="submit"
-							disabled={ isUnchanged }
-							accessibleWhenDisabled
-						>
-							{ translate( 'Save' ) }
-						</Button>
-					</HStack>
+								type="submit"
+								disabled={ isUnchanged }
+								accessibleWhenDisabled
+							>
+								{ translate( 'Save' ) }
+							</Button>
+						</HStack>
+					</form>
 				</VStack>
 			</VStack>
 		</Modal>
