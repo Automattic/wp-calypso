@@ -1,4 +1,6 @@
 @import '@wordpress/base-styles/variables';
+@import './dark-theme/utils/mixins';
+@import '@automattic/color-studio/dist/color-variables';
 
 /* Callout */
 @mixin dashboard-dark-theme-callout {
@@ -881,6 +883,17 @@
 	}
 }
 
+// This mixin generates the color palette variables for the dark theme.
+@mixin dashboard-dark-theme-palettes {
+	// Blue
+	@include dashboard-dark-theme-color-palette( 'studio-blue', $studio-blue );
+	@include dashboard-dark-theme-color-palette-alias( 'studio-wordpress-blue', 'studio-blue' );
+
+	// Gray
+	@include dashboard-dark-theme-color-palette( 'studio-gray', $studio-gray );
+	@include dashboard-dark-theme-color-palette-alias( 'studio-neutral', 'studio-gray' );
+}
+
 // :root variables overridden for dark theme
 @mixin dashboard-dark-theme {
 	// Overrides the default `--wp-components-*` to ensure all components that
@@ -991,7 +1004,9 @@
 	@include dashboard-dark-theme-emails;
 	@include dashboard-dark-theme-form-controls;
 	@include dashboard-dark-theme-item-group;
+	@include dashboard-dark-theme-modal;
 	@include dashboard-dark-theme-muted-text;
+	@include dashboard-dark-theme-palettes;
 	@include dashboard-dark-theme-panel;
 	@include dashboard-dark-theme-plugins;
 	@include dashboard-dark-theme-popover;
@@ -999,6 +1014,5 @@
 	@include dashboard-dark-theme-section-header;
 	@include dashboard-dark-theme-site-icon;
 	@include dashboard-dark-theme-site-logs-badges;
-	@include dashboard-dark-theme-modal;
 	@include dashboard-dark-theme-summary-button;
 }
