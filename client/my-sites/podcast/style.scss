@@ -58,16 +58,45 @@ body.is-section-podcasting {
 	max-inline-size: 760px;
 }
 
-.podcast__settings-cover-fields {
-	flex: 1;
-	min-inline-size: 0;
+// Larger cover preview with manage buttons stacked to the right.
+.podcast__settings-cover .podcast-cover-image-setting {
+	width: auto;
+	display: grid;
+	grid-template-columns: auto 1fr;
+	column-gap: 16px;
+	row-gap: 8px;
+	align-items: start;
 }
 
-.podcast__settings-cover-row {
-	@media ( max-width: 600px ) {
-		flex-direction: column;
-		align-items: stretch !important;
-	}
+.podcast__settings-cover .podcast-cover-image-setting > label,
+.podcast__settings-cover .podcast-cover-image-setting > .form-label {
+	grid-column: 1 / -1;
+	margin: 0;
+	font-size: 11px;
+	font-weight: 500;
+	text-transform: uppercase;
+	letter-spacing: 0;
+	color: inherit;
+}
+
+.podcast__settings-cover .podcast-cover-image-setting__preview {
+	float: none;
+	grid-column: 1;
+	grid-row: 2 / span 10;
+	width: 160px;
+	height: 160px;
+	margin: 0;
+	align-self: start;
+}
+
+.podcast__settings-cover .podcast-cover-image-setting__button {
+	float: none;
+	grid-column: 2;
+	margin: 0;
+	align-self: start;
+	justify-self: start;
+	width: auto;
+	min-inline-size: 110px;
 }
 
 .podcast__settings-category-add {
@@ -101,19 +130,6 @@ body.is-section-podcasting {
 .podcast__settings-readiness .notice-banner__icon-wrapper {
 	margin-block-start: 0;
 	margin-inline-end: 12px;
-}
-
-.podcast__settings-topics {
-	margin: 0;
-	padding: 0;
-	border: 0;
-}
-
-.podcast__settings-topics-legend {
-	display: block;
-	margin-block-end: 4px;
-	padding: 0;
-	font-weight: 500;
 }
 
 // Plan cards: bordered surface, optional corner badge that sits flush with

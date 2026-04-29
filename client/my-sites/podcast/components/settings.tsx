@@ -5,16 +5,17 @@ import {
 } from '@automattic/calypso-products';
 import { NoticeBanner } from '@automattic/components';
 import {
+	BaseControl,
 	Button,
 	Card,
 	CardBody,
 	CardHeader,
+	FormTokenField,
 	Notice,
 	SelectControl,
 	TextControl,
 	TextareaControl,
 	ToggleControl,
-	__experimentalHStack as HStack,
 	__experimentalHeading as Heading,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
@@ -307,12 +308,72 @@ const PodcastingSettingsForm = ( {
 		}
 	}, [ dirtyFields, submitForm ] );
 
-	const onTopicChange = useCallback(
-		( key: 'podcasting_category_1' | 'podcasting_category_2' | 'podcasting_category_3' ) =>
-			( value: string ) => {
-				updateFields( { [ key ]: value }, () => submitForm() );
-			},
-		[ updateFields, submitForm ]
+	const topicLabelByValue = useMemo( () => {
+		const map = new Map< string, string >();
+		topicOptions.forEach( ( opt ) => {
+			if ( opt.value && opt.value !== '0' ) {
+				map.set( opt.value, opt.label );
+			}
+		} );
+		return map;
+	}, [ topicOptions ] );
+
+	const topicValueByLabel = useMemo( () => {
+		const map = new Map< string, string >();
+		topicOptions.forEach( ( opt ) => {
+			if ( opt.value && opt.value !== '0' ) {
+				map.set( opt.label, opt.value );
+			}
+		} );
+		return map;
+	}, [ topicOptions ] );
+
+	const selectedTopicLabels = useMemo( () => {
+		return [
+			fields.podcasting_category_1,
+			fields.podcasting_category_2,
+			fields.podcasting_category_3,
+		]
+			.map( ( v ) => {
+				const value = String( v ?? '' );
+				if ( ! value || value === '0' ) {
+					return '';
+				}
+				return topicLabelByValue.get( value ) ?? '';
+			} )
+			.filter( Boolean );
+	}, [
+		fields.podcasting_category_1,
+		fields.podcasting_category_2,
+		fields.podcasting_category_3,
+		topicLabelByValue,
+	] );
+
+	const topicSuggestions = useMemo(
+		() => Array.from( topicLabelByValue.values() ),
+		[ topicLabelByValue ]
+	);
+
+	const onTopicsChange = useCallback(
+		( tokens: ( string | { value: string } )[] ) => {
+			const labels = tokens
+				.map( ( t ) => ( typeof t === 'string' ? t : t.value ) )
+				.filter( ( label ) => topicValueByLabel.has( label ) )
+				.slice( 0, 3 );
+			const values = labels.map( ( label ) => topicValueByLabel.get( label ) ?? '0' );
+			while ( values.length < 3 ) {
+				values.push( '0' );
+			}
+			updateFields(
+				{
+					podcasting_category_1: values[ 0 ],
+					podcasting_category_2: values[ 1 ],
+					podcasting_category_3: values[ 2 ],
+				},
+				() => submitForm()
+			);
+		},
+		[ topicValueByLabel, updateFields, submitForm ]
 	);
 
 	const onExplicitChange = useCallback(
@@ -474,12 +535,7 @@ const PodcastingSettingsForm = ( {
 							</CardHeader>
 							<CardBody>
 								<VStack spacing={ 6 }>
-									<HStack
-										alignment="flex-start"
-										spacing={ 6 }
-										justify="flex-start"
-										className="podcast__settings-cover-row"
-									>
+									<div className="podcast__settings-cover">
 										<PodcastCoverImageSetting
 											coverImageId={ Number( fields.podcasting_image_id ?? 0 ) || 0 }
 											coverImageUrl={ fields.podcasting_image ?? '' }
@@ -488,28 +544,27 @@ const PodcastingSettingsForm = ( {
 											onUploadStateChange={ setIsCoverImageUploading }
 											isDisabled={ disabled }
 										/>
+									</div>
 
-										<VStack spacing={ 4 } className="podcast__settings-cover-fields">
-											<TextControl
-												__nextHasNoMarginBottom
-												__next40pxDefaultSize
-												label={ translate( 'Title' ) as string }
-												value={ decodeEntities( fields.podcasting_title ?? '' ) }
-												onChange={ onTextChange( 'podcasting_title' ) }
-												onBlur={ onTextBlur }
-												disabled={ disabled }
-											/>
-											<TextareaControl
-												__nextHasNoMarginBottom
-												label={ translate( 'Summary / Description' ) as string }
-												value={ decodeEntities( fields.podcasting_summary ?? '' ) }
-												onChange={ onTextChange( 'podcasting_summary' ) }
-												onBlur={ onTextBlur }
-												disabled={ disabled }
-												rows={ 4 }
-											/>
-										</VStack>
-									</HStack>
+									<TextControl
+										__nextHasNoMarginBottom
+										__next40pxDefaultSize
+										label={ translate( 'Title' ) as string }
+										value={ decodeEntities( fields.podcasting_title ?? '' ) }
+										onChange={ onTextChange( 'podcasting_title' ) }
+										onBlur={ onTextBlur }
+										disabled={ disabled }
+									/>
+
+									<TextareaControl
+										__nextHasNoMarginBottom
+										label={ translate( 'Summary / Description' ) as string }
+										value={ decodeEntities( fields.podcasting_summary ?? '' ) }
+										onChange={ onTextChange( 'podcasting_summary' ) }
+										onBlur={ onTextBlur }
+										disabled={ disabled }
+										rows={ 4 }
+									/>
 
 									<TextControl
 										__nextHasNoMarginBottom
@@ -546,48 +601,29 @@ const PodcastingSettingsForm = ( {
 							</CardHeader>
 							<CardBody>
 								<VStack spacing={ 6 }>
-									<fieldset className="podcast__settings-topics">
-										<legend className="podcast__settings-topics-legend">
-											{ translate( 'Podcast topics' ) }
-										</legend>
-										<Text variant="muted" size="12">
-											{ translate(
-												'Choose how your podcast should be categorized within Apple Podcasts and other podcasting services.'
-											) }
-										</Text>
-										<VStack spacing={ 3 }>
-											<SelectControl
-												__nextHasNoMarginBottom
-												__next40pxDefaultSize
-												label={ translate( 'Primary topic' ) as string }
-												hideLabelFromVision
-												value={ String( fields.podcasting_category_1 ?? '0' ) }
-												options={ topicOptions }
-												onChange={ onTopicChange( 'podcasting_category_1' ) }
-												disabled={ disabled }
-											/>
-											<SelectControl
-												__nextHasNoMarginBottom
-												__next40pxDefaultSize
-												label={ translate( 'Secondary topic' ) as string }
-												hideLabelFromVision
-												value={ String( fields.podcasting_category_2 ?? '0' ) }
-												options={ topicOptions }
-												onChange={ onTopicChange( 'podcasting_category_2' ) }
-												disabled={ disabled }
-											/>
-											<SelectControl
-												__nextHasNoMarginBottom
-												__next40pxDefaultSize
-												label={ translate( 'Tertiary topic' ) as string }
-												hideLabelFromVision
-												value={ String( fields.podcasting_category_3 ?? '0' ) }
-												options={ topicOptions }
-												onChange={ onTopicChange( 'podcasting_category_3' ) }
-												disabled={ disabled }
-											/>
-										</VStack>
-									</fieldset>
+									<BaseControl
+										__nextHasNoMarginBottom
+										id="podcast-topics"
+										label={ translate( 'Podcast topics' ) as string }
+										help={
+											translate(
+												'Choose how your podcast should be categorized within Apple Podcasts and other podcasting services. Pick up to three.'
+											) as string
+										}
+									>
+										<FormTokenField
+											__nextHasNoMarginBottom
+											__next40pxDefaultSize
+											__experimentalExpandOnFocus
+											__experimentalShowHowTo={ false }
+											label=""
+											value={ selectedTopicLabels }
+											suggestions={ topicSuggestions }
+											maxLength={ 3 }
+											onChange={ onTopicsChange }
+											disabled={ disabled }
+										/>
+									</BaseControl>
 
 									<SelectControl
 										__nextHasNoMarginBottom
