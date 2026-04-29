@@ -46,7 +46,7 @@ function initialize() {
 		STEPS.SETUP_YOUR_SITE_AI,
 	];
 
-	return [ ...stepsWithRequiredLogin( steps ), STEPS.PLAYGROUND, STEPS.BLUEPRINT, STEPS.ERROR ];
+	return [ ...stepsWithRequiredLogin( steps ), STEPS.PLAYGROUND, STEPS.BLUEPRINT ];
 }
 
 const onboarding: FlowV2< typeof initialize > = {
@@ -78,7 +78,6 @@ const onboarding: FlowV2< typeof initialize > = {
 		);
 		const coupon = useQuery().get( 'coupon' );
 		const refParameter = useQuery().get( 'ref' );
-		const siteSlugParam = useQuery().get( 'siteSlug' );
 
 		const { setShouldShowNotification } = usePurchasePlanNotification();
 
@@ -238,23 +237,6 @@ const onboarding: FlowV2< typeof initialize > = {
 					}
 				}
 				case 'processing': {
-					if (
-						providedDependencies.processingResult === ProcessingResult.NO_ACTION &&
-						siteSlugParam
-					) {
-						// No pending action — the user landed on this page directly without
-						// completing the prior step (e.g. a direct URL load or page refresh).
-						// Redirect back to post-checkout-onboarding so it can set up the
-						// pending action and advance the flow normally.
-						window.location.replace(
-							addQueryArgs( withLocale( '/setup/onboarding/post-checkout-onboarding', locale ), {
-								siteSlug: siteSlugParam,
-								...( refParameter ? { ref: refParameter } : {} ),
-							} )
-						);
-						return;
-					}
-
 					const [ destination, backDestination ] = await getPostCheckoutDestination(
 						providedDependencies,
 						planCartItem
@@ -304,7 +286,8 @@ const onboarding: FlowV2< typeof initialize > = {
 							window.location.replace( destination );
 						}
 					} else {
-						return navigate( 'error' as typeof currentStepSlug );
+						// TODO: Handle errors
+						// navigate( 'error' );
 					}
 					return;
 				}

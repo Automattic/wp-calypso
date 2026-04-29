@@ -1,4 +1,3 @@
-import { siteBySlugQuery } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import {
 	FEATURE_BIG_SKY,
@@ -9,24 +8,21 @@ import {
 } from '@automattic/calypso-products';
 import { SiteIntent } from '@automattic/data-stores/src/onboard';
 import { Step } from '@automattic/onboarding';
-import { useQuery } from '@tanstack/react-query';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
 import Loading from 'calypso/components/loading';
 import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
-import { useQuery as useUrlParams } from 'calypso/landing/stepper/hooks/use-query';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { waitForPluginsActive } from 'calypso/landing/stepper/utils/wait-for-plugins-active';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useExperiment } from 'calypso/lib/explat';
 import { useMarketplaceThemeProducts } from '../../../../hooks/use-marketplace-theme-products';
-import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
+import { useSiteData } from '../../../../hooks/use-site-data';
 import { useSiteTransferStatusQuery } from '../../../../hooks/use-site-transfer/query';
 import { useWaitForAtomic } from '../../../../hooks/use-wait-for-atomic';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import type { Step as StepType } from '../../types';
-import type { OnboardSelect } from '@automattic/data-stores';
+import type { OnboardSelect, SiteSelect } from '@automattic/data-stores';
 
 const usePluginByGoal = () => {
 	const intent = useSelect(
@@ -48,19 +44,9 @@ const PostCheckoutOnboarding: StepType< {
 		postCheckoutBigSky?: boolean;
 	};
 } > = ( { flow, navigation } ) => {
-	const { __ } = useI18n();
 	const { submit } = navigation;
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
-
-	const siteSlug = useSiteSlugParam() ?? '';
-	const {
-		data: site,
-		isLoading: isLoadingSite,
-		isError: isErrorSite,
-	} = useQuery( {
-		...siteBySlugQuery( siteSlug ),
-		enabled: !! siteSlug,
-	} );
+	const { site, siteSlug } = useSiteData();
 
 	const eligibleForExperiment =
 		isEnabled( 'onboarding/post-checkout-ai-step' ) &&
@@ -92,23 +78,29 @@ const PostCheckoutOnboarding: StepType< {
 		[]
 	);
 
-	const isJetpackOrAtomic = !! site?.jetpack || !! site?.is_wpcom_atomic;
+	const isJetpack = useSelect(
+		( select ) => site && ( select( SITE_STORE ) as SiteSelect ).isJetpackSite( site.ID ),
+		[ site ]
+	);
+
+	const isAtomic = useSelect(
+		( select ) => site && ( select( SITE_STORE ) as SiteSelect ).isSiteAtomic( site.ID ),
+		[ site ]
+	);
+
+	const isJetpackOrAtomic = isJetpack || isAtomic;
 
 	const {
 		isLoading: isLoadingMarketplaceThemeProducts,
-		isError: isErrorMarketplaceThemeProducts,
 		isMarketplaceThemeSubscribed,
 		isExternallyManagedThemeAvailable,
-	} = useMarketplaceThemeProducts( { siteId: site?.ID } );
+	} = useMarketplaceThemeProducts();
 
-	const {
-		data: siteTransferStatusData,
-		isLoading: isLoadingSiteTransferStatusData,
-		isError: isErrorSiteTransferStatus,
-	} = useSiteTransferStatusQuery( site?.ID );
+	const { data: siteTransferStatusData, isLoading: isLoadingSiteTransferStatusData } =
+		useSiteTransferStatusQuery( site?.ID );
 
 	const { waitForInitiateTransfer, waitForTransfer, waitForFeature, waitForLatestSiteData } =
-		useWaitForAtomic( { siteId: site?.ID } );
+		useWaitForAtomic( {} );
 
 	const { setIntentOnSite, setGoalsOnSite } = useDispatch( SITE_STORE );
 
@@ -123,7 +115,7 @@ const PostCheckoutOnboarding: StepType< {
 	const goalPlugin = usePluginByGoal();
 	const hasPluginByGoal = !! goalPlugin;
 
-	const refParameter = useUrlParams().get( 'ref' );
+	const refParameter = useQuery().get( 'ref' );
 	const isWooHostingSolutions = refParameter === WOO_HOSTING_SOLUTIONS_REF;
 
 	// Prefer the cart item (what the user just bought — freshest signal during
@@ -148,7 +140,7 @@ const PostCheckoutOnboarding: StepType< {
 	 * - Verify that the site is atomic, as the theme should be installed on the user's site.
 	 *
 	 * The atomic transfer will be initiated immediately after the user purchases an externally managed theme.
-	 * If it's not initiated, we need to trigger the atomic transfer manually.
+	 * If it’s not initiated, we need to trigger the atomic transfer manually.
 	 *
 	 * Note that an externally managed theme is only available when both of the following conditions are met:
 	 * - The site must be subscribed to the theme.
@@ -159,26 +151,10 @@ const PostCheckoutOnboarding: StepType< {
 		isMarketplaceThemeSubscribed &&
 		isExternallyManagedThemeAvailable;
 
-	const hasError = isErrorSite || isErrorMarketplaceThemeProducts || isErrorSiteTransferStatus;
-
-	useEffect( () => {
-		if ( ! hasError ) {
-			return;
-		}
-		recordTracksEvent( 'calypso_onboarding_post_checkout_setup_error', {
-			flow,
-			error_site: isErrorSite,
-			error_marketplace_theme_products: isErrorMarketplaceThemeProducts,
-			error_site_transfer_status: isErrorSiteTransferStatus,
-		} );
-	}, [ hasError, flow, isErrorSite, isErrorMarketplaceThemeProducts, isErrorSiteTransferStatus ] );
-
 	useEffect( () => {
 		if (
-			hasError ||
 			! site ||
 			! siteSlug ||
-			isLoadingSite ||
 			isLoadingMarketplaceThemeProducts ||
 			isLoadingSiteTransferStatusData ||
 			isLoadingExperiment
@@ -225,10 +201,8 @@ const PostCheckoutOnboarding: StepType< {
 			siteSlug,
 		} );
 	}, [
-		hasError,
 		site,
 		siteSlug,
-		isLoadingSite,
 		isLoadingMarketplaceThemeProducts,
 		isLoadingSiteTransferStatusData,
 		isLoadingExperiment,
@@ -239,27 +213,6 @@ const PostCheckoutOnboarding: StepType< {
 		isExternallyManagedThemeAvailable,
 		shouldInstallPlugin,
 	] );
-
-	if ( hasError ) {
-		const heading = __( "We've hit a snag" );
-		const body = __(
-			'Something went wrong while setting up your site. Please try refreshing the page, or contact support if the problem persists.'
-		);
-
-		if ( shouldUseStepContainerV2( flow ) ) {
-			return (
-				<Step.CenteredColumnLayout
-					columnWidth={ 8 }
-					topBar={ <Step.TopBar /> }
-					heading={ <Step.Heading text={ heading } /> }
-				>
-					{ body }
-				</Step.CenteredColumnLayout>
-			);
-		}
-
-		return <Loading className="wpcom-loading__boot" title={ heading } subtitle={ body } />;
-	}
 
 	if ( shouldUseStepContainerV2( flow ) ) {
 		return <Step.Loading />;
