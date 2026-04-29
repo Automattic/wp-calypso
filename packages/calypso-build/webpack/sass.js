@@ -38,13 +38,12 @@ module.exports.loader = ( { includePaths, prelude, postCssOptions } ) => ( {
 			loader: require.resolve( 'sass-loader' ),
 			options: {
 				additionalData: prelude,
+				api: 'modern',
 				sassOptions: {
-					includePaths,
+					loadPaths: includePaths,
 					quietDeps: true,
+					silenceDeprecations: [ 'mixed-decls' ],
 				},
-				// The warnRuleAsWarning can be removed once sass-loader is updated to v14. It defaults to true in that version.
-				// @see https://github.com/webpack-contrib/sass-loader/tree/v14.0.0?tab=readme-ov-file#warnruleaswarning
-				warnRuleAsWarning: true,
 			},
 		},
 	],
