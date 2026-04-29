@@ -26,7 +26,7 @@ type TopicGroupCardProps = {
 
 const BlogAvatar: React.FC< { blog: CuratedBlog } > = ( { blog } ) => {
 	const { data: feed } = useQuery( readFeedQuery( blog.feed_ID ) );
-	const iconUrl = feed?.site_icon ?? feed?.image;
+	const iconUrl = feed?.image;
 
 	return (
 		<>
@@ -35,7 +35,7 @@ const BlogAvatar: React.FC< { blog: CuratedBlog } > = ( { blog } ) => {
 				title={ blog.site_name }
 				style={ { width: AVATAR_SIZE, height: AVATAR_SIZE } }
 			>
-				<SiteIcon iconUrl={ iconUrl } size={ AVATAR_SIZE } alt={ blog.site_name } />
+				<SiteIcon iconUrl={ iconUrl } size={ AVATAR_SIZE } alt={ blog.site_name } lazy />
 			</span>
 		</>
 	);

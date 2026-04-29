@@ -47,11 +47,14 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 	const [ followedTags, setFollowedTags ] = useState< string[] >( [] );
 	const [ showAllTopics, setShowAllTopics ] = useState( false );
 	const hasSyncedFromServerRef = useRef( false );
+	const followedTagsRef = useRef< string[] >( [] );
 	const { data: followedTagsFromState } = useFollowedReaderTags();
 	const reduxFollows = useSelector( getReaderFollows );
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 	const [ processingTags, setProcessingTags ] = useState< Set< string > >( new Set() );
+	const processingTagsRef = useRef< Set< string > >( new Set() );
+	const inFlightTagOpsRef = useRef< Map< string, Promise< boolean > > >( new Map() );
 	const [ processingPacks, setProcessingPacks ] = useState< Set< string > >( new Set() );
 	const [ relaxedPackCriteria, setRelaxedPackCriteria ] = useState< Set< string > >( new Set() );
 	const { mutateAsync: followTag } = useMutation( followReadTagMutation( queryClient ) );
@@ -64,6 +67,14 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 		setFollowedTags( followedTagsFromState.map( ( tag ) => tag.slug ) );
 		hasSyncedFromServerRef.current = true;
 	}, [ followedTagsFromState ] );
+
+	useEffect( () => {
+		followedTagsRef.current = followedTags;
+	}, [ followedTags ] );
+
+	useEffect( () => {
+		processingTagsRef.current = processingTags;
+	}, [ processingTags ] );
 
 	// Resolve each topic group's blog list once per modal session. The random
 	// selection is therefore stable for the lifetime of the modal, which is
@@ -104,53 +115,72 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 
 	const isContinueDisabled = followedTags.length < 4;
 
-	const handleTopicChange = async ( checked: boolean, tag: string ) => {
-		// If the tag is already being processed, do nothing.
-		if ( processingTags.has( tag ) ) {
-			return;
+	const handleTopicChange = async ( checked: boolean, tag: string ): Promise< boolean > => {
+		const existingOperation = inFlightTagOpsRef.current.get( tag );
+		if ( existingOperation ) {
+			return existingOperation;
 		}
 
-		// Mark the tag as being processed.
-		setProcessingTags( ( current ) => new Set( current ).add( tag ) );
-
-		// Follow or unfollow the tag and update the followed tags state for the UI.
-		let totalFollowedAfterToggle = followedTags.length;
-		setFollowedTags( ( currentTags ) => {
-			let nextTags = currentTags.filter( ( t ) => t !== tag );
-			if ( checked ) {
-				nextTags = currentTags.includes( tag ) ? currentTags : [ ...currentTags, tag ];
+		const operation = ( async (): Promise< boolean > => {
+			// If an operation for this tag is already in progress through another path, wait for it.
+			if ( processingTagsRef.current.has( tag ) ) {
+				return checked
+					? followedTagsRef.current.includes( tag )
+					: ! followedTagsRef.current.includes( tag );
 			}
-			totalFollowedAfterToggle = nextTags.length;
-			return nextTags;
-		} );
 
-		recordTracksEvent(
-			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_tag_${
-				checked ? 'followed' : 'unfollowed'
-			}`,
-			{
-				tag,
-				total_followed: totalFollowedAfterToggle,
+			// Mark the tag as being processed.
+			setProcessingTags( ( current ) => new Set( current ).add( tag ) );
+
+			// Follow or unfollow the tag and update the followed tags state for the UI.
+			let totalFollowedAfterToggle = followedTagsRef.current.length;
+			setFollowedTags( ( currentTags ) => {
+				let nextTags = currentTags.filter( ( t ) => t !== tag );
+				if ( checked ) {
+					nextTags = currentTags.includes( tag ) ? currentTags : [ ...currentTags, tag ];
+				}
+				totalFollowedAfterToggle = nextTags.length;
+				return nextTags;
+			} );
+
+			recordTracksEvent(
+				`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_tag_${
+					checked ? 'followed' : 'unfollowed'
+				}`,
+				{
+					tag,
+					total_followed: totalFollowedAfterToggle,
+				}
+			);
+
+			try {
+				await ( checked ? followTag( tag ) : unfollowTag( tag ) );
+				return true;
+			} catch {
+				// Revert the optimistic update when the request fails.
+				setFollowedTags( ( currentTags ) =>
+					checked ? currentTags.filter( ( t ) => t !== tag ) : [ ...currentTags, tag ]
+				);
+				const errorMessage = checked
+					? translate( 'Could not follow tag: %(tag)s', { args: { tag } } )
+					: translate( 'Could not unfollow tag: %(tag)s', { args: { tag } } );
+				dispatch( errorNotice( errorMessage ) );
+				return false;
+			} finally {
+				setProcessingTags( ( current ) => {
+					const updated = new Set( current );
+					updated.delete( tag );
+					return updated;
+				} );
 			}
-		);
+		} )();
+
+		inFlightTagOpsRef.current.set( tag, operation );
 
 		try {
-			await ( checked ? followTag( tag ) : unfollowTag( tag ) );
-		} catch {
-			// Revert the optimistic update when the request fails.
-			setFollowedTags( ( currentTags ) =>
-				checked ? currentTags.filter( ( t ) => t !== tag ) : [ ...currentTags, tag ]
-			);
-			const errorMessage = checked
-				? translate( 'Could not follow tag: %(tag)s', { args: { tag } } )
-				: translate( 'Could not unfollow tag: %(tag)s', { args: { tag } } );
-			dispatch( errorNotice( errorMessage ) );
+			return await operation;
 		} finally {
-			setProcessingTags( ( current ) => {
-				const updated = new Set( current );
-				updated.delete( tag );
-				return updated;
-			} );
+			inFlightTagOpsRef.current.delete( tag );
 		}
 	};
 
@@ -164,10 +194,33 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 		try {
 			// Follow tags in deterministic order so state updates don't race each other.
 			for ( const tag of pack.tags ) {
-				if ( ! followedTags.includes( tag ) ) {
-					await handleTopicChange( true, tag );
+				while ( processingTagsRef.current.has( tag ) ) {
+					const inFlight = inFlightTagOpsRef.current.get( tag );
+					if ( inFlight ) {
+						await inFlight;
+					} else {
+						await new Promise( ( resolve ) => setTimeout( resolve, 20 ) );
+					}
+				}
+
+				if ( followedTagsRef.current.includes( tag ) ) {
+					continue;
+				}
+
+				const didFollowTag = await handleTopicChange( true, tag );
+				if ( ! didFollowTag || ! followedTagsRef.current.includes( tag ) ) {
+					return;
 				}
 			}
+
+			recordTracksEvent(
+				`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_pack_subscribed`,
+				{
+					pack_id: pack.id,
+					tag_count: pack.tags.length,
+					blog_count: pack.blogs.length,
+				}
+			);
 
 			// Follow any blogs in the pack we're not already following.
 			for ( const blog of pack.blogs ) {
@@ -182,15 +235,6 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 				// follow data-layer notices and should not block pack completion.
 				dispatch( follow( blog.site_URL, followData, null ) );
 			}
-
-			recordTracksEvent(
-				`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_pack_subscribed`,
-				{
-					pack_id: pack.id,
-					tag_count: pack.tags.length,
-					blog_count: pack.blogs.length,
-				}
-			);
 		} finally {
 			setProcessingPacks( ( current ) => {
 				const updated = new Set( current );
