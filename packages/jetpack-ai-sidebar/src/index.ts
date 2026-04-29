@@ -645,6 +645,12 @@ const BLOCK_SUGGESTIONS = [
 	},
 ];
 
+// ---------- capabilities ----------
+
+export const capabilities = {
+	supportsSplitScreen: true,
+};
+
 /**
  * Block-aware dynamic suggestions for the AM sidebar.
  *
