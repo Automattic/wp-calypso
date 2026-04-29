@@ -1,4 +1,8 @@
-import { followReadTagMutation, unfollowReadTagMutation } from '@automattic/api-queries';
+import {
+	followReadTagMutation,
+	unfollowReadTagMutation,
+	type ReaderTag,
+} from '@automattic/api-queries';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -14,10 +18,9 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { toggleReaderSidebarTags } from 'calypso/state/reader-ui/sidebar/actions';
 import { isTagsOpen } from 'calypso/state/reader-ui/sidebar/selectors';
-import type { NormalizedReaderTag } from 'calypso/reader/lib/tag-utils';
 import './style.scss';
 
-const containsBloganuary = ( followedTags: NormalizedReaderTag[] | null ): boolean | undefined => {
+const containsBloganuary = ( followedTags: ReaderTag[] | null ): boolean | undefined => {
 	if ( followedTags === null ) {
 		return undefined;
 	}

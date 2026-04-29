@@ -113,16 +113,16 @@ class TagStream extends Component {
 			} );
 		}
 
-		if ( tag && tag.error ) {
+		if ( this.props.isNotFound ) {
 			return (
 				<ReaderMain className="tag-stream__main">
 					<TagStreamHeader
 						title={ titleText }
 						encodedTagSlug={ encodedTagSlug }
-						// This shouldn not be necessary as user should not have been able to
-						// subscribe to an error tag. Nevertheless, we should give them a route to
-						// unfollow if that was the case.
-						showFollow={ tag.id && this.isSubscribed() }
+						// Should not be necessary because the user shouldn't have been able to
+						// subscribe to a missing tag, but still give them a route to unfollow
+						// if that's somehow the case.
+						showFollow={ this.isSubscribed() }
 						showSort={ false }
 					/>
 					{ emptyContent() }
@@ -176,17 +176,16 @@ class TagStream extends Component {
 function withReaderTags( Inner ) {
 	return function WithReaderTags( props ) {
 		const followedTags = useFollowedReaderTags();
-		const currentTag = useReaderTagBySlug( props.decodedTagSlug );
+		const { tag: currentTag, isNotFound } = useReaderTagBySlug( props.decodedTagSlug );
 
 		// Annotate the active tag with isFollowing so the existing isSubscribed()
 		// check on the class works against the same shape as the followed list.
-		const annotatedCurrent =
-			currentTag && ! currentTag.error
-				? {
-						...currentTag,
-						isFollowing: followedTags?.some( ( t ) => t.slug === currentTag.slug ) ?? false,
-				  }
-				: currentTag;
+		const annotatedCurrent = currentTag
+			? {
+					...currentTag,
+					isFollowing: followedTags?.some( ( t ) => t.slug === currentTag.slug ) ?? false,
+			  }
+			: null;
 
 		const tags = [ annotatedCurrent, ...( followedTags ?? [] ) ].filter( Boolean );
 
@@ -196,6 +195,7 @@ function withReaderTags( Inner ) {
 				tags={ tags }
 				followedTags={ followedTags }
 				description={ currentTag?.description }
+				isNotFound={ isNotFound }
 			/>
 		);
 	};
