@@ -53,6 +53,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 	const queryClient = useQueryClient();
 	const [ processingTags, setProcessingTags ] = useState< Set< string > >( new Set() );
 	const [ processingPacks, setProcessingPacks ] = useState< Set< string > >( new Set() );
+	const [ relaxedPackCriteria, setRelaxedPackCriteria ] = useState< Set< string > >( new Set() );
 	const { mutateAsync: followTag } = useMutation( followReadTagMutation( queryClient ) );
 	const { mutateAsync: unfollowTag } = useMutation( unfollowReadTagMutation( queryClient ) );
 
@@ -85,7 +86,20 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 		);
 
 	const isPackSubscribed = ( pack: ResolvedPack ): boolean => {
-		return pack.tags.every( ( tag ) => followedTags.includes( tag ) );
+		const tagsFollowed = pack.tags.every( ( tag ) => followedTags.includes( tag ) );
+		if ( ! tagsFollowed ) {
+			return false;
+		}
+
+		// Initial render uses strict criteria (all blogs) so existing complete pack
+		// follows are recognized precisely. After the user explicitly subscribes to
+		// this pack in-session, relax to "at least one blog" to avoid being held
+		// hostage by stale/deleted recommended blogs.
+		const followedBlogCount = pack.blogs.filter( isBlogFollowed ).length;
+		if ( relaxedPackCriteria.has( pack.id ) ) {
+			return pack.blogs.length === 0 || followedBlogCount > 0;
+		}
+		return followedBlogCount === pack.blogs.length;
 	};
 
 	const isContinueDisabled = followedTags.length < 4;
@@ -139,6 +153,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 			return;
 		}
 
+		setRelaxedPackCriteria( ( current ) => new Set( current ).add( pack.id ) );
 		setProcessingPacks( ( current ) => new Set( current ).add( pack.id ) );
 		try {
 			// Follow tags in deterministic order so state updates don't race each other.
