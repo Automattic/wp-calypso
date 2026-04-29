@@ -65,7 +65,19 @@ function mapQuoted(
 	post: AtmosphereFeedItem | AtmosphereQuoteTombstone
 ): SocialPost | SocialQuoteTombstone {
 	if ( 'type' in post ) {
-		return { type: post.type, uri: post.uri, reason: post.reason };
+		// AtmosphereQuoteBlockedTombstone carries an `author: ActorRef`;
+		// AtmosphereQuoteNotFoundTombstone does not. Neither carries a
+		// `reason` field on trunk's atmosphere shape, so synthesize the
+		// lower-case mirror from `type` for legacy social consumers.
+		const tombstone: SocialQuoteTombstone = {
+			type: post.type,
+			uri: post.uri,
+			reason: post.type === 'not_found' ? 'notfound' : 'blocked',
+		};
+		if ( post.type === 'blocked' ) {
+			tombstone.author = { did: post.author.did };
+		}
+		return tombstone;
 	}
 	return mapAtmosphereFeedItemToSocialPost( post );
 }

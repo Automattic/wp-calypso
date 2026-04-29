@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 import { forwardRef } from 'react';
+import { mapAtmosphereFeedItemToSocialPost } from '../../mappers/atmosphere';
 import { SocialPostCard } from '../post-card';
 import { ThreadTombstone } from './thread-tombstone';
 import type { AtmosphereThreadNode } from '@automattic/api-core';
@@ -60,7 +61,7 @@ export const ThreadNode = forwardRef< HTMLDivElement, ThreadNodeProps >( functio
 				style={ wrapperStyle }
 			>
 				<SocialPostCard
-					post={ node.post }
+					post={ mapAtmosphereFeedItemToSocialPost( node.post ) }
 					variant="default"
 					expandedVideo={ expandedVideo }
 					prominentTimestamp={ prominentTimestamp }

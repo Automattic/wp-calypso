@@ -66,10 +66,17 @@ export interface SocialEmbedExternal {
 	thumb: string | null;
 }
 
+// Sources differ on what metadata travels with a tombstone — atmosphere's
+// AtmosphereQuoteBlockedTombstone carries an `author` ActorRef, the older
+// wire shape included a redundant `reason` lower-case mirror of `type`,
+// and Mastodon today carries neither. Both are optional so per-protocol
+// mappers preserve what they have without forcing every consumer to handle
+// every shape.
 export interface SocialQuoteTombstone {
 	type: 'not_found' | 'blocked';
 	uri: string;
-	reason: 'notfound' | 'blocked';
+	reason?: 'notfound' | 'blocked';
+	author?: { did?: string; id?: string; handle?: string };
 }
 
 export interface SocialEmbedQuote {
