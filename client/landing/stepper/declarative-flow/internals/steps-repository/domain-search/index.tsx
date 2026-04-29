@@ -431,7 +431,7 @@ const DomainSearchStep: StepType< {
 				<>
 					{ config.allowsUsingOwnDomain && (
 						<Step.LinkButton onClick={ () => events.onExternalDomainClick( query ) }>
-							{ __( 'Use a domain I already own' ) }
+							{ __( 'Use a domain I own' ) }
 						</Step.LinkButton>
 					) }
 				</>
@@ -490,7 +490,7 @@ const DomainSearchStep: StepType< {
 				onClick={ () => events.onExternalDomainClick( query ) }
 				variant="link"
 			>
-				<span>{ __( 'Use a domain I already own' ) }</span>
+				<span>{ __( 'Use a domain I own' ) }</span>
 			</Button>
 		);
 	};
