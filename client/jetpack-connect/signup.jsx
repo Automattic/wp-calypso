@@ -160,16 +160,16 @@ export class JetpackSignup extends Component {
 		return 'automattic-for-agencies-client' === this.props.authQuery.from;
 	}
 
-	isFromJetpackConnector() {
-		return 'jetpack-connector' === this.props.authQuery.from;
+	isFromJetpackConnector( props = this.props ) {
+		return 'jetpack-connector' === props.authQuery.from;
 	}
 
-	isFromJetpackOnboarding() {
-		return 'jetpack-onboarding' === this.props.authQuery.from;
+	isFromJetpackOnboarding( props = this.props ) {
+		return 'jetpack-onboarding' === props.authQuery.from;
 	}
 
-	isUnifiedConnectionFlow() {
-		return this.isFromJetpackOnboarding() || this.isFromJetpackConnector();
+	isUnifiedConnectionFlow( props = this.props ) {
+		return this.isFromJetpackOnboarding( props ) || this.isFromJetpackConnector( props );
 	}
 
 	handleSubmitSignup = ( _, userData, analyticsData, afterSubmit = noop ) => {

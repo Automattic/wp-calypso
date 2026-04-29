@@ -381,3 +381,114 @@ exports[`JetpackSignup should render with locale suggestions 1`] = `
   </main>
 </div>
 `;
+
+exports[`JetpackSignup should render with the connector branding when from=jetpack-connector 1`] = `
+<div>
+  <main
+    class="jetpack-connect__authorize-form-wrapper--connector jetpack-connect__main is-jetpack-connector-flow main"
+    role="main"
+  >
+    DocumentHead
+    <div
+      class="jetpack-connect__authorize-form"
+    >
+      <div
+        class="connect-screen-brand-header"
+      >
+        <div
+          class="connect-screen-brand-header__logo"
+        >
+          <img
+            alt=""
+            class="connect-screen-brand-header__logo-image"
+            src="jetpack-connect-woo.svg"
+          />
+        </div>
+        <h1
+          class="connect-screen-brand-header__title"
+        >
+          Connect your store
+        </h1>
+        <p
+          class="connect-screen-brand-header__description"
+        >
+          Connect your store to unlock powerful features.
+        </p>
+      </div>
+      <div
+        class="signup-form"
+      >
+        <div
+          class="signup-form__passwordless-form-wrapper"
+        >
+          <div
+            class="card logged-out-form"
+          >
+            <form
+              novalidate=""
+            >
+              <fieldset
+                class="validation-fieldset form-fieldset"
+                role="group"
+              >
+                <label
+                  class="form-label"
+                  for="signup-email"
+                >
+                  Enter your email address
+                </label>
+                <input
+                  autocapitalize="off"
+                  autocorrect="off"
+                  class="form-text-input signup-form__passwordless-email"
+                  id="signup-email"
+                  name="email"
+                  type="email"
+                  value="email@an.example.site"
+                />
+                <div
+                  class="validation-fieldset__validation-message"
+                />
+              </fieldset>
+              <div
+                class="card logged-out-form__footer"
+              >
+                <button
+                  class="components-button signup-form__submit is-next-40px-default-size is-primary"
+                  type="submit"
+                >
+                  Continue
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div
+          class="auth-form__separator"
+        >
+          <div
+            class="auth-form__separator-text"
+          >
+            or
+          </div>
+        </div>
+        <div
+          class="card auth-form__social is-signup"
+        >
+          <div
+            class="auth-form__social-buttons"
+          >
+            <div
+              class="auth-form__social-buttons-container"
+            >
+              GoogleSocialButton
+              AppleLoginButton
+              GitHubLoginButton
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+`;
