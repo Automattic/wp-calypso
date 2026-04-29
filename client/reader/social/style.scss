@@ -17,8 +17,14 @@
 	align-items: flex-end;
 	justify-content: space-between;
 	gap: 1rem;
-	margin-block-start: -2.5rem;
 	padding-inline: 0.5rem;
+}
+
+// Pull the avatar up to overlap the banner only when a banner is rendered.
+// Without this guard, the negative margin would yank the avatar above the
+// card's top edge for accounts with no cover image.
+.social-profile-card__banner + .social-profile-card__header-row {
+	margin-block-start: -2.5rem;
 
 	@media ( max-width: 600px ) {
 		margin-block-start: -1.75rem;
