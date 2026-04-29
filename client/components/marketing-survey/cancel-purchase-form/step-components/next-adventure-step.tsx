@@ -19,8 +19,8 @@ interface Props {
 export default function NextAdventureStep( props: Props ) {
 	const translate = useTranslate();
 	const { isPlan, isOnlyStep, intent, onValidationChange } = props;
-	const isCancelPostMutation =
-		config.isEnabled( 'purchases/split-cancel-remove' ) && intent !== 'remove';
+	const isSplitEnabled = config.isEnabled( 'purchases/split-cancel-remove' );
+	const isCancelPostMutation = isSplitEnabled && intent !== 'remove';
 	const [ text, setText ] = useState( '' );
 	const [ nextAdventure, setNextAdventure ] = useState( '' );
 	const [ nextAdventureDetails, setNextAdventureDetails ] = useState( '' );
@@ -87,20 +87,27 @@ export default function NextAdventureStep( props: Props ) {
 	}, [ nextAdventure, isPlan, onValidationChange ] );
 
 	let headerText;
-	if ( isOnlyStep ) {
+	let subHeaderText;
+	if ( ! isSplitEnabled ) {
+		headerText = translate( 'Sorry to see you go' );
+		subHeaderText = translate( 'One last thing', {
+			context: 'This is the last step before cancelling the plan.',
+		} );
+	} else if ( isOnlyStep ) {
 		headerText = isCancelPostMutation
-			? translate( 'Cancelation confirmed' )
+			? translate( 'Cancellation confirmed' )
 			: translate( 'Share your feedback' );
+		subHeaderText = translate(
+			'Before you go, please answer a quick question to help us improve WordPress.com.'
+		);
 	} else {
 		headerText = isCancelPostMutation
 			? translate( 'Thanks for your feedback' )
 			: translate( 'One last thing', {
 					context: 'This is the last step before cancelling the plan.',
 			  } );
+		subHeaderText = undefined;
 	}
-	const subHeaderText = isOnlyStep
-		? translate( 'Before you go, please answer a quick question to help us improve WordPress.com.' )
-		: undefined;
 
 	return (
 		<div className="cancel-purchase-form__feedback">
