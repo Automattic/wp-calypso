@@ -254,6 +254,26 @@ describe( 'normalizeSuggestions', () => {
 		] );
 	} );
 
+	it( 'keeps concise question labels so post-specific chips can be shown', () => {
+		expect(
+			normalizeSuggestions(
+				[
+					{
+						label: 'Why refuse tips?',
+						prompt: 'Why does the fisherman refuse tips in this post?',
+					},
+				],
+				'ai-suggestion'
+			)
+		).toEqual( [
+			{
+				id: 'ai-suggestion-0-why-does-the-fisherman-refuse-tips-in-th',
+				label: 'Why refuse tips?',
+				prompt: 'Why does the fisherman refuse tips in this post?',
+			},
+		] );
+	} );
+
 	it( 'falls back to a short chip label when the returned label is empty', () => {
 		expect(
 			normalizeSuggestions( [ { label: ' ', prompt: 'Can you summarize this post?' } ], 'ai' )
@@ -266,7 +286,7 @@ describe( 'normalizeSuggestions', () => {
 		] );
 	} );
 
-	it( 'replaces long question labels with short fallback labels', () => {
+	it( 'replaces overly long labels with short fallback labels', () => {
 		expect(
 			normalizeSuggestions(
 				[

@@ -231,7 +231,7 @@ const FOLLOWUP_DEBOUNCE_MS = 2500;
 const MIN_FOLLOWUP_AGENT_TEXT_LENGTH = 40;
 const MAX_SUGGESTION_LABEL_LENGTH = 48;
 const MAX_SUGGESTION_LABEL_WORDS = 7;
-const POST_FALLBACK_LABELS = [ 'Summarize this post', 'Explore this topic', 'Find related posts' ];
+const POST_FALLBACK_LABELS = [ 'Main takeaway', 'Key details', 'Related context' ];
 const BLOG_FALLBACK_LABELS = [ 'Explore this blog', 'Find popular posts', 'Recommend a post' ];
 const FOLLOWUP_FALLBACK_LABELS = [ 'Go deeper', 'Learn more', 'Ask a follow-up' ];
 
@@ -328,8 +328,7 @@ function isConciseSuggestionLabel( label ) {
 	}
 	return (
 		label.length <= MAX_SUGGESTION_LABEL_LENGTH &&
-		label.split( /\s+/ ).length <= MAX_SUGGESTION_LABEL_WORDS &&
-		! /[?]/.test( label )
+		label.split( /\s+/ ).length <= MAX_SUGGESTION_LABEL_WORDS
 	);
 }
 
@@ -479,10 +478,12 @@ ${ postExcerpt }
 
 Return only a JSON array of exactly 3 objects, with no markdown or commentary.
 Each object must have:
-- "label": short chip text, 2-5 words, no question mark, max 48 characters.
+- "label": short chip text, 2-5 words, max 48 characters. Prefer a specific reader question; question marks are okay.
 - "prompt": a full question for the blog assistant to answer.
 
 Generate questions a reader might click to learn more ABOUT THIS POST specifically.
+Use concrete details from the title or excerpt when possible.
+Avoid generic labels like "Summarize this post", "Explain this post", or "Find related posts".
 Do not ask the author personal interview questions.
 Do not address the author as "you" or "your".
 Phrase prompts around "this post", "the post", "the author", or the topic discussed.`
@@ -492,7 +493,7 @@ Site URL: ${ siteUrl }
 
 Return only a JSON array of exactly 3 objects, with no markdown or commentary.
 Each object must have:
-- "label": short chip text, 2-5 words, no question mark, max 48 characters.
+- "label": short chip text, 2-5 words, max 48 characters. Question marks are okay.
 - "prompt": a full question for the blog assistant to answer.
 
 Generate questions a reader might click to explore THIS BLOG overall: its topics, recent posts, or recommendations.
@@ -524,7 +525,7 @@ Reader asked: ${ userText }
 Blog replied: ${ agentText }
 
 Return only a JSON array of 2-3 objects, with no markdown or commentary. Each object must have "label" and "prompt" strings.
-Labels must be short chip text, 2-5 words, no question mark, max 48 characters.
+Labels must be short chip text, 2-5 words, max 48 characters. Question marks are okay.
 Generate follow-up questions the reader might want to ask next, based on what was discussed.
 Do not ask the author/site owner personal interview questions or address them as "you".
 Questions should feel like natural next-step curiosity: go deeper on a point, connect to a related theme, or explore an implication. Not generic.`;
