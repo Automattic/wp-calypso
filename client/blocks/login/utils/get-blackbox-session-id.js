@@ -3,9 +3,14 @@ import { loadBlackboxSdk } from 'calypso/blocks/login/utils/blackbox-sdk';
 /**
  * Retrieve a Blackbox bot-detection session ID.
  *
- * Awaits the lazy SDK load, then calls getSessionId() which returns the
- * cached session ID immediately (non-blocking) and ships accumulated
- * behavioral data in the background.
+ * Awaits the lazy SDK load, then calls collect() to flush accumulated
+ * behavioral data (keypress timing, mouse movements, etc.) to the server.
+ * This ensures the server-side session score reflects behavioral signals
+ * before the login request fires — critical for enforcement via verify().
+ *
+ * collect() is safe to call at submit time because the login form's submit
+ * button is disabled while a challenge is active (isBlackboxChallengeActive),
+ * so this only fires when no challenge widget is in progress.
  *
  * Blackbox returns BlackboxError instead of throwing, so the typeof check
  * filters those out. The try/catch is defense-in-depth.
@@ -22,18 +27,22 @@ export async function getBlackboxSessionId() {
 		return undefined;
 	}
 
-	if ( typeof window.Blackbox?.getSessionId !== 'function' ) {
+	if ( typeof window.Blackbox?.collect !== 'function' ) {
 		return undefined;
 	}
 
 	try {
-		const sessionId = await Promise.race( [
-			window.Blackbox.getSessionId(),
+		const result = await Promise.race( [
+			window.Blackbox.collect(),
 			new Promise( ( resolve ) => setTimeout( resolve, 2000 ) ),
 		] );
 
-		if ( typeof sessionId === 'string' ) {
-			return sessionId;
+		if ( typeof result === 'string' ) {
+			return result;
+		}
+
+		if ( result && typeof result.sessionId === 'string' ) {
+			return result.sessionId;
 		}
 	} catch {
 		// Intentionally ignored — Blackbox must never block login.
