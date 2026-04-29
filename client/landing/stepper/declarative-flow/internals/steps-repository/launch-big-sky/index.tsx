@@ -180,7 +180,7 @@ const LaunchBigSky: StepType = function ( props ) {
 			event.preventDefault();
 			await Promise.all( [
 				setIntentOnSite( siteSlug, SiteIntent.AIAssembler ),
-				updateBigSkyPlugin( siteId, { enable: true } ),
+				updateBigSkyPlugin( siteId, { enable: true, setup_assembler_theme: true } ),
 			] );
 			// Poll until the async job that sets big_sky_enable on the remote site has
 			// completed. Plugin activation triggers a PHP-FPM restart, so the option isn't

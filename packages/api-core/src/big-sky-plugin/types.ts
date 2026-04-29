@@ -7,6 +7,7 @@ export interface BigSkyPluginMetadata {
 
 export interface BigSkyPluginUpdateRequest {
 	enable: boolean;
+	setup_assembler_theme?: boolean;
 }
 
 export interface BigSkyPluginResponse {
