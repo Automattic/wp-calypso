@@ -3,6 +3,7 @@
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render } from '@testing-library/react';
+import nock from 'nock';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import ReaderPostActions from '../index';
@@ -39,6 +40,21 @@ const defaultProps = {
 };
 
 describe( 'ReaderPostActions', () => {
+	beforeAll( () => {
+		nock.disableNetConnect();
+	} );
+
+	beforeEach( () => {
+		nock.cleanAll();
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/read/teams' )
+			.reply( 200, { number: 0, teams: [] } );
+	} );
+
+	afterAll( () => {
+		nock.enableNetConnect();
+	} );
+
 	describe( 'when comments API is disabled', () => {
 		it( 'should not render CommentButton', () => {
 			const store = createMockStore();
