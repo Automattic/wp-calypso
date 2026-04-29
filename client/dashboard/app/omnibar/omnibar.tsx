@@ -54,10 +54,7 @@ export default function OmnibarContainer( { user }: { user?: User } ) {
 		const result = buildOmnibarNodesFromAdminBarNodes( removeUnsupportedDotcomNodes( nodes ) );
 
 		if ( ! result.home ) {
-			result.home = {
-				id: '',
-				title: '',
-			};
+			result.home = { id: '' };
 		}
 
 		result.home.icon = <OmnibarHomeIcon />;
@@ -66,7 +63,6 @@ export default function OmnibarContainer( { user }: { user?: User } ) {
 			if ( ! result.site ) {
 				result.site = {
 					id: 'site-name',
-					title: '',
 					children: [],
 				};
 			}
@@ -78,7 +74,7 @@ export default function OmnibarContainer( { user }: { user?: User } ) {
 		result.plugins = [
 			{
 				id: 'help-center',
-				title: __( 'Help' ),
+				label: __( 'Help' ),
 				icon: <Icon icon={ helpFilled } />,
 				onClick: () => setShowHelpCenter( ! isHelpCenterShown ),
 			},
@@ -99,12 +95,10 @@ export function InitialOmnibar( { user }: { user?: User } ) {
 			nodes={ {
 				home: {
 					id: '',
-					title: '',
 					icon: <OmnibarHomeIcon />,
 				},
 				user: {
 					id: '',
-					title: '',
 					icon: user ? <img src={ user.avatar_URL } alt="" /> : undefined,
 				},
 			} }
