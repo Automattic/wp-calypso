@@ -334,3 +334,44 @@ body.is-section-podcasting {
 	font-size: 14px;
 	font-weight: 600;
 }
+
+.podcast__submit-modal .components-modal__content {
+	max-width: 520px;
+}
+
+.podcast__submit-steps {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.podcast__submit-step {
+	padding: 16px;
+	background: var( --wpds-color-bg-surface-tertiary, #f6f7f7 );
+	border-radius: 8px;
+}
+
+.podcast__submit-step-title {
+	margin: 0;
+	font-size: 14px;
+	font-weight: 600;
+	color: var( --wpds-color-fg-content-neutral, #1e1e1e );
+}
+
+.podcast__submit-step-row {
+	@media (max-width: $break-small) {
+		flex-direction: column;
+		align-items: stretch;
+	}
+}
+
+.podcast__submit-step-field {
+	flex: 1;
+	min-width: 0;
+}
+
+.podcast__submit-copy-button {
+	min-inline-size: 8rem;
+	align-self: flex-start;
+	justify-content: flex-start;
+}
