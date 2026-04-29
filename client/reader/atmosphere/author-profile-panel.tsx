@@ -306,6 +306,9 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 					emptyLine={ String( translate( 'Their feed is empty.' ) ) }
 					emptyActionLabel={ String( translate( 'View on Bluesky' ) ) }
 					emptyActionURL={ profile.data?.bluesky_url ?? getBlueskyProfileUrl( actor ) }
+					protocolLabel="Bluesky"
+					protocolHomeURL="/reader/atmosphere"
+					protocolHomeLabel={ translate( 'Back to ATmosphere' ) }
 				/>
 			</VStack>
 		</SocialAnalyticsProvider>
