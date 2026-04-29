@@ -151,9 +151,6 @@ export interface MastodonAuthorProfile {
 	raw: Record< string, unknown >;
 }
 
-// Same shape as MastodonTimelinePage so the existing
-// mapMastodonFeedItemToSocialPost mapper plugs in unchanged.
-export interface MastodonAuthorFeedPage {
-	items: MastodonFeedItem[];
-	cursor: string | null;
-}
+// Author-feed pages share the timeline page shape; alias rather than
+// duplicate so a future field on MastodonTimelinePage propagates here too.
+export type MastodonAuthorFeedPage = MastodonTimelinePage;
