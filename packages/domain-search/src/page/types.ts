@@ -79,6 +79,7 @@ export interface DomainSearchEvents {
 export interface DomainSearchConfig {
 	vendor: DomainSuggestionQueryVendor;
 	skippable: boolean;
+	emphasizedTlds: string[];
 	deemphasizedTlds: string[];
 	priceRules: PriceRulesConfig;
 	includeDotBlogSubdomain: boolean;

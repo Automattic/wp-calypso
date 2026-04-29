@@ -108,11 +108,13 @@ export const useSuggestionsList = () => {
 				} )
 				.map( ( suggestion ) => suggestion.domain_name ),
 			query,
+			emphasizedTlds: config.emphasizedTlds,
 			deemphasizedTlds: config.deemphasizedTlds,
 		} );
 	}, [
 		suggestions,
 		query,
+		config.emphasizedTlds,
 		config.deemphasizedTlds,
 		availablePremiumDomains,
 		fqdnAvailability,

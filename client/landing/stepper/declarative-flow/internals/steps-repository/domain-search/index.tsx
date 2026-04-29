@@ -22,6 +22,11 @@ import { useQueryHandler } from 'calypso/components/domains/wpcom-domain-search/
 import FormattedHeader from 'calypso/components/formatted-header';
 import { dashboardLink, dashboardOrigins } from 'calypso/dashboard/utils/link';
 import { isRelativeUrl } from 'calypso/dashboard/utils/url';
+import {
+	WOO_HOSTING_SOLUTIONS_DEEMPHASIZED_TLDS,
+	WOO_HOSTING_SOLUTIONS_EMPHASIZED_TLDS,
+	WOO_HOSTING_SOLUTIONS_REF,
+} from 'calypso/landing/stepper/constants';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -83,6 +88,8 @@ const DomainSearchStep: StepType< {
 	const queryParams = useQuery();
 	const queryParamNew = queryParams.get( 'new' ) ?? '';
 	const tldQuery = queryParams.get( 'tld' );
+	const refParameter = queryParams.get( 'ref' );
+	const isWooHostingSolutions = refParameter === WOO_HOSTING_SOLUTIONS_REF;
 	const source = queryParams.get( 'source' );
 	const backTo = queryParams.get( 'back_to' ) ?? '';
 	const sourceSlug = queryParams.get( 'sourceSlug' );
@@ -140,6 +147,8 @@ const DomainSearchStep: StepType< {
 				isHundredYearPlanFlow( flow ) || isHundredYearDomainFlow( flow )
 					? HUNDRED_YEAR_DOMAIN_TLDS
 					: allowedTlds,
+			emphasizedTlds: isWooHostingSolutions ? WOO_HOSTING_SOLUTIONS_EMPHASIZED_TLDS : [],
+			deemphasizedTlds: isWooHostingSolutions ? WOO_HOSTING_SOLUTIONS_DEEMPHASIZED_TLDS : [],
 			includeOwnedDomainInSuggestions: true,
 			allowsUsingOwnDomain:
 				! isAIBuilderFlow( flow ) &&
@@ -147,7 +156,7 @@ const DomainSearchStep: StepType< {
 				! isHundredYearPlanFlow( flow ) &&
 				( isHundredYearDomainFlow( flow ) ? !! query : true ),
 		};
-	}, [ flow, isCiab, tldQuery, query ] );
+	}, [ flow, isCiab, tldQuery, query, isWooHostingSolutions ] );
 
 	const { submit } = navigation;
 

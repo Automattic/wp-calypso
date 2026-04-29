@@ -61,6 +61,7 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 	config: {
 		vendor: 'variation2_front',
 		skippable: false,
+		emphasizedTlds: [],
 		deemphasizedTlds: [],
 		includeDotBlogSubdomain: false,
 		allowsUsingOwnDomain: false,
