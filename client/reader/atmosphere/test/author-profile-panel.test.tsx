@@ -77,6 +77,9 @@ describe( 'AuthorProfilePanel', () => {
 	afterEach( () => {
 		nock.cleanAll();
 		jest.restoreAllMocks();
+		// Reset window.location so per-test ?tab= overrides don't leak into
+		// the next test's useAuthorProfileFilter() read.
+		window.history.replaceState( {}, '', '/' );
 	} );
 
 	it( 'renders the header and feed once both queries resolve', async () => {
