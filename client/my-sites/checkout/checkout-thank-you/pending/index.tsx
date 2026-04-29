@@ -7,7 +7,7 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { invokeSurvicateEvent } from '@automattic/survicate';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { useCheckoutHelpCenter } from 'calypso/my-sites/checkout/src/hooks/use-checkout-help-center';
@@ -28,7 +28,6 @@ import { requestSite } from 'calypso/state/sites/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import usePurchaseOrder from '../../src/hooks/use-purchase-order';
 import { logStashLoadErrorEvent } from '../../src/lib/analytics';
-import type { ResponseCart } from '@automattic/shopping-cart';
 import type { RedirectInstructions } from 'calypso/my-sites/checkout/src/lib/pending-page';
 import type {
 	OrderTransaction,
@@ -132,22 +131,6 @@ function isValidOrderId( orderId: number | ':orderId' ): orderId is number {
 	return Number.isInteger( orderId );
 }
 
-function cartProductsContainAtomicTriggeringProduct(
-	products: ResponseCart[ 'products' ]
-): boolean {
-	return products.some( ( product ) => {
-		if ( product.extra?.is_marketplace_product === true ) {
-			return true;
-		}
-		const productType = product.extra?.product_type;
-		return (
-			productType === 'marketplace_plugin' ||
-			productType === 'marketplace_theme' ||
-			productType === 'saas_plugin'
-		);
-	} );
-}
-
 function useAtomicTransferLoadingPhrase( enabled: boolean ): string | undefined {
 	const translate = useTranslate();
 	const [ phraseIndex, setPhraseIndex ] = useState( -1 );
@@ -180,6 +163,10 @@ function useAtomicTransferLoadingPhrase( enabled: boolean ): string | undefined 
 }
 
 function performRedirect( url: string ): void {
+	// Stepper (/setup/) and signup (/start/site-content-collection) routes require a
+	// hard redirect because they are self-contained apps that need a fresh Calypso
+	// bundle. A client-side page() call would land in the wrong bundle and break the
+	// flow (see https://github.com/Automattic/wp-calypso/pull/68538).
 	if (
 		url.startsWith( '/' ) &&
 		! url.startsWith( '/setup/' ) &&
@@ -253,11 +240,10 @@ function useRedirectOnTransactionSuccess( {
 	const currentUserId = useSelector( getCurrentUserId );
 	const cartKey = useCartKey();
 	const { reloadFromServer: reloadCart, responseCart } = useShoppingCart( cartKey );
+	// Best-effort: capture cart products at mount to extract the marketplace plugin
+	// slug for the post-Atomic redirect. The cart may be empty for redirect payment
+	// methods (e.g. PayPal), in which case we fall back to the stale-slug fix below.
 	const [ cartProductsAtMount ] = useState( () => responseCart.products );
-	const isAtomicTransferExpected = useMemo(
-		() => cartProductsContainAtomicTriggeringProduct( cartProductsAtMount ),
-		[ cartProductsAtMount ]
-	);
 
 	const firstItem = receipt?.items[ 0 ];
 	const isRenewal = receipt?.items.some( ( item ) => item.type === 'recurring' ) ?? false;
@@ -300,17 +286,31 @@ function useRedirectOnTransactionSuccess( {
 	}, [ isUnifiedCheckout, blogId, reduxDispatch ] );
 
 	const [ atomicWaitTimedOut, setAtomicWaitTimedOut ] = useState( false );
-	const { data: transferStatusData } = useQuery( {
+	// Always poll when blogId is known — the status is the authoritative signal for
+	// whether an atomic transfer is in progress. The cart is not used here because
+	// it may be empty by the time this page loads (e.g. PayPal / redirect flows).
+	const { data: transferStatusData, isFetched: isTransferStatusFetched } = useQuery( {
 		...siteAutomatedTransferStatusQuery( blogId ?? 0 ),
-		enabled: !! blogId && isAtomicTransferExpected && ! atomicWaitTimedOut,
+		enabled: !! blogId && ! atomicWaitTimedOut,
 		refetchInterval: ( query ) => {
-			if ( query.state.data?.status === 'complete' ) {
+			const status = query.state.data?.status;
+			if ( status === transferStates.COMPLETE ) {
+				return false;
+			}
+			// No transfer in progress — stop polling so the redirect can proceed.
+			if ( ! status || status === transferStates.NONE || status === transferStates.REVERTED ) {
 				return false;
 			}
 			return ATOMIC_TRANSFER_POLL_INTERVAL_MS;
 		},
 	} );
 	const transferStatus = transferStatusData?.status ?? null;
+	// Derive atomic transfer expectation from the live status (not the cart).
+	const isAtomicTransferExpected =
+		!! blogId &&
+		!! transferStatus &&
+		transferStatus !== transferStates.NONE &&
+		transferStatus !== transferStates.REVERTED;
 	const isFinalSiteAtomic = useSelector( ( state ) =>
 		blogId ? isSiteWpcomAtomic( state, blogId ) : false
 	);
@@ -365,6 +365,13 @@ function useRedirectOnTransactionSuccess( {
 		reloadCart().catch( () => {
 			// No need to do anything here. CartMessages will report this error to the user.
 		} );
+
+		// When blogId is known, wait for the first transfer status result before
+		// deciding whether to hold for an atomic transfer. Without this, the
+		// redirect might fire before we detect an in-progress transfer.
+		if ( blogId && ! isTransferStatusFetched ) {
+			return;
+		}
 
 		// Wait for the receipt to load before redirecting so we can display the
 		// correct notification and possibly run analytics.
@@ -520,6 +527,7 @@ function useRedirectOnTransactionSuccess( {
 		error,
 		finalReceiptId,
 		isReceiptLoaded,
+		isTransferStatusFetched,
 		isAtomicTransferComplete,
 		isAtomicTransferExpected,
 		isRenewal,
