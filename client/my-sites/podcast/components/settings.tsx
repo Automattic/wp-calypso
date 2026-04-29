@@ -4,6 +4,7 @@ import {
 	getPlan,
 } from '@automattic/calypso-products';
 import {
+	Button,
 	Card,
 	CardBody,
 	CardHeader,
@@ -20,7 +21,7 @@ import {
 import { useTranslate } from 'i18n-calypso';
 import { pick } from 'lodash';
 import { useCallback, useMemo, useState } from 'react';
-import TermTreeSelector from 'calypso/blocks/term-tree-selector';
+import TermFormDialog from 'calypso/blocks/term-form-dialog';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import { decodeEntities } from 'calypso/lib/formatting';
 import PodcastCoverImageSetting from 'calypso/my-sites/site-settings/podcast-cover-image-setting';
@@ -29,7 +30,7 @@ import wrapSettingsForm from 'calypso/my-sites/site-settings/wrap-settings-form'
 import { useSelector } from 'calypso/state';
 import { hasLoadedSitePlansFromServer } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { getTerm } from 'calypso/state/terms/selectors';
+import { getTerm, getTerms } from 'calypso/state/terms/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const TRACKED_FIELDS = [
@@ -119,10 +120,15 @@ const PodcastingSettingsForm = ( {
 	const topicOptions = useTopicOptions();
 
 	const [ isCoverImageUploading, setIsCoverImageUploading ] = useState( false );
+	const [ isAddCategoryOpen, setIsAddCategoryOpen ] = useState( false );
 
 	const siteId = useSelector( getSelectedSiteId );
 	const site = useSelector( getSelectedSite );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
+	const categories = useSelector(
+		( state ) =>
+			( getTerms( state, siteId ?? 0, 'category' ) as { ID: number; name?: string }[] | null ) ?? []
+	);
 	const plansDataLoaded = useSelector( ( state ) => hasLoadedSitePlansFromServer( state, siteId ) );
 
 	const podcastingCategoryId = fields.podcasting_category_id
@@ -190,6 +196,32 @@ const PodcastingSettingsForm = ( {
 		},
 		[ updateFields, submitForm ]
 	);
+
+	const onCategoryDropdownChange = useCallback(
+		( value: string ) => {
+			const id = Number( value );
+			if ( ! Number.isFinite( id ) || id <= 0 ) {
+				return;
+			}
+			onCategorySelected( { ID: id } );
+		},
+		[ onCategorySelected ]
+	);
+
+	const categoryOptions = useMemo( () => {
+		const options = categories.map( ( cat ) => ( {
+			value: String( cat.ID ),
+			label: decodeEntities( cat.name ?? '' ),
+		} ) );
+		options.sort( ( a, b ) => a.label.localeCompare( b.label ) );
+		if ( ! podcastingCategoryId ) {
+			options.unshift( {
+				value: '',
+				label: translate( 'Select a category' ) as string,
+			} );
+		}
+		return options;
+	}, [ categories, podcastingCategoryId, translate ] );
 
 	const onCoverImageRemoved = useCallback( () => {
 		updateFields( { podcasting_image_id: '0', podcasting_image: '' }, () => submitForm() );
@@ -324,14 +356,33 @@ const PodcastingSettingsForm = ( {
 										</Notice>
 									) }
 
-									<TermTreeSelector
+									<HStack alignment="flex-end" spacing={ 3 } justify="flex-start">
+										<SelectControl
+											__nextHasNoMarginBottom
+											__next40pxDefaultSize
+											className="podcast__settings-category-select"
+											label={ translate( 'Category' ) as string }
+											hideLabelFromVision
+											value={ podcastingCategoryId ? String( podcastingCategoryId ) : '' }
+											options={ categoryOptions }
+											onChange={ onCategoryDropdownChange }
+											disabled={ disabled }
+										/>
+										<Button
+											variant="secondary"
+											onClick={ () => setIsAddCategoryOpen( true ) }
+											disabled={ disabled }
+										>
+											{ translate( 'Add category' ) }
+										</Button>
+									</HStack>
+
+									<TermFormDialog
+										showDialog={ isAddCategoryOpen }
+										onClose={ () => setIsAddCategoryOpen( false ) }
+										postType="post"
 										taxonomy="category"
-										selected={ podcastingCategoryId ? [ podcastingCategoryId ] : [] }
-										podcastingCategoryId={ podcastingCategoryId }
-										onChange={ onCategorySelected }
-										addTerm
-										onAddTermSuccess={ onCategorySelected }
-										height={ 200 }
+										onSuccess={ onCategorySelected }
 									/>
 
 									{ isCategoryChanging && (
