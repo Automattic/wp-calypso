@@ -3,9 +3,12 @@
 	margin-bottom: 24px;
 }
 
+.promo-card.checkout-sidebar-plan-upsell {
+	padding: 24px;
+}
+
 @media (min-width: 961px) {
 	.card.promo-card.checkout-sidebar-plan-upsell {
-		padding: 24px;
 		background: #fff;
 		border-radius: 3px;
 		box-shadow:
