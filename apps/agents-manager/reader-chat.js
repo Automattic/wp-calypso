@@ -161,6 +161,7 @@ function injectScopedReset() {
 const readerConfig = window.JetpackReaderChatConfig || {};
 const readerAgentId = readerConfig.agentId || 'reader-chat';
 const readerSiteId = normalizeReaderSiteId( readerConfig.siteId );
+const readerCurrentPost = getReaderCurrentPost( readerConfig );
 
 // Set agentId for useAgentConfig() to pick up via agentsManagerData global.
 window.agentsManagerData = window.agentsManagerData || {};
@@ -171,7 +172,7 @@ window.agentsManagerData.emptyViewHeading = getReaderEmptyViewHeading( readerCon
 // Expose page context on the global so the default context provider
 // and agent hooks can read it. The AgentsManager default context
 // provider sends window.location info; we augment with post-level data.
-window.agentsManagerData.currentPost = readerConfig.currentPost || null;
+window.agentsManagerData.currentPost = readerCurrentPost;
 window.agentsManagerData.siteName = readerConfig.siteName || '';
 window.agentsManagerData.siteUrl = readerConfig.siteUrl || '';
 
@@ -181,7 +182,7 @@ window.agentsManagerData.siteUrl = readerConfig.siteUrl || '';
  * stay if the AI call fails.
  */
 function getFallbackSuggestions() {
-	const post = readerConfig.currentPost;
+	const post = readerCurrentPost;
 
 	if ( ! post ) {
 		return [
@@ -207,19 +208,19 @@ function getFallbackSuggestions() {
 
 	return [
 		{
-			id: 'summarize',
-			label: 'Summarize this post',
-			prompt: `Can you summarize "${ title }" for me?`,
+			id: 'takeaway',
+			label: 'Main takeaway',
+			prompt: `What is the main takeaway from "${ title }"?`,
 		},
 		{
-			id: 'explain',
-			label: 'Explain this post',
-			prompt: `Can you explain the main points of "${ title }" in simple terms?`,
+			id: 'details',
+			label: 'Key details',
+			prompt: `What details from "${ title }" are most important?`,
 		},
 		{
-			id: 'related',
-			label: 'Find related posts',
-			prompt: `What other posts on this blog are related to "${ title }"?`,
+			id: 'context',
+			label: 'Related context',
+			prompt: `What related ideas or posts help explain "${ title }"?`,
 		},
 	];
 }
@@ -249,8 +250,29 @@ function decodeHtmlEntities( text ) {
 	return textarea.value.replace( /\u00a0/g, ' ' );
 }
 
+function normalizeReaderUrl( url ) {
+	try {
+		const parsed = new URL( url );
+		return `${ parsed.origin }${ parsed.pathname }`.replace( /\/+$/, '' );
+	} catch {
+		return String( url || '' ).replace( /\/+$/, '' );
+	}
+}
+
+function getReaderCurrentPost( config ) {
+	const post = config?.currentPost || null;
+	if ( ! post ) {
+		return null;
+	}
+
+	const postUrl = normalizeReaderUrl( post.url );
+	const siteUrl = normalizeReaderUrl( config?.siteUrl );
+
+	return postUrl && siteUrl && postUrl === siteUrl ? null : post;
+}
+
 function getReaderEmptyViewHeading( config ) {
-	return config?.currentPost
+	return getReaderCurrentPost( config )
 		? 'Ask me anything about this post.'
 		: 'Ask me anything about this blog.';
 }
@@ -336,10 +358,8 @@ function getFallbackSuggestionLabel( index, resultIdPrefix ) {
 	if ( resultIdPrefix === 'followup' ) {
 		return FOLLOWUP_FALLBACK_LABELS[ index ] || 'Ask a follow-up';
 	}
-	const labels = readerConfig.currentPost ? POST_FALLBACK_LABELS : BLOG_FALLBACK_LABELS;
-	return (
-		labels[ index ] || ( readerConfig.currentPost ? 'Ask about this post' : 'Explore this blog' )
-	);
+	const labels = readerCurrentPost ? POST_FALLBACK_LABELS : BLOG_FALLBACK_LABELS;
+	return labels[ index ] || ( readerCurrentPost ? 'Ask about this post' : 'Explore this blog' );
 }
 
 function normalizeSuggestions( items, resultIdPrefix ) {
@@ -391,7 +411,7 @@ async function fetchSuggestions( { messageText, requestIdPrefix, resultIdPrefix,
 						type: 'data',
 						data: {
 							clientContext: {
-								post_url: readerConfig.currentPost?.url || '',
+								post_url: readerCurrentPost?.url || '',
 								selectedSiteId: readerSiteId,
 							},
 						},
@@ -460,7 +480,7 @@ async function fetchSuggestions( { messageText, requestIdPrefix, resultIdPrefix,
  * chips immediately and re-renders with AI suggestions when they arrive.
  */
 function fetchAiSuggestions( signal ) {
-	const post = readerConfig.currentPost;
+	const post = readerCurrentPost;
 	const siteName = readerConfig.siteName || '';
 	const siteUrl = readerConfig.siteUrl || '';
 	const postTitle = decodeHtmlEntities( post?.title || '' );

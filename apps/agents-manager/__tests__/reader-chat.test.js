@@ -209,6 +209,15 @@ describe( 'getReaderEmptyViewHeading', () => {
 	it( 'uses blog copy when no post is selected', () => {
 		expect( getReaderEmptyViewHeading( {} ) ).toBe( 'Ask me anything about this blog.' );
 	} );
+
+	it( 'uses blog copy when the current post is the static front page', () => {
+		expect(
+			getReaderEmptyViewHeading( {
+				siteUrl: 'https://example.com/',
+				currentPost: { id: 1, title: 'Home', url: 'https://example.com/' },
+			} )
+		).toBe( 'Ask me anything about this blog.' );
+	} );
 } );
 
 // ---------------------------------------------------------------------------
