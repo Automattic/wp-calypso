@@ -10,7 +10,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { fixMe, translate } from 'i18n-calypso';
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
 import { READER_ONBOARDING_TRACKS_EVENT_PREFIX } from 'calypso/reader/onboarding-rsm/constants';
 import { StepIndicator } from 'calypso/reader/onboarding-rsm/step-indicator';
@@ -46,22 +46,22 @@ type ResolvedPack = TopicGroup & { blogs: CuratedBlog[] };
 const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onContinue } ) => {
 	const [ followedTags, setFollowedTags ] = useState< string[] >( [] );
 	const [ showAllTopics, setShowAllTopics ] = useState( false );
-	const [ busyPacks, setBusyPacks ] = useState< Set< string > >( new Set() );
+	const hasSyncedFromServerRef = useRef( false );
 	const { data: followedTagsFromState } = useFollowedReaderTags();
 	const reduxFollows = useSelector( getReaderFollows );
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 	const [ processingTags, setProcessingTags ] = useState< Set< string > >( new Set() );
-	const { mutate: followTag } = useMutation( followReadTagMutation( queryClient ) );
-	const { mutate: unfollowTag } = useMutation( unfollowReadTagMutation( queryClient ) );
+	const { mutateAsync: followTag } = useMutation( followReadTagMutation( queryClient ) );
+	const { mutateAsync: unfollowTag } = useMutation( unfollowReadTagMutation( queryClient ) );
 
 	useEffect( () => {
-		// If there are followed tags in the state and no tags are being processed, update the followed tags state for the UI.
-		if ( followedTagsFromState && processingTags.size === 0 ) {
-			const initialTags = followedTagsFromState.map( ( tag ) => tag.slug );
-			setFollowedTags( initialTags );
+		if ( ! followedTagsFromState || hasSyncedFromServerRef.current ) {
+			return;
 		}
-	}, [ followedTagsFromState, processingTags ] );
+		setFollowedTags( followedTagsFromState.map( ( tag ) => tag.slug ) );
+		hasSyncedFromServerRef.current = true;
+	}, [ followedTagsFromState ] );
 
 	// Resolve each topic group's blog list once per modal session. The random
 	// selection is therefore stable for the lifetime of the modal, which is
@@ -91,73 +91,61 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 
 	const isContinueDisabled = followedTags.length < 4;
 
-	const handleTopicChange = ( checked: boolean, tag: string ) => {
+	const handleTopicChange = async ( checked: boolean, tag: string ) => {
 		// If the tag is already being processed, do nothing.
 		if ( processingTags.has( tag ) ) {
-			return null;
+			return;
 		}
 
 		// Mark the tag as being processed.
 		setProcessingTags( ( current ) => new Set( current ).add( tag ) );
 
-		const releaseProcessing = () => {
+		// Follow or unfollow the tag and update the followed tags state for the UI.
+		setFollowedTags( ( currentTags ) =>
+			checked ? [ ...currentTags, tag ] : currentTags.filter( ( t ) => t !== tag )
+		);
+
+		recordTracksEvent(
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_tag_${
+				checked ? 'followed' : 'unfollowed'
+			}`,
+			{
+				tag,
+				total_followed: followedTags.length + ( checked ? 1 : -1 ),
+			}
+		);
+
+		try {
+			await ( checked ? followTag( tag ) : unfollowTag( tag ) );
+		} catch {
+			// Revert the optimistic update when the request fails.
+			setFollowedTags( ( currentTags ) =>
+				checked ? currentTags.filter( ( t ) => t !== tag ) : [ ...currentTags, tag ]
+			);
+			const errorMessage = checked
+				? translate( 'Could not follow tag: %(tag)s', { args: { tag } } )
+				: translate( 'Could not unfollow tag: %(tag)s', { args: { tag } } );
+			dispatch( errorNotice( errorMessage ) );
+		} finally {
 			setProcessingTags( ( current ) => {
 				const updated = new Set( current );
 				updated.delete( tag );
 				return updated;
 			} );
-		};
-
-		// Follow or unfollow the tag and update the followed tags state for the UI.
-		if ( checked ) {
-			followTag( tag, {
-				onSettled: releaseProcessing,
-				onError: () => {
-					dispatch(
-						errorNotice( translate( 'Could not follow tag: %(tag)s', { args: { tag } } ) )
-					);
-				},
-			} );
-			setFollowedTags( ( currentTags ) => [ ...currentTags, tag ] );
-			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_tag_followed`, {
-				tag,
-				total_followed: followedTags.length + 1,
-			} );
-		} else {
-			unfollowTag( tag, {
-				onSettled: releaseProcessing,
-				onError: () => {
-					dispatch(
-						errorNotice( translate( 'Could not unfollow tag: %(tag)s', { args: { tag } } ) )
-					);
-				},
-			} );
-			setFollowedTags( ( currentTags ) => currentTags.filter( ( t ) => t !== tag ) );
-			recordTracksEvent(
-				`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_tag_unfollowed`,
-				{
-					tag,
-					total_followed: followedTags.length - 1,
-				}
-			);
 		}
 	};
 
-	const handlePackSubscribe = ( pack: ResolvedPack ) => {
-		if ( busyPacks.has( pack.id ) || isPackSubscribed( pack ) ) {
+	const handlePackSubscribe = async ( pack: ResolvedPack ) => {
+		if ( isPackSubscribed( pack ) ) {
 			return;
 		}
 
-		setBusyPacks( ( current ) => new Set( current ).add( pack.id ) );
-
-		// Follow any tags in the pack we're not already following. Reuse the
-		// existing per-tag handler so the busy/processing semantics, optimistic
-		// state update, and tracks events stay consistent with single-tag toggles.
-		pack.tags.forEach( ( tag ) => {
+		// Follow tags in deterministic order so state updates don't race each other.
+		for ( const tag of pack.tags ) {
 			if ( ! followedTags.includes( tag ) ) {
-				handleTopicChange( true, tag );
+				await handleTopicChange( true, tag );
 			}
-		} );
+		}
 
 		// Follow any blogs in the pack we're not already following.
 		pack.blogs.forEach( ( blog ) => {
@@ -179,17 +167,6 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 				blog_count: pack.blogs.length,
 			}
 		);
-
-		// Release the busy state on the next tick — Redux state for follows and
-		// tags updates synchronously so isPackSubscribed will start returning
-		// true immediately, which renders the locked "Subscribed" state.
-		setTimeout( () => {
-			setBusyPacks( ( current ) => {
-				const updated = new Set( current );
-				updated.delete( pack.id );
-				return updated;
-			} );
-		}, 0 );
 	};
 
 	const handleContinue = () => {
@@ -314,8 +291,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 										tags={ pack.tags }
 										blogs={ pack.blogs }
 										isSubscribed={ isPackSubscribed( pack ) }
-										isBusy={ busyPacks.has( pack.id ) }
-										onSubscribe={ () => handlePackSubscribe( pack ) }
+										onSubscribe={ () => void handlePackSubscribe( pack ) }
 									/>
 								</div>
 							) ) }
