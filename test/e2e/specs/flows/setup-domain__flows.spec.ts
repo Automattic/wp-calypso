@@ -6,13 +6,13 @@ import {
 	NewUserResponse,
 	RestAPIClient,
 } from '@automattic/calypso-e2e';
-import { tags, test, expect } from '../../lib/pw-base';
+import { test, expect } from '../../lib/pw-base';
 import { apiCloseAccount, apiDeleteSite } from '../shared';
 
 test.describe(
 	'Setup Domain Flows',
 	{
-		tag: [ tags.CALYPSO_RELEASE ],
+		tag: [],
 	},
 	() => {
 		const accountsToCleanup: {

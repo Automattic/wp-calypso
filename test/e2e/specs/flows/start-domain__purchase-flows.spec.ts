@@ -5,13 +5,13 @@ import {
 	NewSiteResponse,
 	RestAPIClient,
 } from '@automattic/calypso-e2e';
-import { tags, test } from '../../lib/pw-base';
+import { test } from '../../lib/pw-base';
 import { apiCloseAccount, apiDeleteSite } from '../shared';
 
 test.describe(
 	'Start Domain Only Flows',
 	{
-		tag: [ tags.CALYPSO_RELEASE ],
+		tag: [],
 	},
 	() => {
 		const accountsToCleanup: {
