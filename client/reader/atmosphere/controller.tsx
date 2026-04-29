@@ -20,6 +20,10 @@ const loadAtmosphereThreadView = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-reader-atmosphere-thread-view" */ 'calypso/reader/atmosphere/atmosphere-thread-view'
 	);
+const loadAuthorProfileView = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-reader-atmosphere-author-profile-view" */ 'calypso/reader/atmosphere/author-profile-view'
+	);
 
 function ensureAtmosphereEnabled(): boolean {
 	if ( ! isEnabled( 'reader/social' ) ) {
@@ -121,13 +125,7 @@ export const atmosphereProfile = ( context: Context, next: () => void ) => {
 
 	context.primary = (
 		<AsyncLoad
-			key="reader-atmosphere-author-profile"
-			require={ () =>
-				import(
-					/* webpackChunkName: "async-load-calypso-reader-atmosphere-author-profile-view" */
-					'calypso/reader/atmosphere/author-profile-view'
-				)
-			}
+			require={ loadAuthorProfileView }
 			placeholder={ null }
 			connectionId={ id }
 			actor={ actor }
