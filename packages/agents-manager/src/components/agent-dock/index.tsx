@@ -5,7 +5,7 @@ import {
 	type Suggestion,
 } from '@automattic/agenttic-ui';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useCallback, useState } from '@wordpress/element';
+import { useCallback, useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { comment, drawerRight, help, login, lifesaver } from '@wordpress/icons';
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
@@ -16,6 +16,7 @@ import useSetupCustomActions from '../../hooks/use-setup-custom-actions';
 import { useShouldUseUnifiedAgent } from '../../hooks/use-should-use-unified-agent';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { LocalConversationListItem } from '../../types';
+import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
 import { persistLastActivity } from '../../utils/persist-last-activity';
 import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
@@ -97,14 +98,23 @@ export default function AgentDock( {
 
 	// `agentConfig` is guaranteed non-null here because AgentSetup guards rendering
 	const agentId = agentConfig!.agentId;
+	// Reader-chat runs on public blog frontends where there's no wp-admin
+	// sidebar to dock into. Detect that context so we can hide options that
+	// don't apply and avoid persisting open/close state through the logged-in
+	// Agents Manager REST state endpoint.
+	const isReaderChat = isReaderChatAgent( agentId );
+	const setOpenState = useCallback(
+		( isOpen: boolean ) => setIsOpen( isOpen, ! isReaderChat ),
+		[ isReaderChat, setIsOpen ]
+	);
 
 	const { isDocked, canDock, dock, undock, openSidebar, closeSidebar, createAgentPortal } =
 		useAgentLayoutManager( {
-			defaultDocked: isPersistedDocked,
+			defaultDocked: isReaderChat ? false : isPersistedDocked,
 			defaultOpen: isPersistedOpen,
 			desktopMediaQuery,
-			onOpenSidebar: () => setIsOpen( true ),
-			onCloseSidebar: () => setIsOpen( false ),
+			onOpenSidebar: () => setOpenState( true ),
+			onCloseSidebar: () => setOpenState( false ),
 		} );
 
 	// Handle WordPress admin bar integration
@@ -113,7 +123,7 @@ export default function AgentDock( {
 		sectionName,
 		maybeOpenChat: () => {
 			if ( ! isPersistedOpen ) {
-				isDocked ? openSidebar() : setIsOpen( true );
+				isDocked ? openSidebar() : setOpenState( true );
 			}
 		},
 		navigate,
@@ -138,6 +148,8 @@ export default function AgentDock( {
 		}
 	}, [ agentId ] );
 
+	const shouldShowUnifiedSupport = shouldUseUnifiedAgent && ! isReaderChat;
+
 	const handleChatHasMessagesChange = useCallback(
 		( hasMessages: boolean ) => setIsOrchestratorChatEmpty( ! hasMessages ),
 		[]
@@ -147,10 +159,10 @@ export default function AgentDock( {
 		[]
 	);
 
-	const handleClose = isDocked ? closeSidebar : () => setIsOpen( false );
+	const handleClose = isDocked ? closeSidebar : () => setOpenState( false );
 
 	const handleExpand = () => {
-		setIsOpen( true );
+		setOpenState( true );
 		if ( pathname === '/history' ) {
 			navigate( '/' );
 		}
@@ -158,6 +170,9 @@ export default function AgentDock( {
 
 	const handleSelectConversation = ( conversation: LocalConversationListItem ) => {
 		if ( conversation.is_zendesk ) {
+			if ( isReaderChat ) {
+				return;
+			}
 			navigate( '/zendesk', { state: { conversationId: conversation.conversation_id } } );
 		} else {
 			const sessionId = conversation.session_id || '';
@@ -168,6 +183,40 @@ export default function AgentDock( {
 		}
 	};
 
+	// Persist reader-chat open/closed state across page navigations via
+	// localStorage — the AGENTS_MANAGER_STORE is in-memory only, so a fresh
+	// page load resets isOpen to false by default. Read the stored flag on
+	// mount and restore; write it on every toggle.
+	const OPEN_STORAGE_KEY = `jetpack-reader-chat-open-${ agentId }`;
+	useEffect( () => {
+		if ( ! isReaderChat ) {
+			return;
+		}
+		try {
+			if ( localStorage.getItem( OPEN_STORAGE_KEY ) === '1' && ! isPersistedOpen ) {
+				setOpenState( true );
+			}
+		} catch {
+			// ignore
+		}
+		// Only restore on first mount.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
+	useEffect( () => {
+		if ( ! isReaderChat ) {
+			return;
+		}
+		try {
+			if ( isPersistedOpen ) {
+				localStorage.setItem( OPEN_STORAGE_KEY, '1' );
+			} else {
+				localStorage.removeItem( OPEN_STORAGE_KEY );
+			}
+		} catch {
+			// ignore
+		}
+	}, [ isPersistedOpen, isReaderChat, OPEN_STORAGE_KEY ] );
+
 	const getChatHeaderOptions = (): ChatHeaderOptions => {
 		return [
 			{
@@ -176,7 +225,7 @@ export default function AgentDock( {
 				isDisabled: pathname === '/chat' && isOrchestratorChatEmpty,
 				onClick: () => navigate( '/' ),
 			},
-			shouldUseUnifiedAgent && {
+			shouldShowUnifiedSupport && {
 				icon: lifesaver,
 				title: __( 'New Zendesk chat', '__i18n_text_domain__' ),
 				isDisabled: pathname === '/zendesk' && isZendeskChatEmpty,
@@ -186,21 +235,26 @@ export default function AgentDock( {
 				},
 			},
 			// TODO: For testing. Remove before release.
-			{
+			! isReaderChat && {
 				icon: help,
 				title: __( 'Support guides', '__i18n_text_domain__' ),
 				isDisabled: pathname === '/support-guides',
 				onClick: () => navigate( '/support-guides' ),
 			},
-			isDocked && {
-				icon: login,
-				title: __( 'Pop out sidebar', '__i18n_text_domain__' ),
-				onClick: () => {
-					undock();
-					setIsDocked( false );
+			// Sidebar docking only makes sense in wp-admin where a block-editor
+			// sidebar slot exists. On public reader-chat frontends there's no
+			// sidebar to dock into — the click does nothing, so hide the option.
+			! isReaderChat &&
+				isDocked && {
+					icon: login,
+					title: __( 'Pop out sidebar', '__i18n_text_domain__' ),
+					onClick: () => {
+						undock();
+						setIsDocked( false );
+					},
 				},
-			},
-			! isDocked &&
+			! isReaderChat &&
+				! isDocked &&
 				canDock && {
 					icon: drawerRight,
 					title: __( 'Move to sidebar', '__i18n_text_domain__' ),
@@ -287,10 +341,10 @@ export default function AgentDock( {
 			// NOTE: Use route state to pass data that needs to be accessed throughout the app.
 			<Routes>
 				<Route path="/chat" element={ OrchestratorChatRoute } />
-				<Route path="/post" element={ SupportGuideRoute } />
-				<Route path="/zendesk" element={ ZendeskChatRoute } />
-				<Route path="/support-guides" element={ SupportGuidesRoute } />
-				<Route path="/history" element={ HistoryRoute } />
+				{ ! isReaderChat && <Route path="/post" element={ SupportGuideRoute } /> }
+				{ shouldShowUnifiedSupport && <Route path="/zendesk" element={ ZendeskChatRoute } /> }
+				{ ! isReaderChat && <Route path="/support-guides" element={ SupportGuidesRoute } /> }
+				{ ! isReaderChat && <Route path="/history" element={ HistoryRoute } /> }
 				<Route path="*" element={ <Navigate to="/chat" state={ { isNewChat: true } } replace /> } />
 			</Routes>
 		)
