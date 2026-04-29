@@ -1,5 +1,6 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@automattic/components/src/styles/typography';
+@import '@automattic/typography/styles/fonts';
 @import '@wordpress/base-styles/variables';
 @import '@wordpress/base-styles/colors';
 @import '@wordpress/base-styles/mixins';
@@ -9,10 +10,12 @@
 $colophon-height: 50px;
 
 body:not( .is-jetpack-sso-partner-branded--woo ) {
-	.jetpack-connect__main:not( .is-woocommerce ):not( .is-automattic-for-agencies-flow ),
+	.jetpack-connect__main:not( .is-woocommerce ):not( .is-automattic-for-agencies-flow ):not(
+			.is-jetpack-connector-flow
+		),
 	.layout.is-section-jetpack-connect:not( .is-jetpack-mobile-flow ):not(
 			.is-woocommerce-core-profiler-flow
-		):not( .is-automattic-for-agencies-flow ) {
+		):not( .is-automattic-for-agencies-flow ):not( .is-jetpack-connector-flow ) {
 		@include jetpack-connect-colors();
 	}
 }
@@ -37,6 +40,11 @@ body:not( .is-jetpack-sso-partner-branded--woo ) {
 
 .jetpack-connect__main.main.is-automattic-for-agencies-flow {
 	max-width: 426px;
+}
+
+.is-jetpack-connector-flow,
+.layout.is-section-jetpack-connect.is-jetpack-connector-flow {
+	@include jetpack-connector-wpcom-colors();
 }
 
 .is-section-jetpack-connect,
@@ -276,6 +284,69 @@ body:not( .is-jetpack-sso-partner-branded--woo ) {
 	@media screen and ( max-width: $break-mobile ) {
 		min-width: 250px;
 		padding: 0 8px;
+	}
+}
+
+.jetpack-connect__authorize-form-wrapper--connector {
+	max-width: 520px;
+	margin: 5vh auto 0;
+
+	// WP.com body font
+	font-family: $sans;
+
+	.connect-screen-brand-header {
+		text-align: center;
+		margin-bottom: 24px;
+	}
+
+	.connect-screen-brand-header__logo-image {
+		width: 58px;
+		height: auto;
+	}
+
+	// WP.com brand serif for the main title
+	.connect-screen-brand-header__title {
+		font-family: $brand-serif;
+		color: var( --color-neutral-100 );
+	}
+
+	.connect-screen-brand-header__description {
+		color: var( --studio-gray-50, #646970 );
+	}
+
+	.connect-screen-permissions-list__title,
+	.connect-screen-permissions-list__item,
+	.connect-screen-user-card__name,
+	.connect-screen-user-card__details {
+		font-family: $sans;
+	}
+
+	.connect-screen-consent-text {
+		color: var( --studio-gray-50, #646970 );
+	}
+
+	.button.is-primary,
+	.components-button.is-primary {
+		font-weight: 500;
+		letter-spacing: 0.32px;
+	}
+
+	// WP.com blue input focus
+	input:focus {
+		border-color: var( --color-accent );
+		box-shadow: 0 0 0 2px var( --color-accent-light );
+	}
+
+	.jetpack-connect__switch-account-link {
+		color: var( --color-accent );
+	}
+
+	.connect-screen-action-buttons__tertiary.components-button.is-link {
+		color: var( --color-accent );
+	}
+
+	@media screen and ( max-width: $break-mobile ) {
+		padding: 0 16px;
 	}
 }
 

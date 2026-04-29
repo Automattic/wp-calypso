@@ -29,6 +29,8 @@ interface Props {
 	isFromAkismet?: boolean;
 	isFromPassport?: boolean;
 	isFromAutomatticForAgenciesPlugin?: boolean;
+	isFromJetpackConnector?: boolean;
+	connectorPlugins?: string[];
 	partnerConfig?: PartnerConfig | null;
 	isGravPoweredClient?: boolean;
 	isUserLoggedIn?: boolean;
@@ -72,6 +74,8 @@ export function getHeaderText( {
 	isFromAkismet,
 	isFromPassport,
 	isFromAutomatticForAgenciesPlugin,
+	isFromJetpackConnector,
+	connectorPlugins,
 	partnerConfig,
 	isGravPoweredClient,
 	currentQuery,
@@ -95,8 +99,12 @@ export function getHeaderText( {
 	let headerText = translate( 'Log in to your account' );
 
 	if ( isSocialFirst ) {
-		// CIAB partners have custom headers without "with WordPress.com"
-		if ( partnerConfig ) {
+		if ( isFromJetpackConnector ) {
+			const hasWoo = connectorPlugins?.some( ( slug: string ) => slug.startsWith( 'woocommerce' ) );
+			headerText = hasWoo
+				? translate( 'Log in to WordPress.com to connect your store' )
+				: translate( 'Log in to WordPress.com to connect your site' );
+		} else if ( partnerConfig ) {
 			headerText = translate( 'Log in to %(partner)s', {
 				args: { partner: partnerConfig.displayName },
 			} );
