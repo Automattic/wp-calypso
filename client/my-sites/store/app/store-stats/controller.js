@@ -8,6 +8,13 @@ import StatsPagePlaceholder from 'calypso/my-sites/stats/stats-page-placeholder'
 import { recordTrack } from '../../lib/analytics';
 import { getQueryDate } from './utils';
 
+const loadStoreStats = () =>
+	import( /* webpackChunkName: "async-load-calypso-my-sites-store-app-store-stats" */ '.' );
+const loadListView = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-my-sites-store-app-store-stats-listview" */ './listview'
+	);
+
 function isValidParameters( context ) {
 	const validParameters = {
 		type: [ 'orders', 'products', 'categories', 'coupons' ],
@@ -72,30 +79,12 @@ export default function StatsController( context, next ) {
 	switch ( props.type ) {
 		case 'orders':
 			asyncComponent = (
-				<AsyncLoad
-					key="store-app-store-stats"
-					placeholder={ placeholder }
-					require={ () =>
-						import(
-							/* webpackChunkName: "async-load-calypso-my-sites-store-app-store-stats" */ '.'
-						)
-					}
-					{ ...props }
-				/>
+				<AsyncLoad placeholder={ placeholder } require={ loadStoreStats } { ...props } />
 			);
 			break;
 		default:
 			asyncComponent = (
-				<AsyncLoad
-					key="store-app-store-stats-listview"
-					placeholder={ placeholder }
-					require={ () =>
-						import(
-							/* webpackChunkName: "async-load-calypso-my-sites-store-app-store-stats-listview" */ './listview'
-						)
-					}
-					{ ...props }
-				/>
+				<AsyncLoad placeholder={ placeholder } require={ loadListView } { ...props } />
 			);
 			break;
 	}

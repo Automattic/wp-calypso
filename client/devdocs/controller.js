@@ -17,6 +17,29 @@ import Sidebar from './sidebar';
 import DevWelcome from './welcome';
 import WizardComponent from './wizard-component';
 
+const loadDesign = () =>
+	import( /* webpackChunkName: "async-load-calypso-devdocs-design" */ './design' );
+const loadBlocks = () =>
+	import( /* webpackChunkName: "async-load-calypso-devdocs-design-blocks" */ './design/blocks' );
+const loadPlayground = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-devdocs-design-playground" */ './design/playground'
+	);
+const loadWordpressComponentsGallery = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-devdocs-design-wordpress-components-gallery" */ './design/wordpress-components-gallery'
+	);
+const loadDocsSelectors = () =>
+	import( /* webpackChunkName: "async-load-calypso-devdocs-docs-selectors" */ './docs-selectors' );
+const loadTypography = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-devdocs-design-typography" */ './design/typography'
+	);
+const loadIllustrations = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-devdocs-design-illustrations" */ './design/illustrations'
+	);
+
 const devdocs = {
 	/*
 	 * Documentation is rendered on #primary and doesn't expect a sidebar to exist
@@ -78,15 +101,7 @@ const devdocs = {
 
 	// UI components
 	design: function ( context, next ) {
-		context.primary = (
-			<AsyncLoad
-				key="devdocs-design"
-				component={ context.params.component }
-				require={ () =>
-					import( /* webpackChunkName: "async-load-calypso-devdocs-design" */ './design' )
-				}
-			/>
-		);
+		context.primary = <AsyncLoad component={ context.params.component } require={ loadDesign } />;
 		next();
 	},
 
@@ -97,58 +112,26 @@ const devdocs = {
 
 	// App Blocks
 	blocks: function ( context, next ) {
-		context.primary = (
-			<AsyncLoad
-				key="devdocs-blocks"
-				component={ context.params.component }
-				require={ () =>
-					import(
-						/* webpackChunkName: "async-load-calypso-devdocs-design-blocks" */ './design/blocks'
-					)
-				}
-			/>
-		);
+		context.primary = <AsyncLoad component={ context.params.component } require={ loadBlocks } />;
 		next();
 	},
 
 	playground: function ( context, next ) {
 		context.primary = (
-			<AsyncLoad
-				key="devdocs-playground"
-				component={ context.params.component }
-				require={ () =>
-					import(
-						/* webpackChunkName: "async-load-calypso-devdocs-design-playground" */ './design/playground'
-					)
-				}
-			/>
+			<AsyncLoad component={ context.params.component } require={ loadPlayground } />
 		);
 		next();
 	},
 
 	wpComponentsGallery( context, next ) {
-		context.primary = (
-			<AsyncLoad
-				key="devdocs-wp-components-gallery"
-				require={ () =>
-					import(
-						/* webpackChunkName: "async-load-calypso-devdocs-design-wordpress-components-gallery" */ './design/wordpress-components-gallery'
-					)
-				}
-			/>
-		);
+		context.primary = <AsyncLoad require={ loadWordpressComponentsGallery } />;
 		next();
 	},
 
 	selectors: function ( context, next ) {
 		context.primary = (
 			<AsyncLoad
-				key="devdocs-selectors"
-				require={ () =>
-					import(
-						/* webpackChunkName: "async-load-calypso-devdocs-docs-selectors" */ './docs-selectors'
-					)
-				}
+				require={ loadDocsSelectors }
 				search={ context.query.search }
 				selector={ context.params.selector }
 			/>
@@ -158,30 +141,14 @@ const devdocs = {
 
 	typography: function ( context, next ) {
 		context.primary = (
-			<AsyncLoad
-				key="devdocs-typography"
-				component={ context.params.component }
-				require={ () =>
-					import(
-						/* webpackChunkName: "async-load-calypso-devdocs-design-typography" */ './design/typography'
-					)
-				}
-			/>
+			<AsyncLoad component={ context.params.component } require={ loadTypography } />
 		);
 		next();
 	},
 
 	illustrations: function ( context, next ) {
 		context.primary = (
-			<AsyncLoad
-				key="devdocs-illustrations"
-				component={ context.params.component }
-				require={ () =>
-					import(
-						/* webpackChunkName: "async-load-calypso-devdocs-design-illustrations" */ './design/illustrations'
-					)
-				}
-			/>
+			<AsyncLoad component={ context.params.component } require={ loadIllustrations } />
 		);
 		next();
 	},

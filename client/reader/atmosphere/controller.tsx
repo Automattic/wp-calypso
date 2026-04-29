@@ -4,6 +4,23 @@ import AsyncLoad from 'calypso/components/async-load';
 import { TIMELINE_TAB } from './helper';
 import { DID_RE, RKEY_RE } from './route';
 
+const loadAtmosphereLandingView = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-reader-atmosphere-landing-view" */ 'calypso/reader/atmosphere/atmosphere-landing-view'
+	);
+const loadAtmosphereConnectView = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-reader-atmosphere-connect-view" */ 'calypso/reader/atmosphere/atmosphere-connect-view'
+	);
+const loadAtmosphereAccountView = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-reader-atmosphere-account-view" */ 'calypso/reader/atmosphere/atmosphere-account-view'
+	);
+const loadAtmosphereThreadView = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-reader-atmosphere-thread-view" */ 'calypso/reader/atmosphere/atmosphere-thread-view'
+	);
+
 function ensureAtmosphereEnabled(): boolean {
 	if ( ! isEnabled( 'reader/social' ) ) {
 		page.redirect( '/reader' );
@@ -16,17 +33,7 @@ export const atmosphereLanding = ( context: Context, next: () => void ) => {
 	if ( ! ensureAtmosphereEnabled() ) {
 		return;
 	}
-	context.primary = (
-		<AsyncLoad
-			key="reader-atmosphere-landing"
-			require={ () =>
-				import(
-					/* webpackChunkName: "async-load-calypso-reader-atmosphere-landing-view" */ 'calypso/reader/atmosphere/atmosphere-landing-view'
-				)
-			}
-			placeholder={ null }
-		/>
-	);
+	context.primary = <AsyncLoad require={ loadAtmosphereLandingView } placeholder={ null } />;
 	next();
 };
 
@@ -34,17 +41,7 @@ export const atmosphereConnect = ( context: Context, next: () => void ) => {
 	if ( ! ensureAtmosphereEnabled() ) {
 		return;
 	}
-	context.primary = (
-		<AsyncLoad
-			key="reader-atmosphere-connect"
-			require={ () =>
-				/* webpackChunkName: "async-load-calypso-reader-atmosphere-connect-view" */ import(
-					'calypso/reader/atmosphere/atmosphere-connect-view'
-				)
-			}
-			placeholder={ null }
-		/>
-	);
+	context.primary = <AsyncLoad require={ loadAtmosphereConnectView } placeholder={ null } />;
 	next();
 };
 
@@ -68,12 +65,7 @@ export const atmosphereAccount = ( context: Context, next: () => void ) => {
 	const tab = String( context.params.tab ?? '' );
 	context.primary = (
 		<AsyncLoad
-			key="reader-atmosphere-account"
-			require={ () =>
-				import(
-					/* webpackChunkName: "async-load-calypso-reader-atmosphere-account-view" */ 'calypso/reader/atmosphere/atmosphere-account-view'
-				)
-			}
+			require={ loadAtmosphereAccountView }
 			placeholder={ null }
 			connectionId={ id }
 			tab={ tab }
@@ -101,13 +93,7 @@ export const atmosphereThread = ( context: Context, next: () => void ) => {
 
 	context.primary = (
 		<AsyncLoad
-			key="reader-atmosphere-thread"
-			require={ () =>
-				import(
-					/* webpackChunkName: "async-load-calypso-reader-atmosphere-thread-view" */
-					'calypso/reader/atmosphere/atmosphere-thread-view'
-				)
-			}
+			require={ loadAtmosphereThreadView }
 			placeholder={ null }
 			connectionId={ id }
 			did={ did }

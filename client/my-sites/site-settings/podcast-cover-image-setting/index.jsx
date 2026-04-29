@@ -29,6 +29,11 @@ import './style.scss';
 
 const debug = debugModule( 'calypso:podcast-image' );
 
+const loadMediaModal = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-post-editor-media-modal" */ 'calypso/post-editor/media-modal'
+	);
+
 class PodcastCoverImageSetting extends PureComponent {
 	static propTypes = {
 		coverImageId: PropTypes.number,
@@ -151,9 +156,7 @@ class PodcastCoverImageSetting extends PureComponent {
 	}
 
 	preloadModal() {
-		import(
-			/* webpackChunkName: "async-load-calypso-post-editor-media-modal" */ 'calypso/post-editor/media-modal'
-		);
+		loadMediaModal();
 	}
 
 	renderChangeButton() {
@@ -215,11 +218,7 @@ class PodcastCoverImageSetting extends PureComponent {
 		return (
 			hasToggledModal && (
 				<AsyncLoad
-					require={ () =>
-						import(
-							/* webpackChunkName: "async-load-calypso-post-editor-media-modal" */ 'calypso/post-editor/media-modal'
-						)
-					}
+					require={ loadMediaModal }
 					placeholder={ <EditorMediaModalDialog isVisible /> }
 					siteId={ siteId }
 					onClose={ this.editSelectedMedia }

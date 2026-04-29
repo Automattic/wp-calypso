@@ -3,6 +3,11 @@ import { useSiteGlobalStylesOnPersonal } from 'calypso/state/sites/hooks/use-sit
 import type { StyleVariation } from '@automattic/design-picker';
 import './style.scss';
 
+const loadGlobalStylesVariations = () =>
+	import(
+		/* webpackChunkName: "async-load-automattic-global-styles-src-components-global-styles-variations" */ '@automattic/global-styles/src/components/global-styles-variations'
+	);
+
 interface ThemeStyleVariationsProps {
 	selectedVariation: StyleVariation;
 	variations: StyleVariation[];
@@ -23,11 +28,7 @@ const ThemeStyleVariations = ( {
 		<div className="theme__sheet-style-variations">
 			<div className="theme__sheet-style-variations-previews">
 				<AsyncLoad
-					require={ () =>
-						import(
-							/* webpackChunkName: "async-load-automattic-global-styles-src-components-global-styles-variations" */ '@automattic/global-styles/src/components/global-styles-variations'
-						)
-					}
+					require={ loadGlobalStylesVariations }
 					placeholder={ null }
 					globalStylesVariations={ variations }
 					selectedGlobalStylesVariation={ selectedVariation }
