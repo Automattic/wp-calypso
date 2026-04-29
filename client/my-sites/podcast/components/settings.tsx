@@ -7,7 +7,6 @@ import {
 	Button,
 	Card,
 	CardBody,
-	CardFooter,
 	CardHeader,
 	Notice,
 	SelectControl,
@@ -200,24 +199,27 @@ const PodcastingSettingsForm = ( {
 
 	const onCategorySelected = useCallback(
 		( category: { ID: number } ) => {
-			updateFields( { podcasting_category_id: String( category.ID ) } );
+			updateFields( { podcasting_category_id: String( category.ID ) }, () => submitForm() );
 			setIsEnabling( false );
 		},
-		[ updateFields ]
+		[ updateFields, submitForm ]
 	);
 
 	const onCoverImageRemoved = useCallback( () => {
-		updateFields( { podcasting_image_id: '0', podcasting_image: '' } );
-	}, [ updateFields ] );
+		updateFields( { podcasting_image_id: '0', podcasting_image: '' }, () => submitForm() );
+	}, [ updateFields, submitForm ] );
 
 	const onCoverImageSelected = useCallback(
 		( coverId: number, coverUrl: string ) => {
-			updateFields( {
-				podcasting_image_id: String( coverId ),
-				podcasting_image: coverUrl,
-			} );
+			updateFields(
+				{
+					podcasting_image_id: String( coverId ),
+					podcasting_image: coverUrl,
+				},
+				() => submitForm()
+			);
 		},
-		[ updateFields ]
+		[ updateFields, submitForm ]
 	);
 
 	const onTextChange = useCallback(
@@ -227,34 +229,29 @@ const PodcastingSettingsForm = ( {
 		[ updateFields ]
 	);
 
+	const onTextBlur = useCallback( () => {
+		if ( dirtyFields.length > 0 ) {
+			submitForm();
+		}
+	}, [ dirtyFields, submitForm ] );
+
 	const onTopicChange = useCallback(
 		( key: 'podcasting_category_1' | 'podcasting_category_2' | 'podcasting_category_3' ) =>
 			( value: string ) => {
-				updateFields( { [ key ]: value } );
+				updateFields( { [ key ]: value }, () => submitForm() );
 			},
-		[ updateFields ]
+		[ updateFields, submitForm ]
 	);
 
 	const onExplicitChange = useCallback(
 		( value: string ) => {
-			updateFields( { podcasting_explicit: value } );
+			updateFields( { podcasting_explicit: value }, () => submitForm() );
 		},
-		[ updateFields ]
+		[ updateFields, submitForm ]
 	);
 
 	const podcastingCategoryName = podcastingCategory?.name;
 	const newPostUrl = siteSlug ? `/post/${ siteSlug }` : '';
-
-	const saveButton = (
-		<Button
-			variant="primary"
-			type="submit"
-			isBusy={ isSavingSettings }
-			disabled={ disabled || ! isPodcastingEnabled || dirtyFields.length === 0 }
-		>
-			{ isSavingSettings ? translate( 'Saving…' ) : translate( 'Save' ) }
-		</Button>
-	);
 
 	if ( ! site || ! siteId ) {
 		return null;
@@ -383,7 +380,6 @@ const PodcastingSettingsForm = ( {
 									) }
 								</VStack>
 							</CardBody>
-							<CardFooter>{ saveButton }</CardFooter>
 						</Card>
 
 						{ /* Show details */ }
@@ -422,6 +418,7 @@ const PodcastingSettingsForm = ( {
 												label={ translate( 'Title' ) as string }
 												value={ decodeEntities( fields.podcasting_title ?? '' ) }
 												onChange={ onTextChange( 'podcasting_title' ) }
+												onBlur={ onTextBlur }
 												disabled={ disabled }
 											/>
 											<TextareaControl
@@ -429,6 +426,7 @@ const PodcastingSettingsForm = ( {
 												label={ translate( 'Summary / Description' ) as string }
 												value={ decodeEntities( fields.podcasting_summary ?? '' ) }
 												onChange={ onTextChange( 'podcasting_summary' ) }
+												onBlur={ onTextBlur }
 												disabled={ disabled }
 												rows={ 4 }
 											/>
@@ -441,6 +439,7 @@ const PodcastingSettingsForm = ( {
 										label={ translate( 'Hosts / Artist / Producer' ) as string }
 										value={ decodeEntities( fields.podcasting_talent_name ?? '' ) }
 										onChange={ onTextChange( 'podcasting_talent_name' ) }
+										onBlur={ onTextBlur }
 										disabled={ disabled }
 									/>
 
@@ -450,11 +449,11 @@ const PodcastingSettingsForm = ( {
 										label={ translate( 'Copyright' ) as string }
 										value={ decodeEntities( fields.podcasting_copyright ?? '' ) }
 										onChange={ onTextChange( 'podcasting_copyright' ) }
+										onBlur={ onTextBlur }
 										disabled={ disabled }
 									/>
 								</VStack>
 							</CardBody>
-							<CardFooter>{ saveButton }</CardFooter>
 						</Card>
 
 						{ /* Feed metadata */ }
@@ -540,11 +539,11 @@ const PodcastingSettingsForm = ( {
 										}
 										value={ decodeEntities( fields.podcasting_email ?? '' ) }
 										onChange={ onTextChange( 'podcasting_email' ) }
+										onBlur={ onTextBlur }
 										disabled={ disabled }
 									/>
 								</VStack>
 							</CardBody>
-							<CardFooter>{ saveButton }</CardFooter>
 						</Card>
 					</>
 				) }
