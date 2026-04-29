@@ -27,6 +27,7 @@ import useMarketplaceAdditionalSteps from 'calypso/my-sites/marketplace/pages/ma
 import theme from 'calypso/my-sites/marketplace/theme';
 import { waitFor } from 'calypso/my-sites/marketplace/util';
 import { useSelector, useDispatch } from 'calypso/state';
+import { receiveAdminMenu } from 'calypso/state/admin-menu/actions';
 import { initiateAtomicTransfer } from 'calypso/state/atomic/transfers/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
@@ -346,6 +347,7 @@ const MarketplaceProductInstall = ( {
 			if ( ! pluginsUrlFinal ) {
 				return;
 			}
+			dispatch( receiveAdminMenu( siteId, [] ) );
 			waitFor( 1 ).then( () => {
 				window.location.href = pluginsUrlFinal as string;
 			} );
@@ -361,6 +363,8 @@ const MarketplaceProductInstall = ( {
 		uploadedPluginSlug,
 		pluginsUrlFinal,
 		isAtomicTransferReady,
+		dispatch,
+		siteId,
 	] ); // We need to trigger this hook also when `automatedTransferStatus` changes cause the plugin install is done on the background in that case.
 
 	// Validate theme is already active

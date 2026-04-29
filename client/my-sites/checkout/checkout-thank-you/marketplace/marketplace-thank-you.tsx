@@ -8,7 +8,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
 import theme from 'calypso/my-sites/marketplace/theme';
 import { useSelector, useDispatch } from 'calypso/state';
-import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
+import { requestAdminMenu, receiveAdminMenu } from 'calypso/state/admin-menu/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 import { isRequesting } from 'calypso/state/plugins/installed/selectors';
@@ -135,6 +135,7 @@ const MarketplaceThankYou = ( {
 
 		// Redirect to plugins.php if there are only plugins and no themes.
 		if ( isPageReady && pluginSlugs.length > 0 && themeSlugs.length === 0 && pluginsUrl ) {
+			dispatch( receiveAdminMenu( siteId, [] ) );
 			window.location.href = pluginsUrl;
 			return;
 		}
@@ -147,6 +148,8 @@ const MarketplaceThankYou = ( {
 		pluginSlugs.length,
 		themeSlugs.length,
 		pluginsUrl,
+		dispatch,
+		siteId,
 	] );
 
 	const { steps, additionalSteps } = useThankYouSteps( {

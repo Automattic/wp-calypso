@@ -78,6 +78,7 @@ export * from './site-address-change';
 export * from './site-admin-bar';
 export * from './site-agency';
 export * from './site-atomic-transfers';
+export * from './site-automated-transfer-status';
 export * from './site-automated-transfers-eligibility';
 export * from './site-backup-download';
 export * from './site-backup-restore';

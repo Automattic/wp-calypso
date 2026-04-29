@@ -249,47 +249,40 @@ export default function useCreatePaymentSubmittedAndProcessingCallback( {
 				return;
 			}
 
-			// We need to do a hard redirect if we're redirecting to the stepper.
-			// Since stepper is self-contained, it doesn't load properly if we do a normal history state change
-			// The same is true if we are redirecting to the signup flow, we are restricting it to only 1 specific flow here.
+			const redirectOptions = {
+				siteSlug,
+				orderId: 'order_id' in transactionResult ? transactionResult.order_id : undefined,
+				receiptId: 'receipt_id' in transactionResult ? transactionResult.receipt_id : undefined,
+				fromSiteSlug,
+				fromExternalCheckout: sitelessCheckoutType === 'a4a',
+			};
+
+			// Stepper, signup, and external-checkout flows must use a hard redirect:
+			// - /setup/ and /start/site-content-collection: stepper / signup are
+			//   self-contained and require a fresh calypso bundle to load. Without
+			//   the hard reload, the pending page's downstream page() call would
+			//   land in a stale calypso instance and the flow would break (see
+			//   PR #68538, PR #85417).
+			// - A4A external checkout: the pending URL lives on wordpress.com,
+			//   a different origin.
 			if (
-				isURL( url ) ||
 				url.includes( '/setup/' ) ||
-				url.includes( '/start/site-content-collection' )
+				url.includes( '/start/site-content-collection' ) ||
+				redirectOptions.fromExternalCheckout
 			) {
-				const options = {
-					siteSlug,
-					orderId: 'order_id' in transactionResult ? transactionResult.order_id : undefined,
-					receiptId: 'receipt_id' in transactionResult ? transactionResult.receipt_id : undefined,
-					fromSiteSlug,
-					fromExternalCheckout: sitelessCheckoutType === 'a4a',
-				};
+				absoluteRedirectThroughPending( url, redirectOptions );
+				return;
+			}
 
-				// Stepper, signup, and external-checkout flows must use a hard redirect:
-				// - /setup/ and /start/site-content-collection: stepper / signup are
-				//   self-contained and require a fresh calypso bundle to load. Without
-				//   the hard reload, the pending page's downstream page() call would
-				//   land in a stale calypso instance and the flow would break (see
-				//   PR #68538, PR #85417).
-				// - A4A external checkout: the pending URL lives on wordpress.com,
-				//   a different origin.
-				if (
-					url.includes( '/setup/' ) ||
-					url.includes( '/start/site-content-collection' ) ||
-					options.fromExternalCheckout
-				) {
-					absoluteRedirectThroughPending( url, options );
-					return;
-				}
-
-				// Cross-origin same-app cases (e.g. dashboard upgrade where the final
-				// URL is on my.localhost:3000 from calypso.localhost:3000). Navigate
-				// to the pending page via client-side routing to avoid the blank-screen
-				// flash; the pending page will then hard-redirect to the absolute URL
-				// because performRedirect falls through to window.location.href when
-				// the URL doesn't start with `/`.
+			// Cross-origin same-app cases (e.g. dashboard upgrade where the final
+			// URL is on my.localhost:3000 from calypso.localhost:3000). Navigate
+			// to the pending page via client-side routing to avoid the blank-screen
+			// flash; the pending page will then hard-redirect to the absolute URL
+			// because performRedirect falls through to window.location.href when
+			// the URL doesn't start with `/`.
+			if ( isURL( url ) ) {
 				window.scrollTo( 0, 0 );
-				page( addUrlToPendingPageRedirect( url, { ...options, urlType: 'relative' } ) );
+				page( addUrlToPendingPageRedirect( url, { ...redirectOptions, urlType: 'relative' } ) );
 				return;
 			}
 

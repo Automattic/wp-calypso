@@ -1,4 +1,4 @@
-import { receiptQuery } from '@automattic/api-queries';
+import { receiptQuery, siteAutomatedTransferStatusQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
@@ -15,15 +15,17 @@ import { getRedirectFromPendingPage } from 'calypso/my-sites/checkout/src/lib/pe
 import { sendMessageToOpener } from 'calypso/my-sites/checkout/src/lib/popup';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useSelector, useDispatch } from 'calypso/state';
-import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
+import { receiveAdminMenu } from 'calypso/state/admin-menu/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
-import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { SUCCESS } from 'calypso/state/order-transactions/constants';
+import { storePersistedStateItem } from 'calypso/state/persisted-state';
 import getOrderTransactionError from 'calypso/state/selectors/get-order-transaction-error';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { requestSite } from 'calypso/state/sites/actions';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import usePurchaseOrder from '../../src/hooks/use-purchase-order';
 import { logStashLoadErrorEvent } from '../../src/lib/analytics';
 import type { ResponseCart } from '@automattic/shopping-cart';
@@ -247,6 +249,7 @@ function useRedirectOnTransactionSuccess( {
 		orderId ? getOrderTransactionError( state, orderId ) : null
 	);
 	const reduxDispatch = useDispatch();
+	const currentUserId = useSelector( getCurrentUserId );
 	const cartKey = useCartKey();
 	const { reloadFromServer: reloadCart, responseCart } = useShoppingCart( cartKey );
 	const [ cartProductsAtMount ] = useState( () => responseCart.products );
@@ -259,6 +262,9 @@ function useRedirectOnTransactionSuccess( {
 	const isRenewal = receipt?.items.some( ( item ) => item.type === 'recurring' ) ?? false;
 	const productName = firstItem?.variation || firstItem?.product || '';
 	const blogId = firstItem?.site_id;
+	const freshSiteSlug = useSelector( ( state ) =>
+		blogId ? getSiteSlug( state, blogId ) : null
+	);
 	const saasRedirectUrl = receipt?.items.reduce< string | undefined >(
 		( url, item ) => url ?? ( item.saas_redirect_url || undefined ),
 		undefined
@@ -290,29 +296,22 @@ function useRedirectOnTransactionSuccess( {
 	}, [ isUnifiedCheckout, blogId, reduxDispatch ] );
 
 	const [ atomicWaitTimedOut, setAtomicWaitTimedOut ] = useState( false );
-	const transferStatus = useSelector( ( state ) =>
-		blogId ? getAutomatedTransferStatus( state, blogId ) : null
-	);
+	const { data: transferStatusData } = useQuery( {
+		...siteAutomatedTransferStatusQuery( blogId ?? 0 ),
+		enabled: !! blogId && isAtomicTransferExpected && ! atomicWaitTimedOut,
+		refetchInterval: ( query ) => {
+			if ( query.state.data?.status === 'complete' ) {
+				return false;
+			}
+			return ATOMIC_TRANSFER_POLL_INTERVAL_MS;
+		},
+	} );
+	const transferStatus = transferStatusData?.status ?? null;
 	const isFinalSiteAtomic = useSelector( ( state ) =>
 		blogId ? isSiteWpcomAtomic( state, blogId ) : false
 	);
 	const isAtomicTransferComplete =
 		! isAtomicTransferExpected || isFinalSiteAtomic || atomicWaitTimedOut;
-
-	// Poll the automated transfer status while we're waiting on it. Stops polling
-	// the moment we have a definitive answer (COMPLETE) or the watchdog timeout fires.
-	useEffect( () => {
-		if ( ! blogId || ! isAtomicTransferExpected || isAtomicTransferComplete ) {
-			return;
-		}
-		// Fire one immediately and then on an interval. The first call kicks off
-		// the request even if the polling interval is long.
-		reduxDispatch( fetchAutomatedTransferStatus( blogId ) );
-		const intervalId = window.setInterval( () => {
-			reduxDispatch( fetchAutomatedTransferStatus( blogId ) );
-		}, ATOMIC_TRANSFER_POLL_INTERVAL_MS );
-		return () => window.clearInterval( intervalId );
-	}, [ blogId, isAtomicTransferExpected, isAtomicTransferComplete, reduxDispatch ] );
 
 	// Once the transfer reports COMPLETE, re-fetch the site so `is_wpcom_atomic`
 	// flips. `useAtomicTransfer` does the same dance — site endpoint lags transfer
@@ -399,14 +398,44 @@ function useRedirectOnTransactionSuccess( {
 			return redirectTo;
 		} )();
 
+		// For purchases that triggered an Atomic transfer, the redirect URL
+		// was generated before the transfer and contains the pre-Atomic site
+		// slug (e.g. example.wordpress.com instead of example.wpcomstaging.com).
+		// Additionally, plugin purchases get a generic /home destination from
+		// the stepper. Fix both: use the fresh slug from Redux (populated by
+		// the requestSite polling that already ran), and for plugin purchases
+		// redirect to the installed plugin's page.
+		const postAtomicRedirectTo = ( () => {
+			if ( ! isAtomicTransferExpected || ! freshSiteSlug ) {
+				return effectiveRedirectTo;
+			}
+			// Extract the plugin slug from the cart products captured at mount.
+			// The transfer status API doesn't return uploaded_plugin_slug for
+			// marketplace purchases — only for direct plugin uploads.
+			const marketplacePlugin = cartProductsAtMount.find(
+				( { extra } ) =>
+					extra?.product_type === 'marketplace_plugin' || extra?.product_type === 'saas_plugin'
+			);
+			const pluginSlug = marketplacePlugin?.extra?.product_slug;
+			if ( pluginSlug ) {
+				return `/plugins/${ pluginSlug }/${ freshSiteSlug }`;
+			}
+			// No plugin slug available — fix the stale site slug in the
+			// existing redirect URL so at least the destination resolves.
+			if ( siteSlug && effectiveRedirectTo?.includes( siteSlug ) ) {
+				return effectiveRedirectTo.replace( siteSlug, freshSiteSlug );
+			}
+			return effectiveRedirectTo;
+		} )();
+
 		const redirectInstructions = getRedirectFromPendingPage( {
 			isLoadingOrder,
 			error,
 			transaction,
 			orderId,
 			receiptId,
-			redirectTo: effectiveRedirectTo,
-			siteSlug,
+			redirectTo: postAtomicRedirectTo,
+			siteSlug: freshSiteSlug || siteSlug,
 			saasRedirectUrl,
 			fromSiteSlug,
 		} );
@@ -441,11 +470,41 @@ function useRedirectOnTransactionSuccess( {
 			reduxDispatch( requestSite( blogId ) );
 		}
 
+		// After an Atomic transfer, the admin menu has new items (installed
+		// plugin entries). Clear the stale menu from both Redux and IndexedDB
+		// so the destination page fetches a fresh one via QuerySiteAdminMenu.
+		// We must await the IndexedDB write directly — the normal Redux
+		// persistence subscriber is throttled at 5s and the write is
+		// async/unawaited, so it never completes before the redirect fires.
+		if ( blogId && isAtomicTransferExpected && currentUserId ) {
+			reduxDispatch( receiveAdminMenu( blogId, [] ) );
+			// Key format from client/state/initial-state.js:getPersistenceKey
+			const storageKey = `redux-state-${ currentUserId }:adminMenu`;
+			storePersistedStateItem( storageKey, {
+				menus: { [ blogId ]: [] },
+				_timestamp: Date.now(),
+			} ).catch( () => {
+				// Best-effort — if IDB write fails, the destination page will
+				// still fetch a fresh menu; the sidebar will just flash briefly.
+			} );
+		}
+
+		// Force a hard redirect for post-Atomic navigation. Client-side
+		// page() keeps the stale Calypso instance; a full reload re-reads
+		// IndexedDB (cleared above) and resolves the new site slug cleanly.
+		const finalRedirectUrl =
+			isAtomicTransferExpected && redirectInstructions.url.startsWith( '/' )
+				? window.location.origin + redirectInstructions.url
+				: redirectInstructions.url;
+
 		const elapsed = Date.now() - mountTime;
 		const holdRemaining = Math.max( 0, MIN_PENDING_HOLD_MS - elapsed );
 
 		window.setTimeout( () => {
-			notifyAndPerformRedirect( siteSlug, redirectInstructions );
+			notifyAndPerformRedirect( siteSlug, {
+				...redirectInstructions,
+				url: finalRedirectUrl,
+			} );
 		}, holdRemaining );
 	}, [
 		isLoadingOrder,
@@ -457,8 +516,11 @@ function useRedirectOnTransactionSuccess( {
 		finalReceiptId,
 		isReceiptLoaded,
 		isAtomicTransferComplete,
+		isAtomicTransferExpected,
 		isRenewal,
 		blogId,
+		cartProductsAtMount,
+		currentUserId,
 		orderId,
 		productName,
 		receiptId,
@@ -469,6 +531,7 @@ function useRedirectOnTransactionSuccess( {
 		transaction,
 		translate,
 		fromSiteSlug,
+		freshSiteSlug,
 	] );
 
 	return { isAtomicTransferExpected };
