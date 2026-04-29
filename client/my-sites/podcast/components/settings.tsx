@@ -4,7 +4,6 @@ import {
 	getPlan,
 } from '@automattic/calypso-products';
 import {
-	Button,
 	Card,
 	CardBody,
 	CardHeader,
@@ -23,7 +22,6 @@ import { pick } from 'lodash';
 import { useCallback, useMemo, useState } from 'react';
 import TermTreeSelector from 'calypso/blocks/term-tree-selector';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import { decodeEntities } from 'calypso/lib/formatting';
 import PodcastCoverImageSetting from 'calypso/my-sites/site-settings/podcast-cover-image-setting';
 import useTopics from 'calypso/my-sites/site-settings/podcasting-details/use-topics';
@@ -32,11 +30,7 @@ import { useSelector } from 'calypso/state';
 import { hasLoadedSitePlansFromServer } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getTerm } from 'calypso/state/terms/selectors';
-import {
-	getSelectedSite,
-	getSelectedSiteId,
-	getSelectedSiteSlug,
-} from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const TRACKED_FIELDS = [
 	'podcasting_category_id',
@@ -128,7 +122,6 @@ const PodcastingSettingsForm = ( {
 
 	const siteId = useSelector( getSelectedSiteId );
 	const site = useSelector( getSelectedSite );
-	const siteSlug = useSelector( getSelectedSiteSlug );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	const plansDataLoaded = useSelector( ( state ) => hasLoadedSitePlansFromServer( state, siteId ) );
 
@@ -145,18 +138,9 @@ const PodcastingSettingsForm = ( {
 		podcastingCategoryId
 			? ( getTerm( state, siteId ?? 0, 'category', podcastingCategoryId ) as {
 					name?: string;
-					feed_url?: string;
 			  } | null )
 			: null
 	);
-	// WP.com Simple sites can return http:; prefer https for display.
-	const feedUrl = useMemo( () => {
-		const raw = podcastingCategory?.feed_url;
-		if ( ! raw ) {
-			return '';
-		}
-		return isJetpack ? raw : raw.replace( /^http:/, 'https:' );
-	}, [ podcastingCategory, isJetpack ] );
 
 	const isCategoryChanging =
 		! isSavingSettings &&
@@ -253,7 +237,6 @@ const PodcastingSettingsForm = ( {
 	);
 
 	const podcastingCategoryName = podcastingCategory?.name;
-	const newPostUrl = siteSlug ? `/post/${ siteSlug }` : '';
 
 	if ( ! site || ! siteId ) {
 		return null;
@@ -357,26 +340,6 @@ const PodcastingSettingsForm = ( {
 												'If you change categories, you will need to resubmit your feed to Apple Podcasts and any other podcasting services.'
 											) }
 										</Notice>
-									) }
-
-									{ feedUrl && (
-										<VStack spacing={ 2 }>
-											<Text weight={ 500 }>{ translate( 'RSS feed' ) }</Text>
-											<ClipboardButtonInput value={ feedUrl } />
-											<Text variant="muted" size="12">
-												{ translate(
-													'Copy your feed URL and submit it to Apple Podcasts and other podcasting services.'
-												) }
-											</Text>
-										</VStack>
-									) }
-
-									{ isPodcastingEnabled && newPostUrl && (
-										<HStack justify="flex-start">
-											<Button variant="secondary" href={ newPostUrl }>
-												{ translate( 'Create episode' ) }
-											</Button>
-										</HStack>
 									) }
 								</VStack>
 							</CardBody>
