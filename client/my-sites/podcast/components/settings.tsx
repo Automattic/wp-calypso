@@ -30,7 +30,7 @@ import wrapSettingsForm from 'calypso/my-sites/site-settings/wrap-settings-form'
 import { useSelector } from 'calypso/state';
 import { hasLoadedSitePlansFromServer } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { getTerm, getTerms } from 'calypso/state/terms/selectors';
+import { getTerms } from 'calypso/state/terms/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const TRACKED_FIELDS = [
@@ -139,14 +139,6 @@ const PodcastingSettingsForm = ( {
 	// "Enable podcasting" CTA) so users can pick a category right away.
 	const [ isEnabling, setIsEnabling ] = useState( ! isPodcastingEnabled );
 	const showSettings = isPodcastingEnabled || isEnabling;
-
-	const podcastingCategory = useSelector( ( state ) =>
-		podcastingCategoryId
-			? ( getTerm( state, siteId ?? 0, 'category', podcastingCategoryId ) as {
-					name?: string;
-			  } | null )
-			: null
-	);
 
 	const isCategoryChanging =
 		! isSavingSettings &&
@@ -268,8 +260,6 @@ const PodcastingSettingsForm = ( {
 		[ updateFields, submitForm ]
 	);
 
-	const podcastingCategoryName = podcastingCategory?.name;
-
 	if ( ! site || ! siteId ) {
 		return null;
 	}
@@ -341,18 +331,6 @@ const PodcastingSettingsForm = ( {
 									{ isEnabling && ! isPodcastingEnabled && (
 										<Notice status="info" isDismissible={ false }>
 											{ translate( 'Select a category to start your podcast feed.' ) }
-										</Notice>
-									) }
-
-									{ isPodcastingEnabled && podcastingCategoryName && (
-										<Notice status="success" isDismissible={ false }>
-											{ translate(
-												'Publish blog posts in the {{strong}}%s{{/strong}} category to add new episodes.',
-												{
-													args: podcastingCategoryName,
-													components: { strong: <strong /> },
-												}
-											) }
 										</Notice>
 									) }
 
