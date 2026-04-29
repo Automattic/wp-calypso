@@ -17,7 +17,9 @@ import useFeedbackAction from '../../hooks/use-feedback-action';
 import useSaveNewChatRoute from '../../hooks/use-save-new-chat-route';
 import useSourcesAction from '../../hooks/use-sources-action';
 import useZoomAction from '../../hooks/use-zoom-action';
+import { markSessionUsed } from '../../utils/agent-session';
 import convertToolMessagesToComponents from '../../utils/convert-tool-messages-to-components';
+import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
 import { persistLastActivity } from '../../utils/persist-last-activity';
 import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
@@ -116,8 +118,20 @@ export default function OrchestratorChat( {
 		progressMessage,
 	} = useAgentChat( agentConfig! );
 
+	// Reader-chat sessions are short (usually < 50 messages) — don't waste
+	// time paginating 10 pages deep. One page covers typical use.
+	const isReaderChat = isReaderChatAgent( agentConfig?.agentId );
+	const shouldLoadConversation =
+		! isReaderChat || ( ! hasUserSentMessage && messages.length === 0 && ! isProcessing );
+
 	const { isLoading: isLoadingConversation } = useConversation( {
+		maxPages: isReaderChat ? 1 : 10,
+		enabled: shouldLoadConversation,
 		onSuccess: ( loadedMessages, serverSessionId ) => {
+			if ( isReaderChat && ( hasUserSentMessage || messages.length > 0 || isProcessing ) ) {
+				return;
+			}
+
 			// Update the UI with the loaded messages
 			loadMessages( loadedMessages );
 			// Make sure future messages go to the right session
@@ -165,7 +179,7 @@ export default function OrchestratorChat( {
 	useZoomAction( registerMessageActions );
 
 	// Register a "Sources" action on agent messages with sources data.
-	useSourcesAction( registerMessageActions );
+	useSourcesAction( registerMessageActions, ! isReaderChat );
 
 	const imageUpload = useImageUpload?.();
 	const pendingImages = imageUpload?.pendingImages || [];
@@ -207,10 +221,20 @@ export default function OrchestratorChat( {
 				}
 			} else {
 				// No images, just send normally
-				onSubmit( message );
+				await onSubmit( message );
+			}
+			if ( isReaderChat ) {
+				markSessionUsed( agentConfig?.agentId );
 			}
 		},
-		[ onSubmit, pendingImages.length, siteKey, uploadImagesToWordPress ]
+		[
+			agentConfig?.agentId,
+			isReaderChat,
+			onSubmit,
+			pendingImages.length,
+			siteKey,
+			uploadImagesToWordPress,
+		]
 	);
 
 	// Handle navigation continuation if hook is provided
