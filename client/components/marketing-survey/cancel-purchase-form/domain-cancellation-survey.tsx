@@ -177,7 +177,7 @@ const DomainCancellationSurvey: React.FC< Props > = ( {
 							disabled={ cancellationInProgress }
 							onClick={ handleSubmit }
 						>
-							{ translate( 'Skip and remove' ) }
+							{ isRemoveIntent ? translate( 'Skip and remove' ) : translate( 'Skip and cancel' ) }
 						</Button>
 					) }
 				</div>
