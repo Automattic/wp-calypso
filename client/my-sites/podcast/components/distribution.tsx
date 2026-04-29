@@ -1,3 +1,4 @@
+import { ConfettiAnimation } from '@automattic/components';
 import {
 	Button,
 	Card,
@@ -78,6 +79,7 @@ function Distribution() {
 	const translate = useTranslate();
 	const feedUrl = useFeedUrl();
 	const [ activeId, setActiveId ] = useState< string | null >( null );
+	const [ showConfetti, setShowConfetti ] = useState( false );
 	const activeDirectory = DIRECTORIES.find( ( d ) => d.id === activeId ) ?? null;
 
 	return (
@@ -142,11 +144,7 @@ function Distribution() {
 											</span>
 											<Text weight={ 500 }>{ name }</Text>
 										</HStack>
-										<Button
-											variant="primary"
-											size="compact"
-											onClick={ () => setActiveId( id ) }
-										>
+										<Button variant="primary" size="compact" onClick={ () => setActiveId( id ) }>
 											{ translate( 'Submit' ) }
 										</Button>
 									</HStack>
@@ -166,8 +164,11 @@ function Distribution() {
 						learnMoreUrl: activeDirectory.learnMoreUrl,
 					} }
 					onClose={ () => setActiveId( null ) }
+					onFirstSave={ () => setShowConfetti( true ) }
 				/>
 			) }
+
+			{ showConfetti && <ConfettiAnimation /> }
 		</>
 	);
 }

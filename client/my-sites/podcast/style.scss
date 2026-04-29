@@ -207,7 +207,6 @@ body.is-section-podcast {
 	font-weight: 600;
 }
 
-// Submit modal — three-step podcatcher submission flow.
 .podcast__submit-modal .components-modal__content {
 	max-width: 520px;
 }
@@ -216,9 +215,6 @@ body.is-section-podcast {
 	list-style: none;
 	margin: 0;
 	padding: 0;
-	display: flex;
-	flex-direction: column;
-	gap: 20px;
 }
 
 .podcast__submit-step {
@@ -228,23 +224,17 @@ body.is-section-podcast {
 }
 
 .podcast__submit-step-title {
-	margin: 0 0 4px;
+	margin: 0;
 	font-size: 14px;
 	font-weight: 600;
 	color: var( --wpds-color-fg-content-neutral, #1e1e1e );
 }
 
-.podcast__submit-step-description {
-	margin: 0 0 12px;
-	font-size: 13px;
-	line-height: 1.5;
-	color: var( --wpds-color-fg-content-neutral-weak, #757575 );
-}
-
 .podcast__submit-step-form {
-	display: flex;
-	gap: 8px;
-	align-items: stretch;
+	@media (max-width: $break-small) {
+		flex-direction: column;
+		align-items: stretch;
+	}
 }
 
 .podcast__submit-step-field {

@@ -1,12 +1,23 @@
-import { Button, ExternalLink, Modal, TextControl } from '@wordpress/components';
-import { external } from '@wordpress/icons';
+import {
+	Button,
+	ExternalLink,
+	Modal,
+	TextControl,
+	__experimentalHStack as HStack,
+	__experimentalText as Text,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
+import { external, link } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useState, type FormEvent } from 'react';
-import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { useFeedUrl } from '../hooks/use-feed-url';
-import { usePodcatcherUrl } from '../hooks/use-podcatcher-url';
+import {
+	hasCelebratedFirstSave,
+	markCelebratedFirstSave,
+	usePodcatcherUrl,
+} from '../hooks/use-podcatcher-url';
 
 export type Podcatcher = {
 	id: string;
@@ -18,22 +29,71 @@ export type Podcatcher = {
 type Props = {
 	podcatcher: Podcatcher;
 	onClose: () => void;
+	onFirstSave?: () => void;
 };
 
-const SubmitModal = ( { podcatcher, onClose }: Props ) => {
+const COPIED_FEEDBACK_MS = 2000;
+
+const SubmitModal = ( { podcatcher, onClose, onFirstSave }: Props ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const feedUrl = useFeedUrl();
 	const [ storedUrl, setStoredUrl ] = usePodcatcherUrl( siteId, podcatcher.id );
 	const [ draftUrl, setDraftUrl ] = useState( storedUrl );
+	const [ hasCopied, setHasCopied ] = useState( false );
+	const copyTimeoutRef = useRef< ReturnType< typeof setTimeout > | null >( null );
+
+	useEffect(
+		() => () => {
+			if ( copyTimeoutRef.current ) {
+				clearTimeout( copyTimeoutRef.current );
+			}
+		},
+		[]
+	);
+
+	const handleCopy = () => {
+		if ( ! feedUrl ) {
+			return;
+		}
+		navigator.clipboard
+			.writeText( feedUrl )
+			.then( () => {
+				setHasCopied( true );
+				if ( copyTimeoutRef.current ) {
+					clearTimeout( copyTimeoutRef.current );
+				}
+				copyTimeoutRef.current = setTimeout( () => setHasCopied( false ), COPIED_FEEDBACK_MS );
+			} )
+			.catch( () => {
+				/* clipboard unavailable — ignore */
+			} );
+	};
 
 	const handleSave = ( event: FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
-		setStoredUrl( draftUrl.trim() );
+		const trimmed = draftUrl.trim();
+		setStoredUrl( trimmed );
+		if ( trimmed && ! hasCelebratedFirstSave( siteId ) ) {
+			markCelebratedFirstSave( siteId );
+			onFirstSave?.();
+		}
 		onClose();
 	};
 
-	const serviceArgs = { args: { service: podcatcher.name } };
+	const isUnchanged = draftUrl.trim() === storedUrl.trim();
+
+	const serviceArgs = {
+		args: { service: podcatcher.name },
+		comment: '%(service)s is a podcast directory name, e.g. "Spotify" or "Apple Podcasts".',
+	};
+
+	// Service-specific tip rendered alongside step 2. Substack adds a similar hint
+	// for Pocket Casts so users pick the right submission option.
+	const step2Note =
+		podcatcher.id === 'pocketcasts'
+			? translate( 'Choose the Public option, since this feed is for your listeners.' )
+			: null;
 
 	return (
 		<Modal
@@ -41,12 +101,12 @@ const SubmitModal = ( { podcatcher, onClose }: Props ) => {
 			onRequestClose={ onClose }
 			className="podcast__submit-modal"
 		>
-			<ol className="podcast__submit-steps">
-				<li className="podcast__submit-step">
-					<h3 className="podcast__submit-step-title">
+			<VStack as="ol" spacing={ 5 } className="podcast__submit-steps">
+				<VStack as="li" spacing={ 3 } className="podcast__submit-step">
+					<h2 className="podcast__submit-step-title">
 						{ translate( 'Step 1: Copy your RSS feed URL' ) }
-					</h3>
-					<p className="podcast__submit-step-description">
+					</h2>
+					<Text as="p" variant="muted">
 						{ feedUrl
 							? translate(
 									'Click the button below to copy your RSS feed URL. %(service)s will require this URL to list your podcast.',
@@ -55,19 +115,30 @@ const SubmitModal = ( { podcatcher, onClose }: Props ) => {
 							: translate(
 									'Set your podcast category in the Settings tab to generate your RSS feed URL.'
 							  ) }
-					</p>
-					{ feedUrl && <ClipboardButtonInput value={ feedUrl } /> }
-				</li>
+					</Text>
+					{ feedUrl && (
+						<Button
+							variant="secondary"
+							__next40pxDefaultSize
+							icon={ link }
+							iconPosition="left"
+							onClick={ handleCopy }
+						>
+							{ hasCopied ? translate( 'Copied!' ) : translate( 'Copy link' ) }
+						</Button>
+					) }
+				</VStack>
 
-				<li className="podcast__submit-step">
-					<h3 className="podcast__submit-step-title">
+				<VStack as="li" spacing={ 3 } className="podcast__submit-step">
+					<h2 className="podcast__submit-step-title">
 						{ translate( 'Step 2: Submit your podcast to %(service)s', serviceArgs ) }
-					</h3>
-					<p className="podcast__submit-step-description">
+					</h2>
+					<Text as="p" variant="muted">
 						{ translate(
 							'Click the button below to visit %(service)s and complete their sign up flow.',
 							serviceArgs
 						) }
+						{ step2Note && <> { step2Note }</> }
 						{ podcatcher.learnMoreUrl && (
 							<>
 								{ ' ' }
@@ -76,7 +147,7 @@ const SubmitModal = ( { podcatcher, onClose }: Props ) => {
 								</ExternalLink>
 							</>
 						) }
-					</p>
+					</Text>
 					<Button
 						variant="secondary"
 						__next40pxDefaultSize
@@ -91,19 +162,24 @@ const SubmitModal = ( { podcatcher, onClose }: Props ) => {
 					>
 						{ translate( 'Visit %(service)s', serviceArgs ) }
 					</Button>
-				</li>
+				</VStack>
 
-				<li className="podcast__submit-step">
-					<h3 className="podcast__submit-step-title">
+				<VStack as="li" spacing={ 3 } className="podcast__submit-step">
+					<h2 className="podcast__submit-step-title">
 						{ translate( 'Step 3: Enter your %(service)s URL', serviceArgs ) }
-					</h3>
-					<p className="podcast__submit-step-description">
+					</h2>
+					<Text as="p" variant="muted">
 						{ translate(
 							'Paste your new %(service)s URL into the field below and we’ll use it for your sharing buttons.',
 							serviceArgs
 						) }
-					</p>
-					<form className="podcast__submit-step-form" onSubmit={ handleSave }>
+					</Text>
+					<HStack
+						as="form"
+						spacing={ 2 }
+						className="podcast__submit-step-form"
+						onSubmit={ handleSave }
+					>
 						<div className="podcast__submit-step-field">
 							<TextControl
 								label={ translate( '%(service)s URL', serviceArgs ) as string }
@@ -116,12 +192,18 @@ const SubmitModal = ( { podcatcher, onClose }: Props ) => {
 								__nextHasNoMarginBottom
 							/>
 						</div>
-						<Button variant="primary" __next40pxDefaultSize type="submit">
+						<Button
+							variant="primary"
+							__next40pxDefaultSize
+							type="submit"
+							disabled={ isUnchanged }
+							accessibleWhenDisabled
+						>
 							{ translate( 'Save' ) }
 						</Button>
-					</form>
-				</li>
-			</ol>
+					</HStack>
+				</VStack>
+			</VStack>
 		</Modal>
 	);
 };
