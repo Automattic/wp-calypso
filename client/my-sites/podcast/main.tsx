@@ -91,16 +91,18 @@ const PodcastMain = ( { section }: PodcastMainProps ) => {
 
 	// Keep the URL in sync with the current view: tabs live at
 	// /podcasting/<section>/[site], welcome at the bare /podcasting/[site]. A
-	// disabled podcast on a section URL gets bounced back to welcome.
+	// disabled podcast on episodes/distribution gets bounced back to welcome,
+	// but /podcasting/settings stays accessible so the user can flip podcasting on.
 	useEffect( () => {
 		if ( ! isSetupResolved ) {
 			return;
 		}
 		const path = window.location.pathname;
 		const isSectionUrl = /^\/podcasting\/(episodes|distribution|settings)(\/|$)/.test( path );
+		const isContentSectionUrl = /^\/podcasting\/(episodes|distribution)(\/|$)/.test( path );
 		if ( showTabs && ! isSectionUrl ) {
 			window.history.replaceState( null, '', '/podcasting/episodes' + pathSuffix );
-		} else if ( ! showTabs && isSectionUrl ) {
+		} else if ( ! showTabs && isContentSectionUrl ) {
 			window.history.replaceState( null, '', '/podcasting' + pathSuffix );
 		}
 	}, [ showTabs, isSetupResolved, pathSuffix ] );
@@ -181,6 +183,14 @@ const PodcastMain = ( { section }: PodcastMainProps ) => {
 					</div>
 				</Tabs.Panel>
 			</Tabs.Root>
+		);
+	} else if ( tabSection === 'settings' ) {
+		// Pre-setup users land here from Welcome's "Enable podcasting" CTA;
+		// render Settings on its own so they can pick a category.
+		pageContent = (
+			<div className="podcast__tab-content">
+				<Settings />
+			</div>
 		);
 	} else {
 		pageContent = (

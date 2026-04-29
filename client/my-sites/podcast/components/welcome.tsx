@@ -180,11 +180,10 @@ function Welcome( { planTier }: WelcomeProps ) {
 		? ( translate( 'Get more out of podcasting with a plan upgrade' ) as string )
 		: ( translate( 'Podcasting is included in your plan' ) as string );
 
-	// Enable podcasting by sending the user to the existing Settings → Podcasting
-	// flow, where picking a category writes podcasting_category_id. Returning to
-	// /podcasting/[site] after that lands the user on the Episodes tab.
+	// Forward into the Settings tab with the form pre-revealed; picking a
+	// category there writes podcasting_category_id and flips podcasting on.
 	const goToSettings = () => {
-		const path = siteSlug ? `/settings/podcasting/${ siteSlug }` : '/settings/podcasting';
+		const path = siteSlug ? `/podcasting/settings/${ siteSlug }` : '/podcasting/settings';
 		page.show( path );
 	};
 

@@ -125,7 +125,6 @@ const PodcastingSettingsForm = ( {
 	const topicOptions = useTopicOptions();
 
 	const [ isCoverImageUploading, setIsCoverImageUploading ] = useState( false );
-	const [ isEnabling, setIsEnabling ] = useState( false );
 
 	const siteId = useSelector( getSelectedSiteId );
 	const site = useSelector( getSelectedSite );
@@ -137,6 +136,9 @@ const PodcastingSettingsForm = ( {
 		? Number( fields.podcasting_category_id )
 		: 0;
 	const isPodcastingEnabled = podcastingCategoryId > 0;
+	// Reveal the form for first-time setup (e.g. arriving from Welcome's
+	// "Enable podcasting" CTA) so users can pick a category right away.
+	const [ isEnabling, setIsEnabling ] = useState( ! isPodcastingEnabled );
 	const showSettings = isPodcastingEnabled || isEnabling;
 
 	const podcastingCategory = useSelector( ( state ) =>
@@ -323,9 +325,7 @@ const PodcastingSettingsForm = ( {
 								<VStack spacing={ 6 }>
 									{ isEnabling && ! isPodcastingEnabled && (
 										<Notice status="info" isDismissible={ false }>
-											{ translate(
-												'Select a category for your podcast feed, then save your settings.'
-											) }
+											{ translate( 'Select a category to start your podcast feed.' ) }
 										</Notice>
 									) }
 
