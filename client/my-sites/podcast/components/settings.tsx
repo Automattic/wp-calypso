@@ -7,6 +7,7 @@ import {
 	Button,
 	Card,
 	CardBody,
+	CardFooter,
 	Notice,
 	SelectControl,
 	TextControl,
@@ -67,6 +68,7 @@ const getFormSettings = ( settings: SiteSettingsShape | undefined ): PodcastingF
 interface PodcastingFormProps {
 	fields: PodcastingFields;
 	settings?: SiteSettingsShape;
+	dirtyFields: string[];
 	handleSubmitForm: ( event?: React.FormEvent< HTMLFormElement > ) => void;
 	isRequestingSettings: boolean;
 	isSavingSettings: boolean;
@@ -111,6 +113,7 @@ const useTopicOptions = (): PodcastTopicOption[] => {
 const PodcastingSettingsForm = ( {
 	fields,
 	settings,
+	dirtyFields,
 	handleSubmitForm,
 	isRequestingSettings,
 	isSavingSettings,
@@ -526,16 +529,18 @@ const PodcastingSettingsForm = ( {
 						</Card>
 
 						{ /* Save */ }
-						<HStack justify="flex-end" className="podcast__settings-actions">
-							<Button
-								variant="primary"
-								type="submit"
-								isBusy={ isSavingSettings }
-								disabled={ disabled || ! isPodcastingEnabled }
-							>
-								{ isSavingSettings ? translate( 'Saving…' ) : translate( 'Save settings' ) }
-							</Button>
-						</HStack>
+						<Card className="site-settings__card podcast__card podcast__settings-save-card">
+							<CardFooter>
+								<Button
+									variant="primary"
+									type="submit"
+									isBusy={ isSavingSettings }
+									disabled={ disabled || ! isPodcastingEnabled || dirtyFields.length === 0 }
+								>
+									{ isSavingSettings ? translate( 'Saving…' ) : translate( 'Save' ) }
+								</Button>
+							</CardFooter>
+						</Card>
 					</>
 				) }
 			</VStack>
