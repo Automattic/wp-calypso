@@ -1,7 +1,7 @@
 import { fetchReaderTeams } from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
 
-export const readerTeamsQuery = () => {
+export const readTeamsQuery = () => {
 	return queryOptions( {
 		queryKey: [ 'read', 'teams' ],
 		queryFn: () => fetchReaderTeams(),

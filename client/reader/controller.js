@@ -1,4 +1,4 @@
-import { readerTeamsQuery } from '@automattic/api-queries';
+import { readTeamsQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { getAnyLanguageRouteParam, getLanguageRouteParam } from '@automattic/i18n-utils';
 import i18n from 'i18n-calypso';
@@ -90,7 +90,7 @@ export function following( context, next ) {
 	const startDate = getStartDate( context );
 
 	const state = context.store.getState();
-	const teamsData = context.queryClient.getQueryData( readerTeamsQuery().queryKey );
+	const teamsData = context.queryClient.getQueryData( readTeamsQuery().queryKey );
 	// only for a8c for now
 	if ( isAutomatticTeamMember( teamsData?.teams ?? [] ) ) {
 		// select last reader path if available, otherwise just open following

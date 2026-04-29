@@ -1,4 +1,4 @@
-import { readerTeamsQuery } from '@automattic/api-queries';
+import { readTeamsQuery } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
@@ -35,7 +35,7 @@ const ReaderPostActions = ( {
 	const showComments = isCommentsOpen( post ) || post.discussion?.comment_count > 0;
 	const showLikes = isLikeable( post );
 	const listClassnames = clsx( 'reader-post-actions', className );
-	const { data } = useQuery( readerTeamsQuery() );
+	const { data } = useQuery( readTeamsQuery() );
 	const isAutomattician = isAutomatticTeamMember( data?.teams ?? [] );
 	const shouldShowFreshlyPressed = fullPost && isAutomattician && showShare;
 

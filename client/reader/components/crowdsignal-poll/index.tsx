@@ -1,4 +1,4 @@
-import { readerTeamsQuery } from '@automattic/api-queries';
+import { readTeamsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef } from 'react';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
@@ -18,7 +18,7 @@ const CrowdsignalPoll = () => {
 	const dispatch = useDispatch();
 
 	const remotePrefsLoaded = useSelector( hasReceivedRemotePreferences );
-	const { data: teamsData } = useQuery( readerTeamsQuery() );
+	const { data: teamsData } = useQuery( readTeamsQuery() );
 	const isAutomattician = isAutomatticTeamMember( teamsData?.teams ?? [] );
 	const userRegistrationDate = useSelector( getCurrentUserDate );
 	const hasViewedPollPref = useSelector( ( state ): boolean | undefined | null =>

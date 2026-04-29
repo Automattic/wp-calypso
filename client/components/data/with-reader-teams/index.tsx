@@ -1,5 +1,5 @@
 import { ReaderTeam } from '@automattic/api-core';
-import { readerTeamsQuery } from '@automattic/api-queries';
+import { readTeamsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { ComponentType } from 'react';
 
@@ -19,7 +19,7 @@ export function withReaderTeams< P extends WithReaderTeamsProps >(
 	const displayName = WrappedComponent.displayName || WrappedComponent.name || 'Component';
 
 	function WithReaderTeams( props: Omit< P, keyof WithReaderTeamsProps > ) {
-		const { data } = useQuery( readerTeamsQuery() );
+		const { data } = useQuery( readTeamsQuery() );
 		const teams = data?.teams ?? EMPTY;
 
 		return <WrappedComponent { ...( props as P ) } teams={ teams } />;
