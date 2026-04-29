@@ -38,7 +38,7 @@
 
             &:hover {
                 a, button {
-                    background: color-mix(in srgb, #fff 98%, var(--wp-admin-theme-color, $help-center-blue));
+                    background: color-mix(in srgb, var(--color-surface) 98%, var(--wp-admin-theme-color, $help-center-blue));
                     color: var(--wp-components-color-accent, var(--wp-admin-theme-color, $help-center-blue));
                     cursor: pointer;
                 }
@@ -53,7 +53,6 @@
                 padding: 16px;
                 display: flex;
                 text-decoration: none;
-                color: var(--studio-gray-100);
                 font-size: $font-body-small;
                 border-radius: 2px;
                 font-weight: normal;
@@ -86,4 +85,3 @@
         }
     }
 }
-
