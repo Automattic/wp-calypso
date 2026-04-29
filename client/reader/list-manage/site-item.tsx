@@ -81,10 +81,14 @@ export default function SiteItem( props: {
 	const { mutate: addFeed } = useMutation( addReadListFeedMutation( queryClient ) );
 	const { mutate: deleteSite } = useMutation( deleteReadListSiteMutation( queryClient ) );
 
-	const { data: itemsData } = useQuery( readListItemsAllQuery( owner, list.slug ) );
-	const isInList = !! itemsData?.items?.some(
-		( listItem ) => Number( listItem.site_ID ) === Number( item.site_ID )
-	);
+	const { data: isInList = false } = useQuery( {
+		...readListItemsAllQuery( owner, list.slug ),
+		select: ( itemsData ) =>
+			!! item.site_ID &&
+			!! itemsData?.items?.some(
+				( listItem ) => Number( listItem.site_ID ) === Number( item.site_ID )
+			),
+	} );
 	const isRecommendedBlogsList = list.slug === 'recommended-blogs';
 
 	const [ showDeleteConfirmation, setShowDeleteConfirmation ] = useState( false );

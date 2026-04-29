@@ -35,10 +35,14 @@ export default function TagItem( props: {
 	const { mutate: addTag } = useMutation( addReadListTagMutation( queryClient ) );
 	const { mutate: deleteTag } = useMutation( deleteReadListTagMutation( queryClient ) );
 
-	const { data: itemsData } = useQuery( readListItemsAllQuery( owner, list.slug ) );
-	const isInList = !! itemsData?.items?.some(
-		( listItem ) => Number( listItem.tag_ID ) === Number( item.tag_ID )
-	);
+	const { data: isInList = false } = useQuery( {
+		...readListItemsAllQuery( owner, list.slug ),
+		select: ( itemsData ) =>
+			!! item.tag_ID &&
+			!! itemsData?.items?.some(
+				( listItem ) => Number( listItem.tag_ID ) === Number( item.tag_ID )
+			),
+	} );
 
 	const [ showDeleteConfirmation, setShowDeleteConfirmation ] = useState( false );
 	const addItem = () => {
@@ -47,7 +51,12 @@ export default function TagItem( props: {
 			return;
 		}
 		addTag(
-			{ owner, slug: list.slug, tagSlug },
+			{
+				owner,
+				slug: list.slug,
+				tagSlug,
+				tagId: item.tag_ID ? Number( item.tag_ID ) : undefined,
+			},
 			{
 				onSuccess: () => {
 					dispatch(

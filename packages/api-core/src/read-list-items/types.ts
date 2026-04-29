@@ -1,19 +1,33 @@
 import type { Site } from '../site';
 
+// List items are polymorphic: a feed item carries `feed_ID`, a site item carries
+// `site_ID`, a tag item carries `tag_ID`. Optimistic-update placeholders may
+// only have one of these. Every field is therefore optional / nullable.
 export interface ReadListItem {
-	ID: string;
-	feed_ID: number;
-	site_ID: number;
-	tag_ID: number;
-	meta: {
-		links: {
-			feed: string;
+	ID?: string;
+	feed_ID?: number | null;
+	site_ID?: number | null;
+	tag_ID?: number | null;
+	meta?: {
+		links?: {
+			feed?: string;
+			site?: string;
+			tag?: string;
 		};
-		data: {
-			feed: ReadListItemFeed | null;
-			site: Site | null;
+		data?: {
+			feed?: ReadListItemFeed | null;
+			site?: Site | null;
+			tag?: { tag: ReadListItemTag } | null;
 		};
 	};
+}
+
+export interface ReadListItemTag {
+	ID: number;
+	slug: string;
+	title?: string;
+	display_name?: string;
+	URL?: string;
 }
 
 export interface ReadListItemFeed {

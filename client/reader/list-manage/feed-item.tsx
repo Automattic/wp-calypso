@@ -86,10 +86,14 @@ export default function FeedItem( props: {
 	} );
 	const isRecommendedBlogsList = list.slug === 'recommended-blogs';
 
-	const { data: itemsData } = useQuery( readListItemsAllQuery( owner, list.slug ) );
-	const isInList = !! itemsData?.items?.some(
-		( listItem ) => Number( listItem.feed_ID ) === Number( item.feed_ID )
-	);
+	const { data: isInList = false } = useQuery( {
+		...readListItemsAllQuery( owner, list.slug ),
+		select: ( itemsData ) =>
+			!! item.feed_ID &&
+			!! itemsData?.items?.some(
+				( listItem ) => Number( listItem.feed_ID ) === Number( item.feed_ID )
+			),
+	} );
 
 	const dispatch = useDispatch();
 	const translate = useTranslate();

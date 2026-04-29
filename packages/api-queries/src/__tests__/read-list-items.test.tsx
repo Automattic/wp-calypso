@@ -143,10 +143,7 @@ describe( 'addReadListFeedMutation', () => {
 
 	it( 'optimistically appends a feed and confirms it on success', async () => {
 		nock( BASE )
-			.post( '/rest/v1.2/read/lists/alice/my-list/feeds/new', {
-				feed_id: 7,
-				feed_url: undefined,
-			} )
+			.post( '/rest/v1.2/read/lists/alice/my-list/feeds/new', { feed_id: 7 } )
 			.reply( 200, { feed_id: 7 } );
 
 		const client = newClient();
@@ -250,6 +247,58 @@ describe( 'addReadListTagMutation', () => {
 			tagSlug: 'photography',
 		} );
 		expect( scope.isDone() ).toBe( true );
+	} );
+
+	it( 'optimistically appends a tag placeholder when tagId is supplied', async () => {
+		nock( BASE )
+			.post( '/rest/v1.2/read/lists/alice/my-list/tags/new', { tag: 'photography' } )
+			.reply( 200, { tagId: 99 } );
+
+		const client = newClient();
+		seedItems( client, 'alice', 'my-list', [ { tag_ID: 5 } ] );
+
+		const { result } = renderHook( () => useMutation( addReadListTagMutation( client ) ), {
+			wrapper: makeWrapper( client ),
+		} );
+
+		await result.current.mutateAsync( {
+			owner: 'alice',
+			slug: 'my-list',
+			tagSlug: 'photography',
+			tagId: 99,
+		} );
+
+		const items = client.getQueryData< { items: { tag_ID?: number }[] } >(
+			readListItemsAllQuery( 'alice', 'my-list' ).queryKey
+		)?.items;
+		expect( items?.find( ( item ) => item.tag_ID === 99 ) ).toBeDefined();
+	} );
+
+	it( 'rolls back the optimistic tag placeholder on error', async () => {
+		nock( BASE )
+			.post( '/rest/v1.2/read/lists/alice/my-list/tags/new' )
+			.reply( 500, { error: 'oops' } );
+
+		const client = newClient();
+		seedItems( client, 'alice', 'my-list', [ { tag_ID: 5 } ] );
+
+		const { result } = renderHook( () => useMutation( addReadListTagMutation( client ) ), {
+			wrapper: makeWrapper( client ),
+		} );
+
+		await expect(
+			result.current.mutateAsync( {
+				owner: 'alice',
+				slug: 'my-list',
+				tagSlug: 'photography',
+				tagId: 99,
+			} )
+		).rejects.toBeDefined();
+
+		const items = client.getQueryData< { items: { tag_ID?: number }[] } >(
+			readListItemsAllQuery( 'alice', 'my-list' ).queryKey
+		)?.items;
+		expect( items ).toEqual( [ { tag_ID: 5 } ] );
 	} );
 } );
 

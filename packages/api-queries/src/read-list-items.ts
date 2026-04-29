@@ -127,7 +127,7 @@ export const addReadListFeedMutation = ( queryClient: QueryClient ) =>
 				if ( items.some( ( item ) => Number( item.feed_ID ) === Number( feedId ) ) ) {
 					return items;
 				}
-				return [ ...items, { feed_ID: feedId } as ReadListItem ];
+				return [ ...items, { feed_ID: feedId } ];
 			} ),
 		onError: ( _error, { owner, slug }, context ) => rollback( queryClient, owner, slug, context ),
 		onSettled: ( _data, _error, { owner, slug } ) => invalidateItems( queryClient, owner, slug ),
@@ -171,11 +171,32 @@ export interface AddReadListTagVariables {
 	owner: string;
 	slug: string;
 	tagSlug: string;
+	// Optional — supplied by consumers that already know the tag's ID (e.g. the
+	// list-manage suggestion picker) so we can apply an optimistic placeholder
+	// against the items cache. The mutation request itself doesn't need it.
+	tagId?: number;
 }
 
 export const addReadListTagMutation = ( queryClient: QueryClient ) =>
 	mutationOptions< unknown, Error, AddReadListTagVariables, ListItemMutationContext >( {
 		mutationFn: ( variables ) => addReadListTag( variables ),
+		onMutate: ( { owner, slug, tagId, tagSlug } ) =>
+			snapshotAndOptimisticallyUpdate( queryClient, owner, slug, ( items ) => {
+				if ( tagId == null ) {
+					return items;
+				}
+				if ( items.some( ( item ) => Number( item.tag_ID ) === Number( tagId ) ) ) {
+					return items;
+				}
+				return [
+					...items,
+					{
+						tag_ID: tagId,
+						meta: { data: { tag: { tag: { ID: tagId, slug: tagSlug } } } },
+					},
+				];
+			} ),
+		onError: ( _error, { owner, slug }, context ) => rollback( queryClient, owner, slug, context ),
 		onSettled: ( _data, _error, { owner, slug } ) => invalidateItems( queryClient, owner, slug ),
 	} );
 
