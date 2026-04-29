@@ -46,13 +46,6 @@ export async function cancelAndRefundPurchaseAsync( purchaseId, data ) {
 	} );
 }
 
-export async function removePurchaseAsync( purchaseId ) {
-	return wpcom.req.post( {
-		path: `/purchases/${ purchaseId }/delete`,
-		apiNamespace: 'wpcom/v2',
-	} );
-}
-
 export const submitSurvey = ( surveyName, siteId, surveyData ) => ( dispatch ) => {
 	return wpcom.req
 		.post( '/marketing/survey', {
