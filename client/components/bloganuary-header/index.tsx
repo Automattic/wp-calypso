@@ -1,8 +1,4 @@
-import {
-	followReadTagMutation,
-	unfollowReadTagMutation,
-	type ReaderTag,
-} from '@automattic/api-queries';
+import { followReadTagMutation, unfollowReadTagMutation } from '@automattic/api-queries';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -13,26 +9,22 @@ import FollowButton from 'calypso/blocks/follow-button/button';
 import BloganuaryIcon from 'calypso/components/blogging-prompt-card/bloganuary-icon';
 import isBloganuary from 'calypso/data/blogging-prompt/is-bloganuary';
 import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
-import { slugify } from 'calypso/reader/lib/tag-utils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { toggleReaderSidebarTags } from 'calypso/state/reader-ui/sidebar/actions';
 import { isTagsOpen } from 'calypso/state/reader-ui/sidebar/selectors';
 import './style.scss';
 
-const containsBloganuary = ( followedTags: ReaderTag[] | null ): boolean | undefined => {
-	if ( followedTags === null ) {
-		return undefined;
-	}
-	return followedTags.some( ( tag ) => tag.slug === 'bloganuary' );
-};
-
 const BloganuaryHeader = () => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const queryClient = useQueryClient();
-	const followedTags = useFollowedReaderTags();
-	const isFollowingBloganuary = containsBloganuary( followedTags );
+	const { data: followedTags, isSuccess } = useFollowedReaderTags();
+	// While the query is still loading we don't know yet — keep the follow
+	// button disabled by returning `undefined` instead of `false`.
+	const isFollowingBloganuary = isSuccess
+		? followedTags.some( ( tag ) => tag.slug === 'bloganuary' )
+		: undefined;
 	const isTagsSidebarOpen = useSelector( isTagsOpen );
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const { mutate: followTag } = useMutation( followReadTagMutation( queryClient ) );
@@ -47,7 +39,7 @@ const BloganuaryHeader = () => {
 	};
 
 	const followBloganuaryTag = () => {
-		followTag( slugify( 'bloganuary' ), {
+		followTag( 'bloganuary', {
 			onError: () => {
 				dispatch(
 					errorNotice(
@@ -63,7 +55,7 @@ const BloganuaryHeader = () => {
 	};
 
 	const unfollowBloganuaryTag = () => {
-		unfollowTag( slugify( 'bloganuary' ), {
+		unfollowTag( 'bloganuary', {
 			onError: () => {
 				dispatch(
 					errorNotice(

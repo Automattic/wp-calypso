@@ -18,7 +18,7 @@ import {
 
 const DiscoverStream = ( props ) => {
 	const translate = useTranslate();
-	const followedTags = useFollowedReaderTags();
+	const { data: followedTags } = useFollowedReaderTags();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const selectedTab = props.selectedTab || FRESHLY_PRESSED_TAB;
 	const selectedTag = props.query?.selectedTag ?? 'dailyprompt';

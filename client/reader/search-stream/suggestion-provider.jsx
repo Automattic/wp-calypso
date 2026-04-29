@@ -114,7 +114,7 @@ const SuggestionsProvider = ( Element, count = 3 ) => {
 	}
 
 	return function SuggestionsProviderWrapper( props ) {
-		const followedTags = useFollowedReaderTags();
+		const { data: followedTags } = useFollowedReaderTags();
 		return <SuggestionsClass { ...props } followedTags={ followedTags } />;
 	};
 };

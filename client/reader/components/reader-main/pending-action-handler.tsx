@@ -2,7 +2,6 @@ import { followReadTagMutation } from '@automattic/api-queries';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { slugify } from 'calypso/reader/lib/tag-utils';
 import { useDispatch, useSelector } from 'calypso/state';
 import { likeComment } from 'calypso/state/comments/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -43,7 +42,7 @@ export const ReaderPendingActionHandler = () => {
 					dispatch( follow( pendingAction.siteUrl, pendingAction.followData, null ) );
 					break;
 				case 'follow-tag':
-					followTag( slugify( pendingAction.tag ), {
+					followTag( pendingAction.tag, {
 						onError: () => {
 							dispatch(
 								errorNotice(

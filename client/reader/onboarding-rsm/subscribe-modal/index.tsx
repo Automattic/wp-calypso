@@ -64,11 +64,12 @@ interface StreamProps {
 const TypedStream: ComponentType< StreamProps > = Stream as ComponentType< StreamProps >;
 
 const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) => {
-	const followedTags = useFollowedReaderTags();
+	const { data: followedTags } = useFollowedReaderTags();
 
-	const followedTagSlugs = useMemo( () => {
-		return ( followedTags || [] ).map( ( tag ) => tag.slug );
-	}, [ followedTags ] );
+	const followedTagSlugs = useMemo(
+		() => followedTags?.map( ( tag ) => tag.slug ) ?? [],
+		[ followedTags ]
+	);
 
 	const promptVerification = ! useSelector( isCurrentUserEmailVerified );
 

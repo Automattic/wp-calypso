@@ -62,6 +62,17 @@ function invalidateFollowedTags( queryClient: QueryClient ): Promise< void > {
 	return queryClient.invalidateQueries( { queryKey: [ 'read', 'tags', 'followed' ] } );
 }
 
+/**
+ * Turn a tag name into its API slug. Consumers can pass either a raw label
+ * ("Health & Fitness") or an already-canonical slug ("health-fitness") — both
+ * normalize to the same value. URL-encoding is left to the api-core layer.
+ */
+function slugify( tag: string ): string {
+	return typeof tag === 'string'
+		? tag.trim().toLowerCase().replace( /\s+/g, '-' ).replace( /-{2,}/g, '-' )
+		: '';
+}
+
 // Calypso boots its own QueryClient (see `client/state/query-client.ts`) instead
 // of the singleton from this package, so each mutation factory accepts the
 // caller's QueryClient and uses it for cache invalidation. Pass
@@ -69,7 +80,8 @@ function invalidateFollowedTags( queryClient: QueryClient ): Promise< void > {
 
 export const followReadTagMutation = ( queryClient: QueryClient ) =>
 	mutationOptions( {
-		mutationFn: async ( slug: string ) => {
+		mutationFn: async ( tag: string ) => {
+			const slug = slugify( tag );
 			try {
 				return await followReadTag( slug );
 			} catch ( error ) {
@@ -86,6 +98,6 @@ export const followReadTagMutation = ( queryClient: QueryClient ) =>
 
 export const unfollowReadTagMutation = ( queryClient: QueryClient ) =>
 	mutationOptions( {
-		mutationFn: unfollowReadTag,
+		mutationFn: ( tag: string ) => unfollowReadTag( slugify( tag ) ),
 		onSuccess: () => invalidateFollowedTags( queryClient ),
 	} );

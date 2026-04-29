@@ -13,7 +13,6 @@ import { fixMe, translate } from 'i18n-calypso';
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
-import { slugify } from 'calypso/reader/lib/tag-utils';
 import { READER_ONBOARDING_TRACKS_EVENT_PREFIX } from 'calypso/reader/onboarding/constants';
 import { errorNotice } from 'calypso/state/notices/actions';
 
@@ -37,7 +36,7 @@ interface Category {
 
 const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onContinue } ) => {
 	const [ followedTags, setFollowedTags ] = useState< string[] >( [] );
-	const followedTagsFromState = useFollowedReaderTags();
+	const { data: followedTagsFromState } = useFollowedReaderTags();
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 	const [ processingTags, setProcessingTags ] = useState< Set< string > >( new Set() );
@@ -73,7 +72,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 
 		// Follow or unfollow the tag and update the followed tags state for the UI.
 		if ( checked ) {
-			followTag( slugify( tag ), {
+			followTag( tag, {
 				onSettled: releaseProcessing,
 				onError: () => {
 					dispatch(
@@ -87,7 +86,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 				total_followed: followedTags.length + 1,
 			} );
 		} else {
-			unfollowTag( slugify( tag ), {
+			unfollowTag( tag, {
 				onSettled: releaseProcessing,
 				onError: () => {
 					dispatch(

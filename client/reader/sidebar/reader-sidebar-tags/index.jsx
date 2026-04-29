@@ -9,7 +9,6 @@ import { connect, useDispatch } from 'react-redux';
 import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import ReaderTagIcon from 'calypso/reader/components/icons/tag-icon';
-import { slugify } from 'calypso/reader/lib/tag-utils';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
@@ -83,7 +82,7 @@ export class ReaderSidebarTags extends Component {
 
 function withFollowedReaderTags( Inner ) {
 	return function WithFollowedReaderTags( props ) {
-		const tags = useFollowedReaderTags();
+		const { data: tags } = useFollowedReaderTags();
 		return <Inner { ...props } tags={ tags } />;
 	};
 }
@@ -95,7 +94,7 @@ function withFollowTagMutation( Inner ) {
 		const { mutate: follow } = useMutation( followReadTagMutation( queryClient ) );
 
 		const followTag = ( tag ) =>
-			follow( slugify( tag ), {
+			follow( tag, {
 				onError: () =>
 					dispatch(
 						errorNotice( i18nTranslate( 'Could not follow tag: %(tag)s', { args: { tag } } ) )
