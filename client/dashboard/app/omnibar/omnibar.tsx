@@ -48,14 +48,9 @@ export default function OmnibarContainer( { user }: { user?: User } ) {
 		const nodes = siteNodes ?? dashboardNodes ?? [];
 		const result = buildOmnibarNodesFromAdminBarNodes( removeUnsupportedDotcomNodes( nodes ) );
 
-		if ( ! result.home ) {
-			result.home = {
-				id: '',
-				title: '',
-			};
+		if ( result.home ) {
+			result.home.icon = <OmnibarHomeIcon />;
 		}
-
-		result.home.icon = <OmnibarHomeIcon />;
 
 		if ( site ) {
 			if ( ! result.site ) {
