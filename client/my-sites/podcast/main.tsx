@@ -1,7 +1,8 @@
+import page from '@automattic/calypso-router';
 import { Page } from '@wordpress/admin-ui';
 import { Tabs } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import QueryTerms from 'calypso/components/data/query-terms';
@@ -107,6 +108,17 @@ const PodcastMain = ( { section }: PodcastMainProps ) => {
 		}
 	}, [ showTabs, isSetupResolved, pathSuffix ] );
 
+	// Detect a true→false transition on isSetUp (the user just disabled
+	// podcasting from Settings) and bounce them to Welcome via page.show so
+	// the controller re-runs with no `section` prop.
+	const prevIsSetUp = useRef( isSetUp );
+	useEffect( () => {
+		if ( isSetupResolved && prevIsSetUp.current && ! isSetUp ) {
+			page.show( '/podcast' + pathSuffix );
+		}
+		prevIsSetUp.current = isSetUp;
+	}, [ isSetUp, isSetupResolved, pathSuffix ] );
+
 	const tabs = [
 		{
 			name: 'episodes' as const,
@@ -184,7 +196,7 @@ const PodcastMain = ( { section }: PodcastMainProps ) => {
 				</Tabs.Panel>
 			</Tabs.Root>
 		);
-	} else if ( tabSection === 'settings' ) {
+	} else if ( section === 'settings' ) {
 		// Pre-setup users land here from Welcome's "Enable podcasting" CTA;
 		// render Settings on its own so they can pick a category.
 		pageContent = (

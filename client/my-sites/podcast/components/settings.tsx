@@ -16,8 +16,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { pick } from 'lodash';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import TermFormDialog from 'calypso/blocks/term-form-dialog';
 import QueryMedia from 'calypso/components/data/query-media';
 import { decodeEntities } from 'calypso/lib/formatting';
@@ -55,7 +54,12 @@ type SiteSettingsShape = {
 };
 
 const getFormSettings = ( settings: SiteSettingsShape | undefined ): PodcastingFields =>
-	pick( settings ?? {}, TRACKED_FIELDS ) as PodcastingFields;
+	Object.fromEntries(
+		TRACKED_FIELDS.filter( ( key ) => settings && key in settings ).map( ( key ) => [
+			key,
+			settings![ key ],
+		] )
+	) as PodcastingFields;
 
 interface PodcastingFormProps {
 	fields: PodcastingFields;
@@ -138,6 +142,28 @@ const PodcastingSettingsForm = ( {
 		podcastingCategoryId !== Number( settings.podcasting_category_id );
 
 	const disabled = isRequestingSettings || isSavingSettings || isCoverImageUploading;
+
+	// Pre-fill the title from the site name on first arrival when the user
+	// hasn't enabled podcasting yet. Mirrors the legacy toggle-on behavior so
+	// users coming from Welcome's "Enable podcasting" CTA see a sensible default.
+	useEffect( () => {
+		if (
+			! isRequestingSettings &&
+			! isPodcastingEnabled &&
+			! fields.podcasting_title &&
+			! settings?.podcasting_title &&
+			settings?.blogname
+		) {
+			updateFields( { podcasting_title: settings.blogname } );
+		}
+	}, [
+		isRequestingSettings,
+		isPodcastingEnabled,
+		fields.podcasting_title,
+		settings?.podcasting_title,
+		settings?.blogname,
+		updateFields,
+	] );
 
 	// Cover-image meta is needed to validate dimensions/format against
 	// Apple Podcasts' cover-art requirements (square, 1400-3000 px, PNG/JPG).
@@ -381,27 +407,6 @@ const PodcastingSettingsForm = ( {
 			<VStack spacing={ 4 } className="podcast__settings">
 				{ siteId && coverImageId && <QueryMedia siteId={ siteId } mediaId={ coverImageId } /> }
 
-				{ /* Enable / disable */ }
-				<Card className="site-settings__card podcast__card">
-					<CardBody>
-						<ToggleControl
-							__nextHasNoMarginBottom
-							checked={ isPodcastingEnabled }
-							onChange={ onTogglePodcasting }
-							disabled={ disabled }
-							label={ translate( 'Enable podcasting on this site' ) as string }
-							help={
-								isPodcastingEnabled
-									? ( translate(
-											'Disable to stop publishing your podcast feed. You can always set it up again.'
-									  ) as string )
-									: undefined
-							}
-						/>
-					</CardBody>
-				</Card>
-
-				{ /* Submission readiness */ }
 				{ isPodcastingEnabled && submissionIssues.length > 0 && (
 					<div className="podcast__settings-readiness">
 						<NoticeBanner
@@ -423,7 +428,6 @@ const PodcastingSettingsForm = ( {
 					</div>
 				) }
 
-				{ /* Category + RSS feed */ }
 				<Card className="site-settings__card podcast__card">
 					<CardHeader>
 						<VStack spacing={ 1 }>
@@ -483,7 +487,6 @@ const PodcastingSettingsForm = ( {
 					</CardBody>
 				</Card>
 
-				{ /* Show details */ }
 				<Card className="site-settings__card podcast__card">
 					<CardHeader>
 						<VStack spacing={ 1 }>
@@ -551,7 +554,6 @@ const PodcastingSettingsForm = ( {
 					</CardBody>
 				</Card>
 
-				{ /* Feed metadata */ }
 				<Card className="site-settings__card podcast__card">
 					<CardHeader>
 						<VStack spacing={ 1 }>
@@ -621,14 +623,28 @@ const PodcastingSettingsForm = ( {
 						</VStack>
 					</CardBody>
 				</Card>
+
+				<Card className="site-settings__card podcast__card">
+					<CardBody>
+						<ToggleControl
+							__nextHasNoMarginBottom
+							checked={ isPodcastingEnabled }
+							onChange={ onTogglePodcasting }
+							disabled={ disabled }
+							label={ translate( 'Enable podcasting on this site' ) as string }
+							help={
+								isPodcastingEnabled
+									? ( translate(
+											'Disable to stop publishing your podcast feed. You can always set it up again.'
+									  ) as string )
+									: undefined
+							}
+						/>
+					</CardBody>
+				</Card>
 			</VStack>
 		</form>
 	);
 };
 
-// `wrapSettingsForm` is a JS HOC; type its output loosely and cast its inputs.
-const Settings = wrapSettingsForm( getFormSettings )(
-	PodcastingSettingsForm as unknown as React.ComponentType
-) as unknown as React.ComponentType;
-
-export default Settings;
+export default wrapSettingsForm( getFormSettings )( PodcastingSettingsForm );
