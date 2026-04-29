@@ -4,16 +4,9 @@ import {
 	READER_RECOMMENDED_BLOGS_ITEMS_REQUEST,
 	READER_RECOMMENDED_BLOGS_ITEMS_REQUEST_FAILURE,
 } from 'calypso/state/reader/action-types';
-import { listItems, userRecommendedBlogs, isRequestingUserRecommendedBlogs } from '../reducer';
+import { userRecommendedBlogs, isRequestingUserRecommendedBlogs } from '../reducer';
 
 describe( 'reducer', () => {
-	describe( '#listItems()', () => {
-		test( 'should default to an empty object', () => {
-			const state = listItems( undefined, {} );
-			expect( state ).toEqual( {} );
-		} );
-	} );
-
 	describe( '#userRecommendedBlogs', () => {
 		test( 'should default to an empty object', () => {
 			const state = userRecommendedBlogs( undefined, {} );
