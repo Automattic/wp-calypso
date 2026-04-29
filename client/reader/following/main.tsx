@@ -18,6 +18,15 @@ import { useFollowingView } from './view-preference';
 import ViewToggle from './view-toggle';
 import './style.scss';
 
+const loadQuickPost = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-reader-components-quick-post" */ 'calypso/reader/components/quick-post'
+	);
+const loadTrackResurrections = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-lib-analytics-track-resurrections" */ 'calypso/lib/analytics/track-resurrections'
+	);
+
 function FollowingStream( { ...props } ) {
 	const { currentView } = useFollowingView();
 	const dispatch = useDispatch();
@@ -76,14 +85,7 @@ function FollowingStream( { ...props } ) {
 					{ hasSites && (
 						<Card className="following-stream__quick-post-card">
 							<CardBody>
-								<AsyncLoad
-									require={ () =>
-										import(
-											/* webpackChunkName: "async-load-calypso-reader-components-quick-post" */ 'calypso/reader/components/quick-post'
-										)
-									}
-									placeholder={ <QuickPostSkeleton /> }
-								/>
+								<AsyncLoad require={ loadQuickPost } placeholder={ <QuickPostSkeleton /> } />
 							</CardBody>
 						</Card>
 					) }
@@ -94,14 +96,7 @@ function FollowingStream( { ...props } ) {
 				</ReaderStream>
 			) }
 			<ResurrectedWelcomeModalGate onVisibilityChange={ setIsResurrectedModalVisible } />
-			<AsyncLoad
-				require={ () =>
-					import(
-						/* webpackChunkName: "async-load-calypso-lib-analytics-track-resurrections" */ 'calypso/lib/analytics/track-resurrections'
-					)
-				}
-				placeholder={ null }
-			/>
+			<AsyncLoad require={ loadTrackResurrections } placeholder={ null } />
 		</>
 	);
 }

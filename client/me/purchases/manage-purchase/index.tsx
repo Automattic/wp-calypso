@@ -195,6 +195,11 @@ import type { Theme } from 'calypso/types';
 
 import './style.scss';
 
+const loadProductPlanOverlapNotices = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-blocks-product-plan-overlap-notices" */ 'calypso/blocks/product-plan-overlap-notices'
+	);
+
 export interface ManagePurchaseProps {
 	cardTitle?: string;
 	getAddNewPaymentMethodUrlFor?: typeof getAddNewPaymentMethodUrlFor;
@@ -1793,11 +1798,7 @@ function PlanOverlapNotice( {
 		}
 		return (
 			<AsyncLoad
-				require={ () =>
-					import(
-						/* webpackChunkName: "async-load-calypso-blocks-product-plan-overlap-notices" */ 'calypso/blocks/product-plan-overlap-notices'
-					)
-				}
+				require={ loadProductPlanOverlapNotices }
 				placeholder={ null }
 				plans={ JETPACK_PLANS }
 				products={ JETPACK_PRODUCTS_LIST }
@@ -1812,11 +1813,7 @@ function PlanOverlapNotice( {
 	}
 	return (
 		<AsyncLoad
-			require={ () =>
-				import(
-					/* webpackChunkName: "async-load-calypso-blocks-product-plan-overlap-notices" */ 'calypso/blocks/product-plan-overlap-notices'
-				)
-			}
+			require={ loadProductPlanOverlapNotices }
 			placeholder={ null }
 			plans={ JETPACK_PLANS }
 			products={ JETPACK_PRODUCTS_LIST }

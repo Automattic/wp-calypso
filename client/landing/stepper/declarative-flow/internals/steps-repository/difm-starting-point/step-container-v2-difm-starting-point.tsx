@@ -11,6 +11,11 @@ import { useDIFMHeading } from 'calypso/my-sites/marketing/do-it-for-me/use-difm
 
 import './style.scss';
 
+const loadSiteBuildShowcase = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-my-sites-marketing-do-it-for-me-site-build-showcase" */ 'calypso/my-sites/marketing/do-it-for-me/site-build-showcase'
+	);
+
 export const StepContainerV2DIFMStartingPoint = ( {
 	topBar,
 	siteId,
@@ -82,11 +87,7 @@ export const StepContainerV2DIFMStartingPoint = ( {
 						{ isLargeViewport && (
 							<div className="step-container-v2--difm-starting-point__right-column">
 								<AsyncLoad
-									require={ () =>
-										import(
-											/* webpackChunkName: "async-load-calypso-my-sites-marketing-do-it-for-me-site-build-showcase" */ 'calypso/my-sites/marketing/do-it-for-me/site-build-showcase'
-										)
-									}
+									require={ loadSiteBuildShowcase }
 									placeholder={ <LoadingEllipsis /> }
 									isStoreFlow={ false }
 								/>
