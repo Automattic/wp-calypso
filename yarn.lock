@@ -1888,6 +1888,8 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@wordpress/components": "npm:^29.0.0"
+    "@wordpress/compose": "npm:^7.23.0"
+    "@wordpress/icons": "npm:^10.23.0"
     typescript: "npm:^5.8.3"
   peerDependencies:
     "@wordpress/data": ^10.23.0
@@ -13599,6 +13601,7 @@ __metadata:
     get-video-id: "npm:^3.1.4"
     hash.js: "npm:^1.1.7"
     he: "npm:^1.2.0"
+    hls.js: "npm:^1.6.16"
     html-loader: "npm:^0.5.5"
     html-to-react: "npm:^1.5.1"
     i18n-calypso: "workspace:^"
@@ -19601,6 +19604,13 @@ __metadata:
   dependencies:
     "@babel/runtime": "npm:^7.7.6"
   checksum: 812ec839386222d6437bd78d9f05db32e47d105ada0ad8834b32626919dd2fee7a10001bc489510f93a8069d02f118214bd8d42a82f7cf9daf8e84fbcbbb2016
+  languageName: node
+  linkType: hard
+
+"hls.js@npm:^1.6.16":
+  version: 1.6.16
+  resolution: "hls.js@npm:1.6.16"
+  checksum: dedf0255fdea857f29e46caab990b2bbdfde9410e64932466e03fc95018238b94486ce57e4b6a96aa4d0e8f9fd26c877e3905951f900fd58437f5eab2b284722
   languageName: node
   linkType: hard
 

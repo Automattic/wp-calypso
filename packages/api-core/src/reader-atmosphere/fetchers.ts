@@ -4,6 +4,7 @@ import type {
 	AtmosphereConnectionDetails,
 	AtmosphereConnectionsResponse,
 	AtmosphereCreateConnectionResponse,
+	AtmosphereThreadResponse,
 	AtmosphereTimelinePage,
 } from './types';
 
@@ -73,6 +74,35 @@ export async function getTimeline( params: GetTimelineParams ): Promise< Atmosph
 			},
 			query
 		) ) as AtmosphereTimelinePage;
+	} catch ( raw ) {
+		throw classifyAtmosphereError( raw );
+	}
+}
+
+export interface GetThreadParams {
+	uri: string;
+	depth?: number;
+	parentHeight?: number;
+}
+
+export async function getThread( params: GetThreadParams ): Promise< AtmosphereThreadResponse > {
+	const { uri, depth, parentHeight } = params;
+	const query: Record< string, string > = { uri };
+	// typeof guard preserves depth=0 (root only) and parentHeight=0 — valid backend values.
+	if ( typeof depth === 'number' ) {
+		query.depth = String( depth );
+	}
+	if ( typeof parentHeight === 'number' ) {
+		query.parentHeight = String( parentHeight );
+	}
+	try {
+		return ( await wpcom.req.get(
+			{
+				path: '/reader/atmosphere/thread',
+				apiNamespace: NAMESPACE,
+			},
+			query
+		) ) as AtmosphereThreadResponse;
 	} catch ( raw ) {
 		throw classifyAtmosphereError( raw );
 	}

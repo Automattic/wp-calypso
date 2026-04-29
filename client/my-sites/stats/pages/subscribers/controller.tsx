@@ -26,6 +26,7 @@ function subscribers( context: Context, next: () => void ) {
 
 	context.primary = (
 		<AsyncLoad
+			key="stats-pages-subscribers"
 			require={ () =>
 				import( /* webpackChunkName: "async-load-calypso-my-sites-stats-pages-subscribers" */ '.' )
 			}

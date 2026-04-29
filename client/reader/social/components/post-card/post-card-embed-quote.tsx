@@ -16,6 +16,8 @@ export function PostCardEmbedQuote( { embed, parentPostUri }: PostCardEmbedQuote
 		return <PostCardEmbedQuoteTombstone tombstone={ embed.post } />;
 	}
 	const inner = embed.post;
+	const inAppUrl = analytics?.getThreadUrl?.( inner.uri ) ?? null;
+	const href = inAppUrl ?? inner.permalink;
 	const handleClick = () => {
 		if ( ! analytics ) {
 			return;
@@ -24,14 +26,15 @@ export function PostCardEmbedQuote( { embed, parentPostUri }: PostCardEmbedQuote
 			connection_id: analytics.connectionId,
 			parent_uri: parentPostUri,
 			quoted_uri: inner.uri,
+			destination: inAppUrl ? 'in_app_thread' : 'bsky_app',
 		} );
 	};
+	const externalAttrs = inAppUrl ? {} : { target: '_blank', rel: 'noopener noreferrer' };
 	return (
 		<a
 			className="social-post-card-embed-quote-link"
-			href={ inner.permalink }
-			target="_blank"
-			rel="noopener noreferrer"
+			href={ href }
+			{ ...externalAttrs }
 			onClick={ handleClick }
 		>
 			<SocialPostCard post={ inner } variant="compact" />

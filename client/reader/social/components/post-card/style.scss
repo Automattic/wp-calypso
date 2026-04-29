@@ -3,6 +3,8 @@
 
 	// Inner anchors stay clickable above the timestamp ::after card-link overlay.
 	.social-post-card-header__author,
+	.social-post-card-header__reply-context-link,
+	.social-post-card-counts__link,
 	.social-post-card-embed-external,
 	.social-post-card-embed-quote-link,
 	.social-post-card-embed-images__item {
@@ -170,16 +172,44 @@ a.social-post-card-header__timestamp::after {
 	}
 }
 
+// Negative inline margin escapes CardBody's 16px horizontal padding so the borders run edge-to-edge.
+.social-post-card-timestamp {
+	display: block;
+	margin-block-start: 12px;
+	margin-inline: -16px;
+	padding-block: 8px;
+	padding-inline: 16px;
+	font-size: 0.875rem;
+	color: var( --studio-gray-50 );
+	border-block: 1px solid var( --studio-gray-5 );
+
+	+ .social-post-card-counts {
+		// Reuse the timestamp's bottom border as the counts row's top separator (no extra gap).
+		margin-block-start: 8px;
+	}
+}
+
 .social-post-card-counts {
 	margin-top: 8px;
 	font-size: 0.875rem;
 	color: var( --studio-gray-50 );
 	gap: 16px;
 
-	span {
+	span,
+	.social-post-card-counts__link {
 		display: inline-flex;
 		align-items: center;
 		gap: 4px;
+	}
+
+	.social-post-card-counts__link {
+		color: inherit;
+		text-decoration: none;
+
+		&:hover,
+		&:focus-visible {
+			color: var( --studio-blue-50 );
+		}
 	}
 
 	svg {
@@ -244,6 +274,23 @@ a.social-post-card-header__timestamp::after {
 		object-fit: cover;
 		display: block;
 	}
+
+	// Reset <button> defaults — the cell may render as a button (default
+	// variant, opens the ImageCarousel modal on click) or as a div / anchor.
+	&:where( button ) {
+		appearance: none;
+		border: 0;
+		padding: 0;
+		font: inherit;
+		color: inherit;
+		cursor: pointer;
+		text-align: inherit;
+
+		&:focus-visible {
+			outline: 2px solid var( --studio-blue-50 );
+			outline-offset: 2px;
+		}
+	}
 }
 
 .social-post-card-embed-video {
@@ -259,6 +306,13 @@ a.social-post-card-header__timestamp::after {
 	height: auto;
 	display: block;
 	object-fit: cover;
+}
+
+.social-post-card-embed-video__player {
+	display: block;
+	inline-size: 100%;
+	block-size: 100%;
+	background: var( --studio-gray-90 );
 }
 
 .social-post-card-embed-video__play {

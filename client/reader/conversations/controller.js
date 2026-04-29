@@ -33,7 +33,7 @@ export function conversations( context, next ) {
 					/* webpackChunkName: "async-load-calypso-reader-conversations-stream" */ 'calypso/reader/conversations/stream'
 				)
 			}
-			key="conversations"
+			key="reader-conversations"
 			streamKey={ streamKey }
 			trackScrollPage={ scrollTracker }
 		/>
@@ -71,7 +71,7 @@ export function conversationsA8c( context, next ) {
 					/* webpackChunkName: "async-load-calypso-reader-conversations-stream" */ 'calypso/reader/conversations/stream'
 				)
 			}
-			key="conversations"
+			key="reader-conversations-a8c"
 			title="Conversations @ Automattic"
 			streamKey={ streamKey }
 			store={ { id: streamKey } }

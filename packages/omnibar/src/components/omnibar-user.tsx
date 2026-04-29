@@ -2,19 +2,22 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { OmnibarMenu } from './omnibar-menu';
 import type { OmnibarNode } from '../types';
 
 import './omnibar-user.scss';
 
 export function OmnibarUserNode( { node }: { node: OmnibarNode } ) {
+	const isDesktop = useViewportMatch( 'medium' );
+
 	return (
 		<OmnibarMenu
 			node={ {
 				...node,
 				render: ( { title, icon } ) => {
 					const userAvatar = <span className="omnibar__user-avatar">{ icon }</span>;
-					if ( ! title ) {
+					if ( ! isDesktop || ! title ) {
 						return userAvatar;
 					}
 					return (

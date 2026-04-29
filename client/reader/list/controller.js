@@ -24,7 +24,7 @@ export const createList = ( context, next ) => {
 					/* webpackChunkName: "async-load-calypso-reader-list-manage" */ 'calypso/reader/list-manage'
 				)
 			}
-			key="list-manage"
+			key="reader-list-create"
 			isCreateForm
 		/>
 	);
@@ -92,7 +92,7 @@ export const editList = ( context, next ) => {
 					/* webpackChunkName: "async-load-calypso-reader-list-manage" */ 'calypso/reader/list-manage'
 				)
 			}
-			key="list-manage"
+			key="reader-list-edit"
 			owner={ encodeURIComponent( context.params.user ) }
 			slug={ encodeURIComponent( context.params.list ) }
 			selectedSection="details"
@@ -119,7 +119,7 @@ export const editListItems = ( context, next ) => {
 					/* webpackChunkName: "async-load-calypso-reader-list-manage" */ 'calypso/reader/list-manage'
 				)
 			}
-			key="list-manage"
+			key="reader-list-edit-list-items"
 			owner={ encodeURIComponent( context.params.user ) }
 			slug={ encodeURIComponent( context.params.list ) }
 			selectedSection="items"
@@ -146,7 +146,7 @@ export const exportList = ( context, next ) => {
 					/* webpackChunkName: "async-load-calypso-reader-list-manage" */ 'calypso/reader/list-manage'
 				)
 			}
-			key="list-manage"
+			key="reader-list-export"
 			owner={ encodeURIComponent( context.params.user ) }
 			slug={ encodeURIComponent( context.params.list ) }
 			selectedSection="export"
@@ -173,7 +173,7 @@ export const deleteList = ( context, next ) => {
 					/* webpackChunkName: "async-load-calypso-reader-list-manage" */ 'calypso/reader/list-manage'
 				)
 			}
-			key="list-manage"
+			key="reader-list-delete"
 			owner={ encodeURIComponent( context.params.user ) }
 			slug={ encodeURIComponent( context.params.list ) }
 			selectedSection="delete"

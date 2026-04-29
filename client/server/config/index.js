@@ -1,5 +1,5 @@
 const configPath = require( 'path' ).resolve( __dirname, '..', '..', '..', 'config' );
-const { default: createConfig } = require( '@automattic/create-calypso-config' );
+const { default: createConfig, resolveTemplates } = require( '@automattic/create-calypso-config' );
 const parser = require( './parser' );
 
 const { serverData, clientData } = parser( configPath, {
@@ -9,4 +9,4 @@ const { serverData, clientData } = parser( configPath, {
 } );
 
 module.exports = createConfig( serverData );
-module.exports.clientData = clientData;
+module.exports.clientData = resolveTemplates( clientData );

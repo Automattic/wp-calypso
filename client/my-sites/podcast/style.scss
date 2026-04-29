@@ -1,0 +1,208 @@
+@import '@wordpress/dataviews/build-style/style.css';
+@import 'calypso/components/jetpack-page-layout/admin-ui-page';
+
+body.is-section-podcast {
+	@include admin-ui-page-layout;
+}
+
+// `@wordpress/ui` Tabs ships its styles inside `@layer wp-ui-components`,
+// which Calypso's unlayered button reset overrides. Restore the package
+// defaults (16px horizontal padding) and add a separator under the tab bar.
+.podcast__tabs-bar {
+	border-block-end: 1px solid var( --wpds-color-stroke-base-tertiary, #dcdcde );
+	margin-block-end: 24px;
+}
+
+.podcast__tabs [role='tab'] {
+	padding-inline: var( --wpds-dimension-padding-lg, 16px );
+}
+
+.podcast__section-header {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	margin-block-end: 24px;
+}
+
+.podcast__section-heading {
+	margin: 0;
+	font-size: 28px;
+	font-weight: 400;
+	line-height: 1.2;
+	color: var( --wpds-color-fg-content-neutral, #1e1e1e );
+}
+
+.podcast__section-description {
+	margin: 0;
+	font-size: 13px;
+	line-height: 1.4;
+	color: var( --wpds-color-fg-content-neutral-weak, #757575 );
+}
+
+.podcast__directory-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.podcast__directory-row {
+	padding-block: 12px;
+	border-block-end: 1px solid var( --wpds-color-stroke-base-tertiary, #dcdcde );
+
+	&:last-child {
+		border-block-end: none;
+	}
+}
+
+// Plan cards: bordered surface, optional corner badge that sits flush with
+// the top edge, content stretches so feature list fills the remaining space.
+.podcast__plan-card {
+	display: flex;
+	flex-direction: column;
+	position: relative;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+}
+
+.podcast__plan-card .components-card-body {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+}
+
+.podcast__plan-badge-corner {
+	position: absolute;
+	inset-block-start: 0;
+	inset-inline-end: 16px;
+	padding: 4px 10px;
+	background: var( --wpds-color-bg-content-neutral-medium, #50575e );
+	color: #fff;
+	font-size: 10px;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	border-end-start-radius: 4px;
+	border-end-end-radius: 4px;
+	z-index: 1;
+
+	&.is-recommended {
+		background: var( --wpds-color-bg-status-success-strong, #1a8d36 );
+	}
+}
+
+// Specificity prefix because @wordpress/components ships Emotion styles that
+// load after our stylesheet.
+.podcast__plan-card .podcast__plan-card-content {
+	flex: 1;
+}
+
+.podcast__plan-cta {
+	justify-content: center;
+	inline-size: 100%;
+}
+
+.podcast__plan-card .podcast__plan-features {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	flex: 1;
+}
+
+// Welcome — hero
+.podcast__welcome-hero {
+	display: grid;
+	grid-template-columns: minmax( 0, 1.1fr ) minmax( 0, 1fr );
+	gap: 40px;
+	align-items: center;
+	padding: 40px;
+	border-radius: 8px;
+	background:
+		radial-gradient( circle at 0% 0%, var( --studio-blue-0, #f0f6fc ) 0%, transparent 50% ),
+		radial-gradient( circle at 100% 100%, var( --studio-purple-0, #fdf3fc ) 0%, transparent 50% ),
+		var( --wpds-color-bg-surface-base, #fff );
+
+	@media ( max-width: 900px ) {
+		grid-template-columns: 1fr;
+		padding: 24px;
+	}
+}
+
+.podcast__welcome-title {
+	margin: 0;
+	font-size: 32px;
+	font-weight: 400;
+	line-height: 1.15;
+	letter-spacing: -0.01em;
+}
+
+.podcast__welcome-hero-preview {
+	box-shadow: 0 6px 20px -12px rgba( 0, 0, 0, 0.18 );
+}
+
+.podcast__welcome-hero-preview-cover {
+	display: grid;
+	place-items: center;
+	flex-shrink: 0;
+	inline-size: 56px;
+	block-size: 56px;
+	border-radius: 8px;
+	background: linear-gradient(
+		135deg,
+		var( --studio-blue-40, #4f94d4 ),
+		var( --studio-purple-40, #a26dc1 )
+	);
+	color: #fff;
+
+	svg {
+		fill: currentcolor;
+	}
+}
+
+.podcast__welcome-hero-preview-episodes {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+// Welcome — benefits
+.podcast__welcome-benefit-icon {
+	display: inline-flex;
+	align-items: center;
+	color: var( --wpds-color-fg-content-neutral, #1e1e1e );
+
+	svg {
+		inline-size: 24px;
+		block-size: 24px;
+		fill: currentcolor;
+	}
+}
+
+// Welcome — How it works.
+// CSS Grid with `auto-fit` + `min(240px, 100%)` lets columns shrink with the
+// container — no overflow at narrow widths, no flex-wrap breakpoint cliff.
+.podcast__welcome-steps {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: grid;
+	grid-template-columns: repeat( auto-fit, minmax( min( 240px, 100% ), 1fr ) );
+	gap: 24px;
+}
+
+.podcast__welcome-step {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.podcast__welcome-step-circle {
+	display: grid;
+	place-items: center;
+	inline-size: 32px;
+	block-size: 32px;
+	border-radius: 50%;
+	background: var( --wpds-color-bg-content-neutral-strong, #2c3338 );
+	color: #fff;
+	font-size: 14px;
+	font-weight: 600;
+}

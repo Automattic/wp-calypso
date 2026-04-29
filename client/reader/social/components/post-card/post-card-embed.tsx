@@ -10,16 +10,29 @@ import type { SocialEmbed } from '../../types';
 interface PostCardEmbedProps {
 	embed: SocialEmbed;
 	parentPostUri: string;
+	expandedVideo?: boolean;
+	compact?: boolean;
 }
 
-export function PostCardEmbed( { embed, parentPostUri }: PostCardEmbedProps ) {
+export function PostCardEmbed( {
+	embed,
+	parentPostUri,
+	expandedVideo,
+	compact,
+}: PostCardEmbedProps ) {
 	switch ( embed.type ) {
 		case 'images':
-			return <PostCardEmbedImages embed={ embed } />;
+			return <PostCardEmbedImages embed={ embed } compact={ compact } />;
 		case 'video':
-			return <PostCardEmbedVideo embed={ embed } />;
+			return <PostCardEmbedVideo embed={ embed } expanded={ expandedVideo } />;
 		case 'external':
-			return <PostCardEmbedExternal embed={ embed } parentPostUri={ parentPostUri } />;
+			return (
+				<PostCardEmbedExternal
+					embed={ embed }
+					parentPostUri={ parentPostUri }
+					compact={ compact }
+				/>
+			);
 		case 'quote':
 			return <PostCardEmbedQuote embed={ embed } parentPostUri={ parentPostUri } />;
 		case 'quote_with_media':

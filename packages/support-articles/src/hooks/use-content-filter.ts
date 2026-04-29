@@ -60,6 +60,17 @@ export const useContentFilter = ( node: HTMLDivElement | null, currentSiteDomain
 						element.setAttribute( 'href', new URL( href, link ).href );
 					}
 
+					// /support/contact is a landing page, not a doc — its layout
+					// breaks inside the Help Center. Route to Odie instead.
+					const parsed = canParse( element.href );
+					if ( parsed && /^(?:\/\w\w)?\/support\/contact\/?$/.test( parsed.pathname ) ) {
+						element.onclick = ( event: Event ) => {
+							event.preventDefault();
+							navigate( '/odie' );
+						};
+						return;
+					}
+
 					element.onclick = ( event: Event ) => {
 						event.preventDefault();
 

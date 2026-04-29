@@ -5,9 +5,10 @@ export type AtmosphereError =
 	| { kind: 'auth_required' }
 	| { kind: 'connection_not_found' }
 	| { kind: 'not_found' }
+	// retry_after is in seconds, matching the Bluesky and wpcom contract.
 	| { kind: 'rate_limited'; retry_after?: number }
 	| { kind: 'upstream_unavailable' }
-	| { kind: 'bad_request'; message: string }
+	| { kind: 'bad_request'; message: string | null }
 	| { kind: 'unknown'; cause: unknown };
 
 interface WpErrorLike {
@@ -51,7 +52,8 @@ export function classifyAtmosphereError( raw: unknown ): AtmosphereError {
 		case 'atmosphere_upstream_unavailable':
 			return { kind: 'upstream_unavailable' };
 		case 'bad_request':
-			return { kind: 'bad_request', message: raw.message ?? '' };
+		case 'atmosphere_bad_request':
+			return { kind: 'bad_request', message: raw.message ?? null };
 		default:
 			return { kind: 'unknown', cause: raw };
 	}

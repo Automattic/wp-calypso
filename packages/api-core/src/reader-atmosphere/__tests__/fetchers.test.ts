@@ -1,7 +1,39 @@
 import nock from 'nock';
-import { createConnection, getConnection, getConnections, getTimeline } from '../fetchers';
+import {
+	createConnection,
+	getConnection,
+	getConnections,
+	getThread,
+	getTimeline,
+} from '../fetchers';
+import type { AtmosphereFeedItem, AtmosphereThreadResponse } from '../types';
 
 const BASE = 'https://public-api.wordpress.com';
+
+function makeFeedItem( overrides: Partial< AtmosphereFeedItem > = {} ): AtmosphereFeedItem {
+	return {
+		uri: 'at://did:plc:default/app.bsky.feed.post/3kdef',
+		cid: 'cid-default',
+		author: {
+			did: 'did:plc:default',
+			handle: 'default.bsky.social',
+			display_name: '',
+			avatar: null,
+		},
+		created_at: '2026-04-28T10:00:00Z',
+		indexed_at: '2026-04-28T10:00:00Z',
+		text: '',
+		html: '<p></p>',
+		lang: [],
+		reply_parent: null,
+		reply_root: null,
+		reason: null,
+		embed: null,
+		counts: { replies: 0, reposts: 0, likes: 0, quotes: 0 },
+		bluesky_url: 'https://bsky.app/profile/default.bsky.social/post/3kdef',
+		...overrides,
+	};
+}
 
 describe( 'atmosphere fetchers', () => {
 	afterEach( () => nock.cleanAll() );
@@ -167,6 +199,128 @@ describe( 'atmosphere fetchers', () => {
 			await expect( getTimeline( { connectionId: 42 } ) ).rejects.toMatchObject( {
 				kind: 'unknown',
 			} );
+		} );
+	} );
+
+	describe( 'getThread', () => {
+		const fixture: AtmosphereThreadResponse = {
+			thread: {
+				type: 'post',
+				post: makeFeedItem( { uri: 'at://did:plc:abc/app.bsky.feed.post/3kabc' } ),
+				parent: null,
+				replies: [
+					{
+						type: 'post',
+						post: makeFeedItem( { uri: 'at://did:plc:def/app.bsky.feed.post/3kdef' } ),
+						parent: null,
+						replies: [],
+					},
+					{
+						type: 'not_found',
+						uri: 'at://did:plc:ghi/app.bsky.feed.post/3kghi',
+					},
+				],
+			},
+		};
+
+		it( 'fetches the thread for a given at-uri with default depth/parentHeight omitted from the request', async () => {
+			nock( BASE )
+				.get( '/wpcom/v2/reader/atmosphere/thread' )
+				.query( { uri: 'at://did:plc:abc/app.bsky.feed.post/3kabc' } )
+				.reply( 200, fixture );
+
+			const got = await getThread( {
+				uri: 'at://did:plc:abc/app.bsky.feed.post/3kabc',
+			} );
+			expect( got ).toEqual( fixture );
+		} );
+
+		it( 'forwards depth and parentHeight as query params when supplied', async () => {
+			nock( BASE )
+				.get( '/wpcom/v2/reader/atmosphere/thread' )
+				.query( {
+					uri: 'at://did:plc:abc/app.bsky.feed.post/3kabc',
+					depth: '6',
+					parentHeight: '80',
+				} )
+				.reply( 200, fixture );
+
+			const got = await getThread( {
+				uri: 'at://did:plc:abc/app.bsky.feed.post/3kabc',
+				depth: 6,
+				parentHeight: 80,
+			} );
+			expect( got ).toEqual( fixture );
+		} );
+
+		it( 'classifies a 400 atmosphere_bad_request response', async () => {
+			nock( BASE )
+				.get( '/wpcom/v2/reader/atmosphere/thread' )
+				.query( true )
+				.reply( 400, { error: 'atmosphere_bad_request', message: 'Invalid AT-URI.' } );
+
+			await expect( getThread( { uri: 'at://garbage' } ) ).rejects.toMatchObject( {
+				kind: 'bad_request',
+				message: 'Invalid AT-URI.',
+			} );
+		} );
+
+		it( 'classifies a 404 atmosphere_not_found response', async () => {
+			nock( BASE )
+				.get( '/wpcom/v2/reader/atmosphere/thread' )
+				.query( true )
+				.reply( 404, { error: 'atmosphere_not_found', message: 'Thread not found.' } );
+
+			await expect(
+				getThread( { uri: 'at://did:plc:abc/app.bsky.feed.post/3kabc' } )
+			).rejects.toMatchObject( { kind: 'not_found' } );
+		} );
+
+		it( 'classifies a 401 atmosphere_auth_required response', async () => {
+			nock( BASE )
+				.get( '/wpcom/v2/reader/atmosphere/thread' )
+				.query( true )
+				.reply( 401, { error: 'atmosphere_auth_required' } );
+
+			await expect(
+				getThread( { uri: 'at://did:plc:abc/app.bsky.feed.post/3kabc' } )
+			).rejects.toMatchObject( { kind: 'auth_required' } );
+		} );
+
+		it( 'classifies a 429 atmosphere_rate_limited response with retry_after', async () => {
+			nock( BASE )
+				.get( '/wpcom/v2/reader/atmosphere/thread' )
+				.query( true )
+				.reply( 429, {
+					error: 'atmosphere_rate_limited',
+					data: { retry_after: 30 },
+				} );
+
+			await expect(
+				getThread( { uri: 'at://did:plc:abc/app.bsky.feed.post/3kabc' } )
+			).rejects.toMatchObject( { kind: 'rate_limited', retry_after: 30 } );
+		} );
+
+		it( 'classifies a 502 atmosphere_upstream_unavailable response', async () => {
+			nock( BASE )
+				.get( '/wpcom/v2/reader/atmosphere/thread' )
+				.query( true )
+				.reply( 502, { error: 'atmosphere_upstream_unavailable' } );
+
+			await expect(
+				getThread( { uri: 'at://did:plc:abc/app.bsky.feed.post/3kabc' } )
+			).rejects.toMatchObject( { kind: 'upstream_unavailable' } );
+		} );
+
+		it( 'classifies a network error as unknown', async () => {
+			nock( BASE )
+				.get( '/wpcom/v2/reader/atmosphere/thread' )
+				.query( true )
+				.replyWithError( 'boom' );
+
+			await expect(
+				getThread( { uri: 'at://did:plc:abc/app.bsky.feed.post/3kabc' } )
+			).rejects.toMatchObject( { kind: 'unknown' } );
 		} );
 	} );
 } );

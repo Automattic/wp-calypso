@@ -6,11 +6,17 @@ import {
 } from '@automattic/api-queries';
 import { AdminBarNode, Omnibar, buildOmnibarNodesFromAdminBarNodes } from '@automattic/omnibar';
 import { useQuery } from '@tanstack/react-query';
+import { __ } from '@wordpress/i18n';
+import { Icon, helpFilled } from '@wordpress/icons';
 import { useEffect, useMemo, useState } from 'react';
 import SiteIcon from '../../components/site-icon';
 import { getSiteDisplayName } from '../../utils/site-name';
+import { useHelpCenter } from '../help-center';
+import { omnibarEvents } from './events';
 import { OmnibarHomeIcon } from './home';
 import type { User } from '@automattic/api-core';
+
+const onClickResponsiveMenu = () => omnibarEvents.mobileMenu.emit();
 
 const UNSUPPORTED_DOTCOM_NODE_IDS = new Set( [
 	'site-plan',
@@ -41,13 +47,20 @@ export default function OmnibarContainer( { user }: { user?: User } ) {
 		enabled: hydrated && !! siteId,
 	} );
 
+	const { isShown: isHelpCenterShown, setShowHelpCenter } = useHelpCenter();
+
 	const omnibarNodes = useMemo( () => {
 		const nodes = siteNodes ?? dashboardNodes ?? [];
 		const result = buildOmnibarNodesFromAdminBarNodes( removeUnsupportedDotcomNodes( nodes ) );
 
-		if ( result.home ) {
-			result.home.icon = <OmnibarHomeIcon />;
+		if ( ! result.home ) {
+			result.home = {
+				id: '',
+				title: '',
+			};
 		}
+
+		result.home.icon = <OmnibarHomeIcon />;
 
 		if ( site ) {
 			if ( ! result.site ) {
@@ -62,13 +75,22 @@ export default function OmnibarContainer( { user }: { user?: User } ) {
 			result.site.title = getSiteDisplayName( site );
 		}
 
+		result.plugins = [
+			{
+				id: 'help-center',
+				title: __( 'Help' ),
+				icon: <Icon icon={ helpFilled } />,
+				onClick: () => setShowHelpCenter( ! isHelpCenterShown ),
+			},
+		];
+
 		return result;
-	}, [ dashboardNodes, siteNodes, site ] );
+	}, [ dashboardNodes, siteNodes, site, isHelpCenterShown, setShowHelpCenter ] );
 
 	if ( ! hydrated ) {
 		return <InitialOmnibar user={ user } />;
 	}
-	return <Omnibar nodes={ omnibarNodes } />;
+	return <Omnibar nodes={ omnibarNodes } onClickResponsiveMenu={ onClickResponsiveMenu } />;
 }
 
 export function InitialOmnibar( { user }: { user?: User } ) {
@@ -86,6 +108,7 @@ export function InitialOmnibar( { user }: { user?: User } ) {
 					icon: user ? <img src={ user.avatar_URL } alt="" /> : undefined,
 				},
 			} }
+			onClickResponsiveMenu={ onClickResponsiveMenu }
 		/>
 	);
 }

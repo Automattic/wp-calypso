@@ -73,6 +73,7 @@ export default function StatsController( context, next ) {
 		case 'orders':
 			asyncComponent = (
 				<AsyncLoad
+					key="store-app-store-stats"
 					placeholder={ placeholder }
 					require={ () =>
 						import(
@@ -86,6 +87,7 @@ export default function StatsController( context, next ) {
 		default:
 			asyncComponent = (
 				<AsyncLoad
+					key="store-app-store-stats-listview"
 					placeholder={ placeholder }
 					require={ () =>
 						import(
