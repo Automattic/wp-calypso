@@ -5,5 +5,6 @@ export const readOrganizationsQuery = () => {
 	return queryOptions( {
 		queryKey: [ 'read', 'organizations' ],
 		queryFn: () => fetchReaderOrganizations(),
+		staleTime: 5 * 60 * 1000,
 	} );
 };

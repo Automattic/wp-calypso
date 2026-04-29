@@ -55,7 +55,7 @@ describe( 'withReaderOrganizations', () => {
 	} );
 
 	it( 'falls back to an empty array when the request fails', async () => {
-		nock( 'https://public-api.wordpress.com' )
+		const scope = nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.2/read/organizations' )
 			.reply( 500, { message: 'Internal Server Error' } );
 
@@ -63,8 +63,7 @@ describe( 'withReaderOrganizations', () => {
 			queryClient: getQueryClient(),
 		} );
 
-		await waitFor( () => {
-			expect( container ).toBeEmptyDOMElement();
-		} );
+		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
+		expect( container ).toBeEmptyDOMElement();
 	} );
 } );
