@@ -8,12 +8,14 @@ import {
 	Card,
 	CardBody,
 	CardFooter,
+	CardHeader,
 	Notice,
 	SelectControl,
 	TextControl,
 	TextareaControl,
 	ToggleControl,
 	__experimentalHStack as HStack,
+	__experimentalHeading as Heading,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
@@ -243,6 +245,17 @@ const PodcastingSettingsForm = ( {
 	const podcastingCategoryName = podcastingCategory?.name;
 	const newPostUrl = siteSlug ? `/post/${ siteSlug }` : '';
 
+	const saveButton = (
+		<Button
+			variant="primary"
+			type="submit"
+			isBusy={ isSavingSettings }
+			disabled={ disabled || ! isPodcastingEnabled || dirtyFields.length === 0 }
+		>
+			{ isSavingSettings ? translate( 'Saving…' ) : translate( 'Save' ) }
+		</Button>
+	);
+
 	if ( ! site || ! siteId ) {
 		return null;
 	}
@@ -299,17 +312,18 @@ const PodcastingSettingsForm = ( {
 					<>
 						{ /* Category + RSS feed */ }
 						<Card className="site-settings__card podcast__card">
+							<CardHeader>
+								<VStack spacing={ 1 }>
+									<Heading level={ 4 }>{ translate( 'Podcast category' ) }</Heading>
+									<Text variant="muted">
+										{ translate(
+											'Posts published in this category will be included in your podcast feed.'
+										) }
+									</Text>
+								</VStack>
+							</CardHeader>
 							<CardBody>
 								<VStack spacing={ 6 }>
-									<VStack spacing={ 1 }>
-										<h3 className="podcast__card-title">{ translate( 'Podcast category' ) }</h3>
-										<Text variant="muted">
-											{ translate(
-												'Posts published in this category will be included in your podcast feed.'
-											) }
-										</Text>
-									</VStack>
-
 									{ isEnabling && ! isPodcastingEnabled && (
 										<Notice status="info" isDismissible={ false }>
 											{ translate(
@@ -369,21 +383,23 @@ const PodcastingSettingsForm = ( {
 									) }
 								</VStack>
 							</CardBody>
+							<CardFooter>{ saveButton }</CardFooter>
 						</Card>
 
 						{ /* Show details */ }
 						<Card className="site-settings__card podcast__card">
+							<CardHeader>
+								<VStack spacing={ 1 }>
+									<Heading level={ 4 }>{ translate( 'Show details' ) }</Heading>
+									<Text variant="muted">
+										{ translate(
+											'This information appears in podcast apps like Apple Podcasts and Spotify.'
+										) }
+									</Text>
+								</VStack>
+							</CardHeader>
 							<CardBody>
 								<VStack spacing={ 6 }>
-									<VStack spacing={ 1 }>
-										<h3 className="podcast__card-title">{ translate( 'Show details' ) }</h3>
-										<Text variant="muted">
-											{ translate(
-												'This information appears in podcast apps like Apple Podcasts and Spotify.'
-											) }
-										</Text>
-									</VStack>
-
 									<HStack
 										alignment="flex-start"
 										spacing={ 6 }
@@ -438,19 +454,21 @@ const PodcastingSettingsForm = ( {
 									/>
 								</VStack>
 							</CardBody>
+							<CardFooter>{ saveButton }</CardFooter>
 						</Card>
 
 						{ /* Feed metadata */ }
 						<Card className="site-settings__card podcast__card">
+							<CardHeader>
+								<VStack spacing={ 1 }>
+									<Heading level={ 4 }>{ translate( 'Feed settings' ) }</Heading>
+									<Text variant="muted">
+										{ translate( 'Configure how your podcast appears in directories and apps.' ) }
+									</Text>
+								</VStack>
+							</CardHeader>
 							<CardBody>
 								<VStack spacing={ 6 }>
-									<VStack spacing={ 1 }>
-										<h3 className="podcast__card-title">{ translate( 'Feed settings' ) }</h3>
-										<Text variant="muted">
-											{ translate( 'Configure how your podcast appears in directories and apps.' ) }
-										</Text>
-									</VStack>
-
 									<fieldset className="podcast__settings-topics">
 										<legend className="podcast__settings-topics-legend">
 											{ translate( 'Podcast topics' ) }
@@ -526,20 +544,7 @@ const PodcastingSettingsForm = ( {
 									/>
 								</VStack>
 							</CardBody>
-						</Card>
-
-						{ /* Save */ }
-						<Card className="site-settings__card podcast__card podcast__settings-save-card">
-							<CardFooter>
-								<Button
-									variant="primary"
-									type="submit"
-									isBusy={ isSavingSettings }
-									disabled={ disabled || ! isPodcastingEnabled || dirtyFields.length === 0 }
-								>
-									{ isSavingSettings ? translate( 'Saving…' ) : translate( 'Save' ) }
-								</Button>
-							</CardFooter>
+							<CardFooter>{ saveButton }</CardFooter>
 						</Card>
 					</>
 				) }
