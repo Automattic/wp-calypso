@@ -268,8 +268,16 @@ export class MagicLogin extends Component {
 	};
 
 	render() {
-		const { oauth2Client, query, translate, isWooJPC, isJetpackLogin, isUnifiedConnectionFlow } =
-			this.props;
+		const {
+			oauth2Client,
+			query,
+			translate,
+			isWooJPC,
+			isJetpackLogin,
+			isUnifiedConnectionFlow,
+			isFromJetpackConnector,
+			connectorPlugins,
+		} = this.props;
 		const { usernameOrEmail } = this.state;
 
 		if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
@@ -326,7 +334,15 @@ export class MagicLogin extends Component {
 			</Main>
 		);
 
-		return <OneLoginLayout isJetpack={ isJetpackLogin }>{ mainContent }</OneLoginLayout>;
+		return (
+			<OneLoginLayout
+				isJetpack={ isJetpackLogin }
+				isFromJetpackConnector={ isFromJetpackConnector }
+				connectorPlugins={ connectorPlugins }
+			>
+				{ mainContent }
+			</OneLoginLayout>
+		);
 	}
 }
 
@@ -378,6 +394,9 @@ const mapState = ( state ) => {
 	const currentQuery = getCurrentQueryArguments( state );
 	const initialQuery = getInitialQueryArguments( state );
 	const redirectToOriginal = getRedirectToOriginal( state );
+	const redirectToParams = new URLSearchParams( redirectToOriginal?.split( '?' )[ 1 ] );
+	const redirectToFrom = redirectToParams.get( 'from' );
+	const redirectToPlugins = redirectToParams.get( 'plugins' );
 
 	return {
 		locale: getCurrentLocaleSlug( state ),
@@ -395,8 +414,10 @@ const mapState = ( state ) => {
 		redirectToSanitized: getRedirectToSanitized( state ),
 		redirectToOriginal,
 		isUnifiedConnectionFlow: [ 'jetpack-onboarding', 'jetpack-connector' ].includes(
-			new URLSearchParams( redirectToOriginal?.split( '?' )[ 1 ] ).get( 'from' )
+			redirectToFrom
 		),
+		isFromJetpackConnector: 'jetpack-connector' === redirectToFrom,
+		connectorPlugins: redirectToPlugins ? redirectToPlugins.split( ',' ).filter( Boolean ) : [],
 		isWooJPC: isWooJPCFlow( state ),
 		publicToken: getMagicLoginPublicToken( state ),
 		partnerConfig: detectPartnerConfig( getCurrentOAuth2Client( state ) ),
