@@ -333,3 +333,118 @@ describe( 'ThreadPanel', () => {
 		);
 	} );
 } );
+
+describe( 'ThreadPanel — slice 6 author chip + repost preface rewrites', () => {
+	const reposterDid = 'did:plc:rep234567defghi234567jklab';
+	const reposterHandle = 'joe.bsky.social';
+
+	function fixtureWithRepost(): AtmosphereThreadResponse {
+		const base = fixture();
+		const post = ( base.thread as unknown as { post: Record< string, unknown > } ).post;
+		post.reason = {
+			type: 'repost',
+			by: {
+				did: reposterDid,
+				handle: reposterHandle,
+				display_name: 'Joe',
+				avatar: null,
+			},
+			indexed_at: '2026-04-28T11:00:00Z',
+		};
+		return base;
+	}
+
+	beforeEach( () => {
+		jest
+			.spyOn( analytics, 'recordReaderTracksEvent' )
+			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+	} );
+
+	afterEach( () => {
+		nock.cleanAll();
+		jest.restoreAllMocks();
+	} );
+
+	it( 'author chip <a> href is the in-app profile URL (same-tab, no target/rel)', async () => {
+		nock( BASE ).get( PATH ).query( { uri: TARGET_URI } ).reply( 200, fixtureWithRepost() );
+
+		renderWithProvider( <ThreadPanel connection={ connection } did={ DID } rkey={ RKEY } />, {
+			queryClient: makeQueryClient(),
+		} );
+
+		await screen.findAllByRole( 'link' );
+		const authorLink = screen
+			.getAllByRole( 'link' )
+			.find(
+				( a ) => a.getAttribute( 'href' ) === '/reader/atmosphere/7/profile/jane.bsky.social'
+			);
+		expect( authorLink ).toBeDefined();
+		expect( authorLink ).not.toHaveAttribute( 'target' );
+		expect( authorLink ).not.toHaveAttribute( 'rel' );
+	} );
+
+	it( 'repost preface name is a real <a> to the reposter in-app profile URL', async () => {
+		nock( BASE ).get( PATH ).query( { uri: TARGET_URI } ).reply( 200, fixtureWithRepost() );
+
+		renderWithProvider( <ThreadPanel connection={ connection } did={ DID } rkey={ RKEY } />, {
+			queryClient: makeQueryClient(),
+		} );
+
+		const repostLink = await screen.findByRole( 'link', { name: /Joe/i } );
+		expect( repostLink ).toHaveAttribute(
+			'href',
+			`/reader/atmosphere/7/profile/${ reposterHandle }`
+		);
+		expect( repostLink ).not.toHaveAttribute( 'target' );
+		expect( repostLink ).not.toHaveAttribute( 'rel' );
+	} );
+
+	it( 'fires author_clicked with destination=in_app after the rewrite', async () => {
+		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		nock( BASE ).get( PATH ).query( { uri: TARGET_URI } ).reply( 200, fixtureWithRepost() );
+
+		const user = userEvent.setup();
+		renderWithProvider( <ThreadPanel connection={ connection } did={ DID } rkey={ RKEY } />, {
+			queryClient: makeQueryClient(),
+		} );
+
+		await screen.findAllByRole( 'link' );
+		const authorLink = screen
+			.getAllByRole( 'link' )
+			.find(
+				( a ) => a.getAttribute( 'href' ) === '/reader/atmosphere/7/profile/jane.bsky.social'
+			);
+		await user.click( authorLink as HTMLElement );
+		expect( spy ).toHaveBeenCalledWith(
+			'calypso_reader_atmosphere_thread_author_clicked',
+			expect.objectContaining( {
+				connection_id: 7,
+				author_handle: 'jane.bsky.social',
+				destination: 'in_app',
+			} )
+		);
+	} );
+
+	it( 'fires repost_author_clicked with destination=in_app when the reposter link is clicked', async () => {
+		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		nock( BASE ).get( PATH ).query( { uri: TARGET_URI } ).reply( 200, fixtureWithRepost() );
+
+		const user = userEvent.setup();
+		renderWithProvider( <ThreadPanel connection={ connection } did={ DID } rkey={ RKEY } />, {
+			queryClient: makeQueryClient(),
+		} );
+
+		const repostLink = await screen.findByRole( 'link', { name: /Joe/i } );
+		await user.click( repostLink );
+		expect( spy ).toHaveBeenCalledWith(
+			'calypso_reader_atmosphere_thread_repost_author_clicked',
+			expect.objectContaining( {
+				connection_id: 7,
+				post_uri: TARGET_URI,
+				reposter_did: reposterDid,
+				reposter_handle: reposterHandle,
+				destination: 'in_app',
+			} )
+		);
+	} );
+} );

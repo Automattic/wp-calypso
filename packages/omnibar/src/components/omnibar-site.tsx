@@ -27,18 +27,7 @@ export function OmnibarSiteNode( {
 		: actionNodes?.filter( ( { id } ) => id === 'new-content' );
 
 	return [
-		<OmnibarMenu
-			key={ siteNode.id }
-			node={ {
-				...siteNode,
-				render: ( { icon, title } ) => (
-					<HStack>
-						{ icon }
-						<span>{ title }</span>
-					</HStack>
-				),
-			} }
-		/>,
+		<OmnibarMenu key={ siteNode.id } node={ siteNode } />,
 		siteActionNodes && <OmnibarSiteActionsNode nodes={ siteActionNodes } />,
 	].filter( Boolean );
 }

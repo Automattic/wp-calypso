@@ -2,11 +2,15 @@ import {
 	readerAtmosphereKeys,
 	type AtmosphereFeedItem,
 	type AtmosphereThreadResponse,
+	AtmosphereAuthorFeedPage,
+	AtmosphereAuthorProfile,
 } from '@automattic/api-core';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import {
+	useAuthorFeedInfiniteQuery,
+	useAuthorProfileQuery,
 	useConnectionQuery,
 	useConnectionsQuery,
 	useCreateConnectionMutation,
@@ -92,7 +96,6 @@ describe( 'reader-atmosphere hooks', () => {
 				avatar: 'https://cdn/avatar.png',
 				banner: null,
 				counts: { followers: 0, follows: 0, posts: 0 },
-				raw: {},
 			} );
 		const client = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 		const { result } = renderHook( () => useConnectionQuery( 42 ), {
@@ -329,6 +332,142 @@ describe( 'reader-atmosphere hooks', () => {
 
 			await waitFor( () => expect( result.current.isError ).toBe( true ) );
 			expect( nock.pendingMocks() ).toHaveLength( 0 );
+		} );
+	} );
+
+	describe( 'useAuthorProfileQuery', () => {
+		it( 'is disabled when actor is empty', () => {
+			const queryClient = new QueryClient();
+			const wrapper = makeWrapper( queryClient );
+
+			renderHook( () => useAuthorProfileQuery( { actor: '' } ), { wrapper } );
+
+			expect( queryClient.isFetching() ).toBe( 0 );
+		} );
+
+		it( 'fetches the profile and resolves the typed result', async () => {
+			const payload: AtmosphereAuthorProfile = {
+				did: 'did:plc:abc',
+				handle: 'alice.bsky.social',
+				display_name: 'Alice',
+				description: '',
+				description_html: '',
+				avatar: null,
+				banner: null,
+				bluesky_url: 'https://bsky.app/profile/alice.bsky.social',
+				counts: { followers: 0, follows: 0, posts: 0 },
+			};
+			nock( BASE )
+				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social' )
+				.reply( 200, payload );
+
+			const queryClient = new QueryClient();
+			const wrapper = makeWrapper( queryClient );
+			const { result } = renderHook(
+				() => useAuthorProfileQuery( { actor: 'alice.bsky.social' } ),
+				{ wrapper }
+			);
+
+			await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+			expect( result.current.data ).toEqual( payload );
+		} );
+
+		it( 'recovers via refetch after an error', async () => {
+			nock( BASE )
+				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social' )
+				.reply( 502, { error: 'atmosphere_upstream_unavailable' } );
+
+			const queryClient = new QueryClient( {
+				defaultOptions: { queries: { retry: false } },
+			} );
+			const wrapper = makeWrapper( queryClient );
+			const { result } = renderHook(
+				() => {
+					const q = useAuthorProfileQuery( { actor: 'alice.bsky.social' } );
+					// Touch props in render so TanStack's tracked-props observer
+					// notifies on later transitions (isError -> isSuccess).
+					void q.data;
+					void q.isError;
+					void q.error;
+					void q.isSuccess;
+					return q;
+				},
+				{ wrapper }
+			);
+			await waitFor( () => expect( result.current.isError ).toBe( true ) );
+			expect( result.current.error ).toMatchObject( { kind: 'upstream_unavailable' } );
+
+			nock( BASE )
+				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social' )
+				.reply( 200, { did: 'did:plc:abc', handle: 'alice.bsky.social' } );
+			await result.current.refetch();
+			await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+		} );
+	} );
+
+	describe( 'useAuthorFeedInfiniteQuery', () => {
+		it( 'is disabled when actor is empty', () => {
+			const queryClient = new QueryClient();
+			const wrapper = makeWrapper( queryClient );
+
+			renderHook( () => useAuthorFeedInfiniteQuery( { actor: '' } ), { wrapper } );
+
+			expect( queryClient.isFetching() ).toBe( 0 );
+		} );
+
+		it( 'resolves the first page', async () => {
+			const page: AtmosphereAuthorFeedPage = { items: [], cursor: 'next' };
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.reply( 200, page );
+
+			const queryClient = new QueryClient();
+			const wrapper = makeWrapper( queryClient );
+			const { result } = renderHook(
+				() => {
+					const q = useAuthorFeedInfiniteQuery( { actor: 'alice.bsky.social' } );
+					void q.data;
+					void q.isError;
+					void q.error;
+					void q.isSuccess;
+					return q;
+				},
+				{ wrapper }
+			);
+
+			await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+			expect( result.current.data?.pages[ 0 ] ).toEqual( page );
+		} );
+
+		it( 'advances the cursor on fetchNextPage', async () => {
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.reply( 200, { items: [], cursor: 'page-2' } );
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.query( { cursor: 'page-2' } )
+				.reply( 200, { items: [], cursor: null } );
+
+			const queryClient = new QueryClient();
+			const wrapper = makeWrapper( queryClient );
+			const { result } = renderHook(
+				() => {
+					const q = useAuthorFeedInfiniteQuery( { actor: 'alice.bsky.social' } );
+					void q.data;
+					void q.hasNextPage;
+					void q.isFetchingNextPage;
+					void q.isError;
+					void q.error;
+					void q.isSuccess;
+					return q;
+				},
+				{ wrapper }
+			);
+
+			await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+			await result.current.fetchNextPage();
+			await waitFor( () => expect( result.current.data?.pages.length ).toBe( 2 ) );
+			expect( result.current.hasNextPage ).toBe( false );
 		} );
 	} );
 } );
