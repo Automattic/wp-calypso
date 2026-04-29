@@ -47,12 +47,7 @@ function OmnibarDropdownContent( { nodes }: { nodes: OmnibarNode[] } ) {
 export function OmnibarMenu( { node }: { node: OmnibarNode } ) {
 	if ( ! node.children ) {
 		return (
-			<Button
-				className="omnibar__menu"
-				href={ node.href }
-				onClick={ node.onClick }
-				label={ node.title }
-			>
+			<Button className="omnibar__menu" href={ node.href } label={ node.title }>
 				<OmnibarNodeContent node={ node } />
 			</Button>
 		);
