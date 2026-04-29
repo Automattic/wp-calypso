@@ -82,6 +82,19 @@ body.is-section-podcasting {
 	padding-block-start: 8px;
 }
 
+.podcast__settings-topics {
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+.podcast__settings-topics-legend {
+	display: block;
+	margin-block-end: 4px;
+	padding: 0;
+	font-weight: 500;
+}
+
 // Plan cards: bordered surface, optional corner badge that sits flush with
 // the top edge, content stretches so feature list fills the remaining space.
 .podcast__plan-card {

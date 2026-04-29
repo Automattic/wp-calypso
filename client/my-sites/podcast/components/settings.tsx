@@ -53,9 +53,7 @@ const TRACKED_FIELDS = [
 
 type PodcastingFieldKey = ( typeof TRACKED_FIELDS )[ number ];
 
-type PodcastingFields = Partial< Record< PodcastingFieldKey, string > > & {
-	[ key: string ]: unknown;
-};
+type PodcastingFields = Partial< Record< PodcastingFieldKey, string > >;
 
 type SiteSettingsShape = {
 	podcasting_category_id?: string | number;
@@ -70,10 +68,9 @@ interface PodcastingFormProps {
 	fields: PodcastingFields;
 	settings?: SiteSettingsShape;
 	handleSubmitForm: ( event?: React.FormEvent< HTMLFormElement > ) => void;
-	handleSelect: ( event: React.ChangeEvent< HTMLSelectElement > ) => void;
 	isRequestingSettings: boolean;
 	isSavingSettings: boolean;
-	updateFields: ( fields: Partial< PodcastingFields >, callback?: () => void ) => void;
+	updateFields: ( fields: Record< string, string >, callback?: () => void ) => void;
 	submitForm: () => void;
 }
 
@@ -115,7 +112,6 @@ const PodcastingSettingsForm = ( {
 	fields,
 	settings,
 	handleSubmitForm,
-	handleSelect,
 	isRequestingSettings,
 	isSavingSettings,
 	updateFields,
@@ -229,13 +225,9 @@ const PodcastingSettingsForm = ( {
 	const onTopicChange = useCallback(
 		( key: 'podcasting_category_1' | 'podcasting_category_2' | 'podcasting_category_3' ) =>
 			( value: string ) => {
-				// `wrapSettingsForm` exposes a generic select handler that expects a
-				// synthetic event shape with `target.name` / `target.value`.
-				handleSelect( {
-					target: { name: key, value },
-				} as unknown as React.ChangeEvent< HTMLSelectElement > );
+				updateFields( { [ key ]: value } );
 			},
-		[ handleSelect ]
+		[ updateFields ]
 	);
 
 	const onExplicitChange = useCallback(
@@ -456,44 +448,48 @@ const PodcastingSettingsForm = ( {
 										</Text>
 									</VStack>
 
-									<VStack spacing={ 3 }>
-										<Text weight={ 500 }>{ translate( 'Podcast topics' ) }</Text>
+									<fieldset className="podcast__settings-topics">
+										<legend className="podcast__settings-topics-legend">
+											{ translate( 'Podcast topics' ) }
+										</legend>
 										<Text variant="muted" size="12">
 											{ translate(
 												'Choose how your podcast should be categorized within Apple Podcasts and other podcasting services.'
 											) }
 										</Text>
-										<SelectControl
-											__nextHasNoMarginBottom
-											__next40pxDefaultSize
-											label={ translate( 'Primary topic' ) as string }
-											hideLabelFromVision
-											value={ String( fields.podcasting_category_1 ?? '0' ) }
-											options={ topicOptions }
-											onChange={ onTopicChange( 'podcasting_category_1' ) }
-											disabled={ disabled }
-										/>
-										<SelectControl
-											__nextHasNoMarginBottom
-											__next40pxDefaultSize
-											label={ translate( 'Secondary topic' ) as string }
-											hideLabelFromVision
-											value={ String( fields.podcasting_category_2 ?? '0' ) }
-											options={ topicOptions }
-											onChange={ onTopicChange( 'podcasting_category_2' ) }
-											disabled={ disabled }
-										/>
-										<SelectControl
-											__nextHasNoMarginBottom
-											__next40pxDefaultSize
-											label={ translate( 'Tertiary topic' ) as string }
-											hideLabelFromVision
-											value={ String( fields.podcasting_category_3 ?? '0' ) }
-											options={ topicOptions }
-											onChange={ onTopicChange( 'podcasting_category_3' ) }
-											disabled={ disabled }
-										/>
-									</VStack>
+										<VStack spacing={ 3 }>
+											<SelectControl
+												__nextHasNoMarginBottom
+												__next40pxDefaultSize
+												label={ translate( 'Primary topic' ) as string }
+												hideLabelFromVision
+												value={ String( fields.podcasting_category_1 ?? '0' ) }
+												options={ topicOptions }
+												onChange={ onTopicChange( 'podcasting_category_1' ) }
+												disabled={ disabled }
+											/>
+											<SelectControl
+												__nextHasNoMarginBottom
+												__next40pxDefaultSize
+												label={ translate( 'Secondary topic' ) as string }
+												hideLabelFromVision
+												value={ String( fields.podcasting_category_2 ?? '0' ) }
+												options={ topicOptions }
+												onChange={ onTopicChange( 'podcasting_category_2' ) }
+												disabled={ disabled }
+											/>
+											<SelectControl
+												__nextHasNoMarginBottom
+												__next40pxDefaultSize
+												label={ translate( 'Tertiary topic' ) as string }
+												hideLabelFromVision
+												value={ String( fields.podcasting_category_3 ?? '0' ) }
+												options={ topicOptions }
+												onChange={ onTopicChange( 'podcasting_category_3' ) }
+												disabled={ disabled }
+											/>
+										</VStack>
+									</fieldset>
 
 									<SelectControl
 										__nextHasNoMarginBottom
