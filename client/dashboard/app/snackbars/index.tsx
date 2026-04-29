@@ -53,22 +53,14 @@ export default function Snackbars() {
 
 	const snackbarNotices = notices
 		.filter( ( { type } ) => type === 'snackbar' )
-		.map( ( notice ) => {
-			const { status } = notice;
+		.map( ( { status, ...notice } ) => {
 			const icon = statusIcon[ status ];
-			const className =
-				'className' in notice && typeof notice.className === 'string'
-					? notice.className
-					: undefined;
 			const statusClassName = status ? `is-${ status }` : undefined;
 
 			return {
+				className: statusClassName ? [ statusClassName ].filter( Boolean ).join( ' ' ) : undefined,
+				icon: icon && <Icon icon={ icon } style={ { fill: 'currentcolor' } } />,
 				...notice,
-				className: [ className, statusClassName ].filter( Boolean ).join( ' ' ) || undefined,
-				icon:
-					'icon' in notice
-						? notice.icon
-						: icon && <Icon icon={ icon } style={ { fill: 'currentcolor' } } />,
 			};
 		} );
 
