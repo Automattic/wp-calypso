@@ -146,6 +146,8 @@ export interface TransactionRequest {
 	pan?: string | undefined;
 	gstin?: string | undefined;
 	nik?: string | undefined;
+	// 6-digit BLIK code generated in the customer's banking app.
+	code?: string | undefined;
 	useForAllSubscriptions?: boolean;
 	eventSource?: string;
 }
@@ -200,6 +202,8 @@ export type WPCOMTransactionEndpointPaymentDetails = {
 	pan?: string;
 	gstin?: string;
 	nik?: string;
+	// 6-digit BLIK code generated in the customer's banking app.
+	code?: string;
 	useForAllSubscriptions?: boolean;
 	eventSource?: string;
 };
