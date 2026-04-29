@@ -1,27 +1,20 @@
-import { readTeamsQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
 import PropTypes from 'prop-types';
 import BlogStickersList from 'calypso/blocks/blog-stickers/list';
 import InfoPopover from 'calypso/components/info-popover';
-import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { useBlogStickersQuery } from './use-blog-stickers-query';
 
 import './style.scss';
 
 const BlogStickers = ( { blogId } ) => {
-	const { data } = useQuery( readTeamsQuery() );
-	const teams = data?.teams ?? [];
-	const isTeamMember = isAutomatticTeamMember( teams );
+	const { data: stickers, teams, isAutomattician } = useBlogStickersQuery( blogId );
 
-	const { data: stickers } = useBlogStickersQuery( blogId );
-
-	if ( teams.length && ! isTeamMember ) {
+	if ( teams.length && ! isAutomattician ) {
 		return null;
 	}
 
 	return (
 		<div className="blog-stickers">
-			{ isTeamMember && stickers?.length > 0 && (
+			{ isAutomattician && stickers?.length > 0 && (
 				<InfoPopover>
 					<BlogStickersList stickers={ stickers } />
 				</InfoPopover>

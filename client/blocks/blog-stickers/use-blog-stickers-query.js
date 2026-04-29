@@ -4,14 +4,17 @@ import wp from 'calypso/lib/wp';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 
 export const useBlogStickersQuery = ( blogId, queryOptions = {} ) => {
-	const { data } = useQuery( readTeamsQuery() );
-	const isAutomattician = isAutomatticTeamMember( data?.teams ?? [] );
+	const { data: teamsData } = useQuery( readTeamsQuery() );
+	const teams = teamsData?.teams ?? [];
+	const isAutomattician = isAutomatticTeamMember( teams );
 
-	return useQuery( {
+	const stickersQuery = useQuery( {
 		queryKey: [ 'blog-stickers', blogId ],
 		queryFn: () => wp.req.get( `/sites/${ blogId }/blog-stickers` ),
 		...queryOptions,
 		enabled: !! blogId && isAutomattician,
 		staleTime: 1000 * 60 * 5,
 	} );
+
+	return { ...stickersQuery, teams, isAutomattician };
 };
