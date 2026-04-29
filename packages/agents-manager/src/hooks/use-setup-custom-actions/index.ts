@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef } from '@wordpress/element';
 import { useNavigate } from 'react-router-dom';
 import { useAgentsManagerContext } from '../../contexts';
 import { AGENTS_MANAGER_STORE } from '../../stores';
+import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 
 interface Props {
@@ -31,10 +32,11 @@ export default function useSetupCustomActions( {
 		return store.getAgentsManagerState();
 	}, [] );
 	const { setIsOpen, setIsDocked } = useDispatch( AGENTS_MANAGER_STORE );
-	const { getActiveSessionId } = useAgentsManagerContext();
+	const { agentConfig, getActiveSessionId } = useAgentsManagerContext();
 	const navigate = useNavigate();
 	const resolveRef = useRef< ( ( state: AgentsManagerChatState ) => void ) | null >( null );
 	const hasFiredReadyRef = useRef( false );
+	const shouldPersistOpenState = ! isReaderChatAgent( agentConfig?.agentId );
 
 	const setChatOpen = useCallback(
 		( shouldOpen: boolean ) => {
@@ -43,7 +45,7 @@ export default function useSetupCustomActions( {
 			}
 
 			if ( ! isDocked || ! canDock ) {
-				return setIsOpen( shouldOpen );
+				return setIsOpen( shouldOpen, shouldPersistOpenState );
 			}
 
 			if ( shouldOpen ) {
@@ -54,7 +56,7 @@ export default function useSetupCustomActions( {
 				closeSidebar();
 			}
 		},
-		[ canDock, closeSidebar, isDocked, openSidebar, setIsOpen ]
+		[ canDock, closeSidebar, isDocked, openSidebar, setIsOpen, shouldPersistOpenState ]
 	);
 
 	const setChatDocked = useCallback(
