@@ -70,6 +70,7 @@ export * from './read-achievements-settings';
 export * from './read-feed';
 export * from './read-list-items';
 export * from './read-lists';
+export * from './read-organizations';
 export * from './read-site';
 export * from './read-tags';
 export * from './reader-atmosphere';

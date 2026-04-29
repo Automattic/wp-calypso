@@ -4,7 +4,6 @@ import conversations from './conversations/reducer';
 import feedSearches from './feed-searches/reducer';
 import feeds from './feeds/reducer';
 import follows from './follows/reducer';
-import organizations from './organizations/reducer';
 import posts from './posts/reducer';
 import recommendedSites from './recommended-sites/reducer';
 import relatedPosts from './related-posts/reducer';
@@ -27,7 +26,6 @@ const combinedReducer = combineReducers( {
 	sites,
 	streams,
 	thumbnails,
-	organizations,
 } );
 const readerReducer = withStorageKey( 'reader', combinedReducer );
 export default readerReducer;
