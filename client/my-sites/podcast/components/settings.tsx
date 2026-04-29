@@ -1,8 +1,3 @@
-import {
-	PLAN_PERSONAL,
-	WPCOM_FEATURES_UPLOAD_AUDIO_FILES,
-	getPlan,
-} from '@automattic/calypso-products';
 import { NoticeBanner } from '@automattic/components';
 import {
 	BaseControl,
@@ -24,7 +19,6 @@ import { useTranslate } from 'i18n-calypso';
 import { pick } from 'lodash';
 import { useCallback, useMemo, useState } from 'react';
 import TermFormDialog from 'calypso/blocks/term-form-dialog';
-import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QueryMedia from 'calypso/components/data/query-media';
 import { decodeEntities } from 'calypso/lib/formatting';
 import PodcastCoverImageSetting from 'calypso/my-sites/site-settings/podcast-cover-image-setting';
@@ -32,8 +26,6 @@ import useTopics from 'calypso/my-sites/site-settings/podcasting-details/use-top
 import wrapSettingsForm from 'calypso/my-sites/site-settings/wrap-settings-form';
 import { useSelector } from 'calypso/state';
 import getMediaItem from 'calypso/state/selectors/get-media-item';
-import { hasLoadedSitePlansFromServer } from 'calypso/state/sites/plans/selectors';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getTerms } from 'calypso/state/terms/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -128,21 +120,15 @@ const PodcastingSettingsForm = ( {
 
 	const siteId = useSelector( getSelectedSiteId );
 	const site = useSelector( getSelectedSite );
-	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	const categories = useSelector(
 		( state ) =>
 			( getTerms( state, siteId ?? 0, 'category' ) as { ID: number; name?: string }[] | null ) ?? []
 	);
-	const plansDataLoaded = useSelector( ( state ) => hasLoadedSitePlansFromServer( state, siteId ) );
 
 	const podcastingCategoryId = fields.podcasting_category_id
 		? Number( fields.podcasting_category_id )
 		: 0;
 	const isPodcastingEnabled = podcastingCategoryId > 0;
-	// Reveal the form for first-time setup (e.g. arriving from Welcome's
-	// "Enable podcasting" CTA) so users can pick a category right away.
-	const [ isEnabling, setIsEnabling ] = useState( ! isPodcastingEnabled );
-	const showSettings = isPodcastingEnabled || isEnabling;
 
 	const isCategoryChanging =
 		! isSavingSettings &&
@@ -150,9 +136,6 @@ const PodcastingSettingsForm = ( {
 		settings &&
 		Number( settings.podcasting_category_id ) > 0 &&
 		podcastingCategoryId !== Number( settings.podcasting_category_id );
-
-	const isAudioUploadEnabled =
-		plansDataLoaded && ( site?.options?.upgraded_filetypes_enabled || isJetpack );
 
 	const disabled = isRequestingSettings || isSavingSettings || isCoverImageUploading;
 
@@ -222,14 +205,12 @@ const PodcastingSettingsForm = ( {
 			}
 
 			if ( isEnabled ) {
-				setIsEnabling( true );
 				if ( ! fields.podcasting_title ) {
 					updateFields( { podcasting_title: settings?.blogname || '' } );
 				}
 				return;
 			}
 
-			setIsEnabling( false );
 			if ( isPodcastingEnabled ) {
 				updateFields( { podcasting_category_id: '0' }, () => submitForm() );
 			}
@@ -247,7 +228,6 @@ const PodcastingSettingsForm = ( {
 	const onCategorySelected = useCallback(
 		( category: { ID: number } ) => {
 			updateFields( { podcasting_category_id: String( category.ID ) }, () => submitForm() );
-			setIsEnabling( false );
 		},
 		[ updateFields, submitForm ]
 	);
@@ -406,7 +386,7 @@ const PodcastingSettingsForm = ( {
 					<CardBody>
 						<ToggleControl
 							__nextHasNoMarginBottom
-							checked={ isPodcastingEnabled || isEnabling }
+							checked={ isPodcastingEnabled }
 							onChange={ onTogglePodcasting }
 							disabled={ disabled }
 							label={ translate( 'Enable podcasting on this site' ) as string }
@@ -443,224 +423,204 @@ const PodcastingSettingsForm = ( {
 					</div>
 				) }
 
-				{ /* Audio upload upsell */ }
-				{ showSettings && plansDataLoaded && ! isAudioUploadEnabled && (
-					<UpsellNudge
-						plan={ PLAN_PERSONAL }
-						title={ translate( 'Upload Audio with WordPress.com %(personalPlanName)s', {
-							args: { personalPlanName: getPlan( PLAN_PERSONAL )?.getTitle() ?? '' },
-						} ) }
-						description={ translate( 'Embed podcast episodes directly from your media library.' ) }
-						feature={ WPCOM_FEATURES_UPLOAD_AUDIO_FILES }
-						event="podcasting_details_upload_audio"
-						tracksImpressionName="calypso_upgrade_nudge_impression"
-						tracksClickName="calypso_upgrade_nudge_cta_click"
-						showIcon
-					/>
-				) }
+				{ /* Category + RSS feed */ }
+				<Card className="site-settings__card podcast__card">
+					<CardHeader>
+						<VStack spacing={ 1 }>
+							<Heading level={ 4 }>{ translate( 'Podcast category' ) }</Heading>
+							<Text variant="muted">
+								{ translate(
+									'Posts in this category are treated as podcast episodes. Add an audio or video block to each one so listeners have something to play.'
+								) }
+							</Text>
+						</VStack>
+					</CardHeader>
+					<CardBody>
+						<VStack spacing={ 6 }>
+							{ ! isPodcastingEnabled && (
+								<Notice status="info" isDismissible={ false }>
+									{ translate( 'Select a category to start your podcast feed.' ) }
+								</Notice>
+							) }
 
-				{ showSettings && (
-					<>
-						{ /* Category + RSS feed */ }
-						<Card className="site-settings__card podcast__card">
-							<CardHeader>
-								<VStack spacing={ 1 }>
-									<Heading level={ 4 }>{ translate( 'Podcast category' ) }</Heading>
-									<Text variant="muted">
-										{ translate(
-											'Posts in this category are treated as podcast episodes. Add an audio or video block to each one so listeners have something to play.'
-										) }
-									</Text>
-								</VStack>
-							</CardHeader>
-							<CardBody>
-								<VStack spacing={ 6 }>
-									{ isEnabling && ! isPodcastingEnabled && (
-										<Notice status="info" isDismissible={ false }>
-											{ translate( 'Select a category to start your podcast feed.' ) }
-										</Notice>
+							<VStack spacing={ 2 }>
+								<SelectControl
+									__nextHasNoMarginBottom
+									__next40pxDefaultSize
+									label={ translate( 'Category' ) as string }
+									hideLabelFromVision
+									value={ podcastingCategoryId ? String( podcastingCategoryId ) : '' }
+									options={ categoryOptions }
+									onChange={ onCategoryDropdownChange }
+									disabled={ disabled }
+								/>
+								<Button
+									variant="link"
+									className="podcast__settings-category-add"
+									onClick={ () => setIsAddCategoryOpen( true ) }
+									disabled={ disabled }
+								>
+									{ translate( 'Create a new category' ) }
+								</Button>
+							</VStack>
+
+							<TermFormDialog
+								showDialog={ isAddCategoryOpen }
+								onClose={ () => setIsAddCategoryOpen( false ) }
+								postType="post"
+								taxonomy="category"
+								onSuccess={ onCategorySelected }
+							/>
+
+							{ isCategoryChanging && (
+								<Notice status="warning" isDismissible={ false }>
+									{ translate(
+										'If you change categories, you will need to resubmit your feed to Apple Podcasts and any other podcasting services.'
 									) }
+								</Notice>
+							) }
+						</VStack>
+					</CardBody>
+				</Card>
 
-									<VStack spacing={ 2 }>
-										<SelectControl
-											__nextHasNoMarginBottom
-											__next40pxDefaultSize
-											label={ translate( 'Category' ) as string }
-											hideLabelFromVision
-											value={ podcastingCategoryId ? String( podcastingCategoryId ) : '' }
-											options={ categoryOptions }
-											onChange={ onCategoryDropdownChange }
-											disabled={ disabled }
-										/>
-										<Button
-											variant="link"
-											className="podcast__settings-category-add"
-											onClick={ () => setIsAddCategoryOpen( true ) }
-											disabled={ disabled }
-										>
-											{ translate( 'Create a new category' ) }
-										</Button>
-									</VStack>
+				{ /* Show details */ }
+				<Card className="site-settings__card podcast__card">
+					<CardHeader>
+						<VStack spacing={ 1 }>
+							<Heading level={ 4 }>{ translate( 'Show details' ) }</Heading>
+							<Text variant="muted">
+								{ translate(
+									'This information appears in podcast apps like Apple Podcasts and Spotify.'
+								) }
+							</Text>
+						</VStack>
+					</CardHeader>
+					<CardBody>
+						<VStack spacing={ 6 }>
+							<div className="podcast__settings-cover">
+								<PodcastCoverImageSetting
+									coverImageId={ Number( fields.podcasting_image_id ?? 0 ) || 0 }
+									coverImageUrl={ fields.podcasting_image ?? '' }
+									onRemove={ onCoverImageRemoved }
+									onSelect={ onCoverImageSelected }
+									onUploadStateChange={ setIsCoverImageUploading }
+									isDisabled={ disabled }
+								/>
+							</div>
 
-									<TermFormDialog
-										showDialog={ isAddCategoryOpen }
-										onClose={ () => setIsAddCategoryOpen( false ) }
-										postType="post"
-										taxonomy="category"
-										onSuccess={ onCategorySelected }
-									/>
+							<TextControl
+								__nextHasNoMarginBottom
+								__next40pxDefaultSize
+								label={ translate( 'Title' ) as string }
+								value={ decodeEntities( fields.podcasting_title ?? '' ) }
+								onChange={ onTextChange( 'podcasting_title' ) }
+								onBlur={ onTextBlur }
+								disabled={ disabled }
+							/>
 
-									{ isCategoryChanging && (
-										<Notice status="warning" isDismissible={ false }>
-											{ translate(
-												'If you change categories, you will need to resubmit your feed to Apple Podcasts and any other podcasting services.'
-											) }
-										</Notice>
-									) }
-								</VStack>
-							</CardBody>
-						</Card>
+							<TextareaControl
+								__nextHasNoMarginBottom
+								label={ translate( 'Summary / Description' ) as string }
+								value={ decodeEntities( fields.podcasting_summary ?? '' ) }
+								onChange={ onTextChange( 'podcasting_summary' ) }
+								onBlur={ onTextBlur }
+								disabled={ disabled }
+								rows={ 4 }
+							/>
 
-						{ /* Show details */ }
-						<Card className="site-settings__card podcast__card">
-							<CardHeader>
-								<VStack spacing={ 1 }>
-									<Heading level={ 4 }>{ translate( 'Show details' ) }</Heading>
-									<Text variant="muted">
-										{ translate(
-											'This information appears in podcast apps like Apple Podcasts and Spotify.'
-										) }
-									</Text>
-								</VStack>
-							</CardHeader>
-							<CardBody>
-								<VStack spacing={ 6 }>
-									<div className="podcast__settings-cover">
-										<PodcastCoverImageSetting
-											coverImageId={ Number( fields.podcasting_image_id ?? 0 ) || 0 }
-											coverImageUrl={ fields.podcasting_image ?? '' }
-											onRemove={ onCoverImageRemoved }
-											onSelect={ onCoverImageSelected }
-											onUploadStateChange={ setIsCoverImageUploading }
-											isDisabled={ disabled }
-										/>
-									</div>
+							<TextControl
+								__nextHasNoMarginBottom
+								__next40pxDefaultSize
+								label={ translate( 'Hosts / Artist / Producer' ) as string }
+								value={ decodeEntities( fields.podcasting_talent_name ?? '' ) }
+								onChange={ onTextChange( 'podcasting_talent_name' ) }
+								onBlur={ onTextBlur }
+								disabled={ disabled }
+							/>
 
-									<TextControl
-										__nextHasNoMarginBottom
-										__next40pxDefaultSize
-										label={ translate( 'Title' ) as string }
-										value={ decodeEntities( fields.podcasting_title ?? '' ) }
-										onChange={ onTextChange( 'podcasting_title' ) }
-										onBlur={ onTextBlur }
-										disabled={ disabled }
-									/>
+							<TextControl
+								__nextHasNoMarginBottom
+								__next40pxDefaultSize
+								label={ translate( 'Copyright' ) as string }
+								value={ decodeEntities( fields.podcasting_copyright ?? '' ) }
+								onChange={ onTextChange( 'podcasting_copyright' ) }
+								onBlur={ onTextBlur }
+								disabled={ disabled }
+							/>
+						</VStack>
+					</CardBody>
+				</Card>
 
-									<TextareaControl
-										__nextHasNoMarginBottom
-										label={ translate( 'Summary / Description' ) as string }
-										value={ decodeEntities( fields.podcasting_summary ?? '' ) }
-										onChange={ onTextChange( 'podcasting_summary' ) }
-										onBlur={ onTextBlur }
-										disabled={ disabled }
-										rows={ 4 }
-									/>
+				{ /* Feed metadata */ }
+				<Card className="site-settings__card podcast__card">
+					<CardHeader>
+						<VStack spacing={ 1 }>
+							<Heading level={ 4 }>{ translate( 'Feed settings' ) }</Heading>
+							<Text variant="muted">
+								{ translate( 'Configure how your podcast appears in directories and apps.' ) }
+							</Text>
+						</VStack>
+					</CardHeader>
+					<CardBody>
+						<VStack spacing={ 6 }>
+							<BaseControl
+								__nextHasNoMarginBottom
+								id="podcast-topics"
+								label={ translate( 'Podcast topics' ) as string }
+								help={
+									translate(
+										'Choose how your podcast should be categorized within Apple Podcasts and other podcasting services. Pick up to three.'
+									) as string
+								}
+							>
+								<FormTokenField
+									__nextHasNoMarginBottom
+									__next40pxDefaultSize
+									__experimentalExpandOnFocus
+									__experimentalShowHowTo={ false }
+									label=""
+									value={ selectedTopicLabels }
+									suggestions={ topicSuggestions }
+									maxLength={ 3 }
+									onChange={ onTopicsChange }
+									disabled={ disabled }
+								/>
+							</BaseControl>
 
-									<TextControl
-										__nextHasNoMarginBottom
-										__next40pxDefaultSize
-										label={ translate( 'Hosts / Artist / Producer' ) as string }
-										value={ decodeEntities( fields.podcasting_talent_name ?? '' ) }
-										onChange={ onTextChange( 'podcasting_talent_name' ) }
-										onBlur={ onTextBlur }
-										disabled={ disabled }
-									/>
+							<SelectControl
+								__nextHasNoMarginBottom
+								__next40pxDefaultSize
+								label={ translate( 'Explicit content' ) as string }
+								value={ String( fields.podcasting_explicit ?? 'no' ) }
+								options={
+									[
+										{ value: 'no', label: translate( 'No' ) as string },
+										{ value: 'yes', label: translate( 'Yes' ) as string },
+										{ value: 'clean', label: translate( 'Clean' ) as string },
+									] as PodcastTopicOption[]
+								}
+								onChange={ onExplicitChange }
+								disabled={ disabled }
+							/>
 
-									<TextControl
-										__nextHasNoMarginBottom
-										__next40pxDefaultSize
-										label={ translate( 'Copyright' ) as string }
-										value={ decodeEntities( fields.podcasting_copyright ?? '' ) }
-										onChange={ onTextChange( 'podcasting_copyright' ) }
-										onBlur={ onTextBlur }
-										disabled={ disabled }
-									/>
-								</VStack>
-							</CardBody>
-						</Card>
-
-						{ /* Feed metadata */ }
-						<Card className="site-settings__card podcast__card">
-							<CardHeader>
-								<VStack spacing={ 1 }>
-									<Heading level={ 4 }>{ translate( 'Feed settings' ) }</Heading>
-									<Text variant="muted">
-										{ translate( 'Configure how your podcast appears in directories and apps.' ) }
-									</Text>
-								</VStack>
-							</CardHeader>
-							<CardBody>
-								<VStack spacing={ 6 }>
-									<BaseControl
-										__nextHasNoMarginBottom
-										id="podcast-topics"
-										label={ translate( 'Podcast topics' ) as string }
-										help={
-											translate(
-												'Choose how your podcast should be categorized within Apple Podcasts and other podcasting services. Pick up to three.'
-											) as string
-										}
-									>
-										<FormTokenField
-											__nextHasNoMarginBottom
-											__next40pxDefaultSize
-											__experimentalExpandOnFocus
-											__experimentalShowHowTo={ false }
-											label=""
-											value={ selectedTopicLabels }
-											suggestions={ topicSuggestions }
-											maxLength={ 3 }
-											onChange={ onTopicsChange }
-											disabled={ disabled }
-										/>
-									</BaseControl>
-
-									<SelectControl
-										__nextHasNoMarginBottom
-										__next40pxDefaultSize
-										label={ translate( 'Explicit content' ) as string }
-										value={ String( fields.podcasting_explicit ?? 'no' ) }
-										options={
-											[
-												{ value: 'no', label: translate( 'No' ) as string },
-												{ value: 'yes', label: translate( 'Yes' ) as string },
-												{ value: 'clean', label: translate( 'Clean' ) as string },
-											] as PodcastTopicOption[]
-										}
-										onChange={ onExplicitChange }
-										disabled={ disabled }
-									/>
-
-									<TextControl
-										__nextHasNoMarginBottom
-										__next40pxDefaultSize
-										type="email"
-										label={ translate( 'Email address' ) as string }
-										help={
-											translate(
-												'Included in your feed so podcast directories can verify ownership. Most require it for submission.'
-											) as string
-										}
-										value={ decodeEntities( fields.podcasting_email ?? '' ) }
-										onChange={ onTextChange( 'podcasting_email' ) }
-										onBlur={ onTextBlur }
-										disabled={ disabled }
-									/>
-								</VStack>
-							</CardBody>
-						</Card>
-					</>
-				) }
+							<TextControl
+								__nextHasNoMarginBottom
+								__next40pxDefaultSize
+								type="email"
+								label={ translate( 'Email address' ) as string }
+								help={
+									translate(
+										'Included in your feed so podcast directories can verify ownership. Most require it for submission.'
+									) as string
+								}
+								value={ decodeEntities( fields.podcasting_email ?? '' ) }
+								onChange={ onTextChange( 'podcasting_email' ) }
+								onBlur={ onTextBlur }
+								disabled={ disabled }
+							/>
+						</VStack>
+					</CardBody>
+				</Card>
 			</VStack>
 		</form>
 	);
