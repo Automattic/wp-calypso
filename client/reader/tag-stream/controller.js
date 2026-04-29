@@ -12,7 +12,6 @@ import {
 } from 'calypso/reader/controller-helper';
 import { recordTrack } from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import getReaderTagBySlug from 'calypso/state/reader/tags/selectors/get-reader-tag-by-slug';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import renderHeaderSection from '../lib/header-section';
@@ -31,9 +30,9 @@ export const tagListing = ( context, next ) => {
 		trim( context.params.tag ).toLowerCase().replace( /\s+/g, '-' ).replace( /-{2,}/g, '-' )
 	);
 	const state = context.store.getState();
-	const tag = getReaderTagBySlug( state, tagSlug );
-	const tagTitle =
-		tag?.title || capitalPDangit( titlecase( trim( context.params.tag ) ).replace( /[-_]/g, ' ' ) );
+	const tagTitle = capitalPDangit(
+		titlecase( trim( context.params.tag ) ).replace( /[-_]/g, ' ' )
+	);
 
 	const encodedTag = encodeURIComponent( tagSlug ).toLowerCase();
 

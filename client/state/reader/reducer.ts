@@ -13,7 +13,6 @@ import saved from './saved/reducer';
 import siteBlocks from './site-blocks/reducer';
 import sites from './sites/reducer';
 import streams from './streams/reducer';
-import tags from './tags/reducer';
 import thumbnails from './thumbnails/reducer';
 
 const combinedReducer = combineReducers( {
@@ -29,7 +28,6 @@ const combinedReducer = combineReducers( {
 	siteBlocks,
 	sites,
 	streams,
-	tags,
 	thumbnails,
 	organizations,
 } );
