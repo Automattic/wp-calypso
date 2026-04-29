@@ -2,6 +2,7 @@ import { Button } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { intlFormat } from 'date-fns';
 import Notice from '../../../components/notice';
+import { classifyPurchaseForCopy } from './classify-purchase-for-copy';
 import type { Purchase } from '@automattic/api-core';
 
 /**
@@ -10,33 +11,20 @@ import type { Purchase } from '@automattic/api-core';
  * remove-success snackbar.
  */
 export function getProductNoun( purchase: Purchase ): string {
-	if ( purchase.is_plan ) {
-		return __( 'plan' );
+	switch ( classifyPurchaseForCopy( purchase ) ) {
+		case 'plan':
+			return __( 'plan' );
+		case 'domain':
+			return __( 'domain' );
+		case 'email':
+			return __( 'email' );
+		case 'marketplace_theme':
+			return __( 'theme' );
+		case 'marketplace_plugin':
+			return __( 'plugin' );
+		default:
+			return __( 'subscription' );
 	}
-	if ( purchase.is_domain_registration ) {
-		return __( 'domain' );
-	}
-	const slug = purchase.product_slug ?? '';
-	if (
-		slug.startsWith( 'wp_titan_mail' ) ||
-		slug === 'gapps' ||
-		slug === 'gapps_extra_license' ||
-		slug === 'gapps_business' ||
-		slug === 'gapps_business_extra_license' ||
-		slug.startsWith( 'wp_google_workspace_' )
-	) {
-		return __( 'email' );
-	}
-	if ( purchase.product_type === 'marketplace_theme' ) {
-		return __( 'theme' );
-	}
-	if (
-		purchase.product_type?.startsWith( 'marketplace' ) ||
-		purchase.product_type === 'saas_plugin'
-	) {
-		return __( 'plugin' );
-	}
-	return __( 'subscription' );
 }
 
 /**
