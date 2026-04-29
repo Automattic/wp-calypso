@@ -44,9 +44,11 @@ export function FeedListEmpty( {
 			return (
 				<EmptyContent
 					title={ translate( 'Reconnect needed' ) }
-					line={ translate( 'Your %(protocol)s connection needs to be reconnected. Coming soon.', {
+					line={ translate( 'Your %(protocol)s connection needs to be reconnected.', {
 						args: { protocol: protocolLabel },
 					} ) }
+					action={ protocolHomeLabel }
+					actionURL={ protocolHomeURL }
 				/>
 			);
 		case 'rate_limited': {

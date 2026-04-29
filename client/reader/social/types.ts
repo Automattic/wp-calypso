@@ -92,6 +92,14 @@ export type SocialEmbed =
 	| SocialEmbedQuote
 	| SocialEmbedQuoteWithMedia;
 
+export interface SocialContentWarning {
+	// Mastodon's content-warning text. Empty string means "marked
+	// sensitive but no specific reason given" — the post-card body
+	// still hides content behind a generic "Sensitive content" gate.
+	spoiler_text: string;
+	sensitive: boolean;
+}
+
 export interface SocialPost {
 	uri: string;
 	permalink: string;
@@ -106,6 +114,9 @@ export interface SocialPost {
 	reason: SocialReason | null;
 	embed: SocialEmbed | null;
 	counts: SocialCounts;
+	// Optional content warning — undefined for protocols that don't
+	// expose them (atmosphere) or for posts that aren't flagged.
+	content_warning?: SocialContentWarning;
 }
 
 // Narrow error type covering only the kinds FeedListEmpty switches on.

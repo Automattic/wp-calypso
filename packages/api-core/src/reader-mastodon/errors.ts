@@ -29,6 +29,12 @@ export function classifyMastodonError( raw: unknown ): MastodonError {
 	if ( ! isWpErrorLike( raw ) ) {
 		return { kind: 'unknown', cause: raw };
 	}
+	const rateLimited = ( source: WpErrorLike ): MastodonError => {
+		const retryAfter = source.data?.retry_after;
+		return typeof retryAfter === 'number'
+			? { kind: 'rate_limited', retry_after: retryAfter }
+			: { kind: 'rate_limited' };
+	};
 	switch ( raw.error ) {
 		case 'invalid_instance':
 			return { kind: 'invalid_instance' };
@@ -41,13 +47,8 @@ export function classifyMastodonError( raw: unknown ): MastodonError {
 		case 'mastodon_not_found':
 			return { kind: 'not_found' };
 		case 'rate_limited':
-			return { kind: 'rate_limited' };
-		case 'mastodon_rate_limited': {
-			const retryAfter = raw.data?.retry_after;
-			return typeof retryAfter === 'number'
-				? { kind: 'rate_limited', retry_after: retryAfter }
-				: { kind: 'rate_limited' };
-		}
+		case 'mastodon_rate_limited':
+			return rateLimited( raw );
 		case 'upstream_unavailable':
 		case 'mastodon_upstream_unavailable':
 			return { kind: 'upstream_unavailable' };
@@ -56,7 +57,7 @@ export function classifyMastodonError( raw: unknown ): MastodonError {
 	}
 	const statusCode = raw.statusCode ?? raw.status;
 	if ( statusCode === 429 ) {
-		return { kind: 'rate_limited' };
+		return rateLimited( raw );
 	}
 	return { kind: 'unknown', cause: raw };
 }

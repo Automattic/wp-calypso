@@ -104,6 +104,23 @@ export const mastodonTimelineInfiniteQuery = ( connectionId: number ) =>
 		enabled: connectionId > 0,
 		staleTime: 30_000,
 		gcTime: 5 * 60_000,
+		// Don't retry terminal errors — they won't resolve on their own
+		// and a 3x retry just delays the "Reconnect needed" / "Connection
+		// not found" copy. Transient errors (rate limits, upstream
+		// outages) get one extra attempt with backoff keyed off
+		// retry_after where present.
+		retry: ( failureCount, error ) => {
+			if ( error.kind === 'rate_limited' || error.kind === 'upstream_unavailable' ) {
+				return failureCount < 2;
+			}
+			return false;
+		},
+		retryDelay: ( _attempt, error ) => {
+			if ( error.kind === 'rate_limited' && error.retry_after !== undefined ) {
+				return Math.min( error.retry_after * 1000, 30_000 );
+			}
+			return 2_000;
+		},
 	} );
 
 export function useMastodonTimelineInfiniteQuery( connectionId: number ) {

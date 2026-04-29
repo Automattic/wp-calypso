@@ -13,16 +13,17 @@ const EMBED: SocialEmbedAudio = {
 };
 
 describe( 'PostCardEmbedAudio', () => {
-	it( 'renders an audio element with controls', () => {
+	it( 'renders native controls and exposes alt as the accessible name', () => {
 		render( <PostCardEmbedAudio embed={ EMBED } /> );
-		const audio = document.querySelector( 'audio' ) as HTMLAudioElement;
-		expect( audio ).not.toBeNull();
+		const audio = screen.getByLabelText( 'Voice memo about cats' ) as HTMLAudioElement;
 		expect( audio.controls ).toBe( true );
 		expect( audio.src ).toContain( 'clip.mp3' );
 	} );
 
-	it( 'sets aria-label to the alt text', () => {
-		render( <PostCardEmbedAudio embed={ EMBED } /> );
-		expect( screen.getByLabelText( 'Voice memo about cats' ) ).toBeVisible();
+	it( 'omits aria-label when alt is empty (avoids invalid aria-label="")', () => {
+		const { container } = render( <PostCardEmbedAudio embed={ { ...EMBED, alt: '' } } /> );
+		const audio = container.querySelector( 'audio' ) as HTMLAudioElement;
+		expect( audio ).not.toBeNull();
+		expect( audio.hasAttribute( 'aria-label' ) ).toBe( false );
 	} );
 } );

@@ -126,17 +126,21 @@ describe( 'Mastodon TimelinePanel', () => {
 
 	it( 'fires error_shown on upstream_unavailable + recovers via Retry', async () => {
 		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		// upstream_unavailable retries up to 2 times (per the hook's retry
+		// policy), so allow up to 3 502s before the failure surfaces.
 		nock( BASE )
 			.get( PATH )
 			.query( {} )
+			.times( 3 )
 			.reply( 502, { error: 'mastodon_upstream_unavailable', message: 'down' } );
 
 		const user = userEvent.setup();
 		renderWithProvider( <TimelinePanel connection={ CONNECTION } />, {
 			queryClient: makeQueryClient(),
 		} );
-		await waitFor( () =>
-			expect( screen.getAllByText( /unreachable/i ).length ).toBeGreaterThan( 0 )
+		await waitFor(
+			() => expect( screen.getAllByText( /unreachable/i ).length ).toBeGreaterThan( 0 ),
+			{ timeout: 10_000 }
 		);
 		expect( spy ).toHaveBeenCalledWith(
 			'calypso_reader_mastodon_timeline_error_shown',
@@ -153,7 +157,7 @@ describe( 'Mastodon TimelinePanel', () => {
 			'calypso_reader_mastodon_timeline_retry_clicked',
 			expect.objectContaining( { connection_id: 9, error_kind: 'upstream_unavailable' } )
 		);
-	} );
+	}, 15_000 );
 
 	it( 'fires post_clicked when the timestamp anchor is clicked', async () => {
 		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
@@ -166,6 +170,9 @@ describe( 'Mastodon TimelinePanel', () => {
 			queryClient: makeQueryClient(),
 		} );
 		await waitFor( () => expect( screen.getByText( 'hello' ) ).toBeVisible() );
+		// Mastodon mapper sets `permalink: item.url`. The clickable timestamp
+		// anchor uses permalink; the analytics post_uri prop reflects
+		// `post.uri` which is now `item.id`.
 		const expectedHref = 'https://mastodon.social/@alice/1';
 		const link = screen
 			.getAllByRole( 'link' )
@@ -174,7 +181,7 @@ describe( 'Mastodon TimelinePanel', () => {
 		await user.click( link as HTMLElement );
 		expect( spy ).toHaveBeenCalledWith(
 			'calypso_reader_mastodon_timeline_post_clicked',
-			expect.objectContaining( { connection_id: 9, post_uri: expectedHref } )
+			expect.objectContaining( { connection_id: 9, post_uri: '1' } )
 		);
 	} );
 

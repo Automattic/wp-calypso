@@ -27,8 +27,11 @@ export function mapMastodonFeedItemToSocialPost(
 	item: MastodonFeedItem,
 	options: MapMastodonOptions
 ): SocialPost {
-	return {
-		uri: item.url,
+	const post: SocialPost = {
+		// `id` is the Mastodon status id (unique per post per instance).
+		// `url` is the canonical web URL — two boosts of the same post
+		// share a `url`, so it's not safe to use as a React key.
+		uri: item.id,
 		permalink: item.url,
 		text: '',
 		html: item.content,
@@ -56,6 +59,13 @@ export function mapMastodonFeedItemToSocialPost(
 		},
 		embed: mapMedia( item.media ),
 	};
+	if ( item.sensitive ) {
+		post.content_warning = {
+			spoiler_text: item.spoiler_text,
+			sensitive: true,
+		};
+	}
+	return post;
 }
 
 function mapAccount( account: MastodonTimelineAccount, instance: string ): SocialPost[ 'author' ] {

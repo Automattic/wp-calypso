@@ -52,7 +52,7 @@ describe( 'PostCardEmbed dispatcher', () => {
 			<PostCardEmbed
 				embed={ {
 					type: 'quote',
-					post: { type: 'not_found', uri: 'at://x' },
+					post: { type: 'not_found', uri: 'at://x', reason: 'notfound' },
 				} }
 				parentPostUri="at://parent"
 			/>
@@ -69,7 +69,7 @@ describe( 'PostCardEmbed dispatcher', () => {
 			aspect_ratio: null,
 		};
 		render( <PostCardEmbed embed={ embed } parentPostUri="x" /> );
-		expect( document.querySelector( 'video.social-post-card-embed-gifv' ) ).not.toBeNull();
+		expect( ( screen.getByLabelText( 'gif' ) as HTMLElement ).tagName ).toBe( 'VIDEO' );
 	} );
 
 	it( 'dispatches audio embeds to PostCardEmbedAudio', () => {
@@ -80,6 +80,6 @@ describe( 'PostCardEmbed dispatcher', () => {
 			duration_seconds: null,
 		};
 		render( <PostCardEmbed embed={ embed } parentPostUri="x" /> );
-		expect( document.querySelector( 'audio.social-post-card-embed-audio' ) ).not.toBeNull();
+		expect( ( screen.getByLabelText( 'audio' ) as HTMLElement ).tagName ).toBe( 'AUDIO' );
 	} );
 } );

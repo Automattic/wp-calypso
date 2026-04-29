@@ -26,10 +26,33 @@ const FIXTURE: MastodonFeedItem = {
 const OPTS = { instance: 'mastodon.social' };
 
 describe( 'mapMastodonFeedItemToSocialPost', () => {
-	it( 'sets permalink and uri from url', () => {
+	it( 'sets uri from id and permalink from url', () => {
 		const post = mapMastodonFeedItemToSocialPost( FIXTURE, OPTS );
+		// uri must be the status id so two boosts of the same post (sharing
+		// `url`) produce distinct React keys.
+		expect( post.uri ).toBe( '111111111111111111' );
 		expect( post.permalink ).toBe( 'https://mastodon.social/@alice/111111111111111111' );
-		expect( post.uri ).toBe( 'https://mastodon.social/@alice/111111111111111111' );
+	} );
+
+	it( 'omits content_warning when sensitive is false', () => {
+		const post = mapMastodonFeedItemToSocialPost( FIXTURE, OPTS );
+		expect( post.content_warning ).toBeUndefined();
+	} );
+
+	it( 'surfaces content_warning with spoiler text when sensitive is true', () => {
+		const post = mapMastodonFeedItemToSocialPost(
+			{ ...FIXTURE, sensitive: true, spoiler_text: 'NSFW' },
+			OPTS
+		);
+		expect( post.content_warning ).toEqual( { sensitive: true, spoiler_text: 'NSFW' } );
+	} );
+
+	it( 'surfaces content_warning with empty spoiler when sensitive is true with no reason', () => {
+		const post = mapMastodonFeedItemToSocialPost(
+			{ ...FIXTURE, sensitive: true, spoiler_text: '' },
+			OPTS
+		);
+		expect( post.content_warning ).toEqual( { sensitive: true, spoiler_text: '' } );
 	} );
 
 	it( 'qualifies a local acct with the connection instance', () => {

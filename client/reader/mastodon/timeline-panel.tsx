@@ -4,12 +4,15 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { UnknownAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
-import { SocialFeedList, SocialPostCard } from 'calypso/reader/social';
-import { SocialAnalyticsProvider } from 'calypso/reader/social/components/post-card/analytics-context';
-import { mapMastodonFeedItemToSocialPost } from 'calypso/reader/social/mappers/mastodon';
+import {
+	SocialAnalyticsProvider,
+	SocialFeedList,
+	SocialPostCard,
+	mapMastodonFeedItemToSocialPost,
+} from 'calypso/reader/social';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import type { MastodonConnection, MastodonError, MastodonFeedItem } from '@automattic/api-core';
-import type { SocialError, SocialPost } from 'calypso/reader/social/types';
+import type { SocialError, SocialPost } from 'calypso/reader/social';
 import type { AppState } from 'calypso/types';
 
 interface TimelinePanelProps {
@@ -152,5 +155,3 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 		</SocialAnalyticsProvider>
 	);
 }
-
-export default TimelinePanel;

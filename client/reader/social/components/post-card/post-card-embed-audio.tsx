@@ -5,6 +5,9 @@ interface Props {
 }
 
 export function PostCardEmbedAudio( { embed }: Props ) {
+	// `aria-label=""` is invalid; omit when alt is empty so the element
+	// has no accessible name rather than a broken empty one.
+	const labelProps = embed.alt ? { 'aria-label': embed.alt } : {};
 	return (
 		// Mastodon audio attachments don't carry caption tracks, so a
 		// <track kind="captions"> is impossible here. The alt text is
@@ -13,9 +16,9 @@ export function PostCardEmbedAudio( { embed }: Props ) {
 		<audio
 			className="social-post-card-embed-audio"
 			src={ embed.src }
-			aria-label={ embed.alt }
 			controls
 			preload="metadata"
+			{ ...labelProps }
 		/>
 	);
 }
