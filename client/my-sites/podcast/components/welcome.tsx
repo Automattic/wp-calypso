@@ -1,3 +1,9 @@
+import {
+	isBusinessPlan,
+	isEcommercePlan,
+	isPersonalPlan,
+	isPremiumPlan,
+} from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { PlanPrice } from '@automattic/components';
 import {
@@ -12,28 +18,44 @@ import { Icon, audio, check, layout, megaphone } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import getSitePlanSlug from 'calypso/state/sites/selectors/get-site-plan-slug';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-export type PlanTier = 'free' | 'personal' | 'premium' | 'business';
+type PlanSlug = 'personal' | 'premium' | 'business';
+type PlanTier = 'free' | PlanSlug;
+type Translate = ReturnType< typeof useTranslate >;
 
-interface WelcomeProps {
-	planTier: PlanTier;
-}
+const getPlanTier = ( planSlug: string | null ): PlanTier => {
+	if ( ! planSlug ) {
+		return 'free';
+	}
+	if ( isBusinessPlan( planSlug ) || isEcommercePlan( planSlug ) ) {
+		return 'business';
+	}
+	if ( isPremiumPlan( planSlug ) ) {
+		return 'premium';
+	}
+	if ( isPersonalPlan( planSlug ) ) {
+		return 'personal';
+	}
+	return 'free';
+};
 
 interface PlanDef {
-	slug: 'personal' | 'premium' | 'business';
+	slug: PlanSlug;
 	name: string;
 	blurb: string;
 	price: number;
 	features: string[];
 }
 
-type Translate = ReturnType< typeof useTranslate >;
+type PlanCard = { plan: PlanDef; label: 'your-plan' | 'recommended' | null };
 
-const getPlans = (
-	translate: Translate
-): Record< 'personal' | 'premium' | 'business', PlanDef > => ( {
-	personal: {
+// Show the user's plan + the next one up. Free sees Personal + Premium (Recommended).
+// On paid plans the upgrade target is shown without a "Recommended" push.
+// Business sees only Business.
+function getPlanCards( tier: PlanTier, translate: Translate ): PlanCard[] {
+	const personal: PlanDef = {
 		slug: 'personal',
 		name: translate( 'Personal' ) as string,
 		blurb: translate( 'Run a real podcast with native tools and stats.' ) as string,
@@ -45,8 +67,8 @@ const getPlans = (
 			translate( 'Episode block' ) as string,
 			translate( 'Episode scaffolding on publish' ) as string,
 		],
-	},
-	premium: {
+	};
+	const premium: PlanDef = {
 		slug: 'premium',
 		name: translate( 'Premium' ) as string,
 		blurb: translate( 'Add AI tools and self-hosted video to your show.' ) as string,
@@ -57,8 +79,8 @@ const getPlans = (
 			translate( 'Chapter markers' ) as string,
 			translate( 'Self-hosted video with VideoPress' ) as string,
 		],
-	},
-	business: {
+	};
+	const business: PlanDef = {
 		slug: 'business',
 		name: translate( 'Business' ) as string,
 		blurb: translate( 'Scale your podcast with full hosting and developer tools.' ) as string,
@@ -68,35 +90,27 @@ const getPlans = (
 			translate( 'Priority 24/7 support' ) as string,
 			translate( 'SFTP, WP-CLI, and GitHub Deployments' ) as string,
 		],
-	},
-} );
+	};
 
-// Show the user's plan + the next one up. Free sees Personal + Premium (Recommended).
-// On paid plans the upgrade target is shown without a "Recommended" push.
-// Business sees only Business.
-function getPlanCards(
-	tier: PlanTier,
-	plans: Record< 'personal' | 'premium' | 'business', PlanDef >
-): { plan: PlanDef; label: 'your-plan' | 'recommended' | null }[] {
-	if ( tier === 'free' ) {
-		return [
-			{ plan: plans.personal, label: null },
-			{ plan: plans.premium, label: 'recommended' },
-		];
+	switch ( tier ) {
+		case 'free':
+			return [
+				{ plan: personal, label: null },
+				{ plan: premium, label: 'recommended' },
+			];
+		case 'personal':
+			return [
+				{ plan: personal, label: 'your-plan' },
+				{ plan: premium, label: null },
+			];
+		case 'premium':
+			return [
+				{ plan: premium, label: 'your-plan' },
+				{ plan: business, label: null },
+			];
+		case 'business':
+			return [ { plan: business, label: 'your-plan' } ];
 	}
-	if ( tier === 'personal' ) {
-		return [
-			{ plan: plans.personal, label: 'your-plan' },
-			{ plan: plans.premium, label: null },
-		];
-	}
-	if ( tier === 'premium' ) {
-		return [
-			{ plan: plans.premium, label: 'your-plan' },
-			{ plan: plans.business, label: null },
-		];
-	}
-	return [ { plan: plans.business, label: 'your-plan' } ];
 }
 
 const getBenefits = (
@@ -147,36 +161,27 @@ const getSteps = ( translate: Translate ): { number: string; title: string; body
 	},
 ];
 
-// Mock episodes for the hero preview
-const getSampleShow = ( translate: Translate ) => ( {
-	title: translate( 'Far From Home' ) as string,
-	host: 'Maya Chen',
-} );
-
-const getSampleEpisodes = ( translate: Translate ) => [
-	{
-		number: 4,
-		title: translate( 'Lost in Lisbon: how getting turned around saved my trip' ) as string,
-		duration: translate( '38 min' ) as string,
-	},
-	{
-		number: 3,
-		title: translate( 'Eating my way through Oaxaca' ) as string,
-		duration: translate( '45 min' ) as string,
-	},
-];
-
-function Welcome( { planTier }: WelcomeProps ) {
+function Welcome() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const siteSlug = useSelector( getSelectedSiteSlug );
+	const siteId = useSelector( getSelectedSiteId );
+	const planSlug = useSelector( ( state ) => getSitePlanSlug( state, siteId ) );
+	const planTier = getPlanTier( planSlug );
 
-	const plans = getPlans( translate );
-	const cards = getPlanCards( planTier, plans );
+	const cards = getPlanCards( planTier, translate );
 	const benefits = getBenefits( translate );
 	const steps = getSteps( translate );
-	const sampleShow = getSampleShow( translate );
-	const sampleEpisodes = getSampleEpisodes( translate );
+	const sampleEpisodes = [
+		{
+			title: translate( 'Lost in Lisbon: how getting turned around saved my trip' ) as string,
+			duration: translate( '38 min' ) as string,
+		},
+		{
+			title: translate( 'Eating my way through Oaxaca' ) as string,
+			duration: translate( '45 min' ) as string,
+		},
+	];
 	const isFree = planTier === 'free';
 	const pricingTitle = isFree
 		? ( translate( 'Get more out of podcasting with a plan upgrade' ) as string )
@@ -191,23 +196,22 @@ function Welcome( { planTier }: WelcomeProps ) {
 
 	// Redirect through Calypso checkout, then back to /podcasting so the user can
 	// click Enable on their now-eligible plan.
-	const goToCheckout = ( planSlug: 'personal' | 'premium' | 'business' ) => {
+	const goToCheckout = ( targetPlan: PlanSlug ) => {
 		dispatch(
 			recordTracksEvent( 'calypso_podcast_upgrade_clicked', {
-				plan_slug: planSlug,
+				plan_slug: targetPlan,
 				current_tier: planTier,
 			} )
 		);
 		const returnTo = siteSlug ? `/podcasting/${ siteSlug }` : '/podcasting';
 		const path = siteSlug
-			? `/checkout/${ siteSlug }/${ planSlug }?redirect_to=${ encodeURIComponent( returnTo ) }`
-			: `/checkout/${ planSlug }`;
+			? `/checkout/${ siteSlug }/${ targetPlan }?redirect_to=${ encodeURIComponent( returnTo ) }`
+			: `/checkout/${ targetPlan }`;
 		page.show( path );
 	};
 
 	return (
 		<VStack spacing={ 8 } className="podcast__welcome">
-			{ /* Hero */ }
 			<section className="podcast__welcome-hero">
 				<VStack spacing={ 4 } className="podcast__welcome-hero-copy">
 					<h2 className="podcast__welcome-title">
@@ -233,9 +237,9 @@ function Welcome( { planTier }: WelcomeProps ) {
 									<Icon icon={ audio } />
 								</span>
 								<VStack spacing={ 0 }>
-									<Text weight={ 600 }>{ sampleShow.title }</Text>
+									<Text weight={ 600 }>{ translate( 'Far From Home' ) }</Text>
 									<Text variant="muted" size={ 12 }>
-										{ translate( 'by %(host)s', { args: { host: sampleShow.host } } ) }
+										{ translate( 'by %(host)s', { args: { host: 'Maya Chen' } } ) }
 									</Text>
 									<Text variant="muted" size={ 11 }>
 										{ translate( 'Apple Podcasts · Spotify · Overcast', {
@@ -247,7 +251,7 @@ function Welcome( { planTier }: WelcomeProps ) {
 							</HStack>
 							<VStack as="ul" spacing={ 1 } className="podcast__welcome-hero-preview-episodes">
 								{ sampleEpisodes.map( ( ep ) => (
-									<HStack as="li" key={ ep.number } alignment="center" spacing={ 2 }>
+									<HStack as="li" key={ ep.title } alignment="center" spacing={ 2 }>
 										<Text size={ 11 } variant="muted">
 											▶
 										</Text>
@@ -263,7 +267,6 @@ function Welcome( { planTier }: WelcomeProps ) {
 				</Card>
 			</section>
 
-			{ /* Pricing */ }
 			<section className="podcast__welcome-pricing">
 				<header className="podcast__section-header">
 					<h2 className="podcast__section-heading">{ pricingTitle }</h2>
@@ -331,7 +334,6 @@ function Welcome( { planTier }: WelcomeProps ) {
 				</HStack>
 			</section>
 
-			{ /* Benefits */ }
 			<HStack alignment="stretch" spacing={ 4 } wrap>
 				{ benefits.map( ( b ) => (
 					<Card
@@ -354,7 +356,6 @@ function Welcome( { planTier }: WelcomeProps ) {
 				) ) }
 			</HStack>
 
-			{ /* How it works */ }
 			<Card>
 				<CardBody>
 					<VStack spacing={ 5 }>

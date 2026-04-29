@@ -22,17 +22,12 @@ import useAccessGate from './hooks/use-access-gate';
 
 import './style.scss';
 
-type PodcastSection = 'episodes' | 'distribution' | 'settings';
+const VALID_SECTIONS = [ 'episodes', 'distribution', 'settings' ] as const;
+type PodcastSection = ( typeof VALID_SECTIONS )[ number ];
 
 type PodcastMainProps = {
 	section?: string;
 };
-
-const VALID_SECTIONS: readonly PodcastSection[] = [
-	'episodes',
-	'distribution',
-	'settings',
-] as const;
 
 const isValidSection = ( s: string | undefined ): s is PodcastSection =>
 	!! s && ( VALID_SECTIONS as readonly string[] ).includes( s );
@@ -42,15 +37,17 @@ const PodcastMain = ( { section }: PodcastMainProps ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const accessGate = useAccessGate();
-	// Match the Episodes-tab resolution: prefer the legacy setting, then fall
-	// back to a category named "Podcast" so sites with episodes already
-	// flowing through that term land on Episodes by default.
+	// If podcasting_category_id is set, trust it (0 = user disabled). Only
+	// when the setting is missing do we fall back to a "Podcast" category
+	// heuristic so sites with episodes already flowing through that term
+	// land on Episodes by default.
 	const isSetUp = useSelector( ( state ) => {
 		if ( ! siteId ) {
 			return false;
 		}
-		if ( getPodcastingCategoryId( state, siteId ) ) {
-			return true;
+		const categoryId = getPodcastingCategoryId( state, siteId );
+		if ( categoryId !== null ) {
+			return Number( categoryId ) > 0;
 		}
 		const terms = getTerms( state, siteId, 'category' );
 		return Array.isArray( terms )
@@ -58,14 +55,14 @@ const PodcastMain = ( { section }: PodcastMainProps ) => {
 			: false;
 	} );
 	// True once we have a definitive answer for `isSetUp` — either the
-	// setting is set, or the terms list has loaded. Used to suppress a
-	// welcome → tabs flash on the bare /podcasting/[site] URL while data
-	// is still in flight.
+	// setting has loaded (any value, including 0), or the terms list has
+	// loaded. Used to suppress a welcome → tabs flash on the bare
+	// /podcasting/[site] URL while data is still in flight.
 	const isSetupResolved = useSelector( ( state ) => {
 		if ( ! siteId ) {
 			return true;
 		}
-		if ( getPodcastingCategoryId( state, siteId ) ) {
+		if ( getPodcastingCategoryId( state, siteId ) !== null ) {
 			return true;
 		}
 		return Array.isArray( getTerms( state, siteId, 'category' ) );
@@ -151,14 +148,13 @@ const PodcastMain = ( { section }: PodcastMainProps ) => {
 		}
 	};
 
-	// Render nothing until we know whether podcasting is set up — prevents a
-	// Welcome flash before terms/site-settings resolve and we switch to tabs.
-	const isWaitingForSetup = ! isSetupResolved;
-
 	let pageContent;
 	if ( accessGate ) {
 		pageContent = accessGate;
-	} else if ( isWaitingForSetup ) {
+	} else if ( ! isSetupResolved ) {
+		// Render nothing until we know whether podcasting is set up — prevents
+		// a Welcome flash before terms/site-settings resolve and we switch to
+		// tabs.
 		pageContent = null;
 	} else if ( showTabs ) {
 		pageContent = (
@@ -207,7 +203,7 @@ const PodcastMain = ( { section }: PodcastMainProps ) => {
 	} else {
 		pageContent = (
 			<div className="podcast__tab-content">
-				<Welcome planTier="free" />
+				<Welcome />
 			</div>
 		);
 	}
