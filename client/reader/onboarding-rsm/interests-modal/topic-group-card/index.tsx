@@ -72,6 +72,28 @@ const TopicGroupCard: React.FC< TopicGroupCardProps > = ( {
 		  )
 		: '';
 	const meta = [ tagSummary, blogSummary ].filter( Boolean ).join( ' · ' );
+	let subscribeLabel = __( 'Subscribe' );
+	let subscribeAriaLabel = sprintf(
+		/* translators: %s is the topic pack title. */
+		__( 'Subscribe to %s' ),
+		title
+	);
+	if ( isBusy ) {
+		subscribeLabel = __( 'Subscribing' );
+		subscribeAriaLabel = sprintf(
+			/* translators: %s is the topic pack title. */
+			__( 'Subscribing to %s' ),
+			title
+		);
+	}
+	if ( isSubscribed ) {
+		subscribeLabel = __( 'Subscribed' );
+		subscribeAriaLabel = sprintf(
+			/* translators: %s is the topic pack title. */
+			__( 'Subscribed to %s' ),
+			title
+		);
+	}
 
 	return (
 		<article
@@ -109,28 +131,14 @@ const TopicGroupCard: React.FC< TopicGroupCardProps > = ( {
 				variant="secondary"
 				onClick={ onSubscribe }
 				isBusy={ isBusy }
-				disabled={ isSubscribed }
+				disabled={ isSubscribed || isBusy }
 				accessibleWhenDisabled
-				aria-label={
-					isSubscribed
-						? sprintf(
-								/* translators: %s is the topic pack title. */
-								__( 'Subscribed to %s' ),
-								title
-						  )
-						: sprintf(
-								/* translators: %s is the topic pack title. */
-								__( 'Subscribe to %s' ),
-								title
-						  )
-				}
+				aria-label={ subscribeAriaLabel }
 			>
 				{ isSubscribed && (
 					<Icon className="topic-group-card__subscribe-icon" icon={ check } size={ 18 } />
 				) }
-				<span className="topic-group-card__subscribe-label">
-					{ isSubscribed ? __( 'Subscribed' ) : __( 'Subscribe' ) }
-				</span>
+				<span className="topic-group-card__subscribe-label">{ subscribeLabel }</span>
 			</Button>
 		</article>
 	);

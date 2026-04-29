@@ -52,6 +52,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 	const [ processingTags, setProcessingTags ] = useState< Set< string > >( new Set() );
+	const [ processingPacks, setProcessingPacks ] = useState< Set< string > >( new Set() );
 	const { mutateAsync: followTag } = useMutation( followReadTagMutation( queryClient ) );
 	const { mutateAsync: unfollowTag } = useMutation( unfollowReadTagMutation( queryClient ) );
 
@@ -84,9 +85,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 		);
 
 	const isPackSubscribed = ( pack: ResolvedPack ): boolean => {
-		const tagsFollowed = pack.tags.every( ( tag ) => followedTags.includes( tag ) );
-		const blogsFollowed = pack.blogs.every( isBlogFollowed );
-		return tagsFollowed && blogsFollowed;
+		return pack.tags.every( ( tag ) => followedTags.includes( tag ) );
 	};
 
 	const isContinueDisabled = followedTags.length < 4;
@@ -136,37 +135,48 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 	};
 
 	const handlePackSubscribe = async ( pack: ResolvedPack ) => {
-		if ( isPackSubscribed( pack ) ) {
+		if ( processingPacks.has( pack.id ) || isPackSubscribed( pack ) ) {
 			return;
 		}
 
-		// Follow tags in deterministic order so state updates don't race each other.
-		for ( const tag of pack.tags ) {
-			if ( ! followedTags.includes( tag ) ) {
-				await handleTopicChange( true, tag );
+		setProcessingPacks( ( current ) => new Set( current ).add( pack.id ) );
+		try {
+			// Follow tags in deterministic order so state updates don't race each other.
+			for ( const tag of pack.tags ) {
+				if ( ! followedTags.includes( tag ) ) {
+					await handleTopicChange( true, tag );
+				}
 			}
+
+			// Follow any blogs in the pack we're not already following.
+			for ( const blog of pack.blogs ) {
+				if ( isBlogFollowed( blog ) ) {
+					continue;
+				}
+				const followData: { feed_ID: number; blog_ID?: number } = { feed_ID: blog.feed_ID };
+				if ( blog.site_ID && blog.site_ID > 0 ) {
+					followData.blog_ID = blog.site_ID;
+				}
+				// Best effort only: site-specific failures are handled by existing
+				// follow data-layer notices and should not block pack completion.
+				dispatch( follow( blog.site_URL, followData, null ) );
+			}
+
+			recordTracksEvent(
+				`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_pack_subscribed`,
+				{
+					pack_id: pack.id,
+					tag_count: pack.tags.length,
+					blog_count: pack.blogs.length,
+				}
+			);
+		} finally {
+			setProcessingPacks( ( current ) => {
+				const updated = new Set( current );
+				updated.delete( pack.id );
+				return updated;
+			} );
 		}
-
-		// Follow any blogs in the pack we're not already following.
-		pack.blogs.forEach( ( blog ) => {
-			if ( isBlogFollowed( blog ) ) {
-				return;
-			}
-			const followData: { feed_ID: number; blog_ID?: number } = { feed_ID: blog.feed_ID };
-			if ( blog.site_ID && blog.site_ID > 0 ) {
-				followData.blog_ID = blog.site_ID;
-			}
-			dispatch( follow( blog.site_URL, followData, null ) );
-		} );
-
-		recordTracksEvent(
-			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_pack_subscribed`,
-			{
-				pack_id: pack.id,
-				tag_count: pack.tags.length,
-				blog_count: pack.blogs.length,
-			}
-		);
 	};
 
 	const handleContinue = () => {
@@ -291,6 +301,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 										tags={ pack.tags }
 										blogs={ pack.blogs }
 										isSubscribed={ isPackSubscribed( pack ) }
+										isBusy={ processingPacks.has( pack.id ) }
 										onSubscribe={ () => void handlePackSubscribe( pack ) }
 									/>
 								</div>
