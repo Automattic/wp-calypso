@@ -19,6 +19,10 @@ const loadMastodonThreadView = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-reader-mastodon-thread-view" */ 'calypso/reader/mastodon/mastodon-thread-view'
 	);
+const loadMastodonAuthorProfileView = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-reader-mastodon-author-profile-view" */ 'calypso/reader/mastodon/author-profile-view'
+	);
 
 function ensureMastodonEnabled(): boolean {
 	if ( ! isEnabled( 'reader/social' ) ) {
@@ -107,6 +111,34 @@ export const mastodonThread = ( context: Context, next: () => void ) => {
 			placeholder={ null }
 			connectionId={ id }
 			statusId={ statusId }
+		/>
+	);
+	next();
+};
+
+export const mastodonProfile = ( context: Context, next: () => void ) => {
+	if ( ! ensureMastodonEnabled() ) {
+		return;
+	}
+
+	const id = Number( context.params.id );
+	const actor = String( context.params.actor ?? '' ).trim();
+
+	const idValid = Number.isFinite( id ) && id > 0;
+	const inputsValid = idValid && actor.length > 0;
+
+	if ( ! inputsValid ) {
+		page.redirect( idValid ? `/reader/mastodon/${ id }` : '/reader/mastodon' );
+		return;
+	}
+
+	context.primary = (
+		<AsyncLoad
+			key="reader-mastodon-author-profile"
+			require={ loadMastodonAuthorProfileView }
+			placeholder={ null }
+			connectionId={ id }
+			actor={ actor }
 		/>
 	);
 	next();

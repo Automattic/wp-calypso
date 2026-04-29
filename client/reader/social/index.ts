@@ -32,6 +32,7 @@ export { SocialAuthorProfilePanel } from './author-profile-panel';
 export type { SocialAuthorProfilePanelProps } from './author-profile-panel';
 export { mapAtmosphereFeedItemToSocialPost } from './mappers/atmosphere';
 export {
+	mapMastodonAccountToSocialProfileCardProps,
 	mapMastodonFeedItemToSocialPost,
 	mapMastodonThreadResponseToSocialThreadNode,
 } from './mappers/mastodon';
