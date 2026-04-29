@@ -4,9 +4,9 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { UnknownAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
-import { SocialFeedList, SocialPostCard } from 'calypso/reader/social';
-import { SocialAnalyticsProvider } from 'calypso/reader/social/components/post-card/analytics-context';
+import { SocialAnalyticsProvider, SocialFeedList, SocialPostCard } from 'calypso/reader/social';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import { getThreadUrl as buildThreadUrl } from './route';
 import type { AtmosphereConnection, AtmosphereFeedItem } from '@automattic/api-core';
 import type { AppState } from 'calypso/types';
 
@@ -61,7 +61,7 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 		}
 	}, [ isError, error, connection.id, dispatch ] );
 
-	const handleRetry = () => {
+	const handleRetry = useCallback( () => {
 		dispatch(
 			recordReaderTracksEvent( 'calypso_reader_atmosphere_timeline_retry_clicked', {
 				connection_id: connection.id,
@@ -69,7 +69,7 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 			} )
 		);
 		refetch();
-	};
+	}, [ connection.id, error, dispatch, refetch ] );
 
 	const onClickAnalytics = useCallback(
 		( event: string, props: Record< string, unknown > ) => {
@@ -78,20 +78,29 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 		[ dispatch ]
 	);
 
+	const getThreadUrl = useCallback(
+		( uri: string ) => buildThreadUrl( connection.id, uri ),
+		[ connection.id ]
+	);
+
 	const renderItem = useCallback(
 		( post: AtmosphereFeedItem ) => <SocialPostCard post={ post } variant="default" />,
 		[]
 	);
 	const itemKey = useCallback( ( post: AtmosphereFeedItem ) => post.uri, [] );
 
+	const analyticsValue = useMemo(
+		() => ( {
+			source: 'atmosphere' as const,
+			connectionId: connection.id,
+			onClick: onClickAnalytics,
+			getThreadUrl,
+		} ),
+		[ connection.id, onClickAnalytics, getThreadUrl ]
+	);
+
 	return (
-		<SocialAnalyticsProvider
-			value={ {
-				source: 'atmosphere',
-				connectionId: connection.id,
-				onClick: onClickAnalytics,
-			} }
-		>
+		<SocialAnalyticsProvider value={ analyticsValue }>
 			<SocialFeedList< AtmosphereFeedItem >
 				items={ items }
 				isPending={ isPending }

@@ -495,7 +495,9 @@
 
 	// Table
 	.dataviews-view-table {
-		color: var( --dashboard__text-color );
+		// Match the upstream light-mode table default, where non-primary fields
+		// use `$gray-700` (`--dashboard__text-muted-color` in app-dotcom).
+		color: var( --dashboard__text-muted-color );
 
 		th {
 			color: var( --dashboard__text-color );
@@ -833,6 +835,40 @@
 	}
 }
 
+/* Modal */
+@mixin dashboard-dark-theme-modal {
+	.components-modal__frame {
+		background: var( --dashboard-surface__background-color );
+		color: var( --dashboard__text-color );
+
+		h1,
+		h2,
+		h3,
+		.components-modal__header-heading {
+			color: var( --dashboard__text-color );
+		}
+
+		.components-modal__header .components-button {
+			color: var( --dashboard__text-color );
+		}
+
+		.components-modal__content.has-scrolled-content:not( .hide-header ) {
+			.components-modal__header {
+				border-bottom-color: var( --dashboard-surface__border-color );
+			}
+		}
+
+		.dataforms-layouts-panel__field-label {
+			color: var( --dashboard__text-muted-color );
+		}
+
+		.dataforms-layouts-panel__field-trigger.is-disabled
+			.dataforms-layouts-panel__field-control {
+			color: var( --dashboard__text-muted-color );
+		}
+	}
+}
+
 // :root variables overridden for dark theme
 @mixin dashboard-dark-theme {
 	// Overrides the default `--wp-components-*` to ensure all components that
@@ -951,5 +987,6 @@
 	@include dashboard-dark-theme-section-header;
 	@include dashboard-dark-theme-site-icon;
 	@include dashboard-dark-theme-site-logs-badges;
+	@include dashboard-dark-theme-modal;
 	@include dashboard-dark-theme-summary-button;
 }

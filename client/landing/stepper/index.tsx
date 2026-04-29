@@ -59,6 +59,23 @@ import type { CurrentUser, HelpCenterSelect, HelpCenterDispatch } from '@automat
 import type { AnyAction } from 'redux';
 import type { WpcomRequestParams } from 'wpcom-proxy-request';
 
+const loadCookieBanner = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-blocks-cookie-banner" */ 'calypso/blocks/cookie-banner'
+	);
+const loadGlobalNotices = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-components-global-notices" */ 'calypso/components/global-notices'
+	);
+const loadAgentsManagerLoader = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-layout-agents-manager-loader" */ 'calypso/layout/agents-manager-loader'
+	);
+const loadWebpackBuildMonitor = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-components-webpack-build-monitor" */ 'calypso/components/webpack-build-monitor'
+	);
+
 declare const window: AppWindow;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -254,24 +271,9 @@ async function main() {
 					<BrowserRouter basename="setup">
 						<FlowRenderer flow={ flow } steps={ flowSteps } />
 						{ config.isEnabled( 'cookie-banner' ) && (
-							<AsyncLoad
-								require={ () =>
-									import(
-										/* webpackChunkName: "async-load-calypso-blocks-cookie-banner" */ 'calypso/blocks/cookie-banner'
-									)
-								}
-								placeholder={ null }
-							/>
+							<AsyncLoad require={ loadCookieBanner } placeholder={ null } />
 						) }
-						<AsyncLoad
-							require={ () =>
-								import(
-									/* webpackChunkName: "async-load-calypso-components-global-notices" */ 'calypso/components/global-notices'
-								)
-							}
-							placeholder={ null }
-							id="notices"
-						/>
+						<AsyncLoad require={ loadGlobalNotices } placeholder={ null } id="notices" />
 					</BrowserRouter>
 					{ ! FLOWS_WITHOUT_HELP_CENTER.has( flowName ) &&
 						( flowName === WOO_HOSTED_PLANS_FLOW ? (
@@ -284,11 +286,7 @@ async function main() {
 									sectionName="stepper"
 								/>
 								<AsyncLoad
-									require={ () =>
-										import(
-											/* webpackChunkName: "async-load-calypso-layout-agents-manager-loader" */ 'calypso/layout/agents-manager-loader'
-										)
-									}
+									require={ loadAgentsManagerLoader }
 									placeholder={ null }
 									sectionName={ flowName }
 									loadAgentsManager
@@ -296,14 +294,7 @@ async function main() {
 							</>
 						) ) }
 					{ 'development' === process.env.NODE_ENV && (
-						<AsyncLoad
-							require={ () =>
-								import(
-									/* webpackChunkName: "async-load-calypso-components-webpack-build-monitor" */ 'calypso/components/webpack-build-monitor'
-								)
-							}
-							placeholder={ null }
-						/>
+						<AsyncLoad require={ loadWebpackBuildMonitor } placeholder={ null } />
 					) }
 				</QueryClientProvider>
 			</Provider>

@@ -2,8 +2,10 @@
  * @jest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { SocialAnalyticsProvider } from '../analytics-context';
 import { PostCardEmbedQuote } from '../post-card-embed-quote';
-import type { AtmosphereFeedItem } from '@automattic/api-core';
+import type { AtmosphereFeedItem, AtmosphereEmbedQuote } from '@automattic/api-core';
 
 const innerPost: AtmosphereFeedItem = {
 	uri: 'at://did:plc:abc/app.bsky.feed.post/inner',
@@ -28,7 +30,7 @@ describe( 'PostCardEmbedQuote', () => {
 			<PostCardEmbedQuote
 				embed={ {
 					type: 'quote',
-					post: { type: 'not_found', uri: 'at://x', reason: 'notfound' },
+					post: { type: 'not_found', uri: 'at://x' },
 				} }
 				parentPostUri="at://parent"
 			/>
@@ -39,7 +41,10 @@ describe( 'PostCardEmbedQuote', () => {
 	it( 'renders a tombstone for a blocked quote', () => {
 		render(
 			<PostCardEmbedQuote
-				embed={ { type: 'quote', post: { type: 'blocked', uri: 'at://y', reason: 'blocked' } } }
+				embed={ {
+					type: 'quote',
+					post: { type: 'blocked', uri: 'at://y', author: { did: 'did:plc:blk' } },
+				} }
 				parentPostUri="at://parent"
 			/>
 		);
@@ -55,5 +60,101 @@ describe( 'PostCardEmbedQuote', () => {
 		);
 		expect( screen.getByText( 'inner text' ) ).toBeVisible();
 		expect( screen.getByText( '@inner.bsky.social' ) ).toBeVisible();
+	} );
+} );
+
+function makeFeedItem( overrides: Partial< AtmosphereFeedItem > = {} ): AtmosphereFeedItem {
+	return {
+		uri: 'at://did:plc:default/app.bsky.feed.post/3kdef',
+		cid: 'cid-default',
+		author: {
+			did: 'did:plc:default',
+			handle: 'default.bsky.social',
+			display_name: '',
+			avatar: null,
+		},
+		created_at: '2026-04-28T10:00:00Z',
+		indexed_at: '2026-04-28T10:00:00Z',
+		text: '',
+		html: '<p></p>',
+		lang: [],
+		reply_parent: null,
+		reply_root: null,
+		reason: null,
+		embed: null,
+		counts: { replies: 0, reposts: 0, likes: 0, quotes: 0 },
+		bluesky_url: 'https://bsky.app/profile/default.bsky.social/post/3kdef',
+		...overrides,
+	};
+}
+
+describe( 'PostCardEmbedQuote getThreadUrl rewiring', () => {
+	const quotedPost: AtmosphereFeedItem = makeFeedItem( {
+		uri: 'at://did:plc:def/app.bsky.feed.post/3kdef',
+		bluesky_url: 'https://bsky.app/profile/jane.bsky.social/post/3kdef',
+	} );
+	const embed: AtmosphereEmbedQuote = { type: 'quote', post: quotedPost };
+
+	function wrap(
+		ui: React.ReactNode,
+		getThreadUrl?: ( uri: string ) => string | null,
+		onClick = jest.fn()
+	) {
+		return (
+			<SocialAnalyticsProvider
+				value={ {
+					source: 'atmosphere',
+					connectionId: 7,
+					onClick,
+					getThreadUrl,
+				} }
+			>
+				{ ui }
+			</SocialAnalyticsProvider>
+		);
+	}
+
+	it( 'routes in-app when resolver returns a string for the quoted post', () => {
+		const getThreadUrl = ( uri: string ) =>
+			uri === quotedPost.uri ? '/reader/atmosphere/7/thread/did:plc:def/3kdef' : null;
+		render(
+			wrap( <PostCardEmbedQuote embed={ embed } parentPostUri="at://parent" />, getThreadUrl )
+		);
+		const link = screen.getByRole( 'link' );
+		expect( link ).toHaveAttribute( 'href', '/reader/atmosphere/7/thread/did:plc:def/3kdef' );
+		expect( link ).not.toHaveAttribute( 'target' );
+	} );
+
+	it( 'falls back to the quoted bsky.app URL when resolver returns null', () => {
+		render(
+			wrap( <PostCardEmbedQuote embed={ embed } parentPostUri="at://parent" />, () => null )
+		);
+		const link = screen.getByRole( 'link' );
+		expect( link ).toHaveAttribute( 'href', quotedPost.bluesky_url );
+		expect( link ).toHaveAttribute( 'target', '_blank' );
+	} );
+
+	it( 'fires quote_clicked with destination discriminator', async () => {
+		const onClick = jest.fn();
+		const getThreadUrl = ( uri: string ) =>
+			uri === quotedPost.uri ? '/reader/atmosphere/7/thread/did:plc:def/3kdef' : null;
+		render(
+			wrap(
+				<PostCardEmbedQuote embed={ embed } parentPostUri="at://parent" />,
+				getThreadUrl,
+				onClick
+			)
+		);
+		const user = userEvent.setup();
+		await user.click( screen.getByRole( 'link' ) );
+		expect( onClick ).toHaveBeenCalledWith(
+			expect.stringContaining( '_quote_clicked' ),
+			expect.objectContaining( {
+				connection_id: 7,
+				parent_uri: 'at://parent',
+				quoted_uri: quotedPost.uri,
+				destination: 'in_app_thread',
+			} )
+		);
 	} );
 } );

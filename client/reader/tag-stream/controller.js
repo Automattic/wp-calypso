@@ -17,6 +17,11 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import renderHeaderSection from '../lib/header-section';
 
+const loadMain = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-reader-tag-stream-main" */ 'calypso/reader/tag-stream/main'
+	);
+
 const analyticsPageTitle = 'Reader';
 
 export const tagListing = ( context, next ) => {
@@ -63,11 +68,7 @@ export const tagListing = ( context, next ) => {
 				} ) }
 			/>
 			<AsyncLoad
-				require={ () =>
-					import(
-						/* webpackChunkName: "async-load-calypso-reader-tag-stream-main" */ 'calypso/reader/tag-stream/main'
-					)
-				}
+				require={ loadMain }
 				key={ 'tag-' + encodedTag }
 				streamKey={ streamKey }
 				encodedTagSlug={ encodedTag }

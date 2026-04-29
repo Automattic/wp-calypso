@@ -1,7 +1,9 @@
 /**
  * @jest-environment jsdom
  */
-import { screen } from '@testing-library/react';
+import { QueryClient } from '@tanstack/react-query';
+import { screen, waitFor } from '@testing-library/react';
+import nock from 'nock';
 import documentHeadReducer from 'calypso/state/document-head/reducer';
 import readerReducer from 'calypso/state/reader/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
@@ -50,19 +52,12 @@ const listData = {
 	is_public: true,
 };
 
-function readerListsState( {
-	list = listData,
-	requested = true,
-}: { list?: typeof listData | null; requested?: boolean } = {} ) {
+function readerListsState( { list = listData }: { list?: typeof listData | null } = {} ) {
 	return {
 		reader: {
 			lists: {
 				items: list ? { [ list.ID ]: list } : {},
 				listItems: {},
-				subscribedLists: [],
-				isRequestingList: false,
-				isRequestingLists: false,
-				listRequests: requested ? { 'test_user:my-list': true } : {},
 			},
 		},
 		currentUser: {
@@ -71,33 +66,67 @@ function readerListsState( {
 	};
 }
 
-describe( 'ReaderList', () => {
-	test( 'renders missing state when list is not found after request', () => {
-		renderWithProvider(
-			<ReaderList owner="test_user" slug="my-list" view="posts" streamKey="list:1" />,
-			{ reducers, initialState: readerListsState( { list: null } ) }
-		);
+function createQueryClient() {
+	return new QueryClient( {
+		defaultOptions: { queries: { retry: false } },
+	} );
+}
 
-		expect( screen.getByText( 'List not found' ) ).toBeVisible();
+describe( 'ReaderList', () => {
+	beforeEach( () => nock.disableNetConnect() );
+	afterEach( () => {
+		nock.cleanAll();
+		nock.enableNetConnect();
 	} );
 
-	test( 'renders Stream for the default posts view', () => {
+	test( 'renders missing state when list is not found after request', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/read/lists/test_user/my-list' )
+			.reply( 404, { error: 'not_found' } );
+
 		renderWithProvider(
 			<ReaderList owner="test_user" slug="my-list" view="posts" streamKey="list:1" />,
-			{ reducers, initialState: readerListsState() }
+			{
+				reducers,
+				initialState: readerListsState( { list: null } ),
+				queryClient: createQueryClient(),
+			}
 		);
 
-		expect( screen.getByTestId( 'stream' ) ).toBeVisible();
+		await waitFor( () => {
+			expect( screen.getByText( 'List not found' ) ).toBeVisible();
+		} );
+	} );
+
+	test( 'renders Stream for the default posts view', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/read/lists/test_user/my-list' )
+			.reply( 200, { list: listData } );
+
+		renderWithProvider(
+			<ReaderList owner="test_user" slug="my-list" view="posts" streamKey="list:1" />,
+			{ reducers, initialState: readerListsState(), queryClient: createQueryClient() }
+		);
+
+		await waitFor( () => {
+			expect( screen.getByTestId( 'stream' ) ).toBeVisible();
+		} );
 		expect( screen.queryByTestId( 'list-sites' ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'renders ListSites in the sites view', () => {
+	test( 'renders ListSites in the sites view', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/read/lists/test_user/my-list' )
+			.reply( 200, { list: listData } );
+
 		renderWithProvider(
 			<ReaderList owner="test_user" slug="my-list" view="sites" streamKey="list:1" />,
-			{ reducers, initialState: readerListsState() }
+			{ reducers, initialState: readerListsState(), queryClient: createQueryClient() }
 		);
 
-		expect( screen.getByTestId( 'list-sites' ) ).toBeVisible();
+		await waitFor( () => {
+			expect( screen.getByTestId( 'list-sites' ) ).toBeVisible();
+		} );
 		expect( screen.queryByTestId( 'stream' ) ).not.toBeInTheDocument();
 	} );
 } );

@@ -21,6 +21,15 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import type { Action, RenderModalProps, View } from '@wordpress/dataviews';
 
+const loadRestoreSiteForm = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-sites-settings-administration-tools-restore-site-restore-site-form" */ 'calypso/sites/settings/administration/tools/restore-site/restore-site-form'
+	);
+const loadLeaveSiteModalForm = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-sites-settings-administration-tools-leave-site-leave-site-modal-form" */ 'calypso/sites/settings/administration/tools/leave-site/leave-site-modal-form'
+	);
+
 type Capabilities = Record< string, Record< string, boolean > >;
 
 // Export this function for testing purposes.
@@ -234,11 +243,7 @@ export function useActions( {
 				RenderModal: ( { items, closeModal }: RenderModalProps< SiteExcerptData > ) => {
 					return (
 						<AsyncLoad
-							require={ () =>
-								import(
-									/* webpackChunkName: "async-load-calypso-sites-settings-administration-tools-restore-site-restore-site-form" */ 'calypso/sites/settings/administration/tools/restore-site/restore-site-form'
-								)
-							}
+							require={ loadRestoreSiteForm }
 							placeholder={ null }
 							siteId={ items[ 0 ]?.ID ?? 0 }
 							onClose={ closeModal }
@@ -256,11 +261,7 @@ export function useActions( {
 				RenderModal: ( { items, closeModal }: RenderModalProps< SiteExcerptData > ) => {
 					return (
 						<AsyncLoad
-							require={ () =>
-								import(
-									/* webpackChunkName: "async-load-calypso-sites-settings-administration-tools-leave-site-leave-site-modal-form" */ 'calypso/sites/settings/administration/tools/leave-site/leave-site-modal-form'
-								)
-							}
+							require={ loadLeaveSiteModalForm }
 							placeholder={ null }
 							siteId={ items[ 0 ]?.ID ?? 0 }
 							onSuccess={ () => {

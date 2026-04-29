@@ -5,6 +5,6 @@ import { getCalypsoQueryClient } from 'calypso/state/query-client';
  */
 export function invalidateUserListItemsQuery( userLogin: string, listName: string ): void {
 	getCalypsoQueryClient()?.invalidateQueries( {
-		queryKey: [ 'read', 'list', userLogin, listName, 'items' ],
+		queryKey: [ 'read', 'lists', userLogin, listName, 'items' ],
 	} );
 }

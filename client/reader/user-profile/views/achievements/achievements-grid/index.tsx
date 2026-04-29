@@ -1,5 +1,6 @@
 import { Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import { useAchievementsQuery } from 'calypso/data/reader/use-achievements-query';
 import { deduplicateAchievements } from '../utils';
 import AnniversaryAchievement from './anniversary-achievement';
@@ -9,9 +10,16 @@ import './style.scss';
 
 export default function AchievementsGrid( { userLogin }: { userLogin: string } ) {
 	const translate = useTranslate();
-	const { achievements, isLoading } = useAchievementsQuery( userLogin );
+	const { achievements, isLoading, isError, hasNextPage, isFetchingNextPage, fetchNextPage } =
+		useAchievementsQuery( userLogin );
 
-	if ( isLoading ) {
+	useEffect( () => {
+		if ( hasNextPage && ! isFetchingNextPage && ! isError ) {
+			fetchNextPage();
+		}
+	}, [ hasNextPage, isFetchingNextPage, isError, fetchNextPage ] );
+
+	if ( isLoading || hasNextPage ) {
 		return (
 			<div className="user-profile__loader">
 				<Spinner /> { translate( 'Loading achievements…' ) }

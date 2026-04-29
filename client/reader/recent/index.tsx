@@ -25,6 +25,11 @@ import RecentPostSkeleton from './recent-post-skeleton';
 import type { PostItem, ReaderPost } from './types';
 import type { AppState } from 'calypso/types';
 
+const loadReaderFullPost = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-blocks-reader-full-post" */ 'calypso/blocks/reader-full-post'
+	);
+
 interface RecentProps {
 	viewToggle?: React.ReactNode;
 }
@@ -289,11 +294,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 				{ data?.items.length > 0 && selectedItem && getPostFromItem( selectedItem ) && (
 					<>
 						<AsyncLoad
-							require={ () =>
-								import(
-									/* webpackChunkName: "async-load-calypso-blocks-reader-full-post" */ 'calypso/blocks/reader-full-post'
-								)
-							}
+							require={ loadReaderFullPost }
 							feedId={ selectedItem.feedId }
 							postId={ selectedItem.postId }
 							onClose={ () => {

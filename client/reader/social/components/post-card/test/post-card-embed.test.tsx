@@ -51,7 +51,7 @@ describe( 'PostCardEmbed dispatcher', () => {
 			<PostCardEmbed
 				embed={ {
 					type: 'quote',
-					post: { type: 'not_found', uri: 'at://x', reason: 'notfound' },
+					post: { type: 'not_found', uri: 'at://x' },
 				} }
 				parentPostUri="at://parent"
 			/>

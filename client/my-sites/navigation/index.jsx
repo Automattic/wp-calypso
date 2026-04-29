@@ -12,6 +12,15 @@ import { getSidebarType, SidebarType } from 'calypso/state/global-sidebar/select
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
+const loadManageSelectedSite = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-jetpack-cloud-sections-sidebar-navigation-manage-selected-site" */ 'calypso/jetpack-cloud/sections/sidebar-navigation/manage-selected-site'
+	);
+const loadSidebar = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-my-sites-sidebar" */ 'calypso/my-sites/sidebar'
+	);
+
 class MySitesNavigation extends Component {
 	static displayName = 'MySitesNavigation';
 
@@ -33,29 +42,11 @@ class MySitesNavigation extends Component {
 		let asyncSidebar = null;
 
 		if ( config.isEnabled( 'jetpack-cloud' ) ) {
-			asyncSidebar = (
-				<AsyncLoad
-					require={ () =>
-						import(
-							/* webpackChunkName: "async-load-calypso-jetpack-cloud-sections-sidebar-navigation-manage-selected-site" */ 'calypso/jetpack-cloud/sections/sidebar-navigation/manage-selected-site'
-						)
-					}
-					{ ...asyncProps }
-				/>
-			);
+			asyncSidebar = <AsyncLoad require={ loadManageSelectedSite } { ...asyncProps } />;
 		} else if ( this.props.isGlobalSidebarVisible ) {
 			return this.renderGlobalSidebar();
 		} else {
-			asyncSidebar = (
-				<AsyncLoad
-					require={ () =>
-						import(
-							/* webpackChunkName: "async-load-calypso-my-sites-sidebar" */ 'calypso/my-sites/sidebar'
-						)
-					}
-					{ ...asyncProps }
-				/>
-			);
+			asyncSidebar = <AsyncLoad require={ loadSidebar } { ...asyncProps } />;
 		}
 
 		return <div className="my-sites__navigation">{ asyncSidebar }</div>;

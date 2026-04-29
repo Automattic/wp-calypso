@@ -8,9 +8,10 @@ import type { ReactNode } from 'react';
 interface PostCardHeaderProps {
 	post: AtmosphereFeedItem;
 	variant: 'default' | 'compact';
+	prominentTimestamp?: boolean;
 }
 
-export function PostCardHeader( { post, variant }: PostCardHeaderProps ) {
+export function PostCardHeader( { post, variant, prominentTimestamp }: PostCardHeaderProps ) {
 	const translate = useTranslate();
 	const analytics = useSocialAnalytics();
 	const isCompact = variant === 'compact';
@@ -18,6 +19,11 @@ export function PostCardHeader( { post, variant }: PostCardHeaderProps ) {
 	const profileUrl = `https://bsky.app/profile/${ post.author.handle }`;
 	const avatarSize = isCompact ? 24 : 36;
 	const timestampIso = post.created_at || post.indexed_at;
+
+	const inAppPostUrl = analytics?.getThreadUrl?.( post.uri ) ?? null;
+	const inAppParentUrl = post.reply_parent
+		? analytics?.getThreadUrl?.( post.reply_parent.uri ) ?? null
+		: null;
 
 	const fireAuthorClicked = () => {
 		if ( ! analytics ) {
@@ -27,6 +33,7 @@ export function PostCardHeader( { post, variant }: PostCardHeaderProps ) {
 			connection_id: analytics.connectionId,
 			author_did: post.author.did,
 			author_handle: post.author.handle,
+			destination: 'bsky_app',
 		} );
 	};
 
@@ -41,6 +48,19 @@ export function PostCardHeader( { post, variant }: PostCardHeaderProps ) {
 			embed_type: post.embed?.type ?? null,
 			is_repost: post.reason !== null,
 			is_reply: post.reply_parent !== null,
+			destination: inAppPostUrl ? 'in_app_thread' : 'bsky_app',
+		} );
+	};
+
+	const fireReplyContextClicked = () => {
+		if ( ! analytics || ! post.reply_parent ) {
+			return;
+		}
+		analytics.onClick( `calypso_reader_${ analytics.source }_timeline_reply_context_clicked`, {
+			connection_id: analytics.connectionId,
+			post_uri: post.uri,
+			parent_uri: post.reply_parent.uri,
+			destination: inAppParentUrl ? 'in_app_thread' : 'bsky_app',
 		} );
 	};
 
@@ -71,6 +91,43 @@ export function PostCardHeader( { post, variant }: PostCardHeaderProps ) {
 		</>
 	);
 
+	const replyContextLabel = post.reply_parent
+		? translate( 'Replying to @%(handle)s', {
+				args: { handle: post.reply_parent.author.handle },
+		  } )
+		: null;
+
+	const renderTimestamp = () => {
+		if ( ! timestampIso ) {
+			return null;
+		}
+		if ( isCompact ) {
+			return <TimeSince className="social-post-card-header__timestamp" date={ timestampIso } />;
+		}
+		if ( inAppPostUrl ) {
+			return (
+				<a
+					className="social-post-card-header__timestamp"
+					href={ inAppPostUrl }
+					onClick={ firePostClicked }
+				>
+					<TimeSince date={ timestampIso } />
+				</a>
+			);
+		}
+		return (
+			<a
+				className="social-post-card-header__timestamp"
+				href={ post.bluesky_url }
+				target="_blank"
+				rel="noopener noreferrer"
+				onClick={ firePostClicked }
+			>
+				<TimeSince date={ timestampIso } />
+			</a>
+		);
+	};
+
 	return (
 		<VStack spacing={ 1 } className="social-post-card-header">
 			{ post.reason && post.reason.type === 'repost' && (
@@ -81,12 +138,20 @@ export function PostCardHeader( { post, variant }: PostCardHeaderProps ) {
 					} ) }
 				</div>
 			) }
-			{ post.reply_parent && (
+			{ post.reply_parent && replyContextLabel && (
 				<div className="social-post-card-header__reply-context">
 					<span aria-hidden="true">↩ </span>
-					{ translate( 'Replying to @%(handle)s', {
-						args: { handle: post.reply_parent.author.handle },
-					} ) }
+					{ inAppParentUrl ? (
+						<a
+							className="social-post-card-header__reply-context-link"
+							href={ inAppParentUrl }
+							onClick={ fireReplyContextClicked }
+						>
+							{ replyContextLabel }
+						</a>
+					) : (
+						replyContextLabel
+					) }
 				</div>
 			) }
 			<div className="social-post-card-header__row">
@@ -105,24 +170,12 @@ export function PostCardHeader( { post, variant }: PostCardHeaderProps ) {
 						{ authorBody }
 					</a>
 				) }
-				{ timestampIso && (
+				{ timestampIso && ! prominentTimestamp && (
 					<>
 						<span className="social-post-card-header__dot" aria-hidden="true">
 							·
 						</span>
-						{ isCompact ? (
-							<TimeSince className="social-post-card-header__timestamp" date={ timestampIso } />
-						) : (
-							<a
-								className="social-post-card-header__timestamp"
-								href={ post.bluesky_url }
-								target="_blank"
-								rel="noopener noreferrer"
-								onClick={ firePostClicked }
-							>
-								<TimeSince date={ timestampIso } />
-							</a>
-						) }
+						{ renderTimestamp() }
 					</>
 				) }
 			</div>

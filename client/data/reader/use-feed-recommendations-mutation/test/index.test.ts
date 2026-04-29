@@ -1,15 +1,18 @@
 /**
  * @jest-environment jsdom
  */
+import { readSubscribedListsQuery } from '@automattic/api-queries';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, act } from '@testing-library/react';
 import { translate } from 'i18n-calypso';
+import { createElement, type ReactNode } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import {
 	addRecommendedBlogsSite,
 	removeRecommendedBlogsSite,
 } from 'calypso/state/reader/lists/actions';
-import { getListByOwnerAndSlug, getMatchingItem } from 'calypso/state/reader/lists/selectors';
+import { getMatchingItem } from 'calypso/state/reader/lists/selectors';
 import { useFeedRecommendationsMutation } from '..';
 import type { AppState } from 'calypso/types';
 
@@ -25,38 +28,58 @@ const mockUseDispatch = useDispatch as jest.MockedFunction< typeof useDispatch >
 const mockGetCurrentUserName = getCurrentUserName as jest.MockedFunction<
 	typeof getCurrentUserName
 >;
-const mockGetListByOwnerAndSlug = getListByOwnerAndSlug as jest.MockedFunction<
-	typeof getListByOwnerAndSlug
->;
 const mockGetMatchingItem = getMatchingItem as jest.MockedFunction< typeof getMatchingItem >;
 const mockTranslate = translate as jest.MockedFunction< typeof translate >;
+
+const mockList = {
+	ID: 456,
+	owner: 'testuser',
+	slug: 'recommended-blogs',
+	title: 'Recommended Blogs',
+	description: '',
+	is_owner: true,
+	is_public: false,
+};
+
+function createWrapper( {
+	subscribedLists = [ mockList ],
+}: { subscribedLists?: ( typeof mockList )[] | undefined } = {} ) {
+	const queryClient = new QueryClient( {
+		defaultOptions: { queries: { retry: false } },
+	} );
+	if ( subscribedLists ) {
+		queryClient.setQueryData( readSubscribedListsQuery().queryKey, {
+			lists: subscribedLists,
+		} );
+	}
+	return ( { children }: { children: ReactNode } ) =>
+		createElement( QueryClientProvider, { client: queryClient }, children );
+}
 
 describe( 'useFeedRecommendationsMutation', () => {
 	const mockDispatch = jest.fn();
 	const mockFeedId = 123;
 	const mockCurrentUser = 'testuser';
-	const mockList = { ID: 456, owner: 'testuser', slug: 'recommended-blogs' };
 
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockUseDispatch.mockReturnValue( mockDispatch );
 		mockTranslate.mockImplementation( ( text ) => text );
 
-		// Mock selector functions directly
 		mockGetCurrentUserName.mockReturnValue( mockCurrentUser );
-		mockGetListByOwnerAndSlug.mockReturnValue( mockList );
 		mockGetMatchingItem.mockReturnValue( false ); // Default: not recommended
 
 		// Mock useSelector to call the actual selector functions
 		mockUseSelector.mockImplementation( ( selector ) => {
-			// Call the selector with a mock state - the selector will use our mocked functions
 			return selector( {} as AppState );
 		} );
 	} );
 
 	describe( 'Basic functionality', () => {
 		it( 'should return correct initial state', () => {
-			const { result } = renderHook( () => useFeedRecommendationsMutation( mockFeedId ) );
+			const { result } = renderHook( () => useFeedRecommendationsMutation( mockFeedId ), {
+				wrapper: createWrapper(),
+			} );
 
 			expect( result.current ).toEqual( {
 				isRecommended: false,
@@ -67,10 +90,11 @@ describe( 'useFeedRecommendationsMutation', () => {
 		} );
 
 		it( 'should return true for isRecommended when feed is in list', () => {
-			// Mock that the feed is found in the list
 			mockGetMatchingItem.mockReturnValue( { feed_ID: mockFeedId } );
 
-			const { result } = renderHook( () => useFeedRecommendationsMutation( mockFeedId ) );
+			const { result } = renderHook( () => useFeedRecommendationsMutation( mockFeedId ), {
+				wrapper: createWrapper(),
+			} );
 
 			expect( result.current.isRecommended ).toBe( true );
 		} );
@@ -78,15 +102,17 @@ describe( 'useFeedRecommendationsMutation', () => {
 		it( 'should return false for canToggle when no user', () => {
 			mockGetCurrentUserName.mockReturnValue( null );
 
-			const { result } = renderHook( () => useFeedRecommendationsMutation( mockFeedId ) );
+			const { result } = renderHook( () => useFeedRecommendationsMutation( mockFeedId ), {
+				wrapper: createWrapper(),
+			} );
 
 			expect( result.current.canToggle ).toBe( false );
 		} );
 
 		it( 'should return false for canToggle when no list', () => {
-			mockGetListByOwnerAndSlug.mockReturnValue( undefined );
-
-			const { result } = renderHook( () => useFeedRecommendationsMutation( mockFeedId ) );
+			const { result } = renderHook( () => useFeedRecommendationsMutation( mockFeedId ), {
+				wrapper: createWrapper( { subscribedLists: [] } ),
+			} );
 
 			expect( result.current.canToggle ).toBe( false );
 		} );
@@ -94,7 +120,9 @@ describe( 'useFeedRecommendationsMutation', () => {
 
 	describe( 'Toggle functionality', () => {
 		it( 'should dispatch addRecommendedBlogsSite when toggling on', () => {
-			const { result } = renderHook( () => useFeedRecommendationsMutation( mockFeedId ) );
+			const { result } = renderHook( () => useFeedRecommendationsMutation( mockFeedId ), {
+				wrapper: createWrapper(),
+			} );
 
 			act( () => {
 				result.current.toggleRecommended();
@@ -109,10 +137,11 @@ describe( 'useFeedRecommendationsMutation', () => {
 		} );
 
 		it( 'should dispatch removeRecommendedBlogsSite when toggling off', () => {
-			// Mock that the site is already recommended
 			mockGetMatchingItem.mockReturnValue( { feed_ID: mockFeedId } );
 
-			const { result } = renderHook( () => useFeedRecommendationsMutation( mockFeedId ) );
+			const { result } = renderHook( () => useFeedRecommendationsMutation( mockFeedId ), {
+				wrapper: createWrapper(),
+			} );
 
 			act( () => {
 				result.current.toggleRecommended();
@@ -129,7 +158,9 @@ describe( 'useFeedRecommendationsMutation', () => {
 		it( 'should not dispatch when canToggle is false', () => {
 			mockGetCurrentUserName.mockReturnValue( null );
 
-			const { result } = renderHook( () => useFeedRecommendationsMutation( mockFeedId ) );
+			const { result } = renderHook( () => useFeedRecommendationsMutation( mockFeedId ), {
+				wrapper: createWrapper(),
+			} );
 
 			act( () => {
 				result.current.toggleRecommended();
@@ -141,11 +172,12 @@ describe( 'useFeedRecommendationsMutation', () => {
 
 	describe( 'Redux integration', () => {
 		it( 'should react to selector function changes', () => {
-			const { result, rerender } = renderHook( () => useFeedRecommendationsMutation( mockFeedId ) );
+			const { result, rerender } = renderHook( () => useFeedRecommendationsMutation( mockFeedId ), {
+				wrapper: createWrapper(),
+			} );
 
 			expect( result.current.isRecommended ).toBe( false );
 
-			// Change the mock return value to simulate Redux state change
 			mockGetMatchingItem.mockReturnValue( { feed_ID: mockFeedId } );
 
 			rerender();
@@ -156,16 +188,18 @@ describe( 'useFeedRecommendationsMutation', () => {
 		it( 'should handle missing user gracefully', () => {
 			mockGetCurrentUserName.mockReturnValue( null );
 
-			const { result } = renderHook( () => useFeedRecommendationsMutation( mockFeedId ) );
+			const { result } = renderHook( () => useFeedRecommendationsMutation( mockFeedId ), {
+				wrapper: createWrapper(),
+			} );
 
 			expect( result.current.isRecommended ).toBe( false );
 			expect( result.current.canToggle ).toBe( false );
 		} );
 
 		it( 'should handle missing list gracefully', () => {
-			mockGetListByOwnerAndSlug.mockReturnValue( undefined );
-
-			const { result } = renderHook( () => useFeedRecommendationsMutation( mockFeedId ) );
+			const { result } = renderHook( () => useFeedRecommendationsMutation( mockFeedId ), {
+				wrapper: createWrapper( { subscribedLists: [] } ),
+			} );
 
 			expect( result.current.isRecommended ).toBe( false );
 			expect( result.current.canToggle ).toBe( false );

@@ -1,9 +1,15 @@
+import {
+	createReadListMutation,
+	readListQuery,
+	updateReadListMutation,
+} from '@automattic/api-queries';
+import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'react-redux';
 import ReaderExportButton from 'calypso/blocks/reader-export-button';
 import { READER_EXPORT_TYPE_LIST } from 'calypso/blocks/reader-export-button/constants';
-import QueryReaderList from 'calypso/components/data/query-reader-list';
 import QueryReaderListItems from 'calypso/components/data/query-reader-list-items';
 import EmptyContent from 'calypso/components/empty-content';
 import NavigationHeader from 'calypso/components/navigation-header';
@@ -13,14 +19,9 @@ import NavTabs from 'calypso/components/section-nav/tabs';
 import { preventWidows } from 'calypso/lib/formatting';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import ListMissing from 'calypso/reader/list/components/missing';
-import { createReaderList, updateReaderList } from 'calypso/state/reader/lists/actions';
-import {
-	getListByOwnerAndSlug,
-	getListItems,
-	isCreatingList as isCreatingListSelector,
-	isUpdatingList as isUpdatingListSelector,
-	isMissingByOwnerAndSlug,
-} from 'calypso/state/reader/lists/selectors';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { DEFAULT_NOTICE_DURATION } from 'calypso/state/notices/constants';
+import { getListItems } from 'calypso/state/reader/lists/selectors';
 import ItemAdder from './item-adder';
 import ListDelete from './list-delete';
 import ListForm from './list-form';
@@ -31,14 +32,29 @@ import './style.scss';
 
 function Details( { list } ) {
 	const dispatch = useDispatch();
-	const isUpdatingList = useSelector( isUpdatingListSelector );
+	const translate = useTranslate();
+	const queryClient = useQueryClient();
+	const { mutate: updateList, isPending: isUpdatingList } = useMutation(
+		updateReadListMutation( queryClient )
+	);
+
+	const handleSubmit = ( newList ) => {
+		updateList( newList, {
+			onSuccess: () => {
+				dispatch(
+					successNotice( translate( 'List updated successfully.' ), {
+						duration: DEFAULT_NOTICE_DURATION,
+					} )
+				);
+			},
+			onError: () => {
+				dispatch( errorNotice( translate( 'Unable to update list.' ) ) );
+			},
+		} );
+	};
 
 	return (
-		<ListForm
-			list={ list }
-			isSubmissionDisabled={ isUpdatingList }
-			onSubmit={ ( newList ) => dispatch( updateReaderList( newList ) ) }
-		/>
+		<ListForm list={ list } isSubmissionDisabled={ isUpdatingList } onSubmit={ handleSubmit } />
 	);
 }
 
@@ -90,16 +106,40 @@ function Export( { list, listItems } ) {
 function ReaderListCreate() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const isCreatingList = useSelector( isCreatingListSelector );
+	const queryClient = useQueryClient();
+	const { mutate: createList, isPending: isCreatingList } = useMutation(
+		createReadListMutation( queryClient )
+	);
+
+	const handleSubmit = ( formList ) => {
+		const params = {
+			title: formList.title,
+			description: formList.description,
+			is_public: formList.is_public,
+		};
+		createList( params, {
+			onSuccess: ( data ) => {
+				if ( data.list?.owner && data.list?.slug ) {
+					page( `/reader/list/${ data.list.owner }/${ data.list.slug }/edit/items` );
+					dispatch(
+						successNotice( translate( 'List created successfully.' ), {
+							duration: DEFAULT_NOTICE_DURATION,
+						} )
+					);
+				} else {
+					dispatch( errorNotice( translate( 'Unable to create new list.' ) ) );
+				}
+			},
+			onError: () => {
+				dispatch( errorNotice( translate( 'Unable to create new list.' ) ) );
+			},
+		} );
+	};
 
 	return (
 		<ReaderMain>
 			<NavigationHeader title={ translate( 'Create List' ) } />
-			<ListForm
-				isCreateForm
-				isSubmissionDisabled={ isCreatingList }
-				onSubmit={ ( list ) => dispatch( createReaderList( list ) ) }
-			/>
+			<ListForm isCreateForm isSubmissionDisabled={ isCreatingList } onSubmit={ handleSubmit } />
 		</ReaderMain>
 	);
 }
@@ -107,10 +147,9 @@ function ReaderListCreate() {
 function ReaderListEdit( props ) {
 	const { selectedSection } = props;
 	const translate = useTranslate();
-	const list = useSelector( ( state ) => getListByOwnerAndSlug( state, props.owner, props.slug ) );
-	const isMissing = useSelector( ( state ) =>
-		isMissingByOwnerAndSlug( state, props.owner, props.slug )
-	);
+	const { data, isFetched } = useQuery( readListQuery( props.owner, props.slug ) );
+	const list = data?.list;
+	const isMissing = isFetched && ! list;
 	const listItems = useSelector( ( state ) =>
 		list ? getListItems( state, list.ID ) : undefined
 	);
@@ -132,7 +171,6 @@ function ReaderListEdit( props ) {
 
 	return (
 		<>
-			{ ! list && <QueryReaderList owner={ props.owner } slug={ props.slug } /> }
 			{ ! listItems && list && <QueryReaderListItems owner={ props.owner } slug={ props.slug } /> }
 			<ReaderMain>
 				<NavigationHeader

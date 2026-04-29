@@ -16,6 +16,9 @@ import 'calypso/components/popover-menu/style.scss';
  */
 const debug = debugModule( 'calypso:author-selector' );
 
+const loadSearch = () =>
+	import( /* webpackChunkName: "async-load-automattic-search" */ '@automattic/search' );
+
 class AuthorSwitcherShell extends Component {
 	static propTypes = {
 		users: PropTypes.array,
@@ -64,11 +67,7 @@ class AuthorSwitcherShell extends Component {
 				>
 					{ ( this.props.search || users.length > 10 ) && (
 						<AsyncLoad
-							require={ () =>
-								import(
-									/* webpackChunkName: "async-load-automattic-search" */ '@automattic/search'
-								)
-							}
+							require={ loadSearch }
 							compact
 							onSearch={ this.props.updateSearch }
 							placeholder={ this.props.translate( 'Find Author…', { context: 'search label' } ) }

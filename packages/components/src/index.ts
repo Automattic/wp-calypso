@@ -53,6 +53,7 @@ export { default as ExternalLink } from './external-link';
 export * from './theme-type-badge';
 export { default as FlowQuestion } from './flow-question';
 export { default as Swipeable } from './swipeable';
+export { ImageCarousel } from './image-carousel';
 export { default as DotPager } from './dot-pager';
 export { default as EmbedContainer } from './embed-container';
 export { ExperienceControl } from './experience-control';
