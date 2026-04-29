@@ -93,6 +93,13 @@ export function registerFeatureClipSidebar(): void {
 		return;
 	}
 
+	// Server-side dev-mode flag — synchronous read, no network. The host
+	// platform decides which environments expose this panel and injects the
+	// flag inline before this script runs.
+	if ( ! window.imageStudioData?.isDevMode ) {
+		return;
+	}
+
 	registerPlugin( PLUGIN_NAME, {
 		render: FeatureClipPanel,
 	} );
