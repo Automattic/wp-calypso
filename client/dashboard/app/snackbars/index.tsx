@@ -56,15 +56,11 @@ export default function Snackbars() {
 		.map( ( notice ) => {
 			const { status } = notice;
 			const icon = statusIcon[ status ];
-			const className =
-				'className' in notice && typeof notice.className === 'string'
-					? notice.className
-					: undefined;
 			const statusClassName = status ? `is-${ status }` : undefined;
 
 			return {
 				...notice,
-				className: [ className, statusClassName ].filter( Boolean ).join( ' ' ) || undefined,
+				className: statusClassName,
 				icon:
 					'icon' in notice
 						? notice.icon

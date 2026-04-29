@@ -57,7 +57,6 @@ describe( 'Snackbars', () => {
 		type: string;
 		status?: string;
 		content?: string;
-		className?: string;
 	} >;
 	let mockSubscribe: jest.Mock;
 
@@ -135,7 +134,6 @@ describe( 'Snackbars', () => {
 				type: 'snackbar',
 				status: 'error',
 				content: 'Failed notice',
-				className: 'custom-class',
 			},
 		];
 
@@ -151,7 +149,7 @@ describe( 'Snackbars', () => {
 				} ),
 				expect.objectContaining( {
 					id: 'error-snackbar',
-					className: 'custom-class is-error',
+					className: 'is-error',
 				} ),
 			] )
 		);
