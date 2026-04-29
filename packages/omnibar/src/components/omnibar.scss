@@ -1,4 +1,5 @@
 $omnibar-height: 32px;
+$omnibar-height-mobile: 46px;
 $omnibar-font-size: 13px;
 
 // Modern color scheme variables
@@ -9,14 +10,20 @@ $omnibar-submenu-text-color: #bcbcbc;
 $omnibar-highlight-color: #7b90ff;
 
 .omnibar {
+	--omnibar-height: #{$omnibar-height-mobile};
+
+	@media ( min-width: 782px ) {
+		--omnibar-height: #{$omnibar-height};
+	}
+
 	background-color: $omnibar-base-color;
-	min-height: $omnibar-height;
-	height: $omnibar-height;
+	min-height: var( --omnibar-height );
+	height: var( --omnibar-height );
 	display: flex;
 	padding: 0;
 	margin: 0;
 	font-size: $omnibar-font-size;
-	line-height: $omnibar-height;
+	line-height: var( --omnibar-height );
 
 	.omnibar__secondary {
 		display: flex;
@@ -29,12 +36,12 @@ $omnibar-highlight-color: #7b90ff;
 	}
 
 	.components-button.omnibar__menu {
-		height: $omnibar-height;
-		padding: 0 8px;
+		height: var( --omnibar-height );
+		padding: 0 12px;
 		color: $omnibar-text-color;
 		background-color: transparent;
 		font-size: $omnibar-font-size;
-		line-height: $omnibar-height;
+		line-height: var( --omnibar-height );
 		border-radius: 0;
 
 		&:hover,
@@ -42,19 +49,38 @@ $omnibar-highlight-color: #7b90ff;
 		&:active,
 		&[aria-expanded='true'] {
 			background-color: $omnibar-submenu-background;
-			color: $omnibar-highlight-color;
 			box-shadow: none;
 			outline: none;
+		}
+
+		@media ( min-width: 782px ) {
+			padding: 0 8px;
 		}
 	}
 }
 
 .components-popover.omnibar__popover {
+	will-change: auto;
+
+	.components-popover__content {
+		border-radius: 0;
+		box-shadow: none;
+	}
+
 	.components-dropdown-menu__menu {
 		background-color: $omnibar-submenu-background;
+		border-color: $omnibar-submenu-background;
+
+		.components-menu-group {
+			padding: 4px;
+		}
+
+		.components-menu-group + .components-menu-group {
+			border-color: $omnibar-base-color;
+		}
 
 		.components-button.components-menu-item__button {
-			color: $omnibar-submenu-text-color;
+			color: $omnibar-text-color;
 
 			&:hover,
 			&:focus,

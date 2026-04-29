@@ -264,9 +264,13 @@ export const purchaseSettingsRoute = createRoute( {
 		};
 	},
 	path: '$purchaseId',
-	validateSearch: ( search ): { refunded?: true } => {
+	validateSearch: ( search ): { refunded?: true; upgraded?: true } => {
 		const isRefunded = search.refunded === true || search.refunded === 'true';
-		return isRefunded ? { refunded: true } : {};
+		const isUpgraded = search.upgraded === true || search.upgraded === 'true';
+		return {
+			...( isRefunded ? { refunded: true } : {} ),
+			...( isUpgraded ? { upgraded: true } : {} ),
+		};
 	},
 } );
 

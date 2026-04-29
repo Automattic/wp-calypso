@@ -15,6 +15,9 @@ import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-u
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
+const importHelpCenter = () =>
+	import( /* webpackChunkName: "async-load-automattic-help-center" */ '@automattic/help-center' );
+
 const HELP_CENTER_STORE = HelpCenter.register();
 
 type Props = {
@@ -57,7 +60,7 @@ export default function HelpCenterLoader( { sectionName, loadHelpCenter, current
 
 	return (
 		<AsyncLoad
-			require="@automattic/help-center"
+			require={ importHelpCenter }
 			placeholder={ null }
 			handleClose={ handleClose }
 			currentRoute={ currentRoute }

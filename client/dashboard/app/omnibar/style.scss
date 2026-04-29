@@ -5,8 +5,6 @@ $omnibar-height: 32px;
 	top: 0;
 	inset-inline: 0;
 	z-index: 99999;
-	height: $omnibar-height;
-	background-color: #1e1e1e;
 }
 
 body:has( #wpcom-omnibar ) #wpcom {

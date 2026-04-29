@@ -35,6 +35,15 @@ jobs:
       pull-requests: write
       id-token: write
     steps:
+      - name: Validate area input
+        env:
+          AREA: ${{ inputs.area }}
+        run: |
+          case "$AREA" in
+            dashboard|a4a|general) ;;
+            *) echo "::error::Unknown area: '$AREA'. Must be one of: dashboard, a4a, general."; exit 1 ;;
+          esac
+
       # Fork-reject. With pull_request, GitHub already strips secrets from
       # fork PRs, but the issue_comment trigger on pr-review-on-ping.yml
       # fires from the default branch with secrets in scope, so a fork PR
@@ -78,6 +87,26 @@ jobs:
             *) echo "::error::Denying review: $PR_USER permission=$PERM"; exit 1 ;;
           esac
 
+      # AGENTS.md / CLAUDE.md are bot instructions; skip review if a PR edits them
+      # so the bot doesn't review under guidance the PR itself is modifying.
+      - name: Skip AI review on trusted-instruction file edits
+        id: trusted_files
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.issue.number || github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          FILES=$(gh pr diff "$PR_NUMBER" --repo "$REPO" --name-only)
+          if echo "$FILES" | grep -qiE '(^|/)(AGENTS|CLAUDE)\.md$'; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            gh pr comment "$PR_NUMBER" --repo "$REPO" --body \
+              "AI review skipped: this PR modifies \`AGENTS.md\` or \`CLAUDE.md\` files, which the review bot reads as instructions. Edits to these files require human review."
+            exit 1
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
       # Always check out the default branch, never PR code. claude-code-action
       # does its own `git checkout <PR_head>` later, so this is mostly a
       # warm-up; the real defense for trusted prompts is keeping prompt
@@ -90,12 +119,20 @@ jobs:
           persist-credentials: false
 
       - name: Run review (dashboard)
-        if: inputs.area == 'dashboard'
+        if: inputs.area == 'dashboard' && steps.trusted_files.outputs.skip == 'false'
         uses: anthropics/claude-code-action@567fe954a4527e81f132d87d1bdbcc94f7737434 # v1.0.107
         with:
           anthropic_api_key: ${{ secrets.anthropic_api_key }}
           prompt: |
             # Code Review Instructions
+
+            You are reviewing pull request #${{ github.event.issue.number || github.event.pull_request.number }} in ${{ github.repository }}.
+
+            When fetching the diff or PR metadata, ALWAYS pass the PR number explicitly:
+            - `gh pr diff ${{ github.event.issue.number || github.event.pull_request.number }} --repo ${{ github.repository }}`
+            - `gh pr view ${{ github.event.issue.number || github.event.pull_request.number }} --repo ${{ github.repository }} --json …`
+
+            Do NOT run `gh pr diff` or `gh pr view` without an explicit PR number argument. Do NOT infer the PR number from `git log`, `git branch`, or any other source.
 
             ## Primary Objective
 
@@ -140,12 +177,20 @@ jobs:
             --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr diff:*),Bash(gh pr view:*),Bash(git show:*),Bash(git diff:*),Bash(git log:*),Bash(git ls-files:*),Bash(git grep:*),Bash(rg *),Read,Glob,Grep"
 
       - name: Run review (a4a)
-        if: inputs.area == 'a4a'
+        if: inputs.area == 'a4a' && steps.trusted_files.outputs.skip == 'false'
         uses: anthropics/claude-code-action@567fe954a4527e81f132d87d1bdbcc94f7737434 # v1.0.107
         with:
           anthropic_api_key: ${{ secrets.anthropic_api_key }}
           prompt: |
             # Code Review Instructions (A4A)
+
+            You are reviewing pull request #${{ github.event.issue.number || github.event.pull_request.number }} in ${{ github.repository }}.
+
+            When fetching the diff or PR metadata, ALWAYS pass the PR number explicitly:
+            - `gh pr diff ${{ github.event.issue.number || github.event.pull_request.number }} --repo ${{ github.repository }}`
+            - `gh pr view ${{ github.event.issue.number || github.event.pull_request.number }} --repo ${{ github.repository }} --json …`
+
+            Do NOT run `gh pr diff` or `gh pr view` without an explicit PR number argument. Do NOT infer the PR number from `git log`, `git branch`, or any other source.
 
             ## Primary Objective
 
@@ -188,12 +233,20 @@ jobs:
             --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr diff:*),Bash(gh pr view:*),Bash(git show:*),Bash(git diff:*),Bash(git log:*),Bash(git ls-files:*),Bash(git grep:*),Bash(rg *),Read,Glob,Grep"
 
       - name: Run review (general)
-        if: inputs.area == 'general'
+        if: inputs.area == 'general' && steps.trusted_files.outputs.skip == 'false'
         uses: anthropics/claude-code-action@567fe954a4527e81f132d87d1bdbcc94f7737434 # v1.0.107
         with:
           anthropic_api_key: ${{ secrets.anthropic_api_key }}
           prompt: |
             # Code Review Instructions (General)
+
+            You are reviewing pull request #${{ github.event.issue.number || github.event.pull_request.number }} in ${{ github.repository }}.
+
+            When fetching the diff or PR metadata, ALWAYS pass the PR number explicitly:
+            - `gh pr diff ${{ github.event.issue.number || github.event.pull_request.number }} --repo ${{ github.repository }}`
+            - `gh pr view ${{ github.event.issue.number || github.event.pull_request.number }} --repo ${{ github.repository }} --json …`
+
+            Do NOT run `gh pr diff` or `gh pr view` without an explicit PR number argument. Do NOT infer the PR number from `git log`, `git branch`, or any other source.
 
             ## Primary Objective
 

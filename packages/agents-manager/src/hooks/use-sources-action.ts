@@ -30,8 +30,15 @@ function getMessageSources( message: UIMessage ): Source[] | null {
  * Registers the SourcesDisplay component as a message action on agent messages
  * that contain a sources data block.
  */
-export default function useSourcesAction( registerMessageActions: RegisterMessageActions ): void {
+export default function useSourcesAction(
+	registerMessageActions: RegisterMessageActions,
+	enabled = true
+): void {
 	useEffect( () => {
+		if ( ! enabled ) {
+			return;
+		}
+
 		registerMessageActions( {
 			id: 'agents-manager-sources',
 			actions: ( message ) => {
@@ -56,5 +63,5 @@ export default function useSourcesAction( registerMessageActions: RegisterMessag
 				];
 			},
 		} );
-	}, [ registerMessageActions ] );
+	}, [ enabled, registerMessageActions ] );
 }

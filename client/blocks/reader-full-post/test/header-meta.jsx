@@ -18,6 +18,10 @@ jest.mock( 'calypso/state/reader/feeds/selectors', () => ( {
 	getFeed: jest.fn(),
 } ) );
 
+jest.mock( 'calypso/reader/components/achievements/author-achievement-badges', () => ( {
+	AuthorAchievementBadges: () => null,
+} ) );
+
 const createMockStore = () => {
 	const reducer = ( state = {} ) => state;
 	return createStore( reducer );

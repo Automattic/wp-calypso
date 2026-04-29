@@ -70,6 +70,10 @@
 		color: var( --dashboard-surface__border-color );
 		border-color: var( --dashboard-surface__border-color );
 	}
+
+	.components-card__header {
+		border-bottom-color: var( --dashboard-surface__border-color );
+	}
 }
 
 /* Panel */
@@ -358,7 +362,9 @@
 		}
 
 		.summary-button-navigation-icon,
+		.summary-button-decoration,
 		.summary-button-decoration svg {
+			color: var( --dashboard__text-muted-color );
 			fill: var( --dashboard__text-muted-color );
 		}
 
@@ -385,7 +391,9 @@
 			}
 
 			.summary-button-navigation-icon,
+			.summary-button-decoration,
 			.summary-button-decoration svg {
+				color: var( --dashboard-menu-item-active__color );
 				fill: var( --dashboard-menu-item-active__color );
 			}
 		}
@@ -488,7 +496,9 @@
 
 	// Table
 	.dataviews-view-table {
-		color: var( --dashboard__text-color );
+		// Match the upstream light-mode table default, where non-primary fields
+		// use `$gray-700` (`--dashboard__text-muted-color` in app-dotcom).
+		color: var( --dashboard__text-muted-color );
 
 		th {
 			color: var( --dashboard__text-color );
@@ -498,7 +508,11 @@
 			border-top-color: var( --dashboard-surface__border-color );
 		}
 
-		td.dataviews-view-table__actions-column--stuck::after,
+		th.dataviews-view-table__actions-column--stuck::after,
+		td.dataviews-view-table__actions-column--stuck::after {
+			background-color: var( --dashboard-surface__border-color );
+		}
+
 		thead.dataviews-view-table__thead--stuck::after {
 			background-color: var( --dashboard-surface__background-color );
 		}
@@ -789,6 +803,77 @@
 	--color-border-subtle: var( --dashboard-surface__border-color );
 }
 
+/* Site Logs Badges */
+@mixin dashboard-dark-theme-site-logs-badges {
+	// Data table badges in the logs views don't declare a Badge intent, and
+	// override the colors locally, so we have to target them directly here.
+	:is( .site-logs-card, .site-logs-details-modal ) :is(
+			.badge--POST,
+			.badge--deprecated,
+			.badge--GET,
+			.badge--DELETE,
+			.badge--error,
+			.badge--fatal,
+			.badge--warning,
+			.badge--user
+		) {
+		background-color: color-mix(
+			in srgb,
+			var( --wp-components-color-background ) 90%,
+			var( --base-color )
+		);
+		color: color-mix(
+			in srgb,
+			var( --wp-components-color-foreground ) 50%,
+			var( --base-color )
+		);
+
+		// `<Badge intent="default">` adds `.is-default`, which the Badge
+		// component pairs with an inset box-shadow in dark mode to stay
+		// visible against the card surface. The colored variants above
+		// already make the chip visible, so clear the shadow — except for
+		// `.badge--user`, whose gray-tinted bg is too close to the surface
+		// to stand on its own.
+		&:not( .badge--user ) {
+			box-shadow: none;
+		}
+	}
+}
+
+/* Modal */
+@mixin dashboard-dark-theme-modal {
+	.components-modal__frame {
+		background: var( --dashboard-surface__background-color );
+		color: var( --dashboard__text-color );
+
+		h1,
+		h2,
+		h3,
+		.components-modal__header-heading {
+			color: var( --dashboard__text-color );
+		}
+
+		.components-modal__header .components-button {
+			color: var( --dashboard__text-color );
+		}
+
+		.components-modal__content.has-scrolled-content:not( .hide-header ) {
+			.components-modal__header {
+				border-bottom-color: var( --dashboard-surface__border-color );
+			}
+		}
+
+		.dataforms-layouts-panel__field-label {
+			color: var( --dashboard__text-muted-color );
+		}
+
+		.dataforms-layouts-panel__field-trigger.is-disabled
+			.dataforms-layouts-panel__field-control {
+			color: var( --dashboard__text-muted-color );
+		}
+	}
+}
+
 // :root variables overridden for dark theme
 @mixin dashboard-dark-theme {
 	// Overrides the default `--wp-components-*` to ensure all components that
@@ -891,21 +976,24 @@
 	--jp-gray-100: #f0f0f0;
 	--jp-gray-off: #2a2a2a;
 
+	@include dashboard-calypso-theme-properties;
 	@include dashboard-dark-theme-action-list;
 	@include dashboard-dark-theme-breadcrumbs;
-	@include dashboard-dark-theme-card;
 	@include dashboard-dark-theme-callout;
+	@include dashboard-dark-theme-card;
 	@include dashboard-dark-theme-dataviews;
 	@include dashboard-dark-theme-destructive-secondary-button;
 	@include dashboard-dark-theme-emails;
 	@include dashboard-dark-theme-form-controls;
 	@include dashboard-dark-theme-item-group;
+	@include dashboard-dark-theme-muted-text;
 	@include dashboard-dark-theme-panel;
-	@include dashboard-dark-theme-popover;
 	@include dashboard-dark-theme-plugins;
+	@include dashboard-dark-theme-popover;
 	@include dashboard-dark-theme-scan;
 	@include dashboard-dark-theme-section-header;
 	@include dashboard-dark-theme-site-icon;
+	@include dashboard-dark-theme-site-logs-badges;
+	@include dashboard-dark-theme-modal;
 	@include dashboard-dark-theme-summary-button;
-	@include dashboard-calypso-theme-properties;
 }

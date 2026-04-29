@@ -4,6 +4,11 @@ import { trackPageLoad, trackScrollPage } from 'calypso/reader/controller-helper
 import { recordTrack } from 'calypso/reader/stats';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
+const loadStream = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-reader-conversations-stream" */ 'calypso/reader/conversations/stream'
+	);
+
 export function conversations( context, next ) {
 	const basePath = sectionify( context.path );
 	const mcKey = 'conversations';
@@ -28,7 +33,7 @@ export function conversations( context, next ) {
 
 	context.primary = (
 		<AsyncLoad
-			require="calypso/reader/conversations/stream"
+			require={ loadStream }
 			key="conversations"
 			streamKey={ streamKey }
 			trackScrollPage={ scrollTracker }
@@ -62,7 +67,7 @@ export function conversationsA8c( context, next ) {
 
 	context.primary = (
 		<AsyncLoad
-			require="calypso/reader/conversations/stream"
+			require={ loadStream }
 			key="conversations"
 			title="Conversations @ Automattic"
 			streamKey={ streamKey }
