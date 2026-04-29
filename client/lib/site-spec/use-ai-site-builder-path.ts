@@ -5,9 +5,9 @@ const SITE_SPEC_PATH = '/setup/ai-site-builder-spec';
 const DEFAULT_PATH = '/setup/ai-site-builder';
 
 /**
- * Returns the setup path for the "Create with AI" / "Build with AI" / "Start
- * with AI" entry points on WordPress.com (sites dashboard, empty state,
- * themes banner, theme search empty-results card).
+ * Returns the setup path for the "Create with AI" entry points on the
+ * WordPress.com sites dashboard (new dashboard, site-switcher, empty state,
+ * legacy /sites popover).
  *
  * Users enrolled as treatment in the Vega site-spec experiment get the
  * Calypso-hosted spec-refinement widget (`/setup/ai-site-builder-spec`); every

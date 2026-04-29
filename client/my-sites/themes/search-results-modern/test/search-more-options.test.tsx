@@ -10,15 +10,9 @@ jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 	recordTracksEvent: jest.fn(),
 } ) );
 
-const mockUseExperiment = jest.fn( () => [ false, null ] );
-jest.mock( 'calypso/lib/explat', () => ( {
-	useExperiment: ( ...args: unknown[] ) => mockUseExperiment( ...args ),
-} ) );
-
 describe( 'SearchMoreOptions', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		mockUseExperiment.mockReset().mockReturnValue( [ false, null ] );
 	} );
 
 	test( 'renders the title', () => {
@@ -68,21 +62,6 @@ describe( 'SearchMoreOptions', () => {
 		expect( screen.getByRole( 'link', { name: 'Upload theme' } ) ).toHaveAttribute(
 			'href',
 			'/start/business'
-		);
-	} );
-
-	test( 'routes treatment users to the Calypso site-spec flow', () => {
-		mockUseExperiment.mockReturnValue( [
-			false,
-			{
-				experimentName: 'wpcom_ai_website_builder_vega_site_spec_202604',
-				variationName: 'treatment',
-			},
-		] );
-		render( <SearchMoreOptions title="No themes found" /> );
-		expect( screen.getByRole( 'link', { name: 'Build with AI' } ) ).toHaveAttribute(
-			'href',
-			'/setup/ai-site-builder-spec'
 		);
 	} );
 

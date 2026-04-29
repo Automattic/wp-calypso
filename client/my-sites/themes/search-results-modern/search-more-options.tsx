@@ -4,7 +4,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
-import { useAiSiteBuilderPath } from 'calypso/lib/site-spec';
 import emptySearchAI from 'calypso/my-sites/themes/search-results-modern/empty-search-ai.webp';
 import emptySearchDIFM from 'calypso/my-sites/themes/search-results-modern/empty-search-difm.webp';
 import emptySearchUpload from 'calypso/my-sites/themes/search-results-modern/empty-search-upload.webp';
@@ -19,7 +18,6 @@ interface SearchMoreOptionsProps {
 
 const SearchMoreOptions = ( { title, subtitle, searchTerm }: SearchMoreOptionsProps ) => {
 	const translate = useTranslate();
-	const aiSiteBuilderPath = useAiSiteBuilderPath();
 
 	const trackAIClick = useCallback( () => {
 		recordTracksEvent( 'calypso_themeshowcase_more_options_ai_click', {
@@ -59,7 +57,7 @@ const SearchMoreOptions = ( { title, subtitle, searchTerm }: SearchMoreOptionsPr
 					<Button
 						className="search-more-options__button"
 						variant="secondary"
-						href={ aiSiteBuilderPath }
+						href="/setup/ai-site-builder"
 						onClick={ trackAIClick }
 					>
 						{ translate( 'Build with AI' ) }

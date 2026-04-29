@@ -5,13 +5,11 @@ import bigSkyLogo from 'calypso/assets/images/icons/big-sky.svg';
 import wordpressLogo from 'calypso/assets/images/icons/wordpress-logo.svg';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
-import { useAiSiteBuilderPath } from 'calypso/lib/site-spec';
 
 import './style.scss';
 
 const AIBuilderBanner = () => {
 	const translate = useTranslate();
-	const aiSiteBuilderPath = useAiSiteBuilderPath();
 
 	const trackClick = useCallback( () => {
 		recordTracksEvent( 'calypso_themeshowcase_ai_builder_banner_click' );
@@ -27,7 +25,7 @@ const AIBuilderBanner = () => {
 				<Button
 					className="banner-modern__button"
 					variant="primary"
-					href={ aiSiteBuilderPath }
+					href="/setup/ai-site-builder"
 					onClick={ trackClick }
 				>
 					{ translate( 'Start with AI' ) }
