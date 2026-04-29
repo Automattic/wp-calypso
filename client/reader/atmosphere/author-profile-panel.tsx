@@ -187,20 +187,6 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 	);
 	const itemKey = useCallback( ( post: AtmosphereFeedItem ) => post.uri, [] );
 
-	const handleViewOnBskyClick = useCallback( () => {
-		if ( ! profile.data ) {
-			return;
-		}
-		dispatch(
-			recordReaderTracksEvent( 'calypso_reader_atmosphere_profile_external_clicked', {
-				connection_id: connection.id,
-				actor,
-				external_uri: profile.data.bluesky_url,
-				surface: 'header_action',
-			} )
-		);
-	}, [ connection.id, actor, profile.data, dispatch ] );
-
 	const stats: SocialProfileStat[] = profile.data
 		? [
 				{
@@ -264,17 +250,6 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 	};
 
 	const renderHeaderBody = ( profileData: AtmosphereAuthorProfile ) => {
-		const headerActions = (
-			<a
-				className="atmosphere-profile__view-on-bsky"
-				href={ profileData.bluesky_url }
-				target="_blank"
-				rel="noopener noreferrer"
-				onClick={ handleViewOnBskyClick }
-			>
-				{ translate( 'View on Bluesky' ) }
-			</a>
-		);
 		return (
 			<SocialProfileCard
 				avatar={ profileData.avatar }
@@ -284,7 +259,6 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 				bioHtml={ profileData.description_html }
 				stats={ stats }
 				statsLabel={ String( translate( 'Profile stats' ) ) }
-				headerActions={ headerActions }
 			/>
 		);
 	};

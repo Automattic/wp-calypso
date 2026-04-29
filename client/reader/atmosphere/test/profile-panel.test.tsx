@@ -58,10 +58,6 @@ describe( 'ProfilePanel (own profile)', () => {
 		expect( await screen.findByRole( 'heading', { level: 2, name: 'Viewer Name' } ) ).toBeVisible();
 		expect( screen.getByText( '@viewer.bsky.social' ) ).toBeVisible();
 		expect( screen.getByText( 'About me.' ) ).toBeVisible();
-		expect( screen.getByRole( 'link', { name: /view on bluesky/i } ) ).toHaveAttribute(
-			'href',
-			'https://bsky.app/profile/viewer.bsky.social'
-		);
 	} );
 
 	it( 'renders an error state when the connection endpoint fails', async () => {

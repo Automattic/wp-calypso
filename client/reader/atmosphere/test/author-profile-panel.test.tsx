@@ -207,39 +207,6 @@ describe( 'AuthorProfilePanel', () => {
 		);
 	} );
 
-	it( 'fires external_clicked with surface=header_action on the View on Bluesky link', async () => {
-		const user = userEvent.setup();
-		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
-		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social' )
-			.reply( 200, profilePayload );
-		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
-			.query( true )
-			.reply( 200, { items: [], cursor: null } );
-
-		renderWithProvider(
-			<AuthorProfilePanel connection={ connection } actor="alice.bsky.social" />,
-			{ queryClient: makeQueryClient() }
-		);
-
-		// The header renders a "View on Bluesky" link; the empty-feed state
-		// also renders one. Wait for the header to mount, then click the
-		// first occurrence (the header action).
-		await screen.findAllByRole( 'link', { name: /view on bluesky/i } );
-		const viewOnBskyLinks = screen.getAllByRole( 'link', { name: /view on bluesky/i } );
-		await user.click( viewOnBskyLinks[ 0 ] );
-		expect( spy ).toHaveBeenCalledWith(
-			'calypso_reader_atmosphere_profile_external_clicked',
-			expect.objectContaining( {
-				connection_id: 42,
-				actor: 'alice.bsky.social',
-				external_uri: 'https://bsky.app/profile/alice.bsky.social',
-				surface: 'header_action',
-			} )
-		);
-	} );
-
 	it( 'paginates when sentinel comes into view', async () => {
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social' )

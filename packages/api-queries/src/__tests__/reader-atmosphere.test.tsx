@@ -96,7 +96,6 @@ describe( 'reader-atmosphere hooks', () => {
 				avatar: 'https://cdn/avatar.png',
 				banner: null,
 				counts: { followers: 0, follows: 0, posts: 0 },
-				raw: {},
 			} );
 		const client = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 		const { result } = renderHook( () => useConnectionQuery( 42 ), {
