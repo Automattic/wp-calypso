@@ -317,7 +317,7 @@ export function SocialAuthorProfilePanel< TProfile, TError extends ProtocolError
 					emptyActionURL={ emptyActionURL }
 					protocolLabel={ protocolLabel }
 					protocolHomeURL={ protocolHomeURL }
-					protocolHomeLabel={ protocolHomeLabel }
+					protocolHomeLabel={ String( protocolHomeLabel ) }
 				/>
 			</VStack>
 		</SocialAnalyticsProvider>
