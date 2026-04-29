@@ -1,6 +1,7 @@
 import {
 	authorizeMastodonConnection,
 	completeMastodonConnection,
+	getMastodonAuthorProfile,
 	getMastodonConnection,
 	getMastodonConnections,
 	getMastodonThread,
@@ -21,6 +22,7 @@ import type {
 	AuthorizeMastodonConnectionParams,
 	CompleteMastodonConnectionParams,
 	GetMastodonTimelineParams,
+	MastodonAuthorProfile,
 	MastodonAuthorizeResponse,
 	MastodonConnectionDetails,
 	MastodonConnectionsResponse,
@@ -155,4 +157,29 @@ export const mastodonThreadQueryOptions = ( connectionId: number, statusId: stri
 
 export function useMastodonThreadQuery( connectionId: number, statusId: string ) {
 	return useQuery( mastodonThreadQueryOptions( connectionId, statusId ) );
+}
+
+export const mastodonAuthorProfileQueryOptions = ( connectionId: number, actor: string ) =>
+	queryOptions< MastodonAuthorProfile, MastodonError >( {
+		queryKey: readerMastodonKeys.authorProfile( connectionId, actor ),
+		queryFn: () => getMastodonAuthorProfile( { connectionId, actor } ),
+		enabled: connectionId > 0 && actor.length > 0,
+		staleTime: 60_000,
+		gcTime: 5 * 60_000,
+		retry: ( failureCount, error ) => {
+			if ( error.kind === 'rate_limited' || error.kind === 'upstream_unavailable' ) {
+				return failureCount < 2;
+			}
+			return false;
+		},
+		retryDelay: ( _attempt, error ) => {
+			if ( error.kind === 'rate_limited' && error.retry_after !== undefined ) {
+				return Math.min( error.retry_after * 1000, 30_000 );
+			}
+			return 2_000;
+		},
+	} );
+
+export function useMastodonAuthorProfileQuery( connectionId: number, actor: string ) {
+	return useQuery( mastodonAuthorProfileQueryOptions( connectionId, actor ) );
 }
