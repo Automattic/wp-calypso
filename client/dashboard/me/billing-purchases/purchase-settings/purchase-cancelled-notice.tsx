@@ -39,6 +39,11 @@ export function PurchaseCancelledNotice( {
 	purchase: Purchase;
 	onClose: () => void;
 } ) {
+	// One-time purchases and edge cases without an expiry can't render a
+	// meaningful "until <date>" message, so skip the notice entirely.
+	if ( ! purchase.expiry_date ) {
+		return null;
+	}
 	const expiryDate = intlFormat(
 		new Date( purchase.expiry_date ),
 		{ dateStyle: 'long' },
