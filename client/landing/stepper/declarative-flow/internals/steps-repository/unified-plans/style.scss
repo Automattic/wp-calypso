@@ -53,5 +53,9 @@
 		.plans-features-main__plan-type-selector-layout {
 			margin: 0;
 		}
+
+		.is-plan-type-selector-visible .plans-features-main__features-grid {
+			margin-top: 16px;
+		}
 	}
 }
