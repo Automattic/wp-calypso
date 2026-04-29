@@ -193,7 +193,7 @@ describe( 'PostCardHeader getThreadUrl rewiring', () => {
 
 describe( 'PostCardHeader — author chip with getProfileUrl resolver', () => {
 	function renderWithAnalytics(
-		post: AtmosphereFeedItem,
+		post: SocialPost,
 		getProfileUrl: ( ref: { did?: string | null; handle?: string | null } ) => string | null
 	) {
 		const onClick = jest.fn();
@@ -212,14 +212,14 @@ describe( 'PostCardHeader — author chip with getProfileUrl resolver', () => {
 		return { onClick };
 	}
 
-	const basePost: AtmosphereFeedItem = {
+	const basePost: SocialPost = {
 		uri: 'at://did:plc:abc/app.bsky.feed.post/xyz',
-		cid: 'cid',
 		author: {
-			did: 'did:plc:abc',
+			id: 'did:plc:abc',
 			handle: 'alice.bsky.social',
 			display_name: 'Alice',
 			avatar: null,
+			profile_url: 'https://bsky.app/profile/alice.bsky.social',
 		},
 		created_at: '2024-01-01T00:00:00.000Z',
 		indexed_at: '2024-01-01T00:00:00.000Z',
@@ -231,7 +231,7 @@ describe( 'PostCardHeader — author chip with getProfileUrl resolver', () => {
 		reason: null,
 		embed: null,
 		counts: { replies: 0, reposts: 0, likes: 0, quotes: 0 },
-		bluesky_url: 'https://bsky.app/profile/alice.bsky.social/post/xyz',
+		permalink: 'https://bsky.app/profile/alice.bsky.social/post/xyz',
 	};
 
 	it( 'uses the in-app URL when the resolver returns a string', () => {
@@ -274,11 +274,11 @@ describe( 'PostCardHeader — author chip with getProfileUrl resolver', () => {
 	} );
 
 	describe( 'PostCardHeader — repost preface clickability', () => {
-		const repostedPost: AtmosphereFeedItem = {
+		const repostedPost: SocialPost = {
 			...basePost,
 			reason: {
 				type: 'repost',
-				by: { did: 'did:plc:joe', handle: 'joe.example.com', display_name: 'Joe' },
+				by: { id: 'did:plc:joe', handle: 'joe.example.com', display_name: 'Joe' },
 			},
 		};
 
