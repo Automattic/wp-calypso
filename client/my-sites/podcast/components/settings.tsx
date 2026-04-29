@@ -420,11 +420,10 @@ const PodcastingSettingsForm = ( {
 										</Notice>
 									) }
 
-									<HStack alignment="flex-end" spacing={ 3 } justify="flex-start">
+									<VStack spacing={ 2 }>
 										<SelectControl
 											__nextHasNoMarginBottom
 											__next40pxDefaultSize
-											className="podcast__settings-category-select"
 											label={ translate( 'Category' ) as string }
 											hideLabelFromVision
 											value={ podcastingCategoryId ? String( podcastingCategoryId ) : '' }
@@ -433,13 +432,14 @@ const PodcastingSettingsForm = ( {
 											disabled={ disabled }
 										/>
 										<Button
-											variant="secondary"
+											variant="link"
+											className="podcast__settings-category-add"
 											onClick={ () => setIsAddCategoryOpen( true ) }
 											disabled={ disabled }
 										>
-											{ translate( 'Create a category' ) }
+											{ translate( 'Create a new category' ) }
 										</Button>
-									</HStack>
+									</VStack>
 
 									<TermFormDialog
 										showDialog={ isAddCategoryOpen }

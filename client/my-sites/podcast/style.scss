@@ -70,9 +70,8 @@ body.is-section-podcasting {
 	}
 }
 
-.podcast__settings-category-select {
-	flex: 1;
-	min-inline-size: 0;
+.podcast__settings-category-add {
+	align-self: flex-start;
 }
 
 .podcast__settings-issues {
