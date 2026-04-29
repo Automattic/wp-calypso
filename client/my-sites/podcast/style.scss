@@ -75,6 +75,35 @@ body.is-section-podcasting {
 	min-inline-size: 0;
 }
 
+.podcast__settings-issues {
+	margin: 4px 0 0;
+	padding-inline-start: 18px;
+	list-style: disc;
+}
+
+.podcast__settings-readiness .notice-banner {
+	padding: 16px;
+	font-size: 13px;
+
+	p {
+		margin: 0;
+		font-size: 13px;
+		line-height: 1.5;
+	}
+}
+
+.podcast__settings-readiness .notice-banner__title {
+	font-size: 13px;
+	font-weight: 500;
+	line-height: 1.5;
+	margin-block-end: 4px;
+}
+
+.podcast__settings-readiness .notice-banner__icon-wrapper {
+	margin-block-start: 0;
+	margin-inline-end: 12px;
+}
+
 .podcast__settings-topics {
 	margin: 0;
 	padding: 0;

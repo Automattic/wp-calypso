@@ -3,6 +3,7 @@ import {
 	WPCOM_FEATURES_UPLOAD_AUDIO_FILES,
 	getPlan,
 } from '@automattic/calypso-products';
+import { NoticeBanner } from '@automattic/components';
 import {
 	Button,
 	Card,
@@ -23,11 +24,13 @@ import { pick } from 'lodash';
 import { useCallback, useMemo, useState } from 'react';
 import TermFormDialog from 'calypso/blocks/term-form-dialog';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import QueryMedia from 'calypso/components/data/query-media';
 import { decodeEntities } from 'calypso/lib/formatting';
 import PodcastCoverImageSetting from 'calypso/my-sites/site-settings/podcast-cover-image-setting';
 import useTopics from 'calypso/my-sites/site-settings/podcasting-details/use-topics';
 import wrapSettingsForm from 'calypso/my-sites/site-settings/wrap-settings-form';
 import { useSelector } from 'calypso/state';
+import getMediaItem from 'calypso/state/selectors/get-media-item';
 import { hasLoadedSitePlansFromServer } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getTerms } from 'calypso/state/terms/selectors';
@@ -151,6 +154,65 @@ const PodcastingSettingsForm = ( {
 		plansDataLoaded && ( site?.options?.upgraded_filetypes_enabled || isJetpack );
 
 	const disabled = isRequestingSettings || isSavingSettings || isCoverImageUploading;
+
+	// Cover-image meta is needed to validate dimensions/format against
+	// Apple Podcasts' cover-art requirements (square, 1400-3000 px, PNG/JPG).
+	const coverImageId = Number( fields.podcasting_image_id ?? 0 ) || 0;
+	const coverImage = useSelector( ( state ) =>
+		coverImageId
+			? ( getMediaItem( state, siteId ?? 0, coverImageId ) as {
+					width?: number;
+					height?: number;
+					mime_type?: string;
+			  } | null )
+			: null
+	);
+
+	const submissionIssues = useMemo( () => {
+		const list: string[] = [];
+		if ( ! ( fields.podcasting_title ?? '' ).trim() ) {
+			list.push( translate( 'Add a title.' ) as string );
+		}
+		if ( ! ( fields.podcasting_summary ?? '' ).trim() ) {
+			list.push( translate( 'Add a summary.' ) as string );
+		}
+		if ( ! ( fields.podcasting_talent_name ?? '' ).trim() ) {
+			list.push( translate( 'Add a host, artist, or producer name.' ) as string );
+		}
+		if ( ! ( fields.podcasting_email ?? '' ).trim() ) {
+			list.push( translate( 'Add an email address.' ) as string );
+		}
+		const primaryTopic = String( fields.podcasting_category_1 ?? '0' );
+		if ( primaryTopic === '0' || primaryTopic === '' ) {
+			list.push( translate( 'Choose a primary podcast topic.' ) as string );
+		}
+		if ( ! coverImageId ) {
+			list.push( translate( 'Add a cover image.' ) as string );
+		} else if ( coverImage ) {
+			const { width, height, mime_type: mimeType } = coverImage;
+			if ( mimeType && mimeType !== 'image/png' && mimeType !== 'image/jpeg' ) {
+				list.push( translate( 'Cover image must be a PNG or JPG.' ) as string );
+			}
+			if ( width && height && width !== height ) {
+				list.push( translate( 'Cover image must be square.' ) as string );
+			}
+			if ( width && ( width < 1400 || width > 3000 ) ) {
+				list.push(
+					translate( 'Cover image must be between 1400×1400 and 3000×3000 pixels.' ) as string
+				);
+			}
+		}
+		return list;
+	}, [
+		fields.podcasting_title,
+		fields.podcasting_summary,
+		fields.podcasting_talent_name,
+		fields.podcasting_email,
+		fields.podcasting_category_1,
+		coverImageId,
+		coverImage,
+		translate,
+	] );
 
 	const onTogglePodcasting = useCallback(
 		( isEnabled: boolean ) => {
@@ -276,6 +338,8 @@ const PodcastingSettingsForm = ( {
 			</header>
 
 			<VStack spacing={ 4 } className="podcast__settings">
+				{ siteId && coverImageId && <QueryMedia siteId={ siteId } mediaId={ coverImageId } /> }
+
 				{ /* Enable / disable */ }
 				<Card className="site-settings__card podcast__card">
 					<CardBody>
@@ -295,6 +359,26 @@ const PodcastingSettingsForm = ( {
 						/>
 					</CardBody>
 				</Card>
+
+				{ /* Submission readiness */ }
+				{ isPodcastingEnabled && submissionIssues.length > 0 && (
+					<div className="podcast__settings-readiness">
+						<NoticeBanner
+							level="warning"
+							title={ translate( 'Finish setting up your feed' ) as string }
+							hideCloseButton
+						>
+							<p>
+								{ translate( 'Address these before you submit your feed to podcast directories:' ) }
+							</p>
+							<ul className="podcast__settings-issues">
+								{ submissionIssues.map( ( issue ) => (
+									<li key={ issue }>{ issue }</li>
+								) ) }
+							</ul>
+						</NoticeBanner>
+					</div>
+				) }
 
 				{ /* Audio upload upsell */ }
 				{ showSettings && plansDataLoaded && ! isAudioUploadEnabled && (
