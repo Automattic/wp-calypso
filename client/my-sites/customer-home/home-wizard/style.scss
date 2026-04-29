@@ -269,8 +269,7 @@ body.is-home-wizard-open {
 // --- Prompt-variant wizard (shared step shell) ---
 
 .home-wizard--textarea,
-.home-wizard--chips,
-.home-wizard--sentence {
+.home-wizard--chips {
 	.home-wizard__step {
 		padding: 8px 0;
 	}
@@ -354,26 +353,3 @@ body.is-home-wizard-open {
 	}
 }
 
-// Variant 3: sentence (mad libs)
-.home-wizard__sentence {
-	padding: 16px;
-	background: #f6f7f7;
-	border-radius: 8px;
-}
-
-.home-wizard__sentence-select {
-	min-width: 160px;
-
-	.components-base-control {
-		margin-bottom: 0;
-	}
-}
-
-.home-wizard__sentence-input {
-	flex: 1;
-	min-width: 200px;
-
-	.components-base-control {
-		margin-bottom: 0;
-	}
-}

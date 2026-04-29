@@ -19,4 +19,4 @@ export type WizardAnswers = {
 	features: FeatureKey[];
 };
 
-export type WizardVariant = 'textarea' | 'chips' | 'sentence';
+export type WizardVariant = 'textarea' | 'chips';

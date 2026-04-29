@@ -3,7 +3,6 @@ import { useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import ChipsStep from './chips-step';
 import PromptStep from './prompt-step';
-import SentenceStep from './sentence-step';
 import type { WizardAnswers, WizardVariant } from './types';
 
 import './style.scss';
@@ -40,7 +39,6 @@ export default function HomeWizard( { variant, onClose, onComplete }: Props ) {
 		>
 			{ variant === 'textarea' && <PromptStep value={ prompt } onChange={ setPrompt } /> }
 			{ variant === 'chips' && <ChipsStep value={ prompt } onChange={ setPrompt } /> }
-			{ variant === 'sentence' && <SentenceStep value={ prompt } onChange={ setPrompt } /> }
 
 			<footer className="home-wizard__footer">
 				<Button variant="tertiary" onClick={ onClose }>

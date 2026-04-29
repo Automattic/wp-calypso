@@ -376,7 +376,6 @@ function useBodyClass( className: string, active: boolean ) {
 const VARIANT_LABELS: Record< WizardVariant, string > = {
 	textarea: 'Textarea',
 	chips: 'Chips',
-	sentence: 'Sentence',
 };
 
 export default function HomeDashboard() {
