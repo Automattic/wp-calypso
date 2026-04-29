@@ -14,7 +14,8 @@ const pickRandom = < T >( items: T[], count: number, random: () => number ): T[]
 	const pool = [ ...items ];
 	const picked: T[] = [];
 	while ( picked.length < count && pool.length > 0 ) {
-		const index = Math.floor( random() * pool.length );
+		const rawIndex = Math.floor( random() * pool.length );
+		const index = Math.max( 0, Math.min( pool.length - 1, rawIndex ) );
 		picked.push( pool.splice( index, 1 )[ 0 ] );
 	}
 	return picked;

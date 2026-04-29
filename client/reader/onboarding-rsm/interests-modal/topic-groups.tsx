@@ -8,25 +8,34 @@ export type TopicGroup = {
 	tags: string[];
 };
 
-// Placeholder Unsplash images, sized for card thumbnails. Swap with curated
-// art when finalized.
+const createPlaceholderImage = ( label: string ): string =>
+	`data:image/svg+xml;charset=UTF-8,${ encodeURIComponent(
+		`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 338" role="img" aria-label="${ label }">
+			<defs>
+				<linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+					<stop offset="0%" stop-color="#f6f7f7" />
+					<stop offset="100%" stop-color="#dcdcde" />
+				</linearGradient>
+			</defs>
+			<rect width="600" height="338" fill="url(#bg)" />
+			<circle cx="84" cy="84" r="32" fill="#c3c4c7" opacity="0.55" />
+			<rect x="48" y="238" width="240" height="20" rx="10" fill="#3858e9" opacity="0.9" />
+			<rect x="48" y="270" width="180" height="14" rx="7" fill="#50575e" opacity="0.45" />
+			<text x="48" y="210" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="32" font-weight="700" fill="#1d2327">${ label }</text>
+		</svg>`
+	) }`;
+
+// Inline SVG placeholders avoid third-party image requests while preserving
+// thumbnail rendering until first-party curated artwork is available.
 const IMG = {
-	mostSubscribed:
-		'https://images.unsplash.com/photo-1495446815901-a7297e633e8d?auto=format&fit=crop&w=600&q=80',
-	foodDrinks:
-		'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=600&q=80',
-	travelWorld:
-		'https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=600&q=80',
-	photographyArts:
-		'https://images.unsplash.com/photo-1519638831568-d9897f54ed69?auto=format&fit=crop&w=600&q=80',
-	techDevelopment:
-		'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80',
-	natureScience:
-		'https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=600&q=80',
-	designCraft:
-		'https://images.unsplash.com/photo-1452860606245-08befc0ff44b?auto=format&fit=crop&w=600&q=80',
-	musicCulture:
-		'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=600&q=80',
+	mostSubscribed: createPlaceholderImage( 'Most Subscribed' ),
+	foodDrinks: createPlaceholderImage( 'Food & Drinks' ),
+	travelWorld: createPlaceholderImage( 'Travel & World' ),
+	photographyArts: createPlaceholderImage( 'Photography & Arts' ),
+	techDevelopment: createPlaceholderImage( 'Tech & Development' ),
+	natureScience: createPlaceholderImage( 'Nature & Science' ),
+	designCraft: createPlaceholderImage( 'Design & Craft' ),
+	musicCulture: createPlaceholderImage( 'Music & Culture' ),
 };
 
 export const getTopicGroups = (): TopicGroup[] => [

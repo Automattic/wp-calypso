@@ -1,12 +1,11 @@
+import { readFeedQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { __, sprintf, _n } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
 import clsx from 'clsx';
 import React from 'react';
-import { useSelector } from 'react-redux';
 import { SiteIcon } from 'calypso/blocks/site-icon';
-import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
-import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import type { CuratedBlog } from '../../curated-blogs';
 
 import './style.scss';
@@ -26,12 +25,11 @@ type TopicGroupCardProps = {
 };
 
 const BlogAvatar: React.FC< { blog: CuratedBlog } > = ( { blog } ) => {
-	const feed = useSelector( ( state ) => getFeed( state, blog.feed_ID ) );
+	const { data: feed } = useQuery( readFeedQuery( blog.feed_ID ) );
 	const iconUrl = feed?.site_icon ?? feed?.image;
 
 	return (
 		<>
-			<QueryReaderFeed feedId={ blog.feed_ID } />
 			<span
 				className="topic-group-card__avatar"
 				title={ blog.site_name }

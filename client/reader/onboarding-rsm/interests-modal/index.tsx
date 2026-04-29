@@ -114,9 +114,15 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 		setProcessingTags( ( current ) => new Set( current ).add( tag ) );
 
 		// Follow or unfollow the tag and update the followed tags state for the UI.
-		setFollowedTags( ( currentTags ) =>
-			checked ? [ ...currentTags, tag ] : currentTags.filter( ( t ) => t !== tag )
-		);
+		let totalFollowedAfterToggle = followedTags.length;
+		setFollowedTags( ( currentTags ) => {
+			let nextTags = currentTags.filter( ( t ) => t !== tag );
+			if ( checked ) {
+				nextTags = currentTags.includes( tag ) ? currentTags : [ ...currentTags, tag ];
+			}
+			totalFollowedAfterToggle = nextTags.length;
+			return nextTags;
+		} );
 
 		recordTracksEvent(
 			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_tag_${
@@ -124,7 +130,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 			}`,
 			{
 				tag,
-				total_followed: followedTags.length + ( checked ? 1 : -1 ),
+				total_followed: totalFollowedAfterToggle,
 			}
 		);
 
