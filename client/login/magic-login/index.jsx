@@ -389,7 +389,7 @@ const MagicLoginWithContext = ( props ) => {
 	);
 };
 
-export const getConnectorParamsFromRedirectTo = ( redirectToOriginal ) => {
+export const getConnectionFlowFromRedirectTo = ( redirectToOriginal ) => {
 	const redirectToParams = new URLSearchParams( redirectToOriginal?.split( '?' )[ 1 ] );
 	const from = redirectToParams.get( 'from' );
 	const plugins = redirectToParams.get( 'plugins' );
@@ -405,7 +405,7 @@ const mapState = ( state ) => {
 	const currentQuery = getCurrentQueryArguments( state );
 	const initialQuery = getInitialQueryArguments( state );
 	const redirectToOriginal = getRedirectToOriginal( state );
-	const connectorParams = getConnectorParamsFromRedirectTo( redirectToOriginal );
+	const connectorParams = getConnectionFlowFromRedirectTo( redirectToOriginal );
 
 	return {
 		locale: getCurrentLocaleSlug( state ),

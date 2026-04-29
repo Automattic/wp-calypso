@@ -1,11 +1,7 @@
 /** @jest-environment jsdom */
 import React from 'react';
 import { getPartnerSignupTosElement } from 'calypso/lib/partner-branding';
-import {
-	getConnectorParamsFromRedirectTo,
-	getMagicLoginInitialHeaders,
-	MagicLogin,
-} from '../index';
+import { getConnectionFlowFromRedirectTo, getMagicLoginInitialHeaders, MagicLogin } from '../index';
 
 jest.mock( 'calypso/lib/partner-branding', () => ( {
 	detectPartnerConfig: jest.fn(),
@@ -131,9 +127,9 @@ describe( 'magic-login branding behavior', () => {
 	} );
 } );
 
-describe( 'getConnectorParamsFromRedirectTo', () => {
+describe( 'getConnectionFlowFromRedirectTo', () => {
 	it( 'flags the connector flow and parses plugins when from=jetpack-connector', () => {
-		const params = getConnectorParamsFromRedirectTo(
+		const params = getConnectionFlowFromRedirectTo(
 			'/jetpack/connect/authorize?from=jetpack-connector&plugins=jetpack,woocommerce'
 		);
 
@@ -145,7 +141,7 @@ describe( 'getConnectorParamsFromRedirectTo', () => {
 	} );
 
 	it( 'recognises jetpack-onboarding as part of the unified flow without flagging the connector', () => {
-		const params = getConnectorParamsFromRedirectTo(
+		const params = getConnectionFlowFromRedirectTo(
 			'/jetpack/connect/authorize?from=jetpack-onboarding'
 		);
 
@@ -155,7 +151,7 @@ describe( 'getConnectorParamsFromRedirectTo', () => {
 	} );
 
 	it( 'does not flag the connector for unrelated from values', () => {
-		const params = getConnectorParamsFromRedirectTo(
+		const params = getConnectionFlowFromRedirectTo(
 			'/jetpack/connect/authorize?from=my-jetpack&plugins=jetpack,woocommerce'
 		);
 
@@ -165,7 +161,7 @@ describe( 'getConnectorParamsFromRedirectTo', () => {
 	} );
 
 	it( 'returns an empty plugin list when the plugins query param is absent', () => {
-		const params = getConnectorParamsFromRedirectTo(
+		const params = getConnectionFlowFromRedirectTo(
 			'/jetpack/connect/authorize?from=jetpack-connector'
 		);
 
@@ -174,7 +170,7 @@ describe( 'getConnectorParamsFromRedirectTo', () => {
 	} );
 
 	it( 'returns sensible defaults when redirect_to is missing', () => {
-		expect( getConnectorParamsFromRedirectTo( undefined ) ).toEqual( {
+		expect( getConnectionFlowFromRedirectTo( undefined ) ).toEqual( {
 			isFromJetpackConnector: false,
 			isUnifiedConnectionFlow: false,
 			connectorPlugins: [],
@@ -182,7 +178,7 @@ describe( 'getConnectorParamsFromRedirectTo', () => {
 	} );
 
 	it( 'filters empty entries produced by trailing commas in plugins', () => {
-		const params = getConnectorParamsFromRedirectTo(
+		const params = getConnectionFlowFromRedirectTo(
 			'/jetpack/connect/authorize?from=jetpack-connector&plugins=jetpack,,woocommerce,'
 		);
 
