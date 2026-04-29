@@ -183,6 +183,9 @@ const PodcastingSettingsForm = ( {
 
 	const submissionIssues = useMemo( () => {
 		const list: string[] = [];
+		if ( ! isPodcastingEnabled ) {
+			list.push( translate( 'Select a podcast category.' ) as string );
+		}
 		if ( ! ( fields.podcasting_title ?? '' ).trim() ) {
 			list.push( translate( 'Add a title.' ) as string );
 		}
@@ -224,6 +227,7 @@ const PodcastingSettingsForm = ( {
 		fields.podcasting_category_1,
 		coverImageId,
 		coverImage,
+		isPodcastingEnabled,
 		translate,
 	] );
 
@@ -399,11 +403,15 @@ const PodcastingSettingsForm = ( {
 			<VStack spacing={ 4 } className="podcast__settings">
 				{ siteId && coverImageId && <QueryMedia siteId={ siteId } mediaId={ coverImageId } /> }
 
-				{ isPodcastingEnabled && submissionIssues.length > 0 && (
+				{ submissionIssues.length > 0 && (
 					<div className="podcast__settings-readiness">
 						<NoticeBanner
 							level="warning"
-							title={ translate( 'Almost ready to submit' ) as string }
+							title={
+								isPodcastingEnabled
+									? ( translate( 'Almost ready to submit' ) as string )
+									: ( translate( 'Set up your podcast feed' ) as string )
+							}
 							hideCloseButton
 						>
 							<p>
@@ -433,12 +441,6 @@ const PodcastingSettingsForm = ( {
 					</CardHeader>
 					<CardBody>
 						<VStack spacing={ 6 }>
-							{ ! isPodcastingEnabled && (
-								<Notice status="info" isDismissible={ false }>
-									{ translate( 'Select a category to start your podcast feed.' ) }
-								</Notice>
-							) }
-
 							<VStack spacing={ 2 }>
 								<SelectControl
 									__nextHasNoMarginBottom
