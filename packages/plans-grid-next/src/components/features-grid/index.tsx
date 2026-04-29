@@ -16,7 +16,6 @@ import { PlanFeaturesItem } from '../item';
 import { PlanStorage } from '../shared/storage';
 import BillingTimeframes from './billing-timeframes';
 import EnterpriseFeatures from './enterprise-features';
-import MobileFreeDomain from './mobile-free-domain';
 import PlanFeaturesList from './plan-features-list';
 import PlanHeaders from './plan-headers';
 import PlanLogos from './plan-logos';
@@ -174,7 +173,6 @@ const MobileView = ( {
 						/>
 					) }
 					{ isNotFreePlan && <BillingTimeframes renderedGridPlans={ [ gridPlan ] } /> }
-					<MobileFreeDomain gridPlan={ gridPlan } paidDomainName={ paidDomainName } />
 					<TopButtons
 						renderedGridPlans={ [ gridPlan ] }
 						isInSignup={ isInSignup }
