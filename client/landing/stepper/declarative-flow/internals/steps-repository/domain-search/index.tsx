@@ -314,13 +314,7 @@ const DomainSearchStep: StepType< {
 
 	const subHeaderText = useMemo( () => {
 		if ( isWooHostingSolutions ) {
-			return (
-				<>
-					{ __( 'Your domain is how customers find you and remember you.' ) }
-					<br />
-					{ __( 'Start with .com, .shop, or .store.' ) }
-				</>
-			);
+			return __( 'Find a .com, .shop, or .store that customers will remember.' );
 		}
 
 		if ( isNewsletterFlow( flow ) ) {
