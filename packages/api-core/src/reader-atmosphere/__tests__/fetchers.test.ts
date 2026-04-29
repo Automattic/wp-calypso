@@ -93,7 +93,6 @@ describe( 'atmosphere fetchers', () => {
 				avatar: null,
 				banner: null,
 				counts: { followers: 0, follows: 0, posts: 0 },
-				raw: {},
 			} );
 		const result = await getConnection( 42 );
 		expect( result.handle ).toBe( 'a.bsky.social' );
@@ -338,8 +337,10 @@ describe( 'atmosphere fetchers', () => {
 				handle: 'alice.bsky.social',
 				display_name: 'Alice',
 				description: 'plain bio',
+				description_html: '<p>plain bio</p>',
 				avatar: 'https://cdn.bsky.app/avatar.jpg',
 				banner: 'https://cdn.bsky.app/banner.jpg',
+				bluesky_url: 'https://bsky.app/profile/alice.bsky.social',
 				counts: { followers: 10, follows: 5, posts: 3 },
 			};
 			nock( BASE )

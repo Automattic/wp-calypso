@@ -352,8 +352,10 @@ describe( 'reader-atmosphere hooks', () => {
 				handle: 'alice.bsky.social',
 				display_name: 'Alice',
 				description: '',
+				description_html: '',
 				avatar: null,
 				banner: null,
+				bluesky_url: 'https://bsky.app/profile/alice.bsky.social',
 				counts: { followers: 0, follows: 0, posts: 0 },
 			};
 			nock( BASE )

@@ -49,7 +49,6 @@ describe( 'ProfilePanel (own profile)', () => {
 				avatar: 'https://cdn.example/a.jpg',
 				banner: 'https://cdn.example/b.jpg',
 				counts: { followers: 12, follows: 7, posts: 4 },
-				raw: {},
 			} );
 
 		renderWithProvider( <ProfilePanel connection={ connection } />, {
