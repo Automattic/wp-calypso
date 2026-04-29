@@ -5,10 +5,14 @@
 import { render, screen } from '@testing-library/react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { createReduxStore } from 'calypso/state';
+import { setStore } from 'calypso/state/redux-store';
 import PurchaseNotice from '../notices';
 
 describe( 'PurchaseNotice', () => {
 	const store = createReduxStore();
+	// Drains the registerReducer queue into this store so dynamically-registered
+	// reducers (e.g. state.purchases) are present for selectors that read them.
+	setStore( store );
 	const futureYearDate = new Date();
 	futureYearDate.setFullYear( futureYearDate.getFullYear() + 10 );
 	const pastYearDate = new Date();
