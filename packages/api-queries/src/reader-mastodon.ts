@@ -1,6 +1,7 @@
 import {
 	authorizeMastodonConnection,
 	completeMastodonConnection,
+	getMastodonAuthorFeed,
 	getMastodonAuthorProfile,
 	getMastodonConnection,
 	getMastodonConnections,
@@ -21,7 +22,9 @@ import {
 import type {
 	AuthorizeMastodonConnectionParams,
 	CompleteMastodonConnectionParams,
+	GetMastodonAuthorFeedParams,
 	GetMastodonTimelineParams,
+	MastodonAuthorFeedPage,
 	MastodonAuthorProfile,
 	MastodonAuthorizeResponse,
 	MastodonConnectionDetails,
@@ -182,4 +185,44 @@ export const mastodonAuthorProfileQueryOptions = ( connectionId: number, actor: 
 
 export function useMastodonAuthorProfileQuery( connectionId: number, actor: string ) {
 	return useQuery( mastodonAuthorProfileQueryOptions( connectionId, actor ) );
+}
+
+export const mastodonAuthorFeedInfiniteQuery = ( connectionId: number, actor: string ) =>
+	infiniteQueryOptions<
+		MastodonAuthorFeedPage,
+		MastodonError,
+		InfiniteData< MastodonAuthorFeedPage >,
+		QueryKey,
+		string | undefined
+	>( {
+		queryKey: readerMastodonKeys.authorFeed( connectionId, actor ),
+		queryFn: ( { pageParam } ) =>
+			getMastodonAuthorFeed( {
+				connectionId,
+				actor,
+				cursor: pageParam,
+			} as GetMastodonAuthorFeedParams ),
+		initialPageParam: undefined,
+		// `|| undefined` (not `??`): an empty-string cursor terminates pagination.
+		// Atmosphere slice 6 hardened this exact path against an upstream returning ''.
+		getNextPageParam: ( lastPage ) => lastPage.cursor || undefined,
+		enabled: connectionId > 0 && actor.length > 0,
+		staleTime: 30_000,
+		gcTime: 5 * 60_000,
+		retry: ( failureCount, error ) => {
+			if ( error.kind === 'rate_limited' || error.kind === 'upstream_unavailable' ) {
+				return failureCount < 2;
+			}
+			return false;
+		},
+		retryDelay: ( _attempt, error ) => {
+			if ( error.kind === 'rate_limited' && error.retry_after !== undefined ) {
+				return Math.min( error.retry_after * 1000, 30_000 );
+			}
+			return 2_000;
+		},
+	} );
+
+export function useMastodonAuthorFeedInfiniteQuery( connectionId: number, actor: string ) {
+	return useInfiniteQuery( mastodonAuthorFeedInfiniteQuery( connectionId, actor ) );
 }
