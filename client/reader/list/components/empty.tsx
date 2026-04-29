@@ -1,9 +1,9 @@
+import { readListItemsAllQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-import QueryReaderListItems from 'calypso/components/data/query-reader-list-items';
 import EmptyContent from 'calypso/components/empty-content';
 import { ReaderList } from 'calypso/reader/list-manage/types';
-import { getListItems } from 'calypso/state/reader/lists/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 
 interface ListEmptyProps {
@@ -13,10 +13,13 @@ interface ListEmptyProps {
 export default function ListEmpty( { list }: ListEmptyProps ): JSX.Element {
 	const translate = useTranslate();
 	const previousRoute: string = useSelector( getPreviousRoute );
-	const listItems = useSelector( ( state ) =>
-		list ? getListItems( state, list.ID ) : undefined
-	);
-	const isEmptyList = ! listItems?.length;
+	const { data: itemsData, isFetched } = useQuery( {
+		...readListItemsAllQuery( list?.owner ?? null, list?.slug ?? null ),
+		enabled: !! list,
+	} );
+	// Only flip to "empty" once we've actually fetched — otherwise the initial
+	// undefined cache makes every list look empty during the loading flash.
+	const isEmptyList = isFetched && ! itemsData?.items?.length;
 	const shouldPromptManagement = isEmptyList && list?.is_owner;
 	const isRecommendedBlogsList = list?.slug === 'recommended-blogs';
 
@@ -68,10 +71,5 @@ export default function ListEmpty( { list }: ListEmptyProps ): JSX.Element {
 		</a>
 	);
 
-	return (
-		<>
-			<QueryReaderListItems owner={ list?.owner } slug={ list?.slug } />
-			<EmptyContent title={ getTitle() } line={ getLine() } action={ action } />
-		</>
-	);
+	return <EmptyContent title={ getTitle() } line={ getLine() } action={ action } />;
 }

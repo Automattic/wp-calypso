@@ -96,3 +96,34 @@ export interface MastodonTimelinePage {
 	items: MastodonFeedItem[];
 	cursor: string | null;
 }
+
+// Wire shape from /reader/mastodon/connections/<id>/thread.
+// Mirrors atmosphere's recursive thread shape: focal node at thread.post,
+// ancestor chain via thread.parent.parent... (linked list), reply tree
+// under thread.replies. Tombstone variants (not_found / blocked) cover
+// soft-deleted or moderated statuses inside the thread.
+export interface MastodonThreadPostNode {
+	type: 'post';
+	post: MastodonFeedItem;
+	parent: MastodonThreadNode | null;
+	replies: MastodonThreadNode[];
+}
+
+export interface MastodonThreadNotFoundNode {
+	type: 'not_found';
+	uri: string;
+}
+
+export interface MastodonThreadBlockedNode {
+	type: 'blocked';
+	uri: string;
+}
+
+export type MastodonThreadNode =
+	| MastodonThreadPostNode
+	| MastodonThreadNotFoundNode
+	| MastodonThreadBlockedNode;
+
+export interface MastodonThreadResponse {
+	thread: MastodonThreadNode;
+}

@@ -5,6 +5,7 @@ import type {
 	MastodonConnectionDetails,
 	MastodonConnectionsResponse,
 	MastodonCreateConnectionResponse,
+	MastodonThreadResponse,
 	MastodonTimelinePage,
 } from './types';
 
@@ -94,6 +95,28 @@ export async function getMastodonTimeline(
 			},
 			query
 		) ) as MastodonTimelinePage;
+	} catch ( raw ) {
+		throw classifyMastodonError( raw );
+	}
+}
+
+export interface GetMastodonThreadParams {
+	connectionId: number;
+	statusId: string;
+}
+
+export async function getMastodonThread(
+	params: GetMastodonThreadParams
+): Promise< MastodonThreadResponse > {
+	const { connectionId, statusId } = params;
+	try {
+		return ( await wpcom.req.get(
+			{
+				path: `/reader/mastodon/connections/${ connectionId }/thread`,
+				apiNamespace: NAMESPACE,
+			},
+			{ status_id: statusId }
+		) ) as MastodonThreadResponse;
 	} catch ( raw ) {
 		throw classifyMastodonError( raw );
 	}

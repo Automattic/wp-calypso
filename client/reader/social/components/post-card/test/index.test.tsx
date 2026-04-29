@@ -93,7 +93,6 @@ describe( 'SocialPostCard', () => {
 						post: {
 							type: 'not_found',
 							uri: 'at://x',
-							reason: 'notfound',
 						},
 					},
 				} }

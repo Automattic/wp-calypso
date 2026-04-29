@@ -30,7 +30,6 @@ export interface AtmosphereConnectionDetails {
 	avatar: string | null;
 	banner: string | null;
 	counts: AtmosphereProfileCounts;
-	raw: Record< string, unknown >;
 }
 
 export interface AtmosphereAuthor {
@@ -169,4 +168,34 @@ export type AtmosphereThreadNode =
 
 export interface AtmosphereThreadResponse {
 	thread: AtmosphereThreadNode;
+}
+
+/**
+ * Author profile response from /wpcom/v2/reader/atmosphere/profile/{actor}.
+ * Connection-agnostic. `description_html` is the server-rendered, sanitised
+ * bio with mention/URL/hashtag facets turned into anchors (mirrors what the
+ * official Bluesky clients render); `description` is the plain-text fallback.
+ * `bluesky_url` is the canonical bsky.app profile URL — already-encoded
+ * server-side, so consumers can use it as-is.
+ */
+export interface AtmosphereAuthorProfile {
+	did: string;
+	handle: string;
+	display_name: string | null;
+	description: string;
+	description_html: string;
+	avatar: string | null;
+	banner: string | null;
+	bluesky_url: string;
+	counts: AtmosphereProfileCounts;
+}
+
+/**
+ * Author feed page response. Same shape as AtmosphereTimelinePage —
+ * factored as a separate type so we can diverge in slice 8+ if the
+ * filter-tabs follow-up (CM-628) introduces a filter-aware shape.
+ */
+export interface AtmosphereAuthorFeedPage {
+	items: AtmosphereFeedItem[];
+	cursor: string | null;
 }

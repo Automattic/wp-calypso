@@ -1,15 +1,15 @@
-import { readSubscribedListsQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
+import {
+	addReadListFeedMutation,
+	deleteReadListFeedMutation,
+	readListItemsAllQuery,
+	readSubscribedListsQuery,
+} from '@automattic/api-queries';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { translate } from 'i18n-calypso';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
-import {
-	addRecommendedBlogsSite as addFeedRecommendation,
-	removeRecommendedBlogsSite as removeFeedRecommendation,
-} from 'calypso/state/reader/lists/actions';
-import { getMatchingItem } from 'calypso/state/reader/lists/selectors';
-import type { AppState } from 'calypso/types';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 interface useFeedRecommendationsMutationResult {
 	isRecommended: boolean;
@@ -17,6 +17,8 @@ interface useFeedRecommendationsMutationResult {
 	canToggle: boolean;
 	toggleRecommended: () => void;
 }
+
+const RECOMMENDED_BLOGS_SLUG = 'recommended-blogs';
 
 /**
  * Custom hook for managing the feed recommendations state with optimistic updates
@@ -27,71 +29,71 @@ export const useFeedRecommendationsMutation = (
 	feedId: number
 ): useFeedRecommendationsMutationResult => {
 	const dispatch = useDispatch();
+	const queryClient = useQueryClient();
 	const currentUserName = useSelector( getCurrentUserName );
 
-	// Get the recommended blogs list for the current user from the subscribed lists query.
 	const { data: subscribedListsData } = useQuery( {
 		...readSubscribedListsQuery(),
 		enabled: !! currentUserName,
 	} );
 	const recommendedBlogsList = currentUserName
 		? subscribedListsData?.lists.find(
-				( list ) => list.owner === currentUserName && list.slug === 'recommended-blogs'
+				( list ) => list.owner === currentUserName && list.slug === RECOMMENDED_BLOGS_SLUG
 		  )
 		: undefined;
 
-	// Memoized selector to check if item is in recommended list
-	const selectIsInRecommendedList = useCallback(
-		( state: AppState ) => {
-			if ( ! currentUserName || ! recommendedBlogsList?.ID ) {
-				return false;
-			}
-
-			// Match by feedId only
-			const matchByFeedId = getMatchingItem( state, { listId: recommendedBlogsList.ID, feedId } );
-			return !! matchByFeedId;
-		},
-		[ currentUserName, recommendedBlogsList?.ID, feedId ]
+	const { data: itemsData } = useQuery( {
+		...readListItemsAllQuery( currentUserName, RECOMMENDED_BLOGS_SLUG ),
+		enabled: !! currentUserName && !! recommendedBlogsList?.ID,
+	} );
+	const isRecommended = !! itemsData?.items?.some(
+		( item ) => Number( item.feed_ID ) === Number( feedId )
 	);
 
-	// Get actual state from Redux (includes optimistic updates handled by reducer)
-	const isRecommended = useSelector( selectIsInRecommendedList );
+	const { mutate: addFeed, isPending: isAdding } = useMutation(
+		addReadListFeedMutation( queryClient )
+	);
+	const { mutate: deleteFeed, isPending: isDeleting } = useMutation(
+		deleteReadListFeedMutation( queryClient )
+	);
+	const isUpdating = isAdding || isDeleting;
 
-	// Local state for loading state only
-	const [ isUpdating, setIsUpdating ] = useState( false );
-
-	// Determine if toggle is available
 	const canToggle = Boolean(
 		currentUserName && typeof currentUserName === 'string' && recommendedBlogsList?.ID
 	);
 
-	// Toggle function - Redux reducer handles optimistic updates
 	const toggleRecommended = useCallback( () => {
-		if ( ! canToggle || isUpdating || ! recommendedBlogsList?.ID ) {
+		if ( ! canToggle || isUpdating || ! recommendedBlogsList?.ID || ! currentUserName ) {
 			return;
 		}
 
 		const newValue = ! isRecommended;
-
-		setIsUpdating( true );
-
-		// Add a small delay before allowing the next toggle to prevent rapid toggling
-		setTimeout( () => setIsUpdating( false ), 300 );
+		const variables = {
+			owner: currentUserName as string,
+			slug: RECOMMENDED_BLOGS_SLUG,
+			feedId,
+		};
 
 		if ( newValue ) {
-			dispatch(
-				addFeedRecommendation( recommendedBlogsList.ID, feedId, currentUserName as string, {
-					successMessage: translate( 'Site added to your recommended blogs.' ),
-					errorMessage: translate( 'Failed to add site to recommended blogs. Please try again.' ),
-				} )
-			);
+			addFeed( variables, {
+				onSuccess: () => {
+					dispatch( successNotice( translate( 'Site added to your recommended blogs.' ) ) );
+				},
+				onError: () => {
+					dispatch(
+						errorNotice( translate( 'Failed to add site to recommended blogs. Please try again.' ) )
+					);
+				},
+			} );
 		} else {
-			dispatch(
-				removeFeedRecommendation( recommendedBlogsList.ID, feedId, currentUserName as string, {
-					successMessage: translate( 'Site removed from your recommended blogs.' ),
-					errorMessage: translate( 'Failed to remove site from recommended blogs.' ),
-				} )
-			);
+			deleteFeed( variables, {
+				onSuccess: () => {
+					dispatch( successNotice( translate( 'Site removed from your recommended blogs.' ) ) );
+				},
+				onError: () => {
+					dispatch( errorNotice( translate( 'Failed to remove site from recommended blogs.' ) ) );
+				},
+			} );
 		}
 	}, [
 		canToggle,
@@ -100,6 +102,8 @@ export const useFeedRecommendationsMutation = (
 		feedId,
 		currentUserName,
 		recommendedBlogsList?.ID,
+		addFeed,
+		deleteFeed,
 		dispatch,
 	] );
 

@@ -22,7 +22,13 @@ export type {
 	SocialEmbedQuote,
 	SocialEmbedQuoteWithMedia,
 	SocialQuoteTombstone,
+	SocialThreadNode,
+	SocialThreadPostNode,
+	SocialThreadTombstoneNode,
 	SocialError,
 } from './types';
 export { mapAtmosphereFeedItemToSocialPost } from './mappers/atmosphere';
-export { mapMastodonFeedItemToSocialPost } from './mappers/mastodon';
+export {
+	mapMastodonFeedItemToSocialPost,
+	mapMastodonThreadResponseToSocialThreadNode,
+} from './mappers/mastodon';

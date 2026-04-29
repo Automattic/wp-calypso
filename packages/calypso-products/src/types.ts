@@ -344,18 +344,8 @@ export type Plan = BillingTerm & {
 	get2023PricingGridSignupWpcomFeatures?: () => Feature[];
 
 	/**
-	 * Comprehensive feature list for the long_set variant of the plans differentiators experiment.
-	 * Shows all features for each plan including base infrastructure features.
-	 */
-	getLongSetSignupWpcomFeatures?: () => Feature[];
-	/**
-	 * Feature list for focused_more_premium and focused_new_copy (ExPlat) variants of the plans
-	 * differentiators experiment.
-	 */
-	getVar41MorePremiumSignupWpcomFeatures?: () => Feature[];
-	/**
-	 * Comprehensive feature list for the focused_no_ai variant of the plans differentiators experiment.
-	 * Plan-scoped pills match other pill variants except AI-labeled pills are not shown.
+	 * Feature list for the rolled-out pricing differentiation cohort.
+	 * Uses non-AI wording; plan-scoped pills suppress AI-labeled pills.
 	 */
 	getVar42NoAiSignupWpcomFeatures?: () => Feature[];
 
