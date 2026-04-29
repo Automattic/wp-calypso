@@ -206,8 +206,8 @@ const sections = [
 		group: 'sites',
 	},
 	{
-		name: 'podcast',
-		paths: [ '/podcast' ],
+		name: 'podcasting',
+		paths: [ '/podcasting' ],
 		module: 'calypso/my-sites/podcast',
 		group: 'sites',
 	},

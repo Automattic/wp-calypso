@@ -1,8 +1,8 @@
 import { useTranslate } from 'i18n-calypso';
-import type { AtmosphereQuoteTombstone } from '@automattic/api-core';
+import type { SocialQuoteTombstone } from '../../types';
 
 interface PostCardEmbedQuoteTombstoneProps {
-	tombstone: AtmosphereQuoteTombstone;
+	tombstone: SocialQuoteTombstone;
 }
 
 export function PostCardEmbedQuoteTombstone( { tombstone }: PostCardEmbedQuoteTombstoneProps ) {

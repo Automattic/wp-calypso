@@ -1,6 +1,8 @@
 import { wpcom } from '../wpcom-fetcher';
 import { classifyAtmosphereError } from './errors';
 import type {
+	AtmosphereAuthorFeedPage,
+	AtmosphereAuthorProfile,
 	AtmosphereConnectionDetails,
 	AtmosphereConnectionsResponse,
 	AtmosphereCreateConnectionResponse,
@@ -103,6 +105,54 @@ export async function getThread( params: GetThreadParams ): Promise< AtmosphereT
 			},
 			query
 		) ) as AtmosphereThreadResponse;
+	} catch ( raw ) {
+		throw classifyAtmosphereError( raw );
+	}
+}
+
+export interface GetAuthorProfileParams {
+	actor: string;
+}
+
+export async function getAuthorProfile(
+	params: GetAuthorProfileParams
+): Promise< AtmosphereAuthorProfile > {
+	const { actor } = params;
+	try {
+		return ( await wpcom.req.get( {
+			path: `/reader/atmosphere/profile/${ encodeURIComponent( actor ) }`,
+			apiNamespace: NAMESPACE,
+		} ) ) as AtmosphereAuthorProfile;
+	} catch ( raw ) {
+		throw classifyAtmosphereError( raw );
+	}
+}
+
+export interface GetAuthorFeedParams {
+	actor: string;
+	cursor?: string;
+	limit?: number;
+}
+
+export async function getAuthorFeed(
+	params: GetAuthorFeedParams
+): Promise< AtmosphereAuthorFeedPage > {
+	const { actor, cursor, limit } = params;
+	const query: Record< string, string > = {};
+	if ( cursor ) {
+		query.cursor = cursor;
+	}
+	if ( limit ) {
+		query.limit = String( limit );
+	}
+	try {
+		return ( await wpcom.req.get(
+			{
+				path: `/reader/atmosphere/profile/${ encodeURIComponent( actor ) }/feed`,
+				apiNamespace: NAMESPACE,
+			},
+			query
+		) ) as AtmosphereAuthorFeedPage;
 	} catch ( raw ) {
 		throw classifyAtmosphereError( raw );
 	}

@@ -1,5 +1,6 @@
 import {
 	createReadListMutation,
+	readListItemsAllQuery,
 	readListQuery,
 	updateReadListMutation,
 } from '@automattic/api-queries';
@@ -7,10 +8,9 @@ import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import ReaderExportButton from 'calypso/blocks/reader-export-button';
 import { READER_EXPORT_TYPE_LIST } from 'calypso/blocks/reader-export-button/constants';
-import QueryReaderListItems from 'calypso/components/data/query-reader-list-items';
 import EmptyContent from 'calypso/components/empty-content';
 import NavigationHeader from 'calypso/components/navigation-header';
 import SectionNav from 'calypso/components/section-nav';
@@ -21,7 +21,6 @@ import ReaderMain from 'calypso/reader/components/reader-main';
 import ListMissing from 'calypso/reader/list/components/missing';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { DEFAULT_NOTICE_DURATION } from 'calypso/state/notices/constants';
-import { getListItems } from 'calypso/state/reader/lists/selectors';
 import ItemAdder from './item-adder';
 import ListDelete from './list-delete';
 import ListForm from './list-form';
@@ -150,9 +149,11 @@ function ReaderListEdit( props ) {
 	const { data, isFetched } = useQuery( readListQuery( props.owner, props.slug ) );
 	const list = data?.list;
 	const isMissing = isFetched && ! list;
-	const listItems = useSelector( ( state ) =>
-		list ? getListItems( state, list.ID ) : undefined
-	);
+	const { data: itemsData } = useQuery( {
+		...readListItemsAllQuery( props.owner, props.slug ),
+		enabled: !! list,
+	} );
+	const listItems = itemsData?.items;
 	const sectionProps = { ...props, list, listItems };
 
 	// Only the list owner can manage the list
@@ -171,7 +172,6 @@ function ReaderListEdit( props ) {
 
 	return (
 		<>
-			{ ! listItems && list && <QueryReaderListItems owner={ props.owner } slug={ props.slug } /> }
 			<ReaderMain>
 				<NavigationHeader
 					title={ translate( 'Manage %(listName)s', {

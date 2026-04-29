@@ -53,7 +53,7 @@ const PodcastMain = ( { section }: PodcastMainProps ) => {
 	} );
 	// True once we have a definitive answer for `isSetUp` — either the
 	// setting is set, or the terms list has loaded. Used to suppress a
-	// welcome → tabs flash on the bare /podcast/[site] URL while data
+	// welcome → tabs flash on the bare /podcasting/[site] URL while data
 	// is still in flight.
 	const isSetupResolved = useSelector( ( state ) => {
 		if ( ! siteId ) {
@@ -67,7 +67,7 @@ const PodcastMain = ( { section }: PodcastMainProps ) => {
 	const pathSuffix = siteSlug ? '/' + siteSlug : '';
 
 	// Tabs only show when podcasting is actually set up. A deep link to
-	// /podcast/episodes/[site] on a non-set-up site bounces back to the
+	// /podcasting/episodes/[site] on a non-set-up site bounces back to the
 	// welcome via the URL-sync effect below.
 	const showTabs = isSetUp;
 
@@ -85,18 +85,18 @@ const PodcastMain = ( { section }: PodcastMainProps ) => {
 	}, [ section ] );
 
 	// Keep the URL in sync with the current view: tabs live at
-	// /podcast/<section>/[site], welcome at the bare /podcast/[site]. A
+	// /podcasting/<section>/[site], welcome at the bare /podcasting/[site]. A
 	// disabled podcast on a section URL gets bounced back to welcome.
 	useEffect( () => {
 		if ( ! isSetupResolved ) {
 			return;
 		}
 		const path = window.location.pathname;
-		const isSectionUrl = /^\/podcast\/(episodes|distribution)(\/|$)/.test( path );
+		const isSectionUrl = /^\/podcasting\/(episodes|distribution)(\/|$)/.test( path );
 		if ( showTabs && ! isSectionUrl ) {
-			window.history.replaceState( null, '', '/podcast/episodes' + pathSuffix );
+			window.history.replaceState( null, '', '/podcasting/episodes' + pathSuffix );
 		} else if ( ! showTabs && isSectionUrl ) {
-			window.history.replaceState( null, '', '/podcast' + pathSuffix );
+			window.history.replaceState( null, '', '/podcasting' + pathSuffix );
 		}
 	}, [ showTabs, isSetupResolved, pathSuffix ] );
 
@@ -104,12 +104,12 @@ const PodcastMain = ( { section }: PodcastMainProps ) => {
 		{
 			name: 'episodes' as const,
 			title: translate( 'Episodes' ) as string,
-			path: '/podcast/episodes' + pathSuffix,
+			path: '/podcasting/episodes' + pathSuffix,
 		},
 		{
 			name: 'distribution' as const,
 			title: translate( 'Distribution' ) as string,
-			path: '/podcast/distribution' + pathSuffix,
+			path: '/podcasting/distribution' + pathSuffix,
 		},
 	];
 

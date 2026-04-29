@@ -2,11 +2,11 @@ import { TimeSince } from '@automattic/components';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSocialAnalytics } from './analytics-context';
-import type { AtmosphereFeedItem } from '@automattic/api-core';
+import type { SocialPost } from '../../types';
 import type { ReactNode } from 'react';
 
 interface PostCardHeaderProps {
-	post: AtmosphereFeedItem;
+	post: SocialPost;
 	variant: 'default' | 'compact';
 	prominentTimestamp?: boolean;
 }
@@ -16,7 +16,16 @@ export function PostCardHeader( { post, variant, prominentTimestamp }: PostCardH
 	const analytics = useSocialAnalytics();
 	const isCompact = variant === 'compact';
 	const displayName = post.author.display_name || post.author.handle;
-	const profileUrl = `https://bsky.app/profile/${ post.author.handle }`;
+	const externalProfileUrl = post.author.profile_url;
+	const inAppProfileUrl =
+		analytics?.getProfileUrl?.( {
+			did: post.author.id,
+			handle: post.author.handle,
+		} ) ?? null;
+	const profileUrl = inAppProfileUrl ?? externalProfileUrl;
+	const profileTarget = inAppProfileUrl ? undefined : '_blank';
+	const profileRel = inAppProfileUrl ? undefined : 'noopener noreferrer';
+	const profileDestination = inAppProfileUrl ? 'in_app' : 'bsky_app';
 	const avatarSize = isCompact ? 24 : 36;
 	const timestampIso = post.created_at || post.indexed_at;
 
@@ -31,9 +40,9 @@ export function PostCardHeader( { post, variant, prominentTimestamp }: PostCardH
 		}
 		analytics.onClick( `calypso_reader_${ analytics.source }_timeline_author_clicked`, {
 			connection_id: analytics.connectionId,
-			author_did: post.author.did,
+			author_id: post.author.id,
 			author_handle: post.author.handle,
-			destination: 'bsky_app',
+			destination: profileDestination,
 		} );
 	};
 
@@ -118,7 +127,7 @@ export function PostCardHeader( { post, variant, prominentTimestamp }: PostCardH
 		return (
 			<a
 				className="social-post-card-header__timestamp"
-				href={ post.bluesky_url }
+				href={ post.permalink }
 				target="_blank"
 				rel="noopener noreferrer"
 				onClick={ firePostClicked }
@@ -133,9 +142,47 @@ export function PostCardHeader( { post, variant, prominentTimestamp }: PostCardH
 			{ post.reason && post.reason.type === 'repost' && (
 				<div className="social-post-card-header__reason">
 					<span aria-hidden="true">🔁 </span>
-					{ translate( 'Reposted by %(name)s', {
-						args: { name: post.reason.by.display_name || post.reason.by.handle },
-					} ) }
+					{ ( () => {
+						const by = post.reason.by;
+						const reposterName = by.display_name || by.handle;
+						const inAppUrl =
+							analytics?.getProfileUrl?.( { did: by.id, handle: by.handle } ) ?? null;
+						const href =
+							inAppUrl ?? `https://bsky.app/profile/${ encodeURIComponent( by.handle ) }`;
+						const isInApp = inAppUrl !== null;
+						const target = isInApp ? undefined : '_blank';
+						const rel = isInApp ? undefined : 'noopener noreferrer';
+						const destination = isInApp ? 'in_app' : 'bsky_app';
+						const fireRepostAuthorClicked = () => {
+							if ( ! analytics ) {
+								return;
+							}
+							analytics.onClick(
+								`calypso_reader_${ analytics.source }_timeline_repost_author_clicked`,
+								{
+									connection_id: analytics.connectionId,
+									post_uri: post.uri,
+									reposter_did: by.id,
+									reposter_handle: by.handle,
+									destination,
+								}
+							);
+						};
+						return translate( 'Reposted by {{a}}%(name)s{{/a}}', {
+							args: { name: reposterName },
+							components: {
+								a: (
+									<a
+										className="social-post-card-header__reason-author"
+										href={ href }
+										target={ target }
+										rel={ rel }
+										onClick={ fireRepostAuthorClicked }
+									/>
+								),
+							},
+						} );
+					} )() }
 				</div>
 			) }
 			{ post.reply_parent && replyContextLabel && (
@@ -163,8 +210,8 @@ export function PostCardHeader( { post, variant, prominentTimestamp }: PostCardH
 					<a
 						className="social-post-card-header__author"
 						href={ profileUrl }
-						target="_blank"
-						rel="noopener noreferrer"
+						target={ profileTarget }
+						rel={ profileRel }
 						onClick={ fireAuthorClicked }
 					>
 						{ authorBody }

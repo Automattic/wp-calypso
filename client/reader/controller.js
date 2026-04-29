@@ -1,3 +1,4 @@
+import { readTeamsQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { getAnyLanguageRouteParam, getLanguageRouteParam } from '@automattic/i18n-utils';
 import i18n from 'i18n-calypso';
@@ -15,7 +16,6 @@ import { getLastPath, isReaderMSDEnabled } from 'calypso/state/reader-ui/selecto
 import { toggleReaderSidebarFollowing } from 'calypso/state/reader-ui/sidebar/actions';
 import { isFollowingOpen } from 'calypso/state/reader-ui/sidebar/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import { getReaderTeams } from 'calypso/state/teams/selectors';
 import { getSection } from 'calypso/state/ui/selectors';
 import { setupRedirectRoutes } from 'calypso/utils';
 import {
@@ -90,8 +90,9 @@ export function following( context, next ) {
 	const startDate = getStartDate( context );
 
 	const state = context.store.getState();
+	const teamsData = context.queryClient.getQueryData( readTeamsQuery().queryKey );
 	// only for a8c for now
-	if ( isAutomatticTeamMember( getReaderTeams( state ) ) ) {
+	if ( isAutomatticTeamMember( teamsData?.teams ?? [] ) ) {
 		// select last reader path if available, otherwise just open following
 		const currentSection = getSection( state );
 		const lastPath = getLastPath( state );

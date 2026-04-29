@@ -182,16 +182,16 @@ function Welcome( { planTier }: WelcomeProps ) {
 
 	// Enable podcasting by sending the user to the existing Settings → Podcasting
 	// flow, where picking a category writes podcasting_category_id. Returning to
-	// /podcast/[site] after that lands the user on the Episodes tab.
+	// /podcasting/[site] after that lands the user on the Episodes tab.
 	const goToSettings = () => {
 		const path = siteSlug ? `/settings/podcasting/${ siteSlug }` : '/settings/podcasting';
 		page.show( path );
 	};
 
-	// Redirect through Calypso checkout, then back to /podcast so the user can
+	// Redirect through Calypso checkout, then back to /podcasting so the user can
 	// click Enable on their now-eligible plan.
 	const goToCheckout = ( planSlug: 'personal' | 'premium' | 'business' ) => {
-		const returnTo = siteSlug ? `/podcast/${ siteSlug }` : '/podcast';
+		const returnTo = siteSlug ? `/podcasting/${ siteSlug }` : '/podcasting';
 		const path = siteSlug
 			? `/checkout/${ siteSlug }/${ planSlug }?redirect_to=${ encodeURIComponent( returnTo ) }`
 			: `/checkout/${ planSlug }`;

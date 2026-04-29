@@ -1,19 +1,21 @@
 import './style.scss';
 
-import { Card, CardBody } from '@wordpress/components';
+import { Button, Card, CardBody } from '@wordpress/components';
 import clsx from 'clsx';
+import { useTranslate } from 'i18n-calypso';
+import { useState, type ReactNode } from 'react';
 import { PostCardBody } from './post-card-body';
 import { PostCardCounts } from './post-card-counts';
 import { PostCardEmbed } from './post-card-embed';
 import { PostCardHeader } from './post-card-header';
 import { PostCardLink } from './post-card-link';
 import { PostCardTimestamp } from './post-card-timestamp';
-import type { AtmosphereFeedItem } from '@automattic/api-core';
+import type { SocialContentWarning, SocialPost } from '../../types';
 
 type SocialPostCardVariant = 'default' | 'compact';
 
 interface SocialPostCardProps {
-	post: AtmosphereFeedItem;
+	post: SocialPost;
 	variant?: SocialPostCardVariant;
 	expandedVideo?: boolean;
 	// When true, the inline timestamp moves out of the header and renders as
@@ -35,6 +37,28 @@ export function SocialPostCard( {
 	const isQuoteEmbed = post.embed?.type === 'quote' || post.embed?.type === 'quote_with_media';
 	const showEmbed = post.embed && ( ! isCompact || ! isQuoteEmbed );
 
+	const cw = post.content_warning;
+	// Whole-post CW gate fires when spoiler_text is set. Bare `sensitive`
+	// (no spoiler) gates only the media embed (handled inside PostCardEmbed
+	// via the `sensitive` prop) so the body still renders.
+	const cwGate = cw && cw.spoiler_text ? cw : null;
+
+	const bodyAndEmbed: ReactNode = (
+		<>
+			<PostCardBody post={ post } />
+			{ showEmbed && post.embed && (
+				<PostCardEmbed
+					embed={ post.embed }
+					parentPostUri={ post.uri }
+					expandedVideo={ expandedVideo }
+					compact={ isCompact }
+					// Bare `sensitive` (no whole-post CW) blurs the media.
+					sensitive={ ! cwGate && Boolean( cw?.sensitive ) }
+				/>
+			) }
+		</>
+	);
+
 	const card = (
 		<Card className={ clsx( 'social-post-card', `social-post-card--${ variant }` ) }>
 			<CardBody>
@@ -43,14 +67,10 @@ export function SocialPostCard( {
 					variant={ variant }
 					prominentTimestamp={ showProminentTimestamp }
 				/>
-				<PostCardBody post={ post } />
-				{ showEmbed && post.embed && (
-					<PostCardEmbed
-						embed={ post.embed }
-						parentPostUri={ post.uri }
-						expandedVideo={ expandedVideo }
-						compact={ isCompact }
-					/>
+				{ cwGate ? (
+					<ContentWarningGate warning={ cwGate }>{ bodyAndEmbed }</ContentWarningGate>
+				) : (
+					bodyAndEmbed
 				) }
 				{ showProminentTimestamp && <PostCardTimestamp post={ post } /> }
 				{ ! isCompact && <PostCardCounts counts={ post.counts } postUri={ post.uri } /> }
@@ -66,4 +86,40 @@ export function SocialPostCard( {
 	}
 
 	return <PostCardLink variant={ variant }>{ card }</PostCardLink>;
+}
+
+// Gates BOTH the post body (text) and any media embed behind a "Show
+// content" button when the post carries a content-warning spoiler.
+// Used by the Mastodon spoiler_text path; bare `sensitive` media blurs
+// without triggering this gate (handled by PostCardEmbed instead).
+function ContentWarningGate( {
+	warning,
+	children,
+}: {
+	warning: SocialContentWarning;
+	children: ReactNode;
+} ) {
+	const translate = useTranslate();
+	const [ revealed, setRevealed ] = useState( false );
+
+	if ( revealed ) {
+		return <>{ children }</>;
+	}
+
+	return (
+		<div className="social-post-card-content-warning">
+			<p className="social-post-card-content-warning__spoiler">{ warning.spoiler_text }</p>
+			<Button
+				variant="secondary"
+				onClick={ ( e: React.MouseEvent ) => {
+					// Prevent the card-link overlay from intercepting and navigating away.
+					e.preventDefault();
+					e.stopPropagation();
+					setRevealed( true );
+				} }
+			>
+				{ translate( 'Show content' ) }
+			</Button>
+		</div>
+	);
 }

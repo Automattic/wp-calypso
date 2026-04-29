@@ -5,6 +5,7 @@ import { CircularProgressBar } from '@automattic/components';
 import { Checklist, ChecklistItem, Task } from '@automattic/launchpad';
 import { translate } from 'i18n-calypso';
 import React, { useState, useEffect } from 'react';
+import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
 import {
 	READER_ONBOARDING_SEEN_PREFERENCE_KEY,
 	READER_ONBOARDING_PREFERENCE_KEY,
@@ -20,7 +21,6 @@ import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
 import hasCompletedReaderProfile from 'calypso/state/reader/onboarding/selectors/has-completed-reader-profile';
-import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 import { useSiteSubscriptions } from '../following/use-site-subscriptions';
 import './style.scss';
 
@@ -39,7 +39,7 @@ const ReaderOnboarding = ( {
 	const userRegistrationDate: string | null = useSelector( getCurrentUserDate );
 	const { isLoading, hasNonSelfSubscriptions } = useSiteSubscriptions();
 
-	const followedTags = useSelector( getReaderFollowedTags );
+	const { data: followedTags } = useFollowedReaderTags();
 	const follows = useSelector( getReaderFollows );
 	const profileCompleted = useSelector( hasCompletedReaderProfile );
 	const hasUserGravatar = useSelector( hasGravatar );
@@ -51,7 +51,7 @@ const ReaderOnboarding = ( {
 		getPreference( state, READER_ONBOARDING_SEEN_PREFERENCE_KEY )
 	);
 
-	const hasFollowedTags = followedTags !== null && followedTags.length > 2;
+	const hasFollowedTags = ( followedTags?.length ?? 0 ) > 2;
 	const hasFollowedSites = follows?.filter( ( follow ) => ! follow.is_owner )?.length > 2;
 
 	// If the user has completed the onboarding, save the preference and track the event.

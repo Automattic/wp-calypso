@@ -2,6 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import page, { type Context } from '@automattic/calypso-router';
 import AsyncLoad from 'calypso/components/async-load';
 import { TIMELINE_TAB } from './helper';
+import { STATUS_ID_RE } from './route';
 
 const loadMastodonLandingView = () =>
 	import(
@@ -13,6 +14,10 @@ const loadMastodonOauthCallbackView = () =>
 const loadMastodonAccountView = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-reader-mastodon-account-view" */ 'calypso/reader/mastodon/mastodon-account-view'
+	);
+const loadMastodonThreadView = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-reader-mastodon-thread-view" */ 'calypso/reader/mastodon/mastodon-thread-view'
 	);
 
 function ensureMastodonEnabled(): boolean {
@@ -74,6 +79,34 @@ export const mastodonAccount = ( context: Context, next: () => void ) => {
 			placeholder={ null }
 			connectionId={ id }
 			tab={ tab }
+		/>
+	);
+	next();
+};
+
+export const mastodonThread = ( context: Context, next: () => void ) => {
+	if ( ! ensureMastodonEnabled() ) {
+		return;
+	}
+
+	const id = Number( context.params.id );
+	const statusId = String( context.params.status_id ?? '' );
+
+	const idValid = Number.isFinite( id ) && id > 0;
+	const inputsValid = idValid && STATUS_ID_RE.test( statusId );
+
+	if ( ! inputsValid ) {
+		page.redirect( idValid ? `/reader/mastodon/${ id }` : '/reader/mastodon' );
+		return;
+	}
+
+	context.primary = (
+		<AsyncLoad
+			key="reader-mastodon-thread"
+			require={ loadMastodonThreadView }
+			placeholder={ null }
+			connectionId={ id }
+			statusId={ statusId }
 		/>
 	);
 	next();
