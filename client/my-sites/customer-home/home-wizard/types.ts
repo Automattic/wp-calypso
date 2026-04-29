@@ -11,6 +11,10 @@ export type FeatureKey =
 	| 'donations';
 
 export type WizardAnswers = {
+	prompt: string;
+	// Kept for compatibility with the registry's filter shape; populated only
+	// in the v1 (Goals + Features) variant. The AI prompt variant ignores
+	// these fields.
 	goal: GoalKey | null;
 	features: FeatureKey[];
 };

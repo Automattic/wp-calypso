@@ -26,32 +26,23 @@ import { getSiteUrl, getSiteOption } from 'calypso/state/sites/selectors';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import HomeWizard from './home-wizard';
+import { inferAnswersFromPrompt } from './home-wizard/infer-from-prompt';
 import { selectTasks } from './home-wizard/select-tasks';
 import TailoredLaunchpad from './home-wizard/tailored-launchpad';
 import type { SiteState } from './home-wizard/task-registry';
-import type { FeatureKey, GoalKey, WizardAnswers } from './home-wizard/types';
+import type { WizardAnswers } from './home-wizard/types';
 import type { AppState } from 'calypso/types';
 
 import './home-dashboard.scss';
 
 // Per-site list so each newly created site triggers the wizard once.
 const HOME_WIZARD_COMPLETED_SITES_PREF = 'home_wizard_completed_sites';
-const HOME_WIZARD_GOAL_PREF = 'home_wizard_goal';
-const HOME_WIZARD_FEATURES_PREF = 'home_wizard_features';
+const HOME_WIZARD_PROMPT_PREF = 'home_wizard_prompt';
 
 const RECENT_POSTS_QUERY = { number: 5, status: 'publish' } as const;
 const LAUNCHPAD_CONTEXT = 'customer-home';
 
-// Map wizard goal answers onto a Launchpad checklist slug. Anything that
-// doesn't have a dedicated launchpad falls back to the generic "build" list.
-const GOAL_TO_CHECKLIST: Record< string, string > = {
-	write: 'write',
-	build: 'build',
-	sell: 'sell',
-	newsletter: 'newsletter',
-	promote: 'build',
-	portfolio: 'build',
-};
+const FALLBACK_CHECKLIST_SLUG = 'build';
 
 function useSiteState( siteSlug: string ): SiteState {
 	const siteId = useSelector( ( state: AppState ) => getSelectedSite( state )?.ID ?? null );
@@ -87,29 +78,25 @@ function useSiteState( siteSlug: string ): SiteState {
 function SiteSetupWidget() {
 	const translate = useTranslate();
 	const siteSlug = useSelector( getSelectedSiteSlug ) ?? '';
-	const site = useSelector( getSelectedSite );
-	const wizardGoal = useSelector( ( state: AppState ) =>
-		getPreference( state, HOME_WIZARD_GOAL_PREF )
-	) as GoalKey | null;
-	const wizardFeatures =
-		( useSelector( ( state: AppState ) => getPreference( state, HOME_WIZARD_FEATURES_PREF ) ) as
-			| FeatureKey[]
-			| null ) ?? [];
+	const wizardPrompt =
+		( useSelector( ( state: AppState ) => getPreference( state, HOME_WIZARD_PROMPT_PREF ) ) as
+			| string
+			| null ) ?? '';
 
-	const siteIntent = ( site?.options as { site_intent?: string } | undefined )?.site_intent ?? '';
 	const siteState = useSiteState( siteSlug );
 
-	const tailoredTasks = wizardGoal ? selectTasks( wizardGoal, wizardFeatures, siteState ) : [];
+	// Placeholder until the AI integration lands: keyword-infer goal+features
+	// from the prompt, then run the existing selectTasks pipeline.
+	const inferred = wizardPrompt ? inferAnswersFromPrompt( wizardPrompt ) : null;
+	const tailoredTasks = inferred ? selectTasks( inferred.goal, inferred.features, siteState ) : [];
 
 	// Fallback path for users who skipped the wizard or whose preferences
 	// haven't loaded yet — keep the original server-driven Launchpad.
-	const fallbackChecklistSlug =
-		siteIntent || ( wizardGoal ? GOAL_TO_CHECKLIST[ wizardGoal ] ?? 'build' : 'build' );
 	const {
 		data: { checklist: fallbackChecklist },
-	} = useSortedLaunchpadTasks( siteSlug, fallbackChecklistSlug, LAUNCHPAD_CONTEXT );
+	} = useSortedLaunchpadTasks( siteSlug, FALLBACK_CHECKLIST_SLUG, LAUNCHPAD_CONTEXT );
 
-	const useTailored = wizardGoal !== null && tailoredTasks.length > 0;
+	const useTailored = !! wizardPrompt && tailoredTasks.length > 0;
 	const fallbackVisible = ! useTailored && ( fallbackChecklist?.length ?? 0 ) > 0;
 
 	if ( ! useTailored && ! fallbackVisible ) {
@@ -129,7 +116,7 @@ function SiteSetupWidget() {
 				) : (
 					<Launchpad
 						siteSlug={ siteSlug }
-						checklistSlug={ fallbackChecklistSlug }
+						checklistSlug={ FALLBACK_CHECKLIST_SLUG }
 						launchpadContext={ LAUNCHPAD_CONTEXT }
 					/>
 				) }
@@ -361,11 +348,8 @@ function useHomeWizard() {
 			const next = Array.from( new Set( [ ...( completedSites ?? [] ), siteId ] ) );
 			dispatch( savePreference( HOME_WIZARD_COMPLETED_SITES_PREF, next ) );
 		}
-		if ( answers?.goal ) {
-			dispatch( savePreference( HOME_WIZARD_GOAL_PREF, answers.goal ) );
-		}
-		if ( answers?.features ) {
-			dispatch( savePreference( HOME_WIZARD_FEATURES_PREF, answers.features ) );
+		if ( answers?.prompt ) {
+			dispatch( savePreference( HOME_WIZARD_PROMPT_PREF, answers.prompt ) );
 		}
 		if ( forced && typeof window !== 'undefined' ) {
 			const url = new URL( window.location.href );

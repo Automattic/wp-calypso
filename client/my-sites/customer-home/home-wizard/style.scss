@@ -265,3 +265,45 @@ body.is-home-wizard-open {
 	display: flex;
 	gap: 8px;
 }
+
+// --- Prompt-variant wizard ---
+
+.home-wizard--prompt {
+	.home-wizard__step {
+		padding: 8px 0;
+	}
+}
+
+.home-wizard__prompt-examples {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.home-wizard__prompt-example {
+	display: block;
+	width: 100%;
+	text-align: left;
+	background: transparent;
+	border: 0;
+	padding: 8px 12px;
+	border-radius: 4px;
+	color: #50575e;
+	font-size: 13px;
+	line-height: 1.4;
+	cursor: pointer;
+	transition: background 120ms ease, color 120ms ease;
+
+	&:hover {
+		background: #f6f7f7;
+		color: var(--wp-admin-theme-color, #3858e9);
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--wp-admin-theme-color, #3858e9);
+		outline-offset: 2px;
+	}
+}
