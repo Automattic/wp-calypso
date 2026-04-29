@@ -182,7 +182,7 @@ class PodcastCoverImageSetting extends PureComponent {
 		const { transientMediaId, isUploading } = this.state;
 		const media = transientMediaId && this.props.getMediaItem( siteId, transientMediaId );
 		const imageUrl = ( media && media.URL ) || coverImageUrl;
-		const imageSrc = imageUrl && resizeImageUrl( imageUrl, 96 );
+		const imageSrc = imageUrl && resizeImageUrl( imageUrl, 256 );
 		const isTransient = !! transientMediaId;
 
 		const classNames = clsx( 'podcast-cover-image-setting__preview', {
