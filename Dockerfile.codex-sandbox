@@ -1,0 +1,63 @@
+# Custom Docker AI Sandbox template for Calypso development.
+# Read more: https://docs.docker.com/ai/sandboxes/
+#
+# Extends Docker's default {agent}-docker sandbox variant and adds:
+# - NVM
+# - the correct Node version pinned in .nvmrc
+# - Yarn
+# - jq (agents like to use this tool)
+#
+# Build & load once (sbx has its own image store, separate from Docker's):
+#   ```bash
+#   docker build -f Dockerfile.codex-sandbox -t calypso-codex-sandbox .
+#   docker save calypso-codex-sandbox -o /tmp/calypso-codex-sandbox.tar
+#   sbx template load /tmp/calypso-codex-sandbox.tar
+#   ```
+#
+# Run multiple times:
+#   ```bash
+#   sbx run --template calypso-codex-sandbox codex
+#   ```
+
+FROM docker/sandbox-templates:codex-docker
+
+USER root
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      curl ca-certificates git build-essential jq \
+    && rm -rf /var/lib/apt/lists/*
+
+USER agent
+ENV NVM_DIR=/home/agent/.nvm
+COPY --chown=agent:agent .nvmrc /tmp/.nvmrc
+COPY --chown=agent:agent package.json /tmp/package.json
+SHELL ["/bin/bash", "-c"]
+# The base image sets NPM_CONFIG_PREFIX, which nvm refuses to coexist with.
+# Override to empty for this layer and onwards.
+ENV NPM_CONFIG_PREFIX=
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash \
+ && source "$NVM_DIR/nvm.sh" \
+ && NODE_VERSION="$(tr -d '[:space:]' < /tmp/.nvmrc)" \
+ && nvm install "$NODE_VERSION" \
+ && nvm alias default "$NODE_VERSION" \
+ && ln -sfn "$NVM_DIR/versions/node/v$NODE_VERSION" "$NVM_DIR/current" \
+ && corepack enable \
+ && corepack prepare "$(jq -r .packageManager /tmp/package.json)" --activate
+
+# Put the nvm-installed node binaries on PATH for every shell — interactive,
+# non-interactive, login, or whatever sbx happens to spawn. We can't rely on
+# .bashrc alone since the agent's shell may not source it.
+ENV PATH=$NVM_DIR/current/bin:$PATH
+
+# Source nvm.sh so the `nvm` command itself is available in shells. We write
+# to multiple init files because sbx-spawned shells don't reliably hit any
+# single one: ~/.bashrc covers interactive non-login bash, /etc/profile.d/
+# covers login shells, /etc/bash.bashrc covers system-wide interactive bash.
+USER root
+RUN printf '%s\n' \
+      'export NVM_DIR=/home/agent/.nvm' \
+      '[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"' \
+      '[ -f "$PWD/.nvmrc" ] && nvm use --silent 2>/dev/null || true' \
+      | tee /etc/profile.d/nvm.sh >> /etc/bash.bashrc \
+ && tee -a /home/agent/.bashrc < /etc/profile.d/nvm.sh > /dev/null \
+ && chown agent:agent /home/agent/.bashrc
+USER agent
