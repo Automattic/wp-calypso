@@ -166,13 +166,15 @@ const MobileView = ( {
 					<PlanLogos renderedGridPlans={ [ gridPlan ] } isInSignup={ false } />
 					<PlanHeaders renderedGridPlans={ [ gridPlan ] } />
 					{ isInSignup && <PlanTagline renderedGridPlans={ [ gridPlan ] } /> }
-					{ isNotFreePlan && (
+					{ ( isNotFreePlan || isInSignup ) && (
 						<PlanPrices
 							renderedGridPlans={ [ gridPlan ] }
 							currentSitePlanSlug={ currentSitePlanSlug }
 						/>
 					) }
-					{ isNotFreePlan && <BillingTimeframes renderedGridPlans={ [ gridPlan ] } /> }
+					{ ( isNotFreePlan || isInSignup ) && (
+						<BillingTimeframes renderedGridPlans={ [ gridPlan ] } />
+					) }
 					<TopButtons
 						renderedGridPlans={ [ gridPlan ] }
 						isInSignup={ isInSignup }
