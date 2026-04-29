@@ -149,38 +149,49 @@
 	white-space: nowrap;
 }
 
-.home-dashboard__wizard-fab {
+.home-dashboard__variant-toggle {
 	position: fixed;
 	right: 24px;
 	bottom: 24px;
 	display: inline-flex;
 	align-items: center;
-	gap: 8px;
-	padding: 10px 16px;
+	gap: 4px;
+	padding: 4px 4px 4px 12px;
 	background: #1e1e1e;
 	color: #fff;
-	border: 0;
 	border-radius: 24px;
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.24);
+	z-index: 100000;
+}
+
+.home-dashboard__variant-toggle-icon {
+	fill: currentColor;
+	opacity: 0.7;
+	margin-right: 4px;
+}
+
+.home-dashboard__variant-toggle-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 28px;
+	background: transparent;
+	color: #fff;
+	border: 0;
+	border-radius: 16px;
 	font-size: 13px;
 	font-weight: 500;
 	cursor: pointer;
-	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.24);
-	z-index: 100000;
-	transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
+	transition: background 120ms ease;
 
 	&:hover {
-		background: #000;
-		transform: translateY(-1px);
-		box-shadow: 0 6px 20px rgba(0, 0, 0, 0.32);
+		background: rgba(255, 255, 255, 0.16);
 	}
 
 	&:focus-visible {
 		outline: 2px solid var(--wp-admin-theme-color, #3858e9);
 		outline-offset: 2px;
-	}
-
-	svg {
-		fill: currentColor;
 	}
 }
 

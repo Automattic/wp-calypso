@@ -266,14 +266,17 @@ body.is-home-wizard-open {
 	gap: 8px;
 }
 
-// --- Prompt-variant wizard ---
+// --- Prompt-variant wizard (shared step shell) ---
 
-.home-wizard--prompt {
+.home-wizard--textarea,
+.home-wizard--chips,
+.home-wizard--sentence {
 	.home-wizard__step {
 		padding: 8px 0;
 	}
 }
 
+// Variant 1: textarea + example sentences
 .home-wizard__prompt-examples {
 	list-style: none;
 	margin: 0;
@@ -305,5 +308,72 @@ body.is-home-wizard-open {
 	&:focus-visible {
 		outline: 2px solid var(--wp-admin-theme-color, #3858e9);
 		outline-offset: 2px;
+	}
+}
+
+// Variant 2: chips grid
+.home-wizard__chip-grid {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 8px;
+
+	@media (max-width: 480px) {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+.home-wizard__type-chip {
+	display: block;
+	width: 100%;
+	padding: 16px 12px;
+	background: #fff;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	font-size: 14px;
+	font-weight: 500;
+	color: #1e1e1e;
+	cursor: pointer;
+	transition: border-color 120ms ease, background 120ms ease, color 120ms ease;
+
+	&:hover {
+		border-color: var(--wp-admin-theme-color, #3858e9);
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--wp-admin-theme-color, #3858e9);
+		outline-offset: 2px;
+	}
+
+	&.is-selected {
+		border-color: var(--wp-admin-theme-color, #3858e9);
+		background: rgba(56, 88, 233, 0.08);
+		color: var(--wp-admin-theme-color, #3858e9);
+	}
+}
+
+// Variant 3: sentence (mad libs)
+.home-wizard__sentence {
+	padding: 16px;
+	background: #f6f7f7;
+	border-radius: 8px;
+}
+
+.home-wizard__sentence-select {
+	min-width: 160px;
+
+	.components-base-control {
+		margin-bottom: 0;
+	}
+}
+
+.home-wizard__sentence-input {
+	flex: 1;
+	min-width: 200px;
+
+	.components-base-control {
+		margin-bottom: 0;
 	}
 }

@@ -30,7 +30,7 @@ import { inferAnswersFromPrompt } from './home-wizard/infer-from-prompt';
 import { selectTasks } from './home-wizard/select-tasks';
 import TailoredLaunchpad from './home-wizard/tailored-launchpad';
 import type { SiteState } from './home-wizard/task-registry';
-import type { WizardAnswers } from './home-wizard/types';
+import type { WizardAnswers, WizardVariant } from './home-wizard/types';
 import type { AppState } from 'calypso/types';
 
 import './home-dashboard.scss';
@@ -323,6 +323,7 @@ function useHomeWizard() {
 	// wizard synchronously, even if the savePreference dispatch hasn't yet
 	// round-tripped through redux.
 	const [ isOpen, setIsOpen ] = useState< boolean >( forced || ! completedForSite );
+	const [ variant, setVariant ] = useState< WizardVariant >( 'textarea' );
 	const touched = useRef( false );
 
 	// While the user hasn't interacted yet, keep the open state in sync with
@@ -335,8 +336,9 @@ function useHomeWizard() {
 		setIsOpen( forced || ! completedForSite );
 	}, [ forced, completedForSite ] );
 
-	const open = () => {
+	const open = ( nextVariant: WizardVariant = 'textarea' ) => {
 		touched.current = true;
+		setVariant( nextVariant );
 		setIsOpen( true );
 	};
 
@@ -358,7 +360,7 @@ function useHomeWizard() {
 		}
 	};
 
-	return { isOpen, open, finish };
+	return { isOpen, variant, open, finish };
 }
 
 function useBodyClass( className: string, active: boolean ) {
@@ -371,9 +373,20 @@ function useBodyClass( className: string, active: boolean ) {
 	}, [ active, className ] );
 }
 
+const VARIANT_LABELS: Record< WizardVariant, string > = {
+	textarea: 'Textarea',
+	chips: 'Chips',
+	sentence: 'Sentence',
+};
+
 export default function HomeDashboard() {
 	const translate = useTranslate();
-	const { isOpen: isWizardOpen, open: openWizard, finish: finishWizard } = useHomeWizard();
+	const {
+		isOpen: isWizardOpen,
+		variant: wizardVariant,
+		open: openWizard,
+		finish: finishWizard,
+	} = useHomeWizard();
 
 	useBodyClass( 'is-home-wizard-open', isWizardOpen );
 
@@ -403,20 +416,34 @@ export default function HomeDashboard() {
 			) }
 			{ isWizardOpen && (
 				<HomeWizard
+					variant={ wizardVariant }
 					onClose={ () => finishWizard() }
 					onComplete={ ( answers ) => finishWizard( answers ) }
 				/>
 			) }
 			{ ! isWizardOpen && (
-				<button
-					type="button"
-					className="home-dashboard__wizard-fab"
-					onClick={ openWizard }
-					aria-label={ translate( 'Open setup wizard' ) as string }
+				<div
+					className="home-dashboard__variant-toggle"
+					role="group"
+					aria-label={ translate( 'Open wizard variant' ) as string }
 				>
-					<Icon icon={ settings } size={ 20 } />
-					<span>{ translate( 'Setup wizard' ) }</span>
-				</button>
+					<Icon icon={ settings } size={ 16 } className="home-dashboard__variant-toggle-icon" />
+					{ ( Object.keys( VARIANT_LABELS ) as WizardVariant[] ).map( ( v, i ) => (
+						<button
+							key={ v }
+							type="button"
+							className="home-dashboard__variant-toggle-button"
+							onClick={ () => openWizard( v ) }
+							aria-label={
+								translate( 'Open variant %(num)d (%(label)s)', {
+									args: { num: i + 1, label: VARIANT_LABELS[ v ] },
+								} ) as string
+							}
+						>
+							{ i + 1 }
+						</button>
+					) ) }
+				</div>
 			) }
 		</div>
 	);

@@ -18,3 +18,5 @@ export type WizardAnswers = {
 	goal: GoalKey | null;
 	features: FeatureKey[];
 };
+
+export type WizardVariant = 'textarea' | 'chips' | 'sentence';

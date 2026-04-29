@@ -1,19 +1,22 @@
 import { Modal, Button } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
+import ChipsStep from './chips-step';
 import PromptStep from './prompt-step';
-import type { WizardAnswers } from './types';
+import SentenceStep from './sentence-step';
+import type { WizardAnswers, WizardVariant } from './types';
 
 import './style.scss';
 
 type Props = {
+	variant: WizardVariant;
 	onClose: () => void;
 	onComplete: ( answers: WizardAnswers ) => void;
 };
 
-const MIN_PROMPT_CHARS = 12;
+const MIN_PROMPT_CHARS = 8;
 
-export default function HomeWizard( { onClose, onComplete }: Props ) {
+export default function HomeWizard( { variant, onClose, onComplete }: Props ) {
 	const translate = useTranslate();
 	const [ prompt, setPrompt ] = useState< string >( '' );
 
@@ -30,12 +33,14 @@ export default function HomeWizard( { onClose, onComplete }: Props ) {
 		<Modal
 			title=""
 			onRequestClose={ onClose }
-			className="home-wizard home-wizard--prompt"
+			className={ `home-wizard home-wizard--${ variant }` }
 			shouldCloseOnClickOutside={ false }
 			__experimentalHideHeader
 			size="medium"
 		>
-			<PromptStep value={ prompt } onChange={ setPrompt } />
+			{ variant === 'textarea' && <PromptStep value={ prompt } onChange={ setPrompt } /> }
+			{ variant === 'chips' && <ChipsStep value={ prompt } onChange={ setPrompt } /> }
+			{ variant === 'sentence' && <SentenceStep value={ prompt } onChange={ setPrompt } /> }
 
 			<footer className="home-wizard__footer">
 				<Button variant="tertiary" onClick={ onClose }>

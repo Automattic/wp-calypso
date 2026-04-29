@@ -12,9 +12,9 @@ type Props = {
 };
 
 const EXAMPLE_PROMPTS = [
-	'A weekly newsletter about indie game development for ~500 subscribers.',
-	'A small online store selling hand-thrown ceramics, with a blog for studio updates.',
-	'A portfolio for my freelance illustration work, plus a contact page for new clients.',
+	'A weekly newsletter about indie game development.',
+	'A small online store selling hand-thrown ceramics.',
+	'A portfolio for my freelance illustration work.',
 ];
 
 export default function PromptStep( { value, onChange }: Props ) {
@@ -22,33 +22,23 @@ export default function PromptStep( { value, onChange }: Props ) {
 
 	return (
 		<VStack spacing={ 4 } className="home-wizard__step">
-			<VStack spacing={ 2 }>
-				<Heading level={ 2 } size={ 20 }>
-					{ translate( 'Tell us about your site' ) }
-				</Heading>
-				<Text variant="muted">
-					{ translate(
-						'Describe what you want to build, in your own words. The more specific, the better — what kind of site, who it’s for, and what you want visitors to do.'
-					) }
-				</Text>
-			</VStack>
+			<Heading level={ 2 } size={ 20 }>
+				{ translate( 'Tell us about your site' ) }
+			</Heading>
 
 			<TextareaControl
 				__nextHasNoMarginBottom
-				label={ translate( 'Your site, in one paragraph' ) as string }
+				label={ translate( 'In one sentence' ) as string }
+				hideLabelFromVision
 				value={ value }
 				onChange={ onChange }
-				rows={ 6 }
-				placeholder={
-					translate(
-						'e.g. A weekly newsletter about indie game development for ~500 subscribers, with paid posts via Stripe and a comments section on each issue.'
-					) as string
-				}
+				rows={ 4 }
+				placeholder={ translate( 'A weekly newsletter about indie game development…' ) as string }
 			/>
 
-			<VStack spacing={ 2 }>
+			<VStack spacing={ 1 }>
 				<Text variant="muted" size={ 12 }>
-					{ translate( 'Need inspiration?' ) }
+					{ translate( 'Try one of these:' ) }
 				</Text>
 				<ul className="home-wizard__prompt-examples">
 					{ EXAMPLE_PROMPTS.map( ( example ) => (
