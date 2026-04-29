@@ -48,12 +48,45 @@ function getRegisteredCallback(): AbilityCallback {
 }
 
 describe( 'registerUpdateCanvasVideoAbility', () => {
+	let originalCreateElement: typeof document.createElement;
+
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockRegisterAbilityCategory.mockResolvedValue( undefined );
 		mockRegisterAbility.mockResolvedValue( undefined );
 		// Reset module-level isRegistered guard between tests.
 		jest.resetModules();
+
+		// preloadVideo() inside the ability creates a <video>, sets src, and waits
+		// for onloadedmetadata / onerror — neither of which fire reliably in jsdom,
+		// so it falls back to a 3s setTimeout. With multiple callback invocations
+		// per test that tips us past Jest's 5s timeout. Stub createElement('video')
+		// so onloadedmetadata fires synchronously when src is assigned.
+		originalCreateElement = document.createElement.bind( document );
+		jest
+			.spyOn( document, 'createElement' )
+			.mockImplementation( ( tagName: string, options?: ElementCreationOptions ) => {
+				const element = originalCreateElement( tagName, options );
+				if ( tagName.toLowerCase() === 'video' ) {
+					Object.defineProperty( element, 'src', {
+						configurable: true,
+						set() {
+							const handler = ( element as HTMLVideoElement ).onloadedmetadata;
+							if ( typeof handler === 'function' ) {
+								handler.call( element, new Event( 'loadedmetadata' ) );
+							}
+						},
+						get() {
+							return '';
+						},
+					} );
+				}
+				return element;
+			} );
+	} );
+
+	afterEach( () => {
+		jest.restoreAllMocks();
 	} );
 
 	it( 'registers the ability with the expected name and required schema', async () => {
