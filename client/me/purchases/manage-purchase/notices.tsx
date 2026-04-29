@@ -23,6 +23,7 @@ import { connect } from 'react-redux';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Notice, { NoticeStatus } from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
+import { getProductNounForCategory } from 'calypso/dashboard/me/billing-purchases/purchase-settings/classify-purchase-for-copy';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import {
 	canExplicitRenew,
@@ -52,6 +53,7 @@ import { getTrialCheckoutUrl } from 'calypso/lib/trials/get-trial-checkout-url';
 import { managePurchase } from 'calypso/me/purchases/paths';
 import UpcomingRenewalsDialog from 'calypso/me/purchases/upcoming-renewals/upcoming-renewals-dialog';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { classifyPurchaseForCopy } from '../classify-purchase-for-copy';
 import { getAddNewPaymentMethodPath } from '../utils';
 import type { SiteDetails } from '@automattic/data-stores';
 import type {
@@ -126,39 +128,6 @@ class PurchaseNotice extends Component<
 	};
 
 	/**
-	 * Plain-English noun for the cancelled-redirect notice ("plan" / "domain" /
-	 * "email" / "theme" / "plugin" / "subscription").
-	 */
-	getCancelledNoticeProductNoun( purchase: Purchase ) {
-		const { translate } = this.props;
-		if ( isPlan( purchase ) ) {
-			return translate( 'plan' );
-		}
-		if ( isDomainRegistration( purchase ) ) {
-			return translate( 'domain' );
-		}
-		const slug = purchase.productSlug ?? '';
-		if (
-			slug.startsWith( 'wp_titan_mail' ) ||
-			slug === 'gapps' ||
-			slug.startsWith( 'gapps_' ) ||
-			slug.startsWith( 'wp_google_workspace_' )
-		) {
-			return translate( 'email' );
-		}
-		if ( purchase.productType === 'marketplace_theme' ) {
-			return translate( 'theme' );
-		}
-		if (
-			purchase.productType?.startsWith( 'marketplace' ) ||
-			purchase.productType === 'saas_plugin'
-		) {
-			return translate( 'plugin' );
-		}
-		return translate( 'subscription' );
-	}
-
-	/**
 	 * Transient success notice shown after a cancel-flow redirect. Suppresses
 	 * every other notice until dismissed; the URL param is cleared on mount so
 	 * refresh / back-navigation falls through to the regular notices.
@@ -198,7 +167,7 @@ class PurchaseNotice extends Component<
 			'Your subscription is cancelled and you won’t be billed again. You’ll continue to have access to the %(productNoun)s until %(expiryDate)s.',
 			{
 				args: {
-					productNoun: this.getCancelledNoticeProductNoun( purchase ),
+					productNoun: getProductNounForCategory( classifyPurchaseForCopy( purchase ) ),
 					expiryDate,
 				},
 			}

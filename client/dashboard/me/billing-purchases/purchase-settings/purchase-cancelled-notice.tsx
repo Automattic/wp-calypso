@@ -2,30 +2,8 @@ import { Button } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { intlFormat } from 'date-fns';
 import Notice from '../../../components/notice';
-import { classifyPurchaseForCopy } from './classify-purchase-for-copy';
+import { classifyPurchaseForCopy, getProductNounForCategory } from './classify-purchase-for-copy';
 import type { Purchase } from '@automattic/api-core';
-
-/**
- * Plain-English noun for a purchase ("plan" / "domain" / "email" / "theme" /
- * "plugin" / "subscription"). Used by the cancelled success notice and by the
- * remove-success snackbar.
- */
-export function getProductNoun( purchase: Purchase ): string {
-	switch ( classifyPurchaseForCopy( purchase ) ) {
-		case 'plan':
-			return __( 'plan' );
-		case 'domain':
-			return __( 'domain' );
-		case 'email':
-			return __( 'email' );
-		case 'marketplace_theme':
-			return __( 'theme' );
-		case 'marketplace_plugin':
-			return __( 'plugin' );
-		default:
-			return __( 'subscription' );
-	}
-}
 
 /**
  * Transient success notice shown on Purchase Settings after a cancel.
@@ -73,7 +51,7 @@ export function PurchaseCancelledNotice( {
 		);
 	}
 
-	const productNoun = getProductNoun( purchase );
+	const productNoun = getProductNounForCategory( classifyPurchaseForCopy( purchase ) );
 	return (
 		<Notice variant="success" onClose={ onClose }>
 			{ sprintf(
