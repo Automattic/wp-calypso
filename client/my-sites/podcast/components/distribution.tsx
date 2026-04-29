@@ -81,6 +81,9 @@ function Distribution() {
 	const [ activeId, setActiveId ] = useState< string | null >( null );
 	const [ showConfetti, setShowConfetti ] = useState( false );
 	const activeDirectory = DIRECTORIES.find( ( d ) => d.id === activeId ) ?? null;
+	const prefersReducedMotion =
+		typeof window !== 'undefined' &&
+		window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
 
 	return (
 		<>
@@ -168,7 +171,7 @@ function Distribution() {
 				/>
 			) }
 
-			{ showConfetti && <ConfettiAnimation /> }
+			{ showConfetti && <ConfettiAnimation trigger={ ! prefersReducedMotion } delay={ 300 } /> }
 		</>
 	);
 }

@@ -142,7 +142,12 @@ const SubmitModal = ( { podcatcher, onClose, onFirstSave }: Props ) => {
 						{ podcatcher.learnMoreUrl && (
 							<>
 								{ ' ' }
-								<ExternalLink href={ podcatcher.learnMoreUrl }>
+								<ExternalLink
+									href={ podcatcher.learnMoreUrl }
+									aria-label={
+										translate( 'Learn more about submitting to %(service)s', serviceArgs ) as string
+									}
+								>
 									{ translate( 'Learn more' ) }
 								</ExternalLink>
 							</>
