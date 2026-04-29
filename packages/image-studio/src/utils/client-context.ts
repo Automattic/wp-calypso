@@ -224,7 +224,7 @@ function detectImageEntity(): DetectedEntity | null {
 			return null;
 		}
 
-		const attachmentId = storeSelect.getImageStudioAttachmentId?.();
+		const imageAttachmentId = storeSelect.getImageStudioAttachmentId?.();
 		const isOpen = storeSelect.getIsImageStudioOpen?.() || false;
 		const imageSelectedStyle = storeSelect.getSelectedStyle?.() || null;
 		const selectedAspectRatio = storeSelect.getSelectedAspectRatio?.() || null;
@@ -239,6 +239,12 @@ function detectImageEntity(): DetectedEntity | null {
 		// Video-mode style lives in the dedicated video-studio store.
 		const videoStudioSelect = select( videoStudioStore );
 		const videoSelectedStyle = videoStudioSelect?.getSelectedStyle?.() ?? null;
+
+		// In video mode, the generated clip's attachment id is written to the
+		// video-studio store by `update-canvas-video`; the image-studio store's
+		// id stays null for the PostEditorFeatureClip entry point.
+		const videoAttachmentId = videoStudioSelect?.getCurrentAttachmentId?.() ?? null;
+		const attachmentId = isVideo ? videoAttachmentId : imageAttachmentId;
 
 		// Try to get attachment metadata from core store
 		// TODO: remove cast when @wordpress/core-data exports store types

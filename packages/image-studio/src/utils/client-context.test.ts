@@ -46,6 +46,7 @@ interface ImageStoreSelectors {
 interface VideoStoreSelectors {
 	getSelectedStyle?: () => string | null;
 	getCurrentVideoUrl?: () => string | null;
+	getCurrentAttachmentId?: () => number | null;
 }
 
 interface EditorStoreSelectors {
@@ -218,6 +219,50 @@ describe( 'getClientContext', () => {
 
 		expect( ctx.videoStudio ).toBeDefined();
 		expect( ctx.videoStudio ).not.toHaveProperty( 'title' );
+	} );
+
+	it( 'sources the videoStudio id and attachment metadata from the video-studio store', () => {
+		setupSelect( {
+			imageStudio: {
+				// Image-studio store's id stays null for the feature-clip entry point.
+				getImageStudioAttachmentId: () => null,
+				getIsImageStudioOpen: () => true,
+				getSelectedStyle: () => null,
+				getSelectedAspectRatio: () => null,
+				getEntryPoint: () => 'post_editor_feature_clip',
+				getBlockType: () => null,
+			},
+			videoStudio: {
+				getSelectedStyle: () => 'promotional',
+				// update-canvas-video writes the generated clip's id here.
+				getCurrentAttachmentId: () => 4242,
+			},
+			core: {
+				getEntityRecord: ( _kind: string, _name: string, id: number ) =>
+					id === 4242
+						? {
+								id: 4242,
+								source_url: 'https://example.com/clip.mp4',
+								title: { rendered: 'Generated Clip' },
+								alt_text: '',
+								media_details: { width: 1080, height: 1920 },
+								description: { rendered: '' },
+						  }
+						: null,
+			},
+		} );
+
+		const ctx = getClientContext();
+
+		expect( ctx.videoStudio ).toBeDefined();
+		expect( ctx.videoStudio?.id ).toBe( 4242 );
+		expect( ctx.videoStudio?.metadata ).toMatchObject( {
+			id: 4242,
+			url: 'https://example.com/clip.mp4',
+			title: 'Generated Clip',
+			width: 1080,
+			height: 1920,
+		} );
 	} );
 
 	it( 'falls back to wp-admin environment when studio is closed', () => {

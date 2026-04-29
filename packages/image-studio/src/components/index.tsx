@@ -89,10 +89,14 @@ function ImageStudioAgentChat( {
 
 	const displayMessages = useImageStudioMessageDisplay( agentChatProps?.messages );
 
-	const placeholder =
-		mode === ImageStudioMode.Edit
-			? __( 'Describe what you want to add, remove, or replace…', __i18n_text_domain__ )
-			: __( 'Describe your image', __i18n_text_domain__ );
+	let placeholder: string;
+	if ( mode === ImageStudioMode.Edit ) {
+		placeholder = __( 'Describe what you want to add, remove, or replace…', __i18n_text_domain__ );
+	} else if ( isVideoMode ) {
+		placeholder = __( 'Describe your video clip…', __i18n_text_domain__ );
+	} else {
+		placeholder = __( 'Describe your image', __i18n_text_domain__ );
+	}
 
 	const { handleSuggestionClick, isLoadingSuggestions, abortSuggestionsLoading } =
 		useImageStudioSuggestions( {
