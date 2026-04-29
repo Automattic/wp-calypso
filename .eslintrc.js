@@ -26,6 +26,20 @@ module.exports = {
 			files: [ '**/*.jsx' ],
 		},
 		{
+			// Code blocks inside markdown are illustrative snippets, not real
+			// components. Rules that depend on lexical context (hook call sites,
+			// unused vars, undefined globals, etc.) produce noise without value.
+			// eslint-plugin-md emits virtual files named `<dir>/<name>.md.<lang>`.
+			files: [ '**/*.md.{js,jsx,ts,tsx}' ],
+			rules: {
+				'react-hooks/rules-of-hooks': 'off',
+				'react-hooks/exhaustive-deps': 'off',
+				'no-unused-vars': 'off',
+				'no-undef': 'off',
+				'@typescript-eslint/no-unused-vars': 'off',
+			},
+		},
+		{
 			files: [ '*.md' ],
 			parser: 'markdown-eslint-parser',
 			rules: {

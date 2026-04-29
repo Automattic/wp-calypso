@@ -17,88 +17,47 @@ import './style.scss';
 
 const debug = debugFactory( 'calypso:jitm' );
 
+const loadNotice = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-blocks-jitm-templates-notice" */ './templates/notice'
+	);
+const loadSidebarBanner = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-blocks-jitm-templates-sidebar-banner" */ './templates/sidebar-banner'
+	);
+const loadHomeTask = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-blocks-jitm-templates-home-task" */ './templates/home-task'
+	);
+const loadSpotlight = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-blocks-jitm-templates-spotlight" */ './templates/spotlight'
+	);
+const loadModal = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-blocks-jitm-templates-modal" */ './templates/modal'
+	);
+const loadDefault = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-blocks-jitm-templates-default" */ './templates/default'
+	);
+
 function renderTemplate( template, props ) {
 	switch ( template ) {
 		case 'notice':
-			return (
-				<AsyncLoad
-					{ ...props }
-					key="notice"
-					require={ () =>
-						import(
-							/* webpackChunkName: "async-load-calypso-blocks-jitm-templates-notice" */ './templates/notice'
-						)
-					}
-					placeholder={ null }
-				/>
-			);
+			return <AsyncLoad { ...props } require={ loadNotice } placeholder={ null } />;
 		case 'sidebar-banner':
-			return (
-				<AsyncLoad
-					{ ...props }
-					key="sidebar-banner"
-					require={ () =>
-						import(
-							/* webpackChunkName: "async-load-calypso-blocks-jitm-templates-sidebar-banner" */ './templates/sidebar-banner'
-						)
-					}
-					placeholder={ null }
-				/>
-			);
+			return <AsyncLoad { ...props } require={ loadSidebarBanner } placeholder={ null } />;
 		case 'home-task':
-			return (
-				<AsyncLoad
-					{ ...props }
-					key="home-task"
-					require={ () =>
-						import(
-							/* webpackChunkName: "async-load-calypso-blocks-jitm-templates-home-task" */ './templates/home-task'
-						)
-					}
-					placeholder={ null }
-				/>
-			);
+			return <AsyncLoad { ...props } require={ loadHomeTask } placeholder={ null } />;
 		case 'spotlight':
-			return (
-				<AsyncLoad
-					{ ...props }
-					key="spotlight"
-					require={ () =>
-						import(
-							/* webpackChunkName: "async-load-calypso-blocks-jitm-templates-spotlight" */ './templates/spotlight'
-						)
-					}
-					placeholder={ null }
-				/>
-			);
+			return <AsyncLoad { ...props } require={ loadSpotlight } placeholder={ null } />;
 		case 'invisible':
 			return <>{ props.trackImpression && props.trackImpression() }</>;
 		case 'modal':
-			return (
-				<AsyncLoad
-					{ ...props }
-					key="modal"
-					require={ () =>
-						import(
-							/* webpackChunkName: "async-load-calypso-blocks-jitm-templates-modal" */ './templates/modal'
-						)
-					}
-					placeholder={ null }
-				/>
-			);
+			return <AsyncLoad { ...props } require={ loadModal } placeholder={ null } />;
 		default:
-			return (
-				<AsyncLoad
-					{ ...props }
-					key="default"
-					require={ () =>
-						import(
-							/* webpackChunkName: "async-load-calypso-blocks-jitm-templates-default" */ './templates/default'
-						)
-					}
-					placeholder={ null }
-				/>
-			);
+			return <AsyncLoad { ...props } require={ loadDefault } placeholder={ null } />;
 	}
 }
 

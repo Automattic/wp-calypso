@@ -2,6 +2,7 @@ import { Button, DropdownMenu } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { close, moreVertical, backup, chevronLeft, Icon } from '@wordpress/icons';
 import { useNavigate } from 'react-router-dom';
+import { isReaderChatHost } from '../../utils/is-reader-chat-agent';
 import type { ComponentProps } from 'react';
 import './style.scss';
 
@@ -38,13 +39,21 @@ export default function ChatHeader( { onClose, options, title, onBack }: Props )
 					label={ __( 'More Options', '__i18n_text_domain__' ) }
 					toggleProps={ { size: 'small' } }
 				/>
-				<Button
-					className="agents-manager-chat-header__history-btn"
-					icon={ backup }
-					onClick={ () => navigate( '/history' ) }
-					label={ __( 'View history', '__i18n_text_domain__' ) }
-					size="small"
-				/>
+				{ /*
+				 * Public reader-chat runs on blog frontends where session history
+				 * isn't user-accessible (no account, per-visit local storage).
+				 * Hide the history icon for that context — it navigates to a
+				 * route with nothing to show.
+				 */ }
+				{ ! isReaderChatHost() && (
+					<Button
+						className="agents-manager-chat-header__history-btn"
+						icon={ backup }
+						onClick={ () => navigate( '/history' ) }
+						label={ __( 'View history', '__i18n_text_domain__' ) }
+						size="small"
+					/>
+				) }
 				<Button
 					className="agents-manager-chat-header__close-btn"
 					icon={ close }

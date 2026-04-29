@@ -5,6 +5,11 @@ import { resetGuidedToursHistory } from 'calypso/state/guided-tours/actions';
 import { getGuidedTourState } from 'calypso/state/guided-tours/selectors';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 
+const loadComponent = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-layout-guided-tours-component" */ './component'
+	);
+
 function GuidedTours() {
 	const dispatch = useDispatch();
 	const tourState = useSelector( getGuidedTourState );
@@ -21,15 +26,7 @@ function GuidedTours() {
 		return null;
 	}
 
-	return (
-		<AsyncLoad
-			require={ () =>
-				import(
-					/* webpackChunkName: "async-load-calypso-layout-guided-tours-component" */ './component'
-				)
-			}
-		/>
-	);
+	return <AsyncLoad require={ loadComponent } />;
 }
 
 export default GuidedTours;

@@ -7,6 +7,7 @@ import {
 	useCompleteMastodonConnectionMutation,
 	useMastodonConnectionQuery,
 	useMastodonConnectionsQuery,
+	useMastodonTimelineInfiniteQuery,
 } from '../reader-mastodon';
 
 const BASE = 'https://public-api.wordpress.com';
@@ -187,5 +188,21 @@ describe( 'reader-mastodon hooks', () => {
 		} );
 		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
 		expect( result.current.data?.avatar ).toBe( 'https://cdn/avatar.png' );
+	} );
+} );
+
+describe( 'useMastodonTimelineInfiniteQuery', () => {
+	afterEach( () => nock.cleanAll() );
+
+	it( 'fetches first page with no cursor', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/9/timeline' )
+			.reply( 200, { items: [], cursor: 'next-cursor' } );
+		const client = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+		const { result } = renderHook( () => useMastodonTimelineInfiniteQuery( 9 ), {
+			wrapper: makeWrapper( client ),
+		} );
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+		expect( result.current.data?.pages[ 0 ].cursor ).toBe( 'next-cursor' );
 	} );
 } );

@@ -1,6 +1,11 @@
 import AsyncLoad from 'calypso/components/async-load';
 import { useRouteModal } from 'calypso/lib/route-modal';
 
+const loadDialog = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-blocks-support-article-dialog-dialog" */ './dialog'
+	);
+
 function SupportArticleDialogLoader() {
 	const { isModalOpen } = useRouteModal( 'support-article' );
 
@@ -8,16 +13,7 @@ function SupportArticleDialogLoader() {
 		return null;
 	}
 
-	return (
-		<AsyncLoad
-			require={ () =>
-				import(
-					/* webpackChunkName: "async-load-calypso-blocks-support-article-dialog-dialog" */ './dialog'
-				)
-			}
-			placeholder={ null }
-		/>
-	);
+	return <AsyncLoad require={ loadDialog } placeholder={ null } />;
 }
 
 export default SupportArticleDialogLoader;

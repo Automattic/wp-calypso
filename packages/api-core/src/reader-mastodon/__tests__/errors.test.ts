@@ -69,3 +69,38 @@ describe( 'classifyMastodonError', () => {
 		expect( classifyMastodonError( 42 ).kind ).toBe( 'unknown' );
 	} );
 } );
+
+describe( 'classifyMastodonError — timeline kinds', () => {
+	it( 'maps mastodon_auth_required → auth_required', () => {
+		expect( classifyMastodonError( { error: 'mastodon_auth_required' } ) ).toEqual( {
+			kind: 'auth_required',
+		} );
+	} );
+
+	it( 'maps mastodon_not_found → not_found', () => {
+		expect( classifyMastodonError( { error: 'mastodon_not_found' } ) ).toEqual( {
+			kind: 'not_found',
+		} );
+	} );
+
+	it( 'maps mastodon_rate_limited without retry_after', () => {
+		expect( classifyMastodonError( { error: 'mastodon_rate_limited' } ) ).toEqual( {
+			kind: 'rate_limited',
+		} );
+	} );
+
+	it( 'maps mastodon_rate_limited with retry_after', () => {
+		expect(
+			classifyMastodonError( {
+				error: 'mastodon_rate_limited',
+				data: { retry_after: 42 },
+			} )
+		).toEqual( { kind: 'rate_limited', retry_after: 42 } );
+	} );
+
+	it( 'maps mastodon_upstream_unavailable → upstream_unavailable', () => {
+		expect( classifyMastodonError( { error: 'mastodon_upstream_unavailable' } ) ).toEqual( {
+			kind: 'upstream_unavailable',
+		} );
+	} );
+} );

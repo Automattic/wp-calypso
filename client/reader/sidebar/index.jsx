@@ -1,17 +1,18 @@
 import 'calypso/my-sites/sidebar/style.scss'; // Copy styles from the My Sites sidebar.
 import './style.scss';
+import { readSubscribedListsQuery } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
+import { useQuery } from '@tanstack/react-query';
 import { Icon, plus } from '@wordpress/icons';
 import clsx from 'clsx';
 import closest from 'component-closest';
 import i18n, { localize } from 'i18n-calypso';
 import { defer, startsWith } from 'lodash';
-import { Component } from 'react';
-import { connect } from 'react-redux';
-import QueryReaderLists from 'calypso/components/data/query-reader-lists';
-import QueryReaderOrganizations from 'calypso/components/data/query-reader-organizations';
+import { Component, useMemo } from 'react';
+import { connect, useSelector } from 'react-redux';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
+import { withReaderOrganizations } from 'calypso/components/data/with-reader-organizations';
 import { withCurrentRoute } from 'calypso/components/route';
 import GlobalSidebar, { GLOBAL_SIDEBAR_EVENTS } from 'calypso/layout/global-sidebar';
 import SidebarItem from 'calypso/layout/sidebar/item';
@@ -30,8 +31,6 @@ import { getTagStreamUrl } from 'calypso/reader/route';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { getSubscribedLists } from 'calypso/state/reader/lists/selectors';
-import { getReaderOrganizations } from 'calypso/state/reader/organizations/selectors';
 import { isReaderMSDEnabled } from 'calypso/state/reader-ui/selectors';
 import {
 	toggleReaderSidebarLists,
@@ -43,6 +42,7 @@ import {
 	isFollowingOpen,
 	isTagsOpen,
 } from 'calypso/state/reader-ui/sidebar/selectors';
+import getCurrentIntlCollator from 'calypso/state/selectors/get-current-intl-collator';
 import { getReaderTeams } from 'calypso/state/teams/selectors';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import ReaderSidebarHelper from './helper';
@@ -166,9 +166,7 @@ export class ReaderSidebar extends Component {
 			<div className="sidebar-menu-container">
 				<AppTitle />
 				<SidebarMenu>
-					<QueryReaderLists />
 					<QueryReaderTeams />
-					<QueryReaderOrganizations />
 
 					<li className="sidebar-streams__following">
 						<ReaderSidebarRecent
@@ -320,26 +318,42 @@ export class ReaderSidebar extends Component {
 	}
 }
 
-export default withCurrentRoute(
-	connect(
-		( state ) => {
-			return {
-				isListsOpen: isListsOpen( state ),
-				isFollowingOpen: isFollowingOpen( state ),
-				isTagsOpen: isTagsOpen( state ),
-				subscribedLists: getSubscribedLists( state ),
-				teams: getReaderTeams( state ),
-				organizations: getReaderOrganizations( state ),
-				isMSDEnabled: isReaderMSDEnabled( state ),
-			};
-		},
-		{
-			recordReaderTracksEvent,
-			recordTracksEvent,
-			setNextLayoutFocus,
-			toggleListsVisibility: toggleReaderSidebarLists,
-			toggleFollowingVisibility: toggleReaderSidebarFollowing,
-			toggleTagsVisibility: toggleReaderSidebarTags,
-		}
-	)( localize( ReaderSidebar ) )
+function withSubscribedLists( WrappedComponent ) {
+	return function WithSubscribedLists( props ) {
+		const { data } = useQuery( readSubscribedListsQuery() );
+		const collator = useSelector( getCurrentIntlCollator );
+		const subscribedLists = useMemo( () => {
+			if ( ! data?.lists ) {
+				return [];
+			}
+			return [ ...data.lists ].sort( ( a, b ) => collator.compare( a.title, b.title ) );
+		}, [ data, collator ] );
+		return <WrappedComponent { ...props } subscribedLists={ subscribedLists } />;
+	};
+}
+
+export default withSubscribedLists(
+	withCurrentRoute(
+		withReaderOrganizations(
+			connect(
+				( state ) => {
+					return {
+						isListsOpen: isListsOpen( state ),
+						isFollowingOpen: isFollowingOpen( state ),
+						isTagsOpen: isTagsOpen( state ),
+						teams: getReaderTeams( state ),
+						isMSDEnabled: isReaderMSDEnabled( state ),
+					};
+				},
+				{
+					recordReaderTracksEvent,
+					recordTracksEvent,
+					setNextLayoutFocus,
+					toggleListsVisibility: toggleReaderSidebarLists,
+					toggleFollowingVisibility: toggleReaderSidebarFollowing,
+					toggleTagsVisibility: toggleReaderSidebarTags,
+				}
+			)( localize( ReaderSidebar ) )
+		)
+	)
 );

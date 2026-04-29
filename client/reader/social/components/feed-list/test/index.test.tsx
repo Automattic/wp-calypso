@@ -4,7 +4,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils';
 import { SocialFeedList } from '../index';
-import type { AtmosphereError } from '@automattic/api-core';
+import type { SocialError } from '../../../types';
 
 interface Item {
 	id: string;
@@ -21,6 +21,9 @@ const baseProps = {
 	renderItem: ( i: Item ) => <div>{ i.label }</div>,
 	emptyTitle: 'Empty',
 	emptyLine: 'Empty line',
+	protocolLabel: 'Bluesky',
+	protocolHomeURL: '/reader/atmosphere',
+	protocolHomeLabel: 'Back to ATmosphere',
 };
 
 describe( 'SocialFeedList', () => {
@@ -120,7 +123,7 @@ describe( 'SocialFeedList', () => {
 				items={ [] }
 				isPending={ false }
 				isError
-				error={ { kind: 'upstream_unavailable' } as AtmosphereError }
+				error={ { kind: 'upstream_unavailable' } as SocialError }
 				hasNextPage={ false }
 				isFetchingNextPage={ false }
 				fetchNextPage={ () => {} }

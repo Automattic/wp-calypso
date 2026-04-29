@@ -270,7 +270,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 						</VStack>
 					</CardBody>
 					{ ! isEnabled && (
-						<CardFooter style={ { background: '#FAFAFA' } }>
+						<CardFooter className="ai-tools-settings__features-footer">
 							<VStack as="ul" spacing={ 1 } style={ { padding: 0, margin: 0 } }>
 								{ features.map( ( feature, i ) => (
 									<HStack key={ i } as="li" justify="flex-start" spacing={ 3 }>

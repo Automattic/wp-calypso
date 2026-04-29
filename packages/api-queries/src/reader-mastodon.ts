@@ -3,17 +3,31 @@ import {
 	completeMastodonConnection,
 	getMastodonConnection,
 	getMastodonConnections,
+	getMastodonThread,
+	getMastodonTimeline,
 	readerMastodonKeys,
 } from '@automattic/api-core';
-import { queryOptions, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+	infiniteQueryOptions,
+	queryOptions,
+	useInfiniteQuery,
+	useMutation,
+	useQuery,
+	useQueryClient,
+	type InfiniteData,
+	type QueryKey,
+} from '@tanstack/react-query';
 import type {
 	AuthorizeMastodonConnectionParams,
 	CompleteMastodonConnectionParams,
+	GetMastodonTimelineParams,
 	MastodonAuthorizeResponse,
 	MastodonConnectionDetails,
 	MastodonConnectionsResponse,
 	MastodonCreateConnectionResponse,
 	MastodonError,
+	MastodonThreadResponse,
+	MastodonTimelinePage,
 } from '@automattic/api-core';
 
 export const mastodonConnectionsQueryOptions = () =>
@@ -74,4 +88,71 @@ export const mastodonConnectionQueryOptions = ( id: number | null ) =>
 
 export function useMastodonConnectionQuery( id: number | null ) {
 	return useQuery( mastodonConnectionQueryOptions( id ) );
+}
+
+export const mastodonTimelineInfiniteQuery = ( connectionId: number ) =>
+	infiniteQueryOptions<
+		MastodonTimelinePage,
+		MastodonError,
+		InfiniteData< MastodonTimelinePage >,
+		QueryKey,
+		string | undefined
+	>( {
+		queryKey: readerMastodonKeys.timeline( connectionId ),
+		queryFn: ( { pageParam } ) =>
+			getMastodonTimeline( { connectionId, cursor: pageParam } as GetMastodonTimelineParams ),
+		initialPageParam: undefined,
+		getNextPageParam: ( lastPage ) => lastPage.cursor ?? undefined,
+		enabled: connectionId > 0,
+		staleTime: 30_000,
+		gcTime: 5 * 60_000,
+		// Don't retry terminal errors — they won't resolve on their own
+		// and a 3x retry just delays the "Reconnect needed" / "Connection
+		// not found" copy. Transient errors (rate limits, upstream
+		// outages) get one extra attempt with backoff keyed off
+		// retry_after where present.
+		retry: ( failureCount, error ) => {
+			if ( error.kind === 'rate_limited' || error.kind === 'upstream_unavailable' ) {
+				return failureCount < 2;
+			}
+			return false;
+		},
+		retryDelay: ( _attempt, error ) => {
+			if ( error.kind === 'rate_limited' && error.retry_after !== undefined ) {
+				return Math.min( error.retry_after * 1000, 30_000 );
+			}
+			return 2_000;
+		},
+	} );
+
+export function useMastodonTimelineInfiniteQuery( connectionId: number ) {
+	return useInfiniteQuery( mastodonTimelineInfiniteQuery( connectionId ) );
+}
+
+export const mastodonThreadQueryOptions = ( connectionId: number, statusId: string ) =>
+	queryOptions< MastodonThreadResponse, MastodonError >( {
+		queryKey: readerMastodonKeys.thread( connectionId, statusId ),
+		queryFn: () => getMastodonThread( { connectionId, statusId } ),
+		enabled: connectionId > 0 && statusId.length > 0,
+		staleTime: 30_000,
+		gcTime: 5 * 60_000,
+		// Same retry posture as the timeline query: terminal errors
+		// fail fast; transient errors (rate-limited, upstream down)
+		// retry once with retry_after-aware backoff.
+		retry: ( failureCount, error ) => {
+			if ( error.kind === 'rate_limited' || error.kind === 'upstream_unavailable' ) {
+				return failureCount < 2;
+			}
+			return false;
+		},
+		retryDelay: ( _attempt, error ) => {
+			if ( error.kind === 'rate_limited' && error.retry_after !== undefined ) {
+				return Math.min( error.retry_after * 1000, 30_000 );
+			}
+			return 2_000;
+		},
+	} );
+
+export function useMastodonThreadQuery( connectionId: number, statusId: string ) {
+	return useQuery( mastodonThreadQueryOptions( connectionId, statusId ) );
 }

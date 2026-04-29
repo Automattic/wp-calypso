@@ -18,6 +18,11 @@ import { areHostingFeaturesSupported } from './hosting/features';
 import type { Context, Context as PageJSContext } from '@automattic/calypso-router';
 import type { CalypsoDispatch, IAppState } from 'calypso/state/types';
 
+const loadTrackResurrections = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-lib-analytics-track-resurrections" */ 'calypso/lib/analytics/track-resurrections'
+	);
+
 const getStatusFilterValue = ( status?: string ) => {
 	return siteLaunchStatusGroupValues.find( ( value ) => value === status );
 };
@@ -120,14 +125,7 @@ export function sitesDashboard( context: Context, next: () => void ) {
 			<Global styles={ sitesDashboardGlobalStyles } />
 			<PageViewTracker path="/sites" title="Sites Management Page" delay={ 500 } />
 			<ResurrectedWelcomeModalGate />
-			<AsyncLoad
-				require={ () =>
-					import(
-						/* webpackChunkName: "async-load-calypso-lib-analytics-track-resurrections" */ 'calypso/lib/analytics/track-resurrections'
-					)
-				}
-				placeholder={ null }
-			/>
+			<AsyncLoad require={ loadTrackResurrections } placeholder={ null } />
 			<SitesDashboard queryParams={ getQueryParams( context ) } />
 		</>
 	);

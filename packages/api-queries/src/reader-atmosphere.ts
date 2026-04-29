@@ -1,7 +1,10 @@
 import {
 	createConnection,
+	getAuthorFeed,
+	getAuthorProfile,
 	getConnection,
 	getConnections,
+	getThread,
 	getTimeline,
 	readerAtmosphereKeys,
 } from '@automattic/api-core';
@@ -16,19 +19,44 @@ import {
 	type QueryKey,
 } from '@tanstack/react-query';
 import type {
+	AtmosphereAuthorFeedPage,
+	AtmosphereAuthorProfile,
 	AtmosphereConnectionDetails,
 	AtmosphereConnectionsResponse,
 	AtmosphereCreateConnectionResponse,
 	AtmosphereError,
+	AtmosphereThreadResponse,
 	AtmosphereTimelinePage,
 	CreateConnectionParams,
 } from '@automattic/api-core';
+
+const TERMINAL_ERROR_KINDS: ReadonlySet< AtmosphereError[ 'kind' ] > = new Set( [
+	'auth_required',
+	'auth_failed',
+	'invalid_handle',
+	'invalid_credentials',
+	'connection_not_found',
+	'not_found',
+	'bad_request',
+	// rate_limited surfaces a wait-then-Retry UI; auto-retrying immediately
+	// would contradict the user-facing message.
+	'rate_limited',
+] );
+
+const isTerminalError = ( error: AtmosphereError ): boolean =>
+	TERMINAL_ERROR_KINDS.has( error.kind );
 
 export const connectionsQueryOptions = () =>
 	queryOptions< AtmosphereConnectionsResponse, AtmosphereError >( {
 		queryKey: readerAtmosphereKeys.connections(),
 		queryFn: getConnections,
 		staleTime: 60_000,
+		retry: ( failureCount, error ) => {
+			if ( isTerminalError( error ) ) {
+				return false;
+			}
+			return failureCount < 2;
+		},
 	} );
 
 export function useConnectionsQuery( { enabled }: { enabled?: boolean } = {} ) {
@@ -81,7 +109,7 @@ export const timelineInfiniteQuery = ( connectionId: number ) =>
 		queryKey: readerAtmosphereKeys.timeline( connectionId ),
 		queryFn: ( { pageParam } ) => getTimeline( { connectionId, cursor: pageParam } ),
 		initialPageParam: undefined,
-		getNextPageParam: ( lastPage ) => lastPage.cursor ?? undefined,
+		getNextPageParam: ( lastPage ) => lastPage.cursor || undefined,
 		enabled: connectionId > 0,
 		staleTime: 30_000,
 		gcTime: 5 * 60_000,
@@ -89,4 +117,69 @@ export const timelineInfiniteQuery = ( connectionId: number ) =>
 
 export function useTimelineInfiniteQuery( connectionId: number ) {
 	return useInfiniteQuery( timelineInfiniteQuery( connectionId ) );
+}
+
+export const threadQueryOptions = ( uri: string ) =>
+	queryOptions< AtmosphereThreadResponse, AtmosphereError >( {
+		queryKey: readerAtmosphereKeys.thread( uri ),
+		queryFn: () => getThread( { uri } ),
+		enabled: uri.length > 0,
+		staleTime: 30_000,
+		gcTime: 5 * 60_000,
+		retry: ( failureCount, error ) => {
+			if ( isTerminalError( error ) ) {
+				return false;
+			}
+			return failureCount < 2;
+		},
+	} );
+
+export interface UseThreadQueryParams {
+	uri: string;
+}
+
+export function useThreadQuery( { uri }: UseThreadQueryParams ) {
+	return useQuery( threadQueryOptions( uri ) );
+}
+
+export const profileQueryOptions = ( actor: string ) =>
+	queryOptions< AtmosphereAuthorProfile, AtmosphereError >( {
+		queryKey: readerAtmosphereKeys.profile( actor ),
+		queryFn: () => getAuthorProfile( { actor } ),
+		enabled: actor.length > 0,
+		staleTime: 30_000,
+		gcTime: 5 * 60_000,
+	} );
+
+export interface UseAuthorProfileQueryParams {
+	actor: string;
+}
+
+export function useAuthorProfileQuery( { actor }: UseAuthorProfileQueryParams ) {
+	return useQuery( profileQueryOptions( actor ) );
+}
+
+export const authorFeedInfiniteQuery = ( actor: string ) =>
+	infiniteQueryOptions<
+		AtmosphereAuthorFeedPage,
+		AtmosphereError,
+		InfiniteData< AtmosphereAuthorFeedPage >,
+		QueryKey,
+		string | undefined
+	>( {
+		queryKey: readerAtmosphereKeys.authorFeed( actor ),
+		queryFn: ( { pageParam } ) => getAuthorFeed( { actor, cursor: pageParam } ),
+		initialPageParam: undefined,
+		getNextPageParam: ( lastPage ) => lastPage.cursor || undefined,
+		enabled: actor.length > 0,
+		staleTime: 30_000,
+		gcTime: 5 * 60_000,
+	} );
+
+export interface UseAuthorFeedInfiniteQueryParams {
+	actor: string;
+}
+
+export function useAuthorFeedInfiniteQuery( { actor }: UseAuthorFeedInfiniteQueryParams ) {
+	return useInfiniteQuery( authorFeedInfiniteQuery( actor ) );
 }

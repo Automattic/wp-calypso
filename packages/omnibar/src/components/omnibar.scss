@@ -1,4 +1,5 @@
 $omnibar-height: 32px;
+$omnibar-height-mobile: 46px;
 $omnibar-font-size: 13px;
 
 // Modern color scheme variables
@@ -9,14 +10,20 @@ $omnibar-submenu-text-color: #bcbcbc;
 $omnibar-highlight-color: #7b90ff;
 
 .omnibar {
+	--omnibar-height: #{$omnibar-height-mobile};
+
+	@media ( min-width: 782px ) {
+		--omnibar-height: #{$omnibar-height};
+	}
+
 	background-color: $omnibar-base-color;
-	min-height: $omnibar-height;
-	height: $omnibar-height;
+	min-height: var( --omnibar-height );
+	height: var( --omnibar-height );
 	display: flex;
 	padding: 0;
 	margin: 0;
 	font-size: $omnibar-font-size;
-	line-height: $omnibar-height;
+	line-height: var( --omnibar-height );
 
 	.omnibar__secondary {
 		display: flex;
@@ -29,12 +36,12 @@ $omnibar-highlight-color: #7b90ff;
 	}
 
 	.components-button.omnibar__menu {
-		height: $omnibar-height;
-		padding: 0 8px;
+		height: var( --omnibar-height );
+		padding: 0 12px;
 		color: $omnibar-text-color;
 		background-color: transparent;
 		font-size: $omnibar-font-size;
-		line-height: $omnibar-height;
+		line-height: var( --omnibar-height );
 		border-radius: 0;
 
 		&:hover,
@@ -44,6 +51,10 @@ $omnibar-highlight-color: #7b90ff;
 			background-color: $omnibar-submenu-background;
 			box-shadow: none;
 			outline: none;
+		}
+
+		@media ( min-width: 782px ) {
+			padding: 0 8px;
 		}
 	}
 }
