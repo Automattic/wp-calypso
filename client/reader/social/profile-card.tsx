@@ -1,3 +1,4 @@
+import { formatNumberCompact } from '@automattic/number-formatters';
 import DOMPurify from 'dompurify';
 import { useMemo } from 'react';
 import type { TranslateResult } from 'i18n-calypso';
@@ -145,7 +146,9 @@ export function SocialProfileCard( {
 			<ul className="social-profile-card__stats" aria-label={ statsLabel }>
 				{ stats.map( ( stat ) => (
 					<li key={ stat.key } className="social-profile-card__stat">
-						<span className="social-profile-card__stat-count">{ stat.count }</span>{ ' ' }
+						<span className="social-profile-card__stat-count">
+							{ formatNumberCompact( stat.count ) }
+						</span>{ ' ' }
 						<span className="social-profile-card__stat-label">{ stat.label }</span>
 					</li>
 				) ) }

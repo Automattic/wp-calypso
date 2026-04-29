@@ -28,6 +28,27 @@ describe( 'SocialProfileCard', () => {
 		expect( screen.getByText( 'hello world' ) ).toBeVisible();
 	} );
 
+	it( 'formats large stat counts in compact notation', () => {
+		render(
+			<SocialProfileCard
+				statsLabel="Profile stats"
+				stats={ [
+					{ key: 'followers', count: 605312, label: 'followers' },
+					{ key: 'following', count: 1234, label: 'following' },
+					{ key: 'posts', count: 1500000, label: 'posts' },
+				] }
+			/>
+		);
+
+		const stats = screen.getByRole( 'list', { name: 'Profile stats' } );
+		// formatNumberCompact uses Intl.NumberFormat compact notation with
+		// maximumFractionDigits: 1, so 605312 -> 605.3K, 1234 -> 1.2K, etc.
+		expect( stats ).toHaveTextContent( '605.3K followers' );
+		expect( stats ).toHaveTextContent( '1.2K following' );
+		expect( stats ).toHaveTextContent( '1.5M posts' );
+		expect( stats ).not.toHaveTextContent( '605312' );
+	} );
+
 	it( 'omits avatar when null', () => {
 		render(
 			<SocialProfileCard
