@@ -645,7 +645,7 @@ function UnifiedPlansStep( {
 	if ( useStepContainerV2 && wrapperProps ) {
 		const goBack = wrapperProps.hideBack ? undefined : wrapperProps.goBack;
 		const handleOnboardingBack = () => {
-			window.location.href = '/setup/onboarding/domains';
+			window.location.href = getStepUrl( 'onboarding', 'domains' );
 		};
 		const backClick = isOnboardingFlow( flowName ) ? handleOnboardingBack : goBack;
 
