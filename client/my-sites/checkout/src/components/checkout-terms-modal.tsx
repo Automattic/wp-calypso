@@ -65,7 +65,7 @@ export default function CheckoutTermsModal( {
 			className="checkout-terms-modal"
 		>
 			<TermsModalBody>
-				<CheckoutTerms cart={ cart } />
+				<CheckoutTerms cart={ cart } expandReadMore />
 			</TermsModalBody>
 		</Modal>
 	);
