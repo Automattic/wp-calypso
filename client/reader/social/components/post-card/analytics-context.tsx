@@ -8,7 +8,11 @@ import { createContext, useContext, type ReactNode } from 'react';
 // hard-coded event names inside subcomponents on the `_timeline_`
 // prefix so the rewrite stays the single source of truth.
 export interface SocialAnalyticsContextValue {
-	source: 'atmosphere' | 'mastodon';
+	// Free-form protocol identifier slotted into Tracks event names as
+	// `calypso_reader_<source>_*`. Per-protocol shells set their own value
+	// (e.g. 'atmosphere', 'mastodon') — kept as a plain string so adding a
+	// third protocol doesn't require editing this shared file.
+	source: string;
 	connectionId: number;
 	onClick: ( event: string, props: Record< string, unknown > ) => void;
 	// Optional URL resolver. Returning null (or omitting) signals the consumer to fall back to a public URL.
