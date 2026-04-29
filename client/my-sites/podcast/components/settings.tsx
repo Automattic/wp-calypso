@@ -10,7 +10,6 @@ import {
 	SelectControl,
 	TextControl,
 	TextareaControl,
-	ToggleControl,
 	__experimentalHeading as Heading,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
@@ -224,32 +223,12 @@ const PodcastingSettingsForm = ( {
 		translate,
 	] );
 
-	const onTogglePodcasting = useCallback(
-		( isEnabled: boolean ) => {
-			if ( disabled ) {
-				return;
-			}
-
-			if ( isEnabled ) {
-				if ( ! fields.podcasting_title ) {
-					updateFields( { podcasting_title: settings?.blogname || '' } );
-				}
-				return;
-			}
-
-			if ( isPodcastingEnabled ) {
-				updateFields( { podcasting_category_id: '0' }, () => submitForm() );
-			}
-		},
-		[
-			disabled,
-			isPodcastingEnabled,
-			fields.podcasting_title,
-			settings?.blogname,
-			updateFields,
-			submitForm,
-		]
-	);
+	const onDisablePodcasting = useCallback( () => {
+		if ( disabled || ! isPodcastingEnabled ) {
+			return;
+		}
+		updateFields( { podcasting_category_id: '0' }, () => submitForm() );
+	}, [ disabled, isPodcastingEnabled, updateFields, submitForm ] );
 
 	const onCategorySelected = useCallback(
 		( category: { ID: number } ) => {
@@ -624,24 +603,30 @@ const PodcastingSettingsForm = ( {
 					</CardBody>
 				</Card>
 
-				<Card className="site-settings__card podcast__card">
-					<CardBody>
-						<ToggleControl
-							__nextHasNoMarginBottom
-							checked={ isPodcastingEnabled }
-							onChange={ onTogglePodcasting }
-							disabled={ disabled }
-							label={ translate( 'Enable podcasting on this site' ) as string }
-							help={
-								isPodcastingEnabled
-									? ( translate(
-											'Disable to stop publishing your podcast feed. You can always set it up again.'
-									  ) as string )
-									: undefined
-							}
-						/>
-					</CardBody>
-				</Card>
+				{ isPodcastingEnabled && (
+					<Card className="site-settings__card podcast__card">
+						<CardHeader>
+							<VStack spacing={ 1 }>
+								<Heading level={ 4 }>{ translate( 'Disable podcasting' ) }</Heading>
+								<Text variant="muted">
+									{ translate(
+										'Stops publishing your podcast feed. Your show details stay saved, so you can set it up again later.'
+									) }
+								</Text>
+							</VStack>
+						</CardHeader>
+						<CardBody>
+							<Button
+								variant="secondary"
+								isDestructive
+								onClick={ onDisablePodcasting }
+								disabled={ disabled }
+							>
+								{ translate( 'Disable podcasting' ) }
+							</Button>
+						</CardBody>
+					</Card>
+				) }
 			</VStack>
 		</form>
 	);
