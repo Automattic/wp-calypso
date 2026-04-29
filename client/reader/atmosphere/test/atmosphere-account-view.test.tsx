@@ -18,6 +18,13 @@ jest.mock(
 		}
 );
 
+// recordReaderTracksEvent is a thunk that reads state.reader.follows. The test
+// store from renderWithProvider does not provide that slice. Replace it with a
+// no-op action creator so dispatch() does not throw.
+jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
+	recordReaderTracksEvent: () => ( { type: '@@TEST/NOOP' } ),
+} ) );
+
 jest.mock( 'calypso/components/data/document-head', () => () => null );
 
 jest.mock( '@automattic/calypso-router', () => {
@@ -60,7 +67,6 @@ function mockConnectionDetails( id: number ) {
 			avatar: null,
 			banner: null,
 			counts: { followers: 0, follows: 0, posts: 0 },
-			raw: {},
 		} );
 }
 

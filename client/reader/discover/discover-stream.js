@@ -1,6 +1,7 @@
 import { SiteSubscriptionsQueryPropsProvider } from '@automattic/data-stores/src/reader/contexts';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import DiscoverHeaderAndNavigation from 'calypso/reader/discover/components/header-and-navigation';
 import AddSubscriptionForm from 'calypso/reader/new-subscription/components/add-subscription-form';
@@ -8,7 +9,6 @@ import { ADD_SUBSCRIPTION_CONFIGS } from 'calypso/reader/new-subscription/compon
 import Stream from 'calypso/reader/stream';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 import {
 	getDiscoverStreamTags,
 	RECOMMENDED_TAB,
@@ -18,7 +18,7 @@ import {
 
 const DiscoverStream = ( props ) => {
 	const translate = useTranslate();
-	const followedTags = useSelector( getReaderFollowedTags );
+	const { data: followedTags } = useFollowedReaderTags();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const selectedTab = props.selectedTab || FRESHLY_PRESSED_TAB;
 	const selectedTag = props.query?.selectedTag ?? 'dailyprompt';

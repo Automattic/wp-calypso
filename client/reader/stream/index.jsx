@@ -180,9 +180,9 @@ class ReaderStream extends Component {
 		const ref = this.listRef.current && this.listRef.current.refs[ postRefKey ];
 		const node = ReactDom.findDOMNode( ref );
 
-		// if the post is found, focus the first anchor tag within it.
 		if ( node ) {
-			const firstLink = node.querySelector( 'a' );
+			// Skip anchors inside .user-avatar to avoid triggering hovercard.
+			const firstLink = node.querySelector( 'a:not(.user-avatar a)' );
 
 			if ( firstLink ) {
 				firstLink.focus();

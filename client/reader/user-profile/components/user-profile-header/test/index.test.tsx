@@ -36,7 +36,7 @@ jest.mock( '@automattic/calypso-config', () => ( {
 	isEnabled: jest.fn(),
 } ) );
 
-jest.mock( 'calypso/reader/user-profile/views/achievements/use-achievements-visibility', () => ( {
+jest.mock( 'calypso/reader/components/achievements/use-achievements-visibility', () => ( {
 	__esModule: true,
 	default: () => ( { isOwnProfile: true, isVisible: true, isLoading: false } ),
 } ) );

@@ -151,6 +151,7 @@ module.exports = {
 		'wpcalypso/i18n-named-placeholders': 'error',
 		'wpcalypso/i18n-translate-identifier': 'error',
 		'wpcalypso/i18n-unlocalized-url': 'error',
+		'wpcalypso/jsx-async-load-require-top-level': 'error',
 		'wpcalypso/jsx-gridicon-size': 'error',
 		'wpcalypso/jsx-classname-namespace': 'error',
 		'wpcalypso/redux-no-bound-selectors': 'error',

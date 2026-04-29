@@ -41,7 +41,7 @@
 	"dependencies": {
 		"@automattic/create-calypso-config": "workspace:^",
 		"@types/cookie": "^0.6.0",
-		"@types/node": "^22.7.5",
+		"@types/node": "^24.12.2",
 		"cookie": "^0.7.2",
 		"tslib": "^2.8.1"
 	},

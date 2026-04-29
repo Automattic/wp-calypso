@@ -1,4 +1,6 @@
+import { followReadTagMutation, unfollowReadTagMutation } from '@automattic/api-queries';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
 	Modal,
 	Button,
@@ -7,16 +9,15 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
-import { fixMe } from 'i18n-calypso';
+import { fixMe, translate } from 'i18n-calypso';
 import React, { useState, useEffect, useMemo } from 'react';
-import { useStore } from 'react-redux';
+import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
 import { READER_ONBOARDING_TRACKS_EVENT_PREFIX } from 'calypso/reader/onboarding-rsm/constants';
 import { StepIndicator } from 'calypso/reader/onboarding-rsm/step-indicator';
 import { useSelector, useDispatch } from 'calypso/state';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { follow } from 'calypso/state/reader/follows/actions';
 import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
-import { requestFollowTag, requestUnfollowTag } from 'calypso/state/reader/tags/items/actions';
-import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 import { getPackBlogs } from './get-pack-blogs';
 import TopicGroupCard from './topic-group-card';
 import { getTopicGroups, type TopicGroup } from './topic-groups';
@@ -40,26 +41,24 @@ interface Category {
 	topics: Topic[];
 }
 
-interface Tag {
-	slug: string;
-}
-
 type ResolvedPack = TopicGroup & { blogs: CuratedBlog[] };
 
 const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onContinue } ) => {
 	const [ followedTags, setFollowedTags ] = useState< string[] >( [] );
 	const [ showAllTopics, setShowAllTopics ] = useState( false );
 	const [ busyPacks, setBusyPacks ] = useState< Set< string > >( new Set() );
-	const followedTagsFromState = useSelector( getReaderFollowedTags );
+	const { data: followedTagsFromState } = useFollowedReaderTags();
 	const reduxFollows = useSelector( getReaderFollows );
 	const dispatch = useDispatch();
+	const queryClient = useQueryClient();
 	const [ processingTags, setProcessingTags ] = useState< Set< string > >( new Set() );
-	const reduxStore = useStore();
+	const { mutate: followTag } = useMutation( followReadTagMutation( queryClient ) );
+	const { mutate: unfollowTag } = useMutation( unfollowReadTagMutation( queryClient ) );
 
 	useEffect( () => {
 		// If there are followed tags in the state and no tags are being processed, update the followed tags state for the UI.
 		if ( followedTagsFromState && processingTags.size === 0 ) {
-			const initialTags = followedTagsFromState.map( ( tag: Tag ) => tag.slug );
+			const initialTags = followedTagsFromState.map( ( tag ) => tag.slug );
 			setFollowedTags( initialTags );
 		}
 	}, [ followedTagsFromState, processingTags ] );
@@ -101,16 +100,38 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 		// Mark the tag as being processed.
 		setProcessingTags( ( current ) => new Set( current ).add( tag ) );
 
+		const releaseProcessing = () => {
+			setProcessingTags( ( current ) => {
+				const updated = new Set( current );
+				updated.delete( tag );
+				return updated;
+			} );
+		};
+
 		// Follow or unfollow the tag and update the followed tags state for the UI.
 		if ( checked ) {
-			dispatch( requestFollowTag( tag ) );
+			followTag( tag, {
+				onSettled: releaseProcessing,
+				onError: () => {
+					dispatch(
+						errorNotice( translate( 'Could not follow tag: %(tag)s', { args: { tag } } ) )
+					);
+				},
+			} );
 			setFollowedTags( ( currentTags ) => [ ...currentTags, tag ] );
 			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_tag_followed`, {
 				tag,
 				total_followed: followedTags.length + 1,
 			} );
 		} else {
-			dispatch( requestUnfollowTag( tag ) );
+			unfollowTag( tag, {
+				onSettled: releaseProcessing,
+				onError: () => {
+					dispatch(
+						errorNotice( translate( 'Could not unfollow tag: %(tag)s', { args: { tag } } ) )
+					);
+				},
+			} );
 			setFollowedTags( ( currentTags ) => currentTags.filter( ( t ) => t !== tag ) );
 			recordTracksEvent(
 				`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_tag_unfollowed`,
@@ -120,34 +141,6 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 				}
 			);
 		}
-
-		// Set a maximum number of attempts to check if the tag has been processed.
-		let attempts = 0;
-		const MAX_ATTEMPTS = 100; // 100 * 100ms = 10 seconds
-
-		// Poll to check if the tag has been processed (followed or unfollowed).
-		const checkStateInterval = setInterval( () => {
-			attempts++;
-
-			// Get the current followed tags from the state.
-			const currentFollowedTags = getReaderFollowedTags( reduxStore.getState() ) || [];
-			const stateTagSlugs = currentFollowedTags.map( ( t: Tag ) => t.slug );
-
-			// Check if the tag is now being followed or unfollowed.
-			const isStateUpdated = checked
-				? stateTagSlugs.includes( tag )
-				: ! stateTagSlugs.includes( tag );
-
-			// If the state has been updated or we've reached the maximum number of attempts, clear the interval and remove the tag from the processing set.
-			if ( isStateUpdated || attempts >= MAX_ATTEMPTS ) {
-				clearInterval( checkStateInterval );
-				setProcessingTags( ( current ) => {
-					const updated = new Set( current );
-					updated.delete( tag );
-					return updated;
-				} );
-			}
-		}, 100 );
 	};
 
 	const handlePackSubscribe = ( pack: ResolvedPack ) => {

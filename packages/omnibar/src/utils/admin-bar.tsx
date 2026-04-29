@@ -14,8 +14,9 @@ export function buildOmnibarNodesFromAdminBarNodes( adminBarNodes: AdminBarNode[
 		};
 
 		switch ( node.id ) {
-			case 'wpcom-logo':
+			case 'wp-logo':
 				omnibarNodes.home = omnibarNode;
+				omnibarNodes.home.title = undefined;
 				break;
 			case 'site-name':
 				omnibarNodes.site = omnibarNode;
@@ -47,10 +48,12 @@ export function buildOmnibarNodesFromAdminBarNodes( adminBarNodes: AdminBarNode[
 				const avatar = doc.querySelector( 'img' );
 				const avatarSrc = avatar?.getAttribute( 'src' );
 				if ( avatarSrc ) {
-					const url = new URL( avatarSrc );
-					url.search = '';
 					omnibarNode.icon = (
-						<img src={ url.toString() } alt={ avatar?.getAttribute( 'alt' ) || '' } />
+						<img
+							src={ avatarSrc }
+							srcSet={ avatar?.getAttribute( 'srcset' ) || '' }
+							alt={ avatar?.getAttribute( 'alt' ) || '' }
+						/>
 					);
 				}
 				omnibarNodes.user = omnibarNode;
@@ -58,8 +61,18 @@ export function buildOmnibarNodesFromAdminBarNodes( adminBarNodes: AdminBarNode[
 			}
 			case 'user-info': {
 				const doc = new DOMParser().parseFromString( node.title || '', 'text/html' );
+				const avatar = doc.querySelector( 'img' );
+				const avatarSrc = avatar?.getAttribute( 'src' );
+				if ( avatarSrc ) {
+					omnibarNode.icon = (
+						<img
+							src={ avatarSrc }
+							srcSet={ avatar?.getAttribute( 'srcset' ) || '' }
+							alt={ avatar?.getAttribute( 'alt' ) || '' }
+						/>
+					);
+				}
 				omnibarNode.title = doc.querySelector( '.edit-profile' )?.textContent?.trim() || '';
-				omnibarNode.icon = omnibarNodes.user?.icon;
 				omnibarNode.meta = {
 					displayName: doc.querySelector( '.display-name' )?.textContent?.trim(),
 					username: doc.querySelector( '.username' )?.textContent?.trim(),

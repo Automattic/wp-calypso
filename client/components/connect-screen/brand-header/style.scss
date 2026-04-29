@@ -24,16 +24,20 @@
 }
 
 .connect-screen-brand-header__title {
-	font-size: 1.75rem;
+	font-size: 2rem;
 	font-weight: 500;
 	margin: 0 0 0.5rem;
 	letter-spacing: -0.02em;
-	line-height: 1.35;
+	line-height: 1.25;
 	color: var( --color-text );
 
 	@include break-mobile {
-		font-size: 2rem;
 		margin-bottom: 1rem;
+	}
+
+	@include break-large {
+		font-size: 2.75rem;
+		line-height: 1.15;
 	}
 }
 
