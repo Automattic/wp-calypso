@@ -27,6 +27,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 USER agent
+ENV NODE_OPTIONS=--max-old-space-size=16384
 ENV NVM_DIR=/home/agent/.nvm
 COPY --chown=agent:agent .nvmrc /tmp/.nvmrc
 COPY --chown=agent:agent package.json /tmp/package.json
