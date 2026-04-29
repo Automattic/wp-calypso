@@ -28,6 +28,8 @@ export type {
 	SocialError,
 } from './types';
 export { AuthorProfileHeader } from './author-profile-header';
+export { SocialAuthorProfilePanel } from './author-profile-panel';
+export type { SocialAuthorProfilePanelProps } from './author-profile-panel';
 export { mapAtmosphereFeedItemToSocialPost } from './mappers/atmosphere';
 export {
 	mapMastodonFeedItemToSocialPost,
