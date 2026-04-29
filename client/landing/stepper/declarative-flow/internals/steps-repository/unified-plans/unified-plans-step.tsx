@@ -54,6 +54,15 @@ import type { OnboardSelect, SiteDetails } from '@automattic/data-stores';
 import type { StepState } from 'calypso/state/signup/progress/schema';
 import './unified-plans-step-styles.scss';
 
+const loadPlanFaq = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-my-sites-plans-features-main-components-plan-faq" */ 'calypso/my-sites/plans-features-main/components/plan-faq'
+	);
+const loadStepWrapper = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-signup-step-wrapper" */ 'calypso/signup/step-wrapper'
+	);
+
 export interface UnifiedPlansStepProps {
 	hideFreePlan?: boolean;
 	hidePersonalPlan?: boolean;
@@ -607,16 +616,7 @@ function UnifiedPlansStep( {
 						return null;
 					}
 
-					return (
-						<AsyncLoad
-							require={ () =>
-								import(
-									/* webpackChunkName: "async-load-calypso-my-sites-plans-features-main-components-plan-faq" */ 'calypso/my-sites/plans-features-main/components/plan-faq'
-								)
-							}
-							placeholder={ null }
-						/>
-					);
+					return <AsyncLoad require={ loadPlanFaq } placeholder={ null } />;
 				} }
 			/>
 		</div>
@@ -697,11 +697,7 @@ function UnifiedPlansStep( {
 						/**
 						 * Common Start/Stepper props [START]
 						 */
-						require={ () =>
-							import(
-								/* webpackChunkName: "async-load-calypso-signup-step-wrapper" */ 'calypso/signup/step-wrapper'
-							)
-						}
+						require={ loadStepWrapper }
 						flowName={ flowName }
 						stepName={ stepName }
 						stepContent={ stepContent }

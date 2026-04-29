@@ -30,6 +30,11 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
+const loadForm = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-my-sites-site-settings-seo-settings-form" */ 'calypso/my-sites/site-settings/seo-settings/form'
+	);
+
 const SiteSettingsTraffic = ( {
 	fields,
 	handleAutosavingRadio,
@@ -96,17 +101,7 @@ const SiteSettingsTraffic = ( {
 					{ isAdmin && (
 						<SeoSettingsHelpCard disabled={ isRequestingSettings || isSavingSettings } />
 					) }
-					{ isAdmin && (
-						<AsyncLoad
-							key={ siteId }
-							require={ () =>
-								import(
-									/* webpackChunkName: "async-load-calypso-my-sites-site-settings-seo-settings-form" */ 'calypso/my-sites/site-settings/seo-settings/form'
-								)
-							}
-							placeholder={ null }
-						/>
-					) }
+					{ isAdmin && <AsyncLoad key={ siteId } require={ loadForm } placeholder={ null } /> }
 					{ isJetpackAdmin && (
 						<JetpackSiteStats
 							handleAutosavingToggle={ handleAutosavingToggle }

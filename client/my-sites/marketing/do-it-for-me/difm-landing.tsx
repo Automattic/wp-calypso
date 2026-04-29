@@ -10,6 +10,11 @@ import { useDIFMHeading } from './use-difm-heading';
 
 import './difm-landing.scss';
 
+const loadSiteBuildShowcase = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-my-sites-marketing-do-it-for-me-site-build-showcase" */ './site-build-showcase'
+	);
+
 const Wrapper = styled.div`
 	display: flex;
 	align-items: flex-start;
@@ -134,11 +139,7 @@ export default function DIFMLanding( {
 				</ContentSection>
 				<ImageSection>
 					<AsyncLoad
-						require={ () =>
-							import(
-								/* webpackChunkName: "async-load-calypso-my-sites-marketing-do-it-for-me-site-build-showcase" */ './site-build-showcase'
-							)
-						}
+						require={ loadSiteBuildShowcase }
 						placeholder={ <LoadingEllipsis /> }
 						isStoreFlow={ isStoreFlow }
 					/>

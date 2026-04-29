@@ -26,6 +26,11 @@ import 'calypso/state/admin-menu/init';
 
 import './style.scss';
 
+const loadNotice = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-my-sites-current-site-notice" */ 'calypso/my-sites/current-site/notice'
+	);
+
 export const MySitesSidebarUnified = ( { path, isUnifiedSiteSidebarVisible } ) => {
 	const menuItems = useSiteMenuItems();
 	const isAllDomainsView = useDomainsViewStatus();
@@ -47,15 +52,7 @@ export const MySitesSidebarUnified = ( { path, isUnifiedSiteSidebarVisible } ) =
 			<Sidebar>
 				{ isUnifiedSiteSidebarVisible && selectedSite && ! isAllDomainsView && (
 					<SidebarRegion>
-						<AsyncLoad
-							require={ () =>
-								import(
-									/* webpackChunkName: "async-load-calypso-my-sites-current-site-notice" */ 'calypso/my-sites/current-site/notice'
-								)
-							}
-							placeholder={ null }
-							site={ selectedSite }
-						/>
+						<AsyncLoad require={ loadNotice } placeholder={ null } site={ selectedSite } />
 					</SidebarRegion>
 				) }
 				{ ! isUnifiedSiteSidebarVisible && (

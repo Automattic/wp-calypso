@@ -1,15 +1,18 @@
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import EmptyContent from 'calypso/components/empty-content';
-import type { AtmosphereError } from '@automattic/api-core';
+import type { SocialError } from '../../types';
 
 interface FeedListEmptyProps {
-	error: AtmosphereError | null;
+	error: SocialError | null;
 	onRetry: () => void;
 	emptyTitle: string;
 	emptyLine: string;
 	emptyActionLabel?: string;
 	emptyActionURL?: string;
+	protocolLabel: string;
+	protocolHomeURL: string;
+	protocolHomeLabel: string;
 }
 
 export function FeedListEmpty( {
@@ -19,6 +22,9 @@ export function FeedListEmpty( {
 	emptyLine,
 	emptyActionLabel,
 	emptyActionURL,
+	protocolLabel,
+	protocolHomeURL,
+	protocolHomeLabel,
 }: FeedListEmptyProps ) {
 	const translate = useTranslate();
 
@@ -38,20 +44,31 @@ export function FeedListEmpty( {
 			return (
 				<EmptyContent
 					title={ translate( 'Reconnect needed' ) }
-					line={ translate( 'Your Bluesky connection needs to be reconnected. Coming soon.' ) }
+					line={ translate( 'Your %(protocol)s connection needs to be reconnected.', {
+						args: { protocol: protocolLabel },
+					} ) }
+					action={ protocolHomeLabel }
+					actionURL={ protocolHomeURL }
 				/>
 			);
 		case 'rate_limited': {
-			const retryAfter = ( error as { retry_after?: number } ).retry_after;
+			const retryAfter = error.retry_after;
 			return (
 				<EmptyContent
 					title={ translate( 'Slow down' ) }
 					line={
 						retryAfter
-							? translate( 'Bluesky is asking us to slow down. Try again in %(n)ds.', {
-									args: { n: retryAfter },
+							? translate(
+									'%(protocol)s is asking us to slow down. Try again in %(n)d second.',
+									'%(protocol)s is asking us to slow down. Try again in %(n)d seconds.',
+									{
+										count: retryAfter,
+										args: { protocol: protocolLabel, n: retryAfter },
+									}
+							  )
+							: translate( '%(protocol)s is asking us to slow down. Try again in a moment.', {
+									args: { protocol: protocolLabel },
 							  } )
-							: translate( 'Bluesky is asking us to slow down. Try again in a moment.' )
 					}
 					action={
 						<Button variant="primary" onClick={ onRetry }>
@@ -64,8 +81,12 @@ export function FeedListEmpty( {
 		case 'upstream_unavailable':
 			return (
 				<EmptyContent
-					title={ translate( 'Bluesky unreachable' ) }
-					line={ translate( 'Bluesky is temporarily unreachable. Try again in a moment.' ) }
+					title={ translate( '%(protocol)s unreachable', {
+						args: { protocol: protocolLabel },
+					} ) }
+					line={ translate( '%(protocol)s is temporarily unreachable. Try again in a moment.', {
+						args: { protocol: protocolLabel },
+					} ) }
 					action={
 						<Button variant="primary" onClick={ onRetry }>
 							{ translate( 'Retry' ) }
@@ -78,8 +99,8 @@ export function FeedListEmpty( {
 				<EmptyContent
 					title={ translate( 'Connection not found' ) }
 					line={ translate( 'This connection no longer exists.' ) }
-					action={ translate( 'Back to ATmosphere' ) }
-					actionURL="/reader/atmosphere"
+					action={ protocolHomeLabel }
+					actionURL={ protocolHomeURL }
 				/>
 			);
 		default:

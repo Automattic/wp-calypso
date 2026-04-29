@@ -128,6 +128,13 @@ import ThemeSupportTab from './theme-support-tab';
 
 import './style.scss';
 
+const loadJitm = () =>
+	import( /* webpackChunkName: "async-load-calypso-blocks-jitm" */ 'calypso/blocks/jitm' );
+const loadGlobalNotices = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-components-global-notices" */ 'calypso/components/global-notices'
+	);
+
 const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
 	'I acknowledge private features are not for use in themes or plugins and doing so will break in the next version of WordPress.',
 	'@wordpress/components'
@@ -611,11 +618,7 @@ class ThemeSheet extends Component {
 			<div className="theme__sheet-content">
 				{ config.isEnabled( 'jitms' ) && this.props.siteSlug && (
 					<AsyncLoad
-						require={ () =>
-							import(
-								/* webpackChunkName: "async-load-calypso-blocks-jitm" */ 'calypso/blocks/jitm'
-							)
-						}
+						require={ loadJitm }
 						placeholder={ null }
 						messagePath="calypso:theme:admin_notices"
 					/>
@@ -1250,15 +1253,7 @@ class ThemeSheet extends Component {
 					title={ analyticsPageTitle }
 					properties={ { is_logged_in: isLoggedIn } }
 				/>
-				<AsyncLoad
-					require={ () =>
-						import(
-							/* webpackChunkName: "async-load-calypso-components-global-notices" */ 'calypso/components/global-notices'
-						)
-					}
-					placeholder={ null }
-					id="notices"
-				/>
+				<AsyncLoad require={ loadGlobalNotices } placeholder={ null } id="notices" />
 				{
 					siteId && (
 						<QueryActiveTheme siteId={ siteId } />

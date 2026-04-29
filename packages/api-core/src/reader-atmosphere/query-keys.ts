@@ -4,4 +4,7 @@ export const readerAtmosphereKeys = {
 	connection: ( id: number | null ) => [ ...readerAtmosphereKeys.all, 'connection', id ] as const,
 	timeline: ( connectionId: number ) =>
 		[ ...readerAtmosphereKeys.all, 'timeline', connectionId ] as const,
+	thread: ( uri: string ) => [ ...readerAtmosphereKeys.all, 'thread', uri ] as const,
+	profile: ( actor: string ) => [ ...readerAtmosphereKeys.all, 'profile', actor ] as const,
+	authorFeed: ( actor: string ) => [ ...readerAtmosphereKeys.all, 'author-feed', actor ] as const,
 };

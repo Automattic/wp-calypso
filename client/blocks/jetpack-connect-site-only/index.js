@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -24,9 +25,10 @@ class JetpackConnectSiteOnly extends Component {
 		const redirectParams = new URLSearchParams( urlParams.get( 'redirect_to' ) );
 		const purchaseNonce = redirectParams.get( 'purchase_nonce' );
 
+		const port = config( 'port' ) ?? 3001;
 		const url =
 			'development' === calypsoEnv
-				? `http://jetpack.cloud.localhost:3001/pricing/${ slug }`
+				? `http://jetpack.cloud.localhost:${ port }/pricing/${ slug }`
 				: `https://cloud.jetpack.com/pricing/${ slug }`;
 
 		return addQueryArgs(

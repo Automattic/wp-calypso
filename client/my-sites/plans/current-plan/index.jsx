@@ -67,6 +67,11 @@ import TrialCurrentPlan from './trials/trial-current-plan';
 
 import './style.scss';
 
+const loadProductPurchaseFeaturesList = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-blocks-product-purchase-features-list" */ 'calypso/blocks/product-purchase-features-list'
+	);
+
 class CurrentPlan extends Component {
 	state = {
 		hideThankYouModal: false,
@@ -188,11 +193,7 @@ class CurrentPlan extends Component {
 					<h1 className="current-plan__header-heading">{ planFeaturesHeader }</h1>
 				</div>
 				<AsyncLoad
-					require={ () =>
-						import(
-							/* webpackChunkName: "async-load-calypso-blocks-product-purchase-features-list" */ 'calypso/blocks/product-purchase-features-list'
-						)
-					}
+					require={ loadProductPurchaseFeaturesList }
 					placeholder={ null }
 					plan={ currentPlanSlug }
 					isPlaceholder={ isLoading }

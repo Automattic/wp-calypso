@@ -1,8 +1,8 @@
 import { sanitizePostHtml } from './sanitize-post-html';
-import type { AtmosphereFeedItem } from '@automattic/api-core';
+import type { SocialPost } from '../../types';
 
 interface PostCardBodyProps {
-	post: AtmosphereFeedItem;
+	post: SocialPost;
 }
 
 export function PostCardBody( { post }: PostCardBodyProps ) {

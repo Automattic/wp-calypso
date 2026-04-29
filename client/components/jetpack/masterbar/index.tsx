@@ -13,6 +13,11 @@ import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 
 import './style.scss';
 
+const loadPortalNav = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-components-jetpack-portal-nav" */ 'calypso/components/jetpack/portal-nav'
+	);
+
 const JetpackCloudMasterBar: React.FC = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -48,14 +53,7 @@ const JetpackCloudMasterBar: React.FC = () => {
 			>
 				<JetpackLogo size={ 28 } full={ ! isNarrow || isExteriorPage } aria={ { hidden: true } } />
 			</a>
-			<AsyncLoad
-				require={ () =>
-					import(
-						/* webpackChunkName: "async-load-calypso-components-jetpack-portal-nav" */ 'calypso/components/jetpack/portal-nav'
-					)
-				}
-				placeholder={ null }
-			/>
+			<AsyncLoad require={ loadPortalNav } placeholder={ null } />
 			{ headerTitle && <h1 className="masterbar__item-title">{ headerTitle }</h1> }
 			<ProfileDropdown />
 		</Masterbar>

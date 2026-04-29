@@ -5,6 +5,11 @@ import { recordTrack } from 'calypso/reader/stats';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { trackPageLoad, setPageTitle } from '../controller-helper';
 
+const loadMain = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-reader-on-this-day-main" */ 'calypso/reader/on-this-day/main'
+	);
+
 const analyticsPageTitle = 'Reader';
 
 export function onThisDay( context, next ) {
@@ -23,14 +28,6 @@ export function onThisDay( context, next ) {
 
 	setPageTitle( context, i18n.translate( 'On This Day' ) );
 
-	context.primary = (
-		<AsyncLoad
-			require={ () =>
-				import(
-					/* webpackChunkName: "async-load-calypso-reader-on-this-day-main" */ 'calypso/reader/on-this-day/main'
-				)
-			}
-		/>
-	);
+	context.primary = <AsyncLoad require={ loadMain } />;
 	next();
 }

@@ -1,0 +1,13 @@
+.omnibar {
+	.components-button.omnibar__responsive-menu {
+		svg {
+			fill: currentColor;
+			width: 24px;
+			height: 24px;
+		}
+
+		@media ( min-width: 782px ) {
+			display: none;
+		}
+	}
+}

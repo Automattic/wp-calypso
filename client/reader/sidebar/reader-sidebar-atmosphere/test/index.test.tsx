@@ -61,7 +61,6 @@ function mockConnection( { id, displayName, handle, did, avatar = null }: MockCo
 			avatar,
 			banner: null,
 			counts: { followers: 0, follows: 0, posts: 0 },
-			raw: {},
 		} );
 }
 

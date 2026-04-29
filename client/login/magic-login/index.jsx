@@ -268,7 +268,7 @@ export class MagicLogin extends Component {
 	};
 
 	render() {
-		const { oauth2Client, query, translate, isWooJPC, isJetpackLogin, isFromJetpackOnboarding } =
+		const { oauth2Client, query, translate, isWooJPC, isJetpackLogin, isUnifiedConnectionFlow } =
 			this.props;
 		const { usernameOrEmail } = this.state;
 
@@ -284,7 +284,7 @@ export class MagicLogin extends Component {
 			...( this.props.isJetpackLogin ? { flow: 'jetpack' } : {} ),
 			isJetpackMagicLinkSignUpEnabled: this.props.isJetpackLogin,
 			createAccountForNewUser: true,
-			isFromJetpackOnboarding,
+			isUnifiedConnectionFlow,
 			tosComponent: this.renderTos(),
 			...( isStudio
 				? {
@@ -394,9 +394,9 @@ const mapState = ( state ) => {
 		twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
 		redirectToSanitized: getRedirectToSanitized( state ),
 		redirectToOriginal,
-		isFromJetpackOnboarding:
-			new URLSearchParams( redirectToOriginal?.split( '?' )[ 1 ] ).get( 'from' ) ===
-			'jetpack-onboarding',
+		isUnifiedConnectionFlow: [ 'jetpack-onboarding', 'jetpack-connector' ].includes(
+			new URLSearchParams( redirectToOriginal?.split( '?' )[ 1 ] ).get( 'from' )
+		),
 		isWooJPC: isWooJPCFlow( state ),
 		publicToken: getMagicLoginPublicToken( state ),
 		partnerConfig: detectPartnerConfig( getCurrentOAuth2Client( state ) ),

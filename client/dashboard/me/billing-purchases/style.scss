@@ -1,3 +1,5 @@
+@use '../../../../packages/ui/src/utils/mixins' as ui-mixins;
+
 img.payment-method-image {
 	vertical-align: middle;
 }
@@ -10,6 +12,41 @@ img.payment-method-image {
 .checkout-submit-button > button.is-primary {
 	width: 100%;
 	justify-content: center;
+}
+
+.payment-method-selector__content {
+	@include ui-mixins.when-dark-theme {
+		.checkout-steps__submit-button-wrapper {
+			background: var( --dashboard-surface__background-color );
+		}
+
+		.payment-method-selector__list .has-highlight {
+			&::before {
+				border-bottom-color: var( --dashboard-surface__border-color );
+			}
+
+			&.is-checked::before,
+			&:hover::before {
+				border-color: var( --dashboard-item-selected__border-color, var( --wp-admin-theme-color ) );
+			}
+
+			> input:not( :disabled ) + label::before {
+				background: var( --dashboard-surface__background-color );
+				border-color: var(
+					--dashboard-field__border-color,
+					var( --dashboard-surface__border-color )
+				);
+			}
+
+			> input:not( :disabled ) + label::after {
+				background: var( --dashboard-surface__background-color );
+			}
+
+			&.is-checked > input:not( :disabled ) + label::after {
+				background: var( --dashboard-item-selected__border-color, var( --wp-admin-theme-color ) );
+			}
+		}
+	}
 }
 
 .dataviews-view-table__cell-content-wrapper .purchase-payment-method__wrapper {

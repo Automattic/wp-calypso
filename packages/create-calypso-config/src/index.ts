@@ -129,7 +129,39 @@ export interface ConfigApi {
 	disable: ( feature: string ) => void;
 }
 
+/**
+ * Resolves {{key}} templates in config string values using top-level config
+ * values. For example, `"http://calypso.localhost:{{port}}"` becomes
+ * `"http://calypso.localhost:3000"` when `data.port` is `3000`.
+ */
+function resolveTemplates( data: ConfigData ): ConfigData {
+	const resolve = ( value: unknown ): unknown => {
+		if ( typeof value === 'string' && value.includes( '{{' ) ) {
+			return value.replace( /\{\{(\w+)\}\}/g, ( match, key ) =>
+				key in data ? String( data[ key ] ) : match
+			);
+		}
+		if ( typeof value === 'object' && value !== null && ! Array.isArray( value ) ) {
+			const result: Record< string, unknown > = {};
+			for ( const k of Object.keys( value ) ) {
+				result[ k ] = resolve( ( value as Record< string, unknown > )[ k ] );
+			}
+			return result;
+		}
+		return value;
+	};
+
+	const resolved: ConfigData = {};
+	for ( const key of Object.keys( data ) ) {
+		resolved[ key ] = resolve( data[ key ] );
+	}
+	return resolved;
+}
+
+export { resolveTemplates };
+
 export default ( data: ConfigData ): ConfigApi => {
+	data = resolveTemplates( data );
 	const configApi = config( data ) as ConfigApi;
 	configApi.isEnabled = isEnabled( data );
 	configApi.enabledFeatures = enabledFeatures( data );

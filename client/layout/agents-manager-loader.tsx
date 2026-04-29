@@ -6,6 +6,11 @@ import getPrimarySiteSlug from 'calypso/state/selectors/get-primary-site-slug';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { getSelectedSite, isSiteSection } from 'calypso/state/ui/selectors';
 
+const importAgentsManager = () =>
+	import(
+		/* webpackChunkName: "async-load-automattic-agents-manager" */ '@automattic/agents-manager'
+	);
+
 export default function AgentsManagerLoader( {
 	sectionName,
 	loadAgentsManager,
@@ -26,11 +31,7 @@ export default function AgentsManagerLoader( {
 
 	return (
 		<AsyncLoad
-			require={ () =>
-				import(
-					/* webpackChunkName: "async-load-automattic-agents-manager" */ '@automattic/agents-manager'
-				)
-			}
+			require={ importAgentsManager }
 			placeholder={ null }
 			currentUser={ user }
 			sectionName={ sectionName }

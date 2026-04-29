@@ -28,6 +28,27 @@ describe( 'SocialProfileCard', () => {
 		expect( screen.getByText( 'hello world' ) ).toBeVisible();
 	} );
 
+	it( 'formats large stat counts in compact notation', () => {
+		render(
+			<SocialProfileCard
+				statsLabel="Profile stats"
+				stats={ [
+					{ key: 'followers', count: 605312, label: 'followers' },
+					{ key: 'following', count: 1234, label: 'following' },
+					{ key: 'posts', count: 1500000, label: 'posts' },
+				] }
+			/>
+		);
+
+		const stats = screen.getByRole( 'list', { name: 'Profile stats' } );
+		// formatNumberCompact uses Intl.NumberFormat compact notation with
+		// maximumFractionDigits: 1, so 605312 -> 605.3K, 1234 -> 1.2K, etc.
+		expect( stats ).toHaveTextContent( '605.3K followers' );
+		expect( stats ).toHaveTextContent( '1.2K following' );
+		expect( stats ).toHaveTextContent( '1.5M posts' );
+		expect( stats ).not.toHaveTextContent( '605312' );
+	} );
+
 	it( 'omits avatar when null', () => {
 		render(
 			<SocialProfileCard
@@ -203,5 +224,70 @@ describe( 'SocialProfileCard', () => {
 		const bio = container.querySelector( '.social-profile-card__bio' );
 		expect( bio?.querySelector( 'p' )?.textContent ).toBe( 'rich' );
 		expect( bio?.textContent ).not.toContain( 'plain' );
+	} );
+} );
+
+describe( 'SocialProfileCard — rich variant', () => {
+	it( 'renders banner, display name, handle, bio and stats together', () => {
+		render(
+			<SocialProfileCard
+				avatar="https://cdn.example/a.jpg"
+				banner="https://cdn.example/b.jpg"
+				displayName="Alice"
+				handle="alice.bsky.social"
+				bioHtml="<p>Hi.</p>"
+				stats={ [
+					{ key: 'followers', count: 10, label: 'followers' },
+					{ key: 'follows', count: 5, label: 'following' },
+					{ key: 'posts', count: 3, label: 'posts' },
+				] }
+				statsLabel="Profile stats"
+				headerActions={ <button type="button">View on Bluesky</button> }
+			/>
+		);
+
+		expect( screen.getByRole( 'heading', { level: 2, name: 'Alice' } ) ).toBeVisible();
+		expect( screen.getByText( '@alice.bsky.social' ) ).toBeVisible();
+		expect( screen.getByText( 'Hi.' ) ).toBeVisible();
+		expect( screen.getByRole( 'list', { name: 'Profile stats' } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'View on Bluesky' } ) ).toBeVisible();
+	} );
+
+	it( 'falls back to the handle when displayName is missing', () => {
+		render(
+			<SocialProfileCard handle="alice.bsky.social" stats={ [] } statsLabel="Profile stats" />
+		);
+		expect( screen.getByRole( 'heading', { level: 2, name: 'alice.bsky.social' } ) ).toBeVisible();
+	} );
+
+	it( 'omits the heading and handle when both are absent (slim layout)', () => {
+		render(
+			<SocialProfileCard
+				avatar="https://cdn.example/a.jpg"
+				bio="Plain bio."
+				stats={ [] }
+				statsLabel="Profile stats"
+			/>
+		);
+		expect( screen.queryByRole( 'heading' ) ).toBeNull();
+		expect( screen.queryByText( /@/ ) ).toBeNull();
+		expect( screen.getByText( 'Plain bio.' ) ).toBeVisible();
+	} );
+
+	it( 'hides the banner image on load failure', () => {
+		const { container } = render(
+			<SocialProfileCard
+				banner="https://cdn.example/broken.jpg"
+				displayName="Alice"
+				stats={ [] }
+				statsLabel="Profile stats"
+			/>
+		);
+		const banner = container.querySelector(
+			'.social-profile-card__banner'
+		) as HTMLImageElement | null;
+		expect( banner ).not.toBeNull();
+		banner!.dispatchEvent( new Event( 'error', { bubbles: true } ) );
+		expect( banner!.style.display ).toBe( 'none' );
 	} );
 } );

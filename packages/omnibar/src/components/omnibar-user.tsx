@@ -2,23 +2,26 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { OmnibarMenu } from './omnibar-menu';
 import type { OmnibarNode } from '../types';
 
 import './omnibar-user.scss';
 
 export function OmnibarUserNode( { node }: { node: OmnibarNode } ) {
+	const isDesktop = useViewportMatch( 'medium' );
+
 	return (
 		<OmnibarMenu
 			node={ {
 				...node,
 				render: ( { title, icon } ) => {
 					const userAvatar = <span className="omnibar__user-avatar">{ icon }</span>;
-					if ( ! title ) {
+					if ( ! isDesktop || ! title ) {
 						return userAvatar;
 					}
 					return (
-						<HStack spacing={ 2 }>
+						<HStack spacing={ 1 }>
 							<span>{ title }</span>
 							{ userAvatar }
 						</HStack>
@@ -31,12 +34,14 @@ export function OmnibarUserNode( { node }: { node: OmnibarNode } ) {
 							return {
 								...grandChild,
 								render: ( { title, icon, meta } ) => (
-									<HStack spacing={ 3 } expanded={ false }>
+									<HStack spacing={ 3 } expanded={ false } className="omnibar__user">
 										{ icon && <span className="omnibar__user-avatar">{ icon }</span> }
 										<VStack>
-											<span>{ meta?.displayName }</span>
-											<span>@{ meta?.username }</span>
-											<span>{ title }</span>
+											<VStack spacing={ 1 }>
+												<span>{ meta?.displayName }</span>
+												<span className="omnibar__user-info">@{ meta?.username }</span>
+											</VStack>
+											<span className="omnibar__user-info">{ title }</span>
 										</VStack>
 									</HStack>
 								),
