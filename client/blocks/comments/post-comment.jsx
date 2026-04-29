@@ -332,7 +332,9 @@ class PostComment extends PureComponent {
 	};
 
 	renderAuthorTag = ( { authorName, authorUrl, commentId, className } ) => {
-		const isExternalUrl = authorUrl?.startsWith( '/reader/users/' ) === false;
+		// Any path-relative URL is an internal Reader route (e.g. /reader/users/{login},
+		// /reader/blogs/{site_ID}). Anything else (https://...) is external.
+		const isExternalUrl = !! authorUrl && ! authorUrl.startsWith( '/' );
 
 		return authorUrl && ! isExternalUrl ? (
 			<a

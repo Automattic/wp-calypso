@@ -86,7 +86,21 @@ describe( 'UserAvatar', () => {
 		expect( link ).toHaveAttribute( 'href', '/reader/users/testuser' );
 	} );
 
-	test( 'does not wrap avatar in link when wpcom_login is not provided', () => {
+	test( 'falls back to the blog stream link when wpcom_login is missing but site_ID is provided', () => {
+		render( <UserAvatar user={ { ...defaultUser, wpcom_login: undefined, site_ID: 999 } } /> );
+
+		const link = document.querySelector( '.user-avatar a' );
+		expect( link ).toHaveAttribute( 'href', '/reader/blogs/999' );
+	} );
+
+	test( 'prefers wpcom_login over site_ID when both are provided', () => {
+		render( <UserAvatar user={ { ...defaultUser, site_ID: 999 } } /> );
+
+		const link = document.querySelector( '.user-avatar a' );
+		expect( link ).toHaveAttribute( 'href', '/reader/users/testuser' );
+	} );
+
+	test( 'does not wrap avatar in link when neither wpcom_login nor site_ID is provided', () => {
 		render( <UserAvatar user={ { ...defaultUser, wpcom_login: undefined } } /> );
 
 		expect( document.querySelector( '.user-avatar a' ) ).not.toBeInTheDocument();

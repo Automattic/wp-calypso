@@ -9,6 +9,7 @@ import { useCallback, useRef, useState } from 'react';
 import UserHovercard from 'calypso/blocks/user-avatar/user-hovercard';
 import PreloadedImage from 'calypso/components/preloaded-image';
 import UserAvatarDefaultIcon from 'calypso/reader/components/icons/user-avatar-default-icon';
+import { getSiteUrl } from 'calypso/reader/route';
 import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
 import { getProcessedGravatarUrl } from './utils';
 
@@ -26,6 +27,7 @@ export interface UserAvatarInfo {
 	description?: string;
 	login?: string; // Represents username on source website i.e. WPCOM, Jetpack site, etc.
 	profile_URL?: string;
+	site_ID?: number; // The user's primary blog ID on WordPress.com or a Jetpack-connected site.
 	wpcom_id?: number;
 	wpcom_login?: string;
 }
@@ -39,7 +41,15 @@ export default function UserAvatar( { user, size = 32, hideHovercard = false }: 
 	);
 	// Using this to add a delay before showing the hovercard, to avoid it flashing when the user is just moving their mouse across the avatar.
 	const hoverTimerRef = useRef< ReturnType< typeof setTimeout > | null >( null );
-	const wpcomProfileUrl = user?.wpcom_login ? getUserProfileUrl( user?.wpcom_login ) : null; // Only navigate to profile page. Avoid navigating to any external links to keep UX consistent.
+	// Prefer the WPCOM Reader profile; fall back to the user's blog stream when only site_ID is
+	// available (common for commenters on Jetpack-connected sites without a wpcom_login). External
+	// URLs are intentionally not used here to keep navigation inside the Reader.
+	let avatarLinkUrl: string | null = null;
+	if ( user?.wpcom_login ) {
+		avatarLinkUrl = getUserProfileUrl( user.wpcom_login );
+	} else if ( user?.site_ID ) {
+		avatarLinkUrl = getSiteUrl( user.site_ID );
+	}
 	const name = user?.display_name || user?.name || '';
 	const avatarUrl = user?.avatar_URL ? getProcessedGravatarUrl( user.avatar_URL ) : null;
 	const avatarImg = avatarUrl ? (
@@ -56,7 +66,7 @@ export default function UserAvatar( { user, size = 32, hideHovercard = false }: 
 		<UserAvatarDefaultIcon iconSize={ size } />
 	);
 	// Make the container focusable when there's no <a> child to receive focus, so keyboard users can trigger the hovercard.
-	const needsTabIndex = ! wpcomProfileUrl && ! hideHovercard;
+	const needsTabIndex = ! avatarLinkUrl && ! hideHovercard;
 
 	// Prefetching so that we can display WPCOM users Hovercards instantly, Gravatar lookups will be triggered on hover.
 	useQuery( userQuery( user?.wpcom_login, user?.wpcom_id, ! hideHovercard ) );
@@ -125,7 +135,7 @@ export default function UserAvatar( { user, size = 32, hideHovercard = false }: 
 			role={ needsTabIndex ? 'button' : undefined }
 			aria-label={ translate( 'User Profile: %s', { args: name } ) as string }
 		>
-			{ wpcomProfileUrl ? <a href={ wpcomProfileUrl }>{ avatarImg }</a> : avatarImg }
+			{ avatarLinkUrl ? <a href={ avatarLinkUrl }>{ avatarImg }</a> : avatarImg }
 
 			{ user && ! hideHovercard && isHovered && (
 				<Popover
