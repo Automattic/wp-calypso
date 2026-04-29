@@ -5,9 +5,11 @@ import type { OmnibarNode } from '../types';
 
 export function OmnibarSiteNode( {
 	node,
+	pluginNodes,
 	actionNodes,
 }: {
 	node: OmnibarNode;
+	pluginNodes?: OmnibarNode[];
 	actionNodes?: OmnibarNode[];
 } ) {
 	const isDesktop = useViewportMatch( 'medium' );
@@ -28,8 +30,13 @@ export function OmnibarSiteNode( {
 
 	return [
 		<OmnibarMenu key={ siteNode.id } node={ siteNode } />,
+		pluginNodes && <OmnibarSitePluginsNode nodes={ pluginNodes } />,
 		siteActionNodes && <OmnibarSiteActionsNode nodes={ siteActionNodes } />,
 	].filter( Boolean );
+}
+
+export function OmnibarSitePluginsNode( { nodes }: { nodes: OmnibarNode[] } ) {
+	return nodes.map( ( node ) => <OmnibarMenu key={ node.id } node={ node } /> );
 }
 
 export function OmnibarSiteActionsNode( { nodes }: { nodes: OmnibarNode[] } ) {
