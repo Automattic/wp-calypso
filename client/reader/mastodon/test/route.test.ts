@@ -26,7 +26,9 @@ describe( 'getProfileUrl', () => {
 		);
 	} );
 
-	it( 'returns null on a malformed actor string', () => {
-		expect( getProfileUrl( 7, 'has spaces' ) ).toBeNull();
+	it( 'passes through an unqualified webfinger handle (no leading @)', () => {
+		expect( getProfileUrl( 7, 'alice@mastodon.social' ) ).toBe(
+			'/reader/mastodon/7/profile/alice@mastodon.social'
+		);
 	} );
 } );
