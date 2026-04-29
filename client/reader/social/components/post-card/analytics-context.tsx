@@ -9,6 +9,11 @@ import { createContext, useContext, type ReactNode } from 'react';
 // prefix so the rewrite stays the single source of truth.
 
 export interface SocialProfileRefInput {
+	// Universal protocol-agnostic identifier — DID for atmosphere, numeric
+	// account id for Mastodon. Per-protocol resolvers decide which they
+	// understand and which to validate.
+	id?: string | null;
+	// Atmosphere-named alias kept for back-compat with the slice-6 wiring.
 	did?: string | null;
 	handle?: string | null;
 }
