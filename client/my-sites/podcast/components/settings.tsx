@@ -331,7 +331,7 @@ const PodcastingSettingsForm = ( {
 									<Heading level={ 4 }>{ translate( 'Podcast category' ) }</Heading>
 									<Text variant="muted">
 										{ translate(
-											'Posts published in this category will be included in your podcast feed.'
+											'Posts in this category are treated as podcast episodes. Add an audio or video block to each one so listeners have something to play.'
 										) }
 									</Text>
 								</VStack>
