@@ -89,6 +89,46 @@ body.is-section-podcasting {
 	align-self: start;
 }
 
+// Empty state: turn the preview into an obvious dashed upload zone with a
+// "+" affordance, and hide the redundant "Add" button beside it.
+.podcast__settings-cover .podcast-cover-image-setting__preview.is-blank {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	gap: 4px;
+	border: 2px dashed var( --wpds-color-stroke-base-tertiary, #c3c4c7 );
+	background: var( --wpds-color-bg-surface-base-secondary, #f6f7f7 );
+	transition: border-color 0.15s ease, background-color 0.15s ease;
+
+	&::before {
+		content: '+';
+		font-size: 28px;
+		font-weight: 400;
+		line-height: 1;
+		color: var( --wpds-color-fg-content-neutral-weak, #757575 );
+	}
+
+	&:hover:not( :disabled ),
+	&:focus-visible {
+		border-color: var( --wpds-color-stroke-status-info-strong, #007cba );
+		background: var( --wpds-color-bg-surface-base, #fff );
+	}
+}
+
+.podcast__settings-cover .podcast-cover-image-setting__preview.is-blank
+	.podcast-cover-image-setting__placeholder {
+	font-style: normal;
+	font-size: 12px;
+	color: var( --wpds-color-fg-content-neutral-weak, #757575 );
+}
+
+.podcast__settings-cover
+	.podcast-cover-image-setting:has( .podcast-cover-image-setting__preview.is-blank )
+	.podcast-cover-image-setting__button {
+	display: none;
+}
+
 .podcast__settings-cover .podcast-cover-image-setting__button {
 	float: none;
 	grid-column: 2;
