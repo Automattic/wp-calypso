@@ -164,6 +164,14 @@ export class JetpackSignup extends Component {
 		return 'jetpack-connector' === this.props.authQuery.from;
 	}
 
+	isFromJetpackOnboarding() {
+		return 'jetpack-onboarding' === this.props.authQuery.from;
+	}
+
+	isUnifiedConnectionFlow() {
+		return this.isFromJetpackOnboarding() || this.isFromJetpackConnector();
+	}
+
 	handleSubmitSignup = ( _, userData, analyticsData, afterSubmit = noop ) => {
 		debug( 'submitting new account', userData );
 		this.setState( { isCreatingAccount: true }, () =>
@@ -343,7 +351,6 @@ export class JetpackSignup extends Component {
 				isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
 			>
 				<div className="jetpack-connect__authorize-form">
-					{ this.renderLocaleSuggestions() }
 					{ isFromJetpackConnector && connectorBranding ? (
 						<BrandHeader
 							logo={ connectorBranding.logo }
@@ -385,6 +392,7 @@ export class JetpackSignup extends Component {
 					/>
 
 					{ this.renderLoginUser() }
+					{ this.renderLocaleSuggestions() }
 				</div>
 				{ isWooJPC && this.props.authQuery.installedExtSuccess && <WooInstallExtSuccessNotice /> }
 			</MainWrapper>
