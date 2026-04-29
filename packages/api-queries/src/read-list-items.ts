@@ -78,6 +78,15 @@ function itemsQueryKey( owner: string, slug: string ) {
 	return readListItemsAllQuery( owner, slug ).queryKey;
 }
 
+// Broader prefix that also matches `readListItemsQuery` and
+// `readListItemsInfiniteQuery`, so a mutation against the `'all'` cache also
+// invalidates the paginated/infinite views (e.g. list header total count,
+// list/views/sites). Mirrors the legacy data-layer's
+// `invalidateUserListItemsQuery` prefix.
+function itemsInvalidationKey( owner: string, slug: string ) {
+	return [ 'read', 'lists', owner, slug, 'items' ] as const;
+}
+
 async function snapshotAndOptimisticallyUpdate(
 	queryClient: QueryClient,
 	owner: string,
@@ -85,7 +94,7 @@ async function snapshotAndOptimisticallyUpdate(
 	updater: ( items: ReadListItem[] ) => ReadListItem[]
 ): Promise< ListItemMutationContext > {
 	const queryKey = itemsQueryKey( owner, slug );
-	await queryClient.cancelQueries( { queryKey } );
+	await queryClient.cancelQueries( { queryKey: itemsInvalidationKey( owner, slug ) } );
 	const previous = queryClient.getQueryData< ReadListItemsResponse >( queryKey );
 	if ( previous ) {
 		queryClient.setQueryData< ReadListItemsResponse >( queryKey, {
@@ -108,7 +117,7 @@ function rollback(
 }
 
 function invalidateItems( queryClient: QueryClient, owner: string, slug: string ) {
-	return queryClient.invalidateQueries( { queryKey: itemsQueryKey( owner, slug ) } );
+	return queryClient.invalidateQueries( { queryKey: itemsInvalidationKey( owner, slug ) } );
 }
 
 export interface AddReadListFeedVariables {

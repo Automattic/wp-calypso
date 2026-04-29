@@ -8,6 +8,8 @@ import {
 	deleteReadListSiteMutation,
 	deleteReadListTagMutation,
 	readListItemsAllQuery,
+	readListItemsInfiniteQuery,
+	readListItemsQuery,
 } from '../read-list-items';
 
 const BASE = 'https://public-api.wordpress.com';
@@ -181,6 +183,42 @@ describe( 'addReadListFeedMutation', () => {
 			readListItemsAllQuery( 'alice', 'my-list' ).queryKey
 		)?.items;
 		expect( items ).toEqual( [ { feed_ID: 1 } ] );
+	} );
+
+	it( 'invalidates the paginated and infinite items queries on settle', async () => {
+		nock( BASE )
+			.post( '/rest/v1.2/read/lists/alice/my-list/feeds/new' )
+			.reply( 200, { feed_id: 7 } );
+
+		const client = newClient();
+		// Seed both the paginated and infinite caches as if they had been
+		// previously fetched alongside the `'all'` cache.
+		client.setQueryData( readListItemsQuery( 'alice', 'my-list' ).queryKey, {
+			list_ID: 1,
+			success: true,
+			items: [],
+			page: 1,
+			number: 20,
+			total_items: 0,
+		} );
+		client.setQueryData( readListItemsInfiniteQuery( 'alice', 'my-list', 'feed,site' ).queryKey, {
+			pages: [ { list_ID: 1, success: true, items: [], page: 1, number: 20, total_items: 0 } ],
+			pageParams: [ 1 ],
+		} );
+
+		const { result } = renderHook( () => useMutation( addReadListFeedMutation( client ) ), {
+			wrapper: makeWrapper( client ),
+		} );
+
+		await result.current.mutateAsync( { owner: 'alice', slug: 'my-list', feedId: 7 } );
+
+		expect(
+			client.getQueryState( readListItemsQuery( 'alice', 'my-list' ).queryKey )?.isInvalidated
+		).toBe( true );
+		expect(
+			client.getQueryState( readListItemsInfiniteQuery( 'alice', 'my-list', 'feed,site' ).queryKey )
+				?.isInvalidated
+		).toBe( true );
 	} );
 } );
 
