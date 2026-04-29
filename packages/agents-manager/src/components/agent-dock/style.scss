@@ -701,9 +701,17 @@ body.agents-manager-sidebar-container.is-split-screen {
 		max-width: none;
 	}
 
-	// Force the Sources card for split-sidebar view.
+	// Stretch MessageActions so its flex line spans the bubble; otherwise on
+	// wide viewports the container shrinks to content and the Sources card
+	// never wraps. `flex: 0 0 100%` then makes the card a non-shrinking full
+	// row so the existing -32px overlay lands on the actions row reliably.
+	.MessageActions-module_container:has(.agents-manager-sources-display) {
+		inline-size: 100%;
+	}
+
 	.agents-manager-sources-display.card {
-		min-width: 100%;
+		flex: 0 0 100%;
+		max-inline-size: 100%;
 	}
 
 }
