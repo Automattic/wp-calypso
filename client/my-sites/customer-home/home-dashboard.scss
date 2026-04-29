@@ -99,11 +99,15 @@
 	display: flex;
 	flex-direction: column;
 	gap: 6px;
-}
 
-.home-dashboard__glance-footer {
-	display: block;
-	margin-top: 8px;
+	a {
+		color: var(--wp-admin-theme-color, #3858e9);
+		text-decoration: none;
+
+		&:hover {
+			text-decoration: underline;
+		}
+	}
 }
 
 .home-dashboard__site-preview-frame {
@@ -114,16 +118,18 @@
 	overflow: hidden;
 	margin-bottom: 12px;
 
-	iframe {
-		position: absolute;
-		top: 0;
-		left: 0;
-		border: 0;
-		width: 250%;
-		height: 250%;
-		transform: scale(0.4);
-		transform-origin: top left;
-		pointer-events: none;
+	// SiteThumbnail enforces its own width/height; stretch it to fill the frame.
+	.site-thumbnail {
+		width: 100% !important;
+		height: 100% !important;
+	}
+
+	.site-thumbnail__image {
+		display: block;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		object-position: top center;
 	}
 }
 

@@ -1,0 +1,57 @@
+@import "@wordpress/base-styles/colors";
+@import "@automattic/color-studio/dist/color-variables";
+
+.tailored-launchpad__group {
+	width: 100%;
+}
+
+// 8px vertical / 12px horizontal padding on each Item; override WPDS defaults.
+.tailored-launchpad__item.components-item {
+	padding: 8px 12px;
+	border-radius: 4px;
+	color: inherit;
+
+	&:visited {
+		color: inherit;
+	}
+}
+
+a.tailored-launchpad__item.components-item {
+	text-decoration: none;
+	transition: background 120ms ease;
+
+	&:hover,
+	&:focus-visible {
+		background: $studio-gray-0;
+	}
+}
+
+.tailored-launchpad__check svg {
+	fill: $gray-800;
+}
+
+.tailored-launchpad__item.is-completed {
+	.tailored-launchpad__title {
+		color: #757575;
+		text-decoration: line-through;
+	}
+
+	.tailored-launchpad__check svg {
+		fill: var(--wp-admin-theme-color, #3858e9);
+	}
+}
+
+.tailored-launchpad__chevron {
+	color: #757575;
+
+	svg {
+		fill: currentColor;
+	}
+}
+
+.tailored-launchpad__title {
+	font-size: 14px;
+	font-weight: 500;
+	line-height: 1.3;
+	color: $gray-900;
+}

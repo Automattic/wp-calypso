@@ -1,3 +1,4 @@
+import { SiteThumbnail, Spinner } from '@automattic/components';
 import { useSortedLaunchpadTasks } from '@automattic/data-stores';
 import { Launchpad } from '@automattic/launchpad';
 import {
@@ -25,7 +26,10 @@ import { getSiteUrl, getSiteOption } from 'calypso/state/sites/selectors';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import HomeWizard from './home-wizard';
-import type { WizardAnswers } from './home-wizard/types';
+import { selectTasks } from './home-wizard/select-tasks';
+import TailoredLaunchpad from './home-wizard/tailored-launchpad';
+import type { SiteState } from './home-wizard/task-registry';
+import type { FeatureKey, GoalKey, WizardAnswers } from './home-wizard/types';
 import type { AppState } from 'calypso/types';
 
 import './home-dashboard.scss';
@@ -49,24 +53,66 @@ const GOAL_TO_CHECKLIST: Record< string, string > = {
 	portfolio: 'build',
 };
 
+function useSiteState( siteSlug: string ): SiteState {
+	const siteId = useSelector( ( state: AppState ) => getSelectedSite( state )?.ID ?? null );
+	const site = useSelector( getSelectedSite );
+
+	const postCount = useSelector( ( state: AppState ) =>
+		siteId ? getAllPostCount( state, siteId, 'post', 'publish' ) : 0
+	) as number;
+	const pageCount = useSelector( ( state: AppState ) =>
+		siteId ? getAllPostCount( state, siteId, 'page', 'publish' ) : 0
+	) as number;
+
+	const subscriberCount = Number(
+		( site?.options as { subscribers_count?: number } | undefined )?.subscribers_count ?? 0
+	);
+	const isLaunched = site?.launch_status === 'launched';
+	const hasCustomDomain = !! site?.URL && ! /\.wordpress\.com$/i.test( new URL( site.URL ).host );
+
+	return {
+		siteSlug,
+		postCount: postCount ?? 0,
+		pageCount: pageCount ?? 0,
+		subscriberCount,
+		hasCustomDomain,
+		isLaunched,
+		// TODO: real product/plugin lookups — gated false for now so registry
+		// hideWhen rules behave conservatively (show the task until proven done).
+		hasProduct: false,
+		installedPluginSlugs: [],
+	};
+}
+
 function SiteSetupWidget() {
 	const translate = useTranslate();
 	const siteSlug = useSelector( getSelectedSiteSlug ) ?? '';
 	const site = useSelector( getSelectedSite );
 	const wizardGoal = useSelector( ( state: AppState ) =>
 		getPreference( state, HOME_WIZARD_GOAL_PREF )
-	) as string | null;
+	) as GoalKey | null;
+	const wizardFeatures =
+		( useSelector( ( state: AppState ) => getPreference( state, HOME_WIZARD_FEATURES_PREF ) ) as
+			| FeatureKey[]
+			| null ) ?? [];
+
 	const siteIntent = ( site?.options as { site_intent?: string } | undefined )?.site_intent ?? '';
-	const checklistSlug =
+	const siteState = useSiteState( siteSlug );
+
+	const tailoredTasks = wizardGoal ? selectTasks( wizardGoal, wizardFeatures, siteState ) : [];
+
+	// Fallback path for users who skipped the wizard or whose preferences
+	// haven't loaded yet — keep the original server-driven Launchpad.
+	const fallbackChecklistSlug =
 		siteIntent || ( wizardGoal ? GOAL_TO_CHECKLIST[ wizardGoal ] ?? 'build' : 'build' );
-
 	const {
-		data: { checklist },
-	} = useSortedLaunchpadTasks( siteSlug, checklistSlug, LAUNCHPAD_CONTEXT );
+		data: { checklist: fallbackChecklist },
+	} = useSortedLaunchpadTasks( siteSlug, fallbackChecklistSlug, LAUNCHPAD_CONTEXT );
 
-	const total = checklist?.length ?? 0;
+	const useTailored = wizardGoal !== null && tailoredTasks.length > 0;
+	const fallbackVisible = ! useTailored && ( fallbackChecklist?.length ?? 0 ) > 0;
 
-	if ( total === 0 ) {
+	if ( ! useTailored && ! fallbackVisible ) {
 		return null;
 	}
 
@@ -78,11 +124,15 @@ function SiteSetupWidget() {
 				</Heading>
 			</CardHeader>
 			<CardBody>
-				<Launchpad
-					siteSlug={ siteSlug }
-					checklistSlug={ checklistSlug }
-					launchpadContext={ LAUNCHPAD_CONTEXT }
-				/>
+				{ useTailored ? (
+					<TailoredLaunchpad tasks={ tailoredTasks } />
+				) : (
+					<Launchpad
+						siteSlug={ siteSlug }
+						checklistSlug={ fallbackChecklistSlug }
+						launchpadContext={ LAUNCHPAD_CONTEXT }
+					/>
+				) }
 			</CardBody>
 		</Card>
 	);
@@ -141,6 +191,7 @@ function ActivityWidget() {
 function AtAGlanceWidget() {
 	const translate = useTranslate();
 	const siteId = useSelector( ( state: AppState ) => getSelectedSite( state )?.ID ?? null );
+	const siteSlug = useSelector( getSelectedSiteSlug ) ?? '';
 	const postCount = useSelector( ( state: AppState ) =>
 		siteId ? getAllPostCount( state, siteId, 'post', 'publish' ) : 0
 	);
@@ -150,21 +201,11 @@ function AtAGlanceWidget() {
 	const commentCount = useSelector( ( state: AppState ) =>
 		siteId ? Number( getSiteOption( state, siteId, 'comment_count' ) ?? 0 ) : 0
 	);
-	const activeThemeId = useSelector( ( state: AppState ) =>
-		siteId ? getActiveTheme( state, siteId ) : null
-	);
-	const theme = useSelector( ( state: AppState ) =>
-		siteId && activeThemeId ? getCanonicalTheme( state, siteId, activeThemeId ) : null
-	);
 
 	return (
 		<Card className="home-dashboard__widget" size="small">
 			{ siteId && <QueryPostCounts siteId={ siteId } type="post" /> }
 			{ siteId && <QueryPostCounts siteId={ siteId } type="page" /> }
-			{ siteId && <QueryActiveTheme siteId={ siteId } /> }
-			{ siteId && activeThemeId && (
-				<QueryCanonicalTheme siteId={ siteId } themeId={ activeThemeId } />
-			) }
 			<CardHeader>
 				<Heading level={ 2 } size={ 16 }>
 					{ translate( 'At a Glance' ) }
@@ -173,36 +214,37 @@ function AtAGlanceWidget() {
 			<CardBody>
 				<ul className="home-dashboard__glance-list">
 					<li>
-						{ translate( '%(count)d post', '%(count)d posts', {
-							count: postCount ?? 0,
-							args: { count: postCount ?? 0 },
-						} ) }
+						<a href={ `/posts/${ siteSlug }` }>
+							{ translate( '%(count)d post', '%(count)d posts', {
+								count: postCount ?? 0,
+								args: { count: postCount ?? 0 },
+							} ) }
+						</a>
 					</li>
 					<li>
-						{ translate( '%(count)d comment', '%(count)d comments', {
-							count: commentCount,
-							args: { count: commentCount },
-						} ) }
+						<a href={ `/comments/all/${ siteSlug }` }>
+							{ translate( '%(count)d comment', '%(count)d comments', {
+								count: commentCount,
+								args: { count: commentCount },
+							} ) }
+						</a>
 					</li>
 					<li>
-						{ translate( '%(count)d page', '%(count)d pages', {
-							count: pageCount ?? 0,
-							args: { count: pageCount ?? 0 },
-						} ) }
+						<a href={ `/pages/${ siteSlug }` }>
+							{ translate( '%(count)d page', '%(count)d pages', {
+								count: pageCount ?? 0,
+								args: { count: pageCount ?? 0 },
+							} ) }
+						</a>
 					</li>
 				</ul>
-				{ theme?.name && (
-					<Text variant="muted" className="home-dashboard__glance-footer">
-						{ translate( 'WordPress.com using {{strong}}%(themeName)s{{/strong}} theme.', {
-							args: { themeName: theme.name },
-							components: { strong: <strong /> },
-						} ) }
-					</Text>
-				) }
 			</CardBody>
 		</Card>
 	);
 }
+
+const PREVIEW_WIDTH = 800;
+const PREVIEW_HEIGHT = 500;
 
 function SitePreviewWidget() {
 	const translate = useTranslate();
@@ -212,13 +254,28 @@ function SitePreviewWidget() {
 	const siteUrl = useSelector( ( state: AppState ) =>
 		siteId ? getSiteUrl( state, siteId ) : null
 	);
+	const activeThemeId = useSelector( ( state: AppState ) =>
+		siteId ? getActiveTheme( state, siteId ) : null
+	);
+	const theme = useSelector( ( state: AppState ) =>
+		siteId && activeThemeId ? getCanonicalTheme( state, siteId, activeThemeId ) : null
+	);
 
-	const previewSrc = siteUrl
-		? `${ siteUrl }/?hide_banners=true&preview_overlay=true&preview=true`
-		: null;
+	// Coming-soon / unlaunched sites serve a wp.com placeholder page on their
+	// public URL — useless as a preview. Fall back to the active theme's
+	// public demo so users see what their theme actually looks like.
+	const isPublic = site?.launch_status === 'launched' && ! site?.is_coming_soon;
+	const previewTarget =
+		isPublic && siteUrl ? siteUrl : ( theme?.demo_uri as string | undefined ) ?? '';
+
+	const previewLabel = translate( 'Site preview' ) as string;
 
 	return (
 		<Card className="home-dashboard__widget home-dashboard__site-preview-card" size="small">
+			{ siteId && <QueryActiveTheme siteId={ siteId } /> }
+			{ siteId && activeThemeId && (
+				<QueryCanonicalTheme siteId={ siteId } themeId={ activeThemeId } />
+			) }
 			<CardHeader>
 				<Heading level={ 2 } size={ 16 }>
 					{ translate( 'Site Preview' ) }
@@ -226,13 +283,16 @@ function SitePreviewWidget() {
 			</CardHeader>
 			<CardBody>
 				<div className="home-dashboard__site-preview-frame">
-					{ previewSrc ? (
-						<iframe
-							loading="lazy"
-							title={ translate( 'Site preview' ) as string }
-							src={ previewSrc }
-						/>
-					) : null }
+					<SiteThumbnail
+						mShotsUrl={ previewTarget }
+						alt={ previewLabel }
+						aria-label={ previewLabel }
+						width={ PREVIEW_WIDTH }
+						height={ PREVIEW_HEIGHT }
+						mshotsOption={ { vpw: 1600, vph: 1000, w: PREVIEW_WIDTH, h: PREVIEW_HEIGHT } }
+					>
+						<Spinner />
+					</SiteThumbnail>
 				</div>
 				<div className="home-dashboard__site-preview-meta">
 					<div>

@@ -60,7 +60,6 @@ import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import { getMostRecentlySelectedSiteId, getSectionGroup } from 'calypso/state/ui/selectors';
 import Item from './item';
 import Masterbar from './masterbar';
-import { MasterbarLaunchButton } from './masterbar-launch-button';
 import Notifications from './masterbar-notifications/notifications-button';
 
 class MasterbarLoggedIn extends Component {
@@ -601,16 +600,6 @@ class MasterbarLoggedIn extends Component {
 		);
 	}
 
-	renderLaunchButton() {
-		const { isA4ADevSite, isUnlaunchedSite, siteId, isManageSiteOptionsEnabled } = this.props;
-
-		if ( ! isUnlaunchedSite || ! isManageSiteOptionsEnabled || isA4ADevSite ) {
-			return null;
-		}
-
-		return <MasterbarLaunchButton siteId={ siteId } />;
-	}
-
 	renderProfileMenu() {
 		const { user, isGlobalSidebarVisible, siteAdminUrl } = this.props;
 		const profileActions = [
@@ -795,7 +784,6 @@ class MasterbarLoggedIn extends Component {
 					{ this.renderCommentsMenu() }
 					{ this.renderSiteActionMenu() }
 					{ this.renderLanguageSwitcher() }
-					{ this.renderLaunchButton() }
 				</div>
 				<div className="masterbar__section masterbar__section--right">
 					{ this.renderCart() }
