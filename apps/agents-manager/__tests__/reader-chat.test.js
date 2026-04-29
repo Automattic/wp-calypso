@@ -289,7 +289,7 @@ describe( 'normalizeSuggestions', () => {
 		).toEqual( [
 			{
 				id: 'ai-0-can-you-summarize-this-post',
-				label: 'Explore this blog',
+				label: 'Explore recent posts',
 				prompt: 'Can you summarize this post?',
 			},
 		] );
@@ -310,7 +310,7 @@ describe( 'normalizeSuggestions', () => {
 		).toEqual( [
 			{
 				id: 'ai-0-what-does-this-post-say-about-spontaneou',
-				label: 'Explore this blog',
+				label: 'Explore recent posts',
 				prompt: 'What does this post say about spontaneous travel?',
 			},
 		] );
@@ -363,7 +363,7 @@ describe( 'getFallbackSuggestions', () => {
 		// (no currentPost), so getFallbackSuggestions returns the no-post branch.
 		const suggestions = getFallbackSuggestions();
 		expect( suggestions ).toHaveLength( 3 );
-		expect( suggestions.map( ( s ) => s.id ) ).toEqual( [ 'popular', 'about', 'recommend' ] );
+		expect( suggestions.map( ( s ) => s.id ) ).toEqual( [ 'recent', 'about', 'recommend' ] );
 	} );
 
 	it( 'each generic suggestion has `id`, `label`, and `prompt` strings', () => {

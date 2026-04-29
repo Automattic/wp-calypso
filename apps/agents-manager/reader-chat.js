@@ -187,9 +187,9 @@ function getFallbackSuggestions() {
 	if ( ! post ) {
 		return [
 			{
-				id: 'popular',
-				label: 'Find popular posts',
-				prompt: 'What are the most popular posts on this blog?',
+				id: 'recent',
+				label: 'Explore recent posts',
+				prompt: 'What recent posts can I read on this blog?',
 			},
 			{
 				id: 'about',
@@ -233,7 +233,11 @@ const MIN_FOLLOWUP_AGENT_TEXT_LENGTH = 40;
 const MAX_SUGGESTION_LABEL_LENGTH = 48;
 const MAX_SUGGESTION_LABEL_WORDS = 7;
 const POST_FALLBACK_LABELS = [ 'Main takeaway', 'Key details', 'Related context' ];
-const BLOG_FALLBACK_LABELS = [ 'Explore this blog', 'Find popular posts', 'Recommend a post' ];
+const BLOG_FALLBACK_LABELS = [
+	'Explore recent posts',
+	'Learn about this blog',
+	'Recommend a post',
+];
 const FOLLOWUP_FALLBACK_LABELS = [ 'Go deeper', 'Learn more', 'Ask a follow-up' ];
 
 function normalizeReaderSiteId( siteId ) {
@@ -546,9 +550,11 @@ Blog replied: ${ agentText }
 
 Return only a JSON array of 2-3 objects, with no markdown or commentary. Each object must have "label" and "prompt" strings.
 Labels must be short chip text, 2-5 words, max 48 characters. Question marks are okay.
-Generate follow-up questions the reader might want to ask next, based on what was discussed.
+Generate follow-up questions the reader might want to ask next, based only on the reader's question and the blog reply above.
+Anchor every question in a concrete detail, place, person, phrase, or theme from the reply.
+Do not ask for broad advice, outside recommendations, popularity, traffic, trends, or facts not implied by the reply.
 Do not ask the author/site owner personal interview questions or address them as "you".
-Questions should feel like natural next-step curiosity: go deeper on a point, connect to a related theme, or explore an implication. Not generic.`;
+Questions should feel like natural next-step curiosity: clarify a detail, go deeper on a named point, or ask how two details connect.`;
 
 	return fetchSuggestions( {
 		messageText,
