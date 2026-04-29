@@ -31,8 +31,12 @@
 		@include ui-mixins.when-dark-theme {
 			background-color: var( --dashboard-surface__background-color );
 
-			&:not( .StripeElement--invalid ) iframe {
-				filter: brightness( 2.8 );
+			&.StripeElement--empty:not( .StripeElement--invalid ) iframe {
+				filter: grayscale( 1 ) brightness( 1.04 );
+			}
+
+			&:not( .StripeElement--empty ):not( .StripeElement--invalid ) iframe {
+				filter: grayscale( 1 ) brightness( 4.2 );
 			}
 		}
 
