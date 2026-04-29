@@ -1,117 +1,74 @@
 import { Button, FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
-import { useSelect, useDispatch, registerStore } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import { Fragment, ReactNode } from 'react';
+import { useEffect, useState, Fragment, ReactNode } from 'react';
 import Field from '../field';
 import { PaymentMethodLogos } from '../payment-method-logos';
 import { SummaryLine, SummaryDetails } from '../summary-details';
-import type {
-	PaymentMethodStore,
-	StoreSelectors,
-	StoreSelectorsWithState,
-	StoreActions,
-	StoreState,
-} from '../payment-method-store';
-import type { AnyAction } from '../types';
 import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';
 
 const debug = debugFactory( 'wpcom-checkout:sofort-payment-method' );
 
-// Disabling this to make migration easier
-/* eslint-disable @typescript-eslint/no-use-before-define */
-
-type NounsInStore = 'customerName';
-type SofortStore = PaymentMethodStore< NounsInStore >;
-
-const actions: StoreActions< NounsInStore > = {
-	changeCustomerName( payload ) {
-		return { type: 'CUSTOMER_NAME_SET', payload };
-	},
-};
-
-const selectors: StoreSelectorsWithState< NounsInStore > = {
-	getCustomerName( state ) {
-		return state.customerName || '';
-	},
-};
-
-function useCustomerName() {
-	const { customerName } = useSelect( ( select ) => {
-		const store = select( 'sofort' ) as StoreSelectors< NounsInStore >;
-		return {
-			customerName: store.getCustomerName(),
-		};
-	}, [] );
-
-	return customerName;
+interface SofortPaymentMethodStateShape {
+	customerName: string;
 }
 
-export function createSofortPaymentMethodStore(): SofortStore {
-	debug( 'creating a new sofort payment method store' );
-	const store = registerStore( 'sofort', {
-		reducer(
-			state: StoreState< NounsInStore > = {
-				customerName: { value: '', isTouched: false },
-			},
-			action: AnyAction
-		): StoreState< NounsInStore > {
-			switch ( action.type ) {
-				case 'CUSTOMER_NAME_SET':
-					return { ...state, customerName: { value: action.payload, isTouched: true } };
-			}
-			return state;
-		},
-		actions,
-		selectors,
-	} );
+type StateSubscriber = () => void;
 
-	return store;
+class SofortPaymentMethodState {
+	data: SofortPaymentMethodStateShape = {
+		customerName: '',
+	};
+
+	subscribers: StateSubscriber[] = [];
+
+	isTouched: boolean = false;
+
+	change = ( value: string ): void => {
+		this.data.customerName = value;
+		this.isTouched = true;
+		this.notifySubscribers();
+	};
+
+	subscribe = ( callback: () => void ): ( () => void ) => {
+		this.subscribers.push( callback );
+		return () => {
+			this.subscribers = this.subscribers.filter( ( subscriber ) => subscriber !== callback );
+		};
+	};
+
+	notifySubscribers = (): void => {
+		this.subscribers.forEach( ( subscriber ) => subscriber() );
+	};
 }
 
 export function createSofortMethod( {
-	store,
 	submitButtonContent,
 }: {
-	store: SofortStore;
 	submitButtonContent: ReactNode;
 } ): PaymentMethod {
+	const state = new SofortPaymentMethodState();
+
 	return {
 		id: 'sofort',
 		hasRequiredFields: true,
 		paymentProcessorId: 'sofort',
 		label: <SofortLabel />,
-		activeContent: <SofortFields />,
-		submitButton: <SofortPayButton store={ store } submitButtonContent={ submitButtonContent } />,
-		inactiveContent: <SofortSummary />,
+		activeContent: <SofortFields state={ state } />,
+		submitButton: <SofortPayButton state={ state } submitButtonContent={ submitButtonContent } />,
+		inactiveContent: <SofortSummary state={ state } />,
 		getAriaLabel: () => 'Sofort',
 	};
 }
 
-function SofortFields() {
-	const { __ } = useI18n();
-
-	const customerName = useCustomerName();
-	const { changeCustomerName } = useDispatch( 'sofort' );
-	const { formStatus } = useFormStatus();
-	const isDisabled = formStatus !== FormStatus.READY;
-
-	return (
-		<SofortFormWrapper>
-			<SofortField
-				id="sofort-cardholder-name"
-				type="Text"
-				autoComplete="cc-name"
-				label={ __( 'Your name' ) }
-				value={ customerName?.value ?? '' }
-				onChange={ changeCustomerName }
-				isError={ customerName?.isTouched && customerName?.value.length === 0 }
-				errorMessage={ __( 'This field is required' ) }
-				disabled={ isDisabled }
-			/>
-		</SofortFormWrapper>
-	);
+function useSubscribeToEventEmitter( state: SofortPaymentMethodState ) {
+	const [ , forceReload ] = useState( 0 );
+	useEffect( () => {
+		return state.subscribe( () => {
+			forceReload( ( val: number ) => val + 1 );
+		} );
+	}, [ state ] );
 }
 
 const SofortFormWrapper = styled.div`
@@ -143,19 +100,41 @@ const SofortField = styled( Field )`
 	}
 `;
 
+function SofortFields( { state }: { state: SofortPaymentMethodState } ) {
+	const { __ } = useI18n();
+	useSubscribeToEventEmitter( state );
+	const { formStatus } = useFormStatus();
+	const isDisabled = formStatus !== FormStatus.READY;
+
+	return (
+		<SofortFormWrapper>
+			<SofortField
+				id="sofort-cardholder-name"
+				type="Text"
+				autoComplete="cc-name"
+				label={ __( 'Your name' ) }
+				value={ state.data.customerName }
+				onChange={ state.change }
+				isError={ state.isTouched && state.data.customerName.length === 0 }
+				errorMessage={ __( 'This field is required' ) }
+				disabled={ isDisabled }
+			/>
+		</SofortFormWrapper>
+	);
+}
+
 function SofortPayButton( {
 	disabled,
 	onClick,
-	store,
+	state,
 	submitButtonContent,
 }: {
 	disabled?: boolean;
 	onClick?: ProcessPayment;
-	store: SofortStore;
+	state: SofortPaymentMethodState;
 	submitButtonContent: ReactNode;
 } ) {
 	const { formStatus } = useFormStatus();
-	const customerName = useCustomerName();
 
 	// This must be typed as optional because it's injected by cloning the
 	// element in CheckoutSubmitButton, but the uncloned element does not have
@@ -170,10 +149,10 @@ function SofortPayButton( {
 		<Button
 			disabled={ disabled }
 			onClick={ () => {
-				if ( isFormValid( store ) ) {
+				if ( isFormValid( state ) ) {
 					debug( 'submitting sofort payment' );
 					onClick( {
-						name: customerName?.value,
+						name: state.data.customerName,
 					} );
 				}
 			} }
@@ -186,26 +165,32 @@ function SofortPayButton( {
 	);
 }
 
-function SofortSummary() {
-	const customerName = useCustomerName();
+function SofortSummary( { state }: { state: SofortPaymentMethodState } ) {
+	useSubscribeToEventEmitter( state );
 
 	return (
 		<SummaryDetails>
-			<SummaryLine>{ customerName?.value }</SummaryLine>
+			<SummaryLine>{ state.data.customerName }</SummaryLine>
 		</SummaryDetails>
 	);
 }
 
-function isFormValid( store: SofortStore ): boolean {
-	const customerName = selectors.getCustomerName( store.getState() );
-
-	if ( ! customerName?.value.length ) {
+function isFormValid( state: SofortPaymentMethodState ): boolean {
+	if ( ! state.data.customerName.length ) {
 		// Touch the field so it displays a validation error
-		store.dispatch( actions.changeCustomerName( '' ) );
+		state.change( '' );
 		return false;
 	}
 	return true;
 }
+
+function SofortLogoImg( { className }: { className?: string } ) {
+	return <img src="/calypso/images/upgrades/sofort.svg" alt="Sofort" className={ className } />;
+}
+
+const SofortLogo = styled( SofortLogoImg )`
+	width: 64px;
+`;
 
 function SofortLabel() {
 	const { __ } = useI18n();
@@ -217,12 +202,4 @@ function SofortLabel() {
 			</PaymentMethodLogos>
 		</Fragment>
 	);
-}
-
-const SofortLogo = styled( SofortLogoImg )`
-	width: 64px;
-`;
-
-function SofortLogoImg( { className }: { className?: string } ) {
-	return <img src="/calypso/images/upgrades/sofort.svg" alt="Sofort" className={ className } />;
 }
