@@ -27,6 +27,7 @@ export type {
 	SocialThreadTombstoneNode,
 	SocialError,
 } from './types';
+export { AuthorProfileHeader } from './author-profile-header';
 export { mapAtmosphereFeedItemToSocialPost } from './mappers/atmosphere';
 export {
 	mapMastodonFeedItemToSocialPost,
