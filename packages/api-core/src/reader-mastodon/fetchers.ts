@@ -1,6 +1,7 @@
 import { wpcom } from '../wpcom-fetcher';
 import { classifyMastodonError } from './errors';
 import type {
+	MastodonAuthorFeedPage,
 	MastodonAuthorProfile,
 	MastodonAuthorizeResponse,
 	MastodonConnectionDetails,
@@ -137,6 +138,37 @@ export async function getMastodonAuthorProfile(
 			path: `/reader/mastodon/connections/${ connectionId }/profile/${ actor }`,
 			apiNamespace: NAMESPACE,
 		} ) ) as MastodonAuthorProfile;
+	} catch ( raw ) {
+		throw classifyMastodonError( raw );
+	}
+}
+
+export interface GetMastodonAuthorFeedParams {
+	connectionId: number;
+	actor: string;
+	cursor?: string;
+	limit?: number;
+}
+
+export async function getMastodonAuthorFeed(
+	params: GetMastodonAuthorFeedParams
+): Promise< MastodonAuthorFeedPage > {
+	const { connectionId, actor, cursor, limit } = params;
+	const query: Record< string, string > = {};
+	if ( cursor ) {
+		query.cursor = cursor;
+	}
+	if ( limit ) {
+		query.limit = String( limit );
+	}
+	try {
+		return ( await wpcom.req.get(
+			{
+				path: `/reader/mastodon/connections/${ connectionId }/profile/${ actor }/feed`,
+				apiNamespace: NAMESPACE,
+			},
+			query
+		) ) as MastodonAuthorFeedPage;
 	} catch ( raw ) {
 		throw classifyMastodonError( raw );
 	}

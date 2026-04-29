@@ -2,6 +2,7 @@ import nock from 'nock';
 import {
 	authorizeMastodonConnection,
 	completeMastodonConnection,
+	getMastodonAuthorFeed,
 	getMastodonAuthorProfile,
 	getMastodonConnection,
 	getMastodonConnections,
@@ -182,5 +183,32 @@ describe( 'getMastodonAuthorProfile', () => {
 		await expect(
 			getMastodonAuthorProfile( { connectionId: 7, actor: '108020' } )
 		).rejects.toMatchObject( { kind: 'auth_required' } );
+	} );
+} );
+
+describe( 'getMastodonAuthorFeed', () => {
+	afterEach( () => nock.cleanAll() );
+
+	it( 'GETs /reader/mastodon/connections/:id/profile/:actor/feed with cursor + limit', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/7/profile/108020/feed' )
+			.query( { cursor: 'abc', limit: '20' } )
+			.reply( 200, { items: [], cursor: null } );
+		const page = await getMastodonAuthorFeed( {
+			connectionId: 7,
+			actor: '108020',
+			cursor: 'abc',
+			limit: 20,
+		} );
+		expect( page.items ).toEqual( [] );
+		expect( page.cursor ).toBeNull();
+	} );
+
+	it( 'omits empty cursor + limit', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/7/profile/108020/feed' )
+			.reply( 200, { items: [], cursor: null } );
+		const page = await getMastodonAuthorFeed( { connectionId: 7, actor: '108020' } );
+		expect( page.cursor ).toBeNull();
 	} );
 } );
