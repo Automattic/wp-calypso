@@ -136,7 +136,9 @@ export interface MastodonThreadResponse {
 // different id; we still use it as the URL key when known because the
 // home-instance perspective is stable per connection. Webfinger handle
 // (`acct` qualified to `@user@instance`) is the cross-instance fallback
-// when only the handle is on hand.
+// when only the handle is on hand. Counts are projected into the nested
+// `counts` object the same way `MastodonConnectionDetails` exposes them
+// (followers / following / posts), not the upstream flat `*_count` form.
 export interface MastodonAuthorProfile {
 	id: string;
 	acct: string;
@@ -144,9 +146,7 @@ export interface MastodonAuthorProfile {
 	avatar: string | null;
 	header: string | null;
 	note: string;
-	followers_count: number;
-	following_count: number;
-	statuses_count: number;
+	counts: MastodonProfileCounts;
 	locked: boolean;
 	raw: Record< string, unknown >;
 }

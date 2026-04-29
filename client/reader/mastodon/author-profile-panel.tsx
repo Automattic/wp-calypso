@@ -40,22 +40,22 @@ export function MastodonAuthorProfilePanel( {
 		? [
 				{
 					key: 'followers',
-					count: profile.data.followers_count,
+					count: profile.data.counts.followers,
 					label: translate( 'follower', 'followers', {
-						count: profile.data.followers_count,
+						count: profile.data.counts.followers,
 					} ),
 				},
 				{
 					key: 'follows',
-					count: profile.data.following_count,
+					count: profile.data.counts.following,
 					label: translate( 'following', {
 						context: 'profile stats: count of accounts followed',
 					} ),
 				},
 				{
 					key: 'posts',
-					count: profile.data.statuses_count,
-					label: translate( 'post', 'posts', { count: profile.data.statuses_count } ),
+					count: profile.data.counts.posts,
+					label: translate( 'post', 'posts', { count: profile.data.counts.posts } ),
 				},
 		  ]
 		: [];

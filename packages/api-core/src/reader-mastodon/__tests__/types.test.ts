@@ -58,9 +58,7 @@ describe( 'MastodonAuthorProfile', () => {
 			avatar: 'https://example.invalid/a.png',
 			header: 'https://example.invalid/b.png',
 			note: '<p>hello</p>',
-			followers_count: 0,
-			following_count: 0,
-			statuses_count: 0,
+			counts: { followers: 0, following: 0, posts: 0 },
 			locked: false,
 			raw: {},
 		};

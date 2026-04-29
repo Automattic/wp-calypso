@@ -217,19 +217,19 @@ describe( 'useMastodonAuthorProfileQuery', () => {
 	afterEach( () => nock.cleanAll() );
 
 	it( 'fetches /profile/:actor and returns the profile', async () => {
-		nock( BASE ).get( '/wpcom/v2/reader/mastodon/connections/7/profile/108020' ).reply( 200, {
-			id: '108020',
-			acct: 'alice@mastodon.social',
-			display_name: 'Alice',
-			avatar: null,
-			header: null,
-			note: '',
-			followers_count: 0,
-			following_count: 0,
-			statuses_count: 0,
-			locked: false,
-			raw: {},
-		} );
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/7/profile/108020' )
+			.reply( 200, {
+				id: '108020',
+				acct: 'alice@mastodon.social',
+				display_name: 'Alice',
+				avatar: null,
+				header: null,
+				note: '',
+				counts: { followers: 0, following: 0, posts: 0 },
+				locked: false,
+				raw: {},
+			} );
 		const { result } = renderHook( () => useMastodonAuthorProfileQuery( 7, '108020' ), {
 			wrapper: createWrapper(),
 		} );
