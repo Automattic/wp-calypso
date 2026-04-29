@@ -572,7 +572,10 @@ describe( 'reader-atmosphere hooks', () => {
 
 			// Both queries resolved independently — the cache key includes filter,
 			// so the second hook did not reuse the first hook's data.
-			expect( queryClient.getQueryCache().getAll().length ).toBe( 2 );
+			const matched = queryClient.getQueryCache().findAll( {
+				queryKey: readerAtmosphereKeys.authorFeed( 'alice.bsky.social' ),
+			} );
+			expect( matched ).toHaveLength( 2 );
 		} );
 	} );
 } );

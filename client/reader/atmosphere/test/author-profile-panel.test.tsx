@@ -398,6 +398,31 @@ describe( 'AuthorProfilePanel', () => {
 			expect( screen.queryByRole( 'button', { name: /view on bluesky/i } ) ).toBeNull();
 			expect( screen.queryByRole( 'link', { name: /view on bluesky/i } ) ).toBeNull();
 		} );
+
+		it( 'shows the Media-tab empty title and no "View on Bluesky" action when ?tab=media', async () => {
+			window.history.replaceState(
+				{},
+				'',
+				'/reader/atmosphere/42/profile/alice.bsky.social?tab=media'
+			);
+
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social' )
+				.reply( 200, profilePayload );
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.query( true )
+				.reply( 200, { items: [], cursor: null } );
+
+			renderWithProvider(
+				<AuthorProfilePanel connection={ connection } actor="alice.bsky.social" />,
+				{ queryClient: makeQueryClient() }
+			);
+
+			expect( await screen.findByText( /hasn’t posted any media yet/i ) ).toBeVisible();
+			expect( screen.queryByRole( 'button', { name: /view on bluesky/i } ) ).toBeNull();
+			expect( screen.queryByRole( 'link', { name: /view on bluesky/i } ) ).toBeNull();
+		} );
 	} );
 
 	it( 'dedupes feed items by uri across pages (Bluesky returns repeats)', async () => {

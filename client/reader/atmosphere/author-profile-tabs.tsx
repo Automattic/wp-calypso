@@ -35,7 +35,9 @@ function readPathname(): string {
  * Reads `?tab=` from the current location and returns the corresponding
  * backend enum filter. Side-effects a single `page.replace` to the default
  * tab when the slug is malformed (gated on a ref so repeated renders with
- * the same malformed value don't loop). Returns the default filter on
+ * the same malformed value don't loop). If the user navigates to a valid
+ * tab and then back to a different malformed value, the rewrite re-fires —
+ * the gate clears once a valid slug appears. Returns the default filter on
  * missing or malformed values.
  */
 export function useAuthorProfileFilter(): AtmosphereAuthorFeedFilter {
@@ -48,15 +50,24 @@ export function useAuthorProfileFilter(): AtmosphereAuthorFeedFilter {
 		if ( slug === null ) {
 			return;
 		}
-		if ( slug in SLUG_TO_FILTER ) {
+		if ( Object.hasOwn( SLUG_TO_FILTER, slug ) ) {
 			correctedFor.current = null;
 			return;
 		}
 		if ( correctedFor.current === slug ) {
 			return;
 		}
-		correctedFor.current = slug;
-		const next = new URLSearchParams( readSearch() );
+		// Re-validate against the live URL: between render and effect commit
+		// another `page.replace` (e.g. a same-batch tab click) could have
+		// changed `?tab=` to a valid value. Without this guard the effect
+		// would clobber the user's valid choice with the default.
+		const liveSearch = readSearch();
+		const liveSlug = liveSearch.get( 'tab' );
+		if ( liveSlug === null || Object.hasOwn( SLUG_TO_FILTER, liveSlug ) ) {
+			return;
+		}
+		correctedFor.current = liveSlug;
+		const next = new URLSearchParams( liveSearch );
 		next.set( 'tab', DEFAULT_SLUG );
 		page.replace( `${ readPathname() }?${ next.toString() }` );
 	}, [ slug ] );
@@ -64,7 +75,7 @@ export function useAuthorProfileFilter(): AtmosphereAuthorFeedFilter {
 	if ( slug === null ) {
 		return DEFAULT_FILTER;
 	}
-	if ( slug in SLUG_TO_FILTER ) {
+	if ( Object.hasOwn( SLUG_TO_FILTER, slug ) ) {
 		return SLUG_TO_FILTER[ slug ];
 	}
 	return DEFAULT_FILTER;
@@ -87,9 +98,17 @@ interface TabSpec {
 // validates handle/DID and returns null on invalid; we always have a
 // resolved actor here and need to append the ?tab slug.
 function buildPath( connectionId: number, actor: string, slug: string ): string {
-	return `/reader/atmosphere/${ connectionId }/profile/${ encodeURIComponent(
-		actor
-	) }?tab=${ slug }`;
+	const base = `/reader/atmosphere/${ connectionId }/profile/${ encodeURIComponent( actor ) }`;
+	if ( typeof window === 'undefined' ) {
+		return `${ base }?tab=${ slug }`;
+	}
+	// Preserve any other query params and the fragment (e.g. ?from=timeline,
+	// or #scroll-anchor) that the user may have on the URL when switching
+	// tabs. Mirrors the malformed-rewrite path's URL-preservation behavior.
+	const params = new URLSearchParams( window.location.search );
+	params.set( 'tab', slug );
+	const hash = window.location.hash; // includes leading '#' or '' if absent
+	return `${ base }?${ params.toString() }${ hash }`;
 }
 
 function isPlainLeftClick( event: React.MouseEvent ): boolean {
@@ -163,7 +182,7 @@ export function AuthorProfileTabs( { connectionId, actor, activeFilter }: Author
 					<NavItem
 						key={ tab.slug }
 						path={ tab.path }
-						selected={ tab.filter === activeFilter }
+						selected={ tab.filter === selected.filter }
 						onClick={ ( event: React.MouseEvent< HTMLAnchorElement > ) =>
 							handleClick( event, tab )
 						}

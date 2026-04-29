@@ -185,6 +185,16 @@ describe( 'AuthorProfileTabs', () => {
 		expect( analytics.recordReaderTracksEvent ).not.toHaveBeenCalled();
 	} );
 
+	it( 'falls back to Posts when activeFilter is the un-tabbed posts_and_author_threads value', () => {
+		renderTabs( { activeFilter: 'posts_and_author_threads' } );
+		// All three tabs render and the Posts tab is shown as selected.
+		expect( screen.getByRole( 'menuitem', { name: 'Posts' } ) ).toBeVisible();
+		expect( screen.getByRole( 'menuitem', { name: 'Replies' } ) ).toBeVisible();
+		expect( screen.getByRole( 'menuitem', { name: 'Media' } ) ).toBeVisible();
+		const postsTab = screen.getByRole( 'menuitem', { name: 'Posts' } );
+		expect( postsTab.closest( 'li' ) ).toHaveClass( 'is-selected' );
+	} );
+
 	it( 'modifier-click does not call preventDefault — native browser handling kicks in', async () => {
 		renderTabs( { activeFilter: 'posts_no_replies' } );
 		const repliesLink = screen.getByRole( 'menuitem', { name: 'Replies' } );
