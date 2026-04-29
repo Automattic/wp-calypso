@@ -24,3 +24,22 @@ offer a way of handling all types of URLs.
 
 **IMPORTANT NOTE**: URL part names are different between Node's `url` and `lib/url`. This is because
 `lib/url` is aligned to the `URL` / `URLSearchParam` standard in detriment of the legacy API.
+
+## Exported utilities
+
+- `addQueryArgs( args, url )` — merges an object of query parameters into any URL type (absolute, protocol-relative, path-relative)
+- `withoutHttp( url )` — strips the `http://` or `https://` scheme from a URL
+- `urlToSlug( url )` — converts a URL to a site slug (replaces `/` with `::`)
+- `urlToDomainAndPath( url )` — removes the protocol and trailing slash, returning domain + path
+- `urlToDomain( url )` — removes the protocol and path, returning only the domain
+- `omitUrlParams( url, params )` — removes specified query parameters from a URL
+- `isExternal( url )` — returns `true` if the URL points to a different origin than the current page
+- `resemblesUrl( url )` — returns `true` if the string looks like a URL
+- `isOutsideCalypso( url )` — returns `true` if the URL is outside the Calypso app
+- `isHttps( url )` — returns `true` if the URL uses the `https:` scheme
+- `addSchemeIfMissing( url, scheme )` — prepends a scheme to a protocol-relative URL if none is present
+- `setUrlScheme( url, scheme )` — replaces the scheme of a URL
+- `decodeURIIfValid( url )` — calls `decodeURI` and returns the original string on failure
+- `decodeURIComponentIfValid( component )` — calls `decodeURIComponent` and returns the original string on failure
+- `resolveRelativePath( from, to )` — resolves a relative path against a base path
+- `pathToUrl( path )` — converts a Calypso path (e.g. `/sites/example.com`) to an absolute URL
