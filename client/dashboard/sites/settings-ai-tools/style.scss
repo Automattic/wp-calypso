@@ -17,7 +17,7 @@
 	margin: 0;
 
 	@include ui-mixins.when-dark-theme {
-		border-top-color: var( --color-border-subtle );
+		border-top-color: var( --dashboard-surface__border-color );
 	}
 }
 
