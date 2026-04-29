@@ -74,12 +74,7 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 	} );
 
 	const profile = useAuthorProfileQuery( { actor } );
-	// posts_no_replies is the API default — omit the param so the URL stays
-	// clean and matches the original no-filter behaviour when no ?tab is present.
-	const feed = useAuthorFeedInfiniteQuery( {
-		actor,
-		filter: filter === 'posts_no_replies' ? undefined : filter,
-	} );
+	const feed = useAuthorFeedInfiniteQuery( { actor, filter } );
 
 	// Reset the error_shown dedup ref when navigating between profiles so the
 	// next author's first error fires its analytics even when the kind matches.
@@ -105,6 +100,9 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 			return;
 		}
 		viewedFor.current = key;
+		// Capture filter at first-fire time. The event semantics are "what filter
+		// was active when the user first opened this profile", which is decided
+		// the moment profile.data resolves — not on subsequent tab switches.
 		dispatch(
 			recordReaderTracksEvent( 'calypso_reader_atmosphere_profile_viewed', {
 				connection_id: connection.id,
@@ -114,7 +112,8 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 				initial_filter: filter,
 			} )
 		);
-	}, [ actor, connection.id, profile.data, filter, dispatch ] );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ actor, connection.id, profile.data, dispatch ] );
 
 	useEffect( () => {
 		if ( profile.isError && profile.error && profile.error.kind !== lastErrorKind.current.header ) {

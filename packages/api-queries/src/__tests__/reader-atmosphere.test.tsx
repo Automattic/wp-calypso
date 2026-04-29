@@ -497,6 +497,37 @@ describe( 'reader-atmosphere hooks', () => {
 			expect( scope.isDone() ).toBe( true );
 		} );
 
+		it( 'treats filter=posts_no_replies the same as no filter (default normalization)', async () => {
+			const scope = nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.query( ( q ) => ! ( 'filter' in q ) )
+				.reply( 200, { items: [], cursor: null } );
+
+			const queryClient = new QueryClient();
+			const wrapper = makeWrapper( queryClient );
+			const { result } = renderHook(
+				() => {
+					const q = useAuthorFeedInfiniteQuery( {
+						actor: 'alice.bsky.social',
+						filter: 'posts_no_replies',
+					} );
+					void q.data;
+					void q.isError;
+					void q.error;
+					void q.isSuccess;
+					return q;
+				},
+				{ wrapper }
+			);
+
+			await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+			expect( scope.isDone() ).toBe( true );
+
+			// And the cache key should match the slice-6 4-element shape, not 5-element.
+			const cacheKey = queryClient.getQueryCache().getAll()[ 0 ]?.queryKey;
+			expect( cacheKey ).toEqual( [ 'reader', 'atmosphere', 'author-feed', 'alice.bsky.social' ] );
+		} );
+
 		it( 'caches results independently per filter value', async () => {
 			nock( 'https://public-api.wordpress.com' )
 				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )

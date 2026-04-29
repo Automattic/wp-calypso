@@ -183,5 +183,10 @@ export interface UseAuthorFeedInfiniteQueryParams {
 }
 
 export function useAuthorFeedInfiniteQuery( { actor, filter }: UseAuthorFeedInfiniteQueryParams ) {
-	return useInfiniteQuery( authorFeedInfiniteQuery( actor, filter ) );
+	// Collapse the default filter to undefined so the cache key and request
+	// URL stay clean for the default tab. Callers can pass 'posts_no_replies'
+	// without paying a cache-key change versus passing nothing at all —
+	// matters for slice-6 cache compatibility.
+	const normalizedFilter = filter === 'posts_no_replies' ? undefined : filter;
+	return useInfiniteQuery( authorFeedInfiniteQuery( actor, normalizedFilter ) );
 }
