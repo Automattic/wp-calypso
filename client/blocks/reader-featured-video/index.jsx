@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import ReactDom from 'react-dom';
 import playIconImage from 'calypso/assets/images/reader/play-icon.webp';
+import readerPocketCastImage from 'calypso/assets/images/reader/reader-pocket-cast.svg';
 import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
 import getEmbedMetadata from 'calypso/lib/get-video-id';
 import EmbedHelper from 'calypso/reader/embed-helper';
@@ -178,10 +179,18 @@ const checkEmbedSizeDimensions = ( embed ) => {
 	return _embed;
 };
 
+const POCKETCAST_FALLBACK_WIDTH = 220;
+const POCKETCAST_FALLBACK_HEIGHT = 80;
+
 function ReaderFeaturedVideoWithQuery( props ) {
 	const videoEmbed = checkEmbedSizeDimensions( props.videoEmbed );
 	const { service, id } = ( videoEmbed?.src && getEmbedMetadata( videoEmbed.src ) ) || {};
-	const { data: thumbnailUrl } = useQuery( readerThumbnailQuery( service, id ) );
+	const { data: fetchedThumbnailUrl } = useQuery( readerThumbnailQuery( service, id ) );
+
+	let thumbnailUrl = fetchedThumbnailUrl;
+	if ( videoEmbed.type === 'pocketcasts' && ! thumbnailUrl ) {
+		thumbnailUrl = `${ readerPocketCastImage }?w=${ POCKETCAST_FALLBACK_WIDTH }&h=${ POCKETCAST_FALLBACK_HEIGHT }`;
+	}
 
 	let imageWidth = videoEmbed.width;
 	let imageHeight = videoEmbed.height;

@@ -11,4 +11,5 @@ export const readerThumbnailQuery = (
 		queryFn: () => fetchReaderThumbnail( { service: service!, id: id! } ),
 		enabled: !! service && !! id,
 		staleTime: Infinity,
+		meta: { persist: false },
 	} );

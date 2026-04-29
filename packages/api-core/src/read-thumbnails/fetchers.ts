@@ -26,13 +26,13 @@ const POCKETCAST_DEFAULT_WIDTH = 220;
 const POCKETCAST_DEFAULT_HEIGHT = 80;
 
 function fetchYoutubeThumbnail( id: string ): string {
-	return `https://img.youtube.com/vi/${ id }/mqdefault.jpg`;
+	return `https://img.youtube.com/vi/${ encodeURIComponent( id ) }/mqdefault.jpg`;
 }
 
 async function fetchVideoPressThumbnail( id: string ): Promise< string | null > {
 	try {
 		const json = ( await fetchJson(
-			`https://public-api.wordpress.com/rest/v1.1/videos/${ id }/poster`
+			`https://public-api.wordpress.com/rest/v1.1/videos/${ encodeURIComponent( id ) }/poster`
 		) ) as VideoPressPosterResponse;
 		return json?.poster ?? null;
 	} catch {
@@ -43,7 +43,7 @@ async function fetchVideoPressThumbnail( id: string ): Promise< string | null > 
 async function fetchVimeoThumbnail( id: string ): Promise< string | null > {
 	try {
 		const json = ( await fetchJson(
-			`https://vimeo.com/api/v2/video/${ id }.json`
+			`https://vimeo.com/api/v2/video/${ encodeURIComponent( id ) }.json`
 		) ) as VimeoVideoResponse[];
 		return json?.[ 0 ]?.thumbnail_large ?? null;
 	} catch {
@@ -53,8 +53,9 @@ async function fetchVimeoThumbnail( id: string ): Promise< string | null > {
 
 async function fetchPocketcastsThumbnail( id: string ): Promise< string | null > {
 	try {
+		const pocketcastsUrl = encodeURIComponent( `https://pca.st/${ id }` );
 		const json = ( await fetchJson(
-			`https://pca.st/oembed.json?url=https%3A%2F%2Fpca.st%2F${ id }`
+			`https://pca.st/oembed.json?url=${ pocketcastsUrl }`
 		) ) as PocketcastsOembedResponse;
 		const thumbnailUrl = json?.thumbnail_url;
 		if ( ! thumbnailUrl ) {
@@ -82,4 +83,5 @@ export async function fetchReaderThumbnail(
 		case 'pocketcasts':
 			return fetchPocketcastsThumbnail( id );
 	}
+	return null;
 }
