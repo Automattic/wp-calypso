@@ -807,7 +807,8 @@
 @mixin dashboard-dark-theme-site-logs-badges {
 	// Data table badges in the logs views don't declare a Badge intent, and
 	// override the colors locally, so we have to target them directly here.
-	:is( .site-logs-card, .site-logs-details-modal ) :is(
+	:is( .site-logs-card, .site-logs-details-modal )
+		:is(
 			.badge--POST,
 			.badge--deprecated,
 			.badge--GET,
@@ -822,11 +823,7 @@
 			var( --wp-components-color-background ) 90%,
 			var( --base-color )
 		);
-		color: color-mix(
-			in srgb,
-			var( --wp-components-color-foreground ) 50%,
-			var( --base-color )
-		);
+		color: color-mix( in srgb, var( --wp-components-color-foreground ) 50%, var( --base-color ) );
 
 		// `<Badge intent="default">` adds `.is-default`, which the Badge
 		// component pairs with an inset box-shadow in dark mode to stay
@@ -867,8 +864,7 @@
 			color: var( --dashboard__text-muted-color );
 		}
 
-		.dataforms-layouts-panel__field-trigger.is-disabled
-			.dataforms-layouts-panel__field-control {
+		.dataforms-layouts-panel__field-trigger.is-disabled .dataforms-layouts-panel__field-control {
 			color: var( --dashboard__text-muted-color );
 		}
 	}
@@ -986,7 +982,6 @@
 	@include dashboard-dark-theme-emails;
 	@include dashboard-dark-theme-form-controls;
 	@include dashboard-dark-theme-item-group;
-	@include dashboard-dark-theme-muted-text;
 	@include dashboard-dark-theme-panel;
 	@include dashboard-dark-theme-plugins;
 	@include dashboard-dark-theme-popover;
