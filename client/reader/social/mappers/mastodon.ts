@@ -184,11 +184,12 @@ function mapMastodonThreadNode(
 	if ( node.type === 'not_found' || node.type === 'blocked' ) {
 		return { type: node.type, uri: node.uri };
 	}
+	const replies = Array.isArray( node.replies ) ? node.replies.filter( Boolean ) : [];
 	const result: SocialThreadPostNode = {
 		type: 'post',
 		post: mapMastodonFeedItemToSocialPost( node.post, options ),
 		parent: node.parent ? mapMastodonThreadNode( node.parent, options ) : null,
-		replies: node.replies.map( ( reply ) => mapMastodonThreadNode( reply, options ) ),
+		replies: replies.map( ( reply ) => mapMastodonThreadNode( reply, options ) ),
 	};
 	return result;
 }

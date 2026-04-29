@@ -167,8 +167,20 @@ function renderBody( {
 	if ( isError && error ) {
 		return renderError( { translate, error, handleRetry } );
 	}
-	if ( ! data ) {
-		return isFetching ? <MastodonThreadTreeSkeleton /> : null;
+	if ( ! data || ! data.thread ) {
+		if ( isFetching ) {
+			return <MastodonThreadTreeSkeleton />;
+		}
+		// Defensive: a backend that hasn't been updated to the recursive
+		// `{ thread }` shape (or any other malformed payload) shouldn't crash
+		// the render tree. Surface the same not-found UI we'd show for a
+		// genuinely missing post.
+		return (
+			<EmptyContent
+				title={ translate( 'Thread not found' ) }
+				line={ translate( 'This post is no longer available.' ) }
+			/>
+		);
 	}
 	const root = mapMastodonThreadResponseToSocialThreadNode( data, { instance } );
 	return <MastodonThreadTree root={ root } targetUri={ targetUri } />;
