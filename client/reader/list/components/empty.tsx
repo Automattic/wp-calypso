@@ -13,11 +13,13 @@ interface ListEmptyProps {
 export default function ListEmpty( { list }: ListEmptyProps ): JSX.Element {
 	const translate = useTranslate();
 	const previousRoute: string = useSelector( getPreviousRoute );
-	const { data: itemsData } = useQuery( {
+	const { data: itemsData, isFetched } = useQuery( {
 		...readListItemsAllQuery( list?.owner ?? null, list?.slug ?? null ),
 		enabled: !! list,
 	} );
-	const isEmptyList = ! itemsData?.items?.length;
+	// Only flip to "empty" once we've actually fetched — otherwise the initial
+	// undefined cache makes every list look empty during the loading flash.
+	const isEmptyList = isFetched && ! itemsData?.items?.length;
 	const shouldPromptManagement = isEmptyList && list?.is_owner;
 	const isRecommendedBlogsList = list?.slug === 'recommended-blogs';
 
