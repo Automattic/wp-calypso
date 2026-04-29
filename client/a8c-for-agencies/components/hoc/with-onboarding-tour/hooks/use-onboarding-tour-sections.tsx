@@ -235,7 +235,7 @@ export default function useOnboardingTourSections() {
 				title: translate( 'Migrations' ),
 				bannerImage: OnboardingTourBannerMigrations,
 				content: {
-					title: translate( 'Better hosting for your clients. Up to $10K for you.' ),
+					title: translate( 'Better hosting for your clients.' ),
 					descriptions: [
 						translate(
 							'Tired of subpar hosting? Migrate your sites to WordPress.com or Pressable and tap into WP Cloud—the only cloud platform built just for WordPress.'
