@@ -68,7 +68,7 @@ export * from './products';
 export * from './read-achievements';
 export * from './read-achievements-settings';
 export * from './read-feed';
-export * from './read-list';
+export * from './read-lists';
 export * from './read-site';
 export * from './reader-atmosphere';
 export * from './reader-mastodon';

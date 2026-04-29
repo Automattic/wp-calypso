@@ -6,6 +6,6 @@ export const readAchievementsSettingsQuery = ( userIdOrLogin?: number | string |
 		queryKey: [ 'read', 'achievements', userIdOrLogin, 'settings' ],
 		queryFn: () => fetchReadAchievementsSettings( userIdOrLogin! ),
 		enabled: userIdOrLogin != null,
-		staleTime: 10 * 1000, // 10 seconds
+		staleTime: 60 * 1000, // 1 minute
 	} );
 };

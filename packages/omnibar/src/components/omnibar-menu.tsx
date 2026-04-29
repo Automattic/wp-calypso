@@ -58,7 +58,7 @@ export function OmnibarMenu( { node }: { node: OmnibarNode } ) {
 			className="omnibar__dropdown"
 			icon={ null }
 			label={ node.title }
-			popoverProps={ { className: 'omnibar__popover' } }
+			popoverProps={ { className: 'omnibar__popover', offset: 0 } }
 			toggleProps={ {
 				className: 'omnibar__menu',
 				children: <OmnibarNodeContent node={ node } />,

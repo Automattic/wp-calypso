@@ -46,7 +46,11 @@ export function userProfile( ctx: Context, next: () => void ): void {
 
 	context.primary = (
 		<AsyncLoad
-			require="calypso/reader/user-profile"
+			require={ () =>
+				import(
+					/* webpackChunkName: "async-load-calypso-reader-user-profile" */ 'calypso/reader/user-profile'
+				)
+			}
 			key={ 'user-posts-' + userLogin }
 			userLogin={ userLogin }
 			userId={ userId }

@@ -79,7 +79,11 @@ const GlobalNotifications = () => {
 	return (
 		<div className="global-notifications" ref={ containerRef }>
 			<AsyncLoad
-				require="calypso/notifications"
+				require={ () =>
+					import(
+						/* webpackChunkName: "async-load-calypso-notifications" */ 'calypso/notifications'
+					)
+				}
 				isShowing={ isNotificationsOpen }
 				checkToggle={ checkToggleNotes }
 				placeholder={ null }

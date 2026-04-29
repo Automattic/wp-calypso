@@ -1,3 +1,5 @@
+@use '../../../../packages/ui/src/utils/mixins' as ui-mixins;
+
 @import "@wordpress/base-styles/colors";
 @import "@wordpress/base-styles/variables";
 
@@ -11,6 +13,11 @@
 .celebration-modal--content {
 	padding: $grid-unit-10 $grid-unit-20;
 	background-color: $gray-100;
+
+	@include ui-mixins.when-dark-theme {
+		background-color: var( --wp-components-color-gray-200 );
+		color: var( --dashboard__text-color );
+	}
 
 	a {
 		color: inherit;

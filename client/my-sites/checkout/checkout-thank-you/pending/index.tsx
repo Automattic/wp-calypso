@@ -245,6 +245,7 @@ function useRedirectOnTransactionSuccess( {
 		enabled: !! finalReceiptId,
 	} );
 	const isReceiptLoaded = isReceiptSuccess || isReceiptError;
+
 	const error: Error | null = useSelector( ( state ) =>
 		orderId ? getOrderTransactionError( state, orderId ) : null
 	);
@@ -269,6 +270,9 @@ function useRedirectOnTransactionSuccess( {
 		( url, item ) => url ?? ( item.saas_redirect_url || undefined ),
 		undefined
 	);
+	const resolvedPurchaseId =
+		receipt?.items.find( ( item ) => item.store_subscription_id )?.store_subscription_id ??
+		undefined;
 
 	const { searchParams } = getUrlParts( redirectTo || '/' );
 	// Prefer checkout_type from the receipt (more reliable) and fall back to
@@ -438,6 +442,7 @@ function useRedirectOnTransactionSuccess( {
 			siteSlug: freshSiteSlug || siteSlug,
 			saasRedirectUrl,
 			fromSiteSlug,
+			purchaseId: resolvedPurchaseId,
 		} );
 
 		if ( ! redirectInstructions ) {
@@ -532,6 +537,7 @@ function useRedirectOnTransactionSuccess( {
 		translate,
 		fromSiteSlug,
 		freshSiteSlug,
+		resolvedPurchaseId,
 	] );
 
 	return { isAtomicTransferExpected };

@@ -206,6 +206,12 @@ const sections = [
 		group: 'sites',
 	},
 	{
+		name: 'podcast',
+		paths: [ '/podcast' ],
+		module: 'calypso/my-sites/podcast',
+		group: 'sites',
+	},
+	{
 		name: 'settings-security',
 		paths: [ '/settings/security' ],
 		module: 'calypso/my-sites/site-settings/settings-security',

@@ -234,7 +234,11 @@ export function useActions( {
 				RenderModal: ( { items, closeModal }: RenderModalProps< SiteExcerptData > ) => {
 					return (
 						<AsyncLoad
-							require="calypso/sites/settings/administration/tools/restore-site/restore-site-form"
+							require={ () =>
+								import(
+									/* webpackChunkName: "async-load-calypso-sites-settings-administration-tools-restore-site-restore-site-form" */ 'calypso/sites/settings/administration/tools/restore-site/restore-site-form'
+								)
+							}
 							placeholder={ null }
 							siteId={ items[ 0 ]?.ID ?? 0 }
 							onClose={ closeModal }
@@ -252,7 +256,11 @@ export function useActions( {
 				RenderModal: ( { items, closeModal }: RenderModalProps< SiteExcerptData > ) => {
 					return (
 						<AsyncLoad
-							require="calypso/sites/settings/administration/tools/leave-site/leave-site-modal-form"
+							require={ () =>
+								import(
+									/* webpackChunkName: "async-load-calypso-sites-settings-administration-tools-leave-site-leave-site-modal-form" */ 'calypso/sites/settings/administration/tools/leave-site/leave-site-modal-form'
+								)
+							}
 							placeholder={ null }
 							siteId={ items[ 0 ]?.ID ?? 0 }
 							onSuccess={ () => {

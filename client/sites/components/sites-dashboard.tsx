@@ -451,7 +451,16 @@ const SitesDashboard = ( {
 			);
 		}
 
-		return <AsyncLoad require="../v2/sites-list" placeholder={ null } />;
+		return (
+			<AsyncLoad
+				require={ () =>
+					import(
+						/* webpackChunkName: "async-load-calypso-sites-v2-sites-list" */ '../v2/sites-list'
+					)
+				}
+				placeholder={ null }
+			/>
+		);
 	};
 
 	return (
