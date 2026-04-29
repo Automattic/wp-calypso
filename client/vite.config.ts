@@ -254,8 +254,13 @@ export default defineConfig(
 					// Suppress warnings from third-party SCSS dependencies.
 					quietDeps: true,
 
-					// Suppress legacy @import deprecation warnings from dependencies.
-					silenceDeprecations: [ 'import' ],
+					// Suppress Sass deprecation warnings that require code changes across
+					// 30+ first-party files — tracked for a dedicated SCSS modernisation PR:
+					//   global-builtin:  map-get/type-of/unquote/round without @use 'sass:...'
+					//   color-functions: darken() calls in login SCSS
+					//   slash-div:       "/" division in odie-client
+					//   import:          legacy @import syntax throughout the codebase
+					silenceDeprecations: [ 'import', 'global-builtin', 'color-functions', 'slash-div' ],
 				},
 			},
 			postcss: {

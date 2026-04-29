@@ -70,6 +70,7 @@ class Document extends Component {
 			user,
 			useTranslationChunks,
 			showStepContainerV2Loader,
+			viteDev,
 		} = this.props;
 
 		const installedChunks = entrypoint.js
@@ -241,7 +242,7 @@ class Document extends Component {
 					 * this lets us have the performance benefit in prod, without breaking HMR in dev
 					 * since the manifest needs to be updated on each save
 					 */ }
-					{ env === 'development' && (
+					{ env === 'development' && ! viteDev && (
 						<script nonce={ inlineScriptNonce } src={ `/calypso/${ target }/runtime.js` } />
 					) }
 					{ env !== 'development' &&
@@ -276,8 +277,21 @@ class Document extends Component {
 						<script key={ translationChunk } nonce={ inlineScriptNonce } src={ translationChunk } />
 					) ) }
 
+					{ viteDev && (
+						<script
+							key="@vite/client"
+							nonce={ inlineScriptNonce }
+							type="module"
+							src="/@vite/client"
+						/>
+					) }
 					{ entrypoint.js.map( ( asset ) => (
-						<script key={ asset } nonce={ inlineScriptNonce } src={ asset } />
+						<script
+							key={ asset }
+							nonce={ inlineScriptNonce }
+							{ ...( viteDev ? { type: 'module' } : {} ) }
+							src={ asset }
+						/>
 					) ) }
 					<script
 						nonce={ inlineScriptNonce }

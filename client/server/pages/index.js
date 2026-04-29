@@ -265,7 +265,9 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	const entrypointFiles = request.getFilesForChunkGroup( entrypoint );
 
 	performanceMark( request.context, 'getAssets', true );
-	const manifests = request.getAssets().manifests;
+	const assets = request.getAssets();
+	const manifests = assets.manifests;
+	const viteDev = !! assets.viteDev;
 
 	performanceMark( request.context, 'assign context object', true );
 	const context = Object.assign( {}, request.context, {
@@ -279,6 +281,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 		lang: config( 'i18n_default_locale_slug' ),
 		entrypoint: entrypointFiles,
 		manifests,
+		viteDev,
 		reactQueryDevtoolsHelper,
 		accountSettingsHelper,
 		authHelper,
