@@ -5,7 +5,6 @@ import {
 	deleteReadListSite,
 	deleteReadListTag,
 	fetchReadListItems,
-	fetchReadListItemsAll,
 	type ReadListItem,
 	type ReadListItemsResponse,
 } from '@automattic/api-core';
@@ -49,11 +48,14 @@ export const readListItemsInfiniteQuery = (
 
 // Default React Query retry count.
 const DEFAULT_RETRY = 3;
+// Matches the legacy data-layer's flat fetch (`number: 2000`, full meta).
+const ALL_ITEMS_META = 'site,feed,tag';
+const ALL_ITEMS_PAGE_SIZE = 2000;
 
 export const readListItemsAllQuery = ( owner?: string | null, slug?: string | null ) =>
 	queryOptions( {
 		queryKey: [ 'read', 'lists', owner, slug, 'items', 'all' ],
-		queryFn: () => fetchReadListItemsAll( owner!, slug! ),
+		queryFn: () => fetchReadListItems( owner!, slug!, ALL_ITEMS_META, 1, ALL_ITEMS_PAGE_SIZE ),
 		enabled: !! owner && !! slug,
 		staleTime: 1000 * 60 * 5,
 		// `list_not_found` is a permanent 404 (e.g. user has no recommended-blogs

@@ -22,16 +22,3 @@ export const fetchReadListItems = (
 		method: 'GET',
 	} );
 };
-
-export const fetchReadListItemsAll = (
-	owner: string,
-	slug: string
-): Promise< ReadListItemsResponse > => {
-	return wpcom.req.get( {
-		path: addQueryArgs(
-			`/read/lists/${ encodeURIComponent( owner ) }/${ encodeURIComponent( slug ) }/items`,
-			{ meta: 'site,feed,tag', number: 2000 }
-		),
-		apiVersion: '1.2',
-	} );
-};

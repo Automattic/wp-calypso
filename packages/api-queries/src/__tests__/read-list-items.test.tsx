@@ -28,7 +28,7 @@ describe( 'readListItemsAllQuery', () => {
 	it( 'fetches all items for a list with the legacy query args', async () => {
 		const scope = nock( BASE )
 			.get( '/rest/v1.2/read/lists/alice/my-list/items' )
-			.query( { meta: 'site,feed,tag', number: 2000 } )
+			.query( { meta: 'site,feed,tag', page: 1, number: 2000 } )
 			.reply( 200, {
 				list_ID: 42,
 				success: true,
@@ -52,7 +52,7 @@ describe( 'readListItemsAllQuery', () => {
 	it( 'works for the recommended-blogs slug', async () => {
 		const scope = nock( BASE )
 			.get( '/rest/v1.2/read/lists/alice/recommended-blogs/items' )
-			.query( { meta: 'site,feed,tag', number: 2000 } )
+			.query( { meta: 'site,feed,tag', page: 1, number: 2000 } )
 			.reply( 200, {
 				list_ID: 99,
 				success: true,
@@ -86,7 +86,7 @@ describe( 'readListItemsAllQuery', () => {
 	it( 'URL-encodes owner and slug', async () => {
 		const scope = nock( BASE )
 			.get( '/rest/v1.2/read/lists/al%20ice/my%2Flist/items' )
-			.query( { meta: 'site,feed,tag', number: 2000 } )
+			.query( { meta: 'site,feed,tag', page: 1, number: 2000 } )
 			.reply( 200, {
 				list_ID: 1,
 				success: true,
