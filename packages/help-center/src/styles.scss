@@ -9,7 +9,7 @@
  * THIS FILE SHOULD NOT CONTAIN ANY COMPONENT SPECIFIC STYLES.
  */
 .help-center > div.help-center__container {
-	background-color: #fff;
+	background-color: var(--color-surface);
 	z-index: $help-center-z-index;
 	cursor: default;
 	transition: max-height 0.5s;
