@@ -9,6 +9,16 @@ export function getTimelineUrl( connectionId: number ): string {
 	return `/reader/atmosphere/${ connectionId }/timeline`;
 }
 
+/**
+ * Build the canonical bsky.app profile URL for a Bluesky handle. Centralised
+ * so the four call sites (post-author chip + repost preface fallback,
+ * AuthorProfilePanel + ProfilePanel "View on Bluesky" actions) agree on the
+ * encoding, and so a future change to bsky.app's URL shape is one edit.
+ */
+export function getBlueskyProfileUrl( handle: string ): string {
+	return `https://bsky.app/profile/${ encodeURIComponent( handle ) }`;
+}
+
 export function getThreadUrl( connectionId: number, postUri: string ): string | null {
 	if ( ! Number.isFinite( connectionId ) || connectionId <= 0 ) {
 		return null;
@@ -22,4 +32,35 @@ export function getThreadUrl( connectionId: number, postUri: string ): string | 
 		return null;
 	}
 	return `/reader/atmosphere/${ connectionId }/thread/${ did }/${ rkey }`;
+}
+
+// Bluesky handles: at least one dot; lowercase ASCII letters/digits/hyphens
+// per label; reject leading/trailing dots and uppercase.
+export const HANDLE_RE =
+	/^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)+$/;
+
+export interface ProfileRefInput {
+	did?: string | null;
+	handle?: string | null;
+}
+
+/**
+ * Build the in-app author profile URL for a connection. Returns null when
+ * neither handle nor DID validates — callers fall back to a bsky.app URL.
+ * Handle is preferred over DID for URL readability.
+ */
+export function getProfileUrl( connectionId: number, ref: ProfileRefInput ): string | null {
+	if ( ! Number.isFinite( connectionId ) || connectionId <= 0 ) {
+		return null;
+	}
+	const handle = ref.handle?.trim() ?? '';
+	const did = ref.did?.trim() ?? '';
+
+	if ( handle && HANDLE_RE.test( handle ) ) {
+		return `/reader/atmosphere/${ connectionId }/profile/${ encodeURIComponent( handle ) }`;
+	}
+	if ( did && DID_RE.test( did ) ) {
+		return `/reader/atmosphere/${ connectionId }/profile/${ encodeURIComponent( did ) }`;
+	}
+	return null;
 }

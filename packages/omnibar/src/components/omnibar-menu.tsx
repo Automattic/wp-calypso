@@ -45,14 +45,11 @@ function OmnibarDropdownContent( { nodes }: { nodes: OmnibarNode[] } ) {
 }
 
 export function OmnibarMenu( { node }: { node: OmnibarNode } ) {
+	const label = node.title || node.label || '';
+
 	if ( ! node.children ) {
 		return (
-			<Button
-				className="omnibar__menu"
-				href={ node.href }
-				onClick={ node.onClick }
-				label={ node.title }
-			>
+			<Button className="omnibar__menu" href={ node.href } onClick={ node.onClick } label={ label }>
 				<OmnibarNodeContent node={ node } />
 			</Button>
 		);
@@ -62,7 +59,7 @@ export function OmnibarMenu( { node }: { node: OmnibarNode } ) {
 		<DropdownMenu
 			className="omnibar__dropdown"
 			icon={ null }
-			label={ node.title }
+			label={ label }
 			popoverProps={ { className: 'omnibar__popover', offset: 0 } }
 			toggleProps={ {
 				className: 'omnibar__menu',
