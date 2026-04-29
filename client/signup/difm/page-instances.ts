@@ -25,8 +25,6 @@ import {
 	CASE_STUDIES_PAGE,
 	CUSTOM_PAGE,
 	SHOP_PAGE,
-	SUPPORT_BLOG_PAGE,
-	SUPPORT_SHOP_PAGE,
 } from './constants';
 import type { PageId } from './constants';
 
@@ -42,8 +40,6 @@ export const SINGLE_ONLY_PAGE_TYPES: PageId[] = [
 	CONTACT_PAGE,
 	BLOG_PAGE,
 	NEWSLETTER_PAGE,
-	SUPPORT_SHOP_PAGE,
-	SUPPORT_BLOG_PAGE,
 ];
 
 /** Display order for page types. Custom last. Store flow inserts SHOP_PAGE after HOME. */
@@ -65,8 +61,6 @@ export const PAGE_TYPE_ORDER: PageId[] = [
 	DONATE_PAGE,
 	NEWSLETTER_PAGE,
 	CASE_STUDIES_PAGE,
-	SUPPORT_SHOP_PAGE,
-	SUPPORT_BLOG_PAGE,
 	CUSTOM_PAGE,
 ];
 

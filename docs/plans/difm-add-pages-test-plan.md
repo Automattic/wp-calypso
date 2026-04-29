@@ -10,7 +10,6 @@ Test plan for the DIFM page-instances / custom-pages change: PR verification (au
 - **Store flow (`do-it-for-me-store`):** **Shop** is **required** and **cannot be deselected** (same as Home). Clicks on those tiles do nothing by design.
 - **Multiple Custom pages:** Use **Add a Custom Page** to add extra Custom instances; each can be removed individually.
 - **Only one tile per non-Custom type** in the grid — you **cannot** pick two separate “Services” rows from the picker (no duplicate non-Custom instances). Scenarios below use **at most one** of each standard type plus **3× Custom** where needed.
-- **Support session (A8C + HE):** Extra tiles **Custom Blog Page** and **Custom Shop Page** appear only when a support session is active **and** reader teams have loaded (Calypso fetches teams on this step so Automattician detection works). **Custom Shop Page** appears only in **non-store** flows (store flow uses the regular **Shop** row instead).
 - **Not in the picker (by design):** **Careers** and **Case Studies** were removed from the grid per product guidance; they are **not** selectable in these manual tests.
 
 ## Progress (manual QA)
@@ -31,8 +30,7 @@ Test plan for the DIFM page-instances / custom-pages change: PR verification (au
 | **Assemblers** | `buildDIFMCartExtrasObject` sends `selected_page_instances` when provided; `selected_page_titles` still derived/sent. | Extend `client/state/difm/test/assemblers.ts`: add a test with `selectedPageInstances` and assert `selected_page_instances` in the output. |
 | **Website content** | When `selectedPageInstances` exists, one PageData per instance (by `instance.id`); custom pages get distinct title/content. | `client/state/signup/steps/website-content` reducer/actions tests: assert generated pages match instances and custom titles. |
 | **Page picker** | Selection state (toggles + custom adds) is saved and passed to the next step; defaults for Premium vs Store flow include required Home (and Shop in store). | Page-picker tests: assert initial state and that submit sends `selectedPageInstances` with correct length and types. |
-| **Blog + Shop** | **Blog:** toggle on/off (at most one). **Shop (store):** always present, not toggled off. **Support Custom Blog/Shop:** visible only with A8C + support session + teams loaded; toggle like other optional types (non-store only for Custom Shop). | Integration or manual checks on `client/signup/steps/page-picker/index.tsx` behavior. |
-| **Support custom rows** | `SUPPORT_SHOP_PAGE` / `SUPPORT_BLOG_PAGE` serialize in `selectedPageTitles` / `selectedPageInstances` when selected. | Assert payload shape when tiles are selected in a support session. |
+| **Blog + Shop** | **Blog:** toggle on/off (at most one). **Shop (store):** always present, not toggled off. | Integration or manual checks on `client/signup/steps/page-picker/index.tsx` behavior. |
 
 **Note:** If `client/lib/signup/step-actions/index.js` still uses `dependencies.selectedPageTitles.length` for `cartItem.quantity`, it should use **page instances** for pricing (e.g. `dependencies.selectedPageInstances?.length ?? dependencies.selectedPageTitles?.length ?? 0`). Add a unit test that covers the instances path.
 
@@ -46,7 +44,7 @@ Test plan for the DIFM page-instances / custom-pages change: PR verification (au
 
 ---
 
-## Part 2: Manual QA scenarios (four tests + one support-session add-on)
+## Part 2: Manual QA scenarios (four tests + optional add-ons)
 
 You run **four** manual tests: three **paid** (Premium, Business, E-commerce) and one **free** (Express + coupon). **All four tests** use the page picker and content form; only the free test uses a coupon so no credits are spent.
 
@@ -192,28 +190,7 @@ You run **four** manual tests: three **paid** (Premium, Business, E-commerce) an
 
 ---
 
-### Test 5 (add-on): Support session for Custom Blog/Shop rows
-
-This test validates support-only rows that are not expected in regular customer sessions.
-
-- **Session:** A8C team member + support session enabled.
-- **Flow:** Run once in **non-store** (Custom Shop + Custom Blog available) and once in **store** (Custom Blog only; regular **Shop** is the store row).
-- **Goal:** Validate visibility and toggling for:
-  - `SUPPORT_SHOP_PAGE` (Custom Shop Page) — **non-store only**
-  - `SUPPORT_BLOG_PAGE` (Custom Blog Page)
-
-**Checklist:** [ ] Rows appear only when support session + Automattician detection are active. [ ] Click tiles to select/deselect (same grid rules as other optional types). [ ] Selected values persist and round-trip through dependencies/payloads. [ ] Non-support session hides both rows.
-
-**If the tiles do not show or clicks do nothing:**
-
-- Confirm **Redux** support session is active (support user boot should run after refresh; `sessionStorage` / support flow must restore the session).
-- **Automattician:** reader **teams** must load — wait a moment after opening the page picker, or refresh once; tiles depend on `isA8cTeamMember`.
-- **Custom Shop:** only appears in **non-store** DIFM flows; in **store** flow use the normal **Shop** row and only **Custom Blog Page** as the extra support row.
-- If you are logged in as the customer (not SU), or teams never load, the support-only tiles stay hidden.
-
----
-
-### Test 6 (quick add-on): Blog RC verification
+### Test 5 (quick add-on): Blog RC verification
 
 Run one quick sanity check using the **Blog RC** Calypso tool after DIFM form submission.
 
@@ -225,7 +202,7 @@ Run one quick sanity check using the **Blog RC** Calypso tool after DIFM form su
 
 ---
 
-### Test 7 (quick add-on): Mobile picker sanity check
+### Test 6 (quick add-on): Mobile picker sanity check
 
 Quick mobile validation only; do not block release on this.
 
@@ -240,6 +217,6 @@ Quick mobile validation only; do not block release on this.
 ## Summary
 
 - **UI:** Thumbnail grid with toggles; **no stepper**; **Home** always on; **Shop** required and locked in store flow; multiple pages only via **Custom** repeats.
-- **Page coverage:** Tests 1–4 cover the picker’s standard types (Careers and Case Studies are **not** in the grid) plus **3× Custom** per test. Test 5 covers support-only Custom Blog/Shop rows.
-- **Extra validation:** Test 6 adds a quick Blog RC content-creation check; Test 7 adds a quick mobile picker sanity check (non-blocking).
+- **Page coverage:** Tests 1–4 cover the picker’s standard types (Careers and Case Studies are **not** in the grid) plus **3× Custom** per test.
+- **Extra validation:** Test 5 adds a quick Blog RC content-creation check; Test 6 adds a quick mobile picker sanity check (non-blocking).
 - **Manual QA progress:** Tests **1–3** done; **Test 4** in progress.

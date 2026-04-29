@@ -18,8 +18,6 @@ export const PRICING_PAGE = 'PRICING_PAGE';
 export const TEAM_PAGE = 'TEAM_PAGE';
 export const SHOP_PAGE = 'SHOP_PAGE';
 export const CUSTOM_PAGE = 'CUSTOM_PAGE';
-export const SUPPORT_SHOP_PAGE = 'SUPPORT_SHOP_PAGE';
-export const SUPPORT_BLOG_PAGE = 'SUPPORT_BLOG_PAGE';
 export const CAREERS_PAGE = 'CAREERS_PAGE';
 export const EVENTS_PAGE = 'EVENTS_PAGE';
 export const DONATE_PAGE = 'DONATE_PAGE';
@@ -41,8 +39,6 @@ export type PageId =
 	| typeof TEAM_PAGE
 	| typeof SHOP_PAGE
 	| typeof CUSTOM_PAGE
-	| typeof SUPPORT_SHOP_PAGE
-	| typeof SUPPORT_BLOG_PAGE
 	| typeof CAREERS_PAGE
 	| typeof EVENTS_PAGE
 	| typeof DONATE_PAGE

@@ -5,7 +5,7 @@
 Refactor the Express Website (DIFM) page-picker and website-content flow so that:
 
 - Every selected page is a **unique instance** (Option A: unique ID per instance).
-- **Single-only** types (no − / +): Home, Contact, Blog, Newsletter, and the support-only “Custom Shop / Custom Blog” rows when that UI is enabled (see §2). **Shop** is store-flow-only and always a single row when present.
+- **Single-only** types (no − / +): Home, Contact, Blog, Newsletter. **Shop** is store-flow-only and always a single row when present.
 - **Multi-add** types use **− / +** steppers; multiplicity is shown by the **count**, not by changing the row label.
 - Row **labels** use existing **`useTranslatedPageTitles()`** strings (e.g. “Services”, “Photo Gallery”, “Events”)—not a “singular (s)” suffix pattern.
 - **Custom page** remains the **last** row in the ordered list.
@@ -49,8 +49,6 @@ Order below follows **`PAGE_TYPE_ORDER`** in `client/signup/difm/page-instances.
 | Donate | `DONATE_PAGE` | Yes | Donate | − / + |
 | Newsletter | `NEWSLETTER_PAGE` | No | Newsletter | |
 | Case studies | `CASE_STUDIES_PAGE` | Yes | Case Studies | − / + |
-| Custom Shop Page | `SUPPORT_SHOP_PAGE` | No | Custom Shop Page | **A8C team + support session** only |
-| Custom Blog Page | `SUPPORT_BLOG_PAGE` | No | Custom Blog Page | **A8C team + support session** only |
 | **Custom page** | `CUSTOM_PAGE` | Yes | Custom Page | **Last**; − / +; per-instance **title** field in UI state |
 
 ---
