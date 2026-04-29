@@ -941,6 +941,7 @@ export default function CheckoutMainContent( {
 						is100YearPlanTermsAccepted={ is100YearPlanTermsAccepted }
 						setIs100YearPlanTermsAccepted={ setIs100YearPlanTermsAccepted }
 						isSubmitted={ isSubmitted }
+						isLargeViewport={ isLargeViewport }
 					/>
 					{ isLargeViewport ? (
 						<PortaledCheckoutFormSubmit validateForm={ validateForm } />
@@ -1676,12 +1677,14 @@ function CheckoutTermsAndCheckboxes( {
 	is100YearPlanTermsAccepted,
 	setIs100YearPlanTermsAccepted,
 	isSubmitted,
+	isLargeViewport,
 }: {
 	is3PDAccountConsentAccepted: boolean;
 	setIs3PDAccountConsentAccepted: ( isAccepted: boolean ) => void;
 	is100YearPlanTermsAccepted: boolean;
 	setIs100YearPlanTermsAccepted: ( isAccepted: boolean ) => void;
 	isSubmitted: boolean;
+	isLargeViewport: boolean;
 } ) {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
@@ -1698,9 +1701,10 @@ function CheckoutTermsAndCheckboxes( {
 			{
 				// Keep the inline legal block above the consent checkbox so
 				// "I have read and agree to all of the above" still refers to
-				// something visible. For carts without a consent checkbox the
-				// same text is reachable via the sidebar's Read more modal.
-				needsConsentCheckbox && <BeforeSubmitCheckoutHeader />
+				// something visible. On desktop without a consent checkbox the
+				// same text is reachable via the sidebar's Read more modal;
+				// mobile has no sidebar modal, so always render it inline.
+				( ! isLargeViewport || needsConsentCheckbox ) && <BeforeSubmitCheckoutHeader />
 			}
 
 			{ hasMarketplaceProduct && (
