@@ -67,17 +67,43 @@ export interface SocialEmbedExternal {
 }
 
 // Sources differ on what metadata travels with a tombstone — atmosphere's
-// AtmosphereQuoteBlockedTombstone carries an `author` ActorRef, the older
-// wire shape included a redundant `reason` lower-case mirror of `type`,
-// and Mastodon today carries neither. Both are optional so per-protocol
-// mappers preserve what they have without forcing every consumer to handle
-// every shape.
+// AtmosphereQuoteBlockedTombstone carries an `author` ActorRef (with `did`),
+// the older wire shape included a redundant `reason` lower-case mirror of
+// `type`, and Mastodon today carries neither. Optional fields preserve
+// protocol-specific data without forcing consumers to handle every shape.
 export interface SocialQuoteTombstone {
 	type: 'not_found' | 'blocked';
 	uri: string;
 	reason?: 'notfound' | 'blocked';
 	author?: { did?: string; id?: string; handle?: string };
 }
+
+export interface SocialThreadPostNode {
+	type: 'post';
+	post: SocialPost;
+	parent: SocialThreadNode | null;
+	replies: SocialThreadNode[];
+}
+
+// Split into two interfaces (rather than `type: 'not_found' | 'blocked'`)
+// so TypeScript can narrow each kind out of the union independently
+// when consumers handle them separately.
+export interface SocialThreadNotFoundNode {
+	type: 'not_found';
+	uri: string;
+}
+
+export interface SocialThreadBlockedNode {
+	type: 'blocked';
+	uri: string;
+}
+
+export type SocialThreadTombstoneNode = SocialThreadNotFoundNode | SocialThreadBlockedNode;
+
+export type SocialThreadNode =
+	| SocialThreadPostNode
+	| SocialThreadNotFoundNode
+	| SocialThreadBlockedNode;
 
 export interface SocialEmbedQuote {
 	type: 'quote';
@@ -101,8 +127,12 @@ export type SocialEmbed =
 
 export interface SocialContentWarning {
 	// Mastodon's content-warning text. Empty string means "marked
-	// sensitive but no specific reason given" — the post-card body
-	// still hides content behind a generic "Sensitive content" gate.
+	// Mastodon decouples these two fields:
+	//   - spoiler_text non-empty -> the whole post is behind a content-warning
+	//     gate (text + media hidden until the user clicks "Show content").
+	//   - sensitive: true -> media should be blurred but the post still renders.
+	// A post can be sensitive without spoiler_text (NSFW media, no CW reason),
+	// or have a spoiler_text without being marked sensitive (text-only spoiler).
 	spoiler_text: string;
 	sensitive: boolean;
 }

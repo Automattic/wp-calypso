@@ -3,6 +3,7 @@ import {
 	completeMastodonConnection,
 	getMastodonConnection,
 	getMastodonConnections,
+	getMastodonThread,
 	getMastodonTimeline,
 	readerMastodonKeys,
 } from '@automattic/api-core';
@@ -25,6 +26,7 @@ import type {
 	MastodonConnectionsResponse,
 	MastodonCreateConnectionResponse,
 	MastodonError,
+	MastodonThreadResponse,
 	MastodonTimelinePage,
 } from '@automattic/api-core';
 
@@ -125,4 +127,32 @@ export const mastodonTimelineInfiniteQuery = ( connectionId: number ) =>
 
 export function useMastodonTimelineInfiniteQuery( connectionId: number ) {
 	return useInfiniteQuery( mastodonTimelineInfiniteQuery( connectionId ) );
+}
+
+export const mastodonThreadQueryOptions = ( connectionId: number, statusId: string ) =>
+	queryOptions< MastodonThreadResponse, MastodonError >( {
+		queryKey: readerMastodonKeys.thread( connectionId, statusId ),
+		queryFn: () => getMastodonThread( { connectionId, statusId } ),
+		enabled: connectionId > 0 && statusId.length > 0,
+		staleTime: 30_000,
+		gcTime: 5 * 60_000,
+		// Same retry posture as the timeline query: terminal errors
+		// fail fast; transient errors (rate-limited, upstream down)
+		// retry once with retry_after-aware backoff.
+		retry: ( failureCount, error ) => {
+			if ( error.kind === 'rate_limited' || error.kind === 'upstream_unavailable' ) {
+				return failureCount < 2;
+			}
+			return false;
+		},
+		retryDelay: ( _attempt, error ) => {
+			if ( error.kind === 'rate_limited' && error.retry_after !== undefined ) {
+				return Math.min( error.retry_after * 1000, 30_000 );
+			}
+			return 2_000;
+		},
+	} );
+
+export function useMastodonThreadQuery( connectionId: number, statusId: string ) {
+	return useQuery( mastodonThreadQueryOptions( connectionId, statusId ) );
 }

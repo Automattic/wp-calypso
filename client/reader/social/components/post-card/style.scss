@@ -3,6 +3,7 @@
 
 	// Inner anchors stay clickable above the timestamp ::after card-link overlay.
 	.social-post-card-header__author,
+	.social-post-card-header__reason-author,
 	.social-post-card-header__reply-context-link,
 	.social-post-card-counts__link,
 	.social-post-card-embed-external,
@@ -10,10 +11,40 @@
 	.social-post-card-embed-images__item,
 	.social-post-card-embed-audio,
 	.social-post-card-embed-gifv,
-	.social-post-card-content-warning .components-button {
+	.social-post-card-content-warning .components-button,
+	.social-post-card-embed-sensitive .components-button {
 		position: relative;
 		z-index: 1;
 	}
+}
+
+// Sensitive-media blur: the inner embed renders as usual but is blurred
+// out, with a centered "Show sensitive media" button overlaid.
+.social-post-card-embed-sensitive {
+	position: relative;
+	margin-top: 8px;
+	border-radius: 8px;
+	overflow: hidden;
+}
+
+.social-post-card-embed-sensitive__blur {
+	filter: blur( 24px );
+	pointer-events: none;
+
+	// Cancel the default block-start margin of the inner embed since the
+	// wrapper provides its own margin-top above.
+	> * {
+		margin-top: 0;
+	}
+}
+
+.social-post-card-embed-sensitive__cover {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: rgba( 0, 0, 0, 0.25 );
 }
 
 // Override the @wordpress/components Card defaults (7px radius + 1px

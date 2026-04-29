@@ -9,6 +9,7 @@ import React, { useMemo, useState, ComponentType, useEffect, useCallback } from 
 import { useSelector } from 'react-redux';
 import { AnyAction } from 'redux';
 import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/connected';
+import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
 import wpcom from 'calypso/lib/wp';
 import { trackScrollPage } from 'calypso/reader/controller-helper';
 import { READER_ONBOARDING_TRACKS_EVENT_PREFIX } from 'calypso/reader/onboarding/constants';
@@ -23,7 +24,6 @@ import {
 	clearStream,
 	requestPaginatedStream,
 } from 'calypso/state/reader/streams/actions';
-import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 import SubscribeVerificationNudge from './verificationNudge';
 
 import './style.scss';
@@ -63,11 +63,12 @@ interface StreamProps {
 const TypedStream: ComponentType< StreamProps > = Stream as ComponentType< StreamProps >;
 
 const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) => {
-	const followedTags = useSelector( getReaderFollowedTags );
+	const { data: followedTags } = useFollowedReaderTags();
 
-	const followedTagSlugs = useMemo( () => {
-		return ( followedTags || [] ).map( ( tag ) => tag.slug );
-	}, [ followedTags ] );
+	const followedTagSlugs = useMemo(
+		() => followedTags?.map( ( tag ) => tag.slug ) ?? [],
+		[ followedTags ]
+	);
 
 	const promptVerification = ! useSelector( isCurrentUserEmailVerified );
 

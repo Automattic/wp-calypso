@@ -86,14 +86,14 @@ describe( 'mastodon fetchers', () => {
 		expect( result.counts.posts ).toBe( 0 );
 	} );
 
-	it( 'getMastodonConnections classifies unknown errors', async () => {
+	it( 'getMastodonConnections classifies 401 as auth_required', async () => {
 		nock( BASE ).get( '/wpcom/v2/reader/mastodon/connections' ).reply( 401, {
 			error: 'not_authenticated',
 			message: '',
 			statusCode: 401,
 			status: 401,
 		} );
-		await expect( getMastodonConnections() ).rejects.toMatchObject( { kind: 'unknown' } );
+		await expect( getMastodonConnections() ).rejects.toMatchObject( { kind: 'auth_required' } );
 	} );
 } );
 

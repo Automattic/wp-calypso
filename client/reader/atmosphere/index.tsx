@@ -7,6 +7,7 @@ import {
 	atmosphereLanding,
 	atmosphereConnect,
 	atmosphereIdRedirect,
+	atmosphereProfile,
 	atmosphereThread,
 	atmosphereAccount,
 } from './controller';
@@ -34,6 +35,14 @@ export default function () {
 		sidebar,
 		setBeforePrimary,
 		atmosphereThread,
+		makeLayout,
+		clientRender
+	);
+	page(
+		'/reader/atmosphere/:id(\\d+)/profile/:actor',
+		sidebar,
+		setBeforePrimary,
+		atmosphereProfile,
 		makeLayout,
 		clientRender
 	);

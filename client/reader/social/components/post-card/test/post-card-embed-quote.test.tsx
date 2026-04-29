@@ -35,7 +35,7 @@ describe( 'PostCardEmbedQuote', () => {
 			<PostCardEmbedQuote
 				embed={ {
 					type: 'quote',
-					post: { type: 'not_found', uri: 'at://x', reason: 'notfound' },
+					post: { type: 'not_found', uri: 'at://x' },
 				} }
 				parentPostUri="at://parent"
 			/>
@@ -48,7 +48,7 @@ describe( 'PostCardEmbedQuote', () => {
 			<PostCardEmbedQuote
 				embed={ {
 					type: 'quote',
-					post: { type: 'blocked', uri: 'at://y', reason: 'blocked' },
+					post: { type: 'blocked', uri: 'at://y' },
 				} }
 				parentPostUri="at://parent"
 			/>

@@ -38,7 +38,10 @@ export function SocialPostCard( {
 	const showEmbed = post.embed && ( ! isCompact || ! isQuoteEmbed );
 
 	const cw = post.content_warning;
-	const cwActive = Boolean( cw?.sensitive );
+	// Whole-post CW gate fires when spoiler_text is set. Bare `sensitive`
+	// (no spoiler) gates only the media embed (handled inside PostCardEmbed
+	// via the `sensitive` prop) so the body still renders.
+	const cwGate = cw && cw.spoiler_text ? cw : null;
 
 	const bodyAndEmbed: ReactNode = (
 		<>
@@ -49,6 +52,8 @@ export function SocialPostCard( {
 					parentPostUri={ post.uri }
 					expandedVideo={ expandedVideo }
 					compact={ isCompact }
+					// Bare `sensitive` (no whole-post CW) blurs the media.
+					sensitive={ ! cwGate && Boolean( cw?.sensitive ) }
 				/>
 			) }
 		</>
@@ -62,8 +67,8 @@ export function SocialPostCard( {
 					variant={ variant }
 					prominentTimestamp={ showProminentTimestamp }
 				/>
-				{ cwActive && cw ? (
-					<ContentWarningGate warning={ cw }>{ bodyAndEmbed }</ContentWarningGate>
+				{ cwGate ? (
+					<ContentWarningGate warning={ cwGate }>{ bodyAndEmbed }</ContentWarningGate>
 				) : (
 					bodyAndEmbed
 				) }
@@ -84,9 +89,9 @@ export function SocialPostCard( {
 }
 
 // Gates BOTH the post body (text) and any media embed behind a "Show
-// content" button when the post is flagged sensitive. Matches native
-// Mastodon clients — gating only text would leave NSFW images / videos
-// fully visible, which is a real safety regression.
+// content" button when the post carries a content-warning spoiler.
+// Used by the Mastodon spoiler_text path; bare `sensitive` media blurs
+// without triggering this gate (handled by PostCardEmbed instead).
 function ContentWarningGate( {
 	warning,
 	children,
@@ -101,15 +106,9 @@ function ContentWarningGate( {
 		return <>{ children }</>;
 	}
 
-	const label = warning.spoiler_text
-		? translate( 'Show content: %(reason)s', { args: { reason: warning.spoiler_text } } )
-		: translate( 'Show sensitive content' );
-
 	return (
 		<div className="social-post-card-content-warning">
-			{ warning.spoiler_text && (
-				<p className="social-post-card-content-warning__spoiler">{ warning.spoiler_text }</p>
-			) }
+			<p className="social-post-card-content-warning__spoiler">{ warning.spoiler_text }</p>
 			<Button
 				variant="secondary"
 				onClick={ ( e: React.MouseEvent ) => {
@@ -119,7 +118,7 @@ function ContentWarningGate( {
 					setRevealed( true );
 				} }
 			>
-				{ label }
+				{ translate( 'Show content' ) }
 			</Button>
 		</div>
 	);

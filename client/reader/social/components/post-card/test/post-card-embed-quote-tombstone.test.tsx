@@ -16,7 +16,6 @@ describe( 'PostCardEmbedQuoteTombstone', () => {
 				tombstone={ {
 					type: 'blocked',
 					uri: 'at://y',
-					author: { did: 'did:plc:blk' },
 				} }
 			/>
 		);

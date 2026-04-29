@@ -396,10 +396,7 @@ const PlansFeaturesMain = ( {
 	);
 
 	const {
-		isLoading: isLoadingDifferentiatorsExperiment,
 		showDifferentiatorHeader,
-		useFocusedComparisonFeatures,
-		useVar41MorePremiumFeatures,
 		useVar42NoAiFeatures,
 		showPricingDifferentiationFeaturePills,
 		useFocusedNewCopyTaglines,
@@ -483,8 +480,6 @@ const PlansFeaturesMain = ( {
 		isDomainOnlySite,
 		reflectStorageSelectionInPlanPrices: true,
 		isInSignup,
-		useFocusedComparisonFeatures,
-		useVar41MorePremiumFeatures,
 		useVar42NoAiFeatures,
 		showPricingDifferentiationFeaturePills,
 		useFocusedNewCopyTaglines,
@@ -513,8 +508,6 @@ const PlansFeaturesMain = ( {
 		isDomainOnlySite,
 		term,
 		reflectStorageSelectionInPlanPrices: true,
-		useFocusedComparisonFeatures,
-		useVar41MorePremiumFeatures,
 		useVar42NoAiFeatures,
 		showPricingDifferentiationFeaturePills,
 		useFocusedNewCopyTaglines,
@@ -746,8 +739,7 @@ const PlansFeaturesMain = ( {
 	const isPlansGridReady =
 		! isLoadingGridPlans &&
 		! resolvedSubdomainName.isLoading &&
-		! isRenewalPricingExperimentLoading &&
-		! isLoadingDifferentiatorsExperiment;
+		! isRenewalPricingExperimentLoading;
 
 	const isMobile = useMobileBreakpoint();
 	const enablePlanTypeSelectorStickyBehavior = isMobile && showPlanTypeSelectorDropdown;
@@ -795,12 +787,8 @@ const PlansFeaturesMain = ( {
 		featureGroupMapForFeaturesGrid = getWooExpressFeaturesGroupedForFeaturesGrid();
 	} else if ( intent === 'plans-wordpress-hosting' ) {
 		featureGroupMapForFeaturesGrid = getWordPressHostingFeaturesGroupedForFeaturesGrid();
-	} else if (
-		useFocusedComparisonFeatures ||
-		useVar41MorePremiumFeatures ||
-		useVar42NoAiFeatures
-	) {
-		// Experiment: stacked variants should render a single, ordered list (no grouping),
+	} else if ( useVar42NoAiFeatures ) {
+		// Stacked rollout variant should render a single, ordered list (no grouping),
 		// otherwise features get scattered across groups causing gaps and can be filtered out.
 		const featureGroups = getPlanFeaturesGroupedForFeaturesGrid();
 		featureGroupMapForFeaturesGrid = Object.fromEntries(
@@ -994,7 +982,6 @@ const PlansFeaturesMain = ( {
 										showSimplifiedBillingDescription={ isInSignup }
 										showBillingDescriptionForIncreasedRenewalPrice={ renewalPricingVariation }
 										isExperimentVariant={ isExperimentVariant }
-										useFocusedComparisonFeatures={ useFocusedComparisonFeatures }
 									/>
 								) }
 								{ showEscapeHatch && hidePlansFeatureComparison && viewAllPlansButton }
