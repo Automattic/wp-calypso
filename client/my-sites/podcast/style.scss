@@ -54,6 +54,34 @@ body.is-section-podcasting {
 	}
 }
 
+.podcast__card-title {
+	margin: 0;
+	font-size: 16px;
+	font-weight: 500;
+	line-height: 1.4;
+	color: var( --wpds-color-fg-content-neutral, #1e1e1e );
+}
+
+.podcast__settings {
+	max-inline-size: 760px;
+}
+
+.podcast__settings-cover-fields {
+	flex: 1;
+	min-inline-size: 0;
+}
+
+.podcast__settings-cover-row {
+	@media ( max-width: 600px ) {
+		flex-direction: column;
+		align-items: stretch !important;
+	}
+}
+
+.podcast__settings-actions {
+	padding-block-start: 8px;
+}
+
 // Plan cards: bordered surface, optional corner badge that sits flush with
 // the top edge, content stretches so feature list fills the remaining space.
 .podcast__plan-card {

@@ -15,18 +15,23 @@ import { getTerms } from 'calypso/state/terms/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import Distribution from './components/distribution';
 import Episodes from './components/episodes';
+import Settings from './components/settings';
 import Welcome from './components/welcome';
 import useAccessGate from './hooks/use-access-gate';
 
 import './style.scss';
 
-type PodcastSection = 'episodes' | 'distribution';
+type PodcastSection = 'episodes' | 'distribution' | 'settings';
 
 type PodcastMainProps = {
 	section?: string;
 };
 
-const VALID_SECTIONS: readonly PodcastSection[] = [ 'episodes', 'distribution' ] as const;
+const VALID_SECTIONS: readonly PodcastSection[] = [
+	'episodes',
+	'distribution',
+	'settings',
+] as const;
 
 const isValidSection = ( s: string | undefined ): s is PodcastSection =>
 	!! s && ( VALID_SECTIONS as readonly string[] ).includes( s );
@@ -92,7 +97,7 @@ const PodcastMain = ( { section }: PodcastMainProps ) => {
 			return;
 		}
 		const path = window.location.pathname;
-		const isSectionUrl = /^\/podcasting\/(episodes|distribution)(\/|$)/.test( path );
+		const isSectionUrl = /^\/podcasting\/(episodes|distribution|settings)(\/|$)/.test( path );
 		if ( showTabs && ! isSectionUrl ) {
 			window.history.replaceState( null, '', '/podcasting/episodes' + pathSuffix );
 		} else if ( ! showTabs && isSectionUrl ) {
@@ -110,6 +115,11 @@ const PodcastMain = ( { section }: PodcastMainProps ) => {
 			name: 'distribution' as const,
 			title: translate( 'Distribution' ) as string,
 			path: '/podcasting/distribution' + pathSuffix,
+		},
+		{
+			name: 'settings' as const,
+			title: translate( 'Settings' ) as string,
+			path: '/podcasting/settings' + pathSuffix,
 		},
 	];
 
@@ -163,6 +173,11 @@ const PodcastMain = ( { section }: PodcastMainProps ) => {
 				<Tabs.Panel value="distribution">
 					<div className="podcast__tab-content">
 						<Distribution />
+					</div>
+				</Tabs.Panel>
+				<Tabs.Panel value="settings">
+					<div className="podcast__tab-content">
+						<Settings />
 					</div>
 				</Tabs.Panel>
 			</Tabs.Root>

@@ -8,6 +8,7 @@ export default function () {
 	page( '/podcasting', siteSelection, sites, makeLayout, clientRender );
 	page( '/podcasting/episodes', siteSelection, sites, makeLayout, clientRender );
 	page( '/podcasting/distribution', siteSelection, sites, makeLayout, clientRender );
+	page( '/podcasting/settings', siteSelection, sites, makeLayout, clientRender );
 
 	page(
 		'/podcasting/:site_id',
@@ -20,7 +21,7 @@ export default function () {
 	);
 
 	page(
-		'/podcasting/:section(episodes|distribution)/:site_id',
+		'/podcasting/:section(episodes|distribution|settings)/:site_id',
 		siteSelection,
 		navigation,
 		siteSettings,
