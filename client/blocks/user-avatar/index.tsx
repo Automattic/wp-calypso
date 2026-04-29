@@ -41,6 +41,13 @@ export default function UserAvatar( { user, size = 32, hideHovercard = false }: 
 	);
 	// Using this to add a delay before showing the hovercard, to avoid it flashing when the user is just moving their mouse across the avatar.
 	const hoverTimerRef = useRef< ReturnType< typeof setTimeout > | null >( null );
+	// Resolve `wpcom_id` to a `user_login` via the existing query so the link works for
+	// commenters whose API response carries only `wpcom_id` (Highlander-authenticated commenters
+	// on Jetpack-connected sites). Enabled when the hovercard would prefetch anyway, or whenever
+	// we have a `wpcom_id` to resolve for link building.
+	const { data: fetchedWpcomUser } = useQuery(
+		userQuery( user?.wpcom_login, user?.wpcom_id, ! hideHovercard || !! user?.wpcom_id )
+	);
 	// Prefer the WPCOM Reader profile; fall back to the user's blog stream when only site_ID is
 	// available (common for commenters on Jetpack-connected sites without a wpcom_login). External
 	// URLs are intentionally not used here to keep navigation inside the Reader.
@@ -49,6 +56,8 @@ export default function UserAvatar( { user, size = 32, hideHovercard = false }: 
 		avatarLinkUrl = getUserProfileUrl( user.wpcom_login );
 	} else if ( user?.site_ID ) {
 		avatarLinkUrl = getSiteUrl( user.site_ID );
+	} else if ( user?.wpcom_id && fetchedWpcomUser?.user_login ) {
+		avatarLinkUrl = getUserProfileUrl( fetchedWpcomUser.user_login );
 	}
 	const name = user?.display_name || user?.name || '';
 	const avatarUrl = user?.avatar_URL ? getProcessedGravatarUrl( user.avatar_URL ) : null;
@@ -67,9 +76,6 @@ export default function UserAvatar( { user, size = 32, hideHovercard = false }: 
 	);
 	// Make the container focusable when there's no <a> child to receive focus, so keyboard users can trigger the hovercard.
 	const needsTabIndex = ! avatarLinkUrl && ! hideHovercard;
-
-	// Prefetching so that we can display WPCOM users Hovercards instantly, Gravatar lookups will be triggered on hover.
-	useQuery( userQuery( user?.wpcom_login, user?.wpcom_id, ! hideHovercard ) );
 
 	// Compute the placement of the hovercard based on available space in the viewport.
 	// This is done after we load the user data, so that we can take into account the height

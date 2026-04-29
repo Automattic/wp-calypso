@@ -1,7 +1,9 @@
 import './post-comment.scss';
+import { userQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Gridicon, TimeSince } from '@automattic/components';
+import { useQuery } from '@tanstack/react-query';
 import { Icon, external } from '@wordpress/icons';
 import { isURL, getAuthority, getProtocol } from '@wordpress/url';
 import clsx from 'clsx';
@@ -32,6 +34,48 @@ import PostCommentWithError from './post-comment-with-error';
 import PostTrackback from './post-trackback';
 
 const noop = () => {};
+
+// Renders the comment author name, optionally as a Reader-internal link.
+// When the synchronous `authorUrl` is missing but a `wpcomId` is available, resolves it to a
+// `user_login` via `userQuery` (which uses `find_by_id: true`) and builds `/reader/users/{login}`.
+// External URLs render the name as <strong> alongside the existing external-link icon.
+function AuthorTag( { authorName, authorUrl, wpcomId, commentId, className, onAuthorClick } ) {
+	const { data: fetchedUser } = useQuery(
+		userQuery( undefined, wpcomId, !! wpcomId && ! authorUrl )
+	);
+	const resolvedUrl =
+		authorUrl || ( fetchedUser?.user_login ? getUserProfileUrl( fetchedUser.user_login ) : null );
+	// Any path-relative URL is an internal Reader route (e.g. /reader/users/{login},
+	// /reader/blogs/{site_ID}). Anything else (https://...) is external.
+	const isExternalUrl = !! resolvedUrl && ! resolvedUrl.startsWith( '/' );
+
+	return resolvedUrl && ! isExternalUrl ? (
+		<a
+			href={ resolvedUrl }
+			className={ className }
+			onClick={ onAuthorClick }
+			id={ `comment-${ commentId }` }
+		>
+			{ authorName }
+		</a>
+	) : (
+		<strong className={ className } id={ `comment-${ commentId }` }>
+			{ authorName }
+
+			{ isExternalUrl && (
+				<a
+					className="comments__external-link"
+					href={ resolvedUrl }
+					target="_blank"
+					rel="noopener noreferrer"
+					aria-label={ translate( "Visit %(name)s's site", { args: { name: authorName } } ) }
+				>
+					<Icon icon={ external } size={ 18 } />
+				</a>
+			) }
+		</strong>
+	);
+}
 
 /**
  * A PostComment is the visual representation for a comment within a tree of comments.
@@ -328,40 +372,13 @@ class PostComment extends PureComponent {
 			commentAuthorUrl = [ commentAuthor?.URL, commentAuthor?.profile_URL ].find( isSafeHttpsUrl );
 		}
 
-		return { comment, commentAuthor, commentAuthorUrl, commentAuthorName };
-	};
-
-	renderAuthorTag = ( { authorName, authorUrl, commentId, className } ) => {
-		// Any path-relative URL is an internal Reader route (e.g. /reader/users/{login},
-		// /reader/blogs/{site_ID}). Anything else (https://...) is external.
-		const isExternalUrl = !! authorUrl && ! authorUrl.startsWith( '/' );
-
-		return authorUrl && ! isExternalUrl ? (
-			<a
-				href={ authorUrl }
-				className={ className }
-				onClick={ this.handleAuthorClick }
-				id={ `comment-${ commentId }` }
-			>
-				{ authorName }
-			</a>
-		) : (
-			<strong className={ className } id={ `comment-${ commentId }` }>
-				{ authorName }
-
-				{ isExternalUrl && (
-					<a
-						className="comments__external-link"
-						href={ authorUrl }
-						target="_blank"
-						rel="noopener noreferrer"
-						aria-label={ translate( "Visit %(name)s's site", { args: { name: authorName } } ) }
-					>
-						<Icon icon={ external } size={ 18 } />
-					</a>
-				) }
-			</strong>
-		);
+		return {
+			comment,
+			commentAuthor,
+			commentAuthorUrl,
+			commentAuthorName,
+			wpcomId: commentAuthor?.wpcom_id,
+		};
 	};
 
 	onReadMore = () => {
@@ -443,9 +460,16 @@ class PostComment extends PureComponent {
 
 		// Author Details
 		const parentCommentId = get( comment, 'parent.ID' );
-		const { commentAuthorUrl, commentAuthorName } = this.getAuthorDetails( commentId );
-		const { commentAuthorUrl: parentAuthorUrl, commentAuthorName: parentAuthorName } =
-			this.getAuthorDetails( parentCommentId );
+		const {
+			commentAuthorUrl,
+			commentAuthorName,
+			wpcomId: commentAuthorWpcomId,
+		} = this.getAuthorDetails( commentId );
+		const {
+			commentAuthorUrl: parentAuthorUrl,
+			commentAuthorName: parentAuthorName,
+			wpcomId: parentAuthorWpcomId,
+		} = this.getAuthorDetails( parentCommentId );
 
 		// highlight comments not older than 10s
 		const isHighlighted =
@@ -462,21 +486,25 @@ class PostComment extends PureComponent {
 				<div className="comments__comment-author">
 					<UserAvatar user={ comment.author } />
 
-					{ this.renderAuthorTag( {
-						authorUrl: commentAuthorUrl,
-						authorName: commentAuthorName,
-						commentId,
-						className: 'comments__comment-username',
-					} ) }
+					<AuthorTag
+						authorUrl={ commentAuthorUrl }
+						authorName={ commentAuthorName }
+						wpcomId={ commentAuthorWpcomId }
+						commentId={ commentId }
+						className="comments__comment-username"
+						onAuthorClick={ this.handleAuthorClick }
+					/>
 					{ this.props.showNestingReplyArrow && parentAuthorName && (
 						<span className="comments__comment-respondee">
 							<Gridicon icon="chevron-right" size={ 16 } />
-							{ this.renderAuthorTag( {
-								className: 'comments__comment-respondee-link',
-								authorName: parentAuthorName,
-								authorUrl: parentAuthorUrl,
-								commentId: parentCommentId,
-							} ) }
+							<AuthorTag
+								className="comments__comment-respondee-link"
+								authorName={ parentAuthorName }
+								authorUrl={ parentAuthorUrl }
+								wpcomId={ parentAuthorWpcomId }
+								commentId={ parentCommentId }
+								onAuthorClick={ this.handleAuthorClick }
+							/>
 						</span>
 					) }
 					<div className="comments__comment-timestamp">

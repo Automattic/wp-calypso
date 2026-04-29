@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import { UserResponse } from '@automattic/api-core';
+import { useQuery } from '@tanstack/react-query';
 import { render, screen, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import UserAvatar, { UserAvatarInfo } from '../index';
@@ -10,6 +11,8 @@ jest.mock( '@tanstack/react-query', () => ( {
 	...jest.requireActual( '@tanstack/react-query' ),
 	useQuery: jest.fn(),
 } ) );
+
+const mockedUseQuery = useQuery as jest.MockedFunction< typeof useQuery >;
 
 let capturedOnUserLoaded: ( ( user: UserResponse | null ) => void ) | undefined;
 
@@ -41,6 +44,8 @@ describe( 'UserAvatar', () => {
 	beforeEach( () => {
 		jest.useFakeTimers();
 		jest.clearAllMocks();
+		// Default: no resolved user data. Individual tests override as needed.
+		mockedUseQuery.mockReturnValue( { data: undefined } as ReturnType< typeof useQuery > );
 	} );
 
 	afterEach( () => {
@@ -100,8 +105,47 @@ describe( 'UserAvatar', () => {
 		expect( link ).toHaveAttribute( 'href', '/reader/users/testuser' );
 	} );
 
-	test( 'does not wrap avatar in link when neither wpcom_login nor site_ID is provided', () => {
-		render( <UserAvatar user={ { ...defaultUser, wpcom_login: undefined } } /> );
+	test( 'falls back to wpcom_id-resolved login when wpcom_login and site_ID are missing', () => {
+		mockedUseQuery.mockReturnValue( {
+			data: { user_login: 'resolveduser' },
+		} as ReturnType< typeof useQuery > );
+
+		render(
+			<UserAvatar
+				user={ { ...defaultUser, wpcom_login: undefined, site_ID: undefined, wpcom_id: 42 } }
+			/>
+		);
+
+		const link = document.querySelector( '.user-avatar a' );
+		expect( link ).toHaveAttribute( 'href', '/reader/users/resolveduser' );
+	} );
+
+	test( 'prefers wpcom_login over wpcom_id when both are present', () => {
+		mockedUseQuery.mockReturnValue( {
+			data: { user_login: 'resolveduser' },
+		} as ReturnType< typeof useQuery > );
+
+		render( <UserAvatar user={ { ...defaultUser, wpcom_id: 42 } } /> );
+
+		const link = document.querySelector( '.user-avatar a' );
+		expect( link ).toHaveAttribute( 'href', '/reader/users/testuser' );
+	} );
+
+	test( 'does not wrap avatar in link when wpcom_id is present but resolution has not loaded', () => {
+		// useQuery still returns { data: undefined } (default mock).
+		render(
+			<UserAvatar
+				user={ { ...defaultUser, wpcom_login: undefined, site_ID: undefined, wpcom_id: 42 } }
+			/>
+		);
+
+		expect( document.querySelector( '.user-avatar a' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'does not wrap avatar in link when no identifying field is provided', () => {
+		render(
+			<UserAvatar user={ { ...defaultUser, wpcom_login: undefined, wpcom_id: undefined } } />
+		);
 
 		expect( document.querySelector( '.user-avatar a' ) ).not.toBeInTheDocument();
 	} );
