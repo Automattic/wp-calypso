@@ -52,7 +52,7 @@ import { getTrialCheckoutUrl } from 'calypso/lib/trials/get-trial-checkout-url';
 import { managePurchase } from 'calypso/me/purchases/paths';
 import UpcomingRenewalsDialog from 'calypso/me/purchases/upcoming-renewals/upcoming-renewals-dialog';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { willAtomicSiteRevertAfterPurchaseDeactivation } from 'calypso/state/purchases/selectors';
 import { getAddNewPaymentMethodPath } from '../utils';
 import type { SiteDetails } from '@automattic/data-stores';
 import type {
@@ -83,7 +83,7 @@ export interface PurchaseNoticeProps {
 
 export interface PurchaseNoticeConnectedProps {
 	recordTracksEvent: typeof recordTracksEvent;
-	isAtomicSite?: boolean;
+	willAtomicSiteRevert?: boolean;
 }
 
 interface MomentProps {
@@ -165,7 +165,7 @@ class PurchaseNotice extends Component<
 	 * refresh / back-navigation falls through to the regular notices.
 	 */
 	renderCancelledRedirectNotice() {
-		const { purchase, translate, moment, isAtomicSite } = this.props;
+		const { purchase, translate, moment, willAtomicSiteRevert } = this.props;
 		if (
 			! config.isEnabled( 'purchases/split-cancel-remove' ) ||
 			! this.state.showCancelledRedirectNotice ||
@@ -174,7 +174,7 @@ class PurchaseNotice extends Component<
 			return null;
 		}
 		const expiryDate = moment( purchase.expiryDate ).format( 'LL' );
-		if ( isAtomicSite ) {
+		if ( willAtomicSiteRevert ) {
 			const exportUrl = `https://${ purchase.domain }/wp-admin/export.php`;
 			return (
 				<Notice
@@ -1449,7 +1449,10 @@ class PurchaseNotice extends Component<
 }
 
 const mapStateToProps = ( state: object, ownProps: PurchaseNoticeProps ) => ( {
-	isAtomicSite: isSiteAutomatedTransfer( state, ownProps.purchase?.siteId ?? null ),
+	willAtomicSiteRevert: willAtomicSiteRevertAfterPurchaseDeactivation(
+		state,
+		ownProps.purchase?.id
+	),
 } );
 
 export default connect( mapStateToProps, { recordTracksEvent } )(
