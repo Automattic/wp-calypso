@@ -144,6 +144,7 @@ declare global {
 				challengeContainer: string | HTMLElement;
 				onChallengeStart?: () => void;
 				onChallengeComplete?: () => void;
+				onChallengeFailure?: ( reason: 'timeout' | 'exhausted' ) => void;
 			} ) => void;
 			collect: () => Promise< string | { sessionId: string } >;
 			getSessionId: () => Promise< string >;

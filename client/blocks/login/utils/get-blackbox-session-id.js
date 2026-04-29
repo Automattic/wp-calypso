@@ -20,7 +20,7 @@ export async function getBlackboxSessionId() {
 	try {
 		await Promise.race( [
 			loadBlackboxSdk(),
-			new Promise( ( resolve ) => setTimeout( resolve, 2000 ) ),
+			new Promise( ( resolve ) => setTimeout( resolve, 5000 ) ),
 		] );
 	} catch {
 		// loadBlackboxSdk() always resolves, but guard here in case that contract changes.
@@ -34,7 +34,7 @@ export async function getBlackboxSessionId() {
 	try {
 		const result = await Promise.race( [
 			window.Blackbox.collect(),
-			new Promise( ( resolve ) => setTimeout( resolve, 2000 ) ),
+			new Promise( ( resolve ) => setTimeout( resolve, 5000 ) ),
 		] );
 
 		if ( typeof result === 'string' ) {

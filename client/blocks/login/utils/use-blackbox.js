@@ -47,6 +47,11 @@ export function useBlackbox( { containerRef } ) {
 							setIsChallengeActive( false );
 						}
 					},
+					onChallengeFailure: () => {
+						if ( ! cancelled ) {
+							setIsChallengeActive( false );
+						}
+					},
 				} );
 
 				if ( hasConfiguredOnce && typeof window.Blackbox.reset === 'function' ) {
