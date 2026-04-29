@@ -365,11 +365,13 @@ const PodcastingSettingsForm = ( {
 					<div className="podcast__settings-readiness">
 						<NoticeBanner
 							level="warning"
-							title={ translate( 'Finish setting up your feed' ) as string }
+							title={ translate( 'Almost ready to submit' ) as string }
 							hideCloseButton
 						>
 							<p>
-								{ translate( 'Address these before you submit your feed to podcast directories:' ) }
+								{ translate(
+									'Podcast apps like Apple Podcasts and Spotify need this information so they can list your show in their directories and show it to listeners. Add the following to your feed:'
+								) }
 							</p>
 							<ul className="podcast__settings-issues">
 								{ submissionIssues.map( ( issue ) => (
