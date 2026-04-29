@@ -3,13 +3,18 @@
 	margin-bottom: 24px;
 }
 
-.card.promo-card.checkout-sidebar-plan-upsell {
+.promo-card.checkout-sidebar-plan-upsell {
 	padding: 24px;
-	background: #fff;
-	border-radius: 3px;
-	box-shadow:
-		0 3px 1px rgba(0, 0, 0, 0.04),
-		0 3px 8px rgba(0, 0, 0, 0.12);
+}
+
+@media (min-width: 961px) {
+	.card.promo-card.checkout-sidebar-plan-upsell {
+		background: #fff;
+		border-radius: 3px;
+		box-shadow:
+			0 3px 1px rgba(0, 0, 0, 0.04),
+			0 3px 8px rgba(0, 0, 0, 0.12);
+	}
 }
 
 .promo-card.checkout-sidebar-plan-upsell .action-panel__title {

@@ -87,6 +87,7 @@ import useCouponFieldState from '../hooks/use-coupon-field-state';
 import { validateContactDetails } from '../lib/contact-validation';
 import { updateCartContactDetailsForCheckout } from '../lib/update-cart-contact-details-for-checkout';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
+import { CheckoutMoneyBackGuarantee } from './CheckoutMoneyBackGuarantee';
 import AcceptTermsOfServiceCheckbox from './accept-terms-of-service-checkbox';
 import badge14Src from './assets/icons/badge-14.svg';
 import badge7Src from './assets/icons/badge-7.svg';
@@ -940,6 +941,7 @@ export default function CheckoutMainContent( {
 						is100YearPlanTermsAccepted={ is100YearPlanTermsAccepted }
 						setIs100YearPlanTermsAccepted={ setIs100YearPlanTermsAccepted }
 						isSubmitted={ isSubmitted }
+						isLargeViewport={ isLargeViewport }
 					/>
 					{ isLargeViewport ? (
 						<PortaledCheckoutFormSubmit validateForm={ validateForm } />
@@ -947,7 +949,13 @@ export default function CheckoutMainContent( {
 						<CheckoutFormSubmit
 							validateForm={ validateForm }
 							submitButtonHeader={ <SubmitButtonHeader /> }
-							submitButtonFooter={ hasCartJetpackProductsOnly ? <JetpackCheckoutSeals /> : null }
+							submitButtonFooter={
+								hasCartJetpackProductsOnly ? (
+									<JetpackCheckoutSeals />
+								) : (
+									<CheckoutMoneyBackGuarantee cart={ responseCart } />
+								)
+							}
 						/>
 					) }
 				</CheckoutStepGroup>
@@ -970,8 +978,12 @@ export default function CheckoutMainContent( {
 					) }
 					{ checkoutSummary }
 					{ checkoutMainContent }
-					<CheckoutProcessorNotice />
-					<CheckoutTrustCards cart={ responseCart } />
+					{ isLargeViewport && (
+						<>
+							<CheckoutProcessorNotice />
+							<CheckoutTrustCards cart={ responseCart } />
+						</>
+					) }
 				</WPCheckoutWrapper>
 			</SubmitButtonSlotContext.Provider>
 		);
@@ -1030,8 +1042,12 @@ export default function CheckoutMainContent( {
 					} }
 				</Step.TwoColumnLayout>
 				<LeaveCheckoutModal { ...leaveModalProps } />
-				<CheckoutProcessorNotice />
-				<CheckoutTrustCards cart={ responseCart } />
+				{ isLargeViewport && (
+					<>
+						<CheckoutProcessorNotice />
+						<CheckoutTrustCards cart={ responseCart } />
+					</>
+				) }
 			</StepContainerV2CheckoutFixer>
 		</SubmitButtonSlotContext.Provider>
 	);
@@ -1661,12 +1677,14 @@ function CheckoutTermsAndCheckboxes( {
 	is100YearPlanTermsAccepted,
 	setIs100YearPlanTermsAccepted,
 	isSubmitted,
+	isLargeViewport,
 }: {
 	is3PDAccountConsentAccepted: boolean;
 	setIs3PDAccountConsentAccepted: ( isAccepted: boolean ) => void;
 	is100YearPlanTermsAccepted: boolean;
 	setIs100YearPlanTermsAccepted: ( isAccepted: boolean ) => void;
 	isSubmitted: boolean;
+	isLargeViewport: boolean;
 } ) {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
@@ -1683,9 +1701,10 @@ function CheckoutTermsAndCheckboxes( {
 			{
 				// Keep the inline legal block above the consent checkbox so
 				// "I have read and agree to all of the above" still refers to
-				// something visible. For carts without a consent checkbox the
-				// same text is reachable via the sidebar's Read more modal.
-				needsConsentCheckbox && <BeforeSubmitCheckoutHeader />
+				// something visible. On desktop without a consent checkbox the
+				// same text is reachable via the sidebar's Read more modal;
+				// mobile has no sidebar modal, so always render it inline.
+				( ! isLargeViewport || needsConsentCheckbox ) && <BeforeSubmitCheckoutHeader />
 			}
 
 			{ hasMarketplaceProduct && (
@@ -2315,7 +2334,7 @@ const WPCheckoutCompletedMainContent = styled.div`
 `;
 
 const WPCheckoutSidebarContent = styled.div`
-	background: ${ colorStudio.colors[ 'White' ] };
+	background: ${ ( props ) => props.theme.colors.background };
 	grid-area: sidebar-content;
 	margin-top: var( --masterbar-checkout-height );
 
@@ -2324,6 +2343,7 @@ const WPCheckoutSidebarContent = styled.div`
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
+		background: ${ colorStudio.colors[ 'White' ] };
 		margin-top: 0;
 		padding: 144px 24px 24px 64px;
 
