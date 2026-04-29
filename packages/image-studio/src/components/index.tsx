@@ -93,7 +93,7 @@ function ImageStudioAgentChat( {
 	if ( mode === ImageStudioMode.Edit ) {
 		placeholder = __( 'Describe what you want to add, remove, or replace…', __i18n_text_domain__ );
 	} else if ( isVideoMode ) {
-		placeholder = __( 'Describe your video clip…', __i18n_text_domain__ );
+		placeholder = __( "Describe your post's feature video clip…", __i18n_text_domain__ );
 	} else {
 		placeholder = __( 'Describe your image', __i18n_text_domain__ );
 	}
@@ -105,6 +105,7 @@ function ImageStudioAgentChat( {
 			messages: displayMessages,
 			mode,
 			inputValue,
+			disabled: isVideoMode,
 		} );
 
 	const handleSubmit = useCallback(
