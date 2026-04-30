@@ -357,9 +357,12 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 
 	// Fire the cancel/remove mutation when the user confirms (the
 	// purchases/split-cancel-remove behavior). Mirrors onSurveyComplete's
-	// mutation block minus the page.redirect — navigation moves to the
-	// survey-submit handler so the user stays on the survey while the
-	// mutation settles.
+	// mutation block minus the page.redirect AND minus refreshSitePlans /
+	// clearPurchases — those clear Redux state synchronously, which flips
+	// hasLoadedUserPurchasesFromServer to false and causes isDataLoading
+	// to render CancelPurchaseLoadingPlaceholder over the survey. They
+	// move to the survey-submit handler so they run during navigation
+	// when the placeholder isn't visible.
 	fireMutationFromConfirm = async () => {
 		this.setState( { isLoading: true } );
 		try {
@@ -375,8 +378,6 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 				if ( ! isAutoRenewIntent ) {
 					await this.handleMarketplaceSubscriptions( refundable );
 				}
-				this.props.refreshSitePlans( this.props.purchase.siteId );
-				this.props.clearPurchases();
 				this.props.successNotice( result.message, {
 					displayOnNextPage: true,
 					duration: 10000,
@@ -523,10 +524,13 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 
 	onSurveyComplete = async () => {
 		// Flag-on path: the mutation already fired at confirm-click via
-		// fireMutationFromConfirm. The success notice and redirect are owned
-		// by that helper and this handler respectively; here we only need to
-		// leave the cancel flow once the user finishes (or skips) the survey.
+		// fireMutationFromConfirm. fireMutationFromConfirm intentionally
+		// skipped clearPurchases / refreshSitePlans so they wouldn't flip
+		// isDataLoading mid-survey; we run them here, immediately before
+		// the redirect, so the destination page picks up fresh server data.
 		if ( this.shouldFireMutationOnConfirm() ) {
+			this.props.refreshSitePlans( this.props.purchase.siteId );
+			this.props.clearPurchases();
 			const managePurchaseUrl = ( this.props.getManagePurchaseUrlFor ?? managePurchase )(
 				this.props.siteSlug,
 				this.props.purchaseId
