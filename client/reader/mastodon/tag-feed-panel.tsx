@@ -187,6 +187,16 @@ export function MastodonTagFeedPanel( { connection, hashtag }: Props ) {
 				<div className="mastodon-tag-feed__header">
 					<h1 className="mastodon-tag-feed__heading">{ `#${ hashtag }` }</h1>
 					{ countLine ? <p className="mastodon-tag-feed__count">{ countLine }</p> : null }
+					{ tagInfo?.url ? (
+						<a
+							className="mastodon-tag-feed__external-link"
+							href={ tagInfo.url }
+							target="_blank"
+							rel="noopener noreferrer"
+						>
+							{ translate( 'View on Mastodon' ) }
+						</a>
+					) : null }
 				</div>
 				<MastodonTagFeedTabs
 					connectionId={ connection.id }

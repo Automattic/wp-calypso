@@ -93,6 +93,38 @@ describe( 'MastodonTagFeedPanel', () => {
 		} );
 	} );
 
+	it( 'renders a "View on Mastodon" link when the backend embeds tag.url', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/7/tag/rust/feed' )
+			.reply( 200, {
+				items: [],
+				cursor: null,
+				tag: { name: 'rust', url: 'https://mastodon.social/tags/rust' },
+			} );
+
+		renderWithProvider( <MastodonTagFeedPanel connection={ connection } hashtag="rust" />, {
+			queryClient: makeQueryClient(),
+		} );
+
+		const link = await screen.findByRole( 'link', { name: 'View on Mastodon' } );
+		expect( link ).toHaveAttribute( 'href', 'https://mastodon.social/tags/rust' );
+		expect( link ).toHaveAttribute( 'target', '_blank' );
+		expect( link ).toHaveAttribute( 'rel', 'noopener noreferrer' );
+	} );
+
+	it( 'omits the external link when tag.url is not provided', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/7/tag/rust/feed' )
+			.reply( 200, { items: [], cursor: null, tag: { name: 'rust', count: 1 } } );
+
+		renderWithProvider( <MastodonTagFeedPanel connection={ connection } hashtag="rust" />, {
+			queryClient: makeQueryClient(),
+		} );
+
+		await waitFor( () => expect( screen.getByRole( 'heading', { name: '#rust' } ) ).toBeVisible() );
+		expect( screen.queryByRole( 'link', { name: 'View on Mastodon' } ) ).toBeNull();
+	} );
+
 	it( 'flows ?tab=media through to the feed query as only_media=true', async () => {
 		window.history.replaceState( {}, '', '/reader/mastodon/7/tag/rust?tab=media' );
 		const feedScope = nock( BASE )
