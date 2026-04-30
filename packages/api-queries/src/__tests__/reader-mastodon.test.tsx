@@ -267,3 +267,30 @@ describe( 'useMastodonAuthorFeedInfiniteQuery', () => {
 		await waitFor( () => expect( result.current.hasNextPage ).toBe( false ) );
 	} );
 } );
+
+describe( 'useMastodonAuthorFeedInfiniteQuery filter', () => {
+	afterEach( () => nock.cleanAll() );
+
+	it( 'forwards posts_no_replies as exclude_replies=true', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/7/profile/108020/feed' )
+			.query( { exclude_replies: 'true' } )
+			.reply( 200, { items: [], cursor: null } );
+		const { result } = renderHook(
+			() => useMastodonAuthorFeedInfiniteQuery( 7, '108020', 'posts_no_replies' ),
+			{ wrapper: createWrapper() }
+		);
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+	} );
+
+	it( 'collapses posts_with_replies (default) to no-filter cache key', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/7/profile/108020/feed' )
+			.reply( 200, { items: [], cursor: null } );
+		const { result } = renderHook(
+			() => useMastodonAuthorFeedInfiniteQuery( 7, '108020', 'posts_with_replies' ),
+			{ wrapper: createWrapper() }
+		);
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+	} );
+} );

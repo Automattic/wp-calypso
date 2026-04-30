@@ -24,6 +24,7 @@ import type {
 	CompleteMastodonConnectionParams,
 	GetMastodonAuthorFeedParams,
 	GetMastodonTimelineParams,
+	MastodonAuthorFeedFilter,
 	MastodonAuthorFeedPage,
 	MastodonAuthorProfile,
 	MastodonAuthorizeResponse,
@@ -202,8 +203,18 @@ export function useMastodonAuthorProfileQuery( connectionId: number, actor: stri
 	return useQuery( mastodonAuthorProfileQueryOptions( connectionId, actor ) );
 }
 
-export const mastodonAuthorFeedInfiniteQuery = ( connectionId: number, actor: string ) => {
-	const normalized = normalizeActor( actor );
+export const mastodonAuthorFeedInfiniteQuery = (
+	connectionId: number,
+	actor: string,
+	filter?: MastodonAuthorFeedFilter
+) => {
+	const normalizedActor = normalizeActor( actor );
+	// `posts_with_replies` is the wire default (no filter param); collapse
+	// to undefined so callers that pass it share the slice-6 cache key with
+	// no-filter callers. `posts_no_replies` and `posts_with_media` survive
+	// as distinct dimensions.
+	const normalizedFilter: MastodonAuthorFeedFilter | undefined =
+		filter === 'posts_with_replies' ? undefined : filter;
 	return infiniteQueryOptions<
 		MastodonAuthorFeedPage,
 		MastodonError,
@@ -211,18 +222,19 @@ export const mastodonAuthorFeedInfiniteQuery = ( connectionId: number, actor: st
 		QueryKey,
 		string | undefined
 	>( {
-		queryKey: readerMastodonKeys.authorFeed( connectionId, normalized ),
+		queryKey: readerMastodonKeys.authorFeed( connectionId, normalizedActor, normalizedFilter ),
 		queryFn: ( { pageParam } ) =>
 			getMastodonAuthorFeed( {
 				connectionId,
-				actor: normalized,
+				actor: normalizedActor,
 				cursor: pageParam,
+				filter: normalizedFilter,
 			} as GetMastodonAuthorFeedParams ),
 		initialPageParam: undefined,
 		// `|| undefined` (not `??`): an empty-string cursor terminates pagination.
 		// Atmosphere slice 6 hardened this exact path against an upstream returning ''.
 		getNextPageParam: ( lastPage ) => lastPage.cursor || undefined,
-		enabled: connectionId > 0 && normalized.length > 0,
+		enabled: connectionId > 0 && normalizedActor.length > 0,
 		staleTime: 30_000,
 		gcTime: 5 * 60_000,
 		retry: ( failureCount, error ) => {
@@ -240,6 +252,10 @@ export const mastodonAuthorFeedInfiniteQuery = ( connectionId: number, actor: st
 	} );
 };
 
-export function useMastodonAuthorFeedInfiniteQuery( connectionId: number, actor: string ) {
-	return useInfiniteQuery( mastodonAuthorFeedInfiniteQuery( connectionId, actor ) );
+export function useMastodonAuthorFeedInfiniteQuery(
+	connectionId: number,
+	actor: string,
+	filter?: MastodonAuthorFeedFilter
+) {
+	return useInfiniteQuery( mastodonAuthorFeedInfiniteQuery( connectionId, actor, filter ) );
 }
