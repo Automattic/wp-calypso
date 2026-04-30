@@ -5,6 +5,7 @@ import { __, sprintf, _n } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
 import clsx from 'clsx';
 import React from 'react';
+import { useInView } from 'react-intersection-observer';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import type { CuratedBlog } from '../../curated-blogs';
 
@@ -25,12 +26,18 @@ type TopicGroupCardProps = {
 };
 
 const BlogAvatar: React.FC< { blog: CuratedBlog } > = ( { blog } ) => {
-	const { data: feed } = useQuery( readFeedQuery( blog.feed_ID ) );
+	const { ref, inView } = useInView( { triggerOnce: true, fallbackInView: true } );
+	const feedQuery = readFeedQuery( blog.feed_ID );
+	const { data: feed } = useQuery( {
+		...feedQuery,
+		enabled: Boolean( feedQuery.enabled ) && inView,
+	} );
 	const iconUrl = feed?.image;
 
 	return (
 		<>
 			<span
+				ref={ ref }
 				className="topic-group-card__avatar"
 				title={ blog.site_name }
 				style={ { width: AVATAR_SIZE, height: AVATAR_SIZE } }
