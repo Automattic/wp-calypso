@@ -17,8 +17,8 @@ import { ImageStudioMode } from '../types';
 import { trackImageStudioOpened } from '../utils/tracking';
 import './feature-clip-sidebar.scss';
 
-const PLUGIN_NAME = 'big-sky-feature-clip';
-const PANEL_NAME = 'big-sky-feature-clip-panel';
+const PLUGIN_NAME = 'image-studio-feature-clip';
+const PANEL_NAME = 'image-studio-feature-clip-panel';
 
 function FeatureClipPanel(): JSX.Element {
 	const handleClick = async () => {
@@ -48,9 +48,9 @@ function FeatureClipPanel(): JSX.Element {
 		<PluginDocumentSettingPanel
 			name={ PANEL_NAME }
 			title={ __( 'Generate Feature Clip', __i18n_text_domain__ ) }
-			className="big-sky-feature-clip-panel"
+			className="image-studio-feature-clip-panel"
 		>
-			<p className="big-sky-feature-clip-panel__description">
+			<p className="image-studio-feature-clip-panel__description">
 				{ __(
 					'Generate a short video clip based on this post. We use the post content and your site guidelines as a starting point.',
 					__i18n_text_domain__
@@ -58,7 +58,7 @@ function FeatureClipPanel(): JSX.Element {
 			</p>
 			<Button
 				variant="secondary"
-				className="big-sky-feature-clip-panel__button"
+				className="image-studio-feature-clip-panel__button"
 				__next40pxDefaultSize
 				onClick={ handleClick }
 			>

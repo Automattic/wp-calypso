@@ -100,7 +100,7 @@ describe( 'feature-clip-sidebar-extension', () => {
 		registerFeatureClipSidebar();
 
 		expect( mockRegisterPlugin ).toHaveBeenCalledTimes( 1 );
-		expect( mockRegisterPlugin.mock.calls[ 0 ][ 0 ] ).toBe( 'big-sky-feature-clip' );
+		expect( mockRegisterPlugin.mock.calls[ 0 ][ 0 ] ).toBe( 'image-studio-feature-clip' );
 	} );
 
 	it( 'does not register the plugin when isDevMode is false', () => {
