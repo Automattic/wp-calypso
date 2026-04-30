@@ -2,7 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import page, { type Context } from '@automattic/calypso-router';
 import AsyncLoad from 'calypso/components/async-load';
 import { TIMELINE_TAB } from './helper';
-import { isValidActor, STATUS_ID_RE } from './route';
+import { isValidActor, isValidHashtag, STATUS_ID_RE } from './route';
 
 const loadMastodonLandingView = () =>
 	import(
@@ -22,6 +22,10 @@ const loadMastodonThreadView = () =>
 const loadMastodonAuthorProfileView = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-reader-mastodon-author-profile-view" */ 'calypso/reader/mastodon/author-profile-view'
+	);
+const loadMastodonTagFeedView = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-reader-mastodon-tag-feed-view" */ 'calypso/reader/mastodon/tag-feed-view'
 	);
 
 function ensureMastodonEnabled(): boolean {
@@ -142,6 +146,37 @@ export const mastodonProfile = ( context: Context, next: () => void ) => {
 			placeholder={ null }
 			connectionId={ id }
 			actor={ actor }
+		/>
+	);
+	next();
+};
+
+export const mastodonTagFeed = ( context: Context, next: () => void ) => {
+	if ( ! ensureMastodonEnabled() ) {
+		return;
+	}
+
+	const id = Number( context.params.id );
+	const hashtag = String( context.params.hashtag ?? '' )
+		.trim()
+		.toLowerCase()
+		.replace( /^#/, '' );
+
+	const idValid = Number.isFinite( id ) && id > 0;
+	const inputsValid = idValid && isValidHashtag( hashtag );
+
+	if ( ! inputsValid ) {
+		page.redirect( idValid ? `/reader/mastodon/${ id }` : '/reader/mastodon' );
+		return;
+	}
+
+	context.primary = (
+		<AsyncLoad
+			key="reader-mastodon-tag-feed"
+			require={ loadMastodonTagFeedView }
+			placeholder={ null }
+			connectionId={ id }
+			hashtag={ hashtag }
 		/>
 	);
 	next();

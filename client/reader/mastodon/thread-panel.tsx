@@ -11,7 +11,7 @@ import {
 	mapMastodonThreadResponseToSocialThreadNode,
 } from 'calypso/reader/social';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { getProfileUrl, getThreadUrl as buildThreadUrl } from './route';
+import { getProfileUrl, getTagFeedUrl, getThreadUrl as buildThreadUrl } from './route';
 import { ThreadHeader } from './thread-header';
 import { MastodonThreadTree } from './thread-tree';
 import { MastodonThreadTreeSkeleton } from './thread-tree/thread-tree-skeleton';
@@ -123,6 +123,11 @@ export function ThreadPanel( { connection, statusId }: ThreadPanelProps ) {
 		[ connection.id, connection.instance ]
 	);
 
+	const buildTagUrl = useCallback(
+		( tag: string ) => getTagFeedUrl( connection.id, tag ),
+		[ connection.id ]
+	);
+
 	const analyticsValue = useMemo(
 		() => ( {
 			source: 'mastodon' as const,
@@ -130,8 +135,9 @@ export function ThreadPanel( { connection, statusId }: ThreadPanelProps ) {
 			onClick: onClickAnalytics,
 			getThreadUrl,
 			getProfileUrl: buildProfileUrl,
+			getTagUrl: buildTagUrl,
 		} ),
-		[ connection.id, onClickAnalytics, getThreadUrl, buildProfileUrl ]
+		[ connection.id, onClickAnalytics, getThreadUrl, buildProfileUrl, buildTagUrl ]
 	);
 
 	return (

@@ -7,7 +7,7 @@ const CONFIG = {
 	// atmosphere, numeric account id for Mastodon) on @-mention anchors,
 	// emitted by the backend so the client can route mentions in-app
 	// without parsing the href.
-	ALLOWED_ATTR: [ 'href', 'rel', 'target', 'data-id' ],
+	ALLOWED_ATTR: [ 'href', 'rel', 'target', 'data-id', 'data-tag' ],
 	// DOMPurify allows every data-* attribute by default; restrict to the
 	// explicit allow-list above so a future backend change can't smuggle
 	// a new data-* attribute (e.g. `data-tracking`) through to the DOM.

@@ -15,7 +15,7 @@ import {
 import { MastodonAuthorProfileTabs, useMastodonAuthorFeedFilter } from './author-profile-tabs';
 import { projectMastodonError } from './error-projection';
 import { errorMessage } from './profile-errors';
-import { getProfileUrl, getThreadUrl, getTimelineUrl } from './route';
+import { getProfileUrl, getTagFeedUrl, getThreadUrl, getTimelineUrl } from './route';
 import type {
 	MastodonAuthorProfile,
 	MastodonConnection,
@@ -153,6 +153,11 @@ export function MastodonAuthorProfilePanel( {
 		[ connection.id ]
 	);
 
+	const buildTagUrl = useCallback(
+		( tag: string ) => getTagFeedUrl( connection.id, tag ),
+		[ connection.id ]
+	);
+
 	// Mastodon-specific empty state: when the account is locked and we have
 	// no items, the feed isn't actually empty — we just can't see it without
 	// following. Surface that explicitly so the empty state isn't misleading.
@@ -181,6 +186,7 @@ export function MastodonAuthorProfilePanel( {
 			projectFeedError={ projectMastodonError }
 			buildProfileUrl={ buildProfileUrl }
 			buildThreadUrl={ buildThreadUrl }
+			buildTagUrl={ buildTagUrl }
 			emptyTitle={
 				isLockedEmpty
 					? String( translate( 'This account’s posts are private.' ) )

@@ -1,4 +1,11 @@
-import { getProfileUrl, getThreadUrl, getTimelineUrl, isValidActor } from '../route';
+import {
+	getProfileUrl,
+	getThreadUrl,
+	getTimelineUrl,
+	isValidActor,
+	getTagFeedUrl,
+	isValidHashtag,
+} from '../route';
 
 describe( 'getTimelineUrl', () => {
 	it( 'returns the connection-scoped timeline path', () => {
@@ -82,5 +89,52 @@ describe( 'getProfileUrl', () => {
 		expect( getProfileUrl( 7, 'alice@mastodon.social' ) ).toBe(
 			'/reader/mastodon/7/profile/alice%40mastodon.social'
 		);
+	} );
+} );
+
+describe( 'isValidHashtag', () => {
+	it( 'accepts canonical (lowercase) ASCII alphanumeric + underscore', () => {
+		expect( isValidHashtag( 'rust' ) ).toBe( true );
+		expect( isValidHashtag( 'rust_lang' ) ).toBe( true );
+		expect( isValidHashtag( 'r2d2' ) ).toBe( true );
+	} );
+
+	it( 'rejects uppercase (canonical form is lowercase only)', () => {
+		expect( isValidHashtag( 'Rust' ) ).toBe( false );
+		expect( isValidHashtag( 'RUST' ) ).toBe( false );
+	} );
+
+	it( 'rejects path traversal, spaces, leading hash, and empty', () => {
+		expect( isValidHashtag( 'rust/extra' ) ).toBe( false );
+		expect( isValidHashtag( 'rust lang' ) ).toBe( false );
+		expect( isValidHashtag( '#rust' ) ).toBe( false );
+		expect( isValidHashtag( '' ) ).toBe( false );
+		expect( isValidHashtag( '../etc' ) ).toBe( false );
+	} );
+
+	it( 'enforces the 128-char length cap', () => {
+		expect( isValidHashtag( 'a'.repeat( 128 ) ) ).toBe( true );
+		expect( isValidHashtag( 'a'.repeat( 129 ) ) ).toBe( false );
+	} );
+} );
+
+describe( 'getTagFeedUrl', () => {
+	it( 'returns null on a non-positive connection id', () => {
+		expect( getTagFeedUrl( 0, 'rust' ) ).toBeNull();
+		expect( getTagFeedUrl( -1, 'rust' ) ).toBeNull();
+	} );
+
+	it( 'lowercases the canonical hashtag and percent-encodes the segment', () => {
+		expect( getTagFeedUrl( 7, 'Rust' ) ).toBe( '/reader/mastodon/7/tag/rust' );
+	} );
+
+	it( 'strips a leading # before validating', () => {
+		expect( getTagFeedUrl( 7, '#rust' ) ).toBe( '/reader/mastodon/7/tag/rust' );
+	} );
+
+	it( 'returns null on a malformed hashtag', () => {
+		expect( getTagFeedUrl( 7, 'has spaces' ) ).toBeNull();
+		expect( getTagFeedUrl( 7, '../foo' ) ).toBeNull();
+		expect( getTagFeedUrl( 7, '' ) ).toBeNull();
 	} );
 } );

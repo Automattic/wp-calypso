@@ -1,0 +1,106 @@
+.topic-group-card {
+	display: flex;
+	flex-direction: column;
+	width: 264px;
+	min-width: 264px;
+	max-width: 264px;
+	padding: 16px;
+	gap: 12px;
+	background-color: var( --color-surface );
+	border: 1px solid var( --color-border-subtle, #e0e0e0 );
+	border-radius: 8px;
+	box-sizing: border-box;
+	scroll-snap-align: start;
+
+	&__header {
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+	}
+
+	&__title {
+		font-size: 1.25rem;
+		font-weight: 600;
+		margin: 0;
+		line-height: 1.2;
+		color: var( --color-text );
+	}
+
+	&__meta {
+		font-size: 0.75rem;
+		color: var( --color-text-subtle );
+		margin: 0;
+	}
+
+	&__image-wrap {
+		width: 100%;
+		aspect-ratio: 16 / 9;
+		overflow: hidden;
+		border-radius: 4px;
+		background-color: var( --studio-gray-0, #f6f7f7 );
+	}
+
+	&__image {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		display: block;
+	}
+
+	&__description {
+		margin: 0;
+		font-size: 0.875rem;
+		line-height: 1.4;
+		color: var( --color-text-subtle );
+		flex-grow: 1;
+		display: -webkit-box;
+		line-clamp: 4;
+		-webkit-line-clamp: 4;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+
+	&__avatars {
+		display: flex;
+		align-items: center;
+		padding-left: 6px; // Compensate for negative-margin overlap of first item.
+	}
+
+	&__avatar {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 50%;
+		overflow: hidden;
+		margin-left: -6px;
+		background-color: var( --studio-white, #fff );
+		box-shadow: 0 0 0 2px var( --color-surface, #fff );
+	}
+
+	&__avatar-more {
+		font-size: 0.75rem;
+		font-weight: 500;
+		color: var( --color-neutral-40, #8c8f94 );
+		background-color: var( --color-neutral-0, #efefef );
+		box-shadow: 0 0 0 2px var( --color-surface, #fff );
+	}
+
+	&__subscribe {
+		justify-content: center;
+		gap: 4px;
+		background-color: var( --color-primary, #3858e9 );
+		border-color: var( --color-primary, #3858e9 );
+		color: var( --color-text-inverted, #fff );
+		opacity: 1;
+
+		.topic-group-card__subscribe-icon {
+			fill: currentColor;
+		}
+
+		&.is-subscribed.components-button.is-primary {
+			background-color: var( --studio-gray-90, #1e1e1e );
+			border-color: var( --studio-gray-90, #1e1e1e );
+			color: var( --studio-white, #fff );
+		}
+	}
+}
