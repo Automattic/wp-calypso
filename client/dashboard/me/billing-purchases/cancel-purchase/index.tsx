@@ -846,8 +846,11 @@ function CancelPurchaseInner() {
 		} );
 	};
 
-	// Mirrors the survey-submit decision so the same effective flow is
-	// available before the mutation fires.
+	// Single source of truth for the effective flow when intent is URL-sourced
+	// (Purchase Settings Cancel/Remove buttons), the eligibility banner sets
+	// refund intent, or the treatment banner forces auto-renew off on the
+	// default Cancel of a refundable plan. Takes cancelIntent as a parameter
+	// so confirm-click callers can pass the fresh value before setState commits.
 	const computeEffectiveFlowType = (
 		cancelIntent: CancelPurchaseState[ 'cancelIntent' ]
 	): CancelFlowType => {
@@ -1286,23 +1289,7 @@ function CancelPurchaseInner() {
 		// Set loading state to show busy button
 		setState( ( state ) => ( { ...state, isLoading: true } ) );
 
-		// When intent is URL-sourced (user arrived via the Purchase Settings
-		// Cancel/Remove buttons), mutationFlowType is already the correct choice.
-		// When intent is absent, fall back to today's banner-driven override:
-		// refund intent set by the eligibility banner forces the refund flow;
-		// the default Cancel on a refundable plan + treatment banner falls back to
-		// auto-renew off.
-		let effectiveFlowType: CancelFlowType = mutationFlowType;
-		if ( ! intent ) {
-			if ( state.cancelIntent === 'refund' ) {
-				effectiveFlowType = CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND;
-			} else if (
-				flowType === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND &&
-				showRefundEligibilityNotice
-			) {
-				effectiveFlowType = CANCEL_FLOW_TYPE.CANCEL_AUTORENEW;
-			}
-		}
+		const effectiveFlowType = computeEffectiveFlowType( state.cancelIntent );
 
 		// Flag-on path: the mutation already fired at confirm-click via
 		// fireMutationFromConfirm. The success notice and navigation cleanup
