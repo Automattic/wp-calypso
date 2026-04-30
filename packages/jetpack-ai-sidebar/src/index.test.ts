@@ -13,6 +13,7 @@ import {
 	findBlockElement,
 	findBlockListLayout,
 	getChatComponent,
+	getEmptyViewSuggestions,
 	toolProvider,
 	useAbilitiesSetup,
 	useCheckpoint,
@@ -59,6 +60,25 @@ describe( 'getChatComponent', () => {
 		expect( getChatComponent( 'font-picker' ) ).toBeNull();
 		expect( getChatComponent( '' ) ).toBeNull();
 		expect( getChatComponent( 'anything-else' ) ).toBeNull();
+	} );
+} );
+
+describe( 'getEmptyViewSuggestions', () => {
+	afterEach( () => {
+		delete ( globalThis as any ).agentsManagerData;
+	} );
+
+	it( 'hides Review Mediator by default', () => {
+		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
+		expect( labels ).toContain( 'Optimize Title' );
+		expect( labels ).not.toContain( 'Mediate review notes' );
+	} );
+
+	it( 'shows Review Mediator when enabled by agentsManagerData', () => {
+		( globalThis as any ).agentsManagerData = { reviewMediatorEnabled: true };
+		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
+		expect( labels ).toContain( 'Optimize Title' );
+		expect( labels ).toContain( 'Mediate review notes' );
 	} );
 } );
 

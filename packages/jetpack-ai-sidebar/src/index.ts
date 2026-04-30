@@ -69,6 +69,23 @@ const MEDIATE_REVIEW_SUGGESTION = {
 	),
 };
 
+function isReviewMediatorEnabled(): boolean {
+	if ( typeof agentsManagerData !== 'undefined' ) {
+		return !! agentsManagerData?.reviewMediatorEnabled;
+	}
+
+	return !! ( globalThis as { agentsManagerData?: { reviewMediatorEnabled?: boolean } } )
+		.agentsManagerData?.reviewMediatorEnabled;
+}
+
+function getReviewMediatorSuggestions() {
+	return isReviewMediatorEnabled() ? [ MEDIATE_REVIEW_SUGGESTION ] : [];
+}
+
+function getPostLevelSuggestions() {
+	return [ OPTIMIZE_TITLE_SUGGESTION, ...getReviewMediatorSuggestions() ];
+}
+
 // ---------- Block element helpers ----------
 
 /**
@@ -668,7 +685,7 @@ export function getEmptyViewSuggestions(): Array< {
 	label: string;
 	prompt?: string;
 } > {
-	return [ OPTIMIZE_TITLE_SUGGESTION, MEDIATE_REVIEW_SUGGESTION ];
+	return getPostLevelSuggestions();
 }
 
 // ---------- useSuggestions ----------
@@ -746,7 +763,11 @@ export function useSuggestions(): {
 			// Scoped to the mediation suggestion specifically (by prompt
 			// match) so other suggestions keep the default narrow width.
 			const value = ( event as CustomEvent ).detail?.value;
-			if ( typeof value === 'string' && value === MEDIATE_REVIEW_SUGGESTION.prompt ) {
+			if (
+				isReviewMediatorEnabled() &&
+				typeof value === 'string' &&
+				value === MEDIATE_REVIEW_SUGGESTION.prompt
+			) {
 				try {
 					( dispatch as any )( 'automattic/agents-manager' ).setIsSplitScreen( true );
 				} catch {
@@ -776,15 +797,17 @@ export function useSuggestions(): {
 		return { suggestions: [] };
 	}
 
+	const reviewMediatorSuggestions = getReviewMediatorSuggestions();
+
 	if ( ! selectedBlock ) {
-		return { suggestions: [ OPTIMIZE_TITLE_SUGGESTION, MEDIATE_REVIEW_SUGGESTION ] };
+		return { suggestions: getPostLevelSuggestions() };
 	}
 
 	const applicable = BLOCK_SUGGESTIONS.filter( ( s ) => s.condition( selectedBlock ) );
 	return {
 		suggestions: [
 			...applicable.map( ( { id, label, prompt } ) => ( { id, label, prompt } ) ),
-			MEDIATE_REVIEW_SUGGESTION,
+			...reviewMediatorSuggestions,
 		],
 	};
 }
