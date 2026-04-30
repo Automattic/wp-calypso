@@ -125,7 +125,6 @@ function recordPostPurchaseWpcomGoogleAdsPurchase( {
 		debug( 'recordPostPurchaseTracking: skipping non-positive purchase value', {
 			receiptId,
 			source,
-			value: conversionValue?.value,
 		} );
 		return;
 	}
