@@ -23,6 +23,18 @@ interface UpdateMessage {
 	hash: string;
 }
 
+type ViteHotContext = {
+	on: ( event: string, callback: ( payload?: unknown ) => void ) => void;
+	off: ( event: string, callback: ( payload?: unknown ) => void ) => void;
+};
+
+type ViteImportMeta = ImportMeta & {
+	hot?: ViteHotContext;
+};
+
+const VITE_HEALTH_CHECK_PATH = '/@vite/client';
+const VITE_HEALTH_CHECK_INTERVAL = 5000;
+
 // avoid reporting the same errors/warnings over and over
 const previousProblems = new Map< string, string >();
 function alreadyReported( type: string, problems: string[] ) {
@@ -101,7 +113,91 @@ function processUpdate( message: UpdateMessage, setBuildState: BuildStateSetter 
 		} );
 }
 
-export default function connectToWebpackServer( setBuildState: BuildStateSetter ) {
+function getViteHotContext(): ViteHotContext | undefined {
+	return ( import.meta as ViteImportMeta ).hot;
+}
+
+function connectToViteServer( setBuildState: BuildStateSetter ) {
+	const hot = getViteHotContext();
+	if ( ! hot ) {
+		return;
+	}
+
+	let isDisconnected = false;
+	let isCheckingServer = false;
+
+	const setIdle = () => {
+		isDisconnected = false;
+		setBuildState( BuildState.IDLE );
+	};
+	const setUpdating = () => setBuildState( BuildState.UPDATING );
+	const setNeedsReload = () => setBuildState( BuildState.NEEDS_RELOAD );
+	const setDisconnected = () => {
+		isDisconnected = true;
+		setBuildState( BuildState.DISCONNECTED );
+	};
+	const setError = ( payload?: unknown ) => {
+		setBuildState( BuildState.ERROR );
+		console.error( '[vite] build failed:', payload );
+	};
+	const checkServerConnection = async () => {
+		if ( isCheckingServer ) {
+			return;
+		}
+
+		isCheckingServer = true;
+
+		try {
+			const response = await fetch( VITE_HEALTH_CHECK_PATH, {
+				method: 'HEAD',
+				cache: 'no-store',
+			} );
+
+			if ( ! response.ok ) {
+				throw new Error( `Vite health check failed with status ${ response.status }` );
+			}
+
+			if ( isDisconnected ) {
+				setIdle();
+			}
+		} catch {
+			setDisconnected();
+		} finally {
+			isCheckingServer = false;
+		}
+	};
+
+	// The Vite websocket can connect before this lazily-loaded monitor mounts.
+	setIdle();
+
+	hot.on( 'vite:ws:connect', setIdle );
+	hot.on( 'vite:ws:disconnect', setDisconnected );
+	hot.on( 'vite:beforeUpdate', setUpdating );
+	hot.on( 'vite:afterUpdate', setIdle );
+	hot.on( 'vite:beforeFullReload', setNeedsReload );
+	hot.on( 'vite:error', setError );
+
+	const healthCheckIntervalId = window.setInterval(
+		checkServerConnection,
+		VITE_HEALTH_CHECK_INTERVAL
+	);
+	window.addEventListener( 'focus', checkServerConnection );
+	document.addEventListener( 'visibilitychange', checkServerConnection );
+
+	return () => {
+		hot.off( 'vite:ws:connect', setIdle );
+		hot.off( 'vite:ws:disconnect', setDisconnected );
+		hot.off( 'vite:beforeUpdate', setUpdating );
+		hot.off( 'vite:afterUpdate', setIdle );
+		hot.off( 'vite:beforeFullReload', setNeedsReload );
+		hot.off( 'vite:error', setError );
+		window.clearInterval( healthCheckIntervalId );
+		window.removeEventListener( 'focus', checkServerConnection );
+		document.removeEventListener( 'visibilitychange', checkServerConnection );
+	};
+}
+
+function connectToWebpackServer( setBuildState: BuildStateSetter ) {
 	if ( typeof EventSource === 'undefined' ) {
 		if ( process.env.NODE_ENV !== 'production' ) {
 			console.warn( '[webpack] build monitor disabled. No `EventSource`.' );
@@ -143,4 +239,8 @@ export default function connectToWebpackServer( setBuildState: BuildStateSetter 
 	return () => {
 		source.close();
 	};
+}
+
+export default function connectToBuildServer( setBuildState: BuildStateSetter ) {
+	return connectToViteServer( setBuildState ) ?? connectToWebpackServer( setBuildState );
 }

@@ -1,7 +1,7 @@
 import { Spinner } from '@automattic/components';
 import clsx from 'clsx';
 import { FunctionComponent, useEffect, useState } from 'react';
-import connectToWebpackServer, { BuildState } from './webpack-client';
+import connectToBuildServer, { BuildState } from './webpack-client';
 
 import './style.scss';
 
@@ -26,7 +26,7 @@ function getMessage( buildState: BuildState ) {
 const WebpackBuildMonitor: FunctionComponent = () => {
 	const [ buildState, setBuildState ] = useState( BuildState.INITIAL );
 
-	useEffect( () => connectToWebpackServer( setBuildState ), [] );
+	useEffect( () => connectToBuildServer( setBuildState ), [] );
 
 	const msg = getMessage( buildState );
 	if ( ! msg ) {
