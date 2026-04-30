@@ -210,3 +210,45 @@ describe( 'getMastodonAuthorFeed', () => {
 		expect( page.cursor ).toBeNull();
 	} );
 } );
+
+describe( 'getMastodonAuthorFeed filter mapping', () => {
+	afterEach( () => nock.cleanAll() );
+
+	it( 'sends exclude_replies=true for posts_no_replies', async () => {
+		const scope = nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/7/profile/108020/feed' )
+			.query( { exclude_replies: 'true' } )
+			.reply( 200, { items: [], cursor: null } );
+		await getMastodonAuthorFeed( {
+			connectionId: 7,
+			actor: '108020',
+			filter: 'posts_no_replies',
+		} );
+		expect( scope.isDone() ).toBe( true );
+	} );
+
+	it( 'sends only_media=true for posts_with_media', async () => {
+		const scope = nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/7/profile/108020/feed' )
+			.query( { only_media: 'true' } )
+			.reply( 200, { items: [], cursor: null } );
+		await getMastodonAuthorFeed( {
+			connectionId: 7,
+			actor: '108020',
+			filter: 'posts_with_media',
+		} );
+		expect( scope.isDone() ).toBe( true );
+	} );
+
+	it( 'sends no filter params for posts_with_replies', async () => {
+		const scope = nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/7/profile/108020/feed' )
+			.reply( 200, { items: [], cursor: null } );
+		await getMastodonAuthorFeed( {
+			connectionId: 7,
+			actor: '108020',
+			filter: 'posts_with_replies',
+		} );
+		expect( scope.isDone() ).toBe( true );
+	} );
+} );

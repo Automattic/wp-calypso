@@ -1,6 +1,7 @@
 import { wpcom } from '../wpcom-fetcher';
 import { classifyMastodonError } from './errors';
 import type {
+	MastodonAuthorFeedFilter,
 	MastodonAuthorFeedPage,
 	MastodonAuthorProfile,
 	MastodonAuthorizeResponse,
@@ -153,18 +154,27 @@ export interface GetMastodonAuthorFeedParams {
 	actor: string;
 	cursor?: string;
 	limit?: number;
+	filter?: MastodonAuthorFeedFilter;
 }
 
 export async function getMastodonAuthorFeed(
 	params: GetMastodonAuthorFeedParams
 ): Promise< MastodonAuthorFeedPage > {
-	const { connectionId, actor, cursor, limit } = params;
+	const { connectionId, actor, cursor, limit, filter } = params;
 	const query: Record< string, string > = {};
 	if ( cursor ) {
 		query.cursor = cursor;
 	}
 	if ( limit ) {
 		query.limit = String( limit );
+	}
+	// Mastodon's `/api/v1/accounts/:id/statuses` exposes filters as two
+	// independent booleans on the same endpoint. `posts_with_replies` and
+	// `undefined` send neither — that's the API default (posts + replies).
+	if ( filter === 'posts_no_replies' ) {
+		query.exclude_replies = 'true';
+	} else if ( filter === 'posts_with_media' ) {
+		query.only_media = 'true';
 	}
 	try {
 		return ( await wpcom.req.get(
