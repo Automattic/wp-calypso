@@ -6,7 +6,6 @@ import feeds from './feeds/reducer';
 import follows from './follows/reducer';
 import posts from './posts/reducer';
 import recommendedSites from './recommended-sites/reducer';
-import relatedPosts from './related-posts/reducer';
 import saved from './saved/reducer';
 import siteBlocks from './site-blocks/reducer';
 import sites from './sites/reducer';
@@ -19,7 +18,6 @@ const combinedReducer = combineReducers( {
 	follows,
 	posts,
 	recommendedSites,
-	relatedPosts,
 	saved,
 	siteBlocks,
 	sites,
