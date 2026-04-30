@@ -410,13 +410,10 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 								justify="right"
 								className="reader-onboarding-modal__footer-buttons"
 							>
-								<Button __next40pxDefaultSize variant="tertiary" onClick={ onClose }>
-									{ __( 'Cancel' ) }
-								</Button>
 								<Button
 									__next40pxDefaultSize
 									onClick={ handleContinue }
-									variant="primary"
+									variant="secondary"
 									disabled={ isContinueDisabled }
 									accessibleWhenDisabled
 								>

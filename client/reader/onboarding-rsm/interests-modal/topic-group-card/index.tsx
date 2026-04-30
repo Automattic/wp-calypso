@@ -10,7 +10,7 @@ import type { CuratedBlog } from '../../curated-blogs';
 
 import './style.scss';
 
-const MAX_VISIBLE_AVATARS = 4;
+const MAX_VISIBLE_AVATARS = 3;
 const AVATAR_SIZE = 28;
 
 type TopicGroupCardProps = {
@@ -125,8 +125,11 @@ const TopicGroupCard: React.FC< TopicGroupCardProps > = ( {
 			) }
 			<Button
 				__next40pxDefaultSize
-				className="topic-group-card__subscribe"
-				variant="secondary"
+				className={ clsx( 'topic-group-card__subscribe', {
+					'is-subscribed': isSubscribed,
+					'is-busy': isBusy,
+				} ) }
+				variant="primary"
 				onClick={ onSubscribe }
 				isBusy={ isBusy }
 				disabled={ isSubscribed || isBusy }

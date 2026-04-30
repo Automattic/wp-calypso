@@ -58,12 +58,12 @@ describe( 'TopicGroupCard', () => {
 		expect( img ).toHaveAttribute( 'src', 'https://images.example/food.jpg' );
 	} );
 
-	it( 'renders avatars capped to 4 with a "+N" overflow indicator', () => {
+	it( 'renders avatars capped to 3 with a "+N" overflow indicator', () => {
 		renderWithProvider( <TopicGroupCard { ...defaultProps } /> );
 
 		// The mocked SiteIcon emits one node per blog avatar that we render.
-		expect( screen.getAllByTestId( 'site-icon' ) ).toHaveLength( 4 );
-		expect( screen.getByText( '+1' ) ).toBeInTheDocument();
+		expect( screen.getAllByTestId( 'site-icon' ) ).toHaveLength( 3 );
+		expect( screen.getByText( '+2' ) ).toBeInTheDocument();
 	} );
 
 	it( 'omits the overflow pill when blogs fit within the visible cap', () => {
