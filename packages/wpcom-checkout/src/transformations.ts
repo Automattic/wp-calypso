@@ -191,6 +191,20 @@ export function isUserVisibleCostOverride( costOverride: {
 	return true;
 }
 
+function makeDomainTransferBundleReasonUnique(
+	costOverride: ResponseCartCostOverride,
+	product: ResponseCartProduct,
+	translate: ReturnType< typeof useTranslate >
+): ResponseCartCostOverride {
+	if ( product.product_slug === 'domain_transfer' && product.is_bundled ) {
+		return {
+			...costOverride,
+			human_readable_reason: String( translate( 'Free domain renewal for one year' ) ),
+		};
+	}
+	return costOverride;
+}
+
 function makeSaleCostOverrideUnique(
 	costOverride: ResponseCartCostOverride,
 	product: ResponseCartProduct,
@@ -356,6 +370,9 @@ export function filterCostOverridesForLineItem(
 			.map( ( costOverride ) => makeSaleCostOverrideUnique( costOverride, product, translate ) )
 			.map( ( costOverride ) =>
 				makeIntroductoryOfferCostOverrideUnique( costOverride, product, translate, true, true )
+			)
+			.map( ( costOverride ) =>
+				makeDomainTransferBundleReasonUnique( costOverride, product, translate )
 			)
 			.map( ( costOverride ) => {
 				// Introductory offers which are renewals may have a prorated
