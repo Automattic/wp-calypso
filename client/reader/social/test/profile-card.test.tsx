@@ -312,7 +312,11 @@ describe( 'SocialProfileCard — bio mention click routing', () => {
 
 	function renderInsideProvider(
 		bioHtml: string,
-		getProfileUrl: ( ref: { id?: string | null; did?: string | null } ) => string | null
+		getProfileUrl: ( ref: {
+			id?: string | null;
+			handle?: string | null;
+			did?: string | null;
+		} ) => string | null
 	) {
 		return render(
 			<SocialAnalyticsProvider

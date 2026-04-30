@@ -75,7 +75,11 @@ describe( 'PostCardBody', () => {
 	describe( 'data-id mention interception', () => {
 		function renderWithAnalytics(
 			html: string,
-			getProfileUrl: ( ref: { id?: string | null } ) => string | null
+			getProfileUrl: ( ref: {
+				id?: string | null;
+				handle?: string | null;
+				did?: string | null;
+			} ) => string | null
 		) {
 			return render(
 				<SocialAnalyticsProvider
