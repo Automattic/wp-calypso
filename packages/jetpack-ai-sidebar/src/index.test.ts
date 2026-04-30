@@ -445,10 +445,10 @@ describe( 'findBlockElement', () => {
 		expect( findBlockElement( '550e8400-e29b-41d4-a716-446655440000' ) ).toBe( el );
 	} );
 
-	it( 'returns a falsy value when the clientId is not in the DOM', () => {
-		// Returns null from the regex guard or querySelector miss; may return
-		// undefined when the optional editor-canvas iframe lookup chain misses.
-		expect( findBlockElement( '550e8400-e29b-41d4-a716-446655440001' ) ).toBeFalsy();
+	it( 'returns null when the clientId is not in the DOM', () => {
+		// Returns null from the regex guard, the main-doc querySelector miss,
+		// or the optional editor-canvas iframe lookup chain (coerced via ?? null).
+		expect( findBlockElement( '550e8400-e29b-41d4-a716-446655440001' ) ).toBeNull();
 	} );
 
 	it( 'rejects malformed clientIds to prevent selector injection', () => {
@@ -471,10 +471,10 @@ describe( 'findBlockListLayout', () => {
 		expect( findBlockListLayout() ).toBe( el );
 	} );
 
-	it( 'returns a falsy value when the root layout is not in the DOM', () => {
-		// Returns null from the main-doc querySelector miss or undefined from
-		// the optional editor-canvas iframe lookup chain.
-		expect( findBlockListLayout() ).toBeFalsy();
+	it( 'returns null when the root layout is not in the DOM', () => {
+		// Returns null from the main-doc querySelector miss or the optional
+		// editor-canvas iframe lookup chain (coerced via ?? null).
+		expect( findBlockListLayout() ).toBeNull();
 	} );
 
 	it( 'ignores layout elements that are not the root container', () => {
