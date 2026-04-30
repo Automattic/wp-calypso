@@ -53,7 +53,6 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 	const [ processingTags, setProcessingTags ] = useState< Set< string > >( new Set() );
-	const processingTagsRef = useRef< Set< string > >( new Set() );
 	const inFlightTagOpsRef = useRef< Map< string, Promise< boolean > > >( new Map() );
 	const [ processingPacks, setProcessingPacks ] = useState< Set< string > >( new Set() );
 	const [ relaxedPackCriteria, setRelaxedPackCriteria ] = useState< Set< string > >( new Set() );
@@ -71,10 +70,6 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 	useEffect( () => {
 		followedTagsRef.current = followedTags;
 	}, [ followedTags ] );
-
-	useEffect( () => {
-		processingTagsRef.current = processingTags;
-	}, [ processingTags ] );
 
 	// Resolve each topic group's blog list once per modal session. The random
 	// selection is therefore stable for the lifetime of the modal, which is
@@ -122,13 +117,6 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 		}
 
 		const operation = ( async (): Promise< boolean > => {
-			// If an operation for this tag is already in progress through another path, wait for it.
-			if ( processingTagsRef.current.has( tag ) ) {
-				return checked
-					? followedTagsRef.current.includes( tag )
-					: ! followedTagsRef.current.includes( tag );
-			}
-
 			// Mark the tag as being processed.
 			setProcessingTags( ( current ) => new Set( current ).add( tag ) );
 
@@ -189,17 +177,16 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 			return;
 		}
 
-		setRelaxedPackCriteria( ( current ) => new Set( current ).add( pack.id ) );
 		setProcessingPacks( ( current ) => new Set( current ).add( pack.id ) );
 		try {
 			// Follow tags in deterministic order so state updates don't race each other.
 			for ( const tag of pack.tags ) {
-				while ( processingTagsRef.current.has( tag ) ) {
+				while ( true ) {
 					const inFlight = inFlightTagOpsRef.current.get( tag );
 					if ( inFlight ) {
 						await inFlight;
 					} else {
-						await new Promise( ( resolve ) => setTimeout( resolve, 20 ) );
+						break;
 					}
 				}
 
@@ -212,6 +199,8 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 					return;
 				}
 			}
+
+			setRelaxedPackCriteria( ( current ) => new Set( current ).add( pack.id ) );
 
 			recordTracksEvent(
 				`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_pack_subscribed`,
