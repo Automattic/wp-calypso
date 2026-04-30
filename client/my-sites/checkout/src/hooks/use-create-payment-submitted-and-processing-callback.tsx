@@ -2,6 +2,10 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { isURL } from '@wordpress/url';
 import debugFactory from 'debug';
 import { useCallback } from 'react';
+import {
+	isPostPurchaseWpcomGoogleAdsEnabled,
+	recordPostPurchaseTracking,
+} from 'calypso/lib/analytics/ad-tracking/record-post-purchase';
 import { recordPurchase } from 'calypso/lib/analytics/record-purchase';
 import { hasEcommercePlan } from 'calypso/lib/cart-values/cart-items';
 import getThankYouPageUrl from 'calypso/my-sites/checkout/get-thank-you-page-url';
@@ -203,6 +207,13 @@ export default function useCreatePaymentSubmittedAndProcessingCallback( {
 				reduxDispatch( fetchSiteFeatures( siteId ) );
 			}
 
+			recordOneClickModalPostPurchaseTracking( {
+				disabledThankYouPage,
+				isInModal,
+				responseCart,
+				transactionResult,
+			} );
+
 			// Checkout in the modal might not need thank you page.
 			// For example, Focused Launch is showing a success dialog directly in editor instead of a thank you page.
 			// See https://github.com/Automattic/wp-calypso/pull/47808#issuecomment-755196691
@@ -341,5 +352,45 @@ async function recordPaymentCompleteAnalytics( {
 				failureDescription: 'useCreatePaymentSubmittedAndProcessingCallback',
 			} )
 		);
+	}
+}
+
+export function recordOneClickModalPostPurchaseTracking( {
+	disabledThankYouPage,
+	isInModal,
+	responseCart,
+	transactionResult,
+}: {
+	disabledThankYouPage?: boolean;
+	isInModal?: boolean;
+	responseCart: ResponseCart;
+	transactionResult: WPCOMTransactionEndpointResponse | undefined;
+} ): void {
+	try {
+		const receiptId =
+			transactionResult && 'receipt_id' in transactionResult
+				? transactionResult.receipt_id
+				: undefined;
+
+		if (
+			! isInModal ||
+			! disabledThankYouPage ||
+			hasEcommercePlan( responseCart ) ||
+			! receiptId ||
+			! transactionResult ||
+			! ( 'success' in transactionResult ) ||
+			! transactionResult.success ||
+			! isPostPurchaseWpcomGoogleAdsEnabled()
+		) {
+			return;
+		}
+
+		recordPostPurchaseTracking( {
+			receiptId,
+			cart: responseCart,
+			source: 'one-click-modal',
+		} );
+	} catch {
+		// Tracking must not block the modal success path.
 	}
 }
