@@ -15,9 +15,11 @@ import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
+import { canOptOutOfWordPressBeta } from '../features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import { BetaProgramNotice } from './beta-program-notice';
 import { LatestVersionNotice } from './latest-version-notice';
+import { OptOutCard } from './opt-out-card';
 import { useVersionSwitch } from './use-version-switch';
 import { VersionForm } from './version-form';
 import { VersionSwitchNotice } from './version-switch-notice';
@@ -59,20 +61,36 @@ function VersionManagement( { site }: { site: Site } ) {
 	);
 }
 
+function BetaProgramContent( { site }: { site: Site } ) {
+	const { data: currentVersion } = useQuery( siteWordPressVersionQuery( site.ID ) );
+	const { data: betaVersion = '' } = useQuery( wpOrgCoreVersionQuery( 'beta' ) );
+
+	if ( canOptOutOfWordPressBeta( site, currentVersion ) ) {
+		return (
+			<VStack spacing={ 6 }>
+				<BetaProgramNotice site={ site } wpVersion={ betaVersion } />
+				<OptOutCard site={ site } />
+			</VStack>
+		);
+	}
+
+	return (
+		<HostingFeatureGatedWithCallout
+			site={ site }
+			feature={ HostingFeatures.BACKUPS_SELF_SERVE }
+			upsellId="site-settings-wordpress"
+		>
+			<VersionManagement site={ site } />
+		</HostingFeatureGatedWithCallout>
+	);
+}
+
 export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 
 	const renderContent = () => {
 		if ( isEnabled( 'dashboard/wp-beta-program' ) ) {
-			return (
-				<HostingFeatureGatedWithCallout
-					site={ site }
-					feature={ HostingFeatures.BACKUPS_SELF_SERVE }
-					upsellId="site-settings-wordpress"
-				>
-					<VersionManagement site={ site } />
-				</HostingFeatureGatedWithCallout>
-			);
+			return <BetaProgramContent site={ site } />;
 		}
 
 		if ( site.is_wpcom_staging_site ) {

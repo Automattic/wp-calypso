@@ -49,6 +49,7 @@ import {
 	canSwitchWordPressVersion,
 	canTransferSite,
 	canViewHundredYearPlanSettings,
+	isWordPressBetaProgramEligible,
 } from '../../sites/features';
 import { shouldLoadWpVersionNotice } from '../../sites/overview/wp-version-notice';
 import { reauthRequiredLink } from '../../utils/link';
@@ -906,7 +907,7 @@ export const siteSettingsWordPressRoute = createRoute( {
 	path: 'wordpress',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( canSwitchWordPressVersion( site ) ) {
+		if ( canSwitchWordPressVersion( site ) || isWordPressBetaProgramEligible( site ) ) {
 			await queryClient.ensureQueryData( siteWordPressVersionQuery( site.ID ) );
 		}
 	},

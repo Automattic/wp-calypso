@@ -52,6 +52,26 @@ export function canSwitchWordPressVersion( site: Site ) {
 	return site.is_wpcom_staging_site;
 }
 
+/**
+ * Atomic/Flex site that may have been auto-enrolled in the WordPress beta
+ * program despite lacking self-serve backups (and therefore the ability to
+ * switch versions manually). When such a site is currently on `beta`, we
+ * offer a one-way opt-out via {@link canOptOutOfWordPressBeta}.
+ */
+export function isWordPressBetaProgramEligible( site: Site ) {
+	if ( ! isEnabled( 'dashboard/wp-beta-program' ) ) {
+		return false;
+	}
+	if ( ! site.is_wpcom_atomic && ! site.is_wpcom_flex ) {
+		return false;
+	}
+	return ! hasHostingFeature( site, HostingFeatures.BACKUPS_SELF_SERVE );
+}
+
+export function canOptOutOfWordPressBeta( site: Site, versionTag: string | undefined ) {
+	return isWordPressBetaProgramEligible( site ) && versionTag === 'beta';
+}
+
 // Settings -> Actions & danger zone
 
 export function canViewSiteActions( site: Site ) {
