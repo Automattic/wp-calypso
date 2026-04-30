@@ -22,6 +22,7 @@
 	"features": {
 		"100-year-plan/vip": true,
 		"ad-tracking": true,
+		"ad-tracking/post-purchase-wpcom-google-ads": false,
 		"akismet/checkout-quantity-dropdown": true,
 		"bilmur-script": true,
 		"blackbox-login": true,

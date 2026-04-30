@@ -39,6 +39,7 @@
 		"a4a-updated-add-new-site": true,
 		"a8c-for-agencies": true,
 		"ad-tracking": true,
+		"ad-tracking/post-purchase-wpcom-google-ads": false,
 		"checkout/stripe-upi": true,
 		"cookie-banner": true,
 		"jetpack/crm-downloads": true,

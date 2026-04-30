@@ -20,6 +20,7 @@
 		"100-year-domain": true,
 		"100-year-plan/vip": true,
 		"ad-tracking": false,
+		"ad-tracking/post-purchase-wpcom-google-ads": false,
 		"akismet/checkout-quantity-dropdown": true,
 		"blackbox-login": true,
 		"calypso/ai-blogging-prompts": false,

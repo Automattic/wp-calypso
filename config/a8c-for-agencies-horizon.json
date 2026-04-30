@@ -39,6 +39,7 @@
 		"a4a/site-migration": true,
 		"a8c-for-agencies": true,
 		"ad-tracking": false,
+		"ad-tracking/post-purchase-wpcom-google-ads": false,
 		"checkout/stripe-upi": true,
 		"cookie-banner": false,
 		"dev/auth-helper": true,

@@ -43,6 +43,7 @@
 		"a8c-for-agencies": true,
 		"a8c-for-agencies/import-site-from-wpcom": true,
 		"ad-tracking": false,
+		"ad-tracking/post-purchase-wpcom-google-ads": false,
 		"always_use_logout_url": true,
 		"checkout/stripe-upi": true,
 		"cookie-banner": false,

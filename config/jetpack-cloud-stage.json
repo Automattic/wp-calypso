@@ -29,6 +29,7 @@
 	"features": {
 		"activity-log/v2": true,
 		"ad-tracking": false,
+		"ad-tracking/post-purchase-wpcom-google-ads": false,
 		"always_use_logout_url": true,
 		"checkout/checkout-version": false,
 		"checkout/google-pay": false,
