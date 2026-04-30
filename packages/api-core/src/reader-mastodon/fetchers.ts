@@ -8,6 +8,8 @@ import type {
 	MastodonConnectionDetails,
 	MastodonConnectionsResponse,
 	MastodonCreateConnectionResponse,
+	MastodonTagFilter,
+	MastodonTagFeedPage,
 	MastodonThreadResponse,
 	MastodonTimelinePage,
 } from './types';
@@ -187,6 +189,50 @@ export async function getMastodonAuthorFeed(
 			},
 			query
 		) ) as MastodonAuthorFeedPage;
+	} catch ( raw ) {
+		throw classifyMastodonError( raw );
+	}
+}
+
+export interface GetMastodonTagFeedParams {
+	connectionId: number;
+	hashtag: string;
+	cursor?: string;
+	limit?: number;
+	filter?: MastodonTagFilter;
+}
+
+export async function getMastodonTagFeed(
+	params: GetMastodonTagFeedParams
+): Promise< MastodonTagFeedPage > {
+	const { connectionId, hashtag, cursor, limit, filter } = params;
+	const query: Record< string, string > = {};
+	if ( cursor ) {
+		query.cursor = cursor;
+	}
+	if ( limit ) {
+		query.limit = String( limit );
+	}
+	// Mastodon's `/api/v1/timelines/tag/:hashtag` exposes `only_media` and
+	// `local` as independent boolean params. `all` and undefined send neither.
+	if ( filter === 'media' ) {
+		query.only_media = 'true';
+	} else if ( filter === 'local' ) {
+		query.local = 'true';
+	}
+	try {
+		return ( await wpcom.req.get(
+			{
+				// Encode `hashtag` defensively; HASHTAG_RE-validated values
+				// contain no chars that need escaping today, but encoding
+				// keeps the request path safe if the validator widens later.
+				path: `/reader/mastodon/connections/${ connectionId }/tag/${ encodeURIComponent(
+					hashtag
+				) }/feed`,
+				apiNamespace: NAMESPACE,
+			},
+			query
+		) ) as MastodonTagFeedPage;
 	} catch ( raw ) {
 		throw classifyMastodonError( raw );
 	}
