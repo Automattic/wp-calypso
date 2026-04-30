@@ -10,8 +10,12 @@ import { thunk as thunkMiddleware } from 'redux-thunk';
 import readerReducer from 'calypso/state/reader/reducer';
 import QueryReaderPost from '../index';
 
-const buildStore = () =>
-	createStore( combineReducers( { reader: readerReducer } ), applyMiddleware( thunkMiddleware ) );
+const buildStore = ( preloadedState?: { reader?: unknown } ) =>
+	createStore(
+		combineReducers( { reader: readerReducer } ),
+		preloadedState as never,
+		applyMiddleware( thunkMiddleware )
+	);
 
 const buildQueryClient = () => {
 	const instance = new QueryClient();
@@ -19,8 +23,11 @@ const buildQueryClient = () => {
 	return instance;
 };
 
-const renderBridge = ( props: Parameters< typeof QueryReaderPost >[ 0 ] ) => {
-	const store = buildStore();
+const renderBridge = (
+	props: Parameters< typeof QueryReaderPost >[ 0 ],
+	preloadedState?: { reader?: unknown }
+) => {
+	const store = buildStore( preloadedState );
 	const queryClient = buildQueryClient();
 	const utils = render(
 		<QueryClientProvider client={ queryClient }>
@@ -96,5 +103,42 @@ describe( 'QueryReaderPost', () => {
 		// nock.disableNetConnect would throw on any unexpected request.
 		const { store } = renderBridge( { postKey: { blogId: 1 } as never } );
 		expect( getReceivedPosts( store ) ).toEqual( {} );
+	} );
+
+	it( 'skips the network call when the post is already in Redux', () => {
+		// No nock scope: any request would throw because of disableNetConnect.
+		const cached = { ID: 2, site_ID: 1, global_ID: 'global-2' };
+		const { store } = renderBridge(
+			{ postKey: { blogId: 1, postId: 2 } },
+			{ reader: { posts: { items: { 'global-2': cached }, seen: {} } } }
+		);
+		expect( getReceivedPosts( store ) ).toEqual( { 'global-2': cached } );
+	} );
+
+	it( 'still fetches when the cached post is in the minimal state', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/read/sites/1/posts/2' )
+			.query( true )
+			.reply( 200, { ID: 2, site_ID: 1, global_ID: 'global-2', title: 'full' } );
+
+		const { store } = renderBridge(
+			{ postKey: { blogId: 1, postId: 2 } },
+			{
+				reader: {
+					posts: {
+						items: {
+							'global-2': { ID: 2, site_ID: 1, global_ID: 'global-2', _state: 'minimal' },
+						},
+						seen: {},
+					},
+				},
+			}
+		);
+
+		await waitFor( () => {
+			expect( getReceivedPosts( store ) ).toMatchObject( {
+				'global-2': { title: 'full' },
+			} );
+		} );
 	} );
 } );

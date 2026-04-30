@@ -19,3 +19,10 @@ export interface ReadPost {
 	global_ID: string;
 	[ key: string ]: unknown;
 }
+
+export const isPostKeyLike = (
+	postKey: Partial< ReadPostKey > | null | undefined
+): postKey is ReadPostKey =>
+	!! postKey &&
+	!! postKey.postId &&
+	!! ( ( postKey as { blogId?: number } ).blogId || ( postKey as { feedId?: number } ).feedId );

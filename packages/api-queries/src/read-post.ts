@@ -1,14 +1,6 @@
-import { fetchReadPost } from '@automattic/api-core';
+import { fetchReadPost, isPostKeyLike } from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
 import type { ReadPost, ReadPostKey } from '@automattic/api-core';
-
-const isPostKeyLike = (
-	postKey: Partial< ReadPostKey > | null | undefined
-): postKey is ReadPostKey =>
-	!! postKey &&
-	typeof postKey.postId === 'number' &&
-	( typeof ( postKey as { blogId?: number } ).blogId === 'number' ||
-		typeof ( postKey as { feedId?: number } ).feedId === 'number' );
 
 export const readerPostQuery = (
 	postKey: Partial< ReadPostKey > | null | undefined,

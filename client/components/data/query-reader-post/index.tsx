@@ -1,8 +1,10 @@
 import { readerPostQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { READER_POSTS_RECEIVE } from 'calypso/state/reader/action-types';
 import { receivePosts } from 'calypso/state/reader/posts/actions';
+import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import type { ReadPostKey } from '@automattic/api-core';
 
 interface QueryReaderPostProps {
@@ -28,7 +30,18 @@ const buildErrorPost = ( postKey: Partial< ReadPostKey >, error: unknown ) => {
 
 export default function QueryReaderPost( { postKey }: QueryReaderPostProps ) {
 	const dispatch = useDispatch();
-	const { data, isError, error } = useQuery( readerPostQuery( postKey ) );
+
+	// Skip the network call when the post is already populated in Redux (e.g. by
+	// a stream response). Mirrors the legacy `! post || post._state === 'minimal'`
+	// guard and keeps the bridge cheap for consumers that mount it unconditionally.
+	const cachedPost = useSelector( ( state ) => getPostByKey( state, postKey ) );
+	const shouldFetch = ! cachedPost || cachedPost._state === 'minimal';
+
+	const queryOptions = readerPostQuery( postKey );
+	const { data, isError, error } = useQuery( {
+		...queryOptions,
+		enabled: queryOptions.enabled !== false && shouldFetch,
+	} );
 
 	const handleSuccess = () => {
 		if ( data ) {
@@ -36,11 +49,16 @@ export default function QueryReaderPost( { postKey }: QueryReaderPostProps ) {
 		}
 	};
 
+	// Dispatch the raw action to bypass `receivePosts`' normalization and
+	// `receiveLikes` side effects, which don't apply to a post that never loaded.
 	const handleError = () => {
 		if ( ! isError || ! postKey ) {
 			return;
 		}
-		dispatch( receivePosts( [ buildErrorPost( postKey, error ) ] ) );
+		dispatch( {
+			type: READER_POSTS_RECEIVE,
+			posts: [ buildErrorPost( postKey, error ) ],
+		} );
 	};
 
 	useEffect( handleSuccess, [ data, dispatch ] );
