@@ -17,7 +17,7 @@
 	}
 
 	&.is-minimized {
-		.help-center__container-header {	
+		.help-center__container-header {
 			.help-center-header__text {
 				flex: unset;
 				cursor: pointer;
@@ -26,9 +26,9 @@
 	}
 
 	.help-center__container-header {
-		background-color: var(--studio-white);
+		background-color: var(--color-surface);
 		border: none;
-		border-bottom: 1px solid $gray-100;
+		border-bottom: 1px solid var(--studio-gray-100);
 		border-radius: 16px;
 		border-bottom-right-radius: 0;
 		border-bottom-left-radius: 0;

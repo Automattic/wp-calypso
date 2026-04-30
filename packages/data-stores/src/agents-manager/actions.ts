@@ -122,6 +122,17 @@ export function setIsLoading( isLoading: boolean ) {
 	} as const;
 }
 
+/**
+ * Set split-screen mode (docked sidebar grows to cover ~50% of the viewport).
+ * Session-scoped — intentionally not persisted to user prefs.
+ */
+export function setIsSplitScreen( isSplitScreen: boolean ) {
+	return {
+		type: 'AGENTS_MANAGER_SET_SPLIT_SCREEN',
+		isSplitScreen,
+	} as const;
+}
+
 export function setHasLoaded( hasLoaded: boolean ) {
 	return {
 		type: 'AGENTS_MANAGER_SET_HAS_LOADED',
@@ -134,6 +145,7 @@ export type AgentsManagerAction =
 	| ReturnType< typeof setLastActivity >
 	| ReturnType< typeof setIsLoading >
 	| ReturnType< typeof setHasLoaded >
+	| ReturnType< typeof setIsSplitScreen >
 	| GeneratorReturnType< typeof setIsOpen >
 	| GeneratorReturnType< typeof setIsDocked >
 	| GeneratorReturnType< typeof setFloatingPosition >;
