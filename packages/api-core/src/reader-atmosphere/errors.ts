@@ -35,6 +35,7 @@ export function classifyAtmosphereError( raw: unknown ): AtmosphereError {
 		case 'auth_failed':
 			return { kind: 'auth_failed' };
 		case 'atmosphere_auth_required':
+		case 'atmosphere_unauthenticated':
 			return { kind: 'auth_required' };
 		case 'connection_not_found':
 			return { kind: 'connection_not_found' };

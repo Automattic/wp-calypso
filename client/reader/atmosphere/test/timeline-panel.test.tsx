@@ -274,9 +274,9 @@ describe( 'TimelinePanel', () => {
 			} )
 			.reply( 200, {
 				like: {
-					uri: 'at://did:plc:caller/app.bsky.feed.like/3kreal',
+					uri: 'at://did:plc:caller/app.bsky.feed.like/3krkeyrkeyrke',
 					cid: 'bafy-like-cid',
-					rkey: '3kreal',
+					rkey: '3krkeyrkeyrke',
 				},
 			} );
 

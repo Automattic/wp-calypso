@@ -509,9 +509,9 @@ describe( 'atmosphere fetchers', () => {
 				} )
 				.reply( 200, {
 					like: {
-						uri: 'at://did:plc:caller/app.bsky.feed.like/3krkey',
+						uri: 'at://did:plc:caller/app.bsky.feed.like/3krkeyrkeyrke',
 						cid: 'bafyreig27zk7',
-						rkey: '3krkey',
+						rkey: '3krkeyrkeyrke',
 					},
 				} );
 
@@ -522,9 +522,9 @@ describe( 'atmosphere fetchers', () => {
 			} );
 
 			expect( result ).toEqual( {
-				uri: 'at://did:plc:caller/app.bsky.feed.like/3krkey',
+				uri: 'at://did:plc:caller/app.bsky.feed.like/3krkeyrkeyrke',
 				cid: 'bafyreig27zk7',
-				rkey: '3krkey',
+				rkey: '3krkeyrkeyrke',
 			} );
 		} );
 
@@ -541,7 +541,7 @@ describe( 'atmosphere fetchers', () => {
 		it( 'classifies 401 as auth_required', async () => {
 			nock( BASE )
 				.post( '/wpcom/v2/reader/atmosphere/connections/42/likes' )
-				.reply( 401, { error: 'atmosphere_auth_required' } );
+				.reply( 401, { error: 'atmosphere_unauthenticated' } );
 
 			await expect(
 				createLike( { connectionId: 42, postUri: 'at://x', postCid: 'y' } )
@@ -571,37 +571,47 @@ describe( 'atmosphere fetchers', () => {
 
 	describe( 'deleteLike', () => {
 		it( 'DELETEs /likes/{rkey} and resolves on 204', async () => {
-			nock( BASE ).delete( '/wpcom/v2/reader/atmosphere/connections/42/likes/3krkey' ).reply( 204 );
+			nock( BASE )
+				.delete( '/wpcom/v2/reader/atmosphere/connections/42/likes/3krkeyrkeyrke' )
+				.reply( 204 );
 
-			await expect( deleteLike( { connectionId: 42, rkey: '3krkey' } ) ).resolves.toBeUndefined();
+			await expect(
+				deleteLike( { connectionId: 42, rkey: '3krkeyrkeyrke' } )
+			).resolves.toBeUndefined();
 		} );
 
 		it( 'classifies 401 as auth_required', async () => {
 			nock( BASE )
-				.delete( '/wpcom/v2/reader/atmosphere/connections/42/likes/3krkey' )
-				.reply( 401, { error: 'atmosphere_auth_required' } );
+				.delete( '/wpcom/v2/reader/atmosphere/connections/42/likes/3krkeyrkeyrke' )
+				.reply( 401, { error: 'atmosphere_unauthenticated' } );
 
-			await expect( deleteLike( { connectionId: 42, rkey: '3krkey' } ) ).rejects.toMatchObject( {
+			await expect(
+				deleteLike( { connectionId: 42, rkey: '3krkeyrkeyrke' } )
+			).rejects.toMatchObject( {
 				kind: 'auth_required',
 			} );
 		} );
 
 		it( 'classifies 429 as rate_limited', async () => {
 			nock( BASE )
-				.delete( '/wpcom/v2/reader/atmosphere/connections/42/likes/3krkey' )
+				.delete( '/wpcom/v2/reader/atmosphere/connections/42/likes/3krkeyrkeyrke' )
 				.reply( 429, { error: 'atmosphere_rate_limited' } );
 
-			await expect( deleteLike( { connectionId: 42, rkey: '3krkey' } ) ).rejects.toMatchObject( {
+			await expect(
+				deleteLike( { connectionId: 42, rkey: '3krkeyrkeyrke' } )
+			).rejects.toMatchObject( {
 				kind: 'rate_limited',
 			} );
 		} );
 
 		it( 'classifies 502 as upstream_unavailable', async () => {
 			nock( BASE )
-				.delete( '/wpcom/v2/reader/atmosphere/connections/42/likes/3krkey' )
+				.delete( '/wpcom/v2/reader/atmosphere/connections/42/likes/3krkeyrkeyrke' )
 				.reply( 502, { error: 'atmosphere_upstream_unavailable' } );
 
-			await expect( deleteLike( { connectionId: 42, rkey: '3krkey' } ) ).rejects.toMatchObject( {
+			await expect(
+				deleteLike( { connectionId: 42, rkey: '3krkeyrkeyrke' } )
+			).rejects.toMatchObject( {
 				kind: 'upstream_unavailable',
 			} );
 		} );

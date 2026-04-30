@@ -2,8 +2,8 @@ import { PENDING_LIKE_URI, rkeyFromUri } from '../rkey-from-uri';
 
 describe( 'rkeyFromUri', () => {
 	it( 'extracts rkey from a typical at-uri', () => {
-		expect( rkeyFromUri( 'at://did:plc:abc/app.bsky.feed.like/3kabcabcabcabc' ) ).toBe(
-			'3kabcabcabcabc'
+		expect( rkeyFromUri( 'at://did:plc:abc/app.bsky.feed.like/3krkeyrkeyrke' ) ).toBe(
+			'3krkeyrkeyrke'
 		);
 	} );
 

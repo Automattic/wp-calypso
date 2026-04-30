@@ -588,8 +588,8 @@ describe( 'reader-atmosphere hooks', () => {
 		const TARGET_URI = 'at://did:plc:target/app.bsky.feed.post/3ktarget';
 		const TARGET_CID = 'cid-target';
 		const OTHER_URI = 'at://did:plc:other/app.bsky.feed.post/3kother';
-		const SERVER_LIKE_URI = 'at://did:plc:viewer/app.bsky.feed.like/3klike';
-		const SERVER_LIKE_RKEY = '3klike';
+		const SERVER_LIKE_URI = 'at://did:plc:viewer/app.bsky.feed.like/3krkeyrkeyrke';
+		const SERVER_LIKE_RKEY = '3krkeyrkeyrke';
 
 		function makeFeedItemWithViewer(
 			overrides: Partial< AtmosphereFeedItem > = {}

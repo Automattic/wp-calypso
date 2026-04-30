@@ -15,7 +15,7 @@ import type { AtmosphereFeedItem } from '@automattic/api-core';
 const BASE = 'https://public-api.wordpress.com';
 const POST_URI = 'at://did:plc:author/app.bsky.feed.post/3kabc';
 const POST_CID = 'bafy-cid';
-const LIKE_URI = 'at://did:plc:caller/app.bsky.feed.like/3kreal';
+const LIKE_URI = 'at://did:plc:caller/app.bsky.feed.like/3krkeyrkeyrke';
 
 function makePost( overrides: Partial< AtmosphereFeedItem > = {} ): AtmosphereFeedItem {
 	return {
@@ -94,7 +94,7 @@ describe( '<LikeButton>', () => {
 				post_cid: POST_CID,
 			} )
 			.reply( 200, {
-				like: { uri: LIKE_URI, cid: 'bafy-like-cid', rkey: '3kreal' },
+				like: { uri: LIKE_URI, cid: 'bafy-like-cid', rkey: '3krkeyrkeyrke' },
 			} );
 
 		const user = userEvent.setup();
@@ -109,7 +109,9 @@ describe( '<LikeButton>', () => {
 	} );
 
 	it( 'click in liked state fires DELETE with the rkey from viewer.like', async () => {
-		nock( BASE ).delete( '/wpcom/v2/reader/atmosphere/connections/42/likes/3kreal' ).reply( 204 );
+		nock( BASE )
+			.delete( '/wpcom/v2/reader/atmosphere/connections/42/likes/3krkeyrkeyrke' )
+			.reply( 204 );
 
 		const user = userEvent.setup();
 		const { onClick } = renderLikeButton(
