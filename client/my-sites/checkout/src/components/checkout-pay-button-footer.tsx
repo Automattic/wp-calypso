@@ -1,5 +1,4 @@
 import { localizeUrl } from '@automattic/i18n-utils';
-import { ResponseCart } from '@automattic/shopping-cart';
 import styled from '@emotion/styled';
 import { Icon } from '@wordpress/components';
 import { lock } from '@wordpress/icons';
@@ -7,6 +6,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { CheckoutSummaryRefundWindows } from './checkout-summary-refund-windows';
 import CheckoutTermsModal from './checkout-terms-modal';
+import type { ResponseCart } from '@automattic/shopping-cart';
 
 const Wrapper = styled.div`
 	display: flex;

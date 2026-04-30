@@ -1,10 +1,10 @@
 import { isPlan } from '@automattic/calypso-products';
-import { ResponseCart } from '@automattic/shopping-cart';
 import styled from '@emotion/styled';
 import { Icon, reusableBlock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { CheckIcon } from './check-icon';
 import { getRefundWindowSummary } from './refund-policies';
+import type { ResponseCart } from '@automattic/shopping-cart';
 import type { TranslateResult } from 'i18n-calypso';
 
 const StyledIcon = styled( Icon )`

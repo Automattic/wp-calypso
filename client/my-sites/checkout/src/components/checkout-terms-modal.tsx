@@ -1,8 +1,8 @@
-import { ResponseCart } from '@automattic/shopping-cart';
 import styled from '@emotion/styled';
 import { Modal } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import CheckoutTerms from './checkout-terms';
+import type { ResponseCart } from '@automattic/shopping-cart';
 
 const TermsModalBody = styled.div`
 	font-size: 14px;

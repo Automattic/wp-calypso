@@ -1,4 +1,3 @@
-import { ResponseCart } from '@automattic/shopping-cart';
 import {
 	AmexLogo,
 	DiscoverLogo,
@@ -11,6 +10,7 @@ import { Icon } from '@wordpress/components';
 import { reusableBlock, shield, payment } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { getRefundWindowSummary } from './refund-policies';
+import type { ResponseCart } from '@automattic/shopping-cart';
 
 const TrustCardsRow = styled.div`
 	display: grid;
