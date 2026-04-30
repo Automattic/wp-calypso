@@ -1,6 +1,7 @@
 import { readerPostQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
+import readerContentWidth from 'calypso/reader/lib/content-width';
 import { useDispatch, useSelector } from 'calypso/state';
 import { READER_POSTS_RECEIVE } from 'calypso/state/reader/action-types';
 import { receivePosts } from 'calypso/state/reader/posts/actions';
@@ -37,7 +38,7 @@ export default function QueryReaderPost( { postKey }: QueryReaderPostProps ) {
 	const cachedPost = useSelector( ( state ) => getPostByKey( state, postKey ) );
 	const shouldFetch = ! cachedPost || cachedPost._state === 'minimal';
 
-	const queryOptions = readerPostQuery( postKey );
+	const queryOptions = readerPostQuery( postKey, readerContentWidth() );
 	const { data, isError, error } = useQuery( {
 		...queryOptions,
 		enabled: queryOptions.enabled !== false && shouldFetch,
