@@ -110,7 +110,7 @@
 	justify-content: flex-end;
 	display: flex;
 	flex-direction: row-reverse;
-	align-items: flex-end;
+	align-items: last baseline;
 	gap: 4px;
 
 	&.is-large-currency {
