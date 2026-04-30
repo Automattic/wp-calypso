@@ -1,6 +1,8 @@
 import { wpcom } from '../wpcom-fetcher';
 import { classifyMastodonError } from './errors';
 import type {
+	MastodonAuthorFeedPage,
+	MastodonAuthorProfile,
 	MastodonAuthorizeResponse,
 	MastodonConnectionDetails,
 	MastodonConnectionsResponse,
@@ -117,6 +119,64 @@ export async function getMastodonThread(
 			},
 			{ status_id: statusId }
 		) ) as MastodonThreadResponse;
+	} catch ( raw ) {
+		throw classifyMastodonError( raw );
+	}
+}
+
+export interface GetMastodonAuthorProfileParams {
+	connectionId: number;
+	actor: string;
+}
+
+export async function getMastodonAuthorProfile(
+	params: GetMastodonAuthorProfileParams
+): Promise< MastodonAuthorProfile > {
+	const { connectionId, actor } = params;
+	try {
+		return ( await wpcom.req.get( {
+			// `actor` flows in from federated mention anchors and route
+			// segments; encode so a crafted handle can't smuggle slashes
+			// or query separators into the request path.
+			path: `/reader/mastodon/connections/${ connectionId }/profile/${ encodeURIComponent(
+				actor
+			) }`,
+			apiNamespace: NAMESPACE,
+		} ) ) as MastodonAuthorProfile;
+	} catch ( raw ) {
+		throw classifyMastodonError( raw );
+	}
+}
+
+export interface GetMastodonAuthorFeedParams {
+	connectionId: number;
+	actor: string;
+	cursor?: string;
+	limit?: number;
+}
+
+export async function getMastodonAuthorFeed(
+	params: GetMastodonAuthorFeedParams
+): Promise< MastodonAuthorFeedPage > {
+	const { connectionId, actor, cursor, limit } = params;
+	const query: Record< string, string > = {};
+	if ( cursor ) {
+		query.cursor = cursor;
+	}
+	if ( limit ) {
+		query.limit = String( limit );
+	}
+	try {
+		return ( await wpcom.req.get(
+			{
+				// Encode `actor`; see getMastodonAuthorProfile for rationale.
+				path: `/reader/mastodon/connections/${ connectionId }/profile/${ encodeURIComponent(
+					actor
+				) }/feed`,
+				apiNamespace: NAMESPACE,
+			},
+			query
+		) ) as MastodonAuthorFeedPage;
 	} catch ( raw ) {
 		throw classifyMastodonError( raw );
 	}

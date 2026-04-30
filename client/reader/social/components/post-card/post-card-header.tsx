@@ -19,6 +19,7 @@ export function PostCardHeader( { post, variant, prominentTimestamp }: PostCardH
 	const externalProfileUrl = post.author.profile_url;
 	const inAppProfileUrl =
 		analytics?.getProfileUrl?.( {
+			id: post.author.id,
 			did: post.author.id,
 			handle: post.author.handle,
 		} ) ?? null;
@@ -146,7 +147,11 @@ export function PostCardHeader( { post, variant, prominentTimestamp }: PostCardH
 						const by = post.reason.by;
 						const reposterName = by.display_name || by.handle;
 						const inAppUrl =
-							analytics?.getProfileUrl?.( { did: by.id, handle: by.handle } ) ?? null;
+							analytics?.getProfileUrl?.( {
+								id: by.id,
+								did: by.id,
+								handle: by.handle,
+							} ) ?? null;
 						const href =
 							inAppUrl ?? `https://bsky.app/profile/${ encodeURIComponent( by.handle ) }`;
 						const isInApp = inAppUrl !== null;
