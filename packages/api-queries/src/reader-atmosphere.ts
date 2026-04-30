@@ -201,15 +201,25 @@ export function useAuthorFeedInfiniteQuery( { actor, filter }: UseAuthorFeedInfi
 }
 
 interface OptimisticContext {
-	snapshots: Array< [ QueryKey, InfiniteData< AtmosphereTimelinePage > | undefined ] >;
+	snapshots: Array< {
+		key: QueryKey;
+		items: Array< { itemKey: string; occurrence: number; item: AtmosphereFeedItem } >;
+	} >;
+}
+
+function getOptimisticItemKey( item: AtmosphereFeedItem ): string {
+	if ( ! item.reason ) {
+		return `${ item.uri }\nreason:none`;
+	}
+	return `${ item.uri }\nreason:${ item.reason.type }:${ item.reason.by.did }:${ item.reason.by.handle }`;
 }
 
 /**
  * Walk every cached `useTimelineInfiniteQuery` entry for the given
  * connection, find any page whose items contain the post by URI, and
  * apply `patch` to that item. Pages that don't contain the URI pass
- * through untouched. Returns the per-key snapshots so `onError` can
- * restore the exact pre-mutation cache state.
+ * through untouched. Returns the pre-mutation items so `onError` can
+ * roll back only this post without clobbering other optimistic updates.
  */
 function patchTimelineCache(
 	queryClient: QueryClient,
@@ -218,28 +228,66 @@ function patchTimelineCache(
 	patch: ( item: AtmosphereFeedItem ) => AtmosphereFeedItem
 ): OptimisticContext {
 	const key = readerAtmosphereKeys.timeline( connectionId );
-	const snapshots: OptimisticContext[ 'snapshots' ] = [];
+	const items: OptimisticContext[ 'snapshots' ][ number ][ 'items' ] = [];
+	const seenOccurrences = new Map< string, number >();
 	const data = queryClient.getQueryData< InfiniteData< AtmosphereTimelinePage > >( key );
-	snapshots.push( [ key, data ] );
 	if ( ! data ) {
-		return { snapshots };
+		return { snapshots: [ { key, items } ] };
 	}
 	queryClient.setQueryData< InfiniteData< AtmosphereTimelinePage > >( key, {
 		...data,
 		pages: data.pages.map( ( page ) => ( {
 			...page,
-			items: page.items.map( ( item ) => ( item.uri === postUri ? patch( item ) : item ) ),
+			items: page.items.map( ( item ) => {
+				if ( item.uri !== postUri ) {
+					return item;
+				}
+				const itemKey = getOptimisticItemKey( item );
+				const occurrence = seenOccurrences.get( itemKey ) ?? 0;
+				seenOccurrences.set( itemKey, occurrence + 1 );
+				items.push( { itemKey, occurrence, item } );
+				return patch( item );
+			} ),
 		} ) ),
 	} );
-	return { snapshots };
+	return { snapshots: [ { key, items } ] };
 }
 
 function restoreTimelineSnapshots( queryClient: QueryClient, ctx: OptimisticContext | undefined ) {
 	if ( ! ctx ) {
 		return;
 	}
-	for ( const [ key, snapshot ] of ctx.snapshots ) {
-		queryClient.setQueryData( key, snapshot );
+	for ( const { key, items } of ctx.snapshots ) {
+		if ( ! items.length ) {
+			continue;
+		}
+		const current = queryClient.getQueryData< InfiniteData< AtmosphereTimelinePage > >( key );
+		if ( ! current ) {
+			continue;
+		}
+		const itemSnapshots = new Map< string, AtmosphereFeedItem[] >();
+		for ( const { itemKey, occurrence, item } of items ) {
+			const snapshots = itemSnapshots.get( itemKey ) ?? [];
+			snapshots[ occurrence ] = item;
+			itemSnapshots.set( itemKey, snapshots );
+		}
+		const seenOccurrences = new Map< string, number >();
+		queryClient.setQueryData< InfiniteData< AtmosphereTimelinePage > >( key, {
+			...current,
+			pages: current.pages.map( ( page ) => ( {
+				...page,
+				items: page.items.map( ( item ) => {
+					const itemKey = getOptimisticItemKey( item );
+					const snapshots = itemSnapshots.get( itemKey );
+					if ( ! snapshots ) {
+						return item;
+					}
+					const occurrence = seenOccurrences.get( itemKey ) ?? 0;
+					seenOccurrences.set( itemKey, occurrence + 1 );
+					return snapshots[ occurrence ] ?? item;
+				} ),
+			} ) ),
+		} );
 	}
 }
 
@@ -252,15 +300,19 @@ export function useCreateLikeMutation( connectionId: number ) {
 		OptimisticContext
 	>( {
 		mutationFn: ( { postUri, postCid } ) => createLike( { connectionId, postUri, postCid } ),
-		onMutate: ( { postUri } ) =>
-			patchTimelineCache( queryClient, connectionId, postUri, ( item ) => ( {
+		onMutate: async ( { postUri } ) => {
+			await queryClient.cancelQueries( {
+				queryKey: readerAtmosphereKeys.timeline( connectionId ),
+			} );
+			return patchTimelineCache( queryClient, connectionId, postUri, ( item ) => ( {
 				...item,
 				viewer: {
 					like: PENDING_LIKE_URI,
 					repost: item.viewer?.repost ?? null,
 				},
 				counts: { ...item.counts, likes: item.counts.likes + 1 },
-			} ) ),
+			} ) );
+		},
 		onError: ( _err, _vars, ctx ) => restoreTimelineSnapshots( queryClient, ctx ),
 		onSuccess: ( result, { postUri } ) => {
 			patchTimelineCache( queryClient, connectionId, postUri, ( item ) => ( {
@@ -279,15 +331,19 @@ export function useDeleteLikeMutation( connectionId: number ) {
 	return useMutation< void, AtmosphereError, { rkey: string; postUri: string }, OptimisticContext >(
 		{
 			mutationFn: ( { rkey } ) => deleteLike( { connectionId, rkey } ),
-			onMutate: ( { postUri } ) =>
-				patchTimelineCache( queryClient, connectionId, postUri, ( item ) => ( {
+			onMutate: async ( { postUri } ) => {
+				await queryClient.cancelQueries( {
+					queryKey: readerAtmosphereKeys.timeline( connectionId ),
+				} );
+				return patchTimelineCache( queryClient, connectionId, postUri, ( item ) => ( {
 					...item,
 					viewer: {
 						like: null,
 						repost: item.viewer?.repost ?? null,
 					},
 					counts: { ...item.counts, likes: Math.max( 0, item.counts.likes - 1 ) },
-				} ) ),
+				} ) );
+			},
 			onError: ( _err, _vars, ctx ) => restoreTimelineSnapshots( queryClient, ctx ),
 		}
 	);

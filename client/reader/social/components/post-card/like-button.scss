@@ -33,9 +33,11 @@
 		opacity: 0.6;
 	}
 
-	svg {
+	svg.like-button {
+		color: currentColor;
 		flex-shrink: 0;
 		fill: currentColor;
+		cursor: inherit;
 	}
 }
 

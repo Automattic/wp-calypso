@@ -284,17 +284,17 @@ describe( 'TimelinePanel', () => {
 		renderWithProvider( <TimelinePanel connection={ connection } />, {
 			queryClient: makeQueryClient(),
 		} );
-		const button = await screen.findByRole( 'button', { name: /like/i } );
+		const button = await screen.findByRole( 'button', { name: /like, 5 likes/i } );
 		expect( button ).toHaveTextContent( '5' );
 
 		await user.click( button );
 
-		await waitFor( () => expect( screen.getByRole( 'button', { name: /unlike/i } ) ) );
-		expect( screen.getByRole( 'button', { name: /unlike/i } ) ).toHaveAttribute(
+		await waitFor( () => expect( screen.getByRole( 'button', { name: /like, 6 likes/i } ) ) );
+		expect( screen.getByRole( 'button', { name: /like, 6 likes/i } ) ).toHaveAttribute(
 			'aria-pressed',
 			'true'
 		);
-		expect( screen.getByRole( 'button', { name: /unlike/i } ) ).toHaveTextContent( '6' );
+		expect( screen.getByRole( 'button', { name: /like, 6 likes/i } ) ).toHaveTextContent( '6' );
 		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
 	} );
 } );

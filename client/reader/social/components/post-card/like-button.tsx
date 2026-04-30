@@ -48,6 +48,11 @@ export function LikeButton( { post, connectionId }: LikeButtonProps ) {
 
 	const isLiked = Boolean( post.viewer?.like );
 	const isPending = create.isPending || remove.isPending;
+	const formattedLikes = formatNumber( post.counts.likes );
+	const accessibleLabel = translate( 'Like, %(count)s like', 'Like, %(count)s likes', {
+		count: post.counts.likes,
+		args: { count: formattedLikes },
+	} );
 
 	const trackError = ( error: AtmosphereError, direction: LikeDirection ) => {
 		dispatch( errorNotice( errorMessageForLike( error, translate ) ) );
@@ -101,14 +106,12 @@ export function LikeButton( { post, connectionId }: LikeButtonProps ) {
 				isPending ? ' is-pending' : ''
 			}` }
 			aria-pressed={ isLiked }
-			aria-label={ isLiked ? translate( 'Unlike' ) : translate( 'Like' ) }
+			aria-label={ accessibleLabel }
 			disabled={ isPending }
 			onClick={ onClick }
 		>
 			<ReaderLikeIcon liked={ isLiked } iconSize={ 16 } />
-			<span className="social-post-card-like-button__count">
-				{ formatNumber( post.counts.likes ) }
-			</span>
+			<span className="social-post-card-like-button__count">{ formattedLikes }</span>
 		</button>
 	);
 }

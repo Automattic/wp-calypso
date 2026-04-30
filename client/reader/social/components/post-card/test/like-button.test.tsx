@@ -76,14 +76,14 @@ describe( '<LikeButton>', () => {
 
 	it( 'renders outlined heart and count when not liked', () => {
 		renderLikeButton();
-		const button = screen.getByRole( 'button', { name: /like/i } );
+		const button = screen.getByRole( 'button', { name: /like, 5 likes/i } );
 		expect( button ).toHaveAttribute( 'aria-pressed', 'false' );
 		expect( button ).toHaveTextContent( '5' );
 	} );
 
-	it( 'renders filled heart and aria-pressed=true when already liked', () => {
+	it( 'keeps a stable label and sets aria-pressed=true when already liked', () => {
 		renderLikeButton( makePost( { viewer: { like: LIKE_URI, repost: null } } ) );
-		const button = screen.getByRole( 'button', { name: /unlike/i } );
+		const button = screen.getByRole( 'button', { name: /like, 5 likes/i } );
 		expect( button ).toHaveAttribute( 'aria-pressed', 'true' );
 	} );
 
@@ -99,7 +99,7 @@ describe( '<LikeButton>', () => {
 
 		const user = userEvent.setup();
 		const { onClick } = renderLikeButton();
-		await user.click( screen.getByRole( 'button', { name: /like/i } ) );
+		await user.click( screen.getByRole( 'button', { name: /like, 5 likes/i } ) );
 
 		expect( onClick ).toHaveBeenCalledWith(
 			'calypso_reader_atmosphere_like_clicked',
@@ -117,7 +117,7 @@ describe( '<LikeButton>', () => {
 		const { onClick } = renderLikeButton(
 			makePost( { viewer: { like: LIKE_URI, repost: null } } )
 		);
-		await user.click( screen.getByRole( 'button', { name: /unlike/i } ) );
+		await user.click( screen.getByRole( 'button', { name: /like, 5 likes/i } ) );
 
 		expect( onClick ).toHaveBeenCalledWith(
 			'calypso_reader_atmosphere_unlike_clicked',
@@ -133,7 +133,7 @@ describe( '<LikeButton>', () => {
 
 		const user = userEvent.setup();
 		renderLikeButton( makePost( { viewer: { like: PENDING_LIKE_URI, repost: null } } ) );
-		await user.click( screen.getByRole( 'button', { name: /unlike/i } ) );
+		await user.click( screen.getByRole( 'button', { name: /like, 5 likes/i } ) );
 
 		expect( interceptor.isDone() ).toBe( false );
 	} );
@@ -146,7 +146,7 @@ describe( '<LikeButton>', () => {
 
 		const user = userEvent.setup();
 		const { onClick } = renderLikeButton();
-		await user.click( screen.getByRole( 'button', { name: /like/i } ) );
+		await user.click( screen.getByRole( 'button', { name: /like, 5 likes/i } ) );
 
 		await waitFor( () =>
 			expect( onClick ).toHaveBeenCalledWith(
@@ -178,7 +178,7 @@ describe( '<LikeButton>', () => {
 			{ queryClient: makeQueryClient() }
 		);
 
-		await user.click( screen.getByRole( 'button', { name: /unlike/i } ) );
+		await user.click( screen.getByRole( 'button', { name: /like, 5 likes/i } ) );
 		expect( onParentClick ).not.toHaveBeenCalled();
 	} );
 } );
