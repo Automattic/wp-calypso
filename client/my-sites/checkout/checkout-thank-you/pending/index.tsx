@@ -3,7 +3,7 @@ import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { Step } from '@automattic/onboarding';
-import { useShoppingCart } from '@automattic/shopping-cart';
+import { useShoppingCart, type ResponseCart } from '@automattic/shopping-cart';
 import { invokeSurvicateEvent } from '@automattic/survicate';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
@@ -77,7 +77,7 @@ interface CheckoutPendingProps {
  * It must be numeric. If set, we know that the transaction is complete and
  * will skip polling for the order.
  */
-function CheckoutPending( {
+export function CheckoutPending( {
 	orderId: orderIdOrPlaceholder,
 	receiptId,
 	siteSlug,
@@ -193,6 +193,10 @@ function useRedirectOnTransactionSuccess( {
 	const reduxDispatch = useDispatch();
 	const cartKey = useCartKey();
 	const { responseCart, reloadFromServer: reloadCart } = useShoppingCart( cartKey );
+	const cartSnapshotRef = useRef< ResponseCart | undefined >( undefined );
+	if ( ! cartSnapshotRef.current && responseCart.total_cost >= 0.01 ) {
+		cartSnapshotRef.current = responseCart;
+	}
 
 	const firstItem = receipt?.items[ 0 ];
 	const isRenewal = receipt?.items.some( ( item ) => item.type === 'recurring' ) ?? false;
@@ -329,7 +333,7 @@ function useRedirectOnTransactionSuccess( {
 			redirectInstructions,
 			receiptId: finalReceiptId,
 			receipt,
-			cart: responseCart,
+			cart: cartSnapshotRef.current,
 		} );
 
 		// Pre-populate the Redux sites store with the newly-purchased site so
@@ -358,7 +362,6 @@ function useRedirectOnTransactionSuccess( {
 		redirectTo,
 		reduxDispatch,
 		reloadCart,
-		responseCart,
 		siteSlug,
 		transaction,
 		translate,

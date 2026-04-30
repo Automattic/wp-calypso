@@ -204,6 +204,16 @@ describe( 'recordPostPurchaseTracking', () => {
 		expect( window.gtag ).not.toHaveBeenCalled();
 	} );
 
+	it( 'skips cart fallback purchases below the existing purchase threshold', () => {
+		recordPostPurchaseTracking( {
+			receiptId: 1014,
+			cart: makeCart( { total_cost: 0.009, currency: 'USD' } ),
+			source: 'checkout-pending',
+		} );
+
+		expect( window.gtag ).not.toHaveBeenCalled();
+	} );
+
 	it( 'dedupes by receipt id in memory', () => {
 		recordPostPurchaseTracking( {
 			receiptId: 1011,
@@ -224,6 +234,21 @@ describe( 'recordPostPurchaseTracking', () => {
 				transaction_id: 1011,
 			} )
 		);
+	} );
+
+	it( 'dedupes by receipt id from sessionStorage', () => {
+		window.sessionStorage.setItem(
+			'calypso:post_purchase_tracking:wpcom_google_ads_purchase:1015',
+			'1'
+		);
+
+		recordPostPurchaseTracking( {
+			receiptId: 1015,
+			cart: makeCart(),
+			source: 'checkout-pending',
+		} );
+
+		expect( window.gtag ).not.toHaveBeenCalled();
 	} );
 
 	it( 'continues when sessionStorage fails', () => {

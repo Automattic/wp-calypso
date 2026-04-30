@@ -14,7 +14,7 @@ export const POST_PURCHASE_WPCOM_GOOGLE_ADS_FEATURE = 'ad-tracking/post-purchase
 type PostPurchaseTrackingSource = 'checkout-pending' | 'one-click-modal';
 
 type RecordPostPurchaseTrackingArgs = {
-	receiptId: number | null | undefined;
+	receiptId: number;
 	cart?: ResponseCart;
 	receipt?: Receipt;
 	source: PostPurchaseTrackingSource;
@@ -50,6 +50,13 @@ export function recordWpcomGoogleAdsPurchaseConversion( {
 	currency,
 	transactionId,
 }: WpcomGoogleAdsPurchaseConversionArgs ): void {
+	if ( typeof window === 'undefined' || ! mayWeTrackByTracker( 'googleAds' ) ) {
+		debug(
+			'recordWpcomGoogleAdsPurchaseConversion: skipping as Google Ads tracking is disallowed'
+		);
+		return;
+	}
+
 	setWpcomGoogleAdsEnhancedConversionUserData();
 
 	const params = [
@@ -67,6 +74,13 @@ export function recordWpcomGoogleAdsPurchaseConversion( {
 }
 
 export function setWpcomGoogleAdsEnhancedConversionUserData(): void {
+	if ( typeof window === 'undefined' || ! mayWeTrackByTracker( 'googleAds' ) ) {
+		debug(
+			'setWpcomGoogleAdsEnhancedConversionUserData: skipping as Google Ads tracking is disallowed'
+		);
+		return;
+	}
+
 	const currentUser = getCurrentUser();
 
 	// SHA256 hash of current user's email address for enhanced conversion matching.
@@ -107,11 +121,7 @@ function recordPostPurchaseWpcomGoogleAdsPurchase( {
 	}
 
 	const conversionValue = getConversionValue( receipt, cart );
-	if (
-		! conversionValue ||
-		! Number.isFinite( conversionValue.value ) ||
-		conversionValue.value <= 0
-	) {
+	if ( ! conversionValue ) {
 		debug( 'recordPostPurchaseTracking: skipping non-positive purchase value', {
 			receiptId,
 			source,
@@ -142,19 +152,28 @@ function recordPostPurchaseWpcomGoogleAdsPurchase( {
 	recordWpcomGoogleAdsPurchaseConversion( {
 		value: conversionValue.value,
 		currency: conversionValue.currency,
-		transactionId: receipt?.id ?? receiptId,
+		transactionId: receiptId,
 	} );
 }
 
 function getConversionValue( receipt?: Receipt, cart?: ResponseCart ): ConversionValue | null {
 	if ( receipt ) {
+		const value = receipt.amount_integer / 100;
+		if ( ! Number.isFinite( value ) || receipt.amount_integer <= 0 ) {
+			return null;
+		}
+
 		return {
-			value: receipt.amount_integer / 100,
+			value,
 			currency: receipt.currency,
 		};
 	}
 
 	if ( cart ) {
+		if ( ! Number.isFinite( cart.total_cost ) || cart.total_cost < 0.01 ) {
+			return null;
+		}
+
 		return {
 			value: cart.total_cost,
 			currency: cart.currency,

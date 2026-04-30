@@ -1,3 +1,4 @@
+import { getCurrentUser } from '@automattic/calypso-analytics';
 import { isPlan } from '@automattic/calypso-products';
 import { costToUSD, refreshCountryCodeCookieGdpr } from 'calypso/lib/analytics/utils';
 import { mayWeTrackByTracker } from '../tracker-buckets';
@@ -489,7 +490,7 @@ export function recordOrderInGoogleAds(
 	}
 
 	// Jetpack
-	if ( mayWeTrackByTracker( 'googleAds' ) && wpcomJetpackCartInfo.containsJetpackProducts ) {
+	if ( wpcomJetpackCartInfo.containsJetpackProducts ) {
 		const params = [
 			'event',
 			'conversion',

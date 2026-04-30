@@ -18,7 +18,6 @@ jest.mock( '@automattic/calypso-config', () => ( {
 
 jest.mock( 'calypso/lib/analytics/tracker-buckets', () => ( {
 	mayWeTrackByTracker: jest.fn(),
-	mayWeInitTracker: jest.fn(),
 } ) );
 
 jest.mock( '../load-tracking-scripts', () => ( {
