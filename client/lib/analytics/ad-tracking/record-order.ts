@@ -1,4 +1,3 @@
-import { getCurrentUser } from '@automattic/calypso-analytics';
 import { isPlan } from '@automattic/calypso-products';
 import { costToUSD, refreshCountryCodeCookieGdpr } from 'calypso/lib/analytics/utils';
 import { mayWeTrackByTracker } from '../tracker-buckets';
@@ -22,6 +21,11 @@ import {
 import { initGTMContainer, loadGTMContainer } from './gtm-container';
 import { loadTrackingScripts } from './load-tracking-scripts';
 import { loadParselyTracker } from './parsely';
+import {
+	isPostPurchaseWpcomGoogleAdsEnabled,
+	recordWpcomGoogleAdsPurchaseConversion,
+	setWpcomGoogleAdsEnhancedConversionUserData,
+} from './record-post-purchase';
 import { isWooExpressUpgrade } from './woo';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
 import type { WpcomJetpackCartInfo } from 'calypso/lib/analytics/utils/split-wpcom-jetpack-cart-info';
@@ -462,7 +466,7 @@ function recordOrderInBing(
 /**
  * Records an order/sign_up in Google Ads Gtag
  */
-function recordOrderInGoogleAds(
+export function recordOrderInGoogleAds(
 	cart: ResponseCart,
 	orderId: number | null | undefined,
 	wpcomJetpackCartInfo: WpcomJetpackCartInfo
@@ -474,28 +478,14 @@ function recordOrderInGoogleAds(
 
 	// MCC-level event.
 	// WPCOM
-	if ( mayWeTrackByTracker( 'googleAds' ) ) {
-		const currentUser = getCurrentUser();
-
-		// SHA256 hash of current user's email address for enhanced conversion matching.
-		const currentUserHashedEmail = currentUser?.hashedPii?.email ?? '';
-
-		window.gtag( 'set', 'user_data', {
-			sha256_email_address: currentUserHashedEmail,
+	if ( ! isPostPurchaseWpcomGoogleAdsEnabled() ) {
+		recordWpcomGoogleAdsPurchaseConversion( {
+			value: cart.total_cost,
+			currency: cart.currency,
+			transactionId: orderId,
 		} );
-
-		const params = [
-			'event',
-			'conversion',
-			{
-				send_to: TRACKING_IDS.wpcomGoogleAdsGtagPurchase,
-				value: cart.total_cost,
-				currency: cart.currency,
-				transaction_id: orderId,
-			},
-		];
-		debug( 'recordOrderInGoogleAds: Record WPCom Purchase', params );
-		window.gtag( ...params );
+	} else if ( wpcomJetpackCartInfo.containsJetpackProducts ) {
+		setWpcomGoogleAdsEnhancedConversionUserData();
 	}
 
 	// Jetpack
