@@ -521,18 +521,25 @@ export function CheckoutSummaryFeaturesList( props: {
 function CheckoutSummaryFeaturesListDomainItem( { domain }: { domain: ResponseCartProduct } ) {
 	const translate = useTranslate();
 
-	let bundledDomainText = translate(
-		'{{strong}}%(domain)s{{/strong}} domain registration free for one year',
-		{
-			components: {
-				strong: <strong />,
-			},
-			args: {
-				domain: domain.meta,
-			},
-			comment: 'domain name and bundling message',
-		}
-	);
+	let bundledDomainText = isDomainTransfer( domain )
+		? translate( '{{strong}}%(domain)s{{/strong}} domain transfer free for one year', {
+				components: {
+					strong: <strong />,
+				},
+				args: {
+					domain: domain.meta,
+				},
+				comment: 'domain name and bundling message for a domain transfer',
+		  } )
+		: translate( '{{strong}}%(domain)s{{/strong}} domain registration free for one year', {
+				components: {
+					strong: <strong />,
+				},
+				args: {
+					domain: domain.meta,
+				},
+				comment: 'domain name and bundling message',
+		  } );
 
 	if ( domain.is_included_for_100yearplan ) {
 		bundledDomainText = translate( '{{strong}}%(domain)s{{/strong}} included with your plan', {
