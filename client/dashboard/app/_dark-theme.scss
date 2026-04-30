@@ -814,11 +814,10 @@
 
 @mixin dashboard-dark-theme-agenttic {
 	// @automattic/agenttic-ui overrides the `:root` variables above with its
-	// own custom properties
-  	.agenttic {
-  		--color-background: var( --dashboard__background-color );
-  		--color-foreground: var( --dashboard__text-color );
-  	}
+	.agenttic {
+		--color-background: var( --dashboard__background-color );
+		--color-foreground: var( --dashboard__text-color );
+	}
 }
 
 /* Site Logs Badges */
