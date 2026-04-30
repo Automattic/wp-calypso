@@ -1,4 +1,5 @@
 import DOMPurify from 'dompurify';
+import type { Config } from 'dompurify';
 
 const CONFIG = {
 	ALLOWED_TAGS: [ 'p', 'br', 'a' ],
@@ -20,35 +21,32 @@ const CONFIG = {
 	ADD_URI_SAFE_ATTR: [ 'data-id' ],
 };
 
-let hookRegistered = false;
-
-function ensureHook() {
-	if ( hookRegistered ) {
+function hardenAnchorAttributes( node: Element ) {
+	if ( node.tagName !== 'A' ) {
 		return;
 	}
-	DOMPurify.addHook( 'afterSanitizeAttributes', ( node ) => {
-		if ( node.tagName !== 'A' ) {
-			return;
+	node.setAttribute( 'target', '_blank' );
+	const existing = ( node.getAttribute( 'rel' ) || '' ).split( /\s+/ ).filter( Boolean );
+	for ( const token of [ 'nofollow', 'noopener', 'noreferrer' ] ) {
+		if ( ! existing.includes( token ) ) {
+			existing.push( token );
 		}
-		const target = node.getAttribute( 'target' );
-		if ( target?.toLowerCase() !== '_blank' ) {
-			return;
-		}
-		const existing = ( node.getAttribute( 'rel' ) || '' ).split( /\s+/ ).filter( Boolean );
-		for ( const token of [ 'nofollow', 'noopener', 'noreferrer' ] ) {
-			if ( ! existing.includes( token ) ) {
-				existing.push( token );
-			}
-		}
-		node.setAttribute( 'rel', existing.join( ' ' ) );
-	} );
-	hookRegistered = true;
+	}
+	node.setAttribute( 'rel', existing.join( ' ' ) );
+}
+
+export function sanitizeReaderSocialHtml( html: string, config: Config ): string {
+	DOMPurify.addHook( 'afterSanitizeAttributes', hardenAnchorAttributes );
+	try {
+		return DOMPurify.sanitize( html, config );
+	} finally {
+		DOMPurify.removeHook( 'afterSanitizeAttributes', hardenAnchorAttributes );
+	}
 }
 
 export function sanitizePostHtml( html: string ): string {
 	if ( ! html ) {
 		return '';
 	}
-	ensureHook();
-	return DOMPurify.sanitize( html, CONFIG );
+	return sanitizeReaderSocialHtml( html, CONFIG );
 }

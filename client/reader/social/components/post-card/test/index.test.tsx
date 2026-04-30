@@ -174,3 +174,46 @@ describe( 'SocialPostCard expandedVideo forwarding', () => {
 		expect( screen.queryByLabelText( /bluesky video/i ) ).not.toBeInTheDocument();
 	} );
 } );
+
+describe( 'SocialPostCard compact + cardLink', () => {
+	const compactPost: SocialPost = {
+		uri: 'at://x/inner',
+		permalink: 'https://bsky.app/x',
+		author: {
+			id: 'did:plc:x',
+			handle: 'x.bsky.social',
+			display_name: 'X',
+			avatar: null,
+			profile_url: 'https://bsky.app/profile/x.bsky.social',
+		},
+		created_at: '2026-04-28T10:00:00Z',
+		indexed_at: '2026-04-28T10:00:00Z',
+		text: 'inner',
+		html: '<p>inner</p>',
+		lang: [],
+		reply_parent: null,
+		reply_root: null,
+		reason: null,
+		embed: null,
+		counts: { replies: 0, reposts: 0, likes: 0, quotes: 0 },
+	};
+
+	it( 'wraps the compact card in a PostCardLink and renders the timestamp as an anchor when cardLink is set', () => {
+		const onClick = jest.fn();
+		const { container } = render(
+			<SocialPostCard
+				post={ compactPost }
+				variant="compact"
+				cardLink={ { href: '/in-app/thread', onClick } }
+			/>
+		);
+		expect( container.querySelector( '.social-post-card-link' ) ).not.toBeNull();
+		const link = screen.getByRole( 'link' );
+		expect( link ).toHaveAttribute( 'href', '/in-app/thread' );
+	} );
+
+	it( 'renders the compact card without a card-link anchor when cardLink is omitted', () => {
+		render( <SocialPostCard post={ compactPost } variant="compact" /> );
+		expect( screen.queryByRole( 'link' ) ).toBeNull();
+	} );
+} );

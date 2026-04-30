@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import page from '@automattic/calypso-router';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { SocialAnalyticsProvider } from '../analytics-context';
 import { PostCardBody } from '../post-card-body';
@@ -48,6 +48,26 @@ describe( 'PostCardBody', () => {
 	it( 'falls back to raw text when html is empty', () => {
 		const { getByText } = render( <PostCardBody post={ baseHtml( '' ) } /> );
 		expect( getByText( 'hello' ) ).toBeVisible();
+	} );
+
+	it( 'renders inline body links with target="_blank" and the hardened rel', () => {
+		render(
+			<PostCardBody post={ baseHtml( '<p>see <a href="https://example.com">site</a></p>' ) } />
+		);
+		const link = screen.getByRole( 'link', { name: 'site' } );
+		expect( link ).toHaveAttribute( 'target', '_blank' );
+		const rel = link.getAttribute( 'rel' ) ?? '';
+		expect( rel ).toContain( 'nofollow' );
+		expect( rel ).toContain( 'noopener' );
+		expect( rel ).toContain( 'noreferrer' );
+	} );
+
+	it( 'preserves the link href verbatim', () => {
+		render(
+			<PostCardBody post={ baseHtml( '<p><a href="https://example.com/path?q=1">x</a></p>' ) } />
+		);
+		const link = screen.getByRole( 'link', { name: 'x' } );
+		expect( link ).toHaveAttribute( 'href', 'https://example.com/path?q=1' );
 	} );
 
 	describe( 'data-id mention interception', () => {

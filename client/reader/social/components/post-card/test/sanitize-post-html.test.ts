@@ -1,12 +1,18 @@
 /**
  * @jest-environment jsdom
  */
+import DOMPurify from 'dompurify';
 import { sanitizePostHtml } from '../sanitize-post-html';
 
 describe( 'sanitizePostHtml', () => {
 	it( 'preserves allowed tags (p, br, a)', () => {
 		const html = '<p>hello <a href="https://example.com">there</a><br>world</p>';
-		expect( sanitizePostHtml( html ) ).toBe( html );
+		const out = sanitizePostHtml( html );
+		expect( out ).toContain( '<p>hello ' );
+		expect( out ).toContain( 'href="https://example.com"' );
+		expect( out ).toContain( '>there</a>' );
+		expect( out ).toContain( '<br>' );
+		expect( out ).toContain( 'world</p>' );
 	} );
 
 	it( 'strips disallowed tags but keeps inner text', () => {
@@ -30,18 +36,35 @@ describe( 'sanitizePostHtml', () => {
 		expect( out ).not.toContain( 'javascript:' );
 	} );
 
-	it( 'forces rel="nofollow noopener noreferrer" on target=_blank anchors', () => {
-		const out = sanitizePostHtml( '<p><a href="https://x.example" target="_blank">x</a></p>' );
-		expect( out ).toContain( 'rel="nofollow noopener noreferrer"' );
+	it( 'forces target="_blank" on every anchor, even when upstream omits it', () => {
+		const out = sanitizePostHtml( '<p><a href="https://x.example">x</a></p>' );
+		expect( out ).toContain( 'target="_blank"' );
 	} );
 
-	it( 'preserves existing rel tokens on target=_blank anchors', () => {
-		const out = sanitizePostHtml(
-			'<p><a href="https://x.example" target="_blank" rel="me">x</a></p>'
-		);
-		expect( out ).toContain( 'me' );
+	it( 'forces rel="nofollow noopener noreferrer" on every anchor', () => {
+		const out = sanitizePostHtml( '<p><a href="https://x.example">x</a></p>' );
+		expect( out ).toContain( 'nofollow' );
 		expect( out ).toContain( 'noopener' );
 		expect( out ).toContain( 'noreferrer' );
+	} );
+
+	it( 'preserves existing rel tokens and adds the hardened set', () => {
+		const out = sanitizePostHtml( '<p><a href="https://x.example" rel="me">x</a></p>' );
+		expect( out ).toContain( 'me' );
+		expect( out ).toContain( 'nofollow' );
+		expect( out ).toContain( 'noopener' );
+		expect( out ).toContain( 'noreferrer' );
+	} );
+
+	it( 'does not leave the Reader Social hook registered on DOMPurify globally', () => {
+		sanitizePostHtml( '<p><a href="https://x.example">x</a></p>' );
+
+		const out = DOMPurify.sanitize( '<a href="/local">local</a>', {
+			ALLOWED_TAGS: [ 'a' ],
+			ALLOWED_ATTR: [ 'href', 'target', 'rel' ],
+		} );
+
+		expect( out ).toBe( '<a href="/local">local</a>' );
 	} );
 
 	it( 'returns empty string for empty input', () => {
