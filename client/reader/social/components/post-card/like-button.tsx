@@ -52,6 +52,7 @@ export function LikeButton( { post, connectionId }: LikeButtonProps ) {
 	const accessibleLabel = translate( 'Like, %(count)s like', 'Like, %(count)s likes', {
 		count: post.counts.likes,
 		args: { count: formattedLikes },
+		textOnly: true,
 	} );
 
 	const trackError = ( error: AtmosphereError, direction: LikeDirection ) => {
