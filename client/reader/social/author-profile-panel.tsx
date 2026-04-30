@@ -6,6 +6,7 @@ import { AuthorProfileHeader } from './author-profile-header';
 import { SocialFeedList } from './components/feed-list';
 import { SocialPostCard } from './components/post-card';
 import { SocialAnalyticsProvider } from './components/post-card/analytics-context';
+import { SocialProfileHeaderSkeleton } from './profile-header-skeleton';
 import type { SocialError, SocialPost } from './types';
 import type { AppState } from 'calypso/types';
 import type { TranslateResult } from 'i18n-calypso';
@@ -287,7 +288,7 @@ export function SocialAuthorProfilePanel< TProfile, TError extends ProtocolError
 
 	const renderHeader = () => {
 		if ( profile.isPending ) {
-			return renderProfileLoading ? renderProfileLoading() : <DefaultProfileLoading />;
+			return renderProfileLoading ? renderProfileLoading() : <SocialProfileHeaderSkeleton />;
 		}
 		if ( profile.isError && profile.error ) {
 			return renderProfileError( profile.error, handleHeaderRetry );
@@ -327,13 +328,5 @@ export function SocialAuthorProfilePanel< TProfile, TError extends ProtocolError
 				/>
 			</VStack>
 		</SocialAnalyticsProvider>
-	);
-}
-
-function DefaultProfileLoading() {
-	return (
-		<div role="status" aria-live="polite" className="social-author-profile__loading">
-			Loading…
-		</div>
 	);
 }

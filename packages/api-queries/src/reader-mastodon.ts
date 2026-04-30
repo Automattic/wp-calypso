@@ -162,11 +162,25 @@ export function useMastodonThreadQuery( connectionId: number, statusId: string )
 	return useQuery( mastodonThreadQueryOptions( connectionId, statusId ) );
 }
 
-export const mastodonAuthorProfileQueryOptions = ( connectionId: number, actor: string ) =>
-	queryOptions< MastodonAuthorProfile, MastodonError >( {
-		queryKey: readerMastodonKeys.authorProfile( connectionId, actor ),
-		queryFn: () => getMastodonAuthorProfile( { connectionId, actor } ),
-		enabled: connectionId > 0 && actor.length > 0,
+// Normalize an actor string for cache keying: trim, strip a leading `@`,
+// and lowercase. The Mastodon backend's `/lookup` is case-insensitive and
+// accepts both with-`@` and without-`@` variants, so a profile reachable as
+// `@Alice@MASTODON.social` and `alice@mastodon.social` should hit one cache
+// entry rather than two. (Numeric ids and `@user@instance` route segments
+// can't always be reduced to the same key without a backend round-trip; we
+// dedupe what we can.)
+function normalizeActor( actor: string ): string {
+	const trimmed = actor.trim();
+	const stripped = trimmed.startsWith( '@' ) ? trimmed.slice( 1 ) : trimmed;
+	return stripped.toLowerCase();
+}
+
+export const mastodonAuthorProfileQueryOptions = ( connectionId: number, actor: string ) => {
+	const normalized = normalizeActor( actor );
+	return queryOptions< MastodonAuthorProfile, MastodonError >( {
+		queryKey: readerMastodonKeys.authorProfile( connectionId, normalized ),
+		queryFn: () => getMastodonAuthorProfile( { connectionId, actor: normalized } ),
+		enabled: connectionId > 0 && normalized.length > 0,
 		staleTime: 60_000,
 		gcTime: 5 * 60_000,
 		retry: ( failureCount, error ) => {
@@ -182,31 +196,33 @@ export const mastodonAuthorProfileQueryOptions = ( connectionId: number, actor: 
 			return 2_000;
 		},
 	} );
+};
 
 export function useMastodonAuthorProfileQuery( connectionId: number, actor: string ) {
 	return useQuery( mastodonAuthorProfileQueryOptions( connectionId, actor ) );
 }
 
-export const mastodonAuthorFeedInfiniteQuery = ( connectionId: number, actor: string ) =>
-	infiniteQueryOptions<
+export const mastodonAuthorFeedInfiniteQuery = ( connectionId: number, actor: string ) => {
+	const normalized = normalizeActor( actor );
+	return infiniteQueryOptions<
 		MastodonAuthorFeedPage,
 		MastodonError,
 		InfiniteData< MastodonAuthorFeedPage >,
 		QueryKey,
 		string | undefined
 	>( {
-		queryKey: readerMastodonKeys.authorFeed( connectionId, actor ),
+		queryKey: readerMastodonKeys.authorFeed( connectionId, normalized ),
 		queryFn: ( { pageParam } ) =>
 			getMastodonAuthorFeed( {
 				connectionId,
-				actor,
+				actor: normalized,
 				cursor: pageParam,
 			} as GetMastodonAuthorFeedParams ),
 		initialPageParam: undefined,
 		// `|| undefined` (not `??`): an empty-string cursor terminates pagination.
 		// Atmosphere slice 6 hardened this exact path against an upstream returning ''.
 		getNextPageParam: ( lastPage ) => lastPage.cursor || undefined,
-		enabled: connectionId > 0 && actor.length > 0,
+		enabled: connectionId > 0 && normalized.length > 0,
 		staleTime: 30_000,
 		gcTime: 5 * 60_000,
 		retry: ( failureCount, error ) => {
@@ -222,6 +238,7 @@ export const mastodonAuthorFeedInfiniteQuery = ( connectionId: number, actor: st
 			return 2_000;
 		},
 	} );
+};
 
 export function useMastodonAuthorFeedInfiniteQuery( connectionId: number, actor: string ) {
 	return useInfiniteQuery( mastodonAuthorFeedInfiniteQuery( connectionId, actor ) );

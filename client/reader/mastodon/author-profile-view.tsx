@@ -1,4 +1,7 @@
-import { useMastodonConnectionsQuery } from '@automattic/api-queries';
+import {
+	useMastodonAuthorProfileQuery,
+	useMastodonConnectionsQuery,
+} from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -55,10 +58,28 @@ export function MastodonAuthorProfileView( { connectionId, actor }: Props ) {
 
 	return (
 		<ReaderMain className="mastodon-view">
-			<DocumentHead title={ translate( '%s ‹ Mastodon ‹ Reader', { args: actor } ) } />
+			<MastodonAuthorProfileTitle connectionId={ connection.id } actor={ actor } />
 			<MastodonAuthorProfilePanel connection={ connection } actor={ actor } />
 		</ReaderMain>
 	);
+}
+
+// Pulls the canonical webfinger handle from the profile cache so the document
+// title reads `@alice@instance.tld ‹ Mastodon ‹ Reader` even when the URL is
+// keyed by numeric id (`108020 ‹ Mastodon ‹ Reader` is unhelpful). The query
+// is shared with the panel below — same connection + actor — so no extra
+// network hit. Falls back to the URL-segment actor while the profile loads.
+function MastodonAuthorProfileTitle( {
+	connectionId,
+	actor,
+}: {
+	connectionId: number;
+	actor: string;
+} ) {
+	const translate = useTranslate();
+	const { data } = useMastodonAuthorProfileQuery( connectionId, actor );
+	const handle = data?.acct ?? actor;
+	return <DocumentHead title={ translate( '%s ‹ Mastodon ‹ Reader', { args: handle } ) } />;
 }
 
 export default MastodonAuthorProfileView;

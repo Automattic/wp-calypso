@@ -30,6 +30,7 @@ export type {
 export { AuthorProfileHeader } from './author-profile-header';
 export { SocialAuthorProfilePanel } from './author-profile-panel';
 export type { SocialAuthorProfilePanelProps } from './author-profile-panel';
+export { SocialProfileHeaderSkeleton } from './profile-header-skeleton';
 export { mapAtmosphereFeedItemToSocialPost } from './mappers/atmosphere';
 export {
 	mapMastodonAccountToSocialProfileCardProps,
