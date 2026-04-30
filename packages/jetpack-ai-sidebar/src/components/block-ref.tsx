@@ -1,16 +1,7 @@
 /**
- * BlockRef — renders a clickable label for a Gutenberg block referenced by
- * 0-based document-order index.
- *
- * Used everywhere the mediation payload points at a block (suggested edits,
- * implications' `affected_blocks`, conflict block references, violations'
- * `block_index`). Replaces the old "Block 3" numeric label with something
- * like "Paragraph — \"Revenue grew 23% YoY…\"" so reviewers can identify
- * the target without counting blocks in the editor.
- *
- * Clicking the label calls `onFocus(index)` — the consumer wires that to
- * `review-mediation.tsx`'s `focusBlock()` helper, which already handles
- * `selectBlock` + iframe-aware scrollIntoView + the `.is-focus-mode` dim.
+ * BlockRef — clickable label for a block referenced by 0-based index.
+ * Renders the block type + a short content preview ("Paragraph — \"Revenue
+ * grew 23% YoY…\""); click invokes `onFocus(index)`.
  */
 
 /**

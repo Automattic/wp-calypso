@@ -1,15 +1,7 @@
 /**
- * Jetpack AI provider module for Agents Manager.
- *
- * Exports the full AM provider contract:
- * - useAbilitiesSetup: captures AM's addMessage callback
- * - toolProvider: surfaces Jetpack AI's client-side abilities to AM
- * - contextProvider: sends Gutenberg editor state to the orchestrator
- * - getChatComponent: resolves `title-picker` to the TitlePicker component
- *   for AM's show-component pipeline
- * - useCheckpoint: post-title snapshots for AM's native Undo action
- * - getEmptyViewSuggestions: initial suggestions before conversation starts
- * - useSuggestions: block-aware dynamic suggestions during conversation
+ * Jetpack AI provider module for Agents Manager — implements the AM provider
+ * contract (toolProvider, contextProvider, getChatComponent, useCheckpoint,
+ * getEmptyViewSuggestions, useSuggestions, useAbilitiesSetup).
  */
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -118,12 +110,9 @@ export function findBlockElement( clientId: string ): HTMLElement | null {
 }
 
 /**
- * Find the block-list root layout element, iframe-aware.
- *
- * Gutenberg's built-in focus/spotlight CSS (`.is-focus-mode .block-editor-block-list__block:not(...)`)
- * keys off a class toggled on this element. Exposed so peer components can
- * mirror the block-notes "dim other blocks" UX without needing to unlock the
- * private `toggleBlockSpotlight` action.
+ * Find the block-list root layout element, iframe-aware. Exposed so peer
+ * components can toggle Gutenberg's `.is-focus-mode` class to mirror the
+ * block-notes "dim other blocks" UX.
  * @returns The root block-list layout element, or null.
  */
 export function findBlockListLayout(): HTMLElement | null {
@@ -280,16 +269,9 @@ function handleUpdateBlockContent( input: any ): any {
 }
 
 /**
- * Apply a mediation-suggested edit to a Gutenberg block.
- *
- * Captures a checkpoint first so AM's native Undo action can restore the
- * pre-edit state, then delegates to `handleUpdateBlockContent` for the actual
- * update and shimmer animation. Passing `summary` also posts it to chat — note
- * that the ReviewMediation caller intentionally omits it, because a new
- * assistant message demotes the mediation from `isLastMessage` and disables
- * the rest of the card stack (see convert-tool-messages-to-components.ts).
- *
- * Intended for consumption by the ReviewMediation component's Accept button.
+ * Apply a mediation-suggested edit to a block. Snapshots a checkpoint so AM's
+ * Undo can restore the pre-edit state, then delegates to handleUpdateBlockContent.
+ * ReviewMediation omits `summary` to keep the mediation card as `isLastMessage`.
  * @param {string}             clientId - Target block's clientId.
  * @param {string}             content  - The new content to apply.
  * @param {string | undefined} summary  - Optional rationale; when provided, posted to chat.
@@ -333,19 +315,9 @@ const SHOW_COMPONENT_ABILITY: any = {
 };
 
 /**
- * Handles `big_sky__show_component` tool calls from the wpcom ability.
- *
- * Follows the Big Sky unified-experience pattern: instead of injecting the
- * picker directly via `addMessage`, we return an `agentMessage` envelope.
- * agenttic-client wraps it as an `{ role: 'agent', parts: [text] }` message,
- * AM's `convert-tool-messages-to-components` transforms it into a component
- * message via `getChatComponent(type)`, and AgentChat's action bar (thumbs,
- * Undo) attaches because the original message had a text content part.
- *
- * Before returning, we snapshot the current post title via the shared
- * checkpoint API so AM's native `use-checkpoint-action` can restore it when
- * the user clicks Undo. The picker disables canvas zoom since title edits
- * don't change block content.
+ * Handle `big_sky__show_component` by returning an agentMessage envelope
+ * (Big Sky unified-experience pattern), then snapshot the post title via
+ * the checkpoint API so AM's Undo can restore it.
  * @param {any} input - Tool call arguments: `{ type, props, toolCallId, ... }`.
  * @returns {Object} Result containing the `agentMessage` to re-emit.
  */
@@ -453,12 +425,9 @@ function isShowComponentTool( toolId: string ): boolean {
 
 export const toolProvider = {
 	/**
-	 * Return the client-side abilities this provider handles:
-	 * - `wpcom/update-block-content`: applies block edits and posts a summary.
-	 * - `big_sky__show_component`: renders interactive pickers (title-picker)
-	 *   via `handleShowComponent`. Registered here so the tool_id is known
-	 *   to the orchestrator on self-hosted Jetpack sites where Big Sky's
-	 *   own registration is unavailable.
+	 * Client-side abilities this provider handles: `wpcom/update-block-content`
+	 * (block edits + summary) and `big_sky__show_component` (interactive pickers,
+	 * registered here so self-hosted Jetpack sees the tool_id).
 	 * @returns {Promise<any[]>} Array of ability descriptors.
 	 */
 	async getAbilities(): Promise< any[] > {
@@ -649,10 +618,8 @@ export function useCheckpoint(): any {
 			}
 			const wpData = ( window as any ).wp?.data;
 			wpData?.dispatch?.( 'core/editor' )?.editPost?.( { title: previous } );
-			// Intentionally NOT deleting the snapshot here — the user can keep
-			// clicking titles in the picker and use Undo again to revert back
-			// to the original title (the state before the picker appeared).
-			// clearCheckpoint() removes the snapshot when AM resets the session.
+			// Keep snapshot so the user can re-Undo back to the original title.
+			// clearCheckpoint() removes it when AM resets the session.
 		},
 	};
 	moduleCheckpointApi = api;
@@ -730,6 +697,17 @@ const BLOCK_SUGGESTIONS = [
 	},
 ];
 
+// ---------- capabilities ----------
+
+/**
+ * Provider capability flags (OR-merged across providers by AM's
+ * loadExternalProviders). `supportsSplitScreen` exposes the 50vw chat-header
+ * toggle here only — block-notes / image-studio / Big Sky don't opt in.
+ */
+export const capabilities = {
+	supportsSplitScreen: true,
+};
+
 /**
  * Block-aware dynamic suggestions for the AM sidebar.
  *
@@ -748,13 +726,8 @@ export function useSuggestions(): {
 			clearSuggestionsFn?.();
 			startBlockShimmer();
 
-			// Auto-trigger the split-screen sidebar when the user clicks
-			// "Mediate review notes". Mediation output is dense (summary +
-			// conflicts + implications + suggested edits + violations) and
-			// crammed into 350px it scrolls forever; expanding to 50vw before
-			// the LLM call starts gives the user room to read the result.
-			// Scoped to the mediation suggestion specifically (by prompt
-			// match) so other suggestions keep the default narrow width.
+			// Mediation output is too dense for the 350px sidebar. Auto-expand
+			// to 50vw on the mediation suggestion only (matched by prompt).
 			const value = ( event as CustomEvent ).detail?.value;
 			if (
 				isReviewMediatorEnabled() &&
@@ -804,20 +777,3 @@ export function useSuggestions(): {
 		],
 	};
 }
-
-// ---------- Provider capabilities ----------
-
-/**
- * Declare the capability flags this provider opts into. AM's
- * `loadExternalProviders` OR-merges these across providers; flags this
- * provider doesn't set stay off globally.
- *
- * `supportsSplitScreen` enables AM's "Split screen sidebar" chat-header
- * option when the jetpack-ai-sidebar provider is loaded. Other AM
- * consumers (block-notes, image-studio, Big Sky) don't opt in, so the
- * menu stays hidden there — containing the blast radius of the 50vw
- * width override to the post editor.
- */
-export const capabilities = {
-	supportsSplitScreen: true,
-};

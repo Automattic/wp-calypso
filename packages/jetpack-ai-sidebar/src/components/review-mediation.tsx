@@ -1,20 +1,7 @@
 /**
- * ReviewMediation — renders the multi-reviewer mediation in the chat sidebar.
- *
- * Displayed when the orchestrator renders a show-component response via
- * 'big_sky__show_component' with data.type set to 'review-mediation'.
- *
- * ## Interaction model
- * - Every block reference (suggested edits, implications' `affected_blocks`,
- *   conflict target block, violations) is a `BlockRef`. Click → `focusBlock`
- *   (selectBlock + scrollIntoView + `.is-focus-mode` dim). Cleanup on unmount.
- * - Suggested-edit cards are clickable on the body (outside buttons) to focus
- *   the target block; Accept applies `suggested_text` via `applyReviewEdit`.
- * - Conflict cards surface per-reviewer + AI candidate resolutions. Each
- *   candidate button applies its `text` to the candidate's `block_index`
- *   via `applyReviewEdit`. Dismiss hides the card locally (no backend call).
- * - Footer "Accept all AI resolutions (N)" sequentially applies every pending
- *   AI conflict candidate + every pending suggested edit.
+ * ReviewMediation — renders the multi-reviewer mediation card. Mounted by
+ * `getChatComponent('review-mediation')` from a `big_sky__show_component`
+ * orchestrator response.
  */
 
 /**

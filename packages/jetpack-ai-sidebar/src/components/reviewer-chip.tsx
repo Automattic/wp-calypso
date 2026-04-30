@@ -1,13 +1,7 @@
 /**
- * ReviewerChip — render a reviewer's name either as an avatar + full name
- * pair (when the server-side `reviewers_metadata` gave us a Gravatar URL)
- * or as a coloured full-name pill (when it did not).
- *
- * Per design intent: the fallback keeps the **full name**, not two-letter
- * initials — avoiding confusion when multiple reviewers share initials
- * (two "MH"s collide; "Marcus Holloway" and "Mira Huang" do not). The pill's
- * hue is deterministically derived from the full name so the same reviewer
- * always reads the same colour across every card in the sidebar.
+ * ReviewerChip — avatar + name when `reviewers_metadata` gives a Gravatar,
+ * otherwise a coloured full-name pill (hue deterministic from name, so the
+ * same reviewer reads the same colour across cards).
  */
 
 export interface ReviewerMetadata {
