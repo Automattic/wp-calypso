@@ -3,13 +3,13 @@ import { Provider as ReduxProvider } from 'react-redux';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
 import { RouteProvider } from 'calypso/components/route';
 import LayoutLoggedOut from 'calypso/layout/logged-out';
-import { makeLayoutMiddleware } from './shared.js';
+import { makeLayoutMiddleware } from './shared.jsx';
 import { ssrSetupLocaleMiddleware } from './ssr-setup-locale.js';
 
 /**
  * Re-export
  */
-export { setSectionMiddleware, setLocaleMiddleware } from './shared.js';
+export { setSectionMiddleware, setLocaleMiddleware } from './shared.jsx';
 
 /**
  * Server side rendering (SSR) is used exclusively for logged out users. Normally, for
