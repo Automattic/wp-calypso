@@ -1,15 +1,37 @@
-import { DropdownMenu, MenuGroup, MenuItem } from '@wordpress/components';
+import { privateApis } from '@wordpress/components';
+import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import { Button } from '@wordpress/ui';
 import { OmnibarNodeContent } from './omnibar-node';
 import type { OmnibarNode } from '../types';
 
-function OmnibarDropdownContent( { nodes }: { nodes: OmnibarNode[] } ) {
-	const handleClick = ( href?: string ) => () => {
-		if ( href ) {
-			window.location.href = href;
-		}
-	};
+const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
+	'I acknowledge private features are not for use in themes or plugins and doing so will break in the next version of WordPress.',
+	'@wordpress/components'
+);
+const { Menu } = unlock( privateApis );
 
+function OmnibarMenuItem( { node }: { node: OmnibarNode } ) {
+	if ( node.children ) {
+		return (
+			<Menu>
+				<Menu.SubmenuTriggerItem>
+					<OmnibarNodeContent node={ node } />
+				</Menu.SubmenuTriggerItem>
+				<Menu.Popover className="omnibar__popover">
+					<OmnibarMenuContent nodes={ node.children } />
+				</Menu.Popover>
+			</Menu>
+		);
+	}
+
+	return (
+		<Menu.Item render={ node.href ? <a href={ node.href } /> : undefined }>
+			<OmnibarNodeContent node={ node } />
+		</Menu.Item>
+	);
+}
+
+function OmnibarMenuContent( { nodes }: { nodes: OmnibarNode[] } ) {
 	const ungroupedItems: OmnibarNode[] = [];
 	const groups: OmnibarNode[] = [];
 
@@ -24,22 +46,19 @@ function OmnibarDropdownContent( { nodes }: { nodes: OmnibarNode[] } ) {
 	return (
 		<>
 			{ ungroupedItems.length > 0 && (
-				<MenuGroup>
+				<Menu.Group>
 					{ ungroupedItems.map( ( item ) => (
-						<MenuItem key={ item.id } onClick={ handleClick( item.href ) }>
-							<OmnibarNodeContent node={ item } />
-						</MenuItem>
+						<OmnibarMenuItem key={ item.id } node={ item } />
 					) ) }
-				</MenuGroup>
+				</Menu.Group>
 			) }
 			{ groups.map( ( group ) => (
-				<MenuGroup key={ group.id } label={ group.title }>
+				<Menu.Group key={ group.id }>
+					{ group.title && <Menu.GroupLabel>{ group.title }</Menu.GroupLabel> }
 					{ ( group.children || [] ).map( ( item ) => (
-						<MenuItem key={ item.id } onClick={ handleClick( item.href ) }>
-							<OmnibarNodeContent node={ item } />
-						</MenuItem>
+						<OmnibarMenuItem key={ item.id } node={ item } />
 					) ) }
-				</MenuGroup>
+				</Menu.Group>
 			) ) }
 		</>
 	);
@@ -63,17 +82,17 @@ export function OmnibarMenu( { node }: { node: OmnibarNode } ) {
 	}
 
 	return (
-		<DropdownMenu
-			className="omnibar__dropdown"
-			icon={ null }
-			label={ label }
-			popoverProps={ { className: 'omnibar__popover', offset: 0 } }
-			toggleProps={ {
-				className: 'omnibar__menu',
-				children: <OmnibarNodeContent node={ node } />,
-			} }
-		>
-			{ () => <OmnibarDropdownContent nodes={ node.children ?? [] } /> }
-		</DropdownMenu>
+		<Menu>
+			<Menu.TriggerButton
+				render={
+					<Button variant="unstyled" className="omnibar__menu" aria-label={ label }>
+						<OmnibarNodeContent node={ node } />
+					</Button>
+				}
+			/>
+			<Menu.Popover className="omnibar__popover" gutter={ 0 } overflowPadding={ 0 }>
+				<OmnibarMenuContent nodes={ node.children } />
+			</Menu.Popover>
+		</Menu>
 	);
 }
