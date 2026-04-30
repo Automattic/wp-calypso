@@ -173,7 +173,14 @@ export type MastodonTagFilter = 'all' | 'media' | 'local';
 // `count` when set.
 export interface MastodonTagInfo {
 	name: string;
+	// Cumulative recent-post count from Mastodon's `history[]` aggregate
+	// when the backend chooses to project it. Render as a "N posts" line
+	// under the hashtag header; omit the line entirely when undefined.
 	count?: number;
+	// Home-instance Mastodon tag-page URL (e.g.
+	// `https://mastodon.social/tags/rust`). Provided so we can offer an
+	// external "View on Mastodon" link for users who want the home-instance
+	// view.
 	url?: string;
 }
 

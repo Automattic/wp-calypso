@@ -93,10 +93,15 @@ describe( 'getProfileUrl', () => {
 } );
 
 describe( 'isValidHashtag', () => {
-	it( 'accepts ASCII alphanumeric + underscore', () => {
+	it( 'accepts canonical (lowercase) ASCII alphanumeric + underscore', () => {
 		expect( isValidHashtag( 'rust' ) ).toBe( true );
 		expect( isValidHashtag( 'rust_lang' ) ).toBe( true );
 		expect( isValidHashtag( 'r2d2' ) ).toBe( true );
+	} );
+
+	it( 'rejects uppercase (canonical form is lowercase only)', () => {
+		expect( isValidHashtag( 'Rust' ) ).toBe( false );
+		expect( isValidHashtag( 'RUST' ) ).toBe( false );
 	} );
 
 	it( 'rejects path traversal, spaces, leading hash, and empty', () => {
@@ -105,6 +110,11 @@ describe( 'isValidHashtag', () => {
 		expect( isValidHashtag( '#rust' ) ).toBe( false );
 		expect( isValidHashtag( '' ) ).toBe( false );
 		expect( isValidHashtag( '../etc' ) ).toBe( false );
+	} );
+
+	it( 'enforces the 128-char length cap', () => {
+		expect( isValidHashtag( 'a'.repeat( 128 ) ) ).toBe( true );
+		expect( isValidHashtag( 'a'.repeat( 129 ) ) ).toBe( false );
 	} );
 } );
 

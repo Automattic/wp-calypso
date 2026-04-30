@@ -78,13 +78,19 @@ export function getProfileUrl(
 	return `/reader/mastodon/${ connectionId }/profile/${ encodeURIComponent( canonical ) }`;
 }
 
-// Mastodon hashtags: ASCII alphanumeric + underscore, 1-128 chars. The
-// protocol allows a wider Unicode set per joinmastodon.org; restrict to
-// the safe ASCII subset for now and revisit if non-ASCII tags become a
-// real signal. Anchored, single-line, rejects path-traversal characters
-// by construction.
-export const HASHTAG_RE = /^[A-Za-z0-9_]{1,128}$/;
+// Mastodon hashtags in canonical form: lowercase ASCII + underscore,
+// 1-128 chars. The protocol allows a wider Unicode set per joinmastodon.org;
+// restrict to the safe ASCII subset for now and revisit if non-ASCII tags
+// become a real signal. Anchored, single-line, rejects path-traversal
+// characters by construction. Case-strict (lowercase only) so the in-app
+// route shape is canonical — a single `/tag/rust` URL, not two distinct
+// React-router paths for `Rust` and `rust`.
+export const HASHTAG_RE = /^[a-z0-9_]{1,128}$/;
 
+// Validates a hashtag against the canonical form. Callers with raw input
+// (mixed case, leading `#`, surrounding whitespace) must canonicalise
+// first via `getTagFeedUrl`, which trim/lowercase/strip-`#`s before
+// validating.
 export function isValidHashtag( hashtag: string ): boolean {
 	return HASHTAG_RE.test( hashtag );
 }
