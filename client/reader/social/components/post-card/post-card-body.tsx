@@ -41,30 +41,51 @@ export function PostCardBody( { post }: PostCardBodyProps ) {
 			return;
 		}
 		const dataId = anchor.getAttribute( 'data-id' );
-		if ( ! dataId ) {
+		if ( dataId ) {
+			const inAppUrl = analytics?.getProfileUrl?.( { id: dataId, did: dataId } ) ?? null;
+			if ( inAppUrl ) {
+				event.preventDefault();
+				page( inAppUrl );
+				return;
+			}
+			// data-id present but resolver returned null — likely a backend ↔
+			// frontend desync (validator rejected an id shape we didn't anticipate,
+			// or the protocol shell forgot to bind getProfileUrl). Surface so it's
+			// observable instead of silently routing to the external host with no
+			// analytics signal.
+			// eslint-disable-next-line no-console
+			console.warn( '[reader-social] data-id mention anchor not resolved to in-app URL', {
+				dataId,
+				href: anchor.getAttribute( 'href' ),
+				source: analytics?.source,
+			} );
+			analytics?.onClick( `calypso_reader_${ analytics.source }_timeline_mention_unresolved`, {
+				connection_id: analytics.connectionId,
+				data_id: dataId,
+			} );
 			return;
 		}
-		const inAppUrl = analytics?.getProfileUrl?.( { id: dataId, did: dataId } ) ?? null;
-		if ( inAppUrl ) {
-			event.preventDefault();
-			page( inAppUrl );
-			return;
+		const dataTag = anchor.getAttribute( 'data-tag' );
+		if ( dataTag ) {
+			const inAppTagUrl = analytics?.getTagUrl?.( dataTag ) ?? null;
+			if ( inAppTagUrl ) {
+				event.preventDefault();
+				page( inAppTagUrl );
+				return;
+			}
+			// data-tag present but resolver returned null — backend ↔ frontend desync.
+			// Same observability pattern as the data-id miss path.
+			// eslint-disable-next-line no-console
+			console.warn( '[reader-social] data-tag anchor not resolved to in-app URL', {
+				dataTag,
+				href: anchor.getAttribute( 'href' ),
+				source: analytics?.source,
+			} );
+			analytics?.onClick( `calypso_reader_${ analytics.source }_timeline_tag_unresolved`, {
+				connection_id: analytics.connectionId,
+				data_tag: dataTag,
+			} );
 		}
-		// data-id present but resolver returned null — likely a backend ↔
-		// frontend desync (validator rejected an id shape we didn't anticipate,
-		// or the protocol shell forgot to bind getProfileUrl). Surface so it's
-		// observable instead of silently routing to the external host with no
-		// analytics signal.
-		// eslint-disable-next-line no-console
-		console.warn( '[reader-social] data-id mention anchor not resolved to in-app URL', {
-			dataId,
-			href: anchor.getAttribute( 'href' ),
-			source: analytics?.source,
-		} );
-		analytics?.onClick( `calypso_reader_${ analytics.source }_timeline_mention_unresolved`, {
-			connection_id: analytics.connectionId,
-			data_id: dataId,
-		} );
 	};
 
 	// onClick on the wrapper div is event delegation onto the real <a>

@@ -62,4 +62,10 @@ describe( 'sanitizePostHtml', () => {
 		expect( out ).not.toContain( 'data-evil' );
 		expect( out ).not.toContain( 'data-tracking' );
 	} );
+
+	it( 'preserves data-tag on hashtag anchors', () => {
+		const html = '<p><a href="https://mastodon.social/tags/rust" data-tag="rust">#rust</a></p>';
+		const out = sanitizePostHtml( html );
+		expect( out ).toContain( 'data-tag="rust"' );
+	} );
 } );
