@@ -15,7 +15,7 @@ describe( '@wordpress/components Text muted color patch', () => {
 		// Guard for the Yarn patch above: if an upgrade drops it, production muted
 		// Text reverts to a fixed gray instead of the Dashboard dark-mode token.
 		// Remove this test and the patch once Dashboard migrates from
-		// `__experimentalText` to the `Text` component from @wordpress/ui.
+		// `__experimentalText` to the `Text` component from @wordpress/ui. or to a component that supports dark mode.
 		expect( fs.existsSync( PATCH_PATH ) ).toBe( true );
 
 		jest.isolateModules( () => {
