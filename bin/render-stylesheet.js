@@ -14,7 +14,7 @@ const args = yargs
 	.option( 'out', { describe: 'Output file' } )
 	.demandOption( [ 'in', 'out' ] ).argv;
 
-// webpack-style resolver, used for `~package/...` style imports.
+// create a webpack-style resolver that finds SCSS files. Inspired by `sass-loader` resolver.
 const resolver = resolve.create.sync( {
 	conditionNames: [ 'sass', 'style' ],
 	mainFields: [ 'sass', 'style', 'main' ],
@@ -24,10 +24,8 @@ const resolver = resolve.create.sync( {
 	preferRelative: true,
 } );
 
-// Modern-API importer. Handles bare-module (`@scope/pkg`,
-// `pkg/path`), project-root-relative (`client/foo/bar`), and `~`-prefixed
-// imports by resolving via webpack's enhanced-resolve from the project root.
-// Sass handles `./` and `../` imports itself, so we skip those.
+// Handles bare-module (`@scope/pkg`, `pkg/path`), project-root-relative (`client/foo/bar`)
+// and `~`-prefixed imports by resolving via webpack's enhanced-resolve from the project root.
 const tryResolve = ( request ) => {
 	try {
 		return resolver( process.cwd(), request );
@@ -36,19 +34,22 @@ const tryResolve = ( request ) => {
 	}
 };
 
+// `dart-sass` custom importer
 const importer = {
 	findFileUrl( url ) {
+		// Sass handles `./` and `../` imports itself, so we skip those.
 		if ( url.startsWith( '.' ) ) {
 			return null;
 		}
-		const stripped = url.replace( /^~/, '' );
+		// Strip the leading tilde.
+		url = url.replace( /^~/, '' );
 		// Sass treats `foo/bar` and `foo/_bar` as equivalent (partials), but
 		// enhanced-resolve doesn't. Try the literal name first, then the
 		// underscore-prefixed partial form.
-		const dir = path.dirname( stripped );
-		const base = path.basename( stripped );
+		const dir = path.dirname( url );
+		const base = path.basename( url );
 		const result =
-			tryResolve( stripped ) || tryResolve( dir === '.' ? `_${ base }` : `${ dir }/_${ base }` );
+			tryResolve( url ) || tryResolve( dir === '.' ? `_${ base }` : `${ dir }/_${ base }` );
 		return result ? pathToFileURL( result ) : null;
 	},
 };
