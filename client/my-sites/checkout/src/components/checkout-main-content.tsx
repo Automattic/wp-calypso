@@ -1158,17 +1158,6 @@ const StepContainerV2CheckoutFixer = styled.div< {
 				background: none;
 				position: relative;
 				height: 100%;
-
-				&:before {
-					content: '';
-					display: block;
-					background: var( --color-neutral-0 );
-					position: fixed;
-					top: calc( var( --step-container-v2-top-bar-height ) * -1 );
-					transform: translateX( calc( var( --left-padding ) * -1 ) );
-					width: 100vw;
-					bottom: 0;
-				}
 			}
 
 			.checkout__summary-area,
