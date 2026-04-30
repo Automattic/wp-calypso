@@ -3,15 +3,27 @@ import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSocialAnalytics } from './analytics-context';
 import type { SocialPost } from '../../types';
+import type React from 'react';
 import type { ReactNode } from 'react';
 
 interface PostCardHeaderProps {
 	post: SocialPost;
 	variant: 'default' | 'compact';
 	prominentTimestamp?: boolean;
+	timestampLink?: {
+		href: string;
+		onClick?: ( event: React.MouseEvent< HTMLAnchorElement > ) => void;
+		target?: string;
+		rel?: string;
+	};
 }
 
-export function PostCardHeader( { post, variant, prominentTimestamp }: PostCardHeaderProps ) {
+export function PostCardHeader( {
+	post,
+	variant,
+	prominentTimestamp,
+	timestampLink,
+}: PostCardHeaderProps ) {
 	const translate = useTranslate();
 	const analytics = useSocialAnalytics();
 	const isCompact = variant === 'compact';
@@ -112,6 +124,19 @@ export function PostCardHeader( { post, variant, prominentTimestamp }: PostCardH
 			return null;
 		}
 		if ( isCompact ) {
+			if ( timestampLink ) {
+				return (
+					<a
+						className="social-post-card-header__timestamp"
+						href={ timestampLink.href }
+						target={ timestampLink.target }
+						rel={ timestampLink.rel }
+						onClick={ timestampLink.onClick }
+					>
+						<TimeSince date={ timestampIso } />
+					</a>
+				);
+			}
 			return <TimeSince className="social-post-card-header__timestamp" date={ timestampIso } />;
 		}
 		if ( inAppPostUrl ) {
