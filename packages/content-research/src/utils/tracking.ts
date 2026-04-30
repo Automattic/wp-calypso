@@ -14,7 +14,3 @@ export function trackContentResearchSummarize( topic: string, resultCount: numbe
 		result_count: resultCount,
 	} );
 }
-
-export function trackContentResearchInsert( topic: string ) {
-	recordTracksEvent( 'calypso_content_research_insert', { topic } );
-}

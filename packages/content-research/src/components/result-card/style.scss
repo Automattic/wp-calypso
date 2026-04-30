@@ -31,53 +31,34 @@
 		flex-shrink: 0;
 	}
 
-	&__body {
-		flex: 1;
-		min-width: 0;
-	}
-
-	&__header {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-		margin-bottom: 6px;
-	}
-
-	&__source {
-		font-size: 10px;
-		font-weight: 600;
+	&__source-icon {
+		font-size: 9px;
+		font-weight: 700;
+		line-height: 1;
 		text-transform: uppercase;
 		letter-spacing: 0.03em;
-		padding: 2px 7px;
+		padding: 2px 4px;
 		border-radius: 3px;
-		color: #50575e;
-		background: #f0f0f0;
-
-		&--reddit {
-			color: #fff;
-			background: #ff4500;
-		}
+		margin-right: 5px;
+		color: #fff;
+		background: #949494;
 
 		&--hn {
-			color: #fff;
 			background: #f0652f;
 		}
 
 		&--reader {
-			color: #fff;
 			background: #0675c4;
 		}
 
 		&--googlenews {
-			color: #fff;
 			background: #1a73e8;
 		}
 	}
 
-	&__subreddit {
-		font-size: 12px;
-		color: #757575;
-		font-style: italic;
+	&__body {
+		flex: 1;
+		min-width: 0;
 	}
 
 	&__title {
@@ -89,9 +70,17 @@
 		color: #1e1e1e;
 		text-decoration: none;
 
-		&:hover {
+		.components-external-link__contents {
+			text-decoration: none;
+		}
+
+		&:hover .content-research-result-card__title-text {
 			color: var(--wp-admin-theme-color, #3858e9);
 		}
+	}
+
+	&__title-text {
+		text-decoration: underline;
 	}
 
 	&__excerpt {

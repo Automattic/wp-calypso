@@ -1,9 +1,8 @@
 import { Button, Icon, Spinner } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { useEffect, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { arrowLeft, chevronDown, chevronUp } from '@wordpress/icons';
-import { trackContentResearchInsert, trackContentResearchSummarize } from '../../utils/tracking';
+import { trackContentResearchSummarize } from '../../utils/tracking';
 import type { ResearchSummary } from '../../types';
 
 const PROGRESS_STEPS = [
@@ -84,35 +83,11 @@ export default function AiSummary( {
 	selectedCount,
 	isExpanded,
 }: AiSummaryProps ) {
-	const { insertBlocks } = useDispatch( 'core/block-editor' ) as {
-		insertBlocks: ( blocks: unknown[] ) => void;
-	};
-
 	const progressMessage = useProgressMessage( isLoading );
 
 	const handleSummarize = () => {
 		trackContentResearchSummarize( topic, resultCount );
 		onSummarize();
-	};
-
-	const handleInsert = () => {
-		if ( ! summary ) {
-			return;
-		}
-
-		trackContentResearchInsert( topic );
-
-		// Use wp.blocks.createBlock if available (externalized by webpack).
-		const wpBlocks = ( window as unknown as Record< string, unknown > ).wp as
-			| { blocks?: { createBlock: ( name: string, attrs: object ) => unknown } }
-			| undefined;
-
-		if ( wpBlocks?.blocks?.createBlock ) {
-			const block = wpBlocks.blocks.createBlock( 'core/paragraph', {
-				content: summary.summary,
-			} );
-			insertBlocks( [ block ] );
-		}
 	};
 
 	if ( ( ! summary && ! isLoading ) || ! isExpanded ) {
@@ -172,7 +147,6 @@ export default function AiSummary( {
 					{ summary.key_findings.length > 0 && (
 						<CollapsibleSection
 							title={ __( 'Key findings', 'content-research' ) }
-							defaultOpen
 							className="content-research-ai-summary__findings"
 						>
 							<ul>
@@ -204,9 +178,6 @@ export default function AiSummary( {
 					onClick={ onClose }
 				>
 					{ __( 'Back to results', 'content-research' ) }
-				</Button>
-				<Button variant="primary" onClick={ handleInsert }>
-					{ __( 'Insert into post', 'content-research' ) }
 				</Button>
 			</div>
 		</div>

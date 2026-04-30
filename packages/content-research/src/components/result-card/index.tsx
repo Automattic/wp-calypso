@@ -10,14 +10,25 @@ interface ResultCardProps {
 	onToggleSelect: () => void;
 }
 
+function getSourceAbbreviation( source: string ): string {
+	switch ( source ) {
+		case 'hn':
+			return 'HN';
+		case 'reader':
+			return 'WP';
+		case 'googlenews':
+			return 'GN';
+		default:
+			return source.slice( 0, 2 ).toUpperCase();
+	}
+}
+
 function getSourceLabel( source: string ): string {
 	switch ( source ) {
-		case 'reddit':
-			return 'Reddit';
 		case 'hn':
 			return 'Hacker News';
 		case 'reader':
-			return 'WPcom Reader';
+			return 'WordPress.com';
 		case 'googlenews':
 			return 'Google News';
 		default:
@@ -89,22 +100,20 @@ export default function ResultCard( { result, isSelected, onToggleSelect }: Resu
 				aria-label={ __( 'Select result for summary', 'content-research' ) }
 			/>
 			<div className="content-research-result-card__body">
-				<div className="content-research-result-card__header">
-					<span
-						className={ `content-research-result-card__source content-research-result-card__source--${ result.source }` }
-					>
-						{ getSourceLabel( result.source ) }
-					</span>
-					{ result.subreddit && (
-						<span className="content-research-result-card__subreddit">{ result.subreddit }</span>
-					) }
-				</div>
 				<ExternalLink
 					className="content-research-result-card__title"
 					href={ result.url }
 					onClick={ () => trackContentResearchResultClick( result.source, result.url ) }
 				>
-					{ decodeEntities( result.title ) }
+					<span
+						className={ `content-research-result-card__source-icon content-research-result-card__source-icon--${ result.source }` }
+						title={ getSourceLabel( result.source ) }
+					>
+						{ getSourceAbbreviation( result.source ) }
+					</span>
+					<span className="content-research-result-card__title-text">
+						{ decodeEntities( result.title ) }
+					</span>
 				</ExternalLink>
 				{ result.excerpt && (
 					<p className="content-research-result-card__excerpt">
