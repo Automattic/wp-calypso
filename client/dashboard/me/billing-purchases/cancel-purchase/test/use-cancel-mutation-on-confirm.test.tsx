@@ -1,9 +1,10 @@
 /**
  * @jest-environment jsdom
  */
+import { userPurchasesQuery } from '@automattic/api-queries';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, act, waitFor } from '@testing-library/react';
-import { useState, type ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import { CANCEL_FLOW_TYPE } from '../../../../utils/purchase';
 import { useCancelMutationOnConfirm } from '../use-cancel-mutation-on-confirm';
 import type { Purchase } from '@automattic/api-core';
@@ -50,17 +51,19 @@ function makeMutations() {
 	};
 }
 
-function TestWrapper( { children }: { children: ReactNode } ) {
-	const [ queryClient ] = useState(
-		() =>
-			new QueryClient( {
-				defaultOptions: {
-					queries: { retry: false },
-					mutations: { retry: false },
-				},
-			} )
-	);
-	return <QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>;
+function makeQueryClient() {
+	return new QueryClient( {
+		defaultOptions: {
+			queries: { retry: false },
+			mutations: { retry: false },
+		},
+	} );
+}
+
+function makeTestWrapper( queryClient: QueryClient ) {
+	return function TestWrapper( { children }: { children: ReactNode } ) {
+		return <QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>;
+	};
 }
 
 describe( 'useCancelMutationOnConfirm', () => {
@@ -70,6 +73,7 @@ describe( 'useCancelMutationOnConfirm', () => {
 
 	test( 'fireMutationOnConfirm dispatches the remove mutation for REMOVE flow', async () => {
 		const mutations = makeMutations();
+		const queryClient = makeQueryClient();
 
 		const { result } = renderHook(
 			() =>
@@ -78,7 +82,7 @@ describe( 'useCancelMutationOnConfirm', () => {
 					...mutations,
 					destinationRoute: '/me/purchases',
 				} ),
-			{ wrapper: TestWrapper }
+			{ wrapper: makeTestWrapper( queryClient ) }
 		);
 
 		act( () => {
@@ -94,6 +98,7 @@ describe( 'useCancelMutationOnConfirm', () => {
 
 	test( 'fireMutationOnConfirm dispatches the auto-renew-off mutation for CANCEL_AUTORENEW flow', async () => {
 		const mutations = makeMutations();
+		const queryClient = makeQueryClient();
 
 		const { result } = renderHook(
 			() =>
@@ -102,7 +107,7 @@ describe( 'useCancelMutationOnConfirm', () => {
 					...mutations,
 					destinationRoute: '/me/purchases',
 				} ),
-			{ wrapper: TestWrapper }
+			{ wrapper: makeTestWrapper( queryClient ) }
 		);
 
 		act( () => {
@@ -119,6 +124,142 @@ describe( 'useCancelMutationOnConfirm', () => {
 		expect( mutations.cancelAndRefundMutation.mutateAsync ).not.toHaveBeenCalled();
 	} );
 
+	test( 'fireMutationOnConfirm dispatches the cancel-and-refund mutation for CANCEL_WITH_REFUND flow', async () => {
+		const mutations = makeMutations();
+		const queryClient = makeQueryClient();
+
+		const purchaseWithProductId = {
+			...mockPurchase,
+			product_id: 9876,
+		} as Purchase;
+
+		const { result } = renderHook(
+			() =>
+				useCancelMutationOnConfirm( {
+					purchase: purchaseWithProductId,
+					...mutations,
+					destinationRoute: '/me/purchases',
+				} ),
+			{ wrapper: makeTestWrapper( queryClient ) }
+		);
+
+		act( () => {
+			result.current.fireMutationOnConfirm( CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND, true );
+		} );
+
+		await waitFor( () => {
+			expect( mutations.cancelAndRefundMutation.mutateAsync ).toHaveBeenCalledWith( {
+				purchaseId: purchaseWithProductId.ID,
+				options: {
+					product_id: 9876,
+					cancel_bundled_domain: true,
+				},
+			} );
+		} );
+		expect( mutations.removePurchaseMutator.mutateAsync ).not.toHaveBeenCalled();
+		expect( mutations.setPurchaseAutoRenewMutation.mutateAsync ).not.toHaveBeenCalled();
+	} );
+
+	test( 'fireMutationOnConfirm strips the deleted purchase from userPurchasesQuery cache after success', async () => {
+		const mutations = makeMutations();
+		const queryClient = makeQueryClient();
+
+		const otherPurchase = { ID: 99999 } as Purchase;
+		queryClient.setQueryData( userPurchasesQuery().queryKey, [ mockPurchase, otherPurchase ] );
+
+		const { result } = renderHook(
+			() =>
+				useCancelMutationOnConfirm( {
+					purchase: mockPurchase,
+					...mutations,
+					destinationRoute: '/me/purchases',
+				} ),
+			{ wrapper: makeTestWrapper( queryClient ) }
+		);
+
+		act( () => {
+			result.current.fireMutationOnConfirm( CANCEL_FLOW_TYPE.REMOVE );
+		} );
+
+		await waitFor( () => {
+			expect( queryClient.getQueryData( userPurchasesQuery().queryKey ) ).toEqual( [
+				otherPurchase,
+			] );
+		} );
+	} );
+
+	test( 'fireMutationOnConfirm captures the purchase into snapshotPurchase for REMOVE flow', async () => {
+		const mutations = makeMutations();
+		const queryClient = makeQueryClient();
+
+		const { result } = renderHook(
+			() =>
+				useCancelMutationOnConfirm( {
+					purchase: mockPurchase,
+					...mutations,
+					destinationRoute: '/me/purchases',
+				} ),
+			{ wrapper: makeTestWrapper( queryClient ) }
+		);
+
+		expect( result.current.snapshotPurchase ).toBeNull();
+
+		act( () => {
+			result.current.fireMutationOnConfirm( CANCEL_FLOW_TYPE.REMOVE );
+		} );
+
+		await waitFor( () => {
+			expect( result.current.snapshotPurchase ).toBe( mockPurchase );
+		} );
+	} );
+
+	test( 'fireMutationOnConfirm captures the purchase into snapshotPurchase for CANCEL_WITH_REFUND flow', async () => {
+		const mutations = makeMutations();
+		const queryClient = makeQueryClient();
+
+		const { result } = renderHook(
+			() =>
+				useCancelMutationOnConfirm( {
+					purchase: mockPurchase,
+					...mutations,
+					destinationRoute: '/me/purchases',
+				} ),
+			{ wrapper: makeTestWrapper( queryClient ) }
+		);
+
+		act( () => {
+			result.current.fireMutationOnConfirm( CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND );
+		} );
+
+		await waitFor( () => {
+			expect( result.current.snapshotPurchase ).toBe( mockPurchase );
+		} );
+	} );
+
+	test( 'fireMutationOnConfirm does NOT capture snapshotPurchase for CANCEL_AUTORENEW flow', async () => {
+		const mutations = makeMutations();
+		const queryClient = makeQueryClient();
+
+		const { result } = renderHook(
+			() =>
+				useCancelMutationOnConfirm( {
+					purchase: mockPurchase,
+					...mutations,
+					destinationRoute: '/me/purchases',
+				} ),
+			{ wrapper: makeTestWrapper( queryClient ) }
+		);
+
+		act( () => {
+			result.current.fireMutationOnConfirm( CANCEL_FLOW_TYPE.CANCEL_AUTORENEW );
+		} );
+
+		await waitFor( () =>
+			expect( mutations.setPurchaseAutoRenewMutation.mutateAsync ).toHaveBeenCalled()
+		);
+		expect( result.current.snapshotPurchase ).toBeNull();
+	} );
+
 	test( 'isPending is true while the mutation is in flight, false after it resolves', async () => {
 		let resolveMutation: ( value?: unknown ) => void = () => {};
 		const removePurchaseMutator = {
@@ -131,6 +272,7 @@ describe( 'useCancelMutationOnConfirm', () => {
 		} as unknown as { mutateAsync: jest.Mock };
 		const cancelAndRefundMutation = makeMutation();
 		const setPurchaseAutoRenewMutation = makeMutation();
+		const queryClient = makeQueryClient();
 
 		const { result } = renderHook(
 			() =>
@@ -141,7 +283,7 @@ describe( 'useCancelMutationOnConfirm', () => {
 					setPurchaseAutoRenewMutation,
 					destinationRoute: '/me/purchases',
 				} ),
-			{ wrapper: TestWrapper }
+			{ wrapper: makeTestWrapper( queryClient ) }
 		);
 
 		expect( result.current.isPending ).toBe( false );
@@ -161,6 +303,7 @@ describe( 'useCancelMutationOnConfirm', () => {
 
 	test( 'skipSurvey navigates to destination without dispatching any mutation', () => {
 		const mutations = makeMutations();
+		const queryClient = makeQueryClient();
 
 		const { result } = renderHook(
 			() =>
@@ -169,7 +312,7 @@ describe( 'useCancelMutationOnConfirm', () => {
 					...mutations,
 					destinationRoute: '/me/purchases',
 				} ),
-			{ wrapper: TestWrapper }
+			{ wrapper: makeTestWrapper( queryClient ) }
 		);
 
 		act( () => {

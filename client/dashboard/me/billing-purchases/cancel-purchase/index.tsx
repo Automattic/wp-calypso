@@ -146,6 +146,36 @@ function renderTopNotice( args: TopNoticeArgs ) {
 	);
 }
 
+// Build the success-snackbar message after a Remove mutation. Three shapes:
+// 1. Default: "%(productName)s was removed from %(siteName)s."
+// 2. Akismet/Jetpack holding-site purchase: drops the siteless.* domain.
+// 3. Domain registration: addresses the domain by name.
+function getRemoveSuccessMessage( purchase: Purchase ): string {
+	const purchaseName = purchase.is_domain ? purchase.meta : purchase.product_name;
+	if ( isAkismetHoldingSitePurchase( purchase ) || isJetpackHoldingSitePurchase( purchase ) ) {
+		return sprintf(
+			/* translators: %(productName)s is the name of a product (e.g., "WordPress.com Premium") */
+			__( '%(productName)s was removed from your account.' ),
+			{ productName: purchaseName }
+		);
+	}
+	if ( purchase.is_domain_registration ) {
+		return sprintf(
+			/* translators: %(domain)s is a domain name */
+			__( 'The domain %(domain)s was removed from your account.' ),
+			{ domain: purchaseName }
+		);
+	}
+	return sprintf(
+		/* translators: %(productName)s is the name of a product (e.g., "WordPress.com Premium") and %(siteName)s is a domain name */
+		__( '%(productName)s was removed from %(siteName)s.' ),
+		{
+			productName: purchaseName,
+			siteName: purchase.domain,
+		}
+	);
+}
+
 const willShowDomainOptionsRadioButtons = (
 	includedDomainPurchase: Purchase,
 	purchase: Purchase
@@ -359,9 +389,38 @@ function CancelPurchaseInner() {
 	};
 
 	// Queries
-	const { data: purchase, isPending: purchaseQueryIsPending } = useSuspenseQuery(
+	// `useQuery` (not `useSuspenseQuery`) so a post-mutation 404 from the
+	// prefix-matched invalidation cascade returns an error result rather than
+	// throwing to the error boundary; the snapshot below covers the read.
+	// The route loader pre-fetches via `ensureQueryData`, so first paint is
+	// instant — `livePurchase` is defined on first render.
+	const { data: livePurchase, isPending: purchaseQueryIsPending } = useQuery(
 		purchaseQuery( parseInt( purchaseId ) )
 	);
+
+	// Mutations consumed by useCancelMutationOnConfirm
+	const setPurchaseAutoRenewMutation = useMutation( userPurchaseSetAutoRenewQuery() );
+	const cancelAndRefundMutation = useMutation( cancelAndRefundPurchaseMutation() );
+	const removePurchaseMutator = useMutation( removePurchaseMutation() );
+
+	const {
+		isPending: isMutationPending,
+		fireMutationOnConfirm,
+		snapshotPurchase,
+	} = useCancelMutationOnConfirm( {
+		purchase: livePurchase as Purchase,
+		cancelAndRefundMutation,
+		removePurchaseMutator,
+		setPurchaseAutoRenewMutation,
+		destinationRoute: purchasesRoute.to ?? '/me/billing/purchases',
+	} );
+
+	// Pre-confirm: livePurchase from the cache (loader pre-fetched).
+	// Post-confirm: the hook captured snapshotPurchase synchronously at
+	// fire-time, so reads of `purchase` continue to work even if the
+	// mutation's invalidation tears down livePurchase.
+	const purchase = ( snapshotPurchase ?? livePurchase ) as Purchase;
+
 	const { data: sitePurchases } = useSuspenseQuery( sitePurchasesQuery( purchase.blog_id ) );
 	const { data: siteFeatures, isPending: siteFeaturesQueryIsPending } = useSuspenseQuery(
 		siteFeaturesQuery( purchase.blog_id )
@@ -397,10 +456,7 @@ function CancelPurchaseInner() {
 		useQuery( userPreferenceQuery( getCancelPurchaseSurveyCompletedPreferenceKey( purchase.ID ) ) );
 	const userHasCompletedCancelSurveyForPurchase = Boolean( userPreferenceForSurveyComplete );
 
-	// Mutations
-	const setPurchaseAutoRenewMutation = useMutation( userPurchaseSetAutoRenewQuery() );
-	const cancelAndRefundMutation = useMutation( cancelAndRefundPurchaseMutation() );
-	const removePurchaseMutator = useMutation( removePurchaseMutation() );
+	// Mutations (continued)
 	const extendWithFreeMonthMutation = useMutation( extendPurchaseWithFreeMonthMutation() );
 	const surveyCompletedMutator = useMutation(
 		userPreferenceMutation( getCancelPurchaseSurveyCompletedPreferenceKey( purchase.ID ) )
@@ -412,14 +468,6 @@ function CancelPurchaseInner() {
 		error: offerApplyError,
 	} = useMutation( applyCancellationOfferMutation( purchase.blog_id, purchase.ID ) );
 	const marketingSurveyMutate = useMutation( marketingSurveyMutation() );
-
-	const { isPending: isMutationPending, fireMutationOnConfirm } = useCancelMutationOnConfirm( {
-		purchase,
-		cancelAndRefundMutation,
-		removePurchaseMutator,
-		setPurchaseAutoRenewMutation,
-		destinationRoute: purchasesRoute.to ?? '/me/billing/purchases',
-	} );
 
 	const showRefundEligibilityNotice = useShowRefundEligibilityNotice( purchase );
 
@@ -851,17 +899,7 @@ function CancelPurchaseInner() {
 					);
 					invokeSurvicateEvent( 'purchaseCancelled' );
 				} else {
-					createSuccessNotice(
-						sprintf(
-							/* translators: %(productName)s is the name of a product (e.g., "WordPress.com Premium") and %(siteName)s is a domain name */
-							__( '%(productName)s was removed from %(siteName)s.' ),
-							{
-								productName: purchaseName,
-								siteName: purchase.domain,
-							}
-						),
-						{ type: 'snackbar' }
-					);
+					createSuccessNotice( getRemoveSuccessMessage( purchase ), { type: 'snackbar' } );
 					invokeSurvicateEvent( 'purchaseRemoved' );
 				}
 			} )
@@ -1172,31 +1210,7 @@ function CancelPurchaseInner() {
 
 		removePurchaseMutator.mutate( purchase.ID, {
 			onSuccess: () => {
-				const purchaseName = purchase.is_domain ? purchase.meta : purchase.product_name;
-				/* translators: %(productName)s is the name of a product (e.g., "WordPress.com Premium") and %(siteName)s is a domain name */
-				let successMessage = sprintf( __( '%(productName)s was removed from %(siteName)s.' ), {
-					productName: purchaseName,
-					siteName: purchase.domain,
-				} );
-				if (
-					isAkismetHoldingSitePurchase( purchase ) ||
-					isJetpackHoldingSitePurchase( purchase )
-				) {
-					/* translators: %(productName)s is the name of a product (e.g., "WordPress.com Premium") */
-					successMessage = sprintf( __( '%(productName)s was removed from your account.' ), {
-						productName: purchaseName,
-					} );
-				}
-				if ( purchase.is_domain_registration ) {
-					successMessage = sprintf(
-						/* translators: %(domain)s is a domain name */
-						__( 'The domain %(domain)s was removed from your account.' ),
-						{
-							domain: purchaseName,
-						}
-					);
-				}
-				createSuccessNotice( successMessage, { type: 'snackbar' } );
+				createSuccessNotice( getRemoveSuccessMessage( purchase ), { type: 'snackbar' } );
 				invokeSurvicateEvent( 'purchaseRemoved' );
 				navigate( {
 					to: purchaseSettingsRoute.fullPath,
