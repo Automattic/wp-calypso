@@ -122,15 +122,13 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 			setProcessingTags( ( current ) => new Set( current ).add( tag ) );
 
 			// Follow or unfollow the tag and update the followed tags state for the UI.
-			let totalFollowedAfterToggle = followedTagsRef.current.length;
-			setFollowedTags( ( currentTags ) => {
-				let nextTags = currentTags.filter( ( t ) => t !== tag );
-				if ( checked ) {
-					nextTags = currentTags.includes( tag ) ? currentTags : [ ...currentTags, tag ];
-				}
-				totalFollowedAfterToggle = nextTags.length;
-				return nextTags;
-			} );
+			const currentTags = followedTagsRef.current;
+			let nextTags = currentTags.filter( ( t ) => t !== tag );
+			if ( checked ) {
+				nextTags = currentTags.includes( tag ) ? currentTags : [ ...currentTags, tag ];
+			}
+			followedTagsRef.current = nextTags;
+			setFollowedTags( nextTags );
 
 			recordTracksEvent(
 				`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_tag_${
@@ -138,7 +136,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 				}`,
 				{
 					tag,
-					total_followed: totalFollowedAfterToggle,
+					total_followed: nextTags.length,
 				}
 			);
 
@@ -147,9 +145,15 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 				return true;
 			} catch {
 				// Revert the optimistic update when the request fails.
-				setFollowedTags( ( currentTags ) =>
-					checked ? currentTags.filter( ( t ) => t !== tag ) : [ ...currentTags, tag ]
-				);
+				const rollbackBaseTags = followedTagsRef.current;
+				let rollbackTags = rollbackBaseTags;
+				if ( checked ) {
+					rollbackTags = rollbackBaseTags.filter( ( t ) => t !== tag );
+				} else if ( ! rollbackBaseTags.includes( tag ) ) {
+					rollbackTags = [ ...rollbackBaseTags, tag ];
+				}
+				followedTagsRef.current = rollbackTags;
+				setFollowedTags( rollbackTags );
 				const errorMessage = checked
 					? translate( 'Could not follow tag: %(tag)s', { args: { tag } } )
 					: translate( 'Could not unfollow tag: %(tag)s', { args: { tag } } );
