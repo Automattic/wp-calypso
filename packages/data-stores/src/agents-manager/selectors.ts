@@ -8,9 +8,11 @@ export const getAgentsManagerState = ( state: State ) => ( {
 	isLoading: state.isLoading,
 	hasLoaded: state.hasLoaded,
 	floatingPosition: state.floatingPosition,
+	isSplitScreen: state.isSplitScreen,
 } );
 export const getIsOpen = ( state: State ) => state.isOpen;
 export const getIsDocked = ( state: State ) => state.isDocked;
+export const getIsSplitScreen = ( state: State ) => state.isSplitScreen;
 export const getRouterHistory = ( state: State, siteKey: string ) => {
 	if ( ! state.routerHistory ) {
 		return undefined;

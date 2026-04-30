@@ -465,9 +465,12 @@ class CancelPurchaseForm extends Component {
 		}
 
 		if ( surveyStep === NEXT_ADVENTURE_STEP ) {
+			const allSteps = this.getAllSurveySteps();
 			return (
 				<NextAdventureStep
 					isPlan={ isPlan( purchase ) }
+					isOnlyStep={ allSteps.length === 1 }
+					intent={ intent }
 					adventureOptions={ this.state.questionTwoOrder }
 					onSelectNextAdventure={ this.onRadioTwoChange }
 					onChangeNextAdventureDetails={ this.onTextTwoChange }

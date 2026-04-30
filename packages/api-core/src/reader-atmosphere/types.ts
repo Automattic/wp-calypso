@@ -199,3 +199,15 @@ export interface AtmosphereAuthorFeedPage {
 	items: AtmosphereFeedItem[];
 	cursor: string | null;
 }
+
+/**
+ * Author feed filter values accepted by the backend, mirroring the four
+ * ATproto `app.bsky.feed.getAuthorFeed` `filter` enum values. The first
+ * three are surfaced as UI tabs (Posts / Replies / Media); the fourth is
+ * type-system supported but not exposed in this slice.
+ */
+export type AtmosphereAuthorFeedFilter =
+	| 'posts_no_replies'
+	| 'posts_with_replies'
+	| 'posts_with_media'
+	| 'posts_and_author_threads';

@@ -24,6 +24,7 @@ export interface OmnibarNodes {
 	home?: OmnibarNode;
 	site?: OmnibarNode;
 	siteActions?: OmnibarNode[];
+	sitePlugins?: OmnibarNode[];
 	plugins?: OmnibarNode[];
 	user?: OmnibarNode;
 }
