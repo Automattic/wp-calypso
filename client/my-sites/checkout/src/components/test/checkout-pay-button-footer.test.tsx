@@ -32,9 +32,15 @@ describe( 'CheckoutPayButtonFooter', () => {
 		expect( screen.getByText( /money back guarantee/i ) ).toBeInTheDocument();
 	} );
 
-	it( 'omits the money-back-guarantee line for a cart with no refund window', () => {
-		renderFooter( getEmptyResponseCart() );
+	it( 'omits the entire refund row for a cart with no refund window', () => {
+		const { container } = renderFooter( getEmptyResponseCart() );
 
 		expect( screen.queryByText( /money back guarantee/i ) ).not.toBeInTheDocument();
+		// The flex Wrapper has gap: 8px between children — leaving an empty
+		// refund row in the DOM would add dead space above the divider. Confirm
+		// the row's wrapper element is gone, not just its inner content.
+		const wrapper = container.querySelector( '.checkout-pay-button-footer' );
+		// 3 direct children: SSL trust line, divider, legal notice (modal is closed).
+		expect( wrapper?.childElementCount ).toBe( 3 );
 	} );
 } );
