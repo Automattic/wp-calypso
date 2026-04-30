@@ -61,16 +61,6 @@ describe( '<SitePerformanceBackend>', () => {
 		render( <SitePerformanceBackend siteSlug={ siteSlug } /> );
 
 		expect( await screen.findByRole( 'button', { name: 'Enable' } ) ).toBeVisible();
-		expect( screen.queryByText( 'APM dashboards coming soon.' ) ).not.toBeInTheDocument();
-	} );
-
-	test( 'renders enabled placeholder + Disable when APM is already enabled', async () => {
-		mockSite( businessSite( true ) );
-
-		render( <SitePerformanceBackend siteSlug={ siteSlug } /> );
-
-		expect( await screen.findByText( 'APM dashboards coming soon.' ) ).toBeVisible();
-		expect( screen.getByRole( 'button', { name: 'Disable' } ) ).toBeVisible();
 	} );
 
 	test( 'clicking Enable POSTs { active: true }', async () => {
@@ -86,17 +76,24 @@ describe( '<SitePerformanceBackend>', () => {
 		} );
 	} );
 
-	test( 'clicking Disable POSTs { active: false }', async () => {
+	test( 'renders the dashboard tabs when APM is enabled', async () => {
 		mockSite( businessSite( true ) );
-		const scope = mockApmToggle( false );
 
-		render( <SitePerformanceBackend siteSlug={ siteSlug } /> );
+		render( <SitePerformanceBackend siteSlug={ siteSlug } tab="overview" /> );
 
-		await userEvent.click( await screen.findByRole( 'button', { name: 'Disable' } ) );
+		expect( await screen.findByRole( 'tab', { name: 'Overview' } ) ).toBeVisible();
+		expect( screen.getByRole( 'tab', { name: 'Requests' } ) ).toBeVisible();
+		expect( screen.getByRole( 'tab', { name: 'Transactions' } ) ).toBeVisible();
+		expect( screen.getByRole( 'tab', { name: 'Database' } ) ).toBeVisible();
+		expect( screen.getByRole( 'tab', { name: 'External requests' } ) ).toBeVisible();
+	} );
 
-		await waitFor( () => {
-			expect( scope.isDone() ).toBe( true );
-		} );
+	test( 'Overview tab renders the slow requests heading', async () => {
+		mockSite( businessSite( true ) );
+
+		render( <SitePerformanceBackend siteSlug={ siteSlug } tab="overview" /> );
+
+		expect( await screen.findByText( 'Slowest requests' ) ).toBeVisible();
 	} );
 
 	test( 'renders upsell when the site is on a plan below Business', async () => {
