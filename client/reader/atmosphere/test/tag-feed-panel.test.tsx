@@ -80,6 +80,21 @@ describe( 'TagFeedPanel', () => {
 		expect( screen.queryByText( /\d+ posts?/i ) ).not.toBeInTheDocument();
 	} );
 
+	// The backend emits `count: null` (not omitted) when the AppView's
+	// `hitsTotal` is absent — guard the loose null/undefined check.
+	it( 'omits the count line when count is null', async () => {
+		nock( BASE )
+			.get( PATH )
+			.reply( 200, { items: [], cursor: null, tag: { name: 'rust', count: null } } );
+
+		renderWithProvider( <TagFeedPanel connection={ connection } hashtag="rust" />, {
+			queryClient: makeQueryClient(),
+		} );
+
+		await waitFor( () => expect( screen.getByRole( 'heading', { name: '#rust' } ) ).toBeVisible() );
+		expect( screen.queryByText( /\d+ posts?/i ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'renders the View on Bluesky link only for https URLs', async () => {
 		nock( BASE )
 			.get( PATH )

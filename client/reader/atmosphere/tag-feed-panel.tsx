@@ -154,8 +154,11 @@ export function TagFeedPanel( { connection, hashtag }: Props ) {
 	);
 
 	const tagInfo = feed.data?.pages[ 0 ]?.tag;
+	// Backend emits `count: null` when the AppView's `hitsTotal` is absent
+	// (see `tag-feed-page` normaliser); use a loose check so we hide the
+	// count line for both a missing field and an explicit null.
 	const countLine =
-		tagInfo?.count !== undefined
+		typeof tagInfo?.count === 'number'
 			? translate( '%(count)d post', '%(count)d posts', {
 					count: tagInfo.count,
 					args: { count: tagInfo.count },
