@@ -2,6 +2,11 @@ import config from '@automattic/calypso-config';
 import { useEffect, useState } from 'react';
 import { loadBlackboxSdk } from 'calypso/blocks/login/utils/blackbox-sdk';
 
+// Give the SDK a short window to synchronously or near-synchronously start a challenge
+// after configure(), avoiding a brief enabled submit button while the widget initializes.
+const BLACKBOX_CONFIGURE_SETTLE_TIMEOUT_MS = 500;
+const BLACKBOX_FAIL_OPEN_TIMEOUT_MS = 5000;
+
 // Tracks whether configure() has been called at least once across mounts.
 // On remount (e.g. back from 2FA), we call reset() to start a fresh session
 // so the new challenge container can surface a challenge.
@@ -12,17 +17,59 @@ let hasConfiguredOnce = false;
  * ref and challenge callbacks, and tracks whether a challenge is active.
  * @param {Object}  options
  * @param {import('react').RefObject<HTMLDivElement>} options.containerRef Ref to the challenge container element.
- * @returns {{ isChallengeActive: boolean }}
+ * @returns {{ isChallengeActive: boolean, isLoading: boolean, hasChallengeContent: boolean }}
  */
 export function useBlackbox( { containerRef } ) {
+	const isEnabled = config.isEnabled( 'blackbox-login' ) && !! config( 'blackbox_api_key' );
 	const [ isChallengeActive, setIsChallengeActive ] = useState( false );
+	const [ isLoading, setIsLoading ] = useState( isEnabled );
+	const [ hasChallengeContent, setHasChallengeContent ] = useState( false );
 
 	useEffect( () => {
-		if ( ! config.isEnabled( 'blackbox-login' ) || ! config( 'blackbox_api_key' ) ) {
+		const container = containerRef.current;
+
+		if ( ! isEnabled || ! container || typeof window.MutationObserver !== 'function' ) {
+			return;
+		}
+
+		const updateHasChallengeContent = () => {
+			setHasChallengeContent( container.childElementCount > 0 );
+		};
+		const observer = new window.MutationObserver( updateHasChallengeContent );
+
+		updateHasChallengeContent();
+		observer.observe( container, { childList: true } );
+
+		return () => {
+			observer.disconnect();
+		};
+	}, [ containerRef, isEnabled ] );
+
+	useEffect( () => {
+		if ( ! isEnabled ) {
 			return;
 		}
 
 		let cancelled = false;
+		let hasStartedChallenge = false;
+		let settleTimeout;
+		const failOpenTimeout = setTimeout( () => {
+			if ( ! cancelled ) {
+				setIsLoading( false );
+			}
+		}, BLACKBOX_FAIL_OPEN_TIMEOUT_MS );
+
+		const clearPendingTimeouts = () => {
+			clearTimeout( settleTimeout );
+			clearTimeout( failOpenTimeout );
+		};
+
+		const stopLoading = () => {
+			clearPendingTimeouts();
+			if ( ! cancelled ) {
+				setIsLoading( false );
+			}
+		};
 
 		loadBlackboxSdk().then( () => {
 			if ( cancelled ) {
@@ -30,6 +77,7 @@ export function useBlackbox( { containerRef } ) {
 			}
 
 			if ( typeof window.Blackbox?.configure !== 'function' ) {
+				stopLoading();
 				return;
 			}
 
@@ -39,16 +87,26 @@ export function useBlackbox( { containerRef } ) {
 					challengeContainer: containerRef.current,
 					onChallengeStart: () => {
 						if ( ! cancelled ) {
+							hasStartedChallenge = true;
+							stopLoading();
 							setIsChallengeActive( true );
 						}
 					},
 					onChallengeComplete: () => {
 						if ( ! cancelled ) {
+							if ( hasStartedChallenge ) {
+								stopLoading();
+							}
+							setHasChallengeContent( false );
 							setIsChallengeActive( false );
 						}
 					},
 					onChallengeFailure: () => {
 						if ( ! cancelled ) {
+							if ( hasStartedChallenge ) {
+								stopLoading();
+							}
+							setHasChallengeContent( false );
 							setIsChallengeActive( false );
 						}
 					},
@@ -62,15 +120,18 @@ export function useBlackbox( { containerRef } ) {
 				}
 
 				hasConfiguredOnce = true;
+				settleTimeout = setTimeout( stopLoading, BLACKBOX_CONFIGURE_SETTLE_TIMEOUT_MS );
 			} catch {
 				// Intentionally ignored — Blackbox must never block login.
+				stopLoading();
 			}
 		} );
 
 		return () => {
 			cancelled = true;
+			clearPendingTimeouts();
 		};
-	}, [ containerRef ] );
+	}, [ containerRef, isEnabled ] );
 
-	return { isChallengeActive };
+	return { isChallengeActive, isLoading, hasChallengeContent };
 }

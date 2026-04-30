@@ -115,11 +115,12 @@ export class LoginForm extends Component {
 		emailSuggestionError: false,
 		password: '',
 		lastUsedAuthenticationMethod: this.getLastUsedAuthenticationMethod(),
-		isBlackboxChallengeActive: false,
+		isBlackboxSubmitBlocked:
+			config.isEnabled( 'blackbox-login' ) && !! config( 'blackbox_api_key' ),
 	};
 
-	handleBlackboxChallengeActiveChange = ( isActive ) => {
-		this.setState( { isBlackboxChallengeActive: isActive } );
+	handleBlackboxSubmitBlockedChange = ( isBlocked ) => {
+		this.setState( { isBlackboxSubmitBlocked: isBlocked } );
 	};
 
 	componentDidMount() {
@@ -644,7 +645,7 @@ export class LoginForm extends Component {
 		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
 		const isEmailOrUsernameInputDisabled =
 			isFormDisabled || this.isPasswordView() || isGravatarFixedAccountLogin;
-		const isSubmitButtonDisabled = isFormDisabled || this.state.isBlackboxChallengeActive;
+		const isSubmitButtonDisabled = isFormDisabled || this.state.isBlackboxSubmitBlocked;
 		let loginUrl;
 		const isPasswordHidden = this.isUsernameOrEmailView();
 		const signupUrl = this.getSignupUrl();
@@ -857,9 +858,7 @@ export class LoginForm extends Component {
 
 						{ shouldRenderForgotPasswordLink && this.renderLostPasswordLink() }
 
-						<BlackboxChallenge
-							onChallengeActiveChange={ this.handleBlackboxChallengeActiveChange }
-						/>
+						<BlackboxChallenge onSubmitBlockedChange={ this.handleBlackboxSubmitBlockedChange } />
 
 						<div className="login__form-action">
 							<LoginSubmitButton

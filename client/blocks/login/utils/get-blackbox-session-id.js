@@ -9,8 +9,8 @@ import { loadBlackboxSdk } from 'calypso/blocks/login/utils/blackbox-sdk';
  * before the login request fires — critical for enforcement via verify().
  *
  * collect() is safe to call at submit time because the login form's submit
- * button is disabled while a challenge is active (isBlackboxChallengeActive),
- * so this only fires when no challenge widget is in progress.
+ * button is disabled while Blackbox is loading or a challenge is active, so
+ * this only fires when no challenge widget is in progress.
  *
  * Blackbox returns BlackboxError instead of throwing, so the typeof check
  * filters those out. The try/catch is defense-in-depth.
