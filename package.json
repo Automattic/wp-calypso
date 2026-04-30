@@ -110,7 +110,7 @@
 		"site-admin:storybook:start": "yarn workspace @automattic/site-admin run storybook:start",
 		"start": "npx check-node-version --package && node bin/welcome.js && yarn run build && yarn run start-build",
 		"start:debug": "NODE_OPTIONS='--max-old-space-size=8192' SOURCEMAP='eval-source-map' yarn start",
-		"start:vite": "vite build --mode development --config client/vite.config.node.ts && BROWSERSLIST_ENV=evergreen NODE_ENV=development USE_VITE=1 node build/server.mjs | bunyan -o short",
+		"start:vite": "yarn run build-static && vite build --mode development --config client/vite.config.node.ts && BROWSERSLIST_ENV=evergreen NODE_ENV=development USE_VITE=1 node build/server.mjs | bunyan -o short",
 		"build:vite": "BROWSERSLIST_ENV=evergreen NODE_ENV=production CALYPSO_ENV=production vite build --config client/vite.config.ts",
 		"build:vite:server": "NODE_ENV=production CALYPSO_ENV=production vite build --config client/vite.config.node.ts",
 		"start-mock-wordpress-com": "MOCK_WORDPRESSDOTCOM=1 yarn run start",

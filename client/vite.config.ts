@@ -183,6 +183,45 @@ const emptyDashiconsPlugin: Plugin = {
 	},
 };
 
+const browserConditionalRequiresPlugin: Plugin = {
+	name: 'calypso-browser-conditional-requires',
+	enforce: 'pre',
+	transform( code: string, id: string ) {
+		if ( ! id.endsWith( '/client/state/index.ts' ) ) {
+			return null;
+		}
+
+		let transformed = code
+			.replace(
+				"isBrowser && require( './analytics/middleware.js' ).analyticsMiddleware",
+				'isBrowser && __calypsoAnalyticsMiddleware'
+			)
+			.replace(
+				"isBrowser && require( './lib/middleware.js' ).default",
+				'isBrowser && __calypsoLibraryMiddleware'
+			)
+			.replace(
+				"isDesktop && require( './desktop/middleware.js' ).default",
+				'isDesktop && __calypsoDesktopMiddleware'
+			);
+
+		if ( transformed === code ) {
+			return null;
+		}
+
+		transformed =
+			[
+				"import { analyticsMiddleware as __calypsoAnalyticsMiddleware } from './analytics/middleware.js';",
+				"import __calypsoLibraryMiddleware from './lib/middleware.js';",
+				"import __calypsoDesktopMiddleware from './desktop/middleware.js';",
+			].join( '\n' ) +
+			'\n' +
+			transformed;
+
+		return { code: transformed, map: null };
+	},
+};
+
 export default defineConfig(
 	(): UserConfig => ( {
 		// Project root — Vite serves files from here in dev mode.
@@ -195,6 +234,13 @@ export default defineConfig(
 			mainFields: [ 'browser', 'calypso:src', 'module', 'main' ],
 
 			alias: [
+				// Server-only logger → browser-safe no-op replacement. Keep this
+				// before the generic `calypso` alias so it wins the match.
+				{
+					find: 'calypso/server/lib/logger',
+					replacement: path.join( __dirname, 'lib/explat/internals/logger-browser-replacement' ),
+				},
+
 				// `calypso/*` → `client/*` (mirrors webpack's `calypso` alias)
 				{ find: 'calypso', replacement: __dirname },
 
@@ -220,17 +266,30 @@ export default defineConfig(
 				},
 
 				// Browser polyfills for Node built-ins used in the codebase.
+				{
+					find: /^fs$/,
+					replacement: path.join( __dirname, 'server/stubs/browser-fs.cjs' ),
+				},
 				{ find: 'path', replacement: 'path-browserify' },
+				{
+					find: /^url$/,
+					replacement: path.join( __dirname, 'server/stubs/browser-url.cjs' ),
+				},
 				{ find: 'util', replacement: findPackage( 'util/' ) },
+
+				// PostCSS marks source-map-js as browser:false, but Gutenberg's
+				// browser bundle imports PostCSS and can safely use the package.
+				{
+					find: /^source-map-js$/,
+					replacement: require.resolve( 'source-map-js/source-map.js' ),
+				},
 
 				// Replace lodash with the tree-shakeable ES module build.
 				{ find: 'lodash', replacement: 'lodash-es' },
 
-				// Server-only logger → browser-safe no-op replacement.
-				{
-					find: 'calypso/server/lib/logger',
-					replacement: path.join( __dirname, 'lib/explat/internals/logger-browser-replacement' ),
-				},
+				// react-day-picker/locale only re-exports date-fns/locale. Rolldown's
+				// dep optimizer currently loses named exports from that re-export shim.
+				{ find: 'react-day-picker/locale', replacement: 'date-fns/locale' },
 			],
 		},
 
@@ -290,6 +349,8 @@ export default defineConfig(
 
 			// See transformJsxInJsPlugin definition above.
 			transformJsxInJsPlugin,
+
+			browserConditionalRequiresPlugin,
 
 			// TypeScript interfaces and type aliases are erased by OXC at compile time,
 			// leaving no runtime export. When .js files import such names for JSDoc

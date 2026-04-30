@@ -56,6 +56,10 @@ export default defineConfig( {
 			// Replace lodash with the tree-shakeable build.
 			{ find: 'lodash', replacement: 'lodash-es' },
 
+			// react-day-picker/locale only re-exports date-fns/locale. Keep the
+			// browser and SSR configs resolving the same concrete ESM source.
+			{ find: 'react-day-picker/locale', replacement: 'date-fns/locale' },
+
 			// See comment in vite.config.ts.
 			{
 				find: /^fast-deep-equal\/es6(\/index\.js)?$/,

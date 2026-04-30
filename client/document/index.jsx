@@ -279,6 +279,21 @@ class Document extends Component {
 
 					{ viteDev && (
 						<script
+							key="@vitejs/plugin-react/preamble"
+							nonce={ inlineScriptNonce }
+							type="module"
+							dangerouslySetInnerHTML={ {
+								__html: `
+									import { injectIntoGlobalHook } from "/@react-refresh";
+									injectIntoGlobalHook( window );
+									window.$RefreshReg$ = () => {};
+									window.$RefreshSig$ = () => ( type ) => type;
+								`,
+							} }
+						/>
+					) }
+					{ viteDev && (
+						<script
 							key="@vite/client"
 							nonce={ inlineScriptNonce }
 							type="module"

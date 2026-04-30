@@ -38,12 +38,15 @@ async function writeDevAssetsJson() {
 
 module.exports = function middleware( app ) {
 	const pending = [];
-	let ready = false;
+	let viteMiddleware = null;
 
-	// Synchronously add a wait middleware so no requests slip past before Vite is ready.
+	// Synchronously reserve Vite's position in the middleware stack. The actual
+	// Vite middleware is created asynchronously, but it still needs to run before
+	// Calypso's page handlers so /@vite/client and /client/* module requests are
+	// handled by Vite instead of falling through to a 404 page.
 	app.use( ( req, res, next ) => {
-		if ( ready ) {
-			return next();
+		if ( viteMiddleware ) {
+			return viteMiddleware( req, res, next );
 		}
 		if ( req.url === '/' ) {
 			res.send( `
@@ -54,7 +57,7 @@ module.exports = function middleware( app ) {
 				</body>
 			` );
 		} else {
-			pending.push( next );
+			pending.push( () => viteMiddleware( req, res, next ) );
 		}
 	} );
 
@@ -68,11 +71,9 @@ module.exports = function middleware( app ) {
 			appType: 'custom',
 		} );
 
-		app.use( vite.middlewares );
-
-		ready = true;
-		for ( const next of pending.splice( 0 ) ) {
-			next();
+		viteMiddleware = vite.middlewares;
+		for ( const resume of pending.splice( 0 ) ) {
+			resume();
 		}
 
 		process.nextTick( () => {

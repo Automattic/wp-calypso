@@ -9,6 +9,10 @@ interface Section {
 	module: string;
 }
 
+function exportSectionsAsEsm( code: string ): string {
+	return code.replace( /module\.exports\s*=\s*sections;\s*$/, 'export default sections;\n' );
+}
+
 export function vitePluginSections( { root }: { root: string } ): Plugin {
 	const moduleToSectionName = new Map< string, string >();
 	let isSSR = false;
@@ -80,15 +84,17 @@ export function vitePluginSections( { root }: { root: string } ): Plugin {
 				// namespace synchronously. The server calls section.load().default(...)
 				// without await, so async dynamic import() would break it.
 				const modulePaths: string[] = [];
-				const modified = code.replace(
-					/\bmodule: (["'])([^"']+)\1/g,
-					( _match: string, quote: string, modulePath: string ) => {
-						let varIdx = modulePaths.indexOf( modulePath );
-						if ( varIdx === -1 ) {
-							varIdx = modulePaths.push( modulePath ) - 1;
+				const modified = exportSectionsAsEsm(
+					code.replace(
+						/\bmodule: (["'])([^"']+)\1/g,
+						( _match: string, quote: string, modulePath: string ) => {
+							let varIdx = modulePaths.indexOf( modulePath );
+							if ( varIdx === -1 ) {
+								varIdx = modulePaths.push( modulePath ) - 1;
+							}
+							return `module: ${ quote }${ modulePath }${ quote }, load: () => _sectionMod${ varIdx }`;
 						}
-						return `module: ${ quote }${ modulePath }${ quote }, load: () => _sectionMod${ varIdx }`;
-					}
+					)
 				);
 
 				const imports = modulePaths
@@ -100,10 +106,12 @@ export function vitePluginSections( { root }: { root: string } ): Plugin {
 
 			// Match module paths in both single and double quotes, since a pre-transform
 			// plugin (e.g. calypso-transform-jsx-in-js via OXC) may normalise quote style.
-			const modified = code.replace(
-				/\bmodule: (["'])([^"']+)\1/g,
-				( _match: string, quote: string, modulePath: string ) =>
-					`module: ${ quote }${ modulePath }${ quote }, load: () => import( '${ modulePath }' )`
+			const modified = exportSectionsAsEsm(
+				code.replace(
+					/\bmodule: (["'])([^"']+)\1/g,
+					( _match: string, quote: string, modulePath: string ) =>
+						`module: ${ quote }${ modulePath }${ quote }, load: () => import( '${ modulePath }' )`
+				)
 			);
 
 			return { code: modified, map: null };
