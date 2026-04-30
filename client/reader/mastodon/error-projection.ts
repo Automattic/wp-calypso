@@ -21,14 +21,18 @@ export function projectMastodonError( err: MastodonError | null | undefined ): S
 			return err.retry_after !== undefined
 				? { kind: 'rate_limited', retry_after: err.retry_after }
 				: { kind: 'rate_limited' };
-		case 'invalid_instance':
 		case 'bad_request':
 			// Surface the backend's validation message — collapsing to a generic
 			// "Something went wrong" copy hides actionable detail (e.g. "Invalid
 			// instance: example.invalid").
 			return { kind: 'unknown', cause: err, message: err.message };
+		case 'invalid_instance':
+			// `invalid_instance` is a discriminator-only variant on the wire;
+			// no message is shipped, so let FeedListEmpty fall back to its
+			// generic copy.
+			return { kind: 'unknown', cause: err };
 		case 'unknown':
-			return { kind: 'unknown', cause: err, message: err.message };
+			return { kind: 'unknown', cause: err };
 		default:
 			// Soft fallback: a future MastodonError variant landing in production
 			// before this switch is updated would otherwise crash the panel

@@ -26,9 +26,13 @@ Out of scope (lives elsewhere):
 client/reader/social/
   index.ts                      # public barrel — only export from here
   profile-card.tsx              # SocialProfileCard (used by every protocol's profile/verify view)
-  style.scss                    # SocialProfileCard styles
+  author-profile-header.tsx     # AuthorProfileHeader — back-button shim for the profile route (slice 6)
+  author-profile-panel.tsx      # SocialAuthorProfilePanel — generic author-profile surface, both protocols wrap (slice 6)
+  profile-header-skeleton.tsx   # SocialProfileHeaderSkeleton — layout-stable placeholder used by the panel (slice 6)
+  style.scss                    # SocialProfileCard + skeleton styles
   test/
     profile-card.test.tsx
+    author-profile-header.test.tsx
 
   components/                   # mirror of client/reader/discover/components/ shape
     feed-list/
@@ -81,8 +85,11 @@ Don't speculate ahead of that signal. Adding a generic shape now will make the a
 - `SocialProfileCard` — generic over a `stats[]` array; accepts plain-text `bio` or sanitised `bioHtml`. Slice-6 widened the prop set so the same component covers both the slim verify/your-own-connection layout and the full author-profile header: `banner`, `displayName`, `handle`, and `headerActions` switch the component into a richer band-and-stats layout (banner above avatar, name + `@handle`, action slot for buttons/links). Already used by ATmosphere for both surfaces; intended for Mastodon.
 - `SocialFeedList<T>` — generic over item type via `renderItem` and `itemKey`. Mastodon plugs in a different data hook and a different `renderItem` callback; the list shell, sentinel-based pagination, skeleton, and error variants don't change.
 - `PostCardLink` — the card-link accessibility pattern (one real `<a>` + `::after` overlay + nested `position: relative; z-index: 1` anchors).
-- `sanitizePostHtml` — DOMPurify wrapper with allow-list (`<p> <br> <a>` / `href, rel, target`) and the `target="_blank"` rel-hardening hook. Conservative enough for Mastodon content too, possibly with a small extension to that allow-list once we see what Mastodon emits.
+- `sanitizePostHtml` — DOMPurify wrapper with allow-list (`<p> <br> <a>` / `href, rel, target, data-id`, `ALLOW_DATA_ATTR: false`) and the `target="_blank"` rel-hardening hook. The `data-id` attribute is carried by @-mention anchors so `<PostCardBody>` can route mentions in-app via `getProfileUrl` without parsing the href.
 - `SocialAnalyticsProvider` / `useSocialAnalytics` — the per-protocol shell wraps its tree with a `source` ('atmosphere' | 'mastodon' | …) + `connectionId` + `onClick(event, props)` callback, plus optional URL resolvers (`getThreadUrl`, `getProfileUrl`). The post-card subcomponents call into this context instead of dispatching `recordReaderTracksEvent` directly. Adding a protocol just means adding a `source` value, wiring up the protocol's per-event Tracks call in the shell, and binding the protocol's URL builders to the resolvers.
+- `SocialAuthorProfilePanel` (slice 6) — generic author-profile surface that owns the layout (back-button + profile header + feed list), the `profile_viewed` / `profile_error_shown` / `profile_retry_clicked` / `profile_back_to_timeline_clicked` Tracks events with ref-based dedupe, and the `SocialAnalyticsProvider` value. Per-protocol wrappers inject already-fetched query results, mappers, error projectors, URL builders, and copy. Atmosphere's wrapper is `client/reader/atmosphere/author-profile-panel.tsx`; Mastodon's is `client/reader/mastodon/author-profile-panel.tsx`. Both shrink to ~150 lines of config.
+- `SocialProfileHeaderSkeleton` (slice 6) — layout-stable placeholder used as the default `renderProfileLoading` slot of `SocialAuthorProfilePanel`. Mirrors `SocialProfileCard`'s sizing so the surface doesn't shift when profile data resolves.
+- `AuthorProfileHeader` — back-button shim taking `timelineUrl: string`. Both protocols use it directly via the shared panel.
 
 ### What's Bluesky-specific today (likely needs forking or refactoring)
 
@@ -128,7 +135,15 @@ interface SocialAnalyticsContextValue {
 	// Slice 5: in-app thread URL for a post URI, or null to fall back.
 	getThreadUrl?: ( postUri: string ) => string | null;
 	// Slice 6: in-app profile URL for an author ref, or null to fall back.
-	getProfileUrl?: ( ref: { did?: string | null; handle?: string | null } ) => string | null;
+	// `id` is the universal protocol-agnostic identifier (DID for atmosphere,
+	// numeric account id for Mastodon). `did` is kept as an atmosphere-named
+	// alias so existing call sites keep working — both fields point to the
+	// same value when post-card-header passes them.
+	getProfileUrl?: ( ref: {
+		id?: string | null;
+		did?: string | null;
+		handle?: string | null;
+	} ) => string | null;
 }
 ```
 
@@ -137,7 +152,15 @@ Surfaces consuming `getThreadUrl` (slice 5): the timestamp anchor in
 count, and `<PostCardHeader>`'s reply-context preface.
 
 Surfaces consuming `getProfileUrl` (slice 6): `<PostCardHeader>`'s author
-chip, and `<PostCardHeader>`'s repost preface (the reposter name).
+chip, `<PostCardHeader>`'s repost preface (the reposter name), and
+`<PostCardBody>` for inline `<a data-id>` @-mention anchors. The body
+component intercepts the click, reads `data-id`, calls `getProfileUrl({ id, did })`
+with the same value in both fields, and routes via `page()` when the
+resolver returns an in-app URL. Modifier-clicks (cmd/ctrl/middle/shift/alt)
+always pass through. When `data-id` is present but the resolver returns
+null the click falls through to the external href AND the body fires a
+`calypso_reader_<source>_timeline_mention_unresolved` Tracks event so a
+backend↔frontend desync is observable in dashboards.
 
 When the resolver returns a string, the click target is in-app (same tab, no
 `rel`). When it returns `null` (or the resolver isn't set), the slice-4
@@ -155,7 +178,9 @@ Allow-list shape:
 
 - `ALLOWED_TAGS: ['p', 'br', 'a']` for post content (extend cautiously for new protocols).
 - `ALLOWED_TAGS: ['p', 'br', 'a', 'span']` for profile bios (Mastodon emits `<span>` mention scaffolding).
-- `ALLOWED_ATTR` capped to `href`, `rel`, `target`, `class` (bio only).
+- `ALLOWED_ATTR` for post content: `href`, `rel`, `target`, `data-id`. The `data-id` attribute carries the protocol's stable author identifier on @-mention anchors so `<PostCardBody>` can route mentions in-app via `getProfileUrl` without parsing the href.
+- `ALLOWED_ATTR` for profile bios: `href`, `rel`, `target`, `class`.
+- `ALLOW_DATA_ATTR: false` on post content. DOMPurify allows every `data-*` attribute by default; we restrict to the explicit allow-list above so a future backend change can't smuggle a new `data-*` attribute (e.g. `data-tracking`) through to the DOM.
 - DOMPurify's default scheme allow-list strips `javascript:` / `data:` / etc. on `href`. Don't extend it.
 - An `afterSanitizeAttributes` hook forces `rel="nofollow noopener noreferrer"` on any `<a target="_blank">` that survives sanitisation. Belt-and-suspenders against window-opener leaks if upstream ever drops the rel attribute.
 
@@ -239,7 +264,7 @@ Inherits everything from `client/reader/AGENTS.md` and `client/AGENTS.md`. Highl
 - ARIA queries (`getByRole`, `getByLabelText`). No CSS selectors. No `data-testid` unless absolutely unavoidable.
 - `renderWithProvider` from `calypso/test-helpers/testing-library` for components needing Redux + React Query.
 - `nock` for HTTP mocking. Never mock components that contain real behaviour.
-- DOMPurify allow-list tests: assert preserved tags, stripped tags, stripped attributes, stripped `javascript:` URLs, and the `target="_blank"` rel-hardening hook.
+- DOMPurify allow-list tests: assert preserved tags, stripped tags, stripped attributes, stripped `javascript:` URLs, the `target="_blank"` rel-hardening hook, that `data-id` survives, and that arbitrary `data-*` attributes (e.g. `data-tracking`) are stripped.
 - For the card-link pattern, test the surface map: timestamp-as-real-`<a>`, author chip click target, quote click target, external click target, card-background click via overlay, and that all anchors carry `target="_blank" rel="noopener noreferrer"`.
 
 Run tests with:
@@ -263,8 +288,12 @@ When wiring up a second (Mastodon) or third social protocol, expect to:
 Future-extraction candidates flagged for later PRs (currently in `client/reader/atmosphere/`, expected to move shared-side once Mastodon needs them):
 
 - `connect-form.tsx` — likely shareable with Mastodon's connect flow.
-- `profile-panel.tsx` / `author-profile-panel.tsx` — both already use `SocialProfileCard` (rich variant) plus a feed list; the panel shells could move shared-side once Mastodon's profile shapes are in front of us.
+- `profile-panel.tsx` (your-own-connection profile) — already uses `SocialProfileCard` (rich variant); the panel shell could move shared-side once Mastodon's profile shape is fully aligned.
 - `atmosphere-navigation.tsx` — the Timeline / Profile / Settings tab structure likely ports.
+
+`author-profile-panel.tsx` was extracted to this directory as
+`SocialAuthorProfilePanel` in slice 6 — both protocols already wrap the
+shared component.
 
 ## References
 

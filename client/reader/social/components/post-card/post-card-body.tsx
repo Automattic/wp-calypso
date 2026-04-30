@@ -53,8 +53,8 @@ export function PostCardBody( { post }: PostCardBodyProps ) {
 		// data-id present but resolver returned null — likely a backend ↔
 		// frontend desync (validator rejected an id shape we didn't anticipate,
 		// or the protocol shell forgot to bind getProfileUrl). Surface so it's
-		// observable instead of silently routing to the external mastodon.social
-		// URL with no signal.
+		// observable instead of silently routing to the external host with no
+		// analytics signal.
 		// eslint-disable-next-line no-console
 		console.warn( '[reader-social] data-id mention anchor not resolved to in-app URL', {
 			dataId,

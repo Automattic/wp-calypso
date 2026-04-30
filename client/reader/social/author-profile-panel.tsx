@@ -71,8 +71,8 @@ export interface SocialAuthorProfilePanelProps<
 	renderProfileBody: ( profile: TProfile ) => ReactNode;
 	renderProfileError: ( error: TError, retry: () => void ) => ReactNode;
 	// Optional pending-state slot. Wrappers can pass a protocol-styled
-	// skeleton; default is an aria-live status text so the surface isn't
-	// silent during the first fetch.
+	// skeleton; default is the layout-stable SocialProfileHeaderSkeleton so
+	// the surface doesn't shift when profile data resolves.
 	renderProfileLoading?: () => ReactNode;
 
 	// Feed items: wrappers provide a stable dedup key (atmosphere uses
