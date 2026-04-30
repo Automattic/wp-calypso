@@ -10,7 +10,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { fixMe, translate } from 'i18n-calypso';
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useReaderInterestTags } from 'calypso/data/reader/use-reader-interest-tags';
 import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
 import { READER_ONBOARDING_TRACKS_EVENT_PREFIX } from 'calypso/reader/onboarding-rsm/constants';
@@ -64,17 +64,26 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 		followedTagsRef.current = followedTags;
 	}, [ followedTags ] );
 
+	const topicGroups = getTopicGroups();
+
 	// Resolve each topic group's blog list once per mounted component instance.
-	// The random selection remains stable while this component stays mounted,
-	// which keeps subscribed-status checks anchored to these specific feed IDs.
-	const packs = useMemo< ResolvedPack[] >(
-		() =>
-			getTopicGroups()
-				.map( ( group ) => ( { ...group, blogs: getPackBlogs( group.tags ) } ) )
-				// Hide the "Most Subscribed" placeholder while it has nothing to subscribe to.
-				.filter( ( pack ) => pack.tags.length > 0 || pack.blogs.length > 0 ),
-		[]
-	);
+	// Random blog picks remain stable while mounted, but translated group labels
+	// can still update if locale changes.
+	const packBlogsByIdRef = useRef< Map< string, CuratedBlog[] > | null >( null );
+	if ( ! packBlogsByIdRef.current ) {
+		packBlogsByIdRef.current = new Map(
+			topicGroups.map( ( group ) => [ group.id, getPackBlogs( group.tags ) ] )
+		);
+	}
+	const packBlogsById = packBlogsByIdRef.current;
+
+	const packs = topicGroups
+		.map( ( group ) => ( {
+			...group,
+			blogs: packBlogsById.get( group.id ) ?? [],
+		} ) )
+		// Hide the "Most Subscribed" placeholder while it has nothing to subscribe to.
+		.filter( ( pack ) => pack.tags.length > 0 || pack.blogs.length > 0 );
 
 	const isBlogFollowed = ( blog: CuratedBlog ): boolean =>
 		reduxFollows.some(
@@ -312,7 +321,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 										} ) }
 										aria-pressed={ checked }
 										disabled={ processingTags.has( topic.tag ) }
-										onClick={ () => handleTopicChange( ! checked, topic.tag ) }
+										onClick={ () => void handleTopicChange( ! checked, topic.tag ) }
 									>
 										{ topic.name }
 									</button>
