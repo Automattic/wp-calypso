@@ -339,7 +339,6 @@
 		"@tanstack/react-store": "0.7.7",
 		"@tanstack/router-core": "1.114.33",
 		"@tanstack/store": "0.7.7",
-		"@wordpress/components@npm:32.1.0": "patch:@wordpress/components@npm%3A32.1.0#~/.yarn/patches/@wordpress-components-npm-32.1.0-dark-text-colors.patch",
 		"@wordpress/components@npm:^32.1.0": "patch:@wordpress/components@npm%3A32.1.0#~/.yarn/patches/@wordpress-components-npm-32.1.0-dark-text-colors.patch",
 		"@types/react": "^18.3.23",
 		"@types/react-dom": "^18.3.7",
