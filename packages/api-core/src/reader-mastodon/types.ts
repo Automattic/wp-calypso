@@ -127,3 +127,30 @@ export type MastodonThreadNode =
 export interface MastodonThreadResponse {
 	thread: MastodonThreadNode;
 }
+
+// Backend projects the home-instance Mastodon Account object. We surface
+// only the fields we render plus `raw` for forward-compat (matches the
+// existing MastodonConnectionDetails convention). `note` arrives sanitized
+// from the wire and is sanitized again client-side (defence-in-depth).
+// `id` is instance-local — same handle on a different home instance has a
+// different id; we still use it as the URL key when known because the
+// home-instance perspective is stable per connection. Webfinger handle
+// (`acct` qualified to `@user@instance`) is the cross-instance fallback
+// when only the handle is on hand. Counts are projected into the nested
+// `counts` object the same way `MastodonConnectionDetails` exposes them
+// (followers / following / posts), not the upstream flat `*_count` form.
+export interface MastodonAuthorProfile {
+	id: string;
+	acct: string;
+	display_name: string;
+	avatar: string | null;
+	header: string | null;
+	note: string;
+	counts: MastodonProfileCounts;
+	locked: boolean;
+	raw: Record< string, unknown >;
+}
+
+// Author-feed pages share the timeline page shape; alias rather than
+// duplicate so a future field on MastodonTimelinePage propagates here too.
+export type MastodonAuthorFeedPage = MastodonTimelinePage;

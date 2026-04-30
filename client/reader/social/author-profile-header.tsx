@@ -1,10 +1,11 @@
 import page from '@automattic/calypso-router';
 import BackButton from 'calypso/components/back-button';
-import { getTimelineUrl } from './route';
-import type { AtmosphereConnection } from '@automattic/api-core';
 
 interface AuthorProfileHeaderProps {
-	connection: AtmosphereConnection;
+	// Pre-built URL the back button navigates to. The protocol shell is
+	// responsible for constructing the timeline URL — this component is
+	// protocol-agnostic.
+	timelineUrl: string;
 	onBackToTimeline?: () => void;
 }
 
@@ -13,9 +14,7 @@ interface AuthorProfileHeaderProps {
 // panel owns the Tracks dispatch via the optional onBackToTimeline callback.
 // SocialProfileCard renders the display-name heading inside the panel body —
 // no heading lives here.
-export function AuthorProfileHeader( { connection, onBackToTimeline }: AuthorProfileHeaderProps ) {
-	const timelineUrl = getTimelineUrl( connection.id );
-
+export function AuthorProfileHeader( { timelineUrl, onBackToTimeline }: AuthorProfileHeaderProps ) {
 	return (
 		<BackButton
 			onClick={ () => {

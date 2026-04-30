@@ -2,7 +2,15 @@ import DOMPurify from 'dompurify';
 
 const CONFIG = {
 	ALLOWED_TAGS: [ 'p', 'br', 'a' ],
-	ALLOWED_ATTR: [ 'href', 'rel', 'target' ],
+	// `data-id` carries the protocol's stable author identifier (DID for
+	// atmosphere, numeric account id for Mastodon) on @-mention anchors,
+	// emitted by the backend so the client can route mentions in-app
+	// without parsing the href.
+	ALLOWED_ATTR: [ 'href', 'rel', 'target', 'data-id' ],
+	// DOMPurify allows every data-* attribute by default; restrict to the
+	// explicit allow-list above so a future backend change can't smuggle
+	// a new data-* attribute (e.g. `data-tracking`) through to the DOM.
+	ALLOW_DATA_ATTR: false,
 };
 
 let hookRegistered = false;

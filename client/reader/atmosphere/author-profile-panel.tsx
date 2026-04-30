@@ -5,20 +5,21 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
 import {
+	AuthorProfileHeader,
 	SocialAnalyticsProvider,
 	SocialFeedList,
 	SocialPostCard,
 	SocialProfileCard,
+	SocialProfileHeaderSkeleton,
 	mapAtmosphereFeedItemToSocialPost,
 	type SocialPost,
 	type SocialProfileStat,
 } from 'calypso/reader/social';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { AuthorProfileHeader } from './author-profile-header';
 import { AuthorProfileTabs, useAuthorProfileFilter } from './author-profile-tabs';
 import { projectAtmosphereError } from './error-projection';
 import { errorMessage } from './profile-errors';
-import { getProfileUrl, getThreadUrl } from './route';
+import { getProfileUrl, getThreadUrl, getTimelineUrl } from './route';
 import type {
 	AtmosphereAuthorFeedFilter,
 	AtmosphereAuthorProfile,
@@ -313,7 +314,7 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 
 	const renderHeader = () => {
 		if ( profile.isPending ) {
-			return <ProfileHeaderSkeleton />;
+			return <SocialProfileHeaderSkeleton />;
 		}
 		if ( profile.isError && profile.error ) {
 			return renderHeaderError( profile.error );
@@ -329,7 +330,10 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 	return (
 		<SocialAnalyticsProvider value={ analyticsValue }>
 			<VStack spacing={ 4 } className="atmosphere-author-profile">
-				<AuthorProfileHeader connection={ connection } onBackToTimeline={ handleBackToTimeline } />
+				<AuthorProfileHeader
+					timelineUrl={ getTimelineUrl( connection.id ) }
+					onBackToTimeline={ handleBackToTimeline }
+				/>
 				{ renderHeader() }
 				<AuthorProfileTabs connectionId={ connection.id } actor={ actor } activeFilter={ filter } />
 				<SocialFeedList< SocialPost >
@@ -351,17 +355,5 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 				/>
 			</VStack>
 		</SocialAnalyticsProvider>
-	);
-}
-
-function ProfileHeaderSkeleton() {
-	return (
-		<div className="atmosphere-profile__header-skeleton" aria-hidden="true">
-			<div className="atmosphere-profile__header-skeleton-banner" />
-			<div className="atmosphere-profile__header-skeleton-avatar" />
-			<div className="atmosphere-profile__header-skeleton-name" />
-			<div className="atmosphere-profile__header-skeleton-handle" />
-			<div className="atmosphere-profile__header-skeleton-stats" />
-		</div>
 	);
 }

@@ -5,6 +5,8 @@ import nock from 'nock';
 import {
 	useAuthorizeMastodonConnectionMutation,
 	useCompleteMastodonConnectionMutation,
+	useMastodonAuthorFeedInfiniteQuery,
+	useMastodonAuthorProfileQuery,
 	useMastodonConnectionQuery,
 	useMastodonConnectionsQuery,
 	useMastodonTimelineInfiniteQuery,
@@ -16,6 +18,10 @@ function makeWrapper( c: QueryClient ) {
 		return <QueryClientProvider client={ c }>{ children }</QueryClientProvider>;
 	}
 	return Wrapper;
+}
+function createWrapper() {
+	const client = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+	return makeWrapper( client );
 }
 
 describe( 'reader-mastodon hooks', () => {
@@ -204,5 +210,60 @@ describe( 'useMastodonTimelineInfiniteQuery', () => {
 		} );
 		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
 		expect( result.current.data?.pages[ 0 ].cursor ).toBe( 'next-cursor' );
+	} );
+} );
+
+describe( 'useMastodonAuthorProfileQuery', () => {
+	afterEach( () => nock.cleanAll() );
+
+	it( 'fetches /profile/:actor and returns the profile', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/7/profile/108020' )
+			.reply( 200, {
+				id: '108020',
+				acct: 'alice@mastodon.social',
+				display_name: 'Alice',
+				avatar: null,
+				header: null,
+				note: '',
+				counts: { followers: 0, following: 0, posts: 0 },
+				locked: false,
+				raw: {},
+			} );
+		const { result } = renderHook( () => useMastodonAuthorProfileQuery( 7, '108020' ), {
+			wrapper: createWrapper(),
+		} );
+		await waitFor( () => expect( result.current.data?.acct ).toBe( 'alice@mastodon.social' ) );
+	} );
+
+	it( 'is disabled when actor is empty', () => {
+		const { result } = renderHook( () => useMastodonAuthorProfileQuery( 7, '' ), {
+			wrapper: createWrapper(),
+		} );
+		expect( result.current.fetchStatus ).toBe( 'idle' );
+	} );
+} );
+
+describe( 'useMastodonAuthorFeedInfiniteQuery', () => {
+	afterEach( () => nock.cleanAll() );
+
+	it( 'fetches first page with no cursor', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/7/profile/108020/feed' )
+			.reply( 200, { items: [], cursor: null } );
+		const { result } = renderHook( () => useMastodonAuthorFeedInfiniteQuery( 7, '108020' ), {
+			wrapper: createWrapper(),
+		} );
+		await waitFor( () => expect( result.current.data?.pages[ 0 ].cursor ).toBeNull() );
+	} );
+
+	it( 'getNextPageParam treats empty-string cursor as done', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/7/profile/108020/feed' )
+			.reply( 200, { items: [], cursor: '' } );
+		const { result } = renderHook( () => useMastodonAuthorFeedInfiniteQuery( 7, '108020' ), {
+			wrapper: createWrapper(),
+		} );
+		await waitFor( () => expect( result.current.hasNextPage ).toBe( false ) );
 	} );
 } );

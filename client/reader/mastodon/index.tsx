@@ -9,6 +9,7 @@ import {
 	mastodonIdRedirect,
 	mastodonAccount,
 	mastodonOauthCallback,
+	mastodonProfile,
 	mastodonThread,
 } from './controller';
 
@@ -36,6 +37,14 @@ export default function () {
 		sidebar,
 		setBeforePrimary,
 		mastodonThread,
+		makeLayout,
+		clientRender
+	);
+	page(
+		'/reader/mastodon/:id(\\d+)/profile/:actor',
+		sidebar,
+		setBeforePrimary,
+		mastodonProfile,
 		makeLayout,
 		clientRender
 	);

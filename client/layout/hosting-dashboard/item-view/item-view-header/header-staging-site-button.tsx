@@ -15,7 +15,7 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
-import { useIsJetpackConnectionProblem } from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem.jsx';
+import { useIsJetpackConnectionProblem } from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem.js';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { requestSite } from 'calypso/state/sites/actions';

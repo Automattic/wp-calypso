@@ -158,10 +158,13 @@ export interface SocialPost {
 
 // Narrow error type covering only the kinds FeedListEmpty switches on.
 // Both AtmosphereError and MastodonError emit these kinds (others fall to
-// the 'unknown' bucket via per-protocol mappers in the panel layer).
+// the 'unknown' bucket via per-protocol mappers in the panel layer). The
+// optional `message` on `unknown` lets per-protocol projectors surface the
+// backend's human-readable copy (e.g. `bad_request` validation messages)
+// instead of being collapsed to the generic "Something went wrong" line.
 export type SocialError =
 	| { kind: 'auth_required' }
 	| { kind: 'not_found' }
 	| { kind: 'rate_limited'; retry_after?: number }
 	| { kind: 'upstream_unavailable' }
-	| { kind: 'unknown'; cause?: unknown };
+	| { kind: 'unknown'; cause?: unknown; message?: string };
