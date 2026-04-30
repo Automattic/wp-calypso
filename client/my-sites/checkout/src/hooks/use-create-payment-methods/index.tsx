@@ -5,7 +5,6 @@ import {
 	createGooglePayMethod,
 	createBancontactMethod,
 	createBlikMethod,
-	createBlikPaymentMethodStore,
 	createP24Method,
 	createEpsMethod,
 	createIdealMethod,
@@ -250,16 +249,14 @@ function useCreateBlik( {
 	// which filters BLIK out of the cart's allowed_payment_methods unless the request is sandboxed.
 	// No additional client gate is needed.
 	const shouldLoad = ! isStripeLoading && ! stripeLoadingError;
-	const paymentMethodStore = useMemo( () => createBlikPaymentMethodStore(), [] );
 	return useMemo(
 		() =>
 			shouldLoad
 				? createBlikMethod( {
-						store: paymentMethodStore,
 						submitButtonContent: <CheckoutSubmitButtonContent />,
 				  } )
 				: null,
-		[ shouldLoad, paymentMethodStore ]
+		[ shouldLoad ]
 	);
 }
 

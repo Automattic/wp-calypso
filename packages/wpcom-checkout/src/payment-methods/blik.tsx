@@ -1,163 +1,93 @@
 import { Button, FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
-import { useSelect, useDispatch, registerStore } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import { Fragment, ReactNode } from 'react';
+import { useEffect, useState, Fragment, ReactNode } from 'react';
 import Field from '../field';
 import { PaymentMethodLogos } from '../payment-method-logos';
 import { SummaryLine, SummaryDetails } from '../summary-details';
-import type {
-	PaymentMethodStore,
-	StoreSelectors,
-	StoreSelectorsWithState,
-	StoreActions,
-	StoreState,
-} from '../payment-method-store';
-import type { AnyAction } from '../types';
 import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';
 
 const debug = debugFactory( 'wpcom-checkout:blik-payment-method' );
 
-// Disabling this to make migration easier
-/* eslint-disable @typescript-eslint/no-use-before-define */
-
-type NounsInStore = 'customerName' | 'blikCode';
-type BlikStore = PaymentMethodStore< NounsInStore >;
-
 const BLIK_CODE_PATTERN = /^\d{6}$/;
 
-const actions: StoreActions< NounsInStore > = {
-	changeCustomerName( payload ) {
-		return { type: 'CUSTOMER_NAME_SET', payload };
-	},
-	changeBlikCode( payload ) {
-		return { type: 'BLIK_CODE_SET', payload };
-	},
-};
+interface BlikPaymentMethodStateShape {
+	customerName: string;
+	blikCode: string;
+}
 
-const selectors: StoreSelectorsWithState< NounsInStore > = {
-	getCustomerName( state ) {
-		return state.customerName || '';
-	},
-	getBlikCode( state ) {
-		return state.blikCode || '';
-	},
-};
+type BlikPaymentMethodKey = keyof BlikPaymentMethodStateShape;
 
-export function createBlikPaymentMethodStore(): BlikStore {
-	debug( 'creating a new blik payment method store' );
-	const store = registerStore( 'blik', {
-		reducer(
-			state: StoreState< NounsInStore > = {
-				customerName: { value: '', isTouched: false },
-				blikCode: { value: '', isTouched: false },
-			},
-			action: AnyAction
-		): StoreState< NounsInStore > {
-			switch ( action.type ) {
-				case 'CUSTOMER_NAME_SET':
-					return { ...state, customerName: { value: action.payload, isTouched: true } };
-				case 'BLIK_CODE_SET':
-					// Strip non-digit characters as the user types — BLIK codes are always numeric.
-					return {
-						...state,
-						blikCode: { value: action.payload.replace( /\D/g, '' ).slice( 0, 6 ), isTouched: true },
-					};
-			}
-			return state;
-		},
-		actions,
-		selectors,
-	} );
+type StateSubscriber = () => void;
 
-	return store;
+class BlikPaymentMethodState {
+	data: BlikPaymentMethodStateShape = {
+		customerName: '',
+		blikCode: '',
+	};
+
+	subscribers: StateSubscriber[] = [];
+
+	isTouched: Record< BlikPaymentMethodKey, boolean > = {
+		customerName: false,
+		blikCode: false,
+	};
+
+	change = ( field: BlikPaymentMethodKey, value: string ): void => {
+		if ( field === 'blikCode' ) {
+			// BLIK codes are always 6 digits — sanitise as the user types so paste-with-spaces just works.
+			value = value.replace( /\D/g, '' ).slice( 0, 6 );
+		}
+		this.data[ field ] = value;
+		this.isTouched[ field ] = true;
+		this.notifySubscribers();
+	};
+
+	subscribe = ( callback: () => void ): ( () => void ) => {
+		this.subscribers.push( callback );
+		return () => {
+			this.subscribers = this.subscribers.filter( ( subscriber ) => subscriber !== callback );
+		};
+	};
+
+	notifySubscribers = (): void => {
+		this.subscribers.forEach( ( subscriber ) => subscriber() );
+	};
 }
 
 export function createBlikMethod( {
-	store,
 	submitButtonContent,
 }: {
-	store: BlikStore;
 	submitButtonContent: ReactNode;
 } ): PaymentMethod {
+	const state = new BlikPaymentMethodState();
+
 	return {
 		id: 'stripe-blik',
 		hasRequiredFields: true,
 		paymentProcessorId: 'stripe-blik',
 		label: <BlikLabel />,
-		activeContent: <BlikFields />,
-		submitButton: <BlikPayButton store={ store } submitButtonContent={ submitButtonContent } />,
-		inactiveContent: <BlikSummary />,
-		getAriaLabel: ( __ ) => __( 'BLIK' ),
+		activeContent: <BlikFields state={ state } />,
+		submitButton: <BlikPayButton state={ state } submitButtonContent={ submitButtonContent } />,
+		inactiveContent: <BlikSummary state={ state } />,
+		getAriaLabel: () => 'BLIK',
 	};
 }
 
-function useBlikData() {
-	const { customerName, blikCode } = useSelect( ( select ) => {
-		const store = select( 'blik' ) as StoreSelectors< NounsInStore >;
-		return {
-			customerName: store.getCustomerName(),
-			blikCode: store.getBlikCode(),
-		};
-	}, [] );
-
-	return {
-		customerName,
-		blikCode,
-	};
-}
-
-function BlikFields() {
-	const { __ } = useI18n();
-
-	const { customerName, blikCode } = useBlikData();
-	const { changeCustomerName, changeBlikCode } = useDispatch( 'blik' );
-	const { formStatus } = useFormStatus();
-	const isDisabled = formStatus !== FormStatus.READY;
-
-	let blikCodeError: string | undefined;
-	if ( blikCode?.isTouched && ! BLIK_CODE_PATTERN.test( blikCode.value ) ) {
-		blikCodeError =
-			blikCode.value.length === 0
-				? __( 'Please enter the 6-digit BLIK code from your banking app.' )
-				: __( 'BLIK code must be 6 digits.' );
-	}
-
-	return (
-		<BlikFormWrapper>
-			<BlikField
-				id="blik-cardholder-name"
-				type="Text"
-				autoComplete="cc-name"
-				label={ __( 'Your name' ) }
-				value={ customerName?.value ?? '' }
-				onChange={ changeCustomerName }
-				isError={ customerName?.isTouched && customerName?.value.length === 0 }
-				errorMessage={ __( 'This field is required' ) }
-				disabled={ isDisabled }
-			/>
-			<BlikField
-				id="blik-code"
-				type="Text"
-				autoComplete="off"
-				label={ __( 'BLIK code' ) }
-				description={ __(
-					'Open your banking app, find the BLIK option, and enter the 6-digit code that appears here.'
-				) }
-				value={ blikCode?.value ?? '' }
-				onChange={ changeBlikCode }
-				isError={ Boolean( blikCodeError ) }
-				errorMessage={ blikCodeError }
-				disabled={ isDisabled }
-			/>
-		</BlikFormWrapper>
-	);
+function useSubscribeToEventEmitter( state: BlikPaymentMethodState ) {
+	const [ , forceReload ] = useState( 0 );
+	useEffect( () => {
+		return state.subscribe( () => {
+			forceReload( ( val: number ) => val + 1 );
+		} );
+	}, [ state ] );
 }
 
 const BlikFormWrapper = styled.div`
 	padding: 16px;
 	position: relative;
+
 	::after {
 		display: block;
 		width: calc( 100% - 6px );
@@ -167,6 +97,7 @@ const BlikFormWrapper = styled.div`
 		position: absolute;
 		top: 0;
 		left: 3px;
+
 		.rtl & {
 			right: 3px;
 			left: auto;
@@ -182,19 +113,63 @@ const BlikField = styled( Field )`
 	}
 `;
 
+function BlikFields( { state }: { state: BlikPaymentMethodState } ) {
+	const { __ } = useI18n();
+	useSubscribeToEventEmitter( state );
+	const { formStatus } = useFormStatus();
+	const isDisabled = formStatus !== FormStatus.READY;
+
+	let blikCodeError: string | undefined;
+	if ( state.isTouched.blikCode && ! BLIK_CODE_PATTERN.test( state.data.blikCode ) ) {
+		blikCodeError =
+			state.data.blikCode.length === 0
+				? __( 'Please enter the 6-digit BLIK code from your banking app.' )
+				: __( 'BLIK code must be 6 digits.' );
+	}
+
+	return (
+		<BlikFormWrapper>
+			<BlikField
+				id="blik-cardholder-name"
+				type="Text"
+				autoComplete="cc-name"
+				label={ __( 'Your name' ) }
+				value={ state.data.customerName }
+				onChange={ ( value: string ) => state.change( 'customerName', value ) }
+				isError={ state.isTouched.customerName && state.data.customerName.length === 0 }
+				errorMessage={ __( 'This field is required' ) }
+				disabled={ isDisabled }
+			/>
+			<BlikField
+				id="blik-code"
+				type="Text"
+				autoComplete="off"
+				label={ __( 'BLIK code' ) }
+				description={ __(
+					'Open your banking app, find the BLIK option, and enter the 6-digit code that appears here.'
+				) }
+				value={ state.data.blikCode }
+				onChange={ ( value: string ) => state.change( 'blikCode', value ) }
+				isError={ Boolean( blikCodeError ) }
+				errorMessage={ blikCodeError }
+				disabled={ isDisabled }
+			/>
+		</BlikFormWrapper>
+	);
+}
+
 function BlikPayButton( {
 	disabled,
 	onClick,
-	store,
+	state,
 	submitButtonContent,
 }: {
 	disabled?: boolean;
 	onClick?: ProcessPayment;
-	store: BlikStore;
+	state: BlikPaymentMethodState;
 	submitButtonContent: ReactNode;
 } ) {
 	const { formStatus } = useFormStatus();
-	const { customerName, blikCode } = useBlikData();
 
 	// This must be typed as optional because it's injected by cloning the
 	// element in CheckoutSubmitButton, but the uncloned element does not have
@@ -210,11 +185,11 @@ function BlikPayButton( {
 			<Button
 				disabled={ disabled }
 				onClick={ () => {
-					if ( isFormValid( store ) ) {
+					if ( isFormValid( state ) ) {
 						debug( 'submitting blik payment' );
 						onClick( {
-							name: customerName?.value,
-							code: blikCode?.value,
+							name: state.data.customerName,
+							code: state.data.blikCode,
 						} );
 					}
 				} }
@@ -230,47 +205,31 @@ function BlikPayButton( {
 	);
 }
 
-function BlikSummary() {
-	const { customerName } = useBlikData();
+function BlikSummary( { state }: { state: BlikPaymentMethodState } ) {
+	useSubscribeToEventEmitter( state );
 
 	return (
 		<SummaryDetails>
-			<SummaryLine>{ customerName?.value }</SummaryLine>
+			<SummaryLine>{ state.data.customerName }</SummaryLine>
 		</SummaryDetails>
 	);
 }
 
-function isFormValid( store: BlikStore ) {
-	const customerName = selectors.getCustomerName( store.getState() );
-	const blikCode = selectors.getBlikCode( store.getState() );
+function isFormValid( state: BlikPaymentMethodState ): boolean {
+	let isValid = true;
 
-	let valid = true;
-
-	if ( ! customerName?.value.length ) {
+	if ( ! state.data.customerName.length ) {
 		// Touch the field so it displays a validation error.
-		store.dispatch( actions.changeCustomerName( '' ) );
-		valid = false;
+		state.change( 'customerName', '' );
+		isValid = false;
 	}
-	if ( ! blikCode?.value || ! BLIK_CODE_PATTERN.test( blikCode.value ) ) {
-		// Touch the field so it displays a validation error. Re-dispatch the
-		// current value (sanitised by the reducer) so the touched flag flips on.
-		store.dispatch( actions.changeBlikCode( blikCode?.value ?? '' ) );
-		valid = false;
+	if ( ! BLIK_CODE_PATTERN.test( state.data.blikCode ) ) {
+		// Re-emit the current value so the touched flag flips on for the error to render.
+		state.change( 'blikCode', state.data.blikCode );
+		isValid = false;
 	}
 
-	return valid;
-}
-
-function BlikLabel() {
-	const { __ } = useI18n();
-	return (
-		<Fragment>
-			<span>{ __( 'BLIK' ) }</span>
-			<PaymentMethodLogos className="blik__logo payment-logos">
-				<BlikLogo />
-			</PaymentMethodLogos>
-		</Fragment>
-	);
+	return isValid;
 }
 
 // Placeholder logo: BLIK's brand mark in their primary pink. Swap for the
@@ -290,3 +249,15 @@ const BlikLogo = styled.span`
 		content: 'BLIK';
 	}
 `;
+
+function BlikLabel() {
+	const { __ } = useI18n();
+	return (
+		<Fragment>
+			<span>{ __( 'BLIK' ) }</span>
+			<PaymentMethodLogos className="blik__logo payment-logos">
+				<BlikLogo />
+			</PaymentMethodLogos>
+		</Fragment>
+	);
+}
