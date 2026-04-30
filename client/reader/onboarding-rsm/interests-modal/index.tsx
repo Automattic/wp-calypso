@@ -11,6 +11,7 @@ import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { fixMe, translate } from 'i18n-calypso';
 import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { useReaderInterestTags } from 'calypso/data/reader/use-reader-interest-tags';
 import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
 import { READER_ONBOARDING_TRACKS_EVENT_PREFIX } from 'calypso/reader/onboarding-rsm/constants';
 import { StepIndicator } from 'calypso/reader/onboarding-rsm/step-indicator';
@@ -31,16 +32,6 @@ interface InterestsModalProps {
 	onContinue: () => void;
 }
 
-interface Topic {
-	name: string;
-	tag: string;
-}
-
-interface Category {
-	name: string;
-	topics: Topic[];
-}
-
 type ResolvedPack = TopicGroup & { blogs: CuratedBlog[] };
 
 const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onContinue } ) => {
@@ -48,6 +39,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 	const [ showAllTopics, setShowAllTopics ] = useState( false );
 	const hasSyncedFromServerRef = useRef( false );
 	const followedTagsRef = useRef< string[] >( [] );
+	const interestTopics = useReaderInterestTags();
 	const { data: followedTagsFromState } = useFollowedReaderTags();
 	const reduxFollows = useSelector( getReaderFollows );
 	const dispatch = useDispatch();
@@ -249,79 +241,6 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 		);
 	};
 
-	const categories: Category[] = [
-		{
-			name: __( 'Lifestyle & Personal Development' ),
-			topics: [
-				{ name: __( 'Health' ), tag: 'health' },
-				{ name: __( 'Personal Finance' ), tag: 'personal-finance' },
-				{ name: __( 'Food' ), tag: 'food' },
-				{ name: __( 'Life Hacks' ), tag: 'life-hacks' },
-				{ name: __( 'Mental Health' ), tag: 'mental-health' },
-				{ name: __( 'Sleep' ), tag: 'sleep' },
-				{ name: __( 'Relationships' ), tag: 'relationships' },
-				{ name: __( 'Parenting' ), tag: 'parenting' },
-				{ name: __( 'Travel' ), tag: 'travel' },
-			],
-		},
-		{
-			name: __( 'Technology & Innovation' ),
-			topics: [
-				{ name: __( 'Gadgets' ), tag: 'gadgets' },
-				{ name: __( 'Software' ), tag: 'software' },
-				{ name: __( 'Tech News' ), tag: 'technology' },
-				{ name: __( 'Design' ), tag: 'design' },
-				{ name: __( 'Artificial Intelligence' ), tag: 'artificial-intelligence' },
-				{ name: __( 'Cybersecurity' ), tag: 'cybersecurity' },
-				{ name: __( 'Gaming' ), tag: 'gaming' },
-				{ name: __( 'Crypto' ), tag: 'cryptocurrency' },
-				{ name: __( 'Science' ), tag: 'science' },
-			],
-		},
-		{
-			name: __( 'Creative Arts & Entertainment' ),
-			topics: [
-				{ name: __( 'Music' ), tag: 'music' },
-				{ name: __( 'Movies' ), tag: 'movies' },
-				{ name: __( 'Books' ), tag: 'books' },
-				{ name: __( 'Art' ), tag: 'art' },
-				{ name: __( 'Theatre & Performance' ), tag: 'theatre' },
-				{ name: __( 'Creative Writing' ), tag: 'writing' },
-				{ name: __( 'Architecture' ), tag: 'architecture' },
-				{ name: __( 'Photography' ), tag: 'photography' },
-				{ name: __( 'DIY Projects' ), tag: 'diy' },
-			],
-		},
-		{
-			name: __( 'Society & Culture' ),
-			topics: [
-				{ name: __( 'Education' ), tag: 'education' },
-				{ name: __( 'Nature' ), tag: 'nature' },
-				{ name: __( 'Future' ), tag: 'future' },
-				{ name: __( 'Politics' ), tag: 'politics' },
-				{ name: __( 'Climate' ), tag: 'climate-change' },
-				{ name: __( 'History' ), tag: 'history' },
-				{ name: __( 'Society' ), tag: 'society' },
-				{ name: __( 'Culture' ), tag: 'culture' },
-				{ name: __( 'Philosophy' ), tag: 'philosophy' },
-			],
-		},
-		{
-			name: __( 'Industry' ),
-			topics: [
-				{ name: __( 'Business' ), tag: 'business' },
-				{ name: __( 'Startups' ), tag: 'startups' },
-				{ name: __( 'Finance' ), tag: 'finance' },
-				{ name: __( 'Space' ), tag: 'space' },
-				{ name: __( 'Leadership' ), tag: 'leadership' },
-				{ name: __( 'Marketing' ), tag: 'marketing' },
-				{ name: __( 'Remote Work' ), tag: 'remote-work' },
-				{ name: __( 'SaaS' ), tag: 'saas' },
-				{ name: __( 'Creator Economy' ), tag: 'creator-economy' },
-			],
-		},
-	];
-
 	return (
 		isOpen && (
 			<Modal onRequestClose={ onClose } size="large" className="interests-modal">
@@ -363,16 +282,18 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 						</div>
 					) }
 
-					<div className="interests-modal__topics-toggle-row">
-						<Button
-							variant="link"
-							onClick={ handleToggleTopics }
-							className="interests-modal__topics-toggle"
-							aria-expanded={ showAllTopics }
-						>
-							{ showAllTopics ? __( 'See less topics' ) : __( 'See more topics' ) }
-						</Button>
-					</div>
+					{ interestTopics.length > 0 && (
+						<div className="interests-modal__topics-toggle-row">
+							<Button
+								variant="link"
+								onClick={ handleToggleTopics }
+								className="interests-modal__topics-toggle"
+								aria-expanded={ showAllTopics }
+							>
+								{ showAllTopics ? __( 'See less topics' ) : __( 'See more topics' ) }
+							</Button>
+						</div>
+					) }
 
 					{ showAllTopics && (
 						<div
@@ -380,25 +301,23 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 							role="group"
 							aria-label={ __( 'Topics' ) }
 						>
-							{ categories
-								.flatMap( ( category ) => category.topics )
-								.map( ( topic ) => {
-									const checked = followedTags.includes( topic.tag );
-									return (
-										<button
-											key={ topic.tag }
-											type="button"
-											className={ clsx( 'interests-modal__topic-pill', {
-												'is-selected': checked,
-											} ) }
-											aria-pressed={ checked }
-											disabled={ processingTags.has( topic.tag ) }
-											onClick={ () => handleTopicChange( ! checked, topic.tag ) }
-										>
-											{ topic.name }
-										</button>
-									);
-								} ) }
+							{ interestTopics.map( ( topic ) => {
+								const checked = followedTags.includes( topic.tag );
+								return (
+									<button
+										key={ topic.tag }
+										type="button"
+										className={ clsx( 'interests-modal__topic-pill', {
+											'is-selected': checked,
+										} ) }
+										aria-pressed={ checked }
+										disabled={ processingTags.has( topic.tag ) }
+										onClick={ () => handleTopicChange( ! checked, topic.tag ) }
+									>
+										{ topic.name }
+									</button>
+								);
+							} ) }
 						</div>
 					) }
 
