@@ -1,8 +1,5 @@
-// Loaded as a side-effect import so .env values are populated into
-// process.env before any module that reads them at evaluation time
-// (notably @automattic/calypso-e2e's env-variables, which captures
-// process.env.PORT into its default base URLs at class construction).
-// Keeping this in its own file lets us import it ahead of everything else.
+// This has to be done in a separate file so we can ensure the environment
+// variables get loaded before `@automattic/calypso-e2e` is imported.
 import { resolve } from 'path';
 import { config } from 'dotenv';
 
