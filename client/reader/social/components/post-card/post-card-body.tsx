@@ -48,7 +48,23 @@ export function PostCardBody( { post }: PostCardBodyProps ) {
 		if ( inAppUrl ) {
 			event.preventDefault();
 			page( inAppUrl );
+			return;
 		}
+		// data-id present but resolver returned null — likely a backend ↔
+		// frontend desync (validator rejected an id shape we didn't anticipate,
+		// or the protocol shell forgot to bind getProfileUrl). Surface so it's
+		// observable instead of silently routing to the external mastodon.social
+		// URL with no signal.
+		// eslint-disable-next-line no-console
+		console.warn( '[reader-social] data-id mention anchor not resolved to in-app URL', {
+			dataId,
+			href: anchor.getAttribute( 'href' ),
+			source: analytics?.source,
+		} );
+		analytics?.onClick( `calypso_reader_${ analytics.source }_timeline_mention_unresolved`, {
+			connection_id: analytics.connectionId,
+			data_id: dataId,
+		} );
 	};
 
 	// onClick on the wrapper div is event delegation onto the real <a>

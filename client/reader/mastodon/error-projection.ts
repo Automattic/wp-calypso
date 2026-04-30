@@ -23,13 +23,21 @@ export function projectMastodonError( err: MastodonError | null | undefined ): S
 				: { kind: 'rate_limited' };
 		case 'invalid_instance':
 		case 'bad_request':
+			// Surface the backend's validation message — collapsing to a generic
+			// "Something went wrong" copy hides actionable detail (e.g. "Invalid
+			// instance: example.invalid").
+			return { kind: 'unknown', cause: err, message: err.message };
 		case 'unknown':
-			return { kind: 'unknown', cause: err };
+			return { kind: 'unknown', cause: err, message: err.message };
 		default:
-			return assertNever( err );
+			// Soft fallback: a future MastodonError variant landing in production
+			// before this switch is updated would otherwise crash the panel
+			// mid-render. Surface the gap to devtools and ship the generic copy.
+			// eslint-disable-next-line no-console
+			console.warn(
+				'[reader-mastodon] unhandled MastodonError kind in projectMastodonError()',
+				err
+			);
+			return { kind: 'unknown', cause: err };
 	}
-}
-
-function assertNever( value: never ): never {
-	throw new Error( `Unhandled MastodonError kind: ${ JSON.stringify( value ) }` );
 }
