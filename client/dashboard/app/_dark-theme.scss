@@ -812,6 +812,15 @@
 	--color-border-subtle: var( --dashboard-surface__border-color );
 }
 
+@mixin dashboard-dark-theme-agenttic {
+	// @automattic/agenttic-ui overrides the `:root` variables above with its
+	// own custom properties
+  	.agenttic {
+  		--color-background: var( --dashboard__background-color );
+  		--color-foreground: var( --dashboard__text-color );
+  	}
+}
+
 /* Site Logs Badges */
 @mixin dashboard-dark-theme-site-logs-badges {
 	// Data table badges in the logs views don't declare a Badge intent, and
@@ -892,6 +901,7 @@
 	// Gray
 	@include dashboard-dark-theme-color-palette( 'studio-gray', $studio-gray );
 	@include dashboard-dark-theme-color-palette-alias( 'studio-neutral', 'studio-gray' );
+	@include dashboard-dark-theme-color-palette-alias( 'color-neutral', 'studio-gray' );
 }
 
 // :root variables overridden for dark theme
@@ -996,6 +1006,7 @@
 
 	@include dashboard-calypso-theme-properties;
 	@include dashboard-dark-theme-action-list;
+	@include dashboard-dark-theme-agenttic;
 	@include dashboard-dark-theme-breadcrumbs;
 	@include dashboard-dark-theme-callout;
 	@include dashboard-dark-theme-card;
