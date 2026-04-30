@@ -90,13 +90,51 @@ describe( 'QueryReaderPost', () => {
 
 		await waitFor( () => {
 			const items = getReceivedPosts( store );
-			const errorPost = Object.values( items ).find(
+			const errorPosts = Object.values( items ).filter(
 				( p ) => ( p as { is_error?: boolean } ).is_error
-			) as { ID: number; site_ID: number; is_error: boolean } | undefined;
-			expect( errorPost ).toBeDefined();
-			expect( errorPost?.ID ).toBe( 2 );
-			expect( errorPost?.site_ID ).toBe( 1 );
+			) as Array< { ID: number; site_ID: number; global_ID: string; is_error: boolean } >;
+			expect( errorPosts ).toHaveLength( 1 );
+			expect( errorPosts[ 0 ].ID ).toBe( 2 );
+			expect( errorPosts[ 0 ].site_ID ).toBe( 1 );
+			expect( errorPosts[ 0 ].global_ID ).toBe( 'error-1-2' );
 		} );
+	} );
+
+	it( 'reuses the same global_ID across re-renders so error posts do not accumulate', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/read/sites/1/posts/2' )
+			.query( true )
+			.reply( 500, { message: 'Internal Server Error' } );
+
+		const store = buildStore();
+		const queryClient = buildQueryClient();
+
+		const Wrapper = ( { postKey }: { postKey: { blogId: number; postId: number } } ) => (
+			<QueryClientProvider client={ queryClient }>
+				<Provider store={ store }>
+					<QueryReaderPost postKey={ postKey } />
+				</Provider>
+			</QueryClientProvider>
+		);
+
+		const { rerender } = render( <Wrapper postKey={ { blogId: 1, postId: 2 } } /> );
+
+		await waitFor( () => {
+			const errorPosts = Object.values( getReceivedPosts( store ) ).filter(
+				( p ) => ( p as { is_error?: boolean } ).is_error
+			);
+			expect( errorPosts ).toHaveLength( 1 );
+		} );
+
+		// Re-render with a new object literal of the same shape — the effect
+		// re-fires, but the deterministic global_ID overwrites the same entry.
+		rerender( <Wrapper postKey={ { blogId: 1, postId: 2 } } /> );
+		rerender( <Wrapper postKey={ { blogId: 1, postId: 2 } } /> );
+
+		const errorPosts = Object.values( getReceivedPosts( store ) ).filter(
+			( p ) => ( p as { is_error?: boolean } ).is_error
+		);
+		expect( errorPosts ).toHaveLength( 1 );
 	} );
 
 	it( 'does not fetch when postKey is incomplete', () => {

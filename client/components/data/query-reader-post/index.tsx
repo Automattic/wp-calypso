@@ -17,12 +17,17 @@ const buildErrorPost = ( postKey: Partial< ReadPostKey >, error: unknown ) => {
 	const feedId = ( postKey as { feedId?: number } ).feedId;
 	const postId = postKey.postId as number | undefined;
 
+	// Deterministic so that re-runs of the error effect (e.g. when the parent
+	// passes a new postKey object literal each render) overwrite the same entry
+	// in the posts reducer (keyed by global_ID) instead of accumulating dupes.
+	const globalId = `error-${ blogId ?? feedId }-${ postId }`;
+
 	return {
 		feed_ID: feedId,
 		ID: postId,
 		site_ID: blogId,
 		is_external: ! blogId,
-		global_ID: crypto.randomUUID(),
+		global_ID: globalId,
 		is_error: true,
 		feed_item_ID: postId,
 		error,
