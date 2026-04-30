@@ -142,8 +142,12 @@ export function MastodonAuthorProfilePanel( {
 	// Mastodon-specific empty state: when the account is locked and we have
 	// no items, the feed isn't actually empty — we just can't see it without
 	// following. Surface that explicitly so the empty state isn't misleading.
+	// Gate on feed.isPending AND ! feed.isError so a transient feed error
+	// on a locked profile doesn't render as "private" — that'd be a
+	// falsehood about a third-party account.
 	const items = feed.data?.pages.flatMap( ( page ) => page.items ?? [] ) ?? [];
-	const isLockedEmpty = profile.data?.locked === true && items.length === 0 && ! feed.isPending;
+	const isLockedEmpty =
+		profile.data?.locked === true && items.length === 0 && ! feed.isPending && ! feed.isError;
 	const emptyHandle = profile.data?.acct ?? actor;
 
 	return (

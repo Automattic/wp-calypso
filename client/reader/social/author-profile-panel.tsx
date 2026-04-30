@@ -205,6 +205,12 @@ export function SocialAuthorProfilePanel< TProfile, TError extends ProtocolError
 		const seen = new Set< string >();
 		const deduped: TFeedItem[] = [];
 		for ( const post of feed.data?.pages.flatMap( ( page ) => page.items ?? [] ) ?? [] ) {
+			// Skip null/undefined entries before invoking `feedItemKey` —
+			// some upstream payloads include holes; we don't want a single
+			// malformed item to crash the whole panel.
+			if ( ! post ) {
+				continue;
+			}
 			const key = feedItemKey( post );
 			if ( ! key || seen.has( key ) ) {
 				continue;

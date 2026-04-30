@@ -155,7 +155,7 @@ describe( 'getMastodonAuthorProfile', () => {
 
 	it( 'passes webfinger handles through unencoded (page.js leaves them as-is)', async () => {
 		nock( BASE )
-			.get( '/wpcom/v2/reader/mastodon/connections/7/profile/@alice@mastodon.social' )
+			.get( '/wpcom/v2/reader/mastodon/connections/7/profile/%40alice%40mastodon.social' )
 			.reply( 200, {
 				id: '108020',
 				acct: 'alice@mastodon.social',

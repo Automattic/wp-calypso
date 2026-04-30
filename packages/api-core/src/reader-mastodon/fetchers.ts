@@ -135,7 +135,12 @@ export async function getMastodonAuthorProfile(
 	const { connectionId, actor } = params;
 	try {
 		return ( await wpcom.req.get( {
-			path: `/reader/mastodon/connections/${ connectionId }/profile/${ actor }`,
+			// `actor` flows in from federated mention anchors and route
+			// segments; encode so a crafted handle can't smuggle slashes
+			// or query separators into the request path.
+			path: `/reader/mastodon/connections/${ connectionId }/profile/${ encodeURIComponent(
+				actor
+			) }`,
 			apiNamespace: NAMESPACE,
 		} ) ) as MastodonAuthorProfile;
 	} catch ( raw ) {
@@ -164,7 +169,10 @@ export async function getMastodonAuthorFeed(
 	try {
 		return ( await wpcom.req.get(
 			{
-				path: `/reader/mastodon/connections/${ connectionId }/profile/${ actor }/feed`,
+				// Encode `actor`; see getMastodonAuthorProfile for rationale.
+				path: `/reader/mastodon/connections/${ connectionId }/profile/${ encodeURIComponent(
+					actor
+				) }/feed`,
 				apiNamespace: NAMESPACE,
 			},
 			query

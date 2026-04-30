@@ -2,7 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import page, { type Context } from '@automattic/calypso-router';
 import AsyncLoad from 'calypso/components/async-load';
 import { TIMELINE_TAB } from './helper';
-import { STATUS_ID_RE } from './route';
+import { isValidActor, STATUS_ID_RE } from './route';
 
 const loadMastodonLandingView = () =>
 	import(
@@ -125,7 +125,10 @@ export const mastodonProfile = ( context: Context, next: () => void ) => {
 	const actor = String( context.params.actor ?? '' ).trim();
 
 	const idValid = Number.isFinite( id ) && id > 0;
-	const inputsValid = idValid && actor.length > 0;
+	// Validate the actor against the same shape the URL builder allows so
+	// a crafted route segment can't reach the panel and bounce through the
+	// fetcher. Reject before mounting the AsyncLoad.
+	const inputsValid = idValid && isValidActor( actor );
 
 	if ( ! inputsValid ) {
 		page.redirect( idValid ? `/reader/mastodon/${ id }` : '/reader/mastodon' );
