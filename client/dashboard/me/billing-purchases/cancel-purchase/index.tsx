@@ -417,6 +417,7 @@ function CancelPurchaseInner() {
 		purchase,
 		cancelAndRefundMutation,
 		removePurchaseMutator,
+		setPurchaseAutoRenewMutation,
 		destinationRoute: purchasesRoute.to ?? '/me/billing/purchases',
 	} );
 
@@ -823,6 +824,7 @@ function CancelPurchaseInner() {
 	) => {
 		fireMutationOnConfirm( effectiveFlowType, cancelBundledDomain )
 			.then( () => {
+				const purchaseName = purchase.is_domain ? purchase.meta : purchase.product_name;
 				if ( effectiveFlowType === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND ) {
 					if ( purchase.is_plan ) {
 						cancelAllMarketplaceSubscriptions();
@@ -831,8 +833,24 @@ function CancelPurchaseInner() {
 						type: 'snackbar',
 					} );
 					invokeSurvicateEvent( 'purchaseRefunded' );
+				} else if ( effectiveFlowType === CANCEL_FLOW_TYPE.CANCEL_AUTORENEW ) {
+					const subscriptionEndDate = intlFormat(
+						purchase.expiry_date,
+						{ dateStyle: 'medium' },
+						{ locale: 'en-US' }
+					);
+					createSuccessNotice(
+						sprintf(
+							/* translators: %(purchaseName)s is the name of the product that was purchased, %(subscriptionEndDate)s is the date the product will no longer be available because the subscription has ended */
+							__(
+								'%(purchaseName)s was successfully cancelled. It will be available for use until it expires on %(subscriptionEndDate)s.'
+							),
+							{ purchaseName, subscriptionEndDate }
+						),
+						{ type: 'snackbar' }
+					);
+					invokeSurvicateEvent( 'purchaseCancelled' );
 				} else {
-					const purchaseName = purchase.is_domain ? purchase.meta : purchase.product_name;
 					createSuccessNotice(
 						sprintf(
 							/* translators: %(productName)s is the name of a product (e.g., "WordPress.com Premium") and %(siteName)s is a domain name */
@@ -852,12 +870,13 @@ function CancelPurchaseInner() {
 			} );
 	};
 
-	// Returns true if the flag-gated mutation-on-confirm path applies for
-	// the given flow. CANCEL_AUTORENEW keeps the trunk in-place flow.
-	const shouldFireMutationOnConfirm = ( effectiveFlowType: CancelFlowType ): boolean =>
-		config.isEnabled( 'purchases/split-cancel-remove' ) &&
-		( effectiveFlowType === CANCEL_FLOW_TYPE.REMOVE ||
-			effectiveFlowType === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND );
+	// Returns true if the flag-gated mutation-on-confirm path applies. The
+	// compliance driver (one-click cancel) covers all cancel flows, so any
+	// effectiveFlowType qualifies — REMOVE / CANCEL_WITH_REFUND go through
+	// the deletion-aware cache machinery in the hook; CANCEL_AUTORENEW
+	// dispatches setPurchaseAutoRenewMutation without touching the cache.
+	const shouldFireMutationOnConfirm = (): boolean =>
+		config.isEnabled( 'purchases/split-cancel-remove' );
 
 	const onCancellationComplete = () => {
 		recordTracksEvent( 'calypso_purchases_cancel_form_start', {
@@ -867,7 +886,7 @@ function CancelPurchaseInner() {
 			user_lang: locale,
 		} );
 		const effectiveFlowType = computeEffectiveFlowType( state.cancelIntent );
-		if ( shouldFireMutationOnConfirm( effectiveFlowType ) ) {
+		if ( shouldFireMutationOnConfirm() ) {
 			fireMutationFromConfirm( effectiveFlowType, state.cancelBundledDomain ?? false );
 		}
 		setState( ( state ) => ( {
@@ -909,7 +928,7 @@ function CancelPurchaseInner() {
 				user_lang: locale,
 			} );
 			const effectiveFlowType = computeEffectiveFlowType( cancelIntent );
-			if ( shouldFireMutationOnConfirm( effectiveFlowType ) ) {
+			if ( shouldFireMutationOnConfirm() ) {
 				fireMutationFromConfirm( effectiveFlowType );
 			}
 			setState( ( state ) => ( {
@@ -1275,7 +1294,7 @@ function CancelPurchaseInner() {
 		// fireMutationFromConfirm. The success notice and navigation cleanup
 		// are owned by that helper; here we only need to leave the cancel
 		// flow once the user finishes (or skips) the survey.
-		if ( shouldFireMutationOnConfirm( effectiveFlowType ) ) {
+		if ( shouldFireMutationOnConfirm() ) {
 			navigate( { to: purchasesRoute.to } );
 			return;
 		}

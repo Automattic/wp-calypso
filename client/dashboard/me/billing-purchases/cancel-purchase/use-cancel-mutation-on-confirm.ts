@@ -17,10 +17,16 @@ interface CancelAndRefundVariables {
 	};
 }
 
+interface SetAutoRenewVariables {
+	purchaseId: number;
+	autoRenew: boolean;
+}
+
 interface UseCancelMutationOnConfirmArgs {
 	purchase: Purchase;
 	cancelAndRefundMutation: MutationLike< CancelAndRefundVariables >;
 	removePurchaseMutator: MutationLike< number >;
+	setPurchaseAutoRenewMutation: MutationLike< SetAutoRenewVariables >;
 	destinationRoute: string;
 }
 
@@ -32,6 +38,7 @@ export function useCancelMutationOnConfirm( {
 	purchase,
 	cancelAndRefundMutation,
 	removePurchaseMutator,
+	setPurchaseAutoRenewMutation,
 	destinationRoute,
 }: UseCancelMutationOnConfirmArgs ) {
 	const navigate = useNavigate();
@@ -41,6 +48,18 @@ export function useCancelMutationOnConfirm( {
 	const fireMutationOnConfirm = useCallback(
 		( effectiveFlowType: CancelFlowType, cancelBundledDomain?: boolean ): Promise< void > => {
 			setIsPending( true );
+
+			// CANCEL_AUTORENEW just disables auto-renew — the purchase stays in
+			// the user's list. None of the deletion-flow cache machinery
+			// (strip-from-list, removeQueries, subscription guard) applies.
+			if ( effectiveFlowType === CANCEL_FLOW_TYPE.CANCEL_AUTORENEW ) {
+				return setPurchaseAutoRenewMutation
+					.mutateAsync( { purchaseId: purchase.ID, autoRenew: false } )
+					.then( () => undefined )
+					.finally( () => {
+						setIsPending( false );
+					} );
+			}
 
 			const stripPurchaseFromList = () => {
 				queryClient.setQueryData( userPurchasesQuery().queryKey, ( old: Purchase[] | undefined ) =>
@@ -92,7 +111,13 @@ export function useCancelMutationOnConfirm( {
 					setIsPending( false );
 				} );
 		},
-		[ purchase, cancelAndRefundMutation, removePurchaseMutator, queryClient ]
+		[
+			purchase,
+			cancelAndRefundMutation,
+			removePurchaseMutator,
+			setPurchaseAutoRenewMutation,
+			queryClient,
+		]
 	);
 
 	const skipSurvey = useCallback( () => {

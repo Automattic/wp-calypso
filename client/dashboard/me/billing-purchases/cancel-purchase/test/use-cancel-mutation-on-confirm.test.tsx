@@ -37,9 +37,17 @@ const mockPurchase = {
 	will_atomic_revert_after_removal: false,
 } as Purchase;
 
-function makeMutation( resolveValue: unknown = undefined ) {
-	const mutateAsync = jest.fn( () => Promise.resolve( resolveValue ) );
+function makeMutation() {
+	const mutateAsync = jest.fn( () => Promise.resolve() );
 	return { mutateAsync } as unknown as { mutateAsync: jest.Mock };
+}
+
+function makeMutations() {
+	return {
+		removePurchaseMutator: makeMutation(),
+		cancelAndRefundMutation: makeMutation(),
+		setPurchaseAutoRenewMutation: makeMutation(),
+	};
 }
 
 function TestWrapper( { children }: { children: ReactNode } ) {
@@ -61,15 +69,13 @@ describe( 'useCancelMutationOnConfirm', () => {
 	} );
 
 	test( 'fireMutationOnConfirm dispatches the remove mutation for REMOVE flow', async () => {
-		const removePurchaseMutator = makeMutation();
-		const cancelAndRefundMutation = makeMutation();
+		const mutations = makeMutations();
 
 		const { result } = renderHook(
 			() =>
 				useCancelMutationOnConfirm( {
 					purchase: mockPurchase,
-					cancelAndRefundMutation,
-					removePurchaseMutator,
+					...mutations,
 					destinationRoute: '/me/purchases',
 				} ),
 			{ wrapper: TestWrapper }
@@ -80,9 +86,37 @@ describe( 'useCancelMutationOnConfirm', () => {
 		} );
 
 		await waitFor( () => {
-			expect( removePurchaseMutator.mutateAsync ).toHaveBeenCalledWith( mockPurchase.ID );
+			expect( mutations.removePurchaseMutator.mutateAsync ).toHaveBeenCalledWith( mockPurchase.ID );
 		} );
-		expect( cancelAndRefundMutation.mutateAsync ).not.toHaveBeenCalled();
+		expect( mutations.cancelAndRefundMutation.mutateAsync ).not.toHaveBeenCalled();
+		expect( mutations.setPurchaseAutoRenewMutation.mutateAsync ).not.toHaveBeenCalled();
+	} );
+
+	test( 'fireMutationOnConfirm dispatches the auto-renew-off mutation for CANCEL_AUTORENEW flow', async () => {
+		const mutations = makeMutations();
+
+		const { result } = renderHook(
+			() =>
+				useCancelMutationOnConfirm( {
+					purchase: mockPurchase,
+					...mutations,
+					destinationRoute: '/me/purchases',
+				} ),
+			{ wrapper: TestWrapper }
+		);
+
+		act( () => {
+			result.current.fireMutationOnConfirm( CANCEL_FLOW_TYPE.CANCEL_AUTORENEW );
+		} );
+
+		await waitFor( () => {
+			expect( mutations.setPurchaseAutoRenewMutation.mutateAsync ).toHaveBeenCalledWith( {
+				purchaseId: mockPurchase.ID,
+				autoRenew: false,
+			} );
+		} );
+		expect( mutations.removePurchaseMutator.mutateAsync ).not.toHaveBeenCalled();
+		expect( mutations.cancelAndRefundMutation.mutateAsync ).not.toHaveBeenCalled();
 	} );
 
 	test( 'isPending is true while the mutation is in flight, false after it resolves', async () => {
@@ -96,6 +130,7 @@ describe( 'useCancelMutationOnConfirm', () => {
 			),
 		} as unknown as { mutateAsync: jest.Mock };
 		const cancelAndRefundMutation = makeMutation();
+		const setPurchaseAutoRenewMutation = makeMutation();
 
 		const { result } = renderHook(
 			() =>
@@ -103,6 +138,7 @@ describe( 'useCancelMutationOnConfirm', () => {
 					purchase: mockPurchase,
 					cancelAndRefundMutation,
 					removePurchaseMutator,
+					setPurchaseAutoRenewMutation,
 					destinationRoute: '/me/purchases',
 				} ),
 			{ wrapper: TestWrapper }
@@ -124,15 +160,13 @@ describe( 'useCancelMutationOnConfirm', () => {
 	} );
 
 	test( 'skipSurvey navigates to destination without dispatching any mutation', () => {
-		const removePurchaseMutator = makeMutation();
-		const cancelAndRefundMutation = makeMutation();
+		const mutations = makeMutations();
 
 		const { result } = renderHook(
 			() =>
 				useCancelMutationOnConfirm( {
 					purchase: mockPurchase,
-					cancelAndRefundMutation,
-					removePurchaseMutator,
+					...mutations,
 					destinationRoute: '/me/purchases',
 				} ),
 			{ wrapper: TestWrapper }
@@ -143,7 +177,8 @@ describe( 'useCancelMutationOnConfirm', () => {
 		} );
 
 		expect( mockNavigate ).toHaveBeenCalledWith( { to: '/me/purchases' } );
-		expect( removePurchaseMutator.mutateAsync ).not.toHaveBeenCalled();
-		expect( cancelAndRefundMutation.mutateAsync ).not.toHaveBeenCalled();
+		expect( mutations.removePurchaseMutator.mutateAsync ).not.toHaveBeenCalled();
+		expect( mutations.cancelAndRefundMutation.mutateAsync ).not.toHaveBeenCalled();
+		expect( mutations.setPurchaseAutoRenewMutation.mutateAsync ).not.toHaveBeenCalled();
 	} );
 } );

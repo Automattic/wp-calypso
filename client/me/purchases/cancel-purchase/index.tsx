@@ -349,16 +349,11 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		}
 	};
 
-	// True when the flag-gated mutation-on-confirm path applies. CANCEL_AUTORENEW
-	// keeps the trunk in-place flow (the purchase is not deleted, so there is
-	// no eventual-consistency window to manage).
-	shouldFireMutationOnConfirm = (): boolean => {
-		if ( ! config.isEnabled( 'purchases/split-cancel-remove' ) ) {
-			return false;
-		}
-		const flowType = this.getCancelFlowType( this.props.purchase );
-		return flowType === CANCEL_FLOW_TYPE.REMOVE || flowType === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND;
-	};
+	// True when the flag-gated mutation-on-confirm path applies. The
+	// compliance driver (one-click cancel) covers all cancel flows, including
+	// CANCEL_AUTORENEW — that path skips the marketplace-cleanup step
+	// because the purchase isn't deleted.
+	shouldFireMutationOnConfirm = (): boolean => config.isEnabled( 'purchases/split-cancel-remove' );
 
 	// Fire the cancel/remove mutation when the user confirms (the
 	// purchases/split-cancel-remove behavior). Mirrors onSurveyComplete's
@@ -368,10 +363,18 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 	fireMutationFromConfirm = async () => {
 		this.setState( { isLoading: true } );
 		try {
-			const result = await this.submitCancelAndRefundPurchase( this.props.purchase );
+			const flowType = this.getCancelFlowType( this.props.purchase );
+			const isAutoRenewIntent = flowType === CANCEL_FLOW_TYPE.CANCEL_AUTORENEW;
+			const result = isAutoRenewIntent
+				? await this.cancelPurchase( this.props.purchase )
+				: await this.submitCancelAndRefundPurchase( this.props.purchase );
 			if ( result.success ) {
-				const refundable = hasAmountAvailableToRefund( this.props.purchase );
-				await this.handleMarketplaceSubscriptions( refundable );
+				const refundable = isAutoRenewIntent
+					? false
+					: hasAmountAvailableToRefund( this.props.purchase );
+				if ( ! isAutoRenewIntent ) {
+					await this.handleMarketplaceSubscriptions( refundable );
+				}
 				this.props.refreshSitePlans( this.props.purchase.siteId );
 				this.props.clearPurchases();
 				this.props.successNotice( result.message, {
