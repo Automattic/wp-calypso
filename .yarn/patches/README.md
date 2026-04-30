@@ -20,5 +20,7 @@ Remove when: Dashboard has replaced its `__experimentalText` usage with the
 `Text` component from `@wordpress/ui`.
 
 Validation: after changing the patch, run `yarn install --immutable
---mode=skip-build` and confirm `muted` resolves to
+--mode=skip-build` and `yarn test-build-tools dependency-patches`. The
+dependency patch test references this patch and confirms the installed
+production Text `muted` style resolves to
 `var(--wp-components-color-gray-700, #757575)`.
