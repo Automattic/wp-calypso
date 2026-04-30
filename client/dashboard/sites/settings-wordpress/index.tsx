@@ -16,7 +16,7 @@ import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
-import { canOptOutOfWordPressBeta } from '../features';
+import { canOptOutOfWordPressBeta, canSwitchWordPressVersion } from '../features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import { BetaOptOutButton } from './beta-opt-out-button';
 import { BetaProgramNotice } from './beta-program-notice';
@@ -64,9 +64,19 @@ function VersionManagement( { site }: { site: Site } ) {
 
 function BetaProgramContent( { site }: { site: Site } ) {
 	const [ justOptedOut, setJustOptedOut ] = useState( false );
-	const { data: currentVersion } = useQuery( siteWordPressVersionQuery( site.ID ) );
-	const { data: betaVersion = '' } = useQuery( wpOrgCoreVersionQuery( 'beta' ) );
-	const { data: latestVersion = '' } = useQuery( wpOrgCoreVersionQuery() );
+	const isEligible = canSwitchWordPressVersion( site ) || canOptOutOfWordPressBeta( site, 'beta' );
+	const { data: currentVersion } = useQuery( {
+		...siteWordPressVersionQuery( site.ID ),
+		enabled: isEligible,
+	} );
+	const { data: betaVersion = '' } = useQuery( {
+		...wpOrgCoreVersionQuery( 'beta' ),
+		enabled: isEligible,
+	} );
+	const { data: latestVersion = '' } = useQuery( {
+		...wpOrgCoreVersionQuery(),
+		enabled: isEligible,
+	} );
 
 	if ( justOptedOut ) {
 		return <LatestVersionNotice wpVersion={ latestVersion } />;
