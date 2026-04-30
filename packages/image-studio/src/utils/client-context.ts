@@ -9,6 +9,8 @@ import { ImageStudioEntryPoint, store as imageStudioStore } from '../store';
 import { store as videoStudioStore } from '../stores/video-studio';
 import type { BlockEditorSelectors, CoreDataSelectors, WPBlock } from '../types/wordpress.d';
 
+const POST_TITLE_MAX_LENGTH = 200;
+
 export interface ImageStudioMetadata {
 	id?: number;
 	url?: string;
@@ -291,7 +293,7 @@ function detectImageEntity(): DetectedEntity | null {
 			const trimmedTitle = typeof postTitle === 'string' ? postTitle.trim() : '';
 
 			if ( trimmedTitle ) {
-				videoStudio.title = trimmedTitle;
+				videoStudio.title = trimmedTitle.slice( 0, POST_TITLE_MAX_LENGTH );
 			}
 
 			return { videoStudio, isOpen, isVideo: true };
