@@ -16420,13 +16420,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dotenv@npm:^16.4.7":
-  version: 16.6.1
-  resolution: "dotenv@npm:16.6.1"
-  checksum: 15ce56608326ea0d1d9414a5c8ee6dcf0fffc79d2c16422b4ac2268e7e2d76ff5a572d37ffe747c377de12005f14b3cc22361e79fc7f1061cce81f77d2c973dc
-  languageName: node
-  linkType: hard
-
 "dotenv@npm:^8.2.0":
   version: 8.6.0
   resolution: "dotenv@npm:8.6.0"
@@ -33532,7 +33525,7 @@ __metadata:
     d3-time-format: "npm:^4.1.0"
     debug: "npm:^4.4.1"
     doctrine: "npm:^3.0.0"
-    dotenv: "npm:^16.4.7"
+    dotenv: "npm:^9.0.2"
     dotenv-webpack: "npm:^8.1.0"
     enhanced-resolve: "npm:5.9.3"
     eslint: "npm:^8.57.1"
@@ -33630,7 +33623,7 @@ __metadata:
     asana-phrase: "npm:^0.0.8"
     babel-jest: "npm:^29.6.1"
     babel-plugin-dynamic-import-node: "npm:^2.3.0"
-    dotenv: "npm:^16.4.7"
+    dotenv: "npm:^9.0.2"
     eslint: "npm:^8.34.0"
     eslint-plugin-jest: "npm:^25.3.0"
     esm: "npm:^3.2.25"
