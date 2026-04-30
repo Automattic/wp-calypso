@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import DOMPurify from 'dompurify';
 import { sanitizePostHtml } from '../sanitize-post-html';
 
 describe( 'sanitizePostHtml', () => {
@@ -53,6 +54,17 @@ describe( 'sanitizePostHtml', () => {
 		expect( out ).toContain( 'nofollow' );
 		expect( out ).toContain( 'noopener' );
 		expect( out ).toContain( 'noreferrer' );
+	} );
+
+	it( 'does not leave the Reader Social hook registered on DOMPurify globally', () => {
+		sanitizePostHtml( '<p><a href="https://x.example">x</a></p>' );
+
+		const out = DOMPurify.sanitize( '<a href="/local">local</a>', {
+			ALLOWED_TAGS: [ 'a' ],
+			ALLOWED_ATTR: [ 'href', 'target', 'rel' ],
+		} );
+
+		expect( out ).toBe( '<a href="/local">local</a>' );
 	} );
 
 	it( 'returns empty string for empty input', () => {

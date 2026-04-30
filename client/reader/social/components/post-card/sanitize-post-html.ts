@@ -1,4 +1,5 @@
 import DOMPurify from 'dompurify';
+import type { Config } from 'dompurify';
 
 const CONFIG = {
 	ALLOWED_TAGS: [ 'p', 'br', 'a' ],
@@ -13,35 +14,32 @@ const CONFIG = {
 	ALLOW_DATA_ATTR: false,
 };
 
-let hookRegistered = false;
-
-// Exported so other call sites that sanitize via DOMPurify directly
-// (e.g. profile-card's bio rendering, which uses a wider tag allow-list)
-// can guarantee the hardening hook is registered before they run.
-export function ensureSanitizerHook() {
-	if ( hookRegistered ) {
+function hardenAnchorAttributes( node: Element ) {
+	if ( node.tagName !== 'A' ) {
 		return;
 	}
-	DOMPurify.addHook( 'afterSanitizeAttributes', ( node ) => {
-		if ( node.tagName !== 'A' ) {
-			return;
+	node.setAttribute( 'target', '_blank' );
+	const existing = ( node.getAttribute( 'rel' ) || '' ).split( /\s+/ ).filter( Boolean );
+	for ( const token of [ 'nofollow', 'noopener', 'noreferrer' ] ) {
+		if ( ! existing.includes( token ) ) {
+			existing.push( token );
 		}
-		node.setAttribute( 'target', '_blank' );
-		const existing = ( node.getAttribute( 'rel' ) || '' ).split( /\s+/ ).filter( Boolean );
-		for ( const token of [ 'nofollow', 'noopener', 'noreferrer' ] ) {
-			if ( ! existing.includes( token ) ) {
-				existing.push( token );
-			}
-		}
-		node.setAttribute( 'rel', existing.join( ' ' ) );
-	} );
-	hookRegistered = true;
+	}
+	node.setAttribute( 'rel', existing.join( ' ' ) );
+}
+
+export function sanitizeReaderSocialHtml( html: string, config: Config ): string {
+	DOMPurify.addHook( 'afterSanitizeAttributes', hardenAnchorAttributes );
+	try {
+		return DOMPurify.sanitize( html, config );
+	} finally {
+		DOMPurify.removeHook( 'afterSanitizeAttributes', hardenAnchorAttributes );
+	}
 }
 
 export function sanitizePostHtml( html: string ): string {
 	if ( ! html ) {
 		return '';
 	}
-	ensureSanitizerHook();
-	return DOMPurify.sanitize( html, CONFIG );
+	return sanitizeReaderSocialHtml( html, CONFIG );
 }

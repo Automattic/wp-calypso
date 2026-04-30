@@ -128,6 +128,24 @@ describe( 'PostCardEmbedQuote getThreadUrl rewiring', () => {
 		const link = screen.getByRole( 'link' );
 		expect( link ).toHaveAttribute( 'href', '/reader/atmosphere/7/thread/did:plc:def/3kdef' );
 		expect( link ).not.toHaveAttribute( 'target' );
+		expect( link ).toHaveAccessibleName( 'Open quoted post by default.bsky.social' );
+	} );
+
+	it( 'keeps the quoted card linked when the quoted post has no timestamp', () => {
+		const timestamplessPost = makeSocialPost( {
+			created_at: '',
+			indexed_at: '',
+		} );
+		const timestamplessEmbed: SocialEmbedQuote = { type: 'quote', post: timestamplessPost };
+		render(
+			wrap(
+				<PostCardEmbedQuote embed={ timestamplessEmbed } parentPostUri="at://parent" />,
+				() => '/in-app/thread'
+			)
+		);
+
+		const link = screen.getByRole( 'link', { name: 'Open quoted post by default.bsky.social' } );
+		expect( link ).toHaveAttribute( 'href', '/in-app/thread' );
 	} );
 
 	it( 'falls back to the permalink when resolver returns null', () => {

@@ -28,6 +28,7 @@ interface SocialPostCardProps {
 		onClick?: ( event: React.MouseEvent< HTMLAnchorElement > ) => void;
 		target?: string;
 		rel?: string;
+		ariaLabel?: string;
 	};
 }
 

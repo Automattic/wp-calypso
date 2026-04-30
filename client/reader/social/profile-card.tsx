@@ -1,7 +1,6 @@
 import { formatNumberCompact } from '@automattic/number-formatters';
-import DOMPurify from 'dompurify';
 import { useMemo } from 'react';
-import { ensureSanitizerHook } from './components/post-card/sanitize-post-html';
+import { sanitizeReaderSocialHtml } from './components/post-card/sanitize-post-html';
 import type { TranslateResult } from 'i18n-calypso';
 import type { ReactNode } from 'react';
 
@@ -65,8 +64,7 @@ export function SocialProfileCard( {
 		if ( ! bioHtml ) {
 			return null;
 		}
-		ensureSanitizerHook();
-		return DOMPurify.sanitize( bioHtml, BIO_SANITIZE_CONFIG );
+		return sanitizeReaderSocialHtml( bioHtml, BIO_SANITIZE_CONFIG );
 	}, [ bioHtml ] );
 
 	let bioNode = null;
