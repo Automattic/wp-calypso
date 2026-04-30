@@ -11,16 +11,6 @@ import type { Purchase } from '@automattic/api-core';
 
 jest.mock( '@automattic/api-core', () => ( {} ) );
 
-const mockNavigate = jest.fn();
-
-jest.mock( '@tanstack/react-router', () => {
-	const actual = jest.requireActual( '@tanstack/react-router' );
-	return {
-		...actual,
-		useNavigate: () => mockNavigate,
-	};
-} );
-
 jest.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
 		createSuccessNotice: jest.fn(),
@@ -67,10 +57,6 @@ function makeTestWrapper( queryClient: QueryClient ) {
 }
 
 describe( 'useCancelMutationOnConfirm', () => {
-	beforeEach( () => {
-		mockNavigate.mockClear();
-	} );
-
 	test( 'fireMutationOnConfirm dispatches the remove mutation for REMOVE flow', async () => {
 		const mutations = makeMutations();
 		const queryClient = makeQueryClient();
@@ -80,7 +66,6 @@ describe( 'useCancelMutationOnConfirm', () => {
 				useCancelMutationOnConfirm( {
 					purchase: mockPurchase,
 					...mutations,
-					destinationRoute: '/me/purchases',
 				} ),
 			{ wrapper: makeTestWrapper( queryClient ) }
 		);
@@ -105,7 +90,6 @@ describe( 'useCancelMutationOnConfirm', () => {
 				useCancelMutationOnConfirm( {
 					purchase: mockPurchase,
 					...mutations,
-					destinationRoute: '/me/purchases',
 				} ),
 			{ wrapper: makeTestWrapper( queryClient ) }
 		);
@@ -138,7 +122,6 @@ describe( 'useCancelMutationOnConfirm', () => {
 				useCancelMutationOnConfirm( {
 					purchase: purchaseWithProductId,
 					...mutations,
-					destinationRoute: '/me/purchases',
 				} ),
 			{ wrapper: makeTestWrapper( queryClient ) }
 		);
@@ -172,7 +155,6 @@ describe( 'useCancelMutationOnConfirm', () => {
 				useCancelMutationOnConfirm( {
 					purchase: mockPurchase,
 					...mutations,
-					destinationRoute: '/me/purchases',
 				} ),
 			{ wrapper: makeTestWrapper( queryClient ) }
 		);
@@ -197,7 +179,6 @@ describe( 'useCancelMutationOnConfirm', () => {
 				useCancelMutationOnConfirm( {
 					purchase: mockPurchase,
 					...mutations,
-					destinationRoute: '/me/purchases',
 				} ),
 			{ wrapper: makeTestWrapper( queryClient ) }
 		);
@@ -222,7 +203,6 @@ describe( 'useCancelMutationOnConfirm', () => {
 				useCancelMutationOnConfirm( {
 					purchase: mockPurchase,
 					...mutations,
-					destinationRoute: '/me/purchases',
 				} ),
 			{ wrapper: makeTestWrapper( queryClient ) }
 		);
@@ -245,7 +225,6 @@ describe( 'useCancelMutationOnConfirm', () => {
 				useCancelMutationOnConfirm( {
 					purchase: mockPurchase,
 					...mutations,
-					destinationRoute: '/me/purchases',
 				} ),
 			{ wrapper: makeTestWrapper( queryClient ) }
 		);
@@ -281,7 +260,6 @@ describe( 'useCancelMutationOnConfirm', () => {
 					cancelAndRefundMutation,
 					removePurchaseMutator,
 					setPurchaseAutoRenewMutation,
-					destinationRoute: '/me/purchases',
 				} ),
 			{ wrapper: makeTestWrapper( queryClient ) }
 		);
@@ -299,29 +277,5 @@ describe( 'useCancelMutationOnConfirm', () => {
 		} );
 
 		await waitFor( () => expect( result.current.isPending ).toBe( false ) );
-	} );
-
-	test( 'skipSurvey navigates to destination without dispatching any mutation', () => {
-		const mutations = makeMutations();
-		const queryClient = makeQueryClient();
-
-		const { result } = renderHook(
-			() =>
-				useCancelMutationOnConfirm( {
-					purchase: mockPurchase,
-					...mutations,
-					destinationRoute: '/me/purchases',
-				} ),
-			{ wrapper: makeTestWrapper( queryClient ) }
-		);
-
-		act( () => {
-			result.current.skipSurvey();
-		} );
-
-		expect( mockNavigate ).toHaveBeenCalledWith( { to: '/me/purchases' } );
-		expect( mutations.removePurchaseMutator.mutateAsync ).not.toHaveBeenCalled();
-		expect( mutations.cancelAndRefundMutation.mutateAsync ).not.toHaveBeenCalled();
-		expect( mutations.setPurchaseAutoRenewMutation.mutateAsync ).not.toHaveBeenCalled();
 	} );
 } );

@@ -1,6 +1,5 @@
 import { userPurchasesQuery } from '@automattic/api-queries';
 import { useQueryClient } from '@tanstack/react-query';
-import { useNavigate } from '@tanstack/react-router';
 import { useCallback, useState } from 'react';
 import { CANCEL_FLOW_TYPE, type CancelFlowType } from '../../../utils/purchase';
 import type { Purchase } from '@automattic/api-core';
@@ -27,7 +26,6 @@ interface UseCancelMutationOnConfirmArgs {
 	cancelAndRefundMutation: MutationLike< CancelAndRefundVariables >;
 	removePurchaseMutator: MutationLike< number >;
 	setPurchaseAutoRenewMutation: MutationLike< SetAutoRenewVariables >;
-	destinationRoute: string;
 }
 
 export function useCancelMutationOnConfirm( {
@@ -35,9 +33,7 @@ export function useCancelMutationOnConfirm( {
 	cancelAndRefundMutation,
 	removePurchaseMutator,
 	setPurchaseAutoRenewMutation,
-	destinationRoute,
 }: UseCancelMutationOnConfirmArgs ) {
-	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const [ isPending, setIsPending ] = useState( false );
 	const [ snapshotPurchase, setSnapshotPurchase ] = useState< Purchase | null >( null );
@@ -99,9 +95,5 @@ export function useCancelMutationOnConfirm( {
 		]
 	);
 
-	const skipSurvey = useCallback( () => {
-		navigate( { to: destinationRoute } );
-	}, [ navigate, destinationRoute ] );
-
-	return { isPending, fireMutationOnConfirm, skipSurvey, snapshotPurchase };
+	return { isPending, fireMutationOnConfirm, snapshotPurchase };
 }

@@ -412,7 +412,6 @@ function CancelPurchaseInner() {
 		cancelAndRefundMutation,
 		removePurchaseMutator,
 		setPurchaseAutoRenewMutation,
-		destinationRoute: purchasesRoute.to ?? '/me/billing/purchases',
 	} );
 
 	// Pre-confirm: livePurchase from the cache (loader pre-fetched).
