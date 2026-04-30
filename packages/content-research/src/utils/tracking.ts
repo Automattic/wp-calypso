@@ -1,5 +1,9 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 
+export function trackContentResearchOpen() {
+	recordTracksEvent( 'calypso_content_research_open' );
+}
+
 export function trackContentResearchSearch( topic: string ) {
 	recordTracksEvent( 'calypso_content_research_search', { topic } );
 }

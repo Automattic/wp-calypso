@@ -1,4 +1,4 @@
-import { useState } from '@wordpress/element';
+import { useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import AiSummary from './components/ai-summary';
 import ResultCard from './components/result-card';
@@ -6,12 +6,16 @@ import SearchInput from './components/search-input';
 import SourceFilterTabs from './components/source-filter';
 import { useContentResearch } from './data/use-content-research';
 import { useResearchSummary } from './data/use-research-summary';
-import { trackContentResearchSearch } from './utils/tracking';
+import { trackContentResearchOpen, trackContentResearchSearch } from './utils/tracking';
 import type { ResearchResult, SourceFilter } from './types';
 
 export { isContentResearchEnabled } from './utils/feature-flag';
 
 export default function ContentResearchSidebar() {
+	useEffect( () => {
+		trackContentResearchOpen();
+	}, [] );
+
 	const [ topic, setTopic ] = useState( '' );
 	const [ activeFilter, setActiveFilter ] = useState< SourceFilter >( 'all' );
 	const [ selectedUrls, setSelectedUrls ] = useState< Set< string > >( () => new Set() );
