@@ -2,11 +2,7 @@
  * @jest-environment jsdom
  */
 
-import {
-	COLOR_SCHEME_STORAGE_KEY,
-	readStoredColorScheme,
-	updateColorSchemePreference,
-} from '../storage';
+import { COLOR_SCHEME_STORAGE_KEY, readStoredColorScheme, updateColorSchemePreference } from '..';
 
 describe( 'color scheme storage', () => {
 	beforeEach( () => {

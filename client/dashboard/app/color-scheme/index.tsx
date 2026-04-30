@@ -4,7 +4,7 @@ import {
 	readStoredColorScheme,
 	saveStoredColorScheme,
 	type ColorScheme,
-} from './storage';
+} from 'calypso/lib/color-scheme';
 
 interface ColorSchemeContextType {
 	colorScheme: ColorScheme;

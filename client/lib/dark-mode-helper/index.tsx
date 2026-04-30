@@ -5,7 +5,7 @@ import {
 	readStoredColorScheme,
 	updateColorSchemePreference,
 	type ColorScheme,
-} from 'calypso/dashboard/app/color-scheme/storage';
+} from 'calypso/lib/color-scheme';
 
 import './style.scss';
 
