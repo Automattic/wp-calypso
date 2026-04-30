@@ -24,6 +24,7 @@ import getOrderTransactionError from 'calypso/state/selectors/get-order-transact
 import { requestSite } from 'calypso/state/sites/actions';
 import usePurchaseOrder from '../../src/hooks/use-purchase-order';
 import { logStashLoadErrorEvent } from '../../src/lib/analytics';
+import { recordCheckoutPendingPostPurchaseTracking } from './post-purchase-tracking';
 import type { RedirectInstructions } from 'calypso/my-sites/checkout/src/lib/pending-page';
 import type {
 	OrderTransaction,
@@ -191,7 +192,7 @@ function useRedirectOnTransactionSuccess( {
 	);
 	const reduxDispatch = useDispatch();
 	const cartKey = useCartKey();
-	const { reloadFromServer: reloadCart } = useShoppingCart( cartKey );
+	const { responseCart, reloadFromServer: reloadCart } = useShoppingCart( cartKey );
 
 	const firstItem = receipt?.items[ 0 ];
 	const isRenewal = receipt?.items.some( ( item ) => item.type === 'recurring' ) ?? false;
@@ -324,6 +325,13 @@ function useRedirectOnTransactionSuccess( {
 			reduxDispatch,
 		} );
 
+		recordCheckoutPendingPostPurchaseTracking( {
+			redirectInstructions,
+			receiptId: finalReceiptId,
+			receipt,
+			cart: responseCart,
+		} );
+
 		// Pre-populate the Redux sites store with the newly-purchased site so
 		// that the thank-you page can use it immediately on arrival.
 		if ( blogId ) {
@@ -346,9 +354,11 @@ function useRedirectOnTransactionSuccess( {
 		orderId,
 		productName,
 		receiptId,
+		receipt,
 		redirectTo,
 		reduxDispatch,
 		reloadCart,
+		responseCart,
 		siteSlug,
 		transaction,
 		translate,
