@@ -7,6 +7,10 @@ const CONFIG = {
 	// emitted by the backend so the client can route mentions in-app
 	// without parsing the href.
 	ALLOWED_ATTR: [ 'href', 'rel', 'target', 'data-id' ],
+	// DOMPurify allows every data-* attribute by default; restrict to the
+	// explicit allow-list above so a future backend change can't smuggle
+	// a new data-* attribute (e.g. `data-tracking`) through to the DOM.
+	ALLOW_DATA_ATTR: false,
 };
 
 let hookRegistered = false;

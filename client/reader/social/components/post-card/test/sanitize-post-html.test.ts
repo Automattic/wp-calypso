@@ -47,4 +47,19 @@ describe( 'sanitizePostHtml', () => {
 	it( 'returns empty string for empty input', () => {
 		expect( sanitizePostHtml( '' ) ).toBe( '' );
 	} );
+
+	it( 'preserves data-id on @-mention anchors', () => {
+		const html = '<p><a href="https://mastodon.social/@alice" data-id="108020">@alice</a></p>';
+		const out = sanitizePostHtml( html );
+		expect( out ).toContain( 'data-id="108020"' );
+	} );
+
+	it( 'strips other data-* attributes', () => {
+		const html =
+			'<p><a href="https://x.example" data-id="42" data-evil="payload" data-tracking="x">y</a></p>';
+		const out = sanitizePostHtml( html );
+		expect( out ).toContain( 'data-id="42"' );
+		expect( out ).not.toContain( 'data-evil' );
+		expect( out ).not.toContain( 'data-tracking' );
+	} );
 } );
