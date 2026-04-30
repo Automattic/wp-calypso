@@ -101,9 +101,11 @@ export function findBlockElement( clientId: string ): HTMLElement | null {
 		const iframe = document.querySelector(
 			'iframe[name="editor-canvas"]'
 		) as HTMLIFrameElement | null;
-		return iframe?.contentDocument?.querySelector(
-			`[data-block="${ clientId }"]`
-		) as HTMLElement | null;
+		return (
+			( iframe?.contentDocument?.querySelector(
+				`[data-block="${ clientId }"]`
+			) as HTMLElement | null ) ?? null
+		);
 	} catch {
 		return null;
 	}
@@ -125,7 +127,7 @@ export function findBlockListLayout(): HTMLElement | null {
 		const iframe = document.querySelector(
 			'iframe[name="editor-canvas"]'
 		) as HTMLIFrameElement | null;
-		return iframe?.contentDocument?.querySelector( selector ) as HTMLElement | null;
+		return ( iframe?.contentDocument?.querySelector( selector ) as HTMLElement | null ) ?? null;
 	} catch {
 		return null;
 	}

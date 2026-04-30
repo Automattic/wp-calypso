@@ -461,7 +461,7 @@ export default function ReviewMediation( {
 							title={ __( 'Jump to conflicts', 'jetpack' ) }
 						>
 							<span className="jetpack-ai-review-mediation__stat-count">{ conflicts.length }</span>{ ' ' }
-							{ _n( 'conflict', 'conflicts', conflicts.length ) }
+							{ _n( 'conflict', 'conflicts', conflicts.length, 'jetpack' ) }
 						</button>
 					</li>
 				) }
@@ -476,7 +476,7 @@ export default function ReviewMediation( {
 							<span className="jetpack-ai-review-mediation__stat-count">
 								{ implications.length }
 							</span>{ ' ' }
-							{ _n( 'implication', 'implications', implications.length ) }
+							{ _n( 'implication', 'implications', implications.length, 'jetpack' ) }
 						</button>
 					</li>
 				) }
@@ -491,7 +491,7 @@ export default function ReviewMediation( {
 							<span className="jetpack-ai-review-mediation__stat-count">
 								{ suggested_edits.length }
 							</span>{ ' ' }
-							{ _n( 'edit', 'edits', suggested_edits.length ) }
+							{ _n( 'edit', 'edits', suggested_edits.length, 'jetpack' ) }
 						</button>
 					</li>
 				) }
@@ -506,7 +506,7 @@ export default function ReviewMediation( {
 							<span className="jetpack-ai-review-mediation__stat-count">
 								{ guideline_violations.length }
 							</span>{ ' ' }
-							{ _n( 'violation', 'violations', guideline_violations.length ) }
+							{ _n( 'violation', 'violations', guideline_violations.length, 'jetpack' ) }
 						</button>
 					</li>
 				) }
