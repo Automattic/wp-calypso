@@ -6,6 +6,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { CheckoutSummaryRefundWindows } from './checkout-summary-refund-windows';
 import CheckoutTermsModal from './checkout-terms-modal';
+import { getRefundWindowSummary } from './refund-policies';
 import type { ResponseCart } from '@automattic/shopping-cart';
 
 const Wrapper = styled.div`
@@ -72,6 +73,7 @@ const LegalNotice = styled.p`
 export default function CheckoutPayButtonFooter( { cart }: { cart: ResponseCart } ) {
 	const translate = useTranslate();
 	const [ isTermsModalOpen, setIsTermsModalOpen ] = useState( false );
+	const hasRefundWindow = getRefundWindowSummary( cart ) !== null;
 
 	return (
 		<Wrapper className="checkout-pay-button-footer">
@@ -80,9 +82,11 @@ export default function CheckoutPayButtonFooter( { cart }: { cart: ResponseCart 
 				<span>{ translate( 'SSL secure payment · 256-bit encryption' ) }</span>
 			</TrustLine>
 
-			<RefundLine>
-				<CheckoutSummaryRefundWindows cart={ cart } includeRefundIcon />
-			</RefundLine>
+			{ hasRefundWindow && (
+				<RefundLine>
+					<CheckoutSummaryRefundWindows cart={ cart } includeRefundIcon />
+				</RefundLine>
+			) }
 
 			<Divider />
 
